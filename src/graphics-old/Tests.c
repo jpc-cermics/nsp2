@@ -443,7 +443,7 @@ static void testG(BCG *Xgc)
       z[i+XNG*j]= (i-VXG)*(i-VXG)-(j-VXG)*(j-VXG);
   p= XNG ; q= YNG;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  nsp_draw_matrix(Xgc,x,y,z,p,q,"021",brect,aaint,FALSE,NULL,NULL,NULL);
+  nsp_draw_matrix(Xgc,x,y,z,p,q,"021",brect,aaint,FALSE,NULL,NULL,NULL,FALSE);
 }
 
 

@@ -1599,7 +1599,7 @@ static void clean_Fac3D(void *plot)
 
 void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, char *strflag,
 	       const char *legend, double *brect, int *aaint,const double *zminmax,const int *colminmax, 
-	       const int *colout)
+	       const int *colout,int draw)
 {
   struct rec_fec *lplot;
   lplot= ((struct rec_fec *) MALLOC(sizeof(struct rec_fec)));
@@ -1639,7 +1639,7 @@ static void replay_Fec(BCG *Xgc,void *theplot)
   nsp_fec(Xgc,plfec->x,plfec->y,plfec->triangles,plfec->func,
 	   &plfec->Nnode,&plfec->Ntr,
 	   plfec->strflag,plfec->legend,plfec->brect,plfec->aaint,
-	   plfec->zminmax, plfec->colminmax, plfec->colout );
+	  plfec->zminmax, plfec->colminmax, plfec->colout,plfec->draw );
 }
 
 

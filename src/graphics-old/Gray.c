@@ -17,6 +17,7 @@
 
 /* functions used by the modified version : */
 
+static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill);
 static void PermutOfSort (const int tab[], int perm[]);
@@ -295,6 +296,8 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
 	    }
       }
   }
+
+
   frame_clip_off(Xgc);
 
   /** Draw Axis or only rectangle **/
@@ -462,7 +465,7 @@ int nsp_draw_matrix_2(BCG *Xgc,double *z,int nr, int nc, double *xrect,
 
 int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, 
 	    char *strflag,const char *legend, double *brect, int *aaint,const double *zminmax,
-	    const int *colminmax, const int *colout)
+	    const int *colminmax, const int *colout,int draw)
 {
   int i,*xm,*ym,j,k, n1=1;
 
@@ -472,7 +475,7 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
   /* Storing values if using the Record driver */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     /* added zminmax and colminmax (bruno) */
-    store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax,colout);
+    store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax,colout,draw);
 
 
   /** Allocation **/
@@ -493,11 +496,10 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
      *	 beginning of the code modified by Bruno 01/02/2001  
      ********************************************************************/
     
-    int nz;
-    int whiteid;
+    int nz, whiteid; 
     
     double *zlevel, dz, zmin, zmax, fxy[3], sx[3], sy[3];
-    int *zone, *fill, kp, perm[3], zxy[3], color_min;
+    int *zone, *fill, kp, perm[3], zxy[3], color_min, color_max;
     int ii[3];
 
     /* choice between zmin and zmax given by the user or computed
@@ -517,22 +519,20 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
     nz=whiteid;
     
     /* choice for the colormap (in case of a user 's choice 
-     *   verify the parameter). 
+     * verify the parameter). 
      */
 
     if ( colminmax == NULL ) 
-      color_min=1; 
-    else if ( colminmax[0] < 1 || colminmax[1] > nz || colminmax[0] > colminmax[1] ) 
       {
-	/* ici on pourrait plutot forcer les choses en imposant 1<= colmin < colmax <= nz */
-	sciprint("\n\r fec : colminmax badly choosen ! ");
-	return ( 0 );
-      } 
-    else
+	color_min=1; 
+      }
+    else 
       {
-	color_min = colminmax[0];
-	nz = colminmax[1] - colminmax[0] + 1;
-      };
+	/* we project on accepted values */
+	color_min = Max(1,Min(Abs(colminmax[0]),Abs(colminmax[1])));
+	color_max = Min(nz,Max(Abs(colminmax[0]),Abs(colminmax[1])));
+	nz = color_max-color_min  + 1;
+      }
       
     /* 
      *  1/ the purpose of the first part is to to compute the "zone" of each point :
@@ -617,6 +617,8 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
       /* call the "painting" function */
       PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
 
+      if ( draw == 1 ) draw_triangle(Xgc,sx,sy);
+
     };
   }
 
@@ -694,7 +696,10 @@ static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  dou
     resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
     resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
     color = fill[zxy[0]]; nr = 3;
-    if ( color != 0 ) Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+    if ( color != 0 ) 
+      {
+	Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+      }
     return;
   }
 
@@ -772,7 +777,26 @@ static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  dou
   resx[nr] = inint(sx[2]); resy[nr] = inint(sy[2]); nr++;
   color = fill[zxy[2]];
   if ( color != 0 )  Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+
+
 }
+
+/* 
+ * sx, sy : vertices coordinates of a triangle (Pi=(sx[i],sy[i]) i=0,1,2)
+ */
+
+static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
+{
+  int nr, resx[3],resy[3];
+  /* 
+   * case of only one color for the triangle : 
+   */
+  resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
+  resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
+  nr = 3;
+  Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
+}
+
 
 static void FindIntersection(const double *sx,const double *sy,const double *fxy,double z,int inda, int indb,
 			     int *xint, int *yint)

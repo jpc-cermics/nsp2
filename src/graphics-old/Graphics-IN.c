@@ -3657,6 +3657,7 @@ int int_xgetech(Stack stack, int rhs, int opt, int lhs)
 static   nsp_option opts_fec[] ={{ "axesflag",s_int,NULLOBJ,-1},
 				 { "colminmax",mat_int,NULLOBJ,-1},
 				 { "colout",mat_int,NULLOBJ,-1},
+				 { "draw", s_bool,NULLOBJ,-1},
 				 { "frameflag",s_int,NULLOBJ,-1},
 				 { "leg",string,NULLOBJ,-1},
 				 { "leg_pos",string,NULLOBJ,-1},
@@ -3674,7 +3675,7 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *x,*y,*Tr,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
   double *rect;
   int *nax,*istyle,nnz= 10;
-  int frame= -1, axes=-1;
+  int frame= -1, axes=-1,draw = FALSE ;
   char *strf=NULL, *leg=NULL, *leg_pos = NULL,*logflags=NULL;
   int leg_posi;
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
@@ -3682,7 +3683,7 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
 
   if ( rhs <= 0) { return sci_demo (stack.fname," exec(\"SCI/demos/fec/fec.ex1\");",1);}
   
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&draw,&frame,
 	       &leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
 
   CheckSameDims(stack.fname,1,2,x,y);
@@ -3707,7 +3708,8 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   nsp_fec(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,
 	  (Mzminmax == NULL) ? NULL : Mzminmax->R,
 	  (Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R, 
-	  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R);
+	  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R,
+	  draw);
 	  
   return 0;
 }

@@ -713,6 +713,7 @@ static int save_Fec(BCG *Xgc,void *plot)
   if ( save_VectC((lplot->strflag),((int)strlen(lplot->strflag))+1) == 0) return(0);
   if ( save_VectC((lplot->strflag_kp),((int)strlen(lplot->strflag))+1) == 0) return(0);
   if ( save_VectC((lplot->legend),((int)strlen(lplot->legend))+1)  == 0) return(0);
+  if ( save_LI(lplot->draw)==0) return(0);
   return(1);
 }
 

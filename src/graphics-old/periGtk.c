@@ -360,8 +360,7 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
   return TRUE;
 }
 
-
-static void xset_winprotect( BCG *gc, int val) { gc->private->protect=val;}
+static void xset_win_protect( BCG *gc, int val) { gc->private->protect=val;}
 
 /* ici normalement on peut pas arreter la destruction */
 

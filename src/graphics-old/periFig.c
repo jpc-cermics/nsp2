@@ -156,7 +156,7 @@ static void force_redraw(BCG *Xgc) {};
 
 static void setpopupname(BCG *Xgc,char *name){}
 
-static void xset_winprotect(BCG *Xgc, int val) {};
+static void xset_win_protect(BCG *Xgc, int val) {};
 
 /* Wait for mouse click in graphic window : Empty here **/
 

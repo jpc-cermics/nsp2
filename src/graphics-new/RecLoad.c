@@ -942,6 +942,7 @@ static int load_Fec(BCG *Xgc)
       if ( load_VectC(&(lplot->strflag_kp)) == 0) return(0);
       if ( load_VectC(&(lplot->legend))  == 0) return(0);
       if (store_record(Xgc,CODEFecN,(char *) lplot) == 0) return(0);
+      if ( load_LI(&lplot->draw)==0) return(0);
     }
   else 
     {

@@ -25,67 +25,65 @@ static void Myalloc (int **xm,int **ym, int n, int *err);
 static void xstringb (BCG *Xgc, char *string,int x, int y, int w, int h);
 
 static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h);
-static void drawarc_1(BCG *Xgc,double arc[]);
-static void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n);
-static void drawarcs_1(BCG *Xgc,double vects[], int style[], int n);
-static void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag);
-static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag);
-static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, double *size);
-static void cleararea_1(BCG *Xgc,double x, double y, double w, double h);
-static void xclick_1(BCG *Xgc,char *str,int *ibutton, double *x, double *y, int iflag,int motion,int release,int key, int istr);
-static void xclick_any_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr) ;
-static void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int iflag,int motion,int release,int key);
-static void fillarc_1(BCG *Xgc, double arc[]);
-static void fillrectangle_1(BCG *Xgc,double rect[]);
-static void drawpolyline_1(BCG *Xgc,double *vx, double *vy , int n,int closeflag);
-static void drawpolyline_clip_1(BCG *Xgc,double *vx, double *vy , int n,double *clip_rect, int closeflag);
-static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p,int v1);
-static void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n);
-static void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha);
-static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p);
-static void drawrectangle_1(BCG *Xgc,double rect[]);
-static void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n);
-static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag);
-static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, double angle);
-static void displaystringa_1(BCG *Xgc,char *string, int ipos);
-static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect);
-static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd);
-static void xset1_clipping_p(BCG *Xgc,double x,double y,double w,double h);
-static void xset1_clipgrf(BCG *Xgc);
-static void xset1_alufunction1(BCG *Xgc,int val);
-static void xset1_background(BCG *Xgc,int val);
-static void xset1_unclip(BCG *Xgc);
-static void xset1_clip(BCG *Xgc,double x[]);
-static void xset1_pattern(BCG *Xgc,int val);
-static void xset1_colormap(BCG *Xgc,int m, double val[]);
-static void xset1_default_colormap(BCG *Xgc);
-static void xset1_default(BCG *Xgc) ;
-static void xset1_font_size(BCG *Xgc,int val);
-static void xset1_font(BCG *Xgc,int val,int val1);
-static void xset1_foreground(BCG *Xgc,int val);
-static void xset1_hidden3d(BCG *Xgc,int val);
-static void xset1_absourel(BCG *Xgc,int val);
-static void xset1_dash(BCG *Xgc,int val);
-static void xset1_mark_size(BCG *Xgc,int val);
-static void xset1_mark(BCG *Xgc,int val,int val1);
-static void xset1_pixmapOn(BCG *Xgc,int val);
-static void xset1_thickness(BCG *Xgc,int val);
-static void xset1_usecolor(BCG *Xgc,int val);
-static void xset1_viewport(BCG *Xgc,int val,int val1);
-static void xset1_windowdim(BCG *Xgc,int val,int val1);
-static void xset1_popupdim(BCG *Xgc,int val,int val1);
-static void xset1_windowpos(BCG *Xgc,int val,int val1);
-static void xset1_wresize(BCG *Xgc,int val);
 
-static void xset1_autoclear(BCG *Xgc,int num);
-static void xset1_autoclear_def(BCG *Xgc);
-static void xset1_fpf(BCG *Xgc,char *fmt) ;
-static void xset1_fpf_def(BCG *Xgc) ;
-
-static void xset1_show(BCG *Xgc);
-static void xset1_pixmapclear(BCG *Xgc);
-
-static void xset1_initialize_gc(BCG *Xgc);
+static  driver_s_drawarc drawarc_1;
+static  driver_s_fillarcs fillarcs_1;
+static  driver_s_drawarcs drawarcs_1;
+static  driver_s_fillpolyline fillpolyline_1;
+static  driver_s_drawarrows drawarrows_1;
+static  driver_s_drawaxis drawaxis_1;
+static  driver_s_cleararea cleararea_1;
+static  driver_s_xclick xclick_1;
+static  driver_s_xclick_any xclick_any_1;
+static  driver_s_xgetmouse xgetmouse_1;
+static  driver_s_fillarc fillarc_1;
+static  driver_s_fillrectangle fillrectangle_1;
+static  driver_s_drawpolyline drawpolyline_1;
+static  driver_s_drawpolyline_clip drawpolyline_clip_1;
+static  driver_s_fillpolylines fillpolylines_1;
+static  driver_s_drawpolymark drawpolymark_1;
+static  driver_s_displaynumbers displaynumbers_1;
+static  driver_s_drawpolylines drawpolylines_1;
+static  driver_s_drawrectangle drawrectangle_1;
+static  driver_s_drawrectangles drawrectangles_1;
+static  driver_s_drawsegments drawsegments_1;
+static  driver_s_displaystring displaystring_1;
+static  driver_s_displaystringa displaystringa_1;
+static  driver_s_boundingbox boundingbox_1;
+static  driver_s_xstringb xstringb_1;
+static  driver_s_xset_clipping_p xset_clipping_p_1;
+static  driver_s_xset_clipgrf xset_clipgrf_1;
+static  driver_s_xset_alufunction1 xset_alufunction1_1;
+static  driver_s_xset_background xset_background_1;
+static  driver_s_xset_unclip xset_unclip_1;
+static  driver_s_xset_clip xset_clip_1;
+static  driver_s_xset_pattern xset_pattern_1;
+static  driver_s_xset_colormap xset_colormap_1;
+static  driver_s_xset_default_colormap xset_default_colormap_1;
+static  driver_s_xset_default xset_default_1;
+static  driver_s_xset_font_size xset_font_size_1;
+static  driver_s_xset_font xset_font_1;
+static  driver_s_xset_foreground xset_foreground_1;
+static  driver_s_xset_hidden3d xset_hidden3d_1;
+static  driver_s_xset_absourel xset_absourel_1;
+static  driver_s_xset_dash xset_dash_1;
+static  driver_s_xset_mark_size xset_mark_size_1;
+static  driver_s_xset_mark xset_mark_1;
+static  driver_s_xset_pixmapOn xset_pixmapOn_1;
+static  driver_s_xset_thickness xset_thickness_1;
+static  driver_s_xset_usecolor xset_usecolor_1;
+static  driver_s_xset_viewport xset_viewport_1;
+static  driver_s_xset_windowdim xset_windowdim_1;
+static  driver_s_xset_popupdim xset_popupdim_1;
+static  driver_s_xset_windowpos xset_windowpos_1;
+static  driver_s_xset_wresize xset_wresize_1;
+static  driver_s_xset_autoclear xset_autoclear_1;
+static  driver_s_xset_autoclear_def xset_autoclear_def_1;
+static  driver_s_xset_fpf xset_fpf_1;
+static  driver_s_xset_fpf_def xset_fpf_def_1;
+static  driver_s_xset_show xset_show_1;
+static  driver_s_xset_pixmapclear xset_pixmapclear_1;
+static  driver_s_initialize_gc initialize_gc_1;
 
 
 Gengine1 nsp_gengine1={
@@ -114,43 +112,39 @@ Gengine1 nsp_gengine1={
   displaystringa_1,
   boundingbox_1,
   xstringb_1,
-
-  xset1_clipping_p,
-  xset1_clipgrf,
-  xset1_alufunction1,
-  xset1_background,
-  xset1_unclip,
-  xset1_clip,
-  xset1_pattern,
-  xset1_colormap,
-  xset1_default_colormap,
-  xset1_default,
-  xset1_font_size,
-  xset1_font,
-  xset1_foreground,
-  xset1_hidden3d,
-  xset1_absourel,
-  xset1_dash,
-  xset1_mark_size,
-  xset1_mark,
-  xset1_pixmapOn,
-  xset1_thickness,
-  xset1_usecolor,
-  xset1_viewport,
-  xset1_windowdim,
-  xset1_popupdim,
-  xset1_windowpos,
-  xset1_wresize,
-
-  xset1_autoclear,
-  xset1_autoclear_def,
-  xset1_fpf,
-  xset1_fpf_def,
-
-  xset1_show,
-  xset1_pixmapclear,
-
-  xset1_initialize_gc,
+  xset_clipping_p_1,
+  xset_clipgrf_1,
+  xset_alufunction1_1,
+  xset_background_1,
+  xset_unclip_1,
+  xset_clip_1,
+  xset_pattern_1,
+  xset_colormap_1,
+  xset_default_colormap_1,
+  xset_default_1,
+  xset_font_size_1,
+  xset_font_1,
+  xset_foreground_1,
+  xset_hidden3d_1,
+  xset_absourel_1,
+  xset_dash_1,
+  xset_mark_size_1,
+  xset_mark_1,
+  xset_pixmapOn_1,
+  xset_thickness_1,
+  xset_usecolor_1,
+  xset_viewport_1,
+  xset_windowdim_1,
+  xset_popupdim_1,
+  xset_windowpos_1,
+  xset_wresize_1,
+  xset_autoclear_1,
+  xset_autoclear_def_1,
+  xset_fpf_1,
+  xset_fpf_def_1,
+  xset_show_1,
+  xset_pixmapclear_1,
+  initialize_gc_1,
 
 };
 
@@ -183,7 +177,7 @@ void nsp_initialize_gc( BCG *Xgc )
   Xgc->graphic_engine->xset_fpf_def(Xgc) ;
 }
 
-static void xset1_initialize_gc(BCG *Xgc)
+static void initialize_gc_1(BCG *Xgc)
 {
   if (Xgc->record_flag == TRUE)  store_initialize_gc(Xgc);
   nsp_initialize_gc(Xgc);
@@ -199,26 +193,26 @@ static void xset1_initialize_gc(BCG *Xgc)
  *  xset_1 
  *-----------------------------------------------------------------------------*/
 
-static void xset1_clipping_p(BCG *Xgc,double x,double y,double w,double h)
+static void xset_clipping_p_1(BCG *Xgc,double x,double y,double w,double h)
 {
   int rect[4]={x,y,w,h};
   if (Xgc->record_flag == TRUE)  store_clipping_p(Xgc,x,y,w,h);
   Xgc->graphic_engine->xset_clip(Xgc,rect);
 }
 
-static void xset1_clipgrf(BCG *Xgc)
+static void xset_clipgrf_1(BCG *Xgc)
 {
   if (Xgc->record_flag == TRUE)  store_clipgrf(Xgc);
   frame_clip_on(Xgc);
 }
 
-static void xset1_unclip(BCG *Xgc)
+static void xset_unclip_1(BCG *Xgc)
 {
   if (Xgc->record_flag == TRUE)  store_unclip(Xgc);
   Xgc->graphic_engine->xset_unclip(Xgc);
 }
 
-static void xset1_clip(BCG *Xgc,double x[])
+static void xset_clip_1(BCG *Xgc,double x[])
 {
   /** and clipping is special its args are floats **/
   int ix[4];
@@ -228,32 +222,32 @@ static void xset1_clip(BCG *Xgc,double x[])
   Xgc->graphic_engine->xset_clip(Xgc,ix);
 }
 
-static void xset1_alufunction1(BCG *Xgc,int val)
+static void xset_alufunction1_1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_alufunction1(Xgc,val);
   Xgc->graphic_engine->xset_alufunction1(Xgc,val);
 }
 
-static void xset1_background(BCG *Xgc,int val)
+static void xset_background_1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_background(Xgc,val);
   Xgc->graphic_engine->xset_background(Xgc,val);
 }
 
 
-static void xset1_pattern(BCG *Xgc,int val)
+static void xset_pattern_1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_pattern(Xgc,val);
   Xgc->graphic_engine->xset_pattern(Xgc,val);
 }
 
-static void xset1_colormap(BCG *Xgc,int m, double val[])
+static void xset_colormap_1(BCG *Xgc,int m, double val[])
 {
   if (Xgc->record_flag == TRUE) store_colormap(Xgc,m,3,val);
   Xgc->graphic_engine->xset_colormap(Xgc,m,3,val);
 }
 
-static void xset1_default_colormap(BCG *Xgc)
+static void xset_default_colormap_1(BCG *Xgc)
 {
   if (Xgc->record_flag == TRUE) store_default_colormap(Xgc);
   Xgc->graphic_engine->xset_default_colormap(Xgc);
@@ -261,13 +255,13 @@ static void xset1_default_colormap(BCG *Xgc)
 
 /* pas clair XXXX */
 
-static void xset1_default(BCG *Xgc) 
+static void xset_default_1(BCG *Xgc) 
 {
   /* no record XXX A FAIRE */
   nsp_initialize_gc(Xgc);
 }
 
-static void xset1_font_size(BCG *Xgc,int val)
+static void xset_font_size_1(BCG *Xgc,int val)
 {
   int font[2];
   if (Xgc->record_flag == TRUE)  store_font_size(Xgc,val);
@@ -275,37 +269,37 @@ static void xset1_font_size(BCG *Xgc,int val)
   Xgc->graphic_engine->xset_font(Xgc,font[0],val);
 }
 
-static void xset1_font(BCG *Xgc,int val,int val1)
+static void xset_font_1(BCG *Xgc,int val,int val1)
 {
   if (Xgc->record_flag == TRUE)  store_font(Xgc,val,val1);
   Xgc->graphic_engine->xset_font(Xgc,val,val1);
 }
 
-static void xset1_foreground(BCG *Xgc,int val)
+static void xset_foreground_1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_foreground(Xgc,val);
   Xgc->graphic_engine->xset_foreground(Xgc,val);
 }
 
-static void xset1_hidden3d(BCG *Xgc,int val)
+static void xset_hidden3d_1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_hidden3d(Xgc,val);
   Xgc->graphic_engine->xset_hidden3d(Xgc,val);
 }
 
-static void xset1_absourel(BCG *Xgc,int val)
+static void xset_absourel_1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_absourel(Xgc,val);
   Xgc->graphic_engine->xset_absourel(Xgc,val);
 }
 
-static void xset1_dash(BCG *Xgc,int val)
+static void xset_dash_1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_dash(Xgc,val);
   Xgc->graphic_engine->xset_dash(Xgc,val);
 }
 
-static void xset1_mark_size(BCG *Xgc,int val)
+static void xset_mark_size_1(BCG *Xgc,int val)
 {
   int mark[2];
   if (Xgc->record_flag == TRUE)  store_mark_size(Xgc,val);
@@ -314,63 +308,63 @@ static void xset1_mark_size(BCG *Xgc,int val)
   Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
 }
 
-static void xset1_mark(BCG *Xgc,int val,int val1)
+static void xset_mark_1(BCG *Xgc,int val,int val1)
 {
   if (Xgc->record_flag == TRUE)  store_mark(Xgc,val,val1);
   Xgc->graphic_engine->xset_mark(Xgc,val,val1);
 }
 
-static void xset1_pixmapOn(BCG *Xgc,int val)
+static void xset_pixmapOn_1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_pixmapOn(Xgc,val);
   Xgc->graphic_engine->xset_pixmapOn(Xgc,val);
 }
 
-static void xset1_thickness(BCG *Xgc,int val)
+static void xset_thickness_1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_thickness(Xgc,val);
   Xgc->graphic_engine->xset_thickness(Xgc,val);
 }
 
-static void xset1_usecolor(BCG *Xgc,int val)
+static void xset_usecolor_1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_usecolor(Xgc,val);
   Xgc->graphic_engine->xset_usecolor(Xgc,val);
 }
 
-static void xset1_viewport(BCG *Xgc,int val,int val1)
+static void xset_viewport_1(BCG *Xgc,int val,int val1)
 {
   Xgc->graphic_engine->xset_viewport(Xgc,val,val1);
 }
 
-static void xset1_windowdim(BCG *Xgc,int val,int val1)
+static void xset_windowdim_1(BCG *Xgc,int val,int val1)
 {
   Xgc->graphic_engine->xset_windowdim(Xgc,val,val1);
 }
 
-static void xset1_popupdim(BCG *Xgc,int val,int val1)
+static void xset_popupdim_1(BCG *Xgc,int val,int val1)
 {
   Xgc->graphic_engine->xset_popupdim(Xgc,val,val1);
 }
 
-static void xset1_windowpos(BCG *Xgc,int val,int val1)
+static void xset_windowpos_1(BCG *Xgc,int val,int val1)
 {
   Xgc->graphic_engine->xset_windowpos(Xgc,val,val1);
 }
 
-static void xset1_wresize(BCG *Xgc,int val)
+static void xset_wresize_1(BCG *Xgc,int val)
 {
   Xgc->graphic_engine->xset_wresize(Xgc,val);
 }
 
-static void xset1_show(BCG *Xgc)
+static void xset_show_1(BCG *Xgc)
 {
   /* need to store ? */
   if (Xgc->record_flag == TRUE)  store_show(Xgc);
   Xgc->graphic_engine->xset_show(Xgc);
 }
 
-static void xset1_pixmapclear(BCG *Xgc)
+static void xset_pixmapclear_1(BCG *Xgc)
 {
   /* need to store ? */
   if (Xgc->record_flag == TRUE)  store_pixmapclear(Xgc);
@@ -378,25 +372,25 @@ static void xset1_pixmapclear(BCG *Xgc)
 }
 
 
-static void xset1_autoclear(BCG *Xgc,int val)
+static void xset_autoclear_1(BCG *Xgc,int val)
 {
   Xgc->graphic_engine->xset_autoclear(Xgc,val);
 }
 
-static void xset1_autoclear_def(BCG *Xgc)
+static void xset_autoclear_def_1(BCG *Xgc)
 {
   Xgc->graphic_engine->xset_autoclear_def(Xgc);
 }
 
 
-static void xset1_fpf(BCG *Xgc,char *val)
+static void xset_fpf_1(BCG *Xgc,char *val)
 {
   if (Xgc->record_flag == TRUE)  store_fpf(Xgc,val);
   Xgc->graphic_engine->xset_fpf(Xgc,val);
 }
 
 
-static void xset1_fpf_def(BCG *Xgc)
+static void xset_fpf_def_1(BCG *Xgc)
 {
   if (Xgc->record_flag == TRUE)  store_fpf_def(Xgc);
   Xgc->graphic_engine->xset_fpf_def(Xgc);
