@@ -3674,10 +3674,8 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   NspMatrix *x,*y,*Tr,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
   double *rect;
-  int *nax,*istyle,nnz= 10;
-  int frame= -1, axes=-1,draw = FALSE ;
+  int *nax,*istyle,nnz= 10, frame= -1, axes=-1,draw = FALSE, leg_posi;
   char *strf=NULL, *leg=NULL, *leg_pos = NULL,*logflags=NULL;
-  int leg_posi;
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
   /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
 
