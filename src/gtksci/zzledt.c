@@ -14,7 +14,7 @@
 #endif
 
 extern int Xorgetchar();
-static int gchar_no_echo();
+static int gchar_no_echo(void);
 static char Sci_Prompt[10];
 
 #ifdef aix
@@ -208,7 +208,7 @@ static int sendprompt=1;
 #include "x_VTparse.h" 
 extern int groundtable[]; /* character table */ 
 
-int using_readline() { return 0;}
+int using_readline(void) { return 0;}
 
 /***********************************************************************
  * line editor
@@ -821,7 +821,7 @@ static void strip_blank(char *source)
  * get sungle character with no echo
  **********************************************************************/
 
-static int gchar_no_echo()
+static int gchar_no_echo(void)
 {
    int i;
    /* get next character, gotten in cbreak mode
@@ -839,7 +839,7 @@ static int gchar_no_echo()
  * set CBREAK mode and switch off echo and disable CR action!
  *----------------------------------------------------------------------*/
 
-static void set_cbreak()
+static void set_cbreak(void)
 {
   /* switch to CBREAK mode without flushing
    * line buffer */
@@ -869,7 +869,7 @@ static void set_cbreak()
  * reset to original mode 
  *----------------------------------------------------------------------*/
 
-static void set_crmod()
+static void set_crmod(void)
 {
   /* reset to original mode (CRMOD) */
 
@@ -933,10 +933,10 @@ static int translate(int ichar)
  * initialise the io sequences
  *----------------------------------------------------------------------*/
 
-static void init_io()
+static void init_io(void)
 {
   int  tgetent();
-  char *getenv();
+  char *getenv(const char *);
   char *tgetstr();
   char tc_buf[2048];       /* holds termcap buffer */
   char *area;
@@ -1004,7 +1004,7 @@ void sci_get_screen_size (int *rows,int *cols)
 /************************************************************************
  * enable keypad mode if using termcap
  ***********************************************************************/
-static void enable_keypad_mode()
+static void enable_keypad_mode(void)
 {
   /* enable keypad transmit mode */
   if(KS && *KS)
@@ -1015,7 +1015,7 @@ static void enable_keypad_mode()
  * disable the keypad mode if using termcap
  ***********************************************************************/
 
-static void disable_keypad_mode()
+static void disable_keypad_mode(void)
 {
   /* disable keypad transmit mode */
    if(KE && *KE)
@@ -1120,12 +1120,12 @@ void C2F(setprlev)(int *pause)
  *  history 
  *------------------------------------------------*/
 
-int nsp_read_history()
+int nsp_read_history(void)
 {
   return read_history ("~/.nsp_history");
 }
 
-int nsp_write_history()
+int nsp_write_history(void)
 {
   return write_history ("~/.nsp_history");
 }

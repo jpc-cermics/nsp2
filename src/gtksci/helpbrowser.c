@@ -22,10 +22,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* #include "config.h" */
+/* 
+ * adapted from the gimp for nsp 
+ * the only exported function is 
+ * int Sci_Help(char *mandir,char *locale,char *help_file) 
+ */
 
 #include <string.h> 
-#include <stdio.h>
+#include <stdio.h> 
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -36,13 +40,10 @@
 
 #include <libgtkhtml/gtkhtml.h>
 
-
 /* XXXX */
 #include "nsp/math.h"
 #include "nsp/sciio.h"
-#include "../system/Sun.h"
-#include "All-extern.h"
-
+#include "nsp/gtksci.h"
 #include "queue.h"
 #include "uri.h"
 
@@ -97,7 +98,6 @@ static GtkTargetEntry help_dnd_target_table[] =
 };
 
 
-static gboolean temp_proc_installed = FALSE;
 
 /*  forward declaration  */
 
@@ -689,16 +689,6 @@ open_browser_dialog (const gchar *help_path,
   load_page (help_file, TRUE);
 }
 
-static gboolean
-idle_load_page (gpointer data)
-{
-  gchar *path = data;
-
-  load_page (path, TRUE);
-  g_free (path);
-
-  return FALSE;
-}
 
 
 /*------------------------------------------------------
@@ -721,6 +711,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
   return 0;
 }
 
+/* 
 static void write_scilab_example(char *example)
 {
   char *pos = example, *tmpdir;
@@ -782,3 +773,5 @@ static void write_scilab_example(char *example)
 
 }
   
+*/
+

@@ -19,14 +19,15 @@
 #include "nsp/graphics/periGtk.h" 
 #include "nsp/menus.h" 
 #include "nsp/math.h"
-#include "../system/Sun.h" 
+#include "../system/files.h" 
 #include "nsp/sciio.h" 
-#include "All-extern.h"
+#include "nsp/gtksci.h"
+#include "menus.h"
 
-extern void create_scilab_about(void); 
+extern void create_nsp_about(void); 
 extern char GetDriver();
 
-static void *sci_window_initial_menu() ;
+static void *sci_window_initial_menu(void) ;
 static void sci_menu_to_item_factory(GtkItemFactory *ifactory,menu_entry *m);
 static void sci_menu_delete(menu_entry **m, char *name) ;
 static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int ne,int action_type,char *fname);
@@ -47,7 +48,7 @@ static GtkItemFactory  *main_item_factory= NULL;
  * used when the menu is plugged 
  */
 
-void create_plugged_main_menu() 
+void create_plugged_main_menu(void)
 {
   static GtkWidget *menubar = NULL; 
   static int first = 0; 
@@ -176,9 +177,9 @@ void create_graphic_window_menu(BCG *dd)
   return ;
 }
 
-/**********************************************************
+/*
  * General routines for dynamic menu item creation and deletion
- ***********************************************************/
+ */
 
 /*---------------------------------------------------
  * Delete the button named button_name in the menu of window 
@@ -445,19 +446,7 @@ static void menu_entry_delete(menu_entry *me)
   FREE(me);
 }
 
-/* unused 
-
-static void submenu_add(menu_entry *me,menu_entry *more)
-{
-  menu_entry *loc = me->subs;
-  if (loc == NULL) me->subs = more;
-  while ( loc->next != NULL) loc = loc->next ;
-  loc->next = more;
-}
-*/
-
-
-/****************************************************
+/*----------------------------------------------------------------
  * Add a menu in a menu_item list
  *  win_num     : graphic window number or -1 for main scilab window
  *  name        : label of menu button
@@ -469,7 +458,7 @@ static void submenu_add(menu_entry *me,menu_entry *more)
  *                action_type==0 : interpreted (execution of scilab instruction
  *                action_type!=0 : hard coded a routine is called
  *  fname;      : name of the action function  
- ****************************************************/
+ *----------------------------------------------------------------*/
 
 static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int ne, 
 			int action_type,char *fname)
@@ -540,9 +529,10 @@ static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int n
   return 0;
 }
 
-/****************************************************
+/*----------------------------------------------------------------
  *Delete the menu name in menu_entry list 
- ****************************************************/
+ *----------------------------------------------------------------*/
+
 
 static void sci_menu_delete(menu_entry **m, char *name) 
 { 
@@ -573,10 +563,9 @@ static void sci_menu_delete(menu_entry **m, char *name)
     }
 }
 
-/****************************************************
+/*----------------------------------------------------------------
  * Set the status of a menu 
- ****************************************************/
-
+ *----------------------------------------------------------------*/
 
 static menu_entry * sci_menu_set_status(menu_entry *m,int winid,char *name,
 					int subid,int status)
@@ -744,7 +733,7 @@ void * graphic_initial_menu(int winid)
   return m;
 }
 
-static void * sci_window_initial_menu() 
+static void * sci_window_initial_menu(void)
 {
   menu_entry *m = NULL;
   int winid = -1;
@@ -924,7 +913,7 @@ static void scig_menu_load(int winid)
  * file operations 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_fileops()
+static void sci_menu_fileops(void)
 {
   char * file = NULL ;
   int rep,ierr;
@@ -991,7 +980,7 @@ static void scig_menu_rot3d(int winid)
  * kill scilab 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_kill()
+static void sci_menu_kill(void)
 {
   sci_clear_and_exit(1);
 }
@@ -1000,7 +989,7 @@ static void sci_menu_kill()
  * make a stop 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_stop () 
+static void sci_menu_stop (void)
 {
   /* int j = SIGINT; */ 
   Sciprintf("sci_menu_stop: to be done \n");
@@ -1012,7 +1001,7 @@ static void sci_menu_stop ()
  * run the help 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_help()
+static void sci_menu_help(void)
 {
   enqueue_nsp_command("help();");
 }
@@ -1021,7 +1010,7 @@ static void sci_menu_help()
  * run the demos 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_demos()
+static void sci_menu_demos(void)
 {
   enqueue_nsp_command( get_sci_data_strings(2));
 }
@@ -1031,27 +1020,27 @@ static void sci_menu_demos()
  * Callbacks for the Graphic Window main menu 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_gwplus() 
+static void sci_menu_gwplus(void)
 {
   MenuFixCurrentWin(lab_count+1); 
 }
 
-static void sci_menu_gwminus() 
+static void sci_menu_gwminus(void)
 {
   MenuFixCurrentWin(lab_count-1); 
 }
 
-static void sci_menu_gwcreate_or_select() 
+static void sci_menu_gwcreate_or_select(void)
 {
   scig_sel(lab_count);
 }
 
-static void sci_menu_gwraise() 
+static void sci_menu_gwraise(void)
 {
   scig_raise(lab_count);
 }
 
-static void sci_menu_gwdelete() 
+static void sci_menu_gwdelete(void)
 {
   scig_menu_delete(lab_count);
 }
@@ -1082,7 +1071,7 @@ static int call_predefined_callbacks(char *name, int winid)
   else if (strcmp(name,"$gwdelete")== 0) sci_menu_gwdelete();
   else if (strcmp(name,"$gwplus")== 0)  sci_menu_gwplus();
   else if (strcmp(name,"$gwminus")== 0)  sci_menu_gwminus();
-  else if (strcmp(name,"$about")== 0)  create_scilab_about ();
+  else if (strcmp(name,"$about")== 0)  create_nsp_about ();
   else if (strcmp(name,"$resume")== 0)  enqueue_nsp_command("resume");
   else if (strcmp(name,"$abort")== 0)   enqueue_nsp_command("abort");
   else if (strcmp(name,"$restart")== 0) enqueue_nsp_command("exec SCI/scilab.star;");
@@ -1090,3 +1079,5 @@ static int call_predefined_callbacks(char *name, int winid)
   else return 0;
   return 1;
 }
+
+

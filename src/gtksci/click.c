@@ -9,7 +9,7 @@
 #include <gtk/gtk.h>
 #include "nsp/machine.h"
 #include "nsp/command.h"
-#include "All-extern.h"
+#include "nsp/gtksci.h"
 #include "nsp/graphics/Graphics.h" 
 
 /*---------------------------------------------------------
@@ -52,12 +52,12 @@ Scig_click_handler set_scig_click_handler( Scig_click_handler f)
   return old;
 }
 
-/* XXXX should be removed */
-void reset_scig_click_handler() 
+/* should be removed */
+
+void reset_scig_click_handler(void)
 {
   scig_click_handler = scig_click_handler_none;
 }
-
 
 /*---------------------------------------------------------
  * The queue ....

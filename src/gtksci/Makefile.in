@@ -14,7 +14,8 @@ OBJSF  =
 
 include ../../Makefile.incl
 
-HTMFLAGS=`pkg-config libgtkhtml-2.0 --cflags`
+#HTMFLAGS=`pkg-config libgtkhtml-2.0 --cflags`
+HTMFLAGS=
 
 CFLAGS = $(CC_OPTIONS) $(TK_INC_PATH) $(TCL_INC_PATH) $(HTMFLAGS)
 

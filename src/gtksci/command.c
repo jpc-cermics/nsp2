@@ -9,9 +9,6 @@
 
 #include <nsp/object.h>
 #include <nsp/command.h>
-#include "All-extern.h"
-#include "../system/Sun.h"
-
 
 /*---------------------------------------------------------------------
  *  This function is used to store Scilab command in a queue 
@@ -43,7 +40,7 @@ Scig_command_handler set_scig_command_handler(Scig_command_handler f)
   return old;
 }
 
-void reset_scig_command_handler() 
+void reset_scig_command_handler(void)
 {
   scig_command_handler = scig_command_handler_none;
 }
@@ -90,7 +87,7 @@ int enqueue_nsp_command(char *command)
  * check queue 
  *---------------------------------------------------------------------------*/
 
-int checkqueue_nsp_command() 
+int checkqueue_nsp_command(void)
 {
   if ( locked) return FALSE;
   if ( L == NULLLIST)  return FALSE;
@@ -102,12 +99,12 @@ int checkqueue_nsp_command()
  * lock the queue (checkqueue_nsp_command() will return FALSE)
  *---------------------------------------------------------------------------*/
 
-void lockqueue_nsp_command() 
+void lockqueue_nsp_command(void)
 {
   locked = TRUE;
 }
 
-void unlockqueue_nsp_command() 
+void unlockqueue_nsp_command(void)
 {
   locked = FALSE;
 }
@@ -116,7 +113,7 @@ void unlockqueue_nsp_command()
  * returns a command or NULLOBJ if queue is empty 
  *---------------------------------------------------------------------------*/
 
-static NspObject *dequeue_nsp_command_obj() 
+static NspObject *dequeue_nsp_command_obj(void)
 {
   NspObject *O;
   if ( L == NULLLIST) return NULLOBJ;

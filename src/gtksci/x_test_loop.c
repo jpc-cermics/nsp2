@@ -8,7 +8,7 @@
 #include "nsp/machine.h"
 #include "../menusX/men_scilab.h" 
 #include "All-extern-x1.h" 
-#include "All-extern.h" 
+#include "nsp/gtksci.h" 
      
 extern int main  (int argc, char **argv);  
 extern int C2F (dsort) (void);  

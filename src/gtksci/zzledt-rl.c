@@ -8,14 +8,20 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <setjmp.h>
+#include <unistd.h> /* for isatty */
 
 #include "nsp/machine.h" 
 #include "nsp/sciio.h" 
-#include "All-extern.h" 
+#include "nsp/gtksci.h" 
 
 static int fd=0;              /* file number for standard in */
 static int  use_prompt=1;
 static int hist = 1; /* flag to add to history */
+
+extern int checkqueue_nsp_command(void) ;
+extern int dequeue_nsp_command(char *buf,int buf_len);
+
+
 
 /***********************************************************************
  * line editor: using readline 
@@ -42,9 +48,9 @@ static int my_getc (FILE *dummy)
   return i;
 }
 
-int using_readline() { return 1;}
+int using_readline(void) { return 1;}
 
-static void initialize_readline();
+static void initialize_readline(void);
 
 static char * dupstr (char *s)
 {
@@ -154,12 +160,12 @@ void SciGtkReadLine(char *prompt, char *buffer, int *buf_size, int *len_line, in
  *  history 
  *------------------------------------------------*/
 
-int nsp_read_history()
+int nsp_read_history(void)
 {
   return read_history (".nsp_history");
 }
 
-int nsp_write_history()
+int nsp_write_history(void)
 {
   int rep = write_history (".nsp_history");
   if ( rep != 0) 
@@ -198,7 +204,7 @@ static char **scilab_completion (const char *, int, int);
 
 /* Tell the GNU Readline library how to complete. */ 
 
-static void initialize_readline ()
+static void initialize_readline (void)
 {
   /* Tell the completer that we want a crack first. */
   rl_attempted_completion_function = scilab_completion;

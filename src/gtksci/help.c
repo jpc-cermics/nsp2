@@ -18,7 +18,7 @@
 #include "nsp/Math.h"
 
 
-static void  initHelpWidgets(GtkWidget *);
+static void initHelpWidgets(GtkWidget *);
 static void changeHelpList(int i) ;
 static void my_gtk_list_change(GtkWidget * list,char ** help,int nhelp);
 static void SciApropos(char *str);

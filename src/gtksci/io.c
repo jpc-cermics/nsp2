@@ -21,7 +21,7 @@
 
 #include "nsp/math.h"
 #include "../system/Sun.h"
-#include "All-extern.h"
+#include "nsp/gtksci.h"
 
 /* WITH_TK is eventually define in nsp/machine.h 
  * include by nsp/Math.h 
@@ -33,40 +33,13 @@
 #include "../tksci/tksci.h"
 #endif
 
+/* FIXME */
 extern void C2F(diary) (char *str, int *n, int nn);
+extern int checkqueue_nsp_command(void) ;
 
-static int BasicScilab = 1;
-
-/*---------------------------------------------------------
+/*
  * Input output functions 
- *---------------------------------------------------------*/
-
-void C2F(xscisncr)(char *str,integer *n,long int dummy)
-{
-  int i;
-  for ( i =0 ; i < *n; i++)  fprintf(stdout,"%c",str[i]);
-}
-
-void C2F(xscistring)(char *str, int *n, long int dummy)
-{
-  int i ;
-  for ( i =0 ; i < *n; i++)  fprintf(stdout,"%c",str[i]);
-  fprintf(stdout,"\n");
-}
-
-void C2F(xscimore)(int *n)
-{
-  int n1;
-  *n=0;
-  if ( using_readline() == 1 ) 
-    n1= get_one_char("[More (y or n) ?]");
-  else {
-    fprintf(stdout,"%s","[More (y or n ) ?] ");
-    n1=Xorgetchar();
-  }
-  if ( n1 == 110 )  *n=1;
-  fprintf(stdout,"\n");
-}
+ */
 
 /* I/O Function for C routines no test for xscion here */
 
@@ -74,58 +47,6 @@ void Scisncr(char *str)
 {
   fprintf(stdout,"%s",str);
 }
-
-
-/* XXXX
-void Scistring(char *str)
-{
-  fprintf(stdout,"%s",str);
-}
-
-*/
-
-/* 
- * sciprint(format,arg1,....)
- */
-/*
-
-void  sciprint(char *fmt,...) 
-{
-  integer lstr;
-  va_list ap;
-  char s_buf[1024];
-  va_start(ap,fmt);
-  (void ) vsprintf(s_buf, fmt, ap );
-  printf("%s",s_buf); 
-  
-  lstr=strlen(s_buf);
-  if ( lstr >= 2 && s_buf[lstr-1]== '\n' && s_buf[lstr-2]== '\r') 
-    {
-      s_buf[lstr-2]= '\n';
-      s_buf[lstr-1]= '\0';
-      lstr--;
-    }
-  C2F(diary)(s_buf,&lstr,0L);
-  va_end(ap);
-}
-
-*/
-/* 
- * sciprint(format,arg1,....)
- * no diary record 
- */
-
-/* 
-void  sciprint_nd(char *fmt,...) 
-{
-  va_list ap;
-  char s_buf[1024];
-  va_start(ap,fmt);
-  (void ) vsprintf(s_buf, fmt, ap );
-  printf("%s",s_buf); 
-  va_end(ap);
-}
-*/
 
 /* 
  * as sciprint but with an added first argument 
@@ -153,77 +74,47 @@ int  sciprint2(int iv,char *fmt,...)
   return retval;
 }
 
-/************************************************************************ 
- * This routine is called by the Scilab interpreter in the course of 
- * computation to checks for all events except typed text (but testing 
- * Ctrl )
- * and to deal with them 
- * (This function is useless in the gtk version)  
- ************************************************************************/
 
-void xevents1()
-{
-  if (BasicScilab) return;
-#ifdef WITH_TK
-  flushTKEvents();
-#endif
-  /* XXXXXX */
-#ifdef WITH_GTK_MAIN 
-  while ( gtk_events_pending()) gtk_main_iteration(); 
-#endif 
-}
+/*
+ * Functions to set or to get the nsp status 
+ * i.e is it a nsp or a nsp -nw 
+ */
 
+static int nsp_in_widget = FALSE;
+static int nsp_with_events = FALSE ;
 
-/****************************************
- * main Input function 
- * returns a char and deal with events 
- ****************************************/
+/**
+ * nsp_in_gtk_window:
+ * @void: 
+ * 
+ * nsp is a gtk application 
+ * 
+ **/
 
-/*---------------------------------------------------------------------------
- * Functions to set or to get the scilab status 
- * i.e is it a scilab or a scilab -nw 
- *---------------------------------------------------------------------------*/
-
-static int INXscilab=0;
-
-void SetXsciOn()
+void nsp_in_gtk_window(void)
 {
 #ifdef WITH_TK
   inittk();
 #endif
-  INXscilab=1;
-  BasicScilab = 0;
+  nsp_in_widget = TRUE ;
+  nsp_with_events = TRUE ;
 }
 
-/* for Fortran calls */
-
-int C2F(xscion)(int *i)
+int nsp_is_gtk_window(void)
 {
-  *i=INXscilab;
-  return(0);
+  return  nsp_in_widget;
 }
 
-/*---------------------------------------------------------------------------
- * when there is no window 
- *    the display can be activated i.e with a plot or an x_menu 
- *    then BasicScilab has to be set to 0 
- *---------------------------------------------------------------------------*/
+void nsp_activate_gtk_events_check(void)
+{
+  nsp_with_events = TRUE;
+}
 
-void SetNotBasic() {  BasicScilab=0;}
+int nsp_check_events_activated(void)
+{ 
+  return nsp_with_events ;
+}
 
-int GetBasic() { return  BasicScilab;} 
-
-
-/*---------------------------------------------------------------------------
- *  Xorgetchar : function used while in the scilab -nw mode 
- *      by zzledt to get the next typed char (in stdin)
- *      but also checks for X11 events if we are using an X Window 
- *      ( ex a graphic window) with scilab -nw )
- *      
- *      stdin is supposed to be changed 
- *      so as not to wait for <cr> this is done inside zzledt 
- *      (in the following code  the key function is select )
- *---------------------------------------------------------------------------*/
 
 #define IBSIZE 1024
 char sci_input_char_buffer[IBSIZE];
@@ -243,18 +134,30 @@ void write_scilab(char *s)
   sci_input_char_buffer[sci_input_char_buffer_count++]='\n';
 }
 
-/* wait for a character and check for pending events */
+/* 
+ *  Xorgetchar : function used while in the scilab -nw mode 
+ *      by zzledt to get the next typed char (in stdin)
+ *      but also checks for X11 events if we are using an X Window 
+ *      ( ex a graphic window) with scilab -nw )
+ *      
+ *      stdin is supposed to be changed 
+ *      so as not to wait for <cr> this is done inside zzledt 
+ *      (in the following code  the key function is select )
+ * wait for a character and check for pending events 
+ */
 
 int Xorgetchar(void)
 {
   int i;
-  static int c_count = -1, counter;
+  static int c_count = -1;
+  SELECT_DEBUG(static int counter=0) ;
   static int GtkXsocket,fd_in,fd_out,fd_err;
   static int first = 0,max_plus1;
   fd_set select_mask,write_mask;
   static struct timeval select_timeout;
   SELECT_DEBUG(fprintf(stderr,"New Xorgetchar %d\n",counter++);)
-  if ( BasicScilab) return(getchar());
+
+  if ( nsp_check_events_activated()== FALSE) return(getchar());
 
   if ( first == 0) 
     {
@@ -362,23 +265,22 @@ int Xorgetchar(void)
   }
 }
 
-
-/*---------------------------------------------------------------------------
- *  Dealing with X11 Events.
- *  xevents is called by Xorgetchar and also by DispatchEvents in 
- *  routines/system 
- *  xevents must work for scilab and scilab -nw 
- ---------------------------------------------------------------------------*/
+/*
+ * This routine can be called to checks for all events 
+ * except typed text (but testing Ctrl) and to deal with them 
+ * This function is unused in the gtk version. 
+ */
 
 void  nsp_check_gtk_events(void)
 {
   /* check the TK case */ 
+  if ( nsp_check_events_activated()== FALSE) return ;
 #ifdef WITH_TK
   flushTKEvents();
 #endif
-  while ( gtk_events_pending())
-    gtk_main_iteration(); 
+  while ( gtk_events_pending())  gtk_main_iteration(); 
 }
+
 
 /*
  * winch signal : window size changed 

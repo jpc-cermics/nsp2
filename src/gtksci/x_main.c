@@ -12,13 +12,18 @@
 #include <stdio.h>
 #include <errno.h>
 #include <signal.h>
-#include <gtk/gtk.h>
-
 #include "nsp/version.h"
 #include "nsp/machine.h"
+#ifdef WITH_GTKGLEXT
+#include <gtk/gtkgl.h>
+#endif
+#include <gtk/gtk.h>
 #include "nsp/sciio.h"
 #include "../system/files.h"
-#include "All-extern.h"
+#include "nsp/gtksci.h"
+#include "menus.h"
+
+extern void controlC_handler (int sig);
 
 char *ProgramName = NULL;
 
@@ -29,6 +34,8 @@ static void create_scilab_status(void);
 #endif 
 
 static void set_sci_env (void);
+static void nsp_gtk_gl_init (int *argc,char ***argv);
+static void nsp_create_gtk_toplevel(gint argc, gchar *argv[]);
 
 /*---------------------------------------------------------- 
  * mainsci.f directly call this function 
@@ -44,19 +51,14 @@ static int  no_window = 0;
 static char * initial_script = NULL;
 static int  initial_script_type = 0; /* 0 means filename 1 means code */
 
-/* extern int C2F(initcom)(int *,int*); */
-
-extern int scilab_main (int argc,char **argv,char *pname,int no_window,int no_startup, char *display);
-extern int C2F(nofpex)(void);
-extern int C2F(getarg)(int *,char *,long int l);
-extern int C2F(iargc)(void);
-extern void C2F(settmpdir)(void);
-extern char *get_sci_data_strings(int n);
-
-extern void SciGtkReadLine(char *prompt, char *buffer, int *buf_size, int *len_line, int *eof);
-
 static char ** create_argv(int *argc);
 static void strip_blank(char *source);
+
+/* two functions comming from Fortran */
+
+extern int C2F(getarg)(int *,char *,long int l);
+extern int C2F(iargc)(void);
+
 
 /* global var */
 
@@ -115,9 +117,12 @@ int real_main(int argc, char **argv)
   if ( no_window == 0 ) 
     {
       char *shmid= getenv("SHMID");
-      /* Not Always initialise gtk */
+      /* we are unsing a gtk widget app */
+      nsp_in_gtk_window();
+      /* initialise gtk */
       gtk_init(&argc,&argv);
-      gtk_gl_init (&argc, &argv);
+      /* initialise opengl */
+      nsp_gtk_gl_init (&argc, &argv);
       /* we are in window mode */
       if ( shmid != NULL )
 	{
@@ -137,7 +142,6 @@ int real_main(int argc, char **argv)
       /* XXX en attente est-ce utile ? 
 	 create_scilab_status();
       */
-      SetXsciOn();
     }
   /* signals */
   signal(SIGINT,sci_clear_and_exit);
@@ -194,21 +198,26 @@ int real_main(int argc, char **argv)
  * and a menu or graphic window is activated 
  */
 
-void start_sci_gtk() {
-  int i;
-  C2F(xscion)(&i); 
-  if ( i== 0 && GetBasic() == 1) 
-    {
-      int argc;
-      char **argv; 
-      if (( argv = create_argv(&argc))== NULL) 
-	exit(1);
-      /* initialise gtk */
-      gtk_init(&argc,&argv);
-      gtk_gl_init (&argc, &argv);
-      SetNotBasic();
-    }
+void start_sci_gtk(void)
+{
+  int argc;
+  char **argv; 
+  if ( nsp_check_events_activated() == TRUE ) return;
+  if (( argv = create_argv(&argc))== NULL) exit(1);
+  /* initialise gtk */
+  gtk_init(&argc,&argv);
+  nsp_gtk_gl_init (&argc, &argv);
+  nsp_activate_gtk_events_check();
 }
+
+
+static void nsp_gtk_gl_init (int *argc,char ***argv)
+{
+#ifdef WITH_GTKGLEXT 
+  gtk_gl_init(argc,argv);
+#endif
+}
+
 
 /* utility */
 
@@ -311,9 +320,7 @@ void  sci_sig_tstp(int n)
  * everybody who used to call killpg() 
  *-------------------------------------------------------*/
 
-int kill_process_group(pid, sig)
-    int pid;
-    int sig;
+int kill_process_group(int pid, int sig)
 {
     return kill (-pid, sig);
 }
@@ -425,7 +432,7 @@ extern char * nsp_get_curdir(void);
 
 extern int C2F(scigetcwd)( char **path, int *lpath, int *err);
 
-static void set_sci_env ()
+static void set_sci_env (void)
 {
   char *p1; 
   if ((p1 = getenv ("SCI")) == (char *) 0)
@@ -521,7 +528,7 @@ static GtkWidget  *window = NULL;
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-static char *get_shared() 
+static char *get_shared(void)
 {
   int shmid;
   char *shm;
@@ -549,14 +556,14 @@ static char *get_shared()
  *  Does setup, initialises windows, forks child.
  */
 
-void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
+static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
 {
   guint32 *xid; 
   char * shm = get_shared() ;
   GtkWidget *vbox,*menubar, *socket_button;
 
   gtk_init(&argc, &argv);
-  gtk_gl_init (&argc, &argv);
+  nsp_gtk_gl_init (&argc, &argv);
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (window), "Nsp");
   gtk_window_set_wmclass (GTK_WINDOW (window), "toplevel", "Scilab");
