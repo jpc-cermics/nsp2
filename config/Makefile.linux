@@ -3,9 +3,9 @@
 FFLAGS = $(FC_OPTIONS)
 
 LIBS=-Wl,--whole-archive libs/nsp.a  \
-	libs/zcalelm.a libs/zblas.a libs/graphics.a \
+	libs/zcalelm.a  libs/graphics.a \
 	libs/gtksci.a libs/menusX.a libs/rand.a libs/dcd.a  \
-	libs/integ.a libs/approx.a \
+	libs/integ.a libs/approx.a libs/lapack.a libs/zblas.a \
 	-Wl,--no-whole-archive
 
 bin/scilex: scilex-lib 
