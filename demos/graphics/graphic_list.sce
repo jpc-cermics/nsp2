@@ -29,7 +29,7 @@ endfunction
 
 demo_2d_1_info='plot2d';
 
-function y=demo_2d_1()
+function demo_2d_1()
   t=(0:0.1:6)*%pi;
   xset("font size",2);
   plot2d(t,sin(t),style=2);
@@ -39,7 +39,7 @@ endfunction
 
 demo_2d_2_info='plot2d log scale';
 
-function y=demo_2d_2()
+function demo_2d_2()
   xset("font size",2);
   plot2d([],(1:10:10000),logflag="nl",leg="log(t)",leg_pos="ur");
   xtitle("plot2d1 log scale","t","y log scale");
@@ -48,7 +48,7 @@ endfunction
 
 demo_2d_3_info='plot2d3';
 
-function y=demo_2d_3(info=%f)
+function demo_2d_3()
   n=32-1;t=(0:n)./n;
   xset("font size",2);
   u=sin(80*%pi*t)+sin(100*%pi*t);
@@ -58,8 +58,7 @@ endfunction
 
 demo_2d_4_info='plot2d superpose';
 
-function y=demo_2d_4(info=%f)
-  if info==%t then y='plot2d'; return;end
+function demo_2d_4()
   v=(1:20)+(1:20).*rand(1,20,"n");
   xset("font size",2);
   plot2d([],v);
@@ -69,16 +68,14 @@ endfunction
 
 demo_2d_5_info='plot2d with function';
 
-function y=demo_2d_5(info=%f)
-  if info==%t then y='plot2d with function'; return;end
+function demo_2d_5()
   fplot2d();
   xtitle("fplot2d : f given by external ","x ","f(x) ");
 endfunction
 
 demo_2d_6_info='histplot';
 
-function y=demo_2d_6(info=%f)
-  if info==%t then y='histplot'; return;end
+function demo_2d_6()
   histplot();
 endfunction
 
@@ -499,6 +496,7 @@ endfunction
 // organize the previous list 
 // for graphic demo widget 
 
+
 graphic_test_prim = list() 
 for i=1:3
   graphic_test_prim(i) = list(sprintf("test%d",i), "not-used",sprintf("demo_prim_%d",i));
@@ -609,22 +607,27 @@ end
 // Matplot Matplot1 fec grayplot 
 // ------------------------------
 
+demo_contour_1_info="grayplot";
+
 function demo_contour_1()
   xset('colormap',hotcolormap(20)) 
+// xset('colormap',jetcolormap(20)) 
   t=-%pi:0.1:%pi;m=exp(sin(t))'*exp(cos(t));
   xsetech(wrect=[0,0,0.5,0.5])
-  xtitle('default');
+  xtitle('grayplot default');
   grayplot(t,t,m);
   xsetech(wrect=[0,0.5,0.5,0.5])
-  xtitle('shade=%t, zminmax and colminmax');
+  xtitle('grayplot shade=%t, zminmax and colminmax');
   grayplot(t,t,m,shade=%t,colminmax=[5,15],zminmax=[0.3,6.0]);
   xsetech(wrect=[0.5,0,0.5,0.5])
-  xtitle('shade=%t, zminmax and colout=[0,0]');
+  xtitle('grayplot shade=%t, zminmax and colout=[0,0]');
   grayplot(t,t,m,shade=%t,zminmax=[0.3,6.0],colout=[0,0]);
   xsetech(wrect=[0.5,0.5,0.5,0.5])
-  xtitle('remap=%f, shade=%t');
+  xtitle('grayplot [1,5;5,1] remap=%f, shade=%t');
   grayplot(1:2,1:2,[1,5;5,1],remap=%f,shade=%t);
 endfunction
+
+demo_contour_2_info="fec";
 
 function demo_contour_2()
   xset('colormap',hotcolormap(20))
@@ -643,20 +646,22 @@ function demo_contour_2()
   triangles=[(1:N);triangles_nodes;zeros(1,N)]';
   rect=[-1.2,-1.2,1.2,1.2];
   xsetech(wrect=[0,0,0.5,0.5])
-  xtitle('default and mesh=%t');
+  xtitle('fec default and mesh=%t');
   fec(xn,yn,triangles,val,strf="032",rect=rect,mesh=%t);
   xsetech(wrect=[0,0.5,0.5,0.5])
-  xtitle('zminmax and mesh=%t');
+  xtitle('fec  zminmax and mesh=%t');
   fec(xn,yn,triangles,val,strf="032",rect=rect,zminmax=[0.4,0.8],mesh=%t);
   xsetech(wrect=[0.5,0,0.5,0.5])
-  xtitle('zminmax,colout=[0,0] and mesh=%t');
+  xtitle('fec  zminmax,colout=[0,0] and mesh=%t');
   fec(xn,yn,triangles,val,strf="032",rect=rect,
   zminmax=[0.4,0.8],colout=[0,0],mesh=%t);
   xsetech(wrect=[0.5,0.5,0.5,0.5])
-  xtitle('zminmax,colout=[1,1] and mesh=%t');
+  xtitle('fec zminmax,colout=[1,1] and mesh=%t');
   fec(xn,yn,triangles,val,strf="032",
       rect=rect,zminmax=[0.4,0.8],colout=[1,1],mesh=%t);
 endfunction
+
+demo_contour_3_info="grayplot+contour";
 
 function demo_contour_3()
   xset("colormap",hotcolormap(40));
@@ -665,10 +670,14 @@ function demo_contour_3()
   contour(t,t,m,11);
 endfunction
 
+demo_contour_4_info="contour";
+
 function demo_contour_4()
   t=-2:0.1:2;m=sinh(t)'*cosh(t);
   contour(t,t,m,[-4:0.5:4]);
 endfunction
+
+demo_contour_5_info="contourf";
 
 function demo_contour_5()
  function z=f(x,y)
@@ -685,6 +694,8 @@ function demo_contour_5()
  //xset('fpf','');
  //contourf(x,y,z,nv=m);
 endfunction
+
+demo_contour_6_info="contourf";
 
 function demo_contour_6()
  function z=f(x,y)
@@ -706,9 +717,9 @@ endfunction
 graphic_test_contour = list() 
 for i=1:6
   name=sprintf("demo_contour_%d",i); 
-  test_info=sprintf("test %d",i); 
-  //execstr('test_info='+name+'(info=%t);');
-  graphic_test_contour(i) = list(test_info, "not-used",name);
+  info=sprintf("test %d",i); 
+  execstr(sprintf("info=%s_info;",name)); 
+  graphic_test_contour(i) = list(info, "not-used",name);
 end 
 
 
