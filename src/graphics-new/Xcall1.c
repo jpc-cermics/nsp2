@@ -297,26 +297,26 @@ static int get_driver_id(void ) { return DriverId;}
  *  xset_1 
  *-----------------------------------------------------------------------------*/
 
-void xset1_clipping_p(BCG *Xgc,double x,double y,double w,double h)
+static void xset1_clipping_p(BCG *Xgc,double x,double y,double w,double h)
 {
   int rect[4]={x,y,w,h};
   if (Xgc->record_flag == TRUE)  store_clipping_p(Xgc,x,y,w,h);
   Xgc->graphic_engine->xset_clip(Xgc,rect);
 }
 
-void xset1_clipgrf(BCG *Xgc)
+static void xset1_clipgrf(BCG *Xgc)
 {
   if (Xgc->record_flag == TRUE)  store_clipgrf(Xgc);
   frame_clip_on(Xgc);
 }
 
-void xset1_unclip(BCG *Xgc)
+static void xset1_unclip(BCG *Xgc)
 {
   if (Xgc->record_flag == TRUE)  store_unclip(Xgc);
   Xgc->graphic_engine->xset_unclip(Xgc);
 }
 
-void xset1_clip(BCG *Xgc,double x[])
+static void xset1_clip(BCG *Xgc,double x[])
 {
   /** and clipping is special its args are floats **/
   int ix[4];
@@ -326,26 +326,26 @@ void xset1_clip(BCG *Xgc,double x[])
   Xgc->graphic_engine->xset_clip(Xgc,ix);
 }
 
-void xset1_alufunction1(BCG *Xgc,int val)
+static void xset1_alufunction1(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_alufunction1(Xgc,val);
   Xgc->graphic_engine->xset_alufunction1(Xgc,val);
 }
 
-void xset1_background(BCG *Xgc,int val)
+static void xset1_background(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_background(Xgc,val);
   Xgc->graphic_engine->xset_background(Xgc,val);
 }
 
 
-void xset1_pattern(BCG *Xgc,int val)
+static void xset1_pattern(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_pattern(Xgc,val);
   Xgc->graphic_engine->xset_pattern(Xgc,val);
 }
 
-void xset1_colormap(BCG *Xgc,int m, double val[])
+static void xset1_colormap(BCG *Xgc,int m, double val[])
 {
   /* not recorded */ 
   Xgc->graphic_engine->xset_colormap(Xgc,m,3,val);
@@ -353,7 +353,7 @@ void xset1_colormap(BCG *Xgc,int m, double val[])
 
 /* pas clair XXXX */
 
-void xset1_default(BCG *Xgc) 
+static void xset1_default(BCG *Xgc) 
 {
   /* no record */
   Xgc->graphic_engine->xset_autoclear_def(Xgc) ;
@@ -362,7 +362,7 @@ void xset1_default(BCG *Xgc)
   Xgc->graphic_engine->sedeco(1);
 }
 
-void xset1_font_size(BCG *Xgc,int val)
+static void xset1_font_size(BCG *Xgc,int val)
 {
   int font[2];
   if (Xgc->record_flag == TRUE)  store_font_size(Xgc,val);
@@ -370,37 +370,37 @@ void xset1_font_size(BCG *Xgc,int val)
   Xgc->graphic_engine->xset_font(Xgc,font[0],val);
 }
 
-void xset1_font(BCG *Xgc,int val,int val1)
+static void xset1_font(BCG *Xgc,int val,int val1)
 {
   if (Xgc->record_flag == TRUE)  store_font(Xgc,val,val1);
   Xgc->graphic_engine->xset_font(Xgc,val,val1);
 }
 
-void xset1_foreground(BCG *Xgc,int val)
+static void xset1_foreground(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_foreground(Xgc,val);
   Xgc->graphic_engine->xset_foreground(Xgc,val);
 }
 
-void xset1_hidden3d(BCG *Xgc,int val)
+static void xset1_hidden3d(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_hidden3d(Xgc,val);
   Xgc->graphic_engine->xset_hidden3d(Xgc,val);
 }
 
-void xset1_absourel(BCG *Xgc,int val)
+static void xset1_absourel(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_absourel(Xgc,val);
   Xgc->graphic_engine->xset_absourel(Xgc,val);
 }
 
-void xset1_dash(BCG *Xgc,int val)
+static void xset1_dash(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_dash(Xgc,val);
   Xgc->graphic_engine->xset_dash(Xgc,val);
 }
 
-void xset1_mark_size(BCG *Xgc,int val)
+static void xset1_mark_size(BCG *Xgc,int val)
 {
   int mark[2];
   if (Xgc->record_flag == TRUE)  store_mark_size(Xgc,val);
@@ -409,63 +409,63 @@ void xset1_mark_size(BCG *Xgc,int val)
   Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
 }
 
-void xset1_mark(BCG *Xgc,int val,int val1)
+static void xset1_mark(BCG *Xgc,int val,int val1)
 {
   if (Xgc->record_flag == TRUE)  store_mark(Xgc,val,val1);
   Xgc->graphic_engine->xset_mark(Xgc,val,val1);
 }
 
-void xset1_pixmapOn(BCG *Xgc,int val)
+static void xset1_pixmapOn(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_pixmapOn(Xgc,val);
   Xgc->graphic_engine->xset_pixmapOn(Xgc,val);
 }
 
-void xset1_thickness(BCG *Xgc,int val)
+static void xset1_thickness(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_thickness(Xgc,val);
   Xgc->graphic_engine->xset_thickness(Xgc,val);
 }
 
-void xset1_usecolor(BCG *Xgc,int val)
+static void xset1_usecolor(BCG *Xgc,int val)
 {
   if (Xgc->record_flag == TRUE)  store_usecolor(Xgc,val);
   Xgc->graphic_engine->xset_usecolor(Xgc,val);
 }
 
-void xset1_viewport(BCG *Xgc,int val,int val1)
+static void xset1_viewport(BCG *Xgc,int val,int val1)
 {
   Xgc->graphic_engine->xset_viewport(Xgc,val,val1);
 }
 
-void xset1_windowdim(BCG *Xgc,int val,int val1)
+static void xset1_windowdim(BCG *Xgc,int val,int val1)
 {
   Xgc->graphic_engine->xset_windowdim(Xgc,val,val1);
 }
 
-void xset1_popupdim(BCG *Xgc,int val,int val1)
+static void xset1_popupdim(BCG *Xgc,int val,int val1)
 {
   Xgc->graphic_engine->xset_popupdim(Xgc,val,val1);
 }
 
-void xset1_windowpos(BCG *Xgc,int val,int val1)
+static void xset1_windowpos(BCG *Xgc,int val,int val1)
 {
   Xgc->graphic_engine->xset_windowpos(Xgc,val,val1);
 }
 
-void xset1_wresize(BCG *Xgc,int val)
+static void xset1_wresize(BCG *Xgc,int val)
 {
   Xgc->graphic_engine->xset_wresize(Xgc,val);
 }
 
-void xset1_show(BCG *Xgc)
+static void xset1_show(BCG *Xgc)
 {
   /* need to store ? */
   if (Xgc->record_flag == TRUE)  store_show(Xgc);
   Xgc->graphic_engine->xset_show(Xgc);
 }
 
-void xset1_pixmapclear(BCG *Xgc)
+static void xset1_pixmapclear(BCG *Xgc)
 {
   /* need to store ? */
   if (Xgc->record_flag == TRUE)  store_pixmapclear(Xgc);
@@ -473,25 +473,25 @@ void xset1_pixmapclear(BCG *Xgc)
 }
 
 
-void xset1_autoclear(BCG *Xgc,int val)
+static void xset1_autoclear(BCG *Xgc,int val)
 {
   Xgc->graphic_engine->xset_autoclear(Xgc,val);
 }
 
-void xset1_autoclear_def(BCG *Xgc)
+static void xset1_autoclear_def(BCG *Xgc)
 {
   Xgc->graphic_engine->xset_autoclear_def(Xgc);
 }
 
 
-void xset1_fpf(BCG *Xgc,char *val)
+static void xset1_fpf(BCG *Xgc,char *val)
 {
   if (Xgc->record_flag == TRUE)  store_fpf(Xgc,val);
   Xgc->graphic_engine->xset_fpf(Xgc,val);
 }
 
 
-void xset1_fpf_def(BCG *Xgc)
+static void xset1_fpf_def(BCG *Xgc)
 {
   if (Xgc->record_flag == TRUE)  store_fpf_def(Xgc);
   Xgc->graphic_engine->xset_fpf_def(Xgc);
@@ -501,7 +501,7 @@ void xset1_fpf_def(BCG *Xgc)
  *  drawarc_1
  *-----------------------------------------------------------------------------*/
 
-void drawarc_1(BCG *Xgc,double arc[])
+static void drawarc_1(BCG *Xgc,double arc[])
 { 
   int iarc[6];
   rect2d_f2i(Xgc,arc,iarc,4);
@@ -515,7 +515,7 @@ void drawarc_1(BCG *Xgc,double arc[])
  * 
  *-----------------------------------------------------------------------------*/
 
-void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
+static void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
 {
   int *xm,err=0,n2;
   Myalloc1(&xm,6*n,&err);
@@ -529,7 +529,7 @@ void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
  *  
  *-----------------------------------------------------------------------------*/
 
-void drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
+static void drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
 {
   int *xm,err=0,n2;
   Myalloc1(&xm,6*n,&err);
@@ -542,7 +542,7 @@ void drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
  *  
  *-----------------------------------------------------------------------------*/
 
-void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
+static void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
 {
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,n,&err);
@@ -556,7 +556,7 @@ void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
  *  arrows
  *-----------------------------------------------------------------------------*/
 
-void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag)
+static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag)
 { 
   int *xm,*ym,err=0,ias,ias1;
   Myalloc(&xm,&ym,n,&err);
@@ -587,7 +587,7 @@ void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[],
  * axis 
  *-----------------------------------------------------------------------------*/
 
-void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, double *size)
+static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, double *size)
 {
   int initpoint1[2],alpha1;
   double size1[3];
@@ -600,7 +600,7 @@ void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, double *
  *  cleararea
  *-----------------------------------------------------------------------------*/
 
-void cleararea_1(BCG *Xgc,double x, double y, double w, double h)
+static void cleararea_1(BCG *Xgc,double x, double y, double w, double h)
 {
   int x1,yy1,w1,h1;
   x1 = XDouble2Pixel(x);
@@ -613,7 +613,7 @@ void cleararea_1(BCG *Xgc,double x, double y, double w, double h)
  * click 
  *-----------------------------------------------------------------------------*/
 
-void xclick_1(BCG *Xgc,char *str,int *ibutton, double *x, double *y, int iflag,int motion,int release,int key, int istr)
+static void xclick_1(BCG *Xgc,char *str,int *ibutton, double *x, double *y, int iflag,int motion,int release,int key, int istr)
 { 
   int x1,yy1,n=1;
   Xgc->graphic_engine->xclick(Xgc,str,ibutton,&x1,&yy1,iflag,motion,release,key,istr);
@@ -623,7 +623,7 @@ void xclick_1(BCG *Xgc,char *str,int *ibutton, double *x, double *y, int iflag,i
  *  click_any
  *-----------------------------------------------------------------------------*/
 
-void xclick_any_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr)
+static void xclick_any_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr)
 { 
   int x1,y1,cur;
   Xgc->graphic_engine->xclick_any(str,ibutton,&x1,&y1,iwin,iflag,motion,release,key,istr);
@@ -638,7 +638,7 @@ void xclick_any_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int *i
  *   xgetmouse
  *-----------------------------------------------------------------------------*/
 
-void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int iflag, int motion,int release,int key)
+static void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int iflag, int motion,int release,int key)
 { 
   int x1,yy1;
   Xgc->graphic_engine->xgetmouse(Xgc,str,ibutton,&x1,&yy1,iflag,motion,release,key);
@@ -649,7 +649,7 @@ void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int ifl
  *   fillarc
  *-----------------------------------------------------------------------------*/
 
-void fillarc_1(BCG *Xgc, double arc[])
+static void fillarc_1(BCG *Xgc, double arc[])
 { 
   int iarc[6],n2=4;
   rect2d_f2i(Xgc,arc,iarc,n2);
@@ -663,7 +663,7 @@ void fillarc_1(BCG *Xgc, double arc[])
  *  fillrectangle
  *-----------------------------------------------------------------------------*/
 
-void fillrectangle_1(BCG *Xgc,double rect[])
+static void fillrectangle_1(BCG *Xgc,double rect[])
 { 
   int irect[4],n2=4;
   rect2d_f2i(Xgc,rect,irect,n2);
@@ -675,7 +675,7 @@ void fillrectangle_1(BCG *Xgc,double rect[])
  *  drawpolyline
  *-----------------------------------------------------------------------------*/
 
-void drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closeflag)
+static void drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closeflag)
 {
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,n,&err);
@@ -691,7 +691,7 @@ void drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closeflag)
  *  and fillvect is in that case of dimension n*p 
  *-----------------------------------------------------------------------------*/
 
-void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
+static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
 {
   int *xm,*ym,err=0,i;
   Myalloc(&xm,&ym,n*p,&err);
@@ -713,7 +713,7 @@ void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int
  *  drawpolymark
  *-----------------------------------------------------------------------------*/
 
-void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
+static void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
 {
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,n,&err);
@@ -728,7 +728,7 @@ void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
  *  displaynumbers
  *-----------------------------------------------------------------------------*/
 
-void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha)
+static void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha)
 {
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,n,&err);
@@ -743,7 +743,7 @@ void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, d
  *   drawpolylines
  *-----------------------------------------------------------------------------*/
 
-void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p)
+static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p)
 {
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,(n)*(p),&err);
@@ -757,7 +757,7 @@ void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p
  *   drawrectangle
  *-----------------------------------------------------------------------------*/
 
-void drawrectangle_1(BCG *Xgc,double rect[])
+static void drawrectangle_1(BCG *Xgc,double rect[])
 {
   int xm[4],n2=4;
   rect2d_f2i(Xgc,rect,xm,n2);
@@ -768,7 +768,7 @@ void drawrectangle_1(BCG *Xgc,double rect[])
  *   drawrectangles
  *-----------------------------------------------------------------------------*/
 
-void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
+static void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
 {
   int *xm,err=0;
   Myalloc1(&xm,4*(n),&err);
@@ -783,7 +783,7 @@ void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
  *  drawsegments
  *-----------------------------------------------------------------------------*/
 
-void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag)
+static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag)
 { 
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,n,&err);
@@ -797,7 +797,7 @@ void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag
  *  displaystring
  *-----------------------------------------------------------------------------*/
 
-void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, double angle)
+static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, double angle)
 {
   int x1,yy1;
   x1 = XDouble2Pixel(x);
@@ -810,7 +810,7 @@ void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, double a
  *  displaystringa
  *-----------------------------------------------------------------------------*/
 
-void displaystringa_1(BCG *Xgc,char *string, int ipos)
+static void displaystringa_1(BCG *Xgc,char *string, int ipos)
 {
   if (Xgc->record_flag == TRUE) 
     store_displaystringa_1(Xgc,string,ipos);
@@ -877,7 +877,7 @@ static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
  *  To get the bounding rectangle of a string
  *-----------------------------------------------------------------------------*/
 
-void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect)
+static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect)
 { 
   int x1,yy1,rect1[4];
   x1 = XDouble2Pixel(x);
@@ -894,7 +894,7 @@ void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect)
 
 #define FONTMAXSIZE 6
 
-void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
+static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
 {
   int x,y,w,h,wbox,hbox,size;
   int fontid[2];
@@ -930,7 +930,7 @@ void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *w
  * and the string is Drawn if Dflag  == 1 ;
  **********************************/
 
-void GSciString(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, int *h)
+static void GSciString(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, int *h)
 {
   char *p = StrMat,*p1,*p2,*plast;
   int yi=y;

@@ -1298,8 +1298,8 @@ void I3dRotation(BCG *Xgc)
 #else
      nsp_gengine->scale->set_driver("X11");
 #endif
-     if ( pixmode == 0 ) nsp_gengine->scale->xset1_alufunction1(Xgc,6);
-     nsp_gengine->scale->xclick_1(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
+     if ( pixmode == 0 ) nsp_gengine->scale->xset_alufunction1(Xgc,6);
+     nsp_gengine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
      nsp_gengine->clearwindow(Xgc);
      theta=Xgc->scales->theta ;
      alpha=Xgc->scales->alpha ;
@@ -1315,10 +1315,10 @@ void I3dRotation(BCG *Xgc)
 	  /* dessin d'un rectangle */
 	  theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
 	  nsp_gengine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
-	  if ( pixmode == 1) nsp_gengine->scale->xset1_pixmapclear(Xgc);
+	  if ( pixmode == 1) nsp_gengine->scale->xset_pixmapclear(Xgc);
 	  dbox(Xgc);
-	  if ( pixmode == 1) nsp_gengine->scale->xset1_show(Xgc);
-	  nsp_gengine->scale->xgetmouse_1(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
+	  if ( pixmode == 1) nsp_gengine->scale->xset_show(Xgc);
+	  nsp_gengine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
 	  /* effacement du rectangle */
 	  dbox(Xgc);
 	  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
@@ -1326,11 +1326,11 @@ void I3dRotation(BCG *Xgc)
 	  x=(xl-Xgc->scales->frect[0])*xx;
 	  y=(yl-Xgc->scales->frect[1])*yy;
 	}
-      if ( pixmode == 0) nsp_gengine->scale->xset1_alufunction1(Xgc,3);
+      if ( pixmode == 0) nsp_gengine->scale->xset_alufunction1(Xgc,3);
      nsp_gengine->scale->set_driver(driver);
      nsp_gengine->clearwindow(Xgc);
      ww=nsp_gengine->xget_curwin();
-     nsp_gengine->scale->xset1_alufunction1(Xgc,alumode);
+     nsp_gengine->scale->xset_alufunction1(Xgc,alumode);
 #ifdef WIN32
       ReleaseWinHdc();
       SciMouseRelease();

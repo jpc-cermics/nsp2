@@ -446,6 +446,8 @@ int xgc_reset_scales_to_default(BCG *Xgc)
       FREE(loc);
       loc = next;
     }
+  Xgc->scales = NULL;
+  /* now reinsert default scale */
   return xgc_add_default_scale(Xgc);
 }
 
