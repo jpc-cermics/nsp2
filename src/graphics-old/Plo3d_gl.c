@@ -8,17 +8,8 @@
 #include <math.h>
 #include <stdio.h>
 #include "nsp/math.h"
-/*
-** NEW !!
-*/
-//#include "nsp/graphics/Graphics.h"
-
-/*
-** NEW !!
-*/
-#include "nsp/graphics/periGL.h"
-
-/* #include "nsp/graphics/PloEch.h" */
+#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics/PloEch.h"
 
 #ifdef __STDC__
 void wininfo(char *format,...);
@@ -39,7 +30,7 @@ static double xx1,yy1;
 void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
 void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
 
-static void C2F(plot3dg) (BCG *Xgc, char *name,
+static void C2F(plot3dg_gl) (BCG *Xgc, char *name,
 			  int (*func)(BCG *Xgc,int *polyx, int *polyy, int *fill,
 				      int whiteid, double zmin, double zmax, double *x, 
 				      double *y, double *z, int i, int j, int jj1,
@@ -278,11 +269,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
   int i;
 
   /** If Record is on **/
-
-  printf(">>>>>>>>>>>>>>\n");
-  printf("FAC3DG\n");
-  printf(">>>>>>>>>>>>>>\n");
-
+  
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) {
       if (strcmp(name,"fac3d")==0) 	
 	store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);

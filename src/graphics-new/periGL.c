@@ -3543,6 +3543,7 @@ void change_camera(BCG *Xgc,const double *pos,const double *cible)
   Xgc->private->camera = nouvelle_camera(pos[0],pos[1],pos[2],cible[0],cible[1],cible[2],
 					 INIT_DISTANCE_CLIPPING_PROCHE,
 					 INIT_DISTANCE_CLIPPING_LOIN);
+  force_affichage(Xgc);
 }
 
 t_camera nouvelle_camera(float px, float py, float pz,
@@ -3570,9 +3571,9 @@ t_camera nouvelle_camera(float px, float py, float pz,
 */
 static void force_affichage(BCG *Xgc)
 {
-     gdk_window_invalidate_rect (Xgc->private->drawing->window,
-				 &Xgc->private->drawing->allocation,
-				 FALSE);
+  gdk_window_invalidate_rect (Xgc->private->drawing->window,
+			      &Xgc->private->drawing->allocation,
+			      FALSE);
 }
 
 /*
@@ -3619,7 +3620,7 @@ static void init_view(BCG *Xgc)
 	  glMatrixMode(GL_MODELVIEW);
 	  glLoadIdentity();
      }
-//     glFlush();	  
+     //     glFlush();	  
      force_affichage(Xgc);
 }
 

@@ -2606,7 +2606,7 @@ int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   int close=0,color,mark,thick;
-  int xmark[2],cmark,cthick,ccolor;
+  int cthick,ccolor;
   char *type;
   NspMatrix *l1,*l2,*l3;
 
