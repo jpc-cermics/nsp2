@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY block SYSTEM "xml/block.xml">
+<!ENTITY bmatrix-in SYSTEM "xml/bmatrix-in.xml">
+<!ENTITY bmatrix SYSTEM "xml/bmatrix.xml">
+<!ENTITY calelm SYSTEM "xml/calelm.xml">
+<!ENTITY cnumeric SYSTEM "xml/cnumeric.xml">
+<!ENTITY connector SYSTEM "xml/connector.xml">
+<!ENTITY datas SYSTEM "xml/datas.xml">
+<!ENTITY file-in SYSTEM "xml/file-in.xml">
+<!ENTITY file SYSTEM "xml/file.xml">
+<!ENTITY function SYSTEM "xml/function.xml">
+<!ENTITY gframe SYSTEM "xml/gframe.xml">
+<!ENTITY grint SYSTEM "xml/grint.xml">
+<!ENTITY hash-in SYSTEM "xml/hash-in.xml">
+<!ENTITY hash SYSTEM "xml/hash.xml">
+<!ENTITY hobj SYSTEM "xml/hobj.xml">
+<!ENTITY integ SYSTEM "xml/integ.xml">
+<!ENTITY interf SYSTEM "xml/interf.xml">
+<!ENTITY ivect-in SYSTEM "xml/ivect-in.xml">
+<!ENTITY ivect SYSTEM "xml/ivect.xml">
+<!ENTITY link SYSTEM "xml/link.xml">
+<!ENTITY list-in SYSTEM "xml/list-in.xml">
+<!ENTITY list SYSTEM "xml/list.xml">
+<!ENTITY lmo SYSTEM "xml/lmo.xml">
+<!ENTITY machine SYSTEM "xml/machine.xml">
+<!ENTITY math SYSTEM "xml/math.xml">
+<!ENTITY matops-in SYSTEM "xml/matops-in.xml">
+<!ENTITY matrix-in SYSTEM "xml/matrix-in.xml">
+<!ENTITY matrix SYSTEM "xml/matrix.xml">
+<!ENTITY menus SYSTEM "xml/menus.xml">
+<!ENTITY me SYSTEM "xml/me.xml">
+<!ENTITY mod-in SYSTEM "xml/mod-in.xml">
+<!ENTITY mod SYSTEM "xml/mod.xml">
+<!ENTITY none SYSTEM "xml/none.xml">
+<!ENTITY object SYSTEM "xml/object.xml">
+<!ENTITY objxdr SYSTEM "xml/objxdr.xml">
+<!ENTITY parse SYSTEM "xml/parse.xml">
+<!ENTITY plistc SYSTEM "xml/plistc.xml">
+<!ENTITY plisttoken SYSTEM "xml/plisttoken.xml">
+<!ENTITY plist SYSTEM "xml/plist.xml">
+<!ENTITY pmatrix SYSTEM "xml/pmatrix.xml">
+<!ENTITY poo SYSTEM "xml/poo.xml">
+<!ENTITY p_plist-in SYSTEM "xml/p_plist-in.xml">
+<!ENTITY pr-output SYSTEM "xml/pr-output.xml">
+<!ENTITY rect SYSTEM "xml/rect.xml">
+<!ENTITY sciio SYSTEM "xml/sciio.xml">
+<!ENTITY smatrix-in SYSTEM "xml/smatrix-in.xml">
+<!ENTITY smatrix SYSTEM "xml/smatrix.xml">
+<!ENTITY spmatops-in SYSTEM "xml/spmatops-in.xml">
+<!ENTITY spmatrix-in SYSTEM "xml/spmatrix-in.xml">
+<!ENTITY spmatrix SYSTEM "xml/spmatrix.xml">
+<!ENTITY types SYSTEM "xml/types.xml">
+<!ENTITY type SYSTEM "xml/type.xml">
+]>
+<book id="index">
+  <bookinfo>
+    <title>Pango Reference Manual</title>
+    <releaseinfo>for Pango &version;</releaseinfo>
+  </bookinfo>
+
+  <chapter id="nsp">
+    <title>The Nsp Doc on line </title>
+	&all-gtk;
+	&all-pango;
+	&block;
+	&bmatrix-in;
+	&bmatrix;
+	&calelm;
+	&cnumeric;
+	&connector;
+	&datas;
+	&file-in;
+	&file;
+	&function;
+	&gframe;
+	&grint;
+	&hash-in;
+	&hash;
+	&hobj;
+	&integ;
+	&interf;
+	&ivect-in;
+	&ivect;
+	&link;
+	&list-in;
+	&list;
+	&lmo;
+	&machine;
+	&math;
+	&matops-in;
+	&matrix-in;
+	&matrix;
+	&menus;
+	&me;
+	&mod-in;
+	&mod;
+	&none;
+	&object;
+	&objxdr;
+	&parse;
+	&plistc;
+	&plisttoken;
+	&plist;
+	&pmatrix;
+	&poo;
+	&p_plist-in;
+	&pr-output;
+	&rect;
+	&sciio;
+	&smatrix-in;
+	&smatrix;
+	&spmatops-in;
+	&spmatrix-in;
+	&spmatrix;
+	&types;
+	&type;
+
+  </chapter>
+
+</book>

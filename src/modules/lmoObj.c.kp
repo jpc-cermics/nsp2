@@ -1,0 +1,171 @@
+/*********************************************************************
+ * This Software is ( Copyright ENPC 1998 )                          *
+ * Jean-Philippe Chancelier Enpc/Cergrene                            *
+ *********************************************************************/
+
+/*********************************************************************
+ * Lmo : List with elts constrained to be modules (Mod)
+ *       List functions can be used by casting a Lmo to List
+ *********************************************************************/
+
+#include <stdio.h>
+#include <string.h>
+#include "nsp_include/pr-output.h" 
+#include "nsp_include/Interf.h"
+#include "nsp_include/Math.h" 
+
+/**************************************************
+ * LmoSize : returns filled,hsize,or hsize 
+ **************************************************/
+
+int LmoSize(Lmo *L, int flag)
+{
+  return  ListLength((List *) L);
+}
+
+/**************************************************
+ * LmoType 
+ **************************************************/
+
+static char list_type_name[]="Lmo";
+static char list_short_type_name[]="lmo";
+
+char *LmoType(void)
+{
+  return(list_type_name);
+}
+
+char *LmoShType(Lmo *L)
+{
+  return(list_short_type_name);
+}
+
+char *LmoSetName(Lmo *M, char *name)
+{
+  char *name1;
+  if ((name1 = NewString(name))== NULLSTRING) return NULLSTRING ;
+  FREE(M->name) ;
+  return M->name = name1;
+}
+ 
+char *LmoGetName(Lmo *M)
+{
+  return M->name;
+}
+
+/** used for L(1)(2)....(expn) evaluation */
+
+Obj *LmoPathExtract(Lmo *L, Obj *O)
+{
+  SMatrix *M;
+  int ival;
+  if ( IsMat(O)  ) 
+    {
+      if ( IntScalar(O,&ival) == FAIL ) return NULLOBJ ;
+      return  NthElement(L,ival);
+    }
+  else if ( IsSMat(O) ) 
+    {
+      if (( M = SMatObj(O)) == NULLSMAT || M->mn != 1) return NULLOBJ ;
+      return ListSearch(L,M->S[0]);
+    }
+  return  NULLOBJ;
+}
+
+/****************************************************
+ * Obj=ObjLmo(A) 
+ * Create a New Obj for which element points to A 
+ * and name points to A->name;
+ ****************************************************/
+
+static SciFType  _Lmo_Type = { 
+  (print_func *) LmoPrint ,      /* printing*/
+  (dealloc_func *) LmoDestroy,   /* dealloc */
+  (copy_func *) LmoCopy,         /* copy object */
+  (size_func *) LmoSize ,        /* m,n or m*n  */
+  (s_type_func *) LmoType,       /* type as a String */
+  (sh_type_func *) LmoShType,    /* type as a short string */
+  (info_func *) LmoInfo,         /* info */
+  (set_name_func *) LmoSetName,  /* set name */
+  (get_name_func *) LmoGetName,  /* get name */
+  (is_true_func  *) def_is_true,  /* check if object can be evaluated as true */
+  (loop_func *) def_loop,         /* used in for x= */
+  (path_func *) LmoPathExtract,   /* used for x(1)(2)(...) */
+  (get_from_obj_func *)  LmoObj,     /* get object stored in SciObj */
+  (eq_func *) 0,                    /* equality */
+  (eq_func *) 0,                    /* non-equality */
+};
+
+SciFType  *Lmo_Type = & _Lmo_Type ;
+
+/****************************************************
+ * A = LmoObj(O);
+ * checks that O is an object of type 
+ *    LMO 
+ * or a Hobj which points to an object of type LMO
+ *    if so, returns a pointer to that LMO and else returns
+ *    NULLLMO
+ ****************************************************/
+
+Lmo  *LmoObj(Obj *O)
+{
+  /** Follow pointer **/
+  if (O->ftype == Hobj_Type ) O= ((Hobj * ) O)->O ;
+  /** Check type **/
+  if (O->ftype == Lmo_Type)
+    return (Lmo *) O;
+  else 
+    Scierror("Error:\tArgument should be a %s\n",Lmo_Type->s_type());
+  return(NULL);
+}
+
+/****************************************************
+ * IsLmoObj(stack,i)
+ * only checks that object at position 
+ * first + i -1  is an object of type  LMO 
+ * or a Hobj which points to an object of type LMO
+ ****************************************************/
+
+int IsLmoObj(Stack stack, int i)
+{
+  return ObjType(NthObj(i)) == Lmo_Type;
+}
+
+
+/****************************************************
+ * IsLmo(O)
+ * only checks that object at position 
+ * is an object of type  LMO 
+ * or a Hobj which points to an object of type LMO
+ ****************************************************/
+
+int IsLmo(Obj *O)
+{
+  return ObjType(O) == Lmo_Type;
+}
+
+/*************************************
+ * Checks that first+i object on the stack 
+ * is a LMO and returns that LMO  
+ * or a copy of that LMO if its name 
+ * is != NVOID 
+ *************************************/
+
+Lmo *GetLmoCopy(Stack stack, int i)
+{
+  if (  GetLmo(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+/*************************************
+ * Checks that i-th object on the stack 
+ * is a Lmo and returns that Lmo or NULLLMO 
+ *************************************/
+
+Lmo *GetLmo(Stack stack, int i)
+{
+  Lmo *M;
+  if (( M = LmoObj(NthObj(i))) == NULLLMO)
+    ArgMessage(stack,i);
+  return M;
+}

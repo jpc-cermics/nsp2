@@ -1,0 +1,16 @@
+BUGS 
+
+	$ est mal fixé quand on fait un x('po')('foo')(..)($) 
+	jpc paques 2003 
+
+	Pour que exec('test.sci') 
+	marche bien il faut etre en mode X11 et pas Rec 
+	Il se pose alors un Pb si on grandit la fenetre 
+	Il faut donc pouvoir associer des handlers a la fenetre 
+	graphique pour le redraw et pouvoir les retirer 
+
+	
+	
+	
+	
+	

@@ -1,0 +1,13 @@
+{"chdir", int_syscd},
+{"getcwd", int_pwd},
+{"file", int_sysfile},
+{"regexp", int_regexp},
+{"regsub", int_regsub},
+{"glob",int_glob},
+{"getenv",int_getenv},
+{"setenv",int_setenv},
+{"unsetenv",int_unsetenv},
+{"timer", int_timer},
+{"system",int_system},
+
+

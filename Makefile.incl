@@ -1,0 +1,94 @@
+RM = rm -f
+AR = ar cru
+FILES_TO_CLEAN = *.CKP *.ln *.BAK *.bak core errs ,* *~ *.a .emacs_* tags TAGS make.log MakeOut .*~ *.trace so_locations *.orig *.cos *.obj
+
+all::
+
+clean::
+	@echo Cleaning 
+	@$(RM) $(FILES_TO_CLEAN)
+distclean::
+	@$(RM) $(FILES_TO_CLEAN)
+
+RANLIB = ranlib
+
+TERMCAPLIB = -lreadline -lncurses
+
+##################################################################
+# NOTE: the following schemes for compiling and linking are not  #
+#       exactly used for the main executable scilex; for it, see #
+#       the files Makefile.<host>                                #
+##################################################################
+
+############
+# C compiler
+# typically, for compiling use: CFLAGS = $(CC_OPTIONS)
+# and for linking: $(CC) -o $(PROGRAM) $(OBJS) $(CC_LDFLAGS)
+###########
+CC = cc
+#CC_OPTIONS = -g -Wall -Dlinux  `gtk-config --cflags` `gnome-config --cflags gnome`
+#CC_OPTIONS = -g -Wall -Dlinux `pkg-config gtk+-2.0 --cflags` -I$(SCIDIR)/src/include
+CC_OPTIONS = -g -Wall -Dlinux  `gnome-config --cflags gnome` -I$(SCIDIR)/src/include
+# XXXXXX a finir proprement 
+CC_OPTIONS = -g -Wall -Dlinux `pkg-config gtk+-2.0 --cflags` -I$(SCIDIR)/src/include
+CC_LDFLAGS = -lieee 
+CC_PICFLAGS = 
+
+##################
+# Fortran compiler
+# typically, for compiling use: FFLAGS = $(FC_OPTIONS)
+# and for linking: $(FC) -o $(PROGRAM) $(OBJS) $(FC_LDFLAGS)
+##################
+FC = g77
+FC_OPTIONS = -g
+FC_LDFLAGS = -lieee -ldl -rdynamic
+FC_PICFLAGS = 
+
+########
+# Linker
+# typically, for linking: $(LD) -o $(PROGRAM) $(OBJS) $(LD_LDFLAGS)
+########
+LD = ld
+LD_LDFLAGS = -lieee
+
+##########
+# X Window: use $(XFLAGS) for compilation and $(XLIBS) for linking
+# typically, for compiling use: CFLAGS = $(CC_OPTIONS) $(XFLAGS)
+# and for linking with X Window
+#  with C compiler: $(CC) -o $(PROGRAM) $(OBJS) $(CC_LDFLAGS) $(XLIBS)
+#  with Fortran compiler: $(FC) -o $(PROGRAM) $(OBJS) $(FC_LDFLAGS) $(XLIBS)
+#  with linker: $(LD) -o $(PROGRAM) $(OBJS) $(LD_LDFLAGS) $(XLIBS)
+##########
+DLDLIB = 
+DLD_SUBDIR = 
+PVMLIB = /usr/local/nsp2/pvm3/lib/LINUX/libpvm3.a
+PVMGLIB = /usr/local/nsp2/pvm3/lib/LINUX/libgpvm3.a
+PVMROOT = /usr/local/nsp2/pvm3
+PVMINCLUDE = /usr/local/nsp2/pvm3/include
+XAWLIB = -lXaw3d
+XMULIB = -lXmu
+XAW_LOCAL_SUBDIR = 
+XAW_LOCAL_LIB = 
+XFLAGS =  -I/usr/X11R6/include 
+X_EXTRA_LIBS = 
+XLIBS = `gtk-config --libs` `gnome-config --libs  gtkxmhtml`  -L/usr/X11R6/lib $(XAWLIB) $(XMULIB) -lXt -lXext  -lSM -lICE -lX11 $(X_EXTRA_LIBS)
+#XLIBS = `pkg-config gtk+-2.0 libgtkhtml-2.0 --libs`
+# a regler proprement 
+XLIBS = `pkg-config gtk+-2.0 libgtkhtml-2.0 --libs` 
+#####################
+# TCL/TK
+#####################
+TK_INC_PATH = 
+TCL_INC_PATH = 
+TCLTK_LIBS = 
+
+#####################
+# for WIN32 version 
+# win32 libraries for gcwin32 
+WIN32LIBS=-mwindows -lwsock32 -lshell32 -lcomctl32  -lwinspool -lm 
+WINLIBS = $(TCLTK_LIBS) $(WIN32LIBS)
+LINKEROPT= $(LD_LDFLAGS)
+# Ressource compiler 
+RC=windres 
+RCVARS=-O coff 
+

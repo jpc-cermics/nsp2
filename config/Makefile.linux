@@ -1,0 +1,17 @@
+# Copyright INRIA
+
+FFLAGS = $(FC_OPTIONS)
+
+# libs/scigtk.a 
+
+LIBS=-Wl,--whole-archive libs/nsp.a  \
+	libs/zcalelm.a libs/zblas.a libs/graphics.a \
+	libs/gd.a libs/gtksci.a libs/menusX.a \
+	-Wl,--no-whole-archive
+
+bin/scilex: scilex-lib 
+	@$(RM) $@;
+	@echo "linking"; 
+	$(FC)  $(FFLAGS) -o $@ src/Parse/lsci.o $(FC_LDFLAGS) \
+	$(LIBS) $(TCLTK_LIBS) $(XLIBS) $(TERMCAPLIB);
+

@@ -1,0 +1,4 @@
+#!/bin/csh 
+\rm -f config.cache 
+./configure --with-gnu --enable-debug --with-gtk --without-tk
+

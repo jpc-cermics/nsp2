@@ -1,0 +1,24 @@
+
+
+Par defaut 
+	
+	A.val      : appelle int_get_attribute 
+	A.val = 67 : appelle int_set_attribute 
+	A.val()    
+	A(val)()   : regardent si A.val peu s'extraire via 
+		     path extract qui utilise 
+		     Il serait bon que le path_extract de 
+		     classa soit celui par défaut pour les objects 
+
+Reste que  A(val) appelle extract_elts 
+	   A(val1,val2) appelle extract 
+	   A(val) = val appelle setrowcols 
+	   A(val) = []  appelle setrowscols 
+
+	   ==> par défaut ce serait peut etre bon que ce soit des méthodes 
+	       changeables pour les matrices etc.... 
+
+
+7 juillet 2003 
+jpc
+
