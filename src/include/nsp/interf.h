@@ -8,20 +8,9 @@
 
 #include "nsp/object.h"
 
-#if 0 
-#define RET_OK 0
-#define RET_ENDFOR -1
-#define RET_BREAK -2
-#define RET_QUIT -3
-#define RET_EOF  -4 
-#define RET_CTRLC -5
-#define RET_RETURN -6
-#define RET_ABORT -7
-#define RET_BUG -100  
-#else 
 enum { RET_OK=0, RET_ENDFOR=-1,  RET_BREAK=-2,   RET_QUIT=-3,  RET_EOF= -4 ,  
-       RET_CTRLC=-5, RET_RETURN=-6, RET_ABORT=-7, RET_ERROR_RAISED=-8, RET_BUG=-100};
-#endif 
+       RET_CTRLC=-5, RET_RETURN=-6, RET_ABORT=-7, RET_CONTINUE = -8 , 
+       RET_ERROR_RAISED=-9, RET_BUG=-100};
 
 /* structure used to store the functions defined by an interface */
 

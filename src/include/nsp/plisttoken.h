@@ -55,7 +55,8 @@
 #define TRYCATCH    -34
 #define CATCH  -35 
 #define FINALLY  -36 
-#define NOTKEY  -37
+#define CONTINUE  -37
+#define NOTKEY  -38
 
 /*****************************
  * OPERATORS
