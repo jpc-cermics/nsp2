@@ -199,7 +199,7 @@ int ModFill(NspMod *Mo)
 	{
 	  fclose(f); return FAIL;
 	}
-      if ( HashEnter(Mo->T,(NspObject *) elt) == FAIL) 
+      if (nsp_hash_enter(Mo->T,(NspObject *) elt) == FAIL) 
 	{
 	  fclose(f); return FAIL;
 	}

@@ -168,7 +168,7 @@ NspObject * LmoSearchName(NspLmo *L,char **Mname)
 	  if ((mo=(NspMod *) C->O) != NULLMOD && strcmp(mo->mname,"")==0 ) 
 	    { 
 	      NspObject *Ob;
-	      if ( HashFind(mo->T,Mname[0],&Ob) == OK) 
+	      if (nsp_hash_find(mo->T,Mname[0],&Ob) == OK) 
 		{
 		  /* Object found is to be a Me */
 		  ((NspMe *) Ob)->path = mo->path;
@@ -187,7 +187,7 @@ NspObject * LmoSearchName(NspLmo *L,char **Mname)
     {
       NspObject *Ob;
       /* search Mname[1] in The hash table of Loc */
-      if (  HashFind(Loc->T,Mname[1],&Ob)== FAIL) return NULLOBJ;
+      if (nsp_hash_find(Loc->T,Mname[1],&Ob)== FAIL) return NULLOBJ;
       /* Object found is to be a Me */
       ((NspMe *) Ob)->path = Loc->path;
       ((NspMe *) Ob)->module = Loc->mname;
