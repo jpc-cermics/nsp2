@@ -66,6 +66,8 @@ extern void sci_get_screen_size (int *rows, int *cols);
 
 extern void nsp_intialize_reader(void);
 
+extern int nsp_from_texmacs(void);
+
 
 #endif 
 

@@ -641,13 +641,16 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,int header )
  * syntax. 
  */
 
-
 void nsp_matrix_latex_print(const NspMatrix *Mat)
 {
   int i,j;
   if ( Mat->rc_type == 'r' ) 
     {
-      Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(Mat)->name );
+      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+      if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
+	Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(Mat)->name );
+      else 
+	Sciprintf("{\\left(\\begin{array}{");
       for (i=0; i <  Mat->n;i++) Sciprintf("c");
       Sciprintf("}\n");
       for (j=0;j < Mat->m;j++)
@@ -659,9 +662,14 @@ void nsp_matrix_latex_print(const NspMatrix *Mat)
 	  Sciprintf("%g\t\\\\\n",Mat->R[Mat->m-1+j*Mat->m]);
 	}
       Sciprintf("\\end{array}\\right)}\n");
+      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+    }
+
+  else 
+    {
+      Sciprintf("Fixme : to be done\n");
     }
 }
-
 
 /**
  * nsp_matrix_latex_tab_print:
@@ -671,27 +679,32 @@ void nsp_matrix_latex_print(const NspMatrix *Mat)
  * syntax. 
  */
 
-
 void nsp_matrix_latex_tab_print(const NspMatrix *Mat)
 {
   int i,j;
   if ( Mat->rc_type == 'r' ) 
     {
+      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:");
       Sciprintf("\\begin{tabular}{|l|");
       for (i=0; i < Mat->n ;i++) Sciprintf("c|");
       Sciprintf("}\\hline\n %s &\t",NSP_OBJECT(Mat)->name);
-      for (i=0; i < Mat->n ;i++) Sciprintf("$C_{%d}$\t&",i);
+      for (i=0; i < Mat->n -1 ;i++) Sciprintf("$C_{%d}$\t&",i+1);
       Sciprintf("$C_{%d}$\\\\ \\hline\n",Mat->n);
       for (j=0;j < Mat->m ;j++)
 	{
-	  Sciprintf("$L_{%d}$\t&",j);
+	  Sciprintf("$L_{%d}$\t&",j+1);
 	  for (i=0;i < Mat->n-1 ;i++)
 	    {
-	      Sciprintf("%g\t& ",Mat->R[i+j*Mat->m]);
+	      Sciprintf("$%g$\t& ",Mat->R[i+j*Mat->m]);
 	    }
-	  Sciprintf("%g\t\\\\ \\hline\n",Mat->R[Mat->m-1+j*Mat->m]);
+	  Sciprintf("$%g$\t\\\\ \\hline\n",Mat->R[Mat->m-1+j*Mat->m]);
 	}
       Sciprintf("\\end{tabular}\n");
+      if ( nsp_from_texmacs() == TRUE ) Sciprintf("\005");
+    }
+  else 
+    {
+      Sciprintf("Fixme : to be done\n");
     }
 }
 
