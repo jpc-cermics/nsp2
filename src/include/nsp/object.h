@@ -225,6 +225,7 @@ extern int attrs_to_stack (char *key,AttrTab attrs[],Stack stack,int pos);
 extern int set_attribute_util(NspObject *ob, NspTypeBase *type, char *attr,NspObject *val);
 extern int int_set_attribute(Stack stack, int rhs, int opt, int lhs);
 extern int int_set_attributes(Stack stack, int rhs, int opt, int lhs);
+extern int int_set_attributes1(void *Ob,Stack stack, int rhs, int opt, int lhs);
 extern int int_create_with_attributes(NspObject *ob,Stack stack, int rhs, int opt, int lhs);
 extern int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type, char *attr,NspObject *val);
 extern int int_get_attribute(Stack stack, int rhs, int opt, int lhs);

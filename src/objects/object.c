@@ -39,7 +39,7 @@ static NspObject *object_loop_def(char *str, NspObject *O, NspObject *O1, int i,
 static int init_object(NspObject *ob,NspTypeObject *type);
 static char *object_type_as_string(void);
 static char *object_type_short_string(void);
-
+static NspMethods *object_get_methods(void);
 /*
  * base object : NspObject 
  */
@@ -62,7 +62,7 @@ NspTypeObject *new_type_object(type_mode mode)
   if ((type =  malloc(sizeof(NspTypeObject))) == NULL) return NULL;
   type->surtype   = NULL;
   type->interface = NULL;
-  type->methods = NULL;
+  type->methods = object_get_methods; 
   type->new = (new_func *) new_object;
   
   type->s_type =  (s_type_func *) object_type_as_string;    
@@ -227,6 +227,15 @@ int int_object_create(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
+/* set method common to all objects object.set[attr=val,attr=val,....] */
+
+static NspMethods object_methods[] = {
+  { "set",  int_set_attributes1},
+  { (char *) 0, NULL}
+};
+
+static NspMethods *object_get_methods(void) { return object_methods;};
+
 /*---------------------------------------------------
  * set of function for dealing with  object attributes
  *--------------------------------------------------*/
@@ -268,6 +277,7 @@ int int_set_attribute(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * ob.set[ attr1=val1, attr2 = val2 ,....]
+ * FIXME ? obsolete and replaced by the next one 
  */
 
 int int_set_attributes(Stack stack, int rhs, int opt, int lhs)
@@ -289,6 +299,30 @@ int int_set_attributes(Stack stack, int rhs, int opt, int lhs)
   NthObj(1)->ret_pos = 1;
   return 1;
 }
+
+/*
+ * ob.set[ attr1=val1, attr2 = val2 ,....]
+ */
+
+int int_set_attributes1(void *ob,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ob=ob;
+  int i;
+  if ( rhs - opt > 0 ) 
+    {
+      Scierror("%s only accept optional arguments \n",stack.fname);
+      return RET_BUG;
+    }
+  CheckLhs(1,1); 
+  for ( i = 1 ; i <= rhs ; i++) 
+    {
+      NspObject *val = ((NspHobj *) NthObj(i))->O;
+      if ( nsp_set_attribute_util(Ob,Ob->basetype,NthObj(i)->name,val) == FAIL) return RET_BUG;
+    }
+  return 0;
+}
+
+
 /*
  * can be used in the constructor 
  * type.new[ attr1=val1, attr2 = val2 ,....]

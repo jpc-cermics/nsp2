@@ -403,12 +403,11 @@ static AttrTab classa_attrs[] = {
 static int int_cla_classa_color_change(void *a,Stack stack,int rhs,int opt,int lhs)
 {
   int color; 
-  CheckRhs(2,2);
+  CheckRhs(1,1);
   CheckLhs(1,1);
-  if (GetScalarInt(stack,2,&color) == FAIL) return RET_BUG;
+  if (GetScalarInt(stack,1,&color) == FAIL) return RET_BUG;
   ((NspClassA *) a)->classa_color = color;
-  NSP_OBJECT(a)->ret_pos = 1;
-  return 1;
+  return 0;
 }
 
 static int int_cla_classa_color_show(void *a,Stack stack,int rhs,int opt,int lhs)
@@ -425,7 +424,6 @@ static int int_cla_set(void *a,Stack stack,int rhs,int opt,int lhs)
   CheckLhs(1,1);
   return int_set_attributes(stack,rhs,opt,lhs);
 }
-
 
 static NspMethods classa_methods[] = {
   { "classa_color_change", int_cla_classa_color_change},

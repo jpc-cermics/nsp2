@@ -76,7 +76,6 @@ static int classb_xdr_save(NspFile  *F, NspClassB *M);
 static NspClassB  *classb_xdr_load(NspFile   *F);
 static AttrTab classb_attrs[]; 
 static NspMethods *classb_get_methods(void); 
-static NspObject *classb_path_extract(NspClassB *A, NspObject *O);
 static int int_clb_create(Stack stack, int rhs, int opt, int lhs);
 #endif /* ClassB_Private */
 

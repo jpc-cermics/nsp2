@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
+ * This Software is ( Copyright ENPC 1998-2004 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -18,7 +18,7 @@ NspTypeClassB *nsp_type_classb=NULL;
 /*
  * Type object for ClassB 
  * all the instance of NspTypeClassB share the same id. 
- * nsp_type_classb: is a an instance of NspTypeClassB 
+ * nsp_type_classb: is an instance of NspTypeClassB 
  *    used for objects of NspClassB type (i.e built with new_classb) 
  * other instances are used for derived classes 
  */
@@ -57,7 +57,7 @@ NspTypeClassB *new_type_classb(type_mode mode)
   top->info = (info_func *) classb_info ;                    
   /* top->is_true = (is_true_func  *) ClassBIsTrue; */
   /* top->loop =(loop_func *) classb_loop;*/
-  top->path_extract = (path_func *) classb_path_extract ; 
+  top->path_extract = (path_func *)  object_path_extract ; 
   top->get_from_obj = (get_from_obj_func *) classb_object;
   top->eq  = (eq_func *) classb_eq;
   top->neq  = (eq_func *) classb_neq;
@@ -105,7 +105,7 @@ static int init_classb(NspClassB *o,NspTypeClassB *type)
   if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
   o->type = type; 
   NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
-  /* specific */
+  /* FIXME : specific */
   o->classb_val = nsp_matrix_create("val",'r',0,0);
   if ( o->classb_val == NULLMAT) return FAIL;
   return OK;
@@ -188,19 +188,6 @@ static int classb_neq(NspClassB *A, NspObject *B)
   return rep;
 }
 
-/* used for evaluation of H(exp1) in exps like H(exp1)(exp2)....(expn)= val 
- * note that H(exp1)= val          -> setrowscols
- *       and H(exp1)(.....) = val  -> pathextract(H,exp1) and then 
- *       iterate on the result 
- */
-
-static NspObject *classb_path_extract(NspClassB *a, NspObject *ob)
-{
-  char *str;
-  if ((str=nsp_string_object(ob)) == NULL ) return NULLOBJ;
-  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
-}
-
 /*
  * save 
  */
@@ -270,9 +257,9 @@ void classb_print(NspClassB *H, int indent)
 
 NspClassB   *classb_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
-  /** Check type **/
+  /* Check type */
   if ( check_cast(O,nsp_type_classb_id) == TRUE) return ((NspClassB *) O);
   else 
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_classb));
@@ -306,7 +293,7 @@ NspClassB  *GetClassB(Stack stack, int i)
 /*-----------------------------------------------------
  * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspClassA instance 
+ * create a NspClassB instance 
  *-----------------------------------------------------*/
 
 NspClassB *classb_create(char *name,int color,int thickness,NspTypeBase *type)
@@ -344,7 +331,6 @@ static int int_clb_create(Stack stack, int rhs, int opt, int lhs)
   int color=-1,thickness=-1;
   /* first argument is a unused its a NspType */
   CheckRhs(1,100);
-
   /* we first create a default object */
   if(( H = classb_create(NVOID,color,thickness,NULL)) == NULLCLB) return RET_BUG;
   /* then we use optional arguments to fill attributes */
@@ -396,7 +382,7 @@ static NspObject *int_clb_get_object_val(void *Hv,char *str)
 static int int_clb_set_val(void *Hv, char *attr, NspObject *O)
 {
   NspMatrix *m;
-  if ((m = (NspMatrix *)nsp_object_copy(O)) == NULLMAT) return RET_BUG;
+  if ((m = (NspMatrix *) nsp_object_copy(O)) == NULLMAT) return RET_BUG;
   ((NspClassB *)Hv)->classb_val = m;
   return OK ;
 }
@@ -408,6 +394,7 @@ static AttrTab classb_attrs[] = {
   { (char *) 0, NULL}
 };
 
+
 /*------------------------------------------------------
  * methods 
  *------------------------------------------------------*/
@@ -415,17 +402,16 @@ static AttrTab classb_attrs[] = {
 static int int_clb_classb_color_change(void *a,Stack stack,int rhs,int opt,int lhs)
 {
   int color; 
-  CheckRhs(2,2);
+  CheckRhs(1,1);
   CheckLhs(1,1);
-  if (GetScalarInt(stack,2,&color) == FAIL) return RET_BUG;
+  if (GetScalarInt(stack,1,&color) == FAIL) return RET_BUG;
   ((NspClassB *) a)->classb_color = color;
-  NSP_OBJECT(a)->ret_pos = 1;
-  return 1;
+  return 0;
 }
 
 static int int_clb_classb_color_show(void *a,Stack stack,int rhs,int opt,int lhs)
 {
-  CheckRhs(1,1);
+  CheckRhs(0,0);
   CheckLhs(1,1);
   Sciprintf("color of %s is %d\n",NSP_OBJECT(a)->name,((NspClassB *) a)->classb_color);
   return 0;
@@ -451,7 +437,7 @@ int int_clb_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspClassB *a;
   if (( a= GetClassB(stack,1))== NULLCLB) return RET_BUG;
- nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0);
   return 0;
 }
 
@@ -461,22 +447,21 @@ int int_clb_test(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab ClassB_func[]={
-  /* #include "classb-in.nam" */ 
-  {"clb_create",int_clb_create}, 
-  {"setrowscols_clb",int_set_attribute}, /* A(val) = B <=> A.val = B */
+  {"setrowscols_clb",int_set_attribute},/* a(xxx)= b */
   {"test_clb",int_clb_test},
+  {"$set_clb",int_set_attributes},
   {(char *) 0, NULL}
 };
 
-/** call ith function in the ClassB interface **/
+/* call ith function in the ClassB interface */
 
 int ClassB_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(ClassB_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void ClassB_Interf_Info(int i, char **fname, function (**f))
 {

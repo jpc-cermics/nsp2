@@ -403,34 +403,24 @@ static AttrTab @TYPEDOWNCASE@_attrs[] = {
 static int int_@TYPESHORT@_@TYPEDOWNCASE@_color_change(void *a,Stack stack,int rhs,int opt,int lhs)
 {
   int color; 
-  CheckRhs(2,2);
+  CheckRhs(1,1);
   CheckLhs(1,1);
-  if (GetScalarInt(stack,2,&color) == FAIL) return RET_BUG;
+  if (GetScalarInt(stack,1,&color) == FAIL) return RET_BUG;
   ((Nsp@TYPENAME@ *) a)->@TYPEDOWNCASE@_color = color;
-  NSP_OBJECT(a)->ret_pos = 1;
-  return 1;
+  return 0;
 }
 
 static int int_@TYPESHORT@_@TYPEDOWNCASE@_color_show(void *a,Stack stack,int rhs,int opt,int lhs)
 {
-  CheckRhs(1,1);
+  CheckRhs(0,0);
   CheckLhs(1,1);
   Sciprintf("color of %s is %d\n",NSP_OBJECT(a)->name,((Nsp@TYPENAME@ *) a)->@TYPEDOWNCASE@_color);
   return 0;
 }
 
-static int int_@TYPESHORT@_set(void *a,Stack stack,int rhs,int opt,int lhs)
-{
-  CheckRhs(1,1000);
-  CheckLhs(1,1);
-  return int_set_attributes(stack,rhs,opt,lhs);
-}
-
-
 static NspMethods @TYPEDOWNCASE@_methods[] = {
   { "@TYPEDOWNCASE@_color_change", int_@TYPESHORT@_@TYPEDOWNCASE@_color_change},
   { "@TYPEDOWNCASE@_color_show",   int_@TYPESHORT@_@TYPEDOWNCASE@_color_show},
-  { "set",  int_@TYPESHORT@_set},
   { (char *) 0, NULL}
 };
 
