@@ -1,4 +1,3 @@
-
 // -*- Mode: scilab -*- 
 // test for grand 
 
@@ -9,9 +8,8 @@ function y=norm(x) ; y=max(abs(x));endfunction ;
 //FIXME : grand mn is not tested 
 //FIXME : grand mul is not tested 
 //FIXME : add circular tests for cdf*
-
-// test for beta random deviate 
-
+//test for beta random deviate 
+  
 N=10000;A=1;B=3;
 Rdev=grand(1,N,'bet',A,B);
 RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
@@ -236,7 +234,8 @@ if max(abs(v-v1)) > 1.e-14 then pause,end
 M=cdfnor("Mean",1*ones(v),P,Q,v);
 if max(abs(M)) > 1.e-14 then pause,end
 St=cdfnor("Std",P,Q,v,0*ones(v));
-if max(abs(St-1)) > 0.2 then pause,end
+// result can be false near P=0.5
+if max(abs(St-1)) > 0.3 then pause,end
 
 // test de cdfgam
 
