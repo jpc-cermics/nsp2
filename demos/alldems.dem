@@ -20,7 +20,7 @@ function create_demo_window()
   endfunction 
 
   function nsp_gtk2_demos() 
-    exec('NSP/src/gtk2/testgtk/base/main.sci');
+    exec('NSP/demos/gtk2/base/main.sci');
   endfunction 
 
   B = hcreate(100)

@@ -1,11 +1,11 @@
 SHELL = /bin/sh
 
-include ../Path.incl
-include ../Makefile.incl
+include ../../Path.incl
+include ../../Makefile.incl
 
 CFLAGS = $(CC_OPTIONS) 
 
-SUBDIRS = graphics gtk2 
+SUBDIRS = libbase
 
 all:: 
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
