@@ -762,6 +762,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	       Xgc->CWindowWidth = x;
 	       Xgc->CWindowHeight = y;
 	       Xgc->private->resize = 1;/* be sure to put this */
+	       /* FIXME: NULL to be changed */
 	       expose_event( Xgc->private->drawing,NULL, Xgc);
 	  }
      }
@@ -3033,6 +3034,15 @@ printf("init stencil !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 
      init_opgl(dd);
 
+#ifdef MOTION
+     dd->private->maxgrid= 10;
+     dd->private->sphi = 90.0;
+     dd->private->stheta = 45.0;
+     dd->private->sdepth = 5.0/4.0 * (dd->private->maxgrid/2.0);
+     dd->private->zNear = (dd->private->maxgrid/2.0)/10.0;
+     dd->private->zFar = (dd->private->maxgrid/2.0)*3.0;
+#endif
+ 
      gdk_gl_drawable_gl_end (gldrawable);
      /*** OpenGL END ***/
      return TRUE;
@@ -3076,6 +3086,8 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
      
      init_view(dd);
 
+     dd->private->aspect = (float)widget->allocation.width /(float)widget->allocation.height;
+
      gdk_gl_drawable_gl_end (gldrawable);
      /*** OpenGL END ***/
 
@@ -3101,6 +3113,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   
   if(dd->private->resize != 0) 
     { 
+      dd->private->resize = 0;
       if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
 	return FALSE;
       
@@ -3119,6 +3132,19 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 		     dd->private->camera.orientation.y, 
 		     dd->private->camera.orientation.z);
 	}
+
+#ifdef MOTION
+      glMatrixMode (GL_PROJECTION);
+      glLoadIdentity ();
+      gluPerspective (64.0, dd->private->aspect, dd->private->zNear, dd->private->zFar);
+      glMatrixMode (GL_MODELVIEW);
+      glLoadIdentity ();
+      glTranslatef (0.0,0.0,-dd->private->sdepth);
+      fprintf(stderr,"je tourne de %f %f\n",dd->private->stheta,dd->private->sphi);
+      glRotatef (-dd->private->stheta, 1.0, 0.0, 0.0);
+      glRotatef (dd->private->sphi, 0.0, 0.0, 1.0);
+      glTranslatef (-(float)((dd->private->maxgrid+1)/2-1), -(float)((dd->private->maxgrid+1)/2-1), 0.0);
+#endif 
       //     glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
       //     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
       //     glPrint2D(dd, 10, 10, 0.6, 0, true, "Coucou");
@@ -3245,6 +3271,80 @@ examine_gl_config_attrib (GdkGLConfig *glconfig)
      
      g_print ("\n");
 }
+
+
+
+/*
+ * The "motion_notify_event" signal handler. Any processing required when
+ * the OpenGL-capable drawing area is under drag motion should be done here.
+ */
+
+static gboolean
+motion_notify_event_ogl (GtkWidget      *widget,
+		     GdkEventMotion *event,
+		     gpointer        data)
+{
+  BCG *Xgc= (BCG*) data;
+
+  gboolean redraw = FALSE;
+
+  if (event->state & GDK_BUTTON1_MASK)
+    {
+      Xgc->private->sphi += (float)(event->x - Xgc->private->beginX) * 4.0;
+      Xgc->private->stheta += (float)(Xgc->private->beginY - event->y) * 4.0;
+
+      redraw = TRUE;
+    }
+
+  if (event->state & GDK_BUTTON2_MASK)
+    {
+      Xgc->private->sdepth -= ((event->y - Xgc->private->beginY)/(widget->allocation.height))*
+	( Xgc->private->maxgrid/2);
+      redraw = TRUE;
+    }
+
+   Xgc->private->beginX = event->x;
+   Xgc->private->beginY = event->y;
+
+  if (redraw ) 
+    {
+      Xgc->private->resize = 1;
+      gdk_window_invalidate_rect (widget->window, &widget->allocation, FALSE);
+    }
+
+  return TRUE;
+}
+
+/*
+ * The "button_press_event" signal handler. Any processing required when
+ * mouse buttons (only left and middle buttons) are pressed on the OpenGL-
+ * capable drawing area should be done here.
+ */
+
+static gboolean
+button_press_event_ogl (GtkWidget      *widget,
+			GdkEventButton *event,
+			gpointer        data)
+{
+  BCG *Xgc= (BCG*) data;
+
+  if (event->button == 1)
+    {
+      Xgc->private->beginX = event->x;
+      Xgc->private->beginY = event->y;
+      return TRUE;
+    }
+
+  if (event->button == 2)
+    {
+      Xgc->private->beginX = event->x;
+      Xgc->private->beginY = event->y;
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
 
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
@@ -3384,15 +3484,23 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 				NULL,
 				TRUE,
 				GDK_GL_RGBA_TYPE);
-
+#ifndef MOTION
   gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
 		     (GtkSignalFunc) locator_button_press, (gpointer) dd);
   gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
 		     (GtkSignalFunc) locator_button_release, (gpointer) dd);
   gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
 		     (GtkSignalFunc) locator_button_motion, (gpointer) dd);
+#endif 
   gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "realize",
 		     (GtkSignalFunc) realize_event, (gpointer) dd);
+
+#ifdef MOTION
+  g_signal_connect (G_OBJECT (dd->private->drawing), "motion_notify_event",
+		    G_CALLBACK (motion_notify_event_ogl),  (gpointer) dd);
+  g_signal_connect (G_OBJECT (dd->private->drawing), "button_press_event",
+		    G_CALLBACK (button_press_event_ogl), (gpointer) dd);
+#endif 
 
   gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
 			| GDK_BUTTON_PRESS_MASK 
@@ -3546,6 +3654,7 @@ void change_camera(BCG *Xgc,const double *pos,const double *cible)
   /* here we need that the display i srefreshed explicitely 
    * and not to simply call gdk_window_invalidate_rect
    */
+  /* FIXME: NULL to be changed */
   expose_event( Xgc->private->drawing,NULL, Xgc);
   /* force_affichage(Xgc); */
 }

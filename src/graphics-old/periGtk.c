@@ -741,6 +741,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	  Xgc->CWindowWidth = x;
 	  Xgc->CWindowHeight = y;
 	  Xgc->private->resize = 1;/* be sure to put this */
+	  /* FIXME: NULL to be changed */
 	  expose_event( Xgc->private->drawing,NULL, Xgc);
 	}
     }
@@ -2994,7 +2995,10 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 
 static void nsp_gtk_invalidate(BCG *Xgc)
 {
-  gdk_window_invalidate_rect(Xgc->private->drawing->window,NULL,FALSE);
+
+  gdk_window_invalidate_rect(Xgc->private->drawing->window,
+			     &Xgc->private->drawing->allocation,
+			     FALSE);
 }
 
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
@@ -3025,9 +3029,13 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     }
   else 
     {
-      gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
-		      event->area.x, event->area.y, event->area.x, event->area.y,
- 		      event->area.width, event->area.height);
+      if (event  != NULL) 
+	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+			event->area.x, event->area.y, event->area.x, event->area.y,
+			event->area.width, event->area.height);
+      else 
+	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+			dd->CWindowWidth, dd->CWindowHeight);
     }
   return FALSE;
 }
