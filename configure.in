@@ -1057,9 +1057,11 @@ case "$host" in
      STRIP=echo
      GCC=yes
      CC=gcc
+     # -L/sw/lib is needed during configure but seams not best place
      CC_OPTIONS='-no-cpp-precomp -O2 -I/sw/include -L/sw/lib'
      CC_LDFLAGS=
      CC_PICFLAGS='-fPIC'
+     LIBS="$LIBS -L/sw/lib"
      # script shell f77 have bugs, get ours
      FC=g77
      FC_OPTIONS='-O2'
@@ -1069,7 +1071,8 @@ case "$host" in
      LD=ld
      LD_LDFLAGS=
      if test "$enable_debug" = yes; then
-       CC_OPTIONS='-g -I/sw/include '
+       # -L/sw/lib is needed during configure but seams not best place
+       CC_OPTIONS='-g -I/sw/include -L/sw/lib'
        FC_OPTIONS=-g
      fi
      if test "$G77" = yes; then
