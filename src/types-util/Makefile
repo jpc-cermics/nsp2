@@ -111,6 +111,11 @@ job_kiko:
 		TASSTRING=Kiko NULL=NULLKIKO \
 		PARENT=Object FIELDS="char *path;\ndouble *module;\nNspMatrix *M;" \
 		PARENTDOWNCASE=object PARENTINC=nsp/object.h 
+job_func:
+	make job  TNAME=Function TDOWNCASE=function TSHORT=f \
+		TASSTRING=Func NULL=NULLFUNC \
+		PARENT=Object FIELDS="int  Num;/* function position inside interface */\nint  Int;/* Interface number in which the function is stored */\nint  status;/* status of the function */" \
+		PARENTDOWNCASE=object PARENTINC=nsp/object.h 
 
 clean : distclean 
 

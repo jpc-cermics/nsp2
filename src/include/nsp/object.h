@@ -249,55 +249,6 @@ struct _methodtab {
 extern int method_search(char *key, NspMethods *Table);
 int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack stack, int rhs, int opt, int lhs);
 
-/*----------------------------------------------------------
- * A set of prototypes 
- *----------------------------------------------------------*/
-
-void nsp_void_object_destroy(NspObject **O);
-
-#define Ocheckname(x,y) ( strcmp( NSP_OBJECT(x)->name,y)==0 ) 
-
-/* XXXXX */
-
-NspObject *nsp_create_empty_matrix_object(char *str);
-NspObject *nsp_create_object_from_doubles( int m,int n,int it,double *rtab,double *itab,char *name);
-void *MaybeObjCopy (NspObject **O);
-NspObject *nsp_object_copy_and_name(char *name,NspObject *O);
-
-/* from Obj.c */
-
-int nsp_object_xdr_save(NspFile *F, NspObject *O);
-NspObject *nsp_object_xdr_load(NspFile *F); 
-extern void nsp_object_destroy(NspObject **O); 
-extern void nsp_void_object_destroy(NspObject **O); 
-extern NspObject *nsp_object_copy(NspObject *O); 
-extern int nsp_object_get_size(NspObject *O, int j); 
-extern NspObject *nsp_object_copy_with_name(NspObject *O); 
-extern NspObject *nsp_object_copy_and_name(char *name, NspObject *O); 
-extern char *nsp_object_type_as_string(NspObject *O); 
-extern char *nsp_object_type_short(NspObject *O); 
-extern int nsp_object_type(NspObject *O, NspTypeId id); 
-extern int nsp_object_implements(NspObject *O, NspTypeId id); 
-extern void nsp_object_info(NspObject *O, int indent); 
-extern void nsp_object_print(NspObject *O, int indent); 
-extern int nsp_object_is_true(NspObject *O); 
-extern NspObject *nsp_object_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep); 
-extern NspObject *def_loop (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
-extern NspObject *nsp_get_object(Stack stack, int i); 
-extern NspObject *nsp_get_object_copy(Stack stack, int i);
-extern NspObject *nsp_create_object_from_double(char *str, double dval); 
-extern NspObject *nsp_create_object_from_int(char *str, int ival); 
-extern NspObject *nsp_complexi_object_(char *str); 
-extern NspObject *nsp_create_object_from_str(char *str); 
-extern NspObject *nsp_create_object_from_str_and_size(char *str, int lstr); 
-extern NspObject *nsp_create_object_from_doubles(integer m, integer n, integer it, double *rtab, double *itab, char *name); 
-extern NspObject *nsp_create_empty_matrix_object(char *str); 
-extern NspObject *nsp_create_true_object(char *str); 
-extern NspObject *nsp_create_boolean_object(char *str,int val);
-extern NspObject *nsp_create_false_object(char *str); 
-extern char *nsp_object_get_name(NspObject *O); 
-extern int nsp_object_set_name(NspObject *O, char *str); 
-extern int print_count_rows(Stack stack,int first_arg,int last_arg);
 
 
 /*----------------------------------------------------------
@@ -357,6 +308,53 @@ typedef enum { NOOBJ,LIST,MATRIX,SMATRIX,BMATRIX,LIB,
 #include "nsp/modulelt.h"
 #include "nsp/classa.h"
 #include "nsp/classb.h"
+
+
+/*----------------------------------------------------------
+ * A set of prototypes 
+ *----------------------------------------------------------*/
+
+void nsp_void_object_destroy(NspObject **O);
+
+#define Ocheckname(x,y) ( strcmp( NSP_OBJECT(x)->name,y)==0 ) 
+
+NspObject *nsp_create_empty_matrix_object(char *str);
+NspObject *nsp_create_object_from_doubles( int m,int n,int it,double *rtab,double *itab,char *name);
+void *MaybeObjCopy (NspObject **O);
+NspObject *nsp_object_copy_and_name(char *name,NspObject *O);
+
+int nsp_object_xdr_save(NspFile *F, NspObject *O);
+NspObject *nsp_object_xdr_load(NspFile *F); 
+extern void nsp_object_destroy(NspObject **O); 
+extern void nsp_void_object_destroy(NspObject **O); 
+extern NspObject *nsp_object_copy(NspObject *O); 
+extern int nsp_object_get_size(NspObject *O, int j); 
+extern NspObject *nsp_object_copy_with_name(NspObject *O); 
+extern NspObject *nsp_object_copy_and_name(char *name, NspObject *O); 
+extern char *nsp_object_type_as_string(NspObject *O); 
+extern char *nsp_object_type_short(NspObject *O); 
+extern int nsp_object_type(NspObject *O, NspTypeId id); 
+extern int nsp_object_implements(NspObject *O, NspTypeId id); 
+extern void nsp_object_info(NspObject *O, int indent); 
+extern void nsp_object_print(NspObject *O, int indent); 
+extern int nsp_object_is_true(NspObject *O); 
+extern NspObject *nsp_object_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep); 
+extern NspObject *def_loop (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
+extern NspObject *nsp_get_object(Stack stack, int i); 
+extern NspObject *nsp_get_object_copy(Stack stack, int i);
+extern NspObject *nsp_create_object_from_double(char *str, double dval); 
+extern NspObject *nsp_create_object_from_int(char *str, int ival); 
+extern NspObject *nsp_complexi_object_(char *str); 
+extern NspObject *nsp_create_object_from_str(char *str); 
+extern NspObject *nsp_create_object_from_str_and_size(char *str, int lstr); 
+extern NspObject *nsp_create_object_from_doubles(integer m, integer n, integer it, double *rtab, double *itab, char *name); 
+extern NspObject *nsp_create_empty_matrix_object(char *str); 
+extern NspObject *nsp_create_true_object(char *str); 
+extern NspObject *nsp_create_boolean_object(char *str,int val);
+extern NspObject *nsp_create_false_object(char *str); 
+extern char *nsp_object_get_name(NspObject *O); 
+extern int nsp_object_set_name(NspObject *O, char *str); 
+extern int print_count_rows(Stack stack,int first_arg,int last_arg);
 
 #endif /*  NSP_TYPE_OBJECT  */
 
