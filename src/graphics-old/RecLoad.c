@@ -244,6 +244,28 @@ static int load_fpf(BCG *Xgc)
   return 1;
 }
 
+static int load_init(BCG *Xgc) 
+{
+  struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
+  if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
+  if ( load_LI(&((struct rec_void *) lplot)->code)==0) return(0);
+  store_record(Xgc,lplot->code,lplot);
+  return 1;
+}
+
+static int load_colormap(BCG *Xgc)
+{
+  struct rec_colormap *lplot = MALLOC(sizeof(struct rec_colormap));
+  if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
+  if ( load_LI(&lplot->code)==0) return(0);
+  if ( load_LI(&lplot->m)==0) return(0);
+  if ( load_LI(&lplot->n)==0) return(0);
+  if ( load_VectF(&lplot->colors) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
+  return 1;
+}
+
+
 /*-----------------------------------------------------------------------------
  *  drawarc_1
  *-----------------------------------------------------------------------------*/
@@ -1225,7 +1247,8 @@ static Load_Table load_table [] ={
   {CODEChamp1		     ,"Champ",		  load_Champ },
   {CODEfpf_def   	     ,"fpf_def",          load_fpf_def},
   {CODEfpf   	             ,"fpf",              load_fpf},
-  {CODEColormap		     ,"Colormap",	  load_Colormap }
+  {CODEinitialize_gc         ,"init",             load_init},
+  {CODEColormap		     ,"Colormap",	  load_colormap }
 };     	
 
 
@@ -1255,7 +1278,7 @@ int tape_load(BCG *Xgc,const char *fname1)
       return(0);
     }
 
-  if ( strncmp(SciF_version,"Nsp",4) != 0 )
+  if ( strncmp(SciF_version,"Nsp",3) != 0 )
     {
       sciprint("Not a save graphics file: %s\n\n",fname1);
       return(0);

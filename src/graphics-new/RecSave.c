@@ -22,6 +22,7 @@ static int save_VectC (char *nx, int l);
 static int save_VectS   (char **nx);
 
 static int save_Colormap (BCG *Xgc,void *);
+static int save_colormap (BCG *Xgc,void *);
 static int save_Ech  (BCG *Xgc,void *); 
 static int save_Plot  (BCG *Xgc,void *); 
 static int save_SciAxis  (BCG *Xgc,void *); 
@@ -144,6 +145,28 @@ static int save_fpf(BCG *Xgc,void * theplot )
 static int save_fpf_def(BCG *Xgc,void * theplot )
 {
   if ( save_LI(((struct rec_void *) theplot)->code)==0) return(0);
+  return 1;
+}
+
+
+static int save_init(BCG *Xgc,void * theplot ) 
+{
+  if ( save_LI(((struct rec_void *) theplot)->code)==0) return(0);
+  return 1;
+}
+
+
+/*-----------------------------------------------------------------------------
+ * colormap
+ *-----------------------------------------------------------------------------*/
+
+static int save_colormap(BCG *Xgc,void *the_plot)
+{
+  struct rec_colormap *lplot = the_plot;
+  if ( save_LI(lplot->code)==0) return(0);
+  if ( save_LI(lplot->m)==0) return(0);
+  if ( save_LI(lplot->n)==0) return(0);
+  if ( save_VectF(lplot->colors,lplot->m*lplot->n) == 0) return(0);
   return 1;
 }
 
@@ -911,7 +934,8 @@ static Save_Table save_table [] ={
   {CODEChamp1		     ,"Champ",		  save_Champ },
   {CODEfpf_def   	     ,"fpf_def",          save_fpf_def},
   {CODEfpf   	             ,"fpf",              save_fpf},
-  {CODEColormap		     ,"Colormap",	  save_Colormap }
+  {CODEinitialize_gc         ,"init",             save_init},
+  {CODEColormap		     ,"Colormap",	  save_colormap }
 };     	
 
 
@@ -941,11 +965,12 @@ int tape_save(BCG *Xgc,const char *fname1, int winnumber)
   xdrstdio_create(xdrs, F, XDR_ENCODE) ;
   save_VectC(scig,((int)strlen(scig))+1) ;
 
-  if ( save_Colormap(Xgc,NULL) == 0) 
-    {
-      sciprint("save: saving colormap failed\r\n") ;
-      return(0);
-    }
+  /* if ( save_Colormap(Xgc,NULL) == 0) 
+     {
+     sciprint("save: saving colormap failed\r\n") ;
+     return(0);
+     }
+  */
   while (list)
     {
       if ( list->theplot != NULL) 

@@ -279,6 +279,40 @@ static void clean_fpf(void *plot) {
 };
 
 
+
+
+/*-----------------------------------------------------------------------------
+ * colormap
+ *-----------------------------------------------------------------------------*/
+
+void store_colormap(BCG *Xgc,int m, int n,double colors[])
+{
+  struct rec_colormap *lplot = MALLOC(sizeof(struct rec_colormap));
+  if (lplot != NULL)
+    {
+      /* initialize  */ 
+      lplot->m = m; 
+      lplot->n = n; 
+      lplot->colors= NULL;
+      if ( CopyVectF(&(lplot->colors),colors,m*n) )
+	{
+	  store_record(Xgc,CODEColormap, lplot);
+	  return;}
+    }
+  Scistring("\nstore_ Plot (XXXX): No more place \n");
+}
+
+static void replay_colormap(BCG *Xgc,void  *theplot)
+{
+  struct rec_colormap *lplot = theplot;
+  Xgc->graphic_engine->scale->xset_colormap(Xgc,lplot->m,lplot->colors);
+}
+
+static void clean_colormap(void *theplot) {
+  struct rec_colormap *lplot = theplot;
+  FREE(lplot->colors);
+};
+
 /*-----------------------------------------------------------------------------
  *  drawarc_1
  *-----------------------------------------------------------------------------*/
@@ -306,7 +340,7 @@ static void replay_drawarc_1(BCG *Xgc,void  *theplot)
 static void clean_drawarc_1(void *plot) {};
 
 /*-----------------------------------------------------------------------------
- * 
+ * fillarcs 
  *-----------------------------------------------------------------------------*/
 
 static void store_fillarcs_G(BCG *Xgc,int code,double vects[],int fillvect[], int n,int size)

@@ -391,6 +391,7 @@ static void xset1_pattern(BCG *Xgc,int val)
 
 static void xset1_colormap(BCG *Xgc,int m, double val[])
 {
+  if (Xgc->record_flag == TRUE) store_colormap(Xgc,m,3,val);
   /* not recorded */ 
   Xgc->graphic_engine->xset_colormap(Xgc,m,3,val);
 }

@@ -627,6 +627,9 @@ static void xset_colormap_gen(BCG *Xgc,int m,int n,void *colors,write_c func,che
   xset_pattern(Xgc,Xgc->NumForeground+1);
   xset_foreground(Xgc,Xgc->NumForeground+1);
   xset_background(Xgc,Xgc->NumForeground+2);
+  FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
+  FPRINTF((file,"\n/Setgray {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
+  FPRINTF((file,"\n/Setcolor {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
 }
 
 
