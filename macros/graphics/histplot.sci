@@ -1,4 +1,4 @@
-function histplot(n,data,normalize=%t,style=[2],strf='171',rect=[],leg="",nax=[2,5,2,5],axesflag=[1],frameflag=[7],fill=%t)
+function histplot(n,data,normalize=%t,style=[2],strf='171',rect=[],leg="",nax=[2,5,2,5],axesflag=[1],frameflag=[8],fill=%t)
 //  
 // draws histogram of data entries using classes given by n 
 // Note that if n is a vector it must be strictly increasing 

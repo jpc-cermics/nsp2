@@ -23,6 +23,7 @@ static void GSciString (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
 static void Myalloc1 (int **xm,int n,int *err);
 static void Myalloc (int **xm,int **ym, int n, int *err);
 static void xstringb (BCG *Xgc, char *string,int x, int y, int w, int h);
+
 static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h);
 static void drawarc_1(BCG *Xgc,double arc[]);
 static void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n);
@@ -49,7 +50,6 @@ static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, d
 static void displaystringa_1(BCG *Xgc,char *string, int ipos);
 static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect);
 static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd);
-
 static void xset1_clipping_p(BCG *Xgc,double x,double y,double w,double h);
 static void xset1_clipgrf(BCG *Xgc);
 static void xset1_alufunction1(BCG *Xgc,int val);

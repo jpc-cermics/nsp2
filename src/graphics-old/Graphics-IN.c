@@ -1,4 +1,4 @@
- /*------------------------------------------------------------------
+  /*------------------------------------------------------------------
   * Copyright ENPC 2003 
   * Jean-Philippe Chancelier Enpc/Cermics
   * jpc@cermics.enpc.fr 
@@ -213,20 +213,21 @@ static char * check_strf(Stack stack,char *fname,char *varname,char *strf)
 
 /*-----------------------------------------------------------
  * Check optional argument legend 
+ * FIXME should return a const char *
  *-----------------------------------------------------------*/
 
 static const char legend_loc[]  = "";
 
 static char * check_legend(Stack stack,char *fname,char *varname,char *legend)
 {
-  if ( legend == NULL ) 
-    {
-      return legend_loc;
-    }
-  else 
-    {
-      return legend;
-    }
+  return ( legend == NULL ) ? legend_loc: legend; 
+}
+
+static const char legend_3d_loc[]  = "X@Y@Z";
+
+static const char * check_legend_3d(Stack stack,char *fname,char *varname,char *legend)
+{
+  return ( legend == NULL ) ? legend_3d_loc: legend; 
 }
 
 /*-----------------------------------------------------------
@@ -488,7 +489,7 @@ int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
 		char **strf,char **leg,
 		NspMatrix *Mrect,double **rect,
 		NspMatrix *Mnax,int **nax,
-		int frame,int axes,char **logflags)
+		int frameflag,int axesflag,char **logflags)
 {
   if (( *istyle = check_style(stack,stack.fname,"style",Mstyle,ns))== NULL) return RET_BUG;
   if (( *strf = check_strf(stack,stack.fname,"strf",*strf))==NULL) return RET_BUG;
@@ -497,14 +498,14 @@ int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
   if (( *nax = check_nax(stack,stack.fname,"nax",Mnax))==NULL) return RET_BUG;
   if (( *logflags= check_logflags(stack,stack.fname,"logflag",*logflags))==NULL) return RET_BUG;
 
-  if ( frame < -1 || frame > 8 ) 
+  if ( frameflag < -1 || frameflag > 8 ) 
     {
       Scierror("%s: frame must be in the range [0,8]\r\n",stack.fname);
       return RET_BUG;
     }   
-  if ( axes < -1 || axes > 5 ) 
+  if ( axesflag < -1 || axesflag > 5 ) 
     {
-      Scierror("%s: axes must be in the range [0,4]\r\n",stack.fname);
+      Scierror("%s: axes must be in the range [0,5]\r\n",stack.fname);
       return RET_BUG;
     }   
 
@@ -521,8 +522,8 @@ int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
     }
   /* activate caption */
   if ((*leg)[0] != '\0') *strf[0]='1';
-  if ( frame != -1 ) (*strf)[1] = frame; 
-  if ( axes != -1 )  (*strf)[2] = axes; 
+  if ( frameflag != -1 ) (*strf)[1] = (char)(frameflag+48); 
+  if ( axesflag != -1 )  (*strf)[2] = (char)(axesflag+48); 
   return 0;
 }
 
@@ -669,7 +670,7 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
   int *iflag;
   NspMatrix *x,*y,*z,*Mebox=NULL,*flag=NULL,*Mstyle=NULL;
   double alpha=35.0,theta=45.0,*ebox ;
-  char *leg=NULL;
+  char *leg=NULL,*leg1;
   int_types T[] = {realmat,realmat,realmat,new_opts, t_end} ;
 
   nsp_option opts[] ={{ "alpha",s_double,NULLOBJ,-1},
@@ -691,7 +692,7 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
 
   if (( iflag = check_param_iflag(stack,stack.fname,"flag",flag,2))==NULL) return RET_BUG;
   if (( ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
-  if (( leg = check_legend(stack,stack.fname,"leg",leg)) == NULL) return RET_BUG;
+  if (( leg1 = check_legend_3d(stack,stack.fname,"leg",leg)) == NULL) return RET_BUG;
 
   if ( Mstyle != NULLMAT ) 
     { 
@@ -701,6 +702,12 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
+  /*
+   * check that iflag[1] and leg are compatible 
+   * i.e force visibility of axes names if they are given
+   */
+  if (leg1 !=  NULL) iflag[1]=4;
+
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
 
@@ -708,11 +715,11 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
     {
       int izcol=1;
       nsp_param3d_1(Xgc,x->R,y->R,z->R,&z->m,&z->n,&izcol,(int *) Mstyle->R,
-		    &theta,&alpha,leg,iflag,ebox);
+		    &theta,&alpha,leg1,iflag,ebox);
     }
   else 
     {
-      nsp_param3d(Xgc,x->R,y->R,z->R,&z->mn,&theta,&alpha,leg,iflag,ebox);
+      nsp_param3d(Xgc,x->R,y->R,z->R,&z->mn,&theta,&alpha,leg1,iflag,ebox);
     }
   return 0;
 } 
@@ -803,7 +810,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   BCG *Xgc;
   NspObject  *args = NULL,*fobj;/* when z is a function */
   double alpha=35.0,theta=45.0,*ebox ;
-  char *leg=NULL;
+  char *leg=NULL, *leg1;
   NspMatrix *x,*y,*z,*Mcolors=NULL,*Mflag=NULL,*Mebox=NULL;
   int izcol=0, *zcol=NULL,*iflag;
   
@@ -864,8 +871,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
 
   if (( iflag = check_iflag(stack,stack.fname,"flag",Mflag,3))==NULL) return RET_BUG;
   if (( ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
-  if (( leg = check_legend(stack,stack.fname,"leg",leg)) == NULL) return RET_BUG;
-
+  if (( leg1 = check_legend_3d(stack,stack.fname,"leg",leg)) == NULL) return RET_BUG;
 
   if ( x->mn == z->mn && x->mn == z->mn && x->mn != 1) 
     {
@@ -886,7 +892,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
     }
   /* 7 and 8 are the mode for superposed graphics */
   iflag[1]=Max(Min(iflag[1],8),0);
-  /* check that iflag[2] and ebox are compatible */
+  /* check that iflag[1] and ebox are compatible */
   if ( Mebox != NULLMAT) 
     {
       /* ebox is given then iflag[1] must be 1 or 3 or 5 */
@@ -897,7 +903,11 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       /* ebox is not given then iflag[1] cannot be 1 or 3 or 5 */
       if ( iflag[1] == 1 ||  iflag[1] == 3 ||  iflag[1] == 5 || iflag[1] == 7 ) iflag[1]++;
     }
-	
+  /*
+   * check that iflag[2] and leg are compatible 
+   * i.e force visibility of axes names if they are given
+   */
+  if (leg1 !=  NULL) iflag[2]=4;
 
   if ( x->mn == 0 || y->mn == 0 || z->mn == 0) { return 0;} 
 
@@ -909,22 +919,22 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       /*  Here we are in the case where x,y and z specify some polygons */
       if (izcol == 0) 
 	{
-	  (*func1)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg,iflag,ebox);
+	  (*func1)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
 	} 
       else if (izcol == 2) 
 	{
 	  /*  New case for the fac3d3 call (interpolated shadig)  */
-	  (*func3)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg,iflag,ebox);
+	  (*func3)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
 	}
       else 
 	{
-	  (*func2)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg,iflag,ebox);
+	  (*func2)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
 	}
     } 
   else 
     {
       /*  Here we are in the standard case  */
-      (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg,iflag,ebox);
+      (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
     }
   return 0;
 }

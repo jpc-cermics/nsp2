@@ -3,21 +3,22 @@
 
 // FIXME : this is a temporary load 
 // of all the graphics macros 
-NSP=getenv('SCI');
 
+NSP=getenv('SCI');
 if %t then 
   A=glob(NSP+'/macros/xdess/*.sci');
   for i=1:size(A,1),exec(A(i,1));end;
   A=glob(NSP+'/macros/scicos/00util.sci');
   exec(A)
 end 
-
 exec(NSP+'/demos/graphics/main_graphic.sci');
 
 // demo for 2d plots 
 // -----------------------
 
-function demo_2d_1()
+demo_2d_1_info='plot2d';
+
+function y=demo_2d_1()
   t=(0:0.1:6)*%pi;
   xset("font size",2);
   plot2d(t,sin(t),style=2);
@@ -25,14 +26,18 @@ function demo_2d_1()
   xgrid(5);
 endfunction
 
-function demo_2d_2()
+demo_2d_2_info='plot2d log scale';
+
+function y=demo_2d_2()
   xset("font size",2);
   plot2d([],(1:10:10000),logflag="nl",leg="log(t)");
   xtitle("plot2d1 log scale","t","y log scale");
   xgrid(3);
 endfunction
-     
-function demo_2d_3()
+
+demo_2d_3_info='plot2d3';
+
+function y=demo_2d_3(info=%f)
   n=32-1;t=(0:n)./n;
   xset("font size",2);
   u=sin(80*%pi*t)+sin(100*%pi*t);
@@ -40,29 +45,39 @@ function demo_2d_3()
   xtitle("plot2d3 (vertical bars plot)","t","f(t)");
 endfunction
 
-function demo_2d_4()
+demo_2d_4_info='plot2d superpose';
+
+function y=demo_2d_4(info=%f)
+  if info==%t then y='plot2d'; return;end
   v=(1:20)+(1:20).*rand(1,20,"n");
   xset("font size",2);
-  plot2d1([],v);
-  plot2d1([],(1:20),style=[2],strf="100",leg="estimated");
+  plot2d([],v);
+  plot2d([],(1:20),style=[2],strf="100",leg="estimated");
   xtitle("plot2d1. Two curves drawn, the first one set the scale"," "," ");
 endfunction
 
-function demo_2d_5()
+demo_2d_5_info='plot2d with function';
+
+function y=demo_2d_5(info=%f)
+  if info==%t then y='plot2d with function'; return;end
   fplot2d();
   xtitle("fplot2d : f given by external ","x ","f(x) ");
 endfunction
 
-function demo_2d_6()
+demo_2d_6_info='histplot';
+
+function y=demo_2d_6(info=%f)
+  if info==%t then y='histplot'; return;end
   histplot();
 endfunction
 
-// organize the previous list 
-// for graphic demo widget 
+// organize the previous list for graphic demo widget 
 
 graphic_test_2d = list() 
 for i=1:6
-  graphic_test_2d(i) = list(sprintf("test%d",i), "not-used",sprintf("demo_2d_%d",i));
+  name=sprintf("demo_2d_%d",i); 
+  info=sprintf("demo_2d_info_%d",i); 
+  graphic_test_2d(i) = list(info,"not-used",name);
 end 
 
 // a sublist for 3d plots 
@@ -167,11 +182,28 @@ function demo_3d_10()
   exec(NSP+'/demos/graphics/NouvArbreQ.sci');
 endfunction
 
+function demo_3d_11()
+// parametric 3d surface 
+// nf3d 
+  u = %pi/2*(-1:0.2:1);
+  v = %pi*(-1:0.2:1);
+  n = size(u,'*');
+  x= cos(u)'*exp(cos(v));
+  y= cos(u)'*sin(v);
+  z= sin(u)'*ones(v);
+  col=ones(u)'*cos(v);
+  col=(n-1)*(col-min(col))/(max(col)-min(col))+1;
+  xset('colormap',hotcolormap(n));
+  [xx,yy,zzcol]=nf3d(x,y,col);
+  [xx,yy,zz]=nf3d(x,y,z);
+  plot3d(xx,yy,zz,colors=zzcol)
+endfunction
+
 // organize the previous list 
 // for graphic demo widget 
 
 graphic_test_3d = list() 
-for i=1:10
+for i=1:11
   graphic_test_3d(i) = list(sprintf("test%d",i), "not-used",sprintf("demo_3d_%d",i));
 end 
 
@@ -332,14 +364,115 @@ for i=1:3
 end 
 
 
+//-------------------------------
+// animations 
+//-------------------------------
+
+function demo_anim_1()
+  t=%pi*(-5:5)/5;
+  plot3d1(t,t,sin(t)'*cos(t),alpha=35,theta=45);
+  st=1;
+  for i=35:st:80, // loop on theta angle
+    xclear();
+    plot3d1(t,t,sin(t)'*cos(t),alpha=i,theta=45,flag=[1,2,4])
+    xset("wshow");
+  end
+  for i=45:st:80, //loop on alpha angle
+    xclear()
+    plot3d1(t,t,sin(t)'*cos(t),alpha=80,theta=i,flag=[1,2,4])
+    xset("wshow");
+  end
+endfunction
+
+function demo_anim_2()
+  np=10;
+  t=(0:0.1:np)*%pi;
+  for i=1:1:30
+    xclear();
+    param3d((t/(np*%pi)*%pi).*sin(t),(t/(np*%pi)*%pi).*cos(t),...
+	    i*t/(np*%pi),alpha=35,theta=45,flag=[2,4]);
+    xset("wshow");
+  end
+endfunction
+
+function demo_anim_3()
+  t=-%pi:0.3:%pi;
+  for i=35:80,
+    xclear();
+    contour(t,t,sin(t)'*cos(t),10,alpha=i,theta=45,flag=[1,2,4])
+    xset("wshow");
+  end
+  for i=45:80,
+    xclear();
+    contour(t,t,sin(t)'*cos(t),10,alpha=80,theta=i,flag=[1,2,4])
+    xset("wshow");
+  end
+endfunction
+
+function demo_anim_4()
+  t=%pi*(-1:0.1:1);
+  I=20:-1:1;
+  ebox=[min(t),max(t),min(t),max(t),-1,1];
+  //realtimeinit(0.1)
+  for i=1:size(I,'*')
+    //realtime(i)
+    xclear();
+    plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=35,theta=45,flag=[2,1,0],ebox=ebox)
+    xset("wshow");
+  end
+endfunction 
+
+function demo_anim_5()
+  t=%pi*(-5:5)/5;
+  plot3d1(t,t,sin(t)'*cos(t),alpha=35,theta=45);
+  alpha=35 + (0:2:60)
+  theta=45 + (0:2:60)
+  w=xget('window')
+  for i=1:size(alpha,'*')
+    xclear(w,%f);// clear but keep recorded graphics 
+    xtape('replayna',w,theta(i),alpha(i));
+    xset("wshow");
+  end
+endfunction
+
+function demo_anim_6()
+  a=ones(60,60);
+  for i=-60:60;
+    b=3*tril(a,i)+2*triu(a,i+1);
+    xclear();plot2d([0,10],[0,10],style=0);
+    Matplot1(b,[4,4,9,9]);xset('wshow');
+  end
+endfunction
+
+
+function demo_anim_7()
+  x=%pi*(-1:0.1:1);y=x;
+  for i=1:50
+    xclear();
+    champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y),
+           rect=[-%pi,-%pi,%pi,%pi],arfact=3)
+    xset('wshow');
+  end
+endfunction
+
+// organize the previous list for graphic demo widget 
+
+graphic_test_anim = list() 
+for i=1:7
+  name=sprintf("demo_anim_%d",i); 
+  test_info=sprintf("test %d",i); 
+  //execstr('test_info='+name+'(info=%t);');
+  graphic_test_anim(i) = list(test_info, "not-used",name);
+end 
 
 // organize the previous list 
 // for 
 
 graphic_demos_all = list( list("primitives", "", "", graphic_test_prim  ), 
                           list("2D curves", "", "", graphic_test_2d  ), 
-                          list("3D curves and surfaces",  "", "", graphic_test_3d ));
-			  			  
+                          list("3D curves and surfaces",  "", "", graphic_test_3d ),
+			  list("Animations",  "", "", graphic_test_anim ));
+			  			  			  
 // small test 
   
 graphics_demo_in_gtk(graphic_demos_all)
