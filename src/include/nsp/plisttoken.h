@@ -51,7 +51,8 @@
 /* -30 is used */
 #define EXEC -31
 #define GLOBAL -32
-#define NOTKEY  -33
+#define CLEARGLOBAL   -33
+#define NOTKEY  -34
 
 /*****************************
  * OPERATORS
