@@ -768,6 +768,10 @@ int int_geom3d( Stack stack, int rhs, int opt, int lhs)
 
 /*-----------------------------------------------------------
  * plot3dXXX(x,y,z,opts)
+ * FIXME: 
+ *  attention les parametres transmis flag et ebox 
+ *  peuvent changer 
+ *  Il faur demander des copies 
  *-----------------------------------------------------------*/
 
 typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,char *,int *,double *); 
@@ -863,18 +867,18 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
 	  return RET_BUG;
 	}
     }
-
-  iflag[1]=Max(Min(iflag[1],6),0);
+  /* 7 and 8 are the mode for superposed graphics */
+  iflag[1]=Max(Min(iflag[1],8),0);
   /* check that iflag[2] and ebox are compatible */
   if ( Mebox != NULLMAT) 
     {
       /* ebox is given then iflag[1] must be 1 or 3 or 5 */
-      if ( iflag[1] == 2 ||  iflag[1] == 4 ||  iflag[1] == 6 ) iflag[1]--;
+      if ( iflag[1] == 2 ||  iflag[1] == 4 ||  iflag[1] == 6 || iflag[1] == 8 ) iflag[1]--;
     }
   else
     {
       /* ebox is not given then iflag[1] cannot be 1 or 3 or 5 */
-      if ( iflag[1] == 1 ||  iflag[1] == 3 ||  iflag[1] == 5 ) iflag[1]++;
+      if ( iflag[1] == 1 ||  iflag[1] == 3 ||  iflag[1] == 5 || iflag[1] == 7 ) iflag[1]++;
     }
 	
 

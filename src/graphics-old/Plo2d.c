@@ -285,7 +285,7 @@ void update_frame_bounds(BCG *Xgc,
   /* if strflag[1] == 7 or 8 we compute the max between current scale and the new one  */
   if (strflag[1] == '7' || strflag[1] == '8' )
     {
-      if ( Xgc->scales->flag != 0 ) 
+      if ( Xgc->scales->scale_flag != 0 ) 
 	{
 	  /* first check that we are not changing from normal<-->log */
 	  int xlog = ((int)strlen(xf) >= 2 && xf[1]=='l' ) ? 1: 0;

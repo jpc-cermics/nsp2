@@ -2,7 +2,11 @@
  *    Graphic library
  *    Copyright (C) 1998-2001 Enpc/Jean-Philippe Chancelier
  *    jpc@cermics.enpc.fr 
- --------------------------------------------------------------------------*/
+ *
+ * FIXME: reporter les modifs de 
+ *    plot3dg pour les echelles automatiques ds les autres graphiques.
+ *
+ *--------------------------------------------------------------------------*/
 
 #include <string.h> /* in case of dbmalloc use */
 #include <math.h>
@@ -155,6 +159,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 			 double *x, double *y, double *z, int *p, int *q, 
 			 double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
+  int redraw=FALSE;
   static int InsideU[4],InsideD[4],fg,fg1,dc;
   /* solid = color of 3D frame */
   int polysize,npoly,whiteid;
@@ -163,14 +168,6 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   static int cache;
   static double zmin,zmax;
   int i,j;
-  /** If Record is on **/
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    {
-      if (strcmp(name,"plot3d")==0) 
-	store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
-      else 
-	store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
-    }
 
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
  
@@ -187,23 +184,64 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
       zmax=bbox[5];
     }
 
-  /* try to mix with previous 3d scales 
-   * FIXME: travail en cours 
-   */
-  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == OK) 
+  if ( Xgc->scales->scale_flag3d != 0 ) 
     {
-      if (flag[1] == '6' || flag[1] == '7' )
+      if (flag[1] == 7 || flag[1] == 8 )
 	{
-	  if ( Xgc->scales->flag != 0 ) 
-	    {
-	      for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
-	      for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
-	      zmin=bbox[4];
-	      zmax=bbox[5];
-	      /* FIXME: here we must change the flag[1];*/
-	    }
+	  for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
+	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
+	  zmin=bbox[4];
+	  zmax=bbox[5];
+
+	  if ( bbox[0] < Xgc->scales->bbox1[0] 
+	       || bbox[1] > Xgc->scales->bbox1[1] 
+	       || bbox[2] < Xgc->scales->bbox1[2] 
+	       || bbox[3] > Xgc->scales->bbox1[3] 
+	       || bbox[4] < Xgc->scales->bbox1[4] 
+	       || bbox[5] > Xgc->scales->bbox1[5] )
+	    redraw = TRUE;
+	  flag[1]=2*Xgc->scales->metric3d;
 	}
     }
+  else 
+    {
+      if (flag[1] == 7 || flag[1] == 8 )
+	{
+	  /* we have used a superpose mode and there's no previous 
+	   * 3d graphics, we switch to default 
+	   */
+	  flag[1]= 1;
+	}
+    }
+  /* switch to mode with ebox to accelerate replot */
+  if ( flag[1]==2 || flag[1]==4 || flag[1]==6 || flag[1] == 8 ) 
+     flag[1]--;
+
+  /* Redraw other graphics */
+  if ( redraw == TRUE )
+    {
+      /* just change bbox not flag */
+      static int iflag[]={0,0,0,1};
+      if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
+	{
+	  Xgc->graphic_engine->xinfo(Xgc,"Auto rescale only works when recording is on " );
+	  return;
+	}
+      Xgc->graphic_engine->clearwindow(Xgc);    
+      /* redraw 3d with new bbox */
+      tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,NULL,teta,alpha,bbox);
+    }
+
+  /* record current 3d plot */
+
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
+    {
+      if (strcmp(name,"plot3d")==0) 
+	store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+      else 
+	store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+    }
+
 
   if ( flag[1] ==0)
     SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
@@ -849,19 +887,11 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
   static int aaint[]={2,10,2,10};
   int wdim[2];
   char logf[2];
-  double R,xo,yo,zo,dx,dy,dz,hx,hy,hx1,hy1,Teta,Alpha;
+  double R,xo,yo,zo,dx,dy,dz,hx,hy,hx1,hy1,Teta=*teta,Alpha=*alpha;
   int wmax,hmax;
   static double cost=0.5,sint=0.5,cosa=0.5,sina=0.5;
-  Teta=*teta;
-  Alpha=*alpha;
-  /*  if (flag==0) {
-    Alpha=Xgc->scales->alpha;
-    Teta=Xgc->scales->theta;
-      }
-  else {
-    Xgc->scales->alpha = Alpha;
-    Xgc->scales->theta = Teta;
-    }*/
+
+  Xgc->scales->scale_flag3d = 1;
   Xgc->scales->alpha = Alpha;
   Xgc->scales->theta = Teta;
   cost=cos((Teta)*M_PI/180.0);
@@ -924,7 +954,7 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
     }
   if ( flag == 2 )
     {
-/* radius and center of the sphere circumscribing the box */
+      /* radius and center of the sphere circumscribing the box */
       dx=bbox[1]-bbox[0]; dy=bbox[3]-bbox[2]; dz=bbox[5]-bbox[4];
       R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2;
       xo= (double) (xbox[0]+xbox[6])/2 ;
@@ -937,7 +967,7 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
     }
   if (flag==2 || flag==3)
     {
-/* adjust limits (code adapted from Plo2d.c & Stephane's patch) */
+      /* adjust limits (code adapted from Plo2d.c & Stephane's patch) */
       hx=xmmax-xmmin;
       hy=ymmax-ymmin;
       if ( hx/(double)wmax  < hy/(double)hmax ) 
@@ -957,10 +987,9 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
      {
       FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
       set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
-      Xgc->scales->metric3d=flag; /* the metric mode is stored into the
-                             * List of Scales */
+      Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
      }
-/* end of code added by es */
+  /* end of code added by es */
 }
 
 /*----------------------------------------------------------------

@@ -329,6 +329,7 @@ static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
 window_scale_list current_scale = 
 { 
   0,
+  0,
   {600,400},
   {0.0,0.0,1.0,1.0},
   {0.0,0.0,1.0,1.0},
@@ -354,6 +355,7 @@ window_scale_list current_scale =
 
 static window_scale_list  default_scale = 
 { 
+  0,
   0,
   {600,400},
   {0.0,0.0,1.0,1.0},
@@ -633,7 +635,8 @@ void window_scale_delete(int win)
 static void scale_copy( window_scale_list *s1,window_scale_list *s2)
 {
   int i,j;
-  s1->flag=s2->flag;
+  s1->scale_flag=s2->scale_flag;
+  s1->scale_flag3d=s2->scale_flag3d;
   s1->wdim[0]=  s2->wdim[0];
   s1->wdim[1]=  s2->wdim[1];
   for (i=0; i< 4; i++) 
@@ -678,7 +681,7 @@ void show_scales(BCG *Xgc)
     {
       sciprint("\tsubwin=[%5.2f,%5.2f,%5.2f,%5.2f], flag=%d\r\n",
 	       loc->subwin_rect[0],loc->subwin_rect[1],loc->subwin_rect[2],loc->subwin_rect[3],
-	       loc->flag);      
+	       loc->scale_flag);      
       loc = loc->next;
     }
 }
@@ -755,7 +758,10 @@ int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *l
 	  if ( xgc_add_scale(Xgc,&default_scale)== FAIL)
 	    return 0;
 	  else 
-	    Xgc->scales->flag = 0;
+	    {
+	      Xgc->scales->scale_flag = 0;
+	      Xgc->scales->scale_flag3d = 0;
+	    }
 	}
     }
   else WRect = Xgc->scales->subwin_rect;
@@ -870,7 +876,7 @@ void set_scale(BCG *Xgc,
       /* if no scales were present and the values given are the same as the 
        * default frect values we must register that we are setting a scale 
        */
-      if ( Xgc->scales->flag == 0)  frame_values_changed='t' ;
+      if ( Xgc->scales->scale_flag == 0)  frame_values_changed='t' ;
 
     }
   if ( flag[3] == 't' ) 
@@ -901,7 +907,7 @@ void set_scale(BCG *Xgc,
     {
       for (i=0; i < 4 ; i++) Xgc->scales->frect[i]=frame_values[i]; 
       /* the scale is no more a default scale */
-      Xgc->scales->flag = 1;
+      Xgc->scales->scale_flag = 1;
     }
 
   if ( wdim_changed == 't' || subwin_changed == 't' || frame_values_changed == 't' 

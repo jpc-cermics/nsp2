@@ -2049,12 +2049,11 @@ void tape_clean_plots(BCG *Xgc,int winnumber)
 
 /*-------------------------------------------------------------------------
  * Change les angles alpha theta dans tous les plot3d stockes 
- *change  aussi flag et box suivant la valeur de iflag.
- *iflag est de longueur [4] si iflag[i] != 0 cela veut dire qu'il faut changer le 
- *flag[i] en utilisant celui de l'argument flag.
- *iflag[4] sert a dire s'il faut ou pas changer bbox 
+ * change  aussi flag et box suivant la valeur de iflag.
+ * iflag est de longueur [4] si iflag[i] != 0 cela veut dire qu'il faut changer le 
+ * flag[i] en utilisant celui de l'argument flag.
+ * iflag[3] sert a dire s'il faut ou pas changer bbox 
  *---------------------------------------------------------------------------*/
-
 
 static void new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
 {
