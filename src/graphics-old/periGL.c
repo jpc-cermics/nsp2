@@ -2093,19 +2093,12 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
 /*
 ** Une police de taille 12 = une texture-fonte d'homotethie 0.6 !!
 */
-     printf("dsiplay %i\n",Xgc->fontSize); 
-     glPrint2D(Xgc, x, y,  (0.6*Xgc->fontSize)/12.0, angle, false, string);
-#if 0 
      if ( Abs(angle) <= 0.1) 
      {
 	  gint lbearing, rbearing, iascent, idescent, iwidth;
 	  gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing,
 			     &iwidth, &iascent, &idescent);
-	  gdk_draw_text(Xgc->private->Cdrawable,Xgc->private->font,Xgc->private->wgc, 
-			x, y - idescent , string, strlen(string));
-	  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-	       gdk_draw_text(Xgc->private->pixmap,Xgc->private->font,Xgc->private->wgc, 
-			     x, y - idescent , string, strlen(string));
+	  glPrint2D(Xgc, x, y,  0.6, angle, false, string); //(0.6*Xgc->fontSize)/12.0
 	  if ( flag == 1) 
 	  {
 	       int rect[] = { x , y- iascent - idescent, 
@@ -2118,7 +2111,6 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
      {
 	  DispStringAngle(Xgc,x,y,string,angle);
      }
-#endif
 }
 
 static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle)
@@ -2127,7 +2119,7 @@ static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle
 ** Une police de taille 12 = une texture-fonte d'homotethie 0.6 !!
 */
 
-printf("%i\n",Xgc->fontSize); 
+     printf("%i\n",Xgc->fontSize); 
      glPrint2D(Xgc, x0, yy0, (0.6*Xgc->fontSize)/12.0, angle, false, string);
 #if 0
      int i;

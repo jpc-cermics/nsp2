@@ -157,7 +157,7 @@ static void pixmap_resize(BCG *Xgc)
  * If there's no graphic window then select creates one 
  */
 
-void xselgraphic(BCG *Xgc)
+static void xselgraphic(BCG *Xgc)
 { 
   /* Test not really usefull: see sciwin in matdes.f */
   if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL);
@@ -167,11 +167,11 @@ void xselgraphic(BCG *Xgc)
 
 /** End of graphic (do nothing)  **/
 
-void xendgraphic(void)
+static void xendgraphic(void)
 {
 } 
 
-void xend(BCG *Xgc)
+static void xend(BCG *Xgc)
 {
   /** Must destroy everything  **/
 }
@@ -196,7 +196,7 @@ static void clearwindow(BCG *Xgc)
 #include <unistd.h> 
 #endif 
 
-void xpause(int sec_time)
+static void xpause(int sec_time)
 { 
   unsigned useconds = (unsigned) sec_time;
   if (useconds != 0)  
@@ -215,14 +215,14 @@ void xpause(int sec_time)
  * Changes the graphic window popupname 
  *-----------------------------------------------------------------*/
 
-void Setpopupname(BCG *Xgc,char *string)
+static void Setpopupname(BCG *Xgc,char *string)
 { 
   gtk_window_set_title(GTK_WINDOW(Xgc->private->window),string);
 }
 
 /* appelle ds Xcall.c */
 
-void setpopupname(BCG *Xgc,char *name)
+static void setpopupname(BCG *Xgc,char *name)
 {
   Setpopupname(Xgc,name);
 }
@@ -336,7 +336,7 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 
 static int sci_graphic_protect = 0;
 
-void   set_delete_win_mode(void) {  sci_graphic_protect = 0 ;}
+extern void   set_delete_win_mode(void) {  sci_graphic_protect = 0 ;}
 extern void   set_no_delete_win_mode(void) {  sci_graphic_protect = 1 ;}
 
 /* ici normalement on peut pas arreter la destruction */
@@ -674,7 +674,7 @@ static void xset_windowpos(BCG *Xgc, int x, int y)
 
 /** To get the drawbox  window size : used by periGif **/
 
-void getwindowdim(BCG *Xgc,int *verbose, int *x, int *narg, double *dummy)
+static void getwindowdim(BCG *Xgc,int *verbose, int *x, int *narg, double *dummy)
 {   
   xget_windowdim(Xgc,x,x+1);
 }
@@ -971,7 +971,7 @@ static void idfromname(char *name1, int *num)
     }
 }
 
-void xset_alufunction(BCG *Xgc,char *string)
+static void xset_alufunction(BCG *Xgc,char *string)
 {   
   int value;
   idfromname(string,&value);
@@ -2324,7 +2324,7 @@ static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewp
  * widget hierarchy 
  */
 
-void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+static void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
   nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
 }
@@ -2560,7 +2560,7 @@ static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z,
  * bitmap display 
  *-----------------------------------------------------*/
 
-void bitmap(BCG *Xgc,char *string, int w, int h)
+static void bitmap(BCG *Xgc,char *string, int w, int h)
 {
   /* 
   static XImage *setimage;
@@ -2624,7 +2624,8 @@ FontAlias fonttab[] ={
   {(char *) NULL,( char *) NULL}
 };
 
-int fontidscale(BCG *Xgc,int fontsize)
+
+static int fontidscale(BCG *Xgc,int fontsize)
 {
   int nnsiz,i;
   int isiz = i_size_[fontsize];
@@ -2670,8 +2671,8 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize)
 
 static void  xget_font(BCG *Xgc,int *font)
 {
-  font[0]= Xgc->fontId ;
-  font[1] =Xgc->fontSize ;
+  font[0] = Xgc->fontId ;
+  font[1] = Xgc->fontSize ;
 }
 
 /** To set the current mark **/
@@ -3234,7 +3235,7 @@ static void analyze_points(BCG *Xgc,int n, int *vx, int *vy, int onemore)
   }
 }
 
-int CheckXgc(BCG *Xgc)
+static int CheckXgc(BCG *Xgc)
 {
   return( Xgc != (BCG *) 0);
 }

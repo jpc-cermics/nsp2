@@ -107,7 +107,6 @@ expose_event (GtkWidget      *widget,
     return FALSE;
 
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
   glCallList (1);
 
   if (gdk_gl_drawable_is_double_buffered (gldrawable))
@@ -149,6 +148,7 @@ my_draw_event (GtkWidget   *owidget,              gpointer        data)
   i--;
   glEndList ();
   glCallList (3);
+  glDrawBuffer(GL_BACK);
   glFlush ();
   gdk_gl_drawable_gl_end (gldrawable);
 
