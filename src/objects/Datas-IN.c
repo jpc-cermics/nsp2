@@ -117,7 +117,7 @@ static int int_clearglobal(Stack stack, int rhs, int opt, int lhs)
  * in the current env if this macros is in the search list 
  */
 
-static char *exists_list[] = {  "all", "local", "global", NULL};
+static char *exists_list[] = {"all", "local", "global", "function", NULL};
 
 static int int_exists(Stack stack, int rhs, int opt, int lhs)
 {
@@ -138,6 +138,9 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
     if (nsp_frame_search_object(Name) != NULLOBJ) irep=1;
     break;
   case 2:    
+    if (nsp_global_frame_search_object(Name) != NULLOBJ) irep=1;
+    break;
+  case 3: 
     if (nsp_global_frame_search_object(Name) != NULLOBJ) irep=1;
     break;
   } 

@@ -11,7 +11,7 @@ function graypolarplot(theta,rho,z,varargin)
   R=max(rho)
   nv=size(varargin)
   if nv>=1 then strf=varargin(2),else  strf='030',end
-  if nv>=2 then rect=varargin(4),else  rect=[-R -R R R]*1.1,end
+  if nv>=2 then rect=varargin(4),else  rect=[-R, -R, R, R]*1.1,end
   plot2d(0,0,1,strf,' ',rect)
   [rho,k]=sort(rho);z=z(:,k);
   
@@ -19,12 +19,12 @@ function graypolarplot(theta,rho,z,varargin)
   for k=1:size(rho,'*')-1
     r=rho(k)
     xfarcs([-r*ones(1,nt-1);
-	    r*ones(1,nt-1)
-	    2*r*ones(1,nt-1)
-	    2*r*ones(1,nt-1)
+	    r*ones(1,nt-1);
+	    2*r*ones(1,nt-1);
+	    2*r*ones(1,nt-1);
 	    theta(1:$-1)*64;
-	    (theta(2:$)-theta(1:$-1))*64
-	   ],(z(1:$-1,k)+z(2:$,k)+z(1:$-1,k+1)+z(2:$,k+1))/4)
+	    (theta(2:$)-theta(1:$-1))*64],
+            (z(1:$-1,k)+z(2:$,k)+z(1:$-1,k+1)+z(2:$,k+1))/4)
   end
   r=rho($)
   if r<>0 then
