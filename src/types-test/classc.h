@@ -7,7 +7,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics
  *-----------------------------------------------------------------*/
 
-#include "classa.h"
+#include "nsp/classa.h"
 
 /*
  * NspClassC inherits from NspClassA

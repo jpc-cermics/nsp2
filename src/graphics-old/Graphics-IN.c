@@ -10,11 +10,10 @@
 
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
-#include "../interp/Eval.h"
-
+#include "nsp/parse.h"
 #include "nsp/graphics/Graphics.h"
 #include "nsp/gsort-p.h"
-
+#include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 
 static int sci_demo (char *fname,char *code,int flag) ;
 static void  nsp_gwin_clear(BCG *Xgc);
@@ -4409,18 +4408,14 @@ static int sci_demo (char *fname,char *code,int flag)
   int rep;
   if ( flag == 1) 
     {
-      Sciprintf("Demo of %s\r\n",fname);
-      Sciprintf("%s\r\n",code);
+      Sciprintf("Demo of %s\n",fname);
+      Sciprintf("%s\n",code);
     }
-  rep = ParseEvalFromStr(code,1);
-  switch (rep)
+  rep = ParseEvalFromStr(code,FALSE,FALSE,FALSE);
+  if  ( rep < 0 ) 
     {
-    case RET_BUG :
-      Scierror("Error:\tBug detected during evaluation of string in %s\n",fname);
-      return rep;
-    case RET_CTRLC :
-      Scierror("Error:\tExecution of string int %s interupted\n",fname);
-      return rep;
+      Scierror("Error: during evaluation of %s\n",code);
+      return RET_BUG;
     }
   return 0;
 }

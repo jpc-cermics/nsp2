@@ -4,9 +4,8 @@
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
-#include "nsp/object.h"
 #define  ClassA_Private 
-#include "classa.h"
+#include "nsp/object.h"
 #include "nsp/interf.h"
 
 /* 

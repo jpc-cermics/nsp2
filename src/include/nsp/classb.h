@@ -9,7 +9,7 @@
   
 /* ClassB */
 
-#include "classa.h"
+#include "nsp/classa.h"
 
 /*
  * NspClassB inherits from NspClassA
@@ -47,21 +47,6 @@ NspClassB *new_classb();
  * Object methods redefined for classb 
  */
 
-#ifdef ClassB_Private 
-static int init_classb(NspClassB *o,NspTypeClassB *type);
-static int classb_size(NspClassB *Mat, int flag);
-static char *classb_type_as_string(void);
-static char *classb_type_short_string(void);
-static int classb_eq(NspClassB *A, NspObject *B);
-static int classb_neq(NspClassB *A, NspObject *B);
-static int classb_xdr_save(NspFile  *F, NspClassB *M);
-static NspClassB  *classb_xdr_load(NspFile   *F);
-static AttrTab classb_attrs[]; 
-static NspMethods *classb_get_methods(void); 
-static NspObject *classb_path_extract(NspClassB *A, NspObject *O);
-static int int_clb_create(Stack stack, int rhs, int opt, int lhs);
-#endif /* ClassB_Private */
-
 #define NULLCLB (NspClassB*) 0
 
 NspClassB *classb_create(char *name,int color,int thickness,NspTypeBase *type);
@@ -78,7 +63,20 @@ extern int IsClassB(NspObject *O);
 extern NspClassB *GetClassBCopy (Stack stack, int i); 
 extern NspClassB *GetClassB (Stack stack, int i); 
 
-
-
 #endif 
+
+#ifdef ClassB_Private 
+static int init_classb(NspClassB *o,NspTypeClassB *type);
+static int classb_size(NspClassB *Mat, int flag);
+static char *classb_type_as_string(void);
+static char *classb_type_short_string(void);
+static int classb_eq(NspClassB *A, NspObject *B);
+static int classb_neq(NspClassB *A, NspObject *B);
+static int classb_xdr_save(NspFile  *F, NspClassB *M);
+static NspClassB  *classb_xdr_load(NspFile   *F);
+static AttrTab classb_attrs[]; 
+static NspMethods *classb_get_methods(void); 
+static NspObject *classb_path_extract(NspClassB *A, NspObject *O);
+static int int_clb_create(Stack stack, int rhs, int opt, int lhs);
+#endif /* ClassB_Private */
 
