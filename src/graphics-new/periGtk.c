@@ -34,9 +34,10 @@ GtkWidget *GetWindowNumber  (int);
 GtkWidget *GetBGWindowNumber (int);
 
 static void ResetScilabXgc (BCG *Xgc);
-static void LoadFonts(void), LoadSymbFonts(void), analyze_points(BCG *Xgc,int n, int *vx, int *vy, int onemore);
-static void DrawMark(BCG *Xgc,int *x, int *y), My2draw(BCG *Xgc,int j, int *vx, int *vy),
-  MyDraw(BCG *Xgc,int iib, int iif, int *vx, int *vy), change_points(int i, int x, int y);
+static void LoadFonts(void), LoadSymbFonts(void);
+static void analyze_points(BCG *Xgc,int n, int *vx, int *vy, int onemore);
+static void DrawMark(BCG *Xgc,int *x, int *y), My2draw(BCG *Xgc,int j, int *vx, int *vy);
+static void MyDraw(BCG *Xgc,int iib, int iif, int *vx, int *vy), change_points(int i, int x, int y);
 static void loadfamily_n(char *name, int *j);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
 static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr);
