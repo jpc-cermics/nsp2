@@ -9,8 +9,8 @@
 #include <math.h>
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
-/* #include "nsp/graphics/PloEch.h" */
 
+/* FIXME: ? should be removed */
 #define spINSIDE_SPARSE
 #if defined(THINK_C) || defined (__MWERKS__)
 #include "::sparse:spConfig.h" 
@@ -96,7 +96,7 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
       frame_clip_off(Xgc);
       /** Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1')
-	Legends(Xgc,style,n1,legend); 
+	nsp_legends(Xgc,style,n1,legend); 
     }
 
   /* my_gl_main (0,NULL); */
@@ -576,8 +576,7 @@ void plot2d_strf_change(char c, char *strf)
  * then the function Legends draw  Min(*n1,6,nlegends) legends
  *-----------------------------------------------------*/
 
-
-void Legends(BCG *Xgc,int *style,int * n1,char * legend)
+void nsp_legends_old(BCG *Xgc,int *style,int * n1,char * legend)
 {
   int rect[4],xx,yy;
   char *leg,*loc;
@@ -638,7 +637,7 @@ void Legends(BCG *Xgc,int *style,int * n1,char * legend)
 		{ 
 		  int n=1,p=2;
 		  polyx[0]=inint(xi);polyx[1]=inint(xi+xoffset);
-		  polyy[0]=inint(yi - rect[3]/2);polyy[1]=inint(yi- rect[3]/2.0);
+		  polyy[0]=polyy[1]=inint(yi - rect[3]/2.0);
 		  lstyle[0]=style[i];
 		  Xgc->graphic_engine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
 		}
@@ -661,15 +660,112 @@ void Legends(BCG *Xgc,int *style,int * n1,char * legend)
     }
 }
 
+/*----------------------------------------------------
+ *  legend="leg1@leg2@leg3@...."             
+ *  legend contain legends separated by '@'
+ *  if nlegend is the number of legends stored in legend
+ *  then the function Legends draw  Min(*n1,6,nlegends) legends
+ *-----------------------------------------------------*/
 
+static void nsp_legends_box(BCG *Xgc,int n1,int *style,char * legend,int box[4],int get_box,
+			    double xoffset,double yoffset,int pat,int fg);
 
+void nsp_legends(BCG *Xgc,int *style,int * n1,char * legend)
+{
+  int rect[4],box[4],xx,yy;
+  char *loc;
+  double xoffset,yoffset;  
+  loc=(char *) MALLOC( (strlen(legend)+1)*sizeof(char));
 
+  Xgc->graphic_engine->boundingbox(Xgc,"pl",xx,yy,rect);
 
+  if ( loc != 0)
+    {
+      int fg,old_dash,pat;
+      fg = Xgc->graphic_engine->xget_foreground(Xgc);
+      old_dash = Xgc->graphic_engine->xset_dash(Xgc,1);
+      pat = Xgc->graphic_engine->xset_pattern(Xgc,fg);
 
+      strcpy(loc,legend);
 
+      /* length for the tick zone associated to the legend */
+      xoffset= (Xgc->scales->WIRect1[2])/20.0;
+      /* y offset between legends */
+      yoffset= rect[3];
+      /* upper right position of the legend box */
+      box[0] = Xgc->scales->WIRect1[0] + Xgc->scales->WIRect1[2];
+      box[1] = Xgc->scales->WIRect1[1];
+      nsp_legends_box(Xgc,*n1,style,loc,box,TRUE,xoffset,yoffset,pat,fg);
+      strcpy(loc,legend);
+      box[0] -= box[2]+ xoffset/2.0;
+      box[1] += xoffset/2.0;
+      nsp_legends_box(Xgc,*n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg);
+      FREE(loc);
+      Xgc->graphic_engine->xset_dash(Xgc,old_dash);
+    }
+  else
+    {
+      Scistring("Legends : running out of memory to store legends\n");
+    }
+}
 
+/* 
+ * draw or compute the bounding box 
+ */
 
-
-
-
-
+static void nsp_legends_box(BCG *Xgc,int n1,int *style,char * legend,int box[4],int get_box,
+			    double xoffset,double yoffset,int pat,int fg)
+{
+  int i,xs,ys,flag=0,polyx[2],polyy[2],lstyle[1],ni,rect[4];
+  double angle=0.0,yi,xi;
+  xi= 1.4*xoffset;
+  yi= box[1]+ yoffset*(1.25);
+  if ( get_box == TRUE )
+    {
+      box[3]= n1*1.5*yoffset;
+      box[2]= xi;
+    }
+  for ( i = 0 ; i < n1 ; i++)
+    {  
+      if (n1 == 1) ni=Max(Min(5,style[1]-1),0);else ni=i;
+      xs=inint(box[0]+xi);
+      ys=inint(yi);
+      if ( i==0) legend=strtok(legend,"@"); else legend=strtok((char *)0,"@");
+      if (legend != 0) 
+	{
+	  if ( get_box == TRUE )
+	    {
+	      Xgc->graphic_engine->boundingbox(Xgc,legend,xs,ys,rect);
+	      box[2]= Max(box[2],xi+rect[2]);
+	    }
+	  else
+	    {
+	      Xgc->graphic_engine->xset_pattern(Xgc,fg);
+	      Xgc->graphic_engine->displaystring(Xgc,legend,xs,ys,flag,angle);
+	      Xgc->graphic_engine->xset_pattern(Xgc,pat);
+	      if (style[i] > 0)
+		{ 
+		  int n=1,p=2;
+		  polyx[0]=inint(box[0]);polyx[1]=inint(box[0]+xoffset);
+		  polyy[0]=polyy[1]=inint(yi - rect[3]/2.0);
+		  lstyle[0]=style[i];
+		  Xgc->graphic_engine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
+		}
+	      else
+		{ 
+		  /* FIXME: should be affected by marksize */
+		  int n=1,p=1;
+		  polyx[0]=inint(box[0]+xoffset);
+		  polyy[0]=inint(yi- rect[3]/2);
+		  lstyle[0]=style[i];
+		  Xgc->graphic_engine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
+		}
+	    }
+	}
+      yi += yoffset*(1.5);
+    }
+  if ( get_box == FALSE )
+    {
+      Xgc->graphic_engine->drawrectangle(Xgc,box);
+    }
+}

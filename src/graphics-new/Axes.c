@@ -251,15 +251,15 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
   int ns=2,style=0,iflag=0;
   int fontid[2],fontsize_kp,logrect[4],smallersize,color_kp;
   
-   /* Modified by POLPOTH09042001 Mon Apr  9 08:59:10 MET DST 2001 */
-   /* If  zero ticks are requested, exit */
- 
-   if (*nx==3) if (x[2]==0.0) return;
-   if (*ny==3) if (y[2]==0.0) return;
- 
-   /* End of modified code */
+  /* Modified by POLPOTH09042001 Mon Apr  9 08:59:10 MET DST 2001 */
+  /* If  zero ticks are requested, exit */
   
-   Xgc->graphic_engine->xget_font(Xgc,fontid);
+  if (*nx==3) if (x[2]==0.0) return;
+  if (*ny==3) if (y[2]==0.0) return;
+ 
+  /* End of modified code */
+  
+  Xgc->graphic_engine->xget_font(Xgc,fontid);
   fontsize_kp = fontid[1] ;
 
   if ( fontsize != -1 ) 
@@ -348,12 +348,12 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	  if ( pos == 'd' ) 
 	    {
 	      posi[1]=inint( ym[0] + 1.2*barlength + rect[3]);
-	      vy[0]= ym[0];vy[1]= ym[0] + barlength ;
+	      vy[0]= ym[0];vy[1]= ym[0] - barlength ;
 	    }
 	  else 
 	    { 
 	      posi[1]=inint( ym[0] - 1.2*barlength);
-	      vy[0]= ym[0];vy[1]= ym[0] - barlength;
+	      vy[0]= ym[0];vy[1]= ym[0] + barlength;
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
 	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
@@ -364,8 +364,9 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
-
+	  
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
+
 	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  /* subtics */
 	  if ( i < Nx-1 ) 
@@ -378,9 +379,9 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 		{
 		  vx[0] = vx[1] = XScale(vxx+dx*j);
 		  if ( pos == 'd' ) 
-		    { vy[0]= ym[0];vy[1]= ym[0] + barlength/2.0 ; }
+		    { vy[0]= ym[0];vy[1]= ym[0] - barlength/2.0 ; }
 		  else 
-		    { vy[0]= ym[0];vy[1]= ym[0] - barlength/2.0; }
+		    { vy[0]= ym[0];vy[1]= ym[0] + barlength/2.0; }
 		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 		}
 	    }
@@ -433,12 +434,12 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	  if ( pos == 'r' ) 
 	    {
 	      posi[0]=inint( xm[0] + 1.2*barlength);
-	      vx[0]= xm[0];vx[1]= xm[0]+barlength;
+	      vx[0]= xm[0];vx[1]= xm[0] - barlength;
 	    }
 	  else 
 	    { 
 	      posi[0]=inint(xm[0] - 1.2*barlength - rect[2]);
-	      vx[0]= xm[0];vx[1]= xm[0] - barlength;
+	      vx[0]= xm[0];vx[1]= xm[0] + barlength;
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
 	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
@@ -446,7 +447,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	    {
 	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
 	      Xgc->graphic_engine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),
-					 (posi[1] += logrect[3],posi[1]),flag,angle);
+						 (posi[1] += logrect[3],posi[1]),flag,angle);
 	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
@@ -464,9 +465,9 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 		{
 		  vy[0] = vy[1] = YScale(vxx+dy*j);
 		  if ( pos == 'r' ) 
-		    { vx[0]= xm[0];vx[1]= xm[0] + barlength/2.0 ; }
+		    { vx[0]= xm[0];vx[1]= xm[0] - barlength/2.0 ; }
 		  else 
-		    { vx[0]= xm[0];vx[1]= xm[0] - barlength/2.0; }
+		    { vx[0]= xm[0];vx[1]= xm[0] +  barlength/2.0; }
 		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 		}
 	    }
@@ -483,7 +484,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
   /* reset to current color */
   if ( textcolor != -1 || ticscolor != -1 ) 
     {
-       Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
+      Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
     }
 
 }

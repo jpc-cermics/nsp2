@@ -208,7 +208,7 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
     {
       int style = -1;
       n1=1;
-      Legends(Xgc,&style,&n1,legend);
+      nsp_legends(Xgc,&style,&n1,legend);
     }
   return(0);
 }

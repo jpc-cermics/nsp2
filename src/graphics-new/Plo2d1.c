@@ -69,7 +69,7 @@ int nsp_plot2d_1(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
       frame_clip_off(Xgc);
       /** Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1')
-	Legends(Xgc,style,n1,legend);
+	nsp_legends(Xgc,style,n1,legend);
     }
  return(0);
 
