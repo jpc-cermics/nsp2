@@ -867,6 +867,11 @@ void set_scale(BCG *Xgc,
     {
       for (i=0; i < 4 ; i++ ) 
 	if ( frame_values[i] != Xgc->scales->frect[i]) { frame_values_changed='t' ; break;}
+      /* if no scales were present and the values given are the same as the 
+       * default frect values we must register that we are setting a scale 
+       */
+      if ( Xgc->scales->flag == 0)  frame_values_changed='t' ;
+
     }
   if ( flag[3] == 't' ) 
     {
@@ -898,6 +903,7 @@ void set_scale(BCG *Xgc,
       /* the scale is no more a default scale */
       Xgc->scales->flag = 1;
     }
+
   if ( wdim_changed == 't' || subwin_changed == 't' || frame_values_changed == 't' 
        ||  axis_changed == 't' )
     {

@@ -59,7 +59,7 @@
  *--------------------------------------------------------------------------*/
   
 int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
-		char *legend,double brect[],int aaint[])
+	       char *legend,double brect[],int aaint[])
 {
   int n;
   int *xm,*ym;
