@@ -2616,7 +2616,6 @@ int int_mpmultel(Stack stack, int rhs, int opt, int lhs)
  */
 
 
-
 static int int_mpmult(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *HMat1,*HMat2,*HMat3;
@@ -2653,7 +2652,7 @@ static int int_mpmult(Stack stack, int rhs, int opt, int lhs)
   else if ( HMat1->mn == 1 ) 
     {
       /* since Mat1 is scalar we store the result in Mat2 so we 
-       * must copy it 
+       * must copy it
        */
       if ((HMat2 = GetMpMatCopy(stack,2)) == NULLMAXPMAT) return RET_BUG;
       if (nsp_mat_add_scalar((NspMatrix *)HMat2,(NspMatrix *)HMat1) != OK) return RET_BUG;

@@ -37,7 +37,7 @@ CC_PICFLAGS =
 # and for linking: $(FC) -o $(PROGRAM) $(OBJS) $(FC_LDFLAGS)
 ##################
 FC = g77
-FC_OPTIONS = -g -Wall
+FC_OPTIONS = -g
 FC_LDFLAGS = -lieee -ldl -rdynamic
 FC_PICFLAGS = 
 
