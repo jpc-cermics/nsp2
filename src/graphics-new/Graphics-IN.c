@@ -514,7 +514,10 @@ int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
  * Attention trop de var optionnelles ici XXXX 
  *-----------------------------------------------------------*/
 
-int int_contour2d_G( Stack stack, int rhs, int opt, int lhs, int (*func) ())
+typedef int (*fc) (BCG *Xgc,double *,double *,double *,int *,int *,int *,int *,double *,int *,char *,
+		   char *,double *,int *); 
+
+int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
 {
   BCG *Xgc;
   int flagx=0,nnz= 10; /* default number of level curves : 10 */
@@ -558,7 +561,7 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs, int (*func) ())
   
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  (*func)(x->R,y->R,z->R,&z->m,&z->n,&flagx,&nnz,nz->R,istyle,strf,leg,rect,nax,strlen(strf),strlen(leg));
+  (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nnz,nz->R,istyle,strf,leg,rect,nax); /*,strlen(strf),strlen(leg));*/
   return 0;
 }
 
