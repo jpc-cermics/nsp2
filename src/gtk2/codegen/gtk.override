@@ -4961,6 +4961,24 @@ _wrap_gtk_calendar_get_date(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 }
 %%
+override gtk_calendar_is_marked_day
+static int _wrap_gtk_calendar_is_marked_day(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int day, ret;
+  if ( GetArgs(stack,rhs,opt,T,&day) == FAIL) return RET_BUG;
+  if ( day < 1 || day > 31 ) 
+    {
+      Scierror("day should be in the range [1,31]\n");
+      return RET_BUG;
+    }
+  ret=  (GTK_CALENDAR (self->obj)->marked_date[day-1] == 1) ;
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+
+%%
 override gtk_drag_dest_set kwargs
 
 static GtkTargetEntry * nsp_gtk_target_entry_from_list(Stack stack,NspList *list,int *n_targets) 
