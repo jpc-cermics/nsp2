@@ -1,0 +1,25 @@
+mode(-1)
+
+//path=get_absolute_file_path('bezier.dem');
+//oldln=lines();lines(0)
+
+getf(path+'Macros.sci');
+getf(path+'bezier.sci','n');
+
+demolist=[
+'Gammatest','xbasc();showinstr(gammatest);gammatest();';
+'2D curve Bezier test','xbasc();showinstr(beziertest);beziertest();';
+'3D curve Bezier test','xbasc();showinstr(bezier3dtest);bezier3dtest();';
+'Bezier surface test','xbasc();showinstr(beziersurftest);beziersurftest();'
+'Bezier surface test 2','xbasc();showinstr(c1test);c1test();']
+
+while %t then
+  num=x_choose(demolist(:,1),'Bezier demos (From Euler)');
+  if num==0 then 
+     lines(oldln(1))
+     return
+  else
+     execstr(demolist(num,2));
+  end,
+end
+

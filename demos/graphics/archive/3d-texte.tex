@@ -1,0 +1,75 @@
+Les macros pour faire des plot3d et manipuler les données 
+
+-1-  premiere facon de faire 
+     x,y,z  ou x et y sont deux vecteurs et z une matrice 
+
+-2-  On peut avoir envie de generer une version facettes de 
+     cela i.e x,y,z trois matrices dont chaque colonne est 
+     une facette carrée.
+
+eval3dp 
+eval3d 
+genfac3d 
+nf3d
+
+plot3d2
+plot3d3
+
+dans demos/graphics/surface on trouve 
+
+eval3d evaluates a function on a grid assuming that the function 
+   accept arrays inputs 
+   ie is able to compute 
+   f(x,y) -> f(x(i),y(i))
+
+eval3dp calcule en plus les facettes 
+   c'est donc normalement eval3d+genfac3d
+
+genfac3d: genere des facettes a partir de x,y,z 
+   ou x et y sont deux vecteurs et z une matrice 
+
+nf3d: passe d'un mode facettes aproprie au surfaces parametrique 
+      a des facettes standard 
+
+quelques examples 
+------------------
+
+function z=f(x,y)
+  z=cos(x).*sin(y)
+endfunction
+
+x=%pi*(-1:0.2:1);
+y=%pi*(-1:0.2:1);
+z=eval3d(f,x,y);
+plot3d(x,y,z);
+[xx,yy,zz]=genfac3d(x,y,z);
+plot3d(xx,yy,zz);
+
+// cas de la sphere 
+     u = linspace(-%pi/2,%pi/2,10);
+     v = linspace(0,2*%pi,10);
+     x= cos(u)'*cos(v);
+     y= cos(u)'*sin(v);
+     z= sin(u)'*ones(v);
+ 
+//ici chacun des x,y,z pourrait etre obtenu par un 
+//eval3d 
+//a partir des trois matrices on veut des facettes 
+
+[xx,yy,zz]=nf3d(x,y,z);
+
+plot3d(xx,yy,zz)
+
+// couleurs par sommet -> interpolated shading 
+
+plot3d(xx,yy,list(zz,30*(zz-min(zz))/(max(zz)-min(zz))+1))
+
+
+
+
+
+
+
+
+
+

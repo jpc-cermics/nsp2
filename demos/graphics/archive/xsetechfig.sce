@@ -1,10 +1,10 @@
-mode(-1)
-xbasc() ;
-
+// FIXME drawaxis a regler 
+//mode(-1)
+xclear();
 xset('color',2)
 
 wrect=[0.2 0.1 0.6 0.6] ;
-frect=[0 -1 10 1] ;// coordonnees utilsateurs
+frect=[0,-1, 10, 1] ;// coordonnees utilsateurs
 dx=frect(3)-frect(1) ;ex=0.07*dx
 dy=frect(4)-frect(2) ;ey=0.07*dy
 f=1/7 ;arect=ones(4,1)*f
@@ -55,7 +55,6 @@ xrect(frect(1)-f*L,frect(4)+f*H,L,H)
 xset('thickness',1)
 // width and height
 xset('font',4,2) ;
-
 
 xset('foreground',5)
 drawaxis(x=frect(1)-f*L,y=frect(4)+f*H-H+[0,H],val=['0','1'],seg=0,sub_int=3)

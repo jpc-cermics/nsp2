@@ -3,7 +3,7 @@
 // fac3d et fac3d1 sont obsoletes 
 // lispace est a rajouter quelque part 
 
-if %f
+if %t
   ncol=40;
   xset('colormap',hotcolormap(ncol));
 else 
@@ -32,15 +32,15 @@ x=[x1 x2];y=[y1 y2];z=[z1 z2];
 // plusieurs facon de donner les couleurs sur des facettes 
 
 xclear(); plot3d1(x,y,z)
-[r,c]=size(z);
 
+[r,c]=size(z);
 dist = (x-1).*(x-1)+(y-1).*(y-1)+(z-1).*(z-1);
 colors= ncol*(dist./max(dist));
 xclear();
 plot3d(x,y,z,colors=colors) ;
 
-z(:,1:50)=%nan;
+z(:,1:40)=%nan;
 xclear();plot3d(x,y,z,colors=colors(1,:)) ;
-xclear(); plot3d(x,y,z,colors=colors) ;
+// xclear(); plot3d(x,y,z,colors=colors) ;
 
 

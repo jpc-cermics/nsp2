@@ -17,8 +17,8 @@ function create_graphics()
   win = gtkdialog_new()
   win.connect["delete_event", delete];
   win.set_title["dialog"];
-  nsp_graphic_new(win,win.vbox);
-  nsp_graphic_new(win,win.vbox);
+  nsp_graphic_new(win,win.vbox,dim=[300,200]);
+  nsp_graphic_new(win,win.vbox,dim=[300,200]);
   button = gtkbutton_new(label="close")
   button.connect["clicked", win_delete,list(win)];
   win.action_area.pack_start[button]

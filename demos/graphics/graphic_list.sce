@@ -256,9 +256,8 @@ function demo_3d_12()
 
   colors=[1,2,3,5,6,9];
   plot3d(Fx',Fy',Fz',colors=colors);
-
-  colshade=[colors;colors+1;colors+2;colors+1];
-  plot3d(Fx',Fy',Fz',colors=colshade);
+  //colshade=[colors;colors+1;colors+2;colors+1];
+  //plot3d(Fx',Fy',Fz',colors=colshade);
 endfunction
   
 demo_3d_13_info="Tube";
