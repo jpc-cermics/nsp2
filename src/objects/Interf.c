@@ -468,7 +468,7 @@ static int  GetListArgs_1(NspList *L,int pos,int_types *T,va_list *ap)
       sprintf(mes,"%s is a list with more than %d elements\n", ArgPosition(pos),count);
       if ( cell == NULLCELL || cell->O == NULLOBJ ) 
 	{
-	  if (*T == list_end ) 
+	  if (*T == list_end || *T == t_end ) 
 	    return OK;
 	  else {
 	    Scierror("Error %s is a too small list\n",ArgPosition(pos));
