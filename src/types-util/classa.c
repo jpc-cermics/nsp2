@@ -19,7 +19,7 @@ NspTypeClassA *nsp_type_classa=NULL;
 /*
  * Type object for ClassA 
  * all the instance of NspTypeClassA share the same id. 
- * nsp_type_classa: is a an instance of NspTypeClassA 
+ * nsp_type_classa: is an instance of NspTypeClassA 
  *    used for objects of NspClassA type (i.e built with new_classa) 
  * other instances are used for derived classes 
  */
@@ -38,7 +38,9 @@ NspTypeClassA *new_type_classa(type_mode mode)
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = classa_get_attrs_table; 
+  type->attrs = classa_attrs ; 
+  type->get_attrs = (attrs_func *) int_get_attribute; 
+  type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods = classa_get_methods; 
   type->new = (new_func *) new_classa;
 
@@ -56,12 +58,13 @@ NspTypeClassA *new_type_classa(type_mode mode)
   top->info = (info_func *) classa_info ;                    
   /* top->is_true = (is_true_func  *) ClassAIsTrue; */
   /* top->loop =(loop_func *) classa_loop;*/
-  top->path_extract = (path_func *) classa_path_extract ; 
+  top->path_extract = (path_func *)  object_path_extract ; 
   top->get_from_obj = (get_from_obj_func *) classa_object;
   top->eq  = (eq_func *) classa_eq;
   top->neq  = (eq_func *) classa_neq;
   top->save  = (save_func *) classa_xdr_save;
   top->load  = (load_func *) classa_xdr_load;
+  top->create = (create_func*) int_cla_create;
 
   /* specific methods for classa */
       
@@ -86,7 +89,10 @@ NspTypeClassA *new_type_classa(type_mode mode)
       return ( mode == T_BASE ) ? type : new_type_classa(mode);
     }
   else 
-    return type;
+    {
+      type->id = nsp_type_classa_id;
+      return type;
+    }
 }
 
 /*
@@ -183,24 +189,11 @@ static int classa_neq(NspClassA *A, NspObject *B)
   return rep;
 }
 
-/* used for evaluation of H(exp1) in exps like H(exp1)(exp2)....(expn)= val 
- * note that H(exp1)= val          -> setrowscols
- *       and H(exp1)(.....) = val  -> pathextract(H,exp1) and then 
- *       iterate on the result 
- */
-
-static NspObject *classa_path_extract(NspClassA *a, NspObject *ob)
-{
-  char *str;
-  if ((str= StringObj(ob)) == NULL ) return NULLOBJ;
-  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
-}
-
 /*
  * save 
  */
 
-static int classa_xdr_save(NspSciFile  *F, NspClassA *M)
+static int classa_xdr_save(NspFile  *F, NspClassA *M)
 {
   if ( XdrSaveI(F,M->type->id) == FAIL) return FAIL;
   if ( XdrSaveString(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -212,7 +205,7 @@ static int classa_xdr_save(NspSciFile  *F, NspClassA *M)
  * load 
  */
 
-static NspClassA  *classa_xdr_load(NspSciFile  *F)
+static NspClassA  *classa_xdr_load(NspFile  *F)
 {
   NspClassA *M = NULL;
   static char name[NAME_MAXL];
@@ -265,9 +258,9 @@ void classa_print(NspClassA *H, int indent)
 
 NspClassA   *classa_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
-  /** Check type **/
+  /* Check type */
   if ( check_cast(O,nsp_type_classa_id) == TRUE) return ((NspClassA *) O);
   else 
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_classa));
@@ -276,12 +269,12 @@ NspClassA   *classa_object(NspObject *O)
 
 int IsClassAObj(Stack stack, int i)
 {
-  return ObjType(NthObj(i) , nsp_type_classa_id);
+  return nsp_object_type(NthObj(i) , nsp_type_classa_id);
 }
 
 int IsClassA(NspObject *O)
 {
-  return ObjType(O,nsp_type_classa_id);
+  return nsp_object_type(O,nsp_type_classa_id);
 }
 
 NspClassA  *GetClassACopy(Stack stack, int i)
@@ -333,18 +326,16 @@ NspClassA *classa_copy(NspClassA *H)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-int int_cla_create(Stack stack, int rhs, int opt, int lhs)
+static int int_cla_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspClassA *H;
   int color=-1,thickness=-1;
-
-  nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
-		      { "thickness",s_int,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-
-  CheckRhs(0,2);
-  if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
+  /* first argument is a unused its a NspType */
+  CheckRhs(1,100);
+  /* we first create a default object */
   if(( H = classa_create(NVOID,color,thickness,NULL)) == NULLCLA) return RET_BUG;
+  /* then we use optional arguments to fill attributes */
+  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -355,7 +346,7 @@ int int_cla_create(Stack stack, int rhs, int opt, int lhs)
 
 static NspObject * int_cla_get_color(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspClassA *) Hv)->classa_color);
+  return nsp_create_object_from_double(NVOID,((NspClassA *) Hv)->classa_color);
 }
 
 static int int_cla_set_color(void *Hv, char *attr, NspObject *O)
@@ -368,7 +359,7 @@ static int int_cla_set_color(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_cla_get_thickness(void *Hv, char *attr)
 {
-  return ObjDouble(NVOID,((NspClassA *) Hv)->classa_thickness);
+  return nsp_create_object_from_double(NVOID,((NspClassA *) Hv)->classa_thickness);
 }
 
 static int int_cla_set_thickness(void *Hv, char *attr, NspObject *O)
@@ -392,7 +383,7 @@ static NspObject *int_cla_get_object_val(void *Hv,char *str)
 static int int_cla_set_val(void *Hv, char *attr, NspObject *O)
 {
   NspMatrix *m;
-  if ((m = (NspMatrix *) ObjCopy(O)) == NULLMAT) return RET_BUG;
+  if ((m = (NspMatrix *) nsp_object_copy(O)) == NULLMAT) return RET_BUG;
   ((NspClassA *)Hv)->classa_val = m;
   return OK ;
 }
@@ -404,7 +395,6 @@ static AttrTab classa_attrs[] = {
   { (char *) 0, NULL}
 };
 
-static AttrTab *classa_get_attrs_table(void) { return classa_attrs;};
 
 /*------------------------------------------------------
  * methods 
@@ -429,9 +419,18 @@ static int int_cla_classa_color_show(void *a,Stack stack,int rhs,int opt,int lhs
   return 0;
 }
 
+static int int_cla_set(void *a,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(1,1000);
+  CheckLhs(1,1);
+  return int_set_attributes(stack,rhs,opt,lhs);
+}
+
+
 static NspMethods classa_methods[] = {
   { "classa_color_change", int_cla_classa_color_change},
   { "classa_color_show",   int_cla_classa_color_show},
+  { "set",  int_cla_set},
   { (char *) 0, NULL}
 };
 
@@ -449,7 +448,7 @@ int int_cla_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspClassA *a;
   if (( a= GetClassA(stack,1))== NULLCLA) return RET_BUG;
-  ObjPrint((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0);
   return 0;
 }
 
@@ -459,24 +458,20 @@ int int_cla_test(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab ClassA_func[]={
-  /* #include "classa-in.nam" */ 
-  {"cla_create",int_cla_create}, 
-  {"setrowscols_cla",int_set_attribute},
-  {"$dot_cla",int_get_attribute},
-  {"$set_cla",int_set_attributes},
+  {"setrowscols_cla",int_set_attribute},/* a(xxx)= b */
   {"test_cla",int_cla_test},
   {(char *) 0, NULL}
 };
 
-/** call ith function in the ClassA interface **/
+/* call ith function in the ClassA interface */
 
 int ClassA_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(ClassA_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void ClassA_Interf_Info(int i, char **fname, function (**f))
 {

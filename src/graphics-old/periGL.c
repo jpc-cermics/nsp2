@@ -62,13 +62,6 @@ static char Marks[] = {
 static unsigned long maxcol; /* XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 static void nsp_gtk_invalidate(BCG *Xgc);
-/*
- * fix camera position 
- */
-
-static t_camera nouvelle_camera(float px, float py, float pz,
-				float cx, float cy, float cz,
-				float near, float far);
 
 /* 
  * OpenGL 
@@ -2879,7 +2872,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 #endif
 
   xset_background(Xgc,Xgc->NumBackground+1);
-  glClearDepth(1.0);  
+  glClearDepth(1.0);
   glEnable(GL_DEPTH_TEST);
   /*     glDrawBuffer(GL_FRONT_AND_BACK); */
   /*     glEnable(GL_TEXTURE_2D); */
@@ -3338,40 +3331,45 @@ void afficher_repere(float ox, float oy, float oz)
   glEnd();
 }
 
-
-
-void change_camera(BCG *Xgc,const double *pos,const double *cible)
+int use_camera(BCG *Xgc)
 {
-  Xgc->private->camera = nouvelle_camera(pos[0],pos[1],pos[2],cible[0],cible[1],cible[2],
-					 INIT_DISTANCE_CLIPPING_PROCHE,
-					 INIT_DISTANCE_CLIPPING_LOIN);
-  /* here we need that the display i srefreshed explicitely 
-   * and not to simply call gdk_window_invalidate_rect
-   */
-  /* FIXME: NULL to be changed */
-  expose_event( Xgc->private->drawing,NULL, Xgc);
-  /* force_affichage(Xgc); */
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity ();
+  gluLookAt( Xgc->private->camera.position.x,
+	     Xgc->private->camera.position.y,
+	     Xgc->private->camera.position.z,
+	     Xgc->private->camera.cible.x,
+	     Xgc->private->camera.cible.y,
+	     Xgc->private->camera.cible.z,
+	     Xgc->private->camera.orientation.x,
+	     Xgc->private->camera.orientation.y,
+	     Xgc->private->camera.orientation.z);
+  glMatrixMode(GL_PROJECTION); 
+  glLoadIdentity();
+  glOrtho(-Xgc->private->drawing->allocation.width,
+	  -Xgc->private->drawing->allocation.height,
+	  2*Xgc->private->drawing->allocation.width,
+	  2*Xgc->private->drawing->allocation.height,
+	  Xgc->private->camera.near,Xgc->private->camera.far);
+  glMatrixMode(GL_MODELVIEW);
+  return 0;
 }
 
-t_camera nouvelle_camera(float px, float py, float pz,
-			 float cx, float cy, float cz,
-			 float near, float far)
+
+void change_camera(BCG *Xgc,const double *val)
 {
-  t_camera camera;
-
-  camera.position.x = px;
-  camera.position.y = py;
-  camera.position.z = pz;
-  camera.cible.x = cx; 
-  camera.cible.y = cy; 
-  camera.cible.z = cz;
-  camera.orientation.x = 0.0; /* orientation (ne pas modifier) */
-  camera.orientation.y = 1.0; /* orientation (ne pas modifier) */
-  camera.orientation.z = 0.0; /* orientation (ne pas modifier) */
-  camera.near = near;
-  camera.far = far;
-
-  return camera;
+  Xgc->private->camera.position.x=*val;val++;
+  Xgc->private->camera.position.y=*val;val++;
+  Xgc->private->camera.position.z=*val;val++;
+  Xgc->private->camera.cible.x=*val;val++;
+  Xgc->private->camera.cible.y=*val;val++;
+  Xgc->private->camera.cible.z=*val;val++;
+  Xgc->private->camera.orientation.x=*val;val++;
+  Xgc->private->camera.orientation.y=*val;val++;
+  Xgc->private->camera.orientation.z=*val;val++;
+  Xgc->private->camera.near=*val;val++;
+  Xgc->private->camera.far=*val;val++;
+  expose_event( Xgc->private->drawing,NULL, Xgc);
 }
 
 /* 

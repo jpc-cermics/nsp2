@@ -43,7 +43,7 @@ NspTypeClassA *new_type_classa(type_mode mode)
   type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods = classa_get_methods; 
   type->new = (new_func *) new_classa;
-  
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
   
@@ -258,9 +258,9 @@ void classa_print(NspClassA *H, int indent)
 
 NspClassA   *classa_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
-  /** Check type **/
+  /* Check type */
   if ( check_cast(O,nsp_type_classa_id) == TRUE) return ((NspClassA *) O);
   else 
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_classa));
@@ -334,9 +334,10 @@ static int int_cla_create(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,100);
   /* we first create a default object */
   if(( H = classa_create(NVOID,color,thickness,NULL)) == NULLCLA) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
   /* then we use optional arguments to fill attributes */
-  return int_set_attributes(stack,rhs,opt,lhs);
+  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
 } 
 
 /*------------------------------------------------------
@@ -382,7 +383,7 @@ static NspObject *int_cla_get_object_val(void *Hv,char *str)
 static int int_cla_set_val(void *Hv, char *attr, NspObject *O)
 {
   NspMatrix *m;
-  if ((m = (NspMatrix *)nsp_object_copy(O)) == NULLMAT) return RET_BUG;
+  if ((m = (NspMatrix *) nsp_object_copy(O)) == NULLMAT) return RET_BUG;
   ((NspClassA *)Hv)->classa_val = m;
   return OK ;
 }
@@ -393,6 +394,7 @@ static AttrTab classa_attrs[] = {
   { "cla_val", 	int_cla_get_val, 	int_cla_set_val, 	int_cla_get_object_val },
   { (char *) 0, NULL}
 };
+
 
 /*------------------------------------------------------
  * methods 
@@ -425,7 +427,6 @@ static int int_cla_set(void *a,Stack stack,int rhs,int opt,int lhs)
 }
 
 
-
 static NspMethods classa_methods[] = {
   { "classa_color_change", int_cla_classa_color_change},
   { "classa_color_show",   int_cla_classa_color_show},
@@ -447,7 +448,7 @@ int int_cla_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspClassA *a;
   if (( a= GetClassA(stack,1))== NULLCLA) return RET_BUG;
- nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0);
   return 0;
 }
 
@@ -457,20 +458,20 @@ int int_cla_test(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab ClassA_func[]={
-  {"setrowscols_cla",int_set_attribute}, /* a(xxx)= b */
+  {"setrowscols_cla",int_set_attribute},/* a(xxx)= b */
   {"test_cla",int_cla_test},
   {(char *) 0, NULL}
 };
 
-/** call ith function in the ClassA interface **/
+/* call ith function in the ClassA interface */
 
 int ClassA_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(ClassA_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void ClassA_Interf_Info(int i, char **fname, function (**f))
 {

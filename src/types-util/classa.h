@@ -17,7 +17,7 @@
 
 typedef struct _nsp_classa NspClassA;
 
-typedef int (*classa_save) (NspSciFile  *F, NspClassA *M);
+typedef int (*classa_save) (NspFile  *F, NspClassA *M);
 
 typedef struct _nsp_type_ClassA { 
   NSP_TYPE_OBJECT__ 
@@ -47,20 +47,6 @@ NspClassA *new_classa();
  * Object methods redefined for classa 
  */
 
-#ifdef ClassA_Private 
-static int init_classa(NspClassA *o,NspTypeClassA *type);
-static int classa_size(NspClassA *Mat, int flag);
-static char *classa_type_as_string(void);
-static char *classa_type_short_string(void);
-static int classa_eq(NspClassA *A, NspObject *B);
-static int classa_neq(NspClassA *A, NspObject *B);
-static int classa_xdr_save(NspSciFile  *F, NspClassA *M);
-static NspClassA  *classa_xdr_load(NspSciFile  *F);
-static AttrTab *classa_get_attrs_table(void);
-static NspMethods *classa_get_methods(void); 
-static NspObject *classa_path_extract(NspClassA *A, NspObject *O);
-#endif /* ClassA_Private */
-
 #define NULLCLA (NspClassA*) 0
 
 NspClassA *classa_create(char *name,int color,int thickness,NspTypeBase *type);
@@ -77,7 +63,20 @@ extern int IsClassA(NspObject *O);
 extern NspClassA *GetClassACopy (Stack stack, int i); 
 extern NspClassA *GetClassA (Stack stack, int i); 
 
-
-
 #endif 
 
+/* private part */
+
+#ifdef ClassA_Private 
+static int init_classa(NspClassA *o,NspTypeClassA *type);
+static int classa_size(NspClassA *Mat, int flag);
+static char *classa_type_as_string(void);
+static char *classa_type_short_string(void);
+static int classa_eq(NspClassA *A, NspObject *B);
+static int classa_neq(NspClassA *A, NspObject *B);
+static int classa_xdr_save(NspFile  *F, NspClassA *M);
+static NspClassA  *classa_xdr_load(NspFile  *F);
+static AttrTab classa_attrs[];
+static NspMethods *classa_get_methods(void); 
+static int int_cla_create(Stack stack, int rhs, int opt, int lhs);
+#endif /* ClassA_Private */

@@ -4203,7 +4203,7 @@ int int_seteventhandler(Stack stack, int rhs, int opt, int lhs)
  * moving the camera 
  *-----------------------------------------------------------*/
 
-extern void change_camera(BCG *Xgc,const double *,const double *);
+extern void change_camera(BCG *Xgc,const double *);
 
 
 int int_camera(Stack stack, int rhs, int opt, int lhs)
@@ -4211,19 +4211,14 @@ int int_camera(Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   NspMatrix *c_pos,*cible_pos;
 
-  CheckRhs(2,2);
+  CheckRhs(1,1);
   CheckLhs(0,0);
 
   if ((c_pos = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ((cible_pos = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-
   CheckVector(stack.fname,1,c_pos);
-  CheckVector(stack.fname,2,cible_pos);
-  CheckLength(stack.fname,1,c_pos,3);
-  CheckLength(stack.fname,2,cible_pos,3);
+  CheckLength(stack.fname,1,c_pos,11);
   Xgc=nsp_check_graphic_context();
-  change_camera(Xgc,c_pos->R,cible_pos->R);
-
+  change_camera(Xgc,c_pos->R);
   return 0;
 }
 

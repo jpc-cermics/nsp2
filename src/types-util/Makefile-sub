@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 TNAME=ClassC
 TDOWNCASE=classc
 TSHORT=clc
@@ -7,6 +8,7 @@ PARENT=ClassA
 PARENTDOWNCASE=classa
 PARENTINC=classa.h
 FILENAME=$(TDOWNCASE)
+FILE=$(TDOWNCASE)
 
 all: job_classc
 

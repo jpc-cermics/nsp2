@@ -7,9 +7,7 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.lib 
 
-OBJSC = 
-
-#mod.obj modObj.obj mod-IN.obj meObj.obj lmoObj.obj lmo-IN.obj lmo.obj
+OBJSC = mod.obj modObj.obj mod-IN.obj meObj.obj lmoObj.obj lmo-IN.obj lmo.obj
 
 OBJSF=
 

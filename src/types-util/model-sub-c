@@ -176,7 +176,7 @@ Nsp@TYPENAME@ *@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-int int_clc_create(Stack stack, int rhs, int opt, int lhs)
+int int_@TYPESHORT@_create(Stack stack, int rhs, int opt, int lhs)
 {
   Nsp@TYPENAME@ *H;
   int color=-1,thickness=-1;
@@ -216,11 +216,11 @@ static NspMethods *@TYPEDOWNCASE@_get_methods(void) { return @TYPEDOWNCASE@_meth
 
 static OpTab @TYPENAME@_func[]={
   /* #include "@TYPEDOWNCASE@-in.nam" */ 
-  {"clc_create",int_clc_create}, 
+  {"@TYPESHORT@_create",int_@TYPESHORT@_create}, 
   /* 
-  {"setrowscols_clc",int_set_attribute},
-  {"$dot_clc",int_get_attribute},
-  {"$set_clc",int_set_attributes},
+  {"setrowscols_@TYPESHORT@",int_set_attribute},
+  {"$dot_@TYPESHORT@",int_get_attribute},
+  {"$set_@TYPESHORT@",int_set_attributes},
   */
   {(char *) 0, NULL}
 };
