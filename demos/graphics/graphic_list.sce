@@ -714,19 +714,17 @@ endfunction
 demo_contour_6_info="contourf";
 
 function demo_contour_6()
- function z=f(x,y)
-  z =  exp(-x.^2 - (y+2).^2) - 0.5*exp(-x.^2-y.^2) +
-       0.3* exp(-(x+2).^2 - y.^2) - 2* exp(-(x+2).^2 - (y+2).^2)
- endfunction
-
- x=-4:0.1:3;y=x;
- z=eval3d(f,x,y);
- m=30;
- xset('colormap',hotcolormap(m));
- xset('fpf','');
- contourf(x,y,z,nv=m);
+  function z=f(x,y)
+    z =  exp(-x.^2 - (y+2).^2) - 0.5*exp(-x.^2-y.^2) +
+    0.3* exp(-(x+2).^2 - y.^2) - 2* exp(-(x+2).^2 - (y+2).^2)
+  endfunction
+  x=-4:0.1:3;y=x;
+  z=eval3d(f,x,y);
+  m=30;
+  xset('colormap',hotcolormap(m));
+  xset('fpf','');
+  contourf(x,y,z,nv=m);
 endfunction
-
 
 // organize the previous list for graphic demo widget 
 
@@ -745,10 +743,6 @@ graphic_demos_all = list( list("primitives", "", "", graphic_test_prim  ),
 			  list("2D contours", "", "", graphic_test_contour  ), 
                           list("3D curves and surfaces",  "", "", graphic_test_3d ),
 			  list("Animations",  "", "", graphic_test_anim ));
-			  			  			  
-  
-graphics_demo_in_gtk(graphic_demos_all)
-
-
-  
+			  
+graphics_demo_in_gtk(graphic_demos_all);
 
