@@ -9,6 +9,7 @@ mktmpl:
 mkdb:
 	gtkdoc-mkdb --module=nsp --source-dir=../Newstack  --sgml-mode --output-format=xml
 	gtkdoc-mkdb --module=nsp --source-dir=../types  --sgml-mode --output-format=xml
+	gtkdoc-mkdb --module=nsp --source-dir=../graphics  --sgml-mode --output-format=xml
 
 mkhtml:
 	cd html; gtkdoc-mkhtml nsp ../nsp-docs.sgml
