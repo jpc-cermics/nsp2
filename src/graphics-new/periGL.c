@@ -2839,13 +2839,38 @@ static void DrawMark(BCG *Xgc,int *x, int *y)
  *
  */
 
+/*
+ * FIXME : experimental for tests 
+ */
+
+static void init_gl_lights(GLfloat light0_pos[4])
+{
+  /* GLfloat light0_pos[4]   = { -50.0, 50.0, 50.0, 0.0 }; */
+  GLfloat light0_color[4] = { .6, .6, .6, 1.0 }; /* white light */
+
+  /* speedups */
+  glEnable(GL_DITHER);
+  glShadeModel(GL_SMOOTH);
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+  glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
+
+  /* light */
+  glLightfv(GL_LIGHT0, GL_POSITION, light0_pos);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE,  light0_color);
+  glEnable(GL_LIGHT0);
+  glEnable(GL_LIGHTING);
+  glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
+  glEnable(GL_COLOR_MATERIAL);
+}
+
+
 /* realize handler for 
  * opengl window 
  */
 
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
-
+  GLfloat light0_pos[4]   = { -50.0, 50.0, 50.0, 0.0 }; 
   BCG *Xgc = (BCG *) data;
   GdkGLContext *glcontext;
   GdkGLDrawable *gldrawable;
@@ -2873,6 +2898,8 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 #endif
 
   xset_background(Xgc,Xgc->NumBackground+1);
+
+  init_gl_lights(light0_pos);
 
   glClearDepth(1.0);
   glEnable(GL_DEPTH_TEST);
@@ -3360,6 +3387,9 @@ int use_camera(BCG *Xgc)
 
 void change_camera(BCG *Xgc,const double *val)
 {
+  int i;
+  GLfloat light0_pos[4]   = { -50.0, 50.0, 50.0, 0.0 }; 
+#if 0
   Xgc->private->camera.position.x=*val;val++;
   Xgc->private->camera.position.y=*val;val++;
   Xgc->private->camera.position.z=*val;val++;
@@ -3371,6 +3401,10 @@ void change_camera(BCG *Xgc,const double *val)
   Xgc->private->camera.orientation.z=*val;val++;
   Xgc->private->camera.near=*val;val++;
   Xgc->private->camera.far=*val;val++;
+#else 
+  for (i=0; i< 3 ;i++) {light0_pos[i]=*val;val++;}
+  init_gl_lights(light0_pos);
+#endif
   expose_event( Xgc->private->drawing,NULL, Xgc);
 }
 
