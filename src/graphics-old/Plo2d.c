@@ -61,7 +61,7 @@
  *--------------------------------------------------------------------------*/
   
 int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
-	       const char *legend,double brect[],int aaint[])
+	       const char *legend,int legend_pos,double brect[],int aaint[])
 {
   int n;
   int *xm,*ym;
@@ -72,7 +72,7 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
   update_frame_bounds(Xgc,0,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Plot1(Xgc,"gnn",x,y,n1,n2,style,strflag,legend,brect,aaint);
+    store_Plot1(Xgc,"gnn",x,y,n1,n2,style,strflag,legend,legend_pos,brect,aaint);
 
   /* Allocation */
   n = (*n1)*(*n2) ; 
@@ -97,8 +97,10 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
       Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,style,*n1,*n2);
       frame_clip_off(Xgc);
       /** Drawing the Legends **/
-      if ((int)strlen(strflag) >=1  && strflag[0] == '1')
-	nsp_legends(Xgc,legend_ur,*n1,style,legend,"@"); 
+      if ((int)strlen(strflag) >=1  && strflag[0] == '1' && legend_pos > 0 && legend != NULL)
+	{
+	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 
+	}
     }
 
   /* my_gl_main (0,NULL); */

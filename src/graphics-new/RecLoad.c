@@ -708,6 +708,7 @@ static int load_Plot(BCG *Xgc)
       if ( load_VectC(&(lplot->strflag)) == 0) return(0);
       if ( load_VectC(&(lplot->strflag_kp)) == 0) return(0);
       if ( load_VectC(&(lplot->legend)) == 0) return(0);
+      if ( load_LI(&(lplot->legend_pos)) == 0) return(0);
       if ( load_VectF(&(lplot->brect)) == 0) return(0);
       if ( load_VectF(&(lplot->brect_kp)) == 0) return(0);
       if ( load_VectLI(&(lplot->aint)) == 0) return(0);

@@ -554,6 +554,7 @@ static int save_Plot(BCG *Xgc,void *plot)
   if ( save_VectC((lplot->strflag),((int)strlen(lplot->strflag))+1) == 0) return(0);
   if ( save_VectC((lplot->strflag_kp),((int)strlen(lplot->strflag_kp))+1) == 0) return(0);
   if ( save_VectC((lplot->legend),((int)strlen(lplot->legend))+1) == 0) return(0);
+  if ( save_LI(lplot->legend_pos) == 0) return(0);
   if ( save_VectF((lplot->brect),4L) == 0) return(0);
   if ( save_VectF((lplot->brect_kp),4L) == 0) return(0);
   if ( save_VectLI((lplot->aint),4L) == 0) return(0);

@@ -231,6 +231,39 @@ static const char * check_legend_3d(Stack stack,char *fname,char *varname,const 
 }
 
 /*-----------------------------------------------------------
+ * Check optional argument legend_pos 
+ *-----------------------------------------------------------*/
+/* 
+ * take care to keep the same order in enum legend_pos and in lpos_table;
+ * typedef enum { legend_dl, legend_dr ,legend_drm, legend_ur,legend_ur,legend_urm } legends_pos;
+ */
+
+static char *Table[] = {"dl",  "dr",  "drm", "ul",  "ur", "urm",  NULL};
+
+static int check_legend_pos(Stack stack,const char *fname,const char *varnam,const char *l_pos)
+{
+  char **entry;
+  int rep ; 
+  if ( l_pos == NULL ) return 5;
+  rep = is_string_in_array(l_pos,Table,1);
+  if ( rep < 0 ) 
+    {
+      Scierror("Error:\toptional argument %s of function %s has a wrong value %s\n",varnam,fname,l_pos);
+      Scierror("\tmust be '%s'", *Table);
+      for (entry = Table+1 ; *entry != NULL; entry++) {
+	if (entry[1] == NULL) {
+	  Scierror(", or '%s'",*entry);
+	} else {
+	  Scierror(", '%s'",*entry);
+	}
+      }
+      return -1;
+    }
+  return rep;
+}
+
+
+/*-----------------------------------------------------------
  * Check optional argument nax 
  * note that var can be changed by this function 
  *-----------------------------------------------------------*/
@@ -478,6 +511,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
 static   nsp_option opts_2d[] ={{ "axesflag",s_int,NULLOBJ,-1},
 				{ "frameflag",s_int,NULLOBJ,-1},
 				{ "leg",string,NULLOBJ,-1},
+				{ "leg_pos",string,NULLOBJ,-1},
 				{ "logflag",string,NULLOBJ,-1}, 
 				{ "nax",mat_int,NULLOBJ,-1},
 				{ "rect",realmat,NULLOBJ,-1},
@@ -487,7 +521,7 @@ static   nsp_option opts_2d[] ={{ "axesflag",s_int,NULLOBJ,-1},
 
 
 int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
-		char **strf,char **leg,
+		char **strf,char **leg, char **leg_pos,int *leg_pos_i,
 		NspMatrix *Mrect,double **rect,
 		NspMatrix *Mnax,int **nax,
 		int frameflag,int axesflag,char **logflags)
@@ -495,6 +529,7 @@ int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
   if (( *istyle = check_style(stack,stack.fname,"style",Mstyle,ns))== NULL) return RET_BUG;
   if (( *strf = check_strf(stack,stack.fname,"strf",*strf))==NULL) return RET_BUG;
   if (( *leg = check_legend(stack,stack.fname,"leg",*leg))==NULL) return RET_BUG;
+  if (( *leg_pos_i = check_legend_pos(stack,stack.fname,"leg",*leg_pos))== -1 ) return RET_BUG;
   if (( *rect = check_rect(stack,stack.fname,"rect",Mrect))==NULL) return RET_BUG;
   if (( *nax = check_nax(stack,stack.fname,"nax",Mnax))==NULL) return RET_BUG;
   if (( *logflags= check_logflags(stack,stack.fname,"logflag",*logflags))==NULL) return RET_BUG;
@@ -548,13 +583,13 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
   int *istyle,*nax;
   NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
   double *rect ; 
-  char *leg=NULL, *strf=NULL, *logflags = NULL;
-
+  char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
+  int leg_posi;
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
 
   if (rhs <= 0) {return  sci_demo(stack.fname,"contour2d(1:5,1:10,rand(5,10),5);",1); }
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&nz,&opts_2d,&axes,&frame,&leg,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&nz,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
 
   CheckVector(stack.fname,1,x);
   CheckVector(stack.fname,2,y);
@@ -576,7 +611,7 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
     flagx = 1;  nnz = nz->mn ;
   }
 
-  if ( int_check2d(stack,Mstyle,&istyle,nnz,&strf,&leg,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
+  if ( int_check2d(stack,Mstyle,&istyle,nnz,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
   
   Xgc=nsp_check_graphic_context();
@@ -1021,20 +1056,20 @@ int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
  *   plot2dxx(x,y,[style,strf,leg,rect,nax])
  *-----------------------------------------------------------*/
 
-int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,
-		  int (*func)(BCG *Xgc,char *,double *,double *,int *,int *,
-			      int *,char *,const char *,double *,int *))
+typedef int (*func_2d)(BCG *Xgc,char *,double *,double *,int *,int *,int *,char *,const char *,int,double *,int *);
+
+int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d func)
 {
   BCG *Xgc;
   /* for 2d optional arguments; */
   int *istyle,*nax, frame= -1, axes=-1,ncurves,lcurve;
   NspMatrix *x,*y, *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
   double *rect ; 
-  char *leg=NULL, *strf=NULL, *logflags = NULL, tflag='g';
-  
+  char *leg=NULL, *strf=NULL, *logflags = NULL, tflag='g', *leg_pos = NULL;
+  int leg_posi;
   int_types T[] = {realmat,realmat,new_opts, t_end} ;
   
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts_2d,&axes,&frame,&leg,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
 
   /* decide what to do according to (x,y) dimensions */ 
 
@@ -1165,7 +1200,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,
 	}
     }
 
-  if ( int_check2d(stack,Mstyle,&istyle,ncurves,&strf,&leg,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
+  if ( int_check2d(stack,Mstyle,&istyle,ncurves,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
   
   /* logflags */ 
@@ -1189,11 +1224,11 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,
 
   if ( strcmp(logflags,"gnn")==0 && force2d == 0) 
     {
-      nsp_plot2d(Xgc,x->R,y->R,&ncurves, &lcurve,istyle,strf,leg,rect,nax);
+      nsp_plot2d(Xgc,x->R,y->R,&ncurves, &lcurve,istyle,strf,leg,leg_posi,rect,nax);
     }
   else
     {
-      (*func)(Xgc,logflags,x->R,y->R,&ncurves, &lcurve,istyle,strf,leg,rect,nax);
+      (*func)(Xgc,logflags,x->R,y->R,&ncurves, &lcurve,istyle,strf,leg,leg_posi,rect,nax);
     }
   return 0;
 }
@@ -1249,13 +1284,13 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   int *istyle,*nax;
   NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
   double *rect ; 
-  char *leg=NULL, *strf=NULL, *logflags = NULL;
-
+  char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
+  int leg_posi;
   int_types T[] = {realmat,realmat,realmat,new_opts, t_end} ;
 
   if ( rhs <= 0) {return sci_demo(stack.fname, "t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);",1);}
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts_2d,&axes,&frame,&leg,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
 
   CheckVector(stack.fname,1,x);
   CheckVector(stack.fname,2,y);
@@ -1268,7 +1303,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   CheckDimProp(stack.fname,1,3, x->mn != z->m); 
   CheckDimProp(stack.fname,2,3, y->mn != z->n); 
 
-  if ( int_check2d(stack,Mstyle,&istyle,z->mn,&strf,&leg,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
+  if ( int_check2d(stack,Mstyle,&istyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
   
   Xgc=nsp_check_graphic_context();
@@ -1291,17 +1326,17 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
   int frame= -1, axes=-1;
   double *rect ; 
-  char *leg=NULL, *strf=NULL, *logflags = NULL;
-
+  char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
+  int leg_posi;
   int_types T[] = {realmat,new_opts, t_end} ;
 
   if ( rhs <= 0) {return   sci_demo(stack.fname,"m=[1,2;3,4];Matplot(m);",1);}
 
-  if ( GetArgs(stack,rhs,opt,T,&z,&opts_2d,&axes,&frame,&leg,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&z,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
 
   if ( z->mn == 0) return 0;
 
-  if ( int_check2d(stack,Mstyle,&istyle,z->mn,&strf,&leg,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
+  if ( int_check2d(stack,Mstyle,&istyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
   
   Xgc=nsp_check_graphic_context();

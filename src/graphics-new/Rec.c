@@ -1103,7 +1103,7 @@ static void clean_NEch(void *plot)
  *---------------------------------------------------------------------------*/
 
 static void store_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int *n1, int *n2, int *style,
-		  char *strflag,const  char *legend, double *brect, int *aint)
+		  char *strflag,const  char *legend,int legend_pos, double *brect, int *aint)
 {
   int nstyle,n1n2;
   struct rec_plot2d *lplot;
@@ -1122,6 +1122,7 @@ static void store_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int 
       lplot->n2= *n2;
       /* to be sure that lplot is corectly initialized */
       lplot->x = lplot->y = NULL;
+      lplot->legend_pos = legend_pos;
       n1n2=(*n1)*(*n2);
       if ( 
 	  CopyVectC(&(lplot->xf),xf,((int)strlen(xf))+1) &&
@@ -1144,49 +1145,49 @@ static void store_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int 
 }
 
 void store_Plot(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
-		const char *legend, double *brect, int *aint)
+		const char *legend,int legend_pos, double *brect, int *aint)
 {
-  store_Plot_G(Xgc,CODEPlot,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
+  store_Plot_G(Xgc,CODEPlot,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
 }
 
 
 void store_Plot1(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
-		 const char *legend, double *brect, int *aint)
+		 const char *legend,int legend_pos, double *brect, int *aint)
 {
-  store_Plot_G(Xgc,CODEPlot1,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
+  store_Plot_G(Xgc,CODEPlot1,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
 }
 
 
 void store_Plot2(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
-		 const char *legend, double *brect, int *aint)
+		 const char *legend,int legend_pos, double *brect, int *aint)
 {
-  store_Plot_G(Xgc,CODEPlot2,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
+  store_Plot_G(Xgc,CODEPlot2,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
 }
 
 
 void store_Plot3(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
-		 const char *legend, double *brect, int *aint)
+		 const char *legend,int legend_pos, double *brect, int *aint)
 {
-  store_Plot_G(Xgc,CODEPlot3,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
+  store_Plot_G(Xgc,CODEPlot3,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
 }
 
 void store_Plot4(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
-		 const char *legend, double *brect, int *aint)
+		 const char *legend,int legend_pos, double *brect, int *aint)
 {
-  store_Plot_G(Xgc,CODEPlot4,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
+  store_Plot_G(Xgc,CODEPlot4,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aint);
 }
 
 
 static void replay_Plot(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  nsp_plot2d_1(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  nsp_plot2d_1(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend,p->legend_pos, p->brect,p->aint);
 }
 
 static void replay_Plot1(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  nsp_plot2d_1(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  nsp_plot2d_1(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend,p->legend_pos, p->brect,p->aint);
 }
 
 
@@ -1194,7 +1195,7 @@ static void replay_Plot1(BCG *Xgc,void * theplot)
 static void replay_Plot2(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  nsp_plot2d_2(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  nsp_plot2d_2(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend,p->legend_pos, p->brect,p->aint);
 }
 
 
@@ -1202,7 +1203,7 @@ static void replay_Plot2(BCG *Xgc,void * theplot)
 static void replay_Plot3(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  nsp_plot2d_3(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  nsp_plot2d_3(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend,p->legend_pos, p->brect,p->aint);
 }
 
 
@@ -1210,7 +1211,7 @@ static void replay_Plot3(BCG *Xgc,void * theplot)
 static void replay_Plot4(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  nsp_plot2d_4(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  nsp_plot2d_4(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend,p->legend_pos, p->brect,p->aint);
 }
 
 
