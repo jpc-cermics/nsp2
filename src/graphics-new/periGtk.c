@@ -1744,10 +1744,10 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
 	{
 	  int nn=1,p=3;
 	  dx=(as/10.0)*dx/norm;dy=(as/10.0)*dy/norm;
-	  polyx[0]= polyx[3]=vx[2*i+1]+dx*cos20;
+	  polyx[0]= polyx[3]=vx[2*i+1]; /* +dx*cos20;*/
 	  polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
 	  polyx[2]= inint(polyx[0]  - cos20*dx + sin20*dy);
-	  polyy[0]= polyy[3]=vy[2*i+1]+dy*cos20;
+	  polyy[0]= polyy[3]=vy[2*i+1]; /* +dy*cos20;*/
 	  polyy[1]= inint(polyy[0] + sin20*dx -cos20*dy) ;
 	  polyy[2]= inint(polyy[0] - sin20*dx - cos20*dy) ;
 	  fillpolylines(Xgc,polyx,polyy,&lstyle,nn,p);
