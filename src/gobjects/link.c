@@ -530,7 +530,7 @@ NspLink *LinkCreateN(char *name,int n,int color,int thickness)
   if ((NSP_OBJECT(H)->name = NewString(name))== NULLSTRING) return NULLLINK;
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
 
-  if (( H->poly = MatZeros(n,2))== NULLMAT) return NULLLINK;
+  if (( H->poly =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;
   H->color = color;
   H->thickness = thickness;
   H->hilited = FALSE ; 

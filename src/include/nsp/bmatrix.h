@@ -137,11 +137,11 @@ extern int nsp_bmatrix_full_compare(const NspBMatrix *A,const  NspBMatrix *B, ch
 
 /* from MatOps.c */
 
-extern NspBMatrix *MatComp (NspMatrix *A, NspMatrix *B, char *op); 
+extern NspBMatrix *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op); 
 
-extern NspBMatrix  *MatIsinf(NspMatrix *A);
-extern NspBMatrix  *MatIsnan(NspMatrix *A);
-extern NspBMatrix  *MatFinite(NspMatrix *A);
+extern NspBMatrix  *nsp_mat_isinf(NspMatrix *A);
+extern NspBMatrix  *nsp_mat_isnan(NspMatrix *A);
+extern NspBMatrix  *nsp_mat_finite(NspMatrix *A);
 
 
 #endif 

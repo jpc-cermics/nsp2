@@ -1453,7 +1453,7 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int row,int flag,char *na
 	  if (( styles = nsp_matrix_create_impl(1.0,1.0,arcs->n) ) == NULLMAT) return RET_BUG;
 	  break;
 	default:
-	  if (( styles = MatZeros(1,arcs->n))  == NULLMAT) return RET_BUG;
+	  if (( styles =nsp_mat_zeros(1,arcs->n))  == NULLMAT) return RET_BUG;
 	  break;
 	  
 	}
@@ -1665,7 +1665,7 @@ int int_xchange(Stack stack, int rhs, int opt, int lhs)
       if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
       CheckLength(stack.fname,1,l1,4);
       if ((l3 = nsp_matrix_create(NVOID,'r',l1->m,l1->n)) == NULLMAT ) return RET_BUG;
-      if ((l4 = MatZeros(l1->m,l1->n)) == NULLMAT ) return RET_BUG;
+      if ((l4 =nsp_mat_zeros(l1->m,l1->n)) == NULLMAT ) return RET_BUG;
       scale_f2wrect(Xgc,l1->R,l3->R);
     }
   else
@@ -2089,7 +2089,7 @@ int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
   else 
     {
       v1=1; /* flat shading */ 
-      if (( l3 = MatZeros(1,l2->n))  == NULLMAT) return RET_BUG;
+      if (( l3 =nsp_mat_zeros(1,l2->n))  == NULLMAT) return RET_BUG;
       l3= Mat2int(l3);
     }
 
@@ -2477,7 +2477,7 @@ int int_xnumb(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      if ((l5 = MatZeros(1,l3->mn)) == NULLMAT) return RET_BUG;
+      if ((l5 =nsp_mat_zeros(1,l3->mn)) == NULLMAT) return RET_BUG;
     }
 
   Xgc=nsp_check_graphic_context();
@@ -2606,7 +2606,7 @@ int int_xpolys(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      if (( l3 = MatOnes(1,l1->n))  == NULLMAT) return RET_BUG;
+      if (( l3 =nsp_mat_ones(1,l1->n))  == NULLMAT) return RET_BUG;
       l3= Mat2int(l3);
       StackStore(stack,(NspObject *) l3,3);
     }

@@ -504,16 +504,17 @@ int nsp_dvmul(int *n, double *dx, int *incx, double *dy, int *incy)
 
 /**
  * nsp_icopy:
- * @n: 
- * @idx: 
- * @incx: 
- * @idy: 
- * @incy: 
+ * @n: number of int to copy 
+ * @idx: copy from @idx int array 
+ * @incx: increment to use for @idx int array 
+ * @idy: copy tp @idy int array 
+ * @incy:  increment to use for @idy int array 
  * 
  * copies an int array idx, to an int array idy. 
  * 
  * Return value: 
  **/
+
 int nsp_icopy(const int *n,const int *idx,const int *incx, int *idy,
 		const int *incy)
 {
@@ -546,10 +547,10 @@ int nsp_icopy(const int *n,const int *idx,const int *incx, int *idy,
 
 /**
  * nsp_iset:
- * @n: 
- * @idx: 
- * @idy: 
- * @incy: 
+ * @n: number of int to copy 
+ * @idx: an int pointer 
+ * @idy: int array 
+ * @incy: increment to use for @idy int array 
  * 
  *  idy[incy*k] =dx , k= 0, *n-1 
  * 
@@ -573,10 +574,10 @@ int nsp_iset(int *n, int *idx, int *idy, int *incy)
 
 /**
  * nsp_iadd:
- * @n: 
- * @ival: 
- * @idy: 
- * @incy: 
+ * @n: number of addition to perform 
+ * @ival: an int pointer 
+ * @idy: int array 
+ * @incy: increment to use for @idy int array 
  * 
  *  iadd  :  idy[k] += ival  k=0,*incy,*n
  * 
@@ -596,11 +597,11 @@ int nsp_iadd(int *n, int *ival, int *idy, int *incy)
 
 /**
  * nsp_dzcopy:
- * @n: 
- * @zx: 
- * @incx: 
- * @zy: 
- * @incy: 
+ * @n: number of copy to perform 
+ * @zx: a double array 
+ * @incx: increment to use for @zx double array 
+ * @zy: a #doubleC array 
+ * @incy: increment to use for @zy #doubleC array 
  * 
  * dzcopy : copies a double precision x, to a complex vector, zy. 
  *     x becomes the real part of y the imag part is set to zero .
@@ -640,10 +641,10 @@ int nsp_dzcopy(const int *n,const double * zx,const int * incx, doubleC * zy,con
 
 /**
  * nsp_dzscal:
- * @n: 
- * @da: 
- * @zx: 
- * @incx: 
+ * @n: number of multiplication to perform 
+ * @da: a pointer to a double 
+ * @zx: a #doubleC array 
+ * @incx: increment to use for @zx #doubleC array 
  * 
  * dzscal : scales a complex vector by a constant.
  *          similar to zscal 
@@ -679,10 +680,10 @@ int nsp_dzscal(int *n, double *da, doubleC *zx, int *incx)
 
 /**
  * nsp_dzset:
- * @n: 
- * @dx: 
- * @zy: 
- * @incy: 
+ * @n: number of affectation to perform 
+ * @dx:  a pointer to a double 
+ * @zy: a #doubleC array 
+ * @incy: increment to use for @zy #doubleC array 
  * 
  * dzset : zy[incy*k] =dx , k= 0, *n-1 
  * 
@@ -706,11 +707,11 @@ int nsp_dzset(int *n, double *dx, doubleC *zy, int *incy)
 
 /**
  * nsp_zadd:
- * @n: 
- * @zx: 
- * @incx: 
- * @zy: 
- * @incy: 
+ * @n: number of addition to perform 
+ * @zx: a #doubleC array 
+ * @incx: increment to use for @zx #doubleC array 
+ * @zy:  a #doubleC array 
+ * @incy: increment to use for @zy #doubleC array 
  * 
  * zadd  :  zy[incy*k ] += zx[incx*k]  k=0,*n-1
  * 
@@ -749,8 +750,8 @@ int nsp_zadd(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
 
 /**
  * myzabs:
- * @real: 
- * @imag: 
+ * @real: a double 
+ * @imag: a double 
  * 
  * zasum  : sum zx[incx*k]  k=0,*n-1
  *        could use pythag to replace myzabs 
@@ -778,9 +779,9 @@ double myzabs(double real,double imag)
 
 /**
  * nsp_zasum:
- * @n: 
- * @zx: 
- * @incx: 
+ * @n: number of addition to perform 
+ * @zx:  a #doubleC array 
+ * @incx: increment to use for @zx #doubleC array 
  * 
  * 
  * 
@@ -819,11 +820,11 @@ double nsp_zasum(int *n, doubleC *zx, int *incx)
 
 /**
  * nsp_zsub:
- * @n: 
- * @zx: 
- * @incx: 
- * @zy: 
- * @incy: 
+ * @n: number of substraction to perform 
+ * @zx: a #doubleC array 
+ * @incx: increment to use for @zx #doubleC array 
+ * @zy: a #doubleC array 
+ * @incy:  increment to use for @zy #doubleC array 
  * 
  * zsub  :  zy[incy*k ] -= zx[incx*k]  k=0,*n-1
  * 
@@ -863,9 +864,9 @@ int nsp_zsub(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
 /**
  * nsp_zsum:
  * @ret_val: 
- * @n: 
- * @zx: 
- * @incx: 
+ * @n: number of addition to perform 
+ * @zx:  a #doubleC array 
+ * @incx: increment to use for @zx #doubleC array 
  * 
  * zsum   :  sum(zx[incx*k], k=0,*n-1)
  * 
@@ -906,11 +907,11 @@ void nsp_zsum(doubleC *ret_val, int *n, doubleC *zx, int *incx)
 
 /**
  * nsp_zvmul:
- * @n: 
- * @zx: 
- * @incx: 
- * @zy: 
- * @incy: 
+ * @n: number of multiplication to perform 
+ * @zx: a #doubleC array 
+ * @incx: increment to use for @zx #doubleC array 
+ * @zy: a #doubleC array 
+ * @incy: increment to use for @zy #doubleC array 
  * 
  * zvmul  :  zy[incy*k ] *= zx[incx*k]  k=0,*n-1
  * 
