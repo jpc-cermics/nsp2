@@ -12,7 +12,7 @@ LIBRARY = zcalelm.lib
 CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
-OBJSC = zfunctions.obj dfunctions.obj ifunctions.obj convert.obj franck.obj dsort.obj dlamch.obj hilbert.obj
+OBJSC = utilities.obj convert.obj franck.obj dsort.obj dlamch.obj hilbert.obj
 OBJSF = hilber.obj magic.obj urand.obj
 
 include ../Make.lib.mak
