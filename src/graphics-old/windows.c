@@ -1,16 +1,34 @@
-/*------------------------------------------------------------------------
- *    Graphic library
- *    Copyright (C) 2001 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- --------------------------------------------------------------------------*/
-
-/*--------------------------------------------------------------------------
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Graphic library
+ * jpc@cermics.enpc.fr 
  * store a list of graphic contexts 
  * this is gui independant the gui dependant part is 
  * delegated to private member of winxgc  
  *--------------------------------------------------------------------------*/
 
 #include "nsp/graphics/Graphics.h" 
+
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
+
 
 /*
  * structure for Window List 
@@ -944,6 +962,14 @@ void set_scale(BCG *Xgc,
       Xgc->scales->WIRect1[1] = YScale( Xgc->scales->frect[3]);
       Xgc->scales->WIRect1[2] = Abs(XScale( Xgc->scales->frect[2]) -  XScale( Xgc->scales->frect[0]));
       Xgc->scales->WIRect1[3] = Abs(YScale( Xgc->scales->frect[3]) -  YScale( Xgc->scales->frect[1]));
+#ifdef WITH_GTKGLEXT 
+      /* transmit info to opengl */
+      if ( Xgc->graphic_engine == &GL_gengine ) 
+	{
+	  nsp_ogl_set_view(Xgc);
+	}
+#endif
+
     }
   if (  aaint_changed== 't' ) 
     {
