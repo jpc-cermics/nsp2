@@ -480,7 +480,8 @@ static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int s
       if ( n != 0) Mnorm /= (n/2);
       as = Mnorm/5.0;
     }
-  scale_f2i(Xgc,&as,&as,&ias,&ias1,1);
+  /* we assume here that ias is given using the x scale */
+  length_scale_f2i (Xgc,&as,&as,&ias,&ias1,1);
   if (Xgc->record_flag == TRUE)  store_drawarrows_1(Xgc,vx,vy,n,as,style,iflag);
   ias=10*ias;
   Xgc->graphic_engine->drawarrows(Xgc,xm,ym,n,ias,style,iflag);

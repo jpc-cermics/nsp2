@@ -2225,7 +2225,7 @@ void DeleteSGWin(int intnum)
   /* deconnect handlers */
   scig_deconnect_handlers(winxgc);
   /* backing store private->pixmap */
-  gdk_pixmap_unref(winxgc->private->pixmap);
+  if (winxgc->private->pixmap != NULL)  gdk_pixmap_unref(winxgc->private->pixmap);
   /* destroy top level window if it is not shared by other graphics  */
   top_count = window_list_search_toplevel(winxgc->private->window); 
   if ( top_count <= 1) 
@@ -2344,6 +2344,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->ccursor=NULL;      
   private->font=NULL;
   private->resize = 0; /* do not remove !! */
+  private->in_expose= FALSE;
 
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
@@ -3359,9 +3360,6 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 		      event->area.x, event->area.y, event->area.x, event->area.y,
  		      event->area.width, event->area.height);
     }
-
-
-
   return FALSE;
 }
 

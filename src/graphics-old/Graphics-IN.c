@@ -1510,19 +1510,15 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
   double arsize=-1.0 ;
   NspMatrix *nx,*ny,*Mstyle=NULL;
 
-  int_types T[] = {realmat,realmat,opts, t_end} ;
-  /* names of optional arguments: must be NULL terminated*/
-  char *Names[]={"arsize","style",NULL};
-  /* types of optional arguments */
-  int_types Topt[]={ s_double,mat_int, t_end} ;
-  /* table to store optional arguments */ 
-  NspObject *Tab[2]; 
-  /* table to store optional arguments position */ 
-  int posi[2];
-  /* structure for optional arguments */
-  named_opts N = { 2 , Names, Topt,Tab, posi};
+  int_types T[] = {realmat,realmat,new_opts, t_end} ;
+
+  nsp_option opts[] ={{ "arsize",s_double,NULLOBJ,-1},
+		      { "style",mat_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
   /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
-  if ( GetArgs(stack,rhs,opt,T,&nx,&ny,&N,&arsize,&Mstyle) == FAIL) return RET_BUG;
+
+  if ( GetArgs(stack,rhs,opt,T,&nx,&ny,&opts,&arsize,&Mstyle) == FAIL) return RET_BUG;
 
   CheckSameDims(stack.fname,1,2,nx,ny);
   if ( nx->mn == 0) { return 0;} 

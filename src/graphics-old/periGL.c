@@ -3735,6 +3735,8 @@ printf("init stencil !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 #endif
 
      init_opgl(dd);
+     LoadFonts(); /* FIXME*/
+
 
      gdk_gl_drawable_gl_end (gldrawable);
      /*** OpenGL END ***/
@@ -3800,6 +3802,9 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   //g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+
+
+  printf("Avant: %i %i\n", glIsList(tab_base[0]), glIsList(tab_base[1]));
 
   if(dd->private->resize != 0) 
     { 
@@ -3951,220 +3956,226 @@ examine_gl_config_attrib (GdkGLConfig *glconfig)
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
-     static char gwin_name[100];
-     gint iw, ih;
-     GtkWidget *scrolled_window;
-     GtkWidget *vbox;
-     GdkGLConfig *glconfig;
+  static char gwin_name[100];
+  gint iw, ih;
+  GtkWidget *scrolled_window;
+  GtkWidget *vbox;
+  static GdkGLConfig *glconfig= NULL;
 
-     /*
-     ** NEW !!
-     */
-     glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
-					   GDK_GL_MODE_DEPTH  |
-					   GDK_GL_MODE_STENCIL |
-					   //GDK_GL_MODE_SINGLE);
-					   GDK_GL_MODE_DOUBLE);
-     if (glconfig == NULL)
-     {
+  /*
+  ** NEW !!
+  */
+  if ( glconfig == NULL ) 
+    {
+      glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
+					    GDK_GL_MODE_DEPTH  |
+					    GDK_GL_MODE_STENCIL |
+					    //GDK_GL_MODE_SINGLE);
+					    GDK_GL_MODE_DOUBLE);
+      if (glconfig == NULL)
+	{
 	  g_print ("*** Cannot find the double-buffered visual.\n");
 	  g_print ("*** Trying single-buffered visual.\n");
-       
-	  exit(1);
 	  /* Try single-buffered visual */
 	  glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
 						GDK_GL_MODE_DEPTH);
 	  if (glconfig == NULL)
-	  {
-	       g_print ("*** No appropriate OpenGL-capable visual found.\n");
-	       exit (1);
-	  }
-     }
-     /* commenter --- decommenter */
-     examine_gl_config_attrib(glconfig);
+	    {
+	      g_print ("*** No appropriate OpenGL-capable visual found.\n");
+	      exit (1);
+	    }
+	}
+      /* commenter --- decommenter */
+      examine_gl_config_attrib(glconfig);
+    }
 
-     /* initialise pointers */
-     dd->private->drawing = NULL;
-     dd->private->wgc = NULL;
-     dd->private->gcursor = NULL;
-     dd->private->ccursor = NULL;
-     gdk_rgb_init();
-     gtk_widget_push_visual(gdk_rgb_get_visual());
-     gtk_widget_push_colormap(gdk_rgb_get_cmap());
+  /* initialise pointers */
+  dd->private->drawing = NULL;
+  dd->private->wgc = NULL;
+  dd->private->gcursor = NULL;
+  dd->private->ccursor = NULL;
+  gdk_rgb_init();
+  gtk_widget_push_visual(gdk_rgb_get_visual());
+  gtk_widget_push_colormap(gdk_rgb_get_cmap());
 
-     /* create window etc */
-     if ( wdim != NULL ) 
-     {
-	  dd->CWindowWidth = iw = wdim[0] ; /*  / pixelWidth(); */
-	  dd->CWindowHeight = ih = wdim[1]; /*  pixelHeight(); */
-     }
-     else 
-     {
-	  dd->CWindowWidth = iw = 600 ; /*  / pixelWidth(); */
-	  dd->CWindowHeight = ih = 400; /*  pixelHeight(); */
-     }
+  /* create window etc */
+  if ( wdim != NULL ) 
+    {
+      dd->CWindowWidth = iw = wdim[0] ; /*  / pixelWidth(); */
+      dd->CWindowHeight = ih = wdim[1]; /*  pixelHeight(); */
+    }
+  else 
+    {
+      dd->CWindowWidth = iw = 600 ; /*  / pixelWidth(); */
+      dd->CWindowHeight = ih = 400; /*  pixelHeight(); */
+    }
 
-     if ( is_top == TRUE ) 
-     {
-	  dd->private->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	  sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
-	  gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-	  gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
-	  gtk_widget_realize(dd->private->window);
-	  vbox = gtk_vbox_new (FALSE, 0);
-	  gtk_container_add (GTK_CONTAINER (dd->private->window), vbox);
-     }
-     else 
-     {
-	  dd->private->window = win ;
-	  sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
-	  gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-	  gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
-	  /* gtk_widget_realize(dd->private->window);*/
-	  vbox = gtk_vbox_new (FALSE, 0);
-	  gtk_container_add (GTK_CONTAINER(box) , vbox);
-     }
+  if ( is_top == TRUE ) 
+    {
+      dd->private->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+      sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
+      gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
+      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
+      gtk_widget_realize(dd->private->window);
+      vbox = gtk_vbox_new (FALSE, 0);
+      gtk_container_add (GTK_CONTAINER (dd->private->window), vbox);
+    }
+  else 
+    {
+      dd->private->window = win ;
+      sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
+      gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
+      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
+      /* gtk_widget_realize(dd->private->window);*/
+      vbox = gtk_vbox_new (FALSE, 0);
+      gtk_container_add (GTK_CONTAINER(box) , vbox);
+    }
 
-     /* gtk_widget_show (vbox); */
+  /* gtk_widget_show (vbox); */
 
-     dd->private->vbox =  gtk_vbox_new (FALSE, 0);
-     gtk_box_pack_start (GTK_BOX (vbox), dd->private->vbox, FALSE, TRUE, 0);
+  dd->private->vbox =  gtk_vbox_new (FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), dd->private->vbox, FALSE, TRUE, 0);
 
-     dd->private->menu_entries = graphic_initial_menu(dd->CurWindow );
-     dd->private->menubar = NULL;
-     create_graphic_window_menu(dd);
+  dd->private->menu_entries = graphic_initial_menu(dd->CurWindow );
+  dd->private->menubar = NULL;
+  create_graphic_window_menu(dd);
 
-     dd->private->CinfoW = gtk_statusbar_new ();
-     gtk_box_pack_start (GTK_BOX (vbox), dd->private->CinfoW, FALSE, TRUE, 0);
+  dd->private->CinfoW = gtk_statusbar_new ();
+  gtk_box_pack_start (GTK_BOX (vbox), dd->private->CinfoW, FALSE, TRUE, 0);
 
-     /* create a new scrolled window. */
-     dd->private->scrolled = scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-     gtk_container_set_border_width (GTK_CONTAINER (scrolled_window),0);
+  /* create a new scrolled window. */
+  dd->private->scrolled = scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+  gtk_container_set_border_width (GTK_CONTAINER (scrolled_window),0);
 
-     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-				     GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
+				  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-     /* fix min size of the scrolled window */
-     if ( wpdim != NULL) 
-	  gtk_widget_set_size_request (scrolled_window,wpdim[0],wpdim[1]);
-     else
-	  gtk_widget_set_size_request (scrolled_window,iw+10,ih+10);
+  /* fix min size of the scrolled window */
+  if ( wpdim != NULL) 
+    gtk_widget_set_size_request (scrolled_window,wpdim[0],wpdim[1]);
+  else
+    gtk_widget_set_size_request (scrolled_window,iw+10,ih+10);
 
-     /* place and realize the scrolled window  */
+  /* place and realize the scrolled window  */
 
-     gtk_box_pack_start (GTK_BOX (vbox), scrolled_window, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), scrolled_window, TRUE, TRUE, 0);
 
-     if ( is_top == TRUE ) 
-	  gtk_widget_realize(scrolled_window);
-     else
-	  gtk_widget_show(scrolled_window);
+  if ( is_top == TRUE ) 
+    gtk_widget_realize(scrolled_window);
+  else
+    gtk_widget_show(scrolled_window);
 
-     if ( viewport_pos != NULL )
-     {
-	  gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
-				    (gfloat) viewport_pos[0]);
-	  gtk_adjustment_set_value( gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
-				    (gfloat) viewport_pos[1]);      
-     }
+  if ( viewport_pos != NULL )
+    {
+      gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
+				(gfloat) viewport_pos[0]);
+      gtk_adjustment_set_value( gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
+				(gfloat) viewport_pos[1]);      
+    }
 
-     /* setup background color */
-     SetColor(&dd->private->gcol_bg, R_RGB(255, 255, 255));
+  /* setup background color */
+  SetColor(&dd->private->gcol_bg, R_RGB(255, 255, 255));
   
-     /* setup foreground color */
-     SetColor(&dd->private->gcol_fg , R_RGB(0,0,0));
+  /* setup foreground color */
+  SetColor(&dd->private->gcol_fg , R_RGB(0,0,0));
 
-     /* create private->drawingarea */
-     dd->private->drawing = gtk_drawing_area_new();
+  /* create private->drawingarea */
+  dd->private->drawing = gtk_drawing_area_new();
 
 
-     /*
-     ** NEW !! 
-     */
+  /*
+  ** NEW !! 
+	  exit(1);
 
-     /* Set OpenGL-capability to the widget */
-     gtk_widget_set_gl_capability (dd->private->drawing,
-				   glconfig,
-				   NULL,
-				   TRUE,
-				   GDK_GL_RGBA_TYPE);
+  */
 
-     gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
-			(GtkSignalFunc) locator_button_press, (gpointer) dd);
-     gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
-			(GtkSignalFunc) locator_button_release, (gpointer) dd);
-     gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
-			(GtkSignalFunc) locator_button_motion, (gpointer) dd);
-     gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "realize",
-			(GtkSignalFunc) realize_event, (gpointer) dd);
+  /* Set OpenGL-capability to the widget */
+  gtk_widget_set_gl_capability (dd->private->drawing,
+				glconfig,
+				NULL,
+				TRUE,
+				GDK_GL_RGBA_TYPE);
 
-     gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
-			   | GDK_BUTTON_PRESS_MASK 
-			   | GDK_BUTTON_RELEASE_MASK
-			   | GDK_POINTER_MOTION_MASK
-			   | GDK_POINTER_MOTION_HINT_MASK
-			   | GDK_LEAVE_NOTIFY_MASK );
+  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
+		     (GtkSignalFunc) locator_button_press, (gpointer) dd);
+  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
+		     (GtkSignalFunc) locator_button_release, (gpointer) dd);
+  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
+		     (GtkSignalFunc) locator_button_motion, (gpointer) dd);
+  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "realize",
+		     (GtkSignalFunc) realize_event, (gpointer) dd);
 
-     /* private->drawingarea properties */
-     /* min size of the graphic window */
-     gtk_widget_set_size_request(dd->private->drawing, iw, ih);
+  gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
+			| GDK_BUTTON_PRESS_MASK 
+			| GDK_BUTTON_RELEASE_MASK
+			| GDK_POINTER_MOTION_MASK
+			| GDK_POINTER_MOTION_HINT_MASK
+			| GDK_LEAVE_NOTIFY_MASK );
 
-     /* place and realize the private->drawing area */
-     gtk_scrolled_window_add_with_viewport ( GTK_SCROLLED_WINDOW (scrolled_window),dd->private->drawing);
+  /* private->drawingarea properties */
+  /* min size of the graphic window */
+  gtk_widget_set_size_request(dd->private->drawing, iw, ih);
 
-     if ( is_top == TRUE )  
-	  gtk_widget_realize(dd->private->drawing);
-     else
-	  gtk_widget_show(dd->private->drawing);
+  /* place and realize the private->drawing area */
+  gtk_scrolled_window_add_with_viewport ( GTK_SCROLLED_WINDOW (scrolled_window),dd->private->drawing);
 
-     /* connect to signal handlers, etc */
-     gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "configure_event",
-			(GtkSignalFunc) configure_event, (gpointer) dd);
+  if ( is_top == TRUE )  
+    gtk_widget_realize(dd->private->drawing);
+  else
+    gtk_widget_show(dd->private->drawing);
 
-     gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
-			(GtkSignalFunc) expose_event, (gpointer) dd);
+  /* connect to signal handlers, etc */
+  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "configure_event",
+		     (GtkSignalFunc) configure_event, (gpointer) dd);
+
+  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
+		     (GtkSignalFunc) expose_event, (gpointer) dd);
   
-     gtk_signal_connect(GTK_OBJECT(dd->private->window), "destroy",
-			(GtkSignalFunc) sci_destroy_window, (gpointer) dd);
+  gtk_signal_connect(GTK_OBJECT(dd->private->window), "destroy",
+		     (GtkSignalFunc) sci_destroy_window, (gpointer) dd);
 
   
-     gtk_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
-			(GtkSignalFunc) sci_delete_window, (gpointer) dd);
+  gtk_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
+		     (GtkSignalFunc) sci_delete_window, (gpointer) dd);
 
-     gtk_signal_connect (GTK_OBJECT (dd->private->window), "key_press_event",
-			 (GtkSignalFunc) key_press_event, (gpointer) dd);
+  gtk_signal_connect (GTK_OBJECT (dd->private->window), "key_press_event",
+		      (GtkSignalFunc) key_press_event, (gpointer) dd);
 
-     /* show everything */
+  /* show everything */
 
-     if ( is_top == TRUE ) 
-     {
-	  /* create offscreen drawable : Already done in the realize_event 
-	   */
-	  if ( wpos != NULL ) 
-	       gtk_window_move (GTK_WINDOW(dd->private->window),wpos[0],wpos[1]);
-	  gtk_widget_realize(dd->private->window);
-	  gtk_widget_show_all(dd->private->window);
-     }
-     else 
-     {
-	  /* we need here to realize the dd->private->drawing 
-	   * this will create offscreen drawable : in realize_event
-	   * and the initialize_gc 
-	   */
-	  gtk_widget_realize(dd->private->drawing);
-     }
+  if ( is_top == TRUE ) 
+    {
+      /* create offscreen drawable : Already done in the realize_event 
+       */
+      if ( wpos != NULL ) 
+	gtk_window_move (GTK_WINDOW(dd->private->window),wpos[0],wpos[1]);
+      gtk_widget_realize(dd->private->window);
+      gtk_widget_show_all(dd->private->window);
+    }
+  else 
+    {
+      /* we need here to realize the dd->private->drawing 
+       * this will create offscreen drawable : in realize_event
+       * and the initialize_gc 
+       */
+      gtk_widget_realize(dd->private->drawing);
+	  exit(1);
 
-     /* let other widgets use the default colour settings */
-     gtk_widget_pop_visual();
-     gtk_widget_pop_colormap();
+    }
+
+  /* let other widgets use the default colour settings */
+  gtk_widget_pop_visual();
+  gtk_widget_pop_colormap();
 
 
-/*
-** NEW !!
-*/	  
+  /*
+  ** NEW !!
+  */	  
   
-     LoadFonts();
+  /* LoadFonts(); */
 
 }
+
 
 /**
  * nsp_set_graphic_eventhandler:
