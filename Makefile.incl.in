@@ -31,6 +31,7 @@ CC = @CC@
 CC_OPTIONS = @CC_OPTIONS@ @GNOMECFLAGS@ -I$(SCIDIR)/src/include
 # XXXXXX a finir proprement 
 CC_OPTIONS = -g -Wall -Dlinux `pkg-config gtk+-2.0 --cflags` -I$(SCIDIR)/src/include
+CC_OPTIONS = -g -Wall -Dlinux `pkg-config gtkglext-1.0 --cflags` -I$(SCIDIR)/src/include
 CC_LDFLAGS = @CC_LDFLAGS@ 
 CC_PICFLAGS = @CC_PICFLAGS@
 
@@ -75,6 +76,7 @@ XLIBS = @GTKLIBS@ @X_LIBS@ $(XAWLIB) $(XMULIB) -lXt -lXext @X_PRE_LIBS@ -lX11 $(
 #XLIBS = `pkg-config gtk+-2.0 libgtkhtml-2.0 --libs`
 # a regler proprement 
 XLIBS = `pkg-config gtk+-2.0 libgtkhtml-2.0 --libs` 
+XLIBS = `pkg-config gtkglext-1.0 libgtkhtml-2.0 --libs` 
 #####################
 # TCL/TK
 #####################
