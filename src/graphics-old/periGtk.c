@@ -2356,6 +2356,7 @@ static void initgraphic(char *string, int *v2)
   /** Default value is without Pixmap **/
   ScilabXgc->private->Cdrawable = (GdkDrawable *) ScilabXgc->private->drawing->window;
   InitMissileXgc(ScilabXgc);
+  StoreXgc(WinNum);
   EntryCounter=Max(EntryCounter,WinNum);
   EntryCounter++;
   gdk_flush();
