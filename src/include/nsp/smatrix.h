@@ -108,7 +108,7 @@ extern NspSMatrix *nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, 
 extern NspSMatrix *nsp_smatrix_extract_columns(NspSMatrix *A, NspMatrix *Cols, int *err); 
 extern NspSMatrix *SMatLoopCol (char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int *rep); 
 extern NspSMatrix *nsp_smatrix_extract_rows(NspSMatrix *A, NspMatrix *Rows, int *err); 
-extern int SMatString (NspSMatrix *A, char **str); 
+
 extern char *NewString (const char *str); 
 extern String *Basic2String (const char *str); 
 extern String *CopyString (const String *str); 
