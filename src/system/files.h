@@ -70,6 +70,6 @@ extern char *get_nsp_tmpdir(void);
 extern void clean_tmpdir(void);
 extern int nsp_change_curdir(char *path);
 extern char * nsp_get_curdir(void);
-extern void nsp_path_expand(char *in_name, char *out_name, int out_size);
+extern void nsp_path_expand(const char *in_name, char *out_name, int out_size);
 
 #endif 

@@ -161,10 +161,10 @@ static char *SCI_a[] = {  "SCI/", "sci/", "$SCI", "SCI\\", "sci\\", (char *) 0 }
 static char *HOME_a[] = {  "HOME/", "home/", "~/" , "HOME\\", "home\\", "~\\" ,"$HOME", (char *) 0};
 static char *TMP_a[] = {  "TMPDIR/", "tmpdir/","TMPDIR\\", "tmpdir\\", "$TMPDIR", (char *) 0};
 
-static int expand_aliases(char *env, char **alias, char *in_name, char *out_name,int out_size);
+static int expand_aliases(char *env, char **alias,const char *in_name, char *out_name,int out_size);
 static int get_env(char *var,char *buf,int buflen,int iflag);
 
-void nsp_path_expand(char *in_name, char *out_name, int out_size)
+void nsp_path_expand(const char *in_name, char *out_name, int out_size)
 {
   int  nc= FSIZE+1;
   static char SCI[FSIZE+1],HOME[FSIZE+1],TMP[FSIZE+1];
@@ -204,7 +204,7 @@ void nsp_path_expand(char *in_name, char *out_name, int out_size)
  *              else result is truncated 
  *---------------------------------------------*/
 
-static int expand_aliases(char *env, char **alias, char *in_name, char *out_name,int out_size)
+static int expand_aliases(char *env, char **alias,const char *in_name, char *out_name,int out_size)
 {
   char *out = out_name;
   char *out_last = out_name + out_size;
