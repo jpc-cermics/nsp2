@@ -244,8 +244,10 @@ void gobject_destroy(NspGObject *self)
 {
   if (self->obj) 
     {
-      Scierror("==>gobject_destroy (call unref)\n");
-      nsp_object_print((NspObject *)self,0);
+      /* 
+	 fprintf(stderr,"==>gobject_destroy (call unref)\n");
+	 nsp_object_print((NspObject *)self,0);
+      */
       nspg_block_threads();
       g_object_unref(self->obj);
       nspg_unblock_threads();
@@ -1047,9 +1049,11 @@ void nspg_destroy_notify(gpointer user_data)
 {
   NspObject *obj = (NspObject *) user_data;
   nspg_block_threads();
-  Scierror("==>destroy_notify activated on \n");
- nsp_object_print(obj,0);
- nsp_object_destroy(&obj);
+  /* 
+     fprintf(stderr,"==>destroy_notify activated on \n");
+     nsp_object_print(obj,0);
+  */
+  nsp_object_destroy(&obj);
   nspg_unblock_threads();
 }
 
@@ -1064,13 +1068,17 @@ void nspgtk_custom_destroy_notify(gpointer custom)
 {
   NspGtkCustomNotify *ncustom= custom; 
   nspg_block_threads();
-  Scierror("==>custom_destroy_notify activated on \n");
- nsp_object_print(ncustom->func,0);
- nsp_object_destroy(&ncustom->func);
+  /* 
+     printf(stderr,"==>custom_destroy_notify activated on \n");
+     nsp_object_print(ncustom->func,0);
+  */
+  nsp_object_destroy(&ncustom->func);
   if ( ncustom->data != NULL)
     {
- nsp_object_print(ncustom->data,0);
- nsp_object_destroy(&ncustom->data);
+      /* 
+       * nsp_object_print(ncustom->data,0);
+       */
+      nsp_object_destroy(&ncustom->data);
     }
   g_free(ncustom);
   nspg_unblock_threads();

@@ -393,7 +393,7 @@ int int_gdkatom_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspGdkAtom *a;
   if (( a= GetGdkAtom(stack,1))== NULLGDKATOM) return RET_BUG;
- nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0);
   return 0;
 }
 
