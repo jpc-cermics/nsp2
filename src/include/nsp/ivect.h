@@ -63,13 +63,15 @@ extern NspIVect *nsp_ivect_object(NspObject *O);
 
 /* IVect.c */
 
- extern NspIVect *nsp_ivect_create(char *name, double first, double step, double last, int flag); 
- extern int IsIVectF (NspObject *O); 
- extern NspIVect *nsp_ivect_copy(NspIVect *A); 
- extern void nsp_ivect_destroy(NspIVect *IV); 
- extern void nsp_ivect_info(NspIVect *IV, int indent); 
- extern void nsp_ivect_print(NspIVect *IV, int indent); 
- extern NspMatrix *nsp_ivect_2_mat(NspIVect *IV); 
+extern NspIVect *nsp_ivect_create(char *name, double first, double step, double last, int flag); 
+extern int IsIVectF (NspObject *O); 
+extern NspIVect *nsp_ivect_copy(NspIVect *A); 
+extern void nsp_ivect_destroy(NspIVect *IV); 
+extern void nsp_ivect_info(NspIVect *IV, int indent); 
+extern void nsp_ivect_print(NspIVect *IV, int indent); 
+extern NspMatrix *nsp_ivect_2_mat(NspIVect *IV); 
+
+extern int IsIVect(NspObject *O);
 
 #endif
 
