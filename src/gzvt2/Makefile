@@ -1,16 +1,23 @@
 include ../../Makefile.incl 
 
-# imlib-config --libs-gdk is needed for some gnome versions 
-LDFLAGS= `pkg-config libzvt-2.0 --cflags --libs` -DHAS_I18N
-CFLAGS= `pkg-config libzvt-2.0 --cflags ` -DHAS_I18N
+# using vte or libzvt 
+#--------------------
+
+ZTERM_LDFLAGS= `pkg-config libzvt-2.0 --cflags --libs` -DHAS_I18N
+ZTERM_CFLAGS= `pkg-config libzvt-2.0 --cflags ` -DHAS_I18N
+VTE_LDFLAGS= `pkg-config vte --cflags --libs` 
+VTE_CFLAGS=  `pkg-config vte --cflags` 
+
+TERM_NAME=vte
+LDFLAGS=$(VTE_LDFLAGS)
 
 all	::  ../../bin/zterm 
 
 clean :: 
 	@$(RM) -f zterm gtkplug 
 
-../../bin/zterm : zterm.c 
-	cc -o  ../../bin/zterm zterm.c $(LDFLAGS) 
+../../bin/zterm :  $(TERM_NAME).c 
+	$(CC) -o ../../bin/zterm $(TERM_NAME).c  $(LDFLAGS) 
 
 distclean::
 	$(RM) -f ../../bin/zterm gtkplug 	

@@ -1339,8 +1339,6 @@ GTKLIBS='`pkg-config gtk+-2.0 libgtkhtml-2.0 --libs`'
 GNOMECFLAGS='`pkg-config gtk+-2.0 --cflags`'
 AC_DEFINE(WITH_GTK)
 GUILIB='gtksci'
-# GZVT='gzvt2' dose not work: gtk2 bug with plugged menus
-# gzvt2 works again with a gtk patch 
 GZVT='gzvt2'
 # we need a patched version 
 SCILABSCRIPT=scilab-gtk.g
@@ -1358,15 +1356,31 @@ if test "$GTKHTML" = no; then
 	AC_MSG_ERROR([Could not find the libgtkhtml-2.0 package.],)
 fi
 LIBS=$ac_save_LIBS
-# check for zzledt 
+# check first for vte 
 ac_save_LIBS="$LIBS"
-LIBS=`pkg-config libzvt-2.0 --cflags --libs` 
-GZVT2=no
-AC_CHECK_LIB(zvt-2.0, zvt_term_new_with_size,[GZVT2=yes])
-if test "$GZVT2" = no; then
-	AC_MSG_ERROR([Could not find the libzvt-2.0  package.],)
+LIBS=`pkg-config vte --cflags --libs` 
+VTE=no 
+AC_CHECK_LIB(vte,vte_terminal_new,[VTE=yes])
+if test "$VTE" = no; then
+   AC_MSG_WARN([Could not find the vte library. I will try libzvt-2.0 ],)
+   AC_MSG_WARN([you should install vte and vte-devel ],)
+   # check for zzledt 
+   LIBS=`pkg-config libzvt-2.0 --cflags --libs` 
+   GZVT2=no
+   AC_CHECK_LIB(zvt-2.0, zvt_term_new_with_size,[GZVT2=yes])
+   if test "$GZVT2" = no; then
+       AC_MSG_ERROR([Could not find vte library or libzvt-2.0 library.],)
+   else 
+     TERM_NAME=zterm
+     TERM_LDFLAGS=ZTERM_LDFLAGS
+   fi
+else 
+   TERM_NAME=vte
+   TERM_LDFLAGS=VTE_LDFLAGS
 fi
 LIBS=$ac_save_LIBS
+
+
 
   # try to use readline with the gtk version 
   ac_save_LIBS="$LIBS"
@@ -1588,9 +1602,10 @@ AC_SUBST(IMPENV)
 AC_SUBST(ZZLEDT)
 AC_SUBST(STRIP)
 AC_SUBST(PERIGLEXT)
+AC_SUBST(TERM_NAME)
+AC_SUBST(TERM_LDFLAGS)
 
-
-AC_OUTPUT(Makefile.OBJ Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk) 
+AC_OUTPUT(Makefile.OBJ Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile) 
  
 
 
