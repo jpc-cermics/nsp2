@@ -3346,6 +3346,7 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if (HMat1->mn == 0)
     {
+      if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
       NSP_OBJECT (HMat1)->ret_pos = 1;
       return 1;
     }
@@ -3353,8 +3354,16 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if (HMat2->mn == 0)
     {
-      /* flag == 1 ==> A op [] returns [] * */
-      NSP_OBJECT (HMat2)->ret_pos = 1;
+      if ( HMat1 == HMat2 ) 
+	{
+	  NthObj(2) = NULLOBJ;
+	  NSP_OBJECT (HMat1)->ret_pos = 1;
+	}
+      else 
+	{
+	  /* flag == 1 ==> A op [] returns [] * */
+	  NSP_OBJECT (HMat2)->ret_pos = 1;
+	}
       return 1;
     }
   if (HMat2->mn == 1)

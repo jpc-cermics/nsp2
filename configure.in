@@ -84,7 +84,6 @@ fi
 
 SCIVERSION=`cat Version.incl | sed -e "s/SCIVERSION=//" `
 
-
 ########################
 ## removing and cleaning
 ########################
@@ -1143,6 +1142,13 @@ LDLAGS=$CC_LDFLAGS
 # Using `AC_PROG_RANLIB' is rendered obsolete by `AC_PROG_LIBTOOL'
 #AC_PROG_RANLIB
 
+
+#########################
+## sizeof(int*)== sizeof(int)
+#########################
+
+AC_CHECK_POINTER_SIZE() 
+
 ####################
 ## test for X Window
 ####################
@@ -1253,10 +1259,12 @@ AC_TRY_COMPILE([#define C2F(name) name##_],
 AC_CHECK_LIB(m,main)
 AC_CHECK_FUNCS(exp10)
 AC_CHECK_FUNCS(getwd)
+AC_CHECK_FUNCS(getcwd)
 AC_CHECK_FUNCS(sleep)
 AC_CHECK_FUNCS(strerror)
 AC_CHECK_FUNCS(usleep)
 AC_CHECK_FUNCS(finite)
+AC_CHECK_FUNCS(mkstemp)
 
 ########################
 ## test for header files

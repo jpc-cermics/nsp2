@@ -3215,3 +3215,74 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 }
 
 
+
+/*
+ * Res=nsp_mpmat_mult(A,B) matrix product in max plus algebra 
+ * 
+ */
+
+NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B)
+{  
+  NspMatrix *Loc;
+  if ( A->n != B->m ) 
+    {
+      Scierror("Error:\tIncompatible dimensions\n");
+      return(NULLMAT);
+    }
+  if ( A->rc_type == 'i' ) 
+    {
+      if ( B->rc_type == 'r' ) 
+	{
+	  if (nsp_mat_set_ival(B,0.00) == FAIL ) return(NULLMAT);
+	}
+    }
+  else 
+    { 
+      if ( B->rc_type == 'i' ) 
+	{
+	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return(NULLMAT);
+	}
+    }
+  if ((Loc = nsp_matrix_create(NVOID,A->rc_type,A->m,B->n))==  NULLMAT) return(NULLMAT);
+  if ( Loc->rc_type == 'i' ) 
+    {
+      int i,j;
+      for ( i = 0 ; i < A->m ; i++) 
+	for ( j = 0 ; j < B->n ; j++)
+	  {
+	    int k=0;
+	    Loc->I[i+Loc->m*j].r = A->I[i+A->m*k].r+ B->I[k+B->m*j].r;
+	    Loc->I[i+Loc->m*j].i = A->I[i+A->m*k].i+ B->I[k+B->m*j].i;
+	    for ( k= 1; k < A->n ; k++) 
+	      {
+		Loc->I[i+Loc->m*j].r= Max(A->I[i+A->m*k].r+ B->I[k+B->m*j].r,Loc->I[i+Loc->m*j].r);
+		Loc->I[i+Loc->m*j].i= Max(A->I[i+A->m*k].i+ B->I[k+B->m*j].i,Loc->I[i+Loc->m*j].r);
+	      }
+	  }
+    }
+  else 
+    {
+      int i,j;
+      for ( i = 0 ; i < A->m ; i++) 
+	for ( j = 0 ; j < B->n ; j++)
+	  {
+	    int k=0;
+	    Loc->R[i+Loc->m*j]= A->R[i+A->m*k]+ B->R[k+B->m*j];
+	    for ( k= 1; k < A->n ; k++) 
+	      {
+		Loc->R[i+Loc->m*j]= Max(A->R[i+A->m*k]+ B->R[k+B->m*j],Loc->R[i+Loc->m*j]);
+	      }
+	  }
+    }
+  return(Loc);
+}
+
+/*
+ * Max plus addition 
+ *   A = A+B (covers the scalar and [] cases ) 
+ */
+
+int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B) 
+{
+  return  nsp_mat_mult_tt(A,B);
+}

@@ -59,7 +59,6 @@ NspMaxpMatrix *new_mpmatrix();
 
 #ifdef MaxpMatrix_Private
 static int init_mpmatrix(NspMaxpMatrix *ob,NspTypeMaxpMatrix *type);
-static int init_mpmatrix(NspMaxpMatrix *o,NspTypeMaxpMatrix *type);
 static int mpmatrix_size(NspMaxpMatrix *Mat, int flag);
 static char *mpmatrix_type_as_string(void);
 static char *mpmatrix_type_short_string(void);
@@ -126,9 +125,10 @@ extern NspMaxpMatrix *MpMat2float (NspMaxpMatrix *A);
 
 /* typedef int (*F_Enlarge) (void *A,int m,int n); */
 
+extern NspMaxpMatrix * nsp_mp_matrix_from_m(const char *name,NspMatrix *M);
 extern NspMaxpMatrix *nsp_mpmatrix_create (const char *name, char type, integer m, integer n); 
 extern NspMaxpMatrix *nsp_mpmatrix_create_impl (double first, double step, double last); 
-NspMaxpMatrix *nsp_mpmatrix_create_from_doubles(const char *name,integer m,integer n,...);
+extern NspMaxpMatrix *nsp_mpmatrix_create_from_doubles(const char *name,integer m,integer n,...);
 extern int nsp_mpmatrix_fill_with (NspMaxpMatrix *A, const NspMaxpMatrix *B); 
 extern int nsp_mpmatrix_resize (NspMaxpMatrix *A, integer m, integer n); 
 extern int nsp_mpmatrix_scalar_to_mn (NspMaxpMatrix *A, integer m, integer n); 

@@ -35,7 +35,11 @@
 
 /*
  * Max Plus matrices 
- * FIXME: this is just a test 
+ * It is always possible to cast a NspMaxpMatrix * to a NspMatrix * 
+ * when passing it to a function which accept a NspMatrix * as argument.
+ * It is also possible to create a NspMatrix Object from a NspMatrix 
+ * without copy with nsp_mp_matrix_from_m. Note that in this last case 
+ * the given NspMatrix is changed to NULL.
  */
 
 /**
@@ -45,7 +49,7 @@
  * @m: number of rows 
  * @n: number of columns 
  * 
- * Creates a new matrix with unspecified values, returns %NULLMAT on failure. 
+ * Creates a new max plus matrix with unspecified values, returns %NULLMAT on failure. 
  * Returns a #NspMaxpMatrix or %NULLMAT.
  */
 
@@ -104,13 +108,74 @@ NspMaxpMatrix * nsp_mpmatrix_create(const char *name, char type, integer m, inte
   return(Mat);
 }
 
+/**
+ * nsp_mp_matrix_from_m: 
+ * @name: matrix name 
+ * @M: a NspMatrix *
+ * 
+ * Creates a new max plus matrix using data from a given 
+ * argument matrix @M. Data is not copied but moved from 
+ * given argument to the new matrix. the @M matrix size 
+ * is then set to 0x0 and data is set to null to prevent 
+ * sharing data. This function is usefull when using a 
+ * function returning a NspMatrix where a NspMaxpMatrix is 
+ * requested. 
+ * 
+ * Returns a #NspMaxpMatrix or %NULLMAT.
+ */
+
+NspMaxpMatrix * nsp_mp_matrix_from_m(const char *name,NspMatrix *M)
+{
+  NspMaxpMatrix *Mat = new_mpmatrix();
+  
+  if ( Mat == NULLMAXPMAT) 
+    {
+      Scierror("Error:\tRunning out of memory\n");
+      return(NULLMAXPMAT);
+    }
+  /* shared by all objects */
+  if ((NSP_OBJECT(Mat)->name = NewString(name))== NULLSTRING) 
+    {
+      Scierror("Error:\tRunning out of memory\n");
+      return(NULLMAXPMAT);
+    }
+  NSP_OBJECT(Mat)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
+  Mat->m=M->m;
+  Mat->n=M->n;
+  Mat->rc_type = M->rc_type;
+  Mat->mn=M->mn;
+  Mat->convert = 'd'; 
+  if ( Mat->mn == 0 ) 
+    {
+      Mat->m = Mat->n=0;
+      Mat->R = (double *) 0; 
+      Mat->I = (doubleC *) 0;
+      return(Mat);
+    }
+  switch (  Mat->rc_type ) 
+    {
+    case 'r' :
+      Mat->I = (doubleC *) 0;
+      Mat->R = M->R; 
+      break;
+    case 'i' : 
+      Mat->R = (double *) 0; 
+      Mat->I = M->I;
+    }
+  M->R =NULL; M->I = NULL;
+  M->m = M->n = M->mn = 0;
+  return(Mat);
+}
+
+
+
 /*
  * used when data is transmited by caml 
  */
 
 #ifdef OCAML 
 NspMaxpMatrix *MatCreateFromData(char *name, char type, integer m, integer n,
-			     struct caml_bigarray *b)
+				 struct caml_bigarray *b)
 {
   struct caml_bigarray_proxy * proxy;
   NspMaxpMatrix *Mat = new_mpmatrix();
@@ -286,7 +351,7 @@ NspMaxpMatrix *nsp_mpmatrix_copy(const NspMaxpMatrix *A)
  * @A: a #NspMaxpMatrix 
  * @B: a #NspMaxpMatrix 
  * 
- * The #NspMaxpMatrix @A size ans type (real or complex) are changed 
+ * The #NspMaxpMatrix @A size and type (real or complex) are changed 
  * to be the same as size and type of @B. Then @A is filled 
  * with @B data. 
  *
@@ -300,17 +365,17 @@ int nsp_mpmatrix_fill_with(NspMaxpMatrix *A,const NspMaxpMatrix *B)
     case 'r' : 
       if (A->rc_type == 'i') 
 	{ 
-	  if (nsp_mat_get_real(A) == FAIL) return FAIL; 
+	  if (nsp_mat_get_real((NspMatrix *)A) == FAIL) return FAIL; 
 	}
       break; 
     case 'i' : 
       if (A->rc_type == 'r') 
 	{ 
-	  if (nsp_mat_complexify(A,0.0) == FAIL) return FAIL; 
+	  if (nsp_mat_complexify((NspMatrix *)A,0.0) == FAIL) return FAIL; 
 	}
       break;
     }
-  if ( nsp_mpmatrix_resize(A, B->m, B->n) == FAIL) return FAIL;
+  if ( nsp_mpmatrix_resize((NspMaxpMatrix *)A, B->m, B->n) == FAIL) return FAIL;
   switch ( A->rc_type ) 
     {
     case 'r' :
@@ -409,7 +474,7 @@ int nsp_mpmatrix_scalar_to_mn(NspMaxpMatrix *A, integer m, integer n)
   if ( nsp_mpmatrix_resize(A,m,n) == FAIL) return FAIL; 
   switch ( A->rc_type ) 
     {
-    case 'r' : nsp_mat_set_rval(A,A->R[0]);break; 
+    case 'r' : nsp_mat_set_rval((NspMatrix *)A,A->R[0]);break; 
     case 'i' : 
       x= A->I[0]; 
       for ( i=1; i < A->mn ; i++) 
@@ -506,7 +571,7 @@ void nsp_mpmatrix_info(const NspMaxpMatrix *Mat, int indent)
 void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,int header )
 {
   int i;
-  Mat = Mat2double(Mat); /* we should write a scilab_print_internal when Mat is int  XXXXX */
+  Mat = (NspMaxpMatrix *) Mat2double((NspMatrix *)Mat);
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {
@@ -641,7 +706,7 @@ int nsp_mpmatrix_enlarge(NspMaxpMatrix *A, integer m, integer n)
     {
       /* special case A=[] **/
       if ( nsp_mpmatrix_resize(A,m,n) == FAIL) return(FAIL);
- nsp_mat_set_rval(A,0.00);
+      nsp_mat_set_rval((NspMatrix *)A,0.00);
       return OK;
     }
   if ( n > A->n  )
@@ -684,7 +749,7 @@ int nsp_mpmatrix_concat_right(NspMaxpMatrix *A,const NspMaxpMatrix *B)
 	}
       else 
 	{
-	  if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
+	  if (nsp_mat_complexify((NspMatrix *)A,0.00) == FAIL ) return(FAIL);
 	  /* C2F(zcopy)(&B->mn,B->I,&inc,A->I+Asize,&inc);*/
 	  memcpy (A->I+Asize,B->I,sizeof(doubleC)*B->mn);
 	}
@@ -963,7 +1028,7 @@ int nsp_mpmatrix_set_submatrix(NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Col
     {
       if (  A->rc_type == 'r' )
  	{ 
- 	  if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
+ 	  if (nsp_mat_complexify((NspMatrix *)A,0.00) == FAIL ) return(FAIL);
  	} 
       if ( B->mn != 1) 
 	for ( i = 0 ; i < Rows->mn ; i++)
@@ -1056,7 +1121,7 @@ int nsp_mpmatrix_set_rows(NspMaxpMatrix *A, NspMatrix *Rows, NspMaxpMatrix *B)
     {
       if (  A->rc_type == 'r' )
  	{ 
- 	  if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
+ 	  if (nsp_mat_complexify((NspMatrix *)A,0.00) == FAIL ) return(FAIL);
  	} 
       if ( Bscal == 0 ) 
 	for ( i = 0 ; i < Rows->mn ; i++)
@@ -1602,7 +1667,7 @@ int nsp_mpmatrix_set_diag(NspMaxpMatrix *A, NspMaxpMatrix *Diag, integer k)
   else 
     {
       if ( A->rc_type == 'r' ) 
-	if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
+	if (nsp_mat_complexify((NspMatrix *)A,0.00) == FAIL ) return(FAIL);
       for ( i = imin ; i < A->m ; i++ ) 
 	{
 	  A->I[i+(i+k)*A->m].r = Diag->I[j].r ;
@@ -1637,7 +1702,7 @@ NspMaxpMatrix *nsp_mpmatrix_create_diag(const NspMaxpMatrix *Diag, integer k)
     return(NULLMAXPMAT);
   switch (Loc->rc_type ) 
     {
-    case 'r' : nsp_mat_set_rval(Loc,0.00);break;
+    case 'r' : nsp_mat_set_rval((NspMatrix *) Loc,0.00);break;
     case 'i': nsp_csetd(&Loc->mn,&d,Loc->I,&inc);break;
     }
   if ( Loc->rc_type == 'i') 

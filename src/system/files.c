@@ -129,15 +129,17 @@ int nsp_change_curdir(char *path)
 }
 
 /*------------------------------
- * Get scilab current directory 
+ * Get nsp current directory 
+ * FIXME: when getcwd returns a NULL 
+ *        pointer ERANGE shoukd be checked
  *------------------------------*/
 
 char * nsp_get_curdir()
 {
 #ifndef __ABSC__
-  if (GETCWD(cur_dir, FSIZ) == (char*) 0)
+  if (GETCWD(cur_dir, FSIZE) == (char*) 0)
 #else
-    if (GETCWD(cur_dir,FSIZ) != 0)
+    if (GETCWD(cur_dir,FSIZE) != 0)
 #endif
       {	/* get current working dir */
 	Sciprintf("Can't get current directory\n");

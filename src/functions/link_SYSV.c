@@ -9,7 +9,6 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 
-
 #ifndef hppa
 #include <dlfcn.h>
 #else
@@ -239,7 +238,11 @@ int CreateShared(char **loaded_files, char *tmp_file)
    Sciprintf(" to create a shared executable\r\n");
    count++;
    sprintf(tmp_file, "/tmp/SD_%d_/SL_%d_XXXXXX",(int) getpid(),count);
+#ifdef HAVE_MKSTEMP 
+   mkstemp(tmp_file);
+#else 
    mktemp(tmp_file);
+#endif
    {
      int pid, status, wpid;
      static char *argv[MAXARGV] = {

@@ -21,6 +21,12 @@
 /* Define if have getwd */
 #undef HAVE_GETWD
 
+/* Define if have getwd */
+#undef HAVE_GETCWD
+
+/* Define if have mkstemp */
+#undef HAVE_MKSTEMP 
+
 /* Define if have sleep: used in graphics/periX11.c */
 #undef HAVE_SLEEP
 
@@ -45,6 +51,18 @@
 /* Define if have and use GTKHTML */
 #undef WITH_GTKHTML
 
+/* Define if sizeof(int*)==sizeof(int) */
+#undef POINTER_INT 
+
+/* storing and retrieving an int in a pointer */
+
+if defined(POINTER_INT) 
+#define NSP_INT_TO_POINTER(i) ((int *) (i)) 
+#define NSP_POINTER_TO_INT(i) ((int) (i))
+#else 
+#define NSP_INT_TO_POINTER(i) ((int *) (long) (i))
+#define NSP_POINTER_TO_INT(i) ((int) (long) (i))
+#endif 
 
 /* CNAME(x,y) ==> xy **/
 
