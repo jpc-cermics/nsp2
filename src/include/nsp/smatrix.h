@@ -145,6 +145,7 @@ extern int nsp_smatrix_strip_blanks(NspSMatrix *A);
 
 
 extern NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type);
+extern int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines);
 
 #endif 
 

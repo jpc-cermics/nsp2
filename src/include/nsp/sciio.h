@@ -23,20 +23,20 @@ NspObject *Sciprint2string_reset();
 #endif 
 
 int  Sciprint2string(char *fmt, va_list ap);
-void Sciprint_set_diary(FILE *f);
-int Sciprint_diary(char *fmt, va_list ap);
-int Sciprint_diary_only (char *fmt,...);
-void Sciprint_file(FILE *f); 
-int Sciprint2file(char *fmt, va_list ap); 
+FILE * Sciprint_set_diary(FILE *f);
+extern int Sciprint_diary_on(void) ;
+extern int Sciprint_diary(char *fmt, va_list ap);
+extern int Sciprint_diary_only (char *fmt,...);
+extern void Sciprint_file(FILE *f); 
+extern int Sciprint2file(char *fmt, va_list ap); 
 
-typedef int (*IOFun) (char *fmt,...);
+typedef int iofun (char *fmt,...);
+typedef iofun *IOFun;
+
 typedef int (*IOFun1) (int indent,char *fmt,...);
 
-extern IOFun Scierror ;
-typedef void (*MoreFun) (int *n);
-extern MoreFun scimore ;
-extern void scimore_void(int *n);
-MoreFun SetScilabMore(MoreFun F);
+extern iofun Scierror ;
+
 
 extern void C2F(scilines) (int *nl,int *nc);
 int  ParseError  (char *fmt,...);
@@ -46,17 +46,7 @@ extern IOFun2 Scifprintf ;
 typedef int (*SciGetC) (void);
 extern SciGetC Scigetchar ;
 extern SciGetC SetScilabgetchar (SciGetC F);
-typedef void (*SciReadFunction) ( char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
-typedef void (SciReadFunc) ( char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
-extern void SciFileReadLine (char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
-extern SciReadFunction SciReadLine1 ;
-extern SciReadFunction SetSciReadFunction  (SciReadFunction F);
-extern SciReadFunction SetSciReadFunctionDef();
-extern FILE *SetSciInputFile ( FILE *file);
 
-char *set_input_str(char *str); 
-extern SciReadFunc SciStringReadLine;
-extern SciReadFunc SciSMatReadLine;
 
 extern void SciReadClean (void);
 
@@ -65,10 +55,14 @@ extern int get_echo_mode(void);
 extern void set_is_reading(int mode);
 extern int get_is_reading(void);
 
-extern void DefSciReadLine(char *prompt, char *buffer, int *buf_size, int *len_line, int *eof);
+extern void nsp_error_message_show(void);
+extern void nsp_error_message_to_lasterror(void);
 
-extern void nsp_error_message_show();
-extern void nsp_error_message_clear();
+extern int nsp_set_echo_input_line(int val);
+extern int nsp_get_echo_input_line(void);
+
+extern IOVFun nsp_error_vprintf;
+
 
 #endif 
 

@@ -291,10 +291,11 @@ extern NspObject *nsp_create_object_from_str_and_size(char *str, int lstr);
 extern NspObject *nsp_create_object_from_doubles(integer m, integer n, integer it, double *rtab, double *itab, char *name); 
 extern NspObject *nsp_create_empty_matrix_object(char *str); 
 extern NspObject *nsp_create_true_object(char *str); 
+extern NspObject *nsp_create_boolean_object(char *str,int val);
 extern NspObject *nsp_create_false_object(char *str); 
 extern char *nsp_object_get_name(NspObject *O); 
 extern int nsp_object_set_name(NspObject *O, char *str); 
-
+extern int print_count_rows(Stack stack,int first_arg,int last_arg);
 
 
 /*----------------------------------------------------------
