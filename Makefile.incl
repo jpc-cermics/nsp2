@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 RM = rm -f
 AR = ar cru
 FILES_TO_CLEAN = *.CKP *.ln *.BAK *.bak core errs ,* *~ *.a .emacs_* tags TAGS make.log MakeOut .*~ *.trace so_locations *.orig *.cos *.obj
@@ -36,7 +37,7 @@ CC_PICFLAGS =
 # and for linking: $(FC) -o $(PROGRAM) $(OBJS) $(FC_LDFLAGS)
 ##################
 FC = g77
-FC_OPTIONS = -O
+FC_OPTIONS = -g
 FC_LDFLAGS = -lieee -ldl -rdynamic
 FC_PICFLAGS = 
 
