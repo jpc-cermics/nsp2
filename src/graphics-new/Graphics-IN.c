@@ -61,17 +61,21 @@ static int * check_style(Stack stack,char *fname,char *varname,NspMatrix *var,in
 /*-----------------------------------------------------------
  * Check optional iflag argument 
  * 3D options 
+ * default mode is 8 which is a superpose mode 
  *-----------------------------------------------------------*/
 
-static int iflag_def[]={2,2,4};
+static const int iflag_def[]={2,8,4};
+static int iflag_loc[] = {2,8,4};
 
 static int * check_iflag(Stack stack,char *fname,char *varname,NspMatrix *var,int size) 
 {
+  int i;
+  /* provide a default value by copying since the returned array is 
+   * changed 
+   */
   if ( var == NULLMAT) 
     {
-      /* provide a default value */ 
-      iflag_def[0]=iflag_def[1]=2;iflag_def[2]=4;
-      return iflag_def;
+      for ( i= 0 ; i < size ; i++) iflag_loc[i]=iflag_def[i];
     }
   else
     {
@@ -81,66 +85,70 @@ static int * check_iflag(Stack stack,char *fname,char *varname,NspMatrix *var,in
 	  Scierror("%s:optional argument %s is too small (%d<%d)\n",fname,varname,var->mn,size);
 	  return NULL;
 	}
-      return (int *) var->R;
+      for ( i= 0 ; i < size ; i++) iflag_loc[i]=(int) var->R[i];
     }
+  return iflag_loc;
 }
 
 /*-----------------------------------------------------------
  * Check optional iflag argument for param3d 
  *-----------------------------------------------------------*/
 
-static int param_iflag_def[]={2,2,4};
+static const int param_iflag_def[]={8,4};
+static int param_iflag_loc[] = {8,4};
 
-static int * check_param_iflag(Stack stack,char *fname,char *varname,NspMatrix *var)
+static int * check_param_iflag(Stack stack,char *fname,char *varname,NspMatrix *var,int size) 
 {
+  int i;
+  /* provide a default value by copying since the returned array is 
+   * changed 
+   */
   if ( var == NULLMAT) 
     {
-      /* provide a default value */ 
-      param_iflag_def[0]=param_iflag_def[1]=2;param_iflag_def[2]=4;
-      return param_iflag_def;
+      for ( i= 0 ; i < size ; i++) param_iflag_loc[i]=param_iflag_def[i];
     }
   else
     {
       /* check size */ 
-      if ( var->mn != 2 ) 
+      if ( var->mn < size ) 
 	{
-	  Scierror("%s:optional argument %s is too small (%d<2)\n",fname,varname,var->mn);
+	  Scierror("%s:optional argument %s is too small (%d<%d)\n",fname,varname,var->mn,size);
 	  return NULL;
 	}
-      param_iflag_def[1]= ((int *) var->R)[0];
-      param_iflag_def[2]= ((int *) var->R)[1];
-      return param_iflag_def;
+      for ( i= 0 ; i < size ; i++) param_iflag_loc[i]=(int) var->R[i];
     }
+  return param_iflag_loc;
 }
 
 /*-----------------------------------------------------------
- * Check optional argument rect
+ * Check optional argument ebox for 3d plot 
  *-----------------------------------------------------------*/
 
 
-static double  ebox_def[]= { 0,1,0,1,0,1};
+static const double  ebox_def[]= { 0,1,0,1,0,1};
+static double ebox_loc[]=  { 0,1,0,1,0,1};
 
 static double * check_ebox(Stack stack,char *fname,char *varname,NspMatrix *var)
 {
+  int i;
   if ( var == NULLMAT) 
     {
-      ebox_def[0]=ebox_def[2]=ebox_def[4]=0.0;
-      ebox_def[1]=ebox_def[3]=ebox_def[5]=1.0;
-      return ebox_def;
+      for ( i= 0 ; i < 6 ; i++) ebox_loc[i]=ebox_def[i];
     }
   else 
     {
       /* check size */ 
       if ( var->mn != 6 ) 
 	{
-	  Scierror("%s:optional argument %s should be of size 8\n",fname,varname);
+	  Scierror("%s:optional argument %s should be of size 6\n",fname,varname);
 	  return NULL;
 	}
       else 
 	{
-	  return var->R;
+	  for ( i= 0 ; i < 6 ; i++) ebox_loc[i]= var->R[i];
 	}
     }
+  return ebox_loc;
 }
 
 
@@ -668,7 +676,7 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
   CheckSameDims(stack.fname,1,2,x,y);
   CheckSameDims(stack.fname,1,3,x,z);
 
-  if (( iflag = check_param_iflag(stack,stack.fname,"flag",flag))==NULL) return RET_BUG;
+  if (( iflag = check_param_iflag(stack,stack.fname,"flag",flag,2))==NULL) return RET_BUG;
   if (( ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
   if (( leg = check_legend(stack,stack.fname,"leg",leg)) == NULL) return RET_BUG;
 
@@ -796,7 +804,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
 		      { "alpha",s_double,NULLOBJ,-1},
 		      { "colors",mat_int,NULLOBJ,-1},
 		      { "ebox",realmat,NULLOBJ,-1},
-		      { "flag",mat_int,NULLOBJ,-1},
+		      { "flag",realmat,NULLOBJ,-1},
 		      { "leg", string,NULLOBJ,-1},
 		      { "theta",s_double,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};

@@ -34,7 +34,7 @@ static char Marks[] = {
 
 static unsigned long maxcol; /* XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
-
+static void nsp_gtk_invalidate(BCG *Xgc);
 /*
  * fix camera position 
  */
@@ -46,10 +46,9 @@ static t_camera nouvelle_camera(float px, float py, float pz,
 /* 
  * OpenGL 
  */
-static void OrthoMode(int left, int top, int right, int bottom);
-static void PerspectiveMode();
+
 static void force_affichage(BCG *Xgc);
-static void init_view(BCG *Xgc);
+static void nsp_ogl_set_view(BCG *Xgc);
 static bool LoadTGA(TextureImage *texture, char *filename);
 static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col);
 static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...);
@@ -216,10 +215,11 @@ void xend(BCG *Xgc)
 static void clearwindow(BCG *Xgc)
 {
   //  glDrawBuffer(GL_FRONT_AND_BACK);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
-  //  glDrawBuffer(GL_BACK);
-  //  glLoadIdentity ();
-  //  force_affichage(Xgc);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClearColor(Xgc->private->gcol_bg.red /255.0,
+	       Xgc->private->gcol_bg.green /255.0,
+	       Xgc->private->gcol_bg.blue /255.0,0.0);
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /* generates a pause, in seconds */
@@ -676,7 +676,8 @@ static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_
 
 static void cleararea(BCG *Xgc, int x, int y, int w, int h)
 {
-     RectangleClear(Xgc,x,y,w,h,0,R_clear);
+  RectangleClear(Xgc,x,y,w,h,0,R_clear);
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -1774,8 +1775,7 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
     {
       DispStringAngle(Xgc,x,y,string,angle);
     }
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
-
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle)
@@ -1837,7 +1837,7 @@ static void drawline(BCG *Xgc,int x1, int y1, int x2, int y2)
   glVertex2i(x1, y1);
   glVertex2i(x2, y2);
   glEnd();
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /** Draw a set of segments **/
@@ -1942,7 +1942,7 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
      }
      xset_dash_and_color(Xgc,dash,color);
 
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 
 }
 
@@ -1956,7 +1956,7 @@ static void drawrectangle(BCG *Xgc,const int rect[])
   glVertex2i(rect[0]+rect[2],rect[1]+rect[3]);
   glVertex2i(rect[0]        ,rect[1]+rect[3]);
   glEnd();
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
   //glFlush ();
 }
 
@@ -1970,7 +1970,7 @@ static void fillrectangle(BCG *Xgc,const int rect[])
   glVertex2i(rect[0]+rect[2],rect[1]+rect[3]);
   glVertex2i(rect[0]        ,rect[1]+rect[3]);
   glEnd();
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /*----------------------------------------------------------------------------------
@@ -1983,7 +1983,6 @@ static void fillrectangle(BCG *Xgc,const int rect[])
 
 static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
-  int swap= Xgc->private->swap;
      double zmoy,zmax,zmin,zmaxmin;
      int tab[4];
      int i,j,whiteid,fill[1],cpat,xz[2];
@@ -1996,8 +1995,7 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
      cpat = xget_pattern(Xgc);
      xget_windowdim(Xgc,xz,xz+1);
 
-     /* swap will be done at the end */
-     Xgc->private->swap = FALSE;
+
      for (i = 0 ; i < (n1)-1 ; i++)
 	  for (j = 0 ; j < (n2)-1 ; j++)
 	  {
@@ -2027,8 +2025,7 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
 		    }
 	  }
      xset_pattern(Xgc,cpat);
-     Xgc->private->swap = swap ;
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+     if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 
 }
 
@@ -2044,14 +2041,11 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
 
 static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
-  int swap= Xgc->private->swap;
      int i,j,fill[1],cpat,xz[2];
      int tab[4];
      cpat = xget_pattern(Xgc);
      xget_windowdim(Xgc,xz,xz+1);
 
-     /* swap will be done at the end */
-     Xgc->private->swap = FALSE;
      for (i = 0 ; i < (n1)-1 ; i++)
 	  for (j = 0 ; j < (n2)-1 ; j++)
 	  {
@@ -2078,8 +2072,7 @@ static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, in
 		    }
 	  }
      xset_pattern(Xgc,cpat);
-     Xgc->private->swap = swap ;
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -2099,12 +2092,9 @@ static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, in
 
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
-  int swap= Xgc->private->swap;
      int i,cpat,verb;
      verb=0;
      cpat = xget_pattern(Xgc);
-     /* swap will be done at the end */
-     Xgc->private->swap = FALSE;
      for (i=0 ; i< n ; i++)
      {
 	  if (fillvect[i] > Xgc->IDLastPattern + 1)
@@ -2121,8 +2111,7 @@ static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
      }
      xset_pattern(Xgc,cpat);
 
-     Xgc->private->swap = swap ;
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /*
@@ -2137,10 +2126,8 @@ static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
 
 static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
- int swap= Xgc->private->swap;
      int dash,color,i;
      /* store the current values */
-    Xgc->private->swap = FALSE;
      xget_dash_and_color(Xgc,&dash,&color);
      for (i=0 ; i< n ; i++)
      {
@@ -2148,8 +2135,7 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 	  drawarc(Xgc,vects+6*i);
      }
      xset_dash_and_color(Xgc,dash,color);
-     Xgc->private->swap = swap ;
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /** Draw a single ellipsis or part of it **/
@@ -2159,7 +2145,7 @@ static void drawarc(BCG *Xgc,int arc[])
      gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
      if ( Xgc->private->drawable == Xgc->private->drawing->window) 
 	  gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /** Fill a single elipsis or part of it with current pattern **/
@@ -2169,7 +2155,7 @@ static void fillarc(BCG *Xgc,int arc[])
      gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
      if ( Xgc->private->drawable == Xgc->private->drawing->window) 
 	  gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /*
@@ -2185,14 +2171,11 @@ static void fillarc(BCG *Xgc,int arc[])
 
 static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
 { 
- int swap= Xgc->private->swap;
-
      int symb[2],dash,color,i,close;
      /* store the current values */
      xget_mark(Xgc,symb);
      xget_dash_and_color(Xgc,&dash,&color);
 
-    Xgc->private->swap = FALSE;
 
      for (i=0 ; i< n ; i++)
      {
@@ -2212,8 +2195,9 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
      /** back to default values **/
      xset_dash_and_color(Xgc,dash,color);
      xset_mark(Xgc,symb[0],symb[1]);
-     Xgc->private->swap = swap ;
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
+
 }
 
 /***********************************************************
@@ -2229,10 +2213,8 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
- int swap= Xgc->private->swap;
      int dash,color,i;
      xget_dash_and_color(Xgc,&dash,&color);
-    Xgc->private->swap = FALSE;
      for (i = 0 ; i< n ; i++)
      {
 	  if (fillvect[i] > 0 )
@@ -2256,8 +2238,7 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
 	  }
      }
      xset_dash_and_color(Xgc,dash,color);
-     Xgc->private->swap = swap ;
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /* 
@@ -2276,7 +2257,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
     glBegin(GL_LINE_STRIP);
   for (i=0; i < n ; i++) glVertex2i(vx[i], vy[i]);
   glEnd();
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /* 
@@ -2293,7 +2274,7 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) glVertex2i( vx[i], vy[i]);
   glEnd();
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
   
 }
 
@@ -2317,10 +2298,8 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 
 void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
 {
-     int swap= Xgc->private->swap;
      int dash,color,i;
      xget_dash_and_color(Xgc,&dash,&color);
-     Xgc->private->swap = FALSE;
      for (i = 0 ; i< n ; i++)
      {
 	  if (fillvect[i] > 0 )
@@ -2344,8 +2323,7 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 	  }
      }
      xset_dash_and_color(Xgc,dash,color);
-     Xgc->private->swap = swap ;
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag) 
@@ -2355,7 +2333,7 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) glVertex3d( vx[i], vy[i], vz[i]);
   glEnd();
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -2369,7 +2347,7 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
     glBegin(GL_LINE_STRIP);
   for (i=0; i < n ; i++) glVertex3d(vx[i], vy[i], vz[i]);
   glEnd();
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /* 
@@ -2397,7 +2375,7 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
       for ( i=0; i< n ;i++) DrawMark(Xgc,vx+i,vy+i);
       xset_font(Xgc,keepid,keepsize);
     }
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -2416,14 +2394,10 @@ static void drawpolymark3D(BCG *Xgc,double *vx, double *vy, double *vz, int n)
 
 void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p)
 { 
-     int swap= Xgc->private->swap;
-
      int symb[2],dash,color,i,close;
      /* store the current values */
      Xgc->graphic_engine->xget_mark(Xgc,symb);
      xget_dash_and_color(Xgc,&dash,&color);
-
-     Xgc->private->swap = FALSE;
 
      for (i=0 ; i< n ; i++)
      {
@@ -2442,8 +2416,7 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
      /** back to default values **/
      xset_dash_and_color(Xgc,dash,color);
      Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
-     Xgc->private->swap = swap ;
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -2606,7 +2579,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
      private->ccursor=NULL;      
      private->font=NULL;
      private->resize = 0; /* do not remove !! */
-     private->swap = TRUE; 
+     private->in_expose= FALSE;
 
      if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
      {
@@ -3082,56 +3055,43 @@ printf("init stencil !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 */
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
-     BCG *dd = (BCG *) data;
-     GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
-     GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
+  BCG *dd = (BCG *) data;
+  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
+  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
 
-     //g_return_val_if_fail(dd != NULL, FALSE);
-     //g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
-     //g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+  g_return_val_if_fail(dd != NULL, FALSE);
+  g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
+  //g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
 
+  if(GTK_WIDGET_REALIZED(dd->private->drawing))
+    {
+      if ( dd->CurResizeStatus == 1) 
+	{
+	  if ( (dd->CWindowWidth != event->width) || (dd->CWindowHeight != event->height))
+	    {
+	      dd->CWindowWidth = event->width;
+	      dd->CWindowHeight = event->height;
+	      dd->private->resize = 1;
+	    }
+	}
+    }
 
-     if(GTK_WIDGET_REALIZED(dd->private->drawing))
-     {
-	  if ( dd->CurResizeStatus == 1) 
-	  {
-	       if ( (dd->CWindowWidth != event->width) || (dd->CWindowHeight != event->height))
-	       {
-		    dd->CWindowWidth = event->width;
-		    dd->CWindowHeight = event->height;
-		    dd->private->resize = 1;
-	       }
-	  }
-     }
-
-     /*
-     ** NEW !!
-     */
-     //glClear(GL_STENCIL_BUFFER_BIT);
-
-     /*** OpenGL BEGIN ***/
-     if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
-	  return FALSE;
-     
-     init_view(dd);
-
-#ifdef MOTION
-     dd->private->aspect = (float)widget->allocation.width /(float)widget->allocation.height;
-#endif 
-
-     gdk_gl_drawable_gl_end (gldrawable);
-     /*** OpenGL END ***/
-
-     return TRUE;  
+  return TRUE;  
 }
 
 
-/*
-** NEW !!
-*/
+
+static void nsp_gtk_invalidate(BCG *Xgc)
+{
+
+  gdk_window_invalidate_rect(Xgc->private->drawing->window,
+			     &Xgc->private->drawing->allocation,
+			     FALSE);
+}
 
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
+  double theta,alpha;
   BCG *dd = (BCG *) data;
   GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
   GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
@@ -3142,48 +3102,24 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   
   glLineWidth(1.5); // FIXME: 
   
-  if(dd->private->resize != 0) 
+  if ( 1 ) /* FIXME: why do I need to always redraw dd->private->resize != 0) */
     { 
       dd->private->resize = 0;
       if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
 	return FALSE;
       
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
-      glLoadIdentity ();
 
-      if (dd->private->view == VUE_3D)
-	{
-	  gluLookAt (dd->private->camera.position.x, 
-		     dd->private->camera.position.y, 
-		     dd->private->camera.position.z,
-		     dd->private->camera.cible.x, 
-		     dd->private->camera.cible.y, 
-		     dd->private->camera.cible.z,
-		     dd->private->camera.orientation.x,
-		     dd->private->camera.orientation.y, 
-		     dd->private->camera.orientation.z);
-	}
+      nsp_ogl_set_view(dd);
 
-#ifdef MOTION
-      glMatrixMode (GL_PROJECTION);
-      glLoadIdentity ();
-      gluPerspective (64.0, dd->private->aspect, dd->private->zNear, dd->private->zFar);
-      glMatrixMode (GL_MODELVIEW);
-      glLoadIdentity ();
-      glTranslatef (0.0,0.0,-dd->private->sdepth);
-      fprintf(stderr,"je tourne de %f %f\n",dd->private->stheta,dd->private->sphi);
-      glRotatef (-dd->private->stheta, 1.0, 0.0, 0.0);
-      glRotatef (dd->private->sphi, 0.0, 0.0, 1.0);
-      glTranslatef (-(float)((dd->private->maxgrid+1)/2-1), -(float)((dd->private->maxgrid+1)/2-1), 0.0);
-#endif 
       //     glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
       //     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
       //     glPrint2D(dd, 10, 10, 0.6, 0, true, "Coucou");
       //     glPrint2D(dd, 100, 100, 0.6, 0, false, "Coucou");
 
-      dd->private->swap= FALSE;
+      dd->private->in_expose= TRUE;
       scig_resize(dd->CurWindow);
-      dd->private->swap= TRUE;
+      dd->private->in_expose= FALSE;
 
       /* Swap buffers */
       if (gdk_gl_drawable_is_double_buffered (gldrawable))
@@ -3643,40 +3579,6 @@ void afficher_repere(float ox, float oy, float oz)
 }
 
 
-/*
-** Passer en mode orthonorme
-*/
-static void OrthoMode(int left, int top, int right, int bottom)
-{
-     glMatrixMode(GL_PROJECTION); 
-     /* Push on a new matrix so that we can just pop it off to go back to perspective mode */
-     glPushMatrix();
-     /* Reset the current matrix to our identify matrix */
-     glLoadIdentity();
-     /*
-     ** Pass in our 2D ortho screen coordinates.like so (left, right, bottom, top).  The last
-     ** 2 parameters are the near and far planes.
-     */
-     glOrtho( left, right, bottom, top, -1, 1 );
-     /* Switch to model view so that we can render the scope image */
-     glMatrixMode(GL_MODELVIEW);
-     /* Initialize the current model view matrix with the identity matrix */
-     glLoadIdentity();
-}
-
-/*
-** Passer en mode perspective
-*/
-static void PerspectiveMode()
-{
-     /* Enter into our projection matrix mode */
-     glMatrixMode( GL_PROJECTION );
-     /* Pop off the last matrix pushed on when in projection mode (Get rid of ortho mode) */
-     glPopMatrix();
-     /* Go back to our model view matrix like normal */
-     glMatrixMode( GL_MODELVIEW );
-}
-
 
 void change_camera(BCG *Xgc,const double *pos,const double *cible)
 {
@@ -3712,8 +3614,10 @@ t_camera nouvelle_camera(float px, float py, float pz,
      return camera;
 }
 
-/** Force OpenGL a redessiner la scene
-*/
+/* Force OpenGL a redessiner la scene
+ *
+ */
+
 static void force_affichage(BCG *Xgc)
 {
   gdk_window_invalidate_rect (Xgc->private->drawing->window,
@@ -3726,47 +3630,54 @@ static void force_affichage(BCG *Xgc)
 */
 
 
-static void init_view(BCG *Xgc)
+static void nsp_ogl_set_view(BCG *Xgc)
 {
-     float aspect;
-     static bool premiere_fois = true;
+  float aspect;
+  static bool premiere_fois = true;
 
-     glViewport (0,  0, Xgc->private->drawing->allocation.width, Xgc->private->drawing->allocation.height);
-     xset_background(Xgc,Xgc->NumBackground+1);
-     if (Xgc->private->view == VUE_2D)
-     {
-	  glMatrixMode(GL_PROJECTION);
-	  glLoadIdentity();
-	  OrthoMode(0, 0, Xgc->private->drawing->allocation.width, 
-	       Xgc->private->drawing->allocation.height);
-	  glMatrixMode(GL_MODELVIEW);
-	  glLoadIdentity();
-     }
-     else
-     {
-	  if (premiere_fois)
-	  {
-	       printf("OOOOOOO\n");
-	       Xgc->private->camera = nouvelle_camera(5.0,5.0,5.0,
-						      0.0,0.0,0.0,
-						      INIT_DISTANCE_CLIPPING_PROCHE,
-						      INIT_DISTANCE_CLIPPING_LOIN);
-	       premiere_fois = false;
-	  }
+  if (premiere_fois)
+    {
+      Xgc->private->camera = nouvelle_camera(5.0,5.0,5.0,  0.0,0.0,0.0,
+					     INIT_DISTANCE_CLIPPING_PROCHE,
+					     INIT_DISTANCE_CLIPPING_LOIN);
+      premiere_fois = false;
+    }
 
-	  aspect = ((float) Xgc->private->drawing->allocation.width) /
-			    Xgc->private->drawing->allocation.height;
-	  glMatrixMode(GL_PROJECTION);
-	  glLoadIdentity();
-	  printf("%f %f\n", Xgc->private->camera.near,
-			 Xgc->private->camera.far);
-	  gluPerspective(45.0, aspect, Xgc->private->camera.near,
-			 Xgc->private->camera.far);
-	  glMatrixMode(GL_MODELVIEW);
-	  glLoadIdentity();
+  glViewport (0,  0, Xgc->private->drawing->allocation.width, Xgc->private->drawing->allocation.height);
+  xset_background(Xgc,Xgc->NumBackground+1);
+  if (Xgc->private->view == VUE_2D)
+    {
+      glMatrixMode(GL_PROJECTION); 
+      glLoadIdentity();
+      /*
+       * Pass in our 2D ortho screen coordinates.like so (left, right, bottom, top).  The last
+       * 2 parameters are the near and far planes.
+       */
+      glOrtho(0, 0, Xgc->private->drawing->allocation.width, Xgc->private->drawing->allocation.height,-1,1);
+      /* Switch to model view so that we can render the scope image */
+      glMatrixMode(GL_MODELVIEW);
+    }
+  else
+    {
+      double dist=10.0;
+      double theta = Xgc->scales->theta;
+      double alpha = Xgc->scales->alpha;
+
+      glMatrixMode(GL_MODELVIEW);
+      glLoadIdentity ();
+      gluLookAt (10*cos(theta)*sin(alpha),
+		 10*sin(theta)*sin(alpha),
+		 10*cos(alpha),
+		 0,0,0,
+		 0,0,1);
+      
+      aspect = ((float) Xgc->private->drawing->allocation.width) /
+	Xgc->private->drawing->allocation.height;
+      glMatrixMode(GL_PROJECTION);
+      glLoadIdentity();
+      gluPerspective(45.0, aspect, Xgc->private->camera.near, Xgc->private->camera.far);
+      glMatrixMode(GL_MODELVIEW);
      }
-     //     glFlush();	  
-     force_affichage(Xgc);
 }
 
 
@@ -3981,7 +3892,6 @@ static void init_opgl(BCG *Xgc)
   Xgc->private->view = VUE_3D;
   /* ================================ */
   if (   Xgc->private->view ==  VUE_3D)  glEnable(GL_DEPTH_TEST);
-  init_view(Xgc);
 }
      
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)

@@ -9,9 +9,6 @@
  * 
  * FIXME: peut-etre enlver le double_buffer du drawin-area 
  *        puisqu'on le gère directement 
- * FIXME: 
- *        if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
- *        ne rien faire si on est en pixmap mode 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>

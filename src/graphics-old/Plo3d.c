@@ -44,10 +44,10 @@ static void dbox (BCG *Xgc);
 
 static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox);
 
-int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
+static int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
 		double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
 
-int DPoints1_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
+static int DPoints1_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
 		 double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
 
 static void plot3dg_ogl(BCG *Xgc,char *name,
@@ -57,6 +57,16 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 				    int *p, int dc, int fg),
 			double *x, double *y, double *z, int *p, int *q, 
 			double *teta, double *alpha, char *legend, int *flag, double *bbox);
+
+typedef enum {plot3d_t ,facettes_t , param3d_t} nsp_plot3d_type;
+
+static void  nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
+				      double *teta, double *alpha, char *legend, int *flag, double *bbox,
+				      double *zmin,double *zmax, nsp_plot3d_type t);
+
+
+
+
 
 /*-------------------------------------------------------------------------
  *
@@ -159,7 +169,6 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 			 double *x, double *y, double *z, int *p, int *q, 
 			 double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  int redraw=FALSE;
   static int InsideU[4],InsideD[4],fg,fg1,dc;
   /* solid = color of 3D frame */
   int polysize,npoly,whiteid;
@@ -170,67 +179,8 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   int i,j;
 
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
- 
-  if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5 && flag[1] != 7 )
-    {
-      bbox[0]=x[0];bbox[1]=x[*p-1];
-      bbox[2]=y[0];bbox[3]=y[*q-1];
-      zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
-      zmax=bbox[5]=(double) Maxi(z,*p*(*q));
-    }
-  if ( flag[1]==1 || flag[1]==3 || flag[1]==5 || flag[1] == 7 ) 
-    {
-      zmin=bbox[4];
-      zmax=bbox[5];
-    }
 
-  if ( Xgc->scales->scale_flag3d != 0 ) 
-    {
-      if (flag[1] == 7 || flag[1] == 8 )
-	{
-	  for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
-	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
-	  zmin=bbox[4];
-	  zmax=bbox[5];
-
-	  if ( bbox[0] < Xgc->scales->bbox1[0] 
-	       || bbox[1] > Xgc->scales->bbox1[1] 
-	       || bbox[2] < Xgc->scales->bbox1[2] 
-	       || bbox[3] > Xgc->scales->bbox1[3] 
-	       || bbox[4] < Xgc->scales->bbox1[4] 
-	       || bbox[5] > Xgc->scales->bbox1[5] )
-	    redraw = TRUE;
-	  flag[1]=2*Xgc->scales->metric3d;
-	}
-    }
-  else 
-    {
-      if (flag[1] == 7 || flag[1] == 8 )
-	{
-	  /* we have used a superpose mode and there's no previous 
-	   * 3d graphics, we switch to default 
-	   */
-	  flag[1]= 1;
-	}
-    }
-  /* switch to mode with ebox to accelerate replot */
-  if ( flag[1]==2 || flag[1]==4 || flag[1]==6 || flag[1] == 8 ) 
-     flag[1]--;
-
-  /* Redraw other graphics */
-  if ( redraw == TRUE )
-    {
-      /* just change bbox not flag */
-      static int iflag[]={0,0,0,1};
-      if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
-	{
-	  Xgc->graphic_engine->xinfo(Xgc,"Auto rescale only works when recording is on " );
-	  return;
-	}
-      Xgc->graphic_engine->clearwindow(Xgc);    
-      /* redraw 3d with new bbox */
-      tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,NULL,teta,alpha,bbox);
-    }
+  nsp_plot3d_update_bounds(Xgc,name,x,y,z,p,q, teta, alpha,legend,&flag[1],bbox,&zmin,&zmax,plot3d_t);
 
   /* record current 3d plot */
 
@@ -242,11 +192,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 	store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
     }
 
-
-  if ( flag[1] ==0)
-    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
-  else
-    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   /** Calcule l' Enveloppe Convex de la boite **/
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
@@ -348,6 +294,98 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
     }
 }
 
+
+static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
+				     double *teta, double *alpha, char *legend, int *flag, double *bbox,double *zmin,
+				     double *zmax,nsp_plot3d_type type3d)
+{
+  int redraw = FALSE;
+  int i;
+  if (*flag!=0 && *flag!=1 && *flag!=3 && *flag!=5 && *flag != 7 )
+    {
+      switch (type3d) 
+	{
+	case plot3d_t :
+	  bbox[0]=x[0];bbox[1]=x[*p-1];
+	  bbox[2]=y[0];bbox[3]=y[*q-1];
+	  *zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
+	  *zmax=bbox[5]=(double) Maxi(z,*p*(*q));
+	  break;
+	case facettes_t: 
+	  bbox[0]=(double) Mini(x,*p*(*q));
+	  bbox[1]=(double) Maxi(x,*p*(*q));
+	  bbox[2]=(double) Mini(y,*p*(*q)); 
+	  bbox[3]=(double) Maxi(y,*p*(*q));
+	  *zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
+	  *zmax=bbox[5]=(double) Maxi(z,*p*(*q));
+	  break;
+	case param3d_t: 
+	  bbox[0]=(double) Mini(x,*p);bbox[1]=(double) Maxi(x,*p);
+	  bbox[2]=(double) Mini(y,*p);bbox[3]=(double) Maxi(y,*p);
+	  bbox[4]=(double) Mini(z,*p);bbox[5]=(double) Maxi(z,*p);
+	  break;
+	}
+    }
+  if ( *flag==1 || *flag==3 || *flag==5 || *flag == 7 ) 
+    {
+      *zmin=bbox[4];
+      *zmax=bbox[5];
+    }
+
+  if ( Xgc->scales->scale_flag3d != 0 ) 
+    {
+      if (*flag == 7 || *flag == 8 )
+	{
+	  for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
+	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
+	  *zmin=bbox[4];
+	  *zmax=bbox[5];
+
+	  if ( bbox[0] < Xgc->scales->bbox1[0] 
+	       || bbox[1] > Xgc->scales->bbox1[1] 
+	       || bbox[2] < Xgc->scales->bbox1[2] 
+	       || bbox[3] > Xgc->scales->bbox1[3] 
+	       || bbox[4] < Xgc->scales->bbox1[4] 
+	       || bbox[5] > Xgc->scales->bbox1[5] )
+	    redraw = TRUE;
+	  /* changing flag to the mode used by other recorded 3d plots */
+	  *flag=2*Xgc->scales->metric3d;
+	  if ( Xgc->scales->theta != *teta ||  Xgc->scales->alpha != *alpha ) 
+	    redraw = TRUE;
+	}
+
+    }
+  else 
+    {
+      if (*flag == 7 || *flag == 8 )
+	{
+	  /* we have used a superpose mode and there's no previous 
+	   * 3d graphics, we switch to default 
+	   */
+	  *flag= 1;
+	}
+    }
+  /* switch to mode with ebox to accelerate replot */
+  if ( *flag==2 || *flag==4 || *flag==6 || *flag == 8 ) 
+     (*flag)--;
+
+  /* Redraw other graphics */
+  if ( redraw == TRUE )
+    {
+      /* just change bbox not flag */
+      static int iflag[]={0,0,0,1};
+      if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
+	{
+	  Xgc->graphic_engine->xinfo(Xgc,"Auto rescale only works when recording is on " );
+	  return;
+	}
+      Xgc->graphic_engine->clearwindow(Xgc);    
+      /* redraw 3d with new bbox */
+      tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,NULL,teta,alpha,bbox);
+    }
+}
+
+
 static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   static int InsideU[4],InsideD[4],fg1;
@@ -358,6 +396,10 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
   static double zmin,zmax;
   int i;
   /** If Record is on **/
+
+
+  nsp_plot3d_update_bounds(Xgc,name,x,y,z,p,q, teta, alpha,legend,&flag[1],bbox,&zmin,&zmax,facettes_t);
+
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) {
       if (strcmp(name,"fac3d")==0) 	
 	store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
@@ -369,38 +411,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   }
 
-  if (flag[1]!=1 && flag[1] != 0 && flag[1]!=3 && flag[1]!=5)
-    {
-      bbox[0]=(double) Mini(x,*p*(*q));
-      bbox[1]=(double) Maxi(x,*p*(*q));
-      bbox[2]=(double) Mini(y,*p*(*q)); 
-      bbox[3]=(double) Maxi(y,*p*(*q));
-      zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
-      zmax=bbox[5]=(double) Maxi(z,*p*(*q));
-    }
-  if ( flag[1]==1 || flag[1]==3|| flag[1]==5) 
-    {
-      zmin=bbox[4];
-      zmax=bbox[5];
-    }
-
-  /* try to mix with previous 3d scales */
-  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == OK) 
-    {
-      if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-	{
-	  for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
-	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
-	  zmin=bbox[4];
-	  zmax=bbox[5];
-	}
-    }
-
-
-  if ( flag[1]==0)
-    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
-  else
-    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   /** Calcule l' Enveloppe Convex de la boite **/
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
@@ -639,16 +650,14 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
   static int init;
   static int *xm,*ym;
   int fg1;
-  /** If Record is on **/
+  double zmin,zmax; /* unused */
+  
+  nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,n,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
+
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Param3D(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
+  
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
-  if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
-    {
-      bbox[0]=(double) Mini(x,*n);bbox[1]=(double) Maxi(x,*n);
-      bbox[2]=(double) Mini(y,*n);bbox[3]=(double) Maxi(y,*n);
-      bbox[4]=(double) Mini(z,*n);bbox[5]=(double) Maxi(z,*n);
-    }
 
   /* try to mix with previous 3d scales */
   if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == OK) 
@@ -660,12 +669,8 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
 	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
 	}
     }
-
-
-  if ( flag[1] !=0)
-    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
-  else 
-    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
+  /* take care here flag[0] is used */
+  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[0]+1)/2);
   /** Calcule l' Enveloppe Convexe de la boite **/
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
@@ -870,16 +875,6 @@ int nsp_geom3d(BCG *Xgc,double *x, double *y, double *z, int *n)
  * functions for 3D scales 
  *-------------------------------------------------------------------*/
 
-void SetEch3d(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, double *teta, double *alpha)
-{
-  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,1L);
-}
-
-/* 
- * if flag==1,2,3  m and bbox and Xgc->scales->are  recomputed  
- * if flag==0      we only change m without changing scales 
- */
-
 void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, double *teta, double *alpha, int flag)
 {
   double xmmin,ymmax,xmmax,ymmin,FRect[4],WRect[4],ARect[4];
@@ -985,9 +980,9 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
      }
   if (flag !=0 )
      {
-      FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
-      set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
-      Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
+       FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
+       set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
+       Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
      }
   /* end of code added by es */
 }
@@ -1694,7 +1689,7 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
   if ( (polyz == NULL) && (*q) != 0)
     {
       Scistring("plot3dg_ : malloc No more Place\n");
-      goto restore;
+      return;
     }
   /** Allocation  **/
   polyx = graphic_alloc(0,(*p)+1L,sizeof(int));
@@ -1703,7 +1698,7 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
   if ( ( polyx == NULL) ||  ( polyy== NULL) || ( locindex== NULL) )
     {
       Scistring("plot3dg_ : malloc No more Place\n");
-      goto restore;;
+      return;
     }
 
   whiteid  = Xgc->graphic_engine->xget_last(Xgc);
@@ -1803,7 +1798,7 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
 	      int k;
 	      if ( (*p) != 3 && (*p) !=4 ) {
                 Scistring("plot3d1 : interpolated shading is only allowed for polygons with 3 or 4 vertices\n");
- 		goto restore;
+		return;
 	      } else {
        	        for ( k= 0 ; k < *p ; k++) fill[k]= cvect[(*p)*locindex[i]+k];
 		/* Sciprintf("shade not implemented for opengl fac3dg\n");*/
@@ -1829,8 +1824,6 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
       else 
 	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
     }
-
- restore:
   
 }
 
@@ -1858,7 +1851,9 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
   static int cache;
   static double zmin,zmax;
   int i,j;
-  /** If Record is on **/
+
+  nsp_plot3d_update_bounds(Xgc,name,x,y,z,p,q, teta, alpha,legend,&flag[1],bbox,&zmin,&zmax,plot3d_t);
+
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     {
       if (strcmp(name,"plot3d")==0) 
@@ -1869,23 +1864,7 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
  
-  if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
-    {
-      bbox[0]=x[0];bbox[1]=x[*p-1];
-      bbox[2]=y[0];bbox[3]=y[*q-1];
-      zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
-      zmax=bbox[5]=(double) Maxi(z,*p*(*q));
-    }
-  if ( flag[1]==1 || flag[1]==3 || flag[1]==5) 
-    {
-      zmin=bbox[4];
-      zmax=bbox[5];
-    }
-
-  if ( flag[1] ==0)
-    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
-  else
-    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   /** Calcule l' Enveloppe Convex de la boite **/
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
