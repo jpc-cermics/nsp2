@@ -64,7 +64,7 @@ int  sci_show_banner=1;
 
 int real_main(int argc, char **argv)
 {
-  int ierr, i;
+  int ierr=0, i;
   char startup[128];
   char *display = NULL;
 
