@@ -1,7 +1,6 @@
 // programme de test pour un nouveau scicos 
 // en cours de construction 
 
-
 function menuitem_response(w,args) 
 // midle button menu activation 
   global('GF');

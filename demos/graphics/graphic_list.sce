@@ -105,5 +105,6 @@ graphic_demos_all = list( list("primitives", "", "", graphic_test_prim  ),
                           list("3D curves and surfaces",  "", "", graphic_test_3d ),
 			  list("Animations",  "", "", graphic_test_anim ));
 			  
-graphics_demo_in_gtk(graphic_demos_all,%t);
+
+graphics_demo_in_gtk(graphic_demos_all,opengl);
 

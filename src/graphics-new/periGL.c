@@ -3427,30 +3427,28 @@ void nsp_ogl_set_view(BCG *Xgc)
 
 void nsp_ogl_set_2dview(BCG *Xgc)
 {
-  double xc = (Xgc->scales->frect[0]+Xgc->scales->frect[2])/2.0;
-  double yc = (Xgc->scales->frect[1]+Xgc->scales->frect[3])/2.0;
-
   glViewport (0,  0, Xgc->private->drawing->allocation.width, 
 	      Xgc->private->drawing->allocation.height);
   /* xset_background(Xgc,Xgc->NumBackground+1); */
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity ();
-  gluLookAt (xc,yc,1,
-	     xc,yc,-100,
-	     0,-1,0);
+  gluLookAt (0,0,1,
+	     0,0,-1,
+	     0,1,0);
   glMatrixMode(GL_PROJECTION); 
+
+  glLoadIdentity();
+  glOrtho(0, Xgc->private->drawing->allocation.width,
+	  Xgc->private->drawing->allocation.height,
+	  0,-4,4);
+  glMatrixMode(GL_MODELVIEW);
   /* 
-     glLoadIdentity();
-     glOrtho(0, Xgc->private->drawing->allocation.width,
-     Xgc->private->drawing->allocation.height,
-     0,-4,4);
-     glMatrixMode(GL_MODELVIEW);
-  */
   glLoadIdentity();
   glOrtho(XPi2R(0),XPi2R(Xgc->scales->wdim[0]),
 	  YPi2R(Xgc->scales->wdim[1]),YPi2R(0),
 	  -4,4);
   glMatrixMode(GL_MODELVIEW);
+  */
 }
 
 void nsp_ogl_set_3dview(BCG *Xgc)

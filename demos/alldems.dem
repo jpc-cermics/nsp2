@@ -16,11 +16,13 @@ function create_demo_window()
   function [y]=win_hide(but,args)  args(1).hide[];y=%t; endfunction 
 
   function nsp_graphics_demos() 
+    opengl=%f;
     exec('NSP/demos/graphics/graphic_list.sce');
   endfunction 
   
   function nsp_graphics_ogl_demos() 
-    exec('NSP/demos/graphics/graphic_list_ogl.sce');
+    opengl=%t;
+    exec('NSP/demos/graphics/graphic_list.sce');
   endfunction 
 
   function nsp_gtk2_demos() 
@@ -37,7 +39,7 @@ function create_demo_window()
   B('Gtk2')=  nsp_gtk2_demos ;
   B('Gtk2 more')=  nsp_gtk2_demos_plus ;
   win = gtkwindow_new()
-  win.set_size_request[200,150]	
+  win.set_size_request[200,200]	
   //win.set_uposition[20,20]
   win.connect["destroy",hide];
   win.connect["delete_event",hide];
