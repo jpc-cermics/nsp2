@@ -912,9 +912,18 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
   Xgc->scales->m[0][0]= -sint    ;    Xgc->scales->m[0][1]= cost      ;    Xgc->scales->m[0][2]= 0;
   Xgc->scales->m[1][0]= -cost*cosa;   Xgc->scales->m[1][1]= -sint*cosa;    Xgc->scales->m[1][2]= sina;
   Xgc->scales->m[2][0]=  cost*sina;   Xgc->scales->m[2][1]= sint*sina;     Xgc->scales->m[2][2]= cosa;
-  /* Coordonn\'ees apr\`es transformation g\'eometrique de la
-   * boite qui entoure le plot3d                            
-   * le plan de projection est defini par x et y            
+
+  /* in (xbox[8],ybox[8],zbox[8]) are stored the coordinates of the bounding box 
+   * which contains the surface stored clockwise (one level then the other)
+   *       Z
+   *       |
+   *      4 ----- 5        
+   *       /    /|         
+   *     7----6  |__________ Y         
+   *      | 0 | / 1        
+   *     3----- 2          
+   *    /
+   *    X
    */
   for (ib=0;ib<6 ;ib++) 
     { 
@@ -1063,13 +1072,17 @@ void DrawAxis(BCG *Xgc,double *xbox, double *ybox, int *Indices, int style)
   Xgc->graphic_engine->xset_dash(Xgc,lstyle);
 }
 
+
 /*---------------------------------------------------------------------
  * Trace l'enveloppe convexe de la boite contenant le dessin 
+ * et les axes correspondants 
  * et renvoit dans InsideU et InsideD les indices des points dans xbox et ybox
  * qui sont sur les 2 tri\`edres a l'interieur de l'enveloppe convexe
+ * 
  *---------------------------------------------------------------------*/
 
-void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, int *InsideD, char *legend, int flag, double *bbox)
+void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, int *InsideD,
+		char *legend, int flag, double *bbox)
 {
   double xmaxi;
   double x[8],y[8],z[8];
@@ -1079,19 +1092,28 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
   int p,n,dvect[1],dash;
   int pat;
   int i;
-  /* dans xbox[8] se trouve l'abscisse des points successifs   **/
-  /* de la boite qui continent la surface                      **/
-  /* on stocke dans xind[8] les indices des points de la boite **/
-  /* qui sont sur l'enveloppe convexe en partant du point en haut **/
-  /* a droite et en tournant ds le sens trigonometrique           **/
-  /* par exemple avec : **/
-  /*      4 ----- 5        */
-  /*       /    /|         */
-  /*     7----6  |         */
-  /*      | 0 | / 1        */
-  /*     3----- 2          */
-  /* on doit trouver xind={5,4,7,3,2,1}; **/
-  /* on en profite pour stocker aussi les points des triedres **/
+  /* in (xbox[8],ybox[8],zbox[8]) are stored the coordinates of the bounding box 
+   * which contains the surface stored clock wise (one level then the other)
+   *       Z
+   *       |
+   *      4 ----- 5        
+   *       /    /|         
+   *     7----6  |__________ Y         
+   *      | 0 | / 1        
+   *     3----- 2          
+   *    /
+   *    X
+   * We thus know for each segment to which kind of axis i.e X,Y or Z it belongs. 
+   * For example the sum of the indices of a segment if it bleongs to an X direction can 
+   * can only be 11 or 3 (and the reverse is true) This is used in AxesString
+   * 
+   * we store in xind[8] the indices of the bounding box points which define 
+   * when projected on the graphic plan the convex hull. We start at the upper right point 
+   * then follow the boundary in the trigonometric way. 
+   * For example using the previous graph we will find in xind={5,4,7,3,2,1}; 
+   * we also store in InsideU and InsideD the indices of the points defining the two internals 
+   * triedra {0,1,3,4} and {6,2,5,7} in the previous example 
+   */
 
   xmaxi=((double) Maxi(xbox,8L));
   ind= -1;
@@ -1186,7 +1208,7 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
       }
       pat = Xgc->graphic_engine->xset_pattern(Xgc,dvect[0]);
       
-      if (flag >=3)AxesStrings(Xgc,flag,ixbox,iybox,xind,legend,bbox);
+      if (flag >=3) AxesStrings(Xgc,flag,ixbox,iybox,xind,legend,bbox);
       Xgc->graphic_engine->xset_pattern(Xgc,pat);
       Xgc->graphic_engine->xset_dash(Xgc,dash);
     }
@@ -1217,10 +1239,14 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
     }
 }
 
-/* rajoute des symboles x,y,z : sur les axes     **/
-/* et une graduation sur les axes **/
-/* (ixbox,iybox) : Coordonnees des points de l'envelloppe cvxe en pixel **/
-/* xind : indices des points de l'enveloppe cvxe ds xbox et ybox **/
+
+/* 
+ * this routine is called by Convex_Box to add axes strings and graduations 
+ * (ixbox,iybox) contain in pixel the coordinates of the convex hull
+ * xind : contains the indices of the convex hull points in the (xbox,ybox,zbox) 
+ *        storage. This can be used to detect for each convex hull segment to which 
+ *        kind of axis it belongs 
+ */
 
 
 static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, char *legend, double *bbox)
@@ -1238,11 +1264,12 @@ static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, 
     }
   strcpy(loc,legend);
   legx=strtok(loc,"@");legy=strtok((char *)0,"@");legz=strtok((char *)0,"@");
-  /* le cot\'e gauche ( c'est tjrs un axe des Z **/
+
+  /* FIXME: the z axis could be unified with draw_3d_tics ? */
   Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
   iof = (xz[0]+xz[1])/50;
-  x=ixbox[2]-iof ;y=iybox[2]-iof;
-
+  x=ixbox[2]-iof ;
+  y= ( iybox[1] >= iybox[4] ) ? iybox[3]-iof :  iybox[2]-iof ;
   if ( axflag>=4)
     {
       double fx,fy,fz,lx,ly,lz;
@@ -1264,10 +1291,10 @@ static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, 
 
   if ( iybox[1] < iybox[4] ) /* are we upside down ? */
     {
-      /* le cot\^e en bas \`a gauche **/
+      /* down left axis */
       x=inint((ixbox[3]+ixbox[4])/2.0 -iof);
       y=inint((1/3.0)*iybox[3]+(2/3.0)*iybox[4]+iof);
-      if ( xind[3]+xind[4] == 3)
+      if ( xind[3]+xind[4] == 3 || xind[3]+xind[4] == 11) 
 	{
 	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,3,4,4,5,x,y,flag,ang,legx,bbox,2,TRUE,TRUE);
 	}
@@ -1278,7 +1305,7 @@ static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, 
       /* le cot\'e en bas a droite **/
       x=inint((ixbox[4]+ixbox[5])/2+iof);
       y=inint(((2/3.0)*iybox[4]+(1/3.0)*iybox[5])+iof);
-      if ( xind[4]+xind[5] == 3)
+      if ( xind[4]+xind[5] == 3 || xind[4]+xind[5] == 11) 
 	{
 	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,4,5,4,3,x,y,flag,ang,legx,bbox,3,TRUE,FALSE);
 	}
@@ -1289,38 +1316,38 @@ static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, 
     }
   else 
     {
-      /* le cot\^e en bas \`a gauche **/
+      /* down left axis */
       x=inint((ixbox[2]+ixbox[1])/2.0 -iof);
       y=inint((1/3.0)*iybox[2]+(2/3.0)*iybox[1]+iof);
       Xgc->graphic_engine->xinfo(Xgc,"target = %d %d", xind[1]+xind[2], xind[1]+xind[0] );
-
-      if ( xind[1]+xind[2] == 13 )
+      if ( xind[2]+xind[1] == 3 || xind[2]+xind[1] == 11) 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,2,1,1,0,x,y,flag,ang,legy,bbox,2,FALSE,TRUE);
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,2,1,1,0,x,y,flag,ang,legx,bbox,2,TRUE,TRUE);
 	}
       else 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,2,1,1,0,x,y,flag,ang,legx,bbox,2,TRUE,TRUE);
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,2,1,1,0,x,y,flag,ang,legy,bbox,2,FALSE,TRUE);
 	}
       /* le cot\'e en bas a droite **/
       x=inint((ixbox[1]+ixbox[0])/2+iof);
       y=inint(((2/3.0)*iybox[1]+(1/3.0)*iybox[0])+iof);
 
-      if ( xind[1]+xind[0] == 9 )
+      if ( xind[1]+xind[0] == 3 || xind[1]+xind[0] == 11) 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,1,0,1,2,x,y,flag,ang,legy,bbox,3,FALSE,FALSE);
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,1,0,1,2,x,y,flag,ang,legx,bbox,3,TRUE,FALSE);
 	}
       else 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,1,0,1,2,x,y,flag,ang,legx,bbox,3,TRUE,FALSE);
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,1,0,1,2,x,y,flag,ang,legy,bbox,3,FALSE,FALSE);
 	}
     }
   FREE(loc);
 }
 
 
-static void draw_3d_tics(BCG *Xgc,int axflag,int ixbox[],int iybox[],int xind[],int i1,int i2,int i3,int i4,int x,int y,int flag, 
-			 double ang,char *leg,double *bbox,int axis_flag, int xdir,int ofset)
+static void draw_3d_tics(BCG *Xgc,int axflag,int ixbox[],int iybox[],int xind[],int i1,int i2,int i3,int i4,
+			 int x,int y,int flag,double ang,char *leg,double *bbox,int axis_flag, 
+			 int xdir,int ofset)
 {
   int rect[4];
   if ( axflag>=4)
@@ -1489,10 +1516,10 @@ void BBoxToval(double *x, double *y, double *z, int ind, double *bbox)
 
 /* Changement interactif de 3d **/
 
-void I3dRotation(BCG *Xgc)
+void I3dRotation_old(BCG *Xgc)
 {
   int box_only = FALSE;
-  double theta,alpha;
+  double theta,alpha, theta_dir;
   int flag[3],pixmode,alumode;
   int iflag[]={0,0,0,0};
   double xx,yy;
@@ -1511,6 +1538,7 @@ void I3dRotation(BCG *Xgc)
       return;
     }
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  
   xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
   yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
   Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
@@ -1524,7 +1552,10 @@ void I3dRotation(BCG *Xgc)
   ibutton=-1;
   while ( ibutton == -1 ) 
     {
-      theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
+      /* */
+      theta_dir= ( sin(M_PI*alpha/180.0) >= 0 ) ? 1.0 : -1.0;
+      alpha=alpha0 + 90.0*(y-yy0);
+      theta= theta0 - theta_dir*90.0*(x-x0);
       Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
       if ( box_only == TRUE) 
 	{
@@ -1546,6 +1577,69 @@ void I3dRotation(BCG *Xgc)
       yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
       x=(xl-Xgc->scales->frect[0])*xx;
       y=(yl-Xgc->scales->frect[1])*yy;
+    }
+  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
+  force_redraw(Xgc);
+}
+
+/* meme chose mais on ne passe pas par les echelles pour trouver les 
+ * nouveaux angles 
+ */
+
+void I3dRotation(BCG *Xgc)
+{
+  int box_only = FALSE;
+  double theta,alpha, theta_dir;
+  int flag[3],pixmode,alumode;
+  int iflag[]={0,0,0,0};
+  int xc,yc;
+  double theta0,alpha0;
+  int ibutton,iwait=FALSE,istr=0;
+  double x0,y0,x,y,xl,yl,bbox[4];
+  /* FIXME */
+  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
+    {
+      Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
+      return;
+    }
+  if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
+    {
+      Xgc->graphic_engine->xinfo(Xgc,"3d rotation is not possible when recording is not on" );
+      return;
+    }
+  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&xc,&yc,iwait,FALSE,FALSE,FALSE,istr);
+  theta0 = theta = Xgc->scales->theta ;
+  alpha0 = alpha = Xgc->scales->alpha ;
+  x0 = x = xc;
+  y0 = y = yc;
+  ibutton=-1;
+  while ( ibutton == -1 ) 
+    {
+      /* */
+      theta_dir= ( sin(M_PI*alpha0/180.0) >= 0.0 ) ? 1.0 : -1.0;
+      alpha= alpha0 - (y-y0)/5.0;
+      theta= theta0 - theta_dir*(x-x0)/5.0;
+      x0=x;y0=y;alpha0=alpha;theta0=theta;
+      Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
+      if ( box_only == TRUE) 
+	{
+	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+	  Xgc->graphic_engine->clearwindow(Xgc);    
+	  dbox(Xgc,theta,alpha);
+	  if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
+	  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+	}
+      else 
+	{
+	  /* just changes the angles in recorded plots */
+	  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
+	  /* immediate redraw */
+	  force_redraw(Xgc);
+	}
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&xc, &yc,FALSE,TRUE,TRUE,FALSE);
+      x=xc;
+      y=yc;
     }
   new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
   force_redraw(Xgc);
@@ -2204,7 +2298,7 @@ int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *te
   else 
     {
       /* cache=InsideU[0]-4; */
-      if (flag[2] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
+      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg1);
     }
   init = 0 ; 
   while (1) 

@@ -2627,7 +2627,6 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-
   if ( dtype == xmarks ) 
     Xgc->graphic_engine->scale->drawpolymark(Xgc,l1->R,l2->R,l2->mn);
   else

@@ -6,10 +6,6 @@
 
 /*--------------------------------------------------------------------------
  *    Gtk  Driver 
- * 
- * FIXME: peut-etre enlever le double_buffer du drawin-area 
- *        puisqu'on le gère directement 
- *
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -26,18 +22,25 @@
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
 
-
 /*
  * 
  *  Xgc->record_flag == TRUE if we are recording graphics 
  *  Xgc->private->in_expose == TRUE if the call is from an expose_event 
  *  Xgc->CurPixmapStatus == 0 if we are not using an extra pixmap 
- *  
+ *  Xgc->private->draw = TRUE we have something to draw 
  * 
  */ 
 
-#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
+#define DRAW_CHECK_OLD  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
    {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
+
+/*
+ * version ou je dessine tjrs ds le drawable qui est toujours un pixmap 
+ * par contre l'affichage est asynchrone 
+ */
+
+#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc); 
+
 
 /** Global variables to deal with X11 **/
 
@@ -122,7 +125,7 @@ void force_affichage(BCG *Xgc)
 void force_redraw(BCG *Xgc)
 {
   nsp_gtk_invalidate(Xgc);
-  Xgc->private->draw = TRUE; 
+  Xgc->private->draw = TRUE;
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
@@ -2394,6 +2397,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   NewXgc->CurWindow = WinNum;
   NewXgc->record_flag = TRUE; /* default mode is to record plots */
   NewXgc->plots = NULL;
+  NewXgc->incr_plots = NULL;
   NewXgc->graphic_engine = &Gtk_gengine ; /* the graphic engine associated to this graphic window */
 
   if (first == 0)
@@ -3057,7 +3061,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-  /* xinfo(dd,"Expose event "); */
+  /* {static int count = 0; xinfo(dd,"Expose event %d",count++);} */
   if(dd->private->resize != 0) 
     { 
       dd->private->resize = 0;
@@ -3081,7 +3085,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     {
       if ( dd->private->draw == TRUE ) 
 	{
-	  /* need to redraw */
+	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
 	  scig_replay(dd->CurWindow);

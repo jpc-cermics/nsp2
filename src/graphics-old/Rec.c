@@ -5,6 +5,18 @@
  --------------------------------------------------------------------------*/
 /*------------------------------------------------------------------------
  * Graphic High Level Recording function 
+ * Oct 2004 
+ *   le graphique est maintenant asynchrone 
+ *   cest pourquoi il y a incr_plots et plots 
+ *   Il reste a faire jouer un role a recorded_flag 
+ *   different i.e l'enlever et qu'il soit juste actif 
+ *   quand on recopie pour savoir si incr_plot est copie ou 
+ *   detruit 
+ *   La question en suspens est: est-ce necessaire de restorer 
+ *   un graphique synchrone sachant que xset('whow') soit le rendre 
+ *   synchrone 
+ *   Enfin peut-il y a voir ambiguité ? 
+ *   on croit qu'on doit dessiner juste l'incrément alors que non ? 
  *---------------------------------------------------------------------------*/
 
 #include <string.h> /* in case of dbmalloc use */
@@ -2045,6 +2057,39 @@ void tape_clean_plots(BCG *Xgc,int winnumber)
   xgc_reset_scales_to_default(Xgc);
 }
 
+/**
+ * tape_clean_incr_plots:
+ * @Xgc: 
+ * @winnumber: 
+ * 
+ * clean incremental plots 
+ **/
+
+void tape_clean_incr_plots(BCG *Xgc,int winnumber)
+{
+  int flag = FAIL;
+  list_plot *list = Xgc->incr_plots,* list1 ;
+  if ( Xgc->record_flag == FALSE ) return ;
+  while (list)
+    {
+      if (list->theplot != NULL) 
+	{
+	  int code = ((plot_code *) list->theplot)->code ;
+	  if ( record_table[code].clean != NULL) record_table[code].clean(list->theplot);
+	  FREE(list->theplot);
+	  flag = OK;
+	}
+      list1=list;
+      list =list->next;
+      FREE(list1);
+    }
+  Xgc->incr_plots = NULL;
+  /* nothing to do if window was not present */
+  if ( flag == FAIL ) return ;
+  /* reset scales to default */ 
+  xgc_reset_scales_to_default(Xgc);
+}
+
 /*-------------------------------------------------------------------------
  * Change les angles alpha theta dans tous les plot3d stockes 
  * change  aussi flag et box suivant la valeur de iflag.
@@ -2878,6 +2923,34 @@ void tape_replay(BCG *Xgc,int winnumber)
 }
 
 
+/**
+ * tape_replay_incr:
+ * @Xgc: 
+ * @winnumber: 
+ * 
+ * Replay incremental stored graphics and store incremental graphics 
+ * at the end of recorded graphics.
+ * 
+ **/
+
+void tape_replay_incr(BCG *Xgc,int winnumber)
+{ 
+  list_plot *list;
+  if ( Xgc == NULL ) return ;
+  if ( Xgc->record_flag == FALSE ) return ;
+  Xgc->record_flag = FALSE; /* be sure not to record during replay */
+  list = Xgc->incr_plots ;
+  while (list)
+    {
+      if ( list->theplot != NULL) 
+	record_table[((plot_code *) list->theplot)->code ].replay(Xgc,list->theplot);
+      list =list->next;
+    }
+  Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
+  store_incr_plots(Xgc,winnumber);
+}
+
+
 /*---------------------------------------------------------------------
  * Add a new graphics record in the graphic recorder list
  *---------------------------------------------------------------------------*/
@@ -2924,7 +2997,31 @@ int store_record(BCG *Xgc,int code ,void *plot)
 }
 
 
+/**
+ * store_incr_plots:
+ * @Xgc: 
+ * @code: 
+ * @plot: 
+ * 
+ * add incr_plots at the end of current stored record list 
+ * 
+ * Return value: 
+ **/
 
+int store_incr_plots(BCG *Xgc,int winnumber)
+{
+  list_plot *list = Xgc->plots ;
+  if ( list == NULL)
+    {
+      Xgc->plots = Xgc->incr_plots ;
+    }
+  else 
+    {
+      while ( list->next != NULL) list = list->next;
+      list->next = Xgc->incr_plots;
+    }
+  Xgc->incr_plots = NULL;
+}
 
 /*---------------------------------------------------------------------
  * utilities 
