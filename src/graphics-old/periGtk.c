@@ -128,7 +128,6 @@ static void xset_show(BCG *Xgc)
       /* see the comments at the begining */
       force_affichage(Xgc);
     }
-
 }
 
 /*
