@@ -3321,7 +3321,7 @@ void C2F(initgraphic)(char *string, integer *v2, integer *v3, integer *v4, integ
       XSetIOErrorHandler((XIOErrorHandler) X_error_handler);
     }
   InitMissileXgc(PI0,PI0,PI0,PI0);
-  StoreXgc(WinNum);
+  store_Xgc(WinNum);
   EntryCounter=Max(EntryCounter,WinNum);
   EntryCounter++;
   XSync(dpy,0);

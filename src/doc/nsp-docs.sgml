@@ -56,14 +56,12 @@
 ]>
 <book id="index">
   <bookinfo>
-    <title>Pango Reference Manual</title>
-    <releaseinfo>for Pango &version;</releaseinfo>
+    <title>Nsp Reference Manual</title>
+    <releaseinfo>For Nsp 0.01</releaseinfo>
   </bookinfo>
 
   <chapter id="nsp">
     <title>The Nsp Doc on line </title>
-	&all-gtk;
-	&all-pango;
 	&block;
 	&bmatrix-in;
 	&bmatrix;
@@ -89,7 +87,6 @@
 	&lmo;
 	&machine;
 	&math;
-	&matops-in;
 	&matrix-in;
 	&matrix;
 	&menus;

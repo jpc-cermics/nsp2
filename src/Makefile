@@ -25,7 +25,7 @@ world::
 
 distclean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SCIDIRS) doc  ;\
+	for i in $(SCIDIRS) ;\
 	do \
 		(cd $$i ; echo "making distclean in src/$$i..."; \
 		$(MAKE) $(MFLAGS)  distclean); \
@@ -33,7 +33,7 @@ distclean::
 
 clean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) doc ;\
+	for i in $(SUBDIRS) ;\
 	do \
 		(cd $$i ; echo "making clean in src/$$i..."; \
 		$(MAKE) $(MFLAGS) clean); \
