@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <gtk/gtk.h>
 
-#include "command.h" 
+#include "nsp/command.h" 
 #include "nsp/graphics/periGtk.h" 
 #include "nsp/menus.h" 
 #include "nsp/math.h"
