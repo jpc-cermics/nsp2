@@ -11,6 +11,7 @@
 #include <string.h>
 #include "nsp/math.h"
 #include "nsp/user-prefs.h"
+#include "nsp/tokenizer.h"
 
 typedef int (*IOVFun) (char *fmt, va_list ap);
 extern IOVFun Scivprintf;

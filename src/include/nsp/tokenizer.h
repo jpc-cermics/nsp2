@@ -68,7 +68,7 @@ typedef char *token_code2name(Tokenizer *T,int key);
 typedef struct _smat_tokenizer smat_tokenizer ;
 
 struct _smat_tokenizer { 
-  NspSMatrix *smat;
+  char **S;
   int ind;
   int pos;
   char *line;
@@ -118,16 +118,16 @@ struct _tokenizer {
 extern void nsp_init_tokenizer(Tokenizer *T);
 extern void nsp_tokeniser_file(Tokenizer *T,FILE *f);
 extern void nsp_tokeniser_string(Tokenizer *T,char *str);
-extern void nsp_tokeniser_smat(Tokenizer *T,NspSMatrix *S);
+extern void nsp_tokeniser_strings(Tokenizer *T,char **S);
 
 typedef void (SciReadFunc) (Tokenizer *T, char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
 typedef SciReadFunc *SciReadFunction;
 extern SciReadFunction SciReadLine1 ;
 extern SciReadFunction SetSciReadFunction(SciReadFunction F);
 
-typedef void (*MoreFun) (Tokenizer *T,int *n);
+typedef void (*MoreFun) (int *n);
 extern MoreFun scimore ;
-extern void scimore_void(Tokenizer *T,int *n);
+extern void scimore_void(int *n);
 MoreFun SetScilabMore(MoreFun F);
 
 #endif /*  NSP_TOKENIZER  */

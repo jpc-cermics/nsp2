@@ -31,7 +31,7 @@
 #define CASE    -10
 #define QUIT    -11
 #define EXIT    -12 
-#define RETURN  -13
+#define PRETURN -13
 #define HELP    -14
 #define WHAT    -15
 #define WHO     -16
