@@ -57,24 +57,24 @@ if size(a,'c')<>1 then pause,end
 if size(a+a,'c')<>1 then pause,end
 [m,n]=size(a);if or([m,n]<>[2 1]) then pause,end
 
-//AFAIRE a=[1 2;3 4]+%s;
-//AFAIRE if or(size(a)<>[2 2]) then pause,end
-//AFAIRE if or(size(a+0)<>[2 2]) then pause,end
-//AFAIRE if size(a,'*')<>4 then pause,end
-//AFAIRE if size(a+0,'*')<>4 then pause,end
-//AFAIRE [m,n]=size(a);if or([m,n]<>[2 2]) then pause,end
-//AFAIRE 
-//AFAIRE a=[1;2]+%s;
-//AFAIRE if size(a,1)<>2 then pause,end
-//AFAIRE if size(a+0,1)<>2 then pause,end
-//AFAIRE if size(a,'r')<>2 then pause,end
-//AFAIRE if size(a+0,'r')<>2 then pause,end
-//AFAIRE if size(a,2)<>1 then pause,end
-//AFAIRE if size(a+0,2)<>1 then pause,end
-//AFAIRE if size(a,'c')<>1 then pause,end
-//AFAIRE if size(a+0,'c')<>1 then pause,end
-//AFAIRE [m,n]=size(a);if or([m,n]<>[2 1]) then pause,end
-//AFAIRE 
+//TOBEDONE a=[1 2;3 4]+%s;
+//TOBEDONE if or(size(a)<>[2 2]) then pause,end
+//TOBEDONE if or(size(a+0)<>[2 2]) then pause,end
+//TOBEDONE if size(a,'*')<>4 then pause,end
+//TOBEDONE if size(a+0,'*')<>4 then pause,end
+//TOBEDONE [m,n]=size(a);if or([m,n]<>[2 2]) then pause,end
+//TOBEDONE 
+//TOBEDONE a=[1;2]+%s;
+//TOBEDONE if size(a,1)<>2 then pause,end
+//TOBEDONE if size(a+0,1)<>2 then pause,end
+//TOBEDONE if size(a,'r')<>2 then pause,end
+//TOBEDONE if size(a+0,'r')<>2 then pause,end
+//TOBEDONE if size(a,2)<>1 then pause,end
+//TOBEDONE if size(a+0,2)<>1 then pause,end
+//TOBEDONE if size(a,'c')<>1 then pause,end
+//TOBEDONE if size(a+0,'c')<>1 then pause,end
+//TOBEDONE [m,n]=size(a);if or([m,n]<>[2 1]) then pause,end
+//TOBEDONE 
 
 a=[1 2;3 4]==1;
 if or(size(a)<>[2 2]) then pause,end
@@ -101,13 +101,13 @@ n=2;
 if or(eye(n,2)<>[1 0;0 1]) then pause,end
 if or(eye(2,n)<>[1 0;0 1]) then pause,end
 if or(eye(n,n)<>[1 0;0 1]) then pause,end
-//AFAIRE if or(size(eye())<>[-1 -1]) then pause,end
+//TOBEDONE if or(size(eye())<>[-1 -1]) then pause,end
 a=[1 2;3 4];
 if or(eye(a)<>[1 0;0 1]) then pause,end
 if or(eye(a+0)<>[1 0;0 1]) then pause,end
-//AFAIRE a=[1 2;3 4]+%s;
-//AFAIRE if or(eye(a)<>[1 0;0 1]) then pause,end
-//AFAIRE if or(eye(a+0)<>[1 0;0 1]) then pause,end
+//TOBEDONE a=[1 2;3 4]+%s;
+//TOBEDONE if or(eye(a)<>[1 0;0 1]) then pause,end
+//TOBEDONE if or(eye(a+0)<>[1 0;0 1]) then pause,end
 a=string([1 2;3 4]);
 if or(eye(a)<>[1 0;0 1]) then pause,end
 if or(eye(a+a)<>[1 0;0 1]) then pause,end
@@ -128,9 +128,9 @@ if ones([])<>[] then pause,end
 a=[1 2;3 4];
 if or(ones(a)<>[1 1;1 1]) then pause,end
 if or(ones(a+0)<>[1 1;1 1]) then pause,end
-//AFAIRE a=[1 2;3 4]+%s;
-//AFAIRE if or(ones(a)<>[1 1;1 1]) then pause,end
-//AFAIRE if or(ones(a+0)<>[1 1;1 1]) then pause,end
+//TOBEDONE a=[1 2;3 4]+%s;
+//TOBEDONE if or(ones(a)<>[1 1;1 1]) then pause,end
+//TOBEDONE if or(ones(a+0)<>[1 1;1 1]) then pause,end
 a=string([1 2;3 4]);
 if or(ones(a)<>[1 1;1 1]) then pause,end
 if or(ones(a+a)<>[1 1;1 1]) then pause,end
@@ -149,20 +149,20 @@ if rand([])<>[] then pause,end
 a=[1 2;3 4];
 if or(size(rand(a))<>size(a)) then pause,end
 if or(size(rand(a+0))<>size(a)) then pause,end
-//AFAIRE a=[1 2;3 4]+%s;
-//AFAIRE if or(size(rand(a))<>size(a)) then pause,end
-//AFAIRE if or(size(rand(a+0))<>size(a)) then pause,end
+//TOBEDONE a=[1 2;3 4]+%s;
+//TOBEDONE if or(size(rand(a))<>size(a)) then pause,end
+//TOBEDONE if or(size(rand(a+0))<>size(a)) then pause,end
 a=string([1 2;3 4]);
-//AFAIRE if or(size(rand(a))<>size(a)) then pause,end
-//AFAIRE if or(size(rand(a+a))<>size(a)) then pause,end
+//TOBEDONE if or(size(rand(a))<>size(a)) then pause,end
+//TOBEDONE if or(size(rand(a+a))<>size(a)) then pause,end
 a=[1 2;3 4]>1;
-//AFAIRE if or(size(rand(a))<>size(a)) then pause,end
-//AFAIRE if or(size(rand(a+a))<>size(a)) then pause,end
+//TOBEDONE if or(size(rand(a))<>size(a)) then pause,end
+//TOBEDONE if or(size(rand(a+a))<>size(a)) then pause,end
 rand('seed',1);if rand('seed')<>1 then pause,end
 a=2;rand('seed',a);if rand('seed')<>a then pause,end
 
 //diagcre
-//AFAIRE : faire une fonction diag 
+//TOBEDONE : faire une fonction diag 
 //Attention dans NSP on a en plus diagset 
 if or(diagcre([1 2 3])<>[1 0 0;0 2 0;0 0 3]) then pause,end
 a=[1 2 3];
@@ -257,12 +257,12 @@ a=[1+%i 2;-3 4;5,-6];
 if or(abs(a)<>[sqrt(2) 2;3 4;5 6]) then pause,end
 if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]) then pause,end
 
-//AFAIRE a=[1 2;-3 4;5, -6]+%s;
-//AFAIRE if or(abs(a)<>[1 2;3 4;5 6]+%s) then pause,end
-//AFAIRE if or(abs(a+0)<>[1 2;3 4;5 6]+%s) then pause,end
-//AFAIRE a=[1+%i 2;-3 4;5 -6]+%s;
-//AFAIRE if or(abs(a)<>[sqrt(2) 2;3 4;5 6]+%s) then pause,end
-//AFAIRE if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]+%s) then pause,end
+//TOBEDONE a=[1 2;-3 4;5, -6]+%s;
+//TOBEDONE if or(abs(a)<>[1 2;3 4;5 6]+%s) then pause,end
+//TOBEDONE if or(abs(a+0)<>[1 2;3 4;5 6]+%s) then pause,end
+//TOBEDONE a=[1+%i 2;-3 4;5 -6]+%s;
+//TOBEDONE if or(abs(a)<>[sqrt(2) 2;3 4;5 6]+%s) then pause,end
+//TOBEDONE if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]+%s) then pause,end
 
 a=sparse([1 2;-3 4;5 ,-6]);
 if or(full(abs(a))<>[1 2;3 4;5 6]) then pause,end
@@ -281,19 +281,19 @@ a=[1+%i 2;-3 4;5, -6];
 if or(real(a)<>[1 2;-3 4;5 ,-6]) then pause,end
 if or(real(a+0)<>[1 2;-3 4;5, -6]) then pause,end
 
-//AFAIRE a=[1 2;-3 4;5, -6]+%s;
-//AFAIRE if or(real(a)<>a) then pause,end
-//AFAIRE if or(real(a+0)<>a) then pause,end
-//AFAIRE a=[1+%i 2;-3 4;5 ,-6]+%s;
-//AFAIRE if or(real(a)<>[1 2;-3 4;5 ,-6]+%s) then pause,end
-//AFAIRE if or(real(a+0)<>[1 2;-3 4;5 ,-6]+%s) then pause,end
+//TOBEDONE a=[1 2;-3 4;5, -6]+%s;
+//TOBEDONE if or(real(a)<>a) then pause,end
+//TOBEDONE if or(real(a+0)<>a) then pause,end
+//TOBEDONE a=[1+%i 2;-3 4;5 ,-6]+%s;
+//TOBEDONE if or(real(a)<>[1 2;-3 4;5 ,-6]+%s) then pause,end
+//TOBEDONE if or(real(a+0)<>[1 2;-3 4;5 ,-6]+%s) then pause,end
 
-//AFAIREa=sparse([1 2;-3 4;5, -6]);
-//AFAIREif or(real(a)<>a) then pause,end
-//AFAIREif or(real(a+a)<>2*a) then pause,end
-//AFAIREa=sparse([1+%i 2;-3 4;5 ,-6]);
-//AFAIREif or(full(real(a))<>[1 2;-3 4;5, -6]) then pause,end
-//AFAIREif or(full(real(a+a))<>2*[1 2;-3 4;5, -6]) then pause,end
+//TOBEDONEa=sparse([1 2;-3 4;5, -6]);
+//TOBEDONEif or(real(a)<>a) then pause,end
+//TOBEDONEif or(real(a+a)<>2*a) then pause,end
+//TOBEDONEa=sparse([1+%i 2;-3 4;5 ,-6]);
+//TOBEDONEif or(full(real(a))<>[1 2;-3 4;5, -6]) then pause,end
+//TOBEDONEif or(full(real(a+a))<>2*[1 2;-3 4;5, -6]) then pause,end
 
 //imag
 a=[1 2;-3 4;5 ,-6];
@@ -305,19 +305,19 @@ a=[1+%i 2;-3 4;5 ,-6];
 if or(imag(a)<>[1 0;0 0;0 0]) then pause,end
 if or(imag(a+0)<>[1 0;0 0;0 0]) then pause,end
 
-//AFAIRE a=[1 2;-3 4;5 ,-6]+%s;
-//AFAIRE if or(imag(a)<>0*a) then pause,end
-//AFAIRE if or(imag(a+0)<>0*a) then pause,end
-//AFAIRE a=[1+%i 2;-3 4;5 ,-6]+%s;
-//AFAIRE if or(imag(a)<>[poly(1,'s','c') 0;0 0;0 0]) then pause,end
-//AFAIRE if or(imag(a+0)<>[poly(1,'s','c') 0;0 0;0 0]) then pause,end
+//TOBEDONE a=[1 2;-3 4;5 ,-6]+%s;
+//TOBEDONE if or(imag(a)<>0*a) then pause,end
+//TOBEDONE if or(imag(a+0)<>0*a) then pause,end
+//TOBEDONE a=[1+%i 2;-3 4;5 ,-6]+%s;
+//TOBEDONE if or(imag(a)<>[poly(1,'s','c') 0;0 0;0 0]) then pause,end
+//TOBEDONE if or(imag(a+0)<>[poly(1,'s','c') 0;0 0;0 0]) then pause,end
 
-//AFAIREa=sparse([1 2;-3 4;5, -6]);
-//AFAIREif or(imag(a)<>0*a) then pause,end
-//AFAIREif or(imag(a+a)<>0*a) then pause,end
-//AFAIREa=sparse([1+%i 2;-3 4;5 ,-6]);
-//AFAIREif or(full(imag(a))<>[1 0;0 0;0 0]) then pause,end
-//AFAIREif or(full(imag(a+a))<>2*[1 0;0 0;0 0]) then pause,end
+//TOBEDONEa=sparse([1 2;-3 4;5, -6]);
+//TOBEDONEif or(imag(a)<>0*a) then pause,end
+//TOBEDONEif or(imag(a+a)<>0*a) then pause,end
+//TOBEDONEa=sparse([1+%i 2;-3 4;5 ,-6]);
+//TOBEDONEif or(full(imag(a))<>[1 0;0 0;0 0]) then pause,end
+//TOBEDONEif or(full(imag(a+a))<>2*[1 0;0 0;0 0]) then pause,end
 
 
 //conj
@@ -330,19 +330,19 @@ a=[1+%i 2;-3 4;5,-6];
 if or(conj(a)<>[1-%i 2;-3 4;5,-6]) then pause,end
 if or(conj(a+0)<>[1-%i 2;-3 4;5,-6]) then pause,end
 
-//AFAIRE a=[1 2;-3 4;5,-6]+%s;
-//AFAIRE if or(conj(a)<>a) then pause,end
-//AFAIRE if or(conj(a+0)<>a) then pause,end
-//AFAIRE a=[1+%i 2;-3 4;5,-6]+%s;
-//AFAIRE if or(conj(a)<>[1-%i 2;-3 4;5,-6]+%s) then pause,end
-//AFAIRE if or(conj(a+0)<>[1-%i 2;-3 4;5,-6]+%s) then pause,end
+//TOBEDONE a=[1 2;-3 4;5,-6]+%s;
+//TOBEDONE if or(conj(a)<>a) then pause,end
+//TOBEDONE if or(conj(a+0)<>a) then pause,end
+//TOBEDONE a=[1+%i 2;-3 4;5,-6]+%s;
+//TOBEDONE if or(conj(a)<>[1-%i 2;-3 4;5,-6]+%s) then pause,end
+//TOBEDONE if or(conj(a+0)<>[1-%i 2;-3 4;5,-6]+%s) then pause,end
 
 //a=sparse([1 2;-3 4;5,-6]);
-//AFAIREif or(conj(a)<>a) then pause,end
-//AFAIREif or(conj(a+a)<>2*a) then pause,end
-//AFAIREa=sparse([1+%i 2;-3 4;5,-6]);
-//AFAIREif or(full(conj(a))<>[1-%i 2;-3 4;5,-6]) then pause,end
-//AFAIREif or(full(conj(a+a))<>2*[1-%i 2;-3 4;5,-6]) then pause,end
+//TOBEDONEif or(conj(a)<>a) then pause,end
+//TOBEDONEif or(conj(a+a)<>2*a) then pause,end
+//TOBEDONEa=sparse([1+%i 2;-3 4;5,-6]);
+//TOBEDONEif or(full(conj(a))<>[1-%i 2;-3 4;5,-6]) then pause,end
+//TOBEDONEif or(full(conj(a+a))<>2*[1-%i 2;-3 4;5,-6]) then pause,end
 
 
 
@@ -355,12 +355,12 @@ a=[1.2+2.5*%i 2.5;-3.4 4.5;5.8,-6.2];
 if or(int(a)<>[1+2*%i 2;-3 4;5,-6]) then pause,end
 if or(int(a+0)<>[1+2*%i 2;-3 4;5,-6]) then pause,end
 
-//AFAIRE a=[1.2 2.5;-3.4 4.5;5.8,-6.2]+1.1*%s;
-//AFAIRE if or(int(a)<>[1 2;-3 4;5,-6]+%s) then pause,end
-//AFAIRE if or(int(a+0)<>[1 2;-3 4;5,-6]+%s) then pause,end
-//AFAIRE a=[1.2+2.5*%i 2.5;-3.4 4.5;5.8,-6.2]+1.1*%s;
-//AFAIRE if or(int(a)<>[1+2*%i 2;-3 4;5,-6]+%s) then pause,end
-//AFAIRE if or(int(a+0)<>[1+2*%i 2;-3 4;5,-6]+%s) then pause,end
+//TOBEDONE a=[1.2 2.5;-3.4 4.5;5.8,-6.2]+1.1*%s;
+//TOBEDONE if or(int(a)<>[1 2;-3 4;5,-6]+%s) then pause,end
+//TOBEDONE if or(int(a+0)<>[1 2;-3 4;5,-6]+%s) then pause,end
+//TOBEDONE a=[1.2+2.5*%i 2.5;-3.4 4.5;5.8,-6.2]+1.1*%s;
+//TOBEDONE if or(int(a)<>[1+2*%i 2;-3 4;5,-6]+%s) then pause,end
+//TOBEDONE if or(int(a+0)<>[1+2*%i 2;-3 4;5,-6]+%s) then pause,end
 
 if int([])<>[] then pause,end
 a=[];if int(a)<>[] then pause,end
@@ -375,12 +375,12 @@ a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2];
 if or(round(a)<>[1+3*%i 3;-3 5;6,-6]) then pause,end
 if or(round(a+0)<>[1+3*%i 3;-3 5;6,-6]) then pause,end
 
-//AFAIRE a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//AFAIRE if or(round(a)<>[1 3;-3 5;6,-6]+%s) then pause,end
-//AFAIRE if or(round(a+0)<>[1 3;-3 5;6,-6]+%s) then pause,end
-//AFAIRE a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//AFAIRE if or(round(a)<>[1+3*%i 3;-3 5;6,-6]+%s) then pause,end
-//AFAIRE if or(round(a+0)<>[1+3*%i 3;-3 5;6,-6]+%s) then pause,end
+//TOBEDONE a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*%s;
+//TOBEDONE if or(round(a)<>[1 3;-3 5;6,-6]+%s) then pause,end
+//TOBEDONE if or(round(a+0)<>[1 3;-3 5;6,-6]+%s) then pause,end
+//TOBEDONE a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*%s;
+//TOBEDONE if or(round(a)<>[1+3*%i 3;-3 5;6,-6]+%s) then pause,end
+//TOBEDONE if or(round(a+0)<>[1+3*%i 3;-3 5;6,-6]+%s) then pause,end
 
 if round([])<>[] then pause,end
 a=[];if round(a)<>[] then pause,end
@@ -393,12 +393,12 @@ a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2];
 if or(ceil(a)<>[2+3*%i 3;-3 5;6,-6]) then pause,end
 if or(ceil(a+0)<>[2+3*%i 3;-3 5;6,-6]) then pause,end
 
-//AFAIRE a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//AFAIRE if or(ceil(a)<>[2 3;-3 5;6,-6]+2*%s) then pause,end
-//AFAIRE if or(ceil(a+0)<>[2 3;-3 5;6,-6]+2*%s) then pause,end
-//AFAIRE a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//AFAIRE if or(ceil(a)<>[2+3*%i 3;-3 5;6,-6]+2*%s) then pause,end
-//AFAIRE if or(ceil(a+0)<>[2+3*%i 3;-3 5;6,-6]+2*%s) then pause,end
+//TOBEDONE a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*%s;
+//TOBEDONE if or(ceil(a)<>[2 3;-3 5;6,-6]+2*%s) then pause,end
+//TOBEDONE if or(ceil(a+0)<>[2 3;-3 5;6,-6]+2*%s) then pause,end
+//TOBEDONE a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*%s;
+//TOBEDONE if or(ceil(a)<>[2+3*%i 3;-3 5;6,-6]+2*%s) then pause,end
+//TOBEDONE if or(ceil(a+0)<>[2+3*%i 3;-3 5;6,-6]+2*%s) then pause,end
 
 if ceil([])<>[] then pause,end
 a=[];if ceil(a)<>[] then pause,end
@@ -412,12 +412,12 @@ a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2];
 if or(floor(a)<>[1+2*%i 2;-4 4;5, -7]) then pause,end
 if or(floor(a+0)<>[1+2*%i 2;-4 4;5, -7]) then pause,end
 
-//AFAIRE a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//AFAIRE if or(floor(a)<>[1 2;-4 4;5, -7]+%s) then pause,end
-//AFAIRE if or(floor(a+0)<>[1 2;-4 4;5 ,-7]+%s) then pause,end
-//AFAIRE a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//AFAIRE if or(floor(a)<>[1+2*%i 2;-4 4;5, -7]+%s) then pause,end
-//AFAIRE if or(floor(a+0)<>[1+2*%i 2;-4 4;5, -7]+%s) then pause,end
+//TOBEDONE a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*%s;
+//TOBEDONE if or(floor(a)<>[1 2;-4 4;5, -7]+%s) then pause,end
+//TOBEDONE if or(floor(a+0)<>[1 2;-4 4;5 ,-7]+%s) then pause,end
+//TOBEDONE a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*%s;
+//TOBEDONE if or(floor(a)<>[1+2*%i 2;-4 4;5, -7]+%s) then pause,end
+//TOBEDONE if or(floor(a+0)<>[1+2*%i 2;-4 4;5, -7]+%s) then pause,end
 
 if floor([])<>[] then pause,end
 a=[];if floor(a)<>[] then pause,end
@@ -425,8 +425,8 @@ a=[];if floor(a)<>[] then pause,end
 //sign
 a=[1.2 2.51;-3.4 4.52;5.8,-6.2];
 if or(sign(a)<>[1 1;-1 1;1, -1]) then pause,end
-//AFAIREa=[1+%i 2.51;-3.4 4.52;5.8,-6.2];
-//AFAIRE if norm(sign(a)-[sqrt(2)/2*(1+%i) 1;-1 1;1 -1])>10*%eps then pause,end
+//TOBEDONEa=[1+%i 2.51;-3.4 4.52;5.8,-6.2];
+//TOBEDONE if norm(sign(a)-[sqrt(2)/2*(1+%i) 1;-1 1;1 -1])>10*%eps then pause,end
 if sign([])<>[] then pause,end
 a=[];if sign(a)<>[] then pause,end
 
@@ -473,18 +473,18 @@ if norm(tan(atan(a+0))-a)>100*%eps then pause,end
 if atan([])<>[] then pause,end
 a=[];if atan(a)<>[] then pause,end
 
-//AFAIRE if atan([],[])<>[] then pause,end
-//AFAIRE a=[];if atan(a,[])<>[] then pause,end
-//AFAIRE a=[];if atan(a,a)<>[] then pause,end
-//AFAIRE a=[];if atan([],a)<>[] then pause,end
+//TOBEDONE if atan([],[])<>[] then pause,end
+//TOBEDONE a=[];if atan(a,[])<>[] then pause,end
+//TOBEDONE a=[];if atan(a,a)<>[] then pause,end
+//TOBEDONE a=[];if atan([],a)<>[] then pause,end
 
 //expm
-//AFAIRE a=[0 2;0 0];
-//AFAIRE if norm(expm(a)-[1 2;0 1])>10*%eps then pause,end
-//AFAIRE a=[0 2*%i;0 0];
-//AFAIRE if norm(expm(a)-[1 2*%i;0 1])>10*%eps then pause,end
-//AFAIRE if expm([])<>[] then pause,end
-//AFAIRE a=[];if expm(a)<>[] then pause,end
+//TOBEDONE a=[0 2;0 0];
+//TOBEDONE if norm(expm(a)-[1 2;0 1])>10*%eps then pause,end
+//TOBEDONE a=[0 2*%i;0 0];
+//TOBEDONE if norm(expm(a)-[1 2*%i;0 1])>10*%eps then pause,end
+//TOBEDONE if expm([])<>[] then pause,end
+//TOBEDONE a=[];if expm(a)<>[] then pause,end
 
 //sqrt
 a=[1.2 2.51;-3.4 4.52;5.8,-6.2];
@@ -733,7 +733,7 @@ if prod(a,n)<>[] then pause,end
 if prod([],n)<>[] then pause,end
 
 // Prod sur les sparses ? 
-// AFAIRE 
+// TOBEDONE 
 
 
 //cumsum
@@ -1109,69 +1109,66 @@ if or(matrix(a+0,3,m)<>b) then pause,end
 if or(matrix(a+0,n,m)<>b) then pause,end
 
 a=string([1 2 3 4 5 6]);n=1;m=6;
-//AFAIRE if or(matrix(a,1,6)<>a) then pause,end
-//AFAIRE if or(matrix(a,n,6)<>a) then pause,end
-//AFAIRE if or(matrix(a,1,m)<>a) then pause,end
-//AFAIRE if or(matrix(a,n,m)<>a) then pause,end
-//AFAIRE if or(matrix(a+a,1,6)<>a+a) then pause,end
-//AFAIRE if or(matrix(a+a,n,6)<>a+a) then pause,end
-//AFAIRE if or(matrix(a+a,1,m)<>a+a) then pause,end
-//AFAIRE if or(matrix(a+a,n,m)<>a+a) then pause,end
+//TOBEDONE if or(matrix(a,1,6)<>a) then pause,end
+//TOBEDONE if or(matrix(a,n,6)<>a) then pause,end
+//TOBEDONE if or(matrix(a,1,m)<>a) then pause,end
+//TOBEDONE if or(matrix(a,n,m)<>a) then pause,end
+//TOBEDONE if or(matrix(a+a,1,6)<>a+a) then pause,end
+//TOBEDONE if or(matrix(a+a,n,6)<>a+a) then pause,end
+//TOBEDONE if or(matrix(a+a,1,m)<>a+a) then pause,end
+//TOBEDONE if or(matrix(a+a,n,m)<>a+a) then pause,end
 
 n=3;m=2; b=string([1 4;2 5;3 6]);
-//AFAIRE if or(matrix(a,3,2)<>b) then pause,end
-//AFAIRE if or(matrix(a,n,2)<>b) then pause,end
-//AFAIRE if or(matrix(a,3,m)<>b) then pause,end
-//AFAIRE if or(matrix(a,n,m)<>b) then pause,end
-//AFAIRE if or(matrix(a+a,3,2)<>b+b) then pause,end
-//AFAIRE if or(matrix(a+a,n,2)<>b+b) then pause,end
-//AFAIRE if or(matrix(a+a,3,m)<>b+b) then pause,end
-//AFAIRE if or(matrix(a+a,n,m)<>b+b) then pause,end
+//TOBEDONE if or(matrix(a,3,2)<>b) then pause,end
+//TOBEDONE if or(matrix(a,n,2)<>b) then pause,end
+//TOBEDONE if or(matrix(a,3,m)<>b) then pause,end
+//TOBEDONE if or(matrix(a,n,m)<>b) then pause,end
+//TOBEDONE if or(matrix(a+a,3,2)<>b+b) then pause,end
+//TOBEDONE if or(matrix(a+a,n,2)<>b+b) then pause,end
+//TOBEDONE if or(matrix(a+a,3,m)<>b+b) then pause,end
+//TOBEDONE if or(matrix(a+a,n,m)<>b+b) then pause,end
 
-//AFAIRE a=[1 2 3 4 5 6]+%s;
-//AFAIRE n=1;m=6;
-//AFAIRE if or(matrix(a,1,6)<>a) then pause,end
-//AFAIRE if or(matrix(a,n,6)<>a) then pause,end
-//AFAIRE if or(matrix(a,1,m)<>a) then pause,end
-//AFAIRE if or(matrix(a,n,m)<>a) then pause,end
-//AFAIRE if or(matrix(a+0,1,6)<>a) then pause,end
-//AFAIRE if or(matrix(a+0,n,6)<>a) then pause,end
-//AFAIRE if or(matrix(a+0,1,m)<>a) then pause,end
-//AFAIRE if or(matrix(a+0,n,m)<>a) then pause,end
+//TOBEDONE a=[1 2 3 4 5 6]+%s;
+//TOBEDONE n=1;m=6;
+//TOBEDONE if or(matrix(a,1,6)<>a) then pause,end
+//TOBEDONE if or(matrix(a,n,6)<>a) then pause,end
+//TOBEDONE if or(matrix(a,1,m)<>a) then pause,end
+//TOBEDONE if or(matrix(a,n,m)<>a) then pause,end
+//TOBEDONE if or(matrix(a+0,1,6)<>a) then pause,end
+//TOBEDONE if or(matrix(a+0,n,6)<>a) then pause,end
+//TOBEDONE if or(matrix(a+0,1,m)<>a) then pause,end
+//TOBEDONE if or(matrix(a+0,n,m)<>a) then pause,end
 
-//AFAIRE n=3;m=2; b=[1 4;2 5;3 6]+%s;
-//AFAIRE if or(matrix(a,3,2)<>b) then pause,end
-//AFAIRE if or(matrix(a,n,2)<>b) then pause,end
-//AFAIRE if or(matrix(a,3,m)<>b) then pause,end
-//AFAIRE if or(matrix(a,n,m)<>b) then pause,end
-//AFAIRE if or(matrix(a+0,3,2)<>b) then pause,end
-//AFAIRE if or(matrix(a+0,n,2)<>b) then pause,end
-//AFAIRE if or(matrix(a+0,3,m)<>b) then pause,end
-//AFAIRE if or(matrix(a+0,n,m)<>b) then pause,end
-//AFAIRE 
-//AFAIRE a=[1+%i 2 3 4 5 6]+%s;
-//AFAIRE n=1;m=6;
-//AFAIRE if or(matrix(a,1,6)<>a) then pause,end
-//AFAIRE if or(matrix(a,n,6)<>a) then pause,end
-//AFAIRE if or(matrix(a,1,m)<>a) then pause,end
-//AFAIRE if or(matrix(a,n,m)<>a) then pause,end
-//AFAIRE if or(matrix(a+0,1,6)<>a) then pause,end
-//AFAIRE if or(matrix(a+0,n,6)<>a) then pause,end
-//AFAIRE if or(matrix(a+0,1,m)<>a) then pause,end
-//AFAIRE if or(matrix(a+0,n,m)<>a) then pause,end
-//AFAIRE 
-//AFAIRE n=3;m=2; b=[1+%i 4;2 5;3 6]+%s;
-//AFAIRE if or(matrix(a,3,2)<>b) then pause,end
-//AFAIRE if or(matrix(a,n,2)<>b) then pause,end
-//AFAIRE if or(matrix(a,3,m)<>b) then pause,end
-//AFAIRE if or(matrix(a,n,m)<>b) then pause,end
-//AFAIRE if or(matrix(a+0,3,2)<>b) then pause,end
-//AFAIRE if or(matrix(a+0,n,2)<>b) then pause,end
-//AFAIRE if or(matrix(a+0,3,m)<>b) then pause,end
-//AFAIRE if or(matrix(a+0,n,m)<>b) then pause,end
-
-//AFINIR 
-exit
+//TOBEDONE n=3;m=2; b=[1 4;2 5;3 6]+%s;
+//TOBEDONE if or(matrix(a,3,2)<>b) then pause,end
+//TOBEDONE if or(matrix(a,n,2)<>b) then pause,end
+//TOBEDONE if or(matrix(a,3,m)<>b) then pause,end
+//TOBEDONE if or(matrix(a,n,m)<>b) then pause,end
+//TOBEDONE if or(matrix(a+0,3,2)<>b) then pause,end
+//TOBEDONE if or(matrix(a+0,n,2)<>b) then pause,end
+//TOBEDONE if or(matrix(a+0,3,m)<>b) then pause,end
+//TOBEDONE if or(matrix(a+0,n,m)<>b) then pause,end
+//TOBEDONE 
+//TOBEDONE a=[1+%i 2 3 4 5 6]+%s;
+//TOBEDONE n=1;m=6;
+//TOBEDONE if or(matrix(a,1,6)<>a) then pause,end
+//TOBEDONE if or(matrix(a,n,6)<>a) then pause,end
+//TOBEDONE if or(matrix(a,1,m)<>a) then pause,end
+//TOBEDONE if or(matrix(a,n,m)<>a) then pause,end
+//TOBEDONE if or(matrix(a+0,1,6)<>a) then pause,end
+//TOBEDONE if or(matrix(a+0,n,6)<>a) then pause,end
+//TOBEDONE if or(matrix(a+0,1,m)<>a) then pause,end
+//TOBEDONE if or(matrix(a+0,n,m)<>a) then pause,end
+//TOBEDONE 
+//TOBEDONE n=3;m=2; b=[1+%i 4;2 5;3 6]+%s;
+//TOBEDONE if or(matrix(a,3,2)<>b) then pause,end
+//TOBEDONE if or(matrix(a,n,2)<>b) then pause,end
+//TOBEDONE if or(matrix(a,3,m)<>b) then pause,end
+//TOBEDONE if or(matrix(a,n,m)<>b) then pause,end
+//TOBEDONE if or(matrix(a+0,3,2)<>b) then pause,end
+//TOBEDONE if or(matrix(a+0,n,2)<>b) then pause,end
+//TOBEDONE if or(matrix(a+0,3,m)<>b) then pause,end
+//TOBEDONE if or(matrix(a+0,n,m)<>b) then pause,end
 
 //clean
 a=[1 1.d-12 1.d-5 2d8];
