@@ -77,29 +77,8 @@ static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
 void create_graphic_window_menu( BCG *dd);
 void start_sci_gtk();
 
-/* Allocating colors in BCG struct */
-
-#define PIXEL_FROM_RGB(r,g,b) gdk_rgb_xpixel_from_rgb((r << 16)|(g << 8)|(b))
-#define PIXEL_FROM_CMAP(i) PIXEL_FROM_RGB(Xgc->private->Red[i],Xgc->private->Green[i],Xgc->private->Blue[i])
 
 static void DispStringAngle( BCG *xgc,int x0, int yy0, char *string, double angle);
-
-static int XgcAllocColors( BCG *xgc, int m)
-{
-  /* don't forget black and white */
-  int mm = m + 2;
-  if ( (!(xgc->private->Red = (guchar *) MALLOC(mm*sizeof(guchar))))
-       || (!(xgc->private->Green = (guchar *) MALLOC(mm*sizeof(guchar))))
-       || (!(xgc->private->Blue = (guchar *) MALLOC(mm*sizeof(guchar)))) ) 
-    {
-      Sciprintf("XgcAllocColors: unable to alloc\n");
-      FREE(xgc->private->Red);
-      FREE(xgc->private->Green);
-      FREE(xgc->private->Blue);
-      return 0;
-    }
-  return 1;
-}
 
 /*---------------------------------------------------------
  * Gtk graphic engine 
@@ -1419,31 +1398,13 @@ static void sedeco(int flag)
  * xset('default',...) 
  */
 
-#define SETCOLOR(i,r,g,b)  Xgc->private->Red[i]=r;Xgc->private->Green[i]=g;Xgc->private->Blue[i]=b ; 
-
-static void set_colormap_constants(BCG *Xgc,int m)
-{
-  /* Black */
-  SETCOLOR(m, 0,0,0);
-  /* White */
-  SETCOLOR(m+1, 255,255,255);
-  Xgc->Numcolors = m;
-  Xgc->IDLastPattern = m - 1;
-  Xgc->CmapFlag = 0;
-  Xgc->NumForeground = m;
-  Xgc->NumBackground = m + 1;
-  xset_usecolor(Xgc,1);
-  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
-  xset_pattern(Xgc,Xgc->NumForeground+1);
-  xset_foreground(Xgc,Xgc->NumForeground+1);
-  xset_background(Xgc,Xgc->NumForeground+2);
-}
+static int XgcAllocColors( BCG *xgc, int m);
+static void set_colormap_constants(BCG *Xgc,int m);
 
 static void xset_default_colormap(BCG *Xgc)
 {
-  int i;
-  guchar *r, *g, *b;
-  int m;
+  int i,m ;
+  GdkColor *colors_old;
   /*  we don't want to set the default colormap at window creation 
    *  if the scilab command was xset("colormap"); 
    */
@@ -1455,19 +1416,29 @@ static void xset_default_colormap(BCG *Xgc)
   }
   m = DEFAULTNUMCOLORS;
   /* Save old color vectors */
-  r = Xgc->private->Red;  g = Xgc->private->Green;  b = Xgc->private->Blue;
-
+  colors_old = Xgc->private->colors;
   if (!XgcAllocColors(Xgc,m)) {
-    Xgc->private->Red = r;    Xgc->private->Green = g;    Xgc->private->Blue = b;
+    Xgc->private->colors =     colors_old ;
     return;
   }
-  /* Getting RGB values */
-  for (i = 0; i < m; i++) {
-    SETCOLOR(i, default_colors[3*i], default_colors[3*i+1], default_colors[3*i+2]);
-  }
 
+  /* get pixel values for the colors we let gtk do the job 
+   * an other way to fix a pixel value but which could only work for X 
+   * if rgb are coded as guchar
+   * gdk_rgb_xpixel_from_rgb((r << 16)|(g << 8)|(b))
+   */
+
+  if ( Xgc->private->drawing == NULL ) return;
+  if ( Xgc->private->colormap == NULL ) 
+    Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
+  for (i = 0; i < m; i++) {
+    Xgc->private->colors[i].red = (default_colors[3*i] << 8);
+    Xgc->private->colors[i].green = (default_colors[3*i+1] << 8);
+    Xgc->private->colors[i].blue = (default_colors[3*i+2] << 8);
+    gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
+  }
   set_colormap_constants(Xgc,m);
-  FREE(r); FREE(g); FREE(b);
+  FREE(colors_old);
 }
 
 /* Setting the colormap 
@@ -1480,40 +1451,89 @@ static void xset_default_colormap(BCG *Xgc)
 
 static void xset_colormap(BCG *Xgc,int m,int n,double *a)
 {
-  int i;
-  guchar *r, *g, *b;
+  int i ;
+  GdkColor *colors_old;
   /* 2 colors reserved for black and white */
   if ( n != 3 || m  < 0 || m > maxcol - 2) {
     Scierror("Colormap must be a m x 3 array with m <= %ld\n", maxcol-2);
     return;
   }
-  /* Save old color vectors */
-  r = Xgc->private->Red;
-  g = Xgc->private->Green;
-  b = Xgc->private->Blue;
 
+  colors_old = Xgc->private->colors;
   if (!XgcAllocColors(Xgc,m)) {
-    Xgc->private->Red = r;
-    Xgc->private->Green = g;
-    Xgc->private->Blue = b;
+    Xgc->private->colors =     colors_old ;
     return;
   }
-  /* Checking RGB values */
+
+  if ( Xgc->private->drawing == NULL ) return;
+  if ( Xgc->private->colormap == NULL ) 
+    Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
+
   for (i = 0; i < m; i++) {
-    if (a[i] < 0 || a[i] > 1 || a[i+m] < 0 || a[i+m] > 1 ||
-	a[i+2*m] < 0 || a[i+2*m]> 1) {
-      Sciprintf("RGB values must be between 0 and 1\n");
-      Xgc->private->Red = r;
-      Xgc->private->Green = g;
-      Xgc->private->Blue = b;
-      return;
-    }
-    SETCOLOR(i, (guchar)  (a[i]*255), (guchar)(a[i+m]*255),(guchar) (a[i+2*m]*255));
+  }
+
+  /* Checking RGB values */
+  for (i = 0; i < m; i++) 
+    {
+      if (a[i] < 0 || a[i] > 1 || a[i+m] < 0 || a[i+m] > 1 ||
+	  a[i+2*m] < 0 || a[i+2*m]> 1) 
+	{
+	  Sciprintf("RGB values must be between 0 and 1\n");
+	  FREE(Xgc->private->colors);
+	  Xgc->private->colors = colors_old ;
+	  return;
+	}
+      Xgc->private->colors[i].red = (guint16)  (a[i]*65535);
+      Xgc->private->colors[i].green = (guint16)(a[i+m]*65535);
+      Xgc->private->colors[i].blue = (guint16) (a[i+2*m]*65535);
+      gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
   }
   set_colormap_constants(Xgc,m);
-  FREE(r); FREE(g); FREE(b);
+  FREE(colors_old);
 }
 
+/* utility function */
+
+static int XgcAllocColors( BCG *xgc, int m)
+{
+  /* don't forget black and white */
+  int mm = m + 2;
+  if ( ! ( xgc->private->colors = MALLOC(mm*sizeof(GdkColor))))
+    {
+      Sciprintf("memory exhausted: unable to alloc an array of GdkColors\n");
+      FREE(xgc->private->colors);
+      return 0;
+    }
+  return 1;
+}
+
+static void set_colormap_constants(BCG *Xgc,int m)
+{
+  /* Black */
+  if ( Xgc->private->drawing == NULL ) return;
+  if ( Xgc->private->colormap == NULL ) 
+    Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
+  Xgc->private->colors[m].red = 0; 
+  Xgc->private->colors[m].green = 0;
+  Xgc->private->colors[m].blue = 0;
+  gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m]);      
+  /* White */
+  Xgc->private->colors[m+1].red = 65535; 
+  Xgc->private->colors[m+1].green = 65535; 
+  Xgc->private->colors[m+1].blue = 65535; 
+  gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m+1]);      
+  /* constants */
+  Xgc->Numcolors = m;
+  Xgc->IDLastPattern = m - 1;
+  Xgc->CmapFlag = 0;
+  Xgc->NumForeground = m;
+  Xgc->NumBackground = m + 1;
+  xset_usecolor(Xgc,1);
+  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
+  xset_pattern(Xgc,Xgc->NumForeground+1);
+  xset_foreground(Xgc,Xgc->NumForeground+1);
+  xset_background(Xgc,Xgc->NumForeground+2);
+}
 
 /* getting the colormap */
 
@@ -1525,9 +1545,9 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val)
   if ( val != NULL )
     {
       for (i = 0; i < m; i++) {
-	val[i] = (double)Xgc->private->Red[i]/255.0;
-	val[i+m] = (double)Xgc->private->Green[i]/255.0;
-	val[i+2*m] = (double)Xgc->private->Blue[i]/255.0;
+	val[i] = (double)Xgc->private->colors[i].red/65535.0;
+	val[i+m] = (double)Xgc->private->colors[i].green/65535.0;
+	val[i+2*m] = (double)Xgc->private->colors[i].blue/65535.0;
       }
     }
 }
@@ -1539,13 +1559,10 @@ static void xset_background(BCG *Xgc,int num)
   if (Xgc->CurColorStatus == 1) 
     {
       int bg = Xgc->NumBackground =  Max(0,Min(num - 1,Xgc->Numcolors + 1));
-      if (Xgc->private->Red != NULL )
+      if (Xgc->private->colors != NULL )
 	{
 	  /* we fix the default background in Xgc->private->gcol_bg */
-	  Xgc->private->gcol_bg.red = 0;
-	  Xgc->private->gcol_bg.green = 0;
-	  Xgc->private->gcol_bg.blue = 0;
-	  Xgc->private->gcol_bg.pixel = PIXEL_FROM_CMAP(bg);
+	  Xgc->private->gcol_bg = Xgc->private->colors[bg];
 	}
       /* 
        * if we change the background of the window we must change 
@@ -1568,12 +1585,9 @@ static void xset_foreground(BCG *Xgc,int num)
   if (Xgc->CurColorStatus == 1) 
     {
       int fg = Xgc->NumForeground = Max(0,Min(num - 1,Xgc->Numcolors + 1));
-      if (Xgc->private->Red != NULL )
+      if (Xgc->private->colors != NULL )
 	{
-	  Xgc->private->gcol_fg.red = 0;
-	  Xgc->private->gcol_fg.green = 0;
-	  Xgc->private->gcol_fg.blue = 0;
-	  Xgc->private->gcol_fg.pixel = PIXEL_FROM_CMAP(fg);
+	  Xgc->private->gcol_fg =  Xgc->private->colors[fg];
 	  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
 	}
     }
@@ -2283,9 +2297,7 @@ void DeleteSGWin(int intnum)
       gtk_container_remove(GTK_CONTAINER(father),GTK_WIDGET(winxgc->private->vbox));
     }
   /* free gui private area */
-  FREE(winxgc->private->Red);
-  FREE(winxgc->private->Green);
-  FREE(winxgc->private->Blue);
+  FREE(winxgc->private->colors);
   FREE(winxgc->private);
   /* remove current window from window list */
   window_list_remove(intnum);
@@ -2303,8 +2315,8 @@ static void set_c(BCG *Xgc,int col)
   GdkColor temp = {0,0,0,0};
   /* colors from 1 to Xgc->Numcolors */
   Xgc->CurColor = col = Max(0,Min(col,Xgc->Numcolors + 1));
-  if (Xgc->private->Red  == NULL) return;
-  temp.pixel = PIXEL_FROM_CMAP(col);
+  if (Xgc->private->colors  == NULL) return;
+  temp.pixel = Xgc->private->colors[col].pixel;
   switch (value) 
     {
     case GDK_CLEAR : 
@@ -2365,9 +2377,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
       return;
     }
   /* default values  */
-  private->Red=NULL;  
-  private->Green=NULL;
-  private->Blue=NULL; 
+  private->colors=NULL;
+  private->colormap=NULL;
   private->window=NULL;		
   private->drawing=NULL;           
   private->scrolled=NULL;          
@@ -2958,37 +2969,12 @@ static int GtkReallocVector(int n)
  *
  */
 
-/* a revoir XXXX */
-
-#define R_RED(col)	(((col)	   )&255) 
-#define R_GREEN(col)	(((col)>> 8)&255)
-#define R_BLUE(col)	(((col)>>16)&255)
-
-/* set the r, g, b, and pixel values of gcol to color */
-
-static void SetRgBColor(BCG *dd,int red,int green,int blue)
-{
-  GdkColor gcol = { gdk_rgb_xpixel_from_rgb((red << 16)|(green << 8)|(blue)),0,0,0};
-  gdk_gc_set_foreground(dd->private->wgc, &gcol);
-}
-
-static void SetColor(GdkColor *gcol, int color)
-{
-  int red, green, blue;
-  red = R_RED(color);
-  green = R_GREEN(color);
-  blue = R_BLUE(color);
-  gcol->red = 0;
-  gcol->green = 0;
-  gcol->blue = 0;
-  gcol->pixel = gdk_rgb_xpixel_from_rgb((red << 16)|(green << 8)|(blue));
-}
-
-
 /* signal functions */
 
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
+  GdkColor white={0,0,0,0};
+  GdkColor black={0,65535,65535,65535};
   BCG *dd = (BCG *) data;
 
   g_return_val_if_fail(dd != NULL, FALSE);
@@ -2997,9 +2983,14 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   
   /* create gc */
   dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
+  gdk_gc_set_rgb_bg_color(dd->private->xgc,&black);
+  gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
   /* standard gc : for private->pixmap copies */
   /* this gc could be shared by all windows */
   dd->private->stdgc = gdk_gc_new(dd->private->drawing->window);
+  gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
+  gdk_gc_set_rgb_fg_color(dd->private->stdgc,&white);
+
   /* set the cursor */
   dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
   dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
@@ -3132,9 +3123,6 @@ static void scig_deconnect_handlers(BCG *winxgc)
  * if is_top == FALSE a partial widget (vbox) is created 
  *---------------------------------------------------------------*/
 
-#define R_RGB(r,g,b)	((r)|((g)<<8)|((b)<<16))
-
-
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
@@ -3249,14 +3237,6 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* private->drawingarea properties */
   /* min size of the graphic window */
   gtk_widget_set_size_request(dd->private->drawing, iw, ih);
-
-  /* setup background color */
-  dd->private->bg = R_RGB(255, 255, 255);
-  SetColor(&dd->private->gcol_bg, dd->private->bg);
-  
-  /* setup foreground color */
-  dd->private->fg =  R_RGB(0,0,0);
-  SetColor(&dd->private->gcol_fg , dd->private->fg);
 
   /* place and realize the private->drawing area */
   gtk_scrolled_window_add_with_viewport ( GTK_SCROLLED_WINDOW (scrolled_window),dd->private->drawing);

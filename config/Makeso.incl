@@ -17,7 +17,7 @@ OBJDUMP = objdump
 STATIC = 
 LN_S = ln -s
 NM = /usr/bin/nm -B
-LDFLAGS = -lieee $(EXTRA_LDFLAGS) 
+LDFLAGS =  $(EXTRA_LDFLAGS) 
 LIBS = -lm 
 FLIBS =  -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.3 -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.3/../../.. -lfrtbegin -lg2c -lm -lgcc_s
 #******************************************************************* 

@@ -18,7 +18,7 @@ OBJDUMP = objdump
 STATIC = 
 
 CPPFLAGS = 
-LDFLAGS = -lieee
+LDFLAGS = 
 LIBS = -lm 
 FLIBS =  -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.3 -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.3/../../.. -lfrtbegin -lg2c -lm -lgcc_s
 
