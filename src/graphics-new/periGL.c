@@ -3629,8 +3629,8 @@ static void nsp_ogl_set_view(BCG *Xgc)
       double cosa=cos((alpha)*M_PI/180.0);
       double sina=sin((alpha)*M_PI/180.0);
       double cx=(Xgc->scales->bbox1[0]+ Xgc->scales->bbox1[1])/2.0;
-      double cy=(Xgc->scales->bbox1[0]+ Xgc->scales->bbox1[1])/2.0;
-      double cz=(Xgc->scales->bbox1[0]+ Xgc->scales->bbox1[1])/2.0;
+      double cy=(Xgc->scales->bbox1[2]+ Xgc->scales->bbox1[3])/2.0;
+      double cz=(Xgc->scales->bbox1[4]+ Xgc->scales->bbox1[5])/2.0;
       /* radius and center of the sphere circumscribing the box */
       double dx=Xgc->scales->bbox1[1]-Xgc->scales->bbox1[0]; 
       double dy=Xgc->scales->bbox1[3]-Xgc->scales->bbox1[2]; 
@@ -3643,10 +3643,25 @@ static void nsp_ogl_set_view(BCG *Xgc)
        */
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity ();
+      /*
       gluLookAt (cx+R*cost*sina,
 		 cy+R*sint*sina,
 		 cz+R*cosa,
 		 cx,cy,cz,
+		 0,0,1);
+      */
+      /*
+       * Il vaut mieux faire comme ça 
+       * pour que la boite englobante soit correcte 
+       * mais il faut alors bien calculer la position du 
+       * point et surtout near et far !!!!!
+       * qui sont important pour l'élimination des parties cachées
+       */
+      R=50;
+      gluLookAt (R*cost*sina,
+		 R*sint*sina,
+		 R*cosa,
+		 0,0,0,
 		 0,0,1);
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
