@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
-/* #include "nsp/graphics/PloEch.h" */
 
 extern Gengine GL_gengine;
 
@@ -24,8 +23,8 @@ extern double C2F(dsort)();
 
 static double xx1,yy1;
 
-#define PGEOX(x1,y1,z1) inint(xx1= Xgc->scales->Wscx1*(TRX(x1,y1,z1)-Xgc->scales->frect[0]) +Xgc->scales->Wxofset1);
-#define PGEOY(x1,y1,z1) inint(yy1= Xgc->scales->Wscy1*(-TRY(x1,y1,z1)+Xgc->scales->frect[3])+Xgc->scales->Wyofset1);
+#define PGEOX(x1,y1,z1)  inint(xx1= XScale_d(TRX(x1,y1,z1)))
+#define PGEOY(x1,y1,z1)  inint(yy1= YScale_d(TRY(x1,y1,z1)))
 
 static void C2F(plot3dg) (BCG *Xgc, char *name,
 			  int (*func)(BCG *Xgc,int *polyx, int *polyy, int *fill,
@@ -214,10 +213,11 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
     }
 
   SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
-  /* Calcule l' Enveloppe Convex de la boite **/
-  /* ainsi que les triedres caches ou non **/
+  /* compute and draw the convex hull 
+   * and keep track of hiden and visible <<triedres>>
+   */
   Convex_Box(Xgc,&box,legend,flag[2]);
-  /* Le triedre cach\'e **/
+  /* Le triedre */
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
   if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
@@ -257,7 +257,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 	  int npolyok=0;
 	  for ( j =0 ; j < (*q)-1 ; j++)
 	    {
-	     npolyok += (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
+	      npolyok += (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
 				x,y,z,i,j,npolyok,p,dc,fg1);
 	    }
 	  if ( npolyok != 0) 

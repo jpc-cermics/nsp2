@@ -215,11 +215,11 @@ if test "$rest" = "yes"; then
           ;;
       -nw)
           now="-nw"
-	  sci_args="$sci_args -nw"
+	  sci_args="$sci_args"
           ;;
       -nwni)
           now="-nw"
-	  sci_args="$sci_args -nw"
+	  sci_args="$sci_args"
           ;;
       -display|-d)
           prevarg="display"
