@@ -1,18 +1,11 @@
 // FIXME : this is a temporary load 
 // of all the graphics macros 
 
-NSP=getenv('SCI');
-if %t then 
-  A=glob(NSP+'/macros/xdess/*.sci');
-  for i=1:size(A,1),exec(A(i,1));end;
-  A=glob(NSP+'/macros/scicos/00util.sci');
-  exec(A)
-end 
-exec(NSP+'/demos/graphics/main_graphic.sci');
+exec('NSP/demos/graphics/main_graphic.sci');
 
 // A set of demos 
 // add libdemo in the function search list 
-add_lib('SCI/demos/graphics/libdemo');
+add_lib('NSP/demos/graphics/libdemo');
 
 // utility function to build a list for demos 
 
@@ -108,5 +101,5 @@ graphic_demos_all = list( list("primitives", "", "", graphic_test_prim  ),
                           list("3D curves and surfaces",  "", "", graphic_test_3d ),
 			  list("Animations",  "", "", graphic_test_anim ));
 			  
-graphics_demo_in_gtk(graphic_demos_all);
+graphics_demo_in_gtk(graphic_demos_all,%f);
 

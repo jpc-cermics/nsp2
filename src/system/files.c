@@ -65,7 +65,6 @@ void set_nsp_tmpdir(void)
     }
 }
 
-
 /*----------------------------------------------
  * get tmp_dir path 
  *----------------------------------------------*/
@@ -76,7 +75,6 @@ char *get_nsp_tmpdir(void)
   set_nsp_tmpdir();
   return tmp_dir;
 }
-
 
 /*----------------------------------------------
  * clean tmp_dir 
@@ -131,7 +129,7 @@ int nsp_change_curdir(char *path)
 /*------------------------------
  * Get nsp current directory 
  * FIXME: when getcwd returns a NULL 
- *        pointer ERANGE shoukd be checked
+ *        pointer ERANGE should be checked
  *------------------------------*/
 
 char * nsp_get_curdir()
@@ -157,7 +155,8 @@ char * nsp_get_curdir()
  * expand in_name to produce out_name 
  *---------------------------------------------*/
 
-static char *SCI_a[] = {  "SCI/", "sci/", "$SCI", "SCI\\", "sci\\", (char *) 0 };
+static char *SCI_a[] = {  "SCI/", "sci/", "$SCI", "SCI\\", "sci\\",
+			  "NSP/", "nsp/", "$NSP", "NSP\\", "nsp\\", (char *) 0 };
 static char *HOME_a[] = {  "HOME/", "home/", "~/" , "HOME\\", "home\\", "~\\" ,"$HOME", (char *) 0};
 static char *TMP_a[] = {  "TMPDIR/", "tmpdir/","TMPDIR\\", "tmpdir\\", "$TMPDIR", (char *) 0};
 

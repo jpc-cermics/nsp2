@@ -67,7 +67,7 @@ NspTypePList *new_type_plist(type_mode mode)
   top->size  = (size_func *) NspPListSize;                   /* m,n or m*n  */  
   top->s_type =  (s_type_func *) NspPListType;                /* type as a String */  
   top->sh_type = (sh_type_func *) NspPListShType ;              /* type as a short string */  
-  top->info = (info_func *) PListInfo;                    /* info */  
+  top->info = (info_func *) NspPListInfo;                    /* info */  
   /*top->is_true = (is_true_func  *) PListIsTrue;  */           /* check if object can be considered as true */  
   /*top->loop =(loop_func *) NspPListLoopExtract ; */               /* for loops */  
   top->path_extract =  NULL;        /* used for x(1)(2)(...) */  

@@ -292,9 +292,9 @@ void gobject_print(NspGObject *H, int indent)
 
 NspGObject   *gobject_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /*Follow pointer **/
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
-  /** Check type **/
+  /*Check type **/
   if ( check_cast(O,nsp_type_gobject_id) == TRUE) return ((NspGObject *) O);
   else 
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_gobject));
@@ -659,7 +659,7 @@ static int nspgobject_set_data(NspGObject *self, Stack stack,int rhs,int opt,int
   for ( i = 1 ; i <= rhs ; i++) 
     {
       char *key;
-      /** get a copy of object (GetObj takes care of Hobj pointers) **/
+      /*get a copy of object (GetObj takes care of Hobj pointers) **/
       if (( O =nsp_object_copy(nsp_get_object(stack,i))) == NULLOBJ ) return RET_BUG;
       key =nsp_object_get_name(NthObj(i));
       if (nsp_object_set_name(O,nsp_object_get_name(NthObj(i))) == FAIL) return RET_BUG;
@@ -689,10 +689,10 @@ static int nspgobject_connect_general(NspGObject *self, Stack stack,int rhs,int 
   CheckLhs(1,1);
 
   if (( name=  GetString(stack,1)) == (char*)0) return RET_BUG;             
-  /** Need a GetFunction here XXXXXX **/
+  /*Need a GetFunction here XXXXXX **/
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,name)== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /*extra arguments **/
   if ( rhs == 3 ) 
     {
       if (( extra_args = GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;
@@ -737,12 +737,12 @@ static int nspgobject_connect_object_general(NspGObject *self, Stack stack,int r
   CheckLhs(1,1);
 
   if (( name=  GetString(stack,1)) == (char*)0) return RET_BUG;             
-  /** Need a GetFunction here XXXXXX **/
+  /*Need a GetFunction here XXXXXX **/
   if (( callback =GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,name)== FAIL)) return RET_BUG;
   if (( object  =nsp_get_object_copy(stack,3)) == NULLOBJ ) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) object,"o")== FAIL)) return RET_BUG;
-  /** list of extra arguments **/
+  /*list of extra arguments **/
   if ( rhs == 4 ) 
     {
       if (( extra_args =  GetListCopy(stack,4)) == NULLLIST ) return RET_BUG;
@@ -997,14 +997,14 @@ static OpTab NspGObject_func[]={
   {(char *) 0, NULL}
 };
 
-/** call ith function in the NspGObject interface **/
+/*call ith function in the NspGObject interface **/
 
 int GObject_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(NspGObject_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
+/*used to walk through the interface table 
     (for adding or removing functions) **/
 
 void GObject_Interf_Info(int i, char **fname, function (**f))
@@ -1142,7 +1142,7 @@ nspg_closure_invalidate(gpointer data, GClosure *closure)
   NspGClosure *pc = (NspGClosure *)closure;
   nspg_block_threads();
   Scierror("==>nspg_closure_invalidate\n");
- nsp_object_destroy((NspObject **) &pc->callback);
+  nsp_object_destroy((NspObject **) &pc->callback);
   if (pc->extra_args != NULL)nsp_object_destroy((NspObject **) &pc->extra_args);
   if (pc->swap_data != NULL)nsp_object_destroy(&pc->swap_data);
   pc->callback = NULL;
@@ -1220,7 +1220,7 @@ nspg_closure_marshal(GClosure *closure,
       /* fprintf(stderr,"I preserve %d arguments \n",args); */
     }
   
-  /** We put the params on the stack **/
+  /* We put the params on the stack **/
   for (i = 0; i < n_param_values; i++) 
     {
       /* swap in a different initial data for connect_object() */
@@ -1262,7 +1262,7 @@ nspg_closure_marshal(GClosure *closure,
       nargs++;
     }
 
-  /** Calling a macro func is a macro coded in P_PList **/
+  /* Calling a macro func is a macro coded in P_PList **/
   
   if ((n= FuncEval((NspObject *)pc->callback,Marshal_stack.fname,Marshal_stack,Marshal_stack.first,nargs,0,-1)) < 0 )
     {
@@ -1273,7 +1273,7 @@ nspg_closure_marshal(GClosure *closure,
   /* fprintf(stderr,"Sortie de FuncEval avec %d arguments de retour et first=%d\n",n,Marshal_stack.first); */
   
   
-  /** FuncEval fait-il le menage tout seul ? XXXXX **/
+  /* FuncEval fait-il le menage tout seul ? XXXXX **/
   if ( n >= 1) {
     if (return_value) nspg_value_from_nspobject(return_value,Marshal_stack.S[Marshal_stack.first] );
   }
@@ -1313,16 +1313,16 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
       Marshal_stack.first = args ;
       /* fprintf(stderr,"I preserve %d arguments \n",args); */
     }
-  /** We put the params on the stack **/
+  /*We put the params on the stack **/
   for (i = 0; i < n_args ; i++) 
     Marshal_stack.S[Marshal_stack.first + nargs++]= args[i];
-  /** Calling func is a macro coded in P_PList **/
+  /*Calling func is a macro coded in P_PList **/
   if ((n= FuncEval((NspObject *) func,Marshal_stack.fname,Marshal_stack,Marshal_stack.first,nargs,*nret,-1)) < 0 )
     {
       nsp_error_message_show();
       goto end; 
     }
-  /** FuncEval fait-il le menage tout seul ? XXXXX **/
+  /*FuncEval fait-il le menage tout seul ? XXXXX **/
   for ( i = 0 ; i < Min(n,*nret) ; i++) 
     {
       ret[i]= Marshal_stack.S[Marshal_stack.first+i];
@@ -1602,7 +1602,7 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
   case G_TYPE_INTERFACE:
     /* we only handle interface types that have a GObject prereq */
     if (g_type_is_a(G_VALUE_TYPE(value), G_TYPE_OBJECT)) {
-      /** XXXX Attention c'est pas clair ne faudrait-il pas explorer ce qu'il y a ds GObject */
+      /*XXXX Attention c'est pas clair ne faudrait-il pas explorer ce qu'il y a ds GObject */
       if (! IsGObject(obj)) {
 	return FAIL;
       }
@@ -2699,10 +2699,10 @@ static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs)
   CheckLhs(1,1);
 
   if ( GetScalarInt(stack,1,&interval) == FAIL) return RET_BUG;
-  /** Need a GetFunction here XXXXXX **/
+  /* Need a GetFunction here XXXXXX **/
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,"timoeout")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 3 ) 
     {
       if (( extra_args = GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;
@@ -2743,10 +2743,10 @@ static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs)
       Scierror("%s: priority mst be in the range [%d,%d] ([high,default])\n",
 	       G_PRIORITY_HIGH_IDLE, G_PRIORITY_DEFAULT_IDLE);
     }
-  /** Need a GetFunction here XXXXXX **/
+  /* Need a GetFunction here XXXXXX **/
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,"timoeout")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 3 ) 
     {
       if (( extra_args = GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;
@@ -2795,10 +2795,10 @@ static int int_gtk_quit_add(Stack stack,int rhs,int opt,int lhs)
   CheckLhs(1,1);
 
   if ( GetScalarInt(stack,1,&main_level) == FAIL) return RET_BUG;
-  /** Need a GetFunction here XXXXXX **/
+  /* Need a GetFunction here XXXXXX **/
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
   if ((nsp_object_set_name((NspObject *) callback,"quitadd")== FAIL)) return RET_BUG;
-  /** extra arguments **/
+  /* extra arguments **/
   if ( rhs == 3 ) 
     {
       if (( extra_args = GetListCopy(stack,3)) == NULLLIST ) return RET_BUG;

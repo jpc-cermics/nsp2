@@ -157,7 +157,7 @@ function [simple_demo]=graphics_demos_test_list()
   list("test", "appwindow.c", "''poo''" ));
 endfunction
 
-function graphics_demo_in_gtk(demo_list) 
+function graphics_demo_in_gtk(demo_list,ogl) 
   window = gtkwindow_new();// (GTK.WINDOW_TOPLEVEL);
   window.set_title[  "GTK+ Code Demos"]
   //FIXME: to be added 
@@ -177,7 +177,7 @@ function graphics_demo_in_gtk(demo_list)
   notebook.append_page[hb, gtklabel_new(mnemonic="_Graphics")]; 
   notebook.append_page[sw, gtklabel_new(mnemonic="_Source")]; 
   // 
-  nsp_graphic_new(window,hb);
+  nsp_graphic_new(window,hb,opengl=ogl);
   hb = gtkhbox_new();
   
   selection = tree.get_selection[];

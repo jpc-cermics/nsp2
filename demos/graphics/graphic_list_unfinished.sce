@@ -14,13 +14,13 @@ endfunction
 function demo_surf_2()
   function [z]=surf(x,y); z=sin(x)*cos(y);endfunction;
   t=%pi*(-10:10)./10;
-  plot3d(t,t,surf,alpha=35,theta=45,flag=[6,2,3]);
-  z=sin(x).*cos(y);
+  plot3d(t,t,surf,alpha=35,theta=45,flag=[-6,2,3]);
   xinfo("Adding 2d graphics on 3d graphic");
+  x=%pi/2*sin(t);y=%pi/2*cos(t);
   z=sin(x).*cos(y);
   [x1,y1]=geom3d(x,y,z);
   xpoly(x1,y1,type="lines");
-  [x1,y1]=geom3d([0,0],[0,0],[5,0]);
+  [x1,y1]=geom3d([0,0],[%pi/2,0],[5,0]);
   xsegs(x1,y1);
   xstring(x1(1),y1(1)," The point (0,0,0)");
   title=["plot3d and use of xgeom "];
