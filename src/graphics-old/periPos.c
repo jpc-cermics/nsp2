@@ -43,7 +43,7 @@ void FileInit  (BCG *Xgc);
 
 /** Structure to keep the graphic state  **/
 
-static BCG  ScilabGCPos ;
+BCG  ScilabGCPos ; /* sans doute à changer XXX */
 
 
 /*-----------------------------------------------------

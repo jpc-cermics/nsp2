@@ -195,12 +195,15 @@ void  scig_erase(int win_num)
  * 
  */ 
 
-extern Gengine XFig_gengine, Pos_gengine;
+extern BCG ScilabGCPos ; /* sans doute à changer XXX */
+extern Gengine Pos_gengine ; 
+
+
 
 void scig_tops(int win_num, int colored, char *bufname, char *driver)
 {
   BCG *Xgc;
-  Gengine *win_graphic_engine=NULL,*graphic_engine = NULL;
+  Gengine *graphic_engine = NULL;
   int zero=0,un=1;
   if ( scig_buzy  == 1 ) return ;
   if ((Xgc= window_list_search(win_num)) == NULL) return;
@@ -209,7 +212,7 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver)
   
   if ( strcmp(driver,"Pos")==0 ) 
     {
-      graphic_engine = &Pos_gengine;
+      graphic_engine =&Pos_gengine;
     }
 
   graphic_engine->initgraphic(bufname,&win_num);
@@ -217,12 +220,12 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver)
     graphic_engine->xset_usecolor(Xgc,un);
   else
     graphic_engine->xset_usecolor(Xgc,zero);
-  
-  win_graphic_engine = Xgc->graphic_engine; 
-  Xgc->graphic_engine = graphic_engine;
-  graphic_engine->tape_replay(Xgc,win_num);
-  Xgc->graphic_engine = win_graphic_engine;
-
+  ScilabGCPos.record_flag = TRUE ;
+  ScilabGCPos.plots = Xgc->plots ; 
+  xgc_reset_scales_to_default(&ScilabGCPos);
+  graphic_engine->tape_replay(&ScilabGCPos,win_num);
+  ScilabGCPos.plots = NULL ; 
+  ScilabGCPos.record_flag = FALSE ;
   graphic_engine->xend(Xgc);
   scig_buzy = 0;
 }
