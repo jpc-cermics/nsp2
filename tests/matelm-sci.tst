@@ -1,5 +1,6 @@
-deff('[z]=norm(a)','z=maxi(abs(a))');
+// -*- Mode: scilab -*- 
 
+deff('[z]=norm(a)','z=maxi(abs(a))');
 %eps=1.e-8
 
 // Copyright INRIA

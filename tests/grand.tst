@@ -12,7 +12,7 @@ function y=norm(x) ; y=max(abs(x));endfunction ;
 // test for beta random deviate 
 
 N=10000;A=1;B=3;
-Rdev=grand(1,N,'bet',A,B); 
+Rdev=grand(1,N,'bet',A,B);
 RdevS=sort(Rdev);RdevS=RdevS($:-1:1)';
 PS=(1:N)'/N;
 //plot2d(RdevS,PS);

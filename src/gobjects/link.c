@@ -19,8 +19,6 @@
 int nsp_type_link_id=0;
 NspTypeLink *nsp_type_link=NULL;
 
-
-
 NspTypeLink *new_type_link(type_mode mode)
 {
   NspTypeLink *type = NULL;

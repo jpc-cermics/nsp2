@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // Copyright INRIA
 
 function y=emptystr()

@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // il faudrait integrer ce aui suit ds le code 
 // avec des mechanismes d'extraction 
 // ---------------------------------------------

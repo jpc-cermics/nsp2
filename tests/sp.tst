@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // test of sparse redim 
 
 a=testmatrix('magic',10);

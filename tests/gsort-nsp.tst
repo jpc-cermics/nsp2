@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // Copyright INRIA/ENPC 
 // test de gsort :
 // a faire ensuite marcher pour vecteur complexes 

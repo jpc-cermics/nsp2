@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // Copyright INRIA/ENPC 
 
 ij=[1 6;1 5;1 3;2 4;2 1;4 4;4 3;5 1;6 6];

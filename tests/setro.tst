@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // test a(x,y)=z for sparse 
 // Reste a ecrire le cas ou b est scalaire 
 

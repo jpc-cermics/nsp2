@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // fonction temporaires 
 // --------------------
 

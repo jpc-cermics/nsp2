@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 
 // Quelques tests qui doivent marcher 
 

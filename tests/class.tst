@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // an object of Classa 
 
 

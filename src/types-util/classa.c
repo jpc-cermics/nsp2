@@ -106,7 +106,7 @@ static int init_classa(NspClassA *o,NspTypeClassA *type)
   if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
   o->type = type; 
   NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
-  /* specific */
+  /* FIXME : specific */
   o->classa_val = nsp_matrix_create("val",'r',0,0);
   if ( o->classa_val == NULLMAT) return FAIL;
   return OK;

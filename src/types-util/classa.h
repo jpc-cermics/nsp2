@@ -27,9 +27,9 @@ typedef struct _nsp_type_ClassA {
 struct _nsp_classa {
   NspObject father; 
   NspTypeClassA *type; 
-  int classa_color;
-  int classa_thickness;
-  NspMatrix *classa_val;
+  int classb_color;
+  int classb_thickness;
+  NspMatrix *classb_val;
 };
 
 extern int nsp_type_classa_id;

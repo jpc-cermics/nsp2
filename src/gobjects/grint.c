@@ -13,7 +13,7 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include "grint.h" 
+#include "nsp/grint.h" 
 
 /* graphic object interface 
  * NspGRint inherits from NspObject 

@@ -27,6 +27,10 @@ extern NspTypeMatint *nsp_type_matint;
 
 NspTypeMatint *new_type_matint(type_mode mode);
 
+#ifdef   Matint_Private 
+
+#endif 
+
 #endif 
 
 

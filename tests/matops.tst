@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // Copyright Enpc 
 // Test for real-Matrix
 

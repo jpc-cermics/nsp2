@@ -1,24 +1,27 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_GRint
-#define INC_NSP_GRint
+#ifndef INC_NSP_@TYPENAME@
+#define INC_NSP_@TYPENAME@
 
 /*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
+ * This Software is ( Copyright ENPC/CERMICS 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics 
  *********************************************************************/
   
-/* graphic object interface */
+/* interface @TYPENAME@ */
 
-#include <stdio.h>   /** for file declaration **/
-#include "nsp/sciio.h" 
 #include "nsp/object.h"
 
-typedef NspTypeBase NspTypeGRint ; 
+typedef struct _nsp_type_@TYPENAME@ {
+  NSP_TYPE_OBJECT__
+  /* added */
+} NspType@TYPENAME@ ; 
 
-extern int nsp_type_grint_id;
-extern NspTypeGRint *nsp_type_grint;
+#define @TYPEMACRO@(t) ((NspType@TYPENAME@ *) t)
 
-NspTypeGRint *new_type_grint(type_mode mode);
+extern int nsp_type_@TYPEDOWNCASE@_id;
+extern NspType@TYPENAME@ *nsp_type_@TYPEDOWNCASE@;
+
+NspType@TYPENAME@ *new_type_@TYPEDOWNCASE@(type_mode mode);
 
 #endif 
 
