@@ -100,6 +100,10 @@ static void DispStringAngle( BCG *xgc,int x0, int yy0, char *string, double angl
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 
+/* FIXME:*/
+extern void change_camera(BCG *Xgc,const double *val); 
+
+
 /*---------------------------------------------------------
  * Next routine are used to deal with the extra_pixmap 
  * which is used when xset('pixmap',1) is activated at 
@@ -2522,6 +2526,12 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
       return;
     }
 
+  {
+    /* FIXME: temporary for 2d Tests */
+    double v[]={0,0,1,0,0,0,0,1,0,-4,4,0,600,400,0};
+    change_camera(NewXgc,v);
+  }
+
   NewXgc->CurWindow = WinNum;
   NewXgc->record_flag = TRUE; /* default mode is to record plots */
   NewXgc->plots = NULL;
@@ -3376,10 +3386,10 @@ int use_camera(BCG *Xgc)
 	     Xgc->private->camera.orientation.z);
   glMatrixMode(GL_PROJECTION); 
   glLoadIdentity();
-  glOrtho(-Xgc->private->drawing->allocation.width,
-	  -Xgc->private->drawing->allocation.height,
-	  2*Xgc->private->drawing->allocation.width,
-	  2*Xgc->private->drawing->allocation.height,
+  glOrtho(Xgc->private->camera.xmin ,
+	  Xgc->private->camera.xmax ,
+	  Xgc->private->camera.ymin ,
+	  Xgc->private->camera.ymax ,
 	  Xgc->private->camera.near,Xgc->private->camera.far);
   glMatrixMode(GL_MODELVIEW);
   return 0;
@@ -3390,7 +3400,7 @@ void change_camera(BCG *Xgc,const double *val)
 {
   int i;
   GLfloat light0_pos[4]   = { -50.0, 50.0, 50.0, 0.0 }; 
-#if 0
+#if 1
   Xgc->private->camera.position.x=*val;val++;
   Xgc->private->camera.position.y=*val;val++;
   Xgc->private->camera.position.z=*val;val++;
@@ -3402,6 +3412,10 @@ void change_camera(BCG *Xgc,const double *val)
   Xgc->private->camera.orientation.z=*val;val++;
   Xgc->private->camera.near=*val;val++;
   Xgc->private->camera.far=*val;val++;
+  Xgc->private->camera.xmin=*val;val++;
+  Xgc->private->camera.xmax=*val;val++;
+  Xgc->private->camera.ymin=*val;val++;
+  Xgc->private->camera.ymax=*val;val++;
 #else 
   for (i=0; i< 3 ;i++) {light0_pos[i]=*val;val++;}
   init_gl_lights(light0_pos);
@@ -3437,22 +3451,25 @@ static void force_redraw(BCG *Xgc)
 
 static void nsp_ogl_set_view(BCG *Xgc)
 {
-
   glViewport (0,  0, Xgc->private->drawing->allocation.width, 
 	      Xgc->private->drawing->allocation.height);
   /* xset_background(Xgc,Xgc->NumBackground+1); */
-  if ( Xgc->scales->scale_flag3d == 0 )
+  if ( Xgc->scales->scale_flag3d == 0 ) /* XXX */
     {
+      static int first = 0;
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity ();
-      gluLookAt (0,0,100,
+      gluLookAt (0,0,1,
 		 0,0,0,
 		 0,1,0);
       glMatrixMode(GL_PROJECTION); 
       glLoadIdentity();
-      glOrtho(0, 0, Xgc->private->drawing->allocation.width,
-	      Xgc->private->drawing->allocation.height,-1,1);
+      glOrtho(0, Xgc->private->drawing->allocation.width,
+	      Xgc->private->drawing->allocation.height,
+	      0/* -Xgc->private->drawing->allocation.height*/,-4,4);
       glMatrixMode(GL_MODELVIEW);
+      if (first != 0) use_camera(Xgc);
+      first++;
     }
   else
     {
