@@ -29,6 +29,7 @@
 #include <gtkcairo.h>
 
 #define PERI_PRIVATE 1
+#define PERI_PRIVATE_CAIRO 1
 #include "nsp/sciio.h"
 #include "nsp/math.h"
 #include "nsp/graphics/periGtk.h"

@@ -627,55 +627,59 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
      *     into its differents zones (polygons) by the function PaintTriangle   
      */
 #if 0 
-    for ( j = 0 ; j < *Ntr ; j++) 
+    if (  Xgc->graphic_engine == &GL_gengine ) 
       {
-	int ii[3],isx[3],isy[3]; 
-	/* retrieve node numbers and functions values */
-	for ( k = 0 ; k < 3 ; k++ ) {
-	  ii[k] = (int) triangles[j+(*Ntr)*(k+1)] - 1;
-	  zxy[k] = zone[ii[k]];
-	  isx[k]  = xm[ii[k]];   
-	  isy[k]  = ym[ii[k]];
-	  /* using ii for colors */
-	  ii[k]= - fill[zxy[k]]; 
-	};
-	if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
+	for ( j = 0 ; j < *Ntr ; j++) 
 	  {
-	    fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
-	  }     
-	/* call the "painting" function */
-	if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
-      };
+	    int ii[3],isx[3],isy[3]; 
+	    /* retrieve node numbers and functions values */
+	    for ( k = 0 ; k < 3 ; k++ ) {
+	      ii[k] = (int) triangles[j+(*Ntr)*(k+1)] - 1;
+	      zxy[k] = zone[ii[k]];
+	      isx[k]  = xm[ii[k]];   
+	      isy[k]  = ym[ii[k]];
+	      /* using ii for colors */
+	      ii[k]= - fill[zxy[k]]; 
+	    };
+	    if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
+	      {
+		fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
+	      }     
+	    /* call the "painting" function */
+	    if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
+	  };
+      }
+    else
 #else 
-    for ( j = 0 ; j < *Ntr ; j++) 
       {
-	int ii[3], perm[3],kp;
-	double fxy[3];
-	
+	for ( j = 0 ; j < *Ntr ; j++) 
+	  {
+	    int ii[3], perm[3],kp;
+	    double fxy[3];
+	    
+	    /* retrieve node numbers and functions values */
+	    for ( k = 0 ; k < 3 ; k++ ) {
+	      ii[k] = (int) triangles[j+(*Ntr)*(k+1)] - 1;
+	      zxy[k] = zone[ii[k]];
+	    }
 
-	/* retrieve node numbers and functions values */
-	for ( k = 0 ; k < 3 ; k++ ) {
-	  ii[k] = (int) triangles[j+(*Ntr)*(k+1)] - 1;
-	  zxy[k] = zone[ii[k]];
-	}
+	    /* get the permutation perm so as zxy[perm] is sorted */
+	    PermutOfSort(zxy, perm); 
 
-	/* get the permutation perm so as zxy[perm] is sorted */
-	PermutOfSort(zxy, perm); 
-
-	/* apply the permutation to get the triangle 's vertices
-	   in increasing zone (zxy[0] <= zxy[1] <= zxy[2]) */
-	for ( k = 0 ; k < 3 ; k++ ) {
-	  kp = perm[k];
-	  sx[k]  = xm[ii[kp]];   sy[k]  = ym[ii[kp]];
-	  fxy[k] = func[ii[kp]]; zxy[k] = zone[ii[kp]];
-	};
-
-	/* call the "painting" function */
-	PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
-
-	if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
-	
-      };
+	    /* apply the permutation to get the triangle 's vertices
+	       in increasing zone (zxy[0] <= zxy[1] <= zxy[2]) */
+	    for ( k = 0 ; k < 3 ; k++ ) {
+	      kp = perm[k];
+	      sx[k]  = xm[ii[kp]];   sy[k]  = ym[ii[kp]];
+	      fxy[k] = func[ii[kp]]; zxy[k] = zone[ii[kp]];
+	    };
+	    
+	    /* call the "painting" function */
+	    PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+	    
+	    if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
+	  }
+      }
 #endif 
   }
 
