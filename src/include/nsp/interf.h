@@ -138,8 +138,8 @@ extern NspLmo *GetLmo (Stack S,int i);
    { Scierror("%s: arguments %d and %d should have the same size\n",fname,pos1,pos2); \
      return RET_BUG;} 
 
-#define CheckDims(fname,pos1,o1,m,n) if ( o1->m != m || o1->n != n ) \
-   { Scierror("%s: arguments %d should be of size %dx%d\n",fname,pos1,m,n); \
+#define CheckDims(fname,pos1,o1,m1,n1) if ( o1->m != m1 || o1->n != n1 ) \
+   { Scierror("%s: arguments %d should be of size %dx%d\n",fname,pos1,m1,n1); \
      return RET_BUG;} 
 
 #define CheckDimProp(fname,pos1,pos2,log_exp) if ( log_exp ) \
