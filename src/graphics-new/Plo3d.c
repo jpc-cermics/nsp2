@@ -733,6 +733,7 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
   static int init;
   static int *xm,*ym;
   int fg1,cur;
+  double zmin,zmax; /* unused */
 
   nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,n,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
 
@@ -924,6 +925,7 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
       ymmax=  (double) - Mini(ybox,8L);
       ymmin=  (double) - Maxi(ybox,8L);
     }
+  
   /* code added by es: isoview scaling */
   if ( flag == 2 || flag == 3 )
     {
@@ -969,6 +971,9 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
        FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
        set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
        Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
+       /* this is used by opengl for zmin zmax and depth */
+       Xgc->scales->zfrect[0]= (double) Mini(zbox,8L);
+       Xgc->scales->zfrect[1]= (double) Maxi(zbox,8L);
      }
   /* end of code added by es */
 }

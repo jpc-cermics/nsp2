@@ -333,6 +333,7 @@ window_scale_list current_scale =
   {600,400},
   {0.0,0.0,1.0,1.0},
   {0.0,0.0,1.0,1.0},
+  {0.0,0.0},
   {1/8.0,1/8.0,1/8.0,1/8.0},
   {0.0,1.0,0.0,10},
   {0.0,1.0,0.0,10},
@@ -360,6 +361,7 @@ static window_scale_list  default_scale =
   {600,400},
   {0.0,0.0,1.0,1.0},
   {0.0,0.0,1.0,1.0},
+  {0.0,0.0},
   {1/8.0,1/8.0,1/8.0,1/8.0},
   {0.0,1.0,0.0,10},
   {0.0,1.0,0.0,10},
@@ -649,6 +651,7 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
       s1->ytics[i]=s2->ytics[i];
       s1->axis[i]=s2->axis[i];
     }
+  for (i=0; i< 2; i++) s1->zfrect[i]=s2->zfrect[i]; 
   for (i=0; i< 3; i++) 
     for (j=0; i< 3; i++) 
       s1->m[i][j]=s2->m[i][j];
