@@ -1523,8 +1523,8 @@ void I3dRotation(BCG *Xgc)
     {
       /* */
       theta_dir= ( sin(M_PI*alpha0/180.0) >= 0.0 ) ? 1.0 : -1.0;
-      alpha= alpha0 - (y-y0)/5.0;
-      theta= theta0 - theta_dir*(x-x0)/5.0;
+      alpha= alpha0 - (y-y0)/2.0;
+      theta= theta0 - theta_dir*(x-x0)/2.0;
       x0=x;y0=y;alpha0=alpha;theta0=theta;
       Xgc->graphic_engine->xinfo(Xgc,"alpha=%.2f,theta=%.2f",alpha,theta); 
       if ( box_only == TRUE) 
@@ -1835,9 +1835,7 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
 
 
 /* 
- * Current geometric transformation and scales 
- * which are used or set according to the value of flag[1]
- *
+ * OpenGL version of plot3d 
  */
 
 static void plot3dg_ogl(BCG *Xgc,char *name,
@@ -1878,6 +1876,9 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
   /* Le triedre cach\'e **/
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
+  /* here cache won't be used since OpenGL deals with 
+   * hidden surface removal.
+   */ 
   if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
       cache=box.InsideD[0];
@@ -1888,6 +1889,7 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
       cache=box.InsideU[0]-4;
       if (flag[2] >=2 )DrawAxis_ogl(Xgc,&box,'U',fg1);
     }
+
   polyx = graphic_alloc(0,5*(*q),sizeof(double));
   polyy = graphic_alloc(1,5*(*q),sizeof(double));
   polyz = graphic_alloc(5,5*(*q),sizeof(double));
@@ -1899,70 +1901,25 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
     }
 
   /* The 3d plot **/
-
   whiteid = Xgc->graphic_engine->xget_last(Xgc);
   dc =  flag[0];
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;   
-  for ( i =0 ; i < (*q)-1 ; i++)   fill[i]= dc ;
+  for ( i =0 ; i < (*q)-1 ; i++)   fill[i]= dc ; 
   polysize=5;
   npoly= (*q)-1; 
-  /* Choix de l'ordre de parcourt **/
-  switch (cache)
+  for ( i =0 ; i < (*p)-1 ; i++)
     {
-    case 0 : 
-      for ( i =0 ; i < (*p)-1 ; i++)
+      int npolyok=0;
+      for ( j =0 ; j < (*q)-1 ; j++)
 	{
-	  int npolyok=0;
-	  for ( j =0 ; j < (*q)-1 ; j++)
-	    {
-	     npolyok += (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
-				x,y,z,i,j,npolyok,p,dc,fg1);
-	    }
-	  if ( npolyok != 0) 
-	    fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
+	  npolyok += (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
+			     x,y,z,i,j,npolyok,p,dc,fg1);
 	}
-      break;
-    case 1 : 
-      for ( i =0 ; i < (*p)-1 ; i++)
-	{
-	  int npolyok=0;
-	  for ( j =0  ; j < (*q)-1  ; j++)
-	    {
-	      npolyok += (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
-				 x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
-	   }
-	  if ( npolyok != 0) 
-	    fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
-	}
-      break;
-    case 2 : 
-      for ( i =(*p)-2 ; i >=0  ; i--)
-	{
-	  int npolyok=0;
-	  for ( j = 0 ; j < (*q)-1 ; j++)
-	    {
-	     npolyok +=     (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
-				    x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
-	   }
-	  if ( npolyok != 0) 
-	    fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
-	}
-      break;
-    case 3 : 
-      for ( i =(*p)-2 ; i >=0  ; i--)
-	{
-	  int npolyok=0;
-	  for ( j =0 ; j < (*q)-1 ; j++)
-	    {
-	     npolyok += (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
-				x,y,z,i,j,npolyok,p,dc,fg1);
-	   }
-	  if ( npolyok != 0) 
-	    fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
-	}
-      break;
+      if ( npolyok != 0) 
+	fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
     }
+
   /* jpc   if (flag[1] != 0 && flag[2] >=3 ) */
   if ( flag[2] >=3 )
     {

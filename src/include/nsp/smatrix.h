@@ -83,7 +83,7 @@ extern int is_string_in_struct(char *key,void **Table,unsigned int size, int fla
 typedef int (SMat_CompOp) (char *,char *);
 extern NspSMatrix *nsp_smatrix_create(const char *name, integer m, integer n,const char *str, integer flag);
 extern NspSMatrix *nsp_smatrix_create_with_length(const char *name, integer m, integer n, integer strl); 
-extern NspSMatrix *nsp_smatrix_create_from_table(const char **T); 
+extern NspSMatrix *nsp_smatrix_create_from_table(char **T); 
 extern NspSMatrix *nsp_smatrix_create_from_array(int n,const char **T); 
 extern NspSMatrix*nsp_smatrix_create_from_struct(const void *T,unsigned int size);
 extern NspSMatrix *nsp_smatrix_copy(const NspSMatrix *A); 

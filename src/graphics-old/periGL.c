@@ -2910,7 +2910,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
   xset_background(Xgc,Xgc->NumBackground+1);
 
-  init_gl_lights(light0_pos);
+  /* init_gl_lights(light0_pos); */
 
   glClearDepth(1.0);
   glEnable(GL_DEPTH_TEST);
