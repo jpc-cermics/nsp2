@@ -46,7 +46,7 @@ function demo_flipping ()
   check_button.connect[  "toggled",	flipping_toggled_cb, list(%f)]
   check_button.set_border_width[  10]
   button = gtkbutton_new(label="Close");
-  // button.connect[ "clicked", win_hide,list(window)];
+  button.connect["clicked", button_destroy_win,list(window)];
   window.action_area.pack_start[button];
   window.show_all[];
 endfunction 

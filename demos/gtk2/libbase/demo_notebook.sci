@@ -15,7 +15,7 @@ function demo_notebook()
   endfunction 
   
   win = gtkwindow_new()
-  win.connect["delete_event",hide];
+  win.connect["delete_event",demo_delete];
   win.set_title["notebook"];
   box1 = gtkvbox_new(homogeneous=%f,spacing=0)
   win.add[box1]
@@ -47,7 +47,7 @@ function demo_notebook()
   box1.pack_start[box2,expand= %f,fill=%t,padding=0]
   box2.show[]
   button = gtkbutton_new(label="close")
-  button.connect["clicked", win_hide,list(win)];
+  button.connect["clicked", button_destroy_win,list(win)];
   box2.pack_start[button]
   button.show[]
   button = gtkbutton_new(label="next")

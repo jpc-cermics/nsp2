@@ -72,8 +72,8 @@ function demo_entry ()
   box2.set_border_width[  10]
   box1.pack_start[ box2,expand=%f,fill=%t,padding=0]
 
-  button = gtkbutton_new(label="close");
-  // button.connect[ "clicked", win_hide,list(window)];
+  button = gtkbutton_new(label="Close");
+  button.connect["clicked", button_destroy_win,list(window)];
   box2.pack_start[ button,expand=%t,fill=%t,padding=0]
   button.set_flags[GTK.CAN_DEFAULT];
   button.grab_default[];

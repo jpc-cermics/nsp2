@@ -76,7 +76,7 @@ function demo_toolbar()
   win = gtkwindow_new()
   win.set_title["Toolbar test"];
   //win.set_policy[%f, %t, %t];
-  win.connect["delete_event", hide];
+  win.connect["delete_event", demo_delete];
   toolbar = make_toolbar(win)
   win.add[toolbar]
   toolbar.show[]

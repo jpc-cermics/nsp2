@@ -27,10 +27,10 @@ function demo_file_selection ()
   window.hide_fileop_buttons[];
 
   window.set_position[  GTK.WIN_POS_MOUSE]
-  window.connect[  "destroy",hide];
+  //window.connect[  "destroy",hide];
 
   window.ok_button.connect["clicked", file_selection_ok,list(window)]
-  window.cancel_button.connect["clicked", win_hide, list(window)]
+  window.cancel_button.connect["clicked", button_destroy_win, list(window)]
   button = gtkcheckbutton_new(label="Show Fileops");
   button.connect[  "toggled",  show_fileops,list(  window)];
   window.action_area.pack_start[ button,expand=%f,fill=%f,padding=0];

@@ -21,12 +21,10 @@ function [l,table]=make_focus_table(flag)
 endfunction 
 
 function demo_focus() 
-  window = gtkdialog_new(title="Keyboard focus navigation", 
-  buttons= ["gtk-close"]);
-  window.connect["destroy",hide]
-  window.connect[  "response",hide ]
-  window.set_title[  "Keyboard Focus Navigation"]
-  
+  window = gtkdialog_new(title="Keyboard focus navigation");
+  //window.connect["destroy",hide]
+  //window.connect["response",hide ]
+  window.set_title["Keyboard Focus Navigation"]
   frame = gtkframe_new(label="Weird tab focus chain");
   window.vbox.pack_start[ frame,expand=%t,fill=%t,padding=0];
   [l,table] = make_focus_table(%t);
@@ -36,6 +34,12 @@ function demo_focus()
   window.vbox.pack_start[ frame,expand=%t,fill=%t,padding=0];
   [l,table] = make_focus_table(%f);
   frame.add[ table]      
+
+  button = gtkbutton_new(label="Close");
+  button.connect["clicked", button_destroy_win,list(window)];
+  window.action_area.pack_start[button];
+  window.show_all[];
+  
   window.show_all[];
 endfunction 
 

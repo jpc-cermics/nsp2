@@ -4,7 +4,7 @@
 function demo_radio_buttons()
   //if not wins.has_key("radio_buttons"):
   win = gtkwindow_new()
-  win.connect["delete_event",fill= hide];
+  win.connect["delete_event", demo_delete];
   win.set_title["radio buttons"];
   box1 = gtkvbox_new(homogeneous=%f,spacing=0)
   win.add[box1]
@@ -29,7 +29,7 @@ function demo_radio_buttons()
   box1.pack_start[box2,expand=%f,fill=%t,padding=0]
   box2.show[]
   button = gtkbutton_new(label="Close")
-  button.connect["clicked",win_hide,list(win)];
+  button.connect["clicked",button_destroy_win,list(win)];
   box2.pack_start[button]
   button.set_flags[GTK.CAN_DEFAULT]
   button.grab_default[]

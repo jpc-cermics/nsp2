@@ -3,7 +3,7 @@
 
 function demo_scrolled_windows()
   win = gtkdialog_new()
-  win.connect["delete_event", hide];
+  win.connect["delete_event", demo_delete];
   win.set_title["dialog"];
   scrolled_window= gtkscrolledwindow_new()
   scrolled_window.set_border_width[10]
@@ -26,7 +26,7 @@ function demo_scrolled_windows()
     end
   end 
   button = gtkbutton_new(label="close")
-  button.connect["clicked", win_hide,list(win)];
+  button.connect["clicked", button_destroy_win,list(win)];
   win.action_area.pack_start[button]
   button.set_flags[GTK.CAN_DEFAULT]
   button.grab_default[]

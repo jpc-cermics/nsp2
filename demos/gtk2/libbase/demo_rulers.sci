@@ -4,7 +4,7 @@
 
 function demo_rulers()
   win = gtkwindow_new()
-  win.connect["delete_event", hide];
+  win.connect["delete_event", demo_delete];
   win.set_title["rulers"];
   win.set_size_request[300, 300]
   win.set_events[ior(GDK.POINTER_MOTION_MASK,GDK.POINTER_MOTION_HINT_MASK)]

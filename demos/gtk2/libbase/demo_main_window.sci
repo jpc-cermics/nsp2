@@ -1,30 +1,3 @@
-function [y]=hide(win, event) 
-  //win.destroy[] 
-  //printf("destroy activated \n");
-  y=%t;
-endfunction
-
-function [y]=delete(win, event) 
-  //printf("delete event  activated \n");
-  y=%t;
-endfunction
-
-function [y]=destroy(win, event) 
-  //printf("destroy signal\n");
-  y=%t;
-endfunction
-
-function [y]=win_hide(but,args)  
-  args(1).hide[];
-  y=%t; 
-endfunction 
-
-// division modulaire i=y*j + x 
-
-function [y,x]=divmod(i,j)
-  y=idiv(i,j)
-  x=modulo(i,j)
-endfunction
 
 function demo_main_window()
   B = hcreate(100);
@@ -70,8 +43,8 @@ function demo_main_window()
   win.set_title["main window"]
   win.set_size_request[200, 400]	
   //win.set_uposition[20,20]
-  win.connect["destroy",hide];
-  win.connect["delete_event",hide];
+  //win.connect["destroy",hide];
+  win.connect["delete_event", demo_delete];
   win.set_title["gtktest"];
   box1 = gtkvbox_new(homogeneous=%f,spacing=0)
   win.add[box1]
@@ -106,7 +79,7 @@ function demo_main_window()
   box1.pack_start[box2,expand= %f,expand=%f,fill=%f,padding=0]
   box2.show[]
   button = gtkbutton_new(label="close")
-  button.connect["clicked",win_hide,list(win)];
+  button.connect["clicked",button_destroy_win,list(win)];
   button.set_flags[GTK.CAN_DEFAULT]
   box2.pack_start[button]
   button.grab_default[]
@@ -115,7 +88,27 @@ function demo_main_window()
   //gtk_main()
 endfunction
 
+function [y]=demo_delete(win, event) 
+  // used when 
+  y=%f; // if false then destroy is performed 
+        // if true then destroy is not done 
+  if y==%t then 
+    // printf("in delete returning true (no destroy)\n");
+  else
+    // printf("in delete returning false (destroy)\n");
+  end
+endfunction
 
+function destroy(win, event) 
+// called when window is destroyed 
+// printf("in destroy \n");
+endfunction
+
+function button_destroy_win(but,args)  
+  // button handler which destroy args(1)
+  //printf("in win destroy \n");
+  args(1).destroy[];
+endfunction 
 
 
 

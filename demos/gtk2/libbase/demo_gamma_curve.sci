@@ -3,8 +3,8 @@
 
 function []=demo_gamma_curve()
   win = gtkwindow_new()
-  win.connect[ "destroy", hide];
-  win.connect["delete_event",hide];
+  //win.connect[ "destroy", hide];
+  win.connect["delete_event", demo_delete];
   win.set_title["test"];
   win.set_size_request[200, 150]
   curve = gtkgammacurve_new()

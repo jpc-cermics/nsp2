@@ -4,7 +4,7 @@
 
 function []=demo_statusbar()
   win = gtkdialog_new()
-  win.connect[ "delete_event",padding= hide];
+  win.connect[ "delete_event", demo_delete];
   win.set_title["Status Bar Test"];	
 
   statusbar = gtkstatusbar_new()
@@ -35,7 +35,7 @@ function []=demo_statusbar()
   hbox.add[button]
   button.show[]	
   button = gtkbutton_new(label="Close")
-  button.connect["clicked",win_hide,list(win)];
+  button.connect["clicked",button_destroy_win,list(win)];
   hbox.add[button]
   button.set_flags[GTK.CAN_DEFAULT]
   button.grab_default[]

@@ -3,7 +3,7 @@
 
 function demo_buttons()
   win = gtkwindow_new()
-  win.connect[ "delete_event", hide];
+  win.connect[ "delete_event", demo_delete];
   win.set_title["buttons"];
   box1 = gtkvbox_new(homogeneous=%f,spacing=0);
   win.add[box1];
@@ -23,6 +23,13 @@ function demo_buttons()
       args(1).show[] 
     end	
   endfunction 
+
+  // division modulaire i=y*j + x 
+
+  function [y,x]=divmod(i,j)
+    y=idiv(i,j)
+    x=modulo(i,j)
+  endfunction
 
   buttons=list();
   for i= 0:8, 
@@ -47,7 +54,7 @@ function demo_buttons()
   box1.pack_start[box2,expand=%f,fill=%t,padding=0] 	
   box2.show[];
   button = gtkbutton_new(label="Close")
-  button.connect["clicked",win_hide,list(win)];
+  button.connect["clicked",button_destroy_win,list(win)];
   box2.pack_start[button]
   button.set_flags[GTK.CAN_DEFAULT]
   button.grab_default[]

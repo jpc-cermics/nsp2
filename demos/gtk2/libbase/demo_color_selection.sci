@@ -22,7 +22,7 @@ function demo_color_selection ()
   window = gtkcolorselectiondialog_new ("color selection dialog");
   window.help_button.show[];
   window.set_position[  GTK.WIN_POS_MOUSE]
-  window.connect["destroy",hide];
+  // window.connect["destroy",hide];
   
   options_hbox = gtkhbox_new(homogeneous=%f,spacing=0);
   window.vbox.pack_start[ options_hbox,expand=%f,fill=%f,padding=0];
@@ -38,7 +38,7 @@ function demo_color_selection ()
 
   window.colorsel.connect["color_changed", color_selection_changed,	list(window)];
   window.ok_button.connect["clicked",color_selection_ok,list(window)];
-  window.cancel_button.connect["clicked",win_hide,list(window)];
+  window.cancel_button.connect["clicked",button_destroy_win,list(window)];
   window.show_all[];
 endfunction
 

@@ -5,7 +5,7 @@
 
 function demo_timeout(_button)
   win = gtkdialog_new()
-  win.connect["delete_event", hide];
+  win.connect["delete_event", demo_delete];
   win.set_title["Timeout Test"];
   label = gtklabel_new(str="count: 0")
   label.set_padding[10,10]
@@ -49,7 +49,7 @@ function demo_timeout(_button)
   win.set_data[timeout_count = 0];
   
   button = gtkbutton_new(label="close")
-  button.connect["clicked",win_hide,list(win)];
+  button.connect["clicked",button_destroy_win,list(win)];
   win.action_area.pack_start[button]
   button.set_flags[GTK.CAN_DEFAULT]
   button.grab_default[]

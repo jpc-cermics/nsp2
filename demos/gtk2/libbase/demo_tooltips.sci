@@ -3,7 +3,7 @@
 
 function demo_tooltips()
   win = gtkwindow_new()
-  win.connect["delete_event", hide];
+  win.connect["delete_event", demo_delete];
   win.set_title["tooltips"];
   tooltips = gtktooltips_new()
   box1 = gtkvbox_new(homogeneous=%f,spacing=0)
@@ -34,7 +34,7 @@ function demo_tooltips()
   box1.pack_start[box2,expand= %f,fill=%t,padding=0]
   box2.show[]
   button = gtkbutton_new(label="close")
-  button.connect["clicked", win_hide,list(win)];
+  button.connect["clicked", button_destroy_win,list(win)];
   box2.pack_start[button]
   button.set_flags[GTK.CAN_DEFAULT]
   button.grab_default[]

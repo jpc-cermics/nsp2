@@ -7,8 +7,8 @@
 function []=dnd_message_box(title, message, button) 
     win = gtkdialog_new()
     win.set_title[title]; 
-    win.connect[ "delete_event", do_quit];
-    win.connect[ "destroy", do_quit];
+    win.connect[ "delete_event", demo_delete];
+    //win.connect[ "destroy", do_quit];
     hbox = gtkhbox_new(homogeneous=%f,spacing=5);
     hbox.set_border_width[5]
     win.vbox.pack_start[hbox] 
@@ -18,7 +18,7 @@ function []=dnd_message_box(title, message, button)
     label.show[] 
     b = gtkbutton_new(label=button)
     b.set_flags[GTK.CAN_DEFAULT]
-    b.connect["clicked",win_hide,list(win)];
+    b.connect["clicked",button_destroy_win,list(win)];
     win.action_area.pack_start[b]
     b.show[] 
     win.show[]
@@ -42,7 +42,7 @@ endfunction
 function demo_dnd() 
   targets = list(list('text/plain', 0, -1))
   win = gtkwindow_new() 
-  win.connect["delete_event", win_hide];
+  win.connect["delete_event", demo_delete];
   win.set_title["Drag -N- Drop"];
   box1 = gtkvbox_new(homogeneous=%f,spacing=0)
   win.add[box1]
@@ -84,7 +84,7 @@ function demo_dnd()
   box1.pack_start[box2,expand= %f,fill=%t,padding=0]
   box2.show[]
   button = gtkbutton_new(label="close")
-  button.connect["clicked", win_hide,list(win) ];
+  button.connect["clicked", button_destroy_win,list(win) ];
   box2.pack_start[button]
   button.set_flags[GTK.CAN_DEFAULT]
   button.grab_default[]

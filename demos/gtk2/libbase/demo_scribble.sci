@@ -53,7 +53,7 @@ endfunction
 function demo_scribble()
   win = gtkwindow_new();
   win.set_name["Test Input"]
-  win.connect["destroy",hide];
+  //win.connect["destroy",hide];
   win.set_border_width[10]
   vbox = gtkvbox_new(homogeneous=%f,spacing=3);
   win.add[vbox];
@@ -71,7 +71,7 @@ function demo_scribble()
   drawing_area.set_events[ev];
   button = gtkbutton_new(label="Quit")
   vbox.pack_start[button,expand= %f,fill=%f,padding=0]
-  button.connect["clicked",win_hide,list(win)];
+  button.connect["clicked",button_destroy_win,list(win)];
   button.show[]
   win.show[]
 endfunction 

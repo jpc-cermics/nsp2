@@ -4,7 +4,7 @@ function [y]=demo_idle(_button)
   //	win = GtkDialog()
   win = gtkdialog_new()
   //wins["idle_test"] = win
-  win.connect["delete_event",hide];
+  win.connect["delete_event", demo_delete];
   //		win.set_title("Idle Test")
   win.set_title["Idle Test"];
   //		label = GtkLabel("count: 0")
@@ -53,7 +53,7 @@ function [y]=demo_idle(_button)
   win.set_data[idle_count = 0];
   
   button = gtkbutton_new(label="close")
-  button.connect["clicked",win_hide,list(win)];
+  button.connect["clicked",button_destroy_win,list(win)];
   win.action_area.pack_start[button]
   button.set_flags[GTK.CAN_DEFAULT]
   button.grab_default[]

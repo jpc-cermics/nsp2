@@ -13,7 +13,7 @@ function demo_handle_box ()
   window.set_title[  "Handle Box Test"]
   window.set_resizable[  %f]
     
-  window.connect[  "destroy",hide]
+  //window.connect[  "destroy",hide]
       
   window.set_border_width[  20]
 

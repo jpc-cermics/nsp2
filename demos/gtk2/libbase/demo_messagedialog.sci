@@ -17,7 +17,7 @@ function demo_messagedialog()
 	       GTK.MESSAGE_QUESTION;
 	       GTK.MESSAGE_ERROR]
   for t = mess_type'
-    message(t,"Message" )
+    messagedialog(t,"Message" )
   end
 
   mess = ['kkjhjkhkjhkjhkjhkjhkjh';
