@@ -44214,7 +44214,7 @@ static int _wrap_gtk_calendar_set_display_options(NspGtkCalendar *self,Stack sta
   if ( GetArgs(stack,rhs,opt,T,&nsp_flags) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(GTK_TYPE_CALENDAR_DISPLAY_OPTIONS, nsp_flags, (gint *)&flags)==FAIL)
       return RET_BUG;
-  gtk_calendar_set_display_options(GTK_CALENDAR(self->obj), flags);
+  gtk_calendar_display_options(GTK_CALENDAR(self->obj), flags);
   return 0;
 }
 
@@ -44222,7 +44222,7 @@ static int _wrap_gtk_calendar_get_display_options(NspGtkCalendar *self,Stack sta
 {
   int ret;
 
-  ret = gtk_calendar_get_display_options(GTK_CALENDAR(self->obj));
+  ret = 0; /* gtk_calendar_get_display_options(GTK_CALENDAR(self->obj)); */
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }

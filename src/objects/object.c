@@ -846,7 +846,7 @@ int int_object_printf(Stack stack, int rhs, int opt, int lhs)
 
 int int_object_fprintf(Stack stack, int rhs, int opt, int lhs)
 {
-  int i,rows;
+  int i=0,rows;
   NspFile *F;
   char *Format;
   if ( rhs < 2 ) 
@@ -859,9 +859,16 @@ int int_object_fprintf(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   if ((Format = GetString(stack,2)) == (char*)0) return RET_BUG;
-
-  rows = print_count_rows(stack,3,rhs); 
-  for ( i= 0 ; i < rows ; i++)
+  if ( rhs >= 3 ) 
+    {
+      rows = print_count_rows(stack,3,rhs); 
+      for ( i= 0 ; i < rows ; i++)
+	{
+	  if ( do_printf("printf",F->file,Format,stack,rhs ,2,i,(char **) 0) < 0) 
+	    return RET_BUG;
+	}
+    }
+  else 
     {
       if ( do_printf("printf",F->file,Format,stack,rhs ,2,i,(char **) 0) < 0) 
 	return RET_BUG;
@@ -911,18 +918,25 @@ int int_object_zeros(Stack stack, int rhs, int opt, int lhs)
 
 int int_object_sprintf(Stack stack, int rhs, int opt, int lhs)
 {
-  int i,rows;
+  int i=0,rows=1;
   NspSMatrix *obj;
   char *str;
   char *Format;
-  if ( rhs < 2 ) 
-    { Scierror("Error:\tRhs must be > 1\n",rhs);return RET_BUG;}
-
+  if ( rhs < 1 ) 
+    { Scierror("Error:\tRhs must be >= 1\n",rhs);return RET_BUG;}
   CheckLhs(1,1);
-  rows = print_count_rows(stack,2,rhs); 
+  if ( rhs >= 2 )  rows = print_count_rows(stack,2,rhs); 
   if ((obj=nsp_smatrix_create_with_length(NVOID,rows,1,-1))== NULL) return RET_BUG;
   if ((Format = GetString(stack,1)) == (char*)0) return RET_BUG;
-  for ( i= 0 ; i < rows ; i++)
+  if ( rhs >= 2 ) 
+    {
+      for ( i= 0 ; i < rows ; i++)
+	{
+	  if ( do_printf("printf",(FILE*)0,Format,stack,rhs,1,i,&str) < 0) return RET_BUG;
+	  if ((obj->S[i] = CopyString(str)) == (String *) 0) return RET_BUG;
+	}
+    }
+  else
     {
       if ( do_printf("printf",(FILE*)0,Format,stack,rhs,1,i,&str) < 0) return RET_BUG;
       if ((obj->S[i] = CopyString(str)) == (String *) 0) return RET_BUG;

@@ -55,10 +55,11 @@
 #include <ctype.h>  /* isdigit */
 #include  "nsp/object.h"
 #include "nsp/interf.h"
+#include "../system/files.h" /* FSIZE */
 
 /**
  *nsp_file_open:
- * @fname: 
+ * @fname: a path name 
  * @mode: 
  * @xdr_on: 
  * @swap_on: 
@@ -73,6 +74,9 @@ NspFile *nsp_file_open(char *fname, char *mode,int xdr_on,int swap_on)
 {
   FILE *f;
   NspFile *F;
+  char buf[FSIZE+1];
+  /* expand env variables */
+  nsp_path_expand(fname,buf,FSIZE);
   if ( strcmp("stdin",fname)==0) 
     {
       f = stdin;
@@ -85,12 +89,12 @@ NspFile *nsp_file_open(char *fname, char *mode,int xdr_on,int swap_on)
     {
       f = stderr;
     }
-  else if((f=fopen(fname,mode)) == NULL)
+  else if((f=fopen(buf,mode)) == NULL)
     {
       Scierror("Error: fopen failed for file %s\n",fname) ;
       return(NULLSCIFILE);
     }
-  if ((F =nsp_file_create(NVOID,fname,mode,0,f)) == NULLSCIFILE )
+  if ((F =nsp_file_create(NVOID,buf,mode,0,f)) == NULLSCIFILE )
     {
       if ( f != stdin && f != stdout && f != stderr) fclose(f);
       return(NULLSCIFILE);
