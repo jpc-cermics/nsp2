@@ -1735,7 +1735,8 @@ NspMaxpMatrix *nsp_mpmatrix_transpose(const NspMaxpMatrix *A)
 {
   int i,j;
   NspMaxpMatrix *Loc;
-  if (( Loc = nsp_mpmatrix_create(NVOID,A->rc_type,A->n,A->m)) == NULLMAXPMAT) return(NULLMAXPMAT);
+  if (( Loc = nsp_mpmatrix_create(NVOID,A->rc_type,A->n,A->m)) == NULLMAXPMAT)
+    return(NULLMAXPMAT);
   switch (Loc->rc_type ) 
     {
     case 'r' : 

@@ -3277,6 +3277,72 @@ NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B)
   return(Loc);
 }
 
+
+
+
+/*
+ * Matrix product in min plus algebra 
+ * 
+ */
+
+NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B)
+{  
+  NspMatrix *Loc;
+  if ( A->n != B->m ) 
+    {
+      Scierror("Error:\tIncompatible dimensions\n");
+      return(NULLMAT);
+    }
+  if ( A->rc_type == 'i' ) 
+    {
+      if ( B->rc_type == 'r' ) 
+	{
+	  if (nsp_mat_set_ival(B,0.00) == FAIL ) return(NULLMAT);
+	}
+    }
+  else 
+    { 
+      if ( B->rc_type == 'i' ) 
+	{
+	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return(NULLMAT);
+	}
+    }
+  if ((Loc = nsp_matrix_create(NVOID,A->rc_type,A->m,B->n))==  NULLMAT) return(NULLMAT);
+  if ( Loc->rc_type == 'i' ) 
+    {
+      int i,j;
+      for ( i = 0 ; i < A->m ; i++) 
+	for ( j = 0 ; j < B->n ; j++)
+	  {
+	    int k=0;
+	    Loc->I[i+Loc->m*j].r = A->I[i+A->m*k].r+ B->I[k+B->m*j].r;
+	    Loc->I[i+Loc->m*j].i = A->I[i+A->m*k].i+ B->I[k+B->m*j].i;
+	    for ( k= 1; k < A->n ; k++) 
+	      {
+		Loc->I[i+Loc->m*j].r= Min(A->I[i+A->m*k].r+ B->I[k+B->m*j].r,Loc->I[i+Loc->m*j].r);
+		Loc->I[i+Loc->m*j].i= Min(A->I[i+A->m*k].i+ B->I[k+B->m*j].i,Loc->I[i+Loc->m*j].r);
+	      }
+	  }
+    }
+  else 
+    {
+      int i,j;
+      for ( i = 0 ; i < A->m ; i++) 
+	for ( j = 0 ; j < B->n ; j++)
+	  {
+	    int k=0;
+	    Loc->R[i+Loc->m*j]= A->R[i+A->m*k]+ B->R[k+B->m*j];
+	    for ( k= 1; k < A->n ; k++) 
+	      {
+		Loc->R[i+Loc->m*j]= Min(A->R[i+A->m*k]+ B->R[k+B->m*j],Loc->R[i+Loc->m*j]);
+	      }
+	  }
+    }
+  return(Loc);
+}
+
+
+
 /*
  * Max plus addition 
  *   A = A+B (covers the scalar and [] cases ) 

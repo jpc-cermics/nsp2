@@ -2671,9 +2671,8 @@ static int int_mpmult(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * A / B 
- * just implemented for scalars XXXXX 
- * result stored in A 
+ * Res = A / B 
+ * 
  */
 
 static int int_mpdiv(Stack stack, int rhs, int opt, int lhs)
@@ -2683,15 +2682,72 @@ static int int_mpdiv(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((HMat1 = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
   if ((HMat2 = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
-  if ( HMat2->mn <= 1 )
+  if ( HMat2->mn == 1 )
     {
-      return int_mp_mopscal(stack,rhs,opt,lhs,
-			nsp_mat_div_scalar,nsp_mat_div_el,nsp_mat_bdiv_scalar,MpMatNoOp,1);
+      NspMaxpMatrix *Res,*B;
+      /* HMat1 - (HMat2)' */
+      if ((B=nsp_mpmatrix_transpose(HMat2)) ==  NULLMAXPMAT) return RET_BUG;
+      nsp_mat_conj((NspMatrix *) B);
+      nsp_mat_minus((NspMatrix *) B);
+      if ((Res= nsp_mpmatrix_copy(HMat1)) == NULLMAXPMAT) return RET_BUG;
+      nsp_mat_add_scalar((NspMatrix *) Res,(NspMatrix *) B);
+      nsp_mpmatrix_destroy(B);
+      MoveObj(stack,1,(NspObject *) Res);
     }
   else 
     {
-      Scierror("%s: / not implemented for non 1x1 matrices\n",stack.fname);
-      return RET_BUG;
+      NspMaxpMatrix *Res,*B;
+      NspMatrix *C;
+      /* transconjugate HMat2 */
+      if ((B=nsp_mpmatrix_transpose(HMat2)) ==  NULLMAXPMAT) return RET_BUG;
+      nsp_mat_conj((NspMatrix *) B);
+      nsp_mat_minus((NspMatrix *) B);
+      if ((C=nsp_mat_minplus_mult((NspMatrix *)HMat1,(NspMatrix *)B)) == NULLMAT) return RET_BUG;
+      if ((Res = nsp_mp_matrix_from_m(NVOID,C))  == NULLMAXPMAT) return RET_BUG;
+      nsp_matrix_destroy(C);
+      nsp_mpmatrix_destroy(B);
+      MoveObj(stack,1,(NspObject *) Res);
+    }
+  return 1;
+}
+
+/*
+ * Res = A \ B 
+ * 
+ */
+
+static int int_mpbdiv(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMaxpMatrix *HMat1,*HMat2;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((HMat1 = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
+  if ((HMat2 = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
+  if ( HMat1->mn == 1 )
+    {
+      NspMaxpMatrix *Res,*A;
+      /* - HMat1' + (HMat2) */
+      if ((A=nsp_mpmatrix_transpose(HMat1)) ==  NULLMAXPMAT) return RET_BUG;
+      nsp_mat_conj((NspMatrix *) A);
+      nsp_mat_minus((NspMatrix *) A);
+      if ((Res= nsp_mpmatrix_copy(HMat2)) == NULLMAXPMAT) return RET_BUG;
+      nsp_mat_add_scalar((NspMatrix *) Res,(NspMatrix *) A);
+      nsp_mpmatrix_destroy(A);
+      MoveObj(stack,1,(NspObject *) Res);
+    }
+  else 
+    {
+      NspMaxpMatrix *Res,*A;
+      NspMatrix *C;
+      /* transconjugate HMat1 */
+      if ((A=nsp_mpmatrix_transpose(HMat1)) ==  NULLMAXPMAT) return RET_BUG;
+      nsp_mat_conj((NspMatrix *) A);
+      nsp_mat_minus((NspMatrix *) A);
+      if ((C=nsp_mat_minplus_mult((NspMatrix *)A,(NspMatrix *)HMat2)) == NULLMAT) return RET_BUG;
+      if ((Res = nsp_mp_matrix_from_m(NVOID,C))  == NULLMAXPMAT) return RET_BUG;
+      nsp_matrix_destroy(C);
+      nsp_mpmatrix_destroy(A);
+      MoveObj(stack,1,(NspObject *) Res);
     }
   return 1;
 }
@@ -2891,6 +2947,7 @@ static OpTab Matrix_func[]={
   {"minus_mp", int_mpminus},	
   {"mult_mp_mp" ,  int_mpmult},
   {"div_mp_mp" ,  int_mpdiv},
+  {"bdiv_mp_mp" ,  int_mpbdiv},
   {"find_mp", int_mpfind},
   /* 
      {"polar",int_mppolar},

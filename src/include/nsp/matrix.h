@@ -269,8 +269,10 @@ extern NspMatrix *nsp_mat_franck(integer n, int job);
 extern NspMatrix *nsp_mat_hilbert(integer n,int job); 
 extern int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op, int *err); 
 extern int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
+/* maxplus operations */
 extern int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B) ;
 extern NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B);
+extern NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B);
 
 #endif 
 
