@@ -7,19 +7,6 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 
-/* 
- * we use spConfig.h for machine constants 
- * XXX : spConfig should be merged and unified 
- *       with other machine constant scilab code 
- */
-
-#define spINSIDE_SPARSE
-#if defined(THINK_C) || defined (__MWERKS__)
-#include "::sparse:spConfig.h" 
-#else
-#include "../sparse/spConfig.h"
-#endif
-
 double Mini(const double vect[], int n)
 {
   int i;

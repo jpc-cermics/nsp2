@@ -164,7 +164,7 @@ GZVT=
 #   xdr for Win32
 XDRLIB=
 XDRLIBNAME=
-# objects files in src/menusX: default is XOBJS for UNIX
+# objects files in src/menus: default is XOBJS for UNIX
 #   for Win32 use WOBJS
 MENUSOBJS=XOBJS
 # use other malloc (in "src/sun" directory) for some 64 bits machines
@@ -1672,7 +1672,7 @@ AC_SUBST(TERM_LDFLAGS)
 AC_SUBST(GTKHTMLOBJS)
 AC_SUBST(GTKPLUGBUG)
 
-AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile) 
+AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile) 
  
 
 

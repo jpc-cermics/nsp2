@@ -1,0 +1,6 @@
+
+Attention : dcopy est change en memcpy ds le cas des increments 1 
+	ce qui veut dire que dcopy ne doit pas etre utilise 
+	avec des zones memoire qui se recouvrent 
+
+jpc

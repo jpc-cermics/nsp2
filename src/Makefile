@@ -2,9 +2,9 @@ SHELL = /bin/sh
 
 include ../Makefile.incl
 
-SCIDIRS = zblas zcalelm Newstack interp Functions mexlib Gtk2 \
-	system graphics menusX gd gtksci gzvt2 modules gobjects types types-test \
-	randlib cdf 
+SCIDIRS = zcalelm objects interp functions mexlib gtk2 \
+	system graphics menus gtksci gzvt2 modules gobjects types-test \
+	librand libcdf libblas 
 
 
 SUBDIRS = $(XAW_LOCAL_SUBDIR) $(DLD_SUBDIR) $(SCIDIRS) 

@@ -10,14 +10,6 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 
-/* FIXME: ? should be removed */
-#define spINSIDE_SPARSE
-#if defined(THINK_C) || defined (__MWERKS__)
-#include "::sparse:spConfig.h" 
-#else
-#include "../sparse/spConfig.h"
-#endif
-
 /*--------------------------------------------------------------------
  *  nsp_plot2d(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
  *  

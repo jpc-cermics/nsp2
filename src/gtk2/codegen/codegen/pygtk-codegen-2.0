@@ -1,0 +1,10 @@
+#!/bin/sh
+
+prefix=/usr/local
+datadir=${prefix}/share
+codegendir=${datadir}/pygtk/2.0/codegen
+
+PYTHONPATH=$codegendir
+export PYTHONPATH
+
+exec /usr/bin/python $codegendir/codegen.py "$@"

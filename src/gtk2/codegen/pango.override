@@ -1,0 +1,831 @@
+/* -*- Mode: C -*- */
+%%
+headers
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
+#include <nsp/gtk/gboxed.h>
+#include <nsp/gtk/gobject.h>
+#include <pango/pango.h>
+#include "nsp/gtk/pangoattribute.h"
+#include "nsp/all-pango.h"
+
+%%
+init
+
+%%
+modulename pango
+%%
+import gobject.GObject as GObject
+%%
+ignore-glob *_get_type
+%%
+ignore
+pango_color_copy
+pango_color_free
+pango_attribute_copy
+pango_attribute_destroy
+pango_attribute_equal
+pango_attr_list_ref
+pango_attr_list_unref
+pango_coverage_ref
+pango_coverage_unref
+pango_font_description_equal
+pango_font_description_free
+pango_font_descriptions_free
+pango_font_map_free_families
+pango_font_metrics_ref
+pango_font_metrics_unref
+pango_font_get_coverage
+pango_font_find_shaper
+pango_glyph_string_free
+pango_layout_get_log_attrs
+pango_tab_array_free
+%%
+ignore
+pango_context_new
+pango_context_set_font_map
+pango_glyph_string_index_to_x
+pango_glyph_string_x_to_index
+pango_break
+pango_shape
+%%
+override pango_attr_language_new kwargs
+static int
+_wrap_pango_attr_language_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { string , t_end} ;  /*  "language" */
+  char *slanguage;
+  PangoLanguage *language;
+  NspObject *ret; 
+  if (GetArgs(stack,rhs,opt,T, &slanguage) == FAIL) return RET_BUG;
+  language = pango_language_from_string(slanguage);
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_language_new(language),
+						NULL))== NULL) return RET_BUG;
+  MoveObj(stack,1,ret) ;
+  return 1;
+}
+%%
+override pango_attr_family_new kwargs
+static int 
+_wrap_pango_attr_family_new(Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { string, t_end} ;  /*  "family" */
+  char *family;
+  NspObject *ret; 
+
+  if (GetArgs(stack,rhs,opt,T,&family)  == FAIL) return RET_BUG;
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_family_new(family),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret) ;
+  return 1;
+}
+%%
+override pango_attr_foreground_new kwargs
+static int
+_wrap_pango_attr_foreground_new(Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { s_int,s_int,s_int, t_end} ;
+  /* r,g,b */
+  guint16 red, green, blue;
+  NspObject *ret; 
+
+  if (GetArgs(stack,rhs,opt,T, &red, &green, &blue)  == FAIL) return RET_BUG;
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_foreground_new(red, green, blue),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_background_new kwargs
+static int
+_wrap_pango_attr_background_new(Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { s_int,s_int,s_int, t_end} ;
+  /* r,g,b */
+  guint16 red, green, blue;
+  NspObject *ret; 
+
+  if (GetArgs(stack,rhs,opt,T, &red, &green, &blue)  == FAIL) return RET_BUG;
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_background_new(red, green, blue),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_size_new kwargs
+static int
+_wrap_pango_attr_size_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { s_int , t_end} ; /*  "size" */
+  int size;
+  NspObject *ret; 
+  if (GetArgs(stack,rhs,opt,T, &size)  == FAIL) return RET_BUG;
+  if ((ret =  (NspObject *)pangoattribute_create(NVOID,pango_attr_size_new(size),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+
+}
+%%
+override pango_attr_style_new kwargs
+static int
+_wrap_pango_attr_style_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { obj , t_end} ; /* "style" */ 
+  NspObject *py_style;
+  PangoStyle style;
+  NspObject *ret; 
+
+  if (GetArgs(stack,rhs,opt,T,&py_style)  == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(PANGO_TYPE_STYLE, py_style, (gint *)&style))
+    return RET_BUG;
+  if ((ret =  (NspObject *)pangoattribute_create(NVOID,pango_attr_style_new(style),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_weight_new kwargs
+static int
+_wrap_pango_attr_weight_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { obj , t_end} ; /* weight */
+  NspObject *py_weight;
+  PangoWeight weight;
+  NspObject *ret; 
+
+  if (GetArgs(stack,rhs,opt,T, &py_weight)   == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(PANGO_TYPE_WEIGHT, py_weight, (gint *)&weight))
+    return RET_BUG;
+  if ((ret =   (NspObject *)pangoattribute_create(NVOID,pango_attr_weight_new(weight),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_variant_new kwargs
+static int
+_wrap_pango_attr_variant_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { obj , t_end} ; /* "variant" */
+  NspObject *py_variant;
+  PangoVariant variant;
+  NspObject *ret; 
+  
+  if (GetArgs(stack,rhs,opt,T, &py_variant)    == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(PANGO_TYPE_VARIANT, py_variant, (gint *)&variant))
+    return RET_BUG;
+
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_variant_new(variant),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+
+}
+%%
+override pango_attr_stretch_new kwargs
+static int
+_wrap_pango_attr_stretch_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { obj , t_end} ; 
+  NspObject *py_stretch;
+  PangoStretch stretch;
+  NspObject *ret; 
+
+  if (GetArgs(stack,rhs,opt,T, &py_stretch)    == FAIL) return RET_BUG;
+
+  if (nspg_enum_get_value(PANGO_TYPE_STRETCH, py_stretch, (gint *)&stretch))
+    return RET_BUG;
+
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_stretch_new(stretch),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_font_desc_new kwargs
+static int
+_wrap_pango_attr_font_desc_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { obj , t_end} ; /* desc */
+
+  NspObject *font_desc;
+  PangoFontDescription *desc;
+  NspObject *ret; 
+
+  if (GetArgs(stack,rhs,opt,T, &font_desc) == FAIL ) return RET_BUG;
+
+  if (!nspg_boxed_check(font_desc, PANGO_TYPE_FONT_DESCRIPTION)) {
+    Scierror("desc must be a PangoFontDescription");
+    return RET_BUG;
+  }
+  desc = nspg_boxed_get(font_desc, PangoFontDescription);
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_font_desc_new(desc),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_underline_new kwargs
+static int
+_wrap_pango_attr_underline_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { obj , t_end} ;
+
+  NspObject *py_underline;
+  PangoUnderline underline;
+  NspObject *ret; 
+
+  if (GetArgs(stack,rhs,opt,T, &py_underline)  == FAIL ) return RET_BUG;
+  if (nspg_enum_get_value(PANGO_TYPE_UNDERLINE, py_underline,
+			 (gint *)&underline))
+    return RET_BUG;
+
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_underline_new(underline),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_strikethrough_new kwargs
+static int 
+_wrap_pango_attr_strikethrough_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_bool , t_end} ;
+  gboolean strikethrough;
+  NspObject *ret; 
+
+  if (GetArgs(stack,rhs,opt,T, &strikethrough)  == FAIL ) return RET_BUG;
+
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_strikethrough_new(strikethrough),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_rise_new kwargs
+static int
+_wrap_pango_attr_rise_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int , t_end} ;
+  gint rise;
+  NspObject *ret; 
+
+  if (GetArgs(stack,rhs,opt,T, &rise) == FAIL ) return RET_BUG;
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_rise_new(rise),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_shape_new kwargs
+static int
+_wrap_pango_attr_shape_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {realmat,realmat , t_end} ;
+  /* static char *kwlist[] = { "ink_rect", "logical_rect", NULL }; */
+  PangoRectangle ink_rect, logical_rect;
+  NspObject *ret; 
+  NspMatrix *r1,*r2; 
+  if (GetArgs(stack,rhs,opt,T,&r1,&r2) == FAIL) return RET_BUG; 
+  CheckLength(stack,1,r1,4);
+  CheckLength(stack,2,r2,4);
+  ink_rect.x=r1->R[0] ; ink_rect.y=r1->R[1] ;  ink_rect.width= r1->R[2]; ink_rect.height = r1->R[3]; 
+  logical_rect.x= r2->R[0];logical_rect.y= r2->R[1];  logical_rect.width= r2->R[2];logical_rect.height= r2->R[3];
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_shape_new(&ink_rect, &logical_rect),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_scale_new kwargs
+static int
+_wrap_pango_attr_scale_new( Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { s_double, t_end} ;
+  double scale;
+  NspObject *ret; 
+  
+  if (GetArgs(stack,rhs,opt,T, &scale) == FAIL ) return RET_BUG; 
+  if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_scale_new(scale),NULL))==  NULL) return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override pango_attr_list_insert kwargs
+static int
+_wrap_pango_attr_list_insert(NspObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { obj_check , t_end} ;
+  NspPangoAttribute *py_attr;
+  PangoAttribute *attr;
+
+  if (GetArgs(stack,rhs,opt,T, &nsp_type_pangoattribute, &py_attr)  == FAIL ) return RET_BUG;
+  attr = pango_attribute_copy(py_attr->attr);
+  pango_attr_list_insert(nspg_boxed_get(self, PangoAttrList), attr);
+  return 0;
+}
+%%
+override pango_attr_list_insert_before kwargs
+static int
+_wrap_pango_attr_list_insert_before(NspObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { obj_check , t_end} ;
+
+  NspPangoAttribute *py_attr;
+  PangoAttribute *attr;
+
+  if (GetArgs(stack,rhs,opt,T, &nsp_type_pangoattribute, &py_attr)   == FAIL ) return RET_BUG;
+  attr = pango_attribute_copy(py_attr->attr);
+  pango_attr_list_insert_before(nspg_boxed_get(self, PangoAttrList), attr);
+  return 0;
+}
+%%
+override pango_attr_list_change kwargs
+static int
+_wrap_pango_attr_list_change(NspObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { obj_check, t_end} ;
+  NspPangoAttribute *py_attr;
+  PangoAttribute *attr;
+
+  if (GetArgs(stack,rhs,opt,T,  &nsp_type_pangoattribute, &py_attr)   == FAIL ) return RET_BUG;
+
+  attr = pango_attribute_copy(py_attr->attr);
+  pango_attr_list_change(nspg_boxed_get(self, PangoAttrList), attr);
+  return 0;
+}
+%%
+ignore pango_font_description_from_string
+%%
+override pango_font_description_new kwargs
+static int
+_wrap_pangofontdescription_new( Stack stack,int rhs,int opt,int lhs)
+{
+  gpointer  *boxed ;
+  NspObject *ret;
+  char *str = NULL;
+  
+  CheckRhs(0,1); 
+  if ( rhs == 1 ) 
+    { 
+      if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
+      boxed = (gpointer  *) pango_font_description_from_string(str);      
+    }
+  else 
+    boxed = (gpointer  *) pango_font_description_new();
+  if (boxed == NULL ) {
+    Scierror("could not create PangoFontDescription object");
+    return RET_BUG; 
+  }
+  if ((ret =(NspObject *)gboxed_create(NVOID,PANGO_TYPE_FONT_DESCRIPTION, boxed, TRUE, TRUE, 
+				       (NspTypeBase *) nsp_type_pangofontdescription))  == NULL) 
+    return RET_BUG; 
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override-slot PangoFontDescription.tp_compare
+static int
+_wrap_pango_font_description_tp_compare(NspGBoxed *self, NspGBoxed *other)
+{
+  if (self->boxed == other->boxed ||
+      pango_font_description_equal(nspg_boxed_get(self, PangoFontDescription),
+				   nspg_boxed_get(other, PangoFontDescription)))
+    return 0;
+  if (self->boxed > other->boxed)
+    return -1;
+  return 1;
+}
+%%
+override-slot PangoFontDescription.tp_hash
+static long
+_wrap_pango_font_description_tp_hash(NspGBoxed *self)
+{
+  return (long)pango_font_description_hash(
+					   nspg_boxed_get(self, PangoFontDescription));
+}
+%%
+override pango_font_description_copy noargs
+static NspObject *
+_wrap_pango_font_description_copy(NspObject *self)
+{
+  return (NspObject *)gboxed_create(NVOID,PANGO_TYPE_FONT_DESCRIPTION,
+				    nspg_boxed_get(self, PangoFontDescription),
+				    TRUE, TRUE, NULL);
+}
+%%
+override pango_context_list_families noargs
+static  NspObject *
+_wrap_pango_context_list_families(NspGObject *self)
+{
+  PangoFontFamily **families;
+  gint n_families, i;
+  NspObject *ret;
+
+  pango_context_list_families(PANGO_CONTEXT(self->obj), &families, &n_families);
+  ret = NspTuple_New(n_families);
+  for (i = 0; i < n_families; i++) {
+    NspObject *family;
+
+    family = (NspObject *)nspgobject_new((GObject *)families[i]);
+    NspTuple_SetItem(ret, i, family);
+  }
+  g_free(families);
+  return ret;
+}
+%%
+override pango_font_get_glyph_extents kwargs
+static int
+_wrap_pango_font_get_glyph_extents(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { s_int , t_end} ;
+  gint glyph;
+  PangoRectangle ink_rect, logical_rect;
+
+  if (GetArgs(stack,rhs,opt,T, &glyph) == FAIL) return RET_BUG; 
+
+  pango_font_get_glyph_extents(PANGO_FONT(self->obj), (PangoGlyph)glyph,
+			       &ink_rect, &logical_rect);
+  
+  if ( nsp_move_doubles(stack,1,1,4,(double)ink_rect.x,(double) ink_rect.y,
+			(double)ink_rect.width,(double) ink_rect.height) == FAIL) return RET_BUG ; 
+  if ( nsp_move_doubles(stack,2,1,4,(double)logical_rect.x, (double)logical_rect.y,
+			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
+  return 2; 
+}
+%%
+override pango_font_family_list_faces noargs
+static  NspObject *
+_wrap_pango_font_family_list_faces(NspGObject *self)
+{
+  PangoFontFace **faces;
+  gint n_faces, i;
+  NspObject *ret;
+
+  pango_font_family_list_faces(PANGO_FONT_FAMILY(self->obj),
+			       &faces, &n_faces);
+  
+  ret = NspTuple_New(n_faces);
+  for (i = 0; i < n_faces; i++) {
+    NspObject *face = (NspObject *)nspgobject_new((GObject *)faces[i]);
+    NspTuple_SetItem(ret, i, face);
+  }
+  g_free(faces);
+  return ret;
+}
+%%
+override pango_font_map_list_families noargs
+static NspObject *
+_wrap_pango_font_map_list_families(NspGObject *self)
+{
+  PangoFontFamily **families;
+  gint n_families, i;
+  NspObject *ret;
+
+  pango_font_map_list_families(PANGO_FONT_MAP(self->obj), &families,
+			       &n_families);
+  ret = NspTuple_New(n_families);
+  for (i = 0; i < n_families; i++) {
+    NspObject *family= (NspObject *) nspgobject_new((GObject *)families[i]);
+    NspTuple_SetItem(ret, i, family);
+  }
+  g_free(families);
+  return ret;
+}
+%%
+override pango_glyph_string_extents kwargs
+static int
+_wrap_pango_glyph_string_extents(NspObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { obj, t_end} ;
+  /* "fonts" */
+  NspObject *font;
+  PangoRectangle ink_rect, logical_rect;
+  
+  if (GetArgs(stack,rhs,opt,T,&font) == FAIL) return RET_BUG;
+
+  if (!nspgobject_check(font, &nsp_type_pangofont)) {
+    Scierror( "font must be a PangoFont");
+    return RET_BUG;
+  }
+
+  pango_glyph_string_extents(nspg_boxed_get(self, PangoGlyphString),
+			     PANGO_FONT(nspgobject_get(font)),
+			     &ink_rect, &logical_rect);
+  if ( nsp_move_doubles(stack,1,1,4,(double)ink_rect.x,(double) ink_rect.y,
+			(double)ink_rect.width,(double) ink_rect.height) == FAIL) return RET_BUG ; 
+  if ( nsp_move_doubles(stack,2,1,4,(double)logical_rect.x, (double)logical_rect.y,
+			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
+  return 2; 
+}
+%%
+override pango_glyph_string_extents_range kwargs
+static int
+_wrap_pango_glyph_string_extents_range(NspObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { s_int ,s_int , obj , t_end} ; /* "start" "end"  "font" */ 
+
+  gint start, end;
+  NspObject *font;
+  PangoRectangle ink_rect, logical_rect;
+
+  if (GetArgs(stack,rhs,opt,T,&start, &end, &font)== FAIL) return RET_BUG;
+
+  if (!nspgobject_check(font, &nsp_type_pangofont)) {
+    Scierror( "font must be a PangoFont");
+    return RET_BUG;
+  }
+
+  pango_glyph_string_extents_range(nspg_boxed_get(self, PangoGlyphString),
+				   start, end,
+				   PANGO_FONT(nspgobject_get(font)),
+				   &ink_rect, &logical_rect);
+  if ( nsp_move_doubles(stack,1,1,4,(double)ink_rect.x,(double) ink_rect.y,
+			(double)ink_rect.width,(double) ink_rect.height) == FAIL) return RET_BUG ; 
+  if ( nsp_move_doubles(stack,2,1,4,(double)logical_rect.x, (double)logical_rect.y,
+			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
+  return 2; 
+}
+%%
+override pango_glyph_string_get_logical_widths kwargs
+static int
+_wrap_pango_glyph_string_get_logical_widths(NspObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { string ,s_int , t_end} ;
+  const char *text;
+  gint length, embedding_level, *logical_widths;
+  gint i, slen;
+  NspMatrix *ret;
+
+  if (GetArgs(stack,rhs,opt,T, &text, &embedding_level)== FAIL) return RET_BUG;
+  length = strlen(text);
+  slen = g_utf8_strlen(text, length);
+  logical_widths = g_new(int, slen);
+  pango_glyph_string_get_logical_widths(nspg_boxed_get(self,PangoGlyphString),
+					text, length, embedding_level,
+					logical_widths);
+  if (( ret = nsp_matrix_create(NVOID,'r',1, slen))== NULLMAT) return RET_BUG; 
+  for (i = 0; i < slen ; i++)  ret->R[i ] = logical_widths[i];
+  g_free(logical_widths);
+  MoveObj(stack,1,(NspObject *)ret);
+  return 1;
+}
+%%
+override pango_layout_set_markup kwargs
+static int
+_wrap_pango_layout_set_markup(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { string , t_end} ;
+  char *markup;
+  gint length;
+  if (GetArgs(stack,rhs,opt,T,&markup) == FAIL) return RET_BUG;
+  length = strlen(markup);
+  pango_layout_set_markup(PANGO_LAYOUT(self->obj), markup, length);
+  return 0;
+}
+%%
+override pango_layout_set_markup_with_accel kwargs
+static int
+_wrap_pango_layout_set_markup_with_accel(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  /* 
+  static char *kwlist[] = { "markup", "accel_marker", NULL };
+  char *markup;
+  gint length, accel_length;
+  Nsp_UNICODE *accel_marker, pychr;
+  gunichar accel_char;
+
+  if (GetArgs(stack,rhs,opt,T,
+	      "s#u#:PangoLayout.set_markup_with_accel",
+	      kwlist, &markup, &length,
+	      &accel_marker, &accel_length))
+    return RET_BUG;
+  if (accel_length != 1) {
+    Scierror( "accel_marker must be a unicode string of length 1");
+    return RET_BUG;
+  }
+  pango_layout_set_markup_with_accel(PANGO_LAYOUT(self->obj), markup, length,
+				     (gunichar)accel_marker[0], &accel_char);
+
+#if !defined(Nsp_UNICODE_SIZE) || Nsp_UNICODE_SIZE == 2
+  if (accel_char >= 0xffff) {
+    NspErr_SetString(NspExc_ValueError, "unicode character is too big to fit in a 16-bit unicode character");
+    return RET_BUG;
+  }
+#endif
+  pychr = (Nsp_UNICODE)accel_char;
+  return NspUnicode_FromUnicode(&pychr, 1);
+  */
+  Scierror("%s: To be done \n",stack.fname); 
+  return RET_BUG; 
+}
+%%
+override pango_layout_index_to_pos kwargs
+static int
+_wrap_pango_layout_index_to_pos(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { s_int , t_end} ;
+  gint index;
+  PangoRectangle pos;
+  if (GetArgs(stack,rhs,opt,T, &index)== FAIL) return RET_BUG;
+  pango_layout_index_to_pos(PANGO_LAYOUT(self->obj), index, &pos);
+  if ( nsp_move_doubles(stack,1,1,4,(double) pos.x,(double) pos.y,(double) pos.width,(double) pos.height)== FAIL) 
+    return RET_BUG;
+  return 1;
+}
+%%
+override pango_layout_get_cursor_pos kwargs
+static int
+_wrap_pango_layout_get_cursor_pos(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { s_int , t_end} ;
+  gint index;
+  PangoRectangle strong_pos, weak_pos;
+
+  if (GetArgs(stack,rhs,opt,T, &index) == FAIL) return RET_BUG;
+
+  pango_layout_get_cursor_pos(PANGO_LAYOUT(self->obj), index,
+			      &strong_pos, &weak_pos);
+
+  if ( nsp_move_doubles(stack,1,1,4,(double)strong_pos.x,(double) strong_pos.y,
+			(double)	strong_pos.width, (double)strong_pos.height) == FAIL) return RET_BUG ; 
+  if ( nsp_move_doubles(stack,2,1,4,(double)weak_pos.x, weak_pos.y,
+			(double)	weak_pos.width,(double) weak_pos.height) == FAIL) return RET_BUG ; 
+  return 2; 
+}
+%%
+override pango_layout_move_cursor_visually kwargs
+static int
+_wrap_pango_layout_move_cursor_visually(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  /* static char *kwlist[] = { "strong", "old_index", "old_trailing", "direction", NULL }; */
+
+  int_types T[] = { s_int , s_int , s_int , s_int , t_end} ;
+  gboolean strong;
+  gint old_index, old_trailing, direction, new_index = 0, new_trailing = 0;
+  
+  if (GetArgs(stack,rhs,opt,T, &strong, &old_index, &old_trailing, &direction) == FAIL) return RET_BUG;
+
+  pango_layout_move_cursor_visually(PANGO_LAYOUT(self->obj), strong,
+				    old_index, old_trailing, direction,
+				    &new_index, &new_trailing);
+  if ( nsp_move_doubles(stack,1,1,2,(double) new_index,(double) new_trailing)  == FAIL) return RET_BUG;
+  return 1;
+}
+%%
+override pango_layout_xy_to_index kwargs
+static int
+_wrap_pango_layout_xy_to_index(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { s_int , s_int  , t_end} ;
+  /* static char *kwlist[] = { "x", "y", NULL }; */ 
+  gint x, y, index, trailing;
+
+  if (GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
+
+  pango_layout_xy_to_index(PANGO_LAYOUT(self->obj), x, y, &index, &trailing);
+
+  if ( nsp_move_doubles(stack,1,1,2,(double) index,(double) trailing)== FAIL)  return RET_BUG;
+  return 1;
+}
+%%
+override pango_layout_get_extents noargs
+static int
+_wrap_pango_layout_get_extents(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  PangoRectangle ink_rect, logical_rect;
+
+  pango_layout_get_extents(PANGO_LAYOUT(self->obj),
+			   &ink_rect, &logical_rect);
+  if ( nsp_move_doubles(stack,1,1,4,(double)ink_rect.x,(double) ink_rect.y,
+			(double)ink_rect.width,(double) ink_rect.height) == FAIL) return RET_BUG ; 
+  if ( nsp_move_doubles(stack,2,1,4,(double)logical_rect.x, (double)logical_rect.y,
+			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
+  return 2; 
+}
+%%
+override pango_layout_get_pixel_extents noargs
+static int
+_wrap_pango_layout_get_pixel_extents(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  PangoRectangle ink_rect, logical_rect;
+
+  pango_layout_get_pixel_extents(PANGO_LAYOUT(self->obj),
+				 &ink_rect, &logical_rect);
+  if ( nsp_move_doubles(stack,1,1,4,(double)ink_rect.x,(double) ink_rect.y,
+			(double)ink_rect.width,(double) ink_rect.height) == FAIL) return RET_BUG ; 
+  if ( nsp_move_doubles(stack,2,1,4,(double)logical_rect.x, (double)logical_rect.y,
+			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
+  return 2; 
+
+}
+%%
+override pango_layout_get_size noargs
+static int
+_wrap_pango_layout_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  gint width, height;
+
+  pango_layout_get_size(PANGO_LAYOUT(self->obj), &width, &height);
+
+  if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG;
+  return 1;
+}
+%%
+override pango_layout_get_pixel_size noargs
+static int
+_wrap_pango_layout_get_pixel_size(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  gint width, height;
+
+  pango_layout_get_pixel_size(PANGO_LAYOUT(self->obj), &width, &height);
+
+  if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height)  == FAIL) return RET_BUG;
+  return 1;
+}
+%%
+override pango_parse_markup kwargs
+static int
+_wrap_pango_parse_markup( Stack stack,int rhs,int opt,int lhs)
+{
+  /* 
+  static char *kwlist[] = { "markup_text", "accel_marker", NULL };
+  char *markup_text, *text = NULL;
+  gint length;
+  Nsp_UNICODE *py_accel_marker, py_accel_char;
+  gint py_accel_marker_len;
+  gunichar accel_marker, accel_char = 0;
+  PangoAttrList *attr_list = NULL;
+  GError *error = NULL;
+  gboolean ret;
+  NspObject *py_ret;
+
+  if (GetArgs(stack,rhs,opt,T, "s#u#:pango.parse_markup",
+	      kwlist, &markup_text, &length,
+	      &py_accel_marker, &py_accel_marker_len))
+    return RET_BUG;
+  if (py_accel_marker_len != 1) {
+    Scierror( "accel_mark must be one character");
+    return RET_BUG;
+  }
+  accel_marker = py_accel_marker[0];
+  ret = pango_parse_markup(markup_text, length, accel_marker,
+			   &attr_list, &text, &accel_char, &error);
+  if (nspg_error_check(&error))
+    return RET_BUG;
+
+#if !defined(Nsp_UNICODE_SIZE) || Nsp_UNICODE_SIZE == 2
+  if (accel_char >= 0xffff) {
+    NspErr_SetString(NspExc_ValueError, "unicode character is too big to fit in a 16-bit unicode character");
+    return RET_BUG;
+  }
+#endif
+  py_accel_char = (Nsp_UNICODE)accel_char;
+
+  py_ret = Nsp_BuildValue("(Nsu#)", nspg_boxed_new(PANGO_TYPE_ATTR_LIST,
+						  attr_list, FALSE, TRUE),
+			  text, &py_accel_char, 1);
+  g_free(text);
+  return py_ret;
+  */
+  Scierror("%s: To be done \n",stack.fname); 
+  return RET_BUG; 
+}
+%%
+override pango_tab_array_get_tab kwargs
+static int
+_wrap_pango_tab_array_get_tab(NspObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { s_int , t_end} ;
+  /* static char *kwlist[] = { "tab_index", NULL };*/ 
+  gint tab_index, location;
+  PangoTabAlign alignment;
+  if (GetArgs(stack,rhs,opt,T, &tab_index) == FAIL) return RET_BUG;
+
+  pango_tab_array_get_tab(nspg_boxed_get(self, PangoTabArray),
+			  tab_index, &alignment, &location);
+  if ( nsp_move_doubles(stack,1,1,2,(double)alignment,(double) location)  == FAIL) return RET_BUG;
+  return 1;
+}
+%%
+override pango_tab_array_get_tabs noargs
+static int
+_wrap_pango_tab_array_get_tabs(NspObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  PangoTabAlign *alignments;
+  gint *locations, length, i;
+  NspMatrix  *ret;
+
+  length = pango_tab_array_get_size(nspg_boxed_get(self, PangoTabArray));
+  pango_tab_array_get_tabs(nspg_boxed_get(self, PangoTabArray),
+			   &alignments, &locations);
+
+  if (( ret = nsp_matrix_create(NVOID,'r',length,2))== NULLMAT) return RET_BUG; 
+  for (i = 0; i < ret->m; i++) {
+    ret->R[i ] = alignments[i];
+    ret->R[i + ret->m ]= locations[i];
+  }
+  MoveObj(stack,1,(NspObject *)ret);
+  return 1;
+}
+%%
+override pango_layout_set_text kwargs
+static int
+_wrap_pango_layout_set_text(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { string , t_end} ;
+  /* static char *kwlist[] = { "text", NULL };*/ 
+  char *text;
+  gint length;
+  if (GetArgs(stack,rhs,opt,T,  &text, &length) == FAIL) return RET_BUG;
+  pango_layout_set_text(PANGO_LAYOUT(self->obj), text, length);
+  return 0;
+}

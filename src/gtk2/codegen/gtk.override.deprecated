@@ -1,0 +1,896 @@
+/* -*- Mode: C -*- */
+%%
+ignore gtk_clist_new_with_titles gtk_clist_set_row_data_full
+%%
+override gtk_clist_new kwargs
+static int
+_wrap_gtkclist_new(Stack stack,int rhs,int opt,int lhs)
+{
+  /* static char *kwlist[] = { "count", "titles", NULL };*/
+  /* 
+  int_types T[] = { t_end} ;
+  int count = 1, i;
+  NspObject *nsp_list = NULL;
+
+  if (GetArgs(stack,rhs,opt,T,/ *  "|iO:GtkCList.__init__", * / 
+	      &count, &nsp_list))
+    return RET_BUG;
+  if (nsp_list) {
+    gchar **list;
+
+    if (!NspSequence_Check(nsp_list)) {
+      Scierror("2nd argument not a sequence");
+      return RET_BUG;
+    }
+    if (NspSequence_Length(nsp_list) < count) {
+      Scierror( "sequence not long enough");
+      return RET_BUG;
+    }
+    list = g_new(gchar *, count);
+    for (i = 0; i < count; i++) {
+      NspObject *item = NspSequence_GetItem(nsp_list, i);
+
+      Nsp_DECREF(item);
+      if (!NspString_Check(item) && !NspUnicode_Check(item)) {
+	Scierror(
+		 "sequence item not a string or unicode object");
+	g_free(list);
+	return RET_BUG;
+      }
+      list[i] = NspString_AsString(item);
+    }
+    self->obj = (GObject *)gtk_clist_new_with_titles(count, list);
+    g_free(list);
+  } else
+    self->obj = (GObject *)gtk_clist_new(count);
+  if (!self->obj) {
+    Scierror("could not create GtkCList object");
+    return RET_BUG;
+  }
+  nspgobject_register_wrapper((NspObject *)self);
+  */
+
+  return 0;
+}
+%%
+override gtk_clist_get_text kwargs
+static int
+_wrap_gtk_clist_get_text(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,s_int, t_end} ;
+  /* static char *kwlist[] = { "row", "column", NULL };*/
+  int r, c;
+  char *text = NULL;
+
+  if (GetArgs(stack,rhs,opt,T, &r, &c) == FAIL) return RET_BUG;
+
+  if (!gtk_clist_get_text(GTK_CLIST(self->obj), r, c, &text) || text==NULL) {
+    Scierror("can't get text value");
+    return RET_BUG;
+  }
+  return nsp_new_string_obj(NVOID,text,-1);
+}
+%%
+override gtk_clist_get_pixmap kwargs
+static int
+_wrap_gtk_clist_get_pixmap(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,s_int, t_end} ;
+  /* static char *kwlist[] = { "row", "column", NULL };*/
+  int r, c;
+  GdkPixmap *pixmap;
+  GdkBitmap *mask;
+
+  if (GetArgs(stack,rhs,opt,T, &r, &c) == FAIL) return RET_BUG;
+  if (!gtk_clist_get_pixmap(GTK_CLIST(self->obj), r, c,
+			    &pixmap, &mask)) {
+    Scierror("can't get pixmap value");
+    return RET_BUG;
+  }
+  return Nsp_BuildValue("(NN)", nspgobject_new((GObject *)pixmap),
+			nspgobject_new((GObject *)mask));
+}
+%%
+override gtk_clist_get_pixtext kwargs
+static int
+_wrap_gtk_clist_get_pixtext(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,s_int, t_end} ;
+  /* static char *kwlist[] = { "row", "column", NULL };*/
+  int r, c;
+  gchar *text;
+  guint8 spacing;
+  GdkPixmap *pixmap;
+  GdkBitmap *mask;
+
+  if (GetArgs(stack,rhs,opt,T,  &r, &c) == FAIL) return RET_BUG;
+
+  if (!gtk_clist_get_pixtext(GTK_CLIST(self->obj), r, c,
+			     &text, &spacing, &pixmap, &mask)) {
+    Scierror("can't get pixtext value");
+    return RET_BUG;
+  }
+  return Nsp_BuildValue("(ziNN)", text, (gint)spacing,
+			nspgobject_new((GObject *)pixmap),
+			nspgobject_new((GObject *)mask));
+}
+%%
+override gtk_clist_prepend kwargs
+static int
+_wrap_gtk_clist_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+    
+  int_types T[] = {obj, t_end} ;
+  /* static char *kwlist[] = { "text", NULL };*/
+  int col, i;
+  NspList *nsp_list;
+  gchar **list;
+
+  if (GetArgs(stack,rhs,opt,T, &nsp_list) == FAIL) return RET_BUG;
+
+  if (!NspSequence_Check(nsp_list)) {
+    Scierror( "argument not a sequence");
+    return RET_BUG;
+  }
+  col = GTK_CLIST(self->obj)->columns;
+  if (NspSequence_Length(nsp_list) < col) {
+    Scierror( "sequnce too short");
+    return RET_BUG;
+  }
+  list = g_new(gchar *, col);
+  for (i = 0; i < col; i++) {
+    NspObject *item = NspSequence_GetItem(nsp_list, i);
+
+    Nsp_DECREF(item);
+    if (!NspString_Check(item) && !NspUnicode_Check(item)) {
+      Scierror(
+	       "sequence item not a string or unicode object");
+      g_free(list);
+      return RET_BUG;
+    }
+    list[i] = NspString_AsString(item);
+  }
+  i = gtk_clist_prepend(GTK_CLIST(self->obj), list);
+  g_free(list);
+  if ( nsp_move_double(stack,1,(double)i) == FAIL) return RET_BUG; 
+  return 1;
+}
+%%
+override gtk_clist_append kwargs
+static int
+_wrap_gtk_clist_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end} ;
+  /* static char *kwlist[] = { "text", NULL };*/
+  int col, i;
+  NspList *nsp_list;
+  gchar **list;
+
+  if (GetArgs(stack,rhs,opt,T, &nsp_list) == FAIL) return RET_BUG;
+
+  if (!NspSequence_Check(nsp_list)) {
+    Scierror( "argument not a sequence");
+    return RET_BUG;
+  }
+  col = GTK_CLIST(self->obj)->columns;
+  if (NspSequence_Length(nsp_list) < col) {
+    Scierror( "sequnce too short");
+    return RET_BUG;
+  }
+  list = g_new(gchar *, col);
+  for (i = 0; i < col; i++) {
+    NspObject *item = NspSequence_GetItem(nsp_list, i);
+
+    Nsp_DECREF(item);
+    if (!NspString_Check(item) && !NspUnicode_Check(item)) {
+      Scierror(
+	       "sequence item not a string or unicode object");
+      g_free(list);
+      return RET_BUG;
+    }
+    list[i] = NspString_AsString(item);
+  }
+  i = gtk_clist_append(GTK_CLIST(self->obj), list);
+  g_free(list);
+  if ( nsp_move_double(stack,1,(double)i) == FAIL) return RET_BUG; 
+  return 1;
+}
+%%
+override gtk_clist_insert kwargs
+static int
+_wrap_gtk_clist_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,obj, t_end} ;
+  /* static char *kwlist[] = { "row", "text", NULL };*/
+  int col, row, i;
+  NspList *nsp_list;
+  gchar **list;
+
+  if (GetArgs(stack,rhs,opt,T, &row, &nsp_list) == FAIL) return RET_BUG;
+
+  if (!NspSequence_Check(nsp_list)) {
+    Scierror( "argument not a sequence");
+    return RET_BUG;
+  }
+  col = GTK_CLIST(self->obj)->columns;
+  if (NspSequence_Length(nsp_list) < col) {
+    Scierror( "sequnce too short");
+    return RET_BUG;
+  }
+  list = g_new(gchar *, col);
+  for (i = 0; i < col; i++) {
+    NspObject *item = NspSequence_GetItem(nsp_list, i);
+
+    Nsp_DECREF(item);
+    if (!NspString_Check(item) && !NspUnicode_Check(item)) {
+      Scierror(
+	       "sequence item not a string or unicode object");
+      g_free(list);
+      return RET_BUG;
+    }
+    list[i] = NspString_AsString(item);
+  }
+  i = gtk_clist_insert(GTK_CLIST(self->obj), row, list);
+  g_free(list);
+  if ( nsp_move_double(stack,1,(double)i) == FAIL) return RET_BUG; 
+  return 1;
+}
+%%
+override gtk_clist_set_row_data kwargs
+static int
+_wrap_gtk_clist_set_row_data(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,obj, t_end} ;
+  /* static char *kwlist[] = { "row", "data", NULL };*/
+  int row;
+  NspObject *data;
+  if (GetArgs(stack,rhs,opt,T, &row, &data) == FAIL) return RET_BUG;
+  /* Nsp_INCREF(data); add a name to data ? */
+  gtk_clist_set_row_data_full(GTK_CLIST(self->obj), row, data,
+			      (GtkDestroyNotify)nspg_destroy_notify);
+  return 0;
+}
+%%
+override gtk_clist_get_row_data kwargs
+static int
+_wrap_gtk_clist_get_row_data(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int, t_end} ;
+  /* static char *kwlist[] = { "row", NULL };*/
+  NspObject *ret;
+  int row;
+
+  if (GetArgs(stack,rhs,opt,T, &row) == FAIL) return RET_BUG;
+  if (( ret = gtk_clist_get_row_data(GTK_CLIST(self->obj), row))== NULL) 
+    return RET_BUG;
+  MoveObj(stack,1,ret);
+  return 1;
+}
+%%
+override gtk_clist_find_row_from_data kwargs
+static int
+_wrap_gtk_clist_find_row_from_data(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, t_end} ;
+  /* static char *kwlist[] = { "data", NULL };*/
+  NspObject *data;
+  double ret;
+  if (GetArgs(stack,rhs,opt,T,&data) == FAIL) return RET_BUG;
+  ret = (double) gtk_clist_find_row_from_data(GTK_CLIST(self->obj), data);
+  if ( nsp_move_double(stack,1, (double) ret ) == FAIL) return RET_BUG; 
+  return 1;
+}
+%%
+override gtk_clist_get_selection_info kwargs
+static int
+_wrap_gtk_clist_get_selection_info(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,s_int, t_end} ;
+  /* static char *kwlist[] = { "x", "y", NULL };*/
+  gint x, y, row, column, n=0;
+
+  if (GetArgs(stack,rhs,opt,T, &x, &y) == FAIL) return RET_BUG;
+
+  if (gtk_clist_get_selection_info(GTK_CLIST(self->obj), x, y,&row, &column)) n=2;
+  if (  nsp_move_doubles(stack,1,1,n,(double) row,(double) column) == FAIL) 
+    return RET_BUG; 
+  return 1; 
+}
+%%
+override-attr GtkCList.selection
+static NspObject *
+_wrap_gtk_clist__get_selection(NspGObject *self, char *attr)
+{
+  guint row, count=0;
+  GList *selection;
+  NspObject *nsp_int; 
+  NspMatrix *ret;
+  
+  for (selection = GTK_CLIST(self->obj)->selection; selection != NULL;
+       selection = selection->next) count++;
+  
+  if ((ret = MatCreate(NVOID,'r',1,count))== NULLMAT) return RET_BUG; 
+  count=0;
+  for (selection = GTK_CLIST(self->obj)->selection; selection != NULL; 
+       selection = selection->next)  ret->R[count++]=  GPOINTER_TO_UINT(selection->data);
+  return (NspObject *) ret;
+}
+
+%%
+ignore gtk_ctree_construct
+gtk_ctree_insert_gnode
+gtk_ctree_export_to_gnode
+gtk_ctree_post_recursive
+gtk_ctree_post_recursive_to_depth
+gtk_ctree_pre_recursive
+gtk_ctree_pre_recursive_to_depth
+gtk_ctree_find_node_ptr
+%%
+ignore gtk_ctree_new_new_with_titles
+%%
+override-attr GtkCTree.selection
+static NspObject *
+_wrap_gtk_ctree__get_selection(NspGObject *self, char *attr)
+{
+  GList *list,*tmp;
+  NspList *nsp_list;
+  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
+  list = GTK_CLIST(self->obj)->selection; 
+  NSP_OBJ_LIST_FROM_GLIST( gpointer_create(NVOID,GTK_TYPE_CTREE_NODE,tmp->data,NULL),g_list_free);
+}
+%%
+override gtk_ctree kwargs
+static int
+_wrap_gtkctree_new(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { t_end} ;
+  /* static char *kwlist[] = { "columns", "tree_column", "titles", NULL };*/
+  int columns = 1, tree_column = 0;
+  NspObject *nsp_titles = NULL;
+
+  if (GetArgs(stack,rhs,opt,T, "|iiO:GtkCTree.__init__",
+	       &columns, &tree_column,
+	      &nsp_titles))
+    return RET_BUG;
+  if (nsp_titles) {
+    gchar **titles;
+    gint i;
+
+    if (!NspSequence_Check(nsp_titles)) {
+      Scierror( "titles must be a sequence");
+      return RET_BUG;
+    }
+    if (NspSequence_Length(nsp_titles) < columns) {
+      Scierror( "titles too short");
+      return RET_BUG;
+    }
+    titles = g_new(gchar *, columns);
+    for (i = 0; i < columns; i++) {
+      NspObject *item = NspSequence_GetItem(nsp_titles, i);
+
+      Nsp_DECREF(item);
+      if (!NspString_Check(item) && !NspUnicode_Check(item)) {
+	Scierror(
+		 "sequence item not a string or unicode object");
+	g_free(titles);
+	return RET_BUG;
+      }
+      titles[i] = NspString_AsString(item);
+    }
+    self->obj = (GObject *)gtk_ctree_new_with_titles(columns,
+						     tree_column, titles);
+    g_free(titles);
+  } else
+    self->obj = (GObject *)gtk_ctree_new(columns, tree_column);
+  if (!self->obj) {
+    Scierror("could not create GtkCTree object");
+    return RET_BUG;
+  }
+  nspgobject_register_wrapper((NspObject *)self);
+  return 0;
+}
+%%
+override gtk_ctree_base_nodes
+static int
+_wrap_gtk_ctree_base_nodes(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  /* 
+  NspList *nsp_list;
+  GtkCTreeNode *node;
+  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
+
+  / * the first row is always a base node * /
+  node = GTK_CTREE_NODE(GTK_CLIST(self->obj)->row_list);
+  if ((ret = NspList_New(0)) == NULL)
+    return RET_BUG;
+  while (node) {
+    NspObject *obj = gpointer_create(NVOID,GTK_TYPE_CTREE_NODE, node,NULL);
+    if (obj == NULL) {
+      Nsp_DECREF(ret);
+      return RET_BUG;
+    }
+    NspList_Append(ret, obj);
+    Nsp_DECREF(obj);
+    node = GTK_CTREE_ROW(node)->sibling;
+  }
+  return ret;
+  */
+    return NULL;
+}
+%%
+override gtk_ctree_insert_node kwargs
+static int
+_wrap_gtk_ctree_insert_node(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { t_end} ;
+  /* static char *kwlist[] = { "parent", "sibling", "text", "spacing",
+     "pixmap_closed", "mask_closed", "pixmap_opened",
+     "mask_opened", "is_leaf", "expanded", NULL }; */
+  NspObject *nsp_text;
+  NspGPointer *nsp_parent, *nsp_sibling;
+  NspGObject *nsp_pixmap_closed = (NspGObject *) NULL;
+  NspGObject *nsp_mask_closed = (NspGObject *) NULL;
+  NspGObject *nsp_pixmap_opened = (NspGObject *) NULL;
+  NspGObject *nsp_mask_opened = (NspGObject *) NULL;
+  GtkCTreeNode *parent = NULL, *sibling = NULL, *ret;
+  gchar **text = NULL;
+  GdkPixmap *pixmap_closed = NULL, *pixmap_opened = NULL;
+  GdkBitmap *mask_closed = NULL, *mask_opened = NULL;
+  gint spacing = 5, is_leaf = 1, expanded = 0, columns, i;
+
+  if (GetArgs(stack,rhs,opt,T,
+	      "OOO|iOOOOii:GtkCTree.insert_node",
+	      &nsp_parent, &nsp_sibling, &nsp_text,
+	      &spacing, &nsp_pixmap_closed,
+	      &nsp_mask_closed, &nsp_pixmap_opened,
+	      &nsp_mask_opened, &is_leaf, &expanded))
+    return RET_BUG;
+  if (nspg_pointer_check(nsp_parent, GTK_TYPE_CTREE_NODE))
+    parent = nspg_pointer_get(nsp_parent, GtkCTreeNode);
+  else if ( ! IsNone((NspObject *)nsp_parent )) {
+    Scierror( "parent must be a CTreeNode or None");
+    return RET_BUG;
+  }
+  if (nspg_pointer_check(nsp_sibling, GTK_TYPE_CTREE_NODE))
+    sibling = nspg_pointer_get(nsp_sibling, GtkCTreeNode);
+  else if ( ! IsNone((NspObject *)nsp_sibling )) {
+    Scierror("sibling must be a CTreeNode or None");
+    return RET_BUG;
+  }
+  if (nspgobject_check(nsp_pixmap_closed, nsp_type_gdkpixmap))
+    pixmap_closed = GDK_PIXMAP(nsp_pixmap_closed->obj);
+  else if ( ! IsNone((NspObject *)nsp_pixmap_closed )) {
+    Scierror(
+	     "pixmap_closed must be a GdkPixmap or None");
+    return RET_BUG;
+  }
+  if (nspgobject_check(nsp_mask_closed,nsp_type_gdkpixmap))
+    mask_closed = GDK_PIXMAP(nsp_mask_closed->obj);
+  else if ( ! IsNone((NspObject *)nsp_mask_closed )) {
+    Scierror(
+	     "mask_closed must be a GdkBitmap or None");
+    return RET_BUG;
+  }
+  if (nspgobject_check(nsp_pixmap_opened,nsp_type_gdkpixmap))
+    pixmap_opened = GDK_PIXMAP(nsp_pixmap_opened->obj);
+  else if ( ! IsNone((NspObject *)nsp_pixmap_opened )) {
+    Scierror(
+	     "pixmap_opened must be a GdkPixmap or None");
+    return RET_BUG;
+  }
+  if (nspgobject_check(nsp_mask_opened,nsp_type_gdkpixmap))
+    mask_opened = GDK_PIXMAP(nsp_mask_opened->obj);
+  else if ( ! IsNone((NspObject *)nsp_mask_opened )) {
+    Scierror(
+	     "mask_opened must be a GdkBitmap or None");
+    return RET_BUG;
+  }
+  if (!NspSequence_Check(nsp_text)) {
+    Scierror( "text must be a sequence");
+    return RET_BUG;
+  }
+  columns = GTK_CLIST(self->obj)->columns;
+  if (NspSequence_Length(nsp_text) < columns) {
+    Scierror( "text is too short");
+    return RET_BUG;
+  }
+  text = g_new(gchar *, columns);
+  for (i = 0; i < columns; i++) {
+    NspObject *item = NspSequence_GetItem(nsp_text, i);
+
+    Nsp_DECREF(item);
+    if (!NspString_Check(item) && !NspUnicode_Check(item)) {
+      Scierror(
+	       "sequence item not a string or unicode object");
+      g_free(text);
+      return RET_BUG;
+    }
+    text[i] = NspString_AsString(item);
+  }
+  ret = gtk_ctree_insert_node(GTK_CTREE(self->obj), parent, sibling, text,
+			      spacing, pixmap_closed, mask_closed,
+			      pixmap_opened, mask_opened, is_leaf, expanded);
+  g_free(text);
+  return gpointer_create(NVOID,GTK_TYPE_CTREE_NODE, ret,NULL);
+}
+%%
+ignore gtk_ctree_find_by_row_data_custom gtk_ctree_find_all_by_row_data_custom
+%%
+override gtk_ctree_find_by_row_data kwargs
+static int
+_wrap_gtk_ctree_find_by_row_data(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj,obj, t_end} ;
+  /* static char *kwlist[] = { "node", "data", NULL };*/
+  NspObject *data;
+  NspGPointer *nsp_node;
+  GtkCTreeNode *node = NULL, *ret;
+
+  if (GetArgs(stack,rhs,opt,T,&nsp_node, &data)== FAIL) return RET_BUG;
+
+  if (nspg_pointer_check(nsp_node, GTK_TYPE_CTREE_NODE))
+    node = nspg_pointer_get(nsp_node, GtkCTreeNode);
+  else if ( ! IsNone((NspObject *)nsp_node )) {
+    Scierror( "node must be a CTreeNode or None");
+    return RET_BUG;
+  }
+  ret = gtk_ctree_find_by_row_data(GTK_CTREE(self->obj), node, data);
+  if (ret)
+    return gpointer_create(NVOID,GTK_TYPE_CTREE_NODE, ret,NULL);
+return 0;
+}
+%%
+override gtk_ctree_find_all_by_row_data kwargs
+static int
+_wrap_gtk_ctree_find_all_by_row_data(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { t_end} ;
+  /* static char *kwlist[] = { "node", "data", NULL };*/
+  NspGPointer *nsp_node;
+  NspObject *data, *list;
+  GtkCTreeNode *node = NULL;
+  GList *ret, *tmp;
+  NSP_LIST_DEC;
+  if (GetArgs(stack,rhs,opt,T, &nsp_node, &data) == FAIL) return RET_BUG;
+  if (nspg_pointer_check(nsp_node, GTK_TYPE_CTREE_NODE))
+    node = nspg_pointer_get(nsp_node, GtkCTreeNode);
+  else if ( ! IsNone((NspObject *)nsp_node )) {
+    Scierror( "node must be a CTreeNode or None");
+    return RET_BUG;
+  }
+    
+  list = gtk_ctree_find_all_by_row_data(GTK_CTREE(self->obj), node, data);
+
+  NSP_LIST_FROM_GLIST( gpointer_create(NVOID,GTK_TYPE_CTREE_NODE,(GtkCTreeNode *) tmp->data,NULL),g_list_free);
+}
+%%
+override gtk_ctree_node_get_text kwargs
+static int
+_wrap_gtk_ctree_node_get_text(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { t_end} ;
+  /* static char *kwlist[] = { "node", "column", NULL };*/
+  NspGPointer *node;
+  int column;
+  char *text = NULL;
+
+  if (GetArgs(stack,rhs,opt,T,&node, &column) == FAIL) return RET_BUG;;
+
+  if (!nspg_pointer_check(node, GTK_TYPE_CTREE_NODE)) {
+    Scierror( "node must be a CTreeNode");
+    return RET_BUG;
+  }
+
+  if (!gtk_ctree_node_get_text(GTK_CTREE(self->obj),
+			       nspg_pointer_get(node, GtkCTreeNode), column,
+			       &text)) {
+    Scierror("can't get text value");
+    return RET_BUG;
+  }
+  return nsp_new_string_obj(NVOID,text,-1);
+}
+%%
+override gtk_ctree_node_get_pixmap kwargs
+static int
+_wrap_gtk_ctree_node_get_pixmap(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { t_end} ;
+  /* static char *kwlist[] = { "node", "column", NULL };*/
+  NspObject *node;
+  int column;
+  GdkPixmap *pixmap = NULL;
+  GdkBitmap *mask = NULL;
+
+  if (GetArgs(stack,rhs,opt,T, &node, &column) == FAIL) return RET_BUG;;
+
+  if (!nspg_pointer_check(node, GTK_TYPE_CTREE_NODE)) {
+    Scierror( "node must be a CTreeNode");
+    return RET_BUG;
+  }
+
+  if (!gtk_ctree_node_get_pixmap(GTK_CTREE(self->obj),
+				 nspg_pointer_get(node, GtkCTreeNode), column,
+				 &pixmap, &mask)) {
+    Scierror("can't get pixmap value");
+    return RET_BUG;
+  }
+  return Nsp_BuildValue("(NN)", nspgobject_new((GObject *)pixmap),
+			nspgobject_new((GObject *)mask));
+}
+%%
+override gtk_ctree_node_get_pixtext kwargs
+static int
+_wrap_gtk_ctree_node_get_pixtext(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { t_end} ;
+  /* static char *kwlist[] = { "node", "column", NULL };*/
+  NspObject *node;
+  int column;
+  gchar *text = NULL;
+  guint8 spacing;
+  GdkPixmap *pixmap = NULL;
+  GdkBitmap *mask = NULL;
+
+  if (GetArgs(stack,rhs,opt,T, &node, &column)   == FAIL) return RET_BUG;;
+
+  if (!nspg_pointer_check(node, GTK_TYPE_CTREE_NODE)) {
+    Scierror( "node must be a CTreeNode");
+    return RET_BUG;
+  }
+
+  if (!gtk_ctree_node_get_pixtext(GTK_CTREE(self->obj),
+				  nspg_pointer_get(node, GtkCTreeNode), column,
+				  &text, &spacing, &pixmap, &mask)) {
+    Scierror("can't get pixtext value");
+    return RET_BUG;
+  }
+  return Nsp_BuildValue("(siNN)", text, (int)spacing,
+			nspgobject_new((GObject *)pixmap),
+			nspgobject_new((GObject *)mask));
+}
+%%
+override gtk_ctree_get_node_info kwargs
+static int
+_wrap_gtk_ctree_get_node_info(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { t_end} ;
+  /* static char *kwlist[] = { "node", NULL };*/
+  NspObject *node;
+  gchar *text;
+  guint8 spacing;
+  GdkPixmap *pixmap_closed, *pixmap_opened;
+  GdkBitmap *mask_closed, *mask_opened;
+  gboolean is_leaf, expanded;
+
+  if (GetArgs(stack,rhs,opt,T,&node) == FAIL) return RET_BUG;;
+
+  if (!nspg_pointer_check(node, GTK_TYPE_CTREE_NODE)) {
+    Scierror( "node must be a CTreeNode");
+    return RET_BUG;
+  }
+
+  if (!gtk_ctree_get_node_info(GTK_CTREE(self->obj), nspg_pointer_get(node, GtkCTreeNode),
+			       &text, &spacing, &pixmap_closed, &mask_closed,
+			       &pixmap_opened, &mask_opened,
+			       &is_leaf, &expanded)) {
+    Scierror("can't get node info");
+    return RET_BUG;
+  }
+  return Nsp_BuildValue("(siNNNNii)", text, (int)spacing,
+			nspgobject_new((GObject *)pixmap_opened),
+			nspgobject_new((GObject *)mask_closed),
+			nspgobject_new((GObject *)pixmap_opened),
+			nspgobject_new((GObject *)mask_opened),
+			(int)is_leaf, (int)expanded);
+}
+%%
+ignore gtk_ctree_node_set_row_data_full
+%%
+override gtk_ctree_node_set_row_data kwargs
+static int
+_wrap_gtk_ctree_node_set_row_data(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { t_end} ;
+  /* static char *kwlist[] = { "node", "data", NULL };*/
+  NspObject *node, *data;
+
+  if (GetArgs(stack,rhs,opt,T, &node, &data) == FAIL) return RET_BUG;;
+
+  if (!nspg_pointer_check(node, GTK_TYPE_CTREE_NODE)) {
+    Scierror( "node must be a CTreeNode");
+    return RET_BUG;
+  }
+
+  Nsp_INCREF(data);
+  gtk_ctree_node_set_row_data_full(GTK_CTREE(self->obj),
+				   nspg_pointer_get(node, GtkCTreeNode), data,
+				   (GDestroyNotify)nspg_destroy_notify);
+return 0;
+}
+%%
+override gtk_ctree_node_get_row_data kwargs
+static int
+_wrap_gtk_ctree_node_get_row_data(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = { t_end} ;
+  /* static char *kwlist[] = { "node", NULL };*/
+  NspObject *node, *data;
+
+  if (GetArgs(stack,rhs,opt,T,&node) == FAIL) return RET_BUG;;
+
+  if (!nspg_pointer_check(node, GTK_TYPE_CTREE_NODE)) {
+    Scierror( "node must be a CTreeNode");
+    return RET_BUG;
+  }
+
+  data = gtk_ctree_node_get_row_data(GTK_CTREE(self->obj),
+				     nspg_pointer_get(node, GtkCTreeNode));
+  if (!data) data = NULL;
+  Nsp_INCREF(data);
+  return data;
+}
+%%
+override-slot GtkCTreeNode.tp_getattr
+
+static char *_gtkctreenode_attrs[]={ "__attrs","children", "expanded", "is_leaf",
+				    "level", "parent", "sibling",  NULL };
+
+static NspObject *
+_wrap_gtk_ctree_node_tp_getattr(NspGPointer *self, char *attr)
+{
+  int rep;
+  if ((rep= is_string_in_array(attr, _gtkctreenode_attrs, 0)) < 0 ) 
+    {
+      Scierror("attribute %s not found or ambiguous\n",attr);
+      return NULL;
+    }
+  switch (rep) {
+  case 1 : /* "children"*/ {
+    GtkCTreeNode *node = GTK_CTREE_ROW(nspg_pointer_get(self, GtkCTreeNode))->children;
+    NSP_LIST_DEC;
+    NSP_OBJ_LIST( while (node)  ,
+	      nsp_node = gpointer_create(NVOID,GTK_TYPE_CTREE_NODE, node,NULL); 
+	      node = GTK_CTREE_ROW(node)->sibling );
+    return (NspObject *)nsp_list; 
+    NSP_OBJ_LIST_CLEAN; 
+  } 
+  case 2 : /* "expanded"*/
+    return nsp_new_double_obj((double)GTK_CTREE_ROW(nspg_pointer_get(self, GtkCTreeNode))->expanded);
+  case 3: /* "is_leaf"*/
+    return nsp_new_double_obj((double)GTK_CTREE_ROW(nspg_pointer_get(self, GtkCTreeNode))->is_leaf);
+  case 4: /* "level"*/
+    return nsp_new_double_obj((double)GTK_CTREE_ROW(nspg_pointer_get(self, GtkCTreeNode))->level);
+  case 5: /* "parent"*/ {
+    GtkCTreeNode *node = GTK_CTREE_ROW(nspg_pointer_get(self, GtkCTreeNode))->parent;
+    if (node == NULL) return NULL; 
+    return (NspObject *) gpointer_create(NVOID,GTK_TYPE_CTREE_NODE, node,NULL);
+  } 
+  case 6: /* "sibling"*/ {
+    GtkCTreeNode *node = GTK_CTREE_ROW(nspg_pointer_get(self, GtkCTreeNode))->sibling;
+    if (node == NULL) return NULL; 
+    return(NspObject *) gpointer_create(NVOID,GTK_TYPE_CTREE_NODE, node,NULL);
+  } 
+  }
+  return NULL; 
+}
+%%
+ignore gtk_list_item_new_with_label
+%%
+override gtk_list_item_new kwargs
+static int
+_wrap_gtklistitem_new(Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *ret;
+  GObject *gobj;
+  int_types T[] = {string, t_end} ;
+  gchar *text = NULL;
+
+  CheckRhs(0,1);
+  if ( rhs == 0 ) 
+      gobj = (GObject *)gtk_list_item_new();
+  else
+    {
+      if ((text = GetString(stack,1))== NULL) return RET_BUG;
+      gobj = (GObject *)gtk_list_item_new_with_label(text);
+    }
+  if (gobj == NULL ) {
+    Scierror( "could not create GtkListItem object");
+    return RET_BUG;
+  }
+  nsp_type_gtklistitem = new_type_gtklistitem(T_BASE);
+  if ((ret = (NspObject *) gobject_create(NVOID,gobj,(NspTypeBase *) nsp_type_gtklistitem))== FAIL) return RET_BUG; 
+  MoveObj(stack,1,ret);
+  return 1; 
+}
+
+
+%%
+override gtk_list_insert_items kwargs
+static int
+_wrap_gtk_list_insert_items(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, list,s_int, t_end} ;
+  NspList *nsp_items;
+  NspObject *ob;
+  GList *items = NULL;
+  int position, len, i;
+
+  if (GetArgs(stack,rhs,opt,T, &ob, &nsp_items, &position)== FAIL) return RET_BUG;
+  if ((items = glist_from_nsp_list(stack,nsp_items,nsp_type_gtklistitem))==NULL) return RET_BUG;
+  gtk_list_insert_items(GTK_LIST(self->obj), items, position);
+  g_list_free(items); /* XXXX ? */ 
+  return 0;
+}
+%%
+override gtk_list_append_items kwargs
+static int
+_wrap_gtk_list_append_items(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, list, t_end} ;
+  NspList *nsp_items;
+  NspObject *ob;
+  GList *items = NULL;
+  int len, i;
+
+  if (GetArgs(stack,rhs,opt,T, &ob, &nsp_items) == FAIL) return RET_BUG;;
+  if ((items = glist_from_nsp_list(stack,nsp_items,nsp_type_gtklistitem))==NULL) return RET_BUG;
+  gtk_list_append_items(GTK_LIST(self->obj), items);
+  /* g_list_free(items); XXXX ? */ 
+  return 0;
+}
+%%
+override gtk_list_prepend_items kwargs
+static int
+_wrap_gtk_list_prepend_items(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj,list, t_end} ;
+  NspList *nsp_items;
+  NspObject *ob;
+  GList *items = NULL;
+  int len, i;
+  
+  if (GetArgs(stack,rhs,opt,T, &ob, &nsp_items) == FAIL) return RET_BUG;;
+  if ((items = glist_from_nsp_list(stack,nsp_items,nsp_type_gtklistitem))==NULL) return RET_BUG;
+  gtk_list_prepend_items(GTK_LIST(self->obj), items);
+  /* g_list_free(items); */ /* XXXX ? */ 
+  return 0;
+}
+%%
+override gtk_list_remove_items kwargs
+static int
+_wrap_gtk_list_remove_items(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj, list, t_end} ;
+  NspList *nsp_items;
+  NspObject *ob;
+  GList *items = NULL;
+  int len, i;
+  
+  if (GetArgs(stack,rhs,opt,T, &ob, &nsp_items) == FAIL) return RET_BUG;;
+  if ((items = glist_from_nsp_list(stack,nsp_items,nsp_type_gtklistitem))==NULL) return RET_BUG;
+  gtk_list_remove_items(GTK_LIST(self->obj), items);
+  g_list_free(items);
+  return 0;
+}
+%%
+ignore gtk_list_remove_items_no_unref
+%%
+override-attr GtkList.selection
+static NspObject *
+_wrap_gtk_list__get_selection(NspGObject *self, char *attr)
+{
+  GList *list,*tmp;
+  NspList *nsp_list;
+  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
+  list = GTK_LIST(self->obj)->selection; 
+  NSP_OBJ_LIST_FROM_GLIST(nspgobject_new((GObject *) GTK_LIST_ITEM(tmp->data)),g_list_free);
+}
+%%
+override gtk_list_get_selection noargs
+static NspObject *
+_wrap_gtk_list__get_selection(NspGObject *self, char *attr);
+static int
+_wrap_gtk_list_get_selection(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  return _wrap_gtk_list__get_selection(self, NULL);
+}

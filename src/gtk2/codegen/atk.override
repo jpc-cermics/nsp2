@@ -1,0 +1,57 @@
+/* -*- Mode: C -*- */
+%%
+headers
+
+#include "nsp/gtk/gobject.h"
+#include <atk/atk.h>
+#include <atk/atknoopobjectfactory.h>
+#include <atk/atknoopobject.h>
+%%
+modulename atk
+%%
+import gobject.GObject as GObject
+%%
+ignore-glob
+  *_get_type
+%%
+override atk_relation_new kwargs
+static int
+_wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {list, s_int , t_end} ;
+  /* targets" "relationship" */
+  AtkObject **targets;
+  int relationship, count, i=0;
+  NspList  *nsp_targets;
+  Cell *cloc; 
+  NspObject *nsp_ret;
+  GObject *ret;
+
+  if (GetArgs(stack,rhs,opt,T,&nsp_targets, &relationship) == FAIL) return RET_BUG;
+
+  count =nsp_list_length(nsp_targets);
+  targets = g_new(AtkObject *, count);
+    
+  cloc = nsp_targets->first ;
+  while ( cloc != NULLCELL) 
+    {
+      if ( cloc->O == NULLOBJ || nspgobject_check(cloc->O, &nsp_type_atkobject) == FAIL) 
+	{
+	  Scierror( "targets argument must be a sequence of AtkObjects.");
+	  g_free(targets);
+	}
+      else 
+	{
+	  targets[i] = (AtkObject *) nspgobject_get(cloc->O);
+	  i++;
+	}
+    }
+
+  if ((ret = (GObject *)atk_relation_new(targets, count, relationship)) == NULL) return RET_BUG;
+  g_free(targets);
+  nsp_type_atkrelation = new_type_atkrelation(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_atkrelation );
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}

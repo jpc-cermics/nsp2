@@ -7,7 +7,7 @@ LIBRARY = nsp.a
 OBJSC = Matrix.o MatOps.o MatObj.o  \
 	BMatrix.o BMatObj.o \
 	SMatrix.o SMatrix-IN.o SMatObj.o \
-	PMatrix.o PMatrix-IN.o PMatObj.o \
+	PMatrix.o PMatObj.o \
 	SpMatrix.o SpMatrix-IN.o SpMatObj.o \
 	SpMatOps.o SpMatOps-IN.o \
 	List.o ListObj.o \

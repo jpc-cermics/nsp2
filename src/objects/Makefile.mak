@@ -10,7 +10,7 @@ LIBRARY = nsp.lib
 OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	BMatrix.obj BMatObj.obj \
 	SMatrix.obj SMatrix-IN.obj SMatObj.obj \
-	PMatrix.obj PMatrix-IN.obj PMatObj.obj \
+	PMatrix.obj PMatObj.obj \
 	SpMatrix.obj SpMatrix-IN.obj SpMatObj.obj \
 	SpMatOps.obj SpMatOps-IN.obj \
 	List.obj ListObj.obj \
