@@ -407,8 +407,8 @@ static OpTab GdkAtom_func[]={
   {"gdkatom_create",int_gdkatom_create}, 
   {"setrowscols_gdkatom",int_set_attribute},
   /* {"$dot_gdkatom",int_get_attribute},
-     {"$set_gdkatom",int_set_attributes},
-  */
+   * {"$set_gdkatom",int_set_attributes},
+   */
   {"test_gdkatom",int_gdkatom_test},
   {(char *) 0, NULL}
 };

@@ -390,11 +390,12 @@ int int_none_test(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab None_func[]={
-  /* #include "none-in.nam" */ 
   {"none_create",int_none_create}, 
   {"setrowscols_none",int_set_attribute},
-  {"$dot_none",int_get_attribute},
-  {"$set_none",int_set_attributes},
+  /* 
+     {"$dot_none",int_get_attribute},
+     {"$set_none",int_set_attributes},
+  */
   {"test_none",int_none_test},
   {(char *) 0, NULL}
 };

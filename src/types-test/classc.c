@@ -219,13 +219,7 @@ static NspMethods *classc_get_methods(void) { return classc_methods;};
  *----------------------------------------------------*/
 
 static OpTab ClassC_func[]={
-  /* #include "classc-in.nam" */ 
   {"clc_create",int_clc_create}, 
-  /* 
-  {"setrowscols_clc",int_set_attribute},
-  {"$dot_clc",int_get_attribute},
-  {"$set_clc",int_set_attributes},
-  */
   {(char *) 0, NULL}
 };
 

@@ -449,7 +449,6 @@ int int_clb_test(Stack stack, int rhs, int opt, int lhs)
 static OpTab ClassB_func[]={
   {"setrowscols_clb",int_set_attribute},/* a(xxx)= b */
   {"test_clb",int_clb_test},
-  {"$set_clb",int_set_attributes},
   {(char *) 0, NULL}
 };
 

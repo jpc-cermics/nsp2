@@ -19,9 +19,15 @@ a.cla_val
 a.cla_val(3,3) = 1;
 a.cla_val 
 
+// general access to attribute (method set of objects)
+
+a.set[cla_val=1:5,cla_color=56]
+
 // a function for Classa instances 
 
 a('cla_color') = 78  //   {"setrowscols_cla",int_set_attribute}, 
+
+a('cla_color')  // 
 
 test(a) 
 

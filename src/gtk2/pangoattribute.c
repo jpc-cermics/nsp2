@@ -413,8 +413,10 @@ static OpTab PangoAttribute_func[]={
   /* #include "pangoattribute-in.nam" */ 
   {"pangoattribute_create",int_pangoattribute_create}, 
   {"setrowscols_pangoattribute",int_set_attribute},
-  {"$dot_pangoattribute",int_get_attribute},
-  {"$set_pangoattribute",int_set_attributes},
+  /* 
+   * {"$dot_pangoattribute",int_get_attribute},
+   * {"$set_pangoattribute",int_set_attributes},
+   */
   {"test_pangoattribute",int_pangoattribute_test},
   {(char *) 0, NULL}
 };
