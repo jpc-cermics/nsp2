@@ -3,23 +3,24 @@
 
 extern NspList *Datas ;
 
-extern int NewFrame(void);
-extern void DeleteFrame(void);
-extern void FramesInfo(void);
-extern void FrameInfo(void);
-extern void FramesPrint(void);
-extern void FramePrint(void);
-extern int  FrameReplaceObj(NspObject *A);
-extern int  GlobalFrameReplaceObj(NspObject *A);
-extern NspObject *FramesSearchObj(char *str);
-extern NspObject *FrameSearchObj(String *str);
-extern NspObject *GlobalFrameSearchObj(String *str);
-extern void GlobalFrameRemoveObj(String *str);
-extern NspObject *FrameSearchObjAndRemove(String *str);
-extern void FrameObjRemove(String *str);
-extern int SearchObjAndMoveToNextFrame(String *str);
-extern int MoveObjToNextFrame(NspObject *O);
-extern int declare_global(char *name) ;
+
+extern int nsp_new_frame(void);
+extern void nsp_frame_delete(void);
+extern void nsp_frames_info(void);
+extern void nsp_frame_info(void);
+extern void nsp_frames_print(void);
+extern void nsp_frame_print(void);
+extern int nsp_frame_replace_object(NspObject *A);
+extern int nsp_global_frame_replace_object(NspObject *A);
+extern NspObject *nsp_frames_search_object(char *str);
+extern NspObject *nsp_frame_search_object(String *str);
+extern NspObject *nsp_global_frame_search_object(String *str);
+extern void nsp_global_frame_remove_object(String *str);
+extern NspObject *nsp_frame_search_and_remove_object(String *str);
+extern void nsp_frame_remove_object(String *str);
+extern int nsp_frame_search_and_move_up_object(String *str);
+extern int nsp_frame_move_up_object(NspObject *O);
+extern int nsp_declare_global(char *name) ;
 
 #endif
 

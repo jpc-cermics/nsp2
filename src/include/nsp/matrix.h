@@ -2,7 +2,7 @@
 #define INC_NSP_MATRIX
 
 /*
- * This Software is ( Copyright ENPC 1998-2003 ) 
+ * This Software is (Copyright ENPC 1998-2004) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
@@ -77,18 +77,17 @@ NspMatrix *MatCreateFromData  (char *name, char type, integer m,
 			       integer n,struct caml_bigarray *b);
 #endif 
 
-/* XXXXXX */ 
-
+/* XXXXXX  */ 
 #define EPSILON 1.e-15
+
 #define NULLMAT (NspMatrix*) 0
 
-
-double *nsp_alloc_doubles(unsigned int n);
-double *nsp_realloc_doubles(double *dp, unsigned int n);
-int *nsp_alloc_int(unsigned int n);
-int *nsp_realloc_int(int *dp, unsigned int n);
-doubleC *nsp_alloc_doubleC(unsigned int n);
-doubleC *nsp_realloc_doubleC(doubleC *dp, unsigned int n);
+extern double *nsp_alloc_doubles(unsigned int n);
+extern double *nsp_realloc_doubles(double *dp, unsigned int n);
+extern int *nsp_alloc_int(unsigned int n);
+extern int *nsp_realloc_int(int *dp, unsigned int n);
+extern doubleC *nsp_alloc_doubleC(unsigned int n);
+extern doubleC *nsp_realloc_doubleC(doubleC *dp, unsigned int n);
 
 /* from MatObj.c */
 
@@ -103,7 +102,6 @@ extern void matrix_print (NspMatrix *Mat, int indent);
 extern NspObject *matrix_loop_extract (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
 extern NspMatrix *matrix_copy (const NspMatrix *A); 
 extern NspMatrix  *matrix_object(NspObject *O);
-
 
 extern int MatFullComp ();
 extern NspMatrix *matrix_object(NspObject *O); 

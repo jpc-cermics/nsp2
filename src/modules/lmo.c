@@ -339,7 +339,7 @@ NspObject *lmo_path_search_object(NspLmo *L,NspSMatrix *Sm,char **oname)
       VoidObjDestroy(&Ob);
       return NULLOBJ;
     }
-  FrameReplaceObj(Ob);
+ nsp_frame_replace_object(Ob);
   return Ob;
 }
 

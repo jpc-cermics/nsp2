@@ -10,6 +10,4 @@
 #include "nsp/interf.h"
 #include "nsp/datas.h"
 
-extern function  int_resume, int_global, int_exists ;
-
 #endif
