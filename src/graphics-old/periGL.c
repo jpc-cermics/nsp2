@@ -407,10 +407,10 @@ static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)
 	       Xgc->private->Green[bg]/255.0,
 	       Xgc->private->Blue[bg]/255.0);
      glBegin(GL_QUADS);
-     glVertex2f(clip_rect.x, clip_rect.y);
-     glVertex2f(clip_rect.x+clip_rect.width, clip_rect.y);
-     glVertex2f(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-     glVertex2f(clip_rect.x, clip_rect.y+clip_rect.height);
+     glVertex2i(clip_rect.x, clip_rect.y);
+     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
+     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
+     glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
      glEnd();
 #endif
 }
@@ -422,10 +422,10 @@ static void unclip_rectangle(GdkRectangle clip_rect)
      glStencilFunc(GL_ALWAYS, 0x0, 0x0);
      glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
      glBegin(GL_QUADS);
-     glVertex2f(clip_rect.x, clip_rect.y);
-     glVertex2f(clip_rect.x+clip_rect.width, clip_rect.y);
-     glVertex2f(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-     glVertex2f(clip_rect.x, clip_rect.y+clip_rect.height);
+     glVertex2i(clip_rect.x, clip_rect.y);
+     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
+     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
+     glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
      glEnd();
 #endif
 }
@@ -1578,25 +1578,27 @@ static void xset_line_style(BCG *Xgc,int value)
 
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
-     //##QQ printf("xset_dashstyle pas implementee en OpenGL\n");
-#if 0
-     if ( value == 0) 
-     {
-	  gdk_gc_set_line_attributes(Xgc->private->wgc,
-				     (Xgc->CurLineWidth <= 1) ? 0 : Xgc->CurLineWidth,
-				     GDK_LINE_SOLID,GDK_CAP_BUTT, GDK_JOIN_ROUND);
-     }
-     else 
-     {
-	  gint8 buffdash[18];
-	  int i;
-	  for ( i =0 ; i < *n ; i++) buffdash[i]=xx[i];
-	  gdk_gc_set_dashes(Xgc->private->wgc, 0, buffdash, *n);
-	  gdk_gc_set_line_attributes(Xgc->private->wgc, 
-				     (Xgc->CurLineWidth == 0 ) ? 1 : Xgc->CurLineWidth,
-				     GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
-     }
-#endif
+  if ( value == 0) 
+    {
+      /* 
+	 gdk_gc_set_line_attributes(Xgc->private->wgc,
+	 (Xgc->CurLineWidth <= 1) ? 0 : Xgc->CurLineWidth,
+	 GDK_LINE_SOLID,GDK_CAP_BUTT, GDK_JOIN_ROUND);
+       */
+      glLineWidth( ((Xgc->CurLineWidth <= 1) ? 1 : Xgc->CurLineWidth)*0.5);
+    }
+  else 
+    {
+#if 0 
+      gint8 buffdash[18];
+      int i;
+      for ( i =0 ; i < *n ; i++) buffdash[i]=xx[i];
+      gdk_gc_set_dashes(Xgc->private->wgc, 0, buffdash, *n);
+      gdk_gc_set_line_attributes(Xgc->private->wgc, 
+				 (Xgc->CurLineWidth == 0 ) ? 1 : Xgc->CurLineWidth,
+				 GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
+#endif 
+    }
 }
 
 static void xget_dashstyle(BCG *Xgc,int *n,int *value)
@@ -1897,10 +1899,10 @@ static void xset_background(BCG *Xgc,int num)
 	  if (Xgc->private->Red != NULL )
 	  {
 	       /* we fix the default background in Xgc->private->gcol_bg */
-	       Xgc->private->gcol_bg.red = 0;
-	       Xgc->private->gcol_bg.green = 0;
-	       Xgc->private->gcol_bg.blue = 0;
-	       Xgc->private->gcol_bg.pixel = PIXEL_FROM_CMAP(bg);
+	       Xgc->private->gcol_bg.red = Xgc->private->Red[bg];
+	       Xgc->private->gcol_bg.green =  Xgc->private->Green[bg];
+	       Xgc->private->gcol_bg.blue = Xgc->private->Blue[bg];
+	       // Xgc->private->gcol_bg.pixel = PIXEL_FROM_CMAP(bg);
 	  }
 	  /* 
 	   * if we change the background of the window we must change 
@@ -1909,10 +1911,10 @@ static void xset_background(BCG *Xgc,int num)
 //	  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
 //	  gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
 
-	  glClearColor(Xgc->private->Red[bg]/255.0,
-		       Xgc->private->Green[bg]/255.0,
-		       Xgc->private->Blue[bg]/255.0,0.0);
-	  
+
+	  glClearColor(Xgc->private->gcol_bg.red /255.0,
+		       Xgc->private->gcol_bg.green /255.0,
+		       Xgc->private->gcol_bg.blue /255.0,0.0);
      }
 }
  
@@ -2225,8 +2227,7 @@ static void drawpolygon(GdkPoint *points, gint npoints, bool fill)
 	  glBegin(GL_LINE_LOOP);
      for (i=0; i<npoints; i++)
      {
-	  glVertex2i(points[i].x, points[i].y);
-	  glVertex2i(points[i].x, points[i].y);
+       glVertex2i(points[i].x, points[i].y);
      }
      glEnd();
 }
@@ -2362,10 +2363,10 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 static void drawrectangle(BCG *Xgc,const int rect[])
 {   
   glBegin(GL_LINE_LOOP);
-  glTexCoord2f(0,0); glVertex2i(rect[0]        ,rect[1]);
-  glTexCoord2f(1,0); glVertex2i(rect[0]+rect[2],rect[1]);
-  glTexCoord2f(1,1); glVertex2i(rect[0]+rect[2],rect[1]+rect[3]);
-  glTexCoord2f(0,1); glVertex2i(rect[0]        ,rect[1]+rect[3]);
+  glVertex2i(rect[0]        ,rect[1]);
+  glVertex2i(rect[0]+rect[2],rect[1]);
+  glVertex2i(rect[0]+rect[2],rect[1]+rect[3]);
+  glVertex2i(rect[0]        ,rect[1]+rect[3]);
   glEnd();
   if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
   //glFlush ();
@@ -2797,7 +2798,7 @@ static void DeleteSGWin(int intnum)
      /* deconnect handlers */
      scig_deconnect_handlers(winxgc);
      /* backing store private->pixmap */
-     gdk_pixmap_unref(winxgc->private->pixmap);
+     if ( winxgc->private->pixmap != NULL)  gdk_pixmap_unref(winxgc->private->pixmap);
      /* destroy top level window if it is not shared by other graphics  */
      top_count = window_list_search_toplevel(winxgc->private->window); 
      if ( top_count <= 1) 
@@ -3584,22 +3585,22 @@ static void analyze_points(BCG *Xgc,int n, int *vx, int *vy, int onemore)
 	       };
 	  iif=first_out(n,iib,vx,vy);
 	  if (iif == -1) {
-	       /* special case the polyligne is totaly inside */
-	       if (iib == 0) 
-	       {
-		    if (gtk_store_points(n,vx,vy,onemore))
-		    {
-			 int n1 ;
-			 if (onemore == 1) n1 = n+1;else n1= n;
-			 XDroutine(Xgc,n1);
-			 return;
-		    }
-		    else
-			 return;
-	       }
-	       else 
-		    MyDraw(Xgc,iib,n-1,vx,vy);
-	       break;
+	    /* special case the polyligne is totaly inside */
+	    if (iib == 0) 
+	      {
+		if (gtk_store_points(n,vx,vy,onemore))
+		  {
+		    int n1 ;
+		    if (onemore == 1) n1 = n+1;else n1= n;
+		    XDroutine(Xgc,n1);
+		    return;
+		  }
+		else
+		  return;
+	      }
+	    else 
+	      MyDraw(Xgc,iib,n-1,vx,vy);
+	    break;
 	  }
 #ifdef DEBUG
 	  Sciprintf("Analysed : [%d,%d]\n",(int)iib,(int)iif);
