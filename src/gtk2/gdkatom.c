@@ -250,7 +250,7 @@ void gdkatom_info(NspGdkAtom *self, int indent)
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   a_name = gdk_atom_name(self->atom);
-  Sciprintf("%s\t= GdkAtom name=%s 0x%lx ]\n", NSP_OBJECT(self)->name,
+  Sciprintf("%s\t= GdkAtom name=%s 0x%lx \n", NSP_OBJECT(self)->name,
 	    a_name ? a_name : "",
 	    (unsigned long)self->atom);
   g_free(a_name);
@@ -406,8 +406,9 @@ static OpTab GdkAtom_func[]={
   /* #include "gdkatom-in.nam" */ 
   {"gdkatom_create",int_gdkatom_create}, 
   {"setrowscols_gdkatom",int_set_attribute},
-  {"$dot_gdkatom",int_get_attribute},
-  {"$set_gdkatom",int_set_attributes},
+  /* {"$dot_gdkatom",int_get_attribute},
+     {"$set_gdkatom",int_set_attributes},
+  */
   {"test_gdkatom",int_gdkatom_test},
   {(char *) 0, NULL}
 };
