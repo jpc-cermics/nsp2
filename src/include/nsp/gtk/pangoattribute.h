@@ -54,7 +54,7 @@ static int pangoattribute_eq(NspPangoAttribute *A, NspObject *B);
 static int pangoattribute_neq(NspPangoAttribute *A, NspObject *B);
 static int pangoattribute_xdr_save(NspFile  *F, NspPangoAttribute *M);
 static NspPangoAttribute  *pangoattribute_xdr_load(NspFile  *F);
-static AttrTab *pangoattribute_get_attrs_table(void);
+static AttrTab pangoattribute_attrs[];
 static NspMethods *pangoattribute_get_methods(void); 
 static NspObject *pangoattribute_path_extract(NspPangoAttribute *A, NspObject *O);
 #endif /* PangoAttribute_Private */

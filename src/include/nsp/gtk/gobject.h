@@ -176,6 +176,21 @@ extern int nsp_gtk_tree_model_set_col_from_bmat(GtkTreeModel *model,GtkTreeIter 
 extern int nsp_gdk_rectangle_from_object(NspObject *object, GdkRectangle *rectangle);
 extern GType  nspg_type_from_object(NspObject *obj) ;
 
+/* adding constants */
+
+extern void gtk_add_constants(NspObject *module, const gchar *strip_prefix);
+extern void gdk_add_constants(NspObject *module, const gchar *strip_prefix);
+extern void atk_add_constants(NspObject *module, const gchar *strip_prefix);
+extern void pango_add_constants(NspObject *module, const gchar *strip_prefix);
+
+/* to be done */
+
+/* extern void Nsp_BuildValue() ; */
+/* extern void nspg_type_wrapper_new ()*/
+extern NspObject * NspTuple_New(int n);
+extern void NspTuple_SetItem(NspObject *,int n, void *);
+extern int nspg_type_wrapper_new(GType ret);
+
 
 #endif 
 

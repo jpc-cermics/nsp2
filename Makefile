@@ -20,7 +20,7 @@ include Makefile.incl
 all:: bin/scilex  
 
 # Add the object files that are used to compile Scilex
-include Makefile.OBJ
+# include Makefile.OBJ
 
 include config/Makefile.linux
 

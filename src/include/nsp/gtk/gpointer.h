@@ -55,7 +55,7 @@ static char *gpointer_type_as_string(void);
 static char *gpointer_type_short_string(void);
 static int gpointer_eq(NspGPointer *A, NspObject *B);
 static int gpointer_neq(NspGPointer *A, NspObject *B);
-static AttrTab *gpointer_get_attrs_table(void);
+/* static AttrTab *gpointer_get_attrs_table(void); */
 static NspMethods *gpointer_get_methods(void); 
 #endif /* GPointer_Private */
 

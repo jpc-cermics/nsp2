@@ -717,11 +717,11 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
     {
       int rect[4];
       box[3]= n1count*1.5*yoffset;
-      /* enlarged box whic is drawn  */
-      Xgc->graphic_engine->boundingbox(Xgc,"pl",0,0,rect);
     }
   else 
     {
+      /* enlarged box which is drawn  */
+      Xgc->graphic_engine->boundingbox(Xgc,"pl",0,0,rect);
       box[0] -= rect[2]/2; 
       box[1] -= rect[3]/2; 
       box[2] += rect[2]; 
