@@ -203,10 +203,11 @@ static int gboxed_neq(NspGBoxed *A, NspObject *B)
 
 void gboxed_destroy(NspGBoxed *self)
 {
-  
-  Scierror("==>destroy boxed %s free=%d at Ox%lx\n",
-	   g_type_name(self->gtype),
-	   self->free_on_dealloc,self);
+  /* 
+     Scierror("==>destroy boxed %s free=%d at Ox%lx\n",
+     g_type_name(self->gtype),
+     self->free_on_dealloc,self);
+  */
   if (self->free_on_dealloc && self->boxed) {
     nspg_unblock_threads();
     g_boxed_free(self->gtype, self->boxed);
@@ -329,9 +330,9 @@ NspGBoxed *gboxed_create(char *name,GType boxed_type, gpointer boxed, gboolean c
       boxed = g_boxed_copy(boxed_type, boxed);
       own_ref = TRUE;
     }
-
+  /* 
   Scierror("==>Create a boxed %s copy=%d own ref=%d at Ox%lx\n",g_type_name(boxed_type), copy_boxed,own_ref,self);
-
+  */
   self->boxed = boxed;
   self->gtype = boxed_type;
   self->free_on_dealloc = own_ref;

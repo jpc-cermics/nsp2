@@ -1133,9 +1133,9 @@ static void
 nsp_gobject_closures_destroy (gpointer data)
 {
   GSList *slist, *closures = data;
-
-  Scierror("==>closures destroy\n");
-
+  /*
+   * fprintf(stderr,"==>closures destroy\n");
+   */
   for (slist = closures; slist; slist = slist->next)
     {
       g_closure_invalidate (slist->data);
@@ -1149,7 +1149,9 @@ nspg_closure_invalidate(gpointer data, GClosure *closure)
 {
   NspGClosure *pc = (NspGClosure *)closure;
   nspg_block_threads();
-  Scierror("==>nspg_closure_invalidate\n");
+  /* 
+   * Scierror("==>nspg_closure_invalidate\n");
+   */
   nsp_object_destroy((NspObject **) &pc->callback);
   if (pc->extra_args != NULL)nsp_object_destroy((NspObject **) &pc->extra_args);
   if (pc->swap_data != NULL)nsp_object_destroy(&pc->swap_data);
