@@ -2416,34 +2416,34 @@ static void scale_change_Contour(BCG *Xgc,void *plot, int *flag, double *b1, int
   struct rec_contour *theplot;
   theplot =   (struct rec_contour *) plot;
   if (bbox1 != NULL) 
-  {
-   b1[0] = XPixel2Double(bbox1[0]);
-   b1[1] = YPixel2Double(bbox1[1]);
-   b1[2] = XPixel2Double(bbox1[2]);
-   b1[3] = YPixel2Double(bbox1[3]);
-   /*   sciprint("I'm trying to zoom a 3d contour \r\n"); */
-   /*  sciprint(" zoom area: x={%f:%f};  y={%f:%f}\r\n",b1[0],b1[2],b1[1],b1[3]); */
-   xmin=Maxi(theplot->x,theplot->n1); xmax=Mini(theplot->x,theplot->n1);
-   ymin=Maxi(theplot->y,theplot->n1); ymax=Mini(theplot->y,theplot->n2);
-   zmin=Maxi(theplot->z,theplot->n1*theplot->n2);
-   zmax=Mini(theplot->z,theplot->n1*theplot->n2);
-   for (i=0; i < theplot->n1; i++)
-    for (j=0; j < theplot->n2; j++)
-     {
-      x=theplot->x[i]; y=theplot->y[j]; z=theplot->z[j*theplot->n1 + i]; 
-      xp=TRX(x,y,z); yp=TRY(x,y,z); 
-      if(xp >= b1[0] && xp <= b1[2] && yp >= b1[1] && yp <= b1[3])
-       {
-        if(x < xmin) xmin=x; if(x > xmax) xmax=x;
-        if(y < ymin) ymin=y; if(y > ymax) ymax=y;
-        if(z < zmin) zmin=z; if(z > zmax) zmax=z;
-       }
-     }
-   if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
-   if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
-   if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
-   if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1;
-  }
+    {
+      b1[0] = XPixel2Double(bbox1[0]);
+      b1[1] = YPixel2Double(bbox1[1]);
+      b1[2] = XPixel2Double(bbox1[2]);
+      b1[3] = YPixel2Double(bbox1[3]);
+      /*   sciprint("I'm trying to zoom a 3d contour \r\n"); */
+      /*  sciprint(" zoom area: x={%f:%f};  y={%f:%f}\r\n",b1[0],b1[2],b1[1],b1[3]); */
+      xmin=Maxi(theplot->x,theplot->n1); xmax=Mini(theplot->x,theplot->n1);
+      ymin=Maxi(theplot->y,theplot->n1); ymax=Mini(theplot->y,theplot->n2);
+      zmin=Maxi(theplot->z,theplot->n1*theplot->n2);
+      zmax=Mini(theplot->z,theplot->n1*theplot->n2);
+      for (i=0; i < theplot->n1; i++)
+	for (j=0; j < theplot->n2; j++)
+	  {
+	    x=theplot->x[i]; y=theplot->y[j]; z=theplot->z[j*theplot->n1 + i]; 
+	    xp=TRX(x,y,z); yp=TRY(x,y,z); 
+	    if(xp >= b1[0] && xp <= b1[2] && yp >= b1[1] && yp <= b1[3])
+	      {
+		if(x < xmin) xmin=x; if(x > xmax) xmax=x;
+		if(y < ymin) ymin=y; if(y > ymax) ymax=y;
+		if(z < zmin) zmin=z; if(z > zmax) zmax=z;
+	      }
+	  }
+      if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
+      if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
+      if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
+      if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1;
+    }
 }
 
 
