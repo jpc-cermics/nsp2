@@ -34,8 +34,6 @@ function colorbar(umin, umax, colminmax)
   else
      nb_colors = colminmax(2) - colminmax(1) + 1
   end
-  nb_colors = xget("lastpattern")
-  colminmax = [1 nb_colors]
   
   fg_color = xget("foreground")
 
