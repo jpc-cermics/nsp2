@@ -28,7 +28,7 @@ $(TDOWNCASE).h : model-h Makefile
 	    -e "s/@TYPEASSTRING@/$(TASSTRING)/g" \
 	    -e "s/@NULL@/$(NULL)/g" \
 	    -e "s/@TYPESHORT@/$(TSHORT)/g" \
-	    -e "s/@FIELDS@/$(FIELDS)/g" \
+	    -e "s+@FIELDS@+$(FIELDS)+g" \
 	    -e "s/@PARENTDOWNCASE@/$(PARENTDOWNCASE)/g" \
 	    -e "s/@PARENT@/$(PARENT)/g" \
 	    -e "s+@PARENTINC@+$(PARENTINC)+g" \
@@ -93,6 +93,18 @@ job_gboxed:
 		TASSTRING=GBoxed NULL=NULLGBOXED \
 		PARENT=Object FIELDS="pipo"\
 		PARENTDOWNCASE=object PARENTINC=nsp/object.h
+
+job_mod:
+	make job  TNAME=Module TDOWNCASE=module TSHORT=mo \
+		TASSTRING=Module NULL=NULLMODULE \
+		PARENT=Object FIELDS="char *path ; /* absolute XXX path of the module */\n\tchar *mname;  /* module name */\n\tNspHash *T;      /* hash table to store module objects of type me (module elts) */\n\tNspList *L;       /* List of submodules */\n\tint flag;     /* are we a copy ? */;" \
+		PARENTDOWNCASE=object PARENTINC=nsp/object.h 
+
+job_me:
+	make job  TNAME=ModuleElt TDOWNCASE=modulelt TSHORT=me \
+		TASSTRING=ModuleElt NULL=NULLME \
+		PARENT=Object FIELDS="char *path ;/\n\tchar *module;" \
+		PARENTDOWNCASE=object PARENTINC=nsp/object.h 
 
 clean : distclean 
 

@@ -106,7 +106,7 @@ static int init_@TYPEDOWNCASE@(Nsp@TYPENAME@ *o,NspType@TYPENAME@ *type)
   if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
   o->type = type; 
   NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
-  /* specific */
+  /* FIXME : specific */
   o->@TYPEDOWNCASE@_val = nsp_matrix_create("val",'r',0,0);
   if ( o->@TYPEDOWNCASE@_val == NULLMAT) return FAIL;
   return OK;
@@ -294,7 +294,7 @@ Nsp@TYPENAME@  *Get@TYPENAME@(Stack stack, int i)
 /*-----------------------------------------------------
  * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspClassA instance 
+ * create a Nsp@TYPENAME@ instance 
  *-----------------------------------------------------*/
 
 Nsp@TYPENAME@ *@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeBase *type)

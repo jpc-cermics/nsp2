@@ -25,18 +25,10 @@ include ../Make.lib
 
 # need gnome includes 
 
-helpbrowser.o : helpbrowser.c 
-	@compiling $<
-	@$(CC) $(CFLAGS)  -c helpbrowser.c 
-
 helpbrowser:  helpbrowser.c queue.o
 	$(CC) -DALONE $(CC_OPTIONS) `gnome-config --cflags gnome` \
 		-o helpbrowser helpbrowser.c queue.o \
 		`gnome-config --cflags gnome` $(XLIBS)
-
-uri.o : uri.c
-	@compiling $<
-	@$(CC) $(CFLAGS) -c uri.c
 
 OBJTEST = x_test_loop.o
 
