@@ -2830,6 +2830,13 @@ void nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpd
 }
 
 
+/* 
+ * shared between Gtk and GL 
+ */
+
+extern int nsp_get_win_counter();
+extern void nsp_set_win_ounter(int n);
+
 static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			    int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
@@ -2837,7 +2844,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
      BCG *NewXgc ;
      /* Attention ici on peut faire deux fenetre de meme numéro à régler ? XXXXX 
       */
-     int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 :  EntryCounter;
+     int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 : nsp_get_win_counter();
      gui_private *private ; 
      if ( ( private = MALLOC(sizeof(gui_private)))== NULL) 
      {
@@ -2951,8 +2958,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
      /* now initialize the scale list */
      NewXgc->scales = NULL;
      xgc_add_default_scale(NewXgc);
-     EntryCounter=Max(EntryCounter,WinNum);
-     EntryCounter++;
+     
+     nsp_set_win_counter(WinNum);
      gdk_flush();
 
 
@@ -3157,8 +3164,8 @@ static void LoadFonts(gui_private *private)
      */
 
 //##FIXME
-     if (!LoadTGA(&private->textures_font[0],"/Applications/nsp2/src/graphics/Font_mini.tga") ||
-	 !LoadTGA(&private->textures_font[1],"/Applications/nsp2/src/graphics/Font_mini.tga"))
+     if (!LoadTGA(&private->textures_font[0],"/usr/local/nsp2/src/graphics/Font_mini.tga") ||
+	 !LoadTGA(&private->textures_font[1],"/usr/local/nsp2/src/graphics/Font_mini.tga"))
      {
 	  printf("Texture /Applications/nsp2/src/graphics/FontXXX.tga  manquante ou corrompue\n");
 	  exit(1);

@@ -2320,7 +2320,7 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*-----------------------------------------------------------
- * xinit(name=,wdim=,wpdim=,wresize=,viewport=,file=)
+ * xinit(name=,wdim=,wpdim=,wresize=,viewport=,file=,opengl=)
  * name: window name 
  * wdim: window dimensions 
  * wpdim: popupdimension
@@ -2331,7 +2331,7 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
 int int_xinit(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  int v1=-1;
+  int v1=-1,opengl=FALSE;
   NspMatrix *wdim=NULL,*wpdim=NULL,*viewport=NULL,*wpos=NULL;
   char *name=NULL, *file=NULL;
 
@@ -2341,12 +2341,13 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
   nsp_option opts[] ={{ "dim",mat_int,NULLOBJ,-1},
 		      { "file",string,NULLOBJ,-1},
 		      { "name",string,NULLOBJ,-1},
+		      { "opengl",s_bool,NULLOBJ,-1},
 		      { "popup_dim",mat_int,NULLOBJ,-1},
 		      { "popup_pos",mat_int,NULLOBJ,-1},
 		      { "viewport_pos",realmat,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&opts,&wdim,&file,&name,&wpdim,&wpos,&viewport) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&opts,&wdim,&file,&name,&opengl,&wpdim,&wpos,&viewport) == FAIL) return RET_BUG;
 
   if (wdim != NULL && wdim->mn != 2 ) 
     {
@@ -2381,11 +2382,18 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      Gtk_gengine.initgraphic("",&v1,
-			      (wdim) ? (int*)wdim->R: NULL ,
-			      (wpdim) ? (int*)wpdim->R: NULL,
-			      (viewport) ? viewport->R : NULL,
-			      (wpos) ? (int*)wpos->R : NULL);
+      if ( opengl == FALSE ) 
+	Gtk_gengine.initgraphic("",&v1,
+				(wdim) ? (int*)wdim->R: NULL ,
+				(wpdim) ? (int*)wpdim->R: NULL,
+				(viewport) ? viewport->R : NULL,
+				(wpos) ? (int*)wpos->R : NULL);
+      else 
+	GL_gengine.initgraphic("",&v1,
+				(wdim) ? (int*)wdim->R: NULL ,
+				(wpdim) ? (int*)wpdim->R: NULL,
+				(viewport) ? viewport->R : NULL,
+				(wpos) ? (int*)wpos->R : NULL);
     }
   /* we should have an other way here to detect that 
    * initgraphic was fine 
