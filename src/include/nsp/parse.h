@@ -3,4 +3,10 @@
 
 extern int TokenLineSet(int l);
 
+int ParseEvalFile(char *Str, int display);
+int ParseEvalFromStr(char *Str, int display);
+int ParseEvalDir(char *Dir, char *Fname);
+int ParseEvalLoop(int display);
+
+
 #endif 

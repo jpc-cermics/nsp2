@@ -1009,21 +1009,21 @@ void link_check(NspGFrame *F,NspLink *L)
 		  if ( link_split(F,(NspLink *)obj,&link,pt) == OK)
 		    {
 		      /* create a connector */
-		      int color=4,thickness=1, background=9,rep;
+		      int color=4,thickness=1, background=9;
 		      double rect[]={pt[0]-lock_size,pt[1]+lock_size,lock_size*3,lock_size*3}; 
 		      NspConnector *C;
 		      gr_port p;
 		      C=connector_create(NVOID,rect,color,thickness,background,NULL);
 		      if ( C == NULL) return;
-		      if ( EndInsert(F->objs,(NspObject  *) C) == FAIL) return ; 
+		      if ( EndInsert(F->objs,NSP_OBJECT(C)) == FAIL) return ; 
 		      /* and link obj,link and L to the connector */
-		      p.object_id = C; 
+		      p.object_id =NSP_OBJECT(C); 
 		      p.lock = 0; 
 		      p.port = 0; /* not used */
 		      link_lock(F,(NspLink *)obj,1,&p); 
 		      link_lock(F,link,0,&p); 
 		      link_lock(F,L,i,&p); 
-		      gframe_locks_update(F,C);/* align the locks */
+		      gframe_locks_update(F,NSP_OBJECT(C));/* align the locks */
 		      GR_INT(((NspObject *)C)->basetype->interface)->draw(C);
 
 		    }

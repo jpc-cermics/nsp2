@@ -10,6 +10,8 @@
 #include "../zcalelm/convert.h"
 #include "nsp/graphics/Graphics.h"
 
+#include "nsp/parse.h"
+
 /*
  * NspBlock inherits from NspObject and implements GRint 
  * graphic blocks 
@@ -608,7 +610,7 @@ void block_draw(NspBlock *B)
 
   if ( B->show == FALSE ) return ;
 
-  Xgc=check_graphic_window(Xgc);
+  Xgc=check_graphic_window();
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
 
