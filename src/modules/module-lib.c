@@ -11,90 +11,24 @@
 #include "nsp/objxdr.h"
 #include "nsp/datas.h"
 #include "nsp/interf.h" 
+#include "module.h" 
+#include "modulelt.h" 
 
-/**********************************************************
- * Lmo sepcific functions ....
- * Lmo: list of modules can be casted to a List 
- *******************************************************/
-
-/******************************************
- * Res=ELmoCreate 
- * Creates a new empty list with name name 
- * and type tname if we want to define a tlist 
- ******************************************/
-
-NspLmo *ELmoCreate(char *name)
-{
-  NspList *L =nsp_list_create(name,NULLSTRING);
-  if ( L == NULLLIST ) return   NULLLMO; 
-  /* 
-     L->otype = LMO;
-     L->ftype = Lmo_Type;
-  */
-  L->first = NULLCELL;
-  return((NspLmo *) L);
-}
-
-/*************************************************
- * Delete the Lmo and all its elements 
- *************************************************/
-
-void LmoDestroy(NspLmo *l)
-{
- nsp_list_destroy((NspList*) l);
-} 
-
-/******************************
- * Res=LmoCopy(L)
- * returns in Res a copy of the Lmo L 
- * elements inside the list are copied too
- *******************************/
-
-NspLmo *LmoCopy(NspLmo *lmo)
-{
-  NspList *L =nsp_list_copy((NspList *) lmo);
-  if ( L == NULLLIST ) return(NULLLMO) ;
-  /*
-    L->otype = LMO;
-    L->ftype = Lmo_Type;
-  */
-  return(L);
-} 
-
-/******************************************
- *Scilab Display of an Object of type Lmo 
- ******************************************/
-
-void LmoInfo(NspLmo *L, int indent)
-{
- nsp_list_info((NspList *)L,indent);
-} 
-
-/*********************************************
- *  Scilab Display of an Object of type Lmo 
- *********************************************/
-
-void LmoPrint(NspLmo *L, int indent)
-{
- nsp_list_print((NspList *)L,indent);
-} 
 
 /*********************************************
  * Search module mname in module list L 
  *********************************************/
 
-/* XXXX should add in list a Search with prédicate */ 
-
-NspMod *LmoSearchMod(NspLmo *L, String *mname)
+NspModule *nsp_search_module(NspList *L,String *mname)
 {
   Cell *C = ((NspList *) L)->first;
   while ( C != NULLCELL) 
     {
-      if ( C->O != NULLOBJ && strcmp(((NspMod *) C->O)->mname,mname)==0 ) 
-	return((NspMod *) C->O);
+      if ( C->O != NULLOBJ && strcmp(((NspModule *) C->O)->mname,mname)==0 ) 
+	return((NspModule *) C->O);
       C = C->next ;
     }
-  return NULLMOD;
+  return NULLMODULE;
 } 
 
 /*********************************************
@@ -103,12 +37,12 @@ NspMod *LmoSearchMod(NspLmo *L, String *mname)
  * Warning Mname is NULL terminated 
  *********************************************/
 
-static int LmoInsertLast1(NspLmo *L,char *dir,char **Mname);
+static int nsp_insert_module_last_i(NspList *L,char *dir,char **Mname);
 
 /* XXXXX a factoriser quelque part */ 
 #define MAX_PATH 1024 
 
-int LmoInsertLast(NspLmo *L,char *dir,char **Mname)
+int nsp_insert_module_last(NspList *L,char *dir,char **Mname)
 {
   char buf[MAX_PATH];
   strcpy(buf,dir);
@@ -117,29 +51,29 @@ int LmoInsertLast(NspLmo *L,char *dir,char **Mname)
       strcat(buf,"/"); /* XXX */
       strcat(buf,Mname[0]);
     }
-  return LmoInsertLast1(L,buf,Mname);
+  return nsp_insert_module_last_i(L,buf,Mname);
 }
 
 
 /* dir should be big enought to contain a path */ 
 
-static int LmoInsertLast1(NspLmo *L,char *dir,char **Mname)
+static int nsp_insert_module_last_i(NspList *L,char *dir,char **Mname)
 {
-  NspMod *Loc; 
+  NspModule *Loc; 
   if ( Mname[0] == NULL ) return OK;
-  Loc = LmoSearchMod(L,Mname[0]); 
-  if ( Loc == NULLMOD ) 
+  Loc = nsp_search_module(L,Mname[0]); 
+  if ( Loc == NULLMODULE ) 
     {
       /* if module does not exist create module  */ 
-      if ((Loc = ModCreate(NVOID,dir,Mname[0])) == NULLMOD) return FAIL;
-      if (nsp_list_end_insert((NspList *)L,(NspObject *) Loc)== FAIL) return FAIL;
+      if ((Loc = module_create(NVOID,dir,Mname[0],NULL)) == NULLMODULE) return FAIL;
+      if ( nsp_list_end_insert((NspList *)L,(NspObject *) Loc)== FAIL) return FAIL;
     }
   if ( Mname[1] != NULL ) 
     {
       strcat(dir,"/");
       strcat(dir,Mname[1]);
       /* remove the first entry in SMatrix */ 
-      return LmoInsertLast1(Loc->L,dir,++Mname);
+      return nsp_insert_module_last_i(Loc->L,dir,++Mname);
     }
   else 
     return OK;
@@ -152,10 +86,10 @@ static int LmoInsertLast1(NspLmo *L,char *dir,char **Mname)
  * XXXX The returned object is not copied 
  *********************************************/
 
-NspObject * LmoSearchName(NspLmo *L,char **Mname)
+NspObject * nsp_module_search_name(NspList *L,char **Mname)
 {
-  NspMod *Loc; 
-  if ( L == NULLLMO)  return NULLOBJ;
+  NspModule *Loc; 
+  if ( L == NULLLIST )  return NULLOBJ;
   if ( Mname[0] == NULL) return NULLOBJ;
   if ( Mname[1] == NULL) 
     {
@@ -163,11 +97,11 @@ NspObject * LmoSearchName(NspLmo *L,char **Mname)
       Cell *C = ((NspList *) L)->first;
       while ( C != NULLCELL) 
 	{
-	  NspMod *mo;
-	  if ((mo=(NspMod *) C->O) != NULLMOD && strcmp(mo->mname,"")==0 ) 
+	  NspModule *mo;
+	  if ((mo=(NspModule *) C->O) != NULLMODULE && strcmp(mo->mname,"")==0 ) 
 	    { 
 	      NspObject *Ob;
-	      if (nsp_hash_find(mo->T,Mname[0],&Ob) == OK) 
+	      if (mo->T != NULL && nsp_hash_find(mo->T,Mname[0],&Ob) == OK) 
 		{
 		  /* Object found is to be a Me */
 		  ((NspMe *) Ob)->path = mo->path;
@@ -180,13 +114,13 @@ NspObject * LmoSearchName(NspLmo *L,char **Mname)
       return NULLOBJ;
     }
   
-  if (( Loc = LmoSearchMod(L,Mname[0]))== NULLMOD ) return NULLOBJ;
+  if (( Loc = nsp_search_module(L,Mname[0]))== NULLMODULE ) return NULLOBJ;
   
   if ( Mname[2] == NULL ) 
     {
       NspObject *Ob;
       /* search Mname[1] in The hash table of Loc */
-      if (nsp_hash_find(Loc->T,Mname[1],&Ob)== FAIL) return NULLOBJ;
+      if (Loc->T == NULL || nsp_hash_find(Loc->T,Mname[1],&Ob)== FAIL) return NULLOBJ;
       /* Object found is to be a Me */
       ((NspMe *) Ob)->path = Loc->path;
       ((NspMe *) Ob)->module = Loc->mname;
@@ -195,7 +129,7 @@ NspObject * LmoSearchName(NspLmo *L,char **Mname)
   else 
     {
       /* search in the submodules */ 
-      return  LmoSearchName(Loc->L,++Mname);
+      return  nsp_module_search_name(Loc->L,++Mname);
     }
   return OK;
 }
@@ -209,29 +143,29 @@ NspObject * LmoSearchName(NspLmo *L,char **Mname)
  *   empty strings 
  *********************************************/
 
-static NspMod *LmoRecSearch(NspLmo *L,char **Mname)
+static NspModule *nsp_module_rec_search(NspList *L,char **Mname)
 {
-  NspMod *Loc; 
-  if ( Mname[0] == NULL) return NULLMOD;
-  if ( ( Loc = LmoSearchMod(L,Mname[0]))  == NULLMOD)  return NULLMOD;
+  NspModule *Loc; 
+  if ( Mname[0] == NULL) return NULLMODULE;
+  if ( ( Loc = nsp_search_module(L,Mname[0]))  == NULLMODULE)  return NULLMODULE;
   if ( Mname[1] == NULL) return Loc; 
-  return LmoRecSearch(Loc->L,++Mname);
+  return nsp_module_rec_search(Loc->L,++Mname);
 }
 
-int LmoImport(NspLmo *L,char *dir,char **Mname)
+int nsp_module_import(NspList *L,char *dir,char **Mname)
 {
-  NspMod *Loc ;
-  Loc = LmoRecSearch(L,Mname);
-  if ( Loc == NULLMOD ) 
+  NspModule *Loc ;
+  Loc = nsp_module_rec_search(L,Mname);
+  if ( Loc == NULLMODULE ) 
     {
       /* try to load the module */
-      if ( LmoInsertLast(L,dir,Mname) == FAIL) return FAIL;
+      if ( nsp_insert_module_last(L,dir,Mname) == FAIL) return FAIL;
       /* search again */ 
-      Loc = LmoRecSearch(L,Mname);
-      if ( Loc == NULLMOD ) return FAIL;
+      Loc = nsp_module_rec_search(L,Mname);
+      if ( Loc == NULLMODULE ) return FAIL;
     }
   /* this is not a full copy XXX */
-  if (( Loc = ModCopy(Loc))  == NULLMOD)  return FAIL;
+  if (( Loc = module_copy_ref(Loc))  == NULLMODULE)  return FAIL;
   /* insert new module at the begining */ 
   if (nsp_list_insert((NspList *)L,(NspObject *) Loc,0) ==  FAIL) return FAIL;
   return OK;
@@ -245,15 +179,15 @@ int LmoImport(NspLmo *L,char *dir,char **Mname)
 #include <sys/stat.h>
 #include <unistd.h> 
 
-NspObject *lmo_path_search_name(NspLmo *L,NspSMatrix *Sm,char **oname)
+NspObject *module_path_search_name(NspList *L,NspSMatrix *Sm,char **oname)
 {
   struct stat stat_buf;
   int i;
   char buf[MAX_PATH];
   NspObject *Ob;
-  if ( L == NULLLMO) return NULLOBJ;
+  if ( L == NULLLIST) return NULLOBJ;
   /* search oname in L */
-  if (( Ob= LmoSearchName(L,oname)) != NULLOBJ) return Ob;
+  if (( Ob= nsp_module_search_name(L,oname)) != NULLOBJ) return Ob;
   /* search for a file in nsp_path+oname */ 
   for(i= 0 ; i < Sm->mn ; i++) 
     {
@@ -274,21 +208,21 @@ NspObject *lmo_path_search_name(NspLmo *L,NspSMatrix *Sm,char **oname)
 	  if ( oname[1]== NULL) 
 	    {
 	      char *path[]={NVOID,NULL};
-	      if ( LmoInsertLast(L,Sm->S[i],path) == FAIL) return NULLOBJ;
-	      Ob= LmoSearchName(L,oname);
+	      if ( nsp_insert_module_last(L,Sm->S[i],path) == FAIL) return NULLOBJ;
+	      Ob= nsp_module_search_name(L,oname);
 	      return Ob;
 	    }
 	  else 
 	    {
 	      char *name = *pname;
 	      *pname = NULL;
-	      if ( LmoInsertLast(L,Sm->S[i],oname) == FAIL) 
+	      if ( nsp_insert_module_last(L,Sm->S[i],oname) == FAIL) 
 		{
 		  *pname = name;
 		  return NULLOBJ;
 		}
 	      *pname = name;
-	      Ob= LmoSearchName(L,oname);
+	      Ob= nsp_module_search_name(L,oname);
 	      return Ob;
 	    }
 	}
@@ -303,12 +237,12 @@ NspObject *lmo_path_search_name(NspLmo *L,NspSMatrix *Sm,char **oname)
  * current frame and also returns it 
  *********************************************/
 
-NspObject *lmo_path_search_object(NspLmo *L,NspSMatrix *Sm,char **oname)
+NspObject *module_path_search_object(NspList *L,NspSMatrix *Sm,char **oname)
 {
   NspFile *F;
   char buf[MAX_PATH], *loc;
   /* is object in the module search path */ 
-  NspObject *Ob=lmo_path_search_name(L,Sm,oname);
+  NspObject *Ob=module_path_search_name(L,Sm,oname);
   if ( Ob == NULLOBJ) return NULLOBJ; 
   /* object is supposed to be a Me object 
    * 
@@ -321,10 +255,10 @@ NspObject *lmo_path_search_object(NspLmo *L,NspSMatrix *Sm,char **oname)
   /* we load the binary object found in buf */ 
   if (( F = SciFileOpenXdrR(buf)) == NULLSCIFILE) return NULLOBJ;
   Ob=nsp_object_xdr_load(F);
- nsp_object_xdr_load(F); /* not to have a warning when closing */
+  nsp_object_xdr_load(F); /* not to have a warning when closing */
   if ( SciFileCloseXdrR(F) == FAIL)
     {
- nsp_void_object_destroy(&Ob);
+      nsp_void_object_destroy(&Ob);
       return NULLOBJ;
     }
   strcpy(buf,oname[0]);
@@ -335,10 +269,10 @@ NspObject *lmo_path_search_object(NspLmo *L,NspSMatrix *Sm,char **oname)
   }
   if ((loc = Ob->type->set_name(Ob,buf))== NULL)
     {
- nsp_void_object_destroy(&Ob);
+      nsp_void_object_destroy(&Ob);
       return NULLOBJ;
     }
- nsp_frame_replace_object(Ob);
+  nsp_frame_replace_object(Ob);
   return Ob;
 }
 

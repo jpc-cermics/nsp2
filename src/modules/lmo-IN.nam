@@ -1,7 +1,0 @@
-{"lmocreate",int_lmocreate},  		
-{"info_lmo",int_lmoinfo},       	
-{"print_lmo",int_lmoprint},     	
-{"insert",int_lmoinsertlast},  		
-{"search",int_lmosearch},  		
-{"pathsearch",int_lmopathsearch},  		
-{"import",int_lmoimport},  		
