@@ -87,6 +87,16 @@ static int XgcAllocColors( BCG *xgc, int m)
 
 Gengine * nsp_gengine = &Gtk_gengine ;
 
+/* 
+ * force expose events to be executed 
+ */
+
+void force_affichage(BCG *Xgc)
+{
+  /* Xgc->private->resize = 1; */
+  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+}
+
 /*---------------------------------------------------------
  * Next routine are used to deal with the extra_pixmap 
  * which is used when xset('pixmap',1) is activated at 
@@ -113,6 +123,12 @@ static void xset_show(BCG *Xgc)
       gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
     }
+  else
+    {
+      /* see the comments at the begining */
+      force_affichage(Xgc);
+    }
+
 }
 
 /*
@@ -2391,8 +2407,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
    * initialize performs a switch from old value to new value 
    */
 
-  /* Default value is without Pixmap **/
-  NewXgc->private->drawable = (GdkDrawable *) NewXgc->private->drawing->window;  
   NewXgc->CurPixmapStatus = 0; 
   /* default colormap not instaled */
   NewXgc->CmapFlag = -1; 

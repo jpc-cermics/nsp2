@@ -72,7 +72,7 @@ static t_camera nouvelle_camera(float px, float py, float pz,
  * OpenGL 
  */
 
-void force_affichage(BCG *Xgc);
+static void force_affichage(BCG *Xgc);
 void nsp_ogl_set_view(BCG *Xgc);
 static bool LoadTGA(TextureImage *texture, char *filename);
 static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col);
@@ -3132,7 +3132,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 static void nsp_gtk_invalidate(BCG *Xgc)
 {
   /* put an expose in the queue as if the window was resized */
-  Xgc->private->resize = 1;
+  Xgc->private->resize = 1; 
   gdk_window_invalidate_rect(Xgc->private->drawing->window,
 			     &Xgc->private->drawing->allocation,
 			     FALSE);
@@ -3586,10 +3586,10 @@ t_camera nouvelle_camera(float px, float py, float pz,
 }
 
 /* 
- * add an expose event in the event queue. 
+ * force expose events to be executed 
  */
 
-void force_affichage(BCG *Xgc)
+static void force_affichage(BCG *Xgc)
 {
   Xgc->private->resize = 1;
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
@@ -3866,7 +3866,7 @@ static void init_opgl(BCG *Xgc)
   */
   xset_background(Xgc,Xgc->NumBackground+1);
   glClearDepth(1.0); 
-
+  //     glDrawBuffer(GL_FRONT_AND_BACK);
   //     glEnable(GL_TEXTURE_2D);
   //     glEnable (GL_CULL_FACE);
   //     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); 

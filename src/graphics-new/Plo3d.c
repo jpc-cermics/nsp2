@@ -2339,7 +2339,7 @@ void I3dRotation(BCG *Xgc)
       x=(xl-Xgc->scales->frect[0])*xx;
       y=(yl-Xgc->scales->frect[1])*yy;
     }
-  Xgc->graphic_engine->clearwindow(Xgc);
+  Xgc->graphic_engine->clearwindow(Xgc); 
   tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
   force_affichage(Xgc);
 }

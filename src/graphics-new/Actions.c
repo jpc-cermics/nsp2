@@ -306,8 +306,6 @@ void  scig_unzoom(int win_num)
 void scig_3drot(int win_num)
 {
   BCG *Xgc;
-  if ( scig_buzy  == 1 ) return ;
-  scig_buzy =1;
   if ((Xgc= window_list_search(win_num)) == NULL) return;
   if ( Xgc->record_flag != TRUE ) 
     {
@@ -317,7 +315,6 @@ void scig_3drot(int win_num)
     {
       I3dRotation(Xgc);
     }
-  scig_buzy = 0;
 }
 
 
