@@ -19,6 +19,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*  juste une modif bidon pour tester mon accès en écriture */
 
 #include <stdlib.h>
 #include <math.h>
