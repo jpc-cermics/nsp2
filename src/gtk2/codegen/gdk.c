@@ -2263,14 +2263,14 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
 		      { "best_match",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  CheckRhs(2,6);
-  if ( IsMatObj(stack,2)) 
+  CheckRhs(1,3);
+  if ( IsMatObj(stack,1)) 
     {
       NspMatrix *colours;
       int_types T[] = { realmat , new_opts, t_end};
       if (GetArgs(stack,rhs,opt,T, &colours, &opts, &writeable, &best_match) == FAIL ) 
 	return RET_BUG;
-      CheckCols(stack.fname,2,colours,3);
+      CheckCols(stack.fname,1,colours,3);
       for ( i= 0 ; i < colours->m ; i++)
 	{
 	  colour.red = colours->R[i];
@@ -2284,7 +2284,7 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
 	    }
 	}
     }
-  else if ( IsSMatObj(stack,2)) 
+  else if ( IsSMatObj(stack,1)) 
     {
       NspSMatrix *colours=NULL;
       int_types T[] = { smat , new_opts, t_end};
@@ -3172,12 +3172,12 @@ _wrap_gdk_drag_find_window(NspGObject *self, Stack stack,int rhs,int opt,int lhs
 static int _wrap_gdk_drag_motion(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, s_int, s_int, obj, obj, s_int,t_end};
-  GdkDragProtocol protocol;
   NspObject *nsp_protocol = NULL, *nsp_suggested_action = NULL, *nsp_possible_actions = NULL;
-  GdkDragAction suggested_action, possible_actions;
   int x_root, y_root, ret;
   NspGObject *dest_window;
   gulong time;
+  GdkDragProtocol protocol;
+  GdkDragAction suggested_action, possible_actions;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &dest_window, &nsp_protocol, &x_root, &y_root, &nsp_suggested_action, &nsp_possible_actions, &time) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_DRAG_PROTOCOL, nsp_protocol, (gint *)&protocol)== FAIL)
@@ -7288,11 +7288,11 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
   GdkBitmap *mask;
   NspObject *nsp_pixmap, *nsp_mask;
 
-  CheckRhs(1,2);
+  CheckRhs(0,1);
   CheckLhs(1,2);
-  if ( rhs == 2) 
+  if ( rhs == 1) 
     {
-      if ( GetScalarInt(stack,2,&alpha_threshold) == FAIL) return RET_BUG; 
+      if ( GetScalarInt(stack,1,&alpha_threshold) == FAIL) return RET_BUG; 
     }
   if ( lhs == 2) 
     {
@@ -7610,10 +7610,10 @@ static int _wrap_gdk_pixbuf_composite_color(NspGdkPixbuf *self,Stack stack,int r
 {
   int_types T[] = {obj_check, s_int, s_int, s_int, s_int, s_double, s_double, s_double, s_double, obj, s_int, s_int, s_int, s_int, s_int, s_int,t_end};
   NspObject *nsp_interp_type = NULL;
-  double offset_x, offset_y, scale_x, scale_y;
   int dest_x, dest_y, dest_width, dest_height, overall_alpha, check_x, check_y, check_size;
   NspGObject *dest;
   gulong color1, color2;
+  double offset_x, offset_y, scale_x, scale_y;
   GdkInterpType interp_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkpixbuf, &dest, &dest_x, &dest_y, &dest_width, &dest_height, &offset_x, &offset_y, &scale_x, &scale_y, &nsp_interp_type, &overall_alpha, &check_x, &check_y, &check_size, &color1, &color2) == FAIL) return RET_BUG;
@@ -9776,12 +9776,12 @@ int _wrap_gdk_pointer_grab(Stack stack, int rhs, int opt, int lhs)
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
   NspObject *nsp_event_mask = NULL, *nsp_cursor = NULL;
-  GdkEventMask event_mask = 0;
-  GdkWindow *confine_to = NULL;
-  GdkCursor *cursor = NULL;
   int owner_events = FALSE;
   NspGObject *window, *nsp_confine_to = NULL;
   gulong time = GDK_CURRENT_TIME;
+  GdkEventMask event_mask = 0;
+  GdkWindow *confine_to = NULL;
+  GdkCursor *cursor = NULL;
   gint ret;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, opts, &owner_events, &nsp_event_mask, &nsp_confine_to, &nsp_cursor, &time) == FAIL) return RET_BUG;
@@ -10306,12 +10306,12 @@ int _wrap_gdk_unicode_to_keyval(Stack stack, int rhs, int opt, int lhs)
 int _wrap_gdk_pixmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj_check, string, s_int, s_int, s_int, obj, obj,t_end};
-  guchar *data;
   NspObject *nsp_fg, *nsp_bg, *nsp_ret;
   GdkPixmap *ret;
   int width, height, depth;
   NspGObject *drawable;
   GdkColor *fg = NULL, *bg = NULL;
+  guchar *data;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdrawable, &drawable, &data, &width, &height, &depth, &nsp_fg, &nsp_bg) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_fg, GDK_TYPE_COLOR))
@@ -10437,12 +10437,12 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
 int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj, string, s_int, s_int,t_end};
-  GdkDrawable *drawable = NULL;
-  guchar *data;
-  NspObject *nsp_ret;
   GdkBitmap *ret;
+  NspObject *nsp_ret;
   int width, height;
   NspGObject *nsp_drawable;
+  GdkDrawable *drawable = NULL;
+  guchar *data;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_drawable, &data, &width, &height) == FAIL) return RET_BUG;
   if ( IsGdkDrawable((NspObject *)nsp_drawable))

@@ -81,10 +81,10 @@ RC=windres
 RCVARS=-O coff 
 
 .c.o:
-	@echo "compiling $< (debug)"
+	@echo "compiling $< (enable debug)"
 	@$(CC) $(CFLAGS)  -c $<
 
 .f.o:
-	@echo "compiling $< (debug)"
+	@echo "compiling $< (enable debug)"
 	@$(FC) $(FFLAGS)  -c $<
 

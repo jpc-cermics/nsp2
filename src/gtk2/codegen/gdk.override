@@ -1917,11 +1917,11 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
   GdkBitmap *mask;
   NspObject *nsp_pixmap, *nsp_mask;
 
-  CheckRhs(1,2);
+  CheckRhs(0,1);
   CheckLhs(1,2);
-  if ( rhs == 2) 
+  if ( rhs == 1) 
     {
-      if ( GetScalarInt(stack,2,&alpha_threshold) == FAIL) return RET_BUG; 
+      if ( GetScalarInt(stack,1,&alpha_threshold) == FAIL) return RET_BUG; 
     }
   if ( lhs == 2) 
     {
@@ -2073,14 +2073,14 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
 		      { "best_match",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  CheckRhs(2,6);
-  if ( IsMatObj(stack,2)) 
+  CheckRhs(1,3);
+  if ( IsMatObj(stack,1)) 
     {
       NspMatrix *colours;
       int_types T[] = { realmat , new_opts, t_end};
       if (GetArgs(stack,rhs,opt,T, &colours, &opts, &writeable, &best_match) == FAIL ) 
 	return RET_BUG;
-      CheckCols(stack.fname,2,colours,3);
+      CheckCols(stack.fname,1,colours,3);
       for ( i= 0 ; i < colours->m ; i++)
 	{
 	  colour.red = colours->R[i];
@@ -2094,7 +2094,7 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
 	    }
 	}
     }
-  else if ( IsSMatObj(stack,2)) 
+  else if ( IsSMatObj(stack,1)) 
     {
       NspSMatrix *colours=NULL;
       int_types T[] = { smat , new_opts, t_end};
