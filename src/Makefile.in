@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 include ../Makefile.incl
 
-SCIDIRS = zcalelm objects interp functions mexlib gtk2 \
+SCIDIRS = zcalelm objects interp functions gtk2 \
 	system graphics menus gtksci gzvt2 modules gobjects types-test \
 	librand libcdf libblas 
 
