@@ -40,7 +40,7 @@ static void C2F(fac3dg) ( BCG *Xgc,char *name, int iflag, double *x, double *y, 
 			  int *cvect, int *p, int *q, double *teta, double *alpha,
 			  char *legend, int *flag, double *bbox);
 
-static void dbox (BCG *Xgc);
+static void dbox(BCG *Xgc,double theta,double alpha);
 
 static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox);
 
@@ -1479,79 +1479,77 @@ void BBoxToval(double *x, double *y, double *z, int ind, double *bbox)
  *  interactive rotation of a 3d plot 
  *--------------------------------------*/
 
-/* Changement interactif de 3d **/
-static double theta,alpha;
+/*-------------------------------------
+ * Interactive change of view angle 
+ * with full redraw when the mouse moves 
+ * The process is initiated by a click and 
+ * stopped when the mouse is released 
+ *--------------------------------------*/
 
-void I3dRotation_OK(BCG *Xgc)
+/* Changement interactif de 3d **/
+
+void I3dRotation(BCG *Xgc)
 {
+  int box_only = FALSE;
+  double theta,alpha;
   int flag[3],pixmode,alumode;
-  static int iflag[]={0,0,0,0};
+  int iflag[]={0,0,0,0};
   double xx,yy;
   double theta0,alpha0;
+  int ibutton,iwait=FALSE,istr=0;
+  double x0,yy0,x,y,xl,yl,bbox[4];
+  /* FIXME */
   if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
     {
       Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
       return;
     }
-  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
-  yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
-  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
-  alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
   if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
     {
       Xgc->graphic_engine->xinfo(Xgc,"3d rotation is not possible when recording is not on" );
       return;
     }
-  else 
+  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
+  yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
+  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
+  theta=Xgc->scales->theta ;
+  alpha=Xgc->scales->alpha ;
+  x0=(x0-Xgc->scales->frect[0])*xx;
+  yy0=(yy0-Xgc->scales->frect[1])*yy;
+  x=x0;y=yy0;
+  theta0=theta;
+  alpha0=alpha;
+  ibutton=-1;
+  while ( ibutton == -1 ) 
     {
-      int ibutton,iwait=FALSE,istr=0;
-      double x0,yy0,x,y,xl,yl,bbox[4];
-#ifdef WIN32
-      SetWinhdc();
-      SciMouseCapture();
-      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-#else
-      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-#endif
-      if ( pixmode == 0 ) Xgc->graphic_engine->scale->xset_alufunction1(Xgc,6);
-      Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
-      Xgc->graphic_engine->clearwindow(Xgc);
-      theta=Xgc->scales->theta ;
-      alpha=Xgc->scales->alpha ;
-      
-      x0=(x0-Xgc->scales->frect[0])*xx;
-      yy0=(yy0-Xgc->scales->frect[1])*yy;
-      x=x0;y=yy0;
-      theta0=theta;
-      alpha0=alpha;
-      ibutton=-1;
-      while ( ibutton == -1 ) 
+      theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
+      Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
+      if ( box_only == TRUE) 
 	{
-	  /* dessin d'un rectangle */
-	  theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
-	  Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
-	  if ( pixmode == 1) Xgc->graphic_engine->scale->xset_pixmapclear(Xgc);
-	  dbox(Xgc);
+	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+	  Xgc->graphic_engine->clearwindow(Xgc);    
+	  dbox(Xgc,theta,alpha);
 	  if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
-	  Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
-	  /* effacement du rectangle */
-	  dbox(Xgc);
-	  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
-	  yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
-	  x=(xl-Xgc->scales->frect[0])*xx;
-	  y=(yl-Xgc->scales->frect[1])*yy;
+	  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
 	}
-      if ( pixmode == 0) Xgc->graphic_engine->scale->xset_alufunction1(Xgc,3);
-      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-      Xgc->graphic_engine->clearwindow(Xgc);
-      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
-#ifdef WIN32
-      ReleaseWinHdc();
-      SciMouseRelease();
-#endif
-      tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
+      else 
+	{
+	  /* just changes the angles in recorded plots */
+	  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
+	  /* immediate redraw */
+	  force_redraw(Xgc);
+	}
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,TRUE,FALSE);
+      xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
+      yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
+      x=(xl-Xgc->scales->frect[0])*xx;
+      y=(yl-Xgc->scales->frect[1])*yy;
     }
+  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
+  force_redraw(Xgc);
 }
+
 
 /*
  * Win32, warning when using xor mode
@@ -1560,7 +1558,7 @@ void I3dRotation_OK(BCG *Xgc)
  * inside dbox
  */
 
-static void dbox(BCG *Xgc)
+static void dbox(BCG *Xgc,double theta,double alpha)
 {
   double xbox[8],ybox[8],zbox[8];
 #ifdef WIN32
@@ -1578,6 +1576,7 @@ static void dbox(BCG *Xgc)
    Xgc->graphic_engine->xset_pattern(pat);
 #endif
 }
+
 
 /**************** New functions for interpolated shading **********************
  *
@@ -2324,55 +2323,3 @@ int nsp_plot_box3d_ogl(BCG *Xgc,double *xbox, double *ybox, double *zbox)
 
 }
 
-
-
-
-/*-------------------------------------
- * Interactive change of view angle 
- * with full redraw when the mouse moves 
- * The process is initiated by a click and 
- * stopped when the mouse is released 
- *--------------------------------------*/
-
-/* Changement interactif de 3d **/
-static double theta,alpha;
-
-void I3dRotation(BCG *Xgc)
-{
-  int flag[3],pixmode,alumode;
-  static int iflag[]={0,0,0,0};
-  double xx,yy;
-  double theta0,alpha0;
-  int ibutton,iwait=FALSE,istr=0;
-  double x0,yy0,x,y,xl,yl,bbox[4];
-  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
-  yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
-  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
-  theta=Xgc->scales->theta ;
-  alpha=Xgc->scales->alpha ;
-  x0=(x0-Xgc->scales->frect[0])*xx;
-  yy0=(yy0-Xgc->scales->frect[1])*yy;
-  x=x0;y=yy0;
-  theta0=theta;
-  alpha0=alpha;
-  ibutton=-1;
-  while ( ibutton == -1 ) 
-    {
-      theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
-      Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
-      Xgc->graphic_engine->clearwindow(Xgc);
-      tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
-      /* force drawing: FIXME */
-      force_redraw(Xgc);
-      /* force_affichage(Xgc); */
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,TRUE,FALSE);
-      xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
-      yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
-      x=(xl-Xgc->scales->frect[0])*xx;
-      y=(yl-Xgc->scales->frect[1])*yy;
-    }
-  Xgc->graphic_engine->clearwindow(Xgc);
-  tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
-  force_redraw(Xgc);
-  /* force_affichage(Xgc); */
-}

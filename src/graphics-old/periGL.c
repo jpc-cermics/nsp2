@@ -50,6 +50,8 @@
 #define FONTMAXSIZE 6
 #define SYMBOLNUMBER 10
 
+#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )  {  nsp_gtk_invalidate(Xgc); Xgc->private->draw = TRUE;  return; }
+
 static char Marks[] = {
   /*., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
   (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
@@ -245,11 +247,11 @@ void xend(BCG *Xgc)
 
 static void clearwindow(BCG *Xgc)
 {
+  DRAW_CHECK;
   glClearColor(Xgc->private->gcol_bg.red /255.0,
 	       Xgc->private->gcol_bg.green /255.0,
 	       Xgc->private->gcol_bg.blue /255.0,0.0);
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /* generates a pause, in seconds */
@@ -706,8 +708,8 @@ static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_
 
 static void cleararea(BCG *Xgc, int x, int y, int w, int h)
 {
+  DRAW_CHECK;
   RectangleClear(Xgc,x,y,w,h,0,R_clear);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -1789,6 +1791,7 @@ static int CheckColormap(BCG *Xgc,int *m)
 
 static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
 {
+  DRAW_CHECK;
   /*
    * Une police de taille 12 = une texture-fonte d'homotethie ECHELLE_CHAR (0.6) !!
    */
@@ -1864,20 +1867,20 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 
 static void drawline(BCG *Xgc,int x1, int y1, int x2, int y2)
 {
+  DRAW_CHECK;
   glBegin(GL_LINES);
   glVertex2i(x1, y1);
   glVertex2i(x2, y2);
   glEnd();
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double y2, double z2)
 {
+  DRAW_CHECK;
   glBegin(GL_LINES);
   glVertex3d(x1, y1, z1);
   glVertex3d(x2, y2, z2);
   glEnd();
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /** Draw a set of segments **/
@@ -1907,6 +1910,7 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
 void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag)
 {
   int dash,color,i;
+  DRAW_CHECK;
   xget_dash_and_color(Xgc,&dash,&color);
   if ( iflag == 1) { /* one style per segment */
     for (i=0 ; i < n/2 ; i++) {
@@ -1936,6 +1940,7 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
   double cos20=cos(20.0*M_PI/180.0);
   double sin20=sin(20.0*M_PI/180.0);
   int polyx[4],polyy[4];
+  DRAW_CHECK;
   xget_dash_and_color(Xgc,&dash,&color);
   for (i=0 ; i < n/2 ; i++)
     { 
@@ -1979,6 +1984,7 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
      int i,dash,color;
+  DRAW_CHECK;
      xget_dash_and_color(Xgc,&dash,&color);
      for (i = 0 ; i < n ; i++)
      {
@@ -2000,35 +2006,32 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 	  }
      }
      xset_dash_and_color(Xgc,dash,color);
-
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
-
 }
 
 /** Draw one rectangle with current line style **/
 
 static void drawrectangle(BCG *Xgc,const int rect[])
 {   
+  DRAW_CHECK;
   glBegin(GL_LINE_LOOP);
   glVertex2i(rect[0]        ,rect[1]);
   glVertex2i(rect[0]+rect[2],rect[1]);
   glVertex2i(rect[0]+rect[2],rect[1]+rect[3]);
   glVertex2i(rect[0]        ,rect[1]+rect[3]);
   glEnd();
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /** fill one rectangle, with current pattern **/
 
 static void fillrectangle(BCG *Xgc,const int rect[])
 { 
+  DRAW_CHECK;
   glBegin(GL_QUADS);
   glVertex2i(rect[0]        ,rect[1]);
   glVertex2i(rect[0]+rect[2],rect[1]);
   glVertex2i(rect[0]+rect[2],rect[1]+rect[3]);
   glVertex2i(rect[0]        ,rect[1]+rect[3]);
   glEnd();
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /*----------------------------------------------------------------------------------
@@ -2044,6 +2047,7 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
      double zmoy,zmax,zmin,zmaxmin;
      int tab[4];
      int i,j,whiteid,fill[1],cpat,xz[2];
+  DRAW_CHECK;
      zmin=Mini(z,(n1)*(n2));
      zmax=Maxi(z,(n1)*(n2));
      zmaxmin=zmax-zmin;
@@ -2071,15 +2075,6 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
 			 tab[2] = w;
 			 tab[3] = h;
 			 fillrectangle(Xgc,tab);
-
-
-			 /*
-			   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, 
-			   TRUE,x[i],y[j+1],w,h);
-			   if ( Xgc->private->drawable == Xgc->private->drawing->window) 
-			   gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc,
-			   TRUE,x[i],y[j+1],w,h);
-			 */
 		    }
 	  }
      xset_pattern(Xgc,cpat);
@@ -2101,6 +2096,7 @@ static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, in
 {
      int i,j,fill[1],cpat,xz[2];
      int tab[4];
+  DRAW_CHECK;
      cpat = xget_pattern(Xgc);
      xget_windowdim(Xgc,xz,xz+1);
 
@@ -2121,12 +2117,6 @@ static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, in
 			 tab[2] = w;
 			 tab[3] = h;
 			 fillrectangle(Xgc,tab);
-
-/* 			 gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc,  */
-/* 					    TRUE,x[j],y[i],w,h); */
-/* 			 if ( Xgc->private->drawable == Xgc->private->drawing->window)  */
-/* 			      gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc, */
-/* 						 TRUE,x[j],y[i],w,h); */
 		    }
 	  }
      xset_pattern(Xgc,cpat);
@@ -2150,26 +2140,25 @@ static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, in
 
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
-     int i,cpat,verb;
-     verb=0;
-     cpat = xget_pattern(Xgc);
-     for (i=0 ; i< n ; i++)
-     {
-	  if (fillvect[i] > Xgc->IDLastPattern + 1)
-	  {
-	       xset_pattern(Xgc,cpat);
-	       drawarc(Xgc,vects+6*i);
-
-	  }
-	  else
-	  {
-	       xset_pattern(Xgc,fillvect[i]);
-	       fillarc(Xgc,vects+6*i);
-	  }
-     }
-     xset_pattern(Xgc,cpat);
-
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
+  int i,cpat,verb;
+  DRAW_CHECK;
+  verb=0;
+  cpat = xget_pattern(Xgc);
+  for (i=0 ; i< n ; i++)
+    {
+      if (fillvect[i] > Xgc->IDLastPattern + 1)
+	{
+	  xset_pattern(Xgc,cpat);
+	  drawarc(Xgc,vects+6*i);
+	  
+	}
+      else
+	{
+	  xset_pattern(Xgc,fillvect[i]);
+	  fillarc(Xgc,vects+6*i);
+	}
+    }
+  xset_pattern(Xgc,cpat);
 }
 
 /*
@@ -2186,6 +2175,7 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
      int dash,color,i;
      /* store the current values */
+  DRAW_CHECK;
      xget_dash_and_color(Xgc,&dash,&color);
      for (i=0 ; i< n ; i++)
      {
@@ -2200,6 +2190,7 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
+  DRAW_CHECK;
      gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
      if ( Xgc->private->drawable == Xgc->private->drawing->window) 
 	  gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
@@ -2210,6 +2201,7 @@ static void drawarc(BCG *Xgc,int arc[])
 
 static void fillarc(BCG *Xgc,int arc[])
 { 
+  DRAW_CHECK;
      gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
      if ( Xgc->private->drawable == Xgc->private->drawing->window) 
 	  gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
@@ -2231,6 +2223,7 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 { 
      int symb[2],dash,color,i,close;
      /* store the current values */
+  DRAW_CHECK;
      xget_mark(Xgc,symb);
      xget_dash_and_color(Xgc,&dash,&color);
 
@@ -2272,6 +2265,7 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
      int dash,color,i;
+  DRAW_CHECK;
      xget_dash_and_color(Xgc,&dash,&color);
      for (i = 0 ; i< n ; i++)
      {
@@ -2309,6 +2303,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 { 
   gint i;
   if ( n <= 1) return;
+  DRAW_CHECK;
   if ( closeflag == 1 ) 
     glBegin(GL_LINE_LOOP);
   else
@@ -2329,6 +2324,7 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 {
   gint i;
   if ( n <= 1) return;
+  DRAW_CHECK;
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) glVertex2i( vx[i], vy[i]);
   glEnd();
@@ -2357,6 +2353,8 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
 {
      int dash,color,i;
+  DRAW_CHECK;
+
      xget_dash_and_color(Xgc,&dash,&color);
      for (i = 0 ; i< n ; i++)
      {
@@ -2388,6 +2386,8 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 {
   gint i;
   if ( n <= 1) return;
+  DRAW_CHECK;
+
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) glVertex3d( vx[i], vy[i], vz[i]);
   glEnd();
@@ -2399,6 +2399,8 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 { 
   gint i;
   if ( n <= 1) return;
+  DRAW_CHECK;
+
   if ( closeflag == 1 ) 
     glBegin(GL_LINE_LOOP);
   else
@@ -2415,6 +2417,8 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 
 static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 {
+  DRAW_CHECK;
+
   if ( Xgc->CurHardSymb == 0 )
     {
       gint i;
@@ -2443,6 +2447,7 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 */
 static void drawpolymark3D(BCG *Xgc,double *vx, double *vy, double *vz, int n)
 {
+  DRAW_CHECK;
      printf("Fuck off : va falloir utiliser le billboarding pour la fct drawpolymark3D !!\n");
 }
 
@@ -2454,6 +2459,7 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 { 
      int symb[2],dash,color,i,close;
      /* store the current values */
+  DRAW_CHECK;
      Xgc->graphic_engine->xget_mark(Xgc,symb);
      xget_dash_and_color(Xgc,&dash,&color);
 
@@ -2638,6 +2644,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
      private->font=NULL;
      private->resize = 0; /* do not remove !! */
      private->in_expose= FALSE;
+     private->draw= FALSE;
 
      if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
      {
@@ -2791,6 +2798,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
      int i;
      double xi,yi,xf,yf;
      double cosal,sinal;
+  DRAW_CHECK;
      cosal= cos( (double)M_PI * (alpha)/180.0);
      sinal= sin( (double)M_PI * (alpha)/180.0);
      for (i=0; i <= nsteps[0]*nsteps[1]; i++)
@@ -2975,6 +2983,7 @@ static int CurSymbYOffset(BCG *Xgc)
 static void DrawMark(BCG *Xgc,int *x, int *y)
 { 
   char str[2];
+  DRAW_CHECK;
   str[0]=Marks[Xgc->CurHardSymb];
   str[1] = '\0';
   glPrint2D(Xgc, *x,*y, ECHELLE_CHAR, 0, false, str);
@@ -3161,8 +3170,8 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  return FALSE;
 	}
       
-      /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
-      glClear(GL_DEPTH_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      /* glClear(GL_DEPTH_BUFFER_BIT); */
 
       nsp_ogl_set_view(dd);
 
@@ -3179,11 +3188,24 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     }
   else 
     {
-      /* just an expose we use the back buffer */
+      /* just an expose without resizing 
+       * we need to redraw 
+       */ 
       if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
 	{
 	  return FALSE;
 	}
+
+      if ( TRUE || dd->private->draw == TRUE )  /* always redraw */
+	{
+	  glClear(GL_DEPTH_BUFFER_BIT);
+	  dd->private->draw = FALSE;
+	  /* need to redraw */
+	  dd->private->in_expose= TRUE;
+	  scig_replay(dd->CurWindow);
+	  dd->private->in_expose= FALSE;
+	}
+
       if (gdk_gl_drawable_is_double_buffered (gldrawable))
 	gdk_gl_drawable_swap_buffers (gldrawable);
       else
@@ -3314,19 +3336,17 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
     {
       g_print ("*** Cannot find the double-buffered visual.\n");
       g_print ("*** Trying single-buffered visual.\n");
-      
-      exit(1);
       /* Try single-buffered visual */
       glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
 					    GDK_GL_MODE_DEPTH);
       if (glconfig == NULL)
 	{
 	  g_print ("*** No appropriate OpenGL-capable visual found.\n");
-	  exit (1);
+	  return;
 	}
      }
-     /* commenter --- decommenter */
-     examine_gl_config_attrib(glconfig);
+  /* commenter --- decommenter */
+  examine_gl_config_attrib(glconfig);
 
   /* initialise pointers */
   dd->private->drawing = NULL;

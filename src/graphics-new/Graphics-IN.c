@@ -3294,7 +3294,7 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
   int *iflag = iflag_def,*aint = aint_def,*iscflag = iscflag_def, *flagx= flagx_def,num;
   double alpha = 35.0 ,theta = 45.0,  *rect = rect_def ,*ebox = ebox_def ;
 
-  static char *xtape_Table[] = {  "on","clear","replay","replaysc","replayna",  NULL };
+  static char *xtape_Table[] = {  "on","clear","replay","replaysc","replayna","off",  NULL };
 
   CheckRhs(1,7);
   Xgc=nsp_check_graphic_context();
@@ -3361,7 +3361,13 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
       }
       Xgc->graphic_engine->tape_replay_new_angles(Xgc,num,iflag,flagx,&theta,&alpha,ebox); /*  */
       break;
+    case 5: /* off */
+      CheckRhs(1,1);
+      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+      break;
+
     }
+  
   return 0;
 }
 

@@ -2807,7 +2807,7 @@ void tape_replay_undo_scale(BCG *Xgc,int winnumber)
 /*---------------------------------------------------------------------
  * used when zooming: replay with a new scale 
  * the new scale is coded in bbox=[xmin,ymin,xmax,ymax] 
- * the problem is a bit complex if we have manu subwindows 
+ * the problem is a bit complex if we have many subwindows 
  *---------------------------------------------------------------------------*/
 
 void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,  double *bbox)

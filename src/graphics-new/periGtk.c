@@ -9,6 +9,7 @@
  * 
  * FIXME: peut-etre enlever le double_buffer du drawin-area 
  *        puisqu'on le gère directement 
+ *
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -26,7 +27,17 @@
 #include "nsp/command.h"
 
 
-#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )  {  nsp_gtk_invalidate(Xgc); Xgc->private->draw = TRUE;  return; }
+/*
+ * 
+ *  Xgc->record_flag == TRUE if we are recording graphics 
+ *  Xgc->private->in_expose == TRUE if the call is from an expose_event 
+ *  Xgc->CurPixmapStatus == 0 if we are not using an extra pixmap 
+ *  
+ * 
+ */ 
+
+#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
+   {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
 
 /** Global variables to deal with X11 **/
 
@@ -100,8 +111,13 @@ void force_affichage(BCG *Xgc)
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
+/* 
+ * force an expose_event with draw set to TRUE
+ */
+
 void force_redraw(BCG *Xgc)
 {
+  nsp_gtk_invalidate(Xgc);
   Xgc->private->draw = TRUE; 
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
@@ -671,7 +687,7 @@ static int xget_recording(BCG *Xgc)
 
 static void xset_recording(BCG *Xgc, int val)
 {
-  Xgc->record_flag = (val == 0 ) ? FALSE : TRUE;
+  Xgc->record_flag =  val;
 }
 /** to get the window upper-left point coordinates on the screen  **/
 
@@ -1797,6 +1813,7 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
   int dash,color,i;
+  DRAW_CHECK;
   xget_dash_and_color(Xgc,&dash,&color);
   if ( iflag == 1) { /* one style per segment */
     for (i=0 ; i < n/2 ; i++) {
@@ -3059,8 +3076,8 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     {
       if ( dd->private->draw == TRUE ) 
 	{
-	  dd->private->draw = FALSE;
 	  /* need to redraw */
+	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
 	  scig_replay(dd->CurWindow);
 	  dd->private->in_expose= FALSE;
