@@ -1644,31 +1644,6 @@ Pixmap get_private->pixmap(i)
 }
 */
 
-/*****************************************************
- * return 1 : if the current window exists 
- *            and its colormap is not the default 
- *            colormap (the number of colors is returned in m
- * else return 0 
- * Only used for periFig which is to be updated XXXXXX 
- *****************************************************/
-
-int CheckColormap(BCG *Xgc,int *m)
-{
-  if (  Xgc != (BCG *) 0 ) 
-    {
-      *m =  Xgc->Numcolors;
-      if ( Xgc->CmapFlag  != 1) 
-	return 1;
-      else 
-	return 0;
-    }
-  else 
-    { 
-      *m=0;
-      return(0);
-    }
-}
-
 /*-----------------------------------------------------------
  * general routines accessing the previous  set<> or get<> 
  *-----------------------------------------------------------*/

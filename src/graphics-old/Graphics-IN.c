@@ -216,9 +216,9 @@ static char * check_strf(Stack stack,char *fname,char *varname,char *strf)
  * FIXME should return a const char *
  *-----------------------------------------------------------*/
 
-static const char legend_loc[]  = "";
+static char legend_loc[]  = "";
 
-static const char * check_legend(Stack stack,char *fname,char *varname, char *legend)
+static char * check_legend(Stack stack,char *fname,char *varname, char *legend)
 {
   return ( legend == NULL ) ? legend_loc: legend; 
 }
@@ -977,7 +977,7 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
 	targs[0] =(NspObject *) xi;
 	targs[1] = (NspObject *) yj;
 	if ( targs[0]== NULL ||targs[1]== NULL )  goto end;
-	/* XXXX a changer pour metre une fonction eval standard */
+	/* FIXME : a changer pour metre une fonction eval standard */
 	if ( nsp_gtk_eval_function((NspPList *)func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
 	  goto end;
 	if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' && ((NspMatrix *) nsp_ret)->mn==1 )

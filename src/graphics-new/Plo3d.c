@@ -1540,14 +1540,14 @@ void I3dRotation(BCG *Xgc)
 	  /* just changes the angles in recorded plots */
 	  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
 	  /* immediate redraw */
-	  force_redraw(Xgc);
+	  Xgc->graphic_engine->force_redraw(Xgc);
 	}
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&xc, &yc,FALSE,TRUE,TRUE,FALSE);
       x=xc;
       y=yc;
     }
   new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
-  force_redraw(Xgc);
+  Xgc->graphic_engine->force_redraw(Xgc);
 }
 
 

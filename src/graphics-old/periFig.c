@@ -1541,6 +1541,13 @@ must check size and cut into pieces big objects}
 
 #define AREAF(x) Max(0,Min(20,(int) (20.0*((double) x) /((double) GREYNUMBER -1 ))))
 
+/* FIXME: */
+
+static int CheckColormap(BCG *Xgc,int *m) 
+{
+  return 0;
+}
+
 static void xset_pattern_or_color(BCG *Xgc,int pat, int *areafill, int *color)
 {
   if (  Xgc->CurColorStatus == 1) 

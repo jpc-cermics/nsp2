@@ -408,4 +408,23 @@ void scig_savesg(char *filename, int win_num)
   tape_save(Xgc,filename,win_num);
 }
 
+/**
+ * nsp_set_graphic_eventhandler:
+ * @win_num: 
+ * @name: 
+ * @ierr: 
+ * 
+ * FIXME: Feature to be removed: Used to set the EventHandler field of win_num properties 
+ * this is to be changed one day. 
+ **/
+
+void nsp_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
+{  
+  BCG *SciGc;
+  /*ButtonPressMask|PointerMotionMask|ButtonReleaseMask|KeyPressMask */
+  *ierr = 0;
+  SciGc = window_list_search(*win_num);
+  if ( SciGc ==  NULL ) {*ierr=1;return;}
+  strncpy(SciGc->EventHandler,name,NAME_MAXL);
+}
 

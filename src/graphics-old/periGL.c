@@ -75,12 +75,10 @@ static t_camera nouvelle_camera(float px, float py, float pz,
  */
 
 static void force_affichage(BCG *Xgc);
-void nsp_ogl_set_view(BCG *Xgc);
+static void nsp_ogl_set_view(BCG *Xgc);
 static bool LoadTGA(TextureImage *texture, char *filename);
 static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col);
 static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...);
-static void glBillBoardPrint(GLfloat x, GLfloat y, GLfloat z, GLfloat f, const char *string, ...);
-static void init_opgl(BCG *Xgc);
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
 static void unclip_rectangle(GdkRectangle clip_rect);
 
@@ -92,9 +90,7 @@ static void unclip_rectangle(GdkRectangle clip_rect);
 
 static void set_c(BCG *Xgc,int col);
 static void LoadFonts(BCG *Xgc);
-static void LoadSymbFonts(void);
 static void DrawMark(BCG *Xgc,int *x, int *y);
-static void loadfamily_n(char *name, int *j);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
 static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr);
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
@@ -104,17 +100,12 @@ static void scig_deconnect_handlers(BCG *winxgc);
 
 /* utility for points allocations */
 
-static GdkPoint *gtk_get_xpoints(void);
-static int GtkReallocVector (int n);
-static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
-
 void create_graphic_window_menu( BCG *dd);
 void start_sci_gtk();
 
 static void DispStringAngle( BCG *xgc,int x0, int yy0, char *string, double angle);
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
-static void nsp_set_graphic_eventhandler(int *win_num,char *name,int *ierr);
 
 /*---------------------------------------------------------
  * Next routine are used to deal with the extra_pixmap 
@@ -989,44 +980,6 @@ static int xget_absourel(BCG *Xgc)
  * Not in Postscript, Read The X11 manual to get more informations 
  */
 
-static struct alinfo { 
-  char *name;
-  char id;
-  char *info;} AluStruc_[] =
-    { 
-      {"GXclear" , GDK_CLEAR," 0 "},
-      {"GXand" , GDK_AND," src AND dst "},
-      {"GXandReverse" , GDK_AND_REVERSE," src AND NOT dst "},
-      {"GXcopy" , GDK_COPY," src "},
-      {"GXandInverted" , GDK_AND_INVERT," NOT src AND dst "},
-      {"GXnoop" , GDK_NOOP," dst "},
-      {"GXxor" , GDK_XOR," src XOR dst "},
-      {"GXor" , GDK_OR," src OR dst "},
-      {"GXnor" , GDK_OR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
-      {"GXequiv" , GDK_EQUIV," NOT src XOR dst "},
-      {"GXinvert" , GDK_INVERT," NOT dst "},
-      {"GXorReverse" , GDK_OR_REVERSE," src OR NOT dst "},
-      {"GXcopyInverted" , GDK_COPY_INVERT," NOT src "},
-      {"GXorInverted" , GDK_OR_INVERT," NOT src OR dst "},
-      {"GXnand" , GDK_NAND," NOT src OR NOT dst "},
-      {"GXset" , GDK_SET," 1 "}
-    };
-
-static void idfromname(char *name1, int *num)
-{
-  int i;
-  *num = -1;
-  for ( i =0 ; i < 16;i++)
-    if (strcmp(AluStruc_[i].name,name1)== 0)  *num=i;
-  if (*num == -1 ) 
-    {
-      Sciprintf("\n Use the following keys (int in scilab");
-      for ( i=0 ; i < 16 ; i++)
-	Sciprintf("\nkey %s   -> %s\n",AluStruc_[i].name,
-		  AluStruc_[i].info);
-    }
-}
-
 void xset_alufunction(BCG *Xgc,char *string)
 { 
 #if 0
@@ -1103,46 +1056,6 @@ static int xget_thickness(BCG *Xgc)
 {
   return Xgc->CurLineWidth ;
 }
-
-/** To set grey level for filing areas **/
-/** from black (*num =0 ) to white     **/
-
-/* Pixmap  Tabpix_[GREYNUMBER]; */
-
-static char grey0[GREYNUMBER][8]={
-  {(char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00},
-  {(char)0x00, (char)0x00, (char)0x44, (char)0x00, (char)0x00, (char)0x00, (char)0x44, (char)0x00},
-  {(char)0x00, (char)0x44, (char)0x00, (char)0x22, (char)0x08, (char)0x40, (char)0x01, (char)0x20},
-  {(char)0x00, (char)0x92, (char)0x00, (char)0x25, (char)0x00, (char)0x92, (char)0x00, (char)0xa4},
-  {(char)0x55, (char)0x00, (char)0xaa, (char)0x00, (char)0x55, (char)0x00, (char)0xaa, (char)0x00},
-  {(char)0xad, (char)0x00, (char)0x5b, (char)0x00, (char)0xda, (char)0x00, (char)0x6d, (char)0x00},
-  {(char)0x6d, (char)0x02, (char)0xda, (char)0x08, (char)0x6b, (char)0x10, (char)0xb6, (char)0x20},
-  {(char)0x6d, (char)0x22, (char)0xda, (char)0x0c, (char)0x6b, (char)0x18, (char)0xb6, (char)0x24},
-  {(char)0x55, (char)0xaa, (char)0x55, (char)0xaa, (char)0x55, (char)0xaa, (char)0x55, (char)0xaa},
-  {(char)0x92, (char)0xdd, (char)0x25, (char)0xf3, (char)0x94, (char)0xe7, (char)0x49, (char)0xdb},
-  {(char)0x92, (char)0xfd, (char)0x25, (char)0xf7, (char)0x94, (char)0xef, (char)0x49, (char)0xdf},
-  {(char)0x52, (char)0xff, (char)0xa4, (char)0xff, (char)0x25, (char)0xff, (char)0x92, (char)0xff},
-  {(char)0xaa, (char)0xff, (char)0x55, (char)0xff, (char)0xaa, (char)0xff, (char)0x55, (char)0xff},
-  {(char)0xff, (char)0x6d, (char)0xff, (char)0xda, (char)0xff, (char)0x6d, (char)0xff, (char)0x5b},
-  {(char)0xff, (char)0xbb, (char)0xff, (char)0xdd, (char)0xf7, (char)0xbf, (char)0xfe, (char)0xdf},
-  {(char)0xff, (char)0xff, (char)0xbb, (char)0xff, (char)0xff, (char)0xff, (char)0xbb, (char)0xff},
-  {(char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff},
-};
-
-/*  XXXXX 
-
-void CreatePatterns(whitepixel, blackpixel)
-Pixel whitepixel;
-Pixel blackpixel;
-{ 
-  
-int i ;
-for ( i=0 ; i < GREYNUMBER ; i++)
-Tabpix_[i] =XCreatePixmapFromBitmapData(dpy, root,grey0[i] ,8,8,whitepixel
-,blackpixel,XDefaultDepth (dpy,DefaultScreen(dpy)));
- 
-}
-*/
 
 static int  xset_pattern(BCG *Xgc,int num)
 { 
@@ -1222,14 +1135,6 @@ static int xget_dash(BCG *Xgc)
 
 /* old version of xset_dash retained for compatibility */
 
-static void xset_dash_or_color(BCG *Xgc,int value)
-{
-  if ( Xgc->CurColorStatus == 1) 
-    set_c(Xgc,value-1);
-  else
-    xset_dash(Xgc,value);
-}
-
 static void xset_dash_and_color(BCG *Xgc,int dash,int color)
 {
   xset_dash(Xgc,dash);
@@ -1278,27 +1183,8 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
     }
 }
 
-static void xget_dashstyle(BCG *Xgc,int *n,int *value)
-{
-  int i ;
-  *n =1 ;
-  *value = Xgc->CurDashStyle + 1;
-  if (*value != 1) 
-    {
-      value[1]=4;
-      *n = value[1]+2;
-      for (i = 0 ; i < value[1]; i++) value[i+2]=DashTab[*value-2][i];
-    }
-}
-
 
 /** to get the current dash-style **/
-/* old version of xget_dash retained for compatibility */
-
-static int xget_dash_or_color(BCG *Xgc)
-{
-  return ( Xgc->CurColorStatus ==1) ?  Xgc->CurColor + 1 :  xget_dash(Xgc);
-}
 
 static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
 {
@@ -1722,33 +1608,6 @@ static void xset_fpf(BCG *Xgc,char *fmt)
 static void xset_fpf_def(BCG *Xgc) 
 {
   Xgc->fp_format[0]='\0';
-}
-
-
-
-/*****************************************************
- * return 1 : if the current window exists 
- *            and its colormap is not the default 
- *            colormap (the number of colors is returned in m
- * else return 0 
- * Only used for periFig which is to be updated XXXXXX 
- *****************************************************/
-
-static int CheckColormap(BCG *Xgc,int *m)
-{
-  if (  Xgc != (BCG *) 0 ) 
-    {
-      *m =  Xgc->Numcolors;
-      if ( Xgc->CmapFlag  != 1) 
-	return 1;
-      else 
-	return 0;
-    }
-  else 
-    { 
-      *m=0;
-      return(0);
-    }
 }
 
 /*-----------------------------------------------------------
@@ -2514,11 +2373,6 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
  * window_list management 
  *-------------------------------------------------------------------------*/
 
-static int window_list_check_top(BCG *dd,void *win) 
-{
-  return dd->private->window == (GtkWidget *) win ;
-}
-
 static void delete_window(BCG *dd,int intnum)
 { 
   BCG *winxgc= dd; 
@@ -2608,7 +2462,6 @@ static void set_c(BCG *Xgc,int col)
  * available window number 
  */
 
-static int EntryCounter = 0;
 static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			    int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 
@@ -2631,9 +2484,6 @@ void nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpd
 /* 
  * shared between Gtk and GL 
  */
-
-extern int nsp_get_win_counter();
-extern void nsp_set_win_ounter(int n);
 
 static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			    int *wdim,int *wpdim,double *viewport_pos,int *wpos)
@@ -2931,26 +2781,10 @@ static void xget_mark(BCG *Xgc,int *symb)
  *   to X11 
  */
 
-static void loadfamily(char *name, int *j)
-{ 
-  printf("fct loadfamily pas encore implementee en OpenGL\n");
-}
-
-static char *size_n_[] = { "8" ,"10","12","14","18","24"};
-
-static void loadfamily_n(char *name, int *j)
-{ 
-  printf("fct loadfamily_n pas encore implementee en OpenGL\n");
-}
-
-static void queryfamily(char *name, int *j,int *v3)
-{ 
-  printf("fct queryfamily  pas encore implementee en OpenGL\n");
-}
 
 /*
-** NEW !! nouveau prototype de fonction : BCG a ete en +
-*/
+ * FIXME: to be replaced by ..... gtk code 
+ */
 
 #ifdef __APPLE__
 #define PATH "/Applications/nsp2/src/graphics/Font_mini.tga"
@@ -2958,6 +2792,15 @@ static void queryfamily(char *name, int *j,int *v3)
 #define PATH "/usr/local/nsp2/src/graphics/Font_mini.tga"
 #endif 
 
+static void queryfamily(char *name, int *j,int *v3)
+{ 
+  printf("fct queryfamily  pas encore implementee en OpenGL\n");
+}
+
+static void loadfamily(char *name, int *j)
+{ 
+  printf("fct loadfamily pas encore implementee en OpenGL\n");
+}
 
 static void LoadFonts(BCG *Xgc)
 {
@@ -2978,33 +2821,6 @@ static void LoadFonts(BCG *Xgc)
   Xgc->private->fonte_encours = Xgc->private->tab_textures_font[0].texID;
 }
 
-/*
- *  We use the Symbol font  for mark plotting
- *  thus we must be able to center a Symbol character at a specified point. 
- *  
- */
-
-static void LoadSymbFonts(void)
-{ 
-  printf("fct LoadSymbFonts pas encore implementee en OpenGL\n");
-}
-
-/*
- * The two next functions send the x and y offsets to center the current
- * symbol at point (x,y) 
- */
-
-static int CurSymbXOffset(BCG *Xgc)
-{
-  printf("fct CurSymbXOffset  pas encore implementee en OpenGL\n");
-  return(0);
-}
-
-static int CurSymbYOffset(BCG *Xgc)
-{
-  printf("fct CurSymbYOffset pas encore implementee en OpenGL\n");
-  return(0);
-}
 
 static void DrawMark(BCG *Xgc,int *x, int *y)
 { 
@@ -3015,43 +2831,6 @@ static void DrawMark(BCG *Xgc,int *x, int *y)
   glPrint2D(Xgc, *x,*y, ECHELLE_CHAR, 0, false, str);
 }
 
-
-/*-------------------------------------------------------------------
- * Allocation and storing function for vectors of GtkPoints 
- *------------------------------------------------------------------------*/
-
-static GdkPoint *gtk_points = NULL;
-
-static GdkPoint *gtk_get_xpoints(void) { return(gtk_points); }
-
-static int gtk_store_points(int n, int *vx, int *vy, int onemore)
-{ 
-  int i,n1 = ( onemore == 1) ? n+1 : n;
-  if (GtkReallocVector(n1) == 1)
-    {
-      for (i = 0; i < n; i++){
-	gtk_points[i].x =(gint16) Min(Max(0,vx[i]),int16max);
-	gtk_points[i].y =(gint16) Min(Max(0,vy[i]),int16max);
-      }
-      if (onemore == 1) {
-	gtk_points[n].x=(gint16) gtk_points[0].x;
-	gtk_points[n].y=(gint16) gtk_points[0].y;
-      }
-      return(1);
-    }
-  else return(0);
-}
-
-#define MESSAGE5 "Can't re-allocate point vector" 
-
-static int GtkReallocVector(int n)
-{
-  if (( gtk_points = graphic_alloc(8,n,sizeof(GdkPoint))) == 0) 
-    { 
-      Sciprintf(MESSAGE5); return 0;
-    }
-  return 1;
-}
 
 /*--------------------------------------------------------------------------
  * Create Graphic widget 
@@ -3067,54 +2846,27 @@ static int GtkReallocVector(int n)
  *
  */
 
-/* a revoir XXXX */
+/* realize handler for 
+ * opengl window 
+ */
 
-#define R_RED(col)	(((col)	   )&255) 
-#define R_GREEN(col)	(((col)>> 8)&255)
-#define R_BLUE(col)	(((col)>>16)&255)
-
-/* set the r, g, b, and pixel values of gcol to color */
-
-static void SetRgBColor(BCG *dd,int red,int green,int blue)
-{
-  GdkColor gcol = { gdk_rgb_xpixel_from_rgb((red << 16)|(green << 8)|(blue)),0,0,0};
-  gdk_gc_set_foreground(dd->private->wgc, &gcol);
-}
-
-static void SetColor(GdkColor *gcol, int color)
-{
-  int red, green, blue;
-  red = R_RED(color);
-  green = R_GREEN(color);
-  blue = R_BLUE(color);
-  gcol->red = 0;
-  gcol->green = 0;
-  gcol->blue = 0;
-  gcol->pixel = gdk_rgb_xpixel_from_rgb((red << 16)|(green << 8)|(blue));
-}
-
-/* signal functions */
-
-/*
-** NEW !! ATTENTION ne retourne plus un gint
-*/
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
-  BCG *dd = (BCG *) data;
+  BCG *Xgc = (BCG *) data;
+  GdkGLContext *glcontext;
+  GdkGLDrawable *gldrawable;
 
-  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
-  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
+  g_return_val_if_fail(Xgc != NULL, FALSE);
+  g_return_val_if_fail(Xgc->private->drawing != NULL, FALSE);
+  g_return_val_if_fail(GTK_IS_DRAWING_AREA(Xgc->private->drawing), FALSE);
 
-  //g_return_val_if_fail(dd != NULL, FALSE);
-  //g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
-  //g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+  glcontext = gtk_widget_get_gl_context (widget);
+  gldrawable = gtk_widget_get_gl_drawable (widget);
 
-  /*** OpenGL BEGIN ***/
   if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
     return FALSE;
  
 #if 0   
-  printf("init stencil !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
   glClear(GL_STENCIL_BUFFER_BIT);
   glStencilFunc(GL_ALWAYS, 0x1, 0x1);
   glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
@@ -3126,16 +2878,35 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   glEnd();
 #endif
 
-  init_opgl(dd);
+  xset_background(Xgc,Xgc->NumBackground+1);
+  glClearDepth(1.0);  
+  /*     glDrawBuffer(GL_FRONT_AND_BACK); */
+  /*     glEnable(GL_TEXTURE_2D); */
+  /*     glEnable (GL_CULL_FACE); */
+  /*     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);  */
+  glClearStencil(0x0);
+  glEnable(GL_STENCIL_TEST);
+  /*     glEnable(GL_LINE_SMOOTH); */
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  /*     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE); */
+  /*     glLineWidth(1.5); */
+  /*     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST); */
+  /*     glLineWidth(0.5); */
+  glAlphaFunc(GL_GREATER,0.1f);
+  glEnable(GL_ALPHA_TEST);
+  LoadFonts(Xgc);
+  Xgc->private->view = VUE_3D;
+  if (   Xgc->private->view ==  VUE_3D)  glEnable(GL_DEPTH_TEST);
 
   gdk_gl_drawable_gl_end (gldrawable);
-  /*** OpenGL END ***/
-  return TRUE;
+  return FALSE;
 }
 
 /*
-** NEW !!
-*/
+ * 
+ */
+
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
@@ -3145,7 +2916,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
-  //g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+  g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
 
   if(GTK_WIDGET_REALIZED(dd->private->drawing))
     {
@@ -3223,7 +2994,6 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 
       if ( TRUE || dd->private->draw == TRUE )  /* always redraw */
 	{
-	  static int count=0;
 	  /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
 	  glClear(GL_DEPTH_BUFFER_BIT);
 	  nsp_ogl_set_view(dd);
@@ -3460,12 +3230,6 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 				(gfloat) viewport_pos[1]);      
     }
 
-  /* setup background color */
-  SetColor(&dd->private->gcol_bg, R_RGB(255, 255, 255));
-  
-  /* setup foreground color */
-  SetColor(&dd->private->gcol_fg , R_RGB(0,0,0));
-
   /* create private->drawingarea */
   dd->private->drawing = gtk_drawing_area_new();
 
@@ -3551,28 +3315,6 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 }
 
 
-/**
- * nsp_set_graphic_eventhandler:
- * @win_num: 
- * @name: 
- * @ierr: 
- * 
- * Used to set the EventHandler field of win_num properties 
- * this is to be changed one day XXXX 
- **/
-
-static void nsp_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
-{  
-  BCG *SciGc;
-  /*ButtonPressMask|PointerMotionMask|ButtonReleaseMask|KeyPressMask */
-  *ierr = 0;
-  SciGc = window_list_search(*win_num);
-  if ( SciGc ==  NULL ) {*ierr=1;return;}
-  strncpy(SciGc->EventHandler,name,NAME_MAXL);
-}
-
-
-
 /*
 ** #############################################################
 **
@@ -3643,6 +3385,18 @@ static void force_affichage(BCG *Xgc)
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
+/* 
+ * force an expose_event with draw set to TRUE
+ */
+
+static void force_redraw(BCG *Xgc)
+{
+  nsp_gtk_invalidate(Xgc);
+  Xgc->private->draw = TRUE;
+  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+}
+
+
 /*
 ** Commute la vue : mode perspective cavaliere (2D) --- mode perspective)
 */
@@ -3687,6 +3441,7 @@ static void nsp_ogl_set_view(BCG *Xgc)
       /* 
        * fix the model view using the box center 
        * and a point on the sphere circumscribing the box
+       * qui sont important pour l'élimination des parties cachées
        */
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity ();
@@ -3695,20 +3450,6 @@ static void nsp_ogl_set_view(BCG *Xgc)
 		 cz+R*cosa,
 		 cx,cy,cz,
 		 0,0,1);
-      /*
-       * Il vaut mieux faire comme ça 
-       * pour que la boite englobante soit correcte 
-       * mais il faut alors bien calculer la position du 
-       * point et surtout near et far !!!!!
-       * qui sont important pour l'élimination des parties cachées
-       */
-      /* R=50;
-	 gluLookAt (R*cost*sina,
-	 R*sint*sina,
-	 R*cosa,
-	 0,0,0,
-	 0,0,1);
-      */
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
 
@@ -3909,47 +3650,12 @@ static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot
 
 
 /*
-** Comme glPrint3D mais les textures sont toujours orientees vers la camera
-** quelque soit la position de la camera dans l'espace
-*/
-static void glBillBoardPrint(GLfloat x, GLfloat y, GLfloat z, GLfloat f, const char *string, ...)
-{
-  // goto http://www.lighthouse3d.com/opengl/billboarding/index.php3?billInt
-}
+ * Comme glPrint3D mais les textures sont toujours orientees vers la camera
+ * quelque soit la position de la camera dans l'espace
+ * goto http://www.lighthouse3d.com/opengl/billboarding/index.php3?billInt
+ */
 
-/*
-** Initialisation d'OpenGL.
-*/
-static void init_opgl(BCG *Xgc)
-{
-  /*
-  ** NOTE : le chargement des textures se fait dans release_event !!
-  */
-  xset_background(Xgc,Xgc->NumBackground+1);
-  glClearDepth(1.0); 
-  //     glDrawBuffer(GL_FRONT_AND_BACK);
-  //     glEnable(GL_TEXTURE_2D);
-  //     glEnable (GL_CULL_FACE);
-  //     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); 
-  glClearStencil(0x0);
-  glEnable(GL_STENCIL_TEST);
-  //     glEnable(GL_LINE_SMOOTH);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  //     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-  //     glLineWidth(1.5);
-  //     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  //     glLineWidth(0.5);
-  glAlphaFunc(GL_GREATER,0.1f);
-  glEnable(GL_ALPHA_TEST);
-  LoadFonts(Xgc);
 
-  /* ================================ */
-  Xgc->private->view = VUE_3D;
-  /* ================================ */
-  if (   Xgc->private->view ==  VUE_3D)  glEnable(GL_DEPTH_TEST);
-}
-     
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)
 {
 #if 0
@@ -3968,7 +3674,6 @@ static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)
 #endif
 }
 
-// FCT PAS ENCORE TESTEE
 static void unclip_rectangle(GdkRectangle clip_rect)
 {
 #if 0
@@ -3983,8 +3688,5 @@ static void unclip_rectangle(GdkRectangle clip_rect)
 #endif
 }
 
-/*
-** ###########################################################################################
-*/
 
 

@@ -67,6 +67,8 @@ static void gdk_draw_text_rot(GdkDrawable *drawable, GdkFont *font,  GdkGC *gc,
 			      int x, int y, int maxx, int maxy, const gchar *text,
 			      gint text_length, double angle);
 
+static void force_affichage(BCG *Xgc);
+
 /* utility for points allocations */
 
 static GdkPoint *gtk_get_xpoints(void);
@@ -87,7 +89,7 @@ Gengine * nsp_gengine = &Gtk_gengine ;
  * force expose events to be executed 
  */
 
-void force_affichage(BCG *Xgc)
+static void force_affichage(BCG *Xgc)
 {
   /* Xgc->private->resize = 1; */
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
@@ -97,7 +99,7 @@ void force_affichage(BCG *Xgc)
  * force an expose_event with draw set to TRUE
  */
 
-void force_redraw(BCG *Xgc)
+static void force_redraw(BCG *Xgc)
 {
   nsp_gtk_invalidate(Xgc);
   Xgc->private->draw = TRUE;
@@ -1646,31 +1648,6 @@ static void xset_fpf_def(BCG *Xgc)
 }
 
 
-/*****************************************************
- * return 1 : if the current window exists 
- *            and its colormap is not the default 
- *            colormap (the number of colors is returned in m
- * else return 0 
- * Only used for periFig which is to be updated XXXXXX 
- *****************************************************/
-
-int CheckColormap(BCG *Xgc,int *m)
-{
-  if (  Xgc != (BCG *) 0 ) 
-    {
-      *m =  Xgc->Numcolors;
-      if ( Xgc->CmapFlag  != 1) 
-	return 1;
-      else 
-	return 0;
-    }
-  else 
-    { 
-      *m=0;
-      return(0);
-    }
-}
-
 /*-----------------------------------------------------------
  * general routines accessing the previous  set<> or get<> 
  *-----------------------------------------------------------*/
@@ -2313,7 +2290,6 @@ void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,
 
 
 int nsp_get_win_counter() { return EntryCounter;};
-
 void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
 
 static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
@@ -3229,25 +3205,6 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   
 }
 
-/**
- * nsp_set_graphic_eventhandler:
- * @win_num: 
- * @name: 
- * @ierr: 
- * 
- * Used to set the EventHandler field of win_num properties 
- * this is to be changed one day XXXX 
- **/
-
-void nsp_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
-{  
-  BCG *SciGc;
-  /*ButtonPressMask|PointerMotionMask|ButtonReleaseMask|KeyPressMask */
-  *ierr = 0;
-  SciGc = window_list_search(*win_num);
-  if ( SciGc ==  NULL ) {*ierr=1;return;}
-  strncpy(SciGc->EventHandler,name,NAME_MAXL);
-}
 
  
 /*
