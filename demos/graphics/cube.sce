@@ -1,4 +1,3 @@
-
 S=[1,-1,-1
    1,1,-1
    -1,1,-1
@@ -6,7 +5,7 @@ S=[1,-1,-1
    1,1,1
    -1,1,1
    1,-1,1
-   -1,-1,1]
+   -1,-1,1];
 
 function F=faces(i)
   F=[S(1,i),S(2,i),S(3,i),S(4,i)
@@ -35,7 +34,6 @@ colors=[1,2,3,5,6,9];
 plot3d(Fx',Fy',Fz',colors=colors);
 
 // shade 
-
-plot3d(Fx',Fy',Fz',colors=ones(4,1)*colors);
+//plot3d(Fx',Fy',Fz',colors=ones(4,1)*colors);
 
 

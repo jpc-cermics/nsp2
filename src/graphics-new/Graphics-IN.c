@@ -776,10 +776,6 @@ int int_geom3d( Stack stack, int rhs, int opt, int lhs)
 
 /*-----------------------------------------------------------
  * plot3dXXX(x,y,z,opts)
- * FIXME: 
- *  attention les parametres transmis flag et ebox 
- *  peuvent changer 
- *  Il faur demander des copies 
  *-----------------------------------------------------------*/
 
 typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,char *,int *,double *); 
@@ -1891,6 +1887,7 @@ int int_xclear(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *l1;
 
   CheckRhs(0,2) ;
+  
   if ( rhs == 2 )
     {
       if ( GetScalarBool (stack,2,&val) == FAIL) return RET_BUG;
@@ -4292,7 +4289,7 @@ static OpTab Graphics_func[]={
   {"xname",int_xname},
   {"xaxis",int_xaxis},
   {"seteventhandler",int_seteventhandler},
-  {"help_gtk",int_gtkhelp},
+  {"help",int_gtkhelp},
   {"xs2gif",int_xs2gif},
   {"xs2ppm",int_xs2ppm},
   {"xs2ps",int_xs2ps},

@@ -208,7 +208,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   /* Calcule l' Enveloppe Convex de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag,bbox);
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[2],bbox);
   /* Le triedre cach\'e **/
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
@@ -427,7 +427,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
   SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   /* Calcule l' Enveloppe Convex de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag,bbox);
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[2],bbox);
   /* Le triedre cach\'e **/
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;  
@@ -685,18 +685,18 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
   SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[0]+1)/2);
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag,bbox);
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[1],bbox);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /* Le triedre cache **/
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     {
       /* cache=InsideD[0];*/
-      if (flag[2] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
+      if (flag[1] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
     }
   else 
     {
       /* cache=InsideU[0]-4; */
-      if (flag[2] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
+      if (flag[1] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
     }
 
   xm = graphic_alloc(0,(*n),sizeof(int));
@@ -729,7 +729,7 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
       init = j+1;
       if ( init >= (*n)) break;
     }
-  if (flag[2] >=3 ) 
+  if (flag[1] >=3 ) 
     {
       int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
@@ -776,18 +776,18 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
 
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag,bbox);
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[1],bbox);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /* Le triedre cache **/
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     {
       /* cache=InsideD[0];*/
-      if (flag[2] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
+      if (flag[1] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
     }
   else 
     {
       /* cache=InsideU[0]-4; */
-      if (flag[2] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
+      if (flag[1] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
     }
 
   xm = graphic_alloc(0,(*m),sizeof(int));
@@ -825,7 +825,7 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
 	  if ( init >= (*m)) break;
 	}
     }
-  if (flag[2] >=3 ) 
+  if (flag[1] >=3 ) 
     {
       int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
@@ -848,7 +848,7 @@ int nsp_plot_box3d(BCG *Xgc,double *xbox, double *ybox, double *zbox)
   static int InsideU[4],InsideD[4],flag[]={1,1,3},fg,fg1;
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,"X@Y@Z",flag,Xgc->scales->bbox1);
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,"X@Y@Z",flag[2],Xgc->scales->bbox1);
   /* le triedre vu **/
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
@@ -1068,7 +1068,8 @@ void DrawAxis(BCG *Xgc,double *xbox, double *ybox, int *Indices, int style)
  * et renvoit dans InsideU et InsideD les indices des points dans xbox et ybox
  * qui sont sur les 2 tri\`edres a l'interieur de l'enveloppe convexe
  *---------------------------------------------------------------------*/
-void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, int *InsideD, char *legend, int *flag, double *bbox)
+
+void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, int *InsideD, char *legend, int flag, double *bbox)
 {
   double xmaxi;
   double x[8],y[8],z[8];
@@ -1180,12 +1181,12 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
       /* On trace l'enveloppe cvxe **/
       dash = Xgc->graphic_engine->xset_dash(Xgc,1);
       
-      if (flag[2]>=3){
+      if (flag >=3){
 	Xgc->graphic_engine->drawpolylines(Xgc,ixbox,iybox,dvect,n,p);
       }
       pat = Xgc->graphic_engine->xset_pattern(Xgc,dvect[0]);
       
-      if (flag[2]>=3)AxesStrings(Xgc,flag[2],ixbox,iybox,xind,legend,bbox);
+      if (flag >=3)AxesStrings(Xgc,flag,ixbox,iybox,xind,legend,bbox);
       Xgc->graphic_engine->xset_pattern(Xgc,pat);
       Xgc->graphic_engine->xset_dash(Xgc,dash);
     }
@@ -1203,13 +1204,13 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
       /* On trace l'enveloppe cvxe **/
       dash = Xgc->graphic_engine->xset_dash(Xgc,1);
       
-      if (flag[2]>=3){
+      if (flag >=3){
 	drawpolylines3D(Xgc,x,y,z,dvect,n,p);
       }
       pat = Xgc->graphic_engine->xset_pattern(Xgc,dvect[0]);
       /* 
        * FIXME
-       * if (flag[2]>=3)AxesStrings(Xgc,flag[2],ixbox,iybox,xind,legend,bbox);
+       * if (flag >=3)AxesStrings(Xgc,flag,ixbox,iybox,xind,legend,bbox);
        */
       Xgc->graphic_engine->xset_pattern(Xgc,pat);
       Xgc->graphic_engine->xset_dash(Xgc,dash);
@@ -1764,7 +1765,7 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
   SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   /* Calcule l' Enveloppe Convex de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag,bbox);
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[2],bbox);
   /* Le triedre cach\'e **/
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;  
@@ -1962,7 +1963,7 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
   /* Calcule l' Enveloppe Convex de la boite **/
   /* ainsi que les triedres caches ou non **/
 
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag,bbox);
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[2],bbox);
   /* Le triedre cach\'e **/
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
@@ -2192,7 +2193,7 @@ int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *te
   SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[0]+1)/2);
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag,bbox);
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[1],bbox);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /* Le triedre cache **/
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
@@ -2258,7 +2259,7 @@ int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, 
 
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag,bbox);
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[1],bbox);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /* Le triedre cache **/
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
@@ -2306,7 +2307,7 @@ int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, 
 int nsp_plot_box3d_ogl(BCG *Xgc,double *xbox, double *ybox, double *zbox)
 {
   static int InsideU[4],InsideD[4],flag[]={1,1,3},fg,fg1;
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,"X@Y@Z",flag,Xgc->scales->bbox1);
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,"X@Y@Z",flag[2],Xgc->scales->bbox1);
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg);
