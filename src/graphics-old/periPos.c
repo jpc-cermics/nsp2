@@ -1326,6 +1326,8 @@ static void initgraphic(char *string,int *num)
   static int EntryCounter = 0;
   int fnum;
   BCG *Xgc = &ScilabGCPos; 
+  Xgc->graphic_engine = &Pos_gengine ; /* the graphic engine associated to this graphic window */
+
   if (EntryCounter >= 1) xendgraphic(Xgc);/* XXXX */
   strncpy(string1,string,256);
 

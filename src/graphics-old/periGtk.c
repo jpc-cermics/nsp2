@@ -2350,6 +2350,8 @@ static void initgraphic(char *string, int *v2)
   NewXgc->CurWindow = WinNum;
   NewXgc->record_flag = TRUE; /* default mode is to record plots */
   NewXgc->plots = NULL;
+  NewXgc->graphic_engine = &Gtk_gengine ; /* the graphic engine associated to this graphic window */
+
 
   if (first == 0)
     {
@@ -2408,6 +2410,8 @@ extern void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2)
   NewXgc->record_flag = TRUE; /* default mode is to record plots */
   NewXgc->record_flag = TRUE; /* default mode is to record plots */
   NewXgc->plots = NULL;
+  NewXgc->graphic_engine = &Gtk_gengine ; /* the graphic engine associated to this graphic window */
+
   start_sci_gtk(); /* be sure that gtk is started */
 
   if (first == 0)

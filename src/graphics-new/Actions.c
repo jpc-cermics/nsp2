@@ -94,7 +94,7 @@ void scig_replay(int win_num)
   if ( scig_buzy  == 1 ) return ;
   if ( window_list_search(win_num) == NULL) return;
   scig_buzy =1;
-  nsp_gengine1.get_driver_name(name);
+  nsp_gengine1.get_driver_name(name); /* */
   if ( (nsp_gengine1.get_driver()) != 'R') nsp_gengine1.set_driver("Rec");
   cur = nsp_gengine->xset_curwin(win_num,FALSE);
 
