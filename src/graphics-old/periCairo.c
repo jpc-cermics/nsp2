@@ -2216,6 +2216,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 
       gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
       cairo = gtk_cairo_get_cairo (gtkcairo);
+      cairo_new_path(cairo);
       cairo_move_to(cairo, vx[0],vy[0]);
       for ( i = 1 ; i < n ; i++ ) 
 	cairo_line_to(cairo,vx[i],vy[i]);
@@ -2255,6 +2256,7 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
+  cairo_new_path(cairo); 
   cairo_move_to(cairo, vx[0],vy[0]);
   for ( i = 1 ; i < n ; i++ ) 
     cairo_line_to(cairo,vx[i],vy[i]);
