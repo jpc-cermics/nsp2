@@ -659,16 +659,6 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
   
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
 
-  /* try to mix with previous 3d scales */
-  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == OK) 
-    {
-      if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-	{
-	  int i;
-	  for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
-	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
-	}
-    }
   /* take care here flag[0] is used */
   SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[0]+1)/2);
   /** Calcule l' Enveloppe Convexe de la boite **/
@@ -743,21 +733,17 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
   static int init;
   static int *xm,*ym;
   int fg1,cur;
+
+  nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,n,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
+
   /** If Record is on **/
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Param3D1(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
-  if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
-    {
-      int mn=*n*(*m);
-      bbox[0]=(double) Mini(x,mn);bbox[1]=(double) Maxi(x,mn);
-      bbox[2]=(double) Mini(y,mn);bbox[3]=(double) Maxi(y,mn);
-      bbox[4]=(double) Mini(z,mn);bbox[5]=(double) Maxi(z,mn);
-    }
-  if ( flag[1] !=0)
-    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
-  else 
-    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
+
+  /* take care here flag[0] is used */
+  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[0]+1)/2);
+
   /** Calcule l' Enveloppe Convexe de la boite **/
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);

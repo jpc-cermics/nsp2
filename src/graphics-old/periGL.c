@@ -5,6 +5,10 @@
  *--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------
  *    Open GL Driver 
+ * FIXME: pour une élimination correcte des parties cachées il 
+ *   faut utiliser glDepthRange 
+ *   pour préciser la zone de la scene.
+ *   etc.....
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -3665,9 +3669,9 @@ static void nsp_ogl_set_view(BCG *Xgc)
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity ();
-      gluLookAt (10*cos(theta)*sin(alpha),
-		 10*sin(theta)*sin(alpha),
-		 10*cos(alpha),
+      gluLookAt (dist*cos(theta)*sin(alpha),
+		 dist*sin(theta)*sin(alpha),
+		 dist*cos(alpha),
 		 0,0,0,
 		 0,0,1);
       
