@@ -322,8 +322,8 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
 
 void zoom(BCG *Xgc)
 {
-  int aaint[4],flag[2]; /* ansi : ={1,0};*/
-  flag[0] =1 ; flag[1]=0;
+  int aaint[4],flag[3]; /* ansi : ={1,0};*/
+  flag[0] =1 ; flag[1]=flag[2]=0;
   if ( Xgc == NULL) return ;
   if ( Xgc->record_flag != TRUE )
     {

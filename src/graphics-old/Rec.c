@@ -2146,13 +2146,14 @@ static void new_angles_Param3D1(void *plot, double *theta, double *alpha, int *i
  * change the scale in all the recorded graphics 
  *   if flag[0]== 1  bbox is changed 
  *   if flag[1]== 1  aaint is changed 
+ *   if flag[2]== 1  then strfflag[1] is changed if (strflag[2] coincide with given one )
  *   if undo = 1 then the work can be undone (with unzoom)
  *   else undo = 1 unzoom cannot be performed 
  *   if subwin == NULL 
  *       => we must find the subwin asscoiated to bbox1
  *--------------------------------------------------*/
 
-void scale_change_plots(BCG *Xgc,int winnumber, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin)
+void scale_change_plots(BCG *Xgc,int winnumber, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin)
 {
   list_plot *list = Xgc->plots ;
   if ( Xgc->record_flag == FALSE ) return ;
@@ -2162,7 +2163,7 @@ void scale_change_plots(BCG *Xgc,int winnumber, int *flag, double *bbox, int *aa
 	{
 	  int code = ((plot_code *) list->theplot)->code;
 	  if ( record_table[code].scale_change != NULL) 
-	    record_table[code].scale_change(Xgc,list->theplot,flag,bbox,aaint,undo,bbox1,subwin,winnumber);
+	    record_table[code].scale_change(Xgc,list->theplot,flag,bbox,aaint,strflag,undo,bbox1,subwin,winnumber);
 	}
       list =list->next;
     }
@@ -2170,23 +2171,22 @@ void scale_change_plots(BCG *Xgc,int winnumber, int *flag, double *bbox, int *aa
 
 /** change the plot flag in order to use bbox **/ 
 
-static void scale_2D_change_flag(char *str)
+static void scale_2D_change_flag(int flag, char *str,char *str_new)
 {
-  return; /* Added by POLPOTH09042001 on Apr  9 08:59:10 MET DST 2001 */
-  if ( str[1] == '2' ||  str[1] == '1'  || str[1] == '6' ) 
-    str[1] = '5';
-  else if ( str[1] == '4' ) 
-    str[1] = '3';
+  if ( flag == 1 ) 
+    {
+      if ( str[2] == str_new[2] ) str[1]= str_new[1];
+    }
 }
   
 
-static void scale_change_Plot(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Plot(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_plot2d *theplot;
   theplot=(struct rec_plot2d *) plot;
   /* on passe en mode autoscale 5= on utilise bbox et on `regradue' dessus */
-  scale_2D_change_flag( theplot->strflag);
+  scale_2D_change_flag(flag[2], theplot->strflag,strflag);
   for ( i = 0 ; i < 4 ; i++)
     {
       if (flag[0]==1)
@@ -2198,13 +2198,13 @@ static void scale_change_Plot(BCG *Xgc,void *plot, int *flag, double *bbox, int 
     }
 }
 
-static void scale_change_Contour2D(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Contour2D(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_contour2d *theplot;
   theplot=(struct rec_contour2d *) plot;
   /* on passe en mode autoscale 5= on utilise bbox et on `regradue' dessus */
-  scale_2D_change_flag( theplot->strflag);
+  scale_2D_change_flag(flag[2], theplot->strflag,strflag);
   for ( i = 0 ; i < 4 ; i++)
     {
       if (flag[0]==1)
@@ -2216,13 +2216,13 @@ static void scale_change_Contour2D(BCG *Xgc,void *plot, int *flag, double *bbox,
     }
 }
 
-static void scale_change_Gray(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Gray(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_gray *theplot;
   theplot=(struct rec_gray *) plot;
   /* on passe en mode autoscale 5= on utilise bbox et on `regradue' dessus */
-  scale_2D_change_flag( theplot->strflag);
+  scale_2D_change_flag(flag[2], theplot->strflag,strflag);
   for ( i = 0 ; i < 4 ; i++)
     {
       if (flag[0]==1) 
@@ -2234,13 +2234,13 @@ static void scale_change_Gray(BCG *Xgc,void *plot, int *flag, double *bbox, int 
     }
 }
 
-static void scale_change_Champ(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Champ(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_champ *theplot;
   theplot=(struct rec_champ *) plot;
   /* on passe en mode autoscale 5= on utilise bbox et on `regradue' dessus */
-  scale_2D_change_flag( theplot->strflag);
+  scale_2D_change_flag(flag[2], theplot->strflag,strflag);
   for ( i = 0 ; i < 4 ; i++)
     {
       if (flag[0]==1)
@@ -2251,13 +2251,13 @@ static void scale_change_Champ(BCG *Xgc,void *plot, int *flag, double *bbox, int
     }
 }
 
-static void scale_change_Fec(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Fec(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_fec *theplot;
   theplot=(struct rec_fec *) plot;
   /* on passe en mode autoscale 5= on utilise bbox et on `regradue' dessus */
-  scale_2D_change_flag( theplot->strflag);
+  scale_2D_change_flag(flag[2], theplot->strflag,strflag);
   for ( i = 0 ; i < 4 ; i++)
     {
       if (flag[0]==1)  
@@ -2271,7 +2271,7 @@ static void scale_change_Fec(BCG *Xgc,void *plot, int *flag, double *bbox, int *
 
 /* here we deal with subwin changes */
 
-static void scale_change_Ech(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Ech(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_scale *theplot;
@@ -2334,7 +2334,7 @@ static void scale_change_Ech(BCG *Xgc,void *plot, int *flag, double *bbox, int *
     }
 }
 
-static void scale_change_NEch(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_NEch(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_nscale *theplot;
@@ -2408,7 +2408,7 @@ static void scale_change_NEch(BCG *Xgc,void *plot, int *flag, double *bbox, int 
 
 /*** code added by ES 21/5/2002 ****/
 
-static void scale_change_Contour(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,
+static void scale_change_Contour(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag,
 				 int undo, int *bbox1, double *subwin, int win_num)
 {
   int i, j;
@@ -2447,8 +2447,8 @@ static void scale_change_Contour(BCG *Xgc,void *plot, int *flag, double *b1, int
 }
 
 
-static void scale_change_Fac3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,
-                    int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Fac3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag,
+			       int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   double xmin, xmax, ymin, ymax, zmin, zmax, xp, yp, x,y,z;
@@ -2486,7 +2486,7 @@ static void scale_change_Fac3D(BCG *Xgc,void *plot, int *flag, double *b1, int *
   }
 }
 
-static void scale_change_Param3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,
+static void scale_change_Param3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag,
 				 int undo, int *bbox1, double *subwin, int win_num)
 {
   int i; double xmin, xmax, ymin, ymax, zmin, zmax, xp, yp, x,y,z;
@@ -2528,7 +2528,7 @@ static void scale_change_Param3D(BCG *Xgc,void *plot, int *flag, double *b1, int
    }
 }
 
-static void scale_change_Param3D1(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint, 
+static void scale_change_Param3D1(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 
                        int undo, int *bbox1, double *subwin, int win_num)
 {
   int i; 
@@ -2568,8 +2568,8 @@ static void scale_change_Param3D1(BCG *Xgc,void *plot, int *flag, double *b1, in
   } 
 }
 
-static void scale_change_Plot3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint, 
-                     int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Plot3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 
+				int undo, int *bbox1, double *subwin, int win_num)
 {
   int i, j;
   double xmin, xmax, ymin, ymax, zmin, zmax, xp, yp, x,y,z;
@@ -2818,22 +2818,23 @@ void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,  doubl
   bbox1[1]= YDouble2Pixel(bbox[1]);
   bbox1[2]= XDouble2Pixel(bbox[2]);
   bbox1[3]= YDouble2Pixel(bbox[3]);
-  scale_change_plots(Xgc,winnumber,flag,bbox,aaint,1,bbox1,NULL);
+  scale_change_plots(Xgc,winnumber,flag,bbox,aaint,NULL,1,bbox1,NULL);
   tape_replay(Xgc,winnumber);
 }
 
 /*---------------------------------------------------------------------
  * replay with a new Scale but undo is impossible 
  * used for automatic scales 
+ * 
  *---------------------------------------------------------------------------*/
 
-void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, double *bbox)
+void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, double *bbox,char *strflag)
 { 
   /* here we want to change bbox but only for recorded graphics 
    * which are on the same subwin as the current one 
    * and we do not want this operation to be undone ==> undo =0 
    */
-  scale_change_plots(Xgc,winnumber,flag,bbox,aaint,0,NULL,Xgc->scales->subwin_rect);
+  scale_change_plots(Xgc,winnumber,flag,bbox,aaint,strflag,0,NULL,Xgc->scales->subwin_rect);
   tape_replay(Xgc,winnumber);
 }
 

@@ -2,7 +2,7 @@
  *    Graphic library
  *    Copyright (C) 1998-2001 Enpc/Jean-Philippe Chancelier
  *    jpc@cermics.enpc.fr 
- --------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 
 #include <string.h> /* in case of dbmalloc use */
 #include <stdio.h>
@@ -164,18 +164,20 @@ int nsp_plot_grid(BCG *Xgc, int *style)
 
 /*---------------------------------------------------------------------
  * update_frame_bounds : 
- * modify according to strflag Xgc->scales->using given data 
- * output : FRect,aaint,strflag are modified 
+ *  modify according to strflag the current scales 
+ *  Xgc->scales->using given data 
+ *  output : FRect,aaint,strflag are modified 
+ * Remark: this function is recalled each time 
+ *   a plot needs to be redrawn. Thus changed 
+ *   data must be changed only once not each time this 
+ *   function is called. strflag must be changed 
+ *   after the first call for this purpose.
  *----------------------------------------------------*/
 
-void update_frame_bounds(BCG *Xgc,
-			 int cflag,
-			 char *xf,
-			 double *x,double *y,
-			 int *n1, int *n2, int *aaint,
-			 char *strflag,
-			 double FRect[4])
+void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
+			 int *n1, int *n2, int *aaint,char *strflag, double FRect[4])
 {
+  double FRect1[4];
   int Xdec[3],Ydec[3],i,redraw=0;
   double xmin=0.0,xmax=10.0,ymin= 0.0,ymax= 10.0;
   double hx,hy,hx1,hy1;
@@ -206,8 +208,57 @@ void update_frame_bounds(BCG *Xgc,
       /* back to default values for  x=[] and y = [] */
       if ( ymin == LARGEST_REAL ) { ymin = 0; ymax = 10.0 ;} 
       if ( xmin == LARGEST_REAL ) { xmin = 0; xmax = 10.0 ;} 
+      FRect[0]=xmin;FRect[1]=ymin;FRect[2]=xmax;FRect[3]=ymax;
       break;
     }
+
+  if (strflag[1] == '7' || strflag[1] == '8' )
+    {
+      /* if strflag[1] == 7 or 8 we compute the max between current scale and the new one  
+       * and try to detect if we need to redraw previous plots 
+       */
+      if ( Xgc->scales->scale_flag != 0 ) 
+	{
+	  /* first check that we are not changing from normal<-->log */
+	  int xlog = ((int)strlen(xf) >= 2 && xf[1]=='l' ) ? 1: 0;
+	  int ylog = ((int)strlen(xf) >=3  && xf[2]=='l' ) ? 2: 0;
+	  if ( (xlog == 1 && Xgc->scales->logflag[0] == 'n') 
+	       || (xlog == 0 && Xgc->scales->logflag[0] == 'l')
+	       || (ylog == 1 && Xgc->scales->logflag[1] == 'n')
+	       || (ylog == 0 && Xgc->scales->logflag[1] == 'l') )
+	    {
+	      Scistring("Warning: you cannot use automatic rescale if you switch from log to normal or normal to log \n");
+	    }
+	  else 
+	    {
+	      FRect[0] = Min(FRect[0],Xgc->scales->frect[0]);
+	      FRect[1] = Min(FRect[1],Xgc->scales->frect[1]);
+	      FRect[2] = Max(FRect[2],Xgc->scales->frect[2]);
+	      FRect[3] = Max(FRect[3],Xgc->scales->frect[3]);
+	      if ( FRect[0] < Xgc->scales->frect[0] 
+		   || FRect[1] < Xgc->scales->frect[1] 
+		   || FRect[2] > Xgc->scales->frect[2] 
+		   || FRect[3] > Xgc->scales->frect[3] )
+		redraw = 1;
+	    }
+	}
+      /* switch to mode 5 */
+      strflag[1]='5';
+    }
+  else 
+    {
+      /* here we just are suppose to redraw previous plots 
+       * because we use the scale given by the current graphic 
+       * as the new default scale.
+       * But if all the previous graphics were performed the 
+       *     same way redrawing is not usefull. 
+       * FIXME: try to detect the last point
+       */
+      redraw=1;
+    }
+
+  /* Warning: FRect must not be changed bellow 
+   */
 
   /*
    * modify computed min,max if isoview requested 
@@ -215,23 +266,16 @@ void update_frame_bounds(BCG *Xgc,
 
   if ( strflag[1] == '3' || strflag[1] == '4')
     {
-      /* code added by S. Mottelet 11/7/2000 */
-      double FRect[4],WRect[4],ARect[4];
+      /* code by S. Mottelet 11/7/2000 */
+      double FRect1[4],WRect[4],ARect[4];
       char logscale[4];      
-      /* end of added code by S. Mottelet 11/7/2000 */
-      
       int wdim[2];
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       hx=xmax-xmin;
       hy=ymax-ymin;
-
-      /* code added by S. Mottelet 11/7/2000 */
-      getscale2d(Xgc,WRect,FRect,logscale,ARect);
-
+      getscale2d(Xgc,WRect,FRect1,logscale,ARect);
       wdim[0]=linint((double)wdim[0] * WRect[2]);
       wdim[1]=linint((double)wdim[1] * WRect[3]);
-      /* end of added code by S. Mottelet 11/7/2000 */
-
       if ( hx/(double)wdim[0]  <hy/(double) wdim[1] ) 
 	{
 	  hx1=wdim[0]*hy/wdim[1];
@@ -278,62 +322,22 @@ void update_frame_bounds(BCG *Xgc,
       aaint[2]=1;aaint[3]=inint(ymax-ymin);
     }
   
-  /* FRect gives the plotting boundaries xmin,ymin,xmax,ymax */
+  /* FRect1 gives the plotting boundaries xmin,ymin,xmax,ymax */
+  FRect1[0]=xmin;FRect1[1]=ymin;FRect1[2]=xmax;FRect1[3]=ymax;
   
-  FRect[0]=xmin;FRect[1]=ymin;FRect[2]=xmax;FRect[3]=ymax;
-  
-  /* if strflag[1] == 7 or 8 we compute the max between current scale and the new one  */
-  if (strflag[1] == '7' || strflag[1] == '8' )
-    {
-      if ( Xgc->scales->scale_flag != 0 ) 
-	{
-	  /* first check that we are not changing from normal<-->log */
-	  int xlog = ((int)strlen(xf) >= 2 && xf[1]=='l' ) ? 1: 0;
-	  int ylog = ((int)strlen(xf) >=3  && xf[2]=='l' ) ? 2: 0;
-	  if ( (xlog == 1 && Xgc->scales->logflag[0] == 'n') 
-	       || (xlog == 0 && Xgc->scales->logflag[0] == 'l')
-	       || (ylog == 1 && Xgc->scales->logflag[1] == 'n')
-	       || (ylog == 0 && Xgc->scales->logflag[1] == 'l') )
-	    {
-	      Scistring("Warning: you cannot use automatic rescale if you switch from log to normal or normal to log \n");
-	    }
-	  else 
-	    {
-	      FRect[0] = Min(FRect[0],Xgc->scales->frect[0]);
-	      FRect[1] = Min(FRect[1],Xgc->scales->frect[1]);
-	      FRect[2] = Max(FRect[2],Xgc->scales->frect[2]);
-	      FRect[3] = Max(FRect[3],Xgc->scales->frect[3]);
-	      if ( FRect[0] < Xgc->scales->frect[0] 
-		   || FRect[1] < Xgc->scales->frect[1] 
-		   || FRect[2] > Xgc->scales->frect[2] 
-		   || FRect[3] > Xgc->scales->frect[3] )
-		redraw = 1;
-	    }
-	}
-      /* and we force flag back to 5  */
-      strflag[1] = '5';
-    }
-  else 
-    {
-      /* changes strflag[1] to accelerate next calls (replot) */
-      switch (strflag[1]) 
-	{
-	case '2' : strflag[1]='1';break;
-	  /* case '4' : strflag[1]='3';break; */ /* FIXME: this should be used ? */
-	case '6' : strflag[1]='5';break;
-	}
-    }
-	  
+  /* switch strflag so as to use now FRect   */
+  plot2d_strf_change('d',strflag);
+
   if ( (int)strlen(strflag) >=2 && ( strflag[1]=='5' || strflag[1]=='6' ))
     {
       /* recherche automatique des bornes et graduations */
-      Gr_Rescale(&xf[1],FRect,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
-      Gr_Rescale(&xf[1],FRect,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
+      Gr_Rescale(&xf[1],FRect1,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
+      Gr_Rescale(&xf[1],FRect1,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
     }
   
   /* Update the current scale */
 
-  set_scale(Xgc,"tftttf",NULL,FRect,aaint,xf+1,NULL);
+  set_scale(Xgc,"tftttf",NULL,FRect1,aaint,xf+1,NULL);
 
   /* Should be added to set_scale */
 
@@ -342,20 +346,23 @@ void update_frame_bounds(BCG *Xgc,
   Xgc->scales->xtics[3] = aaint[1];
   Xgc->scales->ytics[3] = aaint[3];
 
+  /* FIXME: is it necessary ? */
   /* Changing back min,max and aaint if using log scaling X axis */
   if ((int)strlen(xf) >= 2 && xf[1]=='l' && (int)strlen(strflag) >= 2 && strflag[1] != '0')
     {
-      FRect[0]=exp10(xmin);FRect[2]=exp10(xmax);
+      FRect1[0]=exp10(xmin);FRect1[2]=exp10(xmax);
     }
   /* Changing ymin,ymax and aaint if using log scaling Y axis */
   if ((int)strlen(xf) >=3  && xf[2]=='l' && (int)strlen(strflag) >= 2 && strflag[1] != '0')
     {
-      FRect[1]= exp10(ymin);FRect[3]= exp10(ymax);
+      FRect1[1]= exp10(ymin);FRect1[3]= exp10(ymax);
     }
+
   /* Redraw other graphics */
   if ( redraw )
     {
-      static int flag[2]={1,0};
+      /* we propagate the new strflag[1] to previous plots */
+      static int flag[3]={1,0,1};
       /* Redraw previous graphics with new Scale */
       if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
 	{
@@ -363,10 +370,75 @@ void update_frame_bounds(BCG *Xgc,
 	  return;
 	}
       Xgc->graphic_engine->clearwindow(Xgc);    
-      tape_replay_new_scale_1(Xgc,Xgc->CurWindow,flag,aaint,FRect);
+      tape_replay_new_scale_1(Xgc,Xgc->CurWindow,flag,aaint,FRect,strflag);
+    }
+}
+
+/*----------------------------------------------------
+ * plot2d_brect_from_data:
+ *  compute FRect from data if necessary 
+ *----------------------------------------------------*/
+
+void plot2d_brect_from_data(BCG *Xgc,int cflag, char *xf, double *x,double *y,
+			    int *n1, int *n2, int *aaint, char *strflag, double FRect[4])
+{
+  double xmin,xmax,ymin,ymax;
+  /* cflag is used when using contour */
+  int size_x = (cflag == 1) ? (*n1) : (*n1)*(*n2) ;
+  int size_y = (cflag == 1) ? (*n2) : (*n1)*(*n2) ;
+  char c;
+  if ((int)strlen(strflag) < 2) return ;
+  switch (strflag[1])
+    {
+    case '1' : case '3' : case '5' : case '7':
+      if ( (int)strlen(xf) < 1) c='g' ; else c=xf[0];
+      switch ( c )
+	{
+	case 'e' : xmin= 1.0 ; xmax = (*n2);break;
+	case 'o' : xmax= Maxi(x,(*n2)); xmin= Mini(x,(*n2)); break;
+	case 'g' :
+	default: xmax= Maxi(x, size_x); xmin= Mini(x, size_x); break;
+	}
+      ymin=  Mini(y, size_y); ymax=  Maxi(y,size_y);
+      /* back to default values for  x=[] and y = [] */
+      if ( ymin == LARGEST_REAL ) { ymin = 0; ymax = 10.0 ;} 
+      if ( xmin == LARGEST_REAL ) { xmin = 0; xmax = 10.0 ;} 
+      FRect[0]=xmin;FRect[1]=ymin;FRect[2]=xmax;FRect[3]=ymax;
+      break;
     }
 }
  
+/*
+ * switch strf flag up or down 
+ */
+
+void plot2d_strf_change(char c, char *strf)
+{
+  if ( c == 'u') 
+    {
+      /* move up */ 
+      switch (strf[1]) 
+	{
+	case '1' : strf[1]='2';break;
+	case '3' : strf[1]='4';break;
+	case '5' : strf[1]='6';break;
+	case '7' : strf[1]='8';break;
+	}
+    }
+  else
+    {
+      /*move down */
+      switch (strf[1]) 
+	{
+	case '2' : strf[1]='1';break;
+	case '4' : strf[1]='3';break;
+	case '6' : strf[1]='5';break;
+	case '8' : strf[1]='7';break;
+	}
+
+    }
+}
+
 
 /*----------------------------------------------------
  *  legend="leg1@leg2@leg3@...."             

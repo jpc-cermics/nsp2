@@ -1148,9 +1148,23 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,
   
   /* logflags */ 
   logflags[0]= tflag;
-  
+
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
+
+  /* FIXME: make a function with all this and propagate to other primitives */
+
+  if ( Mrect == NULL ) 
+    { 
+      /* if rect is not provided and selected by strf we switch to recompute rect */
+      plot2d_strf_change('u',strf);
+    }
+  else 
+    {
+      /* if rect is provided and not selected by strf we force it */
+      plot2d_strf_change('d',strf);
+    }
+
   if ( strcmp(logflags,"gnn")==0 && force2d == 0) 
     {
       nsp_plot2d(Xgc,x->R,y->R,&ncurves, &lcurve,istyle,strf,leg,rect,nax);
@@ -3286,9 +3300,9 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
   static double  rect_def[4] = { 0,0,10,10}, ebox_def[6] = {0,1,0,1,0,1};
   static int iflag_def[4] = { 0,0,0,0 };
   static int aint_def[4] = { 0,0,0,0 };
-  static int iscflag_def[2] = { 1,0 };
+  int iscflag[3];
   static int flagx_def[3] = { 1,1,1} ;
-  int *iflag = iflag_def,*aint = aint_def,*iscflag = iscflag_def, *flagx= flagx_def,num;
+  int *iflag = iflag_def,*aint = aint_def, *flagx= flagx_def,num;
   double alpha = 35.0 ,theta = 45.0,  *rect = rect_def ,*ebox = ebox_def ;
 
   static char *xtape_Table[] = {  "on","clear","replay","replaysc","replayna","off",  NULL };
@@ -3317,25 +3331,17 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
       Xgc->graphic_engine->tape_replay(Xgc,num);
       break;
     case 3 : /* replaysc */
-      CheckRhs(2,5);
+      CheckRhs(2,4);
       if (GetScalarInt(stack,2,&num) == FAIL) return RET_BUG;
       /*     s'il n'y a que trois argument le 3ieme est rect[4] */
-      if (rhs == 3) { 
-	if ((M= GetRealMat(stack,3))  == NULLMAT) return RET_BUG;
-	CheckLength(stack.fname,3,M,4); rect =  M->R;
-      }
-      else if ( rhs > 3 ) 
+      iscflag[0]=1; iscflag[1]=iscflag[2]=0;
+      if ((M= GetRealMat(stack,3))  == NULLMAT) return RET_BUG;
+      CheckLength(stack.fname,3,M,4); rect =  M->R;
+      if ( rhs >= 4 ) 
 	{
-	  if ((M= GetRealMatInt(stack,3))  == NULLMAT) return RET_BUG;
-	  CheckLength(stack.fname,3,M,2); iscflag = (int*) M->R;
-	  if ( rhs >=4 ) { 
-	    if ((M= GetRealMat(stack,4))  == NULLMAT) return RET_BUG;
-	    CheckLength(stack.fname,4,M,4); rect =  M->R;
-	  }
-	  if ( rhs >=5 ) { 
-	    if ((M= GetRealMatInt(stack,5))  == NULLMAT) return RET_BUG;
-	    CheckLength(stack.fname,5,M,4); aint = (int*) M->R;
-	  }
+	  iscflag[1]=1;
+	  if ((M= GetRealMatInt(stack,4))  == NULLMAT) return RET_BUG;
+	  CheckLength(stack.fname,4,M,4); aint = (int*) M->R;
 	}
       Xgc->graphic_engine->tape_replay_new_scale(Xgc,num,iscflag,aint,rect);
       break;
