@@ -4491,11 +4491,13 @@ int int_gtkhelp(Stack stack, int rhs, int opt, int lhs)
 {
   int i;
   char *str[3];
+#ifdef WITH_GTKHTML
   CheckRhs(1,1);
   for (i=0; i < 1 ; i++) {
     if ((str[i] = GetString(stack,i+1)) == (char*)0) return RET_BUG;
   }
   Sci_Help(NULL,NULL,str[0]);
+#endif 
   return 0;
 }
 

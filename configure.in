@@ -565,6 +565,82 @@ case "$host" in
     fi
     MAKEFILE_TARGET=Makefile.linux
    ;;
+# Linux gnu: x86_64 distributions added by cdh 2004-09-29
+  x86_64-*-linux-gnu)
+    LIEEELIB=
+    AC_CHECK_LIB(ieee,main,
+      [LIEEELIB=-lieee])
+    MALLOC=malloc.o
+    if test "$with_intelcompilers" = yes; then
+       GCC=no
+       CC=$ICC
+       FC=$IFC
+       CC_OPTIONS='-O -Dlinux -DNARROWPROTO -mp'
+       CC_PICFLAGS="-fPIC"
+# -cm remove comments displays, -w90  -w95 remove warnings abort f90 f95 non standard
+       FC_OPTIONS="-O -cm -w90 -w95 -mp "
+       FC_OPTIONS_O0="-cm  -w90 -w95 -mp "
+       if test "$enable_debug" = yes; then
+         CC_OPTIONS='-g -Wall -Dlinux  -DNARROWPROTO  -mp '
+         FC_OPTIONS="-g -cm  -w90 -w95 -mp "
+       fi
+       CC_LDFLAGS="$LIEEELIB  -Wl,-relax"
+       FC_LDFLAGS="$LIEEELIB -ldl  -lPEPCF90 -Wl,-relax "
+       LD=xild
+       LD_LDFLAGS="$LIEEELIB -lPEPCF90 -Wl,-relax "
+    else
+       GCC=yes
+       CC=cc
+       # CC_PLAT_OPTIONS is optional, and is used to add CPU specific code generation tuning for Athlon64 presumably 
+       # Opteron could benefit too but these are not optimized for the Opteron
+       CC_PLAT_OPTIONS='-march=athlon64 -mfpmath=sse -msse2 -m3dnow -m64 '
+       CC_OPTIONS="-O2 -Dlinux -fwritable-strings -DNARROWPROTO $CC_PLAT_OPTIONS"
+       CC_LDFLAGS=$LIEEELIB
+       CC_PICFLAGS=-fPIC
+       # find Fortran compiler
+       # g77 already asked and found: good
+       if test "$WITH_G77" = yes; then
+         FC=g77
+         FC_PICFLAGS=-fPIC
+       # option with-f2c
+       elif test "$with_f2c" = yes; then
+         AC_CHECK_PROG(F2C,f2c,yes,no)
+         if test "$F2C" = no; then
+           AC_MSG_ERROR([Unable to configure: f2c compiler not found])
+         fi
+         # script shell f77 have bugs, get ours
+         FC='${SCIDIR}/bin/f77-linux'
+       else
+         # first find g77
+         AC_CHECK_PROG(WITH_G77,g77,yes,no)
+         if test "$WITH_G77" = yes; then
+           FC=g77
+           FC_PICFLAGS=-fPIC
+         else
+         # otherwise find f2c
+           AC_CHECK_PROG(F2C,f2c,yes,no)
+           if test "$F2C" = yes; then
+             # script shell f77 have bugs, get ours
+             FC='${SCIDIR}/bin/f77-linux'
+           else
+             AC_MSG_ERROR([Unable to configure: no Fortran compiler found])
+           fi
+         fi
+       fi
+       FC_OPTIONS="-O $CC_PLAT_OPTIONS"
+       FC_OPTIONS_O0=
+       FC_LDFLAGS="$LIEEELIB -ldl -rdynamic -Wl,-relax "
+       LD=ld
+       LD_LDFLAGS="$LIEEELIB  -Wl,-relax "
+       if test "$enable_debug" = yes; then
+        # CC_PLAT_OPTIONS is optional, and is used to add CPU specific code generation tuning for Athlon64 presumably Opteron could benefit too but these are not optimized for the Opteron
+         CC_PLAT_OPTIONS='-march=athlon64 -mfpmath=sse -msse2 -m3dnow -m64 '
+         CC_OPTIONS="-g -Wall -Dlinux -fwritable-strings -DNARROWPROTO $CC_PLAT_OPTIONS"
+         FC_OPTIONS="-g $CC_PLAT_OPTIONS"
+       fi
+    fi
+    MAKEFILE_TARGET=Makefile.linux
+   ;;
 # Alpha Linux
   alpha-*-linux-gnu)
     MALLOC=malloc.o
@@ -1327,27 +1403,32 @@ AC_MSG_RESULT([$GTK_VER])
 # we have cheched above that gtk-config is in the 
 # path, then we don't want to generate a full path 
 # for gtk-config or to directly generate the 
-# result of `gtk-config --cflags`. Idem for gnome
+# result of `gtk-config --cflags`. 
 GTKCFLAGS='`pkg-config gtk+-2.0 --cflags`'
-GTKLIBS='`pkg-config gtk+-2.0 libgtkhtml-2.0 --libs`'
-GNOMECFLAGS='`pkg-config gtk+-2.0 --cflags`'
+GTKLIBS='`pkg-config gtk+-2.0 --libs`'
 AC_DEFINE(WITH_GTK)
+GTK_PKGS='gtk+-2.0'
 GUILIB='gtksci'
 GZVT='gzvt2'
 # we need a patched version 
 SCILABSCRIPT=scilab-gtk.g
 MENUSOBJS=GOBJS
 PERIFILE=periGtk.o
-# gtk 1 HTMLFLAGS=`gnome-config --cflags gnome`
-# gtk 2 HTMLFLAGS=`pkg-config libgtkhtml-2.0 --cflags`
-HTMLFLAGS='`pkg-config libgtkhtml-2.0 --cflags`'
 # check for libgtkhtml-2.0
 ac_save_LIBS="$LIBS"
 LIBS=`pkg-config libgtkhtml-2.0 --cflags --libs`
 GTKHTML=no
+GTKHTMLOBJS=
 AC_CHECK_LIB(gtkhtml-2,html_document_open_stream,[GTKHTML=yes])
 if test "$GTKHTML" = no; then
-	AC_MSG_ERROR([Could not find the libgtkhtml-2.0 package.],)
+   AC_MSG_WARN([Could not find the libgtkhtml-2.0 package.],)
+   AC_MSG_WARN([WARNING interactive html  help will not be build .],)
+else 
+     GTK_PKGS="$GTK_PKGS libgtkhtml-2.0"
+     GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
+     GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+     GTKHTMLOBJS='$(OBJSHELP)'
+     AC_DEFINE(WITH_GTKHTML)
 fi
 LIBS=$ac_save_LIBS
 # check first for vte 
@@ -1374,9 +1455,7 @@ else
 fi
 LIBS=$ac_save_LIBS
 
-
-
-  # try to use readline with the gtk version 
+# try to use readline with the gtk version 
   ac_save_LIBS="$LIBS"
   LIBS="$TERMCAPLIB  $LIBS"
   AC_CHECK_LIB(readline, rl_callback_read_char,[READLINE=-lreadline])
@@ -1398,32 +1477,32 @@ if test "$with_gtkglext" != no; then
     AC_MSG_CHECKING([if gtkglext exists ])
     if pkg-config --exists gtkglext-1.0; then
        AC_MSG_RESULT([yes])
+       AC_MSG_CHECKING([if gtkglext is version $gtkglext_version or later])
+       if pkg-config --atleast-version=$gtkglext_version gtkglext-1.0 ; then
+          AC_MSG_RESULT([yes])
+	  AC_DEFINE(WITH_GTKGLEXT)
+          GTKGLEXT_VER=`$PKG_CONFIG --modversion gtkglext-1.0`
+          PERIGLEXT="periGL.o"
+          # we have cheched above that gtk-config is in the 
+          # path, then we don't want to generate a full path 
+          # for gtk-config or to directly generate the 
+          # result of `gtk-config --cflags`. Idem for gnome
+          GTK_PKGS="$GTK_PKGS gtkglext-1.0"
+          GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
+          GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+       else 
+    	  AC_MSG_WARN([Could not find the gtkglext-1.0 package version $gtkglext_version or later .],)
+    	  AC_MSG_WARN([WARNING OpenGL driver will not be build .],)
+       fi 
     else 
-       AC_MSG_ERROR([Could not find the gtkglext-1.0  package.],)
+       AC_MSG_WARN([Could not find the gtkglext-1.0  package.],)
+       AC_MSG_WARN([WARNING OpenGL driver will not be build .],)
     fi
-    AC_MSG_CHECKING([if gtkglext is version $gtkglext_version or later])
-    if pkg-config --atleast-version=$gtkglext_version gtkglext-1.0 ; then
-       AC_MSG_RESULT([yes])
-    else 
-    	AC_MSG_ERROR([Could not find the gtkglext-1.0 package version $gtkglext_version or later .],)
-    fi 
-
-    AC_DEFINE(WITH_GTKGLEXT)
-
-    GTKGLEXT_VER=`$PKG_CONFIG --modversion gtkglext-1.0`
-    PERIGLEXT="periGL.o"
-    # we have cheched above that gtk-config is in the 
-    # path, then we don't want to generate a full path 
-    # for gtk-config or to directly generate the 
-    # result of `gtk-config --cflags`. Idem for gnome
-    GTKCFLAGS='`pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --cflags`'
-    GTKLIBS='`pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --libs`'
-    GNOMECFLAGS='`pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --cflags`'
-
 fi
 
 #################
 ## Tcl/Tk library
+## unsused 
 #################
 
 TK_INC_PATH=
@@ -1525,7 +1604,6 @@ AC_SUBST(XAW_LOCAL_INCLUDES)
 AC_SUBST(XAW_LOCAL_LIB)
 AC_SUBST(GTKCFLAGS)
 AC_SUBST(GTKLIBS)
-AC_SUBST(GNOMECFLAGS)
 AC_SUBST(TERMCAPLIB)
 AC_SUBST(MAIN)
 AC_SUBST(MAKEFILE_TARGET)
@@ -1591,6 +1669,7 @@ AC_SUBST(STRIP)
 AC_SUBST(PERIGLEXT)
 AC_SUBST(TERM_NAME)
 AC_SUBST(TERM_LDFLAGS)
+AC_SUBST(GTKHTMLOBJS)
 
 AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile) 
  

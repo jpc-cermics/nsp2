@@ -1,3 +1,4 @@
+/* -*- Mode: C -*- */
 /* Copyright INRIA */
 #ifndef MACHINE_H 
 #define MACHINE_H 
@@ -40,6 +41,10 @@
 
 /* Define if have and use GTKGLEXT */
 #undef WITH_GTKGLEXT
+
+/* Define if have and use GTKHTML */
+#undef WITH_GTKHTML
+
 
 /* CNAME(x,y) ==> xy **/
 

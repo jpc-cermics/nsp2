@@ -6,16 +6,16 @@ include ../../Version.incl
 
 LIBRARY = gtksci.a
 
+OBJSHELP=helpbrowser.o uri.o
+
+
 OBJSC =	click.o command.o  io.o \
 	menus.o  x_main.o \
-	about.o queue.o helpbrowser.o uri.o
+	about.o queue.o @GTKHTMLOBJS@
 
 OBJSF  = 
 
 include ../../Makefile.incl
-
-#HTMFLAGS=`pkg-config libgtkhtml-2.0 --cflags`
-HTMFLAGS=
 
 CFLAGS = $(CC_OPTIONS) $(TK_INC_PATH) $(TCL_INC_PATH) $(HTMFLAGS)
 

@@ -14,7 +14,9 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 
+#ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
+#endif 
 
 /* FIXME: */
 extern double C2F(dsort)();
@@ -127,57 +129,80 @@ static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
 
 int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  if ( Xgc->graphic_engine != &GL_gengine ) 
-    C2F(plot3dg)(Xgc,"plot3d",DPoints,x,y,z,p,q,teta,alpha,legend,flag,bbox);
-  else
-    plot3dg_ogl(Xgc,"plot3d",DPoints_ogl,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      plot3dg_ogl(Xgc,"plot3d",DPoints_ogl,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+      return 0;
+    }
+#endif
+  C2F(plot3dg)(Xgc,"plot3d",DPoints,x,y,z,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
 int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  if ( Xgc->graphic_engine != &GL_gengine ) 
-    C2F(plot3dg)(Xgc,"plot3d1",DPoints1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
-  else
-    plot3dg_ogl(Xgc,"plot3d1",DPoints1_ogl,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      plot3dg_ogl(Xgc,"plot3d1",DPoints1_ogl,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+      return 0;
+    }
+#endif 
+  C2F(plot3dg)(Xgc,"plot3d1",DPoints1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
 
 int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  if ( Xgc->graphic_engine != &GL_gengine ) 
-    C2F(fac3dg)(Xgc,"fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-  else 
-    fac3dg_ogl(Xgc,"fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      fac3dg_ogl(Xgc,"fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      return(0);
+    }
+#endif
+  C2F(fac3dg)(Xgc,"fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
 int nsp_plot_fac3d_1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  if ( Xgc->graphic_engine != &GL_gengine ) 
-    C2F(fac3dg)(Xgc,"fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-  else 
-    fac3dg_ogl(Xgc,"fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      fac3dg_ogl(Xgc,"fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      return(0);
+    }
+#endif
+  C2F(fac3dg)(Xgc,"fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
-
 }
 
 int nsp_plot_fac3d_2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  if ( Xgc->graphic_engine != &GL_gengine ) 
-    C2F(fac3dg)(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-  else
-    fac3dg_ogl(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      fac3dg_ogl(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      return(0);
+    }
+#endif 
+  C2F(fac3dg)(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
 int nsp_plot_fac3d_3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
-  if ( Xgc->graphic_engine != &GL_gengine ) 
-    C2F(fac3dg)(Xgc,"fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-  else
-    fac3dg_ogl(Xgc,"fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      fac3dg_ogl(Xgc,"fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      return(0);
+    }
+#endif 
+  C2F(fac3dg)(Xgc,"fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
@@ -689,11 +714,13 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
   int fg1;
   double zmin,zmax; /* unused */
   
+#ifdef WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       nsp_param3d_ogl(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
       return 0;
     }
+#endif
 
   nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,n,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
 
@@ -778,12 +805,13 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
   int fg1,cur;
   double zmin,zmax; /* unused */
 
+#ifdef WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       nsp_param3d_1_ogl(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
       return 1;
     }
-
+#endif
 
   nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,n,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
 
@@ -1169,7 +1197,8 @@ void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag)
   box->InsideD[3]= box->InsideD[0]+4;
   box->xind[5]=ind2;
 
-  if ( Xgc->graphic_engine != &GL_gengine ) 
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       for (i=0; i < 6 ; i++)
 	{
@@ -1192,6 +1221,7 @@ void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag)
       Xgc->graphic_engine->xset_dash(Xgc,dash);
     }
   else
+#endif /* WITH_GTKGLEXT */
     {
       for (i=0; i < 6 ; i++)
 	{
@@ -1567,10 +1597,15 @@ static void dbox(BCG *Xgc,double theta,double alpha)
 #endif
 
   SetEch3d1(Xgc,&box,Xgc->scales->bbox1,theta,alpha,Xgc->scales->metric3d);
-  if ( Xgc->graphic_engine != &GL_gengine ) 
-    nsp_plot_box3d(Xgc,&box);
-  else
+
+#ifdef WITH_GTKGLEXT 
+  if ( Xgc->graphic_engine == &GL_gengine ) 
     nsp_plot_box3d_ogl(Xgc,&box);
+  else
+    nsp_plot_box3d(Xgc,&box);
+#else 
+  nsp_plot_box3d(Xgc,&box);
+#endif 
 
 #ifdef WIN32
    Xgc->graphic_engine->xset_pattern(pat);
@@ -1730,6 +1765,7 @@ int shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysi
  * OpenGL version 
  */
 
+#ifdef WITH_GTKGLEXT 
 
 static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
@@ -2155,3 +2191,4 @@ static int nsp_plot_box3d_ogl(BCG *Xgc,nsp_box_3d *box)
 
 }
 
+#endif /* WITH_GTKGLEXT  */
