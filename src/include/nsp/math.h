@@ -85,7 +85,9 @@ extern double Maxi();  /** XXXX a mettre ailleurs **/
 #define isinf(x) ( !  finite(x) && !isnan(x))
 #endif 
 
+#ifndef exp10
 extern double exp10 (double);
+#endif 
 
 /* Les arguments des fonction XWindows doivent etre des int16 ou unsigned16 */
 
