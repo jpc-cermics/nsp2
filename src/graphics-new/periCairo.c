@@ -45,14 +45,20 @@
  * 
  */ 
 
-#define DRAW_CHECK_OLD  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
-   {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
-
 /*
  * we always draw in a drawable which is a pixmap but the expose event is asynchronous
  */
 
-#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc); 
+/*
+ * FIXME: Attention pour Cairo on n'a pas encore de pixmap 
+ *        on dessine que ds expose 
+ * Il faut proteger tous les ordres graphiques avec DRAW_CHECK 
+ * pour confiner le fait que dessiner a lieu juste dans paint.
+ * Il faut faire de meme pour periGtk.c 
+ */
+
+#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
+   {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
 
 /* Global variables to deal with X11 **/
 
@@ -902,6 +908,7 @@ static void xset_clip(BCG *Xgc,int x[])
   /* clip_rect ={x[0],x[1],x[2],x[3]}= {x,y,w,h} */
   Xgc->ClipRegionSet = 1;
   for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
+  DRAW_CHECK;
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
   cairo_new_path (cairo);
@@ -924,18 +931,16 @@ static void xset_unclip(BCG *Xgc)
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   double x[]={0,0,int16max,  int16max};
-  if (! GTK_WIDGET_REALIZED(Xgc->private->cairo_drawing))
-    {
-      Scierror("Not realized !\n");
-    }
+  if ( Xgc->ClipRegionSet == 0 ) return;
+  Xgc->ClipRegionSet = 0;
+  DRAW_CHECK;
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
-  Xgc->ClipRegionSet = 0;
   /* 
    * gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
    */
   /* how to remove a clip region ? FIXME */
-  cairo_init_clip(cairo);  
+  /* cairo_init_clip(cairo);  */
   cairo_move_to (cairo, x[0],x[1]);
   cairo_rel_line_to (cairo, x[2],0.0);
   cairo_rel_line_to (cairo, 0.0, - x[3]);
@@ -1751,6 +1756,10 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
       */
       gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
       cairo = gtk_cairo_get_cairo (gtkcairo);
+      if (cairo_status (cairo)) {
+	fprintf (stderr, "Cairo is unhappy in displaystring: %s\n",
+		 cairo_status_string (cairo));
+      }
       cairo_select_font (cairo, "sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
       cairo_scale_font (cairo, 20);
       cairo_move_to (cairo, x,y);
