@@ -1268,13 +1268,14 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
 			 { "nax",mat_int,NULLOBJ,-1},
 			 { "rect",realmat,NULLOBJ,-1},
 			 { "remap",s_bool,NULLOBJ,-1},
+			 { "shade",s_bool,NULLOBJ,-1},
 			 { "strf",string,NULLOBJ,-1},
 			 { "style",mat_int,NULLOBJ,-1},
 			 { "zminmax",mat,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
   
   /* for 2d optional arguments; */
-  int *istyle,*nax, frame= -1, axes=-1, remap=FALSE;
+  int *istyle,*nax, frame= -1, axes=-1, remap=TRUE,shade=FALSE;
   NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mcolout=NULL;
   double *rect ; 
   char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
@@ -1287,7 +1288,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   if ( rhs <= 0) {return sci_demo(stack.fname, "t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);",1);}
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts_mp,&axes,&Mcolminmax,&Mcolout,&frame,&leg,&leg_pos,
-	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
+	       &logflags,&Mnax,&Mrect,&remap,&shade,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
 
   CheckVector(stack.fname,1,x);
   CheckVector(stack.fname,2,y);
@@ -1312,7 +1313,8 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   nsp_draw_matrix(Xgc,x->R,y->R,z->R,z->m,z->n,strf,rect,nax,remap,
 		  (Mcolminmax == NULL) ? NULL :(int *) Mcolminmax->R,
 		  (Mzminmax == NULL) ? NULL : Mzminmax->R,
-		  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R);
+		  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R,
+		  shade);
   return 0;
 }
 

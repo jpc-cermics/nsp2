@@ -1064,6 +1064,7 @@ static int load_Gray(BCG *Xgc)
       if ( (flag & 0xf000 ) != 0 )
 	{ if ( load_VectLI(&(lplot->colout)) == 0) return(0);}
       if (store_record(Xgc,CODEGray,(char *) lplot) == 0) return(0);
+      if ( load_LI(&lplot->shade)==0) return(0);
     }
   else 
     {

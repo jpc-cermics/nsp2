@@ -1776,8 +1776,8 @@ static void clean_Contour2D(void *plot)
  *---------------------------------------------------------------------------*/
 
 void store_Gray(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
-		double *brect, int *aaint,
-		int remap,const int *colminmax,const double *zminmax,const int *colout)
+		double *brect, int *aaint,int remap,const int *colminmax,const double *zminmax,
+		const int *colout,int shade)
 {
   struct rec_gray *lplot;
   lplot= ((struct rec_gray *) MALLOC(sizeof(struct rec_gray)));
@@ -1786,6 +1786,7 @@ void store_Gray(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *
       lplot->n1= nx;
       lplot->n2= ny;
       lplot->remap = remap;
+      lplot->shade = shade;
       lplot->colminmax = NULL;
       lplot->zminmax = NULL;
       lplot->colout = NULL;
@@ -1879,7 +1880,7 @@ static void replay_Gray(BCG *Xgc,void *theplot)
   pl3d= (struct rec_gray *)theplot;
   nsp_draw_matrix(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->n1,pl3d->n2,
 		  pl3d->strflag,pl3d->brect,pl3d->aaint,
-		  pl3d->remap,pl3d->colminmax,pl3d->zminmax,pl3d->colout);
+		  pl3d->remap,pl3d->colminmax,pl3d->zminmax,pl3d->colout,pl3d->shade);
 }
 
 static void replay_Gray1(BCG *Xgc,void *theplot)

@@ -23,37 +23,10 @@ static void PermutOfSort (const int tab[], int perm[]);
 static void FindIntersection(const double *sx,const double *sy,const double *fxy,double z,int inda, int indb,
 			     int *xint, int *yint);
 
-/**
- * nsp_draw_matrix:
- * @Xgc: 
- * @x: 
- * @y: 
- * @z: 
- * @n1: 
- * @n2: 
- * @strflag: 
- * @brect: 
- * @aaint: 
- * @l1: 
- * 
- * - z is a (n1,n2) matrix 
- * - x is a (1,n1) matrix 
- * - y is a (1,n2) matrix 
- * - x,y,z are stored as one dimensionnal array in C 
- *
- *  z : is the value of a function on the grid defined by x,y 
- *  on each rectangle the average value of z is computed 
- *  and [zmin,zmax] is linearly remapped to the [colormin,colormap]
- *  values of colors in the current colormap 
- *  the color associated to zmoy is used for filling a specific rectangle 
- * 
- * 
- * Return value: 
- **/
 
-int nsp_draw_matrix_old(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
-		    double *brect, int *aaint, int remap,const int *colminmax,const double *zminmax,
-		    const int *colout)
+static int nsp_draw_matrix_zmoy(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
+				double *brect, int *aaint, int remap,const int *colminmax,const double *zminmax,
+				const int *colout)
 {
   int N = Max((nx),(ny));
   double xx[2],yy[2];
@@ -66,8 +39,7 @@ int nsp_draw_matrix_old(BCG *Xgc,double *x, double *y, double *z, int nx, int ny
   /** Allocation **/
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Gray(Xgc,x,y,z,nx,ny,strflag,brect,aaint,
-	       remap,colminmax,zminmax,colout);
+    store_Gray(Xgc,x,y,z,nx,ny,strflag,brect,aaint,remap,colminmax,zminmax,colout,FALSE);
 
   xm = graphic_alloc(0,N,sizeof(int));
   ym = graphic_alloc(1,N,sizeof(int));
@@ -121,9 +93,9 @@ extern void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n);
 extern Gengine GL_gengine;
 #endif 
 
-int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *func, int nx, int ny, char *strflag,
-		    double *brect, int *aaint, int remap,const int *colminmax,const double *zminmax,
-		    const int *colout)
+static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, int nx, int ny, char *strflag,
+				 double *brect, int *aaint, int remap,const int *colminmax,const double *zminmax,
+				 const int *colout)
 {
   double xx[2],yy[2];
   int i,*xm,*ym,j,k, Nnode= nx*ny, nn1=1,nn2=2;
@@ -136,7 +108,7 @@ int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *func, int nx, int ny,
   /* Storing values if using the Record driver */
   /* FIXME: need one more flag */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Gray(Xgc,x,y,func,nx,ny,strflag,brect,aaint, remap,colminmax,zminmax,colout);
+    store_Gray(Xgc,x,y,func,nx,ny,strflag,brect,aaint, remap,colminmax,zminmax,colout,TRUE);
 
   /** Allocation **/
   xm = graphic_alloc(0,Nnode,sizeof(int));
@@ -331,6 +303,39 @@ int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *func, int nx, int ny,
   return(0);
 }
 
+/*
+ * 
+ * - z is a (n1,n2) matrix 
+ * - x is a (1,n1) matrix 
+ * - y is a (1,n2) matrix 
+ * - x,y,z are stored as one dimensionnal array in C 
+ *
+ *  z : is the value of a function on the grid defined by x,y 
+ *  on each rectangle the average value of z, zmoy, is computed 
+ *  and the rectangle is painted with a color which depends on 
+ *  the value of zmoy 
+ *  the z values, or values from zminmax=[zmin,zmax] if @zminmax is non NULL
+ *  are linearly remapped to the min and max values of clors in 
+ *  the current colormap or to [colormin,colormax] if @colminmax is non NULL.
+ *  if remap is set to false @z values are directly casted to color values. 
+ *  colout can be used to give the colors for z values which are below 
+ *  zminmax[0] or above zminmax[1] (a zero value is interpreted as no painting).
+ * 
+ * 
+ * Return value: 
+ */
+
+int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
+		    double *brect, int *aaint, int remap,const int *colminmax,const double *zminmax,
+		    const int *colout,int shade)
+{
+  if (shade==TRUE) 
+    return nsp_draw_matrix_shade(Xgc,x,y,z,nx,ny,strflag,brect,aaint,remap,colminmax,zminmax,colout);
+  else 
+    return nsp_draw_matrix_zmoy(Xgc,x,y,z,nx,ny,strflag,brect,aaint,remap,colminmax,zminmax,colout);
+}
+
+
 
 /**
  * nsp_draw_matrix_1:
@@ -496,11 +501,10 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
     int ii[3];
 
     /* choice between zmin and zmax given by the user or computed
-     *   with the min and max z values. In matdes.c I have put 
-     * zminmax[0]= zminmax[1]=0 if the user don't give this argument 
+     * with the min and max z values. 
      */
 
-    if ( zminmax[0]==zminmax[1] ) { 
+    if ( zminmax == NULL  ) { 
       zmin=(double) Mini(func,*Nnode); 
       zmax=(double) Maxi(func,*Nnode);
     } 
@@ -513,21 +517,22 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
     nz=whiteid;
     
     /* choice for the colormap (in case of a user 's choice 
-     *   verify the parameter). For the automatic choice I have
-     * put colminmax[0]=colominmax[1]=1 in matdes.c  
+     *   verify the parameter). 
      */
 
-    if ( colminmax[0] == colminmax[1] )  /* automatic choice (see matdes.c) */
+    if ( colminmax == NULL ) 
       color_min=1; 
-    else if ( colminmax[0] < 1 || colminmax[1] > nz || colminmax[0] > colminmax[1] ) {
-      /* ici on pourrait plutot forcer les choses en imposant 1<= colmin < colmax <= nz */
-      sciprint("\n\r fec : colminmax badly choosen ! ");
-      return ( 0 );
-    } 
-    else {
-      color_min = colminmax[0];
-      nz = colminmax[1] - colminmax[0] + 1;
-    };
+    else if ( colminmax[0] < 1 || colminmax[1] > nz || colminmax[0] > colminmax[1] ) 
+      {
+	/* ici on pourrait plutot forcer les choses en imposant 1<= colmin < colmax <= nz */
+	sciprint("\n\r fec : colminmax badly choosen ! ");
+	return ( 0 );
+      } 
+    else
+      {
+	color_min = colminmax[0];
+	nz = colminmax[1] - colminmax[0] + 1;
+      };
       
     /* 
      *  1/ the purpose of the first part is to to compute the "zone" of each point :

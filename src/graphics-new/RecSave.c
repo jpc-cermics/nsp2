@@ -798,6 +798,7 @@ static int save_Gray(BCG *Xgc,void *plot)
     { if ( save_VectF((lplot->zminmax),2L) == 0) return(0);}
   if ( lplot->colout != NULL )  
     { if ( save_VectLI((lplot->colout),2L) == 0) return(0);}
+  if ( save_LI(lplot->shade)==0) return(0);
   return(1);
 }
 
