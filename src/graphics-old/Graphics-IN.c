@@ -1479,7 +1479,8 @@ int int_driver(Stack stack, int rhs, int opt, int lhs)
       if ((rep= GetStringInArray(stack,1,drivers_name,1)) == -1) return RET_BUG; 
       if ( drivers_id[rep] == Rec_driver ) 
 	{
-	  Scierror("%s: Rec driver does not exists, use xtape('on'|'off') to set recording mode on or off \n",stack.fname);
+	  Scierror("%s: Rec driver does not exists, use xset('recording',1|0) to set or unset recording mode\n",
+		   stack.fname);
 	}
       nsp_current_driver = rep;
       switch ( rep ) 
@@ -2273,15 +2274,22 @@ int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
  * 
  *-----------------------------------------------------------*/
 
+typedef enum {  
+  xget_alufunction, xget_background, xget_clipoff, xget_clipping, xget_color, xget_colormap, 
+  xget_dashes, xget_font , xget_font_size  , xget_foreground, xget_hidden3d, 
+  xget_lastpattern, xget_line_mode , xget_line_style , xget_mark , xget_mark_size, xget_pattern, 
+  xget_pixmap,  xget_recording, xget_thickness, xget_use_color, xget_viewport, xget_wdim, 
+  xget_white, xget_window, xget_wpdim, xget_wpos, xget_wresize, xget_fpf, xget_auto_clear
+} xget_enum;
 
-static char *xget_Table[] = {  "alufunction", "background", "clipoff",  "clipping",  "color",  "colormap",
-			       "dashes",    "font",   "font size",    "foreground",  "hidden3d",
-			       "lastpattern",  "line mode",   "line style",   "mark",   "mark size", "pattern",
-			       "pixmap",   "thickness",  "use color",  "viewport", "wdim",   "white",   "window",
-			       "wpdim",   "wpos",  "wresize", "fpf","auto clear",
-			       NULL
+static char *xget_Table[] = {  
+  "alufunction", "background", "clipoff",  "clipping",  "color",  "colormap",
+  "dashes",    "font",   "font size",    "foreground",  "hidden3d",
+  "lastpattern",  "line mode",   "line style",   "mark",   "mark size", "pattern",
+  "pixmap", "recording", "thickness",  "use color",  "viewport", "wdim",   "white",   "window",
+  "wpdim",   "wpos",  "wresize", "fpf","auto clear",
+  NULL
 };
-
 
 int int_xget(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2302,18 +2310,18 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
 
   switch (rep) 
     {
-    case 0: /* {"alufunction",xset_alufunction1,xget_alufunction}, */
+    case xget_alufunction: 
       val = Xgc->graphic_engine->xget_alufunction(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 1: /*{"background",xset_background,xget_background},*/
+    case xget_background:
       val = Xgc->graphic_engine->xget_background(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 2: /*{"clipoff",xset_unclip,xget_clip},*/
-    case 3: /*{"clipping",xset_clip,xget_clip},*/
+    case xget_clipoff:
+    case xget_clipping:
       Xgc->graphic_engine->xget_clip(Xgc,cl);
       if ((M = nsp_matrix_create(NVOID,'r',1,5))== NULLMAT) return RET_BUG;
       for ( i = 0 ; i < 5 ; i++) M->R[i]= cl[i];
@@ -2321,137 +2329,143 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
       NSP_OBJECT(M)->ret_pos = 1;
       return 1;
       break;
-    case 4: /*{"color",xset_pattern,xget_pattern},*/
+    case xget_color:
       val = Xgc->graphic_engine->xget_pattern(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 5: /*{"colormap",xset_colormap,xget_colormap},*/
-      Xgc->graphic_engine->xget_colormap(Xgc,&m3,NULL); /* just to get m3 */
+    case xget_colormap:
+      Xgc->graphic_engine->xget_colormap(Xgc,&m3,NULL); /*just to get m3 */
       if ((M = nsp_matrix_create(NVOID,'r',m3,3))== NULLMAT) return RET_BUG;
       Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R);
       StackStore(stack,(NspObject *) M,rhs+1);
       NSP_OBJECT(M)->ret_pos = 1;
       return 1;
       break;
-    case 6: /*{"dashes",xset_dash_or_color,xget_dash_or_color},  */
+    case xget_dashes:
       val = Xgc->graphic_engine->xget_dash(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 7: /*{"font",xset_font,xget_font},*/
+    case xget_font:
       Xgc->graphic_engine->xget_font(Xgc,vals);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
-    case 8: /*{"font size",xset_font,xget_font},*/
+    case xget_font_size:
       Xgc->graphic_engine->xget_font(Xgc,x1);
       if ( nsp_move_double(stack,1,(double) x1[1]) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 9: /*{"foreground",xset_foreground,xget_foreground},*/
+    case xget_foreground:
       val = Xgc->graphic_engine->xget_foreground(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 10: /*{"hidden3d",xset_hidden3d,xget_hidden3d},*/
+    case xget_hidden3d:
       val = Xgc->graphic_engine->xget_hidden3d(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 11: /*{"lastpattern",xset_empty,xget_last},*/
+    case xget_lastpattern:
       val = Xgc->graphic_engine->xget_last(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 12: /*{"line mode",xset_absourel,xget_absourel},*/
+    case xget_line_mode:
       val = Xgc->graphic_engine->xget_absourel(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 13: /*{"line style",xset_dash,xget_dash},*/
+    case xget_line_style:
       val = Xgc->graphic_engine->xget_dash(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 14: /*{"mark",xset_mark,xget_mark},*/
+    case xget_mark:
       Xgc->graphic_engine->xget_mark(Xgc,vals);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
-    case 15: /*{"mark size",xset_mark,xget_mark},*/
+    case xget_mark_size:
       Xgc->graphic_engine->xget_mark(Xgc,x1);
       if ( nsp_move_double(stack,1,(double) x1[1]) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 16: /*{"pattern",xset_pattern,xget_pattern},*/
+    case xget_pattern:
       val = Xgc->graphic_engine->xget_pattern(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 17: /*{"pixmap",xset_pixmapOn,xget_pixmapOn},*/
+    case xget_pixmap:
       val = Xgc->graphic_engine->xget_pixmapOn(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 18: /*{"thickness",xset_thickness,xget_thickness},*/
+    case xget_recording: 
+      CheckRhs(1,1);
+      val= Xgc->graphic_engine->xget_recording(Xgc);
+      if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
+      return 1;
+      break;
+    case xget_thickness:
       val = Xgc->graphic_engine->xget_thickness(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 19: /*{"use color",xset_usecolor,xget_usecolor},*/
+    case xget_use_color:
       val = Xgc->graphic_engine->xget_usecolor(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 20: /*{"viewport",xset_viewport,xget_viewport},*/
+    case xget_viewport:
       Xgc->graphic_engine->xget_viewport(Xgc,vals,vals+1);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
-    case 21: /*{"wdim",xset_windowdim,xget_windowdim},*/
+    case xget_wdim:
       Xgc->graphic_engine->xget_windowdim(Xgc,vals,vals+1);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
-    case 22: /*{"white",xset_empty,xget_last},*/
+    case xget_white:
       val = Xgc->graphic_engine->xget_last(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 23: /*{"window",xset_curwin,xget_curwin},*/
+    case xget_window:
       val = Xgc->graphic_engine->xget_curwin();
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 24: /*{"wpdim",xset_popupdim,xget_popupdim},*/
+    case xget_wpdim:
       Xgc->graphic_engine->xget_popupdim(Xgc,vals,vals+1);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
-    case 25: /*{"wpos",xset_windowpos,xget_windowpos},*/
+    case xget_wpos:
       Xgc->graphic_engine->xget_windowpos(Xgc,vals,vals+1);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
-    case 26: /*{"wresize",xset_wresize,xget_wresize},*/
+    case xget_wresize:
       val = Xgc->graphic_engine->xget_wresize(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
-    case 27 : /* fpf */
+    case xget_fpf:
       {
 	NspSMatrix *S;
 	if (( S=nsp_smatrix_create(NVOID,1,1,Xgc->graphic_engine->xget_fpf(Xgc),1))== NULLSMAT) return RET_BUG;
@@ -2459,7 +2473,7 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
 	return 1;
       }
       break;
-    case 28:  /* auto clear */
+    case xget_auto_clear:
       {
 	NspSMatrix *S;
 	int val = Xgc->graphic_engine->xget_autoclear(Xgc);
@@ -2910,16 +2924,24 @@ int int_xselect(Stack stack, int rhs, int opt, int lhs)
  * or   xset()
  *-----------------------------------------------------------*/
 
-/* XXXXXXXXXXXXXXXXXXXXXX Attention il faut des xset_1 ici */ 
+/* FIXME:  Attention il faut des xset_1 ici */ 
 
+typedef enum  { 
+ xset_alufunction, xset_background, xset_clipoff, xset_clipping, xset_color, xset_colormap
+ , xset_dashes  , xset_default, xset_default_colormap
+ , xset_font , xset_font_size , xset_foreground, xset_hidden3d
+ , xset_lastpattern, xset_line_mode , xset_line_style , xset_mark , xset_mark_size, xset_pattern
+ , xset_pixmap ,xset_recording, xset_thickness, xset_use_color, xset_viewport, xset_wdim , xset_white , xset_window
+ , xset_wpdim , xset_wpos, xset_wresize, xset_wshow, xset_wwpc, xset_fpf, xset_auto_clear, xset_clipgrf
+} xset_enum ;
 
-static char *xset_Table[] = { "alufunction", "background", "clipoff",  "clipping",  "color",  "colormap",
-			      "dashes",     "default",  "default_colormap",
-			      "font",   "font size",    "foreground",  "hidden3d",
-			      "lastpattern",  "line mode",   "line style",   "mark",   "mark size", "pattern",
-			      "pixmap",   "thickness",  "use color",  "viewport", "wdim",   "white",   "window",
-			      "wpdim",   "wpos",  "wresize",  "wshow",  "wwpc", "fpf","auto clear", "clipgrf",
-			      NULL
+static char *xset_Table[] = { 
+ "alufunction", "background", "clipoff", "clipping", "color", "colormap",
+  "dashes",     "default",  "default_colormap",
+  "font",   "font size",    "foreground",  "hidden3d",
+  "lastpattern",  "line mode",   "line style",   "mark",   "mark size", "pattern",
+  "pixmap", "recording",  "thickness",  "use color",  "viewport", "wdim",   "white",   "window",
+  "wpdim",   "wpos",  "wresize",  "wshow",  "wwpc", "fpf","auto clear", "clipgrf",
 };
 
 int int_xset(Stack stack, int rhs, int opt, int lhs)
@@ -2940,24 +2962,24 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
 
   switch (rep) 
     {
-    case 0: /* {"alufunction",xset_alufunction1,xget_alufunction}, */
+    case xset_alufunction:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,val);
       break;
-    case 1: /*{"background",xset_background,xget_background},*/
+    case xset_background:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_background(Xgc,val);
       break;
-    case 2: /*{"clipoff",xset_unclip,xget_clip},*/
+    case xset_clipoff:
       CheckRhs(1,1);
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_unclip(Xgc);
       break;
-    case 3: /*{"clipping",xset_clip,xget_clip},*/
+    case xset_clipping:
       if ( rhs == 2 ) 
 	{
 	  if (( M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
@@ -2976,36 +2998,36 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
 	  Xgc->graphic_engine->scale->xset_clip(Xgc,cl);
 	}
       break;
-    case 4: /*{"color",xset_pattern,xget_pattern},*/
+    case xset_color:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_pattern(Xgc,val);
       break;
-    case 5: /*{"colormap",xset_colormap,xget_colormap},*/
+    case xset_colormap:
       CheckRhs(2,2);
       if ( (M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG; 
       CheckCols(stack.fname,2,M,3);
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_colormap(Xgc,M->m,M->R);
       break;
-    case 6: /*{"dashes",xset_dash_or_color,xget_dash_or_color},  */
+    case xset_dashes:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_dash(Xgc,val);
       break;
-    case 7: /*{"default",xset_default*/
+    case xset_default:
       CheckRhs(1,1);
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_default(Xgc);
       break;
-    case 8: /*{"default_colormap",xset_default_colormap*/
+    case xset_default_colormap:
       CheckRhs(1,1);
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_default_colormap(Xgc);
       break;
-    case 9: /*{"font",xset_font,xget_font},*/
+    case xset_font:
       CheckRhs(2,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if ( rhs == 3 ) 
@@ -3018,7 +3040,7 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
       if ( rhs == 3 ) font[1]=val1;
       Xgc->graphic_engine->scale->xset_font(Xgc,font[0],font[1]);
       break;
-    case 10: /*{"font size",xset_font,xget_font},*/
+    case xset_font_size:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
@@ -3026,36 +3048,36 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
       font[1]=val;
       Xgc->graphic_engine->scale->xset_font(Xgc,font[0],font[1]);
       break;
-    case 11: /*{"foreground",xset_foreground,xget_foreground},*/
+    case xset_foreground:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_foreground(Xgc,val);
       break;
-    case 12: /*{"hidden3d",xset_hidden3d,xget_hidden3d},*/
+    case xset_hidden3d:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_hidden3d(Xgc,val);
       break;
-    case 13: /*{"lastpattern",xset_empty,xget_last},*/
+    case xset_lastpattern:
       CheckRhs(1,1);
       Scierror("lastpattern cannot be set \n");
       return RET_BUG;
       break;
-    case 14: /*{"line mode",xset_absourel,xget_absourel},*/
+    case xset_line_mode:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_absourel(Xgc,val);
       break;
-    case 15: /*{"line style",xset_dash,xget_dash},*/
+    case xset_line_style:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_dash(Xgc,val);
       break;
-    case 16: /*{"mark",xset_mark,xget_mark},*/
+    case xset_mark:
       CheckRhs(2,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if ( rhs == 3 ) 
@@ -3068,7 +3090,7 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
       if ( rhs == 3 ) mark[1]=val1;
       Xgc->graphic_engine->scale->xset_mark(Xgc,mark[0],mark[1]);
       break;
-    case 17: /*{"mark size",xset_mark,xget_mark},*/
+    case xset_mark_size:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
@@ -3076,50 +3098,56 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
       mark[1]=val;
       Xgc->graphic_engine->scale->xset_mark(Xgc,mark[0],mark[1]);
       break;
-    case 18: /*{"pattern",xset_pattern,xget_pattern},*/
+    case xset_pattern:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_pattern(Xgc,val);
       break;
-    case 19: /*{"pixmap",xset_pixmapOn,xget_pixmapOn},*/
+    case xset_pixmap:
       CheckRhs(2,2);
       Xgc=nsp_check_graphic_context();
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc->graphic_engine->scale->xset_pixmapOn(Xgc,val);
       break;
-    case 20: /*{"thickness",xset_thickness,xget_thickness},*/
+    case xset_recording: 
+      CheckRhs(2,2);
+      Xgc=nsp_check_graphic_context();
+      if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
+      Xgc->graphic_engine->xset_recording(Xgc,(val != 0 ) ? 1 : 0);
+      break;
+    case xset_thickness:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_thickness(Xgc,val);
       break;
-    case 21: /*{"use color",xset_usecolor,xget_usecolor},*/
+    case xset_use_color:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_usecolor(Xgc,val);
       break;
-    case 22: /*{"viewport",xset_viewport,xget_viewport},*/
+    case xset_viewport:
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_viewport(Xgc,val,val1);
       break;
-    case 23: /*{"wdim",xset_windowdim,xget_windowdim},*/
+    case xset_wdim:
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_windowdim(Xgc,val,val1);
       break;
-    case 24: /*{"white",xset_empty,xget_last},*/
+    case xset_white:
       CheckRhs(1,1);
       Scierror("white cannot be set \n");
       return RET_BUG;
       break;
-    case 25: /*{"window",xset_curwin,xget_curwin},*/
+    case xset_window:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if ((Xgc = window_list_get_first()) != NULL) 
@@ -3127,37 +3155,37 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
       else 
 	Xgc= set_graphic_window(Max(val,0));
       break;
-    case 26: /*{"wpdim",xset_popupdim,xget_popupdim},*/
+    case xset_wpdim:
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_popupdim(Xgc,val,val1);
       break;
-    case 27: /*{"wpos",xset_windowpos,xget_windowpos},*/
+    case xset_wpos:
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_windowpos(Xgc,val,val1);
       break;
-    case 28: /*{"wresize",xset_wresize,xget_wresize},*/
+    case xset_wresize:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_wresize(Xgc,val);
       break;
-    case 29: /*{"wshow",xset_show,xget_empty},*/
+    case xset_wshow:
       CheckRhs(1,1);
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_show(Xgc);
       break;
-    case 30: /*{"wwpc",xset_pixmapclear,xget_empty}*/
+    case xset_wwpc:
       CheckRhs(1,1);
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_pixmapclear(Xgc);
       break;
-    case 31: /*{"fpf"}*/
+    case xset_fpf:
       CheckRhs(2,2);
       if ((info = GetString(stack,2)) == (char*)0) return RET_BUG;
       Xgc=nsp_check_graphic_context();
@@ -3167,14 +3195,14 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
 	Xgc->graphic_engine->scale->xset_fpf(Xgc,info);
       return 0;
       break;
-    case 32: /*{"auto clear"}*/
+    case xset_auto_clear:
       CheckRhs(2,2);
       Xgc=nsp_check_graphic_context();
       if ( (rep = GetStringInArray(stack,2,auto_clear_values,1)) == -1 ) return RET_BUG;
       Xgc->graphic_engine->scale->xset_autoclear(Xgc,rep);
       return 0;
       break;
-    case 33 : /*{"clipgrf"},*/
+    case xset_clipgrf:
       CheckRhs(1,1);
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
@@ -3443,7 +3471,7 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
   int iscflag[3];
   static int flagx_def[3] = { 1,1,1} ;
   int *iflag = iflag_def,*aint = aint_def, *flagx= flagx_def,num;
-  double alpha = 35.0 ,theta = 45.0,  *rect = rect_def ,*ebox = ebox_def ;
+  double alpha = 35.0,theta = 45.0,  *rect = rect_def ,*ebox = ebox_def ;
 
   static char *xtape_Table[] = {  "on","clear","replay","replaysc","replayna","off",  NULL };
 
