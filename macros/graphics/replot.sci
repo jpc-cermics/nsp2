@@ -1,7 +1,8 @@
 function replot(rect)
-// replots the graphic window win 
+// replots the current graphic window
 // using rect as x and y bounds 
 // Copyright INRIA
   win=xget("window");
-  xclear();xtape('replaysc',win,rect);
+  xclear(win,%f);
+  xtape('replaysc',win,rect);
 endfunction

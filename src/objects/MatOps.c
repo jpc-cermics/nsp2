@@ -2414,18 +2414,21 @@ int nsp_mat_erfc(NspMatrix *A)
  * A=gamma(A),
  */
 
-
-
 int nsp_mat_tgamma(NspMatrix *A)
 {
   int i ;
   if ( A->rc_type == 'r') 
     {
+#ifdef HAVE_TGAMMA
       for ( i = 0 ; i < A->mn ; i++) A->R[i]= tgamma(A->R[i]);
+#else 
+      Scierror("Error: tgamma function not implemented\n");
+      return(FAIL);
+#endif 
     }
   else
     {
-      Scierror("Erf function argument must be real\n");
+      Scierror("Error: tgamma function not implemented for complex\n");
       return(FAIL);
     }
   return(OK);
@@ -2440,11 +2443,16 @@ int nsp_mat_lgamma(NspMatrix *A)
   int i ;
   if ( A->rc_type == 'r') 
     {
+#ifdef HAVE_LGAMMA
       for ( i = 0 ; i < A->mn ; i++) A->R[i]= lgamma(A->R[i]);
+#else 
+      Scierror("Error: lgamma function not implemented\n");
+      return(FAIL);
+#endif
     }
   else
     {
-      Scierror("Erf function argument must be real\n");
+      Scierror("Error: lgamma function not implemented for complex\n");
       return(FAIL);
     }
   return(OK);

@@ -1281,6 +1281,8 @@ AC_CHECK_FUNCS(strerror)
 AC_CHECK_FUNCS(usleep)
 AC_CHECK_FUNCS(finite)
 AC_CHECK_FUNCS(mkstemp)
+AC_CHECK_FUNCS(tgamma)
+AC_CHECK_FUNCS(lgamma)
 
 ########################
 ## test for header files

@@ -18,6 +18,12 @@
 /* Define if have exp10 */
 #undef HAVE_EXP10
 
+/* Define if have tgamma (true gamma) */
+#undef HAVE_TGAMMA
+
+/* Define if have lgamma (log gamma) */
+#undef HAVE_LGAMMA
+
 /* Define if have getwd */
 #undef HAVE_GETWD
 
