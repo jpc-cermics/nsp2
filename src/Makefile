@@ -4,7 +4,7 @@ include ../Makefile.incl
 
 SCIDIRS = zblas zcalelm Newstack  Parse Functions mexlib Gtk2 \
 	system graphics menusX gd gtksci gzvt2 modules gobjects \
-	types types-test randlib dcd
+	types types-test randlib cdf
 
 SUBDIRS = $(XAW_LOCAL_SUBDIR) $(DLD_SUBDIR) $(SCIDIRS) 
 
