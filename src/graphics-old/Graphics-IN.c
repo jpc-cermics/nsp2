@@ -131,7 +131,7 @@ static double * check_ebox(Stack stack,char *fname,char *varname,NspMatrix *var)
   else 
     {
       /* check size */ 
-      if ( var->mn != 8 ) 
+      if ( var->mn != 6 ) 
 	{
 	  Scierror("%s:optional argument %s should be of size 8\n",fname,varname);
 	  return NULL;
