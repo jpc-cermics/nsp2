@@ -284,12 +284,12 @@ NspLink   *link_object(NspObject *O)
 
 int IsLinkObj(Stack stack, int i)
 {
-  return ObjType(NthObj(i) , nsp_type_link_id);
+  return nsp_object_type(NthObj(i) , nsp_type_link_id);
 }
 
 int IsLink(NspObject *O)
 {
-  return ObjType(O , nsp_type_link_id);
+  return nsp_object_type(O , nsp_type_link_id);
 }
 
 NspLink  *GetLinkCopy(Stack stack, int i)
@@ -375,7 +375,7 @@ static int int_link_create(Stack stack, int rhs, int opt, int lhs)
 
 static NspObject * int_glink_get_color(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspLink *) Hv)->color);
+  return nsp_create_object_from_double(NVOID,((NspLink *) Hv)->color);
 }
 
 static int int_glink_set_color(void *Hv, char *attr, NspObject *O)
@@ -388,7 +388,7 @@ static int int_glink_set_color(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_glink_get_thickness(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspLink *) Hv)->thickness);
+  return nsp_create_object_from_double(NVOID,((NspLink *) Hv)->thickness);
 }
                                                                                                       
 static int int_glink_set_thickness(void *Hv, char *attr, NspObject *O)

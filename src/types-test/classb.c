@@ -282,12 +282,12 @@ NspClassB   *classb_object(NspObject *O)
 
 int IsClassBObj(Stack stack, int i)
 {
-  return ObjType(NthObj(i) , nsp_type_classb_id);
+  return nsp_object_type(NthObj(i) , nsp_type_classb_id);
 }
 
 int IsClassB(NspObject *O)
 {
-  return ObjType(O,nsp_type_classb_id);
+  return nsp_object_type(O,nsp_type_classb_id);
 }
 
 NspClassB  *GetClassBCopy(Stack stack, int i)
@@ -358,7 +358,7 @@ static int int_clb_create(Stack stack, int rhs, int opt, int lhs)
 
 static NspObject * int_clb_get_color(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspClassB *) Hv)->classb_color);
+  return nsp_create_object_from_double(NVOID,((NspClassB *) Hv)->classb_color);
 }
 
 static int int_clb_set_color(void *Hv, char *attr, NspObject *O)
@@ -371,7 +371,7 @@ static int int_clb_set_color(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_clb_get_thickness(void *Hv, char *attr)
 {
-  return ObjDouble(NVOID,((NspClassB *) Hv)->classb_thickness);
+  return nsp_create_object_from_double(NVOID,((NspClassB *) Hv)->classb_thickness);
 }
 
 static int int_clb_set_thickness(void *Hv, char *attr, NspObject *O)
@@ -395,7 +395,7 @@ static NspObject *int_clb_get_object_val(void *Hv,char *str)
 static int int_clb_set_val(void *Hv, char *attr, NspObject *O)
 {
   NspMatrix *m;
-  if ((m = (NspMatrix *) ObjCopy(O)) == NULLMAT) return RET_BUG;
+  if ((m = (NspMatrix *)nsp_object_copy(O)) == NULLMAT) return RET_BUG;
   ((NspClassB *)Hv)->classb_val = m;
   return OK ;
 }
@@ -450,7 +450,7 @@ int int_clb_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspClassB *a;
   if (( a= GetClassB(stack,1))== NULLCLB) return RET_BUG;
-  ObjPrint((NspObject *) a,0);
+ nsp_object_print((NspObject *) a,0);
   return 0;
 }
 

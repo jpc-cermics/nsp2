@@ -81,7 +81,7 @@ int enqueue_nsp_command(char *command)
       if ((L =nsp_list_create(NVOID,NULLSTRING))==NULLLIST) return FAIL;
       initialized = TRUE;
     }
-  if (( O = ObjStr(command))==NULLOBJ ) return FAIL;
+  if (( O =nsp_create_object_from_str(command))==NULLOBJ ) return FAIL;
   if (nsp_list_end_insert(L,O) == FAIL ) return FAIL;
   return OK;
 }
@@ -135,7 +135,7 @@ int dequeue_nsp_command(char *buf,int buf_len)
   NspObject *O = dequeue_nsp_command_obj() ;
   if ( O == NULLOBJ) return FAIL;
   strncpy(buf,((NspSMatrix *) O)->S[0],buf_len);
-  ObjDestroy(&O);
+ nsp_object_destroy(&O);
   return OK;
 }
 

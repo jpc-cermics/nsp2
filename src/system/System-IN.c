@@ -43,7 +43,7 @@ int int_timer(Stack stack,int rhs,int opt,int lhs)
   CheckRhs(0,0);
   CheckLhs(0,1);
   C2F(timer)(&d);
-  if ( (OM= ObjDouble(NVOID,d)) == NULLOBJ) return RET_BUG;
+  if ( (OM=nsp_create_object_from_double(NVOID,d)) == NULLOBJ) return RET_BUG;
   MoveObj(stack,1,OM);
   return 1;
 }
@@ -61,7 +61,7 @@ int int_system(Stack stack,int rhs,int opt,int lhs)
   CheckLhs(0,1);
   if ((command = GetString(stack,1)) == (char*)0) return RET_BUG;
   rep = (double) system(command);
-  if ( (OM= ObjDouble(NVOID,rep)) == NULLOBJ) return RET_BUG;
+  if ( (OM=nsp_create_object_from_double(NVOID,rep)) == NULLOBJ) return RET_BUG;
   MoveObj(stack,1, OM);
   return 1;
 }

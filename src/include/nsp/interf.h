@@ -121,7 +121,7 @@ extern int nsp_move_boolean(Stack stack,int n,int ival);
 extern NspObject *nsp_new_boolean_obj(int ival);
 
 extern void ObjConvert (NspObject *O);
-extern NspObject *GetObj (  Stack stack,   int i);
+extern NspObject *nsp_get_object(  Stack stack,   int i);
 
 extern NspMod  *ModObj  ( NspObject *O);
 extern NspMod *GetModCopy  (Stack S,int i);

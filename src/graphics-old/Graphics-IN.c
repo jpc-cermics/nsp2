@@ -808,7 +808,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) 
 	{
-	  ObjDestroy((NspObject **) &z);
+	nsp_object_destroy((NspObject **) &z);
 	  return RET_BUG;
 	}
     }
@@ -905,13 +905,13 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
   NspMatrix *xi,*yj;
   NspObject *func, *args = NULL;
   int ret = FAIL,i,j;
-  if (( func = ObjCopy(f)) == NULL) return RET_BUG;
-  if (( Osetname(func,"plot3d_build")== FAIL)) return RET_BUG;
+  if (( func =nsp_object_copy(f)) == NULL) return RET_BUG;
+  if ((nsp_object_set_name(func,"plot3d_build")== FAIL)) return RET_BUG;
   /** extra arguments **/
   if ( fargs != NULL ) 
     {
-      if (( args = ObjCopy(fargs)) == NULL ) return RET_BUG;
-      if (( Osetname(args,"arg")== FAIL)) return RET_BUG;
+      if (( args =nsp_object_copy(fargs)) == NULL ) return RET_BUG;
+      if ((nsp_object_set_name(args,"arg")== FAIL)) return RET_BUG;
     }
   if ((xi = nsp_matrix_create("xi",'r',1,1))== NULL) return RET_BUG;
   if ((yj = nsp_matrix_create("yj",'r',1,1))== NULL) return RET_BUG;
@@ -946,10 +946,10 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
   ret = OK;
  end:
   {
-    if ( fargs != NULL) ObjDestroy(&args);
-    ObjDestroy(&func);
-    ObjDestroy((NspObject **)&xi);
-    ObjDestroy((NspObject **)&yj);
+    if ( fargs != NULL)nsp_object_destroy(&args);
+ nsp_object_destroy(&func);
+ nsp_object_destroy((NspObject **)&xi);
+ nsp_object_destroy((NspObject **)&yj);
     return ret;
   }
 }
@@ -1977,7 +1977,7 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
 
   for ( i = 1 ; i <= Min(lhs,4) ; i++) 
     {
-      if (( rep[i-1] = (NspMatrix *) ObjDouble(NVOID,drep[i-1])) == NULLMAT ) return RET_BUG;
+      if (( rep[i-1] = (NspMatrix *)nsp_create_object_from_double(NVOID,drep[i-1])) == NULLMAT ) return RET_BUG;
       StackStore(stack,(NspObject *) rep[i-1],rhs+i);
       NSP_OBJECT(rep[i-1])->ret_pos = i;
     }
@@ -3803,7 +3803,7 @@ int int_xgraduate(Stack stack, int rhs, int opt, int lhs)
   for ( i= 1 ; i <= lhs ; i++) 
     {
       NspObject *O;
-      if (( O = ObjDouble(NVOID,val[i-1])) == NULLOBJ ) return RET_BUG;
+      if (( O =nsp_create_object_from_double(NVOID,val[i-1])) == NULLOBJ ) return RET_BUG;
       NSP_OBJECT(O)->ret_pos=i;
       StackStore(stack,O,rhs+i);
     }

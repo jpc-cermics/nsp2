@@ -60,7 +60,7 @@ int int_modestroy(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(0,0);
   if ((H = GetMod(stack,1)) == NULLMOD) return RET_BUG;
-  ObjDestroy(&NthObj(1));
+ nsp_object_destroy(&NthObj(1));
   return 0;
 }
 

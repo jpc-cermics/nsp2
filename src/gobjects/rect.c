@@ -264,12 +264,12 @@ NspRect   *rect_object(NspObject *O)
 
 int IsRectObj(Stack stack, int i)
 {
-  return ObjType(NthObj(i) , nsp_type_rect_id);
+  return nsp_object_type(NthObj(i) , nsp_type_rect_id);
 }
 
 int IsRect(NspObject *O)
 {
-  return ObjType(O , nsp_type_rect_id);
+  return nsp_object_type(O , nsp_type_rect_id);
 }
 
 NspRect  *GetRectCopy(Stack stack, int i)
@@ -384,7 +384,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 
 static NspObject * int_grect_get_color(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspRect *) Hv)->color);
+  return nsp_create_object_from_double(NVOID,((NspRect *) Hv)->color);
 }
                                                                                                       
 static int int_grect_set_color(void *Hv, char *attr, NspObject *O)
@@ -397,7 +397,7 @@ static int int_grect_set_color(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_grect_get_thickness(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspRect *) Hv)->thickness);
+  return nsp_create_object_from_double(NVOID,((NspRect *) Hv)->thickness);
 }
                                                                                                       
 static int int_grect_set_thickness(void *Hv, char *attr, NspObject *O)
@@ -410,7 +410,7 @@ static int int_grect_set_thickness(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_grect_get_background(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspRect *) Hv)->background);
+  return nsp_create_object_from_double(NVOID,((NspRect *) Hv)->background);
 }
                                                                                                       
 static int int_grect_set_background(void *Hv, char *attr, NspObject *O)

@@ -269,12 +269,12 @@ NspConnector *connector_object(NspObject *O)
 
 int IsConnectorObj(Stack stack, int i)
 {
-  return ObjType(NthObj(i) , nsp_type_connector_id);
+  return nsp_object_type(NthObj(i) , nsp_type_connector_id);
 }
 
 int IsConnector(NspObject *O)
 {
-  return ObjType(O , nsp_type_connector_id);
+  return nsp_object_type(O , nsp_type_connector_id);
 }
 
 NspConnector  *GetConnectorCopy(Stack stack, int i)
@@ -395,7 +395,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 
 static NspObject * int_gconnector_get_color(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspConnector *) Hv)->color);
+  return nsp_create_object_from_double(NVOID,((NspConnector *) Hv)->color);
 }
 
 static int int_gconnector_set_color(void *Hv, char *attr, NspObject *O)
@@ -408,7 +408,7 @@ static int int_gconnector_set_color(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_gconnector_get_thickness(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspConnector *) Hv)->thickness);
+  return nsp_create_object_from_double(NVOID,((NspConnector *) Hv)->thickness);
 }
                                                                                                       
 static int int_gconnector_set_thickness(void *Hv, char *attr, NspObject *O)
@@ -421,7 +421,7 @@ static int int_gconnector_set_thickness(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_gconnector_get_background(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspConnector *) Hv)->background);
+  return nsp_create_object_from_double(NVOID,((NspConnector *) Hv)->background);
 }
                                                                                                       
 static int int_gconnector_set_background(void *Hv, char *attr, NspObject *O)

@@ -320,11 +320,11 @@ NspObject *lmo_path_search_object(NspLmo *L,NspSMatrix *Sm,char **oname)
   /* XXX : must clean Ob ? */
   /* we load the binary object found in buf */ 
   if (( F = SciFileOpenXdrR(buf)) == NULLSCIFILE) return NULLOBJ;
-  Ob= ObjXdrLoad(F);
-  ObjXdrLoad(F); /* not to have a warning when closing */
+  Ob=nsp_object_xdr_load(F);
+ nsp_object_xdr_load(F); /* not to have a warning when closing */
   if ( SciFileCloseXdrR(F) == FAIL)
     {
-      VoidObjDestroy(&Ob);
+ nsp_void_object_destroy(&Ob);
       return NULLOBJ;
     }
   strcpy(buf,oname[0]);
@@ -335,7 +335,7 @@ NspObject *lmo_path_search_object(NspLmo *L,NspSMatrix *Sm,char **oname)
   }
   if ((loc = Ob->type->set_name(Ob,buf))== NULL)
     {
-      VoidObjDestroy(&Ob);
+ nsp_void_object_destroy(&Ob);
       return NULLOBJ;
     }
  nsp_frame_replace_object(Ob);

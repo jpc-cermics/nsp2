@@ -1099,7 +1099,7 @@ GetWinFileAttributes(objIndex, fileName, attributePtrPtr)
     return TCL_ERROR;
   }
 
-  if ((O = ObjTrue("void"))==NULLOBJ)   return TCL_ERROR;
+  if ((O =nsp_create_true_object("void"))==NULLOBJ)   return TCL_ERROR;
   ((BMatrix *) O->Element)->B[0] = result & attributeArray[objIndex] ; 
   *attributePtrPtr = O;
   return TCL_OK;

@@ -103,7 +103,7 @@ void file_print(NspFile *H, int indent);
 
 /* Obj.c */
 
-extern int ObjXdrSave(NspFile  *F, NspObject *O);
+extern int nsp_object_xdr_save(NspFile  *F, NspObject *O);
 
 /* FileObj.c */
 
@@ -132,8 +132,8 @@ extern int XdrLoadArrayD (NspFile *F, double *nx, integer mn);
 extern int XdrSaveString (NspFile *F, char *str);
 extern int XdrLoadString (NspFile *F, char *buf, int buf_len);
 
-extern int ObjXdrSave (NspFile *F, NspObject *O);
-extern NspObject *ObjXdrLoad (NspFile *F); 
+extern int nsp_object_xdr_save(NspFile *F, NspObject *O);
+extern NspObject *nsp_object_xdr_load(NspFile *F); 
 
 extern int is_little_endian(void);
 extern int nsp_feof(NspFile *f);

@@ -129,7 +129,7 @@ int Tcl_SetDoubleObj(Stack stack,int n,double d)
 int Tcl_SetBooleanObj(Stack stack,int n,int ival)
 {
   NspObject *O;
-  if ((O = ObjTrue("void"))==NULLOBJ) return RET_BUG;
+  if ((O =nsp_create_true_object("void"))==NULLOBJ) return RET_BUG;
   if ( ival == 0 )   ((NspBMatrix *) O)->B[0] = ival ;
   MoveObj(stack,n,O);
   return 1;

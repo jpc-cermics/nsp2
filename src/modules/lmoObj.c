@@ -199,7 +199,7 @@ NspLmo   *LmoObj(NspObject *O)
 
 int IsLmoObj(Stack stack, int i)
 {
-  return ObjType(NthObj(i), nsp_type_lmo_id);
+  return nsp_object_type(NthObj(i), nsp_type_lmo_id);
 }
 
 /****************************************************
@@ -210,7 +210,7 @@ int IsLmoObj(Stack stack, int i)
 
 int IsLmo(NspObject *O)
 {
-  return ObjType(O,nsp_type_lmo_id);
+  return nsp_object_type(O,nsp_type_lmo_id);
 }
 
 /*

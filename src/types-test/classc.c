@@ -144,12 +144,12 @@ NspClassC   *classc_object(NspObject *O)
 
 int IsClassCObj(Stack stack, int i)
 {
-  return ObjType(NthObj(i) , nsp_type_classc_id);
+  return nsp_object_type(NthObj(i) , nsp_type_classc_id);
 }
 
 int IsClassC(NspObject *O)
 {
-  return ObjType(O,nsp_type_classc_id);
+  return nsp_object_type(O,nsp_type_classc_id);
 }
 
 NspClassC  *GetClassCCopy(Stack stack, int i)

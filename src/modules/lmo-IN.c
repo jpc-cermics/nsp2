@@ -147,7 +147,7 @@ int int_lmopathsearch(Stack stack, int rhs, int opt, int lhs)
   if ((path = GetSMat(stack,2))  == NULLSMAT) return RET_BUG;
   if ((Mname = GetSMat(stack,3))  == NULLSMAT) return RET_BUG;
   /*if XXX ((O= lmo_path_search_name(H,path,Mname->S)) == NULLOBJ) */
-  if ((O = ObjTrue(NVOID))== NULLOBJ) return RET_BUG;
+  if ((O =nsp_create_true_object(NVOID))== NULLOBJ) return RET_BUG;
   if ((O1= lmo_path_search_object(H,path,Mname->S)) == NULLOBJ) 
     {
       ((NspBMatrix *)O)->B[0] = FALSE;

@@ -251,12 +251,12 @@ NspGFrame   *gframe_object(NspObject *O)
 
 int IsGFrameObj(Stack stack, int i)
 {
-  return ObjType(NthObj(i) , nsp_type_gframe_id);
+  return nsp_object_type(NthObj(i) , nsp_type_gframe_id);
 }
 
 int IsGFrame(NspObject *O)
 {
-  return ObjType(O , nsp_type_gframe_id);
+  return nsp_object_type(O , nsp_type_gframe_id);
 }
 
 NspGFrame  *GetGFrameCopy(Stack stack, int i)
@@ -336,7 +336,7 @@ static int int_gframe_create(Stack stack, int rhs, int opt, int lhs)
   for ( i = 3 ; i <= rhs ; i++ )
     {
       if ( MaybeObjCopy(&NthObj(i)) == NULL)  return RET_BUG;
-      if ( Osetname(NthObj(i),"lel") == FAIL) return RET_BUG;
+      if (nsp_object_set_name(NthObj(i),"lel") == FAIL) return RET_BUG;
       if (nsp_list_end_insert(H->objs,NthObj(i)) == FAIL ) return RET_BUG;
       /** If NthObj(i) is not copied it is inserted in the list 
       we must set then NthObj(i) to NULLOBJ 
@@ -355,7 +355,7 @@ static int int_gframe_create(Stack stack, int rhs, int opt, int lhs)
 #ifdef NOK
 static NspObject * int_gframe_get_color(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspGFrame *) Hv)->color);
+  return nsp_create_object_from_double(NVOID,((NspGFrame *) Hv)->color);
 }
 
 static int int_gframe_set_color(void *Hv, char *attr, NspObject *O)
@@ -368,7 +368,7 @@ static int int_gframe_set_color(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_gframe_get_thickness(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspGFrame *) Hv)->thickness);
+  return nsp_create_object_from_double(NVOID,((NspGFrame *) Hv)->thickness);
 }
                                                                                                       
 static int int_gframe_set_thickness(void *Hv, char *attr, NspObject *O)
@@ -381,7 +381,7 @@ static int int_gframe_set_thickness(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_gframe_get_background(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspGFrame *) Hv)->background);
+  return nsp_create_object_from_double(NVOID,((NspGFrame *) Hv)->background);
 }
                                                                                                       
 static int int_gframe_set_background(void *Hv, char *attr, NspObject *O)

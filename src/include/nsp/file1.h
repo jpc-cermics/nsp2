@@ -105,7 +105,7 @@ int SciFileObjNeq(NspObject *A,NspObject *B);
 
 /* Obj.c */
 
-extern int ObjXdrSave(NspFile  *F, NspObject *O);
+extern int nsp_object_xdr_save(NspFile  *F, NspObject *O);
 
 /* FileObj.c */
 
@@ -140,8 +140,8 @@ extern int ObjXdrSave(NspFile  *F, NspObject *O);
  extern int XdrSaveString (NspFile *F, char *str);
  extern int XdrLoadString (NspFile *F, char *buf, int buf_len);
 
-extern int ObjXdrSave (NspFile *F, NspObject *O);
-extern NspObject *ObjXdrLoad (NspFile *F); 
+extern int nsp_object_xdr_save(NspFile *F, NspObject *O);
+extern NspObject *nsp_object_xdr_load(NspFile *F); 
 
 
 #endif 

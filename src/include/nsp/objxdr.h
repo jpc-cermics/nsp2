@@ -7,7 +7,7 @@ int NspPListXdrSave (NspFile *F,NspPList *M);
 NspPList *NspPListXdrLoad (NspFile *F);
 int PListXdrSave (NspFile *F, PList L);
 int PListXdrLoad (NspFile *F, PList *plist);
-int ObjXdrSave (NspFile *F, NspObject *O);
-NspObject *ObjXdrLoad (NspFile *F); 
+int nsp_object_xdr_save(NspFile *F, NspObject *O);
+NspObject *nsp_object_xdr_load(NspFile *F); 
 
 #endif

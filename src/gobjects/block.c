@@ -269,12 +269,12 @@ NspBlock *block_object(NspObject *O)
 
 int IsBlockObj(Stack stack, int i)
 {
-  return ObjType(NthObj(i) , nsp_type_block_id);
+  return nsp_object_type(NthObj(i) , nsp_type_block_id);
 }
 
 int IsBlock(NspObject *O)
 {
-  return ObjType(O , nsp_type_block_id);
+  return nsp_object_type(O , nsp_type_block_id);
 }
 
 NspBlock  *GetBlockCopy(Stack stack, int i)
@@ -395,7 +395,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 
 static NspObject * int_gblock_get_color(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspBlock *) Hv)->color);
+  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->color);
 }
 
 static int int_gblock_set_color(void *Hv, char *attr, NspObject *O)
@@ -408,7 +408,7 @@ static int int_gblock_set_color(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_gblock_get_thickness(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspBlock *) Hv)->thickness);
+  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->thickness);
 }
                                                                                                       
 static int int_gblock_set_thickness(void *Hv, char *attr, NspObject *O)
@@ -421,7 +421,7 @@ static int int_gblock_set_thickness(void *Hv, char *attr, NspObject *O)
 
 static NspObject * int_gblock_get_background(void *Hv,char *attr)
 {
-  return ObjDouble(NVOID,((NspBlock *) Hv)->background);
+  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->background);
 }
                                                                                                       
 static int int_gblock_set_background(void *Hv, char *attr, NspObject *O)

@@ -936,7 +936,7 @@ int int_regexp(Stack stack,int rhs,int opt,int lhs)
       if ( match == 0) 
 	 {
 	   /** XXXXX : remettre ici un VOID XXXXX **/
-	   if ( (OM= EmptyMat("")) == NULLOBJ) return RET_BUG;   
+	   if ( (OM=nsp_create_empty_matrix_object("")) == NULLOBJ) return RET_BUG;   
 	   MoveObj(stack,2,OM);
 	 }
       else 

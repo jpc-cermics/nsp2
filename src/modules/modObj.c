@@ -197,7 +197,7 @@ NspMod   *ModObj(NspObject *O)
 
 int IsModObj(Stack stack, int i)
 {
-  return ObjType(NthObj(i), nsp_type_mod_id);
+  return nsp_object_type(NthObj(i), nsp_type_mod_id);
 }
 
 /****************************************************
@@ -208,7 +208,7 @@ int IsModObj(Stack stack, int i)
 
 int IsMod(NspObject *O)
 {
-  return ObjType(O,nsp_type_mod_id);
+  return nsp_object_type(O,nsp_type_mod_id);
 }
 
 
