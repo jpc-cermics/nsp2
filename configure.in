@@ -33,20 +33,14 @@ AC_ARG_WITH(gnu,
 AC_ARG_WITH(f2c,
     [  --with-f2c              use f2c C compiler on Linux systems ])
 
-AC_ARG_WITH(local-xaw,
-    [  --with-local-xaw        use Xaw widgets given with Scilab (not recommended) ])
-
-AC_ARG_WITH(xaw3d,
-    [  --without-xaw3d         do not use Xaw3d widgets ])
-
 AC_ARG_WITH(pvm,
     [  --without-pvm           do not compile with PVM library ])
 
 AC_ARG_WITH(tk,
-    [  --without-tk            do not compile with TCL/TK ])
+    [  --with-tk               add tcl-tk support ])
 
 AC_ARG_WITH(gtkglext,
-    [  --with-gtkglext         use Gtkglext widget for graphics ])
+    [  --without-gtkglext      do not use Gtkglext widget for graphics ])
 
 AC_ARG_WITH(addedf2c,
     [  --with-addedf2c         build a local f2c (src/f2c)])
@@ -1399,7 +1393,7 @@ LIBS=$ac_save_LIBS
 
 PERIGLEXT=
 
-if test "$with_gtkglext" = yes; then
+if test "$with_gtkglext" != no; then
     gtkglext_version="1.0.0"
     AC_MSG_CHECKING([if gtkglext exists ])
     if pkg-config --exists gtkglext-1.0; then
@@ -1438,47 +1432,40 @@ TCLTK_LIBS=
 TKSCILIB=
 TKSCIDIR=
 
-if test "$with_tk" != no; then
-
-# check user arguments
-USER_TCL_LIB_PATH=""
-USER_TCL_INC_PATH=""
-AC_ARG_WITH(tcl-library,
-    [  --with-tcl-library=DIR  Tcl library files are in DIR ],
-    [  USER_TCL_LIB_PATH=$withval
-    ])
-AC_ARG_WITH(tcl-include,
+if test "$with_tk" = yes; then
+   # check user arguments
+   USER_TCL_LIB_PATH=""
+   USER_TCL_INC_PATH=""
+   AC_ARG_WITH(tcl-library,[  --with-tcl-library=DIR  Tcl library files are in DIR ],
+    [  USER_TCL_LIB_PATH=$withval ])
+   AC_ARG_WITH(tcl-include,
     [  --with-tcl-include=DIR  Tcl include files are in DIR ],
-    [  USER_TCL_INC_PATH=$withval
-    ])
+    [  USER_TCL_INC_PATH=$withval ])
 
-USER_TK_LIB_PATH=$USER_TCL_LIB_PATH
-USER_TK_INC_PATH=$USER_TCL_INC_PATH
-AC_ARG_WITH(tk-library,
+   USER_TK_LIB_PATH=$USER_TCL_LIB_PATH
+   USER_TK_INC_PATH=$USER_TCL_INC_PATH
+   AC_ARG_WITH(tk-library,
     [  --with-tk-library=DIR   Tk library files are in DIR ],
-    [  USER_TK_LIB_PATH=$withval
-    ])
-AC_ARG_WITH(tk-include,
+    [  USER_TK_LIB_PATH=$withval ])
+   AC_ARG_WITH(tk-include,
     [  --with-tk-include=DIR   Tk include files are in DIR ],
-    [  USER_TK_INC_PATH=$withval
-    ])
+    [  USER_TK_INC_PATH=$withval ])
 
-saved_cflags="$CFLAGS"
-saved_ldflags="$LDFLAGS"
-saved_cppflags="$CPPFLAGS"
+   saved_cflags="$CFLAGS"
+   saved_ldflags="$LDFLAGS"
+   saved_cppflags="$CPPFLAGS"
 
-AC_CHECK_LIB(dl, main,TCLTK_LIBS=" -ldl")
-AC_CHECK_TCLTK()
+   AC_CHECK_LIB(dl, main,TCLTK_LIBS=" -ldl")
+   AC_CHECK_TCLTK()
 
-# set variables
-if test $WITH_TKSCI = 1; then
-  AC_DEFINE(WITH_TK)
-  TKSCILIB="\$(SCIDIR)/libs/tksci.a"
-  TKSCIDIR=tksci
-else
-  AC_MSG_ERROR([TCL/TK not found. Use --without-tk])
-fi
-
+   # set variables
+   if test $WITH_TKSCI = 1; then
+     AC_DEFINE(WITH_TK)
+     TKSCILIB="\$(SCIDIR)/libs/tksci.a"
+     TKSCIDIR=tksci
+   else
+     AC_MSG_ERROR([TCL/TK not found. Use --without-tk])
+   fi
 fi
 
 #################
