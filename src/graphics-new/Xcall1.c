@@ -23,7 +23,7 @@ static void GSciString (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
 static void Myalloc1 (int **xm,int n,int *err);
 static void Myalloc (int **xm,int **ym, int n, int *err);
 static void xstringb (BCG *Xgc, char *string,int x, int y, int w, int h);
-
+static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h);
 static void drawarc_1(BCG *Xgc,double arc[]);
 static void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n);
 static void drawarcs_1(BCG *Xgc,double vects[], int style[], int n);
@@ -745,13 +745,15 @@ static void displaystringa_1(BCG *Xgc,char *string, int ipos)
   switch ( ipos )
     {
     case 1:
-      xstringb(Xgc,string,Xgc->scales->WIRect1[0],Xgc->scales->WIRect1[1],Xgc->scales->WIRect1[2],Xgc->scales->WIRect1[3]/6);
+      xstringb(Xgc,string,Xgc->scales->WIRect1[0],Xgc->scales->WIRect1[1],Xgc->scales->WIRect1[2],Xgc->scales->WIRect1[1]);
       break;
     case 2:
-      xstringb(Xgc,string,Xgc->scales->WIRect1[0]+Xgc->scales->WIRect1[2],Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3],Xgc->scales->WIRect1[2]/6,Xgc->scales->WIRect1[3]/6);
+      xstringb(Xgc,string,Xgc->scales->WIRect1[0],Xgc->scales->wdim[1],Xgc->scales->WIRect1[2],
+	       (Xgc->scales->wdim[1] - (Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3]))*2.0/3.0);
       break;
     case 3:
-      xstringb(Xgc,string,Xgc->scales->WIRect1[0],Xgc->scales->WIRect1[1],Xgc->scales->WIRect1[2]/6,Xgc->scales->WIRect1[3]/12);
+      xstringb_vert(Xgc,string,0,Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3],Xgc->scales->WIRect1[0]/3.0,
+		    Xgc->scales->WIRect1[3]);
       break;
     }
 }
@@ -759,7 +761,8 @@ static void displaystringa_1(BCG *Xgc,char *string, int ipos)
 
 /*-----------------------------------------------------------------------------
  * display a set of lines coded with 'line1@line2@.....@'
- *   centred in the rectangle [x,y,w=wide,h=height] 
+ * centred in the rectangle [x,y,w=wide,h=height] 
+ * if dir == 'v' the string is to be rotated 
  *-----------------------------------------------------------------------------*/
 
 static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
@@ -798,6 +801,49 @@ static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
     }
 }
 
+/*
+ * string are displayed vertically 
+ * in the given box 
+ */
+
+
+static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h)
+{
+  char *loc,*loc1;
+  int count=0,flag=0;
+  double angle=-90.0;
+  loc= (char *) MALLOC( (strlen(string)+1)*sizeof(char));
+  if ( loc != 0)
+    {
+      int wmax=0,hl=0,x1=0,y1=0,rect[4];
+      strcpy(loc,string);
+      loc1=strtok(loc,"@");
+      while ( loc1 != ( char * ) 0) 
+	{  
+	  Xgc->graphic_engine->boundingbox(Xgc,loc1,x1,y1,rect);
+	  if ( rect[2] >= wmax ) wmax=rect[2];
+	  hl = Max(hl,rect[3]);
+	  count++;
+	  loc1=strtok((char *) 0,"@");
+	}
+      y1= y - (h - wmax)/2;
+      x1= x + ( w - count*hl*1.5)/2.0 ; 
+      strcpy(loc,string);
+      loc1=strtok(loc,"@");
+      while ( loc1 != ( char * ) 0) 
+	{  
+	  x1 += hl*(1.25);
+	  Xgc->graphic_engine->displaystring(Xgc,loc1,x1,y1,flag,angle);
+	  loc1=strtok((char *) 0,"@");
+	}
+      FREE(loc);
+    }
+  else
+    {
+      Scistring("xstring : No more Place  \n");
+    }
+}
+
 
 /*-----------------------------------------------------------------------------
  *  boundingbox_1
@@ -825,7 +871,7 @@ static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, do
 {
   int x,y,w,h,wbox,hbox,size;
   int fontid[2];
-  if (Xgc->record_flag == TRUE)     store_xstringb_1(Xgc,str,fflag,xd,yd,wd,hd);
+  if (Xgc->record_flag == TRUE) store_xstringb_1(Xgc,str,fflag,xd,yd,wd,hd);
   x = XDouble2Pixel(*xd);
   y = YDouble2Pixel(*yd);
   length_scale_f2i(Xgc,wd,hd,&wbox,&hbox,1);

@@ -2558,7 +2558,10 @@ int int_xpause(Stack stack, int rhs, int opt, int lhs)
 } 
 
 /*-----------------------------------------------------------
- *  xpoly(xv,yv, [dtype,close])
+ *  xpoly(xv,yv, close = %t|%f , color= , thickness= , mark= , type = "xlines" | "xmarks") 
+ *    if mark is set then type is set to xmarks 
+ *    thickness is only active for xlines 
+ *    FIXME: mark_size should be added 
  *-----------------------------------------------------------*/
 
 int int_xpoly(Stack stack, int rhs, int opt, int lhs)
@@ -2580,7 +2583,7 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
     { "type",string,NULLOBJ,-1},
     { NULL,t_end,NULLOBJ,-1}};
 
-  CheckRhs(2,7);
+  CheckStdRhs(2,2);
   if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   CheckSameDims(stack.fname,1,2,l1,l2);
@@ -2601,6 +2604,7 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 	{
 	  Xgc->graphic_engine->xget_mark(Xgc,xmark); 
 	  Xgc->graphic_engine->scale->xset_mark(Xgc,mark,xmark[1]);
+	  dtype = xmarks; 
 	}
       if ( opts[3].obj != NULLOBJ) 
 	{
@@ -2614,7 +2618,12 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 	  else {
 	    Scierror("%s: type must be \"lines\" or \"marks\"\r\n",stack.fname);
 	    return RET_BUG;
-	}
+	  }
+	  if ( opts[2].obj != NULLOBJ && strncmp(type,"lines",5) == 0 )
+	    {
+	      Sciprintf("type is set to \"marks\" since mark is set \r\n",stack.fname);
+	      dtype = xmarks;
+	    }
 	}
     }
 
@@ -3111,7 +3120,7 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *S;
   int narg;
 
-  if ( rhs <= 0) {  return sci_demo(stack.fname,"x=(1:10)';plot2d(x,x);xtitle(['Titre';'Principal'],'x','y');",1);  }
+  if ( rhs <= 0) {  return sci_demo(stack.fname,"x=(1:10)';plot2d(x,x);xtitle(['Titre';'Principal'],'x legend ','y legend');",1);  }
 
   CheckRhs(1,3);
   Xgc=nsp_check_graphic_context();
