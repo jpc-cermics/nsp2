@@ -3,9 +3,11 @@
 
 extern int TokenLineSet(int l);
 
-int ParseEvalFile(char *Str, int display);
-int ParseEvalFromStr(char *Str, int display);
-int ParseEvalDir(char *Dir, char *Fname);
-int ParseEvalFromStd(int display);
+extern int ParseEvalDir(char *Dir, char *Fname);
+extern int ParseEvalFromStd(int display);
+extern int ParseEvalFromSMatrix(NspSMatrix *M,int display,int echo, int error);
+extern int ParseEvalFile(char *Str, int display,int echo, int error);
+extern int ParseEvalFromStr(char *Str, int display,int echo, int error);
+
 
 #endif 

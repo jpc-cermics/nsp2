@@ -1,7 +1,7 @@
 #ifndef NSP_TOKENIZER 
 #define NSP_TOKENIZER 
 
-#include "nsp/object.h" 
+#include "nsp/plisttoken.h"
 
 #define LINEMAXSIZE 4096 
 
@@ -40,6 +40,7 @@ struct _token
 
 typedef struct _tokenizer Tokenizer; 
 
+
 typedef int token_NextToken(Tokenizer *);
 typedef int token_ParseCommandArg(Tokenizer *);
 typedef int token_ParseString(Tokenizer *);
@@ -65,6 +66,10 @@ typedef int token_ParseComment(Tokenizer *);
 typedef int token_ParseError(Tokenizer *,char *fmt,...);
 typedef char *token_code2name(Tokenizer *T,int key);
 
+typedef void (SciReadFunc) (Tokenizer *T, char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
+typedef SciReadFunc *SciReadFunction;
+extern SciReadFunc DefSciReadLine;
+
 typedef struct _smat_tokenizer smat_tokenizer ;
 
 struct _smat_tokenizer { 
@@ -89,6 +94,7 @@ struct _tokenizer {
   smat_tokenizer strings; /* used when the tokenizer uses a string matrix as input */
   string_tokenizer string; /* used when the tokenizer uses a string matrix as input */
   /* methods */
+  SciReadFunction token_readline;
   token_NextToken *NextToken;
   token_ParseCommandArg *ParseCommandArg;
   token_ParseString *ParseString;
@@ -120,10 +126,6 @@ extern void nsp_tokeniser_file(Tokenizer *T,FILE *f);
 extern void nsp_tokeniser_string(Tokenizer *T,char *str);
 extern void nsp_tokeniser_strings(Tokenizer *T,char **S);
 
-typedef void (SciReadFunc) (Tokenizer *T, char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
-typedef SciReadFunc *SciReadFunction;
-extern SciReadFunction SciReadLine1 ;
-extern SciReadFunction SetSciReadFunction(SciReadFunction F);
 
 typedef void (*MoreFun) (int *n);
 extern MoreFun scimore ;

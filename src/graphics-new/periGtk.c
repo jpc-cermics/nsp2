@@ -15,7 +15,7 @@
 #include <gtk/gtk.h>
 
 #define PERI_PRIVATE 1
-#include "nsp/sciio.h"
+#include "nsp/sciio.h" 
 #include "nsp/math.h"
 #include "nsp/graphics/periGtk.h"
 #include "nsp/version.h"
