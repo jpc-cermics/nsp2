@@ -279,7 +279,7 @@ static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
 
 /* Current Scale */
 
-window_scale_list current_scale = 
+window_scale_list XXXXXcurrent_scale = 
 { 
   0,
   {600,400},

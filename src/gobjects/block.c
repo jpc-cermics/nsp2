@@ -337,6 +337,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 
 static int int_block_create(Stack stack, int rhs, int opt, int lhs)
 {
+  BCG *Xgc;
   NspBlock *H;
   double *val;
   int back=-1,color=-1,thickness=-1;
@@ -351,10 +352,10 @@ static int int_block_create(Stack stack, int rhs, int opt, int lhs)
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
 
-  check_graphic_window();
-  if ( back <= 0 )  back  = nsp_gengine->xget_pattern();
-  if ( color <= 0 ) color = nsp_gengine->xget_pattern();
-  if ( thickness < 0 ) thickness = nsp_gengine->xget_thickness();
+  Xgc=check_graphic_window();
+  if ( back <= 0 )  back  = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( color <= 0 ) color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( thickness < 0 ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
   if(( H = block_create(NVOID,val,color,thickness,back,NULL)) == NULLBLOCK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -600,15 +601,16 @@ static int lock_color=10;
 
 void block_draw(NspBlock *B)
 {
+  BCG *Xgc;
   char str[256];
   double loc[4];
   int cpat, cwidth,i, draw_script ; 
 
   if ( B->show == FALSE ) return ;
 
-  check_graphic_window();
-  cpat = nsp_gengine->xget_pattern();
-  cwidth = nsp_gengine->xget_thickness();
+  Xgc=check_graphic_window(Xgc);
+  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
 
   /* first draw inside */
   /* just a test we draw a Matrix inside the block */
@@ -626,34 +628,34 @@ void block_draw(NspBlock *B)
       break;
     default: 
       /* fill rectangle */
-      nsp_gengine->xset_pattern(B->background);
-      nsp_gengine1.fillrectangle_1(B->r);
+      Xgc->graphic_engine->xset_pattern(Xgc,B->background);
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,B->r);
       break;
     }
   /* draw rectangle */
-  nsp_gengine->xset_pattern(B->color);
-  nsp_gengine1.drawrectangle_1(B->r);
+  Xgc->graphic_engine->xset_pattern(Xgc,B->color);
+  Xgc->graphic_engine->scale->drawrectangle(Xgc,B->r);
   /* add hilited */ 
-  nsp_gengine->xset_pattern(lock_color);
+  Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
   if ( B->hilited == TRUE ) 
     {
       loc[0]=B->r[0]; loc[1]=B->r[1];loc[2]=loc[3]= lock_size;
-      nsp_gengine1.fillrectangle_1(loc);
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
       loc[0]+= B->r[2] -2; loc[1] -= B->r[3] -2;
-      nsp_gengine1.fillrectangle_1(loc);
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
     }
   for ( i=0 ; i < B->n_locks  ; i++ ) 
     {
       if ( block_is_lock_connected(B,i)== TRUE)
-	nsp_gengine->xset_pattern(lock_color); 
+	Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
       else 
-	nsp_gengine->xset_pattern(1); 
+	Xgc->graphic_engine->xset_pattern(Xgc,1); 
       block_get_lock_pos(B,i,loc);
       loc[0] += -1; loc[1] += 1;loc[2]=loc[3]= lock_size;
-      nsp_gengine1.fillrectangle_1(loc);
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
     }
-  nsp_gengine->xset_pattern(cpat);
-  nsp_gengine->xset_thickness(cwidth);
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
 
 /**

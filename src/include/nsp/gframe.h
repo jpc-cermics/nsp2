@@ -13,6 +13,7 @@
 #include "nsp/object.h"
 #include "nsp/matrix.h"
 #include "nsp/smatrix.h"
+#include "nsp/graphics/Graphics.h"
 
 /*
  * NspGFrame inherits from NspObject 
@@ -32,6 +33,7 @@ struct _nsp_gframe {
   NspObject father; 
   NspTypeGFrame *type; 
   NspList *objs ;       /* Object of type list: list of internal objects */
+  BCG *Xgc;
   double scale[4];  /* the scales */
   double r[4] ;     /* frame position in its father */
   struct frame *gfather;
@@ -81,7 +83,7 @@ extern NspGFrame *GetGFrame (Stack stack, int i);
 extern int IsGFrame (NspObject *O); 
 
 extern NspObject *gframe_path_extract (NspGFrame *H, NspObject *O); 
-extern NspGFrame *gframe_create (char *name, const double *scale, double *r,NspTypeBase *type); 
+extern NspGFrame *gframe_create (char *name,BCG *Xgc, const double *scale, double *r,NspTypeBase *type); 
 extern void gframe_draw (NspGFrame *R); 
 extern int gframe_select_obj (NspGFrame *R, const double *pt, NspObject **O,NspObject *exclude); 
 extern int gframe_select_lock(NspGFrame *F,double pt[2], NspObject **O, int *cp, int *lock_c) ;

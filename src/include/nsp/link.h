@@ -11,9 +11,9 @@
 
 #include <stdio.h>   /** for file declaration **/
 #include "nsp/sciio.h" 
-
 #include "nsp/object.h"
 #include "nsp/gframe.h" 
+#include "nsp/graphics/Graphics.h"
 
 /*
  * NspLink inherits from NspObject 
@@ -37,6 +37,7 @@ struct _nsp_link {
   NspObject father; 
   NspTypeLink *type; 
   /* specific*/
+  BCG *Xgc;
   int color; 
   int thickness;
   NspMatrix *poly ;       /* the polyline */
@@ -110,8 +111,8 @@ extern NspLink *GetLink (Stack stack, int i);
 extern NspLink *LinkCreateN(char *name,int n,int color,int thickness);
 extern void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2]);
 extern int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2]);
-
-
+extern void link_check(NspGFrame *F,NspLink *L);
+extern int IsLink(NspObject *O);
 extern int link_add_control(NspLink *L,const double pt[2]);
 
 

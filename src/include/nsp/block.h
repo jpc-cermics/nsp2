@@ -13,6 +13,7 @@
 #include "nsp/object.h"
 #include "nsp/gframe.h"
 #include "nsp/grint.h" /* interface definition */
+#include "nsp/graphics/Graphics.h"
 
 /*
  * NspBlock inherits from NspObject 
@@ -37,6 +38,7 @@ typedef struct b_lock {
 struct _nsp_block {
   NspObject father; 
   NspTypeBlock *type; 
+  BCG *Xgc;
   double r[4]; 		
   int color;
   int thickness;

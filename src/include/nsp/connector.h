@@ -114,6 +114,8 @@ extern NspConnector *GetConnectorCopy (Stack stack, int i);
 extern NspConnector *GetConnector (Stack stack, int i); 
 extern int IsConnector (NspObject *O); 
 
+extern NspConnector *connector_create(char *name,double rect[],int color,int thickness,int background,
+				      NspTypeBase *type );
 
 
 #endif

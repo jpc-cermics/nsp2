@@ -279,7 +279,7 @@ NspGFrame  *GetGFrame(Stack stack, int i)
  * create a NspClassA instance 
  *-----------------------------------------------------*/
 
-NspGFrame *gframe_create(char *name,const double scale[],double r[],NspTypeBase *type)
+NspGFrame *gframe_create(char *name,BCG *Xgc,const double scale[],double r[],NspTypeBase *type)
 {
   int i;
   NspGFrame *H = (type == NULL) ? new_gframe(): type->new();
@@ -293,12 +293,13 @@ NspGFrame *gframe_create(char *name,const double scale[],double r[],NspTypeBase 
   for ( i=0; i < 4 ; i++) H->r[i]=r[i];
   for ( i=0; i < 4 ; i++) H->scale[i]=scale[i];
   if ( ( H->objs = EListCreate(NVOID,NULL))== NULLLIST) return NULLGFRAME;
+  H->Xgc = Xgc;
   return H;
 }
 
 NspGFrame *gframe_copy(NspGFrame *H)
 {
-  NspGFrame *loc= gframe_create(NVOID,H->scale,H->r,NULL);
+  NspGFrame *loc= gframe_create(NVOID,H->Xgc,H->scale,H->r,NULL);
   if ( loc == NULLGFRAME ) return  NULLGFRAME;
   loc->objs = ListCopy(H->objs);
   if ( loc->objs == NULLLIST) return NULLGFRAME;
@@ -313,6 +314,7 @@ NspGFrame *gframe_copy(NspGFrame *H)
 
 static int int_gframe_create(Stack stack, int rhs, int opt, int lhs)
 {
+  BCG *Xgc;
   int i;
   NspGFrame *H;
   NspMatrix *scale,*r;
@@ -324,13 +326,13 @@ static int int_gframe_create(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: optional arguments are not expected\n");
       return RET_BUG;
     }
-  
+  Xgc= check_graphic_window();
   if ((scale =GetRealMat(stack,1)) == NULLMAT ) return FAIL;
   CheckLength(stack.fname,1,scale,4);
   if ((r =GetRealMat(stack,2)) == NULLMAT ) return FAIL;
   CheckLength(stack.fname,2,r,4);
   
-  if(( H = gframe_create(NVOID,scale->R,r->R,NULL)) == NULLGFRAME) return RET_BUG;
+  if(( H = gframe_create(NVOID,Xgc,scale->R,r->R,NULL)) == NULLGFRAME) return RET_BUG;
   for ( i = 3 ; i <= rhs ; i++ )
     {
       if ( MaybeObjCopy(&NthObj(i)) == NULL)  return RET_BUG;
@@ -544,11 +546,12 @@ static int pixmap = TRUE ; /* XXXXX */
 
 void gframe_draw(NspGFrame *R)
 {
+  BCG *Xgc;
   Cell *C = R->objs->first;
-  check_graphic_window();
+  Xgc=check_graphic_window();
   /* using current values */
-  Nsetscale2d(NULL,NULL,R->scale,"nn");
-  nsp_gengine->clearwindow();
+  Nsetscale2d(Xgc,NULL,NULL,R->scale,"nn");
+  Xgc->graphic_engine->clearwindow(Xgc);
   /* XXX xtape('replay',win); */
   /* 
    * XXX A GFrame could be casted info a Rect 
@@ -563,7 +566,7 @@ void gframe_draw(NspGFrame *R)
 	}
       C = C->next ;
     }
-  if ( pixmap ) nsp_gengine->xset_show();
+  if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
 }
 
 
@@ -701,13 +704,13 @@ int gframe_select_and_move(NspGFrame *R,const double pt[2])
 int gframe_select_and_split(NspGFrame *R,const double pt[2])
 {
   int rep=OK;
-  NspObject *O;
-  int k = gframe_select_obj(R,pt,&O,NULL);
+  NspObject *Ob;
+  int k = gframe_select_obj(R,pt,&Ob,NULL);
   if ( k==0 ) return FAIL;
-  if ( IsLink(O) ) 
+  if ( IsLink(Ob) ) 
     {
       NspLink *link;
-      rep= link_split(R,O,&link,pt);
+      rep= link_split(R,(NspLink *) Ob,&link,pt);
       gframe_draw(R);
     }
   return rep;
@@ -726,7 +729,7 @@ int gframe_select_link_and_add_control(NspGFrame *R,const double pt[2])
   if ( k==0 ) return FAIL;
   if ( IsLink(O) ) 
     {
-      rep= link_add_control(O,pt);
+      rep= link_add_control((NspLink *)O,pt);
       gframe_draw(R);
     }
   return rep;
@@ -822,35 +825,36 @@ void gframe_locks_update(NspGFrame *R,NspObject *O)
 int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp,move_action action)
 {
   char driver[4];
-  int alumode = nsp_gengine->xget_alufunction(), wstop = 0, ibutton, iwait=FALSE;
+  BCG *Xgc = F->Xgc;
+  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0, ibutton, iwait=FALSE;
   double mpt[2],pt1[2]= {pt[0],pt[1]},ptwork[2];
 
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
 
   /* move to X11 and  Xor mode */
-  nsp_gengine1.get_driver_name(driver);
-  if (strcmp("X11",driver) != 0)  nsp_gengine1.set_driver("X11");
-  nsp_gengine->xset_alufunction1(6);
+  Xgc->graphic_engine->scale->get_driver_name(driver);
+  if (strcmp("X11",driver) != 0)  Xgc->graphic_engine->scale->set_driver("X11");
+  Xgc->graphic_engine->xset_alufunction1(Xgc,6);
   
   while ( wstop==0 ) 
     {
       bf->draw(O);
       if ( IsBlock(O)  || IsConnector(O))  gframe_locks_draw(F,O);
-      if ( pixmap ) nsp_gengine->xset_show();
+      if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
-      nsp_gengine1.xgetmouse_1("one",&ibutton,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
       if ( ibutton == -100 ) 
 	{
-	  nsp_gengine->xset_alufunction1(alumode);
-	  nsp_gengine1.set_driver(driver);
+	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+	  Xgc->graphic_engine->scale->set_driver(driver);
 	  return ibutton;
 	}
       if ( ibutton == stop ) wstop= 1;
-      nsp_gengine->xinfo("ibutton=%d",ibutton);
+      Xgc->graphic_engine->xinfo(Xgc,"ibutton=%d",ibutton);
       /* clear block shape using redraw */
       bf->draw(O);
       if ( IsBlock(O)|| IsConnector(O) ) gframe_locks_draw(F,O);
-      /* if ( pixmap ) nsp_gengine->xset_show(); */
+      /* if ( pixmap ) Xgc->graphic_engine->xset_show(); */
 
       /* move object */
       switch ( action ) 
@@ -866,10 +870,10 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
       pt1[0] = mpt[0];
       pt1[1] = mpt[1];
     }
-  if ( IsLink(O)) link_check(F,O);
+  if ( IsLink(O)) link_check(F,(NspLink *)O);
 
-  nsp_gengine->xset_alufunction1(alumode);
-  nsp_gengine1.set_driver(driver);
+  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+  Xgc->graphic_engine->scale->set_driver(driver);
   return ibutton;
 }
 
@@ -948,7 +952,7 @@ int gframe_create_new_block(NspGFrame *F)
   rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return FAIL;
   /* XXXX block_draw(B); */
-  if ( pixmap ) nsp_gengine->xset_show();
+  if ( pixmap ) F->Xgc->graphic_engine->xset_show(F->Xgc);
   return OK;
 }
 
@@ -966,29 +970,30 @@ int gframe_create_new_connector(NspGFrame *F)
   rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return FAIL;
   /* XXXX block_draw(B); */
-  if ( pixmap ) nsp_gengine->xset_show();
+  if ( pixmap ) F->Xgc->graphic_engine->xset_show(F->Xgc);
   return OK;
 }
 
 
 int gframe_create_new_link(NspGFrame *F)
 {
+  BCG *Xgc= F->Xgc;
   NspObject *Ob;
   int cp1;
   double mpt[2],pt[2];
   char driver[4];
-  int alumode = nsp_gengine->xget_alufunction(), wstop = 0,stop=2, ibutton, iwait=FALSE;
+  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0,stop=2, ibutton, iwait=FALSE;
   int color=4,thickness=1,hvfactor,count=0;
   NspLink *L;
   NspTypeGRint *bf;
   /* unhilite all */
   gframe_unhilite_objs(F,FALSE);
   hvfactor=5;/* magnetism toward horizontal and vertical line  */
-  nsp_gengine->xinfo("Enter polyline, Right click to stop");
+  Xgc->graphic_engine->xinfo(Xgc,"Enter polyline, Right click to stop");
   /* move to X11 and  Xor mode */
-  nsp_gengine1.get_driver_name(driver);
-  if (strcmp("X11",driver) != 0)  nsp_gengine1.set_driver("X11");
-  nsp_gengine->xset_alufunction1(6);
+  Xgc->graphic_engine->scale->get_driver_name(driver);
+  if (strcmp("X11",driver) != 0)  Xgc->graphic_engine->scale->set_driver("X11");
+  Xgc->graphic_engine->xset_alufunction1(Xgc,6);
   /* prepare a link with 1 points */
   L= LinkCreateN(NVOID,1,color,thickness);
   bf = GR_INT(((NspObject *) L)->basetype->interface);
@@ -1001,14 +1006,14 @@ int gframe_create_new_link(NspGFrame *F)
     {
       /* draw the link */
       bf->draw(L);
-      if ( pixmap ) nsp_gengine->xset_show();
+      if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
-      nsp_gengine1.xgetmouse_1("one",&ibutton,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
       if ( ibutton == -100 ) 
 	{
 	  /* we stop : window was killed */
-	  nsp_gengine->xset_alufunction1(alumode);
-	  nsp_gengine1.set_driver(driver);
+	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+	  Xgc->graphic_engine->scale->set_driver(driver);
 	  return ibutton;
 	}
       if ( ibutton == stop ) wstop= 1;
@@ -1055,7 +1060,7 @@ int gframe_create_new_link(NspGFrame *F)
 	  L->poly->R[count+L->poly->m]= mpt[1];
 	}
     }
-  nsp_gengine->xset_alufunction1(alumode);
+  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
   /* insert link in frame */
   if ( EndInsert(F->objs,(NspObject  *) L) == FAIL) return FAIL;
   /* check if first and last points are locked 
@@ -1069,9 +1074,9 @@ int gframe_create_new_link(NspGFrame *F)
   link_lock_update(F,L,1,mpt);
   link_check(F,L);
   bf->draw(L);
-  if ( pixmap ) nsp_gengine->xset_show();
-  nsp_gengine->xset_alufunction1(alumode);
-  nsp_gengine1.set_driver(driver);
+  if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
+  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+  Xgc->graphic_engine->scale->set_driver(driver);
   return ibutton;
 }
 

@@ -9,7 +9,7 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "../zcalelm/convert.h"
-#include "../graphics/Graphics.h"
+#include <nsp/graphics/Graphics.h>
 
 /* graphic rectangle 
  * NspRect inherits from NspObject 
@@ -204,7 +204,7 @@ static NspRect  *rect_xdr_load(NspFile  *F)
   if ( XdrLoadI(F,&thickness) == FAIL) return NULLRECT;
   if ( XdrLoadI(F,&background) == FAIL) return NULLRECT;
   if ( XdrLoadArrayD(F,rect,4) == FAIL) return NULLRECT;
-  if (( M= rect_create(name,rect,color,thickness,background,NULL)) == NULLRECT ) return NULLRECT;
+  if (( M= rect_create(name,NULL,rect,color,thickness,background,NULL)) == NULLRECT ) return NULLRECT;
   return M;
 }
 
@@ -292,7 +292,7 @@ NspRect  *GetRect(Stack stack, int i)
  * create a NspClassA instance
  *-----------------------------------------------------*/
 
-NspRect *rect_create(char *name,double rect[],int color,int thickness,int background,NspTypeBase *type)
+NspRect *rect_create(char *name,BCG *Xgc,double rect[],int color,int thickness,int background,NspTypeBase *type)
 {
   int i;
   NspRect *H = (type == NULL) ? new_rect(): type->new();
@@ -307,6 +307,7 @@ NspRect *rect_create(char *name,double rect[],int color,int thickness,int backgr
   H->color = color;
   H->thickness = thickness;
   H->background = background;
+  H->Xgc = Xgc;
   return H;
 }
 
@@ -316,7 +317,7 @@ NspRect *rect_create(char *name,double rect[],int color,int thickness,int backgr
 
 static NspRect *rect_copy(NspRect *H)
 {
-  return rect_create(NVOID,H->r,H->color,H->thickness,H->background,NULL);
+  return rect_create(NVOID,H->Xgc,H->r,H->color,H->thickness,H->background,NULL);
 }
 
 /*-------------------------------------------------------------------
@@ -328,6 +329,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 
 int int_grcreate(Stack stack, int rhs, int opt, int lhs)
 {
+  BCG *Xgc;
   NspRect *H;
   double *val;
   int back=-1,color=-1,thickness=-1;
@@ -341,11 +343,11 @@ int int_grcreate(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  check_graphic_window();
-  if ( back <= 0 )  back  = nsp_gengine->xget_pattern();
-  if ( color <= 0 ) color = nsp_gengine->xget_pattern();
-  if ( thickness < 0 ) thickness = nsp_gengine->xget_thickness();
-  if(( H = rect_create(NVOID,val,color,thickness,back,NULL)) == NULLRECT) return RET_BUG;
+  Xgc= check_graphic_window();
+  if ( back <= 0 )  back  = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( color <= 0 ) color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( thickness < 0 ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
+  if(( H = rect_create(NVOID,Xgc,val,color,thickness,back,NULL)) == NULLRECT) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -521,16 +523,17 @@ void Rect_Interf_Info(int i, char **fname, function (**f))
 
 void RectDraw(NspRect *R)
 {
+  BCG *Xgc;
   int cpat, cwidth;
-  check_graphic_window();
-  cpat = nsp_gengine->xget_pattern();
-  cwidth = nsp_gengine->xget_thickness();
-  nsp_gengine->xset_pattern(R->background);
-  nsp_gengine1.fillrectangle_1(R->r);
-  nsp_gengine->xset_pattern(R->color);
-  nsp_gengine1.drawrectangle_1(R->r);
-  nsp_gengine->xset_pattern(cpat);
-  nsp_gengine->xset_thickness(cwidth);
+  Xgc=check_graphic_window();
+  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
+  Xgc->graphic_engine->xset_pattern(Xgc,R->background);
+  Xgc->graphic_engine->scale->fillrectangle(Xgc,R->r);
+  Xgc->graphic_engine->xset_pattern(Xgc,R->color);
+  Xgc->graphic_engine->scale->drawrectangle(Xgc,R->r);
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
 
 /*

@@ -14,6 +14,7 @@
 #include "nsp/object.h"
 #include "nsp/matrix.h"
 #include "nsp/smatrix.h"
+#include "nsp/graphics/Graphics.h"
 
 /*
  * NspRect inherits from NspObject 
@@ -32,6 +33,7 @@ typedef struct _nsp_type_Rect {
 struct _nsp_rect {
   NspObject father; 
   NspTypeRect *type; 
+  BCG *Xgc;
   double r[4];
   int color; 
   int thickness;
@@ -79,7 +81,7 @@ extern int IsRect (NspObject *O);
 
 /* from rect.c */
 
-extern NspRect *rect_create(char *name, double *rect, int color, int thickness, int background,NspTypeBase *); 
+extern NspRect *rect_create(char *name,BCG *Xgc, double *rect, int color, int thickness, int background,NspTypeBase *); 
 extern void RectDraw(NspRect *R);
 extern void RectTranslate(NspRect *R,const double pt[2]);
 extern void RectResize(NspRect *R,const double size[2]);

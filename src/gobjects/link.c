@@ -346,6 +346,7 @@ NspLink *link_copy(NspLink *H)
 
 static int int_link_create(Stack stack, int rhs, int opt, int lhs)
 {
+  BCG *Xgc;
   NspLink *H;
   NspMatrix *M1;
   int color=-1,thickness=-1;
@@ -360,9 +361,9 @@ static int int_link_create(Stack stack, int rhs, int opt, int lhs)
   CheckCols(stack.fname,1,M1,2);
   if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
 
-  check_graphic_window();
-  if ( color <= 0 ) color = nsp_gengine->xget_pattern();
-  if ( thickness < 0 ) thickness = nsp_gengine->xget_thickness();
+  Xgc=  check_graphic_window();
+  if ( color <= 0 ) color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( thickness < 0 ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
   if(( H = link_create(NVOID,M1,color,thickness,NULL)) == NULLLINK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -562,24 +563,25 @@ static int link_unconnected_color=10;
 
 void link_draw(NspLink *L)
 {
+  BCG *Xgc;
   double loc[4];
   int cpat, cwidth;
 
   if ( L->show == FALSE ) return ;
 
-  check_graphic_window();
-  cpat = nsp_gengine->xget_pattern();
-  cwidth = nsp_gengine->xget_thickness();
+  Xgc=check_graphic_window();
+  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   /* draw polyline */
   if ( link_is_lock_connected(L,0)== TRUE && 
        link_is_lock_connected(L,1)== TRUE ) 
-    nsp_gengine->xset_pattern(L->color);
+    Xgc->graphic_engine->xset_pattern(Xgc,L->color);
   else 
-    nsp_gengine->xset_pattern(link_unconnected_color);
-  nsp_gengine1.drawpolyline_1(L->poly->R, L->poly->R + L->poly->m,
-			      L->poly->m,0);
+    Xgc->graphic_engine->xset_pattern(Xgc,link_unconnected_color);
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,L->poly->R, L->poly->R + L->poly->m,
+					   L->poly->m,0);
   /* add hilited */ 
-  nsp_gengine->xset_pattern(lock_color);
+  Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
   if ( L->hilited == TRUE ) 
     {
       int i,m= L->poly->m;
@@ -588,23 +590,23 @@ void link_draw(NspLink *L)
       for ( i=1 ; i < m -1; i++) 
 	{
 	  loc[0]=x[i]-1; loc[1]=y[i]+1;loc[2]=loc[3]= lock_size;
-	  nsp_gengine1.fillrectangle_1(loc);
+	  Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
 	}
       /* firts and last link points which are lock points */
       for ( i=0 ; i <= 1; i++) 
 	{
 	  if ( i== 1 && m == 1) break; /* just one point in the link */
 	  if ( link_is_lock_connected(L,i)== TRUE)
-	    nsp_gengine->xset_pattern(lock_color); 
+	    Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
 	  else 
-	    nsp_gengine->xset_pattern(1); 
+	    Xgc->graphic_engine->xset_pattern(Xgc,1); 
 	  link_get_lock_pos(L,i,loc);
 	  loc[0] += -1; loc[1] += 1;loc[2]=loc[3]= lock_size;
-	  nsp_gengine1.fillrectangle_1(loc);
+	  Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
 	}
     }
-  nsp_gengine->xset_pattern(cpat);
-  nsp_gengine->xset_thickness(cwidth);
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
 
 /**************************************************
