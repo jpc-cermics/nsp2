@@ -1315,8 +1315,10 @@ else
 fi
 
 ##################
-## blas and lapack 
+## blas and lapack and atlas 
+## 
 ##################
+
 BLAS_LOCAL=libblas 
 BLAS_LIBS=libs/blas.a 
 LAPACK_LOCAL=liblapack
@@ -1609,29 +1611,6 @@ if test "$with_maxpluslib" = yes; then
    MPLUSLIB=libs/maxplus.a
    MPLUSLIBDIR=libmaxplus
 fi 
-
-#################
-## atlas 
-#################
-
-# check user arguments
-USER_ATLAS_LIB_PATH=""
-
-AC_ARG_WITH(atlas-library,
-    [  --with-atlas-library=DIR  Atlas library files are in DIR and we use Atlas ],
-    [  USER_ATLAS_LIB_PATH=$withval
-    ])
-
-if test "$USER_ATLAS_LIB_PATH" = ""; then
-	WHICH_BLAS="STD_BLAS"
-	IN_ATLAS=LOCAL
-else 
-	echo "using Atlas library"
-	WHICH_BLAS="ATLAS_LAPACKBLAS"
-	ATLAS_DIR=$USER_ATLAS_LIB_PATH
-	IN_ATLAS=ATLAS
-	AC_DEFINE(WITH_ATLAS)
-fi
 
 #########################
 ## substituting variables

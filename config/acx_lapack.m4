@@ -73,7 +73,9 @@ if test $acx_lapack_ok = no; then
 fi
 
 # Generic LAPACK library?
-for lapack in lapack lapack_rs6k; do
+# adding the atlas lapack library f77lapack jpc 2005 april 
+
+for lapack in f77lapack lapack lapack_rs6k; do
         if test $acx_lapack_ok = no; then
                 save_LIBS="$LIBS"; LIBS="$BLAS_LIBS $LIBS"
                 AC_CHECK_LIB($lapack, $cheev,

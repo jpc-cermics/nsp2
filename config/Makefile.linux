@@ -5,9 +5,10 @@ FFLAGS = $(FC_OPTIONS)
 LIBS=-Wl,--whole-archive libs/nsp.a  \
 	libs/zcalelm.a libs/graphics.a \
 	libs/gtksci.a libs/menusX.a libs/rand.a libs/dcd.a  \
-	libs/integ.a libs/approx.a \
-	 -llapack -lblas \
-	-Wl,--no-whole-archive
+	libs/integ.a libs/approx.a -Wl,--no-whole-archive  \
+	-lf77lapack -lcblas -lf77blas -latlas \
+
+
 
 bin/scilex: scilex-lib 
 	@$(RM) $@;
