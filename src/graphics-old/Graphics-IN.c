@@ -2639,13 +2639,16 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   int v1=-1,opengl=FALSE;
   NspMatrix *wdim=NULL,*wpdim=NULL,*viewport=NULL,*wpos=NULL;
-  char *name=NULL, *file=NULL;
+  char *name=NULL, *file=NULL, *mode = NULL;
+  static char *Table[] = {"d", "l", "n", "p", "k", NULL};
+  char **entry;
 
   /* just optionals arguments */
   int_types T[] = {new_opts, t_end} ;
 
   nsp_option opts[] ={{ "dim",mat_int,NULLOBJ,-1},
 		      { "file",string,NULLOBJ,-1},
+		      { "mode",string,NULLOBJ,-1},
 		      { "name",string,NULLOBJ,-1},
 		      { "opengl",s_bool,NULLOBJ,-1},
 		      { "popup_dim",mat_int,NULLOBJ,-1},
@@ -2653,7 +2656,25 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 		      { "viewport_pos",realmat,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&opts,&wdim,&file,&name,&opengl,&wpdim,&wpos,&viewport) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&opts,&wdim,&file,&mode,&name,&opengl,&wpdim,&wpos,&viewport) == FAIL) return RET_BUG;
+
+  if ( mode != NULL) 
+    {
+      int rep = is_string_in_array(mode,Table,1);
+      if ( rep < 0 ) 
+	{
+	  Scierror("Error:\toptional argument mode of function %s has a wrong value %s\n",stack.fname,mode);
+	  Scierror("\tmust be '%s'", *Table);
+	  for (entry = Table+1 ; *entry != NULL; entry++) {
+	    if (entry[1] == NULL) {
+	      Scierror(", or '%s'",*entry);
+	    } else {
+	      Scierror(", '%s'",*entry);
+	    }
+	  }
+	  return RET_BUG;
+	}
+    }
 
   if (wdim != NULL && wdim->mn != 2 ) 
     {
@@ -2680,17 +2701,17 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 
   if ( nsp_current_bcg != NULL) 
     {
-      nsp_current_bcg->graphic_engine->initgraphic("",&v1, 
+      nsp_current_bcg->graphic_engine->initgraphic(file,&v1, 
 						   (wdim) ? (int*) wdim->R: NULL ,
 						   (wpdim) ? (int*)wpdim->R: NULL,
 						   (viewport) ? viewport->R : NULL,
 						   (wpos) ? (int*)wpos->R : NULL,
-						   'e');
+						   mode[0]);
     }
   else 
     {
       if ( opengl == FALSE ) 
-	Gtk_gengine.initgraphic("",&v1,
+	Gtk_gengine.initgraphic(file,&v1,
 				(wdim) ? (int*)wdim->R: NULL ,
 				(wpdim) ? (int*)wpdim->R: NULL,
 				(viewport) ? viewport->R : NULL,
@@ -2699,7 +2720,7 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
       else 
 	{
 #ifdef WITH_GTKGLEXT 
-	  GL_gengine.initgraphic("",&v1,
+	  GL_gengine.initgraphic(file,&v1,
 				 (wdim) ? (int*)wdim->R: NULL ,
 				 (wpdim) ? (int*)wpdim->R: NULL,
 				 (viewport) ? viewport->R : NULL,

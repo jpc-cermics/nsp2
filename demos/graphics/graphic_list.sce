@@ -69,8 +69,9 @@ endfunction
 demo_2d_5_info='plot2d with function';
 
 function demo_2d_5()
-  fplot2d();
-  xtitle("fplot2d : f given by external ","x ","f(x) ");
+  function y=f(x) ; y=sin(1/x); endfunction
+  plot2d(linspace(1.e-6,1,1000),f,leg="sin(1/x)",leg_pos="dr")
+  xtitle("plot2d(x,f,...)");
 endfunction
 
 demo_2d_6_info='histplot';
