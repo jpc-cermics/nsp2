@@ -144,10 +144,8 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
     if (nsp_global_frame_search_object(Name) != NULLOBJ) irep=1;
     break;
   } 
-  /* XXX should be changed 
-   * if ((O = nsp_create_boolean_object(NVOID,irep)) == NULLOBJ) return RET_BUG;
-   */
-  if (( O =nsp_create_object_from_double(NVOID,irep))== NULLOBJ ) return RET_BUG;
+  if ((O = nsp_create_boolean_object(NVOID,irep)) == NULLOBJ) return RET_BUG;
+  /* if (( O =nsp_create_object_from_double(NVOID,irep))== NULLOBJ ) return RET_BUG;*/
   MoveObj(stack,1,O);
   return 1;
 }

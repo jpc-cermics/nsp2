@@ -1121,7 +1121,7 @@ static int get_from_options(nsp_option Opts[],va_list *ap,char *format)
  * 
  * Utility function to deal with Optional parameters which are 
  * to be extracted from a hash table @H. Note that we only try 
- * to extract options from hash table is hash table contains 
+ * to extract options from hash table. If hash table contains 
  * extra entry they are ignored (Is it to be change ? FIXME)
  * 
  * Return value: 
@@ -1170,6 +1170,68 @@ static int options_check_from_hash(Stack stack,NspHash *H,nsp_option Opts[])
   return OK;
 }
 
+/**
+ * get_args_from_hash:
+ * @stack: calling stack 
+ * @H: a hash table 
+ * @opts: array describing the optional arguments
+ * @Varargs: the object to be parsed according to @opts
+ * 
+ * This function is used to extract arguments from a hash table 
+ * arguments to be extracted are described by a nsp_option 
+ * table. All the specified names present in opts are to be found 
+ * else it returns an error (If specified values from opts can 
+ * be missing in hash then get_optional_args_from_hash should be used instead).
+ * 
+ * Return value:  %OK or %FAIL.
+ **/
+
+static int value_get_from_hash(Stack stack,NspHash *H,nsp_option Opts[]);
+
+int  get_args_from_hash(Stack stack,NspHash *H,nsp_option opts[],...)
+{
+  int rep;
+  va_list ap;
+  va_start(ap,opts);
+
+  /* reorder optional arguments in Opts->objs */
+  if ( value_get_from_hash(stack,H,opts)== FAIL) {
+    va_end(ap);
+    return FAIL;
+  }
+  /* optional argument extraction **/ 
+  rep = get_from_options(opts,&ap,"\twhile extracting optional argument %s");
+  if ( rep == FAIL)
+    Scierror(" of function %s\n",stack.fname);
+  va_end(ap);
+  return rep;
+}
+
+static int value_get_from_hash(Stack stack,NspHash *H,nsp_option Opts[])
+{
+  nsp_option *option = Opts;
+  while ( option->name != NULL) 
+    { 
+      NspObject *Ob;
+      /* search option->name is Hash */
+      if ( nsp_hash_find(H,option->name, &Ob) == OK) 
+	{
+	  option->obj = Ob;
+	  option->position=0; 
+	}
+      else
+	{
+	  char *name = nsp_object_get_name(NSP_OBJECT(H));
+	  Scierror("%s: value for %s entry missing in hash table %s\n",stack.fname,
+		   option->name, name);
+	  option->obj = NULLOBJ;
+	  option->position=-1; 
+	  return FAIL;
+	}
+      option++ ; 
+    }; 
+  return OK; 
+} 
 
 /**
  * ObjConvert:

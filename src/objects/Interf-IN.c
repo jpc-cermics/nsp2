@@ -329,6 +329,37 @@ int int_mxtest11(Stack stack, int rhs, int opt, int lhs)
 		  nsp_smatrix_create_from_table(St));
 }
 
+/* 
+ * Get values from a HashTable 
+ * 
+ */
+
+typedef struct _test12 {
+  NspMatrix *M;
+  int x;
+  double z;
+  NspMatrix *N;
+} test12_data ;
+
+int int_mxtest12(Stack stack, int rhs, int opt, int lhs)
+{
+  test12_data data;
+  NspHash *H;
+  int_types T[]={hash,t_end} ;
+  nsp_option opts[] ={{ "x1",mat,NULLOBJ,-1},
+		      { "x2",s_int,NULLOBJ,-1},
+		      { "x3",s_double,NULLOBJ,-1},
+		      { "x4",matcopy,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&H) == FAIL) return RET_BUG;
+  if ( get_args_from_hash(stack,H,opts,&data.M,&data.x,&data.z,&data.N)==FAIL) 
+    {
+      Scierror("%s: wrong first argument %s\n",stack.fname,nsp_object_get_name(H));
+      return RET_BUG;
+    }
+  return 0;
+}
+
 
 /*
  * The Interface for basic matrices operation 
@@ -347,6 +378,7 @@ static OpTab Interf_func[]={
   {"test9", int_mxtest9},
   {"test10", int_mxtest10},
   {"test11", int_mxtest11},
+  {"test12", int_mxtest12},
   {(char *) 0, NULL}
 };
 
