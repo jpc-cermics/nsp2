@@ -164,7 +164,7 @@ void nsp_initialize_gc( BCG *Xgc )
   Xgc->graphic_engine->xset_font(Xgc,2,1);
   Xgc->graphic_engine->xset_mark(Xgc,0,0);
   Xgc->graphic_engine->xset_pixmapOn(Xgc,0);
-  Xgc->graphic_engine->xset_wresize(Xgc,0);
+  Xgc->graphic_engine->xset_wresize(Xgc,1);
   /** Absolute coord mode  **/
   Xgc->graphic_engine->xset_absourel(Xgc,CoordModeOrigin);
   /* initialisation des pattern dash par defaut en n&b */

@@ -693,12 +693,54 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
  * but if the scrolled window is greater then drawbox will follow 
  */
 
+      /* 
+      geometry.base_width = 0;
+      geometry.base_height = 0;
+      geometry.min_width = 0;
+      geometry.min_height = 0;
+      geometry.width_inc = 0;
+      geometry.height_inc = 0;
+      geometry.max_width = x+10;
+      geometry.max_height = y+10;
+       geometry_mask = GDK_HINT_BASE_SIZE | GDK_HINT_MAX_SIZE| 
+	 GDK_HINT_MIN_SIZE | GDK_HINT_RESIZE_INC; 
+	 geometry_mask = GDK_HINT_MAX_SIZE ; 
+      gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window), Xgc->private->scrolled,
+				     &geometry, geometry_mask);
+      */
+
+/* fixe la taille min s'un widget 
+gtk_widget_set_size_request     (GtkWidget *widget,
+                                             gint width,
+                                             gint height
+     XXXXXXXXXXXXXXXXX
+*/
+
 static void xset_windowdim(BCG *Xgc,int x, int y)
 {
   /* XXXX: not so easy !!! */
   if (Xgc == NULL || Xgc->private->window ==  NULL) return ;
-  gtk_widget_set_usize(Xgc->private->drawing,x,y);
-  /* XXXXX gdk_window_resize(Xgc->private->drawing->window,*x,*y); */
+  if ( Xgc->CurResizeStatus == 1) 
+    {
+
+      GdkGeometry geometry;
+      GdkWindowHints geometry_mask;
+      gint pw,ph,w,h;
+      gdk_window_get_size (Xgc->private->window->window,&pw,&ph);
+      gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
+      /* resize the graphic window */
+      gdk_window_resize(Xgc->private->drawing->window,x,y);
+      /* resize the main window */
+      gdk_window_resize(Xgc->private->window->window,x+(pw-w),y+(ph-h));
+      /* want the expose event to resize pixmap and redraw */
+      Xgc->private->resize = 1; 
+    }
+  else
+    {
+      /* resize the graphic window */
+      gdk_window_resize(Xgc->private->drawing->window,x,y);
+      /* A FAIRE ...... XXXXXX */
+    }
   gdk_flush();
 }
 
@@ -1285,7 +1327,7 @@ static void xset_wresize(BCG *Xgc,int num)
     {
       /* we want here that the graphic window follows the viewport resize */
       /* we set the min size of graphic window to the min accepted size */
-      gtk_widget_set_usize(Xgc->private->drawing,200,100);
+      /* gtk_widget_set_usize(Xgc->private->drawing,400,100); */
       Xgc->CurResizeStatus = num1 ;
       return ; 
     }
@@ -3382,7 +3424,7 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
                                     GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   /* fix min size of the scrolled window */
-  gtk_widget_set_usize(scrolled_window,iw,ih);
+  /* gtk_widget_set_usize(scrolled_window,iw+10,ih+10);*//* XXXX */ 
   
   /* place and realize the scrolled window  */
 
@@ -3415,7 +3457,7 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
 
   /* private->drawingarea properties */
   /* min size of the graphic window */
-  gtk_widget_set_usize(dd->private->drawing, iw, ih);
+  /* gtk_widget_set_usize(dd->private->drawing, iw, ih); */
 
   /* setup background color */
   dd->private->bg = R_RGB(255, 255, 255);
