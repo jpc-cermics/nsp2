@@ -2880,6 +2880,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
   xset_background(Xgc,Xgc->NumBackground+1);
   glClearDepth(1.0);  
+  glEnable(GL_DEPTH_TEST);
   /*     glDrawBuffer(GL_FRONT_AND_BACK); */
   /*     glEnable(GL_TEXTURE_2D); */
   /*     glEnable (GL_CULL_FACE); */
@@ -2896,9 +2897,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   glAlphaFunc(GL_GREATER,0.1f);
   glEnable(GL_ALPHA_TEST);
   LoadFonts(Xgc);
-  Xgc->private->view = VUE_3D;
-  if (   Xgc->private->view ==  VUE_3D)  glEnable(GL_DEPTH_TEST);
-
+  
   gdk_gl_drawable_gl_end (gldrawable);
   return FALSE;
 }
@@ -3367,8 +3366,8 @@ t_camera nouvelle_camera(float px, float py, float pz,
   camera.cible.y = cy; 
   camera.cible.z = cz;
   camera.orientation.x = 0.0; /* orientation (ne pas modifier) */
-  camera.orientation.y = 0.0; /* orientation (ne pas modifier) */
-  camera.orientation.z = 1.0; /* orientation (ne pas modifier) */
+  camera.orientation.y = 1.0; /* orientation (ne pas modifier) */
+  camera.orientation.z = 0.0; /* orientation (ne pas modifier) */
   camera.near = near;
   camera.far = far;
 
@@ -3410,14 +3409,13 @@ static void nsp_ogl_set_view(BCG *Xgc)
     {
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity ();
-      gluLookAt (0,0,10,
+      gluLookAt (0,0,100,
 		 0,0,0,
 		 0,1,0);
       glMatrixMode(GL_PROJECTION); 
       glLoadIdentity();
       glOrtho(0, 0, Xgc->private->drawing->allocation.width,
 	      Xgc->private->drawing->allocation.height,-1,1);
-      /* Switch to model view so that we can render the scope image */
       glMatrixMode(GL_MODELVIEW);
     }
   else
@@ -3472,7 +3470,6 @@ static void nsp_ogl_set_view(BCG *Xgc)
 	      Xgc->scales->frect[1]-ys*Xgc->scales->axis[3],
 	      Xgc->scales->frect[3]+ys*Xgc->scales->axis[2],
 	      -2*R,2*R);
-      /* Xgc->scales->zfrect[0],Xgc->scales->zfrect[1]); */
       glMatrixMode(GL_MODELVIEW);
     }
 }
