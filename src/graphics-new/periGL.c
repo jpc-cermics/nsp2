@@ -1844,6 +1844,15 @@ static void drawline(BCG *Xgc,int x1, int y1, int x2, int y2)
   if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
+static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double y2, double z2)
+{
+  glBegin(GL_LINES);
+  glVertex3d(x1, y1, z1);
+  glVertex3d(x2, y2, z2);
+  glEnd();
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
+}
+
 /** Draw a set of segments **/
 /** segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/
 /** for i=0 step 2 **/
@@ -1864,6 +1873,25 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
     /* une fonction gtk existe ici FIXME */
     for (i=0 ; i < n/2 ; i++) 
       drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+  }
+  xset_dash_and_color(Xgc,dash,color);
+}
+
+void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag)
+{
+  int dash,color,i;
+  xget_dash_and_color(Xgc,&dash,&color);
+  if ( iflag == 1) { /* one style per segment */
+    for (i=0 ; i < n/2 ; i++) {
+      xset_line_style(Xgc,style[i]);
+      drawline3D(Xgc,x[2*i],y[2*i],z[2*i],x[2*i+1],y[2*i+1],z[2*i+1]);
+    }
+  }
+  else {
+    if (*style >= 1) xset_line_style(Xgc,*style);
+    /* une fonction gtk existe ici FIXME */
+    for (i=0 ; i < n/2 ; i++) 
+      drawline3D(Xgc,x[2*i],y[2*i],z[2*i],x[2*i+1],y[2*i+1],z[2*i+1]);
   }
   xset_dash_and_color(Xgc,dash,color);
 }
@@ -3618,8 +3646,8 @@ t_camera nouvelle_camera(float px, float py, float pz,
      return camera;
 }
 
-/* Force OpenGL a redessiner la scene
- *
+/* 
+ * add an expose event in the event queue. 
  */
 
 static void force_affichage(BCG *Xgc)
@@ -3633,31 +3661,22 @@ static void force_affichage(BCG *Xgc)
 ** Commute la vue : mode perspective cavaliere (2D) --- mode perspective)
 */
 
-
 static void nsp_ogl_set_view(BCG *Xgc)
 {
-  float aspect;
-  static bool premiere_fois = true;
-
-  if (premiere_fois)
-    {
-      Xgc->private->camera = nouvelle_camera(5.0,5.0,5.0,  0.0,0.0,0.0,
-					     INIT_DISTANCE_CLIPPING_PROCHE,
-					     INIT_DISTANCE_CLIPPING_LOIN);
-      premiere_fois = false;
-    }
-
-  glViewport (0,  0, Xgc->private->drawing->allocation.width, Xgc->private->drawing->allocation.height);
+  glViewport (0,  0, Xgc->private->drawing->allocation.width, 
+	      Xgc->private->drawing->allocation.height);
   xset_background(Xgc,Xgc->NumBackground+1);
-  if (Xgc->private->view == VUE_2D)
+  if ( Xgc->scales->scale_flag3d == 0 )
     {
+      glMatrixMode(GL_MODELVIEW);
+      glLoadIdentity ();
+      gluLookAt (0,0,10,
+		 0,0,0,
+		 0,1,0);
       glMatrixMode(GL_PROJECTION); 
       glLoadIdentity();
-      /*
-       * Pass in our 2D ortho screen coordinates.like so (left, right, bottom, top).  The last
-       * 2 parameters are the near and far planes.
-       */
-      glOrtho(0, 0, Xgc->private->drawing->allocation.width, Xgc->private->drawing->allocation.height,-1,1);
+      glOrtho(0, 0, Xgc->private->drawing->allocation.width,
+	      Xgc->private->drawing->allocation.height,-1,1);
       /* Switch to model view so that we can render the scope image */
       glMatrixMode(GL_MODELVIEW);
     }
@@ -3674,34 +3693,39 @@ static void nsp_ogl_set_view(BCG *Xgc)
       double cx=(Xgc->scales->bbox1[0]+ Xgc->scales->bbox1[1])/2.0;
       double cy=(Xgc->scales->bbox1[0]+ Xgc->scales->bbox1[1])/2.0;
       double cz=(Xgc->scales->bbox1[0]+ Xgc->scales->bbox1[1])/2.0;
+      /* radius and center of the sphere circumscribing the box */
+      double dx=Xgc->scales->bbox1[1]-Xgc->scales->bbox1[0]; 
+      double dy=Xgc->scales->bbox1[3]-Xgc->scales->bbox1[2]; 
+      double dz=Xgc->scales->bbox1[5]-Xgc->scales->bbox1[4];
+      double R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2; 
 
+      /* 
+       * fix the model view using the box center 
+       * and a point on the sphere circumscribing the box
+       */
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity ();
-      /* middle of englobing box */
-      
-      gluLookAt (cx+dist*cost*sina,
-		 cy+dist*sint*sina,
-		 cz+dist*cosa,
+      gluLookAt (cx+R*cost*sina,
+		 cy+R*sint*sina,
+		 cz+R*cosa,
 		 cx,cy,cz,
 		 0,0,1);
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
 
-      /* 
-       * aspect = ((float) Xgc->private->drawing->allocation.width) /
-       * Xgc->private->drawing->allocation.height;
-       * gluPerspective(45.0, aspect, Xgc->private->camera.near, Xgc->private->camera.far);
-       */
-
       /*
+       * setting the modelview 
+       * we use the computed min max points 
        * FIXME: when we use iso mode we have to change 
        *      the next code 
        * FIXME: ameliorer le zmin,zmax et l'utiliser pour le depth buffer 
        *      i.e donner l'info 
        */
 
-      xs=(Xgc->scales->frect[2]-Xgc->scales->frect[0])/(1 - Xgc->scales->axis[0] - Xgc->scales->axis[1]);
-      ys=(Xgc->scales->frect[3]-Xgc->scales->frect[1])/(1 - Xgc->scales->axis[2] - Xgc->scales->axis[3]);
+      xs=(Xgc->scales->frect[2]-Xgc->scales->frect[0])/
+	(1 - Xgc->scales->axis[0] - Xgc->scales->axis[1]);
+      ys=(Xgc->scales->frect[3]-Xgc->scales->frect[1])/
+	(1 - Xgc->scales->axis[2] - Xgc->scales->axis[3]);
 
       glOrtho(Xgc->scales->frect[0]-xs*Xgc->scales->axis[0],
 	      Xgc->scales->frect[2]+xs*Xgc->scales->axis[1],
