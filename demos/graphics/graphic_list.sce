@@ -1,6 +1,3 @@
-// graphic_demo_list : a list of string matrices 
-// giving graphics demos examples 
-
 // FIXME : this is a temporary load 
 // of all the graphics macros 
 
@@ -12,6 +9,20 @@ if %t then
   exec(A)
 end 
 exec(NSP+'/demos/graphics/main_graphic.sci');
+
+// A set of demos 
+//-------------------------
+
+// utility function to build a list for demos 
+
+function L=build_demo_list(str,n)
+  L = list() 
+  for i=1:n
+    name=sprintf("%s_%d",str,i); 
+    execstr(sprintf("info=%s_%d_info;",str,i)); 
+    L(i) = list(info,"not-used",name);
+  end 
+endfunction
 
 // demo for 2d plots 
 // -----------------------
@@ -73,22 +84,21 @@ endfunction
 
 // organize the previous list for graphic demo widget 
 
-graphic_test_2d = list() 
-for i=1:6
-  name=sprintf("demo_2d_%d",i); 
-  info=sprintf("demo_2d_info_%d",i); 
-  graphic_test_2d(i) = list(info,"not-used",name);
-end 
+graphic_test_2d = build_demo_list("demo_2d",6);
 
 // a sublist for 3d plots 
 // -----------------------
+
+demo_3d_1_info="param3d";
 
 function demo_3d_1()
   param3d();
   xtitle("param3d : parametric curves in R3"," "," ");
 endfunction
 
-function demo_3d_2()
+demo_3d_2_info="param3d";
+
+function demo_3d_2() 
   t=-50*%pi:0.1:50*%pi;
   x=t.*sin(t);y=t.*cos(t);z=t.*abs(t)./(50*%pi);
   param3d(x,y,z,alpha=45,theta=60);
@@ -96,18 +106,24 @@ function demo_3d_2()
   xtitle(title," "," ");
 endfunction
 
-function demo_3d_3()
+demo_3d_3_info="plot3d";
+
+function demo_3d_3() 
   t=(-1:0.1:1)*%pi;plot3d(t,t,sin(t)'*cos(t),alpha=80,theta=70);
   title=["plot3d : z=sin(x)*cos(y)"];
   xtitle(title," "," ");
 endfunction
 
-function demo_3d_4()
+demo_3d_4_info="plot3d1";
+
+function demo_3d_4() 
   xset('colormap',hotcolormap(45));
   t=(-1:0.1:1)*%pi;plot3d1(t,t,sin(t)'*cos(t),alpha=80,theta=70);
   title=["plot3d1 : z=sin(x)*cos(y)"];
   xtitle(title," "," ");
 endfunction
+
+demo_3d_5_info="plot3d with function";
 
 function demo_3d_5()
   function z=f(x,y); z= sin(exp(2*(x+0.2)))*cos(y);endfunction
@@ -117,7 +133,9 @@ function demo_3d_5()
   xtitle(title," "," ");
 endfunction
 
-function demo_3d_6()
+demo_3d_6_info="multiple colormaps";
+
+function demo_3d_6() 
   xsetech(wrect=[0,0,0.5,0.5])
   xset('colormap',graycolormap(45));
   plot3d1()
@@ -132,7 +150,10 @@ function demo_3d_6()
   plot3d1()
 endfunction
 
-function demo_3d_7()
+
+demo_3d_7_info="interpolated shading";
+
+function demo_3d_7() 
   xsetech(wrect=[0,0,0.5,0.5])
   // One facet with interpolated shading using colors Id 
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=[1,2,3]',flag=[1,1,3])
@@ -148,7 +169,9 @@ function demo_3d_7()
   plot3d([0,0,1]',[0,1,0]',[3,1,2]',colors=-[1,6,12]',flag=[1,1,3])
 endfunction
 
-function demo_3d_8()
+demo_3d_8_info="genfact and interp. shad.";
+
+function demo_3d_8() 
 // using genfac3d to compute facets and node colors 
 // from a standard description 
   t=[-%pi/2,0,%pi/2]';
@@ -164,7 +187,9 @@ function demo_3d_8()
   plot3d1(t,t,z);
 endfunction
 
-function demo_3d_9()
+demo_3d_9_info="genfact and interp. shad.";
+
+function demo_3d_9() 
   t=[(0:0.2:2)*%pi]'; z=sin(t)*cos(t');
   xset('colormap',hotcolormap(40));
   // remapping zvalues to colors 
@@ -177,15 +202,19 @@ function demo_3d_9()
   plot3d(xx,yy,zz,colors=zzcolors,alpha=45,theta=60);
 endfunction
 
-function demo_3d_10()
+demo_3d_10_info="Tree";
+
+function demo_3d_10() 
   // a demo by Quentin Quadrat.
   exec(NSP+'/demos/graphics/NouvArbreQ.sci');
 endfunction
 
-function demo_3d_11()
+demo_3d_11_info="parametric surface nf3d";
+
+function demo_3d_11() 
 // parametric 3d surface 
 // nf3d 
-  u = %pi/2*(-1:0.2:1);
+  u = %pi*(-1:0.2:1);
   v = %pi*(-1:0.2:1);
   n = size(u,'*');
   x= cos(u)'*exp(cos(v));
@@ -196,16 +225,129 @@ function demo_3d_11()
   xset('colormap',hotcolormap(n));
   [xx,yy,zzcol]=nf3d(x,y,col);
   [xx,yy,zz]=nf3d(x,y,z);
-  plot3d(xx,yy,zz,colors=zzcol)
+  plot3d(xx,yy,zz,colors=zzcol,alpha=55,theta=110)
+endfunction
+
+
+demo_3d_12_info="Cube";
+
+function demo_3d_12() 
+  S=[1,-1,-1; 1,1,-1; -1,1,-1; -1,-1,-1; 
+     1,1,1;-1,1,1; 1,-1,1; -1,-1,1];
+
+  function F=faces(i)
+    F=[S(4,i),S(3,i),S(2,i),S(1,i)
+       S(2,i),S(3,i),S(6,i),S(5,i)
+       S(4,i),S(8,i),S(6,i),S(3,i)
+       S(1,i),S(7,i),S(8,i),S(4,i)
+       S(1,i),S(2,i),S(5,i),S(7,i)
+       S(5,i),S(6,i),S(8,i),S(7,i)];
+    // reverse the orientation
+    F=F(:,4:-1:1);
+  endfunction
+
+  Fx=faces(1); Fy=faces(2); Fz=faces(3);
+
+  Fx(2:$-1,:) = Fx(2:$-1,:)*1.2;
+  Fy(2:$-1,:) = Fy(2:$-1,:)*1.2;
+  Fz(2:$-1,:) = Fz(2:$-1,:)*1.2;
+  Fz(1,:) = Fz(1,:)-0.4;
+  Fz(6,:) = Fz(6,:)+0.4;
+
+  colors=[1,2,3,5,6,9];
+  plot3d(Fx',Fy',Fz',colors=colors);
+
+  colshade=[colors;colors+1;colors+2;colors+1];
+  plot3d(Fx',Fy',Fz',colors=colshade);
+endfunction
+  
+demo_3d_13_info="Tube";
+
+function demo_3d_13() 
+// following a parametric 3d curve 
+  T=6;
+  t=0:0.2:T;
+  ptc=[sin(t);cos(t);t];
+
+  for i=1:(size(ptc,'c')-1)
+    pt=ptc(:,i);
+    ptn=ptc(:,i+1);
+    u= ptn-pt;
+    u= u / sqrt(sum(u.*u))
+    // find an orthogonal basis (u,v,w)
+    I=find(u==0.0);
+    if I<>[] then 
+      v=0*u;v(I(1))=1;
+    else 
+      v=[u(2);-u(1);0];
+      v= v / sqrt(sum(v.*v))
+    end
+    w=[u(2)*v(3)-u(3)*v(2);
+       -(u(1)*v(3)-u(3)*v(1))
+       u(1)*v(2)-u(2)*v(1)];
+    // the tube around vector [pt,ptn]
+    n=10;
+    alpha=2*%pi*(0:n)/n;
+    r=0.3;
+    pts=r*v*cos(alpha)+r*w*sin(alpha);
+    if i==1 then 
+      ptg=pts+pt*ones(alpha);
+    else
+      ptg=ptd;
+    end
+    ptd=pts+ptn*ones(alpha);
+    xpol=[ptg(1,1:$-1);ptd(1,1:$-1);ptd(1,2:$);ptg(1,2:$)];
+    ypol=[ptg(2,1:$-1);ptd(2,1:$-1);ptd(2,2:$);ptg(2,2:$)];
+    zpol=[ptg(3,1:$-1);ptd(3,1:$-1);ptd(3,2:$);ptg(3,2:$)];
+    plot3d1(xpol,ypol,zpol);
+  end 
+endfunction
+
+demo_3d_14_info="Shell";
+
+function demo_3d_14() 
+  t=4*%pi*(0:20)/20;
+  ptc=[t.*sin(t);t.*cos(t);0*ones(t)];
+  for i=1:(size(ptc,'c')-1)
+    pt=ptc(:,i);
+    ptn=ptc(:,i+1);
+    u= ptn-pt;
+    u= u / sqrt(sum(u.*u))
+    // trouver un vecteur ds le plan orthogonal
+    I=find(u==0.0);
+    if I<>[] then 
+      v=0*u;v(I(1))=1;
+    else 
+      v=[u(2);-u(1);0];
+      v= v / sqrt(sum(v.*v))
+    end
+    w=[u(2)*v(3)-u(3)*v(2);
+       -(u(1)*v(3)-u(3)*v(1))
+       u(1)*v(2)-u(2)*v(1)];
+    
+    n=10;
+    alpha=2*%pi*(0:n)/n;
+    r=t(i);
+
+    pts=r*v*cos(alpha)+r*w*sin(alpha);
+    if i==1 then 
+      ptg=pts+pt*ones(alpha);
+    else
+      ptg=ptd;
+    end
+    ptd=pts+ptn*ones(alpha);
+
+    xpol=[ptg(1,1:$-1);ptd(1,1:$-1);ptd(1,2:$);ptg(1,2:$)];
+    ypol=[ptg(2,1:$-1);ptd(2,1:$-1);ptd(2,2:$);ptg(2,2:$)];
+    zpol=[ptg(3,1:$-1);ptd(3,1:$-1);ptd(3,2:$);ptg(3,2:$)];
+    plot3d1(xpol,ypol,zpol);
+  end 
 endfunction
 
 // organize the previous list 
 // for graphic demo widget 
 
-graphic_test_3d = list() 
-for i=1:11
-  graphic_test_3d(i) = list(sprintf("test%d",i), "not-used",sprintf("demo_3d_%d",i));
-end 
+graphic_test_3d = build_demo_list("demo_3d",14);
 
 // ----------------------------
 

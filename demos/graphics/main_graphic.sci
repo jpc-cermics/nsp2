@@ -103,20 +103,6 @@ function tree_view=create_tree(demo_list)
   tree_view.set_size_request[  200, -1]
   // walk through demo_list and insert
   tree_model_append(model,demo_list,0,0) 
-//   for r=demo_list
-//     if size(r,0)==3 then 
-//       r1=r;r1($+1)=%f; 
-//       iter=model.append[r1];
-//     else
-//       rchildren=r($); // list describing the children 
-//       r1=r;r1($)=%f; 
-//       iter=model.append[r1];
-//       for ch=rchildren;
-// 	ch1=ch;ch1($+1)=%f; 
-// 	model.append[iter,ch1];
-//       end
-//     end
-//   end
   cell = gtkcellrenderertext_new ();
   // g_object_set (G_OBJECT (cell), "style", PANGO_STYLE_ITALIC, NULL);
   cell.set_property["style", PANGO.STYLE_ITALIC];
@@ -166,7 +152,6 @@ simple_demo = list(
   list("Childs1", "", "",tree_view_children ),
   list("Childs1", "", "",tree_view_children ),
   list("test", "appwindow.c", "''poo''" ));
-
 
 function graphics_demo_in_gtk(demo_list) 
   window = gtkwindow_new();// (GTK.WINDOW_TOPLEVEL);
