@@ -2,7 +2,7 @@ SHELL = /bin/sh
 SCIDIR=../..
 SCIDIR1=..\..
 
-LIBRARY = zblas.a
+LIBRARY = blas.a
 
 OBJSC = dcopyC.o
 

@@ -60,7 +60,6 @@ OBJSF = dgelqf.o dgels.o  dgeqrf.o dlae2.o dlaev2.o \
 
 include ../Make.lib
 
-
 all:: Makefile.mak
 
 dlamch.o: dlamch.f

@@ -11,13 +11,20 @@ FFLAGS = $(FC_OPTIONS)
 
 OBJSC =
 
-OBJSF =  dgesv.o dgetrf.o dgetrs.o dpotrs.o dpotrf.o  zgetrf.o zgetrs.o zpotrf.o \
-	dgelqf.o dgels.o  dgeqrf.o dlae2.o dlaev2.o \
+# ATLAS symbol must remain empty 
+ATLAS= 
+# LOCAL symbol must contain a list of local routines which are 
+# also present in ATLAS  
+# the following LOCAL variable is valid for ATLAS-3.2.1 
+
+LOCAL= dgesv.o dgetrf.o dgetrs.o dpotrs.o dpotrf.o  zgetrf.o zgetrs.o zpotrf.o
+
+OBJSF = dgelqf.o dgels.o  dgeqrf.o dlae2.o dlaev2.o \
 	dlarf.o dlarfg.o dlartg.o dlascl.o dlaset.o dlasr.o dlasrt.o \
 	dlassq.o dopgtr.o dorg2l.o dorg2r.o dormqr.o dpptrf.o dspev.o \
 	dspgst.o dspgv.o  dsptrd.o dsptrf.o dorgqr.o \
-	dsteqr.o dtrcon.o dgebal.o dgebak.o \
-	ilaenv.o dlabad.o dlange.o dormlq.o dlansp.o \
+	dsteqr.o  lsame.o dtrcon.o dgebal.o dgebak.o \
+	ilaenv.o dlamch.o dlabad.o dlange.o dormlq.o dlansp.o \
 	dsterf.o dgeqr2.o dlarft.o dlarfb.o dorm2r.o dgelq2.o dlanst.o \
 	dlapy2.o dlantr.o dlacon.o dlatrs.o drscl.o dorml2.o \
 	slamch.o dggbal.o dggbak.o dlacpy.o dlaic1.o dgeqpf.o \
@@ -48,12 +55,15 @@ OBJSF =  dgesv.o dgetrf.o dgetrs.o dpotrs.o dpotrf.o  zgetrf.o zgetrs.o zpotrf.o
 	zpotf2.o  zheev.o zhetrd.o zlanhe.o zsteqr.o \
 	zungtr.o zhetd2.o zlatrd.o zungql.o zung2l.o dggev.o zggev.o \
 	zggbak.o zggbal.o zgghrd.o zhgeqz.o ztgevc.o zgges.o ztgsen.o \
-	ztgexc.o ztgsyl.o ztgex2.o ztgsy2.o zgesc2.o zgetc2.o zlatdf.o
+	ztgexc.o ztgsyl.o ztgex2.o ztgsy2.o zgesc2.o zgetc2.o zlatdf.o \
+	$(LOCAL) 
 
 include ../Make.lib
 
-
 all:: Makefile.mak
+
+dlamch.o: dlamch.f
+	$(FC) -c dlamch.f -o dlamch.o
 
 Makefile.mak	: Makefile
 	$(SCIDIR)/scripts/Mak2VCMak Makefile
