@@ -27,7 +27,7 @@ a.set[cla_val=1:5,cla_color=56]
 
 a('cla_color') = 78  //   {"setrowscols_cla",int_set_attribute}, 
 
-a('cla_color')  // 
+// a('cla_color')  // extractelts_cla to be done XXX (copy from hash)
 
 test(a) 
 
@@ -62,6 +62,7 @@ b.classa_color_change[890]
 b.classb_color_show[] 
 
 // functions for Classa instances 
+// which can be used for instances of Classb
 
 test(b) 
 test(a) 

@@ -1,9 +1,8 @@
-Warning: environment variable TMPDIR not found
 -nsp->// -*- Mode: scilab -*- 
 -nsp->// test for grand 
 -nsp->
 -nsp->prec = 1
-prec	=		 r (1x1)
+prec	=		r (1x1)
 
  |  1 |
 -nsp->function y=norm(x) ; y=max(abs(x));endfunction ;

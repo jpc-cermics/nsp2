@@ -16,7 +16,7 @@
 // Les attributs sont controles par l'operateur dot 
 // qui est en dur pour une table de hashage 
 // peut-etre changer son nom en retirant le dollar 
-// qui indiaue les methodes 
+// qui indique les methodes 
 //
 // 
 
