@@ -1,10 +1,3 @@
-//function A=fond()
-//f1=[15,15,0;15,0,0;0,0,0;0,15,0];
-//f2=[15,15,0;0,15,0;0,15,15;15,15,15];
-//f3=[0,15,0;0,15,15;0,0,15;0,0,0];
-//A=[[f1;f2;f3],[jaune;bleu;bleu]];
-//endfunction
-
 function F=feuille3D(X,M,e,vv)
   VertF=vv*ones(4,1);
   F=[e*[Feuille1;Feuille2;Feuille3;Feuille4;Feuille5;Feuille6;..
@@ -206,7 +199,7 @@ function []=plotarbre3D(n,m)
   //age=ceil(m*rand(n,1));
   age=m;
   posxy=15*rand(n,2);
-  posxy=0*rand(n,2); // FIXME
+  // posxy=0*rand(n,2); // FIXME
   zer2=zeros(n,2);
   pos=[posxy,zer2];
   A=zeros(0,4);
