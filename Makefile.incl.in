@@ -80,13 +80,11 @@ LINKEROPT= $(LD_LDFLAGS)
 RC=windres 
 RCVARS=-O coff 
 
-
-
 .c.o:
-	@echo "compiling $<"
+	@echo "compiling $< @ENABLE_DEBUG@"
 	@$(CC) $(CFLAGS)  -c $<
 
 .f.o:
-	@echo "compiling $<"
+	@echo "compiling $< @ENABLE_DEBUG@"
 	@$(FC) $(FFLAGS)  -c $<
 

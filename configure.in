@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-## Copyright INRIA
+## Copyright INRIA/Enpc 
 
 AC_REVISION($Revision$)dnl
 AC_INIT(COPYING)
@@ -86,6 +86,16 @@ fi
 ###############################
 
 SCIVERSION=`cat Version.incl | sed -e "s/SCIVERSION=//" `
+
+###############################
+## keep track of debug option
+###############################
+
+ENABLE_DEBUG= 
+
+if test "$enable_debug" = yes; then 
+   ENABLE_DEBUG="(enable debug)"   
+fi 
 
 ########################
 ## removing and cleaning
@@ -1700,6 +1710,7 @@ AC_SUBST(GTKHTMLOBJS)
 AC_SUBST(GTKPLUGBUG)
 AC_SUBST(MPLUSLIB)
 AC_SUBST(MPLUSLIBDIR)
+AC_SUBST(ENABLE_DEBUG)
 
 AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux ) 
  
