@@ -671,10 +671,41 @@ function demo_contour_4()
   contour(t,t,m,[-4:0.5:4]);
 endfunction
 
+function demo_contour_5()
+ function z=f(x,y)
+  z =  exp(-x.^2 - (y+2).^2) - 0.5*exp(-x.^2-y.^2) +
+       0.3* exp(-(x+2).^2 - y.^2) - 2* exp(-(x+2).^2 - (y+2).^2)
+ endfunction
+
+ x=-4:0.1:3;y=x;
+ z=eval3d(f,x,y);
+ m=30;
+ xset('colormap',hotcolormap(m));
+ xset('fpf',' ');
+ contourf(x,y,z,nv=m,style=0*ones(1,m))
+ xset('fpf','');
+ contourf(x,y,z,nv=m);
+endfunction
+
+function demo_contour_6()
+ function z=f(x,y)
+  z =  exp(-x.^2 - (y+2).^2) - 0.5*exp(-x.^2-y.^2) +
+       0.3* exp(-(x+2).^2 - y.^2) - 2* exp(-(x+2).^2 - (y+2).^2)
+ endfunction
+
+ x=-4:0.1:3;y=x;
+ z=eval3d(f,x,y);
+ m=30;
+ xset('colormap',hotcolormap(m));
+ xset('fpf','');
+ contourf(x,y,z,nv=m);
+endfunction
+
+
 // organize the previous list for graphic demo widget 
 
 graphic_test_contour = list() 
-for i=1:4
+for i=1:6
   name=sprintf("demo_contour_%d",i); 
   test_info=sprintf("test %d",i); 
   //execstr('test_info='+name+'(info=%t);');
