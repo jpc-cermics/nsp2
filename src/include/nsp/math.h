@@ -8,6 +8,8 @@
 
 #include <math.h>
 #include "machine.h"
+#include "numeric.h" /* set of constants */
+
 
 #ifdef __STDC__
 #include <stdlib.h>
