@@ -10,6 +10,10 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
+
 /*--------------------------------------------------------------------
  *  nsp_plot2d(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
  *  
@@ -479,11 +483,22 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
       if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
 	{
 	  Xgc->graphic_engine->xinfo(Xgc,"Auto rescale only works when recording is on " );
-	  return;
 	}
-      Xgc->graphic_engine->clearwindow(Xgc);    
-      tape_replay_new_scale_1(Xgc,Xgc->CurWindow,flag,aaint,FRect,strflag);
+      else 
+	{
+	  Xgc->graphic_engine->clearwindow(Xgc);    
+	  tape_replay_new_scale_1(Xgc,Xgc->CurWindow,flag,aaint,FRect,strflag);
+	}
     }
+
+#ifdef WITH_GTKGLEXT 
+  /* transmit info to opengl */
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      nsp_ogl_set_2dview(Xgc);
+    }
+#endif
+
 }
 
 /*----------------------------------------------------

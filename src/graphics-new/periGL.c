@@ -68,7 +68,7 @@ static void nsp_gtk_invalidate(BCG *Xgc);
  */
 
 static void force_affichage(BCG *Xgc);
-static void nsp_ogl_set_view(BCG *Xgc);
+void nsp_ogl_set_view(BCG *Xgc);
 static bool LoadTGA(TextureImage *texture, char *filename);
 static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col);
 static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...);
@@ -3412,82 +3412,109 @@ static void force_redraw(BCG *Xgc)
 ** Commute la vue : mode perspective cavaliere (2D) --- mode perspective)
 */
 
-static void nsp_ogl_set_view(BCG *Xgc)
+void nsp_ogl_set_view(BCG *Xgc)
 {
-  glViewport (0,  0, Xgc->private->drawing->allocation.width, 
-	      Xgc->private->drawing->allocation.height);
   /* xset_background(Xgc,Xgc->NumBackground+1); */
   if ( Xgc->scales->scale_flag3d == 0 ) /* XXX */
     {
-      static int first = 0;
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity ();
-      gluLookAt (0,0,1,
-		 0,0,0,
-		 0,1,0);
-      glMatrixMode(GL_PROJECTION); 
-      glLoadIdentity();
-      glOrtho(0, Xgc->private->drawing->allocation.width,
-	      Xgc->private->drawing->allocation.height,
-	      0/* -Xgc->private->drawing->allocation.height*/,-4,4);
-      glMatrixMode(GL_MODELVIEW);
-      if (first != 0) use_camera(Xgc);
-      first++;
+      nsp_ogl_set_2dview(Xgc);
     }
-  else
+  else 
     {
-      double xs,ys;
-      double theta = Xgc->scales->theta;
-      double alpha = Xgc->scales->alpha;
-      double cost=cos((theta)*M_PI/180.0);
-      double sint=sin((theta)*M_PI/180.0);
-      double cosa=cos((alpha)*M_PI/180.0);
-      double sina=sin((alpha)*M_PI/180.0);
-      double cx= Xgc->scales->c[0];
-      double cy= Xgc->scales->c[1];
-      double cz= Xgc->scales->c[2];
-      /* radius and center of the sphere circumscribing the box */
-      double dx=Xgc->scales->bbox1[1]-Xgc->scales->bbox1[0]; 
-      double dy=Xgc->scales->bbox1[3]-Xgc->scales->bbox1[2]; 
-      double dz=Xgc->scales->bbox1[5]-Xgc->scales->bbox1[4];
-      double R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2; 
-
-      /* 
-       * fix the model view using the box center 
-       * and a point on the sphere circumscribing the box
-       * qui sont important pour l'élimination des parties cachées
-       */
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity ();
-      gluLookAt (cx+R*cost*sina,
-		 cy+R*sint*sina,
-		 cz+R*cosa,
-		 cx,cy,cz,
-		 0,0,(sina >= 0.0 ) ? 1 : -1);
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-
-      /*
-       * setting the modelview 
-       * we use the computed min max points 
-       * FIXME: when we use iso mode we have to change 
-       *      the next code 
-       * FIXME: ameliorer le zmin,zmax et l'utiliser pour le depth buffer 
-       *      i.e donner l'info 
-       */
-
-      xs=(Xgc->scales->frect[2]-Xgc->scales->frect[0])/
-	(1 - Xgc->scales->axis[0] - Xgc->scales->axis[1]);
-      ys=(Xgc->scales->frect[3]-Xgc->scales->frect[1])/
-	(1 - Xgc->scales->axis[2] - Xgc->scales->axis[3]);
-      glOrtho(Xgc->scales->frect[0]-xs*Xgc->scales->axis[0],
-	      Xgc->scales->frect[2]+xs*Xgc->scales->axis[1],
-	      Xgc->scales->frect[1]-ys*Xgc->scales->axis[3],
-	      Xgc->scales->frect[3]+ys*Xgc->scales->axis[2],
-	      -2*R,2*R);
-      glMatrixMode(GL_MODELVIEW);
+      nsp_ogl_set_3dview(Xgc);
     }
 }
+
+void nsp_ogl_set_2dview(BCG *Xgc)
+{
+  double xc = (Xgc->scales->frect[0]+Xgc->scales->frect[2])/2.0;
+  double yc = (Xgc->scales->frect[1]+Xgc->scales->frect[3])/2.0;
+
+  glViewport (0,  0, Xgc->private->drawing->allocation.width, 
+	      Xgc->private->drawing->allocation.height);
+  /* xset_background(Xgc,Xgc->NumBackground+1); */
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity ();
+  gluLookAt (xc,yc,1,
+	     xc,yc,-100,
+	     0,-1,0);
+  glMatrixMode(GL_PROJECTION); 
+  /* 
+     glLoadIdentity();
+     glOrtho(0, Xgc->private->drawing->allocation.width,
+     Xgc->private->drawing->allocation.height,
+     0,-4,4);
+     glMatrixMode(GL_MODELVIEW);
+  */
+  glLoadIdentity();
+  glOrtho(XPi2R(0),XPi2R(Xgc->scales->wdim[0]),
+	  YPi2R(Xgc->scales->wdim[1]),YPi2R(0),
+	  -4,4);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void nsp_ogl_set_3dview(BCG *Xgc)
+{
+  /* double xs,ys; */
+  double theta = Xgc->scales->theta;
+  double alpha = Xgc->scales->alpha;
+  double cost=cos((theta)*M_PI/180.0);
+  double sint=sin((theta)*M_PI/180.0);
+  double cosa=cos((alpha)*M_PI/180.0);
+  double sina=sin((alpha)*M_PI/180.0);
+  double cx= Xgc->scales->c[0];
+  double cy= Xgc->scales->c[1];
+  double cz= Xgc->scales->c[2];
+  /* radius and center of the sphere circumscribing the box */
+  double dx=Xgc->scales->bbox1[1]-Xgc->scales->bbox1[0]; 
+  double dy=Xgc->scales->bbox1[3]-Xgc->scales->bbox1[2]; 
+  double dz=Xgc->scales->bbox1[5]-Xgc->scales->bbox1[4];
+  double R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2; 
+
+  glViewport (0,  0, Xgc->private->drawing->allocation.width, 
+	      Xgc->private->drawing->allocation.height);
+  /* 
+   * fix the model view using the box center 
+   * and a point on the sphere circumscribing the box
+   * qui sont important pour l'élimination des parties cachées
+   */
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity ();
+  gluLookAt (cx+R*cost*sina,
+	     cy+R*sint*sina,
+	     cz+R*cosa,
+	     cx,cy,cz,
+	     0,0,(sina >= 0.0 ) ? 1 : -1);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  /*
+   * setting the modelview 
+   * we use the computed min max points 
+   * FIXME: when we use iso mode we have to change 
+   *      the next code 
+   * FIXME: ameliorer le zmin,zmax et l'utiliser pour le depth buffer 
+   *      i.e donner l'info 
+   */
+
+  /* 
+     xs=(Xgc->scales->frect[2]-Xgc->scales->frect[0])/
+     (1 - Xgc->scales->axis[0] - Xgc->scales->axis[1]);
+     ys=(Xgc->scales->frect[3]-Xgc->scales->frect[1])/
+     (1 - Xgc->scales->axis[2] - Xgc->scales->axis[3]);
+     glOrtho(Xgc->scales->frect[0]-xs*Xgc->scales->axis[0],
+     Xgc->scales->frect[2]+xs*Xgc->scales->axis[1],
+     Xgc->scales->frect[1]-ys*Xgc->scales->axis[3],
+     Xgc->scales->frect[3]+ys*Xgc->scales->axis[2],
+     -2*R,2*R);
+  */
+  glLoadIdentity();
+  glOrtho(XPi2R(0),XPi2R(Xgc->scales->wdim[0]),
+	  YPi2R(Xgc->scales->wdim[1]),YPi2R(0),
+	  -2*R,2*R);
+  glMatrixMode(GL_MODELVIEW);
+}
+
 
 
 

@@ -1075,6 +1075,15 @@ void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double
        Xgc->scales->zfrect[1]= (double) Maxi(box->z,8L);
      }
   /* end of code added by es */
+#ifdef WITH_GTKGLEXT 
+  /* transmit info to opengl */
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      nsp_ogl_set_view(Xgc);
+    }
+#endif
+
+
 }
 
 /*----------------------------------------------------------------
