@@ -33,7 +33,7 @@ function [sd]=gr_menu(sd,flag,noframe)
   end 
   
   dr=driver(); if dr=='Rec' then driver('X11'),end
-  seteventhandler('my_eventhandler');
+  //seteventhandler('my_eventhandler');
   if type(gr_objects,'string')=='Mat' then gr_objects=list(); end 
   
   //now move the mouse over the graphic window/

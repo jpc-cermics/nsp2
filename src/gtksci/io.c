@@ -163,7 +163,7 @@ int Xorgetchar(void)
     /* FD_SET(fd_out,&write_mask);
        FD_SET(fd_err,&write_mask); */
 
-    select_timeout.tv_sec = 1000; /* could be more */
+    select_timeout.tv_sec =  60; /* could be more */
     select_timeout.tv_usec = 0;
 #ifdef WITH_GTK_MAIN 
     while ( gtk_events_pending()) 
@@ -190,14 +190,17 @@ int Xorgetchar(void)
     if (i < 0) {
       if (errno != EINTR)
 	{ 
-#ifdef DEBUG
 	  SELECT_DEBUG(fprintf(stderr,"error in select\n");)
-#endif
 	  exit(0);
 	  continue;
 	} 
+      SELECT_DEBUG(fprintf(stderr,"error %s\n",strerror(errno)));
+      continue;
     }
-    SELECT_DEBUG(fprintf(stderr,"after select %d\n",counter++);)
+    if ( i == 0 ) 
+      {
+	continue ;
+      }
     /* if there's something to output */
     if ( FD_ISSET(fd_out,&write_mask)) { 
       fflush(stdout); 
@@ -207,11 +210,7 @@ int Xorgetchar(void)
     }
     /* if there's something to read */
     if ( FD_ISSET(fd_in,&select_mask )) { 
-      register int c;
-      SELECT_DEBUG(fprintf(stderr,"j'attend un caractere %d\n",counter++););
-      c= getchar();
-      SELECT_DEBUG(fprintf(stderr,"lu [%d]\n",c););
-      return c;
+      return getchar();
       break;
     } 
 #ifdef WITH_TK 
