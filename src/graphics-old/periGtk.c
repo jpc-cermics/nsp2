@@ -2283,9 +2283,10 @@ static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewp
  * widget hierarchy 
  */
 
-void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
   nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
+  return  nsp_get_win_counter()-1;
 }
 
 
@@ -2297,8 +2298,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 {
   static int first = 0;
   BCG *NewXgc ;
-  /* Attention ici on peut faire deux fenetre de meme numéro à régler ? XXXXX 
-   */
   int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 : nsp_get_win_counter();
   gui_private *private ; 
   if ( ( private = MALLOC(sizeof(gui_private)))== NULL) 
@@ -2333,7 +2332,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
       Sciprintf("initgraphics: unable to alloc\n");
-      return;
+      return ;
     }
 
   NewXgc->CurWindow = WinNum;
