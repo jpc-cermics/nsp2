@@ -12,6 +12,6 @@ LIBS=-Wl,--whole-archive libs/nsp.a  \
 bin/scilex: scilex-lib 
 	@$(RM) $@;
 	@echo "linking"; 
-	$(FC)  $(FFLAGS) -o $@ src/Parse/lsci.o $(FC_LDFLAGS) \
+	$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o $(FC_LDFLAGS) \
 	$(LIBS) $(TCLTK_LIBS) $(XLIBS) $(TERMCAPLIB);
 
