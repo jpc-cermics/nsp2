@@ -2325,36 +2325,43 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   int v1=-1;
-  NspMatrix *wdim=NULL,*wpdim=NULL,*viewport=NULL;
+  NspMatrix *wdim=NULL,*wpdim=NULL,*viewport=NULL,*wpos=NULL;
   char *name=NULL, *file=NULL;
   int wresize=-1;
 
   /* just optionals arguments */
   int_types T[] = {new_opts, t_end} ;
 
-  nsp_option opts[] ={{ "file",string,NULLOBJ,-1},
+  nsp_option opts[] ={{ "dim",realmat,NULLOBJ,-1},
+		      { "file",string,NULLOBJ,-1},
 		      { "name",string,NULLOBJ,-1},
-		      { "viewport",realmat,NULLOBJ,-1},
-		      { "wdim",realmat,NULLOBJ,-1},
-		      { "wpdim",realmat,NULLOBJ,-1},
-		      { "wresize",s_int,NULLOBJ,-1},
+		      { "popup_dim",realmat,NULLOBJ,-1},
+		      { "popup_pos",realmat,NULLOBJ,-1},
+		      { "viewport_pos",realmat,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&opts,&file,&name,&viewport,&wdim,&wpdim,&wresize) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&opts,&wdim,&file,&name,&wpdim,&wpos,&viewport) == FAIL) return RET_BUG;
 
   if (wdim != NULL && wdim->mn != 2 ) 
     {
-      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"wdim");
+      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"dim");
       return RET_BUG;
     }
   if (wpdim != NULL &&  wpdim->mn != 2 ) 
     {
-      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"wdim");
+      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"popup_dim");
       return RET_BUG;
     }
+
   if (viewport != NULL && viewport->mn != 2 ) 
     {
-      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"wdim");
+      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"viewport_pos");
+      return RET_BUG;
+    }
+
+  if (wpos != NULL && wpos->mn != 2 ) 
+    {
+      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"popup_pos");
       return RET_BUG;
     }
 
@@ -2375,8 +2382,14 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
   Xgc =  window_list_get_first();
   if ( wresize != -1 )  Xgc->graphic_engine->scale->xset_wresize(Xgc,wresize);
   if ( wdim != NULL )   Xgc->graphic_engine->scale->xset_windowdim(Xgc,(int) wdim->R[0],(int) wdim->R[1]);
-  if ( wpdim != NULL )  Xgc->graphic_engine->scale->xset_popupdim(Xgc,(int) wpdim->R[0],(int) wpdim->R[1]);
-  if ( viewport != NULL) Xgc->graphic_engine->scale->xset_viewport(Xgc,(int) viewport->R[0],(int) viewport->R[1]);
+  if ( wpdim != NULL )  
+    {
+      /* assuming here that wresize must be set to zero */
+      Xgc->graphic_engine->scale->xset_wresize(Xgc,0);
+      Xgc->graphic_engine->scale->xset_popupdim(Xgc,(int) wpdim->R[0],(int) wpdim->R[1]);
+    }
+  if ( viewport != NULL)  Xgc->graphic_engine->scale->xset_viewport(Xgc,(int) viewport->R[0],(int) viewport->R[1]);
+  if ( wpos != NULL) Xgc->graphic_engine->scale->xset_windowpos(Xgc,(int) wpos->R[0],(int) wpos->R[1]);
 
   if ( name != NULL )   Xgc->graphic_engine->setpopupname(Xgc,name);
   return 0;

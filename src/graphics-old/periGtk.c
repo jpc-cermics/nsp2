@@ -729,7 +729,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
       gdk_window_resize(Xgc->private->drawing->window,x,y);
       /* want the scrolled window to be aware */
       gtk_widget_set_size_request(Xgc->private->drawing, x,y);
-      /* Limit the scolled window size 10 to be changed XX */
+      /* Limit the scolled window size  */
       /* gdk_window_get_size (Xgc->private->scrolled,&sc_w,&sc_h); */
       geometry.max_width = x+15;
       geometry.max_height = y+15;
