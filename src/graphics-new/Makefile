@@ -52,21 +52,21 @@ periGtk.o: periGtk.c /usr/include/gtk-2.0/gtk/gtk.h \
   ../../src/include/nsp/graphics/periGtk.h \
   ../../src/include/nsp/graphics/Graphics.h \
   ../../src/include/nsp/graphics/perigen.h \
-  ../../src/include/nsp/plisttoken.h ../version.h \
+  ../../src/include/nsp/plisttoken.h \
   ../../src/include/nsp/graphics/color.h
 periPos.o: periPos.c ../../src/include/nsp/sciio.h \
   ../../src/include/nsp/math.h ../../src/include/nsp/machine.h \
   ../../src/include/nsp/graphics/periPos.h /usr/X11R6/include/X11/Xlib.h \
   ../../src/include/nsp/graphics/Graphics.h \
   ../../src/include/nsp/graphics/perigen.h \
-  ../../src/include/nsp/plisttoken.h ../version.h \
+  ../../src/include/nsp/plisttoken.h \
   ../../src/include/nsp/graphics/color.h
 periFig.o: periFig.c ../../src/include/nsp/sciio.h \
   ../../src/include/nsp/math.h ../../src/include/nsp/machine.h \
   ../../src/include/nsp/graphics/periFig.h /usr/X11R6/include/X11/Xlib.h \
   ../../src/include/nsp/graphics/Graphics.h \
   ../../src/include/nsp/graphics/perigen.h \
-  ../../src/include/nsp/plisttoken.h ../version.h \
+  ../../src/include/nsp/plisttoken.h \
   ../../src/include/nsp/graphics/color.h
 Contour.o: Contour.c ../../src/include/nsp/math.h \
   ../../src/include/nsp/machine.h \
@@ -205,21 +205,21 @@ periGtk.o: periGtk.c /usr/include/gtk-2.0/gtk/gtk.h \
   ../../src/include/nsp/graphics/periGtk.h \
   ../../src/include/nsp/graphics/Graphics.h \
   ../../src/include/nsp/graphics/perigen.h \
-  ../../src/include/nsp/plisttoken.h ../version.h \
+  ../../src/include/nsp/plisttoken.h  \
   ../../src/include/nsp/graphics/color.h
 periPos.o: periPos.c ../../src/include/nsp/sciio.h \
   ../../src/include/nsp/math.h ../../src/include/nsp/machine.h \
   ../../src/include/nsp/graphics/periPos.h /usr/X11R6/include/X11/Xlib.h \
   ../../src/include/nsp/graphics/Graphics.h \
   ../../src/include/nsp/graphics/perigen.h \
-  ../../src/include/nsp/plisttoken.h ../version.h \
+  ../../src/include/nsp/plisttoken.h  \
   ../../src/include/nsp/graphics/color.h
 periFig.o: periFig.c ../../src/include/nsp/sciio.h \
   ../../src/include/nsp/math.h ../../src/include/nsp/machine.h \
   ../../src/include/nsp/graphics/periFig.h /usr/X11R6/include/X11/Xlib.h \
   ../../src/include/nsp/graphics/Graphics.h \
   ../../src/include/nsp/graphics/perigen.h \
-  ../../src/include/nsp/plisttoken.h ../version.h \
+  ../../src/include/nsp/plisttoken.h   \
   ../../src/include/nsp/graphics/color.h
 Contour.o: Contour.c ../../src/include/nsp/math.h \
   ../../src/include/nsp/machine.h \
