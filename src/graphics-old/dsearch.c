@@ -11,7 +11,7 @@
 
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
-#include "../Parse/Eval.h"
+#include "../interp/Eval.h"
 
 #include "nsp/graphics/Graphics.h"
 #include "nsp/gsort-p.h"
