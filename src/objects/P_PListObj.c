@@ -1,0 +1,412 @@
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define PList_Private 
+#include "nsp/object.h"
+#include "nsp/plistc.h"
+#include "../system/files.h"
+#include "nsp/pr-output.h" 
+#include "nsp/interf.h"
+#include "nsp/matutil.h"
+
+/*
+ * NspPList inherits from NspObject 
+ */
+
+int nsp_type_plist_id=0;
+NspTypePList *nsp_type_plist=NULL;
+
+NspTypePList *new_type_plist(type_mode mode)
+{
+  NspTypePList *type = NULL;
+  NspTypeObject *top;
+  if ( nsp_type_plist != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_plist;
+    }
+  if ((type =  malloc(sizeof(NspTypePList))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = NULL; /* plist_attrs ; */
+  type->get_attrs = (attrs_func *) int_get_attribute; 
+  type->set_attrs = (attrs_func *) int_set_attribute; 
+  type->methods = NULL; /* plist_get_methods; */
+  type->new = (new_func *) new_plist;
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for plist */ 
+
+  top->pr = (print_func *) NspPListPrint;                    /* printing*/   
+  top->dealloc = (dealloc_func *) NspPListDestroy;              /* dealloc */  
+  top->copy  =  (copy_func *) NspPListCopy;                   /* copy object */  
+  top->size  = (size_func *) NspPListSize;                   /* m,n or m*n  */  
+  top->s_type =  (s_type_func *) NspPListType;                /* type as a String */  
+  top->sh_type = (sh_type_func *) NspPListShType ;              /* type as a short string */  
+  top->info = (info_func *) PListInfo;                    /* info */  
+  /*top->is_true = (is_true_func  *) PListIsTrue;  */           /* check if object can be considered as true */  
+  /*top->loop =(loop_func *) NspPListLoopExtract ; */               /* for loops */  
+  top->path_extract =  NULL;        /* used for x(1)(2)(...) */  
+  top->get_from_obj = (get_from_obj_func *)  NspPListObj ;    /* get object stored in SciObj */  
+  top->eq  = (eq_func *) NspPListObjEq;                       /* equality check */  
+  top->neq  = (eq_func *) NspPListObjNeq;                      /* non-equality check */
+
+  top->save  = (save_func *) NspPListXdrSave;
+  top->load  = (load_func *) NspPListXdrLoad;
+
+  /* specific methods for plist */
+  type->init = (init_func *) init_plist;
+  /* 
+   * interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  
+  if ( nsp_type_plist_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeMatrix called nsp_type_plist
+       */
+      type->id =  nsp_type_plist_id = nsp_new_type_id();
+      nsp_type_plist = type;
+      if ( nsp_register_type(nsp_type_plist) == FALSE) return NULL;
+      return ( mode == T_BASE ) ? type : new_type_plist(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_plist_id;
+      return type;
+    }
+
+}
+
+/*
+ * initialize Plist instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_plist(NspPList *o,NspTypePList *type)
+{
+  /* to be done always */ 
+  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
+  o->type = type; 
+  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of PList 
+ */
+
+NspPList *new_plist() 
+{
+  NspPList *loc; 
+  /* type must exists */
+  nsp_type_plist = new_type_plist(T_BASE);
+  if ( (loc = malloc(sizeof(NspPList)))== NULLP_PLIST) return loc;
+  /* initialize object */
+  if ( init_plist(loc,nsp_type_plist) == FAIL) return NULLP_PLIST;
+  return loc;
+}
+
+/*
+ * NspPListSize
+ */
+
+int NspPListSize(NspPList *Mat, int flag)
+{
+  return 0;
+}
+
+/*
+ * MatType 
+ */
+
+static char plist_type_name[]="PList";
+static char plist_short_type_name[]="pl";
+
+char *NspPListType(void)
+{
+  return(plist_type_name);
+}
+
+char *NspPListShType(void)	
+{
+  return(plist_short_type_name);
+}
+
+int  NspPListFullComp(NspPList * A,NspPList * B,char *op,int *err)
+{
+  Scierror("PListFullComp: to be implemented \n");
+  return FALSE;
+}
+
+int NspPListObjEq(NspObject *A, NspObject *B)
+{
+  int err,rep;
+  if ( check_cast(B,nsp_type_ivect_id) == FALSE) return FALSE ;
+  rep =  NspPListFullComp((NspPList *) A,(NspPList *) B,"==",&err);
+  if ( err == 1) return FALSE ; 
+  return rep;
+}
+
+int NspPListObjNeq(NspObject *A, NspObject *B)
+{
+  int err,rep;
+  if ( check_cast(B,nsp_type_ivect_id) == FALSE) return TRUE;
+  rep =  NspPListFullComp((NspPList *) A,(NspPList *) B,"<>",&err);
+  if ( err == 1) return TRUE ; 
+  return rep;
+}
+
+
+/*
+ * Save a NspPList
+ */
+
+static int PListXdrSave(NspFile  *F, PList L);
+
+int NspPListXdrSave(NspFile  *F, NspPList *M)
+{
+  if (nsp_xdr_save_i(F,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F,M->file_name == NULL ? "" : M->file_name) == FAIL)
+    return FAIL;
+  return ( PListXdrSave(F,M->D) );
+}
+
+/*
+ * Load a NspPList
+ */
+
+static int PListXdrLoad(NspFile  *F, PList *plist);
+
+NspPList *NspPListXdrLoad(NspFile  *F)
+{
+  PList L=NULLPLIST,L1;
+  char file_name[FSIZE]; 
+  char name[NAME_MAXL]; 
+  if (nsp_xdr_load_string(F, name,NAME_MAXL) == FAIL) return NULLP_PLIST;
+  if (nsp_xdr_load_string(F, file_name,FSIZE) == FAIL) return NULLP_PLIST;
+  if ( PListXdrLoad(F,&L) == FAIL) return NULLP_PLIST;
+  if ( L->type != PLIST ) return NULLP_PLIST;
+  L1= L->O;
+  L->O = NULLPLIST;
+  PListDestroy(&L);
+  return(  NspPListCreate(name,L1,file_name[0]== '\0' ? NULL : file_name));
+}
+
+
+/*
+ * Save a PList to a File 
+ */
+
+int PListXdrSave_I(NspFile  *F, PList L)
+{
+ nsp_xdr_save_c(F,'L');
+  while ( L != NULLPLIST ) 
+    {
+      switch ( L->type ) 
+	{
+	case STRING:
+	nsp_xdr_save_c(F,'S');
+	nsp_xdr_save_string(F,(char *) L->O);
+	  break;
+	case COMMENT:
+	nsp_xdr_save_c(F,'C');
+	nsp_xdr_save_string(F,(char *) L->O);
+	  break;
+	case NUMBER:
+	nsp_xdr_save_c(F,'D');
+	nsp_xdr_save_string(F,(char *) L->O);
+	  break;
+	case NAME :
+	nsp_xdr_save_c(F,'N');
+	nsp_xdr_save_string(F,(char *) L->O);
+	  break;
+	case PLIST:
+	  PListXdrSave_I(F, L->O);
+	  break;
+	case EMPTYMAT:
+	nsp_xdr_save_c(F,'M');
+	nsp_xdr_save_i(F,(int)L->O);
+	  break; /* XXXX */
+	default:
+	nsp_xdr_save_c(F,'O');
+	nsp_xdr_save_i(F,L->arity);
+	nsp_xdr_save_i(F,L->type);
+	nsp_xdr_save_i(F,(int)L->O);
+	}
+      L = L->next ;
+    }
+ nsp_xdr_save_c(F,'E');  
+  return OK ;
+}
+
+static int PListXdrSave(NspFile  *F, PList L)
+{
+  if ( PListXdrSave_I(F,L) == FAIL) return FAIL;
+  return nsp_xdr_save_c(F,'Z');
+}
+
+/*
+ * Read a PList from a file 
+ */
+
+static int PListXdrLoad(NspFile  *F, PList *plist)
+{
+  int opar,op,oline;
+  PList loc=NULLPLIST;
+  PList loc1=NULLPLIST;
+  char buf[TBUF];
+  char c ;
+  while ( 1) 
+    {
+      c= EOF;
+ nsp_xdr_load_c(F,&c);
+      switch (c) 
+	{
+	case 'S' : 
+	nsp_xdr_load_string(F,buf,TBUF);
+	  if ( ParseAddString(plist,buf) == FAIL) return (FAIL);
+	  break;
+	case 'C' : 
+	nsp_xdr_load_string(F,buf,TBUF);
+	  if ( ParseAddComment(plist,buf) == FAIL) return (FAIL);
+	  break;
+	case 'D':
+	nsp_xdr_load_string(F,buf,TBUF);
+	  if ( ParseAddDoubleI(plist,buf) == FAIL) return (FAIL);
+	  break;
+	case 'N':
+	nsp_xdr_load_string(F,buf,TBUF);
+	  if ( ParseAddName(plist,buf) == FAIL) return (FAIL);
+	  break;
+	case 'L':
+	  loc1 = loc = NULLPLIST;
+	  if (PListXdrLoad(F,&loc) == FAIL) return (FAIL);
+	  if (ParseAddList1(&loc1,&loc) == FAIL) return (FAIL);
+	  if (ParseAddList(plist,&loc1)== FAIL)  return (FAIL);
+	  break;
+	case 'M': 
+	nsp_xdr_load_i(F,&oline);
+	  if ( ParseAdd(plist,EMPTYMAT,0,oline) == FAIL) return(FAIL);
+	  break;
+	case 'O':
+	nsp_xdr_load_i(F,&opar);
+	nsp_xdr_load_i(F,&op);
+	nsp_xdr_load_i(F,&oline);
+	  if ( ParseAdd(plist,op,opar,oline) == FAIL) return(FAIL);
+	  break;
+	case 'E':
+	  return(OK);
+	  break;
+	case 'Z' :
+	  return OK;
+	  break;
+	default: 
+	  Scierror("Error:\tSomething wrong in saved plist\n");
+	  return FAIL;
+	}
+    }
+  return OK ;
+}
+
+
+
+/*
+ * A = PListObj(O);
+ * checks that O is an object of NspPList type. 
+ * or a Hobj which points to an object of type PList
+ * if so, returns a pointer to that NspPList and else returns NULL
+ */
+
+NspPList *NspPListObj(NspObject *O)
+{
+  /* Follow pointer **/
+  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  /* Check type **/
+  if ( check_cast(O,nsp_type_plist_id) == TRUE) return ((NspPList *) O);
+  else 
+    Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_plist));
+  return(NULL);
+}
+
+
+/*
+ * IsPListObj(stack,i)
+ * only checks that object at position 
+ * first + i -1  is an object of type  PList 
+ * or a Hobj which points to an object of type PList
+ */
+
+int IsNspPListObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i) , nsp_type_plist_id);
+}
+
+/*
+ * IsPList(O)
+ * only checks that object is an object of type  PList 
+ * or a Hobj which points to an object of type PList
+ */
+
+int IsNspPList(NspObject *O)
+{
+  return nsp_object_type(O , nsp_type_plist_id);
+}
+
+/*
+ * Checks that i-th object on the stack 
+ * is a NspList and returns that NspList or NULLLIST 
+ */
+
+NspPList *GetNspPList(Stack stack, int i)
+{
+  NspPList *M;
+  if (( M = NspPListObj(NthObj(i))) == NULLP_PLIST)
+    ArgMessage(stack,i);
+  return M;
+}
+
+
+/*
+ * Checks that first+i object on the stack 
+ * is a LIST and returns that LIST  
+ * or a copy of that LIST if its name 
+ * is != NVOID 
+ */
+
+NspPList *GetNspPListCopy(Stack stack, int i)
+{
+  if (  GetNspPList(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+

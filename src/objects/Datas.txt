@@ -1,0 +1,14 @@
+int  NewFrame(void)
+void DeleteFrame(void)
+void FramesInfo(void)
+void FrameInfo(void)
+void FramesPrint(void)
+void FramePrint(void)
+int  FrameReplaceObj(Obj *A)
+Obj *FramesSearchObj(String *str)
+Obj *FrameSearchObj(String *str)
+Obj *FrameSearchObjAndRemove(String *str)
+int  SearchObjAndMoveToNextFrame(String *str)
+int  MoveObjToNextFrame(Obj *O)
+
+

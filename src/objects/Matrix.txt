@@ -1,0 +1,130 @@
+Matrix *MatCreate(name,type='r' or 'i' ,m,n)
+       Returns an mxn Matrix of type type with unspecified data 
+
+Matrix *MatCreateImpl(first,step,last)
+       returns an implicit vector first:step:last;
+
+Matrix *MatCopy(Matrix *A) 
+       Returns a Copy of A 
+
+int MatResize( Matrix *A, integer m,integer n) 
+       Resizes (enlarge or shrink) the matrix storage array so as to 
+       contain mxn double or complex. added space is not initialized. 
+       Works also if A was previously empty 
+       returns FAIL or OK 
+
+void MatDestroy( Matrix *Mat) 
+       free Mat 
+
+void MatInfo( Matrix *Mat, int indent) 
+       Short display info on Matrix 
+
+void MatPrint(Matrix *Mat,  int indent);
+       Matrix pretty print 
+
+void Mat2LaTeXMat( Matrix *Mat) ;
+       LateX display of a Matrix 
+
+void Mat2LaTeXTab(Mat)
+       Latex display of a Matrix as LaTeX table 
+
+int MatRedim(Matrix *A,  integer m,n) 
+       Changes Matrix size to (m,n)n but the product mxn must be invariant 
+
+int MatEnlarge(Matrix *A, integer m,n)
+    Changes A to A= [ A , 0; 0,0 ] 
+     in such a way that size(A)== (max(A->m,m), max(A->n,n));
+
+int MatConcatR(Matrix *A,*B) 
+    Change A to  A = [A,B ] 
+
+int MatAddCols( Matrix *A,  integer n) 
+    Changes A to  [A, zeros(A->m,n)] 
+    if A == [] A remains []
+
+Matrix* MatConcatD(Matrix *A,*B) 
+	Returns [A;B] 
+
+Matrix* MatConcatDiag( Matrix *A,B)
+	Returns Res = [A,0;0,B] 
+
+int  MatAddRows( Matrix *A,  integer m) 
+     Changes A to  [A;0*ones(m,A->n)]
+     if A=[] it remains []
+
+int MatSetRoCo(Matrix *A, *Rows, *Cols,* B) 	
+    Changes A,  A(Rows,Cols) <-  B 
+    A is changed and enlarged if necessary 
+    Size Compatibility is checked i.e B must be scalar or 
+    size(B)==[size(Rows),size(Cols)]
+
+
+int MatSetRo( Matrix *A, *Rows, *B) 	
+    Performs  A(Inds) = B with complex rules 
+    Inds and B are left unchanged 
+      Rules : A Matrix or A ==[]  
+ 	A(Inds)=B 
+ 	B must be row or column 
+ 	if A==[] the size of the result depends on b 
+  
+       A row vector B must be row 
+       A column vector B must be column 
+       Inds must be in the range of A indices unless A is row or column or []
+       Inds and B must have the same size(.,'*') or B must be scalar 
+
+int mat_is_increasing(A) 
+    Check that A(:) is real and contains an increasing 
+    sequence of values
+
+int MatDeleteCols(Matrix *A,  Matrix *Cols) 
+    Performs A(:,Cols) = []
+    Warning : Cols must be real and increasing and this is not checked here
+
+int MatDeleteRows(Matrix *A,Matrix *Rows) 	
+    Perform A(Rows,:) = []
+    Warning : Rows must be real and increasing and this is not checked here
+
+int MatDeleteElts( Matrix *A, Matrix *Elts) 
+    A(elts) = [] 
+    if A is a vector elts are removed
+    if A is a Matrix elts are removed and A is changed to a column vector
+
+Matrix *MatExtract( Matrix *A, Matrix *Rows,*Cols) 
+       Returns a New Matrix Res =  A(Rows,Cols) 
+
+
+Matrix *MatExtractElts(Matrix *A,Matrix *Elts) 
+       Returns a new matrix Res = A(Elts) 
+       XXXX : Res is a column vector or a row vector if 
+       A was a row vector. We could consider that the size 
+       of Res should be given by Elts 
+
+Matrix *MatExtractCols( Matrix *A,*Cols) 
+       returns a new matrix Res = A(:,Cols) 
+
+
+Matrix *MatExtractRows( Matrix *A,*Rows) 
+       returns a new matrix Res = A(Rows,:) 
+
+Matrix *MatLoopCol(char *str,Matrix *Col,Matrix *A,int icol,int *rep)
+       XXXX   Used in for loops 
+
+Matrix *MatDiagExtract(A,k)
+       Returns the kth diagonal of A as a column Vector
+
+int MatDiagSet(Matrix *A,Matrix *Diag,int k)
+       Sets the kth Diagonal of A to Diag 
+       A is enlarged & comlexified if necessary 
+
+Matrix *MatDiagCreate( Matrix *Diag, integer k ) 
+       Returns a square Matrix with kth diagonal set to Diag 
+
+Matrix *MatTranspose( Matrix *A) 
+       Returns a Matrix Res = A'
+
+
+
+
+
+
+

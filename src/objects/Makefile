@@ -1,0 +1,54 @@
+SHELL = /bin/sh
+SCIDIR=../..
+SCIDIR1=..\..
+
+LIBRARY = nsp.a 
+
+OBJSC = Matrix.o MatOps.o MatObj.o  \
+	BMatrix.o BMatObj.o \
+	SMatrix.o SMatrix-IN.o SMatObj.o \
+	PMatrix.o PMatrix-IN.o PMatObj.o \
+	SpMatrix.o SpMatrix-IN.o SpMatObj.o \
+	SpMatOps.o SpMatOps-IN.o \
+	List.o ListObj.o \
+	Hash.o HashObj.o \
+	object.o objectlib.o \
+	typeobj.o \
+	Hobj.o \
+	function.o \
+	IVect.o  IVectObj.o \
+	Interf.o Interf-IN.o \
+	P_PList.o P_PList-IN.o P_PListObj.o \
+	Datas.o Datas-IN.o Stack.o \
+	gsort.o qsort.o	pr-output.o user-prefs.o Cnumeric.o \
+	Perm.o \
+	File.o FileObj.o \
+	Alloc.o \
+	none.o \
+	matint.o
+
+#	MaxpObj.o MaxpMatrix.o
+
+OBJSF=
+
+include ../../Makefile.incl
+
+CFLAGS = $(CC_OPTIONS) 
+FFLAGS = $(FC_OPTIONS)
+
+include ../Make.lib
+
+all:: Makefile.mak
+
+Makefile.mak	: Makefile
+	$(SCIDIR)/util/Mak2VCMak Makefile
+
+main :: 
+	cc -g -Wall -Dlinux -fwritable-strings -I../../src/include main.c -o main ../../libs/nsp.a ../../libs/zcalelm.a \
+	../../libs/zblas.a -lm -ldl -lg2c -ltermcap
+
+%.X : %.c 
+	protoize -k -c -I../ $*.c 
+	egrep -v "/usr/|nsp_include" $*.c.X | grep -v "static " | sed -e 's+/\*[^/]*/++g' > $*.X 
+	rm -f $*.c.X
+
