@@ -3,8 +3,11 @@
  *    Copyright (C) 2001 Enpc/Jean-Philippe Chancelier
  *    jpc@cermics.enpc.fr 
  --------------------------------------------------------------------------*/
+
 /*--------------------------------------------------------------------------
  *    Gtk  Driver 
+ * FIXME: peut-etre enlver le double_buffer du drawin-area 
+ *        puisqu'on le gère directement 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -2380,6 +2383,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
    * A tester sans pour faire les choses dans l'ordre 
    * dans initialize 
    */
+
   NewXgc->fontId=0 ;
   NewXgc->fontSize=0 ;
   NewXgc->CurHardSymb=0;
@@ -2413,7 +2417,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
 
-
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
   /* Attention ce qui est ici doit pas etre rejoué 
    * on l'enleve donc de initialize_gc
@@ -2423,9 +2426,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   /* now initialize the scale list */
   NewXgc->scales = NULL;
   xgc_add_default_scale(NewXgc);
-
   nsp_set_win_counter(WinNum);
-
   gdk_flush();
 }
 

@@ -35,11 +35,22 @@ static char Marks[] = {
 static unsigned long maxcol; /* XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 
-/** Structure to keep the graphic state  **/
+/*
+ * alpha numerix caracters as opengl textures 
+ */
 
-BCG  ScilabGCGL ; /* sans doute à changer XXX */
-BCG  *XXX_ScilabGCGL = NULL; /* sans doute à changer XXX */
+static     TextureImage       tab_textures_font[2];
+static     GLuint             fonte_encours=0;
+static      GLuint	      tab_base[]={0,0};
+static      GLuint            base_encours=0;
 
+/*
+ * fix camera position 
+ */
+
+static t_camera nouvelle_camera(float px, float py, float pz,
+				float cx, float cy, float cz,
+				float near, float far);
 
 /*------------------------------------------------------------------
  * the current graphic data structure 
@@ -70,388 +81,6 @@ static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
 
 void create_graphic_window_menu( BCG *dd);
 void start_sci_gtk();
-
-
-/*
-** #############################################################
-**
-**                      ROUTINES POUR OPENGL
-**
-** #############################################################
-*/
-
-/*
-** Tableau de textures pour les fontes
-*/
-static     TextureImage       tab_textures_font[2];
-static     GLuint             fonte_encours=0;
-/*
-** Liste d'affichage pour stocker les cararcteres alphanumeriques
-** sous forme de rectangles textures avec transparence.
-** Une alternative simple et peu couteuse plustot que d'utiliser pango.
-** chaque base[i] = un jeu complet de caracteres
-*/
-static      GLuint	      tab_base[]={0,0};
-static      GLuint            base_encours=0;
-
-/*
-** Passer en mode orthonorme
-*/
-static void OrthoMode(int left, int top, int right, int bottom)
-{
-     glMatrixMode(GL_PROJECTION); 
-     /* Push on a new matrix so that we can just pop it off to go back to perspective mode */
-     glPushMatrix();
-     /* Reset the current matrix to our identify matrix */
-     glLoadIdentity();
-     /*
-     ** Pass in our 2D ortho screen coordinates.like so (left, right, bottom, top).  The last
-     ** 2 parameters are the near and far planes.
-     */
-     glOrtho( left, right, bottom, top, -1, 1 );
-     /* Switch to model view so that we can render the scope image */
-     glMatrixMode(GL_MODELVIEW);
-     /* Initialize the current model view matrix with the identity matrix */
-     glLoadIdentity();
-}
-
-/*
-** Passer en mode perspective
-*/
-static void PerspectiveMode()
-{
-     /* Enter into our projection matrix mode */
-     glMatrixMode( GL_PROJECTION );
-     /* Pop off the last matrix pushed on when in projection mode (Get rid of ortho mode) */
-     glPopMatrix();
-     /* Go back to our model view matrix like normal */
-     glMatrixMode( GL_MODELVIEW );
-}
-
-/** Force OpenGL a redessiner la scene
-*/
-static void force_affichage(BCG *Xgc)
-{
-     gdk_window_invalidate_rect (Xgc->private->drawing->window,
-				 &Xgc->private->drawing->allocation,
-				 FALSE);
-}
-
-/*
-** Commute la vue : mode perspective cavaliere (2D) --- mode perspective)
-*/
-static void swap_view(BCG *Xgc)
-{
-     float aspect;
-
-
-     xset_background(Xgc,Xgc->NumBackground+1);
-     if (Xgc->private->view == VUE_3D)
-     {
-	  Xgc->private->view = VUE_2D;
-	  glMatrixMode(GL_PROJECTION);
-	  glLoadIdentity();
-	  OrthoMode(0, 0, Xgc->private->drawing->allocation.width, 
-	       Xgc->private->drawing->allocation.height);
-
-	  //glOrtho(0,Xgc->private->drawing->allocation.width,0,
-	  //	  Xgc->private->drawing->allocation.height,-1,1);
-	  
-	  glMatrixMode(GL_MODELVIEW);
-	  glLoadIdentity();
-     }
-     else
-     {
-	  Xgc->private->view = VUE_3D;
-
-	  aspect = Xgc->private->drawing->allocation.width /
-	       Xgc->private->drawing->allocation.height;
-	  glMatrixMode(GL_PROJECTION);
-	  glLoadIdentity();
-	  gluPerspective(45.0, aspect, Xgc->private->camera.near,
-			 Xgc->private->camera.far);
-	  
-	  glMatrixMode(GL_MODELVIEW);
-	  glLoadIdentity();
-     }
-//     glFlush();	  
-     force_affichage(Xgc);
-}
-
-
-/*
-** TGA avec transparence
-** goto http://nehe.gamedev.net/    lesson #32
-*/
-static bool LoadTGA(TextureImage *texture, char *filename)
-{    
-     GLubyte		TGAheader[12]={0,0,2,0,0,0,0,0,0,0,0,0};
-     GLubyte		TGAcompare[12];	
-     GLubyte		header[6];
-     GLuint		bytesPerPixel;	
-     GLuint		imageSize;
-     GLuint		temp;
-     GLuint		type=GL_RGBA;
-     GLuint             i;
-
-
-     printf(">>>>>> je vais charger la texture %s\n", filename);
-     FILE *file = fopen(filename, "rb");
-     
-     if ( file==NULL ||
-	  fread(TGAcompare,1,sizeof(TGAcompare),file)!=sizeof(TGAcompare) ||
-	  memcmp(TGAheader,TGAcompare,sizeof(TGAheader))!=0 ||
-	  fread(header,1,sizeof(header),file)!=sizeof(header))
-     {
-	  if (file == NULL)
-	  {
-	       printf("%s chemin inexistant\n", filename);
-	       return false;
-	  }
-	  else
-	  {
-	       fclose(file);
-	       return false;
-	  }
-     }
-
-     texture->width  = header[1] * 256 + header[0];
-     texture->height = header[3] * 256 + header[2];
-     
-     if (	texture->width	<=0	||
-		texture->height	<=0	||
-		(header[4]!=24 && header[4]!=32))
-     {
-	  fclose(file);
-	  printf("%s pas une texture 24 ou 32 bits\n", filename);
-	  return false;
-     }
-     
-     texture->bpp	= header[4];
-     bytesPerPixel	= texture->bpp/8;
-     imageSize	= texture->width*texture->height*bytesPerPixel;
-
-     texture->imageData=(GLubyte *)malloc(imageSize);
-
-     if(	texture->imageData==NULL ||
-		fread(texture->imageData, 1, imageSize, file)!=imageSize)
-     {
-	  if(texture->imageData!=NULL)
-	       free(texture->imageData);
-	     
-	  fclose(file);
-	  return false;
-     }
-	
-     for (i=0; i<(unsigned) imageSize; i+=bytesPerPixel)
-     {
-	  temp=texture->imageData[i];
-	  texture->imageData[i] = texture->imageData[i + 2];
-	  texture->imageData[i + 2] = temp;
-     }
-
-     fclose (file);
-
-     glGenTextures(1, &texture->texID);
-
-     glBindTexture(GL_TEXTURE_2D, texture->texID);	
-     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-     if (texture->bpp==24)
-	  type=GL_RGB;
-
-     glTexImage2D(GL_TEXTURE_2D, 0, type, texture->width, texture->height, 0, type, GL_UNSIGNED_BYTE, texture->imageData);
-
-     return true;
-}
-
-/*
-** Construit les listes d'affichages pour stocker les cararcteres
-** alphanumeriques sous forme de rectangles textures avec
-** transparence.
-**
-** texID : ID de la texture.
-** retourne la liste d'affichage des fontes
-** Ne pas oublier de detruire les listes d'affiches a la fin du prog !!
-*/
-static GLuint BuildFont(GLuint texID,
-			int nb_char,
-			int nb_ligne,
-			int nb_col)			
-{
-     int    loop;
-     GLuint base;
-
-     base=glGenLists(nb_char);
-     glBindTexture(GL_TEXTURE_2D, texID);
-     for (loop=0; loop<nb_char; loop++)
-     {
-	  float cx = (float) (loop%16) / ((float) nb_ligne);
-	  float cy = (float) (loop/16) / ((float) nb_col);
-	  float dx = 1.0 / ((float) nb_ligne);
-	  float dy = 1.0 / ((float) nb_col);
-	  glNewList(base+loop,GL_COMPILE);
-	  glBegin(GL_QUADS);
-	  glTexCoord2f(cx,    1.0f-cy);    glVertex2i(0,0);
-	  glTexCoord2f(cx+dx, 1.0f-cy);    glVertex2i(TAILLE_CHAR,0);
-	  glTexCoord2f(cx+dx, 1.0f-cy-dy); glVertex2i(TAILLE_CHAR,TAILLE_CHAR);
-	  glTexCoord2f(cx,    1.0f-cy-dy); glVertex2i(0,TAILLE_CHAR);
-	  glEnd();
-	  glTranslated(TRANSLATE_CHAR,0,0);
-	  glEndList();
-     }
-     return base;
-}
-
-
-/*
-** Affiche une chaine de caractere dans l'espace 3D
-** les textures sont toujours orientees dans la meme direction
-** meme si on tourne la camera
-** x,y,z la position du premier caractere.
-** scale : echelle du texte
-** rot : angle rotation 
-** set : if you have a look at the bitmap, you'll notice there 
-** are two different character sets. The first character set is
-** normal, and the second character set is italicized. If set is 0,
-** the first character set is selected. If set is 1 or greater the
-** second character set is selected.
-*/
-static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...)
-{
-     char		text[256];
-     va_list		ap;
-     
-     if (string == NULL)
-	  return;
-	
-     if (set > 1) set = 1;     
-
-     glColor3f(0,0,0);      
-     va_start(ap, string);
-     vsprintf(text, string, ap);
-     va_end(ap);
-     
-     glEnable(GL_TEXTURE_2D);
-     glEnable(GL_BLEND);
-
-     glBindTexture(GL_TEXTURE_2D, fonte_encours);
-     glPushMatrix();
-     glLoadIdentity();
-     glTranslatef(x-TRANSLATE_CHAR*ECHELLE_CHAR/2, y-TAILLE_CHAR*ECHELLE_CHAR,0);
-     glRotated(rot,1,0,0);
-     glScaled(scal,scal,scal);
-     glListBase(base_encours-32+(128*set));
-     glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);
-     glPopMatrix();
-     glDisable(GL_BLEND);
-     glDisable(GL_TEXTURE_2D);
-}
-
-t_camera nouvelle_camera(float px, float py, float pz,
-			 float cx, float cy, float cz,
-			 float near, float far)
-{
-     t_camera camera;
-
-     camera.position.x = px;
-     camera.position.y = py;
-     camera.position.z = pz;
-     camera.cible.x = cx; 
-     camera.cible.y = cy; 
-     camera.cible.z = cz;
-     camera.orientation.x = 0.0; /* orientation (ne pas modifier) */
-     camera.orientation.y = 1.0; /* orientation (ne pas modifier) */
-     camera.orientation.z = 0.0; /* orientation (ne pas modifier) */
-     camera.near = near;
-     camera.far = far;
-
-     return camera;
-}
-
-/*
-** Comme glPrint3D mais les textures sont toujours orientees vers la camera
-** quelque soit la position de la camera dans l'espace
-*/
-static void glBillBoardPrint(GLfloat x, GLfloat y, GLfloat z, GLfloat f, const char *string, ...)
-{
-// goto http://www.lighthouse3d.com/opengl/billboarding/index.php3?billInt
-}
-
-/*
-** Initialisation d'OpenGL.
-*/
-static void init_opgl(BCG *Xgc)
-{
-/*
-** NOTE : le chargement des textures se fait dans release_event !!
-*/
-
-     xset_background(Xgc,Xgc->NumBackground+1);
-     glClearDepth(1.0); 
-
-//     glEnable(GL_TEXTURE_2D);
-//     glEnable(GL_DEPTH_TEST);
-//     glEnable (GL_CULL_FACE);
-//     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); 
-
-     glClearStencil(0x0);
-     glEnable(GL_STENCIL_TEST);
-
-//     glEnable(GL_LINE_SMOOTH);
-     glEnable(GL_BLEND);
-     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-//     glLineWidth(1.5);
-//     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-//     glLineWidth(0.5);
-     glAlphaFunc(GL_GREATER,0.1f);
-     glEnable(GL_ALPHA_TEST);
-
-/* ================================ */
-     Xgc->private->view = VUE_3D;
-/* ================================ */
-     
-     swap_view(Xgc);
-}
-     
-static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)
-{
-#if 0
-     int bg = Xgc->NumBackground;
-     glStencilFunc(GL_ALWAYS, 0x1, 0x1);
-     glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-     glColor3f(Xgc->private->Red[bg]/255.0,
-	       Xgc->private->Green[bg]/255.0,
-	       Xgc->private->Blue[bg]/255.0);
-     glBegin(GL_QUADS);
-     glVertex2i(clip_rect.x, clip_rect.y);
-     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
-     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-     glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
-     glEnd();
-#endif
-}
-
-// FCT PAS ENCORE TESTEE
-static void unclip_rectangle(GdkRectangle clip_rect)
-{
-#if 0
-     glStencilFunc(GL_ALWAYS, 0x0, 0x0);
-     glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-     glBegin(GL_QUADS);
-     glVertex2i(clip_rect.x, clip_rect.y);
-     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
-     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
-     glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
-     glEnd();
-#endif
-}
-
-/*
-** ###########################################################################################
-*/
 
 /* Allocating colors in BCG struct */
 
@@ -529,11 +158,10 @@ static void pixmap_resize(BCG *Xgc)
 */
 void xselgraphic(BCG *Xgc)
 { 
-     /* Test not really usefull: see sciwin in matdes.f */
-     if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL) 
-	  initgraphic("",NULL,NULL,NULL,NULL,NULL);
-     gdk_window_show(Xgc->private->window->window);
-     force_affichage(Xgc);
+  /* Test not really usefull: see sciwin in matdes.f */
+  if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL) 
+    initgraphic("",NULL,NULL,NULL,NULL,NULL);
+  gdk_window_show(Xgc->private->window->window);
 }
 
 /** End of graphic (do nothing)  **/
@@ -547,15 +175,13 @@ void xendgraphic(void)
 */
 void xend(BCG *Xgc)
 {
-     /** Must destroy everything  **/
-
-/*
-** Detruire les listes d'affiches OpenGL
-*/
-     printf("\007 DELETE FONTES !!!\n");
-     glDeleteLists(tab_base[0],95);
-     glDeleteLists(tab_base[1],95);
-     //glDeleteLists(tab_base[1],256);
+  /** Must destroy everything  **/
+  /*
+  ** Detruire les listes d'affiches OpenGL
+  */
+  printf("\007 DELETE FONTES !!!\n");
+  glDeleteLists(tab_base[0],95);
+  glDeleteLists(tab_base[1],95);
 }
 
 /** Clear the current graphic window     **/
@@ -1004,7 +630,7 @@ static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_
      if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
      {
 	  static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
-//	  gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+	  // gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
 	  clip_rectangle(Xgc, clip_rect);
      }
      (*F)(Xgc,x,y,w,h);
@@ -1012,7 +638,7 @@ static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_
 	  xset_alufunction1(Xgc,cur_alu);   /* back to current value */ 
      if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
      {
-	  /* restor clip */
+	  /* restore clip */
 	  GdkRectangle clip_rect = { Xgc->CurClipRegion[0],
 				     Xgc->CurClipRegion[1],
 				     Xgc->CurClipRegion[2],
@@ -2937,9 +2563,9 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
      private->font=NULL;
      private->resize = 0; /* do not remove !! */
      private->swap = TRUE; 
-/* 
-** NEW !!
-*/
+     /* 
+     ** NEW !!
+     */
      private->camera = nouvelle_camera(0.0, 0.0, 10.0,
 				       0.0, 0.0, 0.0,
 				       INIT_DISTANCE_CLIPPING_PROCHE,
@@ -3030,9 +2656,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
      
      nsp_set_win_counter(WinNum);
      gdk_flush();
-
-
-     XXX_ScilabGCGL = NewXgc; /* FIXME : Attention temporaire pour faire cohabiter Gtk et OpenGL */
 
 }
 
@@ -3873,5 +3496,372 @@ static void nsp_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
      if ( SciGc ==  NULL ) {*ierr=1;return;}
      strncpy(SciGc->EventHandler,name,NAME_MAXL);
 }
+
+
+
+/*
+** #############################################################
+**
+**                      ROUTINES POUR OPENGL
+**
+** #############################################################
+*/
+
+/*
+** Passer en mode orthonorme
+*/
+static void OrthoMode(int left, int top, int right, int bottom)
+{
+     glMatrixMode(GL_PROJECTION); 
+     /* Push on a new matrix so that we can just pop it off to go back to perspective mode */
+     glPushMatrix();
+     /* Reset the current matrix to our identify matrix */
+     glLoadIdentity();
+     /*
+     ** Pass in our 2D ortho screen coordinates.like so (left, right, bottom, top).  The last
+     ** 2 parameters are the near and far planes.
+     */
+     glOrtho( left, right, bottom, top, -1, 1 );
+     /* Switch to model view so that we can render the scope image */
+     glMatrixMode(GL_MODELVIEW);
+     /* Initialize the current model view matrix with the identity matrix */
+     glLoadIdentity();
+}
+
+/*
+** Passer en mode perspective
+*/
+static void PerspectiveMode()
+{
+     /* Enter into our projection matrix mode */
+     glMatrixMode( GL_PROJECTION );
+     /* Pop off the last matrix pushed on when in projection mode (Get rid of ortho mode) */
+     glPopMatrix();
+     /* Go back to our model view matrix like normal */
+     glMatrixMode( GL_MODELVIEW );
+}
+
+/** Force OpenGL a redessiner la scene
+*/
+static void force_affichage(BCG *Xgc)
+{
+     gdk_window_invalidate_rect (Xgc->private->drawing->window,
+				 &Xgc->private->drawing->allocation,
+				 FALSE);
+}
+
+/*
+** Commute la vue : mode perspective cavaliere (2D) --- mode perspective)
+*/
+static void swap_view(BCG *Xgc)
+{
+     float aspect;
+
+
+     xset_background(Xgc,Xgc->NumBackground+1);
+     if (Xgc->private->view == VUE_3D)
+     {
+	  Xgc->private->view = VUE_2D;
+	  glMatrixMode(GL_PROJECTION);
+	  glLoadIdentity();
+	  OrthoMode(0, 0, Xgc->private->drawing->allocation.width, 
+	       Xgc->private->drawing->allocation.height);
+
+	  //glOrtho(0,Xgc->private->drawing->allocation.width,0,
+	  //	  Xgc->private->drawing->allocation.height,-1,1);
+	  
+	  glMatrixMode(GL_MODELVIEW);
+	  glLoadIdentity();
+     }
+     else
+     {
+	  Xgc->private->view = VUE_3D;
+
+	  aspect = Xgc->private->drawing->allocation.width /
+	       Xgc->private->drawing->allocation.height;
+	  glMatrixMode(GL_PROJECTION);
+	  glLoadIdentity();
+	  gluPerspective(45.0, aspect, Xgc->private->camera.near,
+			 Xgc->private->camera.far);
+	  
+	  glMatrixMode(GL_MODELVIEW);
+	  glLoadIdentity();
+     }
+//     glFlush();	  
+     force_affichage(Xgc);
+}
+
+
+/*
+** TGA avec transparence
+** goto http://nehe.gamedev.net/    lesson #32
+*/
+static bool LoadTGA(TextureImage *texture, char *filename)
+{    
+     GLubyte		TGAheader[12]={0,0,2,0,0,0,0,0,0,0,0,0};
+     GLubyte		TGAcompare[12];	
+     GLubyte		header[6];
+     GLuint		bytesPerPixel;	
+     GLuint		imageSize;
+     GLuint		temp;
+     GLuint		type=GL_RGBA;
+     GLuint             i;
+
+
+     printf(">>>>>> je vais charger la texture %s\n", filename);
+     FILE *file = fopen(filename, "rb");
+     
+     if ( file==NULL ||
+	  fread(TGAcompare,1,sizeof(TGAcompare),file)!=sizeof(TGAcompare) ||
+	  memcmp(TGAheader,TGAcompare,sizeof(TGAheader))!=0 ||
+	  fread(header,1,sizeof(header),file)!=sizeof(header))
+     {
+	  if (file == NULL)
+	  {
+	       printf("%s chemin inexistant\n", filename);
+	       return false;
+	  }
+	  else
+	  {
+	       fclose(file);
+	       return false;
+	  }
+     }
+
+     texture->width  = header[1] * 256 + header[0];
+     texture->height = header[3] * 256 + header[2];
+     
+     if (	texture->width	<=0	||
+		texture->height	<=0	||
+		(header[4]!=24 && header[4]!=32))
+     {
+	  fclose(file);
+	  printf("%s pas une texture 24 ou 32 bits\n", filename);
+	  return false;
+     }
+     
+     texture->bpp	= header[4];
+     bytesPerPixel	= texture->bpp/8;
+     imageSize	= texture->width*texture->height*bytesPerPixel;
+
+     texture->imageData=(GLubyte *)malloc(imageSize);
+
+     if(	texture->imageData==NULL ||
+		fread(texture->imageData, 1, imageSize, file)!=imageSize)
+     {
+	  if(texture->imageData!=NULL)
+	       free(texture->imageData);
+	     
+	  fclose(file);
+	  return false;
+     }
+	
+     for (i=0; i<(unsigned) imageSize; i+=bytesPerPixel)
+     {
+	  temp=texture->imageData[i];
+	  texture->imageData[i] = texture->imageData[i + 2];
+	  texture->imageData[i + 2] = temp;
+     }
+
+     fclose (file);
+
+     glGenTextures(1, &texture->texID);
+
+     glBindTexture(GL_TEXTURE_2D, texture->texID);	
+     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+     if (texture->bpp==24)
+	  type=GL_RGB;
+
+     glTexImage2D(GL_TEXTURE_2D, 0, type, texture->width, texture->height, 0, type, GL_UNSIGNED_BYTE, texture->imageData);
+
+     return true;
+}
+
+/*
+** Construit les listes d'affichages pour stocker les cararcteres
+** alphanumeriques sous forme de rectangles textures avec
+** transparence.
+**
+** texID : ID de la texture.
+** retourne la liste d'affichage des fontes
+** Ne pas oublier de detruire les listes d'affiches a la fin du prog !!
+*/
+static GLuint BuildFont(GLuint texID,
+			int nb_char,
+			int nb_ligne,
+			int nb_col)			
+{
+     int    loop;
+     GLuint base;
+
+     base=glGenLists(nb_char);
+     glBindTexture(GL_TEXTURE_2D, texID);
+     for (loop=0; loop<nb_char; loop++)
+     {
+	  float cx = (float) (loop%16) / ((float) nb_ligne);
+	  float cy = (float) (loop/16) / ((float) nb_col);
+	  float dx = 1.0 / ((float) nb_ligne);
+	  float dy = 1.0 / ((float) nb_col);
+	  glNewList(base+loop,GL_COMPILE);
+	  glBegin(GL_QUADS);
+	  glTexCoord2f(cx,    1.0f-cy);    glVertex2i(0,0);
+	  glTexCoord2f(cx+dx, 1.0f-cy);    glVertex2i(TAILLE_CHAR,0);
+	  glTexCoord2f(cx+dx, 1.0f-cy-dy); glVertex2i(TAILLE_CHAR,TAILLE_CHAR);
+	  glTexCoord2f(cx,    1.0f-cy-dy); glVertex2i(0,TAILLE_CHAR);
+	  glEnd();
+	  glTranslated(TRANSLATE_CHAR,0,0);
+	  glEndList();
+     }
+     return base;
+}
+
+
+/*
+** Affiche une chaine de caractere dans l'espace 3D
+** les textures sont toujours orientees dans la meme direction
+** meme si on tourne la camera
+** x,y,z la position du premier caractere.
+** scale : echelle du texte
+** rot : angle rotation 
+** set : if you have a look at the bitmap, you'll notice there 
+** are two different character sets. The first character set is
+** normal, and the second character set is italicized. If set is 0,
+** the first character set is selected. If set is 1 or greater the
+** second character set is selected.
+*/
+static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...)
+{
+     char		text[256];
+     va_list		ap;
+     
+     if (string == NULL)
+	  return;
+	
+     if (set > 1) set = 1;     
+
+     glColor3f(0,0,0);      
+     va_start(ap, string);
+     vsprintf(text, string, ap);
+     va_end(ap);
+     
+     glEnable(GL_TEXTURE_2D);
+     glEnable(GL_BLEND);
+
+     glBindTexture(GL_TEXTURE_2D, fonte_encours);
+     glPushMatrix();
+     glLoadIdentity();
+     glTranslatef(x-TRANSLATE_CHAR*ECHELLE_CHAR/2, y-TAILLE_CHAR*ECHELLE_CHAR,0);
+     glRotated(rot,1,0,0);
+     glScaled(scal,scal,scal);
+     glListBase(base_encours-32+(128*set));
+     glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);
+     glPopMatrix();
+     glDisable(GL_BLEND);
+     glDisable(GL_TEXTURE_2D);
+}
+
+static t_camera nouvelle_camera(float px, float py, float pz,
+				float cx, float cy, float cz,
+				float near, float far)
+{
+     t_camera camera;
+     camera.position.x = px;
+     camera.position.y = py;
+     camera.position.z = pz;
+     camera.cible.x = cx; 
+     camera.cible.y = cy; 
+     camera.cible.z = cz;
+     camera.orientation.x = 0.0; /* orientation (ne pas modifier) */
+     camera.orientation.y = 1.0; /* orientation (ne pas modifier) */
+     camera.orientation.z = 0.0; /* orientation (ne pas modifier) */
+     camera.near = near;
+     camera.far = far;
+     return camera;
+}
+
+/*
+** Comme glPrint3D mais les textures sont toujours orientees vers la camera
+** quelque soit la position de la camera dans l'espace
+*/
+static void glBillBoardPrint(GLfloat x, GLfloat y, GLfloat z, GLfloat f, const char *string, ...)
+{
+// goto http://www.lighthouse3d.com/opengl/billboarding/index.php3?billInt
+}
+
+/*
+** Initialisation d'OpenGL.
+*/
+static void init_opgl(BCG *Xgc)
+{
+/*
+** NOTE : le chargement des textures se fait dans release_event !!
+*/
+
+     xset_background(Xgc,Xgc->NumBackground+1);
+     glClearDepth(1.0); 
+
+//     glEnable(GL_TEXTURE_2D);
+//     glEnable(GL_DEPTH_TEST);
+//     glEnable (GL_CULL_FACE);
+//     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); 
+
+     glClearStencil(0x0);
+     glEnable(GL_STENCIL_TEST);
+
+//     glEnable(GL_LINE_SMOOTH);
+     glEnable(GL_BLEND);
+     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+//     glLineWidth(1.5);
+//     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+//     glLineWidth(0.5);
+     glAlphaFunc(GL_GREATER,0.1f);
+     glEnable(GL_ALPHA_TEST);
+
+/* ================================ */
+     Xgc->private->view = VUE_3D;
+/* ================================ */
+     
+     swap_view(Xgc);
+}
+     
+static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)
+{
+#if 0
+     int bg = Xgc->NumBackground;
+     glStencilFunc(GL_ALWAYS, 0x1, 0x1);
+     glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+     glColor3f(Xgc->private->Red[bg]/255.0,
+	       Xgc->private->Green[bg]/255.0,
+	       Xgc->private->Blue[bg]/255.0);
+     glBegin(GL_QUADS);
+     glVertex2i(clip_rect.x, clip_rect.y);
+     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
+     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
+     glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
+     glEnd();
+#endif
+}
+
+// FCT PAS ENCORE TESTEE
+static void unclip_rectangle(GdkRectangle clip_rect)
+{
+#if 0
+     glStencilFunc(GL_ALWAYS, 0x0, 0x0);
+     glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+     glBegin(GL_QUADS);
+     glVertex2i(clip_rect.x, clip_rect.y);
+     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);
+     glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y+clip_rect.height);
+     glVertex2i(clip_rect.x, clip_rect.y+clip_rect.height);
+     glEnd();
+#endif
+}
+
+/*
+** ###########################################################################################
+*/
 
 
