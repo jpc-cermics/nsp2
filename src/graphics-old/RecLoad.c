@@ -352,6 +352,7 @@ static int load_drawarrows_1(BCG *Xgc)
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
   if ( load_LI(&lplot->n) == 0) return(0);
+  if ( load_LI(&lplot->iflag) == 0) return(0);
   if ( load_D(&lplot->as) == 0) return(0);
   if ( load_VectF(&lplot->vx) == 0) return(0);
   if ( load_VectF(&lplot->vy) == 0) return(0);
@@ -570,8 +571,8 @@ static int load_drawsegments_1(BCG *Xgc)
   if ( load_LI(&lplot->n) == 0) return(0);
   if ( load_VectF(&lplot->vx) == 0) return(0);
   if ( load_VectF(&lplot->vy) == 0) return(0);
-  if ( lplot->iflag != 0 ) 
-    if ( load_VectLI(&lplot->style) == 0) return(0);
+  if ( load_LI(&lplot->iflag) == 0) return(0);
+  if ( load_VectLI(&lplot->style) == 0) return(0);
   store_record(Xgc,lplot->code,lplot);
   return 1;
 }
@@ -585,7 +586,7 @@ static int load_displaystring_1(BCG *Xgc)
   struct rec_displaystring *lplot = MALLOC(sizeof(struct rec_displaystring));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
-  if ( load_C(lplot->string) == 0) return(0);
+  if ( load_VectC(&lplot->string) == 0) return(0);
   if ( load_D(&lplot->x) == 0) return(0);
   if ( load_D(&lplot->y) == 0) return(0);
   if ( load_LI(&lplot->flag) == 0) return(0);
@@ -603,7 +604,7 @@ static int load_displaystringa_1(BCG *Xgc)
   struct rec_displaystringa *lplot = MALLOC(sizeof(struct rec_displaystringa));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
-  if ( load_C(lplot->string) == 0) return(0);
+  if ( load_VectC(&lplot->string) == 0) return(0);
   if ( load_LI(&lplot->ipos) == 0) return(0);
   store_record(Xgc,lplot->code,lplot);
   return 1;
@@ -619,7 +620,7 @@ static int load_xstringb_1(BCG *Xgc)
   struct rec_xstringb *lplot = MALLOC(sizeof(struct rec_xstringb));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
-  if ( load_C(lplot->string) == 0) return(0);
+  if ( load_VectC(&lplot->string) == 0) return(0);
   if ( load_D(&lplot->x) == 0) return(0);
   if ( load_D(&lplot->y) == 0) return(0);
   if ( load_D(&lplot->wd) == 0) return(0);

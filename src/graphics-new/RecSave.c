@@ -15,10 +15,12 @@
 
 static int save_D  (double x);
 static int save_LI (int ix);
-static int save_C (char *c, int lc);
+static int save_C (char *c, int lc); /* save a string with know size which is
+				      * not to be realocated at recload 
+				      */
 static int save_VectLI (int *nx, int l);
 static int save_VectF (double *nx, int l); 
-static int save_VectC (char *nx, int l);
+static int save_VectC (char *nx, int l); /* FIXME: second argument is to be removed */
 static int save_VectS   (char **nx);
 
 static int save_colormap (BCG *Xgc,void *);
@@ -244,6 +246,7 @@ static int save_drawarrows_1(BCG *Xgc,void  *theplot)
   struct rec_arrows *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
   if ( save_LI(lplot->n) == 0) return(0);
+  if ( save_LI(lplot->iflag) == 0) return(0);
   if ( save_D(lplot->as) == 0) return(0);
   if ( save_VectF(lplot->vx,lplot->n) == 0) return(0);
   if ( save_VectF(lplot->vy,lplot->n) == 0) return(0);
@@ -439,8 +442,15 @@ static int save_drawsegments_1(BCG *Xgc,void  *theplot)
   if ( save_LI(lplot->n) == 0) return(0);
   if ( save_VectF(lplot->vx,lplot->n) == 0) return(0);
   if ( save_VectF(lplot->vy,lplot->n) == 0) return(0);
+  if ( save_LI(lplot->iflag) == 0) return(0);
   if ( lplot->iflag != 0 ) 
-    if ( save_VectLI(lplot->style,lplot->n/2) == 0) return(0);
+    {
+      if ( save_VectLI(lplot->style,lplot->n/2) == 0) return(0);
+    }
+  else 
+    {
+      if ( save_VectLI(lplot->style,1) == 0) return(0);
+    }
   return 1;
 }
 
@@ -452,7 +462,7 @@ static int save_displaystring_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaystring *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
-  if ( save_C(lplot->string,strlen(lplot->string)) == 0) return(0);
+  if ( save_VectC(lplot->string,strlen(lplot->string)+1) == 0) return(0);
   if ( save_D(lplot->x) == 0) return(0);
   if ( save_D(lplot->y) == 0) return(0);
   if ( save_LI(lplot->flag) == 0) return(0);
@@ -468,7 +478,7 @@ static int save_displaystringa_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaystringa *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
-  if ( save_C(lplot->string,strlen(lplot->string)) == 0) return(0);
+  if ( save_VectC(lplot->string,strlen(lplot->string)+1) == 0) return(0);
   if ( save_LI(lplot->ipos) == 0) return(0);
   return 1;
 }
@@ -482,7 +492,7 @@ static int save_xstringb_1(BCG *Xgc,void  *theplot)
 {
   struct rec_xstringb *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
-  if ( save_C(lplot->string,strlen(lplot->string)) == 0) return(0);
+  if ( save_VectC(lplot->string,strlen(lplot->string)+1) == 0) return(0);
   if ( save_D(lplot->x) == 0) return(0);
   if ( save_D(lplot->y) == 0) return(0);
   if ( save_D(lplot->wd) == 0) return(0);
@@ -542,7 +552,7 @@ static int save_Plot(BCG *Xgc,void *plot)
   if ( save_VectF((lplot->y),(lplot->n1)*(lplot->n2)) == 0) return(0);
   if ( save_VectLI((lplot->style),nstyle) == 0) return(0);
   if ( save_VectC((lplot->strflag),((int)strlen(lplot->strflag))+1) == 0) return(0);
-  if ( save_VectC((lplot->strflag_kp),((int)strlen(lplot->strflag))+1) == 0) return(0);
+  if ( save_VectC((lplot->strflag_kp),((int)strlen(lplot->strflag_kp))+1) == 0) return(0);
   if ( save_VectC((lplot->legend),((int)strlen(lplot->legend))+1) == 0) return(0);
   if ( save_VectF((lplot->brect),4L) == 0) return(0);
   if ( save_VectF((lplot->brect_kp),4L) == 0) return(0);

@@ -864,8 +864,10 @@ void store_drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int
       lplot->iflag = iflag ; 
       lplot->vx= NULL;
       lplot->vy=NULL;
-      if (iflag != 0) rep= CopyVectLI(&(lplot->style),style,n/2);
-
+      if (iflag != 0) 
+	rep= CopyVectLI(&(lplot->style),style,n/2);
+      else 
+	rep= CopyVectLI(&(lplot->style),style,1);
       if ( rep &&  CopyVectF(&(lplot->vx),vx,n) && CopyVectF(&(lplot->vy),vy,n)) 
 	{
 	  store_record(Xgc,CODEdrawsegments_1, lplot);
