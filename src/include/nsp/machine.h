@@ -57,7 +57,7 @@
 
 /* storing and retrieving an int in a pointer */
 
-if defined(POINTER_INT)
+#if defined(POINTER_INT)
 #define NSP_INT_TO_POINTER(i) ((int *) (i))
 #define NSP_POINTER_TO_INT(i) ((int) (i))
 #else
