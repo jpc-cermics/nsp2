@@ -1046,6 +1046,7 @@ static void xset_thickness(BCG *Xgc,int value)
 { 
   value = Max(0, value);
   if ( Xgc->CurLineWidth == value ) return;
+  Xgc->CurLineWidth =Max(0, value);
   /* when line thickness changes we must change the dash style */
   xset_dash(Xgc,Xgc->CurDashStyle + 1);
 }
@@ -1167,6 +1168,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 	 (Xgc->CurLineWidth <= 1) ? 0 : Xgc->CurLineWidth,
 	 GDK_LINE_SOLID,GDK_CAP_BUTT, GDK_JOIN_ROUND);
       */
+      /* FIXME : */
       glLineWidth( ((Xgc->CurLineWidth <= 1) ? 1 : Xgc->CurLineWidth)*0.5);
     }
   else 
@@ -2055,7 +2057,10 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
 	{ 
 	  /** fill + boundaries **/
 	  xset_pattern(Xgc,fillvect[i]);
+	  glEnable(GL_POLYGON_OFFSET_FILL);
+	  glPolygonOffset(1.0,1.0);
 	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
+	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  xset_dash_and_color(Xgc,dash,color);
 	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
 	}
@@ -2085,12 +2090,14 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   gint i;
   if ( n <= 1) return;
   DRAW_CHECK;
+  glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
   if ( closeflag == 1 ) 
     glBegin(GL_LINE_LOOP);
   else
     glBegin(GL_LINE_STRIP);
   for (i=0; i < n ; i++) glVertex2i(vx[i], vy[i]);
   glEnd();
+  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 }
 
 /* 
@@ -2155,7 +2162,11 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
       if (fillvect[i] > 0 )
 	{ 
 	  /** fill + boundaries **/
+	  glEnable(GL_POLYGON_OFFSET_FILL);
+	  glPolygonOffset(1.0,1.0);
+	  glPolygonOffset(1.0,1.0);
 	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
+	  glDisable(GL_POLYGON_OFFSET_FILL);
 	  xset_dash_and_color(Xgc,dash,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
@@ -2215,7 +2226,10 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 	{ 
 	  /** fill + boundaries **/
 	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
+	  glEnable(GL_POLYGON_OFFSET_FILL);
+	  glPolygonOffset(1.0,1.0);
 	  fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	  glDisable(GL_POLYGON_OFFSET_FILL);
 	  xset_dash_and_color(Xgc,dash,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
@@ -2251,13 +2265,14 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
   gint i;
   if ( n <= 1) return;
   DRAW_CHECK;
-
+  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   if ( closeflag == 1 ) 
     glBegin(GL_LINE_LOOP);
   else
     glBegin(GL_LINE_STRIP);
   for (i=0; i < n ; i++) glVertex3d(vx[i], vy[i], vz[i]);
   glEnd();
+  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 }
 
 /* 
@@ -2886,6 +2901,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   /*     glEnable(GL_TEXTURE_2D); */
   /*     glEnable (GL_CULL_FACE); */
   /*     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);  */
+  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   glClearStencil(0x0);
   glEnable(GL_STENCIL_TEST);
   /*     glEnable(GL_LINE_SMOOTH); */
@@ -2955,7 +2971,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
   
-  glLineWidth(1.5); // FIXME: 
+  /* glLineWidth(1.5);  FIXME */ 
 
   if ( dd->private->resize != 0)  
     { 
