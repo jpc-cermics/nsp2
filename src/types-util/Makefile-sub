@@ -1,0 +1,61 @@
+TNAME=ClassC
+TDOWNCASE=classc
+TSHORT=clc
+TASSTRING=ClassC
+NULL=NULLCLC
+PARENT=ClassA
+PARENTDOWNCASE=classa
+PARENTINC=classa.h
+FILENAME=$(TDOWNCASE)
+
+all: job_classc
+
+job : $(FILE).c $(FILE).h
+
+$(FILE).c : model-sub-c Makefile-sub 
+	sed -e "s/@TYPENAME@/$(TNAME)/g" \
+	    -e "s/@TYPEDOWNCASE@/$(TDOWNCASE)/g" \
+	    -e "s/@TYPEASSTRING@/$(TASSTRING)/g" \
+	    -e "s/@NULL@/$(NULL)/g" \
+	    -e "s/@TYPESHORT@/$(TSHORT)/g" \
+	    -e "s/@PARENTDOWNCASE@/$(PARENTDOWNCASE)/g" \
+	    -e "s/@PARENT@/$(PARENT)/g" \
+	    model-sub-c > $(FILE).c 
+
+$(FILE).h : model-sub-h Makefile-sub
+	sed -e "s/@TYPENAME@/$(TNAME)/g" \
+	    -e "s/@TYPEDOWNCASE@/$(TDOWNCASE)/g" \
+	    -e "s/@TYPEASSTRING@/$(TASSTRING)/g" \
+	    -e "s/@NULL@/$(NULL)/g" \
+	    -e "s/@TYPESHORT@/$(TSHORT)/g" \
+	    -e "s/@FIELDS@/$(FIELDS)/g" \
+	    -e "s/@PARENTDOWNCASE@/$(PARENTDOWNCASE)/g" \
+	    -e "s/@PARENT@/$(PARENT)/g" \
+	    -e "s+@PARENTINC@+$(PARENTINC)+g" \
+	    model-sub-h > $(FILE).h
+
+job_classc: 
+	make -f Makefile-sub job  TNAME=ClassC TDOWNCASE=classc  TSHORT=clc \
+		TASSTRING=ClassC NULL=NULLCLC \
+		PARENT=ClassA PARENTDOWNCASE=classa PARENTINC=classa.h
+
+
+job_gtk: 
+	make -f Makefile-sub job  TNAME='%(typename)s' TDOWNCASE='%(typename_dc)s'  TSHORT='%(typename)s' \
+		TASSTRING='%(typename)s' NULL=NULL'%(typename_uc)s' \
+		PARENT='%(parent)s' PARENTDOWNCASE='%(parent_dc)s' PARENTINC='%(parent_inc)s' FILE=poo
+
+clean : distclean 
+
+distclean:
+	$(RM) *.c *.h
+
+
+
+
+
+
+
+
+
+

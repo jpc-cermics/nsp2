@@ -1,0 +1,243 @@
+/* -*- Mode: C -*- */
+/*-------------------------------------------------------------------
+ * This Software is ( Copyright ENPC 1998-2003 )                          
+ * Jean-Philippe Chancelier Enpc/Cermics 
+ *-------------------------------------------------------------------*/
+
+#include "nsp/object.h"
+#define  @TYPENAME@_Private 
+#include "@TYPEDOWNCASE@.h"
+#include "nsp/interf.h"
+
+/* 
+ * Nsp@TYPENAME@ inherits from Nsp@PARENT@
+ * @TYPENAME@ only adds methods to @PARENT@ 
+ * we try here to find a very short code 
+ * sequence to implement @TYPENAME@ 
+ * the only pb is that when you cast a Nsp@TYPENAME@ to a Nsp@PARENT@ 
+ * the type is wrong it is a subtype of Nsp@PARENT@ 
+ */
+
+int nsp_type_@TYPEDOWNCASE@_id=0;
+NspType@TYPENAME@ *nsp_type_@TYPEDOWNCASE@=NULL;
+
+NspType@TYPENAME@ *new_type_@TYPEDOWNCASE@(type_mode mode)
+{
+  NspType@TYPENAME@ *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_@TYPEDOWNCASE@ != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_@TYPEDOWNCASE@;
+    }
+  if ((type =  malloc(sizeof(NspType@PARENT@))) == NULL) return NULL;
+
+  type->surtype = (NspTypeBase *) new_type_@PARENTDOWNCASE@(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->interface = NULL;
+  type->methods = @TYPEDOWNCASE@_get_methods; 
+  type->new = (new_func *) new_@TYPEDOWNCASE@;
+
+  /* specific methods for @TYPEDOWNCASE@ */
+      
+  type->init = (init_func *) init_@TYPEDOWNCASE@;
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for @TYPEDOWNCASE@ */ 
+
+  top->s_type =  (s_type_func *) @TYPEDOWNCASE@_type_as_string;    
+  top->sh_type = (sh_type_func *) @TYPEDOWNCASE@_type_short_string;
+  
+  /* specific methods for @TYPEDOWNCASE@ */
+      
+  type->init = (init_func *) init_@TYPEDOWNCASE@;
+
+  if ( nsp_type_@TYPEDOWNCASE@_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspType@TYPENAME@ called nsp_type_@TYPEDOWNCASE@
+       */
+      type->id =  nsp_type_@TYPEDOWNCASE@_id = nsp_new_type_id();
+      nsp_type_@TYPEDOWNCASE@ = type;
+      if ( nsp_register_type(nsp_type_@TYPEDOWNCASE@) == FALSE) return NULL;
+      return ( mode == T_BASE ) ? type : new_type_@TYPEDOWNCASE@(mode);
+    }
+  else 
+    return type;
+}
+
+/*
+ * initialize @TYPENAME@ instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_@TYPEDOWNCASE@(Nsp@TYPENAME@ *o,NspType@TYPENAME@ *type)
+{
+  /* jump the first surtype */ 
+  if ( type->surtype->surtype->init(&o->father,type->surtype->surtype) == FAIL) return FAIL;
+  o->type = type; 
+  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of @TYPENAME@ 
+ */
+
+Nsp@TYPENAME@ *new_@TYPEDOWNCASE@() 
+{
+  Nsp@TYPENAME@ *loc; 
+  /* type must exists */
+  nsp_type_@TYPEDOWNCASE@ = new_type_@TYPEDOWNCASE@(T_BASE);
+  if ( (loc = malloc(sizeof(Nsp@TYPENAME@)))== @NULL@) return loc;
+  /* initialize object */
+  if ( init_@TYPEDOWNCASE@(loc,nsp_type_@TYPEDOWNCASE@) == FAIL) return @NULL@;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for @TYPENAME@ 
+ *-----------------------------------------------*/
+
+/*
+ * type as string 
+ */
+
+static char @TYPEDOWNCASE@_type_name[]="@TYPEASSTRING@";
+static char @TYPEDOWNCASE@_short_type_name[]="@TYPESHORT@";
+
+static char *@TYPEDOWNCASE@_type_as_string(void)
+{
+  return(@TYPEDOWNCASE@_type_name);
+}
+
+static char *@TYPEDOWNCASE@_type_short_string(void)
+{
+  return(@TYPEDOWNCASE@_short_type_name);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for @TYPENAME@ objects 
+ * Note that some of these functions could become MACROS XXXXX 
+ *-----------------------------------------------------*/
+
+Nsp@TYPENAME@   *@TYPEDOWNCASE@_object(NspObject *O)
+{
+  /** Follow pointer **/
+  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  /** Check type **/
+  if ( check_cast(O,nsp_type_@TYPEDOWNCASE@_id) == TRUE) return ((Nsp@TYPENAME@ *) O);
+  else 
+    Scierror("Error:\tArgument should be a %s\n",
+	     NSP_TYPE_OBJECT(nsp_type_@TYPEDOWNCASE@->surtype)->s_type());
+  return(NULL);
+}
+
+int Is@TYPENAME@Obj(Stack stack, int i)
+{
+  return ObjType(NthObj(i) , nsp_type_@TYPEDOWNCASE@_id);
+}
+
+int Is@TYPENAME@(NspObject *O)
+{
+  return ObjType(O,nsp_type_@TYPEDOWNCASE@_id);
+}
+
+Nsp@TYPENAME@  *Get@TYPENAME@Copy(Stack stack, int i)
+{
+  if (  Get@TYPENAME@(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+Nsp@TYPENAME@  *Get@TYPENAME@(Stack stack, int i)
+{
+  Nsp@TYPENAME@ *M;
+  if (( M = @TYPEDOWNCASE@_object(NthObj(i))) == @NULL@)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*
+ * copy 
+ */
+
+Nsp@TYPENAME@ *@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H)
+{
+  return @PARENTDOWNCASE@_create(NVOID,H->@PARENTDOWNCASE@_color,H->@PARENTDOWNCASE@_thickness,(NspTypeBase *) nsp_type_@TYPEDOWNCASE@);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the @TYPENAME@
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+int int_clc_create(Stack stack, int rhs, int opt, int lhs)
+{
+  Nsp@TYPENAME@ *H;
+  int color=-1,thickness=-1;
+
+  nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
+		      { "thickness",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  CheckRhs(0,2);
+  if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
+  /* want to be sure that type @TYPEDOWNCASE@ is initialized */
+  nsp_type_@TYPEDOWNCASE@ = new_type_@TYPEDOWNCASE@(T_BASE);
+  if(( H = @PARENTDOWNCASE@_create(NVOID,color,thickness,(NspTypeBase *) nsp_type_@TYPEDOWNCASE@)) == @NULL@) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+/*------------------------------------------------------
+ * methods 
+ *------------------------------------------------------*/
+
+static NspMethods @TYPEDOWNCASE@_methods[] = {
+  { (char *) 0, NULL}
+};
+
+static NspMethods *@TYPEDOWNCASE@_get_methods(void) { return @TYPEDOWNCASE@_methods;};
+
+
+/*-------------------------------------------
+ * function 
+ *-------------------------------------------*/
+
+/*----------------------------------------------------
+ * Interface 
+ * i.e a set of function which are accessible at nsp level
+ *----------------------------------------------------*/
+
+static OpTab @TYPENAME@_func[]={
+  /* #include "@TYPEDOWNCASE@-in.nam" */ 
+  {"clc_create",int_clc_create}, 
+  /* 
+  {"setrowscols_clc",int_set_attribute},
+  {"$dot_clc",int_get_attribute},
+  {"$set_clc",int_set_attributes},
+  */
+  {(char *) 0, NULL}
+};
+
+/** call ith function in the @TYPENAME@ interface **/
+
+int @TYPENAME@_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+{
+  return (*(@TYPENAME@_func[i].fonc))(stack,rhs,opt,lhs);
+}
+
+/** used to walk through the interface table 
+    (for adding or removing functions) **/
+
+void @TYPENAME@_Interf_Info(int i, char **fname, function (**f))
+{
+  *fname = @TYPENAME@_func[i].name;
+  *f = @TYPENAME@_func[i].fonc;
+}
+

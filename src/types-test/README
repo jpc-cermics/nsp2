@@ -1,0 +1,12 @@
+Test file for objects in Scilab 
+ClBox is a generic class used to store external objects 
+describe by a pointer in Nsp 
+
++---Object 
+	|
+	+--ClassA
+	|	|
+	|	+--- ClassB
+	+--ClBox
+	|	|
+	|	+--- ClassC  

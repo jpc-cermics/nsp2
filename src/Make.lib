@@ -1,0 +1,49 @@
+# CFLAGS IS CHANGED LOCALLY FOR EACH SUBDIR 
+# CFLAGS = $(CC_OPTIONS) 
+# or 
+# CFLAGS = $(CC_OPTIONS) $(XFLAGS)
+
+FFLAGS = $(FC_OPTIONS)
+
+OBJS = $(OBJSC) $(OBJSF)
+
+#all:: $(SCIDIR)/libs/$(LIBRARY)
+all:: .archive_target
+
+world: all
+
+$(SCIDIR)/libs/$(LIBRARY): $(OBJS)
+	@echo Creation of $@
+	@$(RM) $@
+	@$(AR) $@ $(OBJS)
+	@$(RANLIB) $@
+
+# New code : we want to deal with one library 
+# whose objects are on multiple directories 
+
+.archive_target : $(OBJS) 
+	@echo Adding files to $(SCIDIR)/libs/$(LIBRARY)
+	ar cr  $(SCIDIR)/libs/$(LIBRARY) $(OBJS) 
+	@$(RANLIB)  $(SCIDIR)/libs/$(LIBRARY)
+	@$(RM) .archive_target
+	@echo "Done" > .archive_target
+
+cleanC :
+	$(RM) $(OBJSC)
+
+cleanF :
+	$(RM) $(OBJSF)
+
+F2CFILES=$(OBJSF:.o=.c)
+
+f2cclean	:
+	$(RM) $(F2CFILES)
+
+clean::
+	$(RM) *.o 
+
+distclean::
+	$(RM) *.o  $(SCIDIR)/libs/$(LIBRARY) .archive_target
+
+
+

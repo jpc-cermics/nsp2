@@ -1,0 +1,48 @@
+SHELL = /bin/sh
+
+include ../Makefile.incl
+
+SCIDIRS = zblas zcalelm Newstack  Parse Functions mexlib Gtk2 \
+	system graphics menusX gd gtksci gzvt2 modules gobjects types types-test
+
+SUBDIRS = $(XAW_LOCAL_SUBDIR) $(DLD_SUBDIR) $(SCIDIRS) 
+
+all::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SUBDIRS) ;\
+	do \
+		(cd $$i ; echo "making all in src/$$i..."; \
+		$(MAKE) $(MFLAGS) all); \
+	done
+
+world::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SUBDIRS) ;\
+	do \
+		(cd $$i ; echo "making world in src/$$i..."; \
+		$(MAKE) $(MFLAGS) world); \
+	done
+
+distclean::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SCIDIRS) ;\
+	do \
+		(cd $$i ; echo "making distclean in src/$$i..."; \
+		$(MAKE) $(MFLAGS)  distclean); \
+	done
+
+clean::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SUBDIRS) ;\
+	do \
+		(cd $$i ; echo "making clean in src/$$i..."; \
+		$(MAKE) $(MFLAGS) clean); \
+	done
+
+f2cclean::
+	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
+	for i in $(SUBDIRS) ;\
+	do \
+		(cd $$i ; echo "making f2cclean in src/$$i..."; \
+		$(MAKE) $(MFLAGS) f2cclean); \
+	done

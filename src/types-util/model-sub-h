@@ -1,0 +1,55 @@
+/* -*- Mode: C -*- */
+#ifndef INC_NSP_@TYPENAME@
+#define INC_NSP_@TYPENAME@
+
+/*-----------------------------------------------------------------
+ * This Software is ( Copyright ENPC 1998-2003 )
+ * Jean-Philippe Chancelier Enpc/Cermics
+ *-----------------------------------------------------------------*/
+
+#include "@PARENTDOWNCASE@.h"
+
+/*
+ * Nsp@TYPENAME@ inherits from Nsp@PARENT@
+ * just change some type attributes 
+ */
+
+typedef Nsp@PARENT@ Nsp@TYPENAME@ ;
+typedef NspType@PARENT@ NspType@TYPENAME@ ;
+
+extern int nsp_type_@TYPEDOWNCASE@_id;
+extern NspType@TYPENAME@ *nsp_type_@TYPEDOWNCASE@;
+
+/* type instances for @PARENTDOWNCASE@ */
+
+NspType@TYPENAME@ *new_type_@TYPEDOWNCASE@(type_mode mode);
+
+/* instance for @TYPENAME@ */
+
+Nsp@TYPENAME@ *new_@TYPEDOWNCASE@();
+
+/*
+ * Object methods redefined for @TYPEDOWNCASE@ 
+ */
+
+#ifdef @TYPENAME@_Private 
+static int init_@TYPEDOWNCASE@(Nsp@TYPENAME@ *o,NspType@TYPENAME@ *type);
+static char *@TYPEDOWNCASE@_type_as_string(void);
+static char *@TYPEDOWNCASE@_type_short_string(void);
+static NspMethods *@TYPEDOWNCASE@_get_methods(void); 
+#endif /* @TYPENAME@_Private */
+
+#define @NULL@ (Nsp@TYPENAME@*) 0
+
+Nsp@TYPENAME@ *@TYPEDOWNCASE@_create(char *name,int color,int thickness);
+
+/* from @TYPENAME@Obj.c */
+
+extern Nsp@TYPENAME@ *@TYPEDOWNCASE@_object (NspObject *O); 
+extern int Is@TYPENAME@Obj (Stack stack, int i); 
+extern int Is@TYPENAME@(NspObject *O);
+extern Nsp@TYPENAME@ *Get@TYPENAME@Copy (Stack stack, int i); 
+extern Nsp@TYPENAME@ *Get@TYPENAME@ (Stack stack, int i); 
+
+#endif 
+

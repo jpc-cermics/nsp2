@@ -1,0 +1,10 @@
+
+interdire [a[]] --> obliger a mettre la virgule 
+i.e a[] soit donner un emessage d''erreur 
+
+[a []] en scilab est accepte 
+
+==> pour faire de meme il faut imposer a[].() a etre colles dans les methodes 
+
+
+

@@ -1,0 +1,24 @@
+/* -*- Mode: C -*- */
+#ifndef INC_NSP_GRint
+#define INC_NSP_GRint
+
+/*********************************************************************
+ * This Software is ( Copyright ENPC 1998-2003 )                          *
+ * Jean-Philippe Chancelier Enpc/Cermics                            *
+ *********************************************************************/
+  
+/* graphic object interface */
+
+#include <stdio.h>   /** for file declaration **/
+#include "nsp/sciio.h" 
+#include "nsp/object.h"
+
+typedef NspTypeBase NspTypeGRint ; 
+
+extern int nsp_type_grint_id;
+extern NspTypeGRint *nsp_type_grint;
+
+NspTypeGRint *new_type_grint(type_mode mode);
+
+#endif 
+

@@ -1,0 +1,487 @@
+/* -*- Mode: C -*- */
+/*-------------------------------------------------------------------
+ * This Software is ( Copyright ENPC 1998-2003 )                          
+ * Jean-Philippe Chancelier Enpc/Cermics 
+ *-------------------------------------------------------------------*/
+
+#include "nsp/object.h"
+#define  @TYPENAME@_Private 
+#include "@TYPEDOWNCASE@.h"
+#include "nsp/interf.h"
+
+/* 
+ * Nsp@TYPENAME@ inherits from Nsp@PARENT@
+ */
+
+int nsp_type_@TYPEDOWNCASE@_id=0;
+NspType@TYPENAME@ *nsp_type_@TYPEDOWNCASE@=NULL;
+
+/*
+ * Type object for @TYPENAME@ 
+ * all the instance of NspType@TYPENAME@ share the same id. 
+ * nsp_type_@TYPEDOWNCASE@: is a an instance of NspType@TYPENAME@ 
+ *    used for objects of Nsp@TYPENAME@ type (i.e built with new_@TYPEDOWNCASE@) 
+ * other instances are used for derived classes 
+ */
+
+NspType@TYPENAME@ *new_type_@TYPEDOWNCASE@(type_mode mode)
+{
+  NspType@TYPENAME@ *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_@TYPEDOWNCASE@ != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_@TYPEDOWNCASE@;
+    }
+  
+  if ((type =  malloc(sizeof(NspType@TYPENAME@))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_@PARENTDOWNCASE@(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = @TYPEDOWNCASE@_get_attrs_table; 
+  type->methods = @TYPEDOWNCASE@_get_methods; 
+  type->new = (new_func *) new_@TYPEDOWNCASE@;
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for @TYPEDOWNCASE@ */ 
+  
+  top->pr = (print_func *) @TYPEDOWNCASE@_print;                    
+  top->dealloc = (dealloc_func *) @TYPEDOWNCASE@_destroy;
+  top->copy  =  (copy_func *) @TYPEDOWNCASE@_copy;                   
+  top->size  = (size_func *) @TYPEDOWNCASE@_size;                  
+  top->s_type =  (s_type_func *) @TYPEDOWNCASE@_type_as_string;    
+  top->sh_type = (sh_type_func *) @TYPEDOWNCASE@_type_short_string;
+  top->info = (info_func *) @TYPEDOWNCASE@_info ;                    
+  /* top->is_true = (is_true_func  *) @TYPENAME@IsTrue; */
+  /* top->loop =(loop_func *) @TYPEDOWNCASE@_loop;*/
+  top->path_extract = (path_func *) @TYPEDOWNCASE@_path_extract ; 
+  top->get_from_obj = (get_from_obj_func *) @TYPEDOWNCASE@_object;
+  top->eq  = (eq_func *) @TYPEDOWNCASE@_eq;
+  top->neq  = (eq_func *) @TYPEDOWNCASE@_neq;
+  top->save  = (save_func *) @TYPEDOWNCASE@_xdr_save;
+  top->load  = (load_func *) @TYPEDOWNCASE@_xdr_load;
+
+  /* specific methods for @TYPEDOWNCASE@ */
+      
+  type->init = (init_func *) init_@TYPEDOWNCASE@;
+      
+  /* 
+   * @TYPENAME@ interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  
+  if ( nsp_type_@TYPEDOWNCASE@_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspType@TYPENAME@ called nsp_type_@TYPEDOWNCASE@
+       */
+      type->id =  nsp_type_@TYPEDOWNCASE@_id = nsp_new_type_id();
+      nsp_type_@TYPEDOWNCASE@ = type;
+      if ( nsp_register_type(nsp_type_@TYPEDOWNCASE@) == FALSE) return NULL;
+      return ( mode == T_BASE ) ? type : new_type_@TYPEDOWNCASE@(mode);
+    }
+  else 
+    return type;
+}
+
+/*
+ * initialize @TYPENAME@ instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_@TYPEDOWNCASE@(Nsp@TYPENAME@ *o,NspType@TYPENAME@ *type)
+{
+  /* to be done always */ 
+  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
+  o->type = type; 
+  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  /* specific */
+  o->@TYPEDOWNCASE@_val = MatCreate("val",'r',0,0);
+  if ( o->@TYPEDOWNCASE@_val == NULLMAT) return FAIL;
+  return OK;
+}
+
+/*
+ * new instance of @TYPENAME@ 
+ */
+
+Nsp@TYPENAME@ *new_@TYPEDOWNCASE@() 
+{
+  Nsp@TYPENAME@ *loc; 
+  /* type must exists */
+  nsp_type_@TYPEDOWNCASE@ = new_type_@TYPEDOWNCASE@(T_BASE);
+  if ( (loc = malloc(sizeof(Nsp@TYPENAME@)))== @NULL@) return loc;
+  /* initialize object */
+  if ( init_@TYPEDOWNCASE@(loc,nsp_type_@TYPEDOWNCASE@) == FAIL) return @NULL@;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for @TYPENAME@ 
+ *-----------------------------------------------*/
+
+/*
+ * size 
+ */
+
+static int @TYPEDOWNCASE@_size(Nsp@TYPENAME@ *Mat, int flag)
+{
+  return 0;
+}
+
+/*
+ * type as string 
+ */
+
+static char @TYPEDOWNCASE@_type_name[]="@TYPEASSTRING@";
+static char @TYPEDOWNCASE@_short_type_name[]="@TYPESHORT@";
+
+static char *@TYPEDOWNCASE@_type_as_string(void)
+{
+  return(@TYPEDOWNCASE@_type_name);
+}
+
+static char *@TYPEDOWNCASE@_type_short_string(void)
+{
+  return(@TYPEDOWNCASE@_short_type_name);
+}
+
+static int @TYPEDOWNCASE@_full_comp(Nsp@TYPENAME@ * A,Nsp@TYPENAME@ * B,char *op,int *err)
+{
+  Scierror("@TYPEDOWNCASE@_full_comp: to be implemented \n");
+  return FALSE;
+}
+
+/*
+ * A == B 
+ */
+
+static int @TYPEDOWNCASE@_eq(Nsp@TYPENAME@ *A, NspObject *B)
+{
+  int err,rep;
+  if ( check_cast(B,nsp_type_@TYPEDOWNCASE@_id) == FALSE) return FALSE ;
+  rep = @TYPEDOWNCASE@_full_comp(A,(Nsp@TYPENAME@ *) B,"==",&err);
+  if ( err == 1) return FALSE ; 
+  return rep;
+}
+
+/*
+ * A != B 
+ */
+
+static int @TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B)
+{
+  int err,rep;
+  if ( check_cast(B,nsp_type_@TYPEDOWNCASE@_id) == FALSE) return TRUE;
+  rep = @TYPEDOWNCASE@_full_comp(A,(Nsp@TYPENAME@ *) B,"<>",&err);
+  if ( err == 1) return TRUE ; 
+  return rep;
+}
+
+/* used for evaluation of H(exp1) in exps like H(exp1)(exp2)....(expn)= val 
+ * note that H(exp1)= val          -> setrowscols
+ *       and H(exp1)(.....) = val  -> pathextract(H,exp1) and then 
+ *       iterate on the result 
+ */
+
+static NspObject *@TYPEDOWNCASE@_path_extract(Nsp@TYPENAME@ *a, NspObject *ob)
+{
+  char *str;
+  if ((str= StringObj(ob)) == NULL ) return NULLOBJ;
+  return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
+}
+
+/*
+ * save 
+ */
+
+static int @TYPEDOWNCASE@_xdr_save(NspSciFile  *F, Nsp@TYPENAME@ *M)
+{
+  if ( XdrSaveI(F,M->type->id) == FAIL) return FAIL;
+  if ( XdrSaveString(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  Scierror("@TYPEDOWNCASE@_xdr_save: to be implemented \n");
+  return OK;
+}
+
+/*
+ * load 
+ */
+
+static Nsp@TYPENAME@  *@TYPEDOWNCASE@_xdr_load(NspSciFile  *F)
+{
+  Nsp@TYPENAME@ *M = NULL;
+  static char name[NAME_MAXL];
+  if ( XdrLoadString(F,name,NAME_MAXL) == FAIL) return @NULL@;
+  Scierror("@TYPEDOWNCASE@_xdr_load: to be implemented \n");
+  return M;
+}
+
+/*
+ * delete 
+ */
+
+void @TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H)
+{
+  FREE(NSP_OBJECT(H)->name);
+  FREE(H);
+}
+
+/*
+ * info 
+ */
+
+void @TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent)
+{
+  int i;
+  if ( H == @NULL@) 
+    {
+      Sciprintf("Null Pointer @TYPENAME@ \n");
+      return;
+    }
+  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
+  Sciprintf("[@TYPEASSTRING@ %s, col=%d th=%d]\n", NSP_OBJECT(H)->name,
+	    H->@TYPEDOWNCASE@_color,H->@TYPEDOWNCASE@_thickness);
+}
+
+/*
+ * print 
+ */
+
+void @TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent)
+{
+  @TYPEDOWNCASE@_info(H,indent);
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for @TYPENAME@ objects 
+ * Note that some of these functions could become MACROS XXXXX 
+ *-----------------------------------------------------*/
+
+Nsp@TYPENAME@   *@TYPEDOWNCASE@_object(NspObject *O)
+{
+  /** Follow pointer **/
+  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  /** Check type **/
+  if ( check_cast(O,nsp_type_@TYPEDOWNCASE@_id) == TRUE) return ((Nsp@TYPENAME@ *) O);
+  else 
+    Scierror("Error:\tArgument should be a %s\n",
+	     NSP_TYPE_OBJECT(nsp_type_@TYPEDOWNCASE@->surtype)->s_type());
+  return(NULL);
+}
+
+int Is@TYPENAME@Obj(Stack stack, int i)
+{
+  return ObjType(NthObj(i) , nsp_type_@TYPEDOWNCASE@_id);
+}
+
+int Is@TYPENAME@(NspObject *O)
+{
+  return ObjType(O,nsp_type_@TYPEDOWNCASE@_id);
+}
+
+Nsp@TYPENAME@  *Get@TYPENAME@Copy(Stack stack, int i)
+{
+  if (  Get@TYPENAME@(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+Nsp@TYPENAME@  *Get@TYPENAME@(Stack stack, int i)
+{
+  Nsp@TYPENAME@ *M;
+  if (( M = @TYPEDOWNCASE@_object(NthObj(i))) == @NULL@)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*-----------------------------------------------------
+ * constructor 
+ * if type is non NULL it is a subtype which can be used to 
+ * create a NspClassA instance 
+ *-----------------------------------------------------*/
+
+Nsp@TYPENAME@ *@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeBase *type)
+{
+  Nsp@TYPENAME@ *H  = (type == NULL) ? new_@TYPEDOWNCASE@() : type->new();
+  if ( H ==  @NULL@)
+    {
+      Sciprintf("No more memory\n");
+      return @NULL@;
+    }
+  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(@NULL@);
+  NSP_OBJECT(H)->ret_pos = -1 ;
+  H->@TYPEDOWNCASE@_color = color;
+  H->@TYPEDOWNCASE@_thickness = thickness;
+  return H;
+}
+
+/*
+ * copy 
+ */
+
+Nsp@TYPENAME@ *@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H)
+{
+  return @TYPEDOWNCASE@_create(NVOID,H->@TYPEDOWNCASE@_color,H->@TYPEDOWNCASE@_thickness,NULL);
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the @TYPENAME@
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+int int_@TYPESHORT@_create(Stack stack, int rhs, int opt, int lhs)
+{
+  Nsp@TYPENAME@ *H;
+  int color=-1,thickness=-1;
+
+  nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
+		      { "thickness",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  CheckRhs(0,2);
+  if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
+  if(( H = @TYPEDOWNCASE@_create(NVOID,color,thickness,NULL)) == @NULL@) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+/*------------------------------------------------------
+ * attributes  (set/get methods) 
+ *------------------------------------------------------*/
+
+static NspObject * int_@TYPESHORT@_get_color(void *Hv,char *attr)
+{
+  return ObjDouble(NVOID,((Nsp@TYPENAME@ *) Hv)->@TYPEDOWNCASE@_color);
+}
+
+static int int_@TYPESHORT@_set_color(void *Hv, char *attr, NspObject *O)
+{
+  int color; 
+  if (  IntScalar(O,&color) == FAIL) return FAIL;
+  ((Nsp@TYPENAME@ *)Hv)->@TYPEDOWNCASE@_color = color;
+  return OK ;
+}
+
+static NspObject * int_@TYPESHORT@_get_thickness(void *Hv, char *attr)
+{
+  return ObjDouble(NVOID,((Nsp@TYPENAME@ *) Hv)->@TYPEDOWNCASE@_thickness);
+}
+
+static int int_@TYPESHORT@_set_thickness(void *Hv, char *attr, NspObject *O)
+{
+  int thickness; 
+  if (  IntScalar(O,&thickness) == FAIL) return FAIL;
+  ((Nsp@TYPENAME@ *) Hv)->@TYPEDOWNCASE@_thickness = thickness;
+  return OK ;
+}
+
+static NspObject * int_@TYPESHORT@_get_val(void *Hv,char *attr)
+{
+  return (NspObject *) ((Nsp@TYPENAME@ *)Hv)->@TYPEDOWNCASE@_val;
+}
+
+static NspObject *int_@TYPESHORT@_get_object_val(void *Hv,char *str)
+{
+  return (NspObject *)  ((Nsp@TYPENAME@ *)Hv)->@TYPEDOWNCASE@_val;
+}
+
+static int int_@TYPESHORT@_set_val(void *Hv, char *attr, NspObject *O)
+{
+  NspMatrix *m;
+  if ((m = (NspMatrix *) ObjCopy(O)) == NULLMAT) return RET_BUG;
+  ((Nsp@TYPENAME@ *)Hv)->@TYPEDOWNCASE@_val = m;
+  return OK ;
+}
+
+static AttrTab @TYPEDOWNCASE@_attrs[] = {
+  { "@TYPESHORT@_color", 	int_@TYPESHORT@_get_color , 	int_@TYPESHORT@_set_color , 	NULL },
+  { "@TYPESHORT@_thickness",int_@TYPESHORT@_get_thickness, 	int_@TYPESHORT@_set_thickness,	NULL },
+  { "@TYPESHORT@_val", 	int_@TYPESHORT@_get_val, 	int_@TYPESHORT@_set_val, 	int_@TYPESHORT@_get_object_val },
+  { (char *) 0, NULL}
+};
+
+static AttrTab *@TYPEDOWNCASE@_get_attrs_table(void) { return @TYPEDOWNCASE@_attrs;};
+
+/*------------------------------------------------------
+ * methods 
+ *------------------------------------------------------*/
+
+static int int_@TYPESHORT@_@TYPEDOWNCASE@_color_change(void *a,Stack stack,int rhs,int opt,int lhs)
+{
+  int color; 
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if (GetScalarInt(stack,2,&color) == FAIL) return RET_BUG;
+  ((Nsp@TYPENAME@ *) a)->@TYPEDOWNCASE@_color = color;
+  NSP_OBJECT(a)->ret_pos = 1;
+  return 1;
+}
+
+static int int_@TYPESHORT@_@TYPEDOWNCASE@_color_show(void *a,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  Sciprintf("color of %s is %d\n",NSP_OBJECT(a)->name,((Nsp@TYPENAME@ *) a)->@TYPEDOWNCASE@_color);
+  return 0;
+}
+
+static NspMethods @TYPEDOWNCASE@_methods[] = {
+  { "@TYPEDOWNCASE@_color_change", int_@TYPESHORT@_@TYPEDOWNCASE@_color_change},
+  { "@TYPEDOWNCASE@_color_show",   int_@TYPESHORT@_@TYPEDOWNCASE@_color_show},
+  { (char *) 0, NULL}
+};
+
+static NspMethods *@TYPEDOWNCASE@_get_methods(void) { return @TYPEDOWNCASE@_methods;};
+
+
+/*-------------------------------------------
+ * function 
+ *-------------------------------------------*/
+
+int int_@TYPESHORT@_test(Stack stack, int rhs, int opt, int lhs)
+{
+  /* test */
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  Nsp@TYPENAME@ *a;
+  if (( a= Get@TYPENAME@(stack,1))== @NULL@) return RET_BUG;
+  ObjPrint((NspObject *) a,0);
+  return 0;
+}
+
+/*----------------------------------------------------
+ * Interface 
+ * i.e a set of function which are accessible at nsp level
+ *----------------------------------------------------*/
+
+static OpTab @TYPENAME@_func[]={
+  /* #include "@TYPEDOWNCASE@-in.nam" */ 
+  {"@TYPESHORT@_create",int_@TYPESHORT@_create}, 
+  {"setrowscols_@TYPESHORT@",int_set_attribute},
+  {"$dot_@TYPESHORT@",int_get_attribute},
+  {"$set_@TYPESHORT@",int_set_attributes},
+  {"test_@TYPESHORT@",int_@TYPESHORT@_test},
+  {(char *) 0, NULL}
+};
+
+/** call ith function in the @TYPENAME@ interface **/
+
+int @TYPENAME@_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+{
+  return (*(@TYPENAME@_func[i].fonc))(stack,rhs,opt,lhs);
+}
+
+/** used to walk through the interface table 
+    (for adding or removing functions) **/
+
+void @TYPENAME@_Interf_Info(int i, char **fname, function (**f))
+{
+  *fname = @TYPENAME@_func[i].name;
+  *f = @TYPENAME@_func[i].fonc;
+}
+
