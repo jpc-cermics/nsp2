@@ -52,7 +52,10 @@
 #define EXEC -31
 #define GLOBAL -32
 #define CLEARGLOBAL   -33
-#define NOTKEY  -34
+#define TRYCATCH    -34
+#define CATCH  -35 
+#define FINALLY  -36 
+#define NOTKEY  -37
 
 /*****************************
  * OPERATORS

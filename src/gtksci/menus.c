@@ -841,8 +841,18 @@ static void scig_menu_saveps(int winid)
     {
       if (strncmp(printer,"Postscript",10)==0 ) 
 	{
-	  /** Postscript*   **/
-	  scig_tops(winid,colored,file,"Pos",'n');
+	  /* this is to be changed to add k and d options */
+	  if ( strcmp(printer,"Postscript No Preamble") == 0) 
+	    scig_tops(winid,colored,file,"Pos",'n');
+	  else 
+	    {
+	      switch ( orientation ) 
+		{
+		case 1: scig_tops(winid,colored,file,"Pos",'l');break;
+		case 2: scig_tops(winid,colored,file,"Pos",'p');break;
+		case 3: scig_tops(winid,colored,file,"Pos",'k');break;
+		}
+	    }
 	}
       else if (strcmp(printer,"Xfig")==0)
 	{
@@ -859,13 +869,15 @@ static void scig_menu_saveps(int winid)
 	  /** PPM file **/
 	  scig_tops(winid,colored,file,"PPM",'n');
 	}
-      /* if Postscript is selected choose */
+#if 0 
+      /* this is to be changed no */
       if ( strcmp(printer,"Postscript No Preamble") != 0)
 	{
 	  sprintf(bufname,"$SCI/bin/scilab -%s %s %s",
 		  ( orientation == 1) ? "save_l" : "save_p",file,printer);
 	  system(bufname);
 	}
+#endif 
   }
 }
 

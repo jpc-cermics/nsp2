@@ -18,6 +18,7 @@
 static int sci_demo (char *fname,char *code,int flag) ;
 static void  nsp_gwin_clear(BCG *Xgc);
 static BCG *nsp_check_graphic_context(void);
+static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
 
 /*-----------------------------------------------------------
  * Check optional style argument 
@@ -431,12 +432,13 @@ int int_champ1( Stack stack, int rhs, int opt, int lhs)
 
 int int_contour( Stack stack, int rhs, int opt, int lhs)
 {
+  NspObject  *args = NULL,*fobj;/* when z is a function */
   BCG *Xgc;
   int *iflag,flagx,nnz=10;
   NspMatrix *x,*y,*z,*nz,*Mebox=NULL,*Mflag=NULL;
   double alpha=35.0,theta=45.0,zlev=0.0,*ebox ;
   char *leg=NULL;
-  int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
+  int_types T[] = {realmat,realmat,obj,realmat,new_opts, t_end} ;
 
   nsp_option opts[] ={{ "alpha",s_double,NULLOBJ,-1},
 		      { "ebox",realmat,NULLOBJ,-1},
@@ -448,10 +450,33 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
   
   if (rhs <= 0) { return sci_demo(stack.fname,"contour(1:5,1:10,rand(5,10),5);",1); }
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&nz,&opts,&alpha,&Mebox,&Mflag,&leg,&theta,&zlev) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&nz,&opts,&alpha,&Mebox,&Mflag,&leg,&theta,&zlev) == FAIL) return RET_BUG;
   
+
   CheckVector(stack.fname,1,x);
   CheckVector(stack.fname,2,y);
+
+  if ( IsNspPList(fobj) )
+    {
+      /* third argument can be a macro */
+      if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
+      if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) 
+	{
+	  nsp_object_destroy((NspObject **) &z);
+	  return RET_BUG;
+	}
+    }
+  else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
+    {
+      z =(NspMatrix *) fobj;
+    }
+  else
+    {
+      /* here we could accept list(z,colors) to emulate scilab code */
+      Scierror("%s: third argument should be a real matrix or a function\n",stack.fname);
+      return RET_BUG;
+    }
+
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
     Scierror("%s: third argument is a vector, expecting a matrix \r\n",stack.fname);
@@ -1037,6 +1062,9 @@ int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
  *   plot2dxx(x,y,[style,strf,leg,rect,nax])
  *-----------------------------------------------------------*/
 
+
+static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, NspObject *fargs);
+
 typedef int (*func_2d)(BCG *Xgc,char *,double *,double *,int *,int *,int *,char *,const char *,int,double *,int *);
 
 int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d func)
@@ -1045,12 +1073,37 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
   /* for 2d optional arguments; */
   int *istyle,*nax, frame= -1, axes=-1,ncurves,lcurve;
   NspMatrix *x,*y, *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
+  NspObject  *args = NULL,*fobj;/* when z is a function */
   double *rect ; 
   char *leg=NULL, *strf=NULL, *logflags = NULL, tflag='g', *leg_pos = NULL;
   int leg_posi;
-  int_types T[] = {realmat,realmat,new_opts, t_end} ;
+
+  int_types T[] = {realmat,obj,new_opts, t_end} ;
   
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&x,&fobj,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL)
+    return RET_BUG;
+
+  if ( IsNspPList(fobj) )
+    {
+      /* third argument can be a macro */
+      if ((y = nsp_matrix_create(NVOID,'r',x->m,x->n))== NULL) return RET_BUG;
+      if ( plot2d_build_y(stack,x,y,fobj,args)== FAIL) 
+	{
+	  nsp_object_destroy((NspObject **) &y);
+	  return RET_BUG;
+	}
+    }
+  else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
+    {
+      y =(NspMatrix *) fobj;
+    }
+  else
+    {
+      /* here we could accept list(z,colors) to emulate scilab code */
+      Scierror("%s: second argument should be a real matrix or a function\n",stack.fname);
+      return RET_BUG;
+    }
+
 
   /* decide what to do according to (x,y) dimensions */ 
 
@@ -1215,6 +1268,64 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
 }
 
 
+
+/* 
+ * build y from f(x,fargs)
+ */
+
+static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, NspObject *fargs)
+{
+  NspObject *targs[4];
+  NspObject *nsp_ret;
+  int nret = 1,nargs = 1;
+  NspMatrix *xi;
+  NspObject *func, *args = NULL;
+  int ret = FAIL,i;
+  if (( func =nsp_object_copy(f)) == NULL) return RET_BUG;
+  if ((nsp_object_set_name(func,"plot2d_build")== FAIL)) return RET_BUG;
+  /** extra arguments **/
+  if ( fargs != NULL ) 
+    {
+      if (( args =nsp_object_copy(fargs)) == NULL ) return RET_BUG;
+      if ((nsp_object_set_name(args,"arg")== FAIL)) return RET_BUG;
+    }
+  if ((xi = nsp_matrix_create("xi",'r',1,1))== NULL) return RET_BUG;
+
+  if (fargs != NULL ) 
+    {
+      targs[1]=(NspObject *) args;
+      nargs= 2;
+    }
+
+  for ( i= 0 ; i < x->mn ; i++) 
+    {
+      xi->R[0]= x->R[i];
+      targs[0] =(NspObject *) xi;
+      if ( targs[0]== NULL )   goto end;
+      /* FIXME : a changer pour metre une fonction eval standard */
+      if ( nsp_gtk_eval_function((NspPList *)func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+	goto end;
+      if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' && ((NspMatrix *) nsp_ret)->mn==1 )
+	{
+	  y->R[i]= ((NspMatrix *) nsp_ret)->R[0];
+	}
+      else 
+	{
+	  Scierror("%s: evaluation failed for y(%d)\n",stack.fname,i+1);
+	  goto end; 
+	}
+    }
+  ret = OK;
+ end:
+  {
+    if ( fargs != NULL)nsp_object_destroy(&args);
+    nsp_object_destroy(&func);
+    nsp_object_destroy((NspObject **)&xi);
+    return ret;
+  }
+}
+
+
 static int int_plot2d( Stack stack, int rhs, int opt, int lhs)
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
@@ -1272,25 +1383,47 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
 			 { "style",mat_int,NULLOBJ,-1},
 			 { "zminmax",mat,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
-  
+  NspObject  *args = NULL,*fobj;/* when z is a function */
   /* for 2d optional arguments; */
   int *istyle,*nax, frame= -1, axes=-1, remap=TRUE,shade=FALSE;
   NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mcolout=NULL;
   double *rect ; 
   char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
   int leg_posi;
-  int_types T[] = {realmat,realmat,realmat,new_opts, t_end} ;
+  int_types T[] = {realmat,realmat,obj,new_opts, t_end} ;
   /* */
   BCG *Xgc;
   NspMatrix *x,*y,*z; 
 
   if ( rhs <= 0) {return sci_demo(stack.fname, "t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);",1);}
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts_mp,&axes,&Mcolminmax,&Mcolout,&frame,&leg,&leg_pos,
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&opts_mp,&axes,&Mcolminmax,&Mcolout,&frame,&leg,&leg_pos,
 	       &logflags,&Mnax,&Mrect,&remap,&shade,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
 
   CheckVector(stack.fname,1,x);
   CheckVector(stack.fname,2,y);
+
+  if ( IsNspPList(fobj) )
+    {
+      /* third argument can be a macro */
+      if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
+      if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) 
+	{
+	nsp_object_destroy((NspObject **) &z);
+	  return RET_BUG;
+	}
+    }
+  else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
+    {
+      z =(NspMatrix *) fobj;
+    }
+  else
+    {
+      /* here we could accept list(z,colors) to emulate scilab code */
+      Scierror("%s: third argument should be a real matrix or a function\n",stack.fname);
+      return RET_BUG;
+    }
+
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
     Scierror("%s: third argument is a vector, expecting a matrix \r\n",stack.fname);

@@ -1358,6 +1358,11 @@ static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
  *
  * Initialize the postscrip driver 
  * if wdim is non null it will be used as window dimensions 
+ * mode = 'p': portrait 
+ *        'l': landscape 
+ *        'k': keep window sizes 
+ *        'd': default
+ *        'n': no_header 
  *------------------------------------------------------*/
 
 static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
