@@ -3450,6 +3450,67 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/*
+ * NspMatrix back division  Res= A\B  
+ * with special cases Mat * [] and Mat * scalar
+ * contributed by Bruno Pincon.
+ */
+
+static int
+int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *HMat1, *HMat2, *HMat3;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ((HMat1 = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
+    return RET_BUG;
+
+  if (HMat1->mn == 0)
+    {
+      if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
+      NSP_OBJECT (HMat1)->ret_pos = 1;
+      return 1;
+    }
+  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
+    return RET_BUG;
+  if (HMat2->mn == 0)
+    {
+      if ( HMat1 == HMat2 ) 
+	{
+	  NthObj(2) = NULLOBJ;
+	  NSP_OBJECT (HMat1)->ret_pos = 1;
+	}
+      else 
+	{
+	  /* flag == 1 ==> A op [] returns [] * */
+	  NSP_OBJECT (HMat2)->ret_pos = 1;
+	}
+      return 1;
+    }
+
+  if ( HMat1->m != HMat2->m )  /* FIXME : the scalar case must be treated one day */
+    {
+      Scierror("Error:\tIncompatible dimensions\n", stack.fname);
+      return RET_BUG;
+    }
+
+  /* get a copy of A and B (if needed...) */
+  if ((HMat1 = GetMatCopy (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if ((HMat2 = GetMatCopy (stack, 2)) == NULLMAT)
+    return RET_BUG;
+
+  if ((HMat3 = nsp_mat_bdiv (HMat1, HMat2)) == NULLMAT)
+    return RET_BUG;
+
+  NSP_OBJECT (HMat2)->ret_pos = 1;  /* ceci car HMat2 et HMat3 pointent sur le même objet */
+
+  return 1;
+}
+
 
 /*
  * A / B 
@@ -3737,6 +3798,7 @@ static OpTab Matrix_func[] = {
   {"ceil_m", int_mxceil},
   {"modulo_m_m", int_mxmodulo},
   {"idiv_m_m", int_mxidiv},
+  {"bdiv_m_m", int_mxbdiv},
   {"int_m", int_mxint},
   {"floor_m", int_mxfloor},
   {"round_m", int_mxround},

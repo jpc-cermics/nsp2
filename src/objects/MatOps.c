@@ -26,6 +26,7 @@
 #include "nsp/cnumeric.h"
 #include "nsp/matutil.h"
 #include "nsp/gsort-p.h"
+#include "nsp/lapack-c.h"
 
 #include <nsp/blas.h>
 #include <nsp/matutil.h>
@@ -230,6 +231,110 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
   return(Loc);
 }
 
+/*
+ *   Res=nsp_mat_bdiv(A,B) A \ B. Contributed by Bruno Pincon
+ */
+
+NspMatrix *nsp_mat_bdiv(NspMatrix *A, NspMatrix *B)
+{  
+  int mA = A->m, nA = A->n, mB = B->m, nB = B->n; /* mA must be equal to mB */
+  int mx = A->n, nx = B->n, ldB, ix, iB, j;
+  int *jpvt = NULL, info, lwork, rank;
+  double *work = NULL, qwork[2], *rwork = NULL;
+  double rcond = DBL_EPSILON;  /* FIXME to be choosen more correctly */
+
+  /* FIXME: I have choosen an easy way :
+   *        - use the high level lapack driver dgelsy, zgelsy
+   *          which is too much is A is square... (in this case
+   *          it is cheaper to do the job with a LU factorization)
+   *        - when B is complex while A is real, something
+   *          better than complexify A can be done
+   */
+  if ( A->rc_type == 'i' ) 
+    {
+      if ( B->rc_type == 'r' ) 
+	{
+	  if (nsp_mat_set_ival(B,0.00) == FAIL ) return(NULLMAT);
+	}
+    }
+  else 
+    { 
+      if ( B->rc_type == 'i' ) 
+	{
+	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return(NULLMAT);
+	}
+    }
+
+  if ( mx > mB )  
+    /* enlarge B so that it can contains the solution x (needed by lapack) */
+    {
+      iB = B->mn-1;
+      if ((nsp_matrix_resize(B,mx,nx)) ==  FAIL) return(NULLMAT);
+      if ( B->rc_type == 'r' )
+	for ( j = nB-1 ; j > 0 ; j--)   /* the first column is already good (so j>0) */
+	  for ( ix = j*mx+mB-1 ; ix >= j*mx ; ix--, iB-- )
+	    B->R[ix] = B->R[iB];
+      else
+	for ( j = nB-1 ; j > 0 ; j--)   /* the first column is already good (so j>0) */
+	  for ( ix = j*mx+mB-1 ; ix >= j*mx ; ix--, iB-- )
+	    B->I[ix] = B->I[iB];
+      ldB = mx;
+    } 
+  else
+    ldB = mB;
+
+  if ( !(jpvt = calloc( nA , sizeof(int))))  /* calloc because jpvt must be initialized with 0 */
+    goto err;
+       
+  if ( A->rc_type == 'r' )
+    { 
+      lwork = -1;  /* query work size */
+      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, qwork, &lwork, &info);
+      lwork = (int) qwork[0];
+      if ( !(work = malloc( lwork*sizeof(double)))) goto err;
+      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, work, &lwork, &info);
+    }
+  else 
+    {
+      lwork = -1;  /* query work size */
+      C2F(zgelsy)(&mA, &nA, &nB, A->I, &mA, B->I, &ldB, jpvt, &rcond, &rank, (doubleC *)qwork, &lwork, rwork, &info);
+      lwork = (int) qwork[0];
+      rwork = malloc( 2*nA*sizeof(double)); 
+      work = malloc( 2*lwork*sizeof(double));
+      if ( ! (rwork && work) ) goto err;
+      C2F(zgelsy)(&mA, &nA, &nB, A->I, &mA, B->I, &ldB, jpvt, &rcond, &rank,  (doubleC *)work, &lwork, rwork, &info);
+    }
+  
+  if ( mx < mB )   /* free a part of B which is not needed */
+    {
+      /* first compress B (the solution x is in B but with a "leading" 
+       * dimension mB  => transform with a "leading" dimension mx ...) 
+       */
+      ix = mx;
+      if ( B->rc_type == 'r' )
+	for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
+	  for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
+	    B->R[ix] = B->R[iB];
+      else
+	for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
+	  for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
+	    B->I[ix] = B->I[iB];
+      /* now we can free the part of B which is not used anymore */
+      if (  nsp_matrix_resize(B, mx, nx) == FAIL )
+	goto err;
+    }
+
+  free(jpvt); free(rwork); free(work);
+  if ( rank < Min(mA,nA) )
+    Sciprintf("\n warning: matrix is rank-deficient m=%d, n=%d, rank=%d \n", mA, nA, rank);
+
+  return B;
+
+ err:
+  free(jpvt); free(rwork); free(work);
+  return NULLMAT;
+      
+}
 
 /*
  * term to term addition : the general case 
@@ -491,19 +596,19 @@ int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind,int j,int flag)
   if (  SameDim(A,B) )
     {
       for ( i = 0; i < A->mn ; i++ ) 
-	if  (A->R[i] <  B->R[i] ) 
+	if  ( ISNAN(A->R[i])  ||  A->R[i] <  B->R[i] ) 
 	  {
 	    A->R[i] = B->R[i] ;
-	    if (flag == 1) Ind->R[i] = j;
+	    if ( flag == 1  &&  !ISNAN(B->R[i]) ) Ind->R[i] = j;
 	  }
     }
   else if ( B->mn == 1) 
     {
       for ( i = 0; i < A->mn ; i++ ) 
-	if  (A->R[i] <  B->R[0] ) 
+	if  ( ISNAN(A->R[i])  ||  A->R[i] <  B->R[0] ) 
 	  {
 	    A->R[i] = B->R[0] ;
-	    if (flag == 1) Ind->R[i] = j;
+	    if (flag == 1  &&  !ISNAN(B->R[0]) ) Ind->R[i] = j;
 	  }
     }
   else if ( A->mn == 1) 
@@ -519,10 +624,10 @@ int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind,int j,int flag)
 	nsp_mat_set_rval(Ind,indval);
 	}
       for ( i = 0; i < A->mn ; i++ ) 
-	if  ( aval < B->R[i] ) 
+	if  ( ISNAN(aval)  ||  aval < B->R[i] ) 
 	  {
 	    A->R[i] = B->R[i] ;
-	    if (flag == 1) Ind->R[i] = j;
+	    if ( flag == 1  &&  !ISNAN(B->R[i]) ) Ind->R[i] = j;
 	  }
 	else
 	  A->R[i] = aval;
@@ -541,7 +646,7 @@ int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind,int j,int flag)
  *  Ind(k,l) is set to j if B(k,l) realize the max and flag ==1 
  *  if flag == 0 Ind is unused and can be null
  *  B unchanged A changed, A is enlarged if necessary 
- *  A and B must have same size or be scalars. 
+ *  A and B must have same size or be scalars.
  */
 
 int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, integer j, integer flag)
@@ -550,19 +655,19 @@ int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, integer j, integ
   if (  SameDim(A,B) )
     {
       for ( i = 0; i < A->mn ; i++ ) 
-	if  (A->R[i] >  B->R[i] ) 
+	if  ( ISNAN(A->R[i]) ||  A->R[i] >  B->R[i] ) 
 	  {
 	    A->R[i] = B->R[i] ;
-	    if (flag == 1) Ind->R[i] = j;
+	    if ( flag == 1  &&  !ISNAN(B->R[i]) ) Ind->R[i] = j;
 	  }
     }
   else if ( B->mn == 1) 
     {
       for ( i = 0; i < A->mn ; i++ ) 
-	if  (A->R[i] >  B->R[0] ) 
+	if  ( ISNAN(A->R[i])  || A->R[i] >  B->R[0] ) 
 	  {
 	    A->R[i] = B->R[0] ;
-	    if (flag == 1) Ind->R[i] = j;
+	    if ( flag == 1  &&  !ISNAN(B->R[0]) ) Ind->R[i] = j;
 	  }
     }
   else if ( A->mn == 1) 
@@ -571,10 +676,10 @@ int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, integer j, integ
       double aval = A->R[0];
       if ( nsp_matrix_resize(A,B->m,B->n) == FAIL) return FAIL;
       for ( i = 0; i < A->mn ; i++ ) 
-	if  ( aval > B->R[i] ) 
+	if  ( ISNAN(aval) ||  aval > B->R[i] ) 
 	  {
 	    A->R[i] = B->R[i] ;
-	    if (flag == 1) Ind->R[i] = j;
+	    if ( flag == 1  &&  !ISNAN(B->R[i]) ) Ind->R[i] = j;
 	  }
 	else
 	  A->R[i] = aval;
