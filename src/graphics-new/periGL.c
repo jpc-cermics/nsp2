@@ -3627,16 +3627,15 @@ static void nsp_ogl_set_view(BCG *Xgc)
   else
     {
       double xs,ys;
-      double dist=10.0;
       double theta = Xgc->scales->theta;
       double alpha = Xgc->scales->alpha;
       double cost=cos((theta)*M_PI/180.0);
       double sint=sin((theta)*M_PI/180.0);
       double cosa=cos((alpha)*M_PI/180.0);
       double sina=sin((alpha)*M_PI/180.0);
-      double cx=(Xgc->scales->bbox1[0]+ Xgc->scales->bbox1[1])/2.0;
-      double cy=(Xgc->scales->bbox1[2]+ Xgc->scales->bbox1[3])/2.0;
-      double cz=(Xgc->scales->bbox1[4]+ Xgc->scales->bbox1[5])/2.0;
+      double cx= Xgc->scales->c[0];
+      double cy= Xgc->scales->c[1];
+      double cz= Xgc->scales->c[2];
       /* radius and center of the sphere circumscribing the box */
       double dx=Xgc->scales->bbox1[1]-Xgc->scales->bbox1[0]; 
       double dy=Xgc->scales->bbox1[3]-Xgc->scales->bbox1[2]; 
@@ -3649,13 +3648,11 @@ static void nsp_ogl_set_view(BCG *Xgc)
        */
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity ();
-      /*
-	gluLookAt (cx+R*cost*sina,
-	cy+R*sint*sina,
-	cz+R*cosa,
-	cx,cy,cz,
-	0,0,1);
-      */
+      gluLookAt (cx+R*cost*sina,
+		 cy+R*sint*sina,
+		 cz+R*cosa,
+		 cx,cy,cz,
+		 0,0,1);
       /*
        * Il vaut mieux faire comme ça 
        * pour que la boite englobante soit correcte 
@@ -3663,12 +3660,13 @@ static void nsp_ogl_set_view(BCG *Xgc)
        * point et surtout near et far !!!!!
        * qui sont important pour l'élimination des parties cachées
        */
-      R=50;
-      gluLookAt (R*cost*sina,
-		 R*sint*sina,
-		 R*cosa,
-		 0,0,0,
-		 0,0,1);
+      /* R=50;
+	 gluLookAt (R*cost*sina,
+	 R*sint*sina,
+	 R*cosa,
+	 0,0,0,
+	 0,0,1);
+      */
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
 
@@ -3690,7 +3688,7 @@ static void nsp_ogl_set_view(BCG *Xgc)
 	      Xgc->scales->frect[2]+xs*Xgc->scales->axis[1],
 	      Xgc->scales->frect[1]-ys*Xgc->scales->axis[3],
 	      Xgc->scales->frect[3]+ys*Xgc->scales->axis[2],
-	      -2000.0,2000.0);
+	      -2*R,2*R);
       /* Xgc->scales->zfrect[0],Xgc->scales->zfrect[1]); */
       glMatrixMode(GL_MODELVIEW);
     }

@@ -64,10 +64,15 @@ static void  nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y,
 				      double *teta, double *alpha, char *legend, int *flag, double *bbox,
 				      double *zmin,double *zmax, nsp_plot3d_type t);
 
-static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, char *legend, double *bbox);
+static void AxesStrings(BCG *Xgc,int axflag,const nsp_box_3d *box, char *legend);
 
-static void draw_3d_tics(BCG *Xgc,int axflag,int ixbox[],int iybox[],int xind[],int i1,int i2,int i3,int i4,int x,int y,int flag, 
-		    double ang,char *leg,double *bbox,int axis_flag, int xdir,int ofset);
+static void draw_3d_tics(BCG *Xgc,const nsp_box_3d *box,int axflag,int i1,int i2,int i3,int i4,int x,int y,int flag, 
+			 double ang,char *leg,int axis_flag, int xdir,int ofset);
+
+static void BBoxToval(double *x, double *y, double *z, int ind,const double *bbox);
+
+static int nsp_plot_box3d(BCG *Xgc, nsp_box_3d *box);
+static int nsp_plot_box3d_ogl(BCG *Xgc,nsp_box_3d *box);
 
 /* FIXME 
  */
@@ -75,7 +80,7 @@ static void draw_3d_tics(BCG *Xgc,int axflag,int ixbox[],int iybox[],int xind[],
 extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
 extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
-static void DrawAxis_ogl(BCG *Xgc,double *xbox,double *ybox,double *zbox, int *Indices, int style);
+static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
 
 
 /*-------------------------------------------------------------------------
@@ -182,11 +187,11 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 			 double *x, double *y, double *z, int *p, int *q, 
 			 double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static int InsideU[4],InsideD[4],fg,fg1,dc;
+  nsp_box_3d box;
+  static int fg,fg1,dc;
   /* solid = color of 3D frame */
   int polysize,npoly,whiteid;
   int *polyx,*polyy,*fill;
-  double xbox[8],ybox[8],zbox[8];
   static int cache;
   static double zmin,zmax;
   int i,j;
@@ -205,22 +210,22 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 	store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
     }
 
-  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+  SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
   /* Calcule l' Enveloppe Convex de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[2],bbox);
+  Convex_Box(Xgc,&box,legend,flag[2]);
   /* Le triedre cach\'e **/
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+  if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      cache=InsideD[0];
-      if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
+      cache=box.InsideD[0];
+      if (flag[2] >=2 ) DrawAxis(Xgc,&box,'D',fg1);
     }
   else 
     {
-      cache=InsideU[0]-4;
-      if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
+      cache=box.InsideU[0]-4;
+      if (flag[2] >=2 )DrawAxis(Xgc,&box,'U',fg1);
     }
   polyx = graphic_alloc(0,5*(*q),sizeof(int));
   polyy = graphic_alloc(1,5*(*q),sizeof(int));
@@ -300,10 +305,10 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   if ( flag[2] >=3 )
     {
       /* Le triedre que l'on doit voir **/
-      if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
+      if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
+	DrawAxis(Xgc,&box,'U',fg);
       else 
-	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
+	DrawAxis(Xgc,&box,'D',fg);
     }
 }
 
@@ -401,10 +406,11 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, 
 
 static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static int InsideU[4],InsideD[4],fg1;
+  nsp_box_3d box;
+  static int fg1;
   int polysize,npoly,whiteid;
   int *polyx,*polyy,*locindex,fill[4]; /* Modified by polpoth 4/5/2000 fill[4] instead of fill[1] */
-  double xbox[8],ybox[8],zbox[8],*polyz;
+  double *polyz;
   static int cache;
   static double zmin,zmax;
   int i;
@@ -424,22 +430,22 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   }
 
-  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+  SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
   /* Calcule l' Enveloppe Convex de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[2],bbox);
+  Convex_Box(Xgc,&box,legend,flag[2]);
   /* Le triedre cach\'e **/
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;  
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+  if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      cache=InsideD[0];
-      if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
+      cache=box.InsideD[0];
+      if (flag[2] >=2 )DrawAxis(Xgc,&box,'D',fg1);
     }
   else 
     {
-      cache=InsideU[0]-4;
-      if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
+      cache=box.InsideU[0]-4;
+      if (flag[2] >=2 )DrawAxis(Xgc,&box,'U',fg1);
     }
   polyz = graphic_alloc(5,(*q),sizeof(double));
   if ( (polyz == NULL) && (*q) != 0)
@@ -571,10 +577,10 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
       int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /* Le triedre que l'on doit voir **/
-      if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
+      if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
+	DrawAxis(Xgc,&box,'U',fg);
       else 
-	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
+	DrawAxis(Xgc,&box,'D',fg);
     }
 }
 
@@ -660,8 +666,7 @@ int DPoints(BCG *Xgc,int *polyx, int *polyy, int *fill, int whiteid, double zmin
 
 int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static int InsideU[4],InsideD[4];
-  static double xbox[8],ybox[8],zbox[8];
+  nsp_box_3d box;
   int style[1],j;
   static int init;
   static int *xm,*ym;
@@ -671,7 +676,7 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       nsp_param3d_ogl(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
-      return;
+      return 0;
     }
 
   nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,n,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
@@ -682,21 +687,21 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
 
   /* take care here flag[0] is used */
-  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[0]+1)/2);
+  SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[0]+1)/2);
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[1],bbox);
+  Convex_Box(Xgc,&box,legend,flag[1]);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /* Le triedre cache **/
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+  if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      /* cache=InsideD[0];*/
-      if (flag[1] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
+      /* cache=box.InsideD[0];*/
+      if (flag[1] >=2 ) DrawAxis(Xgc,&box,'D',fg1);
     }
   else 
     {
-      /* cache=InsideU[0]-4; */
-      if (flag[1] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
+      /* cache=box.InsideU[0]-4; */
+      if (flag[1] >=2 ) DrawAxis(Xgc,&box,'U',fg1);
     }
 
   xm = graphic_alloc(0,(*n),sizeof(int));
@@ -734,10 +739,10 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
       int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /* Le triedre que l'on doit voir **/
-      if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
+      if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
+	DrawAxis(Xgc,&box,'U',fg);
       else 
-	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
+	DrawAxis(Xgc,&box,'D',fg);
     }
   return(0);
 }
@@ -749,8 +754,7 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
 
 int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static int InsideU[4],InsideD[4];
-  static double xbox[8],ybox[8],zbox[8];
+  nsp_box_3d box;
   int style[1],j;
   static int init;
   static int *xm,*ym;
@@ -772,22 +776,22 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
 
   /* take care here flag[0] is used */
-  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[0]+1)/2);
+  SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[0]+1)/2);
 
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[1],bbox);
+  Convex_Box(Xgc,&box,legend,flag[1]);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /* Le triedre cache **/
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+  if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      /* cache=InsideD[0];*/
-      if (flag[1] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
+      /* cache=box.InsideD[0];*/
+      if (flag[1] >=2 ) DrawAxis(Xgc,&box,'D',fg1);
     }
   else 
     {
-      /* cache=InsideU[0]-4; */
-      if (flag[1] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
+      /* cache=box.InsideU[0]-4; */
+      if (flag[1] >=2 ) DrawAxis(Xgc,&box,'U',fg1);
     }
 
   xm = graphic_alloc(0,(*m),sizeof(int));
@@ -830,10 +834,10 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
       int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /* Le triedre que l'on doit voir **/
-      if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
+      if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
+	DrawAxis(Xgc,&box,'U',fg);
       else 
-	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
+	DrawAxis(Xgc,&box,'D',fg);
     }
   return(0);
 }
@@ -843,25 +847,26 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
  * box3d 
  *-------------------------------------------------------------------*/
 
-int nsp_plot_box3d(BCG *Xgc,double *xbox, double *ybox, double *zbox)
+static int nsp_plot_box3d(BCG *Xgc, nsp_box_3d *box)
 {
-  static int InsideU[4],InsideD[4],flag[]={1,1,3},fg,fg1;
+  static int flag[]={1,1,3},fg,fg1;
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,"X@Y@Z",flag[2],Xgc->scales->bbox1);
+  /* FIXME: Convex_Box(Xgc,xbox,ybox,zbox,box.InsideU,box.InsideD,"X@Y@Z",flag[2],Xgc->scales->bbox1); */
+  Convex_Box(Xgc,box,"X@Y@Z",flag[2]);
   /* le triedre vu **/
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
-    DrawAxis(Xgc,xbox,ybox,InsideU,fg);
+  if ( box->z[box->InsideU[0]] > box->z[box->InsideD[0]])
+    DrawAxis(Xgc,box,'U',fg);
   else 
-    DrawAxis(Xgc,xbox,ybox,InsideD,fg);
+    DrawAxis(Xgc,box,'D',fg);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
   /* Le triedre cache **/
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
-      DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
+  if (box->z[box->InsideU[0]] > box->z[box->InsideD[0]])
+      DrawAxis(Xgc,box,'D',fg1);
   else 
-      DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
+      DrawAxis(Xgc,box,'U',fg1);
   return(0);
 }
 
@@ -891,16 +896,13 @@ int nsp_geom3d(BCG *Xgc,double *x, double *y, double *z, int *n)
  * functions for 3D scales 
  *-------------------------------------------------------------------*/
 
-void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, double *teta, double *alpha, int flag)
+void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag)
 {
   double xmmin,ymmax,xmmax,ymmin,FRect[4],WRect[4],ARect[4];
-  int ib;
-  static int aaint[]={2,10,2,10};
-  int wdim[2];
+  double R,xo,yo,zo,dx,dy,dz,hx,hy,hx1,hy1;
+  double cost,sint,cosa,sina;
+  int ib, i, aaint[]={2,10,2,10},wdim[2], wmax,hmax;
   char logf[2];
-  double R,xo,yo,zo,dx,dy,dz,hx,hy,hx1,hy1,Teta=*teta,Alpha=*alpha;
-  int wmax,hmax;
-  static double cost=0.5,sint=0.5,cosa=0.5,sina=0.5;
 
   Xgc->scales->scale_flag3d = 1;
   Xgc->scales->alpha = Alpha;
@@ -928,40 +930,37 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
   for (ib=0;ib<6 ;ib++) 
     { 
       if (flag==0) 
-	bbox[ib]=Xgc->scales->bbox1[ib];
+	box->bbox[ib]=Xgc->scales->bbox1[ib];
       else 
-	Xgc->scales->bbox1[ib]=bbox[ib];
+	box->bbox[ib]=Xgc->scales->bbox1[ib]=bbox[ib];
     }
-  xbox[0]=TRX(bbox[0],bbox[2],bbox[4]);
-  ybox[0]=TRY(bbox[0],bbox[2],bbox[4]);
-  zbox[0]=TRZ(bbox[0],bbox[2],bbox[4]);
-  xbox[1]=TRX(bbox[0],bbox[3],bbox[4]);
-  ybox[1]=TRY(bbox[0],bbox[3],bbox[4]);
-  zbox[1]=TRZ(bbox[0],bbox[3],bbox[4]);
-  xbox[2]=TRX(bbox[1],bbox[3],bbox[4]);
-  ybox[2]=TRY(bbox[1],bbox[3],bbox[4]);
-  zbox[2]=TRZ(bbox[1],bbox[3],bbox[4]);
-  xbox[3]=TRX(bbox[1],bbox[2],bbox[4]);
-  ybox[3]=TRY(bbox[1],bbox[2],bbox[4]);
-  zbox[3]=TRZ(bbox[1],bbox[2],bbox[4]);
-  xbox[4]=TRX(bbox[0],bbox[2],bbox[5]);
-  ybox[4]=TRY(bbox[0],bbox[2],bbox[5]);
-  zbox[4]=TRZ(bbox[0],bbox[2],bbox[5]);
-  xbox[5]=TRX(bbox[0],bbox[3],bbox[5]);
-  ybox[5]=TRY(bbox[0],bbox[3],bbox[5]);
-  zbox[5]=TRZ(bbox[0],bbox[3],bbox[5]);
-  xbox[6]=TRX(bbox[1],bbox[3],bbox[5]);
-  ybox[6]=TRY(bbox[1],bbox[3],bbox[5]);
-  zbox[6]=TRZ(bbox[1],bbox[3],bbox[5]);
-  xbox[7]=TRX(bbox[1],bbox[2],bbox[5]);
-  ybox[7]=TRY(bbox[1],bbox[2],bbox[5]);
-  zbox[7]=TRZ(bbox[1],bbox[2],bbox[5]);
+
+  Xgc->scales->c[0]=( box->bbox[0]+box->bbox[1])/2.0;
+  Xgc->scales->c[1]=( box->bbox[2]+box->bbox[3])/2.0; 
+  Xgc->scales->c[2]=( box->bbox[4]+box->bbox[5])/2.0;
+
+  box->x_r[0]=box->bbox[0]; box->y_r[0]=box->bbox[2];  box->z_r[0]=box->bbox[4];
+  box->x_r[1]=box->bbox[0]; box->y_r[1]=box->bbox[3];  box->z_r[1]=box->bbox[4];
+  box->x_r[2]=box->bbox[1]; box->y_r[2]=box->bbox[3];  box->z_r[2]=box->bbox[4];
+  box->x_r[3]=box->bbox[1]; box->y_r[3]=box->bbox[2];  box->z_r[3]=box->bbox[4];
+  box->x_r[4]=box->bbox[0]; box->y_r[4]=box->bbox[2];  box->z_r[4]=box->bbox[5];
+  box->x_r[5]=box->bbox[0]; box->y_r[5]=box->bbox[3];  box->z_r[5]=box->bbox[5];
+  box->x_r[6]=box->bbox[1]; box->y_r[6]=box->bbox[3];  box->z_r[6]=box->bbox[5];
+  box->x_r[7]=box->bbox[1]; box->y_r[7]=box->bbox[2];  box->z_r[7]=box->bbox[5];
+
+  for ( i = 0 ; i < 8 ; i++) 
+    {
+      box->x[i]=TRX(box->x_r[i],box->y_r[i],box->z_r[i]);
+      box->y[i]=TRY(box->x_r[i],box->y_r[i],box->z_r[i]);
+      box->z[i]=TRZ(box->x_r[i],box->y_r[i],box->z_r[i]);
+    }
+
   /* Calcul des echelles en fonction de la taille du dessin **/
   if ( flag == 1 || flag == 3 )
     {
-      xmmin=  (double) Mini(xbox,8L);xmmax= (double) Maxi(xbox,8L);
-      ymmax=  (double) - Mini(ybox,8L);
-      ymmin=  (double) - Maxi(ybox,8L);
+      xmmin=  (double) Mini(box->x,8L);xmmax= (double) Maxi(box->x,8L);
+      ymmax=  (double) - Mini(box->y,8L);
+      ymmin=  (double) - Maxi(box->y,8L);
     }
   
   /* code added by es: isoview scaling */
@@ -979,11 +978,11 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
   if ( flag == 2 )
     {
       /* radius and center of the sphere circumscribing the box */
-      dx=bbox[1]-bbox[0]; dy=bbox[3]-bbox[2]; dz=bbox[5]-bbox[4];
+      dx=box->bbox[1]-box->bbox[0]; dy=box->bbox[3]-box->bbox[2]; dz=box->bbox[5]-box->bbox[4];
       R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2;
-      xo= (double) (xbox[0]+xbox[6])/2 ;
-      yo= (double) (ybox[0]+ybox[6])/2 ;
-      zo= (double) (zbox[0]+zbox[6])/2 ;
+      xo= (double) (box->x[0]+box->x[6])/2 ;
+      yo= (double) (box->y[0]+box->y[6])/2 ;
+      zo= (double) (box->z[0]+box->z[6])/2 ;
       xmmin=  (double) xo - R ;
       xmmax=  (double) xo + R ;
       ymmax=  (double) -yo + R ;
@@ -1013,42 +1012,10 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
        set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
        Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
        /* this is used by opengl for zmin zmax and depth */
-       Xgc->scales->zfrect[0]= (double) Mini(zbox,8L);
-       Xgc->scales->zfrect[1]= (double) Maxi(zbox,8L);
+       Xgc->scales->zfrect[0]= (double) Mini(box->z,8L);
+       Xgc->scales->zfrect[1]= (double) Maxi(box->z,8L);
      }
   /* end of code added by es */
-
-  /* for OpenGL the transformation is made 
-   * by OpenGL later during drawing
-   */
-
-  if ( Xgc->graphic_engine == &GL_gengine ) 
-    {
-      xbox[0]=bbox[0];
-      ybox[0]=bbox[2];
-      zbox[0]=bbox[4];
-      xbox[1]=bbox[0];
-      ybox[1]=bbox[3];
-      zbox[1]=bbox[4];
-      xbox[2]=bbox[1];
-      ybox[2]=bbox[3];
-      zbox[2]=bbox[4];
-      xbox[3]=bbox[1];
-      ybox[3]=bbox[2];
-      zbox[3]=bbox[4];
-      xbox[4]=bbox[0];
-      ybox[4]=bbox[2];
-      zbox[4]=bbox[5];
-      xbox[5]=bbox[0];
-      ybox[5]=bbox[3];
-      zbox[5]=bbox[5];
-      xbox[6]=bbox[1];
-      ybox[6]=bbox[3];
-      zbox[6]=bbox[5];
-      xbox[7]=bbox[1];
-      ybox[7]=bbox[2];
-      zbox[7]=bbox[5];
-    }
 }
 
 /*----------------------------------------------------------------
@@ -1056,17 +1023,18 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
  * constituent le triedre dans les tableaux xbox et ybox 
  *-----------------------------------------------------------------*/ 
 
-void DrawAxis(BCG *Xgc,double *xbox, double *ybox, int *Indices, int style)
+void DrawAxis(BCG *Xgc,const nsp_box_3d *box,char flag, int style)
 {
+  const int *Indices = ( flag == 'U' ) ? box->InsideU : box->InsideD;
   int ixbox[6],iybox[6],npoly=6,lstyle;
   int i,iflag=0;
   for ( i = 0 ; i <= 4 ; i=i+2)
     {
-      ixbox[i]=XScale(xbox[Indices[0]]);iybox[i]=YScale(ybox[Indices[0]]);
+      ixbox[i]=XScale(box->x[Indices[0]]);iybox[i]=YScale(box->y[Indices[0]]);
     }
-  ixbox[1]=XScale(xbox[Indices[1]]);iybox[1]=YScale(ybox[Indices[1]]);
-  ixbox[3]=XScale(xbox[Indices[2]]);iybox[3]=YScale(ybox[Indices[2]]);
-  ixbox[5]=XScale(xbox[Indices[3]]);iybox[5]=YScale(ybox[Indices[3]]);
+  ixbox[1]=XScale(box->x[Indices[1]]);iybox[1]=YScale(box->y[Indices[1]]);
+  ixbox[3]=XScale(box->x[Indices[2]]);iybox[3]=YScale(box->y[Indices[2]]);
+  ixbox[5]=XScale(box->x[Indices[3]]);iybox[5]=YScale(box->y[Indices[3]]);
   lstyle = Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->drawsegments(Xgc,ixbox,iybox,npoly,&style,iflag);
   Xgc->graphic_engine->xset_dash(Xgc,lstyle);
@@ -1076,22 +1044,16 @@ void DrawAxis(BCG *Xgc,double *xbox, double *ybox, int *Indices, int style)
 /*---------------------------------------------------------------------
  * Trace l'enveloppe convexe de la boite contenant le dessin 
  * et les axes correspondants 
- * et renvoit dans InsideU et InsideD les indices des points dans xbox et ybox
+ * et renvoit dans box.InsideU et box.InsideD les indices des points dans xbox et ybox
  * qui sont sur les 2 tri\`edres a l'interieur de l'enveloppe convexe
  * 
  *---------------------------------------------------------------------*/
 
-void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, int *InsideD,
-		char *legend, int flag, double *bbox)
+void Convex_Box(BCG *Xgc, nsp_box_3d *box, char *legend, int flag)
 {
   double xmaxi;
-  double x[8],y[8],z[8];
-  int ixbox[8],iybox[8];
-  int xind[8];
-  int ind2,ind3,ind;
-  int p,n,dvect[1],dash;
-  int pat;
-  int i;
+  int ind2,ind3,ind, p,n,dvect[1],dash, pat, i;
+
   /* in (xbox[8],ybox[8],zbox[8]) are stored the coordinates of the bounding box 
    * which contains the surface stored clock wise (one level then the other)
    *       Z
@@ -1115,100 +1077,100 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
    * triedra {0,1,3,4} and {6,2,5,7} in the previous example 
    */
 
-  xmaxi=((double) Maxi(xbox,8L));
+  xmaxi=((double) Maxi(box->x,8L));
   ind= -1;
   for (i =0 ; i < 8 ; i++)
     {
-      MaxiInd(xbox,8L,&ind,xmaxi);
+      MaxiInd(box->x,8L,&ind,xmaxi);
       if ( ind > 3)
 	  {
-	    xind[0]=ind;
+	    box->xind[0]=ind;
 	    break;
 	  }
     }
   if (ind < 0 || ind > 8) 
     {
       Scistring("xind out of bounds");
-      xind[0]=4;
+      box->xind[0]=4;
     }
-  UpNext(xind[0],&ind2,&ind3);
-  if ( ybox[xind[0]] > ybox[xind[0]-4]) 
+  UpNext(box->xind[0],&ind2,&ind3);
+  if ( box->y[box->xind[0]] > box->y[box->xind[0]-4]) 
     {
-      if (ybox[ind2] > ybox[ind3]) 
+      if (box->y[ind2] > box->y[ind3]) 
 	{
-	  xind[1]=ind2;InsideU[0]=ind3;
+	  box->xind[1]=ind2;box->InsideU[0]=ind3;
 	}
       else 
 	{
-	  xind[1]=ind3;InsideU[0]=ind2;
+	  box->xind[1]=ind3;box->InsideU[0]=ind2;
 	}
     }
   else 
     {
-      if (ybox[ind2] < ybox[ind3]) 
+      if (box->y[ind2] < box->y[ind3]) 
 	{
-	  xind[1]=ind2;InsideU[0]=ind3;
+	  box->xind[1]=ind2; box->InsideU[0]=ind3;
 	}
       else 
 	{
-	  xind[1]=ind3;InsideU[0]=ind2;
+	  box->xind[1]=ind3; box->InsideU[0]=ind2;
 	}
     }
 
-  UpNext(ind2,&ind2,&ind3); InsideU[1]=xind[0];
-  InsideU[2]=ind2; InsideU[3]=InsideU[0]-4;
-  xind[2]=ind2;
+  UpNext(ind2,&ind2,&ind3);  box->InsideU[1]=box->xind[0];
+  box->InsideU[2]=ind2;  box->InsideU[3]= box->InsideU[0]-4;
+  box->xind[2]=ind2;
   /* le point en bas qui correspond */
-  xind[3]=ind2-4;
-  DownNext(xind[3],&ind2,&ind3);
-  if ( ybox[xind[0]] > ybox[xind[0]-4]) 
+  box->xind[3]=ind2-4;
+  DownNext(box->xind[3],&ind2,&ind3);
+  if ( box->y[box->xind[0]] > box->y[box->xind[0]-4]) 
     {
-      if (ybox[ind2] < ybox[ind3]) 
+      if (box->y[ind2] < box->y[ind3]) 
 	{
-	  xind[4]=ind2;InsideD[0]=ind3;
+	  box->xind[4]=ind2;box->InsideD[0]=ind3;
 	}
       else  
 	{
-	  xind[4]=ind3;InsideD[0]=ind2;
+	  box->xind[4]=ind3;box->InsideD[0]=ind2;
 	}
     }
   else
     {
-      if (ybox[ind2] > ybox[ind3]) 
+      if (box->y[ind2] > box->y[ind3]) 
 	{
-	  xind[4]=ind2;InsideD[0]=ind3;
+	  box->xind[4]=ind2; box->InsideD[0]=ind3;
 	}
       else  
 	{
-	  xind[4]=ind3;InsideD[0]=ind2;
+	  box->xind[4]=ind3; box->InsideD[0]=ind2;
 	}
     }
 
   DownNext(ind2,&ind2,&ind3);
-  InsideD[1]=xind[3];
-  InsideD[2]=ind2;
-  InsideD[3]=InsideD[0]+4;
-  xind[5]=ind2;
+  box->InsideD[1]=box->xind[3];
+  box->InsideD[2]=ind2;
+  box->InsideD[3]= box->InsideD[0]+4;
+  box->xind[5]=ind2;
 
   if ( Xgc->graphic_engine != &GL_gengine ) 
     {
       for (i=0; i < 6 ; i++)
 	{
-	  ixbox[i]=XScale(xbox[xind[i]]);
-	  iybox[i]=YScale(ybox[xind[i]]);
+	  box->ix[i]=XScale(box->x[box->xind[i]]);
+	  box->iy[i]=YScale(box->y[box->xind[i]]);
 	}
-      ixbox[6]=ixbox[0];iybox[6]=iybox[0];
+      box->ix[6]=box->ix[0];box->iy[6]=box->iy[0];
       p=7,n=1;
       dvect[0]= Xgc->graphic_engine->xget_foreground(Xgc);
       /* On trace l'enveloppe cvxe **/
       dash = Xgc->graphic_engine->xset_dash(Xgc,1);
       
       if (flag >=3){
-	Xgc->graphic_engine->drawpolylines(Xgc,ixbox,iybox,dvect,n,p);
+	Xgc->graphic_engine->drawpolylines(Xgc,box->ix,box->iy,dvect,n,p);
       }
       pat = Xgc->graphic_engine->xset_pattern(Xgc,dvect[0]);
       
-      if (flag >=3) AxesStrings(Xgc,flag,ixbox,iybox,xind,legend,bbox);
+      if (flag >=3) AxesStrings(Xgc,flag,box,legend);
       Xgc->graphic_engine->xset_pattern(Xgc,pat);
       Xgc->graphic_engine->xset_dash(Xgc,dash);
     }
@@ -1216,23 +1178,23 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
     {
       for (i=0; i < 6 ; i++)
 	{
-	  x[i]=xbox[xind[i]];
-	  y[i]=ybox[xind[i]];
-	  z[i]=zbox[xind[i]];
+	  box->xh[i]=box->x_r[box->xind[i]];
+	  box->yh[i]=box->y_r[box->xind[i]];
+	  box->zh[i]=box->z_r[box->xind[i]];
 	}
-      x[6]=x[0];y[6]=y[0];z[6]=z[0];
+      box->xh[6]=box->xh[0];box->yh[6]=box->yh[0];box->zh[6]=box->zh[0];
       p=7,n=1;
       dvect[0]= Xgc->graphic_engine->xget_foreground(Xgc);
       /* On trace l'enveloppe cvxe **/
       dash = Xgc->graphic_engine->xset_dash(Xgc,1);
       
       if (flag >=3){
-	drawpolylines3D(Xgc,x,y,z,dvect,n,p);
+	drawpolylines3D(Xgc,box->xh,box->yh,box->zh,dvect,n,p);
       }
       pat = Xgc->graphic_engine->xset_pattern(Xgc,dvect[0]);
       /* 
        * FIXME
-       * if (flag >=3)AxesStrings(Xgc,flag,ixbox,iybox,xind,legend,bbox);
+       * if (flag >=3)AxesStrings(Xgc,flag,ixbox,iybox,box->xind,legend,bbox);
        */
       Xgc->graphic_engine->xset_pattern(Xgc,pat);
       Xgc->graphic_engine->xset_dash(Xgc,dash);
@@ -1242,14 +1204,13 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
 
 /* 
  * this routine is called by Convex_Box to add axes strings and graduations 
- * (ixbox,iybox) contain in pixel the coordinates of the convex hull
- * xind : contains the indices of the convex hull points in the (xbox,ybox,zbox) 
+ * (box->ix,box->iy) contain in pixel the coordinates of the convex hull
+ *  box->xind : contains the indices of the convex hull points in the (xbox,ybox,zbox) 
  *        storage. This can be used to detect for each convex hull segment to which 
  *        kind of axis it belongs 
  */
 
-
-static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, char *legend, double *bbox)
+static void AxesStrings(BCG *Xgc,int axflag,const nsp_box_3d *box, char *legend)
 {
   int xz[2];
   int iof;
@@ -1268,19 +1229,19 @@ static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, 
   /* FIXME: the z axis could be unified with draw_3d_tics ? */
   Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
   iof = (xz[0]+xz[1])/50;
-  x=ixbox[2]-iof ;
-  y= ( iybox[1] >= iybox[4] ) ? iybox[3]-iof :  iybox[2]-iof ;
+  x=box->ix[2]-iof ;
+  y= ( box->iy[1] >= box->iy[4] ) ? box->iy[3]-iof :  box->iy[2]-iof ;
   if ( axflag>=4)
     {
       double fx,fy,fz,lx,ly,lz;
       int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
       xnax[0]=5;xnax[1]=2;
-      FPoint[0]=ixbox[2];FPoint[1]=iybox[2];
-      LPoint[0]=ixbox[3];LPoint[1]=iybox[3];
+      FPoint[0]=box->ix[2];FPoint[1]=box->iy[2];
+      LPoint[0]=box->ix[3];LPoint[1]=box->iy[3];
       Ticsdir[0]= -1;
       Ticsdir[1]=0;
-      BBoxToval(&fx,&fy,&fz,xind[2],bbox);
-      BBoxToval(&lx,&ly,&lz,xind[3],bbox);
+      BBoxToval(&fx,&fy,&fz,box->xind[2],box->bbox);
+      BBoxToval(&lx,&ly,&lz,box->xind[3],box->bbox);
       TDAxis(Xgc,1L,fz,lz,xnax,FPoint,LPoint,Ticsdir);
     }
   if (legz != 0)
@@ -1289,64 +1250,63 @@ static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, 
       Xgc->graphic_engine->displaystring(Xgc,legz,(x=x - rect[2],x),y,flag ,ang);
     }
 
-  if ( iybox[1] < iybox[4] ) /* are we upside down ? */
+  if ( box->iy[1] < box->iy[4] ) /* are we upside down ? */
     {
       /* down left axis */
-      x=inint((ixbox[3]+ixbox[4])/2.0 -iof);
-      y=inint((1/3.0)*iybox[3]+(2/3.0)*iybox[4]+iof);
-      if ( xind[3]+xind[4] == 3 || xind[3]+xind[4] == 11) 
+      x=inint((box->ix[3]+box->ix[4])/2.0 -iof);
+      y=inint((1/3.0)*box->iy[3]+(2/3.0)*box->iy[4]+iof);
+      if ( box->xind[3]+box->xind[4] == 3 || box->xind[3]+box->xind[4] == 11) 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,3,4,4,5,x,y,flag,ang,legx,bbox,2,TRUE,TRUE);
+	  draw_3d_tics(Xgc,box,axflag,3,4,4,5,x,y,flag,ang,legx,2,TRUE,TRUE);
 	}
       else 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,3,4,4,5,x,y,flag,ang,legy,bbox,2,FALSE,TRUE);
+	  draw_3d_tics(Xgc,box,axflag,3,4,4,5,x,y,flag,ang,legy,2,FALSE,TRUE);
 	}
       /* le cot\'e en bas a droite **/
-      x=inint((ixbox[4]+ixbox[5])/2+iof);
-      y=inint(((2/3.0)*iybox[4]+(1/3.0)*iybox[5])+iof);
-      if ( xind[4]+xind[5] == 3 || xind[4]+xind[5] == 11) 
+      x=inint((box->ix[4]+box->ix[5])/2+iof);
+      y=inint(((2/3.0)*box->iy[4]+(1/3.0)*box->iy[5])+iof);
+      if ( box->xind[4]+box->xind[5] == 3 || box->xind[4]+box->xind[5] == 11) 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,4,5,4,3,x,y,flag,ang,legx,bbox,3,TRUE,FALSE);
+	  draw_3d_tics(Xgc,box,axflag,4,5,4,3,x,y,flag,ang,legx,3,TRUE,FALSE);
 	}
       else 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,4,5,4,3,x,y,flag,ang,legy,bbox,3,FALSE,FALSE);
+	  draw_3d_tics(Xgc,box,axflag,4,5,4,3,x,y,flag,ang,legy,3,FALSE,FALSE);
 	}
     }
   else 
     {
       /* down left axis */
-      x=inint((ixbox[2]+ixbox[1])/2.0 -iof);
-      y=inint((1/3.0)*iybox[2]+(2/3.0)*iybox[1]+iof);
-      Xgc->graphic_engine->xinfo(Xgc,"target = %d %d", xind[1]+xind[2], xind[1]+xind[0] );
-      if ( xind[2]+xind[1] == 3 || xind[2]+xind[1] == 11) 
+      x=inint((box->ix[2]+box->ix[1])/2.0 -iof);
+      y=inint((1/3.0)*box->iy[2]+(2/3.0)*box->iy[1]+iof);
+      if ( box->xind[2]+box->xind[1] == 3 || box->xind[2]+box->xind[1] == 11) 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,2,1,1,0,x,y,flag,ang,legx,bbox,2,TRUE,TRUE);
+	  draw_3d_tics(Xgc,box,axflag,2,1,1,0,x,y,flag,ang,legx,2,TRUE,TRUE);
 	}
       else 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,2,1,1,0,x,y,flag,ang,legy,bbox,2,FALSE,TRUE);
+	  draw_3d_tics(Xgc,box,axflag,2,1,1,0,x,y,flag,ang,legy,2,FALSE,TRUE);
 	}
       /* le cot\'e en bas a droite **/
-      x=inint((ixbox[1]+ixbox[0])/2+iof);
-      y=inint(((2/3.0)*iybox[1]+(1/3.0)*iybox[0])+iof);
+      x=inint((box->ix[1]+box->ix[0])/2+iof);
+      y=inint(((2/3.0)*box->iy[1]+(1/3.0)*box->iy[0])+iof);
 
-      if ( xind[1]+xind[0] == 3 || xind[1]+xind[0] == 11) 
+      if ( box->xind[1]+box->xind[0] == 3 || box->xind[1]+box->xind[0] == 11) 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,1,0,1,2,x,y,flag,ang,legx,bbox,3,TRUE,FALSE);
+	  draw_3d_tics(Xgc,box,axflag,1,0,1,2,x,y,flag,ang,legx,3,TRUE,FALSE);
 	}
       else 
 	{
-	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,1,0,1,2,x,y,flag,ang,legy,bbox,3,FALSE,FALSE);
+	  draw_3d_tics(Xgc,box,axflag,1,0,1,2,x,y,flag,ang,legy,3,FALSE,FALSE);
 	}
     }
   FREE(loc);
 }
 
 
-static void draw_3d_tics(BCG *Xgc,int axflag,int ixbox[],int iybox[],int xind[],int i1,int i2,int i3,int i4,
-			 int x,int y,int flag,double ang,char *leg,double *bbox,int axis_flag, 
+static void draw_3d_tics(BCG *Xgc,const nsp_box_3d *box,int axflag,int i1,int i2,int i3,int i4,
+			 int x,int y,int flag,double ang,char *leg,int axis_flag, 
 			 int xdir,int ofset)
 {
   int rect[4];
@@ -1355,12 +1315,12 @@ static void draw_3d_tics(BCG *Xgc,int axflag,int ixbox[],int iybox[],int xind[],
       double fx,fy,fz,lx,ly,lz;
       int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
       xnax[0]=5;xnax[1]=2;
-      FPoint[0]=ixbox[i1];FPoint[1]=iybox[i1];
-      LPoint[0]=ixbox[i2];LPoint[1]=iybox[i2];
-      Ticsdir[0]=ixbox[i3]-ixbox[i4];
-      Ticsdir[1]=iybox[i3]-iybox[i4];
-      BBoxToval(&fx,&fy,&fz,xind[i1],bbox);
-      BBoxToval(&lx,&ly,&lz,xind[i2],bbox);
+      FPoint[0]=box->ix[i1];FPoint[1]=box->iy[i1];
+      LPoint[0]=box->ix[i2];LPoint[1]=box->iy[i2];
+      Ticsdir[0]=box->ix[i3]-box->ix[i4];
+      Ticsdir[1]=box->iy[i3]-box->iy[i4];
+      BBoxToval(&fx,&fy,&fz,box->xind[i1],box->bbox);
+      BBoxToval(&lx,&ly,&lz,box->xind[i2],box->bbox);
       if ( xdir== TRUE) 
 	TDAxis(Xgc,axis_flag,fx,lx,xnax,FPoint,LPoint,Ticsdir); 
       else 
@@ -1488,7 +1448,7 @@ void C2F(TDdrawaxis)(BCG *Xgc,double size, double FPval, double LPval, int *nax,
 
 /* Returns the [x,y,z] values of a point given its xbox or ybox indices **/
 
-void BBoxToval(double *x, double *y, double *z, int ind, double *bbox)
+static void BBoxToval(double *x, double *y, double *z, int ind,const double *bbox)
 {
   switch ( ind)
     {
@@ -1514,88 +1474,16 @@ void BBoxToval(double *x, double *y, double *z, int ind, double *bbox)
  * stopped when the mouse is released 
  *--------------------------------------*/
 
-/* Changement interactif de 3d **/
-
-void I3dRotation_old(BCG *Xgc)
-{
-  int box_only = FALSE;
-  double theta,alpha, theta_dir;
-  int flag[3],pixmode,alumode;
-  int iflag[]={0,0,0,0};
-  double xx,yy;
-  double theta0,alpha0;
-  int ibutton,iwait=FALSE,istr=0;
-  double x0,yy0,x,y,xl,yl,bbox[4];
-  /* FIXME */
-  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
-      return;
-    }
-  if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"3d rotation is not possible when recording is not on" );
-      return;
-    }
-  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
-  
-  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
-  yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
-  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
-  theta=Xgc->scales->theta ;
-  alpha=Xgc->scales->alpha ;
-  x0=(x0-Xgc->scales->frect[0])*xx;
-  yy0=(yy0-Xgc->scales->frect[1])*yy;
-  x=x0;y=yy0;
-  theta0=theta;
-  alpha0=alpha;
-  ibutton=-1;
-  while ( ibutton == -1 ) 
-    {
-      /* */
-      theta_dir= ( sin(M_PI*alpha/180.0) >= 0 ) ? 1.0 : -1.0;
-      alpha=alpha0 + 90.0*(y-yy0);
-      theta= theta0 - theta_dir*90.0*(x-x0);
-      Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
-      if ( box_only == TRUE) 
-	{
-	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-	  Xgc->graphic_engine->clearwindow(Xgc);    
-	  dbox(Xgc,theta,alpha);
-	  if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
-	  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-	}
-      else 
-	{
-	  /* just changes the angles in recorded plots */
-	  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
-	  /* immediate redraw */
-	  force_redraw(Xgc);
-	}
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,TRUE,FALSE);
-      xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
-      yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
-      x=(xl-Xgc->scales->frect[0])*xx;
-      y=(yl-Xgc->scales->frect[1])*yy;
-    }
-  new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
-  force_redraw(Xgc);
-}
-
-/* meme chose mais on ne passe pas par les echelles pour trouver les 
- * nouveaux angles 
- */
-
 void I3dRotation(BCG *Xgc)
 {
   int box_only = FALSE;
   double theta,alpha, theta_dir;
-  int flag[3],pixmode,alumode;
+  int flag[3],pixmode;
   int iflag[]={0,0,0,0};
   int xc,yc;
   double theta0,alpha0;
   int ibutton,iwait=FALSE,istr=0;
-  double x0,y0,x,y,xl,yl,bbox[4];
+  double x0,y0,x,y,bbox[4];
   /* FIXME */
   if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
     {
@@ -1621,7 +1509,7 @@ void I3dRotation(BCG *Xgc)
       alpha= alpha0 - (y-y0)/5.0;
       theta= theta0 - theta_dir*(x-x0)/5.0;
       x0=x;y0=y;alpha0=alpha;theta0=theta;
-      Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
+      Xgc->graphic_engine->xinfo(Xgc,"alpha=%.2f,theta=%.2f",alpha,theta); 
       if ( box_only == TRUE) 
 	{
 	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
@@ -1655,17 +1543,17 @@ void I3dRotation(BCG *Xgc)
 
 static void dbox(BCG *Xgc,double theta,double alpha)
 {
-  double xbox[8],ybox[8],zbox[8];
+  nsp_box_3d box;
 #ifdef WIN32
   int verbose=0,pat,pat1=3,narg;
   pat = Xgc->graphic_engine->xset_pattern(pat1);
 #endif
-  SetEch3d1(Xgc,xbox,ybox,zbox,Xgc->scales->bbox1,&theta,&alpha,Xgc->scales->metric3d);
 
+  SetEch3d1(Xgc,&box,Xgc->scales->bbox1,theta,alpha,Xgc->scales->metric3d);
   if ( Xgc->graphic_engine != &GL_gengine ) 
-    nsp_plot_box3d(Xgc,xbox,ybox,zbox);
+    nsp_plot_box3d(Xgc,&box);
   else
-    nsp_plot_box3d_ogl(Xgc,xbox,ybox,zbox);
+    nsp_plot_box3d_ogl(Xgc,&box);
 
 #ifdef WIN32
    Xgc->graphic_engine->xset_pattern(pat);
@@ -1833,10 +1721,11 @@ int shade(BCG *Xgc,int *polyx, int *polyy, int *fill, int polysize, int flag)
 
 static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static int InsideU[4],InsideD[4],fg1;
+  nsp_box_3d box;
+  static int fg1;
   int polysize,npoly,whiteid;
   int *polyx,*polyy,*locindex,fill[4]; /* Modified by polpoth 4/5/2000 fill[4] instead of fill[1] */
-  double xbox[8],ybox[8],zbox[8],*polyz;
+  double *polyz;
   static int cache;
   static double zmin,zmax;
   int i;
@@ -1856,22 +1745,22 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
 	store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   }
 
-  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+  SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
   /* Calcule l' Enveloppe Convex de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[2],bbox);
+  Convex_Box(Xgc,&box,legend,flag[2]);
   /* Le triedre cach\'e **/
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;  
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+  if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      cache=InsideD[0];
-      if (flag[2] >=2 )DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg1);
+      cache=box.InsideD[0];
+      if (flag[2] >=2 )DrawAxis_ogl(Xgc,&box,'D',fg1);
     }
   else 
     {
-      cache=InsideU[0]-4;
-      if (flag[2] >=2 )DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg1);
+      cache=box.InsideU[0]-4;
+      if (flag[2] >=2 )DrawAxis_ogl(Xgc,&box,'U',fg1);
     }
   polyz = graphic_alloc(5,(*q),sizeof(double));
   if ( (polyz == NULL) && (*q) != 0)
@@ -2007,10 +1896,10 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
       int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /* Le triedre que l'on doit voir **/
-      if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg);
+      if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
+	DrawAxis_ogl(Xgc,&box,'U',fg);
       else 
-	DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg);
+	DrawAxis_ogl(Xgc,&box,'D',fg);
     }
   
 }
@@ -2030,12 +1919,12 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 			double *x, double *y, double *z, int *p, int *q, 
 			double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static int InsideU[4],InsideD[4],fg,fg1,dc;
+  nsp_box_3d box;
+  static int fg,fg1,dc;
   /* solid = color of 3D frame */
   int polysize,npoly,whiteid;
   double *polyx,*polyy,*polyz;
   int *fill;
-  double xbox[8],ybox[8],zbox[8];
   static int cache;
   static double zmin,zmax;
   int i,j;
@@ -2052,24 +1941,23 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
  
-  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+  SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
 
   /* Calcule l' Enveloppe Convex de la boite **/
   /* ainsi que les triedres caches ou non **/
-
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[2],bbox);
+  Convex_Box(Xgc,&box,legend,flag[2]);
   /* Le triedre cach\'e **/
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+  if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      cache=InsideD[0];
-      if (flag[2] >=2 )DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg1);
+      cache=box.InsideD[0];
+      if (flag[2] >=2 )DrawAxis_ogl(Xgc,&box,'D',fg1);
     }
   else 
     {
-      cache=InsideU[0]-4;
-      if (flag[2] >=2 )DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg1);
+      cache=box.InsideU[0]-4;
+      if (flag[2] >=2 )DrawAxis_ogl(Xgc,&box,'U',fg1);
     }
   polyx = graphic_alloc(0,5*(*q),sizeof(double));
   polyy = graphic_alloc(1,5*(*q),sizeof(double));
@@ -2150,10 +2038,10 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
   if ( flag[2] >=3 )
     {
       /* Le triedre que l'on doit voir **/
-      if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg);
+      if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
+	DrawAxis_ogl(Xgc,&box,'U',fg);
       else 
-	DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg);
+	DrawAxis_ogl(Xgc,&box,'D',fg);
     }
 }
 
@@ -2246,17 +2134,18 @@ int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, i
  * constituent le triedre dans les tableaux xbox et ybox 
  */
 
-static void DrawAxis_ogl(BCG *Xgc,double *xbox,double *ybox,double *zbox, int *Indices, int style)
+static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style)
 {
+  const int *Indices = ( flag == 'U' ) ? box->InsideU : box->InsideD;
   double x[6],y[6],z[6],nsegs=6,lstyle;
   int i,iflag=0;
   for ( i = 0 ; i <= 4 ; i=i+2)
     {
-      x[i]=xbox[Indices[0]];y[i]=ybox[Indices[0]];z[i]=zbox[Indices[0]];
+      x[i]=box->x_r[Indices[0]];y[i]=box->y_r[Indices[0]];z[i]=box->z_r[Indices[0]];
     }
-  x[1]=xbox[Indices[1]];y[1]=ybox[Indices[1]];z[1]=zbox[Indices[1]];
-  x[3]=xbox[Indices[2]];y[3]=ybox[Indices[2]];z[3]=zbox[Indices[2]];
-  x[5]=xbox[Indices[3]];y[5]=ybox[Indices[3]];z[5]=zbox[Indices[3]];
+  x[1]=box->x_r[Indices[1]];y[1]=box->y_r[Indices[1]];z[1]=box->z_r[Indices[1]];
+  x[3]=box->x_r[Indices[2]];y[3]=box->y_r[Indices[2]];z[3]=box->z_r[Indices[2]];
+  x[5]=box->x_r[Indices[3]];y[5]=box->y_r[Indices[3]];z[5]=box->z_r[Indices[3]];
   lstyle = Xgc->graphic_engine->xset_dash(Xgc,1);
   drawsegments3D(Xgc,x,y,z,nsegs,&style,iflag);
   Xgc->graphic_engine->xset_dash(Xgc,lstyle);
@@ -2269,8 +2158,7 @@ static void DrawAxis_ogl(BCG *Xgc,double *xbox,double *ybox,double *zbox, int *I
 
 int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static int InsideU[4],InsideD[4];
-  static double xbox[8],ybox[8],zbox[8];
+  nsp_box_3d box;
   int style[1],j;
   static int init;
   int fg1;
@@ -2284,21 +2172,21 @@ int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *te
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
 
   /* take care here flag[0] is used */
-  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[0]+1)/2);
+  SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[0]+1)/2);
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[1],bbox);
+  Convex_Box(Xgc,&box,legend,flag[1]);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /* Le triedre cache **/
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+  if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      /* cache=InsideD[0];*/
-      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg1);
+      /* cache=box.InsideD[0];*/
+      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,&box,'D',fg1);
     }
   else 
     {
-      /* cache=InsideU[0]-4; */
-      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg1);
+      /* cache=box.InsideU[0]-4; */
+      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,&box,'U',fg1);
     }
   init = 0 ; 
   while (1) 
@@ -2319,10 +2207,10 @@ int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *te
       int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /* Le triedre que l'on doit voir **/
-      if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg);
+      if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
+	DrawAxis_ogl(Xgc,&box,'U',fg);
       else 
-	DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg);
+	DrawAxis_ogl(Xgc,&box,'D',fg);
     }
   return(0);
 }
@@ -2334,8 +2222,7 @@ int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *te
 
 int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static int InsideU[4],InsideD[4];
-  static double xbox[8],ybox[8],zbox[8];
+  nsp_box_3d box;
   int style[1],j;
   static int init;
   int fg1,cur;
@@ -2349,22 +2236,22 @@ int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, 
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
 
   /* take care here flag[0] is used */
-  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[0]+1)/2);
+  SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[0]+1)/2);
 
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag[1],bbox);
+  Convex_Box(Xgc,&box,legend,flag[1]);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /* Le triedre cache **/
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+  if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      /* cache=InsideD[0];*/
-      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg1);
+      /* cache=box.InsideD[0];*/
+      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,&box,'D',fg1);
     }
   else 
     {
-      /* cache=InsideU[0]-4; */
-      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg1);
+      /* cache=box.InsideU[0]-4; */
+      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,&box,'U',fg1);
     }
   for ( cur=0 ; cur < *n ; cur++)
     {
@@ -2389,31 +2276,32 @@ int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, 
       int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /* Le triedre que l'on doit voir **/
-      if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg);
+      if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
+	DrawAxis_ogl(Xgc,&box,'U',fg);
       else 
-	DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg);
+	DrawAxis_ogl(Xgc,&box,'D',fg);
     }
   return(0);
 }
 
 
-int nsp_plot_box3d_ogl(BCG *Xgc,double *xbox, double *ybox, double *zbox)
+static int nsp_plot_box3d_ogl(BCG *Xgc,nsp_box_3d *box)
 {
-  static int InsideU[4],InsideD[4],flag[]={1,1,3},fg,fg1;
-  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,"X@Y@Z",flag[2],Xgc->scales->bbox1);
+  static int flag[]={1,1,3},fg,fg1;
+  /* FIXME  Convex_Box(Xgc,xbox,ybox,zbox,box.InsideU,box.InsideD,"X@Y@Z",flag[2],Xgc->scales->bbox1); */
+  Convex_Box(Xgc,box,"X@Y@Z",flag[2]);
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
-    DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg);
+  if ( box->z[box->InsideU[0]] > box->z[box->InsideD[0]])
+    DrawAxis_ogl(Xgc,box,'U',fg);
   else
-    DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg);
+    DrawAxis_ogl(Xgc,box,'D',fg);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
   /* Le triedre cache **/
-  if (zbox[InsideU[0]] > zbox[InsideD[0]])
-      DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg1);
+  if ( box->z[box->InsideU[0]] > box->z[box->InsideD[0]])
+      DrawAxis_ogl(Xgc,box,'D',fg1);
   else
-      DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg1);
+      DrawAxis_ogl(Xgc,box,'U',fg1);
   return(0);
 
 }

@@ -170,14 +170,13 @@ int nsp_contour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int 
 		int *nz, double *zz, double *teta, double *alpha, char *legend, int *flag, 
 		double *bbox, double *zlev, int lstr)
 {
+  nsp_box_3d box;
   int err=0;
   int fg;
-  int InsideU[4],InsideD[4];
   void (*func) (BCG *Xgc,int, double,double,double);
   static double *zconst;
   double zmin,zmax;
   int N[3],i;
-  double xbox[8],ybox[8],zbox[8];
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
@@ -213,22 +212,22 @@ int nsp_contour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int 
 	   bbox[4]=zmin;bbox[5]=zmax;
 	 }
        if ( flag[1] !=0)
-	 SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+	 SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
        else
-	 SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
+	 SetEch3d1(Xgc,&box,bbox,*teta,*alpha,0L);
        /** Calcule l' Enveloppe Convexe de la boite **/
        /** ainsi que les triedres caches ou non **/
-       Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag,bbox);
+       Convex_Box(Xgc,&box,legend,flag[2]);
        /** Le triedre cach\'e **/
-       if (zbox[InsideU[0]] > zbox[InsideD[0]])
+       if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
 	 {
 	   /* cache=InsideD[0]; */
-	   if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideD,HIDDENFRAMECOLOR);
+	   if (flag[2] >=2 )DrawAxis(Xgc,&box,'D',HIDDENFRAMECOLOR);
 	 }
        else 
 	 {
 	   /* cache=InsideU[0]-4; */
-	   if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideU,HIDDENFRAMECOLOR);
+	   if (flag[2] >=2 )DrawAxis(Xgc,&box,'U',HIDDENFRAMECOLOR);
 	 }
      }
   if (*flagnz == 0)
@@ -252,10 +251,10 @@ int nsp_contour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int 
   if (flag[0]!=2 &&  flag[2] >=3 )
     {
       /** Le triedre que l'on doit voir **/
-      if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
+      if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
+	DrawAxis(Xgc,&box,'U',fg);
       else 
-	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
+	DrawAxis(Xgc,&box,'D',fg);
     }
   frame_clip_off(Xgc);
   return(0);
