@@ -180,6 +180,44 @@ int nsp_plot_grid(BCG *Xgc, int *style)
   return(0);
 }
 
+int nsp_plot_polar_grid(BCG *Xgc, int *style)
+{
+  double Rmax;
+  int i,pat,Narc=5,un=1;
+  /* Recording command */
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Grid(Xgc,style);
+  /* changes dash style if necessary */
+  pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
+  frame_clip_on(Xgc);
+  /* first the circles */
+  Rmax= Abs(Xgc->scales->frect[0]);
+  for (i=0; i < 4 ; i++) Rmax=Max(Rmax,Abs(Xgc->scales->frect[i]));
+  Narc=5;
+  for (i=0; i < Narc ; i++)
+    {
+      double r= (Rmax/(Narc-1))*i;
+      double arc[]={-r,r,2*r,2*r,0,360*64.0};
+      int iarc[6];
+      ellipse2d(Xgc,arc,iarc,&un,"f2i");
+      Xgc->graphic_engine->drawarc(Xgc,iarc); 
+    }
+  /* then the rays */
+  for (i=0; i < 12 ; i++) 
+    {
+      double vxd[]={0,Rmax*cos(M_PI*i/6.0)};
+      double vyd[]={0,Rmax*sin(M_PI*i/6.0)};
+      int vx[2],vy[2];
+      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+      Xgc->graphic_engine->displaystring(Xgc,"xxx",vx[1],vy[1],0,0.0); 
+      Xgc->graphic_engine->drawsegments(Xgc,vx,vy,2,style,0); 
+    }
+  frame_clip_off(Xgc);
+  Xgc->graphic_engine->xset_pattern(Xgc,pat);
+  return(0);
+}
+
+
+
 
 /*---------------------------------------------------------------------
  * update_frame_bounds : 

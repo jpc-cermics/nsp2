@@ -3,6 +3,7 @@
  *    Copyright (C) 1998-2001 Enpc/Jean-Philippe Chancelier
  *    jpc@cermics.enpc.fr 
  --------------------------------------------------------------------------*/
+
 /*------------------------------------------------------------------------
  * Graphic High Level Recording function 
  * Oct 2004 
@@ -1652,6 +1653,7 @@ static void clean_Fec(void *plot)
   FREE(theplot->brect);   FREE(theplot->brect_kp); 
   FREE(theplot->aaint);  FREE(theplot->aaint_kp);
   FREE(theplot->zminmax); FREE(theplot->colminmax);  /* added by bruno */
+  FREE(theplot->colout);
 }
 
 

@@ -72,6 +72,8 @@ static void nsp_ogl_set_view(BCG *Xgc);
 static bool LoadTGA(TextureImage *texture, char *filename);
 static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col);
 static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...);
+static void glut_display_string(BCG *Xgc, GLfloat x, GLfloat y, const char *string);
+
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
 static void unclip_rectangle(GdkRectangle clip_rect);
 
@@ -1636,6 +1638,9 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
    */
   if ( Abs(angle) <= 0.1) 
     {
+#if 0      
+      glut_display_string(Xgc, x,  y, string);
+#endif
       glPrint2D(Xgc, x,y, ECHELLE_CHAR, angle, false, string);
       if ( flag == 1) 
 	{
@@ -3623,6 +3628,7 @@ static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col)
 ** the first character set is selected. If set is 1 or greater the
 ** second character set is selected.
 */
+
 static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...)
 {
   char		text[256];
@@ -3653,6 +3659,28 @@ static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot
   glDisable(GL_BLEND);
   glDisable(GL_TEXTURE_2D);
 }
+
+#include <GL/glut.h>
+
+#if 0
+static void glut_display_string(BCG *Xgc, GLfloat x, GLfloat y, const char *string)
+{
+  int j;
+  double height = 10.0f;
+  // The Mono Roman font supported by GLUT has characters that are
+  // 104.76 units wide, up to 119.05 units high, and descenders can
+  // go as low as 33.33 units.
+  // We scale the text to make its height that desired by the caller.
+  const static float FONT_HEIGHT = 119.05f;
+  glPushMatrix();
+  glTranslatef( x, y, 0 );
+  float s = height / FONT_HEIGHT; // scale factor
+  glScalef( s, s, 1 );
+  for ( j = 0; string[j] != '\0'; ++j )
+    glutStrokeCharacter( GLUT_STROKE_MONO_ROMAN, string[j] );
+  glPopMatrix();
+}
+#endif 
 
 
 /*

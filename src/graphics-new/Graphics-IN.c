@@ -2186,6 +2186,7 @@ int int_xgrid(Stack stack, int rhs, int opt, int lhs)
   }
   Xgc=nsp_check_graphic_context();
   nsp_plot_grid(Xgc,&style);
+  nsp_plot_polar_grid(Xgc,&style);
   return 0;
 } 
 
