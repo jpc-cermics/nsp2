@@ -18,8 +18,6 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  
 function  demo_calendar()
-
-  TM_YEAR_BASE=1900
   
   // names of toggle buttons 
   
@@ -89,7 +87,7 @@ function  demo_calendar()
       
   // Build the right font-button */ 
   button = gtkbutton_new(label="Font...");
-  //button.connect[ "clicked", calendar_select_font, list(calendar_data)]
+  button.connect[ "clicked", calendar_select_font, list(calendar)]
   vbox2.pack_start[ button,expand=%f,fill=%f,padding=0]
 
   //  Build the Signal-event part.
@@ -215,49 +213,36 @@ function calendar_toggle_flag(toggle,args)
 endfunction  
 
 function calendar_font_selection_ok(button,data)
-//   GtkRcStyle *style;
-//   char *font_name;
-//   if (calendar->window)
-//     {
-//       font_name = gtk_font_selection_dialog_get_font_name (GTK.FONT_SELECTION_DIALOG(calendar->font_dialog));
-//       if (font_name) 
-// 	{
-// 	  style = gtkrcstyle_new ();
-// 	  pango_font_description_free (style->font_desc);
-// 	  style->font_desc = pango_font_description_from_string (font_name);
-// 	  gtk_widget_modify_style (calendar->window, style);
-// 	  g_free (font_name);
-// 	}
-//     }
-//   gtk_widget_destroy (calendar->font_dialog);
+  calendar = data(1);
+  fdialog = calendar.get_data["font_dialog"]
+  font_name =  fdialog.get_font_name[];
+  // XXXX : unfinished 
+  //       if (font_name) 
+  //style = gtkrcstyle_new ();
+  // 	  pango_font_description_free (style->font_desc);
+  // 	  style->font_desc = pango_font_description_from_string (font_name);
+  // 	  gtk_widget_modify_style (calendar->window, style);
+  // 	  g_free (font_name);
+  // 	}
+  //     }
+  //   gtk_widget_destroy (calendar->font_dialog);
+  fdialog.destroy[];
 endfunction 
 
-function calendar_select_font(button,data)
-//   GtkWidget *window;
+function calendar_select_font(button,args)
+  calendar = args(1)
+  window = gtkfontselectiondialog_new ("Font Selection Dialog");
+  calendar.set_data[font_dialog=window] 
+  window.set_position[  GTK.WIN_POS_MOUSE]
+  // window.connect["destroy",gtk_widget_destroyed, &calendar->font_dialog]
+  window.ok_button.connect["clicked", calendar_font_selection_ok,list(calendar)];
 
-//   if (!calendar->font_dialog) {
-//     window = gtkfontselectiondialog_new ("Font Selection Dialog");
-//     g_return_if_fail(window);
-//     calendar->font_dialog = window;
-    
-//     window.set_position[  GTK.WIN_POS_MOUSE]
-    
-//     window.connect[  "destroy",
-// 		      gtk_widget_destroyed,
-// 		      &calendar->font_dialog]
-    
-//     g_signal_connect (window->ok_button,
-// 		      "clicked", calendar_font_selection_ok,
-// 		      calendar);
-//     g_signal_connect_swapped (window->cancel_button,
-// 			     "clicked", gtk_widget_destroy, 
-// 			     calendar->font_dialog);
-//   }
-//   window=calendar->font_dialog;
-//   if (!window)
-//     window.show[];
-//   else
-//     window.destroy[];
-// }
+  function destroy_fdialog(button,args)
+    args(1).destroy[]
+  endfunction
+
+  window.cancel_button.connect["clicked",destroy_fdialog,list(window)];
+  window=calendar.get_data["font_dialog"];
+  window.show[];
 endfunction 
 
