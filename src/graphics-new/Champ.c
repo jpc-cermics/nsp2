@@ -47,7 +47,7 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
 int nsp_champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, 
 	      int *n2, char *strflag, double *brect, double *arfact, int lstr)
 {
-  champg(Xgc,"champ",0,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
+  champ_generic(Xgc,"champ",0,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
   return(0); 
 }
 
@@ -81,7 +81,7 @@ int nsp_champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1,
 int nsp_champ1(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, 
 	       int *n2, char *strflag, double *brect, double *arfact, int lstr)
 {
-  champg(Xgc,"champ1",1,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
+  champ_generic(Xgc,"champ1",1,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
   return(0);
 }
 
