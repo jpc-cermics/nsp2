@@ -1,0 +1,54 @@
+Contents 
+
+Hash table of functions:  FunTab.c 
+Calling a primitive:  Function.c 
+Link a shared archive and add entry point: link.c  
+Dynamically add an interface: addinter.c 
+	(uses link.c and Funtab.c) 
+
+Scilab primitives for accessing above functions: Functions-IN.*
+
+
+
+Notes 
+===== 
+
+La table de hachage des fonctions associe a un nom de fonction 
+	(numero d'interface et numero de fonction)
+	--> cette table est initialisee avec le contenu de Funtab.fun 
+	--> et on peut la modifier 
+	--> addinter par exemple rajoute des entrees dans cette table 
+	--> ulink en enleve 
+	--> doit-on autoriser l'utilisateur a entrer des choses ?
+	    et a  en retirer car ca peut etre dangeureux 
+	--> Dans la table de hashage les fonctions peuvent ne pas 
+	    exister i.e le couple (int,Num) peut ne faire reference 
+            a rien 
+
+Dans Function.c:
+	On trouve la table des interfaces 
+	Interfaces[] et un appel aux interfaces dynamiques  DynInterf[]  
+	Il faut que les references ds Interfaces[] soient resolues 
+	a la compilation pour que ca marche 
+	D'ou l'idee de rajouter ds Function.c un mecanisme pour que certains 
+	interfaces soient loades a la demande (i.e quand une premier 
+	fonction est appellee ) 
+
+Dans addinter.c: 
+	on trouve ce qu'il faut pour rajouter un interface dynamique 
+	dans Scilab 
+	==> rajouter un point d'entree ds DynInterf 
+	    ce qui a ete fait au moyen de link 	 
+	==> rajouter des entrees dans la Table de Hash 
+	
+Dans link.c: 
+	gere une table de fonctions loadee dynamiquement 
+	une fonction linkee dynamiquement l'est a partir
+	d'une archive partagee 
+	Il faut des fonction utilitaires pour 
+	chercher une fonction ? deloader une archive et 
+	retirer les points d'entres associes 
+	en faisant attention que si le point d''entree etait 
+	une entree d'interface il faut mettre a jour les tables de addinter 
+ 
+
