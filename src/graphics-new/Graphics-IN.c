@@ -2065,7 +2065,7 @@ int int_xrect(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   double *val;
-  int cpat,cwidth,back,color,width;
+  int cpat=0,cwidth=0,back,color,width;
 
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
 		      { "color",s_int,NULLOBJ,-1},
@@ -2864,7 +2864,7 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   int close=0,color,mark,thick;
-  int xmark[2],cmark,cthick,ccolor;
+  int xmark[2],cmark=0,cthick=0,ccolor=0;
   char *type;
 
   NspMatrix *l1,*l2;
@@ -2899,6 +2899,7 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
       if ( opts[2].obj != NULLOBJ) 
 	{
 	  Xgc->graphic_engine->xget_mark(Xgc,xmark); 
+	  cmark=xmark[0];
 	  Xgc->graphic_engine->scale->xset_mark(Xgc,mark,xmark[1]);
 	  dtype = xmarks; 
 	}
@@ -2951,7 +2952,7 @@ int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   int close=0,color,mark,thick;
-  int cthick,ccolor;
+  int cthick=0,ccolor=0;
   char *type;
   NspMatrix *l1,*l2,*l3;
 

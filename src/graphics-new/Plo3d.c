@@ -915,10 +915,10 @@ int nsp_geom3d(BCG *Xgc,double *x, double *y, double *z, int *n)
 
 void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag)
 {
-  double xmmin,ymmax,xmmax,ymmin,FRect[4],WRect[4],ARect[4];
+  double xmmin=0.0,ymmax=1.0,xmmax=1.0,ymmin=0.0,FRect[4],WRect[4],ARect[4];
   double R,xo,yo,zo,dx,dy,dz,hx,hy,hx1,hy1;
   double cost,sint,cosa,sina;
-  int ib, i, aaint[]={2,10,2,10},wdim[2], wmax,hmax;
+  int ib, i, aaint[]={2,10,2,10},wdim[2], wmax=0,hmax=0;
   char logf[2];
 
   Xgc->scales->scale_flag3d = 1;

@@ -34,7 +34,7 @@ int nsp_plot2d_1(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 		 const char *legend,int legend_pos,double brect[],int aaint[])
 {
   int n;
-  int *xm,*ym, nn2=(*n2);
+  int *xm=NULL,*ym=NULL, nn2=(*n2);
   if ( CheckxfParam(xf)== 1) return(0);
 
   /** Boundaries of the frame **/

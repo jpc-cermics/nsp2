@@ -91,7 +91,7 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
 {
   int clip_box[4];
   static int aaint[]={2,10,2,10};
-  int *xm,*ym,*zm,i,j,n,na;
+  int *xm,*ym,*zm=NULL,i,j,n,na;
   double  xx[2],yy[2], maxx;
   double  nx,ny,sc,sfx,sfy,sfx2,sfy2;
   double  arsize1=0.5,arsize2=0.5;

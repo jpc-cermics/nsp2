@@ -962,7 +962,7 @@ static void boundingboxM(BCG *Xgc,char *string, int x, int y, int *rect)
 static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag)
 {
   int NDvalue,i;
-  int l_style,style_val,pen_color,fill_color,areafill;
+  int l_style=0,style_val=0,pen_color,fill_color,areafill;
   int Dvalue1;
   /* store the current values */
   int dash,color;
@@ -970,7 +970,7 @@ static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag
   for ( i =0 ; i < n/2 ; i++)
     {
       if ( (int) iflag == 0) 
-	NDvalue=(*style < 0) ? color : *style;
+	NDvalue=(*style < 0) ? color : *style; 
       else
 	NDvalue=(int) style[i];
       /* in case of min(max()) **/
@@ -999,7 +999,7 @@ static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag
 static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int iflag)
 {
   int i;
-  int l_style,style_val,pen_color,fill_color,areafill;
+  int l_style=0,style_val=0,pen_color,fill_color,areafill;
   int NDvalue;
   /* store the current values */
   int dash,color;
@@ -1448,7 +1448,7 @@ void InitScilabGCXfig(BCG *Xgc)
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *size)
 {
   int i;
-  int pen_color;
+  int pen_color=BLACK;
   double xi,yi,xf,yf;
   double cosal,sinal;
   int dash= xget_dash(Xgc);

@@ -24,7 +24,7 @@ int nsp_plot2d_2(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 		const char *legend,int legend_pos,double brect[],int aaint[])
 {
   int n;
-  int *xm,*ym;
+  int *xm=NULL,*ym=NULL;
   /** Attention : 2*(*n2) **/
   int nn2=2*(*n2);
   if ( CheckxfParam(xf)== 1) return(0);

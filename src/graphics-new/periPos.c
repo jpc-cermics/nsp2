@@ -1781,7 +1781,7 @@ static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
   double ccm = 28.346457;
   double wp = ccm*210;
   double hp = ccm*297;
-  double ws,hs,sc,scx,scy,marg= ccm*5; /* margin 5mm */
+  double ws=0,hs=0,sc=1.0,scx,scy,marg= ccm*5; /* margin 5mm */
   int w=wdef,h=hdef;
 
   if ( mode == 'k' )   {    w=wdim[0] ; h = wdim[1];   }

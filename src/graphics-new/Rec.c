@@ -646,7 +646,7 @@ static void clean_drawpolyline_1(void *plot) {
 void store_fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
 {
   struct rec_fillpolylines *lplot = MALLOC(sizeof(struct rec_fillpolylines));
-  int rep;
+  int rep= TRUE;
   if (lplot != NULL)
     {
       /* initialize  */ 
@@ -657,9 +657,9 @@ void store_fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int 
       lplot->vy=NULL;
       lplot->fillvect=NULL;
       if ( v1 == 2 ) 
-	CopyVectLI(&(lplot->fillvect),fillvect,n*p);
+	rep = CopyVectLI(&(lplot->fillvect),fillvect,n*p);
       else 
-	CopyVectLI(&(lplot->fillvect),fillvect,n);
+	rep = CopyVectLI(&(lplot->fillvect),fillvect,n);
       if (
 	  rep && 
 	  CopyVectF(&(lplot->vx),vx,n*p) &&

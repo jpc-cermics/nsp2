@@ -198,14 +198,14 @@ void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, 
 	      char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
-  int Nx,Ny;
+  int Nx=0,Ny=0;
   double angle=0.0,vxx,vxx1;
   int vx[2],vy[2],xm[2],ym[2];
   char c_format[5];
   int flag=0,xx=0,yy=0,posi[2],rect[4];
   int i,barlength;
   int ns=2,style=0,iflag=0;
-  int fontid[2],fontsize_kp,logrect[4],smallersize,color_kp;
+  int fontid[2],fontsize_kp,logrect[4],smallersize=0,color_kp=0;
   
   /* Modified by POLPOTH09042001 Mon Apr  9 08:59:10 MET DST 2001 */
   /* If  zero ticks are requested, exit */

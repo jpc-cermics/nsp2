@@ -392,8 +392,8 @@ void scig_loadsg(int win_num, char *filename)
   int cur;
   if ( scig_buzy  == 1 ) return ;
   scig_buzy =1;
-  cur = Xgc->graphic_engine->xset_curwin(win_num,FALSE);
   Xgc=check_graphic_window();
+  cur = Xgc->graphic_engine->xset_curwin(win_num,FALSE);
   tape_load(Xgc,filename);
   Xgc->graphic_engine->xset_curwin(cur,FALSE);
   scig_buzy = 0;
@@ -410,8 +410,12 @@ void scig_loadsg(int win_num, char *filename)
 void scig_savesg(char *filename, int win_num)
 {
   BCG *Xgc;
-  if ( window_list_search(win_num) == NULL) return;
-  Xgc=check_graphic_window();
+  if ( (Xgc = window_list_search(win_num)) == NULL) return;
+  if ( Xgc->record_flag != TRUE ) 
+    {
+      Xgc->graphic_engine->xinfo(Xgc,"save works only with the Rec driver");
+      return;
+    }
   tape_save(Xgc,filename,win_num);
 }
 

@@ -42,7 +42,7 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
   char *type;
   int info, m_occ,n_occ,i;
   char c= 'c';
-  NspMatrix *x, *val, *ind, *occ, *Minfo;
+  NspMatrix *x, *val, *ind, *occ, *Minfo=NULL;
   CheckRhs(2,3);
   CheckLhs(0,3);
   if ((x =GetRealMat(stack,1))== NULLMAT ) return RET_BUG;

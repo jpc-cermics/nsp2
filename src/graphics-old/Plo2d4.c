@@ -21,7 +21,7 @@ int nsp_plot2d_4(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 		const char *legend,int legend_pos,double brect[],int aaint[])
 {
   int n;
-  int *xm,*ym;
+  int *xm=NULL,*ym=NULL;
   double arsize1=5.0,arsize2=5.0;
   /** Attention : 2*(*n2) **/
   int nn2=2*(*n2);

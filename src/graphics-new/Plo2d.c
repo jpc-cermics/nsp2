@@ -62,7 +62,7 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
 	       const char *legend,int legend_pos,double brect[],int aaint[])
 {
   int n;
-  int *xm,*ym;
+  int *xm=NULL,*ym=NULL;
 
   /* Storing values if using the Record driver */
   /* Boundaries of the frame */
@@ -575,7 +575,7 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style,char * legend,int b
 
 void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * legend,const char *sep)
 {
-  int rect[4],box[4],xx,yy;
+  int rect[4],box[4],xx=0,yy=0;
   char *loc;
   double xoffset,yoffset;  
   loc=(char *) MALLOC( (strlen(legend)+1)*sizeof(char));
