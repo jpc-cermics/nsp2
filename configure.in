@@ -1304,7 +1304,7 @@ fi
 ## GTK2 
 #################
 
-ZZLEDT="zzledt"
+ZZLEDT="reader"
 
 AC_PATH_PROG(PKG_CONFIG,pkg-config)
 if test "x$PKG_CONFIG" = x; then
@@ -1383,7 +1383,7 @@ LIBS=$ac_save_LIBS
   LIBS=$ac_save_LIBS
   TERMCAPLIB="$READLINE $TERMCAPLIB"
   if test "no$READLINE" != no; then
-     ZZLEDT="zzledt-rl"
+     ZZLEDT="reader_rl"
      AC_DEFINE(WITH_READLINE)
   fi
 
@@ -1592,7 +1592,7 @@ AC_SUBST(PERIGLEXT)
 AC_SUBST(TERM_NAME)
 AC_SUBST(TERM_LDFLAGS)
 
-AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile) 
+AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile) 
  
 
 

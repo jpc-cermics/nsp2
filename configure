@@ -23027,7 +23027,7 @@ fi
 ## GTK2
 #################
 
-ZZLEDT="zzledt"
+ZZLEDT="reader"
 
 # Extract the first word of "pkg-config", so it can be a program name with args.
 set dummy pkg-config; ac_word=$2
@@ -23424,7 +23424,7 @@ fi
   LIBS=$ac_save_LIBS
   TERMCAPLIB="$READLINE $TERMCAPLIB"
   if test "no$READLINE" != no; then
-     ZZLEDT="zzledt-rl"
+     ZZLEDT="reader_rl"
      cat >>confdefs.h <<\_ACEOF
 #define WITH_READLINE 1
 _ACEOF
@@ -24315,7 +24315,7 @@ fi
 
 
 
-                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile"
+                                                                                                                                                                                                                                      ac_config_files="$ac_config_files Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -24861,6 +24861,7 @@ do
   "pvm3/Makefile.aimk" ) CONFIG_FILES="$CONFIG_FILES pvm3/Makefile.aimk" ;;
   "pvm3/hoster/Makefile.aimk" ) CONFIG_FILES="$CONFIG_FILES pvm3/hoster/Makefile.aimk" ;;
   "src/gzvt2/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/gzvt2/Makefile" ;;
+  "src/interp/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/interp/Makefile" ;;
   "src/include/nsp/machine.h" ) CONFIG_HEADERS="$CONFIG_HEADERS src/include/nsp/machine.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

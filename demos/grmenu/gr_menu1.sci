@@ -18,10 +18,10 @@ function [sd]=gr_menu(sd,flag,noframe)
     cdef=[0 0 100 100];
     init=1
   else
-     select type(sd)
-      case 1 then 
+     select type(sd,'string')
+      case 'Mat' then 
        cdef=sd;init=1
-      case 15 then
+      case 'List' then
        if sd(1)<>'sd' then
 	 error('l''entree n''est pas une liste de type sd'),
        end
@@ -34,7 +34,7 @@ function [sd]=gr_menu(sd,flag,noframe)
   
   dr=driver(); if dr=='Rec' then driver('X11'),end
   seteventhandler('my_eventhandler');
-  if type(gr_objects)=='Mat' then gr_objects=list(); end 
+  if type(gr_objects,'string')=='Mat' then gr_objects=list(); end 
   
   //now move the mouse over the graphic window/
   //seteventhandler('') //suppress the event handler
@@ -50,14 +50,14 @@ function [sd]=gr_menu(sd,flag,noframe)
   Settings=['dash style','pattern','thickness','mark','clip off','clip on']
   Objects=['rectangle','frectangle','circle','fcircle','polyline',...
 	  'fpolyline','spline','arrow','points','caption']
-  menus=tlist(['menus',names],Edit,Settings,Objects);
-  Edit='menus(2)'+string(1:size(Edit,'*'))+')';
-  Settings='menus(3)'+string(1:size(Settings,'*'))+')';
-  Objects='menus(4)'+string(1:size(Objects,'*'))+')';
+  menus=tlist(['menus',names,'names'],Edit,Settings,Objects);
+  Edit='menus(names(1))'+string(1:size(Edit,'*'))+')';
+  Settings='menus(names(2))'+string(1:size(Settings,'*'))+')';
+  Objects='menus(names(3))'+string(1:size(Objects,'*'))+')';
   
   for k=1:size(names,'*') ;
     delmenu(curwin,names(k));
-    addmenu(curwin,names(k),menus(k+1),list(2,'gr_'+names(k)));
+    addmenu(curwin,names(k),menus(names(k)),list(2,'gr_'+names(k)));
     execstr(names(k)+'_'+string(curwin)+'='+names(k)+';');
   end
   unsetmenu(curwin,'File',7) //close
@@ -869,7 +869,8 @@ endfunction
 function [rep]=gr_frame_move(ko,pt,kstop,action,pt1)
 // move object frame in Xor mode 
   global('gr_objects');
-  dr=driver();  if dr=='Rec' then driver('X11'),end
+  dr=driver(); 
+  if dr=='Rec' then driver('X11'),end
   xset('alufunction',6);
   rep=[0,0,%inf];
   wstop = 0; 
@@ -964,6 +965,7 @@ function gr_draw(win)
   fr=[0,0,100,100];
   xsetech(frect=fr)
   xrect([0,100,100,100]);
+  pause
   for k=1:lstsize(gr_objects)
     o=gr_objects(k);
     execstr('gr_'+o(1)(1)+'(''draw'',k);');

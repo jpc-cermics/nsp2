@@ -525,12 +525,11 @@ static void xclick_1(BCG *Xgc,char *str,int *ibutton, double *x, double *y, int 
 
 static void xclick_any_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr)
 { 
-  int x1,y1,cur;
+  int x1,y1;
   Xgc->graphic_engine->xclick_any(str,ibutton,&x1,&y1,iwin,iflag,motion,release,key,istr);
   if (*ibutton>=0){
-    cur = Xgc->graphic_engine->xset_curwin(*iwin,FALSE);
-    scale_i2f(Xgc,x,y,&x1,&y1,1);
-    cur = Xgc->graphic_engine->xset_curwin(cur,FALSE);
+    BCG *Xgc_win =window_list_search(*iwin);
+    scale_i2f(Xgc_win,x,y,&x1,&y1,1);
   }
 }
 

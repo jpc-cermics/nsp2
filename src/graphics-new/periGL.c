@@ -878,8 +878,8 @@ static int xset_curwin(int intnum,int set_menu)
 	  if ( new == NULL) 
 	    {
 	      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e');
+	      new = window_list_get_first();
 	    }
-	  new = window_list_get_first();
 	  old =  bcgk->CurWindow ;
 	}
       else

@@ -324,7 +324,7 @@ static void scale_copy (window_scale_list *s1, window_scale_list *s2);
 static window_scale_list *new_wcscale ( window_scale_list *val);
 static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
 
-/* Current Scale XXXXXX to be removed */
+/* Current Scale FIXME XXXXXX to be removed */
 
 window_scale_list current_scale = 
 { 

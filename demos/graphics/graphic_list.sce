@@ -683,8 +683,8 @@ function demo_contour_5()
  xset('colormap',hotcolormap(m));
  xset('fpf',' ');
  contourf(x,y,z,nv=m,style=0*ones(1,m))
- xset('fpf','');
- contourf(x,y,z,nv=m);
+ //xset('fpf','');
+ //contourf(x,y,z,nv=m);
 endfunction
 
 function demo_contour_6()

@@ -1,7 +1,6 @@
 function []=emc2(filename)
-// Visualise un resultat de type GNU.*
-// generes par NSCK2E 
-// en general un ensemble de segments 
+// visualization of a set of segments 
+// read from a file genrated by NSCK2E 
 // Copyright ENPC
   F=fopen(File_name,mode='r')
   xx=F.get_matrix[];
@@ -17,8 +16,7 @@ endfunction
 
 function []=amdbaR(File_name)
 // Read a file describing a MESH of finite elements 
-// of triangle type 
-// The file is of amdba type 
+// of triangle type. File is of amdba type 
   if nargin == 0 ; File_name='MESH';end 
   F=fopen(File_name,mode='r')
   x=F.get_matrix[];
