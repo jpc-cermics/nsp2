@@ -10,13 +10,13 @@
 #include <stdio.h>
 #include <string.h>
 #include "nsp/math.h"
+#include "nsp/user-prefs.h"
 
 typedef int (*IOVFun) (char *fmt, va_list ap);
 extern IOVFun Scivprintf;
 IOVFun SetScilabIO(IOVFun F);
-
-int Sciprintf1 SCI_VARARGS_2DEF(int,indent,char *,fmt);
-int Sciprintf SCI_VARARGS_DEF(char *,fmt); 
+int Sciprintf1(int indent,char *fmt,...);
+int Sciprintf(char *fmt,...); 
 
 #ifdef  NSP_TYPE_OBJECT 
 NspObject *Sciprint2string_reset();
@@ -39,15 +39,13 @@ extern void scimore_void(int *n);
 MoreFun SetScilabMore(MoreFun F);
 
 extern void C2F(scilines) (int *nl,int *nc);
-int  ParseError  SCI_VARARGS_DEF(char *,fmt);
-int scidebug SCI_VARARGS_2DEF(int,i,char *,fmt);
+int  ParseError  (char *fmt,...);
+int scidebug(int i,char *fmt,...);
 typedef int (*IOFun2) (FILE *f,char *fmt,...);
 extern IOFun2 Scifprintf ;
 typedef int (*SciGetC) (void);
 extern SciGetC Scigetchar ;
 extern SciGetC SetScilabgetchar (SciGetC F);
-
-
 typedef void (*SciReadFunction) ( char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
 extern void SciFileReadLine (char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
 extern SciReadFunction SciReadLine1 ;

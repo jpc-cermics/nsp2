@@ -1,3 +1,5 @@
+#ifndef NSP_USER_PREFS
+#define NSP_USER_PREFS
 
 struct user_preferences
 {
@@ -9,4 +11,6 @@ struct user_preferences
 };
 
 extern struct user_preferences user_pref;
+
+#endif 
 
