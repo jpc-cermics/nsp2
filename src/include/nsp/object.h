@@ -77,7 +77,8 @@ typedef struct _nsp_type_object {
 
 /* cast a type instance to base type */
 
-#define NSP_TYPE_OBJECT(t) ((NspTypeObject *) t)
+#define NSP_TYPE_OBJECT(t) ((NspTypeObject *) t) 
+#define NSP_TYPE_BASE(t) ((NspTypeBase *) t) 
 
 /* checking the type of objects is done through 
  * unique id; we keep a list of type to get type 

@@ -3924,21 +3924,20 @@ static int check_xy(char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int ypos,
 /*---------------------------------------------------
  * interface for calling the helpbrowser 
  * when scilab is compiled with gtk 
- * not the perfect place to insert this interface ...
+ * not the perfect place to insert this interface XXX ...
  *---------------------------------------------------*/
 
 extern void Sci_Help(char *,char *,char *);
 
 int int_gtkhelp(Stack stack, int rhs, int opt, int lhs)
 {
-#ifdef WITH_GTK 
+  int i;
   char *str[3];
-  CheckRhs(3,3);
-  for (i=0; i < 3 ; i++) {
+  CheckRhs(1,1);
+  for (i=0; i < 1 ; i++) {
     if ((str[i] = GetString(stack,i+1)) == (char*)0) return RET_BUG;
   }
-  Sci_Help(str[0],str[1],str[2]);
-#endif 
+  Sci_Help(NULL,NULL,str[0]);
   return 0;
 }
 
@@ -4074,9 +4073,7 @@ static OpTab Graphics_func[]={
   {"xname",int_xname},
   {"xaxis",int_xaxis},
   {"seteventhandler",int_seteventhandler},
-#ifdef WITH_GTK
   {"help_gtk",int_gtkhelp},
-#endif 
   {"xs2gif",int_xs2gif},
   {"xs2ppm",int_xs2ppm},
   {"xs2ps",int_xs2ps},

@@ -704,16 +704,16 @@ idle_load_page (gpointer data)
 /*------------------------------------------------------
  * mandir = man path or null (SCI+'man')
  * locale = "eng" or "fr" 
- * help_file = null or absolute file name 
+ * help_file = null or absolute (XXX) file name 
  * returns 0 on success and 1 if index.html not found 
  *------------------------------------------------------*/
 
 int Sci_Help(char *mandir,char *locale,char *help_file) 
 {
   char *sci = getenv("SCI");
-  char *l = (locale == NULL) ? "eng": locale ; 
+  char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
-    mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",NULL);
+    mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S, "xmltoxml",G_DIR_SEPARATOR_S, "html",  NULL);
   if ( window == NULL) 
     open_browser_dialog (mandir,l,help_file);
   else if ( help_file != NULL)
