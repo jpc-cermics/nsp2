@@ -202,7 +202,7 @@ int mpmatrix_eq(NspObject *A,NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_mpmatrix_id) == FALSE) return FALSE ;
-  rep =nsp_mat_fullcomp((NspMaxpMatrix *) A,(NspMaxpMatrix *) B,"==",&err);
+  rep =nsp_mat_fullcomp((NspMatrix *) A,(NspMatrix *) B,"==",&err);
   if ( err == 1) return FALSE ; 
   return rep;
 }
@@ -211,7 +211,7 @@ int mpmatrix_neq(NspObject *A,NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_mpmatrix_id) == FALSE) return TRUE;
-  rep =nsp_mat_fullcomp((NspMaxpMatrix *) A,(NspMaxpMatrix *) B,"<>",&err);
+  rep =nsp_mat_fullcomp((NspMatrix *) A,(NspMatrix *) B,"<>",&err);
   if ( err == 1) return TRUE ; 
   return rep;
 }
@@ -610,7 +610,6 @@ int int_mpcreate(Stack stack, int rhs, int opt, int lhs)
 
 int int_m2mp(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1,n1;
   NspMaxpMatrix *B;
   NspMatrix *A;
   CheckRhs(1,1);
@@ -643,33 +642,6 @@ int int_mpimpl(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * testmatrix('name',size)
- *    name = 'magic','franck','franck^-1','hilbert'
- */
-
-int int_mptestmatrix(Stack stack, int rhs, int opt, int lhs)
-{
-  static char *Strings[] = {"magic","franck","franck^-1","hilbert","hilbert^-1", (char *) NULL};
-  integer ind,n1;
-  NspMaxpMatrix *A;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if (( ind = GetStringInArray(stack,1,Strings,0)) == -1)
-    return RET_BUG;
-  if ( GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
-  switch ( ind ) 
-    {
-    case 0 : A =nsp_mat_magic(n1) ; break;
-    case 1 : A =nsp_mat_franck(n1,0) ; break;
-    case 2 : A =nsp_mat_franck(n1,1) ; break;
-    case 3 : A =nsp_mat_hilbert(n1,0) ; break;
-    case 4 : A =nsp_mat_hilbert(n1,1) ; break;
-    } 
-  if ( A == NULLMAXPMAT) return RET_BUG;
-  MoveObj(stack,1,(NspObject *)A);
-  return 1;
-}
 
 /*
  * Copy of a Matrix 
@@ -702,7 +674,7 @@ int int_mpcomplexify(Stack stack, int rhs, int opt, int lhs)
   if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT ) return RET_BUG;
   if ( rhs == 2 ) 
     if (GetScalarDouble(stack,2,&d) == FAIL) return RET_BUG;
-  if (nsp_mat_complexify(HMat,d) != 0 ) { return RET_BUG;};
+  if (nsp_mat_complexify((NspMatrix *) HMat,d) != 0 ) { return RET_BUG;};
   return 1;  
 }
 
@@ -720,7 +692,7 @@ int int_mprealpart(Stack stack, int rhs, int opt, int lhs)
     {
       if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
     }
-  if (nsp_mat_get_real(HMat) != OK  ) return RET_BUG;
+  if (nsp_mat_get_real((NspMatrix *) HMat) != OK  ) return RET_BUG;
   ((NspObject *) HMat)->ret_pos = 1;
   return 1;
 }
@@ -735,7 +707,7 @@ int int_mpimagpart(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ( (HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
-  if (nsp_mat_get_imag(HMat) !=  OK ) return RET_BUG; ;
+  if (nsp_mat_get_imag((NspMatrix *)HMat) !=  OK ) return RET_BUG; ;
   ((NspObject *) HMat)->ret_pos = 1;
   return 1;
 }
@@ -751,7 +723,7 @@ int int_mpkron(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((HMat1 = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
   if ((HMat2 = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
-  if ((HMat3 =nsp_mat_kron(HMat1,HMat2)) == NULLMAXPMAT) return RET_BUG;
+  if ((HMat3 =nsp_mat_kron((NspMatrix *) HMat1,(NspMatrix *) HMat2)) == NULLMAXPMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat3);
   return 1;
 }
@@ -797,7 +769,7 @@ int int_mpsort(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     { str2 = "d"; }
-  Index=nsp_mat_sort(A,lhs,str1,str2);
+  Index=nsp_mat_sort((NspMatrix *) A,lhs,str1,str2);
   NSP_OBJECT(A)->ret_pos = 1;
   if ( lhs == 2) 
     {
@@ -816,7 +788,7 @@ int int_mpsort(Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
-typedef NspMaxpMatrix *(*SuPro) (NspMaxpMatrix *A,char *);
+typedef NspMatrix *(*SuPro) (NspMatrix *A,char *);
 
 static int int_mp_sum(Stack stack, int rhs, int opt, int lhs, SuPro F)
 {
@@ -831,7 +803,7 @@ static int int_mp_sum(Stack stack, int rhs, int opt, int lhs, SuPro F)
     }
   else 
     { str = "F"; }
-  if ((Res= (*F)(HMat,str)) == NULLMAXPMAT ) return RET_BUG;
+  if ((Res= (*F)((NspMatrix *) HMat,str)) == NULLMAXPMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Res);
   return 1;
 }
@@ -919,7 +891,7 @@ static int int_mp_maxi(Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F
 	  /* intialize Ind matrix **/
 	  flag =1;
 	  if ((Ind = nsp_mpmatrix_create(NVOID,'r',A->m,A->n)) == NULLMAXPMAT)  return RET_BUG;
-	nsp_mat_set_rval(Ind,1.0);
+	  nsp_mat_set_rval((NspMatrix *) Ind,1.0);
 	}
       for ( i= 2 ; i <= rhs ; i++) 
 	{
@@ -968,7 +940,7 @@ int int_mptriu(Stack stack, int rhs, int opt, int lhs)
       if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
     }
   if ( (HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
- nsp_mat_triu(HMat,k1);
+  nsp_mat_triu((NspMatrix *) HMat,k1);
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -989,7 +961,7 @@ int int_mptril(Stack stack, int rhs, int opt, int lhs)
       if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
     }
   if ( (HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
- nsp_mat_tril(HMat,k1);
+  nsp_mat_tril((NspMatrix *) HMat,k1);
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -999,7 +971,7 @@ int int_mptril(Stack stack, int rhs, int opt, int lhs)
  * A is created , m,n no
  */
 
-typedef NspMaxpMatrix * (*Mfunc) (int m,int n);
+typedef NspMatrix * (*Mfunc) (int m,int n);
 
 /* generic function for ones,rand,eyes **/
  
@@ -1047,12 +1019,10 @@ int int_mprand(Stack stack, int rhs, int opt, int lhs)
   switch ( rhs ) 
     {
     case 0 :
-   
-      if (( A =nsp_mat_rand(1,1))== NULLMAXPMAT)  return RET_BUG;
+      if (( A = nsp_mat_rand(1,1))== NULLMAXPMAT)  return RET_BUG;
       MoveObj(stack,1,(NspObject *)A);
       return 1;
     case 1 :
-   
       m=nsp_object_get_size(NthObj(1),1);
       n=nsp_object_get_size(NthObj(1),2);
       /* XXXX */
@@ -1175,7 +1145,7 @@ int int_mpsetr(Stack stack, int rhs, int opt, int lhs)
   if (GetScalarDouble(stack,2,&dval) == FAIL) return RET_BUG;
   /* xxxxx verifier que la matrice a un nom **/
   if ( (HMat=GetMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
- nsp_mat_set_rval(HMat,dval);
+  nsp_mat_set_rval((NspMatrix *) HMat,dval);
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -1193,7 +1163,7 @@ int int_mpseti(Stack stack, int rhs, int opt, int lhs)
   if (GetScalarDouble(stack,2,&dval) == FAIL) return RET_BUG;
   /* xxxxx verifier que la matrice a un nom **/
   if ( (HMat=GetMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
-  if (nsp_mat_set_ival(HMat,dval) != OK ) return RET_BUG;
+  if (nsp_mat_set_ival((NspMatrix *) HMat,dval) != OK ) return RET_BUG;
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -1219,7 +1189,7 @@ int int_mpclean(Stack stack, int rhs, int opt, int lhs)
       if ( GetScalarDouble(stack,3,&epsr) == FAIL) return RET_BUG;
     }
   if ( (HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
- nsp_mat_clean(HMat,rhs,epsa,epsr);
+  nsp_mat_clean((NspMatrix *) HMat,rhs,epsa,epsr);
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -1943,7 +1913,7 @@ int int_mpdquote(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A=GetMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
   if ((B=nsp_mpmatrix_transpose(A)) ==  NULLMAXPMAT) return RET_BUG;
- nsp_mat_conj(B);
+  nsp_mat_conj((NspMatrix *) B);
   MoveObj(stack,1,(NspObject *)B);
   return 1;
 }
@@ -1958,7 +1928,7 @@ int int_mpdestroy(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(0,0);
   if ((HMat = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
- nsp_object_destroy(&NthObj(1));
+  nsp_object_destroy(&NthObj(1));
   return 0;
 }
 
@@ -2008,7 +1978,7 @@ int int_mp2latextab(Stack stack, int rhs, int opt, int lhs)
  *  A=op(A) 
  */
 
-typedef int (*M11) (NspMaxpMatrix *A);
+typedef int (*M11) (NspMatrix *A);
 
 /* generic function for ones,rand,eyes */
  
@@ -2020,12 +1990,12 @@ static int int_mp_gen11(Stack stack, int rhs, int opt, int lhs, M11 F)
   if ((HMat=GetMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
   if ( HMat->mn == 0) return 1;
   if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
-  if (( (*F)(HMat)) < 0) return RET_BUG;
+  if (( (*F)((NspMatrix *) HMat)) < 0) return RET_BUG;
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
 
-typedef void (*VM11) (NspMaxpMatrix *A); 
+typedef void (*VM11) (NspMatrix *A); 
 
 static int int_mp_genv11(Stack stack, int rhs, int opt, int lhs, VM11 F)
 {
@@ -2226,7 +2196,7 @@ int int_mpatan2(Stack stack, int rhs, int opt, int lhs)
   if ( A->mn == 0) return 1;
   if ((B=GetRealMpMat(stack,2))== NULLMAXPMAT) return RET_BUG;
   CheckSameDims(stack.fname,1,2,A,B);
-  if (nsp_mat_atan2(A,B) == FAIL ) return RET_BUG;
+  if (nsp_mat_atan2((NspMatrix *) A,(NspMatrix *)B) == FAIL ) return RET_BUG;
   return 1;
 }
 
@@ -2342,7 +2312,7 @@ int int_mppolar(Stack stack, int rhs, int opt, int lhs)
   if ((B=GetMpMat(stack,2))== NULLMAXPMAT) return RET_BUG;
   if ( SameDim(A,B) ) 
     {
-      if (nsp_mat_polar(A,B) < 0 ) return RET_BUG;
+      if (nsp_mat_polar((NspMatrix *)A,(NspMatrix *)B) < 0 ) return RET_BUG;
     }
   else 
     {
@@ -2369,7 +2339,7 @@ int int_mpiand(Stack stack, int rhs, int opt, int lhs)
       if ((B=GetRealMpMat(stack,2))== NULLMAXPMAT) return RET_BUG;
       if ( SameDim(A,B) ) 
 	{
-	  if (nsp_mat_iand(A,B) == FAIL ) return RET_BUG;
+	  if (nsp_mat_iand((NspMatrix *)A,(NspMatrix *)B) == FAIL ) return RET_BUG;
 	}
       else 
 	{
@@ -2380,7 +2350,7 @@ int int_mpiand(Stack stack, int rhs, int opt, int lhs)
   else 
     {
       unsigned res;
-      if (nsp_mat_iandu(A,&res)  == FAIL )  return RET_BUG;       
+      if (nsp_mat_iandu((NspMatrix *)A,&res)  == FAIL )  return RET_BUG;       
       if ( nsp_mpmatrix_resize(A,1,1) == FAIL) return(FAIL);
       A->R[0] = res;
     }
@@ -2404,7 +2374,7 @@ int int_mpior(Stack stack, int rhs, int opt, int lhs)
       if ((B=GetRealMpMat(stack,2))== NULLMAXPMAT) return RET_BUG;
       if ( SameDim(A,B) ) 
 	{
-	  if (nsp_mat_ior(A,B) == FAIL ) return RET_BUG;
+	  if (nsp_mat_ior((NspMatrix *)A,(NspMatrix *)B) == FAIL ) return RET_BUG;
 	}
       else 
 	{
@@ -2415,7 +2385,7 @@ int int_mpior(Stack stack, int rhs, int opt, int lhs)
   else 
     {
       unsigned res;
-      if (nsp_mat_ioru(A,&res)  == FAIL )  return RET_BUG;       
+      if (nsp_mat_ioru((NspMatrix *)A,&res)  == FAIL )  return RET_BUG;       
       if ( nsp_mpmatrix_resize(A,1,1) == FAIL) return(FAIL);
       A->R[0] = res;
     }
@@ -2439,7 +2409,7 @@ int int_mpconj(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
   if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
- nsp_mat_conj(HMat);
+  nsp_mat_conj((NspMatrix *)HMat);
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -2458,7 +2428,7 @@ int int_mpmodulo(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
   if ( GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
- nsp_mat_modulo(HMat,n);
+  nsp_mat_modulo((NspMatrix *)HMat,n);
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -2476,7 +2446,7 @@ int int_mpidiv(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,2);
   if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
   if ( GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
-  if ( HMat->mn != 0 )nsp_mat_idiv(HMat,n);
+  if ( HMat->mn != 0 )nsp_mat_idiv((NspMatrix *)HMat,n);
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -2493,9 +2463,9 @@ int int_mpidiv(Stack stack, int rhs, int opt, int lhs)
  *  scalar op A --->  F3(A,scalar) 
  */
 
-typedef int (*MPM) (NspMaxpMatrix *,NspMaxpMatrix*);
+typedef int (*MPM) (NspMatrix *,NspMatrix*);
 
-int MpMatNoOp(NspMaxpMatrix *A)
+int MpMatNoOp(NspMatrix *A)
 {
   return OK;
 }
@@ -2633,7 +2603,7 @@ int int_mpbackdivel(Stack stack, int rhs, int opt, int lhs)
 int int_mpmultel(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_mopscal(stack,rhs,opt,lhs,
-			nsp_mat_add_scalar,nsp_mat_add_el,nsp_mat_add_scalar,MpMatNoOp,1);
+			nsp_mat_add_scalar,nsp_mat_dadd,nsp_mat_add_scalar,MpMatNoOp,1);
 }
 
 
@@ -2660,20 +2630,21 @@ static int int_mpmult(Stack stack, int rhs, int opt, int lhs)
   if ( HMat2->mn == 1) 
     {
       if ((HMat1 = GetMpMatCopy(stack,1)) == NULLMAXPMAT) return RET_BUG;
-      if (nsp_mat_mult_scalar(HMat1,HMat2) != OK) return RET_BUG;
+      if (nsp_mat_mult_scalar((NspMatrix *)HMat1,(NspMatrix *)HMat2) != OK) return RET_BUG;
       NSP_OBJECT(HMat1)->ret_pos = 1;
     }
   else if ( HMat1->mn == 1 ) 
     {
       /* since Mat1 is scalar we store the result in Mat2 so we 
-	must copy it **/
+       * must copy it 
+       */
       if ((HMat2 = GetMpMatCopy(stack,2)) == NULLMAXPMAT) return RET_BUG;
-      if (nsp_mat_mult_scalar(HMat2,HMat1) != OK) return RET_BUG;
+      if (nsp_mat_mult_scalar((NspMatrix *)HMat2,(NspMatrix *)HMat1) != OK) return RET_BUG;
       NSP_OBJECT(HMat2)->ret_pos = 1;
     }
   else 
     {
-      if ((HMat3=nsp_mat_mult(HMat1,HMat2)) == NULLMAXPMAT) return RET_BUG;
+      if ((HMat3=nsp_mat_mult((NspMatrix *)HMat1,(NspMatrix *)HMat2)) == NULLMAXPMAT) return RET_BUG;
       MoveObj(stack,1,(NspObject *) HMat3);
     }
   return 1;
@@ -2713,11 +2684,12 @@ static int int_mpdiv(Stack stack, int rhs, int opt, int lhs)
 
 int int_mpfind(Stack stack, int rhs, int opt, int lhs)
 {
-  NspMaxpMatrix *A,*Rc,*Rr;
+  NspMaxpMatrix *A;
+  NspMatrix *Rc,*Rr;
   CheckRhs(1,1);
   CheckLhs(1,2);
   if ((A = GetMpMat(stack,1)) == NULLMAXPMAT)  return RET_BUG;
-  if (nsp_mat_find(A,Max(lhs,1),&Rr,&Rc) == FAIL) return RET_BUG;
+  if (nsp_mat_find((NspMatrix *) A,Max(lhs,1),&Rr,&Rc) == FAIL) return RET_BUG;
   MoveObj(stack,1, (NspObject *)Rr);
   if ( lhs == 2 )
     {
@@ -2860,7 +2832,6 @@ static OpTab Matrix_func[]={
   {"gsort_mp" ,  int_mpsort },
   {"tril_mp" ,  int_mptril },
   {"triu_mp" ,  int_mptriu },
-  {"testm_mp",int_mptestmatrix},
   {"matrix_mp",int_mpmatrix},
   {"quote_mp",int_mpquote},
   {"dprim_mp",int_mpdquote},

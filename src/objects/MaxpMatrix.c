@@ -502,21 +502,28 @@ void nsp_mpmatrix_info(const NspMaxpMatrix *Mat, int indent)
  * @indent is the given indentation for printing.
  */
 
+
 void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,int header )
 {
   int i;
-  Mat = MpMat2double(Mat); /* we should write a scilab_print_internal when Mat is int  XXXXX */
-
+  Mat = Mat2double(Mat); /* we should write a scilab_print_internal when Mat is int  XXXXX */
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  if (Mat->mn==0 )  
+  if (user_pref.pr_as_read_syntax)
     {
-      Sciprintf("%s\t= []\t\t %c (%dx%d)\n",NSP_OBJECT(Mat)->name,Mat->rc_type,Mat->m,Mat->n);
+      if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
+	{
+	  Sciprintf("%s=%s",NSP_OBJECT(Mat)->name,(Mat->mn==0 ) ? " m2mp([])\n" : "" );
+	}
     }
-  else
+  else 
     {
-      Sciprintf("%s\t=\t\t %c (%dx%d)\n",NSP_OBJECT(Mat)->name,Mat->rc_type,Mat->m,Mat->n);
+      Sciprintf("%s\t=%s\t\t mp %c(%dx%d) \n",NSP_OBJECT(Mat)->name,
+		(Mat->mn==0 ) ? " []" : "",Mat->rc_type,Mat->m,Mat->n);
+    }
+  if ( Mat->mn != 0) 
+    {
       if ( Mat->rc_type == 'r') 
-	scilab_print_internalM ((NspMatrix *) Mat,indent);
+	scilab_print_internalM ((NspMatrix *)Mat,indent);
       else 
 	scilab_print_internalCM ((NspMatrix *)Mat,indent);
     }

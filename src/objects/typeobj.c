@@ -518,6 +518,9 @@ void primitive_types_register() {
   new_type_gframe(T_BASE);
   /* initialize nsp gtk objects types */
   nsp_init_gtk_types(); 
+#ifdef MAXPLUS 
+  new_type_mpmatrix(T_BASE);
+#endif 
 }
 
 /*

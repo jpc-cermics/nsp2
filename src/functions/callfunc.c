@@ -72,8 +72,7 @@ extern  sci_interface  Dcd_Interf ;extern  interface_info  Dcd_Interf_Info ;
 extern  sci_interface  Module_Interf ;extern  interface_info  Module_Interf_Info ;
 extern  sci_interface  ModuleElt_Interf ;extern  interface_info  ModuleElt_Interf_Info ;
 
-/* #define MAXP 1 */
-#ifdef MAXP 
+#ifdef MAXPLUS 
 extern  sci_interface  MpMatrix_Interf ;extern  interface_info  MpMatrix_Interf_Info ;
 #endif 
 
@@ -126,7 +125,7 @@ InterfTab Interfaces[]={
   {ClassD_Interf,ClassD_Interf_Info},
   {Gtk_Interf,Gtk_Interf_Info},
 #endif
-#ifdef MAXP 
+#ifdef MAXPLUS
   {MpMatrix_Interf, MpMatrix_Interf_Info},
 #endif 
   {NULL,NULL}
