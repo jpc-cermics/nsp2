@@ -49,9 +49,6 @@ static void displaystringa_1(BCG *Xgc,char *string, int ipos);
 static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect);
 static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd);
 
-static void set_driver(char *x0) ;
-static char get_driver(void ) ;
-
 static void xset1_clipping_p(BCG *Xgc,double x,double y,double w,double h);
 static void xset1_clipgrf(BCG *Xgc);
 static void xset1_alufunction1(BCG *Xgc,int val);
@@ -91,9 +88,6 @@ static void xset1_initialize_gc(BCG *Xgc);
 
 
 Gengine1 nsp_gengine1={
-  set_driver,
-  get_driver,
-
   drawarc_1,
   fillarcs_1,
   drawarcs_1,
@@ -157,134 +151,6 @@ Gengine1 nsp_gengine1={
   xset1_initialize_gc,
 
 };
-
-
-extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine; 
-
-/*---------------------------------------------------------------
- * The basic graphic driver is X11 
- *    The name is X11 due to historical reasons 
- *    but according to architecture X11 can be an Xwindow driver 
- *    a driver for Macintosh 
- *    or a Windows driver 
- * Other drivers are Postscript Fig ( xfig ) and Rec ( Rec= X11 + Recording capabilities) 
- *    xfig is only meaningfull when using Unix machine 
- * ----------------------------------------------------------------*/
-
-/* a enlever plus tard XXXX */
-
-static char DriverName[]= "Rec";
-static int  DriverId = 0;
-
-static void set_driver_old(char *x0) 
-{
-  switch (x0[0])
-    {
-    case 'I':
-      /** special driver for windows : used when hdc is fixed elsewhere */
-      strcpy(DriverName,"Int"); /* internal : for Win32 */
-      DriverId = 0;
-      break;
-    case 'G':
-      if (x0[1]  ==  'I') {
-          strcpy(DriverName,"GIF");
-	  DriverId = 3;
-          break;
-      }
-    case 'X':
-    case 'W':
-      strcpy(DriverName,"X11");
-      DriverId = 0;
-      break;
-    case 'P'  :
-      if (x0[1]  ==  'P') {
-	strcpy(DriverName,"PPM");
-	DriverId = 3;
-	break;
-      }
-      else {
- 	strcpy(DriverName,"Pos");
- 	DriverId = 1;
-      }
-      break;
-    case 'F'  :
-      strcpy(DriverName,"Fig");
-      DriverId = 2;
-      break;
-    case 'R'  :
-      strcpy(DriverName,"Rec");
-      DriverId = 0;
-      break;
-    default:
-      Scistring("\n Wrong driver name I'll use X11");
-      strcpy(DriverName,"X11");
-      DriverId = 0;
-      break;
-    }
-}
-
-
-static void set_driver(char *x0) 
-{
-  switch (x0[0])
-    {
-    case 'I':
-      /** special driver for windows : used when hdc is fixed elsewhere */
-      strcpy(DriverName,"Int"); /* internal : for Win32 */
-      DriverId = 0;
-      break;
-    case 'G':
-      if (x0[1]  ==  'I') 
-	{
-          strcpy(DriverName,"GIF");
-	  DriverId = 3;
-          break;
-	}
-      else 
-	{
-	  strcpy(DriverName,"X11");
-	  DriverId = 0;
-	  nsp_gengine = &Gtk_gengine;
-	  break;
-	}
-    case 'X':
-    case 'W':
-      strcpy(DriverName,"X11");
-      DriverId = 0;
-      break;
-    case 'P'  :
-      if (x0[1]  ==  'P') {
-	strcpy(DriverName,"PPM");
-	DriverId = 3;
-	break;
-      }
-      else {
- 	strcpy(DriverName,"Pos");
- 	DriverId = 1;
-	nsp_gengine = &Pos_gengine;
-	
-      }
-      break;
-    case 'F'  :
-      strcpy(DriverName,"Fig");
-      DriverId = 2;
-      nsp_gengine = &XFig_gengine;
-      break;
-    case 'R'  :
-      strcpy(DriverName,"Rec");
-      DriverId = 0;
-      nsp_gengine = &Gtk_gengine;
-      break;
-    default:
-      Scistring("\n Wrong driver name I'll use X11");
-      strcpy(DriverName,"X11");
-      DriverId = 0;
-      break;
-    }
-}
-
-
-static char get_driver(void ) {return(DriverName[0]);}
 
 
 /*------------------------------------------------

@@ -16,9 +16,12 @@
 #include "nsp/graphics/Graphics.h"
 #include "nsp/gsort-p.h"
 
-extern Gengine *nsp_gengine ; /* XXXXX */
 
 static int sci_demo (char *fname,char *code,int flag) ;
+static void  nsp_gwin_clear(BCG *Xgc);
+static BCG *nsp_check_graphic_context(void);
+static int nsp_get_driver();
+typedef enum { X11_driver, Win_driver, Gtk_driver,  Pos_driver , Fig_driver, Rec_driver } nsp_driver; 
 
 /*-----------------------------------------------------------
  * Check optional style argument 
@@ -348,33 +351,6 @@ static char * check_logflags(Stack stack,char *fname,char *varname,char *logflag
     }
 }
 
-/*-----------------------------------------------------------
- * erase a graphic window if necessary 
- *-----------------------------------------------------------*/
-
-static void  nsp_gwin_clear(BCG *Xgc)
-{
-  if ( Xgc != NULL) 
-    if ( nsp_gengine->xget_autoclear(Xgc) == 1 ) 
-      {
-	nsp_gengine->clearwindow(Xgc);
-	nsp_gengine->tape_clean_plots(Xgc,Xgc->CurWindow);
-      }
-}
-
-
-/**
- * set or create a graphic window 
- * after this function is called we are sure that a graphic window 
- * is selected 
- */
-
-BCG *check_graphic_window(void)
-{
-  int cur = nsp_gengine->xget_curwin();
-  nsp_gengine->xset_curwin(Max(cur,0),TRUE);
-  return window_list_search(cur);
-} 
 
 /*-------------------------------------------------------------------
  * champ 
@@ -409,7 +385,7 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,
   if (( strf = check_strf(stack,stack.fname,"strf",strf))==NULL) return RET_BUG;
   if ( R == def_rect ) strf[1]='5';
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   (*func)(Xgc,x->R,y->R,fx->R,fy->R,&fx->m,&fx->n,strf,R, &arfact, 4L);
   return 0;
@@ -477,7 +453,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
   if (( iflag=check_iflag(stack,stack.fname,"flag",Mflag,3)) == NULL) return RET_BUG;
   if ((  ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   C2F(contour)(Xgc,x->R,y->R,z->R,&z->m,&z->n, &flagx, &nnz,nz->R, &theta, &alpha,
 	       leg, iflag, ebox, &zlev,strlen(leg));
@@ -580,7 +556,7 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs, int (*func) ())
   if ( int_check2d(stack,Mstyle,&istyle,nnz,&strf,&leg,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
   
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   (*func)(x->R,y->R,z->R,&z->m,&z->n,&flagx,&nnz,nz->R,istyle,strf,leg,rect,nax,strlen(strf),strlen(leg));
   return 0;
@@ -636,7 +612,7 @@ int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
   if ((M = nsp_matrix_create(NVOID,'r',1,ix4))== NULLMAT) return RET_BUG;
   for (i =0 ; i < ix4 ; ++i) ((int *) M->R)[i] = i+1;
   if  (nz == 1) ((int *) M->R)[1] =1;
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   C2F(contourif)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nz,znz,(int *) M->R);
   C2F(getconts)(&hl1, &hl2, &x->m, &x->n);
   n=x->n;m=x->m;
@@ -704,7 +680,7 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
 
   if ( Mstyle != NULLMAT ) 
@@ -783,7 +759,7 @@ int int_geom3d( Stack stack, int rhs, int opt, int lhs)
   CheckSameDims(stack.fname,2,3,y1,z1);
 
   if ( x1->mn  == 0)  {  return 0;}
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   C2F(geom3d)(Xgc,x1->R,y1->R,z1->R,&x1->mn);
   NSP_OBJECT(x1)->ret_pos= 1;
   NSP_OBJECT(y1)->ret_pos= 2;
@@ -889,7 +865,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   
   if ( x->mn == 0 || y->mn == 0 || z->mn == 0) { return 0;} 
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
 
   if ( x->mn == y->mn && x->mn == z->mn && x->mn != 1) 
@@ -1149,7 +1125,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,
   /* logflags */ 
   logflags[0]= tflag;
   
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   if ( strcmp(logflags,"gnn")==0 && force2d == 0) 
     {
@@ -1235,7 +1211,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   if ( int_check2d(stack,Mstyle,&istyle,z->mn,&strf,&leg,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
   
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   C2F(xgray)(Xgc,x->R,y->R,z->R,&z->m,&z->n,strf,rect,nax,strlen(strf));
   return 0;
@@ -1268,7 +1244,7 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
   if ( int_check2d(stack,Mstyle,&istyle,z->mn,&strf,&leg,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
   
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   C2F(xgray1)(Xgc,z->R,&z->m,&z->n,strf,rect,nax,strlen(strf));
   return 0;
@@ -1296,36 +1272,112 @@ int int_gray2plot(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   C2F(xgray2)(Xgc,M->R, &M->m,&M->n,Rect->R);
   return 0;
 } 
 
 /*-----------------------------------------------------------
  * driver(driver_name) or  current_driver=driver()
+ * change the default driver used at scilab level 
+ * 
  *-----------------------------------------------------------*/
+
+extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine; 
+extern BCG  ScilabGCPos, ScilabGCXfig; 
+
+static char *drivers_name[]={ "Gtk", "Win", "X11", "Pos", "Fig", "Rec", NULL };
+static int drivers_id[]={ Gtk_driver, Win_driver, X11_driver,  Pos_driver , Fig_driver, Rec_driver };
+static int nsp_current_driver = 0;
+static BCG *nsp_current_bcg= NULL ; 
+
+static int nsp_get_driver()
+{
+  return nsp_current_driver;
+}
+
 
 int int_driver(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *S;
-  char *str;
+  int rep; 
+
   switch (rhs) 
     {
     case 0: 
-      if (( S=nsp_smatrix_create_with_length(NVOID,1,1,3))== NULLSMAT) return RET_BUG;
-      /* XXXX nsp_gengine->scale->get_driver_name(S->S[0]); */
+      if (( S=nsp_smatrix_create_with_length(NVOID,1,1,strlen(drivers_name[nsp_current_driver])))== NULLSMAT)
+	return RET_BUG;
+      strcpy(S->S[0],drivers_name[nsp_current_driver]);
       StackStore(stack,(NspObject *) S,1);
       NSP_OBJECT(S)->ret_pos = 1;
       return 1;
     case 1 :
-      if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
-      nsp_gengine->scale->set_driver(str);
+      if ((rep= GetStringInArray(stack,1,drivers_name,1)) == -1) return RET_BUG; 
+      if ( drivers_id[rep] == Rec_driver ) 
+	{
+	  Scierror("%s: Rec driver does not exists, use xset('recording',...) to set recording mode on or off \n",stack.fname);
+	}
+      nsp_current_driver = rep;
+      switch ( rep ) 
+	{
+	case X11_driver: 
+	case Win_driver:
+	case Gtk_driver: 
+	case Rec_driver: nsp_current_bcg = NULL;break;
+	case  Pos_driver: 
+	  nsp_current_bcg = &ScilabGCPos ; 
+	  ScilabGCPos.graphic_engine = &Pos_gengine;
+	  /* XXX : attention il faut initialiser */ 
+	  break;
+	case  Fig_driver: 
+	  nsp_current_bcg = &ScilabGCXfig ; 
+	  ScilabGCXfig.graphic_engine = &XFig_gengine;
+	  break;
+	}
       return 0;
     default: 
       Scierror("%s: expecting zero or one argument\n",stack.fname);
       return RET_BUG;
     }
 }
+
+
+
+
+/*-----------------------------------------------------------
+ * erase a graphic window if necessary 
+ *-----------------------------------------------------------*/
+
+static void  nsp_gwin_clear(BCG *Xgc)
+{
+  if ( Xgc != NULL) 
+    if ( Xgc->graphic_engine->xget_autoclear(Xgc) == 1 ) 
+      {
+	Xgc->graphic_engine->clearwindow(Xgc);
+	Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
+      }
+}
+
+/**
+ * nsp_check_graphic_context:
+ * @void: 
+ * 
+ * If the current driver is Pos or Fig, this function returns the 
+ * associated BCG structure else the BCG structure associated to 
+ * the current graphic window is returned (If no current graphic 
+ * window exists, one is created).
+ * 
+ * Return value: #NULL or the current BCG to be used 
+ **/
+
+static BCG *nsp_check_graphic_context(void)
+{
+  if ( nsp_current_bcg != NULL ) 
+    return nsp_current_bcg; /* Postscript or Xfig */
+  else
+    return check_graphic_window(); /* a graphic window */
+} 
+
 
 /*-----------------------------------------------------------
  * xarc(...)
@@ -1355,19 +1407,21 @@ static int int_xarc_G(Stack stack, int rhs, int opt, int lhs,char *name, void (*
       Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 6\r\n",stack.fname,rhs);
       return RET_BUG;
     }
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   f(Xgc,val);
   return 0;
 } 
 
 int int_xarc(Stack stack, int rhs, int opt, int lhs) 
 {
-  return int_xarc_G(stack,rhs,opt,lhs,"xarc",nsp_gengine->scale->drawarc);
+  BCG *Xgc=nsp_check_graphic_context();
+  return int_xarc_G(stack,rhs,opt,lhs,"xarc",Xgc->graphic_engine->scale->drawarc);
 }
 
 int int_xfarc(Stack stack, int rhs, int opt, int lhs) 
 {
-  return int_xarc_G(stack,rhs,opt,lhs,"xfarc",nsp_gengine->scale->fillarc);
+  BCG *Xgc=nsp_check_graphic_context();
+  return int_xarc_G(stack,rhs,opt,lhs,"xfarc",Xgc->graphic_engine->scale->fillarc);
 }
 
 
@@ -1412,7 +1466,7 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int row,int flag,char *na
       StackStore(stack,(NspObject *) styles,2); /* to be sure that styles will be cleaned */
     }  
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   f(Xgc,arcs->R,(int *)styles->R,arcs->n);
   return 0;
 } 
@@ -1420,7 +1474,8 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int row,int flag,char *na
 
 int int_xarcs(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_xarcs_G(stack,rhs,opt,lhs,6,0,"xarcs",nsp_gengine->scale->drawarcs);
+  BCG *Xgc=nsp_check_graphic_context();
+  return int_xarcs_G(stack,rhs,opt,lhs,6,0,"xarcs",Xgc->graphic_engine->scale->drawarcs);
 }
 
 /*-----------------------------------------------------------
@@ -1429,7 +1484,8 @@ int int_xarcs(Stack stack, int rhs, int opt, int lhs)
 
 int int_xrects(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_xarcs_G(stack,rhs,opt,lhs,4,0,"xrects",nsp_gengine->scale->drawrectangles);
+  BCG *Xgc=nsp_check_graphic_context();
+  return int_xarcs_G(stack,rhs,opt,lhs,4,0,"xrects",Xgc->graphic_engine->scale->drawrectangles);
 }
 
 /*-----------------------------------------------------------
@@ -1438,7 +1494,8 @@ int int_xrects(Stack stack, int rhs, int opt, int lhs)
 
 int int_xfarcs(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_xarcs_G(stack,rhs,opt,lhs,6,1,"xfarcs",nsp_gengine->scale->fillarcs);
+  BCG *Xgc=nsp_check_graphic_context();
+  return int_xarcs_G(stack,rhs,opt,lhs,6,1,"xfarcs",Xgc->graphic_engine->scale->fillarcs);
 }
 
 /*-----------------------------------------------------------
@@ -1469,14 +1526,14 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
   CheckSameDims(stack.fname,1,2,nx,ny);
   if ( nx->mn == 0) { return 0;} 
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   
   if ( Mstyle != NULLMAT) 
     {
       if ( Mstyle->mn == 1) 
 	{
 	  dstyle = ((int*) Mstyle->R)[0];
-	  nsp_gengine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,&dstyle,0);
+	  Xgc->graphic_engine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,&dstyle,0);
 	}
       else 
 	{
@@ -1484,12 +1541,12 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
 	    Scierror("%s: style has a wrong size (%d), expecting (%d)\r\n",stack.fname,Mstyle->mn, nx->mn/2  );
 	    return RET_BUG;
 	  }
-	  nsp_gengine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,(int*) Mstyle->R,1);
+	  Xgc->graphic_engine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,(int*) Mstyle->R,1);
 	}
     }
   else 
     {
-      nsp_gengine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,&dstyle,0);
+      Xgc->graphic_engine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,&dstyle,0);
     }
   return 0;
 }
@@ -1521,14 +1578,14 @@ int int_xsegs(Stack stack, int rhs, int opt, int lhs)
   CheckSameDims(stack.fname,1,2,nx,ny);
   if ( nx->mn == 0) { return 0;} 
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   if ( Mstyle != NULLMAT) 
     {
       if ( Mstyle->mn == 1) 
 	{
 	  dstyle = ((int*) Mstyle->R)[0];
-	  nsp_gengine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&dstyle,0);
+	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&dstyle,0);
 	}
       else 
 	{
@@ -1536,12 +1593,12 @@ int int_xsegs(Stack stack, int rhs, int opt, int lhs)
 	    Scierror("%s: style has a wrong size (%d), expecting (%d)\r\n",stack.fname,Mstyle->mn, nx->mn/2  );
 	    return RET_BUG;
 	  }
-	  nsp_gengine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,(int*) Mstyle->R,1);
+	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,(int*) Mstyle->R,1);
 	}
     }
   else 
     {
-      nsp_gengine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&dstyle,0);
+      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&dstyle,0);
     }
   return 0;
 } 
@@ -1564,8 +1621,8 @@ int int_xaxis(Stack stack, int rhs, int opt, int lhs)
   if ((l4=GetRealMat(stack,4)) == NULLMAT ) return RET_BUG;
   CheckLength(stack.fname,4,l4,2);
 
-  Xgc=check_graphic_window();
-  nsp_gengine->scale->drawaxis(Xgc,&l1,(int *)l2->R,l3->R,l4->R);
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->scale->drawaxis(Xgc,&l1,(int *)l2->R,l3->R,l4->R);
   return 0;
 }
 
@@ -1585,7 +1642,7 @@ int int_xchange(Stack stack, int rhs, int opt, int lhs)
   
   if ((dir = GetString(stack,3)) == (char*)0) return RET_BUG;
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   
   if ( strncmp(dir,"i2f",3) == 0) 
     {
@@ -1671,8 +1728,8 @@ int int_xclea(Stack stack, int rhs, int opt, int lhs)
   double *val;
   CheckRhs(1,4);
   if ( get_rect(stack,rhs,opt,lhs,&val) == FAIL) return RET_BUG;
-  Xgc=check_graphic_window();
-  nsp_gengine->scale->cleararea(Xgc,*val,*(val+1),*(val+2),*(val+3));
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->scale->cleararea(Xgc,*val,*(val+1),*(val+2),*(val+3));
   return 0;
 } 
 
@@ -1726,30 +1783,30 @@ int int_xrect(Stack stack, int rhs, int opt, int lhs)
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   if ( opt != 0 ) 
     {
-      cpat = nsp_gengine->xget_pattern(Xgc);
-      cwidth = nsp_gengine->xget_thickness(Xgc);
+      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+      cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
       if ( opts[0].obj != NULLOBJ) 
 	{
-	  nsp_gengine->scale->xset_pattern(Xgc,back);
-	  nsp_gengine->scale->fillrectangle(Xgc,val);
-	  nsp_gengine->scale->xset_pattern(Xgc,cpat);
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,back);
+	  Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
 	}
       if ( opts[1].obj != NULLOBJ) 
-	nsp_gengine->scale->xset_pattern(Xgc,color);
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,color);
       if ( opts[2].obj != NULLOBJ) 
-	nsp_gengine->scale->xset_thickness(Xgc,width);
+	Xgc->graphic_engine->scale->xset_thickness(Xgc,width);
     }
 
-  nsp_gengine->scale->drawrectangle(Xgc,val);
+  Xgc->graphic_engine->scale->drawrectangle(Xgc,val);
 
   if ( opt != 0 ) 
     {
-      nsp_gengine->scale->xset_pattern(Xgc,cpat);
-      nsp_gengine->scale->xset_thickness(Xgc,cwidth);
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
+      Xgc->graphic_engine->scale->xset_thickness(Xgc,cwidth);
     }
   return 0;
 } 
@@ -1773,22 +1830,22 @@ int int_xfrect(Stack stack, int rhs, int opt, int lhs)
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&color) == FAIL) return RET_BUG;
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   if ( opt != 0 ) 
     {
-      cpat = nsp_gengine->xget_pattern(Xgc);
+      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
       if ( opts[0].obj != NULLOBJ) 
 	{
-	  nsp_gengine->scale->xset_pattern(Xgc, color);
-	  nsp_gengine->scale->fillrectangle(Xgc,val);
-	  nsp_gengine->scale->xset_pattern(Xgc,cpat);
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc, color);
+	  Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
 	}
       else 
-	nsp_gengine->scale->fillrectangle(Xgc,val);
+	Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
     }
   else 
     {
-      nsp_gengine->scale->fillrectangle(Xgc,val);
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
     }
   return 0;
 } 
@@ -1822,8 +1879,8 @@ int int_xclear(Stack stack, int rhs, int opt, int lhs)
 	  int wid = l1->R[ix];
 	  if (( Xgc=window_list_search(wid)) != NULL) 
 	    {
-	      nsp_gengine->clearwindow(Xgc);
-	      if ( val == TRUE ) nsp_gengine->tape_clean_plots(Xgc,wid);
+	      Xgc->graphic_engine->clearwindow(Xgc);
+	      if ( val == TRUE ) Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
 	    }
 	}
     } 
@@ -1831,8 +1888,8 @@ int int_xclear(Stack stack, int rhs, int opt, int lhs)
     {
       if ((Xgc = window_list_get_first()) != NULL) 
 	{
-	  nsp_gengine->clearwindow(Xgc);
-	  if ( val == TRUE ) nsp_gengine->tape_clean_plots(Xgc,Xgc->CurWindow);
+	  Xgc->graphic_engine->clearwindow(Xgc);
+	  if ( val == TRUE ) Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
 	}
     }
   return 0;
@@ -1853,7 +1910,6 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *S;
   NspMatrix *rep[5];
   double drep[4];
-  int curwin = nsp_gengine->xget_curwin();
 
   nsp_option opts[] ={
     { "clearq",s_bool,NULLOBJ,-1},
@@ -1874,12 +1930,22 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
   if ( opts != 0 && winall != TRUE &&  opts[4].obj != NULLOBJ) 
     {
       win = Max(win,0);
-      nsp_gengine->xset_curwin(win,FALSE);
+      Xgc = window_list_search(win);
+      if ( Xgc == NULL ) 
+	{
+	  Scierror("%s:window %d does not exists\n",stack.fname,win);
+	  return RET_BUG;
+	}
     }
   else 
     {
-      win = curwin;
-      Xgc=check_graphic_window();
+      Xgc = window_list_get_first();
+      if ( Xgc == NULL ) 
+	{
+	  Scierror("%s: No graphic window \n",stack.fname,win);
+	  return RET_BUG;
+	}
+      win = Xgc->CurWindow;
     }
 
   iflag = (clearq == TRUE) ? FALSE : TRUE;
@@ -1894,17 +1960,12 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
 
   if ( winall ) 
     {
-      nsp_gengine->scale->xclick_any(Xgc,buf,&button,&drep[1],&drep[2],&iw,iflag,motion,release,key,istr);
+      Xgc->graphic_engine->scale->xclick_any(Xgc,buf,&button,&drep[1],&drep[2],&iw,iflag,motion,release,key,istr);
     }
   else 
     {
-      nsp_gengine->scale->xclick(Xgc,buf,&button,&drep[1],&drep[2],iflag,motion,release,key,istr);
+      Xgc->graphic_engine->scale->xclick(Xgc,buf,&button,&drep[1],&drep[2],iflag,motion,release,key,istr);
       iw=win;
-    }
-
-  if ( opts != 0 && winall != TRUE &&  opts[4].obj != NULLOBJ) 
-    {
-      nsp_gengine->xset_curwin(Max(curwin,0),FALSE);
     }
 
   drep[0]=(double) button;
@@ -1946,8 +2007,8 @@ int int_xend(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   CheckRhs(-1,0);
-  Xgc=check_graphic_window();
-  nsp_gengine->xend(Xgc);
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->xend(Xgc);
   return 0;
 }
 
@@ -1963,7 +2024,7 @@ int int_xgrid(Stack stack, int rhs, int opt, int lhs)
   if ( rhs == 1) {
     if (GetScalarInt(stack,1,&style) == FAIL) return RET_BUG;
   }
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   C2F(xgrid)(Xgc,&style);
   return 0;
 } 
@@ -1988,8 +2049,8 @@ int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
     if (GetScalarInt(stack,3,&close) == FAIL) return RET_BUG;
   } 
 
-  Xgc=check_graphic_window();
-  nsp_gengine->scale->fillpolyline(Xgc,l1->R,l2->R,l1->mn,close);
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->scale->fillpolyline(Xgc,l1->R,l2->R,l1->mn,close);
   return 0;
 }
 
@@ -2037,9 +2098,9 @@ int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
       l3= Mat2int(l3);
     }
 
-  Xgc=check_graphic_window();    
+  Xgc=nsp_check_graphic_context();    
   
-  nsp_gengine->scale->fillpolylines(Xgc,l1->R,l2->R,(int *)l3->R,l2->n,l2->m,v1);
+  Xgc->graphic_engine->scale->fillpolylines(Xgc,l1->R,l2->R,(int *)l3->R,l2->n,l2->m,v1);
   
   /* end of Code modified by polpoth 7/7/2000 */
   return 0;
@@ -2074,23 +2135,23 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
 
   if (rhs == 2) { if (GetScalarInt(stack,2,&flagx) == FAIL) return RET_BUG;}
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   switch (rep) 
     {
     case 0: /* {"alufunction",xset_alufunction1,xget_alufunction}, */
-      val = nsp_gengine->xget_alufunction(Xgc);
+      val = Xgc->graphic_engine->xget_alufunction(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 1: /*{"background",xset_background,xget_background},*/
-      val = nsp_gengine->xget_background(Xgc);
+      val = Xgc->graphic_engine->xget_background(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 2: /*{"clipoff",xset_unclip,xget_clip},*/
     case 3: /*{"clipping",xset_clip,xget_clip},*/
-      nsp_gengine->xget_clip(Xgc,cl);
+      Xgc->graphic_engine->xget_clip(Xgc,cl);
       if ((M = nsp_matrix_create(NVOID,'r',1,5))== NULLMAT) return RET_BUG;
       for ( i = 0 ; i < 5 ; i++) M->R[i]= cl[i];
       StackStore(stack,(NspObject *) M,rhs+1);
@@ -2098,7 +2159,7 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
       return 1;
       break;
     case 4: /*{"color",xset_pattern,xget_pattern},*/
-      val = nsp_gengine->xget_pattern(Xgc);
+      val = Xgc->graphic_engine->xget_pattern(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
@@ -2106,132 +2167,132 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
       CheckColormap(Xgc,&m3);
       if ( m3 == 0) n3=0;
       if ((M = nsp_matrix_create(NVOID,'r',m3,3))== NULLMAT) return RET_BUG;
-      nsp_gengine->xget_colormap(Xgc,&m3,M->R);
+      Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R);
       StackStore(stack,(NspObject *) M,rhs+1);
       NSP_OBJECT(M)->ret_pos = 1;
       return 1;
       break;
     case 6: /*{"dashes",xset_dash_or_color,xget_dash_or_color},  */
-      val = nsp_gengine->xget_dash(Xgc);
+      val = Xgc->graphic_engine->xget_dash(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 7: /*{"font",xset_font,xget_font},*/
-      nsp_gengine->xget_font(Xgc,vals);
+      Xgc->graphic_engine->xget_font(Xgc,vals);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
     case 8: /*{"font size",xset_font,xget_font},*/
-      nsp_gengine->xget_font(Xgc,x1);
+      Xgc->graphic_engine->xget_font(Xgc,x1);
       if ( nsp_move_double(stack,1,(double) x1[1]) == FAIL) return RET_BUG;
       return 1;
       break;
     case 9: /*{"foreground",xset_foreground,xget_foreground},*/
-      val = nsp_gengine->xget_foreground(Xgc);
+      val = Xgc->graphic_engine->xget_foreground(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 10: /*{"hidden3d",xset_hidden3d,xget_hidden3d},*/
-      val = nsp_gengine->xget_hidden3d(Xgc);
+      val = Xgc->graphic_engine->xget_hidden3d(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 11: /*{"lastpattern",xset_empty,xget_last},*/
-      val = nsp_gengine->xget_last(Xgc);
+      val = Xgc->graphic_engine->xget_last(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 12: /*{"line mode",xset_absourel,xget_absourel},*/
-      val = nsp_gengine->xget_absourel(Xgc);
+      val = Xgc->graphic_engine->xget_absourel(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 13: /*{"line style",xset_dash,xget_dash},*/
-      val = nsp_gengine->xget_dash(Xgc);
+      val = Xgc->graphic_engine->xget_dash(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 14: /*{"mark",xset_mark,xget_mark},*/
-      nsp_gengine->xget_mark(Xgc,vals);
+      Xgc->graphic_engine->xget_mark(Xgc,vals);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
     case 15: /*{"mark size",xset_mark,xget_mark},*/
-      nsp_gengine->xget_mark(Xgc,x1);
+      Xgc->graphic_engine->xget_mark(Xgc,x1);
       if ( nsp_move_double(stack,1,(double) x1[1]) == FAIL) return RET_BUG;
       return 1;
       break;
     case 16: /*{"pattern",xset_pattern,xget_pattern},*/
-      val = nsp_gengine->xget_pattern(Xgc);
+      val = Xgc->graphic_engine->xget_pattern(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 17: /*{"pixmap",xset_pixmapOn,xget_pixmapOn},*/
-      val = nsp_gengine->xget_pixmapOn(Xgc);
+      val = Xgc->graphic_engine->xget_pixmapOn(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 18: /*{"thickness",xset_thickness,xget_thickness},*/
-      val = nsp_gengine->xget_thickness(Xgc);
+      val = Xgc->graphic_engine->xget_thickness(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 19: /*{"use color",xset_usecolor,xget_usecolor},*/
-      val = nsp_gengine->xget_usecolor(Xgc);
+      val = Xgc->graphic_engine->xget_usecolor(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 20: /*{"viewport",xset_viewport,xget_viewport},*/
-      nsp_gengine->xget_viewport(Xgc,vals,vals+1);
+      Xgc->graphic_engine->xget_viewport(Xgc,vals,vals+1);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
     case 21: /*{"wdim",xset_windowdim,xget_windowdim},*/
-      nsp_gengine->xget_windowdim(Xgc,vals,vals+1);
+      Xgc->graphic_engine->xget_windowdim(Xgc,vals,vals+1);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
     case 22: /*{"white",xset_empty,xget_last},*/
-      val = nsp_gengine->xget_last(Xgc);
+      val = Xgc->graphic_engine->xget_last(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 23: /*{"window",xset_curwin,xget_curwin},*/
-      val = nsp_gengine->xget_curwin();
+      val = Xgc->graphic_engine->xget_curwin();
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 24: /*{"wpdim",xset_popupdim,xget_popupdim},*/
-      nsp_gengine->xget_popupdim(Xgc,vals,vals+1);
+      Xgc->graphic_engine->xget_popupdim(Xgc,vals,vals+1);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
     case 25: /*{"wpos",xset_windowpos,xget_windowpos},*/
-      nsp_gengine->xget_windowpos(Xgc,vals,vals+1);
+      Xgc->graphic_engine->xget_windowpos(Xgc,vals,vals+1);
       if ((M= nsp_matrix_create(NVOID,'r',1,2))==NULLMAT) return RET_BUG;
       M->R[0]= vals[0]; M->R[1]=vals[1];
       MoveObj(stack,1,(NspObject *) M);
       return 1;
       break;
     case 26: /*{"wresize",xset_wresize,xget_wresize},*/
-      val = nsp_gengine->xget_wresize(Xgc);
+      val = Xgc->graphic_engine->xget_wresize(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
       return 1;
       break;
     case 27 : /* fpf */
       {
 	NspSMatrix *S;
-	if (( S=nsp_smatrix_create(NVOID,1,1,nsp_gengine->xget_fpf(Xgc),1))== NULLSMAT) return RET_BUG;
+	if (( S=nsp_smatrix_create(NVOID,1,1,Xgc->graphic_engine->xget_fpf(Xgc),1))== NULLSMAT) return RET_BUG;
 	MoveObj(stack,1,(NspObject *) S);
 	return 1;
       }
@@ -2239,7 +2300,7 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
     case 28:  /* auto clear */
       {
 	NspSMatrix *S;
-	int val = nsp_gengine->xget_autoclear(Xgc);
+	int val = Xgc->graphic_engine->xget_autoclear(Xgc);
 	if ( val == 1) 
 	  {
 	    if (( S=nsp_smatrix_create(NVOID,1,1,"on",1))== NULLSMAT) return RET_BUG;
@@ -2257,27 +2318,29 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*-----------------------------------------------------------
- *   xinit([driver-name])
+ *   xinit([name])
  *-----------------------------------------------------------*/
 
 int int_xinit(Stack stack, int rhs, int opt, int lhs)
 {
   int v1=-1;
+  char *dname_arg,dname_def[]=" ",*dname = dname_def;
   CheckRhs(-1,1);
-
-  if (rhs <= 0 )
+  if ( rhs == 1 ) 
     {
-      nsp_gengine->initgraphic(" ",&v1);
-    } 
+      if ((dname_arg = GetString(stack,1)) == (char*)0) return RET_BUG;
+      dname = dname_arg;
+    }
+  if ( nsp_current_bcg != NULL) 
+    {
+      nsp_current_bcg->graphic_engine->initgraphic(dname,&v1);
+    }
   else 
     {
-      char *dname;
-      if ((dname = GetString(stack,1)) == (char*)0) return RET_BUG;
-      nsp_gengine->initgraphic(dname,&v1);
+      Gtk_gengine.initgraphic(dname,&v1);
     }
   return 0;
 }
-
 
 /*-----------------------------------------------------------
  * xlfont(font-name,font-id)
@@ -2290,7 +2353,7 @@ int int_xlfont(Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   char *str;
   int num;
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   if (rhs  <= 0) 
     {
       Scierror("%s: xlfont to be done  \r\n",stack.fname);
@@ -2330,7 +2393,7 @@ int int_xlfont(Stack stack, int rhs, int opt, int lhs)
   if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
   if (GetScalarInt(stack,2,&num) == FAIL) return RET_BUG;
   
-  nsp_gengine->loadfamily(str,&num);
+  Xgc->graphic_engine->loadfamily(str,&num);
   return 0;
 }
 
@@ -2365,9 +2428,9 @@ int int_xnumb(Stack stack, int rhs, int opt, int lhs)
       if ((l5 = MatZeros(1,l3->mn)) == NULLMAT) return RET_BUG;
     }
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   
-  nsp_gengine->scale->displaynumbers(Xgc,l1->R,l2->R,l3->mn,flagx,l3->R,l5->R);
+  Xgc->graphic_engine->scale->displaynumbers(Xgc,l1->R,l2->R,l3->mn,flagx,l3->R,l5->R);
   if ( rhs < 5) nsp_matrix_destroy(l5);
   return 0;
 } 
@@ -2382,8 +2445,8 @@ int int_xpause(Stack stack, int rhs, int opt, int lhs)
   int sec=0;
   CheckRhs(-1,1);
   if (rhs == 1){ if (GetScalarInt(stack,1,&sec) == FAIL) return RET_BUG;}
-  Xgc=check_graphic_window();
-  nsp_gengine->xpause(sec);
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->xpause(sec);
   return 0;
 } 
 
@@ -2418,24 +2481,24 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thick,&type) == FAIL) return RET_BUG;
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   if ( opt != 0 ) 
     {
       if ( opts[1].obj != NULLOBJ) 
 	{
-	  ccolor = nsp_gengine->xget_pattern(Xgc); 
-	  nsp_gengine->scale->xset_pattern(Xgc,color);
+	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,color);
 	}
       if ( opts[2].obj != NULLOBJ) 
 	{
-	  nsp_gengine->xget_mark(Xgc,xmark); 
-	  nsp_gengine->scale->xset_mark(Xgc,mark,xmark[1]);
+	  Xgc->graphic_engine->xget_mark(Xgc,xmark); 
+	  Xgc->graphic_engine->scale->xset_mark(Xgc,mark,xmark[1]);
 	}
       if ( opts[3].obj != NULLOBJ) 
 	{
-	  cthick = nsp_gengine->xget_thickness(Xgc); 
-	  nsp_gengine->scale->xset_thickness(Xgc,thick);
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  Xgc->graphic_engine->scale->xset_thickness(Xgc,thick);
 	}
       if ( opts[4].obj != NULLOBJ) 
 	{
@@ -2450,19 +2513,19 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 
 
   if ( dtype == xmarks ) 
-    nsp_gengine->scale->drawpolymark(Xgc,l1->R,l2->R,l2->mn);
+    Xgc->graphic_engine->scale->drawpolymark(Xgc,l1->R,l2->R,l2->mn);
   else
-    nsp_gengine->scale->drawpolyline(Xgc,l1->R,l2->R,l2->mn,close);
+    Xgc->graphic_engine->scale->drawpolyline(Xgc,l1->R,l2->R,l2->mn,close);
 
   if ( opt != 0 ) 
     {
       /* reset to default values */
-      if ( opts[1].obj != NULLOBJ) nsp_gengine->scale->xset_pattern(Xgc,ccolor);
+      if ( opts[1].obj != NULLOBJ) Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
       if ( opts[2].obj != NULLOBJ) 
 	{
-	  xmark[0]= cmark;  nsp_gengine->scale->xset_mark(Xgc,xmark[0],xmark[1]);
+	  xmark[0]= cmark;  Xgc->graphic_engine->scale->xset_mark(Xgc,xmark[0],xmark[1]);
 	}
-      if ( opts[3].obj != NULLOBJ) nsp_gengine->scale->xset_thickness(Xgc,cthick);
+      if ( opts[3].obj != NULLOBJ) Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
     }
 
   return 0;
@@ -2496,8 +2559,8 @@ int int_xpolys(Stack stack, int rhs, int opt, int lhs)
       StackStore(stack,(NspObject *) l3,3);
     }
 
-  Xgc=check_graphic_window();
-  nsp_gengine->scale->drawpolylines(Xgc,l1->R,l2->R,(int *)l3->R,l2->n,l2->m);
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->scale->drawpolylines(Xgc,l1->R,l2->R,(int *)l3->R,l2->n,l2->m);
   return 0;
 }
 
@@ -2508,8 +2571,8 @@ int int_xselect(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   CheckRhs(-1,0);
-  Xgc=check_graphic_window();
-  nsp_gengine->xselgraphic(Xgc);
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->xselgraphic(Xgc);
   return 0;
 }
 
@@ -2531,7 +2594,7 @@ static char *xset_Table[] = { "alufunction", "background", "clipoff",  "clipping
 
 int int_xset(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc;
+  BCG *Xgc = NULL;
   static char *auto_clear_values[]= {"off","on",NULL};
   char *info;
   int rep,val,val1,x[5], i, mark[2], font[2];
@@ -2550,27 +2613,27 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
     case 0: /* {"alufunction",xset_alufunction1,xget_alufunction}, */
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_alufunction1(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,val);
       break;
     case 1: /*{"background",xset_background,xget_background},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_background(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_background(Xgc,val);
       break;
     case 2: /*{"clipoff",xset_unclip,xget_clip},*/
       CheckRhs(1,1);
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_unclip(Xgc);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_unclip(Xgc);
       break;
     case 3: /*{"clipping",xset_clip,xget_clip},*/
       if ( rhs == 2 ) 
 	{
 	  if (( M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
 	  CheckLength(stack.fname,2,M,4);
-	  Xgc=check_graphic_window();
-	  nsp_gengine->scale->xset_clip(Xgc,M->R);
+	  Xgc=nsp_check_graphic_context();
+	  Xgc->graphic_engine->scale->xset_clip(Xgc,M->R);
 	}
       else
 	{
@@ -2579,24 +2642,22 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
 	    {
 	      if (GetScalarDouble(stack,i+2,cl+i) == FAIL) return RET_BUG; 
 	    }
-	  Xgc=check_graphic_window();
-	  nsp_gengine->scale->xset_clip(Xgc,cl);
+	  Xgc=nsp_check_graphic_context();
+	  Xgc->graphic_engine->scale->xset_clip(Xgc,cl);
 	}
       break;
     case 4: /*{"color",xset_pattern,xget_pattern},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_pattern(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,val);
       break;
     case 5: /*{"colormap",xset_colormap,xget_colormap},*/
       CheckRhs(2,2);
       if ( (M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG; 
       CheckCols(stack.fname,2,M,3);
-      Xgc=check_graphic_window();
-      nsp_gengine->sedeco(0);
-      nsp_gengine->sedeco(1);
-      nsp_gengine->scale->xset_colormap(Xgc,M->m,M->R);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_colormap(Xgc,M->m,M->R);
       /* ajout Bruno :
        * since xset('colormap',..) is not recorded by the Rec driver the 
        * current color initialisation performed by xset('colormap',..) 
@@ -2604,18 +2665,18 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
        * Nex line is added for this
        */
       x[0] = M->m+1;
-      nsp_gengine->scale->xset_pattern(Xgc,x[0]);
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,x[0]);
       break;
     case 6: /*{"dashes",xset_dash_or_color,xget_dash_or_color},  */
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_dash(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_dash(Xgc,val);
       break;
     case 7: /*{"default",xset_default*/
       CheckRhs(1,1);
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_default(Xgc);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_default(Xgc);
       break;
     case 8: /*{"font",xset_font,xget_font},*/
       CheckRhs(2,3);
@@ -2624,31 +2685,31 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
 	}
-      Xgc=check_graphic_window();
-      nsp_gengine->xget_font(Xgc,font);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->xget_font(Xgc,font);
       font[0]=val;
       if ( rhs == 3 ) font[1]=val1;
-      nsp_gengine->scale->xset_font(Xgc,font[0],font[1]);
+      Xgc->graphic_engine->scale->xset_font(Xgc,font[0],font[1]);
       break;
     case 9: /*{"font size",xset_font,xget_font},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->xget_font(Xgc,font);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->xget_font(Xgc,font);
       font[1]=val;
-      nsp_gengine->scale->xset_font(Xgc,font[0],font[1]);
+      Xgc->graphic_engine->scale->xset_font(Xgc,font[0],font[1]);
       break;
     case 10: /*{"foreground",xset_foreground,xget_foreground},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_foreground(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_foreground(Xgc,val);
       break;
     case 11: /*{"hidden3d",xset_hidden3d,xget_hidden3d},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_hidden3d(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_hidden3d(Xgc,val);
       break;
     case 12: /*{"lastpattern",xset_empty,xget_last},*/
       CheckRhs(1,1);
@@ -2658,14 +2719,14 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
     case 13: /*{"line mode",xset_absourel,xget_absourel},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_absourel(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_absourel(Xgc,val);
       break;
     case 14: /*{"line style",xset_dash,xget_dash},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_dash(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_dash(Xgc,val);
       break;
     case 15: /*{"mark",xset_mark,xget_mark},*/
       CheckRhs(2,3);
@@ -2674,57 +2735,57 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
 	}
-      Xgc=check_graphic_window();
-      nsp_gengine->xget_mark(Xgc,mark);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->xget_mark(Xgc,mark);
       mark[0]=val;
       if ( rhs == 3 ) mark[1]=val1;
-      nsp_gengine->scale->xset_mark(Xgc,mark[0],mark[1]);
+      Xgc->graphic_engine->scale->xset_mark(Xgc,mark[0],mark[1]);
       break;
     case 16: /*{"mark size",xset_mark,xget_mark},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->xget_mark(Xgc,mark);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->xget_mark(Xgc,mark);
       mark[1]=val;
-      nsp_gengine->scale->xset_mark(Xgc,mark[0],mark[1]);
+      Xgc->graphic_engine->scale->xset_mark(Xgc,mark[0],mark[1]);
       break;
     case 17: /*{"pattern",xset_pattern,xget_pattern},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_pattern(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,val);
       break;
     case 18: /*{"pixmap",xset_pixmapOn,xget_pixmapOn},*/
       CheckRhs(2,2);
-      Xgc=check_graphic_window();
+      Xgc=nsp_check_graphic_context();
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      nsp_gengine->scale->xset_pixmapOn(Xgc,val);
+      Xgc->graphic_engine->scale->xset_pixmapOn(Xgc,val);
       break;
     case 19: /*{"thickness",xset_thickness,xget_thickness},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_thickness(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_thickness(Xgc,val);
       break;
     case 20: /*{"use color",xset_usecolor,xget_usecolor},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_usecolor(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,val);
       break;
     case 21: /*{"viewport",xset_viewport,xget_viewport},*/
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_viewport(Xgc,val,val1);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_viewport(Xgc,val,val1);
       break;
     case 22: /*{"wdim",xset_windowdim,xget_windowdim},*/
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_windowdim(Xgc,val,val1);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_windowdim(Xgc,val,val1);
       break;
     case 23: /*{"white",xset_empty,xget_last},*/
       CheckRhs(1,1);
@@ -2734,59 +2795,62 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
     case 24: /*{"window",xset_curwin,xget_curwin},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      nsp_gengine->xset_curwin(val,TRUE);
+      if ((Xgc = window_list_get_first()) != NULL) 
+	Xgc->graphic_engine->xset_curwin(Max(val,0),TRUE);
+      else 
+	Xgc= set_graphic_window(Max(val,0));
       break;
     case 25: /*{"wpdim",xset_popupdim,xget_popupdim},*/
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_popupdim(Xgc,val,val1);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_popupdim(Xgc,val,val1);
       break;
     case 26: /*{"wpos",xset_windowpos,xget_windowpos},*/
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_windowpos(Xgc,val,val1);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_windowpos(Xgc,val,val1);
       break;
     case 27: /*{"wresize",xset_wresize,xget_wresize},*/
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_wresize(Xgc,val);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_wresize(Xgc,val);
       break;
     case 28: /*{"wshow",xset_show,xget_empty},*/
       CheckRhs(1,1);
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_show(Xgc);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_show(Xgc);
       break;
     case 29: /*{"wwpc",xset_pixmapclear,xget_empty}*/
       CheckRhs(1,1);
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_pixmapclear(Xgc);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_pixmapclear(Xgc);
       break;
     case 30: /*{"fpf"}*/
       CheckRhs(2,2);
       if ((info = GetString(stack,2)) == (char*)0) return RET_BUG;
-      Xgc=check_graphic_window();
+      Xgc=nsp_check_graphic_context();
       if ( strlen(info)== 0) 
-	nsp_gengine->scale->xset_fpf_def(Xgc);
+	Xgc->graphic_engine->scale->xset_fpf_def(Xgc);
       else 
-	nsp_gengine->scale->xset_fpf(Xgc,info);
+	Xgc->graphic_engine->scale->xset_fpf(Xgc,info);
       return 0;
       break;
     case 31: /*{"auto clear"}*/
       CheckRhs(2,2);
-      Xgc=check_graphic_window();
+      Xgc=nsp_check_graphic_context();
       if ( (rep = GetStringInArray(stack,2,auto_clear_values,1)) == -1 ) return RET_BUG;
-      nsp_gengine->scale->xset_autoclear(Xgc,rep);
+      Xgc->graphic_engine->scale->xset_autoclear(Xgc,rep);
       return 0;
       break;
     case 32 : /*{"clipgrf"},*/
       CheckRhs(1,1);
-      Xgc=check_graphic_window();
-      nsp_gengine->scale->xset_clipgrf(Xgc);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
       break;
     }
   return 0;
@@ -2818,7 +2882,7 @@ int int_xstring(Stack stack, int rhs, int opt, int lhs)
   if (rhs >= 4) {if (GetScalarDouble(stack,4,&angle) == FAIL) return RET_BUG;};
   if (rhs >= 5) {if (GetScalarInt(stack,5,&flagx) == FAIL) return RET_BUG;}; 
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   /*     to keep the size of the largest line */
   wc = 0.;
@@ -2831,8 +2895,8 @@ int int_xstring(Stack stack, int rhs, int opt, int lhs)
 
   for (i = S->m -1 ; i >= 0; --i) 
     {
-      nsp_gengine->scale->displaystring(Xgc,S->S[i],x,y,0,angle);
-      nsp_gengine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
+      Xgc->graphic_engine->scale->displaystring(Xgc,S->S[i],x,y,0,angle);
+      Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
       wc = Max(wc,rect[2]);
       if (i != 0 ) 
 	y += rect[3] * 1.2;
@@ -2841,7 +2905,7 @@ int int_xstring(Stack stack, int rhs, int opt, int lhs)
     }
   if (flagx == 1) {
     double rect[]={x,y,wc, y - yi};
-    nsp_gengine->scale->drawrectangle(Xgc,rect);
+    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
   }
   if ( remove == 1) nsp_smatrix_destroy(S);
   return 0;
@@ -2860,7 +2924,7 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
   if ( rhs <= 0) {  return sci_demo(stack.fname,"x=(1:10)';plot2d(x,x);xtitle(['Titre';'Principal'],'x','y');",1);  }
 
   CheckRhs(1,3);
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   for ( narg = 1 ; narg <= rhs ; narg++) 
     {
@@ -2868,7 +2932,7 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
       if (( S = GetSMat(stack,narg)) == NULLSMAT) return RET_BUG;
       if ( S->mn == 0 ) continue;
       if (( str =nsp_smatrix_elts_concat(S,"@",1," ",1))== NULL) return RET_BUG;
-      nsp_gengine->scale->displaystringa(Xgc,str,narg);
+      Xgc->graphic_engine->scale->displaystringa(Xgc,str,narg);
       FREE(str);
     }
   return 0;
@@ -2906,9 +2970,9 @@ int int_xstringb(Stack stack, int rhs, int opt, int lhs)
       }
   }
   if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return RET_BUG;
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   
-  nsp_gengine->scale->xstringb(Xgc,str,&fill,&x,&y,&w,&hx);
+  Xgc->graphic_engine->scale->xstringb(Xgc,str,&fill,&x,&y,&w,&hx);
   FREE(str);
   return 0;
 } 
@@ -2949,40 +3013,40 @@ int int_xstringc(Stack stack, int rhs, int opt, int lhs)
  
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&fill,&frame,&thickness) == FAIL) return RET_BUG;
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   if ( opt != 0 ) 
     {
-      cpat = nsp_gengine->xget_pattern(Xgc);
-      cwidth = nsp_gengine->xget_thickness(Xgc);
+      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+      cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
       if ( back != -1 )
 	{
-	  nsp_gengine->scale->xset_pattern(Xgc,back);
-	  nsp_gengine->scale->fillrectangle(Xgc,M->R);
-	  nsp_gengine->scale->xset_pattern(Xgc,cpat);
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,back);
+	  Xgc->graphic_engine->scale->fillrectangle(Xgc,M->R);
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
 	}
       if ( thickness != -1 ) 
-	nsp_gengine->scale->xset_thickness(Xgc,thickness);
+	Xgc->graphic_engine->scale->xset_thickness(Xgc,thickness);
       if ( frame != -1 ) 
-	nsp_gengine->scale->xset_pattern(Xgc,frame);
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,frame);
       else
-	nsp_gengine->scale->xset_pattern(Xgc,cpat);
-      nsp_gengine->scale->drawrectangle(Xgc,M->R);
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
+      Xgc->graphic_engine->scale->drawrectangle(Xgc,M->R);
       if ( thickness != -1 ) 
-	nsp_gengine->scale->xset_thickness(Xgc,cwidth);
+	Xgc->graphic_engine->scale->xset_thickness(Xgc,cwidth);
       if ( color != -1) 
-	nsp_gengine->scale->xset_pattern(Xgc,color);
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,color);
       else
-	nsp_gengine->scale->xset_pattern(Xgc,cpat);
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
       y = M->R[1]-M->R[3];
-      nsp_gengine->scale->xstringb(Xgc,str,&fill,M->R,&y,M->R+2,M->R+3);
+      Xgc->graphic_engine->scale->xstringb(Xgc,str,&fill,M->R,&y,M->R+2,M->R+3);
       if ( color != -1) 
-	nsp_gengine->scale->xset_pattern(Xgc,cpat);
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
     }
   else 
     {
       y = M->R[1]-M->R[3];
-      nsp_gengine->scale->xstringb(Xgc,str,&fill,M->R,&y,M->R+2,M->R+3);
+      Xgc->graphic_engine->scale->xstringb(Xgc,str,&fill,M->R,&y,M->R+2,M->R+3);
     }
   FREE(str);
   return 0;
@@ -3020,11 +3084,11 @@ int int_xstringl(Stack stack, int rhs, int opt, int lhs)
       if (( S =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
     }
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   for (i = S->m -1 ; i >= 0; --i) 
     {
-      nsp_gengine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
+      Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
       wc = Max(wc,rect[2]);
       if (i != 0 ) 
 	y += rect[3] * 1.2;
@@ -3056,7 +3120,7 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
   static char *xtape_Table[] = {  "on","clear","replay","replaysc","replayna",  NULL };
 
   CheckRhs(1,7);
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   /* first argument is a string in xtape_table */
 
@@ -3066,17 +3130,17 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
     {
     case 0 : /* on */ 
       CheckRhs(1,1);
-      nsp_gengine->xset_recording(Xgc,TRUE);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
       break;
     case 1 : /* clear */
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&num) == FAIL) return RET_BUG;
-      nsp_gengine->tape_clean_plots(Xgc,num);
+      Xgc->graphic_engine->tape_clean_plots(Xgc,num);
       break;
     case 2 : /* replay */
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&num) == FAIL) return RET_BUG;
-      nsp_gengine->tape_replay(Xgc,num);
+      Xgc->graphic_engine->tape_replay(Xgc,num);
       break;
     case 3 : /* replaysc */
       CheckRhs(2,5);
@@ -3099,7 +3163,7 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
 	    CheckLength(stack.fname,5,M,4); aint = (int*) M->R;
 	  }
 	}
-      nsp_gengine->tape_replay_new_scale(Xgc,num,iscflag,aint,rect);
+      Xgc->graphic_engine->tape_replay_new_scale(Xgc,num,iscflag,aint,rect);
       break;
     case 4: /* replayna */
       CheckRhs(2,5);
@@ -3118,7 +3182,7 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
 	if ((M= GetRealMat(stack,6))  == NULLMAT) return RET_BUG;
 	CheckLength(stack.fname,7,M,6); ebox =  M->R;
       }
-      nsp_gengine->tape_replay_new_angles(Xgc,num,iflag,flagx,&theta,&alpha,ebox); /*  */
+      Xgc->graphic_engine->tape_replay_new_angles(Xgc,num,iflag,flagx,&theta,&alpha,ebox); /*  */
       break;
     }
   return 0;
@@ -3134,8 +3198,8 @@ int int_xinfo(Stack stack, int rhs, int opt, int lhs)
   char *info;
   CheckRhs(1,1);
   if ((info = GetString(stack,1)) == (char*)0) return RET_BUG;
-  Xgc=check_graphic_window();
-  nsp_gengine->xinfo(Xgc,info);
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->xinfo(Xgc,info);
   return 0;
 }
 
@@ -3156,7 +3220,7 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
   static char logflag_def[]="nn";
   char *logflag = logflag_def;
   NspMatrix *M;
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   if ( opt == 0) 
     {
@@ -3250,7 +3314,7 @@ int int_xgetech(Stack stack, int rhs, int opt, int lhs)
     }
 
   if ( lhs >=4 ) { if ((l[4]=(NspObject *) nsp_matrix_create(NVOID,'r',1,4))==NULLOBJ) return RET_BUG; A= ((NspMatrix *) l[4])->R;}
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   getscale2d(Xgc,W,F,L,A);
   for ( i = 1 ; i <= lhs ; i++) 
     {
@@ -3313,7 +3377,7 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
     if ( nax != def_nax) strf[1] = '1';
   }
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   C2F(fec)(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,zminmax,colminmax);
   return 0;
@@ -3341,9 +3405,9 @@ int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {new_opts, t_end} ;
   
   if ( GetArgs(stack,rhs,opt,T,&opts,&clearq,&key,&motion,&release) == FAIL) return RET_BUG;
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
   iflag = (clearq == TRUE) ? FALSE : TRUE;
-  nsp_gengine->scale->xgetmouse(Xgc,"xv",&button,&x,&y,iflag,motion,release,key);
+  Xgc->graphic_engine->scale->xgetmouse(Xgc,"xv",&button,&x,&y,iflag,motion,release,key);
   if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
   M->R[0] = x;  M->R[1] = y;  M->R[2] = (double) button;
   NSP_OBJECT(M)->ret_pos=1;
@@ -3364,12 +3428,15 @@ int int_xsave(Stack stack, int rhs, int opt, int lhs)
 
   if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
   if (rhs == 2) 
-    { if (GetScalarInt(stack,2,&wid) == FAIL) return RET_BUG;}
+    { 
+      if (GetScalarInt(stack,2,&wid) == FAIL) return RET_BUG;
+      if (( Xgc=window_list_search(wid)) == NULL) return 0;
+    }
   else 
     {
-      wid = nsp_gengine->xget_curwin();
+      Xgc = check_graphic_window();
+      wid = Xgc->CurWindow;
     }
-  Xgc=check_graphic_window();
   tape_save(Xgc,str,wid);
   return 0;
 }
@@ -3389,9 +3456,8 @@ int int_xload(Stack stack, int rhs, int opt, int lhs)
   if (rhs == 2) 
     { 
       if (GetScalarInt(stack,2,&wid) == FAIL) return RET_BUG;
-      nsp_gengine->xset_curwin(wid,TRUE);
+      Xgc = set_graphic_window(Max(0,wid));
     }
-
   Xgc=check_graphic_window();
   tape_load(Xgc,str);
   return 0;
@@ -3418,8 +3484,8 @@ int int_xdel(Stack stack, int rhs, int opt, int lhs)
     } 
   else 
     {
-      int win = nsp_gengine->xget_curwin();
-      if ( win != -1) scig_delete(win);
+      BCG *loc =  window_list_get_first();
+      if ( loc != NULL) scig_delete(loc->CurWindow);
     }
   return 0;
 }
@@ -3617,14 +3683,22 @@ int int_gsort(Stack stack, int rhs, int opt, int lhs)
 
 int int_winsid(Stack stack, int rhs, int opt, int lhs)
 {
+  BCG *Xgc =  window_list_get_first();
   NspMatrix *M;
   int ids,num;
   CheckRhs(-1,0) ;
   /* first pass to get num */
-  nsp_gengine->window_list_get_ids(&num,&ids ,0);
-  if ((M=nsp_matrix_create(NVOID,'r',1,num))==NULLMAT) return RET_BUG;
-  /* second pass to fill M */
-  nsp_gengine->window_list_get_ids(&num,(int *) M->R,1);
+  if ( Xgc == NULL ) 
+    {
+      if ((M=nsp_matrix_create(NVOID,'r',0,0))==NULLMAT) return RET_BUG;
+    }
+  else
+    {
+      Xgc->graphic_engine->window_list_get_ids(&num,&ids ,0);
+      if ((M=nsp_matrix_create(NVOID,'r',1,num))==NULLMAT) return RET_BUG;
+      /* second pass to fill M */
+      Xgc->graphic_engine->window_list_get_ids(&num,(int *) M->R,1);
+    }
   NSP_OBJECT(M)->ret_pos = 1; M->convert='i';
   StackStore(stack,(NspObject *)M,1);
   return 1;
@@ -3669,8 +3743,8 @@ int int_xname(Stack stack, int rhs, int opt, int lhs)
   char *str;
   CheckRhs(1,1);
   if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
-  Xgc=check_graphic_window();
-  nsp_gengine->setpopupname(Xgc,str);
+  Xgc=nsp_check_graphic_context();
+  Xgc->graphic_engine->setpopupname(Xgc,str);
   return 0;
 }
 
@@ -3729,7 +3803,7 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&N,&sdir,&fontsize,&format,&seg_flag,
 	       &sub_int,&textcolor,&stics,&ticscolor,&S,&Mx,&My) == FAIL) return RET_BUG;
 
-  Xgc=check_graphic_window();
+  Xgc=nsp_check_graphic_context();
 
   if ( sdir != NULL  ) 
     { 
@@ -3888,8 +3962,8 @@ int int_seteventhandler(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(0,1);
 
-  Xgc=check_graphic_window();
-  win = nsp_gengine->xget_curwin();
+  Xgc=nsp_check_graphic_context();
+  win = Xgc->graphic_engine->xget_curwin();
   if ( win != -1 ) 
     {
       if (rhs == 1) 

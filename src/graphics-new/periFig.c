@@ -69,7 +69,7 @@ static char symb_list[] = {
 
 /** Structure to keep the graphic state  **/
 
-static BCG  ScilabGCXfig ;
+BCG  ScilabGCXfig ;
 
 /*-----------------------------------------------------
  * default colormap coming from Xfig 

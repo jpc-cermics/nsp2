@@ -19,7 +19,6 @@
 static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,const int *vx,const int *vy, int flag,const int *fvect);
 static void Write2Vect(const int *vx,const  int *vy, int from, int n, char *string, int flag, int fv);
 static void WriteGeneric(char *string, int nobj, int sizeobj, const int *vx,const  int *vy, int sizev, int flag, const int *fvect);
-static void InitScilabGCPos(BCG *Xgc);
 static void set_c_Pos(BCG *Xgc,int i);
 static void idfromname (char *name1, int *num);
 static double ascentPos(BCG *Xgc);
@@ -39,8 +38,6 @@ static FILE *file= (FILE *) 0;
 static FILE *file= stdout ;
 #endif
 
-void FileInit  (BCG *Xgc);
-
 /** Structure to keep the graphic state  **/
 
 BCG  ScilabGCPos ; /* sans doute à changer XXX */
@@ -58,12 +55,15 @@ static void xselgraphic(BCG *Xgc) {}
 
 static void xendgraphic(BCG *Xgc)
 {
-  if (file != stdout && file != (FILE*) 0) {
-    FPRINTF((file,"\n%%Latex:\\end{picture}"));
-    FPRINTF((file,"\n showpage\n"));
-    FPRINTF((file,"\n end saved restore \n"));
-    fclose(file);
-    file=stdout;}
+  if (file != stdout && file != (FILE*) 0) 
+    {
+      FPRINTF((file,"\n%%Latex:\\end{picture}"));
+      FPRINTF((file,"\n showpage\n"));
+      FPRINTF((file,"\n end saved restore \n"));
+      fclose(file);
+      file=stdout;
+    }
+  /* XXXXX attention, il faut nettoyer les echelles */
 }
 
 static void xend(BCG *Xgc) 
@@ -78,7 +78,7 @@ static void xend(BCG *Xgc)
 static void clearwindow(BCG *Xgc) 
 {
   /* FPRINTF((file,"\n showpage")); */
-  /** Sending the scale etc.. in case we want an other plot **/
+  /* Sending the scale etc.. in case we want an other plot */
   /* FileInit(file); */
 }
 
@@ -1373,6 +1373,7 @@ static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
 
 static void initgraphic(char *string,int *num)
 { 
+  int x[2];
   char string1[256];
   static int EntryCounter = 0;
   int fnum;
@@ -1382,9 +1383,6 @@ static void initgraphic(char *string,int *num)
   if (EntryCounter >= 1) xendgraphic(Xgc);/* XXXX */
   strncpy(string1,string,256);
 
-  /* Not so useful   
-     sprintf(string2,"%d",(int)EntryCounter);
-     strcat(string1,string2); */
   file=fopen(string1,"w");
   if (file == 0) 
     {
@@ -1401,16 +1399,10 @@ static void initgraphic(char *string,int *num)
       fnum=5;      loadfamily("Times-BoldItalic",&fnum);
 
     }
-  FileInit(Xgc);
-  Xgc->CurWindow =EntryCounter;
-  EntryCounter =EntryCounter +1;
-}
+  Xgc->CurResizeStatus = -1;  /* to be sure that next will initialize */
+  Xgc->CurColorStatus = -1;  /* to be sure that next will initialize */
+  Xgc->CurPixmapStatus = -1; /* to be sure that next will initialize */
 
-void FileInit(BCG *Xgc)
-{
-  int m;
-  /** Just send Postscript commands to define scales etc....**/
-  int x[2];
   xget_windowdim(Xgc,x,x+1);
   FPRINTF((file,"\n%%scipos_w=%d\n%%scipos_h=%d",(int)x[0]/2,(int)x[1]/2));
   FPRINTF((file,"\n%% Dessin en bas a gauche de taille %d,%d",(int)x[0]/2,(int)x[1]/2));
@@ -1418,52 +1410,16 @@ void FileInit(BCG *Xgc)
 	  (int)prec_fact, (int)prec_fact,(int)x[1]/2,(int) prec_fact ));
   FPRINTF((file,"\n%% Init driver "));
   FPRINTF((file,"\n/PaintBackground {WhiteLev 2 add background eq {}{ (drawbox) 4 [background 1 add] [0 0 %d %d] dogrey}ifelse } def", x[0],x[1]));
-
-  InitScilabGCPos(Xgc);
   FPRINTF((file,"\n%% End init driver "));
-  FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
-  /** If the X window exists we check its colormap **/
-  if (  CheckColormap(Xgc,&m) == 70 )  /* XXXXX */
-    { 
-      int i;
-      float r,g,b;
-      Xgc->Numcolors = m;
-      Xgc->NumForeground = m;
-      Xgc->NumBackground = m + 1;
-      if (Xgc->CurColorStatus == 1) 
-	{
-	  Xgc->IDLastPattern = Xgc->Numcolors - 1;
-	  FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
-	}
-      FPRINTF((file,"\n/ColorR ["));
-      for ( i=0; i < m ; i++)
-	{
-	  get_r(Xgc,i,&r);
-	  FPRINTF((file,"%f ",r));
-	  if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
-	}
-      FPRINTF((file,"0.0 1.0 ] def"));
-      FPRINTF((file,"\n/ColorG ["));
-      for ( i=0; i < m ; i++) 
-	{
-	  get_g(Xgc,i,&g);
-	  FPRINTF((file,"%f ",g));
-	  if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
-	}
-      FPRINTF((file,"0.0 1.0] def"));
-      FPRINTF((file,"\n/ColorB ["));
-      for ( i=0; i < m; i++)
-	{
-	  get_b(Xgc,i,&b);
-	  FPRINTF((file,"%f ",b));
-	  if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
-	}
-      FPRINTF((file,"0.0 1.0] def"));
-    }
-  FPRINTF((file,"\n%%Latex:\\begin{picture}(%d,%d)(0,0)",
-	   def_width*prec_fact,
-	   def_height*prec_fact));
+  FPRINTF((file,"\n%%Latex:\\begin{picture}(%d,%d)(0,0)", def_width*prec_fact,  def_height*prec_fact));
+
+  Xgc->graphic_engine->scale->initialize_gc(Xgc);
+  Xgc->scales = NULL;
+  xgc_add_default_scale(Xgc);
+  Xgc->CurWindow =EntryCounter;
+  EntryCounter =EntryCounter +1;
 }
+
 
 /*---------------------------------------------------------------------------
  * writes a message in the info widget associated to the current scilab window 
@@ -1479,47 +1435,7 @@ to come back to the default graphic state}
 
 static void xset_default(BCG *Xgc)
 {
-  InitScilabGCPos(Xgc);
-}
-
-static void InitScilabGCPos(BCG *Xgc)
-{ 
-  int i,j,col;
-  Xgc->IDLastPattern = GREYNUMBER-1;
-  Xgc->CurLineWidth=0 ;
-  i=1;
-  xset_thickness(Xgc,1);
-  xset_alufunction(Xgc,"GXcopy");
-  /** retirer le clipping **/
-  i=j= -1;
-  xset_unclip(Xgc);
-  xset_dash(Xgc,0);
-  xset_font(Xgc,2,1);
-  xset_mark(Xgc,0,0);
-  /** trac\'e absolu **/
-  Xgc->CurVectorStyle = CoordModeOrigin ;
-  /* initialisation des pattern dash par defaut en n&b */
-  Xgc->CurColorStatus =0;
-  xset_pattern(Xgc,1);
-  xset_dash(Xgc,1);
-  xset_hidden3d(Xgc,1);
-  /* initialisation de la couleur par defaut */ 
-  Xgc->Numcolors = DEFAULTNUMCOLORS;
-  Xgc->NumForeground = DEFAULTNUMCOLORS;
-  Xgc->CurColorStatus = 1 ;
-  xset_pattern(Xgc,1);
-  xset_foreground(Xgc,Xgc->NumForeground+1);
-  xset_background(Xgc,Xgc->NumForeground+2);
-  xset_hidden3d(Xgc,4);
-  /* Choix du mode par defaut (decide dans initgraphic_ */
-  getcolordef(&col);
-  /** we force CurColorStatus to the opposite value of col 
-   * to force usecolorPos to perform initialisations 
-   **/
-  Xgc->CurColorStatus = (col == 1) ? 0: 1;
-  xset_usecolor(Xgc,col);
-  if (col == 1) Xgc->IDLastPattern = Xgc->Numcolors - 1;
-  strcpy(Xgc->CurNumberDispFormat,"%-5.2g");
+  nsp_initialize_gc(Xgc);
 }
 
 

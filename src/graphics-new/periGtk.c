@@ -31,7 +31,6 @@ static unsigned long maxcol; /* XXXXX : à revoir */
 /** functions **/
 
 static void set_c(BCG *Xgc,int col);
-static void ResetScilabXgc (BCG *Xgc);
 static void LoadFonts(void), LoadSymbFonts(void);
 static void analyze_points(BCG *Xgc,int n, int *vx, int *vy, int onemore);
 static void DrawMark(BCG *Xgc,int *x, int *y), My2draw(BCG *Xgc,int j, int *vx, int *vy);
@@ -46,10 +45,6 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, dou
 static GdkPoint *gtk_get_xpoints(void);
 static int GtkReallocVector (int n);
 static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
-
-typedef void (*r_c) (BCG *Xgc,int x,int y,int w,int h);
-static void RectangleClear   (BCG *Xgc,int x,int y,int w,int h,int clipflag,r_c f );
-static void R_clear  (BCG *Xgc,int x,int y,int w,int h);
 
 static void CreateGtkGWindow ( BCG *Xgc) ;
 void create_graphic_window_menu( BCG *dd);
@@ -85,8 +80,6 @@ static int XgcAllocColors( BCG *xgc, int m)
  *---------------------------------------------------------*/
 
 Gengine * nsp_gengine = &Gtk_gengine ;
-
-
 
 /*---------------------------------------------------------
  * Pixmap routines: 
@@ -575,11 +568,13 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
 
 }
 
-
-
 /*******************************************************
  * clear a rectangle zone 
  *******************************************************/
+
+typedef void (*r_c) (BCG *Xgc,int x,int y,int w,int h);
+static void RectangleClear   (BCG *Xgc,int x,int y,int w,int h,int clipflag,r_c f );
+static void R_clear  (BCG *Xgc,int x,int y,int w,int h);
 
 static void R_clear(BCG *Xgc,int x, int y, int w, int h)
 {
@@ -1280,7 +1275,7 @@ static int xget_wresize(BCG *Xgc)
   return Xgc->CurResizeStatus;
 }
 
-/* setting the default colormap with colors defined in color.h */
+/* XXXX setting the default colormap with colors defined in color.h */
 
 static int set_default_colormap_flag = 1;
 
@@ -1305,6 +1300,7 @@ static void xset_default_colormap(BCG *Xgc)
   /*  we don't want to set the default colormap at window creation 
    *  if the scilab command was xset("colormap"); 
    */
+  if ( Xgc->CmapFlag == 1 ) return ; /* default colormap already */
   if (set_default_colormap_flag == 0) return;
   if (DEFAULTNUMCOLORS > maxcol) {
     Sciprintf("Not enough colors for default colormap. Maximum is %d\n", maxcol);
@@ -2150,7 +2146,6 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
  * window_list management 
  *-------------------------------------------------------------------------*/
 
-
 int window_list_check_top(BCG *dd,void *win) 
 {
   return dd->private->window == (GtkWidget *) win ;
@@ -2160,16 +2155,15 @@ int window_list_check_top(BCG *dd,void *win)
 void DeleteSGWin(int intnum)
 { 
   BCG *winxgc; 
-  int curwin, top_count;
+  int top_count;
   if ((winxgc = window_list_search(intnum)) == NULL) return;
-  curwin =  xget_curwin();
   /* be sure to clear the recorded graphics */
   scig_erase(intnum);
   /* I delete the pixmap and the widget */
   if ( winxgc->CurPixmapStatus == 1 ) gdk_pixmap_unref(winxgc->private->Cdrawable);
   /* backing store private->pixmap */
   gdk_pixmap_unref(winxgc->private->pixmap);
-  /* destroy top level window  */
+  /* destroy top level window if it is not shared by other graphics  */
   top_count = window_list_search_toplevel(winxgc->private->window); 
   if ( top_count <= 1) 
     gtk_widget_destroy(winxgc->private->window);
@@ -2187,19 +2181,41 @@ void DeleteSGWin(int intnum)
   FREE(winxgc->private);
   /* remove current window from window list */
   window_list_remove(intnum);
-  /* set an other window as the new current window */
-  if ( curwin == intnum ) 
-    {
-      BCG *Xgc = window_list_get_first();
-      if ( Xgc != (BCG *) 0)
-	{
-	  /* ResetScilabXgc (Xgc); */
-	  /* get_window_scale(Xgc->CurWindow,NULL); */
-	}
-    }
 }
 
 /********************************************
+<<<<<<< periGtk.c
+ * Get Window number wincount ( or 0 )  XXXX unused 
+ ********************************************/
+
+static GtkWidget *GetWindowNumber(int wincount)
+{
+  BCG *bcg;
+  bcg = window_list_search(wincount);
+  if ( bcg != (BCG *) 0) 
+    return  bcg->private->window;
+  else 
+    return  NULL;
+}
+
+/********************************************
+ * Get BGWindow number wincount ( or 0 )  XXXX unused 
+ ********************************************/
+
+static GtkWidget *GetBGWindowNumber(int wincount)
+{
+  BCG *bcg;
+  bcg = window_list_search(wincount);
+  if ( bcg != (BCG *) 0) 
+    return bcg->private->window;  /* XXXXXXX */
+  else 
+    return NULL  ;
+}
+
+
+/********************************************
+=======
+>>>>>>> 1.9
  * Routines for initialization : string is a display name 
  ********************************************/
 
@@ -2259,13 +2275,11 @@ static void initgraphic(char *string, int *v2)
       Sciprintf("initgraphics: unable to alloc\n");
       return;
     }
-  NewXgc->CurPixmapStatus = 0; 
-  NewXgc->CurResizeStatus = 1; 
+
   NewXgc->CurWindow = WinNum;
   NewXgc->record_flag = TRUE; /* default mode is to record plots */
   NewXgc->plots = NULL;
   NewXgc->graphic_engine = &Gtk_gengine ; /* the graphic engine associated to this graphic window */
-
 
   if (first == 0)
     {
@@ -2282,14 +2296,10 @@ static void initgraphic(char *string, int *v2)
    * qui est déjà utilisé 
    */
 
+  NewXgc->CurResizeStatus = -1;  /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
   NewXgc->CurPixmapStatus = -1; /* to be sure that next will initialize */
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
-
-  /* InitMissileXgc(NewXgc);
-     store_Xgc(NewXgc,WinNum);
-  */
-
   NewXgc->scales = NULL;
   xgc_add_default_scale(NewXgc);
   EntryCounter=Max(EntryCounter,WinNum);
@@ -2331,6 +2341,7 @@ extern void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2)
       return ;
     }
 
+  /* setting variables to force initialization at window creation */
   NewXgc->CurPixmapStatus = 0; 
   NewXgc->CurResizeStatus = 1; 
   NewXgc->CurWindow = WinNum;
@@ -2351,17 +2362,11 @@ extern void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2)
   gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",600,400,win,box);
 
   NewXgc->private->Cdrawable = (GdkDrawable *) NewXgc->private->drawing->window;
-  /* initialize graphic_context : this action is recorded and replayed when replaying 
-   * XXXX améliorer ce qui suit pour ne pas recreer un colormap si c'est celui par defaut 
-   * qui est déjà utilisé 
-   */
+
+  NewXgc->CmapFlag = -1; 
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
   NewXgc->CurPixmapStatus = -1; /* to be sure that next will initialize */
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
-  /* 
-     InitMissileXgc(NewXgc);
-     store_Xgc(NewXgc,WinNum);
-  */
   NewXgc->scales = NULL;
   xgc_add_default_scale(NewXgc);
   EntryCounter=Max(EntryCounter,WinNum);
@@ -2404,7 +2409,6 @@ extern void nsp_initialize_gc( BCG *Xgc ) ;
 static void xset_default(BCG *Xgc)
 {
   nsp_initialize_gc(Xgc);
-  /* XXX InitMissileXgc (Xgc); */
 }
 
 
@@ -3236,7 +3240,6 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   if (  dd->private->Cdrawable == NULL ) 
     {
       dd->private->Cdrawable= (GdkDrawable *) dd->private->drawing->window;
-      /* XXXXX InitMissileXgc(dd); */
     }
   return FALSE;
 }

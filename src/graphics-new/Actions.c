@@ -68,7 +68,14 @@ void reset_scig_deletegwin_handler(void)
   scig_deletegwin_handler = scig_deletegwin_handler_none;
 }
 
-/* delete action */
+
+/**
+ * scig_delete:
+ * @winid: graphic window number.
+ * 
+ * Delete graphic window @win_num. and associated data.
+ * 
+ **/
 
 void scig_delete(int winid) 
 {
@@ -198,8 +205,6 @@ void  scig_erase(int win_num)
 extern BCG ScilabGCPos ; /* sans doute à changer XXX */
 extern Gengine Pos_gengine ; 
 
-
-
 void scig_tops(int win_num, int colored, char *bufname, char *driver)
 {
   BCG *Xgc;
@@ -323,13 +328,11 @@ void scig_3drot(int win_num)
  * selects window @win_num as the current graphic window.
  */ 
 
-extern Gengine *nsp_gengine ; /* XXXXX */
 
 void scig_sel(int win_num)
 {
-  nsp_gengine->xset_curwin(win_num,TRUE);
+  set_graphic_window(Max(win_num,0)) ;
 }
-
 
 /**
  * scig_raise: 

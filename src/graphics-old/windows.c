@@ -34,6 +34,45 @@ static window_scale_list *new_wcscale ( window_scale_list *val);
 static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
 static WindowList *window_list_search_w(int winnum);
 
+
+/**
+ * check_graphic_window
+ * @void: 
+ * 
+ * returns the BCG structure associated to 
+ * the current graphic window. If no current graphic 
+ * window exists, one is created 
+ * 
+ * Return value: the current BCG to be used 
+ **/
+
+extern Gengine Gtk_gengine ; /* XXXXX */
+
+BCG *check_graphic_window(void)
+{
+  BCG *loc =  window_list_get_first();
+  if ( loc == NULL ) Gtk_gengine.xset_curwin(0,TRUE);
+  return  window_list_get_first();
+} 
+
+
+/**
+ * set_graphic_window:
+ * @num: 
+ * 
+ * The current graphic window is set to window num 
+ * If the window does not exist it s created.
+ * 
+ * Return value: 
+ **/
+
+BCG *set_graphic_window(int num) 
+{
+  Gtk_gengine.xset_curwin(Max(0,num),TRUE);
+  return  window_list_get_first();
+}
+
+
 /*-------------------------------------------------------------------------
  * Adds a new entry at the  start  of the Window List 
  * and returns a pointer to that entry 
@@ -327,13 +366,6 @@ static window_scale_list  default_scale =
  * Back to defaults values : fills current scale (Scale)
  * and curwin() scale with default scale.
  *----------------------------------------------------------*/
-/* XXXX 
-void current_scale2default()
-{
-  scale_copy(&current_scale,&default_scale);  
-  set_window_scale(curwin(),&current_scale);
-}
-*/
 
 void set_window_scale_with_default(int win) 
 { 

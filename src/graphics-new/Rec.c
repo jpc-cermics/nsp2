@@ -14,7 +14,6 @@
 #include "nsp/graphics/Graphics.h"
 #include "nsp/graphics/Rec_private.h"
 
-extern Gengine *nsp_gengine ; /* XXXXX */
 
 static int MaybeCopyVect3dPLI  (int *,int **,int *,int l); 
 static int CopyVectLI  (int **,int *,int ); 
@@ -27,11 +26,6 @@ static void store_int(BCG *Xgc,int code,int val);
 static void store_int2(BCG *Xgc,int code,int val, int val1);
 static void store_int4(BCG *Xgc,int code,int vals[]);
 static void store_double4(BCG *Xgc,int code,double vals[]);
-
-static int curwin(void)
-{
-  return nsp_gengine->xget_curwin();
-}
 
 /*---------------------------------------------------------------------
  * basic primitives 
@@ -2011,64 +2005,6 @@ static int MaybeCopyVect3dPLI(int *iflag, int **nx, int *x, int l)
     return(1);
 }
 
-/*---------------------------------------------------------------------
- *  
- *---------------------------------------------------------------------------*/
-
-/* list_plot *ListPFirst = NULL ; */
-
-/*-------------------------------------------------------------------------
- * store_Xgc is to be called after tape_clean_plots 
- * to restore in recorded list graphic context elements 
- *---------------------------------------------------------------------------*/
-
-void store_Xgc(BCG *Xgc,int winnumber)
-{
-  int i,win,col;
-  int fontid[2];
-
-  win = Xgc->graphic_engine->xget_curwin(); 
-  if ( win != winnumber) Xgc->graphic_engine->xset_curwin(winnumber,FALSE);
-  Xgc->graphic_engine->xget_font(Xgc,fontid);
-  Xgc->graphic_engine->scale->xset_font(Xgc,*fontid,*(fontid+1));
-  Xgc->graphic_engine->xget_mark(Xgc,fontid);
-  Xgc->graphic_engine->scale->xset_mark(Xgc,*fontid,*(fontid+1));
-  
-  i = Xgc->graphic_engine->xget_thickness(Xgc);
-  Xgc->graphic_engine->scale->xset_thickness(Xgc,i);
-  
-  i= Xgc->graphic_engine->xget_absourel(Xgc);
-  Xgc->graphic_engine->scale->xset_absourel(Xgc,i);
-
-  i = Xgc->graphic_engine->xget_alufunction(Xgc);
-  Xgc->graphic_engine->scale->xset_alufunction1(Xgc,i);
-
-  /* pour le clipping on l'enleve */
-
-  Xgc->graphic_engine->scale->xset_unclip(Xgc);
-    
-  col = Xgc->graphic_engine->xget_usecolor(Xgc);
-
-  /**  It seams not a good idea to send back use color on the recorded  commands 
-    see Actions.c (scig_tops) 
-    Xgc->graphic_engine->scale->xset_use color",&col,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
-  **/
-
-  if (col == 0) 
-    {
-      int xz[10];
-      i = Xgc->graphic_engine->xget_pattern(Xgc);
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,i);
-      xz[0] = Xgc->graphic_engine->xget_dash(Xgc);
-      Xgc->graphic_engine->scale->xset_dash(Xgc,xz[0]);
-    }
-  else 
-    {
-      i= Xgc->graphic_engine->xget_pattern(Xgc);
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,i);
-    }
-  if ( win != winnumber) Xgc->graphic_engine->xset_curwin(win,FALSE);
-}
 
 /*-------------------------------------------------------------------------
  * Delete all recorded graphics associated to window winnumber 
@@ -2098,9 +2034,6 @@ void tape_clean_plots(BCG *Xgc,int winnumber)
   Xgc->plots = NULL;
   /* nothing to do if window was not present */
   if ( flag == FAIL ) return ;
-  /* graphic context back in the list */
-  store_Xgc(Xgc,winnumber);
-  /* we remove scales in window number i */
   /* reset scales to default */ 
   xgc_reset_scales_to_default(Xgc);
 }
@@ -2217,7 +2150,7 @@ void scale_change_plots(BCG *Xgc,int winnumber, int *flag, double *bbox, int *aa
   if ( Xgc->record_flag == FALSE ) return ;
   while (list)
     {
-      if (list->window == winnumber && list->theplot != NULL) 
+      if ( list->theplot != NULL) 
 	{
 	  int code = ((plot_code *) list->theplot)->code;
 	  if ( record_table[code].scale_change != NULL) 
@@ -2683,7 +2616,7 @@ static void unscale_plots(BCG *Xgc,int winnumber)
   if ( Xgc->record_flag == FALSE ) return ;
   while (list)
     {
-      if (list->window == winnumber && list->theplot != NULL) 
+      if ( list->theplot != NULL) 
 	{
 	  int code = ((plot_code *) list->theplot)->code;
 	  if ( record_table[code].unscale != NULL)  record_table[code].unscale(list->theplot);
@@ -2944,7 +2877,6 @@ int store_record(BCG *Xgc,int code ,void *plot)
 	{
 	  ((plot_code *) plot )->code = code; 
 	  list->theplot=plot;
-	  list->window=curwin();
 	  list->next=NULL;
 	  list->previous=NULL;
 	  Xgc->plots= list;
@@ -2963,7 +2895,6 @@ int store_record(BCG *Xgc,int code ,void *plot)
 	{
 	  ((plot_code *) plot )->code = code; 
 	  list->next->theplot=plot;
-	  list->next->window=curwin();
 	  list->next->previous=list;
 	  list->next->next=NULL;
 	}

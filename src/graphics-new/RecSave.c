@@ -21,7 +21,6 @@ static int save_VectF (double *nx, int l);
 static int save_VectC (char *nx, int l);
 static int save_VectS   (char **nx);
 
-static int save_Colormap (BCG *Xgc,void *);
 static int save_colormap (BCG *Xgc,void *);
 static int save_Ech  (BCG *Xgc,void *); 
 static int save_Plot  (BCG *Xgc,void *); 
@@ -965,12 +964,6 @@ int tape_save(BCG *Xgc,const char *fname1, int winnumber)
   xdrstdio_create(xdrs, F, XDR_ENCODE) ;
   save_VectC(scig,((int)strlen(scig))+1) ;
 
-  /* if ( save_Colormap(Xgc,NULL) == 0) 
-     {
-     sciprint("save: saving colormap failed\r\n") ;
-     return(0);
-     }
-  */
   while (list)
     {
       if ( list->theplot != NULL) 
@@ -1110,34 +1103,4 @@ static int save_VectS(char **nx)
   return 1;
 }
 
-/** save the colormap if necessary **/
-/** If the X window exists we check its colormap **/
-
-static int save_Colormap(BCG *Xgc,void *unused)
-{
-  int m;
-  if (  CheckColormap(Xgc,&m) == 1) 
-    { 
-      int i;
-      float r,g,b;
-      if ( save_LI(CODEColormap) == 0) return(0);
-      if ( save_LI(m)== 0) return(0);
-      for ( i=0; i < m ; i++)
-	{
-	  get_r(Xgc,i,&r);
-	  if ( save_F(r) == 0) return(0);
-	}
-      for ( i=0; i < m ; i++) 
-	{
-	  get_g(Xgc,i,&g);
-	  if ( save_F(g) == 0) return(0);
-	}
-      for ( i=0; i < m; i++)
-	{
-	  get_b(Xgc,i,&b);
-	  if ( save_F(b) == 0) return(0);
-	}
-    }
-  return(1);
-}
 
