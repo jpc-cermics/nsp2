@@ -119,10 +119,10 @@ function tree_model_append(model,L,iter,count)
 // when an element is itself a Hash table we enter a 
 // recursive call 
   if count== 3 then return;end;
-  printf("In tree_model_append %d,%d\n",count,size(L,0))
+  //printf("In tree_model_append %d,%d\n",count,size(L,0))
   for i=1:size(L,0);
     r=L(i)
-    printf("In for %d\n",count,size(r,0))
+    //printf("In for %d\n",count,size(r,0))
     if size(r,0)==3 then 
       r($+1)=%f; 
       if is(iter,%types.GtkTreeIter) then 
