@@ -3543,7 +3543,11 @@ void change_camera(BCG *Xgc,const double *pos,const double *cible)
   Xgc->private->camera = nouvelle_camera(pos[0],pos[1],pos[2],cible[0],cible[1],cible[2],
 					 INIT_DISTANCE_CLIPPING_PROCHE,
 					 INIT_DISTANCE_CLIPPING_LOIN);
-  force_affichage(Xgc);
+  /* here we need that the display i srefreshed explicitely 
+   * and not to simply call gdk_window_invalidate_rect
+   */
+  expose_event( Xgc->private->drawing,NULL, Xgc);
+  /* force_affichage(Xgc); */
 }
 
 t_camera nouvelle_camera(float px, float py, float pz,
