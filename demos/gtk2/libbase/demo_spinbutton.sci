@@ -36,12 +36,12 @@ endfunction
 function []=do_quit(win,L)
   // the first argument is win or button 
   // depending on the way do_quit is called 
-    printf("dans do_quit \n",6);
+  // printf("dans do_quit \n",6);
   window=L(1);
-  printf('quit spins');
+  // printf('quit spins');
   window.hide[];
   window.destroy[];
-  gtk_main_quit()
+  //gtk_main_quit()
 endfunction 
 
 function []=demo_spinbutton()

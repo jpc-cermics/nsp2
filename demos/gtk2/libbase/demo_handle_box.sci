@@ -2,10 +2,9 @@
 
 
 function handle_box_child_signal (hb,child,action)
-  printf ("%s: child <%s> %sed\n",
-	  g_type_name (G_OBJECT_TYPE (hb)),
-	  g_type_name (G_OBJECT_TYPE (child)),
-	  action);
+  printf("signal: %s: child <%s> %s\n",type(hb,'string'),
+         type(child,'string'),action(1));
+	  
 endfunction 
 
 function demo_handle_box () 

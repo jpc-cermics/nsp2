@@ -2,6 +2,77 @@
 //gtk_progress_bar_get_pulse_step().
 
 function demo_progressbar() 
+
+  function omenu=build_option_menu (items, history, func, args)
+    omenu = gtkoptionmenu_new ();
+    omenu.connect [ "changed",func, args];
+    menu = gtkmenu_new ();
+    menu_item = gtkradiomenuitem_new(label= items(1));
+    menu.append[ menu_item];		
+    group = menu_item;
+    n= size(items,"*")
+    for it=2:n
+      menu_item = gtkradiomenuitem_new(group=group,label= items(it));
+      menu.append[ menu_item];
+      if it == history then  menu_item.set_active[%t];end 
+      menu_item.show[];
+    end
+    omenu.set_menu[menu];
+    omenu.set_history[history];
+  endfunction
+
+  function progress_timeout (args)
+  // args=list(pbar,label)
+    activity= args(1).get_data['activity_mode'];
+    if activity then 
+      args(1).pulse[];
+    else 
+      pcnt = args(1).get_fraction[];
+      pcnt = modulo(pcnt*100 + 2,100)/100
+      printf("%f\n",pcnt);
+      args(1).set_fraction[pcnt];
+      args(2).set_text[sprintf("%3.0f %%",pcnt*100)];
+      y=%t
+    end 
+  endfunction
+
+  function destroy_progress (widget,args)
+    gtk_timeout_remove(args(1));
+  endfunction
+
+  function progressbar_toggle_orientation(widget,args)
+  // if (!GTK_WIDGET_MAPPED (widget)) XXXXXX 
+    i = widget.get_history[];
+    args(1).set_orientation[i];
+  endfunction
+
+  function toggle_show_text (widget,args)
+  // args= list(pbar,entry)
+    active =widget.get_active[]; 
+    args(2).set_sensitive[active];
+    if active then 
+      args(1).set_text[args(2).get_text[]];
+    else 
+      args(1).set_text[""];
+    end 
+  endfunction
+
+  function adjust_step (widget,args)
+    v = args(2).get_value_as_int[]; 
+    printf("setting the pulse to %d\n",v/100);
+    args(1).set_pulse_step[v/100];
+  endfunction
+
+  function toggle_activity_mode (widget,args)
+    active =widget.get_active[]; 
+    args(2).set_sensitive[active];
+    args(1).set_data[activity_mode=active];
+  endfunction 
+
+  function entry_changed (widget,args)
+    args(1).set_text[widget.get_text[]];
+  endfunction 
+  
   items1 = ["Left-Right","Right-Left","Bottom-Top","Top-Bottom"];
   items2 = ["Continuous","Discrete"];
   pdata = list(1);  
@@ -99,9 +170,9 @@ function demo_progressbar()
   button = gtkbutton_new(label="close");
 
   function y=win_kill(widget,args) 
-	timeout_remove(args(2));
-        args(1).destroy[];
-        y=%t
+    gtk_timeout_remove(args(2));
+    args(1).destroy[];
+    y=%t
   endfunction
 
   button.connect["clicked",win_kill,list(window,tt)];
@@ -111,75 +182,3 @@ function demo_progressbar()
   window.show_all[];
 endfunction 
 
-
-
-function omenu=build_option_menu (items, history, func, args)
-//
- omenu = gtkoptionmenu_new ();
- omenu.connect [ "changed",func, args];
- menu = gtkmenu_new ();
- menu_item = gtkradiomenuitem_new(label= items(1));
- menu.append[ menu_item];		
- group = menu_item;
- n= size(items,"*")
- for it=2:n
-  menu_item = gtkradiomenuitem_new(group=group,label= items(it));
-  menu.append[ menu_item];
-  if it == history then  menu_item.set_active[%t];end 
-  menu_item.show[];
- end
- omenu.set_menu[menu];
- omenu.set_history[history];
-endfunction
-
-function progress_timeout (args)
-  // args=list(pbar,label)
-  activity= args(1).get_data['activity_mode'];
-  if activity then 
-     args(1).pulse[];
-  else 
-    pcnt = args(1).get_fraction[];
-    pcnt = modulo(pcnt*100 + 2,100)/100
-    printf("%f\n",pcnt);
-    args(1).set_fraction[pcnt];
-    args(2).set_text[sprintf("%3.0f %%",pcnt*100)];
-    y=%t
-  end 
-endfunction
-
-function destroy_progress (widget,args)
-  timeout_remove(args(1));
-endfunction
-
-function progressbar_toggle_orientation(widget,args)
-   // if (!GTK_WIDGET_MAPPED (widget)) XXXXXX 
-   i = widget.get_history[];
-   args(1).set_orientation[i];
-endfunction
-
-function toggle_show_text (widget,args)
-  // args= list(pbar,entry)
-  active =widget.get_active[]; 
-  args(2).set_sensitive[active];
-  if active then 
-    args(1).set_text[args(2).get_text[]];
-  else 
-    args(1).set_text[""];
-  end 
-endfunction
-
-function adjust_step (widget,args)
-  v = args(2).get_value_as_int[]; 
-  printf("setting the pulse to %d\n",v/100);
-  args(1).set_pulse_step[v/100];
-endfunction
-
-function toggle_activity_mode (widget,args)
-  active =widget.get_active[]; 
-  args(2).set_sensitive[active];
-  args(1).set_data[activity_mode=active];
-endfunction 
-
-function entry_changed (widget,args)
-  args(1).set_text[widget.get_text[]];
-endfunction 

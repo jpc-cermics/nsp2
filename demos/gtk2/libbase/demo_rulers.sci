@@ -17,9 +17,9 @@ function demo_rulers()
   xruler.set_metric[GTK.PIXELS]
   
   function [y]=motion_notify(obj, event)
-    pause
-    // y= ruler.emit("motion_notify_event", event)
-    //y = gtk_signal_emitv_by_name(xruler,"motion_notify_event",list( event))
+    // pause
+    // y = ruler.emit("motion_notify_event", event)
+    // y = gtk_signal_emitv_by_name(xruler,"motion_notify_event",list( event))
   endfunction 
   win.connect["motion_notify_event", motion_notify];
   //	table.attach(ruler, 1,2, 0,1, yoptions=GTK.FILL)
@@ -33,7 +33,7 @@ function demo_rulers()
   function [y]=motion_notify(obj, event) // ruler=ruler)
     y=1
     //return ruler.emit("motion_notify_event", event)
-    y =  gtk_signal_emitv_by_name(yruler,"motion_notify_event",list( event))
+    y=gtk_signal_emitv_by_name(yruler,"motion_notify_event",list( event))
   endfunction
   win.connect["motion_notify_event", motion_notify];
   xoptions=GTK.FILL,  yoptions=ior(GTK.EXPAND, GTK.FILL), 
