@@ -209,9 +209,8 @@ STRIP=strip
 #########################
 
 echo "configuration of libtool"
-
+builtin(include,config/libtool.m4)
 AM_PROG_LIBTOOL
-
 echo "end of configuration of libtool"
 
 #########################
@@ -1315,6 +1314,31 @@ else
   TERMCAPLIB=
 fi
 
+##################
+## blas and lapack 
+##################
+BLAS_LOCAL=libblas 
+BLAS_LIBS=libs/blas.a 
+LAPACK_LOCAL=liblapack
+LAPACK_LIBS=libs/lapack.a 
+USE_LOCAL_BLAS=yes
+USE_LOCAL_LAPACK=yes
+
+builtin(include,config/acx_blas.m4)
+builtin(include,config/acx_lapack.m4)
+ACX_BLAS([USE_LOCAL_BLAS=no])
+ACX_LAPACK([USE_LOCAL_LAPACK=no])
+
+if test "$USE_LOCAL_BLAS" = no; then 
+   AC_MSG_RESULT(using $BLAS_LIBS for blas)
+   BLAS_LOCAL=
+fi 
+
+if test "$USE_LOCAL_LAPACK" = no; then 
+   AC_MSG_RESULT(using $LAPACK_LIBS for lapack)
+   LAPACK_LOCAL=
+fi 
+
 #################
 ## PVM
 #################
@@ -1713,8 +1737,13 @@ AC_SUBST(GTKPLUGBUG)
 AC_SUBST(MPLUSLIB)
 AC_SUBST(MPLUSLIBDIR)
 AC_SUBST(ENABLE_DEBUG)
+AC_SUBST(BLAS_LIBS)
+AC_SUBST(LAPACK_LIBS)
+AC_SUBST(BLAS_LOCAL)
+AC_SUBST(LAPACK_LOCAL)
 
-AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux ) 
+
+AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile ) 
  
 
 

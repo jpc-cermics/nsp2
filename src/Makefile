@@ -4,9 +4,16 @@ include ../Makefile.incl
 
 SCIDIRS = zcalelm objects interp functions gtk2 \
 	system graphics menus gtksci gzvt2 modules gobjects types-test \
-	librand libcdf libblas  libinteg libapprox liblapack
+	librand libcdf  libinteg libapprox   
 
-SUBDIRS = $(XAW_LOCAL_SUBDIR) $(DLD_SUBDIR) $(SCIDIRS) 
+ALLSCIDIRS = zcalelm objects interp functions gtk2 \
+	system graphics menus gtksci gzvt2 modules gobjects types-test \
+	librand libcdf libmaxplus libinteg libapprox \
+	libblas liblapack 
+
+SUBDIRS = $(DLD_SUBDIR) $(SCIDIRS) 
+ALLSUBDIRS = $(DLD_SUBDIR) $(ALLSCIDIRS) 
+
 
 all::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
@@ -16,17 +23,9 @@ all::
 		$(MAKE) $(MFLAGS) all); \
 	done
 
-world::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "making world in src/$$i..."; \
-		$(MAKE) $(MFLAGS) world); \
-	done
-
 distclean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SCIDIRS) ;\
+	for i in $(ALLSCIDIRS) ;\
 	do \
 		(cd $$i ; echo "making distclean in src/$$i..."; \
 		$(MAKE) $(MFLAGS)  distclean); \
@@ -34,7 +33,7 @@ distclean::
 
 clean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
+	for i in $(ALLSUBDIRS) ;\
 	do \
 		(cd $$i ; echo "making clean in src/$$i..."; \
 		$(MAKE) $(MFLAGS) clean); \
@@ -42,7 +41,7 @@ clean::
 
 f2cclean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
+	for i in $(ALLSUBDIRS) ;\
 	do \
 		(cd $$i ; echo "making f2cclean in src/$$i..."; \
 		$(MAKE) $(MFLAGS) f2cclean); \
