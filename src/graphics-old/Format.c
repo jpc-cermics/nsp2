@@ -18,7 +18,7 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 
-extern double C2F(dlamch)  (char *CMACH, unsigned long int);
+extern double nsp_dlamch (char *cmach);
 
 static void FormatPrec (char *fmt, int *desres, double xmin, double xmax, 
 				double xpas);
@@ -453,7 +453,7 @@ static void decompSup(double x, int *xk, int *xa, int b)
 	  double xd;
 	  static double epsilon; 
 	  static int first=0; 
-	  if ( first == 0) { epsilon = 10.0*F2C(dlamch)("e",1L); first++ ;}
+	  if ( first == 0) { epsilon = 10.0*nsp_dlamch("e"); first++ ;}
 	  /* if x is very near (k+1)10^a (epsilon machine) 
 	   * we increment xk
 	   */
@@ -495,7 +495,7 @@ static void decompInf(double x, int *xk, int *xa, int b)
 	  double xup;
 	  static double epsilon; 
 	  static int first=0; 
-	  if ( first == 0) { epsilon = 10.0*F2C(dlamch)("e",1L); first++ ;}
+	  if ( first == 0) { epsilon = 10.0*nsp_dlamch("e"); first++ ;}
 	  *xa = (int) floor(log10(x)) -b +1 ;
 	  *xk = (int) floor(x/exp10((double) *xa));
 	  /* if x is very near (k+1)10^a (epsilon machine) 
