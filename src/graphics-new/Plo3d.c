@@ -1202,29 +1202,6 @@ void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag)
     {
       for (i=0; i < 6 ; i++)
 	{
-	  box->ix[i]=XScale(box->x[box->xind[i]]);
-	  box->iy[i]=YScale(box->y[box->xind[i]]);
-	}
-      box->ix[6]=box->ix[0];box->iy[6]=box->iy[0];
-      p=7,n=1;
-      dvect[0]= Xgc->graphic_engine->xget_foreground(Xgc);
-      /* On trace l'enveloppe cvxe **/
-      dash = Xgc->graphic_engine->xset_dash(Xgc,1);
-      
-      if (flag >=3){
-	Xgc->graphic_engine->drawpolylines(Xgc,box->ix,box->iy,dvect,n,p);
-      }
-      pat = Xgc->graphic_engine->xset_pattern(Xgc,dvect[0]);
-      
-      if (flag >=3) AxesStrings(Xgc,flag,box,legend);
-      Xgc->graphic_engine->xset_pattern(Xgc,pat);
-      Xgc->graphic_engine->xset_dash(Xgc,dash);
-    }
-  else
-#endif /* WITH_GTKGLEXT */
-    {
-      for (i=0; i < 6 ; i++)
-	{
 	  box->xh[i]=box->x_r[box->xind[i]];
 	  box->yh[i]=box->y_r[box->xind[i]];
 	  box->zh[i]=box->z_r[box->xind[i]];
@@ -1243,6 +1220,29 @@ void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag)
        * FIXME
        * if (flag >=3)AxesStrings(Xgc,flag,ixbox,iybox,box->xind,legend,bbox);
        */
+      Xgc->graphic_engine->xset_pattern(Xgc,pat);
+      Xgc->graphic_engine->xset_dash(Xgc,dash);
+    }
+  else
+#endif /* WITH_GTKGLEXT */
+    {
+      for (i=0; i < 6 ; i++)
+	{
+	  box->ix[i]=XScale(box->x[box->xind[i]]);
+	  box->iy[i]=YScale(box->y[box->xind[i]]);
+	}
+      box->ix[6]=box->ix[0];box->iy[6]=box->iy[0];
+      p=7,n=1;
+      dvect[0]= Xgc->graphic_engine->xget_foreground(Xgc);
+      /* On trace l'enveloppe cvxe **/
+      dash = Xgc->graphic_engine->xset_dash(Xgc,1);
+      
+      if (flag >=3){
+	Xgc->graphic_engine->drawpolylines(Xgc,box->ix,box->iy,dvect,n,p);
+      }
+      pat = Xgc->graphic_engine->xset_pattern(Xgc,dvect[0]);
+      
+      if (flag >=3) AxesStrings(Xgc,flag,box,legend);
       Xgc->graphic_engine->xset_pattern(Xgc,pat);
       Xgc->graphic_engine->xset_dash(Xgc,dash);
     }

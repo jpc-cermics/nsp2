@@ -4543,15 +4543,15 @@ int int_camera(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   NspMatrix *c_pos;
-
+#ifdef WITH_GTKGLEXT 
   CheckRhs(1,1);
   CheckLhs(0,0);
-
   if ((c_pos = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
   CheckVector(stack.fname,1,c_pos);
   CheckLength(stack.fname,1,c_pos,15);
   Xgc=nsp_check_graphic_context();
   change_camera(Xgc,c_pos->R);
+#endif
   return 0;
 }
 

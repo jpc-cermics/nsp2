@@ -41,7 +41,7 @@
 #define WITH_PVM 1
 
 /* Define if have and use GTKGLEXT */
-#define WITH_GTKGLEXT 1
+/* #undef WITH_GTKGLEXT */
 
 /* Define if have and use GTKHTML */
 #define WITH_GTKHTML 1
