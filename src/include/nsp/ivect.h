@@ -45,14 +45,13 @@ NspIVect *new_ivect();
 
 #ifdef IVect_Private 
 static int init_ivect(NspIVect *ob,NspTypeIVect *type);
-static int IVectSize(NspIVect *Mat, int flag);
-char *IVectType(void);
-char *IVectShType(NspIVect *M);
-NspObject *IVectLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int IVectObjEq(NspObject *A,NspObject *B);
-int IVectObjNeq(NspObject *A,NspObject *B);
-static int IVectXdrSave(NspFile  *F, NspIVect *M);
-static NspIVect *IVectXdrLoad(NspFile  *F);
+static int nsp_ivect_size(NspIVect *Mat, int flag);
+static char *nsp_ivect_type_as_string(void);
+static char *nsp_ivect_type_short_string(NspIVect *M);
+static int nsp_ivect_eq(NspObject *A,NspObject *B);
+static int nsp_ivect_neq(NspObject *A,NspObject *B);
+static int nsp_ivect_xdr_save(NspFile  *F, NspIVect *M);
+static NspIVect *nsp_ivect_xdr_load(NspFile  *F);
 #endif 
 
 
@@ -60,17 +59,17 @@ static NspIVect *IVectXdrLoad(NspFile  *F);
 
 /* IVectObj.c */
 
-extern NspIVect *IVectObj (NspObject *O); 
+extern NspIVect *nsp_ivect_object(NspObject *O); 
 
 /* IVect.c */
 
- extern NspIVect *IVectCreate (char *name, double first, double step, double last, int flag); 
+ extern NspIVect *nsp_ivect_create(char *name, double first, double step, double last, int flag); 
  extern int IsIVectF (NspObject *O); 
- extern NspIVect *IVectCopy (NspIVect *A); 
- extern void IVectDestroy (NspIVect *IV); 
- extern void IVectInfo (NspIVect *IV, int indent); 
- extern void IVectPrint (NspIVect *IV, int indent); 
- extern NspMatrix *IVect2Mat (NspIVect *IV); 
+ extern NspIVect *nsp_ivect_copy(NspIVect *A); 
+ extern void nsp_ivect_destroy(NspIVect *IV); 
+ extern void nsp_ivect_info(NspIVect *IV, int indent); 
+ extern void nsp_ivect_print(NspIVect *IV, int indent); 
+ extern NspMatrix *nsp_ivect_2_mat(NspIVect *IV); 
 
 #endif
 
