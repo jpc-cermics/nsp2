@@ -10,7 +10,6 @@ OBJSC =	click.o command.o  io.o \
 	menus.o x_VTPrsTbl.o x_main.o \
 	about.o queue.o helpbrowser.o uri.o
 
-
 OBJSF  = 
 
 include ../../Makefile.incl

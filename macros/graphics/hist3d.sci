@@ -4,7 +4,7 @@ function hist3d(f,T,A,leg,flags,ebox)
   def=list(35,45,'X@Y@Z',[2 1 4])
   [lhs,rhs]=argn(0)
   if rhs<=0 then  //demo
-    s_mat=['hist3d(10*rand(10,10));';]
+    s_mat=['hist3d(10*rand(10,10));']
     write(%io(2),s_mat);execstr(s_mat);
     return;
   end
