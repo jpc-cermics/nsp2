@@ -34,6 +34,11 @@ static window_scale_list *new_wcscale ( window_scale_list *val);
 static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
 static WindowList *window_list_search_w(int winnum);
 
+void reset_the_list() /* XXXXXXXXXXXXXXXX */
+{
+  The_List = NULL;
+}
+
 
 /**
  * check_graphic_window
@@ -167,19 +172,20 @@ void window_list_remove(int num)
 	    L1->prev->next = L1->next ; 
 	  else 
 	    The_List = (WindowList *) L1->next ;
+
+	  /* now L1 is to be freed */
+	  loc = L1->winxgc.scales ; 
+	  while ( loc != NULL)
+	    {
+	      window_scale_list *next = loc->next;
+	      FREE(loc);
+	      loc = next;
+	    }
+	  FREE(L1);
 	  break;
 	}
       L1 = (WindowList *) L1->next;
     }
-  /* now L1 is to be freed */
-  loc = L1->winxgc.scales ; 
-  while ( loc != NULL)
-    {
-      window_scale_list *next = loc->next;
-      FREE(loc);
-      loc = next;
-    }
-  FREE(L1);
   return;
 }
 

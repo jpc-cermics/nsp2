@@ -39,6 +39,7 @@ static void loadfamily_n(char *name, int *j);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
 static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr);
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,GtkWidget *c,GtkWidget *d);
+static void scig_deconnect_handlers(BCG *winxgc);
 
 /* utility for points allocations */
 
@@ -2159,14 +2160,25 @@ void DeleteSGWin(int intnum)
   if ((winxgc = window_list_search(intnum)) == NULL) return;
   /* be sure to clear the recorded graphics */
   scig_erase(intnum);
+
   /* I delete the pixmap and the widget */
-  if ( winxgc->CurPixmapStatus == 1 ) gdk_pixmap_unref(winxgc->private->Cdrawable);
+  if ( winxgc->CurPixmapStatus == 1 ) 
+    {
+      gdk_pixmap_unref(winxgc->private->Cdrawable);
+      winxgc->private->Cdrawable = (GdkDrawable *)winxgc->private->drawing->window;
+      winxgc->CurPixmapStatus = 0; 
+    }
+  /* deconnect handlers */
+  scig_deconnect_handlers(winxgc);
   /* backing store private->pixmap */
   gdk_pixmap_unref(winxgc->private->pixmap);
+  winxgc->private->pixmap=NULL;
   /* destroy top level window if it is not shared by other graphics  */
   top_count = window_list_search_toplevel(winxgc->private->window); 
   if ( top_count <= 1) 
-    gtk_widget_destroy(winxgc->private->window);
+    {
+      gtk_widget_destroy(winxgc->private->window);
+    }
   else 
     {
       GtkWidget *father; 
@@ -2178,6 +2190,9 @@ void DeleteSGWin(int intnum)
       gtk_container_remove(GTK_CONTAINER(father),GTK_WIDGET(winxgc->private->vbox));
     }
   /* free gui private area */
+  FREE(winxgc->private->Red);
+  FREE(winxgc->private->Green);
+  FREE(winxgc->private->Blue);
   FREE(winxgc->private);
   /* remove current window from window list */
   window_list_remove(intnum);
@@ -2265,7 +2280,7 @@ static void initgraphic(char *string, int *v2)
    * XXXX améliorer ce qui suit pour ne pas recreer un colormap si c'est celui par defaut 
    * qui est déjà utilisé 
    */
-
+  NewXgc->CmapFlag = -1; 
   NewXgc->CurResizeStatus = -1;  /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
   NewXgc->CurPixmapStatus = -1; /* to be sure that next will initialize */
@@ -2334,6 +2349,7 @@ extern void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2)
   NewXgc->private->Cdrawable = (GdkDrawable *) NewXgc->private->drawing->window;
 
   NewXgc->CmapFlag = -1; 
+  NewXgc->CurResizeStatus = -1;  /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
   NewXgc->CurPixmapStatus = -1; /* to be sure that next will initialize */
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
@@ -3389,6 +3405,28 @@ static int GTK_Open(BCG *dd, char *dsp, double w, double h)
   gtk_widget_pop_visual();
   gtk_widget_pop_colormap();
   return 1;
+}
+
+static void scig_deconnect_handlers(BCG *winxgc)
+{
+  int n=0;
+  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+				       (GtkSignalFunc) configure_event, (gpointer) winxgc);
+  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+				       (GtkSignalFunc) expose_event, (gpointer) winxgc);
+  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
+				       (GtkSignalFunc)  sci_destroy_window, (gpointer) winxgc);
+  n+=g_signal_handlers_disconnect_by_func (GTK_OBJECT (winxgc->private->window),
+					(GtkSignalFunc) key_press_event, (gpointer) winxgc);
+
+  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+				       (GtkSignalFunc) locator_button_press, (gpointer) winxgc);
+  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+				       (GtkSignalFunc) locator_button_release, (gpointer) winxgc);
+  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+				       (GtkSignalFunc) locator_button_motion, (gpointer) winxgc);
+  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
+				       (GtkSignalFunc) realize_event, (gpointer) winxgc);
 }
 
 /*---------------------------------------------------------------

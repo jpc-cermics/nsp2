@@ -824,16 +824,15 @@ void gframe_locks_update(NspGFrame *R,NspObject *O)
 
 int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp,move_action action)
 {
-  char driver[4];
+  int record;
   BCG *Xgc = F->Xgc;
   int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0, ibutton, iwait=FALSE;
   double mpt[2],pt1[2]= {pt[0],pt[1]},ptwork[2];
 
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
 
-  /* move to X11 and  Xor mode */
-  Xgc->graphic_engine->scale->get_driver_name(driver);
-  if (strcmp("X11",driver) != 0)  Xgc->graphic_engine->scale->set_driver("X11");
+  record = Xgc->graphic_engine->xget_recording(Xgc);
+  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
   Xgc->graphic_engine->xset_alufunction1(Xgc,6);
   
   while ( wstop==0 ) 
@@ -846,7 +845,7 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
       if ( ibutton == -100 ) 
 	{
 	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-	  Xgc->graphic_engine->scale->set_driver(driver);
+	  Xgc->graphic_engine->xset_recording(Xgc,record);
 	  return ibutton;
 	}
       if ( ibutton == stop ) wstop= 1;
@@ -873,7 +872,7 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
   if ( IsLink(O)) link_check(F,(NspLink *)O);
 
   Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-  Xgc->graphic_engine->scale->set_driver(driver);
+  Xgc->graphic_engine->xset_recording(Xgc,record);
   return ibutton;
 }
 
@@ -979,9 +978,8 @@ int gframe_create_new_link(NspGFrame *F)
 {
   BCG *Xgc= F->Xgc;
   NspObject *Ob;
-  int cp1;
+  int cp1,record;
   double mpt[2],pt[2];
-  char driver[4];
   int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0,stop=2, ibutton, iwait=FALSE;
   int color=4,thickness=1,hvfactor,count=0;
   NspLink *L;
@@ -990,9 +988,9 @@ int gframe_create_new_link(NspGFrame *F)
   gframe_unhilite_objs(F,FALSE);
   hvfactor=5;/* magnetism toward horizontal and vertical line  */
   Xgc->graphic_engine->xinfo(Xgc,"Enter polyline, Right click to stop");
-  /* move to X11 and  Xor mode */
-  Xgc->graphic_engine->scale->get_driver_name(driver);
-  if (strcmp("X11",driver) != 0)  Xgc->graphic_engine->scale->set_driver("X11");
+
+  record = Xgc->graphic_engine->xget_recording(Xgc);
+  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
   Xgc->graphic_engine->xset_alufunction1(Xgc,6);
   /* prepare a link with 1 points */
   L= LinkCreateN(NVOID,1,color,thickness);
@@ -1013,7 +1011,7 @@ int gframe_create_new_link(NspGFrame *F)
 	{
 	  /* we stop : window was killed */
 	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-	  Xgc->graphic_engine->scale->set_driver(driver);
+	  Xgc->graphic_engine->xset_recording(Xgc,record);
 	  return ibutton;
 	}
       if ( ibutton == stop ) wstop= 1;
@@ -1076,7 +1074,7 @@ int gframe_create_new_link(NspGFrame *F)
   bf->draw(L);
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
   Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-  Xgc->graphic_engine->scale->set_driver(driver);
+  Xgc->graphic_engine->xset_recording(Xgc,record);
   return ibutton;
 }
 

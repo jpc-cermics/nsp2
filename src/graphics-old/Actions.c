@@ -79,7 +79,6 @@ void reset_scig_deletegwin_handler(void)
 
 void scig_delete(int winid) 
 {
-  scig_erase(winid);
   scig_deletegwin_handler(winid);
   DeleteSGWin(winid);
 }
