@@ -3445,7 +3445,7 @@ static void nsp_ogl_set_view(BCG *Xgc)
 		 cy+R*sint*sina,
 		 cz+R*cosa,
 		 cx,cy,cz,
-		 0,0,1);
+		 0,0,(sina >= 0.0 ) ? 1 : -1);
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
 
@@ -3462,7 +3462,6 @@ static void nsp_ogl_set_view(BCG *Xgc)
 	(1 - Xgc->scales->axis[0] - Xgc->scales->axis[1]);
       ys=(Xgc->scales->frect[3]-Xgc->scales->frect[1])/
 	(1 - Xgc->scales->axis[2] - Xgc->scales->axis[3]);
-
       glOrtho(Xgc->scales->frect[0]-xs*Xgc->scales->axis[0],
 	      Xgc->scales->frect[2]+xs*Xgc->scales->axis[1],
 	      Xgc->scales->frect[1]-ys*Xgc->scales->axis[3],
