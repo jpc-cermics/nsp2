@@ -2614,7 +2614,7 @@ typedef  struct  {
 
 /* ce qui suit marche sur 75dpi ou 100dpi */
 
-FontAlias fonttab[] ={
+static FontAlias fonttab[] ={
   {"CourR", "-adobe-courier-medium-r-normal--*-%s0-*-*-m-*-iso8859-1"},
   {"Symb", "-adobe-symbol-medium-r-normal--*-%s0-*-*-p-*-adobe-fontspecific"},
   {"TimR", "-adobe-times-medium-r-normal--*-%s0-*-*-p-*-iso8859-1"},

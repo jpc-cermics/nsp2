@@ -2824,7 +2824,7 @@ static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewp
  * widget hierarchy 
  */
 
-void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+void nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
      nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
 }
