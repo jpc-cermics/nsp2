@@ -36,13 +36,10 @@ static int environSize = 0;	/* Non-zero means that the environ array was
  * Declarations for local procedures defined in this file:
  */
 
-static int		FindVariable _ANSI_ARGS_((CONST char *name,
-			    int *lengthPtr));
-static void		ReplaceString _ANSI_ARGS_((CONST char *oldStr,
-			    char *newStr));
-void			TclSetEnv _ANSI_ARGS_((CONST char *name,
-					       CONST char *value));
-void			TclUnsetEnv _ANSI_ARGS_((CONST char *name));
+static int		FindVariable (CONST char *name,  int *lengthPtr);
+static void		ReplaceString (CONST char *oldStr,  char *newStr);
+void			TclSetEnv (CONST char *name, CONST char *value);
+void			TclUnsetEnv (CONST char *name);
 
 /*
  *----------------------------------------------------------------------
