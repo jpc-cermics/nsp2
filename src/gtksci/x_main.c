@@ -105,12 +105,6 @@ int real_main(int argc, char **argv)
   /* provide a default SCI  */
   set_sci_env();
 
-  /* change the default input for dealing with 
-   * gtk events  
-   */
-
-  SetSciReadFunction( SciGtkReadLine) ;
-
   /* create temp directory */
   /* C2F(settmpdir)(); XXXX */
 

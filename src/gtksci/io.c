@@ -23,7 +23,7 @@
 #include "../system/Sun.h"
 #include "nsp/gtksci.h"
 
-/* WITH_TK is eventually define in nsp/machine.h 
+/* WITH_TK is eventually defined in nsp/machine.h 
  * include by nsp/Math.h 
  */ 
 
@@ -40,40 +40,6 @@ extern int checkqueue_nsp_command(void) ;
 /*
  * Input output functions 
  */
-
-/* I/O Function for C routines no test for xscion here */
-
-void Scisncr(char *str)
-{
-  fprintf(stdout,"%s",str);
-}
-
-/* 
- * as sciprint but with an added first argument 
- * which is ignored (used in do_printf) 
- */
-
-int  sciprint2(int iv,char *fmt,...) 
-{
-  int retval,lstr;
-  va_list ap;
-  char s_buf[1024];
-  va_start(ap,fmt);
-  /* next three lines added for diary SS*/
-  (void ) vsprintf(s_buf, fmt, ap );
-  lstr=strlen(s_buf);
-  if ( lstr >= 2 && s_buf[lstr-1]== '\n' && s_buf[lstr-2]== '\r') 
-    {
-      s_buf[lstr-2]= '\n';
-      s_buf[lstr-1]= '\0';
-      lstr--;
-    }
-  /* XXX C2F(diary)(s_buf,&lstr,0L); */
-  retval= vfprintf(stdout, fmt, ap );
-  va_end(ap);
-  return retval;
-}
-
 
 /*
  * Functions to set or to get the nsp status 
@@ -197,7 +163,7 @@ int Xorgetchar(void)
     /* FD_SET(fd_out,&write_mask);
        FD_SET(fd_err,&write_mask); */
 
-    select_timeout.tv_sec = 10; /* could be more */
+    select_timeout.tv_sec = 1000; /* could be more */
     select_timeout.tv_usec = 0;
 #ifdef WITH_GTK_MAIN 
     while ( gtk_events_pending()) 
@@ -241,8 +207,11 @@ int Xorgetchar(void)
     }
     /* if there's something to read */
     if ( FD_ISSET(fd_in,&select_mask )) { 
-      SELECT_DEBUG(fprintf(stderr,"j'attend un caractere %d\n",counter++);)
-      return getchar();
+      register int c;
+      SELECT_DEBUG(fprintf(stderr,"j'attend un caractere %d\n",counter++););
+      c= getchar();
+      SELECT_DEBUG(fprintf(stderr,"lu [%d]\n",c););
+      return c;
       break;
     } 
 #ifdef WITH_TK 

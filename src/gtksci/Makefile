@@ -8,7 +8,8 @@ LIBRARY = gtksci.a
 
 OBJSC =	click.o command.o  io.o \
 	menus.o x_VTPrsTbl.o x_main.o \
-	zzledt-rl.o about.o queue.o helpbrowser.o uri.o
+	about.o queue.o helpbrowser.o uri.o
+
 
 OBJSF  = 
 
@@ -22,8 +23,6 @@ CFLAGS = $(CC_OPTIONS) $(TK_INC_PATH) $(TCL_INC_PATH) $(HTMFLAGS)
 FFLAGS = $(FC_OPTIONS)
 
 include ../Make.lib
-
-# need gnome includes 
 
 helpbrowser:  helpbrowser.c queue.o
 	$(CC) -DALONE $(CC_OPTIONS) `gnome-config --cflags gnome` \

@@ -1,4 +1,3 @@
-
 #ifndef SCI_IO_H 
 #define SCI_IO_H 
 
@@ -12,22 +11,12 @@
 #include <string.h>
 #include "nsp/math.h"
 
-/** seams to be missing in non ansi gnu stdio.h **/
-#ifdef __GNUC__ 
-#ifndef __STDC__ 
-extern int fprintf(),printf(),vprintf(),vfprintf();
-#endif 
-#endif 
-
-
 typedef int (*IOVFun) (char *fmt, va_list ap);
 extern IOVFun Scivprintf;
 IOVFun SetScilabIO(IOVFun F);
 
 int Sciprintf1 SCI_VARARGS_2DEF(int,indent,char *,fmt);
 int Sciprintf SCI_VARARGS_DEF(char *,fmt); 
-
-/* NspSMatrix *Sciprint2string_reset(); */
 
 #ifdef  NSP_TYPE_OBJECT 
 NspObject *Sciprint2string_reset();
@@ -75,6 +64,8 @@ extern void set_echo_mode(int mode);
 extern int get_echo_mode(void); 
 extern void set_is_reading(int mode);
 extern int get_is_reading(void);
+
+extern void DefSciReadLine(char *prompt, char *buffer, int *buf_size, int *len_line, int *eof);
 
 
 #endif 

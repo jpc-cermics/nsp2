@@ -998,6 +998,7 @@ double nsp_urand(int *iy)
       halfm = (double) m2;
   
       /*  compute multiplier and increment for linear congruential method */
+
       z = halfm * atan(1.0) / 8.;
       ia = (((int) ININT(z)) << 3) + 5;
       z = halfm * (.5 - sqrt(3.) / 6.);

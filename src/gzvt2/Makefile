@@ -4,12 +4,13 @@ include ../../Makefile.incl
 #--------------------
 
 ZTERM_LDFLAGS= `pkg-config libzvt-2.0 --cflags --libs` -DHAS_I18N
-ZTERM_CFLAGS= `pkg-config libzvt-2.0 --cflags ` -DHAS_I18N
+zterm_CFLAGS= `pkg-config libzvt-2.0 --cflags ` -DHAS_I18N
 VTE_LDFLAGS= `pkg-config vte --cflags --libs` 
-VTE_CFLAGS=  `pkg-config vte --cflags` 
+vte_CFLAGS=  `pkg-config vte --cflags` 
 
 TERM_NAME=vte
 LDFLAGS=$(VTE_LDFLAGS)
+CFLAGS=$(vte_FLAGS)
 
 all	::  ../../bin/zterm 
 

@@ -1479,7 +1479,7 @@ int int_driver(Stack stack, int rhs, int opt, int lhs)
       if ((rep= GetStringInArray(stack,1,drivers_name,1)) == -1) return RET_BUG; 
       if ( drivers_id[rep] == Rec_driver ) 
 	{
-	  Scierror("%s: Rec driver does not exists, use xset('recording',...) to set recording mode on or off \n",stack.fname);
+	  Scierror("%s: Rec driver does not exists, use xtape('on'|'off') to set recording mode on or off \n",stack.fname);
 	}
       nsp_current_driver = rep;
       switch ( rep ) 
@@ -2188,7 +2188,7 @@ int int_xgrid(Stack stack, int rhs, int opt, int lhs)
   }
   Xgc=nsp_check_graphic_context();
   nsp_plot_grid(Xgc,&style);
-  nsp_plot_polar_grid(Xgc,&style);
+  /* FIXME nsp_plot_polar_grid(Xgc,&style); */
   return 0;
 } 
 

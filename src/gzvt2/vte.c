@@ -299,7 +299,7 @@ decrease_font_size(GtkWidget *widget, gpointer data)
 }
 
 static gboolean
-read_and_feed(GIOChannel *source, GIOCondition condition, gpointer data)
+read_and_feedXXX(GIOChannel *source, GIOCondition condition, gpointer data)
 {
   char buf[2048];
   gsize size;
@@ -307,10 +307,17 @@ read_and_feed(GIOChannel *source, GIOCondition condition, gpointer data)
   g_return_val_if_fail(VTE_IS_TERMINAL(data), FALSE);
   status = g_io_channel_read_chars(source, buf, sizeof(buf),
 				   &size, NULL);
-  if ((status == G_IO_STATUS_NORMAL) && (size > 0)) {
-    vte_terminal_feed(VTE_TERMINAL(data), buf, size);
-    return TRUE;
-  }
+  if ((status == G_IO_STATUS_NORMAL) && (size > 0)) 
+    {
+      vte_terminal_feed(VTE_TERMINAL(data), buf, size);
+      return TRUE;
+    }
+  else 
+    {
+      vte_terminal_feed(VTE_TERMINAL(data),"X",1);
+      return TRUE;
+
+    }
   return FALSE;
 }
 

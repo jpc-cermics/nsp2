@@ -715,7 +715,6 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
     }
   if ( get_box == TRUE )
     {
-      int rect[4];
       box[3]= n1count*1.5*yoffset;
     }
   else 
