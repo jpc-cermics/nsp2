@@ -2770,17 +2770,6 @@ static void xget_mark(BCG *Xgc,int *symb)
  *   to X11 
  */
 
-
-/*
- * FIXME: to be replaced by ..... gtk code 
- */
-
-#ifdef __APPLE__
-#define PATH "/Applications/nsp2/src/graphics/Font_mini.tga"
-#else 
-#define PATH "/usr/local/nsp2/src/graphics/Font_mini.tga"
-#endif 
-
 static void queryfamily(char *name, int *j,int *v3)
 { 
   printf("fct queryfamily  pas encore implementee en OpenGL\n");
@@ -2791,17 +2780,32 @@ static void loadfamily(char *name, int *j)
   printf("fct loadfamily pas encore implementee en OpenGL\n");
 }
 
+/*FIXME */
+#define MAX_PATH 1024
+static char font_path[MAX_PATH];
+
+static void ogl_path_font()
+{
+  char *env = getenv("SCI");
+  sprintf(font_path,"%s/src/graphics/Font_mini.tga",(env == NULL) ? "/fixme" : env);
+}
+
 static void LoadFonts(BCG *Xgc)
 {
   /*
    * Construction de fontes avec OpenGL
-   * FIXME
    */
-  
-  if (!LoadTGA(&Xgc->private->tab_textures_font[0],PATH) ||
-      !LoadTGA(&Xgc->private->tab_textures_font[1],PATH))
+  static int first = 0 ;
+  if (first == 0 ) 
     {
-      Sciprintf("Texture PATH/src/graphics/FontXXX.tga  manquante ou corrompue\n");
+      ogl_path_font();
+      first++;
+    }
+
+  if (!LoadTGA(&Xgc->private->tab_textures_font[0],font_path) ||
+      !LoadTGA(&Xgc->private->tab_textures_font[1],font_path))
+    {
+      Sciprintf("Texture Font missing or corrupted\n");
     }
   Xgc->private->tab_base[0] = BuildFont(Xgc->private->tab_textures_font[0].texID, 95, 16, 8);
   Xgc->private->tab_base[1] = BuildFont(Xgc->private->tab_textures_font[1].texID, 95, 16, 8);
@@ -3551,7 +3555,7 @@ static bool LoadTGA(TextureImage *texture, char *filename)
   GLuint             i;
 
 
-  printf(">>>>>> je vais charger la texture %s\n", filename);
+  printf("XXX je vais charger la texture %s\n", filename);
   FILE *file = fopen(filename, "rb");
      
   if ( file==NULL ||
