@@ -2410,6 +2410,47 @@ int nsp_mat_erfc(NspMatrix *A)
   return(OK);
 }
 
+/*
+ * A=gamma(A),
+ */
+
+
+
+int nsp_mat_tgamma(NspMatrix *A)
+{
+  int i ;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i = 0 ; i < A->mn ; i++) A->R[i]= tgamma(A->R[i]);
+    }
+  else
+    {
+      Scierror("Erf function argument must be real\n");
+      return(FAIL);
+    }
+  return(OK);
+}
+
+/*
+ * A=log(gamma(A)), 
+ */
+
+int nsp_mat_lgamma(NspMatrix *A)
+{
+  int i ;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i = 0 ; i < A->mn ; i++) A->R[i]= lgamma(A->R[i]);
+    }
+  else
+    {
+      Scierror("Erf function argument must be real\n");
+      return(FAIL);
+    }
+  return(OK);
+}
+
+
 
 /*
  * A=Arg(A),
@@ -2711,6 +2752,10 @@ int nsp_mat_sqrtel(NspMatrix *A)
     }
   return(OK);
 }
+
+
+
+
 
 /*
  *nsp_mat_minus(A),  A= -A 

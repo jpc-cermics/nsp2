@@ -94,6 +94,9 @@ extern double Maxi();  /* XXXX a mettre ailleurs **/
 extern double exp10 (double);
 #endif 
 
+/* missing prototype */
+double tgamma(double);
+
 /* Les arguments des fonction XWindows doivent etre des int16 ou unsigned16 */
 
 #define int16max   0x7FFF

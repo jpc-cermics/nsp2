@@ -252,6 +252,9 @@ extern int nsp_mat_tanh(NspMatrix *A);
 extern int nsp_mat_abs(NspMatrix *A); 
 extern int nsp_mat_erf(NspMatrix *A); 
 extern int nsp_mat_erfc(NspMatrix *A); 
+extern int nsp_mat_lgamma(NspMatrix *A); 
+extern int nsp_mat_tgamma(NspMatrix *A); 
+
 extern int nsp_mat_arg(NspMatrix *A); 
 extern int nsp_mat_polar(NspMatrix *A, NspMatrix *B); 
 extern int nsp_mat_iand(NspMatrix *A, NspMatrix *B); 

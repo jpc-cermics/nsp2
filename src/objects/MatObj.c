@@ -2669,6 +2669,27 @@ int_mxerfc (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * A=gamma(A)
+ */
+
+int
+int_mxgamma(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_tgamma);
+}
+
+/*
+ * A=gammaln(A),  * A is changed 
+ */
+
+int
+int_mxgammaln (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_lgamma);
+}
+
+
+/*
  * A=Arg(A),  * A is changed 
  */
 
@@ -3657,6 +3678,8 @@ static OpTab Matrix_func[] = {
   {"abs_m", int_mxabs},
   {"erf_m", int_mxerf},
   {"erfc_m", int_mxerfc},
+  {"gamma_m",int_mxgamma},
+  {"gammaln_m",int_mxgammaln},
   {"arg_m", int_mxarg},
   {"cos_m", int_mxcos},
   {"cosh_m", int_mxcosh},
