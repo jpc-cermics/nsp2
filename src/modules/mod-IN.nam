@@ -1,4 +1,0 @@
-{"mocreate",int_mocreate},  		/*  */
-{"destroy_mo",int_modestroy}, 		/* should de used in clear */
-{"info_mo",int_moinfo},       		/* info(H) */
-{"print_mo",int_moprint},     		/* print(H) */
