@@ -9,14 +9,9 @@
 // of the gtk-demo 
 //
 // The main function in this file is 
-// function graphics_demo_in_gtk(demo_list) 
+// graphics_demo_in_gtk(demo_list) 
+// which is used to create a demo widget (see graphic_list.sce)
 //--------------------------------------------------- 
-
-TITLE_COLUMN=0
-FILENAME_COLUMN=1
-FUNC_COLUMN=2
-ITALIC_COLUMN=3
-NUM_COLUMNS=4 
 
 function message(t,mess) 
   dialog = gtkmessagedialog_new (flags= GTK.DIALOG_MODAL,type= t,
@@ -31,6 +26,8 @@ endfunction
 
 function row_activated_cb (tree_view,path,data)
 // activated when a row is selected 
+  ITALIC_COLUMN=3;
+  FUNC_COLUMN=2;
   model = tree_view.get_model[];
   iter = model.get_iter[path];
   func=model.get_value[iter,FUNC_COLUMN];
@@ -50,6 +47,7 @@ function row_activated_cb (tree_view,path,data)
 endfunction 
 
 function selection_cb(selection,args)
+  FUNC_COLUMN=2
   model=args(1);
   buffer=args(2);
   iter=selection.get_selected[]
@@ -106,6 +104,8 @@ function tree_view=create_tree(demo_list)
   cell = gtkcellrenderertext_new ();
   // g_object_set (G_OBJECT (cell), "style", PANGO_STYLE_ITALIC, NULL);
   cell.set_property["style", PANGO.STYLE_ITALIC];
+  TITLE_COLUMN=0;
+  ITALIC_COLUMN=3;
   attrs=hcreate(text= TITLE_COLUMN,style_set=ITALIC_COLUMN);
   col = gtktreeviewcolumn_new(title="Widget (double click for demo)",renderer=cell,attrs=attrs);
   tree_view.append_column[col];
@@ -142,16 +142,20 @@ function tree_model_append(model,L,iter,count)
   end
 endfunction
 
-tree_view_children = list(
-  list( "Poo", "unused", "''poo''"),
-  list( "Foo", "list_store.c", "''foo''" ));
+function [simple_demo]=graphics_demos_test_list()
+// just return a list which can be used as 
+// graphics_demo_in_gtk argument 
+  tree_view_children = list(
+    list( "Poo", "unused", "''poo''"),
+    list( "Foo", "list_store.c", "''foo''" ));
   
-simple_demo = list( 
+  simple_demo = list( 
   list("Plot3d", "appwindow.c", "''poo''" ), 
   list("test", "appwindow.c", "''poo''" ),
   list("Childs1", "", "",tree_view_children ),
   list("Childs1", "", "",tree_view_children ),
   list("test", "appwindow.c", "''poo''" ));
+endfunction
 
 function graphics_demo_in_gtk(demo_list) 
   window = gtkwindow_new();// (GTK.WINDOW_TOPLEVEL);
