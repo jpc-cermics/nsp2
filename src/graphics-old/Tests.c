@@ -18,10 +18,10 @@ static void polycorps(BCG *Xgc);
 
 static void test2DD(BCG *Xgc)
 {
-  integer sec=10;
-  integer style[NCURVES2D],aaint[4],n1,n2;
+  int sec=10;
+  int style[NCURVES2D],aaint[4],n1,n2;
   double x[NCURVES2D*XN2D],y[NCURVES2D*XN2D],brect[4],Wrect[4],Frect[4];
-  integer i,j,k;
+  int i,j,k;
   for ( k= 0 ; k < 50 ; k++)
     {
       for ( j =0 ; j < NCURVES2D ; j++)
@@ -53,9 +53,9 @@ static void test2DD(BCG *Xgc)
 
 static void test2D(BCG *Xgc)
 {
-  integer style[NCURVES2DD],aaint[4],n1,n2;
+  int style[NCURVES2DD],aaint[4],n1,n2;
   double x[NCURVES2DD*XN2DD],y[NCURVES2DD*XN2DD],brect[4];
-  integer i,j;
+  int i,j;
   for ( j =0 ; j < NCURVES2DD ; j++)
     {
       i=0;
@@ -78,9 +78,9 @@ static void test2D(BCG *Xgc)
 
 static void test2D2(BCG *Xgc)
 {
-  integer style[NCURVES2D2],aaint[4],n1,n2;
+  int style[NCURVES2D2],aaint[4],n1,n2;
   double x[NCURVES2D2*XN2D2],y[NCURVES2D2*XN2D2],brect[4];
-  integer i,j,k,on=1;
+  int i,j,k,on=1;
   Xgc->graphic_engine->scale->xset_pixmapOn(Xgc,on);
   for ( k=0 ; k < 50 ; k++) 
     {
@@ -110,9 +110,9 @@ static void test2D2(BCG *Xgc)
 
 static void test2D3(BCG *Xgc)
 {
-  integer style[NCURVES2D3],aaint[4],n1,n2;
+  int style[NCURVES2D3],aaint[4],n1,n2;
   double x[NCURVES2D3*XN2D3],y[NCURVES2D3*XN2D3],brect[4];
-  integer i,j;
+  int i,j;
   for ( j =0 ; j < NCURVES2D3 ; j++)
     for ( i=0 ; i < XN2D3 ; i++)
       {
@@ -135,9 +135,9 @@ static void test2D3(BCG *Xgc)
 
 static void test2D4(BCG *Xgc)
 {
-  integer style[NCURVES2D4],aaint[4],n1,n2;
+  int style[NCURVES2D4],aaint[4],n1,n2;
   double x[NCURVES2D4*XN2D4],y[NCURVES2D4*XN2D4],brect[4];
-  integer i,j;
+  int i,j;
   for ( j =0 ; j < NCURVES2D4 ; j++)
     for ( i=0 ; i < XN2D4 ; i++)
       {
@@ -163,9 +163,9 @@ static void test2D4(BCG *Xgc)
 
 static void test2DN1(BCG *Xgc)
 {
-  integer style[NC2DN1],aaint[4],n1,n2;
+  int style[NC2DN1],aaint[4],n1,n2;
   double x[NC2DN1*XDDN1],y[NC2DN1*XDDN1],brect[4];
-  integer i,j;
+  int i,j;
   for ( j =0 ; j < NC2DN1 ; j++)
     for ( i=0 ; i < XDDN1 ; i++)
       {
@@ -186,9 +186,9 @@ static void test2DN1(BCG *Xgc)
 
 static void test2DN2(BCG *Xgc)
 {
-  integer style[NCURVESN1],aaint[4],n1,n2;
+  int style[NCURVESN1],aaint[4],n1,n2;
   double x[NCURVESN1*XNN1],y[NCURVESN1*XNN1],brect[4];
-  integer i,j;
+  int i,j;
   for ( j =0 ; j < NCURVESN1 ; j++)
     for ( i=0 ; i < XNN1 ; i++)
       {
@@ -209,9 +209,9 @@ static void test2DN2(BCG *Xgc)
 
 static void test2DN3(BCG *Xgc)
 {
-  integer style[NCURVESN1],aaint[4],n1,n2;
+  int style[NCURVESN1],aaint[4],n1,n2;
   double x[NCURVESN1*XNN1],y[NCURVESN1*XNN1],brect[4];
-  integer i,j;
+  int i,j;
   for ( j =0 ; j < NCURVESN1 ; j++)
     for ( i=0 ; i < XNN1 ; i++)
       {
@@ -240,9 +240,9 @@ static void test2DN3(BCG *Xgc)
 static void test3D(BCG *Xgc)
 {
   double z[XN3D*YN3D],x[XN3D],y[YN3D],bbox[6];
-  integer flag[3],p,q;
+  int flag[3],p,q;
   double teta,alpha;
-  integer i ,j ;
+  int i ,j ;
   for ( i=0 ; i < XN3D ; i++) x[i]=10*i;
   for ( j=0 ; j < YN3D ; j++) y[j]=10*j;
   for ( i=0 ; i < XN3D ; i++)
@@ -262,9 +262,9 @@ static void test3D(BCG *Xgc)
 static void test3DA(BCG *Xgc)
 {
   double z[XN3DA*YN3DA],x[XN3DA],y[YN3DA],bbox[6];
-  integer flag[3],p,q,k;
+  int flag[3],p,q,k;
   double teta,alpha;
-  integer i ,j,on=1;
+  int i ,j,on=1;
   Xgc->graphic_engine->scale->xset_pixmapOn(Xgc,on);
   Xgc->graphic_engine->scale->xset_usecolor(Xgc,1);
   for ( i=0 ; i < XN3DA ; i++) x[i]=i/((double) XN3DA) - 2.0;
@@ -292,9 +292,9 @@ static void test3DA(BCG *Xgc)
 static void test3D1(BCG *Xgc)
 {
   double z[XN3D1*YN3D1],x[XN3D1],y[YN3D1],bbox[6];
-  integer flag[3],p,q;
+  int flag[3],p,q;
   double teta,alpha;
-  integer i ,j ;
+  int i ,j ;
   for ( i=0 ; i < XN3D1 ; i++) x[i]=10*i;
   for ( j=0 ; j < YN3D1 ; j++) y[j]=10*j;
   for ( i=0 ; i < XN3D1 ; i++)
@@ -313,9 +313,9 @@ static void test3D1(BCG *Xgc)
 static void test3D2(BCG *Xgc)
 {
   double z[XN3D2*YN3D2],x[XN3D2],y[YN3D2],bbox[6];
-  integer flag[3],p,q;
+  int flag[3],p,q;
   double teta,alpha;
-  integer i ,j ;
+  int i ,j ;
   for ( i=0 ; i < XN3D2 ; i++) x[i]=10*i;
   for ( j=0 ; j < YN3D2 ; j++) y[j]=10*j;
   for ( i=0 ; i < XN3D2 ; i++)
@@ -329,7 +329,7 @@ static void test3D2(BCG *Xgc)
 
 static void testArrows(BCG *Xgc)
 {
-  integer narrowx2=20,j,style=0,iflag=0;
+  int narrowx2=20,j,style=0,iflag=0;
   double arsizex10=20.0;
   double polyx[20],polyy[20];
   double dx=100;
@@ -338,7 +338,7 @@ static void testArrows(BCG *Xgc)
     {polyx[2*j]=250;polyy[2*j]=250;}
   for ( j =0 ; j < 10 ; j++)
     {
-      integer alpha;
+      int alpha;
       alpha=36*j;
       polyx[2*j+1]=250+ cos(3.14116*alpha/180.0)*dx;
       polyy[2*j+1]=250 -sin(3.14116*alpha/180.0)*dx;
@@ -354,9 +354,9 @@ static void TestC(BCG *Xgc,     int ii)
 {
   double z[XNC*YNC],x[XNC],y[YNC];
   double zz,bbox[6],zlev=10.0;
-  integer p,q,i,j,nz,flagnz=0;
+  int p,q,i,j,nz,flagnz=0;
   double teta=35,alpha=45;
-  integer flag[3];
+  int flag[3];
   zz=1;
   for ( i=0 ; i < XNC ; i++) x[i]=10*i;
   for ( j=0 ; j < YNC ; j++) y[j]=10*j;
@@ -374,12 +374,12 @@ static void TestC(BCG *Xgc,     int ii)
 
 static void TestC2d(BCG *Xgc)
 {
-  integer aaint[4];
+  int aaint[4];
   double brect[4];
   double z[XNC*YNC],x[XNC],y[YNC];
   int style[LEVELNUM];
   double zz;
-  integer p,q,i,j,nz,flagnz=0;
+  int p,q,i,j,nz,flagnz=0;
   zz=1;
   for ( i=0 ; i < XNC ; i++) x[i]=10*i;
   for ( j=0 ; j < YNC ; j++) y[j]=10*j;
@@ -406,7 +406,7 @@ static void testCh(BCG *Xgc)
 {
   double x[XNCh],y[YNCh];
   double fx[XNCh*YNCh], fy[XNCh*YNCh], vrect[4],arfact;
-  integer i ,j;
+  int i ,j;
   static char fax[]="021";
   for ( i=0 ; i < XNCh ; i++)
     x[i]= -1+2*((double) i)/XNCh;
@@ -432,10 +432,10 @@ static void testCh(BCG *Xgc)
 
 static void testG(BCG *Xgc)
 {
-  integer aaint[4];
+  int aaint[4];
   double brect[4];
   double z[XNG*YNG],x[XNG],y[YNG];
-  integer p,q,i,j;
+  int p,q,i,j;
   for ( i=0 ; i < XNG ; i++) x[i]=10*i;
   for ( j=0 ; j < YNG ; j++) y[j]=10*j;
   for ( i=0 ; i < XNG ; i++)
@@ -452,7 +452,7 @@ static void testG(BCG *Xgc)
 static void testP3D(BCG *Xgc)
 {
   double z[XNP3D],x[XNP3D],y[XNP3D],bbox[6];
-  integer n,flag[3],i;
+  int n,flag[3],i;
   double theta,alpha;
   for ( i=0 ; i < XNP3D ; i++)
     {
@@ -472,12 +472,12 @@ static void testP3D(BCG *Xgc)
 static void testPattern(BCG *Xgc)
 {
   double rect[]={10,10,50,50};
-  integer i=0,j,k;
+  int i=0,j,k;
   fixbounds(Xgc,-0.0,500.0,-50.0,200.0);
   for ( k =0 ; k < 4 ; k++)
     {
       for ( j =0 ; j < 5 ; j++)
-	{ integer pat;
+	{ int pat;
 	  pat=j+5*k;
 	  Xgc->graphic_engine->scale->xset_pattern(Xgc,pat);
 	  Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
@@ -493,15 +493,15 @@ static void testPattern(BCG *Xgc)
 static void testColor(BCG *Xgc)
 {
   double rect[]={10,10,50,50};
-  integer j,k;
+  int j,k;
   fixbounds(Xgc,-0.0,500.0,-50.0,200.0);
   for ( k =0 ; k < 4 ; k++)
     {
       for ( j =0 ; j < 5 ; j++)
 	{ 
-	  integer pat;
+	  int pat;
 	  pat=j+5*k;
-	  set_c(Xgc,pat);
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,pat);
 	  Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
 	  Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
 	  rect[0] += rect[2]+5.0;
@@ -509,7 +509,6 @@ static void testColor(BCG *Xgc)
       rect[1] += rect[3]+5.0;
       rect[0]  =10.0;
     }
-  set_c(Xgc,0L);
 }
 
 
@@ -518,7 +517,7 @@ static void testColor(BCG *Xgc)
   
 static void testPrim(BCG *Xgc)
 {
-  integer style[NCURVESP],aaint[4],n1,n2;
+  int style[NCURVESP],aaint[4],n1,n2;
   double x[NCURVESP*XMP],y[NCURVESP*XMP],brect[4];
   x[0]= -100.0;x[1]=500.0;
   y[0]= -100.0;y[1]=600.0;
@@ -532,9 +531,9 @@ static void testPrim(BCG *Xgc)
 /**
 static void transl(x,n,val)
      double x[];
-     integer n,val;
+     int n,val;
 {
-  integer i;
+  int i;
   for (i=0 ; i < n ; i++)    x[i]=x[i]+val;
 }
 **/
@@ -542,8 +541,8 @@ static void transl(x,n,val)
 static void corps(BCG *Xgc)
 {
   double x[7],y[7],boxes[7*4],arcs[7*6],xpols[7*7],ypols[7*7],arsize;
-  integer pats[7],n,i,j,iflag;
-  integer whiteid,style=0,xiflag=0;
+  int pats[7],n,i,j,iflag;
+  int whiteid,style=0,xiflag=0;
   Xgc->graphic_engine->xset_default(Xgc);
   n=7;
   whiteid = Xgc->graphic_engine->xget_last(Xgc);
@@ -637,7 +636,7 @@ static void corps(BCG *Xgc)
 
 static void testString(BCG *Xgc)
 {
-  integer j,v=0,pat=1;
+  int j,v=0,pat=1;
   double x=50.0,y=0.0;
   fixbounds(Xgc,-200.0,200.0,-200.0,200.0);
   Xgc->graphic_engine->xset_font(Xgc,2,10);
@@ -661,12 +660,12 @@ static void testXormode(BCG *Xgc)
 static void testXliness(BCG *Xgc)
 {
   char info[10];
-  integer j,k,ii=0;
+  int j,k,ii=0;
   double ang=0.0;
   double x=20.0,y=20.0,w=40.0,h=30.0;
-  integer npoly=1,polysize=5;
+  int npoly=1,polysize=5;
   double polyx[5],polyy[5];
-  integer whiteid;
+  int whiteid;
   fixbounds(Xgc,0.0,500.0,0.0,250.0);
   whiteid = Xgc->graphic_engine->xget_last(Xgc);
   sprintf(info,"white=%d",(int)whiteid);
@@ -675,7 +674,7 @@ static void testXliness(BCG *Xgc)
   for ( k =0 ; k < 4 ; k++)
     {
       for ( j =0 ; j < 10 ; j++)
-	{ integer pat;
+	{ int pat;
 	  pat=j+10*k;
 	  polyx[0]=x;polyx[1]=x+w;polyx[2]=x+w;polyx[3]=x;polyx[4]=x;
 	  polyy[0]=y;polyy[1]=y;polyy[2]=y+h;polyy[3]=y+h;polyy[4]=y;
@@ -692,7 +691,7 @@ static void testXliness(BCG *Xgc)
 
 static void testMarks(BCG *Xgc)
 {
-  integer style[2],aaint[4],n1,n2,nn1;
+  int style[2],aaint[4],n1,n2,nn1;
   static double x[4],y[4],brect[4];
   n1=2;n2=2;
   x[0]=0; x[1] =0;x[2]=-1;x[3]=1;
@@ -712,13 +711,13 @@ static void testMarks(BCG *Xgc)
 
 static void testXrects(BCG *Xgc)
 {
-  integer j,k,nrect=1;
+  int j,k,nrect=1;
   double rect[4],xx=10.0,yy=10.0,w=40.0,h=40.0;
   fixbounds(Xgc,-0.0,500.0,-50.0,200.0);
   for ( k =0 ; k < 4 ; k++)
     {
       for ( j =0 ; j < 10 ; j++)
-	{ integer pat;
+	{ int pat;
 	  pat=j+10*k;
 	  rect[0]=xx;rect[1]=yy;rect[2]=w;rect[3]=h;
 	  Xgc->graphic_engine->scale->drawrectangles(Xgc,rect,&pat,nrect);
@@ -735,7 +734,7 @@ static void testXrects(BCG *Xgc)
 
 static void fixbounds(BCG *Xgc, double xmin,     double xmax,     double ymin,     double ymax)
 {
-  integer style[NCU],aaint[4],n1=1,n2=1;
+  int style[NCU],aaint[4],n1=1,n2=1;
   double x[NCU*NF],y[NCU*NF],brect[4];
   x[0]=xmin;x[1]=xmax;
   y[0]=ymin;y[1]=ymax;
@@ -747,7 +746,7 @@ static void fixbounds(BCG *Xgc, double xmin,     double xmax,     double ymin,  
   
 static void testPoly(BCG *Xgc)
 {
-  integer style[1],aaint[4],n1=1,n2=1;
+  int style[1],aaint[4],n1=1,n2=1;
   double brect[4],x[1],y[1];
   brect[0]= -5.0;brect[2]=35.0;
   brect[1]= -5.0;brect[3]=35.0;
@@ -761,7 +760,7 @@ static void testPoly(BCG *Xgc)
 static void polycorps(BCG *Xgc)
 {
   double x[NPC],y[NPC];
-  integer n=NPC,cf=0;
+  int n=NPC,cf=0;
   x[0]=x[6]=0.0;x[5]=x[1]=10.0,x[4]=x[2]=20.0;x[3]=30.0;
   y[0]=15.0;y[1]=y[2]=30.0;y[3]=15.0;y[4]=y[5]=0.0;y[6]=15.0;
   Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,n,cf);

@@ -30,8 +30,9 @@ static unsigned long maxcol; /* XXXXX : à revoir */
 
 /** functions **/
 
-GtkWidget *GetWindowNumber  (int);
-GtkWidget *GetBGWindowNumber (int);
+static void set_c(BCG *Xgc,int col);
+static GtkWidget *GetWindowNumber  (int);
+static GtkWidget *GetBGWindowNumber (int);
 
 static void ResetScilabXgc (BCG *Xgc);
 static void LoadFonts(void), LoadSymbFonts(void);
@@ -770,28 +771,6 @@ static int xset_curwin(int intnum,int set_menu)
   return old;
 }
 
-/* used in the previous function to set back the graphic scales 
- * when changing form one window to an other 
- * Also used in scig_tops : to force a reset of scilab graphic scales 
- * after a print in Postscript or Xfig 
- */
-
-void SwitchWindow(int *intnum)
-{
-  /** trying to get window *intnum **/
-  BCG *SXgc =  window_list_search(*intnum);
-  if ( SXgc != (BCG *) 0 ) 
-    {
-      /** Window intnum exists **/
-      ResetScilabXgc (SXgc);
-      /* XX no use get_window_scale(*intnum,NULL);*/
-    }
-  else 
-    {
-      /** Create window **/
-      initgraphic("",intnum);
-    }
-}
 
 /*
  * Get the id number of the Current Graphic Window 
@@ -840,7 +819,6 @@ static void xget_clip(BCG *Xgc,int *x)
       x[4] =Xgc->CurClipRegion[3];
     }
 }
-
 
 
 /*
@@ -895,17 +873,18 @@ static struct alinfo {
   };
 
 static void idfromname(char *name1, int *num)
-{int i;
- *num = -1;
- for ( i =0 ; i < 16;i++)
-   if (strcmp(AluStruc_[i].name,name1)== 0)  *num=i;
- if (*num == -1 ) 
-   {
-     Sciprintf("\n Use the following keys (int in scilab");
-     for ( i=0 ; i < 16 ; i++)
-       Sciprintf("\nkey %s   -> %s\n",AluStruc_[i].name,
-		AluStruc_[i].info);
-   }
+{
+  int i;
+  *num = -1;
+  for ( i =0 ; i < 16;i++)
+    if (strcmp(AluStruc_[i].name,name1)== 0)  *num=i;
+  if (*num == -1 ) 
+    {
+      Sciprintf("\n Use the following keys (int in scilab");
+      for ( i=0 ; i < 16 ; i++)
+	Sciprintf("\nkey %s   -> %s\n",AluStruc_[i].name,
+		  AluStruc_[i].info);
+    }
 }
 
 void xset_alufunction(BCG *Xgc,char *string)
@@ -1004,7 +983,9 @@ static char grey0[GREYNUMBER][8]={
   {(char)0xff, (char)0xff, (char)0xbb, (char)0xff, (char)0xff, (char)0xff, (char)0xbb, (char)0xff},
   {(char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff},
 };
-/* 
+
+/*  XXXXX 
+
 void CreatePatterns(whitepixel, blackpixel)
      Pixel whitepixel;
      Pixel blackpixel;
@@ -1029,13 +1010,13 @@ static int  xset_pattern(BCG *Xgc,int num)
     {
       /* 
 	 int i ; 
-      i= Max(0,Min(*num - 1,GREYNUMBER - 1));
-      Xgc->CurPattern = i;
-      XSetTile (dpy, gc, Tabpix_[i]); 
-      if (i ==0)
-	XSetFillStyle(dpy,gc,FillSolid);
-      else 
-	XSetFillStyle(dpy,gc,FillTiled);
+	 i= Max(0,Min(*num - 1,GREYNUMBER - 1));
+	 Xgc->CurPattern = i;
+	 XSetTile (dpy, gc, Tabpix_[i]); 
+	 if (i ==0)
+	 XSetFillStyle(dpy,gc,FillSolid);
+	 else 
+	 XSetFillStyle(dpy,gc,FillTiled);
       */
     }
   return old;
@@ -1133,9 +1114,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
     {
       gdk_gc_set_line_attributes(Xgc->private->wgc,
 				 (Xgc->CurLineWidth <= 1) ? 0 : Xgc->CurLineWidth,
-				 GDK_LINE_SOLID,
-				 GDK_CAP_BUTT,
-				 GDK_JOIN_ROUND);
+				 GDK_LINE_SOLID,GDK_CAP_BUTT, GDK_JOIN_ROUND);
     }
   else 
     {
@@ -1145,9 +1124,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
       gdk_gc_set_dashes(Xgc->private->wgc, 0, buffdash, *n);
       gdk_gc_set_line_attributes(Xgc->private->wgc, 
 				 (Xgc->CurLineWidth == 0 ) ? 1 : Xgc->CurLineWidth,
-				 GDK_LINE_ON_OFF_DASH,
-				 GDK_CAP_BUTT,
-				 GDK_JOIN_ROUND);
+				 GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
     }
 }
 
@@ -1423,7 +1400,6 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val)
 
 /** set and get the number of the background or foreground */
 
-
 static void xset_background(BCG *Xgc,int num)
 { 
   if (Xgc->CurColorStatus == 1) 
@@ -1503,7 +1479,6 @@ static int xget_hidden3d(BCG *Xgc)
       return  1; /** the hidden3d is a solid line style in b&w */
     }
 }
-
 
 /*-----------------------------------------------------------------------------
  * All the following function xxxx_1 
@@ -2217,10 +2192,10 @@ void DeleteSGWin(int intnum)
 }
 
 /********************************************
- * Get Window number wincount ( or 0 ) 
+ * Get Window number wincount ( or 0 )  XXXX unused 
  ********************************************/
 
-GtkWidget *GetWindowNumber(int wincount)
+static GtkWidget *GetWindowNumber(int wincount)
 {
   BCG *bcg;
   bcg = window_list_search(wincount);
@@ -2231,10 +2206,10 @@ GtkWidget *GetWindowNumber(int wincount)
 }
 
 /********************************************
- * Get BGWindow number wincount ( or 0 ) 
+ * Get BGWindow number wincount ( or 0 )  XXXX unused 
  ********************************************/
 
-GtkWidget *GetBGWindowNumber(int wincount)
+static GtkWidget *GetBGWindowNumber(int wincount)
 {
   BCG *bcg;
   bcg = window_list_search(wincount);
@@ -2250,7 +2225,7 @@ GtkWidget *GetBGWindowNumber(int wincount)
  * Routines for initialization : string is a display name 
  ********************************************/
 
-void set_c(BCG *Xgc,int col)
+static void set_c(BCG *Xgc,int col)
 {
   int value = AluStruc_[Xgc->CurDrawFunction].id;
   GdkColor temp = {0,0,0,0};
@@ -2445,9 +2420,13 @@ static void xinfo(BCG *Xgc,char *format,...)
  *  to come back to the default graphic state}
  *---------------------------------------------------------*/
 
+extern void nsp_initialize_gc( BCG *Xgc ) ;
+
+
 static void xset_default(BCG *Xgc)
 {
-  InitMissileXgc (Xgc);
+  nsp_initialize_gc(Xgc);
+  /* XXX InitMissileXgc (Xgc); */
 }
 
 static void InitMissileXgc ( BCG *Xgc ) 
@@ -3388,7 +3367,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   if (  dd->private->Cdrawable == NULL ) 
     {
       dd->private->Cdrawable= (GdkDrawable *) dd->private->drawing->window;
-      InitMissileXgc(dd);
+      /* XXXXX InitMissileXgc(dd); */
     }
   return FALSE;
 }

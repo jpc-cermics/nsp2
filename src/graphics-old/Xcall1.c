@@ -299,7 +299,7 @@ static int get_driver_id(void ) { return DriverId;}
  * graphic context initialization 
  *------------------------------------------------*/
 
-static void nsp_initialize_gc( BCG *Xgc ) 
+void nsp_initialize_gc( BCG *Xgc ) 
 { 
   int i;
   Xgc->graphic_engine->xset_unclip(Xgc);
@@ -398,7 +398,7 @@ static void xset1_colormap(BCG *Xgc,int m, double val[])
 
 static void xset1_default_colormap(BCG *Xgc)
 {
-  /* not recorded */ 
+  /* not recorded XXX */ 
   Xgc->graphic_engine->xset_default_colormap(Xgc);
 }
 
@@ -406,11 +406,8 @@ static void xset1_default_colormap(BCG *Xgc)
 
 static void xset1_default(BCG *Xgc) 
 {
-  /* no record */
-  Xgc->graphic_engine->xset_autoclear_def(Xgc) ;
-  Xgc->graphic_engine->xset_fpf_def(Xgc) ;
-  Xgc->graphic_engine->sedeco(0);
-  Xgc->graphic_engine->sedeco(1);
+  /* no record XXX A FAIRE */
+  nsp_initialize_gc(Xgc);
 }
 
 static void xset1_font_size(BCG *Xgc,int val)
