@@ -101,10 +101,6 @@ void file_print(NspFile *H, int indent);
 
 #define NULLSCIFILE (NspFile *) 0
 
-/* Obj.c */
-
-extern int nsp_object_xdr_save(NspFile  *F, NspObject *O);
-
 /* FileObj.c */
 
 extern NspFile *file_object (NspObject *O);
@@ -132,9 +128,6 @@ extern int XdrLoadArrayD (NspFile *F, double *nx, integer mn);
 extern int XdrSaveString (NspFile *F, char *str);
 extern int XdrLoadString (NspFile *F, char *buf, int buf_len);
 
-extern int nsp_object_xdr_save(NspFile *F, NspObject *O);
-extern NspObject *nsp_object_xdr_load(NspFile *F); 
-
 extern int is_little_endian(void);
 extern int nsp_feof(NspFile *f);
 extern int nsp_ferror(NspFile *f);
@@ -149,8 +142,10 @@ extern int nsp_putstr(NspFile *F, char *str);
 
 extern int do_printf (char *fname,FILE * fp, char *format,Stack stack,int n_args,
 	       int arg_cnt,int line, char **strv);
-extern int do_scanf (char *fname,FILE *fp, char *format,Stack stack,int iline, int *nargs, 
-			     char *strv,int *retval);
+
+extern int do_scanf (char *command,FILE *fp,
+		     char *format,Stack stack,int iline, int *nargs, 
+		     char *strv,int *retval);
 
 
 

@@ -40,33 +40,32 @@ struct _token
 
 typedef struct _tokenizer Tokenizer; 
 
-
-typedef int token_NextToken(Tokenizer *);
-typedef int token_ParseCommandArg(Tokenizer *);
-typedef int token_ParseString(Tokenizer *);
-typedef int token_GetChar(Tokenizer *);
-typedef int token_ForceNextChar(Tokenizer *);
-typedef int token_FuncForceNextChar(Tokenizer *);
-typedef int token_IgnoreWSpaces(Tokenizer *);
-typedef int token_viewch(Tokenizer *);
-typedef int token_backch(Tokenizer *);
-typedef int token_IsDotDotDot(Tokenizer *);
-typedef int token_IsDotDot(Tokenizer *);
-typedef int token_IsDotStarStar(Tokenizer *);
-typedef int token_IsDotAlphaOld(Tokenizer *);
-typedef int token_IsDotAlpha(Tokenizer *);
-typedef int token_IsTranspose(Tokenizer *);
-typedef int token_ParseShowLine(Tokenizer *);
-typedef int token_Getlin(Tokenizer *,char *prompt);
-typedef int token_TokenLineSet(Tokenizer *,int l);
-typedef void token_ParseOperators(Tokenizer *);
-typedef int token_ParseNumber(Tokenizer *);
-typedef int token_ParseSymb(Tokenizer *,char *str, int *l);
-typedef int token_ParseComment(Tokenizer *);
-typedef int token_ParseError(Tokenizer *,char *fmt,...);
+typedef int token_NextToken(Tokenizer *T);
+typedef int token_ParseCommandArg(Tokenizer *T);
+typedef int token_ParseString(Tokenizer *T);
+typedef int token_GetChar(Tokenizer *T);
+typedef int token_ForceNextChar(Tokenizer *T);
+typedef int token_FuncForceNextChar(Tokenizer *T);
+typedef int token_IgnoreWSpaces(Tokenizer *T);
+typedef int token_viewch(Tokenizer *T);
+typedef int token_backch(Tokenizer *T);
+typedef int token_IsDotDotDot(Tokenizer *T);
+typedef int token_IsDotDot(Tokenizer *T);
+typedef int token_IsDotStarStar(Tokenizer *T);
+typedef int token_IsDotAlphaOld(Tokenizer *T);
+typedef int token_IsDotAlpha(Tokenizer *T);
+typedef int token_IsTranspose(Tokenizer *T);
+typedef int token_ParseShowLine(Tokenizer *T);
+typedef int token_Getlin(Tokenizer *T,char *prompt);
+typedef int token_TokenLineSet(Tokenizer *T,int l);
+typedef void token_ParseOperators(Tokenizer *T);
+typedef int token_ParseNumber(Tokenizer *T);
+typedef int token_ParseSymb(Tokenizer *T,char *str, int *l);
+typedef int token_ParseComment(Tokenizer *T);
+typedef int token_ParseError(Tokenizer *T,char *fmt,...);
 typedef char *token_code2name(Tokenizer *T,int key);
 
-typedef void (SciReadFunc) (Tokenizer *T, char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
+typedef void (SciReadFunc)(Tokenizer *T, char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
 typedef SciReadFunc *SciReadFunction;
 extern SciReadFunc DefSciReadLine;
 

@@ -28,10 +28,10 @@ struct _nsp_module {
   NspObject father; 
   NspTypeModule *type; 
   char *path ; /* absolute XXX path of the module */
-	char *mname;  /* module name */
-	NspHash *T;      /* hash table to store module objects of type me (module elts) */
-	NspList *L;       /* List of submodules */
-	int flag;     /* are we a copy ? */;
+  char *mname;  /* module name */
+  NspHash *T;      /* hash table to store module objects of type me (module elts) */
+  NspList *L;       /* List of submodules */
+  int flag;     /* are we a copy ? */
 };
 
 extern int nsp_type_module_id;

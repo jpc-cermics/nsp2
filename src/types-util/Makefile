@@ -97,7 +97,7 @@ job_gboxed:
 job_mod:
 	make job  TNAME=Module TDOWNCASE=module TSHORT=mo \
 		TASSTRING=Module NULL=NULLMODULE \
-		PARENT=Object FIELDS="char *path ; /* absolute XXX path of the module */\n\tchar *mname;  /* module name */\n\tNspHash *T;      /* hash table to store module objects of type me (module elts) */\n\tNspList *L;       /* List of submodules */\n\tint flag;     /* are we a copy ? */;" \
+		PARENT=Object FIELDS="char *path ; /* absolute XXX path of the module */\n\tchar *mname;  /* module name */\n\tNspHash *T;      /* hash table to store module objects of type me (module elts) */\n\tNspList *L;       /* List of submodules */\n\tint flag;     /* are we a copy ? */" \
 		PARENTDOWNCASE=object PARENTINC=nsp/object.h 
 
 job_me:

@@ -80,7 +80,6 @@ extern int GetStringInArray (Stack stack, int ith, char **Table, int flag);
 extern int GetStringInStruct(Stack stack, int ith,void *T,unsigned int size, int flag);
 extern int is_string_in_array (const char *key, char **Table, int flag); 
 extern int is_string_in_struct(const char *key,void **Table,unsigned int size, int flag);
-typedef int (SMat_CompOp) (char *,char *);
 extern NspSMatrix *nsp_smatrix_create(const char *name, integer m, integer n,const char *str, integer flag);
 extern NspSMatrix *nsp_smatrix_create_with_length(const char *name, integer m, integer n, integer strl); 
 extern NspSMatrix *nsp_smatrix_create_from_table(char **T); 
@@ -136,13 +135,12 @@ extern NspMatrix *nsp_string_to_ascii(char *S);
 extern NspMatrix *nsp_smatrix_sort(NspSMatrix *A, int flag, char *str1, char *str2); 
 extern NspSMatrix *nsp_smatrix_split(char *string, char *splitChars); 
 extern int nsp_row_smatrix_append_string(NspSMatrix *A, char *str); 
-extern int SMatSearchComp (char *op, SMat_CompOp (**comp_op)); 
+
 extern NspBMatrix *SMatCompOp (NspSMatrix *A, NspSMatrix *B, char *op); 
 extern int SMatFullComp (NspSMatrix *A, NspSMatrix *B, char *op, int *err); 
 extern NspSMatrix *nsp_smatrix_transpose(const NspSMatrix *A); 
 extern NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A, const char *needle, const char *replace); 
 extern int nsp_smatrix_strip_blanks(NspSMatrix *A); 
-
 
 extern NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type);
 extern int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines);

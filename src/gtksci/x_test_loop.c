@@ -26,7 +26,6 @@ extern void LTest  (char *x0);
 extern void C2F (sigbas) (int *i);  
 extern void check_win  (void);  
 extern void C2F (setfbutn) (char *name, int *rep);  
-extern int C2F (scilines) (int *nl, int *nc);  
 extern int C2F (sciquit) (void);  
 extern void plot  (void);  
 extern void cerro  (char *str);  
@@ -297,9 +296,6 @@ void C2F(setfbutn)(name,rep)
 
 int C2F(dsort)(){};
 
-int C2F(scilines)(nl,nc)
-     int *nl, *nc;
-{return(0);};
 
 int C2F(sciquit)()
 {

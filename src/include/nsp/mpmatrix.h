@@ -83,13 +83,6 @@ NspMaxpMatrix *MatCreateFromData  (char *name, char type, integer m,
 
 #define NULLMAXPMAT (NspMaxpMatrix*) 0
 
-extern double *nsp_alloc_doubles(unsigned int n);
-extern double *nsp_realloc_doubles(double *dp, unsigned int n);
-extern int *nsp_alloc_int(unsigned int n);
-extern int *nsp_realloc_int(int *dp, unsigned int n);
-extern doubleC *nsp_alloc_doubleC(unsigned int n);
-extern doubleC *nsp_realloc_doubleC(doubleC *dp, unsigned int n);
-
 /* from MatObj.c */
 
 extern void nsp_mpmatrix_destroy(NspMaxpMatrix *Mat); 

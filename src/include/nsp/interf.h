@@ -117,11 +117,11 @@ extern void PutLhsObj (Stack stack,int nv,int ind[]);
 
 extern void OptCheck (NspObject **Os,NspObject **DefO,char **Names,int n,Stack ,int nopt);
 extern char *ArgPosition (int i);
-extern void ArgName (     Stack , int i );
-extern void ArgMessage (     Stack , int i );
+extern void ArgName (Stack stack, int i );
+extern void ArgMessage (Stack stack, int i );
 
-extern void SwapObjs (Stack ,int i,int j);
-extern void MoveObj  (Stack ,int i,NspObject *O);
+extern void SwapObjs (Stack stack,int i,int j);
+extern void MoveObj  (Stack stack ,int j,NspObject *O);
 extern void StackStore(Stack stack,NspObject * o,int pos);
 
 extern int nsp_move_string(Stack stack,int n,const char *bytes,int length);
@@ -133,7 +133,6 @@ extern int nsp_move_boolean(Stack stack,int n,int ival);
 extern NspObject *nsp_new_boolean_obj(int ival);
 
 extern void ObjConvert (NspObject *O);
-extern NspObject *nsp_get_object(  Stack stack,   int i);
 
 extern NspMod  *ModObj  ( NspObject *O);
 extern NspMod *GetModCopy  (Stack S,int i);

@@ -38,8 +38,6 @@ typedef int (*IOFun1) (int indent,char *fmt,...);
 
 extern iofun Scierror ;
 
-
-extern void C2F(scilines) (int *nl,int *nc);
 int  ParseError  (char *fmt,...);
 int scidebug(int i,char *fmt,...);
 typedef int (*IOFun2) (FILE *f,char *fmt,...);
@@ -47,7 +45,6 @@ extern IOFun2 Scifprintf ;
 typedef int (*SciGetC) (void);
 extern SciGetC Scigetchar ;
 extern SciGetC SetScilabgetchar (SciGetC F);
-
 
 extern void SciReadClean (void);
 

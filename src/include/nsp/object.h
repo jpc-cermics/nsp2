@@ -253,7 +253,6 @@ int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack sta
  * A set of prototypes 
  *----------------------------------------------------------*/
 
-NspObject *nsp_frames_search_object(char *str);
 void nsp_void_object_destroy(NspObject **O);
 
 #define Ocheckname(x,y) ( strcmp( NSP_OBJECT(x)->name,y)==0 ) 
