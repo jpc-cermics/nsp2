@@ -6,7 +6,7 @@ function demo_main_window()
   B('toggle buttons')=  demo_toggle_buttons,
   B('check buttons')=  demo_check_buttons,
   B('radio buttons')=  demo_radio_buttons,
-
+  B('calendar')=  demo_calendar,
   B('toolbar')=  demo_toolbar,
   B('handle box')= demo_handle_box,
   B('reparent')=  demo_reparent,
