@@ -36,40 +36,33 @@ function [toolbar]=make_toolbar(win)
   win.realize[];
   // FIXME: crashes if the window is not realized 
   style = win.style.get_bg_gc[GTK.STATE_NORMAL]
-  //[1] - first possibility 
-  //pixmap=gtk_pixmap_new_from_xpm(win, "test.xpm")
-  //[2] - second possibility
   gdkwin = win.window;
   [pix, mask] = gdk_pixmap_create_from_xpm(gdkwin, none_create(),getenv('NSP')+"/demos/gtk2/libbase/test.xpm")
-  //[3] - third possibility
-  //cmap =  win.get_colormap[];
-  //[pix,mask]=gdk_pixmap_colormap_create_from_xpm([],cmap,[],"test.xpm")
-  // toolbar.append_item
-  //  GtkPixmap(pix, mask),
-  pixmap = gtk_pixmap_new(pix,mask);
-  toolbar.append_item["Horizontal", "Horizontal toolbar layout","Horizontal toolbar layout",pixmap,  set_toolbar_horizontal]
-  pixmap = gtk_pixmap_new(pix,mask);
-  toolbar.append_item["Vertical", "Vertical toolbar layout", "Vertical toolbar layout", pixmap, set_toolbar_vertical]
+  pixmap = gtkimage_new("pixmap",pix,mask);
+ 
+  toolbar.append_item[text="Horizontal",tooltip_text= "Horizontal toolbar layout",tooltip_private_text="Horizontal toolbar layout",icon=pixmap,callback=set_toolbar_horizontal]
+  pixmap = gtkimage_new("pixmap",pix,mask);
+  toolbar.append_item[text="Vertical",tooltip_text= "Vertical toolbar layout",tooltip_private_text= "Vertical toolbar layout",icon= pixmap,callback= set_toolbar_vertical]
   toolbar.append_space[]
-  pixmap = gtk_pixmap_new(pix,mask);
-  toolbar.append_item["Icons", "Only show toolbar icons","Only Icons",pixmap,set_toolbar_icons]
-  pixmap = gtk_pixmap_new(pix,mask);
-  toolbar.append_item["Text", "Only show toolbar text","Only Text", pixmap,  set_toolbar_text]
-  pixmap = gtk_pixmap_new(pix,mask);
-  toolbar.append_item["Both", "Show toolbar icons and text","Both Text and Icons",pixmap,set_toolbar_both ]
+  pixmap = gtkimage_new("pixmap",pix,mask);
+  toolbar.append_item[text="Icons",tooltip_text= "Only show toolbar icons",tooltip_private_text="Only Icons",icon=pixmap,callback=set_toolbar_icons]
+    pixmap = gtkimage_new("pixmap",pix,mask);
+  toolbar.append_item[text="Text",tooltip_text= "Only show toolbar text",tooltip_private_text="Only Text",icon= pixmap,callback=  set_toolbar_text]
+  pixmap = gtkimage_new("pixmap",pix,mask);
+  toolbar.append_item[text="Both",tooltip_text= "Show toolbar icons and text",tooltip_private_text="Both Text and Icons",icon=pixmap,callback=set_toolbar_both ]
   toolbar.append_space[]
-  entry = gtk_entry_new()
+  entry = gtkentry_new()
   entry.show[]
   toolbar.append_widget[entry, "", ""]
   toolbar.append_space[]
-  pixmap = gtk_pixmap_new(pix,mask);
-  toolbar.append_item["Small", "Use small spaces","Small spaces",pixmap,set_toolbar_small_space]
-  pixmap = gtk_pixmap_new(pix,mask);
-  toolbar.append_item["Big", "Use big spaces","Big spaces",pixmap,set_toolbar_big_space]
-  pixmap = gtk_pixmap_new(pix,mask);
-  toolbar.append_item["Enable", "Enable tooltips","Enable tooltips",pixmap,set_toolbar_enable]
-  pixmap = gtk_pixmap_new(pix,mask);
-  toolbar.append_item["Disable", "Disable tooltips","Disable tooltips",pixmap,set_toolbar_disable]
+  pixmap = gtkimage_new("pixmap",pix,mask);
+  toolbar.append_item[text="Small",tooltip_text= "Use small spaces",tooltip_private_text="Small spaces",icon=pixmap,callback=set_toolbar_small_space]
+  pixmap = gtkimage_new("pixmap",pix,mask);
+  toolbar.append_item[text="Big",tooltip_text= "Use big spaces",tooltip_private_text="Big spaces",icon=pixmap,callback=set_toolbar_big_space]
+  pixmap = gtkimage_new("pixmap",pix,mask);
+  toolbar.append_item[text="Enable",tooltip_text= "Enable tooltips",tooltip_private_text="Enable tooltips",icon=pixmap,callback=set_toolbar_enable]
+  pixmap = gtkimage_new("pixmap",pix,mask);
+  toolbar.append_item[text="Disable",tooltip_text= "Disable tooltips",tooltip_private_text="Disable tooltips",icon=pixmap,callback=set_toolbar_disable]
 endfunction 
 
 function demo_toolbar()
