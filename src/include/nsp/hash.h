@@ -62,33 +62,14 @@ NspTypeHash *new_type_hash(type_mode mode);
 
 NspHash *new_hash();
 
-/*
- * Object methods redefined for hash 
- */
-
-#ifdef Hash_Private 
-static int init_hash(NspHash *ob,NspTypeHash *type);
-static int hash_size(NspHash *Mat, int flag);
-static char *hash_type_as_string(void);
-static char *hash_type_short_string(void);
-static int hash_eq(NspHash *A, NspObject *B);
-static int hash_neq(NspHash *A, NspObject *B);
-static int hash_xdr_save(NspFile  *F, NspHash *M);
-static NspHash  *hash_xdr_load(NspFile  *F);
-static NspObject *hash_path_extract(NspHash *A, NspObject *O);
-static AttrTab hash_attrs[]; 
-static int int_hash_get_attribute(Stack stack, int rhs, int opt, int lhs);
-static int int_hash_set_attribute(Stack stack, int rhs, int opt, int lhs);
-static NspMethods *hash_get_methods(void); 
-#endif /* Hash_Private */
 
 #define NULLHASH (NspHash*) 0
 
-NspHash *nsp_hash_create(char *name, unsigned int size);
-NspHash *hash_copy(NspHash *H);
-void nsp_hash_destroy(NspHash *H);
-void hash_info(NspHash *H, int indent);
-void hash_print(NspHash *H, int indent);
+extern NspHash *nsp_hash_create(char *name, unsigned int size);
+extern NspHash *hash_copy(NspHash *H);
+extern void nsp_hash_destroy(NspHash *H);
+extern void hash_info(NspHash *H, int indent);
+extern void hash_print(NspHash *H, int indent);
 
 /* from HashObj.c */
 
@@ -100,8 +81,6 @@ extern NspHash *GetHash (Stack stack, int i);
 
 /* from file NspHash.c */ 
 
-extern NspHash *HashCreate (char *name, unsigned int size); 
-extern NspHash *HashCopy (NspHash *H); 
 extern int nsp_hash_resize(NspHash *H, unsigned int new_size); 
 extern int nsp_hash_merge(NspHash *H1, NspHash *H2); 
 extern void HashDestroy (NspHash *H); 
@@ -118,22 +97,32 @@ extern NspBMatrix  *nsp_hash_not_equal(NspHash *L1, NspHash *L2);
 extern int nsp_hash_full_equal(NspHash *L1, NspHash *L2);
 extern int nsp_hash_full_not_equal(NspHash *L1, NspHash *L2);
 
-
-/* from file HashObj.c */ 
-
-extern NspObject *HashPathExtract (NspHash *H, NspObject *O); 
-extern NspObject *HashLoopExtract (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
-/* for Hash.c */
-
 typedef enum {
   H_FIND,H_FIND_COPY,H_ENTER,H_ENTER_COPY,H_REMOVE
 } HashOperation;
  
 extern int nsp_hsearch (NspHash *H,char *key, NspObject **data,HashOperation);
-extern NspHash *nsp_hcreate (char *str,  unsigned nel);
+extern NspHash *nsp_hcreate_from_list(char *name,unsigned int nel, NspList *L);
+NspHash *nsp_hcreate(char *name, unsigned int nel);
 extern void nsp_hdestroy (NspHash *H);
-
-
 
 #endif
 
+#ifdef Hash_Private 
+/*
+ * Object methods redefined for hash 
+ */
+static int init_hash(NspHash *ob,NspTypeHash *type);
+static int hash_size(NspHash *Mat, int flag);
+static char *hash_type_as_string(void);
+static char *hash_type_short_string(void);
+static int hash_eq(NspHash *A, NspObject *B);
+static int hash_neq(NspHash *A, NspObject *B);
+static int hash_xdr_save(NspFile  *F, NspHash *M);
+static NspHash  *hash_xdr_load(NspFile  *F);
+static NspObject *hash_path_extract(NspHash *A, NspObject *O);
+static AttrTab hash_attrs[]; 
+static int int_hash_get_attribute(Stack stack, int rhs, int opt, int lhs);
+static int int_hash_set_attribute(Stack stack, int rhs, int opt, int lhs);
+static NspMethods *hash_get_methods(void); 
+#endif /* Hash_Private */
