@@ -11,7 +11,14 @@ bin/scilex: scilex-lib
 		$(RM) $@; \
 		echo "linking"; \
 		$(FC) $(FFLAGS) -o $@ $(DEFAULTS) $(FC_LDFLAGS) $(LIBR)  \
-			`gtk-config --libs` `glib-config --libs` $(TCLTK_LIBS) $(XLIBS) $(TERMCAPLIB) -ldl; \
+			$(TCLTK_LIBS) $(XLIBS) $(TERMCAPLIB) -ldl; \
 	else \
 		echo bin/scilex is up to date ; \
 	fi
+
+#used in bin/scilab -link 
+
+show	: 
+	@echo $(FC) $(FFLAGS) -o $@ $(DEFAULTS) $(FC_LDFLAGS) $(LIBR) \
+	$(TCLTK_LIBS) $(XLIBS) $(TERMCAPLIB) -ldl;
+	

@@ -45,8 +45,8 @@ AC_ARG_WITH(pvm,
 AC_ARG_WITH(tk,
     [  --without-tk            do not compile with TCL/TK ])
 
-AC_ARG_WITH(gtk,
-    [  --with-gtk              use Gtk widgets ])
+AC_ARG_WITH(gtk2,
+    [  --with-gtk2             use Gtk widgets ])
 
 AC_ARG_WITH(addedf2c,
     [  --with-addedf2c         build a local f2c (src/f2c)])
@@ -523,7 +523,7 @@ case "$host" in
     MAKEFILE_TARGET=Makefile.linux
    ;;
 # Linux ELF: all standard distributions
-  *-pc-linux-gnu)
+  i*86-*-linux-gnu | *-pc-linux-gnu )
     LIEEELIB=
     AC_CHECK_LIB(ieee,main,
       [LIEEELIB=-lieee])
@@ -1117,77 +1117,6 @@ $RM testX11.c testX11
 ])
 fi
 
-######################################
-## test for Xaw and Xmu Athena widgets
-######################################
-
-XAW3D=no
-if test "$PERIFILE" = periX11.o; then 
-  if test "$with_local_xaw" = yes; then
-    if test "$ac_cv_X11_release" = R4; then
-      AC_MSG_ERROR([Local Xaw and Xmu Libraries cannot be used with X11R4])
-    else
-      XAWLIB='$(SCIDIR)/libs/libXaw.a'
-      XMULIB='$(SCIDIR)/libs/libXmu.a'
-      XAW_LOCAL_LIB='$(SCIDIR)/libs/libXaw.a $(SCIDIR)/libs/libXmu.a'
-      XAW_LOCAL_INCLUDES='-I$(SCIDIR)/src'
-      XAW_LOCAL_SUBDIR=X11
-      XAW=Xaw
-    fi
-  else
-    ac_save_LDFLAGS="$LDFLAGS"
-    if test -n "$x_libraries"; then
-      LDFLAGS="$LDFLAGS -L$x_libraries -R$x_libraries"
-    fi
-    AC_CHECK_LIB(Xmu,main,[XAthena=yes],[XAthena=no],-lXt -lXext $X_PRE_LIBS -lX11 $X_EXTRA_LIBS)
-    if test "$with_xaw3d" != no; then
-      AC_CHECK_LIB(Xaw3d,main,[XAthena3d=yes],[XAthena3d=no],-lXmu -lXt -lXext $X_PRE_LIBS -lX11 $X_EXTRA_LIBS)
-      if test "$XAthena3d" = no; then
-        AC_MSG_ERROR([Xaw3d missing. Use Xaw instead])
-      else
-        XAW3D=yes
-        XAthena=yes
-      fi
-    else
-      AC_CHECK_LIB(Xaw,main,[XAthena=yes],[XAthena=no],-lXmu -lXt -lXext $X_PRE_LIBS -lX11 $X_EXTRA_LIBS)
-    fi
-    LDFLAGS="$ac_save_LDFLAGS"
-    if test "$XAthena" = no; then
-      AC_MSG_WARN([Xaw and/or Xmu Library missing. Trying local libraries.])
-      if test "$ac_cv_X11_release" = R4; then
-        AC_MSG_ERROR([Local Xaw and Xmu Libraries cannot be used with X11R4])
-      else
-        AC_MSG_WARN([Using Local Xaw and Xmu Libraries])
-        XAWLIB='$(SCIDIR)/libs/libXaw.a'
-        XMULIB='$(SCIDIR)/libs/libXmu.a'
-        XAW_LOCAL_LIB='$(SCIDIR)/libs/libXaw.a $(SCIDIR)/libs/libXmu.a'
-        XAW_LOCAL_INCLUDES='-I$(SCIDIR)/src'
-        XAW_LOCAL_SUBDIR=X11
-	XAW=Xaw
-      fi
-    else
-      XMULIB=-lXmu
-      if test "$XAW3D" = yes; then
-        XAWLIB=-lXaw3d
-        XAW=Xaw3d
-      else
-        XAW=Xaw
-        XAWLIB=-lXaw
-      fi
-    fi
-  fi
-fi
-
-if test "$XAW3D" = yes; then
-  save_cflags=$CFLAGS
-  CFLAGS=$X_CFLAGS
-  AC_TRY_COMPILE([#include <X11/IntrinsicP.h>
-#include <X11/Xaw3d/ViewportP.h>],,,
-    AC_MSG_ERROR([Include file "ViewportP.h" for Xaw3d not found. 
-                  Get and put it in <X11/Xaw3d/> or use Xaw instead.]))
-  CFLAGS=$save_cflags
-fi
-
 #######################
 ## test for underscores
 #######################
@@ -1372,49 +1301,52 @@ fi
 fi
 
 #################
-## GTK
+## GTK unsuported 
 #################
 
-ZZLEDT=zzledt
+#################
+## GTK2 
+#################
 
-if test "$with_gtk" = yes; then
+if test "$with_gtk2" = yes; then
   AC_CHECK_PROG(GTK_CONFIG,gtk-config,yes,no)
   if test "$GTK_CONFIG" = no; then
     AC_MSG_WARN([gtk-config not found: I will not use -with-gtk])
-    with_gtk="no"
+    with_gtk2="no"
   fi
   AC_CHECK_PROG(GNOME_CONFIG,gnome-config,yes,no)
   if test "$GNOME_CONFIG" = no; then
     AC_MSG_WARN([gnome-config not found: I will not use -with-gtk])
-    with_gtk="no"
+    with_gtk2="no"
   fi
-  if test "$with_gtk" = yes; then
-    AC_MSG_CHECKING([if gtk is version 1.2 or later])
-    GTK_VER=`gtk-config --version`
+  if test "$with_gtk2" = yes; then
+    AC_MSG_CHECKING([if gtk is version 2.1 or later])
+    GTK_VER=`pkg-config --modversion gtk+-2.0`
     case $GTK_VER in
-      0.* )
-        AC_MSG_ERROR([you need at least version 1.2 of gtk])
-        ;;
-      1.1* )
-        AC_MSG_ERROR([you need at least version 1.2 of gtk])
-        ;;
-      * )
-      # we have cheched above that gtk-config is in the 
-      # path, then we don't want to generate a full path 
-      # for gtk-config or to directly generate the 
-      # result of `gtk-config --cflags`. Idem for gnome
-      AC_MSG_RESULT([$GTK_VER])
-      GTKCFLAGS='`gtk-config --cflags`'
-      GTKLIBS='`gtk-config --libs` `gnome-config --libs  gtkxmhtml`'
-      GNOMECFLAGS='`gnome-config --cflags gnome`'
-      ;;
+      2.2.* | 2.3.0 | 2.3.1| 2.3.2| 2.3.4 )
+        GTKPLUGBUG=gtkmenu.o
+	;;
     esac    
+    AC_MSG_RESULT([$GTK_VER])
+    # we have cheched above that gtk-config is in the 
+    # path, then we don't want to generate a full path 
+    # for gtk-config or to directly generate the 
+    # result of `gtk-config --cflags`. Idem for gnome
+    GTKCFLAGS='`pkg-config gtk+-2.0 --cflags`'
+    GTKLIBS='`pkg-config gtk+-2.0 libgtkhtml-2.0 --libs`'
+    GNOMECFLAGS='`pkg-config gtk+-2.0 --cflags`'
     AC_DEFINE(WITH_GTK)
     GUILIB='gtksci'
-    GZVT='gzvt'
+    # GZVT='gzvt2' dose not work: gtk2 bug with plugged menus
+    # gzvt2 works again with a gtk patch 
+    GZVT='gzvt2'
+    # we need a patched version 
     SCILABSCRIPT=scilab-gtk.g
     MENUSOBJS=GOBJS
     PERIFILE=periGtk.o
+    # gtk 1 HTMLFLAGS=`gnome-config --cflags gnome`
+    # gtk 2 HTMLFLAGS=`pkg-config libgtkhtml-2.0 --cflags`
+    HTMLFLAGS='`pkg-config libgtkhtml-2.0 --cflags`'
   fi
   # try to use readline with the gtk version 
   ac_save_LIBS="$LIBS"
@@ -1427,6 +1359,9 @@ if test "$with_gtk" = yes; then
      AC_DEFINE(WITH_READLINE)
   fi
 fi
+
+
+
 
 #################
 ## Tcl/Tk library
