@@ -79,6 +79,7 @@ extern char *GetString (Stack stack, int i);
 extern int GetStringInArray (Stack stack, int ith, char **Table, int flag); 
 extern int GetStringInStruct(Stack stack, int ith,void *T,unsigned int size, int flag);
 extern int is_string_in_array (const char *key, char **Table, int flag); 
+extern void string_not_in_array(Stack stack,const char *key, char **Table,char *message);
 extern int is_string_in_struct(const char *key,void **Table,unsigned int size, int flag);
 extern NspSMatrix *nsp_smatrix_create(const char *name, integer m, integer n,const char *str, integer flag);
 extern NspSMatrix *nsp_smatrix_create_with_length(const char *name, integer m, integer n, integer strl); 

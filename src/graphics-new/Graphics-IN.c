@@ -249,10 +249,10 @@ static int check_legend_pos(Stack stack,const char *fname,const char *varnam,con
   if ( rep < 0 ) 
     {
       Scierror("Error:\toptional argument %s of function %s has a wrong value %s\n",varnam,fname,l_pos);
-      Scierror("\tmust be '%s'", *Table);
+      Scierror("\texpected values are '%s'", *Table);
       for (entry = Table+1 ; *entry != NULL; entry++) {
 	if (entry[1] == NULL) {
-	  Scierror(", or '%s'",*entry);
+	  Scierror(", or '%s'\n",*entry);
 	} else {
 	  Scierror(", '%s'",*entry);
 	}
@@ -2641,8 +2641,6 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *wdim=NULL,*wpdim=NULL,*viewport=NULL,*wpos=NULL;
   char *name=NULL, *file=NULL, *mode = NULL;
   static char *Table[] = {"d", "l", "n", "p", "k", NULL};
-  char **entry;
-
   /* just optionals arguments */
   int_types T[] = {new_opts, t_end} ;
 
@@ -2663,15 +2661,7 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
       int rep = is_string_in_array(mode,Table,1);
       if ( rep < 0 ) 
 	{
-	  Scierror("Error:\toptional argument mode of function %s has a wrong value %s\n",stack.fname,mode);
-	  Scierror("\tmust be '%s'", *Table);
-	  for (entry = Table+1 ; *entry != NULL; entry++) {
-	    if (entry[1] == NULL) {
-	      Scierror(", or '%s'",*entry);
-	    } else {
-	      Scierror(", '%s'",*entry);
-	    }
-	  }
+	  string_not_in_array(stack,mode,Table,"optional argument mode");
 	  return RET_BUG;
 	}
     }
@@ -4016,7 +4006,6 @@ int int_xdel(Stack stack, int rhs, int opt, int lhs)
 
 int int_xs2ps(Stack stack, int rhs, int opt, int lhs)
 {
-  char **entry;
   int win_id,rep=1,color=-1;
   char *filename= NULL, *mode = NULL;
   static char *Table[] = {"d", "l", "n", "p", "k", NULL};
@@ -4030,15 +4019,7 @@ int int_xs2ps(Stack stack, int rhs, int opt, int lhs)
       rep = is_string_in_array(mode,Table,1);
       if ( rep < 0 ) 
 	{
-	  Scierror("Error:\toptional argument mode of function %s has a wrong value %s\n",stack.fname,mode);
-	  Scierror("\tmust be '%s'", *Table);
-	  for (entry = Table+1 ; *entry != NULL; entry++) {
-	    if (entry[1] == NULL) {
-	      Scierror(", or '%s'",*entry);
-	    } else {
-	      Scierror(", '%s'",*entry);
-	    }
-	  }
+	  string_not_in_array(stack,mode,Table,"optional argument mode");
 	  return RET_BUG;
 	}
     }
@@ -4580,11 +4561,291 @@ static int sci_demo (char *fname,char *code,int flag)
 
 extern int int_dsearch(Stack stack, int rhs, int opt, int lhs);
 
+/*-----------------------------------------------------------
+ * ode en préparation 
+ *-----------------------------------------------------------*/
+
+
+typedef struct _ode_data ode_data;
+ 
+struct _ode_data
+{
+  NspList *args;
+  NspMatrix *y,*t;
+  NspObject *func;
+};
+
+static int ode_prepare(int m,int n,NspObject *f,NspList *args,ode_data *ode)
+{
+  if (( ode->func =nsp_object_copy(f)) == NULL) return RET_BUG;
+  if (( nsp_object_set_name(ode->func,"ode_f")== FAIL)) return RET_BUG;
+  if ( args != NULL ) 
+    {
+      if (( ode->args = nsp_list_copy(args)) == NULL ) return RET_BUG;
+      if (( nsp_object_set_name((NspObject *) ode->args,"arg")== FAIL)) return RET_BUG;
+    }
+  else 
+    {
+      ode->args = NULL;
+    }
+  if ((ode->y = nsp_matrix_create("y",'r',m,n))== NULL) return RET_BUG;
+  if ((ode->t = nsp_matrix_create("t",'r',1,1))== NULL) return RET_BUG;
+  return OK;
+}
+
+static void ode_clean(ode_data *ode)
+{
+  if ( ode->args != NULL) nsp_list_destroy(ode->args);
+  nsp_object_destroy(&ode->func);
+  nsp_matrix_destroy(ode->y);
+  nsp_matrix_destroy(ode->t);
+}
+
+static int ode_system(int *neq,const double *t,const double y[],double ydot[],ode_data *ode)
+{
+  NspObject *targs[4];/* arguments to be transmited to ode->func */
+  NspObject *nsp_ret;
+  int nret = 1,nargs = 2, i;
+  targs[0]= NSP_OBJECT(ode->t); 
+  ode->t->R[0] = *t;
+  targs[1]= NSP_OBJECT(ode->y); 
+  for ( i= 0 ; i < ode->y->mn ; i++) ode->y->R[i]= y[i];
+  if (ode->args != NULL ) 
+    {
+      targs[2]= NSP_OBJECT(ode->args);
+      nargs= 3;
+    }
+  /* FIXME : a changer pour metre une fonction eval standard */
+  if ( nsp_gtk_eval_function((NspPList *)ode->func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+    return FAIL;
+  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' ) 
+    {
+      for ( i= 0 ; i < ode->y->mn ; i++) ydot[i]= ((NspMatrix *) nsp_ret)->R[i];
+      nsp_object_destroy((NspObject **) &nsp_ret);
+    }
+  else 
+    {
+      Scierror("Error: evaluation failed in ode t=%5.3f\n",*t);
+      return FAIL;
+    }
+  return OK;
+}
+
+
+int int_ode( Stack stack, int rhs, int opt, int lhs)
+{
+  double ydot[2];
+  ode_data ode;
+  NspObject *f= NULL, *jac=NULL,*g=NULL;
+  NspList *args=NULL, *gargs=NULL;
+  double rtol=1.e-8,atol=1.e-8,t0;
+  int ng=-1;
+  char *type=NULL;
+  NspMatrix *x0,*t,*w=NULL,*iw=NULL;
+  static char *Table[] = {"adams","stiff", "rk", "rkf", "fix", "discrete", "roots", NULL};
+  int_types T[] = {realmat,s_double,realmat,obj,new_opts, t_end} ;
+
+  nsp_option opts[] ={
+    { "args",list,  NULLOBJ,-1},
+    { "atol",s_double,NULLOBJ,-1},
+    { "g", obj, NULLOBJ,-1},
+    { "gargs",list,  NULLOBJ,-1},
+    { "iw",realmatcopy,NULLOBJ,-1},
+    { "jac", obj, NULLOBJ,-1},
+    { "ng", s_int, NULLOBJ,-1},
+    { "rtol",s_double,NULLOBJ,-1},
+    { "type",string,NULLOBJ,-1},
+    { "w", realmatcopy,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  };
+
+  if ( GetArgs(stack,rhs,opt,T,&x0,&t0,&t,&f,&opts,&args,&atol,&g,&gargs,&iw,&jac,&ng,&rtol,&type,&w) 
+       == FAIL) return RET_BUG;
+
+  if ( type != NULL) 
+    {
+      int rep = is_string_in_array(type,Table,1);
+      if ( rep < 0 ) 
+	{
+	  string_not_in_array(stack,type,Table,"optional argument type");
+	  return RET_BUG;
+	}
+    }
+
+  if ( IsNspPList(f) )
+    {
+    }
+  else 
+    {
+      Scierror("%s: fourth argument should be a function\n",stack.fname);
+      return RET_BUG;
+    }
+
+  if ( ode_prepare(x0->m,x0->n,f,args,&ode) == FAIL ) 
+    return RET_BUG;
+
+  if ( ode_system(&x0->mn,&t0,x0->R,ydot,&ode)==FAIL) 
+    return RET_BUG;
+
+  ode_clean(&ode);
+
+  return 0;
+}
+
+/*-----------------------------------------------------------
+ * feval en preparation 
+ *-----------------------------------------------------------*/
+
+typedef struct _feval_data feval_data;
+ 
+struct _feval_data
+{
+  NspList *args;
+  NspMatrix *x,*y;
+  NspObject *func;
+};
+
+static int feval_prepare(int dim,NspObject *f,NspList *args,feval_data *feval)
+{
+  if (( feval->func =nsp_object_copy(f)) == NULL) return RET_BUG;
+  if (( nsp_object_set_name(feval->func,"feval_f")== FAIL)) return RET_BUG;
+  if ( args != NULL ) 
+    {
+      if (( feval->args = nsp_list_copy(args)) == NULL ) return RET_BUG;
+      if (( nsp_object_set_name((NspObject *) feval->args,"arg")== FAIL)) return RET_BUG;
+    }
+  else 
+    {
+      feval->args = NULL;
+    }
+  if ((feval->x = nsp_matrix_create("x",'r',1,1))== NULL) return RET_BUG;
+  if ( dim == 2 ) 
+    {
+      if ((feval->y = nsp_matrix_create("y",'r',1,1))== NULL) return RET_BUG;
+    }
+  else 
+    {
+      feval->y = NULL;
+    }
+  return OK;
+}
+
+static void feval_clean(int dim,feval_data *feval)
+{
+  if ( feval->args != NULL) nsp_list_destroy(feval->args);
+  nsp_object_destroy(&feval->func);
+  nsp_matrix_destroy(feval->x);
+  if ( dim == 2 ) nsp_matrix_destroy(feval->y);
+}
+
+static int feval_system(int dim,double x,double y,double * val,feval_data *feval)
+{
+  NspObject *targs[4];/* arguments to be transmited to feval->func */
+  NspObject *nsp_ret;
+  int nret = 1,nargs = 0;
+  targs[nargs]= NSP_OBJECT(feval->x); nargs++;
+  feval->x->R[0] = x;
+  if ( dim == 2 ) 
+    {
+      targs[nargs]= NSP_OBJECT(feval->y); 
+      feval->y->R[0]= y;
+      nargs++;
+    }
+  if (feval->args != NULL ) 
+    {
+      targs[nargs]= NSP_OBJECT(feval->args);
+      nargs++;
+    }
+  /* FIXME : a changer pour metre une fonction eval standard */
+  if ( nsp_gtk_eval_function((NspPList *)feval->func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+    return FAIL;
+  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' 
+      && ((NspMatrix *) nsp_ret)->mn==1 ) 
+    {
+      *val= ((NspMatrix *) nsp_ret)->R[0];
+      nsp_object_destroy((NspObject **) &nsp_ret);
+    }
+  else 
+    {
+      Scierror("Error: evaluation failed in feval \n");
+      return FAIL;
+    }
+  return OK;
+}
+
+
+int int_feval( Stack stack, int rhs, int opt, int lhs)
+{
+  int i,j,dim=1;
+  NspMatrix *M;
+  feval_data feval;
+  NspObject *f= NULL;
+  NspList *args=NULL;
+  NspMatrix *x,*y;
+  int_types T1[] = {realmat,obj,new_opts, t_end} ;
+  int_types T2[] = {realmat,realmat,obj,new_opts, t_end} ;
+
+  nsp_option opts[] ={
+    { "args",list,  NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  };
+
+  if ( rhs - opt == 3 )
+    {
+      if ( GetArgs(stack,rhs,opt,T2,&x,&y,&f,&opts,&args) == FAIL) return RET_BUG;
+      dim=2;
+    }
+  else if ( rhs - opt == 2 )
+    {
+      if ( GetArgs(stack,rhs,opt,T1,&x,&f,&opts,&args) == FAIL) return RET_BUG;
+      dim=1;
+    }
+  else 
+    {
+      Scierror("%s: expecting 2 or 3 non optional arguments found %d\n",stack.fname,rhs-opt );
+      return RET_BUG; 
+    }
+
+  if ( IsNspPList(f) == FALSE  )
+    {
+      Scierror("%s: fourth argument should be a function\n",stack.fname);
+      return RET_BUG;
+    }
+
+  if ( feval_prepare(dim,f,args,&feval) == FAIL ) 
+    return RET_BUG;
+  if ( dim == 1 )
+    {
+      if ((M = nsp_matrix_create(NVOID,'r',x->m,x->n))== NULLMAT) return RET_BUG;
+      for ( i = 0 ; i < x->mn ; i++) 
+	{
+	  if ( feval_system(dim,x->R[i],0,&M->R[i],&feval)==FAIL) 
+	    return RET_BUG;
+	}
+    }
+  else 
+    {
+      if ((M = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULLMAT) return RET_BUG;
+      for ( i = 0 ; i < x->mn ; i++) 
+	for ( j = 0 ; j < y->mn ; j++) 
+	{
+	  if ( feval_system(dim,x->R[i],y->R[j],&M->R[i+M->m*j],&feval)==FAIL) 
+	    return RET_BUG;
+	}
+    }
+  feval_clean(1,&feval);
+  MoveObj(stack,1,NSP_OBJECT(M));
+  return 1;
+}
+
+
 /*************************************************************
  * The Interface for basic matrices operation 
  *************************************************************/
 
 static OpTab Graphics_func[]={
+  {"ode",int_ode}, /* FIXME: en construction */
+  {"feval",int_feval}, /* FIXME: en construction */
   {"champ",int_champ},
   {"contour",int_contour},
   {"param3d",int_param3d},

@@ -1205,7 +1205,7 @@ nspg_closure_marshal(GClosure *closure,
       int args =0;
       while ( *O != NULLOBJ) { args++; O++;}
       Marshal_stack.first = args ;
-      fprintf(stderr,"I preserve %d arguments \n",args);
+      /* fprintf(stderr,"I preserve %d arguments \n",args); */
     }
   
   /** We put the params on the stack **/
@@ -1266,7 +1266,7 @@ nspg_closure_marshal(GClosure *closure,
   /* clean the stack */
   for (i = 0 ; i < n ; i++) 
     {
- nsp_void_object_destroy(&Marshal_stack.S[Marshal_stack.first+i]);
+      nsp_void_object_destroy(&Marshal_stack.S[Marshal_stack.first+i]);
       Marshal_stack.S[Marshal_stack.first+i]= NULLOBJ;
     }
   goto end; 
@@ -1288,7 +1288,7 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
     {
       goto end;
     }
-  Marshal_stack.fname = "pipo"; /* pc->callback->name; XXXX */
+  Marshal_stack.fname = "@gtk_callback"; /* pc->callback->name; XXXX */
   Marshal_stack.S = Marshal_stack_S ;
   Marshal_stack.L = Marshal_stack_S  + STACK_SIZE;
   Marshal_stack.first = 0 ;
@@ -1299,7 +1299,7 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
       int args =0;
       while ( *O != NULLOBJ) { args++; O++;}
       Marshal_stack.first = args ;
-      fprintf(stderr,"I preserve %d arguments \n",args);
+      /* fprintf(stderr,"I preserve %d arguments \n",args); */
     }
   /** We put the params on the stack **/
   for (i = 0; i < n_args ; i++) 
@@ -1319,7 +1319,7 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
   /* clean the stack */
   for ( i = *nret ; i < n  ; i++) 
     {
- nsp_void_object_destroy(&Marshal_stack.S[Marshal_stack.first+i]);
+      nsp_void_object_destroy(&Marshal_stack.S[Marshal_stack.first+i]);
       Marshal_stack.S[Marshal_stack.first+i]= NULLOBJ;
     }
   rep = OK;

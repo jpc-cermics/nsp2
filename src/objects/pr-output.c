@@ -53,6 +53,12 @@ static int plus_format = 0;
 /*Nonzero means always print like dollars and cents. */
 static int bank_format = 0;
 
+/*Nonzero means always print in latex syntax */
+static int latex_format = 0;
+
+/* used with latex_format to add the fact that output is for texmacs */
+static int latex_texmacs_format = 0;
+
 /*Nonzero means use an e format. */
 static int print_e = 0;
 
@@ -675,7 +681,7 @@ static  void pr_complex (doubleC c)
     }
   else
     {
-      /**** A faire **/
+      /** FIXME: to be done  **/
     }
 }
 
@@ -1121,8 +1127,16 @@ static void SMij_string_as_read(const void *m, int i, int j)
   Sciprintf("\"");
   while ( *c != '\0') 
     {
-      if ( *c== '\'' || *c == '\"') Sciprintf("%s","''");
-      else Sciprintf("%c",*c);
+      switch (*c) 
+	{
+	case '\'' :
+	case '\"' : 
+	  Sciprintf("%s","''");break;
+	case '\n' :
+	  Sciprintf("%s","\\n");break;
+	default: 
+	  Sciprintf("%c",*c);
+	}
       c++;
     }
   Sciprintf("\"");
@@ -1389,9 +1403,6 @@ void nsp_print_internalSpM (NspSpMatrix *m, int indent)
 
 
 
-
-
-
 /*
  * Initialize and customization of print formats 
  */
@@ -1401,6 +1412,8 @@ static void init_format_state (void)
   free_format = 0;
   plus_format = 0;
   bank_format = 0;
+  latex_format = 0;
+  latex_texmacs_format = 0;
   print_e = 0;
   print_big_e = 0;
 }

@@ -2762,13 +2762,10 @@ static OpTab Matrix_func[]={
   {"sign_mp",int_mpsign},
   {"tan_mp",int_mptan},
   {"tanh_mp",int_mptanh},
-  {"polar",int_mppolar},
   {"iand_mp_mp",int_mpiand},
   {"ior_mp_mp",int_mpior},
   {"conj_mp",int_mpconj},
   {"dh_mp_mp",int_mppowel},
-  {"dsl",int_mpdivel},
-  {"dbs",int_mpbackdivel},
   {"dst_mp_mp",int_mpmultel},
   {"plus_mp_mp",   int_mpdadd},
   {"minus_mp_mp",   int_mpdsub},
@@ -2776,6 +2773,11 @@ static OpTab Matrix_func[]={
   {"mult_mp_mp" ,  int_mpmult},
   {"div_mp_mp" ,  int_mpdiv},
   {"find_mp", int_mpfind},
+  /* 
+     {"polar",int_mppolar},
+     {"dsl",int_mpdivel},
+     {"dbs",int_mpbackdivel},
+  */
   {(char *) 0, NULL}
 };
 

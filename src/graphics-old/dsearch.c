@@ -1,8 +1,7 @@
  /*------------------------------------------------------------------
-  * Copyright ENPC 2004 
-  *   Jean-Philippe Chancelier Enpc/Cermics
-  *   jpc@cermics.enpc.fr 
-  *   Bruno Pincon 
+  * Copyright 2004 
+  *   Bruno Pincon  Bruno.Pincon@iecn.u-nancy.fr
+  *   Jean-Philippe Chancelier Enpc/Cermics jpc@cermics.enpc.fr 
   *------------------------------------------------------------------*/
 
 #include <math.h>
@@ -46,8 +45,8 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,3);
   CheckLhs(0,3);
   if ((x =GetRealMat(stack,1))== NULLMAT ) return RET_BUG;
-  CheckVector(stack.fname,1,x)
-    if ((val =GetRealMat(stack,2))== NULLMAT ) return RET_BUG;
+  /* CheckVector(stack.fname,1,x);*/
+  if ((val =GetRealMat(stack,2))== NULLMAT ) return RET_BUG;
   CheckVector(stack.fname,2,val)
   if ( rhs == 3 ) 
     {
@@ -268,9 +267,7 @@ void nsp_dsearchd(const double x[], int m,const double val[], int n,
     }
 } 
 
-/*
- *
- */
+
 
 
 

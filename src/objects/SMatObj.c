@@ -513,6 +513,30 @@ int is_string_in_array(const char *key, char **Table, int flag)
 }
 
 
+/**
+ * string_not_in_array:
+ * @key: 
+ * @Table: 
+ * 
+ * used in conjunction with is_string_in_array for error 
+ * message. 
+ *
+ **/
+
+void string_not_in_array(Stack stack,const char *key, char **Table,char *message)
+{
+  char **entry;
+  Scierror("Error:\t%s of function %s has a wrong value %s\n",message,stack.fname,key);
+  Scierror("\texpected values are '%s'", *Table);
+  for (entry = Table+1 ; *entry != NULL; entry++) {
+    if (entry[1] == NULL) {
+      Scierror(", or '%s'\n",*entry);
+    } else {
+      Scierror(", '%s'",*entry);
+    }
+  }
+}
+
 /* Table : Array of strings to compare against str
  * last entry must be NULL
  * and there must not be duplicate entries.
