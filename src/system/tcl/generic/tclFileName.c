@@ -1112,9 +1112,8 @@ DoTildeSubst( user, resultPtr)
 int int_glob (stack,rhs,opt,lhs) 
      Stack stack;int rhs,opt,lhs;
 {
-  NspObject *O;
   NspSMatrix *S;
-  int i, noComplain=0, firstArg;
+  int i, noComplain=0;
   char c;
   int result = TCL_OK;
   Tcl_DString buffer;

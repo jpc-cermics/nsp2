@@ -2815,7 +2815,7 @@ static void DrawMark(BCG *Xgc,int *x, int *y)
 /*
  * FIXME : experimental for tests 
  */
-
+#if 0 
 static void init_gl_lights(GLfloat light0_pos[4])
 {
   /* GLfloat light0_pos[4]   = { -50.0, 50.0, 50.0, 0.0 }; */
@@ -2835,6 +2835,7 @@ static void init_gl_lights(GLfloat light0_pos[4])
   glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
   glEnable(GL_COLOR_MATERIAL);
 }
+#endif 
 
 
 /* realize handler for 

@@ -157,6 +157,12 @@ EXTERN void		TclPlatformInit _ANSI_ARGS_(());
 EXTERN char *		TclWordEnd _ANSI_ARGS_((char *start, char *lastChar,
 			    int nested, int *semiPtr));
 
+EXTERN void             Tcl_CreateExitHandler();
+
+EXTERN int              TclMatchFiles(char *separators,  Tcl_DString *dirPtr, char *pattern, char *tail, NspSMatrix *S);
+
+
+
 /*
  * The macro below is used to modify a "char" value (e.g. by casting
  * it to an unsigned character) so that it can be used safely with

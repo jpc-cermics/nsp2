@@ -7,9 +7,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
-#ifdef __STDC__
 #include <stdlib.h>
-#endif 
 
 #include "nsp/object.h"
 #include "nsp/stack.h"
@@ -17,6 +15,9 @@
 
 extern int C2F(timer) (double *d);
 extern char *TclGetEnv (char *name);
+extern void TclSetEnv (const char *name,const char *value);
+extern void TclUnsetEnv (const char *name);
+extern void TclPlatformInit();
 
 extern function int_syscd;
 extern function int_sysfile;

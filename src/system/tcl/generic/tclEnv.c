@@ -41,7 +41,7 @@ static int		FindVariable _ANSI_ARGS_((CONST char *name,
 static void		ReplaceString _ANSI_ARGS_((CONST char *oldStr,
 			    char *newStr));
 void			TclSetEnv _ANSI_ARGS_((CONST char *name,
-			    CONST char *value));
+					       CONST char *value));
 void			TclUnsetEnv _ANSI_ARGS_((CONST char *name));
 
 /*

@@ -106,7 +106,6 @@ NspObject  *Tcl_NewStringObj(char *bytes,int length)
 
 int Tcl_SetDoubleObj(Stack stack,int n,double d)
 {
-  NspObject *O;
   NspMatrix *M;
   if (( M = nsp_matrix_create("void",'r',1,1) ) == NULLMAT ) return RET_BUG;
   M->R[0] = d;

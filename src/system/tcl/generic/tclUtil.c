@@ -173,8 +173,6 @@ Tcl_AppendResult TCL_VARARGS_DEF(char *,arg1)
 {
     va_list argList;
     char *string;
-    int newSpace;
-
     /* Now go through all the argument and print them 
      */
 
@@ -224,7 +222,7 @@ Tcl_RegExpCompile( string)
     char *string;			/* String for which to produce
 					 * compiled regular expression. */
 {
-  int i, length;
+  int length;
   regexp *result;
 
   length = strlen(string);
