@@ -2494,8 +2494,9 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 
   {
     /* FIXME: temporary for 2d Tests */
-    double v[]={0,0,1,0,0,0,0,1,0,-4,4,0,600,400,0};
-    change_camera(NewXgc,v);
+    /* double v[]={0,0,1,0,0,0,0,1,0,-4,4,0,600,400,0};
+       change_camera(NewXgc,v);
+    */
   }
 
   NewXgc->CurWindow = WinNum;
