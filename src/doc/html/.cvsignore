@@ -1,0 +1,6 @@
+*.html
+*.png 
+index.sgml
+nspdoc.devhelp
+.ghost
+.cvsignore
