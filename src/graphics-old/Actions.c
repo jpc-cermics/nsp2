@@ -220,7 +220,7 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver)
       graphic_engine =&Pos_gengine;
     }
 
-  graphic_engine->initgraphic(bufname,&win_num);
+  graphic_engine->initgraphic(bufname,&win_num,NULL,NULL,NULL,NULL);
   if (colored==1) 
     graphic_engine->xset_usecolor(Xgc,un);
   else

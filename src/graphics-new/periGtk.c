@@ -40,7 +40,9 @@ static void MyDraw(BCG *Xgc,int iib, int iif, int *vx, int *vy), change_points(i
 static void loadfamily_n(char *name, int *j);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
 static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr);
-static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,GtkWidget *c,GtkWidget *d);
+static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
+				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
+
 static void scig_deconnect_handlers(BCG *winxgc);
 
 /* utility for points allocations */
@@ -158,7 +160,7 @@ static void pixmap_resize(BCG *Xgc)
 void xselgraphic(BCG *Xgc)
 { 
   /* Test not really usefull: see sciwin in matdes.f */
-  if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL) initgraphic("",NULL);
+  if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL);
   gdk_window_show(Xgc->private->window->window);
   gdk_flush();
 }
@@ -666,7 +668,7 @@ static void xget_windowpos(BCG *Xgc,int *x,int *y)
 
 static void xset_windowpos(BCG *Xgc, int x, int y)
 {
-  if (Xgc == NULL || Xgc->private->window ==  NULL) initgraphic("",NULL);
+  if (Xgc == NULL || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL);
   gdk_window_move (Xgc->private->window->window, x,y);
 }
 
@@ -819,7 +821,7 @@ static int xset_curwin(int intnum,int set_menu)
   if ( bcgk == (BCG *) 0 ) 
     {
       /** First entry or no more graphic window **/
-      initgraphic("",&intnum);
+      initgraphic("",&intnum,NULL,NULL,NULL,NULL);
       /** send info to menu **/
       new = window_list_get_first();
       old = -1;
@@ -831,7 +833,7 @@ static int xset_curwin(int intnum,int set_menu)
 	  BCG *new= window_list_win_to_front(intnum);
 	  if ( new == NULL) 
 	    {
-	      initgraphic("",&intnum);
+	      initgraphic("",&intnum,NULL,NULL,NULL,NULL);
 	    }
 	  new = window_list_get_first();
 	  old =  bcgk->CurWindow ;
@@ -2309,23 +2311,27 @@ static void set_c(BCG *Xgc,int col)
  */
 
 static int EntryCounter = 0;
-static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box, int *v2);
+static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
+			    int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 
-static void initgraphic(char *string, int *v2) 
+
+static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
-  nsp_initgraphic(string,NULL,NULL,v2);
+  nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos);
 }
 
 /* used when a graphic window is to be inserted in a more complex 
  * widget hierarchy 
  */
 
-extern void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2)
+extern void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
-  nsp_initgraphic("",win,box,&v2);
+  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
 }
 
-static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box, int *v2)
+
+static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
+			    int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
   static int first = 0;
   BCG *NewXgc ;
@@ -2378,11 +2384,11 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box, int *v2)
   start_sci_gtk(); /* be sure that gtk is started */
   if ( win != NULL )
     {
-      gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",600,400,win,box);
+      gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
     }
   else 
     {
-      gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",600,400,NULL,NULL);
+      gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",NULL,NULL,wdim,wpdim,viewport_pos,wpos);
     }
 
   /* recheck with valgrind 
@@ -3399,7 +3405,8 @@ static void scig_deconnect_handlers(BCG *winxgc)
 #define R_RGB(r,g,b)	((r)|((g)<<8)|((b)<<16))
 
 
-void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,GtkWidget *win,GtkWidget *box)
+static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
+				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
   static char gwin_name[100];
   gint iw, ih;
@@ -3415,9 +3422,16 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
   gtk_widget_push_colormap(gdk_rgb_get_cmap());
 
   /* create window etc */
-
-  dd->CWindowWidth = iw = w ; /*  / pixelWidth(); */
-  dd->CWindowHeight = ih = h; /*  pixelHeight(); */
+  if ( wdim != NULL ) 
+    {
+      dd->CWindowWidth = iw = wdim[0] ; /*  / pixelWidth(); */
+      dd->CWindowHeight = ih = wdim[1]; /*  pixelHeight(); */
+    }
+  else 
+    {
+      dd->CWindowWidth = iw = 600 ; /*  / pixelWidth(); */
+      dd->CWindowHeight = ih = 400; /*  pixelHeight(); */
+    }
 
   if ( is_top == TRUE ) 
     {
@@ -3460,7 +3474,11 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
 				  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   /* fix min size of the scrolled window */
-  gtk_widget_set_size_request (scrolled_window,iw+10,ih+10);
+  if ( wpdim != NULL) 
+    gtk_widget_set_size_request (scrolled_window,wpdim[0],wpdim[1]);
+  else
+    gtk_widget_set_size_request (scrolled_window,iw+10,ih+10);
+
   /* place and realize the scrolled window  */
 
   gtk_box_pack_start (GTK_BOX (vbox), scrolled_window, TRUE, TRUE, 0);
@@ -3469,6 +3487,14 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
     gtk_widget_realize(scrolled_window);
   else
     gtk_widget_show(scrolled_window);
+
+  if ( viewport_pos != NULL )
+    {
+      gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
+				(gfloat) viewport_pos[0]);
+      gtk_adjustment_set_value( gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
+				(gfloat) viewport_pos[1]);      
+    }
 
   /* create private->drawingarea */
 
@@ -3492,7 +3518,7 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
 
   /* private->drawingarea properties */
   /* min size of the graphic window */
-  gtk_widget_set_size_request(dd->private->drawing, w, h);
+  gtk_widget_set_size_request(dd->private->drawing, iw, ih);
 
   /* setup background color */
   dd->private->bg = R_RGB(255, 255, 255);
@@ -3533,6 +3559,8 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
     {
       /* create offscreen drawable : Already done in the realize_event 
        */
+      if ( wpos != NULL ) 
+	gtk_window_move (GTK_WINDOW(dd->private->window),wpos[0],wpos[1]);
       gtk_widget_realize(dd->private->window);
       gtk_widget_show_all(dd->private->window);
     }

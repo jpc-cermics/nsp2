@@ -2327,16 +2327,15 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
   int v1=-1;
   NspMatrix *wdim=NULL,*wpdim=NULL,*viewport=NULL,*wpos=NULL;
   char *name=NULL, *file=NULL;
-  int wresize=-1;
 
   /* just optionals arguments */
   int_types T[] = {new_opts, t_end} ;
 
-  nsp_option opts[] ={{ "dim",realmat,NULLOBJ,-1},
+  nsp_option opts[] ={{ "dim",mat_int,NULLOBJ,-1},
 		      { "file",string,NULLOBJ,-1},
 		      { "name",string,NULLOBJ,-1},
-		      { "popup_dim",realmat,NULLOBJ,-1},
-		      { "popup_pos",realmat,NULLOBJ,-1},
+		      { "popup_dim",mat_int,NULLOBJ,-1},
+		      { "popup_pos",mat_int,NULLOBJ,-1},
 		      { "viewport_pos",realmat,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
@@ -2367,11 +2366,19 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 
   if ( nsp_current_bcg != NULL) 
     {
-      nsp_current_bcg->graphic_engine->initgraphic("",&v1);
+      nsp_current_bcg->graphic_engine->initgraphic("",&v1, 
+						   (wdim) ? (int*) wdim->R: NULL ,
+						   (wpdim) ? (int*)wpdim->R: NULL,
+						   (viewport) ? viewport->R : NULL,
+						   (wpos) ? (int*)wpos->R : NULL);
     }
   else 
     {
-      Gtk_gengine.initgraphic("",&v1);
+      Gtk_gengine.initgraphic("",&v1,
+			      (wdim) ? (int*)wdim->R: NULL ,
+			      (wpdim) ? (int*)wpdim->R: NULL,
+			      (viewport) ? viewport->R : NULL,
+			      (wpos) ? (int*)wpos->R : NULL);
     }
   /* we should have an other way here to detect that 
    * initgraphic was fine 
@@ -2380,17 +2387,10 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
    * initgraphic
    */
   Xgc =  window_list_get_first();
-  if ( wresize != -1 )  Xgc->graphic_engine->scale->xset_wresize(Xgc,wresize);
-  if ( wdim != NULL )   Xgc->graphic_engine->scale->xset_windowdim(Xgc,(int) wdim->R[0],(int) wdim->R[1]);
   if ( wpdim != NULL )  
     {
-      /* assuming here that wresize must be set to zero */
       Xgc->graphic_engine->scale->xset_wresize(Xgc,0);
-      Xgc->graphic_engine->scale->xset_popupdim(Xgc,(int) wpdim->R[0],(int) wpdim->R[1]);
     }
-  if ( viewport != NULL)  Xgc->graphic_engine->scale->xset_viewport(Xgc,(int) viewport->R[0],(int) viewport->R[1]);
-  if ( wpos != NULL) Xgc->graphic_engine->scale->xset_windowpos(Xgc,(int) wpos->R[0],(int) wpos->R[1]);
-
   if ( name != NULL )   Xgc->graphic_engine->setpopupname(Xgc,name);
   return 0;
 }
