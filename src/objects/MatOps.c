@@ -1417,15 +1417,29 @@ static NspMatrix *MatMaxiMini(NspMatrix *A, char *flag, NspMatrix **Imax, int lh
 static int VMaxi(int n, double *A, int incr, double *amax)
 {
   int imax,i,i1=1;
-  *amax= A[0]; imax = 1;
-  for ( i = incr ; i < n ; i += incr )
+  imax = 1;
+  *amax = A[0];
+
+  /* look for the first non Nan component */
+  i = 0; i1 = 0;
+  while ( i < n && ISNAN(A[i]) )
     {
-      if ( A[i] > *amax ) 
+      i += incr; i1++;
+    }
+
+  if ( i < n )  /* this vector is not only with Nan... */
+    {
+      /* So init with the first non Nan component then do the usual loop */
+      *amax = A[i]; imax = i1+1;
+      for (  ; i < n ; i += incr )
 	{
-	  *amax = A[i];
-	  imax = i1+1;
+	  if ( A[i] > *amax ) 
+	    {
+	      *amax = A[i];
+	      imax = i1+1;
+	    }
+	  i1++;
 	}
-      i1++;
     }
   return imax;
 }
@@ -1447,19 +1461,33 @@ NspMatrix *nsp_mat_maxi(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 
 static int VMini(int n, double *A, int incr, double *amin)
 {
-  int imin,i,i1=1;
+  int imin,i,i1=0;
   *amin= A[0]; imin = 1;
-  for ( i = incr ; i < n ; i += incr )
+
+  /* look for the first non Nan component */
+  i = 0; i1 = 0;
+  while ( i < n && ISNAN(A[i]) )
     {
-      if ( A[i] < *amin ) 
+      i += incr; i1++;
+    }
+
+  if ( i < n )  /* this vector is not only with Nan... */
+    {
+      /* So init with the first non Nan component then do the usual loop */
+      *amin = A[i]; imin = i1+1;
+      for ( ; i < n ; i += incr )
 	{
-	  *amin = A[i];
-	  imin = i1+1;
+	  if ( A[i] < *amin ) 
+	    {
+	      *amin = A[i];
+	      imin = i1+1;
+	    }
+	  i1++;
 	}
-      i1++;
     }
   return imin;
 }
+
 
 
 NspMatrix *nsp_mat_mini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
