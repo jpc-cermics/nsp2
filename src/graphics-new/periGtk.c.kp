@@ -25,14 +25,6 @@
 
 static unsigned long maxcol; /* XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
-static void nsp_gtk_invalidate(BCG *Xgc);
-
-
-/* 
- * select the pixmap on which to draw 
- */
-
-#define XGC_DRAWABLE  ((Xgc->private->Cdrawable != (GdkDrawable *) Xgc->private->drawing->window) ? Xgc->private->Cdrawable : Xgc->private->pixmap )
 
 /*------------------------------------------------------------------
  * the current graphic data structure 
@@ -1707,8 +1699,11 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
       gint lbearing, rbearing, iascent, idescent, iwidth;
       gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing,
 			 &iwidth, &iascent, &idescent);
-      gdk_draw_text(XGC_DRAWABLE,Xgc->private->font,Xgc->private->wgc, 
+      gdk_draw_text(Xgc->private->Cdrawable,Xgc->private->font,Xgc->private->wgc, 
 		    x, y - idescent , string, strlen(string));
+      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+	gdk_draw_text(Xgc->private->pixmap,Xgc->private->font,Xgc->private->wgc, 
+		      x, y - idescent , string, strlen(string));
       if ( flag == 1) 
 	{
 	  int rect[] = { x , y- iascent - idescent, 
@@ -1721,7 +1716,6 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
     {
       DispStringAngle(Xgc,x,y,string,angle);
     }
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
 }
 
 static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle)
@@ -1777,10 +1771,11 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
  * line segments arrows 
  *-------------------------------------------------*/
 
-static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
+static void drawline(BCG *Xgc,int *x1, int *yy1, int *x2, int *y2)
 {
-  gdk_draw_line(XGC_DRAWABLE,Xgc->private->wgc, x1, yy1, x2, y2);
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
+  gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc, *x1, *yy1, *x2, *y2);
+  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+    gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc, *x1, *yy1, *x2, *y2);
 }
 
 /** Draw a set of segments **/
@@ -1795,14 +1790,18 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
   if ( iflag == 1) { /* one style per segment */
     for (i=0 ; i < n/2 ; i++) {
       xset_line_style(Xgc,style[i]);
-      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+      gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+	gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
     }
   }
   else {
     if (*style >= 1) xset_line_style(Xgc,*style);
-    /* une fonction gtk existe ici FIXME */
-    for (i=0 ; i < n/2 ; i++) 
-      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+    for (i=0 ; i < n/2 ; i++) {
+      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+	gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+      gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+    }
   }
   xset_dash_and_color(Xgc,dash,color);
 }
@@ -1826,7 +1825,10 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
       double dx,dy,norm;
       lstyle = (iflag == 1) ? style[i] : ( *style < 1 ) ? color : *style; 
       xset_line_style(Xgc,lstyle);
-      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+	gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+      gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+
       dx=( vx[2*i+1]-vx[2*i]);
       dy=( vy[2*i+1]-vy[2*i]);
       norm = sqrt(dx*dx+dy*dy);
@@ -1890,17 +1892,18 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 
 static void drawrectangle(BCG *Xgc,const int rect[])
 { 
-  gdk_draw_rectangle(XGC_DRAWABLE, Xgc->private->wgc, FALSE,
-		     rect[0],rect[1],rect[2],rect[3]);
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
+  gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, FALSE,rect[0],rect[1],rect[2],rect[3]);
+  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+    gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc, FALSE,rect[0],rect[1],rect[2],rect[3]);
 }
 
 /** fill one rectangle, with current pattern **/
 
 static void fillrectangle(BCG *Xgc,const int rect[])
 { 
-  gdk_draw_rectangle(XGC_DRAWABLE, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]);
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
+  gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]);
+  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+    gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]);
 }
 
 /*----------------------------------------------------------------------------------
@@ -1936,12 +1939,14 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
 	if ( w != 0 && h != 0 && x[i] < xz[0] && y[j+1] < xz[1] && x[i]+w > 0 && y[j+1]+h > 0 )
 	  if ( Abs(x[i]) < int16max && Abs(y[j+1]) < int16max && w < uns16max && h < uns16max)
 	    {
-	      gdk_draw_rectangle(XGC_DRAWABLE, Xgc->private->wgc, 
+	      gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, 
 				 TRUE,x[i],y[j+1],w,h);
+	      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+		gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc,
+				   TRUE,x[i],y[j+1],w,h);
 	    }
       }
   xset_pattern(Xgc,cpat);
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
 }
 
 /*----------------------------------------------------------------------------------
@@ -1971,12 +1976,14 @@ static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, in
 	if ( w != 0 && h != 0 && x[j] < xz[0] && y[i] < xz[1] && x[j]+w > 0 && y[i]+h > 0 )
 	  if ( Abs(x[j]) < int16max && Abs(y[i+1]) < int16max && w < uns16max && h < uns16max)
 	    {
-	      gdk_draw_rectangle(XGC_DRAWABLE, Xgc->private->wgc, 
+	      gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, 
 				 TRUE,x[j],y[i],w,h);
+	      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+		gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc,
+				   TRUE,x[j],y[i],w,h);
 	    }
       }
   xset_pattern(Xgc,cpat);
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -2005,6 +2012,7 @@ static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
 	{
 	  xset_pattern(Xgc,cpat);
 	  drawarc(Xgc,vects+6*i);
+
 	}
       else
 	{
@@ -2042,18 +2050,18 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
-  gdk_draw_arc(XGC_DRAWABLE, Xgc->private->wgc,FALSE,
-	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
+  gdk_draw_arc(Xgc->private->Cdrawable, Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
+  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+    gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
 }
 
 /** Fill a single elipsis or part of it with current pattern **/
 
 static void fillarc(BCG *Xgc,int arc[])
 { 
-  gdk_draw_arc(XGC_DRAWABLE, Xgc->private->wgc,TRUE,
-	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
+  gdk_draw_arc(Xgc->private->Cdrawable, Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
+  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+    gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
 }
 
 /*
@@ -2145,12 +2153,17 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   if (closeflag == 1) n1 =n+1;else n1= n;
   if (n1 >= 2) 
     {
+      /* 
+	 analyze_points(*n, vx, vy,*closeflag); 
+	 gdk_flush();
+      */
       if ( gtk_store_points(n, vx, vy, closeflag)) 
 	{
-	  gdk_draw_lines(XGC_DRAWABLE,Xgc->private->wgc, gtk_get_xpoints(), n1);
+	  gdk_draw_lines(Xgc->private->Cdrawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
+	  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+	    gdk_draw_lines(Xgc->private->pixmap, Xgc->private->wgc, gtk_get_xpoints(), n1);
 	}
     }
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
 }
 
 /* 
@@ -2162,11 +2175,19 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 {
   int n1;
   if (closeflag == 1) n1 = n+1;else n1= n;
+  /* 
+  if (gtk_store_points(*n, vx, vy,*closeflag)){
+    XFillPolygon (dpy, Xgc->private->Cdrawable, gc, get_xpoints(), n1,
+		  Complex, Xgc->CurVectorStyle);
+  }
+  gdk_flush();
+  */
   if ( gtk_store_points(n, vx, vy, closeflag)) 
     {
-      gdk_draw_polygon(XGC_DRAWABLE,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
+      gdk_draw_polygon(Xgc->private->Cdrawable,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
+      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+	gdk_draw_polygon(Xgc->private->pixmap, Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1); 
     }
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
 }
 
 /* 
@@ -2180,8 +2201,11 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
     {
       if (gtk_store_points(n, vx, vy,(int)0L))
 	{
-	  gdk_draw_points(XGC_DRAWABLE,
+	  gdk_draw_points(Xgc->private->Cdrawable,
 			  Xgc->private->wgc,gtk_get_xpoints(), n);
+	  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+	    gdk_draw_points(Xgc->private->pixmap, 
+			    Xgc->private->wgc,gtk_get_xpoints(), n); 
 	}
     }
   else 
@@ -2195,7 +2219,6 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
       for ( i=0; i< n ;i++) DrawMark(Xgc,vx+i,vy+i);
       xset_font(Xgc,keepid,keepsize);
     }
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
 }
 
 /*-------------------------------------------------------------------------
@@ -2206,6 +2229,7 @@ int window_list_check_top(BCG *dd,void *win)
 {
   return dd->private->window == (GtkWidget *) win ;
 }
+
 
 void DeleteSGWin(int intnum)
 { 
@@ -2504,6 +2528,8 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
 	  xf = xi - ( size[1]*sinal);
 	  yf = yi + ( size[1]*cosal);
 	  gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc, xi,yi,xf,yf) ;
+	  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+	    gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc, xi,yi,xf,yf);
 	}
     }
   for (i=0; i <= nsteps[1]; i++)
@@ -2513,8 +2539,9 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
       xf = xi - ( size[1]*size[2]*sinal);
       yf = yi + ( size[1]*size[2]*cosal);
       gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc, xi,yi,xf,yf) ;
+      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+	gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc, xi,yi,xf,yf);
     }
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
 }
 
 /*-----------------------------------------------------
@@ -2862,7 +2889,7 @@ static void DrawMark(BCG *Xgc,int *x, int *y)
   gdk_draw_text(Xgc->private->Cdrawable,Xgc->private->font,Xgc->private->wgc, 
 		*x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
   if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-    gdk_draw_text(XGC_DRAWABLE,Xgc->private->font,Xgc->private->wgc, 
+    gdk_draw_text(Xgc->private->pixmap,Xgc->private->font,Xgc->private->wgc, 
 		  *x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
 }
 
@@ -2910,8 +2937,9 @@ static int GtkReallocVector(int n)
 
 static void XDroutine(BCG *Xgc,int npts)
 {
-  gdk_draw_lines(XGC_DRAWABLE,Xgc->private->wgc, gtk_get_xpoints(), npts);
-  if ( Xgc->private->in_expose == FALSE ) nsp_gtk_invalidate(Xgc);
+  gdk_draw_lines(Xgc->private->Cdrawable,Xgc->private->wgc, gtk_get_xpoints(), npts);
+  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+    gdk_draw_lines(Xgc->private->pixmap, Xgc->private->wgc, gtk_get_xpoints(), npts);
 }
 
 /* My own clipping routines  
@@ -3322,12 +3350,6 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
   return FALSE;
 }
 
-
-static void nsp_gtk_invalidate(BCG *Xgc)
-{
-  gdk_window_invalidate_rect(Xgc->private->drawing->window,NULL,FALSE);
-}
-
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
@@ -3347,9 +3369,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       gdk_gc_set_background(dd->private->stdgc, &dd->private->gcol_bg);
       gdk_draw_rectangle(dd->private->pixmap,dd->private->stdgc, TRUE,0,0,dd->CWindowWidth, dd->CWindowHeight);
       /* On lance l'action standard de resize + redessin  */
-      dd->private->in_expose= TRUE;
       scig_resize(dd->CurWindow);
-      dd->private->in_expose= FALSE;
       gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 		      dd->CWindowWidth, dd->CWindowHeight);
     }

@@ -19,7 +19,6 @@
 static int sci_demo (char *fname,char *code,int flag) ;
 static void  nsp_gwin_clear(BCG *Xgc);
 static BCG *nsp_check_graphic_context(void);
-typedef enum { X11_driver, Win_driver, Gtk_driver,  Pos_driver , Fig_driver, Rec_driver, GL_driver } nsp_driver; 
 
 /*-----------------------------------------------------------
  * Check optional style argument 
@@ -1284,13 +1283,17 @@ int int_gray2plot(Stack stack, int rhs, int opt, int lhs)
  * 
  *-----------------------------------------------------------*/
 
-extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine, GL_gengine; 
-extern BCG  ScilabGCPos, ScilabGCXfig, ScilabGCGL; 
+#ifdef WITH_GL
+extern Gengine GL_gengine; 
+#endif 
 
-extern BCG  *XXX_ScilabGCGL ; /*FIXME: temporairement ici */
+extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine; 
+extern BCG  ScilabGCPos, ScilabGCXfig; 
 
-static char *drivers_name[]={ "Gtk", "Win", "X11", "Pos", "Fig", "Rec", "Ogl", NULL };
-static int drivers_id[]={ Gtk_driver, Win_driver, X11_driver,  Pos_driver , Fig_driver, Rec_driver, GL_driver };
+typedef enum { X11_driver, Win_driver, Gtk_driver,  Pos_driver , Fig_driver, Rec_driver } nsp_driver; 
+
+static char *drivers_name[]={ "Gtk", "Win", "X11", "Pos", "Fig", "Rec" , NULL };
+static int drivers_id[]={ Gtk_driver, Win_driver, X11_driver,  Pos_driver , Fig_driver, Rec_driver};
 static int nsp_current_driver = 0;
 static BCG *nsp_current_bcg= NULL ; 
 
@@ -1320,13 +1323,8 @@ int int_driver(Stack stack, int rhs, int opt, int lhs)
 	case X11_driver: 
 	case Win_driver:
 	case Gtk_driver: 
-	case Rec_driver:nsp_current_bcg = NULL;break; 
-	case GL_driver : 
-	  nsp_current_bcg = &ScilabGCGL ; 
-	  if ( XXX_ScilabGCGL != NULL)  nsp_current_bcg = XXX_ScilabGCGL ; 
-
-	  ScilabGCGL.graphic_engine = &GL_gengine;
-	  break;
+	case Rec_driver: 
+	  nsp_current_bcg = NULL;break; 
 	case  Pos_driver: 
 	  nsp_current_bcg = &ScilabGCPos ; 
 	  ScilabGCPos.graphic_engine = &Pos_gengine;
@@ -2389,11 +2387,15 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 				(viewport) ? viewport->R : NULL,
 				(wpos) ? (int*)wpos->R : NULL);
       else 
-	GL_gengine.initgraphic("",&v1,
-				(wdim) ? (int*)wdim->R: NULL ,
-				(wpdim) ? (int*)wpdim->R: NULL,
-				(viewport) ? viewport->R : NULL,
-				(wpos) ? (int*)wpos->R : NULL);
+	{
+#ifdef WITH_GL
+	  GL_gengine.initgraphic("",&v1,
+				 (wdim) ? (int*)wdim->R: NULL ,
+				 (wpdim) ? (int*)wpdim->R: NULL,
+				 (viewport) ? viewport->R : NULL,
+				 (wpos) ? (int*)wpos->R : NULL);
+#endif 
+	}
     }
   /* we should have an other way here to detect that 
    * initgraphic was fine 
