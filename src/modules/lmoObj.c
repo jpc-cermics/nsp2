@@ -16,6 +16,9 @@
 
 /*
  * NspLmo inherits from NspObject 
+ * A NspLmo is a list with elts constrained to be modules (Mod)
+ * Fixme: a revoir completement 
+ * 
  */
 
 int nsp_type_lmo_id=0;

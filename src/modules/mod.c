@@ -63,10 +63,10 @@ NspMod *ModCreate(char *name,char *path,char *mname)
     }
   /* fill Mod->T with names contained in file 
    * dir/names 
-   * XXX : could also scan dir in the future 
+   * FIXME : could also scan dir in the future 
    */
   if ( ModFill(M) == FAIL) return NULLMOD;
-  if ((M->L = ELmoCreate(NVOID))== NULLLMO) return NULLMOD;
+  if ((M->L = NSP_OBJECT(ELmoCreate(NVOID)))== NULLLMO) return NULLMOD;
   M->flag=0;
   return(M);
 } 

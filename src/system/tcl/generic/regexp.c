@@ -96,7 +96,7 @@ static char *errMsg = NULL;
  */
 
 /* definition	number	opnd?	meaning */
-#define	END	0	/* no	End of program. */
+#define	REG_END	0	/* no	End of program. */
 #define	BOL	1	/* no	Match "" at beginning of line. */
 #define	EOL	2	/* no	Match "" at end of line. */
 #define	ANY	3	/* no	Match any one character. */
@@ -281,7 +281,7 @@ TclRegComp(exp)
   r->regmust = NULL;
   r->regmlen = 0;
   scan = r->program+1;			/* First BRANCH. */
-  if (OP(regnext(scan)) == END) {		/* Only one top-level choice. */
+  if (OP(regnext(scan)) == REG_END) {		/* Only one top-level choice. */
     scan = OPERAND(scan);
 
     /* Starting-point info. */
@@ -370,7 +370,7 @@ reg(paren, flagp, rcstate)
   }
 
   /* Make a closing node, and hook it on the end. */
-  ender = regnode((paren) ? CLOSE+parno : END,rcstate);	
+  ender = regnode((paren) ? CLOSE+parno : REG_END,rcstate);	
   regtail(ret, ender);
 
   /* Hook the tails of the branches to the closing node. */
@@ -1038,7 +1038,7 @@ regmatch(prog, restate)
       }
       return(0);
     }
-    case END:
+    case REG_END:
       return(1);	/* Success! */
     default:
       if (OP(scan) > OPEN && OP(scan) < OPEN+NSUBEXP) {
@@ -1054,7 +1054,7 @@ regmatch(prog, restate)
   }
 
   /*
-   * We get here only if there's trouble -- normally "case END" is
+   * We get here only if there's trouble -- normally "case REG_END" is
    * the terminating point.
    */
   TclRegError("corrupted pointers");
@@ -1147,7 +1147,7 @@ regdump(r)
 
 
   s = r->program + 1;
-  while (op != END) {	/* While that wasn't END last time... */
+  while (op != REG_END) {	/* While that wasn't END last time... */
     op = OP(s);
     printf("%2d%s", s-r->program, regprop(s));	/* Where, what. */
     next = regnext(s);
@@ -1217,7 +1217,7 @@ regprop(op)
   case BACK:
     p = "BACK";
     break;
-  case END:
+  case REG_END:
     p = "END";
     break;
   case OPEN+1:

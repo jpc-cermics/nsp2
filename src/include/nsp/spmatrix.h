@@ -87,7 +87,7 @@ static int SpMatXdrSave(NspFile  *F, NspMatrix *M);
 /* SpMatObj.c */
 
  extern NspSpMatrix *SpObj (NspObject *O); 
- extern int IsSpObj (Stack stack, int i); 
+ extern int IsSpMatObj (Stack stack, int i); 
  extern NspSpMatrix *GetSpCopy (Stack stack, int i); 
  extern NspSpMatrix *GetSp (Stack stack, int i); 
 
