@@ -73,11 +73,14 @@ static void BBoxToval(double *x, double *y, double *z, int ind,const double *bbo
 
 static int nsp_plot_box3d(BCG *Xgc, nsp_box_3d *box);
 static int nsp_plot_box3d_ogl(BCG *Xgc,nsp_box_3d *box);
+static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin, int *polyx, int *polyy, int *fill);
 
 /* FIXME 
  */
 
 extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
+extern void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
+
 extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
@@ -511,7 +514,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	{
 	  polyx[(*p)]=polyx[0];
 	  polyy[(*p)]=polyy[0];
-
+	  
 	  fill[0]=  flag[0];
 	  /* Beginning of modified code by E. Segre 4/5/2000 : the call
 	     to Xgc->graphic_engine->("xliness" ... is now done in each if/else if block.
@@ -558,13 +561,19 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	    }
 	  else if ( iflag ==3 ) { /* colors are given by cvect of size (*p) times (*q) */
 	      int k;
-              
 	      if ( (*p) != 3 && (*p) !=4 ) {
                 Scistring("plot3d1 : interpolated shading is only allowed for polygons with 3 or 4 vertices\n");
  		return;
 	      } else {
-       	        for ( k= 0 ; k < *p ; k++) fill[k]= cvect[(*p)*locindex[i]+k];
-                shade(Xgc,polyx,polyy,fill,*p,flag[0]);
+                /** fill **/
+		shade(Xgc,polyx,polyy,cvect+(*p)*locindex[i],*p,flag[0]);
+		/** draw if requested but just check on the first color **/ 
+		if ( cvect[(*p)*locindex[i]] >= 0 ) 
+		  {
+		    fill[0]=0;
+		    Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
+		  }
+
 	      }
 	  }
 	  else Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
@@ -1572,7 +1581,7 @@ static void dbox(BCG *Xgc,double theta,double alpha)
  *This function sorts the vertices such that the color value is in decreasing order
  *---------------------------------------------------------------------------------*/
 
-int  triangleSort(int *polyxin, int *polyyin, int *fillin, int *polyx, int *polyy, int *fill)
+static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin, int *polyx, int *polyy, int *fill)
 { 
   int tmp,k;
   for (k=0;k<3;k++) {polyx[k]=polyxin[k]; polyy[k]=polyyin[k]; fill[k]=fillin[k];}
@@ -1597,17 +1606,14 @@ int  triangleSort(int *polyxin, int *polyyin, int *fillin, int *polyx, int *poly
 
 
 /*-----------------------------------------------------------------------
- * This is the main shading function. When the polygone has 4 vertices, it
+ * This is the main shading function. When the polygon has 4 vertices, it
  * is splitted in two triangles and shade() is recursively called twice.
  * Author : mottelet 2000 
  * XXXX: remplacer les malloc par graphic_alloc pour uniformiser avec les autres 
  *       routines 
- * FIXME: semble avoir un Pb avec une orientation non conforme 
- *        avec l'orientation standard 
- * FIXME: si des polygones ont trop de cotés shade ne marche pas.
  *-----------------------------------------------------------------------*/
 
-int shade(BCG *Xgc,int *polyx, int *polyy, int *fill, int polysize, int flag)
+int shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysize, int flag)
 {
    int px[5],py[5],fil[4],is[3],ie[3],n[3];
    int npoly=1,k,col,cols,psize,i,s,e;
@@ -1661,7 +1667,7 @@ int shade(BCG *Xgc,int *polyx, int *polyy, int *fill, int polysize, int flag)
 
           psize=3;
           col=fills[0];
-          Xgc->graphic_engine->fillpolylines(Xgc,polyxs,polyys,(cols=-col,&cols),npoly,psize);
+          Xgc->graphic_engine->fillpolylines(Xgc,polyxs,polyys,(cols=-Abs(col),&cols),npoly,psize);
           return(0);
      }
      
@@ -1671,7 +1677,7 @@ int shade(BCG *Xgc,int *polyx, int *polyy, int *fill, int polysize, int flag)
           for(i=0;i<=n[0];i++) {
 	     px[0]=x[2][i]; px[1]=x[0][i]; px[2]=x[0][i+1]; px[3]=x[2][i+1];
 	     py[0]=y[2][i]; py[1]=y[0][i]; py[2]=y[0][i+1]; py[3]=y[2][i+1];
-	     Xgc->graphic_engine->fillpolylines(Xgc,px,py,(cols=-col,&cols),npoly,psize);
+	     Xgc->graphic_engine->fillpolylines(Xgc,px,py,(cols=-Abs(col),&cols),npoly,psize);
              col--;
 	  }
 	  free(x[0]);
@@ -1684,7 +1690,7 @@ int shade(BCG *Xgc,int *polyx, int *polyy, int *fill, int polysize, int flag)
           for(i=0;i<=n[1];i++) {
 	     px[0]=x[2][n[0]+i]; px[1]=x[1][i]; px[2]=x[1][i+1]; px[3]=x[2][n[0]+i+1];
 	     py[0]=y[2][n[0]+i]; py[1]=y[1][i]; py[2]=y[1][i+1]; py[3]=y[2][n[0]+i+1];
-	     Xgc->graphic_engine->fillpolylines(Xgc,px,py,(cols=-col,&cols),npoly,psize);
+	     Xgc->graphic_engine->fillpolylines(Xgc,px,py,(cols=-Abs(col),&cols),npoly,psize);
              col--;
 	  }
           free(x[1]);
@@ -1712,11 +1718,9 @@ int shade(BCG *Xgc,int *polyx, int *polyy, int *fill, int polysize, int flag)
    return 0;
 }     
 
-
 /*
  * OpenGL version 
  */
-
 
 
 static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
@@ -1724,7 +1728,7 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
   nsp_box_3d box;
   static int fg1;
   int polysize,npoly,whiteid;
-  int *polyx,*polyy,*locindex,fill[4]; /* Modified by polpoth 4/5/2000 fill[4] instead of fill[1] */
+  int *polyx,*polyy,*locindex,fill[4];
   double *polyz;
   static int cache;
   static double zmin,zmax;
@@ -1762,48 +1766,10 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
       cache=box.InsideU[0]-4;
       if (flag[2] >=2 )DrawAxis_ogl(Xgc,&box,'U',fg1);
     }
-  polyz = graphic_alloc(5,(*q),sizeof(double));
-  if ( (polyz == NULL) && (*q) != 0)
-    {
-      Scistring("plot3dg_ : malloc No more Place\n");
-      return;
-    }
-  /* Allocation  **/
-  polyx = graphic_alloc(0,(*p)+1L,sizeof(int));
-  polyy = graphic_alloc(1,(*p)+1L,sizeof(int));
-  locindex = graphic_alloc(2,(*q),sizeof(int));
-  if ( ( polyx == NULL) ||  ( polyy== NULL) || ( locindex== NULL) )
-    {
-      Scistring("plot3dg_ : malloc No more Place\n");
-      return;
-    }
-
   whiteid  = Xgc->graphic_engine->xget_last(Xgc);
   fill[0]=  flag[0];
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
-  /* tri **/
-  for ( i =0 ; i < *q ; i++)
-    {
-      double zdmin1, zdmin,xmoy=0.00,ymoy=0.00,zmoy=0.00;
-      int j=0 ;
-      zdmin1=  TRZ(x[ (*p)*i]  ,y[(*p)*i]  ,z[(*p)*i]);
-      for ( j= 0 ; j < *p ; j++) 
-	{
-	  xmoy += x[ j +(*p)*i];  ymoy += y[ j +(*p)*i];  zmoy += z[ j +(*p)*i];
-	  zdmin =  TRZ(x[ j +(*p)*i]  ,y[ j +(*p)*i]  ,z[ j +(*p)*i]);
-	  if ( zdmin1 < zdmin ) zdmin1= zdmin;
-	}
-      /* polyz[i]= zdmin1 + TRZ(xmoy,ymoy,zmoy); */
-      polyz[i]=  TRZ(xmoy,ymoy,zmoy);
-    }
-  C2F(dsort)(polyz,q,locindex); 
-  for ( i =0 ; i < (*q) ; i++)
-    {
-      locindex[i] -= 1;  /* Fortran locindex -> C locindex */
-      if ( locindex[i] >= *q) 
-	sciprint (" index[%d]=%d\r\n",i,locindex[i]);
-      locindex[i] = Min(Max(0,locindex[i]),*q-1);
-    }
+
   polysize=(*p)+1; /* jpc : dec 1999 */
   npoly=1; 
   for ( i = (*q)-1 ; i>= 0 ; i--)
@@ -1811,84 +1777,41 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
       int j,nok=0;
       for ( j =0 ; j < (*p) ; j++)
 	{
-	  polyx[j]=PGEOX(x[(*p)*locindex[i]+j]  ,y[(*p)*locindex[i]+j]  ,z[(*p)*locindex[i]+j]);
-	  if ( finite(xx1) ==0 ) 
-	    {
-	      nok=1;break;
-	    }
-	  polyy[j]=PGEOY(x[(*p)*locindex[i]+j]  ,y[(*p)*locindex[i]+j]  ,z[(*p)*locindex[i]+j]);
-	  if ( finite(yy1)==0)
+	  if ( finite(z[(*p)*i+j]) ==0 )  /* just test on z values */
 	    {
 	      nok=1;break;
 	    }
 	}
       if ( nok == 0) 
 	{
-	  polyx[(*p)]=polyx[0];
-	  polyy[(*p)]=polyy[0];
-
 	  fill[0]=  flag[0];
-	  /* Beginning of modified code by E. Segre 4/5/2000 : the call
-	     to Xgc->graphic_engine->("xliness" ... is now done in each if/else if block.
-	     The case iflag==3 corresponds to the new case, where cvect points
-	     to a (*p) times (*q) matrix, in order to do interpolated shading.
-	     
-	     The new added function are located at the end of thecurrent file (Plo3d.c) */
-
-	  if ( *p >= 2 && ((polyx[1]-polyx[0])*(polyy[2]-polyy[0])-
-			   (polyy[1]-polyy[0])*(polyx[2]-polyx[0])) <  0) 
-	    {
-	      fill[0] = (flag[0] > 0 ) ? fg1 : -fg1 ;
-	      /* 
-		 The following test fixes a bug : when flag[0]==0 then only the
-		 wire frame has to be drawn, and the "shadow" of the surface does
-		 not have to appear. polpoth 4/5/2000
-		 */
-	      
-	      if (flag[0]==0) fill[0]=0;
-	      /* modification du to E Segre to avoid drawing of hidden facets */
-	      if (fg1>0) 
-		{
-		  fillpolylines3D(Xgc,x+(*p)*locindex[i],y+(*p)*locindex[i],z+(*p)*locindex[i],fill,npoly,polysize-1);
-		}
-	      /*Xgc->graphic_engine->fillpolylines(Xgc,"str",polyx,polyy,fill,&npoly,&polysize);*/
-	    }
-	  else if ( iflag == 1) 
+	  if ( iflag == 1) 
 	    {
 	      /* color according to z-level */
 	      double zl=0;
 	      int k;
 	      for ( k= 0 ; k < *p ; k++) 
-		zl+= z[(*p)*locindex[i]+k];
+		zl+= z[(*p)*i+k];
 	      fill[0]=inint((whiteid-1)*((zl/(*p))-zmin)/(zmax-zmin))+1;
 	      if ( flag[0] < 0 ) fill[0]=-fill[0];
-	      fillpolylines3D(Xgc,x+(*p)*locindex[i],y+(*p)*locindex[i],z+(*p)*locindex[i],fill,npoly,polysize-1);
+	      fillpolylines3D(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,fill,npoly,polysize-1);
 	    }
 	  else if ( iflag == 2) 
 	    {
 	      /* colors are given by cvect */
-	      fill[0]= cvect[locindex[i]];
+	      fill[0]= cvect[i];
 	      if ( flag[0] < 0 ) fill[0]=-fill[0];
-	      fillpolylines3D(Xgc,x+(*p)*locindex[i],y+(*p)*locindex[i],z+(*p)*locindex[i],fill,npoly,polysize-1);
+	      fillpolylines3D(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,fill,npoly,polysize-1);
 	    }
-	  else if (iflag ==3) { /* colors are given by cvect of size (*p) times (*q) */
-	      int k;
-	      if ( (*p) != 3 && (*p) !=4 ) {
-                Scistring("plot3d1 : interpolated shading is only allowed for polygons with 3 or 4 vertices\n");
-		return;
-	      } else {
-       	        for ( k= 0 ; k < *p ; k++) fill[k]= cvect[(*p)*locindex[i]+k];
-		/* Sciprintf("shade not implemented for opengl fac3dg\n");*/
-                /* FIXME: shade(Xgc,polyx,polyy,fill,*p,flag[0]); */
-		fillpolylines3D(Xgc,x+(*p)*locindex[i],y+(*p)*locindex[i],z+(*p)*locindex[i],fill,npoly,polysize-1);
-	      }
-	  }
+	  else if (iflag ==3) 
+	    { 
+	      /* colors are given by cvect of size (*p) times (*q) */
+	      fillpolylines3D_shade(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,cvect+(*p)*i, npoly,polysize-1);
+	    }
 	  else
 	    {
-	      fillpolylines3D(Xgc,x+(*p)*locindex[i],y+(*p)*locindex[i],z+(*p)*locindex[i],fill,npoly,polysize-1);
+	      fillpolylines3D(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,fill,npoly,polysize-1);
 	    }
-	  /* End of modified code by polpoth 4/5/2000 */
-
 	}
     } 
   if ( flag[2] >=3 )
@@ -1901,7 +1824,6 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
       else 
 	DrawAxis_ogl(Xgc,&box,'D',fg);
     }
-  
 }
 
 

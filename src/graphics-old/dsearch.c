@@ -104,13 +104,14 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
     nsp_dsearchd(x->R,x->mn,val->R,val->mn,(int *) ind->R,(int *) occ->R,&info);
   if ( lhs >= 0) 
     {
-      /* ind->convert = 'i';  occ is filed with integers */
+      ind->convert = 'i'; /* occ is filed with integers */
       ind = Mat2double(ind);
       NthObj(rhs+1) = (NspObject *) ind;
       NSP_OBJECT(NthObj(rhs+1))->ret_pos = 1;
     }
   if ( lhs >= 2)
     {
+      occ->convert = 'i';
       occ = Mat2double(occ);
       NthObj(rhs+2) = (NspObject *) occ;
       NSP_OBJECT(NthObj(rhs+2))->ret_pos = 2;

@@ -2336,6 +2336,68 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 }
 
 /**
+ * fillpolylines3D_shade: 
+ * @Xgc: 
+ * @vectsx: 
+ * @vectsy: 
+ * @vectsz: 
+ * @fillvect: 
+ * @n: 
+ * @p: 
+ * 
+ * when we have one color for each node 
+ **/
+
+
+static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag) ;
+
+void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, 
+			   double *vectsz, int *fillvect,int n, int p)
+{
+  int dash,color,i;
+  DRAW_CHECK;
+  xget_dash_and_color(Xgc,&dash,&color);
+  for (i = 0 ; i< n ; i++)
+    {
+      /* for each polyline we only take a decision according to the first color */
+      if (fillvect[i] > 0 )
+	{ 
+	  /** fill + boundaries **/
+	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
+	  xset_dash_and_color(Xgc,dash,color);
+	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	}
+      else  if (fillvect[i] == 0 )
+	{
+	  xset_dash_and_color(Xgc,dash,color);
+	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	}
+      else 
+	{
+	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
+	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	}
+    }
+  xset_dash_and_color(Xgc,dash,color);
+}
+
+
+static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag) 
+{
+  gint i;
+  if ( n <= 1) return;
+  DRAW_CHECK;
+  glBegin(GL_POLYGON);
+  for ( i=0 ;  i< n ; i++) 
+    {
+      xset_pattern(Xgc,Abs(colors[i]));
+      glVertex3d( vx[i], vy[i], vz[i]);
+    }
+  glEnd();
+}
+
+
+/**
  * fillpolylines3D:
  * @Xgc: 
  * @vectsx: 
@@ -2351,7 +2413,6 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
-
 
 void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
 {

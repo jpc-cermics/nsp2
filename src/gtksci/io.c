@@ -248,7 +248,7 @@ void write_scilab(char *s)
 int Xorgetchar(void)
 {
   int i;
-  static int c_count = -1;
+  static int c_count = -1, counter;
   static int GtkXsocket,fd_in,fd_out,fd_err;
   static int first = 0,max_plus1;
   fd_set select_mask,write_mask;
@@ -273,6 +273,7 @@ int Xorgetchar(void)
     }
 
   for( ; ; ) {
+    SELECT_DEBUG(fprintf(stderr,"looping %d\n",counter++);)
     /* always flush writes before waiting */
     gdk_flush();
     fflush(stdout); 
@@ -293,10 +294,14 @@ int Xorgetchar(void)
     /* FD_SET(fd_out,&write_mask);
        FD_SET(fd_err,&write_mask); */
 
-    select_timeout.tv_sec = 5;
+    select_timeout.tv_sec = 10; /* could be more */
     select_timeout.tv_usec = 0;
 #ifdef WITH_GTK_MAIN 
-    while ( gtk_events_pending()) gtk_main_iteration(); 
+    while ( gtk_events_pending()) 
+      {
+	SELECT_DEBUG(fprintf(stderr,"une iteration %d\n",counter++);)
+	gtk_main_iteration(); 
+      }
 #endif
     /* maybe a new string to execute */
     if ( sci_input_char_buffer_count > 0) 
@@ -310,18 +315,20 @@ int Xorgetchar(void)
       }
     /* maybe a command in the command queue */
     if ( checkqueue_nsp_command() == TRUE) return 0;
-    
+    SELECT_DEBUG(fprintf(stderr,"enter select %d\n",counter++);)
     i = select(max_plus1, &select_mask,&write_mask, (fd_set *)NULL, &select_timeout);
+    SELECT_DEBUG(fprintf(stderr,"after select %d\n",counter++);)
     if (i < 0) {
       if (errno != EINTR)
 	{ 
 #ifdef DEBUG
-	  fprintf(stderr,"error in select\n");
+	  SELECT_DEBUG(fprintf(stderr,"error in select\n");)
 #endif
 	  exit(0);
 	  continue;
 	} 
     }
+    SELECT_DEBUG(fprintf(stderr,"after select %d\n",counter++);)
     /* if there's something to output */
     if ( FD_ISSET(fd_out,&write_mask)) { 
       fflush(stdout); 
@@ -329,9 +336,9 @@ int Xorgetchar(void)
     if ( FD_ISSET(fd_err,&write_mask)) { 
       fflush(stderr); 
     }
-
     /* if there's something to read */
     if ( FD_ISSET(fd_in,&select_mask )) { 
+      SELECT_DEBUG(fprintf(stderr,"j'attend un caractere %d\n",counter++);)
       return getchar();
       break;
     } 
@@ -347,6 +354,7 @@ int Xorgetchar(void)
 #ifdef WITH_GTK_MAIN 
       while ( gtk_events_pending()) 
 	{ 
+	  SELECT_DEBUG(fprintf(stderr,"une iteration after select %d\n",counter++);)
 	  gtk_main_iteration(); 
 	} 
 #endif 
