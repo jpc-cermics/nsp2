@@ -6,7 +6,7 @@
 
 #include "nsp/object.h"
 #define  ModuleElt_Private 
-#include "modulelt.h"
+#include "nsp/modulelt.h"
 #include "nsp/interf.h"
 
 /* 

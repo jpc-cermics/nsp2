@@ -11,8 +11,8 @@
 #include "nsp/objxdr.h"
 #include "nsp/datas.h"
 #include "nsp/interf.h" 
-#include "module.h" 
-#include "modulelt.h" 
+#include "nsp/module.h" 
+#include "nsp/modulelt.h" 
 
 
 /*********************************************

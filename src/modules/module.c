@@ -6,8 +6,8 @@
 
 #include "nsp/object.h"
 #define  Module_Private 
-#include "module.h"
-#include "modulelt.h"
+#include "nsp/module.h"
+#include "nsp/modulelt.h"
 #include "nsp/interf.h"
 
 /* 
