@@ -29,7 +29,6 @@ static int scig_buzy = 0;
 /*
  * the functions in this file are called from 
  * callback ( see jpc_SGraph.c ) for the XWindow version 
- *
  */
 
 /*
