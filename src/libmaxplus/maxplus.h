@@ -9,6 +9,7 @@ extern int Semi_Howard (int *ij, double *A,double *t,int nnodes,int narcs,double
 
 
 extern int maxplus_matrix_karp(NspMatrix *A,int entry,double *res);
+extern int maxplus_spmatrix_karp(NspSpMatrix *Sp,int entry,double *res);
 
 extern int in_span (double *A,int n, int p, double *b, double precision);
 /* weakbasis */

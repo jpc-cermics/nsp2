@@ -86,10 +86,11 @@ static int nsp_spmatrix_xdr_save(NspFile  *F, NspSpMatrix *M);
 
 /* SpMatObj.c */
 
- extern NspSpMatrix *SpObj (NspObject *O); 
- extern int IsSpMatObj (Stack stack, int i); 
- extern NspSpMatrix *GetSpCopy (Stack stack, int i); 
- extern NspSpMatrix *GetSp (Stack stack, int i); 
+extern NspSpMatrix *SpObj (NspObject *O); 
+extern int IsSpMatObj (Stack stack, int i); 
+extern NspSpMatrix *GetSpCopy (Stack stack, int i); 
+extern NspSpMatrix *GetSp (Stack stack, int i); 
+extern NspSpMatrix *GetRealSp(Stack stack, int i);
 
 /* NspSpMatrix.c */
 

@@ -145,7 +145,7 @@ static int int_maxp_semi_howard(Stack stack, int rhs, int opt, int lhs)
 
 static int int_maxp_karp(Stack stack, int rhs, int opt, int lhs)
 { 
-  NspMatrix *A,*Res;
+  NspMatrix *A;
   double res;
   int entry=1;
   CheckRhs(1,2);
@@ -155,12 +155,35 @@ static int int_maxp_karp(Stack stack, int rhs, int opt, int lhs)
     {
       if ( GetScalarInt(stack,2,&entry) == FAIL) return RET_BUG;
     }
-  if ((Res = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) 
-    return RET_BUG;
-  if ( maxplus_matrix_karp(A,entry-1,&res) == FAIL) return FAIL;
+  if ( maxplus_matrix_karp(A,entry-1,&res) == FAIL)
+    {
+      return RET_BUG;
+    }
   if ( nsp_move_double(stack,1,res )== FAIL) return RET_BUG;
   return 1;
 }
+
+/*
+ * version for a sparse Matrix 
+ */
+
+static int int_maxp_sp_karp(Stack stack, int rhs, int opt, int lhs)
+{ 
+  NspSpMatrix *A;
+  double res;
+  int entry=1;
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((A = GetRealSp(stack,1)) == NULLSP)  return RET_BUG;
+  if ( rhs == 2 ) 
+    {
+      if ( GetScalarInt(stack,2,&entry) == FAIL) return RET_BUG;
+    }
+  if ( maxplus_spmatrix_karp(A,entry-1,&res) == FAIL) return RET_BUG;
+  if ( nsp_move_double(stack,1,res )== FAIL) return RET_BUG;
+  return 1;
+}
+
 
 static int int_maxp_sparse2full(Stack stack, int rhs, int opt, int lhs)
 { 
@@ -435,7 +458,8 @@ static int int_maxp_ford_bellman(Stack stack, int rhs, int opt, int lhs)
 static OpTab Maxplus_func[]={
   {"hhoward",      int_maxp_howard},	
   {"hsemihoward",  int_maxp_semi_howard},	
-  {"karp",	   int_maxp_karp},		
+  {"karp_m",	   int_maxp_karp},		
+  {"karp_sp",      int_maxp_sp_karp},
   {"Max_Full",	   int_maxp_sparse2full},	
   {"hin_span",	   int_maxp_in_span},	
   {"hweakbasis",   int_maxp_weakbasis},	

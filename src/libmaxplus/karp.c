@@ -36,7 +36,7 @@ int maxplus_matrix_karp(NspMatrix *A,int entry,double *res)
 	  IJ->R[i+A->m*j+IJ->m] = j+1;
 	}
     }
-  return  Karp(IJ,A,A->m,entry,res);
+  return Karp(IJ,A,A->m,entry,res);
 }
 
 /**
@@ -48,7 +48,7 @@ int maxplus_matrix_karp(NspMatrix *A,int entry,double *res)
  * Return value: 
  **/
 
-int maxplus_spmatrix_karp(NspSpMatrix *Sp,int entry,double *res)
+int maxplus_spmatrix_karp(NspSpMatrix *Sp,int entry,double *res) 
 {
   NspMatrix *IJ, *A;
   if ( nsp_spmatrix_get(Sp, &IJ, &A)== FAIL) return FAIL;
@@ -92,8 +92,8 @@ static int Karp(const NspMatrix *IJ,const NspMatrix *A,int nnodes, int entry, do
 
   if (( V = nsp_matrix_create(NVOID,'r',SIZE,1)) == NULLMAT) 
     {
-      Scierror("You may try Karp_Big, which is twice slower\n");
-      Scierror("but only requires a linear space\n");
+      Scierror("Error: you may try Karp_Big, which is twice slower\n");
+      Scierror("\tbut only requires a linear space\n");
       return FAIL;
     }
   for (i=0; i<SIZE; i++)
@@ -102,7 +102,8 @@ static int Karp(const NspMatrix *IJ,const NspMatrix *A,int nnodes, int entry, do
     }
   if ( entry < 0 || entry >= SIZE )
     {
-      Scierror("Error: entry=%d is incorrect\n",entry+1);
+      Scierror("Error: entry=%d is incorrect in function karp\n",entry+1);
+      return FAIL;
     }
   V->R[entry]=0;
   jnnodes=0;

@@ -300,3 +300,23 @@ NspSpMatrix *GetSp(Stack stack, int i)
   return M;
 }
 
+/*
+ * Checks that first+i object on the stack 
+ * is a SpMatrix and returns that SpMatrix  
+ */
+
+NspSpMatrix *GetRealSp(Stack stack, int i)
+{
+  NspSpMatrix *M;
+  if (( M =nsp_spmatrix_object(NthObj(i))) == NULLSP )
+     ArgMessage(stack,i);
+  if (M->rc_type == 'i')
+    {
+      Scierror ("\t%s", ArgPosition (i));
+      ArgName (stack, i);
+      Scierror (" of function %s should not be complex\n", stack.fname);
+      return NULLSP;
+    }
+  return M;
+}
+
