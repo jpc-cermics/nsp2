@@ -346,7 +346,7 @@ static int int_clb_create(Stack stack, int rhs, int opt, int lhs)
   /* first argument is a unused its a NspType */
   CheckRhs(1,100);
   /* we first create a default object */
-  if(( H = classb_create(NVOID,color,thickness,NULL)) == NULLCLA) return RET_BUG;
+  if(( H = classb_create(NVOID,color,thickness,NULL)) == NULLCLB) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   /* then we use optional arguments to fill attributes */
   return int_set_attributes(stack,rhs,opt,lhs);
