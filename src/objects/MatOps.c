@@ -3221,6 +3221,8 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
  * 
  */
 
+#define PLUS(x,y) (( isinf( -x ) || isinf( -y )) ? (Min(x,y)) : x+y )
+
 NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B)
 {  
   NspMatrix *Loc;
@@ -3251,12 +3253,12 @@ NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B)
 	for ( j = 0 ; j < B->n ; j++)
 	  {
 	    int k=0;
-	    Loc->I[i+Loc->m*j].r = A->I[i+A->m*k].r+ B->I[k+B->m*j].r;
-	    Loc->I[i+Loc->m*j].i = A->I[i+A->m*k].i+ B->I[k+B->m*j].i;
+	    Loc->I[i+Loc->m*j].r = PLUS(A->I[i+A->m*k].r,B->I[k+B->m*j].r);
+	    Loc->I[i+Loc->m*j].i = PLUS(A->I[i+A->m*k].i,B->I[k+B->m*j].i);
 	    for ( k= 1; k < A->n ; k++) 
 	      {
-		Loc->I[i+Loc->m*j].r= Max(A->I[i+A->m*k].r+ B->I[k+B->m*j].r,Loc->I[i+Loc->m*j].r);
-		Loc->I[i+Loc->m*j].i= Max(A->I[i+A->m*k].i+ B->I[k+B->m*j].i,Loc->I[i+Loc->m*j].r);
+		Loc->I[i+Loc->m*j].r= Max( PLUS(A->I[i+A->m*k].r, B->I[k+B->m*j].r),Loc->I[i+Loc->m*j].r);
+		Loc->I[i+Loc->m*j].i= Max( PLUS(A->I[i+A->m*k].i, B->I[k+B->m*j].i),Loc->I[i+Loc->m*j].r);
 	      }
 	  }
     }
@@ -3267,10 +3269,10 @@ NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B)
 	for ( j = 0 ; j < B->n ; j++)
 	  {
 	    int k=0;
-	    Loc->R[i+Loc->m*j]= A->R[i+A->m*k]+ B->R[k+B->m*j];
+	    Loc->R[i+Loc->m*j]= PLUS(A->R[i+A->m*k], B->R[k+B->m*j]);
 	    for ( k= 1; k < A->n ; k++) 
 	      {
-		Loc->R[i+Loc->m*j]= Max(A->R[i+A->m*k]+ B->R[k+B->m*j],Loc->R[i+Loc->m*j]);
+		Loc->R[i+Loc->m*j]= Max(PLUS(A->R[i+A->m*k], B->R[k+B->m*j]),Loc->R[i+Loc->m*j]);
 	      }
 	  }
     }
@@ -3315,12 +3317,12 @@ NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B)
 	for ( j = 0 ; j < B->n ; j++)
 	  {
 	    int k=0;
-	    Loc->I[i+Loc->m*j].r = A->I[i+A->m*k].r+ B->I[k+B->m*j].r;
-	    Loc->I[i+Loc->m*j].i = A->I[i+A->m*k].i+ B->I[k+B->m*j].i;
+	    Loc->I[i+Loc->m*j].r = PLUS( A->I[i+A->m*k].r, B->I[k+B->m*j].r);
+	    Loc->I[i+Loc->m*j].i = PLUS(A->I[i+A->m*k].i, B->I[k+B->m*j].i);
 	    for ( k= 1; k < A->n ; k++) 
 	      {
-		Loc->I[i+Loc->m*j].r= Min(A->I[i+A->m*k].r+ B->I[k+B->m*j].r,Loc->I[i+Loc->m*j].r);
-		Loc->I[i+Loc->m*j].i= Min(A->I[i+A->m*k].i+ B->I[k+B->m*j].i,Loc->I[i+Loc->m*j].r);
+		Loc->I[i+Loc->m*j].r= Min(PLUS(A->I[i+A->m*k].r, B->I[k+B->m*j].r),Loc->I[i+Loc->m*j].r);
+		Loc->I[i+Loc->m*j].i= Min(PLUS(A->I[i+A->m*k].i, B->I[k+B->m*j].i),Loc->I[i+Loc->m*j].r);
 	      }
 	  }
     }
@@ -3331,10 +3333,10 @@ NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B)
 	for ( j = 0 ; j < B->n ; j++)
 	  {
 	    int k=0;
-	    Loc->R[i+Loc->m*j]= A->R[i+A->m*k]+ B->R[k+B->m*j];
+	    Loc->R[i+Loc->m*j]= PLUS(A->R[i+A->m*k], B->R[k+B->m*j]);
 	    for ( k= 1; k < A->n ; k++) 
 	      {
-		Loc->R[i+Loc->m*j]= Min(A->R[i+A->m*k]+ B->R[k+B->m*j],Loc->R[i+Loc->m*j]);
+		Loc->R[i+Loc->m*j]= Min(PLUS(A->R[i+A->m*k], B->R[k+B->m*j]),Loc->R[i+Loc->m*j]);
 	      }
 	  }
     }
