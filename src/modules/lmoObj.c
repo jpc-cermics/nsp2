@@ -123,7 +123,7 @@ NspLmo *new_lmo()
 
 int LmoSize(NspLmo *L, int flag)
 {
-  return  ListLength((NspList *) L);
+  return nsp_list_length((NspList *) L);
 }
 
 /**************************************************
@@ -225,12 +225,12 @@ NspObject *LmoPathExtract( NspLmo *L, NspObject *O)
   if ( IsMat(O)  ) 
     {
       if ( IntScalar(O,&ival) == FAIL ) return NULLOBJ ;
-      return  NthElement((NspList *) L,ival);
+      return nsp_list_get_element((NspList *) L,ival);
     }
   else if ( IsSMat(O) ) 
     {
       if (( M = SMatObj(O)) == NULLSMAT || M->mn != 1) return NULLOBJ ;
-      return ListSearch((NspList *) L,M->S[0]);
+      return nsp_list_search((NspList *) L,M->S[0]);
     }
   return  NULLOBJ;
 }

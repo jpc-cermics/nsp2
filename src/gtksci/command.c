@@ -78,11 +78,11 @@ int enqueue_nsp_command(char *command)
    */
   if ( initialized == FALSE ) 
     {
-      if ((L = EListCreate(NVOID,NULLSTRING))==NULLLIST) return FAIL;
+      if ((L =nsp_list_create(NVOID,NULLSTRING))==NULLLIST) return FAIL;
       initialized = TRUE;
     }
   if (( O = ObjStr(command))==NULLOBJ ) return FAIL;
-  if ( EndInsert(L,O) == FAIL ) return FAIL;
+  if (nsp_list_end_insert(L,O) == FAIL ) return FAIL;
   return OK;
 }
 
@@ -94,8 +94,8 @@ int checkqueue_nsp_command()
 {
   if ( locked) return FALSE;
   if ( L == NULLLIST)  return FALSE;
-  if ( ListLength(L) < 1 )  return FALSE;
-  return ( NthElement(L,1) != NULLOBJ);
+  if (nsp_list_length(L) < 1 )  return FALSE;
+  return (nsp_list_get_element(L,1) != NULLOBJ);
 }
 
 /*---------------------------------------------------------------------------
@@ -120,9 +120,9 @@ static NspObject *dequeue_nsp_command_obj()
 {
   NspObject *O;
   if ( L == NULLLIST) return NULLOBJ;
-  if ( ListLength(L) < 1 )  return FALSE;
-  O = NthElement(L,1);
-  if ( O != NULLOBJ)  DeleteNthCellOnly(L,1);
+  if (nsp_list_length(L) < 1 )  return FALSE;
+  O =nsp_list_get_element(L,1);
+  if ( O != NULLOBJ)nsp_list_delete_cell(L,1);
   return O;
 }
 

@@ -54,15 +54,15 @@ NspList *new_list();
 
 #ifdef List_Private
 static int init_list(NspList *ob,NspTypeList *type);
-static int ListSize(NspList *Mat, int flag);
-char *ListType(void);
-char *ListShType(NspList *M);
+static int nsp_list_size(NspList *Mat, int flag);
+char *nsp_list_type_as_string(void);
+char *nsp_list_type_short_string(NspList *M);
 NspObject *list_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int ListObjEq(NspObject *A,NspObject *B);
-int ListObjNeq(NspObject *A,NspObject *B);
-static int ListIsTrue(NspList *l);
-NspList*ListXdrLoad(NspFile  *F);
-int ListXdrSave(NspFile  *F, NspList *L);
+int nsp_list_eq(NspObject *A,NspObject *B);
+int nsp_list_neq(NspObject *A,NspObject *B);
+static int nsp_list_is_true(NspList *l);
+NspList*nsp_list_xdr_load(NspFile  *F);
+int nsp_list_xdr_save(NspFile  *F, NspList *L);
 #endif 
 
 #define NULLLIST ( NspList *) 0 
@@ -71,46 +71,47 @@ int ListXdrSave(NspFile  *F, NspList *L);
 
 /** Functions declaration **/
 
- extern NspObject *ListPathExtract (NspList *L, NspObject *O); 
- extern int ListObjEq (NspObject *A, NspObject *B); 
- extern int ListObjNeq (NspObject *A, NspObject *B); 
- extern NspList *ListObj (NspObject *O); 
- extern int IsListObj (Stack stack, int i); 
- extern int IsList (NspObject *O); 
- extern NspList *GetListCopy (Stack stack, int i); 
- extern NspList *GetList (Stack stack, int i); 
+extern NspObject *nsp_list_path_extract(NspList *L, NspObject *O); 
+extern int nsp_list_eq(NspObject *A, NspObject *B); 
+extern int nsp_list_neq(NspObject *A, NspObject *B); 
+extern NspList *nsp_list_object(NspObject *O); 
+extern int IsListObj (Stack stack, int i); 
+extern int IsList (NspObject *O); 
+extern NspList *GetListCopy (Stack stack, int i); 
+extern NspList *GetList (Stack stack, int i); 
 
 extern NspObject *EvalMacro (NspPList *, NspObject **, NspList *, int *);
- extern NspList *EListCreate (char *name, char *tname); 
- extern Cell *NewCell (char *name, NspObject *O); 
- extern void CellDestroy (Cell **c); 
- extern void ListDestroy (NspList *l); 
- extern NspList *ListCopy (NspList *L); 
- extern NspList *ListExtract (NspList *L, NspMatrix *Elts); 
- extern int ListInsert (NspList *L, NspObject *O, int n); 
- extern NspObject *NthElement (NspList *L, integer nel); 
- extern int EndInsert (NspList *L, NspObject *A); 
- extern int NInsert (NspList *L, NspObject *A, integer n); 
- extern void ListDeleteNamed (NspList *L, char *str); 
- extern int DeleteNth (NspList *L, integer nel); 
- extern int DeleteNthCellOnly (NspList *L, integer nel); 
- extern int ListLength (NspList *L); 
- extern int ConcatList (NspList *L1, NspList *L2); 
- extern void ListInfo (NspList *L, int indent); 
- extern void ListPrint (NspList *L, int indent); 
+extern NspList *nsp_list_create(char *name, char *tname); 
+extern Cell *nsp_cell_create(char *name, NspObject *O); 
+extern void nsp_cell_destroy(Cell **c); 
+extern void nsp_list_destroy(NspList *l); 
+extern NspList *nsp_list_copy(NspList *L); 
+extern NspList *nsp_list_extract(NspList *L, NspMatrix *Elts); 
+extern int nsp_list_insert(NspList *L, NspObject *O, int n); 
+extern NspObject *nsp_list_get_element(NspList *L, integer nel); 
+extern int nsp_list_end_insert(NspList *L, NspObject *A); 
+extern int nsp_list_store(NspList *L, NspObject *A, integer n); 
+extern void nsp_list_delete_elt_by_name(NspList *L, char *str); 
+extern int nsp_list_delete_elt(NspList *L, integer nel); 
+extern int nsp_list_delete_cell(NspList *L, integer nel); 
+extern int nsp_list_length(NspList *L); 
+extern int nsp_list_concat(NspList *L1, NspList *L2); 
+extern void nsp_list_info(NspList *L, int indent); 
+extern void nsp_list_print(NspList *L, int indent); 
  extern NspObject *ListSearch_Old (NspList *L, String *str); 
- extern NspObject *ListSearch (NspList *L, String *str); 
- extern NspObject *ListSearchAndRemove (NspList *L, char *str); 
- extern int ListSearchAndReplace (NspList *L, NspObject *O); 
- extern void CellDestroyButNotObj (Cell **c); 
- extern NspObject *SortedListSearch (NspList *L, String *str); 
- extern NspObject *SortedListSearchAndRemove (NspList *L, char *str); 
- extern int SortedListInsert (NspList *L, NspObject *O); 
- extern NspList *ListMap (NspList *L, NspPList *PL, NspList *args); 
- extern NspObject *ListFoldRight (NspList *L, NspPList *PL, NspList *args); 
-extern NspBMatrix *ListEqual (NspList *L1, NspList *L2); 
- extern NspBMatrix *ListNequal (NspList *L1, NspList *L2); 
- extern int ListFullEqual (NspList *L1, NspList *L2); 
- extern int ListFullNequal (NspList *L1, NspList *L2); 
+ extern NspObject *nsp_list_search(NspList *L, String *str); 
+ extern NspObject *nsp_list_search_and_remove(NspList *L, char *str); 
+ extern int nsp_list_search_and_replace(NspList *L, NspObject *O); 
+ extern void nsp_cell_only_destroy(Cell **c); 
+ extern NspObject *nsp_sorted_list_search(NspList *L, String *str); 
+ extern NspObject *nsp_sorted_list_search_and_remove(NspList *L, char *str); 
+ extern int nsp_sorted_list_insert(NspList *L, NspObject *O); 
+ extern NspList *nsp_list_map(NspList *L, NspPList *PL, NspList *args); 
+ extern NspObject *nsp_list_fold_right(NspList *L, NspPList *PL, NspList *args); 
+extern NspBMatrix *nsp_list_equal(NspList *L1, NspList *L2); 
+ extern NspBMatrix *nsp_list_not_equal(NspList *L1, NspList *L2); 
+ extern int nsp_list_full_equal(NspList *L1, NspList *L2); 
+ extern int nsp_list_full_not_equal(NspList *L1, NspList *L2); 
+extern int nsp_list_compact(NspList *L1, char flag );
 
 #endif

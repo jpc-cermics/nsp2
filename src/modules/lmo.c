@@ -25,7 +25,7 @@
 
 NspLmo *ELmoCreate(char *name)
 {
-  NspList *L = EListCreate(name,NULLSTRING);
+  NspList *L =nsp_list_create(name,NULLSTRING);
   if ( L == NULLLIST ) return   NULLLMO; 
   /* 
      L->otype = LMO;
@@ -41,7 +41,7 @@ NspLmo *ELmoCreate(char *name)
 
 void LmoDestroy(NspLmo *l)
 {
-  ListDestroy((NspList*) l);
+ nsp_list_destroy((NspList*) l);
 } 
 
 /******************************
@@ -52,7 +52,7 @@ void LmoDestroy(NspLmo *l)
 
 NspLmo *LmoCopy(NspLmo *lmo)
 {
-  NspList *L = ListCopy((NspList *) lmo);
+  NspList *L =nsp_list_copy((NspList *) lmo);
   if ( L == NULLLIST ) return(NULLLMO) ;
   /*
     L->otype = LMO;
@@ -67,7 +67,7 @@ NspLmo *LmoCopy(NspLmo *lmo)
 
 void LmoInfo(NspLmo *L, int indent)
 {
-  ListInfo((NspList *)L,indent);
+ nsp_list_info((NspList *)L,indent);
 } 
 
 /*********************************************
@@ -76,7 +76,7 @@ void LmoInfo(NspLmo *L, int indent)
 
 void LmoPrint(NspLmo *L, int indent)
 {
-  ListPrint((NspList *)L,indent);
+ nsp_list_print((NspList *)L,indent);
 } 
 
 /*********************************************
@@ -132,7 +132,7 @@ static int LmoInsertLast1(NspLmo *L,char *dir,char **Mname)
     {
       /* if module does not exist create module  */ 
       if ((Loc = ModCreate(NVOID,dir,Mname[0])) == NULLMOD) return FAIL;
-      if ( EndInsert((NspList *)L,(NspObject *) Loc)== FAIL) return FAIL;
+      if (nsp_list_end_insert((NspList *)L,(NspObject *) Loc)== FAIL) return FAIL;
     }
   if ( Mname[1] != NULL ) 
     {
@@ -233,7 +233,7 @@ int LmoImport(NspLmo *L,char *dir,char **Mname)
   /* this is not a full copy XXX */
   if (( Loc = ModCopy(Loc))  == NULLMOD)  return FAIL;
   /* insert new module at the begining */ 
-  if ( ListInsert((NspList *)L,(NspObject *) Loc,0) ==  FAIL) return FAIL;
+  if (nsp_list_insert((NspList *)L,(NspObject *) Loc,0) ==  FAIL) return FAIL;
   return OK;
 }
 

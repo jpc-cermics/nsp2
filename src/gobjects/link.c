@@ -936,7 +936,7 @@ int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
       link_lock(F,(*L1),1,&p); 
     }
   /* add L1 in the frame */ 
-  if ( EndInsert(F->objs,(NspObject  *) (*L1)) == FAIL) return FAIL;
+  if (nsp_list_end_insert(F->objs,(NspObject  *) (*L1)) == FAIL) return FAIL;
   return OK;
 }
 
@@ -1015,7 +1015,7 @@ void link_check(NspGFrame *F,NspLink *L)
 		      gr_port p;
 		      C=connector_create(NVOID,rect,color,thickness,background,NULL);
 		      if ( C == NULL) return;
-		      if ( EndInsert(F->objs,NSP_OBJECT(C)) == FAIL) return ; 
+		      if (nsp_list_end_insert(F->objs,NSP_OBJECT(C)) == FAIL) return ; 
 		      /* and link obj,link and L to the connector */
 		      p.object_id =NSP_OBJECT(C); 
 		      p.lock = 0; 

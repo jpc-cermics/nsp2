@@ -119,7 +119,7 @@ void ModDestroy(NspMod *Mo)
   if ( Mo->flag  == 0) 
     {
       nsp_hash_destroy(Mo->T);
-      ListDestroy(Mo->L);
+ nsp_list_destroy(Mo->L);
       FREE(Mo->path);
     }
   FREE(Mo) ;
@@ -141,7 +141,7 @@ void ModInfo(NspMod *Mo, int indent)
   Sciprintf("Module name=%s path=%s \n",NSP_OBJECT(Mo)->name,Mo->path);
   for ( i=0 ; i < indent ; i++) Sciprintf(" [\n");
   hash_info(Mo->T,indent+2);
-  ListInfo(Mo->L,indent+2);
+ nsp_list_info(Mo->L,indent+2);
   for ( i=0 ; i < indent ; i++) Sciprintf(" ]\n");
 }
 
@@ -162,7 +162,7 @@ void ModPrint(NspMod *Mo, int indent)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("<Module name=%s path=%s\n",Mo->mname,Mo->path);
   hash_print(Mo->T,indent+2);
-  ListPrint(Mo->L,indent+2);
+ nsp_list_print(Mo->L,indent+2);
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf(">\n");
 }
