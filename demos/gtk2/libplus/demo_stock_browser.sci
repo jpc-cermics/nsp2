@@ -67,10 +67,10 @@ function selection_changed (selection)
   [iter,model] = selection.get_selected[]
   if is(iter,%types.None) then  return; end ;
   // iter is a GtkTreeIter 
-  info = model.get_value[ iter,0]
+  info_d = model.get_value[ iter,0]
   // l = list(ids(i), l1,sz,small_icon,accel_str, id_to_macro(ids(i)));
   //     l1 = list(stock_id, label,modifier,keyval,translation_domain)
-  l= model.get_data['nsp_data'](info); 
+  l= model.get_data['nsp_data'](info_d); 
   display(1).set_text[l(6)]; 
   display(2).set_text[l(1)]; 
   display(3).set_text_with_mnemonic[sprintf("%s %s",l(2)(2),l(5))];
@@ -78,37 +78,37 @@ function selection_changed (selection)
 endfunction
 
 // XXXXXX a modifier pour que l'acces  l=
-// model.get_data['nsp_data'](info)(6); 
+// model.get_data['nsp_data'](info_d)(6); 
 // ne fasse pas de copie 
 
 function macro_set_func_text(tree_column,cell,model,iter,data)
-  info = model.get_value[ iter,0]
-  l= model.get_data['nsp_data'](info)(6);
-  cell.set_property["text",l];// info->macro;
+  info_d = model.get_value[ iter,0]
+  l= model.get_data['nsp_data'](info_d)(6);
+  cell.set_property["text",l];// info_d->macro;
 endfunction
 
 function macro_set_func_pixbuf(tree_column,cell,model,iter,data)
-  info = model.get_value[ iter,0]
-  l= model.get_data['nsp_data'](info)(4);
-  cell.set_property["pixbuf",l];// info->macro;
+  info_d = model.get_value[ iter,0]
+  l= model.get_data['nsp_data'](info_d)(4);
+  cell.set_property["pixbuf",l];// info_d->macro;
 endfunction
 
 function id_set_func (tree_column,cell,model,iter,data)
-  info = model.get_value[ iter,0]
-  l= model.get_data['nsp_data'](info)(1);
-  cell.set_property["text",l];//info->id
+  info_d = model.get_value[ iter,0]
+  l= model.get_data['nsp_data'](info_d)(1);
+  cell.set_property["text",l];//info_d->id
 endfunction
 
 function accel_set_func (tree_column,cell,model,iter,data)
-  info = model.get_value[ iter,0]
-  l= model.get_data['nsp_data'](info)(5);
-  cell.set_property["text", l];//info->accel_str
+  info_d = model.get_value[ iter,0]
+  l= model.get_data['nsp_data'](info_d)(5);
+  cell.set_property["text", l];//info_d->accel_str
 endfunction
 
 function label_set_func (tree_column,cell,model,iter,data)
-  info = model.get_value[ iter,0];
-  l= model.get_data['nsp_data'](info)(2)(2);
-  cell.set_property["text", l];// info->item.label
+  info_d = model.get_value[ iter,0];
+  l= model.get_data['nsp_data'](info_d)(2)(2);
+  cell.set_property["text", l];// info_d ->item.label
 endfunction 
 
 function demo_stock_browser () 

@@ -96,15 +96,14 @@ function setup_default_icon ()
 endfunction
 
 function demo_treestore1() 
-  // 
-    
+// 
   h=hcreate(A=89,B=%t,C=rand(4,4));
   h1=hcreate(A=89,B=%t,C=rand(4,4),h1=h,h2=h);
   h3=hcreate(A=78,foo=h1);
   
   setup_default_icon ();
   window = gtkwindow_new();// (GTK.WINDOW_TOPLEVEL);
-  window.set_title[  "GTK+ Code Demos"]
+  window.set_title[  "GTK+ Treestore demo"]
   //window.connect[  "destroy", hide];
   window.set_default_size[280,300]
 
@@ -115,7 +114,7 @@ function demo_treestore1()
   sw.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC]
   hbox.pack_start[sw,expand=%t,fill=%t,padding=0]
 
-  tree = create_tree (h); 
+  tree = create_tree (h3); 
   sw.add[tree]
   window.show_all[];
 endfunction 

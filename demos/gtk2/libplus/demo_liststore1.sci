@@ -1,5 +1,11 @@
 // building a list store from Matrix 
 
+function demo_liststore1()
+  demo_liststore_from_mat () 
+  demo_liststore_from_smat () 
+  demo_liststore_from_bmat () 
+endfunction
+
 function demo_liststore_from_mat () 
   window = gtkwindow_new()
   window.set_title["GtkListStore demo"]

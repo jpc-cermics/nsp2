@@ -38,7 +38,7 @@ function screen_display_check (widget,args)
   end 
 endfunction 
 
-function create_display_screen () 
+function demo_display_screen () 
   opts=hcreate(type= GTK.WINDOW_TOPLEVEL,title="Screen or Display selection",...
 	       border_width= 10);
   window = gtkwidget_new(%types.GtkWindow,opts);
