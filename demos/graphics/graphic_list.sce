@@ -209,7 +209,7 @@ endfunction
 
 demo_3d_11_info="parametric surface nf3d";
 
-function demo_3d_11() 
+function demo_3d_11_old() 
 // parametric 3d surface 
 // nf3d 
   u = %pi*(-1:0.2:1);
@@ -226,6 +226,21 @@ function demo_3d_11()
   plot3d(xx,yy,zz,colors=zzcol,alpha=55,theta=110)
 endfunction
 
+function demo_3d_11() 
+  u = %pi*(-1:0.2:1)/2;
+  v = %pi/2*(-1:0.2:1);
+  n = size(u,'*');
+  x= cos(u)'*exp(cos(v));
+  y= cos(u)'*sin(v);
+  z= sin(u)'*ones(v);
+  col=ones(u)'*cos(v); 
+  col=(n-1)*(col-min(col))/(max(col)-min(col))+1; 
+  xset('colormap',hotcolormap(n));
+  [xx,yy,zz]=nf3d(x,y,z);
+  [xx,yy,zzcol]=nf3d(x,y,col); 
+  xx=[xx,-xx];yy=[yy,-yy];zz=[zz,zz];zzcol=[zzcol,zzcol]; 
+  plot3d(xx,yy,zz,colors=zzcol,alpha=55,theta=110,flag=[0,2,0]); 
+endfunction
 
 demo_3d_12_info="Cube";
 
@@ -718,12 +733,9 @@ endfunction
 graphic_test_contour = list() 
 for i=1:6
   name=sprintf("demo_contour_%d",i); 
-  info=sprintf("test %d",i); 
   execstr(sprintf("info_d=%s_info;",name)); 
   graphic_test_contour(i) = list(info_d, "not-used",name);
 end 
-
-
 
 // organize the previous list 
 //------------------------------
