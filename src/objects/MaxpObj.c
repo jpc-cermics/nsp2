@@ -1298,8 +1298,8 @@ int int_mpmat2vect(Stack stack, int rhs, int opt, int lhs)
 /* xxxx ecrire le Enlarge ***/
 
 /*
- * Right Concatenation 
- * A= [A,B] 
+ * Right Concatenation  A= [A,B] 
+ * When A is Maxplus and B is Maxplus or Mat 
  */
 
 int int_mpconcatr(Stack stack, int rhs, int opt, int lhs)
@@ -1310,11 +1310,31 @@ int int_mpconcatr(Stack stack, int rhs, int opt, int lhs)
   if ((HMat1 = GetMpMat(stack,1))  == NULLMAXPMAT) return RET_BUG;
   if ( HMat1->mn == 0) 
     {
-      /* return 2 */
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
+      /* return 2 but maybe change 2 to Maxplus */
+      if ( IsMat(NSP_OBJECT(HMat1) ))
+	{
+	  NspMaxpMatrix *Res;
+	  if (( Res = nsp_mpmatrix_copy(HMat1)) == NULLMAXPMAT) return RET_BUG;
+	  MoveObj(stack,1,NSP_OBJECT(Res));
+	}
+      else 
+	NSP_OBJECT(NthObj(2))->ret_pos = 1;
       return 1;
     }
-  if ((HMat2 = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
+  if ( IsMatObj(stack,2) )
+    {
+      if ((HMat2 = (NspMaxpMatrix *) GetMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
+    }
+  else if ( IsMpMatObj(stack,2)) 
+    {
+      if ((HMat2 = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
+    }
+  else 
+    {
+      Scierror("Error:\t second argument of function %s\n",stack.fname);
+      Scierror("\tshould be of type Mat or MaxpMat\n");
+      return RET_BUG;
+    }
   if ( HMat2->mn == 0) 
     {
       NSP_OBJECT(HMat1)->ret_pos = 1;
@@ -1331,50 +1351,27 @@ int int_mpconcatr(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Right Concatenation Mat & BMat  
- * A= [A,B] 
- * we have to deal with [] 
- * if Mat<>[]  -->  [Mat,Bmat] -> [Mat,b2m(BMat)] 
- * if Mat==[]  -->  [Mat,Bmat] -> BMat
+ * Right Concatenation A= [A,B] 
+ * When A is Mat and B is Maxplus 
  */
 
-int int_mpconcatr_mb(Stack stack, int rhs, int opt, int lhs)
+int int_mpconcatr_m(Stack stack, int rhs, int opt, int lhs)
 {
-  NspMaxpMatrix *HMat;
+  NspMatrix *A;
+  NspMaxpMatrix *Res;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ( IsMatObj(stack,1)  ) 
-    {
-      if ((HMat = GetMpMat(stack,1))  == NULLMAXPMAT) return RET_BUG;
-      if ( HMat->mn == 0) 
-	{
-	  /* [[],B] --> B **/
-	  NSP_OBJECT(NthObj(2))->ret_pos = 1;
-	  return 1;
-	}
-      else 
-	{
-	  /* [A,B] --> [A, b2m(B)] **/
-	  stack.first +=1;
-	  if ( int_bmatrix_b2m(stack,1,0,1) < 0 ) return RET_BUG;
-	  stack.first -=1;
-	  return int_mpconcatr(stack,rhs,opt,lhs);
-	}
-    }
-  else
-    {
-      /* [B,A] **/
-      if ((HMat = GetMpMat(stack,2))  == NULLMAXPMAT) return RET_BUG;
-      if ( HMat->mn == 0)  return 1; 
-      if ( int_bmatrix_b2m(stack,1,0,1) < 0 ) return RET_BUG;
-      return int_mpconcatr(stack,rhs,opt,lhs);
-    }
+  if ((A = GetMat(stack,1))  == NULLMAT) return RET_BUG;
+  /* change A to MaxPlus */
+  if (( Res = nsp_mpmatrix_copy((NspMaxpMatrix *) A)) == NULLMAXPMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  /* switch to A=[A,B] when A is a Maxplus Matrix */
+  return int_mpconcatr(stack,rhs,opt,lhs);
 }
 
-
 /*
- * Down Concatenation 
- * Res = [A;B] 
+ * Down Concatenation  Res = [A;B] 
+ * when  type(A,B)=(MaxpMat, MaxpMat) 
  * return NULLMAXPMAT on failure ( incompatible size or No more space )
  * A and B are left unchanged 
  */
@@ -1413,8 +1410,61 @@ int int_mpconcatd(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Diag Concatenation 
- * Res = [A,0;0,B] 
+ * Down Concatenation  Res = [A;B] 
+ * when  type(A,B)=(Mat,MaxpMat) or (MaxpMat,Mat) 
+ * return NULLMAXPMAT on failure ( incompatible size or No more space )
+ * A and B are left unchanged 
+ */
+
+static int int_mp_concat_m(Stack stack, int rhs, int opt, int lhs, Fconcat F)
+{
+  NspMaxpMatrix *Res;
+  NspMaxpMatrix *A,*B;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ( IsMatObj(stack,1) )
+    {
+      if ((A = (NspMaxpMatrix *) GetMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
+    }
+  else if ( IsMpMatObj(stack,1)) 
+    {
+      if ((A = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
+    }
+  else 
+    {
+      Scierror("Error:\t first argument of function %s\n",stack.fname);
+      Scierror("\tshould be of type Mat or MaxpMat\n");
+      return RET_BUG;
+    }
+  if ( IsMatObj(stack,2) )
+    {
+      if ((B = (NspMaxpMatrix *) GetMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
+    }
+  else if ( IsMpMatObj(stack,2)) 
+    {
+      if ((B = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
+    }
+  else 
+    {
+      Scierror("Error:\t second argument of function %s\n",stack.fname);
+      Scierror("\tshould be of type Mat or MaxpMat\n");
+      return RET_BUG;
+    }
+  if (( Res= (*F)(A,B)) == NULLMAXPMAT)  return RET_BUG;
+  MoveObj(stack,1,(NspObject *)Res);
+  return 1;
+}
+
+int int_mpconcatd_m(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mp_concat_m(stack,rhs,opt,lhs,nsp_mpmatrix_concat_down);
+}
+
+
+
+/*
+ * Diag Concatenation  Res = [A,0;0,B] 
+ * when  type(A,B)=(MaxpMat,MaxpMat) 
  * return NULLMAXPMAT on failure ( No more space )
  * A and B are left unchanged 
  */
@@ -1423,6 +1473,20 @@ int int_mpconcatdiag(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_concat(stack,rhs,opt,lhs,nsp_mpmatrix_concat_diag);
 }
+
+
+/*
+ * Diag Concatenation  Res = [A,0;0,B] 
+ * when  type(A,B)=(Mat,MaxpMat) or (MaxpMat,Mat) 
+ * return NULLMAXPMAT on failure ( No more space )
+ * A and B are left unchanged 
+ */
+
+int int_mpconcatdiag_m(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mp_concat_m(stack,rhs,opt,lhs,nsp_mpmatrix_concat_diag);
+}
+
 
 
 /*
@@ -2461,13 +2525,56 @@ int int_mpdsub(Stack stack, int rhs, int opt, int lhs)
  * A=nsp_mat_pow_el(A,B), A.^ B 
  * with special cases Mat.^[]  and Mat.^scalar
  *                    [].^Mat ans scalar.^Mat
+ * Note: B here is a standard Matrix 
  */
 
 int int_mppowel(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mp_mopscal(stack,rhs,opt,lhs,
-			nsp_mat_pow_scalar,nsp_mat_pow_el,nsp_mat_pow_scalarm,MpMatNoOp,1);
+  NspMaxpMatrix *A;
+  NspMatrix *B;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetMpMatCopy(stack,1)) == NULLMAXPMAT) return RET_BUG;
+  if ( A->mn == 0) 
+    {
+      NSP_OBJECT(A)->ret_pos = 1;
+      return 1;
+    }
+  if (( B = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ( B->mn == 0) 
+    {
+      NspMaxpMatrix *Res;
+      /* since B is to be returned we make a copy if necessary */
+      if (( Res = nsp_mpmatrix_copy((NspMaxpMatrix *) B)) == NULLMAXPMAT) return RET_BUG;
+      /* return Res */
+      MoveObj(stack,1,NSP_OBJECT(Res));
+      return 1;
+    }
+  if ( B->mn == 1) 
+    {
+      if ( nsp_mat_mult_scalar((NspMatrix *) A,(NspMatrix *) B) != OK) return RET_BUG;
+      NSP_OBJECT(A)->ret_pos = 1;
+    }
+  else if ( A->mn == 1 ) 
+    {
+      NspMaxpMatrix *Res;
+      /* since Mat1 is scalar we store the result in Mat2 so we 
+       * must copy it and change it to a Max Plus Matrix;
+       */
+      if (( Res = nsp_mpmatrix_copy((NspMaxpMatrix *) B)) == NULLMAXPMAT) return RET_BUG;
+      if (  nsp_mat_mult_scalar((NspMatrix *)Res,(NspMatrix *)A) != OK) return RET_BUG;
+      /* return Res */
+      MoveObj(stack,1,NSP_OBJECT(Res));
+    }
+  else 
+    {
+      if ( nsp_mat_mult_el((NspMatrix *)A,(NspMatrix *)B) != OK) return RET_BUG;
+      NSP_OBJECT(A)->ret_pos = 1;
+    }
+  return 1;
 }
+
+
 
 /*
  * A=DivEl(A,B),  A ./ B 
@@ -2686,14 +2793,17 @@ static OpTab Matrix_func[]={
   {"clean_mp" ,  int_mpclean },
   {"complexify_mp" ,  int_mpcomplexify },
   {"concatd_mp_mp" ,  int_mpconcatd },
-  {"concatr_mp_mp" ,  int_mpconcatr },
-  {"concatr_b_mp" ,  int_mpconcatr_mb },
-  {"concatr_m_b" ,  int_mpconcatr_mb },
+  {"concatd_mp_m" ,  int_mpconcatd_m },
+  {"concatd_m_mp" ,  int_mpconcatd_m },
+  {"concatr_mp" ,  int_mpconcatr },
+  {"concatr_m_mp" ,  int_mpconcatr_m},
   {"copy_mp" ,  int_mpcopy },
   {"mpcreate_m_m" ,  int_mpcreate },
   {"dadd_mp_mp" ,   int_mpdadd },
   {"destroy_mp" ,  int_mpdestroy },
   {"concatdiag_mp_mp" ,  int_mpconcatdiag },
+  {"concatdiag_m_mp" ,  int_mpconcatdiag_m },
+  {"concatdiag_mp_m" ,  int_mpconcatdiag_m },
   {"diag_mp",int_mpdiag},
   {"diag_mp_mp",int_mpdiag},
   {"diagcre_mp" ,  int_mpdiagcre },
@@ -2775,7 +2885,7 @@ static OpTab Matrix_func[]={
   {"iand_mp_mp",int_mpiand},
   {"ior_mp_mp",int_mpior},
   {"conj_mp",int_mpconj},
-  {"dh_mp_mp",int_mppowel},
+  {"dh_mp_m",int_mppowel},
   {"dst_mp_mp",int_mpmultel},
   {"plus_mp_mp",   int_mpdadd},
   {"minus_mp_mp",   int_mpdsub},

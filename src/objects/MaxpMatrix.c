@@ -806,6 +806,7 @@ int nsp_mpmatrix_add_columns(NspMaxpMatrix *A, integer n)
  * @B: a #NspMaxpMatrix
  * 
  * returns a new #NspMaxpMatrix equals to  [@A ; @B ] ; 
+ * @A and @B must have compatible dimensions. 
  * 
  * returns a #NspMaxpMatrix or %NULLMAXPMAT.
  */
@@ -814,26 +815,22 @@ NspMaxpMatrix* nsp_mpmatrix_concat_down(const NspMaxpMatrix *A,const NspMaxpMatr
 {
   char type = 'r';
   NspMaxpMatrix *Loc;
-  integer inc = 1;
-  int j;
-  if ( A->n != B->n ) 
+  int inc = 1,j,cols;
+  if ( A->n != B->n &&  A->mn != 0 && B->mn != 0 ) 
     {
       Scierror("Error:\tIncompatible dimensions\n");
       return(NULLMAXPMAT);
     }
+  cols=Max(A->n,B->n);
   if ( A->rc_type == 'i' || B->rc_type == 'i' ) type = 'i';
-  if (( Loc = nsp_mpmatrix_create(NVOID,type,A->m+B->m,A->n)) == NULLMAXPMAT)  return(NULLMAXPMAT);
+  if (( Loc = nsp_mpmatrix_create(NVOID,type,A->m+B->m,cols)) == NULLMAXPMAT)
+    return(NULLMAXPMAT);
   if ( Loc->rc_type == 'r' ) 
     {
       for ( j = 0 ; j < A->n ; j++ ) 
- 	{
-	  /*
- 	  C2F(dcopy) (&A->m,A->R+j*A->m,&inc,Loc->R+j*(Loc->m),&inc);
- 	  C2F(dcopy) (&B->m,B->R+j*B->m,&inc,Loc->R+j*(Loc->m)+A->m,&inc);
-	  */
-	  memcpy(Loc->R+j*(Loc->m),A->R+j*A->m,A->m*sizeof(double));
-	  memcpy(Loc->R+j*(Loc->m)+A->m,B->R+j*B->m,B->m*sizeof(double));
- 	}
+	memcpy(Loc->R+j*(Loc->m),A->R+j*A->m,A->m*sizeof(double));
+      for ( j = 0 ; j < B->n ; j++ ) 
+	memcpy(Loc->R+j*(Loc->m)+A->m,B->R+j*B->m,B->m*sizeof(double));
     }
   else 
     {
@@ -841,25 +838,23 @@ NspMaxpMatrix* nsp_mpmatrix_concat_down(const NspMaxpMatrix *A,const NspMaxpMatr
  	{
  	case 'r' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
- 	nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->I+j*(Loc->m),&inc);
+	    nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->I+j*(Loc->m),&inc);
  	  break;
  	case 'i' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
-	    /*
-		C2F(zcopy) (&A->m,A->I+j*A->m,&inc,Loc->I+j*(Loc->m),&inc); **/
+	    /*	C2F(zcopy) (&A->m,A->I+j*A->m,&inc,Loc->I+j*(Loc->m),&inc); **/
 	    memcpy(Loc->I+j*(Loc->m),A->I+j*A->m,A->m*sizeof(doubleC));
  	  break;
  	}
       switch ( B->rc_type ) 
  	{
  	case 'r' :
- 	  for ( j = 0 ; j < A->n ; j++ ) 
- 	nsp_dzcopy(&B->m,B->R+j*B->m,&inc,Loc->I+j*(Loc->m)+A->m,&inc);
+ 	  for ( j = 0 ; j < B->n ; j++ ) 
+	    nsp_dzcopy(&B->m,B->R+j*B->m,&inc,Loc->I+j*(Loc->m)+A->m,&inc);
  	  break;
  	case 'i' :
- 	  for ( j = 0 ; j < A->n ; j++ ) 
-	    /* 
- 	    C2F(zcopy) (&B->m,B->I+j*B->m,&inc,Loc->I+j*(Loc->m)+A->m,&inc);
+ 	  for ( j = 0 ; j < B->n ; j++ ) 
+	    /*   C2F(zcopy) (&B->m,B->I+j*B->m,&inc,Loc->I+j*(Loc->m)+A->m,&inc);
 	    */
 	    memcpy(Loc->I+j*(Loc->m)+A->m,B->I+j*B->m,B->m*sizeof(doubleC));
  	  break;

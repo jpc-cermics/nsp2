@@ -383,7 +383,7 @@ NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,char *attr)
 	      if ( sm != NULL) 
 		{
 		  if (nsp_smatrix_concat_right(sm, sm1) == FAIL) return NULL;
-		nsp_smatrix_destroy(sm1);
+		  nsp_smatrix_destroy(sm1);
 		}
 	      else 
 		{
@@ -512,7 +512,7 @@ NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type)
 	  if ( sm != NULL) 
 	    {
 	      if (nsp_smatrix_concat_right(sm, sm1) == FAIL) return NULLSMAT;
-	nsp_smatrix_destroy(sm1);
+	      nsp_smatrix_destroy(sm1);
 	    }
 	  else 
 	    {
