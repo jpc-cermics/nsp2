@@ -26,11 +26,16 @@ function create_demo_window()
   function nsp_gtk2_demos() 
     exec('NSP/demos/gtk2/main.sci');
   endfunction 
+  
+  function nsp_gtk2_demos_plus() 
+    exec('NSP/demos/gtk2/mainplus.sci');
+  endfunction 
 
   B = hcreate(100)
   B('Graphics')=  nsp_graphics_demos ;
   B('OpenGL graphics')=  nsp_graphics_ogl_demos ;
   B('Gtk2')=  nsp_gtk2_demos ;
+  B('Gtk2 more')=  nsp_gtk2_demos ;
   win = gtkwindow_new()
   win.set_size_request[200,150]	
   //win.set_uposition[20,20]

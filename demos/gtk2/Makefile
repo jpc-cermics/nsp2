@@ -5,7 +5,7 @@ include ../../Makefile.incl
 
 CFLAGS = $(CC_OPTIONS) 
 
-SUBDIRS = libbase
+SUBDIRS = libbase libplus
 
 all:: 
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
