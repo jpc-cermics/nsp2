@@ -216,16 +216,14 @@ function calendar_font_selection_ok(button,data)
   calendar = data(1);
   fdialog = calendar.get_data["font_dialog"]
   font_name =  fdialog.get_font_name[];
-  // XXXX : unfinished 
-  //       if (font_name) 
-  //style = gtkrcstyle_new ();
-  // 	  pango_font_description_free (style->font_desc);
-  // 	  style->font_desc = pango_font_description_from_string (font_name);
-  // 	  gtk_widget_modify_style (calendar->window, style);
-  // 	  g_free (font_name);
-  // 	}
-  //     }
-  //   gtk_widget_destroy (calendar->font_dialog);
+  // FIXME : pb if using style 
+  // style = gtkrcstyle_new (); // not found !!
+  // pfd = pangofontdescription_new(font_name);
+  // style->font_desc = pfd 
+  // calendar.modify_style[style]
+  // But it works if we use modify_font
+  pfd = pangofontdescription_new(font_name);
+  calendar.modify_font[pfd]
   fdialog.destroy[];
 endfunction 
 
