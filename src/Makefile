@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 include ../Makefile.incl
 
-SCIDIRS = zblas zcalelm Newstack  Parse Functions mexlib Gtk2 \
+SCIDIRS = interp zblas zcalelm Newstack  Functions mexlib Gtk2 \
 	system graphics menusX gd gtksci gzvt2 modules gobjects types types-test \
 	randlib cdf 
 
@@ -16,6 +16,10 @@ all::
 		(cd $$i ; echo "making all in src/$$i..."; \
 		$(MAKE) $(MFLAGS) all); \
 	done
+
+force:: 
+	$(RM) */.archive_target 
+	make all 
 
 world::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \

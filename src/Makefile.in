@@ -2,7 +2,7 @@ SHELL = /bin/sh
 
 include ../Makefile.incl
 
-SCIDIRS = zblas zcalelm Newstack  Parse Functions mexlib Gtk2 \
+SCIDIRS = zblas zcalelm Newstack interp Functions mexlib Gtk2 \
 	system graphics menusX gd gtksci gzvt2 modules gobjects types types-test \
 	randlib cdf 
 
