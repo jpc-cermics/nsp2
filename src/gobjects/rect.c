@@ -8,7 +8,7 @@
 
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
-#include "../zcalelm/convert.h"
+#include "nsp/matutil.h"
 #include <nsp/graphics/Graphics.h>
 
 /* graphic rectangle 

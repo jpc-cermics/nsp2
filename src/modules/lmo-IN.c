@@ -10,7 +10,7 @@
 #include "nsp/object.h"
 #include "nsp/stack.h"
 #include "nsp/mod-in.h" 
-#include "../zcalelm/convert.h" 
+#include "nsp/matutil.h" 
 
 /*********************************************************************
  * Interface for Lmo (List of mmodules)

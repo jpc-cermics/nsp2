@@ -12,7 +12,7 @@
 
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
-#include "../zcalelm/convert.h"
+#include "nsp/matutil.h"
 
 /*
  * NspMod inherits from NspObject 
