@@ -41,7 +41,7 @@ int C2F(plot2d1)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
   update_frame_bounds(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
-  if (nsp_gengine1.get_driver()=='R') 
+  if (nsp_gengine->scale->get_driver()=='R') 
     store_Plot1(Xgc,xf,x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /** Allocation **/

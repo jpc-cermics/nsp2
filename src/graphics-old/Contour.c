@@ -154,7 +154,7 @@ int C2F(contour)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer 
   integer N[3],i;
   double xbox[8],ybox[8],zbox[8];
 
-  if (nsp_gengine1.get_driver()=='R')  store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
+  if (nsp_gengine->scale->get_driver()=='R')  store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
 
   switch (flag[0])
     {
@@ -260,7 +260,7 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
   update_frame_bounds(Xgc,1,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
   /** If Record is on **/
-  if (nsp_gengine1.get_driver()=='R' && strcmp(name,"contour2")==0 ) 
+  if (nsp_gengine->scale->get_driver()=='R' && strcmp(name,"contour2")==0 ) 
     store_Contour2D(Xgc,x,y,z,n1,n2,flagnz,nz,zz,style,strflag,legend,brect,aaint);
 
   zmin=(double) Mini(z,*n1*(*n2)); 

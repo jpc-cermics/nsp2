@@ -69,7 +69,7 @@ int C2F(plot2d)(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char 
   
   update_frame_bounds(Xgc,0,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
-  if (nsp_gengine1.get_driver()=='R') 
+  if (nsp_gengine->scale->get_driver()=='R') 
     store_Plot1(Xgc,"gnn",x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /* Allocation */
@@ -112,7 +112,7 @@ int C2F(xgrid)(BCG *Xgc, int *style)
   double pas;
   int pat;
   /* Recording command */
-  if (nsp_gengine1.get_driver()=='R') store_Grid(Xgc,style);
+  if (nsp_gengine->scale->get_driver()=='R') store_Grid(Xgc,style);
   /* changes dash style if necessary */
   pat = nsp_gengine->xset_pattern(Xgc,*style);
   /** Get current scale **/
@@ -356,17 +356,17 @@ void update_frame_bounds(BCG *Xgc,
       char driver[4];
       /* Redraw previous graphics with new Scale */
       integer ww;
-      nsp_gengine1.get_driver_name(driver);
+      nsp_gengine->scale->get_driver_name(driver);
       if (strcmp("Rec",driver) != 0) 
 	{
 	  Scistring("Auto rescale only works with the rec driver\n" );
 	  return;
 	}
       ww = nsp_gengine->xget_curwin();
-      nsp_gengine1.set_driver("X11");
+      nsp_gengine->scale->set_driver("X11");
       nsp_gengine->clearwindow(Xgc);
       tape_replay_new_scale_1(Xgc,ww,flag,aaint,FRect);
-     nsp_gengine1.set_driver(driver);
+     nsp_gengine->scale->set_driver(driver);
     }
 }
  

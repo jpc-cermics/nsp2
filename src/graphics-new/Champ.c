@@ -69,7 +69,7 @@ static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, doubl
 
   update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
   /* Storing values if using the Record driver */
-  if (nsp_gengine1.get_driver()=='R') 
+  if (nsp_gengine->scale->get_driver()=='R') 
     {
       if (strcmp(name,"champ")==0)
 	store_Champ(Xgc,x,y,fx,fy,n1,n2,strflag,brect,arfact);

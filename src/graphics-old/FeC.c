@@ -53,7 +53,7 @@ int C2F(fec)(BCG *Xgc,double *x, double *y, double *triangles, double *func, int
   update_frame_bounds(Xgc,0,"gnn",x,y,&n1,Nnode,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
-  if (nsp_gengine1.get_driver()=='R') 
+  if (nsp_gengine->scale->get_driver()=='R') 
     /* added zminmax and colminmax (bruno) */
     store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax);
 

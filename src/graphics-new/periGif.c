@@ -176,7 +176,7 @@ void GetDriverName(char *DriverName)
      double *dv2;
      double *dv3;
      double *dv4;
-     nsp_gengine1.get_driver_name(DriverName, v2, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4);
+     nsp_gengine->scale->get_driver_name(DriverName, v2, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4);
 }
 
 void C2F(xendgraphicGif)(void)

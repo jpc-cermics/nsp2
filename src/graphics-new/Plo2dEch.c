@@ -273,30 +273,30 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
   SetWinhdc();
   SciMouseCapture();
 #endif 
- nsp_gengine1.set_driver("X11");
+ nsp_gengine->scale->set_driver("X11");
  nsp_gengine->xset_thickness(Xgc,th1);
  nsp_gengine->xset_dash(Xgc,1);
  nsp_gengine->xset_pattern(Xgc,fg);
  
   /** XXXXXX : a regler pour Win32 in = 6 **/
- nsp_gengine1.xset1_alufunction1(Xgc,6);
- nsp_gengine1.xclick_1(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
+ nsp_gengine->scale->xset1_alufunction1(Xgc,6);
+ nsp_gengine->scale->xclick_1(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
  x=x0;y=yy0;
  ibutton=-1;
  while ( ibutton == -1 ) 
    {
      /* dessin d'un rectangle */
      zoom_rect(Xgc,x0,yy0,x,y);
-     if ( pixmode == 1) nsp_gengine1.xset1_show(Xgc);
-     nsp_gengine1.xgetmouse_1(Xgc,"one",&ibutton,&xl, &yl,iwait,TRUE,FALSE,FALSE);
+     if ( pixmode == 1) nsp_gengine->scale->xset1_show(Xgc);
+     nsp_gengine->scale->xgetmouse_1(Xgc,"one",&ibutton,&xl, &yl,iwait,TRUE,FALSE,FALSE);
      /* effacement du rectangle */
      zoom_rect(Xgc,x0,yy0,x,y);
-     if ( pixmode == 1) nsp_gengine1.xset1_show(Xgc);
+     if ( pixmode == 1) nsp_gengine->scale->xset1_show(Xgc);
      x=xl;y=yl;
     }
 #ifndef WIN32
   /** XXXX */
- nsp_gengine1.xset1_alufunction1(Xgc,3);
+ nsp_gengine->scale->xset1_alufunction1(Xgc,3);
 #endif
   /* Back to the default driver which must be Rec and redraw the recorded
    * graphics with the new scales 
@@ -305,7 +305,7 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
   bbox[1]=Min(yy0,y);
   bbox[2]=Max(x0,x);
   bbox[3]=Max(yy0,y);
-  nsp_gengine1.xset1_alufunction1(Xgc,alumode);
+  nsp_gengine->scale->xset1_alufunction1(Xgc,alumode);
   nsp_gengine->xset_thickness(Xgc,th);
   nsp_gengine->xset_dash(Xgc,style);
   nsp_gengine->xset_pattern(Xgc,color);
@@ -326,7 +326,7 @@ void zoom(BCG *Xgc)
   int ww;
   flag[0] =1 ; flag[1]=0;
   ww= nsp_gengine->xget_curwin();
-  nsp_gengine1.get_driver_name(driver);
+  nsp_gengine->scale->get_driver_name(driver);
   if (strcmp("Rec",driver) != 0) 
     {
       Scistring("\n Use the Rec driver to zoom " );
@@ -336,7 +336,7 @@ void zoom(BCG *Xgc)
     {
       double bbox[4];
       zoom_get_rectangle(Xgc,bbox);
-      nsp_gengine1.set_driver(driver);
+      nsp_gengine->scale->set_driver(driver);
       nsp_gengine->clearwindow(Xgc);    
       tape_replay_new_scale(Xgc,ww,flag,aaint,bbox);
     }
@@ -346,7 +346,7 @@ void unzoom(BCG *Xgc)
 {
   char driver[4];
   int ww;
-  nsp_gengine1.get_driver_name(driver);
+  nsp_gengine->scale->get_driver_name(driver);
   if (strcmp("Rec",driver) != 0) 
     {
       Scistring("\n Use the Rec driver to unzoom " );
@@ -374,7 +374,7 @@ static void zoom_rect(BCG *Xgc,double x0,double yy0,double  x,double  y)
   int pat;
   pat = nsp_gengine->xset_pattern(Xgc,3);
 #endif
-  nsp_gengine1.drawrectangle_1(Xgc,rect);
+  nsp_gengine->scale->drawrectangle_1(Xgc,rect);
 #ifdef WIN32
    nsp_gengine->xset_pattern(Xgc,pat);
 #endif

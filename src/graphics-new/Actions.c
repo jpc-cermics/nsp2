@@ -14,7 +14,6 @@ static int scig_buzy = 0;
  * callback ( see jpc_SGraph.c ) for the XWindow version 
  */
 
-
 /**
  * sets a specific draw handler for a graphic window 
  * which is called by tape_replay. 
@@ -35,7 +34,6 @@ void reset_scig_handler(void)
 {
   scig_handler = scig_handler_none;
 }
-
 
 /**
  * sets a specific handler which is called on a delete event for window 
@@ -89,24 +87,14 @@ void scig_delete(int winid)
 void scig_replay(int win_num)
 {
   BCG *Xgc;
-  int cur;
-  char name[4];
   if ( scig_buzy  == 1 ) return ;
-  if ( window_list_search(win_num) == NULL) return;
+  if ( (Xgc= window_list_search(win_num)) == NULL) return;
+  if ( Xgc->record_flag != TRUE ) return ;
   scig_buzy =1;
-  nsp_gengine1.get_driver_name(name); /* */
-  if ( (nsp_gengine1.get_driver()) != 'R') nsp_gengine1.set_driver("Rec");
-  cur = nsp_gengine->xset_curwin(win_num,FALSE);
-
-  Xgc=check_graphic_window();
-  nsp_gengine->clearwindow(Xgc);    
-  /* XXXX scig_handler(win_num); */
-  nsp_gengine->tape_replay(Xgc,win_num);
-  nsp_gengine->xset_curwin(cur,FALSE);
-  nsp_gengine1.set_driver(name);
+  Xgc->graphic_engine->clearwindow(Xgc);    
+  Xgc->graphic_engine->tape_replay(Xgc,win_num);
   scig_buzy=0;
 }
-
 
 /**
  * scig_expose: 
@@ -120,30 +108,19 @@ void scig_replay(int win_num)
 void scig_expose(int win_num)
 {
   BCG *Xgc;
-  int cur,pix;
-  char name[4];
+  int pix;
   if ( scig_buzy  == 1 ) return ;
-  if ( window_list_search(win_num) == NULL) return;
+  if ( (Xgc= window_list_search(win_num)) == NULL) return;
   scig_buzy =1;
-  nsp_gengine1.get_driver_name(name);
-  cur = nsp_gengine->xset_curwin(win_num,FALSE);
-  Xgc=check_graphic_window();
-
-  pix = nsp_gengine->xget_pixmapOn(Xgc);
+  pix = Xgc->graphic_engine->xget_pixmapOn(Xgc);
   if ( pix == 0) 
     {
-      if ( (nsp_gengine1.get_driver()) != 'R')nsp_gengine1.set_driver("Rec");
-      nsp_gengine->clearwindow(Xgc);    
-      /* XXXX scig_handler(win_num); */
-      nsp_gengine->tape_replay(Xgc,win_num);
-      cur = nsp_gengine->xset_curwin(cur,FALSE);
-      nsp_gengine1.set_driver(name);
+      Xgc->graphic_engine->clearwindow(Xgc);    
+      Xgc->graphic_engine->tape_replay(Xgc,win_num);
     }
   else
     {
-      nsp_gengine->xset_show(Xgc);    
-      cur = nsp_gengine->xset_curwin(cur,FALSE);
-      nsp_gengine1.set_driver(name);
+      Xgc->graphic_engine->xset_show(Xgc);    
     }
   scig_buzy = 0;
 }
@@ -159,21 +136,12 @@ void scig_expose(int win_num)
 void scig_resize(int win_num)
 {
   BCG *Xgc;
-  int cur;
-  char name[4];
   if ( scig_buzy  == 1 ) return ;
-  if ( window_list_search(win_num) == NULL) return;
+  if ( (Xgc = window_list_search(win_num)) == NULL) return;
   scig_buzy =1;
-  nsp_gengine1.get_driver_name(name);
-  if ( (nsp_gengine1.get_driver()) !='R') nsp_gengine1.set_driver("Rec");
-  cur = nsp_gengine->xset_curwin(win_num,FALSE);
-  Xgc=check_graphic_window();
-  nsp_gengine->pixmap_resize(Xgc);
-  nsp_gengine->clearwindow(Xgc);    
-  /* XXXX scig_handler(win_num); */
-  nsp_gengine->tape_replay(Xgc,win_num);
-  cur = nsp_gengine->xset_curwin(cur,FALSE);
-  nsp_gengine1.set_driver(name);
+  Xgc->graphic_engine->pixmap_resize(Xgc);
+  Xgc->graphic_engine->clearwindow(Xgc);    
+  Xgc->graphic_engine->tape_replay(Xgc,win_num);
   scig_buzy = 0;
 }
 
@@ -188,23 +156,15 @@ void scig_resize(int win_num)
 void scig_resize_pixmap(int win_num)
 {
   BCG *Xgc;
-  int cur;
-  char name[4];
   if ( scig_buzy  == 1 ) return ;
-  if ( window_list_search(win_num) == NULL) return;
+  if ( (Xgc= window_list_search(win_num)) == NULL) return;
   scig_buzy =1;
-  nsp_gengine1.get_driver_name(name);
-  nsp_gengine1.set_driver("Int");
-  cur = nsp_gengine->xset_curwin(win_num,FALSE);
-  Xgc=check_graphic_window();
-  nsp_gengine->pixmap_resize(Xgc);
-  nsp_gengine->xset_curwin(cur,FALSE);
-  nsp_gengine1.set_driver(name);
+  Xgc->graphic_engine->pixmap_resize(Xgc);
   scig_buzy = 0;
 }
 
 /**
- * scig_resize_pixmap:
+ * scig_erase:
  * @win_num: graphic window number.
  * 
  * clears the graphic window @win_num and the associated 
@@ -214,20 +174,11 @@ void scig_resize_pixmap(int win_num)
 void  scig_erase(int win_num)
 {
   BCG *Xgc;
-  int cur;
-  char name[4];
   if ( scig_buzy  == 1 ) return ;
-  /* nothing to do if window does not exists */
-  if ( window_list_search(win_num) == NULL) return;
+  if ( (Xgc=window_list_search(win_num)) == NULL) return;
   scig_buzy =1;
-  nsp_gengine1.get_driver_name(name);
-  if ( (nsp_gengine1.get_driver()) !='R') nsp_gengine1.set_driver("Rec");
-  cur = nsp_gengine->xset_curwin(win_num,FALSE);
-  Xgc=check_graphic_window();
-  nsp_gengine->clearwindow(Xgc);
-  nsp_gengine->tape_clean_plots(Xgc,win_num);
-  nsp_gengine->xset_curwin(cur,FALSE);
-  nsp_gengine1.set_driver(name);
+  Xgc->graphic_engine->clearwindow(Xgc);
+  Xgc->graphic_engine->tape_clean_plots(Xgc,win_num);
   scig_buzy = 0;
 }
 
@@ -251,32 +202,34 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver)
   int zero=0,un=1;
   int cur, screenc;
   if ( scig_buzy  == 1 ) return ;
-  if ( window_list_search(win_num) == NULL) return;
+  if ((Xgc= window_list_search(win_num)) == NULL) return;
   scig_buzy =1;
-  nsp_gengine1.get_driver_name(name);
-  cur = nsp_gengine->xset_curwin(win_num,FALSE);
-  nsp_gengine1.set_driver(driver);
-  nsp_gengine->initgraphic(bufname,&win_num);
+  
+  Xgc->graphic_engine->scale->get_driver_name(name);
+  cur =Xgc->graphic_engine->xset_curwin(win_num,FALSE);
+  Xgc->graphic_engine->scale->set_driver(driver);
+
+  Xgc->graphic_engine->initgraphic(bufname,&win_num);
   if (colored==1) 
-    nsp_gengine->xset_usecolor(Xgc,un);
+    Xgc->graphic_engine->xset_usecolor(Xgc,un);
   else
-    nsp_gengine->xset_usecolor(Xgc,zero);
+    Xgc->graphic_engine->xset_usecolor(Xgc,zero);
   getcolordef(&screenc);
   /** we set the default screen color to the value of colored 
-    because we don't want that recorded events such as xset("default") could 
-    change the color status .
-    and we set the UseColorFlag to 1 not to replay xset("use color",..) events 
-    **/
+      because we don't want that recorded events such as xset("default") could 
+      change the color status .
+      and we set the UseColorFlag to 1 not to replay xset("use color",..) events 
+  **/
   setcolordef(colored);
   UseColorFlag(1);
   /* XXXX scig_handler(win_num); */
-  nsp_gengine->tape_replay(Xgc,win_num);
+  Xgc->graphic_engine->tape_replay(Xgc,win_num);
   /** back to default values **/
   UseColorFlag(0);
   setcolordef(screenc);
-  nsp_gengine->xend(Xgc);
-  nsp_gengine1.set_driver(name);
-  nsp_gengine->xset_curwin(cur,FALSE);
+  Xgc->graphic_engine->xend(Xgc);
+  Xgc->graphic_engine->scale->set_driver(name);
+  Xgc->graphic_engine->xset_curwin(cur,FALSE);
   /* to force a reset in the graphic scales */
   SwitchWindow(&cur);
   scig_buzy = 0;
@@ -303,26 +256,19 @@ void scig_export(char *fname, int iwin, int color, char *driver)
 void scig_2dzoom(int win_num)
 {
   BCG *Xgc;
-  char name[4];
   if ( scig_buzy  == 1 ) return ;
-  if ( window_list_search(win_num) == NULL) return;
+  if ( (Xgc=window_list_search(win_num)) == NULL) return;
   scig_buzy =1;
-  nsp_gengine1.get_driver_name(name);
-  if ( (nsp_gengine1.get_driver()) !='R') 
+  if ( Xgc->record_flag != TRUE ) 
     {
-      nsp_gengine->xinfo(Xgc,"Zoom works only with the Rec driver");
+      Xgc->graphic_engine->xinfo(Xgc,"Zoom works only with the Rec driver");
     }
   else 
     {
-      int cur = nsp_gengine->xset_curwin(win_num,FALSE);
-      Xgc=check_graphic_window();
       zoom(Xgc);
-      nsp_gengine->xset_curwin(cur,FALSE);
-      nsp_gengine1.set_driver(name);
     }
   scig_buzy = 0;
 }
-
 
 /**
  * scig_unzoom: 
@@ -334,23 +280,16 @@ void scig_2dzoom(int win_num)
 void   scig_unzoom(int win_num)
 {
   BCG *Xgc;
-  int cur;
-  char name[4];
   if ( scig_buzy  == 1 ) return ;
-  if ( window_list_search(win_num) == NULL) return;
+  if ( (Xgc = window_list_search(win_num)) == NULL) return;
   scig_buzy =1;
-  nsp_gengine1.get_driver_name(name);
-  if ( (nsp_gengine1.get_driver()) !='R') 
+  if ( Xgc->record_flag != TRUE ) 
     {
-      nsp_gengine->xinfo(Xgc,"UnZoom works only with the Rec driver ");
+      Xgc->graphic_engine->xinfo(Xgc,"UnZoom works only with the Rec driver ");
     }
   else 
     {
-      cur = nsp_gengine->xset_curwin(win_num,FALSE);
-      Xgc=check_graphic_window();
       unzoom(Xgc);
-      nsp_gengine->xset_curwin(cur,FALSE);
-      nsp_gengine1.set_driver(name);
     }
   scig_buzy = 0;
 }
@@ -367,23 +306,16 @@ void   scig_unzoom(int win_num)
 void scig_3drot(int win_num)
 {
   BCG *Xgc;
-  int cur;
-  char name[4];
   if ( scig_buzy  == 1 ) return ;
   scig_buzy =1;
-  if ( window_list_search(win_num) == NULL) return;
-  nsp_gengine1.get_driver_name(name);
-  if ( (nsp_gengine1.get_driver()) !='R') 
+  if ((Xgc= window_list_search(win_num)) == NULL) return;
+  if ( Xgc->record_flag != TRUE ) 
     {
-      nsp_gengine->xinfo(Xgc,"Rot3D works only with the Rec driver");
+      Xgc->graphic_engine->xinfo(Xgc,"Rot3D works only with the Rec driver");
     }
   else 
     {
-      cur = nsp_gengine->xset_curwin(win_num,FALSE);
-      Xgc=check_graphic_window();
       I3dRotation(Xgc);
-      nsp_gengine->xset_curwin(cur,FALSE);
-      nsp_gengine1.set_driver(name);
     }
   scig_buzy = 0;
 }
@@ -412,9 +344,8 @@ void scig_sel(int win_num)
 void scig_raise(int win_num)
 {
   BCG *Xgc;
-  nsp_gengine->xset_curwin(win_num,TRUE);
-  Xgc=check_graphic_window();
-  nsp_gengine->xselgraphic(Xgc);
+  if ((Xgc= window_list_search(win_num)) == NULL) return;
+  Xgc->graphic_engine->xselgraphic(Xgc);
 }
 
 /**
@@ -428,10 +359,15 @@ void scig_raise(int win_num)
 
 int scig_change(int win_num)
 {
-  
-  int cur = nsp_gengine->xget_curwin();
-  if ( cur != win_num) nsp_gengine->xset_curwin(win_num,TRUE);
-  return cur; 
+  BCG *Xgc = check_graphic_window();
+  if ( Xgc != NULL ) 
+    {
+      if ( Xgc->CurWindow != win_num) 
+	Xgc->graphic_engine->xset_curwin(win_num,TRUE);
+      return Xgc->CurWindow; 
+    }
+  else 
+    return -1; 
 }
 
 
@@ -450,10 +386,10 @@ void scig_loadsg(int win_num, char *filename)
   int cur;
   if ( scig_buzy  == 1 ) return ;
   scig_buzy =1;
-  cur = nsp_gengine->xset_curwin(win_num,FALSE);
+  cur = Xgc->graphic_engine->xset_curwin(win_num,FALSE);
   Xgc=check_graphic_window();
   tape_load(Xgc,filename);
-  nsp_gengine->xset_curwin(cur,FALSE);
+  Xgc->graphic_engine->xset_curwin(cur,FALSE);
   scig_buzy = 0;
 }
 

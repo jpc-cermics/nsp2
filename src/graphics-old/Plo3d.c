@@ -126,7 +126,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   static double zmin,zmax;
   integer i,j;
   /** If Record is on **/
-  if (nsp_gengine1.get_driver()=='R') 
+  if (nsp_gengine->scale->get_driver()=='R') 
     {
       if (strcmp(name,"plot3d")==0) 
 	store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
@@ -265,7 +265,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
   static double zmin,zmax;
   integer i;
   /** If Record is on **/
-  if (nsp_gengine1.get_driver()=='R') {
+  if (nsp_gengine->scale->get_driver()=='R') {
       if (strcmp(name,"fac3d")==0) 	
 	store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
       else if (strcmp(name,"fac3d1")==0) 	
@@ -533,7 +533,7 @@ int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, integer *n, double *t
   static integer *xm,*ym;
   int fg1;
   /** If Record is on **/
-  if (nsp_gengine1.get_driver()=='R') 
+  if (nsp_gengine->scale->get_driver()=='R') 
     store_Param3D(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
   style[0] = nsp_gengine->xget_dash(Xgc);
   if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
@@ -619,7 +619,7 @@ int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, integer *m, integer 
   static integer *xm,*ym;
   integer fg1,cur;
   /** If Record is on **/
-  if (nsp_gengine1.get_driver()=='R') 
+  if (nsp_gengine->scale->get_driver()=='R') 
     store_Param3D1(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
   style[0] = nsp_gengine->xget_dash(Xgc);
   if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
@@ -1281,7 +1281,7 @@ void I3dRotation(BCG *Xgc)
   yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
   pixmode = nsp_gengine->xget_pixmapOn(Xgc);
   alumode = nsp_gengine->xget_alufunction(Xgc);
-  nsp_gengine1.get_driver_name(driver);
+  nsp_gengine->scale->get_driver_name(driver);
   if (strcmp("Rec",driver) != 0) 
     {
       Scistring("\n Use the Rec driver for 3f Rotation " );
@@ -1294,12 +1294,12 @@ void I3dRotation(BCG *Xgc)
 #ifdef WIN32
       SetWinhdc();
       SciMouseCapture();
-     nsp_gengine1.set_driver("Int");
+     nsp_gengine->scale->set_driver("Int");
 #else
-     nsp_gengine1.set_driver("X11");
+     nsp_gengine->scale->set_driver("X11");
 #endif
-     if ( pixmode == 0 ) nsp_gengine1.xset1_alufunction1(Xgc,6);
-     nsp_gengine1.xclick_1(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
+     if ( pixmode == 0 ) nsp_gengine->scale->xset1_alufunction1(Xgc,6);
+     nsp_gengine->scale->xclick_1(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
      nsp_gengine->clearwindow(Xgc);
      theta=Xgc->scales->theta ;
      alpha=Xgc->scales->alpha ;
@@ -1315,10 +1315,10 @@ void I3dRotation(BCG *Xgc)
 	  /* dessin d'un rectangle */
 	  theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
 	  nsp_gengine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
-	  if ( pixmode == 1) nsp_gengine1.xset1_pixmapclear(Xgc);
+	  if ( pixmode == 1) nsp_gengine->scale->xset1_pixmapclear(Xgc);
 	  dbox(Xgc);
-	  if ( pixmode == 1) nsp_gengine1.xset1_show(Xgc);
-	  nsp_gengine1.xgetmouse_1(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
+	  if ( pixmode == 1) nsp_gengine->scale->xset1_show(Xgc);
+	  nsp_gengine->scale->xgetmouse_1(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
 	  /* effacement du rectangle */
 	  dbox(Xgc);
 	  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
@@ -1326,11 +1326,11 @@ void I3dRotation(BCG *Xgc)
 	  x=(xl-Xgc->scales->frect[0])*xx;
 	  y=(yl-Xgc->scales->frect[1])*yy;
 	}
-      if ( pixmode == 0) nsp_gengine1.xset1_alufunction1(Xgc,3);
-     nsp_gengine1.set_driver(driver);
+      if ( pixmode == 0) nsp_gengine->scale->xset1_alufunction1(Xgc,3);
+     nsp_gengine->scale->set_driver(driver);
      nsp_gengine->clearwindow(Xgc);
      ww=nsp_gengine->xget_curwin();
-     nsp_gengine1.xset1_alufunction1(Xgc,alumode);
+     nsp_gengine->scale->xset1_alufunction1(Xgc,alumode);
 #ifdef WIN32
       ReleaseWinHdc();
       SciMouseRelease();

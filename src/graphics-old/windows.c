@@ -665,7 +665,7 @@ void show_scales(BCG *Xgc)
 int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
 {
   static integer aaint[]={2,10,2,10};
-  if (nsp_gengine1.get_driver()=='R') store_Ech(Xgc,WRect,FRect,logscale);
+  if (nsp_gengine->scale->get_driver()=='R') store_Ech(Xgc,WRect,FRect,logscale);
   if (logscale[0]=='l') 
     {
       FRect[0]=log10(FRect[0]);
@@ -751,7 +751,7 @@ int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *l
 	  FRect[3]=log10(FRect[3]);
 	}
     }
-  if (nsp_gengine1.get_driver()=='R') store_NEch(Xgc,flag,WRect,ARect,FRect,logscale);
+  if (nsp_gengine->scale->get_driver()=='R') store_NEch(Xgc,flag,WRect,ARect,FRect,logscale);
   set_scale(Xgc,flag,WRect,FRect,NULL,logscale,ARect);
   return(0);
 }
