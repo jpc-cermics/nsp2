@@ -253,8 +253,10 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
        * But if all the previous graphics were performed the 
        *     same way redrawing is not usefull. 
        * FIXME: try to detect the last point
+       * FIXME: not a good idea since it will result in 
+       * many lots when replaying 
        */
-      redraw=1;
+      /* redraw=1; */
     }
 
   /* Warning: FRect must not be changed bellow 
@@ -267,7 +269,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
   if ( strflag[1] == '3' || strflag[1] == '4')
     {
       /* code by S. Mottelet 11/7/2000 */
-      double FRect1[4],WRect[4],ARect[4];
+      double WRect[4],ARect[4];
       char logscale[4];      
       int wdim[2];
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
@@ -328,11 +330,15 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
   /* switch strflag so as to use now FRect   */
   plot2d_strf_change('d',strflag);
 
-  if ( (int)strlen(strflag) >=2 && ( strflag[1]=='5' || strflag[1]=='6' ))
+  /* pretty axes */
+  if ( (int)strlen(strflag) >=2 && 
+       ( strflag[1]=='5' || strflag[1]=='6'))
     {
+      double FRect2[4];
+      int i;
+      for (i=0; i< 4 ;i++) FRect2[i]=FRect1[i];
       /* recherche automatique des bornes et graduations */
-      Gr_Rescale(&xf[1],FRect1,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
-      Gr_Rescale(&xf[1],FRect1,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
+      Gr_Rescale_new(&xf[1],FRect2,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
     }
   
   /* Update the current scale */

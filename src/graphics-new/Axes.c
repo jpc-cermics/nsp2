@@ -18,6 +18,7 @@ static double  x_convert (char xy_type,double x[] ,int i);
 static double  y_convert (char xy_type,double x[] ,int i);
 static void NumberFormat (char *str,int k,int a);
 static void aplotv1 (BCG *Xgc,char*);
+static void aplotv1_new(BCG *Xgc,char *strflag);
 static void aplotv2 (BCG *Xgc,char*);
 
 /*--------------------------------------------------------------
@@ -41,10 +42,13 @@ void axis_draw(BCG *Xgc,char *strflag)
       break;
     default :
       if ( strflag[1] == '5' || strflag[1] =='6' )
-	/* using auto rescale */
-	aplotv1(Xgc,strflag);
+	{
+	  aplotv1_new(Xgc,strflag);
+	}
       else
-	aplotv2(Xgc,strflag);
+	{
+	  aplotv2(Xgc,strflag);
+	}
       break;
     }
   Xgc->graphic_engine->xset_dash(Xgc,old_dash);
@@ -98,6 +102,8 @@ static void aplotv2(BCG *Xgc,char *strflag)
   Sci_Axis(Xgc,dir,'r',&x1,&nx,y,&ny,NULL,Xgc->scales->Waaint1[2],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
 }
 
+/* unused  */
+
 static void aplotv1(BCG *Xgc,char *strflag)
 {
   char dir = 'l';
@@ -139,6 +145,55 @@ static void aplotv1(BCG *Xgc,char *strflag)
   Sci_Axis(Xgc,dir,'i',&x1,&nx,Xgc->scales->ytics,&ny,NULL,Xgc->scales->Waaint1[2],
 	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
 }
+
+/* here we use frect to find the axes position 
+ * since given axis are not supposed to fit to frect boundaries 
+ *
+ */
+
+static void aplotv1_new(BCG *Xgc,char *strflag)
+{
+  /* we use */
+  char dir = 'l';
+  char c = (strlen(strflag) >= 3) ? strflag[2] : '1';
+  int nx,ny,seg=0;
+  int fontsize = -1 ,textcolor = -1 ,ticscolor = -1; /* default values */
+  double  x1,y1;
+  switch ( c ) 
+    { 
+    case '3' : /* right axis */ 
+      x1= Xgc->scales->frect[2];
+      y1= Xgc->scales->frect[1];
+      dir = 'r';
+      break;
+    case '4' : /* centred axis */
+      seg=1;
+      x1= (Xgc->scales->frect[0]+Xgc->scales->frect[2])/2.0;
+      y1= (Xgc->scales->frect[1]+Xgc->scales->frect[3])/2.0;
+      break ;
+    case '5': /* centred at (0,0) */
+      seg=1;
+      x1 = y1 = 0.0;
+      break;
+    case '1' : /* left axis */
+    default :
+      x1= Xgc->scales->frect[0];
+      y1= Xgc->scales->frect[1];
+      break;
+    }
+  if ( c != '4' && c != '5' )  
+    /** frame rectangle **/
+    Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
+  /** x-axis **/
+  ny=1,nx=4;
+  Sci_Axis(Xgc,'d','i',Xgc->scales->xtics,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],
+	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
+  /** y-axis **/
+  ny=4,nx=1;
+  Sci_Axis(Xgc,dir,'i',&x1,&nx,Xgc->scales->ytics,&ny,NULL,Xgc->scales->Waaint1[2],
+	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
+}
+
 
 
 /*-------------------------------------------------------------

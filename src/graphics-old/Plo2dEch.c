@@ -354,16 +354,16 @@ void unzoom(BCG *Xgc)
     }
 }
 
-/**
-  Win32, warning when using xor mode
-  colors are changed and black is turned to white
-  so we must use an other pattern than the black one
-  inside dbox
-  **/
 
 static void zoom_rect(BCG *Xgc,double x0,double yy0,double  x,double  y)
 {
   double rect[4]= {Min(x0,x),Max(yy0,y),Abs(x0-x),Abs(yy0-y)};
+  /*
+   *  Win32, warning when using xor mode
+   *  colors are changed and black is turned to white
+   *  so we must use an other pattern than the black one
+   *  inside dbox
+   **/
 #ifdef WIN32
   int pat;
   pat = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -375,11 +375,10 @@ static void zoom_rect(BCG *Xgc,double x0,double yy0,double  x,double  y)
 }
 
 /* 
- *  FRectI=[xmin,ymin,xmax,ymax] est transforme de 
- *  facon a avoir une graduation simple et reguliere 
- *  Xdec,Ydec,xnax,ynax
- *  caracterisant cette graduation 
- *  (voir les fonctions qui suivent )
+ * here we compute new axis graduation 
+ * and changing FRect (enlarge) to fit the new 
+ * graduation. 
+ * This function is obsolete 
  */
 
 void Gr_Rescale(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax, int *ynax)
@@ -403,6 +402,93 @@ void Gr_Rescale(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax, int
     }
   else
     {
+      Ydec[0]=inint(FRectI[1]);Ydec[1]=inint(FRectI[3]);Ydec[2]=0;
+    }
+}
+
+/*
+ * here we compute new axis graduation 
+ * but without changing FRect 
+ * the computed graduation do not start at FRect boundaries 
+ */
+
+
+void Gr_Rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax, int *ynax)
+{
+  int i;
+  double FRectO[4];
+  double xtest;
+  if (logf[0] == 'n') 
+    {
+      if ( FRectI[0]*FRectI[2] < 0 ) 
+	{
+	  double xmin,xmax;
+	  /* if zero is inside frect we try to find a graduation with zero inside */
+	  xmin = Min(FRectI[0],-FRectI[2]);
+	  xmax = Max(FRectI[2],-FRectI[0]);
+	  graduate(&xmin,&xmax,FRectO,FRectO+2,xnax,xnax+1,Xdec,Xdec+1,Xdec+2);
+	}
+      else
+	{
+	  graduate(FRectI,FRectI+2,FRectO,FRectO+2,xnax,xnax+1,Xdec,Xdec+1,Xdec+2);
+	}
+      /* we do not change FRectI but change Xdec to eliminate points outside FRectI
+       */
+      i=0;
+      while (1) { 
+	xtest= exp10((double)Xdec[2])*(Xdec[0] + i*(Xdec[1]-Xdec[0])/xnax[1]); 
+	if ( xtest >= FRectI[0] ) break;
+	i++;
+      }
+      Xdec[0] += i*(Xdec[1]-Xdec[0])/xnax[1];
+      xnax[1] -= i;
+      /* eliminate extra values at the end  */
+      i=0;
+      while (1) 
+	{
+	  xtest = exp10((double)Xdec[2])*(Xdec[0]+(xnax[1]-i)*(Xdec[1]-Xdec[0])/xnax[1]);
+	  if ( xtest <=  FRectI[2] ) break;
+	  i++;
+	}
+      Xdec[1] -= i*(Xdec[1]-Xdec[0])/xnax[1];
+      xnax[1] -= i;
+    }
+  else
+    {
+      /* logscale */
+      Xdec[0]=inint(FRectI[0]);
+      Xdec[1]=inint(FRectI[2]);
+      Xdec[2]=0;
+    }
+  if (logf[1] == 'n') 
+    {
+      graduate(FRectI+1,FRectI+3,FRectO+1,FRectO+3,ynax,ynax+1,Ydec,Ydec+1,Ydec+2);
+      /* we do not change FRectI but change Xdec to eliminate points outside FRectI
+       */
+      i=0;
+      while (1)
+	{
+	  xtest = exp10(Ydec[2])*(Ydec[0] + i*(Ydec[1]-Ydec[0])/ynax[1]);
+	  if ( xtest >= FRectI[1] ) break;
+	  i++;
+	}
+      Ydec[0] += i*(Ydec[1]-Ydec[0])/ynax[1];
+      ynax[1] -= i;
+      /* eliminate extra values at the end  */
+      i=0;
+      while (1)
+	{
+	  xtest = exp10(Ydec[2])*(Ydec[0]+(ynax[1]-i)*(Ydec[1]-Ydec[0])/ynax[1]);
+	  if ( xtest <=  FRectI[3] ) break;
+	  i++;
+	}
+      Ydec[1] -= i*(Ydec[1]-Ydec[0])/ynax[1];
+      ynax[1] -= i;
+
+    }
+  else
+    {
+      /* logscale */
       Ydec[0]=inint(FRectI[1]);Ydec[1]=inint(FRectI[3]);Ydec[2]=0;
     }
 }

@@ -287,7 +287,11 @@ static void graduate1(double *xmi, double *xma, double *xi, double *xa, int *np1
 	      ,*kminr,*kmaxr,*ar,npr); */
       *np2= npr;
       if ( *np2 <= 20 ) 
-	break;
+	{
+	  /* try to have 0 in the graduation if present */
+	  if ( ~( *xmi == -*xma  && *np2 % 2 == 0 ))
+	    break;
+	}
       else
 	b--;
     }
