@@ -266,6 +266,8 @@ NspObject *nsp_object_copy_and_name(char *name,NspObject *O);
 
 /* from Obj.c */
 
+int nsp_object_xdr_save(NspFile *F, NspObject *O);
+NspObject *nsp_object_xdr_load(NspFile *F); 
 extern void nsp_object_destroy(NspObject **O); 
 extern void nsp_void_object_destroy(NspObject **O); 
 extern NspObject *nsp_object_copy(NspObject *O); 
