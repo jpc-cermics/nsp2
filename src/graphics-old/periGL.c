@@ -3663,6 +3663,7 @@ static void nsp_ogl_set_view(BCG *Xgc)
     }
   else
     {
+      double xs,ys;
       double dist=10.0;
       double theta = Xgc->scales->theta;
       double alpha = Xgc->scales->alpha;
@@ -3677,7 +3678,7 @@ static void nsp_ogl_set_view(BCG *Xgc)
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity ();
       /* middle of englobing box */
-
+      
       gluLookAt (cx+dist*cost*sina,
 		 cy+dist*sint*sina,
 		 cz+dist*cosa,
@@ -3686,12 +3687,23 @@ static void nsp_ogl_set_view(BCG *Xgc)
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
       /* 
-      aspect = ((float) Xgc->private->drawing->allocation.width) /
-      Xgc->private->drawing->allocation.height;
-      gluPerspective(45.0, aspect, Xgc->private->camera.near, Xgc->private->camera.far);
-      */
-      glOrtho(Xgc->scales->frect[0],Xgc->scales->frect[2],
-	      Xgc->scales->frect[1],Xgc->scales->frect[3],
+       * aspect = ((float) Xgc->private->drawing->allocation.width) /
+       * Xgc->private->drawing->allocation.height;
+       * gluPerspective(45.0, aspect, Xgc->private->camera.near, Xgc->private->camera.far);
+       */
+      /*
+       * 
+       * 
+       */
+      
+
+      xs=(Xgc->scales->frect[2]-Xgc->scales->frect[0])/(1 - Xgc->scales->axis[0] - Xgc->scales->axis[1]);
+      ys=(Xgc->scales->frect[3]-Xgc->scales->frect[1])/(1 - Xgc->scales->axis[2] - Xgc->scales->axis[3]);
+
+      glOrtho(Xgc->scales->frect[0]-xs*Xgc->scales->axis[0],
+	      Xgc->scales->frect[2]+xs*Xgc->scales->axis[1],
+	      Xgc->scales->frect[1]-ys*Xgc->scales->axis[3],
+	      Xgc->scales->frect[3]+ys*Xgc->scales->axis[2],
 	      -2000.0,2000.0);
       /* Xgc->scales->zfrect[0],Xgc->scales->zfrect[1]); */
       glMatrixMode(GL_MODELVIEW);
