@@ -2517,6 +2517,17 @@ int nsp_mat_iand(NspMatrix *A, NspMatrix *B)
   return(OK);
 }
 
+/**
+ * nsp_mat_iandu:
+ * @A: 
+ * @res: 
+ * 
+ * logical and of all the entries of A 
+ * casted to integer 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
+
 int nsp_mat_iandu(NspMatrix *A, unsigned int *res)
 {
   int i ;
@@ -2548,6 +2559,39 @@ int nsp_mat_ior(NspMatrix *A, NspMatrix *B)
   return(OK);
 }
 
+/*
+ * A= A << i  
+ *      >> i 
+ */
+
+int nsp_mat_ishift(NspMatrix *A,int shift,char dir)
+{
+  int i ;
+  if ( A->rc_type == 'i' )
+    {
+      Scierror("ishit: argument should be real\n");
+      return(FAIL);
+    }
+  if ( dir == 'r' )
+    for ( i = 0 ; i < A->mn ; i++) 
+      A->R[i] = ((int) aint(A->R[i])) >> shift; 
+  else 
+    for ( i = 0 ; i < A->mn ; i++) 
+      A->R[i] = ((int) aint(A->R[i])) << shift; 
+  return(OK);
+}
+
+/**
+ * nsp_mat_ioru:
+ * @A: 
+ * @res: 
+ * 
+ * logical or of the entries of @A 
+ * casted to integer 
+ * 
+ * Return value: 
+ **/
+
 int nsp_mat_ioru(NspMatrix *A, unsigned int *res)
 {
   int i ;
@@ -2563,7 +2607,7 @@ int nsp_mat_ioru(NspMatrix *A, unsigned int *res)
 }
 
 /*
- *nsp_mat_conj: A=real(A)-i*Imag(A)
+ * nsp_mat_conj: A=real(A)-i*Imag(A)
  * A is changed  only if imaginary 
  */
 

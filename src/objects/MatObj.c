@@ -3103,6 +3103,42 @@ int_mxior (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+/*
+ * A=ishift(A,n,['r'|'l'])
+ */
+
+int int_mxishift (Stack stack, int rhs, int opt, int lhs)
+{
+  int shift;
+  char dir='l';
+  NspMatrix *A;
+  CheckRhs(2,3);
+  CheckLhs(1, 1);
+  if ((A = GetRealMatCopy (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  NSP_OBJECT (A)->ret_pos = 1;
+  if (A->mn == 0)
+    {
+      NSP_OBJECT (A)->ret_pos = 1;
+      return 1;
+    }
+  if (GetScalarInt (stack, 2, &shift) == FAIL) 
+    return RET_BUG;
+  if (rhs >= 3)
+    {
+      int rep;
+      char *shift_options1[] = { "r", "l", NULL };
+      if ((rep = GetStringInArray (stack, 3, shift_options1, 1)) == -1)
+	return RET_BUG;
+      dir = shift_options1[rep][0];
+    }
+  if ( nsp_mat_ishift(A,shift,dir) == FAIL)
+    return RET_BUG;
+  return 1;
+}
+
+
 /*
  *nsp_mat_conj: A=real(A)-i*Imag(A)
  * A is changed  if imaginary not changed if real 
@@ -3707,6 +3743,7 @@ static OpTab Matrix_func[] = {
   {"polar", int_mxpolar},
   {"iand", int_mxiand},
   {"ior", int_mxior},
+  {"ishift", int_mxishift},
   {"conj_m", int_mxconj},
   {"dh", int_mxpowel},
   {"dsl", int_mxdivel},

@@ -261,6 +261,7 @@ extern int nsp_mat_iand(NspMatrix *A, NspMatrix *B);
 extern int nsp_mat_iandu(NspMatrix *A, unsigned int *res); 
 extern int nsp_mat_ior(NspMatrix *A, NspMatrix *B); 
 extern int nsp_mat_ioru(NspMatrix *A, unsigned int *res); 
+extern int nsp_mat_ishift(NspMatrix *A,int shift,char dir);
 extern void nsp_mat_conj(NspMatrix *A); 
 extern void nsp_mat_cos(NspMatrix *A); 
 extern void nsp_mat_cosh(NspMatrix *A); 

@@ -1,11 +1,24 @@
-/*------------------------------------------------------------------------
- *    Graphic library
- *    Copyright (C) 2001 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- --------------------------------------------------------------------------*/
-
-/*--------------------------------------------------------------------------
- *    Gtk  Driver 
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Graphic library
+ * jpc@cermics.enpc.fr
+ * Gtk driver 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -41,7 +54,7 @@
 #define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc); 
 
 
-/** Global variables to deal with X11 **/
+/* Global variables to deal with X11 **/
 
 static unsigned long maxcol; /* FIXME XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
@@ -51,7 +64,7 @@ static void nsp_gtk_invalidate(BCG *Xgc);
  * the current graphic data structure 
  *------------------------------------------------------------------*/
 
-/** functions **/
+/* functions **/
 
 static void nsp_gtk_set_color(BCG *Xgc,int col);
 static void LoadFonts(void), LoadSymbFonts(void);
@@ -664,7 +677,7 @@ static int xget_recording(BCG *Xgc)
 
 static void xset_recording(BCG *Xgc, int val)
 {
-  Xgc->record_flag =  val;
+  Xgc->record_flag = (val == 0 ) ? FALSE : TRUE;
 }
 /** to get the window upper-left point coordinates on the screen  **/
 
@@ -1373,7 +1386,6 @@ static void sedeco(int flag)
   set_default_colormap_flag = flag;
 }
 
-
 /* set_default_colormap is called when raising a window for the first 
  * time by xset('window',...) or by getting back to default by 
  * xset('default',...) 
@@ -1533,7 +1545,7 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val)
     }
 }
 
-/** set and get the number of the background or foreground */
+/* set and get the number of the background or foreground */
 
 static void xset_background(BCG *Xgc,int num)
 { 

@@ -88,9 +88,9 @@ static int nsp_draw_matrix_zmoy(BCG *Xgc,double *x, double *y, double *z, int nx
  * 
  */
 
-#if 0 
+#if 1
 /* FIXME */
-extern void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n);
+extern void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag);
 extern Gengine GL_gengine;
 #endif 
 
@@ -240,7 +240,7 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
      *    into its differents zones (polygons) by the function PaintTriangle   
      */
 
-#if 0     
+#if 1     
     if (  Xgc->graphic_engine == &GL_gengine ) 
       {
 	for ( i = 0 ; i < nx -1 ; i++ )
@@ -254,7 +254,7 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
 		  xp[k]= xm[pos[k]];
 		  yp[k]= ym[pos[k]];
 		}
-	      fillpolyline2D_shade(Xgc,xp,yp,colors,4);
+	      fillpolyline2D_shade(Xgc,xp,yp,colors,4,1);
 	    }
       }
     else 
@@ -530,10 +530,8 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
      ********************************************************************/
     
     int nz, whiteid; 
-    
-    double *zlevel, dz, zmin, zmax, fxy[3], sx[3], sy[3];
-    int *zone, *fill, kp, perm[3], zxy[3], color_min, color_max;
-    int ii[3];
+    double *zlevel, dz, zmin, zmax, sx[3], sy[3];
+    int *zone, *fill, zxy[3], color_min, color_max;
 
     /* choice between zmin and zmax given by the user or computed
      * with the min and max z values. 
@@ -625,34 +623,60 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
 	zone[i] = floor( (func[i] - zmin)/dz ) + 1;
     };
     /* 
-       2/ loop of the triangles : each triangle is finally decomposed 
-          into its differents zones (polygons) by the function PaintTriangle   
-    */
-    for ( j = 0 ; j < *Ntr ; j++) {
-
-      /* retrieve node numbers and functions values */
-      for ( k = 0 ; k < 3 ; k++ ) {
-	ii[k] = (int) triangles[j+(*Ntr)*(k+1)] - 1;
-	zxy[k] = zone[ii[k]];
-      }
-
-      /* get the permutation perm so as zxy[perm] is sorted */
-      PermutOfSort(zxy, perm); 
-
-      /* apply the permutation to get the triangle 's vertices
-         in increasing zone (zxy[0] <= zxy[1] <= zxy[2]) */
-      for ( k = 0 ; k < 3 ; k++ ) {
-	kp = perm[k];
-	sx[k]  = xm[ii[kp]];   sy[k]  = ym[ii[kp]];
-	fxy[k] = func[ii[kp]]; zxy[k] = zone[ii[kp]];
+     *  2/ loop on the triangles : each triangle is finally decomposed 
+     *     into its differents zones (polygons) by the function PaintTriangle   
+     */
+#if 0 
+    for ( j = 0 ; j < *Ntr ; j++) 
+      {
+	int ii[3],isx[3],isy[3]; 
+	/* retrieve node numbers and functions values */
+	for ( k = 0 ; k < 3 ; k++ ) {
+	  ii[k] = (int) triangles[j+(*Ntr)*(k+1)] - 1;
+	  zxy[k] = zone[ii[k]];
+	  isx[k]  = xm[ii[k]];   
+	  isy[k]  = ym[ii[k]];
+	  /* using ii for colors */
+	  ii[k]= - fill[zxy[k]]; 
+	};
+	if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
+	  {
+	    fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
+	  }     
+	/* call the "painting" function */
+	if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
       };
+#else 
+    for ( j = 0 ; j < *Ntr ; j++) 
+      {
+	int ii[3], perm[3],kp;
+	double fxy[3];
+	
 
-      /* call the "painting" function */
-      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+	/* retrieve node numbers and functions values */
+	for ( k = 0 ; k < 3 ; k++ ) {
+	  ii[k] = (int) triangles[j+(*Ntr)*(k+1)] - 1;
+	  zxy[k] = zone[ii[k]];
+	}
 
-      if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
+	/* get the permutation perm so as zxy[perm] is sorted */
+	PermutOfSort(zxy, perm); 
 
-    };
+	/* apply the permutation to get the triangle 's vertices
+	   in increasing zone (zxy[0] <= zxy[1] <= zxy[2]) */
+	for ( k = 0 ; k < 3 ; k++ ) {
+	  kp = perm[k];
+	  sx[k]  = xm[ii[kp]];   sy[k]  = ym[ii[kp]];
+	  fxy[k] = func[ii[kp]]; zxy[k] = zone[ii[kp]];
+	};
+
+	/* call the "painting" function */
+	PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+
+	if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
+	
+      };
+#endif 
   }
 
   /********************************************************************
@@ -678,6 +702,14 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
  * functions used by the modified code (Bruno 01/02/2001)
  ********************************************************************/
 
+/**
+ * PermutOfSort:
+ * @tab: 
+ * @perm: 
+ * 
+ * 
+ **/
+
 static void PermutOfSort (const int *tab, int *perm)
 {
   /* 
@@ -698,25 +730,28 @@ static void PermutOfSort (const int *tab, int *perm)
 }
 
 
+/**
+ * PaintTriangle:
+ * @Xgc: 
+ * @sx, @sy : vertices coordinates of a triangle (Pi=(sx[i],sy[i]) i=0,1,2)
+ * @fxy    : fxy[i], (i=0,1,2) value of an affine function on the vertex Pi
+ * @zxy    : zone of Pi : zxy[i]=j if  zlevel[j-1] <= fxy[i] < zlevel[j]
+ * @zlevel : a (0..nz) vector given the boundaries for color filling
+ * @fill   : fill[j] is the color pattern associated with zone[j] 
+ *           when fill[j]=0 the zone is not painted 
+ * 
+ * decomposes the triangle into its different
+ * zones (which gives polygones) and send them to the
+ * graphic driver. This is something like the shade function
+ * (see Plo3d.c) but a little different as in shade
+ * a color is directly associated with each vertex.
+ *
+ **/
+
+
 static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill)
 {
-  /* 
-     arguments :
-     ---------
-     sx, sy : vertices coordinates of a triangle (Pi=(sx[i],sy[i]) i=0,1,2)
-     fxy    : fxy[i], (i=0,1,2) value of an affine function on the vertex Pi
-     zxy    : zone of Pi : zxy[i]=j if  zlevel[j-1] <= fxy[i] < zlevel[j]
-     zlevel : a (0..nz) vector given the boundaries for color filling
-     fill   : fill[j] is the color pattern associated with zone[j] 
-              when fill[j]=0 the zone is not painted 
-     purpose : this function decompose the triangle into its different
-     -------   zones (which gives polygones) and send them to the
-               graphic driver. This is something like the shade function
-               (see Plo3d.c) but a little different as in shade
-               a color is directly associated with each vertex.
-  */
-
   int nb0, edge, izone, color;
   int nr, resx[5],resy[5];
   int xEdge2, yEdge2, xEdge, yEdge; 

@@ -1160,7 +1160,7 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
       GValue value = { 0 };
       if ( Ocheckname(NthObj(i),NVOID) ) 
 	{
-	  Scierror("Error: properties mus have names \n");
+	  Scierror("Error: properties must have names \n");
 	  Scierror("\t%s of function %s\n",ArgPosition(rhs),stack.fname);
 	  return RET_BUG;
 	}

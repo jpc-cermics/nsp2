@@ -1907,7 +1907,7 @@ NspGdkRectangle *gdkrectangle_copy(NspGdkRectangle *self)
 } 
 */ 
 
-#line 2136 "gdk.override"
+#line 2144 "gdk.override"
 static int
 _wrap_gdkrectangle_new(Stack stack,int rhs,int opt,int lhs)
 {
@@ -1949,7 +1949,7 @@ _wrap_gdkrectangle_new(Stack stack,int rhs,int opt,int lhs)
 #line 1950 "gdk.c"
 
 
-#line 2176 "gdk.override"
+#line 2184 "gdk.override"
 static int
 _wrap_gdk_rectangle_intersect(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -1966,7 +1966,7 @@ _wrap_gdk_rectangle_intersect(NspGObject *self, Stack stack,int rhs,int opt,int 
 #line 1967 "gdk.c"
 
 
-#line 2191 "gdk.override"
+#line 2199 "gdk.override"
 static int
 _wrap_gdk_rectangle_union(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -2247,7 +2247,7 @@ _wrap_gdkcolormap_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2061 "gdk.override"
+#line 2069 "gdk.override"
 static int
 _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -2364,7 +2364,7 @@ static int _wrap_gdk_color_black(NspGdkColormap *self,Stack stack,int rhs,int op
   return 1;
 }
 
-#line 2126 "gdk.override"
+#line 2134 "gdk.override"
 static int
 _wrap_gdk_color_alloc(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
@@ -2723,7 +2723,7 @@ _wrap_gdk_device_get_history(NspGObject *self, Stack stack,int rhs,int opt,int l
   return pyevents;
   */ 
   Scierror("To be done XXXX ");
-  return 0;
+  return RET_BUG;
 }
 #line 2729 "gdk.c"
 
@@ -3992,7 +3992,7 @@ _wrap_gdk_draw_rgb_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 			       rowstride, xdith, ydith);
   */
   Scierror("To be done XXXXXXXXX");
-  return 0;
+  return RET_BUG;
 }
 #line 3998 "gdk.c"
 
@@ -4035,7 +4035,7 @@ _wrap_gdk_draw_rgb_32_image(NspGObject *self, Stack stack,int rhs,int opt,int lh
 				  rowstride, xdith, ydith);
   */
   Scierror("To be done XXXXXX ");  
-  return 0;
+  return RET_BUG;
 }
 #line 4041 "gdk.c"
 
@@ -4077,7 +4077,7 @@ _wrap_gdk_draw_gray_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   return 0;
   */
   Scierror("To be done XXXXXX ");
-  return 0;
+  return RET_BUG;
 }
 #line 4083 "gdk.c"
 
@@ -4516,7 +4516,7 @@ _wrap_gdk_property_change(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     g_free(data);
     */
   Scierror("To be done XXXXXX ");
-  return 0;
+  return RET_BUG;
 }
 #line 4522 "gdk.c"
 
@@ -7482,57 +7482,65 @@ static int
 _wrap_gdk_pixbuf_save(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
 {
-  /* static char *kwlist[] = {"filename", "type", "options", NULL};*/
-  /* 
-     gchar *filename, *type, **option_keys = NULL, **option_values = NULL;
-  NspObject *nsp_options = NULL;
+  NspObject *object;
+  char *filename,*type,*opt_key,*opt_value;
+  int i,len;
+  char **option_keys,**option_values;
   GError *error = NULL;
-
-  if (GetArgs(stack,rhs,opt,T,
-	      / * "ss|O!:GdkPixbuf.save" * /
-	      &filename, &type,
-	      &nsp_type_dict, &nsp_options) == FAIL )
-    return RET_BUG;
-
-  if (nsp_options != NULL) {
-    guint len;
-    gint pos = 0, i = 0;
-    NspObject *key, *value;
-	
-    len = NspDict_Size(nsp_options);
-    option_keys = g_new(gchar *, len + 1);
-    option_values = g_new(gchar *, len + 1);
-
-    while (NspDict_Next(nsp_options, &pos, &key, &value)) {
-      if (!NspString_Check(key) || !NspString_Check(value)) {
-	g_free(option_keys);
-	g_free(option_values);
-	Scierror(
-		 "keys and values must be strings");
-	return RET_BUG;
-      }
-
-      option_keys[i]   = NspString_AsString(key);
-      option_values[i] = NspString_AsString(value);
-      i++;
+  /* static char *kwlist[] = {"filename", "type", "options", NULL};*/
+  GdkPixbuf *pixbuf;
+  pixbuf = GDK_PIXBUF(self->obj);
+  CheckStdRhs(2,2);
+  if ((filename = GetString(stack,1)) == (char*)0) return RET_BUG;
+  if ((type = GetString(stack,2)) == (char*)0) return RET_BUG;
+  len = opt;
+  option_keys = g_new(gchar *, len + 1);
+  option_values = g_new(gchar *, len + 1);
+  for ( i = 3 ; i <= rhs ; i++) 
+    {
+      NspObject * option;
+      if ((option =nsp_get_object(stack,i)) == NULLOBJ ) return RET_BUG;
+      opt_key = nsp_object_get_name(option);
+      if ( IsString(option))
+	{
+	  opt_value = ((NspSMatrix *) object)->S[0];
+	}
+      else 
+	{
+	  Scierror("%s option value is not a string !\n",opt_key);
+	  g_free(option_keys);
+	  g_free(option_values);
+	  return RET_BUG;
+	}
+      if ((option_keys[i] = NewString(opt_key)) == NULLSTRING)
+	{
+	  g_free(option_keys);
+	  g_free(option_values);
+	  return RET_BUG;
+	}
+      if ((option_values[i] = NewString(opt_value)) == NULLSTRING)
+	{
+	  g_free(option_keys);
+	  g_free(option_values);
+	  return RET_BUG;
+	}
     }
-	
-    option_keys[len] = NULL;
-    option_values[len] = NULL;
-  }
+  option_keys[len] = NULL;
+  option_values[len] = NULL;
   gdk_pixbuf_savev(GDK_PIXBUF(self->obj), filename, type,
 		   option_keys, option_values, &error);
-	
+  /* 
+  if (nspg_error_check(&error)) return RET_BUG;
+  */
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n",stack.fname);
+    return RET_BUG;
+  }
   g_free(option_keys);
   g_free(option_values);
- 
-  if (nspg_error_check(&error))
-    return RET_BUG;
-  */
-  Scierror("To be done XXXXXXX ");
   return 0;
 }
-#line 7536 "gdk.c"
+#line 7544 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_add_alpha(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -7714,7 +7722,7 @@ _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
   /* array->strides[0] = gdk_pixbuf_get_rowstride(pixbuf);*/
   return (NspObject *)array;
 }
-#line 7718 "gdk.c"
+#line 7726 "gdk.c"
 static AttrTab gdkpixbuf_attrs[] = {
   { "pixel_array", (attr_get_function *)_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { NULL,NULL,NULL,NULL },
@@ -8709,7 +8717,7 @@ NspGdkVisual *gdkvisual_copy(NspGdkVisual *self)
 } 
 */ 
 
-#line 2210 "gdk.override"
+#line 2218 "gdk.override"
 static char *_visual[]={ "best_depth", "best_type", "get_system", NULL };
 static int
 _wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
@@ -8788,7 +8796,7 @@ _wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
     }
   return RET_BUG;
 }
-#line 8792 "gdk.c"
+#line 8800 "gdk.c"
 
 
 static NspMethods *gdkvisual_get_methods(void) { return NULL;};
@@ -9916,9 +9924,9 @@ _wrap_gdk_threads_enter(Stack stack,int rhs,int opt,int lhs)
   Nsp_END_ALLOW_THREADS;
   */
   Scierror("To be done XXXXX ");
-  return 0;
+  return RET_BUG;
 }
-#line 9922 "gdk.c"
+#line 9930 "gdk.c"
 
 
 int _wrap_gdk_threads_leave(Stack stack, int rhs, int opt, int lhs)
@@ -10007,7 +10015,7 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
   return 0;
 #endif
 }
-#line 10011 "gdk.c"
+#line 10019 "gdk.c"
 
 
 int _wrap_gdk_colormap_get_system(Stack stack, int rhs, int opt, int lhs)
@@ -10048,7 +10056,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 10052 "gdk.c"
+#line 10060 "gdk.c"
 
 
 int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs)
@@ -10162,7 +10170,7 @@ _wrap_gdk_fontset_load( Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 10166 "gdk.c"
+#line 10174 "gdk.c"
 
 
 int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs)
@@ -10431,7 +10439,7 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
     gdk_bitmap_unref(mask);
   */
 }
-#line 10435 "gdk.c"
+#line 10443 "gdk.c"
 
 
 int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
@@ -10738,7 +10746,7 @@ int _wrap_gdk_pixbuf_new_from_file(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2314 "gdk.override"
+#line 2322 "gdk.override"
 static int
 _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
 {
@@ -10760,7 +10768,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 10764 "gdk.c"
+#line 10772 "gdk.c"
 
 
 int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs)
@@ -10809,7 +10817,7 @@ int _wrap_gdk_screen_get_default(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2290 "gdk.override"
+#line 2298 "gdk.override"
 
 int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
 {
@@ -10832,7 +10840,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 10836 "gdk.c"
+#line 10844 "gdk.c"
 
 
 int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs)
@@ -11069,7 +11077,7 @@ gdk_register_classes(NspObject *d)
   #endif
 * /
 
-#line 11073 "gdk.c"
+#line 11081 "gdk.c"
   nspg_register_boxed(d, "Event", GDK_TYPE_EVENT, &PyGdkEvent_Type);
   nspg_register_boxed(d, "Font", GDK_TYPE_FONT, &PyGdkFont_Type);
   nspg_register_boxed(d, "Color", GDK_TYPE_COLOR, &PyGdkColor_Type);

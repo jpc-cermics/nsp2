@@ -1,10 +1,24 @@
-/*------------------------------------------------------------------------
- *    Graphic library
- *    Copyright (C) 2001 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- --------------------------------------------------------------------------*/
-/*--------------------------------------------------------------------------
- *    Gtk  Driver 
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Graphic library
+ * jpc@cermics.enpc.fr
+ * Cairo driver 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -22,27 +36,51 @@
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
 
-/** Global variables to deal with X11 **/
+/*
+ * 
+ *  Xgc->record_flag == TRUE if we are recording graphics 
+ *  Xgc->private->in_expose == TRUE if the call is from an expose_event 
+ *  Xgc->CurPixmapStatus == 0 if we are not using an extra pixmap 
+ *  Xgc->private->draw = TRUE we have something to draw 
+ * 
+ */ 
 
-static unsigned long maxcol; /* XXXXX : à revoir */
+#define DRAW_CHECK_OLD  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
+   {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
+
+/*
+ * we always draw in a drawable which is a pixmap but the expose event is asynchronous
+ */
+
+#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc); 
+
+/* Global variables to deal with X11 **/
+
+static unsigned long maxcol; /* FIXME XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
+static void nsp_gtk_invalidate(BCG *Xgc);
 
 /*------------------------------------------------------------------
  * the current graphic data structure 
  *------------------------------------------------------------------*/
 
-/** functions **/
+/* functions **/
 
-static void set_c(BCG *Xgc,int col);
+static void nsp_gtk_set_color(BCG *Xgc,int col);
 static void LoadFonts(void), LoadSymbFonts(void);
-static void DrawMark(BCG *Xgc,int *x, int *y); 
 static void loadfamily_n(char *name, int *j);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
 static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr);
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
-
 static void scig_deconnect_handlers(BCG *winxgc);
+static void DrawMark(BCG *Xgc,int *x, int *y);
+
+static void gdk_draw_text_rot(GdkDrawable *drawable, GdkFont *font,  GdkGC *gc,
+			      int x, int y, int maxx, int maxy, const gchar *text,
+			      gint text_length, double angle);
+
+static void force_affichage(BCG *Xgc);
 
 /* utility for points allocations */
 
@@ -51,31 +89,7 @@ static int GtkReallocVector (int n);
 static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
 
 void create_graphic_window_menu( BCG *dd);
-void start_sci_gtk();
-
-/* Allocating colors in BCG struct */
-
-#define PIXEL_FROM_RGB(r,g,b) gdk_rgb_xpixel_from_rgb((r << 16)|(g << 8)|(b))
-#define PIXEL_FROM_CMAP(i) PIXEL_FROM_RGB(Xgc->private->Red[i],Xgc->private->Green[i],Xgc->private->Blue[i])
-
-static void DispStringAngle( BCG *xgc,int x0, int yy0, char *string, double angle);
-
-static int XgcAllocColors( BCG *xgc, int m)
-{
-  /* don't forget black and white */
-  int mm = m + 2;
-  if ( (!(xgc->private->Red = (guchar *) MALLOC(mm*sizeof(guchar))))
-       || (!(xgc->private->Green = (guchar *) MALLOC(mm*sizeof(guchar))))
-       || (!(xgc->private->Blue = (guchar *) MALLOC(mm*sizeof(guchar)))) ) 
-    {
-      Sciprintf("XgcAllocColors: unable to alloc\n");
-      FREE(xgc->private->Red);
-      FREE(xgc->private->Green);
-      FREE(xgc->private->Blue);
-      return 0;
-    }
-  return 1;
-}
+extern void start_sci_gtk();
 
 /*---------------------------------------------------------
  * Gtk graphic engine 
@@ -84,43 +98,72 @@ static int XgcAllocColors( BCG *xgc, int m)
 
 Gengine * nsp_gengine = &Gtk_gengine ;
 
+/* 
+ * force expose events to be executed 
+ */
+
+static void force_affichage(BCG *Xgc)
+{
+  /* Xgc->private->resize = 1; */
+  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+}
+/* 
+ * force an expose_event with draw set to TRUE
+ */
+
+static void force_redraw(BCG *Xgc)
+{
+  nsp_gtk_invalidate(Xgc);
+  Xgc->private->draw = TRUE;
+  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+}
+
 /*---------------------------------------------------------
- * Pixmap routines: 
+ * Next routine are used to deal with the extra_pixmap 
+ * which is used when xset('pixmap',1) is activated at 
+ * scilab level. 
  *---------------------------------------------------------*/
 
 static void xset_pixmapclear(BCG *Xgc)
 {
-  pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+  if ( Xgc->CurPixmapStatus == 1) 
+    {
+      pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+    }
 }
 
 static void xset_show(BCG *Xgc)
 {
-  if ( Xgc->private->Cdrawable != Xgc->private->drawing->window) 
+  if ( Xgc->CurPixmapStatus == 1) 
     {
-      /* copy pixmap Xgc->private->Cdrawable to  Xgc->private->drawing->window
-       * and expose 
-       */
-      gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg);
+      /* we copy the extra_pixmap to the window and to the backing store pixmap */
+      /* gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg); */
       /* drawing to the window and to the backing store pixmap */
-      gdk_draw_pixmap(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->Cdrawable,0,0,
-		      0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
-      gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->Cdrawable,0,0,0,0,
-		      Xgc->CWindowWidth, Xgc->CWindowHeight);
-      /* force expose */
-      /* gtk_widget_queue_draw(Xgc->private->drawing);*/
+      gdk_draw_pixmap(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
+		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+      gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
+		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+    }
+  else
+    {
+      /* see the comments at the begining */
+      force_affichage(Xgc);
     }
 }
 
 /*
  * Pixmap clear: clear the extra private->pixmap associated to the window 
- * using the window background 
+ * using the background color.
  */
 
 static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 {
-  gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg);
-  gdk_draw_rectangle(Xgc->private->Cdrawable,Xgc->private->stdgc, TRUE,
-		     0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+  if ( Xgc->CurPixmapStatus == 1) 
+    {
+      gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg);
+      gdk_draw_rectangle(Xgc->private->extra_pixmap,Xgc->private->stdgc, TRUE,
+			 0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+    }
 }
 
 /* 
@@ -130,7 +173,7 @@ static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 
 static void pixmap_resize(BCG *Xgc)
 {
-  if (Xgc->private->Cdrawable != (GdkDrawable *) Xgc->private->drawing->window)
+  if ( Xgc->CurPixmapStatus == 1) 
     {
       int x= Xgc->CWindowWidth; 
       int y= Xgc->CWindowHeight;
@@ -141,11 +184,12 @@ static void pixmap_resize(BCG *Xgc)
 	  xinfo(Xgc,"No more space to create Pixmaps");
 	  return;
 	}
-      gdk_pixmap_unref((GdkPixmap *) Xgc->private->Cdrawable);
-      Xgc->private->Cdrawable = temp;
+      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
+      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
       pixmap_clear_rect(Xgc,0,0,x,y);
     }
 } 
+
 
 /*-----------------------------------------------------
  * General routines callable from Scilab 
@@ -159,16 +203,12 @@ static void pixmap_resize(BCG *Xgc)
 static void xselgraphic(BCG *Xgc)
 { 
   /* Test not really usefull: see sciwin in matdes.f */
-  if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL);
+  if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL,'e');
   gdk_window_show(Xgc->private->window->window);
   gdk_flush();
 }
 
 /** End of graphic (do nothing)  **/
-
-static void xendgraphic(void)
-{
-} 
 
 static void xend(BCG *Xgc)
 {
@@ -180,12 +220,12 @@ static void xend(BCG *Xgc)
 static void clearwindow(BCG *Xgc)
 {
   /* we use the private->stdgc graphic context */
+  DRAW_CHECK;
+  /* XXX
   gdk_gc_set_foreground(Xgc->private->stdgc, &Xgc->private->gcol_bg);
-  gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->stdgc, TRUE, 0, 0,
+  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->stdgc, TRUE, 0, 0,
 		     Xgc->CWindowWidth, Xgc->CWindowHeight);
-  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-    gdk_draw_rectangle(Xgc->private->pixmap, Xgc->private->stdgc, TRUE, 0, 0,
-		       Xgc->CWindowWidth, Xgc->CWindowHeight);
+  */
 }
 
 /* generates a pause, in seconds */
@@ -333,7 +373,7 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
   return TRUE;
 }
 
-static void xset_winprotect( BCG *gc, int val) { gc->private->protect=val;}
+static void xset_win_protect( BCG *gc, int val) { gc->private->protect=val;}
 
 /* ici normalement on peut pas arreter la destruction */
 
@@ -347,11 +387,11 @@ static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
     {
       info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
       info.button = -100;
-      DeleteSGWin(gc->CurWindow);
+      delete_window(gc,gc->CurWindow);
       gtk_main_quit();
     }
   else 
-    DeleteSGWin(gc->CurWindow);
+    delete_window(gc,gc->CurWindow);
 }
 
 /* ici avec la valeur renvoyée on peut décider de detruire ou pas */
@@ -367,11 +407,11 @@ static gboolean sci_delete_window (GtkWidget *widget, GdkEventKey *event,  BCG *
     {
       info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
       info.button = -100;
-      DeleteSGWin(gc->CurWindow);
+      delete_window(gc,gc->CurWindow);
       gtk_main_quit();
     }
   else 
-    DeleteSGWin(gc->CurWindow);
+    delete_window(gc,gc->CurWindow);
   return FALSE;
 }
 
@@ -527,7 +567,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
 #endif 
   GTK_locator_info rec_info ; 
   int win;
-  if ( Xgc == (BCG *) 0 || Xgc->private->Cdrawable == NULL ) {
+  if ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) {
     *ibutton = -100;     return;
   }
   win = Xgc->CurWindow;
@@ -583,7 +623,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
   /* take care of recursive calls i.e restore info  */
   info = rec_info ; 
 
-  if ( Xgc != (BCG *) 0 && Xgc->private->Cdrawable != NULL ) {
+  if ( Xgc != (BCG *) 0 && Xgc->private->drawing != NULL ) {
     gdk_window_set_cursor (Xgc->private->drawing->window,Xgc->private->ccursor);
   }
 
@@ -593,34 +633,28 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
  * clear a rectangle zone 
  *******************************************************/
 
-typedef void (*r_c) (BCG *Xgc,int x,int y,int w,int h);
-static void RectangleClear   (BCG *Xgc,int x,int y,int w,int h,int clipflag,r_c f );
-static void R_clear  (BCG *Xgc,int x,int y,int w,int h);
-
-static void R_clear(BCG *Xgc,int x, int y, int w, int h)
+static void cleararea(BCG *Xgc, int x, int y, int w, int h)
 {
-  gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, TRUE,x,y,w,h);
-  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-    gdk_draw_rectangle(Xgc->private->pixmap, Xgc->private->wgc, TRUE,x,y,w,h);
-}
-
-static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_c F)
-{
+  int clipflag = 0;
   /* switch to a clear gc */
   int cur_alu = Xgc->CurDrawFunction;
   int clear = 0 ; /* 0 is the Xclear alufunction */;
+  DRAW_CHECK;
+
   if ( cur_alu != clear ) xset_alufunction1(Xgc,clear);
   if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
     {
       static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
       gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
     }
-  (*F)(Xgc,x,y,w,h);
+  /* XXXX 
+  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,x,y,w,h);
+  */
   if ( cur_alu != clear )
     xset_alufunction1(Xgc,cur_alu);   /* back to current value */ 
   if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
     {
-      /* restor clip */
+      /* restore clip */
       GdkRectangle clip_rect = { Xgc->CurClipRegion[0],
 				 Xgc->CurClipRegion[1],
 				 Xgc->CurClipRegion[2],
@@ -629,10 +663,7 @@ static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_
     }
 }
 
-static void cleararea(BCG *Xgc, int x, int y, int w, int h)
-{
-  RectangleClear(Xgc,x,y,w,h,0,R_clear);
-}
+
 
 
 
@@ -664,16 +695,10 @@ static void xget_windowpos(BCG *Xgc,int *x,int *y)
 
 static void xset_windowpos(BCG *Xgc, int x, int y)
 {
-  if (Xgc == NULL || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL);
+  if (Xgc == NULL || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL,'e');
   gdk_window_move (Xgc->private->window->window, x,y);
 }
 
-/** To get the drawbox  window size : used by periGif **/
-
-static void getwindowdim(BCG *Xgc,int *verbose, int *x, int *narg, double *dummy)
-{   
-  xget_windowdim(Xgc,x,x+1);
-}
 
 /** To get the drawbox  window size **/
 
@@ -749,6 +774,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	  Xgc->CWindowWidth = x;
 	  Xgc->CWindowHeight = y;
 	  Xgc->private->resize = 1;/* be sure to put this */
+	  /* FIXME: NULL to be changed */
 	  expose_event( Xgc->private->drawing,NULL, Xgc);
 	}
     }
@@ -817,7 +843,7 @@ static int xset_curwin(int intnum,int set_menu)
   if ( bcgk == (BCG *) 0 ) 
     {
       /** First entry or no more graphic window **/
-      initgraphic("",&intnum,NULL,NULL,NULL,NULL);
+      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e');
       /** send info to menu **/
       new = window_list_get_first();
       old = -1;
@@ -829,9 +855,9 @@ static int xset_curwin(int intnum,int set_menu)
 	  BCG *new= window_list_win_to_front(intnum);
 	  if ( new == NULL) 
 	    {
-	      initgraphic("",&intnum,NULL,NULL,NULL,NULL);
+	      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e');
+	      new = window_list_get_first();
 	    }
-	  new = window_list_get_first();
 	  old =  bcgk->CurWindow ;
 	}
       else
@@ -870,20 +896,53 @@ static int xget_curwin(void)
 
 static void xset_clip(BCG *Xgc,int x[])
 {
+  GtkCairo *gtkcairo;
+  cairo_t *cairo;
   int i;
-  GdkRectangle clip_rect ={x[0],x[1],x[2],x[3]};
+  /* clip_rect ={x[0],x[1],x[2],x[3]}= {x,y,w,h} */
   Xgc->ClipRegionSet = 1;
   for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
-  gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
+  cairo = gtk_cairo_get_cairo (gtkcairo);
+  cairo_new_path (cairo);
+  cairo_move_to (cairo, x[0],x[1]);
+  cairo_rel_line_to (cairo, x[2],0.0);
+  cairo_rel_line_to (cairo, 0.0, - x[3]);
+  cairo_rel_line_to (cairo, -x[2],0.0);
+  cairo_rel_line_to (cairo, 0.0, x[3]);
+  cairo_close_path (cairo);
+  cairo_clip (cairo);
+  /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+   */
+
 }
 
 /** unset clip zone **/
 
 static void xset_unclip(BCG *Xgc)
 {
-  static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
+  GtkCairo *gtkcairo;
+  cairo_t *cairo;
+  double x[]={0,0,int16max,  int16max};
+  if (! GTK_WIDGET_REALIZED(Xgc->private->cairo_drawing))
+    {
+      Scierror("Not realized !\n");
+    }
+  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
+  cairo = gtk_cairo_get_cairo (gtkcairo);
   Xgc->ClipRegionSet = 0;
-  gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+  /* 
+   * gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+   */
+  /* how to remove a clip region ? FIXME */
+  cairo_init_clip(cairo);  
+  cairo_move_to (cairo, x[0],x[1]);
+  cairo_rel_line_to (cairo, x[2],0.0);
+  cairo_rel_line_to (cairo, 0.0, - x[3]);
+  cairo_rel_line_to (cairo, -x[2],0.0);
+  cairo_rel_line_to (cairo, 0.0, x[3]);
+  cairo_close_path (cairo);
+  cairo_clip (cairo);
 }
 
 /** Get the boundaries of the current clip zone **/
@@ -952,6 +1011,7 @@ static struct alinfo {
     {"GXset" , GDK_SET," 1 "}
   };
 
+/*
 static void idfromname(char *name1, int *num)
 {
   int i;
@@ -977,6 +1037,7 @@ static void xset_alufunction(BCG *Xgc,char *string)
       gdk_gc_set_function(Xgc->private->wgc, AluStruc_[value].id);
     }
 }
+*/
 
 static void xset_alufunction1(BCG *Xgc,int num)
 {   
@@ -1005,9 +1066,10 @@ static void xset_alufunction1(BCG *Xgc,int num)
     }
   if ( value == GDK_XOR  && Xgc->CurColorStatus == 1 )
     {
-      /** the way colors are computed changes if we are in Xor mode **/
-      /** so we force here the computation of current color  **/
-      set_c(Xgc,Xgc->CurColor);
+      /* the way colors are computed changes if we are in Xor mode 
+       * so we force here the computation of current color  
+       */
+      nsp_gtk_set_color(Xgc,Xgc->CurColor);
     }
 }
 
@@ -1039,10 +1101,9 @@ static int xget_thickness(BCG *Xgc)
   return Xgc->CurLineWidth ;
 }
 
-/** To set grey level for filing areas **/
-/** from black (*num =0 ) to white     **/
-
-/* Pixmap  Tabpix_[GREYNUMBER]; */
+/* To set grey level for filing areas 
+ * from black (*num =0 ) to white    
+ * Pixmap  Tabpix_[GREYNUMBER]; 
 
 static char grey0[GREYNUMBER][8]={
   {(char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00},
@@ -1064,8 +1125,6 @@ static char grey0[GREYNUMBER][8]={
   {(char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff},
 };
 
-/*  XXXXX 
-
 void CreatePatterns(whitepixel, blackpixel)
      Pixel whitepixel;
      Pixel blackpixel;
@@ -1084,7 +1143,7 @@ static int  xset_pattern(BCG *Xgc,int num)
   int old = xget_pattern(Xgc);
   if (Xgc->CurColorStatus == 1) 
     {
-      set_c(Xgc,num-1);
+      nsp_gtk_set_color(Xgc,num-1);
     }
   else 
     {
@@ -1157,14 +1216,6 @@ static int xget_dash(BCG *Xgc)
 
 /* old version of xset_dash retained for compatibility */
 
-static void xset_dash_or_color(BCG *Xgc,int value)
-{
-  if ( Xgc->CurColorStatus == 1) 
-    set_c(Xgc,value-1);
-  else
-    xset_dash(Xgc,value);
-}
-
 static void xset_dash_and_color(BCG *Xgc,int dash,int color)
 {
   xset_dash(Xgc,dash);
@@ -1190,24 +1241,43 @@ static void xset_line_style(BCG *Xgc,int value)
 
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
+  GtkCairo *gtkcairo;
+  cairo_t *cairo;
+  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
+  cairo = gtk_cairo_get_cairo (gtkcairo);
+
   if ( value == 0) 
     {
-      gdk_gc_set_line_attributes(Xgc->private->wgc,
-				 (Xgc->CurLineWidth <= 1) ? 0 : Xgc->CurLineWidth,
-				 GDK_LINE_SOLID,GDK_CAP_BUTT, GDK_JOIN_ROUND);
+      /* FIXME: proper width in double ? */
+      cairo_set_line_width(cairo,(Xgc->CurLineWidth <= 1) ? 1 : Xgc->CurLineWidth*0.5);
+      cairo_set_line_cap(cairo, CAIRO_LINE_CAP_BUTT);
+      cairo_set_line_join (cairo, CAIRO_LINE_JOIN_ROUND);
+      /* remove dash */
+      cairo_set_dash (cairo,NULL,0,0.0);
+      /* 
+       * gdk_gc_set_line_attributes(Xgc->private->wgc,
+       *		 (Xgc->CurLineWidth <= 1) ? 0 : Xgc->CurLineWidth,
+       *			 GDK_LINE_SOLID,GDK_CAP_BUTT, GDK_JOIN_ROUND);
+       */
     }
   else 
     {
-      gint8 buffdash[18];
+      double buffdash[18];
       int i;
       for ( i =0 ; i < *n ; i++) buffdash[i]=xx[i];
+      cairo_set_dash (cairo,buffdash,*n,0.0);
+      cairo_set_line_width(cairo,(Xgc->CurLineWidth <= 1) ? 1 : Xgc->CurLineWidth*0.5);
+      cairo_set_line_cap(cairo, CAIRO_LINE_CAP_BUTT);
+      cairo_set_line_join (cairo, CAIRO_LINE_JOIN_ROUND);
+      /* 
       gdk_gc_set_dashes(Xgc->private->wgc, 0, buffdash, *n);
       gdk_gc_set_line_attributes(Xgc->private->wgc, 
 				 (Xgc->CurLineWidth == 0 ) ? 1 : Xgc->CurLineWidth,
 				 GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
+      */
     }
 }
-
+/*
 static void xget_dashstyle(BCG *Xgc,int *n,int *value)
 {
   int i ;
@@ -1220,15 +1290,11 @@ static void xget_dashstyle(BCG *Xgc,int *n,int *value)
       for (i = 0 ; i < value[1]; i++) value[i+2]=DashTab[*value-2][i];
     }
 }
+*/
 
-
-/** to get the current dash-style **/
-/* old version of xget_dash retained for compatibility */
-
-static int xget_dash_or_color(BCG *Xgc)
-{
-  return ( Xgc->CurColorStatus ==1) ?  Xgc->CurColor + 1 :  xget_dash(Xgc);
-}
+/* to get the current dash-style 
+ * old version of xget_dash retained for compatibility 
+ */
 
 static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
 {
@@ -1303,7 +1369,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       else 
 	{
 	  xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
-	  Xgc->private->Cdrawable = temp;
+	  Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
 	  Xgc->CurPixmapStatus = 1;
 	  pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 	}
@@ -1312,8 +1378,9 @@ static void xset_pixmapOn(BCG *Xgc,int num)
     {
       /** I remove the extra pixmap to the window **/
       xinfo(Xgc," ");
-      gdk_pixmap_unref((GdkPixmap *) Xgc->private->Cdrawable);
-      Xgc->private->Cdrawable = (GdkDrawable *)Xgc->private->drawing->window;
+      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
+      Xgc->private->extra_pixmap = NULL;
+      Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
       Xgc->CurPixmapStatus = 0; 
     }
 }
@@ -1373,37 +1440,18 @@ static void sedeco(int flag)
   set_default_colormap_flag = flag;
 }
 
-
 /* set_default_colormap is called when raising a window for the first 
  * time by xset('window',...) or by getting back to default by 
  * xset('default',...) 
  */
 
-#define SETCOLOR(i,r,g,b)  Xgc->private->Red[i]=r;Xgc->private->Green[i]=g;Xgc->private->Blue[i]=b ; 
-
-static void set_colormap_constants(BCG *Xgc,int m)
-{
-  /* Black */
-  SETCOLOR(m, 0,0,0);
-  /* White */
-  SETCOLOR(m+1, 255,255,255);
-  Xgc->Numcolors = m;
-  Xgc->IDLastPattern = m - 1;
-  Xgc->CmapFlag = 0;
-  Xgc->NumForeground = m;
-  Xgc->NumBackground = m + 1;
-  xset_usecolor(Xgc,1);
-  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
-  xset_pattern(Xgc,Xgc->NumForeground+1);
-  xset_foreground(Xgc,Xgc->NumForeground+1);
-  xset_background(Xgc,Xgc->NumForeground+2);
-}
+static int XgcAllocColors( BCG *xgc, int m);
+static void set_colormap_constants(BCG *Xgc,int m);
 
 static void xset_default_colormap(BCG *Xgc)
 {
-  int i;
-  guchar *r, *g, *b;
-  int m;
+  int i,m ;
+  GdkColor *colors_old;
   /*  we don't want to set the default colormap at window creation 
    *  if the scilab command was xset("colormap"); 
    */
@@ -1415,19 +1463,29 @@ static void xset_default_colormap(BCG *Xgc)
   }
   m = DEFAULTNUMCOLORS;
   /* Save old color vectors */
-  r = Xgc->private->Red;  g = Xgc->private->Green;  b = Xgc->private->Blue;
-
+  colors_old = Xgc->private->colors;
   if (!XgcAllocColors(Xgc,m)) {
-    Xgc->private->Red = r;    Xgc->private->Green = g;    Xgc->private->Blue = b;
+    Xgc->private->colors =     colors_old ;
     return;
   }
-  /* Getting RGB values */
-  for (i = 0; i < m; i++) {
-    SETCOLOR(i, default_colors[3*i], default_colors[3*i+1], default_colors[3*i+2]);
-  }
 
+  /* get pixel values for the colors we let gtk do the job 
+   * an other way to fix a pixel value but which could only work for X 
+   * if rgb are coded as guchar
+   * gdk_rgb_xpixel_from_rgb((r << 16)|(g << 8)|(b))
+   */
+
+  if ( Xgc->private->drawing == NULL ) return;
+  if ( Xgc->private->colormap == NULL ) 
+    Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
+  for (i = 0; i < m; i++) {
+    Xgc->private->colors[i].red = (default_colors[3*i] << 8);
+    Xgc->private->colors[i].green = (default_colors[3*i+1] << 8);
+    Xgc->private->colors[i].blue = (default_colors[3*i+2] << 8);
+    gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
+  }
   set_colormap_constants(Xgc,m);
-  FREE(r); FREE(g); FREE(b);
+  FREE(colors_old);
 }
 
 /* Setting the colormap 
@@ -1440,40 +1498,89 @@ static void xset_default_colormap(BCG *Xgc)
 
 static void xset_colormap(BCG *Xgc,int m,int n,double *a)
 {
-  int i;
-  guchar *r, *g, *b;
+  int i ;
+  GdkColor *colors_old;
   /* 2 colors reserved for black and white */
   if ( n != 3 || m  < 0 || m > maxcol - 2) {
     Scierror("Colormap must be a m x 3 array with m <= %ld\n", maxcol-2);
     return;
   }
-  /* Save old color vectors */
-  r = Xgc->private->Red;
-  g = Xgc->private->Green;
-  b = Xgc->private->Blue;
 
+  colors_old = Xgc->private->colors;
   if (!XgcAllocColors(Xgc,m)) {
-    Xgc->private->Red = r;
-    Xgc->private->Green = g;
-    Xgc->private->Blue = b;
+    Xgc->private->colors =     colors_old ;
     return;
   }
-  /* Checking RGB values */
+
+  if ( Xgc->private->drawing == NULL ) return;
+  if ( Xgc->private->colormap == NULL ) 
+    Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
+
   for (i = 0; i < m; i++) {
-    if (a[i] < 0 || a[i] > 1 || a[i+m] < 0 || a[i+m] > 1 ||
-	a[i+2*m] < 0 || a[i+2*m]> 1) {
-      Sciprintf("RGB values must be between 0 and 1\n");
-      Xgc->private->Red = r;
-      Xgc->private->Green = g;
-      Xgc->private->Blue = b;
-      return;
-    }
-    SETCOLOR(i, (guchar)  (a[i]*255), (guchar)(a[i+m]*255),(guchar) (a[i+2*m]*255));
+  }
+
+  /* Checking RGB values */
+  for (i = 0; i < m; i++) 
+    {
+      if (a[i] < 0 || a[i] > 1 || a[i+m] < 0 || a[i+m] > 1 ||
+	  a[i+2*m] < 0 || a[i+2*m]> 1) 
+	{
+	  Sciprintf("RGB values must be between 0 and 1\n");
+	  FREE(Xgc->private->colors);
+	  Xgc->private->colors = colors_old ;
+	  return;
+	}
+      Xgc->private->colors[i].red = (guint16)  (a[i]*65535);
+      Xgc->private->colors[i].green = (guint16)(a[i+m]*65535);
+      Xgc->private->colors[i].blue = (guint16) (a[i+2*m]*65535);
+      gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
   }
   set_colormap_constants(Xgc,m);
-  FREE(r); FREE(g); FREE(b);
+  FREE(colors_old);
 }
 
+/* utility function */
+
+static int XgcAllocColors( BCG *xgc, int m)
+{
+  /* don't forget black and white */
+  int mm = m + 2;
+  if ( ! ( xgc->private->colors = MALLOC(mm*sizeof(GdkColor))))
+    {
+      Sciprintf("memory exhausted: unable to alloc an array of GdkColors\n");
+      FREE(xgc->private->colors);
+      return 0;
+    }
+  return 1;
+}
+
+static void set_colormap_constants(BCG *Xgc,int m)
+{
+  /* Black */
+  if ( Xgc->private->drawing == NULL ) return;
+  if ( Xgc->private->colormap == NULL ) 
+    Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
+  Xgc->private->colors[m].red = 0; 
+  Xgc->private->colors[m].green = 0;
+  Xgc->private->colors[m].blue = 0;
+  gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m]);      
+  /* White */
+  Xgc->private->colors[m+1].red = 65535; 
+  Xgc->private->colors[m+1].green = 65535; 
+  Xgc->private->colors[m+1].blue = 65535; 
+  gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m+1]);      
+  /* constants */
+  Xgc->Numcolors = m;
+  Xgc->IDLastPattern = m - 1;
+  Xgc->CmapFlag = 0;
+  Xgc->NumForeground = m;
+  Xgc->NumBackground = m + 1;
+  xset_usecolor(Xgc,1);
+  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
+  xset_pattern(Xgc,Xgc->NumForeground+1);
+  xset_foreground(Xgc,Xgc->NumForeground+1);
+  xset_background(Xgc,Xgc->NumForeground+2);
+}
 
 /* getting the colormap */
 
@@ -1485,34 +1592,33 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val)
   if ( val != NULL )
     {
       for (i = 0; i < m; i++) {
-	val[i] = (double)Xgc->private->Red[i]/255.0;
-	val[i+m] = (double)Xgc->private->Green[i]/255.0;
-	val[i+2*m] = (double)Xgc->private->Blue[i]/255.0;
+	val[i] = (double)Xgc->private->colors[i].red/65535.0;
+	val[i+m] = (double)Xgc->private->colors[i].green/65535.0;
+	val[i+2*m] = (double)Xgc->private->colors[i].blue/65535.0;
       }
     }
 }
 
-/** set and get the number of the background or foreground */
+/* set and get the number of the background or foreground */
 
 static void xset_background(BCG *Xgc,int num)
 { 
   if (Xgc->CurColorStatus == 1) 
     {
       int bg = Xgc->NumBackground =  Max(0,Min(num - 1,Xgc->Numcolors + 1));
-      if (Xgc->private->Red != NULL )
+      if (Xgc->private->colors != NULL )
 	{
 	  /* we fix the default background in Xgc->private->gcol_bg */
-	  Xgc->private->gcol_bg.red = 0;
-	  Xgc->private->gcol_bg.green = 0;
-	  Xgc->private->gcol_bg.blue = 0;
-	  Xgc->private->gcol_bg.pixel = PIXEL_FROM_CMAP(bg);
+	  Xgc->private->gcol_bg = Xgc->private->colors[bg];
 	}
       /* 
        * if we change the background of the window we must change 
        * the gc ( with alufunction ) and the window background 
        */
       xset_alufunction1(Xgc,Xgc->CurDrawFunction);
-      gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
+      /* XXXXX 
+	 gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
+      */
     }
 }
  
@@ -1528,12 +1634,9 @@ static void xset_foreground(BCG *Xgc,int num)
   if (Xgc->CurColorStatus == 1) 
     {
       int fg = Xgc->NumForeground = Max(0,Min(num - 1,Xgc->Numcolors + 1));
-      if (Xgc->private->Red != NULL )
+      if (Xgc->private->colors != NULL )
 	{
-	  Xgc->private->gcol_fg.red = 0;
-	  Xgc->private->gcol_fg.green = 0;
-	  Xgc->private->gcol_fg.blue = 0;
-	  Xgc->private->gcol_fg.pixel = PIXEL_FROM_CMAP(fg);
+	  Xgc->private->gcol_fg =  Xgc->private->colors[fg];
 	  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
 	}
     }
@@ -1611,39 +1714,6 @@ static void xset_fpf_def(BCG *Xgc)
   Xgc->fp_format[0]='\0';
 }
 
-
-/**********************************************************
- * Used in xsetm()
- *    to see the colormap of current graphic window
- ******************************************************/
-
-int IsPrivateCmap(void) { return 0 ;} 
-
-void set_cmap(void * w)
-{
-  /* XXX
-  if ( Xgc != (BCG *) 0 && Xgc->Cmap != (Colormap)0)
-    XSetWindowColormap(dpy,w,Xgc->Cmap);
-  */
-}
-
-int get_pixel(int i)
-{
-  /* XXX
-  if ( Xgc != (BCG *) 0 && Xgc->Cmap != (Colormap)0)
-    return(Xgc->Colors[Max(Min(i,Xgc->Numcolors + 1),0)]);
-  else 
-  */
-  return(0);
-}
-/* 
-Pixmap get_private->pixmap(i) 
-     int i;
-{
-  return(Tabpix_[ Max(0,Min(i - 1,GREYNUMBER - 1))]);
-}
-*/
-
 /*-----------------------------------------------------------
  * general routines accessing the previous  set<> or get<> 
  *-----------------------------------------------------------*/
@@ -1663,22 +1733,22 @@ Pixmap get_private->pixmap(i)
  * of the string ( we do not separate asc and desc 
  **************************************************/
 
+static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle);
+
 static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
 { 
   GtkCairo *gtkcairo;
   cairo_t *cairo;
-
+  DRAW_CHECK;
   if ( Abs(angle) <= 0.1) 
     {
+      /* 
       gint lbearing, rbearing, iascent, idescent, iwidth;
       gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing,
-			 &iwidth, &iascent, &idescent);
-      gdk_draw_text(Xgc->private->Cdrawable,Xgc->private->font,Xgc->private->wgc, 
+                         &iwidth, &iascent, &idescent);
+      gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
 		    x, y - idescent , string, strlen(string));
-      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-	gdk_draw_text(Xgc->private->pixmap,Xgc->private->font,Xgc->private->wgc, 
-		      x, y - idescent , string, strlen(string));
-
+      */
       gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
       cairo = gtk_cairo_get_cairo (gtkcairo);
       cairo_select_font (cairo, "sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
@@ -1689,10 +1759,13 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
 
       if ( flag == 1) 
 	{
+	  /* XXXX 
 	  int rect[] = { x , y- iascent - idescent, 
 			 gdk_string_width(Xgc->private->font, string),
 			 iascent+idescent};
 	  drawrectangle(Xgc,rect);
+
+	  */
 	}
     }
   else 
@@ -1714,7 +1787,7 @@ static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle
   for ( i = 0 ; i < (int)strlen(string); i++)
     { 
       str1[0]=string[i];
-      /* XDrawString(dpy,Xgc->private->Cdrawable,gc,(int) x,(int) y ,str1,1); */
+      /* XDrawString(dpy,Xgc->private->drawable,gc,(int) x,(int) y ,str1,1); */
       boundingbox(Xgc,str1,x,y,rect);
       /** drawrectangle(Xgc,string,rect,rect+1,rect+2,rect+3); **/
       if ( cosa <= 0.0 && i < (int)strlen(string)-1)
@@ -1758,11 +1831,8 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 {
   GtkCairo *gtkcairo;
   cairo_t *cairo;
-
-  gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc, x1, yy1, x2, y2);
-  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-    gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc, x1, yy1, x2, y2);
-
+  DRAW_CHECK;
+  /* gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, x1, yy1, x2, y2);*/
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
   cairo_move_to(cairo,x1,yy1);
@@ -1778,6 +1848,7 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
   int dash,color,i;
+  DRAW_CHECK;
   xget_dash_and_color(Xgc,&dash,&color);
   if ( iflag == 1) { /* one style per segment */
     for (i=0 ; i < n/2 ; i++) {
@@ -1807,6 +1878,7 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
   double cos20=cos(20.0*M_PI/180.0);
   double sin20=sin(20.0*M_PI/180.0);
   int polyx[4],polyy[4];
+  DRAW_CHECK;
   xget_dash_and_color(Xgc,&dash,&color);
   for (i=0 ; i < n/2 ; i++)
     { 
@@ -1851,6 +1923,7 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
   int i,dash,color;
   xget_dash_and_color(Xgc,&dash,&color);
+  DRAW_CHECK;
   for (i = 0 ; i < n ; i++)
     {
       if ( fillvect[i] < 0 )
@@ -1879,13 +1952,9 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 { 
   GtkCairo *gtkcairo;
   cairo_t *cairo;
-
-  gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, FALSE,rect[0],rect[1],rect[2],rect[3]);
-  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-    gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc, FALSE,rect[0],rect[1],rect[2],rect[3]);
-
+  DRAW_CHECK;
+  /* gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,rect[0],rect[1],rect[2],rect[3]); */
   /* the same for the cairo part */
-
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
   cairo_rectangle (cairo,rect[0],rect[1],rect[2],rect[3]);
@@ -1898,10 +1967,8 @@ static void fillrectangle(BCG *Xgc,const int rect[])
 { 
   GtkCairo *gtkcairo;
   cairo_t *cairo;
-  gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]);
-  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-    gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]);
-
+  DRAW_CHECK;
+  /* gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]); */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
   cairo_rectangle (cairo,rect[0],rect[1],rect[2],rect[3]);
@@ -1917,48 +1984,11 @@ static void fillrectangle(BCG *Xgc,const int rect[])
  *  on each rectangle the average value of z is computed 
  *----------------------------------------------------------------------------------*/
 
-static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
+static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
+				  int remap,const int *colminmax,const double *zminmax)
 {
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-
-  double zmoy,zmax,zmin,zmaxmin;
-  int i,j,whiteid,fill[1],cpat,xz[2];
-  zmin=Mini(z,(n1)*(n2));
-  zmax=Maxi(z,(n1)*(n2));
-  zmaxmin=zmax-zmin;
-  if (zmaxmin <= SMDOUBLE) zmaxmin=SMDOUBLE;
-  
-  whiteid = xget_last(Xgc);
-  cpat = xget_pattern(Xgc);
-  xget_windowdim(Xgc,xz,xz+1);
-
-  for (i = 0 ; i < (n1)-1 ; i++)
-    for (j = 0 ; j < (n2)-1 ; j++)
-      {
-	int w,h;
-	zmoy=1/4.0*(z[i+n1*j]+z[i+n1*(j+1)]+z[i+1+n1*j]+z[i+1+n1*(j+1)]);
-	fill[0]=1 + inint((whiteid-1)*(zmoy-zmin)/(zmaxmin));
-	xset_pattern(Xgc,*fill);
-        w=Abs(x[i+1]-x[i]);h=Abs(y[j+1]-y[j]);
-	/* We don't trace rectangle which are totally out **/
-	if ( w != 0 && h != 0 && x[i] < xz[0] && y[j+1] < xz[1] && x[i]+w > 0 && y[j+1]+h > 0 )
-	  if ( Abs(x[i]) < int16max && Abs(y[j+1]) < int16max && w < uns16max && h < uns16max)
-	    {
-
-	      gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, 
-				 TRUE,x[i],y[j+1],w,h);
-	      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-		gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc,
-				   TRUE,x[i],y[j+1],w,h);
-
-	      gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-	      cairo = gtk_cairo_get_cairo (gtkcairo);
-	      cairo_rectangle (cairo,x[i],y[j+1],w,h);
-	      cairo_stroke (cairo);
-	    }
-      }
-  xset_pattern(Xgc,cpat);
+  DRAW_CHECK;
+  Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
 
 /*----------------------------------------------------------------------------------
@@ -1971,40 +2001,12 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
  *        P1= x[i],y[j] x[i+1],y[j+1]
  *----------------------------------------------------------------------------------*/
 
-static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
+static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
+				  int remap,const int *colminmax,const double *zminmax)
 {
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-
-  int i,j,fill[1],cpat,xz[2];
-  cpat = xget_pattern(Xgc);
-  xget_windowdim(Xgc,xz,xz+1);
-  for (i = 0 ; i < (n1)-1 ; i++)
-    for (j = 0 ; j < (n2)-1 ; j++)
-      {
-	int w,h;
-	fill[0]= z[i+(n1-1)*j];
-	xset_pattern(Xgc,*fill);
-	w=Abs(x[j+1]-x[j]);
-	h=Abs(y[i+1]-y[i]);
-	/* We don't trace rectangle which are totally out **/
-	if ( w != 0 && h != 0 && x[j] < xz[0] && y[i] < xz[1] && x[j]+w > 0 && y[i]+h > 0 )
-	  if ( Abs(x[j]) < int16max && Abs(y[i+1]) < int16max && w < uns16max && h < uns16max)
-	    {
-	      gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, 
-				 TRUE,x[j],y[i],w,h);
-	      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-		gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc,
-				   TRUE,x[j],y[i],w,h);
-	      gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-	      cairo = gtk_cairo_get_cairo (gtkcairo);
-	      cairo_rectangle (cairo,x[i],y[j+1],w,h);
-	      cairo_fill (cairo);
-	    }
-      }
-  xset_pattern(Xgc,cpat);
+  DRAW_CHECK;
+  Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
-
 
 /*----------------------------------------------------------------------------------
  * Circles and Ellipsis 
@@ -2023,6 +2025,7 @@ static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, in
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
   int i,cpat,verb;
+  DRAW_CHECK;
   verb=0;
   cpat = xget_pattern(Xgc);
   for (i=0 ; i< n ; i++)
@@ -2055,6 +2058,7 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
   int dash,color,i;
   /* store the current values */
+  DRAW_CHECK;
   xget_dash_and_color(Xgc,&dash,&color);
   for (i=0 ; i< n ; i++)
     {
@@ -2068,18 +2072,16 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
-  gdk_draw_arc(Xgc->private->Cdrawable, Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-    gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
+  DRAW_CHECK;
+  /* gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]); */
 }
 
 /** Fill a single elipsis or part of it with current pattern **/
 
 static void fillarc(BCG *Xgc,int arc[])
 { 
-  gdk_draw_arc(Xgc->private->Cdrawable, Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-    gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
+  DRAW_CHECK;
+  /* gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);*/
 }
 
 /*
@@ -2097,6 +2099,7 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 { 
   int symb[2],dash,color,i,close;
   /* store the current values */
+  DRAW_CHECK;
   xget_mark(Xgc,symb);
   xget_dash_and_color(Xgc,&dash,&color);
   for (i=0 ; i< n ; i++)
@@ -2133,6 +2136,7 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
   int dash,color,i;
+  DRAW_CHECK;
   xget_dash_and_color(Xgc,&dash,&color);
   for (i = 0 ; i< n ; i++)
     {
@@ -2170,6 +2174,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   int n1,i;
+  DRAW_CHECK;
   if (closeflag == 1) n1 =n+1;else n1= n;
   if (n1 >= 2) 
     {
@@ -2177,13 +2182,12 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
        * analyze_points(*n, vx, vy,*closeflag); 
        * gdk_flush();
        */
+      /* 
       if ( gtk_store_points(n, vx, vy, closeflag)) 
 	{
-	  gdk_draw_lines(Xgc->private->Cdrawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
-	  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-	    gdk_draw_lines(Xgc->private->pixmap, Xgc->private->wgc, gtk_get_xpoints(), n1);
+	  gdk_draw_lines(Xgc->private->drawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
 	}
-
+      */
       gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
       cairo = gtk_cairo_get_cairo (gtkcairo);
       cairo_new_path(cairo);
@@ -2209,21 +2213,21 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   int n1,i;
+  DRAW_CHECK;
   if (closeflag == 1) n1 = n+1;else n1= n;
   /* 
   if (gtk_store_points(*n, vx, vy,*closeflag)){
-    XFillPolygon (dpy, Xgc->private->Cdrawable, gc, get_xpoints(), n1,
+    XFillPolygon (dpy, Xgc->private->drawable, gc, get_xpoints(), n1,
 		  Complex, Xgc->CurVectorStyle);
   }
   gdk_flush();
   */
+  /* 
   if ( gtk_store_points(n, vx, vy, closeflag)) 
     {
-      gdk_draw_polygon(Xgc->private->Cdrawable,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
-      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-	gdk_draw_polygon(Xgc->private->pixmap, Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1); 
+      gdk_draw_polygon(Xgc->private->drawable,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
     }
-
+  */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
   cairo_new_path(cairo); 
@@ -2245,16 +2249,16 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 
 static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 {
+  DRAW_CHECK;
   if ( Xgc->CurHardSymb == 0 )
     {
+      /* XXXX 
       if (gtk_store_points(n, vx, vy,(int)0L))
 	{
-	  gdk_draw_points(Xgc->private->Cdrawable,
+	  gdk_draw_points(Xgc->private->drawable,
 			  Xgc->private->wgc,gtk_get_xpoints(), n);
-	  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-	    gdk_draw_points(Xgc->private->pixmap, 
-			    Xgc->private->wgc,gtk_get_xpoints(), n); 
 	}
+      */
     }
   else 
     { 
@@ -2278,26 +2282,29 @@ int window_list_check_top(BCG *dd,void *win)
   return dd->private->window == (GtkWidget *) win ;
 }
 
-
-void DeleteSGWin(int intnum)
+static void delete_window(BCG *dd,int intnum)
 { 
-  BCG *winxgc; 
+  BCG *winxgc= dd; 
   int top_count;
-  if ((winxgc = window_list_search(intnum)) == NULL) return;
+  if ( dd == NULL) 
+    {
+      if ((winxgc = window_list_search(intnum)) == NULL) return;
+    }
   /* be sure to clear the recorded graphics */
   scig_erase(intnum);
 
   /* I delete the pixmap and the widget */
   if ( winxgc->CurPixmapStatus == 1 ) 
     {
-      gdk_pixmap_unref(winxgc->private->Cdrawable);
-      winxgc->private->Cdrawable = (GdkDrawable *)winxgc->private->drawing->window;
+      gdk_pixmap_unref(winxgc->private->extra_pixmap);
+      winxgc->private->extra_pixmap = NULL;
+      winxgc->private->drawable = NULL; /* (GdkDrawable *)winxgc->private->drawing->window;*/
       winxgc->CurPixmapStatus = 0; 
     }
   /* deconnect handlers */
   scig_deconnect_handlers(winxgc);
   /* backing store private->pixmap */
-  gdk_pixmap_unref(winxgc->private->pixmap);
+  if (winxgc->private->pixmap != NULL)  gdk_pixmap_unref(winxgc->private->pixmap);
   /* destroy top level window if it is not shared by other graphics  */
   top_count = window_list_search_toplevel(winxgc->private->window); 
   if ( top_count <= 1) 
@@ -2307,7 +2314,9 @@ void DeleteSGWin(int intnum)
   else 
     {
       GtkWidget *father; 
+      /* XXXX 
       gtk_widget_hide(GTK_WIDGET(winxgc->private->drawing)); 
+      */
       gtk_widget_hide(GTK_WIDGET(winxgc->private->scrolled)); 
       gtk_widget_hide(GTK_WIDGET(winxgc->private->CinfoW)); 
       gtk_widget_hide(GTK_WIDGET(winxgc->private->vbox));      
@@ -2315,36 +2324,33 @@ void DeleteSGWin(int intnum)
       gtk_container_remove(GTK_CONTAINER(father),GTK_WIDGET(winxgc->private->vbox));
     }
   /* free gui private area */
-  FREE(winxgc->private->Red);
-  FREE(winxgc->private->Green);
-  FREE(winxgc->private->Blue);
+  FREE(winxgc->private->colors);
   FREE(winxgc->private);
   /* remove current window from window list */
   window_list_remove(intnum);
 }
 
-
-
 /********************************************
  * Routines for initialization : string is a display name 
  ********************************************/
 
-static void set_c(BCG *Xgc,int col)
+
+static void nsp_gtk_set_color(BCG *Xgc,int col)
 {
   GtkCairo *gtkcairo;
   cairo_t *cairo;
-
-  int value = AluStruc_[Xgc->CurDrawFunction].id;
-  GdkColor temp = {0,0,0,0};
+  /* int value = AluStruc_[Xgc->CurDrawFunction].id;
+   * GdkColor temp = {0,0,0,0};
+   */
   /* colors from 1 to Xgc->Numcolors */
   Xgc->CurColor = col = Max(0,Min(col,Xgc->Numcolors + 1));
-  if (Xgc->private->Red  == NULL) return; 
+  if (Xgc->private->colors  == NULL) return;
 
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
-  cairo_set_rgb_color (cairo,Xgc->private->Red[col]/255.0,
-		       Xgc->private->Green[col]/255.0,
-		       Xgc->private->Blue[col]/255.0);
+  cairo_set_rgb_color (cairo,Xgc->private->colors[col].red/((double) 0xffff),
+		       Xgc->private->colors[col].green/((double) 0xffff),
+		       Xgc->private->colors[col].blue/((double) 0xffff));
   /* 
   temp.pixel = PIXEL_FROM_CMAP(col);
   switch (value) 
@@ -2374,7 +2380,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			    int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 
 
-static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
 { 
   nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos);
 }
@@ -2383,15 +2389,16 @@ static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewp
  * widget hierarchy 
  */
 
-void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
   nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
+  return  nsp_get_win_counter()-1;
 }
 
 
 int nsp_get_win_counter() { return EntryCounter;};
-
 void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
+
 
 static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			    int *wdim,int *wpdim,double *viewport_pos,int *wpos)
@@ -2408,9 +2415,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
       return;
     }
   /* default values  */
-  private->Red=NULL;  
-  private->Green=NULL;
-  private->Blue=NULL; 
+  private->colors=NULL;
+  private->colormap=NULL;
   private->window=NULL;		
   private->drawing=NULL;           
   private->scrolled=NULL;          
@@ -2420,34 +2426,39 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->item_factory=NULL;
   private->menu_entries=NULL;
   private->pixmap=NULL;       
-  private->Cdrawable=NULL;  
+  private->extra_pixmap=NULL;       
+  private->drawable=NULL;  
   private->wgc=NULL;
   private->stdgc=NULL;
   private->gcursor=NULL;      
   private->ccursor=NULL;      
   private->font=NULL;
   private->resize = 0; /* do not remove !! */
-  private->cairo_pixmap = NULL;
+  private->in_expose= FALSE;
+  private->protect= FALSE;
+  private->draw= FALSE;
+  /* private->cairo_pixmap = NULL; */
 
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
       Sciprintf("initgraphics: unable to alloc\n");
-      return;
+      return ;
     }
 
   NewXgc->CurWindow = WinNum;
   NewXgc->record_flag = TRUE; /* default mode is to record plots */
   NewXgc->plots = NULL;
+  NewXgc->incr_plots = NULL;
   NewXgc->graphic_engine = &Gtk_gengine ; /* the graphic engine associated to this graphic window */
+  start_sci_gtk(); /* be sure that gtk is started */
 
   if (first == 0)
     {
-      maxcol = 1 << 16; /* XXXXX : to be changed */
+      maxcol = 1 << 16; /* FIXME XXXXX : to be changed */
       LoadFonts();
       first++;
     }
 
-  start_sci_gtk(); /* be sure that gtk is started */
   if ( win != NULL )
     {
       gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
@@ -2489,14 +2500,12 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
    * initialize performs a switch from old value to new value 
    */
 
-  /* Default value is without Pixmap **/
-  NewXgc->private->Cdrawable = (GdkDrawable *) NewXgc->private->drawing->window;  NewXgc->CurPixmapStatus = 0; 
+  NewXgc->CurPixmapStatus = 0; 
   /* default colormap not instaled */
   NewXgc->CmapFlag = -1; 
   /* default resize not yet defined */
   NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
-
 
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
   /* Attention ce qui est ici doit pas etre rejoué 
@@ -2507,9 +2516,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   /* now initialize the scale list */
   NewXgc->scales = NULL;
   xgc_add_default_scale(NewXgc);
-
   nsp_set_win_counter(WinNum);
-
   gdk_flush();
 }
 
@@ -2574,14 +2581,12 @@ static void xset_default(BCG *Xgc)
 
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
 {
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-
   int i;
   double xi,yi,xf,yf;
   double cosal,sinal;
   cosal= cos( (double)M_PI * (alpha)/180.0);
   sinal= sin( (double)M_PI * (alpha)/180.0);
+  DRAW_CHECK;
   for (i=0; i <= nsteps[0]*nsteps[1]; i++)
     {
       if (( i % nsteps[0]) != 0)
@@ -2590,9 +2595,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
 	  yi = initpoint[1]+i*size[0]*sinal;
 	  xf = xi - ( size[1]*sinal);
 	  yf = yi + ( size[1]*cosal);
-	  gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc, xi,yi,xf,yf) ;
-	  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-	    gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc, xi,yi,xf,yf);
+	  drawline(Xgc,xi,yi,xf,yf);
 	}
     }
   for (i=0; i <= nsteps[1]; i++)
@@ -2601,9 +2604,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
       yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
       xf = xi - ( size[1]*size[2]*sinal);
       yf = yi + ( size[1]*size[2]*cosal);
-      gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc, xi,yi,xf,yf) ;
-      if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-	gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc, xi,yi,xf,yf);
+      drawline(Xgc,xi,yi,xf,yf);
     }
 }
 
@@ -2623,23 +2624,6 @@ static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z,
       displaystring(Xgc,buf,x[i],y[i],flag,alpha[i]);
     }
 }
-
-/*-----------------------------------------------------
- * bitmap display 
- *-----------------------------------------------------*/
-
-static void bitmap(BCG *Xgc,char *string, int w, int h)
-{
-  /* 
-  static XImage *setimage;
-  setimage = XCreateImage (dpy, XDefaultVisual (dpy, DefaultScreen(dpy)),
-			   1, XYBitmap, 0, string,w,h, 8, 0);	
-  setimage->data = string;
-  XPutImage (dpy, Xgc->private->Cdrawable, gc, setimage, 0, 0, 10,10,w,h);
-  XDestroyImage(setimage);
-  */
-}
-
 
 /*---------------------------------------------------------------------
  * Using X11 Fonts
@@ -2668,7 +2652,7 @@ struct FontInfo { int ok;
 /** Must be of size FONTMAXSIZE **/
 
 static char *size_[] = { "08" ,"10","12","14","18","24"};
-static int i_size_[] = { 8 ,10,12,14,18,24};
+/* static int i_size_[] = { 8 ,10,12,14,18,24}; */
 
 /*
  * To set the current font id  and size 
@@ -2692,20 +2676,21 @@ static FontAlias fonttab[] ={
   {(char *) NULL,( char *) NULL}
 };
 
-
+/* 
 static int fontidscale(BCG *Xgc,int fontsize)
 {
   int nnsiz,i;
   int isiz = i_size_[fontsize];
   double d = Min(Xgc->CWindowHeight,Xgc->CWindowWidth);
   nnsiz = (Xgc != NULL) ? inint((isiz*d/400.0)) : isiz; 
-  /* fprintf(stderr,"Scaling by -->%d %d \n",isiz,nnsiz); */
+  / * fprintf(stderr,"Scaling by -->%d %d \n",isiz,nnsiz); * /
   for ( i=0; i < FONTMAXSIZE ; i++) 
     {
       if (i_size_[i] >= nnsiz ) return Max(i-1,0);
     }
   return FONTMAXSIZE -1;
 }
+*/
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize)
 { 
@@ -2949,15 +2934,13 @@ static void DrawMark(BCG *Xgc,int *x, int *y)
 { 
   GtkCairo *gtkcairo;
   cairo_t *cairo;
-
+  DRAW_CHECK;
   char str[1];
   str[0]=Marks[Xgc->CurHardSymb];
-  gdk_draw_text(Xgc->private->Cdrawable,Xgc->private->font,Xgc->private->wgc, 
+  /* XXX
+  gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
 		*x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
-  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-    gdk_draw_text(Xgc->private->pixmap,Xgc->private->font,Xgc->private->wgc, 
-		  *x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
-
+		*/
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
   cairo_select_font (cairo, "sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
@@ -3018,48 +3001,28 @@ static int GtkReallocVector(int n)
  *
  */
 
-/* a revoir XXXX */
-
-#define R_RED(col)	(((col)	   )&255) 
-#define R_GREEN(col)	(((col)>> 8)&255)
-#define R_BLUE(col)	(((col)>>16)&255)
-
-/* set the r, g, b, and pixel values of gcol to color */
-
-static void SetRgBColor(BCG *dd,int red,int green,int blue)
-{
-  GdkColor gcol = { gdk_rgb_xpixel_from_rgb((red << 16)|(green << 8)|(blue)),0,0,0};
-  gdk_gc_set_foreground(dd->private->wgc, &gcol);
-}
-
-static void SetColor(GdkColor *gcol, int color)
-{
-  int red, green, blue;
-  red = R_RED(color);
-  green = R_GREEN(color);
-  blue = R_BLUE(color);
-  gcol->red = 0;
-  gcol->green = 0;
-  gcol->blue = 0;
-  gcol->pixel = gdk_rgb_xpixel_from_rgb((red << 16)|(green << 8)|(blue));
-}
-
-
 /* signal functions */
 
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
+  GdkColor white={0,0,0,0};
+  GdkColor black={0,65535,65535,65535};
   BCG *dd = (BCG *) data;
 
   g_return_val_if_fail(dd != NULL, FALSE);
-  g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
+  g_return_val_if_fail(dd->private->drawing != NULL, FALSE); 
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
   
   /* create gc */
-  dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
+  dd->private->stdgc = gdk_gc_new(dd->private->drawing->window);
+  gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
+  gdk_gc_set_rgb_fg_color(dd->private->stdgc,&white);
   /* standard gc : for private->pixmap copies */
   /* this gc could be shared by all windows */
-  dd->private->stdgc = gdk_gc_new(dd->private->drawing->window);
+  dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
+  gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
+  gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
+
   /* set the cursor */
   dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
   dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
@@ -3076,13 +3039,12 @@ static gint realize_event(GtkWidget *widget, gpointer data)
       gdk_draw_rectangle(dd->private->pixmap, dd->private->stdgc, TRUE, 0, 0,
 			 dd->CWindowWidth, dd->CWindowHeight);
     }
-  
-  if (  dd->private->Cdrawable == NULL ) 
-    {
-      dd->private->Cdrawable= (GdkDrawable *) dd->private->drawing->window;
-    }
+
+  /* default value is to use the background pixmap */
+  dd->private->drawable= (GdkDrawable *) dd->private->pixmap;
   return FALSE;
 }
+
 
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
@@ -3107,6 +3069,14 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
   return FALSE;
 }
 
+
+static void nsp_gtk_invalidate(BCG *Xgc)
+{
+  gdk_window_invalidate_rect(Xgc->private->drawing->window,
+			     &Xgc->private->drawing->allocation,
+			     FALSE);
+}
+
 /* 
  * Using cairo expose and not cairo paint 
  * to be able to detect partial redraw 
@@ -3115,28 +3085,46 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
  * which is not good !!!
  */
 
+extern gint gdkcairo_expose (void *self, GdkEventExpose *event);
+
+
 static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
   GtkCairo *gtkcairo;
   cairo_t *cr;
-  gint width , height, box_size, box_overlap;
+  gint width , height; /*  box_size, box_overlap; */
 
   g_return_val_if_fail (widget != NULL, FALSE);
   g_return_val_if_fail (GTK_IS_CAIRO (widget), FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
 
+  if( ! GTK_WIDGET_REALIZED(dd->private->drawing)) return FALSE;
+
   gtkcairo = GTK_CAIRO (widget);
   cr = gtk_cairo_get_cairo (gtkcairo);
-  
-  /* this is necessary to make cairo works in an expose event */
-  gdkcairo_expose (gtkcairo->gdkcairo, event);
-
-  /* FIXME: use a pixmap or scig_resize just in case of full redraw */
-  scig_resize(dd->CurWindow);
 
   width = widget->allocation.width;
   height = widget->allocation.height;
+
+  /* configure_event is not activated for cairo */
+  if ( dd->CurResizeStatus == 1) 
+    {
+      if ( (dd->CWindowWidth != width) || (dd->CWindowHeight != height))
+	{
+	  dd->CWindowWidth = width;
+	  dd->CWindowHeight = height;
+	  dd->private->resize = 1;
+	}
+    }
+  
+  /* this is necessary to make cairo works in an expose event */
+  gdkcairo_expose (gtkcairo->gdkcairo, event);
+  /* gtk_cairo_expose(gtkcairo,event);*/
+  /* FIXME: use a pixmap or scig_resize just in case of full redraw */
+  dd->private->in_expose= TRUE;
+  scig_resize(dd->CurWindow);
+  dd->private->in_expose= FALSE;
 
   cairo_save (cr);
   cairo_move_to (cr, 10, 10);
@@ -3153,11 +3141,10 @@ static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointe
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
-
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-  /* xinfo(dd,"Expose event "); */
+  /* {static int count = 0; xinfo(dd,"Expose event %d",count++);} */
   if(dd->private->resize != 0) 
     { 
       dd->private->resize = 0;
@@ -3165,22 +3152,38 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
-
+      /* update drawable */
+      if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
       /* fill private background with background */
       gdk_gc_set_background(dd->private->stdgc, &dd->private->gcol_bg);
       gdk_draw_rectangle(dd->private->pixmap,dd->private->stdgc, TRUE,0,0,dd->CWindowWidth, dd->CWindowHeight);
       /* On lance l'action standard de resize + redessin  */
+      dd->private->in_expose= TRUE;
       scig_resize(dd->CurWindow);
+      dd->private->in_expose= FALSE;
       gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 		      dd->CWindowWidth, dd->CWindowHeight);
     }
   else 
     {
-      gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
-		      event->area.x, event->area.y, event->area.x, event->area.y,
- 		      event->area.width, event->area.height);
-    }
+      if ( dd->private->draw == TRUE ) 
+	{
+	  /* need to make incremental draw */
+	  dd->private->draw = FALSE;
+	  dd->private->in_expose= TRUE;
+	  scig_replay(dd->CurWindow);
+	  dd->private->in_expose= FALSE;
+	}
 
+      if (event  != NULL) 
+	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+			event->area.x, event->area.y, event->area.x, event->area.y,
+			event->area.width, event->area.height);
+      else 
+	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+			dd->CWindowWidth, dd->CWindowHeight);
+    }
+  gdk_flush();
   return FALSE;
 }
 
@@ -3211,8 +3214,6 @@ static void scig_deconnect_handlers(BCG *winxgc)
  * partial or full creation of a graphic nsp widget 
  * if is_top == FALSE a partial widget (vbox) is created 
  *---------------------------------------------------------------*/
-
-#define R_RGB(r,g,b)	((r)|((g)<<8)|((b)<<16))
 
 
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
@@ -3306,14 +3307,12 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 				(gfloat) viewport_pos[1]);      
     }
 
-  /* create private->drawingarea */
-
-  dd->private->drawing = gtk_drawing_area_new();
-  /* FIXME gtk_drawing_area_new(); */
+  /*
+   * drawing is here a cairo_drawing 
+   */
   dd->private->cairo_drawing = gtk_cairo_new (); 
-  gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),300,200);
-
-  gtk_box_pack_start (GTK_BOX (vbox), dd->private->cairo_drawing, TRUE, TRUE, 0);
+  dd->private->drawing =   dd->private->cairo_drawing ;
+  gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400);
 
   gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
 		     (GtkSignalFunc) locator_button_press, (gpointer) dd);
@@ -3333,48 +3332,37 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
   /* private->drawingarea properties */
   /* min size of the graphic window */
-  gtk_widget_set_size_request(dd->private->drawing, iw, ih);
-
-  /* setup background color */
-  dd->private->bg = R_RGB(255, 255, 255);
-  SetColor(&dd->private->gcol_bg, dd->private->bg);
-  
-  /* setup foreground color */
-  dd->private->fg =  R_RGB(0,0,0);
-  SetColor(&dd->private->gcol_fg , dd->private->fg);
+  gtk_widget_set_size_request(GTK_WIDGET (dd->private->drawing), iw, ih);
 
   /* place and realize the private->drawing area */
-  gtk_scrolled_window_add_with_viewport ( GTK_SCROLLED_WINDOW (scrolled_window),dd->private->drawing);
+  gtk_scrolled_window_add_with_viewport ( GTK_SCROLLED_WINDOW (scrolled_window),
+					  GTK_WIDGET (dd->private->drawing));
 
   if ( is_top == TRUE ) 
     { 
       gtk_widget_realize(dd->private->drawing);
-      gtk_widget_realize(dd->private->cairo_drawing);
     }
   else
     {
       gtk_widget_show(dd->private->drawing);
-      gtk_widget_show(dd->private->cairo_drawing);
     }
 
   /* connect to signal handlers, etc */
+
   gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "configure_event",
 		     (GtkSignalFunc) configure_event, (gpointer) dd);
 
   gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
-		     (GtkSignalFunc) expose_event, (gpointer) dd);
-
-  gtk_signal_connect(GTK_OBJECT(dd->private->cairo_drawing), "expose_event",
 		     (GtkSignalFunc) cairo_expose_event, (gpointer) dd);
 
   /* 
   g_signal_connect (G_OBJECT (dd->private->cairo_drawing), "paint", 
 		    G_CALLBACK (cairo_paint),(gpointer) dd );
-  */		  
+  */
+		  
   gtk_signal_connect(GTK_OBJECT(dd->private->window), "destroy",
 		     (GtkSignalFunc) sci_destroy_window, (gpointer) dd);
 
-  
   gtk_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
 		     (GtkSignalFunc) sci_delete_window, (gpointer) dd);
 
@@ -3398,6 +3386,9 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
        * this will create offscreen drawable : in realize_event
        * and the initialize_gc 
        */
+      /* 
+	 gtk_widget_realize(dd->private->drawing);
+      */
       gtk_widget_realize(dd->private->drawing);
     }
 
@@ -3406,29 +3397,4 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   gtk_widget_pop_colormap();
   
 }
-
-/**
- * nsp_set_graphic_eventhandler:
- * @win_num: 
- * @name: 
- * @ierr: 
- * 
- * Used to set the EventHandler field of win_num properties 
- * this is to be changed one day XXXX 
- **/
-
-void nsp_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
-{  
-  BCG *SciGc;
-  /*ButtonPressMask|PointerMotionMask|ButtonReleaseMask|KeyPressMask */
-  *ierr = 0;
-  SciGc = window_list_search(*win_num);
-  if ( SciGc ==  NULL ) {*ierr=1;return;}
-  strncpy(SciGc->EventHandler,name,NAME_MAXL);
-}
-
-
-/*
- * test routines 
- */
 

@@ -2119,11 +2119,13 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 }
 
 
-void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n)
+void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag)
 {
   gint i;
   if ( n <= 1) return;
   DRAW_CHECK;
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(1.0,1.0);
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) 
     {
@@ -2131,6 +2133,7 @@ void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n)
       glVertex2i( vx[i], vy[i]);
     }
   glEnd();
+  glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 
@@ -2163,7 +2166,6 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 	{ 
 	  /** fill + boundaries **/
 	  glEnable(GL_POLYGON_OFFSET_FILL);
-	  glPolygonOffset(1.0,1.0);
 	  glPolygonOffset(1.0,1.0);
 	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
 	  glDisable(GL_POLYGON_OFFSET_FILL);
@@ -2904,7 +2906,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   glClearStencil(0x0);
   glEnable(GL_STENCIL_TEST);
-  /*     glEnable(GL_LINE_SMOOTH); */
+  /* glEnable(GL_LINE_SMOOTH); */
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   /*     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE); */
@@ -2913,6 +2915,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   /*     glLineWidth(0.5); */
   glAlphaFunc(GL_GREATER,0.1f);
   glEnable(GL_ALPHA_TEST);
+  glShadeModel(GL_SMOOTH);
   LoadFonts(Xgc);
   
   gdk_gl_drawable_gl_end (gldrawable);

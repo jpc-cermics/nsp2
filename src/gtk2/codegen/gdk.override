@@ -129,7 +129,7 @@ _wrap_gdk_threads_enter(Stack stack,int rhs,int opt,int lhs)
   Nsp_END_ALLOW_THREADS;
   */
   Scierror("To be done XXXXX ");
-  return 0;
+  return RET_BUG;
 }
 %%
 override gdk_draw_polygon kwargs
@@ -301,7 +301,7 @@ _wrap_gdk_draw_rgb_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 			       rowstride, xdith, ydith);
   */
   Scierror("To be done XXXXXXXXX");
-  return 0;
+  return RET_BUG;
 }
 %%
 ignore gdk_draw_rgb_image_dithalign
@@ -344,7 +344,7 @@ _wrap_gdk_draw_rgb_32_image(NspGObject *self, Stack stack,int rhs,int opt,int lh
 				  rowstride, xdith, ydith);
   */
   Scierror("To be done XXXXXX ");  
-  return 0;
+  return RET_BUG;
 }
 %%
 ignore gdk_draw_rgb_32_image_dithalign
@@ -386,7 +386,7 @@ _wrap_gdk_draw_gray_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   return 0;
   */
   Scierror("To be done XXXXXX ");
-  return 0;
+  return RET_BUG;
 }
 %%
 ignore
@@ -1183,7 +1183,7 @@ _wrap_gdk_device_get_history(NspGObject *self, Stack stack,int rhs,int opt,int l
   return pyevents;
   */ 
   Scierror("To be done XXXX ");
-  return 0;
+  return RET_BUG;
 }
 %%
 override gdk_device_get_axis kwargs
@@ -1799,7 +1799,7 @@ _wrap_gdk_property_change(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     g_free(data);
     */
   Scierror("To be done XXXXXX ");
-  return 0;
+  return RET_BUG;
 }
 %%
 override gdk_window_get_geometry noargs
@@ -2006,54 +2006,62 @@ static int
 _wrap_gdk_pixbuf_save(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
 {
-  /* static char *kwlist[] = {"filename", "type", "options", NULL};*/
-  /* 
-     gchar *filename, *type, **option_keys = NULL, **option_values = NULL;
-  NspObject *nsp_options = NULL;
+  NspObject *object;
+  char *filename,*type,*opt_key,*opt_value;
+  int i,len;
+  char **option_keys,**option_values;
   GError *error = NULL;
-
-  if (GetArgs(stack,rhs,opt,T,
-	      / * "ss|O!:GdkPixbuf.save" * /
-	      &filename, &type,
-	      &nsp_type_dict, &nsp_options) == FAIL )
-    return RET_BUG;
-
-  if (nsp_options != NULL) {
-    guint len;
-    gint pos = 0, i = 0;
-    NspObject *key, *value;
-	
-    len = NspDict_Size(nsp_options);
-    option_keys = g_new(gchar *, len + 1);
-    option_values = g_new(gchar *, len + 1);
-
-    while (NspDict_Next(nsp_options, &pos, &key, &value)) {
-      if (!NspString_Check(key) || !NspString_Check(value)) {
-	g_free(option_keys);
-	g_free(option_values);
-	Scierror(
-		 "keys and values must be strings");
-	return RET_BUG;
-      }
-
-      option_keys[i]   = NspString_AsString(key);
-      option_values[i] = NspString_AsString(value);
-      i++;
+  /* static char *kwlist[] = {"filename", "type", "options", NULL};*/
+  GdkPixbuf *pixbuf;
+  pixbuf = GDK_PIXBUF(self->obj);
+  CheckStdRhs(2,2);
+  if ((filename = GetString(stack,1)) == (char*)0) return RET_BUG;
+  if ((type = GetString(stack,2)) == (char*)0) return RET_BUG;
+  len = opt;
+  option_keys = g_new(gchar *, len + 1);
+  option_values = g_new(gchar *, len + 1);
+  for ( i = 3 ; i <= rhs ; i++) 
+    {
+      NspObject * option;
+      if ((option =nsp_get_object(stack,i)) == NULLOBJ ) return RET_BUG;
+      opt_key = nsp_object_get_name(option);
+      if ( IsString(option))
+	{
+	  opt_value = ((NspSMatrix *) object)->S[0];
+	}
+      else 
+	{
+	  Scierror("%s option value is not a string !\n",opt_key);
+	  g_free(option_keys);
+	  g_free(option_values);
+	  return RET_BUG;
+	}
+      if ((option_keys[i] = NewString(opt_key)) == NULLSTRING)
+	{
+	  g_free(option_keys);
+	  g_free(option_values);
+	  return RET_BUG;
+	}
+      if ((option_values[i] = NewString(opt_value)) == NULLSTRING)
+	{
+	  g_free(option_keys);
+	  g_free(option_values);
+	  return RET_BUG;
+	}
     }
-	
-    option_keys[len] = NULL;
-    option_values[len] = NULL;
-  }
+  option_keys[len] = NULL;
+  option_values[len] = NULL;
   gdk_pixbuf_savev(GDK_PIXBUF(self->obj), filename, type,
 		   option_keys, option_values, &error);
-	
+  /* 
+  if (nspg_error_check(&error)) return RET_BUG;
+  */
+  if ( error != NULL ) {
+    Scierror("%s: gtk error\n",stack.fname);
+    return RET_BUG;
+  }
   g_free(option_keys);
   g_free(option_values);
- 
-  if (nspg_error_check(&error))
-    return RET_BUG;
-  */
-  Scierror("To be done XXXXXXX ");
   return 0;
 }
 %%
