@@ -206,7 +206,7 @@ function []=plotarbre3D(n,m)
   //age=ceil(m*rand(n,1));
   age=m;
   posxy=15*rand(n,2);
-
+  posxy=0*rand(n,2); // FIXME
   zer2=zeros(n,2);
   pos=[posxy,zer2];
   A=zeros(0,4);
@@ -217,6 +217,5 @@ function []=plotarbre3D(n,m)
   plotT3(A);
 endfunction
 
-
-//plotarbre3D(1,4)
+//plotarbre3D(4,8)
 

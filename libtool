@@ -44,7 +44,7 @@ available_tags=" CXX F77"
 
 # ### BEGIN LIBTOOL CONFIG
 
-# Libtool was configured on host dolphy:
+# Libtool was configured on host clio:
 
 # Shell to use when invoking shell scripts.
 SHELL="/bin/sh"
@@ -6744,7 +6744,7 @@ build_old_libs=`case $build_libtool_libs in yes) $echo no;; *) $echo yes;; esac`
 # End:
 # ### BEGIN LIBTOOL TAG CONFIG: CXX
 
-# Libtool was configured on host dolphy:
+# Libtool was configured on host clio:
 
 # Shell to use when invoking shell scripts.
 SHELL="/bin/sh"
@@ -7042,7 +7042,7 @@ include_expsyms=""
 
 # ### BEGIN LIBTOOL TAG CONFIG: F77
 
-# Libtool was configured on host dolphy:
+# Libtool was configured on host clio:
 
 # Shell to use when invoking shell scripts.
 SHELL="/bin/sh"

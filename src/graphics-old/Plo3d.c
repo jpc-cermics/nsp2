@@ -2328,6 +2328,8 @@ void I3dRotation(BCG *Xgc)
       theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
       Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
       /* Xgc->graphic_engine->clearwindow(Xgc); */
+      /* FIXME : here a new_angle_plots is enough 
+       * since  force_affichage will do the drawing */
       tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
       /* force drawing: FIXME */
       force_affichage(Xgc);
@@ -2337,7 +2339,6 @@ void I3dRotation(BCG *Xgc)
       x=(xl-Xgc->scales->frect[0])*xx;
       y=(yl-Xgc->scales->frect[1])*yy;
     }
-  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
   /* Xgc->graphic_engine->clearwindow(Xgc); */
   tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
   force_affichage(Xgc);
