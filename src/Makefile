@@ -4,7 +4,7 @@ include ../Makefile.incl
 
 SCIDIRS = zcalelm objects interp functions gtk2 \
 	system graphics menus gtksci gzvt2 modules gobjects types-test \
-	librand libcdf libblas  libinteg
+	librand libcdf libblas  libinteg libapprox
 
 SUBDIRS = $(XAW_LOCAL_SUBDIR) $(DLD_SUBDIR) $(SCIDIRS) 
 

@@ -74,9 +74,9 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 			double *x, double *y, double *z, int *p, int *q, 
 			double *teta, double *alpha,const char *legend, int *flag, double *bbox);
 
-typedef enum {plot3d_t ,facettes_t , param3d_t} nsp_plot3d_type;
+/* typedef enum {plot3d_t ,facettes_t , param3d_t} nsp_plot3d_type;*/
 
-static void  nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
+void  nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
 				      double *teta, double *alpha,const char *legend, int *flag, double *bbox,
 				      double *zmin,double *zmax, nsp_plot3d_type t);
 
@@ -102,7 +102,6 @@ static int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, dou
 
 extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
 extern void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
-
 extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
@@ -362,7 +361,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 }
 
 
-static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
+void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
 				     double *teta, double *alpha,const char *legend, int *flag, double *bbox,double *zmin,
 				     double *zmax,nsp_plot3d_type type3d)
 {
@@ -1239,10 +1238,25 @@ void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag)
 	drawpolylines3D(Xgc,box->xh,box->yh,box->zh,dvect,n,p);
       }
       pat = Xgc->graphic_engine->xset_pattern(Xgc,dvect[0]);
-      /* 
-       * FIXME
-       * if (flag >=3)AxesStrings(Xgc,flag,ixbox,iybox,box->xind,legend,bbox);
-       */
+      if (flag >=3) 
+	{
+	  /* FIXME:
+	   * AxesStrings uses 2D graphics routines
+	   * I use the fact that 2d and 3d scales are coherent 
+	   * Thus it is possible to make the geometrical transform 
+	   * here and use 2d graphics 
+	   * but it should be better to have a 3D function. 
+	   */
+
+	  nsp_ogl_set_2dview(Xgc);
+	  for (i=0; i < 6 ; i++)
+	    {
+	      box->ix[i]=XScale(box->x[box->xind[i]]);
+	      box->iy[i]=YScale(box->y[box->xind[i]]);
+	    }
+	  AxesStrings(Xgc,flag,box,legend);
+	  nsp_ogl_set_3dview(Xgc);
+	}
       Xgc->graphic_engine->xset_pattern(Xgc,pat);
       Xgc->graphic_engine->xset_dash(Xgc,dash);
     }
@@ -1287,12 +1301,14 @@ static void AxesStrings(BCG *Xgc,int axflag,const nsp_box_3d *box,const char *le
   char *loc,*legx,*legy,*legz; 
   int rect[4],flag=0,x,y;
   double ang=0.0;
+
   loc=(char *) MALLOC( (strlen(legend)+1)*sizeof(char));
   if ( loc == 0)    
     {
       Scistring("AxesString : No more Place to store Legends\n");
       return;
     }
+
   strcpy(loc,legend);
   legx=strtok(loc,"@");legy=strtok((char *)0,"@");legz=strtok((char *)0,"@");
 

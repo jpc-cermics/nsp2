@@ -1490,6 +1490,56 @@ static void clean_3D1(void *plot)
   clean_3D(plot);
 }
 
+
+
+/*---------------------------------------------------------------------
+ * 3dobjs 
+ *---------------------------------------------------------------------------*/
+
+void store_3dobj(BCG *Xgc,void *Obj,double *teta, double *alpha,const char *legend, int *flag, double *bbox,
+		 int with_mesh,int with_box,int box_color,int box_style)
+{
+  NspList *L=Obj;
+  struct rec_3dobj *lplot;
+  lplot= ((struct rec_3dobj *) MALLOC(sizeof(struct rec_plot3d)));
+  if (lplot != NULL)
+    {
+      lplot->teta= *teta;
+      lplot->alpha= *alpha;
+      lplot->with_mesh = with_mesh;
+      lplot->with_box = with_box;
+      lplot->box_color=box_color;
+      lplot->box_style=box_style;
+      lplot->L = (NspList *) nsp_object_copy(NSP_OBJECT(L));
+      if ( 
+	  ( lplot->L != NULL) && 
+	  CopyVectC(&(lplot->legend), legend, ((int)strlen(legend))+1) && 
+	  CopyVectLI(&(lplot->flag), flag,3) &&
+	  CopyVectF(&(lplot->bbox), bbox,6L)
+	  ) 
+	{
+	  store_record(Xgc,CODE3dobj, lplot);
+	  return;}
+    }
+  Scistring("\n store_ Plot (storeplot3d): No more place \n");
+}
+
+
+static void replay_3dobj(BCG *Xgc,void *theplot)
+{
+  struct rec_3dobj *pl3d = (struct rec_3dobj *)theplot;
+  nsp_draw_3d_obj(Xgc,pl3d->L,&pl3d->teta, &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox,
+		  pl3d->with_mesh,pl3d->with_box,pl3d->box_color,pl3d->box_style);
+}
+
+
+static void clean_3dobj(void *plot)
+{
+  struct rec_3dobj *theplot = plot;
+  FREE(theplot->legend);FREE(theplot->flag); FREE(theplot->bbox);
+}
+
+
 /*---------------------------------------------------------------------
  * fac3d 
  * added code by polpoth 4/5/2000 
@@ -2188,6 +2238,20 @@ static void new_angles_Plot3D(void *plot, double *theta, double *alpha, int *ifl
       theplot->bbox[i] = bbox[i];
 }
 
+static void new_angles_3dobj(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+{
+  int i;
+  struct rec_3dobj *theplot;
+  theplot=(struct rec_3dobj *) plot;
+  theplot->teta=*theta;
+  theplot->alpha=*alpha;
+  for (i=0 ; i< 3 ; i++) 
+    if (iflag[i]!=0) theplot->flag[i] = flag[i];
+  if ( iflag[3] != 0) 
+    for ( i= 0 ; i < 6 ; i++ ) 
+      theplot->bbox[i] = bbox[i];
+}
+
 static void new_angles_Fac3D(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
 {
   int i;
@@ -2726,6 +2790,15 @@ static void scale_change_Plot3D(BCG *Xgc,void *plot, int *flag, double *b1, int 
   }
 }
 
+static void scale_change_3dobj(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 
+			       int undo, int *bbox1, double *subwin, int win_num)
+{
+  struct rec_3dobj *theplot;
+  theplot =   (struct rec_3dobj *) plot;
+  /* XXXX */
+
+}
+
 
 /*--------------------------------------------------------------------
  * scale undo : used in unzoom 
@@ -2873,6 +2946,11 @@ static void unscale_Plot3D(void *plot)
   theplot->bbox[5]=Maxi(theplot->z,theplot->p*theplot->q); 
 }
 
+static void unscale_3dobj(void *plot)
+{
+  /* struct rec_3dobj *theplot = plot; */
+}
+
 /*-------------------------------------------------------
  * checks if recorded list contains 3d graphics 
  *-------------------------------------------------------*/
@@ -2896,6 +2974,7 @@ int tape_check_recorded_3D(BCG *Xgc,int winnumber)
 	    case CODEFac3D1:
 	    case CODEFac3D2:
 	    case CODEFac3D3:
+	    case CODE3dobj:
 	    case CODEContour:
 	      return OK;
 	      break;

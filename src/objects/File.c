@@ -53,7 +53,7 @@
 #include <string.h> 
 #include <string.h>
 #include <ctype.h>  /* isdigit */
-#include  "nsp/object.h"
+#include "nsp/object.h"
 #include "nsp/interf.h"
 #include "../system/files.h" /* FSIZE */
 
@@ -223,7 +223,7 @@ int nsp_file_close_xdr_r(NspFile  *F)
       Scierror("Warning: file %s is already closed\n",F->fname);
       return OK;
     }
- nsp_xdr_load_string(F,type,TYPE_S) ;
+  nsp_xdr_load_string(F,type,TYPE_S) ;
   if ( strcmp(type,"endsave") != 0)
     {
       Scierror("Warning: Closing xdr file %s while not at end of file\n",F->fname);
@@ -268,7 +268,7 @@ NspFile *nsp_file_open_xdr_w(char *fname)
   XDR_ON(F->flag);
   OPEN_ON(F->flag);
   xdrstdio_create(F->xdrs, F->file, XDR_ENCODE) ;
- nsp_xdr_save_string(F,scis);
+  nsp_xdr_save_string(F,scis);
   return F;
 }
 
@@ -294,7 +294,7 @@ int nsp_file_close_xdr_w(NspFile  *F)
       Scierror("Warning: file %s is already closed\n",F->fname);
       return OK;
     }
- nsp_xdr_save_string(F,"endsave");
+  nsp_xdr_save_string(F,"endsave");
   assertW(fflush((FILE *) F->xdrs->x_private) != EOF) ; 
   xdr_destroy(F->xdrs);
   assertW(fclose(F->file) != EOF) ;
@@ -421,7 +421,7 @@ int nsp_xdr_save_array_i(NspFile  *F, int *nx, int l)
   szof = sizeof(int) ;
   count = (int) l;
   assertW( xdr_vector(F->xdrs,(char *) &count,(u_int)1,
-		     (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
   assertW( xdr_vector(F->xdrs, (char *)nx, count, szof,(xdrproc_t) xdr_int)) ;
   return OK;
 }
@@ -439,7 +439,7 @@ int nsp_xdr_load_array_i(NspFile  *F, int *nx, int l)
 { 
   szof = sizeof(int) ;
   assertR( xdr_vector(F->xdrs,(char *) &count,(u_int)1,
-		     (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
   if ( count != (u_int) l ) return(FAIL);
   assertR( xdr_vector(F->xdrs, (char *)nx, count, szof,(xdrproc_t) xdr_int)) ;
   return OK;
@@ -461,9 +461,9 @@ int nsp_xdr_save_array_d(NspFile  *F, double *nx, integer l)
   szof = sizeof(double) ;
   count = (int) l;
   assertW( xdr_vector(F->xdrs,(char *) &count,(u_int)1,
-		     (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
   assertW( xdr_vector(F->xdrs,(char *)nx, count, szof,
-		     (xdrproc_t) xdr_double)) ;
+		      (xdrproc_t) xdr_double)) ;
   return OK;
 }
 
@@ -498,11 +498,12 @@ int nsp_xdr_load_array_d(NspFile  *F, double *nx, integer mn)
  * 
  * Return value: %OK or %FAIL
  **/
+
 int nsp_xdr_save_string(NspFile  *F, char *str)
 {
   szof = (strlen(str)+1)*sizeof(char);
   assertW( xdr_vector(F->xdrs,(char *) &szof,(u_int)1,
-		     (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
   assertW( xdr_opaque(F->xdrs,str,szof));
   return OK;
 }
@@ -519,7 +520,7 @@ int nsp_xdr_save_string(NspFile  *F, char *str)
 int nsp_xdr_load_string(NspFile  *F, char *buf, int buf_len)
 {
   assertR( xdr_vector(F->xdrs,(char *) &szof,(u_int)1,
-		     (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
   if ( szof > (u_int) buf_len ) 
     {
       Scierror("Error: Buffer too small (%d> %d) for reading a string\n",szof,buf_len);
@@ -1495,9 +1496,9 @@ int do_scanf (char *command, FILE *fp, char *format, Stack stack,int iline, int 
 	  if (l_flag + h_flag)
 	    Scierror("Error: scanf: bad conversion\n");
 	  if ( width_flag == 1 ) 
-	      nc[num_conversion ] = width_val;
+	    nc[num_conversion ] = width_val;
 	  else
-	      nc[num_conversion ] = 1;
+	    nc[num_conversion ] = 1;
 	  if (width_flag == 1 && width_val > MAX_STR-1 )
 	    {
 	      Scierror("Error: scanf width field %d is too long (< %d) for %%c directive\n",
@@ -1512,24 +1513,24 @@ int do_scanf (char *command, FILE *fp, char *format, Stack stack,int iline, int 
 	case 'x':
 	case 'X':
 	  if ( l_flag ) 
-	     {
-	       ptrtab[num_conversion] =  &buf_lui[num_conversion];
+	    {
+	      ptrtab[num_conversion] =  &buf_lui[num_conversion];
 	      type[num_conversion] = SF_LUI;
-	     }
+	    }
 	  else if ( h_flag) 
-	     {
-	       ptrtab[num_conversion] =  &buf_sui[num_conversion];
+	    {
+	      ptrtab[num_conversion] =  &buf_sui[num_conversion];
 	      type[num_conversion] = SF_SUI;
-	     }
+	    }
 	  else 
-	     {
-	       ptrtab[num_conversion] =  &buf_ui[num_conversion];
+	    {
+	      ptrtab[num_conversion] =  &buf_ui[num_conversion];
 	      type[num_conversion] = SF_UI;
-	     }
+	    }
 	  break;
 	case 'D':
 	  ptrtab[num_conversion] =  &buf_li[num_conversion];
-	      type[num_conversion] = SF_LI;
+	  type[num_conversion] = SF_LI;
 	  break;
 	case 'n':
 	case 'i':
@@ -1561,10 +1562,10 @@ int do_scanf (char *command, FILE *fp, char *format, Stack stack,int iline, int 
 	      return FAIL;
 	    }
 	  else if (l_flag) 
-	     {
-	       ptrtab[num_conversion] =  &buf_lf[num_conversion];
-	       type[num_conversion] = SF_LF;
-	     }
+	    {
+	      ptrtab[num_conversion] =  &buf_lf[num_conversion];
+	      type[num_conversion] = SF_LF;
+	    }
 	  else
 	    {
 	      ptrtab[num_conversion] =  &buf_f[num_conversion];

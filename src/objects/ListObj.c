@@ -918,7 +918,7 @@ static int int_lxextractall(Stack stack, int rhs, int opt, int lhs)
    * typical case not very usefull but for which 
    * first element has to be destroyed : list(1,2,3)(:) 
    */
- nsp_void_object_destroy(&NthObj(1));
+  nsp_void_object_destroy(&NthObj(1));
 
   for ( i = 1 ; i < count ; i++) 
     {

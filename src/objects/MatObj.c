@@ -3401,14 +3401,14 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
   CheckLhs (1, 1);
   if ((HMat1 = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
+  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
+    return RET_BUG;
   if (HMat1->mn == 0)
     {
       if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
       NSP_OBJECT (HMat1)->ret_pos = 1;
       return 1;
     }
-  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
   if (HMat2->mn == 0)
     {
       if ( HMat1 == HMat2 ) 
@@ -3628,6 +3628,9 @@ int int_number_properties(Stack stack, int rhs, int opt, int lhs)
  * The Interface for basic matrices operation 
  */
 
+/* FIXME */
+extern int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs);
+
 static OpTab Matrix_func[] = {
   {"resize2vect_m", int_mxmat2vect},
   {"extractcols_m", int_mxextractcols},
@@ -3761,7 +3764,7 @@ static OpTab Matrix_func[] = {
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
   {"number_properties",int_number_properties},
-
+  {"linear_interpn", int_nsp_linear_interpn}, /* from libapprox */
   {(char *) 0, NULL}
 };
 

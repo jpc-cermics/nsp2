@@ -119,7 +119,7 @@ function demo_3d_8()
   [xx,yy,zzcol]=genfac3d(t,t,col); 
   xsetech(wrect=[0,0,0.5,1])
   // with generated facets 
-  plot3d(xx,yy,zz,colors=zzcol,);
+  plot3d(xx,yy,zz,colors=zzcol);
   xsetech(wrect=[0.5,0,0.5,1])
   // without facets 
   plot3d1(t,t,z);

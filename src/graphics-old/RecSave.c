@@ -13,6 +13,7 @@
 #include "nsp/graphics/Graphics.h"
 #include "nsp/graphics/Rec.h"
 
+
 static int save_D  (double x);
 static int save_LI (int ix);
 static int save_C (char *c, int lc); /* save a string with know size which is
@@ -665,6 +666,7 @@ static int save_Plot3D(BCG *Xgc,void *plot)
   if ( save_VectF((lplot->bbox),6L)== 0) return(0);
   return(1);
 }
+
 
 /*---------------------------------------------------------------------
  * fac3d 

@@ -14,6 +14,7 @@
 #include "nsp/graphics/Graphics.h"
 #include "nsp/gsort-p.h"
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
+#include "Plo3dObj.h"
 
 static int sci_demo (char *fname,char *code,int flag) ;
 static void  nsp_gwin_clear(BCG *Xgc);
@@ -1056,6 +1057,85 @@ int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
   return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d_1,nsp_plot_fac3d_1,nsp_plot_fac3d_2,nsp_plot_fac3d_3);
 }
 
+/* [] = draw_3d_obj(list(Objs),...)
+ */
+
+int int_draw3dobj(Stack stack, int rhs, int opt, int lhs)
+{
+  int err,*iflag,nf=0,nbObj=0, box_color=-1,box_style=SCILAB,with_mesh=FALSE,with_box=TRUE;
+  char *box_style_name=NULL;
+  NspList *L;
+  BCG *Xgc;
+  double alpha=35.0,theta=45.0,*ebox ;
+  const char *leg=NULL, *leg1;
+  NspMatrix *Mflag=NULL,*Mebox=NULL;
+  
+  int_types T[] = {list,new_opts, t_end} ;
+
+  nsp_option opts[] ={
+    { "alpha",s_double,NULLOBJ,-1},
+    { "box_color",s_int,NULLOBJ,-1},
+    { "box_style",string,NULLOBJ,-1},
+    { "ebox",realmat,NULLOBJ,-1},
+    { "flag",realmat,NULLOBJ,-1},
+    { "leg", string,NULLOBJ,-1},
+    { "theta",s_double,NULLOBJ,-1},
+    { "with_box",s_bool,NULLOBJ,-1},
+    { "with_mesh",s_bool,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&L,&opts,&alpha,&box_color,&box_style_name,
+	       &Mebox,&Mflag,&leg,&theta,&with_box,&with_mesh) == FAIL) 
+    return RET_BUG;
+  CheckLhs(1,1);
+
+  if ( box_style_name != NULL) 
+    {
+      if ( strcmp("matlab",box_style_name) == 0 ) 
+	box_style = MATLAB;
+      else if ( strcmp("scilab",box_style_name) == 0 ) 
+	box_style = SCILAB;
+      else
+	box_style = OTHER;
+    }
+
+  obj3d_from_list(stack,L,FALSE,&err,&nf,&nbObj);
+
+  if (err == TRUE) 
+    {
+      Scierror("%s: list of Object is wrong\n",stack.fname);
+      return RET_BUG;
+    }
+
+  if (( iflag = check_iflag(stack,stack.fname,"flag",Mflag,3))==NULL) return RET_BUG;
+  if (( ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
+  if (( leg1 = check_legend_3d(stack,stack.fname,"leg",leg)) == NULL) return RET_BUG;
+
+  /* 7 and 8 are the mode for superposed graphics */
+  iflag[1]=Max(Min(iflag[1],8),0);
+  /* check that iflag[1] and ebox are compatible */
+  if ( Mebox != NULLMAT) 
+    {
+      /* ebox is given then iflag[1] must be 1 or 3 or 5 */
+      if ( iflag[1] == 2 ||  iflag[1] == 4 ||  iflag[1] == 6 || iflag[1] == 8 ) iflag[1]--;
+    }
+  else
+    {
+      /* ebox is not given then iflag[1] cannot be 1 or 3 or 5 */
+      if ( iflag[1] == 1 ||  iflag[1] == 3 ||  iflag[1] == 5 || iflag[1] == 7 ) iflag[1]++;
+    }
+  /*
+   * check that iflag[2] and leg are compatible 
+   * i.e force visibility of axes names if they are given
+   */
+  if (leg !=  NULL) iflag[2]=4;
+
+  Xgc=nsp_check_graphic_context();
+  nsp_gwin_clear(Xgc);
+
+  nsp_draw_3d_obj(Xgc,L,&theta,&alpha,leg1,iflag,ebox,with_mesh,with_box,box_color,box_style);
+  return 0;
+}
 
 /*-----------------------------------------------------------
  *   plot2d(x,y,[style,strf,leg,rect,nax]) 
@@ -4715,7 +4795,6 @@ int int_feval( Stack stack, int rhs, int opt, int lhs)
 
 extern int int_ode( Stack stack, int rhs, int opt, int lhs); /* XXX*/
 
-
 static OpTab Graphics_func[]={
   {"ode",int_ode}, /* FIXME: en construction */
   {"feval",int_feval}, /* FIXME: en construction */
@@ -4794,6 +4873,8 @@ static OpTab Graphics_func[]={
   {"xs2ps",int_xs2ps},
   {"camera",int_camera},
   {"dsearch", int_dsearch},
+  {"draw3d_objs", int_draw3dobj},
+
   {(char *) 0, NULL}
 };
 
