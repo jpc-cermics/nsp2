@@ -11,6 +11,8 @@
 #include "nsp/graphics/Graphics.h"
 /* #include "nsp/graphics/PloEch.h" */
 
+extern Gengine Gtk_gengine;
+
 #ifdef __STDC__
 void wininfo(char *format,...);
 #else
@@ -44,6 +46,20 @@ static void dbox (BCG *Xgc);
 
 static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox);
 
+int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
+		double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
+
+int DPoints1_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
+		 double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
+
+static void plot3dg_ogl(BCG *Xgc,char *name,
+			int (*func)(BCG *Xgc,double *polyx, double *polyy, double *polyz,int *fill,
+				    int whiteid, double zmin, double zmax, double *x, 
+				    double *y, double *z, int i, int j, int jj1,
+				    int *p, int dc, int fg),
+			double *x, double *y, double *z, int *p, int *q, 
+			double *teta, double *alpha, char *legend, int *flag, double *bbox);
+
 /*-------------------------------------------------------------------------
  *
  *  3D Plotting of surfaces given by z=f(x,y)
@@ -76,17 +92,22 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
  *-------------------------------------------------------------------------*/
 int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  C2F(plot3dg)(Xgc,"plot3d",DPoints,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+  if ( Xgc->graphic_engine == &Gtk_gengine ) 
+    C2F(plot3dg)(Xgc,"plot3d",DPoints,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+  else
+    plot3dg_ogl(Xgc,"plot3d",DPoints_ogl,x,y,z,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
 int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  C2F(plot3dg)(Xgc,"plot3d1",DPoints1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+  if ( Xgc->graphic_engine == &Gtk_gengine ) 
+    C2F(plot3dg)(Xgc,"plot3d1",DPoints1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+  else
+    plot3dg_ogl(Xgc,"plot3d1",DPoints1_ogl,x,y,z,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-extern Gengine Gtk_gengine;
 
 int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
@@ -1744,5 +1765,243 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
 
  restore:
   
+}
+
+
+/* 
+ * Current geometric transformation and scales 
+ * which are used or set according to the value of flag[1]
+ *
+ */
+
+static void plot3dg_ogl(BCG *Xgc,char *name,
+			int (*func)(BCG *Xgc,double *polyx, double *polyy, double *polyz,int *fill,
+				    int whiteid, double zmin, double zmax, double *x, 
+				    double *y, double *z, int i, int j, int jj1,
+				    int *p, int dc, int fg),
+			double *x, double *y, double *z, int *p, int *q, 
+			double *teta, double *alpha, char *legend, int *flag, double *bbox)
+{
+  static int InsideU[4],InsideD[4],fg,fg1,dc;
+  /* solid = color of 3D frame */
+  int polysize,npoly,whiteid;
+  double *polyx,*polyy,*polyz;
+  int *fill;
+  double xbox[8],ybox[8],zbox[8];
+  static int cache;
+  static double zmin,zmax;
+  int i,j;
+  /** If Record is on **/
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
+    {
+      if (strcmp(name,"plot3d")==0) 
+	store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+      else 
+	store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+    }
+
+  fg = Xgc->graphic_engine->xget_foreground(Xgc);
+ 
+  if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
+    {
+      bbox[0]=x[0];bbox[1]=x[*p-1];
+      bbox[2]=y[0];bbox[3]=y[*q-1];
+      zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
+      zmax=bbox[5]=(double) Maxi(z,*p*(*q));
+    }
+  if ( flag[1]==1 || flag[1]==3 || flag[1]==5) 
+    {
+      zmin=bbox[4];
+      zmax=bbox[5];
+    }
+
+  if ( flag[1] ==0)
+    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
+  else
+    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+  /** Calcule l' Enveloppe Convex de la boite **/
+  /** ainsi que les triedres caches ou non **/
+  Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
+  /** Le triedre cach\'e **/
+  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
+  if (fg1==-1) fg1=0;
+  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+    {
+      cache=InsideD[0];
+      if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
+    }
+  else 
+    {
+      cache=InsideU[0]-4;
+      if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
+    }
+  polyx = graphic_alloc(0,5*(*q),sizeof(double));
+  polyy = graphic_alloc(1,5*(*q),sizeof(double));
+  polyz = graphic_alloc(5,5*(*q),sizeof(double));
+  fill  = graphic_alloc(2,(*q),sizeof(int));
+  if ( (polyx == NULL) || (polyy == NULL) || (polyz == NULL) ||(fill  == NULL)) 
+    {
+      Scistring("plot3dg_ : malloc No more Place\n");
+      return;
+    }
+
+  /** The 3d plot **/
+
+  whiteid = Xgc->graphic_engine->xget_last(Xgc);
+  dc =  flag[0];
+  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
+  if (fg1==-1) fg1=0;   
+  for ( i =0 ; i < (*q)-1 ; i++)   fill[i]= dc ;
+  polysize=5;
+  npoly= (*q)-1; 
+  /** Choix de l'ordre de parcourt **/
+  switch (cache)
+    {
+    case 0 : 
+      for ( i =0 ; i < (*p)-1 ; i++)
+	{
+	  int npolyok=0;
+	  for ( j =0 ; j < (*q)-1 ; j++)
+	    {
+	     npolyok += (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
+				x,y,z,i,j,npolyok,p,dc,fg1);
+	    }
+	  if ( npolyok != 0) 
+	    fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
+	}
+      break;
+    case 1 : 
+      for ( i =0 ; i < (*p)-1 ; i++)
+	{
+	  int npolyok=0;
+	  for ( j =0  ; j < (*q)-1  ; j++)
+	    {
+	      npolyok += (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
+				 x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
+	   }
+	  if ( npolyok != 0) 
+	    fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
+	}
+      break;
+    case 2 : 
+      for ( i =(*p)-2 ; i >=0  ; i--)
+	{
+	  int npolyok=0;
+	  for ( j = 0 ; j < (*q)-1 ; j++)
+	    {
+	     npolyok +=     (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
+				    x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
+	   }
+	  if ( npolyok != 0) 
+	    fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
+	}
+      break;
+    case 3 : 
+      for ( i =(*p)-2 ; i >=0  ; i--)
+	{
+	  int npolyok=0;
+	  for ( j =0 ; j < (*q)-1 ; j++)
+	    {
+	     npolyok += (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
+				x,y,z,i,j,npolyok,p,dc,fg1);
+	   }
+	  if ( npolyok != 0) 
+	    fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
+	}
+      break;
+    }
+  /* jpc   if (flag[1] != 0 && flag[2] >=3 ) */
+  if ( flag[2] >=3 )
+    {
+      /** Le triedre que l'on doit voir **/
+      if (zbox[InsideU[0]] > zbox[InsideD[0]])
+	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
+      else 
+	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
+    }
+}
+
+
+
+/*-------------------------------------------------------------------
+ *  returns in (polyx, polyy) the polygon for one facet of the surface 
+ *--------------------------------------------------------------------*/
+
+/* FIXME orientation is not properly calculated here  */
+
+int DPoints1_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
+		 double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg)
+{
+
+  polyx[  5*jj1] =x[i];
+  polyy[  5*jj1] =y[j];
+  polyz[  5*jj1] =z[i+(*p)*j];
+  if (  finite(z[i+(*p)*j])==0) return 0;
+  polyx[1 +5*jj1]=x[i];
+  polyy[1 +5*jj1]=y[j+1];
+  polyz[1 +5*jj1]=z[i+(*p)*(j+1)];
+  if (  finite(z[i+(*p)*(j+1)])==0) return 0;
+  polyx[2 +5*jj1]=x[i+1];
+  polyy[2 +5*jj1]=y[j+1];
+  polyz[2 +5*jj1]=z[(i+1)+(*p)*(j+1)];
+  if (  finite(z[i+1+(*p)*(j+1)])==0) return 0;
+  polyx[3 +5*jj1]=x[i+1];
+  polyy[3 +5*jj1]=y[j];
+  polyz[3 +5*jj1]=z[(i+1)+(*p)*j];
+  if (  finite(z[i+1+(*p)*(j)])==0) return 0;
+  polyx[4 +5*jj1]=x[i];
+  polyy[4 +5*jj1]=y[j];
+  polyz[4 +5*jj1]=z[i+(*p)*j];
+  
+  /* 
+  if (((polyx[1+5*jj1]-polyx[0+5*jj1])*(polyy[2+5*jj1]-polyy[0+5*jj1])-
+       (polyy[1+5*jj1]-polyy[0+5*jj1])*(polyx[2+5*jj1]-polyx[0+5*jj1])) <  0)
+    fill[jj1]= (dc < 0 ) ? -fg : fg ;
+  else
+  */
+  {
+    fill[jj1]=inint((whiteid-1)*((1/4.0*( z[i+(*p)*j]+ z[i+1+(*p)*j]+
+					  z[i+(*p)*(j+1)]+ z[i+1+(*p)*(j+1)])-zmin)
+				 /(zmax-zmin)))+1;
+    if ( dc < 0 ) fill[jj1]= -fill[jj1];
+  }
+  return(1);
+}
+
+/* FIXME orientation is not properly calculated here  */
+
+int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
+		double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg)
+{
+#ifdef lint
+  whiteid,fill[0],zmin,zmax;
+#endif
+  polyx[  5*jj1] =x[i];
+  polyy[  5*jj1] =y[j];
+  polyz[  5*jj1] =z[i+(*p)*j];
+  if (  finite(z[i+(*p)*j])==0) return 0;
+  polyx[1 +5*jj1]=x[i];
+  polyy[1 +5*jj1]=y[j+1];
+  polyz[1 +5*jj1]=z[i+(*p)*(j+1)];
+  if (  finite(z[i+(*p)*(j+1)])==0) return 0;
+  polyx[2 +5*jj1]=x[i+1];
+  polyy[2 +5*jj1]=y[j+1];
+  polyz[2 +5*jj1]=z[(i+1)+(*p)*(j+1)];
+  if (  finite(z[i+1+(*p)*(j+1)])==0) return 0;
+  polyx[3 +5*jj1]=x[i+1];
+  polyy[3 +5*jj1]=y[j];
+  polyz[3 +5*jj1]=z[(i+1)+(*p)*j];
+  if (  finite(z[i+1+(*p)*(j)])==0) return 0;
+  polyx[4 +5*jj1]=x[i];
+  polyy[4 +5*jj1]=y[j];
+  polyz[4 +5*jj1]=z[i+(*p)*j];
+  /* FIXME: 
+     if (((polyx[1+5*jj1]-polyx[0+5*jj1])*(polyy[2+5*jj1]-polyy[0+5*jj1])-
+     (polyy[1+5*jj1]-polyy[0+5*jj1])*(polyx[2+5*jj1]-polyx[0+5*jj1])) <  0)
+     fill[jj1]=  (dc != 0 ) ? fg : dc ;
+     else
+  */
+  fill[jj1]= dc;
+  return(1);
 }
 
