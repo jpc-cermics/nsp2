@@ -8,7 +8,7 @@ S=[1,-1,-1
    -1,-1,1];
 
 function F=faces(i)
-  F=[S(1,i),S(2,i),S(3,i),S(4,i)
+  F=[S(4,i),S(3,i),S(2,i),S(1,i)
      S(2,i),S(3,i),S(6,i),S(5,i)
      S(4,i),S(8,i),S(6,i),S(3,i)
      S(1,i),S(7,i),S(8,i),S(4,i)
