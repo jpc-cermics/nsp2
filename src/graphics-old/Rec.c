@@ -2055,7 +2055,7 @@ void tape_clean_plots(BCG *Xgc,int winnumber)
  * iflag[3] sert a dire s'il faut ou pas changer bbox 
  *---------------------------------------------------------------------------*/
 
-static void new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+void new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
 {
   list_plot *list = Xgc->plots ;
   if ( Xgc->record_flag == FALSE ) return ;

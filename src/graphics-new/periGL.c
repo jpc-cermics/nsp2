@@ -9,6 +9,27 @@
  *   faut utiliser glDepthRange 
  *   pour préciser la zone de la scene.
  *   etc.....
+ *
+ * when a graphic function is activated ex drawrectangle 
+ *   the graphic is performed and an expose event is queued 
+ *   (using nsp_gtk_invalidate where resize flag is set to 1 to force 
+ *    a redraw when the expose is effective)
+ *   Proceding this way the graphic is present on the back and front buffer 
+ *   and when an expose event is activated without resize a swap_buffers is enough 
+ *   to redraw the graphics without replaying the whole stuff.
+ *   FIXME: il semble que parfois ça ne marche plus !!!!
+ *   et je ne sais pas pourquoi.
+ *   
+ *   force_affichage(BCG *Xgc) is similar to nsp_gtk_invalidate but the 
+ *   expose is done synchronously. 
+ *   xset('wshow') when we are not using an extra_pixmap performs 
+ *   a force_affichage. 
+ *   This can be usefull in 
+ *   for i=1:10;xclear();plot3d(x,y,z,angle=i);xset('wshow');end
+ *   since if the force_affichage is not used then only the last 
+ *   plot3d will be visible. 
+ *   
+ * 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -140,6 +161,11 @@ static void xset_show(BCG *Xgc)
       gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
     }
+  else
+    {
+      /* see the comments at the begining */
+      force_affichage(Xgc);
+    }
 }
 
 /*
@@ -214,15 +240,15 @@ void xend(BCG *Xgc)
   glDeleteLists(Xgc->private->tab_base[1],95);
 }
 
-/** Clear the current graphic window     **/
+/* Clear the current graphic window 
+ */
 
 static void clearwindow(BCG *Xgc)
 {
-  //  glDrawBuffer(GL_FRONT_AND_BACK);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glClearColor(Xgc->private->gcol_bg.red /255.0,
 	       Xgc->private->gcol_bg.green /255.0,
 	       Xgc->private->gcol_bg.blue /255.0,0.0);
+  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
@@ -1579,10 +1605,11 @@ static void xset_background(BCG *Xgc,int num)
 //	  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
 //	  gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
 	  
-
+/* FIXME 
 	  glClearColor(Xgc->private->gcol_bg.red /255.0,
 		       Xgc->private->gcol_bg.green /255.0,
 		       Xgc->private->gcol_bg.blue /255.0,0.0);
+*/
      }
 }
  
@@ -1989,7 +2016,6 @@ static void drawrectangle(BCG *Xgc,const int rect[])
   glVertex2i(rect[0]        ,rect[1]+rect[3]);
   glEnd();
   if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
-  //glFlush ();
 }
 
 /** fill one rectangle, with current pattern **/
@@ -3105,7 +3131,8 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 
 static void nsp_gtk_invalidate(BCG *Xgc)
 {
-
+  /* put an expose in the queue as if the window was resized */
+  Xgc->private->resize = 1;
   gdk_window_invalidate_rect(Xgc->private->drawing->window,
 			     &Xgc->private->drawing->allocation,
 			     FALSE);
@@ -3125,25 +3152,19 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   
   glLineWidth(1.5); // FIXME: 
 
-  fprintf(stderr,"je redessine %d\n",count++);
-  
-  if ( 1 ) /* FIXME: why do I need to always redraw dd->private->resize != 0) */
+  if ( dd->private->resize != 0)  
     { 
+  
       dd->private->resize = 0;
       if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
 	{
-	  fprintf(stderr,"Attention je retourne \n");
 	  return FALSE;
 	}
       
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
+      /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
+      glClear(GL_DEPTH_BUFFER_BIT);
 
       nsp_ogl_set_view(dd);
-
-      //     glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
-      //     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-      //     glPrint2D(dd, 10, 10, 0.6, 0, true, "Coucou");
-      //     glPrint2D(dd, 100, 100, 0.6, 0, false, "Coucou");
 
       dd->private->in_expose= TRUE;
       scig_resize(dd->CurWindow);
@@ -3161,7 +3182,6 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       /* just an expose we use the back buffer */
       if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
 	{
-	  fprintf(stderr,"Attention je retourne \n");
 	  return FALSE;
 	}
       if (gdk_gl_drawable_is_double_buffered (gldrawable))
@@ -3288,8 +3308,8 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
 					GDK_GL_MODE_DEPTH  |
 					GDK_GL_MODE_STENCIL |
-					GDK_GL_MODE_SINGLE);
-  //GDK_GL_MODE_DOUBLE);
+					//GDK_GL_MODE_SINGLE);
+					GDK_GL_MODE_DOUBLE);
   if (glconfig == NULL)
     {
       g_print ("*** Cannot find the double-buffered visual.\n");
@@ -3571,6 +3591,7 @@ t_camera nouvelle_camera(float px, float py, float pz,
 
 void force_affichage(BCG *Xgc)
 {
+  Xgc->private->resize = 1;
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 

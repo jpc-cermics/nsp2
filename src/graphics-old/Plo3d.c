@@ -2294,11 +2294,10 @@ int nsp_plot_box3d_ogl(BCG *Xgc,double *xbox, double *ybox, double *zbox)
 
 
 /*-------------------------------------
- * just a test FIXME
- *   version ou le graphique tourne 
- *   completement 
- *   avec opengl on ne revoit 
- *   pas le dessin avant la fin !!!!!
+ * Interactive change of view angle 
+ * with full redraw when the mouse moves 
+ * The process is initiated by a click and 
+ * stopped when the mouse is released 
  *--------------------------------------*/
 
 /* Changement interactif de 3d **/
@@ -2327,19 +2326,20 @@ void I3dRotation(BCG *Xgc)
     {
       theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
       Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
-      /* Xgc->graphic_engine->clearwindow(Xgc); */
-      /* FIXME : here a new_angle_plots is enough 
-       * since  force_affichage will do the drawing */
+      Xgc->graphic_engine->clearwindow(Xgc);
+      /* here a new_angle_plots is enough if
+       * force_affichage will do the drawing 
+       */
       tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
       /* force drawing: FIXME */
       force_affichage(Xgc);
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,TRUE,FALSE);
       xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
       yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
       x=(xl-Xgc->scales->frect[0])*xx;
       y=(yl-Xgc->scales->frect[1])*yy;
     }
-  /* Xgc->graphic_engine->clearwindow(Xgc); */
+  Xgc->graphic_engine->clearwindow(Xgc);
   tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
   force_affichage(Xgc);
 }
