@@ -77,7 +77,7 @@ NspObject *SpLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep
 int nsp_spmatrix_eq(NspObject *A,NspObject *B);
 int nsp_spmatrix_neq(NspObject *A,NspObject *B);
 static NspSpMatrix *nsp_spmatrix_xdr_load(NspFile  *F);
-static int nsp_spmatrix_xdr_save(NspFile  *F, NspMatrix *M);
+static int nsp_spmatrix_xdr_save(NspFile  *F, NspSpMatrix *M);
 #endif 
 
 #define NULLSP (  NspSpMatrix *) 0
@@ -100,8 +100,8 @@ extern NspSpMatrix *nsp_spmatrix_copy(NspSpMatrix *A);
 extern NspSpMatrix   *nsp_spmatrix_object(NspObject *O);
 
 
- extern NspSpMatrix *nsp_spmatrix_create(char *name, char type, integer m, integer n); 
- extern NspSpMatrix *nsp_spmatrix_sparse(NspMatrix *RC, NspMatrix *Values, int m, int n); 
+extern NspSpMatrix *nsp_spmatrix_create(char *name, char type, integer m, integer n); 
+extern NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, int m, int n); 
  extern int nsp_spmatrix_get(NspSpMatrix *A, NspMatrix **RC, NspMatrix **Values); 
  extern int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n); 
  extern void SpRowDestroy (SpRow *Row); 
