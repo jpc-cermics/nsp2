@@ -28,7 +28,7 @@ FILE * Sciprint_set_diary(FILE *f,int diary_echo);
 extern int Sciprint_diary_on(void) ;
 extern int Sciprint_diary(char *fmt, va_list ap);
 extern int Sciprint_diary_only (char *fmt,...);
-extern void Sciprint_file(FILE *f); 
+extern FILE *Sciprint_file(FILE *f); 
 extern int Sciprint2file(char *fmt, va_list ap); 
 
 typedef int iofun (char *fmt,...);

@@ -622,6 +622,7 @@ int int_file_printf(void *self,Stack stack, int rhs, int opt, int lhs)
 
 int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
 {
+  FILE *f;
   int rep=-1;
   char *Table[] = {"as_read", NULL};
   NspObject *object ; 
@@ -641,7 +642,7 @@ int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
       Scierror("Warning:\tfile %s is already closed\n",F->fname);
       return RET_BUG;
     }
-  Sciprint_file(F->file); 
+  f = Sciprint_file(F->file); 
   def = SetScilabIO(Sciprint2file);
   mf =  SetScilabMore(scimore_void);
   if ( rep == 0 ) 
@@ -656,10 +657,10 @@ int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
     {
       object->type->pr(object,0,TRUE);
     }
-  return 0;
-  /* back to default */
+  /* back to default values */
   SetScilabIO(def);
   SetScilabMore(mf);
+  Sciprint_file(f); 
   return 0;
 }
 

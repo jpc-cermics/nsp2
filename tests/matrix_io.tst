@@ -110,7 +110,6 @@ fd.close[];
 a1=a;
 rep= exec('TMPDIR/Mat',errcatch=%t)
 if ~rep then pause;end 
-
 if max(a1-a) > 1.e-1 then pause,end 
 
 // write matrix with printf method 
