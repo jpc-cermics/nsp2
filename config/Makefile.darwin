@@ -1,18 +1,33 @@
-# Copyright ENPC 
+# # Copyright ENPC 
+
+# FFLAGS = $(FC_OPTIONS)
+
+# # I we use g77 to link we will have undefined refs. 
+
+# FLIBS=  -lfrtbegin -lg2c -lgcc -lSystem
+# # libs/scigtk.a 
+
+# LIBS= libs/nsp.a  \
+# 	libs/zcalelm.a libs/zblas.a libs/graphics.a \
+# 	libs/gd.a libs/gtksci.a libs/menusX.a 
+
+# bin/scilex: scilex-lib 
+# 	@$(RM) $@;
+# 	@echo "linking"; 
+# 	$(CC)  $(FFLAGS) -o $@ src/Parse/lsci.o $(FC_LDFLAGS) \
+# 	$(LIBS) $(TCLTK_LIBS) $(XLIBS) $(TERMCAPLIB) $(FLIBS);
+
+# Copyright Enpc 
 
 FFLAGS = $(FC_OPTIONS)
 
-# I we use g77 to link we will have undefined refs. 
-
-FLIBS=  -lfrtbegin -lg2c -lgcc -lSystem
-# libs/scigtk.a 
-
-LIBS= libs/nsp.a  \
-	libs/zcalelm.a libs/zblas.a libs/graphics.a \
-	libs/gd.a libs/gtksci.a libs/menusX.a 
+LIBS= libs/nsp.a libs/zcalelm.a libs/zblas.a libs/graphics.a \
+	libs/gtksci.a libs/menusX.a libs/rand.a libs/dcd.a  
 
 bin/scilex: scilex-lib 
 	@$(RM) $@;
 	@echo "linking"; 
-	$(CC)  $(FFLAGS) -o $@ src/Parse/lsci.o $(FC_LDFLAGS) \
-	$(LIBS) $(TCLTK_LIBS) $(XLIBS) $(TERMCAPLIB) $(FLIBS);
+	$(CC)  $(FFLAGS) -o $@ src/interp/lsci.o $(FC_LDFLAGS) \
+	$(LIBS) $(TCLTK_LIBS) $(XLIBS) -lg2c $(TERMCAPLIB);
+
+
