@@ -131,7 +131,10 @@ if test "$rest" = "yes"; then
           ;;
       -nw)
           now="-nw"
-	      sci_args="$sci_args -nw"
+          sci_args="$sci_args -nw"
+          ;;
+      -texmacs)
+          sci_args="$sci_args -texmacs"
           ;;
       -nwni)
           now="-nw"

@@ -421,7 +421,7 @@ void nsp_mat_clean(NspMatrix *A, int rhs, double epsa, double epsr)
  *  On entry A and Ind if Ind is used must have the same size 
  */
 
-int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, integer j, integer flag)
+int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind,int j,int flag)
 {
   int i;
   if (  SameDim(A,B) )

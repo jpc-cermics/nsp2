@@ -51,9 +51,10 @@ struct _ode_data
 		  */
   NspMatrix *y,*t; /* state of ode y->mn >= neq , t : 1x1 matrix the time */
   NspObject *func; /* equation to integrate */
+  NspObject *jac;  /* jacobian */
 };
 
-static ode_data ode_d ={ NULL,0,NULL,NULL,NULL}; 
+static ode_data ode_d ={ NULL,0,NULL,NULL,NULL,NULL}; 
 
 extern struct {
   int mesflg, lunit;
@@ -63,10 +64,19 @@ extern struct {
   int iero;
 } C2F(ierode);
 
-int ode_prepare(int m,int n,NspObject *f,NspList *args,ode_data *obj)
+int ode_prepare(int m,int n,NspObject *f,NspObject *jac,NspList *args,ode_data *obj)
 {
   if (( obj->func =nsp_object_copy(f)) == NULL) return RET_BUG;
   if (( nsp_object_set_name(obj->func,"ode_f")== FAIL)) return RET_BUG;
+  if ( jac != NULL ) 
+    {
+      if (( obj->jac =nsp_object_copy(jac)) == NULL) return RET_BUG;
+      if (( nsp_object_set_name(obj->func,"ode_jac")== FAIL)) return RET_BUG;
+    }
+  else 
+    {
+      obj->jac = NULL;
+    }
   if ( args != NULL ) 
     {
       if (( obj->args = nsp_list_copy(args)) == NULL ) return RET_BUG;
@@ -92,6 +102,7 @@ static void ode_clean(ode_data *obj)
 {
   if ( obj->args != NULL) nsp_list_destroy(obj->args);
   nsp_object_destroy(&obj->func);
+  if ( obj->jac != NULL)   nsp_object_destroy(&obj->jac);
   nsp_matrix_destroy(obj->y);
   nsp_matrix_destroy(obj->t);
 }
@@ -104,9 +115,9 @@ static void ode_clean(ode_data *obj)
  * @: 
  * @ode: 
  * 
- * this function is passed to lsoda 
+ * this function is passed to lsoda as a ode description 
  * 
- * Return value: 
+ * Return value: %FAIL or %OK 
  * 
  **/
 
@@ -146,6 +157,68 @@ static int ode_system(int *neq,const double *t,const double y[],double ydot[])
   return OK;
 }
 
+
+/**
+ * ode_jac_system:
+ * @neq: 
+ * @t: 
+ * @: 
+ * @: 
+ * 
+ * this function is passed to lsoda as a jacobian associated 
+ * to ode_system
+ * 
+ * Return value: 
+ **/
+
+
+static int ode_jac_system(int *neq,const double *t,const double y[],
+			  int *ml,int *mu,double jac[],int *nrowj)
+{
+  ode_data *ode = &ode_d;
+  NspObject *targs[4];/* arguments to be transmited to ode->func */
+  NspObject *nsp_ret;
+  int nret = 1,nargs = 2, i;
+  targs[0]= NSP_OBJECT(ode->t); 
+  ode->t->R[0] = *t;
+  targs[1]= NSP_OBJECT(ode->y); 
+  for ( i= 0 ; i < ode->y->mn ; i++) ode->y->R[i]= y[i];
+  if (ode->args != NULL ) 
+    {
+      targs[2]= NSP_OBJECT(ode->args);
+      nargs= 3;
+    }
+  /* FIXME : a changer pour metre une fonction eval standard */
+  if ( nsp_gtk_eval_function((NspPList *)ode->jac ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+    {
+      C2F(ierode).iero = 1;
+      return FAIL;
+    }
+  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' ) 
+    {
+      if ( *ml == 0 && *mu == 0 )
+	{
+	  for ( i= 0 ; i < ode->y->mn*ode->y->mn ; i++) 
+	    jac[i]= ((NspMatrix *) nsp_ret)->R[i];
+	}
+      else 
+	{
+	  Scierror("Error: ode banded jacobian not already implemented \n");
+	  C2F(ierode).iero = 1;
+	  return FAIL;
+	  
+	}
+      nsp_object_destroy((NspObject **) &nsp_ret);
+    }
+  else 
+    {
+      Scierror("Error: ode system returned argument is wrong t=%5.3f\n",*t);
+      C2F(ierode).iero = 1;
+      return FAIL;
+    }
+  return OK;
+}
+
 /**
  * int_ode:
  * @stack: 
@@ -153,28 +226,35 @@ static int ode_system(int *neq,const double *t,const double y[],double ydot[])
  * @opt: 
  * @lhs: 
  * 
- * interface for ode 
+ * general interface for variations on ode 
+ * according to the value of argument methode control is 
+ * given to a specific interface. 
  * 
- * Return value: 
+ * Return value: number of returned arguments.
  **/
 
-typedef enum {adams,stiff,rk,rkf,fix,discrete,roots} ode_method;
+typedef enum {ode_default,adams,stiff,rk,rkf,fix,discrete,roots} ode_method;
 
-static int int_ode_adams(Stack stack,NspObject *f,int jt,NspObject *jac,NspList *args,NspMatrix *y0,
-			 double t0,NspMatrix *time, double rtol, NspMatrix *Matol) ;
+static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspList *args,NspMatrix *y0,
+			 double t0,NspMatrix *time, double rtol, NspMatrix *Matol,
+			 NspHash *odeoptions) ;
+
+static int int_ode_discrete(Stack stack,NspObject *f,NspList *args,NspMatrix *y0,
+			    double t0,NspMatrix *time);
 
 int int_ode( Stack stack, int rhs, int opt, int lhs)
 {
-  ode_method methode= adams;
+  ode_method methode= ode_default;
   int jt=2;
   NspObject *f= NULL, *jac=NULL,*g=NULL;
+  NspHash *odeoptions = NULL;
   NspList *args=NULL, *gargs=NULL;
   double rtol=1.e-7,t0;
   int ng=-1;
   char *type=NULL;
   NspMatrix *y0,*time,*w=NULL,*iw=NULL, *Matol=NULL;
   
-  static char *Table[] = {"adams","stiff", "rk", "rkf", "fix", "discrete", "roots", NULL};
+  static char *Table[] = {"default","adams","stiff","rk","rkf","fix","discrete","roots", NULL};
 
   int_types T[] = {realmatcopy,s_double,realmat,obj,new_opts, t_end} ;
 
@@ -186,14 +266,15 @@ int int_ode( Stack stack, int rhs, int opt, int lhs)
     { "iw",realmatcopy,NULLOBJ,-1},
     { "jac", obj, NULLOBJ,-1},
     { "ng", s_int, NULLOBJ,-1},
+    { "odeoptions", hash , NULLOBJ,-1},
     { "rtol",s_double,NULLOBJ,-1},
     { "type",string,NULLOBJ,-1},
     { "w", realmatcopy,NULLOBJ,-1},
     { NULL,t_end,NULLOBJ,-1}
   };
 
-  if ( GetArgs(stack,rhs,opt,T,&y0,&t0,&time,&f,&opts,&args,&Matol,&g,&gargs,&iw,&jac,&ng,&rtol,&type,&w) 
-       == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&y0,&t0,&time,&f,&opts,&args,&Matol,&g,
+	       &gargs,&iw,&jac,&ng,&odeoptions,&rtol,&type,&w) == FAIL) return RET_BUG;
 
   /* search for given integration method */
 
@@ -213,15 +294,19 @@ int int_ode( Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
+
   switch ( methode ) 
     {
+    case ode_default: 
+      return int_ode_default(stack,f,jt,jac,args,y0,t0,time,rtol,Matol,odeoptions);
     case adams: 
-      return int_ode_adams(stack,f,jt,jac,args,y0,t0,time,rtol,Matol);
+      
     case stiff:
     case rk:
     case rkf:
     case fix:
     case discrete:
+      return int_ode_discrete(stack,f,args,y0,t0,time);
     case roots:
       Scierror("%s: methode is to be implemented \n",stack.fname);
       return RET_BUG;
@@ -230,9 +315,28 @@ int int_ode( Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static int int_ode_adams(Stack stack,NspObject *f,int jt,NspObject *jac,NspList *args,NspMatrix *y0,
-			 double t0,NspMatrix *time, double rtol, NspMatrix *Matol) 
+static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspList *args,
+			   NspMatrix *y0, double t0,NspMatrix *time, double rtol, 
+			   NspMatrix *Matol, NspHash *odeoptions) 
 {
+  int op_itask=0,op_jactyp=0,op_mxstep=0,op_mxordn=0,op_mxords=0,op_ixpr=0,op_ml=0,op_mu=0;
+  double op_tcrit=0.0,op_h0=0.0,op_hmax=0.0,op_hmin=0.0;
+  nsp_option opts[] ={
+    { "h0",s_double , NULLOBJ,-1},
+    { "hmax",s_double,  NULLOBJ,-1},
+    { "hmin",s_double,  NULLOBJ,-1},
+    { "itask",s_int,  NULLOBJ,-1},
+    { "ixpr",s_int,NULLOBJ,-1},
+    { "jactyp",s_int,NULLOBJ,-1},
+    { "ml",s_int,NULLOBJ,-1},
+    { "mu", s_int,NULLOBJ,-1},
+    { "mxordn",s_int, NULLOBJ,-1},
+    { "mxords",s_int , NULLOBJ,-1},
+    { "mxstep", s_int, NULLOBJ,-1},
+    { "tcrit",s_double,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  };
+  
   int rwork_size,iwork_size, ml=0,mu=0;
   /* atol */
   int itol=1;
@@ -259,6 +363,16 @@ static int int_ode_adams(Stack stack,NspObject *f,int jt,NspObject *jac,NspList 
 	}
     }
 
+  /* get options from options */
+  
+  if ( odeoptions != NULL) 
+    {
+      if ( get_optional_args_from_hash(stack,odeoptions,opts,&op_h0,&op_hmax,&op_hmin,
+				       &op_itask,&op_ixpr,&op_jactyp,&op_ml,&op_mu,&op_mxordn,
+				       &op_mxords,&op_mxstep,&op_tcrit) == FAIL) 
+	return RET_BUG;
+    }
+
   /* working arrays */
 
   if ( jt == 1 || jt == 2 ) 
@@ -269,7 +383,7 @@ static int int_ode_adams(Stack stack,NspObject *f,int jt,NspObject *jac,NspList 
   if (( rwork = nsp_matrix_create(NVOID,'r',1,rwork_size))== NULLMAT) return RET_BUG;
   if (( iwork = nsp_matrix_create(NVOID,'r',1,iwork_size))== NULLMAT) return RET_BUG;
 
-  if ( ode_prepare(y0->m,y0->n,f,args,&ode_d) == FAIL ) 
+  if ( ode_prepare(y0->m,y0->n,f,jac,args,&ode_d) == FAIL ) 
     return RET_BUG;
 
   /* output */
@@ -279,16 +393,20 @@ static int int_ode_adams(Stack stack,NspObject *f,int jt,NspObject *jac,NspList 
   C2F(ierode).iero = 0;
   C2F(eh0001).mesflg = 1 ;
 
+  if ( jac != NULL ) jt = 1; /* user supplied full jacobian */
+
+  /* loop on time */
+
   for ( i= 0 ; i < time->mn ; i++ )
     {
       double tout = time->R[i];
       C2F(lsoda)(ode_system,&y0->mn,y0->R,&t0,&tout,&itol,&rtol,atol,
 		 &itask,&istate,&iopt,rwork->R,&rwork->mn,
-		 (int *)iwork->R,&iwork->mn,NULL,&jt);
+		 (int *)iwork->R,&iwork->mn,ode_jac_system,&jt);
       t0 = tout;
       if ( istate < 0 ) 
 	{
-	  Scierror("%s: istate %d\n",stack.fname,istate);
+	  Scierror("Error: istate=%d in %s\n",istate,stack.fname);
 	  return RET_BUG;
 	}
       if ( C2F(ierode).iero == 1 ) 
@@ -296,18 +414,67 @@ static int int_ode_adams(Stack stack,NspObject *f,int jt,NspObject *jac,NspList 
 	  break;
 	}
       /* FIXME : put a memcpy here */
-      memcpy(res->R+i,y0->R,res->m*sizeof(double));
+      memcpy(res->R+res->m*i,y0->R,res->m*sizeof(double));
     }
 
   if ( C2F(ierode).iero == 1 ) 
     {
-      /* resize matrix */
+      /* resize matrix : just returning relevant values */
       if (nsp_matrix_resize (res,res->m,i-1) != OK) return RET_BUG;
     }
 
   ode_clean(&ode_d);
   nsp_matrix_destroy(rwork);
   nsp_matrix_destroy(iwork);
+  MoveObj(stack,1,(NspObject *) res);
+  return 1;
+}
+
+
+static int int_ode_discrete(Stack stack,NspObject *f,NspList *args,NspMatrix *y0,
+			    double t0,NspMatrix *time)
+{
+  int job=OK, i , j , tk = (int) t0;
+  NspMatrix *res;
+
+  if ( ode_prepare(y0->m,y0->n,f,NULL,args,&ode_d) == FAIL ) 
+    return RET_BUG;
+
+  /* output */
+
+  if (( res = nsp_matrix_create(NVOID,'r',y0->mn,time->mn))== NULLMAT) return RET_BUG;
+
+  C2F(ierode).iero = 0;
+
+  for ( i= 0 ; i < time->mn ; i++ )
+    {
+      /* here we want to compute f(tout,y_tout) */
+      int tkp1 = (int) time->R[i];
+      if ( tk > tkp1 )
+	{
+	  Scierror("Error: given times are not increasing, %d followed by t(%d)=%d\n",tk,i+1,tkp1);
+	  nsp_matrix_destroy(res);
+	  return RET_BUG;
+	}
+      for ( j = tk  ; j < tkp1 ; j++) 
+	{
+	  double t=(double) j;
+	  /* input output can be the same in ode_system */
+	  job= ode_system(&y0->mn,&t,y0->R,y0->R);
+	  if ( job == FAIL)  break;
+	}
+      if ( job == FAIL) break;
+      /* now y0 contains y(tkp1) we need to store it */
+      memcpy(res->R+res->m*i,y0->R,res->m*sizeof(double));
+      tk = tkp1;
+    }
+
+  if ( job == FAIL ) 
+    {
+      /* resize matrix : just returning relevant values */
+      if (nsp_matrix_resize(res,res->m,i-1) != OK) return RET_BUG;
+    }
+  ode_clean(&ode_d);
   MoveObj(stack,1,(NspObject *) res);
   return 1;
 }

@@ -2428,12 +2428,22 @@ static int int_mp_mopscal(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2
  * with special cases Mat + [] and Mat + scalar 
  */
 
+static int nsp_mp_max(NspMatrix *A, NspMatrix *B);
+
 int int_mpdadd(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_mopscal (stack, rhs, opt, lhs,
-			 nsp_mat_mult_scalar, nsp_mat_mult_el,
-			 nsp_mat_mult_scalar, MpMatNoOp, 1);
+			 nsp_mp_max, nsp_mp_max,
+			 nsp_mp_max, MpMatNoOp, 1);
 }
+
+/* utility for previous function: Mat2 can be scalar here but Mat1 no */
+
+static int nsp_mp_max(NspMatrix *A, NspMatrix *B)
+{
+  return nsp_mat_maxitt1(A,B,NULL,0,0);
+}
+
 
 /*
  * term to term substraction 
@@ -2530,7 +2540,7 @@ static int int_mpmult(Stack stack, int rhs, int opt, int lhs)
   if ( HMat2->mn == 1) 
     {
       if ((HMat1 = GetMpMatCopy(stack,1)) == NULLMAXPMAT) return RET_BUG;
-      if (nsp_mat_mult_scalar((NspMatrix *)HMat1,(NspMatrix *)HMat2) != OK) return RET_BUG;
+      if (nsp_mat_add_scalar((NspMatrix *)HMat1,(NspMatrix *)HMat2) != OK) return RET_BUG;
       NSP_OBJECT(HMat1)->ret_pos = 1;
     }
   else if ( HMat1->mn == 1 ) 
@@ -2539,7 +2549,7 @@ static int int_mpmult(Stack stack, int rhs, int opt, int lhs)
        * must copy it 
        */
       if ((HMat2 = GetMpMatCopy(stack,2)) == NULLMAXPMAT) return RET_BUG;
-      if (nsp_mat_mult_scalar((NspMatrix *)HMat2,(NspMatrix *)HMat1) != OK) return RET_BUG;
+      if (nsp_mat_add_scalar((NspMatrix *)HMat2,(NspMatrix *)HMat1) != OK) return RET_BUG;
       NSP_OBJECT(HMat2)->ret_pos = 1;
     }
   else 

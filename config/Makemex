@@ -12,7 +12,7 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 CXX=g++
 LIBTOOL_DEPS = config/ltmain.sh
 LN_S = ln -s
-NM = /usr/bin/nm -p
+NM = /usr/bin/nm -B
 
 OBJDUMP = objdump
 STATIC = 
@@ -20,7 +20,7 @@ STATIC =
 CPPFLAGS = 
 LDFLAGS = 
 LIBS = -lm 
-FLIBS = 
+FLIBS =  -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.3 -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.3/../../.. -lfrtbegin -lg2c -lm -lgcc_s
 
 INCLUDES= -I$(SCIDIR)/src/include
 CFLAGS = $(CC_OPTIONS) 

@@ -73,7 +73,7 @@ static int GetListArgs_1(NspList *L,int pos,int_types *T,va_list *ap);
  * @T: 
  * @Varargs: 
  * 
- * Collects arguments checking their types. 
+ * Collects arguments checking their types using the @T array.
  * 
  * Return value: %OK or %FAIL
  **/
@@ -442,10 +442,10 @@ static int  extract_one_argument(NspObject *Ob,int_types *T,va_list *ap,char Typ
  * GetListArgs:
  * @L: a #NspList 
  * @pos: position in the calling stack 
- * @T: an array giving expected typed 
+ * @T: an array giving expected types 
  * @Varargs: object to parse from the list 
  * 
- * Decodes a list using types given in @T 
+ * Decodes list elements using types given in @T 
  * 
  * 
  * Return value: %OK or %FAIL
@@ -786,9 +786,10 @@ static int RetArgs_1(Stack stack,int lhs,int_types *T,va_list *ap)
  * @i: 
  * @j: 
  * 
+ * Warning : deprecated 
  * swap two object on the stack 
  * first + i -1  and first + j -1
- * XXXX: obsolete 
+ * 
  * 
  **/
 
@@ -827,13 +828,14 @@ void MoveObj(Stack stack, int j, NspObject *O)
  * @nv: 
  * @ind: 
  * 
+ * Warning : deprecated ? 
  * 
  * Permutation of Stack Objects 
  * Note that permutation is given by a function [1,nv]-->[1,nv] 
  * (i.e first indice is zero)  
  * ind is left unchanged at the end of execution 
  * ind(i)=j means that NthObj(i) must be moved to NthObj(j) position 
- * XXXX ret_pos must be set 
+ * XXXXX ret_pos must be set 
  * obsolete ? 
  **/
 
@@ -877,6 +879,7 @@ void ObjPerm(Stack stack, int nv, int *ind)
  * @nv: 
  * @ind: 
  * 
+ * Warning : deprecated 
  * 
  * PutLhsObj : the nv objets at position ind(i) 
  *    are to be moved at the first 1,...,nv position 
@@ -1106,6 +1109,64 @@ static int get_from_options(nsp_option Opts[],va_list *ap,char *format)
 	}
       count++;
     }
+  return OK;
+}
+
+/**
+ * get_optional_args_from_hash:
+ * @stack: calling stack 
+ * @H: a hash table 
+ * @opts: array describing the optional arguments
+ * @Varargs: the object to be parsed according to @opts
+ * 
+ * Utility function to deal with Optional parameters which are 
+ * to be extracted from a hash table @H. Note that we only try 
+ * to extract options from hash table is hash table contains 
+ * extra entry they are ignored (Is it to be change ? FIXME)
+ * 
+ * Return value: 
+ **/
+
+static int options_check_from_hash(Stack stack,NspHash *H,nsp_option Opts[]);
+
+int  get_optional_args_from_hash(Stack stack,NspHash *H,nsp_option opts[],...)
+{
+  int rep;
+  va_list ap;
+  va_start(ap,opts);
+
+  /* reorder optional arguments in Opts->objs */
+  if ( options_check_from_hash(stack,H,opts)== FAIL) {
+    va_end(ap);
+    return FAIL;
+  }
+  /* optional argument extraction **/ 
+  rep = get_from_options(opts,&ap,"\twhile extracting optional argument %s");
+  if ( rep == FAIL)
+    Scierror(" of function %s\n",stack.fname);
+  va_end(ap);
+  return rep;
+}
+
+static int options_check_from_hash(Stack stack,NspHash *H,nsp_option Opts[])
+{
+  nsp_option *option = Opts;
+  while ( option->name != NULL) 
+    { 
+      NspObject *Ob;
+      /* search option->name is Hash */
+      if ( nsp_hash_find(H,option->name, &Ob) == OK) 
+	{
+	  option->obj = Ob;
+	  option->position=0; 
+	}
+      else
+	{
+	  option->obj = NULLOBJ;
+	  option->position=-1; 
+	}
+      option++ ;
+    };
   return OK;
 }
 
