@@ -1,8 +1,9 @@
 
 Some source files contains a GPL Copyright 
+ * Copyright (C) 1998-2004 Jean-Philippe Chancelier Cermics/Enpc 
+ * <NSP>
 or are external libraries with their own licence. 
 Other files are covered by a Scilab licence. 
-
 
 		  GNU LIBRARY GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
