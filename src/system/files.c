@@ -173,7 +173,7 @@ void nsp_path_expand(const char *in_name, char *out_name, int out_size)
     {
       get_env("SCI",SCI,nc,1);
       get_env("HOME",HOME,nc,1);
-      get_env("TMPDIR",TMP,nc,1);
+      set_nsp_tmpdir();
       if ( get_env("TMPDIR",TMP,nc,0) == FAIL) 
 	{
 	  strcpy(TMP,"/tmp");
