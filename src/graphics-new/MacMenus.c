@@ -60,10 +60,10 @@ Handle menu;
 
 CleanWinTape()
 {
-  int ww =   nsp_gengine->xget_curwin(ww);
-  nsp_gengine->xset_curwin(ww,FALSE);
-  nsp_gengine->clearwindow();
-  nsp_gengine->tape_clean_plots("v",&ww);
+  int ww =   Xgc->graphic_engine->xget_curwin(ww);
+  Xgc->graphic_engine->xset_curwin(ww,FALSE);
+  Xgc->graphic_engine->clearwindow();
+  Xgc->graphic_engine->tape_clean_plots("v",&ww);
  }
 
 HandleMenu (long mSelect;

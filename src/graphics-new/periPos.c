@@ -26,8 +26,8 @@ static double ascentPos(BCG *Xgc);
 static int fontsizePos (BCG *Xgc);
 static int PosQueryFont(char *name);
 static void displaysymbols( BCG *Xgc,int *vx, int *vy,int n);
-static void WriteColorRGB(BCG *Xgc,char *str, double *tab, int ind);
-static void WriteColorRGBDef(BCG *Xgc,char *str, short unsigned int *tab, int ind);
+static void WriteColorRGB(BCG *Xgc,char *str, void *tab, int ind);
+static void WriteColorRGBDef(BCG *Xgc,char *str,void *tab, int ind);
 
 #define Char2Int(x)   ( x & 0x000000ff )
 
@@ -44,6 +44,7 @@ void FileInit  (BCG *Xgc);
 /** Structure to keep the graphic state  **/
 
 static BCG  ScilabGCPos ;
+
 
 /*-----------------------------------------------------
 \encadre{General routines}
@@ -605,28 +606,22 @@ static void sedeco(int flag)
  *   ( see  if (  CheckColormap(&m) == 1) in FileInt) 
  ******************************************************/
 
-static void xset_colormap(BCG *Xgc,int m,int n, double *a)
+static int check_colors(BCG *Xgc,int m,int n,void *colors);
+static int check_colors_def(BCG *Xgc,int m,int n,void *colors);
+
+typedef void (*write_c)(BCG *Xgc,char *str, void *colors,int flag);
+typedef int (*check_c)(BCG *Xgc,int m,int n,void *colors);
+
+static void xset_colormap_gen(BCG *Xgc,int m,int n,void *colors,write_c func,check_c check)
 {
-  int i;
-  if (n  != 3 ||  m < 0) {
-    Scistring("Colormap must be a m x 3 array \n");
-    return;
-  }
-  /* Checking RGB values */
-  for (i = 0; i < m; i++) {
-    if (a[i] < 0 || a[i] > 1 || a[i+m] < 0 || a[i+m] > 1 ||
-	a[i+2*m] < 0 || a[i+2*m]> 1) {
-      Scistring("RGB values must be between 0 and 1\n");
-      return;
-    }
-  }
+  if ( check(colors,m,n,colors) == FAIL) return;
   Xgc->Numcolors = m;
   Xgc->IDLastPattern = m - 1;
   Xgc->NumForeground = m;
   Xgc->NumBackground = m + 1;
-  WriteColorRGB(Xgc,"R",a,0);
-  WriteColorRGB(Xgc,"G",a,1);
-  WriteColorRGB(Xgc,"B",a,2);
+  func(Xgc,"R",colors,0);
+  func(Xgc,"G",colors,1);
+  func(Xgc,"B",colors,2);
   xset_usecolor(Xgc,1);
   xset_alufunction1(Xgc,3);
   xset_pattern(Xgc,Xgc->NumForeground+1);
@@ -634,15 +629,60 @@ static void xset_colormap(BCG *Xgc,int m,int n, double *a)
   xset_background(Xgc,Xgc->NumForeground+2);
 }
 
-/* getting the colormap XXXX */
 
-static void xget_colormap(BCG *Xgc, int *num,  double *val)
+static void xset_colormap(BCG *Xgc,int m,int n, double *colors)
 {
-  *num=0 ; /* XXX */
+  xset_colormap_gen(Xgc,m,n,colors,WriteColorRGB,check_colors);
 }
 
-static void WriteColorRGB(BCG *Xgc,char *str, double *tab, int ind)
+static void xset_default_colormap(BCG *Xgc)
 {
+  int   m = DEFAULTNUMCOLORS;
+  xset_colormap_gen(Xgc,m,3,default_colors,WriteColorRGBDef,check_colors_def);
+}
+
+
+static int check_colors_def(BCG *Xgc,int m,int n,void *colors)
+{
+  return OK;
+}
+
+static void WriteColorRGBDef(BCG *Xgc,char *str,void *colors, int ind)
+{
+  unsigned short int *tab=colors;
+  int i;
+  FPRINTF((file,"\n%%-- default colors "));
+  FPRINTF((file,"\n/Color%s [",str));
+  for ( i=0; i < Xgc->Numcolors; i++)
+    {
+      FPRINTF((file,"%f ",(float) tab[3*i+ind]/255.0));
+      if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
+    }
+  FPRINTF((file,"0.0 1.0] def"));
+}
+
+static int check_colors(BCG *Xgc,int m,int n,void *colors)
+{
+  int i;
+  double *a=colors;
+  if (n  != 3 ||  m < 0) {
+    Scistring("Colormap must be a m x 3 array \n");
+    return FAIL;
+  }
+  /* Checking RGB values */
+  for (i = 0; i < m; i++) {
+    if (a[i] < 0 || a[i] > 1 || a[i+m] < 0 || a[i+m] > 1 ||
+	a[i+2*m] < 0 || a[i+2*m]> 1) {
+      Scistring("RGB values must be between 0 and 1\n");
+      return FAIL;
+    }
+  }
+  return OK;
+}
+
+static void WriteColorRGB(BCG *Xgc,char *str, void *colors,int ind)
+{
+  double *tab=colors;
   int i;
   FPRINTF((file,"\n/Color%s [",str));
   for ( i=0; i < Xgc->Numcolors; i++)
@@ -653,30 +693,18 @@ static void WriteColorRGB(BCG *Xgc,char *str, double *tab, int ind)
   FPRINTF((file,"0.0 1.0] def"));
 }
 
+
+/* getting the colormap XXXX */
+
+static void xget_colormap(BCG *Xgc, int *num,  double *val)
+{
+  *num=0 ; /* XXX */
+}
+
 /** 
   Initial colormap : The arrays were filled with the numbers that we get with xget("colormap") 
 **/
 
-void ColorInit(BCG *Xgc)
-{
-  int   m = DEFAULTNUMCOLORS;
-  Xgc->Numcolors = m;
-  WriteColorRGBDef(Xgc,"R",default_colors,0);
-  WriteColorRGBDef(Xgc,"G",default_colors,1);
-  WriteColorRGBDef(Xgc,"B",default_colors,2);
-}
-
-static void WriteColorRGBDef(BCG *Xgc,char *str, short unsigned int *tab, int ind)
-{
-  int i;
-  FPRINTF((file,"\n/Color%s [",str));
-  for ( i=0; i < Xgc->Numcolors; i++)
-    {
-      FPRINTF((file,"%f ",(float) tab[3*i+ind]/255.0));
-      if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
-    }
-  FPRINTF((file,"0.0 1.0] def"));
-}
 
 static void set_c_Pos(BCG *Xgc,int i)
 {
@@ -1361,7 +1389,6 @@ void FileInit(BCG *Xgc)
   /** Just send Postscript commands to define scales etc....**/
   int x[2];
   xget_windowdim(Xgc,x,x+1);
-  ColorInit(Xgc);
   FPRINTF((file,"\n%% Dessin en bas a gauche de taille %d,%d",(int)x[0]/2,(int)x[1]/2));
   FPRINTF((file,"\n[0.5 %d div 0 0 0.5 %d div neg  0 %d %d div] concat",
 	  (int)prec_fact, (int)prec_fact,(int)x[1]/2,(int) prec_fact ));
@@ -1372,7 +1399,7 @@ void FileInit(BCG *Xgc)
   FPRINTF((file,"\n%% End init driver "));
   FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
   /** If the X window exists we check its colormap **/
-  if (  CheckColormap(Xgc,&m) == 1) 
+  if (  CheckColormap(Xgc,&m) == 70 )  /* XXXXX */
     { 
       int i;
       float r,g,b;

@@ -17,6 +17,8 @@
 #include "nsp/sciio.h"
 #include "nsp/graphics/Graphics.h" 
 
+extern Gengine *nsp_gengine ; /* XXXXX */
+
 static void GSciString (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
 static void Myalloc1 (int **xm,int n,int *err);
 static void Myalloc (int **xm,int **ym, int n, int *err);
@@ -60,6 +62,7 @@ static void xset1_unclip(BCG *Xgc);
 static void xset1_clip(BCG *Xgc,double x[]);
 static void xset1_pattern(BCG *Xgc,int val);
 static void xset1_colormap(BCG *Xgc,int m, double val[]);
+static void xset1_default_colormap(BCG *Xgc);
 static void xset1_default(BCG *Xgc) ;
 static void xset1_font_size(BCG *Xgc,int val);
 static void xset1_font(BCG *Xgc,int val,int val1);
@@ -85,6 +88,8 @@ static void xset1_fpf_def(BCG *Xgc) ;
 
 static void xset1_show(BCG *Xgc);
 static void xset1_pixmapclear(BCG *Xgc);
+
+static void xset1_initialize_gc(BCG *Xgc);
 
 Gengine1 nsp_gengine1={
   set_driver,
@@ -125,6 +130,7 @@ Gengine1 nsp_gengine1={
   xset1_clip,
   xset1_pattern,
   xset1_colormap,
+  xset1_default_colormap,
   xset1_default,
   xset1_font_size,
   xset1_font,
@@ -150,6 +156,8 @@ Gengine1 nsp_gengine1={
 
   xset1_show,
   xset1_pixmapclear,
+
+  xset1_initialize_gc
 
 };
 
@@ -287,6 +295,42 @@ static char get_driver(void ) {return(DriverName[0]);}
 
 static int get_driver_id(void ) { return DriverId;}
 
+/*------------------------------------------------
+ * graphic context initialization 
+ *------------------------------------------------*/
+
+static void nsp_initialize_gc( BCG *Xgc ) 
+{ 
+  int i;
+  Xgc->graphic_engine->xset_unclip(Xgc);
+  Xgc->graphic_engine->xset_font(Xgc,2,1);
+  Xgc->graphic_engine->xset_mark(Xgc,0,0);
+  Xgc->graphic_engine->xset_pixmapOn(Xgc,0);
+  Xgc->graphic_engine->xset_wresize(Xgc,0);
+  /** Absolute coord mode  **/
+  Xgc->graphic_engine->xset_absourel(Xgc,CoordModeOrigin);
+  /* initialisation des pattern dash par defaut en n&b */
+  Xgc->graphic_engine->xset_default_colormap(Xgc);
+  getcolordef(&i); /* preferred color status */
+  Xgc->graphic_engine->xset_alufunction1(Xgc,3);
+  Xgc->graphic_engine->xset_usecolor(Xgc,i);
+  Xgc->graphic_engine->xset_pattern(Xgc,1);
+  Xgc->graphic_engine->xset_dash(Xgc,1);
+  Xgc->graphic_engine->xset_hidden3d(Xgc,1);
+  Xgc->graphic_engine->xset_thickness(Xgc,1);;
+  Xgc->graphic_engine->xset_foreground(Xgc,Xgc->NumForeground+1);
+  Xgc->graphic_engine->xset_background(Xgc,Xgc->NumForeground+2);
+  Xgc->graphic_engine->xset_hidden3d(Xgc,4);
+  Xgc->graphic_engine->xset_autoclear_def(Xgc) ;
+  Xgc->graphic_engine->xset_fpf_def(Xgc) ;
+}
+
+static void xset1_initialize_gc(BCG *Xgc)
+{
+  if (Xgc->record_flag == TRUE)  store_initialize_gc(Xgc);
+  nsp_initialize_gc(Xgc);
+}
+
 
 /**************************************************
  * Global values which are set at this level and 
@@ -349,6 +393,12 @@ static void xset1_colormap(BCG *Xgc,int m, double val[])
 {
   /* not recorded */ 
   Xgc->graphic_engine->xset_colormap(Xgc,m,3,val);
+}
+
+static void xset1_default_colormap(BCG *Xgc)
+{
+  /* not recorded */ 
+  Xgc->graphic_engine->xset_default_colormap(Xgc);
 }
 
 /* pas clair XXXX */

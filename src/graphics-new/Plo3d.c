@@ -126,7 +126,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   static double zmin,zmax;
   integer i,j;
   /** If Record is on **/
-  if (nsp_gengine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->scale->get_driver()=='R') 
     {
       if (strcmp(name,"plot3d")==0) 
 	store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
@@ -134,7 +134,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 	store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
     }
 
-  fg = nsp_gengine->xget_foreground(Xgc);
+  fg = Xgc->graphic_engine->xget_foreground(Xgc);
  
   if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
     {
@@ -158,7 +158,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
   /** Le triedre cach\'e **/
-  fg1 = nsp_gengine->xget_hidden3d(Xgc);
+  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     {
@@ -181,9 +181,9 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 
   /** The 3d plot **/
 
-  whiteid = nsp_gengine->xget_last(Xgc);
+  whiteid = Xgc->graphic_engine->xget_last(Xgc);
   dc =  flag[0];
-  fg1 = nsp_gengine->xget_hidden3d(Xgc);
+  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;   
   for ( i =0 ; i < (*q)-1 ; i++)   fill[i]= dc ;
   polysize=5;
@@ -201,7 +201,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 				x,y,z,i,j,npolyok,p,dc,fg1);
 	    }
 	  if ( npolyok != 0) 
-	    nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
+	    Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
       break;
     case 1 : 
@@ -214,7 +214,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 				 x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
 	   }
 	  if ( npolyok != 0) 
-	    nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
+	    Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
       break;
     case 2 : 
@@ -227,7 +227,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 				    x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
 	   }
 	  if ( npolyok != 0) 
-	    nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
+	    Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
       break;
     case 3 : 
@@ -240,7 +240,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 				x,y,z,i,j,npolyok,p,dc,fg1);
 	   }
 	  if ( npolyok != 0) 
-	    nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
+	    Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
       break;
     }
@@ -265,7 +265,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
   static double zmin,zmax;
   integer i;
   /** If Record is on **/
-  if (nsp_gengine->scale->get_driver()=='R') {
+  if (Xgc->graphic_engine->scale->get_driver()=='R') {
       if (strcmp(name,"fac3d")==0) 	
 	store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
       else if (strcmp(name,"fac3d1")==0) 	
@@ -298,7 +298,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
   /** Le triedre cach\'e **/
-  fg1 = nsp_gengine->xget_hidden3d(Xgc);
+  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;  
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     {
@@ -326,9 +326,9 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
       return;
     }
 
-  whiteid  = nsp_gengine->xget_last(Xgc);
+  whiteid  = Xgc->graphic_engine->xget_last(Xgc);
   fill[0]=  flag[0];
-  fg1 = nsp_gengine->xget_hidden3d(Xgc);
+  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /** tri **/
   for ( i =0 ; i < *q ; i++)
     {
@@ -377,7 +377,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 
 	  fill[0]=  flag[0];
 	  /* Beginning of modified code by E. Segre 4/5/2000 : the call
-	     to nsp_gengine->("xliness" ... is now done in each if/else if block.
+	     to Xgc->graphic_engine->("xliness" ... is now done in each if/else if block.
 	     The case iflag==3 corresponds to the new case, where cvect points
 	     to a (*p) times (*q) matrix, in order to do interpolated shading.
 	     
@@ -397,9 +397,9 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	      /* modification du to E Segre to avoid drawing of hidden facets */
 	      if (fg1>0) 
 		{
-		  nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
+		  Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 		}
-	      /*nsp_gengine->fillpolylines(Xgc,"str",polyx,polyy,fill,&npoly,&polysize);*/
+	      /*Xgc->graphic_engine->fillpolylines(Xgc,"str",polyx,polyy,fill,&npoly,&polysize);*/
 	    }
 	  else if ( iflag == 1) 
 	    {
@@ -410,14 +410,14 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 		zl+= z[(*p)*locindex[i]+k];
 	      fill[0]=inint((whiteid-1)*((zl/(*p))-zmin)/(zmax-zmin))+1;
 	      if ( flag[0] < 0 ) fill[0]=-fill[0];
-	      nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
+	      Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 	    }
 	  else if ( iflag == 2) 
 	    {
 	      /* colors are given by cvect */
 	      fill[0]= cvect[locindex[i]];
 	      if ( flag[0] < 0 ) fill[0]=-fill[0];
-	      nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
+	      Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 	    }
 	  else if (iflag ==3) { /* colors are given by cvect of size (*p) times (*q) */
 	      int k;
@@ -430,7 +430,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
                 shade(Xgc,polyx,polyy,fill,*p,flag[0]);
 	      }
 	  }
-	  else nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
+	  else Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 	  /* End of modified code by polpoth 4/5/2000 */
 
 	}
@@ -438,7 +438,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
   if ( flag[2] >=3 )
     {
       integer fg;
-      fg = nsp_gengine->xget_foreground(Xgc);
+      fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
 	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
@@ -533,9 +533,9 @@ int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, integer *n, double *t
   static integer *xm,*ym;
   int fg1;
   /** If Record is on **/
-  if (nsp_gengine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->scale->get_driver()=='R') 
     store_Param3D(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
-  style[0] = nsp_gengine->xget_dash(Xgc);
+  style[0] = Xgc->graphic_engine->xget_dash(Xgc);
   if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
     {
       bbox[0]=(double) Mini(x,*n);bbox[1]=(double) Maxi(x,*n);
@@ -549,7 +549,7 @@ int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, integer *n, double *t
   /** Calcule l' Enveloppe Convexe de la boite **/
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
-  fg1 = nsp_gengine->xget_hidden3d(Xgc);
+  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /** Le triedre cache **/
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     {
@@ -588,14 +588,14 @@ int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, integer *n, double *t
 	  nel++;
 	}
       if ( nel > 0 ) 
-	nsp_gengine->drawpolylines(Xgc,xm,ym,style,1,nel);
+	Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,style,1,nel);
       init = j+1;
       if ( init >= (*n)) break;
     }
   if (flag[2] >=3 ) 
     {
       integer fg;
-      fg = nsp_gengine->xget_foreground(Xgc);
+      fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
 	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
@@ -619,9 +619,9 @@ int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, integer *m, integer 
   static integer *xm,*ym;
   integer fg1,cur;
   /** If Record is on **/
-  if (nsp_gengine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->scale->get_driver()=='R') 
     store_Param3D1(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
-  style[0] = nsp_gengine->xget_dash(Xgc);
+  style[0] = Xgc->graphic_engine->xget_dash(Xgc);
   if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
     {
       int mn=*n*(*m);
@@ -636,7 +636,7 @@ int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, integer *m, integer 
   /** Calcule l' Enveloppe Convexe de la boite **/
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
-  fg1 = nsp_gengine->xget_hidden3d(Xgc);
+  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   /** Le triedre cache **/
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     {
@@ -679,7 +679,7 @@ int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, integer *m, integer 
 	      nel++;
 	    }
 	  if ( nel > 0 ) 
-	    nsp_gengine->drawpolylines(Xgc,xm,ym,style,1,nel);
+	    Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,style,1,nel);
 	  init = j+1;
 	  if ( init >= (*m)) break;
 	}
@@ -687,7 +687,7 @@ int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, integer *m, integer 
   if (flag[2] >=3 ) 
     {
       integer fg;
-      fg = nsp_gengine->xget_foreground(Xgc);
+      fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
 	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
@@ -709,12 +709,12 @@ int C2F(box3d)(BCG *Xgc,double *xbox, double *ybox, double *zbox)
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,"X@Y@Z",flag,Xgc->scales->bbox1);
   /** le triedre vu **/
-  fg = nsp_gengine->xget_foreground(Xgc);
+  fg = Xgc->graphic_engine->xget_foreground(Xgc);
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     DrawAxis(Xgc,xbox,ybox,InsideU,fg);
   else 
     DrawAxis(Xgc,xbox,ybox,InsideD,fg);
-  fg1 = nsp_gengine->xget_hidden3d(Xgc);
+  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
   /** Le triedre cache **/
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
@@ -835,7 +835,7 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
   if ( flag == 2 || flag == 3 )
     {
       /* get current window size */
-      nsp_gengine->xget_windowdim(Xgc,wdim,wdim+1);
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       getscale2d(Xgc,WRect,FRect,logf,ARect);
       wmax=linint((double)wdim[0] * WRect[2]);
       hmax=linint((double)wdim[1] * WRect[3]); 
@@ -897,9 +897,9 @@ void DrawAxis(BCG *Xgc,double *xbox, double *ybox, integer *Indices, integer sty
   ixbox[1]=XScale(xbox[Indices[1]]);iybox[1]=YScale(ybox[Indices[1]]);
   ixbox[3]=XScale(xbox[Indices[2]]);iybox[3]=YScale(ybox[Indices[2]]);
   ixbox[5]=XScale(xbox[Indices[3]]);iybox[5]=YScale(ybox[Indices[3]]);
-  lstyle = nsp_gengine->xset_dash(Xgc,1);
-  nsp_gengine->drawsegments(Xgc,ixbox,iybox,npoly,&style,iflag);
-  nsp_gengine->xset_dash(Xgc,lstyle);
+  lstyle = Xgc->graphic_engine->xset_dash(Xgc,1);
+  Xgc->graphic_engine->drawsegments(Xgc,ixbox,iybox,npoly,&style,iflag);
+  Xgc->graphic_engine->xset_dash(Xgc,lstyle);
 }
 
 /*---------------------------------------------------------------------
@@ -982,18 +982,18 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox, integer *InsideU, integer *
    }
   ixbox[6]=ixbox[0];iybox[6]=iybox[0];
   p=7,n=1;
-  dvect[0]= nsp_gengine->xget_foreground(Xgc);
+  dvect[0]= Xgc->graphic_engine->xget_foreground(Xgc);
   /** On trace l'enveloppe cvxe **/
-  dash = nsp_gengine->xset_dash(Xgc,1);
+  dash = Xgc->graphic_engine->xset_dash(Xgc,1);
     
   if (flag[2]>=3){
-    nsp_gengine->drawpolylines(Xgc,ixbox,iybox,dvect,n,p);
+    Xgc->graphic_engine->drawpolylines(Xgc,ixbox,iybox,dvect,n,p);
   }
-  pat = nsp_gengine->xset_pattern(Xgc,dvect[0]);
+  pat = Xgc->graphic_engine->xset_pattern(Xgc,dvect[0]);
 
   if (flag[2]>=3)AxesStrings(Xgc,flag[2],ixbox,iybox,xind,legend,bbox);
-  nsp_gengine->xset_pattern(Xgc,pat);
-  nsp_gengine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,pat);
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
 
 }
 
@@ -1018,7 +1018,7 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
   strcpy(loc,legend);
   legx=strtok(loc,"@");legy=strtok((char *)0,"@");legz=strtok((char *)0,"@");
   /** le cot\'e gauche ( c'est tjrs un axe des Z **/
-  nsp_gengine->xget_windowdim(Xgc,xz,xz+1);
+  Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
   iof = (xz[0]+xz[1])/50;
   x=ixbox[2]-iof ;y=iybox[2]-iof;
   if ( axflag>=4)
@@ -1036,8 +1036,8 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
     }
   if (legz != 0)
     {
-      nsp_gengine->boundingbox(Xgc,legz,x,y,rect);
-      nsp_gengine->displaystring(Xgc,legz,(x=x - rect[2],x),y,flag ,ang);
+      Xgc->graphic_engine->boundingbox(Xgc,legz,x,y,rect);
+      Xgc->graphic_engine->displaystring(Xgc,legz,(x=x - rect[2],x),y,flag ,ang);
     }
   /** le cot\^e en bas \`a gauche **/
   x=inint((ixbox[3]+ixbox[4])/2.0 -iof);
@@ -1060,8 +1060,8 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
       if (legx != 0)
 	{
 
-	  nsp_gengine->boundingbox(Xgc,legx,x,y,rect);
-	  nsp_gengine->displaystring(Xgc,legx,(x=x-rect[2],x),y,flag,ang);
+	  Xgc->graphic_engine->boundingbox(Xgc,legx,x,y,rect);
+	  Xgc->graphic_engine->displaystring(Xgc,legx,(x=x-rect[2],x),y,flag,ang);
 	}
     }
   else 
@@ -1082,8 +1082,8 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
       if (legy != 0)
 	{
 
-	  nsp_gengine->boundingbox(Xgc,legy,x,y,rect);
-	  nsp_gengine->displaystring(Xgc,legy,(x=x-rect[2],x),y,flag,ang);
+	  Xgc->graphic_engine->boundingbox(Xgc,legy,x,y,rect);
+	  Xgc->graphic_engine->displaystring(Xgc,legy,(x=x-rect[2],x),y,flag,ang);
 	}
     }
   /** le cot\'e en bas a droite **/
@@ -1106,7 +1106,7 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
 	}
       if (legx != 0) 
 	{
-	  nsp_gengine->displaystring(Xgc,legx,x,y,flag,ang);
+	  Xgc->graphic_engine->displaystring(Xgc,legx,x,y,flag,ang);
 	}
     }
   else 
@@ -1126,7 +1126,7 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
 	}
       if (legy != 0) 
 	{
-	  nsp_gengine->displaystring(Xgc,legy,x,y,flag,ang);
+	  Xgc->graphic_engine->displaystring(Xgc,legy,x,y,flag,ang);
 	}
     }
   FREE(loc);
@@ -1167,7 +1167,7 @@ void TDAxis(BCG *Xgc,integer flag, double FPval, double LPval, integer *nax, int
   integer i,barlength;
   double xp, dx,dy,ticsx,ticsy,size;
   integer xz[2];
-  nsp_gengine->xget_windowdim(Xgc,xz,xz+1);
+  Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
   size = xz[0]>=xz[1] ? xz[1]/50.0 : xz[0]/50.0;
   C2F(TDdrawaxis)(Xgc,size,FPval,LPval,nax,FPoint,LPoint,Ticsdir) ;
   ChoixFormatE(fornum,Min(FPval,LPval),Max(LPval,FPval),
@@ -1195,7 +1195,7 @@ void TDAxis(BCG *Xgc,integer flag, double FPval, double LPval, integer *nax, int
       double lp;
       lp = xp + i*(LPval-FPval)/((double)nax[1]);
       sprintf(foo,fornum,lp);
-      nsp_gengine->boundingbox(Xgc,foo,xx,yy,rect);
+      Xgc->graphic_engine->boundingbox(Xgc,foo,xx,yy,rect);
       posi[0]=inint(FPoint[0]+ i*dx + 2*ticsx );
       posi[1]=inint(FPoint[1]+ i*dy + 2*ticsy +rect[3]/2 );
       switch ( flag)
@@ -1206,7 +1206,7 @@ void TDAxis(BCG *Xgc,integer flag, double FPval, double LPval, integer *nax, int
 	  break;
 	case 2: posi[0] -= rect[2];break;
 	}
-      nsp_gengine->displaystring(Xgc,foo,posi[0],posi[1],flag1,angle);
+      Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag1,angle);
     }
 }
 
@@ -1235,7 +1235,7 @@ void C2F(TDdrawaxis)(BCG *Xgc,double size, double FPval, double LPval, integer *
       y[0] =linint(FPoint[1]+ ((double)i)*dy );
       x[1] =linint(x[0]+ ticsx*size);
       y[1] =linint(y[0]+ ticsy*size);
-      nsp_gengine->drawsegments(Xgc,x,y,siz,&style,iflag);
+      Xgc->graphic_engine->drawsegments(Xgc,x,y,siz,&style,iflag);
     }
 }
 
@@ -1271,17 +1271,17 @@ void I3dRotation(BCG *Xgc)
   static integer iflag[]={0,0,0,0};
   double xx,yy;
   double theta0,alpha0;
-  ww=nsp_gengine->xget_curwin();
+  ww=Xgc->graphic_engine->xget_curwin();
   if ( tape_check_recorded_3D(Xgc,ww) == FAIL) 
     {
-      nsp_gengine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
+      Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
       return;
     }
   xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
   yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
-  pixmode = nsp_gengine->xget_pixmapOn(Xgc);
-  alumode = nsp_gengine->xget_alufunction(Xgc);
-  nsp_gengine->scale->get_driver_name(driver);
+  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
+  Xgc->graphic_engine->scale->get_driver_name(driver);
   if (strcmp("Rec",driver) != 0) 
     {
       Scistring("\n Use the Rec driver for 3f Rotation " );
@@ -1294,13 +1294,13 @@ void I3dRotation(BCG *Xgc)
 #ifdef WIN32
       SetWinhdc();
       SciMouseCapture();
-     nsp_gengine->scale->set_driver("Int");
+     Xgc->graphic_engine->scale->set_driver("Int");
 #else
-     nsp_gengine->scale->set_driver("X11");
+     Xgc->graphic_engine->scale->set_driver("X11");
 #endif
-     if ( pixmode == 0 ) nsp_gengine->scale->xset_alufunction1(Xgc,6);
-     nsp_gengine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
-     nsp_gengine->clearwindow(Xgc);
+     if ( pixmode == 0 ) Xgc->graphic_engine->scale->xset_alufunction1(Xgc,6);
+     Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
+     Xgc->graphic_engine->clearwindow(Xgc);
      theta=Xgc->scales->theta ;
      alpha=Xgc->scales->alpha ;
 
@@ -1314,11 +1314,11 @@ void I3dRotation(BCG *Xgc)
 	{
 	  /* dessin d'un rectangle */
 	  theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
-	  nsp_gengine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
-	  if ( pixmode == 1) nsp_gengine->scale->xset_pixmapclear(Xgc);
+	  Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
+	  if ( pixmode == 1) Xgc->graphic_engine->scale->xset_pixmapclear(Xgc);
 	  dbox(Xgc);
-	  if ( pixmode == 1) nsp_gengine->scale->xset_show(Xgc);
-	  nsp_gengine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
+	  if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
+	  Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
 	  /* effacement du rectangle */
 	  dbox(Xgc);
 	  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
@@ -1326,11 +1326,11 @@ void I3dRotation(BCG *Xgc)
 	  x=(xl-Xgc->scales->frect[0])*xx;
 	  y=(yl-Xgc->scales->frect[1])*yy;
 	}
-      if ( pixmode == 0) nsp_gengine->scale->xset_alufunction1(Xgc,3);
-     nsp_gengine->scale->set_driver(driver);
-     nsp_gengine->clearwindow(Xgc);
-     ww=nsp_gengine->xget_curwin();
-     nsp_gengine->scale->xset_alufunction1(Xgc,alumode);
+      if ( pixmode == 0) Xgc->graphic_engine->scale->xset_alufunction1(Xgc,3);
+     Xgc->graphic_engine->scale->set_driver(driver);
+     Xgc->graphic_engine->clearwindow(Xgc);
+     ww=Xgc->graphic_engine->xget_curwin();
+     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
 #ifdef WIN32
       ReleaseWinHdc();
       SciMouseRelease();
@@ -1351,12 +1351,12 @@ static void dbox(BCG *Xgc)
   double xbox[8],ybox[8],zbox[8];
 #ifdef WIN32
   integer verbose=0,pat,pat1=3,narg;
-  pat = nsp_gengine->xset_pattern(pat1);
+  pat = Xgc->graphic_engine->xset_pattern(pat1);
 #endif
   SetEch3d1(Xgc,xbox,ybox,zbox,Xgc->scales->bbox1,&theta,&alpha,Xgc->scales->metric3d);
   C2F(box3d)(Xgc,xbox,ybox,zbox);
 #ifdef WIN32
-   nsp_gengine->xset_pattern(pat);
+   Xgc->graphic_engine->xset_pattern(pat);
 #endif
 }
 
@@ -1462,7 +1462,7 @@ int shade(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer polysi
 
           psize=3;
           col=fills[0];
-          nsp_gengine->fillpolylines(Xgc,polyxs,polyys,(cols=-col,&cols),npoly,psize);
+          Xgc->graphic_engine->fillpolylines(Xgc,polyxs,polyys,(cols=-col,&cols),npoly,psize);
           return(0);
      }
      
@@ -1472,7 +1472,7 @@ int shade(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer polysi
           for(i=0;i<=n[0];i++) {
 	     px[0]=x[2][i]; px[1]=x[0][i]; px[2]=x[0][i+1]; px[3]=x[2][i+1];
 	     py[0]=y[2][i]; py[1]=y[0][i]; py[2]=y[0][i+1]; py[3]=y[2][i+1];
-	     nsp_gengine->fillpolylines(Xgc,px,py,(cols=-col,&cols),npoly,psize);
+	     Xgc->graphic_engine->fillpolylines(Xgc,px,py,(cols=-col,&cols),npoly,psize);
              col--;
 	  }
 	  free(x[0]);
@@ -1485,7 +1485,7 @@ int shade(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer polysi
           for(i=0;i<=n[1];i++) {
 	     px[0]=x[2][n[0]+i]; px[1]=x[1][i]; px[2]=x[1][i+1]; px[3]=x[2][n[0]+i+1];
 	     py[0]=y[2][n[0]+i]; py[1]=y[1][i]; py[2]=y[1][i+1]; py[3]=y[2][n[0]+i+1];
-	     nsp_gengine->fillpolylines(Xgc,px,py,(cols=-col,&cols),npoly,psize);
+	     Xgc->graphic_engine->fillpolylines(Xgc,px,py,(cols=-col,&cols),npoly,psize);
              col--;
 	  }
           free(x[1]);

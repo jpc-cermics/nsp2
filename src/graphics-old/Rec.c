@@ -7,12 +7,16 @@
  * Graphic High Level Recording function 
  *---------------------------------------------------------------------------*/
 
+
+
 #include <string.h> /* in case of dbmalloc use */
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 #include "nsp/graphics/Rec_private.h"
+
+extern Gengine *nsp_gengine ; /* XXXXX */
 
 static int MaybeCopyVect3dPLI  (int *,int **,int *,int l); 
 static int CopyVectLI  (int **,int *,int ); 
@@ -35,6 +39,11 @@ static int curwin(void)
  * basic primitives 
  *---------------------------------------------------------------------------*/
 
+void store_initialize_gc(BCG *Xgc) {  store_void(Xgc,CODEinitialize_gc); }
+
+static void replay_initialize_gc(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->initialize_gc(Xgc);}
+
+
 void store_clipping_p(BCG *Xgc,int x,int y,int w,int h)
 {
   int vals[4];
@@ -45,12 +54,12 @@ void store_clipping_p(BCG *Xgc,int x,int y,int w,int h)
 static void replay_clipping_p(BCG *Xgc,void *theplot)
 {
   struct rec_int4 *lplot  = theplot;
-  nsp_gengine->scale->xset_clipping_p(Xgc, lplot->vals[0], lplot->vals[1],lplot->vals[2],lplot->vals[3]);
+  Xgc->graphic_engine->scale->xset_clipping_p(Xgc, lplot->vals[0], lplot->vals[1],lplot->vals[2],lplot->vals[3]);
 }
 
 void store_clipgrf(BCG *Xgc) {  store_void(Xgc,CODEclipgrf); }
 
-static void replay_clipgrf(BCG *Xgc,void * theplot ) { nsp_gengine->scale->xset_clipgrf(Xgc);}
+static void replay_clipgrf(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_clipgrf(Xgc);}
 
 void store_alufunction1(BCG *Xgc,int val)
 {
@@ -60,7 +69,7 @@ void store_alufunction1(BCG *Xgc,int val)
 static void replay_alufunction1(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_alufunction1(Xgc,val);
+  Xgc->graphic_engine->scale->xset_alufunction1(Xgc,val);
 }
 
 
@@ -72,7 +81,7 @@ void store_background(BCG *Xgc,int val)
 static void replay_background(BCG *Xgc,void *theplot)
 {
   int val =  ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_background(Xgc,val);
+  Xgc->graphic_engine->scale->xset_background(Xgc,val);
 }
 
 void store_unclip(BCG *Xgc)
@@ -80,7 +89,7 @@ void store_unclip(BCG *Xgc)
   store_void(Xgc,CODEunclip);
 }
 
-static void replay_unclip(BCG *Xgc,void * theplot ) { nsp_gengine->scale->xset_unclip(Xgc);}
+static void replay_unclip(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_unclip(Xgc);}
 
 
 void store_clip(BCG *Xgc,double x[])
@@ -91,7 +100,7 @@ void store_clip(BCG *Xgc,double x[])
 static void replay_clip(BCG *Xgc,void *theplot)
 {
   struct rec_double4 *lplot  = theplot;
-  nsp_gengine->scale->xset_clip(Xgc,lplot->vals);
+  Xgc->graphic_engine->scale->xset_clip(Xgc,lplot->vals);
 }
 
 void store_pattern(BCG *Xgc,int val)
@@ -102,7 +111,7 @@ void store_pattern(BCG *Xgc,int val)
 static void replay_pattern(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_pattern(Xgc,val);
+  Xgc->graphic_engine->scale->xset_pattern(Xgc,val);
 }
 
 void store_font_size(BCG *Xgc,int val)
@@ -113,7 +122,7 @@ void store_font_size(BCG *Xgc,int val)
 static void replay_font_size(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_font_size(Xgc,val);
+  Xgc->graphic_engine->scale->xset_font_size(Xgc,val);
 }
 void store_font(BCG *Xgc,int val,int val1)
 {
@@ -123,7 +132,7 @@ void store_font(BCG *Xgc,int val,int val1)
 static void replay_font(BCG *Xgc,void *theplot)
 {
   struct rec_int2 *lplot  = theplot;
-  nsp_gengine->scale->xset_font(Xgc,lplot->val,lplot->val1);
+  Xgc->graphic_engine->scale->xset_font(Xgc,lplot->val,lplot->val1);
 }
 
 void store_foreground(BCG *Xgc,int val)
@@ -134,7 +143,7 @@ void store_foreground(BCG *Xgc,int val)
 static void replay_foreground(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_foreground(Xgc,val);
+  Xgc->graphic_engine->scale->xset_foreground(Xgc,val);
 }
 
 void store_hidden3d(BCG *Xgc,int val)
@@ -145,7 +154,7 @@ void store_hidden3d(BCG *Xgc,int val)
 static void replay_hidden3d(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_hidden3d(Xgc,val);
+  Xgc->graphic_engine->scale->xset_hidden3d(Xgc,val);
 }
 
 void store_absourel(BCG *Xgc,int val)
@@ -156,7 +165,7 @@ void store_absourel(BCG *Xgc,int val)
 static void replay_absourel(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_absourel(Xgc,val);
+  Xgc->graphic_engine->scale->xset_absourel(Xgc,val);
 }
 
 void store_dash(BCG *Xgc,int val)
@@ -167,7 +176,7 @@ void store_dash(BCG *Xgc,int val)
 static void replay_dash(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_dash(Xgc,val);
+  Xgc->graphic_engine->scale->xset_dash(Xgc,val);
 }
 
 void store_mark_size(BCG *Xgc,int val)
@@ -178,7 +187,7 @@ void store_mark_size(BCG *Xgc,int val)
 static void replay_mark_size(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_mark_size(Xgc,val);
+  Xgc->graphic_engine->scale->xset_mark_size(Xgc,val);
 }
 
 void store_mark(BCG *Xgc,int val,int val1)
@@ -189,7 +198,7 @@ void store_mark(BCG *Xgc,int val,int val1)
 static void replay_mark(BCG *Xgc,void *theplot)
 {
   struct rec_int2 *lplot  = theplot;
-  nsp_gengine->scale->xset_mark(Xgc,lplot->val,lplot->val1);
+  Xgc->graphic_engine->scale->xset_mark(Xgc,lplot->val,lplot->val1);
 }
 
 void store_pixmapOn(BCG *Xgc,int val)
@@ -200,7 +209,7 @@ void store_pixmapOn(BCG *Xgc,int val)
 static void replay_pixmapOn(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_pixmapOn(Xgc,val);
+  Xgc->graphic_engine->scale->xset_pixmapOn(Xgc,val);
 }
 
 void store_thickness(BCG *Xgc,int val)
@@ -211,7 +220,7 @@ void store_thickness(BCG *Xgc,int val)
 static void replay_thickness(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine->scale->xset_thickness(Xgc,val);
+  Xgc->graphic_engine->scale->xset_thickness(Xgc,val);
 }
 
 void store_usecolor(BCG *Xgc,int val)
@@ -231,20 +240,20 @@ static void replay_usecolor(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
   if ( special_color == 0) 
-    nsp_gengine->scale->xset_usecolor(Xgc,val);
+    Xgc->graphic_engine->scale->xset_usecolor(Xgc,val);
 }
 
 void store_show(BCG *Xgc) { store_void(Xgc,CODEshow); }
 
-static void replay_show(BCG *Xgc,void * theplot ) { nsp_gengine->scale->xset_show(Xgc);}
+static void replay_show(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_show(Xgc);}
 
 void store_pixmapclear(BCG *Xgc) {  store_void(Xgc,CODEpixmapclear);}
 
-static void replay_pixmapclear(BCG *Xgc,void * theplot ) { nsp_gengine->scale->xset_pixmapclear(Xgc);}
+static void replay_pixmapclear(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_pixmapclear(Xgc);}
 
 void store_fpf_def(BCG *Xgc) { store_void(Xgc,CODEfpf_def); }
 
-static void replay_fpf_def(BCG *Xgc,void * theplot ) { nsp_gengine->scale->xset_fpf_def(Xgc);}
+static void replay_fpf_def(BCG *Xgc,void * theplot ) { Xgc->graphic_engine->scale->xset_fpf_def(Xgc);}
 
 void store_fpf(BCG *Xgc,char *fpf) { 
   struct rec_str *lplot= MALLOC(sizeof(struct rec_str));
@@ -261,7 +270,7 @@ void store_fpf(BCG *Xgc,char *fpf) {
 
 static void replay_fpf(BCG *Xgc,void * theplot ) { 
   struct rec_str *lplot = theplot;
-  nsp_gengine->scale->xset_fpf(Xgc,lplot->str);
+  Xgc->graphic_engine->scale->xset_fpf(Xgc,lplot->str);
 }
 
 static void clean_fpf(void *plot) {
@@ -290,7 +299,7 @@ void store_drawarc_1(BCG *Xgc,double arc[])
 static void replay_drawarc_1(BCG *Xgc,void  *theplot)
 {
   struct rec_drawarc *lplot = theplot;
-  nsp_gengine->scale->drawarc(Xgc,lplot->arc);
+  Xgc->graphic_engine->scale->drawarc(Xgc,lplot->arc);
 }
 
 
@@ -328,7 +337,7 @@ void store_fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
 static void replay_fillarcs_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillarcs *lplot = theplot;
-  nsp_gengine->scale->fillarcs(Xgc, lplot->vects, lplot->fillvect,lplot->n );
+  Xgc->graphic_engine->scale->fillarcs(Xgc, lplot->vects, lplot->fillvect,lplot->n );
 }
 
 static void clean_fillarcs_1(void *theplot) {
@@ -350,7 +359,7 @@ void store_drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
 static void replay_drawarcs_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillarcs *lplot = theplot;
-  nsp_gengine->scale->drawarcs(Xgc, lplot->vects, lplot->fillvect,lplot->n );
+  Xgc->graphic_engine->scale->drawarcs(Xgc, lplot->vects, lplot->fillvect,lplot->n );
 }
 
 
@@ -397,7 +406,7 @@ void store_fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
 static void replay_fillpolyline_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolyline *lplot = theplot;
-  nsp_gengine->scale->fillpolyline(Xgc,lplot->vx, lplot->vy,lplot->n, lplot->closeflag);
+  Xgc->graphic_engine->scale->fillpolyline(Xgc,lplot->vx, lplot->vy,lplot->n, lplot->closeflag);
 }
 
 static void clean_fillpolyline_1(void *plot) {
@@ -441,9 +450,9 @@ static void replay_drawarrows_1(BCG *Xgc,void  *theplot)
 {
   struct rec_arrows *lplot = theplot;
   if (lplot->iflag != 0) 
-    nsp_gengine->scale->drawarrows(Xgc,lplot->vx, lplot->vy,lplot->n,lplot->as,lplot->style,lplot->iflag);
+    Xgc->graphic_engine->scale->drawarrows(Xgc,lplot->vx, lplot->vy,lplot->n,lplot->as,lplot->style,lplot->iflag);
   else 
-    nsp_gengine->scale->drawarrows(Xgc,lplot->vx, lplot->vy,lplot->n,lplot->as,&lplot->def_style,lplot->iflag);
+    Xgc->graphic_engine->scale->drawarrows(Xgc,lplot->vx, lplot->vy,lplot->n,lplot->as,&lplot->def_style,lplot->iflag);
 }
 
 
@@ -486,7 +495,7 @@ void store_drawaxis_1(BCG *Xgc,double *alpha, int *nsteps,double *initpoint, dou
 static void replay_drawaxis_1(BCG *Xgc,void  *theplot)
 {
   struct rec_drawaxis *lplot = theplot;
-  nsp_gengine->scale->drawaxis(Xgc,&lplot->alpha,&lplot->nsteps,lplot->initpoint,lplot->size);
+  Xgc->graphic_engine->scale->drawaxis(Xgc,&lplot->alpha,&lplot->nsteps,lplot->initpoint,lplot->size);
 }
 
 static void clean_drawaxis_1(void  *theplot) {}
@@ -507,7 +516,7 @@ void store_cleararea_1(BCG *Xgc,double x, double y, double w, double h)
 static void replay_cleararea_1(BCG *Xgc,void  *theplot)
 {
   struct rec_double4 *lplot = theplot;
-  nsp_gengine->scale->cleararea(Xgc,lplot->vals[0], lplot->vals[1],lplot->vals[2],lplot->vals[3]);
+  Xgc->graphic_engine->scale->cleararea(Xgc,lplot->vals[0], lplot->vals[1],lplot->vals[2],lplot->vals[3]);
 }
 
 static void clean_cleararea_1(void  *theplot) {}
@@ -533,7 +542,7 @@ void store_fillarc_1(BCG *Xgc,double arc[])
 static void replay_fillarc_1(BCG *Xgc,void  *theplot)
 {
   struct rec_drawarc *lplot = theplot;
-  nsp_gengine->scale->fillarc(Xgc,lplot->arc);
+  Xgc->graphic_engine->scale->fillarc(Xgc,lplot->arc);
 }
 
 static void clean_fillarc_1(void  *theplot) {}
@@ -551,7 +560,7 @@ void store_fillrectangle_1(BCG *Xgc,double rect[])
 static void replay_fillrectangle_1(BCG *Xgc,void  *theplot)
 {
   struct rec_double4 *lplot = theplot;
-  nsp_gengine->scale->fillrectangle(Xgc, lplot->vals);
+  Xgc->graphic_engine->scale->fillrectangle(Xgc, lplot->vals);
 }
 
 static void clean_fillrectangle_1(void  *theplot) {}
@@ -569,7 +578,7 @@ void store_drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closeflag
 static void replay_drawpolyline_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolyline *lplot = theplot;
-  nsp_gengine->scale->drawpolyline(Xgc,lplot->vx, lplot->vy,lplot->n, lplot->closeflag);
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,lplot->vx, lplot->vy,lplot->n, lplot->closeflag);
 }
 
 
@@ -619,7 +628,7 @@ void store_fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int 
 static void replay_fillpolylines_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolylines *lplot = theplot;
-  nsp_gengine->scale->fillpolylines(Xgc,lplot->vx, lplot->vy,lplot->fillvect,lplot->n, lplot->p,lplot->v1);
+  Xgc->graphic_engine->scale->fillpolylines(Xgc,lplot->vx, lplot->vy,lplot->fillvect,lplot->n, lplot->p,lplot->v1);
 }
 
 
@@ -647,7 +656,7 @@ void store_drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
 static void replay_drawpolymark_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolyline *lplot = theplot;
-  nsp_gengine->scale->drawpolymark(Xgc,lplot->vx, lplot->vy,lplot->n);
+  Xgc->graphic_engine->scale->drawpolymark(Xgc,lplot->vx, lplot->vy,lplot->n);
 }
 
 
@@ -691,7 +700,7 @@ void store_displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double
 static void replay_displaynumbers_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaynumbers *lplot = theplot;
-  nsp_gengine->scale->displaynumbers(Xgc,lplot->x, lplot->y,lplot->n,lplot->flag, lplot->z,lplot->alpha);
+  Xgc->graphic_engine->scale->displaynumbers(Xgc,lplot->x, lplot->y,lplot->n,lplot->flag, lplot->z,lplot->alpha);
 }
 
 
@@ -735,7 +744,7 @@ void store_drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n,
 static void replay_drawpolylines_1(BCG *Xgc,void  *theplot)
 {
   struct rec_drawpolylines *lplot = theplot;
-  nsp_gengine->scale->drawpolylines(Xgc,lplot->vx, lplot->vy,lplot->drawvect,lplot->n, lplot->p);
+  Xgc->graphic_engine->scale->drawpolylines(Xgc,lplot->vx, lplot->vy,lplot->drawvect,lplot->n, lplot->p);
 }
 
 
@@ -762,7 +771,7 @@ void store_drawrectangle_1(BCG *Xgc,double rect[])
 static void replay_drawrectangle_1(BCG *Xgc,void  *theplot)
 {
   struct rec_double4 *lplot = theplot;
-  nsp_gengine->scale->drawrectangle(Xgc, lplot->vals);
+  Xgc->graphic_engine->scale->drawrectangle(Xgc, lplot->vals);
 }
 
 
@@ -781,7 +790,7 @@ void store_drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
 static void replay_drawrectangles_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillarcs *lplot = theplot;
-  nsp_gengine->scale->drawrectangles(Xgc,lplot->vects, lplot->fillvect,lplot->n);
+  Xgc->graphic_engine->scale->drawrectangles(Xgc,lplot->vects, lplot->fillvect,lplot->n);
 }
 
 
@@ -821,7 +830,7 @@ void store_drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int
 static void replay_drawsegments_1(BCG *Xgc,void  *theplot)
 {
   struct rec_segment *lplot = theplot;
-  nsp_gengine->scale->drawsegments(Xgc,lplot->vx, lplot->vy,lplot->n,lplot->style,lplot->iflag);
+  Xgc->graphic_engine->scale->drawsegments(Xgc,lplot->vx, lplot->vy,lplot->n,lplot->style,lplot->iflag);
 }
 
 
@@ -862,7 +871,7 @@ void store_displaystring_1(BCG *Xgc,char *string,double x, double y,int flag,dou
 static void replay_displaystring_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaystring *lplot = theplot;
-  nsp_gengine->scale->displaystring(Xgc,lplot->string, lplot->x,lplot->y,lplot->flag,lplot->angle);
+  Xgc->graphic_engine->scale->displaystring(Xgc,lplot->string, lplot->x,lplot->y,lplot->flag,lplot->angle);
 }
 
 
@@ -899,7 +908,7 @@ void store_displaystringa_1(BCG *Xgc,char *string, int ipos)
 static void replay_displaystringa_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaystringa *lplot = theplot;
-  nsp_gengine->scale->displaystringa(Xgc,lplot->string, lplot->ipos);
+  Xgc->graphic_engine->scale->displaystringa(Xgc,lplot->string, lplot->ipos);
 }
 
 
@@ -942,7 +951,7 @@ void store_xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, dou
 static void replay_xstringb_1(BCG *Xgc,void  *theplot)
 {
   struct rec_xstringb *lplot = theplot;
-  nsp_gengine->scale->xstringb(Xgc,lplot->string, &lplot->flag,&lplot->x,&lplot->y,&lplot->wd,&lplot->hd);
+  Xgc->graphic_engine->scale->xstringb(Xgc,lplot->string, &lplot->flag,&lplot->x,&lplot->y,&lplot->wd,&lplot->hd);
 }
 
 
@@ -1986,47 +1995,47 @@ void store_Xgc(BCG *Xgc,int winnumber)
   int i,win,col;
   int fontid[2];
 
-  win = nsp_gengine->xget_curwin(); 
-  if ( win != winnumber) nsp_gengine->xset_curwin(winnumber,FALSE);
-  nsp_gengine->xget_font(Xgc,fontid);
-  nsp_gengine->scale->xset_font(Xgc,*fontid,*(fontid+1));
-  nsp_gengine->xget_mark(Xgc,fontid);
-  nsp_gengine->scale->xset_mark(Xgc,*fontid,*(fontid+1));
+  win = Xgc->graphic_engine->xget_curwin(); 
+  if ( win != winnumber) Xgc->graphic_engine->xset_curwin(winnumber,FALSE);
+  Xgc->graphic_engine->xget_font(Xgc,fontid);
+  Xgc->graphic_engine->scale->xset_font(Xgc,*fontid,*(fontid+1));
+  Xgc->graphic_engine->xget_mark(Xgc,fontid);
+  Xgc->graphic_engine->scale->xset_mark(Xgc,*fontid,*(fontid+1));
   
-  i = nsp_gengine->xget_thickness(Xgc);
-  nsp_gengine->scale->xset_thickness(Xgc,i);
+  i = Xgc->graphic_engine->xget_thickness(Xgc);
+  Xgc->graphic_engine->scale->xset_thickness(Xgc,i);
   
-  i= nsp_gengine->xget_absourel(Xgc);
-  nsp_gengine->scale->xset_absourel(Xgc,i);
+  i= Xgc->graphic_engine->xget_absourel(Xgc);
+  Xgc->graphic_engine->scale->xset_absourel(Xgc,i);
 
-  i = nsp_gengine->xget_alufunction(Xgc);
-  nsp_gengine->scale->xset_alufunction1(Xgc,i);
+  i = Xgc->graphic_engine->xget_alufunction(Xgc);
+  Xgc->graphic_engine->scale->xset_alufunction1(Xgc,i);
 
   /* pour le clipping on l'enleve */
 
-  nsp_gengine->scale->xset_unclip(Xgc);
+  Xgc->graphic_engine->scale->xset_unclip(Xgc);
     
-  col = nsp_gengine->xget_usecolor(Xgc);
+  col = Xgc->graphic_engine->xget_usecolor(Xgc);
 
   /**  It seams not a good idea to send back use color on the recorded  commands 
     see Actions.c (scig_tops) 
-    nsp_gengine->scale->xset_use color",&col,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
+    Xgc->graphic_engine->scale->xset_use color",&col,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
   **/
 
   if (col == 0) 
     {
       int xz[10];
-      i = nsp_gengine->xget_pattern(Xgc);
-      nsp_gengine->scale->xset_pattern(Xgc,i);
-      xz[0] = nsp_gengine->xget_dash(Xgc);
-      nsp_gengine->scale->xset_dash(Xgc,xz[0]);
+      i = Xgc->graphic_engine->xget_pattern(Xgc);
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,i);
+      xz[0] = Xgc->graphic_engine->xget_dash(Xgc);
+      Xgc->graphic_engine->scale->xset_dash(Xgc,xz[0]);
     }
   else 
     {
-      i= nsp_gengine->xget_pattern(Xgc);
-      nsp_gengine->scale->xset_pattern(Xgc,i);
+      i= Xgc->graphic_engine->xget_pattern(Xgc);
+      Xgc->graphic_engine->scale->xset_pattern(Xgc,i);
     }
-  if ( win != winnumber) nsp_gengine->xset_curwin(win,FALSE);
+  if ( win != winnumber) Xgc->graphic_engine->xset_curwin(win,FALSE);
 }
 
 /*-------------------------------------------------------------------------
@@ -2300,7 +2309,7 @@ static void scale_change_Ech(BCG *Xgc,void *plot, int *flag, double *bbox, int *
       /* we are trying to change the scale */
       int wdim[2];
       BCG *Xgc=check_graphic_window();
-      nsp_gengine->xget_windowdim(Xgc,wdim,wdim+1);
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       /* check if bbox1 is inside current subwin */
       if ( theplot->Wrect[0]*wdim[0] <= bbox1[0] 
 	   && (theplot->Wrect[0]+theplot->Wrect[2])*wdim[0] >= bbox1[2] 
@@ -2369,7 +2378,7 @@ static void scale_change_NEch(BCG *Xgc,void *plot, int *flag, double *bbox, int 
 	  int wdim[2];
 	  flag[0]=0; 
 	  Xgc=check_graphic_window();
-	  nsp_gengine->xget_windowdim(Xgc,wdim,wdim+1);
+	  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
 	  /* check if bbox1 is inside current subwin */
 	  if (theplot->Wrect[0]*wdim[0] <= bbox1[0] && (theplot->Wrect[0]+theplot->Wrect[2])*wdim[0] >= bbox1[2] 
 	      && theplot->Wrect[1]*wdim[1] <= bbox1[1] && (theplot->Wrect[1]+theplot->Wrect[3])*wdim[1] >= bbox1[3] )
@@ -2899,7 +2908,7 @@ void tape_replay_old(BCG *Xgc,int winnumber)
   int flag;
 #endif
   char name[4];
-  nsp_gengine->scale->get_driver_name(name);
+  Xgc->graphic_engine->scale->get_driver_name(name);
   /* first check if a special handler is set 
    * 
    */
@@ -2910,9 +2919,9 @@ void tape_replay_old(BCG *Xgc,int winnumber)
 	{
 #ifdef WIN32
 	  /** win32 : we dont't want to use dr because it will change the hdc **/
-	  nsp_gengine->scale->set_driver("Int");
+	  Xgc->graphic_engine->scale->set_driver("Int");
 #else
-	  nsp_gengine->scale->set_driver("X11");
+	  Xgc->graphic_engine->scale->set_driver("X11");
 #endif
 	}
 #ifdef WIN32
@@ -2929,7 +2938,7 @@ void tape_replay_old(BCG *Xgc,int winnumber)
 #ifdef WIN32
       if ( flag == 1) ReleaseWinHdc();
 #endif
-      nsp_gengine->scale->set_driver(name);
+      Xgc->graphic_engine->scale->set_driver(name);
     }
 }
 

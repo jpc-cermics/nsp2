@@ -154,7 +154,7 @@ int C2F(contour)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer 
   integer N[3],i;
   double xbox[8],ybox[8],zbox[8];
 
-  if (nsp_gengine->scale->get_driver()=='R')  store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
+  if (Xgc->graphic_engine->scale->get_driver()=='R')  store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
 
   switch (flag[0])
     {
@@ -222,7 +222,7 @@ int C2F(contour)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer 
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
       contourI(Xgc,func,x,y,z,zz,N,(integer *) 0,&err);
     }
-  fg = nsp_gengine->xget_foreground(Xgc);
+  fg = Xgc->graphic_engine->xget_foreground(Xgc);
   if (flag[0]!=2 &&  flag[2] >=3 )
     {
       /** Le triedre que l'on doit voir **/
@@ -260,7 +260,7 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
   update_frame_bounds(Xgc,1,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
   /** If Record is on **/
-  if (nsp_gengine->scale->get_driver()=='R' && strcmp(name,"contour2")==0 ) 
+  if (Xgc->graphic_engine->scale->get_driver()=='R' && strcmp(name,"contour2")==0 ) 
     store_Contour2D(Xgc,x,y,z,n1,n2,flagnz,nz,zz,style,strflag,legend,brect,aaint);
 
   zmin=(double) Mini(z,*n1*(*n2)); 
@@ -341,7 +341,7 @@ static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z,
   integer n1,n2,ncont,i,c,j,k,n5;
   integer stylec;
   n1=N[0];n2=N[1];ncont=N[2];
-  F= nsp_gengine->xget_fpf(Xgc);
+  F= Xgc->graphic_engine->xget_fpf(Xgc);
   if ( F[0] == '\0') 
     ChoixFormatE1(ContNumFormat,zCont,N[2]);
   InitValues(x,y,z,n1,n2);
@@ -689,24 +689,24 @@ static void ContourTrace(BCG *Xgc,double Cont, integer style)
   double angle=0.0;
   char str[100];
 
-  uc = nsp_gengine->xget_usecolor(Xgc);
+  uc = Xgc->graphic_engine->xget_usecolor(Xgc);
   if (uc) {
-    pat = nsp_gengine->xset_pattern(Xgc,style);
-    nsp_gengine->drawpolyline(Xgc,xcont,ycont,cont_size,close);
-    nsp_gengine->xset_pattern(Xgc,pat);
+    pat = Xgc->graphic_engine->xset_pattern(Xgc,style);
+    Xgc->graphic_engine->drawpolyline(Xgc,xcont,ycont,cont_size,close);
+    Xgc->graphic_engine->xset_pattern(Xgc,pat);
   }
   else {
-    old = nsp_gengine->xset_dash(Xgc,style);
-    nsp_gengine->drawpolyline(Xgc,xcont,ycont,cont_size,close);
-    nsp_gengine->xset_dash(Xgc,old);
+    old = Xgc->graphic_engine->xset_dash(Xgc,style);
+    Xgc->graphic_engine->drawpolyline(Xgc,xcont,ycont,cont_size,close);
+    Xgc->graphic_engine->xset_dash(Xgc,old);
   }
 
-  F=nsp_gengine->xget_fpf(Xgc);
+  F=Xgc->graphic_engine->xget_fpf(Xgc);
   if ( F[0] == '\0') 
     sprintf(str,ContNumFormat,Cont);
   else 
     sprintf(str,F,Cont);
-  nsp_gengine->displaystring(Xgc,str, xcont[cont_size / 2],ycont[cont_size /2],flag,angle);
+  Xgc->graphic_engine->displaystring(Xgc,str, xcont[cont_size / 2],ycont[cont_size /2],flag,angle);
 }
 
 /*--------------------------------------------------------------

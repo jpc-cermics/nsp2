@@ -72,6 +72,47 @@ static char symb_list[] = {
 static BCG  ScilabGCXfig ;
 
 /*-----------------------------------------------------
+ * default colormap coming from Xfig 
+ *-----------------------------------------------------*/
+
+/* These DEFAULTNUMCOLORS colors come from Xfig */
+
+unsigned short  default_colors[] = {
+  0,   0,   0, /* Black: DEFAULTBLACK */
+  0,   0, 255, /* Blue */
+  0, 255,   0, /* Green */
+  0, 255, 255, /* Cyan */
+  255,   0,   0, /* Red */
+  255,   0, 255, /* Magenta */
+  255,   0,   0, /* Yellow */
+  255, 255, 255, /* White: DEFAULTWHITE */
+  0,   0, 144, /* Blue4 */
+  0,   0, 176, /* Blue3 */
+  0,   0, 208, /* Blue2 */
+  135, 206, 255, /* LtBlue */
+  0, 144,   0, /* Green4 */
+  0, 176,   0, /* Green3 */
+  0, 208,   0, /* Green2 */
+  0, 144, 144, /* Cyan4 */
+  0, 176, 176, /* Cyan3 */
+  0, 208, 208, /* Cyan2 */
+  144,   0,   0, /* Red4 */
+  176,   0,   0, /* Red3 */
+  208,   0,   0, /* Red2 */
+  144,   0, 144, /* Magenta4 */
+  176,   0, 176, /* Magenta3 */
+  208,   0, 208, /* Magenta2 */
+  128,  48,   0, /* Brown4 */
+  160,  64,   0, /* Brown3 */
+  192,  96,   0, /* Brown2 */
+  255, 128, 128, /* Pink4 */
+  255, 160, 160, /* Pink3 */
+  255, 192, 192, /* Pink2 */
+  255, 224, 224, /* Pink */
+  255, 215,   0  /* Gold */
+};
+
+/*-----------------------------------------------------
 \encadre{General routines}
 -----------------------------------------------------*/
 
@@ -597,7 +638,6 @@ static void sedeco(int flag)
 
 static void xset_colormap(BCG *Xgc,int m,int n, double *a)
 {
- 
   int i;
   Scistring("Warning : you will have to move the colors definition\n");
   Scistring(" at the top of the xfig file \n");
@@ -634,13 +674,40 @@ static void xset_colormap(BCG *Xgc,int m,int n, double *a)
   xset_background(Xgc,Xgc->NumForeground+2);
 }
 
+static void xset_default_colormap(BCG *Xgc)
+{
+  unsigned short *a = default_colors;
+  int   m = DEFAULTNUMCOLORS;
+  int i;
+  Scistring("Warning : you will have to move the colors definition\n");
+  Scistring("at the top of the xfig file \n");
+  Xgc->Numcolors = m;
+  Xgc->IDLastPattern = m - 1;
+  Xgc->NumForeground = m;
+  Xgc->NumBackground = m + 1;
+  for ( i=0; i < m ; i++)
+    {
+      unsigned short ur,ug,ub;
+      ur = a[i];
+      ug = a[i+m];
+      ub = a[i+2*m];
+      FPRINTF((file,"0 %d #%02x%02x%02x \n",32+i,ur,ug,ub));
+    }
+  FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m,0,0,0));
+  FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m+1,255,255,255));
+  xset_usecolor(Xgc,i);
+  xset_alufunction1(Xgc,3);
+  xset_pattern(Xgc,Xgc->NumForeground+1);
+  xset_foreground(Xgc,Xgc->NumForeground+1);
+  xset_background(Xgc,Xgc->NumForeground+2);
+}
+
 /* getting the colormap XXXX */
 
 static void xget_colormap(BCG *Xgc, int *num,  double *val)
 {
   *num=0 ; /* XXX */
 }
-
 
 
 static void set_c_Fig(BCG *Xgc,int i)

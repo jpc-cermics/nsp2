@@ -41,7 +41,7 @@ int C2F(plot2d1)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
   update_frame_bounds(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
-  if (nsp_gengine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->scale->get_driver()=='R') 
     store_Plot1(Xgc,xf,x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /** Allocation **/
@@ -65,7 +65,7 @@ int C2F(plot2d1)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
   if ( n != 0 ) 
     {
       frame_clip_on(Xgc);
-      nsp_gengine->drawpolylines(Xgc,xm,ym,style,*n1,nn2);
+      Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,style,*n1,nn2);
       frame_clip_off(Xgc);
       /** Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1')

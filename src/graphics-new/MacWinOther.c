@@ -68,7 +68,7 @@ UpdateCWindow()
   WindowPtr theWindow;
   extern WindowPtr C2F(GetWindowNumber)();
   int verbose = 0, win1, narg;
-  win1 = nsp_gengine->xget_curwin();
+  win1 = Xgc->graphic_engine->xget_curwin();
   theWindow = C2F(GetWindowNumber)(win1);
   if ( theWindow != NULL) 
   	{
@@ -195,12 +195,12 @@ DrawContents(WindowPtr win)
       int verbose = 0, win1, narg;
       	sciprint("Tape redraw of %d\r\n",i);
     
-	i= nsp_gengine->xget_curwin(); 
+	i= Xgc->graphic_engine->xget_curwin(); 
       winnumber = i;
       /* fait planter */
-      /* nsp_gengine->MissileGCset("window",&i,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);*/
+      /* Xgc->graphic_engine->MissileGCset("window",&i,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);*/
       tape_replay(winnumber);
-      /*nsp_gengine->MissileGCset("window",&win1,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);*/
+      /*Xgc->graphic_engine->MissileGCset("window",&win1,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);*/
     }
 }
 

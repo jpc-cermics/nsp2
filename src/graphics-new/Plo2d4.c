@@ -32,7 +32,7 @@ int C2F(plot2d4)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
   update_frame_bounds(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
-  if (nsp_gengine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->scale->get_driver()=='R') 
     store_Plot4(Xgc,xf,x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /** Allocations **/
@@ -66,7 +66,7 @@ int C2F(plot2d4)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 	{
 	  integer lstyle ;
 	  lstyle = (style[j] < 0) ?  -style[j] : style[j];
-	  nsp_gengine->drawarrows(Xgc,&xm[2*(*n2)*j],&ym[2*(*n2)*j],nn2,arsize ,&lstyle,0);
+	  Xgc->graphic_engine->drawarrows(Xgc,&xm[2*(*n2)*j],&ym[2*(*n2)*j],nn2,arsize ,&lstyle,0);
 	  
 	}
       frame_clip_off(Xgc);

@@ -53,7 +53,7 @@ int C2F(fec)(BCG *Xgc,double *x, double *y, double *triangles, double *func, int
   update_frame_bounds(Xgc,0,"gnn",x,y,&n1,Nnode,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
-  if (nsp_gengine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->scale->get_driver()=='R') 
     /* added zminmax and colminmax (bruno) */
     store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax);
 
@@ -97,7 +97,7 @@ int C2F(fec)(BCG *Xgc,double *x, double *y, double *triangles, double *func, int
       zmax = Max( zminmax[0] , zminmax[1] );
     };
       
-    whiteid= nsp_gengine->xget_last(Xgc);
+    whiteid= Xgc->graphic_engine->xget_last(Xgc);
     nz=whiteid;
     
     /* choice for the colormap (in case of a user 's choice 
@@ -265,7 +265,7 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
     resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
     resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
     color = fill[zxy[0]]; nr = 3;
-    nsp_gengine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+    Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
     return;
   }
 
@@ -305,7 +305,7 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
   FindIntersection(sx, sy, fxy, zlevel[zxy[0]], 0, 2, &xEdge2, &yEdge2);
   resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
   color = fill[zxy[0]];
-  nsp_gengine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+  Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
 
   /*------------------------------------+ 
   | compute the intermediary polygon(s) |
@@ -327,7 +327,7 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
     FindIntersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
     resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
     color = fill[izone];
-    nsp_gengine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+    Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
   };
 
   /*-----------------------+ 
@@ -342,7 +342,7 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
   /* the last point is P2 */
   resx[nr] = inint(sx[2]); resy[nr] = inint(sy[2]); nr++;
   color = fill[zxy[2]];
-  nsp_gengine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+  Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
 }
 
 static void FindIntersection(double *sx, double *sy, double *fxy, double z, int inda, int indb, integer *xint, integer *yint)

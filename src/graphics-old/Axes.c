@@ -29,15 +29,15 @@ void axis_draw(BCG *Xgc,char *strflag)
   /* using foreground to draw axis */
   int old_dash,pat, fg;
   char c = (strlen(strflag) >= 3) ? strflag[2] : '1';
-  fg = nsp_gengine->xget_foreground(Xgc);
-  old_dash = nsp_gengine->xset_dash(Xgc,1);
-  pat = nsp_gengine->xset_pattern(Xgc,fg);
+  fg = Xgc->graphic_engine->xget_foreground(Xgc);
+  old_dash = Xgc->graphic_engine->xset_dash(Xgc,1);
+  pat = Xgc->graphic_engine->xset_pattern(Xgc,fg);
   switch ( c) 
     {
     case '0' :
       break ;
     case '2' :
-      nsp_gengine->drawrectangle(Xgc,Xgc->scales->WIRect1);
+      Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
       break;
     default :
       if ( strflag[1] == '5' || strflag[1] =='6' )
@@ -47,8 +47,8 @@ void axis_draw(BCG *Xgc,char *strflag)
 	aplotv2(Xgc,strflag);
       break;
     }
-  nsp_gengine->xset_dash(Xgc,old_dash);
-  nsp_gengine->xset_pattern(Xgc,pat);
+  Xgc->graphic_engine->xset_dash(Xgc,old_dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,pat);
 }
 
 /*--------------------------------------------------------------
@@ -89,7 +89,7 @@ static void aplotv2(BCG *Xgc,char *strflag)
     }
   if ( c != '4' && c != '5' )  
     /** frame rectangle **/
-    nsp_gengine->drawrectangle(Xgc,Xgc->scales->WIRect1);
+    Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
   /** x-axis **/
   ny=1,nx=3;
   Sci_Axis(Xgc,'d','r',x,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
@@ -129,7 +129,7 @@ static void aplotv1(BCG *Xgc,char *strflag)
     }
   if ( c != '4' && c != '5' )  
     /** frame rectangle **/
-    nsp_gengine->drawrectangle(Xgc,Xgc->scales->WIRect1);
+    Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
   /** x-axis **/
   ny=1,nx=4;
   Sci_Axis(Xgc,'d','i',Xgc->scales->xtics,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],
@@ -180,7 +180,7 @@ static void aplotv1(BCG *Xgc,char *strflag)
 
 void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
-  if (nsp_gengine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->scale->get_driver()=='R') 
     store_SciAxis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
   Sci_Axis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
 }
@@ -204,24 +204,24 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
  
    /* End of modified code */
   
-   nsp_gengine->xget_font(Xgc,fontid);
+   Xgc->graphic_engine->xget_font(Xgc,fontid);
   fontsize_kp = fontid[1] ;
 
   if ( fontsize != -1 ) 
     {
       fontid[1] = fontsize ;
-      nsp_gengine->xset_font(Xgc,fontid[0],fontid[1]);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
     }
   if ( textcolor != -1 || ticscolor != -1 ) 
     {
-      color_kp = nsp_gengine->xget_pattern(Xgc);
+      color_kp = Xgc->graphic_engine->xget_pattern(Xgc);
     }
 
   if (logflag == 'l' )
     {
-      nsp_gengine->boundingbox(Xgc,"10",xx,yy,logrect);
+      Xgc->graphic_engine->boundingbox(Xgc,"10",xx,yy,logrect);
       smallersize=fontid[1]-2;
-      nsp_gengine->xset_font(Xgc,fontid[0],smallersize);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
     }
   /** Real to Pixel values **/
   switch ( xy_type ) 
@@ -260,9 +260,9 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
       vy[0]= vy[1] = ym[0] = YScale(y[0]);
       if ( seg_flag == 1) 
 	{
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,ticscolor);
-	  nsp_gengine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
+	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
 
       /** loop on the ticks **/
@@ -283,7 +283,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	    }
 	  else 
 	    sprintf(foo,format,vxx);
-	  nsp_gengine->boundingbox(Xgc,foo,xx,yy,rect);
+	  Xgc->graphic_engine->boundingbox(Xgc,foo,xx,yy,rect);
 
 	  /* tick is computed in vx,vy and string is displayed at posi[0],posi[1] position */
 
@@ -300,18 +300,18 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	      posi[1]=inint( ym[0] - 1.2*barlength);
 	      vy[0]= ym[0];vy[1]= ym[0] - barlength;
 	    }
-	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(Xgc,textcolor);
-	  nsp_gengine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
+	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
+	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
 	  if ( logflag == 'l' )
 	    {
-	      nsp_gengine->xset_font(Xgc,fontid[0],fontid[1]);
-	      nsp_gengine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),(posi[1] += logrect[3],posi[1]),flag,angle);
-	      nsp_gengine->xset_font(Xgc,fontid[0],smallersize);
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
+	      Xgc->graphic_engine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),(posi[1] += logrect[3],posi[1]),flag,angle);
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
 	    }
-	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
+	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,ticscolor);
-	  nsp_gengine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
+	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  /* subtics */
 	  if ( i < Nx-1 ) 
 	    {
@@ -326,10 +326,10 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 		    { vy[0]= ym[0];vy[1]= ym[0] + barlength/2.0 ; }
 		  else 
 		    { vy[0]= ym[0];vy[1]= ym[0] - barlength/2.0; }
-		  nsp_gengine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 		}
 	    }
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
       break;
     case 'r' : 
@@ -347,9 +347,9 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
       vx[0]= vx[1] = xm[0]= XScale(x[0]);
       if ( seg_flag == 1) 
 	{
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,ticscolor);
-	  nsp_gengine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
+	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
       /** loop on the ticks **/
       for (i=0 ; i < Ny ; i++)
@@ -369,7 +369,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	  else 
 	    sprintf(foo,format,vxx);
 
-	  nsp_gengine->boundingbox(Xgc,foo,xx,yy,rect);
+	  Xgc->graphic_engine->boundingbox(Xgc,foo,xx,yy,rect);
 
 	  /* tick is computed in vx,vy and string is displayed at posi[0],posi[1] position */
 
@@ -385,19 +385,19 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	      posi[0]=inint(xm[0] - 1.2*barlength - rect[2]);
 	      vx[0]= xm[0];vx[1]= xm[0] - barlength;
 	    }
-	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(Xgc,textcolor);
-	  nsp_gengine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
+	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
+	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
 	  if ( logflag == 'l' )
 	    {
-	      nsp_gengine->xset_font(Xgc,fontid[0],fontid[1]);
-	      nsp_gengine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
+	      Xgc->graphic_engine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),
 					 (posi[1] += logrect[3],posi[1]),flag,angle);
-	      nsp_gengine->xset_font(Xgc,fontid[0],smallersize);
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
 	    }
-	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
+	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,ticscolor);
-	  nsp_gengine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
+	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  /* subtics */
 	  if ( i < Ny-1 ) 
 	    {
@@ -412,10 +412,10 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 		    { vx[0]= xm[0];vx[1]= xm[0] + barlength/2.0 ; }
 		  else 
 		    { vx[0]= xm[0];vx[1]= xm[0] - barlength/2.0; }
-		  nsp_gengine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
+		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 		}
 	    }
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
+	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	}
       break;
     }
@@ -423,12 +423,12 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
   if ( fontsize != -1 || logflag == 'l' )
     {
       fontid[1] = fontsize_kp;
-      nsp_gengine->xset_font(Xgc,fontid[0],fontid[1]);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
     }
   /* reset to current color */
   if ( textcolor != -1 || ticscolor != -1 ) 
     {
-       nsp_gengine->xset_pattern(Xgc,color_kp);
+       Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
     }
 
 }

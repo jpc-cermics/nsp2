@@ -1144,7 +1144,7 @@ static int load_Colormap(BCG *Xgc)
       table[i]=x;
       /** sciprint("loading %f\r\n",table[i]); **/
     }
-  nsp_gengine->xset_colormap(Xgc,m,3,table);
+  Xgc->graphic_engine->xset_colormap(Xgc,m,3,table);
   FREE(table);
   return(1);
 }
@@ -1274,13 +1274,13 @@ int tape_load(BCG *Xgc,const char *fname1)
   assert(fflush((FILE *)rxdrs->x_private) != EOF) ; 
   assert(fclose(RF) != EOF) ;
   /** we plot the load_ed graphics **/
-  nsp_gengine->scale->get_driver_name(name);
-  if ( (nsp_gengine->scale->get_driver()) !='R')nsp_gengine->scale->set_driver("Rec");
-  cur = nsp_gengine->xget_curwin();
-  nsp_gengine->pixmap_resize(Xgc);
-  nsp_gengine->clearwindow(Xgc);
-  nsp_gengine->tape_replay(Xgc,cur);
-  nsp_gengine->scale->set_driver(name);
+  Xgc->graphic_engine->scale->get_driver_name(name);
+  if ( (Xgc->graphic_engine->scale->get_driver()) !='R')Xgc->graphic_engine->scale->set_driver("Rec");
+  cur = Xgc->graphic_engine->xget_curwin();
+  Xgc->graphic_engine->pixmap_resize(Xgc);
+  Xgc->graphic_engine->clearwindow(Xgc);
+  Xgc->graphic_engine->tape_replay(Xgc,cur);
+  Xgc->graphic_engine->scale->set_driver(name);
   return(0);
 }
 

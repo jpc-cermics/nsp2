@@ -22,51 +22,11 @@
 
 /** Global variables to deal with X11 **/
 
-static unsigned long maxcol;
-
-/* These DEFAULTNUMCOLORS colors come from Xfig */
-
-unsigned short  default_colors[] = {
-  0,   0,   0, /* Black: DEFAULTBLACK */
-  0,   0, 255, /* Blue */
-  0, 255,   0, /* Green */
-  0, 255, 255, /* Cyan */
-  255,   0,   0, /* Red */
-  255,   0, 255, /* Magenta */
-  255,   0,   0, /* Yellow */
-  255, 255, 255, /* White: DEFAULTWHITE */
-  0,   0, 144, /* Blue4 */
-  0,   0, 176, /* Blue3 */
-  0,   0, 208, /* Blue2 */
-  135, 206, 255, /* LtBlue */
-  0, 144,   0, /* Green4 */
-  0, 176,   0, /* Green3 */
-  0, 208,   0, /* Green2 */
-  0, 144, 144, /* Cyan4 */
-  0, 176, 176, /* Cyan3 */
-  0, 208, 208, /* Cyan2 */
-  144,   0,   0, /* Red4 */
-  176,   0,   0, /* Red3 */
-  208,   0,   0, /* Red2 */
-  144,   0, 144, /* Magenta4 */
-  176,   0, 176, /* Magenta3 */
-  208,   0, 208, /* Magenta2 */
-  128,  48,   0, /* Brown4 */
-  160,  64,   0, /* Brown3 */
-  192,  96,   0, /* Brown2 */
-  255, 128, 128, /* Pink4 */
-  255, 160, 160, /* Pink3 */
-  255, 192, 192, /* Pink2 */
-  255, 224, 224, /* Pink */
-  255, 215,   0  /* Gold */
-};
-
+static unsigned long maxcol; /* XXXXX : à revoir */
 
 /*------------------------------------------------------------------
  * the current graphic data structure 
  *------------------------------------------------------------------*/
-
-
 
 /** functions **/
 
@@ -1349,7 +1309,7 @@ static void sedeco(int flag)
 
 #define SETCOLOR(i,r,g,b)  Xgc->private->Red[i]=r;Xgc->private->Green[i]=g;Xgc->private->Blue[i]=b ; 
 
-void set_default_colormap(BCG *Xgc)
+static void xset_default_colormap(BCG *Xgc)
 {
   int i;
   guchar *r, *g, *b;
@@ -1395,7 +1355,7 @@ void set_default_colormap(BCG *Xgc)
  * v2 gives the value of m and *v3 must be equal to 3 
  */
 
-static void xset_colormap(BCG *Xgc,int m,int n , double *a)
+static void xset_colormap(BCG *Xgc,int m,int n,double *a)
 {
   int i;
   guchar *r, *g, *b;
@@ -2363,15 +2323,28 @@ static void initgraphic(char *string, int *v2)
   CreateGtkGWindow(NewXgc);
   /** Default value is without Pixmap **/
   NewXgc->private->Cdrawable = (GdkDrawable *) NewXgc->private->drawing->window;
-  InitMissileXgc(NewXgc);
-  store_Xgc(NewXgc,WinNum);
+  /* initialize graphic_context : this action is recorded and replayed when replaying 
+   * XXXX améliorer ce qui suit pour ne pas recreer un colormap si c'est celui par defaut 
+   * qui est déjà utilisé 
+   */
+
+  NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
+  NewXgc->CurPixmapStatus = -1; /* to be sure that next will initialize */
+  NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
+
+  /* InitMissileXgc(NewXgc);
+     store_Xgc(NewXgc,WinNum);
+  */
+
+  NewXgc->scales = NULL;
+  xgc_add_default_scale(NewXgc);
   EntryCounter=Max(EntryCounter,WinNum);
   EntryCounter++;
   gdk_flush();
 }
 
 /*
- * to be improved: 
+ * to be improved:  XXXXX 
  */ 
 
 extern void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2)
@@ -2424,9 +2397,19 @@ extern void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2)
   gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",600,400,win,box);
 
   NewXgc->private->Cdrawable = (GdkDrawable *) NewXgc->private->drawing->window;
-  InitMissileXgc(NewXgc);
-  store_Xgc(NewXgc,WinNum);
-
+  /* initialize graphic_context : this action is recorded and replayed when replaying 
+   * XXXX améliorer ce qui suit pour ne pas recreer un colormap si c'est celui par defaut 
+   * qui est déjà utilisé 
+   */
+  NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
+  NewXgc->CurPixmapStatus = -1; /* to be sure that next will initialize */
+  NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
+  /* 
+     InitMissileXgc(NewXgc);
+     store_Xgc(NewXgc,WinNum);
+  */
+  NewXgc->scales = NULL;
+  xgc_add_default_scale(NewXgc);
   EntryCounter=Max(EntryCounter,WinNum);
   EntryCounter++;
   gdk_flush();
@@ -2466,7 +2449,6 @@ static void xset_default(BCG *Xgc)
   InitMissileXgc (Xgc);
 }
 
-
 static void InitMissileXgc ( BCG *Xgc ) 
 { 
   int i,j;
@@ -2491,7 +2473,7 @@ static void InitMissileXgc ( BCG *Xgc )
   xset_hidden3d(Xgc,1);
   /* initialisation de la couleur par defaut */ 
   Xgc->CurColorStatus = 1;
-  set_default_colormap(Xgc);
+  xset_default_colormap(Xgc);
   xset_alufunction1(Xgc,3);
   xset_pattern(Xgc,Xgc->NumForeground+1);
   /*** XXXXX a faire aussi pour le n&b plus haut ***/
@@ -2507,8 +2489,8 @@ static void InitMissileXgc ( BCG *Xgc )
   xset_usecolor(Xgc,i);
   strcpy(Xgc->CurNumberDispFormat,"%-5.2g");
   /** XXXX a faire peut-etre ailleurs : default scales **/
-  xgc_add_default_scale(Xgc);
 }
+
 
 /* use the current Xgc for reinitialization  
  * used when switching from one graphic window to an other one 

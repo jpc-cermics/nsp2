@@ -16,6 +16,7 @@
 #include "nsp/graphics/Graphics.h"
 #include "nsp/gsort-p.h"
 
+extern Gengine *nsp_gengine ; /* XXXXX */
 
 static int sci_demo (char *fname,char *code,int flag) ;
 
@@ -354,11 +355,11 @@ static char * check_logflags(Stack stack,char *fname,char *varname,char *logflag
 static void  nsp_gwin_clear(BCG *Xgc)
 {
   if ( Xgc != NULL) 
-  if ( nsp_gengine->xget_autoclear(Xgc) == 1 ) 
-    {
-      nsp_gengine->clearwindow(Xgc);
-      nsp_gengine->tape_clean_plots(Xgc,Xgc->CurWindow);
-    }
+    if ( nsp_gengine->xget_autoclear(Xgc) == 1 ) 
+      {
+	nsp_gengine->clearwindow(Xgc);
+	nsp_gengine->tape_clean_plots(Xgc,Xgc->CurWindow);
+      }
 }
 
 
@@ -1284,7 +1285,7 @@ int int_gray2plot(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M,*Rect;
   int_types T[] = {realmat, realmat, t_end} ;
 
-  if ( rhs <= 0) return sci_demo(stack.fname,"plot2d([0,10],[0,10],0);a=ones(50,50);a= 3*tril(a)+2*a;Matplot1(a,[4,4,9,9]);",1);
+  if ( rhs <= 0) return sci_demo(stack.fname,"plot2d([0,10],[0,10],style=0);a=ones(50,50);a= 3*tril(a)+2*a;Matplot1(a,[4,4,9,9]);",1);
 
   if ( GetArgs(stack,rhs,opt,T,&M,&Rect) == FAIL) return RET_BUG;
 
@@ -1637,7 +1638,7 @@ int int_xchange(Stack stack, int rhs, int opt, int lhs)
  *      implicit undefined (a-z) 
  *-----------------------------------------------------------*/
 
-int C2F(entier2d)(integer *n, double *dx,  integer *s)
+int C2F(entier2dXXX)(integer *n, double *dx,  integer *s)
 {
   integer ix;
   for (ix = *n -1 ; ix >= 0; --ix) dx[ix] = (double) s[ix];
@@ -1651,7 +1652,7 @@ int C2F(entier2d)(integer *n, double *dx,  integer *s)
  * Parameter adjustments 
  *-----------------------------------------------------------*/
 
-int C2F(simple2d)(integer *n,double *dx, float *s)
+int C2F(simple2dXXX)(integer *n,double *dx, float *s)
 {
   integer ix;
   for (ix = *n-1 ; ix >= 0; --ix)  dx[ix] = (double) s[ix];

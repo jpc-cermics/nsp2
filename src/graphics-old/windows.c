@@ -30,10 +30,8 @@ static WindowList *The_List  = (WindowList *) NULL;  /* list of windows */
 static int set_window_scale(int win,window_scale_list *scale);
 static window_scale_list *check_subwin_wcscale( window_scale_list *listptr, double subwin_rect[4]);
 static void scale_copy (window_scale_list *s1, window_scale_list *s2);
-static integer curwin (void);
 static window_scale_list *new_wcscale ( window_scale_list *val);
 static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
-static void scale_copy( window_scale_list *s1,window_scale_list *s2);
 static WindowList *window_list_search_w(int winnum);
 
 /*-------------------------------------------------------------------------
@@ -273,13 +271,12 @@ int window_list_get_max_id(void)
  *--------------------------------------------------------------------------*/
 
 static void scale_copy (window_scale_list *s1, window_scale_list *s2);
-static integer curwin (void);
 static window_scale_list *new_wcscale ( window_scale_list *val);
 static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
 
-/* Current Scale */
+/* Current Scale XXXXXX to be removed */
 
-window_scale_list XXXXXcurrent_scale = 
+window_scale_list current_scale = 
 { 
   0,
   {600,400},
@@ -619,14 +616,6 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
   s1->logflag[1] = s2->logflag[1];
 }
 
-/*-------------------------------------------
- * return current window : ok if driver is Rec
- *-------------------------------------------*/
-
-static integer curwin()
-{
-  return nsp_gengine->xget_curwin();
-}
 
 /*-------------------------------------------
  * show the recorded scales for window i 
@@ -667,7 +656,7 @@ void show_scales(BCG *Xgc)
 int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
 {
   static integer aaint[]={2,10,2,10};
-  if (nsp_gengine->scale->get_driver()=='R') store_Ech(Xgc,WRect,FRect,logscale);
+  if (Xgc->graphic_engine->scale->get_driver()=='R') store_Ech(Xgc,WRect,FRect,logscale);
   if (logscale[0]=='l') 
     {
       FRect[0]=log10(FRect[0]);
@@ -753,7 +742,7 @@ int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *l
 	  FRect[3]=log10(FRect[3]);
 	}
     }
-  if (nsp_gengine->scale->get_driver()=='R') store_NEch(Xgc,flag,WRect,ARect,FRect,logscale);
+  if (Xgc->graphic_engine->scale->get_driver()=='R') store_NEch(Xgc,flag,WRect,ARect,FRect,logscale);
   set_scale(Xgc,flag,WRect,FRect,NULL,logscale,ARect);
   return(0);
 }
@@ -824,7 +813,7 @@ void set_scale(BCG *Xgc,
 
   if ( flag[0] == 't'  ) 
     {
-      nsp_gengine->xget_windowdim(Xgc,wdim,wdim+1);
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       if ( Xgc->scales->wdim[0] != wdim[0] || Xgc->scales->wdim[1] != wdim[1]) 
 	{ 
 	  Xgc->scales->wdim[0] = wdim[0]; Xgc->scales->wdim[1] = wdim[1]; 
@@ -922,7 +911,7 @@ void get_cwindow_dims( int wdims[2])
 {
   BCG *Xgc;
   Xgc=check_graphic_window();
-  nsp_gengine->xget_windowdim(Xgc,wdims,wdims+1);
+  Xgc->graphic_engine->xget_windowdim(Xgc,wdims,wdims+1);
 }
 
 /*--------------------------------------------------------------------
@@ -931,12 +920,12 @@ void get_cwindow_dims( int wdims[2])
 
 void frame_clip_on(BCG *Xgc)
 {
-  nsp_gengine->xset_clip(Xgc,Xgc->scales->WIRect1);
+  Xgc->graphic_engine->xset_clip(Xgc,Xgc->scales->WIRect1);
 }
 
 void frame_clip_off(BCG *Xgc)
 {
-  nsp_gengine->xset_unclip(Xgc);
+  Xgc->graphic_engine->xset_unclip(Xgc);
 }
 
 

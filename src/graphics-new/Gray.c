@@ -40,7 +40,7 @@ int C2F(xgray)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, char 
   update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
   /** Allocation **/
 
-  if (nsp_gengine->scale->get_driver()=='R') store_Gray(Xgc,x,y,z,n1,n2,strflag,brect,aaint);
+  if (Xgc->graphic_engine->scale->get_driver()=='R') store_Gray(Xgc,x,y,z,n1,n2,strflag,brect,aaint);
 
 
   xm = graphic_alloc(0,N,sizeof(int));
@@ -59,7 +59,7 @@ int C2F(xgray)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, char 
   for ( j =0 ; j < (*n2) ; j++)	 ym[j]= YScale(y[j]); 
   GraySquare(Xgc,xm,ym,z,*n1,*n2);
   frame_clip_off(Xgc);
-  nsp_gengine->drawrectangle(Xgc,Xgc->scales->WIRect1);
+  Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
   return(0);
 }
 
@@ -71,16 +71,16 @@ static void GraySquare_base(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
   zmax=Maxi(z,(n1)*(n2));
   zmaxmin=zmax-zmin;
   if (zmaxmin <= SMDOUBLE) zmaxmin=SMDOUBLE;
-  whiteid = nsp_gengine->xget_last(Xgc);
-  cpat = nsp_gengine->xget_pattern(Xgc);
-  nsp_gengine->xget_windowdim(Xgc,xz,xz+1);
+  whiteid = Xgc->graphic_engine->xget_last(Xgc);
+  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
   for (i = 0 ; i < (n1)-1 ; i++)
     for (j = 0 ; j < (n2)-1 ; j++)
       {
 	int w,h;
 	zmoy=1/4.0*(z[i+n1*j]+z[i+n1*(j+1)]+z[i+1+n1*j]+z[i+1+n1*(j+1)]);
 	fill[0]=1 + inint((whiteid-1)*(zmoy-zmin)/(zmaxmin));
-	nsp_gengine->xset_pattern(Xgc,fill[0]);
+	Xgc->graphic_engine->xset_pattern(Xgc,fill[0]);
         w=Abs(x[i+1]-x[i]);h=Abs(y[j+1]-y[j]);
 	/* We don't trace rectangle which are totally out **/
 	if ( w != 0 && h != 0 && x[i] < xz[0] && y[j+1] < xz[1] && x[i]+w > 0 && y[j+1]+h > 0 )
@@ -88,7 +88,7 @@ static void GraySquare_base(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 	    if ( Abs(x[i]) < int16max && Abs(y[j+1]) < int16max && w < uns16max && h < uns16max)
 	      {
 		int rect[]={x[i],y[j+1],w,h};
-		nsp_gengine->fillrectangle(Xgc,rect);
+		Xgc->graphic_engine->fillrectangle(Xgc,rect);
 	      }
 	    else 
 	      {
@@ -96,15 +96,15 @@ static void GraySquare_base(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 	      }
 	  }
       }
-   nsp_gengine->xset_pattern(Xgc,cpat);
+   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
 }
 
 
 static void GraySquare(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
-  if ( nsp_gengine->scale->get_driver_id() == 0 ) 
+  if ( Xgc->graphic_engine->scale->get_driver_id() == 0 ) 
     /** accelerated version for X11 or Windows **/
-    nsp_gengine->fill_grid_rectangles(Xgc,x, y, z, n1, n2);
+    Xgc->graphic_engine->fill_grid_rectangles(Xgc,x, y, z, n1, n2);
   else 
     GraySquare_base(Xgc,x, y, z, n1, n2);
 }
@@ -129,7 +129,7 @@ int C2F(xgray1)(BCG *Xgc,double *z, int *n1, int *n2, char *strflag, double *bre
   update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
 
   /** If Record is on **/
-  if (nsp_gengine->scale->get_driver()=='R') store_Gray1(Xgc,z,n1,n2,strflag,brect,aaint);
+  if (Xgc->graphic_engine->scale->get_driver()=='R') store_Gray1(Xgc,z,n1,n2,strflag,brect,aaint);
 
   /** Allocation **/
   xm = graphic_alloc(0,N,sizeof(int));
@@ -148,7 +148,7 @@ int C2F(xgray1)(BCG *Xgc,double *z, int *n1, int *n2, char *strflag, double *bre
   for ( j =0 ; j < (*n1+1) ; j++) ym[j]= YScale(((*n1)-j+0.5));
   GraySquare1(Xgc,xm,ym,z,*n1+1,*n2+1);
   frame_clip_off(Xgc);
-  nsp_gengine->drawrectangle(Xgc,Xgc->scales->WIRect1);
+  Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
   return(0);
 }
 
@@ -164,7 +164,7 @@ int C2F(xgray2)(BCG *Xgc,double *z, int *n1, int *n2, double *xrect)
   int xx1[2],yy1[2];
   int *xm,*ym,  j;
   /** If Record is on **/
-  if (nsp_gengine->scale->get_driver()=='R') store_Gray2(Xgc,z,n1,n2,xrect);
+  if (Xgc->graphic_engine->scale->get_driver()=='R') store_Gray2(Xgc,z,n1,n2,xrect);
   xx[0]=xrect[0];xx[1]=xrect[2];
   yy[0]=xrect[1];yy[1]=xrect[3];
   /** Boundaries of the frame **/
@@ -200,14 +200,14 @@ int C2F(xgray2)(BCG *Xgc,double *z, int *n1, int *n2, double *xrect)
 static void GraySquare1_base(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
   int i,j,fill[1],cpat,xz[2];
-  cpat = nsp_gengine->xget_pattern(Xgc);
-  nsp_gengine->xget_windowdim(Xgc,xz,xz+1);
+  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
   for (i = 0 ; i < (n1)-1 ; i++)
     for (j = 0 ; j < (n2)-1 ; j++)
       {
 	int w,h;
 	fill[0]= z[i+(n1-1)*j];
-	 nsp_gengine->xset_pattern(Xgc,fill[0]);
+	 Xgc->graphic_engine->xset_pattern(Xgc,fill[0]);
 	w=Abs(x[j+1]-x[j]);
 	h=Abs(y[i+1]-y[i]);
 	/* We don't trace rectangle which are totally out **/
@@ -215,17 +215,17 @@ static void GraySquare1_base(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 	  if ( Abs(x[j]) < int16max && Abs(y[i+1]) < int16max && w < uns16max && h < uns16max)
 	    {
 	      int rect[]={x[j],y[i],w,h};
-	      nsp_gengine->fillrectangle(Xgc,rect);
+	      Xgc->graphic_engine->fillrectangle(Xgc,rect);
 	    }
       }
-   nsp_gengine->xset_pattern(Xgc,cpat);
+   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
 }
 
 static void GraySquare1(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
-  if ( nsp_gengine->scale->get_driver_id() == 0 ) 
+  if ( Xgc->graphic_engine->scale->get_driver_id() == 0 ) 
     /** accelerated version for X11 or Windows **/
-    nsp_gengine->fill_grid_rectangles1(Xgc,x, y, z, n1, n2);
+    Xgc->graphic_engine->fill_grid_rectangles1(Xgc,x, y, z, n1, n2);
   else 
     GraySquare1_base(Xgc,x, y, z, n1, n2);
 }

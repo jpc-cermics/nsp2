@@ -69,7 +69,7 @@ int C2F(plot2d)(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char 
   
   update_frame_bounds(Xgc,0,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
-  if (nsp_gengine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->scale->get_driver()=='R') 
     store_Plot1(Xgc,"gnn",x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /* Allocation */
@@ -92,7 +92,7 @@ int C2F(plot2d)(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char 
   if ( n != 0 ) 
     {
       frame_clip_on(Xgc);
-      nsp_gengine->drawpolylines(Xgc,xm,ym,style,*n1,*n2);
+      Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,style,*n1,*n2);
       frame_clip_off(Xgc);
       /** Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1')
@@ -112,9 +112,9 @@ int C2F(xgrid)(BCG *Xgc, int *style)
   double pas;
   int pat;
   /* Recording command */
-  if (nsp_gengine->scale->get_driver()=='R') store_Grid(Xgc,style);
+  if (Xgc->graphic_engine->scale->get_driver()=='R') store_Grid(Xgc,style);
   /* changes dash style if necessary */
-  pat = nsp_gengine->xset_pattern(Xgc,*style);
+  pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
   /** Get current scale **/
   pas = ((double) Xgc->scales->WIRect1[2]) / ((double) Xgc->scales->Waaint1[1]);
   /** x-axis grid (i.e vertical lines ) */
@@ -123,7 +123,7 @@ int C2F(xgrid)(BCG *Xgc, int *style)
       vy[0]=Xgc->scales->WIRect1[1];
       vy[1]=Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3];
       vx[0]=vx[1]= Xgc->scales->WIRect1[0] + inint( ((double) i)*pas);
-      if ( i!=0) nsp_gengine->drawpolyline(Xgc,vx, vy,n,closeflag);
+      if ( i!=0) Xgc->graphic_engine->drawpolyline(Xgc,vx, vy,n,closeflag);
       if (Xgc->scales->logflag[0] == 'l') 
 	{
 	  int jinit=1;
@@ -131,7 +131,7 @@ int C2F(xgrid)(BCG *Xgc, int *style)
 	  for (j= jinit; j < 10 ; j++)
 	    {
 	      vx[0]=vx[1]= Xgc->scales->WIRect1[0] + inint( ((double) i)*pas)+ inint(log10(((double)j))*pas);
-	      nsp_gengine->drawpolyline(Xgc, vx, vy,n,closeflag);
+	      Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
 	    }
 	}
     }
@@ -142,7 +142,7 @@ int C2F(xgrid)(BCG *Xgc, int *style)
       vx[0]=Xgc->scales->WIRect1[0];
       vx[1]=Xgc->scales->WIRect1[0]+Xgc->scales->WIRect1[2];
       vy[0]=vy[1]= Xgc->scales->WIRect1[1] + inint( ((double) i)*pas);
-      if (i!=0)  nsp_gengine->drawpolyline(Xgc, vx, vy,n,closeflag);
+      if (i!=0)  Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
       if (Xgc->scales->logflag[1] == 'l') 
 	{
 	  int jinit=1;
@@ -150,11 +150,11 @@ int C2F(xgrid)(BCG *Xgc, int *style)
 	  for (j= jinit; j < 10 ; j++)
 	    {
 	      vy[0]=vy[1]= Xgc->scales->WIRect1[1] + inint( ((double) i+1)*pas)- inint(log10(((double)j))*pas);
-	       nsp_gengine->drawpolyline(Xgc, vx, vy,n,closeflag);
+	       Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
 	    }
 	}
     }
-  nsp_gengine->xset_pattern(Xgc,pat);
+  Xgc->graphic_engine->xset_pattern(Xgc,pat);
   return(0);
 }
 
@@ -218,7 +218,7 @@ void update_frame_bounds(BCG *Xgc,
       /* end of added code by S. Mottelet 11/7/2000 */
       
       int wdim[2];
-      nsp_gengine->xget_windowdim(Xgc,wdim,wdim+1);
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       hx=xmax-xmin;
       hy=ymax-ymin;
 
@@ -356,17 +356,17 @@ void update_frame_bounds(BCG *Xgc,
       char driver[4];
       /* Redraw previous graphics with new Scale */
       integer ww;
-      nsp_gengine->scale->get_driver_name(driver);
+      Xgc->graphic_engine->scale->get_driver_name(driver);
       if (strcmp("Rec",driver) != 0) 
 	{
 	  Scistring("Auto rescale only works with the rec driver\n" );
 	  return;
 	}
-      ww = nsp_gengine->xget_curwin();
-      nsp_gengine->scale->set_driver("X11");
-      nsp_gengine->clearwindow(Xgc);
+      ww = Xgc->graphic_engine->xget_curwin();
+      Xgc->graphic_engine->scale->set_driver("X11");
+      Xgc->graphic_engine->clearwindow(Xgc);
       tape_replay_new_scale_1(Xgc,ww,flag,aaint,FRect);
-     nsp_gengine->scale->set_driver(driver);
+     Xgc->graphic_engine->scale->set_driver(driver);
     }
 }
  
@@ -387,14 +387,14 @@ void Legends(BCG *Xgc,int *style,int * n1,char * legend)
   int i;
   loc=(char *) MALLOC( (strlen(legend)+1)*sizeof(char));
 
-  nsp_gengine->boundingbox(Xgc,"pl",xx,yy,rect);
+  Xgc->graphic_engine->boundingbox(Xgc,"pl",xx,yy,rect);
 
   if ( loc != 0)
     {
       integer fg,old_dash,pat;
-      fg = nsp_gengine->xget_foreground(Xgc);
-      old_dash = nsp_gengine->xset_dash(Xgc,1);
-      pat = nsp_gengine->xset_pattern(Xgc,fg);
+      fg = Xgc->graphic_engine->xget_foreground(Xgc);
+      old_dash = Xgc->graphic_engine->xset_dash(Xgc,1);
+      pat = Xgc->graphic_engine->xset_pattern(Xgc,fg);
 
       strcpy(loc,legend);
 
@@ -433,16 +433,16 @@ void Legends(BCG *Xgc,int *style,int * n1,char * legend)
 	  if ( i==0) leg=strtok(loc,"@"); else leg=strtok((char *)0,"@");
 	  if (leg != 0) 
 	    {
-	      nsp_gengine->xset_pattern(Xgc,fg);
-	      nsp_gengine->displaystring(Xgc,leg,xs,ys,flag,angle);
-	      nsp_gengine->xset_pattern(Xgc,pat);
+	      Xgc->graphic_engine->xset_pattern(Xgc,fg);
+	      Xgc->graphic_engine->displaystring(Xgc,leg,xs,ys,flag,angle);
+	      Xgc->graphic_engine->xset_pattern(Xgc,pat);
 	      if (style[i] > 0)
 		{ 
 		  integer n=1,p=2;
 		  polyx[0]=inint(xi);polyx[1]=inint(xi+xoffset);
 		  polyy[0]=inint(yi - rect[3]/2);polyy[1]=inint(yi- rect[3]/2.0);
 		  lstyle[0]=style[i];
-		  nsp_gengine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
+		  Xgc->graphic_engine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
 		}
 	      else
 		{ 
@@ -450,12 +450,12 @@ void Legends(BCG *Xgc,int *style,int * n1,char * legend)
 		  polyx[0]=inint(xi+xoffset);
 		  polyy[0]=inint(yi- rect[3]/2);
 		  lstyle[0]=style[i];
-		  nsp_gengine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
+		  Xgc->graphic_engine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
 		}
 	    }
 	}
       FREE(loc);
-      nsp_gengine->xset_dash(Xgc,old_dash);
+      Xgc->graphic_engine->xset_dash(Xgc,old_dash);
     }
   else
     {

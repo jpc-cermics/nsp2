@@ -56,11 +56,11 @@ static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, doubl
   /* get default dash fo rarrows **/
   int cpat,uc;
 
-  uc = nsp_gengine->xget_usecolor(Xgc);
+  uc = Xgc->graphic_engine->xget_usecolor(Xgc);
   if (uc)
-    cpat = nsp_gengine->xget_pattern(Xgc);
+    cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   else
-    cpat = nsp_gengine->xget_dash(Xgc);
+    cpat = Xgc->graphic_engine->xget_dash(Xgc);
   /** The arrowsize acording to the windowsize **/
   n=2*(*n1)*(*n2);
   xx[0]=x[0];xx[1]=x[*n1-1];
@@ -69,7 +69,7 @@ static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, doubl
 
   update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
   /* Storing values if using the Record driver */
-  if (nsp_gengine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->scale->get_driver()=='R') 
     {
       if (strcmp(name,"champ")==0)
 	store_Champ(Xgc,x,y,fx,fy,n1,n2,strflag,brect,arfact);
@@ -152,7 +152,7 @@ static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, doubl
   else 
     {
       int x1n,y1n,x2n,y2n,flag1=0, whiteid, j=0;
-      whiteid=  nsp_gengine->xget_last(Xgc);
+      whiteid=  Xgc->graphic_engine->xget_last(Xgc);
       for ( i = 0 ; i < (*n1)*(*n2) ; i++)
 	{
 	  double nor= sqrt(sfx2*fx[i]*fx[i]+sfy2*fy[i]*fy[i]);
@@ -177,9 +177,9 @@ static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, doubl
   /** Drawing the arrows  **/
   frame_clip_on(Xgc);
   if ( colored ==0) 
-    nsp_gengine->drawarrows(Xgc,xm,ym,na,arsize,&cpat,0);
+    Xgc->graphic_engine->drawarrows(Xgc,xm,ym,na,arsize,&cpat,0);
   else
-    nsp_gengine->drawarrows(Xgc,xm,ym,na,arsize,zm,1);
+    Xgc->graphic_engine->drawarrows(Xgc,xm,ym,na,arsize,zm,1);
   frame_clip_off(Xgc);
 }
 

@@ -195,43 +195,35 @@ void  scig_erase(int win_num)
  * 
  */ 
 
+extern Gengine XFig_gengine, Pos_gengine;
+
 void scig_tops(int win_num, int colored, char *bufname, char *driver)
 {
   BCG *Xgc;
-  char name[4];
+  Gengine *win_graphic_engine=NULL,*graphic_engine = NULL;
   int zero=0,un=1;
-  int cur, screenc;
   if ( scig_buzy  == 1 ) return ;
   if ((Xgc= window_list_search(win_num)) == NULL) return;
+
   scig_buzy =1;
   
-  Xgc->graphic_engine->scale->get_driver_name(name);
-  cur =Xgc->graphic_engine->xset_curwin(win_num,FALSE);
-  Xgc->graphic_engine->scale->set_driver(driver);
+  if ( strcmp(driver,"Pos")==0 ) 
+    {
+      graphic_engine = &Pos_gengine;
+    }
 
-  Xgc->graphic_engine->initgraphic(bufname,&win_num);
+  graphic_engine->initgraphic(bufname,&win_num);
   if (colored==1) 
-    Xgc->graphic_engine->xset_usecolor(Xgc,un);
+    graphic_engine->xset_usecolor(Xgc,un);
   else
-    Xgc->graphic_engine->xset_usecolor(Xgc,zero);
-  getcolordef(&screenc);
-  /** we set the default screen color to the value of colored 
-      because we don't want that recorded events such as xset("default") could 
-      change the color status .
-      and we set the UseColorFlag to 1 not to replay xset("use color",..) events 
-  **/
-  setcolordef(colored);
-  UseColorFlag(1);
-  /* XXXX scig_handler(win_num); */
-  Xgc->graphic_engine->tape_replay(Xgc,win_num);
-  /** back to default values **/
-  UseColorFlag(0);
-  setcolordef(screenc);
-  Xgc->graphic_engine->xend(Xgc);
-  Xgc->graphic_engine->scale->set_driver(name);
-  Xgc->graphic_engine->xset_curwin(cur,FALSE);
-  /* to force a reset in the graphic scales */
-  SwitchWindow(&cur);
+    graphic_engine->xset_usecolor(Xgc,zero);
+  
+  win_graphic_engine = Xgc->graphic_engine; 
+  Xgc->graphic_engine = graphic_engine;
+  graphic_engine->tape_replay(Xgc,win_num);
+  Xgc->graphic_engine = win_graphic_engine;
+
+  graphic_engine->xend(Xgc);
   scig_buzy = 0;
 }
 
@@ -327,6 +319,8 @@ void scig_3drot(int win_num)
  * 
  * selects window @win_num as the current graphic window.
  */ 
+
+extern Gengine *nsp_gengine ; /* XXXXX */
 
 void scig_sel(int win_num)
 {
