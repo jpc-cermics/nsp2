@@ -1,4 +1,6 @@
+function demo_lib()
 // A set of function for graphic demos 
+endfunction
 
 function demo_2d_1()
   t=(0:0.1:6)*%pi;
