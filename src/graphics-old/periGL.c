@@ -112,7 +112,9 @@ void create_graphic_window_menu( BCG *dd);
 void start_sci_gtk();
 
 static void DispStringAngle( BCG *xgc,int x0, int yy0, char *string, double angle);
-
+static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
+static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
+static void nsp_set_graphic_eventhandler(int *win_num,char *name,int *ierr);
 
 /*---------------------------------------------------------
  * Next routine are used to deal with the extra_pixmap 
@@ -378,16 +380,14 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
   return TRUE;
 }
 
-static int sci_graphic_protect = 0;
 
-static void   set_delete_win_mode(void) {  sci_graphic_protect = 0 ;}
-static void   set_no_delete_win_mode(void) {  sci_graphic_protect = 1 ;}
+static void xset_winprotect( BCG *gc, int val) { gc->private->protect=val;}
 
 /* ici normalement on peut pas arreter la destruction */
 
 static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
 {
-  if (  sci_graphic_protect == 1 )
+  if ( gc->private->protect == TRUE )
     {
       xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
     }
@@ -406,7 +406,7 @@ static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
 
 static gboolean sci_delete_window (GtkWidget *widget, GdkEventKey *event,  BCG *gc)
 {
-  if (  sci_graphic_protect == 1 )
+  if ( gc->private->protect == TRUE )
     {
       xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
       return TRUE;
@@ -1749,13 +1749,6 @@ static int get_pixel(int i)
   */
   return(0);
 }
-/* 
-   Pixmap get_private->pixmap(i) 
-   int i;
-   {
-   return(Tabpix_[ Max(0,Min(i - 1,GREYNUMBER - 1))]);
-   }
-*/
 
 /*****************************************************
  * return 1 : if the current window exists 
@@ -2411,8 +2404,6 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
  * FIXME: a rajouter ds la table et rendre statique 
  **/
 
-static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
-static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 
 void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
 {
@@ -2605,7 +2596,7 @@ static void DeleteSGWin(int intnum)
 
 static void set_c(BCG *Xgc,int col)
 {
-  int value = AluStruc_[Xgc->CurDrawFunction].id;
+  /* int value = AluStruc_[Xgc->CurDrawFunction].id; */
   GdkColor c; 
   /* colors from 1 to Xgc->Numcolors */
   col = Max(0,Min(col,Xgc->Numcolors + 1));
@@ -2700,6 +2691,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->font=NULL;
   private->resize = 0; /* do not remove !! */
   private->in_expose= FALSE;
+  private->protect= FALSE;
   private->draw= FALSE;
 
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
@@ -3169,8 +3161,9 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
-  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
-  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
+  /* GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
+     GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
+  */
 
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
@@ -3205,8 +3198,6 @@ static void nsp_gtk_invalidate(BCG *Xgc)
 
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-  static int count =0;
-  double theta,alpha;
   BCG *dd = (BCG *) data;
   GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
   GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);

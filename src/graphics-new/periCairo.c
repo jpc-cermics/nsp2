@@ -333,16 +333,13 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
   return TRUE;
 }
 
-static int sci_graphic_protect = 0;
-
-extern void   set_delete_win_mode(void) {  sci_graphic_protect = 0 ;}
-extern void   set_no_delete_win_mode(void) {  sci_graphic_protect = 1 ;}
+static void xset_winprotect( BCG *gc, int val) { gc->private->protect=val;}
 
 /* ici normalement on peut pas arreter la destruction */
 
 static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
 {
-  if (  sci_graphic_protect == 1 )
+  if ( gc->private->protect == TRUE ) 
     {
       xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
     }
@@ -361,7 +358,7 @@ static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
 
 static gboolean sci_delete_window (GtkWidget *widget, GdkEventKey *event,  BCG *gc)
 {
-  if (  sci_graphic_protect == 1 )
+  if ( gc->private->protect == TRUE ) 
     {
       xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
       return TRUE;

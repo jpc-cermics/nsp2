@@ -161,7 +161,8 @@ void rect2d_f2i(BCG *Xgc,const double x[],int x1[], int n)
       if ( Xgc->scales->logflag[0] == 'n' ) 
 	{
 	  x1[i]=  XScale(x[i]);
-	  x1[i+2]=inint( Xgc->scales->Wscx1*( x[i+2]));
+	  /* x1[i+2]=inint( Xgc->scales->Wscx1*( x[i+2])); */
+	  x1[i+2]= XScale(x[i]+x[i+2]) -x1[i];
 	}
       else 
 	{
@@ -171,7 +172,8 @@ void rect2d_f2i(BCG *Xgc,const double x[],int x1[], int n)
       if ( Xgc->scales->logflag[1] == 'n' ) 
 	{
 	  x1[i+1]= YScale(x[i+1]);
-	  x1[i+3]=inint( Xgc->scales->Wscy1*( x[i+3]));
+	  /* x1[i+3]=inint( Xgc->scales->Wscy1*( x[i+3]));*/
+	  x1[i+3]= YScale(x[i+1]-x[i+3]) - x1[i+1];
 	}
       else 
 	{
@@ -268,7 +270,7 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
   color= Xgc->graphic_engine->xget_pattern(Xgc);
   style = Xgc->graphic_engine->xget_dash(Xgc);
   fg    = Xgc->graphic_engine->xget_foreground(Xgc);
-  set_no_delete_win_mode(); /* protect against window kill */
+  Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
 
 #ifdef WIN32
   SetWinhdc(); 
@@ -310,8 +312,7 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
   Xgc->graphic_engine->xset_thickness(Xgc,th);
   Xgc->graphic_engine->xset_dash(Xgc,style);
   Xgc->graphic_engine->xset_pattern(Xgc,color);
-  
-  set_delete_win_mode();
+  Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   Xgc->graphic_engine->xinfo(Xgc," ");
 #ifdef WIN32
   ReleaseWinHdc();

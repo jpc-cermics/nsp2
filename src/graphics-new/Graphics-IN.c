@@ -1,8 +1,8 @@
-  /*------------------------------------------------------------------
-  * Copyright ENPC 2003 
-  * Jean-Philippe Chancelier Enpc/Cermics
-  * jpc@cermics.enpc.fr 
-  *------------------------------------------------------------------*/
+/*------------------------------------------------------------------
+ * Copyright ENPC 2003 
+ * Jean-Philippe Chancelier Enpc/Cermics
+ * jpc@cermics.enpc.fr 
+ *------------------------------------------------------------------*/
 
 #include <math.h>
 #include <stdio.h>
@@ -218,14 +218,14 @@ static char * check_strf(Stack stack,char *fname,char *varname,char *strf)
 
 static const char legend_loc[]  = "";
 
-static char * check_legend(Stack stack,char *fname,char *varname,char *legend)
+static const char * check_legend(Stack stack,char *fname,char *varname, char *legend)
 {
   return ( legend == NULL ) ? legend_loc: legend; 
 }
 
 static const char legend_3d_loc[]  = "X@Y@Z";
 
-static const char * check_legend_3d(Stack stack,char *fname,char *varname,char *legend)
+static const char * check_legend_3d(Stack stack,char *fname,char *varname,const char *legend)
 {
   return ( legend == NULL ) ? legend_3d_loc: legend; 
 }
@@ -485,6 +485,7 @@ static   nsp_option opts_2d[] ={{ "axesflag",s_int,NULLOBJ,-1},
 				{ "style",mat_int,NULLOBJ,-1},
 				{ NULL,t_end,NULLOBJ,-1}};
 
+
 int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
 		char **strf,char **leg,
 		NspMatrix *Mrect,double **rect,
@@ -670,7 +671,7 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
   int *iflag;
   NspMatrix *x,*y,*z,*Mebox=NULL,*flag=NULL,*Mstyle=NULL;
   double alpha=35.0,theta=45.0,*ebox ;
-  char *leg=NULL,*leg1;
+  const char *leg=NULL,*leg1;
   int_types T[] = {realmat,realmat,realmat,new_opts, t_end} ;
 
   nsp_option opts[] ={{ "alpha",s_double,NULLOBJ,-1},
@@ -798,10 +799,10 @@ int int_geom3d( Stack stack, int rhs, int opt, int lhs)
  * plot3dXXX(x,y,z,opts)
  *-----------------------------------------------------------*/
 
-typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,char *,int *,double *); 
-typedef int (*f3d1)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *,double *,char *,int *,double *); 
-typedef int (*f3d2)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *,double *,char *,int *,double *); 
-typedef int (*f3d3)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *,double *,char *,int *,double *);
+typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,const char *,int *,double *); 
+typedef int (*f3d1)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, double *,const char *,int *,double *); 
+typedef int (*f3d2)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, double *,const char *,int *,double *); 
+typedef int (*f3d3)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, double *,const char *,int *,double *);
 
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
 
@@ -810,7 +811,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   BCG *Xgc;
   NspObject  *args = NULL,*fobj;/* when z is a function */
   double alpha=35.0,theta=45.0,*ebox ;
-  char *leg=NULL, *leg1;
+  const char *leg=NULL, *leg1;
   NspMatrix *x,*y,*z,*Mcolors=NULL,*Mflag=NULL,*Mebox=NULL;
   int izcol=0, *zcol=NULL,*iflag;
   
@@ -1022,7 +1023,7 @@ int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
 
 int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,
 		  int (*func)(BCG *Xgc,char *,double *,double *,int *,int *,
-			      int *,char *,char *,double *,int *))
+			      int *,char *,const char *,double *,int *))
 {
   BCG *Xgc;
   /* for 2d optional arguments; */
@@ -3551,7 +3552,8 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *x,*y,*Tr,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL,*Mcolminmax=NULL;
   double *rect,*zminmax;
   int *colminmax,*nax;
-  char *strf=NULL,*leg=NULL;
+  char *strf=NULL, *leg=NULL;
+  const char *leg1;
   int_types T[] = {realmat,realmat,realmat,realmat,opts, t_end} ;
   /* 3 named optional arguments */
   /* names of optional arguments: must be NULL terminated*/
@@ -3580,7 +3582,7 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   if ( x->mn == 0 || Tr->m == 0) { return 0;} 
 
   if (( strf = check_strf(stack,stack.fname,"strf",strf))==NULL) return RET_BUG;
-  if (( leg = check_legend(stack,stack.fname,"leg",leg))==NULL) return RET_BUG;
+  if (( leg1 = check_legend(stack,stack.fname,"leg",leg))==NULL) return RET_BUG;
   if (( rect = check_rect(stack,stack.fname,"rect",Mrect))==NULL) return RET_BUG;
   if (( nax = check_nax(stack,stack.fname,"nax",Mnax))==NULL) return RET_BUG;
 
@@ -3596,7 +3598,7 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   */
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  nsp_fec(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,zminmax,colminmax);
+  nsp_fec(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg1,rect,nax,zminmax,colminmax);
   return 0;
 }
 
@@ -3997,7 +3999,8 @@ static int check_xy(char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int ypos,
 int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  char dir = 'l', *format = NULL, tics = 'v', **val = NULL;
+  char dir = 'l', *format = NULL, tics = 'v';
+  const char **val = NULL;
   int fontsize = -1, sub_int=2, seg_flag = 1,textcolor = -1,ticscolor=-1;
   double *x = NULL,*y = NULL;
   int nx=0,ny=0,ntics;

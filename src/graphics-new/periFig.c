@@ -155,8 +155,9 @@ static void setpopupname(BCG *Xgc,char *name){}
 
 /** Flush out the X11-buffer  **/
 
-void viderbuff(void) {}
+void poooo_viderbuff(void) {}
 
+static void xset_winprotect(BCG *Xgc, int val);
 
 /** Wait for mouse click in graphic window : Empty here **/
 

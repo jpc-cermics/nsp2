@@ -47,7 +47,7 @@ static void FindIntersection (double sx[], double sy[], double fxy[],
 ---------------------------------------------------------------*/
 
 int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, 
-	     char *strflag, char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
+	     char *strflag,const char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
 {
   int i,*xm,*ym,j,k, n1=1;
 
@@ -207,8 +207,7 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
   if ((int)strlen(strflag) >=1  && strflag[0] == '1')
     {
       int style = -1;
-      n1=1;
-      nsp_legends(Xgc,&style,&n1,legend);
+      nsp_legends(Xgc,legend_ur,1,&style,legend,"@"); 
     }
   return(0);
 }

@@ -32,16 +32,17 @@ static void C2F(plot3dg) (BCG *Xgc, char *name,
 				      double *y, double *z, int i, int j, int jj1,
 				      int *p, int dc, int fg),
 			  double *x, double *y,double *z,
-			  int *p, int *q, double *teta,double *alpha,char *legend,
+			  int *p, int *q, double *teta,double *alpha,const char *legend,
 			  int *flag,double *bbox); 
 
 static void C2F(fac3dg) ( BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, 
 			  int *cvect, int *p, int *q, double *teta, double *alpha,
-			  char *legend, int *flag, double *bbox);
+			  const char *legend, int *flag, double *bbox);
 
 static void dbox(BCG *Xgc,double theta,double alpha);
 
-static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox);
+static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q,
+		       double *teta, double *alpha,const  char *legend, int *flag, double *bbox);
 
 static int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
 		double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
@@ -55,15 +56,15 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 				    double *y, double *z, int i, int j, int jj1,
 				    int *p, int dc, int fg),
 			double *x, double *y, double *z, int *p, int *q, 
-			double *teta, double *alpha, char *legend, int *flag, double *bbox);
+			double *teta, double *alpha,const char *legend, int *flag, double *bbox);
 
 typedef enum {plot3d_t ,facettes_t , param3d_t} nsp_plot3d_type;
 
 static void  nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
-				      double *teta, double *alpha, char *legend, int *flag, double *bbox,
+				      double *teta, double *alpha,const char *legend, int *flag, double *bbox,
 				      double *zmin,double *zmax, nsp_plot3d_type t);
 
-static void AxesStrings(BCG *Xgc,int axflag,const nsp_box_3d *box, char *legend);
+static void AxesStrings(BCG *Xgc,int axflag,const nsp_box_3d *box,const char *legend);
 
 static void draw_3d_tics(BCG *Xgc,const nsp_box_3d *box,int axflag,int i1,int i2,int i3,int i4,int x,int y,int flag, 
 			 double ang,char *leg,int axis_flag, int xdir,int ofset);
@@ -73,6 +74,12 @@ static void BBoxToval(double *x, double *y, double *z, int ind,const double *bbo
 static int nsp_plot_box3d(BCG *Xgc, nsp_box_3d *box);
 static int nsp_plot_box3d_ogl(BCG *Xgc,nsp_box_3d *box);
 static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin, int *polyx, int *polyy, int *fill);
+
+static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, 
+			     double *teta, double *alpha,const char *legend, int *flag, double *bbox);
+
+static int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
+			   double *alpha,const char *legend, int *flag, double *bbox);
 
 /* FIXME 
  */
@@ -118,7 +125,7 @@ static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
 
 
 
-int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   if ( Xgc->graphic_engine != &GL_gengine ) 
     C2F(plot3dg)(Xgc,"plot3d",DPoints,x,y,z,p,q,teta,alpha,legend,flag,bbox);
@@ -127,7 +134,7 @@ int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double 
   return(0);
 }
 
-int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   if ( Xgc->graphic_engine != &GL_gengine ) 
     C2F(plot3dg)(Xgc,"plot3d1",DPoints1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
@@ -137,7 +144,7 @@ int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, doubl
 }
 
 
-int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   if ( Xgc->graphic_engine != &GL_gengine ) 
     C2F(fac3dg)(Xgc,"fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
@@ -146,7 +153,7 @@ int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p,
   return(0);
 }
 
-int nsp_plot_fac3d_1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot_fac3d_1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   if ( Xgc->graphic_engine != &GL_gengine ) 
     C2F(fac3dg)(Xgc,"fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
@@ -156,7 +163,7 @@ int nsp_plot_fac3d_1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *
 
 }
 
-int nsp_plot_fac3d_2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot_fac3d_2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   if ( Xgc->graphic_engine != &GL_gengine ) 
     C2F(fac3dg)(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
@@ -165,7 +172,7 @@ int nsp_plot_fac3d_2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *
   return(0);
 }
 
-int nsp_plot_fac3d_3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot_fac3d_3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   if ( Xgc->graphic_engine != &GL_gengine ) 
     C2F(fac3dg)(Xgc,"fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
@@ -187,7 +194,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 				     double *y, double *z, int i, int j, int jj1,
 				     int *p, int dc, int fg),
 			 double *x, double *y, double *z, int *p, int *q, 
-			 double *teta, double *alpha, char *legend, int *flag, double *bbox)
+			 double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
   static int fg,fg1,dc;
@@ -317,7 +324,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 
 
 static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
-				     double *teta, double *alpha, char *legend, int *flag, double *bbox,double *zmin,
+				     double *teta, double *alpha,const char *legend, int *flag, double *bbox,double *zmin,
 				     double *zmax,nsp_plot3d_type type3d)
 {
   int redraw = FALSE;
@@ -407,7 +414,7 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, 
 }
 
 
-static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
   static int fg1;
@@ -560,11 +567,10 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	      Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 	    }
 	  else if ( iflag ==3 ) { /* colors are given by cvect of size (*p) times (*q) */
-	      int k;
-	      if ( (*p) != 3 && (*p) !=4 ) {
-                Scistring("plot3d1 : interpolated shading is only allowed for polygons with 3 or 4 vertices\n");
- 		return;
-	      } else {
+	    if ( (*p) != 3 && (*p) !=4 ) {
+	      Scistring("plot3d1 : interpolated shading is only allowed for polygons with 3 or 4 vertices\n");
+	      return;
+	    } else {
                 /** fill **/
 		shade(Xgc,polyx,polyy,cvect+(*p)*locindex[i],*p,flag[0]);
 		/** draw if requested but just check on the first color **/ 
@@ -673,7 +679,8 @@ int DPoints(BCG *Xgc,int *polyx, int *polyy, int *fill, int whiteid, double zmin
  * param3d function 
  *-------------------------------------------------------------------*/
 
-int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha,
+		const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
   int style[1],j;
@@ -761,7 +768,8 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
  * param3d1 function 
  *-------------------------------------------------------------------*/
 
-int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha,
+		  const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
   int style[1],j;
@@ -772,7 +780,7 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
-      nsp_param3d_1_ogl(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
+      nsp_param3d_1_ogl(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
       return 1;
     }
 
@@ -1058,7 +1066,7 @@ void DrawAxis(BCG *Xgc,const nsp_box_3d *box,char flag, int style)
  * 
  *---------------------------------------------------------------------*/
 
-void Convex_Box(BCG *Xgc, nsp_box_3d *box, char *legend, int flag)
+void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag)
 {
   double xmaxi;
   int ind2,ind3,ind, p,n,dvect[1],dash, pat, i;
@@ -1219,7 +1227,7 @@ void Convex_Box(BCG *Xgc, nsp_box_3d *box, char *legend, int flag)
  *        kind of axis it belongs 
  */
 
-static void AxesStrings(BCG *Xgc,int axflag,const nsp_box_3d *box, char *legend)
+static void AxesStrings(BCG *Xgc,int axflag,const nsp_box_3d *box,const char *legend)
 {
   int xz[2];
   int iof;
@@ -1723,13 +1731,12 @@ int shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysi
  */
 
 
-static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
   static int fg1;
   int polysize,npoly,whiteid;
-  int *polyx,*polyy,*locindex,fill[4];
-  double *polyz;
+  int fill[4];
   static int cache;
   static double zmin,zmax;
   int i;
@@ -1839,7 +1846,7 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 				    double *y, double *z, int i, int j, int jj1,
 				    int *p, int dc, int fg),
 			double *x, double *y, double *z, int *p, int *q, 
-			double *teta, double *alpha, char *legend, int *flag, double *bbox)
+			double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
   static int fg,fg1,dc;
@@ -2039,7 +2046,8 @@ static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style)
  * param3d function 
  *-------------------------------------------------------------------*/
 
-int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+static int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
+			   double *alpha,const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
   int style[1],j;
@@ -2103,7 +2111,8 @@ int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *te
  * param3d1 function 
  *-------------------------------------------------------------------*/
 
-int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, 
+			     double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
   int style[1],j;

@@ -24,7 +24,7 @@ static void Plo2d3RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, 
 --------------------------------------------------------------------------*/
 
 int nsp_plot2d_3(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
-		char *legend,double brect[],int aaint[])
+		const char *legend,double brect[],int aaint[])
 {
   int n;
   int *xm,*ym;
@@ -73,7 +73,7 @@ int nsp_plot2d_3(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
       frame_clip_off(Xgc);
       /** Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1')
-	nsp_legends(Xgc,style,n1,legend);
+	nsp_legends(Xgc,legend_ur,*n1,style,legend,"@"); 
     }
   return(0);
 }

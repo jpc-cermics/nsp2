@@ -94,6 +94,8 @@ static void setpopupname(BCG *Xgc,char *name){}
 
 /** Wait for mouse click in graphic window : Empty here **/
 
+static void xset_winprotect(BCG *Xgc, int val);
+
 static void xclick(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int iflag, int motion,int release,int key,int istr) {} 
 
 static void xclick_any(char *str, int *ibutton, int *x1, int *yy1, int *iwin, int iflag, int motion,int release,int key,int istr) {} 

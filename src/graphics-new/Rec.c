@@ -27,11 +27,11 @@
 #include "nsp/graphics/Rec_private.h"
 
 
-static int MaybeCopyVect3dPLI  (int *,int **,int *,int l); 
-static int CopyVectLI  (int **,int *,int ); 
-static int CopyVectF  (double **,double *,int ); 
-static int CopyVectC  (char **,char *,int ); 
-static int CopyVectS  (char ***,char **); 
+static int MaybeCopyVect3dPLI  (int ,int **,const int *,int l); 
+static int CopyVectLI  (int **,const int *,int ); 
+static int CopyVectF  (double **,const double *,int ); 
+static int CopyVectC  (char **,const char *,int ); 
+static int CopyVectS  (char ***,const char **); 
 
 static void store_void(BCG *Xgc,int code);
 static void store_int(BCG *Xgc,int code,int val);
@@ -316,8 +316,6 @@ static void clean_colormap(void *theplot) {
   struct rec_colormap *lplot = theplot;
   FREE(lplot->colors);
 };
-
-
 
 void store_default_colormap(BCG *Xgc) { store_void(Xgc,CODEdefault_colormap); }
 
@@ -1104,7 +1102,8 @@ static void clean_NEch(void *plot)
  * 2D plots 
  *---------------------------------------------------------------------------*/
 
-void store_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+static void store_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int *n1, int *n2, int *style,
+		  char *strflag,const  char *legend, double *brect, int *aint)
 {
   int nstyle,n1n2;
   struct rec_plot2d *lplot;
@@ -1144,30 +1143,35 @@ void store_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int *n1, in
   Scistring("\n store_ Plot (storeplot): No more place \n");
 }
 
-void store_Plot(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
+		const char *legend, double *brect, int *aint)
 {
   store_Plot_G(Xgc,CODEPlot,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
 }
 
 
-void store_Plot1(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot1(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
+		 const char *legend, double *brect, int *aint)
 {
   store_Plot_G(Xgc,CODEPlot1,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
 }
 
 
-void store_Plot2(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot2(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
+		 const char *legend, double *brect, int *aint)
 {
   store_Plot_G(Xgc,CODEPlot2,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
 }
 
 
-void store_Plot3(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot3(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
+		 const char *legend, double *brect, int *aint)
 {
   store_Plot_G(Xgc,CODEPlot3,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
 }
 
-void store_Plot4(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot4(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag,
+		 const char *legend, double *brect, int *aint)
 {
   store_Plot_G(Xgc,CODEPlot4,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
 }
@@ -1227,7 +1231,9 @@ static void clean_Plot(void *plot)
  * axis  
  *---------------------------------------------------------------------------*/
 
-void store_SciAxis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
+void store_SciAxis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, 
+		   const char **str, int subtics, char *format, int fontsize, int textcolor, 
+		   int ticscolor, char logflag, int seg_flag)
 {
   struct rec_sciaxis *lplot = ((struct rec_sciaxis *) MALLOC(sizeof(struct rec_sciaxis)));
   if (lplot == NULL)
@@ -1319,7 +1325,7 @@ static void clean_Grid(void *plot)
  * param3d 
  *---------------------------------------------------------------------------*/
 
-void store_Param3D(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Param3D(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   struct rec_param3d *lplot;
   lplot= ((struct rec_param3d *) MALLOC(sizeof(struct rec_param3d)));
@@ -1353,7 +1359,7 @@ static void replay_Param3D(BCG *Xgc,void *theplot)
 }
 
 
-void store_Param3D1(BCG *Xgc, double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Param3D1(BCG *Xgc, double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   struct rec_param3d1 *lplot;
   lplot= ((struct rec_param3d1 *) MALLOC(sizeof(struct rec_param3d1)));
@@ -1368,7 +1374,7 @@ void store_Param3D1(BCG *Xgc, double *x, double *y, double *z, int *m, int *n, i
 	  CopyVectF(&(lplot->x), x,*m*(*n)) &&
 	  CopyVectF(&(lplot->y), y,*m*(*n)) &&
 	  CopyVectF(&(lplot->z), z,*m*(*n)) &&
-	  MaybeCopyVect3dPLI(iflag,&(lplot->colors), colors, *n) &&
+	  MaybeCopyVect3dPLI(*iflag,&(lplot->colors), colors, *n) &&
 	  CopyVectC(&(lplot->legend), legend, ((int)strlen(legend))+1) && 
 	  CopyVectLI(&(lplot->flag), flag,3) &&
 	  CopyVectF(&(lplot->bbox), bbox,6L)
@@ -1418,7 +1424,7 @@ static void clean_Param3D1(void *plot)
  * plot3d 
  *---------------------------------------------------------------------------*/
 
-static void store_Plot3D_G(BCG *Xgc,int code, double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+static void store_Plot3D_G(BCG *Xgc,int code, double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   struct rec_plot3d *lplot;
   lplot= ((struct rec_plot3d *) MALLOC(sizeof(struct rec_plot3d)));
@@ -1443,7 +1449,7 @@ static void store_Plot3D_G(BCG *Xgc,int code, double *x, double *y, double *z, i
   Scistring("\n store_ Plot (storeplot3d): No more place \n");
 }
 
-void store_Plot3D(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Plot3D(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   store_Plot3D_G(Xgc,CODEPlot3D,x,y,z,p,q,teta,alpha,legend,flag,bbox);
 
@@ -1465,7 +1471,7 @@ static void clean_3D(void *plot)
   FREE(theplot->bbox);
 }
 
-void store_Plot3D1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Plot3D1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   store_Plot3D_G(Xgc,CODEPlot3D1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
 }
@@ -1489,7 +1495,7 @@ static void clean_3D1(void *plot)
  *---------------------------------------------------------------------------*/
 
 static void store_Fac3D_G(BCG *Xgc,int code, double *x, double *y, double *z, int *cvect, int *p, int *q, 
-			  double *teta, double *alpha, char *legend, int *flag, double *bbox)
+			  double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   int rep ; 
   struct rec_fac3d *lplot;
@@ -1518,25 +1524,26 @@ static void store_Fac3D_G(BCG *Xgc,int code, double *x, double *y, double *z, in
   Scistring("\n store_ Plot (storefac3d): No more place \n");
 }
 
-void store_Fac3D(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Fac3D(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   store_Fac3D_G(Xgc,CODEFac3D,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
-void store_Fac3D1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Fac3D1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   store_Fac3D_G(Xgc,CODEFac3D1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
-void store_Fac3D2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Fac3D2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   store_Fac3D_G(Xgc,CODEFac3D2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
-void store_Fac3D3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Fac3D3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const
+ char *legend, int *flag, double *bbox)
 {
   store_Fac3D_G(Xgc,CODEFac3D3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
@@ -1588,7 +1595,8 @@ static void clean_Fac3D(void *plot)
  *fec 
  *---------------------------------------------------------------------------*/
 
-void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, char *strflag, char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
+void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, char *strflag,
+	       const char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
 {
   struct rec_fec *lplot;
   lplot= ((struct rec_fec *) MALLOC(sizeof(struct rec_fec)));
@@ -1848,7 +1856,7 @@ static void replay_Gray(BCG *Xgc,void *theplot)
 static void replay_Gray1(BCG *Xgc,void *theplot)
 {
   struct rec_gray *pl3d;
-  pl3d= (struct rec_gray_1 *)theplot;
+  pl3d= (struct rec_gray *)theplot;
   nsp_draw_matrix_1(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
 		    pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
 }
@@ -1959,7 +1967,7 @@ static void clean_Champ(void *plot)
  *   for object copy 
  *---------------------------------------------------------------------------*/
 
-static int CopyVectLI(int **nx, int *x, int l)
+static int CopyVectLI(int **nx,const int *x, int l)
 { 
   int i;
   if ( x != (int *) 0) 
@@ -1971,7 +1979,7 @@ static int CopyVectLI(int **nx, int *x, int l)
   return(1);
 }
 
-static int CopyVectF(double **nx, double *x, int l)
+static int CopyVectF(double **nx,const double *x, int l)
 {
   int i;
   if ( x != (double *) 0) 
@@ -1983,7 +1991,7 @@ static int CopyVectF(double **nx, double *x, int l)
   return(1);
 }
 
-static int CopyVectC(char **nx, char *x, int l)
+static int CopyVectC(char **nx,const char *x, int l)
 {
   int i;
   if ( x != (char *) 0) 
@@ -1995,7 +2003,7 @@ static int CopyVectC(char **nx, char *x, int l)
   return(1);
 }
 
-static int CopyVectS(char ***hstr, char **str)
+static int CopyVectS(char ***hstr,const char **str)
 {
   /** x is a null terminated string vector */
   if ( str != 0) 
@@ -2018,9 +2026,9 @@ static int CopyVectS(char ***hstr, char **str)
   return(1);
 }
 
-static int MaybeCopyVect3dPLI(int *iflag, int **nx, int *x, int l)
+static int MaybeCopyVect3dPLI(int iflag, int **nx,const int *x, int l)
 {
-  if ( *iflag == 1 ) 
+  if (iflag == 1 ) 
     return( CopyVectLI(nx,x,l));
   else
     return(1);
@@ -2925,33 +2933,6 @@ void tape_replay(BCG *Xgc,int winnumber)
 }
 
 
-/**
- * tape_replay_incr:
- * @Xgc: 
- * @winnumber: 
- * 
- * Replay incremental stored graphics and store incremental graphics 
- * at the end of recorded graphics.
- * 
- **/
-
-void tape_replay_incr(BCG *Xgc,int winnumber)
-{ 
-  list_plot *list;
-  if ( Xgc == NULL ) return ;
-  if ( Xgc->record_flag == FALSE ) return ;
-  Xgc->record_flag = FALSE; /* be sure not to record during replay */
-  list = Xgc->incr_plots ;
-  while (list)
-    {
-      if ( list->theplot != NULL) 
-	record_table[((plot_code *) list->theplot)->code ].replay(Xgc,list->theplot);
-      list =list->next;
-    }
-  Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
-  store_incr_plots(Xgc,winnumber);
-}
-
 
 /*---------------------------------------------------------------------
  * Add a new graphics record in the graphic recorder list
@@ -2999,31 +2980,7 @@ int store_record(BCG *Xgc,int code ,void *plot)
 }
 
 
-/**
- * store_incr_plots:
- * @Xgc: 
- * @code: 
- * @plot: 
- * 
- * add incr_plots at the end of current stored record list 
- * 
- * Return value: 
- **/
 
-int store_incr_plots(BCG *Xgc,int winnumber)
-{
-  list_plot *list = Xgc->plots ;
-  if ( list == NULL)
-    {
-      Xgc->plots = Xgc->incr_plots ;
-    }
-  else 
-    {
-      while ( list->next != NULL) list = list->next;
-      list->next = Xgc->incr_plots;
-    }
-  Xgc->incr_plots = NULL;
-}
 
 /*---------------------------------------------------------------------
  * utilities 

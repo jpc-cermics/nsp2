@@ -14,10 +14,9 @@
 #include "nsp/graphics/Graphics.h"
 /* #include "nsp/graphics/PloEch.h" */
 
-static double  x_convert (char xy_type,double x[] ,int i);
-static double  y_convert (char xy_type,double x[] ,int i);
+static double  x_convert (char xy_type,const double x[] ,int i);
+static double  y_convert (char xy_type,const double x[] ,int i);
 static void NumberFormat (char *str,int k,int a);
-static void aplotv1 (BCG *Xgc,char*);
 static void aplotv1_new(BCG *Xgc,char *strflag);
 static void aplotv2 (BCG *Xgc,char*);
 
@@ -100,50 +99,6 @@ static void aplotv2(BCG *Xgc,char *strflag)
   /** y-axis **/
   ny=3,nx=1;
   Sci_Axis(Xgc,dir,'r',&x1,&nx,y,&ny,NULL,Xgc->scales->Waaint1[2],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
-}
-
-/* unused  */
-
-static void aplotv1(BCG *Xgc,char *strflag)
-{
-  char dir = 'l';
-  char c = (strlen(strflag) >= 3) ? strflag[2] : '1';
-  int nx,ny,seg=0;
-  int fontsize = -1 ,textcolor = -1 ,ticscolor = -1; /* default values */
-  double  x1,y1;
-  switch ( c ) 
-    { 
-    case '3' : /* right axis */ 
-      x1= Xgc->scales->xtics[1]*exp10(Xgc->scales->xtics[2]);
-      y1= Xgc->scales->ytics[0]*exp10(Xgc->scales->ytics[2]);
-      dir = 'r';
-      break;
-    case '4' : /* centred axis */
-      seg=1;
-      x1= (Xgc->scales->xtics[0]+Xgc->scales->xtics[1])*exp10(Xgc->scales->xtics[2])/2.0;
-      y1= (Xgc->scales->ytics[0]+Xgc->scales->xtics[1])*exp10(Xgc->scales->ytics[2])/2.0;
-      break ;
-    case '5': /* centred at (0,0) */
-      seg=1;
-      x1 = y1 = 0.0;
-      break;
-    case '1' : /* left axis */
-    default :
-      x1= Xgc->scales->xtics[0]*exp10(Xgc->scales->xtics[2]);
-      y1= Xgc->scales->ytics[0]*exp10(Xgc->scales->ytics[2]);
-      break;
-    }
-  if ( c != '4' && c != '5' )  
-    /** frame rectangle **/
-    Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
-  /** x-axis **/
-  ny=1,nx=4;
-  Sci_Axis(Xgc,'d','i',Xgc->scales->xtics,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],
-	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
-  /** y-axis **/
-  ny=4,nx=1;
-  Sci_Axis(Xgc,dir,'i',&x1,&nx,Xgc->scales->ytics,&ny,NULL,Xgc->scales->Waaint1[2],
-	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
 }
 
 /* here we use frect to find the axes position 
@@ -233,14 +188,15 @@ static void aplotv1_new(BCG *Xgc,char *strflag)
  *-------------------------------------------------------------*/
 
 
-void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
+void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny,const char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_SciAxis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
   Sci_Axis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
 }
 
-void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
+void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny,const char **str, int subtics, 
+	      char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
   int Nx,Ny;
   double angle=0.0,vxx,vxx1;
@@ -491,7 +447,7 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 
 /* from double to pixel */ 
 
-static double  x_convert(char xy_type, double *x, int i)
+static double  x_convert(char xy_type,const double x[], int i)
 {
   switch ( xy_type ) { 
   case 'v' :  return x[i];
@@ -501,7 +457,7 @@ static double  x_convert(char xy_type, double *x, int i)
   return 0.0;
 }
 
-static double y_convert(char xy_type, double *y, int i)
+static double y_convert(char xy_type,const double y[], int i)
 {
   switch ( xy_type ) { 
   case 'v' :  return y[i]; 
