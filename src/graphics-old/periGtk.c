@@ -75,7 +75,7 @@ static int GtkReallocVector (int n);
 static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
 
 void create_graphic_window_menu( BCG *dd);
-void start_sci_gtk();
+extern void start_sci_gtk();
 
 
 static void DispStringAngle( BCG *xgc,int x0, int yy0, char *string, double angle);
@@ -2410,15 +2410,15 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   NewXgc->plots = NULL;
   NewXgc->incr_plots = NULL;
   NewXgc->graphic_engine = &Gtk_gengine ; /* the graphic engine associated to this graphic window */
+  start_sci_gtk(); /* be sure that gtk is started */
 
   if (first == 0)
     {
-      maxcol = 1 << 16; /* XXXXX : to be changed */
+      maxcol = 1 << 16; /* FIXME XXXXX : to be changed */
       LoadFonts();
       first++;
     }
 
-  start_sci_gtk(); /* be sure that gtk is started */
   if ( win != NULL )
     {
       gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);

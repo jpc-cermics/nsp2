@@ -4231,6 +4231,8 @@ static int sci_demo (char *fname,char *code,int flag)
   return 0;
 }
 
+extern int int_dsearch(Stack stack, int rhs, int opt, int lhs);
+
 /*************************************************************
  * The Interface for basic matrices operation 
  *************************************************************/
@@ -4311,6 +4313,7 @@ static OpTab Graphics_func[]={
   {"xs2ppm",int_xs2ppm},
   {"xs2ps",int_xs2ps},
   {"camera",int_camera},
+  {"dsearch", int_dsearch},
   {(char *) 0, NULL}
 };
 

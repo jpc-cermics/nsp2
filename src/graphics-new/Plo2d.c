@@ -441,7 +441,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
 
   /* store information about graduation in xtics */
   
-  if ( (int)strlen(strflag) >=2 && strflag[1]=='5' ) 
+  if ( (int)strlen(strflag) >=2 && (strflag[1]=='5' || strflag[1]=='7') ) 
     {
       for (i=0; i < 3 ; i++ ) Xgc->scales->xtics[i] = Xdec[i];
       for (i=0; i < 3 ; i++ ) Xgc->scales->ytics[i] = Ydec[i];

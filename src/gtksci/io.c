@@ -271,7 +271,7 @@ int Xorgetchar(void)
 #endif 
       max_plus1++;
     }
-  
+
   for( ; ; ) {
     /* always flush writes before waiting */
     gdk_flush();
@@ -311,8 +311,7 @@ int Xorgetchar(void)
     /* maybe a command in the command queue */
     if ( checkqueue_nsp_command() == TRUE) return 0;
     
-    i = select(max_plus1, &select_mask,&write_mask, (fd_set *)NULL,
-	       &select_timeout);
+    i = select(max_plus1, &select_mask,&write_mask, (fd_set *)NULL, &select_timeout);
     if (i < 0) {
       if (errno != EINTR)
 	{ 
@@ -346,7 +345,7 @@ int Xorgetchar(void)
        * counts as being readable 
        */
 #ifdef WITH_GTK_MAIN 
-      while ( gtk_events_pending()) /*  ||(select_mask & gtk_mask) */
+      while ( gtk_events_pending()) 
 	{ 
 	  gtk_main_iteration(); 
 	} 

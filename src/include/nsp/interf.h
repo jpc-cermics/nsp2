@@ -166,7 +166,7 @@ extern NspLmo *GetLmo (Stack S,int i);
    { Scierror("%s: arguments %d should be scalar\n",fname,pos1); \
      return RET_BUG;} 
 
-#define CheckVector(fname,pos1,o1) if ( o1->m != 1 && o1->n != 1 ) \
+#define CheckVector(fname,pos1,o1) if ( o1->mn != 0 && o1->m != 1 && o1->n != 1 ) \
    { Scierror("%s: arguments %d should be a vector \n",fname,pos1); \
      return RET_BUG;} 
 
