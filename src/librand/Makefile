@@ -22,7 +22,7 @@ include ../Make.lib
 all:: Makefile.mak
 
 Makefile.mak	: Makefile
-	$(SCIDIR)/util/Mak2VCMak Makefile
+	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
 
 

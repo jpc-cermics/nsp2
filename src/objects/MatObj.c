@@ -3524,7 +3524,7 @@ double nsp_dlamch (char *cmach);
 typedef enum { nump_eps,nump_huge,nump_tiny,nump_radix,nump_digits,nump_minexp,nump_maxexp,nump_denorm,nump_tiniest  } nump_id;
 static char *numbers_props[]={ "eps","huge","tiny","radix","digits","minexp","maxexp","denorm","tiniest" , NULL };
 
-int int_numbers_properties(Stack stack, int rhs, int opt, int lhs)
+int int_number_properties(Stack stack, int rhs, int opt, int lhs)
 {
   int rep;
   double tiniest,b;
@@ -3547,7 +3547,7 @@ int int_numbers_properties(Stack stack, int rhs, int opt, int lhs)
       if ( tiniest/b != 0.0 ) 
 	{
 	  int i;
-	  for ( i = 1; ((int)nsp_dlamch("n")) -1 ; i++) 
+	  for ( i = 1; i <= ((int)nsp_dlamch("n")) -1 ; i++) 
 	    tiniest = tiniest/b;
 	}
       Ob=nsp_new_double_obj(tiniest); break;
@@ -3693,7 +3693,7 @@ static OpTab Matrix_func[] = {
   {"finite", int_mx_finite},
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
-  {"numbers_properties",int_numbers_properties},
+  {"number_properties",int_number_properties},
 
   {(char *) 0, NULL}
 };

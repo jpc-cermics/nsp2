@@ -30,8 +30,8 @@ include ../Make.lib
 all:: Makefile.mak Makefile.amk
 
 Makefile.mak	: Makefile
-	$(SCIDIR)/util/Mak2VCMak Makefile
+	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
 Makefile.amk	: Makefile
-	$(SCIDIR)/util/Mak2ABSMak Makefile
+	$(SCIDIR)/scripts/Mak2ABSMak Makefile
 

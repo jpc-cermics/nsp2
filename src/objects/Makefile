@@ -41,7 +41,7 @@ include ../Make.lib
 all:: Makefile.mak
 
 Makefile.mak	: Makefile
-	$(SCIDIR)/util/Mak2VCMak Makefile
+	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
 main :: 
 	cc -g -Wall -Dlinux -fwritable-strings -I../../src/include main.c -o main ../../libs/nsp.a ../../libs/zcalelm.a \

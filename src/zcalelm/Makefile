@@ -9,15 +9,15 @@ LIBRARY = zcalelm.a
 CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
-OBJSC = matutil.o 
-OBJSF = dsort.o dlamch.o 
+OBJSC = matutil.o matnum.o 
+OBJSF = dsort.o 
 
 include ../Make.lib
 
 all:: Makefile.mak
 
 Makefile.mak	: Makefile
-	$(SCIDIR)/util/Mak2VCMak Makefile
+	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
 
 

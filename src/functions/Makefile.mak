@@ -22,7 +22,7 @@ include ../Make.lib.mak
 
 
 Makefile.mak	: Makefile
-	$(SCIDIR)/util/Mak2VCMak Makefile
+	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
 #=====================================================
 #dependencies generated with gcc -MMD 

@@ -1,16 +1,10 @@
 #!/bin/SCILABGS
-# Warning : some old versions of sh dont allow inline function definitions
-# like do_scilex()... . In this case use a system V sh (sh5)
-
-# Copyright INRIA
 
 if test "$PRINTERS" = ""; then
   PRINTERS="lp"
 fi
 #############################################################################
-#                                                                           #
 #                       DO NOT MODIFY BELOW THIS LINE                       #
-#                                                                           #
 #############################################################################
 if test "$SCI" = ""; then
   SCI="SCILAB_DIRECTORY"
@@ -34,93 +28,6 @@ export PVM_ROOT PVM_ARCH
 
 PATH=$PATH:$SCI:$SCI/util
 export PATH
-
-do_help()
-{
-echo "Usage:"
-echo     "	scilab [-ns -nw -display display -f file  -l lang -args arguments]"
-echo     "	scilab [-ns -nw -display display -e expression]"
-echo     "	scilab -link <objects>"
-exit
-}
-
-
-
-do_compile()
-{
-	umask 002
-	rm -f report
-	name=`basename $1 .sci`
-	echo generating $name.bin
-	echo "predef();getf('$name.sci');save('$name.bin');quit"\
-	      | $SCI/bin/scilex -ns -nw | sed 1,8d 1>report 2>&1
-	if (grep error report 1> /dev/null  2>&1);
-	then cat report;echo " " 
-	   echo see `pwd`/report for more informations
-	   grep libok report>/dev/null; 
-	else rm -f report;
-	fi
-	umask 022
-	exit 0
-}
-
-do_lib()
-{
-	umask 002
-	rm -f report
-	echo "$1=lib('$2/');save('$2/lib',$1);quit"\
-	      | $SCI/bin/scilex -ns -nw |sed 1,/--\>/d 1>report 2>&1
-	if (grep error report 1> /dev/null  2>&1);
-	then cat report;echo " " 
-		echo see `pwd`/report for more informations
-		grep libok report>/dev/null; 
-	else rm -f report;
-	fi
-	umask 022
-	exit 0
-}
-
-
-do_print() 
-{
-	$SCI/bin/BEpsf $1 $2 
-	lpr -P$3 $2.eps
-	rm -f $2 $2.eps
-
-}
-
-do_save() 
-{
-	case $3 in 
-          Postscript)
-		$SCI/bin/BEpsf $1 $2 
-          	 ;;
-          Postscript-Latex)
-		$SCI/bin/Blatexpr $1 1.0 1.0 $2 
-	   	;;
-	  Xfig)
-		case $1 in
-		-portrait)
-			mv $2 $2.fig
-		;;
-		-landscape)
-			sed -e "2s/Portrait/Landscape/" $2 >$2.fig
-			rm -f $2
-		;;
-		esac
-           	;;
-          Gif)
-		case $1 in
-		-portrait)
-			mv $2 $2.gif
-		;;
-		-landscape)
-			mv $2 $2.gif
-		;;
-		esac
-           	;;
-	esac
-}
 
 # calling Scilab with no argument or special cases of calling Scilab
 rest="no"
@@ -207,6 +114,15 @@ if test "$rest" = "yes"; then
       -ns)
 	  sci_args="$sci_args -ns"
           ;;
+      -show)
+     	  sci_args="$sci_args $sciarg"
+          ;;
+      -echo)
+     	  sci_args="$sci_args $sciarg"
+          ;;
+      -errcatch)
+     	  sci_args="$sci_args $sciarg"
+          ;;
       -nb)
 	  sci_args="$sci_args -nb"
           ;;
@@ -215,11 +131,11 @@ if test "$rest" = "yes"; then
           ;;
       -nw)
           now="-nw"
-	  sci_args="$sci_args"
+	      sci_args="$sci_args -nw"
           ;;
       -nwni)
           now="-nw"
-	  sci_args="$sci_args"
+	      sci_args="$sci_args"
           ;;
       -display|-d)
           prevarg="display"
@@ -236,7 +152,6 @@ if test "$rest" = "yes"; then
        -args)
            prevarg="arguments"
           ;;
-
       *)
           do_help
           ;;
@@ -260,13 +175,17 @@ if test "$rest" = "yes"; then
   fi
 
   if test -n "$now"; then
-      sci_exe="$SCI/bin/scilex"
+      sci_exe="$SCI/bin/scilex "
   else
       sci_exe="$SCI/bin/zterm -e $SCI/bin/scilex"
   fi
 
   if test -n "$debug"; then 
-     $SCI/bin/zterm -e gdb $SCI/bin/scilex
+     if test -n "$now"; then
+        gdb $SCI/bin/scilex
+     else
+        $SCI/bin/zterm -e gdb $SCI/bin/scilex
+     fi
   else
       $sci_exe $sci_args 
   fi 
