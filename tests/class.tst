@@ -27,7 +27,7 @@ test(a)
 
 // an object of Classb which inherits from Classa 
 
-b=%types.ClassB.new[color=89,thickness=56];
+b=%types.ClassB.new[clb_color=89,clb_thickness=56,cla_color=3];
 
 b.__attrs 
 

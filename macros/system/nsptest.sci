@@ -4,16 +4,18 @@ function y=nsptest(fname)
 // 
   fname_dia = strsubst(fname,'.tst','.dia');
   // if .tst was missing 
-  if fname_dia == fname then fname_dia+'.dia';
+  if fname_dia == fname then fname_dia+'.dia';end 
   fname_ref = fname_dia+'.ref';
-  diary(fname_dia);
+  diary(fname_dia,%f);
+  // diary without standard output 
   y=exec(fname,display=%t,echo =%t,errcatch=%t,pausecatch=%t)
-  diary();
+  diary(); 
   if y == %f then 
-    printf("test %s failed\n",fname);
+    printf("Error: test %s failed\n",fname);
+    printf("%s",lasterror());
     return;
   end 
-  dia_file= fopen(fname_dia)
+  dia_file= fopen(fname_dia);
   dia_ = dia_file.get_smatrix[];
   dia_file.close[];
   if file('exists',fname_ref) then 

@@ -2766,7 +2766,7 @@ static OpTab Matrix_func[]={
   {"iand_mp_mp",int_mpiand},
   {"ior_mp_mp",int_mpior},
   {"conj_mp",int_mpconj},
-  {"dh",int_mppowel},
+  {"dh_mp_mp",int_mppowel},
   {"dsl",int_mpdivel},
   {"dbs",int_mpbackdivel},
   {"dst_mp_mp",int_mpmultel},

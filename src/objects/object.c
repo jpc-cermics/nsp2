@@ -334,9 +334,10 @@ int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type, char *attr,NspObjec
     }
   if ( ok == 0) 
     {
-      Scierror("Warning: attribute %s does not exists for instance of %s\n",
+      Scierror("Error: attribute %s does not exists for instance of %s\n",
 	       attr,
 	       ob->type->s_type());
+      return FAIL;
     }
   return OK;
 }
@@ -760,22 +761,27 @@ int int_object_diary(Stack stack, int rhs, int opt, int lhs)
 {
   static NspFile *F= NULL;
   static IOVFun def = NULL;
-  CheckRhs(0,1);
+  CheckRhs(0,2);
   CheckLhs(0,1);
-  if ( rhs == 1) 
+  if ( rhs >= 1) 
     {
+      int diary_echo = TRUE;
       char *fname;
       if ((fname= GetString(stack,1))== NULL) return RET_BUG; 
       if ((F=nsp_file_open(fname,"w",FALSE,FALSE))== NULL) return RET_BUG;
+      if (rhs >= 2 ) 
+	{
+	  if ( GetScalarBool (stack,2,&diary_echo) == FAIL) return RET_BUG;
+	}
       /* changes io in order to write to file F */
-      Sciprint_set_diary(F->file);
+      Sciprint_set_diary(F->file,diary_echo);
       def = SetScilabIO(Sciprint_diary);
     }
   else 
     {
       /* end of diary */
       if ( F != NULL)nsp_file_close(F);
-      Sciprint_set_diary(NULL);
+      Sciprint_set_diary(NULL,TRUE);
       if ( def != NULL) SetScilabIO(def);
       def = NULL;
     }

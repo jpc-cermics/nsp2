@@ -24,7 +24,7 @@ NspObject *Sciprint2string_reset();
 #endif 
 
 int  Sciprint2string(char *fmt, va_list ap);
-FILE * Sciprint_set_diary(FILE *f);
+FILE * Sciprint_set_diary(FILE *f,int diary_echo);
 extern int Sciprint_diary_on(void) ;
 extern int Sciprint_diary(char *fmt, va_list ap);
 extern int Sciprint_diary_only (char *fmt,...);
@@ -63,6 +63,9 @@ extern int nsp_get_echo_input_line(void);
 extern IOVFun nsp_error_vprintf;
 
 extern void sci_get_screen_size (int *rows, int *cols);
+
+extern void nsp_intialize_reader(void);
+
 
 #endif 
 

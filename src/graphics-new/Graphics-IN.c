@@ -877,7 +877,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) 
 	{
-	nsp_object_destroy((NspObject **) &z);
+	  nsp_object_destroy((NspObject **) &z);
 	  return RET_BUG;
 	}
     }
@@ -949,7 +949,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
    * check that iflag[2] and leg are compatible 
    * i.e force visibility of axes names if they are given
    */
-  if (leg1 !=  NULL) iflag[2]=4;
+  if (leg !=  NULL) iflag[2]=4;
 
   if ( x->mn == 0 || y->mn == 0 || z->mn == 0) { return 0;} 
 
