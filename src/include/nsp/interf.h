@@ -96,7 +96,6 @@ typedef struct {
 extern int RetArgs(Stack stack,int lhs,int_types *T,...) ;
 extern int  GetArgs (Stack stack,int rhs,int opt,int_types *T,...);
 extern int  GetListArgs (NspList *L,int pos,int_types *T,...); 
-extern int  GetListArgs_1 (NspList *L,int pos,int_types *T,va_list *ap);
 /* List *BuildListFromArgs_1 (int_types *T,va_list *ap); */
 extern NspList *BuildListFromArgs (int_types *T,...);
 extern int  GetFromTable (NspObject **Objs,int_types *T,...);

@@ -46,14 +46,13 @@ NspHobj *new_hobj();
 
 #ifdef Hobj_Private 
 static int init_hobj(NspHobj *ob,NspTypeHobj *type);
-static int HobjSize(NspHobj *Mat, int flag);
-char *HobjType(void);
-char *HobjShType(NspHobj *M);
-NspObject *HobjLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int HobjObjEq(NspObject *A,NspObject *B);
-int HobjObjNeq(NspObject *A,NspObject *B);
-int HobjXdrSave(NspFile  *F, NspHobj *O);
-static  int HobjIsTrue(NspHobj *M);
+static int nsp_hobj_size(NspHobj *Mat, int flag);
+static char *nsp_hobj_type_as_string(void);
+static char *nsp_hobj_type_short_string(NspHobj *M);
+static int nsp_hobj_eq(NspObject *A,NspObject *B);
+static int nsp_hobj_neq(NspObject *A,NspObject *B);
+static int nsp_hobj_xdr_save(NspFile  *F, NspHobj *O);
+static  int nsp_hobj_is_true(NspHobj *M);
 #endif /* Hobj_Private */
 
 #define NULLHOBJ (NspHobj *) 0
@@ -62,13 +61,13 @@ static  int HobjIsTrue(NspHobj *M);
 NspHobj *HobjCreate  (char *name,NspObject *O);
 NspHobj *HoptCreate  (char *name,NspObject *O);
 NspHobj *GobjCreate  (char *name,NspObject *O);
-NspHobj *HobjCopy    (NspHobj *H);
-void HobjDestroy  (NspHobj *H);
-void HobjInfo     (NspHobj *H,int indent);
-void HobjPrint    (NspHobj *H,int indent);
+NspHobj *nsp_hobj_copy(NspHobj *H);
+void nsp_hobj_destroy(NspHobj *H);
+void nsp_hobj_info(NspHobj *H,int indent);
+void nsp_hobj_print(NspHobj *H,int indent);
 int IsHobj        (NspObject *O);
 int IsHopt        (NspObject *O);
-NspHobj  *HobjObj    (NspObject *O);
+NspHobj  *nsp_hobj_object(NspObject *O);
 int IsGlobal      (NspObject *O);
 
 #endif
