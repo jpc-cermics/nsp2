@@ -72,8 +72,9 @@ static void nsp_ogl_set_view(BCG *Xgc);
 static bool LoadTGA(TextureImage *texture, char *filename);
 static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col);
 static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...);
+#if 0
 static void glut_display_string(BCG *Xgc, GLfloat x, GLfloat y, const char *string);
-
+#endif 
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
 static void unclip_rectangle(GdkRectangle clip_rect);
 

@@ -455,7 +455,7 @@ if test $SIZEOF_INTP = 1; then
 	AC_DEFINE(POINTER_INT)
 else 
 	AC_MSG_RESULT([no])
-	if $SIZEOF_INTP = "can't happen"; then
+	if test $SIZEOF_INTP = "can't happen"; then
 		AC_MSG_ERROR([can(t happen])
 	fi
 fi

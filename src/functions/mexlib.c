@@ -81,7 +81,7 @@ static void nsp_initmex(char *name,int *lfirst,int lhs,int  *plhs[], int rhs,con
   stack = SciStack;
   stack.first = *lfirst;
   stack.fname = name;
-  for (k = 0; k < rhs ; ++k) prhs[k]=(int *) (k+1);
+  for (k = 0; k < rhs ; ++k) prhs[k]= NSP_INT_TO_POINTER(k+1);
 } 
 
 static void nsp_endmex(int lhs,int  *plhs[],int rhs,const int  *prhs[])
@@ -89,7 +89,7 @@ static void nsp_endmex(int lhs,int  *plhs[],int rhs,const int  *prhs[])
   int i;
   for ( i= 0 ; i < lhs ; i++) 
     {
-      int j= (int) plhs[i];
+      int j= NSP_POINTER_TO_INT(plhs[i]);
       NthObj(j)->ret_pos = i+1;
     }
   onlyone =0;
@@ -131,7 +131,7 @@ static void nsp_mex_errjump()
 
 double *mxGetPr(const mxArray *ptr)
 {
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT( ptr);
   NspMatrix *A;
   if ((A=GetRealMat(stack,i)) == NULLMAT)   
     {
@@ -148,7 +148,7 @@ double *mxGetPr(const mxArray *ptr)
 
 double *mxGetPi(const mxArray *ptr)
 {  
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT(ptr);
   NspMatrix *A;
   if ((A=GetRealMat(stack,i)) == NULLMAT) 
     nsp_mex_errjump();
@@ -172,7 +172,7 @@ double *mxGetPi(const mxArray *ptr)
 
 int mxGetM(const mxArray *ptr)
 {
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT( ptr);
   if ( check_cast(NthObj(i),nsp_type_matrix_id) ) 
     return ((NspMatrix *) NthObj(i))->m; 
   else if ( check_cast(NthObj(i),nsp_type_smatrix_id) ) 
@@ -208,7 +208,7 @@ int *mxGetIr(const mxArray *ptr)
 
 int mxGetN(const mxArray *ptr)
 {
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT(ptr);
   char *Str;
   if ( check_cast(NthObj(i),nsp_type_matrix_id) ) 
     return ((NspMatrix *) NthObj(i))->n;
@@ -229,7 +229,7 @@ int mxGetN(const mxArray *ptr)
 
 int mxIsString(const mxArray *ptr)
 {
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT( ptr);
   if (IsSMatObj(stack,i)  && 
       ((NspSMatrix *)NthObj(i))->mn == 1)
     return 1;
@@ -241,7 +241,7 @@ int mxIsString(const mxArray *ptr)
 
 int mxIsNumeric(const mxArray *ptr)
 {
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT( ptr);
   if ( IsMatObj(stack,i)  || 
        IsSpMatObj(stack,i)  )
     return 1;
@@ -253,7 +253,7 @@ int mxIsNumeric(const mxArray *ptr)
 
 int mxIsFull(const mxArray *ptr)
 {
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT( ptr);
   if ( IsMatObj(stack,i) ) 
     return 1;
   else
@@ -264,7 +264,7 @@ int mxIsFull(const mxArray *ptr)
 
 int mxIsSparse(const mxArray *ptr)
 {
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT( ptr);
   if ( IsSpMatObj(stack,i)  )
     return 1;
   else
@@ -276,7 +276,7 @@ int mxIsSparse(const mxArray *ptr)
 
 int mxIsComplex(const mxArray *ptr)
 {
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT(ptr);
   if ( IsMatObj(stack,i) )
     {
       if (((NspMatrix *) NthObj(i))->rc_type == 'c' ) 
@@ -299,7 +299,7 @@ int mxIsComplex(const mxArray *ptr)
 
 double mxGetScalar(const mxArray *ptr)
 { 
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT( ptr);
   double dval;
   if (GetScalarDouble(stack,i,&dval) == FAIL) 
     nsp_mex_errjump();
@@ -353,7 +353,7 @@ void *mxCalloc(unsigned int n, unsigned int size)
 
 int mxGetString(const mxArray *ptr, char *str, int strl)
 {
-  int i= (int) ptr;
+  int i= NSP_POINTER_TO_INT( ptr);
   char *Str;
   if ((Str = GetString(stack,i)) == (char*)0) nsp_mex_errjump();
   strncpy(str,Str,strl);
