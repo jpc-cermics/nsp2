@@ -331,7 +331,7 @@ int *mxCreateFull(int m, int n, int it)
     }
   newmat++;
   NthObj(rhs+newmat)= (NspObject*) A;
-  return (int*) (rhs+newmat);
+  return NSP_INT_TO_POINTER(rhs+newmat);
 }
 
 /* Allocation on the stack **/
@@ -397,7 +397,7 @@ int *mxCreateString(char *string)
   if ((S= nsp_smatrix_create(NVOID,1,1,string,(integer)1)) == NULLSMAT ) nsp_mex_errjump();
   newmat++;
   NthObj(rhs+newmat)= (NspObject *) S;
-  return (int*) (rhs+newmat);
+  return NSP_INT_TO_POINTER(rhs+newmat);
 }
 
 
