@@ -261,8 +261,8 @@ extern void MatSinh (NspMatrix *A);
 extern int MatSqrtEl (NspMatrix *A); 
 extern int MatMinus (NspMatrix *A); 
 extern NspMatrix *MatMagic (integer n); 
-extern NspMatrix *MatFranck (integer n, integer job); 
-extern NspMatrix *MatHilbert (integer n); 
+extern NspMatrix *MatFranck (integer n, int job); 
+extern NspMatrix *MatHilbert (integer n,int job); 
 extern int MatFullComp (NspMatrix *A, NspMatrix *B, char *op, int *err); 
 extern int MatFind (NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
 
