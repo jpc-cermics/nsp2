@@ -47,6 +47,7 @@ typedef int (*SciGetC) (void);
 extern SciGetC Scigetchar ;
 extern SciGetC SetScilabgetchar (SciGetC F);
 typedef void (*SciReadFunction) ( char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
+typedef void (SciReadFunc) ( char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
 extern void SciFileReadLine (char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
 extern SciReadFunction SciReadLine1 ;
 extern SciReadFunction SetSciReadFunction  (SciReadFunction F);
@@ -54,7 +55,8 @@ extern SciReadFunction SetSciReadFunctionDef();
 extern FILE *SetSciInputFile ( FILE *file);
 
 char *set_input_str(char *str); 
-void SciStringReadLine(char *prompt, char *buffer, int *buf_size, int *len_line, int *eof);
+extern SciReadFunc SciStringReadLine;
+extern SciReadFunc SciSMatReadLine;
 
 extern void SciReadClean (void);
 
@@ -65,8 +67,8 @@ extern int get_is_reading(void);
 
 extern void DefSciReadLine(char *prompt, char *buffer, int *buf_size, int *len_line, int *eof);
 
-void nsp_error_message_show();
-void nsp_error_message_clear();
+extern void nsp_error_message_show();
+extern void nsp_error_message_clear();
 
 #endif 
 

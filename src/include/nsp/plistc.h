@@ -9,8 +9,6 @@
 
 #include "nsp/math.h"
 #include "nsp/sciio.h" 
-
-
 #include "nsp/plisttoken.h"
 
 extern int debug; 
