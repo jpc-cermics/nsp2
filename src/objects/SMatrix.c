@@ -327,7 +327,7 @@ void nsp_smatrix_print(const NspSMatrix *Mat, int indent)
 		(Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 
-    scilab_print_internalSM (Mat,indent);
+    nsp_print_internalSM (Mat,indent);
 }
 
 

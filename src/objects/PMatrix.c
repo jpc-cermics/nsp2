@@ -120,7 +120,7 @@ void nsp_pmatrix_print(NspPMatrix *Mat, int indent)
 	}
     }
   Sciprintf("EndPMat\n");
-  scilab_print_internalPM (Mat,indent);
+  nsp_print_internalPM (Mat,indent);
 }
 
 

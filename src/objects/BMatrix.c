@@ -197,7 +197,7 @@ void nsp_bmatrix_print(NspBMatrix *BMat, int indent,int header)
     }
   if ( BMat->mn != 0) 
     {
-      scilab_print_internalBM(BMat,indent);
+      nsp_print_internalBM(BMat,indent);
     }
 }
 

@@ -588,9 +588,9 @@ void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,int header )
   if ( Mat->mn != 0) 
     {
       if ( Mat->rc_type == 'r') 
-	scilab_print_internalM ((NspMatrix *)Mat,indent);
+	nsp_print_internalM ((NspMatrix *)Mat,indent);
       else 
-	scilab_print_internalCM ((NspMatrix *)Mat,indent);
+	nsp_print_internalCM ((NspMatrix *)Mat,indent);
     }
 }
 

@@ -549,7 +549,7 @@ void nsp_spmatrix_print(NspSpMatrix *Sp, int indent)
   else
     {
       Sciprintf("%s\t=\t\t %c (%dx%d) sparse\n",NSP_OBJECT(Sp)->name,Sp->rc_type,Sp->m,Sp->n);
-      scilab_print_internalSpM (Sp,indent);
+      nsp_print_internalSpM (Sp,indent);
     }
 
   /* 

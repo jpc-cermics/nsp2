@@ -30,16 +30,14 @@
 
 NspList  *Datas = NULLLIST;
 NspMatrix *Dollar = NULLMAT;    /* Direct access to $ **/
-NspObject    *Null = NULLOBJ;      /* Direct access to %null **/
+NspObject *Null = NULLOBJ;      /* Direct access to %null **/
 NspList  *GlobalFrame = NULLLIST; /* Direct access to GlobalFrame **/
 NspObject   *Reserved= NULLOBJ;      /* used to fill stack with non empty object */
-
 
 /**
  * nsp_init_frames:
  * 
- * Initialize frame data structure which is used for function 
- * invocation.
+ * Initialize frame data structure which is used for function invocation.
  * Return value: %OK or %FAIL.
  **/
 

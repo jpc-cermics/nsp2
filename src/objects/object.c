@@ -622,8 +622,8 @@ int int_object_is(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * print(obj, indent=N,mode=... ) 
- *   display object using it's standard print function 
+ * info(obj) 
+ * info on object. 
  * 
  */
 
@@ -639,11 +639,15 @@ int int_object_info(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * print(obj, indent=N,mode=... ) 
+ * FIXME: 
+ *   must be changed to accept 
+ *   more than one object 
+ *   and optional arguments 
+ *   indent = N, mode = 'as_read' | 'latex' , latex_mode = 'mat'|'tab', header = %t | %f 
+ * 
  *   display object using it's standard print function 
  * 
  */
-
 
 int int_object_print(Stack stack, int rhs, int opt, int lhs)
 {

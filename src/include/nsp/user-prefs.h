@@ -1,6 +1,10 @@
 #ifndef NSP_USER_PREFS
 #define NSP_USER_PREFS
 
+/* FIXME: 
+ *   should be moved to scilab data 
+ */
+
 struct user_preferences
 {
   int output_max_field_width;

@@ -609,7 +609,7 @@ void nsp_matrix_info(const NspMatrix *Mat, int indent)
 void nsp_matrix_print( NspMatrix *Mat, int indent,int header )
 {
   int i;
-  Mat = Mat2double(Mat); /* we should write a scilab_print_internal when Mat is int  XXXXX */
+  Mat = Mat2double(Mat); /* we should write a nsp_print_internal when Mat is int  XXXXX */
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {
@@ -626,9 +626,9 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,int header )
   if ( Mat->mn != 0) 
     {
       if ( Mat->rc_type == 'r') 
-	scilab_print_internalM (Mat,indent);
+	nsp_print_internalM (Mat,indent);
       else 
-	scilab_print_internalCM (Mat,indent);
+	nsp_print_internalCM (Mat,indent);
     }
 }
 

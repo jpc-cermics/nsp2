@@ -691,7 +691,7 @@ static void print_empty_matrix (int nr, int nc)
 
 /*
  * Printing Scilab Matrix 
- *    scilab_print_internalM
+ *    nsp_print_internalM
  *    the first function are generic functions
  *    used for other Scilab types 
  */
@@ -812,7 +812,7 @@ static void M_general(void *m, int nr, int nc, int inc, int total_width, int max
     }
 }
 
-void scilab_print_internalM (NspMatrix *m, int indent)
+void nsp_print_internalM (NspMatrix *m, int indent)
 {
   int nr = m->m;
   int nc = m->n;
@@ -886,7 +886,7 @@ void CMij_float(const void *m, int i, int j)
   pr_complex ( M->I[i+(M->m)*j]);
 }
 
-void scilab_print_internalCM (NspMatrix *cm, int indent)
+void nsp_print_internalCM (NspMatrix *cm, int indent)
 {
   int nr = cm->m;
   int nc = cm->n;
@@ -947,7 +947,7 @@ void scilab_print_internalCM (NspMatrix *cm, int indent)
  * Printing Scilab Polynomial Matrices 
  */
 
-int scilab_print_internalPM (NspPMatrix *M, int indent)
+int nsp_print_internalPM (NspPMatrix *M, int indent)
 {
   integer *Iloc;
   int inc,column_width,total_width;
@@ -1128,7 +1128,7 @@ static void SMij_string_as_read(const void *m, int i, int j)
   Sciprintf("\"");
 }
 
-int scilab_print_internalSM (const NspSMatrix *m, int indent)
+int nsp_print_internalSM (const NspSMatrix *m, int indent)
 {
   integer *Iloc;
   int inc,column_width=2,total_width;
@@ -1255,7 +1255,7 @@ static void BMij(const void *m, int i, int j)
 }
 
 
-void scilab_print_internalBM (NspBMatrix *cm, int indent)
+void nsp_print_internalBM (NspBMatrix *cm, int indent)
 {
   int nr = cm->m;
   int nc = cm->n;
@@ -1352,7 +1352,7 @@ static void SpM_general(NspSpMatrix *Sp, int indent)
     }
 }
 
-void scilab_print_internalSpM (NspSpMatrix *m, int indent)
+void nsp_print_internalSpM (NspSpMatrix *m, int indent)
 {
   if ( m->mn == 0) 
     {

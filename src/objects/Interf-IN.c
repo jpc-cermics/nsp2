@@ -234,7 +234,7 @@ int int_mxtest20(Stack stack, int rhs, int opt, int lhs)
   GetStringInArray(stack,1,Strings,0);
   return 0;
   /* int_mx2pmx(stack,rhs,opt,lhs) ;
-  scilab_print_internalPM (NthObj(1)->Element);
+  nsp_print_internalPM (NthObj(1)->Element);
   return 1; **/
 }  
 
