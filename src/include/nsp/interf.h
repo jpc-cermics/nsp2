@@ -102,6 +102,7 @@ extern NspList *BuildListFromArgs (int_types *T,...);
 extern int  GetFromTable (NspObject **Objs,int_types *T,...);
 extern int  get_optional_args(Stack stack,int rhs,int opt,nsp_option opts[],...);
 extern int  get_optional_args_from_hash(Stack stack,NspHash *H,nsp_option opts[],...);
+extern int  get_args_from_hash(Stack stack,NspHash *H,nsp_option opts[],...);
 
 extern void PutLhsObj (Stack stack,int nv,int ind[]);
 
