@@ -1057,8 +1057,8 @@ case "$host" in
      STRIP=echo
      GCC=yes
      CC=gcc
-     CC_OPTIONS='-no-cpp-precomp -O2 -I/sw/include'
-     CC_LDFLAGS='-L/sw/lib'
+     CC_OPTIONS='-no-cpp-precomp -O2 -I/sw/include -L/sw/lib'
+     CC_LDFLAGS=
      CC_PICFLAGS='-fPIC'
      # script shell f77 have bugs, get ours
      FC=g77
