@@ -20,7 +20,7 @@
 #define RET_BUG -100  
 #else 
 enum { RET_OK=0, RET_ENDFOR=-1,  RET_BREAK=-2,   RET_QUIT=-3,  RET_EOF= -4 ,  
-       RET_CTRLC=-5, RET_RETURN=-6, RET_ABORT=-7, RET_BUG=-100};
+       RET_CTRLC=-5, RET_RETURN=-6, RET_ABORT=-7, RET_ERROR_RAISED=-8, RET_BUG=-100};
 #endif 
 
 /* structure used to store the functions defined by an interface */
