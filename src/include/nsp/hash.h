@@ -103,7 +103,7 @@ extern NspHash *GetHash (Stack stack, int i);
 extern NspHash *HashCreate (char *name, unsigned int size); 
 extern NspHash *HashCopy (NspHash *H); 
 extern int nsp_hash_resize(NspHash *H, unsigned int new_size); 
-extern int nsp_hash_rerge(NspHash *H1, NspHash *H2); 
+extern int nsp_hash_merge(NspHash *H1, NspHash *H2); 
 extern void HashDestroy (NspHash *H); 
 extern void HashInfo (NspHash *H, int indent); 
 extern void HashPrint (NspHash *H, int indent); 
@@ -113,6 +113,11 @@ extern int nsp_hash_enter(NspHash *H, NspObject *O);
 extern void nsp_hash_remove(NspHash *H, char *str); 
 extern int nsp_hash_find_and_copy(NspHash *H, char *str, NspObject **O); 
 extern int nsp_hash_find(NspHash *H, char *str, NspObject **O);
+extern NspBMatrix  *nsp_hash_equal(NspHash *L1, NspHash *L2);
+extern NspBMatrix  *nsp_hash_not_equal(NspHash *L1, NspHash *L2);
+extern int nsp_hash_full_equal(NspHash *L1, NspHash *L2);
+extern int nsp_hash_full_not_equal(NspHash *L1, NspHash *L2);
+
 
 /* from file HashObj.c */ 
 
