@@ -7,7 +7,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <malloc.h>
-#include <string.h>
+#include <string.h> 
 
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
@@ -2618,15 +2618,42 @@ int int_xpolys(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*-----------------------------------------------------------
+ * xselect([winid])
+ * raise the current graphics window  or window with id winid 
+ * which becomes the new current window. 
+ * windows are created if necessary.
  *-----------------------------------------------------------*/
 
 int int_xselect(Stack stack, int rhs, int opt, int lhs)
 {
+  int win_id;
   BCG *Xgc;
-  CheckRhs(-1,0);
-  Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->xselgraphic(Xgc);
+  CheckRhs(0,1);
+  if (rhs >= 1) 
+    {
+      if (GetScalarInt(stack,1,&win_id) == FAIL) return RET_BUG;
+      win_id = Max(0,win_id);
+      if ((Xgc=window_list_search(win_id)) != NULL) 
+	{
+	  Xgc->graphic_engine->xset_curwin(win_id,TRUE);
+	  Xgc->graphic_engine->xselgraphic(Xgc);
+	}
+      else 
+	{
+	  /* create a graphic window */
+	  Xgc= set_graphic_window(win_id);
+	  Xgc->graphic_engine->xselgraphic(Xgc);
+	}
+    }
+  else 
+    {
+      /* raise current window with creation if none */
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->xselgraphic(Xgc);
+    }
   return 0;
+
+
 }
 
 /*-----------------------------------------------------------
