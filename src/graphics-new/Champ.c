@@ -89,6 +89,7 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
 			  double *fx, double *fy, int *n1, int *n2, char *strflag, 
 			  double *brect, double *arfact, int lstr)
 {
+  int clip_box[4];
   static int aaint[]={2,10,2,10};
   int *xm,*ym,*zm,i,j,n,na;
   double  xx[2],yy[2], maxx;
@@ -167,12 +168,15 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
   arsize=  (arsize1 < arsize2) ? inint(arsize1*10.0) : inint(arsize2*10.0) ;
   arsize = (int)(arsize*(*arfact));
 
-  set_clip_box(Xgc->scales->WIRect1[0],Xgc->scales->WIRect1[0]+Xgc->scales->WIRect1[2],Xgc->scales->WIRect1[1],
-	       Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3]);
+  clip_box[0]=Xgc->scales->WIRect1[0];
+  clip_box[1]=Xgc->scales->WIRect1[0]+Xgc->scales->WIRect1[2];
+  clip_box[2]=Xgc->scales->WIRect1[1];
+  clip_box[3]=Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3];
 
   if ( colored == 0 ) 
     {
       int j=0;
+
       for ( i = 0 ; i < (*n1)*(*n2) ; i++)
 	{
 	  int x1n,y1n,x2n,y2n,flag1=0;
@@ -180,7 +184,8 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
 	  xm[2*j]  = (int)(-sfx*fx[i]/2+xm[2*i]);
 	  ym[1+2*j]= (int)(-sfy*fy[i]/2+ym[2*i]);
 	  ym[2*j]  = (int)(sfy*fy[i]/2+ym[2*i]);
-	  clip_line(xm[2*j],ym[2*j],xm[2*j+1],ym[2*j+1],&x1n,&y1n,&x2n,&y2n,&flag1);
+	  clip_line(xm[2*j],ym[2*j],xm[2*j+1],ym[2*j+1],&x1n,&y1n,&x2n,&y2n,&flag1,
+		    clip_box[0],clip_box[1],clip_box[2],clip_box[3]);
 	  if (flag1 !=0)
 	    {
 	      if (flag1==1||flag1==3) { xm[2*j]=x1n;ym[2*j]=y1n;};
@@ -204,7 +209,8 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
 	  xm[2*j]  = (int)(-sfx*fx[i]/(2*nor)+xm[2*i]);
 	  ym[1+2*j]= (int)(-sfy*fy[i]/(2*nor)+ym[2*i]);
 	  ym[2*j]  = (int)(sfy*fy[i]/(2*nor)+ym[2*i]);
-	  clip_line(xm[2*j],ym[2*j],xm[2*j+1],ym[2*j+1],&x1n,&y1n,&x2n,&y2n,&flag1);
+	  clip_line(xm[2*j],ym[2*j],xm[2*j+1],ym[2*j+1],&x1n,&y1n,&x2n,&y2n,&flag1,
+		    clip_box[0],clip_box[1],clip_box[2],clip_box[3]);
 	  if (flag1 !=0)
 	    {
 	      if (flag1==1||flag1==3) { xm[2*j]=x1n;ym[2*j]=y1n;};

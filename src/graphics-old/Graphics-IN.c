@@ -1283,7 +1283,7 @@ int int_gray2plot(Stack stack, int rhs, int opt, int lhs)
  * 
  *-----------------------------------------------------------*/
 
-#ifdef WITH_GL
+#ifdef WITH_GTKGLEXT 
 extern Gengine GL_gengine; 
 #endif 
 
@@ -2384,7 +2384,7 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 				(wpos) ? (int*)wpos->R : NULL);
       else 
 	{
-#ifdef WITH_GL
+#ifdef WITH_GTKGLEXT 
 	  GL_gengine.initgraphic("",&v1,
 				 (wdim) ? (int*)wdim->R: NULL ,
 				 (wpdim) ? (int*)wpdim->R: NULL,
@@ -2596,6 +2596,64 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 
   return 0;
 }
+
+/*-----------------------------------------------------------
+ * xpoly_clip(xv,yv,clip_rect,opts)
+ * test interface for xpoly with clipping 
+ *-----------------------------------------------------------*/
+
+int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
+{
+  BCG *Xgc;
+  int close=0,color,mark,thick;
+  int xmark[2],cmark,cthick,ccolor;
+  char *type;
+  NspMatrix *l1,*l2,*l3;
+
+  nsp_option opts[] ={
+    { "close",s_bool,NULLOBJ,-1},
+    { "color",s_int,NULLOBJ,-1},
+    { "thickness",s_int,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}};
+
+  CheckRhs(2,7);
+  if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+  if ((l3=GetRealMat(stack,3)) == NULLMAT ) return RET_BUG;
+  CheckSameDims(stack.fname,1,2,l1,l2);
+
+  CheckLength(stack.fname,3,l3,4);
+  if ( l1->mn == 0 ) return 0;
+  if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thick,&type) == FAIL) return RET_BUG;
+
+  Xgc=nsp_check_graphic_context();
+
+  if ( opt != 0 ) 
+    {
+      if ( opts[1].obj != NULLOBJ) 
+	{
+	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+	  Xgc->graphic_engine->scale->xset_pattern(Xgc,color);
+	}
+      if ( opts[2].obj != NULLOBJ) 
+	{
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  Xgc->graphic_engine->scale->xset_thickness(Xgc,thick);
+	}
+    }
+  
+  Xgc->graphic_engine->scale->drawpolyline_clip(Xgc,l1->R,l2->R,l2->mn,l3->R,close);
+
+  if ( opt != 0 ) 
+    {
+      /* reset to default values */
+      if ( opts[1].obj != NULLOBJ) Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
+      if ( opts[2].obj != NULLOBJ) Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
+    }
+
+  return 0;
+}
+
 
 /*-----------------------------------------------------------
  *   xpolys(xpols,ypols,[draw])
@@ -4136,6 +4194,7 @@ static OpTab Graphics_func[]={
   {"xnumb",int_xnumb},
   {"xpause",int_xpause},
   {"xpoly",int_xpoly},
+  {"xpoly_clip",int_xpoly_clip},
   {"xpolys",int_xpolys},
   {"xselect",int_xselect},
   {"xset",int_xset},

@@ -1272,10 +1272,15 @@ static void drawpolyline( BCG *Xgc, int *vx, int *vy, int n,int closeflag)
     FPRINTF((file,"#/closeflag false def\n"));
   if (Xgc->ClipRegionSet ==1 )
     {
-      analyze_points(Xgc,n, vx, vy, closeflag);
+      /* FIXME 
+	 analyze_points(Xgc,n, vx, vy, closeflag);
+      */
+      fillpolylines(Xgc,vx,vy,&fvect,i,n);
     }
   else 
-    fillpolylines(Xgc,vx,vy,&fvect,i,n);
+    {
+      fillpolylines(Xgc,vx,vy,&fvect,i,n);
+    }
 }
 
 /** Fill the polygon **/
@@ -1841,7 +1846,6 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
     sciprint("Can't translate %s\r\n",string);
 }
 
-
 static void Write2Vect(const int *vx,const int *vy, int n, int flag)
 {
   int i,k;
@@ -1860,111 +1864,6 @@ static void Write2Vect(const int *vx,const int *vy, int n, int flag)
 	}
       FPRINTF((file,"\n"));
     }
-}
-
-
-/************************************************************
- * Clipping functions for XFig 
- ************************************************************/
-
-static void MyDraw(BCG *Xgc,int iib, int iif, int *vx, int *vy)
-{
-  int fvect=0,ipoly=1;
-  int iideb;
-  int x1kn,y1kn,x2kn,y2kn;
-  int x1n,y1n,x11n,y11n,x2n,y2n,flag2=0,flag1=0;
-  int npts;
-  npts= ( iib > 0) ? iif-iib+2  : iif-iib+1;
-  if ( iib > 0) 
-    {
-      clip_line(vx[iib-1],vy[iib-1],vx[iib],vy[iib],&x1n,&y1n,&x2n,&y2n,&flag1);
-    }
-  clip_line(vx[iif-1],vy[iif-1],vx[iif],vy[iif],&x11n,&y11n,&x2n,&y2n,&flag2);
-  /** if (store_points)(npts, &vx[Max(0,iib-1)], &vy[Max(0,iib-1)],(int)0L)); **/
-  iideb = Max(0,iib-1);
-  if (iib > 0 && (flag1==1||flag1==3)) 
-    {
-      x1kn=vx[iideb]; y1kn=vy[iideb];
-      vx[iideb]=x1n; vy[iideb]=y1n;
-    }
-  if (flag2==2 || flag2==3) 
-    {
-      x2kn=vx[iideb+npts-1]; y2kn=vy[iideb+npts-1];
-      vx[iideb+npts-1]=x2n; vy[iideb+npts-1]=y2n;
-    }
-  fillpolylines(Xgc,&vx[iideb],&vy[iideb],&fvect,ipoly,npts);
-  if (iib > 0 && (flag1==1||flag1==3)) 
-    {
-      vx[iideb]=x1kn; vy[iideb]=y1kn;
-    }
-  if (flag2==2 || flag2==3) 
-    {
-      vx[iideb+npts-1]=x2kn; vy[iideb+npts-1]=y2kn;
-    }
-}
-
-static void My2draw(BCG *Xgc,int j, int *vx, int *vy)
-{
-  /** The segment is out but can cross the box **/
-  int vxn[2],vyn[2],flag,fvect=0,ipoly=1;
-  clip_line(vx[j-1],vy[j-1],vx[j],vy[j],&vxn[0],&vyn[0],&vxn[1],&vyn[1],&flag);
-  if (flag == 3 ) 
-  {
-    fillpolylines(Xgc,vxn,vyn,&fvect,ipoly,2);
-  }
-}
-
-static void analyze_points(BCG *Xgc,int n, int *vx, int *vy, int onemore)
-{ 
-  int iib,iif,ideb=0,vxl[2],vyl[2],fvect=0,ipoly=1,deux=2;
-  int xleft, xright, ybot, ytop;
-  xleft=Xgc->CurClipRegion[0];
-  xright=xleft+Xgc->CurClipRegion[2];
-  ybot=Xgc->CurClipRegion[1];
-  ytop= ybot + Xgc->CurClipRegion[3];
-  set_clip_box(xleft, xright, ybot, ytop);
-  while (1) 
-    { int j;
-      iib=first_in(n,ideb,vx,vy);
-      if (iib == -1) 
-	{ 
-	  for (j=ideb+1; j < n; j++) My2draw(Xgc,j,vx,vy);
-	  break;
-	}
-      else 
-      if ( iib - ideb > 1) 
-	{
-	  /* un partie du polygine est totalement out de ideb a iib -1 */
-	  /* mais peu couper la zone */
-	  for (j=ideb+1; j < iib; j++) My2draw(Xgc,j,vx,vy);
-	};
-      iif=first_out(n,iib,vx,vy);
-      if (iif == -1) {
-	/* special case the polyligne is totaly inside */
-	if (iib == 0) 
-	  {
-	    /** XXXX : if (store_points)(n,vx,vy,onemore)); **/
-	    /** if (onemore == 1) n1 = n+1;else n1= n; **/
-	    fillpolylines(Xgc,vx,vy,&fvect,ipoly,n);
-	    return ;
-	  }
-	else 
-	  MyDraw(Xgc,iib,n-1,vx,vy);
-	break;
-      }
-      MyDraw(Xgc,iib,iif,vx,vy);
-      ideb=iif;
-    }
-  if (onemore == 1) {
-    /* The polyligne is closed we consider the closing segment */
-    int x1n,y1n,x2n,y2n,flag1=0;
-    vxl[0]=vx[n-1];vxl[1]=vx[0];vyl[0]=vy[n-1];vyl[1]=vy[0];
-    clip_line(vxl[0],vyl[0],vxl[1],vyl[1],&x1n,&y1n,&x2n,&y2n,&flag1);
-    if ( flag1==0) return ;
-    if (flag1==1||flag1==3) {vxl[0]=x1n;vyl[0]=y1n;}
-    if (flag1==2||flag1==3) {vxl[1]=x2n;vyl[0]=y2n;}
-    fillpolylines(Xgc,vxl,vyl,&fvect,ipoly,deux);
-  }
 }
 
 /*---------------------------------------------------------

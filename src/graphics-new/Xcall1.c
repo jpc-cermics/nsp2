@@ -37,6 +37,7 @@ static void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, 
 static void fillarc_1(BCG *Xgc, double arc[]);
 static void fillrectangle_1(BCG *Xgc,double rect[]);
 static void drawpolyline_1(BCG *Xgc,double *vx, double *vy , int n,int closeflag);
+static void drawpolyline_clip_1(BCG *Xgc,double *vx, double *vy , int n,double *clip_rect, int closeflag);
 static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p,int v1);
 static void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n);
 static void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha);
@@ -101,6 +102,7 @@ Gengine1 nsp_gengine1={
   fillarc_1,
   fillrectangle_1,
   drawpolyline_1,
+  drawpolyline_clip_1,
   fillpolylines_1,
   drawpolymark_1,
   displaynumbers_1,
@@ -587,6 +589,27 @@ static void drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closefla
   scale_f2i(Xgc,vx,vy,xm,ym,n);
   if (Xgc->record_flag == TRUE)  store_drawpolyline_1(Xgc,vx,vy,n,closeflag);
   Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,n,closeflag);
+}
+
+/* XXXX*/
+extern void nsp_set_clip_box(int xxleft, int xxright, int yybot, int yytop);
+
+static void drawpolyline_clip_1(BCG *Xgc, double *vx, double *vy ,int n,double *clip_rect, int closeflag)
+{
+  int ix[4],cb[4];
+  int *xm,*ym,err=0;
+  Myalloc(&xm,&ym,n,&err);
+  if (err  ==   1) return;
+  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  /** and clipping is special its args are floats **/
+  scale_f2i(Xgc,clip_rect,clip_rect+1,ix,ix+1,1);
+  length_scale_f2i(Xgc,clip_rect+2,clip_rect+3,ix+2,ix+3,1);
+  /* 
+     if (Xgc->record_flag == TRUE)  store_drawpolyline_1(Xgc,vx,vy,n,closeflag);
+  */
+  /* xxleft, int xxright, int yybot, int yytop)*/
+  cb[0]=ix[0];cb[1]=ix[0]+ix[2];cb[2]=ix[1];cb[3]=ix[1]+ix[3];
+  Xgc->graphic_engine->drawpolyline_clip(Xgc,xm,ym,n,cb,closeflag);
 }
 
 /*-----------------------------------------------------------------------------
