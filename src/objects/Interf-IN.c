@@ -256,8 +256,8 @@ int int_mxtest3(Stack stack, int rhs, int opt, int lhs)
   /* first object is replaced by a copy of A if necessary **/
   if ((B=GetMatCopy(stack,1))== NULLMAT ) return RET_BUG;
   if ((C=nsp_matrix_copy(B))== NULLMAT ) return RET_BUG;
- nsp_mat_sin(B); /* B <-- sin(B) **/
- nsp_mat_cos(C);
+  nsp_mat_sin(B); /* B <-- sin(B) **/
+  nsp_mat_cos(C);
   /* B <- B +C **/
   if (nsp_mat_dadd(B,C) == FAIL) return RET_BUG;
   nsp_matrix_destroy(C);

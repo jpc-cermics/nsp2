@@ -458,7 +458,7 @@ static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * res = " and A(i;j)"
+ * res = " or A(i;j)"
  */
 
 static int int_bmatrix_or1(Stack stack, int rhs, int opt, int lhs)

@@ -3499,8 +3499,65 @@ int_mx_finite (Stack stack, int rhs, int opt, int lhs)
 }
 
 /* FIXME */
-
 extern function int_nsp_grand;
+
+
+double nsp_dlamch (char *cmach);
+
+/*
+ * constants from lapack dlamch 
+ * and include files 
+ * number_properties 
+ *   
+ *        number_properties("eps")    -> machine epsilon dlamch('e')
+ *        number_properties("radix")  -> base  dlamch('b')
+ *        number_properties("digits") -> number of digits for the mantissa dlamch('n')
+ *        number_properties("minexp") -> emin dlamch('m')
+ *        number_properties("maxexp") -> emax dlamch('l')
+ *        number_properties("huge")   -> max positive float dlamch('o')
+ *        number_properties("tiny")   -> min positive normalised float dlamch('u')
+ *        number_properties("denorm") -> (boolean) true if denormalised number are used
+ *        number_properties("tiniest")-> min positive denormalised float 
+ * FIXME : add integer constants 
+ */
+
+typedef enum { nump_eps,nump_huge,nump_tiny,nump_radix,nump_digits,nump_minexp,nump_maxexp,nump_denorm,nump_tiniest  } nump_id;
+static char *numbers_props[]={ "eps","huge","tiny","radix","digits","minexp","maxexp","denorm","tiniest" , NULL };
+
+int int_numbers_properties(Stack stack, int rhs, int opt, int lhs)
+{
+  int rep;
+  double tiniest,b;
+  NspObject *Ob;
+  CheckRhs(1,1);
+  CheckLhs(1,1);  
+  if ((rep= GetStringInArray(stack,1,numbers_props,1)) == -1) return RET_BUG; 
+  switch ( rep ) 
+    {
+    case nump_eps: Ob=nsp_new_double_obj(nsp_dlamch("e")); break;
+    case nump_huge: Ob=nsp_new_double_obj(nsp_dlamch("o")); break;
+    case nump_tiny: Ob=nsp_new_double_obj(nsp_dlamch("u")); break;
+    case nump_radix: Ob=nsp_new_double_obj(nsp_dlamch("b")); break;
+    case nump_digits: Ob=nsp_new_double_obj(nsp_dlamch("n")); break;
+    case nump_minexp: Ob=nsp_new_double_obj(nsp_dlamch("m")); break;
+    case nump_maxexp: Ob=nsp_new_double_obj(nsp_dlamch("l")); break;
+    case nump_denorm: Ob = nsp_create_boolean_object(NVOID,(nsp_dlamch("u") / nsp_dlamch("b") ) > 0.0E0 ? TRUE : FALSE);break;
+    case nump_tiniest: 
+      b = nsp_dlamch("b"); tiniest = nsp_dlamch("u"); 
+      if ( tiniest/b != 0.0 ) 
+	{
+	  int i;
+	  for ( i = 1; ((int)nsp_dlamch("n")) -1 ; i++) 
+	    tiniest = tiniest/b;
+	}
+      Ob=nsp_new_double_obj(tiniest); break;
+    }
+  if ( Ob == NULLOBJ) return RET_BUG;
+  NthObj(1) = Ob;
+  NthObj(1)->ret_pos  = 1;
+  return 1;
+}
+
 
 
 /*
@@ -3636,6 +3693,8 @@ static OpTab Matrix_func[] = {
   {"finite", int_mx_finite},
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
+  {"numbers_properties",int_numbers_properties},
+
   {(char *) 0, NULL}
 };
 

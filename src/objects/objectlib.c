@@ -111,7 +111,7 @@ NspObject *nsp_object_copy_with_name(NspObject *O)
   if ( ( l =nsp_object_copy(O)) == NULLOBJ ) return NULLOBJ;
   if (nsp_object_set_name(l,nsp_object_get_name(O)) == FAIL)
     {
- nsp_object_destroy(&l);
+      nsp_object_destroy(&l);
       return(NULLOBJ);
     }
   return l;
