@@ -1,0 +1,85 @@
+function [y]=hide(win, event) 
+  //win.destroy[] 
+  printf("destroy activated \n");
+  pause
+  y=%t;
+endfunction
+
+function [y]=delete(win, event) 
+  printf("delete event  activated \n");
+  y=%t;
+endfunction
+
+function [y]=destroy(win, event) 
+  printf("destroy signal\n");
+  y=%t;
+endfunction
+
+function [y]=win_hide(but,args)  args(1).hide[];y=%t; endfunction 
+
+function nsp_graphics_demos() 
+ exec(getenv('SCI')+'/demos/graphics/graphic_list.sce');
+ 
+endfunction 
+
+
+
+
+function create_demo_window()
+  B = hcreate(100);
+  B('graphics')=  nsp_graphics_demos ;
+  win = gtkwindow_new()
+  win.set_size_request[200, 400]	
+  //win.set_uposition[20,20]
+  win.connect["destroy",hide];
+  win.connect["delete_event",hide];
+  win.set_title["nsp demos"];
+  box1 = gtkvbox_new(homogeneous=%f,spacing=0)
+  win.add[box1]
+  box1.show[]
+  scrolled_window = gtkscrolledwindow_new()
+  scrolled_window.set_border_width[10]
+  scrolled_window.set_policy[GTK.POLICY_AUTOMATIC,GTK.POLICY_AUTOMATIC];
+  box1.pack_start[scrolled_window, expand=%t,fill=%t,padding=0] 	
+  scrolled_window.show[]
+  box2 = gtkvbox_new(homogeneous=%f,spacing=0)
+  box2.set_border_width[0]
+  scrolled_window.add_with_viewport[box2];
+  box2.show[]
+  k = B.__keys;
+  Bk = sort(k,'g','i');
+  for i1 = 1:size(Bk,1)
+    button = gtkbutton_new(label=Bk(i1,1))
+    func= B.find[Bk(i1,1)]
+    if is(func,%types.PList) then 
+      button.connect["clicked",func];
+    else
+      button.set_sensitive[%f]
+    end 
+    box2.pack_start[button]
+    button.show[]
+  end 
+  separator = gtkhseparator_new()
+  box1.pack_start[separator,expand= %f,fill= %f,padding=0]
+  separator.show[]
+  box2 = gtkvbox_new(homogeneous=%f,spacing=10)
+  box2.set_border_width[10]
+  box1.pack_start[box2,expand= %f,expand=%f,fill=%f,padding=0]
+  box2.show[]
+  button = gtkbutton_new(label="close")
+  button.connect["clicked",win_hide,list(win)];
+  button.set_flags[GTK.CAN_DEFAULT]
+  box2.pack_start[button]
+  button.grab_default[]
+  button.show[]
+  win.show[]
+endfunction
+
+create_demo_window()
+
+
+
+
+
+
+
