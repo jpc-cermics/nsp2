@@ -1448,7 +1448,7 @@ void BBoxToval(double *x, double *y, double *z, int ind, double *bbox)
 /* Changement interactif de 3d **/
 static double theta,alpha;
 
-void I3dRotation(BCG *Xgc)
+void I3dRotation_OK(BCG *Xgc)
 {
   int flag[3],pixmode,alumode;
   static int iflag[]={0,0,0,0};
@@ -1534,7 +1534,12 @@ static void dbox(BCG *Xgc)
   pat = Xgc->graphic_engine->xset_pattern(pat1);
 #endif
   SetEch3d1(Xgc,xbox,ybox,zbox,Xgc->scales->bbox1,&theta,&alpha,Xgc->scales->metric3d);
-  nsp_plot_box3d(Xgc,xbox,ybox,zbox);
+
+  if ( Xgc->graphic_engine != &GL_gengine ) 
+    nsp_plot_box3d(Xgc,xbox,ybox,zbox);
+  else
+    nsp_plot_box3d_ogl(Xgc,xbox,ybox,zbox);
+
 #ifdef WIN32
    Xgc->graphic_engine->xset_pattern(pat);
 #endif
@@ -2264,3 +2269,76 @@ int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, 
   return(0);
 }
 
+
+int nsp_plot_box3d_ogl(BCG *Xgc,double *xbox, double *ybox, double *zbox)
+{
+  static int InsideU[4],InsideD[4],flag[]={1,1,3},fg,fg1;
+  Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,"X@Y@Z",flag,Xgc->scales->bbox1);
+  fg = Xgc->graphic_engine->xget_foreground(Xgc);
+  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+    DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg);
+  else
+    DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg);
+  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
+  if (fg1==-1) fg1=0;
+  /* Le triedre cache **/
+  if (zbox[InsideU[0]] > zbox[InsideD[0]])
+      DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideD,fg1);
+  else
+      DrawAxis_ogl(Xgc,xbox,ybox,zbox,InsideU,fg1);
+  return(0);
+
+}
+
+
+
+
+/*-------------------------------------
+ * just a test FIXME
+ *   version ou le graphique tourne 
+ *   completement 
+ *   avec opengl on ne revoit 
+ *   pas le dessin avant la fin !!!!!
+ *--------------------------------------*/
+
+/* Changement interactif de 3d **/
+static double theta,alpha;
+
+void I3dRotation(BCG *Xgc)
+{
+  int flag[3],pixmode,alumode;
+  static int iflag[]={0,0,0,0};
+  double xx,yy;
+  double theta0,alpha0;
+  int ibutton,iwait=FALSE,istr=0;
+  double x0,yy0,x,y,xl,yl,bbox[4];
+  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
+  yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
+  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
+  theta=Xgc->scales->theta ;
+  alpha=Xgc->scales->alpha ;
+  x0=(x0-Xgc->scales->frect[0])*xx;
+  yy0=(yy0-Xgc->scales->frect[1])*yy;
+  x=x0;y=yy0;
+  theta0=theta;
+  alpha0=alpha;
+  ibutton=-1;
+  while ( ibutton == -1 ) 
+    {
+      theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
+      Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
+      /* Xgc->graphic_engine->clearwindow(Xgc); */
+      tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
+      /* force drawing: FIXME */
+      force_affichage(Xgc);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
+      xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
+      yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
+      x=(xl-Xgc->scales->frect[0])*xx;
+      y=(yl-Xgc->scales->frect[1])*yy;
+    }
+  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+  /* Xgc->graphic_engine->clearwindow(Xgc); */
+  tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
+  force_affichage(Xgc);
+}

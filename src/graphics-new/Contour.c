@@ -218,7 +218,7 @@ int nsp_contour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int 
 	 SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
        /** Calcule l' Enveloppe Convexe de la boite **/
        /** ainsi que les triedres caches ou non **/
-       Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
+       Convex_Box(Xgc,xbox,ybox,zbox,InsideU,InsideD,legend,flag,bbox);
        /** Le triedre cach\'e **/
        if (zbox[InsideU[0]] > zbox[InsideD[0]])
 	 {
