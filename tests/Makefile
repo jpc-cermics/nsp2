@@ -7,7 +7,7 @@ all : $(TESTS)
 
 .tst.dia :
 	@echo "-----------$*.dia----------------"
-	@../bin/scilex -f ../macros/system/nsptest.sci -e "nsptest('$*.tst');quit" 
+	@../bin/scilex -nw -e "nsptest('$*.tst');quit" 
 
 distclean	:
 	@echo cleaning tests
