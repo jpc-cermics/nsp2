@@ -2618,10 +2618,11 @@ int int_mpbackdivel(Stack stack, int rhs, int opt, int lhs)
  * A=MultEl(A,B),  A .* B -> a + b in max plus 
  */
 
+
 int int_mpmultel(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_mopscal(stack,rhs,opt,lhs,
-			nsp_mat_add_scalar,nsp_mat_dadd,nsp_mat_add_scalar,MpMatNoOp,1);
+			nsp_mat_add_scalar_maxplus,nsp_mat_dadd_maxplus,nsp_mat_add_scalar_maxplus,MpMatNoOp,1);
 }
 
 
@@ -2660,20 +2661,17 @@ static int int_mpmult(Stack stack, int rhs, int opt, int lhs)
     }
   if ( B->mn == 1) 
     {
-      /* FIXME: The Pb here is that nsp_mat_add_scalar should be changed for (-%inf) + %inf -> -%inf 
-       */
       if ((A = GetMpMatCopy(stack,1)) == NULLMAXPMAT) return RET_BUG;
-      if (nsp_mat_add_scalar((NspMatrix *)A,(NspMatrix *)B) != OK) return RET_BUG;
+      if (nsp_mat_add_scalar_maxplus((NspMatrix *)A,(NspMatrix *)B) != OK) return RET_BUG;
       NSP_OBJECT(A)->ret_pos = 1;
     }
   else if ( A->mn == 1 ) 
     {
       /* since Mat1 is scalar we store the result in Mat2 so we 
        * must copy it
-       * FIXME: The Pb here is that nsp_mat_add_scalar should be changed for (-%inf) + %inf -> -%inf 
        */
       if ((B = GetMpMatCopy(stack,2)) == NULLMAXPMAT) return RET_BUG;
-      if (nsp_mat_add_scalar((NspMatrix *)B,(NspMatrix *)A) != OK) return RET_BUG;
+      if (nsp_mat_add_scalar_maxplus((NspMatrix *)B,(NspMatrix *)A) != OK) return RET_BUG;
       NSP_OBJECT(B)->ret_pos = 1;
     }
   else 
@@ -2708,7 +2706,7 @@ static int int_mpdiv(Stack stack, int rhs, int opt, int lhs)
       nsp_mat_conj((NspMatrix *) B);
       nsp_mat_minus((NspMatrix *) B);
       if ((Res= nsp_mpmatrix_copy(HMat1)) == NULLMAXPMAT) return RET_BUG;
-      nsp_mat_add_scalar((NspMatrix *) Res,(NspMatrix *) B);
+      nsp_mat_add_scalar_maxplus((NspMatrix *) Res,(NspMatrix *) B);
       nsp_mpmatrix_destroy(B);
       MoveObj(stack,1,(NspObject *) Res);
     }
@@ -2749,7 +2747,7 @@ static int int_mpbdiv(Stack stack, int rhs, int opt, int lhs)
       nsp_mat_conj((NspMatrix *) A);
       nsp_mat_minus((NspMatrix *) A);
       if ((Res= nsp_mpmatrix_copy(HMat2)) == NULLMAXPMAT) return RET_BUG;
-      nsp_mat_add_scalar((NspMatrix *) Res,(NspMatrix *) A);
+      nsp_mat_add_scalar_maxplus((NspMatrix *) Res,(NspMatrix *) A);
       nsp_mpmatrix_destroy(A);
       MoveObj(stack,1,(NspObject *) Res);
     }

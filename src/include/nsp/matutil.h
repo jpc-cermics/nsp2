@@ -16,6 +16,7 @@ extern int nsp_convert_double_to_type (double *x, int n, const char *type);
 extern int nsp_convert_type_to_double (double *x, int n, const char *type); 
 extern int nsp_dset (const int *n, const double *dx, double *dy, const int *incy); 
 extern int nsp_dadd (int *n, double *dx, int *incx, double *dy, int *incy); 
+extern int nsp_dadd_maxplus (int *n, double *dx, int *incx, double *dy, int *incy); 
 extern int nsp_dsub (int *n, double *dx, int *incx, double *dy, int *incy); 
 extern double nsp_dsum (int *n, double *dx, int *incx); 
 extern int nsp_dvmul (int *n, double *dx, int *incx, double *dy, int *incy); 
@@ -26,6 +27,7 @@ extern int nsp_dzcopy (const int *n, const double *zx, const int *incx, doubleC 
 extern int nsp_dzscal (int *n, double *da, doubleC *zx, int *incx); 
 extern int nsp_dzset (int *n, double *dx, doubleC *zy, int *incy); 
 extern int nsp_zadd (int *n, doubleC *zx, int *incx, doubleC *zy, int *incy); 
+extern int nsp_zadd_maxplus (int *n, doubleC *zx, int *incx, doubleC *zy, int *incy); 
 extern double myzabs (double real, double imag); 
 extern double nsp_zasum (int *n, doubleC *zx, int *incx); 
 extern int nsp_zsub (int *n, doubleC *zx, int *incx, doubleC *zy, int *incy); 

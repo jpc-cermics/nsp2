@@ -377,6 +377,64 @@ int nsp_dadd(int *n, double *dx, int *incx, double *dy, int *incy)
   return 0;
 }
 
+/**
+ * nsp_dadd_maxplus:
+ * @n: number of += operation to perform
+ * @dx: array of double to be added 
+ * @incx: increment for @dx array indices
+ * @dy: array of double in which addition is performed
+ * @incy: increment for @dy array indices
+ * 
+ * dy = dy + dx where +  returns -%inf when a or b is -%inf 
+ * Return value: unused 
+ **/
+
+int nsp_dadd_maxplus(int *n, double *dx, int *incx, double *dy, int *incy)
+{
+  static int i, ix, iy;
+  if (*n <= 0) { return 0;  }
+  if (*incx == 1 && *incy == 1) 
+    {
+      for (i = 0 ; i < *n ; ++i) 
+	{
+	  if ( !isinf(- *dy) && !isinf(- *dx)) 
+	    {
+	      *(dy++) += *(dx++);
+	    }
+	  else 
+	    {
+	      *(dy) = Min(*dy,*dx); dy++;dx++;
+	    }
+	}
+      return 0;
+    }
+  else 
+    {
+      register double *y,*x;
+      /* code for unequal increments or equal increments */
+      /* not equal to 1 */
+      ix = iy = 0;
+      if (*incx < 0) { ix = (-(*n) + 1) * *incx ;} 
+      if (*incy < 0) { iy = (-(*n) + 1) * *incy ;}
+      y= dy+iy;
+      x= dx+ix;
+      for ( i = 0; i < *n ; i++ ) 
+	{
+	  if ( !isinf(- (*y) ) && !isinf(- (*x) ) ) 
+	    {
+	      *y += *x;
+	    }
+	  else 
+	    {
+	      *y = Min(*y,*x);
+	    }
+	  x += *incx;
+	  y += *incy;
+      }
+    }
+  return 0;
+}
+
 
 /**
  * nsp_dsub:
@@ -742,6 +800,83 @@ int nsp_zadd(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
 	zy[iy].r += zx[ix].r , zy[iy].i += zx[ix].i;
 	ix += *incx;
 	iy += *incy;
+      }
+    }
+  return 0;
+}
+
+
+/**
+ * nsp_zadd_maxplus:
+ * @n: number of addition to perform 
+ * @zx: a #doubleC array 
+ * @incx: increment to use for @zx #doubleC array 
+ * @zy:  a #doubleC array 
+ * @incy: increment to use for @zy #doubleC array 
+ * 
+ * dy = dy + dx where +  returns -%inf when a or b is -%inf 
+ * Return value: unsused 
+ **/
+
+
+int nsp_zadd_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
+{
+  static int i, ix, iy;
+  if (*n <= 0) { return 0;  }
+  if (*incx == 1 && *incy == 1) 
+    {
+      for (i = 0 ; i < *n ; ++i) 
+	{
+	  if ( !isinf(- (*zy).r) && !isinf(- (*zx).r)) 
+	    {
+	      (*zy).r += (*zx).r;
+	    }
+	  else 
+	    {
+	      (*zy).r = Min((*zy).r,(*zx).r);
+	    }
+	  if ( !isinf(- (*zy).i) && !isinf(- (*zx).i)) 
+	    {
+	      (*zy).i += (*zx).i;
+	    }
+	  else 
+	    {
+	      (*zy).i = Min((*zy).i,(*zx).i);
+	    }
+	  zx++;zy++;
+	}
+      return 0;
+    }
+  else 
+    {
+      register doubleC *y,*x;
+      /* code for unequal increments or equal increments */
+      /* not equal to 1 */
+      ix = iy = 0;
+      if (*incx < 0) { ix = (-(*n) + 1) * *incx ;} 
+      if (*incy < 0) { iy = (-(*n) + 1) * *incy ;}
+      y= zy+iy;
+      x= zx+ix;
+      for ( i = 0; i < *n ; i++ ) 
+	{
+	  if ( !isinf(- (*y).r ) && !isinf(- (*x).r ) ) 
+	    {
+	      (*y).r += (*x).r;
+	    }
+	  else 
+	    {
+	      (*y).r = Min((*y).r,(*x).r);
+	    }
+	  if ( !isinf(- (*y).i ) && !isinf(- (*x).i ) ) 
+	    {
+	      (*y).i += (*x).i;
+	    }
+	  else 
+	    {
+	      (*y).i = Min((*y).i,(*x).i);
+	    }
+	  x += *incx;
+	  y += *incy;
       }
     }
   return 0;

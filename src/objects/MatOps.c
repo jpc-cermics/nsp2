@@ -290,12 +290,69 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
     }
 }
 
+
+
 /* the case Mat2 scalar **/
 
 int nsp_mat_add_scalar(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   return MatOpScalar(Mat1,Mat2,nsp_dadd,nsp_zadd);
 }
+
+/* extension of Mat + scalar for (-%inf+ %inf -> -%inf) */
+
+int nsp_mat_add_scalar_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
+{
+  return MatOpScalar(Mat1,Mat2,nsp_dadd_maxplus,nsp_zadd_maxplus);
+}
+
+int nsp_mat_dadd_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
+{
+  if (SameDim(Mat1,Mat2))
+    {
+      integer inc=1;
+      if ( Mat1->rc_type == 'r' ) 
+	{
+	  if ( Mat2->rc_type == 'r') 
+	    {
+	      nsp_dadd_maxplus(&(Mat1->mn),Mat2->R,&inc,Mat1->R,&inc);
+	    }
+	  else 
+	    {
+	      double *D1,*D2;
+	      inc = 2;
+	      if (nsp_mat_complexify(Mat1,0.00)== FAIL ) return(FAIL);
+	      D1= (double *) Mat1->I;
+	      D2= (double *) Mat2->I;
+	      nsp_dadd_maxplus(&(Mat1->mn),D2,&inc,D1,&inc);
+	      C2F(dcopy)(&(Mat1->mn),D2+1,&inc,D1+1,&inc);
+	    }
+	}
+      else 
+	{
+	  if ( Mat2->rc_type == 'r') 
+	    {
+	      double *D1;
+	      integer inc2=2;
+	      D1= (double *) Mat1->I;
+	      nsp_dadd_maxplus(&(Mat1->mn),Mat2->R,&inc,D1,&inc2);
+	    }
+	  else 
+	    {
+	      inc = 1;
+	      nsp_zadd_maxplus(&(Mat1->mn),Mat2->I,&inc,Mat1->I,&inc);
+	    }
+	}
+      return(OK);
+    }
+
+  else 
+    {
+      Scierror("Error:\tArguments must have the same size\n");
+      return(FAIL);
+    }
+}
+
 
 /*
  * term to term addition : the general case 
@@ -769,12 +826,11 @@ int nsp_mat_complexify(NspMatrix *Mat, double d)
       return(FAIL);
     }
   Mat->rc_type = 'i';
- nsp_ciset(&(Mat->mn),&d,Mat->I,&incx);  
+  nsp_ciset(&(Mat->mn),&d,Mat->I,&incx);  
   C2F(dcopy)(&(Mat->mn),Mat->R,&incx,(double *) Mat->I,&incy);
   FREE(Mat->R);
   return(OK);
 }
-
 /*
  * Return the Real part of Matrix A 
  * In a Real Matrix A
