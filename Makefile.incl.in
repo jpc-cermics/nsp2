@@ -79,3 +79,13 @@ LINKEROPT= $(LD_LDFLAGS)
 RC=windres 
 RCVARS=-O coff 
 
+
+
+.c.o:
+	@echo "compiling $<"
+	@$(CC) $(CFLAGS)  -c $<
+
+.f.o:
+	@echo "compiling $<"
+	@$(FC) $(FFLAGS)  -c $<
+

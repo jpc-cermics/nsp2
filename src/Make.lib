@@ -23,7 +23,7 @@ $(SCIDIR)/libs/$(LIBRARY): $(OBJS)
 
 .archive_target : $(OBJS) 
 	@echo Adding files to $(SCIDIR)/libs/$(LIBRARY)
-	ar cr  $(SCIDIR)/libs/$(LIBRARY) $(OBJS) 
+	@ar cr  $(SCIDIR)/libs/$(LIBRARY) $(OBJS) 
 	@$(RANLIB)  $(SCIDIR)/libs/$(LIBRARY)
 	@$(RM) .archive_target
 	@echo "Done" > .archive_target
