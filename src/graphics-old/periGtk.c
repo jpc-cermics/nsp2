@@ -2245,14 +2245,26 @@ static void initgraphic(char *string, int *v2)
       Sciprintf("initgraphics: running out of memory \n");
       return;
     }
-  private->window = NULL;
-  private->item_factory = NULL;
-  private->drawing =  NULL;
-  private->pixmap =   NULL;
-  private->CinfoW =   NULL ;
-  private->Red = (guchar *) 0;
-  private->Green = (guchar *) 0;
-  private->Blue = (guchar *) 0;
+  /* default values  */
+  private->Red=NULL;  
+  private->Green=NULL;
+  private->Blue=NULL; 
+  private->window=NULL;		
+  private->drawing=NULL;           
+  private->scrolled=NULL;          
+  private->CinfoW =NULL;           
+  private->vbox=NULL;              
+  private->menubar=NULL;
+  private->item_factory=NULL;
+  private->menu_entries=NULL;
+  private->pixmap=NULL;       
+  private->Cdrawable=NULL;  
+  private->wgc=NULL;
+  private->stdgc=NULL;
+  private->gcursor=NULL;      
+  private->ccursor=NULL;      
+  private->font=NULL;
+  private->resize = 0; /* do not remove !! */
 
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
@@ -2273,17 +2285,49 @@ static void initgraphic(char *string, int *v2)
     }
 
   CreateGtkGWindow(NewXgc);
-  /** Default value is without Pixmap **/
-  NewXgc->private->Cdrawable = (GdkDrawable *) NewXgc->private->drawing->window;
-  /* initialize graphic_context : this action is recorded and replayed when replaying 
-   * XXXX améliorer ce qui suit pour ne pas recreer un colormap si c'est celui par defaut 
-   * qui est déjà utilisé 
+
+  /* recheck with valgrind 
+   * valgrind detecte des variables non initialisees dans 
+   * initialize a cause d'initialisation croisées 
+   * d'ou des valeurs par defaut ...
+   * A tester sans pour faire les choses dans l'ordre 
+   * dans initialize 
    */
+  NewXgc->fontId=0 ;
+  NewXgc->fontSize=0 ;
+  NewXgc->CurHardSymb=0;
+  NewXgc->CurHardSymbSize=0;
+  NewXgc->CurLineWidth=0;
+  NewXgc->CurPattern=0;
+  NewXgc->CurColor=0;
+  NewXgc->CurPixmapStatus=0;
+  NewXgc->CurVectorStyle=0;
+  NewXgc->CurDrawFunction=0;
+  NewXgc->ClipRegionSet=0;
+  NewXgc->CurDashStyle=0;
+  NewXgc->IDLastPattern=0;
+  NewXgc->Numcolors=0; 
+  NewXgc->NumBackground=0;
+  NewXgc->NumForeground=0;
+  NewXgc->NumHidden3d=0; 
+  NewXgc->Autoclear=0;
+
+  /* next values are to be set since initialize_gc 
+   * action depend on the current state defined by these 
+   * variables. For pixmap, resizestatus and colorstatus 
+   * initialize performs a switch from old value to new value 
+   */
+
+  /* Default value is without Pixmap **/
+  NewXgc->private->Cdrawable = (GdkDrawable *) NewXgc->private->drawing->window;  NewXgc->CurPixmapStatus = 0; 
+  /* default colormap not instaled */
   NewXgc->CmapFlag = -1; 
-  NewXgc->CurResizeStatus = -1;  /* to be sure that next will initialize */
+  /* default resize not yet defined */
+  NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
-  NewXgc->CurPixmapStatus = -1; /* to be sure that next will initialize */
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
+
+  /* now initialize the scale list */
   NewXgc->scales = NULL;
   xgc_add_default_scale(NewXgc);
   EntryCounter=Max(EntryCounter,WinNum);
@@ -2318,6 +2362,7 @@ extern void nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2)
   private->Red = (guchar *) 0;
   private->Green = (guchar *) 0;
   private->Blue = (guchar *) 0;
+  private->resize= 0;
 
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
@@ -3199,7 +3244,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-
+  
   /* create gc */
   dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
   /* standard gc : for private->pixmap copies */
