@@ -6,7 +6,6 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <malloc.h>
 #include <string.h> 
 
 #include "nsp/matrix-in.h"
