@@ -258,24 +258,49 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
 	      int pos[3],tr;
 	      for ( tr = 0 ; tr < 2 ; tr ++ )
 		{
-		  if ( tr == 0 ) 
-		    { 
-		      /* upper triangle 
-		       *  ___
-		       *  | /
-		       *  |/
-		       */
-		      pos[0]=i+nx*j; pos[1]=pos[0]+nx;  pos[2]=pos[0]+nx+1;
-		    }
-		  else 
+		  if ((i +j) % 2 == 0 )
 		    {
-		      /* lower triangle 
-		       * 
-		       *   /|
-		       *  /_|
-		       */
-		      pos[0]=i+nx*j;  pos[1]=pos[0]+1;   pos[2]=pos[0]+nx+1;
+		      if ( tr == 0 ) 
+			{ 
+			  /* upper triangle 
+			   *  ___
+			   *  | /
+			   *  |/
+			   */
+			  pos[0]=i+nx*j; pos[1]=pos[0]+nx;  pos[2]=pos[0]+nx+1;
+			}
+		      else 
+			{
+			  /* lower triangle 
+			   * 
+			   *   /|
+			   *  /_|
+			   */
+			  pos[0]=i+nx*j;  pos[1]=pos[0]+1;   pos[2]=pos[0]+nx+1;
+			}
 		    }
+		  else
+		    {
+		      if ( tr == 0 ) 
+			{ 
+			  /* upper triangle 
+			   *  
+			   *  |\
+			   *  |_\
+			   */
+			  pos[0]=i+nx*j; pos[1]=pos[0]+1;  pos[2]=pos[0]+nx;
+			}
+		      else 
+			{
+			  /* lower triangle 
+			   *  ___
+			   *  \ |
+			   *   \|
+			   */
+			  pos[0]=i+nx*j+1;  pos[1]=pos[0]+nx;   pos[2]=pos[0]+nx-1;
+			}
+		    }
+
 		  /* retrieve node numbers and functions values */
 		  for ( k = 0 ; k < 3 ; k++ ) zxy[k]= zone[pos[k]];
 		  /* get the permutation perm so as zxy[perm] is sorted */
