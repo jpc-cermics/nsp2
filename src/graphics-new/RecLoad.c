@@ -857,7 +857,7 @@ static int load_Plot3D(BCG *Xgc)
       if ( load_VectC(&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(&(lplot->flag)) == 0) return(0);
       if ( load_VectF(&(lplot->bbox))== 0) return(0);
-      if (store_record(Xgc,CODEPlot3D,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,lplot->code,(char *) lplot) == 0) return(0);
     }
   else 
     {

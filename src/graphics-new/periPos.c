@@ -623,13 +623,13 @@ static void xset_colormap_gen(BCG *Xgc,int m,int n,void *colors,write_c func,che
   func(Xgc,"G",colors,1);
   func(Xgc,"B",colors,2);
   xset_usecolor(Xgc,1);
+  FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
+  FPRINTF((file,"\n/Setgray {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
+  FPRINTF((file,"\n/Setcolor {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
   xset_alufunction1(Xgc,3);
   xset_pattern(Xgc,Xgc->NumForeground+1);
   xset_foreground(Xgc,Xgc->NumForeground+1);
   xset_background(Xgc,Xgc->NumForeground+2);
-  FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
-  FPRINTF((file,"\n/Setgray {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
-  FPRINTF((file,"\n/Setcolor {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
 }
 
 
@@ -690,12 +690,11 @@ static void WriteColorRGB(BCG *Xgc,char *str, void *colors,int ind)
   FPRINTF((file,"\n/Color%s [",str));
   for ( i=0; i < Xgc->Numcolors; i++)
     {
-      FPRINTF((file,"%f ",(float) tab[3*i+ind]));
+      FPRINTF((file,"%f ",(float) tab[i+Xgc->Numcolors*ind]));
       if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
     }
   FPRINTF((file,"0.0 1.0] def"));
 }
-
 
 /* getting the colormap XXXX */
 
@@ -1392,6 +1391,7 @@ void FileInit(BCG *Xgc)
   /** Just send Postscript commands to define scales etc....**/
   int x[2];
   xget_windowdim(Xgc,x,x+1);
+  FPRINTF((file,"\n%%scipos_w=%d\n%%scipos_h=%d",(int)x[0]/2,(int)x[1]/2));
   FPRINTF((file,"\n%% Dessin en bas a gauche de taille %d,%d",(int)x[0]/2,(int)x[1]/2));
   FPRINTF((file,"\n[0.5 %d div 0 0 0.5 %d div neg  0 %d %d div] concat",
 	  (int)prec_fact, (int)prec_fact,(int)x[1]/2,(int) prec_fact ));
