@@ -184,7 +184,7 @@ extern Stack SciStack ;
 
 extern void StackInfo (void); 
 extern void InitStack (void); 
-
+extern void nsp_init_stack(Stack *stack,NspObject **S);
 
 /*-----------------------------------------------------------
  * Object attributes 

@@ -53,7 +53,7 @@
 #define WITH_GTKHTML 1
 
 /* Define if use maxplus lib  */
-/* #undef WITH_MAXPLUSLIB */
+#define WITH_MAXPLUSLIB 1
 
 /* Define if sizeof(int*)==sizeof(int) */
 #define POINTER_INT 1

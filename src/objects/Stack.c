@@ -34,17 +34,22 @@ void StackInfo(void)
   
 }
 
-void InitStack (void)
+void InitStack()
 {
-  SciStack.fname = NULL;
-  SciStack.file_name = NULL;
-  SciStack.first = 0;
-  SciStack.S = S ;
-  SciStack.L = S + STACK_SIZE;
-  SciStack.error_msg = (NspObject *) nsp_smatrix_create(NVOID,0,0,NULL,0);
-  SciStack.error = error;
-  SciStack.errcatch = FALSE;
-  SciStack.pause = TRUE;
+  nsp_init_stack(&SciStack,S);
+}
+
+void nsp_init_stack(Stack *stack,NspObject **S)
+{
+  stack->fname = NULL;
+  stack->file_name = NULL;
+  stack->first = 0;
+  stack->S = S ;
+  stack->L = S + STACK_SIZE;
+  stack->error_msg = (NspObject *) nsp_smatrix_create(NVOID,0,0,NULL,0);
+  stack->error = error;
+  stack->errcatch = FALSE;
+  stack->pause = TRUE;
 }
 
 Stack SciStack ;

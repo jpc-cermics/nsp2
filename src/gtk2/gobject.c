@@ -1,8 +1,21 @@
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 #define  NspGObject_Private 
 #include "nsp/gtk/gobject.h"
@@ -1192,12 +1205,11 @@ nspg_closure_marshal(GClosure *closure,
     {
       goto end;
     }
-  Marshal_stack.fname = "pipo"; /* pc->callback->name; XXXX */
-  Marshal_stack.S = Marshal_stack_S ;
-  Marshal_stack.L = Marshal_stack_S  + STACK_SIZE;
-  fprintf(stderr,"FuncEval(%d) avec le Marshal_stack %s stack.S=<%lx>, first=%d\n",
-	  stack_count, "pipo"/* pc->callback->name; XXXX */ , (long) Marshal_stack.S,Marshal_stack.first); 
-  Marshal_stack.first = 0 ;
+  nsp_init_stack(&Marshal_stack,Marshal_stack_S);
+  Marshal_stack.fname = "pipo"; 
+  /* fprintf(stderr,"FuncEval(%d) avec le Marshal_stack %s stack.S=<%lx>, first=%d\n",
+   *   stack_count, "pipo" ,(long) Marshal_stack.S,Marshal_stack.first); 
+   */
   if ( stack_count != 1 ) 
     {
       /* XXX trying to preserve the already stored objects */ 
@@ -1254,10 +1266,12 @@ nspg_closure_marshal(GClosure *closure,
   
   if ((n= FuncEval((NspObject *)pc->callback,Marshal_stack.fname,Marshal_stack,Marshal_stack.first,nargs,0,-1)) < 0 )
     {
+      nsp_error_message_show();
       goto end; 
     }
 
-  fprintf(stderr,"Sortie de FuncEval avec %d arguments de retour et first=%d\n",n,Marshal_stack.first);
+  /* fprintf(stderr,"Sortie de FuncEval avec %d arguments de retour et first=%d\n",n,Marshal_stack.first); */
+  
   
   /** FuncEval fait-il le menage tout seul ? XXXXX **/
   if ( n >= 1) {
@@ -1288,10 +1302,8 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
     {
       goto end;
     }
-  Marshal_stack.fname = "@gtk_callback"; /* pc->callback->name; XXXX */
-  Marshal_stack.S = Marshal_stack_S ;
-  Marshal_stack.L = Marshal_stack_S  + STACK_SIZE;
-  Marshal_stack.first = 0 ;
+  nsp_init_stack(&Marshal_stack,Marshal_stack_S);
+  Marshal_stack.fname = "pipo"; /* pc->callback->name; XXXX */
   if ( stack_count != 1 ) 
     {
       /* XXX trying to preserve the already stored objects */ 
@@ -1307,6 +1319,7 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
   /** Calling func is a macro coded in P_PList **/
   if ((n= FuncEval((NspObject *) func,Marshal_stack.fname,Marshal_stack,Marshal_stack.first,nargs,*nret,-1)) < 0 )
     {
+      nsp_error_message_show();
       goto end; 
     }
   /** FuncEval fait-il le menage tout seul ? XXXXX **/
