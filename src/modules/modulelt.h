@@ -27,8 +27,8 @@ typedef struct _nsp_type_ModuleElt {
 struct _nsp_modulelt {
   NspObject father; 
   NspTypeModuleElt *type; 
-  char *path ;/
-	char *module;
+  char *path ;
+  char *module;
 };
 
 extern int nsp_type_modulelt_id;
@@ -48,7 +48,7 @@ NspModuleElt *new_modulelt();
 
 #define NULLME (NspModuleElt*) 0
 
-NspModuleElt *modulelt_create(char *name,int color,int thickness,NspTypeBase *type);
+NspModuleElt *modulelt_create(char *name,NspTypeBase *type);
 NspModuleElt *modulelt_copy(NspModuleElt *H);
 void modulelt_destroy(NspModuleElt *H);
 void modulelt_info(NspModuleElt *H, int indent);

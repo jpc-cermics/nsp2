@@ -106,9 +106,7 @@ static int init_modulelt(NspModuleElt *o,NspTypeModuleElt *type)
   if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
   o->type = type; 
   NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
-  /* FIXME : specific */
-  o->modulelt_val = nsp_matrix_create("val",'r',0,0);
-  if ( o->modulelt_val == NULLMAT) return FAIL;
+  /* specific */
   return OK;
 }
 
@@ -237,8 +235,7 @@ void modulelt_info(NspModuleElt *H, int indent)
       return;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("[ModuleElt %s, col=%d th=%d]\n", NSP_OBJECT(H)->name,
-	    H->modulelt_color,H->modulelt_thickness);
+  Sciprintf("[ModuleElt %s]\n", NSP_OBJECT(H)->name);
 }
 
 /*
@@ -297,7 +294,7 @@ NspModuleElt  *GetModuleElt(Stack stack, int i)
  * create a NspModuleElt instance 
  *-----------------------------------------------------*/
 
-NspModuleElt *modulelt_create(char *name,int color,int thickness,NspTypeBase *type)
+NspModuleElt *modulelt_create(char *name,NspTypeBase *type)
 {
   NspModuleElt *H  = (type == NULL) ? new_modulelt() : type->new();
   if ( H ==  NULLME)
@@ -307,8 +304,6 @@ NspModuleElt *modulelt_create(char *name,int color,int thickness,NspTypeBase *ty
     }
   if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(NULLME);
   NSP_OBJECT(H)->ret_pos = -1 ;
-  H->modulelt_color = color;
-  H->modulelt_thickness = thickness;
   return H;
 }
 
@@ -318,7 +313,7 @@ NspModuleElt *modulelt_create(char *name,int color,int thickness,NspTypeBase *ty
 
 NspModuleElt *modulelt_copy(NspModuleElt *H)
 {
-  return modulelt_create(NVOID,H->modulelt_color,H->modulelt_thickness,NULL);
+  return modulelt_create(NVOID,NULL);
 }
 
 /*-------------------------------------------------------------------
@@ -329,11 +324,10 @@ NspModuleElt *modulelt_copy(NspModuleElt *H)
 static int int_me_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspModuleElt *H;
-  int color=-1,thickness=-1;
   /* first argument is a unused its a NspType */
   CheckRhs(1,100);
   /* we first create a default object */
-  if(( H = modulelt_create(NVOID,color,thickness,NULL)) == NULLME) return RET_BUG;
+  if(( H = modulelt_create(NVOID,NULL)) == NULLME) return RET_BUG;
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
@@ -344,54 +338,7 @@ static int int_me_create(Stack stack, int rhs, int opt, int lhs)
  * attributes  (set/get methods) 
  *------------------------------------------------------*/
 
-static NspObject * int_me_get_color(void *Hv,char *attr)
-{
-  return nsp_create_object_from_double(NVOID,((NspModuleElt *) Hv)->modulelt_color);
-}
-
-static int int_me_set_color(void *Hv, char *attr, NspObject *O)
-{
-  int color; 
-  if (  IntScalar(O,&color) == FAIL) return FAIL;
-  ((NspModuleElt *)Hv)->modulelt_color = color;
-  return OK ;
-}
-
-static NspObject * int_me_get_thickness(void *Hv, char *attr)
-{
-  return nsp_create_object_from_double(NVOID,((NspModuleElt *) Hv)->modulelt_thickness);
-}
-
-static int int_me_set_thickness(void *Hv, char *attr, NspObject *O)
-{
-  int thickness; 
-  if (  IntScalar(O,&thickness) == FAIL) return FAIL;
-  ((NspModuleElt *) Hv)->modulelt_thickness = thickness;
-  return OK ;
-}
-
-static NspObject * int_me_get_val(void *Hv,char *attr)
-{
-  return (NspObject *) ((NspModuleElt *)Hv)->modulelt_val;
-}
-
-static NspObject *int_me_get_object_val(void *Hv,char *str)
-{
-  return (NspObject *)  ((NspModuleElt *)Hv)->modulelt_val;
-}
-
-static int int_me_set_val(void *Hv, char *attr, NspObject *O)
-{
-  NspMatrix *m;
-  if ((m = (NspMatrix *) nsp_object_copy(O)) == NULLMAT) return RET_BUG;
-  ((NspModuleElt *)Hv)->modulelt_val = m;
-  return OK ;
-}
-
 static AttrTab modulelt_attrs[] = {
-  { "me_color", 	int_me_get_color , 	int_me_set_color , 	NULL },
-  { "me_thickness",int_me_get_thickness, 	int_me_set_thickness,	NULL },
-  { "me_val", 	int_me_get_val, 	int_me_set_val, 	int_me_get_object_val },
   { (char *) 0, NULL}
 };
 
@@ -400,37 +347,8 @@ static AttrTab modulelt_attrs[] = {
  * methods 
  *------------------------------------------------------*/
 
-static int int_me_modulelt_color_change(void *a,Stack stack,int rhs,int opt,int lhs)
-{
-  int color; 
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if (GetScalarInt(stack,2,&color) == FAIL) return RET_BUG;
-  ((NspModuleElt *) a)->modulelt_color = color;
-  NSP_OBJECT(a)->ret_pos = 1;
-  return 1;
-}
-
-static int int_me_modulelt_color_show(void *a,Stack stack,int rhs,int opt,int lhs)
-{
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  Sciprintf("color of %s is %d\n",NSP_OBJECT(a)->name,((NspModuleElt *) a)->modulelt_color);
-  return 0;
-}
-
-static int int_me_set(void *a,Stack stack,int rhs,int opt,int lhs)
-{
-  CheckRhs(1,1000);
-  CheckLhs(1,1);
-  return int_set_attributes(stack,rhs,opt,lhs);
-}
-
 
 static NspMethods modulelt_methods[] = {
-  { "modulelt_color_change", int_me_modulelt_color_change},
-  { "modulelt_color_show",   int_me_modulelt_color_show},
-  { "set",  int_me_set},
   { (char *) 0, NULL}
 };
 

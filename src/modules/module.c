@@ -7,6 +7,7 @@
 #include "nsp/object.h"
 #define  Module_Private 
 #include "module.h"
+#include "modulelt.h"
 #include "nsp/interf.h"
 
 /* 
@@ -228,7 +229,7 @@ void module_destroy(NspModule *H)
   FREE(H->mname);
   if ( H->flag  == 0) 
     {
-      nsp_hash_destroy(H->T);
+      if ( H->T != NULL) nsp_hash_destroy(H->T);
       if ( H->L != NULL) nsp_list_destroy(H->L);
     }
   FREE(H);
@@ -249,8 +250,8 @@ void module_info(NspModule *H, int indent)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("[Module %s, path=%s mname=%s\n", NSP_OBJECT(H)->name,
 	    H->path,H->mname);
-  hash_info(H->T,indent+2);
-  nsp_list_info(H->L,indent+2);
+  if ( H->T != NULL) hash_info(H->T,indent+2);
+  if ( H->L != NULL)nsp_list_info(H->L,indent+2);
   for ( i=0 ; i < indent ; i++) Sciprintf("]\n");
 }
 
@@ -269,9 +270,9 @@ void module_print(NspModule *H, int indent)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s =\tmodule\n",NSP_OBJECT(H)->name); 
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("<Hdule name=%s path=%s\n",H->mname,H->path);
-  hash_print(H->T,indent+2);
-  nsp_list_print(H->L,indent+2);
+  Sciprintf("<Module name=%s path=%s\n",H->mname,H->path);
+  if ( H->T != NULL)  hash_print(H->T,indent+2);
+  if ( H->L != NULL)  nsp_list_print(H->L,indent+2);
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf(">\n");
 
@@ -351,12 +352,12 @@ static int module_fill(NspModule *M)
     }
   while (1) 
     {
-      NspMe *elt;
+      NspModuleElt *elt;
       int rep;
       char name[NAME_MAXL];
       rep = fscanf(f,"%s",name);
       if ( rep == 0 || rep == EOF ) break;
-      if ((elt = MeCreate(name))== NULLME ) 
+      if ((elt = modulelt_create(name,NULL))== NULLME ) 
 	{
 	  fclose(f); return FAIL;
 	}
@@ -390,16 +391,19 @@ NspModule *module_create(char *name,const char *path,const char *mname,NspTypeBa
       Scierror("Error:\tRunning out of memory\n");
       return(NULLMODULE);
     }
-  if ((M->T= nsp_hash_create(NVOID,10))== NULLHASH) 
+  if (M->path[0] != '\0') 
     {
-      Scierror("Error:\tRunning out of memory\n");
-      return(NULLMODULE);
+      if ((M->T= nsp_hash_create(NVOID,10))== NULLHASH)
+	{
+	  Scierror("Error:\tRunning out of memory\n");
+	  return(NULLMODULE);
+	}
+      /* fill Mod->T with names contained in file 
+       * dir/names 
+       * FIXME : could also scan dir in the future 
+       */
+      if (module_fill(M) == FAIL) return NULLMODULE;
     }
-  /* fill Mod->T with names contained in file 
-   * dir/names 
-   * FIXME : could also scan dir in the future 
-   */
-  if ( module_fill(M) == FAIL) return NULLMODULE;
   M->L = NULL;
   M->flag=0;
   return(M);
@@ -421,13 +425,15 @@ NspModule *module_copy(NspModule *H)
 
 static int int_mo_create(Stack stack, int rhs, int opt, int lhs)
 {
+  char *mname,*path;
   NspModule *H;
   /* first argument is a unused its a NspType */
-  CheckRhs(1,100);
+  CheckRhs(2,2);
+  if ((path = GetString(stack,1)) == (char*)0) return RET_BUG;
+  if ((mname = GetString(stack,2)) == (char*)0) return RET_BUG;
   /* we first create a default object */
-  if(( H = module_create(NVOID,"","",NULL)) == NULLMODULE) return RET_BUG;
+  if(( H = module_create(NVOID,path,mname,NULL)) == NULLMODULE) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
