@@ -1,8 +1,8 @@
- /*------------------------------------------------------------------------
+/*------------------------------------------------------------------------
  *    Graphic library
  *    Copyright (C) 2001 Enpc/Jean-Philippe Chancelier
  *    jpc@cermics.enpc.fr 
- --------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------
  *    Open GL Driver 
  *--------------------------------------------------------------------------*/
@@ -36,21 +36,27 @@ static unsigned long maxcol; /* XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 
 /*
- * alpha numerix caracters as opengl textures 
- */
-
-static     TextureImage       tab_textures_font[2];
-static     GLuint             fonte_encours=0;
-static      GLuint	      tab_base[]={0,0};
-static      GLuint            base_encours=0;
-
-/*
  * fix camera position 
  */
 
 static t_camera nouvelle_camera(float px, float py, float pz,
 				float cx, float cy, float cz,
 				float near, float far);
+
+/* 
+ * OpenGL 
+ */
+static void OrthoMode(int left, int top, int right, int bottom);
+static void PerspectiveMode();
+static void force_affichage(BCG *Xgc);
+static void init_view(BCG *Xgc);
+static bool LoadTGA(TextureImage *texture, char *filename);
+static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col);
+static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...);
+static void glBillBoardPrint(GLfloat x, GLfloat y, GLfloat z, GLfloat f, const char *string, ...);
+static void init_opgl(BCG *Xgc);
+static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
+static void unclip_rectangle(GdkRectangle clip_rect);
 
 /*------------------------------------------------------------------
  * the current graphic data structure 
@@ -59,11 +65,8 @@ static t_camera nouvelle_camera(float px, float py, float pz,
 /** functions **/
 
 static void set_c(BCG *Xgc,int col);
-/*
-** NEW !!
-*/
-static void LoadFonts(void), LoadSymbFonts(void);
-//
+static void LoadFonts(BCG *Xgc);
+static void LoadSymbFonts(void);
 static void DrawMark(BCG *Xgc,int *x, int *y);
 static void loadfamily_n(char *name, int *j);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
@@ -153,9 +156,6 @@ static void pixmap_resize(BCG *Xgc)
  * If there's no graphic window then select creates one 
  */
 
-/*
-** NEW !!
-*/
 void xselgraphic(BCG *Xgc)
 { 
   /* Test not really usefull: see sciwin in matdes.f */
@@ -170,30 +170,24 @@ void xendgraphic(void)
 {
 } 
 
-/*
-** NEW !!
-*/
+
 void xend(BCG *Xgc)
 {
-  /** Must destroy everything  **/
-  /*
-  ** Detruire les listes d'affiches OpenGL
-  */
-  printf("\007 DELETE FONTES !!!\n");
-  glDeleteLists(tab_base[0],95);
-  glDeleteLists(tab_base[1],95);
+  /* Must destroy everything  **/
+  /* FIXME: a mettre ailleurs */
+  glDeleteLists(Xgc->private->tab_base[0],95);
+  glDeleteLists(Xgc->private->tab_base[1],95);
 }
 
 /** Clear the current graphic window     **/
 
 static void clearwindow(BCG *Xgc)
 {
-//  glDrawBuffer(GL_FRONT_AND_BACK);
+  //  glDrawBuffer(GL_FRONT_AND_BACK);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
-//  glDrawBuffer(GL_BACK);
-
-//     glLoadIdentity ();
-//     force_affichage(Xgc);
+  //  glDrawBuffer(GL_BACK);
+  //  glLoadIdentity ();
+  //  force_affichage(Xgc);
 }
 
 /* generates a pause, in seconds */
@@ -538,7 +532,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
 #endif 
      GTK_locator_info rec_info ; 
      int win;
-     if ( Xgc == (BCG *) 0 || Xgc->private->Cdrawable == NULL ) {
+     if ( Xgc == (BCG *) 0 || Xgc->private->drawable == NULL ) {
 	  *ibutton = -100;     return;
      }
      win = Xgc->CurWindow;
@@ -594,7 +588,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
      /* take care of recursive calls i.e restore info  */
      info = rec_info ; 
 
-     if ( Xgc != (BCG *) 0 && Xgc->private->Cdrawable != NULL ) {
+     if ( Xgc != (BCG *) 0 && Xgc->private->drawable != NULL ) {
 	  gdk_window_set_cursor (Xgc->private->drawing->window,Xgc->private->ccursor);
      }
 
@@ -615,8 +609,8 @@ static void R_clear(BCG *Xgc,int x, int y, int w, int h)
      tab[0] = x;      tab[1] = y;      tab[2] = w;      tab[3] = h;
      fillrectangle(Xgc, tab);
 /*
-     gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, TRUE,x,y,w,h);
-     if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+     gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,x,y,w,h);
+     if ( Xgc->private->drawable == Xgc->private->drawing->window) 
 	  gdk_draw_rectangle(Xgc->private->pixmap, Xgc->private->wgc, TRUE,x,y,w,h);
 */
 }
@@ -1336,7 +1330,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	  else 
 	  {
 	       xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
-	       Xgc->private->Cdrawable = temp;
+	       Xgc->private->drawable = temp;
 	       Xgc->CurPixmapStatus = 1;
 	       pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 	  }
@@ -1345,8 +1339,8 @@ static void xset_pixmapOn(BCG *Xgc,int num)
      {
 	  /** I remove the extra pixmap to the window **/
 	  xinfo(Xgc," ");
-	  gdk_pixmap_unref((GdkPixmap *) Xgc->private->Cdrawable);
-	  Xgc->private->Cdrawable = (GdkDrawable *)Xgc->private->drawing->window;
+	  gdk_pixmap_unref((GdkPixmap *) Xgc->private->drawable);
+	  Xgc->private->drawable = (GdkDrawable *)Xgc->private->drawing->window;
 	  Xgc->CurPixmapStatus = 0; 
      }
 #endif
@@ -1733,37 +1727,29 @@ static int CheckColormap(BCG *Xgc,int *m)
 
 static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
 {
-/*
-** Une police de taille 12 = une texture-fonte d'homotethie ECHELLE_CHAR (0.6) !!
-*/
-//     
-
-     if ( Abs(angle) <= 0.1) 
-     {
-	  glPrint2D(Xgc, x,y, ECHELLE_CHAR, angle, false, string);
-	  //glPrint2D(Xgc, x-TRANSLATE_CHAR*ECHELLE_CHAR/2, y-TAILLE_CHAR*ECHELLE_CHAR, ECHELLE_CHAR, angle, false, string); //(ECHELLE_CHAR*Xgc->fontSize)/12.0
-	  if ( flag == 1) 
-	  {
-	       int rect[4];
-	       boundingbox(Xgc,string, x, y, rect);
-	       drawrectangle(Xgc,rect);
-	  }
-     }
-     else 
-     {
-	  DispStringAngle(Xgc,x,y,string,angle);
-     }
+  /*
+   * Une police de taille 12 = une texture-fonte d'homotethie ECHELLE_CHAR (0.6) !!
+   */
+  if ( Abs(angle) <= 0.1) 
+    {
+      glPrint2D(Xgc, x,y, ECHELLE_CHAR, angle, false, string);
+      if ( flag == 1) 
+	{
+	  int rect[4];
+	  boundingbox(Xgc,string, x, y, rect);
+	  drawrectangle(Xgc,rect);
+	}
+    }
+  else 
+    {
+      DispStringAngle(Xgc,x,y,string,angle);
+    }
   if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
 
 }
 
 static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle)
 {
-/*
-** Une police de taille 12 = une texture-fonte d'homotethie ECHELLE_CHAR !!
-*/
-
-//     glPrint2D(Xgc, x0, yy0, (ECHELLE_CHAR*Xgc->fontSize)/12.0, angle, false, string);
 #if 0
      int i;
      int x,y, rect[4];
@@ -1776,7 +1762,7 @@ static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle
      for ( i = 0 ; i < (int)strlen(string); i++)
      { 
 	  str1[0]=string[i];
-	  /* XDrawString(dpy,Xgc->private->Cdrawable,gc,(int) x,(int) y ,str1,1); */
+	  /* XDrawString(dpy,Xgc->private->drawable,gc,(int) x,(int) y ,str1,1); */
 	  boundingbox(Xgc,str1,x,y,rect);
 	  /** drawrectangle(Xgc,string,rect,rect+1,rect+2,rect+3); **/
 	  if ( cosa <= 0.0 && i < (int)strlen(string)-1)
@@ -1801,75 +1787,27 @@ static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle
 #endif
 }
 
-/** To get the bounding rectangle of a string **/
+/* To get the bounding rectangle of a string */
 
 static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 { 
-//     gint lbearing, rbearing, iascent, idescent, iwidth;
-     //gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing, &iwidth, &iascent, &idescent);
-     rect[0]= x ;
-     rect[1]= y - TAILLE_CHAR * ECHELLE_CHAR; //iascent - idescent;
-     rect[2]= strlen(string)*TRANSLATE_CHAR * ECHELLE_CHAR;//gdk_string_width(Xgc->private->font, string);
-     rect[3]= TAILLE_CHAR * ECHELLE_CHAR;//iascent + idescent;
+  rect[0]= x ;
+  rect[1]= y - TAILLE_CHAR * ECHELLE_CHAR;
+  rect[2]= strlen(string)*TRANSLATE_CHAR * ECHELLE_CHAR;
+  rect[3]= TAILLE_CHAR * ECHELLE_CHAR;
 }
-
-
 
 /*------------------------------------------------
  * line segments arrows 
  *-------------------------------------------------*/
 
-static void drawxpoints(GdkPoint *points, gint npoints)
+static void drawline(BCG *Xgc,int x1, int y1, int x2, int y2)
 {
-     gint i;
-
-     glBegin(GL_POINTS);
-     for (i=0; i<npoints; i++)
-	  glVertex2i(points[i].x, points[i].y);
-     glEnd();
-}
-
-/*
-** NEW !! ATTENTION cette fct est DE NOUVEAU UTILISEE
-** remplace gdk_draw_line
-*/
-static void drawline(int x1, int y1, int x2, int y2)
-{
-     glBegin(GL_LINES);
-     glVertex2i(x1, y1);
-     glVertex2i(x2, y2);
-     glEnd();
-}
-
-/*
-** NEW !! Remplace gdk_draw_lines
-*/
-static void drawlines(GdkPoint *points, gint npoints)
-{
-     gint i;
-
-     glBegin(GL_LINE_STRIP);
-     for (i=0; i<npoints; i++)
-	  glVertex2i(points[i].x, points[i].y);
-     glEnd();
-}
-
-/*
-** NEW !! Remplace gdk_draw_polygon
-*/
-static void drawpolygon(GdkPoint *points, gint npoints, bool fill)
-{
-     gint i;
-
-     if (fill)
-	  glBegin(GL_POLYGON);
-     else
-	  glBegin(GL_LINE_LOOP);
-     for (i=0; i<npoints; i++)
-     {
-       glVertex2i(points[i].x, points[i].y);
-     }
-     glEnd();
+  glBegin(GL_LINES);
+  glVertex2i(x1, y1);
+  glVertex2i(x2, y2);
+  glEnd();
+  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
 }
 
 /** Draw a set of segments **/
@@ -1879,31 +1817,21 @@ static void drawpolygon(GdkPoint *points, gint npoints, bool fill)
 
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
-     int dash,color,i;
-
-     xget_dash_and_color(Xgc,&dash,&color);
-     if ( iflag == 1) { /* one style per segment */
-	  for (i=0 ; i < n/2 ; i++) {
-	       xset_line_style(Xgc,style[i]);
-	       drawline(vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-	       //gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-	       //if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-	       //    gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-	  }
-     }
-     else {
-	  if (*style >= 1) xset_line_style(Xgc,*style);
-	  for (i=0 ; i < n/2 ; i++) {
-	       drawline(vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-	       //if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-	       //	    gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-	       //gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-	  }
-     }
-     xset_dash_and_color(Xgc,dash,color);
-
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
-
+  int dash,color,i;
+  xget_dash_and_color(Xgc,&dash,&color);
+  if ( iflag == 1) { /* one style per segment */
+    for (i=0 ; i < n/2 ; i++) {
+      xset_line_style(Xgc,style[i]);
+      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+    }
+  }
+  else {
+    if (*style >= 1) xset_line_style(Xgc,*style);
+    /* une fonction gtk existe ici FIXME */
+    for (i=0 ; i < n/2 ; i++) 
+      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+  }
+  xset_dash_and_color(Xgc,dash,color);
 }
 
 /* Draw a set of arrows 
@@ -1915,45 +1843,35 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
 
 static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
 { 
-     int dash,color,i,lstyle;
-     double cos20=cos(20.0*M_PI/180.0);
-     double sin20=sin(20.0*M_PI/180.0);
-     int polyx[4],polyy[4];
-     xget_dash_and_color(Xgc,&dash,&color);
-     for (i=0 ; i < n/2 ; i++)
-     { 
-	  double dx,dy,norm;
-	  lstyle = (iflag == 1) ? style[i] : ( *style < 1 ) ? color : *style; 
-	  xset_line_style(Xgc,lstyle);
-	  drawline(vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-	  /*
-	    if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-	    gdk_draw_line(Xgc->private->pixmap,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-	    gdk_draw_line(Xgc->private->Cdrawable,Xgc->private->wgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-	  */
-
-	  dx=( vx[2*i+1]-vx[2*i]);
-	  dy=( vy[2*i+1]-vy[2*i]);
-	  norm = sqrt(dx*dx+dy*dy);
-	  if ( Abs(norm) >  SMDOUBLE ) 
-	  {
-	       int nn=1,p=3;
-	       dx=(as/10.0)*dx/norm;dy=(as/10.0)*dy/norm;
-	       polyx[0]= polyx[3]=vx[2*i+1]; /* +dx*cos20;*/
-	       polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
-	       polyx[2]= inint(polyx[0]  - cos20*dx + sin20*dy);
-	       polyy[0]= polyy[3]=vy[2*i+1]; /* +dy*cos20;*/
-	       polyy[1]= inint(polyy[0] + sin20*dx -cos20*dy) ;
-	       polyy[2]= inint(polyy[0] - sin20*dx - cos20*dy) ;
-	       fillpolylines(Xgc,polyx,polyy,&lstyle,nn,p);
-	  }
-     }
-     xset_dash_and_color(Xgc,dash,color);
-
-  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
-
+  int dash,color,i,lstyle;
+  double cos20=cos(20.0*M_PI/180.0);
+  double sin20=sin(20.0*M_PI/180.0);
+  int polyx[4],polyy[4];
+  xget_dash_and_color(Xgc,&dash,&color);
+  for (i=0 ; i < n/2 ; i++)
+    { 
+      double dx,dy,norm;
+      lstyle = (iflag == 1) ? style[i] : ( *style < 1 ) ? color : *style; 
+      xset_line_style(Xgc,lstyle);
+      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+      dx=( vx[2*i+1]-vx[2*i]);
+      dy=( vy[2*i+1]-vy[2*i]);
+      norm = sqrt(dx*dx+dy*dy);
+      if ( Abs(norm) >  SMDOUBLE ) 
+	{
+	  int nn=1,p=3;
+	  dx=(as/10.0)*dx/norm;dy=(as/10.0)*dy/norm;
+	  polyx[0]= polyx[3]=vx[2*i+1]; /* +dx*cos20;*/
+	  polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
+	  polyx[2]= inint(polyx[0]  - cos20*dx + sin20*dy);
+	  polyy[0]= polyy[3]=vy[2*i+1]; /* +dy*cos20;*/
+	  polyy[1]= inint(polyy[0] + sin20*dx -cos20*dy) ;
+	  polyy[2]= inint(polyy[0] - sin20*dx - cos20*dy) ;
+	  fillpolylines(Xgc,polyx,polyy,&lstyle,nn,p);
+	}
+    }
+  xset_dash_and_color(Xgc,dash,color);
 }
-
 
 /*
  * Rectangles
@@ -2070,9 +1988,9 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
 
 
 			 /*
-			   gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc, 
+			   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, 
 			   TRUE,x[i],y[j+1],w,h);
-			   if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+			   if ( Xgc->private->drawable == Xgc->private->drawing->window) 
 			   gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc,
 			   TRUE,x[i],y[j+1],w,h);
 			 */
@@ -2122,9 +2040,9 @@ static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, in
 			 tab[3] = h;
 			 fillrectangle(Xgc,tab);
 
-/* 			 gdk_draw_rectangle(Xgc->private->Cdrawable, Xgc->private->wgc,  */
+/* 			 gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc,  */
 /* 					    TRUE,x[j],y[i],w,h); */
-/* 			 if ( Xgc->private->Cdrawable == Xgc->private->drawing->window)  */
+/* 			 if ( Xgc->private->drawable == Xgc->private->drawing->window)  */
 /* 			      gdk_draw_rectangle(Xgc->private->pixmap,Xgc->private->wgc, */
 /* 						 TRUE,x[j],y[i],w,h); */
 		    }
@@ -2208,8 +2126,8 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
-     gdk_draw_arc(Xgc->private->Cdrawable, Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-     if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+     gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
+     if ( Xgc->private->drawable == Xgc->private->drawing->window) 
 	  gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
      if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
 }
@@ -2218,8 +2136,8 @@ static void drawarc(BCG *Xgc,int arc[])
 
 static void fillarc(BCG *Xgc,int arc[])
 { 
-     gdk_draw_arc(Xgc->private->Cdrawable, Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-     if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
+     gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
+     if ( Xgc->private->drawable == Xgc->private->drawing->window) 
 	  gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
      if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
 }
@@ -2320,53 +2238,33 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
 
 static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 { 
-     int n1;
-     if (closeflag == 1) n1 =n+1;else n1= n;
-     if (n1 >= 2) 
-     {
-       if ( gtk_store_points(n, vx, vy, closeflag)) 
-	  {
-	       
-/*	       printf("Drawlines exit\n");
-  exit(1); */
-	       drawlines(gtk_get_xpoints(), n1);
-/*
-  gdk_draw_lines(Xgc->private->Cdrawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
-  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-  gdk_draw_lines(Xgc->private->pixmap, Xgc->private->wgc, gtk_get_xpoints(), n1);
-*/
-	  }
-     }
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  gint i;
+  if ( n <= 1) return;
+  if ( closeflag == 1 ) 
+    glBegin(GL_LINE_LOOP);
+  else
+    glBegin(GL_LINE_STRIP);
+  for (i=0; i < n ; i++) glVertex2i(vx[i], vy[i]);
+  glEnd();
+  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
 }
 
 /* 
  * Fill the polygon or polyline 
  * according to *closeflag : the given vector is a polyline or a polygon 
+ * FIXME: Attention ça ne marche que pour un polygone convexe !!!!!!
+ * sinon il faut le trianguler 
  */
 
 static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag) 
 {
-     int n1;
-     if (closeflag == 1) n1 = n+1;else n1= n;
-     /* 
-	if (gtk_store_points(*n, vx, vy,*closeflag)){
-	XFillPolygon (dpy, Xgc->private->Cdrawable, gc, get_xpoints(), n1,
-	Complex, Xgc->CurVectorStyle);
-	}
-	gdk_flush();
-     */
-     if ( gtk_store_points(n, vx, vy, closeflag)) 
-     {
-
-	  drawpolygon(gtk_get_xpoints(), n1, true);
-/*
-  gdk_draw_polygon(Xgc->private->Cdrawable,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
-  if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-  gdk_draw_polygon(Xgc->private->pixmap, Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1); 
-*/
-     }
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  gint i;
+  if ( n <= 1) return;
+  glBegin(GL_POLYGON);
+  for ( i=0 ;  i< n ; i++) glVertex2i( vx[i], vy[i]);
+  glEnd();
+  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  
 }
 
 /* 
@@ -2376,32 +2274,25 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 
 static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 {
-     if ( Xgc->CurHardSymb == 0 )
-     {
-	  if (gtk_store_points(n, vx, vy,(int)0L))
-	  {
-	       drawxpoints(gtk_get_xpoints(), n);
-/*
-	       gdk_draw_points(Xgc->private->Cdrawable,
-			       Xgc->private->wgc,gtk_get_xpoints(), n);
-	       if ( Xgc->private->Cdrawable == Xgc->private->drawing->window) 
-		    gdk_draw_points(Xgc->private->pixmap, 
-				    Xgc->private->wgc,gtk_get_xpoints(), n);
-*/ 
-	  }
-     }
-     else 
-     { 
-	  int i,keepid,keepsize,hds;
-	  i=1;
-	  keepid =  Xgc->fontId;
-	  keepsize= Xgc->fontSize;
-	  hds= Xgc->CurHardSymbSize;
-	  xset_font(Xgc,i,hds);
-	  for ( i=0; i< n ;i++) DrawMark(Xgc,vx+i,vy+i);
-	  xset_font(Xgc,keepid,keepsize);
-     }
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+  if ( Xgc->CurHardSymb == 0 )
+    {
+      gint i;
+      glBegin(GL_POINTS);
+      for (i=0; i< n ; i++) glVertex2i( vx[i], vy[i]);
+      glEnd();
+    }
+  else 
+    { 
+      int i,keepid,keepsize,hds;
+      i=1;
+      keepid =  Xgc->fontId;
+      keepsize= Xgc->fontSize;
+      hds= Xgc->CurHardSymbSize;
+      xset_font(Xgc,i,hds);
+      for ( i=0; i< n ;i++) DrawMark(Xgc,vx+i,vy+i);
+      xset_font(Xgc,keepid,keepsize);
+    }
+  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
 }
 
 /*-------------------------------------------------------------------------
@@ -2426,8 +2317,8 @@ static void DeleteSGWin(int intnum)
 /*
      if ( winxgc->CurPixmapStatus == 1 ) 
      {
-	  gdk_pixmap_unref(winxgc->private->Cdrawable);
-	  winxgc->private->Cdrawable = (GdkDrawable *)winxgc->private->drawing->window;
+	  gdk_pixmap_unref(winxgc->private->drawable);
+	  winxgc->private->drawable = (GdkDrawable *)winxgc->private->drawing->window;
 	  winxgc->CurPixmapStatus = 0; 
      }
 */
@@ -2555,7 +2446,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
      private->item_factory=NULL;
      private->menu_entries=NULL;
      private->pixmap=NULL;       
-     private->Cdrawable=NULL;  
+     private->drawable=NULL;  
      private->wgc=NULL;
      private->stdgc=NULL;
      private->gcursor=NULL;      
@@ -2563,13 +2454,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
      private->font=NULL;
      private->resize = 0; /* do not remove !! */
      private->swap = TRUE; 
-     /* 
-     ** NEW !!
-     */
-     private->camera = nouvelle_camera(0.0, 0.0, 10.0,
-				       0.0, 0.0, 0.0,
-				       INIT_DISTANCE_CLIPPING_PROCHE,
-				       INIT_DISTANCE_CLIPPING_LOIN);
 
      if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
      {
@@ -2636,7 +2520,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
       */
 
      /* Default value is without Pixmap **/
-     NewXgc->private->Cdrawable = (GdkDrawable *) NewXgc->private->drawing->window;  NewXgc->CurPixmapStatus = 0; 
+     NewXgc->private->drawable = (GdkDrawable *) NewXgc->private->drawing->window;  NewXgc->CurPixmapStatus = 0; 
      /* default colormap not instaled */
      NewXgc->CmapFlag = -1; 
      /* default resize not yet defined */
@@ -2733,7 +2617,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
 	       yi = initpoint[1]+i*size[0]*sinal;
 	       xf = xi - ( size[1]*sinal);
 	       yf = yi + ( size[1]*cosal);
-	       drawline(xi,yi,xf,yf);
+	       drawline(Xgc,xi,yi,xf,yf);
 	  }
      }
      for (i=0; i <= nsteps[1]; i++)
@@ -2742,7 +2626,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
 	  yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
 	  xf = xi - ( size[1]*size[2]*sinal);
 	  yf = yi + ( size[1]*size[2]*cosal);
-	  drawline(xi,yi,xf,yf);
+	  drawline(Xgc,xi,yi,xf,yf);
      }
 }
 
@@ -2775,7 +2659,7 @@ void bitmap(BCG *Xgc,char *string, int w, int h)
 	setimage = XCreateImage (dpy, XDefaultVisual (dpy, DefaultScreen(dpy)),
 	1, XYBitmap, 0, string,w,h, 8, 0);	
 	setimage->data = string;
-	XPutImage (dpy, Xgc->private->Cdrawable, gc, setimage, 0, 0, 10,10,w,h);
+	XPutImage (dpy, Xgc->private->drawable, gc, setimage, 0, 0, 10,10,w,h);
 	XDestroyImage(setimage);
      */
 }
@@ -2857,34 +2741,24 @@ static void queryfamily(char *name, int *j,int *v3)
 #define PATH "/usr/local/nsp2/src/graphics/Font_mini.tga"
 #endif 
 
-static void LoadFonts(void)
+
+static void LoadFonts(BCG *Xgc)
 {
-     static bool chgt_texture = true;
-
-
-     printf("Avant: %i %i\n", glIsList(tab_base[0]), glIsList(tab_base[1]));
-     if (!chgt_texture)
-	  return ;
-
-     /*
-     ** Construction de fontes avec OpenGL
-     */
-
-//##FIXME
-     if (!LoadTGA(&tab_textures_font[0],PATH) ||
-	 !LoadTGA(&tab_textures_font[1],PATH))
-     {
-	  printf("Texture PATH/src/graphics/FontXXX.tga  manquante ou corrompue\n");
-	  exit(1);
-     }
-
-     tab_base[0] = BuildFont(tab_textures_font[0].texID, 95, 16, 8);
-     tab_base[1] = BuildFont(tab_textures_font[1].texID, 95, 16, 8);
-     //base[1] = BuildFont(tab_textures_font[1].texID, 256, 16, 16);
-     base_encours  = tab_base[0];
-     fonte_encours = tab_textures_font[0].texID;
-     chgt_texture = false;
-     printf("Apres: %i %i\n", glIsList(tab_base[0]), glIsList(tab_base[1]));
+  /*
+   * Construction de fontes avec OpenGL
+   * FIXME
+   */
+  
+  if (!LoadTGA(&Xgc->private->tab_textures_font[0],PATH) ||
+      !LoadTGA(&Xgc->private->tab_textures_font[1],PATH))
+    {
+      Sciprintf("Texture PATH/src/graphics/FontXXX.tga  manquante ou corrompue\n");
+    }
+  Xgc->private->tab_base[0] = BuildFont(Xgc->private->tab_textures_font[0].texID, 95, 16, 8);
+  Xgc->private->tab_base[1] = BuildFont(Xgc->private->tab_textures_font[1].texID, 95, 16, 8);
+  /* base[1] = BuildFont(tab_textures_font[1].texID, 256, 16, 16); */
+  Xgc->private->base_encours  = Xgc->private->tab_base[0];
+  Xgc->private->fonte_encours = Xgc->private->tab_textures_font[0].texID;
 }
 
 /*
@@ -3035,8 +2909,6 @@ printf("init stencil !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 #endif
 
      init_opgl(dd);
-     LoadFonts(); /* FIXME*/
-
 
      gdk_gl_drawable_gl_end (gldrawable);
      /*** OpenGL END ***/
@@ -3070,17 +2942,16 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	  }
      }
 
-/*
-** NEW !!
-*/
-     glClear(GL_STENCIL_BUFFER_BIT);
+     /*
+     ** NEW !!
+     */
+     //glClear(GL_STENCIL_BUFFER_BIT);
 
      /*** OpenGL BEGIN ***/
      if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
 	  return FALSE;
      
-     glViewport (0,  0, widget->allocation.width, widget->allocation.height);
-     init_opgl(dd);
+     init_view(dd);
 
      gdk_gl_drawable_gl_end (gldrawable);
      /*** OpenGL END ***/
@@ -3102,10 +2973,9 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   //g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-
-
-  printf("Avant: %i %i\n", glIsList(tab_base[0]), glIsList(tab_base[1]));
-
+  
+  glLineWidth(1.5); // FIXME: 
+  
   if(dd->private->resize != 0) 
     { 
       if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
@@ -3260,34 +3130,33 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   gint iw, ih;
   GtkWidget *scrolled_window;
   GtkWidget *vbox;
-  static GdkGLConfig *glconfig= NULL;
-
+  GdkGLConfig *glconfig;
+  
   /*
   ** NEW !!
   */
-  if ( glconfig == NULL ) 
+  glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
+					GDK_GL_MODE_DEPTH  |
+					GDK_GL_MODE_STENCIL |
+					//GDK_GL_MODE_SINGLE);
+					GDK_GL_MODE_DOUBLE);
+  if (glconfig == NULL)
     {
+      g_print ("*** Cannot find the double-buffered visual.\n");
+      g_print ("*** Trying single-buffered visual.\n");
+      
+      exit(1);
+      /* Try single-buffered visual */
       glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
-					    GDK_GL_MODE_DEPTH  |
-					    GDK_GL_MODE_STENCIL |
-					    //GDK_GL_MODE_SINGLE);
-					    GDK_GL_MODE_DOUBLE);
+					    GDK_GL_MODE_DEPTH);
       if (glconfig == NULL)
 	{
-	  g_print ("*** Cannot find the double-buffered visual.\n");
-	  g_print ("*** Trying single-buffered visual.\n");
-	  /* Try single-buffered visual */
-	  glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
-						GDK_GL_MODE_DEPTH);
-	  if (glconfig == NULL)
-	    {
-	      g_print ("*** No appropriate OpenGL-capable visual found.\n");
-	      exit (1);
-	    }
+	  g_print ("*** No appropriate OpenGL-capable visual found.\n");
+	  exit (1);
 	}
-      /* commenter --- decommenter */
-      examine_gl_config_attrib(glconfig);
-    }
+     }
+     /* commenter --- decommenter */
+     examine_gl_config_attrib(glconfig);
 
   /* initialise pointers */
   dd->private->drawing = NULL;
@@ -3382,11 +3251,8 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* create private->drawingarea */
   dd->private->drawing = gtk_drawing_area_new();
 
-
   /*
   ** NEW !! 
-	  exit(1);
-
   */
 
   /* Set OpenGL-capability to the widget */
@@ -3459,21 +3325,11 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
        * and the initialize_gc 
        */
       gtk_widget_realize(dd->private->drawing);
-	  exit(1);
-
     }
 
   /* let other widgets use the default colour settings */
   gtk_widget_pop_visual();
   gtk_widget_pop_colormap();
-
-
-  /*
-  ** NEW !!
-  */	  
-  
-  /* LoadFonts(); */
-
 }
 
 
@@ -3506,6 +3362,23 @@ static void nsp_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
 **
 ** #############################################################
 */
+
+void afficher_repere(float ox, float oy, float oz)
+{
+     printf("Afficher_repere\n");
+     glBegin(GL_LINES);
+     glColor3f(1.0,0.0,0.0);
+     glVertex3f(ox, oy, oz);
+     glVertex3f(ox+10.0, oy, oz);
+     glColor3f(0.0,1.0,0.0);
+     glVertex3f(ox, oy, oz);
+     glVertex3f(ox, oy+10.0, oz);
+     glColor3f(0.0,0.0,1.0);
+     glVertex3f(ox, oy, oz);
+     glVertex3f(ox, oy, oz+10.0);
+     glEnd();
+}
+
 
 /*
 ** Passer en mode orthonorme
@@ -3541,6 +3414,28 @@ static void PerspectiveMode()
      glMatrixMode( GL_MODELVIEW );
 }
 
+
+t_camera nouvelle_camera(float px, float py, float pz,
+			 float cx, float cy, float cz,
+			 float near, float far)
+{
+     t_camera camera;
+
+     camera.position.x = px;
+     camera.position.y = py;
+     camera.position.z = pz;
+     camera.cible.x = cx; 
+     camera.cible.y = cy; 
+     camera.cible.z = cz;
+     camera.orientation.x = 0.0; /* orientation (ne pas modifier) */
+     camera.orientation.y = 1.0; /* orientation (ne pas modifier) */
+     camera.orientation.z = 0.0; /* orientation (ne pas modifier) */
+     camera.near = near;
+     camera.far = far;
+
+     return camera;
+}
+
 /** Force OpenGL a redessiner la scene
 */
 static void force_affichage(BCG *Xgc)
@@ -3553,43 +3448,51 @@ static void force_affichage(BCG *Xgc)
 /*
 ** Commute la vue : mode perspective cavaliere (2D) --- mode perspective)
 */
-static void swap_view(BCG *Xgc)
+
+
+static void init_view(BCG *Xgc)
 {
      float aspect;
+     static bool premiere_fois = true;
 
-
+     glViewport (0,  0, Xgc->private->drawing->allocation.width, Xgc->private->drawing->allocation.height);
      xset_background(Xgc,Xgc->NumBackground+1);
-     if (Xgc->private->view == VUE_3D)
+     if (Xgc->private->view == VUE_2D)
      {
-	  Xgc->private->view = VUE_2D;
 	  glMatrixMode(GL_PROJECTION);
 	  glLoadIdentity();
 	  OrthoMode(0, 0, Xgc->private->drawing->allocation.width, 
 	       Xgc->private->drawing->allocation.height);
-
-	  //glOrtho(0,Xgc->private->drawing->allocation.width,0,
-	  //	  Xgc->private->drawing->allocation.height,-1,1);
-	  
 	  glMatrixMode(GL_MODELVIEW);
 	  glLoadIdentity();
      }
      else
      {
-	  Xgc->private->view = VUE_3D;
+	  if (premiere_fois)
+	  {
+	       printf("OOOOOOO\n");
+	       Xgc->private->camera = nouvelle_camera(0.0,0.0,10.0,
+						      0.0,0.0,0.0,
+						      INIT_DISTANCE_CLIPPING_PROCHE,
+						      INIT_DISTANCE_CLIPPING_LOIN);
+	       premiere_fois = false;
+	  }
 
-	  aspect = Xgc->private->drawing->allocation.width /
-	       Xgc->private->drawing->allocation.height;
+	  aspect = ((float) Xgc->private->drawing->allocation.width) /
+			    Xgc->private->drawing->allocation.height;
 	  glMatrixMode(GL_PROJECTION);
 	  glLoadIdentity();
+	  printf("%f %f\n", Xgc->private->camera.near,
+			 Xgc->private->camera.far);
 	  gluPerspective(45.0, aspect, Xgc->private->camera.near,
 			 Xgc->private->camera.far);
-	  
 	  glMatrixMode(GL_MODELVIEW);
 	  glLoadIdentity();
      }
 //     glFlush();	  
      force_affichage(Xgc);
 }
+
 
 
 /*
@@ -3688,10 +3591,8 @@ static bool LoadTGA(TextureImage *texture, char *filename)
 ** retourne la liste d'affichage des fontes
 ** Ne pas oublier de detruire les listes d'affiches a la fin du prog !!
 */
-static GLuint BuildFont(GLuint texID,
-			int nb_char,
-			int nb_ligne,
-			int nb_col)			
+
+static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col)			
 {
      int    loop;
      GLuint base;
@@ -3716,6 +3617,7 @@ static GLuint BuildFont(GLuint texID,
      }
      return base;
 }
+
 
 
 /*
@@ -3749,37 +3651,19 @@ static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot
      glEnable(GL_TEXTURE_2D);
      glEnable(GL_BLEND);
 
-     glBindTexture(GL_TEXTURE_2D, fonte_encours);
+     glBindTexture(GL_TEXTURE_2D, Xgc->private->fonte_encours);
      glPushMatrix();
      glLoadIdentity();
      glTranslatef(x-TRANSLATE_CHAR*ECHELLE_CHAR/2, y-TAILLE_CHAR*ECHELLE_CHAR,0);
      glRotated(rot,1,0,0);
      glScaled(scal,scal,scal);
-     glListBase(base_encours-32+(128*set));
+     glListBase(Xgc->private->base_encours-32+(128*set));
      glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);
      glPopMatrix();
      glDisable(GL_BLEND);
      glDisable(GL_TEXTURE_2D);
 }
 
-static t_camera nouvelle_camera(float px, float py, float pz,
-				float cx, float cy, float cz,
-				float near, float far)
-{
-     t_camera camera;
-     camera.position.x = px;
-     camera.position.y = py;
-     camera.position.z = pz;
-     camera.cible.x = cx; 
-     camera.cible.y = cy; 
-     camera.cible.z = cz;
-     camera.orientation.x = 0.0; /* orientation (ne pas modifier) */
-     camera.orientation.y = 1.0; /* orientation (ne pas modifier) */
-     camera.orientation.z = 0.0; /* orientation (ne pas modifier) */
-     camera.near = near;
-     camera.far = far;
-     return camera;
-}
 
 /*
 ** Comme glPrint3D mais les textures sont toujours orientees vers la camera
@@ -3795,36 +3679,33 @@ static void glBillBoardPrint(GLfloat x, GLfloat y, GLfloat z, GLfloat f, const c
 */
 static void init_opgl(BCG *Xgc)
 {
-/*
-** NOTE : le chargement des textures se fait dans release_event !!
-*/
+  /*
+  ** NOTE : le chargement des textures se fait dans release_event !!
+  */
+  xset_background(Xgc,Xgc->NumBackground+1);
+  glClearDepth(1.0); 
 
-     xset_background(Xgc,Xgc->NumBackground+1);
-     glClearDepth(1.0); 
+  //     glEnable(GL_TEXTURE_2D);
+  //     glEnable (GL_CULL_FACE);
+  //     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); 
+  glClearStencil(0x0);
+  glEnable(GL_STENCIL_TEST);
+  //     glEnable(GL_LINE_SMOOTH);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  //     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+  //     glLineWidth(1.5);
+  //     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  //     glLineWidth(0.5);
+  glAlphaFunc(GL_GREATER,0.1f);
+  glEnable(GL_ALPHA_TEST);
+  LoadFonts(Xgc);
 
-//     glEnable(GL_TEXTURE_2D);
-//     glEnable(GL_DEPTH_TEST);
-//     glEnable (GL_CULL_FACE);
-//     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL); 
-
-     glClearStencil(0x0);
-     glEnable(GL_STENCIL_TEST);
-
-//     glEnable(GL_LINE_SMOOTH);
-     glEnable(GL_BLEND);
-     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-//     glLineWidth(1.5);
-//     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-//     glLineWidth(0.5);
-     glAlphaFunc(GL_GREATER,0.1f);
-     glEnable(GL_ALPHA_TEST);
-
-/* ================================ */
-     Xgc->private->view = VUE_3D;
-/* ================================ */
-     
-     swap_view(Xgc);
+  /* ================================ */
+  Xgc->private->view = VUE_2D;
+  /* ================================ */
+  if (   Xgc->private->view ==  VUE_3D)  glEnable(GL_DEPTH_TEST);
+  init_view(Xgc);
 }
      
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)
