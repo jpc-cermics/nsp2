@@ -981,11 +981,11 @@ case "$host" in
    ;;
 # Darwin/MacOSX (Not supported by INRIA)
   *-*-darwin*)
-     STRIP=echo 
+     STRIP=echo
      GCC=yes
-     CC=cc
+     CC=gcc
      CC_OPTIONS='-no-cpp-precomp -O2 -I/sw/include'
-     CC_LDFLAGS=
+     CC_LDFLAGS='-L/sw/lib'
      CC_PICFLAGS='-fPIC'
      # script shell f77 have bugs, get ours
      FC=g77
