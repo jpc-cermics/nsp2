@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "Graphics.h"
+#include "nsp/graphics/Graphics.h"
 
 
 typedef  struct  {

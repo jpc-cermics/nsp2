@@ -8,33 +8,33 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "Graphics.h"
-/* #include "PloEch.h" */
+#include "nsp/graphics/Graphics.h"
+/* #include "nsp/graphics/PloEch.h" */
 
-typedef void (level_f) (integer ival, double Cont, double xncont,
+typedef void (level_f) (BCG *Xgc,integer ival, double Cont, double xncont,
 			       double yncont);
-typedef void (*ptr_level_f) (integer ival, double Cont, double xncont,
+typedef void (*ptr_level_f) (BCG *Xgc,integer ival, double Cont, double xncont,
 			       double yncont);
 
 static int 
-Contour2D (ptr_level_f,char *,double *x,double *y,double *z,integer *n1,
-		   integer *n2,integer *flagnz,integer *nz,double *zz,
-		   integer *style,char *strflag,char *legend,double *brect,
-		    integer *aaint);
+Contour2D (BCG *Xgc,ptr_level_f,char *,double *x,double *y,double *z,integer *n1,
+	   integer *n2,integer *flagnz,integer *nz,double *zz,
+	   integer *style,char *strflag,char *legend,double *brect,
+	   integer *aaint);
 static void 
-contourI (ptr_level_f,double *, double *, double *,
-		  double *, integer *, integer *, integer *);
+contourI (BCG *Xgc,ptr_level_f,double *, double *, double *,
+	  double *, integer *, integer *, integer *);
 static void
-look (ptr_level_f, integer i, integer j, integer ib,
+look (BCG *Xgc,ptr_level_f, integer i, integer j, integer ib,
 	      integer jb, integer qq,double Cont, integer style);
 
-static integer ffnd (ptr_level_f,integer,integer,integer,integer,integer,
-			     integer,integer,integer,integer,integer,
-			     double,integer *);
+static integer ffnd (BCG *Xgc,ptr_level_f,integer,integer,integer,integer,integer,
+		     integer,integer,integer,integer,integer,
+		     double,integer *);
 
 static int Gcont_size = 0;
 
-static void ContourTrace (double Cont, integer style);
+static void ContourTrace (BCG *Xgc,double Cont, integer style);
 static level_f Contstore_, Contstore_1, Contstore_2,GContstore_2;
 static void GContstore_2Last (void);
 static double x_cont (integer i);
@@ -143,18 +143,18 @@ static double y_cont(integer i) {  return GY[i] ;}
 static double ZC=0.0;
 static char   ContNumFormat[100];
 
-int C2F(contour)(double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, double *teta, double *alpha, char *legend, integer *flag, double *bbox, double *zlev, integer lstr)
+int C2F(contour)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, double *teta, double *alpha, char *legend, integer *flag, double *bbox, double *zlev, integer lstr)
 {
   int err=0;
   integer fg;
   integer InsideU[4],InsideD[4];
-  void (*func) (integer, double,double,double);
+  void (*func) (BCG *Xgc,integer, double,double,double);
   static double *zconst;
   double zmin,zmax;
   integer N[3],i;
   double xbox[8],ybox[8],zbox[8];
 
-  if (nsp_gengine1.get_driver()=='R')  store_Contour(x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
+  if (nsp_gengine1.get_driver()=='R')  store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
 
   switch (flag[0])
     {
@@ -172,10 +172,10 @@ int C2F(contour)(double *x, double *y, double *z, integer *n1, integer *n2, inte
       double FRect[4];
       static int aaint[4] = {2,10,2,10};
       FRect[0]=x[0];FRect[1]= y[0];FRect[2]=x[*n1-1];FRect[3]= y[*n2-1];
-      set_scale("tftttf",NULL,FRect,aaint,"nn",NULL);
+      set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
       /** Drawing axes **/
-      axis_draw("111");
-      frame_clip_on();
+      axis_draw(Xgc,"111");
+      frame_clip_on(Xgc);
     }
   else
     {
@@ -187,22 +187,22 @@ int C2F(contour)(double *x, double *y, double *z, integer *n1, integer *n2, inte
 	   bbox[4]=zmin;bbox[5]=zmax;
 	 }
        if ( flag[1] !=0)
-	 SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+	 SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
        else
-	 SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,0L);
+	 SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
        /** Calcule l' Enveloppe Convexe de la boite **/
        /** ainsi que les triedres caches ou non **/
-       Convex_Box(xbox,ybox,InsideU,InsideD,legend,flag,bbox);
+       Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
        /** Le triedre cach\'e **/
        if (zbox[InsideU[0]] > zbox[InsideD[0]])
 	 {
 	   /* cache=InsideD[0]; */
-	   if (flag[2] >=2 )DrawAxis(xbox,ybox,InsideD,HIDDENFRAMECOLOR);
+	   if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideD,HIDDENFRAMECOLOR);
 	 }
        else 
 	 {
 	   /* cache=InsideU[0]-4; */
-	   if (flag[2] >=2 )DrawAxis(xbox,ybox,InsideU,HIDDENFRAMECOLOR);
+	   if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideU,HIDDENFRAMECOLOR);
 	 }
      }
   if (*flagnz == 0)
@@ -215,31 +215,31 @@ int C2F(contour)(double *x, double *y, double *z, integer *n1, integer *n2, inte
       for ( i =0 ; i < *nz ; i++) 
 	zconst[i]=zmin + (i+1)*(zmax-zmin)/(*nz+1);
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(func,x,y,z,zconst,N,(integer *) 0,&err);
+      contourI(Xgc,func,x,y,z,zconst,N,(integer *) 0,&err);
     }
    else
     {
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(func,x,y,z,zz,N,(integer *) 0,&err);
+      contourI(Xgc,func,x,y,z,zz,N,(integer *) 0,&err);
     }
-  fg = nsp_gengine->xget_foreground();
+  fg = nsp_gengine->xget_foreground(Xgc);
   if (flag[0]!=2 &&  flag[2] >=3 )
     {
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis(xbox,ybox,InsideU,fg);
+	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
       else 
-	DrawAxis(xbox,ybox,InsideD,fg);
+	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
     }
-  frame_clip_off();
+  frame_clip_off(Xgc);
   return(0);
 }
 
 /** interface for contour2d **/
 
-int C2F(contour2)(double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, integer *style, char *strflag, char *legend, double *brect, integer *aaint)
+int C2F(contour2)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, integer *style, char *strflag, char *legend, double *brect, integer *aaint)
 {
-  Contour2D(Contstore_2,"contour2",x,y,z,n1,n2,flagnz,nz,zz,style,strflag,
+  Contour2D(Xgc,Contstore_2,"contour2",x,y,z,n1,n2,flagnz,nz,zz,style,strflag,
 	    legend,brect,aaint);
   return 0;
 }
@@ -249,7 +249,7 @@ int C2F(contour2)(double *x, double *y, double *z, integer *n1, integer *n2, int
  * contour2di + c2dex 
  */
 
-static int Contour2D(ptr_level_f func, char *name, double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, integer *style, char *strflag, char *legend, double *brect, integer *aaint)
+static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, integer *style, char *strflag, char *legend, double *brect, integer *aaint)
 {
   integer err=0;
   static double *zconst;
@@ -257,11 +257,11 @@ static int Contour2D(ptr_level_f func, char *name, double *x, double *y, double 
   integer N[3],i;
 
   /** Boundaries of the frame **/
-  update_frame_bounds(1,"gnn",x,y,n1,n2,aaint,strflag,brect);
+  update_frame_bounds(Xgc,1,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
   /** If Record is on **/
   if (nsp_gengine1.get_driver()=='R' && strcmp(name,"contour2")==0 ) 
-    store_Contour2D(x,y,z,n1,n2,flagnz,nz,zz,style,strflag,legend,brect,aaint);
+    store_Contour2D(Xgc,x,y,z,n1,n2,flagnz,nz,zz,style,strflag,legend,brect,aaint);
 
   zmin=(double) Mini(z,*n1*(*n2)); 
   zmax=(double) Maxi(z,*n1*(*n2));
@@ -269,8 +269,8 @@ static int Contour2D(ptr_level_f func, char *name, double *x, double *y, double 
   /** Scales **/
   if (strcmp(name,"contour2")==0 )
     {
-      axis_draw(strflag);
-      frame_clip_on();
+      axis_draw(Xgc,strflag);
+      frame_clip_on(Xgc);
     }
   if (*flagnz==0)
     {
@@ -282,19 +282,19 @@ static int Contour2D(ptr_level_f func, char *name, double *x, double *y, double 
       for ( i =0 ; i < *nz ; i++) 
 	zconst[i]=zmin + (i+1)*(zmax-zmin)/(*nz+1);
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(func,x,y,z,zconst,N,style,&err);
+      contourI(Xgc,func,x,y,z,zconst,N,style,&err);
     }
   else
     {
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(func,x,y,z,zz,N,style,&err);
+      contourI(Xgc,func,x,y,z,zz,N,style,&err);
     }
 
-  if (strcmp(name,"contour2")==0 )frame_clip_off();
+  if (strcmp(name,"contour2")==0 )frame_clip_off(Xgc);
   return(0);
 }
 
-int C2F(contourif)(double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, integer *style)
+int C2F(contourif)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, integer *style)
 {
   integer err=0;
   static double *zconst;
@@ -314,12 +314,12 @@ int C2F(contourif)(double *x, double *y, double *z, integer *n1, integer *n2, in
       for ( i =0 ; i < *nz ; i++) 
 	zconst[i]=zmin + (i+1)*(zmax-zmin)/(*nz+1);
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(GContstore_2,x,y,z,zconst,N,style,&err);
+      contourI(Xgc,GContstore_2,x,y,z,zconst,N,style,&err);
     }
   else
     {
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(GContstore_2,x,y,z,zz,N,style,&err);
+      contourI(Xgc,GContstore_2,x,y,z,zz,N,style,&err);
     }
   return(0);
 }
@@ -334,14 +334,14 @@ int C2F(contourif)(double *x, double *y, double *z, integer *n1, integer *n2, in
  *  gives the dash style for contour i
  *-------------------------------------------------------*/
 
-static void contourI(ptr_level_f func, double *x, double *y, double *z, double *zCont, integer *N, integer *style, integer *err)
+static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z, double *zCont, integer *N, integer *style, integer *err)
 {
   int check = 1;
   char *F;
   integer n1,n2,ncont,i,c,j,k,n5;
   integer stylec;
   n1=N[0];n2=N[1];ncont=N[2];
-  F= nsp_gengine->xget_fpf();
+  F= nsp_gengine->xget_fpf(Xgc);
   if ( F[0] == '\0') 
     ChoixFormatE1(ContNumFormat,zCont,N[2]);
   InitValues(x,y,z,n1,n2);
@@ -394,14 +394,14 @@ static void contourI(ptr_level_f func, double *x, double *y, double *z, double *
 	ib = xbd_cont[k-1] ; jb= ybd_cont[k-1];
 	if  (not_same_sign (phi_cont(i,j)-zCont[c] , 
 			    phi_cont(ib,jb)-zCont[c]))
-	  look(func,i,j,ib,jb,1L,zCont[c],stylec);
+	  look(Xgc,func,i,j,ib,jb,1L,zCont[c],stylec);
 	}
       /** inside segments **/
       for ( i = 1 ; i < n1-1; i++)
 	for ( j = 1 ; j < n2-1 ; j++)
 	  if  (not_same_sign ( phi_cont(i,j)-zCont[c] , 
 			       phi_cont(i, j-1)-zCont[c]))
-	    look(func,i,j,i,j-1,2L,zCont[c],stylec);
+	    look(Xgc,func,i,j,i,j-1,2L,zCont[c],stylec);
     }
 }
 
@@ -413,7 +413,7 @@ static void contourI(ptr_level_f func, double *x, double *y, double *z, double *
  *  c: indice of the contour Cont 
  *---------------------------------------------------------------------*/
 
-static void look(ptr_level_f func, integer i, integer j, integer ib, integer jb, integer qq, double Cont, integer style)
+static void look(BCG *Xgc,ptr_level_f func, integer i, integer j, integer ib, integer jb, integer qq, double Cont, integer style)
 {
   integer ip,jp,im,jm,zds,ent=0,flag=0,wflag;
   jp= j+1; ip= i+1; jm=j-1;im=i-1;
@@ -430,30 +430,30 @@ static void look(ptr_level_f func, integer i, integer j, integer ib, integer jb,
       if  (get_itg_cont(i,jm) > 1) return;
       ent=1 ; /* le segment est vertical vers le bas */
       /* Storing intersection point */
-      (*func)(0,Cont, x_cont(i), 
-		f_intercept(Cont,phi_cont(i,jm),
-			    y_cont(jm),phi_cont(i,j),y_cont(j)));
+      (*func)(Xgc,0,Cont, x_cont(i), 
+	      f_intercept(Cont,phi_cont(i,jm),
+			  y_cont(jm),phi_cont(i,j),y_cont(j)));
       break;
     case 2 : 
       if  (get_itg_cont(im,j) == 1 || get_itg_cont(im,j)==3 ) return;
       ent=2 ; /* le segment est horizontal gauche */
       /* Storing intersection point */
-      (*func)( 0,Cont,
-		f_intercept(Cont,phi_cont(im,j),
-			    x_cont(im),phi_cont(i,j),x_cont(i)), y_cont(j));
+      (*func)(Xgc,0,Cont,
+	      f_intercept(Cont,phi_cont(im,j),
+			  x_cont(im),phi_cont(i,j),x_cont(i)), y_cont(j));
       break ; 
     case 3 :
       if  (get_itg_cont(i,j) > 1 ) return;
       ent=3 ; /* le segment est vertical haut */
       /* Storing intersection point */
-      (*func)(0,Cont,x_cont(i), f_intercept(Cont,phi_cont(i,j),
+      (*func)(Xgc,0,Cont,x_cont(i), f_intercept(Cont,phi_cont(i,j),
 					    y_cont(j),phi_cont(i,jp),y_cont(jp)));
       break ;
     case 4 :
       if  (get_itg_cont(i,j) == 1 || get_itg_cont(i,j)==3 ) return;
       ent=4 ; /* le segment est horizontal droit */
       /* Storing intersection point */
-      (*func)(0,Cont,f_intercept(Cont,phi_cont(i,j),
+      (*func)(Xgc,0,Cont,f_intercept(Cont,phi_cont(i,j),
 				 x_cont(i),phi_cont(ip,j),x_cont(ip)),
 	      y_cont(j));
       break;
@@ -466,9 +466,10 @@ static void look(ptr_level_f func, integer i, integer j, integer ib, integer jb,
     { 
       jp= j+1; ip= i+1; jm=j-1;im=i-1;
       switch  ( ent) 
-	{case 1 :
+	{
+	case 1 :
 	  inc_itg_cont(i,jm,2L);
-	  ent = ffnd(func,i,ip,ip,i,j,j,jm,jm,ent,qq,Cont,&zds);
+	  ent = ffnd(Xgc,func,i,ip,ip,i,j,j,jm,jm,ent,qq,Cont,&zds);
 	  /* on calcule le nouveau point, ent donne la 
 	     direction du segment a explorer */
 	  switch ( ent)
@@ -480,7 +481,7 @@ static void look(ptr_level_f func, integer i, integer j, integer ib, integer jb,
 	  break ;
 	case 2  :
 	  inc_itg_cont(im,j,1L);
-	  ent = ffnd(func,i,i,im,im,j,jm,jm,j,ent,qq,Cont,&zds);
+	  ent = ffnd(Xgc,func,i,i,im,im,j,jm,jm,j,ent,qq,Cont,&zds);
 	  switch ( ent)
 	    { 
 	    case -1: wflag=0; break;
@@ -490,7 +491,7 @@ static void look(ptr_level_f func, integer i, integer j, integer ib, integer jb,
 	  break ;
 	case 3 :
 	  inc_itg_cont(i,j,2L);
-	  ent = ffnd(func,i,im,im,i,j,j,jp,jp,ent,qq,Cont,&zds);
+	  ent = ffnd(Xgc,func,i,im,im,i,j,j,jp,jp,ent,qq,Cont,&zds);
 	  switch ( ent)
 	    { 
 	    case -1: wflag=0; break;
@@ -500,7 +501,7 @@ static void look(ptr_level_f func, integer i, integer j, integer ib, integer jb,
 	  break ;
 	case 4 :
 	  inc_itg_cont(i,j,1L);
-	  ent = ffnd(func,i,i,ip,ip,j,jp,jp,j,ent,qq,Cont,&zds);
+	  ent = ffnd(Xgc,func,i,i,ip,ip,j,jp,jp,j,ent,qq,Cont,&zds);
 	  switch ( ent)
 	    {
 	    case -1: wflag=0; break;
@@ -538,7 +539,7 @@ static void look(ptr_level_f func, integer i, integer j, integer ib, integer jb,
   if ( func == GContstore_2 ) 
     GContstore_2Last();
   else 
-    ContourTrace(Cont,style);
+    ContourTrace(Xgc,Cont,style);
 }
 
 
@@ -550,7 +551,7 @@ static void look(ptr_level_f func, integer i, integer j, integer ib, integer jb,
  *       suivant a explorer 
  *-----------------------------------------------------------------------*/
 
-static integer ffnd (ptr_level_f func, integer i1, integer i2, integer i3, integer i4, integer jj1, integer jj2, integer jj3, integer jj4, integer ent, integer qq, double Cont, integer *zds)
+static integer ffnd (BCG *Xgc,ptr_level_f func, integer i1, integer i2, integer i3, integer i4, integer jj1, integer jj2, integer jj3, integer jj4, integer ent, integer qq, double Cont, integer *zds)
 {
   double phi1,phi2,phi3,phi4,xav,yav,phiav;
   integer revflag,i;
@@ -581,8 +582,8 @@ static integer ffnd (ptr_level_f func, integer i1, integer i2, integer i3, integ
       phi = phi3; phi3 = phi2; phi2= phi;
     }
   /* on stocke un nouveau point  */
-  (*func)(1,Cont,f_intercept(0.0,phi1,x_cont(i1),phiav,xav),
-	    f_intercept(0.0,phi1,y_cont(jj1),phiav,yav));
+  (*func)(Xgc,1,Cont,f_intercept(0.0,phi1,x_cont(i1),phiav,xav),
+	  f_intercept(0.0,phi1,y_cont(jj1),phiav,yav));
   /*
    * on parcourt les segments du rectangle pour voir sur quelle face
    * on sort 
@@ -593,16 +594,16 @@ static integer ffnd (ptr_level_f func, integer i1, integer i2, integer i3, integ
       if ( not_same_sign ( phi1,phi2))   /** sortir du for **/ break ; 
       if  ( phiav != 0.0 ) 
 	{
-	  (*func)(1,Cont,f_intercept(0.0,phi2,x_cont(i2),phiav,xav),
-		    f_intercept(0.0,phi2,y_cont(jj2),phiav,yav));
+	  (*func)(Xgc,1,Cont,f_intercept(0.0,phi2,x_cont(i2),phiav,xav),
+		  f_intercept(0.0,phi2,y_cont(jj2),phiav,yav));
 	} 
       /** on permutte les points du rectangle **/
       l1=i1; k1= jj1;
       i1=i2;jj1=jj2;i2=i3;jj2=jj3;i3=i4;jj3=jj4;i4=l1;jj4=k1;
       phi=phi1; phi1=phi2;phi2=phi3;phi3=phi4;phi4=phi;
     }
-  (*func)(1,Cont,f_intercept(0.0,phi1,x_cont(i1),phi2,x_cont(i2)),
-	    f_intercept(0.0,phi1,y_cont(jj1),phi2,y_cont(jj2)));
+  (*func)(Xgc,1,Cont,f_intercept(0.0,phi1,x_cont(i1),phi2,x_cont(i2)),
+	  f_intercept(0.0,phi1,y_cont(jj1),phi2,y_cont(jj2)));
   if ( qq==1 && bdyp(i1,jj1) && bdyp(i2,jj2)) *zds = 1 ;
   if ( revflag == 1  &&  ! oddp (i) )  i = i+2;
   return ( 1 + (  ( i + ent + 2) % 4));
@@ -643,7 +644,7 @@ G_Contstore_(integer ival, int xncont, int yncont)
  */
 
 static void
-Contstore_(integer ival, double Cont, double xncont, double yncont)
+Contstore_(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
 {
   G_Contstore_(ival,GEOX(xncont,yncont,Cont),
 	      GEOY(xncont,yncont,Cont));
@@ -656,7 +657,7 @@ Contstore_(integer ival, double Cont, double xncont, double yncont)
  */
 
 static void
-Contstore_1(integer ival, double Cont, double xncont, double yncont)
+Contstore_1(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
 {
   G_Contstore_(ival,GEOX(xncont,yncont,ZC),
 	      GEOY(xncont,yncont,ZC));
@@ -669,7 +670,7 @@ Contstore_1(integer ival, double Cont, double xncont, double yncont)
  */
 
 static void
-Contstore_2(integer ival, double Cont, double xncont, double yncont)
+Contstore_2(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
 {
   G_Contstore_(ival,XScale(xncont),YScale(yncont));
 }
@@ -680,7 +681,7 @@ Contstore_2(integer ival, double Cont, double xncont, double yncont)
  * floating point format 
  */
 
-static void ContourTrace(double Cont, integer style)
+static void ContourTrace(BCG *Xgc,double Cont, integer style)
 { 
   char *F;
   int pat,old;
@@ -688,24 +689,24 @@ static void ContourTrace(double Cont, integer style)
   double angle=0.0;
   char str[100];
 
-  uc = nsp_gengine->xget_usecolor();
+  uc = nsp_gengine->xget_usecolor(Xgc);
   if (uc) {
-    pat = nsp_gengine->xset_pattern(style);
-    nsp_gengine->drawpolyline(xcont,ycont,cont_size,close);
-    nsp_gengine->xset_pattern(pat);
+    pat = nsp_gengine->xset_pattern(Xgc,style);
+    nsp_gengine->drawpolyline(Xgc,xcont,ycont,cont_size,close);
+    nsp_gengine->xset_pattern(Xgc,pat);
   }
   else {
-    old = nsp_gengine->xset_dash(style);
-    nsp_gengine->drawpolyline(xcont,ycont,cont_size,close);
-    nsp_gengine->xset_dash(old);
+    old = nsp_gengine->xset_dash(Xgc,style);
+    nsp_gengine->drawpolyline(Xgc,xcont,ycont,cont_size,close);
+    nsp_gengine->xset_dash(Xgc,old);
   }
 
-  F=nsp_gengine->xget_fpf();
+  F=nsp_gengine->xget_fpf(Xgc);
   if ( F[0] == '\0') 
     sprintf(str,ContNumFormat,Cont);
   else 
     sprintf(str,F,Cont);
-  nsp_gengine->displaystring(str, xcont[cont_size / 2],ycont[cont_size /2],flag,angle);
+  nsp_gengine->displaystring(Xgc,str, xcont[cont_size / 2],ycont[cont_size /2],flag,angle);
 }
 
 /*--------------------------------------------------------------
@@ -729,7 +730,7 @@ int C2F(getconts)(double **x, double **y, integer *mm, integer *n)
   return 0;
 }
 
-static void GContstore_2(integer ival, double Cont, double xncont, double yncont)
+static void GContstore_2(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
 {
   int n;
   if ( ival == 0) 

@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "Graphics.h"
-/* #include "PloEch.h" */
+#include "nsp/graphics/Graphics.h"
+/* #include "nsp/graphics/PloEch.h" */
 
 
-static void Plo2d3RealToPixel (integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf);
+static void Plo2d3RealToPixel (BCG *Xgc,integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf);
 
 /*--------------------------------------------------------------------
   C2F(plot2d3)(xf,x,y,n1,n2,style,strflag,legend,brect,aaint)
@@ -23,7 +23,7 @@ static void Plo2d3RealToPixel (integer *n1, integer *n2, double *x, double *y, i
   which are considered as dash-styles 
 --------------------------------------------------------------------------*/
 
-int C2F(plot2d3)(char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+int C2F(plot2d3)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 		char *legend,double brect[],int aaint[])
 {
   int n;
@@ -34,11 +34,11 @@ int C2F(plot2d3)(char *xf,double x[],double y[],int *n1,int *n2,int style[],char
   if ( CheckxfParam(xf)== 1) return(0);
 
   /** Boundaries of the frame **/
-  update_frame_bounds(0,xf,x,y,n1,n2,aaint,strflag,brect);
+  update_frame_bounds(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
   if (nsp_gengine1.get_driver()=='R') 
-    store_Plot3(xf,x,y,n1,n2,style,strflag,legend,brect,aaint);
+    store_Plot3(Xgc,xf,x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /* Allocation */
   n = (*n1)*nn2 ; 
@@ -53,33 +53,33 @@ int C2F(plot2d3)(char *xf,double x[],double y[],int *n1,int *n2,int style[],char
 	}      
 
       /** Real to Pixel values **/
-      Plo2d3RealToPixel(n1,n2,x,y,xm,ym,xf);
+      Plo2d3RealToPixel(Xgc,n1,n2,x,y,xm,ym,xf);
       
       /** Draw Axis or only rectangle **/
     }
-  axis_draw(strflag);
+  axis_draw(Xgc,strflag);
   if ( n != 0 ) 
     {
       /** Drawing the curves **/
-      frame_clip_on();
+      frame_clip_on(Xgc);
       /** to get the default dash **/
       for ( j = 0 ; j < (*n1) ; j++)
 	{
 	  integer lstyle,iflag=0;
 	  /** style must be negative **/
 	  lstyle = (style[j] < 0) ?  -style[j] : style[j];
-	  nsp_gengine->drawsegments(&xm[2*(*n2)*j],&ym[2*(*n2)*j],nn2,&lstyle,iflag);
+	  nsp_gengine->drawsegments(Xgc,&xm[2*(*n2)*j],&ym[2*(*n2)*j],nn2,&lstyle,iflag);
 	}
-      frame_clip_off();
+      frame_clip_off(Xgc);
       /** Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1')
-	Legends(style,n1,legend);
+	Legends(Xgc,style,n1,legend);
     }
   return(0);
 }
 
 
-static void Plo2d3RealToPixel(integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf)
+static void Plo2d3RealToPixel(BCG *Xgc,integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf)
 {
   integer i,j;
   /** Computing y-values **/

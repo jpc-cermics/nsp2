@@ -72,9 +72,9 @@ static FILE *file= stdout ;
 #endif
 
 #include "nsp/math.h"
-#include "Graphics.h"
-#include "periGif.h"
-#include "color.h"
+#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics/periGif.h"
+#include "nsp/graphics/color.h"
 #include "../gd/gd.h"
 
 void C2F(WriteGeneric1Gif)();

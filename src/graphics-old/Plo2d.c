@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "Graphics.h"
-/* #include "PloEch.h" */
+#include "nsp/graphics/Graphics.h"
+/* #include "nsp/graphics/PloEch.h" */
 
 #define spINSIDE_SPARSE
 #if defined(THINK_C) || defined (__MWERKS__)
@@ -58,7 +58,7 @@
  * lstr* : unused ( but used by Fortran ) 
  *--------------------------------------------------------------------------*/
   
-int C2F(plot2d)(double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+int C2F(plot2d)(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 		char *legend,double brect[],int aaint[])
 {
   int n;
@@ -67,10 +67,10 @@ int C2F(plot2d)(double x[],double y[],int *n1,int *n2,int style[],char *strflag,
   /* Storing values if using the Record driver */
   /* Boundaries of the frame */
   
-  update_frame_bounds(0,"gnn",x,y,n1,n2,aaint,strflag,brect);
+  update_frame_bounds(Xgc,0,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
   if (nsp_gengine1.get_driver()=='R') 
-    store_Plot1("gnn",x,y,n1,n2,style,strflag,legend,brect,aaint);
+    store_Plot1(Xgc,"gnn",x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /* Allocation */
   n = (*n1)*(*n2) ; 
@@ -84,19 +84,19 @@ int C2F(plot2d)(double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 	  return 0;
 	}      
       /** Real to Pixel values **/
-      scale_f2i(x,y,xm,ym,n);
+      scale_f2i(Xgc,x,y,xm,ym,n);
       /** Drawing axes **/
     }
-  axis_draw(strflag);
+  axis_draw(Xgc,strflag);
   /** Drawing the curves **/
   if ( n != 0 ) 
     {
-      frame_clip_on();
-      nsp_gengine->drawpolylines(xm,ym,style,*n1,*n2);
-      frame_clip_off();
+      frame_clip_on(Xgc);
+      nsp_gengine->drawpolylines(Xgc,xm,ym,style,*n1,*n2);
+      frame_clip_off(Xgc);
       /** Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1')
-	Legends(style,n1,legend); 
+	Legends(Xgc,style,n1,legend); 
     }
   return(0);
 }
@@ -106,73 +106,72 @@ int C2F(plot2d)(double x[],double y[],int *n1,int *n2,int style[],char *strflag,
  * add a grid to a 2D plot
  *--------------------------------------------------------------------*/
 
-int C2F(xgrid)(style)
-     integer *style;
+int C2F(xgrid)(BCG *Xgc, int *style)
 {
   integer closeflag=0,n=2,vx[2],vy[2],i,j;
   double pas;
   int pat;
   /* Recording command */
-  if (nsp_gengine1.get_driver()=='R') store_Grid(style);
+  if (nsp_gengine1.get_driver()=='R') store_Grid(Xgc,style);
   /* changes dash style if necessary */
-  pat = nsp_gengine->xset_pattern(*style);
+  pat = nsp_gengine->xset_pattern(Xgc,*style);
   /** Get current scale **/
-  pas = ((double) current_scale.WIRect1[2]) / ((double) current_scale.Waaint1[1]);
+  pas = ((double) Xgc->scales->WIRect1[2]) / ((double) Xgc->scales->Waaint1[1]);
   /** x-axis grid (i.e vertical lines ) */
-  for ( i=0 ; i < current_scale.Waaint1[1]; i++)
+  for ( i=0 ; i < Xgc->scales->Waaint1[1]; i++)
     {
-      vy[0]=current_scale.WIRect1[1];
-      vy[1]=current_scale.WIRect1[1]+current_scale.WIRect1[3];
-      vx[0]=vx[1]= current_scale.WIRect1[0] + inint( ((double) i)*pas);
-      if ( i!=0) nsp_gengine->drawpolyline(vx, vy,n,closeflag);
-      if (current_scale.logflag[0] == 'l') 
+      vy[0]=Xgc->scales->WIRect1[1];
+      vy[1]=Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3];
+      vx[0]=vx[1]= Xgc->scales->WIRect1[0] + inint( ((double) i)*pas);
+      if ( i!=0) nsp_gengine->drawpolyline(Xgc,vx, vy,n,closeflag);
+      if (Xgc->scales->logflag[0] == 'l') 
 	{
 	  int jinit=1;
 	  if ( i== 0 ) jinit=2; /* no grid on plot boundary */
 	  for (j= jinit; j < 10 ; j++)
 	    {
-	      vx[0]=vx[1]= current_scale.WIRect1[0] + inint( ((double) i)*pas)+ inint(log10(((double)j))*pas);
-	      nsp_gengine->drawpolyline( vx, vy,n,closeflag);
+	      vx[0]=vx[1]= Xgc->scales->WIRect1[0] + inint( ((double) i)*pas)+ inint(log10(((double)j))*pas);
+	      nsp_gengine->drawpolyline(Xgc, vx, vy,n,closeflag);
 	    }
 	}
     }
   /** y-axis grid (i.e horizontal lines ) **/
-  pas = ((double) current_scale.WIRect1[3]) / ((double) current_scale.Waaint1[3]);
-  for ( i=0 ; i < current_scale.Waaint1[3]; i++)
+  pas = ((double) Xgc->scales->WIRect1[3]) / ((double) Xgc->scales->Waaint1[3]);
+  for ( i=0 ; i < Xgc->scales->Waaint1[3]; i++)
     {
-      vx[0]=current_scale.WIRect1[0];
-      vx[1]=current_scale.WIRect1[0]+current_scale.WIRect1[2];
-      vy[0]=vy[1]= current_scale.WIRect1[1] + inint( ((double) i)*pas);
-      if (i!=0)  nsp_gengine->drawpolyline( vx, vy,n,closeflag);
-      if (current_scale.logflag[1] == 'l') 
+      vx[0]=Xgc->scales->WIRect1[0];
+      vx[1]=Xgc->scales->WIRect1[0]+Xgc->scales->WIRect1[2];
+      vy[0]=vy[1]= Xgc->scales->WIRect1[1] + inint( ((double) i)*pas);
+      if (i!=0)  nsp_gengine->drawpolyline(Xgc, vx, vy,n,closeflag);
+      if (Xgc->scales->logflag[1] == 'l') 
 	{
 	  int jinit=1;
-	  if ( i== current_scale.Waaint1[3]-1 ) jinit=2; /* no grid on plot boundary */
+	  if ( i== Xgc->scales->Waaint1[3]-1 ) jinit=2; /* no grid on plot boundary */
 	  for (j= jinit; j < 10 ; j++)
 	    {
-	      vy[0]=vy[1]= current_scale.WIRect1[1] + inint( ((double) i+1)*pas)- inint(log10(((double)j))*pas);
-	       nsp_gengine->drawpolyline( vx, vy,n,closeflag);
+	      vy[0]=vy[1]= Xgc->scales->WIRect1[1] + inint( ((double) i+1)*pas)- inint(log10(((double)j))*pas);
+	       nsp_gengine->drawpolyline(Xgc, vx, vy,n,closeflag);
 	    }
 	}
     }
-  nsp_gengine->xset_pattern(pat);
+  nsp_gengine->xset_pattern(Xgc,pat);
   return(0);
 }
 
 
 /*---------------------------------------------------------------------
  * update_frame_bounds : 
- * modify according to strflag current_scale using given data 
+ * modify according to strflag Xgc->scales->using given data 
  * output : FRect,aaint,strflag are modified 
  *----------------------------------------------------*/
 
-void update_frame_bounds(cflag, xf, x, y, n1, n2, aaint, strflag, FRect)
-     int cflag;
-     char *xf;
-     double *x, *y;
-     integer *n1, *n2, *aaint;
-     char *strflag;
-     double FRect[4];
+void update_frame_bounds(BCG *Xgc,
+			 int cflag,
+			 char *xf,
+			 double *x,double *y,
+			 int *n1, int *n2, int *aaint,
+			 char *strflag,
+			 double FRect[4])
 {
   int Xdec[3],Ydec[3],i,redraw=0;
   double xmin=0.0,xmax=10.0,ymin= 0.0,ymax= 10.0;
@@ -219,12 +218,12 @@ void update_frame_bounds(cflag, xf, x, y, n1, n2, aaint, strflag, FRect)
       /* end of added code by S. Mottelet 11/7/2000 */
       
       int wdim[2];
-      nsp_gengine->xget_windowdim(wdim,wdim+1);
+      nsp_gengine->xget_windowdim(Xgc,wdim,wdim+1);
       hx=xmax-xmin;
       hy=ymax-ymin;
 
       /* code added by S. Mottelet 11/7/2000 */
-      getscale2d(WRect,FRect,logscale,ARect);
+      getscale2d(Xgc,WRect,FRect,logscale,ARect);
 
       wdim[0]=linint((double)wdim[0] * WRect[2]);
       wdim[1]=linint((double)wdim[1] * WRect[3]);
@@ -283,28 +282,28 @@ void update_frame_bounds(cflag, xf, x, y, n1, n2, aaint, strflag, FRect)
   /* if strflag[1] == 7 or 8 we compute the max between current scale and the new one  */
   if (strflag[1] == '7' || strflag[1] == '8' )
     {
-      if ( current_scale.flag != 0 ) 
+      if ( Xgc->scales->flag != 0 ) 
 	{
 	  /* first check that we are not changing from normal<-->log */
 	  int xlog = ((int)strlen(xf) >= 2 && xf[1]=='l' ) ? 1: 0;
 	  int ylog = ((int)strlen(xf) >=3  && xf[2]=='l' ) ? 2: 0;
-	  if ( (xlog == 1 && current_scale.logflag[0] == 'n') 
-	       || (xlog == 0 && current_scale.logflag[0] == 'l')
-	       || (ylog == 1 && current_scale.logflag[1] == 'n')
-	       || (ylog == 0 && current_scale.logflag[1] == 'l') )
+	  if ( (xlog == 1 && Xgc->scales->logflag[0] == 'n') 
+	       || (xlog == 0 && Xgc->scales->logflag[0] == 'l')
+	       || (ylog == 1 && Xgc->scales->logflag[1] == 'n')
+	       || (ylog == 0 && Xgc->scales->logflag[1] == 'l') )
 	    {
 	      Scistring("Warning: you cannot use automatic rescale if you switch from log to normal or normal to log \n");
 	    }
 	  else 
 	    {
-	      FRect[0] = Min(FRect[0],current_scale.frect[0]);
-	      FRect[1] = Min(FRect[1],current_scale.frect[1]);
-	      FRect[2] = Max(FRect[2],current_scale.frect[2]);
-	      FRect[3] = Max(FRect[3],current_scale.frect[3]);
-	      if ( FRect[0] < current_scale.frect[0] 
-		   || FRect[1] < current_scale.frect[1] 
-		   || FRect[2] > current_scale.frect[2] 
-		   || FRect[3] > current_scale.frect[3] )
+	      FRect[0] = Min(FRect[0],Xgc->scales->frect[0]);
+	      FRect[1] = Min(FRect[1],Xgc->scales->frect[1]);
+	      FRect[2] = Max(FRect[2],Xgc->scales->frect[2]);
+	      FRect[3] = Max(FRect[3],Xgc->scales->frect[3]);
+	      if ( FRect[0] < Xgc->scales->frect[0] 
+		   || FRect[1] < Xgc->scales->frect[1] 
+		   || FRect[2] > Xgc->scales->frect[2] 
+		   || FRect[3] > Xgc->scales->frect[3] )
 		redraw = 1;
 	    }
 	}
@@ -331,14 +330,14 @@ void update_frame_bounds(cflag, xf, x, y, n1, n2, aaint, strflag, FRect)
   
   /* Update the current scale */
 
-  set_scale("tftttf",NULL,FRect,aaint,xf+1,NULL);
+  set_scale(Xgc,"tftttf",NULL,FRect,aaint,xf+1,NULL);
 
   /* Should be added to set_scale */
 
-  for (i=0; i < 3 ; i++ ) current_scale.xtics[i] = Xdec[i];
-  for (i=0; i < 3 ; i++ ) current_scale.ytics[i] = Ydec[i];
-  current_scale.xtics[3] = aaint[1];
-  current_scale.ytics[3] = aaint[3];
+  for (i=0; i < 3 ; i++ ) Xgc->scales->xtics[i] = Xdec[i];
+  for (i=0; i < 3 ; i++ ) Xgc->scales->ytics[i] = Ydec[i];
+  Xgc->scales->xtics[3] = aaint[1];
+  Xgc->scales->ytics[3] = aaint[3];
 
   /* Changing back min,max and aaint if using log scaling X axis */
   if ((int)strlen(xf) >= 2 && xf[1]=='l' && (int)strlen(strflag) >= 2 && strflag[1] != '0')
@@ -365,8 +364,8 @@ void update_frame_bounds(cflag, xf, x, y, n1, n2, aaint, strflag, FRect)
 	}
       ww = nsp_gengine->xget_curwin();
       nsp_gengine1.set_driver("X11");
-      nsp_gengine->clearwindow();
-      tape_replay_new_scale_1(ww,flag,aaint,FRect);
+      nsp_gengine->clearwindow(Xgc);
+      tape_replay_new_scale_1(Xgc,ww,flag,aaint,FRect);
      nsp_gengine1.set_driver(driver);
     }
 }
@@ -380,7 +379,7 @@ void update_frame_bounds(cflag, xf, x, y, n1, n2, aaint, strflag, FRect)
  *-----------------------------------------------------*/
 
 
-void Legends(int *style,int * n1,char * legend)
+void Legends(BCG *Xgc,int *style,int * n1,char * legend)
 {
   int rect[4],xx,yy;
   char *leg,*loc;
@@ -388,32 +387,32 @@ void Legends(int *style,int * n1,char * legend)
   int i;
   loc=(char *) MALLOC( (strlen(legend)+1)*sizeof(char));
 
-  nsp_gengine->boundingbox("pl",xx,yy,rect);
+  nsp_gengine->boundingbox(Xgc,"pl",xx,yy,rect);
 
   if ( loc != 0)
     {
       integer fg,old_dash,pat;
-      fg = nsp_gengine->xget_foreground();
-      old_dash = nsp_gengine->xset_dash(1);
-      pat = nsp_gengine->xset_pattern(fg);
+      fg = nsp_gengine->xget_foreground(Xgc);
+      old_dash = nsp_gengine->xset_dash(Xgc,1);
+      pat = nsp_gengine->xset_pattern(Xgc,fg);
 
       strcpy(loc,legend);
 
       /* length for the tick zone associated to the legend */
-      xoffset= (current_scale.wdim[0]*current_scale.subwin_rect[2]*(1- current_scale.axis[0] - current_scale.axis[1]))/12.0;
+      xoffset= (Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[2]*(1- Xgc->scales->axis[0] - Xgc->scales->axis[1]))/12.0;
       /* y offset between legends */
-      yoffset= (current_scale.wdim[1]*current_scale.subwin_rect[3]*current_scale.axis[3])/5.0;
+      yoffset= (Xgc->scales->wdim[1]*Xgc->scales->subwin_rect[3]*Xgc->scales->axis[3])/5.0;
 
       /* x position of the legends in pixel if n <= 3 */ 
-      xi = current_scale.wdim[0]*current_scale.subwin_rect[2]*current_scale.axis[0]
-	+ current_scale.subwin_rect[0]*current_scale.wdim[0];
+      xi = Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[2]*Xgc->scales->axis[0]
+	+ Xgc->scales->subwin_rect[0]*Xgc->scales->wdim[0];
       /* x position of the legends in pixel if n > 3 */ 
-      xi1 = xi + current_scale.wdim[0]*current_scale.subwin_rect[2]*(1.0 - (current_scale.axis[0]+current_scale.axis[1]))/2.0 ;
+      xi1 = xi + Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[2]*(1.0 - (Xgc->scales->axis[0]+Xgc->scales->axis[1]))/2.0 ;
 
       /* y position of x-axis in pixel */
-      yi1 = current_scale.wdim[1]*current_scale.subwin_rect[3]*current_scale.axis[2]
-	+ current_scale.subwin_rect[1]*current_scale.wdim[1] 
-	+ current_scale.subwin_rect[3]*current_scale.wdim[1]*(1.0 - (current_scale.axis[2]+current_scale.axis[3])) ; /* ouf !! */
+      yi1 = Xgc->scales->wdim[1]*Xgc->scales->subwin_rect[3]*Xgc->scales->axis[2]
+	+ Xgc->scales->subwin_rect[1]*Xgc->scales->wdim[1] 
+	+ Xgc->scales->subwin_rect[3]*Xgc->scales->wdim[1]*(1.0 - (Xgc->scales->axis[2]+Xgc->scales->axis[3])) ; /* ouf !! */
 
       for ( i = 0 ; i < *n1 && i < 6 ; i++)
 	{  
@@ -434,16 +433,16 @@ void Legends(int *style,int * n1,char * legend)
 	  if ( i==0) leg=strtok(loc,"@"); else leg=strtok((char *)0,"@");
 	  if (leg != 0) 
 	    {
-	      nsp_gengine->xset_pattern(fg);
-	      nsp_gengine->displaystring(leg,xs,ys,flag,angle);
-	      nsp_gengine->xset_pattern(pat);
+	      nsp_gengine->xset_pattern(Xgc,fg);
+	      nsp_gengine->displaystring(Xgc,leg,xs,ys,flag,angle);
+	      nsp_gengine->xset_pattern(Xgc,pat);
 	      if (style[i] > 0)
 		{ 
 		  integer n=1,p=2;
 		  polyx[0]=inint(xi);polyx[1]=inint(xi+xoffset);
 		  polyy[0]=inint(yi - rect[3]/2);polyy[1]=inint(yi- rect[3]/2.0);
 		  lstyle[0]=style[i];
-		  nsp_gengine->drawpolylines(polyx,polyy,lstyle,n,p);
+		  nsp_gengine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
 		}
 	      else
 		{ 
@@ -451,12 +450,12 @@ void Legends(int *style,int * n1,char * legend)
 		  polyx[0]=inint(xi+xoffset);
 		  polyy[0]=inint(yi- rect[3]/2);
 		  lstyle[0]=style[i];
-		  nsp_gengine->drawpolylines(polyx,polyy,lstyle,n,p);
+		  nsp_gengine->drawpolylines(Xgc,polyx,polyy,lstyle,n,p);
 		}
 	    }
 	}
       FREE(loc);
-      nsp_gengine->xset_dash(old_dash);
+      nsp_gengine->xset_dash(Xgc,old_dash);
     }
   else
     {

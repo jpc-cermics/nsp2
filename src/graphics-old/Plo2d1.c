@@ -8,10 +8,10 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "Graphics.h"
-/* #include "PloEch.h" */
+#include "nsp/graphics/Graphics.h"
+/* #include "nsp/graphics/PloEch.h" */
 
-static void Plo2d1RealToPixel (integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf);
+static void Plo2d1RealToPixel (BCG *Xgc,integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf);
 
 /*--------------------------------------------------------------------
   C2F(plot2d1)(xf,x,y,n1,n2,style,strflag,legend,brect,aint)
@@ -30,19 +30,19 @@ static void Plo2d1RealToPixel (integer *n1, integer *n2, double *x, double *y, i
   xf[2]='l' or 'n' LogAxis or standard on Y
 --------------------------------------------------------------------------*/
 
-int C2F(plot2d1)(char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
-		char *legend,double brect[],int aaint[])
+int C2F(plot2d1)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+		 char *legend,double brect[],int aaint[])
 {
   int n;
   integer *xm,*ym, nn2=(*n2);
   if ( CheckxfParam(xf)== 1) return(0);
 
   /** Boundaries of the frame **/
-  update_frame_bounds(0,xf,x,y,n1,n2,aaint,strflag,brect);
+  update_frame_bounds(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
   if (nsp_gengine1.get_driver()=='R') 
-    store_Plot1(xf,x,y,n1,n2,style,strflag,legend,brect,aaint);
+    store_Plot1(Xgc,xf,x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /** Allocation **/
 
@@ -57,25 +57,25 @@ int C2F(plot2d1)(char *xf,double x[],double y[],int *n1,int *n2,int style[],char
 	  return 0;
 	}      
       /** Real to Pixel values **/
-      Plo2d1RealToPixel(n1,n2,x,y,xm,ym,xf);
+      Plo2d1RealToPixel(Xgc,n1,n2,x,y,xm,ym,xf);
     }
   /** Drawing axes **/
-  axis_draw(strflag);
+  axis_draw(Xgc,strflag);
   /** Drawing the curves **/
   if ( n != 0 ) 
     {
-      frame_clip_on();
-      nsp_gengine->drawpolylines(xm,ym,style,*n1,nn2);
-      frame_clip_off();
+      frame_clip_on(Xgc);
+      nsp_gengine->drawpolylines(Xgc,xm,ym,style,*n1,nn2);
+      frame_clip_off(Xgc);
       /** Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1')
-	Legends(style,n1,legend);
+	Legends(Xgc,style,n1,legend);
     }
  return(0);
 
 }
 
-static void Plo2d1RealToPixel(integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf)
+static void Plo2d1RealToPixel(BCG *Xgc,integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf)
 {
   integer i,j;
   /** Computing y-values **/

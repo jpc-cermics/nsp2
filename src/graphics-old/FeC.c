@@ -11,12 +11,12 @@
 #include <math.h>
 #include <string.h>
 #include "nsp/math.h"
-#include "Graphics.h"
+#include "nsp/graphics/Graphics.h"
 
 /* functions used by the modified version : */
-static void PaintTriangle (double sx[], double sy[], double fxy[], 
-				    int zxy[], 
-				    double zlevel[], int fill[]);
+static void PaintTriangle (BCG *Xgc,double sx[], double sy[], double fxy[], 
+			   int zxy[], 
+			   double zlevel[], int fill[]);
 static void PermutOfSort (int tab[], int perm[]);
 static void FindIntersection (double sx[], double sy[], double fxy[],
 				       double z, int inda, int indb, 
@@ -45,17 +45,17 @@ static void FindIntersection (double sx[], double sy[], double fxy[],
  *  first and last color of the colormap (Bruno.Pincon@iecn.u-nancy.fr)
 ---------------------------------------------------------------*/
 
-int C2F(fec)(double *x, double *y, double *triangles, double *func, integer *Nnode, integer *Ntr, char *strflag, char *legend, double *brect, integer *aaint, double *zminmax, integer *colminmax)
+int C2F(fec)(BCG *Xgc,double *x, double *y, double *triangles, double *func, integer *Nnode, integer *Ntr, char *strflag, char *legend, double *brect, integer *aaint, double *zminmax, integer *colminmax)
 {
   integer i,*xm,*ym,j,k, n1=1;
 
   /** Boundaries of the frame **/
-  update_frame_bounds(0,"gnn",x,y,&n1,Nnode,aaint,strflag,brect);
+  update_frame_bounds(Xgc,0,"gnn",x,y,&n1,Nnode,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
   if (nsp_gengine1.get_driver()=='R') 
     /* added zminmax and colminmax (bruno) */
-    store_Fec(x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax);
+    store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax);
 
 
   /** Allocation **/
@@ -67,10 +67,10 @@ int C2F(fec)(double *x, double *y, double *triangles, double *func, integer *Nno
       return 0;
     }      
   
-  scale_f2i(x,y,xm,ym,*Nnode);
+  scale_f2i(Xgc,x,y,xm,ym,*Nnode);
 
   /* Fec code */
-  frame_clip_on();
+  frame_clip_on(Xgc);
   {
     /********************************************************************
      *	 beginning of the code modified by Bruno 01/02/2001  
@@ -97,7 +97,7 @@ int C2F(fec)(double *x, double *y, double *triangles, double *func, integer *Nno
       zmax = Max( zminmax[0] , zminmax[1] );
     };
       
-    whiteid= nsp_gengine->xget_last();
+    whiteid= nsp_gengine->xget_last(Xgc);
     nz=whiteid;
     
     /* choice for the colormap (in case of a user 's choice 
@@ -187,7 +187,7 @@ int C2F(fec)(double *x, double *y, double *triangles, double *func, integer *Nno
       };
 
       /* call the "painting" function */
-      PaintTriangle(sx, sy, fxy, zxy, zlevel, fill);
+      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
 
     };
   }
@@ -196,17 +196,17 @@ int C2F(fec)(double *x, double *y, double *triangles, double *func, integer *Nno
    *                     end of the modified code
    ********************************************************************/
 
-  frame_clip_off();
+  frame_clip_off(Xgc);
 
   /** Draw Axis or only rectangle **/
-  axis_draw(strflag);
+  axis_draw(Xgc,strflag);
 
   /** Drawing the Legends **/
   if ((int)strlen(strflag) >=1  && strflag[0] == '1')
     {
       integer style = -1;
       n1=1;
-      Legends(&style,&n1,legend);
+      Legends(Xgc,&style,&n1,legend);
     }
   return(0);
 }
@@ -235,7 +235,7 @@ static void PermutOfSort (int *tab, int *perm)
 }
 
 
-static void PaintTriangle (double *sx, double *sy, double *fxy, int *zxy, double *zlevel, int *fill)
+static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zxy, double *zlevel, int *fill)
 {
   /* 
      arguments :
@@ -265,7 +265,7 @@ static void PaintTriangle (double *sx, double *sy, double *fxy, int *zxy, double
     resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
     resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
     color = fill[zxy[0]]; nr = 3;
-    nsp_gengine->fillpolylines(resx,resy,&color,1,nr);
+    nsp_gengine->fillpolylines(Xgc,resx,resy,&color,1,nr);
     return;
   }
 
@@ -305,7 +305,7 @@ static void PaintTriangle (double *sx, double *sy, double *fxy, int *zxy, double
   FindIntersection(sx, sy, fxy, zlevel[zxy[0]], 0, 2, &xEdge2, &yEdge2);
   resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
   color = fill[zxy[0]];
-  nsp_gengine->fillpolylines(resx,resy,&color,1,nr);
+  nsp_gengine->fillpolylines(Xgc,resx,resy,&color,1,nr);
 
   /*------------------------------------+ 
   | compute the intermediary polygon(s) |
@@ -327,7 +327,7 @@ static void PaintTriangle (double *sx, double *sy, double *fxy, int *zxy, double
     FindIntersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
     resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
     color = fill[izone];
-    nsp_gengine->fillpolylines(resx,resy,&color,1,nr);
+    nsp_gengine->fillpolylines(Xgc,resx,resy,&color,1,nr);
   };
 
   /*-----------------------+ 
@@ -342,7 +342,7 @@ static void PaintTriangle (double *sx, double *sy, double *fxy, int *zxy, double
   /* the last point is P2 */
   resx[nr] = inint(sx[2]); resy[nr] = inint(sy[2]); nr++;
   color = fill[zxy[2]];
-  nsp_gengine->fillpolylines(resx,resy,&color,1,nr);
+  nsp_gengine->fillpolylines(Xgc,resx,resy,&color,1,nr);
 }
 
 static void FindIntersection(double *sx, double *sy, double *fxy, double z, int inda, int indb, integer *xint, integer *yint)

@@ -8,8 +8,8 @@
 #include <math.h>
 #include <stdio.h>
 #include "nsp/math.h"
-#include "Graphics.h"
-/* #include "PloEch.h" */
+#include "nsp/graphics/Graphics.h"
+/* #include "nsp/graphics/PloEch.h" */
 
 #ifdef __STDC__
 void wininfo(char *format,...);
@@ -24,16 +24,23 @@ extern double C2F(dsort)();
 
 static double xx1,yy1;
 
-#define PGEOX(x1,y1,z1) inint(xx1= current_scale.Wscx1*(TRX(x1,y1,z1)-current_scale.frect[0]) +current_scale.Wxofset1);
-#define PGEOY(x1,y1,z1) inint(yy1= current_scale.Wscy1*(-TRY(x1,y1,z1)+current_scale.frect[3])+current_scale.Wyofset1);
+#define PGEOX(x1,y1,z1) inint(xx1= Xgc->scales->Wscx1*(TRX(x1,y1,z1)-Xgc->scales->frect[0]) +Xgc->scales->Wxofset1);
+#define PGEOY(x1,y1,z1) inint(yy1= Xgc->scales->Wscy1*(-TRY(x1,y1,z1)+Xgc->scales->frect[3])+Xgc->scales->Wyofset1);
 
-static void C2F(plot3dg) ( char *name,int (*func)(), double *x, double *y,double *z,
-				   integer *p, integer *q, double *teta,double *alpha,char *legend,
-				   integer *flag,double *bbox);
+static void C2F(plot3dg) (BCG *Xgc, char *name,
+			  int (*func)(BCG *Xgc,integer *polyx, integer *polyy, integer *fill,
+				      integer whiteid, double zmin, double zmax, double *x, 
+				      double *y, double *z, integer i, integer j, integer jj1,
+				      integer *p, integer dc, integer fg),
+			  double *x, double *y,double *z,
+			  integer *p, integer *q, double *teta,double *alpha,char *legend,
+			  integer *flag,double *bbox); 
 
-static void C2F(fac3dg) ( char *name, int iflag, double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox);
+static void C2F(fac3dg) ( BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, 
+			  integer *cvect, integer *p, integer *q, double *teta, double *alpha,
+			  char *legend, integer *flag, double *bbox);
 
-static void dbox (void);
+static void dbox (BCG *Xgc);
 
 
 /*-------------------------------------------------------------------------
@@ -66,33 +73,33 @@ static void dbox (void);
  *     
  *  <-- The arguments are not modified 
  *-------------------------------------------------------------------------*/
-int C2F(plot3d)(double *x, double *y, double *z, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(plot3d)(BCG *Xgc,double *x, double *y, double *z, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
 {
-  C2F(plot3dg)("plot3d",DPoints,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+  C2F(plot3dg)(Xgc,"plot3d",DPoints,x,y,z,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(plot3d1)(double *x, double *y, double *z, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(plot3d1)(BCG *Xgc,double *x, double *y, double *z, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
 {
-  C2F(plot3dg)("plot3d1",DPoints1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+  C2F(plot3dg)(Xgc,"plot3d1",DPoints1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(fac3d)(double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(fac3d)(BCG *Xgc,double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
 {
-  C2F(fac3dg)("fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  C2F(fac3dg)(Xgc,"fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(fac3d1)(double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(fac3d1)(BCG *Xgc,double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
 {
-  C2F(fac3dg)("fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  C2F(fac3dg)(Xgc,"fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(fac3d2)(double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(fac3d2)(BCG *Xgc,double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
 {
-  C2F(fac3dg)("fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  C2F(fac3dg)(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
@@ -102,7 +109,13 @@ int C2F(fac3d2)(double *x, double *y, double *z, integer *cvect, integer *p, int
  *
  */
 
-static void C2F(plot3dg)(char *name, int (*func) (/* ??? */), double *x, double *y, double *z, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+static void C2F(plot3dg)(BCG *Xgc,char *name,
+			 int (*func)(BCG *Xgc,integer *polyx, integer *polyy, integer *fill,
+				     integer whiteid, double zmin, double zmax, double *x, 
+				     double *y, double *z, integer i, integer j, integer jj1,
+				     integer *p, integer dc, integer fg),
+			 double *x, double *y, double *z, integer *p, integer *q, 
+			 double *teta, double *alpha, char *legend, integer *flag, double *bbox)
 {
   static integer InsideU[4],InsideD[4],fg,fg1,dc;
   /* solid = color of 3D frame */
@@ -116,12 +129,12 @@ static void C2F(plot3dg)(char *name, int (*func) (/* ??? */), double *x, double 
   if (nsp_gengine1.get_driver()=='R') 
     {
       if (strcmp(name,"plot3d")==0) 
-	store_Plot3D(x,y,z,p,q,teta,alpha,legend,flag,bbox);
+	store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
       else 
-	store_Plot3D1(x,y,z,p,q,teta,alpha,legend,flag,bbox);
+	store_Plot3D1(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
     }
 
-  fg = nsp_gengine->xget_foreground();
+  fg = nsp_gengine->xget_foreground(Xgc);
  
   if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
     {
@@ -138,24 +151,24 @@ static void C2F(plot3dg)(char *name, int (*func) (/* ??? */), double *x, double 
 
 
   if ( flag[1] ==0)
-    SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,0L);
+    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
   else
-    SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   /** Calcule l' Enveloppe Convex de la boite **/
   /** ainsi que les triedres caches ou non **/
-  Convex_Box(xbox,ybox,InsideU,InsideD,legend,flag,bbox);
+  Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
   /** Le triedre cach\'e **/
-  fg1 = nsp_gengine->xget_hidden3d();
+  fg1 = nsp_gengine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     {
       cache=InsideD[0];
-      if (flag[2] >=2 )DrawAxis(xbox,ybox,InsideD,fg1);
+      if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
     }
   else 
     {
       cache=InsideU[0]-4;
-      if (flag[2] >=2 )DrawAxis(xbox,ybox,InsideU,fg1);
+      if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
     }
   polyx = graphic_alloc(0,5*(*q),sizeof(int));
   polyy = graphic_alloc(1,5*(*q),sizeof(int));
@@ -168,9 +181,9 @@ static void C2F(plot3dg)(char *name, int (*func) (/* ??? */), double *x, double 
 
   /** The 3d plot **/
 
-  whiteid = nsp_gengine->xget_last();
+  whiteid = nsp_gengine->xget_last(Xgc);
   dc =  flag[0];
-  fg1 = nsp_gengine->xget_hidden3d();
+  fg1 = nsp_gengine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;   
   for ( i =0 ; i < (*q)-1 ; i++)   fill[i]= dc ;
   polysize=5;
@@ -184,11 +197,11 @@ static void C2F(plot3dg)(char *name, int (*func) (/* ??? */), double *x, double 
 	  int npolyok=0;
 	  for ( j =0 ; j < (*q)-1 ; j++)
 	    {
-	     npolyok += (*func)(polyx,polyy,fill,whiteid,zmin,zmax,
+	     npolyok += (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
 				x,y,z,i,j,npolyok,p,dc,fg1);
 	    }
 	  if ( npolyok != 0) 
-	    nsp_gengine->fillpolylines(polyx,polyy,fill,npolyok,polysize);
+	    nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
       break;
     case 1 : 
@@ -197,11 +210,11 @@ static void C2F(plot3dg)(char *name, int (*func) (/* ??? */), double *x, double 
 	  int npolyok=0;
 	  for ( j =0  ; j < (*q)-1  ; j++)
 	    {
-	      npolyok += (*func)(polyx,polyy,fill,whiteid,zmin,zmax,
+	      npolyok += (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
 				 x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
 	   }
 	  if ( npolyok != 0) 
-	    nsp_gengine->fillpolylines(polyx,polyy,fill,npolyok,polysize);
+	    nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
       break;
     case 2 : 
@@ -210,11 +223,11 @@ static void C2F(plot3dg)(char *name, int (*func) (/* ??? */), double *x, double 
 	  int npolyok=0;
 	  for ( j = 0 ; j < (*q)-1 ; j++)
 	    {
-	     npolyok +=     (*func)(polyx,polyy,fill,whiteid,zmin,zmax,
+	     npolyok +=     (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
 				    x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
 	   }
 	  if ( npolyok != 0) 
-	    nsp_gengine->fillpolylines(polyx,polyy,fill,npolyok,polysize);
+	    nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
       break;
     case 3 : 
@@ -223,11 +236,11 @@ static void C2F(plot3dg)(char *name, int (*func) (/* ??? */), double *x, double 
 	  int npolyok=0;
 	  for ( j =0 ; j < (*q)-1 ; j++)
 	    {
-	     npolyok += (*func)(polyx,polyy,fill,whiteid,zmin,zmax,
+	     npolyok += (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
 				x,y,z,i,j,npolyok,p,dc,fg1);
 	   }
 	  if ( npolyok != 0) 
-	    nsp_gengine->fillpolylines(polyx,polyy,fill,npolyok,polysize);
+	    nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
       break;
     }
@@ -236,13 +249,13 @@ static void C2F(plot3dg)(char *name, int (*func) (/* ??? */), double *x, double 
     {
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis(xbox,ybox,InsideU,fg);
+	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
       else 
-	DrawAxis(xbox,ybox,InsideD,fg);
+	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
     }
 }
 
-static void C2F(fac3dg)(char *name, int iflag, double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
 {
   static integer InsideU[4],InsideD[4],fg1;
   integer polysize,npoly,whiteid;
@@ -254,13 +267,13 @@ static void C2F(fac3dg)(char *name, int iflag, double *x, double *y, double *z, 
   /** If Record is on **/
   if (nsp_gengine1.get_driver()=='R') {
       if (strcmp(name,"fac3d")==0) 	
-	store_Fac3D(x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+	store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
       else if (strcmp(name,"fac3d1")==0) 	
-	store_Fac3D1(x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+	store_Fac3D1(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
       else if (strcmp(name,"fac3d2")==0) 	
-	store_Fac3D2(x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+	store_Fac3D2(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
       else 
-	store_Fac3D3(x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+	store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   }
 
   if (flag[1]!=1 && flag[1] != 0 && flag[1]!=3 && flag[1]!=5)
@@ -278,24 +291,24 @@ static void C2F(fac3dg)(char *name, int iflag, double *x, double *y, double *z, 
       zmax=bbox[5];
     }
   if ( flag[1]==0)
-    SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,0L);
+    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
   else
-    SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   /** Calcule l' Enveloppe Convex de la boite **/
   /** ainsi que les triedres caches ou non **/
-  Convex_Box(xbox,ybox,InsideU,InsideD,legend,flag,bbox);
+  Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
   /** Le triedre cach\'e **/
-  fg1 = nsp_gengine->xget_hidden3d();
+  fg1 = nsp_gengine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;  
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     {
       cache=InsideD[0];
-      if (flag[2] >=2 )DrawAxis(xbox,ybox,InsideD,fg1);
+      if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
     }
   else 
     {
       cache=InsideU[0]-4;
-      if (flag[2] >=2 )DrawAxis(xbox,ybox,InsideU,fg1);
+      if (flag[2] >=2 )DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
     }
   polyz = graphic_alloc(5,(*q),sizeof(double));
   if ( (polyz == NULL) && (*q) != 0)
@@ -313,9 +326,9 @@ static void C2F(fac3dg)(char *name, int iflag, double *x, double *y, double *z, 
       return;
     }
 
-  whiteid  = nsp_gengine->xget_last();
+  whiteid  = nsp_gengine->xget_last(Xgc);
   fill[0]=  flag[0];
-  fg1 = nsp_gengine->xget_hidden3d();
+  fg1 = nsp_gengine->xget_hidden3d(Xgc);
   /** tri **/
   for ( i =0 ; i < *q ; i++)
     {
@@ -384,9 +397,9 @@ static void C2F(fac3dg)(char *name, int iflag, double *x, double *y, double *z, 
 	      /* modification du to E Segre to avoid drawing of hidden facets */
 	      if (fg1>0) 
 		{
-		  nsp_gengine->fillpolylines(polyx,polyy,fill,npoly,polysize);
+		  nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 		}
-	      /*nsp_gengine->fillpolylines("str",polyx,polyy,fill,&npoly,&polysize);*/
+	      /*nsp_gengine->fillpolylines(Xgc,"str",polyx,polyy,fill,&npoly,&polysize);*/
 	    }
 	  else if ( iflag == 1) 
 	    {
@@ -397,14 +410,14 @@ static void C2F(fac3dg)(char *name, int iflag, double *x, double *y, double *z, 
 		zl+= z[(*p)*locindex[i]+k];
 	      fill[0]=inint((whiteid-1)*((zl/(*p))-zmin)/(zmax-zmin))+1;
 	      if ( flag[0] < 0 ) fill[0]=-fill[0];
-	      nsp_gengine->fillpolylines(polyx,polyy,fill,npoly,polysize);
+	      nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 	    }
 	  else if ( iflag == 2) 
 	    {
 	      /* colors are given by cvect */
 	      fill[0]= cvect[locindex[i]];
 	      if ( flag[0] < 0 ) fill[0]=-fill[0];
-	      nsp_gengine->fillpolylines(polyx,polyy,fill,npoly,polysize);
+	      nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 	    }
 	  else if (iflag ==3) { /* colors are given by cvect of size (*p) times (*q) */
 	      int k;
@@ -414,10 +427,10 @@ static void C2F(fac3dg)(char *name, int iflag, double *x, double *y, double *z, 
  		return;
 	      } else {
        	        for ( k= 0 ; k < *p ; k++) fill[k]= cvect[(*p)*locindex[i]+k];
-                shade(polyx,polyy,fill,*p,flag[0]);
+                shade(Xgc,polyx,polyy,fill,*p,flag[0]);
 	      }
 	  }
-	  else nsp_gengine->fillpolylines(polyx,polyy,fill,npoly,polysize);
+	  else nsp_gengine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 	  /* End of modified code by polpoth 4/5/2000 */
 
 	}
@@ -425,12 +438,12 @@ static void C2F(fac3dg)(char *name, int iflag, double *x, double *y, double *z, 
   if ( flag[2] >=3 )
     {
       integer fg;
-      fg = nsp_gengine->xget_foreground();
+      fg = nsp_gengine->xget_foreground(Xgc);
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis(xbox,ybox,InsideU,fg);
+	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
       else 
-	DrawAxis(xbox,ybox,InsideD,fg);
+	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
     }
 }
 
@@ -438,7 +451,7 @@ static void C2F(fac3dg)(char *name, int iflag, double *x, double *y, double *z, 
  *  returns in (polyx, polyy) the polygon for one facet of the surface 
  *--------------------------------------------------------------------*/
 
-int DPoints1(integer *polyx, integer *polyy, integer *fill, integer whiteid, double zmin, double zmax, double *x, double *y, double *z, integer i, integer j, integer jj1, integer *p, integer dc, integer fg)
+int DPoints1(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer whiteid, double zmin, double zmax, double *x, double *y, double *z, integer i, integer j, integer jj1, integer *p, integer dc, integer fg)
 {
   polyx[  5*jj1] =PGEOX(x[i]  ,y[j]  ,z[i+(*p)*j]);
   if ( finite(xx1)==0 )return(0);
@@ -474,7 +487,7 @@ int DPoints1(integer *polyx, integer *polyy, integer *fill, integer whiteid, dou
   
 }
 
-int DPoints(integer *polyx, integer *polyy, integer *fill, integer whiteid, double zmin, double zmax, double *x, double *y, double *z, integer i, integer j, integer jj1, integer *p, integer dc, integer fg)
+int DPoints(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer whiteid, double zmin, double zmax, double *x, double *y, double *z, integer i, integer j, integer jj1, integer *p, integer dc, integer fg)
 {
 #ifdef lint
   whiteid,fill[0],zmin,zmax;
@@ -511,7 +524,7 @@ int DPoints(integer *polyx, integer *polyy, integer *fill, integer whiteid, doub
  * param3d function 
  *-------------------------------------------------------------------*/
 
-int C2F(param3d)(double *x, double *y, double *z, integer *n, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, integer *n, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
 {
   static integer InsideU[4],InsideD[4];
   static double xbox[8],ybox[8],zbox[8];
@@ -521,8 +534,8 @@ int C2F(param3d)(double *x, double *y, double *z, integer *n, double *teta, doub
   int fg1;
   /** If Record is on **/
   if (nsp_gengine1.get_driver()=='R') 
-    store_Param3D(x,y,z,n,teta,alpha,legend,flag,bbox);
-  style[0] = nsp_gengine->xget_dash();
+    store_Param3D(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
+  style[0] = nsp_gengine->xget_dash(Xgc);
   if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
     {
       bbox[0]=(double) Mini(x,*n);bbox[1]=(double) Maxi(x,*n);
@@ -530,23 +543,23 @@ int C2F(param3d)(double *x, double *y, double *z, integer *n, double *teta, doub
       bbox[4]=(double) Mini(z,*n);bbox[5]=(double) Maxi(z,*n);
     }
   if ( flag[1] !=0)
-    SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   else 
-    SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,0L);
+    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
   /** Calcule l' Enveloppe Convexe de la boite **/
   /** ainsi que les triedres caches ou non **/
-  Convex_Box(xbox,ybox,InsideU,InsideD,legend,flag,bbox);
-  fg1 = nsp_gengine->xget_hidden3d();
+  Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
+  fg1 = nsp_gengine->xget_hidden3d(Xgc);
   /** Le triedre cache **/
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     {
       /* cache=InsideD[0];*/
-      if (flag[2] >=2 ) DrawAxis(xbox,ybox,InsideD,fg1);
+      if (flag[2] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
     }
   else 
     {
       /* cache=InsideU[0]-4; */
-      if (flag[2] >=2 ) DrawAxis(xbox,ybox,InsideU,fg1);
+      if (flag[2] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
     }
 
   xm = graphic_alloc(0,(*n),sizeof(int));
@@ -575,19 +588,19 @@ int C2F(param3d)(double *x, double *y, double *z, integer *n, double *teta, doub
 	  nel++;
 	}
       if ( nel > 0 ) 
-	nsp_gengine->drawpolylines(xm,ym,style,1,nel);
+	nsp_gengine->drawpolylines(Xgc,xm,ym,style,1,nel);
       init = j+1;
       if ( init >= (*n)) break;
     }
   if (flag[2] >=3 ) 
     {
       integer fg;
-      fg = nsp_gengine->xget_foreground();
+      fg = nsp_gengine->xget_foreground(Xgc);
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis(xbox,ybox,InsideU,fg);
+	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
       else 
-	DrawAxis(xbox,ybox,InsideD,fg);
+	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
     }
   return(0);
 }
@@ -597,7 +610,7 @@ int C2F(param3d)(double *x, double *y, double *z, integer *n, double *teta, doub
  * param3d1 function 
  *-------------------------------------------------------------------*/
 
-int C2F(param3d1)(double *x, double *y, double *z, integer *m, integer *n, integer *iflag, integer *colors, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, integer *m, integer *n, integer *iflag, integer *colors, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
 {
   static integer InsideU[4],InsideD[4];
   static double xbox[8],ybox[8],zbox[8];
@@ -607,8 +620,8 @@ int C2F(param3d1)(double *x, double *y, double *z, integer *m, integer *n, integ
   integer fg1,cur;
   /** If Record is on **/
   if (nsp_gengine1.get_driver()=='R') 
-    store_Param3D1(x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
-  style[0] = nsp_gengine->xget_dash();
+    store_Param3D1(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
+  style[0] = nsp_gengine->xget_dash(Xgc);
   if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
     {
       int mn=*n*(*m);
@@ -617,23 +630,23 @@ int C2F(param3d1)(double *x, double *y, double *z, integer *m, integer *n, integ
       bbox[4]=(double) Mini(z,mn);bbox[5]=(double) Maxi(z,mn);
     }
   if ( flag[1] !=0)
-    SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
+    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   else 
-    SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,0L);
+    SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
   /** Calcule l' Enveloppe Convexe de la boite **/
   /** ainsi que les triedres caches ou non **/
-  Convex_Box(xbox,ybox,InsideU,InsideD,legend,flag,bbox);
-  fg1 = nsp_gengine->xget_hidden3d();
+  Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,legend,flag,bbox);
+  fg1 = nsp_gengine->xget_hidden3d(Xgc);
   /** Le triedre cache **/
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
     {
       /* cache=InsideD[0];*/
-      if (flag[2] >=2 ) DrawAxis(xbox,ybox,InsideD,fg1);
+      if (flag[2] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
     }
   else 
     {
       /* cache=InsideU[0]-4; */
-      if (flag[2] >=2 ) DrawAxis(xbox,ybox,InsideU,fg1);
+      if (flag[2] >=2 ) DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
     }
 
   xm = graphic_alloc(0,(*m),sizeof(int));
@@ -666,7 +679,7 @@ int C2F(param3d1)(double *x, double *y, double *z, integer *m, integer *n, integ
 	      nel++;
 	    }
 	  if ( nel > 0 ) 
-	    nsp_gengine->drawpolylines(xm,ym,style,1,nel);
+	    nsp_gengine->drawpolylines(Xgc,xm,ym,style,1,nel);
 	  init = j+1;
 	  if ( init >= (*m)) break;
 	}
@@ -674,12 +687,12 @@ int C2F(param3d1)(double *x, double *y, double *z, integer *m, integer *n, integ
   if (flag[2] >=3 ) 
     {
       integer fg;
-      fg = nsp_gengine->xget_foreground();
+      fg = nsp_gengine->xget_foreground(Xgc);
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
-	DrawAxis(xbox,ybox,InsideU,fg);
+	DrawAxis(Xgc,xbox,ybox,InsideU,fg);
       else 
-	DrawAxis(xbox,ybox,InsideD,fg);
+	DrawAxis(Xgc,xbox,ybox,InsideD,fg);
     }
   return(0);
 }
@@ -689,25 +702,25 @@ int C2F(param3d1)(double *x, double *y, double *z, integer *m, integer *n, integ
  * box3d 
  *-------------------------------------------------------------------*/
 
-int C2F(box3d)(double *xbox, double *ybox, double *zbox)
+int C2F(box3d)(BCG *Xgc,double *xbox, double *ybox, double *zbox)
 {
   static integer InsideU[4],InsideD[4],flag[]={1,1,3},fg,fg1;
   /** Calcule l' Enveloppe Convexe de la boite **/
   /** ainsi que les triedres caches ou non **/
-  Convex_Box(xbox,ybox,InsideU,InsideD,"X@Y@Z",flag,current_scale.bbox1);
+  Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,"X@Y@Z",flag,Xgc->scales->bbox1);
   /** le triedre vu **/
-  fg = nsp_gengine->xget_foreground();
+  fg = nsp_gengine->xget_foreground(Xgc);
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
-    DrawAxis(xbox,ybox,InsideU,fg);
+    DrawAxis(Xgc,xbox,ybox,InsideU,fg);
   else 
-    DrawAxis(xbox,ybox,InsideD,fg);
-  fg1 = nsp_gengine->xget_hidden3d();
+    DrawAxis(Xgc,xbox,ybox,InsideD,fg);
+  fg1 = nsp_gengine->xget_hidden3d(Xgc);
   if (fg1==-1) fg1=0;
   /** Le triedre cache **/
   if (zbox[InsideU[0]] > zbox[InsideD[0]])
-      DrawAxis(xbox,ybox,InsideD,fg1);
+      DrawAxis(Xgc,xbox,ybox,InsideD,fg1);
   else 
-      DrawAxis(xbox,ybox,InsideU,fg1);
+      DrawAxis(Xgc,xbox,ybox,InsideU,fg1);
   return(0);
 }
 
@@ -716,7 +729,7 @@ int C2F(box3d)(double *xbox, double *ybox, double *zbox)
  * 3d geometric transformation 
  *-------------------------------------------------------------------*/
 
-int C2F(geom3d)(double *x, double *y, double *z, integer *n)
+int C2F(geom3d)(BCG *Xgc,double *x, double *y, double *z, integer *n)
 {
   integer j;
   for ( j =0 ; j < (*n) ; j++)	 
@@ -737,17 +750,17 @@ int C2F(geom3d)(double *x, double *y, double *z, integer *n)
  * functions for 3D scales 
  *-------------------------------------------------------------------*/
 
-void SetEch3d(double *xbox, double *ybox, double *zbox, double *bbox, double *teta, double *alpha)
+void SetEch3d(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, double *teta, double *alpha)
 {
-  SetEch3d1(xbox,ybox,zbox,bbox,teta,alpha,1L);
+  SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,1L);
 }
 
 /* 
- * if flag==1,2,3  m and bbox and current_scale are  recomputed  
+ * if flag==1,2,3  m and bbox and Xgc->scales->are  recomputed  
  * if flag==0      we only change m without changing scales 
  */
 
-void SetEch3d1(double *xbox, double *ybox, double *zbox, double *bbox, double *teta, double *alpha, integer flag)
+void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, double *teta, double *alpha, integer flag)
 {
   double xmmin,ymmax,xmmax,ymmin,FRect[4],WRect[4],ARect[4];
   integer ib;
@@ -760,22 +773,22 @@ void SetEch3d1(double *xbox, double *ybox, double *zbox, double *bbox, double *t
   Teta=*teta;
   Alpha=*alpha;
   /*  if (flag==0) {
-    Alpha=current_scale.alpha;
-    Teta=current_scale.theta;
+    Alpha=Xgc->scales->alpha;
+    Teta=Xgc->scales->theta;
       }
   else {
-    current_scale.alpha = Alpha;
-    current_scale.theta = Teta;
+    Xgc->scales->alpha = Alpha;
+    Xgc->scales->theta = Teta;
     }*/
-  current_scale.alpha = Alpha;
-  current_scale.theta = Teta;
+  Xgc->scales->alpha = Alpha;
+  Xgc->scales->theta = Teta;
   cost=cos((Teta)*M_PI/180.0);
   sint=sin((Teta)*M_PI/180.0);
   cosa=cos((Alpha)*M_PI/180.0);
   sina=sin((Alpha)*M_PI/180.0);
-  current_scale.m[0][0]= -sint    ;    current_scale.m[0][1]= cost      ;    current_scale.m[0][2]= 0;
-  current_scale.m[1][0]= -cost*cosa;   current_scale.m[1][1]= -sint*cosa;    current_scale.m[1][2]= sina;
-  current_scale.m[2][0]=  cost*sina;   current_scale.m[2][1]= sint*sina;     current_scale.m[2][2]= cosa;
+  Xgc->scales->m[0][0]= -sint    ;    Xgc->scales->m[0][1]= cost      ;    Xgc->scales->m[0][2]= 0;
+  Xgc->scales->m[1][0]= -cost*cosa;   Xgc->scales->m[1][1]= -sint*cosa;    Xgc->scales->m[1][2]= sina;
+  Xgc->scales->m[2][0]=  cost*sina;   Xgc->scales->m[2][1]= sint*sina;     Xgc->scales->m[2][2]= cosa;
   /* Coordonn\'ees apr\`es transformation g\'eometrique de la
    * boite qui entoure le plot3d                            
    * le plan de projection est defini par x et y            
@@ -783,9 +796,9 @@ void SetEch3d1(double *xbox, double *ybox, double *zbox, double *bbox, double *t
   for (ib=0;ib<6 ;ib++) 
     { 
       if (flag==0) 
-	bbox[ib]=current_scale.bbox1[ib];
+	bbox[ib]=Xgc->scales->bbox1[ib];
       else 
-	current_scale.bbox1[ib]=bbox[ib];
+	Xgc->scales->bbox1[ib]=bbox[ib];
     }
   xbox[0]=TRX(bbox[0],bbox[2],bbox[4]);
   ybox[0]=TRY(bbox[0],bbox[2],bbox[4]);
@@ -822,8 +835,8 @@ void SetEch3d1(double *xbox, double *ybox, double *zbox, double *bbox, double *t
   if ( flag == 2 || flag == 3 )
     {
       /* get current window size */
-      nsp_gengine->xget_windowdim(wdim,wdim+1);
-      getscale2d(WRect,FRect,logf,ARect);
+      nsp_gengine->xget_windowdim(Xgc,wdim,wdim+1);
+      getscale2d(Xgc,WRect,FRect,logf,ARect);
       wmax=linint((double)wdim[0] * WRect[2]);
       hmax=linint((double)wdim[1] * WRect[3]); 
     }
@@ -861,8 +874,8 @@ void SetEch3d1(double *xbox, double *ybox, double *zbox, double *bbox, double *t
   if (flag !=0 )
      {
       FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
-      set_scale("tftttf",NULL,FRect,aaint,"nn",NULL);
-      current_scale.metric3d=flag; /* the metric mode is stored into the
+      set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
+      Xgc->scales->metric3d=flag; /* the metric mode is stored into the
                              * List of Scales */
      }
 /* end of code added by es */
@@ -873,7 +886,7 @@ void SetEch3d1(double *xbox, double *ybox, double *zbox, double *bbox, double *t
  * constituent le triedre dans les tableaux xbox et ybox 
  *-----------------------------------------------------------------*/ 
 
-void DrawAxis(double *xbox, double *ybox, integer *Indices, integer style)
+void DrawAxis(BCG *Xgc,double *xbox, double *ybox, integer *Indices, integer style)
 {
   integer ixbox[6],iybox[6],npoly=6,lstyle;
   integer i,iflag=0;
@@ -884,9 +897,9 @@ void DrawAxis(double *xbox, double *ybox, integer *Indices, integer style)
   ixbox[1]=XScale(xbox[Indices[1]]);iybox[1]=YScale(ybox[Indices[1]]);
   ixbox[3]=XScale(xbox[Indices[2]]);iybox[3]=YScale(ybox[Indices[2]]);
   ixbox[5]=XScale(xbox[Indices[3]]);iybox[5]=YScale(ybox[Indices[3]]);
-  lstyle = nsp_gengine->xset_dash(1);
-  nsp_gengine->drawsegments(ixbox,iybox,npoly,&style,iflag);
-  nsp_gengine->xset_dash(lstyle);
+  lstyle = nsp_gengine->xset_dash(Xgc,1);
+  nsp_gengine->drawsegments(Xgc,ixbox,iybox,npoly,&style,iflag);
+  nsp_gengine->xset_dash(Xgc,lstyle);
 }
 
 /*---------------------------------------------------------------------
@@ -895,7 +908,7 @@ void DrawAxis(double *xbox, double *ybox, integer *Indices, integer style)
  * qui sont sur les 2 tri\`edres a l'interieur de l'enveloppe convexe
  *---------------------------------------------------------------------*/
 
-void Convex_Box(double *xbox, double *ybox, integer *InsideU, integer *InsideD, char *legend, integer *flag, double *bbox)
+void Convex_Box(BCG *Xgc,double *xbox, double *ybox, integer *InsideU, integer *InsideD, char *legend, integer *flag, double *bbox)
 {
   double xmaxi;
   integer ixbox[8],iybox[8];
@@ -969,18 +982,18 @@ void Convex_Box(double *xbox, double *ybox, integer *InsideU, integer *InsideD, 
    }
   ixbox[6]=ixbox[0];iybox[6]=iybox[0];
   p=7,n=1;
-  dvect[0]= nsp_gengine->xget_foreground();
+  dvect[0]= nsp_gengine->xget_foreground(Xgc);
   /** On trace l'enveloppe cvxe **/
-  dash = nsp_gengine->xset_dash(1);
+  dash = nsp_gengine->xset_dash(Xgc,1);
     
   if (flag[2]>=3){
-    nsp_gengine->drawpolylines(ixbox,iybox,dvect,n,p);
+    nsp_gengine->drawpolylines(Xgc,ixbox,iybox,dvect,n,p);
   }
-  pat = nsp_gengine->xset_pattern(dvect[0]);
+  pat = nsp_gengine->xset_pattern(Xgc,dvect[0]);
 
-  if (flag[2]>=3)AxesStrings(flag[2],ixbox,iybox,xind,legend,bbox);
-   nsp_gengine->xset_pattern(pat);
-  nsp_gengine->xset_dash(dash);
+  if (flag[2]>=3)AxesStrings(Xgc,flag[2],ixbox,iybox,xind,legend,bbox);
+  nsp_gengine->xset_pattern(Xgc,pat);
+  nsp_gengine->xset_dash(Xgc,dash);
 
 }
 
@@ -989,7 +1002,7 @@ void Convex_Box(double *xbox, double *ybox, integer *InsideU, integer *InsideD, 
 /** (ixbox,iybox) : Coordonnees des points de l'envelloppe cvxe en pixel **/
 /** xind : indices des points de l'enveloppe cvxe ds xbox et ybox **/
 
-void AxesStrings(integer axflag, integer *ixbox, integer *iybox, integer *xind, char *legend, double *bbox)
+void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, integer *xind, char *legend, double *bbox)
 {
   integer xz[2];
   integer iof;
@@ -1005,7 +1018,7 @@ void AxesStrings(integer axflag, integer *ixbox, integer *iybox, integer *xind, 
   strcpy(loc,legend);
   legx=strtok(loc,"@");legy=strtok((char *)0,"@");legz=strtok((char *)0,"@");
   /** le cot\'e gauche ( c'est tjrs un axe des Z **/
-  nsp_gengine->xget_windowdim(xz,xz+1);
+  nsp_gengine->xget_windowdim(Xgc,xz,xz+1);
   iof = (xz[0]+xz[1])/50;
   x=ixbox[2]-iof ;y=iybox[2]-iof;
   if ( axflag>=4)
@@ -1019,12 +1032,12 @@ void AxesStrings(integer axflag, integer *ixbox, integer *iybox, integer *xind, 
       Ticsdir[1]=0;
       BBoxToval(&fx,&fy,&fz,xind[2],bbox);
       BBoxToval(&lx,&ly,&lz,xind[3],bbox);
-      TDAxis(1L,fz,lz,xnax,FPoint,LPoint,Ticsdir);
+      TDAxis(Xgc,1L,fz,lz,xnax,FPoint,LPoint,Ticsdir);
     }
   if (legz != 0)
     {
-      nsp_gengine->boundingbox(legz,x,y,rect);
-      nsp_gengine->displaystring(legz,(x=x - rect[2],x),y,flag ,ang);
+      nsp_gengine->boundingbox(Xgc,legz,x,y,rect);
+      nsp_gengine->displaystring(Xgc,legz,(x=x - rect[2],x),y,flag ,ang);
     }
   /** le cot\^e en bas \`a gauche **/
   x=inint((ixbox[3]+ixbox[4])/2.0 -iof);
@@ -1042,13 +1055,13 @@ void AxesStrings(integer axflag, integer *ixbox, integer *iybox, integer *xind, 
 	  Ticsdir[1]=iybox[4]-iybox[5];
 	  BBoxToval(&fx,&fy,&fz,xind[3],bbox);
 	  BBoxToval(&lx,&ly,&lz,xind[4],bbox);
-	  TDAxis(2L,fx,lx,xnax,FPoint,LPoint,Ticsdir);
+	  TDAxis(Xgc,2L,fx,lx,xnax,FPoint,LPoint,Ticsdir);
 	}
       if (legx != 0)
 	{
 
-	  nsp_gengine->boundingbox(legx,x,y,rect);
-	  nsp_gengine->displaystring(legx,(x=x-rect[2],x),y,flag,ang);
+	  nsp_gengine->boundingbox(Xgc,legx,x,y,rect);
+	  nsp_gengine->displaystring(Xgc,legx,(x=x-rect[2],x),y,flag,ang);
 	}
     }
   else 
@@ -1064,13 +1077,13 @@ void AxesStrings(integer axflag, integer *ixbox, integer *iybox, integer *xind, 
 	  Ticsdir[1]=iybox[4]-iybox[5];
 	  BBoxToval(&fx,&fy,&fz,xind[3],bbox);
 	  BBoxToval(&lx,&ly,&lz,xind[4],bbox);
-	  TDAxis(2L,fy,ly,xnax,FPoint,LPoint,Ticsdir);
+	  TDAxis(Xgc,2L,fy,ly,xnax,FPoint,LPoint,Ticsdir);
 	}
       if (legy != 0)
 	{
 
-	  nsp_gengine->boundingbox(legy,x,y,rect);
-	  nsp_gengine->displaystring(legy,(x=x-rect[2],x),y,flag,ang);
+	  nsp_gengine->boundingbox(Xgc,legy,x,y,rect);
+	  nsp_gengine->displaystring(Xgc,legy,(x=x-rect[2],x),y,flag,ang);
 	}
     }
   /** le cot\'e en bas a droite **/
@@ -1089,11 +1102,11 @@ void AxesStrings(integer axflag, integer *ixbox, integer *iybox, integer *xind, 
 	  Ticsdir[1]=iybox[4]-iybox[3];
 	  BBoxToval(&fx,&fy,&fz,xind[4],bbox);
 	  BBoxToval(&lx,&ly,&lz,xind[5],bbox);
-	  TDAxis(3L,fx,lx,xnax,FPoint,LPoint,Ticsdir); 
+	  TDAxis(Xgc,3L,fx,lx,xnax,FPoint,LPoint,Ticsdir); 
 	}
       if (legx != 0) 
 	{
-	  nsp_gengine->displaystring(legx,x,y,flag,ang);
+	  nsp_gengine->displaystring(Xgc,legx,x,y,flag,ang);
 	}
     }
   else 
@@ -1109,11 +1122,11 @@ void AxesStrings(integer axflag, integer *ixbox, integer *iybox, integer *xind, 
 	  Ticsdir[1]=iybox[4]-iybox[3];
 	  BBoxToval(&fx,&fy,&fz,xind[4],bbox);
 	  BBoxToval(&lx,&ly,&lz,xind[5],bbox);
-	  TDAxis(3L,fy,ly,xnax,FPoint,LPoint,Ticsdir); 
+	  TDAxis(Xgc,3L,fy,ly,xnax,FPoint,LPoint,Ticsdir); 
 	}
       if (legy != 0) 
 	{
-	  nsp_gengine->displaystring(legy,x,y,flag,ang);
+	  nsp_gengine->displaystring(Xgc,legy,x,y,flag,ang);
 	}
     }
   FREE(loc);
@@ -1148,15 +1161,15 @@ void DownNext(integer ind1, integer *ind2, integer *ind3)
 }
 
 
-void TDAxis(integer flag, double FPval, double LPval, integer *nax, integer *FPoint, integer *LPoint, integer *Ticsdir)
+void TDAxis(BCG *Xgc,integer flag, double FPval, double LPval, integer *nax, integer *FPoint, integer *LPoint, integer *Ticsdir)
 {
   char fornum[100];
   integer i,barlength;
   double xp, dx,dy,ticsx,ticsy,size;
   integer xz[2];
-  nsp_gengine->xget_windowdim(xz,xz+1);
+  nsp_gengine->xget_windowdim(Xgc,xz,xz+1);
   size = xz[0]>=xz[1] ? xz[1]/50.0 : xz[0]/50.0;
-  C2F(TDdrawaxis)(size,FPval,LPval,nax,FPoint,LPoint,Ticsdir) ;
+  C2F(TDdrawaxis)(Xgc,size,FPval,LPval,nax,FPoint,LPoint,Ticsdir) ;
   ChoixFormatE(fornum,Min(FPval,LPval),Max(LPval,FPval),
 	       Abs((LPval-FPval))/nax[1]);
   xp= FPval;
@@ -1182,7 +1195,7 @@ void TDAxis(integer flag, double FPval, double LPval, integer *nax, integer *FPo
       double lp;
       lp = xp + i*(LPval-FPval)/((double)nax[1]);
       sprintf(foo,fornum,lp);
-      nsp_gengine->boundingbox(foo,xx,yy,rect);
+      nsp_gengine->boundingbox(Xgc,foo,xx,yy,rect);
       posi[0]=inint(FPoint[0]+ i*dx + 2*ticsx );
       posi[1]=inint(FPoint[1]+ i*dy + 2*ticsy +rect[3]/2 );
       switch ( flag)
@@ -1193,12 +1206,12 @@ void TDAxis(integer flag, double FPval, double LPval, integer *nax, integer *FPo
 	  break;
 	case 2: posi[0] -= rect[2];break;
 	}
-      nsp_gengine->displaystring(foo,posi[0],posi[1],flag1,angle);
+      nsp_gengine->displaystring(Xgc,foo,posi[0],posi[1],flag1,angle);
     }
 }
 
 
-void C2F(TDdrawaxis)(double size, double FPval, double LPval, integer *nax, integer *FPoint, integer *LPoint, integer *Ticsdir)
+void C2F(TDdrawaxis)(BCG *Xgc,double size, double FPval, double LPval, integer *nax, integer *FPoint, integer *LPoint, integer *Ticsdir)
 { 
   integer i;
   double dx,dy,ticsx,ticsy;
@@ -1222,7 +1235,7 @@ void C2F(TDdrawaxis)(double size, double FPval, double LPval, integer *nax, inte
       y[0] =linint(FPoint[1]+ ((double)i)*dy );
       x[1] =linint(x[0]+ ticsx*size);
       y[1] =linint(y[0]+ ticsy*size);
-      nsp_gengine->drawsegments(x,y,siz,&style,iflag);
+      nsp_gengine->drawsegments(Xgc,x,y,siz,&style,iflag);
     }
 }
 
@@ -1251,7 +1264,7 @@ void BBoxToval(double *x, double *y, double *z, integer ind, double *bbox)
 /** Changement interactif de 3d **/
 static double theta,alpha;
 
-void I3dRotation(void)
+void I3dRotation(BCG *Xgc)
 {
   char driver[4];
   integer flag[3],pixmode,alumode,ww;
@@ -1259,15 +1272,15 @@ void I3dRotation(void)
   double xx,yy;
   double theta0,alpha0;
   ww=nsp_gengine->xget_curwin();
-  if ( tape_check_recorded_3D(ww) == FAIL) 
+  if ( tape_check_recorded_3D(Xgc,ww) == FAIL) 
     {
-      nsp_gengine->xinfo("No 3d recorded plots in your graphic window");
+      nsp_gengine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
       return;
     }
-  xx=1.0/Abs(current_scale.frect[0]-current_scale.frect[2]);
-  yy=1.0/Abs(current_scale.frect[1]-current_scale.frect[3]);
-  pixmode = nsp_gengine->xget_pixmapOn();
-  alumode = nsp_gengine->xget_alufunction();
+  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
+  yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
+  pixmode = nsp_gengine->xget_pixmapOn(Xgc);
+  alumode = nsp_gengine->xget_alufunction(Xgc);
   nsp_gengine1.get_driver_name(driver);
   if (strcmp("Rec",driver) != 0) 
     {
@@ -1285,14 +1298,14 @@ void I3dRotation(void)
 #else
      nsp_gengine1.set_driver("X11");
 #endif
-      if ( pixmode == 0 ) nsp_gengine1.xset1_alufunction1(6);
-      nsp_gengine1.xclick_1("one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
-      nsp_gengine->clearwindow();
-      theta=current_scale.theta ;
-      alpha=current_scale.alpha ;
+     if ( pixmode == 0 ) nsp_gengine1.xset1_alufunction1(Xgc,6);
+     nsp_gengine1.xclick_1(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
+     nsp_gengine->clearwindow(Xgc);
+     theta=Xgc->scales->theta ;
+     alpha=Xgc->scales->alpha ;
 
-      x0=(x0-current_scale.frect[0])*xx;
-      yy0=(yy0-current_scale.frect[1])*yy;
+     x0=(x0-Xgc->scales->frect[0])*xx;
+      yy0=(yy0-Xgc->scales->frect[1])*yy;
       x=x0;y=yy0;
       theta0=theta;
       alpha0=alpha;
@@ -1301,28 +1314,28 @@ void I3dRotation(void)
 	{
 	  /* dessin d'un rectangle */
 	  theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
-	  nsp_gengine->xinfo("alpha=%.1f,theta=%.1f",alpha,theta); 
-	  if ( pixmode == 1) nsp_gengine1.xset1_pixmapclear();
-	  dbox();
-	  if ( pixmode == 1) nsp_gengine1.xset1_show();
-	  nsp_gengine1.xgetmouse_1("one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
+	  nsp_gengine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
+	  if ( pixmode == 1) nsp_gengine1.xset1_pixmapclear(Xgc);
+	  dbox(Xgc);
+	  if ( pixmode == 1) nsp_gengine1.xset1_show(Xgc);
+	  nsp_gengine1.xgetmouse_1(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,FALSE,FALSE);
 	  /* effacement du rectangle */
-	  dbox();
-	  xx=1.0/Abs(current_scale.frect[0]-current_scale.frect[2]);
-	  yy=1.0/Abs(current_scale.frect[1]-current_scale.frect[3]);
-	  x=(xl-current_scale.frect[0])*xx;
-	  y=(yl-current_scale.frect[1])*yy;
+	  dbox(Xgc);
+	  xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
+	  yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
+	  x=(xl-Xgc->scales->frect[0])*xx;
+	  y=(yl-Xgc->scales->frect[1])*yy;
 	}
-      if ( pixmode == 0) nsp_gengine1.xset1_alufunction1(3);
+      if ( pixmode == 0) nsp_gengine1.xset1_alufunction1(Xgc,3);
      nsp_gengine1.set_driver(driver);
-     nsp_gengine->clearwindow();
+     nsp_gengine->clearwindow(Xgc);
      ww=nsp_gengine->xget_curwin();
-     nsp_gengine1.xset1_alufunction1(alumode);
+     nsp_gengine1.xset1_alufunction1(Xgc,alumode);
 #ifdef WIN32
       ReleaseWinHdc();
       SciMouseRelease();
 #endif
-      tape_replay_new_angles(ww,iflag,flag,&theta,&alpha,bbox);
+      tape_replay_new_angles(Xgc,ww,iflag,flag,&theta,&alpha,bbox);
     }
 }
 
@@ -1333,15 +1346,15 @@ void I3dRotation(void)
  * inside dbox
  */
 
-static void dbox(void)
+static void dbox(BCG *Xgc)
 {
   double xbox[8],ybox[8],zbox[8];
 #ifdef WIN32
   integer verbose=0,pat,pat1=3,narg;
   pat = nsp_gengine->xset_pattern(pat1);
 #endif
-  SetEch3d1(xbox,ybox,zbox,current_scale.bbox1,&theta,&alpha,current_scale.metric3d);
-  C2F(box3d)(xbox,ybox,zbox);
+  SetEch3d1(Xgc,xbox,ybox,zbox,Xgc->scales->bbox1,&theta,&alpha,Xgc->scales->metric3d);
+  C2F(box3d)(Xgc,xbox,ybox,zbox);
 #ifdef WIN32
    nsp_gengine->xset_pattern(pat);
 #endif
@@ -1353,9 +1366,9 @@ static void dbox(void)
  *
  *******************************************************************************/
 
-int C2F(fac3d3)(double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(fac3d3)(BCG *Xgc,double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
 {
-  C2F(fac3dg)("fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  C2F(fac3dg)(Xgc,"fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
@@ -1395,7 +1408,7 @@ int  triangleSort(integer *polyxin, integer *polyyin, integer *fillin, integer *
  *       routines 
  *-----------------------------------------------------------------------*/
 
-int shade(integer *polyx, integer *polyy, integer *fill, integer polysize, integer flag)
+int shade(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer polysize, integer flag)
 {
    integer px[5],py[5],fil[4],is[3],ie[3],n[3];
    integer npoly=1,k,col,cols,psize,i,s,e;
@@ -1449,7 +1462,7 @@ int shade(integer *polyx, integer *polyy, integer *fill, integer polysize, integ
 
           psize=3;
           col=fills[0];
-          nsp_gengine->fillpolylines(polyxs,polyys,(cols=-col,&cols),npoly,psize);
+          nsp_gengine->fillpolylines(Xgc,polyxs,polyys,(cols=-col,&cols),npoly,psize);
           return(0);
      }
      
@@ -1459,7 +1472,7 @@ int shade(integer *polyx, integer *polyy, integer *fill, integer polysize, integ
           for(i=0;i<=n[0];i++) {
 	     px[0]=x[2][i]; px[1]=x[0][i]; px[2]=x[0][i+1]; px[3]=x[2][i+1];
 	     py[0]=y[2][i]; py[1]=y[0][i]; py[2]=y[0][i+1]; py[3]=y[2][i+1];
-	     nsp_gengine->fillpolylines(px,py,(cols=-col,&cols),npoly,psize);
+	     nsp_gengine->fillpolylines(Xgc,px,py,(cols=-col,&cols),npoly,psize);
              col--;
 	  }
 	  free(x[0]);
@@ -1472,7 +1485,7 @@ int shade(integer *polyx, integer *polyy, integer *fill, integer polysize, integ
           for(i=0;i<=n[1];i++) {
 	     px[0]=x[2][n[0]+i]; px[1]=x[1][i]; px[2]=x[1][i+1]; px[3]=x[2][n[0]+i+1];
 	     py[0]=y[2][n[0]+i]; py[1]=y[1][i]; py[2]=y[1][i+1]; py[3]=y[2][n[0]+i+1];
-	     nsp_gengine->fillpolylines(px,py,(cols=-col,&cols),npoly,psize);
+	     nsp_gengine->fillpolylines(Xgc,px,py,(cols=-col,&cols),npoly,psize);
              col--;
 	  }
           free(x[1]);
@@ -1491,11 +1504,11 @@ int shade(integer *polyx, integer *polyy, integer *fill, integer polysize, integ
       px[0]=polyx[0]; px[1]=polyx[1]; px[2]=polyx[2];
       py[0]=polyy[0]; py[1]=polyy[1]; py[2]=polyy[2];
       fil[0]=fill[0]; fil[1]=fill[1]; fil[2]=fill[2];
-      shade(px,py,fil,3,flag);
+      shade(Xgc,px,py,fil,3,flag);
       px[0]=polyx[0]; px[1]=polyx[2]; px[2]=polyx[3];
       py[0]=polyy[0]; py[1]=polyy[2]; py[2]=polyy[3];
       fil[0]=fill[0]; fil[1]=fill[2]; fil[2]=fill[3];
-      shade(px,py,fil,3,flag);
+      shade(Xgc,px,py,fil,3,flag);
    }
    return 0;
 }     

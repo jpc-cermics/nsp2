@@ -9,9 +9,9 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "Graphics.h"
+#include "nsp/graphics/Graphics.h"
 
-static void zoom_rect (double,double,double,double);
+static void zoom_rect (BCG *Xgc,double,double,double,double);
 
 /*--------------------------------------------------------------------
  * converts a rectangle into a wrect specification 
@@ -20,33 +20,33 @@ static void zoom_rect (double,double,double,double);
  * to set the plot region to a specified rectangle 
  * --------------------------------------------------------------------------*/
 
-void scale_f2wrect(const double x[],double x1[])
+void scale_f2wrect(BCG *Xgc,const double x[],double x1[])
 {
   int i=0;
-  if ( current_scale.logflag[0] == 'n' ) 
+  if ( Xgc->scales->logflag[0] == 'n' ) 
     {
       x1[i]=  XScale_d(x[i]);
-      x1[i+2]= current_scale.Wscx1*( x[i+2]);
+      x1[i+2]= Xgc->scales->Wscx1*( x[i+2]);
     }
   else 
     {
       x1[i]= XLogScale_d(x[i]);
-      x1[i+2]=current_scale.Wscx1*(log10((x[i]+x[i+2])/x[i]));
+      x1[i+2]=Xgc->scales->Wscx1*(log10((x[i]+x[i+2])/x[i]));
     } 
-  if ( current_scale.logflag[1] == 'n' ) 
+  if ( Xgc->scales->logflag[1] == 'n' ) 
     {
       x1[i+1]= YScale_d(x[i+1]);
-      x1[i+3]= current_scale.Wscy1*( x[i+3]);
+      x1[i+3]= Xgc->scales->Wscy1*( x[i+3]);
     }
   else 
     {
       x1[i+1]= YLogScale_d(x[i+1]);
-      x1[i+3]= current_scale.Wscy1*(log10(x[i+1]/(x[i+1]-x[i+3])));
+      x1[i+3]= Xgc->scales->Wscy1*(log10(x[i+1]/(x[i+1]-x[i+3])));
     }
-  x1[0] /= (double) current_scale.wdim[0];
-  x1[2] /= (double) current_scale.wdim[0];
-  x1[1] /= (double) current_scale.wdim[1];
-  x1[3] /= (double) current_scale.wdim[1];
+  x1[0] /= (double) Xgc->scales->wdim[0];
+  x1[2] /= (double) Xgc->scales->wdim[0];
+  x1[1] /= (double) Xgc->scales->wdim[1];
+  x1[3] /= (double) Xgc->scales->wdim[1];
 } 
 
 
@@ -61,28 +61,28 @@ void scale_f2wrect(const double x[],double x1[])
  *    lstr    : unused (Fortran/C) 
  * --------------------------------------------------------------------------*/
 
-void scale_f2i(const double x[],const double y[],int x1[],int y1[],int n)
+void scale_f2i(BCG *Xgc,const double x[],const double y[],int x1[],int y1[],int n)
 {
   int i;
-  if (current_scale.logflag[0] == 'n') 
+  if (Xgc->scales->logflag[0] == 'n') 
     for ( i=0 ; i < n  ; i++) x1[i]= XScale(x[i]);
   else 
     for ( i=0 ; i < n  ; i++) x1[i]= XLogScale(x[i]);
-  if (current_scale.logflag[1] == 'n') 
+  if (Xgc->scales->logflag[1] == 'n') 
     for ( i=0 ; i < n ; i++)  y1[i]= YScale(y[i]);
   else 
     for ( i=0 ; i < n ; i++)  y1[i]= YLogScale(y[i]);
 }
 
 
-void scale_i2f( double x[], double y[],const int x1[],const int y1[],int n)
+void scale_i2f(BCG *Xgc, double x[], double y[],const int x1[],const int y1[],int n)
 {
   int i;
-  if (current_scale.logflag[0] == 'n') 
+  if (Xgc->scales->logflag[0] == 'n') 
     for ( i=0 ; i < n ; i++) x[i]= XPi2R( x1[i] );
   else 
     for ( i=0 ; i < n ; i++) x[i]= exp10(XPi2R( x1[i]));
-  if (current_scale.logflag[1] == 'n') 
+  if (Xgc->scales->logflag[1] == 'n') 
     for ( i=0 ; i < n ; i++)  y[i]= YPi2R( y1[i] );
   else 
     for ( i=0 ; i < n ; i++)  y[i]= exp10(YPi2R( y1[i]));
@@ -94,23 +94,23 @@ void scale_i2f( double x[], double y[],const int x1[],const int y1[],int n)
  * Note that it cannot work in logarithmic scale 
  *--------------------------------------------------------------------*/
 
-void length_scale_f2i(const double *x,const double *y, int *x1, int *y1, int n)
+void length_scale_f2i(BCG *Xgc,const double *x,const double *y, int *x1, int *y1, int n)
 {
   int i;
   for ( i=0 ; i < n ; i++)
     {
-      x1[i]=inint( current_scale.Wscx1*( x[i]));
-      y1[i]=inint( current_scale.Wscy1*( y[i]));
+      x1[i]=inint( Xgc->scales->Wscx1*( x[i]));
+      y1[i]=inint( Xgc->scales->Wscy1*( y[i]));
     }
 }
 
-void length_scale_i2f(double *x, double *y, const int *x1, const int *y1, int n)
+void length_scale_i2f(BCG *Xgc,double *x, double *y, const int *x1, const int *y1, int n)
 {
   int i;
   for ( i=0 ; i < n ; i++)
     {
-      x[i]=x1[i]/current_scale.Wscx1;
-      y[i]=y1[i]/current_scale.Wscy1;
+      x[i]=x1[i]/Xgc->scales->Wscx1;
+      y[i]=y1[i]/Xgc->scales->Wscy1;
     }
 }
 
@@ -118,7 +118,7 @@ void length_scale_i2f(double *x, double *y, const int *x1, const int *y1, int n)
 
 /** meme chose mais pour transformer des ellipses **/
 
-void ellipse2d(double *x, int *x1, int *n, char *dir)
+void ellipse2d(BCG *Xgc,double *x, int *x1, int *n, char *dir)
 {
   int i;
   if (strcmp("f2i",dir)==0) 
@@ -128,8 +128,8 @@ void ellipse2d(double *x, int *x1, int *n, char *dir)
 	{
 	  x1[i  ]= XScale(x[i]);
 	  x1[i+1]= YScale(x[i+1]);
-	  x1[i+2]= inint( current_scale.Wscx1*( x[i+2]));
-	  x1[i+3]= inint( current_scale.Wscy1*( x[i+3]));
+	  x1[i+2]= inint( Xgc->scales->Wscx1*( x[i+2]));
+	  x1[i+3]= inint( Xgc->scales->Wscy1*( x[i+3]));
 	  x1[i+4]= inint( x[i+4]);
 	  x1[i+5]= inint( x[i+5]);
 	}
@@ -140,8 +140,8 @@ void ellipse2d(double *x, int *x1, int *n, char *dir)
 	{
 	  x[i]=   XPi2R(x1[i]); 
 	  x[i+1]= YPi2R( x1[i+1] ); 
-	  x[i+2]= x1[i+2]/current_scale.Wscx1;
-	  x[i+3]= x1[i+3]/current_scale.Wscy1;
+	  x[i+2]= x1[i+2]/Xgc->scales->Wscx1;
+	  x[i+3]= x1[i+3]/Xgc->scales->Wscy1;
 	  x[i+4]= x1[i+4];
 	  x[i+5]= x1[i+5];
 	}
@@ -152,44 +152,44 @@ void ellipse2d(double *x, int *x1, int *n, char *dir)
 
 /** meme chose mais pour transformer des rectangles **/
 
-void rect2d_f2i(const double x[],int x1[], int n)
+void rect2d_f2i(BCG *Xgc,const double x[],int x1[], int n)
 {
   int i;
   /** double to int (pixel) direction **/
   for ( i=0 ; i < n ; i= i+4)
     {
-      if ( current_scale.logflag[0] == 'n' ) 
+      if ( Xgc->scales->logflag[0] == 'n' ) 
 	{
 	  x1[i]=  XScale(x[i]);
-	  x1[i+2]=inint( current_scale.Wscx1*( x[i+2]));
+	  x1[i+2]=inint( Xgc->scales->Wscx1*( x[i+2]));
 	}
       else 
 	{
 	  x1[i]= XLogScale(x[i]);
-	  x1[i+2]=inint( current_scale.Wscx1*(log10((x[i]+x[i+2])/x[i])));
+	  x1[i+2]=inint( Xgc->scales->Wscx1*(log10((x[i]+x[i+2])/x[i])));
 	} 
-      if ( current_scale.logflag[1] == 'n' ) 
+      if ( Xgc->scales->logflag[1] == 'n' ) 
 	{
 	  x1[i+1]= YScale(x[i+1]);
-	  x1[i+3]=inint( current_scale.Wscy1*( x[i+3]));
+	  x1[i+3]=inint( Xgc->scales->Wscy1*( x[i+3]));
 	}
       else 
 	{
 	  x1[i+1]= YLogScale(x[i+1]);
-	  x1[i+3]=inint( current_scale.Wscy1*(log10(x[i+1]/(x[i+1]-x[i+3]))));
+	  x1[i+3]=inint( Xgc->scales->Wscy1*(log10(x[i+1]/(x[i+1]-x[i+3]))));
 	}
     }
 } 
   
-void rect2d_i2f(double x[],const  int x1[], int n)
+void rect2d_i2f(BCG *Xgc,double x[],const  int x1[], int n)
 {
   int i;
   for ( i=0 ; i < n ; i=i+4)
     {
-      if ( current_scale.logflag[0] == 'n' ) 
+      if ( Xgc->scales->logflag[0] == 'n' ) 
 	{
 	  x[i]= XPi2R(x1[i] );
-	  x[i+2]=x1[i+2]/current_scale.Wscx1;
+	  x[i+2]=x1[i+2]/Xgc->scales->Wscx1;
 	}
       else
 	{
@@ -197,10 +197,10 @@ void rect2d_i2f(double x[],const  int x1[], int n)
 	  x[i+2]=exp10(XPi2R( x1[i]+x1[i+2] ));
 	  x[i+2] -= x[i];
 	}
-      if ( current_scale.logflag[1] == 'n' ) 
+      if ( Xgc->scales->logflag[1] == 'n' ) 
 	{
 	  x[i+1]= YPi2R( x1[i+1]);
-	  x[i+3]=x1[i+3]/current_scale.Wscy1;
+	  x[i+3]=x1[i+3]/Xgc->scales->Wscy1;
 	}
       else
 	{
@@ -215,29 +215,29 @@ void rect2d_i2f(double x[],const  int x1[], int n)
  
 /** meme chose mais pour axis **/
 
-void axis2d(double *alpha, double *initpoint, double *size, int *initpoint1, double *size1)
+void axis2d(BCG *Xgc,double *alpha, double *initpoint, double *size, int *initpoint1, double *size1)
 {
   double sina ,cosa;
   double xx,yy,scl;
-  /* pour eviter des problemes numerique quand current_scale.scx1 ou current_scale.scy1 sont 
+  /* pour eviter des problemes numerique quand Xgc->scales->scx1 ou Xgc->scales->scy1 sont 
    *  tres petits et cosal ou sinal aussi 
    */
   if ( Abs(*alpha) == 90 ) 
     {
-      scl=current_scale.Wscy1;
+      scl=Xgc->scales->Wscy1;
     }
   else 
     {
       if (Abs(*alpha) == 0) 
 	{
-	  scl=current_scale.Wscx1;
+	  scl=Xgc->scales->Wscx1;
 	}
       else 
 	{
 	  sina= sin(*alpha * M_PI/180.0);
 	  cosa= cos(*alpha * M_PI/180.0);
-	  xx= cosa*current_scale.Wscx1; xx *= xx;
-	  yy= sina*current_scale.Wscy1; yy *= yy;
+	  xx= cosa*Xgc->scales->Wscx1; xx *= xx;
+	  yy= sina*Xgc->scales->Wscy1; yy *= yy;
 	  scl= sqrt(xx+yy);
 	}
     }
@@ -254,19 +254,19 @@ extern int EchCheckSCPlots();
 
 /** get a rectangle interactively **/ 
 
-void zoom_get_rectangle(double *bbox)
+void zoom_get_rectangle(BCG *Xgc,double *bbox)
 {
   /* Using the mouse to get the new rectangle to fix boundaries */
   int th,th1=1, pixmode,alumode,color,style,fg;
   int ibutton,iwait=FALSE,istr=0;
   double x0,yy0,x,y,xl,yl;
 
-  pixmode = nsp_gengine->xget_pixmapOn();
-  alumode = nsp_gengine->xget_alufunction();
-  th = nsp_gengine->xget_thickness();
-  color= nsp_gengine->xget_pattern();
-  style = nsp_gengine->xget_dash();
-  fg    = nsp_gengine->xget_foreground();
+  pixmode = nsp_gengine->xget_pixmapOn(Xgc);
+  alumode = nsp_gengine->xget_alufunction(Xgc);
+  th = nsp_gengine->xget_thickness(Xgc);
+  color= nsp_gengine->xget_pattern(Xgc);
+  style = nsp_gengine->xget_dash(Xgc);
+  fg    = nsp_gengine->xget_foreground(Xgc);
   set_no_delete_win_mode();
 
 #ifdef WIN32
@@ -274,29 +274,29 @@ void zoom_get_rectangle(double *bbox)
   SciMouseCapture();
 #endif 
  nsp_gengine1.set_driver("X11");
- nsp_gengine->xset_thickness(th1);
- nsp_gengine->xset_dash(1);
- nsp_gengine->xset_pattern(fg);
+ nsp_gengine->xset_thickness(Xgc,th1);
+ nsp_gengine->xset_dash(Xgc,1);
+ nsp_gengine->xset_pattern(Xgc,fg);
  
   /** XXXXXX : a regler pour Win32 in = 6 **/
- nsp_gengine1.xset1_alufunction1(6);
- nsp_gengine1.xclick_1("one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
+ nsp_gengine1.xset1_alufunction1(Xgc,6);
+ nsp_gengine1.xclick_1(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
  x=x0;y=yy0;
  ibutton=-1;
  while ( ibutton == -1 ) 
    {
      /* dessin d'un rectangle */
-     zoom_rect(x0,yy0,x,y);
-     if ( pixmode == 1) nsp_gengine1.xset1_show();
-     nsp_gengine1.xgetmouse_1("one",&ibutton,&xl, &yl,iwait,TRUE,FALSE,FALSE);
+     zoom_rect(Xgc,x0,yy0,x,y);
+     if ( pixmode == 1) nsp_gengine1.xset1_show(Xgc);
+     nsp_gengine1.xgetmouse_1(Xgc,"one",&ibutton,&xl, &yl,iwait,TRUE,FALSE,FALSE);
      /* effacement du rectangle */
-     zoom_rect(x0,yy0,x,y);
-     if ( pixmode == 1) nsp_gengine1.xset1_show();
+     zoom_rect(Xgc,x0,yy0,x,y);
+     if ( pixmode == 1) nsp_gengine1.xset1_show(Xgc);
      x=xl;y=yl;
     }
 #ifndef WIN32
   /** XXXX */
-  nsp_gengine1.xset1_alufunction1(3);
+ nsp_gengine1.xset1_alufunction1(Xgc,3);
 #endif
   /* Back to the default driver which must be Rec and redraw the recorded
    * graphics with the new scales 
@@ -305,13 +305,13 @@ void zoom_get_rectangle(double *bbox)
   bbox[1]=Min(yy0,y);
   bbox[2]=Max(x0,x);
   bbox[3]=Max(yy0,y);
-  nsp_gengine1.xset1_alufunction1(alumode);
-  nsp_gengine->xset_thickness(th);
-  nsp_gengine->xset_dash(style);
-  nsp_gengine->xset_pattern(color);
+  nsp_gengine1.xset1_alufunction1(Xgc,alumode);
+  nsp_gengine->xset_thickness(Xgc,th);
+  nsp_gengine->xset_dash(Xgc,style);
+  nsp_gengine->xset_pattern(Xgc,color);
   
   set_delete_win_mode();
-  nsp_gengine->xinfo(" ");
+  nsp_gengine->xinfo(Xgc," ");
 #ifdef WIN32
   ReleaseWinHdc();
   SciMouseRelease();
@@ -319,7 +319,7 @@ void zoom_get_rectangle(double *bbox)
 
 }
 
-void zoom(void)
+void zoom(BCG *Xgc)
 {
   char driver[4];
   int aaint[4],flag[2]; /* ansi : ={1,0};*/
@@ -335,14 +335,14 @@ void zoom(void)
   else 
     {
       double bbox[4];
-      zoom_get_rectangle(bbox);
-     nsp_gengine1.set_driver(driver);
-      nsp_gengine->clearwindow();    
-      tape_replay_new_scale(ww,flag,aaint,bbox);
+      zoom_get_rectangle(Xgc,bbox);
+      nsp_gengine1.set_driver(driver);
+      nsp_gengine->clearwindow(Xgc);    
+      tape_replay_new_scale(Xgc,ww,flag,aaint,bbox);
     }
 }
 
-void unzoom(void)
+void unzoom(BCG *Xgc)
 {
   char driver[4];
   int ww;
@@ -354,9 +354,9 @@ void unzoom(void)
     }
   else 
     {
-      nsp_gengine->clearwindow();
+      nsp_gengine->clearwindow(Xgc);
       ww = nsp_gengine->xget_curwin();
-      tape_replay_undo_scale(ww);
+      tape_replay_undo_scale(Xgc,ww);
     }
 }
 
@@ -367,16 +367,16 @@ void unzoom(void)
   inside dbox
   **/
 
-static void zoom_rect(double x0,double yy0,double  x,double  y)
+static void zoom_rect(BCG *Xgc,double x0,double yy0,double  x,double  y)
 {
   double rect[4]= {Min(x0,x),Max(yy0,y),Abs(x0-x),Abs(yy0-y)};
 #ifdef WIN32
   int pat;
-  pat = nsp_gengine->xset_pattern(3);
+  pat = nsp_gengine->xset_pattern(Xgc,3);
 #endif
-  nsp_gengine1.drawrectangle_1(rect);
+  nsp_gengine1.drawrectangle_1(Xgc,rect);
 #ifdef WIN32
-   nsp_gengine->xset_pattern(pat);
+   nsp_gengine->xset_pattern(Xgc,pat);
 #endif
 }
 

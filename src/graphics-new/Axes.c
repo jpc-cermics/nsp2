@@ -11,44 +11,44 @@
 #include <string.h>
 #include <stdio.h>
 #include "nsp/math.h"
-#include "Graphics.h"
-/* #include "PloEch.h" */
+#include "nsp/graphics/Graphics.h"
+/* #include "nsp/graphics/PloEch.h" */
 
 static double  x_convert (char xy_type,double x[] ,int i);
 static double  y_convert (char xy_type,double x[] ,int i);
 static void NumberFormat (char *str,integer k,integer a);
-static void aplotv1 (char*);
-static void aplotv2 (char*);
+static void aplotv1 (BCG *Xgc,char*);
+static void aplotv2 (BCG *Xgc,char*);
 
 /*--------------------------------------------------------------
  * Draw Axis or only rectangle
  *----------------------------------------------------------------*/
 
-void axis_draw(char *strflag)
+void axis_draw(BCG *Xgc,char *strflag)
 {
   /* using foreground to draw axis */
   int old_dash,pat, fg;
   char c = (strlen(strflag) >= 3) ? strflag[2] : '1';
-  fg = nsp_gengine->xget_foreground();
-  old_dash = nsp_gengine->xset_dash(1);
-  pat = nsp_gengine->xset_pattern(fg);
+  fg = nsp_gengine->xget_foreground(Xgc);
+  old_dash = nsp_gengine->xset_dash(Xgc,1);
+  pat = nsp_gengine->xset_pattern(Xgc,fg);
   switch ( c) 
     {
     case '0' :
       break ;
     case '2' :
-      nsp_gengine->drawrectangle(current_scale.WIRect1);
+      nsp_gengine->drawrectangle(Xgc,Xgc->scales->WIRect1);
       break;
     default :
       if ( strflag[1] == '5' || strflag[1] =='6' )
 	/* using auto rescale */
-	aplotv1(strflag);
+	aplotv1(Xgc,strflag);
       else
-	aplotv2(strflag);
+	aplotv2(Xgc,strflag);
       break;
     }
-  nsp_gengine->xset_dash(old_dash);
-  nsp_gengine->xset_pattern(pat);
+  nsp_gengine->xset_dash(Xgc,old_dash);
+  nsp_gengine->xset_pattern(Xgc,pat);
 }
 
 /*--------------------------------------------------------------
@@ -59,7 +59,7 @@ void axis_draw(char *strflag)
  *  each big interval will be divided in 3 small intervals.
  *----------------------------------------------------------------*/
 
-static void aplotv2(char *strflag)
+static void aplotv2(BCG *Xgc,char *strflag)
 {
   char dir = 'l';
   int nx,ny;
@@ -67,8 +67,8 @@ static void aplotv2(char *strflag)
   int seg =0;
   double x[3],y[3],x1,y1;
   char c = (strlen(strflag) >= 3) ? strflag[2] : '1';
-  x[0] = current_scale.frect[0]; x[1] = current_scale.frect[2] ; x[2]=current_scale.Waaint1[1];
-  y[0]=  current_scale.frect[1]; y[1] = current_scale.frect[3] ; y[2]=current_scale.Waaint1[3];
+  x[0] = Xgc->scales->frect[0]; x[1] = Xgc->scales->frect[2] ; x[2]=Xgc->scales->Waaint1[1];
+  y[0]=  Xgc->scales->frect[1]; y[1] = Xgc->scales->frect[3] ; y[2]=Xgc->scales->Waaint1[3];
   switch ( c ) 
     { 
     case '3' : /* right axis */ 
@@ -89,16 +89,16 @@ static void aplotv2(char *strflag)
     }
   if ( c != '4' && c != '5' )  
     /** frame rectangle **/
-    nsp_gengine->drawrectangle(current_scale.WIRect1);
+    nsp_gengine->drawrectangle(Xgc,Xgc->scales->WIRect1);
   /** x-axis **/
   ny=1,nx=3;
-  Sci_Axis('d','r',x,&nx,&y1,&ny,NULL,current_scale.Waaint1[0],NULL,fontsize,textcolor,ticscolor,current_scale.logflag[0],seg);
+  Sci_Axis(Xgc,'d','r',x,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
   /** y-axis **/
   ny=3,nx=1;
-  Sci_Axis(dir,'r',&x1,&nx,y,&ny,NULL,current_scale.Waaint1[2],NULL,fontsize,textcolor,ticscolor,current_scale.logflag[1],seg);
+  Sci_Axis(Xgc,dir,'r',&x1,&nx,y,&ny,NULL,Xgc->scales->Waaint1[2],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
 }
 
-static void aplotv1(char *strflag)
+static void aplotv1(BCG *Xgc,char *strflag)
 {
   char dir = 'l';
   char c = (strlen(strflag) >= 3) ? strflag[2] : '1';
@@ -108,14 +108,14 @@ static void aplotv1(char *strflag)
   switch ( c ) 
     { 
     case '3' : /* right axis */ 
-      x1= current_scale.xtics[1]*exp10(current_scale.xtics[2]);
-      y1= current_scale.ytics[0]*exp10(current_scale.ytics[2]);
+      x1= Xgc->scales->xtics[1]*exp10(Xgc->scales->xtics[2]);
+      y1= Xgc->scales->ytics[0]*exp10(Xgc->scales->ytics[2]);
       dir = 'r';
       break;
     case '4' : /* centred axis */
       seg=1;
-      x1= (current_scale.xtics[0]+current_scale.xtics[1])*exp10(current_scale.xtics[2])/2.0;
-      y1= (current_scale.ytics[0]+current_scale.xtics[1])*exp10(current_scale.ytics[2])/2.0;
+      x1= (Xgc->scales->xtics[0]+Xgc->scales->xtics[1])*exp10(Xgc->scales->xtics[2])/2.0;
+      y1= (Xgc->scales->ytics[0]+Xgc->scales->xtics[1])*exp10(Xgc->scales->ytics[2])/2.0;
       break ;
     case '5': /* centred at (0,0) */
       seg=1;
@@ -123,21 +123,21 @@ static void aplotv1(char *strflag)
       break;
     case '1' : /* left axis */
     default :
-      x1= current_scale.xtics[0]*exp10(current_scale.xtics[2]);
-      y1= current_scale.ytics[0]*exp10(current_scale.ytics[2]);
+      x1= Xgc->scales->xtics[0]*exp10(Xgc->scales->xtics[2]);
+      y1= Xgc->scales->ytics[0]*exp10(Xgc->scales->ytics[2]);
       break;
     }
   if ( c != '4' && c != '5' )  
     /** frame rectangle **/
-    nsp_gengine->drawrectangle(current_scale.WIRect1);
+    nsp_gengine->drawrectangle(Xgc,Xgc->scales->WIRect1);
   /** x-axis **/
   ny=1,nx=4;
-  Sci_Axis('d','i',current_scale.xtics,&nx,&y1,&ny,NULL,current_scale.Waaint1[0],
-	   NULL,fontsize,textcolor,ticscolor,current_scale.logflag[0],seg);
+  Sci_Axis(Xgc,'d','i',Xgc->scales->xtics,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],
+	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
   /** y-axis **/
   ny=4,nx=1;
-  Sci_Axis(dir,'i',&x1,&nx,current_scale.ytics,&ny,NULL,current_scale.Waaint1[2],
-	   NULL,fontsize,textcolor,ticscolor,current_scale.logflag[1],seg);
+  Sci_Axis(Xgc,dir,'i',&x1,&nx,Xgc->scales->ytics,&ny,NULL,Xgc->scales->Waaint1[2],
+	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
 }
 
 
@@ -178,14 +178,14 @@ static void aplotv1(char *strflag)
  *-------------------------------------------------------------*/
 
 
-void sci_axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
+void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
   if (nsp_gengine1.get_driver()=='R') 
-    store_SciAxis(pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
-  Sci_Axis(pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
+    store_SciAxis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
+  Sci_Axis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
 }
 
-void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
+void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
   int Nx,Ny;
   double angle=0.0,vxx,vxx1;
@@ -204,24 +204,24 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
  
    /* End of modified code */
   
-   nsp_gengine->xget_font(fontid);
+   nsp_gengine->xget_font(Xgc,fontid);
   fontsize_kp = fontid[1] ;
 
   if ( fontsize != -1 ) 
     {
       fontid[1] = fontsize ;
-      nsp_gengine->xset_font(fontid[0],fontid[1]);
+      nsp_gengine->xset_font(Xgc,fontid[0],fontid[1]);
     }
   if ( textcolor != -1 || ticscolor != -1 ) 
     {
-      color_kp = nsp_gengine->xget_pattern();
+      color_kp = nsp_gengine->xget_pattern(Xgc);
     }
 
   if (logflag == 'l' )
     {
-      nsp_gengine->boundingbox("10",xx,yy,logrect);
+      nsp_gengine->boundingbox(Xgc,"10",xx,yy,logrect);
       smallersize=fontid[1]-2;
-      nsp_gengine->xset_font(fontid[0],smallersize);
+      nsp_gengine->xset_font(Xgc,fontid[0],smallersize);
     }
   /** Real to Pixel values **/
   switch ( xy_type ) 
@@ -247,7 +247,7 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
     case 'u' : 
     case 'd' :
       /** Horizontal axes **/
-      barlength = current_scale.WIRect1[3]/50.0;
+      barlength = Xgc->scales->WIRect1[3]/50.0;
       /** compute a format **/
       if (str == NULL && format == NULL )  
 	switch (xy_type ) {
@@ -260,9 +260,9 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
       vy[0]= vy[1] = ym[0] = YScale(y[0]);
       if ( seg_flag == 1) 
 	{
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(ticscolor);
-	  nsp_gengine->drawsegments(vx, vy, ns,&style,iflag);
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(color_kp);
+	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,ticscolor);
+	  nsp_gengine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
+	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
 	}
 
       /** loop on the ticks **/
@@ -283,7 +283,7 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
 	    }
 	  else 
 	    sprintf(foo,format,vxx);
-	  nsp_gengine->boundingbox(foo,xx,yy,rect);
+	  nsp_gengine->boundingbox(Xgc,foo,xx,yy,rect);
 
 	  /* tick is computed in vx,vy and string is displayed at posi[0],posi[1] position */
 
@@ -300,18 +300,18 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
 	      posi[1]=inint( ym[0] - 1.2*barlength);
 	      vy[0]= ym[0];vy[1]= ym[0] - barlength;
 	    }
-	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(textcolor);
-	  nsp_gengine->displaystring(foo,posi[0],posi[1],flag,angle);
+	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(Xgc,textcolor);
+	  nsp_gengine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
 	  if ( logflag == 'l' )
 	    {
-	      nsp_gengine->xset_font(fontid[0],fontid[1]);
-	      nsp_gengine->displaystring("10",(posi[0] -= logrect[2],posi[0]),(posi[1] += logrect[3],posi[1]),flag,angle);
-	      nsp_gengine->xset_font(fontid[0],smallersize);
+	      nsp_gengine->xset_font(Xgc,fontid[0],fontid[1]);
+	      nsp_gengine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),(posi[1] += logrect[3],posi[1]),flag,angle);
+	      nsp_gengine->xset_font(Xgc,fontid[0],smallersize);
 	    }
-	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(color_kp);
+	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
 
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(ticscolor);
-	  nsp_gengine->drawsegments( vx, vy, ns,&style,iflag);
+	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,ticscolor);
+	  nsp_gengine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  /* subtics */
 	  if ( i < Nx-1 ) 
 	    {
@@ -326,16 +326,16 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
 		    { vy[0]= ym[0];vy[1]= ym[0] + barlength/2.0 ; }
 		  else 
 		    { vy[0]= ym[0];vy[1]= ym[0] - barlength/2.0; }
-		  nsp_gengine->drawsegments( vx, vy, ns,&style,iflag);
+		  nsp_gengine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 		}
 	    }
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(color_kp);
+	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
 	}
       break;
     case 'r' : 
     case 'l' :
       /** Vertical axes **/
-      barlength = current_scale.WIRect1[2]/75.0;
+      barlength = Xgc->scales->WIRect1[2]/75.0;
       if (str == NULL &&  format == NULL )  
 	switch (xy_type ) {
 	case 'v' : ChoixFormatE1(c_format,y,Ny);break;
@@ -347,9 +347,9 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
       vx[0]= vx[1] = xm[0]= XScale(x[0]);
       if ( seg_flag == 1) 
 	{
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(ticscolor);
-	  nsp_gengine->drawsegments(vx, vy, ns,&style,iflag);
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(color_kp);
+	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,ticscolor);
+	  nsp_gengine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
+	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
 	}
       /** loop on the ticks **/
       for (i=0 ; i < Ny ; i++)
@@ -369,7 +369,7 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
 	  else 
 	    sprintf(foo,format,vxx);
 
-	  nsp_gengine->boundingbox(foo,xx,yy,rect);
+	  nsp_gengine->boundingbox(Xgc,foo,xx,yy,rect);
 
 	  /* tick is computed in vx,vy and string is displayed at posi[0],posi[1] position */
 
@@ -385,19 +385,19 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
 	      posi[0]=inint(xm[0] - 1.2*barlength - rect[2]);
 	      vx[0]= xm[0];vx[1]= xm[0] - barlength;
 	    }
-	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(textcolor);
-	  nsp_gengine->displaystring(foo,posi[0],posi[1],flag,angle);
+	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(Xgc,textcolor);
+	  nsp_gengine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
 	  if ( logflag == 'l' )
 	    {
-	      nsp_gengine->xset_font(fontid[0],fontid[1]);
-	      nsp_gengine->displaystring("10",(posi[0] -= logrect[2],posi[0]),
+	      nsp_gengine->xset_font(Xgc,fontid[0],fontid[1]);
+	      nsp_gengine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),
 					 (posi[1] += logrect[3],posi[1]),flag,angle);
-	      nsp_gengine->xset_font(fontid[0],smallersize);
+	      nsp_gengine->xset_font(Xgc,fontid[0],smallersize);
 	    }
-	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(color_kp);
+	  if ( textcolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
 
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(ticscolor);
-	  nsp_gengine->drawsegments( vx, vy, ns,&style,iflag);
+	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,ticscolor);
+	  nsp_gengine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  /* subtics */
 	  if ( i < Ny-1 ) 
 	    {
@@ -412,10 +412,10 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
 		    { vx[0]= xm[0];vx[1]= xm[0] + barlength/2.0 ; }
 		  else 
 		    { vx[0]= xm[0];vx[1]= xm[0] - barlength/2.0; }
-		  nsp_gengine->drawsegments( vx, vy, ns,&style,iflag);
+		  nsp_gengine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 		}
 	    }
-	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(color_kp);
+	  if ( ticscolor != -1 )  nsp_gengine->xset_pattern(Xgc,color_kp);
 	}
       break;
     }
@@ -423,12 +423,12 @@ void Sci_Axis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, ch
   if ( fontsize != -1 || logflag == 'l' )
     {
       fontid[1] = fontsize_kp;
-      nsp_gengine->xset_font(fontid[0],fontid[1]);
+      nsp_gengine->xset_font(Xgc,fontid[0],fontid[1]);
     }
   /* reset to current color */
   if ( textcolor != -1 || ticscolor != -1 ) 
     {
-       nsp_gengine->xset_pattern(color_kp);
+       nsp_gengine->xset_pattern(Xgc,color_kp);
     }
 
 }

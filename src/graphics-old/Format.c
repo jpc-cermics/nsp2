@@ -16,7 +16,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "nsp/math.h"
-#include "Graphics.h"
+#include "nsp/graphics/Graphics.h"
 
 extern double C2F(dlamch)  (char *CMACH, unsigned long int);
 

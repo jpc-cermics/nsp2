@@ -4168,7 +4168,7 @@ static void InitMissileXgc (integer *v1,integer *v2,integer *v3,integer *v4)
   C2F(usecolor)(&i ,PI0,PI0,PI0);
   strcpy(ScilabXgc->CurNumberDispFormat,"%-5.2g");
   /** default scales **/
-  current_scale2default();
+  Xgc->scales->default();
 }
 
 

@@ -12,22 +12,22 @@
 #define PERI_PRIVATE 1
 #include "nsp/sciio.h"
 #include "nsp/math.h"
-#include "periPos.h"
+#include "nsp/graphics/periPos.h"
 #include "../version.h"
-#include "color.h"
+#include "nsp/graphics/color.h"
 
 static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,const int *vx,const int *vy, int flag,const int *fvect);
 static void Write2Vect(const int *vx,const  int *vy, int from, int n, char *string, int flag, int fv);
 static void WriteGeneric(char *string, int nobj, int sizeobj, const int *vx,const  int *vy, int sizev, int flag, const int *fvect);
-static void InitScilabGCPos(void);
-static void set_c_Pos(int i);
+static void InitScilabGCPos(BCG *Xgc);
+static void set_c_Pos(BCG *Xgc,int i);
 static void idfromname (char *name1, int *num);
-static double ascentPos(void);
-static int fontsizePos (void);
+static double ascentPos(BCG *Xgc);
+static int fontsizePos (BCG *Xgc);
 static int PosQueryFont(char *name);
-static void displaysymbols( int *vx, int *vy,int n);
-static void WriteColorRGB(char *str, double *tab, int ind);
-static void WriteColorRGBDef(char *str, short unsigned int *tab, int ind);
+static void displaysymbols( BCG *Xgc,int *vx, int *vy,int n);
+static void WriteColorRGB(BCG *Xgc,char *str, double *tab, int ind);
+static void WriteColorRGBDef(BCG *Xgc,char *str, short unsigned int *tab, int ind);
 
 #define Char2Int(x)   ( x & 0x000000ff )
 
@@ -39,11 +39,11 @@ static FILE *file= (FILE *) 0;
 static FILE *file= stdout ;
 #endif
 
-void FileInit  (void);
+void FileInit  (BCG *Xgc);
 
 /** Structure to keep the graphic state  **/
 
-static struct BCG  ScilabGCPos ;
+static BCG  ScilabGCPos ;
 
 /*-----------------------------------------------------
 \encadre{General routines}
@@ -51,11 +51,11 @@ static struct BCG  ScilabGCPos ;
 
 /** To select the graphic Window  **/
 
-static void xselgraphic(void ) {}
+static void xselgraphic(BCG *Xgc) {}
 
 /** End of graphic (close the file) **/
 
-static void xendgraphic(void)
+static void xendgraphic(BCG *Xgc)
 {
   if (file != stdout && file != (FILE*) 0) {
     FPRINTF((file,"\n%%Latex:\\end{picture}"));
@@ -65,16 +65,16 @@ static void xendgraphic(void)
     file=stdout;}
 }
 
-static void xend(void) 
+static void xend(BCG *Xgc) 
 {
-  xendgraphic();
+  xendgraphic(Xgc);
 }
 
 
 /** Clear the current graphic window     **/
 /** In Postscript : nothing      **/
 
-static void clearwindow(void) 
+static void clearwindow(BCG *Xgc) 
 {
   /* FPRINTF((file,"\n showpage")); */
   /** Sending the scale etc.. in case we want an other plot **/
@@ -89,19 +89,19 @@ static void xpause(int sec_time) {}
  * Changes the graphic window popupname 
  *-----------------------------------------------------------------*/
 
-static void setpopupname(char *name){}
+static void setpopupname(BCG *Xgc,char *name){}
 
 /** Wait for mouse click in graphic window : Empty here **/
 
-static void xclick(char *str, int *ibutton, int *x1, int *yy1, int iflag, int motion,int release,int key,int istr) {} 
+static void xclick(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int iflag, int motion,int release,int key,int istr) {} 
 
 static void xclick_any(char *str, int *ibutton, int *x1, int *yy1, int *iwin, int iflag, int motion,int release,int key,int istr) {} 
 
-static void xgetmouse(char *str, int *ibutton, int *x1, int *yy1, int queue,int motion,int release,int key){};
+static void xgetmouse(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int queue,int motion,int release,int key){};
 
 /** Clear a rectangle **/
 
-void cleararea(int x, int y, int w, int h)
+void cleararea(BCG *Xgc,int x, int y, int w, int h)
 {
   FPRINTF((file,"\n [ %d %d %d %d ] clearzone",x,y,w,h));
 }
@@ -113,14 +113,14 @@ void cleararea(int x, int y, int w, int h)
 
 /** to get the window upper-left point coordinates **/
 
-static void xget_windowpos(int *x, int *y)
+static void xget_windowpos(BCG *Xgc,int *x, int *y)
 {
   *x = *y = 0;
  }
 
 /** to set the window upper-left point position (Void) **/
 
-static void xset_windowpos(int x, int y)
+static void xset_windowpos(BCG *Xgc,int x, int y)
 {
 }
 
@@ -133,7 +133,7 @@ static int prec_fact =10;
 static int def_width =600;
 static int def_height =424;
 
-static void xget_windowdim(int *x, int *y)
+static void xget_windowdim(BCG *Xgc,int *x, int *y)
 {     
   *x= def_width*prec_fact;
   *y= def_height*prec_fact;
@@ -141,13 +141,13 @@ static void xget_windowdim(int *x, int *y)
 
 /** To change the window dimensions : do Nothing in Postscript  **/
 
-static void xset_windowdim(int x, int y)
+static void xset_windowdim(BCG *Xgc,int x, int y)
 {
 }
 
 /** To get the popup  window size **/
 
-static void xget_popupdim(int *x, int *y)
+static void xget_popupdim(BCG *Xgc,int *x, int *y)
 {
   *x= def_width*prec_fact;
   *y= def_height*prec_fact;
@@ -155,24 +155,25 @@ static void xget_popupdim(int *x, int *y)
 
 /** To change the popup window size  **/
 
-static void xset_popupdim(int x, int y)
+static void xset_popupdim(BCG *Xgc,int x, int y)
 {
 }
 
 /** To get the viewport Upper/Left point Position **/
 
-static void xget_viewport(int *x, int *y) {       *x = *y =0;} 
+static void xget_viewport(BCG *Xgc,int *x, int *y) {       *x = *y =0;} 
 
 /** To change the window size  **/
 
-static void xset_viewport(int x, int y) {}
+static void xset_viewport(BCG *Xgc,int x, int y) {}
 
 /** Select a graphic Window : Empty for Postscript **/
 
 static int xset_curwin(int intnum, int set_menu)
 {
-  int i =  ScilabGCPos.CurWindow;
- ScilabGCPos.CurWindow  = intnum;
+  BCG *Xgc = &ScilabGCPos; 
+  int i =  Xgc->CurWindow;
+  Xgc->CurWindow  = intnum;
  return i;
 }
 
@@ -180,42 +181,43 @@ static int xset_curwin(int intnum, int set_menu)
 
 static int xget_curwin(void)
 {
-  return  ScilabGCPos.CurWindow ;
+  BCG *Xgc = &ScilabGCPos; 
+  return  Xgc->CurWindow ;
 }
 
 /** Set a clip zone (rectangle ) **/
 
-static void xset_clip(int x[])
+static void xset_clip(BCG *Xgc,int x[])
 {
   int i;
-  ScilabGCPos.ClipRegionSet = 1;
-  for ( i = 0 ; i < 4 ; i++)   ScilabGCPos.CurClipRegion[i]= x[i];
+  Xgc->ClipRegionSet = 1;
+  for ( i = 0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
   FPRINTF((file,"\n%d %d %d %d setclipzone",*x,*(x+1),*(x+2),*(x+3)));
 }
 
 /** unset clip zone **/
 
-static void xset_unclip(void)
+static void xset_unclip(BCG *Xgc)
 {
-  ScilabGCPos.ClipRegionSet = 0;
-  ScilabGCPos.CurClipRegion[0]= -1;
-  ScilabGCPos.CurClipRegion[1]= -1;
-  ScilabGCPos.CurClipRegion[2]= 200000;
-  ScilabGCPos.CurClipRegion[3]= 200000;
+  Xgc->ClipRegionSet = 0;
+  Xgc->CurClipRegion[0]= -1;
+  Xgc->CurClipRegion[1]= -1;
+  Xgc->CurClipRegion[2]= 200000;
+  Xgc->CurClipRegion[3]= 200000;
   FPRINTF((file,"\n%d %d %d %d setclipzone",-1,-1,200000,200000));
 }
 
 /** Get the boundaries of the current clip zone **/
 
-static void xget_clip(int *x)
+static void xget_clip(BCG *Xgc,int *x)
 {
-  x[0] = ScilabGCPos.ClipRegionSet;
+  x[0] = Xgc->ClipRegionSet;
   if ( x[0] == 1)
     {
-      x[1] =ScilabGCPos.CurClipRegion[0];
-      x[2] =ScilabGCPos.CurClipRegion[1];
-      x[3] =ScilabGCPos.CurClipRegion[2];
-      x[4] =ScilabGCPos.CurClipRegion[3];
+      x[1] =Xgc->CurClipRegion[0];
+      x[2] =Xgc->CurClipRegion[1];
+      x[3] =Xgc->CurClipRegion[2];
+      x[4] =Xgc->CurClipRegion[3];
     }
 }
 
@@ -226,33 +228,33 @@ static void xget_clip(int *x)
  Absolute mode if *num==0, relative mode if *num != 0
 ------------------------------------------------------------*/
 
-static void xset_absourel(int num)
+static void xset_absourel(BCG *Xgc,int num)
 {
   if (num == 0 )
-    ScilabGCPos.CurVectorStyle =  CoordModeOrigin;
+    Xgc->CurVectorStyle =  CoordModeOrigin;
   else 
-    ScilabGCPos.CurVectorStyle =  CoordModePrevious ;
+    Xgc->CurVectorStyle =  CoordModePrevious ;
 }
 
 /** to get information on absolute or relative mode **/
 
-static int xget_absourel()
+static int xget_absourel(BCG *Xgc)
 {
-  return ScilabGCPos.CurVectorStyle  ;
+  return Xgc->CurVectorStyle  ;
 }
 
 
 /** The alu function for drawing : Works only with X11 **/
 /** Not in Postscript **/
 
-static void xset_alufunction(char *string)
+static void xset_alufunction(BCG *Xgc,char *string)
 {    
   int value;
   
   idfromname(string,&value);
   if ( value != -1)
     {
-      ScilabGCPos.CurDrawFunction = value;
+      Xgc->CurDrawFunction = value;
       FPRINTF((file,"\n%% %d setalufunction",(int)value));
     }
 }
@@ -298,22 +300,22 @@ void idfromname(char *name1, int *num)
 }
 
 
-static void xset_alufunction1(int num)
+static void xset_alufunction1(BCG *Xgc,int num)
 {     
   int value;
   value=AluStrucPos[Min(15,Max(0,num))].id;
   if ( value != -1)
     {
-      ScilabGCPos.CurDrawFunction = value;
+      Xgc->CurDrawFunction = value;
       /* to be done */
     }
 }
 
 /** To get the value of the alufunction **/
 
-static int xget_alufunction()
+static int xget_alufunction(BCG *Xgc)
 { 
-  return  ScilabGCPos.CurDrawFunction ;
+  return  Xgc->CurDrawFunction ;
 }
 
 /** to set the thickness of lines : 0 is a possible value **/
@@ -321,17 +323,17 @@ static int xget_alufunction()
 
 #define Thick_prec 5
 
-static void xset_thickness(int value)
+static void xset_thickness(BCG *Xgc,int value)
 { 
-  ScilabGCPos.CurLineWidth =Max(0, value);
+  Xgc->CurLineWidth =Max(0, value);
   FPRINTF((file,"\n%d Thickness",(int)Max(0,value*Thick_prec)));
 }
 
 /** to get the thicknes value **/
 
-static int xget_thickness()
+static int xget_thickness(BCG *Xgc)
 {
-  return  ScilabGCPos.CurLineWidth ;
+  return  Xgc->CurLineWidth ;
 }
      
 
@@ -342,15 +344,15 @@ static int xget_thickness()
   the white pattern }
 ----------------------------------------------------*/
 
-static int xset_pattern(int num)
+static int xset_pattern(BCG *Xgc,int num)
 {
   int i;
-  int old = xget_pattern();
-  if ( ScilabGCPos.CurColorStatus ==1) 
+  int old = xget_pattern(Xgc);
+  if ( Xgc->CurColorStatus ==1) 
     {
-      i= Max(0,Min(num-1,ScilabGCPos.Numcolors+1));
-      ScilabGCPos.CurColor = i ;
-      set_c_Pos(i);
+      i= Max(0,Min(num-1,Xgc->Numcolors+1));
+      Xgc->CurColor = i ;
+      set_c_Pos(Xgc,i);
     }
   else 
     {
@@ -360,7 +362,7 @@ static int xset_pattern(int num)
 	i=0;
       else 
 	i= Max(0,Min(num-1,GREYNUMBER-1));
-      ScilabGCPos.CurPattern = i;
+      Xgc->CurPattern = i;
       if (i ==0)
 	FPRINTF((file,"\nfillsolid"));
       else 
@@ -371,24 +373,24 @@ static int xset_pattern(int num)
 
 /** To get the id of the current pattern  **/
 
-static int xget_pattern()
+static int xget_pattern(BCG *Xgc)
 { 
-  if ( ScilabGCPos.CurColorStatus ==1) 
+  if ( Xgc->CurColorStatus ==1) 
     {
-      return  ScilabGCPos.CurColor +1 ;
+      return  Xgc->CurColor +1 ;
     }
   else 
     {
-      return  ScilabGCPos.CurPattern +1 ;
+      return  Xgc->CurPattern +1 ;
     }
 }
 
 
 /** To get the id of the last pattern **/
 
-static int xget_last()
+static int xget_last(BCG *Xgc)
 {
-  return  ScilabGCPos.IDLastPattern +1 ;
+  return  Xgc->IDLastPattern +1 ;
 }
 
 /** To set dash-style : **/
@@ -405,50 +407,50 @@ static int DashTabPos[MAXDASH][4] = {
 
 /* old version of setdashPos retained for compatibility */
 
-static void xset_dash_or_color(int value)
+static void xset_dash_or_color(BCG *Xgc,int value)
 {
   static int  l2=4,l3 ;
 
-  if ( ScilabGCPos.CurColorStatus == 1) 
+  if ( Xgc->CurColorStatus == 1) 
     {
       int i;
-      i= Max(0,Min(value-1,ScilabGCPos.Numcolors+1));
-      ScilabGCPos.CurColor =i;
-      set_c_Pos(i);
+      i= Max(0,Min(value-1,Xgc->Numcolors+1));
+      Xgc->CurColor =i;
+      set_c_Pos(Xgc,i);
     }
   else 
     {
       l3 = Max(0,Min(MAXDASH - 1,value - 1));
-      xset_dashstyle(l3,DashTabPos[l3],&l2);
-      ScilabGCPos.CurDashStyle = l3;
+      xset_dashstyle(Xgc,l3,DashTabPos[l3],&l2);
+      Xgc->CurDashStyle = l3;
     }
 }
 
-static int xset_dash(int value)
+static int xset_dash(BCG *Xgc,int value)
 {
-  int old = xget_dash();
+  int old = xget_dash(Xgc);
   int l2=4,l3 ;
   l3 = Max(0,Min(MAXDASH - 1,value - 1));
-  xset_dashstyle(l3,DashTabPos[l3],&l2);
-  ScilabGCPos.CurDashStyle = l3;
+  xset_dashstyle(Xgc,l3,DashTabPos[l3],&l2);
+  Xgc->CurDashStyle = l3;
   return old;
 }
 
-static void xset_dash_and_color(int dash,int color)
+static void xset_dash_and_color(BCG *Xgc,int dash,int color)
 {
-  xset_dash(dash);
-  xset_pattern(color);
+  xset_dash(Xgc,dash);
+  xset_pattern(Xgc,color);
 }
 
 /* style arguments sets either dash style either color */
 
-static void xset_line_style(int value)
+static void xset_line_style(BCG *Xgc,int value)
 {
-  if (ScilabGCPos.CurColorStatus == 0)
-    xset_dash(value);
+  if (Xgc->CurColorStatus == 0)
+    xset_dash(Xgc,value);
   else {
-    xset_dash(ScilabGCPos.CurDashStyle + 1);
-    xset_pattern(value);
+    xset_dash(Xgc,Xgc->CurDashStyle + 1);
+    xset_pattern(Xgc,value);
   }
 }
 
@@ -457,7 +459,7 @@ static void xset_line_style(int value)
 /** the dash style is specified by the xx vector of n values **/
 /** xx[3]={5,3,7} and *n == 3 means :  5white 3 void 7 white \ldots **/
   
-static void xset_dashstyle(int value, int *xx, int *n)
+static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
   int i ;
   if ( value == 0) FPRINTF((file,"\n[] 0 setdash"));
@@ -475,14 +477,14 @@ static void xset_dashstyle(int value, int *xx, int *n)
 /* old version of getdashPos retained for compatibility */
 
 
-static int xget_dash_or_color()
+static int xget_dash_or_color(BCG *Xgc)
 {
-  return ( ScilabGCPos.CurColorStatus ==1) ?  ScilabGCPos.CurColor + 1 :  xget_dash();
+  return ( Xgc->CurColorStatus ==1) ?  Xgc->CurColor + 1 :  xget_dash(Xgc);
 }
 
-static int xget_dash()
+static int xget_dash(BCG *Xgc)
 {
-  return ScilabGCPos.CurDashStyle+1;
+  return Xgc->CurDashStyle+1;
   /* 
      if ( *value == 1) 
      { if (*verbose == 1) Scistring("\nLine style = Line Solid");}
@@ -502,33 +504,33 @@ static int xget_dash()
   */
 }
 
-static void xget_dash_and_color(int *dash,int *color)
+static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
 {
-  *dash= xget_dash();
-  *color=xget_pattern();
+  *dash= xget_dash(Xgc);
+  *color=xget_pattern(Xgc);
 }
 
-static void xset_usecolor(int num)
+static void xset_usecolor(BCG *Xgc,int num)
 {
   int i;
   i =  Min(Max(num,0),1);
   FPRINTF((file,"\n%%--use color %d ",i));
-  if ( ScilabGCPos.CurColorStatus != (int)i)
+  if ( Xgc->CurColorStatus != (int)i)
     {
-      if (ScilabGCPos.CurColorStatus == 1) 
+      if (Xgc->CurColorStatus == 1) 
 	{
 	  /* je passe de Couleur a n&b */
 	  /* remise des couleurs a vide */
-	  ScilabGCPos.CurColorStatus = 1;
-	  xset_pattern(1);
+	  Xgc->CurColorStatus = 1;
+	  xset_pattern(Xgc,1);
 	  /* passage en n&b */
-	  ScilabGCPos.CurColorStatus = 0;
-	  i= ScilabGCPos.CurPattern+1;
-	  xset_pattern(i);
-	  i= ScilabGCPos.CurDashStyle+1;
-	  xset_dash(i);
-	  ScilabGCPos.IDLastPattern = GREYNUMBER - 1;
-	  FPRINTF((file,"\n/WhiteLev %d def",ScilabGCPos.IDLastPattern));
+	  Xgc->CurColorStatus = 0;
+	  i= Xgc->CurPattern+1;
+	  xset_pattern(Xgc,i);
+	  i= Xgc->CurDashStyle+1;
+	  xset_dash(Xgc,i);
+	  Xgc->IDLastPattern = GREYNUMBER - 1;
+	  FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
 	  FPRINTF((file,"\n/Setgray { WhiteLev div setgray } def "));
 	  FPRINTF((file,"\n/Setcolor { WhiteLev div setgray } def "));
 	  FPRINTF((file,"\n/usecolor 0  def "));
@@ -538,42 +540,42 @@ static void xset_usecolor(int num)
 	  /* je passe en couleur */
 	  /* remise a zero des patterns et dash */
 	  /* remise des couleurs a vide */
-	  ScilabGCPos.CurColorStatus = 0;
-	  xset_pattern(1);
-	  xset_dash(1);
+	  Xgc->CurColorStatus = 0;
+	  xset_pattern(Xgc,1);
+	  xset_dash(Xgc,1);
 	  /* passage en couleur  */
-	  ScilabGCPos.CurColorStatus = 1;
-	  i= ScilabGCPos.CurColor+1;
-	  xset_pattern(i);
-	  ScilabGCPos.IDLastPattern = ScilabGCPos.Numcolors - 1;
-	  FPRINTF((file,"\n/WhiteLev %d def",ScilabGCPos.IDLastPattern));
+	  Xgc->CurColorStatus = 1;
+	  i= Xgc->CurColor+1;
+	  xset_pattern(Xgc,i);
+	  Xgc->IDLastPattern = Xgc->Numcolors - 1;
+	  FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
 	  FPRINTF((file,"\n/Setgray {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
 	  FPRINTF((file,"\n/Setcolor {/i exch def ColorR i get ColorG i get ColorB i get setrgbcolor } def "));
 	  FPRINTF((file,"\n/usecolor 1 def "));
 	}
     }
-    FPRINTF((file,"\n%%--end use color %d ",ScilabGCPos.CurColorStatus));
+    FPRINTF((file,"\n%%--end use color %d ",Xgc->CurColorStatus));
 }
 
 
-static int xget_usecolor()
+static int xget_usecolor(BCG *Xgc)
 {
-  return ScilabGCPos.CurColorStatus;
+  return Xgc->CurColorStatus;
 }
 
 /* private pixmap for double buffering 
  */
 
 
-static void xset_pixmapOn(int num) { }
+static void xset_pixmapOn(BCG *Xgc,int num) { }
 
-static int xget_pixmapOn() {  return ScilabGCPos.CurPixmapStatus;}
+static int xget_pixmapOn(BCG *Xgc) {  return Xgc->CurPixmapStatus;}
 
-static void xset_wresize(int num) { }
+static void xset_wresize(BCG *Xgc,int num) { }
 
-static int xget_wresize()
+static int xget_wresize(BCG *Xgc)
 {
-  return ScilabGCPos.CurResizeStatus;
+  return Xgc->CurResizeStatus;
 }
 
 /* setting the default colormap with colors defined in color.h */
@@ -603,7 +605,7 @@ static void sedeco(int flag)
  *   ( see  if (  CheckColormap(&m) == 1) in FileInt) 
  ******************************************************/
 
-static void xset_colormap(int m,int n, double *a)
+static void xset_colormap(BCG *Xgc,int m,int n, double *a)
 {
   int i;
   if (n  != 3 ||  m < 0) {
@@ -618,32 +620,32 @@ static void xset_colormap(int m,int n, double *a)
       return;
     }
   }
-  ScilabGCPos.Numcolors = m;
-  ScilabGCPos.IDLastPattern = m - 1;
-  ScilabGCPos.NumForeground = m;
-  ScilabGCPos.NumBackground = m + 1;
-  WriteColorRGB("R",a,0);
-  WriteColorRGB("G",a,1);
-  WriteColorRGB("B",a,2);
-  xset_usecolor(1);
-  xset_alufunction1(3);
-  xset_pattern(ScilabGCPos.NumForeground+1);
-  xset_foreground(ScilabGCPos.NumForeground+1);
-  xset_background(ScilabGCPos.NumForeground+2);
+  Xgc->Numcolors = m;
+  Xgc->IDLastPattern = m - 1;
+  Xgc->NumForeground = m;
+  Xgc->NumBackground = m + 1;
+  WriteColorRGB(Xgc,"R",a,0);
+  WriteColorRGB(Xgc,"G",a,1);
+  WriteColorRGB(Xgc,"B",a,2);
+  xset_usecolor(Xgc,1);
+  xset_alufunction1(Xgc,3);
+  xset_pattern(Xgc,Xgc->NumForeground+1);
+  xset_foreground(Xgc,Xgc->NumForeground+1);
+  xset_background(Xgc,Xgc->NumForeground+2);
 }
 
 /* getting the colormap XXXX */
 
-static void xget_colormap( int *num,  double *val)
+static void xget_colormap(BCG *Xgc, int *num,  double *val)
 {
   *num=0 ; /* XXX */
 }
 
-static void WriteColorRGB(char *str, double *tab, int ind)
+static void WriteColorRGB(BCG *Xgc,char *str, double *tab, int ind)
 {
   int i;
   FPRINTF((file,"\n/Color%s [",str));
-  for ( i=0; i < ScilabGCPos.Numcolors; i++)
+  for ( i=0; i < Xgc->Numcolors; i++)
     {
       FPRINTF((file,"%f ",(float) tab[3*i+ind]));
       if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
@@ -655,20 +657,20 @@ static void WriteColorRGB(char *str, double *tab, int ind)
   Initial colormap : The arrays were filled with the numbers that we get with xget("colormap") 
 **/
 
-void ColorInit(void)
+void ColorInit(BCG *Xgc)
 {
   int   m = DEFAULTNUMCOLORS;
-  ScilabGCPos.Numcolors = m;
-  WriteColorRGBDef("R",default_colors,0);
-  WriteColorRGBDef("G",default_colors,1);
-  WriteColorRGBDef("B",default_colors,2);
+  Xgc->Numcolors = m;
+  WriteColorRGBDef(Xgc,"R",default_colors,0);
+  WriteColorRGBDef(Xgc,"G",default_colors,1);
+  WriteColorRGBDef(Xgc,"B",default_colors,2);
 }
 
-static void WriteColorRGBDef(char *str, short unsigned int *tab, int ind)
+static void WriteColorRGBDef(BCG *Xgc,char *str, short unsigned int *tab, int ind)
 {
   int i;
   FPRINTF((file,"\n/Color%s [",str));
-  for ( i=0; i < ScilabGCPos.Numcolors; i++)
+  for ( i=0; i < Xgc->Numcolors; i++)
     {
       FPRINTF((file,"%f ",(float) tab[3*i+ind]/255.0));
       if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
@@ -676,30 +678,30 @@ static void WriteColorRGBDef(char *str, short unsigned int *tab, int ind)
   FPRINTF((file,"0.0 1.0] def"));
 }
 
-static void set_c_Pos(int i)
+static void set_c_Pos(BCG *Xgc,int i)
 {
   int j;
-  j=Max(Min(i,ScilabGCPos.Numcolors+1),0);
+  j=Max(Min(i,Xgc->Numcolors+1),0);
   FPRINTF((file,"\n%d Setcolor",(int)j));
 }
 
 
 /** set and get the number of the background or foreground */
 
-static void xset_background(int num)
+static void xset_background(BCG *Xgc,int num)
 { 
-  if (ScilabGCPos.CurColorStatus == 1) 
+  if (Xgc->CurColorStatus == 1) 
     {
-      ScilabGCPos.NumBackground = Max(0,Min(num - 1,ScilabGCPos.Numcolors + 1));
-      FPRINTF((file,"\n/background %d def PaintBackground",ScilabGCPos.NumBackground));
+      Xgc->NumBackground = Max(0,Min(num - 1,Xgc->Numcolors + 1));
+      FPRINTF((file,"\n/background %d def PaintBackground",Xgc->NumBackground));
     }
 }
 
-static int xget_background(void)
+static int xget_background(BCG *Xgc)
 { 
-  if ( ScilabGCPos.CurColorStatus == 1 ) 
+  if ( Xgc->CurColorStatus == 1 ) 
     {
-      return  ScilabGCPos.NumBackground + 1;
+      return  Xgc->NumBackground + 1;
     }
   else 
     {
@@ -710,19 +712,19 @@ static int xget_background(void)
 
 /** set and get the number of the background or foreground */
 
-static void xset_foreground(int num)
+static void xset_foreground(BCG *Xgc,int num)
 { 
-  if (ScilabGCPos.CurColorStatus == 1) 
+  if (Xgc->CurColorStatus == 1) 
     {
-      ScilabGCPos.NumForeground = Max(0,Min(num - 1,ScilabGCPos.Numcolors + 1));
+      Xgc->NumForeground = Max(0,Min(num - 1,Xgc->Numcolors + 1));
     }
 }
 
-static int xget_foreground()
+static int xget_foreground(BCG *Xgc)
 { 
-  if ( ScilabGCPos.CurColorStatus == 1 ) 
+  if ( Xgc->CurColorStatus == 1 ) 
     {
-      return  ScilabGCPos.NumForeground + 1;
+      return  Xgc->NumForeground + 1;
     }
   else 
     {
@@ -734,20 +736,20 @@ static int xget_foreground()
 
 /** set and get the number of the hidden3d color */
 
-static void xset_hidden3d(int num)
+static void xset_hidden3d(BCG *Xgc,int num)
 { 
-  if (ScilabGCPos.CurColorStatus == 1) 
+  if (Xgc->CurColorStatus == 1) 
     {
       /* es: Max(0,... -> Max(-1,... */
-      ScilabGCPos.NumHidden3d = Max(-1,Min(num - 1,ScilabGCPos.Numcolors + 1));
+      Xgc->NumHidden3d = Max(-1,Min(num - 1,Xgc->Numcolors + 1));
     }
 }
 
-static int xget_hidden3d()
+static int xget_hidden3d(BCG *Xgc)
 { 
-  if ( ScilabGCPos.CurColorStatus == 1 ) 
+  if ( Xgc->CurColorStatus == 1 ) 
     {
-      return ScilabGCPos.NumHidden3d + 1;
+      return Xgc->NumHidden3d + 1;
     }
   else 
     {
@@ -756,47 +758,47 @@ static int xget_hidden3d()
 }
 
 
-static void xset_autoclear(int num)
+static void xset_autoclear(BCG *Xgc,int num)
 { 
-  ScilabGCPos.Autoclear = Max(0,Min(1,num));
+  Xgc->Autoclear = Max(0,Min(1,num));
 }
 
-static void xset_autoclear_def() 
+static void xset_autoclear_def(BCG *Xgc) 
 {
-  ScilabGCPos.Autoclear = 0;
+  Xgc->Autoclear = 0;
 }
 
-static int xget_autoclear(void)
+static int xget_autoclear(BCG *Xgc)
 { 
-  return  ScilabGCPos.Autoclear;
+  return  Xgc->Autoclear;
 }
 
-static char *xget_fpf(void)
+static char *xget_fpf(BCG *Xgc)
 {
-  return( ScilabGCPos.fp_format);
+  return( Xgc->fp_format);
 }
 
-static void xset_fpf(char *fmt) 
+static void xset_fpf(BCG *Xgc,char *fmt) 
 {
-  strncpy(ScilabGCPos.fp_format,fmt,32);
+  strncpy(Xgc->fp_format,fmt,32);
 }
 
-static void xset_fpf_def() 
+static void xset_fpf_def(BCG *Xgc) 
 {
-  ScilabGCPos.fp_format[0]='\0';
+  Xgc->fp_format[0]='\0';
 }
 
 
-static void xset_pixmapclear(void)
+static void xset_pixmapclear(BCG *Xgc)
 {
 }
 
-static void xset_show(void)
+static void xset_show(BCG *Xgc)
 {
   FPRINTF((file,"\n%% SPLIT HERE"));
 }
 
-static void pixmap_resize(void)
+static void pixmap_resize(BCG *Xgc)
 {
 
 } 
@@ -812,11 +814,11 @@ static void pixmap_resize(void)
  around the string.}
 -----------------------------------------------------*/
 
-static void displaystring(char *string, int x, int y, int flag, double angle)
+static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double angle)
 {     
   int i,rect[4] ;
-  int yn = (int) (y + ascentPos());
-  boundingbox(string,x,yn,rect);
+  int yn = (int) (y + ascentPos(Xgc));
+  boundingbox(Xgc,string,x,yn,rect);
   FPRINTF((file,"\n("));
   for ( i=0; i < (int)strlen(string);i++)
     {
@@ -826,7 +828,7 @@ static void displaystring(char *string, int x, int y, int flag, double angle)
 	FPRINTF((file,"%c",string[i]));
     }
   FPRINTF((file,") %d %d %d %5.2f [%d %d %d %d] Show", x,yn ,flag,angle,rect[0],rect[1],rect[2],rect[3]));
-  FPRINTF((file,"\n%%Latex:\\myput{%d}{%d}{%d}{%s}",x,def_height*prec_fact - yn, fontsizePos(), string));
+  FPRINTF((file,"\n%%Latex:\\myput{%d}{%d}{%d}{%s}",x,def_height*prec_fact - yn, fontsizePos(Xgc), string));
  }
 
 
@@ -1028,11 +1030,11 @@ static double PosStrAsc(int id_font, int id_size)
 
 /*** modified by Bruno by using the previus datas and functions ***/
 
-void boundingbox(char *string, int x, int y, int rect[])
+void boundingbox(BCG *Xgc,char *string, int x, int y, int rect[])
 {
   int font[2];
   double h, w;
-  xget_font(font);
+  xget_font(Xgc,font);
   PosStrBox(string, font[0], font[1], &w, &h);
   rect[0]= x;
   rect[1]= (int)(y-h*prec_fact);
@@ -1049,10 +1051,10 @@ void boundingbox(char *string, int x, int y, int rect[])
 /* approximation of ascent using (asc + dsc) /2  */ 
 /** modified by bruno **/
 
-static double ascentPos() 
+static double ascentPos(BCG *Xgc) 
 { 
   int font[2];
-  xget_font(font);
+  xget_font(Xgc,font);
   return (PosStrAsc(font[0], font[1]) * prec_fact);
   /* old: return ((bsizePos[font[1]][1] +(bsizePos[font[1]][3]/2.0) ))*((double) prec_fact); */
 }
@@ -1068,10 +1070,10 @@ static void drawline(int *xx1, int *yy1, int *x2, int *y2)
 /** segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/
 /** for i=0 step 2 **/
 
-static void drawsegments(int *vx, int *vy, int n, int *style, int iflag)
+static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag)
 {
   int dash,color,i;
-  xget_dash_and_color(&dash,&color);
+  xget_dash_and_color(Xgc,&dash,&color);
   /* store the current values */
   if ( iflag == 0 )
     {
@@ -1087,21 +1089,21 @@ static void drawsegments(int *vx, int *vy, int n, int *style, int iflag)
 	  WriteGeneric("drawsegs",(int)1L,(int)4L,&vx[2*i],&vy[2*i],(int)2L,(int)1L,&NDvalue);
 	}
     }
-  xset_dash_and_color(dash,color);
+  xset_dash_and_color(Xgc,dash,color);
 }
 
 /** Draw a set of arrows **/
 
-static void drawarrows(int *vx, int *vy, int n, int as, int *style, int iflag)
+static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int iflag)
 {
   int dash,color;
-  xget_dash_and_color(&dash,&color);
+  xget_dash_and_color(Xgc,&dash,&color);
   /* store the current values */
   if ( iflag == 0 )
     {
       /** all the arrows have the same color **/
       int color1 = (*style < 1) ?  color : *style;
-      xset_line_style(color1);
+      xset_line_style(Xgc,color1);
       WriteGeneric("drawarrows",(int)1L,n*2,vx,vy,n,(int)1L,&as); 
     }
   else
@@ -1109,12 +1111,12 @@ static void drawarrows(int *vx, int *vy, int n, int as, int *style, int iflag)
       int i;
       for ( i=0 ; i < n/2 ; i++) 
 	{
-	  xset_line_style(style[i]);
+	  xset_line_style(Xgc,style[i]);
 	  /*setpattern(&NDvalue,PI0,PI0,PI0); commented out ss 13/09/00 */
 	  WriteGeneric("drawarrows",(int)1L,(int)4L,&vx[2*i],&vy[2*i],(int)2L,(int)1L,&as);
 	}
     }
-  xset_dash_and_color(dash,color);
+  xset_dash_and_color(Xgc,dash,color);
 }
 
 
@@ -1124,28 +1126,28 @@ static void drawarrows(int *vx, int *vy, int n, int as, int *style, int iflag)
 /** (*n) : number of rectangles **/
 /** fillvect[*n] : specify the action (see periX11.c) **/
 
-static void drawrectangles(const int *vects,const int *fillvect, int n)
+static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
-  int cpat =  xget_pattern();
+  int cpat =  xget_pattern(Xgc);
   WriteGeneric("drawbox",n,(int)4L,vects,vects,4*n,(int)0L,fillvect);
-  xset_pattern(cpat);
+  xset_pattern(Xgc,cpat);
 }
 
 /** Draw one rectangle **/
 
 
-static void drawrectangle(const int rect[])
+static void drawrectangle(BCG *Xgc,const int rect[])
 {
   int fvect= 0;
-  drawrectangles(rect,&fvect,1);
+  drawrectangles(Xgc,rect,&fvect,1);
 }
 
 /** Draw a filled rectangle **/
 
-static void fillrectangle(const int rect[])
+static void fillrectangle(BCG *Xgc,const int rect[])
 { 
-  int cpat = xget_pattern();
-  drawrectangles(rect,&cpat,1);
+  int cpat = xget_pattern(Xgc);
+  drawrectangles(Xgc,rect,&cpat,1);
 }
 
 
@@ -1153,7 +1155,7 @@ static void fillrectangle(const int rect[])
  * accelerated draw a set of rectangles, not implemented for Pos 
  *----------------------------------------------------------------------------------*/
 
-static void fill_grid_rectangles(int *x, int *y, double *z, int n1, int n2)
+static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
 }
 
@@ -1161,7 +1163,7 @@ static void fill_grid_rectangles(int *x, int *y, double *z, int n1, int n2)
  * accelerated draw a set of rectangles, not implemented for Pos 
  *----------------------------------------------------------------------------------*/
 
-static void fill_grid_rectangles1(int *x, int *y, double *z, int n1, int n2)
+static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
 }
 
@@ -1170,11 +1172,11 @@ static void fill_grid_rectangles1(int *x, int *y, double *z, int n1, int n2)
 /** fillvect[*n] : specify the action <?> **/
 /** caution angle=degreangle*64          **/
 
-static void fillarcs( int *vects, int *fillvect, int n)
+static void fillarcs(BCG *Xgc, int *vects, int *fillvect, int n)
 {
-  int cpat =  xget_pattern();
+  int cpat =  xget_pattern(Xgc);
   WriteGeneric("fillarc",n,(int)6L,vects,vects,6*n,(int)0L,fillvect);
-  xset_pattern(cpat);
+  xset_pattern(Xgc,cpat);
 }
 
 /** Draw a set of ellipsis or part of ellipsis **/
@@ -1184,43 +1186,43 @@ static void fillarcs( int *vects, int *fillvect, int n)
 /** angle1,angle2 specifies the portion of the ellipsis **/
 /** caution : angle=degreangle*64          **/
 
-static void drawarcs( int *vects, int *style, int n)
+static void drawarcs( BCG *Xgc,int *vects, int *style, int n)
 {
   int i,dash,color;
   /* store the current values */
-  xget_dash_and_color(&dash,&color);
+  xget_dash_and_color(Xgc,&dash,&color);
   for ( i=0 ; i < n ; i++) 
     {
       int fvect,na=1;
       /** to fix the style */
-      xset_line_style(style[i]);
+      xset_line_style(Xgc,style[i]);
 
       /** to say that we don't want to fill the arcs */
-      fvect = ScilabGCPos.IDLastPattern  +2;
-      fillarcs(&vects[(6)*i],&fvect,na);
+      fvect = Xgc->IDLastPattern  +2;
+      fillarcs(Xgc,&vects[(6)*i],&fvect,na);
     }
-  xset_dash_and_color(dash,color);
+  xset_dash_and_color(Xgc,dash,color);
 }
 
 
 /** Draw a single ellipsis or part of it **/
 /** caution angle=degreAngle*64          **/
 
-static void drawarc(int arc[])
+static void drawarc(BCG *Xgc,int arc[])
 { 
   int fvect;
   /** fvect set to tell that we only want to draw not to fill  */
-  fvect = ScilabGCPos.IDLastPattern + 2  ;
-  fillarcs(arc,&fvect,1);
+  fvect = Xgc->IDLastPattern + 2  ;
+  fillarcs(Xgc,arc,&fvect,1);
 }
 
 /** Fill a single elipsis or part of it **/
 /** with current pattern **/
 
-static void fillarc( int arc[])
+static void fillarc(BCG *Xgc, int arc[])
 { 
-  int cpat= xget_pattern();
-  fillarcs(arc,&cpat,1);
+  int cpat= xget_pattern(Xgc);
+  fillarcs(Xgc,arc,&cpat,1);
  }
 
 /*--------------------------------------------------------------
@@ -1232,28 +1234,28 @@ static void fillarc( int arc[])
 /** drawvect[i] >= use a mark for polyline i **/
 /** drawvect[i] < 0 use a line style for polyline i **/
 
-static void drawpolylines( int *vectsx, int *vectsy, int *drawvect, int n, int p)
+static void drawpolylines(BCG *Xgc, int *vectsx, int *vectsy, int *drawvect, int n, int p)
 {
   int symb[2],i,dash,color;
   /* get the current values */
-  xget_mark(symb);
-  xget_dash_and_color(&dash,&color);
+  xget_mark(Xgc,symb);
+  xget_dash_and_color(Xgc,&dash,&color);
   for (i=0 ; i< n ; i++)
     {
       if (drawvect[i] <= 0)
 	{ /** on utilise la marque de numero associ\'ee **/
-	  xset_mark(- drawvect[i],symb[1]);
-	  drawpolymark(vectsx+(p)*i,vectsy+(p)*i,p);
+	  xset_mark(Xgc,- drawvect[i],symb[1]);
+	  drawpolymark(Xgc,vectsx+(p)*i,vectsy+(p)*i,p);
 	}
       else
 	{/** on utilise un style pointill\'e  **/
-	  xset_line_style(drawvect[i]);
-	  drawpolyline(vectsx+(p)*i,vectsy+(p)*i,p,0);
+	  xset_line_style(Xgc,drawvect[i]);
+	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,0);
 	}
     }
   /** back to default values **/
-  xset_dash_and_color(dash,color);
-  xset_mark(symb[0],symb[1]);
+  xset_dash_and_color(Xgc,dash,color);
+  xset_mark(Xgc,symb[0],symb[1]);
 }
 
 /**************************************************************
@@ -1267,51 +1269,51 @@ static void drawpolylines( int *vectsx, int *vectsy, int *drawvect, int n, int p
  if fillvect[i] < 0  fill with pattern - fillvect[i]
  **************************************************************/
 
-static void fillpolylines( int *vectsx, int *vectsy, int *fillvect, int n, int p)
+static void fillpolylines(BCG *Xgc, int *vectsx, int *vectsy, int *fillvect, int n, int p)
 {
   int cpat;
-  if ( ScilabGCPos.CurVectorStyle !=  CoordModeOrigin)
+  if ( Xgc->CurVectorStyle !=  CoordModeOrigin)
     FPRINTF((file,"\n/absolu false def"));
-  cpat=xget_pattern();
+  cpat=xget_pattern(Xgc);
   WriteGeneric("drawpoly",n,(p)*2,vectsx,vectsy,(p)*(n),(int)1L,fillvect);
-  xset_pattern(cpat);
+  xset_pattern(Xgc,cpat);
   FPRINTF((file,"\n/absolu true def"));
 }
 
 /** Only draw one polygon with current line style **/
 /** according to *closeflag : it's a polyline or a polygon **/
 
-static void drawpolyline(  int *vx, int *vy, int n,int closeflag)
+static void drawpolyline( BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 { 
   int fvect=0;
   if (closeflag == 1 )
     FPRINTF((file,"\n/closeflag true def"));
   else 
     FPRINTF((file,"\n/closeflag false def"));
-  fillpolylines(vx,vy,&fvect,1,n);
+  fillpolylines(Xgc,vx,vy,&fvect,1,n);
 }
 
 /** Fill the polygon **/
 
-static void fillpolyline(  int *vx, int *vy,int n, int closeflag)
+static void fillpolyline(BCG *Xgc,  int *vx, int *vy,int n, int closeflag)
 {
-  int cpat = xget_pattern();
+  int cpat = xget_pattern(Xgc);
   /** just fill  ==> cpat < 0 **/
   cpat = -cpat;
-  fillpolylines(vx,vy,&cpat,1,n);
+  fillpolylines(Xgc,vx,vy,&cpat,1,n);
 }
 
 /** Draw a set of  current mark centred at points defined **/
 /** by vx and vy (vx[i],vy[i]) **/
 
-static void drawpolymark( int *vx, int *vy,int n)
+static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
 { 
-  int keepid,keepsize,i=1,sz=ScilabGCPos.CurHardSymbSize;
-  keepid =  ScilabGCPos.fontId;
-  keepsize= ScilabGCPos.fontSize;
-  xset_font(i,sz);
-  displaysymbols(vx,vy,n);
-  xset_font(keepid,keepsize);
+  int keepid,keepsize,i=1,sz=Xgc->CurHardSymbSize;
+  keepid =  Xgc->fontId;
+  keepsize= Xgc->fontSize;
+  xset_font(Xgc,i,sz);
+  displaysymbols(Xgc,vx,vy,n);
+  xset_font(Xgc,keepid,keepsize);
 }
 
 /*-----------------------------------------------------
@@ -1323,8 +1325,8 @@ static void initgraphic(char *string,int *num)
   char string1[256];
   static int EntryCounter = 0;
   int fnum;
-
-  if (EntryCounter >= 1) xendgraphic();
+  BCG *Xgc = &ScilabGCPos; 
+  if (EntryCounter >= 1) xendgraphic(Xgc);/* XXXX */
   strncpy(string1,string,256);
 
   /* Not so useful   
@@ -1346,44 +1348,44 @@ static void initgraphic(char *string,int *num)
       fnum=5;      loadfamily("Times-BoldItalic",&fnum);
 
     }
-  FileInit();
-  ScilabGCPos.CurWindow =EntryCounter;
+  FileInit(Xgc);
+  Xgc->CurWindow =EntryCounter;
   EntryCounter =EntryCounter +1;
 }
 
-void FileInit(void)
+void FileInit(BCG *Xgc)
 {
   int m;
   /** Just send Postscript commands to define scales etc....**/
   int x[2];
-  xget_windowdim(x,x+1);
-  ColorInit();
+  xget_windowdim(Xgc,x,x+1);
+  ColorInit(Xgc);
   FPRINTF((file,"\n%% Dessin en bas a gauche de taille %d,%d",(int)x[0]/2,(int)x[1]/2));
   FPRINTF((file,"\n[0.5 %d div 0 0 0.5 %d div neg  0 %d %d div] concat",
 	  (int)prec_fact, (int)prec_fact,(int)x[1]/2,(int) prec_fact ));
   FPRINTF((file,"\n%% Init driver "));
   FPRINTF((file,"\n/PaintBackground {WhiteLev 2 add background eq {}{ (drawbox) 4 [background 1 add] [0 0 %d %d] dogrey}ifelse } def", x[0],x[1]));
 
-  InitScilabGCPos();
+  InitScilabGCPos(Xgc);
   FPRINTF((file,"\n%% End init driver "));
-  FPRINTF((file,"\n/WhiteLev %d def",ScilabGCPos.IDLastPattern));
+  FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
   /** If the X window exists we check its colormap **/
-  if (  CheckColormap(&m) == 1) 
+  if (  CheckColormap(Xgc,&m) == 1) 
     { 
       int i;
       float r,g,b;
-      ScilabGCPos.Numcolors = m;
-      ScilabGCPos.NumForeground = m;
-      ScilabGCPos.NumBackground = m + 1;
-      if (ScilabGCPos.CurColorStatus == 1) 
+      Xgc->Numcolors = m;
+      Xgc->NumForeground = m;
+      Xgc->NumBackground = m + 1;
+      if (Xgc->CurColorStatus == 1) 
 	{
-	  ScilabGCPos.IDLastPattern = ScilabGCPos.Numcolors - 1;
-	  FPRINTF((file,"\n/WhiteLev %d def",ScilabGCPos.IDLastPattern));
+	  Xgc->IDLastPattern = Xgc->Numcolors - 1;
+	  FPRINTF((file,"\n/WhiteLev %d def",Xgc->IDLastPattern));
 	}
       FPRINTF((file,"\n/ColorR ["));
       for ( i=0; i < m ; i++)
 	{
-	  get_r(i,&r);
+	  get_r(Xgc,i,&r);
 	  FPRINTF((file,"%f ",r));
 	  if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
 	}
@@ -1391,7 +1393,7 @@ void FileInit(void)
       FPRINTF((file,"\n/ColorG ["));
       for ( i=0; i < m ; i++) 
 	{
-	  get_g(i,&g);
+	  get_g(Xgc,i,&g);
 	  FPRINTF((file,"%f ",g));
 	  if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
 	}
@@ -1399,7 +1401,7 @@ void FileInit(void)
       FPRINTF((file,"\n/ColorB ["));
       for ( i=0; i < m; i++)
 	{
-	  get_b(i,&b);
+	  get_b(Xgc,i,&b);
 	  FPRINTF((file,"%f ",b));
 	  if ( (i % 10 ) == 0 ) FPRINTF((file,"\n"));
 	}
@@ -1414,7 +1416,7 @@ void FileInit(void)
  * writes a message in the info widget associated to the current scilab window 
  *----------------------------------------------------------------------------*/
 
-static void xinfo(char *format,...) {}
+static void xinfo(BCG *Xgc,char *format,...) {}
 
 
 /*--------------------------------------------------------
@@ -1422,49 +1424,49 @@ static void xinfo(char *format,...) {}
 to come back to the default graphic state}
 ---------------------------------------------------------*/
 
-static void xset_default(void)
+static void xset_default(BCG *Xgc)
 {
-  InitScilabGCPos();
+  InitScilabGCPos(Xgc);
 }
 
-static void InitScilabGCPos(void)
+static void InitScilabGCPos(BCG *Xgc)
 { 
   int i,j,col;
-  ScilabGCPos.IDLastPattern = GREYNUMBER-1;
-  ScilabGCPos.CurLineWidth=0 ;
+  Xgc->IDLastPattern = GREYNUMBER-1;
+  Xgc->CurLineWidth=0 ;
   i=1;
-  xset_thickness(1);
-  xset_alufunction("GXcopy");
+  xset_thickness(Xgc,1);
+  xset_alufunction(Xgc,"GXcopy");
   /** retirer le clipping **/
   i=j= -1;
-  xset_unclip();
-  xset_dash(0);
-  xset_font(2,1);
-  xset_mark(0,0);
+  xset_unclip(Xgc);
+  xset_dash(Xgc,0);
+  xset_font(Xgc,2,1);
+  xset_mark(Xgc,0,0);
   /** trac\'e absolu **/
-  ScilabGCPos.CurVectorStyle = CoordModeOrigin ;
+  Xgc->CurVectorStyle = CoordModeOrigin ;
   /* initialisation des pattern dash par defaut en n&b */
-  ScilabGCPos.CurColorStatus =0;
-  xset_pattern(1);
-  xset_dash(1);
-  xset_hidden3d(1);
+  Xgc->CurColorStatus =0;
+  xset_pattern(Xgc,1);
+  xset_dash(Xgc,1);
+  xset_hidden3d(Xgc,1);
   /* initialisation de la couleur par defaut */ 
-  ScilabGCPos.Numcolors = DEFAULTNUMCOLORS;
-  ScilabGCPos.NumForeground = DEFAULTNUMCOLORS;
-  ScilabGCPos.CurColorStatus = 1 ;
-  xset_pattern(1);
-  xset_foreground(ScilabGCPos.NumForeground+1);
-  xset_background(ScilabGCPos.NumForeground+2);
-  xset_hidden3d(4);
+  Xgc->Numcolors = DEFAULTNUMCOLORS;
+  Xgc->NumForeground = DEFAULTNUMCOLORS;
+  Xgc->CurColorStatus = 1 ;
+  xset_pattern(Xgc,1);
+  xset_foreground(Xgc,Xgc->NumForeground+1);
+  xset_background(Xgc,Xgc->NumForeground+2);
+  xset_hidden3d(Xgc,4);
   /* Choix du mode par defaut (decide dans initgraphic_ */
   getcolordef(&col);
   /** we force CurColorStatus to the opposite value of col 
    * to force usecolorPos to perform initialisations 
    **/
-  ScilabGCPos.CurColorStatus = (col == 1) ? 0: 1;
-  xset_usecolor(col);
-  if (col == 1) ScilabGCPos.IDLastPattern = ScilabGCPos.Numcolors - 1;
-  strcpy(ScilabGCPos.CurNumberDispFormat,"%-5.2g");
+  Xgc->CurColorStatus = (col == 1) ? 0: 1;
+  xset_usecolor(Xgc,col);
+  if (col == 1) Xgc->IDLastPattern = Xgc->Numcolors - 1;
+  strcpy(Xgc->CurNumberDispFormat,"%-5.2g");
 }
 
 
@@ -1490,7 +1492,7 @@ $n1$and $n2$ are int numbers for interval numbers.
 
 -------------------------------------------------------------*/
 
-static void drawaxis( int alpha, int *nsteps, int *initpoint, double *size)
+static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *size)
 {
   FPRINTF((file,"\n %d [%d %d] [%f %f %f] [%d %d] drawaxis",
 	   alpha,nsteps[0],nsteps[1],size[0],size[1],size[2],
@@ -1504,13 +1506,13 @@ static void drawaxis( int alpha, int *nsteps, int *initpoint, double *size)
   add a box around the string.
 -----------------------------------------------------*/
 
-static void displaynumbers(int *x, int *y, int n, int flag, double *z, double *alpha)
+static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, double *alpha)
 { int i ;
   char buf[20];
   for (i=0 ; i < n ; i++)
     { 
-      sprintf(buf,ScilabGCPos.CurNumberDispFormat,z[i]);
-      displaystring(buf,x[i],y[i],flag,(alpha[i]));
+      sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
+      displaystring(Xgc,buf,x[i],y[i],flag,(alpha[i]));
     }
 }
 
@@ -1662,14 +1664,14 @@ static int  isizePos[] = { 8 ,10,12,14,18,24};
 
 /** To set the current font id of font and size **/
 
-static int fontsizePos (void)
+static int fontsizePos (BCG *Xgc)
 { 
-  return isizePos[ScilabGCPos.fontSize];
+  return isizePos[Xgc->fontSize];
 }
 	 
 
 
-static void xset_font(int fontid, int fontsize)
+static void xset_font(BCG *Xgc,int fontid, int fontsize)
 { 
   int i,fsiz;
   i = Min(FONTNUMBER-1,Max(fontid,0));
@@ -1678,8 +1680,8 @@ static void xset_font(int fontid, int fontsize)
     Scistring("\n Sorry This Font is Not available ");
   else 
    {
-     ScilabGCPos.fontId = i;
-     ScilabGCPos.fontSize = fsiz;
+     Xgc->fontId = i;
+     Xgc->fontSize = fsiz;
      FPRINTF((file,"\n/%s findfont %d scf mul scalefont setfont",
 	     FontInfoTabPos[i].fname,
 	     (int) (isizePos[fsiz]*prec_fact)));
@@ -1688,27 +1690,27 @@ static void xset_font(int fontid, int fontsize)
 
 /** To get the values id and size of the current font **/
 
-static void xget_font(int *font)
+static void xget_font(BCG *Xgc,int *font)
 {
-  font[0]= ScilabGCPos.fontId ;
-  font[1] =ScilabGCPos.fontSize ;
+  font[0]= Xgc->fontId ;
+  font[1] =Xgc->fontSize ;
 }
 
 
 /** To set the current mark : using the symbol font of adobe **/
 
-static void xset_mark(int number, int size)
+static void xset_mark(BCG *Xgc,int number, int size)
 { 
-  ScilabGCPos.CurHardSymb =  Max(Min(SYMBOLNUMBER-1,number),0);
-  ScilabGCPos.CurHardSymbSize =  Max(Min(FONTMAXSIZE-1,size),0);
+  Xgc->CurHardSymb =  Max(Min(SYMBOLNUMBER-1,number),0);
+  Xgc->CurHardSymbSize =  Max(Min(FONTMAXSIZE-1,size),0);
 ;}
 
 /** To get the current mark id **/
 
-static void xget_mark(int *symb)
+static void xget_mark(BCG *Xgc,int *symb)
 {
-  symb[0] = ScilabGCPos.CurHardSymb ;
-  symb[1] = ScilabGCPos.CurHardSymbSize ;
+  symb[0] = Xgc->CurHardSymb ;
+  symb[1] = Xgc->CurHardSymbSize ;
 }
 
 char symb_listPos[] = {
@@ -1718,13 +1720,13 @@ char symb_listPos[] = {
   (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
   (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
 
-static void displaysymbols(int *vx, int *vy,int n)
+static void displaysymbols(BCG *Xgc,int *vx, int *vy,int n)
 {
-  int fvect=  ( ScilabGCPos.CurColorStatus ==1) ? ScilabGCPos.CurColor : ScilabGCPos.CurPattern ;
-  if ( ScilabGCPos.CurVectorStyle !=  CoordModeOrigin)
+  int fvect=  ( Xgc->CurColorStatus ==1) ? Xgc->CurColor : Xgc->CurPattern ;
+  if ( Xgc->CurVectorStyle !=  CoordModeOrigin)
     FPRINTF((file,"\n/absolu false def"));
   FPRINTF((file,"\nHardMark 0 16#%x put",
-      Char2Int( symb_listPos[ScilabGCPos.CurHardSymb])));
+      Char2Int( symb_listPos[Xgc->CurHardSymb])));
   WriteGeneric("drawpolymark",(int)1L,(n)*2,vx,vy,n,(int)1L,&fvect);
   FPRINTF((file,"\n/absolu true def"));
 }

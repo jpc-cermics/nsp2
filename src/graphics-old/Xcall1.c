@@ -15,76 +15,76 @@
 #include <math.h>
 #include "nsp/math.h"
 #include "nsp/sciio.h"
-#include "Graphics.h" 
+#include "nsp/graphics/Graphics.h" 
 
-static void GSciString (int,int x,int y,char *StrMat,int *w,int *h);
+static void GSciString (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
 static void Myalloc1 (int **xm,int n,int *err);
 static void Myalloc (int **xm,int **ym, int n, int *err);
-static void xstringb ( char *string,int x, int y, int w, int h);
+static void xstringb (BCG *Xgc, char *string,int x, int y, int w, int h);
 
-static void drawarc_1(double arc[]);
-static void fillarcs_1(double vects[],int fillvect[], int n);
-static void drawarcs_1(double vects[], int style[], int n);
-static void fillpolyline_1(double *vx, double *vy,int n,int closeflag);
-static void drawarrows_1(double vx[],double vy[],int n,double as, int style[], int iflag);
-static void drawaxis_1(double *alpha, int *nsteps, double *initpoint, double *size);
-static void cleararea_1(double x, double y, double w, double h);
-static void xclick_1(char *str,int *ibutton, double *x, double *y, int iflag,int motion,int release,int key, int istr);
-static void xclick_any_1(char *str, int *ibutton, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr) ;
-static void xgetmouse_1(char *str, int *ibutton, double *x, double *y, int iflag,int motion,int release,int key);
-static void fillarc_1( double arc[]);
-static void fillrectangle_1(double rect[]);
-static void drawpolyline_1(double *vx, double *vy , int n,int closeflag);
-static void fillpolylines_1( double *vx, double *vy, int *fillvect, int n, int p,int v1);
-static void drawpolymark_1(double *vx, double *vy,int n);
-static void displaynumbers_1(double *x, double *y,int n, int flag,double *z, double *alpha);
-static void drawpolylines_1(double *vx, double *vy, int *drawvect,int n, int p);
-static void drawrectangle_1(double rect[]);
-static void drawrectangles_1(double vects[],int fillvect[], int n);
-static void drawsegments_1(double *vx, double *vy,int n, int *style, int iflag);
-static void displaystring_1(char *string,double x, double y,int flag, double angle);
-static void displaystringa_1(char *string, int ipos);
-static void boundingbox_1(char *string, double x, double y, double *rect);
-static void xstringb_1(char *str,int *fflag, double *xd, double *yd, double *wd, double *hd);
+static void drawarc_1(BCG *Xgc,double arc[]);
+static void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n);
+static void drawarcs_1(BCG *Xgc,double vects[], int style[], int n);
+static void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag);
+static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag);
+static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, double *size);
+static void cleararea_1(BCG *Xgc,double x, double y, double w, double h);
+static void xclick_1(BCG *Xgc,char *str,int *ibutton, double *x, double *y, int iflag,int motion,int release,int key, int istr);
+static void xclick_any_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr) ;
+static void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int iflag,int motion,int release,int key);
+static void fillarc_1(BCG *Xgc, double arc[]);
+static void fillrectangle_1(BCG *Xgc,double rect[]);
+static void drawpolyline_1(BCG *Xgc,double *vx, double *vy , int n,int closeflag);
+static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p,int v1);
+static void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n);
+static void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha);
+static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p);
+static void drawrectangle_1(BCG *Xgc,double rect[]);
+static void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n);
+static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag);
+static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, double angle);
+static void displaystringa_1(BCG *Xgc,char *string, int ipos);
+static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect);
+static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd);
 
 static void set_driver(char *x0) ;
 static void get_driver_name(char *str);
 static char get_driver(void ) ;
 static int get_driver_id(void );
 
-static void xset1_clipping_p(double x,double y,double w,double h);
-static void xset1_clipgrf();
-static void xset1_alufunction1(int val);
-static void xset1_background(int val);
-static void xset1_unclip();
-static void xset1_clip(double x[]);
-static void xset1_pattern(int val);
-static void xset1_colormap(int m, double val[]);
-static void xset1_default(void) ;
-static void xset1_font_size(int val);
-static void xset1_font(int val,int val1);
-static void xset1_foreground(int val);
-static void xset1_hidden3d(int val);
-static void xset1_absourel(int val);
-static void xset1_dash(int val);
-static void xset1_mark_size(int val);
-static void xset1_mark(int val,int val1);
-static void xset1_pixmapOn(int val);
-static void xset1_thickness(int val);
-static void xset1_usecolor(int val);
-static void xset1_viewport(int val,int val1);
-static void xset1_windowdim(int val,int val1);
-static void xset1_popupdim(int val,int val1);
-static void xset1_windowpos(int val,int val1);
-static void xset1_wresize(int val);
+static void xset1_clipping_p(BCG *Xgc,double x,double y,double w,double h);
+static void xset1_clipgrf(BCG *Xgc);
+static void xset1_alufunction1(BCG *Xgc,int val);
+static void xset1_background(BCG *Xgc,int val);
+static void xset1_unclip(BCG *Xgc);
+static void xset1_clip(BCG *Xgc,double x[]);
+static void xset1_pattern(BCG *Xgc,int val);
+static void xset1_colormap(BCG *Xgc,int m, double val[]);
+static void xset1_default(BCG *Xgc) ;
+static void xset1_font_size(BCG *Xgc,int val);
+static void xset1_font(BCG *Xgc,int val,int val1);
+static void xset1_foreground(BCG *Xgc,int val);
+static void xset1_hidden3d(BCG *Xgc,int val);
+static void xset1_absourel(BCG *Xgc,int val);
+static void xset1_dash(BCG *Xgc,int val);
+static void xset1_mark_size(BCG *Xgc,int val);
+static void xset1_mark(BCG *Xgc,int val,int val1);
+static void xset1_pixmapOn(BCG *Xgc,int val);
+static void xset1_thickness(BCG *Xgc,int val);
+static void xset1_usecolor(BCG *Xgc,int val);
+static void xset1_viewport(BCG *Xgc,int val,int val1);
+static void xset1_windowdim(BCG *Xgc,int val,int val1);
+static void xset1_popupdim(BCG *Xgc,int val,int val1);
+static void xset1_windowpos(BCG *Xgc,int val,int val1);
+static void xset1_wresize(BCG *Xgc,int val);
 
-static void xset1_autoclear(int num);
-static void xset1_autoclear_def(void);
-static void xset1_fpf(char *fmt) ;
-static void xset1_fpf_def() ;
+static void xset1_autoclear(BCG *Xgc,int num);
+static void xset1_autoclear_def(BCG *Xgc);
+static void xset1_fpf(BCG *Xgc,char *fmt) ;
+static void xset1_fpf_def(BCG *Xgc) ;
 
-static void xset1_show(void);
-static void xset1_pixmapclear(void);
+static void xset1_show(BCG *Xgc);
+static void xset1_pixmapclear(BCG *Xgc);
 
 Gengine1 nsp_gengine1={
   set_driver,
@@ -324,270 +324,271 @@ int dr_XXXX(char x0[],char x1[],integer *x2,integer *x3,integer *x4,integer *x5,
  *  xset_1 
  *-----------------------------------------------------------------------------*/
 
-void xset1_clipping_p(double x,double y,double w,double h)
+void xset1_clipping_p(BCG *Xgc,double x,double y,double w,double h)
 {
   int rect[4]={x,y,w,h};
-  if (nsp_gengine1.get_driver()=='R')  store_clipping_p(x,y,w,h);
-  nsp_gengine->xset_clip(rect);
+  if (nsp_gengine1.get_driver()=='R')  store_clipping_p(Xgc,x,y,w,h);
+  nsp_gengine->xset_clip(Xgc,rect);
 }
 
-void xset1_clipgrf()
+void xset1_clipgrf(BCG *Xgc)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_clipgrf();
-  frame_clip_on();
+  if (nsp_gengine1.get_driver()=='R')  store_clipgrf(Xgc);
+  frame_clip_on(Xgc);
 }
 
-void xset1_unclip()
+void xset1_unclip(BCG *Xgc)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_unclip();
-  nsp_gengine->xset_unclip();
+  if (nsp_gengine1.get_driver()=='R')  store_unclip(Xgc);
+  nsp_gengine->xset_unclip(Xgc);
 }
 
-void xset1_clip(double x[])
+void xset1_clip(BCG *Xgc,double x[])
 {
   /** and clipping is special its args are floats **/
   int ix[4];
-  scale_f2i(x,x+1,ix,ix+1,1);
-  length_scale_f2i(x+2,x+3,ix+2,ix+3,1);
-  if (nsp_gengine1.get_driver()=='R') store_clip(x);
-  nsp_gengine->xset_clip(ix);
+  scale_f2i(Xgc,x,x+1,ix,ix+1,1);
+  length_scale_f2i(Xgc,x+2,x+3,ix+2,ix+3,1);
+  if (nsp_gengine1.get_driver()=='R') store_clip(Xgc,x);
+  nsp_gengine->xset_clip(Xgc,ix);
 }
 
-void xset1_alufunction1(int val)
+void xset1_alufunction1(BCG *Xgc,int val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_alufunction1(val);
-  nsp_gengine->xset_alufunction1(val);
+  if (nsp_gengine1.get_driver()=='R')  store_alufunction1(Xgc,val);
+  nsp_gengine->xset_alufunction1(Xgc,val);
 }
 
-void xset1_background(int val)
+void xset1_background(BCG *Xgc,int val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_background(val);
-  nsp_gengine->xset_background(val);
+  if (nsp_gengine1.get_driver()=='R')  store_background(Xgc,val);
+  nsp_gengine->xset_background(Xgc,val);
 }
 
 
-void xset1_pattern(int val)
+void xset1_pattern(BCG *Xgc,int val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_pattern(val);
-  nsp_gengine->xset_pattern(val);
+  if (nsp_gengine1.get_driver()=='R')  store_pattern(Xgc,val);
+  nsp_gengine->xset_pattern(Xgc,val);
 }
 
-void xset1_colormap(int m, double val[])
+void xset1_colormap(BCG *Xgc,int m, double val[])
 {
   /* not recorded */ 
-  nsp_gengine->xset_colormap(m,3,val);
+  nsp_gengine->xset_colormap(Xgc,m,3,val);
 }
 
+/* pas clair XXXX */
 
-void xset1_default(void) 
+void xset1_default(BCG *Xgc) 
 {
   /* no record */
-  nsp_gengine->xset_autoclear_def() ;
-  nsp_gengine->xset_fpf_def() ;
+  nsp_gengine->xset_autoclear_def(Xgc) ;
+  nsp_gengine->xset_fpf_def(Xgc) ;
   nsp_gengine->sedeco(0);
   nsp_gengine->sedeco(1);
 }
 
-void xset1_font_size(int val)
+void xset1_font_size(BCG *Xgc,int val)
 {
   int font[2];
-  if (nsp_gengine1.get_driver()=='R')  store_font_size(val);
-  nsp_gengine->xget_font(font);
-  nsp_gengine->xset_font(font[0],val);
+  if (nsp_gengine1.get_driver()=='R')  store_font_size(Xgc,val);
+  nsp_gengine->xget_font(Xgc,font);
+  nsp_gengine->xset_font(Xgc,font[0],val);
 }
 
-void xset1_font(int val,int val1)
+void xset1_font(BCG *Xgc,int val,int val1)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_font(val,val1);
-  nsp_gengine->xset_font(val,val1);
+  if (nsp_gengine1.get_driver()=='R')  store_font(Xgc,val,val1);
+  nsp_gengine->xset_font(Xgc,val,val1);
 }
 
-void xset1_foreground(int val)
+void xset1_foreground(BCG *Xgc,int val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_foreground(val);
-  nsp_gengine->xset_foreground(val);
+  if (nsp_gengine1.get_driver()=='R')  store_foreground(Xgc,val);
+  nsp_gengine->xset_foreground(Xgc,val);
 }
 
-void xset1_hidden3d(int val)
+void xset1_hidden3d(BCG *Xgc,int val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_hidden3d(val);
-  nsp_gengine->xset_hidden3d(val);
+  if (nsp_gengine1.get_driver()=='R')  store_hidden3d(Xgc,val);
+  nsp_gengine->xset_hidden3d(Xgc,val);
 }
 
-void xset1_absourel(int val)
+void xset1_absourel(BCG *Xgc,int val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_absourel(val);
-  nsp_gengine->xset_absourel(val);
+  if (nsp_gengine1.get_driver()=='R')  store_absourel(Xgc,val);
+  nsp_gengine->xset_absourel(Xgc,val);
 }
 
-void xset1_dash(int val)
+void xset1_dash(BCG *Xgc,int val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_dash(val);
-  nsp_gengine->xset_dash(val);
+  if (nsp_gengine1.get_driver()=='R')  store_dash(Xgc,val);
+  nsp_gengine->xset_dash(Xgc,val);
 }
 
-void xset1_mark_size(int val)
+void xset1_mark_size(BCG *Xgc,int val)
 {
   int mark[2];
-  if (nsp_gengine1.get_driver()=='R')  store_mark_size(val);
-  nsp_gengine->xget_mark(mark);
+  if (nsp_gengine1.get_driver()=='R')  store_mark_size(Xgc,val);
+  nsp_gengine->xget_mark(Xgc,mark);
   mark[1]=val;
-  nsp_gengine->xset_mark(mark[0],mark[1]);
+  nsp_gengine->xset_mark(Xgc,mark[0],mark[1]);
 }
 
-void xset1_mark(int val,int val1)
+void xset1_mark(BCG *Xgc,int val,int val1)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_mark(val,val1);
-  nsp_gengine->xset_mark(val,val1);
+  if (nsp_gengine1.get_driver()=='R')  store_mark(Xgc,val,val1);
+  nsp_gengine->xset_mark(Xgc,val,val1);
 }
 
-void xset1_pixmapOn(int val)
+void xset1_pixmapOn(BCG *Xgc,int val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_pixmapOn(val);
-  nsp_gengine->xset_pixmapOn(val);
+  if (nsp_gengine1.get_driver()=='R')  store_pixmapOn(Xgc,val);
+  nsp_gengine->xset_pixmapOn(Xgc,val);
 }
 
-void xset1_thickness(int val)
+void xset1_thickness(BCG *Xgc,int val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_thickness(val);
-  nsp_gengine->xset_thickness(val);
+  if (nsp_gengine1.get_driver()=='R')  store_thickness(Xgc,val);
+  nsp_gengine->xset_thickness(Xgc,val);
 }
 
-void xset1_usecolor(int val)
+void xset1_usecolor(BCG *Xgc,int val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_usecolor(val);
-  nsp_gengine->xset_usecolor(val);
+  if (nsp_gengine1.get_driver()=='R')  store_usecolor(Xgc,val);
+  nsp_gengine->xset_usecolor(Xgc,val);
 }
 
-void xset1_viewport(int val,int val1)
+void xset1_viewport(BCG *Xgc,int val,int val1)
 {
-  nsp_gengine->xset_viewport(val,val1);
+  nsp_gengine->xset_viewport(Xgc,val,val1);
 }
 
-void xset1_windowdim(int val,int val1)
+void xset1_windowdim(BCG *Xgc,int val,int val1)
 {
-  nsp_gengine->xset_windowdim(val,val1);
+  nsp_gengine->xset_windowdim(Xgc,val,val1);
 }
 
-void xset1_popupdim(int val,int val1)
+void xset1_popupdim(BCG *Xgc,int val,int val1)
 {
-  nsp_gengine->xset_popupdim(val,val1);
+  nsp_gengine->xset_popupdim(Xgc,val,val1);
 }
 
-void xset1_windowpos(int val,int val1)
+void xset1_windowpos(BCG *Xgc,int val,int val1)
 {
-  nsp_gengine->xset_windowpos(val,val1);
+  nsp_gengine->xset_windowpos(Xgc,val,val1);
 }
 
-void xset1_wresize(int val)
+void xset1_wresize(BCG *Xgc,int val)
 {
-  nsp_gengine->xset_wresize(val);
+  nsp_gengine->xset_wresize(Xgc,val);
 }
 
-void xset1_show(void)
-{
-  /* need to store ? */
-  if (nsp_gengine1.get_driver()=='R')  store_show();
-  nsp_gengine->xset_show();
-}
-
-void xset1_pixmapclear(void)
+void xset1_show(BCG *Xgc)
 {
   /* need to store ? */
-  if (nsp_gengine1.get_driver()=='R')  store_pixmapclear();
-  nsp_gengine->xset_pixmapclear();
+  if (nsp_gengine1.get_driver()=='R')  store_show(Xgc);
+  nsp_gengine->xset_show(Xgc);
+}
+
+void xset1_pixmapclear(BCG *Xgc)
+{
+  /* need to store ? */
+  if (nsp_gengine1.get_driver()=='R')  store_pixmapclear(Xgc);
+  nsp_gengine->xset_pixmapclear(Xgc);
 }
 
 
-void xset1_autoclear(int val)
+void xset1_autoclear(BCG *Xgc,int val)
 {
-  nsp_gengine->xset_autoclear(val);
+  nsp_gengine->xset_autoclear(Xgc,val);
 }
 
-void xset1_autoclear_def(void)
+void xset1_autoclear_def(BCG *Xgc)
 {
-  nsp_gengine->xset_autoclear_def();
-}
-
-
-void xset1_fpf(char *val)
-{
-  if (nsp_gengine1.get_driver()=='R')  store_fpf(val);
-  nsp_gengine->xset_fpf(val);
+  nsp_gengine->xset_autoclear_def(Xgc);
 }
 
 
-void xset1_fpf_def()
+void xset1_fpf(BCG *Xgc,char *val)
 {
-  if (nsp_gengine1.get_driver()=='R')  store_fpf_def();
-  nsp_gengine->xset_fpf_def();
+  if (nsp_gengine1.get_driver()=='R')  store_fpf(Xgc,val);
+  nsp_gengine->xset_fpf(Xgc,val);
+}
+
+
+void xset1_fpf_def(BCG *Xgc)
+{
+  if (nsp_gengine1.get_driver()=='R')  store_fpf_def(Xgc);
+  nsp_gengine->xset_fpf_def(Xgc);
 }
 
 /*-----------------------------------------------------------------------------
  *  drawarc_1
  *-----------------------------------------------------------------------------*/
 
-void drawarc_1(double arc[])
+void drawarc_1(BCG *Xgc,double arc[])
 { 
   int iarc[6];
-  rect2d_f2i(arc,iarc,4);
+  rect2d_f2i(Xgc,arc,iarc,4);
   iarc[4]=(int) arc[4];
   iarc[5]=(int) arc[5];
-  if (nsp_gengine1.get_driver()=='R') store_drawarc_1(arc);
-  nsp_gengine->drawarc(iarc);
+  if (nsp_gengine1.get_driver()=='R') store_drawarc_1(Xgc,arc);
+  nsp_gengine->drawarc(Xgc,iarc);
 }
 
 /*-----------------------------------------------------------------------------
  * 
  *-----------------------------------------------------------------------------*/
 
-void fillarcs_1(double vects[],int fillvect[], int n)
+void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
 {
   int *xm,err=0,n2;
   Myalloc1(&xm,6*n,&err);
   if (err ==  1) return;
-  ellipse2d(vects,xm,(n2=6*n,&n2),"f2i");
-  if (nsp_gengine1.get_driver()=='R') store_fillarcs_1(vects,fillvect,n);
-  nsp_gengine->fillarcs(xm,fillvect,n);
+  ellipse2d(Xgc,vects,xm,(n2=6*n,&n2),"f2i");
+  if (nsp_gengine1.get_driver()=='R') store_fillarcs_1(Xgc,vects,fillvect,n);
+  nsp_gengine->fillarcs(Xgc,xm,fillvect,n);
 }
 
 /*-----------------------------------------------------------------------------
  *  
  *-----------------------------------------------------------------------------*/
 
-void drawarcs_1(double vects[], int style[], int n)
+void drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
 {
   int *xm,err=0,n2;
   Myalloc1(&xm,6*n,&err);
   if (err ==  1) return;
-  ellipse2d(vects,xm,(n2=6*(n),&n2),"f2i");
-  if (nsp_gengine1.get_driver()=='R') store_drawarcs_1(vects,style,n);
-  nsp_gengine->drawarcs(xm,style,n);
+  ellipse2d(Xgc,vects,xm,(n2=6*(n),&n2),"f2i");
+  if (nsp_gengine1.get_driver()=='R') store_drawarcs_1(Xgc,vects,style,n);
+  nsp_gengine->drawarcs(Xgc,xm,style,n);
 }
 /*-----------------------------------------------------------------------------
  *  
  *-----------------------------------------------------------------------------*/
 
-void fillpolyline_1(double *vx, double *vy,int n,int closeflag)
+void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
 {
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err ==  1) return;
-  scale_f2i(vx,vy,xm,ym,n);
-  if (nsp_gengine1.get_driver()=='R') store_fillpolyline_1(vx,vy,n,closeflag);
-  nsp_gengine->fillpolyline(xm,ym,n,closeflag);
+  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  if (nsp_gengine1.get_driver()=='R') store_fillpolyline_1(Xgc,vx,vy,n,closeflag);
+  nsp_gengine->fillpolyline(Xgc,xm,ym,n,closeflag);
 }
 
 /*-----------------------------------------------------------------------------
  *  arrows
  *-----------------------------------------------------------------------------*/
 
-void drawarrows_1(double vx[],double vy[],int n,double as, int style[], int iflag)
+void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag)
 { 
   int *xm,*ym,err=0,ias,ias1;
   Myalloc(&xm,&ym,n,&err);
   if (err ==  1) return;
-  scale_f2i(vx,vy,xm,ym,n);
+  scale_f2i(Xgc,vx,vy,xm,ym,n);
   /* is as < 0 --> not set */
   if ( as < 0.0 ) 
     {
@@ -603,59 +604,59 @@ void drawarrows_1(double vx[],double vy[],int n,double as, int style[], int ifla
       if ( n != 0) Mnorm /= (n/2);
       as = Mnorm/5.0;
     }
-  scale_f2i(&as,&as,&ias,&ias1,1);
-  if (nsp_gengine1.get_driver()=='R')  store_drawarrows_1(vx,vy,n,as,style,iflag);
+  scale_f2i(Xgc,&as,&as,&ias,&ias1,1);
+  if (nsp_gengine1.get_driver()=='R')  store_drawarrows_1(Xgc,vx,vy,n,as,style,iflag);
   ias=10*ias;
-  nsp_gengine->drawarrows(xm,ym,n,ias,style,iflag);
+  nsp_gengine->drawarrows(Xgc,xm,ym,n,ias,style,iflag);
 }
 
 /*-----------------------------------------------------------------------------
  * axis 
  *-----------------------------------------------------------------------------*/
 
-void drawaxis_1(double *alpha, int *nsteps, double *initpoint, double *size)
+void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, double *size)
 {
   int initpoint1[2],alpha1;
   double size1[3];
   alpha1=inint( *alpha);
-  axis2d(alpha,initpoint,size,initpoint1,size1);  
-  if (nsp_gengine1.get_driver()=='R') store_drawaxis_1(alpha,nsteps,initpoint,size);
-  nsp_gengine->drawaxis(alpha1,nsteps,initpoint1,size1);
+  axis2d(Xgc,alpha,initpoint,size,initpoint1,size1);  
+  if (nsp_gengine1.get_driver()=='R') store_drawaxis_1(Xgc,alpha,nsteps,initpoint,size);
+  nsp_gengine->drawaxis(Xgc,alpha1,nsteps,initpoint1,size1);
 }
 /*-----------------------------------------------------------------------------
  *  cleararea
  *-----------------------------------------------------------------------------*/
 
-void cleararea_1(double x, double y, double w, double h)
+void cleararea_1(BCG *Xgc,double x, double y, double w, double h)
 {
   int x1,yy1,w1,h1;
   x1 = XDouble2Pixel(x);
   yy1 = YDouble2Pixel(y);
-  length_scale_f2i (&w,&h,&w1,&h1,1);
-  if (nsp_gengine1.get_driver()=='R') store_cleararea_1(x1,yy1,w1,h1);
-  nsp_gengine->cleararea(x1,yy1,w1,h1);
+  length_scale_f2i (Xgc,&w,&h,&w1,&h1,1);
+  if (nsp_gengine1.get_driver()=='R') store_cleararea_1(Xgc,x1,yy1,w1,h1);
+  nsp_gengine->cleararea(Xgc,x1,yy1,w1,h1);
 }
 /*-----------------------------------------------------------------------------
  * click 
  *-----------------------------------------------------------------------------*/
 
-void xclick_1(char *str,int *ibutton, double *x, double *y, int iflag,int motion,int release,int key, int istr)
+void xclick_1(BCG *Xgc,char *str,int *ibutton, double *x, double *y, int iflag,int motion,int release,int key, int istr)
 { 
   int x1,yy1,n=1;
-  nsp_gengine->xclick(str,ibutton,&x1,&yy1,iflag,motion,release,key,istr);
-  scale_i2f(x,y,&x1,&yy1,n);
+  nsp_gengine->xclick(Xgc,str,ibutton,&x1,&yy1,iflag,motion,release,key,istr);
+  scale_i2f(Xgc,x,y,&x1,&yy1,n);
 }
 /*-----------------------------------------------------------------------------
  *  click_any
  *-----------------------------------------------------------------------------*/
 
-void xclick_any_1(char *str, int *ibutton, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr)
+void xclick_any_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr)
 { 
   int x1,y1,cur;
   nsp_gengine->xclick_any(str,ibutton,&x1,&y1,iwin,iflag,motion,release,key,istr);
   if (*ibutton>=0){
     cur = nsp_gengine->xset_curwin(*iwin,FALSE);
-    scale_i2f(x,y,&x1,&y1,1);
+    scale_i2f(Xgc,x,y,&x1,&y1,1);
     cur = nsp_gengine->xset_curwin(cur,FALSE);
   }
 }
@@ -664,51 +665,51 @@ void xclick_any_1(char *str, int *ibutton, double *x, double *y, int *iwin,int i
  *   xgetmouse
  *-----------------------------------------------------------------------------*/
 
-void xgetmouse_1(char *str, int *ibutton, double *x, double *y, int iflag, int motion,int release,int key)
+void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, double *x, double *y, int iflag, int motion,int release,int key)
 { 
   int x1,yy1;
-  nsp_gengine->xgetmouse(str,ibutton,&x1,&yy1,iflag,motion,release,key);
-  scale_i2f(x,y,&x1,&yy1,1);
+  nsp_gengine->xgetmouse(Xgc,str,ibutton,&x1,&yy1,iflag,motion,release,key);
+  scale_i2f(Xgc,x,y,&x1,&yy1,1);
 }
 
 /*-----------------------------------------------------------------------------
  *   fillarc
  *-----------------------------------------------------------------------------*/
 
-void fillarc_1( double arc[])
+void fillarc_1(BCG *Xgc, double arc[])
 { 
   int iarc[6],n2=4;
-  rect2d_f2i(arc,iarc,n2);
+  rect2d_f2i(Xgc,arc,iarc,n2);
   iarc[4]=(int) arc[4];
   iarc[5]=(int) arc[5];
-  if (nsp_gengine1.get_driver()=='R') store_fillarc_1(arc);
-  nsp_gengine->fillarc(iarc);
+  if (nsp_gengine1.get_driver()=='R') store_fillarc_1(Xgc,arc);
+  nsp_gengine->fillarc(Xgc,iarc);
 }
 
 /*-----------------------------------------------------------------------------
  *  fillrectangle
  *-----------------------------------------------------------------------------*/
 
-void fillrectangle_1(double rect[])
+void fillrectangle_1(BCG *Xgc,double rect[])
 { 
   int irect[4],n2=4;
-  rect2d_f2i(rect,irect,n2);
-  if (nsp_gengine1.get_driver()=='R')  store_fillrectangle_1(rect);
-  nsp_gengine->fillrectangle(irect);
+  rect2d_f2i(Xgc,rect,irect,n2);
+  if (nsp_gengine1.get_driver()=='R')  store_fillrectangle_1(Xgc,rect);
+  nsp_gengine->fillrectangle(Xgc,irect);
 }
 
 /*-----------------------------------------------------------------------------
  *  drawpolyline
  *-----------------------------------------------------------------------------*/
 
-void drawpolyline_1( double *vx, double *vy ,int n, int closeflag)
+void drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closeflag)
 {
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err ==  1) return;
-  scale_f2i(vx,vy,xm,ym,n);
-  if (nsp_gengine1.get_driver()=='R')  store_drawpolyline_1(vx,vy,n,closeflag);
-  nsp_gengine->drawpolyline(xm,ym,n,closeflag);
+  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  if (nsp_gengine1.get_driver()=='R')  store_drawpolyline_1(Xgc,vx,vy,n,closeflag);
+  nsp_gengine->drawpolyline(Xgc,xm,ym,n,closeflag);
 }
 
 /*-----------------------------------------------------------------------------
@@ -717,20 +718,20 @@ void drawpolyline_1( double *vx, double *vy ,int n, int closeflag)
  *  and fillvect is in that case of dimension n*p 
  *-----------------------------------------------------------------------------*/
 
-void fillpolylines_1( double *vx, double *vy, int *fillvect, int n, int p, int v1)
+void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
 {
   int *xm,*ym,err=0,i;
   Myalloc(&xm,&ym,n*p,&err);
   if (err ==  1) return;
-  scale_f2i(vx,vy,xm,ym,n*p);
+  scale_f2i(Xgc,vx,vy,xm,ym,n*p);
 
-  if (nsp_gengine1.get_driver()=='R') store_fillpolylines_1(vx,vy,fillvect,n,p,v1);
+  if (nsp_gengine1.get_driver()=='R') store_fillpolylines_1(Xgc,vx,vy,fillvect,n,p,v1);
 
   if (v1==2) {
-    for (i=0 ; i< (n) ;i++) shade(&xm[(p)*i],&ym[(p)*i],&fillvect[(p)*i],p,0);
+    for (i=0 ; i< (n) ;i++) shade(Xgc,&xm[(p)*i],&ym[(p)*i],&fillvect[(p)*i],p,0);
   }
   else 
-    nsp_gengine->fillpolylines(xm,ym,fillvect,n,p);
+    nsp_gengine->fillpolylines(Xgc,xm,ym,fillvect,n,p);
 
   /* end of code modified by polpoth 11/7/2000 */
 
@@ -739,14 +740,14 @@ void fillpolylines_1( double *vx, double *vy, int *fillvect, int n, int p, int v
  *  drawpolymark
  *-----------------------------------------------------------------------------*/
 
-void drawpolymark_1(double *vx, double *vy,int n)
+void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
 {
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err ==  1) return;
-  scale_f2i(vx,vy,xm,ym,n);
-  if (nsp_gengine1.get_driver()=='R')  store_drawpolymark_1(vx,vy,n);
-  nsp_gengine->drawpolymark(xm,ym,n);
+  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  if (nsp_gengine1.get_driver()=='R')  store_drawpolymark_1(Xgc,vx,vy,n);
+  nsp_gengine->drawpolymark(Xgc,xm,ym,n);
 
 }
 
@@ -754,103 +755,103 @@ void drawpolymark_1(double *vx, double *vy,int n)
  *  displaynumbers
  *-----------------------------------------------------------------------------*/
 
-void displaynumbers_1(double *x, double *y,int n, int flag,double *z, double *alpha)
+void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha)
 {
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err ==  1) return;
-  scale_f2i(x,y,xm,ym,n);
+  scale_f2i(Xgc,x,y,xm,ym,n);
   if (nsp_gengine1.get_driver()=='R') 
-    store_displaynumbers_1(x,y,n,flag,z,alpha);
-  nsp_gengine->displaynumbers(xm,ym,n,flag,z,alpha);
+    store_displaynumbers_1(Xgc,x,y,n,flag,z,alpha);
+  nsp_gengine->displaynumbers(Xgc,xm,ym,n,flag,z,alpha);
 }
 
 /*-----------------------------------------------------------------------------
  *   drawpolylines
  *-----------------------------------------------------------------------------*/
 
-void drawpolylines_1(double *vx, double *vy, int *drawvect,int n, int p)
+void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p)
 {
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,(n)*(p),&err);
   if (err ==  1) return;
-  scale_f2i(vx,vy,xm,ym,n*p);
+  scale_f2i(Xgc,vx,vy,xm,ym,n*p);
   if (nsp_gengine1.get_driver()=='R') 
-    store_drawpolylines_1(vx,vy,drawvect,n,p);
-  nsp_gengine->drawpolylines(xm,ym,drawvect,n,p);
+    store_drawpolylines_1(Xgc,vx,vy,drawvect,n,p);
+  nsp_gengine->drawpolylines(Xgc,xm,ym,drawvect,n,p);
 }
 /*-----------------------------------------------------------------------------
  *   drawrectangle
  *-----------------------------------------------------------------------------*/
 
-void drawrectangle_1(double rect[])
+void drawrectangle_1(BCG *Xgc,double rect[])
 {
   int xm[4],n2=4;
-  rect2d_f2i(rect,xm,n2);
-  if (nsp_gengine1.get_driver()=='R') store_drawrectangle_1(rect);
-  nsp_gengine->drawrectangle(xm);
+  rect2d_f2i(Xgc,rect,xm,n2);
+  if (nsp_gengine1.get_driver()=='R') store_drawrectangle_1(Xgc,rect);
+  nsp_gengine->drawrectangle(Xgc,xm);
 }
 /*-----------------------------------------------------------------------------
  *   drawrectangles
  *-----------------------------------------------------------------------------*/
 
-void drawrectangles_1(double vects[],int fillvect[], int n)
+void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
 {
   int *xm,err=0;
   Myalloc1(&xm,4*(n),&err);
   if (err ==  1) return;
-  rect2d_f2i(vects,xm,4*(n));
+  rect2d_f2i(Xgc,vects,xm,4*(n));
   if (nsp_gengine1.get_driver()=='R') 
-    store_drawrectangles_1(vects,fillvect,n);
-  nsp_gengine->drawrectangles(xm,fillvect,n);
+    store_drawrectangles_1(Xgc,vects,fillvect,n);
+  nsp_gengine->drawrectangles(Xgc,xm,fillvect,n);
 }
 
 /*-----------------------------------------------------------------------------
  *  drawsegments
  *-----------------------------------------------------------------------------*/
 
-void drawsegments_1(double *vx, double *vy,int n, int *style, int iflag)
+void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag)
 { 
   int *xm,*ym,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err ==  1) return;
-  scale_f2i(vx,vy,xm,ym,n);
+  scale_f2i(Xgc,vx,vy,xm,ym,n);
   if (nsp_gengine1.get_driver()=='R') 
-    store_drawsegments_1(vx,vy,n,style,iflag);
-  nsp_gengine->drawsegments(xm,ym,n,style,iflag);
+    store_drawsegments_1(Xgc,vx,vy,n,style,iflag);
+  nsp_gengine->drawsegments(Xgc,xm,ym,n,style,iflag);
 }
 /*-----------------------------------------------------------------------------
  *  displaystring
  *-----------------------------------------------------------------------------*/
 
-void displaystring_1(char *string,double x, double y,int flag, double angle)
+void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, double angle)
 {
   int x1,yy1;
   x1 = XDouble2Pixel(x);
   yy1 = YDouble2Pixel(y);
   if (nsp_gengine1.get_driver()=='R') 
-    store_displaystring_1(string,x,y,flag,angle);
-  nsp_gengine->displaystring(string,x1,yy1,flag,angle);
+    store_displaystring_1(Xgc,string,x,y,flag,angle);
+  nsp_gengine->displaystring(Xgc,string,x1,yy1,flag,angle);
 }
 /*-----------------------------------------------------------------------------
  *  displaystringa
  *-----------------------------------------------------------------------------*/
 
-void displaystringa_1(char *string, int ipos)
+void displaystringa_1(BCG *Xgc,char *string, int ipos)
 {
   if (nsp_gengine1.get_driver()=='R') 
-    store_displaystringa_1(string,ipos);
+    store_displaystringa_1(Xgc,string,ipos);
   
   switch ( ipos )
     {
     case 1:
-      xstringb(string,current_scale.WIRect1[0],current_scale.WIRect1[1],current_scale.WIRect1[2],current_scale.WIRect1[3]/6);
+      xstringb(Xgc,string,Xgc->scales->WIRect1[0],Xgc->scales->WIRect1[1],Xgc->scales->WIRect1[2],Xgc->scales->WIRect1[3]/6);
       break;
     case 2:
-      xstringb(string,current_scale.WIRect1[0]+current_scale.WIRect1[2],current_scale.WIRect1[1]+current_scale.WIRect1[3],current_scale.WIRect1[2]/6,current_scale.WIRect1[3]/6);
+      xstringb(Xgc,string,Xgc->scales->WIRect1[0]+Xgc->scales->WIRect1[2],Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3],Xgc->scales->WIRect1[2]/6,Xgc->scales->WIRect1[3]/6);
       break;
     case 3:
-      xstringb(string,current_scale.WIRect1[0],current_scale.WIRect1[1],current_scale.WIRect1[2]/6,current_scale.WIRect1[3]/12);
+      xstringb(Xgc,string,Xgc->scales->WIRect1[0],Xgc->scales->WIRect1[1],Xgc->scales->WIRect1[2]/6,Xgc->scales->WIRect1[3]/12);
       break;
     }
 }
@@ -861,7 +862,7 @@ void displaystringa_1(char *string, int ipos)
  *   centred in the rectangle [x,y,w=wide,h=height] 
  *-----------------------------------------------------------------------------*/
 
-static void xstringb(char *string, int x, int y, int w, int h)
+static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
 {
   char *loc,*loc1;
   loc= (char *) MALLOC( (strlen(string)+1)*sizeof(char));
@@ -872,7 +873,7 @@ static void xstringb(char *string, int x, int y, int w, int h)
       loc1=strtok(loc,"@");
       while ( loc1 != ( char * ) 0) 
 	{  
-	  nsp_gengine->boundingbox(loc1,x1,yy1,rect);
+	  nsp_gengine->boundingbox(Xgc,loc1,x1,yy1,rect);
 	  if ( rect[2] >= wmax ) wmax=rect[2];
 	  htot += (int) (1.2*((double) rect[3]));
 	  loc1=strtok((char *) 0,"@");
@@ -885,7 +886,7 @@ static void xstringb(char *string, int x, int y, int w, int h)
 	{  
 	  double angle=0.0;
 	  int flag=0;
-	  nsp_gengine->displaystring(loc1,x1,yy1,flag,angle);
+	  nsp_gengine->displaystring(Xgc,loc1,x1,yy1,flag,angle);
 	  yy1 += (int) (1.2*((double)rect[3]));
 	  loc1=strtok((char *) 0,"@");
 	}
@@ -903,14 +904,14 @@ static void xstringb(char *string, int x, int y, int w, int h)
  *  To get the bounding rectangle of a string
  *-----------------------------------------------------------------------------*/
 
-void boundingbox_1(char *string, double x, double y, double *rect)
+void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect)
 { 
   int x1,yy1,rect1[4];
   x1 = XDouble2Pixel(x);
   yy1 = YDouble2Pixel(y);
-  nsp_gengine->boundingbox(string,x1,yy1,rect1);
-  scale_i2f(rect,rect+1,rect1,rect1+1,1);
-  length_scale_i2f(rect+2,rect+3,rect1+2,rect1+3,1);
+  nsp_gengine->boundingbox(Xgc,string,x1,yy1,rect1);
+  scale_i2f(Xgc,rect,rect+1,rect1,rect1+1,1);
+  length_scale_i2f(Xgc,rect+2,rect+3,rect1+2,rect1+3,1);
 }
 
 /*-----------------------------------------------------------------------------
@@ -920,15 +921,15 @@ void boundingbox_1(char *string, double x, double y, double *rect)
 
 #define FONTMAXSIZE 6
 
-void xstringb_1(char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
+void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
 {
   int x,y,w,h,wbox,hbox,size;
   int fontid[2];
-  if (nsp_gengine1.get_driver()=='R')     store_xstringb_1(str,fflag,xd,yd,wd,hd);
+  if (nsp_gengine1.get_driver()=='R')     store_xstringb_1(Xgc,str,fflag,xd,yd,wd,hd);
   x = XDouble2Pixel(*xd);
   y = YDouble2Pixel(*yd);
-  length_scale_f2i(wd,hd,&wbox,&hbox,1);
-  nsp_gengine->xget_font(fontid);
+  length_scale_f2i(Xgc,wd,hd,&wbox,&hbox,1);
+  nsp_gengine->xget_font(Xgc,fontid);
   size = FONTMAXSIZE;
   w = wbox +1;
   if ( *fflag == 1 ) 
@@ -936,16 +937,16 @@ void xstringb_1(char *str,int *fflag, double *xd, double *yd, double *wd, double
       while ( (w > wbox || h > hbox) && size >=0  ) 
 	{
 	  size--;
-	  nsp_gengine->xset_font(fontid[0],size);
-	  GSciString(0,x,y,str,&w,&h);
+	  nsp_gengine->xset_font(Xgc,fontid[0],size);
+	  GSciString(Xgc,0,x,y,str,&w,&h);
 	}
     }
   else 
-    GSciString(0,x,y,str,&w,&h);
+    GSciString(Xgc,0,x,y,str,&w,&h);
   x = x +  (wbox - w)/2.0;
   y = y -  (hbox - h)/2.0; 
-  GSciString(1,x,y,str,&w,&h);
-  nsp_gengine->xset_font(fontid[0],fontid[1]);
+  GSciString(Xgc,1,x,y,str,&w,&h);
+  nsp_gengine->xset_font(Xgc,fontid[0],fontid[1]);
 }
 
 
@@ -956,7 +957,7 @@ void xstringb_1(char *str,int *fflag, double *xd, double *yd, double *wd, double
  * and the string is Drawn if Dflag ==1 ;
  **********************************/
 
-void GSciString(int Dflag, int x, int y, char *StrMat, int *w, int *h)
+void GSciString(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, int *h)
 {
   char *p = StrMat,*p1,*p2,*plast;
   int yi=y;
@@ -973,8 +974,8 @@ void GSciString(int Dflag, int x, int y, char *StrMat, int *w, int *h)
       while ( p1 != p && *p1 != '\n' ) 
 	p1--;
       if ( Dflag == 1) 
-	nsp_gengine->displaystring(( p1 == p ) ? p1 : p1 +1, x,yi,flag,angle);
-      nsp_gengine->boundingbox( ( p1 == p ) ? p1 : p1 +1, x,yi,logrect);
+	nsp_gengine->displaystring(Xgc,( p1 == p ) ? p1 : p1 +1, x,yi,flag,angle);
+      nsp_gengine->boundingbox(Xgc, ( p1 == p ) ? p1 : p1 +1, x,yi,logrect);
       if ( p2 != plast) 	*p2 = '\n';
       wc = Max( wc , logrect[2]);
       if ( p == p1 ) 

@@ -38,8 +38,8 @@
 
 #include <stdio.h>
 #include "nsp/math.h"
-#include "Graphics.h"
-#include "Rec.h"
+#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics/Rec.h"
 
 #define assert(ex) {if (!(ex)){ sciprint("Graphic load_/Save Error \r\n");return(0);}}
 
@@ -55,181 +55,192 @@ static int load_VectF( double **nx);
 static int load_VectC( char **nx);
 static int load_VectS( char ***nx );
 
-static int load_Plot  (void); 
-static int load_SciAxis  (void); 
-static int load_Grid (void); 
-static int load_Param3D (void); 
-static int load_Param3D1 (void); 
-static int load_Plot3D (void); 
-static int load_Fac3D (void); 
-static int load_Fec (void); 
-static int load_Contour (void); 
-static int load_Contour2D (void); 
-static int load_Gray (void); 
-static int load_Gray1 (void); 
-static int load_Gray2 (void); 
-static int load_Champ (void); 
-static int load_Ech (void); 
+static int load_Plot  (BCG *Xgc); 
+static int load_SciAxis  (BCG *Xgc); 
+static int load_Grid (BCG *Xgc); 
+static int load_Param3D (BCG *Xgc); 
+static int load_Param3D1 (BCG *Xgc); 
+static int load_Plot3D (BCG *Xgc); 
+static int load_Fac3D (BCG *Xgc); 
+static int load_Fec (BCG *Xgc); 
+static int load_Contour (BCG *Xgc); 
+static int load_Contour2D (BCG *Xgc); 
+static int load_Gray (BCG *Xgc); 
+static int load_Gray1 (BCG *Xgc); 
+static int load_Gray2 (BCG *Xgc); 
+static int load_Champ (BCG *Xgc); 
+static int load_Ech (BCG *Xgc); 
 
-static int load_clipping_p (void) ;
-static int load_clipgrf (void) ;
-static int load_alufunction1 (void) ;
-static int load_background (void) ;
-static int load_unclip (void) ;
-static int load_clip (void) ;
-static int load_pattern (void) ;
-static int load_font_size (void) ;
-static int load_font (void) ;
-static int load_foreground (void) ;
-static int load_hidden3d (void) ;
-static int load_absourel (void) ;
-static int load_dash (void) ;
-static int load_mark_size (void) ;
-static int load_mark (void) ;
-static int load_pixmapOn (void) ;
-static int load_thickness (void) ;
-static int load_usecolor (void) ;
-static int load_show (void) ;
-static int load_pixmapclear (void) ;
-static int load_drawarc_1 (void) ;
-static int load_fillarcs_1 (void) ;
-static int load_drawarcs_1 (void) ;
-static int load_fillpolyline_1 (void) ;
-static int load_drawarrows_1 (void) ;
-static int load_drawaxis_1 (void) ;
-static int load_cleararea_1 (void) ;
-static int load_fillarc_1 (void) ;
-static int load_fillrectangle_1 (void) ;
-static int load_drawpolyline_1 (void) ;
-static int load_fillpolylines_1 (void) ;
-static int load_drawpolymark_1 (void) ;
-static int load_displaynumbers_1 (void) ;
-static int load_drawpolylines_1 (void) ;
-static int load_drawrectangle_1 (void) ;
-static int load_drawrectangles_1 (void) ;
-static int load_drawsegments_1 (void) ;
-static int load_displaystring_1 (void) ;
-static int load_displaystringa_1 (void) ;
-static int load_xstringb_1 (void) ;
+static int load_clipping_p (BCG *Xgc) ;
+static int load_clipgrf (BCG *Xgc) ;
+static int load_alufunction1 (BCG *Xgc) ;
+static int load_background (BCG *Xgc) ;
+static int load_unclip (BCG *Xgc) ;
+static int load_clip (BCG *Xgc) ;
+static int load_pattern (BCG *Xgc) ;
+static int load_font_size (BCG *Xgc) ;
+static int load_font (BCG *Xgc) ;
+static int load_foreground (BCG *Xgc) ;
+static int load_hidden3d (BCG *Xgc) ;
+static int load_absourel (BCG *Xgc) ;
+static int load_dash (BCG *Xgc) ;
+static int load_mark_size (BCG *Xgc) ;
+static int load_mark (BCG *Xgc) ;
+static int load_pixmapOn (BCG *Xgc) ;
+static int load_thickness (BCG *Xgc) ;
+static int load_usecolor (BCG *Xgc) ;
+static int load_show (BCG *Xgc) ;
+static int load_pixmapclear (BCG *Xgc) ;
+static int load_drawarc_1 (BCG *Xgc) ;
+static int load_fillarcs_1 (BCG *Xgc) ;
+static int load_drawarcs_1 (BCG *Xgc) ;
+static int load_fillpolyline_1 (BCG *Xgc) ;
+static int load_drawarrows_1 (BCG *Xgc) ;
+static int load_drawaxis_1 (BCG *Xgc) ;
+static int load_cleararea_1 (BCG *Xgc) ;
+static int load_fillarc_1 (BCG *Xgc) ;
+static int load_fillrectangle_1 (BCG *Xgc) ;
+static int load_drawpolyline_1 (BCG *Xgc) ;
+static int load_fillpolylines_1 (BCG *Xgc) ;
+static int load_drawpolymark_1 (BCG *Xgc) ;
+static int load_displaynumbers_1 (BCG *Xgc) ;
+static int load_drawpolylines_1 (BCG *Xgc) ;
+static int load_drawrectangle_1 (BCG *Xgc) ;
+static int load_drawrectangles_1 (BCG *Xgc) ;
+static int load_drawsegments_1 (BCG *Xgc) ;
+static int load_displaystring_1 (BCG *Xgc) ;
+static int load_displaystringa_1 (BCG *Xgc) ;
+static int load_xstringb_1 (BCG *Xgc) ;
 
 /*---------------------------------------------------------------------
  * basic primitives 
  *---------------------------------------------------------------------------*/
 
-static int load_clipping_p(void)
+static int load_clipping_p(BCG *Xgc)
 {
   struct rec_int4 *lplot  = MALLOC(sizeof(struct rec_int4));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
   if ( load_LIS(lplot->vals,4) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
-static int load_clipgrf(void)
+static int load_clipgrf(BCG *Xgc)
 {
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&((struct rec_void *) lplot)->code)==0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
-static int load_int(void) 
+static int load_int(BCG *Xgc) 
 {
   struct rec_int *lplot = MALLOC(sizeof(struct rec_int));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
   if ( load_LI(&lplot->val) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
-static int load_alufunction1(void) { return load_int(); }
+static int load_alufunction1(BCG *Xgc) { return load_int(Xgc); }
 
-static int load_background(void)  { return load_int(); }
+static int load_background(BCG *Xgc)  { return load_int(Xgc); }
 
-static int load_unclip(void)
+static int load_unclip(BCG *Xgc)
 {
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&((struct rec_void *) lplot)->code)==0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
-static int load_clip(void)
+static int load_clip(BCG *Xgc)
 {
   struct rec_int4 *lplot  = MALLOC(sizeof(struct rec_int4));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LIS(lplot->vals,4) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
-static int load_pattern(void)  { return load_int(); }
+static int load_pattern(BCG *Xgc)  { return load_int(Xgc); }
 
-static int load_font_size(void)  { return load_int(); }
+static int load_font_size(BCG *Xgc)  { return load_int(Xgc); }
 
 
-static int load_font(void)
+static int load_font(BCG *Xgc)
 {
   struct rec_int2 *lplot  = MALLOC(sizeof(struct rec_int2));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
   if ( load_LI(&lplot->val) == 0) return(0);
   if ( load_LI(&lplot->val1) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
-static int load_foreground(void)  { return load_int(); }
+static int load_foreground(BCG *Xgc)  { return load_int(Xgc); }
 
-static int load_hidden3d(void)  { return load_int(); }
+static int load_hidden3d(BCG *Xgc)  { return load_int(Xgc); }
 
-static int load_absourel(void)  { return load_int(); }
+static int load_absourel(BCG *Xgc)  { return load_int(Xgc); }
 
-static int load_dash(void)  { return load_int(); }
+static int load_dash(BCG *Xgc)  { return load_int(Xgc); }
 
-static int load_mark_size(void)  { return load_int(); }
+static int load_mark_size(BCG *Xgc)  { return load_int(Xgc); }
 
-static int load_mark(void)  
+static int load_mark(BCG *Xgc)  
 {
   struct rec_int2 *lplot  = MALLOC(sizeof(struct rec_int2));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
   if ( load_LI(&lplot->val) == 0) return(0);
   if ( load_LI(&lplot->val1) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
-static int load_pixmapOn(void)  { return load_int(); }
-static int load_thickness(void)  { return load_int(); }
-static int load_usecolor(void)  { return load_int(); }
+static int load_pixmapOn(BCG *Xgc)  { return load_int(Xgc); }
+static int load_thickness(BCG *Xgc)  { return load_int(Xgc); }
+static int load_usecolor(BCG *Xgc)  { return load_int(Xgc); }
 
-static int load_show(void) 
+static int load_show(BCG *Xgc) 
 {
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&((struct rec_void *) lplot)->code)==0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
-static int load_pixmapclear(void)
+static int load_pixmapclear(BCG *Xgc)
 {
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&((struct rec_void *) lplot)->code)==0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
-static int load_fpf_def(void)
+static int load_fpf_def(BCG *Xgc)
 {
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&((struct rec_void *) lplot)->code)==0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
-static int load_fpf(void)
+static int load_fpf(BCG *Xgc)
 {
   struct rec_str *lplot  = MALLOC(sizeof(struct rec_str));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_C(lplot->str) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -237,7 +248,7 @@ static int load_fpf(void)
  *  drawarc_1
  *-----------------------------------------------------------------------------*/
 
-static int load_drawarc_1(void)
+static int load_drawarc_1(BCG *Xgc)
 {
   int i;
   struct rec_drawarc *lplot = MALLOC(sizeof(struct rec_drawarc));
@@ -247,6 +258,7 @@ static int load_drawarc_1(void)
     {
       if ( load_D(lplot->arc+i) == 0) return(0);
     }
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -254,7 +266,7 @@ static int load_drawarc_1(void)
  * 
  *-----------------------------------------------------------------------------*/
 
-static int load_fillarcs_1(void)
+static int load_fillarcs_1(BCG *Xgc)
 {
   struct rec_fillarcs *lplot = MALLOC(sizeof(struct rec_fillarcs));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -262,6 +274,7 @@ static int load_fillarcs_1(void)
   if ( load_LI(&lplot->n) == 0) return(0);
   if ( load_VectF(&lplot->vects) == 0) return(0);
   if ( load_VectLI(&lplot->fillvect) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -269,7 +282,7 @@ static int load_fillarcs_1(void)
  *  
  *-----------------------------------------------------------------------------*/
 
-static int load_drawarcs_1(void)
+static int load_drawarcs_1(BCG *Xgc)
 {
   struct rec_fillarcs *lplot = MALLOC(sizeof(struct rec_fillarcs));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -277,6 +290,7 @@ static int load_drawarcs_1(void)
   if ( load_LI(&lplot->n) == 0) return(0);
   if ( load_VectF(&lplot->vects) == 0) return(0);
   if ( load_VectLI(&lplot->fillvect) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -284,7 +298,7 @@ static int load_drawarcs_1(void)
  *  
  *-----------------------------------------------------------------------------*/
 
-static int load_fillpolyline_1(void)
+static int load_fillpolyline_1(BCG *Xgc)
 {
   struct rec_fillpolyline *lplot = MALLOC(sizeof(struct rec_fillpolyline));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -293,6 +307,7 @@ static int load_fillpolyline_1(void)
   if ( load_LI(&lplot->closeflag) == 0) return(0);
   if ( load_VectF(&lplot->vx) == 0) return(0);
   if ( load_VectF(&lplot->vy) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -300,7 +315,7 @@ static int load_fillpolyline_1(void)
  *  arrows
  *-----------------------------------------------------------------------------*/
 
-static int load_drawarrows_1(void)
+static int load_drawarrows_1(BCG *Xgc)
 {
   struct rec_arrows *lplot = MALLOC(sizeof(struct rec_arrows));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -317,6 +332,7 @@ static int load_drawarrows_1(void)
     {
       if ( load_LI(&lplot->def_style)==0) return(0);
     }
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -324,7 +340,7 @@ static int load_drawarrows_1(void)
  * axis 
  *-----------------------------------------------------------------------------*/
 
-static int load_drawaxis_1(void)
+static int load_drawaxis_1(BCG *Xgc)
 {
   struct rec_drawaxis *lplot = MALLOC(sizeof(struct rec_drawaxis));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -333,6 +349,7 @@ static int load_drawaxis_1(void)
   if ( load_LI(&lplot->nsteps) == 0) return(0);
   if ( load_DS(lplot->initpoint,2) == 0) return(0);
   if ( load_DS(lplot->size,3) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -340,12 +357,13 @@ static int load_drawaxis_1(void)
  *  cleararea
  *-----------------------------------------------------------------------------*/
 
-static int load_cleararea_1(void)
+static int load_cleararea_1(BCG *Xgc)
 {
   struct rec_double4 *lplot = MALLOC(sizeof(struct rec_double4));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
   if ( load_DS(lplot->vals,4) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -353,7 +371,7 @@ static int load_cleararea_1(void)
  *   fillarc
  *-----------------------------------------------------------------------------*/
 
-static int load_fillarc_1(void)
+static int load_fillarc_1(BCG *Xgc)
 {
   int i;
   struct rec_drawarc *lplot = MALLOC(sizeof(struct rec_drawarc));
@@ -363,6 +381,7 @@ static int load_fillarc_1(void)
     {
       if ( load_D(lplot->arc+i) == 0) return(0);
     }
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -370,20 +389,21 @@ static int load_fillarc_1(void)
  *  fillrectangle
  *-----------------------------------------------------------------------------*/
 
-static int load_fillrectangle_1(void)
+static int load_fillrectangle_1(BCG *Xgc)
 {
   struct rec_double4 *lplot = MALLOC(sizeof(struct rec_double4));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
   if ( load_DS(lplot->vals,4) == 0) return(0);
   return 1;
+  store_record(Xgc,lplot->code,lplot);
 }
 
 /*-----------------------------------------------------------------------------
  *  drawpolyline
  *-----------------------------------------------------------------------------*/
 
-static int load_drawpolyline_1(void)
+static int load_drawpolyline_1(BCG *Xgc)
 {
   struct rec_fillpolyline *lplot = MALLOC(sizeof(struct rec_fillpolyline));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -392,6 +412,7 @@ static int load_drawpolyline_1(void)
   if ( load_LI(&lplot->closeflag) == 0) return(0);
   if ( load_VectF(&lplot->vx) == 0) return(0);
   if ( load_VectF(&lplot->vy) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -399,7 +420,7 @@ static int load_drawpolyline_1(void)
  *  fillpolylines
  *-----------------------------------------------------------------------------*/
 
-static int load_fillpolylines_1(void)
+static int load_fillpolylines_1(BCG *Xgc)
 {
   struct rec_fillpolylines *lplot = MALLOC(sizeof(struct rec_fillpolylines));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -417,6 +438,7 @@ static int load_fillpolylines_1(void)
     {
       if ( load_VectLI(&lplot->fillvect) == 0) return(0);
     }
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -424,7 +446,7 @@ static int load_fillpolylines_1(void)
  *  drawpolymark
  *-----------------------------------------------------------------------------*/
 
-static int load_drawpolymark_1(void)
+static int load_drawpolymark_1(BCG *Xgc)
 {
   struct rec_fillpolyline *lplot = MALLOC(sizeof(struct rec_fillpolyline));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -433,6 +455,7 @@ static int load_drawpolymark_1(void)
   if ( load_LI(&lplot->closeflag) == 0) return(0);
   if ( load_VectF(&lplot->vx) == 0) return(0);
   if ( load_VectF(&lplot->vy) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -440,7 +463,7 @@ static int load_drawpolymark_1(void)
  *  displaynumbers
  *-----------------------------------------------------------------------------*/
 
-static int load_displaynumbers_1(void)
+static int load_displaynumbers_1(BCG *Xgc)
 {
   struct rec_displaynumbers *lplot = MALLOC(sizeof(struct rec_displaynumbers));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -451,6 +474,7 @@ static int load_displaynumbers_1(void)
   if ( load_VectF(&lplot->y) == 0) return(0);
   if ( load_VectF(&lplot->z) == 0) return(0);
   if ( load_VectF(&lplot->alpha) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -458,7 +482,7 @@ static int load_displaynumbers_1(void)
  *   drawpolylines
  *-----------------------------------------------------------------------------*/
 
-static int load_drawpolylines_1(void)
+static int load_drawpolylines_1(BCG *Xgc)
 {
   struct rec_drawpolylines *lplot = MALLOC(sizeof(struct rec_drawpolylines));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -468,6 +492,7 @@ static int load_drawpolylines_1(void)
   if ( load_VectF(&lplot->vx) == 0) return(0);
   if ( load_VectF(&lplot->vy) == 0) return(0);
   if ( load_VectLI(&lplot->drawvect) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -476,12 +501,13 @@ static int load_drawpolylines_1(void)
  *   drawrectangle
  *-----------------------------------------------------------------------------*/
 
-static int load_drawrectangle_1(void)
+static int load_drawrectangle_1(BCG *Xgc)
 {
   struct rec_double4 *lplot = MALLOC(sizeof(struct rec_double4));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
   if ( load_DS(lplot->vals,4) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -489,7 +515,7 @@ static int load_drawrectangle_1(void)
  *   drawrectangles
  *-----------------------------------------------------------------------------*/
 
-static int load_drawrectangles_1(void)
+static int load_drawrectangles_1(BCG *Xgc)
 {
   struct rec_fillarcs *lplot = MALLOC(sizeof(struct rec_fillarcs));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -497,6 +523,7 @@ static int load_drawrectangles_1(void)
   if ( load_LI(&lplot->n) == 0) return(0);
   if ( load_VectF(&lplot->vects) == 0) return(0);
   if ( load_VectLI(&lplot->fillvect) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -504,7 +531,7 @@ static int load_drawrectangles_1(void)
  *  drawsegments
  *-----------------------------------------------------------------------------*/
 
-static int load_drawsegments_1(void)
+static int load_drawsegments_1(BCG *Xgc)
 {
   struct rec_segment *lplot = MALLOC(sizeof(struct rec_arrows));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -514,6 +541,7 @@ static int load_drawsegments_1(void)
   if ( load_VectF(&lplot->vy) == 0) return(0);
   if ( lplot->iflag != 0 ) 
     if ( load_VectLI(&lplot->style) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -521,7 +549,7 @@ static int load_drawsegments_1(void)
  *  displaystring
  *-----------------------------------------------------------------------------*/
 
-static int load_displaystring_1(void)
+static int load_displaystring_1(BCG *Xgc)
 {
   struct rec_displaystring *lplot = MALLOC(sizeof(struct rec_displaystring));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -531,6 +559,7 @@ static int load_displaystring_1(void)
   if ( load_D(&lplot->y) == 0) return(0);
   if ( load_LI(&lplot->flag) == 0) return(0);
   if ( load_D(&lplot->angle) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -538,13 +567,14 @@ static int load_displaystring_1(void)
  *  displaystringa
  *-----------------------------------------------------------------------------*/
 
-static int load_displaystringa_1(void)
+static int load_displaystringa_1(BCG *Xgc)
 {
   struct rec_displaystringa *lplot = MALLOC(sizeof(struct rec_displaystringa));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
   if ( load_C(lplot->string) == 0) return(0);
   if ( load_LI(&lplot->ipos) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -553,7 +583,7 @@ static int load_displaystringa_1(void)
  * specified box (only works with driver which properly estimate string sizes)
  *-----------------------------------------------------------------------------*/
 
-static int load_xstringb_1(void)
+static int load_xstringb_1(BCG *Xgc)
 {
   struct rec_xstringb *lplot = MALLOC(sizeof(struct rec_xstringb));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
@@ -564,6 +594,7 @@ static int load_xstringb_1(void)
   if ( load_D(&lplot->wd) == 0) return(0);
   if ( load_D(&lplot->hd) == 0) return(0);
   if ( load_LI(&lplot->flag) == 0) return(0);
+  store_record(Xgc,lplot->code,lplot);
   return 1;
 }
 
@@ -571,7 +602,7 @@ static int load_xstringb_1(void)
  * scales 
  *---------------------------------------------------------------------------*/
 
-static int load_Ech(void)
+static int load_Ech(BCG *Xgc)
 {
   struct rec_scale *lplot = ((struct rec_scale *) MALLOC(sizeof(struct rec_scale)));
   if (lplot != NULL)
@@ -581,7 +612,7 @@ static int load_Ech(void)
       if ( load_VectF(&(lplot->Wrect)) == 0) return(0);
       if ( load_VectF(&(lplot->Frect)) == 0) return(0);
       if ( load_VectF(&(lplot->Frect_kp))   == 0) return(0);
-      if (store_record(CODEEch,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEEch,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -591,7 +622,7 @@ static int load_Ech(void)
   return(1);
 }
 
-static int load_NEch(void)
+static int load_NEch(BCG *Xgc)
 {
   struct rec_nscale *lplot;
   lplot= ((struct rec_nscale *) MALLOC(sizeof(struct rec_nscale)));
@@ -604,7 +635,7 @@ static int load_NEch(void)
       if ( load_VectF(&(lplot->Frect)) == 0) return(0);
       if ( load_VectF(&(lplot->Arect)) == 0) return(0);
       if ( load_VectF(&(lplot->Frect_kp))   == 0) return(0);
-      if (store_record(CODENEch,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODENEch,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -618,7 +649,7 @@ static int load_NEch(void)
  * 2D plots  
  *---------------------------------------------------------------------------*/
 
-static int load_Plot(void)
+static int load_Plot(BCG *Xgc)
 {
   int n=0, nstyle;
   struct rec_plot2d *lplot;
@@ -649,7 +680,7 @@ static int load_Plot(void)
       if ( load_VectF(&(lplot->brect_kp)) == 0) return(0);
       if ( load_VectLI(&(lplot->aint)) == 0) return(0);
       if ( load_VectLI(&(lplot->aint_kp)) == 0) return(0);
-      if (store_record(CODEPlot,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEPlot,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -664,7 +695,7 @@ static int load_Plot(void)
  * xgrid 
  *---------------------------------------------------------------------------*/
 
-static int load_SciAxis(void)
+static int load_SciAxis(BCG *Xgc)
 {
   char type[3] ;
   struct rec_sciaxis *lplot;
@@ -696,7 +727,7 @@ static int load_SciAxis(void)
   lplot->pos =  type[0] ;
   lplot->xy_type =  type[1];
   lplot->logflag  = type[2];
-  if (store_record(CODESciAxis,(char *) lplot) == 0) return(0);
+  if (store_record(Xgc,CODESciAxis,(char *) lplot) == 0) return(0);
   return(1);
 }
 
@@ -704,7 +735,7 @@ static int load_SciAxis(void)
  * xgrid 
  *---------------------------------------------------------------------------*/
 
-static int load_Grid(void)
+static int load_Grid(BCG *Xgc)
 { 
   struct rec_xgrid *lplot ;
   lplot= ((struct rec_xgrid *) MALLOC(sizeof(struct rec_xgrid)));
@@ -712,7 +743,7 @@ static int load_Grid(void)
     {
       if ( load_LI(&lplot->style) == 0) return(0);
       if ( load_LI(&lplot->code)==0) return(0);
-      if (store_record(CODEGrid,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEGrid,(char *) lplot) == 0) return(0);
       
     }
   else 
@@ -728,7 +759,7 @@ static int load_Grid(void)
  * param3d 
  *---------------------------------------------------------------------------*/
 
-static int load_Param3D(void)
+static int load_Param3D(BCG *Xgc)
 {
   struct rec_param3d *lplot;
   lplot= ((struct rec_param3d *) MALLOC(sizeof(struct rec_param3d)));
@@ -744,7 +775,7 @@ static int load_Param3D(void)
       if ( load_VectC(&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(&(lplot->flag)) == 0) return(0);
       if ( load_VectF(&(lplot->bbox))== 0) return(0);
-      if (store_record(CODEParam3D,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEParam3D,(char *) lplot) == 0) return(0);
     }
   else
     {
@@ -754,7 +785,7 @@ static int load_Param3D(void)
   return(1);
 }
 
-static int load_Param3D1(void)
+static int load_Param3D1(BCG *Xgc)
 {
   struct rec_param3d1 *lplot;
   lplot= ((struct rec_param3d1 *) MALLOC(sizeof(struct rec_param3d1)));
@@ -773,7 +804,7 @@ static int load_Param3D1(void)
       if ( load_VectC(&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(&(lplot->flag)) == 0) return(0);
       if ( load_VectF(&(lplot->bbox))== 0) return(0);
-      if (store_record(CODEParam3D1,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEParam3D1,(char *) lplot) == 0) return(0);
     }
   else
     {
@@ -787,7 +818,7 @@ static int load_Param3D1(void)
  * plot3d 
  *---------------------------------------------------------------------------*/
 
-static int load_Plot3D(void)
+static int load_Plot3D(BCG *Xgc)
 {
   struct rec_plot3d *lplot ;
   lplot= ((struct rec_plot3d *) MALLOC(sizeof(struct rec_plot3d)));
@@ -804,7 +835,7 @@ static int load_Plot3D(void)
       if ( load_VectC(&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(&(lplot->flag)) == 0) return(0);
       if ( load_VectF(&(lplot->bbox))== 0) return(0);
-      if (store_record(CODEPlot3D,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEPlot3D,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -818,7 +849,7 @@ static int load_Plot3D(void)
  * fac3d 
  *---------------------------------------------------------------------------*/
 
-static int load_Fac3D(void)
+static int load_Fac3D(BCG *Xgc)
 {
   struct rec_fac3d *lplot;
   lplot= ((struct rec_fac3d *) MALLOC(sizeof(struct rec_fac3d)));
@@ -839,7 +870,7 @@ static int load_Fac3D(void)
       if ( load_VectC(&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(&(lplot->flag)) == 0) return(0);
       if ( load_VectF(&(lplot->bbox))== 0) return(0);
-      if (store_record(CODEFac3D,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEFac3D,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -855,7 +886,7 @@ static int load_Fac3D(void)
 
 /* pas compatibility */
 
-static int load_Fec(void)
+static int load_Fec(BCG *Xgc)
 {
   struct rec_fec *lplot;
   lplot= ((struct rec_fec *) MALLOC(sizeof(struct rec_fec)));
@@ -877,7 +908,7 @@ static int load_Fec(void)
       if ( load_VectC(&(lplot->strflag)) == 0) return(0);
       if ( load_VectC(&(lplot->strflag_kp)) == 0) return(0);
       if ( load_VectC(&(lplot->legend))  == 0) return(0);
-      if (store_record(CODEFecN,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEFecN,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -892,7 +923,7 @@ static int load_Fec(void)
  * contour 
  *---------------------------------------------------------------------------*/
 
-static int load_Contour(void)
+static int load_Contour(BCG *Xgc)
 {
   struct rec_contour *lplot;
   lplot= ((struct rec_contour *) MALLOC(sizeof(struct rec_contour)));
@@ -916,7 +947,7 @@ static int load_Contour(void)
       if ( load_VectC(&(lplot->legend)) == 0) return(0);
       if ( load_VectLI(&(lplot->flag)) == 0) return(0);
       if ( load_VectF(&(lplot->bbox)) == 0) return(0);
-      if (store_record(CODEContour,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEContour,(char *) lplot) == 0) return(0);
       
     }
   else 
@@ -928,7 +959,7 @@ static int load_Contour(void)
 }
 
 
-static int load_Contour2D(void)
+static int load_Contour2D(BCG *Xgc)
 {
   struct rec_contour2d *lplot;
   lplot= ((struct rec_contour2d *) MALLOC(sizeof(struct rec_contour2d)));
@@ -954,7 +985,7 @@ static int load_Contour2D(void)
       if ( load_VectF(&(lplot->brect_kp)) == 0) return(0);
       if ( load_VectLI(&(lplot->aint)) == 0) return(0);
       if ( load_VectLI(&(lplot->aint_kp)) == 0) return(0);
-      if (store_record(CODEContour2D,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEContour2D,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -969,7 +1000,7 @@ static int load_Contour2D(void)
  * gray plot 
  * ---------------------------------------------------------------------------*/
 
-static int load_Gray(void)
+static int load_Gray(BCG *Xgc)
 {
  
   struct rec_gray *lplot;
@@ -988,7 +1019,7 @@ static int load_Gray(void)
       if ( load_VectF(&(lplot->brect_kp)) == 0) return(0);
       if ( load_VectLI(&(lplot->aaint))  == 0) return(0);
       if ( load_VectLI(&(lplot->aaint_kp)) == 0) return(0);
-      if (store_record(CODEGray,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEGray,(char *) lplot) == 0) return(0);
       
     }
   else 
@@ -999,7 +1030,7 @@ static int load_Gray(void)
   return(1);
 }
 
-static int load_Gray1(void)
+static int load_Gray1(BCG *Xgc)
 {
  
   struct rec_gray *lplot;
@@ -1017,7 +1048,7 @@ static int load_Gray1(void)
       if ( load_VectF(&(lplot->brect_kp)) == 0) return(0);
       if ( load_VectLI(&(lplot->aaint))  == 0) return(0);
       if ( load_VectLI(&(lplot->aaint_kp)) == 0) return(0);
-      if (store_record(CODEGray1,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEGray1,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -1027,7 +1058,7 @@ static int load_Gray1(void)
   return(1);
 }
 
-static int load_Gray2(void)
+static int load_Gray2(BCG *Xgc)
 {
  
   struct rec_gray_2 *lplot;
@@ -1039,7 +1070,7 @@ static int load_Gray2(void)
       if ( load_LI(&lplot->code)==0) return(0);
       if ( load_VectF(&(lplot->z)) == 0) return(0);
       if ( load_VectF(&(lplot->xrect)) == 0) return(0);
-      if (store_record(CODEGray2,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEGray2,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -1054,7 +1085,7 @@ static int load_Gray2(void)
  * champ 
  * ---------------------------------------------------------------------------*/
 
-static int load_Champ(void)
+static int load_Champ(BCG *Xgc)
 {
   struct rec_champ *lplot;
   lplot= ((struct rec_champ *) MALLOC(sizeof(struct rec_champ)));
@@ -1073,7 +1104,7 @@ static int load_Champ(void)
       if ( load_VectC(&(lplot->strflag_kp)) == 0) return(0);
       if ( load_VectF(&(lplot->vrect)) == 0) return(0);
       if ( load_VectF(&(lplot->vrect_kp))== 0) return(0);
-      if (store_record(CODEChamp,(char *) lplot) == 0) return(0);
+      if (store_record(Xgc,CODEChamp,(char *) lplot) == 0) return(0);
     }
   else 
     {
@@ -1096,7 +1127,7 @@ static u_int rszof ;
 
 /** special case for colormap **/
 
-static int load_Colormap(void)
+static int load_Colormap(BCG *Xgc)
 {
   double *table; double x;
   int m,i;
@@ -1113,7 +1144,7 @@ static int load_Colormap(void)
       table[i]=x;
       /** sciprint("loading %f\r\n",table[i]); **/
     }
-  nsp_gengine->xset_colormap(m,3,table);
+  nsp_gengine->xset_colormap(Xgc,m,3,table);
   FREE(table);
   return(1);
 }
@@ -1122,7 +1153,7 @@ static int load_Colormap(void)
 typedef  struct  {
   int code;
   char *name;
-  int  (*load)(void);
+  int  (*load)(BCG *);
 } Load_Table;
 
 static Load_Table load_table [] ={
@@ -1202,7 +1233,7 @@ static Load_Table load_table [] ={
 #define __STDC__
 #endif 
 
-int tape_load(const char *fname1)
+int tape_load(BCG *Xgc,const char *fname1)
 {
   int cur,type;
   char name[4];
@@ -1238,7 +1269,7 @@ int tape_load(const char *fname1)
 
   while ( load_LI(&type) != 0 && type != CODEendplots) 
     {
-      if ( load_table[type].load() == 0 ) break;
+      if ( load_table[type].load(Xgc) == 0 ) break;
     }
   assert(fflush((FILE *)rxdrs->x_private) != EOF) ; 
   assert(fclose(RF) != EOF) ;
@@ -1246,9 +1277,9 @@ int tape_load(const char *fname1)
   nsp_gengine1.get_driver_name(name);
   if ( (nsp_gengine1.get_driver()) !='R')nsp_gengine1.set_driver("Rec");
   cur = nsp_gengine->xget_curwin();
-  nsp_gengine->pixmap_resize();
-  nsp_gengine->clearwindow();
-  nsp_gengine->tape_replay(cur);
+  nsp_gengine->pixmap_resize(Xgc);
+  nsp_gengine->clearwindow(Xgc);
+  nsp_gengine->tape_replay(Xgc,cur);
   nsp_gengine1.set_driver(name);
   return(0);
 }
@@ -1301,7 +1332,7 @@ static int load_C(char *c)
   return(1);
 }
 
-static int load_VectLI( int **nx)
+static int load_VectLI(int **nx)
 { 
   /** Attention int peut etre un long int **/
   rszof = sizeof(int) ;

@@ -5,7 +5,7 @@
  --------------------------------------------------------------------------*/
 
 #include "nsp/math.h"
-#include "Graphics.h"
+#include "nsp/graphics/Graphics.h"
 
 /* 
  * we use spConfig.h for machine constants 

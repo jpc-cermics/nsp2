@@ -1,7 +1,7 @@
 #include <math.h>
 #include "nsp/machine.h"
 #include "nsp/math.h"
-#include "Graphics.h"
+#include "nsp/graphics/Graphics.h"
 
 
 static int nnuees (double *x, double *y, double *z, integer *n, double *bx, double *by, double *bz, integer *nbbary, integer *chaine, integer *ierr);

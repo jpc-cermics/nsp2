@@ -7,14 +7,16 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "Graphics.h"
+#include "nsp/graphics/Graphics.h"
 
 #define XN2D 63
 #define NCURVES2D  3
-static void polycorps(),corps();
-static void fixbounds();
 
-static void test2DD()
+static void corps(BCG *Xgc);
+static void fixbounds(BCG *Xgc, double xmin,     double xmax,     double ymin,     double ymax);
+static void polycorps(BCG *Xgc);
+
+static void test2DD(BCG *Xgc)
 {
   integer sec=10;
   integer style[NCURVES2D],aaint[4],n1,n2;
@@ -39,17 +41,17 @@ static void test2DD()
 	  Frect[i]=Wrect[i];
 	}
       Wrect[0]=Wrect[1]=Wrect[2]=Wrect[3]=0.5;
-      setscale2d(Wrect,Frect,"nn");
-      C2F(plot2d)(x,y,&n1,&n2,style,"021"," ",brect,aaint);
+      setscale2d(Xgc,Wrect,Frect,"nn");
+      C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"021"," ",brect,aaint);
       Wrect[0]=Wrect[1]=0;Wrect[2]=Wrect[3]=1.0;
-      setscale2d(Wrect,Frect,"nn");
+      setscale2d(Xgc,Wrect,Frect,"nn");
     }
 }
 
 #define XN2DD 2
 #define NCURVES2DD  1
 
-static void test2D()
+static void test2D(BCG *Xgc)
 {
   integer style[NCURVES2DD],aaint[4],n1,n2;
   double x[NCURVES2DD*XN2DD],y[NCURVES2DD*XN2DD],brect[4];
@@ -68,18 +70,18 @@ static void test2D()
   n1=NCURVES2DD;n2=XN2DD;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   brect[0]=brect[1]=0;brect[2]=brect[3]=1.0;
-  C2F(plot2d)(x,y,&n1,&n2,style,"011"," ",brect,aaint);
+  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"011"," ",brect,aaint);
 }
 
 #define XN2D2 200
 #define NCURVES2D2 1
 
-static void test2D2()
+static void test2D2(BCG *Xgc)
 {
   integer style[NCURVES2D2],aaint[4],n1,n2;
   double x[NCURVES2D2*XN2D2],y[NCURVES2D2*XN2D2],brect[4];
   integer i,j,k,on=1;
-  nsp_gengine1.xset1_pixmapOn(on);
+  nsp_gengine1.xset1_pixmapOn(Xgc,on);
   for ( k=0 ; k < 50 ; k++) 
     {
       for ( j =0 ; j < NCURVES2D2 ; j++)
@@ -93,20 +95,20 @@ static void test2D2()
       aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
       for ( i=0 ; i < NCURVES2D2 ; i++)
 	style[i]= -i-1;
-      C2F(plot2d2)("gnn",x,y,&n1,&n2,style,"111",
+      C2F(plot2d2)(Xgc,"gnn",x,y,&n1,&n2,style,"111",
 		   " y=sin(x/10)@y=sin(2*x/10)",brect,aaint);
-      nsp_gengine1.xset1_show();
-      nsp_gengine1.xset1_pixmapclear();
+      nsp_gengine1.xset1_show(Xgc);
+      nsp_gengine1.xset1_pixmapclear(Xgc);
     }
   on=0;
-  nsp_gengine1.xset1_pixmapOn(on);
+  nsp_gengine1.xset1_pixmapOn(Xgc,on);
 }
 
 
 #define XN2D3 63
 #define NCURVES2D3 2
 
-static void test2D3()
+static void test2D3(BCG *Xgc)
 {
   integer style[NCURVES2D3],aaint[4],n1,n2;
   double x[NCURVES2D3*XN2D3],y[NCURVES2D3*XN2D3],brect[4];
@@ -122,7 +124,7 @@ static void test2D3()
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   for ( i=0 ; i < NCURVES2D3 ; i++)
     style[i]= -i-1;
-  C2F(plot2d3)("gnn",x,y,&n1,&n2,style,"111",
+  C2F(plot2d3)(Xgc,"gnn",x,y,&n1,&n2,style,"111",
 	       " y=sin(x/10)@y=sin(2*x/10)",brect,aaint);
 
 }
@@ -131,7 +133,7 @@ static void test2D3()
 #define XN2D4 63
 #define NCURVES2D4 2
 
-static void test2D4()
+static void test2D4(BCG *Xgc)
 {
   integer style[NCURVES2D4],aaint[4],n1,n2;
   double x[NCURVES2D4*XN2D4],y[NCURVES2D4*XN2D4],brect[4];
@@ -147,8 +149,8 @@ static void test2D4()
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   for ( i=0 ; i < NCURVES2D4 ; i++)
     style[i]= -i-1;
-  C2F(plot2d4)("gnn",x,y,&n1,&n2,style,"111",
-	   " y=sin(x/10)@y=sin(2*x/10)",brect,aaint);
+  C2F(plot2d4)(Xgc,"gnn",x,y,&n1,&n2,style,"111",
+	       " y=sin(x/10)@y=sin(2*x/10)",brect,aaint);
 }
 
 
@@ -159,7 +161,7 @@ static void test2D4()
 #define XDDN1 10
 #define NC2DN1 1
 
-static void test2DN1()
+static void test2DN1(BCG *Xgc)
 {
   integer style[NC2DN1],aaint[4],n1,n2;
   double x[NC2DN1*XDDN1],y[NC2DN1*XDDN1],brect[4];
@@ -178,11 +180,11 @@ static void test2DN1()
   brect[2] = 4.8584755555555557;
   brect[1] = 3.856136206;
   brect[0] = 4.8546488888888888;
-  C2F(plot2d1)("enn",x,y,&n1,&n2,style,"151",
+  C2F(plot2d1)(Xgc,"enn",x,y,&n1,&n2,style,"151",
 	       " ",brect,aaint);
 }
 
-static void test2DN2()
+static void test2DN2(BCG *Xgc)
 {
   integer style[NCURVESN1],aaint[4],n1,n2;
   double x[NCURVESN1*XNN1],y[NCURVESN1*XNN1],brect[4];
@@ -202,10 +204,10 @@ static void test2DN2()
     style[i]= -NCURVESN1+i;
   n1=NCURVESN1;n2=XNN1;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  C2F(plot2d1)("gln",x,y,&n1,&n2,style,"121", "C1:y=log10(x)@C2:y=exp10(x/2.e3) ",brect,aaint);
+  C2F(plot2d1)(Xgc,"gln",x,y,&n1,&n2,style,"121", "C1:y=log10(x)@C2:y=exp10(x/2.e3) ",brect,aaint);
 }
 
-static void test2DN3()
+static void test2DN3(BCG *Xgc)
 {
   integer style[NCURVESN1],aaint[4],n1,n2;
   double x[NCURVESN1*XNN1],y[NCURVESN1*XNN1],brect[4];
@@ -225,7 +227,7 @@ static void test2DN3()
     style[i]= -NCURVESN1+i;
   n1=NCURVESN1;n2=XNN1;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  C2F(plot2d1)("gnl",x,y,&n1,&n2,style,"121","C1:y=log10(x)@C2:y=exp10(x/2.e3) ",brect,aaint);
+  C2F(plot2d1)(Xgc,"gnl",x,y,&n1,&n2,style,"121","C1:y=log10(x)@C2:y=exp10(x/2.e3) ",brect,aaint);
 }
 
 
@@ -235,7 +237,7 @@ static void test2DN3()
 #define YN3D 21
 #define VX3D 10
 
-static void test3D()
+static void test3D(BCG *Xgc)
 {
   double z[XN3D*YN3D],x[XN3D],y[YN3D],bbox[6];
   integer flag[3],p,q;
@@ -248,7 +250,7 @@ static void test3D()
   p= XN3D ; q= YN3D;  teta=alpha=35;
   flag[0]=2;flag[1]=2,flag[2]=4;
   p= XN3D ; q= YN3D;  teta=alpha=35;
-  C2F(plot3d)(x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
+  C2F(plot3d)(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
 }
 
 
@@ -257,14 +259,14 @@ static void test3D()
 #define YN3DA 21
 #define VX3DA 10
 
-static void test3DA()
+static void test3DA(BCG *Xgc)
 {
   double z[XN3DA*YN3DA],x[XN3DA],y[YN3DA],bbox[6];
   integer flag[3],p,q,k;
   double teta,alpha;
   integer i ,j,on=1;
-  nsp_gengine1.xset1_pixmapOn(on);
-  nsp_gengine1.xset1_usecolor(1);
+  nsp_gengine1.xset1_pixmapOn(Xgc,on);
+  nsp_gengine1.xset1_usecolor(Xgc,1);
   for ( i=0 ; i < XN3DA ; i++) x[i]=i/((double) XN3DA) - 2.0;
   for ( j=0 ; j < YN3DA ; j++) y[j]=j/((double) YN3DA) - 2.0;
   for ( k = 0 ; k < 20 ; k++)
@@ -274,12 +276,12 @@ static void test3DA()
       p= XN3DA ; q= YN3DA;  teta=alpha=35;
       flag[0]=2;flag[1]=(k== 0)? 2:0,flag[2]=0;
       p= XN3DA ; q= YN3DA;  teta=alpha=35;
-      C2F(plot3d1)(x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
-      nsp_gengine1.xset1_show();
-      nsp_gengine1.xset1_pixmapclear();
+      C2F(plot3d1)(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
+      nsp_gengine1.xset1_show(Xgc);
+      nsp_gengine1.xset1_pixmapclear(Xgc);
     }
-  nsp_gengine1.xset1_pixmapOn(0);
-  nsp_gengine1.xset1_usecolor(0);
+  nsp_gengine1.xset1_pixmapOn(Xgc,0);
+  nsp_gengine1.xset1_usecolor(Xgc,0);
 }
 
 
@@ -287,7 +289,7 @@ static void test3DA()
 #define YN3D1 21
 #define VX 10
 
-static void test3D1()
+static void test3D1(BCG *Xgc)
 {
   double z[XN3D1*YN3D1],x[XN3D1],y[YN3D1],bbox[6];
   integer flag[3],p,q;
@@ -299,8 +301,8 @@ static void test3D1()
     for ( j=0 ; j < YN3D1 ; j++) z[i+XN3D1*j]= (i-VX)*(i-VX)+(j-VX)*(j-VX);
   p= XN3D1 ; q= YN3D1;  teta=alpha=35;
   flag[0]=2;flag[1]=2,flag[2]=3;
-  C2F(plot3d1)(x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
-  I3dRotation() ;
+  C2F(plot3d1)(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
+  I3dRotation(Xgc) ;
 }
 
 
@@ -308,7 +310,7 @@ static void test3D1()
 #define YN3D2 21
 #define VX3D2 5
 
-static void test3D2()
+static void test3D2(BCG *Xgc)
 {
   double z[XN3D2*YN3D2],x[XN3D2],y[YN3D2],bbox[6];
   integer flag[3],p,q;
@@ -320,18 +322,18 @@ static void test3D2()
     for ( j=0 ; j < YN3D2 ; j++) z[i+XN3D2*j]= (i-VX3D2)*(i-VX3D2);
   p= XN3D2 ; q= YN3D2;  teta=alpha=35;
   flag[0]=2;flag[1]=2,flag[2]=3;
-  C2F(plot3d1)(x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
+  C2F(plot3d1)(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
 }
 
 
 
-static void testArrows()
+static void testArrows(BCG *Xgc)
 {
   integer narrowx2=20,j,style=0,iflag=0;
   double arsizex10=20.0;
   double polyx[20],polyy[20];
   double dx=100;
-  fixbounds(0.0,500.0,0.0,500.0);
+  fixbounds(Xgc,0.0,500.0,0.0,500.0);
   for ( j =0 ; j < 10 ; j++)
     {polyx[2*j]=250;polyy[2*j]=250;}
   for ( j =0 ; j < 10 ; j++)
@@ -341,15 +343,14 @@ static void testArrows()
       polyx[2*j+1]=250+ cos(3.14116*alpha/180.0)*dx;
       polyy[2*j+1]=250 -sin(3.14116*alpha/180.0)*dx;
     }
-  nsp_gengine1.drawarrows_1(polyx,polyy,narrowx2,arsizex10,&style,iflag);
+  nsp_gengine1.drawarrows_1(Xgc,polyx,polyy,narrowx2,arsizex10,&style,iflag);
 }
 
 #define XNC 21
 #define YNC 21
 #define VXC 10
 
-static void TestC(ii)
-     int ii;
+static void TestC(BCG *Xgc,     int ii)
 {
   double z[XNC*YNC],x[XNC],y[YNC];
   double zz,bbox[6],zlev=10.0;
@@ -366,12 +367,12 @@ static void TestC(ii)
   flag[0]=ii;
   flag[1]=2;
   flag[2]=3;
- C2F(contour)(x,y,z,&p,&q,&flagnz,&nz,&zz,&teta,&alpha, "X@Y@Z",flag,bbox,&zlev,0L);
+  C2F(contour)(Xgc,x,y,z,&p,&q,&flagnz,&nz,&zz,&teta,&alpha, "X@Y@Z",flag,bbox,&zlev,0L);
 }
 
 #define LEVELNUM 10
 
-static void TestC2d()
+static void TestC2d(BCG *Xgc)
 {
   integer aaint[4];
   double brect[4];
@@ -390,18 +391,18 @@ static void TestC2d()
   brect[0]=brect[1]=0;brect[2]=brect[3]=200.0;
   for (i=0; i < LEVELNUM; i++) 
     style[i]= i;
-  C2F(contour2)(x,y,z,&p,&q,&flagnz,&nz,&zz,style,"011", "X@Y@Z",brect,aaint);
+  C2F(contour2)(Xgc,x,y,z,&p,&q,&flagnz,&nz,&zz,style,"011", "X@Y@Z",brect,aaint);
 }
 
-static void testC1() { TestC(2);}
-static void testC2() { TestC(0);}
-static void testC3() { TestC(1);}
+static void testC1(BCG *Xgc) { TestC(Xgc,2);}
+static void testC2(BCG *Xgc) { TestC(Xgc,0);}
+static void testC3(BCG *Xgc) { TestC(Xgc,1);}
 
 
 #define XNCh 21
 #define YNCh 21
 
-static void testCh()
+static void testCh(BCG *Xgc)
 {
   double x[XNCh],y[YNCh];
   double fx[XNCh*YNCh], fy[XNCh*YNCh], vrect[4],arfact;
@@ -421,7 +422,7 @@ static void testCh()
 
   vrect[0]=vrect[1]= -1 ,vrect[2]=vrect[3]=1;
   arfact=1.0;
-  nsp_champ(x,y,fx,fy,(i=XNCh,&i),(j=YNCh,&j),fax,vrect,&arfact,0L);
+  nsp_champ(Xgc,x,y,fx,fy,(i=XNCh,&i),(j=YNCh,&j),fax,vrect,&arfact,0L);
 }
 
 
@@ -429,7 +430,7 @@ static void testCh()
 #define YNG 21
 #define VXG 10
 
-static void testG()
+static void testG(BCG *Xgc)
 {
   integer aaint[4];
   double brect[4];
@@ -442,13 +443,13 @@ static void testG()
       z[i+XNG*j]= (i-VXG)*(i-VXG)-(j-VXG)*(j-VXG);
   p= XNG ; q= YNG;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  C2F(xgray)(x,y,z,&p,&q,"021",brect,aaint,0L);
+  C2F(xgray)(Xgc,x,y,z,&p,&q,"021",brect,aaint,0L);
 }
 
 
 #define XNP3D 201
 
-static void testP3D()
+static void testP3D(BCG *Xgc)
 {
   double z[XNP3D],x[XNP3D],y[XNP3D],bbox[6];
   integer n,flag[3],i;
@@ -463,25 +464,25 @@ static void testP3D()
   flag[0]=0;
   flag[1]=2;
   flag[2]=2;
-  C2F(param3d)(x,y,z,(n=XNP3D,&n),&theta,&alpha,"X@Y@Z",flag,bbox);
+  C2F(param3d)(Xgc,x,y,z,(n=XNP3D,&n),&theta,&alpha,"X@Y@Z",flag,bbox);
 }
 
 
 
-static void testPattern()
+static void testPattern(BCG *Xgc)
 {
   double rect[]={10,10,50,50};
   integer i=0,j,k;
-  fixbounds(-0.0,500.0,-50.0,200.0);
+  fixbounds(Xgc,-0.0,500.0,-50.0,200.0);
   for ( k =0 ; k < 4 ; k++)
     {
       for ( j =0 ; j < 5 ; j++)
 	{ integer pat;
 	  pat=j+5*k;
-	  nsp_gengine1.xset1_pattern(pat);
-	  nsp_gengine1.fillrectangle_1(rect);
-	  nsp_gengine1.xset1_pattern(i);
-	  nsp_gengine1.drawrectangle_1(rect);
+	  nsp_gengine1.xset1_pattern(Xgc,pat);
+	  nsp_gengine1.fillrectangle_1(Xgc,rect);
+	  nsp_gengine1.xset1_pattern(Xgc,i);
+	  nsp_gengine1.drawrectangle_1(Xgc,rect);
 	  rect[0] += rect[2]+5.0;
 	}
       rect[1] += rect[3]+5.0;
@@ -489,33 +490,33 @@ static void testPattern()
     }
 }
 
-static void testColor()
+static void testColor(BCG *Xgc)
 {
   double rect[]={10,10,50,50};
   integer j,k;
-  fixbounds(-0.0,500.0,-50.0,200.0);
+  fixbounds(Xgc,-0.0,500.0,-50.0,200.0);
   for ( k =0 ; k < 4 ; k++)
     {
       for ( j =0 ; j < 5 ; j++)
 	{ 
 	  integer pat;
 	  pat=j+5*k;
-	  set_c(pat);
-	  nsp_gengine1.drawrectangle_1(rect);
-	  nsp_gengine1.fillrectangle_1(rect);
+	  set_c(Xgc,pat);
+	  nsp_gengine1.drawrectangle_1(Xgc,rect);
+	  nsp_gengine1.fillrectangle_1(Xgc,rect);
 	  rect[0] += rect[2]+5.0;
 	}
       rect[1] += rect[3]+5.0;
       rect[0]  =10.0;
     }
-  set_c(0L);
+  set_c(Xgc,0L);
 }
 
 
 #define XMP 1
 #define NCURVESP  2
   
-static void testPrim()
+static void testPrim(BCG *Xgc)
 {
   integer style[NCURVESP],aaint[4],n1,n2;
   double x[NCURVESP*XMP],y[NCURVESP*XMP],brect[4];
@@ -524,8 +525,8 @@ static void testPrim()
   style[0]= -1;
   n1=NCURVESP;n2=XMP;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  C2F(plot2d)(x,y,&n1,&n2,style,"022"," ",brect,aaint);
-  corps();
+  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"022"," ",brect,aaint);
+  corps(Xgc);
 }
 
 /**
@@ -538,14 +539,14 @@ static void transl(x,n,val)
 }
 **/
 
-static void corps()
+static void corps(BCG *Xgc)
 {
   double x[7],y[7],boxes[7*4],arcs[7*6],xpols[7*7],ypols[7*7],arsize;
   integer pats[7],n,i,j,iflag;
   integer whiteid,style=0,xiflag=0;
-  nsp_gengine->xset_default();
+  nsp_gengine->xset_default(Xgc);
   n=7;
-  whiteid = nsp_gengine->xget_last();
+  whiteid = nsp_gengine->xget_last(Xgc);
   for (i=0; i < 7; i++) x[i]=i*40.00;
   for (i=0; i < 7; i++)
     {
@@ -555,11 +556,11 @@ static void corps()
       boxes[4*i+3]=30.000;
       pats[i]=whiteid+1;
     }
-  nsp_gengine1.drawrectangles_1(boxes,pats,n);
+  nsp_gengine1.drawrectangles_1(Xgc, boxes,pats,n);
   for (i=0; i < 7; i++) boxes[4*i+1]=45.000;
   pats[0]=0;pats[1]=4;pats[2]=8;pats[3]=12;
   pats[4]=15;pats[5]=whiteid;pats[6]=0;
-  nsp_gengine1.drawrectangles_1(boxes,pats,n);
+  nsp_gengine1.drawrectangles_1(Xgc,boxes,pats,n);
   for (i=0; i < 7; i++)
     {
       arcs[6*i]=x[i];
@@ -569,14 +570,14 @@ static void corps()
       arcs[6*i+4]=0.000;
       arcs[6*i+5]=64.0*180.000;
     }
-  nsp_gengine1.drawarcs_1(arcs,pats,n);
+  nsp_gengine1.drawarcs_1(Xgc,arcs,pats,n);
   for (i=0; i < 7; i++)
     {
       arcs[6*i+1]=135.000;
       arcs[6*i+5]=64*360.000;
       pats[i]=whiteid+1;
     }
-  nsp_gengine1.drawarcs_1(arcs,pats,n);
+  nsp_gengine1.drawarcs_1(Xgc,arcs,pats,n);
   x[0]=x[6]=0.0;x[5]=x[1]=10.0,x[4]=x[2]=20.0;x[3]=30.0;
   y[0]=15.0;y[1]=y[2]=30.0;y[3]=15.0;y[4]=y[5]=0.0;y[6]=15.0;
   for (i=0;i< 7 ; i++) y[i]=y[i]+160.0;
@@ -588,23 +589,23 @@ static void corps()
 	  ypols[i+j*7]=y[i];
 	}
     }
-  nsp_gengine1.fillpolylines_1(xpols,ypols,pats,n,n,0);
+  nsp_gengine1.fillpolylines_1(Xgc,xpols,ypols,pats,n,n,0);
   pats[0]=0;pats[1]=4;pats[2]=8;pats[3]=12;
   pats[4]=15;pats[5]=whiteid;pats[6]=0;
   for (j=0;j<7;j++)
       for (i=0;i< 7 ; i++) 
 	  ypols[i+j*7]=ypols[i+j*7]+60;
-  nsp_gengine1.fillpolylines_1(xpols,ypols,pats,n,n,0);
+  nsp_gengine1.fillpolylines_1(Xgc,xpols,ypols,pats,n,n,0);
   for (j=0;j<7;j++)
       for (i=0;i< 7 ; i++) 
 	  ypols[i+j*7]=ypols[i+j*7]+60;
   for (j=0;j<7;j++) pats[j]=j;
-  nsp_gengine1.drawpolylines_1(xpols,ypols,pats,n,n);
+  nsp_gengine1.drawpolylines_1(Xgc,xpols,ypols,pats,n,n);
   for (j=0;j<7;j++)
     for (i=0;i< 7 ; i++) 
       ypols[i+j*7]=ypols[i+j*7]+60;
   for (j=0;j<7;j++) pats[j]= -j;
-    nsp_gengine1.drawpolylines_1(xpols,ypols,pats,n,n);
+  nsp_gengine1.drawpolylines_1(Xgc,xpols,ypols,pats,n,n);
   for (i=0; i < 7; i++)
     {
       xpols[2*i]=40*i;
@@ -613,51 +614,51 @@ static void corps()
       ypols[2*i+1]=360.0+70.0;
     }
   n=14;
-  nsp_gengine1.drawsegments_1(xpols,ypols,n,&style,xiflag);
+  nsp_gengine1.drawsegments_1(Xgc,xpols,ypols,n,&style,xiflag);
   for (i=0; i < 7; i++)
     {
       ypols[2*i]=360.0+70.0;
       ypols[2*i+1]=360.0+100.0;
     }
   arsize=50;
-  nsp_gengine1.drawarrows_1(xpols,ypols,n,arsize,&style,xiflag);
+  nsp_gengine1.drawarrows_1(Xgc,xpols,ypols,n,arsize,&style,xiflag);
   x[0]=0;x[1]=100;x[2]=200;
   for (i=0; i < 3 ; i++) y[i]=500;
   xpols[0]=10.0;xpols[1]=20.0;xpols[2]=35;
   ypols[0]=ypols[1]=ypols[2]=0.0;
   n=3;
   iflag=1;
-  nsp_gengine1.displaynumbers_1(x,y,n,iflag,xpols,ypols);
+  nsp_gengine1.displaynumbers_1(Xgc,x,y,n,iflag,xpols,ypols);
   for (i=0; i < 3 ; i++) y[i]=550;
   iflag=0;
-  nsp_gengine1.displaynumbers_1(x,y,n,iflag,xpols,ypols);
+  nsp_gengine1.displaynumbers_1(Xgc,x,y,n,iflag,xpols,ypols);
 
   }
 
-static void testString()
+static void testString(BCG *Xgc)
 {
   integer j,v=0,pat=1;
   double x=50.0,y=0.0;
-  fixbounds(-200.0,200.0,-200.0,200.0);
-  nsp_gengine->xset_font(2,10);
+  fixbounds(Xgc,-200.0,200.0,-200.0,200.0);
+  nsp_gengine->xset_font(Xgc,2,10);
   for ( j =0 ; j < 360; j=j+45)
     {
       pat=pat+2;
-      nsp_gengine1.xset1_pattern(pat);
-      nsp_gengine1.displaystring_1("String",x,y,v,j);
+      nsp_gengine1.xset1_pattern(Xgc,pat);
+      nsp_gengine1.displaystring_1(Xgc,"String",x,y,v,j);
     }
-  nsp_gengine->xset_default();
+  nsp_gengine->xset_default(Xgc);
 }
 
-static void testXormode()
+static void testXormode(BCG *Xgc)
 {
-  nsp_gengine->xset_alufunction1(6);
-  testPattern();
-  testString();
-  nsp_gengine->xset_alufunction1(3);
+  nsp_gengine->xset_alufunction1(Xgc,6);
+  testPattern(Xgc);
+  testString(Xgc);
+  nsp_gengine->xset_alufunction1(Xgc,3);
 }
 
-static void testXliness()
+static void testXliness(BCG *Xgc)
 {
   char info[10];
   integer j,k,ii=0;
@@ -666,10 +667,10 @@ static void testXliness()
   integer npoly=1,polysize=5;
   double polyx[5],polyy[5];
   integer whiteid;
-  fixbounds(0.0,500.0,0.0,250.0);
-  whiteid = nsp_gengine->xget_last();
+  fixbounds(Xgc,0.0,500.0,0.0,250.0);
+  whiteid = nsp_gengine->xget_last(Xgc);
   sprintf(info,"white=%d",(int)whiteid);
-  nsp_gengine1.displaystring_1(info,x,y,ii,ang);
+  nsp_gengine1.displaystring_1(Xgc,info,x,y,ii,ang);
   x=10;y=40;
   for ( k =0 ; k < 4 ; k++)
     {
@@ -678,10 +679,10 @@ static void testXliness()
 	  pat=j+10*k;
 	  polyx[0]=x;polyx[1]=x+w;polyx[2]=x+w;polyx[3]=x;polyx[4]=x;
 	  polyy[0]=y;polyy[1]=y;polyy[2]=y+h;polyy[3]=y+h;polyy[4]=y;
-	  nsp_gengine1.fillpolylines_1(polyx,polyy,&pat,npoly,polysize,0);
+	  nsp_gengine1.fillpolylines_1(Xgc,polyx,polyy,&pat,npoly,polysize,0);
 	  polyy[0]=polyy[0]-10.0;
 	  sprintf(info,"gl=%d",(int)pat);
-	  nsp_gengine1.displaystring_1(info,*polyx,*polyy,ii,ang);
+	  nsp_gengine1.displaystring_1(Xgc,info,*polyx,*polyy,ii,ang);
   	  x=x+w+5;
 	}
       y=y+h+20;
@@ -689,7 +690,7 @@ static void testXliness()
     }
 }
 
-static void testMarks()
+static void testMarks(BCG *Xgc)
 {
   integer style[2],aaint[4],n1,n2,nn1;
   static double x[4],y[4],brect[4];
@@ -699,28 +700,28 @@ static void testMarks()
   style[0]=1;style[1]=1;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   brect[0]=brect[1]=0;brect[2]=brect[3]=1.0;
-  C2F(plot2d)(x,y,&n1,&n2,style,"021"," ",brect,aaint);
+  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"021"," ",brect,aaint);
   n1=2,nn1=10;
-  nsp_gengine1.xset1_mark(n1,nn1);
+  nsp_gengine1.xset1_mark(Xgc,n1,nn1);
   n1=1,n2=1;
   x[0]=0;y[0]=0;
   style[0] = -4;
-  C2F(plot2d)(x,y,&n1,&n2,style,"001"," ",brect,aaint);
+  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"001"," ",brect,aaint);
 }
 
 
-static void testXrects()
+static void testXrects(BCG *Xgc)
 {
   integer j,k,nrect=1;
   double rect[4],xx=10.0,yy=10.0,w=40.0,h=40.0;
-  fixbounds(-0.0,500.0,-50.0,200.0);
+  fixbounds(Xgc,-0.0,500.0,-50.0,200.0);
   for ( k =0 ; k < 4 ; k++)
     {
       for ( j =0 ; j < 10 ; j++)
 	{ integer pat;
 	  pat=j+10*k;
 	  rect[0]=xx;rect[1]=yy;rect[2]=w;rect[3]=h;
-	  nsp_gengine1.drawrectangles_1(rect,&pat,nrect);
+	  nsp_gengine1.drawrectangles_1(Xgc,rect,&pat,nrect);
   	  xx=xx+w+5.0;
 	}
       yy=yy+h+5.0;
@@ -732,11 +733,7 @@ static void testXrects()
 #define NF 1
 #define NCU  2
 
-static void fixbounds(xmin, xmax, ymin, ymax)
-     double xmin;
-     double xmax;
-     double ymin;
-     double ymax;
+static void fixbounds(BCG *Xgc, double xmin,     double xmax,     double ymin,     double ymax)
 {
   integer style[NCU],aaint[4],n1=1,n2=1;
   double x[NCU*NF],y[NCU*NF],brect[4];
@@ -745,29 +742,29 @@ static void fixbounds(xmin, xmax, ymin, ymax)
   style[0]= -1;
   n1=NCU;n2=NF;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  C2F(plot2d)(x,y,&n1,&n2,style,"022"," ",brect,aaint);
+  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"022"," ",brect,aaint);
 }
   
-static void testPoly()
+static void testPoly(BCG *Xgc)
 {
   integer style[1],aaint[4],n1=1,n2=1;
   double brect[4],x[1],y[1];
   brect[0]= -5.0;brect[2]=35.0;
   brect[1]= -5.0;brect[3]=35.0;
   style[0]= -1;
-  C2F(plot2d)(x,y,&n1,&n2,style,"010"," ",brect,aaint);
-  polycorps();
+  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"010"," ",brect,aaint);
+  polycorps(Xgc);
 }
 
 #define NPC 7
 
-static void polycorps()
+static void polycorps(BCG *Xgc)
 {
   double x[NPC],y[NPC];
   integer n=NPC,cf=0;
   x[0]=x[6]=0.0;x[5]=x[1]=10.0,x[4]=x[2]=20.0;x[3]=30.0;
   y[0]=15.0;y[1]=y[2]=30.0;y[3]=15.0;y[4]=y[5]=0.0;y[6]=15.0;
-  nsp_gengine1.drawpolyline_1(x,y,n,cf);
+  nsp_gengine1.drawpolyline_1(Xgc,x,y,n,cf);
 }
 
 typedef  struct  {

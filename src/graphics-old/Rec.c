@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "Graphics.h"
-#include "Rec_private.h"
+#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics/Rec_private.h"
 
 static int MaybeCopyVect3dPLI  (int *,int **,int *,int l); 
 static int CopyVectLI  (int **,int *,int ); 
@@ -20,11 +20,11 @@ static int CopyVectF  (double **,double *,int );
 static int CopyVectC  (char **,char *,int ); 
 static int CopyVectS  (char ***,char **); 
 
-static void store_void(int code);
-static void store_int(int code,int val);
-static void store_int2(int code,int val, int val1);
-static void store_int4(int code,int vals[]);
-static void store_double4(int code,double vals[]);
+static void store_void(BCG *Xgc,int code);
+static void store_int(BCG *Xgc,int code,int val);
+static void store_int2(BCG *Xgc,int code,int val, int val1);
+static void store_int4(BCG *Xgc,int code,int vals[]);
+static void store_double4(BCG *Xgc,int code,double vals[]);
 
 static int curwin(void)
 {
@@ -35,189 +35,188 @@ static int curwin(void)
  * basic primitives 
  *---------------------------------------------------------------------------*/
 
-void store_clipping_p(int x,int y,int w,int h)
+void store_clipping_p(BCG *Xgc,int x,int y,int w,int h)
 {
   int vals[4];
   vals[0]= x; vals[1]= y; vals[2] = w ; vals[3] = h;
-  store_int4(CODEclipping_p,vals);
+  store_int4(Xgc,CODEclipping_p,vals);
 }
 
-static void replay_clipping_p(void *theplot)
+static void replay_clipping_p(BCG *Xgc,void *theplot)
 {
   struct rec_int4 *lplot  = theplot;
-  nsp_gengine1.xset1_clipping_p( lplot->vals[0], lplot->vals[1],lplot->vals[2],lplot->vals[3]);
+  nsp_gengine1.xset1_clipping_p(Xgc, lplot->vals[0], lplot->vals[1],lplot->vals[2],lplot->vals[3]);
 }
 
-void store_clipgrf(void ) {  store_void(CODEclipgrf); }
+void store_clipgrf(BCG *Xgc) {  store_void(Xgc,CODEclipgrf); }
 
-static void replay_clipgrf(void * theplot ) { nsp_gengine1.xset1_clipgrf();}
+static void replay_clipgrf(BCG *Xgc,void * theplot ) { nsp_gengine1.xset1_clipgrf(Xgc);}
 
-void store_alufunction1(int val)
+void store_alufunction1(BCG *Xgc,int val)
 {
-  store_int(CODEalufunction1,val);
+  store_int(Xgc,CODEalufunction1,val);
 }
 
-static void replay_alufunction1(void *theplot)
+static void replay_alufunction1(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_alufunction1(val);
+  nsp_gengine1.xset1_alufunction1(Xgc,val);
 }
 
 
-void store_background(int val)
+void store_background(BCG *Xgc,int val)
 {
-  store_int(CODEbackground,val);
+  store_int(Xgc,CODEbackground,val);
 }
 
-static void replay_background(void *theplot)
+static void replay_background(BCG *Xgc,void *theplot)
 {
   int val =  ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_background(val);
+  nsp_gengine1.xset1_background(Xgc,val);
 }
 
-void store_unclip()
+void store_unclip(BCG *Xgc)
 {
-  store_void(CODEunclip);
+  store_void(Xgc,CODEunclip);
 }
 
-static void replay_unclip(void * theplot ) { nsp_gengine1.xset1_unclip();}
+static void replay_unclip(BCG *Xgc,void * theplot ) { nsp_gengine1.xset1_unclip(Xgc);}
 
 
-void store_clip(double x[])
+void store_clip(BCG *Xgc,double x[])
 {
-  store_double4(CODEclip,x);
+  store_double4(Xgc,CODEclip,x);
 }
 
-static void replay_clip(void *theplot)
+static void replay_clip(BCG *Xgc,void *theplot)
 {
   struct rec_double4 *lplot  = theplot;
-  nsp_gengine1.xset1_clip(lplot->vals);
+  nsp_gengine1.xset1_clip(Xgc,lplot->vals);
 }
 
-
-void store_pattern(int val)
+void store_pattern(BCG *Xgc,int val)
 {
-  store_int(CODEpattern,val);
+  store_int(Xgc,CODEpattern,val);
 }
 
-static void replay_pattern(void *theplot)
-{
-  int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_pattern(val);
-}
-
-void store_font_size(int val)
-{
-  store_int(CODEfont_size,val);
-}
-
-static void replay_font_size(void *theplot)
+static void replay_pattern(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_font_size(val);
-}
-void store_font(int val,int val1)
-{
-  store_int2(CODEfont,val,val1);
+  nsp_gengine1.xset1_pattern(Xgc,val);
 }
 
-static void replay_font(void *theplot)
+void store_font_size(BCG *Xgc,int val)
+{
+  store_int(Xgc,CODEfont_size,val);
+}
+
+static void replay_font_size(BCG *Xgc,void *theplot)
+{
+  int val = ((struct rec_int *) theplot)->val;
+  nsp_gengine1.xset1_font_size(Xgc,val);
+}
+void store_font(BCG *Xgc,int val,int val1)
+{
+  store_int2(Xgc,CODEfont,val,val1);
+}
+
+static void replay_font(BCG *Xgc,void *theplot)
 {
   struct rec_int2 *lplot  = theplot;
-  nsp_gengine1.xset1_font(lplot->val,lplot->val1);
+  nsp_gengine1.xset1_font(Xgc,lplot->val,lplot->val1);
 }
 
-void store_foreground(int val)
+void store_foreground(BCG *Xgc,int val)
 {
-  store_int(CODEforeground,val);
+  store_int(Xgc,CODEforeground,val);
 }
 
-static void replay_foreground(void *theplot)
-{
-  int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_foreground(val);
-}
-
-void store_hidden3d(int val)
-{
-  store_int(CODEhidden3d,val);
-}
-
-static void replay_hidden3d(void *theplot)
+static void replay_foreground(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_hidden3d(val);
+  nsp_gengine1.xset1_foreground(Xgc,val);
 }
 
-void store_absourel(int val)
+void store_hidden3d(BCG *Xgc,int val)
 {
-  store_int(CODEabsourel,val);
+  store_int(Xgc,CODEhidden3d,val);
 }
 
-static void replay_absourel(void *theplot)
-{
-  int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_absourel(val);
-}
-
-void store_dash(int val)
-{
-  store_int(CODEdash,val);
-}
-
-static void replay_dash(void *theplot)
+static void replay_hidden3d(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_dash(val);
+  nsp_gengine1.xset1_hidden3d(Xgc,val);
 }
 
-void store_mark_size(int val)
+void store_absourel(BCG *Xgc,int val)
 {
-  store_int(CODEmark_size,val);
+  store_int(Xgc,CODEabsourel,val);
 }
 
-static void replay_mark_size(void *theplot)
+static void replay_absourel(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_mark_size(val);
+  nsp_gengine1.xset1_absourel(Xgc,val);
 }
 
-void store_mark(int val,int val1)
+void store_dash(BCG *Xgc,int val)
 {
-  store_int2(CODEmark,val,val1);
+  store_int(Xgc,CODEdash,val);
 }
 
-static void replay_mark(void *theplot)
+static void replay_dash(BCG *Xgc,void *theplot)
+{
+  int val = ((struct rec_int *) theplot)->val;
+  nsp_gengine1.xset1_dash(Xgc,val);
+}
+
+void store_mark_size(BCG *Xgc,int val)
+{
+  store_int(Xgc,CODEmark_size,val);
+}
+
+static void replay_mark_size(BCG *Xgc,void *theplot)
+{
+  int val = ((struct rec_int *) theplot)->val;
+  nsp_gengine1.xset1_mark_size(Xgc,val);
+}
+
+void store_mark(BCG *Xgc,int val,int val1)
+{
+  store_int2(Xgc,CODEmark,val,val1);
+}
+
+static void replay_mark(BCG *Xgc,void *theplot)
 {
   struct rec_int2 *lplot  = theplot;
-  nsp_gengine1.xset1_mark(lplot->val,lplot->val1);
+  nsp_gengine1.xset1_mark(Xgc,lplot->val,lplot->val1);
 }
 
-void store_pixmapOn(int val)
+void store_pixmapOn(BCG *Xgc,int val)
 {
-  store_int(CODEpixmapOn,val);
+  store_int(Xgc,CODEpixmapOn,val);
 }
 
-static void replay_pixmapOn(void *theplot)
-{
-  int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_pixmapOn(val);
-}
-
-void store_thickness(int val)
-{
-  store_int(CODEthickness,val);
-}
-
-static void replay_thickness(void *theplot)
+static void replay_pixmapOn(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
-  nsp_gengine1.xset1_thickness(val);
+  nsp_gengine1.xset1_pixmapOn(Xgc,val);
 }
 
-void store_usecolor(int val)
+void store_thickness(BCG *Xgc,int val)
 {
-  store_int(CODEusecolor,val);
+  store_int(Xgc,CODEthickness,val);
+}
+
+static void replay_thickness(BCG *Xgc,void *theplot)
+{
+  int val = ((struct rec_int *) theplot)->val;
+  nsp_gengine1.xset1_thickness(Xgc,val);
+}
+
+void store_usecolor(BCG *Xgc,int val)
+{
+  store_int(Xgc,CODEusecolor,val);
 }
 
 
@@ -228,41 +227,41 @@ void UseColorFlag(int flag)
   special_color=flag;
 }
 
-static void replay_usecolor(void *theplot)
+static void replay_usecolor(BCG *Xgc,void *theplot)
 {
   int val = ((struct rec_int *) theplot)->val;
   if ( special_color == 0) 
-    nsp_gengine1.xset1_usecolor(val);
+    nsp_gengine1.xset1_usecolor(Xgc,val);
 }
 
-void store_show(void) { store_void(CODEshow); }
+void store_show(BCG *Xgc) { store_void(Xgc,CODEshow); }
 
-static void replay_show(void * theplot ) { nsp_gengine1.xset1_show();}
+static void replay_show(BCG *Xgc,void * theplot ) { nsp_gengine1.xset1_show(Xgc);}
 
-void store_pixmapclear(void) {  store_void(CODEpixmapclear);}
+void store_pixmapclear(BCG *Xgc) {  store_void(Xgc,CODEpixmapclear);}
 
-static void replay_pixmapclear(void * theplot ) { nsp_gengine1.xset1_pixmapclear();}
+static void replay_pixmapclear(BCG *Xgc,void * theplot ) { nsp_gengine1.xset1_pixmapclear(Xgc);}
 
-void store_fpf_def(void) { store_void(CODEfpf_def); }
+void store_fpf_def(BCG *Xgc) { store_void(Xgc,CODEfpf_def); }
 
-static void replay_fpf_def(void * theplot ) { nsp_gengine1.xset1_fpf_def();}
+static void replay_fpf_def(BCG *Xgc,void * theplot ) { nsp_gengine1.xset1_fpf_def(Xgc);}
 
-void store_fpf(char *fpf) { 
+void store_fpf(BCG *Xgc,char *fpf) { 
   struct rec_str *lplot= MALLOC(sizeof(struct rec_str));
   if (lplot != NULL)
     {
       if ( CopyVectC(&(lplot->str),fpf,strlen(fpf)+1) )
 	{
-	  store_record(CODEfpf, lplot);
+	  store_record(Xgc,CODEfpf, lplot);
 	  return;
 	}
     }
   Scistring("\nstore_ Plot (xcall1): No more place \n");
 }
 
-static void replay_fpf(void * theplot ) { 
+static void replay_fpf(BCG *Xgc,void * theplot ) { 
   struct rec_str *lplot = theplot;
-  nsp_gengine1.xset1_fpf(lplot->str);
+  nsp_gengine1.xset1_fpf(Xgc,lplot->str);
 }
 
 static void clean_fpf(void *plot) {
@@ -275,23 +274,23 @@ static void clean_fpf(void *plot) {
  *  drawarc_1
  *-----------------------------------------------------------------------------*/
 
-void store_drawarc_1(double arc[])
+void store_drawarc_1(BCG *Xgc,double arc[])
 { 
   int i;
   struct rec_drawarc *lplot= ((struct rec_drawarc *) MALLOC(sizeof(struct rec_drawarc)));
   if (lplot != NULL)
     {
       for ( i = 0 ; i < 6 ; i++) lplot->arc[i]=arc[i];
-      store_record(CODEdrawarc_1,lplot);
+      store_record(Xgc,CODEdrawarc_1,lplot);
       return; 
     }
   Scistring("\nstore_ Plot (xcall1): No more place \n");
 }
 
-static void replay_drawarc_1(void  *theplot)
+static void replay_drawarc_1(BCG *Xgc,void  *theplot)
 {
   struct rec_drawarc *lplot = theplot;
-  nsp_gengine1.drawarc_1(lplot->arc);
+  nsp_gengine1.drawarc_1(Xgc,lplot->arc);
 }
 
 
@@ -301,7 +300,7 @@ static void clean_drawarc_1(void *plot) {};
  * 
  *-----------------------------------------------------------------------------*/
 
-static void store_fillarcs_G(int code,double vects[],int fillvect[], int n,int size)
+static void store_fillarcs_G(BCG *Xgc,int code,double vects[],int fillvect[], int n,int size)
 {
   struct rec_fillarcs *lplot = MALLOC(sizeof(struct rec_fillarcs));
   if (lplot != NULL)
@@ -315,21 +314,21 @@ static void store_fillarcs_G(int code,double vects[],int fillvect[], int n,int s
 	  CopyVectLI(&(lplot->fillvect),fillvect,n)
 	  )
 	{
-	  store_record(code, lplot);
+	  store_record(Xgc,code, lplot);
 	  return;}
     }
   Scistring("\nstore_ Plot (XXXX): No more place \n");
 }
 
-void store_fillarcs_1(double vects[],int fillvect[], int n)
+void store_fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
 {
-  store_fillarcs_G(CODEfillarcs_1,vects,fillvect,n,6);
+  store_fillarcs_G(Xgc,CODEfillarcs_1,vects,fillvect,n,6);
 }
 
-static void replay_fillarcs_1(void  *theplot)
+static void replay_fillarcs_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillarcs *lplot = theplot;
-  nsp_gengine1.fillarcs_1( lplot->vects, lplot->fillvect,lplot->n );
+  nsp_gengine1.fillarcs_1(Xgc, lplot->vects, lplot->fillvect,lplot->n );
 }
 
 static void clean_fillarcs_1(void *theplot) {
@@ -342,16 +341,16 @@ static void clean_fillarcs_1(void *theplot) {
  *  
  *-----------------------------------------------------------------------------*/
 
-void store_drawarcs_1(double vects[], int style[], int n)
+void store_drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
 {
-  store_fillarcs_G(CODEdrawarcs_1,vects,style,n,6);
+  store_fillarcs_G(Xgc,CODEdrawarcs_1,vects,style,n,6);
 }
 
 
-static void replay_drawarcs_1(void  *theplot)
+static void replay_drawarcs_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillarcs *lplot = theplot;
-  nsp_gengine1.drawarcs_1( lplot->vects, lplot->fillvect,lplot->n );
+  nsp_gengine1.drawarcs_1(Xgc, lplot->vects, lplot->fillvect,lplot->n );
 }
 
 
@@ -367,7 +366,7 @@ static void clean_drawarcs_1(void *plot) {
  *  
  *-----------------------------------------------------------------------------*/
 
-static void store_fillpolyline_G(int code,double vx[],double vy[], int n,int closeflag)
+static void store_fillpolyline_G(BCG *Xgc,int code,double vx[],double vy[], int n,int closeflag)
 {
   struct rec_fillpolyline *lplot = MALLOC(sizeof(struct rec_fillpolyline));
   if (lplot != NULL)
@@ -382,23 +381,23 @@ static void store_fillpolyline_G(int code,double vx[],double vy[], int n,int clo
 	  CopyVectF(&(lplot->vy),vy,n)
 	  )
 	{
-	  store_record(code, lplot); return;
+	  store_record(Xgc,code, lplot); return;
 	}
     }
   Scistring("\nstore_ Plot (XXXX): No more place \n");
 }
 
 
-void store_fillpolyline_1(double *vx, double *vy,int n,int closeflag)
+void store_fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
 {
-  store_fillpolyline_G(CODEfillpolyline_1,vx,vy,n,closeflag);
+  store_fillpolyline_G(Xgc,CODEfillpolyline_1,vx,vy,n,closeflag);
 }
 
 
-static void replay_fillpolyline_1(void  *theplot)
+static void replay_fillpolyline_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolyline *lplot = theplot;
-  nsp_gengine1.fillpolyline_1(lplot->vx, lplot->vy,lplot->n, lplot->closeflag);
+  nsp_gengine1.fillpolyline_1(Xgc,lplot->vx, lplot->vy,lplot->n, lplot->closeflag);
 }
 
 static void clean_fillpolyline_1(void *plot) {
@@ -413,7 +412,7 @@ static void clean_fillpolyline_1(void *plot) {
  *  arrows
  *-----------------------------------------------------------------------------*/
 
-void store_drawarrows_1(double vx[],double vy[],int n,double as, int style[], int iflag)
+void store_drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag)
 { 
   struct rec_arrows *lplot = MALLOC(sizeof(struct rec_arrows));
   int rep = TRUE ;
@@ -431,20 +430,20 @@ void store_drawarrows_1(double vx[],double vy[],int n,double as, int style[], in
 	lplot->def_style = *style;
       if ( rep &&  CopyVectF(&(lplot->vx),vx,n) &&  CopyVectF(&(lplot->vy),vy,n) )
 	{
-	  store_record(CODEdrawarrows_1, lplot);
+	  store_record(Xgc,CODEdrawarrows_1, lplot);
 	  return;
 	}
     }
   Scistring("\nstore_ Plot (XXXX): No more place \n");
 }
 
-static void replay_drawarrows_1(void  *theplot)
+static void replay_drawarrows_1(BCG *Xgc,void  *theplot)
 {
   struct rec_arrows *lplot = theplot;
   if (lplot->iflag != 0) 
-    nsp_gengine1.drawarrows_1(lplot->vx, lplot->vy,lplot->n,lplot->as,lplot->style,lplot->iflag);
+    nsp_gengine1.drawarrows_1(Xgc,lplot->vx, lplot->vy,lplot->n,lplot->as,lplot->style,lplot->iflag);
   else 
-    nsp_gengine1.drawarrows_1(lplot->vx, lplot->vy,lplot->n,lplot->as,&lplot->def_style,lplot->iflag);
+    nsp_gengine1.drawarrows_1(Xgc,lplot->vx, lplot->vy,lplot->n,lplot->as,&lplot->def_style,lplot->iflag);
 }
 
 
@@ -460,7 +459,7 @@ static void clean_drawarrows_1(void *plot) {
  * axis 
  *-----------------------------------------------------------------------------*/
 
-void store_drawaxis_1(double *alpha, int *nsteps,double *initpoint, double *size)
+void store_drawaxis_1(BCG *Xgc,double *alpha, int *nsteps,double *initpoint, double *size)
 {
   /* 
      int initpoint1[2],alpha1;
@@ -477,17 +476,17 @@ void store_drawaxis_1(double *alpha, int *nsteps,double *initpoint, double *size
       lplot->size[0] = size[0] ; 
       lplot->size[1] = size[1] ; 
       lplot->size[2] = size[2] ; 
-      store_record(CODEdrawaxis_1, lplot);
+      store_record(Xgc,CODEdrawaxis_1, lplot);
       return;
     }
   Scistring("\nstore_ Plot (XXXX): No more place \n");
 }
 
 
-static void replay_drawaxis_1(void  *theplot)
+static void replay_drawaxis_1(BCG *Xgc,void  *theplot)
 {
   struct rec_drawaxis *lplot = theplot;
-  nsp_gengine1.drawaxis_1(&lplot->alpha,&lplot->nsteps,lplot->initpoint,lplot->size);
+  nsp_gengine1.drawaxis_1(Xgc,&lplot->alpha,&lplot->nsteps,lplot->initpoint,lplot->size);
 }
 
 static void clean_drawaxis_1(void  *theplot) {}
@@ -497,18 +496,18 @@ static void clean_drawaxis_1(void  *theplot) {}
  *  cleararea
  *-----------------------------------------------------------------------------*/
 
-void store_cleararea_1(double x, double y, double w, double h)
+void store_cleararea_1(BCG *Xgc,double x, double y, double w, double h)
 {
   double vals[4];
   vals[0]=x;  vals[0]=y;  vals[0]=w;  vals[0]=h;
-  store_double4(CODEcleararea_1,vals);
+  store_double4(Xgc,CODEcleararea_1,vals);
 }
 
 
-static void replay_cleararea_1(void  *theplot)
+static void replay_cleararea_1(BCG *Xgc,void  *theplot)
 {
   struct rec_double4 *lplot = theplot;
-  nsp_gengine1.cleararea_1(lplot->vals[0], lplot->vals[1],lplot->vals[2],lplot->vals[3]);
+  nsp_gengine1.cleararea_1(Xgc,lplot->vals[0], lplot->vals[1],lplot->vals[2],lplot->vals[3]);
 }
 
 static void clean_cleararea_1(void  *theplot) {}
@@ -517,24 +516,24 @@ static void clean_cleararea_1(void  *theplot) {}
  *   fillarc
  *-----------------------------------------------------------------------------*/
 
-void store_fillarc_1(double arc[])
+void store_fillarc_1(BCG *Xgc,double arc[])
 { 
   struct rec_drawarc *lplot= ((struct rec_drawarc *) MALLOC(sizeof(struct rec_drawarc)));
   if (lplot != NULL)
     {
       int i;
       for ( i = 0 ; i < 6 ; i++) lplot->arc[i]=arc[i];
-      store_record(CODEfillarc_1,lplot);
+      store_record(Xgc,CODEfillarc_1,lplot);
       return; 
     }
   Scistring("\nstore_ Plot (xcall1): No more place \n");
 }
 
 
-static void replay_fillarc_1(void  *theplot)
+static void replay_fillarc_1(BCG *Xgc,void  *theplot)
 {
   struct rec_drawarc *lplot = theplot;
-  nsp_gengine1.fillarc_1(lplot->arc);
+  nsp_gengine1.fillarc_1(Xgc,lplot->arc);
 }
 
 static void clean_fillarc_1(void  *theplot) {}
@@ -543,16 +542,16 @@ static void clean_fillarc_1(void  *theplot) {}
  *  fillrectangle
  *-----------------------------------------------------------------------------*/
 
-void store_fillrectangle_1(double rect[])
+void store_fillrectangle_1(BCG *Xgc,double rect[])
 { 
-  store_double4(CODEfillrectangle_1,rect);
+  store_double4(Xgc,CODEfillrectangle_1,rect);
 }
 
 
-static void replay_fillrectangle_1(void  *theplot)
+static void replay_fillrectangle_1(BCG *Xgc,void  *theplot)
 {
   struct rec_double4 *lplot = theplot;
-  nsp_gengine1.fillrectangle_1( lplot->vals);
+  nsp_gengine1.fillrectangle_1(Xgc, lplot->vals);
 }
 
 static void clean_fillrectangle_1(void  *theplot) {}
@@ -561,16 +560,16 @@ static void clean_fillrectangle_1(void  *theplot) {}
  *  drawpolyline
  *-----------------------------------------------------------------------------*/
 
-void store_drawpolyline_1( double *vx, double *vy ,int n, int closeflag)
+void store_drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closeflag)
 {
-  store_fillpolyline_G(CODEdrawpolyline_1,vx,vy,n,closeflag);
+  store_fillpolyline_G(Xgc,CODEdrawpolyline_1,vx,vy,n,closeflag);
 }
 
 
-static void replay_drawpolyline_1(void  *theplot)
+static void replay_drawpolyline_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolyline *lplot = theplot;
-  nsp_gengine1.drawpolyline_1(lplot->vx, lplot->vy,lplot->n, lplot->closeflag);
+  nsp_gengine1.drawpolyline_1(Xgc,lplot->vx, lplot->vy,lplot->n, lplot->closeflag);
 }
 
 
@@ -587,7 +586,7 @@ static void clean_drawpolyline_1(void *plot) {
  *  fillpolylines
  *-----------------------------------------------------------------------------*/
 
-void store_fillpolylines_1( double *vx, double *vy, int *fillvect, int n, int p, int v1)
+void store_fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
 {
   struct rec_fillpolylines *lplot = MALLOC(sizeof(struct rec_fillpolylines));
   int rep;
@@ -610,17 +609,17 @@ void store_fillpolylines_1( double *vx, double *vy, int *fillvect, int n, int p,
 	  CopyVectF(&(lplot->vy),vy,n*p) 
 	  )
 	{
-	  store_record(CODEfillpolylines_1, lplot);
+	  store_record(Xgc,CODEfillpolylines_1, lplot);
 	  return;}
     }
   Scistring("\nstore_ Plot (XXXX): No more place \n");
 }
 
 
-static void replay_fillpolylines_1(void  *theplot)
+static void replay_fillpolylines_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolylines *lplot = theplot;
-  nsp_gengine1.fillpolylines_1(lplot->vx, lplot->vy,lplot->fillvect,lplot->n, lplot->p,lplot->v1);
+  nsp_gengine1.fillpolylines_1(Xgc,lplot->vx, lplot->vy,lplot->fillvect,lplot->n, lplot->p,lplot->v1);
 }
 
 
@@ -639,16 +638,16 @@ static void clean_fillpolylines_1(void *plot) {
  *  drawpolymark
  *-----------------------------------------------------------------------------*/
 
-void store_drawpolymark_1(double *vx, double *vy,int n)
+void store_drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
 {
-  store_fillpolyline_G(CODEdrawpolymark_1,vx,vy,n,0);
+  store_fillpolyline_G(Xgc,CODEdrawpolymark_1,vx,vy,n,0);
 }
 
 
-static void replay_drawpolymark_1(void  *theplot)
+static void replay_drawpolymark_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolyline *lplot = theplot;
-  nsp_gengine1.drawpolymark_1(lplot->vx, lplot->vy,lplot->n);
+  nsp_gengine1.drawpolymark_1(Xgc,lplot->vx, lplot->vy,lplot->n);
 }
 
 
@@ -663,7 +662,7 @@ static void clean_drawpolymark_1(void *plot) {
  *  displaynumbers
  *-----------------------------------------------------------------------------*/
 
-void store_displaynumbers_1(double *x, double *y,int n, int flag,double *z, double *alpha)
+void store_displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha)
 {
   struct rec_displaynumbers *lplot = MALLOC(sizeof(struct rec_displaynumbers));
   if (lplot != NULL)
@@ -682,17 +681,17 @@ void store_displaynumbers_1(double *x, double *y,int n, int flag,double *z, doub
 	  CopyVectF(&(lplot->alpha),alpha,n) 
 	  )
 	{
-	  store_record(CODEdisplaynumbers_1, lplot);
+	  store_record(Xgc,CODEdisplaynumbers_1, lplot);
 	  return;}
     }
   Scistring("\nstore_ Plot (XXXX): No more place \n");
 }
 
 
-static void replay_displaynumbers_1(void  *theplot)
+static void replay_displaynumbers_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaynumbers *lplot = theplot;
-  nsp_gengine1.displaynumbers_1(lplot->x, lplot->y,lplot->n,lplot->flag, lplot->z,lplot->alpha);
+  nsp_gengine1.displaynumbers_1(Xgc,lplot->x, lplot->y,lplot->n,lplot->flag, lplot->z,lplot->alpha);
 }
 
 
@@ -708,7 +707,7 @@ static void clean_displaynumbers_1(void *plot) {
  *   drawpolylines
  *-----------------------------------------------------------------------------*/
 
-void store_drawpolylines_1(double *vx, double *vy, int *drawvect,int n, int p)
+void store_drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p)
 {
   struct rec_drawpolylines *lplot = MALLOC(sizeof(struct rec_drawpolylines));
   if (lplot != NULL)
@@ -725,7 +724,7 @@ void store_drawpolylines_1(double *vx, double *vy, int *drawvect,int n, int p)
 	  CopyVectLI(&(lplot->drawvect),drawvect,n)
 	  )
 	{
-	  store_record(CODEdrawpolylines_1, lplot);
+	  store_record(Xgc,CODEdrawpolylines_1, lplot);
 	  return;
 	}
     }
@@ -733,10 +732,10 @@ void store_drawpolylines_1(double *vx, double *vy, int *drawvect,int n, int p)
 }
 
 
-static void replay_drawpolylines_1(void  *theplot)
+static void replay_drawpolylines_1(BCG *Xgc,void  *theplot)
 {
   struct rec_drawpolylines *lplot = theplot;
-  nsp_gengine1.drawpolylines_1(lplot->vx, lplot->vy,lplot->drawvect,lplot->n, lplot->p);
+  nsp_gengine1.drawpolylines_1(Xgc,lplot->vx, lplot->vy,lplot->drawvect,lplot->n, lplot->p);
 }
 
 
@@ -754,16 +753,16 @@ static void clean_drawpolylines_1(void *plot) {
  *   drawrectangle
  *-----------------------------------------------------------------------------*/
 
-void store_drawrectangle_1(double rect[])
+void store_drawrectangle_1(BCG *Xgc,double rect[])
 {
-  store_double4(CODEdrawrectangle_1,rect);
+  store_double4(Xgc,CODEdrawrectangle_1,rect);
 }
 
 
-static void replay_drawrectangle_1(void  *theplot)
+static void replay_drawrectangle_1(BCG *Xgc,void  *theplot)
 {
   struct rec_double4 *lplot = theplot;
-  nsp_gengine1.drawrectangle_1( lplot->vals);
+  nsp_gengine1.drawrectangle_1(Xgc, lplot->vals);
 }
 
 
@@ -773,16 +772,16 @@ static void clean_drawrectangle_1(void *plot) {}
  *   drawrectangles
  *-----------------------------------------------------------------------------*/
 
-void store_drawrectangles_1(double vects[],int fillvect[], int n)
+void store_drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
 {
-  store_fillarcs_G(CODEdrawrectangles_1,vects,fillvect,n,4);
+  store_fillarcs_G(Xgc,CODEdrawrectangles_1,vects,fillvect,n,4);
 }
 
 
-static void replay_drawrectangles_1(void  *theplot)
+static void replay_drawrectangles_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillarcs *lplot = theplot;
-  nsp_gengine1.drawrectangles_1(lplot->vects, lplot->fillvect,lplot->n);
+  nsp_gengine1.drawrectangles_1(Xgc,lplot->vects, lplot->fillvect,lplot->n);
 }
 
 
@@ -796,7 +795,7 @@ static void clean_drawrectangles_1(void *plot) {
  *  drawsegments
  *-----------------------------------------------------------------------------*/
 
-void store_drawsegments_1(double *vx, double *vy,int n, int *style, int iflag)
+void store_drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag)
 {
   int rep=TRUE;
   struct rec_segment *lplot = MALLOC(sizeof(struct rec_segment));
@@ -811,7 +810,7 @@ void store_drawsegments_1(double *vx, double *vy,int n, int *style, int iflag)
 
       if ( rep &&  CopyVectF(&(lplot->vx),vx,n) && CopyVectF(&(lplot->vy),vy,n)) 
 	{
-	  store_record(CODEdrawsegments_1, lplot);
+	  store_record(Xgc,CODEdrawsegments_1, lplot);
 	  return;
 	}
     }
@@ -819,10 +818,10 @@ void store_drawsegments_1(double *vx, double *vy,int n, int *style, int iflag)
 }
 
 
-static void replay_drawsegments_1(void  *theplot)
+static void replay_drawsegments_1(BCG *Xgc,void  *theplot)
 {
   struct rec_segment *lplot = theplot;
-  nsp_gengine1.drawsegments_1(lplot->vx, lplot->vy,lplot->n,lplot->style,lplot->iflag);
+  nsp_gengine1.drawsegments_1(Xgc,lplot->vx, lplot->vy,lplot->n,lplot->style,lplot->iflag);
 }
 
 
@@ -839,7 +838,7 @@ static void clean_drawsegments_1(void *plot) {
  *  displaystring
  *-----------------------------------------------------------------------------*/
 
-void store_displaystring_1(char *string,double x, double y,int flag,double angle)
+void store_displaystring_1(BCG *Xgc,char *string,double x, double y,int flag,double angle)
 {
   struct rec_displaystring *lplot = MALLOC(sizeof(struct rec_displaystring));
   if (lplot != NULL)
@@ -854,16 +853,16 @@ void store_displaystring_1(char *string,double x, double y,int flag,double angle
 	  CopyVectC(&(lplot->string),string,((int)strlen(string))+1) 
 	  )
 	{
-	  store_record(CODEdisplaystring_1, lplot);
+	  store_record(Xgc,CODEdisplaystring_1, lplot);
 	  return;}
     }
   Scistring("\nstore_ Plot (XXXX): No more place \n");
 }
 
-static void replay_displaystring_1(void  *theplot)
+static void replay_displaystring_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaystring *lplot = theplot;
-  nsp_gengine1.displaystring_1(lplot->string, lplot->x,lplot->y,lplot->flag,lplot->angle);
+  nsp_gengine1.displaystring_1(Xgc,lplot->string, lplot->x,lplot->y,lplot->flag,lplot->angle);
 }
 
 
@@ -879,7 +878,7 @@ static void clean_displaystring_1(void *plot) {
  *  displaystringa
  *-----------------------------------------------------------------------------*/
 
-void store_displaystringa_1(char *string, int ipos)
+void store_displaystringa_1(BCG *Xgc,char *string, int ipos)
 {
   struct rec_displaystringa *lplot = MALLOC(sizeof(struct rec_displaystringa));
   if (lplot != NULL)
@@ -890,17 +889,17 @@ void store_displaystringa_1(char *string, int ipos)
 	  CopyVectC(&(lplot->string),string,((int)strlen(string))+1) 
 	  )
 	{
-	  store_record(CODEdisplaystringa_1, lplot);
+	  store_record(Xgc,CODEdisplaystringa_1, lplot);
 	  return;}
     }
   Scistring("\nstore_ Plot (XXXX): No more place \n");
 }
 
 
-static void replay_displaystringa_1(void  *theplot)
+static void replay_displaystringa_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaystringa *lplot = theplot;
-  nsp_gengine1.displaystringa_1(lplot->string, lplot->ipos);
+  nsp_gengine1.displaystringa_1(Xgc,lplot->string, lplot->ipos);
 }
 
 
@@ -917,7 +916,7 @@ static void clean_displaystringa_1(void *plot) {
  * specified box (only works with driver which properly estimate string sizes)
  *-----------------------------------------------------------------------------*/
 
-void store_xstringb_1(char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
+void store_xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd)
 {
   struct rec_xstringb *lplot = MALLOC(sizeof(struct rec_xstringb));
   if (lplot != NULL)
@@ -933,17 +932,17 @@ void store_xstringb_1(char *str,int *fflag, double *xd, double *yd, double *wd, 
 	  CopyVectC(&(lplot->string),str,((int)strlen(str))+1) 
 	  )
 	{
-	  store_record(CODExstringb_1, lplot);
+	  store_record(Xgc,CODExstringb_1, lplot);
 	  return;}
     }
   Scistring("\nstore_ Plot (XXXX): No more place \n");
 }
 
 
-static void replay_xstringb_1(void  *theplot)
+static void replay_xstringb_1(BCG *Xgc,void  *theplot)
 {
   struct rec_xstringb *lplot = theplot;
-  nsp_gengine1.xstringb_1(lplot->string, &lplot->flag,&lplot->x,&lplot->y,&lplot->wd,&lplot->hd);
+  nsp_gengine1.xstringb_1(Xgc,lplot->string, &lplot->flag,&lplot->x,&lplot->y,&lplot->wd,&lplot->hd);
 }
 
 
@@ -959,7 +958,7 @@ static void clean_xstringb_1(void *plot) {
  * xsetech 
  *---------------------------------------------------------------------------*/
 
-void store_Ech(double *WRect, double *FRect, char *logflag)
+void store_Ech(BCG *Xgc,double *WRect, double *FRect, char *logflag)
 {
   struct rec_scale *lplot;
   lplot= ((struct rec_scale *) MALLOC(sizeof(struct rec_scale)));
@@ -973,17 +972,17 @@ void store_Ech(double *WRect, double *FRect, char *logflag)
 	  CopyVectF(&(lplot->Frect_kp),FRect,4L) 
 	  ) 
 	{
-	  store_record(CODEEch, lplot);
+	  store_record(Xgc,CODEEch, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storeEch): No more place \n");
 }
 
 
-static void replay_Ech(void *theplot)
+static void replay_Ech(BCG *Xgc,void *theplot)
 {
   struct rec_scale *plch = theplot;
-  setscale2d(plch->Wrect,plch->Frect,plch->logflag);
+  setscale2d(Xgc,plch->Wrect,plch->Frect,plch->logflag);
 }
 
 
@@ -1000,7 +999,7 @@ static void clean_Ech(void *plot)
  * xsetech (new)
  *---------------------------------------------------------------------------*/
 
-void store_NEch(char *flag, double *WRect, double *ARect, double *FRect, char *logflag)
+void store_NEch(BCG *Xgc,char *flag, double *WRect, double *ARect, double *FRect, char *logflag)
 {
   struct rec_nscale *lplot;
   lplot= ((struct rec_nscale *) MALLOC(sizeof(struct rec_nscale)));
@@ -1016,17 +1015,17 @@ void store_NEch(char *flag, double *WRect, double *ARect, double *FRect, char *l
 	  CopyVectF(&(lplot->Frect_kp),FRect,4L) 
 	  ) 
 	{
-	  store_record(CODENEch, lplot);
+	  store_record(Xgc,CODENEch, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storeEch): No more place \n");
 }
 
 
-static void replay_NEch(void *theplot)
+static void replay_NEch(BCG *Xgc,void *theplot)
 {
   struct rec_nscale *plch = theplot;
-  set_scale(plch->flag,plch->Wrect,plch->Frect,NULL,plch->logflag,plch->Arect);
+  set_scale(Xgc,plch->flag,plch->Wrect,plch->Frect,NULL,plch->logflag,plch->Arect);
 }
 
 
@@ -1045,7 +1044,7 @@ static void clean_NEch(void *plot)
  * 2D plots 
  *---------------------------------------------------------------------------*/
 
-void store_Plot_G(int code, char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
 {
   int nstyle,n1n2;
   struct rec_plot2d *lplot;
@@ -1079,75 +1078,75 @@ void store_Plot_G(int code, char *xf, double *x, double *y, int *n1, int *n2, in
 	  CopyVectLI(&(lplot->aint_kp),aint,4) 
 	  ) 
 	{
-	  store_record(code, lplot);
+	  store_record(Xgc,code, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storeplot): No more place \n");
 }
 
-void store_Plot(char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
 {
-  store_Plot_G(CODEPlot,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
+  store_Plot_G(Xgc,CODEPlot,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
 }
 
 
-void store_Plot1(char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot1(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
 {
-  store_Plot_G(CODEPlot1,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
+  store_Plot_G(Xgc,CODEPlot1,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
 }
 
 
-void store_Plot2(char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot2(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
 {
-  store_Plot_G(CODEPlot2,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
+  store_Plot_G(Xgc,CODEPlot2,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
 }
 
 
-void store_Plot3(char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot3(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
 {
-  store_Plot_G(CODEPlot3,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
+  store_Plot_G(Xgc,CODEPlot3,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
 }
 
-void store_Plot4(char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Plot4(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int *style, char *strflag, char *legend, double *brect, int *aint)
 {
-  store_Plot_G(CODEPlot4,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
+  store_Plot_G(Xgc,CODEPlot4,xf,x,y,n1,n2,style,strflag,legend,brect,aint);
 }
 
 
-static void replay_Plot(void * theplot)
+static void replay_Plot(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  C2F(plot2d1)(p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  C2F(plot2d1)(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
 }
 
-static void replay_Plot1(void * theplot)
+static void replay_Plot1(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  C2F(plot2d1)(p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
-}
-
-
-
-static void replay_Plot2(void * theplot)
-{
-  struct rec_plot2d *p = theplot;
-  C2F(plot2d2)(p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  C2F(plot2d1)(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
 }
 
 
 
-static void replay_Plot3(void * theplot)
+static void replay_Plot2(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  C2F(plot2d3)(p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  C2F(plot2d2)(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
 }
 
 
 
-static void replay_Plot4(void * theplot)
+static void replay_Plot3(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  C2F(plot2d4)(p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  C2F(plot2d3)(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+}
+
+
+
+static void replay_Plot4(BCG *Xgc,void * theplot)
+{
+  struct rec_plot2d *p = theplot;
+  C2F(plot2d4)(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
 }
 
 
@@ -1168,7 +1167,7 @@ static void clean_Plot(void *plot)
  * axis  
  *---------------------------------------------------------------------------*/
 
-void store_SciAxis(char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
+void store_SciAxis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
   struct rec_sciaxis *lplot = ((struct rec_sciaxis *) MALLOC(sizeof(struct rec_sciaxis)));
   if (lplot == NULL)
@@ -1194,15 +1193,15 @@ void store_SciAxis(char pos, char xy_type, double *x, int *nx, double *y, int *n
       CopyVectF(&(lplot->y),y,*ny) &&
       CopyVectS(&(lplot->str),str))
     {
-      store_record(CODESciAxis, lplot);
+      store_record(Xgc,CODESciAxis, lplot);
     }
 }
   
 
-static void replay_SciAxis(void *theplot)
+static void replay_SciAxis(BCG *Xgc,void *theplot)
 {
   struct rec_sciaxis *p = (struct rec_sciaxis *) theplot;
-  sci_axis(p->pos,p->xy_type,p->x,&p->nx,p->y,&p->ny,p->str,p->subtics,p->format,p->fontsize,p->textcolor,
+  sci_axis(Xgc,p->pos,p->xy_type,p->x,&p->nx,p->y,&p->ny,p->str,p->subtics,p->format,p->fontsize,p->textcolor,
 	   p->ticscolor,p->logflag,p->seg_flag);
 
 }
@@ -1227,25 +1226,25 @@ static void clean_SciAxis(void *plot)
  * xgrid 
  *---------------------------------------------------------------------------*/
 
-void store_Grid(int *style)
+void store_Grid(BCG *Xgc,int *style)
 {
   struct rec_xgrid *lplot;
   lplot= ((struct rec_xgrid *) MALLOC(sizeof(struct rec_xgrid)));
   if (lplot != NULL)
     {
       lplot->style = *style;
-      store_record(CODEGrid, lplot);
+      store_record(Xgc,CODEGrid, lplot);
       return;
     }
   Scistring("\n store_ (storegrid): No more place \n");
 }
 
 
-static void replay_Grid(void *theplot)
+static void replay_Grid(BCG *Xgc,void *theplot)
 {
   struct rec_xgrid *plch;
   plch= (struct rec_xgrid *)theplot;
-  C2F(xgrid)(&(plch->style));
+  C2F(xgrid)(Xgc,&(plch->style));
 }
 
 
@@ -1260,7 +1259,7 @@ static void clean_Grid(void *plot)
  * param3d 
  *---------------------------------------------------------------------------*/
 
-void store_Param3D(double *x, double *y, double *z, int *n, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Param3D(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   struct rec_param3d *lplot;
   lplot= ((struct rec_param3d *) MALLOC(sizeof(struct rec_param3d)));
@@ -1278,23 +1277,23 @@ void store_Param3D(double *x, double *y, double *z, int *n, double *teta, double
 	  CopyVectF(&(lplot->bbox), bbox,6L)
 	  ) 
 	{
-	  store_record(CODEParam3D, lplot);
+	  store_record(Xgc,CODEParam3D, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storeparam3d): No more place \n");
 }
 
 
-static void replay_Param3D(void *theplot)
+static void replay_Param3D(BCG *Xgc,void *theplot)
 {
   struct rec_param3d *pl3d;
   pl3d= (struct rec_param3d *)theplot;
-  C2F(param3d)(pl3d->x,pl3d->y,pl3d->z,&pl3d->n,&pl3d->teta,
+  C2F(param3d)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n,&pl3d->teta,
 	       &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
 
-void store_Param3D1( double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Param3D1(BCG *Xgc, double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   struct rec_param3d1 *lplot;
   lplot= ((struct rec_param3d1 *) MALLOC(sizeof(struct rec_param3d1)));
@@ -1315,7 +1314,7 @@ void store_Param3D1( double *x, double *y, double *z, int *m, int *n, int *iflag
 	  CopyVectF(&(lplot->bbox), bbox,6L)
 	  ) 
 	{
-	  store_record(CODEParam3D1, lplot);
+	  store_record(Xgc,CODEParam3D1, lplot);
 	  return;
 	}
     }
@@ -1323,11 +1322,11 @@ void store_Param3D1( double *x, double *y, double *z, int *m, int *n, int *iflag
 }
 
 
-static void replay_Param3D1(void *theplot)
+static void replay_Param3D1(BCG *Xgc,void *theplot)
 {
   struct rec_param3d1 *pl3d;
   pl3d= (struct rec_param3d1 *)theplot;
-  C2F(param3d1)(pl3d->x,pl3d->y,pl3d->z,&pl3d->m,&pl3d->n,&pl3d->iflag,
+  C2F(param3d1)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->m,&pl3d->n,&pl3d->iflag,
 		pl3d->colors, &pl3d->teta,
 		&pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
@@ -1359,7 +1358,7 @@ static void clean_Param3D1(void *plot)
  * plot3d 
  *---------------------------------------------------------------------------*/
 
-static void store_Plot3D_G(int code, double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+static void store_Plot3D_G(BCG *Xgc,int code, double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   struct rec_plot3d *lplot;
   lplot= ((struct rec_plot3d *) MALLOC(sizeof(struct rec_plot3d)));
@@ -1378,23 +1377,23 @@ static void store_Plot3D_G(int code, double *x, double *y, double *z, int *p, in
 	  CopyVectF(&(lplot->bbox), bbox,6L)
 	  ) 
 	{
-	  store_record(code, lplot);
+	  store_record(Xgc,code, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storeplot3d): No more place \n");
 }
 
-void store_Plot3D(double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Plot3D(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  store_Plot3D_G(CODEPlot3D,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+  store_Plot3D_G(Xgc,CODEPlot3D,x,y,z,p,q,teta,alpha,legend,flag,bbox);
 
 }
 
 
-static void replay_3D(void *theplot)
+static void replay_3D(BCG *Xgc,void *theplot)
 {
   struct rec_plot3d *pl3d = (struct rec_plot3d *)theplot;
-  C2F(plot3d)(pl3d->x,pl3d->y,pl3d->z,&pl3d->p,&pl3d->q,&pl3d->teta,
+  C2F(plot3d)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->p,&pl3d->q,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
@@ -1406,16 +1405,16 @@ static void clean_3D(void *plot)
   FREE(theplot->bbox);
 }
 
-void store_Plot3D1(double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Plot3D1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  store_Plot3D_G(CODEPlot3D1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+  store_Plot3D_G(Xgc,CODEPlot3D1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
-static void replay_3D1(void *theplot)
+static void replay_3D1(BCG *Xgc,void *theplot)
 {
   struct rec_plot3d *pl3d = (struct rec_plot3d *)theplot;
-  C2F(plot3d1)(pl3d->x,pl3d->y,pl3d->z,&pl3d->p,&pl3d->q,&pl3d->teta,
+  C2F(plot3d1)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->p,&pl3d->q,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
@@ -1429,7 +1428,7 @@ static void clean_3D1(void *plot)
  * added code by polpoth 4/5/2000 
  *---------------------------------------------------------------------------*/
 
-static void store_Fac3D_G(int code, double *x, double *y, double *z, int *cvect, int *p, int *q, 
+static void store_Fac3D_G(BCG *Xgc,int code, double *x, double *y, double *z, int *cvect, int *p, int *q, 
 			  double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   int rep ; 
@@ -1452,64 +1451,64 @@ static void store_Fac3D_G(int code, double *x, double *y, double *z, int *cvect,
       else lplot->cvect = NULL;
       if (rep )
 	{
-	  store_record(code, lplot);
+	  store_record(Xgc,code, lplot);
 	  return;
 	}
     }
   Scistring("\n store_ Plot (storefac3d): No more place \n");
 }
 
-void store_Fac3D(double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Fac3D(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  store_Fac3D_G(CODEFac3D,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  store_Fac3D_G(Xgc,CODEFac3D,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
-void store_Fac3D1(double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Fac3D1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  store_Fac3D_G(CODEFac3D1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  store_Fac3D_G(Xgc,CODEFac3D1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
-void store_Fac3D2(double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Fac3D2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  store_Fac3D_G(CODEFac3D2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  store_Fac3D_G(Xgc,CODEFac3D2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
 
-void store_Fac3D3(double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+void store_Fac3D3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  store_Fac3D_G(CODEFac3D3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+  store_Fac3D_G(Xgc,CODEFac3D3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
 
-static void replay_Fac3D(void *theplot)
+static void replay_Fac3D(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d= (struct rec_fac3d *)theplot;
-  C2F(fac3d)(pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,&pl3d->p,&pl3d->q,&pl3d->teta,
+  C2F(fac3d)(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,&pl3d->p,&pl3d->q,&pl3d->teta,
 	     &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
-static void replay_Fac3D1(void *theplot)
+static void replay_Fac3D1(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d = (struct rec_fac3d *)theplot;
-  C2F(fac3d1)(pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
+  C2F(fac3d1)(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
 	      &pl3d->p,&pl3d->q,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
-static void replay_Fac3D2(void *theplot)
+static void replay_Fac3D2(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d = (struct rec_fac3d *)theplot;
-  C2F(fac3d2)(pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
+  C2F(fac3d2)(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
 	      &pl3d->p,&pl3d->q,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
 
-static void replay_Fac3D3(void *theplot)
+static void replay_Fac3D3(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d =  (struct rec_fac3d *)theplot;
-  C2F(fac3d3)(pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
+  C2F(fac3d3)(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
 	      &pl3d->p,&pl3d->q,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
@@ -1529,7 +1528,7 @@ static void clean_Fac3D(void *plot)
  *fec 
  *---------------------------------------------------------------------------*/
 
-void store_Fec( double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, char *strflag, char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
+void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, char *strflag, char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
 {
   struct rec_fec *lplot;
   lplot= ((struct rec_fec *) MALLOC(sizeof(struct rec_fec)));
@@ -1553,16 +1552,16 @@ void store_Fec( double *x, double *y, double *triangles, double *func, int *Nnod
 	  CopyVectC(&(lplot->legend),legend,((int)strlen(legend))+1)  
 	  ) 
 	{
-	  store_record(CODEFecN, lplot);
+	  store_record(Xgc,CODEFecN, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storefec): No more place \n");
 }
 
-static void replay_Fec(void *theplot)
+static void replay_Fec(BCG *Xgc,void *theplot)
 {
   struct rec_fec *plfec = (struct rec_fec *)theplot;
-  C2F(fec)(plfec->x,plfec->y,plfec->triangles,plfec->func,
+  C2F(fec)(Xgc,plfec->x,plfec->y,plfec->triangles,plfec->func,
 	   &plfec->Nnode,&plfec->Ntr,
 	   plfec->strflag,plfec->legend,plfec->brect,plfec->aaint,
 	   plfec->zminmax, plfec->colminmax    /* added by bruno */
@@ -1587,7 +1586,7 @@ static void clean_Fec(void *plot)
  * contour 
  *---------------------------------------------------------------------------*/
 
-void store_Contour( double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, double *teta, double *alpha, char *legend, int *flag, double *bbox, double *zlev)
+void store_Contour(BCG *Xgc, double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, double *teta, double *alpha, char *legend, int *flag, double *bbox, double *zlev)
 {
   struct rec_contour *lplot;
   lplot= ((struct rec_contour *) MALLOC(sizeof(struct rec_contour)));
@@ -1614,17 +1613,17 @@ void store_Contour( double *x, double *y, double *z, int *n1, int *n2, int *flag
 	  CopyVectF(&(lplot->bbox), bbox,6L)
 	  ) 
 	{
-	  store_record(CODEContour, lplot);
+	  store_record(Xgc,CODEContour, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storecontour): No more place \n");
 }
 
-static void replay_Contour(void *theplot)
+static void replay_Contour(BCG *Xgc,void *theplot)
 {
   struct rec_contour *pl3d;
   pl3d= (struct rec_contour *)theplot;
-  C2F(contour)(pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
+  C2F(contour)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
 	   pl3d->zz,&pl3d->teta,
 	  &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox,&pl3d->zlev,0L);
 }
@@ -1639,7 +1638,7 @@ static void clean_Contour(void *plot)
 }
 
 
-void store_Contour2D(double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aint)
+void store_Contour2D(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aint)
 {
   struct rec_contour2d *lplot;
   int nstyle;
@@ -1670,17 +1669,17 @@ void store_Contour2D(double *x, double *y, double *z, int *n1, int *n2, int *fla
 	  CopyVectLI(&(lplot->aint_kp),aint,4) 
 	  ) 
 	{
-	  store_record(CODEContour2D, lplot);
+	  store_record(Xgc,CODEContour2D, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storecontour): No more place \n");
 }
 
-static void replay_Contour2D(void *theplot)
+static void replay_Contour2D(BCG *Xgc,void *theplot)
 {
   struct rec_contour2d *pl3d;
   pl3d= (struct rec_contour2d *)theplot;
-  C2F(contour2)(pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
+  C2F(contour2)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
 		pl3d->zz, pl3d->style,pl3d->strflag,pl3d->legend,
 		pl3d->brect,pl3d->aint);
 }
@@ -1703,7 +1702,7 @@ static void clean_Contour2D(void *plot)
  * grayplots Matplot 
  *---------------------------------------------------------------------------*/
 
-void store_Gray(double *x, double *y, double *z, int *n1, int *n2, char *strflag, double *brect, int *aaint)
+void store_Gray(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, char *strflag, double *brect, int *aaint)
 {
   struct rec_gray *lplot;
   lplot= ((struct rec_gray *) MALLOC(sizeof(struct rec_gray)));
@@ -1723,7 +1722,7 @@ void store_Gray(double *x, double *y, double *z, int *n1, int *n2, char *strflag
 	  CopyVectLI(&(lplot->aaint_kp),aaint,4) 
 	  ) 
 	{
-	  store_record(CODEGray, lplot);
+	  store_record(Xgc,CODEGray, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storegray): No more place \n");
@@ -1731,7 +1730,7 @@ void store_Gray(double *x, double *y, double *z, int *n1, int *n2, char *strflag
 
 /** For matrices  z(i,j) **/
 
-void store_Gray1(double *z, int *n1, int *n2, char *strflag, double *brect, int *aaint)
+void store_Gray1(BCG *Xgc,double *z, int *n1, int *n2, char *strflag, double *brect, int *aaint)
 {
   struct rec_gray *lplot;
   lplot= ((struct rec_gray *) MALLOC(sizeof(struct rec_gray)));
@@ -1751,7 +1750,7 @@ void store_Gray1(double *z, int *n1, int *n2, char *strflag, double *brect, int 
 	  CopyVectLI(&(lplot->aaint_kp),aaint,4) 
 	  ) 
 	{
-	  store_record(CODEGray1, lplot);
+	  store_record(Xgc,CODEGray1, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storegray): No more place \n");
@@ -1759,7 +1758,7 @@ void store_Gray1(double *z, int *n1, int *n2, char *strflag, double *brect, int 
 
 
 
-void store_Gray2(double *z, int *n1, int *n2, double *xrect)
+void store_Gray2(BCG *Xgc,double *z, int *n1, int *n2, double *xrect)
 {
   struct rec_gray_2 *lplot;
   lplot= ((struct rec_gray_2 *) MALLOC(sizeof(struct rec_gray_2)));
@@ -1772,7 +1771,7 @@ void store_Gray2(double *z, int *n1, int *n2, double *xrect)
 	  CopyVectF(&(lplot->xrect),xrect,4L) 
 	  ) 
 	{
-	  store_record(CODEGray2, lplot);
+	  store_record(Xgc,CODEGray2, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storegray): No more place \n");
@@ -1780,31 +1779,31 @@ void store_Gray2(double *z, int *n1, int *n2, double *xrect)
 
 
 
-static void replay_Gray(void *theplot)
+static void replay_Gray(BCG *Xgc,void *theplot)
 {
   struct rec_gray *pl3d;
   pl3d= (struct rec_gray *)theplot;
-  C2F(xgray)(pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,
+  C2F(xgray)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,
 	     pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
 }
 
 
 
-static void replay_Gray1(void *theplot)
+static void replay_Gray1(BCG *Xgc,void *theplot)
 {
   struct rec_gray *pl3d;
   pl3d= (struct rec_gray *)theplot;
-  C2F(xgray1)(pl3d->z,&pl3d->n1,&pl3d->n2,
+  C2F(xgray1)(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
 	     pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
 }
 
 
 
-static void replay_Gray2(void *theplot)
+static void replay_Gray2(BCG *Xgc,void *theplot)
 {
   struct rec_gray_2 *pl3d;
   pl3d= (struct rec_gray_2 *)theplot;
-  C2F(xgray2)(pl3d->z,&pl3d->n1,&pl3d->n2,
+  C2F(xgray2)(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
 	     pl3d->xrect);
 }
 
@@ -1836,7 +1835,7 @@ static void clean_Gray2(void *plot)
  * champ champ1 
  *---------------------------------------------------------------------------*/
 
-static void store_Champ_G(int code, double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
+static void store_Champ_G(BCG *Xgc,int code, double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
 {
   struct rec_champ *lplot;
   lplot= ((struct rec_champ *) MALLOC(sizeof(struct rec_champ)));
@@ -1856,34 +1855,34 @@ static void store_Champ_G(int code, double *x, double *y, double *fx, double *fy
 	  CopyVectF(&(lplot->vrect_kp),vrect,4L)
 	  ) 
 	{
-	  store_record(code, lplot);
+	  store_record(Xgc,code, lplot);
 	  return;}
     }
   Scistring("\n store_ Plot (storechamp): No more place \n");
 }
 
-void store_Champ(double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
+void store_Champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
 {
-  store_Champ_G(CODEChamp, x,y, fx,fy,n1,n2,strflag, vrect,arfact);
+  store_Champ_G(Xgc,CODEChamp, x,y, fx,fy,n1,n2,strflag, vrect,arfact);
 }
 
-void store_Champ1(double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
+void store_Champ1(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
 {
-  store_Champ_G(CODEChamp1, x,y, fx,fy,n1,n2,strflag, vrect,arfact);
+  store_Champ_G(Xgc,CODEChamp1, x,y, fx,fy,n1,n2,strflag, vrect,arfact);
 }
 
 
-static void replay_Champ(void *theplot)
+static void replay_Champ(BCG *Xgc,void *theplot)
 {
   struct rec_champ *plch = (struct rec_champ *)theplot;
-  nsp_champ(plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
+  nsp_champ(Xgc,plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
 	     plch->strflag,plch->vrect,&(plch->arfact),0L);
 }
 
-static void replay_Champ1(void *theplot)
+static void replay_Champ1(BCG *Xgc,void *theplot)
 {
   struct rec_champ *plch= (struct rec_champ *)theplot;
-  nsp_champ1(plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
+  nsp_champ1(Xgc,plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
 	      plch->strflag,plch->vrect,&(plch->arfact),0L);
 }
 
@@ -1975,39 +1974,39 @@ static int MaybeCopyVect3dPLI(int *iflag, int **nx, int *x, int l)
  *  
  *---------------------------------------------------------------------------*/
 
-list_plot *ListPFirst = NULL ;
+/* list_plot *ListPFirst = NULL ; */
 
 /*-------------------------------------------------------------------------
  * store_Xgc is to be called after tape_clean_plots 
  * to restore in recorded list graphic context elements 
  *---------------------------------------------------------------------------*/
 
-void store_Xgc(int winnumber)
+void store_Xgc(BCG *Xgc,int winnumber)
 {
   int i,win,col;
   int fontid[2];
 
   win = nsp_gengine->xget_curwin(); 
   if ( win != winnumber) nsp_gengine->xset_curwin(winnumber,FALSE);
-  nsp_gengine->xget_font(fontid);
-  nsp_gengine1.xset1_font(*fontid,*(fontid+1));
-  nsp_gengine->xget_mark(fontid);
-  nsp_gengine1.xset1_mark(*fontid,*(fontid+1));
+  nsp_gengine->xget_font(Xgc,fontid);
+  nsp_gengine1.xset1_font(Xgc,*fontid,*(fontid+1));
+  nsp_gengine->xget_mark(Xgc,fontid);
+  nsp_gengine1.xset1_mark(Xgc,*fontid,*(fontid+1));
   
-  i = nsp_gengine->xget_thickness();
-  nsp_gengine1.xset1_thickness(i);
+  i = nsp_gengine->xget_thickness(Xgc);
+  nsp_gengine1.xset1_thickness(Xgc,i);
   
-  i= nsp_gengine->xget_absourel();
-  nsp_gengine1.xset1_absourel(i);
+  i= nsp_gengine->xget_absourel(Xgc);
+  nsp_gengine1.xset1_absourel(Xgc,i);
 
-  i = nsp_gengine->xget_alufunction();
-  nsp_gengine1.xset1_alufunction1(i);
+  i = nsp_gengine->xget_alufunction(Xgc);
+  nsp_gengine1.xset1_alufunction1(Xgc,i);
 
   /* pour le clipping on l'enleve */
 
-  nsp_gengine1.xset1_unclip();
+  nsp_gengine1.xset1_unclip(Xgc);
     
-  col = nsp_gengine->xget_usecolor();
+  col = nsp_gengine->xget_usecolor(Xgc);
 
   /**  It seams not a good idea to send back use color on the recorded  commands 
     see Actions.c (scig_tops) 
@@ -2017,69 +2016,53 @@ void store_Xgc(int winnumber)
   if (col == 0) 
     {
       int xz[10];
-      i = nsp_gengine->xget_pattern();
-      nsp_gengine1.xset1_pattern(i);
-      xz[0] = nsp_gengine->xget_dash();
-      nsp_gengine1.xset1_dash(xz[0]);
+      i = nsp_gengine->xget_pattern(Xgc);
+      nsp_gengine1.xset1_pattern(Xgc,i);
+      xz[0] = nsp_gengine->xget_dash(Xgc);
+      nsp_gengine1.xset1_dash(Xgc,xz[0]);
     }
-else 
+  else 
     {
-      i= nsp_gengine->xget_pattern();
-      nsp_gengine1.xset1_pattern(i);
+      i= nsp_gengine->xget_pattern(Xgc);
+      nsp_gengine1.xset1_pattern(Xgc,i);
     }
   if ( win != winnumber) nsp_gengine->xset_curwin(win,FALSE);
 }
 
-
-
 /*-------------------------------------------------------------------------
  * Delete all recorded graphics associated to window winnumber 
- * Then if reset_flag is TRUE
+ * Then if reset_flag is TRUE 
  *      [1] current graphic context is stored back in the list 
  *      [2] the scale flag is reset to zero (for preventing auto scale to use it) 
  *---------------------------------------------------------------------------*/
 
-void tape_clean_plots(int winnumber)
+void tape_clean_plots(BCG *Xgc,int winnumber)
 {
   int flag = FAIL;
-  list_plot *list,*list1;     
-  list=ListPFirst;
+  list_plot *list = Xgc->plots,* list1 ;
+  if ( Xgc->record_flag == FALSE ) return ;
   while (list)
     {
-      if (list->window == winnumber)
+      if (list->theplot != NULL) 
 	{
-	  if (list->theplot != NULL) 
-	    {
-	      int code = ((plot_code *) list->theplot)->code ;
-	      if ( record_table[code].clean != NULL) record_table[code].clean(list->theplot);
-	      FREE(list->theplot);
-	      flag = OK;
-	    }
-	  if (list->previous != NULL) (list->previous)->next=list->next;
-	  else
-	    ListPFirst=list->next;
-	  if (list->next != NULL) 
-	    (list->next)->previous=list->previous;
-	  list1=list;
-	  list =list->next;
-	  FREE(list1);
+	  int code = ((plot_code *) list->theplot)->code ;
+	  if ( record_table[code].clean != NULL) record_table[code].clean(list->theplot);
+	  FREE(list->theplot);
+	  flag = OK;
 	}
-      else 
-	list=list->next;
+      list1=list;
+      list =list->next;
+      FREE(list1);
     }
+  Xgc->scales = NULL;
   /* nothing to do if window was not present */
   if ( flag == FAIL ) return ;
   /* graphic context back in the list */
-  store_Xgc(winnumber);
+  store_Xgc(Xgc,winnumber);
   /* we remove scales in window number i */
-  window_scale_delete(winnumber);
-  /* if *winnumber is also the current window we reset current_scale to default value */
-  if ( winnumber == curwin() ) 
-    current_scale2default();
-  else 
-    set_window_scale_with_default(winnumber);
+  /* reset scales to default */ 
+  xgc_reset_scales_to_default(Xgc);
 }
-
 
 /*-------------------------------------------------------------------------
  * Change les angles alpha theta dans tous les plot3d stockes 
@@ -2090,12 +2073,13 @@ void tape_clean_plots(int winnumber)
  *---------------------------------------------------------------------------*/
 
 
-static void new_angles_plots(int winnumber, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
+static void new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
 {
-  list_plot *list = ListPFirst;
+  list_plot *list = Xgc->plots ;
+  if ( Xgc->record_flag == FALSE ) return ;
   while (list)
     {
-      if (list->window == winnumber && list->theplot != NULL) 
+      if ( list->theplot != NULL) 
 	{
 	  int code = ((plot_code *) list->theplot)->code;
 	  if ( record_table[code].new_angles !=  NULL) 
@@ -2113,10 +2097,10 @@ static void new_angles_Plot3D(void *plot, double *theta, double *alpha, int *ifl
   theplot->teta=*theta;
   theplot->alpha=*alpha;
   for (i=0 ; i< 3 ; i++) 
-      if (iflag[i]!=0) theplot->flag[i] = flag[i];
+    if (iflag[i]!=0) theplot->flag[i] = flag[i];
   if ( iflag[3] != 0) 
     for ( i= 0 ; i < 6 ; i++ ) 
-            theplot->bbox[i] = bbox[i];
+      theplot->bbox[i] = bbox[i];
 }
 
 static void new_angles_Fac3D(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
@@ -2186,16 +2170,17 @@ static void new_angles_Param3D1(void *plot, double *theta, double *alpha, int *i
  *       => we must find the subwin asscoiated to bbox1
  *--------------------------------------------------*/
 
-void scale_change_plots(int winnumber, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin)
+void scale_change_plots(BCG *Xgc,int winnumber, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin)
 {
-  list_plot *list = ListPFirst;
+  list_plot *list = Xgc->plots ;
+  if ( Xgc->record_flag == FALSE ) return ;
   while (list)
     {
       if (list->window == winnumber && list->theplot != NULL) 
 	{
 	  int code = ((plot_code *) list->theplot)->code;
 	  if ( record_table[code].scale_change != NULL) 
-	    record_table[code].scale_change(list->theplot,flag,bbox,aaint,undo,bbox1,subwin,winnumber);
+	    record_table[code].scale_change(Xgc,list->theplot,flag,bbox,aaint,undo,bbox1,subwin,winnumber);
 	}
       list =list->next;
     }
@@ -2213,7 +2198,7 @@ static void scale_2D_change_flag(char *str)
 }
   
 
-static void scale_change_Plot(void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Plot(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_plot2d *theplot;
@@ -2231,7 +2216,7 @@ static void scale_change_Plot(void *plot, int *flag, double *bbox, int *aaint, i
     }
 }
 
-static void scale_change_Contour2D(void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Contour2D(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_contour2d *theplot;
@@ -2249,7 +2234,7 @@ static void scale_change_Contour2D(void *plot, int *flag, double *bbox, int *aai
     }
 }
 
-static void scale_change_Gray(void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Gray(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_gray *theplot;
@@ -2267,7 +2252,7 @@ static void scale_change_Gray(void *plot, int *flag, double *bbox, int *aaint, i
     }
 }
 
-static void scale_change_Champ(void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Champ(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_champ *theplot;
@@ -2284,7 +2269,7 @@ static void scale_change_Champ(void *plot, int *flag, double *bbox, int *aaint, 
     }
 }
 
-static void scale_change_Fec(void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Fec(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_fec *theplot;
@@ -2304,7 +2289,7 @@ static void scale_change_Fec(void *plot, int *flag, double *bbox, int *aaint, in
 
 /* here we deal with subwin changes */
 
-static void scale_change_Ech(void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Ech(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_scale *theplot;
@@ -2314,7 +2299,8 @@ static void scale_change_Ech(void *plot, int *flag, double *bbox, int *aaint, in
     {
       /* we are trying to change the scale */
       int wdim[2];
-      nsp_gengine->xget_windowdim(wdim,wdim+1);
+      BCG *Xgc=check_graphic_window();
+      nsp_gengine->xget_windowdim(Xgc,wdim,wdim+1);
       /* check if bbox1 is inside current subwin */
       if ( theplot->Wrect[0]*wdim[0] <= bbox1[0] 
 	   && (theplot->Wrect[0]+theplot->Wrect[2])*wdim[0] >= bbox1[2] 
@@ -2326,7 +2312,7 @@ static void scale_change_Ech(void *plot, int *flag, double *bbox, int *aaint, in
 	   */
 	  flag[0]=1;
 	  /* localy change the scale */
-	  set_scale("tttftf",theplot->Wrect,theplot->Frect,NULL,theplot->logflag,NULL);
+	  set_scale(Xgc,"tttftf",theplot->Wrect,theplot->Frect,NULL,theplot->logflag,NULL);
 	  bbox[0] = XPixel2Double(bbox1[0]);
 	  bbox[1] = YPixel2Double(bbox1[1]);
 	  bbox[2] = XPixel2Double(bbox1[2]);
@@ -2367,7 +2353,7 @@ static void scale_change_Ech(void *plot, int *flag, double *bbox, int *aaint, in
     }
 }
 
-static void scale_change_NEch(void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_NEch(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_nscale *theplot;
@@ -2379,15 +2365,18 @@ static void scale_change_NEch(void *plot, int *flag, double *bbox, int *aaint, i
       /* 1- check if nscale contains a subwin definition */
       if ( theplot->flag[1] == 't' ) 
 	{
+	  BCG *Xgc;
 	  int wdim[2];
 	  flag[0]=0; 
-	  nsp_gengine->xget_windowdim(wdim,wdim+1);
+	  Xgc=check_graphic_window();
+	  nsp_gengine->xget_windowdim(Xgc,wdim,wdim+1);
 	  /* check if bbox1 is inside current subwin */
 	  if (theplot->Wrect[0]*wdim[0] <= bbox1[0] && (theplot->Wrect[0]+theplot->Wrect[2])*wdim[0] >= bbox1[2] 
 	      && theplot->Wrect[1]*wdim[1] <= bbox1[1] && (theplot->Wrect[1]+theplot->Wrect[3])*wdim[1] >= bbox1[3] )
 	    {
 	      /** we extract the associated scale **/
-	      get_window_scale(win_num,theplot->Wrect);
+	      move_subwindow_scale_to_front(Xgc,theplot->Wrect);
+	      /* get_window_scale(Xgc,theplot->Wrect); */
 	      /* bbox1 is inside the subwindow 
 	       * we must change bbox to the subwindow scale 
 	       */
@@ -2398,7 +2387,7 @@ static void scale_change_NEch(void *plot, int *flag, double *bbox, int *aaint, i
 	      /* sciprint("je trouve un bbox ds [%f %f %f %f ] ds [%f,%f,%f,%f] log=[%c,%c]\r\n",
 		       bbox[0],bbox[1],bbox[2],bbox[3],
 		       theplot->Wrect[0],theplot->Wrect[1],theplot->Wrect[2],theplot->Wrect[3],
-		       current_scale.logflag[0],		       current_scale.logflag[1]);
+		       Xgc->scales->logflag[0],		       Xgc->scales->logflag[1]);
 	      */
 	      /* flag is changed ==> next recorded plots will use bbox **/
 	      flag[0]=1;
@@ -2440,7 +2429,7 @@ static void scale_change_NEch(void *plot, int *flag, double *bbox, int *aaint, i
 
 /*** code added by ES 21/5/2002 ****/
 
-static void scale_change_Contour(void *plot, int *flag, double *b1, int *aaint,
+static void scale_change_Contour(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,
 				 int undo, int *bbox1, double *subwin, int win_num)
 {
   int i, j;
@@ -2474,12 +2463,12 @@ static void scale_change_Contour(void *plot, int *flag, double *b1, int *aaint,
    if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
    if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
    if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
-   if (theplot->flag[1]>0) theplot->flag[1]=2*current_scale.metric3d-1;
+   if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1;
   }
 }
 
 
-static void scale_change_Fac3D(void *plot, int *flag, double *b1, int *aaint,
+static void scale_change_Fac3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,
                     int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
@@ -2514,12 +2503,12 @@ static void scale_change_Fac3D(void *plot, int *flag, double *b1, int *aaint,
    if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
    if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
    if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
-   if (theplot->flag[1]>0) theplot->flag[1]=2*current_scale.metric3d-1; 
+   if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1; 
   }
 }
 
-static void scale_change_Param3D(void *plot, int *flag, double *b1, int *aaint,
-                       int undo, int *bbox1, double *subwin, int win_num)
+static void scale_change_Param3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,
+				 int undo, int *bbox1, double *subwin, int win_num)
 {
   int i; double xmin, xmax, ymin, ymax, zmin, zmax, xp, yp, x,y,z;
   struct rec_param3d *theplot;
@@ -2556,11 +2545,11 @@ static void scale_change_Param3D(void *plot, int *flag, double *b1, int *aaint,
    if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
    /*   sciprint("trying to zoom a 3d param3d plot: x= [%f:%f], y=[%f:%f], z=[%f:%f]\r\n",xmin, xmax, ymin, ymax, zmin, zmax);
     */
-   if (theplot->flag[1]>0) theplot->flag[1]=2*current_scale.metric3d-1; 
+   if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1; 
    }
 }
 
-static void scale_change_Param3D1(void *plot, int *flag, double *b1, int *aaint, 
+static void scale_change_Param3D1(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint, 
                        int undo, int *bbox1, double *subwin, int win_num)
 {
   int i; 
@@ -2595,12 +2584,12 @@ static void scale_change_Param3D1(void *plot, int *flag, double *b1, int *aaint,
    if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
    if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
    if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
-   if (theplot->flag[1]>0) theplot->flag[1]=2*current_scale.metric3d-1;
+   if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1;
    /*   sciprint("I'm trying to zoom a 3d param3d1 plot \r\n"); */
   } 
 }
 
-static void scale_change_Plot3D(void *plot, int *flag, double *b1, int *aaint, 
+static void scale_change_Plot3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint, 
                      int undo, int *bbox1, double *subwin, int win_num)
 {
   int i, j;
@@ -2635,7 +2624,7 @@ static void scale_change_Plot3D(void *plot, int *flag, double *b1, int *aaint,
    if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
    if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
    if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
-   if (theplot->flag[1]>0) theplot->flag[1]=2*current_scale.metric3d-1; 
+   if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1; 
    /*   sciprint("theplotflags: %i %i %i\r\n", theplot->flag[0], theplot->flag[1],
 	theplot->flag[2]);
 	sciprint("flags: %i %i %\r\n", flag[0], flag[1],flag[2]); */
@@ -2650,9 +2639,10 @@ static void scale_change_Plot3D(void *plot, int *flag, double *b1, int *aaint,
  * scale undo : used in unzoom 
  *--------------------------------------------------------------------*/
 
-static void unscale_plots(winnumber)
+static void unscale_plots(BCG *Xgc,int winnumber)
 {
-  list_plot *list = ListPFirst;
+  list_plot *list = Xgc->plots ;
+  if ( Xgc->record_flag == FALSE ) return ;
   while (list)
     {
       if (list->window == winnumber && list->theplot != NULL) 
@@ -2795,12 +2785,13 @@ static void unscale_Plot3D(void *plot)
  * checks if recorded list contains 3d graphics 
  *-------------------------------------------------------*/
 
-int tape_check_recorded_3D(int winnumber)
+int tape_check_recorded_3D(BCG *Xgc,int winnumber)
 {
-  list_plot *list = ListPFirst;
+  list_plot *list = Xgc->plots ;
+  if ( Xgc->record_flag == FALSE ) return FAIL ;
   while (list)
     {
-      if ( list->window == winnumber && list->theplot != NULL) 
+      if ( list->theplot != NULL) 
 	{
 	  int code = ((plot_code *) list->theplot)->code;
 	  switch (code) 
@@ -2828,10 +2819,10 @@ int tape_check_recorded_3D(int winnumber)
  *  restore scales (unzoom) and redraw stored graphics 
  *---------------------------------------------------------------------------*/
 
-void tape_replay_undo_scale(int winnumber)
+void tape_replay_undo_scale(BCG *Xgc,int winnumber)
 { 
-  unscale_plots(winnumber);
-  tape_replay(winnumber);
+  unscale_plots(Xgc,winnumber);
+  tape_replay(Xgc,winnumber);
 }
 
 /*---------------------------------------------------------------------
@@ -2840,7 +2831,7 @@ void tape_replay_undo_scale(int winnumber)
  * the problem is a bit complex if we have manu subwindows 
  *---------------------------------------------------------------------------*/
 
-void tape_replay_new_scale(int winnumber, int *flag, int *aaint,  double *bbox)
+void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,  double *bbox)
 { 
   /** get the bounding box in pixel */
   int bbox1[4];
@@ -2848,8 +2839,8 @@ void tape_replay_new_scale(int winnumber, int *flag, int *aaint,  double *bbox)
   bbox1[1]= YDouble2Pixel(bbox[1]);
   bbox1[2]= XDouble2Pixel(bbox[2]);
   bbox1[3]= YDouble2Pixel(bbox[3]);
-  scale_change_plots(winnumber,flag,bbox,aaint,1,bbox1,NULL);
-  tape_replay(winnumber);
+  scale_change_plots(Xgc,winnumber,flag,bbox,aaint,1,bbox1,NULL);
+  tape_replay(Xgc,winnumber);
 }
 
 /*---------------------------------------------------------------------
@@ -2857,14 +2848,14 @@ void tape_replay_new_scale(int winnumber, int *flag, int *aaint,  double *bbox)
  * used for automatic scales 
  *---------------------------------------------------------------------------*/
 
-void tape_replay_new_scale_1(int winnumber, int *flag, int *aaint, double *bbox)
+void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, double *bbox)
 { 
   /* here we want to change bbox but only for recorded graphics 
    * which are on the same subwin as the current one 
    * and we do not want this operation to be undone ==> undo =0 
    */
-  scale_change_plots(winnumber,flag,bbox,aaint,0,NULL,current_scale.subwin_rect);
-  tape_replay(winnumber);
+  scale_change_plots(Xgc,winnumber,flag,bbox,aaint,0,NULL,Xgc->scales->subwin_rect);
+  tape_replay(Xgc,winnumber);
 }
 
 /*---------------------------------------------------------------------
@@ -2872,19 +2863,20 @@ void tape_replay_new_scale_1(int winnumber, int *flag, int *aaint, double *bbox)
  *  then redraw recorded graphics 
  *---------------------------------------------------------------------------*/
 
-void tape_replay_new_angles(int winnumber,int *iflag, int *flag,double *theta, double *alpha, double *bbox)
+void tape_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,double *theta, double *alpha, double *bbox)
 { 
-  new_angles_plots(winnumber,theta,alpha,iflag,flag,bbox);
-  tape_replay(winnumber);
+  new_angles_plots(Xgc,winnumber,theta,alpha,iflag,flag,bbox);
+  tape_replay(Xgc,winnumber);
 }
 
 /*---------------------------------------------------------------------
  * redraw stored graphics 
  *---------------------------------------------------------------------------*/
 
-void tape_replay(int winnumber)
+void tape_replay(BCG *Xgc,int winnumber)
 { 
-  list_plot *list = ListPFirst;
+  list_plot *list = Xgc->plots ;
+  if ( Xgc->record_flag == FALSE ) return ;
 #ifdef WIN32
   int flag;
 #endif
@@ -2894,7 +2886,7 @@ void tape_replay(int winnumber)
    * 
    */
   scig_handler(winnumber);
-  if ( ListPFirst != NULL)
+  if ( list != NULL)
     {
       if ( name[0] =='R' )
 	{
@@ -2912,8 +2904,8 @@ void tape_replay(int winnumber)
       /* the replay list code */
       while (list)
 	{
-	  if (list->window == winnumber && list->theplot != NULL) 
-	    record_table[((plot_code *) list->theplot)->code ].replay(list->theplot);
+	  if ( list->theplot != NULL) 
+	    record_table[((plot_code *) list->theplot)->code ].replay(Xgc,list->theplot);
 	  list =list->next;
 	}
 #ifdef WIN32
@@ -2927,18 +2919,21 @@ void tape_replay(int winnumber)
  * Add a new graphics record in the graphic recorder list
  *---------------------------------------------------------------------------*/
 
-int store_record(int code ,void *plot)
+int store_record(BCG *Xgc,int code ,void *plot)
 {
-  if (ListPFirst == NULL)
+  list_plot *list = Xgc->plots ;
+  if ( Xgc->record_flag == FALSE ) return 1 ;
+  if ( list == NULL)
     {
-      ListPFirst = MALLOC(sizeof(list_plot));
-      if (ListPFirst != NULL)
+      list  = MALLOC(sizeof(list_plot));
+      if (list != NULL)
 	{
 	  ((plot_code *) plot )->code = code; 
-	  ListPFirst->theplot=plot;
-	  ListPFirst->window=curwin();
-	  ListPFirst->next=NULL;
-	  ListPFirst->previous=NULL;
+	  list->theplot=plot;
+	  list->window=curwin();
+	  list->next=NULL;
+	  list->previous=NULL;
+	  Xgc->plots= list;
 	}
       else
 	{
@@ -2948,10 +2943,7 @@ int store_record(int code ,void *plot)
     }
   else 
     {
-      list_plot *list;
-      list=ListPFirst;
-      while (list->next != NULL) 
-	list=list->next;
+      while (list->next != NULL) list=list->next;
       list->next=MALLOC(sizeof(list_plot));
       if (list->next != NULL)
 	{
@@ -2977,32 +2969,32 @@ int store_record(int code ,void *plot)
  * utilities 
  *---------------------------------------------------------------------------*/
 
-static void store_void(int code)
+static void store_void(BCG *Xgc,int code)
 {
   struct rec_void *lplot= ((struct rec_void *) MALLOC(sizeof(struct rec_void)));
   if (lplot != NULL)
     {
       lplot->code = code;
-      store_record(code,lplot);
+      store_record(Xgc,code,lplot);
       return; 
     }
   Scistring("\nstore_ Plot (xcall1): No more place \n");
 }
 
-static void store_int(int code,int val)
+static void store_int(BCG *Xgc,int code,int val)
 {
   struct rec_int *lplot= ((struct rec_int *) MALLOC(sizeof(struct rec_int)));
   if (lplot != NULL)
     {
       lplot->code = code;
       lplot->val = val;
-      store_record(code,lplot);
+      store_record(Xgc,code,lplot);
       return; 
     }
   Scistring("\nstore_ Plot (xcall1): No more place \n");
 }
 
-static void store_int2(int code,int val, int val1)
+static void store_int2(BCG *Xgc,int code,int val, int val1)
 {
   struct rec_int2 *lplot= ((struct rec_int2 *) MALLOC(sizeof(struct rec_int2)));
   if (lplot != NULL)
@@ -3010,13 +3002,13 @@ static void store_int2(int code,int val, int val1)
       lplot->code = code;
       lplot->val = val;
       lplot->val1 = val1;
-      store_record(code,lplot);
+      store_record(Xgc,code,lplot);
       return; 
     }
   Scistring("\nstore_ Plot (xcall1): No more place \n");
 }
 
-static void store_int4(int code,int vals[])
+static void store_int4(BCG *Xgc,int code,int vals[])
 {
   struct rec_int4 *lplot= ((struct rec_int4 *) MALLOC(sizeof(struct rec_int4)));
   if (lplot != NULL)
@@ -3024,13 +3016,13 @@ static void store_int4(int code,int vals[])
       int i;
       lplot->code = code;
       for ( i=0; i< 4 ; i++ ) lplot->vals[i] = vals[i];
-      store_record(code,lplot);
+      store_record(Xgc,code,lplot);
       return; 
     }
   Scistring("\nstore_ Plot (xcall1): No more place \n");
 }
 
-static void store_double4(int code,double vals[])
+static void store_double4(BCG *Xgc,int code,double vals[])
 {
   struct rec_double4 *lplot= ((struct rec_double4 *) MALLOC(sizeof(struct rec_double4)));
   if (lplot != NULL)
@@ -3038,7 +3030,7 @@ static void store_double4(int code,double vals[])
       int i;
       lplot->code = code;
       for ( i=0; i< 4 ; i++ ) lplot->vals[i] = vals[i];
-      store_record(code,lplot);
+      store_record(Xgc,code,lplot);
       return; 
     }
   Scistring("\nstore_ Plot (xcall1): No more place \n");

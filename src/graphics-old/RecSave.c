@@ -10,8 +10,8 @@
 #include <string.h> /* in case of dbmalloc use */
 #include <stdio.h>
 #include "nsp/math.h"
-#include "Graphics.h"
-#include "Rec.h"
+#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics/Rec.h"
 
 static int save_D  (double x);
 static int save_LI (int ix);
@@ -20,20 +20,21 @@ static int save_VectLI (int *nx, int l);
 static int save_VectF (double *nx, int l); 
 static int save_VectC (char *nx, int l);
 static int save_VectS   (char **nx);
-static int save_Colormap (void *);
-static int save_Ech  (void *); 
-static int save_Plot  (void *); 
-static int save_SciAxis  (void *); 
-static int save_Grid  (void *); 
-static int save_Param3D  (void *); 
-static int save_Param3D1  (void *); 
-static int save_Plot3D  (void *); 
-static int save_Fac3D  (void *); 
-static int save_Fec  (void *); 
-static int save_Contour  (void *); 
-static int save_Contour2D  (void *); 
-static int save_Gray  (void *); 
-static int save_Champ  (void *); 
+
+static int save_Colormap (BCG *Xgc,void *);
+static int save_Ech  (BCG *Xgc,void *); 
+static int save_Plot  (BCG *Xgc,void *); 
+static int save_SciAxis  (BCG *Xgc,void *); 
+static int save_Grid  (BCG *Xgc,void *); 
+static int save_Param3D  (BCG *Xgc,void *); 
+static int save_Param3D1  (BCG *Xgc,void *); 
+static int save_Plot3D  (BCG *Xgc,void *); 
+static int save_Fac3D  (BCG *Xgc,void *); 
+static int save_Fec  (BCG *Xgc,void *); 
+static int save_Contour  (BCG *Xgc,void *); 
+static int save_Contour2D  (BCG *Xgc,void *); 
+static int save_Gray  (BCG *Xgc,void *); 
+static int save_Champ  (BCG *Xgc,void *); 
 
 /*---------------------------------------------------------------------
  * save plots using xdr 
@@ -44,7 +45,7 @@ static int save_Champ  (void *);
  * basic primitives 
  *---------------------------------------------------------------------------*/
 
-static int save_clipping_p(void *theplot)
+static int save_clipping_p(BCG *Xgc,void *theplot)
 {
   struct rec_int4 *lplot  = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -52,7 +53,7 @@ static int save_clipping_p(void *theplot)
   return 1;
 }
 
-static int save_clipgrf(void * theplot ) 
+static int save_clipgrf(BCG *Xgc,void * theplot ) 
 {
   if ( save_LI(((struct rec_void *) theplot)->code)==0) return(0);
   return 1;
@@ -66,17 +67,17 @@ static int save_int(void *theplot)
   return 1;
 }
 
-static int save_alufunction1(void *theplot) { return save_int(theplot); }
+static int save_alufunction1(BCG *Xgc,void *theplot) { return save_int(theplot); }
 
-static int save_background(void *theplot)  { return save_int(theplot); }
+static int save_background(BCG *Xgc,void *theplot)  { return save_int(theplot); }
 
-static int save_unclip(void * theplot )
+static int save_unclip(BCG *Xgc,void * theplot )
 {
   if ( save_LI(((struct rec_void *) theplot)->code)==0) return(0);
   return 1;
 }
 
-static int save_clip(void *theplot)
+static int save_clip(BCG *Xgc,void *theplot)
 {
   struct rec_int4 *lplot  = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -84,12 +85,12 @@ static int save_clip(void *theplot)
   return 1;
 }
 
-static int save_pattern(void *theplot)  { return save_int(theplot); }
+static int save_pattern(BCG *Xgc,void *theplot)  { return save_int(theplot); }
 
-static int save_font_size(void *theplot)  { return save_int(theplot); }
+static int save_font_size(BCG *Xgc,void *theplot)  { return save_int(theplot); }
 
 
-static int save_font(void *theplot)
+static int save_font(BCG *Xgc,void *theplot)
 {
   struct rec_int2 *lplot  = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -98,17 +99,17 @@ static int save_font(void *theplot)
   return 1;
 }
 
-static int save_foreground(void *theplot)  { return save_int(theplot); }
+static int save_foreground(BCG *Xgc,void *theplot)  { return save_int(theplot); }
 
-static int save_hidden3d(void *theplot)  { return save_int(theplot); }
+static int save_hidden3d(BCG *Xgc,void *theplot)  { return save_int(theplot); }
 
-static int save_absourel(void *theplot)  { return save_int(theplot); }
+static int save_absourel(BCG *Xgc,void *theplot)  { return save_int(theplot); }
 
-static int save_dash(void *theplot)  { return save_int(theplot); }
+static int save_dash(BCG *Xgc,void *theplot)  { return save_int(theplot); }
 
-static int save_mark_size(void *theplot)  { return save_int(theplot); }
+static int save_mark_size(BCG *Xgc,void *theplot)  { return save_int(theplot); }
 
-static int save_mark(void *theplot)  
+static int save_mark(BCG *Xgc,void *theplot)  
 {
   struct rec_int2 *lplot  = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -117,30 +118,30 @@ static int save_mark(void *theplot)
   return 1;
 }
 
-static int save_pixmapOn(void *theplot)  { return save_int(theplot); }
-static int save_thickness(void *theplot)  { return save_int(theplot); }
-static int save_usecolor(void *theplot)  { return save_int(theplot); }
+static int save_pixmapOn(BCG *Xgc,void *theplot)  { return save_int(theplot); }
+static int save_thickness(BCG *Xgc,void *theplot)  { return save_int(theplot); }
+static int save_usecolor(BCG *Xgc,void *theplot)  { return save_int(theplot); }
 
-static int save_show(void * theplot ) 
+static int save_show(BCG *Xgc,void * theplot ) 
 {
   if ( save_LI(((struct rec_void *) theplot)->code)==0) return(0);
   return 1;
 }
 
-static int save_pixmapclear(void * theplot )
+static int save_pixmapclear(BCG *Xgc,void * theplot )
 {
   if ( save_LI(((struct rec_void *) theplot)->code)==0) return(0);
   return 1;
 }
 
-static int save_fpf(void * theplot )
+static int save_fpf(BCG *Xgc,void * theplot )
 {
   struct rec_str* lplot = theplot;
   if ( save_C( lplot->str,strlen(lplot->str)) == 0) return(0);
   return 1;
 }
 
-static int save_fpf_def(void * theplot )
+static int save_fpf_def(BCG *Xgc,void * theplot )
 {
   if ( save_LI(((struct rec_void *) theplot)->code)==0) return(0);
   return 1;
@@ -152,7 +153,7 @@ static int save_fpf_def(void * theplot )
  *  drawarc_1
  *-----------------------------------------------------------------------------*/
 
-static int save_drawarc_1(void  *theplot)
+static int save_drawarc_1(BCG *Xgc,void  *theplot)
 {
   int i;
   struct rec_drawarc *lplot = theplot;
@@ -168,7 +169,7 @@ static int save_drawarc_1(void  *theplot)
  * 
  *-----------------------------------------------------------------------------*/
 
-static int save_fillarcs_1(void  *theplot)
+static int save_fillarcs_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillarcs *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -182,7 +183,7 @@ static int save_fillarcs_1(void  *theplot)
  *  
  *-----------------------------------------------------------------------------*/
 
-static int save_drawarcs_1(void  *theplot)
+static int save_drawarcs_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillarcs *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -196,7 +197,7 @@ static int save_drawarcs_1(void  *theplot)
  *  
  *-----------------------------------------------------------------------------*/
 
-static int save_fillpolyline_1(void  *theplot)
+static int save_fillpolyline_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolyline *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -211,7 +212,7 @@ static int save_fillpolyline_1(void  *theplot)
  *  arrows
  *-----------------------------------------------------------------------------*/
 
-static int save_drawarrows_1(void  *theplot)
+static int save_drawarrows_1(BCG *Xgc,void  *theplot)
 {
   struct rec_arrows *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -234,7 +235,7 @@ static int save_drawarrows_1(void  *theplot)
  * axis 
  *-----------------------------------------------------------------------------*/
 
-static int save_drawaxis_1(void  *theplot)
+static int save_drawaxis_1(BCG *Xgc,void  *theplot)
 {
   struct rec_drawaxis *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -249,7 +250,7 @@ static int save_drawaxis_1(void  *theplot)
  *  cleararea
  *-----------------------------------------------------------------------------*/
 
-static int save_cleararea_1(void  *theplot)
+static int save_cleararea_1(BCG *Xgc,void  *theplot)
 {
   struct rec_double4 *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -261,7 +262,7 @@ static int save_cleararea_1(void  *theplot)
  *   fillarc
  *-----------------------------------------------------------------------------*/
 
-static int save_fillarc_1(void  *theplot)
+static int save_fillarc_1(BCG *Xgc,void  *theplot)
 {
   int i;
   struct rec_drawarc *lplot = theplot;
@@ -277,7 +278,7 @@ static int save_fillarc_1(void  *theplot)
  *  fillrectangle
  *-----------------------------------------------------------------------------*/
 
-static int save_fillrectangle_1(void  *theplot)
+static int save_fillrectangle_1(BCG *Xgc,void  *theplot)
 {
   struct rec_double4 *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -289,7 +290,7 @@ static int save_fillrectangle_1(void  *theplot)
  *  drawpolyline
  *-----------------------------------------------------------------------------*/
 
-static int save_drawpolyline_1(void  *theplot)
+static int save_drawpolyline_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolyline *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -304,7 +305,7 @@ static int save_drawpolyline_1(void  *theplot)
  *  fillpolylines
  *-----------------------------------------------------------------------------*/
 
-static int save_fillpolylines_1(void  *theplot)
+static int save_fillpolylines_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolylines *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -328,7 +329,7 @@ static int save_fillpolylines_1(void  *theplot)
  *  drawpolymark
  *-----------------------------------------------------------------------------*/
 
-static int save_drawpolymark_1(void  *theplot)
+static int save_drawpolymark_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillpolyline *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -343,7 +344,7 @@ static int save_drawpolymark_1(void  *theplot)
  *  displaynumbers
  *-----------------------------------------------------------------------------*/
 
-static int save_displaynumbers_1(void  *theplot)
+static int save_displaynumbers_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaynumbers *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -360,7 +361,7 @@ static int save_displaynumbers_1(void  *theplot)
  *   drawpolylines
  *-----------------------------------------------------------------------------*/
 
-static int save_drawpolylines_1(void  *theplot)
+static int save_drawpolylines_1(BCG *Xgc,void  *theplot)
 {
   struct rec_drawpolylines *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -377,7 +378,7 @@ static int save_drawpolylines_1(void  *theplot)
  *   drawrectangle
  *-----------------------------------------------------------------------------*/
 
-static int save_drawrectangle_1(void  *theplot)
+static int save_drawrectangle_1(BCG *Xgc,void  *theplot)
 {
   struct rec_double4 *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -389,7 +390,7 @@ static int save_drawrectangle_1(void  *theplot)
  *   drawrectangles
  *-----------------------------------------------------------------------------*/
 
-static int save_drawrectangles_1(void  *theplot)
+static int save_drawrectangles_1(BCG *Xgc,void  *theplot)
 {
   struct rec_fillarcs *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -404,7 +405,7 @@ static int save_drawrectangles_1(void  *theplot)
  *  drawsegments
  *-----------------------------------------------------------------------------*/
 
-static int save_drawsegments_1(void  *theplot)
+static int save_drawsegments_1(BCG *Xgc,void  *theplot)
 {
   struct rec_segment *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -420,7 +421,7 @@ static int save_drawsegments_1(void  *theplot)
  *  displaystring
  *-----------------------------------------------------------------------------*/
 
-static int save_displaystring_1(void  *theplot)
+static int save_displaystring_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaystring *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -436,7 +437,7 @@ static int save_displaystring_1(void  *theplot)
  *  displaystringa
  *-----------------------------------------------------------------------------*/
 
-static int save_displaystringa_1(void  *theplot)
+static int save_displaystringa_1(BCG *Xgc,void  *theplot)
 {
   struct rec_displaystringa *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -450,7 +451,7 @@ static int save_displaystringa_1(void  *theplot)
  * specified box (only works with driver which properly estimate string sizes)
  *-----------------------------------------------------------------------------*/
 
-static int save_xstringb_1(void  *theplot)
+static int save_xstringb_1(BCG *Xgc,void  *theplot)
 {
   struct rec_xstringb *lplot = theplot;
   if ( save_LI(lplot->code)==0) return(0);
@@ -467,7 +468,7 @@ static int save_xstringb_1(void  *theplot)
  * scale 
  * ---------------------------------------------------------------------------*/
 
-static int save_Ech(void *plot)
+static int save_Ech(BCG *Xgc,void *plot)
 {
   struct rec_scale *lplot = (struct rec_scale *) plot;
   if ( save_C(lplot->logflag,2L)== 0) return(0);
@@ -478,7 +479,7 @@ static int save_Ech(void *plot)
   return(1);
 }
 
-static int save_NEch(void *plot)
+static int save_NEch(BCG *Xgc,void *plot)
 {
   struct rec_nscale *lplot = (struct rec_nscale *) plot;
   if ( save_C(lplot->logflag,2L)== 0) return(0);
@@ -495,7 +496,7 @@ static int save_NEch(void *plot)
  * plot2d 
  *---------------------------------------------------------------------------*/
 
-static int save_Plot(void *plot)
+static int save_Plot(BCG *Xgc,void *plot)
 {
   int n=0, nstyle;
   struct rec_plot2d *lplot = (struct rec_plot2d *) plot;
@@ -527,7 +528,7 @@ static int save_Plot(void *plot)
  * axis 
  *---------------------------------------------------------------------------*/
 
-static int save_SciAxis(void *plot)
+static int save_SciAxis(BCG *Xgc,void *plot)
 {
   struct rec_sciaxis *lplot = (struct rec_sciaxis *) plot;
   char type[3] ;
@@ -555,7 +556,7 @@ static int save_SciAxis(void *plot)
  * xgrid 
  *---------------------------------------------------------------------------*/
 
-static int save_Grid(void *plot)
+static int save_Grid(BCG *Xgc,void *plot)
 {
   struct rec_xgrid *lplot = (struct rec_xgrid *) plot;
   if ( save_LI(lplot->style)== 0) return(0);
@@ -568,7 +569,7 @@ static int save_Grid(void *plot)
  * param3d 
  *---------------------------------------------------------------------------*/
 
-static int save_Param3D(void *plot)
+static int save_Param3D(BCG *Xgc,void *plot)
 {
   struct rec_param3d *lplot = (struct rec_param3d *) plot;
   if ( save_LI(lplot->n)== 0) return(0);
@@ -584,7 +585,7 @@ static int save_Param3D(void *plot)
   return(1);
 }
 
-static int save_Param3D1(void *plot)
+static int save_Param3D1(BCG *Xgc,void *plot)
 {
   struct rec_param3d1 *lplot = (struct rec_param3d1 *) plot;
   if ( save_LI(lplot->m)== 0) return(0);
@@ -609,7 +610,7 @@ static int save_Param3D1(void *plot)
  * plot3d  
  *---------------------------------------------------------------------------*/
 
-static int save_Plot3D(void *plot)
+static int save_Plot3D(BCG *Xgc,void *plot)
 {
   struct rec_plot3d *lplot = (struct rec_plot3d *) plot;
   if ( save_LI(lplot->p)== 0) return(0);
@@ -630,7 +631,7 @@ static int save_Plot3D(void *plot)
  * fac3d 
  *---------------------------------------------------------------------------*/
 
-static int save_Fac3D(void *plot)
+static int save_Fac3D(BCG *Xgc,void *plot)
 {
   struct rec_fac3d *lplot = (struct rec_fac3d *) plot;
   if ( save_LI(lplot->p)== 0) return(0);
@@ -655,7 +656,7 @@ static int save_Fac3D(void *plot)
  * fec 
  *---------------------------------------------------------------------------*/
 
-static int save_Fec(void *plot)
+static int save_Fec(BCG *Xgc,void *plot)
 {
   struct rec_fec *lplot = (struct rec_fec *) plot;
   if ( save_LI(lplot->Nnode)== 0) return(0);
@@ -681,7 +682,7 @@ static int save_Fec(void *plot)
  * contour 
  *---------------------------------------------------------------------------*/
 
-static int save_Contour(void *plot)
+static int save_Contour(BCG *Xgc,void *plot)
 {
   struct rec_contour *lplot = (struct rec_contour *) plot;
   if ( save_LI(lplot->n1)== 0) return(0);
@@ -703,7 +704,7 @@ static int save_Contour(void *plot)
   return(1);
 }
 
-static int save_Contour2D(void *plot)
+static int save_Contour2D(BCG *Xgc,void *plot)
 {
   int nstyle;
   struct rec_contour2d *lplot = (struct rec_contour2d *) plot;
@@ -733,7 +734,7 @@ static int save_Contour2D(void *plot)
  * xgray 
  *---------------------------------------------------------------------------*/
 
-static int save_Gray(void *plot)
+static int save_Gray(BCG *Xgc,void *plot)
 {
   struct rec_gray *lplot = (struct rec_gray *) plot;
   if ( save_LI(lplot->n1)== 0) return(0);
@@ -751,7 +752,7 @@ static int save_Gray(void *plot)
   return(1);
 }
 
-static int save_Gray1(void *plot)
+static int save_Gray1(BCG *Xgc,void *plot)
 {
   struct rec_gray *lplot = (struct rec_gray *) plot;
   if ( save_LI(lplot->n1)== 0) return(0);
@@ -767,7 +768,7 @@ static int save_Gray1(void *plot)
   return(1);
 }
 
-static int save_Gray2(void *plot)
+static int save_Gray2(BCG *Xgc,void *plot)
 {
   struct rec_gray_2 *lplot = (struct rec_gray_2 *) plot;
   if ( save_LI(lplot->n1)== 0) return(0);
@@ -782,7 +783,7 @@ static int save_Gray2(void *plot)
  * champ 
  *---------------------------------------------------------------------------*/
 
-static int save_Champ(void *plot)
+static int save_Champ(BCG *Xgc,void *plot)
 {
   struct rec_champ *lplot = (struct rec_champ *) plot;
   if ( save_LI(lplot->n1)== 0) return(0);
@@ -838,7 +839,7 @@ static u_int szof ;
 typedef  struct  {
   int code;
   char *name;
-  int  (*save)(void *);
+  int  (*save)(BCG *Xgc,void *);
 } Save_Table;
 
 static Save_Table save_table [] ={
@@ -918,10 +919,11 @@ static Save_Table save_table [] ={
 #define __STDC__
 #endif 
 
-int tape_save(const char *fname1, int winnumber)
+int tape_save(BCG *Xgc,const char *fname1, int winnumber)
 {
+  list_plot *list = Xgc->plots ;
   static char scig[]={"Nsp_1.0"};
-  list_plot *list;
+  if ( Xgc->record_flag == FALSE ) return 0 ;
 #ifdef lint 
   *unused;
 #endif
@@ -938,19 +940,19 @@ int tape_save(const char *fname1, int winnumber)
     }
   xdrstdio_create(xdrs, F, XDR_ENCODE) ;
   save_VectC(scig,((int)strlen(scig))+1) ;
-  list=ListPFirst;
-  if ( save_Colormap(NULL) == 0) 
+
+  if ( save_Colormap(Xgc,NULL) == 0) 
     {
       sciprint("save: saving colormap failed\r\n") ;
       return(0);
     }
   while (list)
     {
-      if (list->window == winnumber && list->theplot != NULL) 
+      if ( list->theplot != NULL) 
 	{
 	  int code = ((plot_code *) list->theplot)->code;
 	  if (save_LI(code) == 0) break;
-	  if (save_table[code].save(list->theplot) == 0) break;
+	  if (save_table[code].save(Xgc,list->theplot) == 0) break;
 	}
       list =list->next;
     }
@@ -1086,10 +1088,10 @@ static int save_VectS(char **nx)
 /** save the colormap if necessary **/
 /** If the X window exists we check its colormap **/
 
-static int save_Colormap(void *unused)
+static int save_Colormap(BCG *Xgc,void *unused)
 {
   int m;
-  if (  CheckColormap(&m) == 1) 
+  if (  CheckColormap(Xgc,&m) == 1) 
     { 
       int i;
       float r,g,b;
@@ -1097,17 +1099,17 @@ static int save_Colormap(void *unused)
       if ( save_LI(m)== 0) return(0);
       for ( i=0; i < m ; i++)
 	{
-	  get_r(i,&r);
+	  get_r(Xgc,i,&r);
 	  if ( save_F(r) == 0) return(0);
 	}
       for ( i=0; i < m ; i++) 
 	{
-	  get_g(i,&g);
+	  get_g(Xgc,i,&g);
 	  if ( save_F(g) == 0) return(0);
 	}
       for ( i=0; i < m; i++)
 	{
-	  get_b(i,&b);
+	  get_b(Xgc,i,&b);
 	  if ( save_F(b) == 0) return(0);
 	}
     }

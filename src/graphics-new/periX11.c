@@ -23,11 +23,11 @@
 #include <X11/Shell.h>
 
 #include "nsp/math.h"
-#include "Graphics.h"
-#include "periX11.h"
-#include "periX11-bcg.h"
+#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics/periX11.h"
+#include "nsp/graphics/periX11-bcg.h"
 #include "../version.h"
-#include "color.h"
+#include "nsp/graphics/color.h"
 #include "../intersci/cerro.h" 
 
 extern void GPopupResize (struct BCG *ScilabXgc,int *,int *);
@@ -703,7 +703,7 @@ static void xset_windowpos(integer *x, integer *y, integer *v3, integer *v4)
 
 void C2F(getwindowdim) (integer *verbose, integer *x, integer *narg, double *dummy)
 {     
-  xget_windowdim(verbose, x, narg,dummy);
+  xget_windowdim(Xgc,verbose, x, narg,dummy);
 }
 
 /** To get the drawbox  window size **/
@@ -870,7 +870,7 @@ static void xset_clip(integer *x, integer *y, integer *w, integer *h)
   integer verbose=0,wd[2],narg;
   XRectangle rects[1];
   ScilabXgc->ClipRegionSet = 1;
-  xget_windowdim(&verbose,wd,&narg,vdouble);
+  xget_windowdim(Xgc,&verbose,wd,&narg,vdouble);
   rects[0].x= *x;
   rects[0].y= *y;
   rects[0].width= *w;
@@ -1207,7 +1207,7 @@ static void xset_dash_or_color(integer *value, integer *v2, integer *v3, integer
 static void xset_dash_and_color(integer *value, integer *v2, integer *v3, integer *v4)
 {
   xset_dash(value, v2, v3, v4);
-  xset_pattern(value+6, v2, v3, v4);
+  xset_pattern(Xgc,value+6, v2, v3, v4);
 }
 
 static void xset_line_style(integer *value, integer *v2, integer *v3, integer *v4)
@@ -1218,7 +1218,7 @@ static void xset_line_style(integer *value, integer *v2, integer *v3, integer *v
   else {
     j= ScilabXgc->CurDashStyle + 1;
     xset_dash(&j,PI0,PI0,PI0);
-    xset_pattern(value,PI0,PI0,PI0);
+    xset_pattern(Xgc,value,PI0,PI0,PI0);
   }
 }
 
@@ -1304,11 +1304,11 @@ static void xset_usecolor(integer *num, integer *v1, integer *v2, integer *v3)
 	{
 	  /* from color to b&w */
 	  ScilabXgc->CurColorStatus = 1;
-	  xset_pattern((i=1,&i),PI0,PI0,PI0);
+	  xset_pattern(Xgc,(i=1,&i),PI0,PI0,PI0);
 	  /* go to b&w */
 	  ScilabXgc->CurColorStatus = 0;
 	  i= ScilabXgc->CurPattern + 1;
-	  xset_pattern(&i,PI0,PI0,PI0);
+	  xset_pattern(Xgc,&i,PI0,PI0,PI0);
 	  i= ScilabXgc->CurDashStyle + 1;
 	  xset_dash(&i,PI0,PI0,PI0);
 
@@ -1321,13 +1321,13 @@ static void xset_usecolor(integer *num, integer *v1, integer *v2, integer *v3)
 	  /* patterns and dashes reinitialization */
 	  /* colors too */
 	  ScilabXgc->CurColorStatus = 0;
-	  xset_pattern((i=1,&i),PI0,PI0,PI0);
+	  xset_pattern(Xgc,(i=1,&i),PI0,PI0,PI0);
 	  xset_dash((i=1,&i),PI0,PI0,PI0);
 	  /* switching to color mode */
 	  ScilabXgc->CurColorStatus = 1;
 	  i= ScilabXgc->CurColor + 1;
-	  xset_pattern(&i,PI0,PI0,PI0);
-	  xset_pattern(&i,PI0,PI0,PI0);
+	  xset_pattern(Xgc,&i,PI0,PI0,PI0);
+	  xset_pattern(Xgc,&i,PI0,PI0,PI0);
 	  ScilabXgc->IDLastPattern = ScilabXgc->Numcolors - 1;
 
 	}
@@ -1927,7 +1927,7 @@ void setcolormap1(integer m, double *a)
   ScilabXgc->NumBackground = m + 1;
   xset_usecolor((i=1,&i) ,PI0,PI0,PI0);
   xset_alufunction1(&ScilabXgc->CurDrawFunction,PI0,PI0,PI0);
-  xset_pattern((i=ScilabXgc->NumForeground+1,&i),PI0,PI0,PI0);  
+  xset_pattern(Xgc,(i=ScilabXgc->NumForeground+1,&i),PI0,PI0,PI0);  
   xset_foreground((i=ScilabXgc->NumForeground+1,&i),PI0,PI0,PI0);
   xset_background((i=ScilabXgc->NumForeground+2,&i),PI0,PI0,PI0);
   XFlush(dpy);
@@ -2132,7 +2132,7 @@ void setcolormap3(integer m, double *a)
   ScilabXgc->NumBackground = m + 1;
   xset_usecolor((i=1,&i) ,PI0,PI0,PI0);
   xset_alufunction1(&ScilabXgc->CurDrawFunction,PI0,PI0,PI0);
-  xset_pattern((i=ScilabXgc->NumForeground+1,&i),PI0,PI0,PI0);  
+  xset_pattern(Xgc,(i=ScilabXgc->NumForeground+1,&i),PI0,PI0,PI0);  
   xset_foreground((i=ScilabXgc->NumForeground+1,&i),PI0,PI0,PI0);
   xset_background((i=ScilabXgc->NumForeground+2,&i),PI0,PI0,PI0);
   XFlush(dpy);
@@ -2587,7 +2587,7 @@ void C2F(drawarrows)(char *str, integer *vx, integer *vy, integer *n, integer *a
       else if (*style >= 1)
 	xset_line_style(style,PI0,PI0,PI0);
       
-      /* xset_pattern(&NDvalue,PI0,PI0,PI0); commented out 13/09/00 ss */
+      /* xset_pattern(Xgc,&NDvalue,PI0,PI0,PI0); commented out 13/09/00 ss */
       XDrawLine(dpy,ScilabXgc->Cdrawable,gc,(int) vx[2*i],(int)vy[2*i],
 		(int)vx[2*i+1],(int)vy[2*i+1]);
       dx=( vx[2*i+1]-vx[2*i]);
@@ -2645,7 +2645,7 @@ void C2F(drawrectangles)(char *str, integer *vects, integer *fillvect, integer *
 	}
       else
 	{
-	  xset_pattern(&(fillvect[i]),PI0,PI0,PI0);
+	  xset_pattern(Xgc,&(fillvect[i]),PI0,PI0,PI0);
 	  C2F(fillrectangle)(str,vects+4*i,vects+4*i+1,vects+4*i+2,vects+4*i+3,PI0,PI0,PD0,PD0,PD0,PD0);
 	}
     }
@@ -2686,7 +2686,7 @@ void fill_grid_rectangles(integer *x, integer *y, double *z, integer n1, integer
   
   xget_last(&verbose,&whiteid,&narg,vdouble);
   xget_pattern(&verbose,&cpat,&narg,vdouble);
-  xget_windowdim(&verbose,xz,&narg,vdouble);
+  xget_windowdim(Xgc,&verbose,xz,&narg,vdouble);
 
   for (i = 0 ; i < (n1)-1 ; i++)
     for (j = 0 ; j < (n2)-1 ; j++)
@@ -2694,14 +2694,14 @@ void fill_grid_rectangles(integer *x, integer *y, double *z, integer n1, integer
 	integer w,h;
 	zmoy=1/4.0*(z[i+n1*j]+z[i+n1*(j+1)]+z[i+1+n1*j]+z[i+1+n1*(j+1)]);
 	fill[0]=1 + inint((whiteid-1)*(zmoy-zmin)/(zmaxmin));
-	xset_pattern(fill,PI0,PI0,PI0);
+	xset_pattern(Xgc,fill,PI0,PI0,PI0);
         w=Abs(x[i+1]-x[i]);h=Abs(y[j+1]-y[j]);
 	/* We don't trace rectangle which are totally out **/
 	if ( w != 0 && h != 0 && x[i] < xz[0] && y[j+1] < xz[1] && x[i]+w > 0 && y[j+1]+h > 0 )
 	  if ( Abs(x[i]) < int16max && Abs(y[j+1]) < int16max && w < uns16max && h < uns16max)
 	    XFillRectangle(dpy,ScilabXgc->Cdrawable,gc,x[i],y[j+1],w,h); 
       }
-  xset_pattern(&cpat,PI0,PI0,PI0);
+  xset_pattern(Xgc,&cpat,PI0,PI0,PI0);
 }
 
 /*----------------------------------------------------------------------------------
@@ -2718,13 +2718,13 @@ void fill_grid_rectangles1(integer *x, integer *y, double *z, integer n1, intege
 {
   integer i,j,verbose=0,narg,fill[1],cpat,xz[2];
   xget_pattern(&verbose,&cpat,&narg,vdouble);
-  xget_windowdim(&verbose,xz,&narg,vdouble);
+  xget_windowdim(Xgc,&verbose,xz,&narg,vdouble);
   for (i = 0 ; i < (n1)-1 ; i++)
     for (j = 0 ; j < (n2)-1 ; j++)
       {
 	integer w,h;
 	fill[0]= z[i+(n1-1)*j];
-	xset_pattern(fill,PI0,PI0,PI0);
+	xset_pattern(Xgc,fill,PI0,PI0,PI0);
 	w=Abs(x[j+1]-x[j]);
 	h=Abs(y[i+1]-y[i]);
 	/* We don't trace rectangle which are totally out **/
@@ -2732,7 +2732,7 @@ void fill_grid_rectangles1(integer *x, integer *y, double *z, integer n1, intege
 	  if ( Abs(x[j]) < int16max && Abs(y[i+1]) < int16max && w < uns16max && h < uns16max)
 	    XFillRectangle(dpy,ScilabXgc->Cdrawable,gc,x[j],y[i],w,h); 
       }
-  xset_pattern(&cpat,PI0,PI0,PI0);
+  xset_pattern(Xgc,&cpat,PI0,PI0,PI0);
 }
 
 
@@ -2763,20 +2763,20 @@ void C2F(fillarcs)(char *str, integer *vects, integer *fillvect, integer *n, int
     {
       if (fillvect[i] > ScilabXgc->IDLastPattern + 1)
 	{
-	  xset_pattern(&(cpat),PI0,PI0,PI0);
+	  xset_pattern(Xgc,&(cpat),PI0,PI0,PI0);
 	  C2F(drawarc)(str,vects+6*i,vects+6*i+1,
 		       vects+6*i+2,vects+6*i+3,
 		       vects+6*i+4,vects+6*i+5,PD0,PD0,PD0,PD0);
 	}
       else
 	{
-	  xset_pattern(&(fillvect[i]),PI0,PI0,PI0);
+	  xset_pattern(Xgc,&(fillvect[i]),PI0,PI0,PI0);
 	  C2F(fillarc)(str,vects+6*i,vects+6*i+1,
 		       vects+6*i+2,vects+6*i+3,
 		       vects+6*i+4,vects+6*i+5,PD0,PD0,PD0,PD0);
 	}
     }
-  xset_pattern(&(cpat),PI0,PI0,PI0);
+  xset_pattern(Xgc,&(cpat),PI0,PI0,PI0);
 }
 
 /*
@@ -2842,7 +2842,7 @@ void C2F(drawpolylines)(char *str, integer *vectsx, integer *vectsy, integer *dr
        { /** we use the markid : drawvect[i] : with current dash **/
 	 NDvalue = - drawvect[i];
 	 xset_mark(&NDvalue,symb+1,PI0,PI0);
-	 xset_pattern(Dvalue+6,PI0,PI0,PI0);
+	 xset_pattern(Xgc,Dvalue+6,PI0,PI0,PI0);
 	 C2F(drawpolymark)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
        }
      else
@@ -2880,28 +2880,28 @@ void C2F(fillpolylines)(char *str, integer *vectsx, integer *vectsy, integer *fi
       if (fillvect[i] > 0 )
 	{ 
 	  /** fill + boundaries **/
-	  xset_pattern(&(fillvect[i]),PI0,PI0,PI0);
+	  xset_pattern(Xgc,&(fillvect[i]),PI0,PI0,PI0);
 	  C2F(fillpolyline)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,(close=1,&close),
 			    PI0,PI0,PD0,PD0,PD0,PD0);
 	  xset_line_style(Dvalue,PI0,PI0,PI0);
-	  xset_pattern(&cpat,PI0,PI0,PI0);
+	  xset_pattern(Xgc,&cpat,PI0,PI0,PI0);
 	  C2F(drawpolyline)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,(close=1,&close)
 			    ,PI0,PI0,PD0,PD0,PD0,PD0);
 	}
       else  if (fillvect[i] == 0 )
 	{
 	  xset_line_style(Dvalue,PI0,PI0,PI0);
-	  xset_pattern(&cpat,PI0,PI0,PI0);
+	  xset_pattern(Xgc,&cpat,PI0,PI0,PI0);
 	  C2F(drawpolyline)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,(close=1,&close)
 			    ,PI0,PI0,PD0,PD0,PD0,PD0);
 	}
       else 
 	{
 	  pattern = -fillvect[i] ;
-	  xset_pattern(&pattern,PI0,PI0,PI0);
+	  xset_pattern(Xgc,&pattern,PI0,PI0,PI0);
 	  C2F(fillpolyline)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,(close=1,&close)
 			    ,PI0,PI0,PD0,PD0,PD0,PD0);
-	  xset_pattern(&(cpat),PI0,PI0,PI0); 
+	  xset_pattern(Xgc,&(cpat),PI0,PI0,PI0); 
 	}
     }
   xset_dash_and_color(Dvalue,PI0,PI0,PI0);  /* ajoute ss le 13/09/00 */
@@ -3576,14 +3576,14 @@ InitMissileXgc (integer *v1, integer *v2, integer *v3, integer *v4)
   xset_absourel(&i,PI0,PI0,PI0);
   /* initialisation des pattern dash par defaut en n&b */
   ScilabXgc->CurColorStatus = 0;
-  xset_pattern((i=1,&i),PI0,PI0,PI0);
+  xset_pattern(Xgc,(i=1,&i),PI0,PI0,PI0);
   xset_dash((i=1,&i),PI0,PI0,PI0);
   xset_hidden3d((i=1,&i),PI0,PI0,PI0);
   /* initialisation de la couleur par defaut */ 
   ScilabXgc->CurColorStatus = 1;
   set_default_colormap();
   xset_alufunction1((i=3,&i),PI0,PI0,PI0);
-  xset_pattern((i=ScilabXgc->NumForeground+1,&i),PI0,PI0,PI0);
+  xset_pattern(Xgc,(i=ScilabXgc->NumForeground+1,&i),PI0,PI0,PI0);
   /*** XXXXX a faire aussi pour le n&b plus haut ***/
   xset_foreground((i=ScilabXgc->NumForeground+1,&i),PI0,PI0,PI0);
   xset_background((i=ScilabXgc->NumForeground+2,&i),PI0,PI0,PI0);
@@ -3597,7 +3597,7 @@ InitMissileXgc (integer *v1, integer *v2, integer *v3, integer *v4)
   xset_usecolor(&i ,PI0,PI0,PI0);
   strcpy(ScilabXgc->CurNumberDispFormat,"%-5.2g");
   /** default scales **/
-  current_scale2default();
+  Xgc->scales->default();
 }
 
 /* use the current ScilabXgc for reinitialization  
@@ -3637,11 +3637,11 @@ static void ResetScilabXgc (void)
     {
       /* remise des couleurs a vide */
       ScilabXgc->CurColorStatus = 1;
-      xset_pattern((i=DefaultForeground,&i),PI0,PI0,PI0);
+      xset_pattern(Xgc,(i=DefaultForeground,&i),PI0,PI0,PI0);
       /* passage en n&b */
       ScilabXgc->CurColorStatus = 0;
       i= ScilabXgc->CurPattern + 1;
-      xset_pattern(&i,PI0,PI0,PI0);
+      xset_pattern(Xgc,&i,PI0,PI0,PI0);
       i= ScilabXgc->CurDashStyle + 1;
       xset_dash(&i,PI0,PI0,PI0);
       i= ScilabXgc->NumHidden3d+1;
@@ -3652,12 +3652,12 @@ static void ResetScilabXgc (void)
       /* remise a zero des patterns et dash */
       /* remise des couleurs a vide */
       ScilabXgc->CurColorStatus = 0;
-      xset_pattern((i=1,&i),PI0,PI0,PI0);
+      xset_pattern(Xgc,(i=1,&i),PI0,PI0,PI0);
       xset_dash((i=1,&i),PI0,PI0,PI0);
       /* passage en couleur  */
       ScilabXgc->CurColorStatus = 1;
       i= ScilabXgc->CurColor + 1;
-      xset_pattern(&i,PI0,PI0,PI0);
+      xset_pattern(Xgc,&i,PI0,PI0,PI0);
       i= ScilabXgc->NumBackground+1;
       xset_background(&i,PI0,PI0,PI0);
       i= ScilabXgc->NumForeground+1;
@@ -4367,7 +4367,7 @@ static void C2F(analyze_points)(integer n, integer *vx, integer *vy, integer one
 { 
   integer iib,iif,ideb=0,vxl[2],vyl[2];
   integer verbose=0,wd[2],narg;
-  xget_windowdim(&verbose,wd,&narg,vdouble);
+  xget_windowdim(Xgc,&verbose,wd,&narg,vdouble);
   xleft=0;xright=wd[0]; ybot=0;ytop=wd[1];
 #ifdef DEBUG1
   xleft=100;xright=300;

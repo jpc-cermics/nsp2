@@ -8,12 +8,12 @@
 #include <stdio.h>
 #include <string.h>
 #include "nsp/math.h"
-#include "Graphics.h"
+#include "nsp/graphics/Graphics.h"
 /* #include "PloEch.h" */
 
 static double MiniD (const double *x,integer n);
 
-static void champg(char *name, int colored, double *x, double *y, double *fx, double *fy, int *n1, int *n2, 
+static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, double *fx, double *fy, int *n1, int *n2, 
 		   char *strflag, double *brect, double *arfact, int lstr);
 
 /*-----------------------------------------------------------------
@@ -33,19 +33,19 @@ static void champg(char *name, int colored, double *x, double *y, double *fx, do
  * - lstr : (used when called from Fortran code)
  -------------------------------------------------------------------*/
 
-int nsp_champ(double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *brect, double *arfact, int lstr)
+int nsp_champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *brect, double *arfact, int lstr)
 {
-  champg("champ",0,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
+  champg(Xgc,"champ",0,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
   return(0); 
 }
 
-int nsp_champ1(double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *brect, double *arfact, int lstr)
+int nsp_champ1(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *brect, double *arfact, int lstr)
 {
-  champg("champ1",1,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
+  champg(Xgc,"champ1",1,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
   return(0);
 }
 
-static void champg(char *name, int colored, double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *brect, double *arfact, int lstr)
+static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *brect, double *arfact, int lstr)
 {
   static int aaint[]={2,10,2,10};
   int *xm,*ym,*zm,i,j,n,na;
@@ -56,25 +56,25 @@ static void champg(char *name, int colored, double *x, double *y, double *fx, do
   /* get default dash fo rarrows **/
   int cpat,uc;
 
-  uc = nsp_gengine->xget_usecolor();
+  uc = nsp_gengine->xget_usecolor(Xgc);
   if (uc)
-    cpat = nsp_gengine->xget_pattern();
+    cpat = nsp_gengine->xget_pattern(Xgc);
   else
-    cpat = nsp_gengine->xget_dash();
+    cpat = nsp_gengine->xget_dash(Xgc);
   /** The arrowsize acording to the windowsize **/
   n=2*(*n1)*(*n2);
   xx[0]=x[0];xx[1]=x[*n1-1];
   yy[0]=y[0];yy[1]=y[*n2-1];
   /** Boundaries of the frame **/
 
-  update_frame_bounds(0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
+  update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
   /* Storing values if using the Record driver */
   if (nsp_gengine1.get_driver()=='R') 
     {
       if (strcmp(name,"champ")==0)
-	store_Champ(x,y,fx,fy,n1,n2,strflag,brect,arfact);
+	store_Champ(Xgc,x,y,fx,fy,n1,n2,strflag,brect,arfact);
       else 
-	store_Champ1(x,y,fx,fy,n1,n2,strflag,brect,arfact);
+	store_Champ1(Xgc,x,y,fx,fy,n1,n2,strflag,brect,arfact);
     }
 
   /** Allocation **/
@@ -101,10 +101,10 @@ static void champg(char *name, int colored, double *x, double *y, double *fx, do
 	ym[2*(i +(*n1)*j)]= YScale(y[j]);
       }
   /** Scaling **/
-  nx=MiniD(x,*n1)*current_scale.Wscx1;
-  ny=MiniD(y,*n2)*current_scale.Wscy1;
-  sfx= current_scale.Wscx1;
-  sfy= current_scale.Wscy1;
+  nx=MiniD(x,*n1)*Xgc->scales->Wscx1;
+  ny=MiniD(y,*n2)*Xgc->scales->Wscy1;
+  sfx= Xgc->scales->Wscx1;
+  sfy= Xgc->scales->Wscy1;
   sfx2= sfx*sfx;
   sfy2= sfy*sfy;
   maxx = sfx2*fx[0]*fx[0]+sfy2*fy[0]*fy[0];
@@ -120,13 +120,13 @@ static void champg(char *name, int colored, double *x, double *y, double *fx, do
   sfx *= sc;
   sfy *= sc;
   /** size of arrow **/
-  arsize1= ((double) current_scale.WIRect1[2])/(5*(*n1));
-  arsize2= ((double) current_scale.WIRect1[3])/(5*(*n2));
+  arsize1= ((double) Xgc->scales->WIRect1[2])/(5*(*n1));
+  arsize2= ((double) Xgc->scales->WIRect1[3])/(5*(*n2));
   arsize=  (arsize1 < arsize2) ? inint(arsize1*10.0) : inint(arsize2*10.0) ;
   arsize = (int)(arsize*(*arfact));
 
-  set_clip_box(current_scale.WIRect1[0],current_scale.WIRect1[0]+current_scale.WIRect1[2],current_scale.WIRect1[1],
-	       current_scale.WIRect1[1]+current_scale.WIRect1[3]);
+  set_clip_box(Xgc->scales->WIRect1[0],Xgc->scales->WIRect1[0]+Xgc->scales->WIRect1[2],Xgc->scales->WIRect1[1],
+	       Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3]);
 
   if ( colored == 0 ) 
     {
@@ -152,7 +152,7 @@ static void champg(char *name, int colored, double *x, double *y, double *fx, do
   else 
     {
       int x1n,y1n,x2n,y2n,flag1=0, whiteid, j=0;
-      whiteid=  nsp_gengine->xget_last();
+      whiteid=  nsp_gengine->xget_last(Xgc);
       for ( i = 0 ; i < (*n1)*(*n2) ; i++)
 	{
 	  double nor= sqrt(sfx2*fx[i]*fx[i]+sfy2*fy[i]*fy[i]);
@@ -173,14 +173,14 @@ static void champg(char *name, int colored, double *x, double *y, double *fx, do
       na=2*j;
     }
   /** Drawing axes **/
-  axis_draw(strflag);
+  axis_draw(Xgc,strflag);
   /** Drawing the arrows  **/
-  frame_clip_on();
+  frame_clip_on(Xgc);
   if ( colored ==0) 
-    nsp_gengine->drawarrows(xm,ym,na,arsize,&cpat,0);
+    nsp_gengine->drawarrows(Xgc,xm,ym,na,arsize,&cpat,0);
   else
-    nsp_gengine->drawarrows(xm,ym,na,arsize,zm,1);
-  frame_clip_off();
+    nsp_gengine->drawarrows(Xgc,xm,ym,na,arsize,zm,1);
+  frame_clip_off(Xgc);
 }
 
 /*----------------------------------
