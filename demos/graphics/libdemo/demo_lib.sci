@@ -140,7 +140,7 @@ endfunction
 
 function demo_3d_10() 
   // a demo by Quentin Quadrat.
-  exec(NSP+'/demos/graphics/NouvArbreQ.sci');
+    demo_tree(1,5);
 endfunction
 
 function demo_3d_11_old() 

@@ -1,10 +1,14 @@
-// FIXME : this is a temporary load 
-// of all the graphics macros 
+//---------------------------------------------------
+// Copyright (C) 2004 Jean-Philippe Chancelier Cermics/Enpc 
+// jpc@cermics.enpc.fr 
+// NSP  graphic demo 
+//--------------------------------------------------- 
 
 exec('NSP/demos/graphics/main_graphic.sci');
 
 // A set of demos 
 // add libdemo in the function search list 
+
 add_lib('NSP/demos/graphics/libdemo');
 
 // utility function to build a list for demos 

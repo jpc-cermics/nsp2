@@ -18,14 +18,19 @@ function create_demo_window()
   function nsp_graphics_demos() 
     exec('NSP/demos/graphics/graphic_list.sce');
   endfunction 
+  
+  function nsp_graphics_ogl_demos() 
+    exec('NSP/demos/graphics/graphic_list_ogl.sce');
+  endfunction 
 
   function nsp_gtk2_demos() 
     exec('NSP/demos/gtk2/main.sci');
   endfunction 
 
   B = hcreate(100)
-  B('graphics')=  nsp_graphics_demos ;
-  B('gtk2')=  nsp_gtk2_demos ;
+  B('Graphics')=  nsp_graphics_demos ;
+  B('OpenGL graphics')=  nsp_graphics_ogl_demos ;
+  B('Gtk2')=  nsp_gtk2_demos ;
   win = gtkwindow_new()
   //win.set_size_request[0,200]	
   //win.set_uposition[20,20]
