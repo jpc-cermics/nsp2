@@ -342,9 +342,6 @@ static int cdf_dlamc2 (int *beta, int *t, int *rnd, double *eps,
   int i__1;
   double d__1, d__2, d__3, d__4, d__5;
 
-  /* Builtin functions */
-  double pow_di (double *, int *);
-  /* Local variables */
   int ieee;
   double half;
   int lrnd;
