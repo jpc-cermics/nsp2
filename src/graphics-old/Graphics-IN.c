@@ -1,8 +1,8 @@
  /*------------------------------------------------------------------
- * Copyright ENPC 2003 
- * Jean-Philippe Chancelier Enpc/Cermics
- * jpc@cermics.enpc.fr 
- *------------------------------------------------------------------*/
+  * Copyright ENPC 2003 
+  * Jean-Philippe Chancelier Enpc/Cermics
+  * jpc@cermics.enpc.fr 
+  *------------------------------------------------------------------*/
 
 #include <math.h>
 #include <stdio.h>
@@ -448,7 +448,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
   if ( leg == NULL) leg = "";
 
   if (( iflag=check_iflag(stack,stack.fname,"flag",Mflag,3)) == NULL) return RET_BUG;
-  if ((  ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
+  if (( ebox=check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
@@ -775,7 +775,6 @@ typedef int (*f3d1)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q
 typedef int (*f3d2)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *,double *,char *,int *,double *); 
 typedef int (*f3d3)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *,double *,char *,int *,double *);
 
-
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
 
 int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d2 func2,f3d3 func3)
@@ -793,7 +792,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
 		      { "alpha",s_double,NULLOBJ,-1},
 		      { "colors",mat_int,NULLOBJ,-1},
 		      { "ebox",realmat,NULLOBJ,-1},
-		      { "flag",realmat,NULLOBJ,-1},
+		      { "flag",mat_int,NULLOBJ,-1},
 		      { "leg", string,NULLOBJ,-1},
 		      { "theta",s_double,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
@@ -804,6 +803,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
 
   if ( IsNspPList(fobj) )
     {
+      /* third argument can be a macro */
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) 
 	{
@@ -817,6 +817,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
     }
   else
     {
+      /* here we could accept list(z,colors) to emulate scilab code */
       Scierror("%s: third argument should be a real matrix or a function\n",stack.fname);
       return RET_BUG;
     }
@@ -840,10 +841,10 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       if ( Mcolors->mn == z->mn ) izcol=2  ;
     }
 
-
   if (( iflag = check_iflag(stack,stack.fname,"flag",Mflag,3))==NULL) return RET_BUG;
   if (( ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
   if (( leg = check_legend(stack,stack.fname,"leg",leg)) == NULL) return RET_BUG;
+
 
   if ( x->mn == z->mn && x->mn == z->mn && x->mn != 1) 
     {
@@ -862,7 +863,21 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
 	  return RET_BUG;
 	}
     }
-  
+
+  iflag[1]=Max(Min(iflag[1],6),0);
+  /* check that iflag[2] and ebox are compatible */
+  if ( Mebox != NULLMAT) 
+    {
+      /* ebox is given then iflag[1] must be 1 or 3 or 5 */
+      if ( iflag[1] == 2 ||  iflag[1] == 4 ||  iflag[1] == 6 ) iflag[1]--;
+    }
+  else
+    {
+      /* ebox is not given then iflag[1] cannot be 1 or 3 or 5 */
+      if ( iflag[1] == 1 ||  iflag[1] == 3 ||  iflag[1] == 5 ) iflag[1]++;
+    }
+	
+
   if ( x->mn == 0 || y->mn == 0 || z->mn == 0) { return 0;} 
 
   Xgc=nsp_check_graphic_context();
@@ -870,9 +885,9 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
 
   if ( x->mn == y->mn && x->mn == z->mn && x->mn != 1) 
     { 
+      /*  Here we are in the case where x,y and z specify some polygons */
       if (izcol == 0) 
 	{
-	  /*  Here we are in the case where x,y and z specify some polygons */
 	  (*func1)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg,iflag,ebox);
 	} 
       else if (izcol == 2) 
@@ -887,6 +902,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
     } 
   else 
     {
+      /*  Here we are in the standard case  */
       (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg,iflag,ebox);
     }
   return 0;
@@ -946,9 +962,9 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
  end:
   {
     if ( fargs != NULL)nsp_object_destroy(&args);
- nsp_object_destroy(&func);
- nsp_object_destroy((NspObject **)&xi);
- nsp_object_destroy((NspObject **)&yj);
+    nsp_object_destroy(&func);
+    nsp_object_destroy((NspObject **)&xi);
+    nsp_object_destroy((NspObject **)&yj);
     return ret;
   }
 }

@@ -13,13 +13,7 @@
 
 extern Gengine Gtk_gengine;
 
-#ifdef __STDC__
-void wininfo(char *format,...);
-#else
-/*VARARGS0*/
-void wininfo();
-#endif    
-
+/* FIXME: */
 extern double C2F(dsort)();
 
 /** like GEOX or GEOY in PloEch.h but we keep values in xx1 and yy1 for finite check **/ 
@@ -193,6 +187,18 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
       zmax=bbox[5];
     }
 
+  /* try to mix with previous 3d scales */
+  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == OK) 
+    {
+      if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
+	{
+	  for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
+	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
+	  zmin=bbox[4];
+	  zmax=bbox[5];
+	}
+
+    }
 
   if ( flag[1] ==0)
     SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
@@ -334,6 +340,20 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
       zmin=bbox[4];
       zmax=bbox[5];
     }
+
+  /* try to mix with previous 3d scales */
+  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == OK) 
+    {
+      if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
+	{
+	  for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
+	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
+	  zmin=bbox[4];
+	  zmax=bbox[5];
+	}
+    }
+
+
   if ( flag[1]==0)
     SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,0L);
   else
@@ -586,6 +606,19 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
       bbox[2]=(double) Mini(y,*n);bbox[3]=(double) Maxi(y,*n);
       bbox[4]=(double) Mini(z,*n);bbox[5]=(double) Maxi(z,*n);
     }
+
+  /* try to mix with previous 3d scales */
+  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == OK) 
+    {
+      if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
+	{
+	  int i;
+	  for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
+	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
+	}
+    }
+
+
   if ( flag[1] !=0)
     SetEch3d1(Xgc,xbox,ybox,zbox,bbox,teta,alpha,(long)(flag[1]+1)/2);
   else 
