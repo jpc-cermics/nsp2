@@ -153,7 +153,7 @@ static int load_unclip(BCG *Xgc)
 {
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
-  if ( load_LI(&((struct rec_void *) lplot)->code)==0) return(0);
+  if ( load_LI(&lplot->code)==0) return(0);
   store_record(Xgc,lplot->code,lplot);
   return 1;
 }
@@ -427,8 +427,8 @@ static int load_fillrectangle_1(BCG *Xgc)
   if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
   if ( load_LI(&lplot->code)==0) return(0);
   if ( load_DS(lplot->vals,4) == 0) return(0);
-  return 1;
   store_record(Xgc,lplot->code,lplot);
+  return 1;
 }
 
 /*-----------------------------------------------------------------------------
@@ -1306,8 +1306,15 @@ int tape_load(BCG *Xgc,const char *fname1)
       return(0);
     }
 
-  while ( load_LI(&type) != 0 && type != CODEendplots) 
+  while ( load_LI(&type) != 0 ) 
     {
+      sciprint("XXXsaved code %d\n",type);
+      if ( type < 0 || type >  CODEendplots) 
+	{
+	  sciprint("Something wrong while reloading %s\n\n",fname1);
+	  break;
+	}
+      if ( type ==  CODEendplots ) break; /* normal end */
       if ( load_table[type].load(Xgc) == 0 ) break;
     }
   assert(fflush((FILE *)rxdrs->x_private) != EOF) ; 
@@ -1335,13 +1342,17 @@ static int load_D(double *x)
   return(1);
 }
 
+/*
+ * reload an array in a static array (i.e non allocated)
+ * n must match the number of stored values in the xdr array
+ */
+
 static int load_DS(double *x,int n)
 {
-  int i;
   rszof = sizeof(double) ;
-  rcount = (u_int) 1;
-  for ( i= 0 ; i > n ; i++) 
-    assert( xdr_vector(rxdrs, (char *) (x+i), rcount, rszof, (xdrproc_t) xdr_double)) ;
+  assert( xdr_vector(rxdrs,(char *) &rcount,(u_int)1,(u_int) sizeof(u_int), (xdrproc_t) xdr_u_int)) ;
+  if (rcount != (u_int) n ) return 0;
+  assert( xdr_vector(rxdrs, (char *) x, rcount, rszof, (xdrproc_t) xdr_double)) ;
   return(1);
 }
 

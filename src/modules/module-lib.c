@@ -8,7 +8,6 @@
 #include <string.h>
 
 #include "nsp/object.h"
-#include "nsp/objxdr.h"
 #include "nsp/datas.h"
 #include "nsp/interf.h" 
 #include "nsp/module.h" 

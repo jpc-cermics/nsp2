@@ -761,7 +761,6 @@ static void displaystringa_1(BCG *Xgc,char *string, int ipos)
 /*-----------------------------------------------------------------------------
  * display a set of lines coded with 'line1@line2@.....@'
  * centred in the rectangle [x,y,w=wide,h=height] (x,y) is the down left position ?
- * if dir == 'v' the string is to be rotated 
  *-----------------------------------------------------------------------------*/
 
 static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
@@ -887,7 +886,9 @@ static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, do
 	}
     }
   else 
-    GSciString(Xgc,0,x,y,str,&w,&h);
+    {
+      GSciString(Xgc,0,x,y,str,&w,&h);
+    }
   x = x +  (wbox - w)/2.0;
   y = y -  (hbox - h)/2.0; 
   GSciString(Xgc,1,x,y,str,&w,&h);
@@ -912,7 +913,7 @@ static void GSciString(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, i
     {
       int logrect[4];
       double angle=0.0;
-      int flag=1;
+      int flag=0;
       p2 =p1 ; *p1 = '\0';
       while ( p1 != p && *p1 != '\n' ) 
 	p1--;

@@ -3451,6 +3451,7 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
  * xstringb 
  *-----------------------------------------------------------*/
 
+
 int int_xstringb(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -3480,7 +3481,6 @@ int int_xstringb(Stack stack, int rhs, int opt, int lhs)
   }
   if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
-  
   Xgc->graphic_engine->scale->xstringb(Xgc,str,&fill,&x,&y,&w,&hx);
   FREE(str);
   return 0;

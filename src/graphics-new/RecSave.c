@@ -75,7 +75,8 @@ static int save_background(BCG *Xgc,void *theplot)  { return save_int(theplot); 
 
 static int save_unclip(BCG *Xgc,void * theplot )
 {
-  if ( save_LI(((struct rec_void *) theplot)->code)==0) return(0);
+  struct rec_void *lplot = theplot ;
+  if ( save_LI(lplot->code)==0) return(0);
   return 1;
 }
 
@@ -1015,6 +1016,7 @@ int tape_save(BCG *Xgc,const char *fname1, int winnumber)
       if ( list->theplot != NULL) 
 	{
 	  int code = ((plot_code *) list->theplot)->code;
+	  sciprint("XXXsaved code %d\n",code);
 	  if (save_LI(code) == 0) break;
 	  if (save_table[code].save(Xgc,list->theplot) == 0) break;
 	}

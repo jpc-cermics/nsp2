@@ -27,7 +27,7 @@ TERMCAPLIB = -lreadline -lncurses
 # and for linking: $(CC) -o $(PROGRAM) $(OBJS) $(CC_LDFLAGS)
 ###########
 CC = cc
-CC_OPTIONS = -O -g -Wall -Dlinux   `pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --cflags` -I$(SCIDIR)/src/include
+CC_OPTIONS =  -g -Wall -Dlinux   `pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --cflags` -I$(SCIDIR)/src/include
 CC_LDFLAGS = -lieee 
 CC_PICFLAGS = 
 
@@ -84,7 +84,7 @@ RCVARS=-O coff
 
 .c.o:
 	@echo "compiling $<"
-	@$(CC) $(CFLAGS)  -c $<
+	$(CC) $(CFLAGS)  -c $<
 
 .f.o:
 	@echo "compiling $<"

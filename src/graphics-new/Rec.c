@@ -988,8 +988,7 @@ void store_xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, dou
       lplot->flag = *fflag;
       lplot->string=NULL;
       if (
-	  CopyVectC(&(lplot->string),str,((int)strlen(str))+1) 
-	  )
+	  CopyVectC(&(lplot->string),str,((int)strlen(str))+1) )
 	{
 	  store_record(Xgc,CODExstringb_1, lplot);
 	  return;}
@@ -2992,6 +2991,12 @@ void tape_replay(BCG *Xgc,int winnumber)
 int store_record(BCG *Xgc,int code ,void *plot)
 {
   list_plot *list = Xgc->plots ;
+  if ( code < 0 ||  code >= CODEendplots )
+    {
+      Scistring("Error: code is not a plot code\n");
+      return 0;
+    }
+
   if ( Xgc->record_flag == FALSE ) return 1 ;
   if ( list == NULL)
     {
