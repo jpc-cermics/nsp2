@@ -218,7 +218,7 @@ static int block_xdr_save(NspFile  *F, NspBlock *M)
 
 static NspBlock  *block_xdr_load(NspFile  *F)
 {
-  NspBlock *M;
+  NspBlock *M=NULLBLOCK;
   static char name[NAME_MAXL];
   if ( XdrLoadString(F,name,NAME_MAXL) == FAIL) return NULLBLOCK;
   Scierror("block_xdr_load: to be implemented \n");

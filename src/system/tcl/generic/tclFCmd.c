@@ -300,7 +300,7 @@ TclFileDeleteCmd( argc, argv,forceFlag)
     int forceFlag;              /* force Argument */
 {
     Tcl_DString nameBuffer, errorBuffer;
-    int i, force, result;
+    int i, force=0, result;
     char *errfile;
 
     errfile = NULL;

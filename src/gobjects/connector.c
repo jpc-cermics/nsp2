@@ -218,7 +218,7 @@ static int connector_xdr_save(NspFile  *F, NspConnector *M)
 
 static NspConnector  *connector_xdr_load(NspFile  *F)
 {
-  NspConnector *M;
+  NspConnector *M=NULLCONNECTOR;
   static char name[NAME_MAXL];
   if ( XdrLoadString(F,name,NAME_MAXL) == FAIL) return NULLCONNECTOR;
   Scierror("connector_xdr_load: to be implemented \n");
@@ -876,7 +876,7 @@ void connector_get_lock_pos(const NspConnector *B,int i,double pt[])
 
 int connector_set_lock_connection(NspConnector *B,int i,const gr_port *p)
 {
-  int port_number;
+  int port_number=0;
   gr_port *port= NULL;
   if ( i ==  0 ) 
     {

@@ -80,7 +80,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 {
   char *fileName, *extension, *errorString;
   int statOp = 0;		/* Init. to avoid compiler warning. */
-  int length;
+  int length=0;
   int mode = 0;		/* Init. to avoid compiler warning. */
   struct stat statBuf;
   Tcl_DString buffer;
@@ -747,7 +747,7 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
     {
       /** Get the attributes and their values : we use a NspSMatrix **/
       NspSMatrix *S;
-      NspObject *O;
+      NspObject *O=NULL;
       int count;
       for (count = 0; tclpFileAttrStrings[count] != NULL; count++) {};
       if (( S =nsp_smatrix_create("void",count,2,"v",0)) ==  NULLSMAT ) goto done;

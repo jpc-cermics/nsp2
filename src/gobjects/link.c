@@ -222,7 +222,7 @@ static int link_xdr_save(NspFile  *F, NspLink *M)
 
 static NspLink  *link_xdr_load(NspFile  *F)
 {
-  NspLink *M;
+  NspLink *M=NULLLINK;
   static char name[NAME_MAXL];
   Scierror("link_xdr_load to be implemented \n");
   if ( XdrLoadString(F,name,NAME_MAXL) == FAIL) return NULLLINK;

@@ -198,7 +198,7 @@ static int gframe_xdr_save(NspFile  *F, NspGFrame *M)
 
 static NspGFrame  *gframe_xdr_load(NspFile  *F)
 {
-  NspGFrame *M;
+  NspGFrame *M=NULLGFRAME;
   static char name[NAME_MAXL];
   if ( XdrLoadString(F,name,NAME_MAXL) == FAIL) return NULLGFRAME;
   Scierror("gframe_xdr_load  to be implemented \n");
