@@ -19,6 +19,7 @@
 // qui indiaue les methodes 
 //
 // 
+
 h = hcreate(10) 
 h.enter[a=[20,30],b='foo']
 h1= hcreate(10);

@@ -1,4 +1,10 @@
-function [T]=Triu(a,k)
-[m,n]=size(a);T=a;
-if k>=0;for i=1:m;for j=1:mini(i+k-1,n),T(i,j)=0;end;end;
-else if -k+1<=m ; for i=(-k+1):m;for j=1:mini(i+k-1,n),T(i,j)=0;end;end;end;end
+xsetech(wrect=[0,0,1,0.5])
+plot3d1()
+xsetech(wrect=[0,0.5,0.5,0.5])
+exec('macros/xdess/hotcolormap.sci')
+xset('colormap',hotcolormap(45));
+plot3d1()
+xsetech(wrect=[0.5,0.5,0.5,0.5])
+exec('macros/xdess/greencolormap.sci')
+xset('colormap',greencolormap(34));
+plot3d1()

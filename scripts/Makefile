@@ -10,7 +10,10 @@ IV = $(SCIDIR)/Version.incl
 SBIN = $(SCIDIR)/bin
 UTIL = $(SCIDIR)/util
 
-BPROGRAMS = 
+XXBPROGRAMS = $(SBIN)/Blatexpr $(SBIN)/Blatexpr2 \
+	$(SBIN)/Blatexprs $(SBIN)/Blpr $(SBIN)/BEpsf \
+	$(UTIL)/Blatdoc $(UTIL)/Blatdocs
+
 PROGRAMS = $(SBIN)/scilab $(BPROGRAMS)
 
 all:: $(PROGRAMS)
