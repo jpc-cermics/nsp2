@@ -1,19 +1,13 @@
-/*------------------------------------------------------------------------
- *    Graphic library
- *    Copyright (C) 1998-2000 Enpc/Jean-Philippe Chancelier
- *    jpc@cereve.enpc.fr 
- --------------------------------------------------------------------------*/
-#ifndef __GSORT_INT__
-#define __GSORT_INT__
+/*********************************************************************
+ * This Software is ( Copyright ENPC 1998-2003 ) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ *********************************************************************/
 
-static void CNAME(ColSort,int)( int * a, int *ind, int flag, int  n, int p,char dir);
-
-static void CNAME(RowSort,int)( int * a, int *ind, int flag, int  n, int p,char dir);
-static void CNAME(GlobalSort,int)( int * a, int *ind, int flag, int  n, int p,char dir);
-static void CNAME(LexiRow,int)( int * a, int *ind, int flag, int  n, int p,char dir);
-static void CNAME(LexiCol,int)( int * a, int *ind, int flag, int  n, int p,char dir);
-
-
+static void CNAME(ColSort,int)();
+static void CNAME(RowSort,int)();
+static void CNAME(GlobalSort,int)();
+static void CNAME(LexiRow,int)();
+static void CNAME(LexiCol,int)();
 
 /******************************************************
  * Generic code for Sorting Matrices a[i+n*j] 
@@ -21,23 +15,23 @@ static void CNAME(LexiCol,int)( int * a, int *ind, int flag, int  n, int p,char 
  * with int == double or type = int 
  ******************************************************/
 
-static int CNAME(swapcode,int)(char * parmi,char * parmj,int n,int incr) 
+static int CNAME(swapcode,int)(parmi, parmj, n) 
+     char *parmi,*parmj;
+     int n;
 { 		
   int i = n;
   register int *pi = (int *) (parmi); 		
   register int *pj = (int *) (parmj); 
-  register int inc1 = incr/sizeof(int);
   do { 						
     register int t = *pi;		
-    *pi = *pj;				
-    *pj = t;				
-    pi += inc1;
-    pj += inc1;
+    *pi++ = *pj;				
+    *pj++ = t;				
   } while (--i > 0);				
   return(0);
 }
 
-static int CNAME(compareC,int)( char * i, char * j)
+static int CNAME(compareC,int)(i,j)
+     char *i,*j;
 {
   if ( *((int *)i) > *((int *)j))
     return (1);
@@ -46,7 +40,8 @@ static int CNAME(compareC,int)( char * i, char * j)
   return (0);
 }
 
-static int CNAME(compareD,int)( char * i, char * j)
+static int CNAME(compareD,int)(i,j)
+     char *i,*j;
 {
   if ( *((int *)i) < *((int *)j))
     return (1);
@@ -59,7 +54,11 @@ static int CNAME(compareD,int)( char * i, char * j)
  * Column sort of a matrix 
  ******************************************************/
 
-static void CNAME(ColSort,int)( int * a, int *ind, int flag, int  n, int p,char dir)
+static void CNAME(ColSort,int)(a,ind,flag,n,p,dir)
+     int *a;
+     int *ind;
+     int flag,n,p;
+     char dir;
 {
   int i,j;
   if ( flag == 1) 
@@ -83,7 +82,11 @@ static void CNAME(ColSort,int)( int * a, int *ind, int flag, int  n, int p,char 
  * Row sort of a matrix 
  ******************************************************/
 
-static void CNAME(RowSort,int)( int * a, int *ind, int flag, int  n, int p,char dir)
+static void CNAME(RowSort,int)(a,ind,flag,n,p,dir)
+     int *a;
+     int *ind;
+     int n,p,flag;
+     char dir;
 {  
   int i,j;
   if ( flag == 1) 
@@ -110,7 +113,11 @@ static void CNAME(RowSort,int)( int * a, int *ind, int flag, int  n, int p,char 
  * Global sort of a Matrix
  ******************************************************/
 
-static void CNAME(GlobalSort,int)( int * a, int *ind, int flag, int  n, int p,char dir)
+static void CNAME(GlobalSort,int)(a,ind,flag,n,p,dir)
+     int *a;
+     int *ind;
+     int n,p,flag;
+     char dir;
 {  
   int i;
   if ( flag == 1) 
@@ -133,13 +140,16 @@ static void CNAME(GlobalSort,int)( int * a, int *ind, int flag, int  n, int p,ch
 static int CNAME(lexicols,int) =1;
 static int CNAME(lexirows,int) =1;
 
-static void CNAME(setLexiSize,int)( int n, int p) 
+static void CNAME(setLexiSize,int)(n,p) 
+     int p,n;
 {
   CNAME(lexicols,int) = p;
   CNAME(lexirows,int) = n;
 }
 
-static  int CNAME(LexiRowcompareC,int)(int * i,int * j)
+static  int CNAME(LexiRowcompareC,int)(i,j)
+     int *i;
+     int *j;
 {
   int jc;
   for ( jc = 0 ; jc < CNAME(lexicols,int) ; jc++) 
@@ -153,8 +163,9 @@ static  int CNAME(LexiRowcompareC,int)(int * i,int * j)
     }
   return (0);
 }
-
-static  int CNAME(LexiRowcompareD,int)(int * i,int * j)
+static  int CNAME(LexiRowcompareD,int)(i,j)
+     int *i;
+     int *j;
 {
   int jc;
   for ( jc = 0 ; jc < CNAME(lexicols,int) ; jc++) 
@@ -169,13 +180,14 @@ static  int CNAME(LexiRowcompareD,int)(int * i,int * j)
   return (0);
 }
 
-static int CNAME(LexiRowswapcode,int)(char * parmi,char * parmj,int n,int inc) 
+static int CNAME(LexiRowswapcode,int)(parmi, parmj, n) 
+     char *parmi,*parmj;
+     int n;
 { 		
   int i = n,j;
   register int *pi = (int *) (parmi); 		
   register int *pj = (int *) (parmj); 
-  register int inc1 = inc/sizeof(double);
-  /** if ( n!= 1) printf(" swapcode avec n != 1\n"); **/
+  if ( n!= 1) printf(" swapcode avec n != 1\n");
   do { 
     for ( j = 0 ; j < CNAME(lexicols,int) ; j++) 
       {
@@ -183,14 +195,17 @@ static int CNAME(LexiRowswapcode,int)(char * parmi,char * parmj,int n,int inc)
 	*(pi + CNAME(lexirows,int)*j) = *(pj+CNAME(lexirows,int)*j);				
 	*(pj + CNAME(lexirows,int)*j) = t;	
       }
-    pi += inc1;
-    pj += inc1;
+    pi++;
+    pj++;
   } while (--i > 0);				
   return(0);
 }
 
 
-static void CNAME(LexiRow,int)( int * a, int *ind, int flag, int  n, int p,char dir)
+static void CNAME(LexiRow,int)(a,ind,flag,n,p,dir)
+     int *a,*ind;
+     int n,p;
+     char dir;
 {
   int i;
   CNAME(setLexiSize,int)(n,p);
@@ -211,7 +226,8 @@ static void CNAME(LexiRow,int)( int * a, int *ind, int flag, int  n, int p,char 
  *  to sort them 
  ******************************************************/
 
-static  int CNAME(LexiColcompareC,int)(int * i, int * j)
+static  int CNAME(LexiColcompareC,int)(i,j)
+     int *i,*j;
 {
   int ic;
   for ( ic = 0 ; ic < CNAME(lexirows,int) ; ic++) 
@@ -225,8 +241,8 @@ static  int CNAME(LexiColcompareC,int)(int * i, int * j)
     }
   return (0);
 }
-
-static  int CNAME(LexiColcompareD,int)(int * i,int * j)
+static  int CNAME(LexiColcompareD,int)(i,j)
+     int *i,*j;
 {
   int ic;
   for ( ic = 0 ; ic < CNAME(lexirows,int) ; ic++) 
@@ -241,7 +257,9 @@ static  int CNAME(LexiColcompareD,int)(int * i,int * j)
   return (0);
 }
 
-static int CNAME(LexiColswapcode,int)(char * parmi,char * parmj,int n,int incr) 
+static int CNAME(LexiColswapcode,int)(parmi, parmj, n) 
+     char *parmi,*parmj;
+     int n;
 { 		
   int i = n,ir;
   register int *pi = (int *) (parmi); 		
@@ -261,7 +279,11 @@ static int CNAME(LexiColswapcode,int)(char * parmi,char * parmj,int n,int incr)
 }
 
 
-static void CNAME(LexiCol,int)( int * a, int *ind, int flag, int  n, int p,char dir)
+static void CNAME(LexiCol,int)(a,ind,flag,n,p,dir)
+     int *a;
+     int *ind;
+     int n,p;
+     char dir;
 {
   int i;
   CNAME(setLexiSize,int)(n,p);
@@ -277,27 +299,33 @@ static void CNAME(LexiCol,int)( int * a, int *ind, int flag, int  n, int p,char 
 	   swapcodeind);
 }
 
-#ifdef TEST_GSORT 
 
-static void CNAME(afficher,int)( int * a, char * name, int n, int p);
+#ifdef TEST 
+
+static void CNAME(afficher,int)();
 static void CNAME(sorttest,int)();
 static void CNAME(inita,int)();
 
 static int CNAME(aa,int)[4*4] = {4,4,1,1,6,7,2,1,3,4,5,2,9,8,7,6};
 /*static int aa[4*4] = {6,6,6,6,6,6,6,6,6,6,5,5,5,5,5,5}; */
 
-static void CNAME(inita,int)( int * a, int n, int p)
+static void CNAME(inita,int)(a,n,p)
+     int *a;
+     int n,p;
 {
   int i;
   if ( n == 4 && p == 4  ) 
     for (i=0; i < n*p; i++) a[i]=CNAME(aa,int)[i];
   else 
     for (i=0; i < n*p; i++) a[i]=n*p-i;
-  CNAME(afficher,int)(a,"a",n,p);
+  CNAME(afficher,int)(a,"a",n,p,sizeof(int));
 }
 
 
-static void CNAME(afficher,int)( int * a, char * name, int n, int p)
+static void CNAME(afficher,int)(a,name,n,p)
+     char *name;
+     int *a;
+     int n,p;
 {
   int i,j;
   printf("%s=\n",name);
@@ -314,6 +342,7 @@ static void CNAME(afficher,int)( int * a, char * name, int n, int p)
 
 #define Nint 2
 #define Pint 2 
+
 
 static void CNAME(sorttest,int)()
 {
@@ -353,14 +382,9 @@ static void CNAME(sorttest,int)()
   CNAME(afficher,int)(a,"lexico Row a",n,p);
   afficherint(ind,"lexico Row ind",n,1);
 }
-#endif /* TEST_GSORT */
 
 
-#endif /*__GSORT_INT__*/
-
-
-
-
+#endif
 
 
 

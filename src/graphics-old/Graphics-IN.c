@@ -4088,8 +4088,9 @@ int int_xs2ppm(Stack stack, int rhs, int opt, int lhs)
  *       str1 = 'g','r','c','lc','lr',
  *       str2 = 'i' | 'd' 
  *-----------------------------------------------------------*/
-
-/* Attention il faut copier les arguments **/ 
+/*
+ * FIXME : moved in MatObj.c and SMatObj.c 
+ */
 
 int int_gsort(Stack stack, int rhs, int opt, int lhs)
 {
@@ -4639,7 +4640,6 @@ static OpTab Graphics_func[]={
   {"contour2d",int_contour2d},
   {"xg2ps",int_xg2ps},
   {"xs2fig",int_xs2fig},
-  {"gsort",int_gsort},
   {"winsid",int_winsid},
   {"param3d1",int_param3d},
   {"xstringb",int_xstringb},
