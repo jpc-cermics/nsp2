@@ -35,7 +35,7 @@ function create_demo_window()
   B('Graphics')=  nsp_graphics_demos ;
   B('OpenGL graphics')=  nsp_graphics_ogl_demos ;
   B('Gtk2')=  nsp_gtk2_demos ;
-  B('Gtk2 more')=  nsp_gtk2_demos ;
+  B('Gtk2 more')=  nsp_gtk2_demos_plus ;
   win = gtkwindow_new()
   win.set_size_request[200,150]	
   //win.set_uposition[20,20]
