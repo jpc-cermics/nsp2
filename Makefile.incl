@@ -12,7 +12,7 @@ distclean::
 
 RANLIB = ranlib
 
-TERMCAPLIB = -lreadline -lncurses
+TERMCAPLIB =-lreadline  -lncurses
 
 ##################################################################
 # NOTE: the following schemes for compiling and linking are not  #
@@ -26,13 +26,13 @@ TERMCAPLIB = -lreadline -lncurses
 # and for linking: $(CC) -o $(PROGRAM) $(OBJS) $(CC_LDFLAGS)
 ###########
 CC = cc
-#CC_OPTIONS = -O -Dlinux  `pkg-config gtk+-2.0 --cflags` `pkg-config gtk+-2.0 --cflags`
+#CC_OPTIONS = -no-cpp-precomp -O2 -I/sw/include `pkg-config gtk+-2.0 --cflags` `pkg-config gtk+-2.0 --cflags`
 #CC_OPTIONS = -g -Wall -Dlinux `pkg-config gtk+-2.0 --cflags` -I$(SCIDIR)/src/include
-CC_OPTIONS = -O -Dlinux  `pkg-config gtk+-2.0 --cflags` -I$(SCIDIR)/src/include
+CC_OPTIONS = -no-cpp-precomp -O2 -I/sw/include `pkg-config gtk+-2.0 --cflags` -I$(SCIDIR)/src/include
 # XXXXXX a finir proprement 
 CC_OPTIONS = -g -Wall -Dlinux `pkg-config gtk+-2.0 --cflags` -I$(SCIDIR)/src/include
-CC_LDFLAGS = -lieee 
-CC_PICFLAGS = 
+CC_LDFLAGS =  
+CC_PICFLAGS = -fPIC
 
 ##################
 # Fortran compiler
@@ -40,16 +40,16 @@ CC_PICFLAGS =
 # and for linking: $(FC) -o $(PROGRAM) $(OBJS) $(FC_LDFLAGS)
 ##################
 FC = g77
-FC_OPTIONS = -O
-FC_LDFLAGS = -lieee -ldl -rdynamic
-FC_PICFLAGS = 
+FC_OPTIONS = -O2
+FC_LDFLAGS = -L/sw/lib -ldl
+FC_PICFLAGS = -fPIC
 
 ########
 # Linker
 # typically, for linking: $(LD) -o $(PROGRAM) $(OBJS) $(LD_LDFLAGS)
 ########
 LD = ld
-LD_LDFLAGS = -lieee
+LD_LDFLAGS = 
 
 ##########
 # X Window: use $(XFLAGS) for compilation and $(XLIBS) for linking
@@ -61,10 +61,10 @@ LD_LDFLAGS = -lieee
 ##########
 DLDLIB = 
 DLD_SUBDIR = 
-PVMLIB = /usr/local/nsp2/pvm3/lib/LINUX/libpvm3.a
-PVMGLIB = /usr/local/nsp2/pvm3/lib/LINUX/libgpvm3.a
-PVMROOT = /usr/local/nsp2/pvm3
-PVMINCLUDE = /usr/local/nsp2/pvm3/include
+PVMLIB = /Applications/nsp2/pvm3/lib/DARWIN/libpvm3.a
+PVMGLIB = /Applications/nsp2/pvm3/lib/DARWIN/libgpvm3.a
+PVMROOT = /Applications/nsp2/pvm3
+PVMINCLUDE = /Applications/nsp2/pvm3/include
 XAWLIB = 
 XMULIB = 
 XAW_LOCAL_SUBDIR = 

@@ -56,7 +56,7 @@ NspMod *ModCreate(char *name,char *path,char *mname)
       Scierror("Error:\tRunning out of memory\n");
       return(NULLMOD);
     }
-  if ((M->T= hash_create(NVOID,10))== NULLHASH) 
+  if ((M->T= nsp_hash_create(NVOID,10))== NULLHASH) 
     {
       Scierror("Error:\tRunning out of memory\n");
       return(NULLMOD);
@@ -118,7 +118,7 @@ void ModDestroy(NspMod *Mo)
   FREE(NSP_OBJECT(Mo)->name);
   if ( Mo->flag  == 0) 
     {
-      hash_destroy(Mo->T);
+      nsp_hash_destroy(Mo->T);
       ListDestroy(Mo->L);
       FREE(Mo->path);
     }

@@ -84,9 +84,9 @@ static NspMethods *hash_get_methods(void);
 
 #define NULLHASH (NspHash*) 0
 
-NspHash *hash_create(char *name, unsigned int size);
+NspHash *nsp_hash_create(char *name, unsigned int size);
 NspHash *hash_copy(NspHash *H);
-void hash_destroy(NspHash *H);
+void nsp_hash_destroy(NspHash *H);
 void hash_info(NspHash *H, int indent);
 void hash_print(NspHash *H, int indent);
 

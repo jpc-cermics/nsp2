@@ -14,12 +14,12 @@ all: default
 
 default:
 	@PVM_ROOT=$(SCIDIR)/pvm3; export PVM_ROOT;\
-		PVM_ARCH=LINUX; export PVM_ARCH ;\
+		PVM_ARCH=DARWIN; export PVM_ARCH ;\
 		./lib/aimk $(AIMKSTR) default
 
 clean:
 	@PVM_ROOT=$(SCIDIR)/pvm3; export PVM_ROOT;\
-		PVM_ARCH=LINUX; export PVM_ARCH ;\
+		PVM_ARCH=DARWIN; export PVM_ARCH ;\
 		./lib/aimk $(AIMKSTR) clean
 
 # distclean clean removes *.o and other remaining executables 

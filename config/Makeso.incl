@@ -16,10 +16,10 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 OBJDUMP = objdump
 STATIC = 
 LN_S = ln -s
-NM = /usr/bin/nm -B
+NM = /usr/bin/nm -p
 LDFLAGS =  $(EXTRA_LDFLAGS) 
 LIBS = -lm 
-FLIBS =  -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.2 -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.2/../../.. -lfrtbegin -lg2c -lm -lgcc_s
+FLIBS = 
 #******************************************************************* 
 INCLUDES=  $(XFLAGS) $(TK_INC_PATH) $(TCL_INC_PATH) -I$(SCIDIR)/src/include 
 

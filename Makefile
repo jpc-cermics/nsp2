@@ -22,7 +22,7 @@ all:: bin/scilex
 # Add the object files that are used to compile Scilex
 include Makefile.OBJ
 
-include config/Makefile.linux
+include config/Makefile.darwin
 
 distclean::
 	$(RM) bin/scilex
@@ -99,10 +99,10 @@ PVMBINDISTFILES = \
 	$(SCIBASE)/pvm3/lib/pvmd \
 	$(SCIBASE)/pvm3/lib/pvmtmparch \
 	$(SCIBASE)/pvm3/lib/pvmgetarch \
-	$(SCIBASE)/pvm3/lib/LINUX/pvmd3 \
-	$(SCIBASE)/pvm3/lib/LINUX/pvmgs \
-	$(SCIBASE)/pvm3/lib/LINUX/pvm \
-	$(SCIBASE)/pvm3/bin/LINUX/*
+	$(SCIBASE)/pvm3/lib/DARWIN/pvmd3 \
+	$(SCIBASE)/pvm3/lib/DARWIN/pvmgs \
+	$(SCIBASE)/pvm3/lib/DARWIN/pvm \
+	$(SCIBASE)/pvm3/bin/DARWIN/*
 
 BINDISTFILES = \
 	$(SCIBASE)/.binary \
@@ -153,7 +153,7 @@ BINDISTFILES = \
 
 tarbindist:
 	touch .binary
-	strip bin/scilex
+	echo bin/scilex
 	cd tests; make distclean
 	cd examples; make distclean
 	cd .. ; tar cvf $(SCIBASE)/$(SCIBASE)-bin.tar $(BINDISTFILES) $(PVMBINDISTFILES)
@@ -164,7 +164,7 @@ LIBPREFIX = /usr
 install:
 	@if test `pwd` != ${LIBPREFIX}/$(SCIBASE); then \
 		touch .binary; \
-		strip $(SCIDIR)/bin/scilex; \
+		echo $(SCIDIR)/bin/scilex; \
 		(cd tests; make distclean); \
 		(cd examples; make distclean); \
 		(cd .. ; tar cf - $(BINDISTFILES) $(PVMBINDISTFILES) $(PVMBINDISTFILES1) | (cd ${LIBPREFIX}; tar xf -)); \

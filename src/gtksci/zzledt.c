@@ -48,10 +48,18 @@ static char Sci_Prompt[10];
 #define B42UNIX
 #endif
 #endif
+
+
 #ifdef linux
+#ifdef __APPLE__
+#define B42UNIX
+#define TERMCAP
+#else
 #define ATTUNIX
 #define TERMCAP
 #endif
+#endif
+
 #if defined(netbsd) || defined(freebsd)
 #define TERMCAP
 #endif
