@@ -336,7 +336,28 @@ static int sci_graphic_protect = 0;
 void   set_delete_win_mode(void) {  sci_graphic_protect = 0 ;}
 extern void   set_no_delete_win_mode(void) {  sci_graphic_protect = 1 ;}
 
-static gboolean sci_destroy_window (GtkWidget *widget, GdkEventKey *event,  BCG *gc)
+/* ici normalement on peut pas arreter la destruction */
+
+static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
+{
+  if (  sci_graphic_protect == 1 )
+    {
+      xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
+    }
+  if ( info.sci_click_activated == TRUE ) 
+    {
+      info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
+      info.button = -100;
+      DeleteSGWin(gc->CurWindow);
+      gtk_main_quit();
+    }
+  else 
+    DeleteSGWin(gc->CurWindow);
+}
+
+/* ici avec la valeur renvoyée on peut décider de detruire ou pas */
+
+static gboolean sci_delete_window (GtkWidget *widget, GdkEventKey *event,  BCG *gc)
 {
   if (  sci_graphic_protect == 1 )
     {
@@ -2287,9 +2308,13 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box, int *v2)
 
   start_sci_gtk(); /* be sure that gtk is started */
   if ( win != NULL )
-    gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",600,400,win,box);
+    {
+      gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",600,400,win,box);
+    }
   else 
-    gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",600,400,NULL,NULL);
+    {
+      gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",600,400,NULL,NULL);
+    }
 
   /* recheck with valgrind 
    * valgrind detecte des variables non initialisees dans 
@@ -2330,6 +2355,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box, int *v2)
   /* default resize not yet defined */
   NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
+
+
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
 
   /* now initialize the scale list */
@@ -3194,6 +3221,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   /* set window bg */
   gdk_window_set_background(dd->private->drawing->window, &dd->private->gcol_bg);
 
+
   if ( dd->private->pixmap == NULL)
     {
       dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
@@ -3208,6 +3236,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
     {
       dd->private->Cdrawable= (GdkDrawable *) dd->private->drawing->window;
     }
+
   return FALSE;
 }
 
@@ -3220,11 +3249,12 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 
   /* check for resize */
   if( (GTK_WIDGET_REALIZED(dd->private->drawing)) 
-      && ((dd->CWindowWidth != event->width) || (dd->CWindowHeight != event->height))) {
-    dd->CWindowWidth = event->width;
-    dd->CWindowHeight = event->height;
-    dd->private->resize = 1;
-  }
+      && ((dd->CWindowWidth != event->width) || (dd->CWindowHeight != event->height))) 
+    {
+      dd->CWindowWidth = event->width;
+      dd->CWindowHeight = event->height;
+      dd->private->resize = 1;
+    }
   return FALSE;
 }
 
@@ -3234,7 +3264,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-  xinfo(dd,"Expose event ");
+  /* xinfo(dd,"Expose event "); */
   if(dd->private->resize != 0) 
     { 
       dd->private->resize = 0;
@@ -3259,8 +3289,6 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     }
   return FALSE;
 }
-
-#define R_RGB(r,g,b)	((r)|((g)<<8)|((b)<<16))
 
 
 static void scig_deconnect_handlers(BCG *winxgc)
@@ -3289,6 +3317,9 @@ static void scig_deconnect_handlers(BCG *winxgc)
  * partial or full creation of a graphic nsp widget 
  * if is_top == FALSE a partial widget (vbox) is created 
  *---------------------------------------------------------------*/
+
+#define R_RGB(r,g,b)	((r)|((g)<<8)|((b)<<16))
+
 
 void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,GtkWidget *win,GtkWidget *box)
 {
@@ -3326,7 +3357,7 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
       sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
       gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
       gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
-      /* gtk_widget_realize(dd->private->window); */
+      /* gtk_widget_realize(dd->private->window);*/
       vbox = gtk_vbox_new (FALSE, 0);
       gtk_container_add (GTK_CONTAINER(box) , vbox);
     }
@@ -3405,36 +3436,36 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
   /* connect to signal handlers, etc */
   gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "configure_event",
 		     (GtkSignalFunc) configure_event, (gpointer) dd);
+
   gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
 		     (GtkSignalFunc) expose_event, (gpointer) dd);
-
-  gtk_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
+  
+  gtk_signal_connect(GTK_OBJECT(dd->private->window), "destroy",
 		     (GtkSignalFunc) sci_destroy_window, (gpointer) dd);
 
+  
+  gtk_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
+		     (GtkSignalFunc) sci_delete_window, (gpointer) dd);
+
   gtk_signal_connect (GTK_OBJECT (dd->private->window), "key_press_event",
-      (GtkSignalFunc) key_press_event, (gpointer) dd);
+		      (GtkSignalFunc) key_press_event, (gpointer) dd);
 
   /* show everything */
 
   if ( is_top == TRUE ) 
     {
+      /* create offscreen drawable : Already done in the realize_event 
+       */
       gtk_widget_realize(dd->private->window);
       gtk_widget_show_all(dd->private->window);
-  
-      /* create offscreen drawable */
-      dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
-					   dd->CWindowWidth, dd->CWindowHeight,
-					   -1);
-
-      gdk_gc_set_foreground(dd->private->stdgc, &dd->private->gcol_bg);
-      gdk_draw_rectangle(dd->private->pixmap, dd->private->stdgc, TRUE, 0, 0,
-			 dd->CWindowWidth, dd->CWindowHeight);
     }
   else 
     {
-      /* we must wait the expose event to initialize the pixmap */
-      dd->private->pixmap = NULL;
-      dd->private->resize = 1 ;
+      /* we need here to realize the dd->private->drawing 
+       * this will create offscreen drawable : in realize_event
+       * and the initialize_gc 
+       */
+      gtk_widget_realize(dd->private->drawing);
     }
 
   /* let other widgets use the default colour settings */
