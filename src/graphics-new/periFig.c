@@ -135,6 +135,8 @@ static void xend(BCG *Xgc)
   xendgraphic(Xgc);
 }
 
+static void delete_window(BCG *dd,int intnum) {};
+
 
 /** Clear the current graphic window     **/
 /** In Fig : nothing      **/
@@ -151,11 +153,6 @@ static void xpause(int sec_time) {}
  *-----------------------------------------------------------------*/
 
 static void setpopupname(BCG *Xgc,char *name){}
-
-
-/** Flush out the X11-buffer  **/
-
-void poooo_viderbuff(void) {}
 
 static void xset_winprotect(BCG *Xgc, int val) {};
 

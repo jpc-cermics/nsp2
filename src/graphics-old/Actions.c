@@ -80,8 +80,10 @@ void reset_scig_deletegwin_handler(void)
 
 void scig_delete(int winid) 
 {
+  BCG *Xgc;
+  if ( (Xgc= window_list_search(winid)) == NULL) return;
   scig_deletegwin_handler(winid);
-  DeleteSGWin(winid);
+  Xgc->graphic_engine->delete_window(Xgc,winid);
 }
 
 /**

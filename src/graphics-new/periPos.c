@@ -71,6 +71,7 @@ static void xend(BCG *Xgc)
   xendgraphic(Xgc);
 }
 
+static void delete_window(BCG *dd,int intnum) {};
 
 /** Clear the current graphic window     **/
 /** In Postscript : nothing      **/

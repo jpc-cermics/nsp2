@@ -373,11 +373,11 @@ static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
     {
       info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
       info.button = -100;
-      DeleteSGWin(gc->CurWindow);
+      delete_window(gc,gc->CurWindow);
       gtk_main_quit();
     }
   else 
-    DeleteSGWin(gc->CurWindow);
+    delete_window(gc,gc->CurWindow);
 }
 
 /* ici avec la valeur renvoyée on peut décider de detruire ou pas */
@@ -393,11 +393,11 @@ static gboolean sci_delete_window (GtkWidget *widget, GdkEventKey *event,  BCG *
     {
       info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
       info.button = -100;
-      DeleteSGWin(gc->CurWindow);
+      delete_window(gc,gc->CurWindow);
       gtk_main_quit();
     }
   else 
-    DeleteSGWin(gc->CurWindow);
+    delete_window(gc,gc->CurWindow);
   return FALSE;
 }
 
@@ -1646,38 +1646,6 @@ static void xset_fpf_def(BCG *Xgc)
 }
 
 
-/**********************************************************
- * Used in xsetm()
- *    to see the colormap of current graphic window
- ******************************************************/
-
-int IsPrivateCmap(void) { return 0 ;} 
-
-void set_cmap(void * w)
-{
-  /* XXX
-  if ( Xgc != (BCG *) 0 && Xgc->Cmap != (Colormap)0)
-    XSetWindowColormap(dpy,w,Xgc->Cmap);
-  */
-}
-
-int get_pixel(int i)
-{
-  /* XXX
-  if ( Xgc != (BCG *) 0 && Xgc->Cmap != (Colormap)0)
-    return(Xgc->Colors[Max(Min(i,Xgc->Numcolors + 1),0)]);
-  else 
-  */
-  return(0);
-}
-/* 
-Pixmap get_private->pixmap(i) 
-     int i;
-{
-  return(Tabpix_[ Max(0,Min(i - 1,GREYNUMBER - 1))]);
-}
-*/
-
 /*****************************************************
  * return 1 : if the current window exists 
  *            and its colormap is not the default 
@@ -2243,11 +2211,14 @@ int window_list_check_top(BCG *dd,void *win)
   return dd->private->window == (GtkWidget *) win ;
 }
 
-void DeleteSGWin(int intnum)
+static void delete_window(BCG *dd,int intnum)
 { 
-  BCG *winxgc; 
+  BCG *winxgc= dd; 
   int top_count;
-  if ((winxgc = window_list_search(intnum)) == NULL) return;
+  if ( dd == NULL) 
+    {
+      if ((winxgc = window_list_search(intnum)) == NULL) return;
+    }
   /* be sure to clear the recorded graphics */
   scig_erase(intnum);
 
@@ -3069,22 +3040,22 @@ static void scig_deconnect_handlers(BCG *winxgc)
 {
   int n=0;
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) configure_event, (gpointer) winxgc);
+					  (GtkSignalFunc) configure_event, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) expose_event, (gpointer) winxgc);
+					  (GtkSignalFunc) expose_event, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
-				       (GtkSignalFunc)  sci_destroy_window, (gpointer) winxgc);
+					  (GtkSignalFunc)  sci_destroy_window, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func (GTK_OBJECT (winxgc->private->window),
-					(GtkSignalFunc) key_press_event, (gpointer) winxgc);
+					   (GtkSignalFunc) key_press_event, (gpointer) winxgc);
 
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) locator_button_press, (gpointer) winxgc);
+					  (GtkSignalFunc) locator_button_press, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) locator_button_release, (gpointer) winxgc);
+					  (GtkSignalFunc) locator_button_release, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) locator_button_motion, (gpointer) winxgc);
+					  (GtkSignalFunc) locator_button_motion, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) realize_event, (gpointer) winxgc);
+					  (GtkSignalFunc) realize_event, (gpointer) winxgc);
 }
 
 /*---------------------------------------------------------------
