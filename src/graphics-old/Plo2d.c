@@ -107,9 +107,12 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
 
 /*--------------------------------------------------------------------
  * add a grid to a 2D plot
+ *  FIXME: 
+ *  If we are using Gr_Rescale_new xgrid will not work 
+ *  since the grid does not start at frect boundaries
  *--------------------------------------------------------------------*/
 
-int nsp_plot_grid(BCG *Xgc, int *style)
+int nsp_plot_grid_old(BCG *Xgc, int *style)
 {
   int closeflag=0,n=2,vx[2],vy[2],i,j;
   double pas;
@@ -161,6 +164,65 @@ int nsp_plot_grid(BCG *Xgc, int *style)
   return(0);
 }
 
+int nsp_plot_grid(BCG *Xgc, int *style)
+{
+  int closeflag=0,n=2,vx[2],vy[2],i,j;
+  double vxd[2],vyd[2],pas;
+  int pat;
+  /* Recording command */
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Grid(Xgc,style);
+  /* changes dash style if necessary */
+  pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
+  /** x-axis grid (i.e vertical lines ) */
+  pas = ((double) Xgc->scales->WIRect1[2]) / ((double) Xgc->scales->Waaint1[1]);
+  for ( i=0 ; i <= Xgc->scales->xtics[3]; i++)
+    {
+      vyd[0]=Xgc->scales->frect[1];
+      vyd[1]=Xgc->scales->frect[3];
+      vxd[0]=vxd[1]= exp10((double)Xgc->scales->xtics[2]) *
+	(Xgc->scales->xtics[0] + i*(Xgc->scales->xtics[1]-Xgc->scales->xtics[0])/Xgc->scales->xtics[3]);
+      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+      /* FIXME: detect here if tics and vertical boundaries match ? */
+      if ( vxd[0] != Xgc->scales->frect[0] && vxd[0] != Xgc->scales->frect[2]) 
+	Xgc->graphic_engine->drawpolyline(Xgc,vx, vy,n,closeflag);
+      /* FIXME: strange ? */
+      if (Xgc->scales->logflag[0] == 'l') 
+	{
+	  int jinit=1;
+	  if ( i== 0 ) jinit=2; /* no grid on plot boundary */
+	  for (j= jinit; j < 10 ; j++)
+	    {
+	      vx[0]=vx[1]= Xgc->scales->WIRect1[0] + inint( ((double) i)*pas)+ inint(log10(((double)j))*pas);
+	      Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
+	    }
+	}
+    }
+  /** y-axis grid (i.e horizontal lines ) **/
+  pas = ((double) Xgc->scales->WIRect1[3]) / ((double) Xgc->scales->Waaint1[3]);
+  for ( i=0 ; i <= Xgc->scales->ytics[3]; i++)
+    {
+      vxd[0]=Xgc->scales->frect[0];
+      vxd[1]=Xgc->scales->frect[2];
+      vyd[0]=vyd[1]= exp10((double)Xgc->scales->ytics[2]) *
+	(Xgc->scales->ytics[0] + i*(Xgc->scales->ytics[1]-Xgc->scales->ytics[0])/Xgc->scales->ytics[3]);
+      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+      if ( vyd[0] != Xgc->scales->frect[1] && vyd[0] != Xgc->scales->frect[3]) 
+	Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
+      if (Xgc->scales->logflag[1] == 'l') 
+	{
+	  int jinit=1;
+	  if ( i== Xgc->scales->Waaint1[3]-1 ) jinit=2; /* no grid on plot boundary */
+	  for (j= jinit; j < 10 ; j++)
+	    {
+	      vy[0]=vy[1]= Xgc->scales->WIRect1[1] + inint( ((double) i+1)*pas)- inint(log10(((double)j))*pas);
+	       Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
+	    }
+	}
+    }
+  Xgc->graphic_engine->xset_pattern(Xgc,pat);
+  return(0);
+}
+
 
 /*---------------------------------------------------------------------
  * update_frame_bounds : 
@@ -192,10 +254,10 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
   switch (strflag[1])
     {
     case '0': return ; 
-    case '1' : case '3' : case '5' : case '7':
+    case '1' : case '3' : case '5' : case '7': case '9' : case 'B':
       xmin=FRect[0];xmax=FRect[2];ymin= FRect[1];ymax= FRect[3];
       break;
-    case '2' : case '4' : case '6' : case '8':
+    case '2' : case '4' : case '6' : case '8': case 'A' : case 'C':
       if ( (int)strlen(xf) < 1) c='g' ; else c=xf[0];
       switch ( c )
 	{
@@ -239,26 +301,46 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
 		   || FRect[1] < Xgc->scales->frect[1] 
 		   || FRect[2] > Xgc->scales->frect[2] 
 		   || FRect[3] > Xgc->scales->frect[3] )
-		redraw = 1;
+		{
+		  Xgc->graphic_engine->xinfo(Xgc,"need to redraw because of autoscale" );
+		  redraw = 1;
+		}
 	    }
 	}
-      /* switch to mode 5 */
-      strflag[1]='5';
-    }
-  else 
-    {
-      /* here we just are suppose to redraw previous plots 
-       * because we use the scale given by the current graphic 
-       * as the new default scale.
-       * But if all the previous graphics were performed the 
-       *     same way redrawing is not usefull. 
-       * FIXME: try to detect the last point
-       * FIXME: not a good idea since it will result in 
-       * many lots when replaying 
-       */
-      /* redraw=1; */
     }
 
+
+  /* switch strflag so as to use now FRect   */
+  plot2d_strf_change('d',strflag);
+
+  /* we also need to redraw if other graphics are not in the same  mode */
+  if ( redraw == 0 &&  Xgc->scales->scale_flag ) 
+    {
+      if ( strflag[1] == '9' ) 
+	{ if ( Xgc->scales->strflag != '1'  ) redraw = 1;}
+      else if ( strflag[1] == 'B' ) 
+	{ if ( Xgc->scales->strflag != '3'  ) redraw = 1;}
+      else if ( strflag[1] == '7' ) 
+	{ if ( Xgc->scales->strflag != '5'  ) redraw = 1;}
+      if ( redraw == 1) Xgc->graphic_engine->xinfo(Xgc,"need to redraw because of mode change" );
+    }
+
+  /* we also need to redraw if the mode is the same but frect is changing */
+  if ( redraw == 0 &&  Xgc->scales->scale_flag != 0 ) 
+    {
+      if ( strflag[1]=='7'|| strflag[1] == '9' ||  strflag[1] == 'B' )
+	{
+	  if ( FRect[0] != Xgc->scales->frect[0] 
+	       || FRect[1] != Xgc->scales->frect[1] 
+	       || FRect[2] != Xgc->scales->frect[2] 
+	       || FRect[3] != Xgc->scales->frect[3] )
+	    {
+	      Xgc->graphic_engine->xinfo(Xgc,"need to redraw because of scale change in mode" );
+	      redraw = 1;
+	    }
+	}
+    }
+  
   /* Warning: FRect must not be changed bellow 
    */
 
@@ -266,7 +348,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
    * modify computed min,max if isoview requested 
    */
 
-  if ( strflag[1] == '3' || strflag[1] == '4')
+  if ( (int)strlen(strflag) >= 2 && (strflag[1] == '3' || strflag[1] == '4'))
     {
       /* code by S. Mottelet 11/7/2000 */
       double WRect[4],ARect[4];
@@ -327,30 +409,65 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
   /* FRect1 gives the plotting boundaries xmin,ymin,xmax,ymax */
   FRect1[0]=xmin;FRect1[1]=ymin;FRect1[2]=xmax;FRect1[3]=ymax;
   
-  /* switch strflag so as to use now FRect   */
-  plot2d_strf_change('d',strflag);
-
   /* pretty axes */
-  if ( (int)strlen(strflag) >=2 && 
-       ( strflag[1]=='5' || strflag[1]=='6'))
+  if ( (int)strlen(strflag) >=2 && ( strflag[1]=='5' || strflag[1]== '7') ) 
     {
       double FRect2[4];
       int i;
       for (i=0; i< 4 ;i++) FRect2[i]=FRect1[i];
-      /* recherche automatique des bornes et graduations */
+      /* change graduation */
       Gr_Rescale_new(&xf[1],FRect2,Xdec,Ydec,&(aaint[0]),&(aaint[2]));
+    }
+
+  /* we also need to redraw if aaint has changed */
+  if ( redraw == 0 &&  Xgc->scales->scale_flag != 0 ) 
+    {
+      if (strflag[1] == '7' || strflag[1] == '9' ||  strflag[1] == 'B' ) 
+	{
+	  if ( aaint[0] != Xgc->scales->Waaint1[0] 
+	       || aaint[1] != Xgc->scales->Waaint1[1] 
+	       || aaint[2] != Xgc->scales->Waaint1[2] 
+	       || aaint[3] != Xgc->scales->Waaint1[3] )
+	    {
+	      Xgc->graphic_engine->xinfo(Xgc,"need to redraw because of aaint change" );
+	      redraw = 1;
+	    }
+	}
     }
   
   /* Update the current scale */
 
   set_scale(Xgc,"tftttf",NULL,FRect1,aaint,xf+1,NULL);
 
-  /* Should be added to set_scale */
+  /* store information about graduation in xtics */
+  
+  if ( (int)strlen(strflag) >=2 && strflag[1]=='5' ) 
+    {
+      for (i=0; i < 3 ; i++ ) Xgc->scales->xtics[i] = Xdec[i];
+      for (i=0; i < 3 ; i++ ) Xgc->scales->ytics[i] = Ydec[i];
+      Xgc->scales->xtics[3] = aaint[1];
+      Xgc->scales->ytics[3] = aaint[3];
+    }
+  else 
+    {
+      Xgc->scales->xtics[0] = xmin;
+      Xgc->scales->xtics[1] = xmax;
+      Xgc->scales->xtics[2] = 0.0;
+      Xgc->scales->xtics[3] = aaint[1];
 
-  for (i=0; i < 3 ; i++ ) Xgc->scales->xtics[i] = Xdec[i];
-  for (i=0; i < 3 ; i++ ) Xgc->scales->ytics[i] = Ydec[i];
-  Xgc->scales->xtics[3] = aaint[1];
-  Xgc->scales->ytics[3] = aaint[3];
+      Xgc->scales->ytics[0] = ymin;
+      Xgc->scales->ytics[1] = ymax;
+      Xgc->scales->ytics[2] = 0.0;
+      Xgc->scales->ytics[3] = aaint[3];
+    }
+
+  /* switch back to recorded mode */
+  if ( strflag[1] == '9' ) strflag[1]= '1';
+  else if ( strflag[1] == 'B' ) strflag[1]= '3';
+  else if ( strflag[1] == '7' ) strflag[1]= '5';
+
+  /* store information about strflag */ 
+  Xgc->scales->strflag = strflag[1]; 
 
   /* FIXME: is it necessary ? */
   /* Changing back min,max and aaint if using log scaling X axis */
@@ -364,11 +481,13 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
       FRect1[1]= exp10(ymin);FRect1[3]= exp10(ymax);
     }
 
-  /* Redraw other graphics */
+  /* Redraw other graphics if needed */
   if ( redraw )
     {
-      /* we propagate the new strflag[1] to previous plots */
-      static int flag[3]={1,0,1};
+      /* we propagate the new strflag[1] to previous plots and the new frect 
+       */
+      static int flag[3]={1,1,1};
+      /* if the last graphic contains axis draw we remove previous ones */
       /* Redraw previous graphics with new Scale */
       if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
 	{
@@ -429,6 +548,8 @@ void plot2d_strf_change(char c, char *strf)
 	case '3' : strf[1]='4';break;
 	case '5' : strf[1]='6';break;
 	case '7' : strf[1]='8';break;
+	case '9' : strf[1]='A';break;
+	case 'B' : strf[1]='C';break;
 	}
     }
   else
@@ -440,6 +561,8 @@ void plot2d_strf_change(char c, char *strf)
 	case '4' : strf[1]='3';break;
 	case '6' : strf[1]='5';break;
 	case '8' : strf[1]='7';break;
+	case 'A' : strf[1]='9';break;
+	case 'C' : strf[1]='B';break;
 	}
 
     }

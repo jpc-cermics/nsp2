@@ -33,11 +33,16 @@ extern NspSMatrix *SMatCreateFromAttrsTable (AttrTab *T);
 #define NthObj(x) (stack.S[stack.first+x-1])
 
 #define CheckRhs(x,y) if ( rhs < x || rhs > y ) \
-  { Scierror("Error: Rhs=%d is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
+  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
 
 #define CheckLhs(x,y) if ( lhs != -1 && ( lhs < x || lhs > y )) \
-  { Scierror("Error Lhs=%d is incorrect for function %s\n",lhs,stack.fname);return RET_BUG;}
+  { Scierror("Error %d returned values is incorrect for function %s\n",lhs,stack.fname);return RET_BUG;}
 
+#define CheckStdRhs(x,y) if ( rhs -opt < x || rhs -opt > y ) \
+  { Scierror("Error: %d non-optional arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
+
+#define CheckOptRhs(x,y) if ( opt < x || opt > y ) \
+  { Scierror("Error: %d optional arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
 
 /* Used by GetArgs to decode argument list */
 

@@ -1828,30 +1828,26 @@ static void replay_Gray(BCG *Xgc,void *theplot)
   struct rec_gray *pl3d;
   pl3d= (struct rec_gray *)theplot;
   nsp_draw_matrix(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,
-	     pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
+		  pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
 }
-
-
 
 static void replay_Gray1(BCG *Xgc,void *theplot)
 {
   struct rec_gray *pl3d;
-  pl3d= (struct rec_gray *)theplot;
+  pl3d= (struct rec_gray_1 *)theplot;
   nsp_draw_matrix_1(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
-	     pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
+		    pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
 }
-
-
 
 static void replay_Gray2(BCG *Xgc,void *theplot)
 {
   struct rec_gray_2 *pl3d;
   pl3d= (struct rec_gray_2 *)theplot;
   nsp_draw_matrix_2(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
-	     pl3d->xrect);
+		    pl3d->xrect);
 }
 
-
+/* same for Gray1 and Gray2 */
 
 static void clean_Gray(void *plot)
 {
@@ -1860,9 +1856,11 @@ static void clean_Gray(void *plot)
   FREE(theplot->x);FREE(theplot->y);
   FREE(theplot->z);
   FREE(theplot->strflag);
-  FREE(theplot->brect);FREE(theplot->aaint);   
+  FREE(theplot->brect);
+  FREE(theplot->aaint);   
   FREE(theplot->strflag_kp);
-  FREE(theplot->brect_kp);FREE(theplot->aaint_kp);   
+  FREE(theplot->brect_kp);
+  FREE(theplot->aaint_kp);   
 }
 
 static void clean_Gray2(void *plot)
@@ -1874,12 +1872,12 @@ static void clean_Gray2(void *plot)
 }
 
 
-
 /*---------------------------------------------------------------------
  * champ champ1 
  *---------------------------------------------------------------------------*/
 
-static void store_Champ_G(BCG *Xgc,int code, double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *vrect, double *arfact)
+static void store_Champ_G(BCG *Xgc,int code, double *x, double *y, double *fx, double *fy, 
+			  int *n1, int *n2, char *strflag, double *vrect, double *arfact)
 {
   struct rec_champ *lplot;
   lplot= ((struct rec_champ *) MALLOC(sizeof(struct rec_champ)));
@@ -2171,11 +2169,15 @@ void scale_change_plots(BCG *Xgc,int winnumber, int *flag, double *bbox, int *aa
 
 /** change the plot flag in order to use bbox **/ 
 
-static void scale_2D_change_flag(int flag, char *str,char *str_new)
+static void scale_2D_change_flag(int undo, int flag, char *str,char *str_kp, char *str_new)
 {
   if ( flag == 1 ) 
     {
-      if ( str[2] == str_new[2] ) str[1]= str_new[1];
+      if ( str[2] == str_new[2] ) 
+	{
+	  str[1]= str_new[1];
+	  if ( undo == 0) str_kp[1] =str[1];
+	}
     }
 }
   
@@ -2186,7 +2188,7 @@ static void scale_change_Plot(BCG *Xgc,void *plot, int *flag, double *bbox, int 
   struct rec_plot2d *theplot;
   theplot=(struct rec_plot2d *) plot;
   /* on passe en mode autoscale 5= on utilise bbox et on `regradue' dessus */
-  scale_2D_change_flag(flag[2], theplot->strflag,strflag);
+  scale_2D_change_flag(undo,flag[2], theplot->strflag,theplot->strflag_kp ,strflag);
   for ( i = 0 ; i < 4 ; i++)
     {
       if (flag[0]==1)
@@ -2194,7 +2196,11 @@ static void scale_change_Plot(BCG *Xgc,void *plot, int *flag, double *bbox, int 
 	  theplot->brect[i]=bbox[i];
 	  if (undo == 0)   theplot->brect_kp[i]=bbox[i];
 	}
-      if (flag[1]==1)  theplot->aint[i]=aaint[i];
+      if (flag[1]==1)  
+	{
+	  theplot->aint[i]=aaint[i];
+	  if (undo == 0)   theplot->aint_kp[i]=aaint[i];
+	}
     }
 }
 
@@ -2204,7 +2210,7 @@ static void scale_change_Contour2D(BCG *Xgc,void *plot, int *flag, double *bbox,
   struct rec_contour2d *theplot;
   theplot=(struct rec_contour2d *) plot;
   /* on passe en mode autoscale 5= on utilise bbox et on `regradue' dessus */
-  scale_2D_change_flag(flag[2], theplot->strflag,strflag);
+  scale_2D_change_flag(undo,flag[2], theplot->strflag,theplot->strflag_kp,strflag);
   for ( i = 0 ; i < 4 ; i++)
     {
       if (flag[0]==1)
@@ -2216,13 +2222,15 @@ static void scale_change_Contour2D(BCG *Xgc,void *plot, int *flag, double *bbox,
     }
 }
 
+/* same for Gray1 and Gray2 NULL for Gray3 */
+
 static void scale_change_Gray(BCG *Xgc,void *plot, int *flag, double *bbox, int *aaint,char *strflag, int undo, int *bbox1, double *subwin, int win_num)
 {
   int i;
   struct rec_gray *theplot;
   theplot=(struct rec_gray *) plot;
   /* on passe en mode autoscale 5= on utilise bbox et on `regradue' dessus */
-  scale_2D_change_flag(flag[2], theplot->strflag,strflag);
+  scale_2D_change_flag(undo,flag[2], theplot->strflag,theplot->strflag_kp,strflag);
   for ( i = 0 ; i < 4 ; i++)
     {
       if (flag[0]==1) 
@@ -2240,7 +2248,7 @@ static void scale_change_Champ(BCG *Xgc,void *plot, int *flag, double *bbox, int
   struct rec_champ *theplot;
   theplot=(struct rec_champ *) plot;
   /* on passe en mode autoscale 5= on utilise bbox et on `regradue' dessus */
-  scale_2D_change_flag(flag[2], theplot->strflag,strflag);
+  scale_2D_change_flag(undo,flag[2], theplot->strflag,theplot->strflag_kp,strflag);
   for ( i = 0 ; i < 4 ; i++)
     {
       if (flag[0]==1)
@@ -2257,7 +2265,7 @@ static void scale_change_Fec(BCG *Xgc,void *plot, int *flag, double *bbox, int *
   struct rec_fec *theplot;
   theplot=(struct rec_fec *) plot;
   /* on passe en mode autoscale 5= on utilise bbox et on `regradue' dessus */
-  scale_2D_change_flag(flag[2], theplot->strflag,strflag);
+  scale_2D_change_flag(undo,flag[2], theplot->strflag,theplot->strflag_kp,strflag);
   for ( i = 0 ; i < 4 ; i++)
     {
       if (flag[0]==1)  
@@ -2825,12 +2833,11 @@ void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,  doubl
 /*---------------------------------------------------------------------
  * replay with a new Scale but undo is impossible 
  * used for automatic scales 
- * 
  *---------------------------------------------------------------------------*/
 
 void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, double *bbox,char *strflag)
 { 
-  /* here we want to change bbox but only for recorded graphics 
+  /* here we want to change (bbox,aaint,strfag) but only for recorded graphics 
    * which are on the same subwin as the current one 
    * and we do not want this operation to be undone ==> undo =0 
    */

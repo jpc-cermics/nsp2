@@ -236,15 +236,15 @@ static char * check_legend(Stack stack,char *fname,char *varname,char *legend)
  * note that var can be changed by this function 
  *-----------------------------------------------------------*/
 
-static int def_nax[]={2,10,2,10};
+static const int def_nax[]={2,10,2,10};
+static int loc_nax[]={2,10,2,10};
 
 static int * check_nax(Stack stack,char *fname,char *varname,NspMatrix *var)
 {
+  int i;
   if ( var == NULLMAT) 
     {
-      def_nax[0]=def_nax[2]=2;
-      def_nax[1]=def_nax[3]=10;
-      return def_nax;
+      for (i = 0 ; i < 4; ++i) loc_nax[i]=def_nax[i];
     }
   else 
     {
@@ -257,10 +257,11 @@ static int * check_nax(Stack stack,char *fname,char *varname,NspMatrix *var)
       else 
 	{
 	  int *ivar  = (int *) var->R,i;
-	  for (i = 0 ; i < 4; ++i) ivar[i]=Max(ivar[i],0);
+	  for (i = 0 ; i < 4; ++i) loc_nax[i]=Max(ivar[i],0);
 	  return ivar;
 	}
     }
+  return loc_nax;
 }
 
 /*-----------------------------------------------------------
@@ -1010,9 +1011,10 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,
   
   int_types T[] = {realmat,realmat,new_opts, t_end} ;
   
-  /* XXXX : autoriser les appels spéciaux : plot2d(y,opts) plot2d(logf,x,y,opts) plot2d(logf,x,y,opts)  */
-  
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts_2d,&axes,&frame,&leg,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
+
+
+  
 
   /* decide what to do according to (x,y) dimensions */ 
 
@@ -1292,7 +1294,7 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
  * Matplot1 
  *-----------------------------------------------------------*/
 
-int int_gray2plot(Stack stack, int rhs, int opt, int lhs)
+int int_matplot1(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   NspMatrix *M,*Rect;
@@ -4290,7 +4292,7 @@ static OpTab Graphics_func[]={
   {"Matplot",int_matplot},
   {"contour2di",int_contour2d1},
   {"c2dex",int_c2dex},
-  {"Matplot1",int_gray2plot}, 
+  {"Matplot1",int_matplot1}, 
   {"xgraduate",int_xgraduate},
   {"xname",int_xname},
   {"xaxis",int_xaxis},

@@ -408,8 +408,8 @@ void Gr_Rescale(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax, int
 
 /*
  * here we compute new axis graduation 
- * but without changing FRect 
- * the computed graduation do not start at FRect boundaries 
+ * but without changing FRect. The computed graduation does not 
+ * necessary start at FRect boundaries but inside. 
  */
 
 
