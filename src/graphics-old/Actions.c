@@ -204,11 +204,12 @@ void  scig_erase(int win_num)
  * 
  */ 
 
-extern BCG ScilabGCPos ; /* sans doute à changer XXX */
+extern BCG ScilabGCPos ; /* sans doute à changer FIXME XXX */
 extern Gengine Pos_gengine ; 
 
-void scig_tops(int win_num, int colored, char *bufname, char *driver)
+void scig_tops(int win_num, int colored, char *bufname, char *driver,char option)
 {
+  int wdim[2],*wdim_p=NULL;
   BCG *Xgc;
   Gengine *graphic_engine = NULL;
   int zero=0,un=1;
@@ -222,7 +223,13 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver)
       graphic_engine =&Pos_gengine;
     }
 
-  graphic_engine->initgraphic(bufname,&win_num,NULL,NULL,NULL,NULL);
+  if ( option == 'k') 
+    {
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+      wdim_p = wdim;
+    }
+  
+  graphic_engine->initgraphic(bufname,&win_num,wdim,NULL,NULL,NULL,option);
   if (colored==1) 
     graphic_engine->xset_usecolor(Xgc,un);
   else
@@ -237,14 +244,14 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver)
   scig_buzy = 0;
 }
 
-void scig_export(char *fname, int iwin, int color, char *driver)
+void scig_export(char *fname, int iwin, int color, char *driver,char option)
 {
   int sc;
   if ( color == -1 ) 
     getcolordef(&sc);
   else 
     sc= color;
-  scig_tops(iwin,sc,fname,driver);
+  scig_tops(iwin,sc,fname,driver,option);
 }
 
 

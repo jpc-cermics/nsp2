@@ -238,13 +238,13 @@ static const char * check_legend_3d(Stack stack,char *fname,char *varname,const 
  * typedef enum { legend_dl, legend_dr ,legend_drm, legend_ur,legend_ur,legend_urm } legends_pos;
  */
 
-static char *Table[] = {"dl",  "dr",  "drm", "ul",  "ur", "urm",  NULL};
 
 static int check_legend_pos(Stack stack,const char *fname,const char *varnam,const char *l_pos)
 {
+  static char *Table[] = {"dl",  "dr",  "drm", "ul",  "ur", "urm",  NULL};
   char **entry;
   int rep ; 
-  if ( l_pos == NULL ) return 5;
+  if ( l_pos == NULL ) return 4;
   rep = is_string_in_array(l_pos,Table,1);
   if ( rep < 0 ) 
     {
@@ -526,9 +526,10 @@ int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
 		NspMatrix *Mnax,int **nax,
 		int frameflag,int axesflag,char **logflags)
 {
+  char *leg1;
   if (( *istyle = check_style(stack,stack.fname,"style",Mstyle,ns))== NULL) return RET_BUG;
   if (( *strf = check_strf(stack,stack.fname,"strf",*strf))==NULL) return RET_BUG;
-  if (( *leg = check_legend(stack,stack.fname,"leg",*leg))==NULL) return RET_BUG;
+  if (( leg1 = check_legend(stack,stack.fname,"leg",*leg))==NULL) return RET_BUG;
   if (( *leg_pos_i = check_legend_pos(stack,stack.fname,"leg",*leg_pos))== -1 ) return RET_BUG;
   if (( *rect = check_rect(stack,stack.fname,"rect",Mrect))==NULL) return RET_BUG;
   if (( *nax = check_nax(stack,stack.fname,"nax",Mnax))==NULL) return RET_BUG;
@@ -556,8 +557,9 @@ int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
       /* if rect is provided and not selected by strf we force it */
       plot2d_strf_change('d',*strf);
     }
-  /* activate caption */
-  if ((*leg)[0] != '\0') *strf[0]='1';
+  /* change strf according to other given flags */
+  *strf[0] =  ( leg == NULL || strcmp(leg1,"")==0 ) ? '0': '1';
+  *leg = leg1;
   if ( frameflag != -1 ) (*strf)[1] = (char)(frameflag+48); 
   if ( axesflag != -1 )  (*strf)[2] = (char)(axesflag+48); 
   return 0;
@@ -2468,7 +2470,8 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 						   (wdim) ? (int*) wdim->R: NULL ,
 						   (wpdim) ? (int*)wpdim->R: NULL,
 						   (viewport) ? viewport->R : NULL,
-						   (wpos) ? (int*)wpos->R : NULL);
+						   (wpos) ? (int*)wpos->R : NULL,
+						   'e');
     }
   else 
     {
@@ -2477,7 +2480,8 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 				(wdim) ? (int*)wdim->R: NULL ,
 				(wpdim) ? (int*)wpdim->R: NULL,
 				(viewport) ? viewport->R : NULL,
-				(wpos) ? (int*)wpos->R : NULL);
+				(wpos) ? (int*)wpos->R : NULL,
+				'e');
       else 
 	{
 #ifdef WITH_GTKGLEXT 
@@ -2485,7 +2489,8 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 				 (wdim) ? (int*)wdim->R: NULL ,
 				 (wpdim) ? (int*)wpdim->R: NULL,
 				 (viewport) ? viewport->R : NULL,
-				 (wpos) ? (int*)wpos->R : NULL);
+				 (wpos) ? (int*)wpos->R : NULL,
+				 'e');
 #endif 
 	}
     }
@@ -3757,20 +3762,47 @@ static int int_export_G(Stack stack, int rhs, int opt, int lhs,char * export_for
   if ((filename = GetString(stack,2)) == (char*)0) return RET_BUG;
   /* color or n & b */ 
   if ( rhs >= 3) {   if (GetScalarInt(stack,3,&color) == FAIL) return RET_BUG;}
-  scig_export(filename,iwin,color,export_format);
+  scig_export(filename,iwin,color,export_format,'p');
   return 0;
 }
 
 int int_xs2ps(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_export_G(stack,rhs,opt,lhs,"Pos");
+  char **entry;
+  int win_id,rep=1,color=-1;
+  char *filename= NULL, *mode = NULL;
+  static char *Table[] = {"l","n", "p", "k", NULL};
+  int_types T[] = {s_int,string, new_opts, t_end} ;
+  nsp_option opts[] ={{ "color",s_bool,NULLOBJ,-1},
+		      { "mode",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&win_id,&filename,&opts,&color,&mode) == FAIL) return RET_BUG;
+  if ( mode != NULL) 
+    {
+      rep = is_string_in_array(mode,Table,1);
+      if ( rep < 0 ) 
+	{
+	  Scierror("Error:\toptional argument mode of function %s has a wrong value %s\n",stack.fname,mode);
+	  Scierror("\tmust be '%s'", *Table);
+	  for (entry = Table+1 ; *entry != NULL; entry++) {
+	    if (entry[1] == NULL) {
+	      Scierror(", or '%s'",*entry);
+	    } else {
+	      Scierror(", '%s'",*entry);
+	    }
+	  }
+	  return RET_BUG;
+	}
+    }
+  scig_export(filename,win_id,color,"Pos",Table[rep][0]);
+  return 0;
 }
 
 /* backward compatibility */
 
 int int_xg2ps(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_export_G(stack,rhs,opt,lhs,"Pos");
+  return int_xs2ps(stack,rhs,opt,lhs);
 }
 
 int int_xs2fig(Stack stack, int rhs, int opt, int lhs)

@@ -28,6 +28,8 @@ static void displaysymbols( BCG *Xgc,int *vx, int *vy,int n);
 static void WriteColorRGB(BCG *Xgc,char *str, void *tab, int ind);
 static void WriteColorRGBDef(BCG *Xgc,char *str,void *tab, int ind);
 
+static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2]);
+
 #define Char2Int(x)   ( x & 0x000000ff )
 
 #if defined(__CYGWIN32__) || defined(__MINGW32__) || defined(__GNUC__) || defined(__MSC__)
@@ -86,6 +88,8 @@ static void clearwindow(BCG *Xgc)
 /** To generate a pause : Empty here **/
 
 static void xpause(int sec_time) {}
+
+static void force_redraw(BCG *Xgc) {}
 
 /*-----------------------------------------------------------------
  * Changes the graphic window popupname 
@@ -1371,11 +1375,14 @@ static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
 }
 
 /*-----------------------------------------------------
-\encadre{Routine for initialisation}
-------------------------------------------------------*/
+ *
+ * Initialize the postscrip driver 
+ * if wdim is non null it will be used as window dimensions 
+ *------------------------------------------------------*/
 
-static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
 { 
+  char bbox[256],geom[256];
   int x[2];
   char string1[256];
   static int EntryCounter = 0;
@@ -1394,6 +1401,7 @@ static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *view
     }
   if (EntryCounter == 0)
     { 
+
       fnum=0;      loadfamily("Courier",&fnum);
       fnum=1;      loadfamily("Symbol",&fnum);
       fnum=2;      loadfamily("Times-Roman",&fnum);
@@ -1406,11 +1414,30 @@ static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *view
   Xgc->CurColorStatus = -1;  /* to be sure that next will initialize */
   Xgc->CurPixmapStatus = -1; /* to be sure that next will initialize */
 
-  xget_windowdim(Xgc,x,x+1);
-  FPRINTF((file,"\n%%scipos_w=%d\n%%scipos_h=%d",(int)x[0]/2,(int)x[1]/2));
-  FPRINTF((file,"\n%% Dessin en bas a gauche de taille %d,%d",(int)x[0]/2,(int)x[1]/2));
-  FPRINTF((file,"\n[0.5 %d div 0 0 0.5 %d div neg  0 %d %d div] concat",
-	  (int)prec_fact, (int)prec_fact,(int)x[1]/2,(int) prec_fact ));
+  if ( wdim != 0) 
+    {
+      x[0]=wdim[0]*prec_fact;x[1]=wdim[1]*prec_fact;
+    }
+  else 
+    {
+      xget_windowdim(Xgc,x,x+1);
+    }
+
+  get_ps_data(mode,bbox,geom,x);
+
+  if ( mode == 'e' ) 
+    {
+      FPRINTF((file,"\n%%scipos_w=%d\n%%scipos_h=%d",(int)x[0]/2,(int)x[1]/2));
+      FPRINTF((file,"\n%% Dessin en bas a gauche de taille %d,%d",(int)x[0]/2,(int)x[1]/2));
+      FPRINTF((file,"\n[0.5 %d div 0 0 0.5 %d div neg  0 %d %d div] concat",
+	       (int)prec_fact, (int)prec_fact,(int)x[1]/2,(int) prec_fact ));
+    }
+  else 
+    {
+      FPRINTF((file,bbox));
+      FPRINTF((file,geom));
+    }
+
   FPRINTF((file,"\n%% Init driver "));
   FPRINTF((file,"\n/PaintBackground {WhiteLev 2 add background eq {}{ (drawbox) 4 [background 1 add] [0 0 %d %d] dogrey}ifelse } def", x[0],x[1]));
   FPRINTF((file,"\n%% End init driver "));
@@ -1744,4 +1771,87 @@ static void queryfamily(char *name, int *j,int *v3)
   *j=FONTNUMBER;
 }
 
-/*------------------------END--------------------*/
+
+/**
+ * get_ps_data:
+ * @orientation: 
+ * @bbox: 
+ * @geom: 
+ * 
+ * Utility function for postscript generation 
+ * return in bbox a correct bounding box 
+ * and in geom the proper geometric transformation 
+ * for postscript according to mode 
+ * mode = 'p' 'l' 'k' 'e';
+ * wdim is only used for 'k' 
+ **/
+
+static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
+{
+  const int wdef = 6000, hdef = 4240;
+  /* A4 paper in mm */
+  double ccm = 28.346457;
+  double wp = ccm*210;
+  double hp = ccm*297;
+  double ws,hs,sc,scx,scy,marg= ccm*5; /* margin 5mm */
+  int w=wdef,h=hdef;
+
+  if ( mode == 'k' )   {    w=wdim[0] ; h = wdim[1];   }
+  
+  /* Compute proper bounding boxes */
+  switch (mode ) 
+    {
+    case 'p' : 
+      ws = (wp-2*marg)/((double) w);
+      hs = (hp-2*marg)/((double) h);
+      sc = Min(ws,hs);
+      ws = w*sc;
+      hs = h*sc; 
+      sprintf(bbox,"\n%%%%BoundingBox: %d %d %d %d \n", 
+	      (int) ((wp - ws)/(2*10.0)),
+	      (int) ((hp - hs)/(2*10.0)),
+	      (int) (ws/10.0 + (wp - ws)/(2*10.0)),
+	      (int) (hs/10.0 + (hp - hs)/(2*10.0))
+	      );
+      break;
+    case 'l':
+      ws = (hp-2*marg)/((double) w);
+      hs = (wp-2*marg)/((double) h);
+      sc = Min(ws,hs);
+      ws = w*sc;
+      hs = h*sc; 
+      sprintf(bbox,"\n%%%%BoundingBox: %d %d %d %d \n", 
+	      (int) ((wp - hs)/(2*10.0)),
+	      (int) ((hp - ws)/(2*10.0)),
+	      (int) (hs/10.0 + (wp - hs)/(2*10.0)) ,
+	      (int) (ws/10.0 + (hp - ws)/(2*10.0))
+	      );
+      break;
+    default: 
+      ws = w;
+      hs = h;
+      sprintf(bbox,"\n%%%%BoundingBox: %d %d %d %d \n", 0,0,(int) (ws/10.0),(int) (hs/10.0));
+    }
+  
+  /* now compute the scales */
+  
+  switch (mode ) 
+    {
+    case 'p' : 
+      sprintf(geom,"\n[%f 20 div 0 0 %f 20 div neg %d 10 div %d 10 div] concat",
+	      2*sc,2*sc,(int) ((wp - ws)/(2)), (int) ((hp - hs)/(2) + hs));
+      break;
+    case 'l':
+      sprintf(geom,"\n90 rotate 0 neg %d neg 10 div translate\n[%f 20 div 0 0 %f 20 div neg %d 10 div %d 10 div] concat",
+	     (int)(h/2.0) + (int) ((wp - hs)/(2.0)) ,2*sc,2*sc,(int) ((hp - ws)/2), (int)(h/2.0)); 
+      break;
+    case 'k': 
+      scx = ws/(wdef/2.0);
+      scy = hs/(hdef/2.0);
+      sprintf(geom,"\n[%f 20 div 0 0 %f 20 div neg %d 10 div %d 10 div] concat",
+	      scx,scy,0,(int) hs);
+      break;
+    default: 
+      sprintf(geom,"\n[0.5 10 div 0 0 0.5 10 div neg  0 %d 10 div] concat",(int) (hdef/2.0));
+    }
+}

@@ -18,8 +18,6 @@
 #include "../sparse/spConfig.h"
 #endif
 
-
-
 /*--------------------------------------------------------------------
  *  nsp_plot2d(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
  *  
@@ -97,7 +95,7 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
       Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,style,*n1,*n2);
       frame_clip_off(Xgc);
       /** Drawing the Legends **/
-      if ((int)strlen(strflag) >=1  && strflag[0] == '1' && legend_pos > 0 && legend != NULL)
+      if ((int)strlen(strflag) >=1  && strflag[0] == '1' && legend_pos >= 0 && legend != NULL)
 	{
 	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 
 	}
@@ -115,58 +113,6 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
  *  If we are using Gr_Rescale_new xgrid will not work 
  *  since the grid does not start at frect boundaries
  *--------------------------------------------------------------------*/
-
-int nsp_plot_grid_old(BCG *Xgc, int *style)
-{
-  int closeflag=0,n=2,vx[2],vy[2],i,j;
-  double pas;
-  int pat;
-  /* Recording command */
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Grid(Xgc,style);
-  /* changes dash style if necessary */
-  pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
-  /** Get current scale **/
-  pas = ((double) Xgc->scales->WIRect1[2]) / ((double) Xgc->scales->Waaint1[1]);
-  /** x-axis grid (i.e vertical lines ) */
-  for ( i=0 ; i < Xgc->scales->Waaint1[1]; i++)
-    {
-      vy[0]=Xgc->scales->WIRect1[1];
-      vy[1]=Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3];
-      vx[0]=vx[1]= Xgc->scales->WIRect1[0] + inint( ((double) i)*pas);
-      if ( i!=0) Xgc->graphic_engine->drawpolyline(Xgc,vx, vy,n,closeflag);
-      if (Xgc->scales->logflag[0] == 'l') 
-	{
-	  int jinit=1;
-	  if ( i== 0 ) jinit=2; /* no grid on plot boundary */
-	  for (j= jinit; j < 10 ; j++)
-	    {
-	      vx[0]=vx[1]= Xgc->scales->WIRect1[0] + inint( ((double) i)*pas)+ inint(log10(((double)j))*pas);
-	      Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
-	    }
-	}
-    }
-  /** y-axis grid (i.e horizontal lines ) **/
-  pas = ((double) Xgc->scales->WIRect1[3]) / ((double) Xgc->scales->Waaint1[3]);
-  for ( i=0 ; i < Xgc->scales->Waaint1[3]; i++)
-    {
-      vx[0]=Xgc->scales->WIRect1[0];
-      vx[1]=Xgc->scales->WIRect1[0]+Xgc->scales->WIRect1[2];
-      vy[0]=vy[1]= Xgc->scales->WIRect1[1] + inint( ((double) i)*pas);
-      if (i!=0)  Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
-      if (Xgc->scales->logflag[1] == 'l') 
-	{
-	  int jinit=1;
-	  if ( i== Xgc->scales->Waaint1[3]-1 ) jinit=2; /* no grid on plot boundary */
-	  for (j= jinit; j < 10 ; j++)
-	    {
-	      vy[0]=vy[1]= Xgc->scales->WIRect1[1] + inint( ((double) i+1)*pas)- inint(log10(((double)j))*pas);
-	       Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
-	    }
-	}
-    }
-  Xgc->graphic_engine->xset_pattern(Xgc,pat);
-  return(0);
-}
 
 int nsp_plot_grid(BCG *Xgc, int *style)
 {
@@ -614,42 +560,58 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
       box[0]=box[1]=0;
       nsp_legends_box(Xgc,n1,style,loc,box,TRUE,xoffset,yoffset,pat,fg,sep);
       strcpy(loc,legend);
-      /* upper right position of the legend box */
-      box[0] = Xgc->scales->WIRect1[0] + Xgc->scales->WIRect1[2];
-      box[1] = Xgc->scales->WIRect1[1];
-      box[0] -= box[2]+ xoffset/2.0;
-      box[1] += xoffset/2.0;
-      nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
-      /* upper right margin */
-      box[0] = Xgc->scales->WIRect1[0] + Xgc->scales->WIRect1[2];
-      box[1] = Xgc->scales->WIRect1[1];
-      box[0] += xoffset/2.0;
-      box[1] += xoffset/2.0;
-      nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
-      /* upper left position  of the legend box */
-      box[0] = Xgc->scales->WIRect1[0];
-      box[1] = Xgc->scales->WIRect1[1];
-      box[0] += xoffset/2.0;
-      box[1] += xoffset/2.0;
-      nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
-      /* down right position  of the legend box */
-      box[0] = Xgc->scales->WIRect1[0] + Xgc->scales->WIRect1[2];
-      box[1] = Xgc->scales->WIRect1[1] + Xgc->scales->WIRect1[3];;
-      box[0] -= box[2]+ xoffset/2.0;
-      box[1] -= box[3]+ xoffset/2.0;
-      nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
-      /* down right margin */
-      box[0] = Xgc->scales->WIRect1[0] + Xgc->scales->WIRect1[2];
-      box[1] = Xgc->scales->WIRect1[1] + Xgc->scales->WIRect1[3];;
-      box[0] += xoffset/2.0;
-      box[1] -= box[3]+ xoffset/2.0;
-      nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
-      /* down left  position  of the legend box */
-      box[0] = Xgc->scales->WIRect1[0];
-      box[1] = Xgc->scales->WIRect1[1]  + Xgc->scales->WIRect1[3];;
-      box[0] += xoffset/2.0;
-      box[1] -= box[3]+ xoffset/2.0;
-      nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+
+      switch (pos) 
+	{
+	case legend_ur: 
+	  /* upper right position of the legend box */
+	  box[0] = Xgc->scales->WIRect1[0] + Xgc->scales->WIRect1[2];
+	  box[1] = Xgc->scales->WIRect1[1];
+	  box[0] -= box[2]+rect[2]/2+ xoffset/2.0;
+	  box[1] += xoffset/2.0;
+	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  break;
+	case legend_urm:
+	  /* upper right margin */
+	  box[0] = Xgc->scales->WIRect1[0] + Xgc->scales->WIRect1[2];
+	  box[1] = Xgc->scales->WIRect1[1];
+	  box[0] += xoffset/2.0;
+	  box[1] += xoffset/2.0;
+	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  break;
+	case  legend_ul:
+	  /* upper left position  of the legend box */
+	  box[0] = Xgc->scales->WIRect1[0];
+	  box[1] = Xgc->scales->WIRect1[1];
+	  box[0] += xoffset/2.0;
+	  box[1] += xoffset/2.0;
+	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  break;
+	case legend_dr :
+	  /* down right position  of the legend box */
+	  box[0] = Xgc->scales->WIRect1[0] + Xgc->scales->WIRect1[2];
+	  box[1] = Xgc->scales->WIRect1[1] + Xgc->scales->WIRect1[3];;
+	  box[0] -= box[2]+rect[2]/2+ xoffset/2.0;
+	  box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
+	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  break;
+	case legend_drm:
+	  /* down right margin */
+	  box[0] = Xgc->scales->WIRect1[0] + Xgc->scales->WIRect1[2];
+	  box[1] = Xgc->scales->WIRect1[1] + Xgc->scales->WIRect1[3];;
+	  box[0] += xoffset/2.0;
+	  box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
+	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  break;
+	case legend_dl: 
+	  /* down left  position  of the legend box */
+	  box[0] = Xgc->scales->WIRect1[0];
+	  box[1] = Xgc->scales->WIRect1[1]  + Xgc->scales->WIRect1[3];;
+	  box[0] += xoffset/2.0;
+	  box[1] -= box[3]+rect[3]/2+ xoffset/2.0;
+	  nsp_legends_box(Xgc,n1,style,loc,box,FALSE,xoffset,yoffset,pat,fg,sep);
+	  break;
+	}
       FREE(loc);
       Xgc->graphic_engine->xset_dash(Xgc,old_dash);
     }
@@ -663,16 +625,15 @@ void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * l
  * draw or compute the bounding box 
  */
 
-static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int box[4],int get_box,
-			    double xoffset,double yoffset,int pat,int fg,const char *sep)
+static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int box[4],
+			    int get_box,double xoffset,double yoffset,int pat,int fg,const char *sep)
 {
-  int i,xs,ys,flag=0,polyx[2],polyy[2],lstyle[1],rect[4];
+  int i,xs,ys,flag=0,polyx[2],polyy[2],lstyle[1],rect[4],n1count=0;
   double angle=0.0,yi,xi;
   xi= 1.4*xoffset;
   yi= box[1]+ yoffset*(1.25);
   if ( get_box == TRUE )
     {
-      box[3]= n1*1.5*yoffset;
       box[2]= xi;
     }
   for ( i = 0 ; i < n1 ; i++)
@@ -680,8 +641,9 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
       xs=inint(box[0]+xi);
       ys=inint(yi);
       if ( i==0) legend=strtok(legend,sep); else legend=strtok((char *)0,sep);
-      if (legend != 0) 
+      if (legend != 0 && strcmp(legend,"") != 0 ) 
 	{
+	  n1count++;
 	  if ( get_box == TRUE )
 	    {
 	      Xgc->graphic_engine->boundingbox(Xgc,legend,xs,ys,rect);
@@ -713,8 +675,19 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
 	}
       yi += yoffset*(1.5);
     }
-  if ( get_box == FALSE )
+  if ( get_box == TRUE )
     {
+      int rect[4];
+      box[3]= n1count*1.5*yoffset;
+      /* enlarged box whic is drawn  */
+      Xgc->graphic_engine->boundingbox(Xgc,"pl",0,0,rect);
+    }
+  else 
+    {
+      box[0] -= rect[2]/2; 
+      box[1] -= rect[3]/2; 
+      box[2] += rect[2]; 
+      box[3] += rect[3];
       Xgc->graphic_engine->drawrectangle(Xgc,box);
     }
 }

@@ -814,7 +814,7 @@ static void scig_menu_print(int winid)
 	}
 
       sprintf(bufname,"%s/scilab-%d",p1,(int)winid);
-      scig_tops(winid,colored,bufname,"Pos");
+      scig_tops(winid,colored,bufname,"Pos",'n');
       sprintf(bufname,"$SCI/bin/scilab -%s %s/scilab-%d %s",
 	      (orientation == 1) ? "print_l" : "print_p",
 	      p1,(int)winid,printer);
@@ -842,23 +842,24 @@ static void scig_menu_saveps(int winid)
       if (strncmp(printer,"Postscript",10)==0 ) 
 	{
 	  /** Postscript*   **/
-	  scig_tops(winid,colored,file,"Pos");
+	  scig_tops(winid,colored,file,"Pos",'n');
 	}
       else if (strcmp(printer,"Xfig")==0)
 	{
 	  /** Xfig   **/
-	  scig_tops(winid,colored,file,"Fig");
+	  scig_tops(winid,colored,file,"Fig",'n');
 	}
       else if (strcmp(printer,"Gif")==0)
 	{
 	  /** Gif file **/
-	  scig_tops(winid,colored,file,"GIF");
+	  scig_tops(winid,colored,file,"GIF",'n');
 	}
       else if (strcmp(printer,"PPM")==0)
 	{
 	  /** PPM file **/
-	  scig_tops(winid,colored,file,"PPM");
+	  scig_tops(winid,colored,file,"PPM",'n');
 	}
+      /* if Postscript is selected choose */
       if ( strcmp(printer,"Postscript No Preamble") != 0)
 	{
 	  sprintf(bufname,"$SCI/bin/scilab -%s %s %s",

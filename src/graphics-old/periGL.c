@@ -192,7 +192,7 @@ void xselgraphic(BCG *Xgc)
 { 
   /* Test not really usefull: see sciwin in matdes.f */
   if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL) 
-    initgraphic("",NULL,NULL,NULL,NULL,NULL);
+    initgraphic("",NULL,NULL,NULL,NULL,NULL,'e');
   gdk_window_show(Xgc->private->window->window);
 }
 
@@ -709,7 +709,7 @@ static void xget_windowpos(BCG *Xgc,int *x,int *y)
 
 static void xset_windowpos(BCG *Xgc, int x, int y)
 {
-  if (Xgc == NULL || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL);
+  if (Xgc == NULL || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL,'e');
   gdk_window_move (Xgc->private->window->window, x,y);
 }
 
@@ -863,7 +863,7 @@ static int xset_curwin(int intnum,int set_menu)
   if ( bcgk == (BCG *) 0 ) 
     {
       /** First entry or no more graphic window **/
-      initgraphic("",&intnum,NULL,NULL,NULL,NULL);
+      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e');
       /** send info to menu **/
       new = window_list_get_first();
       old = -1;
@@ -875,7 +875,7 @@ static int xset_curwin(int intnum,int set_menu)
 	  BCG *new= window_list_win_to_front(intnum);
 	  if ( new == NULL) 
 	    {
-	      initgraphic("",&intnum,NULL,NULL,NULL,NULL);
+	      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e');
 	    }
 	  new = window_list_get_first();
 	  old =  bcgk->CurWindow ;
@@ -2463,7 +2463,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 			    int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 
 
-static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
 { 
   nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos);
 }

@@ -18,7 +18,7 @@ static void Plo2d4RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, 
   
 
 int nsp_plot2d_4(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
-		const char *legend,int leg_pos,double brect[],int aaint[])
+		const char *legend,int legend_pos,double brect[],int aaint[])
 {
   int n;
   int *xm,*ym;
@@ -33,7 +33,7 @@ int nsp_plot2d_4(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 
   /* Storing values if using the Record driver */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Plot4(Xgc,xf,x,y,n1,n2,style,strflag,legend,leg_pos,brect,aaint);
+    store_Plot4(Xgc,xf,x,y,n1,n2,style,strflag,legend,legend_pos,brect,aaint);
 
   /** Allocations **/
   n = (*n1)*nn2 ; 
@@ -71,8 +71,10 @@ int nsp_plot2d_4(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 	}
       frame_clip_off(Xgc);
       /** Drawing the Legends **/
-      if ((int)strlen(strflag) >=1  && strflag[0] == '1')
-	nsp_legends(Xgc,legend_ur,*n1,style,legend,"@"); 
+      if ((int)strlen(strflag) >=1  && strflag[0] == '1' && legend_pos >= 0 && legend != NULL)
+	{
+	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 
+	}
     }
   return(0);
 }
