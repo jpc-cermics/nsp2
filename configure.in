@@ -336,7 +336,7 @@ case "$host" in
       [LIEEELIB=-lieee])
     GCC=yes
     CC=gcc
-    CC_OPTIONS='-O -Dlinux -fwritable-strings'
+    CC_OPTIONS='-O -Dlinux '
     CC_LDFLAGS=$LIEEELIB
     # find Fortran compiler
     # g77 already asked and found: good
@@ -372,7 +372,7 @@ case "$host" in
     LD=ld
     LD_LDFLAGS=$LIEEELIB
     if test "$enable_debug" = yes; then
-      CC_OPTIONS='-g -Dlinux -fwritable-strings'
+      CC_OPTIONS='-g -Dlinux '
       FC_OPTIONS=-g
     fi
     MAKEFILE_TARGET=Makefile.linux
@@ -474,7 +474,7 @@ case "$host" in
       [LIEEELIB=-lieee])
     GCC=yes
     CC=cc
-    CC_OPTIONS='-O -Dlinux -fwritable-strings'
+    CC_OPTIONS='-O -Dlinux '
     CC_LDFLAGS=$LIEEELIB
     # find Fortran compiler
     # g77 already asked and found: good
@@ -510,7 +510,7 @@ case "$host" in
     LD=ld
     LD_LDFLAGS=$LIEEELIB
     if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -Dlinux -fwritable-strings'
+      CC_OPTIONS='-g -Dlinux '
       FC_OPTIONS=-g
     fi
     DLDLIB='${SCIDIR}/libs/libdld.a'
@@ -594,7 +594,7 @@ case "$host" in
        # CC_PLAT_OPTIONS is optional, and is used to add CPU specific code generation tuning for Athlon64 presumably 
        # Opteron could benefit too but these are not optimized for the Opteron
        CC_PLAT_OPTIONS='-march=athlon64 -mfpmath=sse -msse2 -m3dnow -m64 '
-       CC_OPTIONS="-O2 -Dlinux -fwritable-strings -DNARROWPROTO $CC_PLAT_OPTIONS"
+       CC_OPTIONS="-O2 -Dlinux  -DNARROWPROTO $CC_PLAT_OPTIONS"
        CC_LDFLAGS=$LIEEELIB
        CC_PICFLAGS=-fPIC
        # find Fortran compiler
@@ -635,7 +635,7 @@ case "$host" in
        if test "$enable_debug" = yes; then
         # CC_PLAT_OPTIONS is optional, and is used to add CPU specific code generation tuning for Athlon64 presumably Opteron could benefit too but these are not optimized for the Opteron
          CC_PLAT_OPTIONS='-march=athlon64 -mfpmath=sse -msse2 -m3dnow -m64 '
-         CC_OPTIONS="-g -Wall -Dlinux -fwritable-strings -DNARROWPROTO $CC_PLAT_OPTIONS"
+         CC_OPTIONS="-g -Wall -Dlinux  -DNARROWPROTO $CC_PLAT_OPTIONS"
          FC_OPTIONS="-g $CC_PLAT_OPTIONS"
        fi
     fi
@@ -646,7 +646,7 @@ case "$host" in
     MALLOC=malloc.o
     GCC=yes
     CC=cc
-    CC_OPTIONS='-O -mieee-with-inexact -Dlinux -fwritable-strings'
+    CC_OPTIONS='-O -mieee-with-inexact -Dlinux '
     CC_LDFLAGS='-ldl -rdynamic -mieee-with-inexact'
     CC_PICFLAGS=-fPIC
     # find Fortran compiler
@@ -683,7 +683,7 @@ case "$host" in
     LD=ld
     LD_LDFLAGS=
     if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -mieee-with-inexact -Dlinux -fwritable-strings'
+      CC_OPTIONS='-g -mieee-with-inexact -Dlinux '
       FC_OPTIONS='-g -mieee-with-inexact'
     fi
     MAKEFILE_TARGET=Makefile.linux
@@ -695,7 +695,7 @@ case "$host" in
       [LIEEELIB=-lieee])
     GCC=yes
     CC=cc
-    CC_OPTIONS='-O -D_GNU_SOURCE -Dlinux -fwritable-strings'
+    CC_OPTIONS='-O -D_GNU_SOURCE -Dlinux '
     CC_LDFLAGS=$LIEEELIB
     CC_PICFLAGS=-fPIC
     # find Fortran compiler
@@ -733,7 +733,7 @@ case "$host" in
     LD=ld
     LD_LDFLAGS=$LIEEELIB
     if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -Dlinux -D_GNU_SOURCE -fwritable-strings'
+      CC_OPTIONS='-g -Dlinux -D_GNU_SOURCE '
       FC_OPTIONS=-g
     fi
     MAKEFILE_TARGET=Makefile.linux
@@ -928,9 +928,9 @@ case "$host" in
     EXAMPLES_TESTS='$(SUBDIRS1)'
     GCC=yes
     CC=gcc 
-    CC_OPTIONS='-mno-cygwin -mieee-fp -O -fwritable-strings  -Wall'
+    CC_OPTIONS='-mno-cygwin -mieee-fp -O   -Wall'
       if test "$enable_debug" = yes; then 
-	CC_OPTIONS='-mno-cygwin -g -fwritable-strings  -Wall'
+	CC_OPTIONS='-mno-cygwin -g   -Wall'
       fi
     CC_LDFLAGS=
     FC=g77
@@ -1670,6 +1670,7 @@ AC_SUBST(PERIGLEXT)
 AC_SUBST(TERM_NAME)
 AC_SUBST(TERM_LDFLAGS)
 AC_SUBST(GTKHTMLOBJS)
+AC_SUBST(GTKPLUGBUG)
 
 AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile) 
  
