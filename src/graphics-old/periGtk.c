@@ -35,8 +35,7 @@
    {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
 
 /*
- * version ou je dessine tjrs ds le drawable qui est toujours un pixmap 
- * par contre l'affichage est asynchrone 
+ * we always draw in a drawable which is a pixmap but the expose event is asynchronous
  */
 
 #define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc); 
@@ -44,7 +43,7 @@
 
 /** Global variables to deal with X11 **/
 
-static unsigned long maxcol; /* XXXXX : à revoir */
+static unsigned long maxcol; /* FIXME XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 static void nsp_gtk_invalidate(BCG *Xgc);
 
@@ -54,7 +53,7 @@ static void nsp_gtk_invalidate(BCG *Xgc);
 
 /** functions **/
 
-static void set_c(BCG *Xgc,int col);
+static void nsp_gtk_set_color(BCG *Xgc,int col);
 static void LoadFonts(void), LoadSymbFonts(void);
 static void loadfamily_n(char *name, int *j);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
@@ -76,9 +75,6 @@ static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
 
 void create_graphic_window_menu( BCG *dd);
 extern void start_sci_gtk();
-
-
-static void DispStringAngle( BCG *xgc,int x0, int yy0, char *string, double angle);
 
 /*---------------------------------------------------------
  * Gtk graphic engine 
@@ -200,10 +196,6 @@ static void xselgraphic(BCG *Xgc)
 }
 
 /** End of graphic (do nothing)  **/
-
-static void xendgraphic(void)
-{
-} 
 
 static void xend(BCG *Xgc)
 {
@@ -968,6 +960,7 @@ static struct alinfo {
     {"GXset" , GDK_SET," 1 "}
   };
 
+/* 
 static void idfromname(char *name1, int *num)
 {
   int i;
@@ -983,6 +976,7 @@ static void idfromname(char *name1, int *num)
     }
 }
 
+
 static void xset_alufunction(BCG *Xgc,char *string)
 {   
   int value;
@@ -993,6 +987,7 @@ static void xset_alufunction(BCG *Xgc,char *string)
       gdk_gc_set_function(Xgc->private->wgc, AluStruc_[value].id);
     }
 }
+*/
 
 static void xset_alufunction1(BCG *Xgc,int num)
 {   
@@ -1021,9 +1016,10 @@ static void xset_alufunction1(BCG *Xgc,int num)
     }
   if ( value == GDK_XOR  && Xgc->CurColorStatus == 1 )
     {
-      /** the way colors are computed changes if we are in Xor mode **/
-      /** so we force here the computation of current color  **/
-      set_c(Xgc,Xgc->CurColor);
+      /* the way colors are computed changes if we are in Xor mode 
+       * so we force here the computation of current color  
+       */
+      nsp_gtk_set_color(Xgc,Xgc->CurColor);
     }
 }
 
@@ -1055,10 +1051,9 @@ static int xget_thickness(BCG *Xgc)
   return Xgc->CurLineWidth ;
 }
 
-/** To set grey level for filing areas **/
-/** from black (*num =0 ) to white     **/
-
-/* Pixmap  Tabpix_[GREYNUMBER]; */
+/* To set grey level for filing areas 
+ * from black (*num =0 ) to white    
+ * Pixmap  Tabpix_[GREYNUMBER]; 
 
 static char grey0[GREYNUMBER][8]={
   {(char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00},
@@ -1080,8 +1075,6 @@ static char grey0[GREYNUMBER][8]={
   {(char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff},
 };
 
-/*  XXXXX 
-
 void CreatePatterns(whitepixel, blackpixel)
      Pixel whitepixel;
      Pixel blackpixel;
@@ -1093,6 +1086,7 @@ void CreatePatterns(whitepixel, blackpixel)
 					   ,blackpixel,XDefaultDepth (dpy,DefaultScreen(dpy)));
  
 }
+
 */
 
 static int  xset_pattern(BCG *Xgc,int num)
@@ -1100,7 +1094,7 @@ static int  xset_pattern(BCG *Xgc,int num)
   int old = xget_pattern(Xgc);
   if (Xgc->CurColorStatus == 1) 
     {
-      set_c(Xgc,num-1);
+      nsp_gtk_set_color(Xgc,num-1);
     }
   else 
     {
@@ -1173,14 +1167,6 @@ static int xget_dash(BCG *Xgc)
 
 /* old version of xset_dash retained for compatibility */
 
-static void xset_dash_or_color(BCG *Xgc,int value)
-{
-  if ( Xgc->CurColorStatus == 1) 
-    set_c(Xgc,value-1);
-  else
-    xset_dash(Xgc,value);
-}
-
 static void xset_dash_and_color(BCG *Xgc,int dash,int color)
 {
   xset_dash(Xgc,dash);
@@ -1224,6 +1210,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
     }
 }
 
+/* 
 static void xget_dashstyle(BCG *Xgc,int *n,int *value)
 {
   int i ;
@@ -1236,21 +1223,16 @@ static void xget_dashstyle(BCG *Xgc,int *n,int *value)
       for (i = 0 ; i < value[1]; i++) value[i+2]=DashTab[*value-2][i];
     }
 }
+*/
 
-
-/** to get the current dash-style **/
-/* old version of xget_dash retained for compatibility */
-
-static int xget_dash_or_color(BCG *Xgc)
-{
-  return ( Xgc->CurColorStatus ==1) ?  Xgc->CurColor + 1 :  xget_dash(Xgc);
-}
+/* to get the current dash-style 
+ * old version of xget_dash retained for compatibility 
+ */
 
 static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
 {
   *dash = xget_dash(Xgc);
   *color = xget_pattern(Xgc);
-
 }
 
 /* used to switch from color to b&w and reverse */
@@ -1766,6 +1748,7 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
     }
 }
 
+/* 
 static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle)
 {
   int i;
@@ -1781,11 +1764,12 @@ static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle
       str1[0]=string[i];
       displaystring(Xgc, str1, x, y,0,0.0);
       boundingbox(Xgc,str1,x,y,rect);
-      /** drawrectangle(Xgc,string,rect,rect+1,rect+2,rect+3); **/
+      / * drawrectangle(Xgc,string,rect,rect+1,rect+2,rect+3); * /
       if ( cosa <= 0.0 && i < (int)strlen(string)-1)
 	{ char str2[2];
-	/** si le cosinus est negatif le deplacement est a calculer **/
-	/** sur la boite du caractere suivant **/
+	/ * si le cosinus est negatif le deplacement est a calculer 
+	 * sur la boite du caractere suivant 
+         * /
 	str2[1]='\0';str2[0]=string[i+1];
 	boundingbox(Xgc,str2,x,y,rect);
 	}
@@ -1802,6 +1786,7 @@ static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle
       y +=  sina*l*1.1;
     }
 }
+*/
 
 /** To get the bounding rectangle of a string **/
 
@@ -2307,7 +2292,7 @@ void DeleteSGWin(int intnum)
  * Routines for initialization : string is a display name 
  ********************************************/
 
-static void set_c(BCG *Xgc,int col)
+static void nsp_gtk_set_color(BCG *Xgc,int col)
 {
   int value = AluStruc_[Xgc->CurDrawFunction].id;
   GdkColor temp = {0,0,0,0};
@@ -2585,22 +2570,6 @@ static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z,
     }
 }
 
-/*-----------------------------------------------------
- * bitmap display 
- *-----------------------------------------------------*/
-
-static void bitmap(BCG *Xgc,char *string, int w, int h)
-{
-  /* 
-  static XImage *setimage;
-  setimage = XCreateImage (dpy, XDefaultVisual (dpy, DefaultScreen(dpy)),
-			   1, XYBitmap, 0, string,w,h, 8, 0);	
-  setimage->data = string;
-  XPutImage (dpy, Xgc->private->drawable, gc, setimage, 0, 0, 10,10,w,h);
-  XDestroyImage(setimage);
-  */
-}
-
 
 /*---------------------------------------------------------------------
  * Using X11 Fonts
@@ -2629,7 +2598,7 @@ struct FontInfo { int ok;
 /** Must be of size FONTMAXSIZE **/
 
 static char *size_[] = { "08" ,"10","12","14","18","24"};
-static int i_size_[] = { 8 ,10,12,14,18,24};
+/* static int i_size_[] = { 8 ,10,12,14,18,24}; */
 
 /*
  * To set the current font id  and size 
@@ -2653,20 +2622,21 @@ static FontAlias fonttab[] ={
   {(char *) NULL,( char *) NULL}
 };
 
-
+/* 
 static int fontidscale(BCG *Xgc,int fontsize)
 {
   int nnsiz,i;
   int isiz = i_size_[fontsize];
   double d = Min(Xgc->CWindowHeight,Xgc->CWindowWidth);
   nnsiz = (Xgc != NULL) ? inint((isiz*d/400.0)) : isiz; 
-  /* fprintf(stderr,"Scaling by -->%d %d \n",isiz,nnsiz); */
+  / * fprintf(stderr,"Scaling by -->%d %d \n",isiz,nnsiz); * /
   for ( i=0; i < FONTMAXSIZE ; i++) 
     {
       if (i_size_[i] >= nnsiz ) return Max(i-1,0);
     }
   return FONTMAXSIZE -1;
 }
+*/
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize)
 { 

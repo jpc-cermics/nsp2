@@ -2,6 +2,7 @@
   * Copyright ENPC 2004 
   * Jean-Philippe Chancelier Enpc/Cermics
   * jpc@cermics.enpc.fr 
+  * Bruno Pincon 
   *------------------------------------------------------------------*/
 
 #include <math.h>

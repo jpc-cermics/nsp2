@@ -15,7 +15,7 @@
 
 #include "nsp/graphics/Graphics.h" 
 
-static void My2draw(BCG *Xgc,int j, int *vx, int *vy, int xleft,int xright,int ybot,int ytop);
+static void draw_clipped(BCG *Xgc,int j, int *vx, int *vy, int xleft,int xright,int ybot,int ytop);
 
 
 /* Test a single point to be within the xleft,xright,ybot,ytop bbox.
@@ -50,7 +50,7 @@ static int clip_point(int x, int y,int xleft,int xright,int ybot,int ytop)
 
 
 void clip_line(int x1, int yy1, int x2, int y2, int *x1n, int *yy1n, int *x2n, int *y2n, int *flag, 
-	       int xleft,int xright,int ybot,int ytop)
+		      int xleft,int xright,int ybot,int ytop)
 {
   int x, y, dx, dy, x_intr[2], y_intr[2], count, pos1, pos2;
   *x1n=x1;*yy1n=yy1;*x2n=x2;*y2n=y2;*flag=4;
@@ -172,13 +172,13 @@ void clip_line(int x1, int yy1, int x2, int y2, int *x1n, int *yy1n, int *x2n, i
 static void MyDraw(BCG *Xgc,int iib, int iif, int *vx, int *vy, 
 		   int xleft,int xright,int ybot,int ytop)
 {
-  My2draw(Xgc,iib,vx,vy ,xleft, xright, ybot,ytop);
-  My2draw(Xgc,iif,vx,vy,xleft, xright, ybot,ytop); 
+  draw_clipped(Xgc,iib,vx,vy ,xleft, xright, ybot,ytop);
+  draw_clipped(Xgc,iif,vx,vy,xleft, xright, ybot,ytop); 
   Xgc->graphic_engine->drawpolyline(Xgc,vx + iib,vy +iib,iif-iib,0);
 }
 
 /**
- * My2draw:
+ * draw_clipped:
  * @Xgc: 
  * @j: 
  * @vx: 
@@ -191,7 +191,7 @@ static void MyDraw(BCG *Xgc,int iib, int iif, int *vx, int *vy,
  *        do not call clip_again
  **/
 
-static void My2draw(BCG *Xgc,int j, int *vx, int *vy,int xleft,int xright,int ybot,int ytop)
+static void draw_clipped(BCG *Xgc,int j, int *vx, int *vy,int xleft,int xright,int ybot,int ytop)
 {
   int vxn[2],vyn[2],flag;
   if ( j== 0) return;
@@ -206,7 +206,7 @@ static void My2draw(BCG *Xgc,int j, int *vx, int *vy,int xleft,int xright,int yb
  *  or zero if the whole polyline is out 
  */
 
-int first_in(int n, int ideb, int *vx, int *vy, int xleft,int xright,int ybot,int ytop)
+static int first_in(int n, int ideb, int *vx, int *vy, int xleft,int xright,int ybot,int ytop)
 {
   int i;
   for (i=ideb  ; i < n ; i++)
@@ -228,7 +228,7 @@ int first_in(int n, int ideb, int *vx, int *vy, int xleft,int xright,int ybot,in
  *  or zero if the whole polyline is out 
  */
 
-int first_out(int n, int ideb, int *vx, int *vy, int xleft,int xright,int ybot,int ytop)
+static int first_out(int n, int ideb, int *vx, int *vy, int xleft,int xright,int ybot,int ytop)
 {
   int i;
   for (i=ideb  ; i < n ; i++)
@@ -276,7 +276,7 @@ void nsp_drawpolyline_clip(BCG *Xgc,int *vx, int *vy, int n,int *clip_box,int on
 	  /* all points are out but segments can cross the box 
 	   * we draw each intersected segments in a loop
 	   */
-	  for (j=ideb+1; j < n; j++) My2draw(Xgc,j,vx,vy , xleft, xright, ybot,ytop);
+	  for (j=ideb+1; j < n; j++) draw_clipped(Xgc,j,vx,vy , xleft, xright, ybot,ytop);
 	  break;
 	}
       else 
@@ -286,7 +286,7 @@ void nsp_drawpolyline_clip(BCG *Xgc,int *vx, int *vy, int n,int *clip_box,int on
 	      /* all points from ideb to iib -1 are out but segments can cross the box 
 	       * we draw each intersected segments in a loop
 	       */
-	      for (j=ideb+1; j < iib; j++) My2draw(Xgc,j,vx,vy, xleft, xright, ybot,ytop);
+	      for (j=ideb+1; j < iib; j++) draw_clipped(Xgc,j,vx,vy, xleft, xright, ybot,ytop);
 	    };
 	}
       iif=first_out(n,iib,vx,vy,  xleft, xright, ybot,ytop);
@@ -316,6 +316,7 @@ void nsp_drawpolyline_clip(BCG *Xgc,int *vx, int *vy, int n,int *clip_box,int on
     {
       /* The polyligne is closed we consider the closing segment */
       vxl[0]=vx[n-1];vxl[1]=vx[0];vyl[0]=vy[n-1];vyl[1]=vy[0];
-      My2draw(Xgc,0,vxl,vyl, xleft, xright, ybot,ytop);
+      draw_clipped(Xgc,0,vxl,vyl, xleft, xright, ybot,ytop);
     }
 }
+

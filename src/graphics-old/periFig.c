@@ -157,7 +157,7 @@ static void setpopupname(BCG *Xgc,char *name){}
 
 void poooo_viderbuff(void) {}
 
-static void xset_winprotect(BCG *Xgc, int val);
+static void xset_winprotect(BCG *Xgc, int val) {};
 
 /** Wait for mouse click in graphic window : Empty here **/
 
