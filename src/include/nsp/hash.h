@@ -91,7 +91,7 @@ extern int nsp_hash_enter_copy(NspHash *H, NspObject *O);
 extern int nsp_hash_enter(NspHash *H, NspObject *O); 
 extern void nsp_hash_remove(NspHash *H, char *str); 
 extern int nsp_hash_find_and_copy(NspHash *H, char *str, NspObject **O); 
-extern int nsp_hash_find(NspHash *H, char *str, NspObject **O);
+extern int nsp_hash_find(NspHash *H,const char *str, NspObject **O);
 extern NspBMatrix  *nsp_hash_equal(NspHash *L1, NspHash *L2);
 extern NspBMatrix  *nsp_hash_not_equal(NspHash *L1, NspHash *L2);
 extern int nsp_hash_full_equal(NspHash *L1, NspHash *L2);
@@ -101,7 +101,7 @@ typedef enum {
   H_FIND,H_FIND_COPY,H_ENTER,H_ENTER_COPY,H_REMOVE
 } HashOperation;
  
-extern int nsp_hsearch (NspHash *H,char *key, NspObject **data,HashOperation);
+extern int nsp_hsearch (NspHash *H,const char *key, NspObject **data,HashOperation);
 extern NspHash *nsp_hcreate_from_list(char *name,unsigned int nel, NspList *L);
 NspHash *nsp_hcreate(char *name, unsigned int nel);
 extern void nsp_hdestroy (NspHash *H);
