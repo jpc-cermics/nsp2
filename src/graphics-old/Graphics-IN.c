@@ -3433,8 +3433,9 @@ int int_xstringl(Stack stack, int rhs, int opt, int lhs)
 
 int int_xtape(Stack stack, int rhs, int opt, int lhs)
 {
+  NspObject  *status;
   BCG *Xgc;
-  int rep;
+  int rep,rec;
   NspMatrix *M;
   static double  rect_def[4] = { 0,0,10,10}, ebox_def[6] = {0,1,0,1,0,1};
   static int iflag_def[4] = { 0,0,0,0 };
@@ -3457,8 +3458,12 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
     {
     case 0 : /* on */ 
       CheckRhs(1,1);
+      rec= Xgc->graphic_engine->xget_recording(Xgc);
       Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-      break;
+      if ((status= nsp_new_string_obj(NVOID,(rec== TRUE) ? "on": "off",-1))== NULLOBJ)
+	return RET_BUG;
+      MoveObj(stack,1, status);
+      return 1;
     case 1 : /* clear */
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&num) == FAIL) return RET_BUG;
@@ -3505,9 +3510,12 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
       break;
     case 5: /* off */
       CheckRhs(1,1);
+      rec= Xgc->graphic_engine->xget_recording(Xgc);
       Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-      break;
-
+      if ((status= nsp_new_string_obj(NVOID,(rec== TRUE) ? "on": "off",-1))== NULLOBJ)
+	return RET_BUG;
+      MoveObj(stack,1,status);
+      return 1;
     }
   
   return 0;
