@@ -186,7 +186,7 @@ static int CNAME(LexiRowswapcode,double)(parmi, parmj, n)
   int i = n,j;
   register double *pi = (double *) (parmi); 		
   register double *pj = (double *) (parmj); 
-  /** if ( n!= 1) printf(" swapcode avec n != 1\n"); **/
+  /* if ( n!= 1) printf(" swapcode avec n != 1\n"); */
   do { 
     for ( j = 0 ; j < CNAME(lexicols,double) ; j++) 
       {
@@ -263,7 +263,7 @@ static int CNAME(LexiColswapcode,double)(parmi, parmj, n)
   int i = n,ir;
   register double *pi = (double *) (parmi); 		
   register double *pj = (double *) (parmj); 
-  /** if ( n!= 1) printf(" swapcode avec n != 1\n"); **/
+  /* if ( n!= 1) printf(" swapcode avec n != 1\n"); */
   do { 
     for ( ir = 0 ; ir < CNAME(lexirows,double) ; ir++) 
       {
