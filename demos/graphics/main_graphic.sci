@@ -43,6 +43,7 @@ function row_activated_cb (tree_view,path,data)
     // FIXME: we need here to know the graphic Id 
     // window to be sure to draw in the good window 
     xclear()
+    xset('default');
     execstr(func+"();");
     model.set[iter,ITALIC_COLUMN,italic]; 
   end
