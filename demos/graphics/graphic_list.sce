@@ -41,7 +41,7 @@ demo_2d_2_info='plot2d log scale';
 
 function y=demo_2d_2()
   xset("font size",2);
-  plot2d([],(1:10:10000),logflag="nl",leg="log(t)");
+  plot2d([],(1:10:10000),logflag="nl",leg="log(t)",leg_pos="ur");
   xtitle("plot2d1 log scale","t","y log scale");
   xgrid(3);
 endfunction
