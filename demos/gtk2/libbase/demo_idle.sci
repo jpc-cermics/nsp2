@@ -18,7 +18,6 @@ function [y]=demo_idle(_button)
 
   // function to be executed when idle 
   function [y]=idle_test(args)
-    pause
     y=1
     count=args(1).get_data['idle_count'];
     count = count + 1;

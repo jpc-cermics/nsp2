@@ -162,9 +162,18 @@ int Xorgetchar(void)
      */
     /* FD_SET(fd_out,&write_mask);
        FD_SET(fd_err,&write_mask); */
-
-    select_timeout.tv_sec =  60; /* could be more */
-    select_timeout.tv_usec = 0;
+    /* 
+     * here we must reset select_timeout at each iteration
+     * since select can change it.
+     * 
+     * we put a timeout to give a chance to gtk_timeout and gtk_idle 
+     * (they do not unblock select) to be executed when they are used without a gtk_main call 
+     * I do not exactly know which time choice is good ....
+     * if timeout is too small nsp will work too much when idle 
+     * if too large gtk_timeout and gtk_idle won't work fine without gtk_main.
+     */
+    select_timeout.tv_sec =  0; /* could be more */
+    select_timeout.tv_usec = 5;
 #ifdef WITH_GTK_MAIN 
     while ( gtk_events_pending()) 
       {
