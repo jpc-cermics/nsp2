@@ -57,7 +57,7 @@ int MeObjEq(NspObject *A,NspObject *B);
 int MeObjNeq(NspObject *A,NspObject *B);
 #endif 
 
-#define NULLME (NspMe *) 0
+#define NULLXME (NspMe *) 0
 
 
 

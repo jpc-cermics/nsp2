@@ -103,7 +103,7 @@ job_mod:
 job_me:
 	make job  TNAME=ModuleElt TDOWNCASE=modulelt TSHORT=me \
 		TASSTRING=ModuleElt NULL=NULLME \
-		PARENT=Object FIELDS="char *path ;/\n\tchar *module;" \
+		PARENT=Object FIELDS="char *path ;\n\tchar *module;" \
 		PARENTDOWNCASE=object PARENTINC=nsp/object.h 
 
 clean : distclean 
