@@ -22,8 +22,12 @@
  * SCCS: @(#) tclUnixPort.h 1.49 97/07/30 14:11:59
  */
 
+
+
 #ifndef _TCLUNIXPORT
 #define _TCLUNIXPORT
+
+#include "config.h" 
 
 #ifndef _TCLINT
 #   include "tclInt.h"

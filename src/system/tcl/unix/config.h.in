@@ -1,0 +1,56 @@
+/* -*- Mode: C -*- */
+
+#ifndef NSP_TCL_CONFIG_H 
+#define NSP_TCL_CONFIG_H 
+
+#undef mode_t 
+#undef pid_t
+#undef size_t
+#undef HAVE_GETCWD 
+#undef HAVE_GETWD 
+#undef HAVE_NET_ERRNO_H
+#undef HAVE_OPENDIR 
+#undef HAVE_SIGNED_CHAR
+#undef HAVE_STRERROR 
+#undef HAVE_STRSTR
+#undef HAVE_STRTOD 
+#undef HAVE_STRTOL
+#undef HAVE_SYS_IOCTL_H
+#undef HAVE_SYS_SELECT_H
+#undef HAVE_SYS_TIME_H
+#undef HAVE_TIMEZONE_VAR
+#undef HAVE_TMPNAM
+#undef HAVE_TM_GMTOFF
+#undef HAVE_TM_TZADJ
+#undef HAVE_TZNAME
+#undef HAVE_UNAME 
+#undef HAVE_UNISTD_H
+#undef HAVE_VFORK 
+#undef HAVE_WAIT3 
+#undef HAVE_WAITPID
+#undef NEED_MATHERR
+#undef NO_DIRENT_H
+#undef NO_DLFCN_H
+#undef NO_ERRNO_H
+#undef NO_FD_SET
+#undef NO_FLOAT_H
+#undef NO_GETWD
+#undef NO_LIMITS_H
+#undef NO_STDLIB_H
+#undef NO_STRERROR
+#undef NO_STRING_H
+#undef NO_SYS_WAIT_H
+#undef NO_UNAME
+#undef NO_UNION_WAIT
+#undef NO_VALUES_H
+#undef NO_WAIT3
+#undef TM_IN_SYS_TIME_H
+#undef USEGETWD
+#undef USE_DELTA_FOR_TZ
+#undef USE_DIRENT2_H
+#undef USE_FIONBIO
+#undef USE_SGTTY
+#undef USE_TERMIO
+#undef USE_TERMIOS
+
+#endif
