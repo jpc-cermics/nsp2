@@ -1563,7 +1563,7 @@ fi
 #################
 
 MPLUSLIB=
-MPLUSLIBDIR=libmaxplus
+MPLUSLIBDIR=
 
 if test "$with_maxpluslib" = yes; then
    AC_DEFINE(WITH_MAXPLUSLIB)
