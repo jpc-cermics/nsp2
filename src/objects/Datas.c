@@ -22,6 +22,7 @@
 #include "nsp/object.h"
 #include "nsp/datas.h"
 #include "../functions/FunTab.h"
+#include "../interp/LibsTab.h"
 
 /*
  * Used to store the calling frames for function invocation 
