@@ -145,6 +145,11 @@ extern NspLmo *GetLmo (Stack S,int i);
    { Scierror("%s: arguments %d and %d have incompatible size\n",fname,pos1,pos2); \
      return RET_BUG;} 
 
+#define CheckSquare(fname,pos1,o1) if ( o1->m != o1->n ) \
+   { Scierror("%s: arguments %d should be square\n",fname,pos1); \
+     return RET_BUG;} 
+
+
 #define CheckRows(fname,pos1,o1,value) if ( o1->m != value ) \
    { Scierror("%s: arguments %d has an incorrect row dimension\n",fname,pos1); \
      return RET_BUG;} 

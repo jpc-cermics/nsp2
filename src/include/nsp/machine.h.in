@@ -51,6 +51,9 @@
 /* Define if have and use GTKHTML */
 #undef WITH_GTKHTML
 
+/* Define if use maxplus lib  */
+#undef WITH_MAXPLUSLIB
+
 /* Define if sizeof(int*)==sizeof(int) */
 #undef POINTER_INT 
 
