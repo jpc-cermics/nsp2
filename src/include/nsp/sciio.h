@@ -63,6 +63,7 @@ typedef void (*SciReadFunction) ( char *prompt,char *buffer, int *buf_size,int *
 extern void SciFileReadLine (char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
 extern SciReadFunction SciReadLine1 ;
 extern SciReadFunction SetSciReadFunction  (SciReadFunction F);
+extern SciReadFunction SetSciReadFunctionDef();
 extern FILE *SetSciInputFile ( FILE *file);
 
 char *set_input_str(char *str); 

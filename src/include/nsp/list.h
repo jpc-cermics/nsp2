@@ -52,19 +52,6 @@ NspList *new_list();
  * Object methods redefined for list 
  */
 
-#ifdef List_Private
-static int init_list(NspList *ob,NspTypeList *type);
-static int nsp_list_size(NspList *Mat, int flag);
-char *nsp_list_type_as_string(void);
-char *nsp_list_type_short_string(NspList *M);
-NspObject *list_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int nsp_list_eq(NspObject *A,NspObject *B);
-int nsp_list_neq(NspObject *A,NspObject *B);
-static int nsp_list_is_true(NspList *l);
-NspList*nsp_list_xdr_load(NspFile  *F);
-int nsp_list_xdr_save(NspFile  *F, NspList *L);
-#endif 
-
 #define NULLLIST ( NspList *) 0 
 #define NULLCELL ( Cell *) 0 
 #define NULLOBJ  ( NspObject *) 0 
@@ -72,8 +59,6 @@ int nsp_list_xdr_save(NspFile  *F, NspList *L);
 /** Functions declaration **/
 
 extern NspObject *nsp_list_path_extract(NspList *L, NspObject *O); 
-extern int nsp_list_eq(NspObject *A, NspObject *B); 
-extern int nsp_list_neq(NspObject *A, NspObject *B); 
 extern NspList *nsp_list_object(NspObject *O); 
 extern int IsListObj (Stack stack, int i); 
 extern int IsList (NspObject *O); 
@@ -115,3 +100,20 @@ extern NspBMatrix *nsp_list_equal(NspList *L1, NspList *L2);
 extern int nsp_list_compact(NspList *L1, char flag );
 
 #endif
+
+/* private definitions */
+
+
+#ifdef List_Private
+static int init_list(NspList *ob,NspTypeList *type);
+static int nsp_list_size(NspList *Mat, int flag);
+static char *nsp_list_type_as_string(void);
+static char *nsp_list_type_short_string(NspList *M);
+static NspObject *list_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
+static int nsp_list_eq(NspObject *A,NspObject *B);
+static int nsp_list_neq(NspObject *A,NspObject *B);
+static int nsp_list_is_true(NspList *l);
+static NspList *nsp_list_xdr_load(NspFile  *F);
+static int nsp_list_xdr_save(NspFile  *F, NspList *L);
+static NspMethods *nsp_list_get_methods(void);
+#endif 
