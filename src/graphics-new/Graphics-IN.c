@@ -4561,136 +4561,6 @@ static int sci_demo (char *fname,char *code,int flag)
 
 extern int int_dsearch(Stack stack, int rhs, int opt, int lhs);
 
-/*-----------------------------------------------------------
- * ode en préparation 
- *-----------------------------------------------------------*/
-
-
-typedef struct _ode_data ode_data;
- 
-struct _ode_data
-{
-  NspList *args;
-  NspMatrix *y,*t;
-  NspObject *func;
-};
-
-static int ode_prepare(int m,int n,NspObject *f,NspList *args,ode_data *ode)
-{
-  if (( ode->func =nsp_object_copy(f)) == NULL) return RET_BUG;
-  if (( nsp_object_set_name(ode->func,"ode_f")== FAIL)) return RET_BUG;
-  if ( args != NULL ) 
-    {
-      if (( ode->args = nsp_list_copy(args)) == NULL ) return RET_BUG;
-      if (( nsp_object_set_name((NspObject *) ode->args,"arg")== FAIL)) return RET_BUG;
-    }
-  else 
-    {
-      ode->args = NULL;
-    }
-  if ((ode->y = nsp_matrix_create("y",'r',m,n))== NULL) return RET_BUG;
-  if ((ode->t = nsp_matrix_create("t",'r',1,1))== NULL) return RET_BUG;
-  return OK;
-}
-
-static void ode_clean(ode_data *ode)
-{
-  if ( ode->args != NULL) nsp_list_destroy(ode->args);
-  nsp_object_destroy(&ode->func);
-  nsp_matrix_destroy(ode->y);
-  nsp_matrix_destroy(ode->t);
-}
-
-static int ode_system(int *neq,const double *t,const double y[],double ydot[],ode_data *ode)
-{
-  NspObject *targs[4];/* arguments to be transmited to ode->func */
-  NspObject *nsp_ret;
-  int nret = 1,nargs = 2, i;
-  targs[0]= NSP_OBJECT(ode->t); 
-  ode->t->R[0] = *t;
-  targs[1]= NSP_OBJECT(ode->y); 
-  for ( i= 0 ; i < ode->y->mn ; i++) ode->y->R[i]= y[i];
-  if (ode->args != NULL ) 
-    {
-      targs[2]= NSP_OBJECT(ode->args);
-      nargs= 3;
-    }
-  /* FIXME : a changer pour metre une fonction eval standard */
-  if ( nsp_gtk_eval_function((NspPList *)ode->func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
-    return FAIL;
-  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' ) 
-    {
-      for ( i= 0 ; i < ode->y->mn ; i++) ydot[i]= ((NspMatrix *) nsp_ret)->R[i];
-      nsp_object_destroy((NspObject **) &nsp_ret);
-    }
-  else 
-    {
-      Scierror("Error: evaluation failed in ode t=%5.3f\n",*t);
-      return FAIL;
-    }
-  return OK;
-}
-
-
-int int_ode( Stack stack, int rhs, int opt, int lhs)
-{
-  double ydot[2];
-  ode_data ode;
-  NspObject *f= NULL, *jac=NULL,*g=NULL;
-  NspList *args=NULL, *gargs=NULL;
-  double rtol=1.e-8,atol=1.e-8,t0;
-  int ng=-1;
-  char *type=NULL;
-  NspMatrix *x0,*t,*w=NULL,*iw=NULL;
-  static char *Table[] = {"adams","stiff", "rk", "rkf", "fix", "discrete", "roots", NULL};
-  int_types T[] = {realmat,s_double,realmat,obj,new_opts, t_end} ;
-
-  nsp_option opts[] ={
-    { "args",list,  NULLOBJ,-1},
-    { "atol",s_double,NULLOBJ,-1},
-    { "g", obj, NULLOBJ,-1},
-    { "gargs",list,  NULLOBJ,-1},
-    { "iw",realmatcopy,NULLOBJ,-1},
-    { "jac", obj, NULLOBJ,-1},
-    { "ng", s_int, NULLOBJ,-1},
-    { "rtol",s_double,NULLOBJ,-1},
-    { "type",string,NULLOBJ,-1},
-    { "w", realmatcopy,NULLOBJ,-1},
-    { NULL,t_end,NULLOBJ,-1}
-  };
-
-  if ( GetArgs(stack,rhs,opt,T,&x0,&t0,&t,&f,&opts,&args,&atol,&g,&gargs,&iw,&jac,&ng,&rtol,&type,&w) 
-       == FAIL) return RET_BUG;
-
-  if ( type != NULL) 
-    {
-      int rep = is_string_in_array(type,Table,1);
-      if ( rep < 0 ) 
-	{
-	  string_not_in_array(stack,type,Table,"optional argument type");
-	  return RET_BUG;
-	}
-    }
-
-  if ( IsNspPList(f) )
-    {
-    }
-  else 
-    {
-      Scierror("%s: fourth argument should be a function\n",stack.fname);
-      return RET_BUG;
-    }
-
-  if ( ode_prepare(x0->m,x0->n,f,args,&ode) == FAIL ) 
-    return RET_BUG;
-
-  if ( ode_system(&x0->mn,&t0,x0->R,ydot,&ode)==FAIL) 
-    return RET_BUG;
-
-  ode_clean(&ode);
-
-  return 0;
-}
 
 /*-----------------------------------------------------------
  * feval en preparation 
@@ -4840,8 +4710,11 @@ int int_feval( Stack stack, int rhs, int opt, int lhs)
 
 
 /*************************************************************
- * The Interface for basic matrices operation 
+ * The Interface for graphic functions 
  *************************************************************/
+
+extern int int_ode( Stack stack, int rhs, int opt, int lhs); /* XXX*/
+
 
 static OpTab Graphics_func[]={
   {"ode",int_ode}, /* FIXME: en construction */

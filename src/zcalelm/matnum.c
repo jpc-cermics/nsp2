@@ -2,38 +2,9 @@
 #include <nsp/math.h>
 #include <nsp/sciio.h>
 
-/* from fortran library */
-extern   double pow_di (double *, int *);
-
-
-/*  -- LAPACK auxiliary routine (version 2.0) -- */
-/*     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., */
-/*     Courant Institute, Argonne National Lab, and Rice University */
-/*     October 31, 1992 */
-/*  DLAMCH determines double precision machine parameters. */
-/*  CMACH   (input) CHARACTER*1 */
-/*          Specifies the value to be returned by DLAMCH: */
-/*          = 'E' or 'e',   DLAMCH := eps */
-/*          = 'S' or 's ,   DLAMCH := sfmin */
-/*          = 'B' or 'b',   DLAMCH := base */
-/*          = 'P' or 'p',   DLAMCH := eps*base */
-/*          = 'N' or 'n',   DLAMCH := t */
-/*          = 'R' or 'r',   DLAMCH := rnd */
-/*          = 'M' or 'm',   DLAMCH := emin */
-/*          = 'U' or 'u',   DLAMCH := rmin */
-/*          = 'L' or 'l',   DLAMCH := emax */
-/*          = 'O' or 'o',   DLAMCH := rmax */
-/*          where */
-/*          eps   = relative machine precision */
-/*          sfmin = safe minimum, such that 1/sfmin does not overflow */
-/*          base  = base of the machine */
-/*          prec  = eps*base */
-/*          t     = number of (base) digits in the mantissa */
-/*          rnd   = 1.0 when rounding occurs in addition, 0.0 otherwise */
-/*          emin  = minimum exponent before (gradual) underflow */
-/*          rmin  = underflow threshold - base**(emin-1) */
-/*          emax  = largest exponent before overflow */
-/*          rmax  = overflow threshold  - (base**emax)*(1-eps) */
+/*
+ * static function used here 
+ */
 
 static int nsp_lsame (const char *ca,const  char *cb);
 static int nsp_dlamc1 (int *beta, int *t, int *rnd, int *ieee1);
@@ -42,26 +13,57 @@ static double nsp_dlamc3 (double *a, double *b);
 static  int nsp_dlamc4 (int *emin, double *start, int *base);
 static  int nsp_dlamc5 (int *beta, int *p, int *emin, int *ieee, int *emax, double *rmax);
 
+
+/* from fortran library */
+extern  double pow_di (double *, int *);
+
+/*
+ * when used from Fortran 
+ */
+extern  double nsp_dlamch (char *cmach);
+
+double C2F(dlamch)(char *cmach, long int lstr)
+{
+  return nsp_dlamch (cmach);
+}
+
+/*--------------------------------------------------------------------
+ *     LAPACK auxiliary routine (version 2.0) -- 
+ *     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., 
+ *     Courant Institute, Argonne National Lab, and Rice University 
+ *     October 31, 1992 
+ *  DLAMCH determines double precision machine parameters. 
+ *  CMACH   (input) CHARACTER*1 
+ *          Specifies the value to be returned by DLAMCH: 
+ *          = 'E' or 'e',   DLAMCH := eps 
+ *          = 'S' or 's ,   DLAMCH := sfmin 
+ *          = 'B' or 'b',   DLAMCH := base 
+ *          = 'P' or 'p',   DLAMCH := eps*base 
+ *          = 'N' or 'n',   DLAMCH := t 
+ *          = 'R' or 'r',   DLAMCH := rnd 
+ *          = 'M' or 'm',   DLAMCH := emin 
+ *          = 'U' or 'u',   DLAMCH := rmin 
+ *          = 'L' or 'l',   DLAMCH := emax 
+ *          = 'O' or 'o',   DLAMCH := rmax 
+ *          where 
+ *          eps   = relative machine precision 
+ *          sfmin = safe minimum, such that 1/sfmin does not overflow 
+ *          base  = base of the machine 
+ *          prec  = eps*base 
+ *          t     = number of (base) digits in the mantissa 
+ *          rnd   = 1.0 when rounding occurs in addition, 0.0 otherwise 
+ *          emin  = minimum exponent before (gradual) underflow 
+ *          rmin  = underflow threshold - base**(emin-1) 
+ *          emax  = largest exponent before overflow 
+ *          rmax  = overflow threshold  - (base**emax)*(1-eps) 
+ *------------------------------------------------------------------*/
+
 double nsp_dlamch (char *cmach)
 {
-  /*  ONE = 1.0D+0, ZERO = 0.0D+0 */
   static int first = TRUE;
-  int i_1;
-  double ret_val;
-  static double base;
-  int beta;
-  static double emin, prec, emax;
-  int imin, imax;
-  int lrnd;
-  static double rmin, rmax;
-  double zero= 0.0;
-  static double t;
-  double rmach=0.0;
-  double small;
-  static double sfmin;
-  int it;
-  double one=1.0;
-  static double rnd, eps;
+  static double base, emin, prec, emax, rmin, rmax,t, sfmin, rnd, eps;
+  double zero= 0.0,  rmach=0.0, small, ret_val,one=1.0;
+  int i_1, beta, imin, imax, lrnd,  it;
 
   if (first)
     {

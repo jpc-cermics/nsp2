@@ -8,7 +8,7 @@
 /* #undef SUNOSDLD */
 
 /* Define if leading underscores */
-#define WLU 1
+/* #undef WLU */
 
 /* Define if trailing underscores */
 #define WTU 1
@@ -17,7 +17,7 @@
 #define USE_SHARP_SIGN 1
 
 /* Define if have exp10 */
-/* #undef HAVE_EXP10 */
+#define HAVE_EXP10 1
 
 /* Define if have getwd */
 #define HAVE_GETWD 1
@@ -53,7 +53,7 @@
 #define WITH_GTKHTML 1
 
 /* Define if use maxplus lib  */
-/* #undef WITH_MAXPLUSLIB */
+#define WITH_MAXPLUSLIB 1
 
 /* Define if sizeof(int*)==sizeof(int) */
 #define POINTER_INT 1

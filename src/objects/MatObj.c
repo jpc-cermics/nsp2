@@ -3509,9 +3509,7 @@ int_mx_finite (Stack stack, int rhs, int opt, int lhs)
 
 /* FIXME */
 extern function int_nsp_grand;
-
-
-double nsp_dlamch (char *cmach);
+extern double nsp_dlamch (char *cmach);
 
 /*
  * constants from lapack dlamch 
