@@ -11,7 +11,7 @@
 #include "nsp/graphics/Graphics.h"
 /* #include "nsp/graphics/PloEch.h" */
 
-static void Plo2d2RealToPixel (BCG *Xgc,integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf);
+static void Plo2d2RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf);
 
 /*--------------------------------------------------------------------
   C2F(plot2d2)(xf,x,y,n1,n2,style,strflag,legend,brect,aint)
@@ -24,16 +24,16 @@ int C2F(plot2d2)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 		char *legend,double brect[],int aaint[])
 {
   int n;
-  integer *xm,*ym;
+  int *xm,*ym;
   /** Attention : 2*(*n2) **/
-  integer nn2=2*(*n2);
+  int nn2=2*(*n2);
   if ( CheckxfParam(xf)== 1) return(0);
 
   /** Boundaries of the frame **/
   update_frame_bounds(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
-  if (Xgc->graphic_engine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Plot2(Xgc,xf,x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /** Allocation **/
@@ -66,9 +66,9 @@ int C2F(plot2d2)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 }
 
 
-static void Plo2d2RealToPixel(BCG *Xgc,integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf)
+static void Plo2d2RealToPixel(BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf)
 {
-  integer i,j;
+  int i,j;
   /** Computing y-values **/
   if ((int)strlen(xf) >= 3 && xf[2]=='l')	  
     {

@@ -11,40 +11,40 @@
 #include "nsp/graphics/Graphics.h"
 /* #include "nsp/graphics/PloEch.h" */
 
-typedef void (level_f) (BCG *Xgc,integer ival, double Cont, double xncont,
+typedef void (level_f) (BCG *Xgc,int ival, double Cont, double xncont,
 			       double yncont);
-typedef void (*ptr_level_f) (BCG *Xgc,integer ival, double Cont, double xncont,
+typedef void (*ptr_level_f) (BCG *Xgc,int ival, double Cont, double xncont,
 			       double yncont);
 
 static int 
-Contour2D (BCG *Xgc,ptr_level_f,char *,double *x,double *y,double *z,integer *n1,
-	   integer *n2,integer *flagnz,integer *nz,double *zz,
-	   integer *style,char *strflag,char *legend,double *brect,
-	   integer *aaint);
+Contour2D (BCG *Xgc,ptr_level_f,char *,double *x,double *y,double *z,int *n1,
+	   int *n2,int *flagnz,int *nz,double *zz,
+	   int *style,char *strflag,char *legend,double *brect,
+	   int *aaint);
 static void 
 contourI (BCG *Xgc,ptr_level_f,double *, double *, double *,
-	  double *, integer *, integer *, integer *);
+	  double *, int *, int *, int *);
 static void
-look (BCG *Xgc,ptr_level_f, integer i, integer j, integer ib,
-	      integer jb, integer qq,double Cont, integer style);
+look (BCG *Xgc,ptr_level_f, int i, int j, int ib,
+	      int jb, int qq,double Cont, int style);
 
-static integer ffnd (BCG *Xgc,ptr_level_f,integer,integer,integer,integer,integer,
-		     integer,integer,integer,integer,integer,
-		     double,integer *);
+static int ffnd (BCG *Xgc,ptr_level_f,int,int,int,int,int,
+		     int,int,int,int,int,
+		     double,int *);
 
 static int Gcont_size = 0;
 
-static void ContourTrace (BCG *Xgc,double Cont, integer style);
+static void ContourTrace (BCG *Xgc,double Cont, int style);
 static level_f Contstore_, Contstore_1, Contstore_2,GContstore_2;
 static void GContstore_2Last (void);
-static double x_cont (integer i);
-static double y_cont (integer i);
-static double phi_cont (integer, integer); 
+static double x_cont (int i);
+static double y_cont (int i);
+static double phi_cont (int, int); 
 static double f_intercept  (double, double, double, double, double );
-static integer not_same_sign  (double val1, double val2); 
-static integer get_itg_cont  (integer i, integer j); 
-static void inc_itg_cont  (integer i, integer j, integer val); 
-static integer oddp  (integer i);
+static int not_same_sign  (double val1, double val2); 
+static int get_itg_cont  (int i, int j); 
+static void inc_itg_cont  (int i, int j, int val); 
+static int oddp  (int i);
 
 /*-----------------------------------------------------------------------
  *  Level curves 
@@ -60,16 +60,16 @@ static integer oddp  (integer i);
  *---------------------------------------------------------------------------*/
 
 static double *GX,*GY,*GZ;
-static integer Gn1,Gn2;
+static int Gn1,Gn2;
 
-static void InitValues(double *x, double *y, double *z, integer n1, integer n2)
+static void InitValues(double *x, double *y, double *z, int n1, int n2)
 {
   Gn1=n1;  Gn2=n2;  GX = x;  GY = y;  GZ = z;
 }
 
-/*--------return the  value of f for a pointeger on the grid-----*/
+/*--------return the  value of f for a point on the grid-----*/
 
-static double phi_cont(integer i, integer j)
+static double phi_cont(int i, int j)
 {
   return(GZ[i+Gn1*j]);
 }
@@ -84,26 +84,26 @@ static double f_intercept(double zCont, double fi, double xi, double fj, double 
 
 /* check for boundary points */
 
-static integer  bdyp(integer i, integer j)
+static int  bdyp(int i, int j)
 {
   return (  j == 0 || i == 0 || j == Gn2-1 || i == Gn1-1 );
 }
 
 /* store or get flag values */
 
-static  integer *itg_cont, *xbd_cont,*ybd_cont;
+static  int *itg_cont, *xbd_cont,*ybd_cont;
 
-static integer get_itg_cont(integer i, integer j)
+static int get_itg_cont(int i, int j)
 {
   return( itg_cont[i+Gn1*j]);
 }
 
-static void inc_itg_cont(integer i, integer j, integer val)
+static void inc_itg_cont(int i, int j, int val)
 {
   itg_cont[i+Gn1*j] += val;
 }
 
-static integer not_same_sign(double val1, double val2)
+static int not_same_sign(double val1, double val2)
 {
   if ( ISNAN(val1) ==1 || ISNAN(val2) == 1) return(0);
   /** 0.0 est consid\'er\'e comme positif **/
@@ -115,15 +115,15 @@ static integer not_same_sign(double val1, double val2)
       if ( val2 >= 0.0) return(1) ; else return(0);}
 }
 
-static integer oddp(integer i) { return( i == 1 || i ==3 );}
+static int oddp(int i) { return( i == 1 || i ==3 );}
 
 /*---------return the x-value of a grid point--------*/
 
-static double x_cont(integer i) {  return GX[i] ;}
+static double x_cont(int i) {  return GX[i] ;}
 
 /*---------return the y-value of a grid point --------*/
 
-static double y_cont(integer i) {  return GY[i] ;}
+static double y_cont(int i) {  return GY[i] ;}
 
 /*------------------------------------------------------------
  * Draw level curves for a function f(x,y) which values 
@@ -133,7 +133,7 @@ static double y_cont(integer i) {  return GY[i] ;}
  * - y is a (1,n2) matrix 
  * - x,y,z are stored as one dimensionnal array in C 
  * - if *flagnz =0 
- * -   then  nz is an integer pointer to the number of level curves. 
+ * -   then  nz is an int pointer to the number of level curves. 
  *     else  zz is an array which gives th requested level values.
  *            (and nz is the size of thos array)
  * Computed from min and max of z
@@ -143,18 +143,19 @@ static double y_cont(integer i) {  return GY[i] ;}
 static double ZC=0.0;
 static char   ContNumFormat[100];
 
-int C2F(contour)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, double *teta, double *alpha, char *legend, integer *flag, double *bbox, double *zlev, integer lstr)
+int C2F(contour)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, double *teta, double *alpha, char *legend, int *flag, double *bbox, double *zlev, int lstr)
 {
   int err=0;
-  integer fg;
-  integer InsideU[4],InsideD[4];
-  void (*func) (BCG *Xgc,integer, double,double,double);
+  int fg;
+  int InsideU[4],InsideD[4];
+  void (*func) (BCG *Xgc,int, double,double,double);
   static double *zconst;
   double zmin,zmax;
-  integer N[3],i;
+  int N[3],i;
   double xbox[8],ybox[8],zbox[8];
 
-  if (Xgc->graphic_engine->scale->get_driver()=='R')  store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
+    store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
 
   switch (flag[0])
     {
@@ -215,12 +216,12 @@ int C2F(contour)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer 
       for ( i =0 ; i < *nz ; i++) 
 	zconst[i]=zmin + (i+1)*(zmax-zmin)/(*nz+1);
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(Xgc,func,x,y,z,zconst,N,(integer *) 0,&err);
+      contourI(Xgc,func,x,y,z,zconst,N,(int *) 0,&err);
     }
    else
     {
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(Xgc,func,x,y,z,zz,N,(integer *) 0,&err);
+      contourI(Xgc,func,x,y,z,zz,N,(int *) 0,&err);
     }
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
   if (flag[0]!=2 &&  flag[2] >=3 )
@@ -237,7 +238,7 @@ int C2F(contour)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer 
 
 /** interface for contour2d **/
 
-int C2F(contour2)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, integer *style, char *strflag, char *legend, double *brect, integer *aaint)
+int C2F(contour2)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aaint)
 {
   Contour2D(Xgc,Contstore_2,"contour2",x,y,z,n1,n2,flagnz,nz,zz,style,strflag,
 	    legend,brect,aaint);
@@ -249,18 +250,18 @@ int C2F(contour2)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer
  * contour2di + c2dex 
  */
 
-static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, integer *style, char *strflag, char *legend, double *brect, integer *aaint)
+static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aaint)
 {
-  integer err=0;
+  int err=0;
   static double *zconst;
   double zmin,zmax;
-  integer N[3],i;
+  int N[3],i;
 
   /** Boundaries of the frame **/
   update_frame_bounds(Xgc,1,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
   /** If Record is on **/
-  if (Xgc->graphic_engine->scale->get_driver()=='R' && strcmp(name,"contour2")==0 ) 
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE && strcmp(name,"contour2")==0 ) 
     store_Contour2D(Xgc,x,y,z,n1,n2,flagnz,nz,zz,style,strflag,legend,brect,aaint);
 
   zmin=(double) Mini(z,*n1*(*n2)); 
@@ -294,12 +295,12 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
   return(0);
 }
 
-int C2F(contourif)(BCG *Xgc,double *x, double *y, double *z, integer *n1, integer *n2, integer *flagnz, integer *nz, double *zz, integer *style)
+int C2F(contourif)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style)
 {
-  integer err=0;
+  int err=0;
   static double *zconst;
   double zmin,zmax;
-  integer N[3],i;
+  int N[3],i;
 
   zmin=(double) Mini(z,*n1*(*n2)); 
   zmax=(double) Maxi(z,*n1*(*n2));
@@ -330,16 +331,16 @@ int C2F(contourif)(BCG *Xgc,double *x, double *y, double *z, integer *n1, intege
  *  x : of size N[0] gives the x-values of the grid 
  *  y : of size N[1] gives the y-values of the grid 
  *  z : of size N[0]*N[1]  gives the f-values on the grid 
- *  style: size ncont (=N[2]) or empty integer pointer 
+ *  style: size ncont (=N[2]) or empty int pointer 
  *  gives the dash style for contour i
  *-------------------------------------------------------*/
 
-static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z, double *zCont, integer *N, integer *style, integer *err)
+static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z, double *zCont, int *N, int *style, int *err)
 {
   int check = 1;
   char *F;
-  integer n1,n2,ncont,i,c,j,k,n5;
-  integer stylec;
+  int n1,n2,ncont,i,c,j,k,n5;
+  int stylec;
   n1=N[0];n2=N[1];ncont=N[2];
   F= Xgc->graphic_engine->xget_fpf(Xgc);
   if ( F[0] == '\0') 
@@ -382,14 +383,14 @@ static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z,
 	}
   for ( c= 0 ; c < ncont ; c++)
     {
-      stylec = ( style != (integer *) 0) ? style[c] : c;
+      stylec = ( style != (int *) 0) ? style[c] : c;
       /** itg-cont is a flag array to memorize checked parts of the grid **/
       for ( i = 0 ; i < n1; i++)
 	for ( j =0 ; j < n2 ; j++)
 	  itg_cont[i+n1*j]=0 ;
       /** all the boundary segments **/
       for ( k = 1 ; k < n5 ; k++)
-	{ integer ib,jb;
+	{ int ib,jb;
 	i = xbd_cont[k] ; j = ybd_cont[k];
 	ib = xbd_cont[k-1] ; jb= ybd_cont[k-1];
 	if  (not_same_sign (phi_cont(i,j)-zCont[c] , 
@@ -413,9 +414,9 @@ static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z,
  *  c: indice of the contour Cont 
  *---------------------------------------------------------------------*/
 
-static void look(BCG *Xgc,ptr_level_f func, integer i, integer j, integer ib, integer jb, integer qq, double Cont, integer style)
+static void look(BCG *Xgc,ptr_level_f func, int i, int j, int ib, int jb, int qq, double Cont, int style)
 {
-  integer ip,jp,im,jm,zds,ent=0,flag=0,wflag;
+  int ip,jp,im,jm,zds,ent=0,flag=0,wflag;
   jp= j+1; ip= i+1; jm=j-1;im=i-1;
   /*  on regarde comment est le segment de depart */
   if  ( jb == jm)  flag = 1; 
@@ -551,10 +552,10 @@ static void look(BCG *Xgc,ptr_level_f func, integer i, integer j, integer ib, in
  *       suivant a explorer 
  *-----------------------------------------------------------------------*/
 
-static integer ffnd (BCG *Xgc,ptr_level_f func, integer i1, integer i2, integer i3, integer i4, integer jj1, integer jj2, integer jj3, integer jj4, integer ent, integer qq, double Cont, integer *zds)
+static int ffnd (BCG *Xgc,ptr_level_f func, int i1, int i2, int i3, int i4, int jj1, int jj2, int jj3, int jj4, int ent, int qq, double Cont, int *zds)
 {
   double phi1,phi2,phi3,phi4,xav,yav,phiav;
-  integer revflag,i;
+  int revflag,i;
   phi1=phi_cont(i1,jj1)-Cont;
   phi2=phi_cont(i2,jj2)-Cont;
   phi3=phi_cont(i3,jj3)-Cont;
@@ -571,7 +572,7 @@ static integer ffnd (BCG *Xgc,ptr_level_f func, integer i1, integer i2, integer 
     }
   if (  not_same_sign( phiav,phi4)) 
     {
-      integer l1, k1; 
+      int l1, k1; 
       double phi;
       revflag = 1 ; 
       l1= i4; k1= jj4;
@@ -589,7 +590,7 @@ static integer ffnd (BCG *Xgc,ptr_level_f func, integer i1, integer i2, integer 
    * on sort 
    */
   for  ( i = 0 ;  ; i++)
-    { integer l1,k1;
+    { int l1,k1;
       double phi;
       if ( not_same_sign ( phi1,phi2))   /** sortir du for **/ break ; 
       if  ( phiav != 0.0 ) 
@@ -613,8 +614,8 @@ static integer ffnd (BCG *Xgc,ptr_level_f func, integer i1, integer i2, integer 
  * Storing and tracing level curves 
  *----------------------------------------------------------------*/
 
-static integer *xcont,*ycont;
-static integer cont_size ;
+static int *xcont,*ycont;
+static int cont_size ;
 
 /*
  * store a point in the current level curve if ival == 0 the level 
@@ -623,7 +624,7 @@ static integer cont_size ;
  */
 
 static void
-G_Contstore_(integer ival, int xncont, int yncont)
+G_Contstore_(int ival, int xncont, int yncont)
 {
   int n;
   /* nouveau contour */
@@ -644,7 +645,7 @@ G_Contstore_(integer ival, int xncont, int yncont)
  */
 
 static void
-Contstore_(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
+Contstore_(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 {
   G_Contstore_(ival,GEOX(xncont,yncont,Cont),
 	      GEOY(xncont,yncont,Cont));
@@ -657,7 +658,7 @@ Contstore_(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
  */
 
 static void
-Contstore_1(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
+Contstore_1(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 {
   G_Contstore_(ival,GEOX(xncont,yncont,ZC),
 	      GEOY(xncont,yncont,ZC));
@@ -670,7 +671,7 @@ Contstore_1(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
  */
 
 static void
-Contstore_2(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
+Contstore_2(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 {
   G_Contstore_(ival,XScale(xncont),YScale(yncont));
 }
@@ -681,11 +682,11 @@ Contstore_2(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
  * floating point format 
  */
 
-static void ContourTrace(BCG *Xgc,double Cont, integer style)
+static void ContourTrace(BCG *Xgc,double Cont, int style)
 { 
   char *F;
   int pat,old;
-  integer close=0, flag=0, uc;
+  int close=0, flag=0, uc;
   double angle=0.0;
   char str[100];
 
@@ -721,7 +722,7 @@ static int count=0;
  
 /** used to bring back data to Scilab Stack **/
 
-int C2F(getconts)(double **x, double **y, integer *mm, integer *n)
+int C2F(getconts)(double **x, double **y, int *mm, int *n)
 {
   *x = Gxcont;
   *y = Gycont;
@@ -730,7 +731,7 @@ int C2F(getconts)(double **x, double **y, integer *mm, integer *n)
   return 0;
 }
 
-static void GContstore_2(BCG *Xgc,integer ival, double Cont, double xncont, double yncont)
+static void GContstore_2(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 {
   int n;
   if ( ival == 0) 

@@ -1,7 +1,7 @@
 all: scan mktmpl mkdb mkhtml 
 
 scan :
-	gtkdoc-scan --module=nsp --source-dir=../include/nsp --ignore-headers="blas.h gsort.h gsort-double.h gsort-int.h gsort-gen.h gsort-string.h gsort-p.h gtk graphics TAGS all-gtk.h all-pango.h all-gdk.h"
+	gtkdoc-scan --module=nsp --source-dir=../include/nsp --ignore-headers="blas.h gsort.h gsort-double.h gsort-int.h gsort-gen.h gsort-string.h gsort-p.h gtk TAGS all-gtk.h all-pango.h all-gdk.h"
 
 mktmpl:
 	gtkdoc-mktmpl --module=nsp

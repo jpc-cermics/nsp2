@@ -50,9 +50,7 @@ static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rec
 static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, double *wd, double *hd);
 
 static void set_driver(char *x0) ;
-static void get_driver_name(char *str);
 static char get_driver(void ) ;
-static int get_driver_id(void );
 
 static void xset1_clipping_p(BCG *Xgc,double x,double y,double w,double h);
 static void xset1_clipgrf(BCG *Xgc);
@@ -91,11 +89,10 @@ static void xset1_pixmapclear(BCG *Xgc);
 
 static void xset1_initialize_gc(BCG *Xgc);
 
+
 Gengine1 nsp_gengine1={
   set_driver,
-  get_driver_name,
   get_driver,
-  get_driver_id,
 
   drawarc_1,
   fillarcs_1,
@@ -157,7 +154,7 @@ Gengine1 nsp_gengine1={
   xset1_show,
   xset1_pixmapclear,
 
-  xset1_initialize_gc
+  xset1_initialize_gc,
 
 };
 
@@ -286,14 +283,9 @@ static void set_driver(char *x0)
     }
 }
 
-static void get_driver_name(char *str)
-{
-  strcpy(str,DriverName);
-}
 
 static char get_driver(void ) {return(DriverName[0]);}
 
-static int get_driver_id(void ) { return DriverId;}
 
 /*------------------------------------------------
  * graphic context initialization 

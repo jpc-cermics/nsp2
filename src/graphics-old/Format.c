@@ -20,18 +20,18 @@
 
 extern double C2F(dlamch)  (char *CMACH, unsigned long int);
 
-static void FormatPrec (char *fmt, integer *desres, double xmin, double xmax, 
+static void FormatPrec (char *fmt, int *desres, double xmin, double xmax, 
 				double xpas);
-static void FormatPrec1 (char *fmt, integer *desres, double *xx, integer nx);
-static int Fsepare (char *fmt, integer dec, integer *l, double xmin, double xmax, 
+static void FormatPrec1 (char *fmt, int *desres, double *xx, int nx);
+static int Fsepare (char *fmt, int dec, int *l, double xmin, double xmax, 
 			    double xpas);
-static int Fsepare1 (char *fmt, integer dec, integer *l, double *xx, integer nx);
+static int Fsepare1 (char *fmt, int dec, int *l, double *xx, int nx);
 static void graduate1 (double *xmi,double * xma,double * xi,double * xa,
-			       integer * np1,integer * np2,integer * kminr,integer * kmaxr,integer * ar,int count);
+			       int * np1,int * np2,int * kminr,int * kmaxr,int * ar,int count);
 
-static void gradua ( double *xmi, double *xma,integer * kminr,integer *kmaxr,integer *ar,integer *npr,integer *b);
-static void decompSup (double x,integer * xk,integer *  xa,integer   b);
-static void decompInf (double x,integer * xk,integer *  xa,integer   b);
+static void gradua ( double *xmi, double *xma,int * kminr,int *kmaxr,int *ar,int *npr,int *b);
+static void decompSup (double x,int * xk,int *  xa,int   b);
+static void decompInf (double x,int * xk,int *  xa,int   b);
 
 /*----------------------------------------------------
  * ChoixFormatE returns a format ("%.*f" or "%.*e")
@@ -49,7 +49,7 @@ static void decompInf (double x,integer * xk,integer *  xa,integer   b);
 void ChoixFormatE(char *fmt, double xmin, double xmax, double xpas)
 {
   char c;
-  integer des,len;
+  int des,len;
   /* format f minimal  */
   for ( des = 0 ; des < 5 ; des++)
     {
@@ -78,10 +78,10 @@ void ChoixFormatE(char *fmt, double xmin, double xmax, double xpas)
  *  if not increase it (i.e increase desres) 
  */
 
-static void FormatPrec(char *fmt, integer *desres, double xmin, double xmax, double xpas)
+static void FormatPrec(char *fmt, int *desres, double xmin, double xmax, double xpas)
 {
   char buf1[100],buf2[100];
-  integer i=0;
+  int i=0;
   while ( xmin+((double)i)*xpas < xmax && *desres  < 10 )
     {
       double x1,x2,yy1;
@@ -102,7 +102,7 @@ static void FormatPrec(char *fmt, integer *desres, double xmin, double xmax, dou
  *  the string length that will result in using the format 
  */
 
-static int Fsepare(char *fmt, integer dec, integer *l, double xmin, double xmax, double xpas)
+static int Fsepare(char *fmt, int dec, int *l, double xmin, double xmax, double xpas)
 {
   double x=xmin;
   char buf1[100],buf2[100];
@@ -127,10 +127,10 @@ static int Fsepare(char *fmt, integer dec, integer *l, double xmin, double xmax,
  * array xx[0:nx-1];
  *------------------------------------------------*/
 
-void ChoixFormatE1(char *fmt, double *xx, integer nx)
+void ChoixFormatE1(char *fmt, double *xx, int nx)
 {
   char c;
-  integer des,len;
+  int des,len;
   /* format f minimal  */
   for ( des = 0 ; des < 5 ; des++)
     {
@@ -161,11 +161,11 @@ void ChoixFormatE1(char *fmt, double *xx, integer nx)
  *  the string length that will result in using the format 
  *------------------------------------------------------*/
 
-static void FormatPrec1(char *fmt, integer *desres, double *xx, integer nx)
+static void FormatPrec1(char *fmt, int *desres, double *xx, int nx)
 {
   char buf1[100],buf2[100];
   double xpas;
-  integer i=0;
+  int i=0;
   while ( i < nx-1 && *desres  < 10 )
     {
       double x1,x2;
@@ -183,10 +183,10 @@ static void FormatPrec1(char *fmt, integer *desres, double *xx, integer nx)
     }
 }
 
-static int Fsepare1(char *fmt, integer dec, integer *l, double *xx, integer nx)
+static int Fsepare1(char *fmt, int dec, int *l, double *xx, int nx)
 {
   char buf1[100],buf2[100];
-  integer i=0;
+  int i=0;
   *l = 0;
   /**  Take care of : sprintf(buf1,"%.*f",0,1.d230) which overflow in buf1 **/
   /**  we don't use %.*f format if numbers are two big **/
@@ -222,7 +222,7 @@ static int Fsepare1(char *fmt, integer dec, integer *l, double *xx, integer nx)
  *  [xmi,xma]
  *---------------------------------------------------- */
 
-int graduate(double *xmi, double *xma, double *xi, double *xa, integer *np1, integer *np2, integer *kminr, integer *kmaxr, integer *ar)
+int graduate(double *xmi, double *xma, double *xi, double *xa, int *np1, int *np2, int *kminr, int *kmaxr, int *ar)
 {
   if ( *xmi > *xma) 
     {
@@ -234,9 +234,9 @@ int graduate(double *xmi, double *xma, double *xi, double *xa, integer *np1, int
   return(0);
 }
 
-static void graduate1(double *xmi, double *xma, double *xi, double *xa, integer *np1, integer *np2, integer *kminr, integer *kmaxr, integer *ar, int count)
+static void graduate1(double *xmi, double *xma, double *xi, double *xa, int *np1, int *np2, int *kminr, int *kmaxr, int *ar, int count)
 {
-  integer npr,b,i,dx,dxmi,dxma;
+  int npr,b,i,dx,dxmi,dxma;
   /* fprintf(stderr,"[%20.10f,%20.10f]\n",*xmi,*xma); */
   /* 
    * 
@@ -340,12 +340,12 @@ static void graduate1(double *xmi, double *xma, double *xi, double *xa, integer 
 
 #define DMAX 0xFFFFFFF
 
-static void gradua(double *xmi, double *xma, integer *kminr, integer *kmaxr, integer *ar, integer *npr, integer *b)
+static void gradua(double *xmi, double *xma, int *kminr, int *kmaxr, int *ar, int *npr, int *b)
 {
   double x0=*xmi,x1=*xma,loc;
-  integer x0k,x0a;
-  integer x1k,x1a;
-  integer kmin1,kmax1,a1,np1,kmin2,kmax2,a2,np2,kmin,kmax,a,np;
+  int x0k,x0a;
+  int x1k,x1a;
+  int kmin1,kmax1,a1,np1,kmin2,kmax2,a2,np2,kmin,kmax,a,np;
   decompInf(x0,&x0k,&x0a,*b);
   decompSup(x1,&x1k,&x1a,*b);
   /** special cases **/
@@ -436,7 +436,7 @@ static void gradua(double *xmi, double *xma, integer *kminr, integer *kmaxr, int
  * il faut choisir b < 10 pour ne pas depasser dans k l'entier maximum
  */
 
-static void decompSup(double x, integer *xk, integer *xa, integer b)
+static void decompSup(double x, int *xk, int *xa, int b)
 {
   if ( x == 0.0 ) 
     { 
@@ -478,7 +478,7 @@ static void decompSup(double x, integer *xk, integer *xa, integer b)
  *    s'obtient par decompSup(-x,xk,xa,b) et xk=-xk 
  */
 
-static void decompInf(double x, integer *xk, integer *xa, integer b)
+static void decompInf(double x, int *xk, int *xa, int b)
 {
   if ( x == 0.0 ) 
     { 
@@ -515,7 +515,7 @@ static void decompInf(double x, integer *xk, integer *xa, integer b)
 main() 
 {
   double xmin=1.0,xmax=1.0,eps=1.e-10,xi,xa;
-  integer n1,n2,n,i;
+  int n1,n2,n,i;
   int kminr,kmaxr,ar;
   xmin=0.0;
   xmax=1.006;

@@ -39,7 +39,7 @@ static S_alloc Storage[S_alloc_max] = { {0,0,NULL},{0,0,NULL},{0,0,NULL},
 
 void * graphic_alloc(int indice, int n, unsigned int size)
 {
-  integer *p; 
+  int *p; 
   unsigned int size_needed = n*size;
   unsigned int block_size = Storage[indice].size;
   /* check indice */
@@ -52,10 +52,10 @@ void * graphic_alloc(int indice, int n, unsigned int size)
   while ( size_needed > block_size ) block_size += NBPOINTS ;
   if ( Storage[indice].init == 0) 
     /** Allocation **/
-    { p = (integer*) MALLOC( block_size); }
+    { p = (int*) MALLOC( block_size); }
   else
     /** Reallocation **/
-    { p = (integer *)  REALLOC( Storage[indice].storage,block_size ) ; }
+    { p = (int *)  REALLOC( Storage[indice].storage,block_size ) ; }
   if ( p == NULL) 
     return 0;
   Storage[indice].storage= p ;

@@ -16,7 +16,7 @@
 
 static double  x_convert (char xy_type,double x[] ,int i);
 static double  y_convert (char xy_type,double x[] ,int i);
-static void NumberFormat (char *str,integer k,integer a);
+static void NumberFormat (char *str,int k,int a);
 static void aplotv1 (BCG *Xgc,char*);
 static void aplotv2 (BCG *Xgc,char*);
 
@@ -151,7 +151,7 @@ static void aplotv1(BCG *Xgc,char *strflag)
  *         'v' means that tics position are given by a vector 
  *         'r' means that tics position are in a range i.e given by a vector of size 3 
  *             [min,max,number_of_intervals] 
- *         'i' means that tics positions are in a range given by four number (integers) 
+ *         'i' means that tics positions are in a range given by four number (ints) 
  *             [k1,k2,e,number_of intervale] -> [k1*10^e,k2*10^e] 
  *   x vector of size nx 
  *   y vector of size ny 
@@ -180,7 +180,7 @@ static void aplotv1(BCG *Xgc,char *strflag)
 
 void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
-  if (Xgc->graphic_engine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_SciAxis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
   Sci_Axis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
 }
@@ -191,10 +191,10 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
   double angle=0.0,vxx,vxx1;
   int vx[2],vy[2],xm[2],ym[2];
   char c_format[5];
-  integer flag=0,xx=0,yy=0,posi[2],rect[4];
-  integer i,barlength;
+  int flag=0,xx=0,yy=0,posi[2],rect[4];
+  int i,barlength;
   int ns=2,style=0,iflag=0;
-  integer fontid[2],fontsize_kp,logrect[4],smallersize,color_kp;
+  int fontid[2],fontsize_kp,logrect[4],smallersize,color_kp;
   
    /* Modified by POLPOTH09042001 Mon Apr  9 08:59:10 MET DST 2001 */
    /* If  zero ticks are requested, exit */
@@ -276,8 +276,8 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	    {
 	      /*defaults format **/
 	      if  ( xy_type == 'i') 
-		NumberFormat(foo,((integer) (x[0] + i*(x[1]-x[0])/x[3])),
-			     ((integer) x[2]));
+		NumberFormat(foo,((int) (x[0] + i*(x[1]-x[0])/x[3])),
+			     ((int) x[2]));
 	      else 
 		sprintf(foo,c_format,vxx);
 	    }
@@ -361,8 +361,8 @@ void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, in
 	  else if ( format == NULL)
 	    {
 	      if ( xy_type == 'i') 
-		NumberFormat(foo,((integer) (y[0] + i*(y[1]-y[0])/y[3])),
-			     ((integer) y[2]));
+		NumberFormat(foo,((int) (y[0] + i*(y[1]-y[0])/y[3])),
+			     ((int) y[2]));
 	      else 
 		sprintf(foo,c_format,vxx);
 	    }
@@ -459,7 +459,7 @@ static double y_convert(char xy_type, double *y, int i)
 
 /* Format pour imprimer un nombre de la forme k10^a */
 
-static void NumberFormat(char *str, integer k, integer a)
+static void NumberFormat(char *str, int k, int a)
 {
   if ( k==0) 
     {

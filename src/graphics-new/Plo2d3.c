@@ -12,7 +12,7 @@
 /* #include "nsp/graphics/PloEch.h" */
 
 
-static void Plo2d3RealToPixel (BCG *Xgc,integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf);
+static void Plo2d3RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf);
 
 /*--------------------------------------------------------------------
   C2F(plot2d3)(xf,x,y,n1,n2,style,strflag,legend,brect,aaint)
@@ -27,17 +27,17 @@ int C2F(plot2d3)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 		char *legend,double brect[],int aaint[])
 {
   int n;
-  integer *xm,*ym;
-  integer j;
+  int *xm,*ym;
+  int j;
   /** Attention : 2*(*n2) **/
-  integer nn2=2*(*n2);
+  int nn2=2*(*n2);
   if ( CheckxfParam(xf)== 1) return(0);
 
   /** Boundaries of the frame **/
   update_frame_bounds(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
-  if (Xgc->graphic_engine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Plot3(Xgc,xf,x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /* Allocation */
@@ -65,7 +65,7 @@ int C2F(plot2d3)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
       /** to get the default dash **/
       for ( j = 0 ; j < (*n1) ; j++)
 	{
-	  integer lstyle,iflag=0;
+	  int lstyle,iflag=0;
 	  /** style must be negative **/
 	  lstyle = (style[j] < 0) ?  -style[j] : style[j];
 	  Xgc->graphic_engine->drawsegments(Xgc,&xm[2*(*n2)*j],&ym[2*(*n2)*j],nn2,&lstyle,iflag);
@@ -79,9 +79,9 @@ int C2F(plot2d3)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 }
 
 
-static void Plo2d3RealToPixel(BCG *Xgc,integer *n1, integer *n2, double *x, double *y, integer *xm, integer *ym, char *xf)
+static void Plo2d3RealToPixel(BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf)
 {
-  integer i,j;
+  int i,j;
   /** Computing y-values **/
   if ((int)strlen(xf) >= 3 && xf[2]=='l')	  
     {

@@ -20,7 +20,7 @@ static void PaintTriangle (BCG *Xgc,double sx[], double sy[], double fxy[],
 static void PermutOfSort (int tab[], int perm[]);
 static void FindIntersection (double sx[], double sy[], double fxy[],
 				       double z, int inda, int indb, 
-				       integer *xint, integer *yint);
+				       int *xint, int *yint);
 
 /*------------------------------------------------------------
  *  Iso contour with grey level or colors 
@@ -45,15 +45,15 @@ static void FindIntersection (double sx[], double sy[], double fxy[],
  *  first and last color of the colormap (Bruno.Pincon@iecn.u-nancy.fr)
 ---------------------------------------------------------------*/
 
-int C2F(fec)(BCG *Xgc,double *x, double *y, double *triangles, double *func, integer *Nnode, integer *Ntr, char *strflag, char *legend, double *brect, integer *aaint, double *zminmax, integer *colminmax)
+int C2F(fec)(BCG *Xgc,double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, char *strflag, char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
 {
-  integer i,*xm,*ym,j,k, n1=1;
+  int i,*xm,*ym,j,k, n1=1;
 
   /** Boundaries of the frame **/
   update_frame_bounds(Xgc,0,"gnn",x,y,&n1,Nnode,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
-  if (Xgc->graphic_engine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     /* added zminmax and colminmax (bruno) */
     store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax);
 
@@ -76,12 +76,12 @@ int C2F(fec)(BCG *Xgc,double *x, double *y, double *triangles, double *func, int
      *	 beginning of the code modified by Bruno 01/02/2001  
      ********************************************************************/
     
-    integer nz;
-    integer whiteid;
+    int nz;
+    int whiteid;
     
     double *zlevel, dz, zmin, zmax, fxy[3], sx[3], sy[3];
     int *zone, *fill, kp, perm[3], zxy[3], color_min;
-    integer ii[3];
+    int ii[3];
 
     /* choice between zmin and zmax given by the user or computed
      *   with the min and max z values. In matdes.c I have put 
@@ -171,7 +171,7 @@ int C2F(fec)(BCG *Xgc,double *x, double *y, double *triangles, double *func, int
 
       /* retrieve node numbers and functions values */
       for ( k = 0 ; k < 3 ; k++ ) {
-	ii[k] = (integer) triangles[j+(*Ntr)*(k+1)] - 1;
+	ii[k] = (int) triangles[j+(*Ntr)*(k+1)] - 1;
 	zxy[k] = zone[ii[k]];
       }
 
@@ -204,7 +204,7 @@ int C2F(fec)(BCG *Xgc,double *x, double *y, double *triangles, double *func, int
   /** Drawing the Legends **/
   if ((int)strlen(strflag) >=1  && strflag[0] == '1')
     {
-      integer style = -1;
+      int style = -1;
       n1=1;
       Legends(Xgc,&style,&n1,legend);
     }
@@ -254,8 +254,8 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
   */
 
   int nb0, edge, izone, color;
-  integer nr, resx[5],resy[5];
-  integer xEdge2, yEdge2, xEdge, yEdge; 
+  int nr, resx[5],resy[5];
+  int xEdge2, yEdge2, xEdge, yEdge; 
 
   /* 
      case of only one color for the triangle : 
@@ -345,7 +345,7 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
   Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
 }
 
-static void FindIntersection(double *sx, double *sy, double *fxy, double z, int inda, int indb, integer *xint, integer *yint)
+static void FindIntersection(double *sx, double *sy, double *fxy, double z, int inda, int indb, int *xint, int *yint)
 {
   double alpha;
   alpha = (z - fxy[inda])/(fxy[indb] - fxy[inda]);

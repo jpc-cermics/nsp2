@@ -31,9 +31,6 @@ static unsigned long maxcol; /* XXXXX : à revoir */
 /** functions **/
 
 static void set_c(BCG *Xgc,int col);
-static GtkWidget *GetWindowNumber  (int);
-static GtkWidget *GetBGWindowNumber (int);
-
 static void ResetScilabXgc (BCG *Xgc);
 static void LoadFonts(void), LoadSymbFonts(void);
 static void analyze_points(BCG *Xgc,int n, int *vx, int *vy, int onemore);
@@ -88,6 +85,8 @@ static int XgcAllocColors( BCG *xgc, int m)
  *---------------------------------------------------------*/
 
 Gengine * nsp_gengine = &Gtk_gengine ;
+
+
 
 /*---------------------------------------------------------
  * Pixmap routines: 
@@ -625,6 +624,17 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
  * graphic context modifications 
  ************************************************************************/
 
+/* record or not the graphic commands */
+
+static int xget_recording(BCG *Xgc)
+{
+  return Xgc->record_flag;
+}
+
+static void xset_recording(BCG *Xgc, int val)
+{
+  Xgc->record_flag = (val == 0 ) ? FALSE : TRUE;
+}
 /** to get the window upper-left point coordinates on the screen  **/
 
 static void xget_windowpos(BCG *Xgc,int *x,int *y)
@@ -1592,8 +1602,6 @@ void get_b(BCG *Xgc,int i, float *b)
  * general routines accessing the previous  set<> or get<> 
  *-----------------------------------------------------------*/
 
-static void InitMissileXgc(BCG *dd);
-
 /*-----------------------------------------------------------
  * Functions for private->drawing 
  *-----------------------------------------------------------*/
@@ -2185,41 +2193,11 @@ void DeleteSGWin(int intnum)
       BCG *Xgc = window_list_get_first();
       if ( Xgc != (BCG *) 0)
 	{
-	  ResetScilabXgc (Xgc);
+	  /* ResetScilabXgc (Xgc); */
 	  /* get_window_scale(Xgc->CurWindow,NULL); */
 	}
     }
 }
-
-/********************************************
- * Get Window number wincount ( or 0 )  XXXX unused 
- ********************************************/
-
-static GtkWidget *GetWindowNumber(int wincount)
-{
-  BCG *bcg;
-  bcg = window_list_search(wincount);
-  if ( bcg != (BCG *) 0) 
-    return  bcg->private->window;
-  else 
-    return  NULL;
-}
-
-/********************************************
- * Get BGWindow number wincount ( or 0 )  XXXX unused 
- ********************************************/
-
-static GtkWidget *GetBGWindowNumber(int wincount)
-{
-  BCG *bcg;
-  bcg = window_list_search(wincount);
-  if ( bcg != (BCG *) 0) 
-    return bcg->private->window;  /* XXXXXXX */
-  else 
-    return NULL  ;
-}
-
-
 
 /********************************************
  * Routines for initialization : string is a display name 
@@ -2429,115 +2407,6 @@ static void xset_default(BCG *Xgc)
   /* XXX InitMissileXgc (Xgc); */
 }
 
-static void InitMissileXgc ( BCG *Xgc ) 
-{ 
-  int i,j;
-  Xgc->IDLastPattern = GREYNUMBER - 1;
-  Xgc->CurLineWidth=0 ;
-  xset_thickness(Xgc,1);
-  /** retirer le clipping **/
-  i=j= -1;
-  xset_unclip(Xgc);
-  Xgc->ClipRegionSet= 0;
-  xset_font(Xgc,2,1);
-  xset_mark(Xgc,0,0);
-  Xgc->CurPixmapStatus =0 ;
-  Xgc->CurResizeStatus =1 ;
-  xset_pixmapOn(Xgc,0);
-  /** trace absolu **/
-  xset_absourel(Xgc,CoordModeOrigin);
-  /* initialisation des pattern dash par defaut en n&b */
-  Xgc->CurColorStatus = 0;
-  xset_pattern(Xgc,1);
-  xset_dash(Xgc,1);
-  xset_hidden3d(Xgc,1);
-  /* initialisation de la couleur par defaut */ 
-  Xgc->CurColorStatus = 1;
-  xset_default_colormap(Xgc);
-  xset_alufunction1(Xgc,3);
-  xset_pattern(Xgc,Xgc->NumForeground+1);
-  /*** XXXXX a faire aussi pour le n&b plus haut ***/
-  xset_foreground(Xgc,Xgc->NumForeground+1);
-  xset_background(Xgc,Xgc->NumForeground+2);
-  xset_hidden3d(Xgc,4);
-  /* Choix du mode par defaut (decide dans initgraphic) */
-  getcolordef(&i);
-  /** we force CurColorStatus to the opposite value of col 
-      to force usecolorPos to perform initialisations 
-  **/
-  Xgc->CurColorStatus = (i == 1) ? 0: 1;
-  xset_usecolor(Xgc,i);
-  strcpy(Xgc->CurNumberDispFormat,"%-5.2g");
-  /** XXXX a faire peut-etre ailleurs : default scales **/
-}
-
-
-/* use the current Xgc for reinitialization  
- * used when switching from one graphic window to an other one 
- * XXXX : remettre le foreground 
- */
-
-static void ResetScilabXgc (BCG *Xgc)
-{ 
-  int i,j, clip[4];
-  i= Xgc->fontId;
-  j= Xgc->fontSize;
-  xset_font(Xgc,i,j);
-  
-  i= Xgc->CurHardSymb;
-  j= Xgc->CurHardSymbSize;
-  xset_mark(Xgc,i,j);
-  
-  i= Xgc->CurLineWidth;
-  xset_thickness(Xgc,i);
-  
-  i= Xgc->CurVectorStyle;
-  xset_absourel(Xgc,i);
-  
-  i= Xgc->CurDrawFunction;
-  xset_alufunction1(Xgc,i);
-  
-  if (Xgc->ClipRegionSet == 1) 
-    {
-      for ( i= 0 ; i < 4; i++) clip[i]=Xgc->CurClipRegion[i];
-      xset_clip(Xgc,clip);
-    }
-  else
-    xset_unclip(Xgc);
-
-  if (Xgc->CurColorStatus == 0) 
-    {
-      /* remise des couleurs a vide */
-      Xgc->CurColorStatus = 1;
-      xset_pattern(Xgc,1);
-      /* passage en n&b */
-      Xgc->CurColorStatus = 0;
-      i= Xgc->CurPattern + 1;
-      xset_pattern(Xgc,i);
-      i= Xgc->CurDashStyle + 1;
-      xset_dash(Xgc,i);
-      i= Xgc->NumHidden3d+1;
-      xset_hidden3d(Xgc,i);
-    }
-  else 
-    {
-      /* remise a zero des patterns et dash */
-      /* remise des couleurs a vide */
-      Xgc->CurColorStatus = 0;
-      xset_pattern(Xgc,1);
-      xset_dash(Xgc,1);
-      /* passage en couleur  */
-      Xgc->CurColorStatus = 1;
-      i= Xgc->CurColor + 1;
-      xset_pattern(Xgc,i);
-      i= Xgc->NumBackground+1;
-      xset_background(Xgc,i);
-      i= Xgc->NumForeground+1;
-      xset_foreground(Xgc,i);
-      i= Xgc->NumHidden3d+1;
-      xset_hidden3d(Xgc,i);
-    }
-}
 
 /*------------------------------------------------------
   Draw an axis whith a slope of alpha degree (clockwise)

@@ -7,8 +7,6 @@
  * Graphic High Level Recording function 
  *---------------------------------------------------------------------------*/
 
-
-
 #include <string.h> /* in case of dbmalloc use */
 #include <stdio.h>
 #include <math.h>
@@ -2342,7 +2340,6 @@ static void scale_change_Ech(BCG *Xgc,void *plot, int *flag, double *bbox, int *
     {
       /* we are trying to change the scale */
       int wdim[2];
-      BCG *Xgc=check_graphic_window();
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       /* check if bbox1 is inside current subwin */
       if ( theplot->Wrect[0]*wdim[0] <= bbox1[0] 
@@ -2408,10 +2405,8 @@ static void scale_change_NEch(BCG *Xgc,void *plot, int *flag, double *bbox, int 
       /* 1- check if nscale contains a subwin definition */
       if ( theplot->flag[1] == 't' ) 
 	{
-	  BCG *Xgc;
 	  int wdim[2];
 	  flag[0]=0; 
-	  Xgc=check_graphic_window();
 	  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
 	  /* check if bbox1 is inside current subwin */
 	  if (theplot->Wrect[0]*wdim[0] <= bbox1[0] && (theplot->Wrect[0]+theplot->Wrect[2])*wdim[0] >= bbox1[2] 
@@ -2933,48 +2928,6 @@ void tape_replay(BCG *Xgc,int winnumber)
   Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
 }
 
-
-void tape_replay_old(BCG *Xgc,int winnumber)
-{ 
-  list_plot *list = Xgc->plots ;
-  if ( Xgc->record_flag == FALSE ) return ;
-#ifdef WIN32
-  int flag;
-#endif
-  char name[4];
-  Xgc->graphic_engine->scale->get_driver_name(name);
-  /* first check if a special handler is set 
-   * 
-   */
-  scig_handler(winnumber);
-  if ( list != NULL)
-    {
-      if ( name[0] =='R' )
-	{
-#ifdef WIN32
-	  /** win32 : we dont't want to use dr because it will change the hdc **/
-	  Xgc->graphic_engine->scale->set_driver("Int");
-#else
-	  Xgc->graphic_engine->scale->set_driver("X11");
-#endif
-	}
-#ifdef WIN32
-      /** if hdc is not set we use the current window hdc **/
-      flag=MaybeSetWinhdc();
-#endif
-      /* the replay list code */
-      while (list)
-	{
-	  if ( list->theplot != NULL) 
-	    record_table[((plot_code *) list->theplot)->code ].replay(Xgc,list->theplot);
-	  list =list->next;
-	}
-#ifdef WIN32
-      if ( flag == 1) ReleaseWinHdc();
-#endif
-      Xgc->graphic_engine->scale->set_driver(name);
-    }
-}
 
 /*---------------------------------------------------------------------
  * Add a new graphics record in the graphic recorder list

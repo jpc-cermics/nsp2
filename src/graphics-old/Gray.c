@@ -40,7 +40,7 @@ int C2F(xgray)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, char 
   update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
   /** Allocation **/
 
-  if (Xgc->graphic_engine->scale->get_driver()=='R') store_Gray(Xgc,x,y,z,n1,n2,strflag,brect,aaint);
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Gray(Xgc,x,y,z,n1,n2,strflag,brect,aaint);
 
 
   xm = graphic_alloc(0,N,sizeof(int));
@@ -63,7 +63,8 @@ int C2F(xgray)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, char 
   return(0);
 }
 
-static void GraySquare_base(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
+
+void fill_grid_rectangles_gen(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
   double zmoy,zmax,zmin,zmaxmin;
   int i,j,whiteid,fill[1],cpat,xz[2];
@@ -102,11 +103,7 @@ static void GraySquare_base(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 
 static void GraySquare(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
-  if ( Xgc->graphic_engine->scale->get_driver_id() == 0 ) 
-    /** accelerated version for X11 or Windows **/
-    Xgc->graphic_engine->fill_grid_rectangles(Xgc,x, y, z, n1, n2);
-  else 
-    GraySquare_base(Xgc,x, y, z, n1, n2);
+  Xgc->graphic_engine->fill_grid_rectangles(Xgc,x, y, z, n1, n2);
 }
 
 
@@ -129,7 +126,7 @@ int C2F(xgray1)(BCG *Xgc,double *z, int *n1, int *n2, char *strflag, double *bre
   update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
 
   /** If Record is on **/
-  if (Xgc->graphic_engine->scale->get_driver()=='R') store_Gray1(Xgc,z,n1,n2,strflag,brect,aaint);
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Gray1(Xgc,z,n1,n2,strflag,brect,aaint);
 
   /** Allocation **/
   xm = graphic_alloc(0,N,sizeof(int));
@@ -164,7 +161,7 @@ int C2F(xgray2)(BCG *Xgc,double *z, int *n1, int *n2, double *xrect)
   int xx1[2],yy1[2];
   int *xm,*ym,  j;
   /** If Record is on **/
-  if (Xgc->graphic_engine->scale->get_driver()=='R') store_Gray2(Xgc,z,n1,n2,xrect);
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Gray2(Xgc,z,n1,n2,xrect);
   xx[0]=xrect[0];xx[1]=xrect[2];
   yy[0]=xrect[1];yy[1]=xrect[3];
   /** Boundaries of the frame **/
@@ -197,7 +194,8 @@ int C2F(xgray2)(BCG *Xgc,double *z, int *n1, int *n2, double *xrect)
  *        P1= x[i],y[j] x[i+1],y[j+1]
  *-------------------------------------------------------*/
 
-static void GraySquare1_base(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
+
+void fill_grid_rectangles1_gen(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
   int i,j,fill[1],cpat,xz[2];
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -223,11 +221,7 @@ static void GraySquare1_base(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 
 static void GraySquare1(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
-  if ( Xgc->graphic_engine->scale->get_driver_id() == 0 ) 
-    /** accelerated version for X11 or Windows **/
-    Xgc->graphic_engine->fill_grid_rectangles1(Xgc,x, y, z, n1, n2);
-  else 
-    GraySquare1_base(Xgc,x, y, z, n1, n2);
+  Xgc->graphic_engine->fill_grid_rectangles1(Xgc,x, y, z, n1, n2);
 }
 
 

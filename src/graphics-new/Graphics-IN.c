@@ -369,8 +369,7 @@ static void  nsp_gwin_clear(BCG *Xgc)
  * is selected 
  */
 
-
-BCG * check_graphic_window(void)
+BCG *check_graphic_window(void)
 {
   int cur = nsp_gengine->xget_curwin();
   nsp_gengine->xset_curwin(Max(cur,0),TRUE);
@@ -468,7 +467,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
 
   if ( nz->mn == 0 ) return 0;
   if ( nz->mn == 1 ) {
-    flagx = 0;  nnz = Max(1,(integer) nz->R[0]); /* number of levels */
+    flagx = 0;  nnz = Max(1,(int) nz->R[0]); /* number of levels */
   } else {
     flagx = 1;  nnz = nz->mn ; /*levels given */
   }
@@ -573,7 +572,7 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs, int (*func) ())
 
   if ( nz->mn == 0 ) return 0;
   if ( nz->mn == 1 ) {
-    flagx = 0;  nnz = Max(1,(integer) nz->R[0]);
+    flagx = 0;  nnz = Max(1,(int) nz->R[0]);
   } else {
     flagx = 1;  nnz = nz->mn ;
   }
@@ -598,7 +597,7 @@ int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   NspMatrix *x,*y,*z, *M,*M1;
   int flagx=0,nz=10; /* default number of level curves : 10 */
-  integer m,n;
+  int m,n;
   double  *hl1, *hl2;
   double *znz= NULL;
   int ix4, i;
@@ -626,7 +625,7 @@ int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
     {
       if (( M = GetRealMat(stack,4)) == NULLMAT) return RET_BUG;
       if ( M->mn == 1) {
-	flagx = 0;  nz = Max(1,(integer)M->R[0] ),znz= M->R;
+	flagx = 0;  nz = Max(1,(int)M->R[0] ),znz= M->R;
       } else {
 	flagx = 1;  nz = M->mn ; znz= M->R;
       }
@@ -728,7 +727,7 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
 int int_c2dex( Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *rep,*rep1;
-  integer m1,n1;
+  int m1,n1;
   double  *hl1, *hl2;
 
   CheckRhs(-1,0);
@@ -810,7 +809,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   double alpha=35.0,theta=45.0,*ebox ;
   char *leg=NULL;
   NspMatrix *x,*y,*z,*Mcolors=NULL,*Mflag=NULL,*Mebox=NULL;
-  integer izcol=0, *zcol=NULL,*iflag;
+  int izcol=0, *zcol=NULL,*iflag;
   
   int_types T[] = {realmat,realmat,obj,new_opts, t_end} ;
 
@@ -999,8 +998,8 @@ int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
  *-----------------------------------------------------------*/
 
 int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,
-		  int (*func)(BCG *Xgc,char *,double *,double *,integer *,integer *,
-			      integer *,char *,char *,double *,integer *))
+		  int (*func)(BCG *Xgc,char *,double *,double *,int *,int *,
+			      int *,char *,char *,double *,int *))
 {
   BCG *Xgc;
   /* for 2d optional arguments; */
@@ -1314,7 +1313,7 @@ int int_driver(Stack stack, int rhs, int opt, int lhs)
     {
     case 0: 
       if (( S=nsp_smatrix_create_with_length(NVOID,1,1,3))== NULLSMAT) return RET_BUG;
-      nsp_gengine->scale->get_driver_name(S->S[0]);
+      /* XXXX nsp_gengine->scale->get_driver_name(S->S[0]); */
       StackStore(stack,(NspObject *) S,1);
       NSP_OBJECT(S)->ret_pos = 1;
       return 1;
@@ -1638,9 +1637,9 @@ int int_xchange(Stack stack, int rhs, int opt, int lhs)
  *      implicit undefined (a-z) 
  *-----------------------------------------------------------*/
 
-int C2F(entier2dXXX)(integer *n, double *dx,  integer *s)
+int C2F(entier2dXXX)(int *n, double *dx,  int *s)
 {
-  integer ix;
+  int ix;
   for (ix = *n -1 ; ix >= 0; --ix) dx[ix] = (double) s[ix];
   return 0;
 } 
@@ -1652,9 +1651,9 @@ int C2F(entier2dXXX)(integer *n, double *dx,  integer *s)
  * Parameter adjustments 
  *-----------------------------------------------------------*/
 
-int C2F(simple2dXXX)(integer *n,double *dx, float *s)
+int C2F(simple2dXXX)(int *n,double *dx, float *s)
 {
-  integer ix;
+  int ix;
   for (ix = *n-1 ; ix >= 0; --ix)  dx[ix] = (double) s[ix];
   return 0;
 } 
@@ -1959,7 +1958,7 @@ int int_xend(Stack stack, int rhs, int opt, int lhs)
 int int_xgrid(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  integer style = 1;
+  int style = 1;
   CheckRhs(-1,1);
   if ( rhs == 1) {
     if (GetScalarInt(stack,1,&style) == FAIL) return RET_BUG;
@@ -1977,7 +1976,7 @@ int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   NspMatrix *l1,*l2;
-  integer close=0;
+  int close=0;
 
   CheckRhs(2,3);
 
@@ -2263,7 +2262,7 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
 
 int int_xinit(Stack stack, int rhs, int opt, int lhs)
 {
-  integer v1=-1;
+  int v1=-1;
   CheckRhs(-1,1);
 
   if (rhs <= 0 )
@@ -2343,7 +2342,7 @@ int int_xnumb(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   NspMatrix *l1,*l2,*l3,*l5;
-  integer flagx=0;
+  int flagx=0;
 
   CheckRhs(3,5);
   if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
@@ -2804,7 +2803,7 @@ int int_xstring(Stack stack, int rhs, int opt, int lhs)
   int remove=0;
   NspSMatrix *S;
   double rect[4],wc,x,y,yi,angle=0.0;
-  integer i,flagx=0;
+  int i,flagx=0;
 
   CheckRhs(3,5);
   
@@ -2883,7 +2882,7 @@ int int_xstringb(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   char * info;
-  integer fill =0;
+  int fill =0;
   double x,y,w,hx;
   String *str;
   NspSMatrix *S;
@@ -3047,11 +3046,11 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
   int rep;
   NspMatrix *M;
   static double  rect_def[4] = { 0,0,10,10}, ebox_def[6] = {0,1,0,1,0,1};
-  static integer iflag_def[4] = { 0,0,0,0 };
-  static integer aint_def[4] = { 0,0,0,0 };
-  static integer iscflag_def[2] = { 1,0 };
-  static integer flagx_def[3] = { 1,1,1} ;
-  integer *iflag = iflag_def,*aint = aint_def,*iscflag = iscflag_def, *flagx= flagx_def,num;
+  static int iflag_def[4] = { 0,0,0,0 };
+  static int aint_def[4] = { 0,0,0,0 };
+  static int iscflag_def[2] = { 1,0 };
+  static int flagx_def[3] = { 1,1,1} ;
+  int *iflag = iflag_def,*aint = aint_def,*iscflag = iscflag_def, *flagx= flagx_def,num;
   double alpha = 35.0 ,theta = 45.0,  *rect = rect_def ,*ebox = ebox_def ;
 
   static char *xtape_Table[] = {  "on","clear","replay","replaysc","replayna",  NULL };
@@ -3067,7 +3066,7 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
     {
     case 0 : /* on */ 
       CheckRhs(1,1);
-      nsp_gengine->scale->set_driver("Rec");
+      nsp_gengine->xset_recording(Xgc,TRUE);
       break;
     case 1 : /* clear */
       CheckRhs(2,2);
@@ -3485,7 +3484,7 @@ int int_gsort(Stack stack, int rhs, int opt, int lhs)
   char iord[2] ; /* = { 'd','\0' }; */
   char typex[10]; /* = { 'g' ,'\0'} ; */
   double dv;
-  integer iv,v;
+  int iv,v;
   iord[0] = 'd'; iord[1]='\0';
   typex[0] = 'g'; typex[1] = '\0';
 
@@ -3619,7 +3618,7 @@ int int_gsort(Stack stack, int rhs, int opt, int lhs)
 int int_winsid(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *M;
-  integer ids,num;
+  int ids,num;
   CheckRhs(-1,0) ;
   /* first pass to get num */
   nsp_gengine->window_list_get_ids(&num,&ids ,0);
@@ -3885,7 +3884,7 @@ int int_seteventhandler(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   char *info;
-  integer ierr=0,win;
+  int ierr=0,win;
   CheckRhs(1,1);
   CheckLhs(0,1);
 

@@ -1147,29 +1147,6 @@ static XDR rxdrs[1] ;
 static u_int rcount ;
 static u_int rszof ;
 
-/** special case for colormap **/
-
-static int load_Colormap(BCG *Xgc)
-{
-  double *table; double x;
-  int m,i;
-  if ( load_LI(&m) == 0) return(0);
-  table  = (double *)  MALLOC(3*m*sizeof(double));
-  if ( table == NULL) return(0);
-  /**  assert( xdr_vector(rxdrs, (char *) table,3*m,sizeof(float), (xdrproc_t) xdr_float)) ;
-  for ( i = 3*m-1 ; i >= 0 ; i--) 
-  table[i]= ((float *) table)[i]; **/
-  
-  for ( i = 0 ; i < 3*m  ; i++ ) 
-    {
-      assert( xdr_vector(rxdrs, (char *) &x,1,sizeof(double), (xdrproc_t) xdr_double)) ;
-      table[i]=x;
-      /** sciprint("loading %f\r\n",table[i]); **/
-    }
-  Xgc->graphic_engine->xset_colormap(Xgc,m,3,table);
-  FREE(table);
-  return(1);
-}
 
 
 typedef  struct  {
@@ -1258,8 +1235,7 @@ static Load_Table load_table [] ={
 
 int tape_load(BCG *Xgc,const char *fname1)
 {
-  int cur,type;
-  char name[4];
+  int type,record;
   strncpy(RFname,fname1,128);
 #ifdef __STDC__
   RF = fopen(RFname,"rb") ;
@@ -1296,14 +1272,14 @@ int tape_load(BCG *Xgc,const char *fname1)
     }
   assert(fflush((FILE *)rxdrs->x_private) != EOF) ; 
   assert(fclose(RF) != EOF) ;
+
   /** we plot the load_ed graphics **/
-  Xgc->graphic_engine->scale->get_driver_name(name);
-  if ( (Xgc->graphic_engine->scale->get_driver()) !='R')Xgc->graphic_engine->scale->set_driver("Rec");
-  cur = Xgc->graphic_engine->xget_curwin();
+  record= Xgc->graphic_engine->xget_recording(Xgc);
+  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
   Xgc->graphic_engine->pixmap_resize(Xgc);
   Xgc->graphic_engine->clearwindow(Xgc);
-  Xgc->graphic_engine->tape_replay(Xgc,cur);
-  Xgc->graphic_engine->scale->set_driver(name);
+  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow);
+  Xgc->graphic_engine->xset_recording(Xgc,record);
   return(0);
 }
 

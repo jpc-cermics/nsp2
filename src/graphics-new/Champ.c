@@ -11,7 +11,7 @@
 #include "nsp/graphics/Graphics.h"
 /* #include "PloEch.h" */
 
-static double MiniD (const double *x,integer n);
+static double MiniD (const double *x,int n);
 
 static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, double *fx, double *fy, int *n1, int *n2, 
 		   char *strflag, double *brect, double *arfact, int lstr);
@@ -69,7 +69,7 @@ static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, doubl
 
   update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
   /* Storing values if using the Record driver */
-  if (Xgc->graphic_engine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     {
       if (strcmp(name,"champ")==0)
 	store_Champ(Xgc,x,y,fx,fy,n1,n2,strflag,brect,arfact);

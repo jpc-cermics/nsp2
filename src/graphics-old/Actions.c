@@ -272,7 +272,7 @@ void scig_2dzoom(int win_num)
  * Unzoom the graphics of graphic window @win_num.
  */ 
 
-void   scig_unzoom(int win_num)
+void  scig_unzoom(int win_num)
 {
   BCG *Xgc;
   if ( scig_buzy  == 1 ) return ;

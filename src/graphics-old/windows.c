@@ -655,8 +655,8 @@ void show_scales(BCG *Xgc)
 
 int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
 {
-  static integer aaint[]={2,10,2,10};
-  if (Xgc->graphic_engine->scale->get_driver()=='R') store_Ech(Xgc,WRect,FRect,logscale);
+  static int aaint[]={2,10,2,10};
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Ech(Xgc,WRect,FRect,logscale);
   if (logscale[0]=='l') 
     {
       FRect[0]=log10(FRect[0]);
@@ -742,7 +742,7 @@ int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *l
 	  FRect[3]=log10(FRect[3]);
 	}
     }
-  if (Xgc->graphic_engine->scale->get_driver()=='R') store_NEch(Xgc,flag,WRect,ARect,FRect,logscale);
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_NEch(Xgc,flag,WRect,ARect,FRect,logscale);
   set_scale(Xgc,flag,WRect,FRect,NULL,logscale,ARect);
   return(0);
 }
@@ -751,7 +751,7 @@ int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *l
 
 int getscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale,double ARect[4])
 {
-  integer i;
+  int i;
   static double ten=10.0;
   logscale[0] = Xgc->scales->logflag[0];
   logscale[1] = Xgc->scales->logflag[1];
@@ -789,7 +789,7 @@ void set_scale(BCG *Xgc,
 	       char flag[6],            /* flag[i] = 't' or 'f' */
 	       double  subwin[4],       /* subwindow specification */
 	       double  frame_values[4], /* [xmin,ymin,xmax,ymax] */
-	       integer aaint[4],        /* [xint,x_subint,y_int,y_subint]*/
+	       int aaint[4],        /* [xint,x_subint,y_int,y_subint]*/
 	       char logflag[2],        /* [xlogflag,ylogflag] */
 	       double axis_values[4])   /* [mfact_xl, mfact_xr,mfact_yu,mfact_yd]; */
 {
@@ -797,7 +797,7 @@ void set_scale(BCG *Xgc,
   char frame_values_changed='f',aaint_changed='f';
   char logflag_changed='f';
   char axis_changed = 'f';
-  integer wdim[2];
+  int wdim[2];
   int i;
 
   if ( flag[1] == 't' ) 

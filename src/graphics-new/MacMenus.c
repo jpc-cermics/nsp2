@@ -55,7 +55,7 @@ Handle menu;
 		DisableItem(menu, item);
 }
 
-#define PI0 (integer *) 0
+#define PI0 (int *) 0
 #define PD0 (double *) 0
 
 CleanWinTape()

@@ -28,17 +28,17 @@ static double xx1,yy1;
 #define PGEOY(x1,y1,z1) inint(yy1= Xgc->scales->Wscy1*(-TRY(x1,y1,z1)+Xgc->scales->frect[3])+Xgc->scales->Wyofset1);
 
 static void C2F(plot3dg) (BCG *Xgc, char *name,
-			  int (*func)(BCG *Xgc,integer *polyx, integer *polyy, integer *fill,
-				      integer whiteid, double zmin, double zmax, double *x, 
-				      double *y, double *z, integer i, integer j, integer jj1,
-				      integer *p, integer dc, integer fg),
+			  int (*func)(BCG *Xgc,int *polyx, int *polyy, int *fill,
+				      int whiteid, double zmin, double zmax, double *x, 
+				      double *y, double *z, int i, int j, int jj1,
+				      int *p, int dc, int fg),
 			  double *x, double *y,double *z,
-			  integer *p, integer *q, double *teta,double *alpha,char *legend,
-			  integer *flag,double *bbox); 
+			  int *p, int *q, double *teta,double *alpha,char *legend,
+			  int *flag,double *bbox); 
 
 static void C2F(fac3dg) ( BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, 
-			  integer *cvect, integer *p, integer *q, double *teta, double *alpha,
-			  char *legend, integer *flag, double *bbox);
+			  int *cvect, int *p, int *q, double *teta, double *alpha,
+			  char *legend, int *flag, double *bbox);
 
 static void dbox (BCG *Xgc);
 
@@ -73,31 +73,31 @@ static void dbox (BCG *Xgc);
  *     
  *  <-- The arguments are not modified 
  *-------------------------------------------------------------------------*/
-int C2F(plot3d)(BCG *Xgc,double *x, double *y, double *z, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(plot3d)(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(plot3dg)(Xgc,"plot3d",DPoints,x,y,z,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(plot3d1)(BCG *Xgc,double *x, double *y, double *z, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(plot3d1)(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(plot3dg)(Xgc,"plot3d1",DPoints1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(fac3d)(BCG *Xgc,double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(fac3d)(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(fac3dg)(Xgc,"fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(fac3d1)(BCG *Xgc,double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(fac3d1)(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(fac3dg)(Xgc,"fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(fac3d2)(BCG *Xgc,double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(fac3d2)(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(fac3dg)(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
@@ -110,23 +110,23 @@ int C2F(fac3d2)(BCG *Xgc,double *x, double *y, double *z, integer *cvect, intege
  */
 
 static void C2F(plot3dg)(BCG *Xgc,char *name,
-			 int (*func)(BCG *Xgc,integer *polyx, integer *polyy, integer *fill,
-				     integer whiteid, double zmin, double zmax, double *x, 
-				     double *y, double *z, integer i, integer j, integer jj1,
-				     integer *p, integer dc, integer fg),
-			 double *x, double *y, double *z, integer *p, integer *q, 
-			 double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+			 int (*func)(BCG *Xgc,int *polyx, int *polyy, int *fill,
+				     int whiteid, double zmin, double zmax, double *x, 
+				     double *y, double *z, int i, int j, int jj1,
+				     int *p, int dc, int fg),
+			 double *x, double *y, double *z, int *p, int *q, 
+			 double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static integer InsideU[4],InsideD[4],fg,fg1,dc;
+  static int InsideU[4],InsideD[4],fg,fg1,dc;
   /* solid = color of 3D frame */
-  integer polysize,npoly,whiteid;
-  integer *polyx,*polyy,*fill;
+  int polysize,npoly,whiteid;
+  int *polyx,*polyy,*fill;
   double xbox[8],ybox[8],zbox[8];
-  static integer cache;
+  static int cache;
   static double zmin,zmax;
-  integer i,j;
+  int i,j;
   /** If Record is on **/
-  if (Xgc->graphic_engine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     {
       if (strcmp(name,"plot3d")==0) 
 	store_Plot3D(Xgc,x,y,z,p,q,teta,alpha,legend,flag,bbox);
@@ -255,17 +255,17 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
     }
 }
 
-static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static integer InsideU[4],InsideD[4],fg1;
-  integer polysize,npoly,whiteid;
-  integer *polyx,*polyy,*locindex,fill[4]; /* Modified by polpoth 4/5/2000 fill[4] instead of fill[1] */
+  static int InsideU[4],InsideD[4],fg1;
+  int polysize,npoly,whiteid;
+  int *polyx,*polyy,*locindex,fill[4]; /* Modified by polpoth 4/5/2000 fill[4] instead of fill[1] */
   double xbox[8],ybox[8],zbox[8],*polyz;
-  static integer cache;
+  static int cache;
   static double zmin,zmax;
-  integer i;
+  int i;
   /** If Record is on **/
-  if (Xgc->graphic_engine->scale->get_driver()=='R') {
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) {
       if (strcmp(name,"fac3d")==0) 	
 	store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
       else if (strcmp(name,"fac3d1")==0) 	
@@ -437,7 +437,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
     } 
   if ( flag[2] >=3 )
     {
-      integer fg;
+      int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
@@ -451,7 +451,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
  *  returns in (polyx, polyy) the polygon for one facet of the surface 
  *--------------------------------------------------------------------*/
 
-int DPoints1(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer whiteid, double zmin, double zmax, double *x, double *y, double *z, integer i, integer j, integer jj1, integer *p, integer dc, integer fg)
+int DPoints1(BCG *Xgc,int *polyx, int *polyy, int *fill, int whiteid, double zmin, double zmax, double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg)
 {
   polyx[  5*jj1] =PGEOX(x[i]  ,y[j]  ,z[i+(*p)*j]);
   if ( finite(xx1)==0 )return(0);
@@ -487,7 +487,7 @@ int DPoints1(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer whi
   
 }
 
-int DPoints(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer whiteid, double zmin, double zmax, double *x, double *y, double *z, integer i, integer j, integer jj1, integer *p, integer dc, integer fg)
+int DPoints(BCG *Xgc,int *polyx, int *polyy, int *fill, int whiteid, double zmin, double zmax, double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg)
 {
 #ifdef lint
   whiteid,fill[0],zmin,zmax;
@@ -524,16 +524,16 @@ int DPoints(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer whit
  * param3d function 
  *-------------------------------------------------------------------*/
 
-int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, integer *n, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static integer InsideU[4],InsideD[4];
+  static int InsideU[4],InsideD[4];
   static double xbox[8],ybox[8],zbox[8];
-  integer style[1],j;
-  static integer init;
-  static integer *xm,*ym;
+  int style[1],j;
+  static int init;
+  static int *xm,*ym;
   int fg1;
   /** If Record is on **/
-  if (Xgc->graphic_engine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Param3D(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
   if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
@@ -594,7 +594,7 @@ int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, integer *n, double *t
     }
   if (flag[2] >=3 ) 
     {
-      integer fg;
+      int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
@@ -610,16 +610,16 @@ int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, integer *n, double *t
  * param3d1 function 
  *-------------------------------------------------------------------*/
 
-int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, integer *m, integer *n, integer *iflag, integer *colors, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
-  static integer InsideU[4],InsideD[4];
+  static int InsideU[4],InsideD[4];
   static double xbox[8],ybox[8],zbox[8];
-  integer style[1],j;
-  static integer init;
-  static integer *xm,*ym;
-  integer fg1,cur;
+  int style[1],j;
+  static int init;
+  static int *xm,*ym;
+  int fg1,cur;
   /** If Record is on **/
-  if (Xgc->graphic_engine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Param3D1(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
   style[0] = Xgc->graphic_engine->xget_dash(Xgc);
   if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
@@ -686,7 +686,7 @@ int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, integer *m, integer 
     }
   if (flag[2] >=3 ) 
     {
-      integer fg;
+      int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
       /** Le triedre que l'on doit voir **/
       if (zbox[InsideU[0]] > zbox[InsideD[0]])
@@ -704,7 +704,7 @@ int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, integer *m, integer 
 
 int C2F(box3d)(BCG *Xgc,double *xbox, double *ybox, double *zbox)
 {
-  static integer InsideU[4],InsideD[4],flag[]={1,1,3},fg,fg1;
+  static int InsideU[4],InsideD[4],flag[]={1,1,3},fg,fg1;
   /** Calcule l' Enveloppe Convexe de la boite **/
   /** ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,xbox,ybox,InsideU,InsideD,"X@Y@Z",flag,Xgc->scales->bbox1);
@@ -729,9 +729,9 @@ int C2F(box3d)(BCG *Xgc,double *xbox, double *ybox, double *zbox)
  * 3d geometric transformation 
  *-------------------------------------------------------------------*/
 
-int C2F(geom3d)(BCG *Xgc,double *x, double *y, double *z, integer *n)
+int C2F(geom3d)(BCG *Xgc,double *x, double *y, double *z, int *n)
 {
-  integer j;
+  int j;
   for ( j =0 ; j < (*n) ; j++)	 
     {
       double x1,y1;
@@ -760,15 +760,15 @@ void SetEch3d(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, d
  * if flag==0      we only change m without changing scales 
  */
 
-void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, double *teta, double *alpha, integer flag)
+void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, double *teta, double *alpha, int flag)
 {
   double xmmin,ymmax,xmmax,ymmin,FRect[4],WRect[4],ARect[4];
-  integer ib;
-  static integer aaint[]={2,10,2,10};
+  int ib;
+  static int aaint[]={2,10,2,10};
   int wdim[2];
   char logf[2];
   double R,xo,yo,zo,dx,dy,dz,hx,hy,hx1,hy1,Teta,Alpha;
-  integer wmax,hmax;
+  int wmax,hmax;
   static double cost=0.5,sint=0.5,cosa=0.5,sina=0.5;
   Teta=*teta;
   Alpha=*alpha;
@@ -886,10 +886,10 @@ void SetEch3d1(BCG *Xgc,double *xbox, double *ybox, double *zbox, double *bbox, 
  * constituent le triedre dans les tableaux xbox et ybox 
  *-----------------------------------------------------------------*/ 
 
-void DrawAxis(BCG *Xgc,double *xbox, double *ybox, integer *Indices, integer style)
+void DrawAxis(BCG *Xgc,double *xbox, double *ybox, int *Indices, int style)
 {
-  integer ixbox[6],iybox[6],npoly=6,lstyle;
-  integer i,iflag=0;
+  int ixbox[6],iybox[6],npoly=6,lstyle;
+  int i,iflag=0;
   for ( i = 0 ; i <= 4 ; i=i+2)
     {
       ixbox[i]=XScale(xbox[Indices[0]]);iybox[i]=YScale(ybox[Indices[0]]);
@@ -908,19 +908,19 @@ void DrawAxis(BCG *Xgc,double *xbox, double *ybox, integer *Indices, integer sty
  * qui sont sur les 2 tri\`edres a l'interieur de l'enveloppe convexe
  *---------------------------------------------------------------------*/
 
-void Convex_Box(BCG *Xgc,double *xbox, double *ybox, integer *InsideU, integer *InsideD, char *legend, integer *flag, double *bbox)
+void Convex_Box(BCG *Xgc,double *xbox, double *ybox, int *InsideU, int *InsideD, char *legend, int *flag, double *bbox)
 {
   double xmaxi;
-  integer ixbox[8],iybox[8];
-  integer xind[8];
-  integer ind2,ind3,ind;
-  integer p,n,dvect[1],dash;
-  integer pat;
-  integer i;
+  int ixbox[8],iybox[8];
+  int xind[8];
+  int ind2,ind3,ind;
+  int p,n,dvect[1],dash;
+  int pat;
+  int i;
   /** dans xbox[8] se trouve l'abscisse des points successifs   **/
   /** de la boite qui continent la surface                      **/
   /** on stocke dans xind[8] les indices des points de la boite **/
-  /** qui sont sur l'enveloppe convexe en partant du pointeger en haut **/
+  /** qui sont sur l'enveloppe convexe en partant du point en haut **/
   /** a droite et en tournant ds le sens trigonometrique           **/
   /** par exemple avec : **/
   /*      4 ----- 5        */
@@ -959,7 +959,7 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox, integer *InsideU, integer *
   UpNext(ind2,&ind2,&ind3); InsideU[1]=xind[0];
   InsideU[2]=ind2; InsideU[3]=InsideU[0]-4;
   xind[2]=ind2;
-  /* le pointeger en bas qui correspond */
+  /* le point en bas qui correspond */
   xind[3]=ind2-4;
   DownNext(xind[3],&ind2,&ind3);
   if (ybox[ind2] < ybox[ind3]) 
@@ -1002,12 +1002,12 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox, integer *InsideU, integer *
 /** (ixbox,iybox) : Coordonnees des points de l'envelloppe cvxe en pixel **/
 /** xind : indices des points de l'enveloppe cvxe ds xbox et ybox **/
 
-void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, integer *xind, char *legend, double *bbox)
+void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, char *legend, double *bbox)
 {
-  integer xz[2];
-  integer iof;
+  int xz[2];
+  int iof;
   char *loc,*legx,*legy,*legz; 
-  integer rect[4],flag=0,x,y;
+  int rect[4],flag=0,x,y;
   double ang=0.0;
   loc=(char *) MALLOC( (strlen(legend)+1)*sizeof(char));
   if ( loc == 0)    
@@ -1024,7 +1024,7 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
   if ( axflag>=4)
     {
       double fx,fy,fz,lx,ly,lz;
-      integer LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
+      int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
       xnax[0]=5;xnax[1]=2;
       FPoint[0]=ixbox[2];FPoint[1]=iybox[2];
       LPoint[0]=ixbox[3];LPoint[1]=iybox[3];
@@ -1047,7 +1047,7 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
       if ( axflag>=4)
 	{
 	  double fx,fy,fz,lx,ly,lz;
-	  integer LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
+	  int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
 	  xnax[0]=5;xnax[1]=2;
 	  FPoint[0]=ixbox[3];FPoint[1]=iybox[3];
 	  LPoint[0]=ixbox[4];LPoint[1]=iybox[4];
@@ -1069,7 +1069,7 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
       if ( axflag>=4)
 	{
 	  double fx,fy,fz,lx,ly,lz;
-	  integer LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
+	  int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
 	  xnax[0]=5;xnax[1]=2;
 	  FPoint[0]=ixbox[3];FPoint[1]=iybox[3];
 	  LPoint[0]=ixbox[4];LPoint[1]=iybox[4];
@@ -1094,7 +1094,7 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
       if ( axflag>=4)
 	{
 	  double fx,fy,fz,lx,ly,lz;
-	  integer LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
+	  int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
 	  xnax[0]=5;xnax[1]=2;
 	  FPoint[0]=ixbox[4];FPoint[1]=iybox[4];
 	  LPoint[0]=ixbox[5];LPoint[1]=iybox[5];
@@ -1114,7 +1114,7 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
       if ( axflag>=4)
 	{
 	  double fx,fy,fz,lx,ly,lz;
-	  integer LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
+	  int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
 	  xnax[0]=5;xnax[1]=2;
 	  FPoint[0]=ixbox[4];FPoint[1]=iybox[4];
 	  LPoint[0]=ixbox[5];LPoint[1]=iybox[5];
@@ -1132,9 +1132,9 @@ void AxesStrings(BCG *Xgc,integer axflag, integer *ixbox, integer *iybox, intege
   FREE(loc);
 }
 
-void MaxiInd(double *vect, integer n, integer *ind, double maxi)
+void MaxiInd(double *vect, int n, int *ind, double maxi)
 {
-  integer i ;
+  int i ;
   if ( *ind+1 < n)
     for (i = *ind+1 ; i < n ; i++)
       if ( vect[i] >= maxi)
@@ -1144,7 +1144,7 @@ void MaxiInd(double *vect, integer n, integer *ind, double maxi)
 /* renvoit les indices des points voisins de ind1 sur la face haute 
    de la boite  */
 
-void UpNext(integer ind1, integer *ind2, integer *ind3)
+void UpNext(int ind1, int *ind2, int *ind3)
 {
   *ind2 = ind1+1;
   *ind3 = ind1-1;
@@ -1152,7 +1152,7 @@ void UpNext(integer ind1, integer *ind2, integer *ind3)
   if (*ind3 == 3) *ind3 = 7;
 }
 
-void DownNext(integer ind1, integer *ind2, integer *ind3)
+void DownNext(int ind1, int *ind2, int *ind3)
 {
   *ind2 = ind1+1;
   *ind3 = ind1-1;
@@ -1161,12 +1161,12 @@ void DownNext(integer ind1, integer *ind2, integer *ind3)
 }
 
 
-void TDAxis(BCG *Xgc,integer flag, double FPval, double LPval, integer *nax, integer *FPoint, integer *LPoint, integer *Ticsdir)
+void TDAxis(BCG *Xgc,int flag, double FPval, double LPval, int *nax, int *FPoint, int *LPoint, int *Ticsdir)
 {
   char fornum[100];
-  integer i,barlength;
+  int i,barlength;
   double xp, dx,dy,ticsx,ticsy,size;
-  integer xz[2];
+  int xz[2];
   Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
   size = xz[0]>=xz[1] ? xz[1]/50.0 : xz[0]/50.0;
   C2F(TDdrawaxis)(Xgc,size,FPval,LPval,nax,FPoint,LPoint,Ticsdir) ;
@@ -1189,8 +1189,8 @@ void TDAxis(BCG *Xgc,integer flag, double FPval, double LPval, integer *nax, int
     }
   for (i=0; i <= nax[1];i++)
     { double angle=0.0;
-      integer flag1=0;
-      integer xx=0,yy=0, posi[2],rect[4];
+      int flag1=0;
+      int xx=0,yy=0, posi[2],rect[4];
       char foo[100];/*** JPC : must be cleared properly **/
       double lp;
       lp = xp + i*(LPval-FPval)/((double)nax[1]);
@@ -1211,9 +1211,9 @@ void TDAxis(BCG *Xgc,integer flag, double FPval, double LPval, integer *nax, int
 }
 
 
-void C2F(TDdrawaxis)(BCG *Xgc,double size, double FPval, double LPval, integer *nax, integer *FPoint, integer *LPoint, integer *Ticsdir)
+void C2F(TDdrawaxis)(BCG *Xgc,double size, double FPval, double LPval, int *nax, int *FPoint, int *LPoint, int *Ticsdir)
 { 
-  integer i;
+  int i;
   double dx,dy,ticsx,ticsy;
   dx= ((double) LPoint[0]-FPoint[0])/((double)nax[1]*nax[0]);
   dy= ((double) LPoint[1]-FPoint[1])/((double)nax[1]*nax[0]);
@@ -1230,7 +1230,7 @@ void C2F(TDdrawaxis)(BCG *Xgc,double size, double FPval, double LPval, integer *
     }
   for (i=0; i <= nax[1]*nax[0];i++)
     {       
-      integer siz=2,x[2],y[2],iflag=0,style=0;
+      int siz=2,x[2],y[2],iflag=0,style=0;
       x[0] =linint(FPoint[0]+ ((double)i)*dx );
       y[0] =linint(FPoint[1]+ ((double)i)*dy );
       x[1] =linint(x[0]+ ticsx*size);
@@ -1240,9 +1240,9 @@ void C2F(TDdrawaxis)(BCG *Xgc,double size, double FPval, double LPval, integer *
 }
 
 
-/** Returns the [x,y,z] values of a pointeger given its xbox or ybox indices **/
+/** Returns the [x,y,z] values of a point given its xbox or ybox indices **/
 
-void BBoxToval(double *x, double *y, double *z, integer ind, double *bbox)
+void BBoxToval(double *x, double *y, double *z, int ind, double *bbox)
 {
   switch ( ind)
     {
@@ -1266,13 +1266,11 @@ static double theta,alpha;
 
 void I3dRotation(BCG *Xgc)
 {
-  char driver[4];
-  integer flag[3],pixmode,alumode,ww;
-  static integer iflag[]={0,0,0,0};
+  int flag[3],pixmode,alumode;
+  static int iflag[]={0,0,0,0};
   double xx,yy;
   double theta0,alpha0;
-  ww=Xgc->graphic_engine->xget_curwin();
-  if ( tape_check_recorded_3D(Xgc,ww) == FAIL) 
+  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
     {
       Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
       return;
@@ -1281,30 +1279,29 @@ void I3dRotation(BCG *Xgc)
   yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
   alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
-  Xgc->graphic_engine->scale->get_driver_name(driver);
-  if (strcmp("Rec",driver) != 0) 
+  if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
     {
-      Scistring("\n Use the Rec driver for 3f Rotation " );
+      Xgc->graphic_engine->xinfo(Xgc,"3d rotation is not possible when recording is not on" );
       return;
     }
   else 
     {
-      integer ibutton,iwait=FALSE,istr=0,ww;
+      int ibutton,iwait=FALSE,istr=0;
       double x0,yy0,x,y,xl,yl,bbox[4];
 #ifdef WIN32
       SetWinhdc();
       SciMouseCapture();
-     Xgc->graphic_engine->scale->set_driver("Int");
+      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
 #else
-     Xgc->graphic_engine->scale->set_driver("X11");
+      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
 #endif
-     if ( pixmode == 0 ) Xgc->graphic_engine->scale->xset_alufunction1(Xgc,6);
-     Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
-     Xgc->graphic_engine->clearwindow(Xgc);
-     theta=Xgc->scales->theta ;
-     alpha=Xgc->scales->alpha ;
-
-     x0=(x0-Xgc->scales->frect[0])*xx;
+      if ( pixmode == 0 ) Xgc->graphic_engine->scale->xset_alufunction1(Xgc,6);
+      Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&yy0,iwait,FALSE,FALSE,FALSE,istr);
+      Xgc->graphic_engine->clearwindow(Xgc);
+      theta=Xgc->scales->theta ;
+      alpha=Xgc->scales->alpha ;
+      
+      x0=(x0-Xgc->scales->frect[0])*xx;
       yy0=(yy0-Xgc->scales->frect[1])*yy;
       x=x0;y=yy0;
       theta0=theta;
@@ -1327,15 +1324,14 @@ void I3dRotation(BCG *Xgc)
 	  y=(yl-Xgc->scales->frect[1])*yy;
 	}
       if ( pixmode == 0) Xgc->graphic_engine->scale->xset_alufunction1(Xgc,3);
-     Xgc->graphic_engine->scale->set_driver(driver);
-     Xgc->graphic_engine->clearwindow(Xgc);
-     ww=Xgc->graphic_engine->xget_curwin();
-     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+      Xgc->graphic_engine->clearwindow(Xgc);
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
 #ifdef WIN32
       ReleaseWinHdc();
       SciMouseRelease();
 #endif
-      tape_replay_new_angles(Xgc,ww,iflag,flag,&theta,&alpha,bbox);
+      tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
     }
 }
 
@@ -1350,7 +1346,7 @@ static void dbox(BCG *Xgc)
 {
   double xbox[8],ybox[8],zbox[8];
 #ifdef WIN32
-  integer verbose=0,pat,pat1=3,narg;
+  int verbose=0,pat,pat1=3,narg;
   pat = Xgc->graphic_engine->xset_pattern(pat1);
 #endif
   SetEch3d1(Xgc,xbox,ybox,zbox,Xgc->scales->bbox1,&theta,&alpha,Xgc->scales->metric3d);
@@ -1366,7 +1362,7 @@ static void dbox(BCG *Xgc)
  *
  *******************************************************************************/
 
-int C2F(fac3d3)(BCG *Xgc,double *x, double *y, double *z, integer *cvect, integer *p, integer *q, double *teta, double *alpha, char *legend, integer *flag, double *bbox)
+int C2F(fac3d3)(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(fac3dg)(Xgc,"fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
@@ -1376,9 +1372,9 @@ int C2F(fac3d3)(BCG *Xgc,double *x, double *y, double *z, integer *cvect, intege
  *This function sorts the vertices such that the color value is in decreasing order
  *---------------------------------------------------------------------------------*/
 
-int  triangleSort(integer *polyxin, integer *polyyin, integer *fillin, integer *polyx, integer *polyy, integer *fill)
+int  triangleSort(int *polyxin, int *polyyin, int *fillin, int *polyx, int *polyy, int *fill)
 { 
-  integer tmp,k;
+  int tmp,k;
   for (k=0;k<3;k++) {polyx[k]=polyxin[k]; polyy[k]=polyyin[k]; fill[k]=fillin[k];}
       
   if (fill[0]<fill[1]) {  
@@ -1408,11 +1404,11 @@ int  triangleSort(integer *polyxin, integer *polyyin, integer *fillin, integer *
  *       routines 
  *-----------------------------------------------------------------------*/
 
-int shade(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer polysize, integer flag)
+int shade(BCG *Xgc,int *polyx, int *polyy, int *fill, int polysize, int flag)
 {
-   integer px[5],py[5],fil[4],is[3],ie[3],n[3];
-   integer npoly=1,k,col,cols,psize,i,s,e;
-   integer polyxs[4],polyys[4],fills[4],*x[3],*y[3];
+   int px[5],py[5],fil[4],is[3],ie[3],n[3];
+   int npoly=1,k,col,cols,psize,i,s,e;
+   int polyxs[4],polyys[4],fills[4],*x[3],*y[3];
    double dx,dy;
 
    if (polysize == 3) { /* The triangle case */
@@ -1433,8 +1429,8 @@ int shade(BCG *Xgc,integer *polyx, integer *polyy, integer *fill, integer polysi
 
         if (n[i]) {
 	
-           x[i]=(integer *)malloc((n[i]+2)*sizeof(integer));
-	   y[i]=(integer *)malloc((n[i]+2)*sizeof(integer)); 
+           x[i]=(int *)malloc((n[i]+2)*sizeof(int));
+	   y[i]=(int *)malloc((n[i]+2)*sizeof(int)); 
 	   if (x[i]==NULL || y[i]==NULL) {
 		Scistring("shade : malloc No more Place\n");
 		return 0;

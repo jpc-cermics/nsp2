@@ -177,6 +177,18 @@ void cleararea(BCG *Xgc,int x, int y, int w, int h)
  * graphic context modifications 
  ************************************************************************/
 
+/* record or not the graphic commands */
+
+static int xget_recording(BCG *Xgc)
+{
+  return Xgc->record_flag;
+}
+
+static void xset_recording(BCG *Xgc, int val)
+{
+  Xgc->record_flag = FALSE; /* never record with Xfig */
+}
+
 /** to get the window upper-left point coordinates **/
 
 void xget_windowpos(BCG *Xgc,int *x,int *y) 
@@ -1062,16 +1074,22 @@ static void fillrectangle(BCG *Xgc,const int rect[])
  * accelerated draw a set of rectangles, not implemented for Pos 
  *----------------------------------------------------------------------------------*/
 
+extern void fill_grid_rectangles_gen(BCG *Xgc,int *x, int *y, double *z, int n1, int n2);
+
 static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
+  fill_grid_rectangles_gen(Xgc,x,y,z,n1,n2);
 }
 
 /*----------------------------------------------------------------------------------
  * accelerated draw a set of rectangles, not implemented for Pos 
  *----------------------------------------------------------------------------------*/
 
+extern void fill_grid_rectangles1_gen(BCG *Xgc,int *x, int *y, double *z, int n1, int n2);
+
 static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
+  fill_grid_rectangles1_gen(Xgc,x,y,z,n1,n2);
 }
 
 /** Draw or fill a set of ellipsis or part of ellipsis **/

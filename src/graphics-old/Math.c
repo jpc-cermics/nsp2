@@ -22,7 +22,7 @@
 
 double Mini(vect, n)
      double *vect;
-     integer n;
+     int n;
 {
   int i;
   double vmin;
@@ -36,7 +36,7 @@ double Mini(vect, n)
 
 double Maxi(vect, n)
      double *vect;
-     integer n;
+     int n;
 {
   int i;
   double maxi;

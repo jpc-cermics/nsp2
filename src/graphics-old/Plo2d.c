@@ -49,7 +49,7 @@
  *
  *     if  strflag[2] == '1' ->then an axis is added
  *        the number of intervals 
- *        is specified by the vector aaint[4] of integers 
+ *        is specified by the vector aaint[4] of ints 
  *	   <aaint[0],aaint[1]> specifies the x-axis number of  points 
  *	   <aaint[2],aaint[3]> same for y-axis
  *     if  strflag[2] == '2' -> no axis, only a box around the curves
@@ -62,14 +62,14 @@ int C2F(plot2d)(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char 
 		char *legend,double brect[],int aaint[])
 {
   int n;
-  integer *xm,*ym;
+  int *xm,*ym;
 
   /* Storing values if using the Record driver */
   /* Boundaries of the frame */
   
   update_frame_bounds(Xgc,0,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
-  if (Xgc->graphic_engine->scale->get_driver()=='R') 
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Plot1(Xgc,"gnn",x,y,n1,n2,style,strflag,legend,brect,aaint);
 
   /* Allocation */
@@ -108,11 +108,11 @@ int C2F(plot2d)(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char 
 
 int C2F(xgrid)(BCG *Xgc, int *style)
 {
-  integer closeflag=0,n=2,vx[2],vy[2],i,j;
+  int closeflag=0,n=2,vx[2],vy[2],i,j;
   double pas;
   int pat;
   /* Recording command */
-  if (Xgc->graphic_engine->scale->get_driver()=='R') store_Grid(Xgc,style);
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Grid(Xgc,style);
   /* changes dash style if necessary */
   pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
   /** Get current scale **/
@@ -353,20 +353,14 @@ void update_frame_bounds(BCG *Xgc,
   if ( redraw )
     {
       static int flag[2]={1,0};
-      char driver[4];
       /* Redraw previous graphics with new Scale */
-      integer ww;
-      Xgc->graphic_engine->scale->get_driver_name(driver);
-      if (strcmp("Rec",driver) != 0) 
+      if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
 	{
-	  Scistring("Auto rescale only works with the rec driver\n" );
+	  Xgc->graphic_engine->xinfo(Xgc,"Auto rescale only works when recording is on " );
 	  return;
 	}
-      ww = Xgc->graphic_engine->xget_curwin();
-      Xgc->graphic_engine->scale->set_driver("X11");
-      Xgc->graphic_engine->clearwindow(Xgc);
-      tape_replay_new_scale_1(Xgc,ww,flag,aaint,FRect);
-     Xgc->graphic_engine->scale->set_driver(driver);
+      Xgc->graphic_engine->clearwindow(Xgc);    
+      tape_replay_new_scale_1(Xgc,Xgc->CurWindow,flag,aaint,FRect);
     }
 }
  
@@ -391,7 +385,7 @@ void Legends(BCG *Xgc,int *style,int * n1,char * legend)
 
   if ( loc != 0)
     {
-      integer fg,old_dash,pat;
+      int fg,old_dash,pat;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
       old_dash = Xgc->graphic_engine->xset_dash(Xgc,1);
       pat = Xgc->graphic_engine->xset_pattern(Xgc,fg);
@@ -416,7 +410,7 @@ void Legends(BCG *Xgc,int *style,int * n1,char * legend)
 
       for ( i = 0 ; i < *n1 && i < 6 ; i++)
 	{  
-	  integer xs,ys,flag=0,polyx[2],polyy[2],lstyle[1],ni;
+	  int xs,ys,flag=0,polyx[2],polyy[2],lstyle[1],ni;
 	  double angle=0.0;
 	  if (*n1 == 1) ni=Max(Min(5,style[1]-1),0);else ni=i;
 	  if (ni >= 3)
@@ -438,7 +432,7 @@ void Legends(BCG *Xgc,int *style,int * n1,char * legend)
 	      Xgc->graphic_engine->xset_pattern(Xgc,pat);
 	      if (style[i] > 0)
 		{ 
-		  integer n=1,p=2;
+		  int n=1,p=2;
 		  polyx[0]=inint(xi);polyx[1]=inint(xi+xoffset);
 		  polyy[0]=inint(yi - rect[3]/2);polyy[1]=inint(yi- rect[3]/2.0);
 		  lstyle[0]=style[i];
@@ -446,7 +440,7 @@ void Legends(BCG *Xgc,int *style,int * n1,char * legend)
 		}
 	      else
 		{ 
-		  integer n=1,p=1;
+		  int n=1,p=1;
 		  polyx[0]=inint(xi+xoffset);
 		  polyy[0]=inint(yi- rect[3]/2);
 		  lstyle[0]=style[i];

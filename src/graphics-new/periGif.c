@@ -78,26 +78,26 @@ static FILE *file= stdout ;
 #include "../gd/gd.h"
 
 void C2F(WriteGeneric1Gif)();
-void C2F(xgetmarkGif)(integer *verbose, integer *symb, integer *narg, double *dummy);
-void C2F(xsetmarkGif)(integer *number, integer *size, integer *v3, integer *v4);
-void C2F(xgetfontGif)(integer *verbose, integer *font, integer *nargs, double *dummy);
-void C2F(xsetfontGif)(integer *fontid, integer *fontsize, integer *v3, integer *v4);
-void C2F(setdashstyleGif)(integer *value, integer *xx, integer *n);
+void C2F(xgetmarkGif)(int *verbose, int *symb, int *narg, double *dummy);
+void C2F(xsetmarkGif)(int *number, int *size, int *v3, int *v4);
+void C2F(xgetfontGif)(int *verbose, int *font, int *nargs, double *dummy);
+void C2F(xsetfontGif)(int *fontid, int *fontsize, int *v3, int *v4);
+void C2F(setdashstyleGif)(int *value, int *xx, int *n);
 void C2F(Write2VectGif)();
-void C2F(WriteGenericGif)(char *string, integer nobj, integer sizeobj, integer *vx, integer *vy, integer sizev, integer flag, integer *fvect);
-void C2F(InitScilabGCGif)(integer *v1, integer *v2, integer *v3, integer *v4);
-void C2F(setforegroundGif)(integer *num, integer *v2, integer *v3, integer *v4);
-void C2F(ScilabGCGetorSetGif)(char *str, integer flag, integer *verbose, integer *x1, integer *x2, integer *x3, integer *x4, integer *x5, integer *x6, double *dx1);
-void C2F(setbackgroundGif)(integer *num, integer *v2, integer *v3, integer *v4);
-void C2F(set_cGif)(integer i);
-void C2F(idfromnameGif) (char *name1, integer *num);
-void C2F(getdashGif)(integer *verbose, integer *value, integer *narg, double *dummy);
+void C2F(WriteGenericGif)(char *string, int nobj, int sizeobj, int *vx, int *vy, int sizev, int flag, int *fvect);
+void C2F(InitScilabGCGif)(int *v1, int *v2, int *v3, int *v4);
+void C2F(setforegroundGif)(int *num, int *v2, int *v3, int *v4);
+void C2F(ScilabGCGetorSetGif)(char *str, int flag, int *verbose, int *x1, int *x2, int *x3, int *x4, int *x5, int *x6, double *dx1);
+void C2F(setbackgroundGif)(int *num, int *v2, int *v3, int *v4);
+void C2F(set_cGif)(int i);
+void C2F(idfromnameGif) (char *name1, int *num);
+void C2F(getdashGif)(int *verbose, int *value, int *narg, double *dummy);
 
 
 
 
 /* static int C2F(GifQueryFont)(); */
-static void C2F(displaysymbolsGif)(char *str, integer *n, integer *vx, integer *vy);
+static void C2F(displaysymbolsGif)(char *str, int *n, int *vx, int *vy);
 extern int ReadbdfFont();
 extern void C2F(nues1)();
 extern int CheckScilabXgc();
@@ -151,7 +151,7 @@ static int fillpolylines_closeflag = 0;
 
 /** To select the graphic Window  **/
 
-void C2F(xselgraphicGif)(char *v1, integer *v2, integer *v3, integer *v4, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(xselgraphicGif)(char *v1, int *v2, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
   if (file != stdout && file != 0 ) {
     fclose(file);
@@ -166,12 +166,12 @@ void C2F(xselgraphicGif)(char *v1, integer *v2, integer *v3, integer *v4, intege
 /** End of graphic (close the file) **/
 
 void GetDriverName(char *DriverName)
-{    integer *v2;
-     integer *v3;
-     integer *v4;
-     integer *v5;
-     integer *v6;
-     integer *v7;
+{    int *v2;
+     int *v3;
+     int *v4;
+     int *v5;
+     int *v6;
+     int *v7;
      double *dv1;
      double *dv2;
      double *dv3;
@@ -182,7 +182,7 @@ void GetDriverName(char *DriverName)
 void C2F(xendgraphicGif)(void)
 {
   char DriverName[10];
-  integer num;
+  int num;
   if (file != stdout && file != (FILE*) 0 && GifIm != (gdImagePtr)0) {
     num = ScilabGCGif.NumBackground;
     gdImageChangeColor(GifIm,col_white,col_index[num]);
@@ -198,7 +198,7 @@ void C2F(xendgraphicGif)(void)
   }
 }
 
-void C2F(xendGif)(char *v1, integer *v2, integer *v3, integer *v4, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(xendGif)(char *v1, int *v2, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
   C2F(xendgraphicGif)();
 }
@@ -207,7 +207,7 @@ void C2F(xendGif)(char *v1, integer *v2, integer *v3, integer *v4, integer *v5, 
 /** Clear the current graphic window     **/
 /** In GIF : nothing      **/
 
-void C2F(clearwindowGif)(char *v1, integer *v2, integer *v3, integer *v4, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(clearwindowGif)(char *v1, int *v2, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
   /* FPRINTF((file,"\n showpage")); */
   /** Sending the scale etc.. in case we want an other plot **/
@@ -216,23 +216,23 @@ void C2F(clearwindowGif)(char *v1, integer *v2, integer *v3, integer *v4, intege
 
 /** To generate a pause : Empty here **/
 
-void C2F(xpauseGif)(char *str, integer *sec_time, integer *v3, integer *v4, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(xpauseGif)(char *str, int *sec_time, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {}
 
 /** Wait for mouse click in graphic window : Empty here **/
 
-void C2F(xclickGif)(char *str, integer *ibutton, integer *xx1, integer *yy1, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(xclickGif)(char *str, int *ibutton, int *xx1, int *yy1, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 { }
 
-void C2F(xclick_anyGif)(char *str, integer *ibutton, integer *xx1, integer *yy1, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(xclick_anyGif)(char *str, int *ibutton, int *xx1, int *yy1, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 { }
 
-void C2F(xgetmouseGif)(char *str, integer *ibutton, integer *xx1, integer *yy1, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(xgetmouseGif)(char *str, int *ibutton, int *xx1, int *yy1, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 { }
 
 /** Clear a rectangle **/
 
-void C2F(clearareaGif)(char *str, integer *x, integer *y, integer *w, integer *h, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(clearareaGif)(char *str, int *x, int *y, int *w, int *h, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
 /*  FPRINTF((file,"\n [ %d %d %d %d ] clearzone",(int)*x,(int)*y,(int)*w,(int)*h));*/
 }
@@ -243,9 +243,9 @@ void C2F(clearareaGif)(char *str, integer *x, integer *y, integer *w, integer *h
 \section{Function for graphic context modification}
 ------------------------------------------------------------------------*/
 
-/** to get the window upper-left pointeger coordinates **/
+/** to get the window upper-left point coordinates **/
 
-void C2F(getwindowposGif)(integer *verbose, integer *x, integer *narg, double *dummy)
+void C2F(getwindowposGif)(int *verbose, int *x, int *narg, double *dummy)
 {
   *narg = 2;
   x[0]= x[1]=0;
@@ -253,15 +253,15 @@ void C2F(getwindowposGif)(integer *verbose, integer *x, integer *narg, double *d
     sciprint("\n CWindow position :%d,%d\r\n",(int)x[0],(int)x[1]);
  }
 
-/** to set the window upper-left pointeger position (Void) **/
+/** to set the window upper-left point position (Void) **/
 
-void C2F(setwindowposGif)(integer *x, integer *y, integer *v3, integer *v4)
+void C2F(setwindowposGif)(int *x, int *y, int *v3, int *v4)
 {
 }
 
 /** To get the window size **/
 
-void C2F(getwindowdimGif)(integer *verbose, integer *x, integer *narg, double *dummy)
+void C2F(getwindowdimGif)(int *verbose, int *x, int *narg, double *dummy)
 {     
   *narg = 2;
   x[0]= ScilabGCGif.CurWindowWidth;
@@ -272,7 +272,7 @@ void C2F(getwindowdimGif)(integer *verbose, integer *x, integer *narg, double *d
 
 /** To change the window dimensions */
 
-void C2F(setwindowdimGif)(integer *x, integer *y, integer *v3, integer *v4)
+void C2F(setwindowdimGif)(int *x, int *y, int *v3, int *v4)
 {
 
   gdImagePtr GifImOld = GifIm;
@@ -299,14 +299,14 @@ void C2F(setwindowdimGif)(integer *x, integer *y, integer *v3, integer *v4)
 
 /** Select a graphic Window : Empty for GIF **/
 
-void C2F(setcurwinGif)(integer *intnum, integer *v2, integer *v3, integer *v4)
+void C2F(setcurwinGif)(int *intnum, int *v2, int *v3, int *v4)
 {
   ScilabGCGif.CurWindow = *intnum;
 }
 
 /** Get the id number of the Current Graphic Window **/
 
-void C2F(getcurwinGif)(integer *verbose, integer *intnum, integer *narg, double *dummy)
+void C2F(getcurwinGif)(int *verbose, int *intnum, int *narg, double *dummy)
 {
   *narg =1 ;
   *intnum = ScilabGCGif.CurWindow ;
@@ -316,7 +316,7 @@ void C2F(getcurwinGif)(integer *verbose, integer *intnum, integer *narg, double 
 
 /** Set a clip zone (rectangle ) **/
 
-void C2F(setclipGif)(integer *x, integer *y, integer *w, integer *h)
+void C2F(setclipGif)(int *x, int *y, int *w, int *h)
 {
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -333,7 +333,7 @@ void C2F(setclipGif)(integer *x, integer *y, integer *w, integer *h)
 
 /** unset clip zone **/
 
-void C2F(unsetclipGif)(integer *v1, integer *v2, integer *v3, integer *v4)
+void C2F(unsetclipGif)(int *v1, int *v2, int *v3, int *v4)
 {
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -350,7 +350,7 @@ void C2F(unsetclipGif)(integer *v1, integer *v2, integer *v3, integer *v4)
 
 /** Get the boundaries of the current clip zone **/
 
-void C2F(getclipGif)(integer *verbose, integer *x, integer *narg, double *dummy)
+void C2F(getclipGif)(int *verbose, int *x, int *narg, double *dummy)
 {
   x[0] = ScilabGCGif.ClipRegionSet;
   if ( x[0] == 1)
@@ -382,7 +382,7 @@ void C2F(getclipGif)(integer *verbose, integer *x, integer *narg, double *dummy)
  Absolute mode if *num==0, relative mode if *num != 0
 ------------------------------------------------------------*/
 
-void C2F(setabsourelGif)(integer *num, integer *v2, integer *v3, integer *v4)
+void C2F(setabsourelGif)(int *num, int *v2, int *v3, int *v4)
 {
   if (*num == 0 )
     ScilabGCGif.CurVectorStyle =  CoordModeOrigin;
@@ -392,7 +392,7 @@ void C2F(setabsourelGif)(integer *num, integer *v2, integer *v3, integer *v4)
 
 /** to get information on absolute or relative mode **/
 
-void C2F(getabsourelGif)(integer *verbose, integer *num, integer *narg, double *dummy)
+void C2F(getabsourelGif)(int *verbose, int *num, int *narg, double *dummy)
 {
   *narg = 1;
   *num = ScilabGCGif.CurVectorStyle  ;
@@ -408,7 +408,7 @@ void C2F(getabsourelGif)(integer *verbose, integer *num, integer *narg, double *
 
 void C2F(setalufunctionGif)(char *string)
 {    
-  integer value;
+  int value;
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
     return;
@@ -446,8 +446,8 @@ struct alinfo {
   {"GXset" ,GXset," 1 "}
 };
 
-void C2F(idfromnameGif)(char *name1, integer *num)
-{integer i;
+void C2F(idfromnameGif)(char *name1, int *num)
+{int i;
  *num = -1;
  for ( i =0 ; i < 16;i++)
    if (strcmp(AluStrucGif[i].name,name1)== 0) 
@@ -462,9 +462,9 @@ void C2F(idfromnameGif)(char *name1, integer *num)
 }
 
 
-void C2F(setalufunction1Gif)(integer *num, integer *v2, integer *v3, integer *v4)
+void C2F(setalufunction1Gif)(int *num, int *v2, int *v3, int *v4)
 {     
-  integer value;
+  int value;
 
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -480,7 +480,7 @@ void C2F(setalufunction1Gif)(integer *num, integer *v2, integer *v3, integer *v4
 
 /** To get the value of the alufunction **/
 
-void C2F(getalufunctionGif)(integer *verbose, integer *value, integer *narg, double *dummy)
+void C2F(getalufunctionGif)(int *verbose, int *value, int *narg, double *dummy)
 { 
   *narg =1 ;
   *value = ScilabGCGif.CurDrawFunction ;
@@ -490,7 +490,7 @@ void C2F(getalufunctionGif)(integer *verbose, integer *value, integer *narg, dou
 	       AluStrucGif[*value].info);}
  }
 
-integer GetAluGif(void)
+int GetAluGif(void)
 {
 return ScilabGCGif.CurDrawFunction;
 }
@@ -499,7 +499,7 @@ return ScilabGCGif.CurDrawFunction;
 
 #define Thick_prec 5
 
-void C2F(setthicknessGif)(integer *value, integer *v2, integer *v3, integer *v4)
+void C2F(setthicknessGif)(int *value, int *v2, int *v3, int *v4)
 { 
   ScilabGCGif.CurLineWidth =Max(0, *value);
 /*  FPRINTF((file,"\n%d Thickness",(int)Max(0,*value*Thick_prec))); */
@@ -507,7 +507,7 @@ void C2F(setthicknessGif)(integer *value, integer *v2, integer *v3, integer *v4)
 
 /** to get the thicknes value **/
 
-void C2F(getthicknessGif)(integer *verbose, integer *value, integer *narg, double *dummy)
+void C2F(getthicknessGif)(int *verbose, int *value, int *narg, double *dummy)
 {
   *narg =1 ;
   *value = ScilabGCGif.CurLineWidth ;
@@ -524,9 +524,9 @@ void C2F(getthicknessGif)(integer *verbose, integer *value, integer *narg, doubl
   the white pattern }
 ----------------------------------------------------*/
 
-void C2F(setpatternGif)(integer *num, integer *v2, integer *v3, integer *v4)
+void C2F(setpatternGif)(int *num, int *v2, int *v3, int *v4)
 {
- integer i ; 
+ int i ; 
   if ( ScilabGCGif.CurColorStatus ==1) 
     {
       i= Max(0,Min(*num-1,ScilabGCGif.Numcolors+1));
@@ -551,7 +551,7 @@ void C2F(setpatternGif)(integer *num, integer *v2, integer *v3, integer *v4)
 
 /** To get the id of the current pattern  **/
 
-void C2F(getpatternGif)(integer *verbose, integer *num, integer *narg, double *dummy)
+void C2F(getpatternGif)(int *verbose, int *num, int *narg, double *dummy)
 { 
 
   *narg=1;
@@ -571,7 +571,7 @@ void C2F(getpatternGif)(integer *verbose, integer *num, integer *narg, double *d
 
 /** To get the id of the last pattern **/
 
-void C2F(getlastGif)(integer *verbose, integer *num, integer *narg, double *dummy)
+void C2F(getlastGif)(int *verbose, int *num, int *narg, double *dummy)
 {
   *num = ScilabGCGif.IDLastPattern +1 ;
   if (*verbose==1) 
@@ -581,17 +581,17 @@ void C2F(getlastGif)(integer *verbose, integer *num, integer *narg, double *dumm
 
 /** To set dash-style : **/
 /**  use a table of dashes and set default dashes to **/
-/**  one of the possible value. value pointeger **/
-/**  to a strictly positive integer **/
+/**  one of the possible value. value point **/
+/**  to a strictly positive int **/
 
-static integer DashTabGif[6][4] = {
+static int DashTabGif[6][4] = {
   {2,5,2,5}, {5,2,5,2},  {5,3,2,3}, {8,3,2,3},
   {11,3,2,3}, {11,3,5,3}};
 
 /* old version of setdashGif retained for compatibility */
-void C2F(set_dash_or_color_Gif)(integer *value, integer *v2, integer *v3, integer *v4)
+void C2F(set_dash_or_color_Gif)(int *value, int *v2, int *v3, int *v4)
 {
-  static integer maxdash = 6, l2=4,l3 ;
+  static int maxdash = 6, l2=4,l3 ;
 
   if ( ScilabGCGif.CurColorStatus == 1) 
     {
@@ -607,9 +607,9 @@ void C2F(set_dash_or_color_Gif)(integer *value, integer *v2, integer *v3, intege
       ScilabGCGif.CurDashStyle = l3;
     }
 }
-void C2F(setdashGif)(integer *value, integer *v2, integer *v3, integer *v4)
+void C2F(setdashGif)(int *value, int *v2, int *v3, int *v4)
 {
-  static integer maxdash = 6, l2=4,l3 ;
+  static int maxdash = 6, l2=4,l3 ;
   l3 = Max(0,Min(maxdash - 1,*value - 1));
   C2F(setdashstyleGif)(&l3,DashTabGif[l3],&l2);
   ScilabGCGif.CurDashStyle = l3;
@@ -644,7 +644,7 @@ static int GifPatternColor(int pat)
 /** the dash style is specified by the xx vector of n values **/
 /** xx[3]={5,3,7} and *n == 3 means :  5white 3 void 7 white \ldots **/
 
-void C2F(setdashstyleGif)(integer *value, integer *xx, integer *n)
+void C2F(setdashstyleGif)(int *value, int *xx, int *n)
 {
   int i, j, cn, c1, c = col_index[ScilabGCGif.CurColor];
 
@@ -669,15 +669,15 @@ void C2F(setdashstyleGif)(integer *value, integer *xx, integer *n)
       nGifDashes = 0;
   }
 }
-static void C2F(set_dash_and_color_Gif)(integer *value, integer *v2, integer *v3, integer *v4)
+static void C2F(set_dash_and_color_Gif)(int *value, int *v2, int *v3, int *v4)
 {
   C2F(setdashGif)(value, v2, v3, v4);
   C2F(setpatternGif)(value+6, v2, v3, v4);
 }
 
-void C2F(set_line_style_Gif)(integer *value, integer *v2, integer *v3, integer *v4)
+void C2F(set_line_style_Gif)(int *value, int *v2, int *v3, int *v4)
 {
-  integer j;
+  int j;
   if (ScilabGCGif.CurColorStatus == 0)
     C2F(setdashGif)(value,PI0,PI0,PI0);
   else {
@@ -690,8 +690,8 @@ void C2F(set_line_style_Gif)(integer *value, integer *v2, integer *v3, integer *
 
 /** to get the current dash-style **/
 /* old version of getdashGif retained for compatibility */
-void C2F(get_dash_or_color_Gif)(integer *verbose, integer *value, integer *narg, double *dummy)
-{integer i ;
+void C2F(get_dash_or_color_Gif)(int *verbose, int *value, int *narg, double *dummy)
+{int i ;
  *narg =1 ;
  if ( ScilabGCGif.CurColorStatus ==1) 
    {
@@ -717,8 +717,8 @@ void C2F(get_dash_or_color_Gif)(integer *verbose, integer *value, integer *narg,
    }
 }
 
-void C2F(getdashGif)(integer *verbose, integer *value, integer *narg, double *dummy)
-{integer i ;
+void C2F(getdashGif)(int *verbose, int *value, int *narg, double *dummy)
+{int i ;
  *narg =1 ;
  *value=ScilabGCGif.CurDashStyle+1;
  if ( *value == 1) 
@@ -737,7 +737,7 @@ void C2F(getdashGif)(integer *verbose, integer *value, integer *narg, double *du
        }
    }
 }
-void C2F(get_dash_and_color_Gif)(integer *verbose, integer *value, integer *narg, double *dummy)
+void C2F(get_dash_and_color_Gif)(int *verbose, int *value, int *narg, double *dummy)
 {
   /*may be improved replacing 6 by narg */
   C2F(getdashGif)(verbose, value, narg,dummy);
@@ -745,9 +745,9 @@ void C2F(get_dash_and_color_Gif)(integer *verbose, integer *value, integer *narg
   *narg = 6;
 }
 
-void C2F(usecolorGif)(integer *num, integer *v2, integer *v3, integer *v4)
+void C2F(usecolorGif)(int *num, int *v2, int *v3, int *v4)
 {
-  integer i;
+  int i;
   i =  Min(Max(*num,0),1);
   if ( ScilabGCGif.CurColorStatus != (int)i)
     {
@@ -783,7 +783,7 @@ void C2F(usecolorGif)(integer *num, integer *v2, integer *v3, integer *v4)
 }
 
 
-void C2F(getusecolorGif)(integer *verbose, integer *num, integer *narg, double *dummy)
+void C2F(getusecolorGif)(int *verbose, int *num, int *narg, double *dummy)
 {
   *num = ScilabGCGif.CurColorStatus;
   if (*verbose == 1) 
@@ -809,7 +809,7 @@ void C2F(getusecolorGif)(integer *verbose, integer *num, integer *narg, double *
  *   ( see  if (  CheckColormap(&m) == 1) in FileInt) 
  ******************************************************/
 
-void C2F(setcolormapGif)(integer *v1, integer *v2, integer *v3, integer *v4, integer *v5, integer *v6, double *a)
+void C2F(setcolormapGif)(int *v1, int *v2, int *v3, int *v4, int *v5, int *v6, double *a)
 {
   int i,m,r,g,b,c,ierr,m1;
   double *cmap;
@@ -953,9 +953,9 @@ static void ColorInitGif(void)
 }
 
 
-void C2F(set_cGif)(integer i)
+void C2F(set_cGif)(int i)
 {
-  integer j;
+  int j;
   j=Max(Min(i,ScilabGCGif.Numcolors+1),0);
 /*  FPRINTF((file,"\n%d Setcolorcolormap",(int)j)); */
 }
@@ -963,7 +963,7 @@ void C2F(set_cGif)(integer i)
 
 /** set and get the number of the background or foreground */
 
-void C2F(setbackgroundGif)(integer *num, integer *v2, integer *v3, integer *v4)
+void C2F(setbackgroundGif)(int *num, int *v2, int *v3, int *v4)
 {
   if (ScilabGCGif.CurColorStatus == 1) 
     {
@@ -971,7 +971,7 @@ void C2F(setbackgroundGif)(integer *num, integer *v2, integer *v3, integer *v4)
     }
 }
 
-void C2F(getbackgroundGif)(integer *verbose, integer *num, integer *narg, double *dummy)
+void C2F(getbackgroundGif)(int *verbose, int *num, int *narg, double *dummy)
 { 
   *narg=1;
   if ( ScilabGCGif.CurColorStatus == 1 ) 
@@ -989,7 +989,7 @@ void C2F(getbackgroundGif)(integer *verbose, integer *num, integer *narg, double
 
 /** set and get the number of the background or foreground */
 
-void C2F(setforegroundGif)(integer *num, integer *v2, integer *v3, integer *v4)
+void C2F(setforegroundGif)(int *num, int *v2, int *v3, int *v4)
 {
   if (ScilabGCGif.CurColorStatus == 1) 
     {
@@ -997,7 +997,7 @@ void C2F(setforegroundGif)(integer *num, integer *v2, integer *v3, integer *v4)
     }
 }
 
-void C2F(getforegroundGif)(integer *verbose, integer *num, integer *narg, double *dummy)
+void C2F(getforegroundGif)(int *verbose, int *num, int *narg, double *dummy)
 { 
   *narg=1;
   if ( ScilabGCGif.CurColorStatus == 1 ) 
@@ -1016,7 +1016,7 @@ void C2F(getforegroundGif)(integer *verbose, integer *num, integer *narg, double
 
 /** set and get the number of the hidden3d color */
 
-void C2F(sethidden3dGif)(integer *num, integer *v2, integer *v3, integer *v4)
+void C2F(sethidden3dGif)(int *num, int *v2, int *v3, int *v4)
 { 
   if (ScilabGCGif.CurColorStatus == 1) 
     {
@@ -1025,7 +1025,7 @@ void C2F(sethidden3dGif)(integer *num, integer *v2, integer *v3, integer *v4)
     }
 }
 
-void C2F(gethidden3dGif)(integer *verbose, integer *num, integer *narg, double *dummy)
+void C2F(gethidden3dGif)(int *verbose, int *num, int *narg, double *dummy)
 { 
   *narg=1;
   if ( ScilabGCGif.CurColorStatus == 1 ) 
@@ -1047,16 +1047,16 @@ void C2F(gethidden3dGif)(integer *verbose, integer *num, integer *narg, double *
  routines } 
 -------------------------------------------------------*/
 
-void C2F(semptyGif)(integer *verbose, integer *v2, integer *v3, integer *v4)
+void C2F(semptyGif)(int *verbose, int *v2, int *v3, int *v4)
 {
   if ( *verbose ==1 ) Scistring("\n No operation ");
 }
-void C2F(setwwhowGif)(integer *verbose, integer *v2, integer *v3, integer *v4)
+void C2F(setwwhowGif)(int *verbose, int *v2, int *v3, int *v4)
 {
 /*  FPRINTF((file,"\n%% SPLIT HERE")); */
 }
 
-void C2F(gemptyGif)(integer *verbose, integer *v2, integer *v3, double *dummy)
+void C2F(gemptyGif)(int *verbose, int *v2, int *v3, double *dummy)
 {
   if ( *verbose ==1 ) Scistring("\n No operation ");
 }
@@ -1101,12 +1101,12 @@ struct bgc { char *name ;
 
 #ifdef lint
 
-/* pour forcer linteger a verifier ca */
+/* pour forcer lint a verifier ca */
 
 static  test(str,flag,verbose,x1,x2,x3,x4,x5)
      char str[];
-     integer flag ;
-     integer  *verbose,*x1,*x2,*x3,*x4,*x5;
+     int flag ;
+     int  *verbose,*x1,*x2,*x3,*x4,*x5;
 { 
   double *dv;
   C2F(setalufunction1Gif)(x1,x2,x3,x4);C2F(getalufunctionGif)(verbose,x1,x2,dv);
@@ -1128,23 +1128,23 @@ static  test(str,flag,verbose,x1,x2,x3,x4,x5)
 #endif 
 
 
-void C2F(scilabgcgetGif)(char *str, integer *verbose, integer *x1, integer *x2, integer *x3, integer *x4, integer *x5, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(scilabgcgetGif)(char *str, int *verbose, int *x1, int *x2, int *x3, int *x4, int *x5, double *dv1, double *dv2, double *dv3, double *dv4)
 {
   int x6=0;
-  C2F(ScilabGCGetorSetGif)(str,(integer)1L,verbose,x1,x2,x3,x4,x5,&x6,dv1);
+  C2F(ScilabGCGetorSetGif)(str,(int)1L,verbose,x1,x2,x3,x4,x5,&x6,dv1);
 }
 
-void C2F(scilabgcsetGif)(char *str, integer *x1, integer *x2, integer *x3, integer *x4, integer *x5, integer *x6, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(scilabgcsetGif)(char *str, int *x1, int *x2, int *x3, int *x4, int *x5, int *x6, double *dv1, double *dv2, double *dv3, double *dv4)
 {
- integer verbose ;
+ int verbose ;
  verbose = 0 ;
- C2F(ScilabGCGetorSetGif)(str,(integer)0L,&verbose,x1,x2,x3,x4,x5,x6,dv1);}
+ C2F(ScilabGCGetorSetGif)(str,(int)0L,&verbose,x1,x2,x3,x4,x5,x6,dv1);}
 
-void C2F(ScilabGCGetorSetGif)(char *str, integer flag, integer *verbose, integer *x1, integer *x2, integer *x3, integer *x4, integer *x5, integer *x6, double *dv1)
-{ integer i ;
+void C2F(ScilabGCGetorSetGif)(char *str, int flag, int *verbose, int *x1, int *x2, int *x3, int *x4, int *x5, int *x6, double *dv1)
+{ int i ;
   for (i=0; i < NUMSETFONC ; i++)
      {
-       integer j;
+       int j;
        j = strcmp(str,ScilabGCTabGif[i].name);
        if ( j == 0 ) 
 	 { if (*verbose == 1)
@@ -1177,13 +1177,13 @@ void C2F(ScilabGCGetorSetGif)(char *str, integer flag, integer *verbose, integer
  positive when clockwise. If *flag ==1 a framed  box is added 
  around the string.}
 -----------------------------------------------------*/
-void C2F(DispStringAngleGif)(integer *x0, integer *yy0, char *string, double *angle)
+void C2F(DispStringAngleGif)(int *x0, int *yy0, char *string, double *angle)
 {
   int i;
-  integer x,y, rect[4];
+  int x,y, rect[4];
   double sina ,cosa,l;
   char str1[2];
-  integer verbose, Dnarg,Dvalue[10],j;
+  int verbose, Dnarg,Dvalue[10],j;
   verbose =0 ;
 
   if (GifIm == (gdImagePtr)0 ) {
@@ -1224,17 +1224,17 @@ void C2F(DispStringAngleGif)(integer *x0, integer *yy0, char *string, double *an
 	}
       else 
 	l = Abs(rect[3]/sina);
-      x +=  (integer)(cosa*l*1.1);
-      y +=  (integer)(sina*l*1.1);
+      x +=  (int)(cosa*l*1.1);
+      y +=  (int)(sina*l*1.1);
     }
   C2F(setdashGif)(Dvalue,PI0,PI0,PI0);
 }
 
-void C2F(displaystringGif)(char *string, integer *x, integer *y, integer *v1, integer *flag, integer *v6, integer *v7, double *angle, double *dv2, double *dv3, double *dv4)
+void C2F(displaystringGif)(char *string, int *x, int *y, int *v1, int *flag, int *v6, int *v7, double *angle, double *dv2, double *dv3, double *dv4)
 {     
-  integer rect[4],x1=0,y1=0;
+  int rect[4],x1=0,y1=0;
 
-  integer verbose, Dnarg,Dvalue[10],j;
+  int verbose, Dnarg,Dvalue[10],j;
   verbose =0 ;
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -1253,7 +1253,7 @@ void C2F(displaystringGif)(char *string, integer *x, integer *y, integer *v1, in
 }
 
 
-void C2F(boundingboxGif)(char *string, integer *x, integer *y, integer *rect, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(boundingboxGif)(char *string, int *x, int *y, int *rect, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
   int k,width;
   if (GifIm == (gdImagePtr)0 ) {
@@ -1271,7 +1271,7 @@ void C2F(boundingboxGif)(char *string, integer *x, integer *y, integer *rect, in
 
 /** Draw a single line in current style **/
 
-void C2F(drawlineGif)(integer *xx1, integer *yy1, integer *x2, integer *y2)
+void C2F(drawlineGif)(int *xx1, int *yy1, int *x2, int *y2)
 {
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -1285,9 +1285,9 @@ void C2F(drawlineGif)(integer *xx1, integer *yy1, integer *x2, integer *y2)
 /** segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/
 /** for i=0 step 2 **/
 
-void C2F(drawsegmentsGif)(char *str, integer *vx, integer *vy, integer *n, integer *style, integer *iflag, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(drawsegmentsGif)(char *str, int *vx, int *vy, int *n, int *style, int *iflag, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
-  integer verbose=0,Dnarg,Dvalue[10],NDvalue;
+  int verbose=0,Dnarg,Dvalue[10],NDvalue;
   int i;
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -1315,7 +1315,7 @@ void C2F(drawsegmentsGif)(char *str, integer *vx, integer *vy, integer *n, integ
     {
       for ( i=0 ; i < *n/2 ; i++) 
 	{
-	  integer NDvalue;
+	  int NDvalue;
 	  NDvalue = style[i];
 	  C2F(setpatternGif)(&NDvalue,PI0,PI0,PI0);
           gdImageThickLine(GifIm, vx[2*i], vy[2*i],
@@ -1332,12 +1332,12 @@ void C2F(drawsegmentsGif)(char *str, integer *vx, integer *vy, integer *n, integ
 /** n is the size of vx and vy **/
 /** as is 10*arsize (arsize) the size of the arrow head in pixels **/
 
-void C2F(drawarrowsGif)(char *str, integer *vx, integer *vy, integer *n, integer *as, integer *style, integer *iflag, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(drawarrowsGif)(char *str, int *vx, int *vy, int *n, int *as, int *style, int *iflag, double *dv1, double *dv2, double *dv3, double *dv4)
 { 
-  integer verbose=0,Dnarg,Dvalue[10],NDvalue,i;
+  int verbose=0,Dnarg,Dvalue[10],NDvalue,i;
   double cos20=cos(20.0*M_PI/180.0);
   double sin20=sin(20.0*M_PI/180.0);
-  integer polyx[4],polyy[4]; 
+  int polyx[4],polyy[4]; 
 
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -1361,7 +1361,7 @@ void C2F(drawarrowsGif)(char *str, integer *vx, integer *vy, integer *n, integer
       dy=( vy[2*i+1]-vy[2*i]);
       norm = sqrt(dx*dx+dy*dy);
       if ( Abs(norm) >  SMDOUBLE ) 
-	{ integer nn=1,p=3;
+	{ int nn=1,p=3;
 	  dx=(*as/10.0)*dx/norm;dy=(*as/10.0)*dy/norm;
 	  polyx[0]= polyx[3]=inint(vx[2*i+1]+dx*cos20);
 	  polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
@@ -1384,7 +1384,7 @@ void C2F(drawarrowsGif)(char *str, integer *vx, integer *vy, integer *n, integer
 /** (*n) : number of rectangles **/
 /** fillvect[*n] : specify the action (see periX11.c) **/
 
-void C2F(drawrectanglesGif)(char *str, integer *vects, integer *fillvect, integer *n, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(drawrectanglesGif)(char *str, int *vects, int *fillvect, int *n, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
   int i,cpat,verb=0,num,cd[10],thick;
 
@@ -1415,7 +1415,7 @@ void C2F(drawrectanglesGif)(char *str, integer *vects, integer *fillvect, intege
   C2F(set_dash_and_color_Gif)(cd,PI0,PI0,PI0);
 }
 
-void C2F(drawrectangleGif)(char *str, integer *x, integer *y, integer *width, integer *height, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(drawrectangleGif)(char *str, int *x, int *y, int *width, int *height, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -1426,10 +1426,10 @@ void C2F(drawrectangleGif)(char *str, integer *x, integer *y, integer *width, in
 
 /** Draw a filled rectangle **/
 
-void C2F(fillrectangleGif)(char *str, integer *x, integer *y, integer *width, integer *height, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(fillrectangleGif)(char *str, int *x, int *y, int *width, int *height, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 { 
 
-  integer cpat,verb=0,num;
+  int cpat,verb=0,num;
 
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -1444,9 +1444,9 @@ void C2F(fillrectangleGif)(char *str, integer *x, integer *y, integer *width, in
 /** fillvect[*n] : specify the action <?> **/
 /** caution angle=degreangle*64          **/
 
-void C2F(fillarcsGif)(char *str, integer *vects, integer *fillvect, integer *n, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(fillarcsGif)(char *str, int *vects, int *fillvect, int *n, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
-  integer verbose=0,Dnarg,pat;
+  int verbose=0,Dnarg,pat;
   int i,i6;
 
   if (GifIm == (gdImagePtr)0 ) {
@@ -1474,9 +1474,9 @@ void C2F(fillarcsGif)(char *str, integer *vects, integer *fillvect, integer *n, 
 /** angle1,angle2 specifies the portion of the ellipsis **/
 /** caution : angle=degreangle*64          **/
 
-void C2F(drawarcsGif)(char *str, integer *vects, integer *style, integer *n, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(drawarcsGif)(char *str, int *vects, int *style, int *n, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
-  integer verbose=0,Dnarg,Dvalue[10],NDvalue;
+  int verbose=0,Dnarg,Dvalue[10],NDvalue;
   int i,i6;
 
   if (GifIm == (gdImagePtr)0 ) {
@@ -1501,11 +1501,11 @@ void C2F(drawarcsGif)(char *str, integer *vects, integer *style, integer *n, int
 /** Draw a single ellipsis or part of it **/
 /** caution angle=degreAngle*64          **/
 
-void C2F(drawarcGif)(char *str, integer *x, integer *y, integer *width, integer *height, integer *angle1, integer *angle2, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(drawarcGif)(char *str, int *x, int *y, int *width, int *height, int *angle1, int *angle2, double *dv1, double *dv2, double *dv3, double *dv4)
 { 
-  integer vx[365],vy[365],k,n;
+  int vx[365],vy[365],k,n;
   float alpha,fact=0.01745329251994330,w,h;
-  integer close = 0;
+  int close = 0;
 
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -1526,11 +1526,11 @@ void C2F(drawarcGif)(char *str, integer *x, integer *y, integer *width, integer 
 /** Fill a single elipsis or part of it **/
 /** with current pattern **/
 
-void C2F(fillarcGif)(char *str, integer *x, integer *y, integer *width, integer *height, integer *angle1, integer *angle2, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(fillarcGif)(char *str, int *x, int *y, int *width, int *height, int *angle1, int *angle2, double *dv1, double *dv2, double *dv3, double *dv4)
 { 
-  integer vx[365],vy[365],k,k0,kmax,n;
+  int vx[365],vy[365],k,k0,kmax,n;
   float alpha,fact=0.01745329251994330,w,h;
-  integer close = 1;
+  int close = 1;
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
     return;
@@ -1570,8 +1570,8 @@ void C2F(fillarcGif)(char *str, integer *x, integer *y, integer *width, integer 
 /** drawvect[i] >= use a mark for polyline i **/
 /** drawvect[i] < 0 use a line style for polyline i **/
 
-void C2F(drawpolylinesGif)(char *str, integer *vectsx, integer *vectsy, integer *drawvect, integer *n, integer *p, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
-{ integer verbose ,symb[2],Mnarg,Dnarg,Dvalue[10],NDvalue,i,j,close;
+void C2F(drawpolylinesGif)(char *str, int *vectsx, int *vectsy, int *drawvect, int *n, int *p, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+{ int verbose ,symb[2],Mnarg,Dnarg,Dvalue[10],NDvalue,i,j,close;
   verbose =0 ;
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
@@ -1615,12 +1615,12 @@ void C2F(drawpolylinesGif)(char *str, integer *vectsx, integer *vectsy, integer 
  if fillvect[i] < 0  fill with pattern - fillvect[i]
  **************************************************************/
 
-void C2F(fillpolylinesGif)(char *str, integer *vectsx, integer *vectsy, integer *fillvect, integer *n, integer *p, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(fillpolylinesGif)(char *str, int *vectsx, int *vectsy, int *fillvect, int *n, int *p, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
-  integer n1,i,j,o;
+  int n1,i,j,o;
 
   gdPoint *points;
-  integer c,thick;
+  int c,thick;
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
     return;
@@ -1656,9 +1656,9 @@ void C2F(fillpolylinesGif)(char *str, integer *vectsx, integer *vectsy, integer 
 /** Only draw one polygon with current line style **/
 /** according to *closeflag : it's a polyline or a polygon **/
 
-void C2F(drawpolylineGif)(char *str, integer *n, integer *vx, integer *vy, integer *closeflag, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(drawpolylineGif)(char *str, int *n, int *vx, int *vy, int *closeflag, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
-  integer thick,n1;
+  int thick,n1;
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
     return;
@@ -1671,10 +1671,10 @@ void C2F(drawpolylineGif)(char *str, integer *n, integer *vx, integer *vy, integ
 
 /** Fill the polygon **/
 
-void C2F(fillpolylineGif)(char *str, integer *n, integer *vx, integer *vy, integer *closeareaflag, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(fillpolylineGif)(char *str, int *n, int *vx, int *vy, int *closeareaflag, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
-  integer i =1;
-  integer cpat,verb=0,num;
+  int i =1;
+  int cpat,verb=0,num;
   if (GifIm == (gdImagePtr)0 ) {
     sciprint(" xinit must be called before any action \r\n");
     return;
@@ -1689,9 +1689,9 @@ void C2F(fillpolylineGif)(char *str, integer *n, integer *vx, integer *vy, integ
 /** Draw a set of  current mark centred at points defined **/
 /** by vx and vy (vx[i],vy[i]) **/
 
-void C2F(drawpolymarkGif)(char *str, integer *n, integer *vx, integer *vy, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(drawpolymarkGif)(char *str, int *n, int *vx, int *vy, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 { 
-  integer keepid,keepsize,i=1,sz=ScilabGCGif.CurHardSymbSize;
+  int keepid,keepsize,i=1,sz=ScilabGCGif.CurHardSymbSize;
 
   keepid =  ScilabGCGif.FontId;
   keepsize= ScilabGCGif.FontSize;
@@ -1705,11 +1705,11 @@ void C2F(drawpolymarkGif)(char *str, integer *n, integer *vx, integer *vy, integ
 ------------------------------------------------------*/
 
 void C2F(
-initgraphicGif)(char *string, integer *v2, integer *v3, integer *v4, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+initgraphicGif)(char *string, int *v2, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 { 
   char string1[256];
-  static integer EntryCounter = 0;
-  integer  x[2],verbose=0,narg;
+  static int EntryCounter = 0;
+  int  x[2],verbose=0,narg;
   double dummy;
 
   if (EntryCounter >= 1) C2F(xendgraphicGif)();
@@ -1748,7 +1748,7 @@ static void FileInitGif(void)
   float R,G,B;
   double *bigcmap,*cmap;
   int *ind,m1,ierr,i1;
-  integer x[2],verbose,narg;
+  int x[2],verbose,narg;
 
   verbose = 0; 
   C2F(getwindowdimGif)(&verbose,x,&narg,vdouble);
@@ -1852,8 +1852,8 @@ to come back to the default graphic state}
 ---------------------------------------------------------*/
 
 
-void InitScilabGCGif(integer *v1, integer *v2, integer *v3, integer *v4)
-{ integer i,j,col;
+void InitScilabGCGif(int *v1, int *v2, int *v3, int *v4)
+{ int i,j,col;
   ScilabGCGif.IDLastPattern = GREYNUMBER-1;
   ScilabGCGif.CurLineWidth=0 ;
   i=1;
@@ -1902,17 +1902,17 @@ void InitScilabGCGif(integer *v1, integer *v2, integer *v3, integer *v4)
      <-----n1---->                 
      <-------------n2-------->
 \end{verbatim}
-$n1$and $n2$ are integer numbers for interval numbers.
+$n1$and $n2$ are int numbers for interval numbers.
 \item $size=<dl,r,coeff>$. $dl$ distance in points between 
      two marks, $r$ size in points of small mark, $r*coeff$ 
      size in points of big marks. (they are doubleing points numbers)
-\item $init$. Initial pointeger $<x,y>$. 
+\item $init$. Initial point $<x,y>$. 
 \end{itemize}
 }
 
 -------------------------------------------------------------*/
-void C2F(drawaxisGif)(char *str, integer *alpha, integer *nsteps, integer *v2, integer *initpoint, integer *v6, integer *v7, double *size, double *dx2, double *dx3, double *dx4)
-{ integer i;
+void C2F(drawaxisGif)(char *str, int *alpha, int *nsteps, int *v2, int *initpoint, int *v6, int *v7, double *size, double *dx2, double *dx3, double *dx4)
+{ int i;
   double xi,yi,xf,yf;
   double cosal,sinal;
 
@@ -1956,8 +1956,8 @@ void C2F(drawaxisGif)(char *str, integer *alpha, integer *nsteps, integer *v2, i
   with a slope alpha[i] (see displaystring_), if flag==1
   add a box around the string.
 -----------------------------------------------------*/
-void C2F(displaynumbersGif)(char *str, integer *x, integer *y, integer *v1, integer *v2, integer *n, integer *flag, double *z, double *alpha, double *dx3, double *dx4)
-{ integer i ;
+void C2F(displaynumbersGif)(char *str, int *x, int *y, int *v1, int *v2, int *n, int *flag, double *z, double *alpha, double *dx3, double *dx4)
+{ int i ;
   char buf[20];
   for (i=0 ; i< *n ; i++)
     { 
@@ -1990,7 +1990,7 @@ gdFont FontListGif[FONTNUMBER][FONTMAXSIZE];
    taille ds le serveur.
 */
 
-struct FontInfo { integer ok;
+struct FontInfo { int ok;
 		  char fname[100];
 		} FontInfoTabGif[FONTNUMBER];
 
@@ -2013,8 +2013,8 @@ static FontAlias fonttab[] ={
 
 /** To set the current font id of font and size **/
 
-void C2F(xsetfontGif)(integer *fontid, integer *fontsize, integer *v3, integer *v4)
-{ integer i,fsiz;
+void C2F(xsetfontGif)(int *fontid, int *fontsize, int *v3, int *v4)
+{ int i,fsiz;
   i = Min(FONTNUMBER-1,Max(*fontid,0));
   fsiz = Min(FONTMAXSIZE-1,Max(*fontsize,0));
   if ( FontInfoTabGif[i].ok !=1 )
@@ -2037,7 +2037,7 @@ void C2F(xsetfontGif)(integer *fontid, integer *fontsize, integer *v3, integer *
 
 /** To get the values id and size of the current font **/
 
-void C2F(xgetfontGif)(integer *verbose, integer *font, integer *nargs, double *dummy)
+void C2F(xgetfontGif)(int *verbose, int *font, int *nargs, double *dummy)
 {
   *nargs=2;
   font[0]= ScilabGCGif.FontId ;
@@ -2053,7 +2053,7 @@ void C2F(xgetfontGif)(integer *verbose, integer *font, integer *nargs, double *d
 
 /** To set the current mark : using the symbol font of adobe **/
 
-void C2F(xsetmarkGif)(integer *number, integer *size, integer *v3, integer *v4)
+void C2F(xsetmarkGif)(int *number, int *size, int *v3, int *v4)
 { 
   ScilabGCGif.CurHardSymb = Max(Min(SYMBOLNUMBER-1,*number),0);
   ScilabGCGif.CurHardSymbSize = Max(Min(FONTMAXSIZE-1,*size),0);
@@ -2061,7 +2061,7 @@ void C2F(xsetmarkGif)(integer *number, integer *size, integer *v3, integer *v4)
 
 /** To get the current mark id **/
 
-void C2F(xgetmarkGif)(integer *verbose, integer *symb, integer *narg, double *dummy)
+void C2F(xgetmarkGif)(int *verbose, int *symb, int *narg, double *dummy)
 {
   *narg =2 ;
   symb[0] = ScilabGCGif.CurHardSymb ;
@@ -2079,7 +2079,7 @@ char symb_listGif[] = {
   (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
   (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
 
-static void C2F(displaysymbolsGif)(char *str, integer *n, integer *vx, integer *vy)
+static void C2F(displaysymbolsGif)(char *str, int *n, int *vx, int *vy)
 {
   int col, i, c, sz;
   col = ( ScilabGCGif.CurColorStatus ==1) ? ScilabGCGif.CurColor : ScilabGCGif.CurPattern ;
@@ -2095,7 +2095,7 @@ static void C2F(displaysymbolsGif)(char *str, integer *n, integer *vx, integer *
 \encadre{Check if a specified family of font exist in GIF }
 -------------------------------------------------------*/
 
-void C2F(loadfamilyGif)(char *name, integer *j, integer *v3, integer *v4, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(loadfamilyGif)(char *name, int *j, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
   FILE *ff;
   char fname[200];
@@ -2155,9 +2155,9 @@ void C2F(loadfamilyGif)(char *name, integer *j, integer *v3, integer *v4, intege
   }
 }
 
-void C2F(queryfamilyGif)(char *name, integer *j, integer *v3, integer *v4, integer *v5, integer *v6, integer *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+void C2F(queryfamilyGif)(char *name, int *j, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 { 
-  integer i ;
+  int i ;
   name[0]='\0';
   for (i=0;i<FONTNUMBER;i++) {
     v3[i]=strlen(FontInfoTabGif[i].fname);
