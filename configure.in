@@ -1410,6 +1410,7 @@ if test "$with_gtkglext" = yes; then
     GTKCFLAGS='`pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --cflags`'
     GTKLIBS='`pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --libs`'
     GNOMECFLAGS='`pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --cflags`'
+
 fi
 
 #################
@@ -1586,7 +1587,6 @@ AC_SUBST(IMPENV)
 AC_SUBST(ZZLEDT)
 AC_SUBST(STRIP)
 AC_SUBST(PERIGLEXT)
-AC_SUBST(WITH_GTKGLEXT)
 
 
 AC_OUTPUT(Makefile.OBJ Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk) 

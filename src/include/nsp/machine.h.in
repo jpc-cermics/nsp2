@@ -38,6 +38,9 @@
 /* Define if have and use PVM */
 #undef WITH_PVM
 
+/* Define if have and use GTKGLEXT */
+#undef WITH_GTKGLEXT
+
 /* CNAME(x,y) ==> xy **/
 
 #if defined(USE_SHARP_SIGN)
