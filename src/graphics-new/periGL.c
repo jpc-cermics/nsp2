@@ -2845,6 +2845,7 @@ static void DrawMark(BCG *Xgc,int *x, int *y)
 
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
+
   BCG *Xgc = (BCG *) data;
   GdkGLContext *glcontext;
   GdkGLDrawable *gldrawable;
@@ -2872,6 +2873,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 #endif
 
   xset_background(Xgc,Xgc->NumBackground+1);
+
   glClearDepth(1.0);
   glEnable(GL_DEPTH_TEST);
   /*     glDrawBuffer(GL_FRONT_AND_BACK); */
@@ -2945,7 +2947,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
-  //g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+  g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
   
   glLineWidth(1.5); // FIXME: 
 
@@ -3400,6 +3402,7 @@ static void force_redraw(BCG *Xgc)
 
 static void nsp_ogl_set_view(BCG *Xgc)
 {
+
   glViewport (0,  0, Xgc->private->drawing->allocation.width, 
 	      Xgc->private->drawing->allocation.height);
   /* xset_background(Xgc,Xgc->NumBackground+1); */
