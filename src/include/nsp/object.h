@@ -174,6 +174,7 @@ struct _stack {
   NspObject **S;     /** points to the whole stack **/
   NspObject *error_msg; 
   stack_error *error;
+  int errcatch;
 } ;
 
 #define STACK_SIZE 500
