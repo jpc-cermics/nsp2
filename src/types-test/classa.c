@@ -447,6 +447,8 @@ int int_cla_test(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab ClassA_func[]={
+  /* {"extract_h",int_get_attributes}, */   	/* a(x1,....) */
+  /* {"extractelts_h",int_get_attributes},*/ /* a(x1)  */
   {"setrowscols_cla",int_set_attribute},/* a(xxx)= b */
   {"test_cla",int_cla_test},
   {(char *) 0, NULL}

@@ -46,6 +46,7 @@ void nsp_gtk_init(int argc, char **argv,int no_window)
       /* we are using a gtk widget app */
       nsp_in_gtk_window();
       /* initialise gtk */
+      gtk_set_locale();
       gtk_init(&argc,&argv);
       /* initialise opengl */
       nsp_gtk_gl_init (&argc, &argv);
@@ -100,6 +101,7 @@ void start_sci_gtk(void)
   char **argv = NULL; 
   if ( nsp_check_events_activated() == TRUE ) return;
   /* initialise gtk */
+  gtk_set_locale();
   gtk_init(&argc,&argv);
   nsp_gtk_gl_init (&argc, &argv);
   nsp_activate_gtk_events_check();
@@ -209,7 +211,7 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   guint32 *xid; 
   char * shm = get_shared() ;
   GtkWidget *vbox,*menubar, *socket_button;
-
+  gtk_set_locale();
   gtk_init(&argc, &argv);
   nsp_gtk_gl_init (&argc, &argv);
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
