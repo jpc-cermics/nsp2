@@ -1,35 +1,33 @@
-function [y]=hide(win, event) 
-  //win.destroy[] 
-  printf("destroy activated \n");
-  pause
-  y=%t;
-endfunction
-
-function [y]=delete(win, event) 
-  printf("delete event  activated \n");
-  y=%t;
-endfunction
-
-function [y]=destroy(win, event) 
-  printf("destroy signal\n");
-  y=%t;
-endfunction
-
-function [y]=win_hide(but,args)  args(1).hide[];y=%t; endfunction 
-
-function nsp_graphics_demos() 
- exec(getenv('SCI')+'/demos/graphics/graphic_list.sce');
- 
-endfunction 
-
-
-
+// -*- Mode: scilab -*- 
 
 function create_demo_window()
-  B = hcreate(100);
+  function [y]=hide(win, event) 
+  // printf("destroy activated \n");
+  y=%f;
+  endfunction
+  function [y]=delete(win, event) 
+  // printf("delete event  activated \n");
+  y=%t;
+  endfunction
+  function [y]=destroy(win, event) 
+  // printf("destroy signal\n");
+  y=%t;
+  endfunction
+  function [y]=win_hide(but,args)  args(1).hide[];y=%t; endfunction 
+
+  function nsp_graphics_demos() 
+    exec('NSP/demos/graphics/graphic_list.sce');
+  endfunction 
+
+  function nsp_gtk2_demos() 
+    exec('NSP/src/gtk2/testgtk/base/main.sci');
+  endfunction 
+
+  B = hcreate(100)
   B('graphics')=  nsp_graphics_demos ;
+  B('gtk2')=  nsp_gtk2_demos ;
   win = gtkwindow_new()
-  win.set_size_request[200, 400]	
+  //win.set_size_request[0,200]	
   //win.set_uposition[20,20]
   win.connect["destroy",hide];
   win.connect["delete_event",hide];
