@@ -352,6 +352,10 @@ typedef enum { NOOBJ,LIST,MATRIX,SMATRIX,BMATRIX,LIB,
 #include "nsp/link.h" 
 #include "nsp/none.h" 
 #include "nsp/type.h" 
+#include "nsp/module.h"
+#include "nsp/modulelt.h"
+#include "nsp/classa.h"
+#include "nsp/classb.h"
 
 #endif /*  NSP_TYPE_OBJECT  */
 

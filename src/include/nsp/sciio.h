@@ -64,6 +64,7 @@ extern int nsp_get_echo_input_line(void);
 
 extern IOVFun nsp_error_vprintf;
 
+extern void sci_get_screen_size (int *rows, int *cols);
 
 #endif 
 
