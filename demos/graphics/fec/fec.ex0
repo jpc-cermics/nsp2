@@ -19,19 +19,19 @@ triangles_nodes=[1:N;[(1:N-1)+1,1];(N+1)*ones(1,N)];
 triangles=[(1:N);triangles_nodes;zeros(1,N)]';
 rect=[-1.2,-1.2,1.2,1.2];
 xsetech(wrect=[0,0,0.5,0.5])
-xtitle('default and draw=%t');
-fec(xn,yn,triangles,val,strf="032",rect=rect,draw=%t);
+xtitle('default and mesh=%t');
+fec(xn,yn,triangles,val,strf="032",rect=rect,mesh=%t);
 xsetech(wrect=[0,0.5,0.5,0.5])
-xtitle('zminmax and draw=%t');
-fec(xn,yn,triangles,val,strf="032",rect=rect,zminmax=[0.4,0.8],draw=%t);
+xtitle('zminmax and mesh=%t');
+fec(xn,yn,triangles,val,strf="032",rect=rect,zminmax=[0.4,0.8],mesh=%t);
 xsetech(wrect=[0.5,0,0.5,0.5])
-xtitle('zminmax,colout=[0,0] and draw=%t');
+xtitle('zminmax,colout=[0,0] and mesh=%t');
 fec(xn,yn,triangles,val,strf="032",rect=rect,
-    zminmax=[0.4,0.8],colout=[0,0],draw=%t);
+    zminmax=[0.4,0.8],colout=[0,0],mesh=%t);
 xsetech(wrect=[0.5,0.5,0.5,0.5])
-xtitle('zminmax,colout=[1,1] and draw=%t');
+xtitle('zminmax,colout=[1,1] and mesh=%t');
 fec(xn,yn,triangles,val,strf="032",
-    rect=rect,zminmax=[0.4,0.8],colout=[1,1],draw=%t);
+    rect=rect,zminmax=[0.4,0.8],colout=[1,1],mesh=%t);
 
 
 

@@ -21,6 +21,8 @@ extern void nsp_frame_remove_object(String *str);
 extern int nsp_frame_search_and_move_up_object(String *str);
 extern int nsp_frame_move_up_object(NspObject *O);
 extern int nsp_declare_global(char *name) ;
+extern int nsp_frame_insert_hash_contents(NspHash *H);
+
 
 #endif
 

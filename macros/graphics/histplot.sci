@@ -38,7 +38,9 @@ function histplot(n,data,normalize=%t,style=[2],strf='171',rect=[],leg="",nax=[2
     xp=[x(1:$-1),x(2:$),x(2:$),x(1:$-1)]';
     y=y(1:$-1);
     yp=[0*y,0*y,y,y]';
+    xset('clipgrf');
     xfpolys(xp,yp,style*ones(1,n-1));
+    xset('clipoff');
   end
 endfunction
 

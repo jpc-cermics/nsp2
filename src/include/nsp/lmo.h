@@ -55,33 +55,13 @@ int LmoObjEq(NspObject *A,NspObject *B);
 int LmoObjNeq(NspObject *A,NspObject *B);
 #endif 
 
-
-NspLmo *LmoCreate  (char *name);
-NspLmo *LmoCopy      (NspLmo *H);
-void LmoDestroy      (NspLmo *H);
-void LmoInfo      (NspLmo *H,int indent);
-void LmoPrint      (NspLmo *H,int indent);
-NspLmo  *LmoObj  ( NspObject *O);
-int LmoFullComp(NspLmo * A,NspLmo * B,char *op,int *err);
-
 #define NULLLMO ( NspLmo *) 0 
 #define NULLCELL ( Cell *) 0 
 #define NULLOBJ  ( NspObject *) 0 
 
 /** Functions declaration **/
 
-NspLmo *ELmoCreate  (char *name);
-void LmoDestroy  (NspLmo *l);
-NspLmo *LmoCopy  (NspLmo *L);
-int LmoLength  (NspLmo *L);
-void LmoInfo  (NspLmo *L,int indent);
-void LmoPrint  (NspLmo *L,int indent);
-NspLmo  *LmoObj  (NspObject *O);
-int LmoInsertLast(NspLmo *L,char *dir,char **Mname);
-NspObject * LmoSearchName(NspLmo *L,char **Mname);
-int LmoImport(NspLmo *L,char *dir,char **Mname);
-
-NspObject *lmo_path_search_name(NspLmo *L,NspSMatrix *Sm,char **oname);
-NspObject *lmo_path_search_object(NspLmo *L,NspSMatrix *Sm,char **oname);
+NspObject *module_path_search_name(NspList *L,NspSMatrix *Sm,char **oname);
+NspObject *module_path_search_object(NspList *L,NspSMatrix *Sm,char **oname);
 
 #endif

@@ -15,7 +15,7 @@
 #include "nsp/gtksci.h" 
 
 static int fd=0;              /* file number for standard in */
-static int  use_prompt=1;
+static int use_prompt=1;
 static int hist = 1; /* flag to add to history */
 
 extern int checkqueue_nsp_command(void) ;
@@ -207,7 +207,7 @@ static char **scilab_completion (const char *, int, int);
 static void initialize_readline (void)
 {
   /* Tell the completer that we want a crack first. */
-  rl_attempted_completion_function = scilab_completion;
+  /* rl_attempted_completion_function = scilab_completion; FIXME: removed temporarily */
 }
 
 static char **scilab_completion (const char * text,int start,int end)

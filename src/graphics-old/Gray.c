@@ -642,7 +642,7 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
       /* call the "painting" function */
       PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
 
-      if ( draw == 1 ) draw_triangle(Xgc,sx,sy);
+      if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
 
     };
   }

@@ -404,7 +404,7 @@ NspModule *module_create(char *name,const char *path,const char *mname,NspTypeBa
        */
       if (module_fill(M) == FAIL) return NULLMODULE;
     }
-  M->L = NULL;
+  if ((M->L =  nsp_list_create(NVOID,NULL))==NULLLIST) return NULLMODULE;
   M->flag=0;
   return(M);
 } 
@@ -417,6 +417,39 @@ NspModule *module_copy(NspModule *H)
 {
   return module_create(NVOID,H->path,H->mname,NULL);
 }
+
+/*
+ * new module which shares hash table and list 
+ * with an other module 
+ */
+
+NspModule *module_copy_ref(NspModule *Mod)
+{
+  NspModule *M  =  new_module() ;
+  if ( M ==  NULLMODULE)
+    {
+      Sciprintf("No more memory\n");
+      return NULLMODULE;
+    }
+  if ( ( NSP_OBJECT(M)->name = NewString(NSP_OBJECT(Mod)->name)) == NULLSTRING) return(NULLMODULE);
+  NSP_OBJECT(M)->ret_pos = -1 ;
+  /* specific for Module */
+  if ((M->path = NewString(Mod->path))== NULLSTRING)
+    {
+      Scierror("Error:\tRunning out of memory\n");
+      return(NULLMODULE);
+    }
+  if ((M->mname = NewString(Mod->mname))== NULLSTRING) 
+    {
+      Scierror("Error:\tRunning out of memory\n");
+      return(NULLMODULE);
+    }
+  M->T = Mod->T;
+  M->L = Mod->L;
+  M->flag=1; /* T and L are not local */
+  return(M);
+} 
+
 
 /*-------------------------------------------------------------------
  * wrappers for the Module
@@ -472,6 +505,104 @@ int int_mo_test(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/**************************************************
+ * insert 
+ **************************************************/
+
+int int_mo_insertlast(Stack stack, int rhs, int opt, int lhs)
+{
+
+  NspList *H;
+  NspSMatrix *Mname; 
+  char *dir;
+  CheckRhs(3,3);
+  CheckLhs(1,1);
+  if ((H = GetList(stack,1)) == NULLLIST) return RET_BUG;
+  if ((dir=GetString(stack,2))== (char *) 0 ) return RET_BUG;     
+  if ((Mname = GetSMat(stack,3))  == NULLSMAT) return RET_BUG;
+  if ( nsp_insert_module_last(H,dir,Mname->S) == FAIL) 
+    {
+      Scierror("Error:List insertion failed\n");
+      return RET_BUG;
+    }
+  return 0;
+}
+
+/**************************************************
+ * search 
+ **************************************************/
+
+int int_mo_search(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *O;
+  NspList *H;
+  NspSMatrix *Mname; 
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((H = GetList(stack,1)) == NULLLIST) return RET_BUG;
+  if ((Mname = GetSMat(stack,2))  == NULLSMAT) return RET_BUG;
+  if ((O= nsp_module_search_name(H,Mname->S)) == NULLOBJ) 
+    {
+      Scierror("Error:List search failed\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1,O);
+  return 1;
+}
+
+/**************************************************
+ * import 
+ **************************************************/
+
+int int_mo_import(Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *H;
+  NspSMatrix *Mname; 
+  char *dir;
+  CheckRhs(3,3);
+  CheckLhs(1,1);
+  if ((H = GetList(stack,1)) == NULLLIST) return RET_BUG;
+  if ((dir=GetString(stack,2))== (char *) 0 ) return RET_BUG;     
+  if ((Mname = GetSMat(stack,3))  == NULLSMAT) return RET_BUG;
+  if ( nsp_module_import(H,dir,Mname->S) == FAIL ) 
+    {
+      Scierror("Error:List import failed\n");
+      return RET_BUG;
+    }
+  return 0;
+}
+
+
+
+/**************************************************
+ * search for a full name using a path variable 
+ * and dynamically add modules in the lmo variable 
+ * during the search 
+ * ==> If object is found it is loaded in the 
+ *     current env 
+ **************************************************/
+
+int int_mo_pathsearch(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *O1,*O;
+  NspList *H;
+  NspSMatrix *Mname,*path;
+  CheckRhs(3,3);
+  CheckLhs(1,1);
+  if ((H = GetList(stack,1)) == NULLLIST) return RET_BUG;
+  if ((path = GetSMat(stack,2))  == NULLSMAT) return RET_BUG;
+  if ((Mname = GetSMat(stack,3))  == NULLSMAT) return RET_BUG;
+  /*if XXX ((O= lmo_path_search_name(H,path,Mname->S)) == NULLOBJ) */
+  if ((O =nsp_create_true_object(NVOID))== NULLOBJ) return RET_BUG;
+  if ((O1= module_path_search_object(H,path,Mname->S)) == NULLOBJ) 
+    {
+      ((NspBMatrix *)O)->B[0] = FALSE;
+    }
+  MoveObj(stack,1,O);
+  return 1;
+}
+
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
@@ -481,6 +612,10 @@ static OpTab Module_func[]={
   {"setrowscols_mo",int_set_attribute},/* a(xxx)= b */
   /* {"test_mo",int_mo_test},*/
   {"mocreate",int_mo_create},
+  {"insert",int_mo_insertlast},  		
+  {"search",int_mo_search},  		
+  {"pathsearch",int_mo_pathsearch},  		
+  {"import",int_mo_import},  		
   {(char *) 0, NULL}
 };
 

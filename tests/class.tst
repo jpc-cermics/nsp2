@@ -1,7 +1,7 @@
 // an object of Classa 
 
 
-a=%types.ClassA(cla_color=89,cla_thickness=56)
+a=%types.ClassA.new[cla_color=89,cla_thickness=56];
 
 // attributes of object 
 
@@ -26,7 +26,7 @@ test(a)
 
 // an object of Classb which inherits from Classa 
 
-b=%types.ClassB(color=89,thickness=56)
+b=%types.ClassB.new[color=89,thickness=56];
 
 b.__attrs 
 

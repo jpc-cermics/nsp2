@@ -1610,6 +1610,7 @@ void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, 
       lplot->colminmax = NULL;
       lplot->zminmax = NULL;
       lplot->colout = NULL;
+      lplot->draw = draw;
       if ( 
 	  CopyVectF(&(lplot->x), x,*Nnode) &&
 	  CopyVectF(&(lplot->y), y,*Nnode) &&

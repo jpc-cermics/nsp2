@@ -7,7 +7,7 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.lib 
 
-OBJSC = module.obj modulelt.obj 
+OBJSC = module.obj modulelt.obj module-lib.obj
 
 OBJSF=
 

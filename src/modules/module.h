@@ -65,6 +65,12 @@ extern int IsModule(NspObject *O);
 extern NspModule *GetModuleCopy (Stack stack, int i); 
 extern NspModule *GetModule (Stack stack, int i); 
 
+extern NspModule *module_copy_ref(NspModule *Mod);
+
+extern NspObject * nsp_module_search_name(NspList *L,char **Mname);
+extern int nsp_insert_module_last(NspList *L,char *dir,char **Mname);
+extern int nsp_module_import(NspList *L,char *dir,char **Mname);
+
 #endif 
 
 /* private part */

@@ -624,6 +624,8 @@ graphic_demos_all = list( list("primitives", "", "", graphic_test_prim  ),
 			  list("Animations",  "", "", graphic_test_anim ));
 			  			  			  
   
-// graphics_demo_in_gtk(graphic_demos_all)
+graphics_demo_in_gtk(graphic_demos_all)
+
+
   
 
