@@ -31,20 +31,17 @@ function [x,y,z]=eval3dp(fun,p1,p2)
 //origine S Steer INRIA 1990
 //
 // Copyright INRIA
-n1=prod(size(p1))
-n2=prod(size(p2))
-//on calcule la valeur de la fonction en tous le couples (p1(i),p2(j))
-[vx,vy,vz]=fun(ones(1,n2).*.matrix(p1,1,n1),matrix(p2,1,n2).*.ones(1,n1))
-p1=[];p2=[];
- 
-//on genere les facettes
-ind=ones(1,n1-1).*.[0 1 n1+1 n1]+ (1:n1-1).*.[1 1 1 1];
-// ind=[1,2,n1+2,n1+1 , 2,3,n1+3,n1+2, ....  ,n1-1,n1,2n1,2n1-1
-
-ind2=ones(1,n2-1).*.ind+((0:n2-2)*n1).*.ones(ind);
-
-nx=prod(size(ind2))
-x=matrix(vx(ind2),4,nx/4);
-y=matrix(vy(ind2),4,nx/4);
-z=matrix(vz(ind2),4,nx/4);
+  n1=prod(size(p1))
+  n2=prod(size(p2))
+  //on calcule la valeur de la fonction en tous le couples (p1(i),p2(j))
+  [vx,vy,vz]=fun(ones(1,n2).*.matrix(p1,1,n1),matrix(p2,1,n2).*.ones(1,n1))
+  p1=[];p2=[];
+  //on genere les facettes
+  ind=ones(1,n1-1).*.[0 1 n1+1 n1]+ (1:n1-1).*.[1 1 1 1];
+  // ind=[1,2,n1+2,n1+1 , 2,3,n1+3,n1+2, ....  ,n1-1,n1,2n1,2n1-1
+  ind2=ones(1,n2-1).*.ind+((0:n2-2)*n1).*.ones(ind);
+  nx=prod(size(ind2))
+  x=matrix(vx(ind2),4,nx/4);
+  y=matrix(vy(ind2),4,nx/4);
+  z=matrix(vz(ind2),4,nx/4);
 endfunction

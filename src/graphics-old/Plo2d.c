@@ -167,55 +167,62 @@ int nsp_plot_grid_old(BCG *Xgc, int *style)
 int nsp_plot_grid(BCG *Xgc, int *style)
 {
   int closeflag=0,n=2,vx[2],vy[2],i,j;
-  double vxd[2],vyd[2],pas;
+  double vxd[2],vyd[2],step;
   int pat;
   /* Recording command */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) store_Grid(Xgc,style);
   /* changes dash style if necessary */
   pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
-  /** x-axis grid (i.e vertical lines ) */
-  pas = ((double) Xgc->scales->WIRect1[2]) / ((double) Xgc->scales->Waaint1[1]);
+  /*  x-axis grid (i.e vertical lines ) */
+  step = (Xgc->scales->xtics[1]-Xgc->scales->xtics[0])/Xgc->scales->xtics[3];
   for ( i=0 ; i <= Xgc->scales->xtics[3]; i++)
     {
-      vyd[0]=Xgc->scales->frect[1];
-      vyd[1]=Xgc->scales->frect[3];
-      vxd[0]=vxd[1]= exp10((double)Xgc->scales->xtics[2]) *
-	(Xgc->scales->xtics[0] + i*(Xgc->scales->xtics[1]-Xgc->scales->xtics[0])/Xgc->scales->xtics[3]);
+      vyd[0]=Xgc->scales->frect[1]; vyd[1]=Xgc->scales->frect[3];
+      if (Xgc->scales->logflag[1] == 'l') { vyd[0]= exp10(vyd[0]); vyd[1]=exp10(vyd[1]);}
+      vxd[0]=vxd[1]= exp10((double)Xgc->scales->xtics[2])*(Xgc->scales->xtics[0] + i*step);
       scale_f2i(Xgc,vxd,vyd,vx,vy,2);
-      /* FIXME: detect here if tics and vertical boundaries match ? */
       if ( vxd[0] != Xgc->scales->frect[0] && vxd[0] != Xgc->scales->frect[2]) 
-	Xgc->graphic_engine->drawpolyline(Xgc,vx, vy,n,closeflag);
-      /* FIXME: strange ? */
-      if (Xgc->scales->logflag[0] == 'l') 
 	{
-	  int jinit=1;
-	  if ( i== 0 ) jinit=2; /* no grid on plot boundary */
-	  for (j= jinit; j < 10 ; j++)
+	  if (Xgc->scales->logflag[0] == 'l') { vxd[0]=vxd[1]= exp10(vxd[0]);}
+	  scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+	  Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
+	}
+      /* subgrid if log axis */
+      if (i < Xgc->scales->xtics[3] && Xgc->scales->logflag[0] == 'l') 
+	{
+	  double xi = exp10(exp10((double)Xgc->scales->xtics[2])*(Xgc->scales->xtics[0] + (i)*step));
+	  for (j= 1; j < 10 ; j++)
 	    {
-	      vx[0]=vx[1]= Xgc->scales->WIRect1[0] + inint( ((double) i)*pas)+ inint(log10(((double)j))*pas);
+	      vxd[0]=vxd[1]= xi*j;
+	      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
 	      Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
 	    }
 	}
     }
-  /** y-axis grid (i.e horizontal lines ) **/
-  pas = ((double) Xgc->scales->WIRect1[3]) / ((double) Xgc->scales->Waaint1[3]);
+  /* y-axis grid (i.e horizontal lines ) */
+  step = (Xgc->scales->ytics[1]-Xgc->scales->ytics[0])/Xgc->scales->ytics[3];
   for ( i=0 ; i <= Xgc->scales->ytics[3]; i++)
     {
-      vxd[0]=Xgc->scales->frect[0];
-      vxd[1]=Xgc->scales->frect[2];
-      vyd[0]=vyd[1]= exp10((double)Xgc->scales->ytics[2]) *
-	(Xgc->scales->ytics[0] + i*(Xgc->scales->ytics[1]-Xgc->scales->ytics[0])/Xgc->scales->ytics[3]);
-      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+      /* xmin and xmax for horizontal lines */
+      vxd[0]=Xgc->scales->frect[0]; vxd[1]=Xgc->scales->frect[2];
+      if (Xgc->scales->logflag[0] == 'l') { vxd[0]=exp10(vxd[0]);vxd[1]=exp10(vxd[1]);}
+      /* */
+      vyd[0]=vyd[1]= exp10((double)Xgc->scales->ytics[2])*(Xgc->scales->ytics[0] + i*step);
+      /* draw horizontal lines if they do not match a contour */
       if ( vyd[0] != Xgc->scales->frect[1] && vyd[0] != Xgc->scales->frect[3]) 
-	Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
-      if (Xgc->scales->logflag[1] == 'l') 
 	{
-	  int jinit=1;
-	  if ( i== Xgc->scales->Waaint1[3]-1 ) jinit=2; /* no grid on plot boundary */
-	  for (j= jinit; j < 10 ; j++)
+	  if (Xgc->scales->logflag[1] == 'l') { vyd[0]=vyd[1]= exp10(vyd[0]);}
+	  scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+	  Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
+	} 
+      if (i < Xgc->scales->ytics[3]&& Xgc->scales->logflag[1] == 'l') 
+	{
+	  double xi = exp10(exp10((double)Xgc->scales->ytics[2])*(Xgc->scales->ytics[0] + (i)*step));
+	  for (j= 1; j < 10 ; j++)
 	    {
-	      vy[0]=vy[1]= Xgc->scales->WIRect1[1] + inint( ((double) i+1)*pas)- inint(log10(((double)j))*pas);
-	       Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
+	      vyd[0]=vyd[1]= xi*j;
+	      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+	      Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
 	    }
 	}
     }
