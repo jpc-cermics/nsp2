@@ -542,7 +542,7 @@ static int int_file_get_smatrix(void *self, Stack stack, int rhs, int opt, int l
 
 
 /*
- * 
+ * put_matrix method 
  */
 
 static int int_file_put_matrix(void *self, Stack stack, int rhs, int opt, int lhs)
@@ -562,7 +562,7 @@ static int int_file_put_matrix(void *self, Stack stack, int rhs, int opt, int lh
 }
 
 /*
- * 
+ * put_smatrix method 
  */
 
 static int int_file_put_smatrix(void *self, Stack stack, int rhs, int opt, int lhs)
@@ -581,11 +581,11 @@ static int int_file_put_smatrix(void *self, Stack stack, int rhs, int opt, int l
 
 int int_file_printf(void *self,Stack stack, int rhs, int opt, int lhs)
 {
-  int i,rows;
+  int i=0,rows=0;
   NspFile *F =self;
   char *Format;
   if ( rhs < 1 ) 
-    { Scierror("Error:\tRhs must be >= 2\n",rhs);return RET_BUG;}
+    { Scierror("Error:\tRhs must be >= 1\n",rhs);return RET_BUG;}
   CheckLhs(0,1);
   if ( !IS_OPENED(F->flag))
     {
@@ -593,8 +593,17 @@ int int_file_printf(void *self,Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   if ((Format = GetString(stack,1)) == (char*)0) return RET_BUG;
-  rows = print_count_rows(stack,2,rhs); 
-  for ( i= 0 ; i < rows ; i++)
+  if ( rhs >= 2 ) 
+    {
+      rows = print_count_rows(stack,2,rhs); 
+      for ( i= 0 ; i < rows ; i++)
+	{
+	  if ( do_printf("printf",F->file,Format,stack,rhs,1,i,(char **) 0) < 0) 
+	    return RET_BUG;
+	}
+      return 0;
+    }
+  else
     {
       if ( do_printf("printf",F->file,Format,stack,rhs,1,i,(char **) 0) < 0) 
 	return RET_BUG;
@@ -604,17 +613,28 @@ int int_file_printf(void *self,Stack stack, int rhs, int opt, int lhs)
 
 /*
  * print method
+ * i.e nsp display 
+ * f.print[A ,options]  options= 'as_read' 
+ * see:  int_object_print to see the changes which are to 
+ * be done 
+ * 
  */
 
 int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
 {
+  int rep=-1;
+  char *Table[] = {"as_read", NULL};
   NspObject *object ; 
   NspFile *F = self;
   IOVFun def ;
   MoreFun mf; 
-  CheckRhs(1,1);
+  CheckRhs(1,2);
   CheckLhs(0,1);
   if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
+  if ( rhs == 2 ) 
+    {
+      if ((rep= GetStringInArray(stack,2,Table,1)) == -1) return RET_BUG;
+    }
   /* changes io in order to write to file F */
   if ( !IS_OPENED(F->flag))
     {
@@ -624,11 +644,26 @@ int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
   Sciprint_file(F->file); 
   def = SetScilabIO(Sciprint2file);
   mf =  SetScilabMore(scimore_void);
-  object->type->pr(object,0,TRUE);
+  if ( rep == 0 ) 
+    {
+      /* want to use a 'as_read' syntax */
+      int kp=user_pref.pr_as_read_syntax;
+      user_pref.pr_as_read_syntax= 1;
+      object->type->pr(object,0,TRUE);
+      user_pref.pr_as_read_syntax= kp;
+    }
+  else 
+    {
+      object->type->pr(object,0,TRUE);
+    }
+  return 0;
+  /* back to default */
   SetScilabIO(def);
   SetScilabMore(mf);
   return 0;
 }
+
+
 
 static NspMethods nsp_file_methods[] = {
   {"close", int_file_fclose},
