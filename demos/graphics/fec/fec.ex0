@@ -3,36 +3,6 @@
 // and visualisation of a function linear on triangles
 // Copyright Enpc.
 
-xset('colormap',hotcolormap(20))
-N=4;
-// build the nodes 
-i=linspace(0,2*%pi,N+1); i($)=[];
-xn=[cos(i)';0];
-yn=[sin(i)';0];
-Nnodes=N+1;
-// values at nodes 
-val=ones(Nnodes,1);
-val($)=0;
-// build the triangles 
-Ntriang=N;
-triangles_nodes=[1:N;[(1:N-1)+1,1];(N+1)*ones(1,N)];
-triangles=[(1:N);triangles_nodes;zeros(1,N)]';
-rect=[-1.2,-1.2,1.2,1.2];
-xsetech(wrect=[0,0,0.5,0.5])
-xtitle('default and mesh=%t');
-fec(xn,yn,triangles,val,strf="032",rect=rect,mesh=%t);
-xsetech(wrect=[0,0.5,0.5,0.5])
-xtitle('zminmax and mesh=%t');
-fec(xn,yn,triangles,val,strf="032",rect=rect,zminmax=[0.4,0.8],mesh=%t);
-xsetech(wrect=[0.5,0,0.5,0.5])
-xtitle('zminmax,colout=[0,0] and mesh=%t');
-fec(xn,yn,triangles,val,strf="032",rect=rect,
-    zminmax=[0.4,0.8],colout=[0,0],mesh=%t);
-xsetech(wrect=[0.5,0.5,0.5,0.5])
-xtitle('zminmax,colout=[1,1] and mesh=%t');
-fec(xn,yn,triangles,val,strf="032",
-    rect=rect,zminmax=[0.4,0.8],colout=[1,1],mesh=%t);
-
 
 
 

@@ -1,23 +1,6 @@
 // More stuffs 
 //-------------
 
-function demo_field_1()
-  x=%pi*(-1:0.1:1);y=x;
-  champ1(x,y,sin(x'*y),cos(x'*y),rect=[-%pi,-%pi,%pi,%pi],arfact=3)
-endfunction
-
-function demo_grayplot_1()
-  xset("colormap",hotcolormap(40));
-  t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);
-endfunction
-
-function demo_contour_1()
-  xset("colormap",hotcolormap(40));
-  t=-2:0.1:2;m=sinh(t)'*cosh(t);
-  grayplot(t,t,m);
-  contour(t,t,m,11);
-endfunction
-
 function demo_surf_1()
   t=%pi*(-10:10)./10;
   box=[-%pi,%pi,-%pi,%pi,-5,1];

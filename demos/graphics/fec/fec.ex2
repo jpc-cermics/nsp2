@@ -3,13 +3,10 @@
 // Mesh of amdba type 
 // Copyright Enpc 
 
-//path=get_absolute_file_path('fec.ex2');
-//getf(path+'macros.sci')
 path=getenv('SCI')+'/demos/graphics/fec/';
 exec('SCI/demos/graphics/fec/macros.sci')
 amdbaR(path+'MESH')
 meshvisu()
-
 xclear()
 xset("use color",1)
 emc2C(1,6,path+'MESH.VAL')

@@ -586,7 +586,6 @@ function demo_anim_6()
   end
 endfunction
 
-
 function demo_anim_7()
   x=%pi*(-1:0.1:1);y=x;
   for i=1:50
@@ -611,7 +610,76 @@ end
 // Matplot Matplot1 fec grayplot 
 // ------------------------------
 
+function demo_contour_1()
+  xset('colormap',hotcolormap(20)) 
+  t=-%pi:0.1:%pi;m=exp(sin(t))'*exp(cos(t));
+  xsetech(wrect=[0,0,0.5,0.5])
+  xtitle('default');
+  grayplot(t,t,m);
+  xsetech(wrect=[0,0.5,0.5,0.5])
+  xtitle('shade=%t, zminmax and colminmax');
+  grayplot(t,t,m,shade=%t,colminmax=[5,15],zminmax=[0.3,6.0]);
+  xsetech(wrect=[0.5,0,0.5,0.5])
+  xtitle('shade=%t, zminmax and colout=[0,0]');
+  grayplot(t,t,m,shade=%t,zminmax=[0.3,6.0],colout=[0,0]);
+  xsetech(wrect=[0.5,0.5,0.5,0.5])
+  xtitle('remap=%f, shade=%t');
+  grayplot(1:2,1:2,[1,5;5,1],remap=%f,shade=%t);
+endfunction
 
+function demo_contour_2()
+  xset('colormap',hotcolormap(20))
+  N=4;
+  // build the nodes 
+  i=linspace(0,2*%pi,N+1); i($)=[];
+  xn=[cos(i)';0];
+  yn=[sin(i)';0];
+  Nnodes=N+1;
+  // values at nodes 
+  val=ones(Nnodes,1);
+  val($)=0;
+  // build the triangles 
+  Ntriang=N;
+  triangles_nodes=[1:N;[(1:N-1)+1,1];(N+1)*ones(1,N)];
+  triangles=[(1:N);triangles_nodes;zeros(1,N)]';
+  rect=[-1.2,-1.2,1.2,1.2];
+  xsetech(wrect=[0,0,0.5,0.5])
+  xtitle('default and mesh=%t');
+  fec(xn,yn,triangles,val,strf="032",rect=rect,mesh=%t);
+  xsetech(wrect=[0,0.5,0.5,0.5])
+  xtitle('zminmax and mesh=%t');
+  fec(xn,yn,triangles,val,strf="032",rect=rect,zminmax=[0.4,0.8],mesh=%t);
+  xsetech(wrect=[0.5,0,0.5,0.5])
+  xtitle('zminmax,colout=[0,0] and mesh=%t');
+  fec(xn,yn,triangles,val,strf="032",rect=rect,
+  zminmax=[0.4,0.8],colout=[0,0],mesh=%t);
+  xsetech(wrect=[0.5,0.5,0.5,0.5])
+  xtitle('zminmax,colout=[1,1] and mesh=%t');
+  fec(xn,yn,triangles,val,strf="032",
+      rect=rect,zminmax=[0.4,0.8],colout=[1,1],mesh=%t);
+endfunction
+
+function demo_contour_3()
+  xset("colormap",hotcolormap(40));
+  t=-2:0.1:2;m=sinh(t)'*cosh(t);
+  grayplot(t,t,m,shade=%t);
+  contour(t,t,m,11);
+endfunction
+
+function demo_contour_4()
+  t=-2:0.1:2;m=sinh(t)'*cosh(t);
+  contour(t,t,m,[-4:0.5:4]);
+endfunction
+
+// organize the previous list for graphic demo widget 
+
+graphic_test_contour = list() 
+for i=1:4
+  name=sprintf("demo_contour_%d",i); 
+  test_info=sprintf("test %d",i); 
+  //execstr('test_info='+name+'(info=%t);');
+  graphic_test_contour(i) = list(test_info, "not-used",name);
+end 
 
 
 
@@ -620,6 +688,7 @@ end
 
 graphic_demos_all = list( list("primitives", "", "", graphic_test_prim  ), 
                           list("2D curves", "", "", graphic_test_2d  ), 
+			  list("2D contours", "", "", graphic_test_contour  ), 
                           list("3D curves and surfaces",  "", "", graphic_test_3d ),
 			  list("Animations",  "", "", graphic_test_anim ));
 			  			  			  
