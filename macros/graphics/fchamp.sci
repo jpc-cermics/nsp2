@@ -27,9 +27,9 @@ function []=fchamp(macr_f,fch_t,fch_xr,fch_yr,arfact,rect,strf)
   if rhs <= 3,fch_yr=-1:0.1:1;end
 
   opts=[]
-  if exists('arfact','local')==1 then opts=[opts,'arfact=arfact'],end
-  if exists('rect','local')==1 then opts=[opts,'rect=rect'],end
-  if exists('strf','local')==1 then opts=[opts,'strf=strf'],end
+  if exists('arfact','local') then opts=[opts,'arfact=arfact'],end
+  if exists('rect','local') then opts=[opts,'rect=rect'],end
+  if exists('strf','local') then opts=[opts,'strf=strf'],end
 
   if type(macr_f) <> 15,
     if type(macr_f)==11 then comp(macr_f),end;
