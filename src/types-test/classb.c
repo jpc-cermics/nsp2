@@ -198,7 +198,7 @@ static int classb_neq(NspClassB *A, NspObject *B)
 static NspObject *classb_path_extract(NspClassB *a, NspObject *ob)
 {
   char *str;
-  if ((str= StringObj(ob)) == NULL ) return NULLOBJ;
+  if ((str=nsp_string_object(ob)) == NULL ) return NULLOBJ;
   return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
 }
 

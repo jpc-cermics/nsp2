@@ -52,15 +52,15 @@ NspSMatrix *new_smatrix();
 
 #ifdef SMatrix_Private 
 static int init_smatrix(NspSMatrix *ob,NspTypeSMatrix *type);
-static int SMatSize(NspSMatrix *Mat, int flag);
-char *SMatType(void);
-char *SMatShType(void);
-NspObject *SMatLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int SMatObjEq(NspObject *A,NspObject *B);
-int SMatObjNeq(NspObject *A,NspObject *B);
-int SMatIsTrue(NspSMatrix *M);
-NspSMatrix *SMatXdrLoad(NspFile  *F);
-int SMatXdrSave(NspFile  *F, NspSMatrix *M);
+static int nsp_smatrix_size(NspSMatrix *Mat, int flag);
+char *nsp_smatrix_type_as_string(void);
+char *nsp_smatrix_type_short_string(void);
+NspObject *nsp_smatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
+int nsp_smatrix_eq(NspObject *A,NspObject *B);
+int nsp_smatrix_neq(NspObject *A,NspObject *B);
+int nsp_smatrix_is_true(NspSMatrix *M);
+NspSMatrix *nsp_smatrix_xdr_load(NspFile  *F);
+int nsp_smatrix_xdr_save(NspFile  *F, NspSMatrix *M);
 #endif 
 
 #define NULLSTRING (char *) 0
@@ -68,8 +68,8 @@ int SMatXdrSave(NspFile  *F, NspSMatrix *M);
 
 /* prototypes */
 
-extern NspSMatrix *SMatObj (NspObject *O); 
-extern char *StringObj (NspObject *O); 
+extern NspSMatrix *nsp_smatrix_object(NspObject *O); 
+extern char *nsp_string_object(NspObject *O); 
 extern int IsSMatObj (Stack stack, int i); 
 extern int IsSMat (NspObject *O); 
 extern int IsString(NspObject *O);

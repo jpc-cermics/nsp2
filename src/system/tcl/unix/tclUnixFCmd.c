@@ -1064,7 +1064,7 @@ static int SetGroupAttribute( objIndex, fileName, attributePtr)
     {
       NspSMatrix *M;
       struct group *groupPtr;
-      if (( M = SMatObj(attributePtr)) == NULLSMAT || M->mn != 1) return TCL_ERROR;
+      if (( M =nsp_smatrix_object(attributePtr)) == NULLSMAT || M->mn != 1) return TCL_ERROR;
       groupPtr = getgrnam(M->S[0]);
       if (groupPtr == NULL) {
 	endgrent();
@@ -1125,7 +1125,7 @@ SetOwnerAttribute( objIndex, fileName, attributePtr)
     {
       NspSMatrix *M;
       struct passwd *pwPtr;
-      if (( M = SMatObj(attributePtr)) == NULLSMAT || M->mn != 1) return TCL_ERROR;
+      if (( M =nsp_smatrix_object(attributePtr)) == NULLSMAT || M->mn != 1) return TCL_ERROR;
       pwPtr = getpwnam(M->S[0]);
       if (pwPtr == NULL) {
 	Scierror("Error: could not set owner for file \"%s\": user \"%s\" does not exist\n",

@@ -1,4 +1,3 @@
-
 #ifndef SCI_SPMATOPS_IN
 #define SCI_SPMATOPS_IN
 
@@ -9,41 +8,30 @@
 
 #include "nsp/interf.h"
 
-extern function int_spabs ;
-extern function int_sperf ;
-extern function int_sperfc ;
-extern function int_sparg ;
-extern function int_spcos ;
-extern function int_spcosh ;
-extern function int_spexpel ;
-extern function int_splogel ;
-extern function int_spsin ;
-extern function int_spsinh ;
-extern function int_spsqrtel ;
-extern function int_spacos ;
-extern function int_spacosh ;
-extern function int_spasin ;
-extern function int_spasinh ;
-extern function int_spatan ;
-extern function int_spatanh ;
-extern function int_spceil ;
-extern function int_spint ;
-extern function int_spfloor ;
-extern function int_spround ;
-extern function int_spsign ;
-extern function int_sptan ;
-extern function int_sptanh ;
-extern function int_spminus ;
-extern function int_sppolar ;
-extern function int_spconj ;
-extern function int_spdadd ;
-extern function int_spdsub ;
-extern function int_sppowel ;
-extern function int_spdivel ;
-extern function int_spbackdivel ;
-extern function int_spmultel ;
-extern function int_spfind ;
-
+static function int_spabs ;
+static function int_sparg ;
+static function int_spcos ;
+static function int_spcosh ;
+static function int_spexpel ;
+static function int_splogel ;
+static function int_spsin ;
+static function int_spsinh ;
+static function int_spsqrtel ;
+static function int_spacos ;
+static function int_spacosh ;
+static function int_spasin ;
+static function int_spasinh ;
+static function int_spatan ;
+static function int_spatanh ;
+static function int_spceil ;
+static function int_spint ;
+static function int_spfloor ;
+static function int_spround ;
+static function int_spsign ;
+static function int_sptan ;
+static function int_sptanh ;
+static function int_spconj ;
+static function int_spfind ;
 
 #endif
 
