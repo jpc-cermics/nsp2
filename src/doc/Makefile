@@ -13,7 +13,8 @@ mkhtml:
 	cd html; gtkdoc-mkhtml nsp ../nsp-docs.sgml
 
 clean:
-	\rm -f -r html/* xml *.stamp tmpl *.txt 
+	\rm -f -r html/* xml *.stamp 
 
 distclean:
-	\rm -f -r html/* xml *.stamp tmpl *.txt 
+	\rm -f -r html/* xml *.stamp 
+

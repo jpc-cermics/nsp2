@@ -27,8 +27,10 @@ typedef struct _nsp_type_BMatrix {
 } NspTypeBMatrix;
 
 struct _nsp_bmatrix {
+  /*< private >*/
   NspObject father; 
   NspTypeBMatrix *type; 
+  /*< public >*/
   integer m,n,mn;
   Boolean *B;	
 };

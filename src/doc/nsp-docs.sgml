@@ -61,58 +61,7 @@
 
   <chapter id="nsp">
     <title>The Nsp Doc on line </title>
-	&block;
-	&bmatrix-in;
 	&bmatrix;
-	&calelm;
-	&cnumeric;
-	&connector;
-	&datas;
-	&file-in;
-	&file;
-	&function;
-	&gframe;
-	&grint;
-	&hash-in;
-	&hash;
-	&hobj;
-	&integ;
-	&interf;
-	&ivect-in;
-	&ivect;
-	&link;
-	&list-in;
-	&list;
-	&lmo;
-	&machine;
-	&math;
-	&matrix-in;
-	&matrix;
-	&menus;
-	&me;
-	&mod-in;
-	&mod;
-	&none;
-	&object;
-	&objxdr;
-	&parse;
-	&plistc;
-	&plisttoken;
-	&plist;
-	&pmatrix;
-	&poo;
-	&p_plist-in;
-	&pr-output;
-	&rect;
-	&sciio;
-	&smatrix-in;
-	&smatrix;
-	&spmatops-in;
-	&spmatrix-in;
-	&spmatrix;
-	&types;
-	&type;
-
   </chapter>
 
 </book>
