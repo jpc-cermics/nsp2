@@ -1866,11 +1866,11 @@ static int nsp_ps_header(FILE *out,char *bbox)
       sciprint("Environment variable SCI must be defined\n");
       return FAIL;
     }
-  sprintf(header,"%s/imp/NperiPos.ps",env);
+  sprintf(header,"%s/libs/NperiPos.ps",env);
   fd=fopen(header,"r");
   if (fd == NULL) 
     {
-      sciprint("Cannot open file %f\n");
+      sciprint("Cannot open file %s\n",header);
       return FAIL;
     }
 
