@@ -1,8 +1,8 @@
 #ifndef SCI_DATAS 
 #define SCI_DATAS 
 
+/* XXXX */
 extern NspList *Datas ;
-
 
 extern int nsp_new_frame(void);
 extern void nsp_frame_delete(void);

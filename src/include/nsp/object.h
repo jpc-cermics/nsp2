@@ -291,7 +291,7 @@ extern NspObject *nsp_create_object_from_str_and_size(char *str, int lstr);
 extern NspObject *nsp_create_object_from_doubles(integer m, integer n, integer it, double *rtab, double *itab, char *name); 
 extern NspObject *nsp_create_empty_matrix_object(char *str); 
 extern NspObject *nsp_create_true_object(char *str); 
-extern NspObject *nsp_create_false_object_(char *str); 
+extern NspObject *nsp_create_false_object(char *str); 
 extern char *nsp_object_get_name(NspObject *O); 
 extern int nsp_object_set_name(NspObject *O, char *str); 
 

@@ -106,6 +106,12 @@ job_me:
 		PARENT=Object FIELDS="char *path ;\n\tchar *module;" \
 		PARENTDOWNCASE=object PARENTINC=nsp/object.h 
 
+job_kiko:
+	make job  TNAME=Kiko TDOWNCASE=kiko TSHORT=ki \
+		TASSTRING=Kiko NULL=NULLKIKO \
+		PARENT=Object FIELDS="char *path;\ndouble *module;\nNspMatrix *M;" \
+		PARENTDOWNCASE=object PARENTINC=nsp/object.h 
+
 clean : distclean 
 
 distclean:

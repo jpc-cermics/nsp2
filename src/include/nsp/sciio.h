@@ -65,6 +65,8 @@ extern int get_is_reading(void);
 
 extern void DefSciReadLine(char *prompt, char *buffer, int *buf_size, int *len_line, int *eof);
 
+void nsp_error_message_show();
+void nsp_error_message_clear();
 
 #endif 
 
