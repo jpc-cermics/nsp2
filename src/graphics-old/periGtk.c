@@ -24,6 +24,7 @@
 /** Global variables to deal with X11 **/
 
 static unsigned long maxcol; /* XXXXX : à revoir */
+static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 
 /*------------------------------------------------------------------
  * the current graphic data structure 
@@ -693,21 +694,6 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
  * but if the scrolled window is greater then drawbox will follow 
  */
 
-      /* 
-      geometry.base_width = 0;
-      geometry.base_height = 0;
-      geometry.min_width = 0;
-      geometry.min_height = 0;
-      geometry.width_inc = 0;
-      geometry.height_inc = 0;
-      geometry.max_width = x+10;
-      geometry.max_height = y+10;
-       geometry_mask = GDK_HINT_BASE_SIZE | GDK_HINT_MAX_SIZE| 
-	 GDK_HINT_MIN_SIZE | GDK_HINT_RESIZE_INC; 
-	 geometry_mask = GDK_HINT_MAX_SIZE ; 
-      gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window), Xgc->private->scrolled,
-				     &geometry, geometry_mask);
-      */
 
 /* fixe la taille min s'un widget 
 gtk_widget_set_size_request     (GtkWidget *widget,
@@ -722,24 +708,51 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
   if (Xgc == NULL || Xgc->private->window ==  NULL) return ;
   if ( Xgc->CurResizeStatus == 1) 
     {
-
-      GdkGeometry geometry;
-      GdkWindowHints geometry_mask;
+      /* here drawing and scrolled move together */
       gint pw,ph,w,h;
       gdk_window_get_size (Xgc->private->window->window,&pw,&ph);
       gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
       /* resize the graphic window */
       gdk_window_resize(Xgc->private->drawing->window,x,y);
-      /* resize the main window */
-      gdk_window_resize(Xgc->private->window->window,x+(pw-w),y+(ph-h));
+      /* resize the main window at init time */
+      gdk_window_resize(Xgc->private->window->window,x+Max((pw-w),0),y+Max((ph-h),0));
       /* want the expose event to resize pixmap and redraw */
       Xgc->private->resize = 1; 
     }
   else
     {
+      /* here drawing and scrolled do not move together */
+      /* gint sc_w,sc_h;*/
+      GdkGeometry geometry;
+      GdkWindowHints geometry_mask;
       /* resize the graphic window */
       gdk_window_resize(Xgc->private->drawing->window,x,y);
-      /* A FAIRE ...... XXXXXX */
+      /* want the scrolled window to be aware */
+      gtk_widget_set_size_request(Xgc->private->drawing, x,y);
+      /* Limit the scolled window size 10 to be changed XX */
+      /* gdk_window_get_size (Xgc->private->scrolled,&sc_w,&sc_h); */
+      geometry.max_width = x+15;
+      geometry.max_height = y+15;
+      geometry_mask = GDK_HINT_MAX_SIZE ; 
+      gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window), Xgc->private->scrolled,
+				     &geometry, geometry_mask);
+      /* here we will only generate a configure event and an expose event 
+       * if the size is schrinked 
+       * thus we activate the redraw by calling appropriate function 
+       */
+      if ( (Xgc->CWindowWidth > x ) || (Xgc->CWindowHeight > y )) 
+	{
+	  Xgc->CWindowWidth = x;
+	  Xgc->CWindowHeight = y;
+	  Xgc->private->resize = 1;/* be sure to put this */
+	}
+      else 
+	{
+	  Xgc->CWindowWidth = x;
+	  Xgc->CWindowHeight = y;
+	  Xgc->private->resize = 1;/* be sure to put this */
+	  expose_event( Xgc->private->drawing,NULL, Xgc);
+	}
     }
   gdk_flush();
 }
@@ -1322,16 +1335,30 @@ static int xget_pixmapOn(BCG *Xgc)
 
 static void xset_wresize(BCG *Xgc,int num)
 {
+  GdkGeometry geometry;
+  GdkWindowHints geometry_mask;
   int num1= Min(Max(num,0),1);
   if ( num1 != Xgc->CurResizeStatus && num1 == 1) 
     {
-      /* we want here that the graphic window follows the viewport resize */
-      /* we set the min size of graphic window to the min accepted size */
-      /* gtk_widget_set_usize(Xgc->private->drawing,400,100); */
+      /* we want here that the graphic window follows the viewport resize 
+       * remove the scrolled window size hints 
+       */
+      geometry.max_width = G_MAXSHORT;
+      geometry.max_height = G_MAXSHORT;
+      geometry_mask = GDK_HINT_MAX_SIZE ; 
+      gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window), Xgc->private->scrolled,
+				     &geometry, geometry_mask);
+      /* remove the min size request */
+      gtk_widget_set_size_request(Xgc->private->drawing,0,0);
       Xgc->CurResizeStatus = num1 ;
-      return ; 
     }
-  Xgc->CurResizeStatus = num1 ;
+  else 
+    {
+      int w,h;
+      gdk_window_get_size (Xgc->private->drawing->window,&w,&h);
+      Xgc->CurResizeStatus = num1 ;
+      xset_windowdim(Xgc,w,h);
+    }
 }
 
 static int xget_wresize(BCG *Xgc)
@@ -2400,7 +2427,11 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box, int *v2)
 
 
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
-
+  /* Attention ce qui est ici doit pas etre rejoué 
+   * on l'enleve donc de initialize_gc
+   */
+  NewXgc->graphic_engine->xset_pixmapOn(NewXgc,0);
+  NewXgc->graphic_engine->xset_wresize(NewXgc,1);
   /* now initialize the scale list */
   NewXgc->scales = NULL;
   xgc_add_default_scale(NewXgc);
@@ -3290,12 +3321,17 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
 
   /* check for resize */
-  if( (GTK_WIDGET_REALIZED(dd->private->drawing)) 
-      && ((dd->CWindowWidth != event->width) || (dd->CWindowHeight != event->height))) 
+  if(GTK_WIDGET_REALIZED(dd->private->drawing))
     {
-      dd->CWindowWidth = event->width;
-      dd->CWindowHeight = event->height;
-      dd->private->resize = 1;
+      if ( dd->CurResizeStatus == 1) 
+	{
+	  if ( (dd->CWindowWidth != event->width) || (dd->CWindowHeight != event->height))
+	    {
+	      dd->CWindowWidth = event->width;
+	      dd->CWindowHeight = event->height;
+	      dd->private->resize = 1;
+	    }
+	}
     }
   return FALSE;
 }
@@ -3421,11 +3457,10 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
   gtk_container_set_border_width (GTK_CONTAINER (scrolled_window),0);
 
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-                                    GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+				  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   /* fix min size of the scrolled window */
-  /* gtk_widget_set_usize(scrolled_window,iw+10,ih+10);*//* XXXX */ 
-  
+  gtk_widget_set_size_request (scrolled_window,iw+10,ih+10);
   /* place and realize the scrolled window  */
 
   gtk_box_pack_start (GTK_BOX (vbox), scrolled_window, TRUE, TRUE, 0);
@@ -3457,7 +3492,7 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
 
   /* private->drawingarea properties */
   /* min size of the graphic window */
-  /* gtk_widget_set_usize(dd->private->drawing, iw, ih); */
+  gtk_widget_set_size_request(dd->private->drawing, w, h);
 
   /* setup background color */
   dd->private->bg = R_RGB(255, 255, 255);

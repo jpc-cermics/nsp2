@@ -2313,27 +2313,72 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*-----------------------------------------------------------
- *   xinit([name])
+ * xinit(name=,wdim=,wpdim=,wresize=,viewport=,file=)
+ * name: window name 
+ * wdim: window dimensions 
+ * wpdim: popupdimension
+ * wresize: wresize status 
+ * viewport: viewport position 
  *-----------------------------------------------------------*/
 
 int int_xinit(Stack stack, int rhs, int opt, int lhs)
 {
+  BCG *Xgc;
   int v1=-1;
-  char *dname_arg,dname_def[]=" ",*dname = dname_def;
-  CheckRhs(-1,1);
-  if ( rhs == 1 ) 
+  NspMatrix *wdim=NULL,*wpdim=NULL,*viewport=NULL;
+  char *name=NULL, *file=NULL;
+  int wresize=-1;
+
+  /* just optionals arguments */
+  int_types T[] = {new_opts, t_end} ;
+
+  nsp_option opts[] ={{ "file",string,NULLOBJ,-1},
+		      { "name",string,NULLOBJ,-1},
+		      { "viewport",realmat,NULLOBJ,-1},
+		      { "wdim",realmat,NULLOBJ,-1},
+		      { "wpdim",realmat,NULLOBJ,-1},
+		      { "wresize",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&opts,&file,&name,&viewport,&wdim,&wpdim,&wresize) == FAIL) return RET_BUG;
+
+  if (wdim != NULL && wdim->mn != 2 ) 
     {
-      if ((dname_arg = GetString(stack,1)) == (char*)0) return RET_BUG;
-      dname = dname_arg;
+      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"wdim");
+      return RET_BUG;
     }
+  if (wpdim != NULL &&  wpdim->mn != 2 ) 
+    {
+      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"wdim");
+      return RET_BUG;
+    }
+  if (viewport != NULL && viewport->mn != 2 ) 
+    {
+      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"wdim");
+      return RET_BUG;
+    }
+
   if ( nsp_current_bcg != NULL) 
     {
-      nsp_current_bcg->graphic_engine->initgraphic(dname,&v1);
+      nsp_current_bcg->graphic_engine->initgraphic("",&v1);
     }
   else 
     {
-      Gtk_gengine.initgraphic(dname,&v1);
+      Gtk_gengine.initgraphic("",&v1);
     }
+  /* we should have an other way here to detect that 
+   * initgraphic was fine 
+   * Il faut aussi retarder le expose dans ce cas la 
+   * noter que les dimensions devraient etre donnee plutot a 
+   * initgraphic
+   */
+  Xgc =  window_list_get_first();
+  if ( wresize != -1 )  Xgc->graphic_engine->scale->xset_wresize(Xgc,wresize);
+  if ( wdim != NULL )   Xgc->graphic_engine->scale->xset_windowdim(Xgc,(int) wdim->R[0],(int) wdim->R[1]);
+  if ( wpdim != NULL )  Xgc->graphic_engine->scale->xset_popupdim(Xgc,(int) wpdim->R[0],(int) wpdim->R[1]);
+  if ( viewport != NULL) Xgc->graphic_engine->scale->xset_viewport(Xgc,(int) viewport->R[0],(int) viewport->R[1]);
+
+  if ( name != NULL )   Xgc->graphic_engine->setpopupname(Xgc,name);
   return 0;
 }
 

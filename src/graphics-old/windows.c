@@ -169,10 +169,15 @@ void window_list_remove(int num)
       if ( L1->winxgc.CurWindow == num )
 	{
 	  if ( L1->prev != NULL) 
-	    L1->prev->next = L1->next ; 
+	    {
+	      if ( L1->next != NULL) L1->next->prev = L1->prev;
+	      L1->prev->next = L1->next ; 
+	    }
 	  else 
-	    The_List = (WindowList *) L1->next ;
-
+	    {
+	      The_List = (WindowList *) L1->next ;
+	      if ( L1->next != NULL) L1->next->prev = NULL;
+	    }
 	  /* now L1 is to be freed */
 	  loc = L1->winxgc.scales ; 
 	  while ( loc != NULL)
