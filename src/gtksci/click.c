@@ -81,7 +81,7 @@ int PushClickQueue(int win,int x,int y,int ibut,
    */
   if ( motion == 1 || release == 1 ) return 0;
 
-  {static int  count=0;fprintf(stderr,"In push %d\n",count++);}
+  /* {static int  count=0;fprintf(stderr,"In push %d\n",count++);} */
   /* store click event in a queue */
   if ( lastc == MaxCB ) 
     {

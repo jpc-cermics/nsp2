@@ -117,7 +117,6 @@ function demo_3d_6()
   plot3d1()
 endfunction
 
-
 function demo_3d_7()
   xsetech(wrect=[0,0,0.5,0.5])
   // One facet with interpolated shading using colors Id 
@@ -163,11 +162,16 @@ function demo_3d_9()
   plot3d(xx,yy,zz,colors=zzcolors,alpha=45,theta=60);
 endfunction
 
+function demo_3d_10()
+  // a demo by Quentin Quadrat.
+  exec(NSP+'/demos/graphics/NouvArbreQ.sci');
+endfunction
+
 // organize the previous list 
 // for graphic demo widget 
 
 graphic_test_3d = list() 
-for i=1:9
+for i=1:10
   graphic_test_3d(i) = list(sprintf("test%d",i), "not-used",sprintf("demo_3d_%d",i));
 end 
 

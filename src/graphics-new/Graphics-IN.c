@@ -124,7 +124,6 @@ static int * check_param_iflag(Stack stack,char *fname,char *varname,NspMatrix *
  * Check optional argument ebox for 3d plot 
  *-----------------------------------------------------------*/
 
-
 static const double  ebox_def[]= { 0,1,0,1,0,1};
 static double ebox_loc[]=  { 0,1,0,1,0,1};
 
@@ -157,15 +156,15 @@ static double * check_ebox(Stack stack,char *fname,char *varname,NspMatrix *var)
  * Check optional argument rect
  *-----------------------------------------------------------*/
 
-static double def_rect[4]  = {0.,0.,10.0,10.0}; 
+static const double  rect_def[]= {0.,0.,10.0,10.0}; 
+static double rect_loc[]=  {0.,0.,10.0,10.0}; 
 
 static double * check_rect(Stack stack,char *fname,char *varname,NspMatrix *var)
 {
+  int i;
   if ( var == NULLMAT) 
     {
-      def_rect[0]=def_rect[1]=0.0;
-      def_rect[2]=def_rect[3]=10.0;
-      return def_rect;
+      for ( i= 0 ; i < 4 ; i++) rect_loc[i]= rect_def[i];
     }
   else 
     {
@@ -177,9 +176,10 @@ static double * check_rect(Stack stack,char *fname,char *varname,NspMatrix *var)
 	}
       else 
 	{
-	  return var->R;
+	  for ( i= 0 ; i < 4 ; i++) rect_loc[i]= var->R[i];
 	}
     }
+  return rect_loc;
 }
 
 /*-----------------------------------------------------------
@@ -187,15 +187,14 @@ static double * check_rect(Stack stack,char *fname,char *varname,NspMatrix *var)
  *-----------------------------------------------------------*/
 
 #define DEFSTRF "081" 
-static char def_strf[]  = DEFSTRF;
+static char strf_loc[] = DEFSTRF;
 
 static char * check_strf(Stack stack,char *fname,char *varname,char *strf)
 {
 
   if ( strf == NULL ) 
     {
-      strcpy(def_strf,DEFSTRF);
-      return def_strf;
+      strcpy(strf_loc,DEFSTRF);
     }
   else 
     {
@@ -205,25 +204,24 @@ static char * check_strf(Stack stack,char *fname,char *varname,char *strf)
 	  return NULL;
 	}
       else 
-	return strf;
+	{
+	  strcpy(strf_loc,strf);
+	}
     }
-  
+  return strf_loc;
 }
-
 
 /*-----------------------------------------------------------
  * Check optional argument legend 
  *-----------------------------------------------------------*/
 
-#define DEFLEGEND "X@Y@Z"
-static char def_legend[]  = DEFLEGEND;
+static const char legend_loc[]  = "";
 
 static char * check_legend(Stack stack,char *fname,char *varname,char *legend)
 {
   if ( legend == NULL ) 
     {
-      strcpy(def_legend,DEFLEGEND);
-      return def_legend;
+      return legend_loc;
     }
   else 
     {
@@ -236,15 +234,15 @@ static char * check_legend(Stack stack,char *fname,char *varname,char *legend)
  * note that var can be changed by this function 
  *-----------------------------------------------------------*/
 
-static const int def_nax[]={2,10,2,10};
-static int loc_nax[]={2,10,2,10};
+static const int nax_def[]={2,10,2,10};
+static int nax_loc[]={2,10,2,10};
 
 static int * check_nax(Stack stack,char *fname,char *varname,NspMatrix *var)
 {
   int i;
   if ( var == NULLMAT) 
     {
-      for (i = 0 ; i < 4; ++i) loc_nax[i]=def_nax[i];
+      for (i = 0 ; i < 4; ++i) nax_loc[i]=nax_def[i];
     }
   else 
     {
@@ -257,17 +255,18 @@ static int * check_nax(Stack stack,char *fname,char *varname,NspMatrix *var)
       else 
 	{
 	  int *ivar  = (int *) var->R,i;
-	  for (i = 0 ; i < 4; ++i) loc_nax[i]=Max(ivar[i],0);
+	  for (i = 0 ; i < 4; ++i) nax_loc[i]=Max(ivar[i],0);
 	  return ivar;
 	}
     }
-  return loc_nax;
+  return nax_loc;
 }
 
 /*-----------------------------------------------------------
  * Check optional argument zminmax
  * note that var can be changed by this function 
  * (Bruno)
+ * FIXME: check copy 
  *-----------------------------------------------------------*/
 
 static double def_zminmax[2]  = {0.,0.};
@@ -298,6 +297,7 @@ static double * check_zminmax (Stack stack,char *fname,char *varname,NspMatrix *
  * Check optional argument colminmax
  * note that var can be changed by this function 
  * (Bruno)
+ * FIXME: check copy 
  *-----------------------------------------------------------*/
 
 static int def_colminmax[2]  = {1,1};
@@ -331,30 +331,31 @@ static int * check_colminmax (Stack stack,char *fname,char *varname,NspMatrix *v
  *-----------------------------------------------------------*/
 
 #define DEFLOGFLAGS "gnn" 
-static char def_logflags[]  = DEFLOGFLAGS;
+static char logflags_loc[]  = DEFLOGFLAGS;
 
 static char * check_logflags(Stack stack,char *fname,char *varname,char *logflags)
 {
   if ( logflags == NULL ) 
     {
-      strcpy(def_logflags,DEFLOGFLAGS);
-      return def_logflags;
+      strcpy(logflags_loc,DEFLOGFLAGS);
     }
   else 
     {
       if ( strlen(logflags) == 2 ) 
 	{
-	  sprintf(def_logflags,"g%c%c",logflags[0],logflags[1]);
-	  return def_logflags;
+	  sprintf(logflags_loc,"g%c%c",logflags[0],logflags[1]);
 	}
-      if ( strlen(logflags) != 3) 
+      else if ( strlen(logflags) != 3) 
 	{
 	  Scierror("%s: optional argument %s has wrong size (%d), 3 expected\n",fname,varname,strlen(logflags)); 
 	  return NULL;
 	}
-      else 
-	return logflags;
+      else
+	{
+	  strcpy(logflags_loc,logflags);
+	}
     }
+  return logflags_loc;
 }
 
 
@@ -389,7 +390,7 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,
 
   if (( R = check_rect(stack,stack.fname,"rect",rect)) == NULL)  return RET_BUG;
   if (( strf = check_strf(stack,stack.fname,"strf",strf))==NULL) return RET_BUG;
-  if ( R == def_rect ) strf[1]='5';
+  if ( R == rect_def ) strf[1]='5';
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
@@ -506,13 +507,22 @@ int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
       Scierror("%s: axes must be in the range [0,4]\r\n",stack.fname);
       return RET_BUG;
     }   
-  if ( *strf == def_strf) {
-    if ( *rect != def_rect) *strf[1] = '7';
-    if ( *leg != def_legend) *strf[0] = '1';
-    if ( *nax != def_nax) *strf[1] = '1';
-    if ( frame != -1 )  *strf[1] = (char)(frame+48);
-    if ( axes != -1 )   *strf[2] = (char)(axes+48);
-  }
+
+  /* check that Mrect and strf are compatible */
+  if ( Mrect == NULL ) 
+    { 
+      /* if rect is not provided and selected by strf we switch to recompute rect */
+      plot2d_strf_change('u',*strf);
+    }
+  else 
+    {
+      /* if rect is provided and not selected by strf we force it */
+      plot2d_strf_change('d',*strf);
+    }
+  /* activate caption */
+  if ((*leg)[0] != '\0') *strf[0]='1';
+  if ( frame != -1 ) (*strf)[1] = frame; 
+  if ( axes != -1 )  (*strf)[2] = axes; 
   return 0;
 }
 
@@ -1014,9 +1024,6 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,
   int_types T[] = {realmat,realmat,new_opts, t_end} ;
   
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&opts_2d,&axes,&frame,&leg,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
-
-
-  
 
   /* decide what to do according to (x,y) dimensions */ 
 
@@ -3570,12 +3577,13 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   if (( zminmax = check_zminmax(stack,stack.fname,"zminmax",Mzminmax))== NULL) return RET_BUG;
   if (( colminmax = check_colminmax(stack,stack.fname,"colminmax",Mcolminmax))== NULL) return RET_BUG;
 
+  /* FIXME 
   if ( strf == def_strf) {
     if ( rect != def_rect) strf[1] = '7';
     if ( leg != def_legend) strf[0] = '1';
     if ( nax != def_nax) strf[1] = '1';
   }
-
+  */
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   nsp_fec(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,zminmax,colminmax);

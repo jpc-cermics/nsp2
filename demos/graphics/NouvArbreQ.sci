@@ -79,29 +79,6 @@ function [A]=arbre3D(n,X,M,e)
   A=TransIm(RotIm(A,M),X);		
 endfunction
 
-//function [A]=arbre3D(n,X,M,e)
-//KK=masse(n);
-//A=bourgeon3D(X,M,3*e*KK(n+1));
-//for i=1:n,
-//  K=KK(n+2-i);
-//  A=[feuille3D([0;0;4*e*K;0],Id,2*e*K);..
-//      entrenoeud3D(Ze,Id,5*e*K);..
-//      Simil([0;0;5*e*K;0],Ma,1,A);..
-//      Simil([0;0;5*e*K;0],Mba,1,A)];  
-//      feuille3D([0;0;4*e*K;0],Maa,2*e*K);..
-//end;
-//  A=TransIm(RotIm(A,M),X);
-//endfunction
-//
-//function [K]=masse(n)
-//F=0; Q=1; K=%inf; f=1/3; q=1/12;
-//for i=1:n,
-//  F=[F,2+2*F(i)];
-//  Q=[Q,F(i+1)*Q(i)/(f*F(i+1)+q*Q(i))];
-//  K=[K,Q(i)/F(i+1)];
-//end;  
-//endfunction
-
 function Imo=Simil(T,M,e,Imn)
   Mp=M'
   [np,nd]=size(Imn)
@@ -129,10 +106,7 @@ function []=plotT3(T3)
   X=matrix(T3(:,1),4,nf),
   Y=matrix(T3(:,2),4,nf),
   Z=matrix(T3(:,3),4,nf),
-  plot3d(X,Y,Z,colors=matrix(T3(:,4),4,nf));
-  // XXX  plot3d ne marche qu'avec les options suivantes 
-  // a vérifier 
-  alpha=35,theta=45,leg="X@Y@Z",flag=[2,2,0];
+  plot3d(X,Y,Z,colors=matrix(T3(:,4),4,nf),flag=[2,2,0]);
 endfunction
 
 function []=plotarbre3D(n,m)
@@ -210,5 +184,5 @@ function []=plotarbre3D(n,m)
   plotT3(A);
 endfunction
 
-//plotarbre3D(4,8)
+plotarbre3D(1,5)
 

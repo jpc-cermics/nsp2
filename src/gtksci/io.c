@@ -229,7 +229,7 @@ int GetBasic() { return  BasicScilab;}
 char sci_input_char_buffer[IBSIZE];
 int  sci_input_char_buffer_count = 0;
 
-#define SELECT_DEBUG(x)
+#define SELECT_DEBUG(x) 
 
 /* send string s as if it was typed in scilab window */ 
 
@@ -253,7 +253,7 @@ int Xorgetchar(void)
   static int first = 0,max_plus1;
   fd_set select_mask,write_mask;
   static struct timeval select_timeout;
-
+  SELECT_DEBUG(fprintf(stderr,"New Xorgetchar %d\n",counter++);)
   if ( BasicScilab) return(getchar());
 
   if ( first == 0) 

@@ -51,6 +51,7 @@ typedef enum {
   s_double,     /* scalar double */
   s_bool,       /* scalar bool   */
   string,       /* string */
+  stringcopy,   /* string copy */
   mat,          /* matrix */
   matcopy,      /* copy of matrix */
   realmat,      /* real matrix */
