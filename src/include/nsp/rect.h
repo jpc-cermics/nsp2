@@ -80,7 +80,6 @@ extern int IsRect (NspObject *O);
 /* from rect.c */
 
 extern NspRect *rect_create(char *name, double *rect, int color, int thickness, int background,NspTypeBase *); 
-extern void check_graphic_window ();
 extern void RectDraw(NspRect *R);
 extern void RectTranslate(NspRect *R,const double pt[2]);
 extern void RectResize(NspRect *R,const double size[2]);
