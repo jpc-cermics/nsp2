@@ -641,10 +641,32 @@ static int nspgobject_get_data(NspGObject *self, Stack stack,int rhs,int opt,int
 
   quark = g_quark_from_string(key);
   data = g_object_get_qdata(self->obj, quark);
-  if (!data) return RET_BUG; 
+  if (!data) {
+    Scierror("Error: data %s does not exists\n",key);
+    return RET_BUG; 
+  }
   MoveObj(stack,1,data);
   return 1;
 }
+
+/* .check_data['name'] */
+
+static int nspgobject_check_data(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  char *key;
+  GQuark quark;
+  NspObject *data;
+
+  int_types T[] = { string , t_end} ;
+  if ( GetArgs(stack,rhs,opt,T, &key) == FAIL) return RET_BUG;
+  quark = g_quark_from_string(key);
+  data = g_object_get_qdata(self->obj, quark);
+  ret = ( data == NULL) ? 0 : 1;
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 
 /* .setdata[name=val,....] */
 
@@ -958,6 +980,7 @@ static NspMethods gobject_methods[] = {
   { "thaw_notify", (nsp_method *) nspgobject_thaw_notify},
   { "get_data", (nsp_method *) nspgobject_get_data},
   { "set_data", (nsp_method *) nspgobject_set_data},
+  { "check_data", (nsp_method *) nspgobject_check_data},
   { "connect", (nsp_method *) nspgobject_connect},
   { "connect_after", (nsp_method *) nspgobject_connect_after},
   { "connect_object", (nsp_method *) nspgobject_connect_object},
