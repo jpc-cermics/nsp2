@@ -20,9 +20,7 @@ static void CNAME(sorttest,TYPE)();
  * with TYPE == double or type = int 
  ******************************************************/
 
-static int CNAME(swapcode,TYPE)(parmi, parmj, n) 
-     char *parmi,*parmj;
-     int n;
+static int CNAME(swapcode,TYPE)(char * parmi,char * parmj,int n) 
 { 		
   int i = n;
   register TYPE *pi = (TYPE *) (parmi); 		
@@ -35,8 +33,7 @@ static int CNAME(swapcode,TYPE)(parmi, parmj, n)
   return(0);
 }
 
-static int CNAME(compareC,TYPE)(i,j)
-     char *i,*j;
+static int CNAME(compareC,TYPE)(char *i,char *j)
 {
   if ( *((TYPE *)i) > *((TYPE *)j))
     return (1);
@@ -45,8 +42,7 @@ static int CNAME(compareC,TYPE)(i,j)
   return (0);
 }
 
-static int CNAME(compareD,TYPE)(i,j)
-     char *i,*j;
+static int CNAME(compareD,TYPE)(char *i,char *j)
 {
   if ( *((TYPE *)i) < *((TYPE *)j))
     return (1);
@@ -59,11 +55,7 @@ static int CNAME(compareD,TYPE)(i,j)
  * Column sort of a matrix 
  ******************************************************/
 
-static void CNAME(ColSort,TYPE)(a,ind,flag,n,p,dir)
-     TYPE *a;
-     int *ind;
-     int flag,n,p;
-     char dir;
+static void CNAME(ColSort,TYPE)(TYPE *a,int *ind,int flag,int n,int p,char dir)
 {
   int i,j;
   if ( flag == 1) 
@@ -87,11 +79,7 @@ static void CNAME(ColSort,TYPE)(a,ind,flag,n,p,dir)
  * Row sort of a matrix 
  ******************************************************/
 
-static void CNAME(RowSort,TYPE)(a,ind,flag,n,p,dir)
-     TYPE *a;
-     int *ind;
-     int n,p,flag;
-     char dir;
+static void CNAME(RowSort,TYPE)(TYPE *a,int *ind,int flag,int n,int p,char dir)
 {  
   int i,j;
   if ( flag == 1) 
@@ -118,11 +106,7 @@ static void CNAME(RowSort,TYPE)(a,ind,flag,n,p,dir)
  * Global sort of a Matrix
  ******************************************************/
 
-static void CNAME(GlobalSort,TYPE)(a,ind,flag,n,p,dir)
-     TYPE *a;
-     int *ind;
-     int n,p,flag;
-     char dir;
+static void CNAME(GlobalSort,TYPE)(TYPE *a,int *ind,int flag,int n,int p,char dir)
 {  
   int i,j;
   if ( flag == 1) 
@@ -145,8 +129,7 @@ static void CNAME(GlobalSort,TYPE)(a,ind,flag,n,p,dir)
 static int CNAME(lexicols,TYPE) =1;
 static int CNAME(lexirows,TYPE) =1;
 
-static int CNAME(setLexiSize,TYPE)(n,p) 
-     int p,n;
+static int CNAME(setLexiSize,TYPE)(int n,int p)
 {
   CNAME(lexicols,TYPE) = p;
   CNAME(lexirows,TYPE) = n;
@@ -181,14 +164,12 @@ static  int CNAME(LexiRowcompareD,TYPE)(int *i, int *j)
   return (0);
 }
 
-static int CNAME(LexiRowswapcode,TYPE)(parmi, parmj, n) 
-     char *parmi,*parmj;
-     int n;
+static int CNAME(LexiRowswapcode,TYPE)(char *parmi,char * parmj,int n) 
 { 		
   int i = n,j;
   register TYPE *pi = (TYPE *) (parmi); 		
   register TYPE *pj = (TYPE *) (parmj); 
-  if ( n!= 1) printf(" swapcode avec n != 1\n");
+  /* if ( n!= 1) printf(" swapcode avec n != 1\n"); */
   do { 
     for ( j = 0 ; j < CNAME(lexicols,TYPE) ; j++) 
       {
@@ -203,10 +184,7 @@ static int CNAME(LexiRowswapcode,TYPE)(parmi, parmj, n)
 }
 
 
-static void CNAME(LexiRow,TYPE)(a,ind,flag,n,p,dir)
-     int *a,*ind;
-     int n,p;
-     char dir;
+static void CNAME(LexiRow,TYPE)(TYPE *a,int *ind,int flag,int n,int p,char dir)
 {
   int i,j;
   CNAME(setLexiSize,TYPE)(n,p);
@@ -227,8 +205,7 @@ static void CNAME(LexiRow,TYPE)(a,ind,flag,n,p,dir)
  *  to sort them 
  ******************************************************/
 
-static  int CNAME(LexiColcompareC,TYPE)(i,j)
-     TYPE *i,*j;
+static  int CNAME(LexiColcompareC,TYPE)(TYPE *i,TYPE *j;
 {
   int ic;
   for ( ic = 0 ; ic < CNAME(lexirows,TYPE) ; ic++) 
@@ -242,8 +219,7 @@ static  int CNAME(LexiColcompareC,TYPE)(i,j)
     }
   return (0);
 }
-static  int CNAME(LexiColcompareD,TYPE)(i,j)
-     TYPE *i,*j;
+static  int CNAME(LexiColcompareD,TYPE)(TYPE *i,TYPE *j)
 {
   int ic;
   for ( ic = 0 ; ic < CNAME(lexirows,TYPE) ; ic++) 
@@ -258,14 +234,12 @@ static  int CNAME(LexiColcompareD,TYPE)(i,j)
   return (0);
 }
 
-static int CNAME(LexiColswapcode,TYPE)(parmi, parmj, n) 
-     char *parmi,*parmj;
-     int n;
+static int CNAME(LexiColswapcode,TYPE)(char *parmi,char *parmj,int n) 
 { 		
   int i = n,ir;
   register TYPE *pi = (TYPE *) (parmi); 		
   register TYPE *pj = (TYPE *) (parmj); 
-  if ( n!= 1) printf(" swapcode avec n != 1\n");
+  /* if ( n!= 1) printf(" swapcode avec n != 1\n"); */
   do { 
     for ( ir = 0 ; ir < CNAME(lexirows,TYPE) ; ir++) 
       {
@@ -280,11 +254,7 @@ static int CNAME(LexiColswapcode,TYPE)(parmi, parmj, n)
 }
 
 
-static void CNAME(LexiCol,TYPE)(a,ind,flag,n,p,dir)
-     TYPE *a;
-     int *ind;
-     int n,p;
-     char dir;
+static void CNAME(LexiCol,TYPE)(TYPE *a,int *ind,int flag,int n,int p,char dir)
 {
   int i,j;
   CNAME(setLexiSize,TYPE)(n,p);
