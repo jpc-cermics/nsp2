@@ -27,7 +27,7 @@ include config/Makefile.linux
 distclean::
 	$(RM) bin/scilex
 
-SUBDIRS = scripts
+SUBDIRS = scripts macros demos 
 
 scilex-lib::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \

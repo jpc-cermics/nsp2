@@ -1,5 +1,5 @@
-#ifndef SCI_MATH 
-#define SCI_MATH 
+#ifndef NSP_MATH 
+#define NSP_MATH 
 
 /*------------------------------------------------------------------------
  *    Copyright (C) 1998-2003-2003 Enpc/Jean-Philippe Chancelier
@@ -28,7 +28,7 @@
 #define OK 0
 #define FAIL 1
 
-/** sur sun solaris finite est dans ieeefp **/
+/* sur sun solaris finite est dans ieeefp **/
 
 #if (defined(sun) && defined(SYSV)) 
 #include <ieeefp.h>
@@ -40,8 +40,8 @@
 #define finite(x) _finite(x) 
 #endif 
 #else  /* WIN32 */ 
-/** This should only be provided when finite prototype is missing **/
-/** XXX : to be tested **/
+/* This should only be provided when finite prototype is missing **/
+/* XXX : to be tested **/
 #ifndef __cplusplus
 int finite (double);
 #endif
@@ -67,8 +67,8 @@ int finite (double);
 #define Max(x,y)	(((x)>(y))?(x):(y))
 #endif 
 
-extern double Mini();  /** XXXX a mettre ailleurs **/
-extern double Maxi();  /** XXXX a mettre ailleurs **/
+extern double Mini();  /* XXXX a mettre ailleurs **/
+extern double Maxi();  /* XXXX a mettre ailleurs **/
 
 #define PI0 (integer *) 0
 #define PD0 (double *) 0
@@ -77,15 +77,18 @@ extern double Maxi();  /** XXXX a mettre ailleurs **/
 #define linint(x) ((integer) floor(x + 0.5 )) 
 #define inint(x) ((int) floor(x + 0.5 ))  
 
-/** a revoir precisement un jour ou l''autre XXXXXX **/
-/** nearest : **/
+/* a revoir precisement un jour ou l''autre XXXXXX **/
+/* nearest : **/
 #define anint(x) rint(x) 
-/** partie entiere **/
+/* partie entiere **/
 #define aint(x) ((x>= 0 ) ? floor(x)  : ceil(x))
 
+/* 
+ * isinf must return -1 0 or 1 
 #ifndef isinf 
 #define isinf(x) ( !  finite(x) && !isnan(x))
 #endif 
+*/
 
 #ifndef exp10
 extern double exp10 (double);
@@ -107,7 +110,7 @@ extern double exp10 (double);
 #define REALLOC(x,y) realloc((char *) x,(unsigned) y)
 #endif
 
-/** void name for object **/
+/* void name for object **/
 #define NVOID ""
 
 #if defined(WIN32) || defined(__STDC__)
@@ -163,7 +166,7 @@ extern double asinh(double);
 extern double atanh(double);
 #endif 
 
-#endif /** #ifndef SCI_MATH **/
+#endif /* SCI_MATH */
 
 
 

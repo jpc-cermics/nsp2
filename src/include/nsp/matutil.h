@@ -18,6 +18,7 @@ extern int nsp_dset (const int *n, const double *dx, double *dy, const int *incy
 extern int nsp_dadd (int *n, double *dx, int *incx, double *dy, int *incy); 
 extern int nsp_dadd_maxplus (int *n, double *dx, int *incx, double *dy, int *incy); 
 extern int nsp_dsub (int *n, double *dx, int *incx, double *dy, int *incy); 
+extern int nsp_dsub_maxplus (int *n, double *dx, int *incx, double *dy, int *incy); 
 extern double nsp_dsum (int *n, double *dx, int *incx); 
 extern int nsp_dvmul (int *n, double *dx, int *incx, double *dy, int *incy); 
 extern int nsp_icopy (const int *n, const int *idx, const int *incx, int *idy, const int *incy); 
@@ -31,6 +32,7 @@ extern int nsp_zadd_maxplus (int *n, doubleC *zx, int *incx, doubleC *zy, int *i
 extern double myzabs (double real, double imag); 
 extern double nsp_zasum (int *n, doubleC *zx, int *incx); 
 extern int nsp_zsub (int *n, doubleC *zx, int *incx, doubleC *zy, int *incy); 
+extern int nsp_zsub_maxplus (int *n, doubleC *zx, int *incx, doubleC *zy, int *incy); 
 extern void nsp_zsum (doubleC *ret_val, int *n, doubleC *zx, int *incx); 
 extern int nsp_zvmul (int *n, doubleC *zx, int *incx, doubleC *zy, int *incy); 
 extern double nsp_urand (int *iy); 

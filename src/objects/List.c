@@ -610,13 +610,13 @@ void nsp_list_info(NspList *L, int indent)
   for ( j=0 ; j < indent ; j++) Sciprintf(" ");
   if ( NSP_OBJECT(L)->name !=  NULLSTRING)
     {
-      Sciprintf("%s =  (",NSP_OBJECT(L)->name);
-      len=indent+strlen(NSP_OBJECT(L)->name)+5; 
+      Sciprintf("List %s = (",NSP_OBJECT(L)->name);
+      len=indent+strlen(NSP_OBJECT(L)->name)+9; 
     }
   else 
     {
-      Sciprintf("   =  (");
-      len = indent+2+5;
+      Sciprintf("List = (");
+      len = indent+2+8;
     }
   if ( L->tname != NULLSTRING) Sciprintf(L->tname); 
   C= L->first;
@@ -682,7 +682,7 @@ void nsp_list_print(NspList *L, int indent)
     }
   else
     {
-      Sciprintf("%s =\n",(strcmp(NSP_OBJECT(L)->name,NVOID) != 0) ? NSP_OBJECT(L)->name : " ");
+      Sciprintf("%s\t=\t\tl\n",(strcmp(NSP_OBJECT(L)->name,NVOID) != 0) ? NSP_OBJECT(L)->name : " ");
       for ( j=0 ; j < indent ; j++) Sciprintf(" ");
       Sciprintf("(\n");
       C= L->first;

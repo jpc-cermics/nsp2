@@ -620,7 +620,7 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,int header )
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\t %c (%dx%d)\n",NSP_OBJECT(Mat)->name,
+      Sciprintf("%s\t=%s\t\t%c (%dx%d)\n",NSP_OBJECT(Mat)->name,
 		(Mat->mn==0 ) ? " []" : "",Mat->rc_type,Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 

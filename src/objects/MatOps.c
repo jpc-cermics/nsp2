@@ -420,6 +420,13 @@ int nsp_mat_sub_scalar(NspMatrix *Mat1, NspMatrix *Mat2)
   return MatOpScalar(Mat1,Mat2,nsp_dsub,nsp_zsub);
 }
 
+/* the case Mat2  is scalar  (No check is made) */
+
+int nsp_mat_sub_scalar_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
+{
+  return MatOpScalar(Mat1,Mat2,nsp_dsub_maxplus,nsp_zsub_maxplus);
+}
+
 /* the case  Mat1 = - Mat1 + Mat2 
  * Mat2 is assumed to be a scalar ( No check is made) */ 
 
@@ -427,7 +434,7 @@ int nsp_mat_subs_calarm(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   if ( MatOpScalar(Mat1,Mat2,nsp_dsub,nsp_zsub) == FAIL ) 
     return FAIL;
- nsp_mat_minus(Mat1);
+  nsp_mat_minus(Mat1);
   return OK;
 }
 
@@ -2728,6 +2735,32 @@ int nsp_mat_minus(NspMatrix *A)
   return(OK);
 }
 
+/*
+ * nsp_mat_minus_maxplus(A),  A= -A 
+ * except for - %inf which is not changed 
+ * A is changed 
+ */
+
+int nsp_mat_minus_maxplus(NspMatrix *A)
+{
+  int i ;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i = 0 ; i < A->mn ; i++) 
+	if ( isinf( A->R[i]) != -1  )  A->R[i] = - A->R[i];
+    }
+  else
+    {
+      for ( i = 0 ; i < A->mn ; i++) 
+	{
+	  if ( isinf( A->I[i].r) != -1 ) A->I[i].i=  - A->I[i].i;
+	  if ( isinf( A->I[i].i) != -1 ) A->I[i].r=  - A->I[i].r;
+	}
+    }
+  return(OK);
+}
+
+
 
 
 /*
@@ -2941,7 +2974,7 @@ NspBMatrix  *nsp_mat_isinf(NspMatrix *A)
 }
 
 /*
- * Isinf 
+ * Isnan
  */
 
 NspBMatrix  *nsp_mat_isnan(NspMatrix *A)
@@ -3277,7 +3310,7 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
  * 
  */
 
-#define PLUS(x,y) (( isinf( -x ) || isinf( -y )) ? (Min(x,y)) : x+y )
+#define PLUS(x,y) (( isinf( x ) == -1  || isinf( y ) == -1 ) ? (Min(x,y)) : x+y )
 
 NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B)
 {  

@@ -1,6 +1,6 @@
 all	:
-	\ls *.sci > Names 
-	../../bin/scilex -dir ./ Names 
+	@\ls *.sci > Names 
+	@../../bin/scilex -dir ./ Names 
 
 clean	:
 	\rm -f *.bin

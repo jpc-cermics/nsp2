@@ -397,7 +397,7 @@ int nsp_dadd_maxplus(int *n, double *dx, int *incx, double *dy, int *incy)
     {
       for (i = 0 ; i < *n ; ++i) 
 	{
-	  if ( !isinf(- *dy) && !isinf(- *dx)) 
+	  if ( isinf(*dy) != -1  && isinf( *dx) != -1 ) 
 	    {
 	      *(dy++) += *(dx++);
 	    }
@@ -420,7 +420,7 @@ int nsp_dadd_maxplus(int *n, double *dx, int *incx, double *dy, int *incy)
       x= dx+ix;
       for ( i = 0; i < *n ; i++ ) 
 	{
-	  if ( !isinf(- (*y) ) && !isinf(- (*x) ) ) 
+	  if ( isinf( (*y) ) != -1  && isinf( (*x) ) != -1 ) 
 	    {
 	      *y += *x;
 	    }
@@ -470,6 +470,47 @@ int nsp_dsub(int *n, double *dx, int *incx, double *dy, int *incy)
       if (*incy < 0) { iy = (-(*n) + 1) * *incy ;}
       for ( i = 0; i < *n ; i++ ) {
 	dy[iy] -= dx[ix];
+	ix += *incx;
+	iy += *incy;
+      }
+    }
+  return 0;
+}
+
+/**
+ * nsp_dsub_maxplus:
+ * @n: number of -= operation to perform
+ * @dx: array of double to be substracted 
+ * @incx: increment for @dx array indices
+ * @dy: array of double in which addition is performed
+ * @incy: increment for @dy array indices
+ * 
+ * dy[incy*k ] -= dx[incx*k]  k=0,*n-1
+ * except when dx[incx*k] = -%inf 
+ * Return value: 
+ **/
+
+int nsp_dsub_maxplus(int *n, double *dx, int *incx, double *dy, int *incy)
+{
+  static int i, ix, iy;
+  if (*n <= 0) { return 0;  }
+  if (*incx == 1 && *incy == 1) 
+    {
+      for (i = 0 ; i < *n ; ++i) 
+	{
+	 if ( isinf( dx[i] ) != -1)  dy[i] -= dx[i] ;
+	}
+      return 0;
+    }
+  else 
+    {
+      /* code for unequal increments or equal increments */
+      /* not equal to 1 */
+      ix = iy = 0;
+      if (*incx < 0) { ix = (-(*n) + 1) * *incx ;} 
+      if (*incy < 0) { iy = (-(*n) + 1) * *incy ;}
+      for ( i = 0; i < *n ; i++ ) {
+	if ( isinf( dx[ix] ) != -1) dy[iy] -= dx[ix];
 	ix += *incx;
 	iy += *incy;
       }
@@ -827,7 +868,7 @@ int nsp_zadd_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
     {
       for (i = 0 ; i < *n ; ++i) 
 	{
-	  if ( !isinf(- (*zy).r) && !isinf(- (*zx).r)) 
+	  if ( isinf( (*zy).r)  != -1 && isinf( (*zx).r) != -1) 
 	    {
 	      (*zy).r += (*zx).r;
 	    }
@@ -835,7 +876,7 @@ int nsp_zadd_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
 	    {
 	      (*zy).r = Min((*zy).r,(*zx).r);
 	    }
-	  if ( !isinf(- (*zy).i) && !isinf(- (*zx).i)) 
+	  if ( isinf( (*zy).i) != -1 && isinf( (*zx).i) != -1) 
 	    {
 	      (*zy).i += (*zx).i;
 	    }
@@ -859,7 +900,7 @@ int nsp_zadd_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
       x= zx+ix;
       for ( i = 0; i < *n ; i++ ) 
 	{
-	  if ( !isinf(- (*y).r ) && !isinf(- (*x).r ) ) 
+	  if ( isinf( (*y).r ) != -1 && isinf( (*x).r ) != -1 ) 
 	    {
 	      (*y).r += (*x).r;
 	    }
@@ -867,7 +908,7 @@ int nsp_zadd_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
 	    {
 	      (*y).r = Min((*y).r,(*x).r);
 	    }
-	  if ( !isinf(- (*y).i ) && !isinf(- (*x).i ) ) 
+	  if ( isinf( (*y).i ) != -1 && isinf( (*x).i ) != -1 ) 
 	    {
 	      (*y).i += (*x).i;
 	    }
@@ -988,6 +1029,50 @@ int nsp_zsub(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
       if (*incy < 0) { iy = (-(*n) + 1) * *incy ;}
       for ( i = 0; i < *n ; i++ ) {
 	zy[iy].r -= zx[ix].r , zy[iy].i -= zx[ix].i;
+	ix += *incx;
+	iy += *incy;
+      }
+    }
+  return 0;
+}
+
+/**
+ * nsp_zsub_maxplus:
+ * @n: number of substraction to perform 
+ * @zx: a #doubleC array 
+ * @incx: increment to use for @zx #doubleC array 
+ * @zy: a #doubleC array 
+ * @incy:  increment to use for @zy #doubleC array 
+ * 
+ * zsub  :  zy[incy*k ] -= zx[incx*k]  k=0,*n-1
+ * 
+ * 
+ * Return value: 
+ **/
+
+int nsp_zsub_maxplus(int *n, doubleC *zx, int *incx, doubleC *zy, int *incy)
+{
+  static int i, ix, iy;
+  if (*n <= 0) { return 0;  }
+  if (*incx == 1 && *incy == 1) 
+    {
+      for (i = 0 ; i < *n ; ++i) 
+	{
+	  if ( isinf( zx[i].r ) != -1) zy[i].r -= zx[i].r ;
+	  if ( isinf( zx[i].i ) != -1) zy[i].i -= zx[i].i;
+	}
+      return 0;
+    }
+  else 
+    {
+      /* code for unequal increments or equal increments */
+      /* not equal to 1 */
+      ix = iy = 0;
+      if (*incx < 0) { ix = (-(*n) + 1) * *incx ;} 
+      if (*incy < 0) { iy = (-(*n) + 1) * *incy ;}
+      for ( i = 0; i < *n ; i++ ) {
+	if ( isinf(  zx[ix].r ) != -1)zy[iy].r -= zx[ix].r ;
+	if ( isinf(  zx[ix].i ) != -1)zy[iy].i -= zx[ix].i;
 	ix += *incx;
 	iy += *incy;
       }

@@ -2249,14 +2249,13 @@ int int_mptanh(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- *nsp_mat_minus: A=-(A)
- * A is changed  
- * return 0 if error 
+ * -(A) 
+ * except for -%inf which is not changed 
  */
  
 int int_mpminus(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_minus);
+  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_minus_maxplus);
 }
 
 
@@ -2527,14 +2526,16 @@ static int nsp_mp_max(NspMatrix *A, NspMatrix *B)
 
 /*
  * term to term substraction 
- * with special cases Mat - [] and Mat - scalar
- *  XXXXX Attention le cas F3 est faux scalar - Mat --> Mat -scalar  
+ *  with special cases Mat - [] and Mat - scalar
+ * FIXME: nsp_mat_dsub and nsp_mat_subs_calarm are to be done 
+ * 
  */
 
 int int_mpdsub(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mp_mopscal(stack,rhs,opt,lhs,
-			nsp_mat_sub_scalar,nsp_mat_dsub,nsp_mat_subs_calarm,nsp_mat_minus,0);
+			nsp_mat_sub_scalar_maxplus,nsp_mat_dsub,
+			nsp_mat_subs_calarm,nsp_mat_minus_maxplus,0);
 }
 
 /*
