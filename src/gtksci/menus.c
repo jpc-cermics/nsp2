@@ -16,7 +16,7 @@
 #include <gtk/gtk.h>
 
 #include "command.h" 
-#include "../graphics/periGtk.h" 
+#include "nsp/graphics/periGtk.h" 
 #include "nsp/menus.h" 
 #include "nsp/math.h"
 #include "../system/Sun.h" 
@@ -153,7 +153,7 @@ void MenuFixCurrentWin(int ivalue)
  * Graphic window menu 
  *--------------------------------------------------------------*/
 
-void create_graphic_window_menu(struct BCG *dd)
+void create_graphic_window_menu(BCG *dd)
 {
   GtkAccelGroup *accel_group=  gtk_accel_group_new ();
 
