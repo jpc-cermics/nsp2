@@ -3085,7 +3085,7 @@ static char *xset_Table[] = {
   "font",   "font size",    "foreground",  "hidden3d",
   "lastpattern",  "line mode",   "line style",   "mark",   "mark size", "pattern",
   "pixmap", "recording",  "thickness",  "use color",  "viewport", "wdim",   "white",   "window",
-  "wpdim",   "wpos",  "wresize",  "wshow",  "wwpc", "fpf","auto clear", "clipgrf",
+  "wpdim",   "wpos",  "wresize",  "wshow",  "wwpc", "fpf","auto clear", "clipgrf", NULL
 };
 
 int int_xset(Stack stack, int rhs, int opt, int lhs)
