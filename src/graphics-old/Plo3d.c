@@ -174,30 +174,35 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
  
-  if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
+  if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5 && flag[1] != 7 )
     {
       bbox[0]=x[0];bbox[1]=x[*p-1];
       bbox[2]=y[0];bbox[3]=y[*q-1];
       zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
       zmax=bbox[5]=(double) Maxi(z,*p*(*q));
     }
-  if ( flag[1]==1 || flag[1]==3 || flag[1]==5) 
+  if ( flag[1]==1 || flag[1]==3 || flag[1]==5 || flag[1] == 7 ) 
     {
       zmin=bbox[4];
       zmax=bbox[5];
     }
 
-  /* try to mix with previous 3d scales */
+  /* try to mix with previous 3d scales 
+   * FIXME: travail en cours 
+   */
   if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == OK) 
     {
-      if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
+      if (flag[1] == '6' || flag[1] == '7' )
 	{
-	  for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
-	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
-	  zmin=bbox[4];
-	  zmax=bbox[5];
+	  if ( Xgc->scales->flag != 0 ) 
+	    {
+	      for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
+	      for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
+	      zmin=bbox[4];
+	      zmax=bbox[5];
+	      /* FIXME: here we must change the flag[1];*/
+	    }
 	}
-
     }
 
   if ( flag[1] ==0)

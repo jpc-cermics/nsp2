@@ -319,7 +319,7 @@ void update_frame_bounds(BCG *Xgc,
       switch (strflag[1]) 
 	{
 	case '2' : strflag[1]='1';break;
-	  /* case '4' : strflag[1]='3';break; */
+	  /* case '4' : strflag[1]='3';break; */ /* FIXME: this should be used ? */
 	case '6' : strflag[1]='5';break;
 	}
     }

@@ -110,31 +110,48 @@ static int XgcAllocColors( BCG *xgc, int m)
 }
 
 /*---------------------------------------------------------
- * Pixmap routines: 
+ * Next routine are used to deal with the extra_pixmap 
+ * which is used when xset('pixmap',1) is activated at 
+ * scilab level. 
+ * FIXME: not used for periGL 
+ *        since xset('pixmap','on') is inactive 
  *---------------------------------------------------------*/
 
 static void xset_pixmapclear(BCG *Xgc)
 {
-     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
-//     glLoadIdentity ();
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
-
+  if ( Xgc->CurPixmapStatus == 1) 
+    {
+      pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+    }
 }
 
 static void xset_show(BCG *Xgc)
 {
-     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
-//     printf("sxet_show pas implementee pour OpenGL !!\n");
+  if ( Xgc->CurPixmapStatus == 1) 
+    {
+      /* we copy the extra_pixmap to the window and to the backing store pixmap */
+      /* gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg); */
+      /* drawing to the window and to the backing store pixmap */
+      gdk_draw_pixmap(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
+		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+      gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
+		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+    }
 }
 
 /*
  * Pixmap clear: clear the extra private->pixmap associated to the window 
- * using the window background 
+ * using the background color.
  */
 
 static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 {
-     printf("pixmap_clear_rect pas implementee pour OpenGL !!\n");
+  if ( Xgc->CurPixmapStatus == 1) 
+    {
+      gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg);
+      gdk_draw_rectangle(Xgc->private->extra_pixmap,Xgc->private->stdgc, TRUE,
+			 0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+    }
 }
 
 /* 
@@ -144,8 +161,23 @@ static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 
 static void pixmap_resize(BCG *Xgc)
 {
-     printf("pixmap_resize pas implementee pour OpenGL !!\n"); 
+  if ( Xgc->CurPixmapStatus == 1) 
+    {
+      int x= Xgc->CWindowWidth; 
+      int y= Xgc->CWindowHeight;
+      /* create a new pixmap */
+      GdkDrawable *temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,x,y,-1);
+      if ( temp  == NULL ) 
+	{
+	  xinfo(Xgc,"No more space to create Pixmaps");
+	  return;
+	}
+      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
+      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
+      pixmap_clear_rect(Xgc,0,0,x,y);
+    }
 } 
+
 
 /*-----------------------------------------------------
  * General routines callable from Scilab 
@@ -1313,8 +1345,7 @@ static int xget_usecolor(BCG *Xgc)
 
 static void xset_pixmapOn(BCG *Xgc,int num)
 { 
-     printf("fct xset_pixmapOn pas encore implementee en OpenGL !!\n");
-#if 0
+  Sciprintf("pixmap on is not implemented in OpenGL driver\n");
      int num1= Min(Max(num,0),1);
      if ( Xgc->CurPixmapStatus == num1 ) return;
      if ( num1 == 1 )
@@ -1344,13 +1375,11 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	  Xgc->private->drawable = (GdkDrawable *)Xgc->private->drawing->window;
 	  Xgc->CurPixmapStatus = 0; 
      }
-#endif
 }
 
 static int xget_pixmapOn(BCG *Xgc)
 {
-     printf("fct xget_pixmapOn pas encore implementee en OpenGL !!\n");
-     return Xgc->CurPixmapStatus;
+  return Xgc->CurPixmapStatus;
 }
 
 /* Change the status of a Graphic Window
@@ -3086,7 +3115,9 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
      
      init_view(dd);
 
+#ifdef MOTION
      dd->private->aspect = (float)widget->allocation.width /(float)widget->allocation.height;
+#endif 
 
      gdk_gl_drawable_gl_end (gldrawable);
      /*** OpenGL END ***/
@@ -3278,7 +3309,7 @@ examine_gl_config_attrib (GdkGLConfig *glconfig)
  * The "motion_notify_event" signal handler. Any processing required when
  * the OpenGL-capable drawing area is under drag motion should be done here.
  */
-
+#ifdef MOTION
 static gboolean
 motion_notify_event_ogl (GtkWidget      *widget,
 		     GdkEventMotion *event,
@@ -3345,6 +3376,7 @@ button_press_event_ogl (GtkWidget      *widget,
   return FALSE;
 }
 
+#endif /* MOTION */
 
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
