@@ -7,7 +7,7 @@
 /*--------------------------------------------------------------------------
  *    Gtk  Driver 
  * 
- * FIXME: peut-etre enlver le double_buffer du drawin-area 
+ * FIXME: peut-etre enlever le double_buffer du drawin-area 
  *        puisqu'on le gère directement 
  *--------------------------------------------------------------------------*/
 
@@ -24,6 +24,9 @@
 #include "nsp/version.h"
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
+
+
+#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )  {  nsp_gtk_invalidate(Xgc); Xgc->private->draw = TRUE;  return; }
 
 /** Global variables to deal with X11 **/
 
@@ -96,6 +99,13 @@ void force_affichage(BCG *Xgc)
   /* Xgc->private->resize = 1; */
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
+
+void force_redraw(BCG *Xgc)
+{
+  Xgc->private->draw = TRUE; 
+  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+}
+
 
 /*---------------------------------------------------------
  * Next routine are used to deal with the extra_pixmap 
@@ -203,10 +213,10 @@ static void xend(BCG *Xgc)
 static void clearwindow(BCG *Xgc)
 {
   /* we use the private->stdgc graphic context */
+  DRAW_CHECK;
   gdk_gc_set_foreground(Xgc->private->stdgc, &Xgc->private->gcol_bg);
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->stdgc, TRUE, 0, 0,
 		     Xgc->CWindowWidth, Xgc->CWindowHeight);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /* generates a pause, in seconds */
@@ -623,6 +633,8 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
   /* switch to a clear gc */
   int cur_alu = Xgc->CurDrawFunction;
   int clear = 0 ; /* 0 is the Xclear alufunction */;
+  DRAW_CHECK;
+
   if ( cur_alu != clear ) xset_alufunction1(Xgc,clear);
   if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
     {
@@ -634,14 +646,13 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
     xset_alufunction1(Xgc,cur_alu);   /* back to current value */ 
   if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
     {
-      /* restor clip */
+      /* restore clip */
       GdkRectangle clip_rect = { Xgc->CurClipRegion[0],
 				 Xgc->CurClipRegion[1],
 				 Xgc->CurClipRegion[2],
 				 Xgc->CurClipRegion[3]};
       gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
     }
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -1696,6 +1707,7 @@ int CheckColormap(BCG *Xgc,int *m)
 
 static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
 { 
+  DRAW_CHECK;
   if ( Abs(angle) <= 0.1) 
     {
       gint lbearing, rbearing, iascent, idescent, iwidth;
@@ -1715,7 +1727,6 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
     {
       DispStringAngle(Xgc,x,y,string,angle);
     }
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -1774,8 +1785,8 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 
 static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 {
+  DRAW_CHECK;
   gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, x1, yy1, x2, y2);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /** Draw a set of segments **/
@@ -1815,6 +1826,7 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
   double cos20=cos(20.0*M_PI/180.0);
   double sin20=sin(20.0*M_PI/180.0);
   int polyx[4],polyy[4];
+  DRAW_CHECK;
   xget_dash_and_color(Xgc,&dash,&color);
   for (i=0 ; i < n/2 ; i++)
     { 
@@ -1858,6 +1870,7 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
   int i,dash,color;
+  DRAW_CHECK;
   xget_dash_and_color(Xgc,&dash,&color);
   for (i = 0 ; i < n ; i++)
     {
@@ -1885,17 +1898,17 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 
 static void drawrectangle(BCG *Xgc,const int rect[])
 { 
+  DRAW_CHECK
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,
 		     rect[0],rect[1],rect[2],rect[3]);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /** fill one rectangle, with current pattern **/
 
 static void fillrectangle(BCG *Xgc,const int rect[])
 { 
+  DRAW_CHECK;
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /*----------------------------------------------------------------------------------
@@ -1910,6 +1923,7 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
 {
   double zmoy,zmax,zmin,zmaxmin;
   int i,j,whiteid,fill[1],cpat,xz[2];
+  DRAW_CHECK;
   zmin=Mini(z,(n1)*(n2));
   zmax=Maxi(z,(n1)*(n2));
   zmaxmin=zmax-zmin;
@@ -1936,7 +1950,6 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
 	    }
       }
   xset_pattern(Xgc,cpat);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /*----------------------------------------------------------------------------------
@@ -1952,6 +1965,7 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
 static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
   int i,j,fill[1],cpat,xz[2];
+  DRAW_CHECK;
   cpat = xget_pattern(Xgc);
   xget_windowdim(Xgc,xz,xz+1);
   for (i = 0 ; i < (n1)-1 ; i++)
@@ -1971,7 +1985,6 @@ static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, in
 	    }
       }
   xset_pattern(Xgc,cpat);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -1992,6 +2005,7 @@ static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, in
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
   int i,cpat,verb;
+  DRAW_CHECK;
   verb=0;
   cpat = xget_pattern(Xgc);
   for (i=0 ; i< n ; i++)
@@ -2023,6 +2037,7 @@ static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
 static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
   int dash,color,i;
+  DRAW_CHECK;
   /* store the current values */
   xget_dash_and_color(Xgc,&dash,&color);
   for (i=0 ; i< n ; i++)
@@ -2037,18 +2052,18 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
+  DRAW_CHECK;
   gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,FALSE,
 	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /** Fill a single elipsis or part of it with current pattern **/
 
 static void fillarc(BCG *Xgc,int arc[])
 { 
+  DRAW_CHECK;
   gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,TRUE,
 	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /*
@@ -2065,6 +2080,7 @@ static void fillarc(BCG *Xgc,int arc[])
 static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
 { 
   int symb[2],dash,color,i,close;
+  DRAW_CHECK;
   /* store the current values */
   xget_mark(Xgc,symb);
   xget_dash_and_color(Xgc,&dash,&color);
@@ -2102,6 +2118,7 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
   int dash,color,i;
+  DRAW_CHECK;
   xget_dash_and_color(Xgc,&dash,&color);
   for (i = 0 ; i< n ; i++)
     {
@@ -2137,6 +2154,7 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
 static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 { 
   int n1;
+  DRAW_CHECK;
   if (closeflag == 1) n1 =n+1;else n1= n;
   if (n1 >= 2) 
     {
@@ -2145,7 +2163,6 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 	  gdk_draw_lines(Xgc->private->drawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
 	}
     }
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -2158,12 +2175,12 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag) 
 {
   int n1;
+  DRAW_CHECK;
   if (closeflag == 1) n1 = n+1;else n1= n;
   if ( gtk_store_points(n, vx, vy, closeflag)) 
     {
       gdk_draw_polygon(Xgc->private->drawable,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
     }
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /* 
@@ -2173,6 +2190,7 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 
 static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 {
+  DRAW_CHECK;
   if ( Xgc->CurHardSymb == 0 )
     {
       if (gtk_store_points(n, vx, vy,(int)0L))
@@ -2192,7 +2210,6 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
       for ( i=0; i< n ;i++) DrawMark(Xgc,vx+i,vy+i);
       xset_font(Xgc,keepid,keepsize);
     }
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /*-------------------------------------------------------------------------
@@ -2344,6 +2361,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->font=NULL;
   private->resize = 0; /* do not remove !! */
   private->in_expose= FALSE;
+  private->draw= FALSE;
 
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
@@ -2490,6 +2508,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
   int i;
   double xi,yi,xf,yf;
   double cosal,sinal;
+  DRAW_CHECK;
   cosal= cos( (double)M_PI * (alpha)/180.0);
   sinal= sin( (double)M_PI * (alpha)/180.0);
   for (i=0; i <= nsteps[0]*nsteps[1]; i++)
@@ -2511,7 +2530,6 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
       yf = yi + ( size[1]*size[2]*cosal);
       gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, xi,yi,xf,yf) ;
     }
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 /*-----------------------------------------------------
@@ -2854,11 +2872,11 @@ static int CurSymbYOffset(BCG *Xgc)
 
 static void DrawMark(BCG *Xgc,int *x, int *y)
 { 
+  DRAW_CHECK;
   char str[1];
   str[0]=Marks[Xgc->CurHardSymb];
   gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
 		*x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) nsp_gtk_invalidate(Xgc);
 }
 
 
@@ -3039,6 +3057,15 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     }
   else 
     {
+      if ( dd->private->draw == TRUE ) 
+	{
+	  dd->private->draw = FALSE;
+	  /* need to redraw */
+	  dd->private->in_expose= TRUE;
+	  scig_replay(dd->CurWindow);
+	  dd->private->in_expose= FALSE;
+	}
+
       if (event  != NULL) 
 	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
@@ -3047,6 +3074,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
     }
+  gdk_flush();
   return FALSE;
 }
 

@@ -64,6 +64,11 @@ static void  nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y,
 				      double *teta, double *alpha, char *legend, int *flag, double *bbox,
 				      double *zmin,double *zmax, nsp_plot3d_type t);
 
+static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, char *legend, double *bbox);
+
+static void draw_3d_tics(BCG *Xgc,int axflag,int ixbox[],int iybox[],int xind[],int i1,int i2,int i3,int i4,int x,int y,int flag, 
+		    double ang,char *leg,double *bbox,int axis_flag, int xdir,int ofset);
+
 /* FIXME 
  */
 
@@ -600,13 +605,16 @@ int DPoints1(BCG *Xgc,int *polyx, int *polyy, int *fill, int whiteid, double zmi
   polyy[4 +5*jj1]=PGEOY(x[i]  ,y[j]  ,z[i+(*p)*j]);
   if ( finite(yy1)==0)return(0);
   if (((polyx[1+5*jj1]-polyx[0+5*jj1])*(polyy[2+5*jj1]-polyy[0+5*jj1])-
-       (polyy[1+5*jj1]-polyy[0+5*jj1])*(polyx[2+5*jj1]-polyx[0+5*jj1])) <  0)
-    fill[jj1]= (dc < 0 ) ? -fg : fg ;
+       (polyy[1+5*jj1]-polyy[0+5*jj1])*(polyx[2+5*jj1]-polyx[0+5*jj1])) <  0 
+      )
+    {
+      fill[jj1]= (dc < 0 ) ? -fg : fg ;
+    }
   else
     {
-    fill[jj1]=inint((whiteid-1)*((1/4.0*( z[i+(*p)*j]+ z[i+1+(*p)*j]+
-				     z[i+(*p)*(j+1)]+ z[i+1+(*p)*(j+1)])-zmin)
-			     /(zmax-zmin)))+1;
+      fill[jj1]=inint((whiteid-1)*((1/4.0*( z[i+(*p)*j]+ z[i+1+(*p)*j]+
+					    z[i+(*p)*(j+1)]+ z[i+1+(*p)*(j+1)])-zmin)
+				   /(zmax-zmin)))+1;
       if ( dc < 0 ) fill[jj1]= -fill[jj1];
     }
   return(1);
@@ -752,7 +760,7 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       nsp_param3d_1_ogl(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
-      return;
+      return 1;
     }
 
 
@@ -1056,11 +1064,10 @@ void DrawAxis(BCG *Xgc,double *xbox, double *ybox, int *Indices, int style)
 }
 
 /*---------------------------------------------------------------------
- *Trace l'enveloppe convexe de la boite contenant le dessin 
+ * Trace l'enveloppe convexe de la boite contenant le dessin 
  * et renvoit dans InsideU et InsideD les indices des points dans xbox et ybox
  * qui sont sur les 2 tri\`edres a l'interieur de l'enveloppe convexe
  *---------------------------------------------------------------------*/
-
 void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, int *InsideD, char *legend, int *flag, double *bbox)
 {
   double xmaxi;
@@ -1099,31 +1106,61 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
   if (ind < 0 || ind > 8) 
     {
       Scistring("xind out of bounds");
-      xind[0]=0;
+      xind[0]=4;
     }
   UpNext(xind[0],&ind2,&ind3);
-  if (ybox[ind2] > ybox[ind3]) 
+  if ( ybox[xind[0]] > ybox[xind[0]-4]) 
     {
-      xind[1]=ind2;InsideU[0]=ind3;
+      if (ybox[ind2] > ybox[ind3]) 
+	{
+	  xind[1]=ind2;InsideU[0]=ind3;
+	}
+      else 
+	{
+	  xind[1]=ind3;InsideU[0]=ind2;
+	}
     }
   else 
     {
-      xind[1]=ind3;InsideU[0]=ind2;
+      if (ybox[ind2] < ybox[ind3]) 
+	{
+	  xind[1]=ind2;InsideU[0]=ind3;
+	}
+      else 
+	{
+	  xind[1]=ind3;InsideU[0]=ind2;
+	}
     }
+
   UpNext(ind2,&ind2,&ind3); InsideU[1]=xind[0];
   InsideU[2]=ind2; InsideU[3]=InsideU[0]-4;
   xind[2]=ind2;
   /* le point en bas qui correspond */
   xind[3]=ind2-4;
   DownNext(xind[3],&ind2,&ind3);
-  if (ybox[ind2] < ybox[ind3]) 
-   {
-     xind[4]=ind2;InsideD[0]=ind3;
-   }
- else  
-   {
-     xind[4]=ind3;InsideD[0]=ind2;
-   }
+  if ( ybox[xind[0]] > ybox[xind[0]-4]) 
+    {
+      if (ybox[ind2] < ybox[ind3]) 
+	{
+	  xind[4]=ind2;InsideD[0]=ind3;
+	}
+      else  
+	{
+	  xind[4]=ind3;InsideD[0]=ind2;
+	}
+    }
+  else
+    {
+      if (ybox[ind2] > ybox[ind3]) 
+	{
+	  xind[4]=ind2;InsideD[0]=ind3;
+	}
+      else  
+	{
+	  xind[4]=ind3;InsideD[0]=ind2;
+	}
+    }
+
   DownNext(ind2,&ind2,&ind3);
   InsideD[1]=xind[3];
   InsideD[2]=ind2;
@@ -1177,8 +1214,6 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
       Xgc->graphic_engine->xset_pattern(Xgc,pat);
       Xgc->graphic_engine->xset_dash(Xgc,dash);
     }
-
-
 }
 
 /* rajoute des symboles x,y,z : sur les axes     **/
@@ -1186,7 +1221,8 @@ void Convex_Box(BCG *Xgc,double *xbox, double *ybox,double *zbox, int *InsideU, 
 /* (ixbox,iybox) : Coordonnees des points de l'envelloppe cvxe en pixel **/
 /* xind : indices des points de l'enveloppe cvxe ds xbox et ybox **/
 
-void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, char *legend, double *bbox)
+
+static void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, char *legend, double *bbox)
 {
   int xz[2];
   int iof;
@@ -1205,6 +1241,7 @@ void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, char *l
   Xgc->graphic_engine->xget_windowdim(Xgc,xz,xz+1);
   iof = (xz[0]+xz[1])/50;
   x=ixbox[2]-iof ;y=iybox[2]-iof;
+
   if ( axflag>=4)
     {
       double fx,fy,fz,lx,ly,lz;
@@ -1223,97 +1260,94 @@ void AxesStrings(BCG *Xgc,int axflag, int *ixbox, int *iybox, int *xind, char *l
       Xgc->graphic_engine->boundingbox(Xgc,legz,x,y,rect);
       Xgc->graphic_engine->displaystring(Xgc,legz,(x=x - rect[2],x),y,flag ,ang);
     }
-  /* le cot\^e en bas \`a gauche **/
-  x=inint((ixbox[3]+ixbox[4])/2.0 -iof);
-  y=inint((1/3.0)*iybox[3]+(2/3.0)*iybox[4]+iof);
-  if ( xind[3]+xind[4] == 3)
-    {
-      if ( axflag>=4)
-	{
-	  double fx,fy,fz,lx,ly,lz;
-	  int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
-	  xnax[0]=5;xnax[1]=2;
-	  FPoint[0]=ixbox[3];FPoint[1]=iybox[3];
-	  LPoint[0]=ixbox[4];LPoint[1]=iybox[4];
-	  Ticsdir[0]=ixbox[4]-ixbox[5];
-	  Ticsdir[1]=iybox[4]-iybox[5];
-	  BBoxToval(&fx,&fy,&fz,xind[3],bbox);
-	  BBoxToval(&lx,&ly,&lz,xind[4],bbox);
-	  TDAxis(Xgc,2L,fx,lx,xnax,FPoint,LPoint,Ticsdir);
-	}
-      if (legx != 0)
-	{
 
-	  Xgc->graphic_engine->boundingbox(Xgc,legx,x,y,rect);
-	  Xgc->graphic_engine->displaystring(Xgc,legx,(x=x-rect[2],x),y,flag,ang);
+  if ( iybox[1] < iybox[4] ) /* are we upside down ? */
+    {
+      /* le cot\^e en bas \`a gauche **/
+      x=inint((ixbox[3]+ixbox[4])/2.0 -iof);
+      y=inint((1/3.0)*iybox[3]+(2/3.0)*iybox[4]+iof);
+      if ( xind[3]+xind[4] == 3)
+	{
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,3,4,4,5,x,y,flag,ang,legx,bbox,2,TRUE,TRUE);
+	}
+      else 
+	{
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,3,4,4,5,x,y,flag,ang,legy,bbox,2,FALSE,TRUE);
+	}
+      /* le cot\'e en bas a droite **/
+      x=inint((ixbox[4]+ixbox[5])/2+iof);
+      y=inint(((2/3.0)*iybox[4]+(1/3.0)*iybox[5])+iof);
+      if ( xind[4]+xind[5] == 3)
+	{
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,4,5,4,3,x,y,flag,ang,legx,bbox,3,TRUE,FALSE);
+	}
+      else 
+	{
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,4,5,4,3,x,y,flag,ang,legy,bbox,3,FALSE,FALSE);
 	}
     }
   else 
     {
-      if ( axflag>=4)
-	{
-	  double fx,fy,fz,lx,ly,lz;
-	  int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
-	  xnax[0]=5;xnax[1]=2;
-	  FPoint[0]=ixbox[3];FPoint[1]=iybox[3];
-	  LPoint[0]=ixbox[4];LPoint[1]=iybox[4];
-	  Ticsdir[0]=ixbox[4]-ixbox[5];
-	  Ticsdir[1]=iybox[4]-iybox[5];
-	  BBoxToval(&fx,&fy,&fz,xind[3],bbox);
-	  BBoxToval(&lx,&ly,&lz,xind[4],bbox);
-	  TDAxis(Xgc,2L,fy,ly,xnax,FPoint,LPoint,Ticsdir);
-	}
-      if (legy != 0)
-	{
+      /* le cot\^e en bas \`a gauche **/
+      x=inint((ixbox[2]+ixbox[1])/2.0 -iof);
+      y=inint((1/3.0)*iybox[2]+(2/3.0)*iybox[1]+iof);
+      Xgc->graphic_engine->xinfo(Xgc,"target = %d %d", xind[1]+xind[2], xind[1]+xind[0] );
 
-	  Xgc->graphic_engine->boundingbox(Xgc,legy,x,y,rect);
-	  Xgc->graphic_engine->displaystring(Xgc,legy,(x=x-rect[2],x),y,flag,ang);
-	}
-    }
-  /* le cot\'e en bas a droite **/
-  x=inint((ixbox[4]+ixbox[5])/2+iof);
-  y=inint(((2/3.0)*iybox[4]+(1/3.0)*iybox[5])+iof);
-  if ( xind[4]+xind[5] == 3)
-    {
-      if ( axflag>=4)
+      if ( xind[1]+xind[2] == 13 )
 	{
-	  double fx,fy,fz,lx,ly,lz;
-	  int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
-	  xnax[0]=5;xnax[1]=2;
-	  FPoint[0]=ixbox[4];FPoint[1]=iybox[4];
-	  LPoint[0]=ixbox[5];LPoint[1]=iybox[5];
-	  Ticsdir[0]=ixbox[4]-ixbox[3];
-	  Ticsdir[1]=iybox[4]-iybox[3];
-	  BBoxToval(&fx,&fy,&fz,xind[4],bbox);
-	  BBoxToval(&lx,&ly,&lz,xind[5],bbox);
-	  TDAxis(Xgc,3L,fx,lx,xnax,FPoint,LPoint,Ticsdir); 
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,2,1,1,0,x,y,flag,ang,legy,bbox,2,FALSE,TRUE);
 	}
-      if (legx != 0) 
+      else 
 	{
-	  Xgc->graphic_engine->displaystring(Xgc,legx,x,y,flag,ang);
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,2,1,1,0,x,y,flag,ang,legx,bbox,2,TRUE,TRUE);
 	}
-    }
-  else 
-    {
-      if ( axflag>=4)
+      /* le cot\'e en bas a droite **/
+      x=inint((ixbox[1]+ixbox[0])/2+iof);
+      y=inint(((2/3.0)*iybox[1]+(1/3.0)*iybox[0])+iof);
+
+      if ( xind[1]+xind[0] == 9 )
 	{
-	  double fx,fy,fz,lx,ly,lz;
-	  int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
-	  xnax[0]=5;xnax[1]=2;
-	  FPoint[0]=ixbox[4];FPoint[1]=iybox[4];
-	  LPoint[0]=ixbox[5];LPoint[1]=iybox[5];
-	  Ticsdir[0]=ixbox[4]-ixbox[3];
-	  Ticsdir[1]=iybox[4]-iybox[3];
-	  BBoxToval(&fx,&fy,&fz,xind[4],bbox);
-	  BBoxToval(&lx,&ly,&lz,xind[5],bbox);
-	  TDAxis(Xgc,3L,fy,ly,xnax,FPoint,LPoint,Ticsdir); 
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,1,0,1,2,x,y,flag,ang,legy,bbox,3,FALSE,FALSE);
 	}
-      if (legy != 0) 
+      else 
 	{
-	  Xgc->graphic_engine->displaystring(Xgc,legy,x,y,flag,ang);
+	  draw_3d_tics(Xgc,axflag,ixbox,iybox,xind,1,0,1,2,x,y,flag,ang,legx,bbox,3,TRUE,FALSE);
 	}
     }
   FREE(loc);
+}
+
+
+static void draw_3d_tics(BCG *Xgc,int axflag,int ixbox[],int iybox[],int xind[],int i1,int i2,int i3,int i4,int x,int y,int flag, 
+			 double ang,char *leg,double *bbox,int axis_flag, int xdir,int ofset)
+{
+  int rect[4];
+  if ( axflag>=4)
+    {
+      double fx,fy,fz,lx,ly,lz;
+      int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
+      xnax[0]=5;xnax[1]=2;
+      FPoint[0]=ixbox[i1];FPoint[1]=iybox[i1];
+      LPoint[0]=ixbox[i2];LPoint[1]=iybox[i2];
+      Ticsdir[0]=ixbox[i3]-ixbox[i4];
+      Ticsdir[1]=iybox[i3]-iybox[i4];
+      BBoxToval(&fx,&fy,&fz,xind[i1],bbox);
+      BBoxToval(&lx,&ly,&lz,xind[i2],bbox);
+      if ( xdir== TRUE) 
+	TDAxis(Xgc,axis_flag,fx,lx,xnax,FPoint,LPoint,Ticsdir); 
+      else 
+	TDAxis(Xgc,axis_flag,fy,ly,xnax,FPoint,LPoint,Ticsdir);
+    }
+  if (leg != 0) 
+    {
+      if ( ofset==TRUE ) 
+	{
+	  Xgc->graphic_engine->boundingbox(Xgc,leg,x,y,rect);
+	  Xgc->graphic_engine->displaystring(Xgc,leg,(x=x-rect[2],x),y,flag,ang);
+	}
+      else
+	Xgc->graphic_engine->displaystring(Xgc,leg,x,y,flag,ang);
+    }
 }
 
 void MaxiInd(double *vect, int n, int *ind, double maxi)
@@ -2327,19 +2361,18 @@ void I3dRotation(BCG *Xgc)
       theta= theta0 - 180.0*(x-x0);alpha=alpha0 + 180.0*(y-yy0);
       Xgc->graphic_engine->xinfo(Xgc,"alpha=%.1f,theta=%.1f",alpha,theta); 
       Xgc->graphic_engine->clearwindow(Xgc);
-      /* here a new_angle_plots is enough if
-       * force_affichage will do the drawing 
-       */
       tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
       /* force drawing: FIXME */
-      force_affichage(Xgc);
+      force_redraw(Xgc);
+      /* force_affichage(Xgc); */
       Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,FALSE,TRUE,TRUE,FALSE);
       xx=1.0/Abs(Xgc->scales->frect[0]-Xgc->scales->frect[2]);
       yy=1.0/Abs(Xgc->scales->frect[1]-Xgc->scales->frect[3]);
       x=(xl-Xgc->scales->frect[0])*xx;
       y=(yl-Xgc->scales->frect[1])*yy;
     }
-  Xgc->graphic_engine->clearwindow(Xgc); 
+  Xgc->graphic_engine->clearwindow(Xgc);
   tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,flag,&theta,&alpha,bbox);
-  force_affichage(Xgc);
+  force_redraw(Xgc);
+  /* force_affichage(Xgc); */
 }
