@@ -1,18 +1,12 @@
-function histplot(n,data,normalization=%t,style=1,strf='171',rect=[],leg="")
-// histplot(n,data,[style,strf,leg,rect,nax])
-// draws histogram of entries in  data put into n classes
-// 
-// histplot(xi,data,[style,strf,leg,rect,nax])
-// generates the histogram of entries in data put into classes
-// ]xi(k) xi(k+1)] .
-// xi's are assumed st. increasing
-//
-// [style,strf,leg,rect,nax] same as plot2d
+function histplot(n,data,normalize=%t,style=[2],strf='171',rect=[],leg="",nax=[2,5,2,5],axesflag=[1],frameflag=[7],fill=%t)
+//  
+// draws histogram of data entries using classes given by n 
+// Note that if n is a vector it must be strictly increasing 
 // Example : enter histplot()
-//! 
-// Copyright INRIA (or Enpc ? )
+// hand rewriten from a previous scilab version (J.P Chancelier)
+// fill option added (J.P Chancelier)
+// dsearch use (Bruno Pinçon) 
 // 
-// modif to use dsearch (Bruno le 10/12/2001)
   if nargin <= 0, 
     s_mat=['histplot([-6:0.2:6],rand(1,2000,''n''));';
 	   'function [y]=f(x); y=exp(-x.*x/2)/sqrt(2*%pi);endfunction';
@@ -22,10 +16,7 @@ function histplot(n,data,normalization=%t,style=1,strf='171',rect=[],leg="")
     execstr(s_mat);
     return;
   end;
-  if nargin < 2 
-    printf('histplot : Wrong number of arguments\n');
-    return;
-  end;
+  if nargin < 2 then printf('histplot : Wrong number of arguments\n'); return; end;
   p=size(data,'*')
   data=data(:)
 
@@ -36,10 +27,22 @@ function histplot(n,data,normalization=%t,style=1,strf='171',rect=[],leg="")
   end,
   n=prod(size(x));
   [ind , y] = dsearch(data, x);
-  if normalization then y=y ./ (p*(x(2:$)-x(1:$-1))),end //normalization
-  // add a last point 
-  y(n)=y($);
-  rect=[min(x),0,max(x),max(y)];
-  plot2d2(x,y,rect=rect);
-  plot2d3(x,y,strf='000');
+  if normalize then y=y ./ (p*(x(2:$)-x(1:$-1))),end 
+  y(n)=y($);   // add a last point 
+  if rect==[] then rect=[min(x),0,max(x),max(y)];end 
+  if fill==%f then 
+    plot2d2(x,y,style=style,rect=rect,strf=strf,rect=rect,axesflag=axesflag,frameflag=frameflag);
+    plot2d3(x,y,style=style,strf='000');
+  else
+    plot2d2([],[],rect=rect,strf=strf,rect=rect,axesflag=axesflag,frameflag=frameflag);
+    xp=[x(1:$-1),x(2:$),x(2:$),x(1:$-1)]';
+    y=y(1:$-1);
+    yp=[0*y,0*y,y,y]';
+    xfpolys(xp,yp,style*ones(1,n-1));
+  end
 endfunction
+
+
+
+
+

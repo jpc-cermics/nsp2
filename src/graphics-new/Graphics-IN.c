@@ -469,6 +469,8 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
 
 /*-----------------------------------------------------------
  * standard 2d optional arguments 
+ * FIXME: axesflags and frame should be used 
+ *        strf kept for compatibility ? 
  *-----------------------------------------------------------*/
 
 static   nsp_option opts_2d[] ={{ "axesflag",s_int,NULLOBJ,-1},
