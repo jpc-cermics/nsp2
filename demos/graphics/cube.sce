@@ -7,6 +7,7 @@ S=[1,-1,-1
    1,-1,1
    -1,-1,1];
 
+
 function F=faces(i)
   F=[S(4,i),S(3,i),S(2,i),S(1,i)
      S(2,i),S(3,i),S(6,i),S(5,i)
@@ -36,4 +37,5 @@ plot3d(Fx',Fy',Fz',colors=colors);
 // shade 
 //plot3d(Fx',Fy',Fz',colors=ones(4,1)*colors);
 
-
+colshade=[colors;colors+1;colors+2;colors+1];
+plot3d(Fx',Fy',Fz',colors=colshade);
