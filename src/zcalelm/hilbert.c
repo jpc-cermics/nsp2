@@ -11,6 +11,16 @@
  * a(i,j)= 1/(i+j-1) 
  ******************************************************/
 
+/**
+ * nsp_hilbert_matrix:
+ * @a: a pointer to a double array which is to be filled
+ * @n: the matrix dimension (@nx@n)
+ * 
+ * returns the  order @n Hilbert matrix. 
+ * a(i,j)= 1/(i+j-1) (i=1,..,n and j=1,..,n)
+ * 
+ **/
+
 void nsp_hilbert_matrix(double *a,int n)
 {
   int i,j;
@@ -22,6 +32,15 @@ void nsp_hilbert_matrix(double *a,int n)
     }
 }
 
+
+/**
+ * nsp_hilbert_inverse_matrix:
+ * @a: 
+ * @n: 
+ * 
+ * returns the inverse of order @n Hilbert matrix. 
+ * 
+ **/
 
 void nsp_hilbert_inverse_matrix(double *a,int n)
 {

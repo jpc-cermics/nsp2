@@ -6,12 +6,12 @@
  * Jean-Philippe Chancelier Enpc/Cergrene   
  */
 
-extern int C2F(int2double) (int *,int *,int *,double *,int *);
-extern int C2F(double2int) (int *,double *,int *);
-extern int C2F(float2int) (int *,float *,int *);
-extern int C2F(float2double) (int *,float *,int *,double *,int *);
-extern int C2F(double2float) (int *,double *,float *);
-extern int C2F(int2float) (int *,int *,int *,float *,int *);
+extern int nsp_int2double(int *,int *,int *,double *,int *);
+extern int nsp_double2int(int *,double *,int *);
+extern int nsp_float2int(int *,float *,int *);
+extern int nsp_float2double(int *,float *,int *,double *,int *);
+extern int nsp_double2float(int *,double *,float *);
+extern int nsp_int2float(int *,int *,int *,float *,int *);
 
 /* online conversion of double arrays */
 

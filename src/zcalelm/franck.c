@@ -5,16 +5,17 @@
 
 #include "nsp/machine.h" 
 
-/******************************************************
- * Order n Franck Matrix and its inverse 
+/**
+ * nsp_franck_matrix:
+ * @a: a pointer to a double array which is to be filled
+ * @n: the matrix dimension (@nx@n)
+ * 
+ * returns the order @n Franck matrix. 
  * 
  * a(i,j)=n-j+1   si i <= j , 
  * a(j,j-1)=n-j , a(i,j)=0 if  i > j+1 
  * 
- * a is a naxn Matrix 
- * job = 0 : franck Matrix 
- * job = 1 : inverse
- ******************************************************/
+ **/
 
 void nsp_franck_matrix(double *a,int n)
 {
@@ -26,6 +27,15 @@ void nsp_franck_matrix(double *a,int n)
       if ( i > 0) a[i+(n)*(i-1)]= (double)(n-i);
     }
 }
+
+/**
+ * nsp_franck_inverse_matrix:
+ * @a: a pointer to a double array which is to be filled
+ * @n: the matrix dimension (@nx@n)
+ * 
+ * returns the matrix inverse of order @n Franck matrix. 
+ * 
+ **/
 
 void nsp_franck_inverse_matrix(double *a,int n)
 {

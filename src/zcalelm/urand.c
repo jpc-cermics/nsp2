@@ -1,5 +1,10 @@
 #include <math.h> 
 
+/*
+ * hand conversion of urand.f (scilab) to C language. 
+ * This routines could be replaced by grand. 
+ */
+
 /**
  * nsp_urand:
  * @iy: an int pointer which value it points to is not to be changed between calls.
@@ -10,6 +15,7 @@
  *  to urand.  the calling program should  not  alter  the  value  of  iy 
  *  between  subsequent calls to urand.  values of urand will be returned 
  *  in the interval (0,1). 
+ * 
  *
  * Return value: a double 
  **/
