@@ -161,14 +161,20 @@ NspTypeBase *check_implements(void *obj,NspTypeId id);
  * we want to pass Stack by value 
  *-----------------------------------------------------------*/
 
-typedef struct _stack {
+typedef struct _stack Stack;
+
+typedef void stack_error(Stack *S,char *fmt,...);
+
+struct _stack {
   char *fname; /** function currently evaluated **/
   char *file_name ; /** current evaluated file **/
   int first;   /** position of first argument to be used **/
   NspObject **D;     /** D is dynamically changed so that D[1] is the first Objet used XXX **/
   NspObject **L;     /** Last position **/
   NspObject **S;     /** points to the whole stack **/
-} Stack;
+  NspObject *error_msg; 
+  stack_error *error;
+} ;
 
 #define STACK_SIZE 500
 extern NspObject *S[STACK_SIZE];    /** this could be malloced XXX **/
@@ -189,7 +195,6 @@ typedef int (attr_set_function) (void *Hv,char *attr, NspObject *val);
 extern NspObject * int_get_failed(NspObject *self, char *attr);
 extern NspObject * int_get_object_failed(NspObject *self, char *attr);
 extern int int_set_failed(NspObject *self,char *attr, NspObject *val);
-
 
 
 /* typedef struct _attrtab AttrTab;  */
