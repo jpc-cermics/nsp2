@@ -98,6 +98,9 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
       if ((int)strlen(strflag) >=1  && strflag[0] == '1')
 	Legends(Xgc,style,n1,legend); 
     }
+
+  my_gl_main (0,NULL);
+
   return(0);
 }
 
