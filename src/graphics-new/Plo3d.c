@@ -2051,43 +2051,22 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
  *  returns in (polyx, polyy) the polygon for one facet of the surface 
  *--------------------------------------------------------------------*/
 
-/* FIXME orientation is not properly calculated here  */
 
 int DPoints1_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
 		 double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg)
 {
-  polyx[  5*jj1] =x[i];
-  polyy[  5*jj1] =y[j];
-  polyz[  5*jj1] =z[i+(*p)*j];
-  if (  finite(z[i+(*p)*j])==0) return 0;
-  polyx[1 +5*jj1]=x[i];
-  polyy[1 +5*jj1]=y[j+1];
-  polyz[1 +5*jj1]=z[i+(*p)*(j+1)];
-  if (  finite(z[i+(*p)*(j+1)])==0) return 0;
-  polyx[2 +5*jj1]=x[i+1];
-  polyy[2 +5*jj1]=y[j+1];
-  polyz[2 +5*jj1]=z[(i+1)+(*p)*(j+1)];
-  if (  finite(z[i+1+(*p)*(j+1)])==0) return 0;
-  polyx[3 +5*jj1]=x[i+1];
-  polyy[3 +5*jj1]=y[j];
-  polyz[3 +5*jj1]=z[(i+1)+(*p)*j];
-  if (  finite(z[i+1+(*p)*(j)])==0) return 0;
-  polyx[4 +5*jj1]=x[i];
-  polyy[4 +5*jj1]=y[j];
-  polyz[4 +5*jj1]=z[i+(*p)*j];
-  
-  /* 
-  if (((polyx[1+5*jj1]-polyx[0+5*jj1])*(polyy[2+5*jj1]-polyy[0+5*jj1])-
-       (polyy[1+5*jj1]-polyy[0+5*jj1])*(polyx[2+5*jj1]-polyx[0+5*jj1])) <  0)
-    fill[jj1]= (dc < 0 ) ? -fg : fg ;
-  else
-  */
-  {
-    fill[jj1]=inint((whiteid-1)*((1/4.0*( z[i+(*p)*j]+ z[i+1+(*p)*j]+
-					  z[i+(*p)*(j+1)]+ z[i+1+(*p)*(j+1)])-zmin)
-				 /(zmax-zmin)))+1;
-    if ( dc < 0 ) fill[jj1]= -fill[jj1];
-  }
+  double zmoy;
+  register double *px= &polyx[5*jj1], *py = &polyy[5*jj1], *pz = &polyz[5*jj1], *zl = &z[i+(*p)*j];
+  *(px) = *(px+1) = *(px+4)= x[i]; *(px+2) = *(px+3) = x[i+1];
+  *(py) = *(py+3) = *(py+4)= y[j]; *(py+1) = *(py+2) = y[j+1];
+  zmoy = *(pz) = *(pz+4) = *zl;
+  zmoy += *(pz+1) = *(zl + (*p));
+  zmoy += *(pz+2) = *(zl + (*p)+1);
+  zmoy += *(pz+3) = *(zl + 1);
+  zmoy /= 4.0;
+  if (  finite(zmoy)==0) return 0;
+  fill[jj1]=inint((whiteid-1)*(zmoy-zmin)/(zmax-zmin))+1;
+  if ( dc < 0 ) fill[jj1]= -fill[jj1];
   return(1);
 }
 
@@ -2096,34 +2075,16 @@ int DPoints1_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, 
 int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
 		double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg)
 {
-#ifdef lint
-  whiteid,fill[0],zmin,zmax;
-#endif
-  polyx[  5*jj1] =x[i];
-  polyy[  5*jj1] =y[j];
-  polyz[  5*jj1] =z[i+(*p)*j];
-  if (  finite(z[i+(*p)*j])==0) return 0;
-  polyx[1 +5*jj1]=x[i];
-  polyy[1 +5*jj1]=y[j+1];
-  polyz[1 +5*jj1]=z[i+(*p)*(j+1)];
-  if (  finite(z[i+(*p)*(j+1)])==0) return 0;
-  polyx[2 +5*jj1]=x[i+1];
-  polyy[2 +5*jj1]=y[j+1];
-  polyz[2 +5*jj1]=z[(i+1)+(*p)*(j+1)];
-  if (  finite(z[i+1+(*p)*(j+1)])==0) return 0;
-  polyx[3 +5*jj1]=x[i+1];
-  polyy[3 +5*jj1]=y[j];
-  polyz[3 +5*jj1]=z[(i+1)+(*p)*j];
-  if (  finite(z[i+1+(*p)*(j)])==0) return 0;
-  polyx[4 +5*jj1]=x[i];
-  polyy[4 +5*jj1]=y[j];
-  polyz[4 +5*jj1]=z[i+(*p)*j];
-  /* FIXME: 
-     if (((polyx[1+5*jj1]-polyx[0+5*jj1])*(polyy[2+5*jj1]-polyy[0+5*jj1])-
-     (polyy[1+5*jj1]-polyy[0+5*jj1])*(polyx[2+5*jj1]-polyx[0+5*jj1])) <  0)
-     fill[jj1]=  (dc != 0 ) ? fg : dc ;
-     else
-  */
+  double zmoy;
+  register double *px= &polyx[  5*jj1], *py = &polyy[  5*jj1],*pz = &polyz[  5*jj1], *zl = &z[i+(*p)*j];
+  *(px) = *(px+1) = *(px+4)= x[i]; *(px+2) = *(px+3) = x[i+1];
+  *(py) = *(py+3) = *(py+4)= y[j]; *(py+1) = *(py+2) = y[j+1];
+  zmoy = *(pz) = *(pz+4) = *zl;
+  zmoy += *(pz+1) = *(zl + (*p));
+  zmoy += *(pz+2) = *(zl + (*p)+1);
+  zmoy += *(pz+3) = *(zl + 1);
+  zmoy /= 4.0;
+  if (  finite(zmoy)==0) return 0;
   fill[jj1]= dc;
   return(1);
 }

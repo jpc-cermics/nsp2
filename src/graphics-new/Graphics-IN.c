@@ -2558,7 +2558,8 @@ int int_xpause(Stack stack, int rhs, int opt, int lhs)
 } 
 
 /*-----------------------------------------------------------
- *  xpoly(xv,yv, close = %t|%f , color= , thickness= , mark= , type = "xlines" | "xmarks") 
+ *  xpoly(xv,yv, close = %t|%f , color= , thickness= , mark= , 
+ *        type = "lines" | "marks") 
  *    if mark is set then type is set to xmarks 
  *    thickness is only active for xlines 
  *    FIXME: mark_size should be added 

@@ -2982,14 +2982,14 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
   
   /* create gc */
-  dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
-  gdk_gc_set_rgb_bg_color(dd->private->xgc,&black);
-  gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
-  /* standard gc : for private->pixmap copies */
-  /* this gc could be shared by all windows */
   dd->private->stdgc = gdk_gc_new(dd->private->drawing->window);
   gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
   gdk_gc_set_rgb_fg_color(dd->private->stdgc,&white);
+  /* standard gc : for private->pixmap copies */
+  /* this gc could be shared by all windows */
+  dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
+  gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
+  gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
 
   /* set the cursor */
   dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
