@@ -10,7 +10,7 @@
 #include "nsp/machine.h"
 #include "command.h"
 #include "All-extern.h"
-#include "../graphics/Graphics.h" 
+#include "nsp/graphics/Graphics.h" 
 
 /*---------------------------------------------------------
  * Mouse events: Note that this code is not specific to Gtk 
@@ -33,7 +33,7 @@ int scig_click_handler_none (int win,int x,int y,int ibut,
 int scig_click_handler_sci (int win,int x,int y,int ibut,int motion,int release)
 {
   static char buf[256];
-  struct BCG *SciGc;
+  BCG *SciGc;
   SciGc = window_list_search(win);
   if (strlen(SciGc->EventHandler)!=0) {
     sprintf(buf,"%s(%d,%d,%d,%d)",SciGc->EventHandler,win,x,y,ibut);
@@ -62,7 +62,7 @@ void reset_scig_click_handler()
 
 void C2F(seteventhandler)(int *win_num,char *name,int *ierr)
 {  
-  struct BCG *SciGc;
+  BCG *SciGc;
   /*ButtonPressMask|PointerMotionMask|ButtonReleaseMask|KeyPressMask */
   *ierr = 0;
   SciGc = window_list_search(*win_num);
