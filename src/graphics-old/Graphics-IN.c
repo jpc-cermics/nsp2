@@ -3967,7 +3967,7 @@ int int_xsave(Stack stack, int rhs, int opt, int lhs)
 
 int int_xload(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc;
+  BCG *Xgc=NULL;
   int wid;
   char *str;
   CheckRhs(1,2);
