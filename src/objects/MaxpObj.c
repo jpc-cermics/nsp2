@@ -620,28 +620,6 @@ int int_m2mp(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * interface for operator : 
- */
-
-int int_mpimpl(Stack stack, int rhs, int opt, int lhs)
-{
-  double dfirst,step=1.0E0,last;
-  NspMaxpMatrix *M;
-  CheckRhs(2,3);
-  CheckLhs(1,1);
-  if (GetScalarDouble(stack,1,&dfirst) == FAIL) return RET_BUG;
-  if (GetScalarDouble(stack,2,&last) == FAIL) return RET_BUG;
-  if ( rhs == 3 ) 
-    {
-      step = last;
-      if (GetScalarDouble(stack,3,&last) == FAIL) return RET_BUG;
-    }
-  if ((M = nsp_mpmatrix_create_impl(dfirst,step,last) ) == NULLMAXPMAT) return RET_BUG;
-  MoveObj(stack,1,(NspObject *)M);
-  return 1;
-}
-
 
 /*
  * Copy of a Matrix 
@@ -2679,7 +2657,6 @@ int int_mp_finite(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab Matrix_func[]={
-
   {"m2mp",int_m2mp},
   {"maxplus",int_m2mp},
   {"resize2vect_mp",int_mpmat2vect},
@@ -2694,7 +2671,6 @@ static OpTab Matrix_func[]={
   {"deleterows_m_b", int_mpdeleterows},
   {"deleteelts_m_b", int_mpdeleteelts},
   {"setrowscols_mp",int_mpsetrc},
-  {"impl",int_mpimpl},
   {"addcols_mp_mp" ,  int_mpaddcols },
   {"addrows_mp_mp" ,  int_mpaddrows },
   {"clean_mp" ,  int_mpclean },
@@ -2735,7 +2711,6 @@ static OpTab Matrix_func[]={
   {"le_mp_mp" ,  int_mple },
   {"lt_mp_mp" ,  int_mplt },
   {"max_mp" ,  int_mpmaxi}, 
-  {"max" ,  int_mpmaxi },
   {"min_mp" ,  int_mpmini },
   {"min_mp" ,  int_mpmini },
   {"sum_mp_s" ,  int_mpsum },
@@ -2760,7 +2735,6 @@ static OpTab Matrix_func[]={
   {"matrix_mp",int_mpmatrix},
   {"quote_mp",int_mpquote},
   {"dprim_mp",int_mpdquote},
-
   {"abs_mp",int_mpabs},
   {"erf_mp",int_mperf},
   {"erfc_mp",int_mperfc},
