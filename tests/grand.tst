@@ -236,3 +236,15 @@ M=cdfnor("Mean",1*ones(v),P,Q,v);
 if max(abs(M)) > 1.e-14 then pause,end
 St=cdfnor("Std",P,Q,v,0*ones(v));
 if max(abs(St-1)) > 0.2 then pause,end
+
+// test de cdfgam
+
+v=[0:0.01:3];
+[P,Q]=cdfgam("PQ",v,0.1*ones(v),0.3*ones(v));
+v1=cdfgam("X",0.1*ones(v),0.3*ones(v),P,Q);
+if max(abs(v-v1)) > 1.e-14 then pause,end
+Shape=cdfgam("Shape",0.3*ones(v),P,Q,v);
+// Shape est faux si P==0;
+if max(abs(Shape(2:$)-0.1)) > 1.e-8 then pause,end
+Scale=cdfgam("Scale",P,Q,v,0.1*ones(v));
+if max(abs(Scale(2:$)-0.3)) > 1.e-8 then pause,end

@@ -727,6 +727,7 @@ static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, d
     store_displaystring_1(Xgc,string,x,y,flag,angle);
   Xgc->graphic_engine->displaystring(Xgc,string,x1,yy1,flag,angle);
 }
+
 /*-----------------------------------------------------------------------------
  *  displaystringa
  *-----------------------------------------------------------------------------*/
@@ -735,18 +736,23 @@ static void displaystringa_1(BCG *Xgc,char *string, int ipos)
 {
   if (Xgc->record_flag == TRUE) 
     store_displaystringa_1(Xgc,string,ipos);
-  
   switch ( ipos )
     {
     case 1:
-      xstringb(Xgc,string,Xgc->scales->WIRect1[0],Xgc->scales->WIRect1[1],Xgc->scales->WIRect1[2],Xgc->scales->WIRect1[1]);
+      xstringb(Xgc,string,Xgc->scales->WIRect1[0],Xgc->scales->WIRect1[1],Xgc->scales->WIRect1[2],
+	       Xgc->scales->WIRect1[1] - Xgc->scales->wdim[1]*Xgc->scales->subwin_rect[1]);
       break;
     case 2:
-      xstringb(Xgc,string,Xgc->scales->WIRect1[0],Xgc->scales->wdim[1],Xgc->scales->WIRect1[2],
-	       (Xgc->scales->wdim[1] - (Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3]))*2.0/3.0);
+      xstringb(Xgc,string,Xgc->scales->WIRect1[0],
+	       Xgc->scales->wdim[1]*(Xgc->scales->subwin_rect[1]+Xgc->scales->subwin_rect[3]),
+	       Xgc->scales->WIRect1[2],
+	       (Xgc->scales->wdim[1]*(Xgc->scales->subwin_rect[1]+Xgc->scales->subwin_rect[3])
+		- (Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3]))*2.0/3.0);
       break;
     case 3:
-      xstringb_vert(Xgc,string,0,Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3],Xgc->scales->WIRect1[0]/3.0,
+      xstringb_vert(Xgc,string,Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[0],
+		    Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3],
+		    (Xgc->scales->WIRect1[0]-Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[0]) /3.0,
 		    Xgc->scales->WIRect1[3]);
       break;
     }
@@ -755,7 +761,7 @@ static void displaystringa_1(BCG *Xgc,char *string, int ipos)
 
 /*-----------------------------------------------------------------------------
  * display a set of lines coded with 'line1@line2@.....@'
- * centred in the rectangle [x,y,w=wide,h=height] 
+ * centred in the rectangle [x,y,w=wide,h=height] (x,y) is the down left position ?
  * if dir == 'v' the string is to be rotated 
  *-----------------------------------------------------------------------------*/
 
