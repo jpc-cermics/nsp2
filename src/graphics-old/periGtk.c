@@ -2183,39 +2183,9 @@ void DeleteSGWin(int intnum)
   window_list_remove(intnum);
 }
 
-/********************************************
-<<<<<<< periGtk.c
- * Get Window number wincount ( or 0 )  XXXX unused 
- ********************************************/
-
-static GtkWidget *GetWindowNumber(int wincount)
-{
-  BCG *bcg;
-  bcg = window_list_search(wincount);
-  if ( bcg != (BCG *) 0) 
-    return  bcg->private->window;
-  else 
-    return  NULL;
-}
-
-/********************************************
- * Get BGWindow number wincount ( or 0 )  XXXX unused 
- ********************************************/
-
-static GtkWidget *GetBGWindowNumber(int wincount)
-{
-  BCG *bcg;
-  bcg = window_list_search(wincount);
-  if ( bcg != (BCG *) 0) 
-    return bcg->private->window;  /* XXXXXXX */
-  else 
-    return NULL  ;
-}
 
 
 /********************************************
-=======
->>>>>>> 1.9
  * Routines for initialization : string is a display name 
  ********************************************/
 
