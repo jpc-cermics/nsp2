@@ -26,12 +26,7 @@ TERMCAPLIB = @TERMCAPLIB@
 # and for linking: $(CC) -o $(PROGRAM) $(OBJS) $(CC_LDFLAGS)
 ###########
 CC = @CC@
-#CC_OPTIONS = @CC_OPTIONS@ @GTKCFLAGS@ @GNOMECFLAGS@
-#CC_OPTIONS = -g -Wall -Dlinux `pkg-config gtk+-2.0 --cflags` -I$(SCIDIR)/src/include
-CC_OPTIONS = @CC_OPTIONS@ @GNOMECFLAGS@ -I$(SCIDIR)/src/include
-# XXXXXX a finir proprement 
-CC_OPTIONS = -g -Wall -Dlinux `pkg-config gtk+-2.0 --cflags` -I$(SCIDIR)/src/include
-CC_OPTIONS = -g -Wall -Dlinux `pkg-config gtkglext-1.0 --cflags` -I$(SCIDIR)/src/include
+CC_OPTIONS = @CC_OPTIONS@ @GTKCFLAGS@ -I$(SCIDIR)/src/include
 CC_LDFLAGS = @CC_LDFLAGS@ 
 CC_PICFLAGS = @CC_PICFLAGS@
 
@@ -66,17 +61,7 @@ PVMLIB = @PVMLIB@
 PVMGLIB = @PVMGLIB@
 PVMROOT = @PVMROOT@
 PVMINCLUDE = @PVMINCLUDE@
-XAWLIB = @XAWLIB@
-XMULIB = @XMULIB@
-XAW_LOCAL_SUBDIR = @XAW_LOCAL_SUBDIR@
-XAW_LOCAL_LIB = @XAW_LOCAL_LIB@
-XFLAGS = @X_CFLAGS@ @XAW_LOCAL_INCLUDES@
-X_EXTRA_LIBS = @X_EXTRA_LIBS@
-XLIBS = @GTKLIBS@ @X_LIBS@ $(XAWLIB) $(XMULIB) -lXt -lXext @X_PRE_LIBS@ -lX11 $(X_EXTRA_LIBS)
-#XLIBS = `pkg-config gtk+-2.0 libgtkhtml-2.0 --libs`
-# a regler proprement 
-XLIBS = `pkg-config gtk+-2.0 libgtkhtml-2.0 --libs` 
-XLIBS = `pkg-config gtkglext-1.0 libgtkhtml-2.0 --libs` 
+XLIBS = @GTKLIBS@
 #####################
 # TCL/TK
 #####################

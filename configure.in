@@ -45,8 +45,8 @@ AC_ARG_WITH(pvm,
 AC_ARG_WITH(tk,
     [  --without-tk            do not compile with TCL/TK ])
 
-AC_ARG_WITH(gtk2,
-    [  --with-gtk2             use Gtk widgets ])
+AC_ARG_WITH(gtkglext,
+    [  --with-gtkglext         use Gtkglext widget for graphics ])
 
 AC_ARG_WITH(addedf2c,
     [  --with-addedf2c         build a local f2c (src/f2c)])
@@ -60,6 +60,7 @@ if test -f .binary; then
   echo "  you'd better read the README file first."
   exit
 fi
+
 
 ###############################
 ## creating Path.incl if needed
@@ -1310,68 +1311,62 @@ fi
 
 ZZLEDT="zzledt"
 
-if test "$with_gtk2" = yes; then
-  AC_PATH_PROG(PKG_CONFIG,pkg-config)
-  if test "x$PKG_CONFIG" = x; then
+AC_PATH_PROG(PKG_CONFIG,pkg-config)
+if test "x$PKG_CONFIG" = x; then
     # @*%&$ Ximian programmers renamed this application
     AC_PATH_PROG(PKG_CONFIG,pkgconfig,yes,no)
     if test "x$PKG_CONFIG" = x; then
     	AC_MSG_ERROR([Could not find the pkg-config (or pkgconfig) program.],)
 	with_gtk2="no"
     fi
-  fi
-  #  AC_CHECK_PROG(GNOME_CONFIG,gnome-config,yes,no)
-  #if test "$GNOME_CONFIG" = no; then
-  #  AC_MSG_WARN([gnome-config not found: I will not use -with-gtk])
-  #  with_gtk2="no"
-  # fi
-  if test "$with_gtk2" = yes; then
-    AC_MSG_CHECKING([if gtk is version 2.1 or later])
-    GTK_VER=`$PKG_CONFIG --modversion gtk+-2.0`
-    case $GTK_VER in
+fi
+
+AC_MSG_CHECKING([if gtk is version 2.1 or later])
+GTK_VER=`$PKG_CONFIG --modversion gtk+-2.0`
+case $GTK_VER in
       2.2.* | 2.3.0 | 2.3.1| 2.3.2| 2.3.4 )
         GTKPLUGBUG=gtkmenu.o
 	;;
-    esac    
-    AC_MSG_RESULT([$GTK_VER])
-    # we have cheched above that gtk-config is in the 
-    # path, then we don't want to generate a full path 
-    # for gtk-config or to directly generate the 
-    # result of `gtk-config --cflags`. Idem for gnome
-    GTKCFLAGS='`pkg-config gtk+-2.0 --cflags`'
-    GTKLIBS='`pkg-config gtk+-2.0 libgtkhtml-2.0 --libs`'
-    GNOMECFLAGS='`pkg-config gtk+-2.0 --cflags`'
-    AC_DEFINE(WITH_GTK)
-    GUILIB='gtksci'
-    # GZVT='gzvt2' dose not work: gtk2 bug with plugged menus
-    # gzvt2 works again with a gtk patch 
-    GZVT='gzvt2'
-    # we need a patched version 
-    SCILABSCRIPT=scilab-gtk.g
-    MENUSOBJS=GOBJS
-    PERIFILE=periGtk.o
-    # gtk 1 HTMLFLAGS=`gnome-config --cflags gnome`
-    # gtk 2 HTMLFLAGS=`pkg-config libgtkhtml-2.0 --cflags`
-    HTMLFLAGS='`pkg-config libgtkhtml-2.0 --cflags`'
-    # check for libgtkhtml-2.0
-    ac_save_LIBS="$LIBS"
-    LIBS=`pkg-config libgtkhtml-2.0 --cflags --libs`
-    GTKHTML=no
-    AC_CHECK_LIB(gtkhtml-2,html_document_open_stream,[GTKHTML=yes])
-    if test "$GTKHTML" = no; then
-    	AC_MSG_ERROR([Could not find the libgtkhtml-2.0 package.],)
-    fi
-    LIBS=$ac_save_LIBS
-    # check for zzledt 
-    ac_save_LIBS="$LIBS"
-    LIBS=`pkg-config libzvt-2.0 --cflags --libs` 
-    GZVT2=no
-    AC_CHECK_LIB(zvt-2.0, zvt_term_new_with_size,[GZVT2=yes])
-    if test "$GZVT2" = no; then
-    	AC_MSG_ERROR([Could not find the libzvt-2.0  package.],)
-    fi
-    LIBS=$ac_save_LIBS
-  fi
+esac    
+AC_MSG_RESULT([$GTK_VER])
+# we have cheched above that gtk-config is in the 
+# path, then we don't want to generate a full path 
+# for gtk-config or to directly generate the 
+# result of `gtk-config --cflags`. Idem for gnome
+GTKCFLAGS='`pkg-config gtk+-2.0 --cflags`'
+GTKLIBS='`pkg-config gtk+-2.0 libgtkhtml-2.0 --libs`'
+GNOMECFLAGS='`pkg-config gtk+-2.0 --cflags`'
+AC_DEFINE(WITH_GTK)
+GUILIB='gtksci'
+# GZVT='gzvt2' dose not work: gtk2 bug with plugged menus
+# gzvt2 works again with a gtk patch 
+GZVT='gzvt2'
+# we need a patched version 
+SCILABSCRIPT=scilab-gtk.g
+MENUSOBJS=GOBJS
+PERIFILE=periGtk.o
+# gtk 1 HTMLFLAGS=`gnome-config --cflags gnome`
+# gtk 2 HTMLFLAGS=`pkg-config libgtkhtml-2.0 --cflags`
+HTMLFLAGS='`pkg-config libgtkhtml-2.0 --cflags`'
+# check for libgtkhtml-2.0
+ac_save_LIBS="$LIBS"
+LIBS=`pkg-config libgtkhtml-2.0 --cflags --libs`
+GTKHTML=no
+AC_CHECK_LIB(gtkhtml-2,html_document_open_stream,[GTKHTML=yes])
+if test "$GTKHTML" = no; then
+	AC_MSG_ERROR([Could not find the libgtkhtml-2.0 package.],)
+fi
+LIBS=$ac_save_LIBS
+# check for zzledt 
+ac_save_LIBS="$LIBS"
+LIBS=`pkg-config libzvt-2.0 --cflags --libs` 
+GZVT2=no
+AC_CHECK_LIB(zvt-2.0, zvt_term_new_with_size,[GZVT2=yes])
+if test "$GZVT2" = no; then
+	AC_MSG_ERROR([Could not find the libzvt-2.0  package.],)
+fi
+LIBS=$ac_save_LIBS
+
   # try to use readline with the gtk version 
   ac_save_LIBS="$LIBS"
   LIBS="$TERMCAPLIB  $LIBS"
@@ -1382,8 +1377,40 @@ if test "$with_gtk2" = yes; then
      ZZLEDT="zzledt-rl"
      AC_DEFINE(WITH_READLINE)
   fi
-fi
 
+#################
+## GTKglext 
+#################
+
+PERIGLEXT=
+
+if test "$with_gtkglext" = yes; then
+    gtkglext_version="1.0.0"
+    AC_MSG_CHECKING([if gtkglext exists ])
+    if pkg-config --exists gtkglext-1.0; then
+       AC_MSG_RESULT([yes])
+    else 
+       AC_MSG_ERROR([Could not find the gtkglext-1.0  package.],)
+    fi
+    AC_MSG_CHECKING([if gtkglext is version $gtkglext_version or later])
+    if pkg-config --atleast-version=$gtkglext_version gtkglext-1.0 ; then
+       AC_MSG_RESULT([yes])
+    else 
+    	AC_MSG_ERROR([Could not find the gtkglext-1.0 package version $gtkglext_version or later .],)
+    fi 
+
+    AC_DEFINE(WITH_GTKGLEXT)
+
+    GTKGLEXT_VER=`$PKG_CONFIG --modversion gtkglext-1.0`
+    PERIGLEXT="periGL.o"
+    # we have cheched above that gtk-config is in the 
+    # path, then we don't want to generate a full path 
+    # for gtk-config or to directly generate the 
+    # result of `gtk-config --cflags`. Idem for gnome
+    GTKCFLAGS='`pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --cflags`'
+    GTKLIBS='`pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --libs`'
+    GNOMECFLAGS='`pkg-config gtkglext-1.0 gtk+-2.0 libgtkhtml-2.0 --cflags`'
+fi
 
 #################
 ## Tcl/Tk library
@@ -1529,9 +1556,6 @@ AC_SUBST(NOINLINE)
 AC_SUBST(WHICH_BLAS)
 AC_SUBST(ATLAS_DIR)
 AC_SUBST(IN_ATLAS)
-
-# for Makemex
-
 AC_SUBST(SHELL)
 AC_SUBST(DLLTOOL)
 AC_SUBST(LD)
@@ -1561,6 +1585,9 @@ AC_SUBST(IMPPREF)
 AC_SUBST(IMPENV)
 AC_SUBST(ZZLEDT)
 AC_SUBST(STRIP)
+AC_SUBST(PERIGLEXT)
+AC_SUBST(WITH_GTKGLEXT)
+
 
 AC_OUTPUT(Makefile.OBJ Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk) 
  
