@@ -1885,12 +1885,11 @@ static void fillrectangle(BCG *Xgc,const int rect[])
  *  on each rectangle the average value of z is computed 
  *----------------------------------------------------------------------------------*/
 
-
-static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int nx,int ny,
+static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 				  int remap,const int *colminmax,const double *zminmax)
 {
   DRAW_CHECK;
-  fill_grid_rectangles_gen(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
+  Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
 
 /*----------------------------------------------------------------------------------
@@ -1903,11 +1902,11 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int nx,int 
  *        P1= x[i],y[j] x[i+1],y[j+1]
  *----------------------------------------------------------------------------------*/
 
-static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int nx,int ny,
+static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				  int remap,const int *colminmax,const double *zminmax)
 {
   DRAW_CHECK;
-  fill_grid_rectangles1_gen(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
+  Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
 
