@@ -169,6 +169,11 @@ static int save_colormap(BCG *Xgc,void *the_plot)
   return 1;
 }
 
+static int save_default_colormap(BCG *Xgc,void *the_plot)
+{
+  if ( save_LI(((struct rec_void *) the_plot)->code)==0) return(0);
+  return 1;
+}
 
 
 /*-----------------------------------------------------------------------------
@@ -934,7 +939,8 @@ static Save_Table save_table [] ={
   {CODEfpf_def   	     ,"fpf_def",          save_fpf_def},
   {CODEfpf   	             ,"fpf",              save_fpf},
   {CODEinitialize_gc         ,"init",             save_init},
-  {CODEColormap		     ,"Colormap",	  save_colormap }
+  {CODEColormap		     ,"Colormap",	  save_colormap },
+  {CODEdefault_colormap	     ,"default_colormap", save_default_colormap }
 };     	
 
 

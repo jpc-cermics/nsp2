@@ -1,6 +1,6 @@
 function []=fplot2d(xr,f,style,strf,leg,rect,nax,void)
 // 2D plot of function f : a Scilab function or the name (as a string)
-//  of a dynamically linked function.
+// of a dynamically linked function.
 // Enter fplot2d() for an example.
 // deff('<y>=f(x)','y=sin(x)+cos(x)');
 // fplot2d(f,0:0.1:%pi);

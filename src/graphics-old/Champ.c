@@ -11,7 +11,7 @@
 #include "nsp/graphics/Graphics.h"
 /* #include "PloEch.h" */
 
-static double MiniD (const double *x,int n);
+static double min_of_doubles (const double *x,int n);
 
 static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y, double *fx, 
 			  double *fy, int *n1, int *n2, 
@@ -143,8 +143,8 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
 	ym[2*(i +(*n1)*j)]= YScale(y[j]);
       }
   /** Scaling **/
-  nx=MiniD(x,*n1)*Xgc->scales->Wscx1;
-  ny=MiniD(y,*n2)*Xgc->scales->Wscy1;
+  nx=min_of_doubles(x,*n1)*Xgc->scales->Wscx1;
+  ny=min_of_doubles(y,*n2)*Xgc->scales->Wscy1;
   sfx= Xgc->scales->Wscx1;
   sfy= Xgc->scales->Wscy1;
   sfx2= sfx*sfx;
@@ -230,7 +230,7 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
  * if x==0 then 1 is returned 
  *----------------------------------*/
 
-static double MiniD(const double *x, int n)
+static double min_of_doubles(const double *x, int n)
 {
   int i;
   double dx=1,mindx=1;

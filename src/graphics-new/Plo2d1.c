@@ -14,7 +14,7 @@
 static void Plo2d1RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf);
 
 /*--------------------------------------------------------------------
-  C2F(plot2d1)(xf,x,y,n1,n2,style,strflag,legend,brect,aint)
+  nsp_plot2d_1(xf,x,y,n1,n2,style,strflag,legend,brect,aint)
   
   similar to plot2d plus one additionnal argument xf 
   and a special treatment for x 
@@ -30,7 +30,7 @@ static void Plo2d1RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, 
   xf[2]='l' or 'n' LogAxis or standard on Y
 --------------------------------------------------------------------------*/
 
-int C2F(plot2d1)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+int nsp_plot2d_1(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 		 char *legend,double brect[],int aaint[])
 {
   int n;

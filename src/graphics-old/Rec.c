@@ -305,6 +305,17 @@ static void clean_colormap(void *theplot) {
   FREE(lplot->colors);
 };
 
+
+
+void store_default_colormap(BCG *Xgc) { store_void(Xgc,CODEdefault_colormap); }
+
+static void replay_default_colormap(BCG *Xgc,void * theplot ) 
+{ 
+  Xgc->graphic_engine->scale->xset_default_colormap(Xgc);
+}
+
+
+
 /*-----------------------------------------------------------------------------
  *  drawarc_1
  *-----------------------------------------------------------------------------*/
@@ -1151,13 +1162,13 @@ void store_Plot4(BCG *Xgc,char *xf, double *x, double *y, int *n1, int *n2, int 
 static void replay_Plot(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  C2F(plot2d1)(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  nsp_plot2d_1(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
 }
 
 static void replay_Plot1(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  C2F(plot2d1)(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  nsp_plot2d_1(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
 }
 
 
@@ -1165,7 +1176,7 @@ static void replay_Plot1(BCG *Xgc,void * theplot)
 static void replay_Plot2(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  C2F(plot2d2)(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  nsp_plot2d_2(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
 }
 
 
@@ -1173,7 +1184,7 @@ static void replay_Plot2(BCG *Xgc,void * theplot)
 static void replay_Plot3(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  C2F(plot2d3)(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  nsp_plot2d_3(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
 }
 
 
@@ -1181,7 +1192,7 @@ static void replay_Plot3(BCG *Xgc,void * theplot)
 static void replay_Plot4(BCG *Xgc,void * theplot)
 {
   struct rec_plot2d *p = theplot;
-  C2F(plot2d4)(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
+  nsp_plot2d_4(Xgc,p->xf,p->x,p->y,&(p->n1),&(p->n2),p->style,p->strflag,p->legend, p->brect,p->aint);
 }
 
 
@@ -1279,7 +1290,7 @@ static void replay_Grid(BCG *Xgc,void *theplot)
 {
   struct rec_xgrid *plch;
   plch= (struct rec_xgrid *)theplot;
-  C2F(xgrid)(Xgc,&(plch->style));
+  nsp_plot_grid(Xgc,&(plch->style));
 }
 
 
@@ -1323,7 +1334,7 @@ static void replay_Param3D(BCG *Xgc,void *theplot)
 {
   struct rec_param3d *pl3d;
   pl3d= (struct rec_param3d *)theplot;
-  C2F(param3d)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n,&pl3d->teta,
+  nsp_param3d(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n,&pl3d->teta,
 	       &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
@@ -1361,7 +1372,7 @@ static void replay_Param3D1(BCG *Xgc,void *theplot)
 {
   struct rec_param3d1 *pl3d;
   pl3d= (struct rec_param3d1 *)theplot;
-  C2F(param3d1)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->m,&pl3d->n,&pl3d->iflag,
+  nsp_param3d_1(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->m,&pl3d->n,&pl3d->iflag,
 		pl3d->colors, &pl3d->teta,
 		&pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
@@ -1428,7 +1439,7 @@ void store_Plot3D(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, doub
 static void replay_3D(BCG *Xgc,void *theplot)
 {
   struct rec_plot3d *pl3d = (struct rec_plot3d *)theplot;
-  C2F(plot3d)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->p,&pl3d->q,&pl3d->teta,
+  nsp_plot3d(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->p,&pl3d->q,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
@@ -1449,7 +1460,7 @@ void store_Plot3D1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, dou
 static void replay_3D1(BCG *Xgc,void *theplot)
 {
   struct rec_plot3d *pl3d = (struct rec_plot3d *)theplot;
-  C2F(plot3d1)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->p,&pl3d->q,&pl3d->teta,
+  nsp_plot3d_1(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->p,&pl3d->q,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
@@ -1519,14 +1530,14 @@ void store_Fac3D3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, 
 static void replay_Fac3D(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d= (struct rec_fac3d *)theplot;
-  C2F(fac3d)(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,&pl3d->p,&pl3d->q,&pl3d->teta,
+  nsp_plot_fac3d(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,&pl3d->p,&pl3d->q,&pl3d->teta,
 	     &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
 static void replay_Fac3D1(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d = (struct rec_fac3d *)theplot;
-  C2F(fac3d1)(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
+  nsp_plot_fac3d_1(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
 	      &pl3d->p,&pl3d->q,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
@@ -1534,7 +1545,7 @@ static void replay_Fac3D1(BCG *Xgc,void *theplot)
 static void replay_Fac3D2(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d = (struct rec_fac3d *)theplot;
-  C2F(fac3d2)(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
+  nsp_plot_fac3d_2(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
 	      &pl3d->p,&pl3d->q,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
@@ -1543,7 +1554,7 @@ static void replay_Fac3D2(BCG *Xgc,void *theplot)
 static void replay_Fac3D3(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d =  (struct rec_fac3d *)theplot;
-  C2F(fac3d3)(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
+  nsp_plot_fac3d_3(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
 	      &pl3d->p,&pl3d->q,&pl3d->teta,
 	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }

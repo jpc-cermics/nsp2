@@ -13,11 +13,11 @@
 
 static void Plo2d4RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf);
 /*--------------------------------------------------------------------
-  C2F(plot2d4)(xf,x,y,n1,n2,style,strflag,legend,brect,aaint)
+  nsp_plot2d_4(xf,x,y,n1,n2,style,strflag,legend,brect,aaint)
 --------------------------------------------------------------------------*/
   
 
-int C2F(plot2d4)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+int nsp_plot2d_4(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 		char *legend,double brect[],int aaint[])
 {
   int n;

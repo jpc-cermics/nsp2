@@ -1340,46 +1340,16 @@ static void FileInit(BCG *Xgc)
   xget_windowdim(Xgc,x,x+1);
   FPRINTF((file,"#FIG 3.1\nPortrait\nCenter\nInches\n1200 2\n"));
   InitScilabGCXfig(Xgc);
-  if (  CheckColormap(Xgc,&m) == 1) 
-    { 
-      int i;
-      float r,g,b;
-      Xgc->Numcolors = m;
-      Xgc->NumForeground = m;
-      Xgc->NumBackground = m + 1;
 
-      if (Xgc->CurColorStatus == 1) 
-	{
-	  Xgc->IDLastPattern = Xgc->Numcolors - 1;
-	}
-      for ( i=0; i < m ; i++)
-	{
-	  unsigned short ur,ug,ub;
-	  get_r(Xgc,i,&r);
-	  get_g(Xgc,i,&g);
-	  get_b(Xgc,i,&b);
-	  ur = (unsigned short) (65535.0*r);
-	  ug = (unsigned short) (65535.0*g);
-	  ub = (unsigned short) (65535.0*b); 
-	  ur = ur >> 8 ;
-	  ug = ug >> 8 ;	
-	  ub = ub >> 8 ; 
-	  FPRINTF((file,"0 %d #%02x%02x%02x\n",32+i,ur,ug,ub));
-	}
-      FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m,0,0,0));
-      FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m+1,255,255,255));
-    }
-  else 
-    {
-      /** the default_colors are the xfig default colors **/
-      m = DEFAULTNUMCOLORS;
-      Xgc->Numcolors = m;
-      Xgc->IDLastPattern = m - 1;
-      Xgc->NumForeground = m;
-      Xgc->NumBackground = m + 1;
-      FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m,0,0,0));
-      FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m+1,255,255,255));
-    }
+  /** the default_colors are the xfig default colors **/
+  m = DEFAULTNUMCOLORS;
+  Xgc->Numcolors = m;
+  Xgc->IDLastPattern = m - 1;
+  Xgc->NumForeground = m;
+  Xgc->NumBackground = m + 1;
+  FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m,0,0,0));
+  FPRINTF((file,"0 %d #%02x%02x%02x \n",32+m+1,255,255,255));
+  
   FPRINTF((file,"2 2 0 0 -1 -1 0 0 -1 0.000 0 0 0 0 0 5\n"));
   FPRINTF((file," %d %d %d %d %d %d %d %d %d %d \n",
 	  0,0,(int)x[0],0,(int)x[0],(int)x[1],0,(int)x[1],0,0));

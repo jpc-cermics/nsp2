@@ -14,13 +14,13 @@
 static void Plo2d2RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf);
 
 /*--------------------------------------------------------------------
-  C2F(plot2d2)(xf,x,y,n1,n2,style,strflag,legend,brect,aint)
+  nsp_plot2d_2(xf,x,y,n1,n2,style,strflag,legend,brect,aint)
   
   Same as plot2d1_ but the curves are plotted in a piece-wise linear 
   style 
   --------------------------------------------------------------------------*/
 
-int C2F(plot2d2)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+int nsp_plot2d_2(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 		char *legend,double brect[],int aaint[])
 {
   int n;

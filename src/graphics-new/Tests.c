@@ -42,7 +42,7 @@ static void test2DD(BCG *Xgc)
 	}
       Wrect[0]=Wrect[1]=Wrect[2]=Wrect[3]=0.5;
       setscale2d(Xgc,Wrect,Frect,"nn");
-      C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"021"," ",brect,aaint);
+      nsp_plot2d(Xgc,x,y,&n1,&n2,style,"021"," ",brect,aaint);
       Wrect[0]=Wrect[1]=0;Wrect[2]=Wrect[3]=1.0;
       setscale2d(Xgc,Wrect,Frect,"nn");
     }
@@ -70,7 +70,7 @@ static void test2D(BCG *Xgc)
   n1=NCURVES2DD;n2=XN2DD;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   brect[0]=brect[1]=0;brect[2]=brect[3]=1.0;
-  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"011"," ",brect,aaint);
+  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"011"," ",brect,aaint);
 }
 
 #define XN2D2 200
@@ -95,7 +95,7 @@ static void test2D2(BCG *Xgc)
       aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
       for ( i=0 ; i < NCURVES2D2 ; i++)
 	style[i]= -i-1;
-      C2F(plot2d2)(Xgc,"gnn",x,y,&n1,&n2,style,"111",
+      nsp_plot2d_2(Xgc,"gnn",x,y,&n1,&n2,style,"111",
 		   " y=sin(x/10)@y=sin(2*x/10)",brect,aaint);
       Xgc->graphic_engine->scale->xset_show(Xgc);
       Xgc->graphic_engine->scale->xset_pixmapclear(Xgc);
@@ -124,7 +124,7 @@ static void test2D3(BCG *Xgc)
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   for ( i=0 ; i < NCURVES2D3 ; i++)
     style[i]= -i-1;
-  C2F(plot2d3)(Xgc,"gnn",x,y,&n1,&n2,style,"111",
+  nsp_plot2d_3(Xgc,"gnn",x,y,&n1,&n2,style,"111",
 	       " y=sin(x/10)@y=sin(2*x/10)",brect,aaint);
 
 }
@@ -149,7 +149,7 @@ static void test2D4(BCG *Xgc)
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   for ( i=0 ; i < NCURVES2D4 ; i++)
     style[i]= -i-1;
-  C2F(plot2d4)(Xgc,"gnn",x,y,&n1,&n2,style,"111",
+  nsp_plot2d_4(Xgc,"gnn",x,y,&n1,&n2,style,"111",
 	       " y=sin(x/10)@y=sin(2*x/10)",brect,aaint);
 }
 
@@ -180,7 +180,7 @@ static void test2DN1(BCG *Xgc)
   brect[2] = 4.8584755555555557;
   brect[1] = 3.856136206;
   brect[0] = 4.8546488888888888;
-  C2F(plot2d1)(Xgc,"enn",x,y,&n1,&n2,style,"151",
+  nsp_plot2d_1(Xgc,"enn",x,y,&n1,&n2,style,"151",
 	       " ",brect,aaint);
 }
 
@@ -204,7 +204,7 @@ static void test2DN2(BCG *Xgc)
     style[i]= -NCURVESN1+i;
   n1=NCURVESN1;n2=XNN1;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  C2F(plot2d1)(Xgc,"gln",x,y,&n1,&n2,style,"121", "C1:y=log10(x)@C2:y=exp10(x/2.e3) ",brect,aaint);
+  nsp_plot2d_1(Xgc,"gln",x,y,&n1,&n2,style,"121", "C1:y=log10(x)@C2:y=exp10(x/2.e3) ",brect,aaint);
 }
 
 static void test2DN3(BCG *Xgc)
@@ -227,7 +227,7 @@ static void test2DN3(BCG *Xgc)
     style[i]= -NCURVESN1+i;
   n1=NCURVESN1;n2=XNN1;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  C2F(plot2d1)(Xgc,"gnl",x,y,&n1,&n2,style,"121","C1:y=log10(x)@C2:y=exp10(x/2.e3) ",brect,aaint);
+  nsp_plot2d_1(Xgc,"gnl",x,y,&n1,&n2,style,"121","C1:y=log10(x)@C2:y=exp10(x/2.e3) ",brect,aaint);
 }
 
 
@@ -250,7 +250,7 @@ static void test3D(BCG *Xgc)
   p= XN3D ; q= YN3D;  teta=alpha=35;
   flag[0]=2;flag[1]=2,flag[2]=4;
   p= XN3D ; q= YN3D;  teta=alpha=35;
-  C2F(plot3d)(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
+  nsp_plot3d(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
 }
 
 
@@ -276,7 +276,7 @@ static void test3DA(BCG *Xgc)
       p= XN3DA ; q= YN3DA;  teta=alpha=35;
       flag[0]=2;flag[1]=(k== 0)? 2:0,flag[2]=0;
       p= XN3DA ; q= YN3DA;  teta=alpha=35;
-      C2F(plot3d1)(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
+      nsp_plot3d_1(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
       Xgc->graphic_engine->scale->xset_show(Xgc);
       Xgc->graphic_engine->scale->xset_pixmapclear(Xgc);
     }
@@ -301,7 +301,7 @@ static void test3D1(BCG *Xgc)
     for ( j=0 ; j < YN3D1 ; j++) z[i+XN3D1*j]= (i-VX)*(i-VX)+(j-VX)*(j-VX);
   p= XN3D1 ; q= YN3D1;  teta=alpha=35;
   flag[0]=2;flag[1]=2,flag[2]=3;
-  C2F(plot3d1)(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
+  nsp_plot3d_1(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
   I3dRotation(Xgc) ;
 }
 
@@ -322,7 +322,7 @@ static void test3D2(BCG *Xgc)
     for ( j=0 ; j < YN3D2 ; j++) z[i+XN3D2*j]= (i-VX3D2)*(i-VX3D2);
   p= XN3D2 ; q= YN3D2;  teta=alpha=35;
   flag[0]=2;flag[1]=2,flag[2]=3;
-  C2F(plot3d1)(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
+  nsp_plot3d_1(Xgc,x,y,z,&p,&q,&teta,&alpha,"X@Y@Z",flag,bbox);
 }
 
 
@@ -464,7 +464,7 @@ static void testP3D(BCG *Xgc)
   flag[0]=0;
   flag[1]=2;
   flag[2]=2;
-  C2F(param3d)(Xgc,x,y,z,(n=XNP3D,&n),&theta,&alpha,"X@Y@Z",flag,bbox);
+  nsp_param3d(Xgc,x,y,z,(n=XNP3D,&n),&theta,&alpha,"X@Y@Z",flag,bbox);
 }
 
 
@@ -524,7 +524,7 @@ static void testPrim(BCG *Xgc)
   style[0]= -1;
   n1=NCURVESP;n2=XMP;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"022"," ",brect,aaint);
+  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"022"," ",brect,aaint);
   corps(Xgc);
 }
 
@@ -699,13 +699,13 @@ static void testMarks(BCG *Xgc)
   style[0]=1;style[1]=1;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   brect[0]=brect[1]=0;brect[2]=brect[3]=1.0;
-  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"021"," ",brect,aaint);
+  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"021"," ",brect,aaint);
   n1=2,nn1=10;
   Xgc->graphic_engine->scale->xset_mark(Xgc,n1,nn1);
   n1=1,n2=1;
   x[0]=0;y[0]=0;
   style[0] = -4;
-  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"001"," ",brect,aaint);
+  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"001"," ",brect,aaint);
 }
 
 
@@ -741,7 +741,7 @@ static void fixbounds(BCG *Xgc, double xmin,     double xmax,     double ymin,  
   style[0]= -1;
   n1=NCU;n2=NF;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"022"," ",brect,aaint);
+  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"022"," ",brect,aaint);
 }
   
 static void testPoly(BCG *Xgc)
@@ -751,7 +751,7 @@ static void testPoly(BCG *Xgc)
   brect[0]= -5.0;brect[2]=35.0;
   brect[1]= -5.0;brect[3]=35.0;
   style[0]= -1;
-  C2F(plot2d)(Xgc,x,y,&n1,&n2,style,"010"," ",brect,aaint);
+  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"010"," ",brect,aaint);
   polycorps(Xgc);
 }
 

@@ -5,19 +5,19 @@ str_l(1)=['t=(0:0.1:6*%pi);';
       'xtitle(''plot2d and xgrid '',''t'',''sin(t)'');';
       'xgrid();'];
 
-str_l(2)=['plot2d1(''enl'',1,(1:10:10000)'');';
+str_l(2)=['plot2d1([],(1:10:10000)'',logflag='"ln"');';
          'xtitle(''plot2d1 log scale'',''t'',''y  log scale'');';
 	 'xgrid(3);'];
      
 str_l(3)=['n=32-1;t=(0:n)/n;';
      'u=sin(80*%pi*t)+sin(100*%pi*t);';
-     'plot2d3(''enn'',1,abs(fft(u,-1))''/n);';
+     'plot2d3([],abs(fft(u,-1))''/n);';
      'xtitle(''plot2d3 (vbar plot)'',''t'',''f(t)'');'];
 
 str_l(4)=['rand(''normal'');';
      'v=(1:20)+(1:20).*rand(1,20);';
-     'plot2d1(''enn'',1,v'');';
-     'plot2d1(''enn'',1,(1:20)'',[2,-2],''100'',''estimated'');';
+     'plot2d1([],v'');';
+     'plot2d1([],1,(1:20)'',[2,-2],''100'',''estimated'');';
      'xtitle(''plot2d1 '','' '','' '');'];
 
 str_l(5)='histplot()';
@@ -37,17 +37,19 @@ str_l(9)=['plot3d();';
       'title=[''plot3d : z=sin(x)*cos(y)''];';
       'xtitle(title,'' '','' '');'];
 
-str_l(10)=['fplot3d();';
-      'title=[''fplot3d : z=f(x,y), f external''];';
-      'xtitle(title,'' '','' '');'];
+str_l(10)=['function z=surf(x,y);z=sin(x)*cos(y);endfunction;';
+	   't=-%pi:0.3:%pi;plot3d(t,t,surf);';
+	   'title=[''fplot3d : z=f(x,y), f external''];';
+	   'xtitle(title,'' '','' '');'];
 
 str_l(11)=['plot3d1();';
       'title=[''plot3d1 : z=sin(x)*cos(y)''];';
       'xtitle(title,'' '','' '');'];
 
-str_l(12)=['fplot3d1();';
-      'title=[''fplot3d : z=f(x,y), f external''];';
-      'xtitle(title,'' '','' '');'];
+str_l(12)=['function z=surf(x,y);z=sin(x)*cos(y);endfunction;';
+	   't=-%pi:0.3:%pi;plot3d(t,t,surf);';
+	   'title=[''fplot3d : z=f(x,y), f external''];';
+	   'xtitle(title,'' '','' '');'];
 
 str_l(13)=['contour();';
       'title=[''contour ''];';

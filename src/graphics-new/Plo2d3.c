@@ -15,7 +15,7 @@
 static void Plo2d3RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf);
 
 /*--------------------------------------------------------------------
-  C2F(plot2d3)(xf,x,y,n1,n2,style,strflag,legend,brect,aaint)
+  nsp_plot2d_3(xf,x,y,n1,n2,style,strflag,legend,brect,aaint)
 
   used to plot only vertical bars form (x_i,0) to (x_i,y_i)
   the arguments are similar to those of plot2d 
@@ -23,7 +23,7 @@ static void Plo2d3RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, 
   which are considered as dash-styles 
 --------------------------------------------------------------------------*/
 
-int C2F(plot2d3)(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+int nsp_plot2d_3(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 		char *legend,double brect[],int aaint[])
 {
   int n;

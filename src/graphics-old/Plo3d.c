@@ -73,31 +73,31 @@ static void dbox (BCG *Xgc);
  *     
  *  <-- The arguments are not modified 
  *-------------------------------------------------------------------------*/
-int C2F(plot3d)(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(plot3dg)(Xgc,"plot3d",DPoints,x,y,z,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(plot3d1)(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(plot3dg)(Xgc,"plot3d1",DPoints1,x,y,z,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(fac3d)(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(fac3dg)(Xgc,"fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(fac3d1)(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot_fac3d_1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(fac3dg)(Xgc,"fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
 }
 
-int C2F(fac3d2)(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot_fac3d_2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(fac3dg)(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);
@@ -524,7 +524,7 @@ int DPoints(BCG *Xgc,int *polyx, int *polyy, int *fill, int whiteid, double zmin
  * param3d function 
  *-------------------------------------------------------------------*/
 
-int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   static int InsideU[4],InsideD[4];
   static double xbox[8],ybox[8],zbox[8];
@@ -610,7 +610,7 @@ int C2F(param3d)(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta,
  * param3d1 function 
  *-------------------------------------------------------------------*/
 
-int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   static int InsideU[4],InsideD[4];
   static double xbox[8],ybox[8],zbox[8];
@@ -702,7 +702,7 @@ int C2F(param3d1)(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
  * box3d 
  *-------------------------------------------------------------------*/
 
-int C2F(box3d)(BCG *Xgc,double *xbox, double *ybox, double *zbox)
+int nsp_plot_box3d(BCG *Xgc,double *xbox, double *ybox, double *zbox)
 {
   static int InsideU[4],InsideD[4],flag[]={1,1,3},fg,fg1;
   /** Calcule l' Enveloppe Convexe de la boite **/
@@ -729,7 +729,7 @@ int C2F(box3d)(BCG *Xgc,double *xbox, double *ybox, double *zbox)
  * 3d geometric transformation 
  *-------------------------------------------------------------------*/
 
-int C2F(geom3d)(BCG *Xgc,double *x, double *y, double *z, int *n)
+int nsp_geom3d(BCG *Xgc,double *x, double *y, double *z, int *n)
 {
   int j;
   for ( j =0 ; j < (*n) ; j++)	 
@@ -1350,7 +1350,7 @@ static void dbox(BCG *Xgc)
   pat = Xgc->graphic_engine->xset_pattern(pat1);
 #endif
   SetEch3d1(Xgc,xbox,ybox,zbox,Xgc->scales->bbox1,&theta,&alpha,Xgc->scales->metric3d);
-  C2F(box3d)(Xgc,xbox,ybox,zbox);
+  nsp_plot_box3d(Xgc,xbox,ybox,zbox);
 #ifdef WIN32
    Xgc->graphic_engine->xset_pattern(pat);
 #endif
@@ -1362,7 +1362,7 @@ static void dbox(BCG *Xgc)
  *
  *******************************************************************************/
 
-int C2F(fac3d3)(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
+int nsp_plot_fac3d_3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha, char *legend, int *flag, double *bbox)
 {
   C2F(fac3dg)(Xgc,"fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   return(0);

@@ -8,7 +8,7 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include "nsp/machine.h"
-#include "command.h"
+#include "nsp/command.h"
 #include "All-extern.h"
 #include "nsp/graphics/Graphics.h" 
 
@@ -58,17 +58,6 @@ void reset_scig_click_handler()
   scig_click_handler = scig_click_handler_none;
 }
 
-/* XXXX idem  */
-
-void C2F(seteventhandler)(int *win_num,char *name,int *ierr)
-{  
-  BCG *SciGc;
-  /*ButtonPressMask|PointerMotionMask|ButtonReleaseMask|KeyPressMask */
-  *ierr = 0;
-  SciGc = window_list_search(*win_num);
-  if ( SciGc ==  NULL ) {*ierr=1;return;}
-  strncpy(SciGc->EventHandler,name,NAME_MAXL);
-}
 
 /*---------------------------------------------------------
  * The queue ....

@@ -19,7 +19,7 @@
 #endif
 
 /*--------------------------------------------------------------------
- *  C2F(plot2d)(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
+ *  nsp_plot2d(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
  *  
  *  Draw *n1 curves of *n2 points each
  *  (x[i+(*n2)*j] ,y[i+(*n2)*j]) Double values giving the point
@@ -58,7 +58,7 @@
  * lstr* : unused ( but used by Fortran ) 
  *--------------------------------------------------------------------------*/
   
-int C2F(plot2d)(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 		char *legend,double brect[],int aaint[])
 {
   int n;
@@ -106,7 +106,7 @@ int C2F(plot2d)(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char 
  * add a grid to a 2D plot
  *--------------------------------------------------------------------*/
 
-int C2F(xgrid)(BCG *Xgc, int *style)
+int nsp_plot_grid(BCG *Xgc, int *style)
 {
   int closeflag=0,n=2,vx[2],vy[2],i,j;
   double pas;

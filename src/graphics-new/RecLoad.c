@@ -265,6 +265,15 @@ static int load_colormap(BCG *Xgc)
   return 1;
 }
 
+static int load_default_colormap(BCG *Xgc)
+{
+  struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
+  if (lplot == NULL) {Scistring("running out of memory \n");return 0;}
+  if ( load_LI(&((struct rec_void *) lplot)->code)==0) return(0);
+  store_record(Xgc,lplot->code,lplot);
+  return 1;
+}
+
 
 /*-----------------------------------------------------------------------------
  *  drawarc_1
@@ -1225,7 +1234,8 @@ static Load_Table load_table [] ={
   {CODEfpf_def   	     ,"fpf_def",          load_fpf_def},
   {CODEfpf   	             ,"fpf",              load_fpf},
   {CODEinitialize_gc         ,"init",             load_init},
-  {CODEColormap		     ,"Colormap",	  load_colormap }
+  {CODEColormap		     ,"Colormap",	  load_colormap },
+  {CODEdefault_colormap	     ,"default_colormap", load_default_colormap }
 };     	
 
 
