@@ -117,6 +117,7 @@ int real_main(int argc, char **argv)
       char *shmid= getenv("SHMID");
       /* Not Always initialise gtk */
       gtk_init(&argc,&argv);
+      gtk_gl_init (&argc, &argv);
       /* we are in window mode */
       if ( shmid != NULL )
 	{
@@ -204,6 +205,7 @@ void start_sci_gtk() {
 	exit(1);
       /* initialise gtk */
       gtk_init(&argc,&argv);
+      gtk_gl_init (&argc, &argv);
       SetNotBasic();
     }
 }
@@ -554,6 +556,7 @@ void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   GtkWidget *vbox,*menubar, *socket_button;
 
   gtk_init(&argc, &argv);
+  gtk_gl_init (&argc, &argv);
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (window), "Nsp");
   gtk_window_set_wmclass (GTK_WINDOW (window), "toplevel", "Scilab");

@@ -2267,6 +2267,81 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   
 }
 
+/**
+ * fillpolylines3D:
+ * @Xgc: 
+ * @vectsx: 
+ * @vectsy: 
+ * @vectsz: 
+ * @fillvect: 
+ * @n: 
+ * @p: 
+ * 
+ * the same for 3D vertices 
+ * FIXME: a rajouter ds la table et rendre statique 
+ **/
+
+static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
+static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
+
+
+void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
+{
+     int swap= Xgc->private->swap;
+     int dash,color,i;
+     xget_dash_and_color(Xgc,&dash,&color);
+     Xgc->private->swap = FALSE;
+     for (i = 0 ; i< n ; i++)
+     {
+	  if (fillvect[i] > 0 )
+	  { 
+	       /** fill + boundaries **/
+	       Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
+	       fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	       xset_dash_and_color(Xgc,dash,color);
+	       drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	  }
+	  else  if (fillvect[i] == 0 )
+	  {
+	       xset_dash_and_color(Xgc,dash,color);
+	       drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	  }
+	  else 
+	  {
+	       Xgc->graphic_engine->xset_pattern(Xgc,-fillvect[i]);
+	       fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
+	       Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  }
+     }
+     xset_dash_and_color(Xgc,dash,color);
+     Xgc->private->swap = swap ;
+     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+}
+
+static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag) 
+{
+  gint i;
+  if ( n <= 1) return;
+  glBegin(GL_POLYGON);
+  for ( i=0 ;  i< n ; i++) glVertex3d( vx[i], vy[i], vz[i]);
+  glEnd();
+  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+}
+
+
+static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag)
+{ 
+  gint i;
+  if ( n <= 1) return;
+  if ( closeflag == 1 ) 
+    glBegin(GL_LINE_LOOP);
+  else
+    glBegin(GL_LINE_STRIP);
+  for (i=0; i < n ; i++) glVertex3d(vx[i], vy[i], vz[i]);
+  glEnd();
+  if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+}
+
 /* 
  * Draw the current mark centred at points defined
  * by vx and vy (vx[i],vy[i]) 
@@ -2294,6 +2369,54 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
     }
   if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
 }
+
+
+
+/*
+** NEW !!
+*/
+static void drawpolymark3D(BCG *Xgc,double *vx, double *vy, double *vz, int n)
+{
+     printf("Fuck off : va falloir utiliser le billboarding pour la fct drawpolymark3D !!\n");
+}
+
+/*
+** FIXME: a rajouter ds la table et rendre statique 
+*/
+
+void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p)
+{ 
+     int swap= Xgc->private->swap;
+
+     int symb[2],dash,color,i,close;
+     /* store the current values */
+     Xgc->graphic_engine->xget_mark(Xgc,symb);
+     xget_dash_and_color(Xgc,&dash,&color);
+
+     Xgc->private->swap = FALSE;
+
+     for (i=0 ; i< n ; i++)
+     {
+	  if (drawvect[i] <= 0)
+	  { /** we use the markid : drawvect[i] : with current dash **/
+	       Xgc->graphic_engine->xset_mark(Xgc,- drawvect[i],symb[1]);
+	       drawpolymark3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p);
+	  }
+	  else
+	  {/** we use the line-style number abs(drawvect[i])  **/
+	       Xgc->graphic_engine->xset_line_style(Xgc,*(drawvect+i));
+	       close = 0;
+	       drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,close);
+	  }
+     }
+     /** back to default values **/
+     xset_dash_and_color(Xgc,dash,color);
+     Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
+     Xgc->private->swap = swap ;
+     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
+}
+
+
 
 /*-------------------------------------------------------------------------
  * window_list management 
@@ -3415,6 +3538,13 @@ static void PerspectiveMode()
 }
 
 
+void change_camera(BCG *Xgc,const double *pos,const double *cible)
+{
+  Xgc->private->camera = nouvelle_camera(pos[0],pos[1],pos[2],cible[0],cible[1],cible[2],
+					 INIT_DISTANCE_CLIPPING_PROCHE,
+					 INIT_DISTANCE_CLIPPING_LOIN);
+}
+
 t_camera nouvelle_camera(float px, float py, float pz,
 			 float cx, float cy, float cz,
 			 float near, float far)
@@ -3428,8 +3558,8 @@ t_camera nouvelle_camera(float px, float py, float pz,
      camera.cible.y = cy; 
      camera.cible.z = cz;
      camera.orientation.x = 0.0; /* orientation (ne pas modifier) */
-     camera.orientation.y = 1.0; /* orientation (ne pas modifier) */
-     camera.orientation.z = 0.0; /* orientation (ne pas modifier) */
+     camera.orientation.y = 0.0; /* orientation (ne pas modifier) */
+     camera.orientation.z = 1.0; /* orientation (ne pas modifier) */
      camera.near = near;
      camera.far = far;
 
@@ -3471,7 +3601,7 @@ static void init_view(BCG *Xgc)
 	  if (premiere_fois)
 	  {
 	       printf("OOOOOOO\n");
-	       Xgc->private->camera = nouvelle_camera(0.0,0.0,10.0,
+	       Xgc->private->camera = nouvelle_camera(5.0,5.0,5.0,
 						      0.0,0.0,0.0,
 						      INIT_DISTANCE_CLIPPING_PROCHE,
 						      INIT_DISTANCE_CLIPPING_LOIN);
@@ -3702,7 +3832,7 @@ static void init_opgl(BCG *Xgc)
   LoadFonts(Xgc);
 
   /* ================================ */
-  Xgc->private->view = VUE_2D;
+  Xgc->private->view = VUE_3D;
   /* ================================ */
   if (   Xgc->private->view ==  VUE_3D)  glEnable(GL_DEPTH_TEST);
   init_view(Xgc);

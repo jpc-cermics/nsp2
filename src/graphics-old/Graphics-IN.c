@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------
+ /*------------------------------------------------------------------
  * Copyright ENPC 2003 
  * Jean-Philippe Chancelier Enpc/Cermics
  * jpc@cermics.enpc.fr 
@@ -4128,6 +4128,34 @@ int int_seteventhandler(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
+/*-----------------------------------------------------------
+ * moving the camera 
+ *-----------------------------------------------------------*/
+
+extern void change_camera(BCG *Xgc,const double *,const double *);
+
+
+int int_camera(Stack stack, int rhs, int opt, int lhs)
+{
+  BCG *Xgc;
+  NspMatrix *c_pos,*cible_pos;
+
+  CheckRhs(2,2);
+  CheckLhs(0,0);
+
+  if ((c_pos = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((cible_pos = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+
+  CheckVector(stack.fname,1,c_pos);
+  CheckVector(stack.fname,2,cible_pos);
+  CheckLength(stack.fname,1,c_pos,3);
+  CheckLength(stack.fname,2,cible_pos,3);
+  Xgc=nsp_check_graphic_context();
+  change_camera(Xgc,c_pos->R,cible_pos->R);
+
+  return 0;
+}
+
 
 /*-----------------------------------------------------------
  * Utility function for demo 
@@ -4234,7 +4262,7 @@ static OpTab Graphics_func[]={
   {"xs2gif",int_xs2gif},
   {"xs2ppm",int_xs2ppm},
   {"xs2ps",int_xs2ps},
-
+  {"camera",int_camera},
   {(char *) 0, NULL}
 };
 

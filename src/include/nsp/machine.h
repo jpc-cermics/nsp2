@@ -7,7 +7,7 @@
 /* #undef SUNOSDLD */
 
 /* Define if leading underscores */
-/* #undef WLU */
+#define WLU 1
 
 /* Define if trailing underscores */
 #define WTU 1
@@ -16,7 +16,7 @@
 #define USE_SHARP_SIGN 1
 
 /* Define if have exp10 */
-#define HAVE_EXP10 1
+/* #undef HAVE_EXP10 */
 
 /* Define if have getwd */
 #define HAVE_GETWD 1
