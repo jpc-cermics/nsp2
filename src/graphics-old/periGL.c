@@ -21,6 +21,14 @@
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
 
+#define FONTNUMBER 7 
+#define FONTMAXSIZE 6
+#define SYMBOLNUMBER 10
+
+static char Marks[] = {
+  /*., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
+  (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
+  (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
 
 /** Global variables to deal with X11 **/
 
@@ -43,7 +51,7 @@ static void set_c(BCG *Xgc,int col);
 /*
 ** NEW !!
 */
-static void LoadFonts(gui_private *private), LoadSymbFonts(void);
+static void LoadFonts(void), LoadSymbFonts(void);
 //
 static void analyze_points(BCG *Xgc,int n, int *vx, int *vy, int onemore);
 static void DrawMark(BCG *Xgc,int *x, int *y), My2draw(BCG *Xgc,int j, int *vx, int *vy);
@@ -73,6 +81,20 @@ void start_sci_gtk();
 **
 ** #############################################################
 */
+
+/*
+** Tableau de textures pour les fontes
+*/
+static     TextureImage       tab_textures_font[2];
+static     GLuint             fonte_encours=0;
+/*
+** Liste d'affichage pour stocker les cararcteres alphanumeriques
+** sous forme de rectangles textures avec transparence.
+** Une alternative simple et peu couteuse plustot que d'utiliser pango.
+** chaque base[i] = un jeu complet de caracteres
+*/
+static      GLuint	      tab_base[]={0,0};
+static      GLuint            base_encours=0;
 
 /*
 ** Passer en mode orthonorme
@@ -108,8 +130,7 @@ static void PerspectiveMode()
      glMatrixMode( GL_MODELVIEW );
 }
 
-/*
-** Force OpenGL a redessiner la scene
+/** Force OpenGL a redessiner la scene
 */
 static void force_affichage(BCG *Xgc)
 {
@@ -317,13 +338,13 @@ static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot
      glEnable(GL_TEXTURE_2D);
      glEnable(GL_BLEND);
 
-     glBindTexture(GL_TEXTURE_2D, Xgc->private->fonte_encours);
+     glBindTexture(GL_TEXTURE_2D, fonte_encours);
      glPushMatrix();
      glLoadIdentity();
-     glTranslatef(x,y,0);
+     glTranslatef(x-TRANSLATE_CHAR*ECHELLE_CHAR/2, y-TAILLE_CHAR*ECHELLE_CHAR,0);
      glRotated(rot,1,0,0);
      glScaled(scal,scal,scal);
-     glListBase(Xgc->private->base_encours-32+(128*set));
+     glListBase(base_encours-32+(128*set));
      glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);
      glPopMatrix();
      glDisable(GL_BLEND);
@@ -465,22 +486,14 @@ static int XgcAllocColors( BCG *xgc, int m)
 static void xset_pixmapclear(BCG *Xgc)
 {
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
-     glLoadIdentity ();
+//     glLoadIdentity ();
+     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
 
-#if 0
-     int bg = Xgc->NumBackground;
-     glClearColor(Xgc->private->Red[bg]/255.0,
-		  Xgc->private->Green[bg]/255.0,
-		  Xgc->private->Blue[bg]/255.0,0.0);
-     printf("sxet_pixmapclear pas implementee pour OpenGL !!\n");
-#endif
 }
 
 static void xset_show(BCG *Xgc)
 {
-     gdk_window_invalidate_rect (Xgc->private->drawing->window,
-				 &Xgc->private->drawing->allocation,
-				 FALSE);
+     if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
 //     printf("sxet_show pas implementee pour OpenGL !!\n");
 }
 
@@ -542,8 +555,9 @@ void xend(BCG *Xgc)
 ** Detruire les listes d'affiches OpenGL
 */
      printf("\007 DELETE FONTES !!!\n");
-     glDeleteLists(Xgc->private->base[0],95);
-     glDeleteLists(Xgc->private->base[1],256);
+     glDeleteLists(tab_base[0],95);
+     glDeleteLists(tab_base[1],95);
+     //glDeleteLists(tab_base[1],256);
 }
 
 /** Clear the current graphic window     **/
@@ -1904,13 +1918,14 @@ static void xset_background(BCG *Xgc,int num)
 	       Xgc->private->gcol_bg.blue = Xgc->private->Blue[bg];
 	       // Xgc->private->gcol_bg.pixel = PIXEL_FROM_CMAP(bg);
 	  }
+
 	  /* 
 	   * if we change the background of the window we must change 
 	   * the gc ( with alufunction ) and the window background 
 	   */
 //	  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
 //	  gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
-
+	  
 
 	  glClearColor(Xgc->private->gcol_bg.red /255.0,
 		       Xgc->private->gcol_bg.green /255.0,
@@ -2101,7 +2116,8 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
 
      if ( Abs(angle) <= 0.1) 
      {
-	  glPrint2D(Xgc, x-TRANSLATE_CHAR*ECHELLE_CHAR/2, y-TAILLE_CHAR*ECHELLE_CHAR, ECHELLE_CHAR, angle, false, string); //(ECHELLE_CHAR*Xgc->fontSize)/12.0
+	  glPrint2D(Xgc, x,y, ECHELLE_CHAR, angle, false, string);
+	  //glPrint2D(Xgc, x-TRANSLATE_CHAR*ECHELLE_CHAR/2, y-TAILLE_CHAR*ECHELLE_CHAR, ECHELLE_CHAR, angle, false, string); //(ECHELLE_CHAR*Xgc->fontSize)/12.0
 	  if ( flag == 1) 
 	  {
 	       int rect[4];
@@ -2756,7 +2772,6 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
      }
      else 
      { 
-/*
 	  int i,keepid,keepsize,hds;
 	  i=1;
 	  keepid =  Xgc->fontId;
@@ -2765,7 +2780,6 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 	  xset_font(Xgc,i,hds);
 	  for ( i=0; i< n ;i++) DrawMark(Xgc,vx+i,vy+i);
 	  xset_font(Xgc,keepid,keepsize);
-*/
      }
      if ( Xgc->private->swap == TRUE ) gdk_gl_drawable_swap_buffers ( gtk_widget_get_gl_drawable (Xgc->private->drawing));
 }
@@ -2789,12 +2803,14 @@ static void DeleteSGWin(int intnum)
      scig_erase(intnum);
 
      /* I delete the pixmap and the widget */
+/*
      if ( winxgc->CurPixmapStatus == 1 ) 
      {
 	  gdk_pixmap_unref(winxgc->private->Cdrawable);
 	  winxgc->private->Cdrawable = (GdkDrawable *)winxgc->private->drawing->window;
 	  winxgc->CurPixmapStatus = 0; 
      }
+*/
      /* deconnect handlers */
      scig_deconnect_handlers(winxgc);
      /* backing store private->pixmap */
@@ -2949,7 +2965,11 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
      if (first == 0)
      {
 	  maxcol = 1 << 16; /* XXXXX : to be changed */
-	  // LoadFonts(private); /* NEW !! */
+	  /* 
+	  ** NEW !! ATTENTION on ne peut pas appeller LoadFonts() ici parcequ'elle appelle
+	  ** des fcts OpenGL et OpenGL n'est pas encore initialise. confere xinit(opengl=%t)
+	  */
+	  //LoadFonts(); 
 	  first++;
      }
 
@@ -3169,15 +3189,16 @@ static void  xget_font(BCG *Xgc,int *font)
 
 static void xset_mark(BCG *Xgc,int number, int size)
 { 
-printf("fct xset_mark pas encore implementee en OpenGL\n");
+  Xgc->CurHardSymb = Max(Min(SYMBOLNUMBER-1,number),0);
+  Xgc->CurHardSymbSize = Max(Min(FONTMAXSIZE-1,size),0);
 }
 
 /** To get the current mark id **/
 
 static void xget_mark(BCG *Xgc,int *symb)
 {
-     printf("fct xget_mark pas encore implementee en OpenGL\n");
-     symb[1] = Xgc->CurHardSymbSize ;
+  symb[0] = Xgc->CurHardSymb ;
+  symb[1] = Xgc->CurHardSymbSize ;
 }
 
 /* Load in X11 a font at size  08 10 12 14 18 24 
@@ -3219,25 +3240,34 @@ static void queryfamily(char *name, int *j,int *v3)
 #define PATH "/usr/local/nsp2/src/graphics/Font_mini.tga"
 #endif 
 
-static void LoadFonts(gui_private *private)
+static void LoadFonts(void)
 {
+     static bool chgt_texture = true;
+
+
+     printf("Avant: %i %i\n", glIsList(tab_base[0]), glIsList(tab_base[1]));
+     if (!chgt_texture)
+	  return ;
+
      /*
      ** Construction de fontes avec OpenGL
      */
 
 //##FIXME
-     if (!LoadTGA(&private->textures_font[0],PATH) ||
-	 !LoadTGA(&private->textures_font[1],PATH))
+     if (!LoadTGA(&tab_textures_font[0],PATH) ||
+	 !LoadTGA(&tab_textures_font[1],PATH))
      {
 	  printf("Texture PATH/src/graphics/FontXXX.tga  manquante ou corrompue\n");
 	  exit(1);
      }
 
-     private->base[0] = BuildFont(private->textures_font[0].texID, 95, 16, 8);
-     private->base[1] = BuildFont(private->textures_font[1].texID, 95, 16, 8);
-     //private->base[1] = BuildFont(private->textures_font[1].texID, 256, 16, 16);
-     private->base_encours  = private->base[0];
-     private->fonte_encours = private->textures_font[0].texID;
+     tab_base[0] = BuildFont(tab_textures_font[0].texID, 95, 16, 8);
+     tab_base[1] = BuildFont(tab_textures_font[1].texID, 95, 16, 8);
+     //base[1] = BuildFont(tab_textures_font[1].texID, 256, 16, 16);
+     base_encours  = tab_base[0];
+     fonte_encours = tab_textures_font[0].texID;
+     chgt_texture = false;
+     printf("Apres: %i %i\n", glIsList(tab_base[0]), glIsList(tab_base[1]));
 }
 
 /*
@@ -3270,7 +3300,10 @@ static int CurSymbYOffset(BCG *Xgc)
 
 static void DrawMark(BCG *Xgc,int *x, int *y)
 { 
-     printf("fct DrawMark pas encore implementee en OpenGL\n");
+  char str[2];
+  str[0]=Marks[Xgc->CurHardSymb];
+  str[1] = '\0';
+  glPrint2D(Xgc, *x,*y, ECHELLE_CHAR, 0, false, str);
 }
 
 
@@ -4129,7 +4162,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 ** NEW !!
 */	  
   
-     LoadFonts(dd->private);
+     LoadFonts();
 
 }
 
