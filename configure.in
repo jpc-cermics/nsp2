@@ -1334,11 +1334,15 @@ ACX_LAPACK([USE_LOCAL_LAPACK=no])
 if test "$USE_LOCAL_BLAS" = no; then 
    AC_MSG_RESULT(using $BLAS_LIBS for blas)
    BLAS_LOCAL=
+else 
+   BLAS_LIBS=libs/blas.a 
 fi 
 
 if test "$USE_LOCAL_LAPACK" = no; then 
    AC_MSG_RESULT(using $LAPACK_LIBS for lapack)
    LAPACK_LOCAL=
+else 
+   LAPACK_LIBS=libs/lapack.a 
 fi 
 
 #################
