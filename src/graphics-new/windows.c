@@ -947,8 +947,7 @@ void set_scale(BCG *Xgc,
 
 void get_cwindow_dims( int wdims[2])
 {
-  BCG *Xgc;
-  Xgc=check_graphic_window();
+  BCG *Xgc = check_graphic_window();
   Xgc->graphic_engine->xget_windowdim(Xgc,wdims,wdims+1);
 }
 

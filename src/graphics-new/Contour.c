@@ -9,21 +9,22 @@
 #include <math.h>
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
-/* #include "nsp/graphics/PloEch.h" */
 
 typedef void (level_f) (BCG *Xgc,int ival, double Cont, double xncont,
-			       double yncont);
+			double yncont);
 typedef void (*ptr_level_f) (BCG *Xgc,int ival, double Cont, double xncont,
-			       double yncont);
+			     double yncont);
 
 static int 
 Contour2D (BCG *Xgc,ptr_level_f,char *,double *x,double *y,double *z,int *n1,
 	   int *n2,int *flagnz,int *nz,double *zz,
 	   int *style,char *strflag,char *legend,double *brect,
 	   int *aaint);
+
 static void 
 contourI (BCG *Xgc,ptr_level_f,double *, double *, double *,
 	  double *, int *, int *, int *);
+
 static void
 look (BCG *Xgc,ptr_level_f, int i, int j, int ib,
 	      int jb, int qq,double Cont, int style);
@@ -125,7 +126,29 @@ static double x_cont(int i) {  return GX[i] ;}
 
 static double y_cont(int i) {  return GY[i] ;}
 
-/*------------------------------------------------------------
+static double ZC=0.0;
+static char   ContNumFormat[100];
+
+
+/**
+ * nsp_contour:
+ * @Xgc: 
+ * @x: 
+ * @y: 
+ * @z: 
+ * @n1: 
+ * @n2: 
+ * @flagnz: 
+ * @nz: 
+ * @zz: 
+ * @teta: 
+ * @alpha: 
+ * @legend: 
+ * @flag: 
+ * @bbox: 
+ * @zlev: 
+ * @lstr: 
+ * 
  * Draw level curves for a function f(x,y) which values 
  * at points x(i),y(j) are given by z(i,j)
  * - z is a (n1,n2) matrix 
@@ -138,12 +161,14 @@ static double y_cont(int i) {  return GY[i] ;}
  *            (and nz is the size of thos array)
  * Computed from min and max of z
  * Exemple Contour(1:5,1:10,rand(5,10),5);
- *---------------------------------------------------------------*/
+ * 
+ * 
+ * Return value: unused 
+ **/
 
-static double ZC=0.0;
-static char   ContNumFormat[100];
-
-int C2F(contour)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, double *teta, double *alpha, char *legend, int *flag, double *bbox, double *zlev, int lstr)
+int nsp_contour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, 
+		int *nz, double *zz, double *teta, double *alpha, char *legend, int *flag, 
+		double *bbox, double *zlev, int lstr)
 {
   int err=0;
   int fg;
@@ -236,9 +261,39 @@ int C2F(contour)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int
   return(0);
 }
 
-/** interface for contour2d **/
+/**
+ * nsp_contour2:
+ * @Xgc: 
+ * @x: 
+ * @y: 
+ * @z: 
+ * @n1: 
+ * @n2: 
+ * @flagnz: 
+ * @nz: 
+ * @zz: 
+ * @style: 
+ * @strflag: 
+ * @legend: 
+ * @brect: 
+ * @aaint: 
+ * 
+ * Draw level curves for a function f(x,y) which values 
+ * at points x(i),y(j) are given by z(i,j)
+ * - z is a (n1,n2) matrix 
+ * - x is a (1,n1) matrix 
+ * - y is a (1,n2) matrix 
+ * - x,y,z are stored as one dimensionnal array in C 
+ * - if *flagnz =0 
+ * -   then  nz is an int pointer to the number of level curves. 
+ *     else  zz is an array which gives th requested level values.
+ *            (and nz is the size of thos array)
+ * Computed from min and max of z
+ * 
+ * Return value: unused 
+ **/
 
-int C2F(contour2)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aaint)
+int nsp_contour2(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aaint)
 {
   Contour2D(Xgc,Contstore_2,"contour2",x,y,z,n1,n2,flagnz,nz,zz,style,strflag,
 	    legend,brect,aaint);
@@ -295,7 +350,27 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
   return(0);
 }
 
-int C2F(contourif)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style)
+
+
+/**
+ * nsp_contour_if:
+ * @Xgc: 
+ * @x: 
+ * @y: 
+ * @z: 
+ * @n1: 
+ * @n2: 
+ * @flagnz: 
+ * @nz: 
+ * @zz: 
+ * @style: 
+ * 
+ * Used to compute level curves and store them 
+ * 
+ * Return value: 
+ **/
+
+int nsp_contour_if(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style)
 {
   int err=0;
   static double *zconst;
@@ -335,7 +410,8 @@ int C2F(contourif)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, i
  *  gives the dash style for contour i
  *-------------------------------------------------------*/
 
-static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z, double *zCont, int *N, int *style, int *err)
+static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z, 
+		     double *zCont, int *N, int *style, int *err)
 {
   int check = 1;
   char *F;
@@ -722,7 +798,21 @@ static int count=0;
  
 /** used to bring back data to Scilab Stack **/
 
-int C2F(getconts)(double **x, double **y, int *mm, int *n)
+
+/**
+ * nsp_get_level_curves:
+ * @x: 
+ * @y: 
+ * @mm: 
+ * @n: 
+ * 
+ * Used to acces to the level curves computed 
+ * by nsp_contour_if
+ * 
+ * Return value: 
+ **/
+
+int nsp_get_level_curves(double **x, double **y, int *mm, int *n)
 {
   *x = Gxcont;
   *y = Gycont;

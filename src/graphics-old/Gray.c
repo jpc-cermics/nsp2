@@ -14,7 +14,20 @@
 static void GraySquare (BCG *Xgc,int *x,int *y,double *z,int n1,int n2);
 static void GraySquare1 (BCG *Xgc,int *x,int *y,double *z, int n1,int n2);
 
-/*------------------------------------------------------------
+
+/**
+ * nsp_draw_matrix:
+ * @Xgc: 
+ * @x: 
+ * @y: 
+ * @z: 
+ * @n1: 
+ * @n2: 
+ * @strflag: 
+ * @brect: 
+ * @aaint: 
+ * @l1: 
+ * 
  * - z is a (n1,n2) matrix 
  * - x is a (1,n1) matrix 
  * - y is a (1,n2) matrix 
@@ -25,9 +38,12 @@ static void GraySquare1 (BCG *Xgc,int *x,int *y,double *z, int n1,int n2);
  *  and [zmin,zmax] is linearly remapped to the [colormin,colormap]
  *  values of colors in the current colormap 
  *  the color associated to zmoy is used for filling a specific rectangle 
- *---------------------------------------------------------------*/
+ * 
+ * 
+ * Return value: 
+ **/
 
-int C2F(xgray)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, char *strflag, double *brect, int *aaint, long int l1)
+int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, char *strflag, double *brect, int *aaint, long int l1)
 {
   int N = Max((*n1),(*n2));
   double xx[2],yy[2];
@@ -63,6 +79,20 @@ int C2F(xgray)(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, char 
   return(0);
 }
 
+
+/**
+ * fill_grid_rectangles_gen:
+ * @Xgc: 
+ * @x: 
+ * @y: 
+ * @z: 
+ * @n1: 
+ * @n2: 
+ * 
+ * A generic function for drawing a set of rectangles 
+ * which is accelerated on Gtk driver (see periGtk.c) 
+ * 
+ **/
 
 void fill_grid_rectangles_gen(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
@@ -109,13 +139,25 @@ static void GraySquare(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 
 
 
-/*-------------------------------------------------------
+/**
+ * nsp_draw_matrix_1:
+ * @Xgc: 
+ * @z: 
+ * @n1: 
+ * @n2: 
+ * @strflag: 
+ * @brect: 
+ * @aaint: 
+ * @l1: 
+ * 
  *  z : of size n1*n2 
  *  the z value is interpreted as a color number inside the current colormap
  *  z[i,j] is used as the color of a square [i-0.5,i+0.5] [j-0.5,j+0.5]
- *-------------------------------------------------------*/
+ * 
+ * Return value: 
+ **/
 
-int C2F(xgray1)(BCG *Xgc,double *z, int *n1, int *n2, char *strflag, double *brect, int *aaint, long int l1)
+int nsp_draw_matrix_1(BCG *Xgc,double *z, int *n1, int *n2, char *strflag, double *brect, int *aaint, long int l1)
 {
   int N = Max((*n1+1),(*n2+1));
   double xx[2],yy[2];
@@ -149,13 +191,22 @@ int C2F(xgray1)(BCG *Xgc,double *z, int *n1, int *n2, char *strflag, double *bre
   return(0);
 }
 
-/*-------------------------------------------------------
+/**
+ * nsp_draw_matrix_2:
+ * @Xgc: 
+ * @z: 
+ * @n1: 
+ * @n2: 
+ * @xrect: 
+ * 
  * like xgray1 : 
  * but xrect here give the rectangle in which the 
  * grayplot is to be drawn using the current scale
- -------------------------------------------------------*/
+ * 
+ * Return value: 
+ **/
 
-int C2F(xgray2)(BCG *Xgc,double *z, int *n1, int *n2, double *xrect)
+int nsp_draw_matrix_2(BCG *Xgc,double *z, int *n1, int *n2, double *xrect)
 {
   double xx[2],yy[2];
   int xx1[2],yy1[2];
@@ -185,16 +236,28 @@ int C2F(xgray2)(BCG *Xgc,double *z, int *n1, int *n2, double *xrect)
 }
 
 
-/*-------------------------------------------------------
+
+
+/**
+ * fill_grid_rectangles1_gen:
+ * @Xgc: 
+ * @x: 
+ * @y: 
+ * @z: 
+ * @n1: 
+ * @n2: 
+ * 
+ * A generic function for drawing a set of rectangles 
+ * which is accelerated on Gtk driver (see periGtk.c) 
+ * 
  *  x : of size n1 gives the x-values of the grid 
  *  y : of size n2 gives the y-values of the grid 
  *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle 
  *  of each rectangle. 
  *  z[i,j] is the value on the middle of rectangle 
  *        P1= x[i],y[j] x[i+1],y[j+1]
- *-------------------------------------------------------*/
-
-
+ * 
+ **/
 void fill_grid_rectangles1_gen(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
 {
   int i,j,fill[1],cpat,xz[2];

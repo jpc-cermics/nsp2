@@ -455,7 +455,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  C2F(contour)(Xgc,x->R,y->R,z->R,&z->m,&z->n, &flagx, &nnz,nz->R, &theta, &alpha,
+  nsp_contour(Xgc,x->R,y->R,z->R,&z->m,&z->n, &flagx, &nnz,nz->R, &theta, &alpha,
 	       leg, iflag, ebox, &zlev,strlen(leg));
   return 0;
 }
@@ -565,7 +565,7 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs, int (*func) ())
 
 int int_contour2d( Stack stack, int rhs, int opt, int lhs)
 {
-  return int_contour2d_G(stack,rhs,opt,lhs, C2F(contour2));
+  return int_contour2d_G(stack,rhs,opt,lhs, nsp_contour2);
 }
 
 int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
@@ -613,8 +613,8 @@ int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
   for (i =0 ; i < ix4 ; ++i) ((int *) M->R)[i] = i+1;
   if  (nz == 1) ((int *) M->R)[1] =1;
   Xgc=nsp_check_graphic_context();
-  C2F(contourif)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nz,znz,(int *) M->R);
-  C2F(getconts)(&hl1, &hl2, &x->m, &x->n);
+  nsp_contour_if(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nz,znz,(int *) M->R);
+  nsp_get_level_curves(&hl1, &hl2, &x->m, &x->n);
   n=x->n;m=x->m;
   if ( n== 0 ) m=0;
 
@@ -709,7 +709,7 @@ int int_c2dex( Stack stack, int rhs, int opt, int lhs)
   CheckRhs(-1,0);
   CheckLhs(1,2);
 
-  C2F(getconts)(&hl1, &hl2, &m1, &n1);
+  nsp_get_level_curves(&hl1, &hl2, &m1, &n1);
   if ( n1 == 0) m1=0;
   switch ( lhs  ) 
     {
@@ -1213,7 +1213,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  C2F(xgray)(Xgc,x->R,y->R,z->R,&z->m,&z->n,strf,rect,nax,strlen(strf));
+  nsp_draw_matrix(Xgc,x->R,y->R,z->R,&z->m,&z->n,strf,rect,nax,strlen(strf));
   return 0;
 }
 
@@ -1246,7 +1246,7 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
   
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  C2F(xgray1)(Xgc,z->R,&z->m,&z->n,strf,rect,nax,strlen(strf));
+  nsp_draw_matrix_1(Xgc,z->R,&z->m,&z->n,strf,rect,nax,strlen(strf));
   return 0;
 } 
 
@@ -1273,7 +1273,7 @@ int int_gray2plot(Stack stack, int rhs, int opt, int lhs)
     }
 
   Xgc=nsp_check_graphic_context();
-  C2F(xgray2)(Xgc,M->R, &M->m,&M->n,Rect->R);
+  nsp_draw_matrix_2(Xgc,M->R, &M->m,&M->n,Rect->R);
   return 0;
 } 
 
@@ -3379,7 +3379,7 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  C2F(fec)(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,zminmax,colminmax);
+  nsp_fec(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,zminmax,colminmax);
   return 0;
 }
 

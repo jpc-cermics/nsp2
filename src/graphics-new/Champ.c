@@ -13,39 +13,81 @@
 
 static double MiniD (const double *x,int n);
 
-static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, double *fx, double *fy, int *n1, int *n2, 
-		   char *strflag, double *brect, double *arfact, int lstr);
+static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y, double *fx, 
+			  double *fy, int *n1, int *n2, 
+			  char *strflag, double *brect, double *arfact, int lstr);
 
-/*-----------------------------------------------------------------
- *  int C2F(champ)(x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr)
- *  int C2F(champ1)(x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr)
+
+/**
+ * nsp_champ:
+ * @Xgc: 
+ * @x: 
+ * @y: 
+ * @fx: 
+ * @fy: 
+ * @n1: 
+ * @n2: 
+ * @strflag: 
+ * @brect: 
+ * @arfact: 
+ * @lstr: 
  *
  * Used for Drawing 2 dimensional vector fields 
  * (fx[i+(*n1)*j], fy[i+(*n1)*j]) is the value of the vector field 
  * at point X=(x[i],y[j]);
- * 
  * - fx and fy are (*n1)*(*n2) matrix of double
  * - arfact : a factor by which to multiply the default arrow size 
- *          usr 1.0 by defaut 
+ *          use 1.0 by defaut 
  * - strflag : a string of length 3 (see plot2d) 
  * - brect=[xmin,ymin,xmax,ymax]    (see plot2d) 
- *
  * - lstr : (used when called from Fortran code)
- -------------------------------------------------------------------*/
+ * Return value: unsued 
+ **/
 
-int nsp_champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *brect, double *arfact, int lstr)
+int nsp_champ(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, 
+	      int *n2, char *strflag, double *brect, double *arfact, int lstr)
 {
   champg(Xgc,"champ",0,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
   return(0); 
 }
 
-int nsp_champ1(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *brect, double *arfact, int lstr)
+/**
+ * nsp_champ1:
+ * @Xgc: 
+ * @x: 
+ * @y: 
+ * @fx: 
+ * @fy: 
+ * @n1: 
+ * @n2: 
+ * @strflag: 
+ * @brect: 
+ * @arfact: 
+ * @lstr: 
+ *
+ * Used for Drawing 2 dimensional vector fields with colored 
+ * arrows.
+ * (fx[i+(*n1)*j], fy[i+(*n1)*j]) is the value of the vector field 
+ * at point X=(x[i],y[j]);
+ * - fx and fy are (*n1)*(*n2) matrix of double
+ * - arfact : a factor by which to multiply the default arrow size 
+ *          use 1.0 by defaut 
+ * - strflag : a string of length 3 (see plot2d) 
+ * - brect=[xmin,ymin,xmax,ymax]    (see plot2d) 
+ * - lstr : (used when called from Fortran code)
+ * Return value: unsued 
+ **/
+
+int nsp_champ1(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, 
+	       int *n2, char *strflag, double *brect, double *arfact, int lstr)
 {
   champg(Xgc,"champ1",1,x,y,fx,fy,n1,n2,strflag,brect,arfact,lstr);
   return(0);
 }
 
-static void champg(BCG *Xgc,char *name, int colored, double *x, double *y, double *fx, double *fy, int *n1, int *n2, char *strflag, double *brect, double *arfact, int lstr)
+static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y, 
+			  double *fx, double *fy, int *n1, int *n2, char *strflag, 
+			  double *brect, double *arfact, int lstr)
 {
   static int aaint[]={2,10,2,10};
   int *xm,*ym,*zm,i,j,n,na;

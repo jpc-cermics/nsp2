@@ -2,10 +2,11 @@
  *    Graphic library
  *    Copyright (C) 1998-2001 Enpc/Jean-Philippe Chancelier
  *    jpc@cermics.enpc.fr 
+ *
  *    modified by Bruno Pincon 01/02/2001 for gain in speed and added 
  *    possibilities to set zmin, zmax by the user and also to set the 
  *    first and last color of the colormap (Bruno.Pincon@iecn.u-nancy.fr)
- --------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <math.h>
@@ -45,7 +46,8 @@ static void FindIntersection (double sx[], double sy[], double fxy[],
  *  first and last color of the colormap (Bruno.Pincon@iecn.u-nancy.fr)
 ---------------------------------------------------------------*/
 
-int C2F(fec)(BCG *Xgc,double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, char *strflag, char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
+int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, 
+	     char *strflag, char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
 {
   int i,*xm,*ym,j,k, n1=1;
 

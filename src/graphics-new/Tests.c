@@ -367,7 +367,7 @@ static void TestC(BCG *Xgc,     int ii)
   flag[0]=ii;
   flag[1]=2;
   flag[2]=3;
-  C2F(contour)(Xgc,x,y,z,&p,&q,&flagnz,&nz,&zz,&teta,&alpha, "X@Y@Z",flag,bbox,&zlev,0L);
+  nsp_contour(Xgc,x,y,z,&p,&q,&flagnz,&nz,&zz,&teta,&alpha, "X@Y@Z",flag,bbox,&zlev,0L);
 }
 
 #define LEVELNUM 10
@@ -391,7 +391,7 @@ static void TestC2d(BCG *Xgc)
   brect[0]=brect[1]=0;brect[2]=brect[3]=200.0;
   for (i=0; i < LEVELNUM; i++) 
     style[i]= i;
-  C2F(contour2)(Xgc,x,y,z,&p,&q,&flagnz,&nz,&zz,style,"011", "X@Y@Z",brect,aaint);
+  nsp_contour2(Xgc,x,y,z,&p,&q,&flagnz,&nz,&zz,style,"011", "X@Y@Z",brect,aaint);
 }
 
 static void testC1(BCG *Xgc) { TestC(Xgc,2);}
@@ -443,7 +443,7 @@ static void testG(BCG *Xgc)
       z[i+XNG*j]= (i-VXG)*(i-VXG)-(j-VXG)*(j-VXG);
   p= XNG ; q= YNG;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  C2F(xgray)(Xgc,x,y,z,&p,&q,"021",brect,aaint,0L);
+  nsp_draw_matrix(Xgc,x,y,z,&p,&q,"021",brect,aaint,0L);
 }
 
 

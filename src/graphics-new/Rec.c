@@ -1596,7 +1596,7 @@ void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, 
 static void replay_Fec(BCG *Xgc,void *theplot)
 {
   struct rec_fec *plfec = (struct rec_fec *)theplot;
-  C2F(fec)(Xgc,plfec->x,plfec->y,plfec->triangles,plfec->func,
+  nsp_fec(Xgc,plfec->x,plfec->y,plfec->triangles,plfec->func,
 	   &plfec->Nnode,&plfec->Ntr,
 	   plfec->strflag,plfec->legend,plfec->brect,plfec->aaint,
 	   plfec->zminmax, plfec->colminmax    /* added by bruno */
@@ -1658,7 +1658,7 @@ static void replay_Contour(BCG *Xgc,void *theplot)
 {
   struct rec_contour *pl3d;
   pl3d= (struct rec_contour *)theplot;
-  C2F(contour)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
+  nsp_contour(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
 	   pl3d->zz,&pl3d->teta,
 	  &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox,&pl3d->zlev,0L);
 }
@@ -1714,7 +1714,7 @@ static void replay_Contour2D(BCG *Xgc,void *theplot)
 {
   struct rec_contour2d *pl3d;
   pl3d= (struct rec_contour2d *)theplot;
-  C2F(contour2)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
+  nsp_contour2(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
 		pl3d->zz, pl3d->style,pl3d->strflag,pl3d->legend,
 		pl3d->brect,pl3d->aint);
 }
@@ -1730,8 +1730,6 @@ static void clean_Contour2D(void *plot)
   FREE(theplot->strflag_kp);
   FREE(theplot->brect_kp);FREE(theplot->aint_kp);   
 }
-
-
 
 /*---------------------------------------------------------------------
  * grayplots Matplot 
@@ -1818,7 +1816,7 @@ static void replay_Gray(BCG *Xgc,void *theplot)
 {
   struct rec_gray *pl3d;
   pl3d= (struct rec_gray *)theplot;
-  C2F(xgray)(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,
+  nsp_draw_matrix(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,
 	     pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
 }
 
@@ -1828,7 +1826,7 @@ static void replay_Gray1(BCG *Xgc,void *theplot)
 {
   struct rec_gray *pl3d;
   pl3d= (struct rec_gray *)theplot;
-  C2F(xgray1)(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
+  nsp_draw_matrix_1(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
 	     pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
 }
 
@@ -1838,7 +1836,7 @@ static void replay_Gray2(BCG *Xgc,void *theplot)
 {
   struct rec_gray_2 *pl3d;
   pl3d= (struct rec_gray_2 *)theplot;
-  C2F(xgray2)(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
+  nsp_draw_matrix_2(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
 	     pl3d->xrect);
 }
 
