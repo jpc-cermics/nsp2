@@ -19,8 +19,8 @@ function L=build_demo_list(str,n)
   L = list() 
   for i=1:n
     name=sprintf("%s_%d",str,i); 
-    execstr(sprintf("info=%s_%d_info;",str,i)); 
-    L(i) = list(info,"not-used",name);
+    execstr(sprintf("info_d=%s_%d_info;",str,i)); 
+    L(i) = list(info_d,"not-used",name);
   end 
 endfunction
 
@@ -719,8 +719,8 @@ graphic_test_contour = list()
 for i=1:6
   name=sprintf("demo_contour_%d",i); 
   info=sprintf("test %d",i); 
-  execstr(sprintf("info=%s_info;",name)); 
-  graphic_test_contour(i) = list(info, "not-used",name);
+  execstr(sprintf("info_d=%s_info;",name)); 
+  graphic_test_contour(i) = list(info_d, "not-used",name);
 end 
 
 

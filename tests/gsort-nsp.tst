@@ -31,42 +31,42 @@ if or(a1<> matrix(a(ind),N,P))  then BUG,end;
 
 [a1,ind]=gsort(a,'r');
 nc=size(a,'c');
-test=[];
+tst=[];
 for i=1:nc ; 
-   test= [test, matrix(a(ind(:,i),i),N,1)];
+   tst= [tst, matrix(a(ind(:,i),i),N,1)];
 end 
-if or(a1<> test)  then BUG,end;
+if or(a1<> tst)  then BUG,end;
 
 //increasing values 
 
 [a1,ind]=gsort(a,'r','i');
 nc=size(a,'c');
-test=[];
+tst=[];
 for i=1:nc ; 
-   test= [test, matrix(a(ind(:,i),i),N,1)];
+   tst= [tst, matrix(a(ind(:,i),i),N,1)];
 end 
-if or(a1<> test)  then BUG,end;
+if or(a1<> tst)  then BUG,end;
 
 
 //----sort each row of a ('c' means that the column indice is used for sorting)
 
 [a1,ind]=gsort(a,'c')   ;
 nr=size(a,'r');
-test=[];
+tst=[];
 for i=1:nr ; 
-   test= [test; matrix(a(i,ind(i,:)),1,P)];
+   tst= [tst; matrix(a(i,ind(i,:)),1,P)];
 end 
-if or(a1<> test)  then BUG,end;
+if or(a1<> tst)  then BUG,end;
 
 //increasing 
 
 [a1,ind]=gsort(a,'c','i')   ;
 nr=size(a,'r');
-test=[];
+tst=[];
 for i=1:nr ; 
-   test= [test; matrix(a(i,ind(i,:)),1,P)];
+   tst= [tst; matrix(a(i,ind(i,:)),1,P)];
 end 
-if or(a1<> test)  then BUG,end;
+if or(a1<> tst )  then BUG,end;
 
 
 //----sort the rows of a in lexicographic order 
