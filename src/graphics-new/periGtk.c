@@ -2172,7 +2172,6 @@ void DeleteSGWin(int intnum)
   scig_deconnect_handlers(winxgc);
   /* backing store private->pixmap */
   gdk_pixmap_unref(winxgc->private->pixmap);
-  winxgc->private->pixmap=NULL;
   /* destroy top level window if it is not shared by other graphics  */
   top_count = window_list_search_toplevel(winxgc->private->window); 
   if ( top_count <= 1) 
@@ -3317,9 +3316,11 @@ static int GTK_Open(BCG *dd, char *dsp, double w, double h)
 
   dd->private->vbox =  gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), dd->private->vbox, FALSE, TRUE, 0);
+
   dd->private->menu_entries = graphic_initial_menu(dd->CurWindow );
   dd->private->menubar = NULL;
   create_graphic_window_menu(dd);
+
   dd->private->CinfoW = gtk_statusbar_new ();
   gtk_box_pack_start (GTK_BOX (vbox), dd->private->CinfoW, FALSE, TRUE, 0);
 
@@ -3480,9 +3481,11 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
 
   dd->private->vbox =  gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), dd->private->vbox, FALSE, TRUE, 0);
+
   dd->private->menu_entries = graphic_initial_menu(dd->CurWindow );
   dd->private->menubar = NULL;
   create_graphic_window_menu(dd);
+
   dd->private->CinfoW = gtk_statusbar_new ();
   gtk_box_pack_start (GTK_BOX (vbox), dd->private->CinfoW, FALSE, TRUE, 0);
 
@@ -3500,11 +3503,11 @@ void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp, double w, double h,G
 
   gtk_box_pack_start (GTK_BOX (vbox), scrolled_window, TRUE, TRUE, 0);
 
-
   if ( is_top == TRUE ) 
     gtk_widget_realize(scrolled_window);
   else
     gtk_widget_show(scrolled_window);
+
   /* create private->drawingarea */
 
   dd->private->drawing = gtk_drawing_area_new();
