@@ -7,10 +7,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "nsp/object.h"
-#include "command.h"
+#include <nsp/object.h>
+#include <nsp/command.h>
 #include "All-extern.h"
 #include "../system/Sun.h"
+
 
 /*---------------------------------------------------------------------
  *  This function is used to store Scilab command in a queue 
@@ -101,12 +102,12 @@ int checkqueue_nsp_command()
  * lock the queue (checkqueue_nsp_command() will return FALSE)
  *---------------------------------------------------------------------------*/
 
-int lockqueue_nsp_command() 
+void lockqueue_nsp_command() 
 {
   locked = TRUE;
 }
 
-int unlockqueue_nsp_command() 
+void unlockqueue_nsp_command() 
 {
   locked = FALSE;
 }

@@ -17,8 +17,9 @@
 #include "nsp/sciio.h"
 #include "nsp/math.h"
 #include "nsp/graphics/periGtk.h"
-#include "../version.h"
+#include "nsp/version.h"
 #include "nsp/graphics/color.h"
+#include "nsp/command.h"
 
 /** Global variables to deal with X11 **/
 

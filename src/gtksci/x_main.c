@@ -14,7 +14,7 @@
 #include <signal.h>
 #include <gtk/gtk.h>
 
-#include "../version.h"
+#include "nsp/version.h"
 #include "nsp/machine.h"
 #include "nsp/sciio.h"
 #include "../system/files.h"

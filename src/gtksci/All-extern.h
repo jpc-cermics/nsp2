@@ -27,14 +27,14 @@ extern void  nsp_check_gtk_events(void);
 
 
 /* command.h */
-
+/*
 typedef int (*Scig_command_handler) (char *);
 extern Scig_command_handler set_scig_command_handler(Scig_command_handler f);
 extern void reset_scig_command_handler(void) ;
 extern int enqueue_nsp_command( char *command); 
 extern int dequeue_nsp_command(char *buf,int buf_len);
 extern int checkqueue_nsp_command(void) ;
-
+*/
 /* zzledt.c */ 
 
 extern int using_readline(void); 

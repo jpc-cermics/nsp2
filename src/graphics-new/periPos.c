@@ -13,7 +13,7 @@
 #include "nsp/sciio.h"
 #include "nsp/math.h"
 #include "nsp/graphics/periPos.h"
-#include "../version.h"
+#include "nsp/version.h"
 #include "nsp/graphics/color.h"
 
 static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,const int *vx,const int *vy, int flag,const int *fvect);

@@ -6,9 +6,8 @@ include ../../Version.incl
 
 LIBRARY = gtksci.a
 
-OBJSC =	click.o command.o  io.o \
-	menus.o x_VTPrsTbl.o x_main.o \
-	zzledt-rl.o about.o queue.o helpbrowser.o uri.o
+OBJSC =	click.o command.o  io.o menus.o x_VTPrsTbl.o x_main.o zzledt-rl.o about.o queue.o helpbrowser.o uri.o
+
 
 OBJSF  = 
 
@@ -43,7 +42,4 @@ distclean::
 	$(RM) $(OBJTEST) test
 
 
-# generated with gcc -MMD 
-#--------------------------
-
-
+#--- dependencies generated with gcc -MMD ------------

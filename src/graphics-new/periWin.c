@@ -28,7 +28,7 @@
 #include "../wsci/wgraph.h"
 
 #include "periWin.h" 
-#include "../version.h"
+#include "nsp/version.h"
 #include "color.h" 
 #include "Graphics.h"
 #include "scigraphic.h"

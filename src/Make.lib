@@ -46,4 +46,25 @@ distclean::
 	$(RM) *.o  $(SCIDIR)/libs/$(LIBRARY) .archive_target
 
 
+# generate dependencies 
+
+
+.SUFFIXES: .d $(SUFFIXES)
+
+DEPS=$(OBJSC:.o=.d)
+
+.c.d:
+	$(CC) $(CFLAGS) -MMD -c $*.c 
+
+# @cat $(DEPS) | egrep -v "^[ \t]*/usr/" >> Makefile 
+
+depend	: $(DEPS)
+	@emacs Makefile  -l `pwd`/../include-remove.el  -e job -batch 2> /dev/null
+	@cat $(DEPS)  >> Makefile 
+	@$(RM) $(DEPS) 
+
+clean:: 
+	@$(RM) $(DEPS) 
+
+
 

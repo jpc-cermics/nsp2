@@ -6,6 +6,7 @@
 
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
+#include "nsp/command.h"
 
 static int scig_buzy = 0;
 
@@ -42,9 +43,9 @@ void reset_scig_handler(void)
 
 /* add handlers for delete action */
 
-static void scig_deletegwin_handler_none (win)int win; {};
+void scig_deletegwin_handler_none (win)int win; {};
 
-static void scig_deletegwin_handler_sci (int win)
+void scig_deletegwin_handler_sci (int win)
 {
   static char buf[256];
   BCG *bcg= window_list_search(win);

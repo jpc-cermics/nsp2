@@ -26,7 +26,7 @@
 #include "nsp/graphics/Graphics.h"
 #include "nsp/graphics/periX11.h"
 #include "nsp/graphics/periX11-bcg.h"
-#include "../version.h"
+#include "nsp/version.h"
 #include "nsp/graphics/color.h"
 #include "../intersci/cerro.h" 
 

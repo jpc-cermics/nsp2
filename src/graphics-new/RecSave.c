@@ -992,20 +992,14 @@ static int save_D(double x)
   return(1);
 }
 
+/* 
 static int save_F(float x)
 {
   double z=x;
   save_D(z);
-  /** sciprint("saving %f\r\n",z); **/
-  /** 
-  szof = sizeof(float) ;
-  count = 1;
-  assert( xdr_vector(xdrs, (char *) &x, count, szof, (xdrproc_t) xdr_float)) ;
-  sciprint("saving %f\r\n",x);
-  **/
   return(1);
 }
-
+*/
 static int save_LI(int ix)
 {
   szof = sizeof(int) ;

@@ -18,7 +18,7 @@
 #include "nsp/sciio.h"
 #include "nsp/math.h"
 #include "nsp/graphics/periFig.h"
-#include "../version.h"
+#include "nsp/version.h"
 #include "nsp/graphics/color.h"
 
 #define WHITE 7

@@ -1605,7 +1605,7 @@ AC_SUBST(IMPENV)
 AC_SUBST(ZZLEDT)
 AC_SUBST(STRIP)
 
-AC_OUTPUT(Makefile.OBJ Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk) 
+AC_OUTPUT(Makefile.OBJ Makefile.incl Makefile scripts/Makefile src/Makefile src/default/Makefile src/graphics/Makefile src/menusX/Makefile config/Makemex config/Makeso.incl src/control/Makefile config/Makefile.aix config/Makefile.ultrix src/lapack/Makefile scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h imp/Makefile src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk) 
  
 
 
