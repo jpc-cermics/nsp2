@@ -279,9 +279,9 @@ void update_frame_bounds(BCG *Xgc,
     }
   
   /* FRect gives the plotting boundaries xmin,ymin,xmax,ymax */
-
+  
   FRect[0]=xmin;FRect[1]=ymin;FRect[2]=xmax;FRect[3]=ymax;
-
+  
   /* if strflag[1] == 7 or 8 we compute the max between current scale and the new one  */
   if (strflag[1] == '7' || strflag[1] == '8' )
     {
