@@ -211,21 +211,29 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
 	fill[0] = - colout[0] ; fill[nz+1] = - colout[1];
       }
 
-    /* compute the zlevels */
-    dz = (zmax - zmin)/nz;
-    for (i = 0 ; i < nz ; i++) zlevel[i] = zmin + i*dz;
-    zlevel[nz] = zmax;
 
     /* finaly compute the zone of each point */
 
-    for ( i = 0 ; i < Nnode ; i++ ) {
-      if ( func[i] > zmax )
-	zone[i] = nz+1;
-      else if ( func[i] < zmin )
-	zone[i] = 0;
-      else
-	zone[i] = floor( (func[i] - zmin)/dz ) + 1;
-    };
+    if (remap == FALSE && colminmax == NULL && zminmax == NULL  ) 
+      {
+	for (i = 0 ; i <= nz ; i++) zlevel[i] = i;
+	for ( i = 0 ; i < Nnode ; i++ ) zone[i] = Min(Max(func[i],0),nz+1);
+      }
+    else
+      {
+	/* compute the zlevels */
+	dz = (zmax - zmin)/nz;
+	for (i = 0 ; i < nz ; i++) zlevel[i] = zmin + i*dz;
+	zlevel[nz] = zmax;
+	for ( i = 0 ; i < Nnode ; i++ ) {
+	  if ( func[i] > zmax )
+	    zone[i] = nz+1;
+	  else if ( func[i] < zmin )
+	    zone[i] = 0;
+	  else
+	    zone[i] = floor( (func[i] - zmin)/dz ) + 1;
+	}
+      }
 
     /* 
      * 2/ loop on the triangles : each triangle is finally decomposed 
