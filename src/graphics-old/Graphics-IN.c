@@ -3654,35 +3654,36 @@ int int_xgetech(Stack stack, int rhs, int opt, int lhs)
  * from the modified version by Bruno 1/2/2001
  *-----------------------------------------------------------*/
 
-static   nsp_option opts_fec[] ={{ "axesflag",s_int,NULLOBJ,-1},
-				 { "colminmax",mat_int,NULLOBJ,-1},
-				 { "colout",mat_int,NULLOBJ,-1},
-				 { "draw", s_bool,NULLOBJ,-1},
-				 { "frameflag",s_int,NULLOBJ,-1},
-				 { "leg",string,NULLOBJ,-1},
-				 { "leg_pos",string,NULLOBJ,-1},
-				 { "logflag",string,NULLOBJ,-1}, 
-				 { "nax",mat_int,NULLOBJ,-1},
-				 { "rect",realmat,NULLOBJ,-1},
-				 { "strf",string,NULLOBJ,-1},
-				 { "style",mat_int,NULLOBJ,-1},
-				 { "zminmax",mat,NULLOBJ,-1},
-				 { NULL,t_end,NULLOBJ,-1}};
 
 int int_fec(Stack stack, int rhs, int opt, int lhs)
 {
+  nsp_option opts_fec[] ={{ "axesflag",s_int,NULLOBJ,-1},
+			  { "colminmax",mat_int,NULLOBJ,-1},
+			  { "colout",mat_int,NULLOBJ,-1},
+			  { "frameflag",s_int,NULLOBJ,-1},
+			  { "leg",string,NULLOBJ,-1},
+			  { "leg_pos",string,NULLOBJ,-1},
+			  { "logflag",string,NULLOBJ,-1}, 
+			  { "mesh", s_bool,NULLOBJ,-1},
+			  { "nax",mat_int,NULLOBJ,-1},
+			  { "rect",realmat,NULLOBJ,-1},
+			  { "strf",string,NULLOBJ,-1},
+			  { "style",mat_int,NULLOBJ,-1},
+			  { "zminmax",mat,NULLOBJ,-1},
+			  { NULL,t_end,NULLOBJ,-1}};
+
   BCG *Xgc;
   NspMatrix *x,*y,*Tr,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
   double *rect;
-  int *nax,*istyle,nnz= 10, frame= -1, axes=-1,draw = FALSE, leg_posi;
+  int *nax,*istyle,nnz= 10, frame= -1, axes=-1,mesh = FALSE, leg_posi;
   char *strf=NULL, *leg=NULL, *leg_pos = NULL,*logflags=NULL;
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
   /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
 
   if ( rhs <= 0) { return sci_demo (stack.fname," exec(\"SCI/demos/fec/fec.ex1\");",1);}
   
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&draw,&frame,
-	       &leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
+	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
 
   CheckSameDims(stack.fname,1,2,x,y);
   CheckSameDims(stack.fname,1,4,x,F);
@@ -3707,7 +3708,7 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
 	  (Mzminmax == NULL) ? NULL : Mzminmax->R,
 	  (Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R, 
 	  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R,
-	  draw);
+	  mesh);
 	  
   return 0;
 }
