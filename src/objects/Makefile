@@ -18,7 +18,7 @@ OBJSC = Matrix.o MatOps.o MatObj.o  \
 	function.o \
 	IVect.o  IVectObj.o \
 	Interf.o Interf-IN.o \
-	P_PList.o P_PList-IN.o P_PListObj.o \
+	P_PList.o  P_PListObj.o \
 	Datas.o Datas-IN.o Stack.o \
 	gsort.o qsort.o	pr-output.o user-prefs.o Cnumeric.o \
 	Perm.o \

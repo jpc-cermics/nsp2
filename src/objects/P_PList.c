@@ -48,11 +48,7 @@ NspPList *NspPListCreate(char *name, PList L,char *filename)
     }
   else 
     P_L->file_name = NULL;
-  NSP_OBJECT(P_L)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
-  /*
-  P_L->otype = P_PLIST;
-  P_L->ftype = NspPList_Type ;
-  */
+  NSP_OBJECT(P_L)->ret_pos = -1 ;
   P_L->D = L;
   return(P_L);
 }
@@ -128,9 +124,9 @@ void NspPListPrint(NspPList *P_L, int indent)
   for ( j=0 ; j < indent ; j++) Sciprintf(" ");
   Sciprintf("%s",NSP_OBJECT(P_L)->name);
   if ( P_L->file_name != NULL) 
-    Sciprintf("\tfunction file='%s'\n",P_L->file_name);
+    Sciprintf("\t=\t\tpl (file='%s')\n",P_L->file_name);
   else 
-    Sciprintf("\n");
+    Sciprintf("\t=\t\tpl\n");
   PListPrettyPrint(P_L->D,indent);
   Sciprintf("\n");
 }

@@ -620,6 +620,22 @@ int int_m2mp(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/*
+ * convert a max plus matrix to a  matrix 
+ */
+
+int int_mp2m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *B;
+  NspMaxpMatrix *A;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if (( A = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
+  if (( B = nsp_matrix_copy((NspMatrix *) A)) == NULLMAT) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) B);   
+  return 1;
+}
+
 
 /*
  * Copy of a Matrix 
@@ -2830,6 +2846,7 @@ int int_mp_finite(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab Matrix_func[]={
   {"m2mp",int_m2mp},
+  {"mp2m",int_mp2m},
   {"maxplus",int_m2mp},
   {"resize2vect_mp",int_mpmat2vect},
   {"extractcols_mp",int_mpextractcols},
@@ -2949,6 +2966,7 @@ static OpTab Matrix_func[]={
   {"div_mp_mp" ,  int_mpdiv},
   {"bdiv_mp_mp" ,  int_mpbdiv},
   {"find_mp", int_mpfind},
+  {"and_mp_mp", int_mpmini},
   /* 
      {"polar",int_mppolar},
      {"dsl",int_mpdivel},

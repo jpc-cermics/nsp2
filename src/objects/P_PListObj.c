@@ -410,3 +410,57 @@ NspPList *GetNspPListCopy(Stack stack, int i)
   return MaybeObjCopy(&NthObj(i));
 }
 
+
+
+/*------------------------------------------------------
+ * attributes  (set/get methods) 
+ *------------------------------------------------------*/
+
+/*------------------------------------------------------
+ * methods 
+ *------------------------------------------------------*/
+
+/*----------------------------------------------------------
+ * Now the interfaced function for macros (pl)
+ *--------------------------------------------------------*/
+
+/*
+ * NspPList2SMatrix 
+ */
+
+int int_pl2s(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *S;
+  NspPList *PL;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
+  if ((S= NspPList2SMatrix(PL,0))== NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}
+
+/*
+ * The Interface for parsed lists
+ */
+
+static OpTab NspPList_func[]={
+  {"pl2s", int_pl2s},
+  {(char *) 0, NULL}
+};
+
+int NspPList_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+{
+  return (*(NspPList_func[i].fonc))(stack,rhs,opt,lhs);
+}
+
+
+/* used to walk through the interface table 
+    (for adding or removing functions) **/
+
+void NspPList_Interf_Info(int i, char **fname, function (**f))
+{
+  *fname = NspPList_func[i].name;
+  *f = NspPList_func[i].fonc;
+}
+

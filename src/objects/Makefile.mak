@@ -21,7 +21,7 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	function.obj \
 	IVect.obj  IVectObj.obj \
 	Interf.obj Interf-IN.obj \
-	P_PList.obj P_PList-IN.obj P_PListObj.obj \
+	P_PList.obj  P_PListObj.obj \
 	Datas.obj Datas-IN.obj Stack.obj \
 	gsort.obj qsort.obj	pr-output.obj user-prefs.obj Cnumeric.obj \
 	Perm.obj \
