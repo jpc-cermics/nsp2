@@ -32,8 +32,8 @@ function [sd]=gr_menu(sd,flag,noframe)
      end
   end 
   
-  dr=driver(); if dr=='Rec' then driver('X11'),end
-  //seteventhandler('my_eventhandler');
+  xset('recording',0);
+  seteventhandler('my_eventhandler');
   if type(gr_objects,'string')=='Mat' then gr_objects=list(); end 
   
   //now move the mouse over the graphic window/
@@ -327,7 +327,7 @@ function sd1 =gr_poly(action,sd,pt,pt1)
    case 'draw' then 
     sd = gr_objects(sd);
     if sd('show') then
-      xpoly(sd('x'),sd('y'),'lines');
+      xpoly(sd('x'),sd('y'),type='lines');
       if sd('hilited') then 
 	// hilited part 
 	rects=[sd('x')-1;sd('y')+1;2*ones(sd('x'));2*ones(sd('x'))];
@@ -707,17 +707,17 @@ function [sd1]=ligne(sd,del)
     z=xgetpoly(d_seg);
     if z==[], return;end;
     sd1=list("ligne",z);
-    xpoly(z(1,:)',z(2,:)',"lines")
+    xpoly(z(1,:)',z(2,:)',type="lines")
   elseif rhs==1 then //draw
      z=sd(2);
-     xpoly(z(1,:)',z(2,:)',"lines")
+     xpoly(z(1,:)',z(2,:)',type="lines")
   elseif del=='del' then //erase
      z=sd(2);
-     xpoly(z(1,:)',z(2,:)',"lines")
+     xpoly(z(1,:)',z(2,:)',type="lines")
   elseif del=='mov' then //move
      z=sd(2);
      x0=xx(1);y0=xx(2);
-     [xo,yo]=move_object('xpoly(z(1,:)''-(x0-xo),z(2,:)''-(y0-yo),""lines"")',x0,y0);
+     [xo,yo]=move_object('xpoly(z(1,:)''-(x0-xo),z(2,:)''-(y0-yo),type=""lines"")',x0,y0);
      sd(2)=[z(1,:)-(x0-xo);z(2,:)-(y0-yo)]
   end;
 endfunction
@@ -750,14 +750,14 @@ function [sd1]=curve(sd,del)
   if rhs<=0 then ,//get
     z=xgetpoly(d_seg);
     if z==[], return;end
-    mm=clearmode();xpoly(z(1,:)',z(2,:)',"lines");modeback(mm)
+    mm=clearmode();xpoly(z(1,:)',z(2,:)',type="lines");modeback(mm)
     [x1,k1]=sort(z(1,:));y1=z(2,k1);z=[x1;y1];
     [n1,n2]=size(z);z=smooth(z(:,n2:-1:1));
     sd1=list("ligne",z);
   else
      z=sd(2);
   end;
-  xpoly(z(1,:)',z(2,:)',"lines");
+  xpoly(z(1,:)',z(2,:)',type="lines");
 endfunction
 
 function [sd1]=points(sd,del)
@@ -767,13 +767,13 @@ function [sd1]=points(sd,del)
     z=xgetpoly(d_point);
     if z==[], return;end;
     sd1=list("point",z);
-    xpoly(z(1,:)',z(2,:)',"marks");
+    xpoly(z(1,:)',z(2,:)',type="marks");
   elseif rhs==1 then //draw
      z=sd(2);
-     xpoly(z(1,:)',z(2,:)',"marks");
+     xpoly(z(1,:)',z(2,:)',type="marks");
   elseif del=='del' then //erase  
      z=sd(2);
-     xpoly(z(1,:)',z(2,:)',"marks");
+     xpoly(z(1,:)',z(2,:)',type="marks");
   elseif del=='mov' then //move  
      z=sd(2);
      x0=xx(1);y0=xx(2);
@@ -818,10 +818,10 @@ function my_eventhandler(win,x,y,ibut)
        rep(3)=-1
        o=gr_objects(k);
        // are we moving the object or a control point 
-       execstr('ic=gr_'+o(1)(1)+'(''inside control'',k,[xc,yc]);');
+       execstr('ic=gr_'+o.type+'(''inside control'',k,[xc,yc]);');
        // hide the moving object and its locked objects 
        gr_objects(k)('show')=%f; 
-       execstr('lcks=gr_'+o(1)(1)+'(''locks update'',k);');
+       execstr('lcks=gr_'+o.type+'(''locks update'',k);');
        for i=lcks 
 	 gr_objects(i)('show')=%f; 
        end
@@ -843,7 +843,7 @@ function my_eventhandler(win,x,y,ibut)
 	 end 
        else 
        	 // we are moving a control point of the object 
-	 execstr('gr_'+o(1)(1)+'(''move point init'',k,ic(2));');
+	 execstr('gr_'+o.type+'(''move point init'',k,ic(2));');
 	 [rep]=gr_frame_move(k,[xc,yc],-5,'move point',ic(2))
 	 if rep== -100 then  
 	   count=0; 
@@ -875,7 +875,7 @@ function [rep]=gr_frame_move(ko,pt,kstop,action,pt1)
   rep=[0,0,%inf];
   wstop = 0; 
   lcks=[];
-  otype = gr_objects(ko)(1)(1); 
+  otype = gr_objects(ko).type; 
   of = 'gr_'+otype;
   while wstop==0 , //move loop
     // draw block shape
@@ -884,7 +884,7 @@ function [rep]=gr_frame_move(ko,pt,kstop,action,pt1)
       // draw connected links 
       for lk= lcks 
 	lo = gr_objects(lk);
-	execstr('gr_'+lo(1)(1)+'(''draw'',lk);');      
+	execstr('gr_'+lo.type+'(''draw'',lk);');      
       end
     end
     if pixmap then xset('wshow'),end
@@ -907,7 +907,7 @@ function [rep]=gr_frame_move(ko,pt,kstop,action,pt1)
       // draw connected links 
       for lk= lcks 
 	lo = gr_objects(lk);
-	execstr('gr_'+lo(1)(1)+'(''draw'',lk);');      
+	execstr('gr_'+lo.type+'(''draw'',lk);');      
       end
     end
     // move object or point inside object 
@@ -930,7 +930,7 @@ function [k,rep]=gr_lock(pt)
   global('gr_objects');
   for k=1:lstsize(gr_objects)
     o=gr_objects(k);
-    execstr('rep=gr_'+o(1)(1)+'(''inside lock'',k,pt);');
+    execstr('rep=gr_'+o.type+'(''inside lock'',k,pt);');
     if rep(1)==1 then
       rep=rep(2:4);
       return ;  
@@ -948,7 +948,7 @@ function k=gr_find(x,y)
   global('gr_objects');
   for k=1:lstsize(gr_objects)
     o=gr_objects(k);
-    execstr('ok=gr_'+o(1)(1)+'(''inside'',k,[x,y]);');
+    execstr('ok=gr_'+o.type+'(''inside'',k,[x,y]);');
     if ok then return ; end 
   end
   k=0;
@@ -965,10 +965,10 @@ function gr_draw(win)
   fr=[0,0,100,100];
   xsetech(frect=fr)
   xrect([0,100,100,100]);
-  pause
+  //pause
   for k=1:lstsize(gr_objects)
     o=gr_objects(k);
-    execstr('gr_'+o(1)(1)+'(''draw'',k);');
+    execstr('gr_'+o.type+'(''draw'',k);');
   end
   if pixmap then xset('wshow'); end 
 endfunction 
@@ -996,7 +996,7 @@ function gr_delete()
   for k=lstsize(gr_objects):-1:1
     o=gr_objects(k);
     if o('hilited') then 
-      execstr('rep=gr_'+o(1)(1)+'(''unlock all'',k);');
+      execstr('rep=gr_'+o.type+'(''unlock all'',k);');
       gr_objects(k)=null();
       // we must update all the numbers contained in lock 
       for j=1:lstsize(gr_objects)
@@ -1026,7 +1026,7 @@ function gr_copy()
       gr_objects($+1)=o;
       n=size(gr_objects,0);
       gr_objects(n)('hilited')=%f;
-      execstr('gr_'+o(1)(1)+'(''move'',n);');
+      execstr('gr_'+o.type+'(''move'',n);');
       g_rep=%t ; 
     end 
   end
