@@ -1072,22 +1072,20 @@ static void fillrectangle(BCG *Xgc,const int rect[])
  * accelerated draw a set of rectangles, not implemented for Pos 
  *----------------------------------------------------------------------------------*/
 
-extern void fill_grid_rectangles_gen(BCG *Xgc,int *x, int *y, double *z, int n1, int n2);
-
-static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
+static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int nx,int ny,
+				  int remap,const double *colminmax,const double *zminmax)
 {
-  fill_grid_rectangles_gen(Xgc,x,y,z,n1,n2);
+  fill_grid_rectangles_gen(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
 
 /*----------------------------------------------------------------------------------
  * accelerated draw a set of rectangles, not implemented for Pos 
  *----------------------------------------------------------------------------------*/
 
-extern void fill_grid_rectangles1_gen(BCG *Xgc,int *x, int *y, double *z, int n1, int n2);
-
-static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
+static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int nx,int ny,
+				  int remap,const double *colminmax,const double *zminmax)
 {
-  fill_grid_rectangles1_gen(Xgc,x,y,z,n1,n2);
+  fill_grid_rectangles1_gen(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
 
 /** Draw or fill a set of ellipsis or part of ellipsis **/

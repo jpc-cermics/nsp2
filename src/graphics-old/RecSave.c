@@ -774,6 +774,7 @@ static int save_Contour2D(BCG *Xgc,void *plot)
 
 static int save_Gray(BCG *Xgc,void *plot)
 {
+  int flag;
   struct rec_gray *lplot = (struct rec_gray *) plot;
   if ( save_LI(lplot->n1)== 0) return(0);
   if ( save_LI(lplot->n2)== 0) return(0);
@@ -787,12 +788,20 @@ static int save_Gray(BCG *Xgc,void *plot)
   if ( save_VectF((lplot->brect_kp),4L) == 0) return(0);
   if ( save_VectLI((lplot->aaint),4L)  == 0) return(0);
   if ( save_VectLI((lplot->aaint_kp),4L) == 0) return(0);
+  flag = lplot->remap | ((lplot->colminmax != NULL) ? (1<<4) : 0)  
+    | ((lplot->zminmax != NULL) ? (1 <<8) :0);
+  if ( save_LI(flag)==0) return(0);
+  if ( lplot->colminmax != NULL )  
+    { if ( save_VectF((lplot->colminmax),2L) == 0) return(0);}
+  if ( lplot->zminmax != NULL )  
+    { if ( save_VectF((lplot->zminmax),2L) == 0) return(0);}
   return(1);
 }
 
 static int save_Gray1(BCG *Xgc,void *plot)
 {
-  struct rec_gray *lplot = (struct rec_gray *) plot;
+  int flag;
+  struct rec_gray1 *lplot = (struct rec_gray1 *) plot;
   if ( save_LI(lplot->n1)== 0) return(0);
   if ( save_LI(lplot->n2)== 0) return(0);
   if ( save_LI(lplot->code)==0) return(0);
@@ -803,17 +812,32 @@ static int save_Gray1(BCG *Xgc,void *plot)
   if ( save_VectF((lplot->brect_kp),4L) == 0) return(0);
   if ( save_VectLI((lplot->aaint),4L)  == 0) return(0);
   if ( save_VectLI((lplot->aaint_kp),4L) == 0) return(0);
+  flag = lplot->remap | ((lplot->colminmax != NULL) ? (1<<4) : 0)  
+    | ((lplot->zminmax != NULL) ? (1 <<8) :0);
+  if ( save_LI(flag)==0) return(0);
+  if ( lplot->colminmax != NULL )  
+    { if ( save_VectF((lplot->colminmax),2L) == 0) return(0);}
+  if ( lplot->zminmax != NULL )  
+    { if ( save_VectF((lplot->zminmax),2L) == 0) return(0);}
   return(1);
 }
 
 static int save_Gray2(BCG *Xgc,void *plot)
 {
+  int flag;
   struct rec_gray_2 *lplot = (struct rec_gray_2 *) plot;
   if ( save_LI(lplot->n1)== 0) return(0);
   if ( save_LI(lplot->n2)== 0) return(0);
   if ( save_LI(lplot->code)==0) return(0);
   if ( save_VectF((lplot->z),(lplot->n1)*(lplot->n2)) == 0) return(0);
   if ( save_VectF((lplot->xrect),4L) == 0) return(0);
+  flag = lplot->remap | ((lplot->colminmax != NULL) ? (1<<4) : 0)  
+    | ((lplot->zminmax != NULL) ? (1 <<8) :0);
+  if ( save_LI(flag)==0) return(0);
+  if ( lplot->colminmax != NULL )  
+    { if ( save_VectF((lplot->colminmax),2L) == 0) return(0);}
+  if ( lplot->zminmax != NULL )  
+    { if ( save_VectF((lplot->zminmax),2L) == 0) return(0);}
   return(1);
 }
 

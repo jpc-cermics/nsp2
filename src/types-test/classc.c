@@ -30,9 +30,9 @@ NspTypeClassC *new_type_classc(type_mode mode)
       /* initialization performed and T_BASE requested */
       return nsp_type_classc;
     }
-  if ((type =  malloc(sizeof(NspTypeClassC))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeClassA))) == NULL) return NULL;
   type->interface = NULL;
-  type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
+  type->surtype = (NspTypeBase *) new_type_classa(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
   type->attrs = NULL;/* classc_attrs ; */
   type->get_attrs = (attrs_func *) int_get_attribute; 

@@ -1035,7 +1035,7 @@ static int load_Contour2D(BCG *Xgc)
 
 static int load_Gray(BCG *Xgc)
 {
- 
+  int flag;
   struct rec_gray *lplot;
   lplot= ((struct rec_gray *) MALLOC(sizeof(struct rec_gray)));
   if (lplot != NULL)
@@ -1052,8 +1052,15 @@ static int load_Gray(BCG *Xgc)
       if ( load_VectF(&(lplot->brect_kp)) == 0) return(0);
       if ( load_VectLI(&(lplot->aaint))  == 0) return(0);
       if ( load_VectLI(&(lplot->aaint_kp)) == 0) return(0);
+      if ( load_LI(&flag) == 0) return(0);
+      lplot->remap= flag & 0x00f ;
+      lplot->colminmax = NULL;
+      lplot->zminmax = NULL;
+      if ( (flag & 0x0f0 ) != 0 )
+	{ if ( load_VectF(&(lplot->colminmax)) == 0) return(0);}
+      if ( (flag & 0xf00 ) != 0 )
+	{ if ( load_VectF(&(lplot->zminmax)) == 0) return(0);}
       if (store_record(Xgc,CODEGray,(char *) lplot) == 0) return(0);
-      
     }
   else 
     {
@@ -1065,9 +1072,9 @@ static int load_Gray(BCG *Xgc)
 
 static int load_Gray1(BCG *Xgc)
 {
- 
-  struct rec_gray *lplot;
-  lplot= ((struct rec_gray *) MALLOC(sizeof(struct rec_gray)));
+  int flag;
+  struct rec_gray1 *lplot;
+  lplot= ((struct rec_gray1 *) MALLOC(sizeof(struct rec_gray1)));
   if (lplot != NULL)
     {
       lplot->x = lplot->y = NULL; /* unused in Gray1 */
@@ -1081,6 +1088,14 @@ static int load_Gray1(BCG *Xgc)
       if ( load_VectF(&(lplot->brect_kp)) == 0) return(0);
       if ( load_VectLI(&(lplot->aaint))  == 0) return(0);
       if ( load_VectLI(&(lplot->aaint_kp)) == 0) return(0);
+      if ( load_LI(&flag) == 0) return(0);
+      lplot->remap= flag & 0x00f ;
+      lplot->colminmax = NULL;
+      lplot->zminmax = NULL;
+      if ( (flag & 0x0f0 ) != 0 )
+	{ if ( load_VectF(&(lplot->colminmax)) == 0) return(0);}
+      if ( (flag & 0xf00 ) != 0 )
+	{ if ( load_VectF(&(lplot->zminmax)) == 0) return(0);}
       if (store_record(Xgc,CODEGray1,(char *) lplot) == 0) return(0);
     }
   else 
@@ -1093,7 +1108,7 @@ static int load_Gray1(BCG *Xgc)
 
 static int load_Gray2(BCG *Xgc)
 {
- 
+  int flag;
   struct rec_gray_2 *lplot;
   lplot= ((struct rec_gray_2 *) MALLOC(sizeof(struct rec_gray_2)));
   if (lplot != NULL)
@@ -1103,7 +1118,15 @@ static int load_Gray2(BCG *Xgc)
       if ( load_LI(&lplot->code)==0) return(0);
       if ( load_VectF(&(lplot->z)) == 0) return(0);
       if ( load_VectF(&(lplot->xrect)) == 0) return(0);
-      if (store_record(Xgc,CODEGray2,(char *) lplot) == 0) return(0);
+      if ( load_LI(&flag) == 0) return(0);
+      lplot->remap= flag & 0x00f ;
+      lplot->colminmax = NULL;
+      lplot->zminmax = NULL;
+      if ( (flag & 0x0f0 ) != 0 )
+	{ if ( load_VectF(&(lplot->colminmax)) == 0) return(0);}
+      if ( (flag & 0xf00 ) != 0 )
+	{ if ( load_VectF(&(lplot->zminmax)) == 0) return(0);}
+      if (store_record(Xgc,CODEGray1,(char *) lplot) == 0) return(0);
     }
   else 
     {

@@ -20,9 +20,7 @@
 #include "../sparse/spConfig.h"
 #endif
 
-double Mini(vect, n)
-     double *vect;
-     int n;
+double Mini(const double vect[], int n)
 {
   int i;
   double vmin;
@@ -34,9 +32,7 @@ double Mini(vect, n)
   return(vmin);
 }
 
-double Maxi(vect, n)
-     double *vect;
-     int n;
+double Maxi(const double vect[], int n)
 {
   int i;
   double maxi;

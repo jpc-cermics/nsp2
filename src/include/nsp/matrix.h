@@ -135,6 +135,8 @@ typedef int (*F_Enlarge) (void *A,int m,int n);
 
 extern NspMatrix *nsp_matrix_create (const char *name, char type, integer m, integer n); 
 extern NspMatrix *nsp_matrix_create_impl (double first, double step, double last); 
+extern NspMatrix *nsp_matrix_create_linspace(const double first[],const double last[],int r,int n);
+extern NspMatrix *nsp_matrix_create_logspace(const double first[],const double last[],int r,int n);
 NspMatrix *nsp_matrix_create_from_doubles(const char *name,integer m,integer n,...);
 extern int nsp_matrix_fill_with (NspMatrix *A, const NspMatrix *B); 
 extern int nsp_matrix_resize (NspMatrix *A, integer m, integer n); 

@@ -1769,24 +1769,31 @@ static void clean_Contour2D(void *plot)
  * grayplots Matplot 
  *---------------------------------------------------------------------------*/
 
-void store_Gray(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, char *strflag, double *brect, int *aaint)
+void store_Gray(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
+		double *brect, int *aaint,
+		int remap,const double *colminmax,const double *zminmax)
 {
   struct rec_gray *lplot;
   lplot= ((struct rec_gray *) MALLOC(sizeof(struct rec_gray)));
   if (lplot != NULL)
     {
-      lplot->n1= *n1;
-      lplot->n2= *n2;
+      lplot->n1= nx;
+      lplot->n2= ny;
+      lplot->remap = remap;
+      lplot->colminmax = NULL;
+      lplot->zminmax = NULL;
       if ( 
-	  CopyVectF(&(lplot->x), x,*n1) &&
-	  CopyVectF(&(lplot->y), y,*n2) &&
-	  CopyVectF(&(lplot->z), z,(*n1)*(*n2)) &&
+	  CopyVectF(&(lplot->x), x,nx) &&
+	  CopyVectF(&(lplot->y), y,ny) &&
+	  CopyVectF(&(lplot->z), z,(nx)*(ny)) &&
 	  CopyVectC(&(lplot->strflag),strflag,((int)strlen(strflag))+1) &&
 	  CopyVectC(&(lplot->strflag_kp),strflag,((int)strlen(strflag))+1) &&
 	  CopyVectF(&(lplot->brect),brect,4L) &&
 	  CopyVectF(&(lplot->brect_kp),brect,4L) &&
 	  CopyVectLI(&(lplot->aaint),aaint,4)  &&
-	  CopyVectLI(&(lplot->aaint_kp),aaint,4) 
+	  CopyVectLI(&(lplot->aaint_kp),aaint,4) &&
+	  ((colminmax != NULL) ? CopyVectF(&(lplot->colminmax),colminmax,2L) : TRUE)&&
+	  ((zminmax != NULL) ? CopyVectF(&(lplot->zminmax),zminmax,2L) : TRUE)
 	  ) 
 	{
 	  store_record(Xgc,CODEGray, lplot);
@@ -1797,24 +1804,30 @@ void store_Gray(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, char
 
 /** For matrices  z(i,j) **/
 
-void store_Gray1(BCG *Xgc,double *z, int *n1, int *n2, char *strflag, double *brect, int *aaint)
+void store_Gray1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double *brect, int *aaint,
+		 int remap,const double *colminmax,const double *zminmax)
 {
-  struct rec_gray *lplot;
-  lplot= ((struct rec_gray *) MALLOC(sizeof(struct rec_gray)));
+  struct rec_gray1 *lplot;
+  lplot= ((struct rec_gray1 *) MALLOC(sizeof(struct rec_gray1)));
   if (lplot != NULL)
     {
-      lplot->n1= *n1;
-      lplot->n2= *n2;
+      lplot->n1= nr;
+      lplot->n2= nc;
       lplot->x = NULL;
       lplot->y = NULL;
+      lplot->remap = remap;
+      lplot->colminmax = NULL;
+      lplot->zminmax = NULL;
       if ( 
-	  CopyVectF(&(lplot->z), z,(*n1)*(*n2)) &&
+	  CopyVectF(&(lplot->z), z,nr*nc) &&
 	  CopyVectC(&(lplot->strflag),strflag,((int)strlen(strflag))+1) &&
 	  CopyVectC(&(lplot->strflag_kp),strflag,((int)strlen(strflag))+1) &&
 	  CopyVectF(&(lplot->brect),brect,4L) &&
 	  CopyVectF(&(lplot->brect_kp),brect,4L) &&
 	  CopyVectLI(&(lplot->aaint),aaint,4)  &&
-	  CopyVectLI(&(lplot->aaint_kp),aaint,4) 
+	  CopyVectLI(&(lplot->aaint_kp),aaint,4) &&
+	  ((colminmax != NULL) ? CopyVectF(&(lplot->colminmax),colminmax,2L) : TRUE)&&
+	  ((zminmax != NULL) ? CopyVectF(&(lplot->zminmax),zminmax,2L) : TRUE)
 	  ) 
 	{
 	  store_record(Xgc,CODEGray1, lplot);
@@ -1825,17 +1838,23 @@ void store_Gray1(BCG *Xgc,double *z, int *n1, int *n2, char *strflag, double *br
 
 
 
-void store_Gray2(BCG *Xgc,double *z, int *n1, int *n2, double *xrect)
+void store_Gray2(BCG *Xgc,double *z, int nr, int nc, double *xrect,
+		 int remap,const double *colminmax,const double *zminmax)
 {
   struct rec_gray_2 *lplot;
   lplot= ((struct rec_gray_2 *) MALLOC(sizeof(struct rec_gray_2)));
   if (lplot != NULL)
     {
-      lplot->n1= *n1;
-      lplot->n2= *n2;
+      lplot->n1= nr;
+      lplot->n2= nc;
+      lplot->remap = remap;
+      lplot->colminmax = NULL;
+      lplot->zminmax = NULL;
       if ( 
-	  CopyVectF(&(lplot->z), z,(*n1)*(*n2)) &&
-	  CopyVectF(&(lplot->xrect),xrect,4L) 
+	  CopyVectF(&(lplot->z), z,nr*nc) &&
+	  CopyVectF(&(lplot->xrect),xrect,4L) &&
+	  ((colminmax != NULL) ? CopyVectF(&(lplot->colminmax),colminmax,2L) : TRUE)&&
+	  ((zminmax != NULL) ? CopyVectF(&(lplot->zminmax),zminmax,2L) : TRUE)
 	  ) 
 	{
 	  store_record(Xgc,CODEGray2, lplot);
@@ -1850,24 +1869,26 @@ static void replay_Gray(BCG *Xgc,void *theplot)
 {
   struct rec_gray *pl3d;
   pl3d= (struct rec_gray *)theplot;
-  nsp_draw_matrix(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,
-		  pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
+  nsp_draw_matrix(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->n1,pl3d->n2,
+		  pl3d->strflag,pl3d->brect,pl3d->aaint,
+		  pl3d->remap,pl3d->colminmax,pl3d->zminmax);
 }
 
 static void replay_Gray1(BCG *Xgc,void *theplot)
 {
-  struct rec_gray *pl3d;
-  pl3d= (struct rec_gray *)theplot;
-  nsp_draw_matrix_1(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
-		    pl3d->strflag,pl3d->brect,pl3d->aaint,0L);
+  struct rec_gray1 *pl3d;
+  pl3d= (struct rec_gray1 *)theplot;
+  nsp_draw_matrix_1(Xgc,pl3d->z,pl3d->n1,pl3d->n2,
+		    pl3d->strflag,pl3d->brect,pl3d->aaint,
+		    pl3d->remap,pl3d->colminmax,pl3d->zminmax);
 }
 
 static void replay_Gray2(BCG *Xgc,void *theplot)
 {
   struct rec_gray_2 *pl3d;
   pl3d= (struct rec_gray_2 *)theplot;
-  nsp_draw_matrix_2(Xgc,pl3d->z,&pl3d->n1,&pl3d->n2,
-		    pl3d->xrect);
+  nsp_draw_matrix_2(Xgc,pl3d->z,pl3d->n1,pl3d->n2, pl3d->xrect,
+		    pl3d->remap,pl3d->colminmax,pl3d->zminmax);
 }
 
 /* same for Gray1 and Gray2 */
@@ -1886,12 +1907,31 @@ static void clean_Gray(void *plot)
   FREE(theplot->aaint_kp);   
 }
 
+static void clean_Gray1(void *plot)
+{
+  struct rec_gray1 *theplot;
+  theplot=(struct rec_gray1 *) plot;
+  FREE(theplot->x);FREE(theplot->y);
+  FREE(theplot->z);
+  FREE(theplot->strflag);
+  FREE(theplot->brect);
+  FREE(theplot->aaint);   
+  FREE(theplot->strflag_kp);
+  FREE(theplot->brect_kp);
+  FREE(theplot->aaint_kp);   
+  FREE(theplot->colminmax);   
+  FREE(theplot->zminmax);   
+}
+
+
 static void clean_Gray2(void *plot)
 {
   struct rec_gray_2 *theplot;
   theplot=(struct rec_gray_2 *) plot;
   FREE(theplot->z);
   FREE(theplot->xrect);
+  FREE(theplot->colminmax);   
+  FREE(theplot->zminmax);   
 }
 
 

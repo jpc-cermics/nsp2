@@ -32,12 +32,6 @@ NspClassC *new_classc();
  * Object methods redefined for classc 
  */
 
-#ifdef ClassC_Private 
-static int init_classc(NspClassC *o,NspTypeClassC *type);
-static char *classc_type_as_string(void);
-static char *classc_type_short_string(void);
-static NspMethods *classc_get_methods(void); 
-#endif /* ClassC_Private */
 
 #define NULLCLC (NspClassC*) 0
 
@@ -53,3 +47,9 @@ extern NspClassC *GetClassC (Stack stack, int i);
 
 #endif 
 
+#ifdef ClassC_Private 
+static int init_classc(NspClassC *o,NspTypeClassC *type);
+static char *classc_type_as_string(void);
+static char *classc_type_short_string(void);
+static NspMethods *classc_get_methods(void); 
+#endif /* ClassC_Private */

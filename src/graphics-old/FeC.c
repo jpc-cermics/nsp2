@@ -212,6 +212,203 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
   return(0);
 }
 
+/*------------------------------------------------------------
+ * similar to nspfec but the function is defined on a grid 
+ * which is to de decomposed as triangles. 
+ *  ______ 
+ *  | /| /|
+ *  |/_|/_|  
+ *  | /| /|
+ *  |/_|/_|
+ * 
+ * this is to be moved in the Gray function 
+ * 
+ *---------------------------------------------------------------*/
+
+int nsp_fec1(BCG *Xgc,double *x, double *y, double *func,int nx, int ny, 
+	     char *strflag,const char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
+{
+  int i,*xm,*ym,j,k, n1=1, Nnode= nx*ny;
+  /** Boundaries of the frame **/
+  update_frame_bounds(Xgc,0,"gnn",x,y,&n1,&Nnode,aaint,strflag,brect);
+
+  /* Storing values if using the Record driver */
+  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
+    /* added zminmax and colminmax (bruno) */
+    /* FIXME: 
+       store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax);
+    */
+
+  /** Allocation **/
+  xm = graphic_alloc(0,Nnode,sizeof(int));
+  ym = graphic_alloc(1,Nnode,sizeof(int));
+  if ( xm == 0 || ym == 0) 
+    {
+      sciprint("Running out of memory \n");
+      return 0;
+    }      
+  
+  for ( i = 0 ; i < nx  ; i++ )
+    for ( j = 0 ; j < ny  ; j++) 
+      {
+	double xp=x[i],yp=y[j];
+	scale_f2i(Xgc,&xp,&yp,xm+i+nx*j,ym+i+nx*j,1);
+      }
+
+  /* Fec code */
+  frame_clip_on(Xgc);
+  {
+    int nz;
+    int whiteid;
+    
+    double *zlevel, dz, zmin, zmax, fxy[3], sx[3], sy[3];
+    int *zone, *fill, kp, perm[3], zxy[3], color_min;
+
+    /* choice between zmin and zmax given by the user or computed
+     * with the min and max z values. In matdes.c I have put 
+     * zminmax[0]= zminmax[1]=0 if the user don't give this argument 
+     */
+
+    if ( zminmax[0]==zminmax[1] ) { 
+      zmin=(double) Mini(func,Nnode);
+      zmax=(double) Maxi(func,Nnode);
+    } 
+    else {
+      zmin = Min( zminmax[0] , zminmax[1] );
+      zmax = Max( zminmax[0] , zminmax[1] );
+    };
+      
+    whiteid= Xgc->graphic_engine->xget_last(Xgc);
+    nz=whiteid;
+    
+    /* choice for the colormap (in case of a user 's choice 
+     * verify the parameter). For the automatic choice I have
+     * put colminmax[0]=colominmax[1]=1 in matdes.c  
+     */
+
+    if ( colminmax[0] == colminmax[1] )  /* automatic choice (see matdes.c) */
+      color_min=1; 
+    else if ( colminmax[0] < 1 || colminmax[1] > nz || colminmax[0] > colminmax[1] ) {
+      /* ici on pourrait plutot forcer les choses en imposant 1<= colmin < colmax <= nz */
+      sciprint("\n\r fec : colminmax badly choosen ! ");
+      return ( 0 );
+    } 
+    else {
+      color_min = colminmax[0];
+      nz = colminmax[1] - colminmax[0] + 1;
+    };
+      
+    /* 
+     *  1/ the purpose of the first part is to to compute the "zone" of each point :
+     *    
+     *    - the array zlevel are the boundaries between the differents zones :
+     *
+     *        zlevel[0] = zmin, zlevel[nz] = zmax 
+     *     and zlevel[i] = zmin + i*(zmax-zmin)/nz
+     *  
+     *     - if  zlevel[j-1] <= func[i] < zlevel[j]  then zone[i] = j
+     *       if func[i] > zmax  then zone[i] = nz+1
+     *       if func[i] < zmin  then zone[i] = 0
+     *     - the zone j is filled with color fill[j] with
+     *       fill[j] = -(j-1 + color_min) if 1 <= j <= nz
+     *       fill[0] = color attributed for fill[1]     ---> this behavior may be changed ...
+     *       fill[nz+1] = color attributed for fill[nz] --/
+     */
+ 
+    /* allocations for some arrays ... */
+
+    zone = graphic_alloc(2,Nnode,sizeof(int));
+    zlevel = graphic_alloc(3,nz+1,sizeof(double));
+    fill  = graphic_alloc(4,nz+2,sizeof(int));
+    if ( (zone == NULL) || (zlevel == NULL) || (fill  == NULL)) 
+      {
+	Scistring("fec: malloc No more Place\n");
+	return 0;
+      }
+    /* compute the fill array (fill = - num color) */
+    fill[1] = - color_min;
+    for ( i = 2 ; i <= nz ; i++ ) fill[i] = fill[i-1] - 1;
+    fill[0] = fill[1] ; fill[nz+1] = fill[nz];
+
+    /* compute the zlevels */
+    dz = (zmax - zmin)/nz;
+    for (i = 0 ; i < nz ; i++) zlevel[i] = zmin + i*dz;
+    zlevel[nz] = zmax;
+
+    /* finaly compute the zone of each point */
+
+    for ( i = 0 ; i < Nnode ; i++ ) {
+      if ( func[i] > zmax )
+	zone[i] = nz+1;
+      else if ( func[i] < zmin )
+	zone[i] = 0;
+      else
+	zone[i] = floor( (func[i] - zmin)/dz ) + 1;
+    };
+
+    /* 
+     * 2/ loop on the triangles : each triangle is finally decomposed 
+     *    into its differents zones (polygons) by the function PaintTriangle   
+     */
+    for ( i = 0 ; i < nx -1 ; i++ )
+      for ( j = 0 ; j < ny -1 ; j++) 
+	{
+	  int pos[3],tr;
+	  for ( tr = 0 ; tr < 2 ; tr ++ )
+	    {
+	      if ( tr == 0 ) 
+		{ 
+		  /* upper triangle 
+		   *  ___
+		   *  | /
+		   *  |/
+		   */
+		  pos[0]=i+nx*j; pos[1]=pos[0]+nx;  pos[2]=pos[0]+nx+1;
+		}
+	      else 
+		{
+		  /* lower triangle 
+		   * 
+		   *   /|
+		   *  /_|
+		   */
+		  pos[0]=i+nx*j;  pos[1]=pos[0]+1;   pos[2]=pos[0]+nx+1;
+		}
+	      /* retrieve node numbers and functions values */
+	      for ( k = 0 ; k < 3 ; k++ ) zxy[k]= zone[pos[k]];
+	      /* get the permutation perm so as zxy[perm] is sorted */
+	      PermutOfSort(zxy, perm); 
+	      /* apply the permutation to get the triangle 's vertices
+	       * in increasing zone (zxy[0] <= zxy[1] <= zxy[2]) 
+	       */
+	      for ( k = 0 ; k < 3 ; k++ ) {
+		kp = perm[k];
+		zxy[k]= zone[pos[kp]];
+		fxy[k]= func[pos[kp]];
+		sx[k] = xm[pos[kp]];
+		sy[k] = ym[pos[kp]];
+	      }
+	      /* call the "painting" function */
+	      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+	    }
+	}
+  }
+
+  frame_clip_off(Xgc);
+
+  /** Draw Axis or only rectangle **/
+  axis_draw(Xgc,strflag);
+
+  /** Drawing the Legends **/
+  if ((int)strlen(strflag) >=1  && strflag[0] == '1')
+    {
+      int style = -1;
+      nsp_legends(Xgc,legend_ur,1,&style,legend,"@"); 
+    }
+  return(0);
+}
+
+
 /********************************************************************
  * functions used by the modified code (Bruno 01/02/2001)
  ********************************************************************/

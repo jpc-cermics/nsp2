@@ -1880,42 +1880,11 @@ static void fillrectangle(BCG *Xgc,const int rect[])
  *  on each rectangle the average value of z is computed 
  *----------------------------------------------------------------------------------*/
 
-static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
+static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int nx,int ny,
+				  int remap,const double *colminmax,const double *zminmax)
 {
-  double zmoy,zmax,zmin,zmaxmin;
-  int tab[4];
-  int i,j,whiteid,fill[1],cpat,xz[2];
   DRAW_CHECK;
-  zmin=Mini(z,(n1)*(n2));
-  zmax=Maxi(z,(n1)*(n2));
-  zmaxmin=zmax-zmin;
-  if (zmaxmin <= SMDOUBLE) zmaxmin=SMDOUBLE;
-  
-  whiteid = xget_last(Xgc);
-  cpat = xget_pattern(Xgc);
-  xget_windowdim(Xgc,xz,xz+1);
-
-
-  for (i = 0 ; i < (n1)-1 ; i++)
-    for (j = 0 ; j < (n2)-1 ; j++)
-      {
-	int w,h;
-	zmoy=1/4.0*(z[i+n1*j]+z[i+n1*(j+1)]+z[i+1+n1*j]+z[i+1+n1*(j+1)]);
-	fill[0]=1 + inint((whiteid-1)*(zmoy-zmin)/(zmaxmin));
-	xset_pattern(Xgc,*fill);
-	w=Abs(x[i+1]-x[i]);h=Abs(y[j+1]-y[j]);
-	/* We don't trace rectangle which are totally out **/
-	if ( w != 0 && h != 0 && x[i] < xz[0] && y[j+1] < xz[1] && x[i]+w > 0 && y[j+1]+h > 0 )
-	  if ( Abs(x[i]) < int16max && Abs(y[j+1]) < int16max && w < uns16max && h < uns16max)
-	    {
-	      tab[0] = x[i]; 
-	      tab[1] = y[j+1]; 
-	      tab[2] = w;
-	      tab[3] = h;
-	      fillrectangle(Xgc,tab);
-	    }
-      }
-  xset_pattern(Xgc,cpat);
+  fill_grid_rectangles_gen(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
 
 /*----------------------------------------------------------------------------------
@@ -1928,34 +1897,11 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int
  *        P1= x[i],y[j] x[i+1],y[j+1]
  *----------------------------------------------------------------------------------*/
 
-static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
+static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int nx,int ny,
+				  int remap,const double *colminmax,const double *zminmax)
 {
-  int i,j,fill[1],cpat,xz[2];
-  int tab[4];
   DRAW_CHECK;
-  cpat = xget_pattern(Xgc);
-  xget_windowdim(Xgc,xz,xz+1);
-
-  for (i = 0 ; i < (n1)-1 ; i++)
-    for (j = 0 ; j < (n2)-1 ; j++)
-      {
-	int w,h;
-	fill[0]= z[i+(n1-1)*j];
-	xset_pattern(Xgc,*fill);
-	w=Abs(x[j+1]-x[j]);
-	h=Abs(y[i+1]-y[i]);
-	/* We don't trace rectangle which are totally out **/
-	if ( w != 0 && h != 0 && x[j] < xz[0] && y[i] < xz[1] && x[j]+w > 0 && y[i]+h > 0 )
-	  if ( Abs(x[j]) < int16max && Abs(y[i+1]) < int16max && w < uns16max && h < uns16max)
-	    {
-	      tab[0] = x[j]; 
-	      tab[1] = y[i]; 
-	      tab[2] = w;
-	      tab[3] = h;
-	      fillrectangle(Xgc,tab);
-	    }
-      }
-  xset_pattern(Xgc,cpat);
+  fill_grid_rectangles1_gen(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
 
 
@@ -2159,6 +2105,22 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   glEnd();
   
 }
+
+
+void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n)
+{
+  gint i;
+  if ( n <= 1) return;
+  DRAW_CHECK;
+  glBegin(GL_POLYGON);
+  for ( i=0 ;  i< n ; i++) 
+    {
+      xset_pattern(Xgc,Abs(colors[i]));
+      glVertex2i( vx[i], vy[i]);
+    }
+  glEnd();
+}
+
 
 /**
  * fillpolylines3D_shade: 

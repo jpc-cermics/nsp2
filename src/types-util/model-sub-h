@@ -32,12 +32,6 @@ Nsp@TYPENAME@ *new_@TYPEDOWNCASE@();
  * Object methods redefined for @TYPEDOWNCASE@ 
  */
 
-#ifdef @TYPENAME@_Private 
-static int init_@TYPEDOWNCASE@(Nsp@TYPENAME@ *o,NspType@TYPENAME@ *type);
-static char *@TYPEDOWNCASE@_type_as_string(void);
-static char *@TYPEDOWNCASE@_type_short_string(void);
-static NspMethods *@TYPEDOWNCASE@_get_methods(void); 
-#endif /* @TYPENAME@_Private */
 
 #define @NULL@ (Nsp@TYPENAME@*) 0
 
@@ -53,3 +47,9 @@ extern Nsp@TYPENAME@ *Get@TYPENAME@ (Stack stack, int i);
 
 #endif 
 
+#ifdef @TYPENAME@_Private 
+static int init_@TYPEDOWNCASE@(Nsp@TYPENAME@ *o,NspType@TYPENAME@ *type);
+static char *@TYPEDOWNCASE@_type_as_string(void);
+static char *@TYPEDOWNCASE@_type_short_string(void);
+static NspMethods *@TYPEDOWNCASE@_get_methods(void); 
+#endif /* @TYPENAME@_Private */

@@ -131,6 +131,9 @@ gint nspg_flags_get_value(GType flag_type, NspObject *obj, gint *val);
 int nspg_value_from_nspobject(GValue *value, NspObject *obj);
 NspObject * nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed);
 
+extern int nsp_flags_add_constants(NspHash *table, GType flags_type,const gchar *strip_prefix);
+extern int nsp_enum_add_constants(NspHash *table, GType enum_type, const gchar *strip_prefix);
+
 
 /* CustomNotify */
 
@@ -169,6 +172,10 @@ extern GtkListStore *nsp_gtk_list_store_from_bmat(NspBMatrix *M);
 extern GtkTreeStore *nsp_gtk_tree_store_from_bmat(NspBMatrix *M);
 extern int nsp_gtk_tree_model_set_row_from_bmat(GtkTreeModel *model, GtkTreeIter *iter,NspBMatrix *M,int row);
 extern int nsp_gtk_tree_model_set_col_from_bmat(GtkTreeModel *model,GtkTreeIter *iter1, NspBMatrix *M,int col);
+
+extern int nsp_gdk_rectangle_from_object(NspObject *object, GdkRectangle *rectangle);
+extern GType  nspg_type_from_object(NspObject *obj) ;
+
 
 #endif 
 

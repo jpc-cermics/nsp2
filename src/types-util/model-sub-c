@@ -31,10 +31,12 @@ NspType@TYPENAME@ *new_type_@TYPEDOWNCASE@(type_mode mode)
       return nsp_type_@TYPEDOWNCASE@;
     }
   if ((type =  malloc(sizeof(NspType@PARENT@))) == NULL) return NULL;
-
+  type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_@PARENTDOWNCASE@(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->interface = NULL;
+  type->attrs = NULL;/* classc_attrs ; */
+  type->get_attrs = (attrs_func *) int_get_attribute; 
+  type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods = @TYPEDOWNCASE@_get_methods; 
   type->new = (new_func *) new_@TYPEDOWNCASE@;
 
@@ -66,7 +68,10 @@ NspType@TYPENAME@ *new_type_@TYPEDOWNCASE@(type_mode mode)
       return ( mode == T_BASE ) ? type : new_type_@TYPEDOWNCASE@(mode);
     }
   else 
-    return type;
+    {
+      type->id = nsp_type_@TYPEDOWNCASE@_id;
+      return type;
+    }
 }
 
 /*
@@ -133,19 +138,18 @@ Nsp@TYPENAME@   *@TYPEDOWNCASE@_object(NspObject *O)
   /** Check type **/
   if ( check_cast(O,nsp_type_@TYPEDOWNCASE@_id) == TRUE) return ((Nsp@TYPENAME@ *) O);
   else 
-    Scierror("Error:\tArgument should be a %s\n",
-	     NSP_TYPE_OBJECT(nsp_type_@TYPEDOWNCASE@->surtype)->s_type());
+    Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_@TYPEDOWNCASE@));
   return(NULL);
 }
 
 int Is@TYPENAME@Obj(Stack stack, int i)
 {
-  return ObjType(NthObj(i) , nsp_type_@TYPEDOWNCASE@_id);
+  return nsp_object_type(NthObj(i) , nsp_type_@TYPEDOWNCASE@_id);
 }
 
 int Is@TYPENAME@(NspObject *O)
 {
-  return ObjType(O,nsp_type_@TYPEDOWNCASE@_id);
+  return nsp_object_type(O,nsp_type_@TYPEDOWNCASE@_id);
 }
 
 Nsp@TYPENAME@  *Get@TYPENAME@Copy(Stack stack, int i)

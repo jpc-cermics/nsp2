@@ -229,7 +229,7 @@ void scig_tops(int win_num, int colored, char *bufname, char *driver,char option
       wdim_p = wdim;
     }
   
-  graphic_engine->initgraphic(bufname,&win_num,wdim,NULL,NULL,NULL,option);
+  graphic_engine->initgraphic(bufname,&win_num,wdim_p,NULL,NULL,NULL,option);
   if (colored==1) 
     graphic_engine->xset_usecolor(Xgc,un);
   else

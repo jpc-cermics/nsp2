@@ -29,6 +29,7 @@ static void WriteColorRGB(BCG *Xgc,char *str, void *tab, int ind);
 static void WriteColorRGBDef(BCG *Xgc,char *str,void *tab, int ind);
 
 static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2]);
+static int nsp_ps_header(FILE *out,char *bbox);
 
 #define Char2Int(x)   ( x & 0x000000ff )
 
@@ -1205,24 +1206,24 @@ static void fillrectangle(BCG *Xgc,const int rect[])
  * accelerated draw a set of rectangles, not implemented for Pos 
  *----------------------------------------------------------------------------------*/
 
-extern void fill_grid_rectangles_gen(BCG *Xgc,int *x, int *y, double *z, int n1, int n2);
 
-static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
+
+static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int nx,int ny,
+				  int remap,const double *colminmax,const double *zminmax)
 {
-  fill_grid_rectangles_gen(Xgc,x,y,z,n1,n2);
-
+  fill_grid_rectangles_gen(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
+
 
 /*----------------------------------------------------------------------------------
  * accelerated draw a set of rectangles, not implemented for Pos 
  *----------------------------------------------------------------------------------*/
 
 
-extern void fill_grid_rectangles1_gen(BCG *Xgc,int *x, int *y, double *z, int n1, int n2);
-
-static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int n1, int n2)
+static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int nx,int ny,
+				  int remap,const double *colminmax,const double *zminmax)
 {
-  fill_grid_rectangles1_gen(Xgc,x,y,z,n1,n2);
+  fill_grid_rectangles1_gen(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
 
 /** Draw or fill a set of ellipsis or part of ellipsis **/
@@ -1401,14 +1402,12 @@ static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *view
     }
   if (EntryCounter == 0)
     { 
-
       fnum=0;      loadfamily("Courier",&fnum);
       fnum=1;      loadfamily("Symbol",&fnum);
       fnum=2;      loadfamily("Times-Roman",&fnum);
       fnum=3;      loadfamily("Times-Italic",&fnum);
       fnum=4;      loadfamily("Times-Bold",&fnum);
       fnum=5;      loadfamily("Times-BoldItalic",&fnum);
-
     }
   Xgc->CurResizeStatus = -1;  /* to be sure that next will initialize */
   Xgc->CurColorStatus = -1;  /* to be sure that next will initialize */
@@ -1425,17 +1424,22 @@ static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *view
 
   get_ps_data(mode,bbox,geom,x);
 
-  if ( mode == 'e' ) 
+  switch (mode) 
     {
+    case 'p':
+    case 'l':
+    case 'k': 
+    case 'd': 
+      nsp_ps_header(file,bbox);
+      FPRINTF((file,geom));
+      break;
+    default: 
+      /* this is just for the no header case */
       FPRINTF((file,"\n%%scipos_w=%d\n%%scipos_h=%d",(int)x[0]/2,(int)x[1]/2));
       FPRINTF((file,"\n%% Dessin en bas a gauche de taille %d,%d",(int)x[0]/2,(int)x[1]/2));
       FPRINTF((file,"\n[0.5 %d div 0 0 0.5 %d div neg  0 %d %d div] concat",
 	       (int)prec_fact, (int)prec_fact,(int)x[1]/2,(int) prec_fact ));
-    }
-  else 
-    {
-      FPRINTF((file,bbox));
-      FPRINTF((file,geom));
+      break;
     }
 
   FPRINTF((file,"\n%% Init driver "));
@@ -1801,7 +1805,7 @@ static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
   /* Compute proper bounding boxes */
   switch (mode ) 
     {
-    case 'p' : 
+    case 'p' : /* portrait */
       ws = (wp-2*marg)/((double) w);
       hs = (hp-2*marg)/((double) h);
       sc = Min(ws,hs);
@@ -1814,7 +1818,7 @@ static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
 	      (int) (hs/10.0 + (hp - hs)/(2*10.0))
 	      );
       break;
-    case 'l':
+    case 'l': /* landscape */
       ws = (hp-2*marg)/((double) w);
       hs = (wp-2*marg)/((double) h);
       sc = Min(ws,hs);
@@ -1826,6 +1830,9 @@ static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
 	      (int) (hs/10.0 + (wp - hs)/(2*10.0)) ,
 	      (int) (ws/10.0 + (hp - ws)/(2*10.0))
 	      );
+      break;
+    case 'd' : /* default */
+      sprintf(bbox,"\n%%%%BoundingBox: %d %d %d %d \n", 0,0,(int) (wdef/20.0),(int) (hdef/20.0));
       break;
     default: 
       ws = w;
@@ -1855,3 +1862,86 @@ static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
       sprintf(geom,"\n[0.5 10 div 0 0 0.5 10 div neg  0 %d 10 div] concat",(int) (hdef/2.0));
     }
 }
+
+static void read_one_line(char **buff,int *stop,FILE *fd,int *buflen);
+
+/*FIXME */
+#define MAX_PATH 1024
+
+
+static int nsp_ps_header(FILE *out,char *bbox)
+{
+  static char *buff = NULL;
+  static int buflen = 512;
+  char header[MAX_PATH];
+  char *env = getenv("SCI");
+  FILE *fd;
+  int stop=0;
+  if (env == NULL) 
+    {
+      sciprint("Environment variable SCI must be defined\n");
+      return FAIL;
+    }
+  sprintf(header,"%s/imp/NperiPos.ps",env);
+  fd=fopen(header,"r");
+  if (fd == NULL) 
+    {
+      sciprint("Cannot open file %f\n");
+      return FAIL;
+    }
+
+  if ( buff == NULL) 
+    {
+      buff = malloc(buflen*sizeof(char));
+      if ( buff == NULL) 
+	{
+	  sciprint("Running out of space\n");
+	  return FAIL;
+	}
+    }
+  /* ommit first line */
+  read_one_line (&buff,&stop,fd,&buflen); 
+  FPRINTF((out,"%s","%!PS-Adobe-2.0 EPSF-2.0"));
+  FPRINTF((out,"%s",bbox));
+  while ( stop != 1)
+    { 
+      read_one_line (&buff,&stop,fd,&buflen); 
+      FPRINTF((out,"%s",buff));
+    }
+  fclose(fd);
+  return OK;
+}
+
+
+static void read_one_line(char **buff,int *stop,FILE *fd,int *buflen)
+{ 
+  int i ,c ;
+  for ( i = 0 ;  (c =getc(fd)) !=  '\n' && c != EOF ; i++) 
+    {
+      if ( i == *buflen -1 ) 
+	{
+	  *buflen += 512;
+	  *buff = realloc(*buff,*buflen*sizeof(char));
+	  if ( *buff == NULL) 
+	    {
+	      fprintf(stderr,"Running out of space \n");
+	      exit(1);
+	    }
+	}
+      (*buff)[i]= c ;
+    }
+  if ( i+1 >= *buflen - 1 ) 
+    {
+      *buflen += 512;
+      *buff == realloc(*buff,*buflen*sizeof(char));
+      if ( *buff == NULL) 
+	{
+	  fprintf(stderr,"Running out of space \n");
+	  exit(1);
+	}
+    }
+  (*buff)[i]='\n';
+  (*buff)[i+1]='\0';
+  if ( c == EOF) {*stop = 1;}
+}
+
