@@ -48,8 +48,10 @@
 #define FOR     -27
 #define FUNCTION -28
 #define ENDFUNCTION -29
-
-#define NOTKEY  -31
+/* -30 is used */
+#define EXEC -31
+#define GLOBAL -32
+#define NOTKEY  -33
 
 /*****************************
  * OPERATORS
