@@ -6,7 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics                            *
  *********************************************************************/
   
-/* block */
+/* block: graphic bloc for scicos  */
 
 #include <stdio.h>   /** for file declaration **/
 #include "nsp/sciio.h" 
