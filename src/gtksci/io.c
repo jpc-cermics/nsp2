@@ -380,15 +380,16 @@ void  nsp_check_gtk_events(void)
     gtk_main_iteration(); 
 }
 
-/*-------------------------------------------------------
+/*
  * winch signal : window size changed 
- *-------------------------------------------------------*/
+ * FIXME: 
+ * not usefull since we call sci_get_screen_size each time we need it
+ */
 
 void sci_winch_signal(int n) 
 {
   int rows,cols;
   sci_get_screen_size (&rows,&cols);
-  if ( rows != 0 && cols != 0 )     C2F(scilines)(&rows,&cols);
 #ifdef DEBUG
   fprintf(stderr,"windows size changed %d %d\r\n",rows,cols);
 #endif 
