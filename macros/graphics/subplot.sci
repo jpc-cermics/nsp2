@@ -1,7 +1,6 @@
 function subplot(m,n,p)
-// Copyright INRIA
-  [lhs,rhs]=argn(0)
-  if rhs==1 then
+// 
+  if nargin == 1 then
     p=modulo(m,10)
     n=modulo((m-p)/10,10)
     m=(m-p-10*n)/100
