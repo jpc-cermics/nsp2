@@ -789,12 +789,15 @@ static int save_Gray(BCG *Xgc,void *plot)
   if ( save_VectLI((lplot->aaint),4L)  == 0) return(0);
   if ( save_VectLI((lplot->aaint_kp),4L) == 0) return(0);
   flag = lplot->remap | ((lplot->colminmax != NULL) ? (1<<4) : 0)  
-    | ((lplot->zminmax != NULL) ? (1 <<8) :0);
+    | ((lplot->zminmax != NULL) ? (1 <<8) :0)
+    | ((lplot->colminmax != NULL) ? (1 <<12) :0);
   if ( save_LI(flag)==0) return(0);
   if ( lplot->colminmax != NULL )  
-    { if ( save_VectF((lplot->colminmax),2L) == 0) return(0);}
+    { if ( save_VectLI((lplot->colminmax),2L) == 0) return(0);}
   if ( lplot->zminmax != NULL )  
     { if ( save_VectF((lplot->zminmax),2L) == 0) return(0);}
+  if ( lplot->colout != NULL )  
+    { if ( save_VectLI((lplot->colout),2L) == 0) return(0);}
   return(1);
 }
 
@@ -816,7 +819,7 @@ static int save_Gray1(BCG *Xgc,void *plot)
     | ((lplot->zminmax != NULL) ? (1 <<8) :0);
   if ( save_LI(flag)==0) return(0);
   if ( lplot->colminmax != NULL )  
-    { if ( save_VectF((lplot->colminmax),2L) == 0) return(0);}
+    { if ( save_VectLI((lplot->colminmax),2L) == 0) return(0);}
   if ( lplot->zminmax != NULL )  
     { if ( save_VectF((lplot->zminmax),2L) == 0) return(0);}
   return(1);
@@ -835,7 +838,7 @@ static int save_Gray2(BCG *Xgc,void *plot)
     | ((lplot->zminmax != NULL) ? (1 <<8) :0);
   if ( save_LI(flag)==0) return(0);
   if ( lplot->colminmax != NULL )  
-    { if ( save_VectF((lplot->colminmax),2L) == 0) return(0);}
+    { if ( save_VectLI((lplot->colminmax),2L) == 0) return(0);}
   if ( lplot->zminmax != NULL )  
     { if ( save_VectF((lplot->zminmax),2L) == 0) return(0);}
   return(1);

@@ -1069,7 +1069,7 @@ static void fillrectangle(BCG *Xgc,const int rect[])
  *----------------------------------------------------------------------------------*/
 
 static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int nx,int ny,
-				  int remap,const double *colminmax,const double *zminmax)
+				  int remap,const int *colminmax,const double *zminmax)
 {
   fill_grid_rectangles_gen(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
@@ -1079,7 +1079,7 @@ static void fill_grid_rectangles(BCG *Xgc,int *x, int *y, double *z, int nx,int 
  *----------------------------------------------------------------------------------*/
 
 static void fill_grid_rectangles1(BCG *Xgc,int *x, int *y, double *z, int nx,int ny,
-				  int remap,const double *colminmax,const double *zminmax)
+				  int remap,const int *colminmax,const double *zminmax)
 {
   fill_grid_rectangles1_gen(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }

@@ -1056,10 +1056,13 @@ static int load_Gray(BCG *Xgc)
       lplot->remap= flag & 0x00f ;
       lplot->colminmax = NULL;
       lplot->zminmax = NULL;
+      lplot->colout = NULL;
       if ( (flag & 0x0f0 ) != 0 )
-	{ if ( load_VectF(&(lplot->colminmax)) == 0) return(0);}
+	{ if ( load_VectLI(&(lplot->colminmax)) == 0) return(0);}
       if ( (flag & 0xf00 ) != 0 )
 	{ if ( load_VectF(&(lplot->zminmax)) == 0) return(0);}
+      if ( (flag & 0xf000 ) != 0 )
+	{ if ( load_VectLI(&(lplot->colout)) == 0) return(0);}
       if (store_record(Xgc,CODEGray,(char *) lplot) == 0) return(0);
     }
   else 
@@ -1093,7 +1096,7 @@ static int load_Gray1(BCG *Xgc)
       lplot->colminmax = NULL;
       lplot->zminmax = NULL;
       if ( (flag & 0x0f0 ) != 0 )
-	{ if ( load_VectF(&(lplot->colminmax)) == 0) return(0);}
+	{ if ( load_VectLI(&(lplot->colminmax)) == 0) return(0);}
       if ( (flag & 0xf00 ) != 0 )
 	{ if ( load_VectF(&(lplot->zminmax)) == 0) return(0);}
       if (store_record(Xgc,CODEGray1,(char *) lplot) == 0) return(0);
@@ -1123,7 +1126,7 @@ static int load_Gray2(BCG *Xgc)
       lplot->colminmax = NULL;
       lplot->zminmax = NULL;
       if ( (flag & 0x0f0 ) != 0 )
-	{ if ( load_VectF(&(lplot->colminmax)) == 0) return(0);}
+	{ if ( load_VectLI(&(lplot->colminmax)) == 0) return(0);}
       if ( (flag & 0xf00 ) != 0 )
 	{ if ( load_VectF(&(lplot->zminmax)) == 0) return(0);}
       if (store_record(Xgc,CODEGray1,(char *) lplot) == 0) return(0);

@@ -16,12 +16,10 @@
 
 /* functions used by the modified version : */
 static void PaintTriangle (BCG *Xgc,double sx[], double sy[], double fxy[], 
-			   int zxy[], 
-			   double zlevel[], int fill[]);
+			   int zxy[],double zlevel[], int fill[]);
 static void PermutOfSort (int tab[], int perm[]);
-static void FindIntersection (double sx[], double sy[], double fxy[],
-				       double z, int inda, int indb, 
-				       int *xint, int *yint);
+static void FindIntersection (double sx[], double sy[], double fxy[],double z, 
+			      int inda, int indb, int *xint, int *yint);
 
 /*------------------------------------------------------------
  *  Iso contour with grey level or colors 
@@ -47,7 +45,7 @@ static void FindIntersection (double sx[], double sy[], double fxy[],
 ---------------------------------------------------------------*/
 
 int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, 
-	     char *strflag,const char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
+	    char *strflag,const char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
 {
   int i,*xm,*ym,j,k, n1=1;
 

@@ -1597,7 +1597,8 @@ static void clean_Fac3D(void *plot)
  *---------------------------------------------------------------------------*/
 
 void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, char *strflag,
-	       const char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
+	       const char *legend, double *brect, int *aaint,const double *zminmax,const int *colminmax, 
+	       const int *colout)
 {
   struct rec_fec *lplot;
   lplot= ((struct rec_fec *) MALLOC(sizeof(struct rec_fec)));
@@ -1605,14 +1606,18 @@ void store_Fec(BCG *Xgc, double *x, double *y, double *triangles, double *func, 
     {
       lplot->Nnode= *Nnode;
       lplot->Ntr= *Ntr;
+      lplot->colminmax = NULL;
+      lplot->zminmax = NULL;
+      lplot->colout = NULL;
       if ( 
 	  CopyVectF(&(lplot->x), x,*Nnode) &&
 	  CopyVectF(&(lplot->y), y,*Nnode) &&
 	  CopyVectF(&(lplot->triangles), triangles,(*Ntr)*5) &&
 	  CopyVectF(&(lplot->func), func,*Nnode ) && 
 	  CopyVectF(&(lplot->brect), brect,4L) &&
-	  CopyVectF(&(lplot->zminmax), zminmax,2L) &&       /* entry added by Bruno */
-	  CopyVectLI(&(lplot->colminmax), colminmax,2L) &&   /*     idem             */
+	  ((colminmax != NULL) ? CopyVectLI(&(lplot->colminmax),colminmax,2L) : TRUE)&&
+	  ((zminmax != NULL) ? CopyVectF(&(lplot->zminmax),zminmax,2L) : TRUE)&&
+	  ((colout != NULL) ? CopyVectLI(&(lplot->colout),colout,2L) : TRUE)&&
 	  CopyVectF(&(lplot->brect_kp), brect,4L) &&
 	  CopyVectLI(&(lplot->aaint), aaint,4) &&
 	  CopyVectLI(&(lplot->aaint_kp), aaint,4) &&
@@ -1633,8 +1638,7 @@ static void replay_Fec(BCG *Xgc,void *theplot)
   nsp_fec(Xgc,plfec->x,plfec->y,plfec->triangles,plfec->func,
 	   &plfec->Nnode,&plfec->Ntr,
 	   plfec->strflag,plfec->legend,plfec->brect,plfec->aaint,
-	   plfec->zminmax, plfec->colminmax    /* added by bruno */
-	   );
+	   plfec->zminmax, plfec->colminmax, plfec->colout );
 }
 
 
@@ -1771,7 +1775,7 @@ static void clean_Contour2D(void *plot)
 
 void store_Gray(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
 		double *brect, int *aaint,
-		int remap,const double *colminmax,const double *zminmax)
+		int remap,const int *colminmax,const double *zminmax,const int *colout)
 {
   struct rec_gray *lplot;
   lplot= ((struct rec_gray *) MALLOC(sizeof(struct rec_gray)));
@@ -1782,6 +1786,7 @@ void store_Gray(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *
       lplot->remap = remap;
       lplot->colminmax = NULL;
       lplot->zminmax = NULL;
+      lplot->colout = NULL;
       if ( 
 	  CopyVectF(&(lplot->x), x,nx) &&
 	  CopyVectF(&(lplot->y), y,ny) &&
@@ -1792,8 +1797,9 @@ void store_Gray(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *
 	  CopyVectF(&(lplot->brect_kp),brect,4L) &&
 	  CopyVectLI(&(lplot->aaint),aaint,4)  &&
 	  CopyVectLI(&(lplot->aaint_kp),aaint,4) &&
-	  ((colminmax != NULL) ? CopyVectF(&(lplot->colminmax),colminmax,2L) : TRUE)&&
-	  ((zminmax != NULL) ? CopyVectF(&(lplot->zminmax),zminmax,2L) : TRUE)
+	  ((colminmax != NULL) ? CopyVectLI(&(lplot->colminmax),colminmax,2L) : TRUE)&&
+	  ((zminmax != NULL) ? CopyVectF(&(lplot->zminmax),zminmax,2L) : TRUE) &&
+	  ((colout != NULL) ? CopyVectLI(&(lplot->colout),colout,2L) : TRUE)
 	  ) 
 	{
 	  store_record(Xgc,CODEGray, lplot);
@@ -1805,7 +1811,7 @@ void store_Gray(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *
 /** For matrices  z(i,j) **/
 
 void store_Gray1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double *brect, int *aaint,
-		 int remap,const double *colminmax,const double *zminmax)
+		 int remap,const int *colminmax,const double *zminmax)
 {
   struct rec_gray1 *lplot;
   lplot= ((struct rec_gray1 *) MALLOC(sizeof(struct rec_gray1)));
@@ -1826,7 +1832,7 @@ void store_Gray1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double *brec
 	  CopyVectF(&(lplot->brect_kp),brect,4L) &&
 	  CopyVectLI(&(lplot->aaint),aaint,4)  &&
 	  CopyVectLI(&(lplot->aaint_kp),aaint,4) &&
-	  ((colminmax != NULL) ? CopyVectF(&(lplot->colminmax),colminmax,2L) : TRUE)&&
+	  ((colminmax != NULL) ? CopyVectLI(&(lplot->colminmax),colminmax,2L) : TRUE)&&
 	  ((zminmax != NULL) ? CopyVectF(&(lplot->zminmax),zminmax,2L) : TRUE)
 	  ) 
 	{
@@ -1839,7 +1845,7 @@ void store_Gray1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double *brec
 
 
 void store_Gray2(BCG *Xgc,double *z, int nr, int nc, double *xrect,
-		 int remap,const double *colminmax,const double *zminmax)
+		 int remap,const int *colminmax,const double *zminmax)
 {
   struct rec_gray_2 *lplot;
   lplot= ((struct rec_gray_2 *) MALLOC(sizeof(struct rec_gray_2)));
@@ -1853,7 +1859,7 @@ void store_Gray2(BCG *Xgc,double *z, int nr, int nc, double *xrect,
       if ( 
 	  CopyVectF(&(lplot->z), z,nr*nc) &&
 	  CopyVectF(&(lplot->xrect),xrect,4L) &&
-	  ((colminmax != NULL) ? CopyVectF(&(lplot->colminmax),colminmax,2L) : TRUE)&&
+	  ((colminmax != NULL) ? CopyVectLI(&(lplot->colminmax),colminmax,2L) : TRUE)&&
 	  ((zminmax != NULL) ? CopyVectF(&(lplot->zminmax),zminmax,2L) : TRUE)
 	  ) 
 	{
@@ -1871,7 +1877,7 @@ static void replay_Gray(BCG *Xgc,void *theplot)
   pl3d= (struct rec_gray *)theplot;
   nsp_draw_matrix(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->n1,pl3d->n2,
 		  pl3d->strflag,pl3d->brect,pl3d->aaint,
-		  pl3d->remap,pl3d->colminmax,pl3d->zminmax);
+		  pl3d->remap,pl3d->colminmax,pl3d->zminmax,pl3d->colout);
 }
 
 static void replay_Gray1(BCG *Xgc,void *theplot)

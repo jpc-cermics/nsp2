@@ -298,64 +298,44 @@ static int * check_nax(Stack stack,char *fname,char *varname,NspMatrix *var)
 
 /*-----------------------------------------------------------
  * Check optional argument zminmax
- * note that var can be changed by this function 
- * (Bruno)
- * FIXME: check copy 
  *-----------------------------------------------------------*/
 
-static double def_zminmax[2]  = {0.,0.};
-
-static double * check_zminmax (Stack stack,char *fname,char *varname,NspMatrix *var)
+static int check_zminmax (Stack stack,char *fname,char *varname,NspMatrix *var)
 {
-  if ( var == NULLMAT) 
+  if ( var != NULLMAT &&  var->mn != 2 ) 
     {
-      def_zminmax[0]=def_zminmax[1]=0.0;
-      return def_zminmax;
+      Scierror("%s:optional argument %s should be of size 2\n",fname,varname);
+      return FAIL;
     }
-  else 
-    {
-      /* check size */ 
-      if ( var->mn != 2 ) 
-	{
-	  Scierror("%s:optional argument %s should be of size 2\n",fname,varname);
-	  return NULL;
-	}
-      else 
-	{
-	  return var->R;
-	}
-    }
+  return OK;
 }
 
 /*-----------------------------------------------------------
  * Check optional argument colminmax
- * note that var can be changed by this function 
- * (Bruno)
- * FIXME: check copy 
  *-----------------------------------------------------------*/
 
-static int def_colminmax[2]  = {1,1};
-
-static int * check_colminmax (Stack stack,char *fname,char *varname,NspMatrix *var)
+static int check_colminmax (Stack stack,char *fname,char *varname,NspMatrix *var)
 {
-  if ( var == NULLMAT) 
+  if ( var != NULLMAT && var->mn != 2 ) 
     {
-      def_colminmax[0]=def_colminmax[1]=0.0;
-      return def_colminmax;
+      Scierror("%s:optional argument %s should be of size 2\n",fname,varname);
+      return FAIL;
     }
-  else 
+  return OK;
+}
+
+/*-----------------------------------------------------------
+ * Check optional argument colout
+ *-----------------------------------------------------------*/
+
+static int check_colout (Stack stack,char *fname,char *varname,NspMatrix *var)
+{
+  if ( var != NULLMAT &&  var->mn != 2 ) 
     {
-      /* check size */ 
-      if ( var->mn != 2 ) 
-	{
-	  Scierror("%s:optional argument %s should be of size 2\n",fname,varname);
-	  return NULL;
-	}
-      else 
-	{
-	  return (int *)  var->R;
-	}
+      Scierror("%s:optional argument %s should be of size 2\n",fname,varname);
+      return FAIL;
     }
+  return OK;
 }
 
 /*-----------------------------------------------------------
@@ -1279,7 +1259,8 @@ static int int_plot2d1_4( Stack stack, int rhs, int opt, int lhs)
 int int_grayplot( Stack stack, int rhs, int opt, int lhs)
 {
   nsp_option opts_mp[] ={{ "axesflag",s_int,NULLOBJ,-1},
-			 { "colminmax",mat,NULLOBJ,-1},
+			 { "colminmax",mat_int,NULLOBJ,-1},
+			 { "colout",mat_int,NULLOBJ,-1},
 			 { "frameflag",s_int,NULLOBJ,-1},
 			 { "leg",string,NULLOBJ,-1},
 			 { "leg_pos",string,NULLOBJ,-1},
@@ -1294,7 +1275,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   
   /* for 2d optional arguments; */
   int *istyle,*nax, frame= -1, axes=-1, remap=FALSE;
-  NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL;
+  NspMatrix *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mcolout=NULL;
   double *rect ; 
   char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
   int leg_posi;
@@ -1305,7 +1286,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
 
   if ( rhs <= 0) {return sci_demo(stack.fname, "t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);",1);}
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts_mp,&axes,&Mcolminmax,&frame,&leg,&leg_pos,
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts_mp,&axes,&Mcolminmax,&Mcolout,&frame,&leg,&leg_pos,
 	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
 
   CheckVector(stack.fname,1,x);
@@ -1315,17 +1296,23 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
     Scierror("%s: third argument is a vector, expecting a matrix \r\n",stack.fname);
     return RET_BUG;
   }
+
   CheckDimProp(stack.fname,1,3, x->mn != z->m); 
   CheckDimProp(stack.fname,2,3, y->mn != z->n); 
 
   if ( int_check2d(stack,Mstyle,&istyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
-  
+
+  if ( check_zminmax(stack,stack.fname,"zminmax",Mzminmax)== FAIL ) return RET_BUG;
+  if ( check_colminmax(stack,stack.fname,"colminmax",Mcolminmax)== FAIL) return RET_BUG;
+  if ( check_colout(stack,stack.fname,"colout",Mcolout)== FAIL) return RET_BUG;
+
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   nsp_draw_matrix(Xgc,x->R,y->R,z->R,z->m,z->n,strf,rect,nax,remap,
-		  (Mcolminmax == NULL) ? NULL : Mcolminmax->R,
-		  (Mzminmax == NULL) ? NULL : Mzminmax->R);
+		  (Mcolminmax == NULL) ? NULL :(int *) Mcolminmax->R,
+		  (Mzminmax == NULL) ? NULL : Mzminmax->R,
+		  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R);
   return 0;
 }
 
@@ -1337,7 +1324,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
 int int_matplot(Stack stack, int rhs, int opt, int lhs) 
 {
   nsp_option opts_mp[] ={{ "axesflag",s_int,NULLOBJ,-1},
-			 { "colminmax",mat,NULLOBJ,-1},
+			 { "colminmax",mat_int,NULLOBJ,-1},
 			 { "frameflag",s_int,NULLOBJ,-1},
 			 { "leg",string,NULLOBJ,-1},
 			 { "leg_pos",string,NULLOBJ,-1},
@@ -1382,10 +1369,13 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
+  if ( check_zminmax(stack,stack.fname,"zminmax",Mzminmax)== FAIL ) return RET_BUG;
+  if ( check_colminmax(stack,stack.fname,"colminmax",Mcolminmax)== FAIL) return RET_BUG;
+
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   nsp_draw_matrix_1(Xgc,z->R,z->m,z->n,strf,rect,nax,remap,
-		    (Mcolminmax == NULL) ? NULL : Mcolminmax->R,
+		    (Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R,
 		    (Mzminmax == NULL) ? NULL : Mzminmax->R);
   return 0;
 } 
@@ -1397,7 +1387,7 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
 int int_matplot1(Stack stack, int rhs, int opt, int lhs)
 {
   nsp_option opts_mp[] ={{ "axesflag",s_int,NULLOBJ,-1},
-			 { "colminmax",mat,NULLOBJ,-1},
+			 { "colminmax",mat_int,NULLOBJ,-1},
 			 { "frameflag",s_int,NULLOBJ,-1},
 			 { "leg",string,NULLOBJ,-1},
 			 { "leg_pos",string,NULLOBJ,-1},
@@ -1438,9 +1428,12 @@ int int_matplot1(Stack stack, int rhs, int opt, int lhs)
 		   Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
 
+  if ( check_zminmax(stack,stack.fname,"zminmax",Mzminmax)== FAIL ) return RET_BUG;
+  if ( check_colminmax(stack,stack.fname,"colminmax",Mcolminmax)== FAIL) return RET_BUG;
+
   Xgc=nsp_check_graphic_context();
   nsp_draw_matrix_2(Xgc,M->R, M->m,M->n,Rect->R,remap,
-		    (Mcolminmax == NULL) ? NULL : Mcolminmax->R,
+		    (Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R,
 		    (Mzminmax == NULL) ? NULL : Mzminmax->R);
 		    
   return 0;
@@ -3659,7 +3652,8 @@ int int_xgetech(Stack stack, int rhs, int opt, int lhs)
  *-----------------------------------------------------------*/
 
 static   nsp_option opts_fec[] ={{ "axesflag",s_int,NULLOBJ,-1},
-				 { "colminmax",s_int,NULLOBJ,-1},
+				 { "colminmax",mat_int,NULLOBJ,-1},
+				 { "colout",mat_int,NULLOBJ,-1},
 				 { "frameflag",s_int,NULLOBJ,-1},
 				 { "leg",string,NULLOBJ,-1},
 				 { "leg_pos",string,NULLOBJ,-1},
@@ -3668,25 +3662,24 @@ static   nsp_option opts_fec[] ={{ "axesflag",s_int,NULLOBJ,-1},
 				 { "rect",realmat,NULLOBJ,-1},
 				 { "strf",string,NULLOBJ,-1},
 				 { "style",mat_int,NULLOBJ,-1},
-				 { "zminmax",s_int,NULLOBJ,-1},
+				 { "zminmax",mat,NULLOBJ,-1},
 				 { NULL,t_end,NULLOBJ,-1}};
 
 int int_fec(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  NspMatrix *x,*y,*Tr,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mstyle=NULL;
-  double *rect,*zminmax;
-  int *colminmax,*nax,*istyle,nnz= 10;
+  NspMatrix *x,*y,*Tr,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
+  double *rect;
+  int *nax,*istyle,nnz= 10;
   int frame= -1, axes=-1;
   char *strf=NULL, *leg=NULL, *leg_pos = NULL,*logflags=NULL;
   int leg_posi;
-  const char *leg1;
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
   /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
 
   if ( rhs <= 0) { return sci_demo (stack.fname," exec(\"SCI/demos/fec/fec.ex1\");",1);}
   
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&frame,
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
 	       &leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
 
   CheckSameDims(stack.fname,1,2,x,y);
@@ -3702,12 +3695,17 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   if ( int_check2d(stack,Mstyle,&istyle,nnz,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
 
-  if (( zminmax = check_zminmax(stack,stack.fname,"zminmax",Mzminmax))== NULL) return RET_BUG;
-  if (( colminmax = check_colminmax(stack,stack.fname,"colminmax",Mcolminmax))== NULL) return RET_BUG;
+  if ( check_zminmax(stack,stack.fname,"zminmax",Mzminmax)== FAIL ) return RET_BUG;
+  if ( check_colminmax(stack,stack.fname,"colminmax",Mcolminmax)== FAIL) return RET_BUG;
+  if ( check_colout(stack,stack.fname,"colout",Mcolout)== FAIL) return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-  nsp_fec(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg1,rect,nax,zminmax,colminmax);
+  nsp_fec(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,
+	  (Mzminmax == NULL) ? NULL : Mzminmax->R,
+	  (Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R, 
+	  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R);
+	  
   return 0;
 }
 

@@ -17,13 +17,11 @@
 
 /* functions used by the modified version : */
 
-static void PaintTriangle (BCG *Xgc,double sx[], double sy[], double fxy[], 
-			   int zxy[], 
-			   double zlevel[], int fill[]);
-static void PermutOfSort (int tab[], int perm[]);
-static void FindIntersection (double sx[], double sy[], double fxy[],
-			      double z, int inda, int indb, 
-			      int *xint, int *yint);
+static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
+			   const int *zxy, const double *zlevel,const int *fill);
+static void PermutOfSort (const int tab[], int perm[]);
+static void FindIntersection(const double *sx,const double *sy,const double *fxy,double z,int inda, int indb,
+			     int *xint, int *yint);
 
 /**
  * nsp_draw_matrix:
@@ -54,7 +52,8 @@ static void FindIntersection (double sx[], double sy[], double fxy[],
  **/
 
 int nsp_draw_matrix_old(BCG *Xgc,double *x, double *y, double *z, int nx, int ny, char *strflag,
-		    double *brect, int *aaint, int remap,const double *colminmax,const double *zminmax)
+		    double *brect, int *aaint, int remap,const int *colminmax,const double *zminmax,
+		    const int *colout)
 {
   int N = Max((nx),(ny));
   double xx[2],yy[2];
@@ -68,7 +67,7 @@ int nsp_draw_matrix_old(BCG *Xgc,double *x, double *y, double *z, int nx, int ny
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_Gray(Xgc,x,y,z,nx,ny,strflag,brect,aaint,
-	       remap,colminmax,zminmax);
+	       remap,colminmax,zminmax,colout);
 
   xm = graphic_alloc(0,N,sizeof(int));
   ym = graphic_alloc(1,N,sizeof(int));
@@ -123,7 +122,8 @@ extern Gengine GL_gengine;
 #endif 
 
 int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *func, int nx, int ny, char *strflag,
-		    double *brect, int *aaint, int remap,const double *colminmax,const double *zminmax)
+		    double *brect, int *aaint, int remap,const int *colminmax,const double *zminmax,
+		    const int *colout)
 {
   double xx[2],yy[2];
   int i,*xm,*ym,j,k, Nnode= nx*ny, nn1=1,nn2=2;
@@ -136,8 +136,7 @@ int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *func, int nx, int ny,
   /* Storing values if using the Record driver */
   /* FIXME: need one more flag */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    store_Gray(Xgc,x,y,func,nx,ny,strflag,brect,aaint,
-	       remap,colminmax,zminmax);
+    store_Gray(Xgc,x,y,func,nx,ny,strflag,brect,aaint, remap,colminmax,zminmax,colout);
 
   /** Allocation **/
   xm = graphic_alloc(0,Nnode,sizeof(int));
@@ -201,7 +200,6 @@ int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *func, int nx, int ny,
      *  1/ the purpose of the first part is to to compute the "zone" of each point :
      *    
      *    - the array zlevel are the boundaries between the differents zones :
-     *
      *        zlevel[0] = zmin, zlevel[nz] = zmax 
      *     and zlevel[i] = zmin + i*(zmax-zmin)/nz
      *  
@@ -210,8 +208,12 @@ int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *func, int nx, int ny,
      *       if func[i] < zmin  then zone[i] = 0
      *     - the zone j is filled with color fill[j] with
      *       fill[j] = -(j-1 + color_min) if 1 <= j <= nz
-     *       fill[0] = color attributed for fill[1]     ---> this behavior may be changed ...
-     *       fill[nz+1] = color attributed for fill[nz] --/
+     *     - if colout == NULL
+     *        fill[0] = color attributed for fill[1]     ---> this behavior may be changed ...
+     *        fill[nz+1] = color attributed for fill[nz] --/
+     *       else 
+     *        fill[0]=- colout[0];
+     *        fill[1]=- colout[1];
      */
  
     /* allocations for some arrays ... */
@@ -227,7 +229,14 @@ int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *func, int nx, int ny,
     /* compute the fill array (fill = - num color) */
     fill[1] = - color_min;
     for ( i = 2 ; i <= nz ; i++ ) fill[i] = fill[i-1] - 1;
-    fill[0] = fill[1] ; fill[nz+1] = fill[nz];
+    if ( colout == NULL) 
+      {
+	fill[0] =  fill[1] ; fill[nz+1] = fill[nz];
+      }
+    else 
+      {
+	fill[0] = - colout[0] ; fill[nz+1] = - colout[1];
+      }
 
     /* compute the zlevels */
     dz = (zmax - zmin)/nz;
@@ -342,7 +351,7 @@ int nsp_draw_matrix(BCG *Xgc,double *x, double *y, double *func, int nx, int ny,
  **/
 
 int nsp_draw_matrix_1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double *brect, int *aaint, 
-		      int remap,const double *colminmax,const double *zminmax)
+		      int remap,const int *colminmax,const double *zminmax)
 {
   double xx[]={0.5, nc+0.5} ;
   double yy[]={0.5, nr+0.5} ;
@@ -393,7 +402,7 @@ int nsp_draw_matrix_1(BCG *Xgc,double *z, int nr, int nc, char *strflag, double 
  **/
 
 int nsp_draw_matrix_2(BCG *Xgc,double *z,int nr, int nc, double *xrect, 
-		      int remap,const double *colminmax,const double *zminmax)
+		      int remap,const int *colminmax,const double *zminmax)
 {
   double xx[]={ xrect[0],xrect[2]};
   double yy[]={ xrect[1],xrect[3]};
@@ -447,7 +456,8 @@ int nsp_draw_matrix_2(BCG *Xgc,double *z,int nr, int nc, double *xrect,
  */
 
 int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int *Nnode, int *Ntr, 
-	     char *strflag,const char *legend, double *brect, int *aaint, double *zminmax, int *colminmax)
+	    char *strflag,const char *legend, double *brect, int *aaint,const double *zminmax,
+	    const int *colminmax, const int *colout)
 {
   int i,*xm,*ym,j,k, n1=1;
 
@@ -457,7 +467,7 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
   /* Storing values if using the Record driver */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     /* added zminmax and colminmax (bruno) */
-    store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax);
+    store_Fec(Xgc,x,y,triangles,func,Nnode,Ntr,strflag,legend,brect,aaint,zminmax,colminmax,colout);
 
 
   /** Allocation **/
@@ -532,8 +542,12 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
      *       if func[i] < zmin  then zone[i] = 0
      *     - the zone j is filled with color fill[j] with
      *       fill[j] = -(j-1 + color_min) if 1 <= j <= nz
-     *       fill[0] = color attributed for fill[1]     ---> this behavior may be changed ...
-     *       fill[nz+1] = color attributed for fill[nz] --/
+     *     - if colout == NULL
+     *        fill[0] = color attributed for fill[1]     ---> this behavior may be changed ...
+     *        fill[nz+1] = color attributed for fill[nz] --/
+     *       else 
+     *        fill[0]=- colout[0];
+     *        fill[1]=- colout[1];
      */
  
     /* allocations for some arrays ... */
@@ -549,7 +563,14 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
     /* compute the fill array (fill = - num color) */
     fill[1] = - color_min;
     for ( i = 2 ; i <= nz ; i++ ) fill[i] = fill[i-1] - 1;
-    fill[0] = fill[1] ; fill[nz+1] = fill[nz];
+    if ( colout == NULL) 
+      {
+	fill[0] =  fill[1] ; fill[nz+1] = fill[nz];
+      }
+    else 
+      {
+	fill[0] = - colout[0] ; fill[nz+1] = - colout[1];
+      }
 
     /* compute the zlevels */
     dz = (zmax - zmin)/nz;
@@ -617,7 +638,7 @@ int nsp_fec(BCG *Xgc,double *x, double *y, double *triangles, double *func, int 
  * functions used by the modified code (Bruno 01/02/2001)
  ********************************************************************/
 
-static void PermutOfSort (int *tab, int *perm)
+static void PermutOfSort (const int *tab, int *perm)
 {
   /* 
    * get the permutation perm[3] which sort the array tab[3] in increasing order 
@@ -637,7 +658,8 @@ static void PermutOfSort (int *tab, int *perm)
 }
 
 
-static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zxy, double *zlevel, int *fill)
+static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
+			   const int *zxy, const double *zlevel,const int *fill)
 {
   /* 
      arguments :
@@ -647,7 +669,7 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
      zxy    : zone of Pi : zxy[i]=j if  zlevel[j-1] <= fxy[i] < zlevel[j]
      zlevel : a (0..nz) vector given the boundaries for color filling
      fill   : fill[j] is the color pattern associated with zone[j] 
-     
+              when fill[j]=0 the zone is not painted 
      purpose : this function decompose the triangle into its different
      -------   zones (which gives polygones) and send them to the
                graphic driver. This is something like the shade function
@@ -660,14 +682,14 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
   int xEdge2, yEdge2, xEdge, yEdge; 
 
   /* 
-     case of only one color for the triangle : 
-  */
+   * case of only one color for the triangle : 
+   */
 
   if ( zxy[0] == zxy[2] ) {
     resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
     resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
     color = fill[zxy[0]]; nr = 3;
-    Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+    if ( color != 0 ) Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
     return;
   }
 
@@ -707,7 +729,7 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
   FindIntersection(sx, sy, fxy, zlevel[zxy[0]], 0, 2, &xEdge2, &yEdge2);
   resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
   color = fill[zxy[0]];
-  Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+  if ( color != 0 )   Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
 
   /*------------------------------------+ 
   | compute the intermediary polygon(s) |
@@ -729,7 +751,7 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
     FindIntersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
     resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
     color = fill[izone];
-    Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+    if ( color != 0 )    Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
   };
 
   /*-----------------------+ 
@@ -744,13 +766,13 @@ static void PaintTriangle (BCG *Xgc,double *sx, double *sy, double *fxy, int *zx
   /* the last point is P2 */
   resx[nr] = inint(sx[2]); resy[nr] = inint(sy[2]); nr++;
   color = fill[zxy[2]];
-  Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+  if ( color != 0 )  Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
 }
 
-static void FindIntersection(double *sx, double *sy, double *fxy, double z, int inda, int indb, int *xint, int *yint)
+static void FindIntersection(const double *sx,const double *sy,const double *fxy,double z,int inda, int indb,
+			     int *xint, int *yint)
 {
-  double alpha;
-  alpha = (z - fxy[inda])/(fxy[indb] - fxy[inda]);
+  double alpha =  (z - fxy[inda])/(fxy[indb] - fxy[inda]);
   *xint = inint((1 - alpha)*sx[inda] + alpha*sx[indb]);
   *yint = inint((1 - alpha)*sy[inda] + alpha*sy[indb]);
 }
@@ -763,7 +785,7 @@ static void FindIntersection(double *sx, double *sy, double *fxy, double z, int 
  */
 
 void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, double *zmax,double *coeff,
-		      const double *colminmax,const double *zminmax,const double z[],int zn)
+		      const int *colminmax,const double *zminmax,const double z[],int zn)
 {
   *colmin=1;
   *colmax=Xgc->graphic_engine->xget_last(Xgc);
@@ -814,7 +836,7 @@ void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, d
  **/
 
 void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
-			       int remap,const double *colminmax,const double *zminmax)
+			       int remap,const int *colminmax,const double *zminmax)
 {
   int colmin,colmax;
   double zmin,zmax,coeff;
@@ -828,7 +850,7 @@ void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const double
     for (j = 0 ; j < nc ; j++)
       {
 	int w,h;
-	fill[0]= (remap == FALSE) ? z[i+nr*j] : colmax*(z[i+nr*j] - zmin)*coeff + colmin;
+	fill[0]= (remap == FALSE) ? rint(z[i+nr*j]) : rint((colmax-colmin)*(z[i+nr*j] - zmin)*coeff + colmin);
 	/* do not draw rectangles which are outside the colormap range */
 	if ( fill[0] < colmin || fill[0] > colmax ) continue ;
 	Xgc->graphic_engine->xset_pattern(Xgc,fill[0]);
@@ -870,7 +892,7 @@ void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const double
  **/
 
 void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
-			      int remap,const double *colminmax,const double *zminmax)
+			      int remap,const int *colminmax,const double *zminmax)
 {
   int colmin,colmax;
   double zmax,zmin,coeff,zmoy;
@@ -884,7 +906,7 @@ void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const double 
       {
 	int w,h;
 	zmoy=1/4.0*(z[i+nx*j]+z[i+nx*(j+1)]+z[i+1+nx*j]+z[i+1+nx*(j+1)]);
-	color = (remap == FALSE) ? zmoy : colmax*(zmoy - zmin)*coeff + colmin;
+	color = (remap == FALSE) ? rint(zmoy) : rint((colmax-colmin)*(zmoy - zmin)*coeff + colmin);
 	if (color < colmin || color > colmax ) continue ;
 	Xgc->graphic_engine->xset_pattern(Xgc,color);
         w=Abs(x[i+1]-x[i]);h=Abs(y[j+1]-y[j]);
