@@ -1,6 +1,3 @@
-all	:
-	@\ls *.sci > Names 
-	@../../bin/scilex -dir ./ Names 
 
-clean	:
-	\rm -f *.bin
+include ../../Path.incl
+include ../Makefile.lib

@@ -88,11 +88,11 @@ function tree_view=create_tree(h)
 endfunction
 
 function setup_default_icon () 
-  filename = "gtk-logo-rgb.gif";
-  pixbuf = gdk_pixbuf_new_from_file(filename);
+  nsp_logo = getenv('NSP')+'/demos/gtk2/libplus/nsp.gif';
+  pixbuf = gdk_pixbuf_new_from_file(nsp_logo);
   // The gtk-logo-rgb icon has a white background, make it transparent
   transparent = pixbuf.add_alpha[ %t, 0xff, 0xff, 0xff];
-  // XXXXX gtk_window_set_default_icon_list (list(transparent));
+  // FIXME: unfinihed .... gtk_window_set_default_icon_list (list(transparent));
 endfunction
 
 function demo_treestore1() 

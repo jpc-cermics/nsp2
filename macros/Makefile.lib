@@ -1,0 +1,10 @@
+
+all	:
+	@echo "processing *.sci files" 
+	@$(SCIDIR)/bin/scilex -nw -dir ./ 
+
+clean	:
+	@echo "Cleaning"
+	@$(RM) *.bin
+
+distclean: clean 

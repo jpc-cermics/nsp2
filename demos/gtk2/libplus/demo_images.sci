@@ -274,7 +274,8 @@ function demo_images()
   align = gtkalignment_new(xalign=0.5,yalign=0.5,xscale=0,yscale=0);
   align.add[  frame]
   vbox.pack_start[ align,expand=%f,fill=%f,padding=0]
-  pixbuf = gdk_pixbuf_new_from_file ("gtk-logo-rgb.gif");
+  logo = getenv('NSP')+'/demos/gtk2/libplus/gtk-logo-rgb.gif";
+  pixbuf = gdk_pixbuf_new_from_file(logo);
   image = gtkimage_new("pixbuf",pixbuf);
   frame.add[image]
   // Animation 
@@ -290,7 +291,8 @@ function demo_images()
   align = gtkalignment_new(xalign=0.5,yalign=0.5,xscale=0,yscale=0);
   align.add[  frame]
   vbox.pack_start[ align,expand=%f,fill=%f,padding=0]
-  image = gtkimage_new("file","floppybuddy.gif");
+  flop = getenv('NSP')+'/demos/gtk2/libplus/floppybuddy.gif';
+  image = gtkimage_new("file",flop);
   frame.add[  image]
   
   // Progressive 

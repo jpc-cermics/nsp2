@@ -35,12 +35,13 @@ function demo_images1()
   // gdkpixmap_new(None,67,67,depth=78)
 
   // colormap or drawable , transparent_color or none, file or data 
-  [pixmap,mask]= gdk_pixmap_create_from_xpm(cmap,None,"nsp.gif");
+  nsp_logo = getenv('NSP')+'/demos/gtk2/libplus/nsp.gif';
+  [pixmap,mask]= gdk_pixmap_create_from_xpm(cmap,None,nsp_logo);
 
   image = gtkimage_new("pixmap",pixmap,mask);
   endfunction 
 
-  add_image(demo_image_from_pixmap(),"file ->pixmap",vbox)
+  add_image(demo_image_from_pixmap(),"file.gif ->pixmap",vbox)
   
   function image=demo_image_from_pixmap_data() 
     xpm_pix = [ "     9     9        2            1";
@@ -68,24 +69,27 @@ function demo_images1()
 //        and examples with bitmap_create  
 
    function image=demo_image_from_pixbuf() 
-     pixbuf= gdk_pixbuf_new_from_file('shell.xpm')
+     shell = getenv('NSP')+'/demos/gtk2/libplus/shell.xpm';
+     pixbuf= gdk_pixbuf_new_from_file(shell)
      image = gtkimage_new("pixbuf",pixbuf);
    endfunction 
-   add_image(demo_image_from_pixbuf(),"file ->pixbuf ->image",vbox)
+   add_image(demo_image_from_pixbuf(),"file.xpm ->pixbuf ->image",vbox)
 
    function image=demo_image_from_pixbuf_pixmap() 
-     pixbuf= gdk_pixbuf_new_from_file('tree.gif')
+     tree = getenv('NSP')+'/demos/gtk2/libplus/tree.gif';
+     pixbuf= gdk_pixbuf_new_from_file(tree)
      pixbuf.render_pixmap_and_mask[] // alpha_thresold]
      [pixmap,mask]=pixbuf.render_pixmap_and_mask[]
      image = gtkimage_new("pixmap",pixmap,mask);
    endfunction 
-   add_image(demo_image_from_pixbuf_pixmap(),"file ->pixbuf -> pixmap ->image",vbox)
+   add_image(demo_image_from_pixbuf_pixmap(),"file.gif ->pixbuf -> pixmap ->image",vbox)
    
    function image=demo_image_from_file() 
-     image= gtkimage_new('file',"gtk-logo-rgb.gif")
+     gtk_logo = getenv('NSP')+'/demos/gtk2/libplus/gtk-logo-rgb.gif";
+     image= gtkimage_new('file',gtk_logo);
    endfunction 
      
-   add_image(demo_image_from_file(),"file -> image",vbox)
+   add_image(demo_image_from_file(),"file.gif -> image",vbox)
    
    window.show_all[]
 endfunction
