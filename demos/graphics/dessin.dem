@@ -1,0 +1,24 @@
+// Copyright Enpc 
+
+function []=xdemo(info,str)
+  x_message([info;str]);
+  xclear();
+  execstr(str);
+endfunction
+
+xset("default");
+
+exec('SCI/demos/graphics/dessin-1.dem');
+
+nn=prod(size(str_l))
+while %t then
+  num=x_choose(info_list,'Choose a demo    ');
+  if num==0 then 
+     lines(oldln(1))
+     return
+  else
+     xdemo(" ",str_l(num));
+  end,
+end
+
+
