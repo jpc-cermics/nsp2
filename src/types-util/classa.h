@@ -3,7 +3,7 @@
 #define INC_NSP_ClassA
 
 /*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )
+ * This Software is ( Copyright ENPC 1998-2005 )
  * Jean-Philippe Chancelier Enpc/Cermics
  *-----------------------------------------------------------------*/
   
@@ -27,9 +27,9 @@ typedef struct _nsp_type_ClassA {
 struct _nsp_classa {
   NspObject father; 
   NspTypeClassA *type; 
-  int classb_color;
-  int classb_thickness;
-  NspMatrix *classb_val;
+  int classa_color;
+  int classa_thickness;
+  NspMatrix *classa_val;
 };
 
 extern int nsp_type_classa_id;

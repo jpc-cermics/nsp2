@@ -252,10 +252,10 @@ NspObject *module_path_search_object(NspList *L,NspSMatrix *Sm,char **oname)
   strcat(buf,".bin");
   /* XXX : must clean Ob ? */
   /* we load the binary object found in buf */ 
-  if (( F = SciFileOpenXdrR(buf)) == NULLSCIFILE) return NULLOBJ;
+  if (( F =nsp_file_open_xdr_r(buf)) == NULLSCIFILE) return NULLOBJ;
   Ob=nsp_object_xdr_load(F);
   nsp_object_xdr_load(F); /* not to have a warning when closing */
-  if ( SciFileCloseXdrR(F) == FAIL)
+  if (nsp_file_close_xdr_r(F) == FAIL)
     {
       nsp_void_object_destroy(&Ob);
       return NULLOBJ;

@@ -27,6 +27,7 @@ typedef struct _nsp_type_Function {
 struct _nsp_function {
   NspObject father; 
   NspTypeFunction *type; 
+  char *fname; /* function name */
   int  pos;/* function position inside interface */
   int  iface;/* Interface number in which the function is stored */
   int  status;/* status of the function */
@@ -49,7 +50,7 @@ NspFunction *new_function();
 
 #define NULLFUNC (NspFunction*) 0
 
-NspFunction *function_create(char *name,int iface,int pos,int status,NspTypeBase *type);
+NspFunction *function_create(char *name,char *fname,int iface,int pos,int status,NspTypeBase *type);
 NspFunction *function_copy(NspFunction *H);
 void function_destroy(NspFunction *H);
 void function_info(NspFunction *H, int indent);

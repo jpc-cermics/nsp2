@@ -188,11 +188,13 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
 		    clip_box[0],clip_box[1],clip_box[2],clip_box[3]);
 	  if (flag1 !=0)
 	    {
-	      if (flag1==1||flag1==3) { xm[2*j]=x1n;ym[2*j]=y1n;};
-	      if (flag1==2||flag1==3) { xm[2*j+1]=x2n;ym[2*j+1]=y2n;};
-	      /* sciprint("j'ai rajoute (%d,%d)->(%d,%d)\r\n",xm[2*j],ym[2*j],xm[2*j+1],ym[2*j+1]); */
+	      /* do not want to clip since if clipped the arrow haed will
+		 be badly placed. just eliminate the totally out segments  
+		 if (flag1==1||flag1==3) { xm[2*j]=x1n;ym[2*j]=y1n;};
+		 if (flag1==2||flag1==3) { xm[2*j+1]=x2n;ym[2*j+1]=y2n;};
+	      */
 	      j++;
-	    }
+	    } 
 	}
       na=2*j;
     }
@@ -213,8 +215,11 @@ static void champ_generic(BCG *Xgc,char *name, int colored, double *x, double *y
 		    clip_box[0],clip_box[1],clip_box[2],clip_box[3]);
 	  if (flag1 !=0)
 	    {
+	      /* do not want to clip since if clipped the arrow head will
+		 be badly placed. just eliminate the totally out segments 
 	      if (flag1==1||flag1==3) { xm[2*j]=x1n;ym[2*j]=y1n;};
 	      if (flag1==2||flag1==3) { xm[2*j+1]=x2n;ym[2*j+1]=y2n;};
+	      */
 	      j++;
 	    }
        }

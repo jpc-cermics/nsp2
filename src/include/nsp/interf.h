@@ -154,7 +154,7 @@ extern NspLmo *GetLmo (Stack S,int i);
      return RET_BUG;} 
 
 #define CheckLength(fname,pos1,o1,value) if ( o1->mn != value ) \
-   { Scierror("%s: arguments %d has an incorrect length\n",fname,pos1); \
+   { Scierror("%s: arguments %d should be of length %d\n",fname,pos1,value); \
      return RET_BUG;} 
 
 #define CheckScalar(fname,pos1,o1) if ( o1->mn != 1 ) \

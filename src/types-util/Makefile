@@ -74,6 +74,11 @@ job_hash:
 		PARENT=Object FIELDS="  unsigned int hsize,filled;\n  void  *htable;"\
 		PARENTDOWNCASE=object PARENTINC=nsp/object.h
 
+job_cell: 
+	make job TNAME=Cell TDOWNCASE=cell TSHORT=c \
+		TASSTRING=Cell NULL=NULLCELL \
+		PARENT=Object FIELDS="  int ndims;int *dims;NspObject *cells;"\
+		PARENTDOWNCASE=object PARENTINC=nsp/object.h
 
 job_gobject: 
 	make job TNAME=GObject TDOWNCASE=gobject TSHORT=gobj \

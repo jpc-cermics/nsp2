@@ -2801,8 +2801,8 @@ static int gtk_store_points(int n, int *vx, int *vy, int onemore)
   if (GtkReallocVector(n1) == 1)
     {
       for (i = 0; i < n; i++){
-	gtk_points[i].x =(gint16) Min(Max(0,vx[i]),int16max);
-	gtk_points[i].y =(gint16) Min(Max(0,vy[i]),int16max);
+	gtk_points[i].x =(gint16) Min(Max(-int16max,vx[i]),int16max);
+	gtk_points[i].y =(gint16) Min(Max(-int16max,vy[i]),int16max);
       }
       if (onemore == 1) {
 	gtk_points[n].x=(gint16) gtk_points[0].x;

@@ -195,8 +195,8 @@ static int @TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B)
 
 static int @TYPEDOWNCASE@_xdr_save(NspFile  *F, Nsp@TYPENAME@ *M)
 {
-  if ( XdrSaveI(F,M->type->id) == FAIL) return FAIL;
-  if ( XdrSaveString(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("@TYPEDOWNCASE@_xdr_save: to be implemented \n");
   return OK;
 }
@@ -209,7 +209,7 @@ static Nsp@TYPENAME@  *@TYPEDOWNCASE@_xdr_load(NspFile  *F)
 {
   Nsp@TYPENAME@ *M = NULL;
   static char name[NAME_MAXL];
-  if ( XdrLoadString(F,name,NAME_MAXL) == FAIL) return @NULL@;
+  if (nsp_xdr_load_string(F,name,NAME_MAXL) == FAIL) return @NULL@;
   Scierror("@TYPEDOWNCASE@_xdr_load: to be implemented \n");
   return M;
 }

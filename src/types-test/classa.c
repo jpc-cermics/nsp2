@@ -194,8 +194,8 @@ static int classa_neq(NspClassA *A, NspObject *B)
 
 static int classa_xdr_save(NspFile  *F, NspClassA *M)
 {
-  if ( XdrSaveI(F,M->type->id) == FAIL) return FAIL;
-  if ( XdrSaveString(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("classa_xdr_save: to be implemented \n");
   return OK;
 }
@@ -208,7 +208,7 @@ static NspClassA  *classa_xdr_load(NspFile  *F)
 {
   NspClassA *M = NULL;
   static char name[NAME_MAXL];
-  if ( XdrLoadString(F,name,NAME_MAXL) == FAIL) return NULLCLA;
+  if (nsp_xdr_load_string(F,name,NAME_MAXL) == FAIL) return NULLCLA;
   Scierror("classa_xdr_load: to be implemented \n");
   return M;
 }

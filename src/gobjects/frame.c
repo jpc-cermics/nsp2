@@ -186,8 +186,8 @@ static int gframe_neq(NspGFrame *A, NspObject *B)
 
 static int gframe_xdr_save(NspFile  *F, NspGFrame *M)
 {
-  if ( XdrSaveI(F,M->type->id) == FAIL) return FAIL;
-  if ( XdrSaveString(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("gframe_xdr_save  to be implemented \n");
   return OK;
 }
@@ -200,7 +200,7 @@ static NspGFrame  *gframe_xdr_load(NspFile  *F)
 {
   NspGFrame *M=NULLGFRAME;
   static char name[NAME_MAXL];
-  if ( XdrLoadString(F,name,NAME_MAXL) == FAIL) return NULLGFRAME;
+  if (nsp_xdr_load_string(F,name,NAME_MAXL) == FAIL) return NULLGFRAME;
   Scierror("gframe_xdr_load  to be implemented \n");
   return M;
 }
