@@ -54,7 +54,6 @@ h.a=[10,20]
 // passage par reference 
 
 h.a(1,1)=100 
-
 // rajout d'une <<methode>>
 function H=$meth_h(H,x)
  $enter_h(H,a=x)

@@ -1,8 +1,8 @@
- /*---------------------------------------------------------- 
-  * mainsci.f directly call this function 
-  * thus this is the real main for scilab 
-  * Copyright 2001 Inria/Enpc 
-  *----------------------------------------------------------*/
+/*---------------------------------------------------------- 
+ * mainsci.f directly call this function 
+ * thus this is the real main for scilab 
+ * Copyright 2001 Inria/Enpc 
+ *----------------------------------------------------------*/
 
 #include <pwd.h>
 #include <ctype.h>
@@ -23,17 +23,10 @@
 #include "nsp/gtksci.h"
 #include "menus.h"
 
-extern void controlC_handler (int sig);
-
-char *ProgramName = NULL;
-
 #if 0 
-static void Syntax  (char *badOption);  
-static void Help  (void);  
 static void create_scilab_status(void);
 #endif 
 
-static void set_sci_env (void);
 static void nsp_gtk_gl_init (int *argc,char ***argv);
 static void nsp_create_gtk_toplevel(gint argc, gchar *argv[]);
 
@@ -43,75 +36,14 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[]);
  * Copyright Inria/Enpc 
  *----------------------------------------------------------*/
 
-#define MIN_STACKSIZE 180000
-
-static int  no_startup_flag=0;
-static int  memory = MIN_STACKSIZE;
-static int  no_window = 0;
-static char * initial_script = NULL;
-static int  initial_script_type = 0; /* 0 means filename 1 means code */
-
-static char ** create_argv(int *argc);
-static void strip_blank(char *source);
-
-/* two functions comming from Fortran */
-
-extern int C2F(getarg)(int *,char *,long int l);
-extern int C2F(iargc)(void);
-
-
 /* global var */
 
-int  sci_show_banner=1;
-
-int real_main(int argc, char **argv)
+void nsp_gtk_init(int argc, char **argv,int no_window)
 {
-  int ierr=0, i;
-  char startup[128];
-  char *display = NULL;
-
-  /* floating point exceptions */
-  /* XXXX C2F(nofpex)();  */
-  /* create argv */
-  /* if (( argv = create_argv(&argc))== NULL) exit(1); */
-  ProgramName = argv[0];
-  /* scanning options */
-  for ( i=0 ; i < argc ; i++) 
-    {
-      if ( strcmp(argv[i],"-nw") == 0) { no_window = 1; } 
-      else if ( strcmp(argv[i],"-display") == 0) { display = argv[++i];} 
-      else if ( strcmp(argv[i],"-ns") == 0) { no_startup_flag = 1; }
-      else if ( strcmp(argv[i],"-nb") == 0) { sci_show_banner = 0; }
-      else if (strcmp(argv[i],"-mem") == 0) { memory = Max(atoi(argv[++i]),MIN_STACKSIZE );} 
-      else if (strcmp(argv[i],"-f") == 0) { initial_script = argv[++i];} 
-      else if ( strcmp(argv[i],"-e") == 0) 
-	{
-	  initial_script = argv[++i];
-	  initial_script_type = 1;
-	} 
-      else if ( strcmp(argv[i],"-pipes") == 0) 
-	{
-	  /* old stuff used by geci 
-	  int p1,p2;
-  	  p1 = atoi(argv[++i]);
-	  p2 = atoi(argv[++i]); 
-	  C2F(initcom)(&p1, &p2); */
-	}
-    }
-  /* reload history */
-
-  nsp_read_history();
-  
-  /* provide a default SCI  */
-  set_sci_env();
-
-  /* create temp directory */
-  /* C2F(settmpdir)(); XXXX */
-
-  if ( no_window == 0 ) 
+  if ( no_window == FALSE ) 
     {
       char *shmid= getenv("SHMID");
-      /* we are unsing a gtk widget app */
+      /* we are using a gtk widget app */
       nsp_in_gtk_window();
       /* initialise gtk */
       gtk_init(&argc,&argv);
@@ -132,10 +64,10 @@ int real_main(int argc, char **argv)
 	   */
 	  create_plugged_main_menu() ;
 	}
-      /* create a status bar */ 
-      /* XXX en attente est-ce utile ? 
-	 create_scilab_status();
-      */
+      /* create a status bar 
+       * FIXME: unsused up to now 
+       * create_scilab_status();
+       */
     }
   /* signals */
   signal(SIGINT,sci_clear_and_exit);
@@ -150,60 +82,28 @@ int real_main(int argc, char **argv)
   /* C2F(inisci)(&ini, &memory, &ierr); */
   /* set up terminal size */
   sci_winch_signal(0);
-  if (ierr > 0) return 1;
-  /*  execute startup 
-   *  and enter main loop 
-   */
-
-  if ( no_startup_flag == 0) 
-    {
-      /* execute a startup */
-      strcpy(startup,get_sci_data_strings(1));
-      strcat(startup,";quit");
-      /* XXXXX C2F(scirun)(startup,strlen(startup)); */
-    }
-  /* now fill startup with the initial_script if necessary */
-  if ( initial_script != NULL ) 
-    {
-      switch ( initial_script_type ) 
-	{
-	case 0 : 
-	  sprintf(startup,"exec('%s',-1)",initial_script);
-	  break;
-	case 1 : 
-	  sprintf(startup,"%s;",initial_script);
-	  break;
-	}
-    }
-  else 
-    strcpy(startup," ");
-  /* message */  
-  /* scilab_status_show("Scilab (C) Inria/Enpc"); */ 
-  /* execute the initial script and enter scilab */ 
-  /* C2F(scirun)(startup,strlen(startup)); XXXX */
-  /* cleaning */
-  /* XXXX C2F(sciquit)();*/
-
-  return 0;
 }
 
-/* This is to be used for starting gtk when 
+/**
+ * start_sci_gtk:
+ * @void: 
+ * 
+ * used for starting gtk when 
  * scilab has been called with scilab -nw 
  * and a menu or graphic window is activated 
- */
+ *
+ **/
 
 void start_sci_gtk(void)
 {
-  int argc;
-  char **argv; 
+  int argc=0;
+  char **argv = NULL; 
   if ( nsp_check_events_activated() == TRUE ) return;
-  if (( argv = create_argv(&argc))== NULL) exit(1);
   /* initialise gtk */
   gtk_init(&argc,&argv);
   nsp_gtk_gl_init (&argc, &argv);
   nsp_activate_gtk_events_check();
 }
-
 
 static void nsp_gtk_gl_init (int *argc,char ***argv)
 {
@@ -211,192 +111,6 @@ static void nsp_gtk_gl_init (int *argc,char ***argv)
   gtk_gl_init(argc,argv);
 #endif
 }
-
-
-/* utility */
-
-#define BSIZE 128 
-
-static char ** create_argv(int *argc)
-{
-  int i;
-  char **argv;
-  *argc = C2F(iargc)() + 1;
-  if ( ( argv = malloc((*argc)*sizeof(char *))) == NULL) return NULL;
-  for ( i=0 ; i < *argc ; i++) 
-    {
-      char buf[BSIZE];
-      C2F(getarg)(&i,buf,BSIZE);
-      buf[BSIZE-1]='\0';
-      strip_blank(buf);
-      argv[i] = malloc((strlen(buf)+1)*sizeof(char));
-      if ( argv[i] == NULL) return NULL;
-      strcpy(argv[i],buf);
-#ifdef DEBUG
-      fprintf(stderr,"arg[%d] %s\n",i,argv[i]);
-#endif 
-    }
-  return argv;
-}
-
-/* utility */
-
-static void strip_blank(char *source)
-{
-  char *p;
-  p = source;
-  /* look for end of string */
-  while(*p != '\0') p++;
-  while(p != source) {
-    p--;
-    if(*p != ' ') break;
-    *p = '\0';
-  }
-}
-
-/*-------------------------------------------------------
- * Exit function called by some 
- * X11 functions 
- * call sciquit which call clearexit
- *-------------------------------------------------------*/
-
-void sci_clear_and_exit(int n)
-{
-  if ( no_startup_flag == 0) 
-    {
-      /* char *quit_script =  get_sci_data_strings(5);
-       * XXXX C2F(scirun)(quit_script,strlen(quit_script)); 
-       */
-    }
-  /** save history **/
-  nsp_write_history();
-  /** clean tmpfiles **/
-  clean_tmpdir();
-  /** clean ieee **/
-#ifdef sun 
-#ifndef SYSV
-#include <sys/ieeefp.h>
-  {
-    char *mode, **out, *in;
-    ieee_flags("clearall","exeption","all", &out);
-  }
-#endif 
-#endif 
-  /* really exit */
-  exit(n);
-}
-
-
-/*-------------------------------------------------------
- * usr1 signal : used to transmit a Control C to 
- * scilab 
- *-------------------------------------------------------*/
-
-void sci_usr1_signal(int n) 
-{
-  controlC_handler(n);
-}
-
-
-
-/*-------------------------------------------------------
- * Ctrl-Z : stops the current computation 
- *          or the current interface call 
- *-------------------------------------------------------*/
-
-void  sci_sig_tstp(int n)
-{
-  Scierror("SIGSTP: aborting current computation\r\n");
-}
-
-/*-------------------------------------------------------
- * Utility function to try to hide system differences from
- * everybody who used to call killpg() 
- *-------------------------------------------------------*/
-
-int kill_process_group(int pid, int sig)
-{
-    return kill (-pid, sig);
-}
-
-/*-------------------------------------------------------
- * Syntax 
- *-------------------------------------------------------*/
-
-#if 0
-
-static struct _options {
-  char *opt;
-  char *desc;
-} options[] = {
-{ "-help",                 "print out this message" },
-{ "-ns",                   "no startup mode " },
-{ "-nw",                   "no window mode " },
-{ "-display displayname",  "X server to contact" },
-{ "-name string",          "client instance, icon, and title strings" },
-{ "-xrm resourcestring",   "additional resource specifications" },
-{ "-tm string",            "terminal mode keywords and characters" },
-{ NULL, NULL }};
-
-static void Syntax (badOption)
-    char *badOption;
-{
-  struct _options *opt;
-  int col;
-
-  fprintf (stderr, "%s:  bad command line option \"%s\"\r\n\n",
-	   ProgramName, badOption);
-
-  fprintf (stderr, "usage:  %s", ProgramName);
-  col = 8 + strlen(ProgramName);
-  for (opt = options; opt->opt; opt++) {
-    int len = 3 + strlen(opt->opt);	 /* space [ string ] */
-    if (col + len > 79) {
-      fprintf (stderr, "\r\n   ");  /* 3 spaces */
-      col = 3;
-    }
-    fprintf (stderr, " [%s]", opt->opt);
-    col += len;
-  }
-
-  fprintf (stderr, "\r\n\nType %s -help for a full description.\r\n\n",
-	   ProgramName);
-  exit (1);
-}
-
-#endif 
-/*-------------------------------------------------------
- * Help utility function 
- *-------------------------------------------------------*/
-
-#if 0 
-
-static char *message[] = {
-  "Options that start with a plus sign (+) restore the default.",
-  NULL
-};
-
-static void Help ()
-{
-  struct _options *opt;
-  char **cpp;
-
-  fprintf (stderr, "usage:\n        %s [-options ...] \n\n",
-	   ProgramName);
-  fprintf (stderr, "where options include:\n");
-  for (opt = options; opt->opt; opt++) {
-    fprintf (stderr, "    %-28s %s\n", opt->opt, opt->desc);
-  }
-  putc ('\n', stderr);
-  for (cpp = message; *cpp; cpp++) {
-    fputs (*cpp, stderr);
-    putc ('\n', stderr);
-  }
-  putc ('\n', stderr);
-  exit (0);
-}
-
-#endif 
 
 /*-------------------------------------------------------
  * color status 
@@ -414,66 +128,6 @@ void getcolordef(integer *screenc)
 void setcolordef( int screenc)
 {
   screencolor = screenc;
-}
-
-/*-------------------------------------------------------
- * try to build SCI and MANCHAPTERS if not provided 
- *-------------------------------------------------------*/
-
-static char *sci_env;
-
-extern char * nsp_get_curdir(void);
-
-extern int C2F(scigetcwd)( char **path, int *lpath, int *err);
-
-static void set_sci_env (void)
-{
-  char *p1; 
-  if ((p1 = getenv ("SCI")) == (char *) 0)
-    {
-      sci_env = malloc((strlen(ProgramName)+1+4)*sizeof(char));
-      if ( sci_env != NULL) 
-	{
-	  int i;
-	  sprintf (sci_env, "SCI=%s",ProgramName);
-	  /* removing the trailing /bin/scilex  */
-	  for ( i = strlen(sci_env) ; i >= 0 ; i-- ) 
-	    {
-	      if ( sci_env[i]== '/' ) 
-		{
-		  if ( i >= 4 ) sci_env[i-4]= '\0';
-		  else { free(sci_env) ; return ;}
-		  break;
-		}
-	    }
-	  if ( strcmp(sci_env,"SCI")==0 )  
-	    {
-	      /* special case when ProgramName = bin/scilex */
-	      char *cwd =  nsp_get_curdir();
-	      if ( cwd  != NULL  ) 
-		{
-		  free(sci_env);
-		  sci_env = malloc((strlen(cwd)+1+4)*sizeof(char));
-		  if ( sci_env != NULL) 
-		    {
-		      strcpy(sci_env,"SCI=");
-		      strcat(sci_env,cwd);
-		      putenv(sci_env);
-		    }
-		  else 
-		    putenv("SCI=./");
-		}
-	      else 
-		{
-		  putenv("SCI=./");
-		}
-	    }
-	  else 
-	    {
-	      putenv(sci_env);
-	    }
-	}
-    }    
 }
 
 /*-------------------------------------------------------

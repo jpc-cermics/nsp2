@@ -296,7 +296,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 		
 	  Tcl_SplitPath(fileName, &pargc, &pargvList);
 	
-	  if ((S =nsp_smatrix_create_from_array(pargc,(const char **)pargvList)) == NULLSMAT ) return RET_BUG;
+	  if ((S =nsp_smatrix_create_from_array(NVOID,pargc,(const char **)pargvList)) == NULLSMAT ) return RET_BUG;
 	  MoveObj(stack,1,(NspObject*) S);
 	  result = 1;
 	  goto done;

@@ -4567,7 +4567,7 @@ static int sci_demo (char *fname,char *code,int flag)
       Sciprintf("Demo of %s\n",fname);
       Sciprintf("%s\n",code);
     }
-  rep = ParseEvalFromStr(code,FALSE,FALSE,FALSE);
+  rep = ParseEvalFromStr(code,FALSE,FALSE,FALSE,TRUE);
   if  ( rep < 0 ) 
     {
       Scierror("Error: during evaluation of %s\n",code);

@@ -166,19 +166,20 @@ typedef struct _stack Stack;
 typedef void stack_error(Stack *S,char *fmt,...);
 
 struct _stack {
-  char *fname; /** function currently evaluated **/
-  char *file_name ; /** current evaluated file **/
-  int first;   /** position of first argument to be used **/
-  NspObject **D;     /** D is dynamically changed so that D[1] is the first Objet used XXX **/
-  NspObject **L;     /** Last position **/
-  NspObject **S;     /** points to the whole stack **/
+  char *fname; /* function currently evaluated **/
+  char *file_name ; /* current evaluated file **/
+  int first;   /* position of first argument to be used **/
+  NspObject **D;     /* D is dynamically changed so that D[1] is the first Objet used XXX **/
+  NspObject **L;     /* Last position **/
+  NspObject **S;     /* points to the whole stack **/
   NspObject *error_msg; 
   stack_error *error;
-  int errcatch;
+  int errcatch; 
+  int pause; 
 } ;
 
 #define STACK_SIZE 500
-extern NspObject *S[STACK_SIZE];    /** this could be malloced XXX **/
+extern NspObject *S[STACK_SIZE];    /* this could be malloced XXX **/
 extern Stack SciStack ;
 
 extern void StackInfo (void); 

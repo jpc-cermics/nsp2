@@ -31,7 +31,8 @@ extern void nsp_check_gtk_events (void);
 extern void sci_winch_signal (int n); 
 
 /* x_main.c */ 
-extern int real_main (int argc, char **argv); 
+
+void nsp_gtk_init(int argc, char **argv,int no_window);
 extern void start_sci_gtk (void); 
 extern void sci_clear_and_exit (int n); 
 extern void sci_usr1_signal (int n); 

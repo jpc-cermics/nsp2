@@ -55,6 +55,7 @@ extern int get_is_reading(void);
 
 extern void nsp_error_message_show(void);
 extern void nsp_error_message_to_lasterror(void);
+extern void nsp_error_message_clear(void);
 
 extern int nsp_set_echo_input_line(int val);
 extern int nsp_get_echo_input_line(void);
