@@ -188,14 +188,14 @@ static void aplotv1_new(BCG *Xgc,char *strflag)
  *-------------------------------------------------------------*/
 
 
-void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny,const char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
+void sci_axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     store_SciAxis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
   Sci_Axis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
 }
 
-void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny,const char **str, int subtics, 
+void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, 
 	      char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
   int Nx,Ny;

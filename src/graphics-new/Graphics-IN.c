@@ -4138,7 +4138,7 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   char dir = 'l', *format = NULL, tics = 'v';
-  const char **val = NULL;
+  char **val = NULL;
   int fontsize = -1, sub_int=2, seg_flag = 1,textcolor = -1,ticscolor=-1;
   double *x = NULL,*y = NULL;
   int nx=0,ny=0,ntics;

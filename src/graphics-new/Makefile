@@ -25,6 +25,7 @@ include ../Make.lib
 # with gcc compiler, do not inline "floor" function in "Format.c"
 
 Format.o: Format.c
-	$(CC) $(CFLAGS) -D__NO_MATH_INLINES -c $< -o $@
+	@echo "compiling $<"
+	@$(CC) $(CFLAGS) -D__NO_MATH_INLINES -c $< -o $@
 
 #--- dependencies generated with gcc ----

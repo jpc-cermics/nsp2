@@ -20,7 +20,7 @@ static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,con
 static void Write2Vect(const int *vx,const  int *vy, int from, int n, char *string, int flag, int fv);
 static void WriteGeneric(char *string, int nobj, int sizeobj, const int *vx,const  int *vy, int sizev, int flag, const int *fvect);
 static void set_c_Pos(BCG *Xgc,int i);
-static void idfromname (char *name1, int *num);
+/* static void idfromname (char *name1, int *num); */
 static double ascentPos(BCG *Xgc);
 static int fontsizePos (BCG *Xgc);
 static int PosQueryFont(char *name);
@@ -269,17 +269,17 @@ static int xget_absourel(BCG *Xgc)
 /** The alu function for drawing : Works only with X11 **/
 /** Not in Postscript **/
 
-static void xset_alufunction(BCG *Xgc,char *string)
-{    
-  int value;
+/* static void xset_alufunction(BCG *Xgc,char *string) */
+/* {     */
+/*   int value; */
   
-  idfromname(string,&value);
-  if ( value != -1)
-    {
-      Xgc->CurDrawFunction = value;
-      FPRINTF((file,"\n%% %d setalufunction",(int)value));
-    }
-}
+/*   idfromname(string,&value); */
+/*   if ( value != -1) */
+/*     { */
+/*       Xgc->CurDrawFunction = value; */
+/*       FPRINTF((file,"\n%% %d setalufunction",(int)value)); */
+/*     } */
+/* } */
 
 /** All the possibilities : Read The X11 manual to get more informations **/
 
@@ -306,20 +306,20 @@ struct alinfo {
   {"GXset" ,GXset," 1 "}
 };
 
-void idfromname(char *name1, int *num)
-{int i;
- *num = -1;
- for ( i =0 ; i < 16;i++)
-   if (strcmp(AluStrucPos[i].name,name1)== 0) 
-     *num=AluStrucPos[i].id;
- if (*num == -1 ) 
-   {
-     Scistring("\n Use the following keys :");
-     for ( i=0 ; i < 16 ; i++)
-       sciprint("\nkey %s -> %s\r\n",AluStrucPos[i].name,
-	       AluStrucPos[i].info);
-   }
-}
+/* void idfromname(char *name1, int *num) */
+/* {int i; */
+/*  *num = -1; */
+/*  for ( i =0 ; i < 16;i++) */
+/*    if (strcmp(AluStrucPos[i].name,name1)== 0)  */
+/*      *num=AluStrucPos[i].id; */
+/*  if (*num == -1 )  */
+/*    { */
+/*      Scistring("\n Use the following keys :"); */
+/*      for ( i=0 ; i < 16 ; i++) */
+/*        sciprint("\nkey %s -> %s\r\n",AluStrucPos[i].name, */
+/* 	       AluStrucPos[i].info); */
+/*    } */
+/* } */
 
 
 static void xset_alufunction1(BCG *Xgc,int num)
@@ -427,26 +427,6 @@ static int DashTabPos[MAXDASH][4] = {
   {2,5,2,5}, {5,2,5,2},  {5,3,2,3}, {8,3,2,3},
   {11,3,2,3}, {11,3,5,3}};
 
-/* old version of setdashPos retained for compatibility */
-
-static void xset_dash_or_color(BCG *Xgc,int value)
-{
-  static int  l2=4,l3 ;
-
-  if ( Xgc->CurColorStatus == 1) 
-    {
-      int i;
-      i= Max(0,Min(value-1,Xgc->Numcolors+1));
-      Xgc->CurColor =i;
-      set_c_Pos(Xgc,i);
-    }
-  else 
-    {
-      l3 = Max(0,Min(MAXDASH - 1,value - 1));
-      xset_dashstyle(Xgc,l3,DashTabPos[l3],&l2);
-      Xgc->CurDashStyle = l3;
-    }
-}
 
 static int xset_dash(BCG *Xgc,int value)
 {
@@ -496,13 +476,6 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 
 
 /** to get the current dash-style **/
-/* old version of getdashPos retained for compatibility */
-
-
-static int xget_dash_or_color(BCG *Xgc)
-{
-  return ( Xgc->CurColorStatus ==1) ?  Xgc->CurColor + 1 :  xget_dash(Xgc);
-}
 
 static int xget_dash(BCG *Xgc)
 {
@@ -1112,10 +1085,10 @@ static double ascentPos(BCG *Xgc)
 
 /** Draw a single line in current style **/
 
-static void drawline(int *xx1, int *yy1, int *x2, int *y2)
-{
-    FPRINTF((file,"\n %d %d %d %d L",(int)*xx1,(int)*yy1,(int)*x2,(int)*y2));
-  }
+/* static void drawline(int *xx1, int *yy1, int *x2, int *y2) */
+/* { */
+/*     FPRINTF((file,"\n %d %d %d %d L",(int)*xx1,(int)*yy1,(int)*x2,(int)*y2)); */
+/*   } */
 
 /** Draw a set of segments **/
 /** segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/

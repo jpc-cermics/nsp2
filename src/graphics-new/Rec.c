@@ -31,7 +31,7 @@ static int MaybeCopyVect3dPLI  (int ,int **,const int *,int l);
 static int CopyVectLI  (int **,const int *,int ); 
 static int CopyVectF  (double **,const double *,int ); 
 static int CopyVectC  (char **,const char *,int ); 
-static int CopyVectS  (char ***,const char **); 
+static int CopyVectS  (char ***,char **); 
 
 static void store_void(BCG *Xgc,int code);
 static void store_int(BCG *Xgc,int code,int val);
@@ -1233,7 +1233,7 @@ static void clean_Plot(void *plot)
  *---------------------------------------------------------------------------*/
 
 void store_SciAxis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, 
-		   const char **str, int subtics, char *format, int fontsize, int textcolor, 
+		   char **str, int subtics, char *format, int fontsize, int textcolor, 
 		   int ticscolor, char logflag, int seg_flag)
 {
   struct rec_sciaxis *lplot = ((struct rec_sciaxis *) MALLOC(sizeof(struct rec_sciaxis)));
@@ -2044,7 +2044,7 @@ static int CopyVectC(char **nx,const char *x, int l)
   return(1);
 }
 
-static int CopyVectS(char ***hstr,const char **str)
+static int CopyVectS(char ***hstr, char **str)
 {
   /** x is a null terminated string vector */
   if ( str != 0) 

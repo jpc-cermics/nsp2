@@ -2843,7 +2843,6 @@ static void init_gl_lights(GLfloat light0_pos[4])
 
 static gint realize_event(GtkWidget *widget, gpointer data)
 {
-  GLfloat light0_pos[4]   = { -50.0, 50.0, 50.0, 0.0 }; 
   BCG *Xgc = (BCG *) data;
   GdkGLContext *glcontext;
   GdkGLDrawable *gldrawable;
@@ -3360,8 +3359,6 @@ int use_camera(BCG *Xgc)
 
 void change_camera(BCG *Xgc,const double *val)
 {
-  int i;
-  GLfloat light0_pos[4]   = { -50.0, 50.0, 50.0, 0.0 }; 
 #if 1
   Xgc->private->camera.position.x=*val;val++;
   Xgc->private->camera.position.y=*val;val++;
@@ -3378,9 +3375,6 @@ void change_camera(BCG *Xgc,const double *val)
   Xgc->private->camera.xmax=*val;val++;
   Xgc->private->camera.ymin=*val;val++;
   Xgc->private->camera.ymax=*val;val++;
-#else 
-  for (i=0; i< 3 ;i++) {light0_pos[i]=*val;val++;}
-  init_gl_lights(light0_pos);
 #endif
   expose_event( Xgc->private->drawing,NULL, Xgc);
 }
