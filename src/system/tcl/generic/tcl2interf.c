@@ -40,9 +40,9 @@ extern NspObject * Tcl_NewStringObj _ANSI_ARGS_((char *bytes, int length));
 
 int Tcl_SetStringObj(Stack stack,int n,char *bytes,int length)
 {
-  NspObject *O;
-  if (( O = Tcl_NewStringObj(bytes, length)) == NULLOBJ ) return RET_BUG;
-  MoveObj(stack,n,O);
+  NspObject *Ob;
+  if (( Ob = Tcl_NewStringObj(bytes, length)) == NULLOBJ ) return RET_BUG;
+  MoveObj(stack,n,Ob);
   return 1;
 }
 
@@ -70,26 +70,20 @@ int Tcl_SetStringObj(Stack stack,int n,char *bytes,int length)
 
 NspObject  *Tcl_NewStringObj(char *bytes,int length)
 {
-  NspObject *O;
   NspSMatrix *S;
   if ( length < 0  ) 
     {
-      if (( S =nsp_smatrix_create("void",1,1,bytes,1) ) == NULLSMAT ) 
+      if (( S =nsp_smatrix_create(NVOID,1,1,bytes,1) ) == NULLSMAT ) 
 	return NULLOBJ;
     }
   else
     {
-      String *loc;
-      if (( S =nsp_smatrix_create("void",1,1,bytes,0) ) == NULLSMAT ) 
+      if (( S =nsp_smatrix_create_with_length(NVOID,1,1,length) ) == NULLSMAT ) 
 	return NULLOBJ;
-      if (( loc = NewStringN(length)) == (String *) 0) 
-	return NULLOBJ;
-      strncpy(loc,bytes,length);
-      loc[length] ='\0';
-      StringDestroy(&S->S[0]);
-      S->S[0] = loc ;
+      strncpy(S->S[0],bytes,length);
+      S->S[0][length] ='\0';
     }
-  return (NspObject*) O;
+  return (NspObject*) S;
 }
 
 /*
@@ -107,7 +101,7 @@ NspObject  *Tcl_NewStringObj(char *bytes,int length)
 int Tcl_SetDoubleObj(Stack stack,int n,double d)
 {
   NspMatrix *M;
-  if (( M = nsp_matrix_create("void",'r',1,1) ) == NULLMAT ) return RET_BUG;
+  if (( M = nsp_matrix_create(NVOID,'r',1,1) ) == NULLMAT ) return RET_BUG;
   M->R[0] = d;
   MoveObj(stack,n,(NspObject*) M);
   return 1;
@@ -127,10 +121,9 @@ int Tcl_SetDoubleObj(Stack stack,int n,double d)
 
 int Tcl_SetBooleanObj(Stack stack,int n,int ival)
 {
-  NspObject *O;
-  if ((O =nsp_create_true_object("void"))==NULLOBJ) return RET_BUG;
-  if ( ival == 0 )   ((NspBMatrix *) O)->B[0] = ival ;
-  MoveObj(stack,n,O);
+  NspObject *Ob;
+  if ((Ob =nsp_create_boolean_object(NVOID,ival))==NULLOBJ) return RET_BUG;
+  MoveObj(stack,n,Ob);
   return 1;
 }
 

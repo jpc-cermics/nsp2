@@ -1,5 +1,6 @@
 /* Copyright INRIA/ENPC */
 /* returns setenv defined variable when getenv fails */
+
 #include <stdio.h>
 #include <string.h>
 

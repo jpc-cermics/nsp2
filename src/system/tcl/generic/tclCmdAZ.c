@@ -48,6 +48,7 @@ int int_syscd(Stack stack,int rhs,int opt,int lhs)
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
+  Tcl_DStringInit(&buffer);
   dirName = Tcl_TranslateFileName( str, &buffer);
   if (dirName == NULL)  return RET_BUG ;
   result = TclChdir(dirName);
@@ -77,90 +78,89 @@ int int_syscd(Stack stack,int rhs,int opt,int lhs)
 
 int int_sysfile(Stack stack,int rhs,int opt,int lhs) 
 {
-    char *fileName, *extension, *errorString;
-    int statOp = 0;		/* Init. to avoid compiler warning. */
-    int length;
-    int mode = 0;			/* Initialized only to prevent
-					 * compiler warning message. */
-    struct stat statBuf;
-    Tcl_DString buffer;
-    int index, result;
-    NspSMatrix *S;
-    /*
-     * This list of constants should match the fileOption string array below.
-     */
+  char *fileName, *extension, *errorString;
+  int statOp = 0;		/* Init. to avoid compiler warning. */
+  int length;
+  int mode = 0;		/* Init. to avoid compiler warning. */
+  struct stat statBuf;
+  Tcl_DString buffer;
+  int index, result=0;
+  NspSMatrix *S;
+  
+  /*
+   * This list of constants should match the fileOption string array below.
+   */
 
-    enum {FILE_ATIME, FILE_ATTRIBUTES, FILE_COPY, FILE_DELETE, FILE_DIRNAME,
-	  FILE_EXECUTABLE, FILE_EXISTS, FILE_EXTENSION, FILE_ISDIRECTORY,
-	  FILE_ISFILE, FILE_JOIN, FILE_LSTAT, FILE_MTIME, FILE_MKDIR,
-	  FILE_NATIVENAME, FILE_OWNED, FILE_PATHTYPE, FILE_READABLE,
-	  FILE_READLINK, FILE_RENAME, FILE_ROOTNAME, FILE_SIZE, FILE_SPLIT,
-	  FILE_STAT, FILE_TAIL, FILE_TYPE, FILE_VOLUMES, FILE_WRITABLE};
+  enum {FILE_ATIME, FILE_ATTRIBUTES, FILE_COPY, FILE_DELETE, FILE_DIRNAME,
+	FILE_EXECUTABLE, FILE_EXISTS, FILE_EXTENSION, FILE_ISDIRECTORY,
+	FILE_ISFILE, FILE_JOIN, FILE_LSTAT, FILE_MTIME, FILE_MKDIR,
+	FILE_NATIVENAME, FILE_OWNED, FILE_PATHTYPE, FILE_READABLE,
+	FILE_READLINK, FILE_RENAME, FILE_ROOTNAME, FILE_SIZE, FILE_SPLIT,
+	FILE_STAT, FILE_TAIL, FILE_TYPE, FILE_VOLUMES, FILE_WRITABLE};
     
-    static char *fileOptions[] = {"atime", "attributes", "copy", "delete", 
-    	    "dirname", "executable", "exists", "extension", "isdirectory", 
-    	    "isfile", "join", "lstat", "mtime", "mkdir", "nativename", 
-    	    "owned", "pathtype", "readable", "readlink", "rename",
-    	    "rootname", "size", "split", "stat", "tail", "type", "volumes", 
-    	    "writable", (char *) NULL};
+  static char *fileOptions[] = 
+    {"atime", "attributes", "copy", "delete", 
+     "dirname", "executable", "exists", "extension", "isdirectory", 
+     "isfile", "join", "lstat", "mtime", "mkdir", "nativename", 
+     "owned", "pathtype", "readable", "readlink", "rename",
+     "rootname", "size", "split", "stat", "tail", "type", "volumes", 
+     "writable", (char *) NULL
+    };
     
-    CheckRhs(1,10000); /* XXXX **/
-    CheckLhs(0,1);
+  CheckRhs(1,10000); /* XXXX **/
+  CheckLhs(0,1);
 
-    /** First argument must be a string in fileOptions **/
-    if ((index = GetStringInArray(stack,1,fileOptions,0)) == -1 ) 
-      return RET_BUG;
+  /** First argument must be a string in fileOptions **/
+  if ((index = GetStringInArray(stack,1,fileOptions,0)) == -1 ) return RET_BUG;
+  
+  /* 
+   * First, do the volumes command, since it is the only one that
+   * has rhs == 1.
+   */
     
-    result = TCL_OK;
-
-    /* 
-     * First, do the volumes command, since it is the only one that
-     * has rhs == 1.
-     */
-    
-    if ( index == FILE_VOLUMES) {
-      if ( rhs != 1 ) {
-	Scierror("Error: function %s, wrong number of arguments for volume option\n",
-		 stack.fname);
-	return RET_BUG;
-      }
-      return TclpListVolumes(stack,1);
-    }
-    
-    if ( rhs < 2 ) {
-      Scierror("Error: function %s, Not enough arguments \n",stack.fname);
+  if ( index == FILE_VOLUMES) {
+    if ( rhs != 1 ) {
+      Scierror("Error: function %s, wrong number of arguments for volume option\n",
+	       stack.fname);
       return RET_BUG;
     }
+    return TclpListVolumes(stack,1);
+  }
     
-    Tcl_DStringInit(&buffer);
+  if ( rhs < 2 ) {
+    Scierror("Error: function %s, Not enough arguments \n",stack.fname);
+    return RET_BUG;
+  }
     
-    /*
-     * Handle operations on the file name.
-     */
+  Tcl_DStringInit(&buffer);
     
-    switch (index) 
+  /*
+   * Handle operations on the file name.
+   */
+    
+  switch (index) 
+    {
+    case FILE_ATTRIBUTES:
+      result = TclFileAttrsCmd(stack,rhs,opt,lhs) ;
+      goto done;
+    case FILE_DIRNAME:	
       {
-      case FILE_ATTRIBUTES:
-	result = TclFileAttrsCmd(stack,rhs,opt,lhs) ;
-	goto done;
-      case FILE_DIRNAME:	
-	{
-	  int pargc;
-	  char **pargv;
+	int pargc;
+	char **pargv;
 	  
-	  if (rhs != 2) {
-	    errorString = "dirname name";
-	    goto not3Args;
-	  }
+	if (rhs != 2) {
+	  errorString = "dirname name";
+	  goto not3Args;
+	}
 
-	  if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
-
-	  /*
-	   * If there is only one element, and it starts with a tilde,
-	   * perform tilde substitution and resplit the path.
-	   */
+	if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
+	
+	/*
+	 * If there is only one element, and it starts with a tilde,
+	 * perform tilde substitution and resplit the path.
+	 */
 	  
-	  Tcl_SplitPath(fileName, &pargc, &pargv);
+	Tcl_SplitPath(fileName, &pargc, &pargv);
 	  if ((pargc == 1) && (*fileName == '~')) {
 	    ckfree((char*) pargv);
 	    fileName = Tcl_TranslateFileName( fileName, &buffer);
@@ -608,7 +608,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 }
 
 
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -624,8 +624,9 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
  *----------------------------------------------------------------------
  */
 
-static NspSMatrix *StoreStatData(struct stat *statPtr) /* Pointer to buffer containing
-						     * stat data to store in varName. */
+static NspSMatrix *StoreStatData(struct stat *statPtr) 
+     /* Pointer to buffer containing
+      * stat data to store in varName. */
 {
   char string[30];
   NspSMatrix *S;

@@ -224,10 +224,7 @@ static int expand_aliases(char *env, char **alias, char *in_name, char *out_name
 
 
 /*---------------------------------------------
- * expand in_name to produce out_name 
- *     try to find alias[i] at the begining of in_name 
- *     and replaces it by env in out_name 
- *     out_name must be large enough to get the result 
+ * get_env 
  *---------------------------------------------*/
 
 static int get_env(char *var,char *buf,int buflen,int iflag)
@@ -242,7 +239,7 @@ static int get_env(char *var,char *buf,int buflen,int iflag)
     {
       char *last; 
       strncpy(buf,local,buflen);
-      /* is it usefulle ? */
+      /* is it useful ? */
       last = &buf[strlen(buf)-1];
       while ( *last == ' ' ) { last = '\0' ;  last--;}
     }
