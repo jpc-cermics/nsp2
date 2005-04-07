@@ -447,13 +447,45 @@ static int int_bmatrix_or(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
 {
+  int rep=2,i,j;
   NspBMatrix *HMat1,*HMat;
-  CheckRhs(1,1);
+  CheckRhs(1,2);
   CheckLhs(1,1);
   if ((HMat1 = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
-  if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;
-  HMat->B[0] = NSP_OBJECT(HMat1)->type->is_true(HMat1);
-  MoveObj(stack,1, (NspObject *)HMat);  
+  if (rhs == 2)
+    {
+      char *and_opts[] = { "c", "r", "*", NULL };
+      if ((rep = GetStringInArray (stack, 2,and_opts, 1)) == -1)
+	return RET_BUG;
+    }
+  switch (rep) 
+    {
+    case 0:  /* column */
+      if ((HMat =nsp_bmatrix_create(NVOID,HMat1->m,1)) == NULLBMAT) return RET_BUG;
+      for ( i= 0 ; i < HMat1->m ; i++)
+	{
+	  HMat->B[i] = TRUE; 
+	  for ( j = 0 ; j < HMat1->n ; j++) 
+	    if ( HMat1->B[i+HMat1->m*j] == FALSE) {HMat->B[i] = FALSE;break;}
+	}
+      MoveObj(stack,1, (NspObject *)HMat);  
+      break;
+    case 1:   /* row */
+      if ((HMat =nsp_bmatrix_create(NVOID,1,HMat1->n)) == NULLBMAT) return RET_BUG;
+      for ( j= 0 ; j < HMat1->n ; j++)
+	{
+	  HMat->B[j] = TRUE; 
+	  for ( i = 0 ; i < HMat1->m ; i++) 
+	    if (  HMat1->B[i+HMat1->m*j]== FALSE ) { HMat->B[j] = FALSE; break;}
+	}
+      MoveObj(stack,1, (NspObject *)HMat);  
+      break;
+    case 2 : 
+      if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;
+      HMat->B[0] = NSP_OBJECT(HMat1)->type->is_true(HMat1);
+      MoveObj(stack,1, (NspObject *)HMat);  
+      break;
+    }
   return 1;
 }
 
@@ -463,24 +495,50 @@ static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_or1(Stack stack, int rhs, int opt, int lhs)
 {
-  int i;
+  int rep=2,i,j;
   NspBMatrix *HMat1,*HMat;
-  CheckRhs(1,1);
+  CheckRhs(1,2);
   CheckLhs(1,1);
   if ((HMat1 = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
-  if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;
-  HMat->B[0] = FALSE;
-  for ( i=0; i < HMat1->mn ; i++ ) 
+  if (rhs == 2)
     {
-      if ( HMat1->B[i] == TRUE ) 
-	{
-	    HMat->B[0] = TRUE;
-	    break;
-	}
+      char *and_opts[] = { "c", "r", "*", NULL };
+      if ((rep = GetStringInArray (stack, 2,and_opts, 1)) == -1)
+	return RET_BUG;
     }
-  MoveObj(stack,1,(NspObject *) HMat);  
+  switch (rep) 
+    {
+    case 0:  /* column */
+      if ((HMat =nsp_bmatrix_create(NVOID,HMat1->m,1)) == NULLBMAT) return RET_BUG;
+      for ( i= 0 ; i < HMat1->m ; i++)
+	{
+	  HMat->B[i] = FALSE; 
+	  for ( j = 0 ; j < HMat1->n ; j++) 
+	    if ( HMat1->B[i+HMat1->m*j] == TRUE ){ HMat->B[i] = TRUE; break;}
+	}
+      break;
+    case 1:   /* row */
+      if ((HMat =nsp_bmatrix_create(NVOID,1,HMat1->n)) == NULLBMAT) return RET_BUG;
+      for ( j= 0 ; j < HMat1->n ; j++)
+	{
+	  HMat->B[j] = FALSE; 
+	  for ( i = 0 ; i < HMat1->m ; i++) 
+	    if ( HMat1->B[i+HMat1->m*j]== TRUE ) {HMat->B[j] = TRUE; break;}
+	}
+      break;
+    case 2 : 
+      if ((HMat =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT) return RET_BUG;
+      HMat->B[0] = FALSE;
+      for ( i=0; i < HMat1->mn ; i++ ) 
+	{
+	  if ( HMat1->B[i] == TRUE ) {  HMat->B[0] = TRUE;   break;  }
+	}
+      break;
+    }
+  MoveObj(stack,1, (NspObject *)HMat);  
   return 1;
 }
+
 
 /*
  * A(i;j) = "not A(i;j)" : A is changed
