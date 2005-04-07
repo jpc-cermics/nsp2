@@ -1,3 +1,6 @@
+#ifndef NSP_LIBAPPROX 
+#define NSP_LIBAPPROX 
+
 enum {NOT_A_KNOT, NATURAL, CLAMPED, PERIODIC, FAST, FAST_PERIODIC, 
       MONOTONE, BY_ZERO, C0, LINEAR, BY_NAN, UNDEFINED};
 
@@ -20,4 +23,5 @@ void nlinear_interp(double **x , double val[], int dim[], int n,
 		    double **xp, double yp[], int np, int outmode, 
 		    double u[], double v[], int ad[], int k[]);
 
+#endif 
 
