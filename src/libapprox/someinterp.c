@@ -25,7 +25,7 @@
 #include <nsp/math.h>
 #include "nsp/approx.h"
 
-static int isearch(double t, double x[], int n) 
+static int isearch(double t,const double x[], int n) 
 {
   /*     PURPOSE
    *        x[0..n-1] being an array (with strict increasing order and n >=2)
@@ -53,7 +53,7 @@ static int isearch(double t, double x[], int n)
     return (-1);
 }
 
-static void fast_int_search(double xx, double x[], int nx, int *i)
+static void fast_int_search(double xx,const double x[], int nx, int *i)
 {
   if ( *i == -1 )
     *i = isearch(xx, x, nx);
@@ -62,7 +62,7 @@ static void fast_int_search(double xx, double x[], int nx, int *i)
 }
 
 
-static void coord_by_periodicity(double *t, double x[], int n, int *i)
+static void coord_by_periodicity(double *t,const double x[], int n, int *i)
 {
   /*
    *     PURPOSE

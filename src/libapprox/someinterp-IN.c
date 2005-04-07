@@ -29,7 +29,7 @@
 #include "nsp/bmatrix-in.h"
 #include "nsp/approx.h"
 
-static int good_order(double x[], int n)
+static int good_order(const double x[], int n)
 {
   /*  test if x[i-1] < x[i] */
   int i;
@@ -44,7 +44,7 @@ static int good_order(double x[], int n)
   return 1;
 }
 
-static int get_spline_type(char *str)
+static int get_spline_type(const char *str)
 {
   if (strcmp(str,"not_a_knot")==0) 
     return NOT_A_KNOT;
@@ -64,7 +64,7 @@ static int get_spline_type(char *str)
     return UNDEFINED;
 }
 
-static int get_outmode(char *str)
+static int get_outmode(const char *str)
 {
   if (strcmp(str,"C0")==0) 
     return C0;
@@ -85,10 +85,10 @@ static int get_outmode(char *str)
 
 int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
 { 
-/*  interface on the ndim linear interpolation routine
- *
- *   yp = linear_interpn(xp1, ..., xpn, x1, ..., xn, val, outmode)
- */
+  /*  interface on the ndim linear interpolation routine
+   *
+   *   yp = linear_interpn(xp1, ..., xpn, x1, ..., xn, val, outmode)
+   */
   char *str;
   int n = (rhs+1)/2 - 1, m, mxp, nxp, mnxp, i, *ndim, ndim_prod=1, *ad, *k, outmode;
   double **xp, **x, *u, *v, *val;
@@ -96,7 +96,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
 
   if ( n < 1 )
     { 
-      Scierror("%s: too few arg \r\n", stack.fname);
+      Scierror("%s: too few arg\n", stack.fname);
       return RET_BUG;
     }
   m = 1; for ( i = 1 ; i <= n ; i++) m = 2*m;
@@ -111,7 +111,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
   k = malloc(n*sizeof(int));
   if ( ! (xp && x && ndim && u && v && ad && k) )
     {
-      Scierror("%s: not enough memory \n", stack.fname);
+      Scierror("%s: not enough memory\n", stack.fname);
       goto err;
     } 
 
@@ -124,7 +124,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
       if ((B = GetMat(stack,i)) == NULLMAT) goto err;
       if ( mxp != B->m || nxp != B->n )
 	{ 
-	  Scierror("%s: bad inputs for xp1, xp2, ...., \r\n", stack.fname);
+	  Scierror("%s: bad inputs for xp1, xp2, ...., \n", stack.fname);
 	  goto err;
 	}
       xp[i-1] = B->R;
@@ -136,12 +136,12 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
       CheckVector(stack.fname,i+n,B);
       if (B->mn < 2)
 	{ 
-	  Scierror("%s: bad arg number %d \r\n", stack.fname, n+i);
+	  Scierror("%s: bad arg number %d \n", stack.fname, n+i);
 	  goto err;
 	}
       if ( !good_order(B->R, B->mn) )
 	{
-	  Scierror("%s: grid abscissae of dim %d not in strict increasing order \r\n", stack.fname, n+i);
+	  Scierror("%s: grid abscissae of dim %d not in strict increasing order \n", stack.fname, n+i);
 	  goto err;
 	}
       ndim[i-1] = B->mn;
@@ -165,7 +165,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
       outmode = get_outmode(str);
       if (outmode == UNDEFINED || outmode == LINEAR)
 	{
-	  Scierror("%s: %s is an unknown or unsupported outmode \n\r",stack.fname, str);
+	  Scierror("%s: %s is an unknown or unsupported outmode \n",stack.fname, str);
 	  goto err;
 	}
     }
@@ -191,10 +191,10 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
 
 static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
 { 
-/*  interface on the splin routine
- *
- *   d = splin(x, y [,splin_type, [end_slopes]])
- */
+  /*  interface on the splin routine
+   *
+   *   d = splin(x, y [,splin_type, [end_slopes]])
+   */
   char *str;
   NspMatrix *x, *y, *s, *d, *Ad, *Asd, *qdy, *lll;
   int n, spline_type;
@@ -210,13 +210,13 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
   n = x->mn;    /* number of interpolation points */
   if ( n < 2 ) 
     { 
-      Scierror("%s: the number of interpolation points must be >= 2\r\n", stack.fname);
+      Scierror("%s: the number of interpolation points must be >= 2\n", stack.fname);
       return RET_BUG;
     }
 
   if (! good_order(x->R, n))  /* verify strict increasing abscissae */
     {
-      Scierror("%s: elts of arg 1 not (strictly) increasing or +-inf detected\r\n",  stack.fname);
+      Scierror("%s: elts of arg 1 not (strictly) increasing or +-inf detected\n",  stack.fname);
       return RET_BUG;
     }
 
@@ -226,7 +226,7 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
       spline_type = get_spline_type(str);
       if ( spline_type == UNDEFINED )
 	{
-	  Scierror("%s: %s is an unknown or unsupported spline type\n\r",stack.fname, str);
+	  Scierror("%s: %s is an unknown or unsupported spline type\n",stack.fname, str);
 	  return RET_BUG;
 	}
     }
@@ -237,7 +237,7 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
     {
       if ( rhs != 4 )
 	{
-	  Scierror("%s: for a clamped spline you must give the endpoint slopes\n\r",stack.fname);
+	  Scierror("%s: for a clamped spline you must give the endpoint slopes\n",stack.fname);
 	  return RET_BUG;
 	}
       if ((s = GetMat(stack,4)) == NULLMAT) return RET_BUG;
@@ -245,14 +245,14 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
     }
   else if ( rhs == 4 )
     {
-      Scierror("%s: 4 args are required only for a clamped spline\n\r",stack.fname);
+      Scierror("%s: 4 args are required only for a clamped spline\n",stack.fname);
       return RET_BUG;
     }
     
   /*  verify y[0] = y[n-1] for periodic splines */
   if ( (spline_type == PERIODIC || spline_type == FAST_PERIODIC)  &&  y->R[0] != y->R[n-1] )
     {
-      Scierror("%s: for a periodic spline y(1) must be equal to y(n)\n\r",stack.fname);
+      Scierror("%s: for a periodic spline y(1) must be equal to y(n)\n",stack.fname);
       return RET_BUG;
     }
 
@@ -291,10 +291,10 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
 
 static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
 { 
-/*  interface on the interp routine
- *
- *   [st [, dst [, d2st [, d3st]]]] = interp(t, x, y, d [,outmode])
- */
+  /*  interface on the interp routine
+   *
+   *   [st [, dst [, d2st [, d3st]]]] = interp(t, x, y, d [,outmode])
+   */
   char *str;
   NspMatrix *t, *x, *y, *d, *st, *dst, *d2st, *d3st;
   int m, n, outmode;
@@ -316,7 +316,7 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
   n = x->mn;
   if ( x->mn < 2 )
     { 
-      Scierror("%s: length of x must be >= 2  \r\n", stack.fname);
+      Scierror("%s: length of x must be >= 2  \n", stack.fname);
       return 0;
     }
 
@@ -326,7 +326,7 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
       outmode = get_outmode(str);
       if ( outmode == UNDEFINED )
 	{
-	  Scierror("%s: %s is an unknown or unsupported outmode \n\r",stack.fname, str);
+	  Scierror("%s: %s is an unknown or unsupported outmode \n",stack.fname, str);
 	  return RET_BUG;
 	}
     }
@@ -368,8 +368,9 @@ int Approx_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return (*(Approx_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+ * (for adding or removing functions) 
+ */
 
 void Approx_Interf_Info(int i, char **fname, function (**f))
 {
