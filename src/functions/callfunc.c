@@ -69,6 +69,7 @@ extern  sci_interface  atk_Interf ;extern  interface_info  atk_Interf_Info ;
 extern  sci_interface  pango_Interf ;extern  interface_info  pango_Interf_Info ;
 extern  sci_interface  Type_Interf ;extern  interface_info  Type_Interf_Info ;
 extern  sci_interface  Dcd_Interf ;extern  interface_info  Dcd_Interf_Info ;
+extern  sci_interface  Approx_Interf ;extern  interface_info  Approx_Interf_Info ;
 extern  sci_interface  Module_Interf ;extern  interface_info  Module_Interf_Info ;
 extern  sci_interface  ModuleElt_Interf ;extern  interface_info  ModuleElt_Interf_Info ;
 
@@ -120,6 +121,7 @@ InterfTab Interfaces[]={
   {pango_Interf,pango_Interf_Info},
   {Type_Interf,Type_Interf_Info},
   {Dcd_Interf , Dcd_Interf_Info },
+  {Approx_Interf , Approx_Interf_Info },
   {Module_Interf , Module_Interf_Info },
   {ModuleElt_Interf , ModuleElt_Interf_Info },
 #ifdef EXTEND 

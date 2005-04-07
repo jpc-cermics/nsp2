@@ -3689,8 +3689,6 @@ int int_number_properties(Stack stack, int rhs, int opt, int lhs)
  * The Interface for basic matrices operation 
  */
 
-/* FIXME */
-extern int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs);
 
 static OpTab Matrix_func[] = {
   {"resize2vect_m", int_mxmat2vect},
@@ -3826,7 +3824,6 @@ static OpTab Matrix_func[] = {
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
   {"number_properties",int_number_properties},
-  {"linear_interpn", int_nsp_linear_interpn}, /* from libapprox */
   {(char *) 0, NULL}
 };
 
