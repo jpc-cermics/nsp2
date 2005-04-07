@@ -182,8 +182,7 @@ static int MatOpScalar(NspMatrix *Mat1, NspMatrix *Mat2, AdSu F1, AdSuZ F2)
 
 NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
 {  
-  /* double alpha=1.00,beta=0.00; **/
-  static doubleC zalpha={1.00,0.00},zbeta={0.00,0.00};
+  doubleC zalpha={1.00,0.00},zbeta={0.00,0.00};
   NspMatrix *Loc;
   if ( A->n != B->m ) 
     {
@@ -215,10 +214,10 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
 	 sont conforme a m,n ce qui est le cas ici 
 	 Voir si on peut modifier dgemm en cons'equence 
       **/
+      double alpha=1.00,beta=0.00;
+      C2F(dgemm)("N","N",&A->m,&B->n,&A->n,&alpha,A->R,&A->m,B->R,&B->m,
+		 &beta,Loc->R,&A->m,1,1); 
       /* 
-	 C2F(dgemm)("N","N",&A->m,&B->n,&A->n,&alpha,A->R,&A->m,B->R,&B->m,
-	 &beta,Loc->R,&A->m,1,1); 
-      **/
       int i,j,un=1,ib=0,ic=0;
       for ( j = 0 ; j < B->n ; j++)
 	{
@@ -227,6 +226,7 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
 	  ic += Loc->m;
 	  ib += B->m;
 	}
+      */
     }
   return(Loc);
 }

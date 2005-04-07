@@ -798,7 +798,7 @@ int int_smxtoupper(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A = GetSMatCopy(stack,1))  == NULLSMAT) return RET_BUG;
- nsp_smatrix_toupper(A);
+  nsp_smatrix_toupper(A);
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
