@@ -9,7 +9,7 @@ LIBRARY = approx.a
 CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
-OBJSC=someinterp.o
+OBJSC=someinterp.o someinterp-IN.o
 
 OBJSF= 
 

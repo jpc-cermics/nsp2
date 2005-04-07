@@ -12,7 +12,7 @@ LIBRARY = approx.lib
 CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
-OBJSC=someinterp.obj
+OBJSC=someinterp.obj someinterp-IN.obj
 
 OBJSF= 
 
