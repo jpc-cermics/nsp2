@@ -235,12 +235,12 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 			 double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
-  static int fg,fg1,dc;
+  int fg,fg1,dc;
   /* solid = color of 3D frame */
   int polysize,npoly,whiteid;
   int *polyx,*polyy,*fill;
-  static int cache;
-  static double zmin,zmax;
+  int cache;
+  double zmin,zmax;
   int i,j;
 
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
@@ -289,7 +289,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   whiteid = Xgc->graphic_engine->xget_last(Xgc);
   dc =  flag[0];
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
-  if (fg1==-1) fg1=0;   
+  if (fg1==-1) fg1=0; 
   for ( i =0 ; i < (*q)-1 ; i++)   fill[i]= dc ;
   polysize=5;
   npoly= (*q)-1; 
@@ -455,16 +455,11 @@ void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double 
 static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
-  static int fg1;
-  int polysize,npoly,whiteid;
+  int fg1, polysize,npoly,whiteid,cache,i;
   int *polyx,*polyy,*locindex,fill[4]; /* Modified by polpoth 4/5/2000 fill[4] instead of fill[1] */
   double *polyz;
-  static int cache;
-  static double zmin,zmax;
-  int i;
+  double zmin,zmax;
   /* If Record is on **/
-
-
   nsp_plot3d_update_bounds(Xgc,name,x,y,z,p,q, teta, alpha,legend,&flag[1],bbox,&zmin,&zmax,facettes_t);
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) {
@@ -722,7 +717,7 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
 {
   nsp_box_3d box;
   int style[1],j;
-  static int init;
+  int init;
   static int *xm,*ym;
   int fg1;
   double zmin,zmax; /* unused */
