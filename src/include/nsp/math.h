@@ -1,21 +1,28 @@
 #ifndef NSP_MATH 
 #define NSP_MATH 
 
-/*------------------------------------------------------------------------
- *    Copyright (C) 1998-2003-2003 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- --------------------------------------------------------------------------*/
-
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *--------------------------------------------------------------------------*/
+#include <stdlib.h>
 #include <math.h>
 #include "machine.h"
 #include "numeric.h" /* set of constants */
-
-
-#ifdef __STDC__
-#include <stdlib.h>
-#else
-#include <malloc.h>
-#endif
 
 #ifndef TRUE
 #define TRUE (1)
@@ -82,13 +89,6 @@ extern double Maxi();  /* XXXX a mettre ailleurs **/
 #define anint(x) rint(x) 
 /* partie entiere **/
 #define aint(x) ((x>= 0 ) ? floor(x)  : ceil(x))
-
-/* 
- * isinf must return -1 0 or 1 
-#ifndef isinf 
-#define isinf(x) ( !  finite(x) && !isnan(x))
-#endif 
-*/
 
 #ifndef exp10
 extern double exp10 (double);
@@ -168,6 +168,8 @@ extern double acosh(double);
 extern double asinh(double);
 extern double atanh(double);
 #endif 
+
+extern  double nsp_dlamch (char *cmach);
 
 #endif /* SCI_MATH */
 
