@@ -441,11 +441,35 @@ int int_pl2s(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * get rhs and lhs 
+ * should be changed to also return opt 
+ * FIXME: should be a method of NspPList 
+ */
+
+int int_inout(Stack stack, int rhs, int opt, int lhs)
+{
+  int pl_lhs,pl_rhsp1;
+  NspPList *PL;
+  CheckRhs(1,1);
+  CheckLhs(1,2);
+  if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
+  plist_get_nargs(PL->D,&pl_lhs,&pl_rhsp1);
+  if ( nsp_move_double(stack,1,(double)pl_lhs )== FAIL) return RET_BUG;
+  if ( lhs == 2 ) 
+    {
+      if ( nsp_move_double(stack,2,(double)pl_rhsp1-1 )== FAIL) return RET_BUG;
+    }
+  return Max(lhs,1);
+}
+
+
+/*
  * The Interface for parsed lists
  */
 
 static OpTab NspPList_func[]={
   {"pl2s", int_pl2s},
+  {"inout", int_inout},
   {(char *) 0, NULL}
 };
 

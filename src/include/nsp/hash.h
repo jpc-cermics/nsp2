@@ -45,8 +45,8 @@ typedef struct _nsp_type_Hash {
 struct _nsp_hash {
   NspObject father; 
   NspTypeHash *type; 
-  unsigned int hsize,filled;
-  void  *htable;
+  unsigned int hsize,filled; /* size of hash table and number of present entries */
+  void  *htable; /* an array of size hsize+1 */
 };
 
 extern int nsp_type_hash_id;

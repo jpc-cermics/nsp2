@@ -128,6 +128,7 @@ extern NspSMatrix * NspPList2SMatrix (NspPList *P_L, int indent);
  extern int PListSave (PList L);
 extern int PListLoad (PList *L);
 extern NspSMatrix *PList2SMatrix(PList L, int indent) ;
+extern void plist_get_nargs(PList List,int *lhs , int *rhsp1);
 
 #endif /*  PLIST_H  */
 
