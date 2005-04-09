@@ -681,11 +681,7 @@ static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
 		   ArgPosition((int) Elts->R[i]));
 	  return RET_BUG;
 	}
-      /* If NspList has no name we must copy : ex list(1,2,3)(3) */
-      if ( L_name ) 
-	{
-	  if ((O=nsp_object_copy(O)) == NULLOBJ) return RET_BUG;
-	}
+      if ((O=nsp_object_copy(O)) == NULLOBJ) return RET_BUG;
       NthObj(rhs+i+1)= O;
     }
   /* 

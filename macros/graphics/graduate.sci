@@ -40,9 +40,9 @@ if  n1 == 0  &  n2 == 0  then
    k1 = 1
    k2 = 1
 else
-   k1 = mini ( abs(n1) , abs(n2) )
-   k1 = maxi (    1    ,     k1  )
-   k2 = maxi ( abs(n1) , abs(n2) )
+   k1 = min ( abs(n1) , abs(n2) )
+   k1 = max (    1    ,     k1  )
+   k2 = max ( abs(n1) , abs(n2) )
 end
 if xma == xmi then
    if xma==0 then
@@ -53,10 +53,10 @@ if xma == xmi then
    end
 end
 
-xx0 = maxi ( xma , xmi )
-xx1 = mini ( xma , xmi )
+xx0 = max ( xma , xmi )
+xx1 = min ( xma , xmi )
 del=abs(xx1-xx0)
-if abs(xx0-xx1)<=1d-6*maxi(xx0,xx1) then
+if abs(xx0-xx1)<=1d-6*max(xx0,xx1) then
   xa = xma
   xi = xmi
   np=1
@@ -80,14 +80,14 @@ for npi = k1:k2
 // il est compris entre  10**ipa-1  et  10**ipa
 //
   if xx0*xx1<0 then
-    pas=maxi(abs([xx0 xx1])/npi)
+    pas=max(abs([xx0 xx1])/npi)
   else
     pas = (xx0-xx1)/npi
   end
   ipa = int(log(pas)/log(10))
   if pas<1 then ipa = ipa - 1,end
 
-  pa2 = 10**ipa
+  pa2 = 10 .^ipa
 //
   ik=find(pas<=kadm*pa2)
   if ik==[] then

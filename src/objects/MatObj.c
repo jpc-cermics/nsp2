@@ -3656,7 +3656,8 @@ int int_number_properties(Stack stack, int rhs, int opt, int lhs)
   NspObject *Ob;
   CheckRhs(1,1);
   CheckLhs(1,1);  
-  if ((rep= GetStringInArray(stack,1,numbers_props,1)) == -1) return RET_BUG; 
+  /* we accept abbrevs here */
+  if ((rep= GetStringInArray(stack,1,numbers_props,0)) == -1) return RET_BUG; 
   switch ( rep ) 
     {
     case nump_eps: Ob=nsp_new_double_obj(nsp_dlamch("e")); break;

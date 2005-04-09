@@ -73,6 +73,8 @@ int nsp_init_frames(int argc, char **argv)
   nsp_frame_replace_object(O);
   if ((O =nsp_create_false_object("%f"))==NULLOBJ) return FAIL;
   nsp_frame_replace_object(O);
+  if ((O =nsp_create_object_from_double("%eps",nsp_dlamch("e")))== NULLOBJ) return FAIL;
+  nsp_frame_replace_object(O);
   /* used for list element deletion **/
   if ((O =nsp_create_empty_matrix_object("%null"))==NULLOBJ) return FAIL;
   nsp_frame_replace_object(O);
