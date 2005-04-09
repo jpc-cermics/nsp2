@@ -89,7 +89,7 @@ int nsp_hash_resize(NspHash *H, unsigned int new_size)
   unsigned int i;
   NspHash *Loc;
   if ((Loc = nsp_hcreate(NVOID,new_size)) == NULLHASH ) return FAIL;
-  for ( i =0 ; i < H->hsize ; i++) 
+  for ( i =0 ; i <= H->hsize ; i++) 
     {
       Hash_Entry *loc = ((Hash_Entry *)H->htable) + i;
       if ( loc->used )
@@ -129,7 +129,7 @@ int nsp_hash_merge(NspHash *H1,NspHash *H2)
 	  return FAIL;
 	}
     }
-  for ( i =0 ; i < H2->hsize ; i++) 
+  for ( i =0 ; i <= H2->hsize ; i++) 
     {
       Hash_Entry *loc = ((Hash_Entry *)H2->htable) + i;
       if ( loc->used )
@@ -490,23 +490,24 @@ int nsp_hash_full_not_equal(NspHash *L1, NspHash *L2)
  */
 
 /* Copyright (C) 1993 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@ira.uka.de>
-
-The GNU C Library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Library General Public License as
-published by the Free Software Foundation; either version 2 of the
-License, or (at your option) any later version.
-
-The GNU C Library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Library General Public License for more details.
-
-You should have received a copy of the GNU Library General Public
-License along with the GNU C Library; see the file COPYING.LIB.  If
-not, write to the Free Software Foundation, Inc., 675 Mass Ave,
-Cambridge, MA 02139, USA.  */
+ *  This file is part of the GNU C Library.
+ *  Contributed by Ulrich Drepper <drepper@ira.uka.de>
+ *
+ *  The GNU C Library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Library General Public License as
+ *  published by the Free Software Foundation; either version 2 of the
+ *   License, or (at your option) any later version.
+ *
+ *  The GNU C Library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public
+ *  License along with the GNU C Library; see the file COPYING.LIB.  If
+ *  not, write to the Free Software Foundation, Inc., 675 Mass Ave,
+ *  Cambridge, MA 02139, USA.  
+ */
 
 
 /*
@@ -606,10 +607,10 @@ int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation acti
   register unsigned count;
   register unsigned idx;
   Hash_Entry *htable =  H->htable;
-    /*
-     * If table is full and another entry should be entered return with 
-     * error.
-     */
+  /*
+   * If table is full and another entry should be entered return with 
+   * error.
+   */
 
   if (action == H_ENTER && H->filled == H->hsize ) 
     {
@@ -644,14 +645,14 @@ int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation acti
 		{
 		case H_REMOVE :
 		  htable[idx].used = 0;
-		nsp_object_destroy(&htable[idx].data);
+		  nsp_object_destroy(&htable[idx].data);
 		  htable[idx].data = NULLOBJ;
 		  (H->filled)--;
 		  return OK ;
 		  break;
 		case H_ENTER_COPY :
 		  if (htable[idx].data != NULLOBJ) 
-		nsp_object_destroy(&htable[idx].data);
+		    nsp_object_destroy(&htable[idx].data);
 		  htable[idx].data =nsp_object_copy_with_name(*data);
 		  if (htable[idx].data == NULLOBJ) 
 		    {
@@ -663,7 +664,7 @@ int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation acti
 		  return OK;
 		case H_ENTER: 
 		  if (htable[idx].data != NULLOBJ) 
-		nsp_object_destroy(&htable[idx].data);
+		    nsp_object_destroy(&htable[idx].data);
 		  htable[idx].data = *data;
 		  return OK;
 		case H_FIND_COPY :
@@ -676,64 +677,64 @@ int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation acti
 	    }
 	}
 	
-	/* Second hash function, as suggested in [Knuth] */
+      /* Second hash function, as suggested in [Knuth] */
 
-        hval2 = 1 + hval % (H->hsize-2);
+      hval2 = 1 + hval % (H->hsize-2);
 	
-        do {
-	    /* 
-	     * Because hsize is prime this guarantees to step through all
-             * available indeces.
-	     */
-            if (idx <= hval2)
-	        idx = H->hsize+idx-hval2;
-	    else
-	        idx -= hval2;
+      do {
+	/* 
+	 * Because hsize is prime this guarantees to step through all
+	 * available indeces.
+	 */
+	if (idx <= hval2)
+	  idx = H->hsize+idx-hval2;
+	else
+	  idx -= hval2;
 
-	    /* Sciprintf("2nd hash Testing idx=%d\n",idx); */
-            /* If entry is found use it. */
-            if (htable[idx].used == hval ) 
+	/* Sciprintf("2nd hash Testing idx=%d\n",idx); */
+	/* If entry is found use it. */
+	if (htable[idx].used == hval ) 
+	  {
+	    if ( Ocheckname(htable[idx].data,key)) 
 	      {
-                if ( Ocheckname(htable[idx].data,key)) 
+		switch (action) 
 		  {
-		    switch (action) 
+		  case H_REMOVE :
+		    htable[idx].used = 0;
+		    nsp_object_destroy(&htable[idx].data);
+		    htable[idx].data = NULLOBJ;
+		    (H->filled)--;
+		    return OK;
+		    break;
+		  case H_ENTER_COPY :
+		    if (htable[idx].data != NULLOBJ) 
+		      nsp_object_destroy(&htable[idx].data);
+		    htable[idx].data =nsp_object_copy_with_name(*data);
+		    if (htable[idx].data == NULLOBJ) 
 		      {
-		      case H_REMOVE :
-			htable[idx].used = 0;
-			nsp_object_destroy(&htable[idx].data);
-			htable[idx].data = NULLOBJ;
+			Sciprintf("No more memory\n");
+			htable[idx].used =0;
 			(H->filled)--;
-			return OK;
-			break;
-		      case H_ENTER_COPY :
-			if (htable[idx].data != NULLOBJ) 
-			nsp_object_destroy(&htable[idx].data);
-			htable[idx].data =nsp_object_copy_with_name(*data);
-			if (htable[idx].data == NULLOBJ) 
-			  {
-			    Sciprintf("No more memory\n");
-			    htable[idx].used =0;
-			    (H->filled)--;
-			    return FAIL;
-			  }
-			return OK;
-		      case H_ENTER :
-			if (htable[idx].data != NULLOBJ) 
-			nsp_object_destroy(&htable[idx].data);
-			htable[idx].data = *data;
-			return OK;
-		      case H_FIND_COPY :
-			*data=nsp_object_copy(htable[idx].data);
-			return OK;
-		      case H_FIND :
-			*data= htable[idx].data;
-			return OK;
+			return FAIL;
 		      }
+		    return OK;
+		  case H_ENTER :
+		    if (htable[idx].data != NULLOBJ) 
+		      nsp_object_destroy(&htable[idx].data);
+		    htable[idx].data = *data;
+		    return OK;
+		  case H_FIND_COPY :
+		    *data=nsp_object_copy(htable[idx].data);
+		    return OK;
+		  case H_FIND :
+		    *data= htable[idx].data;
+		    return OK;
 		  }
 	      }
-	} while (htable[idx].used);
+	  }
+      } while (htable[idx].used);
 	
-      }
+    }
 
   /* Sciprintf("End of hash search idx=%d must be free \n",idx); **/
     

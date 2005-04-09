@@ -224,7 +224,8 @@ static int hash_xdr_save(NspFile  *F, NspHash *M)
   if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(F,M->hsize) == FAIL) return FAIL;
   if (nsp_xdr_save_i(F,M->filled) == FAIL) return FAIL;
-  for ( i =0 ; i < M->hsize ; i++) 
+  /* last entry is at M->hsize ! */
+  for ( i =0 ; i <= M->hsize ; i++) 
     {
       Hash_Entry *loc = ((Hash_Entry *)M->htable) + i;
       if ( loc->used )
@@ -268,7 +269,8 @@ static NspHash  *hash_xdr_load(NspFile  *F)
 void nsp_hash_destroy(NspHash *H)
 {
   unsigned int i;
-  for ( i =0 ; i < H->hsize ; i++) 
+  /* last entry is at M->hsize ! */
+  for ( i =0 ; i <= H->hsize ; i++) 
     {
       Hash_Entry *loc = ((Hash_Entry *) H->htable) + i;
       if ( loc->used) 
@@ -292,7 +294,8 @@ void hash_info(NspHash *H, int indent)
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("Hash %s, (size=%d,filled=%d)\n",NSP_OBJECT(H)->name,H->filled,H->hsize);
-  for ( i1 =0 ; i1 < H->hsize  ; i1++) 
+  /* last entry is at M->hsize ! */
+  for ( i1 =0 ; i1 <= H->hsize  ; i1++) 
     {
       Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
       if ( loc->used) 
@@ -313,7 +316,8 @@ void hash_print(NspHash *H, int indent)
     {
       if ( strcmp(NSP_OBJECT(H)->name,NVOID) != 0) Sciprintf("%s=",NSP_OBJECT(H)->name);
       Sciprintf("hcreate(\n");
-      for ( i1 =0 ; i1 < H->hsize ; i1++) 
+      /* last entry is at M->hsize ! */
+      for ( i1 =0 ; i1 <= H->hsize ; i1++) 
 	{
 	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
 	  if ( loc->used) 
@@ -333,7 +337,7 @@ void hash_print(NspHash *H, int indent)
   else 
     {
       Sciprintf("%s\th, filled=%d, size=%d\n",NSP_OBJECT(H)->name,H->filled,H->hsize);
-      for ( i1 =0 ; i1 < H->hsize ; i1++) 
+      for ( i1 =0 ; i1 <= H->hsize ; i1++) 
 	{
 	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
 	  if ( loc->used) 
@@ -379,7 +383,7 @@ NspHash  *GetHash(Stack stack, int i)
 {
   NspHash *M;
   if (( M = hash_object(NthObj(i))) == NULLHASH)
-     ArgMessage(stack,i);
+    ArgMessage(stack,i);
   return M;
 }
 
@@ -403,7 +407,7 @@ NspHash *hash_copy(NspHash *H)
   NspHash *Loc;
   Loc = nsp_hcreate(NVOID,H->hsize);
   if ( Loc == NULLHASH ) return NULLHASH;
-  for ( i =0 ; i < H->hsize ; i++) 
+  for ( i =0 ; i <= H->hsize ; i++) 
     {
       Hash_Entry *loc = ((Hash_Entry *)H->htable) + i;
       if ( loc->used )
@@ -832,7 +836,7 @@ int Hash_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 /* used to walk through the interface table 
-    (for adding or removing functions) **/
+   (for adding or removing functions) **/
 
 void Hash_Interf_Info(int i, char **fname, function (**f))
 {
