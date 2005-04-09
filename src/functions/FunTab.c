@@ -358,6 +358,7 @@ static int scifunc_hcreate(unsigned int nel)
     filled = 0;
     /* printf(" Size of hTable %d\n",nel); */
     /* allocate memory and zero out */
+    /* note that htable has hsize +1 entries */
     if ((htable = (_ENTRY *)calloc(hsize+1, sizeof(_ENTRY))) == NULL)
 	return 0;
 
@@ -386,7 +387,7 @@ scifunc_hdestroy()
 int FindFunctionB(char *key, int Int, int Num)
 {
   unsigned int i;
-  for ( i = 0 ; i < hsize ; i++ ) 
+  for ( i = 0 ; i <= hsize ; i++ ) 
     if ( htable[i].used 
 	 &&  htable[i].entry.data.Int == Int
 	 &&  htable[i].entry.data.Num == Num
@@ -404,7 +405,7 @@ void ShowTable(void)
 {
   unsigned int i;
   printf("Whole Table\n");
-  for ( i = 0 ; i < hsize ; i++ ) 
+  for ( i = 0 ; i <= hsize ; i++ ) 
     if ( htable[i].used )
       printf("%s %d %d \n",htable[i].entry.key,
 	     htable[i].entry.data.Int,htable[i].entry.data.Num);
@@ -417,7 +418,7 @@ void ShowTable(void)
 void DeleteFunctionS(int Int)
 {
   unsigned int i;
-  for ( i = 0 ; i < hsize ; i++ ) 
+  for ( i = 0 ; i <= hsize ; i++ ) 
     if ( htable[i].used 
 	 &&  htable[i].entry.data.Int == Int
 	 )
