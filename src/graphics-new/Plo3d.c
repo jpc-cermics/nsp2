@@ -1581,6 +1581,7 @@ void I3dRotation(BCG *Xgc)
       Xgc->graphic_engine->xinfo(Xgc,"3d rotation is not possible when recording is not on" );
       return;
     }
+  Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
   Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&xc,&yc,iwait,FALSE,FALSE,FALSE,istr);
   theta0 = theta = Xgc->scales->theta ;
@@ -1615,6 +1616,7 @@ void I3dRotation(BCG *Xgc)
       x=xc;
       y=yc;
     }
+  Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox);
   Xgc->graphic_engine->force_redraw(Xgc);
 }

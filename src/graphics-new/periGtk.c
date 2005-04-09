@@ -623,7 +623,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
   /* take care of recursive calls i.e restore info  */
   info = rec_info ; 
 
-  if ( Xgc != (BCG *) 0 && Xgc->private->drawing != NULL ) {
+  if ( Xgc != (BCG *) 0 && Xgc->private != NULL &&  Xgc->private->drawing != NULL ) {
     gdk_window_set_cursor (Xgc->private->drawing->window,Xgc->private->ccursor);
   }
 
