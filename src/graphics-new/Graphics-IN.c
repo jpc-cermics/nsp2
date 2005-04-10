@@ -713,7 +713,7 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
   int *iflag;
   NspMatrix *x,*y,*z,*Mebox=NULL,*flag=NULL,*Mstyle=NULL;
   double alpha=35.0,theta=45.0,*ebox ;
-  const char *leg=NULL,*leg1;
+  const char *leg=NULL,*leg1=NULL;
   int_types T[] = {realmat,realmat,realmat,new_opts, t_end} ;
 
   nsp_option opts[] ={{ "alpha",s_double,NULLOBJ,-1},
@@ -749,7 +749,7 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
    * check that iflag[1] and leg are compatible 
    * i.e force visibility of axes names if they are given
    */
-  if (leg1 !=  NULL) iflag[1]=4;
+  if (leg !=  NULL && strlen(leg) != 0 ) iflag[1]=4;
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
@@ -1128,7 +1128,7 @@ int int_draw3dobj(Stack stack, int rhs, int opt, int lhs)
    * check that iflag[2] and leg are compatible 
    * i.e force visibility of axes names if they are given
    */
-  if (leg !=  NULL) iflag[2]=4;
+  if (leg !=  NULL && strlen(leg) != 0 ) iflag[2]=4;
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);

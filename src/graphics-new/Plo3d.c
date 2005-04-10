@@ -817,7 +817,7 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
   int style[1],j;
   static int init;
   static int *xm,*ym;
-  int fg1,cur;
+  int fg1,cur,mn=(*m)*(*n);
   double zmin,zmax; /* unused */
 
 #ifdef WITH_GTKGLEXT 
@@ -828,7 +828,7 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
     }
 #endif
 
-  nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,n,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
+  nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,&mn,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
 
   /* If Record is on **/
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
@@ -2153,10 +2153,10 @@ static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, i
   nsp_box_3d box;
   int style[1],j;
   static int init;
-  int fg1,cur;
+  int fg1,cur,mn=(*m)*(*n);
   double zmin,zmax; /* unused */
 
-  nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,n,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
+  nsp_plot3d_update_bounds(Xgc,"param3d",x,y,z,&mn,NULL, teta, alpha,legend,&flag[0],bbox,&zmin,&zmax,param3d_t);
 
   /* If Record is on **/
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
