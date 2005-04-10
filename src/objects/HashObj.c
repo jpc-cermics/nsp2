@@ -646,7 +646,8 @@ static int int_meth_htfind(void *self,Stack stack, int rhs, int opt, int lhs)
   NspHash *H=self;
   NspObject *O;
   CheckRhs(1,1000);
-  CheckLhs(1,1);
+  CheckLhs(1,1000);
+  lhs=Max(lhs,1);
   for ( j = 1 ; j <= rhs ; j++ )
     {
       if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;        
@@ -663,16 +664,51 @@ static int int_meth_htfind(void *self,Stack stack, int rhs, int opt, int lhs)
 	      NthObj(rhs+ ++count) = O ;
 	      NSP_OBJECT(O)->ret_pos = count;
 	    }
+	  if (count == lhs) break;
 	}
+      if (count == lhs) break;
     }
   return count;
 }
 
+/*
+ * checks if keys are present in hash table 
+ * results are returned in boolean matrice 
+ */
+
+static int int_meth_iskey(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *S;
+  int i,j,count=0;
+  NspHash *H=self;
+  NspObject *Ob;
+  NspBMatrix *Res;
+  CheckRhs(1,1000);
+  CheckLhs(1,1000);
+  lhs=Max(lhs,1);
+  for ( j = 1 ; j <= rhs ; j++ )
+    {
+      if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;        
+      if ((Res = nsp_bmatrix_create(NVOID,S->m,S->n))== NULLBMAT) return RET_BUG;
+      for ( i = 0 ; i < S->mn ; i++ ) 
+	{
+	  Res->B[i] = (nsp_hash_find(H,S->S[i],&Ob) == FAIL)? FALSE:TRUE;
+	}
+      NthObj(rhs+ ++count) = NSP_OBJECT(Res) ;
+      NSP_OBJECT(Res)->ret_pos = count;
+      if (count == lhs) break;
+    }
+  return count;
+}
+
+
+
 static NspMethods hash_methods[] = {
-  { "find", int_meth_htfind},
   { "delete", int_htdelete},
-  { "merge", int_htmerge},
   { "enter", int_htenter},
+  { "iskey", int_meth_iskey},
+  { "find", int_meth_htfind},
+  { "merge", int_htmerge},
   { (char *) 0, NULL}
 };
 
@@ -707,7 +743,7 @@ static int int_htfind(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if (nsp_hash_find_and_copy(H,S->S[i],&O) == FAIL)   
 	    {
-	      Scierror("%s: key %s not found in hash table \n",stack.fname);
+	      Scierror("%s: key %s not found in hash table \n",stack.fname,S->S[i]);
 	      nsp_void_object_destroy(&O);
 	      return RET_BUG  ;
 	    }
