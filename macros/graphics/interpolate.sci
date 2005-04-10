@@ -5,7 +5,7 @@ function val=interpolate(x,xref,yref)
 // Jean-Philippe Chancelier 
 // slight corrections by Bruno Pincon
   if size(xref)<>size(yref) | size(xref,"*")<2  then 
-    error('lin_interpolation: xref and y_ref must be of same size and must have at least 2 components');
+    error('interpolate: xref and yref must be of same size and must have at least 2 components');
     return;
   end
   if x == [] then, val = [], return, end
