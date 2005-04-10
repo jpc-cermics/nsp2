@@ -1598,14 +1598,18 @@ static int xget_foreground(BCG *Xgc)
     }
 }
 
-/** set and get the number of the hidden3d color */
+/* set and get the number of the hidden3d color 
+ * which is used for backface drawing in 3d plot
+ * > 0 then a color is used
+ * 0 : no painting 
+ * < 0 same as face color
+ */
 
 static void xset_hidden3d(BCG *Xgc,int num)
 { 
   if (Xgc->CurColorStatus == 1) 
     {
-      /* e Segre: Max(0,... -> Max(-1,... */
-      Xgc->NumHidden3d = Max(-1,Min(num - 1,Xgc->Numcolors + 1));
+      Xgc->NumHidden3d = Max(-2,Min(num - 1,Xgc->Numcolors + 1));
     }
 }
 
@@ -1617,7 +1621,7 @@ static int xget_hidden3d(BCG *Xgc)
     }
   else 
     {
-      return  1; /** the hidden3d is a solid line style in b&w */
+      return  1; /* the hidden3d is a solid line style in b&w */
     }
 }
 

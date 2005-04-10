@@ -264,16 +264,15 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   Convex_Box(Xgc,&box,legend,flag[2]);
   /* Le triedre */
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
-  if (fg1==-1) fg1=0;
   if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
       cache=box.InsideD[0];
-      if (flag[2] >=2 ) DrawAxis(Xgc,&box,'D',fg1);
+      if (flag[2] >=2 ) DrawAxis(Xgc,&box,'D',Max(fg1,0));
     }
   else 
     {
       cache=box.InsideU[0]-4;
-      if (flag[2] >=2 )DrawAxis(Xgc,&box,'U',fg1);
+      if (flag[2] >=2 )DrawAxis(Xgc,&box,'U',Max(fg1,0));
     }
   polyx = graphic_alloc(0,5*(*q),sizeof(int));
   polyy = graphic_alloc(1,5*(*q),sizeof(int));
@@ -288,8 +287,6 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 
   whiteid = Xgc->graphic_engine->xget_last(Xgc);
   dc =  flag[0];
-  fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
-  if (fg1==-1) fg1=0; 
   for ( i =0 ; i < (*q)-1 ; i++)   fill[i]= dc ;
   polysize=5;
   npoly= (*q)-1; 
@@ -479,16 +476,15 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
   Convex_Box(Xgc,&box,legend,flag[2]);
   /* Le triedre cach\'e **/
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
-  if (fg1==-1) fg1=0;  
   if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
       cache=box.InsideD[0];
-      if (flag[2] >=2 )DrawAxis(Xgc,&box,'D',fg1);
+      if (flag[2] >=2 )DrawAxis(Xgc,&box,'D',Max(fg1,0));
     }
   else 
     {
       cache=box.InsideU[0]-4;
-      if (flag[2] >=2 )DrawAxis(Xgc,&box,'U',fg1);
+      if (flag[2] >=2 )DrawAxis(Xgc,&box,'U',Max(fg1,0));
     }
   polyz = graphic_alloc(5,(*q),sizeof(double));
   if ( (polyz == NULL) && (*q) != 0)
@@ -557,29 +553,26 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	  
 	  fill[0]=  flag[0];
 	  /* Beginning of modified code by E. Segre 4/5/2000 : the call
-	     to Xgc->graphic_engine->("xliness" ... is now done in each if/else if block.
-	     The case iflag==3 corresponds to the new case, where cvect points
-	     to a (*p) times (*q) matrix, in order to do interpolated shading.
-	     
-	     The new added function are located at the end of thecurrent file (Plo3d.c) */
+	   * to Xgc->graphic_engine->("xliness" ... is now done in each if/else if block.
+	   * The case iflag==3 corresponds to the new case, where cvect points
+	   * to a (*p) times (*q) matrix, in order to do interpolated shading.
+	   * The new added function are located at the end of thecurrent file (Plo3d.c) 
+	   */
 
-	  if ( *p >= 2 && ((polyx[1]-polyx[0])*(polyy[2]-polyy[0])-
-			   (polyy[1]-polyy[0])*(polyx[2]-polyx[0])) <  0) 
+	  if ( *p >= 2 && fg1 != -1 && ((polyx[1]-polyx[0])*(polyy[2]-polyy[0])-
+					(polyy[1]-polyy[0])*(polyx[2]-polyx[0])) <  0 ) 
 	    {
-	      fill[0] = (flag[0] > 0 ) ? fg1 : -fg1 ;
-	      /* 
-		 The following test fixes a bug : when flag[0]==0 then only the
-		 wire frame has to be drawn, and the "shadow" of the surface does
-		 not have to appear. polpoth 4/5/2000
-		 */
-	      
-	      if (flag[0]==0) fill[0]=0;
+	      /* backface drawing if fg1 != 0  */
+	      /* if flag[0]== 0 only the wire frame has to be drawn 
+	       * else wire frame is drawn or nor according to flag[0] 
+	       * of fg1 value 
+	       */
+	      fill[0] = (flag[0]==0) ? 0 : ((flag[0] > 0 ) ? fg1 : -fg1 );
 	      /* modification du to E Segre to avoid drawing of hidden facets */
 	      if (fg1>0) 
 		{
 		  Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 		}
-	      /*Xgc->graphic_engine->fillpolylines(Xgc,"str",polyx,polyy,fill,&npoly,&polysize);*/
 	    }
 	  else if ( iflag == 1) 
 	    {
@@ -599,25 +592,31 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	      if ( flag[0] < 0 ) fill[0]=-fill[0];
 	      Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 	    }
-	  else if ( iflag ==3 ) { /* colors are given by cvect of size (*p) times (*q) */
-	    if ( (*p) != 3 && (*p) !=4 ) {
-	      Scistring("plot3d1 : interpolated shading is only allowed for polygons with 3 or 4 vertices\n");
-	      return;
-	    } else {
-                /** fill **/
-		shade(Xgc,polyx,polyy,cvect+(*p)*locindex[i],*p,flag[0]);
-		/** draw if requested but just check on the first color **/ 
-		if ( cvect[(*p)*locindex[i]] >= 0 ) 
-		  {
-		    fill[0]=0;
-		    Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
-		  }
-
-	      }
-	  }
-	  else Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
+	  else if ( iflag ==3 ) 
+	    { 
+	      /* colors are given by cvect of size (*p) times (*q) */
+	      if ( (*p) != 3 && (*p) !=4 ) 
+		{
+		  Scistring("plot3d1: interpolated shading is only allowed for polygons with 3 or 4 vertices\n");
+		  return;
+		} 
+	      else
+		{
+		  /* fill */
+		  shade(Xgc,polyx,polyy,cvect+(*p)*locindex[i],*p,flag[0]);
+		  /* draw if requested but just check on the first color */ 
+		  if ( cvect[(*p)*locindex[i]] >= 0 ) 
+		    {
+		      fill[0]=0;
+		      Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
+		    }
+		}
+	    }
+	  else 
+	    {
+	      Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
+	    }
 	  /* End of modified code by polpoth 4/5/2000 */
-
 	}
     } 
   if ( flag[2] >=3 )
@@ -638,6 +637,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 
 int DPoints1(BCG *Xgc,int *polyx, int *polyy, int *fill, int whiteid, double zmin, double zmax, double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg)
 {
+  int backface;
   polyx[  5*jj1] =PGEOX(x[i]  ,y[j]  ,z[i+(*p)*j]);
   if ( finite(xx1)==0 )return(0);
   polyy[  5*jj1] =PGEOY(x[i]  ,y[j]  ,z[i+(*p)*j]);
@@ -658,10 +658,12 @@ int DPoints1(BCG *Xgc,int *polyx, int *polyy, int *fill, int whiteid, double zmi
   if ( finite(xx1)==0 )return(0);
   polyy[4 +5*jj1]=PGEOY(x[i]  ,y[j]  ,z[i+(*p)*j]);
   if ( finite(yy1)==0)return(0);
-  if (((polyx[1+5*jj1]-polyx[0+5*jj1])*(polyy[2+5*jj1]-polyy[0+5*jj1])-
-       (polyy[1+5*jj1]-polyy[0+5*jj1])*(polyx[2+5*jj1]-polyx[0+5*jj1])) <  0 
-      )
+  backface = ((polyx[1+5*jj1]-polyx[0+5*jj1])*(polyy[2+5*jj1]-polyy[0+5*jj1])-
+	      (polyy[1+5*jj1]-polyy[0+5*jj1])*(polyx[2+5*jj1]-polyx[0+5*jj1])) <  0 ;
+  
+  if ( backface && fg != -1 ) 
     {
+      /* backface color */
       fill[jj1]= (dc < 0 ) ? -fg : fg ;
     }
   else
@@ -702,9 +704,14 @@ int DPoints(BCG *Xgc,int *polyx, int *polyy, int *fill, int whiteid, double zmin
   if ( finite(yy1)==0)return(0);
   if (((polyx[1+5*jj1]-polyx[0+5*jj1])*(polyy[2+5*jj1]-polyy[0+5*jj1])-
        (polyy[1+5*jj1]-polyy[0+5*jj1])*(polyx[2+5*jj1]-polyx[0+5*jj1])) <  0)
-    fill[jj1]=  (dc != 0 ) ? fg : dc ;
+    {
+      /* backface color */
+      fill[jj1]=  (dc != 0 ) ? ((fg < 0) ? dc : fg)  : dc ;
+    }
   else
-    fill[jj1]= dc;
+    {
+      fill[jj1]= dc;
+    }
   return(1);
 }
 
