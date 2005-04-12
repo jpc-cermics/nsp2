@@ -126,7 +126,7 @@ void nlinear_interp(double **x , double val[], int dim[], int n,
 
   int i, j, l, p, temp, b,/* toto,*/ two_p_n;
   double xx;
-  double NAN = (2*DBL_MAX)*0.0;
+  double nan_val = (2*DBL_MAX)*0.0;
 
   /*   
    *   calcul des decalages d'indices pour retrouver les valeurs
@@ -157,14 +157,14 @@ void nlinear_interp(double **x , double val[], int dim[], int n,
 	  xx = xp[j][i];
 	  if ( ISNAN(xx) )
 	    {
-	      v[0] = NAN; goto fin;
+	      v[0] = nan_val; goto fin;
 	    }
 	  fast_int_search(xx, x[j], dim[j], &(k[j]));
 	  if ( k[j] == -1 )   /* le point est a l'exterieur */ 
 	    switch (outmode)
 	      {
 	      case BY_NAN :
-		v[0] = NAN;
+		v[0] = nan_val;
 		goto fin;
 
 	      case BY_ZERO :
