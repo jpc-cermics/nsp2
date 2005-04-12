@@ -7,8 +7,8 @@ FFLAGS = $(FC_OPTIONS)
 # -Wl,all_load 
 
 LIBS=  libs/nsp.a libs/zcalelm.a  libs/graphics.a \
-	libs/gtksci.a libs/menusX.a libs/rand.a libs/dcd.a libs/integ.a \
-	libs/lapack.a libs/blas.a
+	libs/gtksci.a libs/menusX.a libs/rand.a libs/dcd.a libs/approx.a \
+	libs/integ.a libs/lapack.a libs/blas.a 
 
 bin/scilex: scilex-lib 
 	@$(RM) $@;
