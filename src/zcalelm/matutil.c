@@ -8,7 +8,6 @@
 #include "nsp/object.h"
 #include "nsp/matutil.h"
 
-
 /*
  * A set of utilities used in matrix operations
  */

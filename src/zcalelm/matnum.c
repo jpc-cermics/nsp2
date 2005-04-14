@@ -21,6 +21,8 @@
  * used when lapack is not present to get machine constants.
  * double C2F(dlamch)(char *cmach, long int lstr)
  * double nsp_dlamch (cmach);
+ * FIXME : eps is smaller here than a direct call to Fortran 
+ *         dlamch
  *--------------------------------------------------------------------------*/
 
 #include <strings.h>
@@ -43,13 +45,13 @@ static  int nsp_dlamc5 (int *beta, int *p, int *emin, int *ieee, int *emax, doub
 extern  double pow_di (double *, int *);
 
 /*
- * when used from Fortran 
+ * when used from Fortran
  */
 extern  double nsp_dlamch (char *cmach);
 
-double C2F(dlamch)(char *cmach, long int lstr)
+double C2F(dlamchXXX)(char *cmach, long int lstr)
 {
-  return nsp_dlamch (cmach);
+  return nsp_dlamch(cmach);
 }
 
 /*--------------------------------------------------------------------
@@ -86,8 +88,8 @@ double C2F(dlamch)(char *cmach, long int lstr)
 double nsp_dlamch (char *cmach)
 {
   static int first = TRUE;
-  static double base, emin, prec, emax, rmin, rmax,t, sfmin, rnd, eps;
-  double zero= 0.0,  rmach=0.0, small, ret_val,one=1.0;
+  static double base, emin, prec, emax, rmin, rmax,t, sfmin, rnd, eps,  rmach=0.0, small;
+  const double zero= 0.0,one=1.0;
   int i_1, beta, imin, imax, lrnd,  it;
 
   if (first)
@@ -161,9 +163,7 @@ double nsp_dlamch (char *cmach)
     {
       rmach = rmax;
     }
-
-  ret_val = rmach;
-  return ret_val;
+  return rmach;
 }
 
 
@@ -400,27 +400,24 @@ static int nsp_dlamc2 (int *beta, int *t, int *rnd, double *eps,
       zero = 0.;
       one = 1.;
       two = 2.;
-
-/*        LBETA, LT, LRND, LEPS, LEMIN and LRMIN  are the local values of */
-/*        BETA, T, RND, EPS, EMIN and RMIN. */
-
-/*        Throughout this routine  we use the function  DLAMC3  to ensure */
-/*        that relevant values are stored  and not held in registers,  or */
-/*        are not affected by optimizers. */
-
-/*        DLAMC1 returns the parameters  LBETA, LT, LRND and LIEEE1. */
+      /*        LBETA, LT, LRND, LEPS, LEMIN and LRMIN  are the local values of */
+      /*        BETA, T, RND, EPS, EMIN and RMIN. */
+      
+      /*        Throughout this routine  we use the function  DLAMC3  to ensure */
+      /*        that relevant values are stored  and not held in registers,  or */
+      /*        are not affected by optimizers. */
+      
+      /*        DLAMC1 returns the parameters  LBETA, LT, LRND and LIEEE1. */
 
       nsp_dlamc1 (&lbeta, &lt, &lrnd, &lieee1);
-
-/*        Start to find EPS. */
+      
+      /*        Start to find EPS. */
 
       b = (double) lbeta;
       i_1 = -lt;
       a = pow_di (&b, &i_1);
       leps = a;
-
-/*        Try some tricks to see whether or not this is the correct  EPS. */
-
+      /*        Try some tricks to see whether or not this is the correct  EPS. */
       b = two / 3;
       half = one / 2;
       d_1 = -half;
@@ -436,16 +433,15 @@ static int nsp_dlamc2 (int *beta, int *t, int *rnd, double *eps,
 	}
 
       leps = 1.;
-
-/* +       WHILE( ( LEPS.GT.B ).AND.( B.GT.ZERO ) )LOOP */
+      /* +       WHILE( ( LEPS.GT.B ).AND.( B.GT.ZERO ) )LOOP */
     L10:
       if (leps > b && b > zero)
 	{
 	  leps = b;
 	  d_1 = half * leps;
-/* Computing 5th power */
+	  /* Computing 5th power */
 	  d_3 = two, d_4 = d_3, d_3 *= d_3;
-/* Computing 2nd power */
+	  /* Computing 2nd power */
 	  d_5 = leps;
 	  d_2 = d_4 * (d_3 * d_3) * (d_5 * d_5);
 	  c_ = nsp_dlamc3 (&d_1, &d_2);
@@ -457,18 +453,15 @@ static int nsp_dlamc2 (int *beta, int *t, int *rnd, double *eps,
 	  b = nsp_dlamc3 (&half, &c_);
 	  goto L10;
 	}
-/* +       END WHILE */
-
+      /* +       END WHILE */
       if (a < leps)
 	{
 	  leps = a;
 	}
-
-/*        Computation of EPS complete. */
-
-/*        Now find  EMIN.  Let A = + or - 1, and + or - (1 + BASE**(-3)). */
-/*        Keep dividing  A by BETA until (gradual) underflow occurs. This */
-/*        is detected when we cannot recover the previous A. */
+      /*        Computation of EPS complete. */
+      /*        Now find  EMIN.  Let A = + or - 1, and + or - (1 + BASE**(-3)). */
+      /*        Keep dividing  A by BETA until (gradual) underflow occurs. This */
+      /*        is detected when we cannot recover the previous A. */
 
       rbase = one / lbeta;
       small = one;
@@ -476,7 +469,7 @@ static int nsp_dlamc2 (int *beta, int *t, int *rnd, double *eps,
 	{
 	  d_1 = small * rbase;
 	  small = nsp_dlamc3 (&d_1, &zero);
-/* L20: */
+	  /* L20: */
 	}
       a = nsp_dlamc3 (&one, &small);
       nsp_dlamc4 (&ngpmin, &one, &lbeta);
@@ -492,15 +485,15 @@ static int nsp_dlamc2 (int *beta, int *t, int *rnd, double *eps,
 	  if (ngpmin == gpmin)
 	    {
 	      lemin = ngpmin;
-/*            ( Non twos-complement machines, no gradual underflow; */
-/*              e.g.,  VAX ) */
+	      /*            ( Non twos-complement machines, no gradual underflow; */
+	      /*              e.g.,  VAX ) */
 	    }
 	  else if (gpmin - ngpmin == 3)
 	    {
 	      lemin = ngpmin - 1 + lt;
 	      ieee = TRUE;
-/*            ( Non twos-complement machines, with gradual underflow; */
-/*              e.g., IEEE standard followers ) */
+	      /*            ( Non twos-complement machines, with gradual underflow; */
+	      /*              e.g., IEEE standard followers ) */
 	    }
 	  else
 	    {
@@ -515,8 +508,8 @@ static int nsp_dlamc2 (int *beta, int *t, int *rnd, double *eps,
 	  if ((i_1 = ngpmin - ngnmin, Abs (i_1)) == 1)
 	    {
 	      lemin = Max (ngpmin, ngnmin);
-/*            ( Twos-complement machines, no gradual underflow; */
-/*              e.g., CYBER 205 ) */
+	      /*            ( Twos-complement machines, no gradual underflow; */
+	      /*              e.g., CYBER 205 ) */
 	    }
 	  else
 	    {
@@ -531,27 +524,27 @@ static int nsp_dlamc2 (int *beta, int *t, int *rnd, double *eps,
 	  if (gpmin - Min (ngpmin, ngnmin) == 3)
 	    {
 	      lemin = Max (ngpmin, ngnmin) - 1 + lt;
-/*            ( Twos-complement machines with gradual underflow; */
-/*              no known machine ) */
+	      /*            ( Twos-complement machines with gradual underflow; */
+	      /*              no known machine ) */
 	    }
 	  else
 	    {
 	      lemin = Min (ngpmin, ngnmin);
-/*            ( A guess; no known machine ) */
+	      /*            ( A guess; no known machine ) */
 	      iwarn = TRUE;
 	    }
 
 	}
       else
 	{
-/* Computing MIN */
+	  /* Computing MIN */
 	  i_1 = Min (ngpmin, ngnmin), i_1 = Min (i_1, gpmin);
 	  lemin = Min (i_1, gnmin);
-/*         ( A guess; no known machine ) */
+	  /*         ( A guess; no known machine ) */
 	  iwarn = TRUE;
 	}
       /* ** */
-/* Comment out this if block if EMIN is ok */
+      /* Comment out this if block if EMIN is ok */
       if (iwarn)
 	{
 	  Sciprintf("WARNING. The value EMIN may be incorrect: Emin=%d\n",emin);
@@ -561,29 +554,23 @@ static int nsp_dlamc2 (int *beta, int *t, int *rnd, double *eps,
 	  Sciprintf(" dlamc2");
 	}
       /* ** */
-
-/*        Assume IEEE arithmetic if we found denormalised  numbers above, */
-/*        or if arithmetic seems to round in the  IEEE style,  determined */
-/*        in routine DLAMC1. A true IEEE machine should have both  things */
-/*        true; however, faulty machines may have one or the other. */
-
+      /*        Assume IEEE arithmetic if we found denormalised  numbers above, */
+      /*        or if arithmetic seems to round in the  IEEE style,  determined */
+      /*        in routine DLAMC1. A true IEEE machine should have both  things */
+      /*        true; however, faulty machines may have one or the other. */
       ieee = ieee || lieee1;
-
-/*        Compute  RMIN by successive division by  BETA. We could compute */
-/*        RMIN as BASE**( EMIN - 1 ),  but some machines underflow during */
-/*        this computation. */
-
+      /*        Compute  RMIN by successive division by  BETA. We could compute */
+      /*        RMIN as BASE**( EMIN - 1 ),  but some machines underflow during */
+      /*        this computation. */
       lrmin = 1.;
       i_1 = 1 - lemin;
       for (i_ = 1; i_ <= i_1; ++i_)
 	{
 	  d_1 = lrmin * rbase;
 	  lrmin = nsp_dlamc3 (&d_1, &zero);
-/* L30: */
+	  /* L30: */
 	}
-
-/*        Finally, call DLAMC5 to compute EMAX and RMAX. */
-
+      /*        Finally, call DLAMC5 to compute EMAX and RMAX. */
       nsp_dlamc5 (&lbeta, &lt, &lemin, &ieee, &lemax, &lrmax);
     }
 
@@ -851,5 +838,5 @@ L10:
 
 static int nsp_lsame (const char *ca,const  char *cb)
 {
-  return strcasecmp(ca,cb)==0;
+  return strncasecmp(ca,cb,1)==0;
 }
