@@ -1,0 +1,10 @@
+2005-04-14    <jpc@cermics.enpc.fr>
+
+	* src/lapack added. It contains a set 
+	of lapack based function (qr,svd,inv,...) 
+	and their interfaces. This is unfinished and 
+	not fully tested.
+
+	
+	
+
