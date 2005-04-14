@@ -57,7 +57,7 @@ static char Marks[] = {
   (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
   (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
 
-/** Global variables to deal with X11 **/
+/* Global variables to deal with X11 **/
 
 static unsigned long maxcol; /* XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
@@ -82,7 +82,7 @@ static void unclip_rectangle(GdkRectangle clip_rect);
  * the current graphic data structure 
  *------------------------------------------------------------------*/
 
-/** functions **/
+/* functions **/
 
 static void set_c(BCG *Xgc,int col);
 static void LoadFonts(BCG *Xgc);
@@ -199,7 +199,7 @@ void xselgraphic(BCG *Xgc)
   gdk_window_show(Xgc->private->window->window);
 }
 
-/** End of graphic (do nothing)  **/
+/* End of graphic (do nothing)  **/
 
 void xendgraphic(void)
 {
@@ -229,7 +229,7 @@ static void clearwindow(BCG *Xgc)
 /* generates a pause, in seconds */
 
 #if defined(__STDC__) || defined(_IBMR2)
-/** for usleep **/
+/* for usleep **/
 #include <unistd.h> 
 #endif 
 
@@ -699,7 +699,7 @@ static void xset_recording(BCG *Xgc, int val)
 {
   Xgc->record_flag = (val == 0 ) ? FALSE : TRUE;
 }
-/** to get the window upper-left point coordinates on the screen  **/
+/* to get the window upper-left point coordinates on the screen  **/
 
 static void xget_windowpos(BCG *Xgc,int *x,int *y)
 {
@@ -708,7 +708,7 @@ static void xget_windowpos(BCG *Xgc,int *x,int *y)
   *x = xx; *y =yy;
 }
 
-/** to set the window upper-left point position on the screen **/
+/* to set the window upper-left point position on the screen **/
 
 static void xset_windowpos(BCG *Xgc, int x, int y)
 {
@@ -716,14 +716,14 @@ static void xset_windowpos(BCG *Xgc, int x, int y)
   gdk_window_move (Xgc->private->window->window, x,y);
 }
 
-/** To get the drawbox  window size : used by periGif **/
+/* To get the drawbox  window size : used by periGif **/
 
 void getwindowdim(BCG *Xgc,int *verbose, int *x, int *narg, double *dummy)
 {   
   xget_windowdim(Xgc,x,x+1);
 }
 
-/** To get the drawbox  window size **/
+/* To get the drawbox  window size **/
 
 static void xget_windowdim(BCG *Xgc,int *x, int *y)
 {     
@@ -804,7 +804,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
   gdk_flush(); //FIXME invalidate_rectangle
 }
 
-/** To get the popup  window size **/
+/* To get the popup  window size **/
 
 static void xget_popupdim(BCG *Xgc,int *x, int *y)
 { 
@@ -813,14 +813,14 @@ static void xget_popupdim(BCG *Xgc,int *x, int *y)
   *x = xx ;  *y = yy ; 
 } 
 
-/** To change the popup window size  **/
+/* To change the popup window size  **/
 
 static void xset_popupdim(BCG *Xgc,int x, int y)
 {
   gdk_window_resize(Xgc->private->window->window,x,y);
 }
 
-/** To get the viewport Upper/Left point Position **/
+/* To get the viewport Upper/Left point Position **/
 
 static void xget_viewport(BCG *Xgc,int *x, int *y)
 {     
@@ -839,7 +839,7 @@ static void xget_viewport(BCG *Xgc,int *x, int *y)
     }
 } 
 
-/** To change the window size  **/
+/* To change the window size  **/
 
 static void xset_viewport(BCG *Xgc,int x, int y)
 {
@@ -865,9 +865,9 @@ static int xset_curwin(int intnum,int set_menu)
   BCG *bcgk= window_list_get_first(),*new=NULL;
   if ( bcgk == (BCG *) 0 ) 
     {
-      /** First entry or no more graphic window **/
+      /* First entry or no more graphic window **/
       initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e');
-      /** send info to menu **/
+      /* send info to menu **/
       new = window_list_get_first();
       old = -1;
     }
@@ -915,7 +915,7 @@ static int xget_curwin(void)
   return  ( Xgc == NULL) ? -1 : Xgc->CurWindow;
 }
 
-/** Set a clip zone (rectangle ) **/
+/* Set a clip zone (rectangle ) **/
 
 static void xset_clip(BCG *Xgc,int x[])
 {
@@ -927,7 +927,7 @@ static void xset_clip(BCG *Xgc,int x[])
   clip_rectangle(Xgc, clip_rect);
 }
 
-/** unset clip zone **/
+/* unset clip zone **/
 
 static void xset_unclip(BCG *Xgc)
 {
@@ -937,7 +937,7 @@ static void xset_unclip(BCG *Xgc)
   unclip_rectangle(clip_rect);
 }
 
-/** Get the boundaries of the current clip zone **/
+/* Get the boundaries of the current clip zone **/
 
 static void xget_clip(BCG *Xgc,int *x)
 {
@@ -959,7 +959,7 @@ static void xget_clip(BCG *Xgc,int *x)
  * Absolute mode if *num==0, relative mode if *num != 0
  */
 
-/** to set absolute or relative mode **/
+/* to set absolute or relative mode **/
 
 static void xset_absourel(BCG *Xgc,int flag)
 {
@@ -969,7 +969,7 @@ static void xset_absourel(BCG *Xgc,int flag)
     Xgc->CurVectorStyle =  CoordModePrevious ;
 }
 
-/** to get information on absolute or relative mode **/
+/* to get information on absolute or relative mode **/
 
 static int xget_absourel(BCG *Xgc)
 {
@@ -980,53 +980,52 @@ static int xget_absourel(BCG *Xgc)
  * Not in Postscript, Read The X11 manual to get more informations 
  */
 
+/* The alu function for private->drawing : Works only with X11
+ * Not in Postscript, Read The X11 manual to get more informations 
+ */
+
+static struct alinfo { 
+  char *name;
+  GLenum id;
+  char *info;} AluStruc_[] =
+  { 
+    {"GXclear" , GL_CLEAR," 0 "},
+    {"GXand" , GL_AND," src AND dst "},
+    {"GXandReverse" , GL_AND_REVERSE," src AND NOT dst "},
+    {"GXcopy" , GL_COPY," src "},
+    {"GXandInverted" , GL_AND_INVERTED," NOT src AND dst "},
+    {"GXnoop" , GL_NOOP," dst "},
+    {"GXxor" , GL_XOR," src XOR dst "},
+    {"GXor" , GL_OR," src OR dst "},
+    {"GXnor" , GL_NOR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
+    {"GXequiv" , GL_EQUIV," NOT src XOR dst "},
+    {"GXinvert" , GL_INVERT," NOT dst "},
+    {"GXorReverse" , GL_OR_REVERSE," src OR NOT dst "},
+    {"GXcopyInverted" , GL_COPY_INVERTED," NOT src "},
+    {"GXorInverted" , GL_OR_INVERTED," NOT src OR dst "},
+    {"GXnand" , GL_NAND," NOT src OR NOT dst "},
+    {"GXset" , GL_SET," 1 "}
+  };
+
+/* 
 void xset_alufunction(BCG *Xgc,char *string)
 { 
-#if 0
   int value;
   idfromname(string,&value);
   if ( value != -1)
     {
       Xgc->CurDrawFunction = value;
-      gdk_gc_set_function(Xgc->private->wgc, AluStruc_[value].id);
+      glLogicOp(AluStruc_[value].id);
     }
-#endif
 }
+*/
 
 static void xset_alufunction1(BCG *Xgc,int num)
 {   
-#if 0
-  int value ; 
-  GdkColor temp = {0,0,0,0};
+  GLenum value ; 
   Xgc->CurDrawFunction = Min(15,Max(0,num));
   value = AluStruc_[Xgc->CurDrawFunction].id;
-
-  switch (value) 
-    {
-    case GDK_CLEAR : 
-      gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,GDK_COPY);
-      break;
-    case GDK_XOR   : 
-      temp.pixel = Xgc->private->gcol_fg.pixel ^ Xgc->private->gcol_bg.pixel ;
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,GDK_XOR);
-      break;
-    default :
-      gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_fg);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,value);
-      break;
-    }
-  if ( value == GDK_XOR  && Xgc->CurColorStatus == 1 )
-    {
-      /** the way colors are computed changes if we are in Xor mode **/
-      /** so we force here the computation of current color  **/
-      set_c(Xgc,Xgc->CurColor);
-    }
-#endif
+  glLogicOp(value);
 }
 
 
@@ -1051,7 +1050,7 @@ static void xset_thickness(BCG *Xgc,int value)
   xset_dash(Xgc,Xgc->CurDashStyle + 1);
 }
 
-/** to get the thickness value **/
+/* to get the thickness value **/
 
 static int xget_thickness(BCG *Xgc)
 {
@@ -1081,7 +1080,7 @@ static int  xset_pattern(BCG *Xgc,int num)
   return old;
 }
 
-/** To get the id of the current pattern  **/
+/* To get the id of the current pattern  **/
 
 static int xget_pattern(BCG *Xgc)
 { 
@@ -1091,7 +1090,7 @@ static int xget_pattern(BCG *Xgc)
     return Xgc->CurPattern + 1;
 }
 
-/** To get the id of the last pattern **/
+/* To get the id of the last pattern **/
 
 static int xget_last(BCG *Xgc)
 {
@@ -1186,7 +1185,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 }
 
 
-/** to get the current dash-style **/
+/* to get the current dash-style **/
 
 static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
 {
@@ -1245,13 +1244,13 @@ static int xget_usecolor(BCG *Xgc)
 
 static void xset_pixmapOn(BCG *Xgc,int num)
 { 
-  Sciprintf("pixmap on is not implemented in OpenGL driver\n");
   int num1= Min(Max(num,0),1);
+  Sciprintf("pixmap on is not implemented in OpenGL driver\n");
   if ( Xgc->CurPixmapStatus == num1 ) return;
   if ( num1 == 1 )
     {
       GdkDrawable *temp ;
-      /** create a new pixmap **/
+      /* create a new pixmap **/
       temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
 					    Xgc->CWindowWidth, Xgc->CWindowHeight,
 					    -1);
@@ -1269,7 +1268,7 @@ static void xset_pixmapOn(BCG *Xgc,int num)
     }
   else 
     {
-      /** I remove the extra pixmap to the window **/
+      /* I remove the extra pixmap to the window **/
       xinfo(Xgc," ");
       gdk_pixmap_unref((GdkPixmap *) Xgc->private->drawable);
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->drawing->window;
@@ -1491,7 +1490,7 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val)
     }
 }
 
-/** set and get the number of the background or foreground */
+/* set and get the number of the background or foreground */
 
 static void xset_background(BCG *Xgc,int num)
 { 
@@ -1508,9 +1507,9 @@ static void xset_background(BCG *Xgc,int num)
        * if we change the background of the window we must change 
        * the gc ( with alufunction ) and the window background 
        */
-      //  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
-      //  gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
-	  
+      /*  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
+       *  gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
+       */
       /* FIXME 
 	 glClearColor(Xgc->private->gcol_bg.red /255.0,
 	 Xgc->private->gcol_bg.green /255.0,
@@ -1552,7 +1551,7 @@ static int xget_foreground(BCG *Xgc)
     }
 }
 
-/** set and get the number of the hidden3d color */
+/* set and get the number of the hidden3d color */
 
 static void xset_hidden3d(BCG *Xgc,int num)
 { 
@@ -1571,7 +1570,7 @@ static int xget_hidden3d(BCG *Xgc)
     }
   else 
     {
-      return  1; /** the hidden3d is a solid line style in b&w */
+      return  1; /* the hidden3d is a solid line style in b&w */
     }
 }
 
@@ -1674,11 +1673,11 @@ static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle
       str1[0]=string[i];
       /* XDrawString(dpy,Xgc->private->drawable,gc,(int) x,(int) y ,str1,1); */
       boundingbox(Xgc,str1,x,y,rect);
-      /** drawrectangle(Xgc,string,rect,rect+1,rect+2,rect+3); **/
+      /* drawrectangle(Xgc,string,rect,rect+1,rect+2,rect+3); **/
       if ( cosa <= 0.0 && i < (int)strlen(string)-1)
 	{ char str2[2];
-	/** si le cosinus est negatif le deplacement est a calculer **/
-	/** sur la boite du caractere suivant **/
+	/* si le cosinus est negatif le deplacement est a calculer **/
+	/* sur la boite du caractere suivant **/
 	str2[1]='\0';str2[0]=string[i+1];
 	boundingbox(Xgc,str2,x,y,rect);
 	}
@@ -1729,10 +1728,10 @@ static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double
   glEnd();
 }
 
-/** Draw a set of segments **/
-/** segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/
-/** for i=0 step 2 **/
-/** n is the size of vx and vy **/
+/* Draw a set of segments **/
+/* segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/
+/* for i=0 step 2 **/
+/* n is the size of vx and vy **/
 
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
@@ -1854,7 +1853,7 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
   xset_dash_and_color(Xgc,dash,color);
 }
 
-/** Draw one rectangle with current line style **/
+/* Draw one rectangle with current line style **/
 
 static void drawrectangle(BCG *Xgc,const int rect[])
 {   
@@ -1867,7 +1866,7 @@ static void drawrectangle(BCG *Xgc,const int rect[])
   glEnd();
 }
 
-/** fill one rectangle, with current pattern **/
+/* fill one rectangle, with current pattern **/
 
 static void fillrectangle(BCG *Xgc,const int rect[])
 { 
@@ -1973,7 +1972,7 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
   xset_dash_and_color(Xgc,dash,color);
 }
 
-/** Draw a single ellipsis or part of it **/
+/* Draw a single ellipsis or part of it **/
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
@@ -1983,7 +1982,7 @@ static void drawarc(BCG *Xgc,int arc[])
     gdk_draw_arc(Xgc->private->pixmap,Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
 }
 
-/** Fill a single elipsis or part of it with current pattern **/
+/* Fill a single elipsis or part of it with current pattern **/
 
 static void fillarc(BCG *Xgc,int arc[])
 { 
@@ -2016,19 +2015,19 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
   for (i=0 ; i< n ; i++)
     {
       if (drawvect[i] <= 0)
-	{ /** we use the markid : drawvect[i] : with current dash **/
+	{ /* we use the markid : drawvect[i] : with current dash **/
 	  xset_mark(Xgc,- drawvect[i],symb[1]);
 	  xset_dash_and_color(Xgc,dash,color);
 	  drawpolymark(Xgc,vectsx+(p)*i,vectsy+(p)*i,p);
 	}
       else
-	{/** we use the line-style number abs(drawvect[i])  **/
+	{/* we use the line-style number abs(drawvect[i])  **/
 	  xset_line_style(Xgc,*(drawvect+i));
 	  close = 0;
 	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,close);
 	}
     }
-  /** back to default values **/
+  /* back to default values **/
   xset_dash_and_color(Xgc,dash,color);
   xset_mark(Xgc,symb[0],symb[1]);
 
@@ -2055,7 +2054,7 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
     {
       if (fillvect[i] > 0 )
 	{ 
-	  /** fill + boundaries **/
+	  /* fill + boundaries **/
 	  xset_pattern(Xgc,fillvect[i]);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
@@ -2164,7 +2163,7 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
       /* for each polyline we only take a decision according to the first color */
       if (fillvect[i] > 0 )
 	{ 
-	  /** fill + boundaries **/
+	  /* fill + boundaries **/
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
 	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
@@ -2226,7 +2225,7 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
     {
       if (fillvect[i] > 0 )
 	{ 
-	  /** fill + boundaries **/
+	  /* fill + boundaries **/
 	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
 	  glEnable(GL_POLYGON_OFFSET_FILL);
 	  glPolygonOffset(1.0,1.0);
@@ -2332,18 +2331,18 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
   for (i=0 ; i< n ; i++)
     {
       if (drawvect[i] <= 0)
-	{ /** we use the markid : drawvect[i] : with current dash **/
+	{ /* we use the markid : drawvect[i] : with current dash **/
 	  Xgc->graphic_engine->xset_mark(Xgc,- drawvect[i],symb[1]);
 	  drawpolymark3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p);
 	}
       else
-	{/** we use the line-style number abs(drawvect[i])  **/
+	{/* we use the line-style number abs(drawvect[i])  **/
 	  Xgc->graphic_engine->xset_line_style(Xgc,*(drawvect+i));
 	  close = 0;
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,close);
 	}
     }
-  /** back to default values **/
+  /* back to default values **/
   xset_dash_and_color(Xgc,dash,color);
   Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
 }
@@ -2734,7 +2733,7 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize)
   Xgc->fontSize = fontsize;
 }
 
-/** To get the  id and size of the current font **/
+/* To get the  id and size of the current font **/
 
 static void  xget_font(BCG *Xgc,int *font)
 {
@@ -2742,7 +2741,7 @@ static void  xget_font(BCG *Xgc,int *font)
   font[1] = Xgc->fontSize ;
 }
 
-/** To set the current mark **/
+/* To set the current mark **/
 
 static void xset_mark(BCG *Xgc,int number, int size)
 { 
@@ -2750,7 +2749,7 @@ static void xset_mark(BCG *Xgc,int number, int size)
   Xgc->CurHardSymbSize = Max(Min(FONTMAXSIZE-1,size),0);
 }
 
-/** To get the current mark id **/
+/* To get the current mark id **/
 
 static void xget_mark(BCG *Xgc,int *symb)
 {
@@ -2861,6 +2860,8 @@ static void init_gl_lights(GLfloat light0_pos[4])
   glEnable(GL_LIGHTING);
   glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
   glEnable(GL_COLOR_MATERIAL);
+  /* logical Ops */
+  glEnable(GL_COLOR_LOGIC_OP);
 }
 #endif 
 
@@ -3465,13 +3466,7 @@ void nsp_ogl_set_2dview(BCG *Xgc)
 	  Xgc->private->drawing->allocation.height,
 	  0,-4,4);
   glMatrixMode(GL_MODELVIEW);
-  /* 
-  glLoadIdentity();
-  glOrtho(XPi2R(0),XPi2R(Xgc->scales->wdim[0]),
-	  YPi2R(Xgc->scales->wdim[1]),YPi2R(0),
-	  -4,4);
-  glMatrixMode(GL_MODELVIEW);
-  */
+  glDisable(GL_DEPTH_TEST);
 }
 
 void nsp_ogl_set_3dview(BCG *Xgc)
@@ -3534,6 +3529,7 @@ void nsp_ogl_set_3dview(BCG *Xgc)
 	  YPi2R(Xgc->scales->wdim[1]),YPi2R(0),
 	  -2*R,2*R);
   glMatrixMode(GL_MODELVIEW);
+  glEnable(GL_DEPTH_TEST);
 }
 
 
@@ -3553,9 +3549,7 @@ static bool LoadTGA(TextureImage *texture, char *filename)
   GLuint		temp;
   GLuint		type=GL_RGBA;
   GLuint             i;
-
-
-  printf("XXX je vais charger la texture %s\n", filename);
+  /* printf("XXX je vais charger la texture %s\n", filename);*/
   FILE *file = fopen(filename, "rb");
      
   if ( file==NULL ||
@@ -3565,7 +3559,7 @@ static bool LoadTGA(TextureImage *texture, char *filename)
     {
       if (file == NULL)
 	{
-	  printf("%s chemin inexistant\n", filename);
+	  /* printf("%s chemin inexistant\n", filename);*/
 	  return false;
 	}
       else
