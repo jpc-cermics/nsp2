@@ -820,5 +820,5 @@ L10:
 
 static int cdf_lsame (const char *ca,const  char *cb)
 {
-  return strcasecmp(ca,cb)==0;
+  return strncasecmp(ca,cb,1)==0;
 }
