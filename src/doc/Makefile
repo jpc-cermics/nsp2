@@ -7,7 +7,7 @@ mktmpl:
 	gtkdoc-mktmpl --module=nspdoc
 
 mkdb:
-	gtkdoc-mkdb --module=nspdoc --source-dir=../Newstack --source-dir=../types  --sgml-mode --output-format=xml
+	gtkdoc-mkdb --module=nspdoc --source-dir=../objects --source-dir=../types  --sgml-mode --output-format=xml
 
 mkhtml:
 	cd html; gtkdoc-mkhtml nspdoc ../nspdoc-docs.sgml
