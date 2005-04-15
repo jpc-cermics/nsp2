@@ -15,7 +15,7 @@ ZBLAS1 = dcabs1.o dzasum.o dznrm2.o izamax.o zaxpy.o zcopy.o \
 #ZB1AUX = idamax.o dasum.o daxpy.o dcopy.o dnrm2.o dscal.o
 
 # stored in lapack 
-ALLBLAS  = lsame.o xerbla.o
+# ALLBLAS  = lsame.o xerbla.o
 
 DBLAS2 = dgemv.o dgbmv.o dsymv.o dsbmv.o dspmv.o \
 	dtrmv.o dtbmv.o dtpmv.o dtrsv.o dtbsv.o dtpsv.o \

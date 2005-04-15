@@ -5,7 +5,7 @@ SHELL = /bin/sh
 SCIDIR=../..
 SCIDIR1=..\..
 
-LIBRARY = zblas.lib
+LIBRARY = blas.lib
 
 OBJSC = dcopyC.obj
 
@@ -18,7 +18,7 @@ ZBLAS1 = dcabs1.obj dzasum.obj dznrm2.obj izamax.obj zaxpy.obj zcopy.obj \
 #ZB1AUX = idamax.obj dasum.obj daxpy.obj dcopy.obj dnrm2.obj dscal.obj
 
 # stored in lapack 
-ALLBLAS  = lsame.obj xerbla.obj
+# ALLBLAS  = lsame.obj xerbla.obj
 
 DBLAS2 = dgemv.obj dgbmv.obj dsymv.obj dsbmv.obj dspmv.obj \
 	dtrmv.obj dtbmv.obj dtpmv.obj dtrsv.obj dtbsv.obj dtpsv.obj \
