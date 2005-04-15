@@ -234,7 +234,7 @@
             END IF
          ELSE
 *
-*           Form  B := alpha*B*A'.
+*           Form  B := alpha*A'*B.
 *
             IF( UPPER )THEN
                DO 110, J = 1, N
