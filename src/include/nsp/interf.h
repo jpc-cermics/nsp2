@@ -151,7 +151,6 @@ extern NspLmo *GetLmo (Stack S,int i);
    { Scierror("%s: arguments %d should be square\n",fname,pos1); \
      return RET_BUG;} 
 
-
 #define CheckRows(fname,pos1,o1,value) if ( o1->m != value ) \
    { Scierror("%s: arguments %d has an incorrect row dimension\n",fname,pos1); \
      return RET_BUG;} 
@@ -170,6 +169,14 @@ extern NspLmo *GetLmo (Stack S,int i);
 
 #define CheckVector(fname,pos1,o1) if ( o1->mn != 0 && o1->m != 1 && o1->n != 1 ) \
    { Scierror("%s: arguments %d should be a vector \n",fname,pos1); \
+     return RET_BUG;} 
+
+#define CheckReal(fname,pos,o1) if ( o1->rc_type != 'r' ) \
+   { Scierror("%s: arguments %d should be a real matrix\n",fname,pos1); \
+     return RET_BUG;} 
+
+#define CheckComplex(fname,pos,o1) if ( o1->rc_type != 'r' ) \
+   { Scierror("%s: arguments %d should be a complex  matrix\n",fname,pos1); \
      return RET_BUG;} 
 
 extern int call_interf(function *f, Stack stack, int rhs, int opt, int lhs); 
