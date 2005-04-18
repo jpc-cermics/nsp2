@@ -8,6 +8,23 @@
 #include "nsp/blas.h"
 #include "nsp/nsp_lapack.h"
 
+/*
+ * xerbla_:
+ * switch lapack message to nsp message
+ * Return value: 
+ **/
+
+int C2F(xerbla)(char *srname,int * info,int srname_len)
+{
+  int i;
+  char mes[7];
+  for (i=0; i < 6 ; i++) mes[i]=srname[i];
+  mes[6]='\0';
+  Scierror("Error: On entry to %s parameter number %d had an illegal value\n",
+	   mes,*info);
+  return 0;
+}
+
 /*----------------------------------------------
  * QR decomposition 
  * int QR2(NspMatrix *A,NspMatrix **q,NspMatrix **r)
@@ -84,7 +101,7 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
       /*     SUBROUTINE DGEQPF( M, N, A, LDA, JPVT, TAU, WORK, INFO ) */
     }
   if (info != 0) {
-    Scierror("Something wrong in dgeqpf\n"); 
+    Scierror("Error: something wrong in dgeqpf\n"); 
     return FAIL;
   }
 
@@ -112,7 +129,10 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
     C2F(dorgqr)(&m, &Minmn,&Minmn, (*Q)->R, &m, tau->R, work->R, &workMin, &info);
   else 
     C2F(dorgqr)(&m, &m,&Minmn, (*Q)->R, &m, tau->R, work->R, &workMin, &info);
-  
+  if (info != 0) {
+    Scierror("Error: something wrong dorgqr\n"); 
+    return FAIL;
+  }
   /* Extract R from R  */ 
   nsp_mat_triu(*R,0); 
   /* compute E if requested */ 
@@ -211,7 +231,8 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
     C2F(zgeqpf)(&m, &n,(*R)->I, &m, Ijpvt,tau->I,work->I,rwork->R, &info);
   }
   if (info != 0) {
-    Scierror("Something wrong in qr2 stub file\n"); 
+    Scierror("Error: something wrong in zgeqpf\n"); 
+    return FAIL;
   }
 
   /* Now we must extract Q from R and tau  */ 
@@ -238,8 +259,12 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
     C2F(zungqr)(&m, &Minmn,&Minmn, (*Q)->I, &m, tau->I, work->I, &workMin, &info);
   else 
     C2F(zungqr)(&m, &m,&Minmn, (*Q)->I, &m, tau->I, work->I, &workMin, &info);
-  /* Now we extract R from R  */ 
+  if (info != 0) {
+    Scierror("Error: something wrong in zungqr\n"); 
+    return FAIL;
+  }
 
+  /* Now we extract R from R  */ 
   nsp_mat_triu(*R,0); 
 
   /* And if necessary we compute E */ 
@@ -407,7 +432,7 @@ static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
     }
       
   if (info != 0) {
-    Scierror("lsq: computation failed in dgelsy");
+    Scierror("Error: computation failed in dgelsy\n");
     return FAIL;
   }
 
@@ -441,7 +466,7 @@ int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag
   int m = A->m, n = A->n, mb = B->m,nrhs = B->n ; 
 
   if (m != mb) {
-    Scierror("lsq: first and second arguments must have equal rows\n");
+    Scierror("Error: first and second arguments in lsq must have equal rows\n");
     return FAIL;
   }
 
@@ -494,6 +519,11 @@ int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag
 	 dwork->I, &lworkMin, rwork->R, &info);
       */
     }
+      
+  if (info != 0) {
+    Scierror("Error: computation failed in zgelsy\n");
+    return FAIL;
+  }
 
   nsp_matrix_destroy(jpvt); 
   nsp_matrix_destroy(dwork); 
@@ -547,8 +577,8 @@ int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,Nsp
   return OK;
 }
 
-
-static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol)
+static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,
+		     NspMatrix **Rank,double *tol)
 {
   int m = A->m,n=A->n,ix1,ix2,lworkMin,info;
   int Minmn = Min(m,n);
@@ -580,7 +610,7 @@ static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
   
   /* computing work space area */ 
 
-  ix1 = Minmn * 3 + Max(m,n), ix2 = Minmn * 5;
+  ix1 = Minmn * 3 + Max(m,n), ix2 = Minmn * 5-56;
   lworkMin = Max(ix1,ix2);
   if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
 
@@ -589,6 +619,13 @@ static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
       /* just compute the singular values */ 
       C2F(dgesvd)("N","N",&m, &n,A->R,&m,SV->R,NULL,&m,NULL, &n,
 		  dwork->R, &lworkMin, &info, 1L, 1L);
+      if (info != 0) {
+	if (info > 0) {
+	  Scierror("Error: convergence problem in svd\n"); 
+	} 
+	/* message for info < 0 is given by xerbla.c */
+	return FAIL;
+      }
       /*  next lines to patch an error of DGESVD */
       nsp_mat_abs(SV); 
       /*  sort sv */ 
@@ -609,12 +646,13 @@ static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 		      dwork->R, &lworkMin, &info, 1L, 1L);
 	}
     }
+
   if (info != 0) {
     if (info > 0) {
-      Scierror("convergence problem in svd "); 
+      Scierror("Error: convergence problem in svd\n"); 
     } 
-    else 
-      Scierror("illegal arguments in svd "); 
+    /* message for info < 0 is given by xerbla.c */
+    return FAIL;
   }
   
   /* Build a matrix from the singular values array */ 
@@ -691,6 +729,13 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
       C2F(zgesvd)("N","N",&m, &n,A->I,&m,SV->R,NULL,&m,NULL, &n,
 		  dwork->I, &lworkMin,rwork->R, &info, 1L, 1L);
       /*  next lines to patch an error of DGESVD */
+      if (info != 0) {
+	if (info > 0) {
+	  Scierror("Error: convergence problem in svd\n"); 
+	} 
+	/* message for info < 0 is given by xerbla.c */
+	return FAIL;
+      }
       nsp_mat_abs(SV); 
       /*  sort sv */ 
       C2F(dlasrt)("D", &Minmn,SV->R, &info, 1L);
@@ -710,12 +755,12 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 		      dwork->I, &lworkMin,rwork->R, &info, 1L, 1L);
 	}
     }
+
   if (info != 0) {
     if (info > 0) {
-      Scierror("convergence problem in svd "); 
+      Scierror("Error: convergence problem in svd\n"); 
     } 
-    else 
-      Scierror("illegal arguments in svd "); 
+    return FAIL;
   }
 
   /* Build a matrix from the singular values array */ 
@@ -783,7 +828,7 @@ static NspMatrix * intddet(NspMatrix *A,char mode)
   }
   
   if (m != n) { 
-    Scierror("det: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument for det should be square and it is (%dx%d)\n", 
 	     m,n);
     return NULL;
   }
@@ -794,7 +839,7 @@ static NspMatrix * intddet(NspMatrix *A,char mode)
 
   C2F(dgetrf)(&m, &n, A->R, &m, Ipiv , &info);
   if (info < 0) {
-    Scierror("det: error in  dgetrf \n") ; 
+    Scierror("Error: something wrong in dgetrf\n") ; 
     return NULL;
   }
   
@@ -850,7 +895,7 @@ static NspMatrix * intzdet(NspMatrix *A,char mode)
   }
   
   if (m != n) { 
-    Scierror("det: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument for det should be square and it is (%dx%d)\n", 
 	     m,n);
     return NULL;
   }
@@ -861,7 +906,7 @@ static NspMatrix * intzdet(NspMatrix *A,char mode)
 
   C2F(zgetrf)(&m, &n, A->I, &m, Ipiv , &info);
   if (info < 0) {
-    Scierror("det: XXXX \n") ; 
+    Scierror("Error: something wrong in zgetrf\n") ; 
     return NULL;
   }
 
@@ -935,7 +980,7 @@ static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
   }
   
   if (m != n) { 
-    Scierror("spec: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument for spec should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -962,8 +1007,8 @@ static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
     }
   
   if (info != 0) {
-    Scierror("XXXXX voir le manuel convergence problem in dgeev"); 
-    return 0;
+    Scierror("Error: convergence problem in dgeev\n"); 
+    return FAIL;
   }
 
   /* result is real ? or complex */ 
@@ -1059,7 +1104,7 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
   }
   
   if (m != n) { 
-    Scierror("spec: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument for spec should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -1086,8 +1131,8 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
     }
   
   if (info != 0) {
-    Scierror("XXXXX voir le manuel convergence problem in dgeev"); 
-    return 0;
+    Scierror("Error: convergence problem in zgeev\n"); 
+    return FAIL;
   }
 
   /* result is real ? or complex */ 
@@ -1164,7 +1209,7 @@ static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
   }
   
   if (m != n) { 
-    Scierror("spec: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -1179,7 +1224,7 @@ static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
   C2F(dsyev)((flag == 'V' ) ? "V" : "N","U" , &n,A->R, &n,wr->R,dwork->R,&lworkMin, &info, 1L, 1L);
   
   if (info != 0) {
-    Scierror("XXXXX voir le manuel convergence problem in dgeev"); 
+    Scierror("Error: convergence problem in dsyev\n"); 
     return FAIL;
   }
 
@@ -1217,7 +1262,7 @@ static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
   }
   
   if (m != n) { 
-    Scierror("spec: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -1233,7 +1278,7 @@ static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
   C2F(zheev)((flag == 'V' ) ? "V" : "N","U" , &n,A->I, &n,wr->R,dwork->I,&lworkMin,rwork->R, &info, 1L, 1L);
   
   if (info != 0) {
-    Scierror("XXXXX voir le manuel convergence problem in dgeev"); 
+    Scierror("Error: convergence problem in zheev\n"); 
     return FAIL;
   }
 
@@ -1285,7 +1330,7 @@ static int intdgetri(NspMatrix *A)
   if ( A->mn == 0 )  return OK ; 
   
   if (m != n) { 
-    Scierror("inv: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of inv should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -1300,10 +1345,9 @@ static int intdgetri(NspMatrix *A)
   
   C2F(dgetrf)(&n, &n,A->R, &n, Iwork, &info);
   if (info > 0) {
-    Scierror("inv: problem is singular");
+    Scierror("inv: problem is singular\n");
     return FAIL;
   } else if (info < 0) {
-    Scierror("inv: wrong argument in inv,dgetrf"); 
     return FAIL;
   }
   C2F(dgetri)(&n, A->R, &n, Iwork, dwork->R,&lworkMin, &info);
@@ -1322,7 +1366,7 @@ int intzgetri(NspMatrix *A)
   if ( A->mn == 0 )  return OK ; 
   
   if (m != n) { 
-    Scierror("inv: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of inv should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -1337,13 +1381,16 @@ int intzgetri(NspMatrix *A)
   
   C2F(zgetrf)(&n, &n,A->I, &n, Iwork, &info);
   if (info > 0) {
-    Scierror("inv: problem is singular");
+    Scierror("Error: problem is singular\n");
     return FAIL;
   } else if (info < 0) {
-    Scierror("inv: wrong argument in inv,dgetrf"); 
     return FAIL;
   }
   C2F(zgetri)(&n, A->I, &n, Iwork, dwork->I,&lworkMin, &info);
+  if (info != 0) {
+    Scierror("Error: something wrong in zgetri\n");
+    return FAIL;
+  }
   return OK;
 
 }
@@ -1376,7 +1423,7 @@ static int intdgecon(NspMatrix *A,double *rcond)
   if ( A->mn == 0 )  return OK ; 
   
   if (m != n) { 
-    Scierror("rcond: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of rcond should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -1394,7 +1441,8 @@ static int intdgecon(NspMatrix *A,double *rcond)
   if (info == 0) {
     C2F(dgecon)("1",&n,A->R,&n,&anorm,rcond,dwork->R,Iwork, &info, 1L);
   } else {
-    Scierror("XXXXX ");
+    Scierror("Error: something wrong in dgetrf\n");
+    return FAIL;
   }
 
   nsp_matrix_destroy(dwork); 
@@ -1417,7 +1465,7 @@ static int intzgecon(NspMatrix *A,double *rcond)
   if ( A->mn == 0 )  return OK ; 
   
   if (m != n) { 
-    Scierror("rcond: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of rcond should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -1436,7 +1484,8 @@ static int intzgecon(NspMatrix *A,double *rcond)
   if (info == 0) {
     C2F(zgecon)("1",&n,A->I,&n,&anorm,rcond,dwork->I,rwork->R, &info, 1L);
   } else {
-    Scierror("XXXXX ");
+    Scierror("Error: something wrong in zgetrf\n");
+    return FAIL;
   }
 
   nsp_matrix_destroy(dwork); 
@@ -1461,7 +1510,7 @@ int nsp_cholewsky(NspMatrix *A)
   if ( A->mn == 0 )  return OK ; 
   
   if (m != n) { 
-    Scierror("cholevsky: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of chol should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -1471,7 +1520,7 @@ int nsp_cholewsky(NspMatrix *A)
     C2F(zpotrf)("U", &n,A->I, &n, &info, 1L);
   if (info != 0) {
     if (info > 0) {
-      Scierror("matrix is not positive definite"); 
+      Scierror("Error: matrix is not positive definite\n"); 
     }
     return FAIL;
   }
@@ -1482,6 +1531,7 @@ int nsp_cholewsky(NspMatrix *A)
 
 /*-----------------------------------------
  * factorisation Lu 
+ * Note that A is changed by nsp_lu
  *-----------------------------------------*/
 
 int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E);
@@ -1527,7 +1577,7 @@ int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
 
   C2F(dgetrf)(&m, &n,A->R, &m,Ipiv, &info);
   if (info < 0) {
-    Scierror("Lu: XXXX ");
+    Scierror("Error: something wrong in lu\n");
     return FAIL;
   }
   
@@ -1615,7 +1665,7 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
 
   C2F(zgetrf)(&m, &n,A->I, &m,Ipiv, &info);
   if (info < 0) {
-    Scierror("Lu: XXXX ");
+    Scierror("Error: something wrong in lu\n");
     return FAIL;
   }
   
@@ -1698,7 +1748,7 @@ static int intdgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
   int m = A->m, n = A->n, mb = B->m,nrhs = B->n ; 
 
   if (m != mb) {
-    Scierror("lsq: first and second arguments must have equal rows\n");
+    Scierror("Error: first and second arguments of lsq  must have equal rows\n");
     return FAIL;
   }
 
@@ -1749,7 +1799,7 @@ static int intdgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
 	  return OK;
 	}
       }
-      Scierror("\\: Warning, matrix is close to singular or badly scaled. rcond = %e\n, using lsq\n",
+      Sciprintf("Error: Warning, matrix is close to singular or badly scaled. rcond = %e\n, using lsq\n",
 	       rcond);
     }
   
@@ -1768,7 +1818,7 @@ static int intdgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
       */
     }
   if (info != 0) {
-    Scierror("lsq: computation failed in dgelsy");
+    Scierror("Error: computation failed in dgelsy\n");
     return FAIL;
   }
 
@@ -1804,7 +1854,7 @@ static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
   int m = A->m, n = A->n, mb = B->m,nrhs = B->n ; 
 
   if (m != mb) {
-    Scierror("lsq: first and second arguments must have equal rows\n");
+    Scierror("Error: first and second arguments of lsq must have equal rows\n");
     return FAIL;
   }
 
@@ -1865,7 +1915,7 @@ static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
 	  return OK;
 	}
       }
-      Scierror("solving linear system with square matrix close to singular or badly scaled. rcond = %e\n, using lsq\n",
+      Sciprintf("solving linear system with square matrix close to singular or badly scaled. rcond = %e\n, using lsq\n",
 	       rcond);
     }
   
@@ -1964,7 +2014,7 @@ int intdgebal(NspMatrix *A,NspMatrix **D)
   }
   
   if (m != n) { 
-    Scierror("balanc: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of balanc should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -1973,8 +2023,18 @@ int intdgebal(NspMatrix *A,NspMatrix **D)
   if (( work =nsp_matrix_create(NVOID,A->rc_type,1,n)) == NULLMAT) return FAIL;
 
   C2F(dgebal)("B", &n, A->R, &n, &ilo, &ihi, work->R, &info, 1L);
+  if (info != 0) {
+    Scierror("Error: something wrong in dgebal\n");
+    return FAIL;
+  }
+
   C2F(dgebak)("B", "R", &n, &ilo, &ihi, work->R, &n, (*D)->R, &n, &info, 1L, 1L);
+  if (info != 0) {
+    Scierror("Error: something wrong in dgebak\n");
+    return FAIL;
+  }
   
+
   nsp_matrix_destroy(work);
   return OK;
 }
@@ -1992,7 +2052,7 @@ int intzgebal(NspMatrix *A,NspMatrix **D)
   }
   
   if (m != n) { 
-    Scierror("balanc: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of balanc should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -2001,8 +2061,16 @@ int intzgebal(NspMatrix *A,NspMatrix **D)
   if (( work =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
 
   C2F(zgebal)("B", &n, A->I, &n, &ilo, &ihi, work->R, &info, 1L);
+  if (info != 0) {
+    Scierror("Error: something wrong in zgebal\n");
+    return FAIL;
+  }
   C2F(dgebak)("B", "R", &n, &ilo, &ihi, work->R, &n, (*D)->R, &n, &info, 1L, 1L);
-  
+    if (info != 0) {
+    Scierror("Error: something wrong in zgebak\n");
+    return FAIL;
+  }
+
   nsp_matrix_destroy(work);
   return OK;
 }
@@ -2037,7 +2105,9 @@ int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMat
   }
   
   if (m != n) { 
-    Scierror("schur: wrong matrix size (%d,%d) it should be square \n", 
+
+
+    Scierror("Error: first argument of schur should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -2075,11 +2145,11 @@ int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMat
 
   if (info > 0) {
     if (info <= n) 
-      Scierror("schur: the QR algorithm failed to compute all the eigenvalues;\n");
+      Scierror("Error: in schur the QR algorithm failed to compute all the eigenvalues;\n");
     else if (info == n + 1) 
-      Scierror("schur: eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
+      Scierror("Error: in schur eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
     else if (info == n + 2) {
-      Scierror("schur: roundoff errors make leading eigenvalues no longer satisfy criterion\n");
+      Scierror("Error: in schur roundoff errors make leading eigenvalues no longer satisfy criterion\n");
     }
     return FAIL;
   }
@@ -2114,7 +2184,7 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
   }
   
   if (m != n) { 
-    Scierror("schur: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of schur should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -2143,7 +2213,8 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
 		 &n, dwork->I, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
     }
   if (info > 0) {
-    Scierror("schur: the QR algorithm failed to compute all the eigenvalues;\n");
+    Scierror("Error: in schur, the QR algorithm failed to compute all the eigenvalues;\n");
+    return FAIL;
   }
 
   /* menage XXXX */ 
@@ -2169,7 +2240,7 @@ int intdgees1(NspMatrix *A,NspMatrix **U,char flag)
     }
   else 
     {
-      Scierror("intdgees1: Wrong flag '%c' \n",flag);
+      Scierror("Error: wrong flag '%c' in intdgees1\n",flag);
       return FAIL;
     }
   return OK;
@@ -2184,7 +2255,7 @@ int intzgees1(NspMatrix *A,NspMatrix **U,char flag)
     }
   else 
     {
-      Scierror("intzgees1: Wrong flag '%c' \n",flag);
+      Scierror("Error: wrong flag '%c' in intzgees1\n",flag);
       return FAIL;
     }
   return OK;
@@ -2291,7 +2362,7 @@ static int intdgehrd(NspMatrix *A, NspMatrix **U)
   }
   
   if (m != n) { 
-    Scierror("hess: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of hess should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -2301,11 +2372,19 @@ static int intdgehrd(NspMatrix *A, NspMatrix **U)
   if (( dwork =nsp_matrix_create(NVOID,'r',1,workMin)) == NULLMAT) return FAIL;
 
   C2F(dgehrd)(&n, &un, &n,A->R, &n,tau->R,dwork->R, &workMin, &info);
+  if (info != 0) {
+    Scierror("Error: something wrong in dgehrd\n");
+    return FAIL;
+  }
 
   if ( U != NULL) { 
     /* extract U */
     if (( *U =nsp_matrix_copy(A))== NULLMAT) return FAIL;
     C2F(dorghr)(&n,&un,&n,(*U)->R,&n,tau->R,dwork->R,&workMin,&info);    
+    if (info != 0) {
+      Scierror("Error: something wrong in dorghr\n");
+      return FAIL;
+    }
   }
   /* extract H */ 
   nsp_mat_triu(A,-1);    
@@ -2327,7 +2406,7 @@ static int intzgehrd(NspMatrix *A, NspMatrix **U)
   }
   
   if (m != n) { 
-    Scierror("hess: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of hess should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
@@ -2337,11 +2416,19 @@ static int intzgehrd(NspMatrix *A, NspMatrix **U)
   if (( dwork =nsp_matrix_create(NVOID,'i',1,workMin)) == NULLMAT) return FAIL;
 
   C2F(zgehrd)(&n, &un, &n,A->I, &n,tau->I,dwork->I, &workMin, &info);
+  if (info != 0) {
+    Scierror("Error: something wrong in zgehrd\n");
+    return FAIL;
+  }
 
   if ( U != NULL) { 
     /* extract U */
     if (( *U =nsp_matrix_copy(A))== NULLMAT) return FAIL;
     C2F(zunghr)(&n,&un,&n,(*U)->I,&n,tau->I,dwork->I,&workMin,&info);    
+    if (info != 0) {
+      Scierror("Error: something wrong in zunghr\n");
+      return FAIL;
+    }
   }
   /* extract H */ 
   nsp_mat_triu(A,-1);    
@@ -2423,12 +2510,14 @@ static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
   }
   
   if (m != n) { 
-    Scierror("spec: wrong first argument size (%d,%d) should be square \n",m,n);
+    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
+	     m,n);
     return FAIL;
   }
 
   if (mb != nb) { 
-    Scierror("spec: wrong second argument size (%d,%d) should be square \n",m,n);
+    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
+	     mb,nb);
     return FAIL;
   }
 
@@ -2461,13 +2550,14 @@ static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
 
   if (info != 0) {
     if (info <= n && info > 0 ) 
-      Scierror("spec: The QZ iteration failed.  No eigenvectors have been calculated\n");
+      Scierror("Error: spec, the QZ iteration failed.  No eigenvectors have been calculated\n");
     else if (info == n + 1) 
-      Scierror("spec: other than QZ iteration failed in dhgeqz\n");
+      Scierror("Error: spec, other than QZ iteration failed in dhgeqz\n");
     else if (info == n + 2) 
-      Scierror("spec: error return from DTGEVC\n");
+      Scierror("Error: spec, error return from DTGEVC\n");
     else 
-      Scierror("spec: wrong argument (%d) in dggev call\n",-info);
+      Scierror("Error: spec, wrong argument (%d) in dggev call\n",-info);
+    return FAIL;
   }
 
   /* return (alphar + %i*alphai) and beta */
@@ -2559,17 +2649,19 @@ static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
   }
   
   if (m != n) { 
-    Scierror("spec: wrong first argument size (%d,%d) should be square \n",m,n);
+    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
+	     m,n);
     return FAIL;
   }
 
   if (mb != nb) { 
-    Scierror("spec: wrong second argument size (%d,%d) should be square \n",m,n);
+    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
+	     mb,nb);
     return FAIL;
   }
 
   if (m != mb || n != nb ) {
-    Scierror("spec: first and second arguments must have equal size\n");
+    Scierror("Error: spec, first and second arguments must have equal size\n");
     return FAIL;
   }
 
@@ -2597,13 +2689,14 @@ static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
 
   if (info != 0) {
     if (info <= n && info > 0 ) 
-      Scierror("spec: The QZ iteration failed.  No eigenvectors have been calculated\n");
+      Scierror("Error: spec, The QZ iteration failed.  No eigenvectors have been calculated\n");
     else if (info == n + 1) 
-      Scierror("spec: other than QZ iteration failed in dhgeqz\n");
+      Scierror("Error: spec, other than QZ iteration failed in dhgeqz\n");
     else if (info == n + 2) 
-      Scierror("spec: error return from DTGEVC\n");
+      Scierror("Error: spec, error return from DTGEVC\n");
     else 
-      Scierror("spec: wrong argument (%d) in dggev call\n",-info);
+      Scierror("Error: spec, wrong argument (%d) in dggev call\n",-info);
+    return FAIL;
   }
 
   /* un peu de ménage XXXXX */ 
@@ -2662,17 +2755,19 @@ static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
   
   if (m != n) { 
-    Scierror("spec: wrong first argument size (%d,%d) should be square \n",m,n);
+    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
+	     m,n);
     return FAIL;
   }
 
   if (mb != nb) { 
-    Scierror("spec: wrong second argument size (%d,%d) should be square \n",m,n);
+    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
+	     mb,nb);
     return FAIL;
   }
 
   if (m != mb || n != nb ) {
-    Scierror("spec: first and second arguments must have equal size\n");
+    Scierror("Error: spec, first and second arguments must have equal size\n");
     return FAIL;
   }
 
@@ -2699,15 +2794,26 @@ static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
 
   C2F(dggbal)("B",&n,A->R, &n,B->R, &n,&ilo,&ihi,lscale->R, rscale->R,dwork->R, &info, 1L);
-
+  if (info != 0) {
+    Scierror("Error: something wrong in dggbal\n");
+    return FAIL;
+  }
   if ( X != NULL) { 
     if (( *X =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
     C2F(dggbak)("B", "L", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*X)->R, &n, &info, 1L,1L);
+    if (info != 0) {
+      Scierror("Error: something wrong in dggbak\n");
+      return FAIL;
+    }
   }
 
   if ( Y != NULL ) {
     if (( *Y =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
     C2F(dggbak)("B", "R", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*Y)->R, &n, &info, 1L, 1L);
+    if (info != 0) {
+      Scierror("Error: something wrong in dggbak\n");
+      return FAIL;
+    }
   }
 
   /* un peu de ménage XXXXX */ 
@@ -2723,17 +2829,18 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
   
   if (m != n) { 
-    Scierror("spec: wrong first argument size (%d,%d) should be square \n",m,n);
+    Scierror("Error: spec, wrong first argument size (%d,%d) should be square \n",m,n);
     return FAIL;
   }
 
   if (mb != nb) { 
-    Scierror("spec: wrong second argument size (%d,%d) should be square \n",m,n);
+    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
+	     mb,nb);
     return FAIL;
   }
 
   if (m != mb || n != nb ) {
-    Scierror("spec: first and second arguments must have equal size\n");
+    Scierror("Error: spec, first and second arguments must have equal size\n");
     return FAIL;
   }
 
@@ -2760,15 +2867,26 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
 
   C2F(zggbal)("B",&n,A->I, &n,B->I, &n,&ilo,&ihi,lscale->R, rscale->R,dwork->R, &info, 1L);
-
+  if (info != 0) {
+    Scierror("Error: something wrong in zggbal\n");
+    return FAIL;
+  }
   if ( X != NULL) { 
     if (( *X =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
     C2F(dggbak)("B", "L", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*X)->R, &n, &info, 1L, 1L);
+    if (info != 0) {
+      Scierror("Error: something wrong in dggbak\n");
+      return FAIL;
+    }
   }
 
   if ( Y != NULL ) {
     if (( *Y =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
     C2F(dggbak)("B", "R", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*Y)->R, &n, &info, 1L, 1L);
+    if (info != 0) {
+      Scierror("Error: something wrong in dggbak\n");
+      return FAIL;
+    }
   }
 
   /* un peu de ménage XXXXX */ 
@@ -2809,18 +2927,19 @@ int intdgges(NspMatrix *A,NspMatrix *B,
   }
   
   if (m != n) { 
-    Scierror("gschur: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of gschur should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
 
   if (mb != nb) { 
-    Scierror("gschur: wrong second argument size (%d,%d) should be square \n",m,n);
+    Scierror("Error: second argument of gschur should be square and it is (%dx%d)\n", 
+	     mb,nb);
     return FAIL;
   }
 
   if (m != mb || n != nb ) {
-    Scierror("gschur: first and second arguments must have equal size\n");
+    Scierror("Error: gschur, first and second arguments must have equal size\n");
     return FAIL;
   }
 
@@ -2863,13 +2982,13 @@ int intdgges(NspMatrix *A,NspMatrix *B,
 
   if (info > 0) {
     if (info <= n) 
-      Scierror("schur: the QR algorithm failed to compute all the eigenvalues;\n");
+      Scierror("Error: schur, the QR algorithm failed to compute all the eigenvalues;\n");
     else if (info == n + 1) 
-      Scierror("schur: eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
+      Scierror("Error: schur, eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
     else if (info == n + 2) 
-      Scierror("schur: roundoff errors make leading eigenvalues no longer satisfy criterion\n");
+      Scierror("Error: schur, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
     else if (info == n + 3) 
-      Scierror("schur: reordering failed\n");
+      Scierror("Error: schur, reordering failed\n");
     return FAIL;
   }
   /* menage XXXX */ 
@@ -2905,18 +3024,18 @@ int intzgges(NspMatrix *A,NspMatrix *B,
   }
   
   if (m != n) { 
-    Scierror("gschur: wrong matrix size (%d,%d) it should be square \n", 
+    Scierror("Error: first argument of gschur should be square and it is (%dx%d)\n", 
 	     m,n);
     return FAIL;
   }
 
   if (mb != nb) { 
-    Scierror("gschur: wrong second argument size (%d,%d) should be square \n",m,n);
+    Scierror("Error: second argument of gschur should be square and it is (%dx%d)\n",mb,nb);
     return FAIL;
   }
 
   if (m != mb || n != nb ) {
-    Scierror("gschur: first and second arguments must have equal size\n");
+    Scierror("Error: gschur, first and second arguments must have equal size\n");
     return FAIL;
   }
 
@@ -2959,13 +3078,13 @@ int intzgges(NspMatrix *A,NspMatrix *B,
 
   if (info > 0) {
     if (info <= n) 
-      Scierror("schur: the QR algorithm failed to compute all the eigenvalues;\n");
+      Scierror("Error: schur, the QR algorithm failed to compute all the eigenvalues;\n");
     else if (info == n + 1) 
-      Scierror("schur: eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
+      Scierror("Error: schur, eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
     else if (info == n + 2) 
-      Scierror("schur: roundoff errors make leading eigenvalues no longer satisfy criterion\n");
+      Scierror("Error: schur, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
     else if (info == n + 3) 
-      Scierror("schur: reordering failed\n");
+      Scierror("Error: schur, reordering failed\n");
     return FAIL;
   }
   /* menage XXXX */ 
