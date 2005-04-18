@@ -29,6 +29,9 @@
 #include "nsp/approx.h"
 #include "nsp/nsp_lapack.h"
 
+/*
+ * interface for nsp_qr 
+ */
 
 static int int_qr( Stack stack, int rhs, int opt, int lhs)
 { 
@@ -61,9 +64,13 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-/* flag = 'n' for minimize Norm */ 
-/* flag = 'z' for zero setting  */
 
+/*
+ * interface for lsq 
+ *   flag = 'n' for minimize Norm 
+ *   flag = 'z' for zero setting  
+ * FIXME: this is to be merged with a next routine 
+ */
 
 static int int_lsq( Stack stack, int rhs, int opt, int lhs)
 { 
@@ -87,28 +94,8 @@ static int int_lsq( Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/* XXXXX for test */
-
-extern double C2F(dlamch)(char *,int );
-extern double cdf_dlamch(char *,int );
-
-static int int_dlamch( Stack stack, int rhs, int opt, int lhs)
-{
-  double x,y,z;
-  char *mode;
-  int_types T[] = {string,t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&mode) == FAIL) return RET_BUG;
-  x = nsp_dlamch(mode);
-  y = C2F(dlamch)(mode,strlen(mode));
-  z = cdf_dlamch(mode,strlen(mode));
-  fprintf(stderr," %e %e %e %d\n",x,y,z,x==y);
-  return 0;
-  
-}
-
-
 /*
- * svd: 
+ * interface for nsp_svd: 
  *    S is always computed 
  *    if U != NULL then 
  *       U and V are computed. 
@@ -116,6 +103,8 @@ static int int_dlamch( Stack stack, int rhs, int opt, int lhs)
  *       are computed for U and V (rows of Vt) else 
  *      U and V are fully computed 
  *    rank is computed if non null (using tol if tol != NULL)
+ * FIXME: if U and V are not computed maybe S could 
+ *    be returned as a vector and not as a Matrix
  */
 
 static int int_svd( Stack stack, int rhs, int opt, int lhs)
@@ -150,7 +139,9 @@ static int int_svd( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-
+/*
+ * interface for nsp_svd: 
+ */
 
 static int int_det( Stack stack, int rhs, int opt, int lhs)
 {
@@ -171,6 +162,9 @@ static int int_det( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/*
+ * interface for nsp_spec: 
+ */
 
 static int int_spec( Stack stack, int rhs, int opt, int lhs)
 {
@@ -186,6 +180,10 @@ static int int_spec( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/*
+ * interface for nsp_inv: 
+ */
+
 static int int_inv( Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
@@ -197,6 +195,9 @@ static int int_inv( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/*
+ * interface for nsp_rcond: 
+ */
 
 static int int_rcond( Stack stack, int rhs, int opt, int lhs)
 {
@@ -210,6 +211,9 @@ static int int_rcond( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/*
+ * interface for nsp_cholewsky: 
+ */
 
 static int int_cholewsky( Stack stack, int rhs, int opt, int lhs)
 {
@@ -222,13 +226,16 @@ static int int_cholewsky( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/*
+ * interface for nsp_cholewsky: 
+ */
 
 static int int_lu( Stack stack, int rhs, int opt, int lhs)
 { 
   NspMatrix *A;
   NspMatrix *L=NULL, *U=NULL, *E=NULL;
   NspMatrix **hE=NULL;
-  int_types T[] = {mat,t_end} ;
+  int_types T[] = {matcopy,t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG;
   CheckLhs(1,3);
   if ( lhs >= 3) { hE= &E;}
@@ -237,6 +244,28 @@ static int int_lu( Stack stack, int rhs, int opt, int lhs)
   if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(U));
   if ( lhs >= 3 ) MoveObj(stack,3,NSP_OBJECT(E));
   return Max(lhs,1);
+}
+
+/*
+ * interface for testing dlamch
+ */
+
+
+extern double C2F(dlamch)(char *,int );
+extern double cdf_dlamch(char *,int );
+
+static int int_dlamch( Stack stack, int rhs, int opt, int lhs)
+{
+  double x,y,z;
+  char *mode;
+  int_types T[] = {string,t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&mode) == FAIL) return RET_BUG;
+  x = nsp_dlamch(mode);
+  y = C2F(dlamch)(mode,strlen(mode));
+  z = cdf_dlamch(mode,strlen(mode));
+  fprintf(stderr," %e %e %e %d\n",x,y,z,x==y);
+  return 0;
+  
 }
 
 /*
