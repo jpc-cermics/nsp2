@@ -49,7 +49,7 @@ extern  double pow_di (double *, int *);
  */
 extern  double nsp_dlamch (char *cmach);
 
-double C2F(dlamchXXX)(char *cmach, long int lstr)
+double C2F(dlamch)(char *cmach, long int lstr)
 {
   return nsp_dlamch(cmach);
 }

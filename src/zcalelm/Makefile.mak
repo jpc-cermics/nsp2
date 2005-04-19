@@ -22,5 +22,9 @@ include ../Make.lib.mak
 Makefile.mak	: Makefile
 	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
+matnum.obj: matnum.c
+	@echo "compiling matnum.c"
+	@$(CC) $(CC_OPTIONS)  -c matnum.c 
+
 
 
