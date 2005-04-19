@@ -232,7 +232,6 @@ case "$host" in
     fi
     FC='f77'
     FC_OPTIONS='-O -fpe3'
-    FC_OPTIONS_O0='-fpe3'
     FC_LDFLAGS=
     FC_USE_CDEC='   '
     LD=ld
@@ -252,7 +251,6 @@ case "$host" in
     if test "$G77" = yes; then
       FC=g77
       FC_OPTIONS=-O
-      FC_OPTIONS_O0=
       if test "$enable_debug" = yes; then 
         FC_OPTIONS=-g
       fi
@@ -273,7 +271,6 @@ case "$host" in
     fi
     FC='f77'
     FC_OPTIONS='-O -fpe3 -switch nosqrt_recip'
-    FC_OPTIONS_O0='-fpe3 -switch nosqrt_recip'
     FC_LDFLAGS=
     FC_USE_CDEC='   '
     LD=ld
@@ -293,7 +290,6 @@ case "$host" in
     if test "$G77" = yes; then
       FC=g77
       FC_OPTIONS=-O
-      FC_OPTIONS_O0=
       if test "$enable_debug" = yes; then 
         FC_OPTIONS=-g
       fi
@@ -314,7 +310,6 @@ case "$host" in
     fi
     FC=f77
     FC_OPTIONS='-qcharlen=4096'
-    FC_OPTIONS_O0='-qcharlen=4096'
     FC_LDFLAGS=
     LD=ld
     LD_LDFLAGS=
@@ -333,7 +328,6 @@ case "$host" in
     if test "$G77" = yes; then
       FC=g77
       FC_OPTIONS=-O
-      FC_OPTIONS_O0=
       if test "$enable_debug" = yes; then 
         FC_OPTIONS=-g
       fi
@@ -378,7 +372,6 @@ case "$host" in
       fi
     fi
     FC_OPTIONS=-O
-    FC_OPTIONS_O0=
     FC_LDFLAGS="$LIEEELIB -ldl -rdynamic"
     LD=ld
     LD_LDFLAGS=$LIEEELIB
@@ -403,7 +396,6 @@ case "$host" in
     fi
     FC=f77
     FC_OPTIONS=-O
-    FC_OPTIONS_O0=
     FC_LDFLAGS=
     FC_PICFLAGS=-PIC
     LD=ld
@@ -424,7 +416,6 @@ case "$host" in
     if test "$G77" = yes; then
       FC=g77
       FC_OPTIONS=-O
-      FC_OPTIONS_O0=
       FC_PICFLAGS=
       if test "$enable_debug" = yes; then 
         FC_OPTIONS=-g
@@ -447,7 +438,6 @@ case "$host" in
     fi
     FC=f77
     FC_OPTIONS=-O
-    FC_OPTIONS_O0=
     FC_LDFLAGS=
     LD=ld
     LD_LDFLAGS=
@@ -466,7 +456,6 @@ case "$host" in
     if test "$G77" = yes; then
       FC=g77
       FC_OPTIONS=-O2
-      FC_OPTIONS_O0=
       FC_LDFLAGS='-t' 
 #     for solaris 2.7 with gcc/g77 2.95.2, binutils 2.9 
 #     the correct value should be 
@@ -516,7 +505,6 @@ case "$host" in
       fi
     fi
     FC_OPTIONS=-O
-    FC_OPTIONS_O0=
     FC_LDFLAGS=$LIEEELIB
     LD=ld
     LD_LDFLAGS=$LIEEELIB
@@ -566,7 +554,6 @@ case "$host" in
       fi
     fi
     FC_OPTIONS=-O
-    FC_OPTIONS_O0=
     FC_LDFLAGS="$LIEEELIB -ldl -rdynamic"
     LD=ld
     LD_LDFLAGS=$LIEEELIB
@@ -590,7 +577,6 @@ case "$host" in
        CC_PICFLAGS="-fPIC"
 # -cm remove comments displays, -w90  -w95 remove warnings abort f90 f95 non standard
        FC_OPTIONS="-O -cm -w90 -w95 -mp "
-       FC_OPTIONS_O0="-cm  -w90 -w95 -mp "
        if test "$enable_debug" = yes; then
          CC_OPTIONS='-g -Wall -Dlinux  -DNARROWPROTO  -mp '
          FC_OPTIONS="-g -cm  -w90 -w95 -mp "
@@ -639,7 +625,6 @@ case "$host" in
          fi
        fi
        FC_OPTIONS="-O $CC_PLAT_OPTIONS"
-       FC_OPTIONS_O0=
        FC_LDFLAGS="$LIEEELIB -ldl -rdynamic -Wl,-relax "
        LD=ld
        LD_LDFLAGS="$LIEEELIB  -Wl,-relax "
@@ -689,7 +674,6 @@ case "$host" in
       fi
     fi
     FC_OPTIONS='-O -mieee-with-inexact'
-    FC_OPTIONS_O0='-mieee-with-inexact'
     FC_LDFLAGS='-ldl -rdynamic -mieee-with-inexact'
     LD=ld
     LD_LDFLAGS=
@@ -738,7 +722,6 @@ case "$host" in
       fi
     fi
     FC_OPTIONS=-O
-    FC_OPTIONS_O0=
     FC_LDFLAGS="$LIEEELIB -ldl -rdynamic"
     FC_PICFLAGS=-fPIC
     LD=ld
@@ -763,7 +746,6 @@ case "$host" in
     fi
     FC=f77
     FC_OPTIONS='-O0 -fpe1'
-    FC_OPTIONS_O0='-O0 -fpe1'
     FC_LDFLAGS=
     LD=ld
     LD_LDFLAGS=
@@ -783,7 +765,6 @@ case "$host" in
     if test "$G77" = yes; then
       FC=g77
       FC_OPTIONS=-O
-      FC_OPTIONS_O0=
       if test "$enable_debug" = yes; then 
         FC_OPTIONS=-g
       fi
@@ -804,10 +785,6 @@ case "$host" in
     fi
     FC=f77
     FC_OPTIONS='-O -Nl999 -Nn15000'
-    FC_OPTIONS_O0='-Nl999 -Nn15000'
-
-
-
     FC_LDFLAGS=
     LD=ld
     LD_LDFLAGS=
@@ -826,7 +803,6 @@ case "$host" in
     if test "$G77" = yes; then
       FC=g77
       FC_OPTIONS=-O
-      FC_OPTIONS_O0=
       if test "$enable_debug" = yes; then 
         FC_OPTIONS=-g
       fi
@@ -849,7 +825,6 @@ case "$host" in
     fi
     FC=fort77
     FC_OPTIONS='-O +Obb1200 +E4'
-    FC_OPTIONS_O0='+Obb1200 +E4'
     FC_LDFLAGS='-Wl,-a,archive'
     LD=ld
     LD_LDFLAGS='-a archive'
@@ -868,7 +843,6 @@ case "$host" in
     if test "$G77" = yes; then
       FC=g77
       FC_OPTIONS=-O
-      FC_OPTIONS_O0=
       if test "$enable_debug" = yes; then 
         FC_OPTIONS=-g
       fi
@@ -890,7 +864,6 @@ case "$host" in
     fi
     FC=fort77
     FC_OPTIONS='+O2 +E4 +Z +DAportable'
-    FC_OPTIONS_O0='+E4 +Z +DAportable'
     FC_LDFLAGS='-Wl,+vnocompatwarnings,-E /usr/lib/libdld.sl'
     LD=ld
     LD_LDFLAGS=
@@ -909,7 +882,6 @@ case "$host" in
     if test "$G77" = yes; then
       FC=g77
       FC_OPTIONS=-O
-      FC_OPTIONS_O0=
       if test "$enable_debug" = yes; then 
         FC_OPTIONS=-g
       fi
@@ -949,7 +921,6 @@ case "$host" in
       FC=g77
     fi 
     FC_OPTIONS="-O -mno-cygwin"
-    FC_OPTIONS_O0="-mno-cygwin"
       if test "$enable_debug" = yes; then 
         FC_OPTIONS="-g -mno-cygwin"
       fi
@@ -973,7 +944,6 @@ case "$host" in
      # script shell f77 have bugs, get ours
      FC=f77
      FC_OPTIONS="${CFLAGS} -Dfreebsd"	
-     FC_OPTIONS_O0='-Dfreebsd'
      FC_LDFLAGS='-lm -Wl,--export-dynamic'
      FC_PICFLAGS='-fPIC'
      LD=ld
@@ -1026,7 +996,6 @@ case "$host" in
    fi
    FC="$F77"
    FC_OPTIONS='-O2'
-   FC_OPTIONS_O0=`echo $FC_OPTIONS | sed 's/-O[0-9]*//g'`
    FC_LDFLAGS="-Wl,-R${X11BASE}/lib"
    FC_PICFLAGS='-fPIC'
    # check for --export-dynamic
@@ -1074,7 +1043,6 @@ case "$host" in
      # script shell f77 have bugs, get ours
      FC=g77
      FC_OPTIONS='-O2'
-     FC_OPTIONS_O0=
      FC_LDFLAGS='-L/sw/lib -ldl'
      FC_PICFLAGS='-fPIC'
      LD=ld
@@ -1107,37 +1075,34 @@ case "$host" in
     ;;
 esac
 
-
-# due to g77 Fortran compiler bugs, a few files must not be compiled
-# with optimizer:
-# in "src/control": hqror2.f comqr3.f tql2.f imtql3.f dsvdc.f wsvdc.f 
-#                        pade.f
-# in "src/sparse": intreadmps.f
+#########################################
+# FC_OPTIONS1 and CC_OPTIONS are similar 
+# to FC_OPTIONS and CC_OPTIONS 
+# except that if the compiler is g77 and gcc
+# optimizations options are removed 
+#########################################
 
 FC_OPTIONS1=$FC_OPTIONS
 if test "$G77" = yes; then
-  if test "$enable_debug" = yes; then   
-    FC_OPTIONS1=$FC_OPTIONS
-  else
-    FC_OPTIONS1=$FC_OPTIONS_O0
-  fi
+  FC_OPTIONS1=`echo $FC_OPTIONS | sed -e 's/-O[[0-9]]*//g'`
 fi
+CC_OPTIONS1=$CC_OPTIONS
+if test "$GCC" = yes; then
+  CC_OPTIONS1=`echo $CC_OPTIONS | sed -e "s/-O[[0-9]]*//g"`
+fi
+
+#########################################
 # due overlapping arguments a few files must not be compiled
 # with optimizer on some computers (SGI : unsfdcopy.f icopy.f)
+#########################################
 
 FC_OPTIONS2=$FC_OPTIONS
-
 case "$host" in
 # SGI MIPS 
   mips-sgi-irix*)
-    if test "$enable_debug" = yes; then   
-      FC_OPTIONS2=$FC_OPTIONS
-    else
-      FC_OPTIONS2=$FC_OPTIONS_O0
-    fi
+    FC_OPTIONS2=`echo $FC_OPTIONS | sed -e 's/-O[[0-9]]*//g'`
     ;;
 esac
-
 
 # due to a gcc bug, a few C functions must not be inlined when compiled
 # with optimizer: the "floor" function in "src/graphics/Format.c"
@@ -1156,7 +1121,6 @@ LDLAGS=$CC_LDFLAGS
 ############################
 # Using `AC_PROG_RANLIB' is rendered obsolete by `AC_PROG_LIBTOOL'
 #AC_PROG_RANLIB
-
 
 #########################
 ## sizeof(int*)== sizeof(int)
@@ -1616,6 +1580,22 @@ if test "$with_maxpluslib" = yes; then
    MPLUSLIBDIR=libmaxplus
 fi 
 
+#################
+## umfpack 
+## prepared for future use 
+#################
+
+if test "xx" = yes; then 
+ builtin(include,config/ac_find_file.m4)
+ builtin(include,config/ac_check_umfpack.m4)
+ AC_CHECK_UMFPACK
+
+ if test "xx$umfpack_libs" != "xx" ; then
+   AC_DEFINE(WITH_UMFPACK)
+   AC_MSG_RESULT([adding umfpack UMFPACK="$umfpack_libs"])
+ fi 
+fi
+
 #########################
 ## substituting variables
 #########################
@@ -1631,6 +1611,7 @@ AC_SUBST(CC_PICFLAGS)
 AC_SUBST(FC)
 AC_SUBST(FC_OPTIONS)
 AC_SUBST(FC_OPTIONS1)
+AC_SUBST(CC_OPTIONS1)
 AC_SUBST(FC_OPTIONS2)
 AC_SUBST(FC_LDFLAGS)
 AC_SUBST(FC_PICFLAGS)
@@ -1727,7 +1708,4 @@ AC_SUBST(LAPACK_LOCAL)
 
 
 AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile ) 
- 
-
-
 
