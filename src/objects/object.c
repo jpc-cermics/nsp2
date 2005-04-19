@@ -229,8 +229,27 @@ int int_object_create(Stack stack, int rhs, int opt, int lhs)
 
 /* set method common to all objects object.set[attr=val,attr=val,....] */
 
+/*
+ * x.equal[y] : checks that x is equal to y 
+ *              i.e x is a copy of y 
+ */
+
+static int int_object_equal(void *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int rep;
+  NspObject *O;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  /* nsp_get_object takes care of Hobj pointers **/
+  if (( O =nsp_get_object(stack,1)) == NULLOBJ ) return RET_BUG;
+  rep = NSP_OBJECT(self)->type->eq(self,O);
+  nsp_move_boolean(stack,1,rep);
+  return 1;
+}
+
 static NspMethods object_methods[] = {
   { "set",  int_set_attributes1},
+  { "equal",  int_object_equal},
   { (char *) 0, NULL}
 };
 
@@ -566,6 +585,9 @@ NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type)
   return sm;
 }
 
+/*---------------------------------------------------
+ * set of interfaced functions 
+ *--------------------------------------------------*/
 
 /*
  * interface for operator \n 
@@ -1349,6 +1371,58 @@ int int_object_xdrload(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * A == B 
+ * when A and B do not have the same type 
+ * when type(A) == type(B) a specilaized function is used 
+ * 
+ */
+
+int int_object_eq(Stack stack, int rhs, int opt, int lhs) 
+{
+  NspObject *O1,*O2;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  /* nsp_get_object takes care of Hobj pointers **/
+  if (( O1 =nsp_get_object(stack,1)) == NULLOBJ ) return RET_BUG;
+  if (( O2 =nsp_get_object(stack,2)) == NULLOBJ ) return RET_BUG;
+  if ( NSP_OBJECT(O1)->type == NSP_OBJECT(O2)->type )
+    {
+      /* should never get there */
+      Scierror("Error: a specialized function eq_%s_%s is missing\n",
+	       NSP_OBJECT(O1)->type->s_type(),NSP_OBJECT(O1)->type->s_type());
+      return RET_BUG;
+    }
+  nsp_move_boolean(stack,1,FALSE); 
+  return 1; 
+} 
+/*
+ * A <> B 
+ * when A and B do not have the same type 
+ * when type(A) == type(B) a specilaized function is used 
+ * 
+ */
+
+int int_object_neq(Stack stack, int rhs, int opt, int lhs) 
+{
+  NspObject *O1,*O2;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  /* nsp_get_object takes care of Hobj pointers **/
+  if (( O1 =nsp_get_object(stack,1)) == NULLOBJ ) return RET_BUG;
+  if (( O2 =nsp_get_object(stack,2)) == NULLOBJ ) return RET_BUG;
+  if ( NSP_OBJECT(O1)->type == NSP_OBJECT(O2)->type )
+    {
+      /* should never get there */
+      Scierror("Error: a specialized function eq_%s_%s is missing\n",
+	       NSP_OBJECT(O1)->type->s_type(),NSP_OBJECT(O1)->type->s_type());
+      return RET_BUG;
+    }
+  nsp_move_boolean(stack,1,TRUE); 
+  return 1; 
+} 
+
+
+/*
  * FIXME: just here to test the matrix interface 
  */
 
@@ -1396,6 +1470,8 @@ int int_matrix_testredim(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab Obj_func[]={
+  {"eq",int_object_eq},
+  {"ne",int_object_neq},
   {"eye", int_object_eye},
   {"ones", int_object_ones},
   {"zeros", int_object_zeros},

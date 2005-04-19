@@ -1,3 +1,13 @@
+2005-04-19    <jpc@cermics.enpc.fr>
+
+	* src/objects/object.c: 
+	a generic eq (==) and ne (<>) added 
+	in object for dealing with a==b and a<>b when 
+	a and b do not share the same type.
+	A method equal was also added obj1.equal[obj2] 
+	test that obj1 and obj2 are copies 
+	(same semantic as and(obj1==obj2))
+
 2005-04-14    <jpc@cermics.enpc.fr>
 
 	* src/lapack added. It contains a set 
