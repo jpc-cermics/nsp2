@@ -21,7 +21,7 @@ Makefile.mak	: Makefile
 
 matnum.o: matnum.c
 	@echo "compiling matnum.c"
-	@$(CC) $(CC_OPTIONS)  -c matnum.c 
+	@$(CC) $(CC_OPTIONS1)  -c matnum.c 
 
 
 
