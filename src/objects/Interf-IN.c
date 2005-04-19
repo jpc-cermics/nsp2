@@ -170,14 +170,19 @@ int int_mxtest8(Stack stack, int rhs, int opt, int lhs)
 }  
 
 
-/* apres cet appel A et B sont devenus des matrices entieres **/
+/* apres cet appel A et B sont devenus des matrices entieres 
+ * 
+ */
 
 int int_mxtest5_2(Stack stack, int rhs, int opt, int lhs)
 {
+  int *ia;
   NspMatrix *A,*B;
   int_types T[]={ mat_int,mat_int, t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A,&B) == FAIL) return RET_BUG;
-  return 1;
+  ia = (int *) A->R;
+  ia[0]=56;
+  return 0;
 }  
 
 
@@ -371,7 +376,7 @@ static OpTab Interf_func[]={
   {"test2", int_mxtest2},
   {"test3", int_mxtest3},
   {"test4", int_mxtest4},
-  {"test5", int_mxtest5},
+  {"test5", int_mxtest5_2},
   {"test6", int_mxtest6},
   {"test7", int_mxtest7},
   {"test8", int_mxtest8},

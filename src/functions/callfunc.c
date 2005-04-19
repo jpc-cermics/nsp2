@@ -315,7 +315,11 @@ int  reorder_stack(Stack stack, int ret)
   while ( *O1 != NULL)  
     {
       O=*O1;
-      if ( IsHobj(O) && strcmp(stack.fname,"handler") != 0 ) /* XXXX */
+      /* XXX : we keep here special cases for handler and resize2vect_h 
+       * which are authorized to return a Hobj. Maybe not a good idea to
+       * keep special cases here.
+       */
+      if ( IsHobj(O) && strcmp(stack.fname,"handler") != 0 && strcmp(stack.fname,"resize2vect_h") != 0)
 	{
 	  int k;
 	  /* O is of type pointer */
@@ -325,11 +329,11 @@ int  reorder_stack(Stack stack, int ret)
 	      if ( O->ret_pos != -1 ) 
 		{
 		  /* XXXX should not get there */ 
-		  fprintf(stderr,"Something wrong in reorder_stack for %s: apointer is returned \n", stack.fname);
+		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", stack.fname);
 		  exit(1);
 		}
 	      /* O is an optional argument,O2 is the value */
-	nsp_object_destroy(&O);
+	      nsp_object_destroy(&O);
 	      /* we go on with O2 */
 	      O = *O1=O2;
 	    }
@@ -339,7 +343,7 @@ int  reorder_stack(Stack stack, int ret)
 	      if ( O->ret_pos != -1 ) 
 		{
 		  /* XXXX should not get there */ 
-		  fprintf(stderr,"Something wrong in reorder_stack for %s: apointer is returned \n", stack.fname);
+		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", stack.fname);
 		  exit(1);
 		}
 	      /* O points to O2 */
@@ -402,7 +406,7 @@ int  reorder_stack(Stack stack, int ret)
   O1 = stack.S+stack.first;
   while ( *O1 != NULL) {
     if ( (*O1)->ret_pos == -1 ) {
- nsp_void_object_destroy(O1);
+      nsp_void_object_destroy(O1);
       /* if object was not destroyed we must remove it from the stack 
        * Attention pose un pb avec pvirg et virg XXXX
        */

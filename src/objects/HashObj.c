@@ -845,6 +845,46 @@ int int_hcreate_from_list(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
+
+/*
+ * Extract all the elements of the list 
+ * an store them on the stack as hopts 
+ * this is usefull for passing optionnal arguments 
+ * H=hcreate(opt1=,...)
+ * f(....,H(:))
+ */ 
+
+static int int_hash_as_options(Stack stack, int rhs, int opt, int lhs)
+{
+  int count =0,i=0;
+  NspHash *H;
+  NspObject *O;
+  CheckRhs(1,1);
+  if ((H = GetHash(stack,1)) == NULLHASH) return RET_BUG;
+  if ( Ocheckname(NthObj(1),NVOID) ) 
+    {
+      Scierror("Error:\t%s must have a name\n",ArgPosition(count));
+      return RET_BUG;
+    }
+  while (1) 
+    {
+      if (nsp_hash_get_next_object(H,&i,&O) == FAIL ) break;
+      if ( O != NULLOBJ )
+	{ 
+	  NspHobj *Opt = HoptCreate(nsp_object_get_name(O),O);
+	  if ( Opt == NULL) return RET_BUG;
+	  NthObj(count+1)= NSP_OBJECT(Opt);
+	  count++;
+	}
+    }
+  for ( i = 1 ; i <= count ; i++) 
+    {
+      NSP_OBJECT(NthObj(i))->ret_pos = i;
+    }
+  return count;
+}
+
+
 /*
  *
  */
@@ -861,6 +901,7 @@ static OpTab Hash_func[]={
   {"eq_h_h",int_ht_eq},
   {"ne_h_h",int_ht_neq},
   {"l2h",int_hcreate_from_list},
+  {"resize2vect_h", int_hash_as_options}, /* H(:) */
   {(char *) 0, NULL}
 };
 
