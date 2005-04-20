@@ -146,7 +146,7 @@ static int hash_size(NspHash *H, int flag)
 {
   switch (flag) 
     {
-    case 0: return H->hsize;
+    case 0: return H->filled;
     case 1: return H->filled;
     case 2: return H->hsize;
     }
