@@ -1395,6 +1395,7 @@ int int_object_eq(Stack stack, int rhs, int opt, int lhs)
   nsp_move_boolean(stack,1,FALSE); 
   return 1; 
 } 
+
 /*
  * A <> B 
  * when A and B do not have the same type 
@@ -1421,6 +1422,17 @@ int int_object_neq(Stack stack, int rhs, int opt, int lhs)
   return 1; 
 } 
 
+/*
+ * length(A) for all objects except for string matrices 
+ */
+
+static int int_object_length(Stack stack, int rhs, int opt, int lhs) 
+{
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  nsp_move_double(stack,1,nsp_object_get_size(NthObj(1),0)); 
+  return 1; 
+} 
 
 /*
  * FIXME: just here to test the matrix interface 
@@ -1494,6 +1506,7 @@ static OpTab Obj_func[]={
   {"sprint",int_object_sprint},
   {"fprint",int_object_fprint},
   {"diary",int_object_diary},
+  {"length",int_object_length},
   {"REDIM",int_object_testredim}, /* FIXME: testing */
   {"REDIM1",int_matrix_testredim}, /* FIXME: testing */
   {(char *) 0, NULL}
