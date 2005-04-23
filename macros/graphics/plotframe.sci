@@ -12,31 +12,30 @@ function plotframe(rect,axisdata,flags,legs,subwindow)
 //  subwindow : see xsetech (wrect)
 //!
 // Copyright INRIA
-  [lhs,rhs]=argn(0)
   f_subwin=%f,f_flags=%f,f_legs=%f;
   r_flags=[%f,%f];
-  if rhs == 5 then
+  if nargin == 5 then
     select type(subwindow,'short'),
      case 'm' , r_subwin=subwindow, f_subwin=%t;
      case 'b' , r_flags =subwindow, f_flags =%t;
      case 's', r_legs = subwindow, f_legs= %t;
     end 
   end
-  if rhs >= 4 then
+  if nargin >= 4 then
     select type(legs,'short'),
      case 'm' , r_subwin=legs, f_subwin=%t;
      case 'b' , r_flags =legs, f_flags =%t;
      case 's', r_legs = legs, f_legs= %t;
     end 
   end
-  if rhs >= 3 then
+  if nargin >= 3 then
     select type(flags,'short'),
      case 'm' , r_subwin=flags, f_subwin=%t;
      case 'b' , r_flags =flags, f_flags =%t;
      case 's', r_legs = flags, f_legs= %t;
     end 
   end
-  if rhs <= 1 then 
+  if nargin <= 1 then 
     error('Wrong number of arguments ');
     return;
   end

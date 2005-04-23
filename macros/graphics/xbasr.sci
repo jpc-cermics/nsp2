@@ -3,8 +3,7 @@ function []=xbasr(win_num)
 // window win_num. It works only with the driver "Rec"
 //!
 // Copyright Enpc
-  [lhs,rhs]=argn(0);
-  if rhs==0,
+  if nargin==0,
     win_num=xget("window");
     xclear(win_num);xtape('replay',win_num);
   else 

@@ -10,10 +10,8 @@ function []=square(xmin,ymin,xmax,ymax)
 //sont imposes.
 //!
 // Copyright INRIA
-[zer,right]=argn(0);
-if right<=0 then right=4;xmin=-2;ymin=-2;xmax=2;ymax=2;end
-if right<>4 then error('0 ou 4 arguments'),end
-wdim=xget("wdim");
-xset("wdim",maxi(wdim),maxi(wdim));
-plot2d(0,0,1,"010"," ",[xmin,ymin,xmax,ymax]);
+  if nargin <=0 then xmin=-2;ymin=-2;xmax=2;ymax=2;end
+  wdim=xget("wdim");
+  xset("wdim",maxi(wdim),maxi(wdim));
+  plot2d(0,0,style=1,rect=[xmin,ymin,xmax,ymax]);
 endfunction
