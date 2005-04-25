@@ -82,7 +82,7 @@ static int int_lsq( Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   if ( GetArgs(stack,rhs,opt,T,&A,&B,&opts,&mode) == FAIL) return RET_BUG;
 
-  cmode = ( opts[1].obj == NULLOBJ) ? 'n' : mode[0]; 
+  cmode = ( opts[0].obj == NULLOBJ) ? 'n' : mode[0]; 
   if ( cmode != 'n' && cmode != 'z' ) 
     {
       Scierror("%s: mode should be 'n' or 'z' \n",stack.fname);
@@ -140,7 +140,7 @@ static int int_svd( Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * interface for nsp_svd: 
+ * interface for nsp_det: 
  */
 
 static int int_det( Stack stack, int rhs, int opt, int lhs)
@@ -227,7 +227,7 @@ static int int_cholewsky( Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * interface for nsp_cholewsky: 
+ * interface for nsp_lu
  */
 
 static int int_lu( Stack stack, int rhs, int opt, int lhs)
@@ -247,9 +247,47 @@ static int int_lu( Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * interface for testing dlamch
+ * interface for norm 
  */
 
+static int int_norm( Stack stack, int rhs, int opt, int lhs)
+{
+  double norm;
+  int rep=1;
+  char *norm_table[] = {  "1","2","inf","fro","Inf","Fro","M",NULL};
+  char norm_lapack_table[] = {  '1','M','I','F','I','F','M'};
+  NspMatrix *A;
+  CheckRhs(1,2);
+  CheckLhs(0,1);
+  if ((A = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  if (rhs == 2)
+    {
+      int repi;
+      if (IsMatObj(stack,2))
+	{
+	  if (GetScalarInt(stack,2,&repi) == FAIL) return RET_BUG;
+	  if ( repi == 1 || repi == 2 ) rep=repi-1;
+	  else if ( isinf(repi)) rep=2;
+	}
+      else if ( IsSMatObj(stack,2))
+	{
+	  if ((rep= GetStringInArray(stack,2,norm_table,1)) == -1) return RET_BUG; 
+	}
+      else
+	{
+	  Scierror("%s: second argument can be 1,2,%inf or '1','2','inf','fro','Inf','Fro','M' \n",stack.fname);
+	  return RET_BUG;
+	}
+    }
+  norm = nsp_norm(A,norm_lapack_table[rep]);
+  if ( nsp_move_double(stack,1,norm )== FAIL) return RET_BUG;
+  return Max(lhs,1);
+}
+
+
+/*
+ * interface for testing dlamch
+ */
 
 extern double C2F(dlamch)(char *,int );
 extern double cdf_dlamch(char *,int );
@@ -268,6 +306,11 @@ static int int_dlamch( Stack stack, int rhs, int opt, int lhs)
   
 }
 
+
+
+
+
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -282,6 +325,7 @@ static OpTab Lapack_func[] = {
   {"inv",int_inv},
   {"cholewsky",int_cholewsky},
   {"rcond",int_rcond},
+  {"norm",int_norm},
   {"lu",int_lu},
   {(char *) 0, NULL}
 };

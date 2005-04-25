@@ -2284,73 +2284,63 @@ int intzgees1(NspMatrix *A,NspMatrix **U,char flag)
 }
 
 
-
-
 /*-----------------------------------------
  *   norm(A,'xxx') 
  *   'M' '1' 'I' 'F' 
  *-----------------------------------------*/
 
-static int intznorm(NspMatrix *A, NspMatrix **Norm,char *flag);
-static int intdnorm(NspMatrix *A,NspMatrix **Norm,char *flag);
+static double intznorm(NspMatrix *A,char flag);
+static double intdnorm(NspMatrix *A,char flag);
 
-/* XXXXX rajouter un test sur flag */ 
-
-int idl_norm(NspMatrix *A,NspMatrix **Norm,char *flag) {
+double nsp_norm(NspMatrix *A,char flag) 
+{
   if ( A->rc_type == 'r' ) 
-    return intdnorm(A,Norm,flag) ;
+    return intdnorm(A,flag) ;
   else 
-    return intznorm(A,Norm,flag) ;
+    return intznorm(A,flag) ;
 }
 
-static int intdnorm(NspMatrix *A,NspMatrix **Norm,char *flag)
+static double intdnorm(NspMatrix *A,char flag)
 {
+  double norm;
   NspMatrix *dwork;
   int lworkMin, m = A->m, n = A->n ;
-
-  if (( *Norm =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-
   /*  A = [] return 0 */ 
-  if ( A->mn == 0 ) {
-    (*Norm)->R[0]=0.0;
-    return OK; 
-  }
-  
-  if ( flag[0] == 'I') {
-    lworkMin = Max(1,n);
-    if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-    (*Norm)->R[0] =  C2F(dlange)(flag, &m, &n,A->R, &m, dwork->R, 1L);
-  } else {
-    (*Norm)->R[0] =  C2F(dlange)(flag, &m, &n,A->R, &m, NULL , 1L);
-  }
-
-  return OK;
+  if ( A->mn == 0 ) return 0.0;
+  if ( flag == 'I') 
+    {
+      lworkMin = Max(1,n);
+      if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+      norm=  C2F(dlange)(&flag, &m, &n,A->R, &m, dwork->R, 1L);
+      nsp_matrix_destroy(dwork);
+    } 
+  else 
+    {
+      norm=  C2F(dlange)(&flag, &m, &n,A->R, &m, NULL , 1L);
+    }
+  return norm;
 } 
 
-static int intznorm(NspMatrix *A, NspMatrix **Norm,char *flag)
+static double intznorm(NspMatrix *A,char flag)
 {
+  double norm;
   NspMatrix *dwork;
   int lworkMin, m = A->m, n = A->n ;
-
-  if (( *Norm =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-
   /*  A = [] return empty matrices */ 
-  if ( A->mn == 0 ) {
-    (*Norm)->R[0]=0.0;
-    return OK; 
-  }
+  if ( A->mn == 0 ) return 0.0;
 
-  if ( flag[0] == 'I') {
-    lworkMin = Max(1,n);
-    if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-    (*Norm)->R[0] =  C2F(zlange)(flag, &m, &n,A->I, &m, dwork->R, 1L);
-  } else {
-    (*Norm)->R[0] =  C2F(zlange)(flag, &m, &n,A->I, &m, NULL , 1L);
-  }
-
-  return OK;
-
-
+  if ( flag == 'I') 
+    {
+      lworkMin = Max(1,n);
+      if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+      norm=  C2F(zlange)(&flag, &m, &n,A->I, &m, dwork->R, 1L);
+      nsp_matrix_destroy(dwork);
+    } 
+  else 
+    {
+      norm=  C2F(zlange)(&flag, &m, &n,A->I, &m, NULL , 1L);
+    }
+  return norm;
 }
 
 /*-----------------------------
