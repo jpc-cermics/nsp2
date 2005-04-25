@@ -59,8 +59,12 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
   if ( nsp_qr(A,&Q,&R,hrank,hE,Tol,cmode)== FAIL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(Q));
   if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(R));
-  if ( lhs >= 3 ) MoveObj(stack,3,NSP_OBJECT(E));
-  if ( lhs >= 4 ) MoveObj(stack,4,NSP_OBJECT(rank));
+  if ( lhs == 3 ) MoveObj(stack,3,NSP_OBJECT(E));
+  if ( lhs == 4 ) 
+    {
+      MoveObj(stack,4,NSP_OBJECT(E));
+      MoveObj(stack,3,NSP_OBJECT(rank));
+    }
   return Max(lhs,1);
 }
 

@@ -47,21 +47,14 @@ int C2F(xerbla)(char *srname,int * info,int srname_len)
   return 0;
 }
 
-/*----------------------------------------------
- * QR decomposition 
- * int QR2(NspMatrix *A,NspMatrix **q,NspMatrix **r)
- * int QR3(NspMatrix *A,NspMatrix **q,NspMatrix **r,NspMatrix **E)
- * int QR4(NspMatrix *A,NspMatrix **q,NspMatrix **r,NspMatrix **rank,NspMatrix **E,double *tol)
- * reste les deux versions économiques a implémenter XXXX
- * flag = 'e' means economic version 
- *----------------------------------------------*/
-
 static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 		      NspMatrix **rank,double *tol,char flag);
 static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 		      NspMatrix **rank,double *tol,char flag);
 
-/* mode can be 'x' or 'e' (economic) 
+/* OK 
+ * QR decomposition  
+ * mode can be 'x' or 'e' (economic) 
  * rank and E are computed if non null arguments are transmited 
  * tol can be given or computed if null is transmited 
  */
@@ -243,19 +236,22 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
   workMin = Max(m,n);
   if ((work =nsp_matrix_create(NVOID,'i',1,workMin)) == NULLMAT) return FAIL;
   
-  if ( E == NULL) {
-    /* XXX make a first query to compute optimal work space ? */
-    C2F(zgeqrf)(&m, &n,(*R)->I, &m, tau->I, work->I, &workMin, &info);
-  } else {
-    int ix;
-    for (ix = 0; ix < n ; ++ix) Ijpvt[ix] =0;
-    C2F(zgeqpf)(&m, &n,(*R)->I, &m, Ijpvt,tau->I,work->I,rwork->R, &info);
-  }
+  if ( E == NULL) 
+    {
+      /* XXX make a first query to compute optimal work space ? */
+      C2F(zgeqrf)(&m, &n,(*R)->I, &m, tau->I, work->I, &workMin, &info);
+    } 
+  else 
+    {
+      int ix;
+      Ijpvt = (int *) jpvt->R;
+      for (ix = 0; ix < n ; ++ix) Ijpvt[ix] =0;
+      C2F(zgeqpf)(&m, &n,(*R)->I, &m, Ijpvt,tau->I,work->I,rwork->R, &info);
+    }
   if (info != 0) {
     Scierror("Error: something wrong in zgeqpf\n"); 
     return FAIL;
   }
-
   /* Now we must extract Q from R and tau  */ 
 
   if (m > n) {
@@ -342,6 +338,200 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
   return OK;
 }
 
+
+/* OK 
+ * Lu factorization 
+ * A is changed by nsp_lu 
+ */
+
+int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E);
+int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E);
+
+int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
+{
+  if (A->rc_type == 'r' ) 
+    return  intdgetrf(A,L,U,E);
+  else 
+    return  intzgetrf(A,L,U,E);
+}
+
+int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
+{
+  int info, m = A->m, n = A->n ,Minmn,i,j,*Ipiv ;
+  NspMatrix *ipiv;
+
+  /* A == [] return empty matrices*/ 
+  if ( A->mn == 0 )  {
+    if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+    if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+    if ( E != NULL)
+      {
+	if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+      }
+    return OK ; 
+  }
+
+  Minmn = Min(m,n);
+
+  if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT) return FAIL;
+  if (( *U =nsp_matrix_create(NVOID,A->rc_type,Minmn,n)) == NULLMAT) return FAIL;
+
+  /* int matrix XXX*/ 
+  if (( ipiv =nsp_matrix_create(NVOID,A->rc_type,1,Minmn)) == NULLMAT) return FAIL;
+  Ipiv = (int *) ipiv->R;
+
+  if ( E != NULL) 
+    {
+      if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,m)) == NULLMAT) return FAIL;
+    }
+
+  C2F(dgetrf)(&m, &n,A->R, &m,Ipiv, &info);
+  if (info < 0) {
+    Scierror("Error: something wrong in lu\n");
+    return FAIL;
+  }
+  
+  /* Extract U from A */ 
+  for ( i = 0 ; i < (*U)->mn ; i++ ) (*U)->R[i]=0.0; 
+  C2F(dlacpy)("U", &Minmn, &n,A->R, &m, (*U)->R, &Minmn, 1L);
+
+  if (E == NULL ) 
+    {
+      NspMatrix *iinvpiv;
+      int *Iinvpiv;
+      /* E is not requested L must be changed to E'*L */ 
+      /* compute a representation of E' */
+      if (( iinvpiv =nsp_matrix_create(NVOID,A->rc_type,1,m)) == NULLMAT) return FAIL;
+      Iinvpiv = (int *) iinvpiv->R;
+      for ( i=1; i <= m ; i++) Iinvpiv[i-1]=i;
+      for ( i=1; i <= Minmn ; i++) 
+	{
+	  int ip = Ipiv[i-1];
+	  if ( ip != i) { 
+	    int iw = Iinvpiv[i-1]; 
+	    Iinvpiv[i-1] = Iinvpiv[ip-1];
+	    Iinvpiv[ip-1] = iw; 
+	  }
+	}
+      /* use A to store L before E' product */ 
+      for ( i = 0 ; i < Minmn ; i++ ) 
+	{
+	  A->R[(m+1)*i]=1.0; 
+	  for ( j = i+1; j < Minmn ; j++) A->R[i+j*m]=0.0; 
+	}
+      /* store E'*L in L */ 
+      for (i=0; i < m ; i++ ) 
+	{
+	  C2F(dcopy)(&Minmn,&A->R[i],&m,&(*L)->R[Iinvpiv[i]-1],&m);
+	}
+      nsp_matrix_destroy(iinvpiv); 
+    }
+  else 
+    {
+      double zero = 0.0,done = 1.0;
+      int one = 1;
+      /* Extract L from A */ 
+      for ( i = 0 ; i < (*L)->mn ; i++ ) (*L)->R[i]=0.0; 
+      C2F(dlacpy)("L", &m, &Minmn,A->R, &m,(*L)->R, &m, 1L);
+      for ( i = 0 ; i < Minmn ; i++ ) (*L)->R[(m+1)*i]=1.0; 
+      /* Compute E */
+      C2F(dlaset)("F", &m, &m, &zero, &done,(*E)->R, &m, 1L);
+      C2F(dlaswp)(&m,(*E)->R,&m,&one ,&Minmn, Ipiv,&one );
+    }
+  nsp_matrix_destroy(ipiv);
+  return OK;
+}
+
+
+int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
+{
+  doubleC Czero = {0.0,0.0}; /*  ,Cone ={ 1.0,0.0} ; */
+  int info, m = A->m, n = A->n ,Minmn,i,j,*Ipiv ;
+  NspMatrix *ipiv;
+  
+  /* A == [] return empty matrices*/ 
+  if ( A->mn == 0 )  {
+    if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+    if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+    if ( E != NULL)
+      {
+	if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+      }
+    return OK ; 
+  }
+
+  Minmn = Min(m,n);
+
+  if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT) return FAIL;
+  if (( *U =nsp_matrix_create(NVOID,A->rc_type,Minmn,n)) == NULLMAT) return FAIL;
+
+  /* int matrix XXX*/ 
+  if (( ipiv =nsp_matrix_create(NVOID,'r',1,Minmn)) == NULLMAT) return FAIL;
+  Ipiv = (int *) ipiv->R;
+
+  if ( E != NULL) 
+    {
+      if (( *E =nsp_matrix_create(NVOID,'r',m,m)) == NULLMAT) return FAIL;
+    }
+
+  C2F(zgetrf)(&m, &n,A->I, &m,Ipiv, &info);
+  if (info < 0) {
+    Scierror("Error: something wrong in lu\n");
+    return FAIL;
+  }
+  
+  /* Extract U from A */ 
+  for ( i = 0 ; i < (*U)->mn ; i++ ) (*U)->I[i] = Czero; 
+  C2F(zlacpy)("U", &Minmn, &n,A->I, &m, (*U)->I, &Minmn, 1L);
+
+  if (E == NULL ) 
+    {
+      NspMatrix *iinvpiv;
+      int *Iinvpiv;
+      /* E is not requested L must be changed to E'*L */ 
+      /* compute a representation of E' */
+      if (( iinvpiv =nsp_matrix_create(NVOID,'r',1,m)) == NULLMAT) return FAIL;
+      Iinvpiv = (int *) iinvpiv->R;
+      for ( i=1; i <= m ; i++) Iinvpiv[i-1]=i;
+      for ( i=1; i <= Minmn ; i++) 
+	{
+	  int ip = Ipiv[i-1];
+	  if ( ip != i) { 
+	    int iw = Iinvpiv[i-1]; 
+	    Iinvpiv[i-1] = Iinvpiv[ip-1];
+	    Iinvpiv[ip-1] = iw; 
+	  }
+	}
+      /* use A to store L before E' product */ 
+      for ( i = 0 ; i < Minmn ; i++ ) 
+	{
+	  A->I [(m+1)*i].r =1.0; A->I [(m+1)*i].i =0.0; 
+	  for ( j = i+1; j < Minmn ; j++) A->I[i+j*m]= Czero; 
+	}
+      /* store E'*L in L */ 
+      for (i=0; i < m ; i++ ) C2F(zcopy)(&Minmn,&A->I[i],&m,&(*L)->I[Iinvpiv[i]-1],&m);
+      nsp_matrix_destroy(iinvpiv); 
+    }
+  else 
+    {
+      double zero = 0.0,done = 1.0;
+      int one = 1;
+      /* Extract L from A */ 
+      for ( i = 0 ; i < (*L)->mn ; i++ ) (*L)->I[i]=Czero; 
+      C2F(zlacpy)("L", &m, &Minmn,A->I, &m,(*L)->I, &m, 1L);
+      for ( i = 0 ; i < Minmn ; i++ ) { (*L)->I[(m+1)*i].r=1.0; (*L)->I[(m+1)*i].i=0.0; }
+      /* Compute E */
+      /* C2F(zlaset)("F", &m, &m, &Czero, &Cone,(*E)->I, &m, 1L);
+       *  C2F(zlaswp)(&m,(*E)->I,&m,&one ,&Minmn, Ipiv,&one ); 
+       */
+      /* Compute E as a real matrix */
+      C2F(dlaset)("F", &m, &m, &zero, &done,(*E)->R, &m, 1L);
+      C2F(dlaswp)(&m,(*E)->R,&m,&one ,&Minmn, Ipiv,&one );
+
+    }
+  nsp_matrix_destroy(ipiv);
+  return OK;
+}
 
 /*----------------------------------------------
  * Lsq computation 
@@ -631,7 +821,7 @@ static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
   
   /* computing work space area */ 
 
-  ix1 = Minmn * 3 + Max(m,n), ix2 = Minmn * 5-56;
+  ix1 = Minmn * 3 + Max(m,n), ix2 = Minmn * 5;
   lworkMin = Max(ix1,ix2);
   if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
 
@@ -1549,195 +1739,6 @@ int nsp_cholewsky(NspMatrix *A)
   return OK;
 } 
 
-
-/*-----------------------------------------
- * factorisation Lu 
- * Note that A is changed by nsp_lu
- *-----------------------------------------*/
-
-int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E);
-int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E);
-
-int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
-{
-  if (A->rc_type == 'r' ) 
-    return  intdgetrf(A,L,U,E);
-  else 
-    return  intzgetrf(A,L,U,E);
-}
-
-int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
-{
-  int info, m = A->m, n = A->n ,Minmn,i,j,*Ipiv ;
-  NspMatrix *ipiv;
-
-  /* A == [] return empty matrices*/ 
-  if ( A->mn == 0 )  {
-    if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if ( E != NULL)
-      {
-	if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  Minmn = Min(m,n);
-
-  if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT) return FAIL;
-  if (( *U =nsp_matrix_create(NVOID,A->rc_type,Minmn,n)) == NULLMAT) return FAIL;
-
-  /* int matrix XXX*/ 
-  if (( ipiv =nsp_matrix_create(NVOID,A->rc_type,1,Minmn)) == NULLMAT) return FAIL;
-  Ipiv = (int *) ipiv->R;
-
-  if ( E != NULL) 
-    {
-      if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,m)) == NULLMAT) return FAIL;
-    }
-
-  C2F(dgetrf)(&m, &n,A->R, &m,Ipiv, &info);
-  if (info < 0) {
-    Scierror("Error: something wrong in lu\n");
-    return FAIL;
-  }
-  
-  /* Extract U from A */ 
-  for ( i = 0 ; i < (*L)->mn ; i++ ) (*U)->R[i]=0.0; 
-  C2F(dlacpy)("U", &Minmn, &n,A->R, &m, (*U)->R, &Minmn, 1L);
-
-  if (E == NULL ) 
-    {
-      NspMatrix *iinvpiv;
-      int *Iinvpiv;
-      /* E is not requested L must be changed to E'*L */ 
-      /* compute a representation of E' */
-      if (( iinvpiv =nsp_matrix_create(NVOID,A->rc_type,1,Minmn)) == NULLMAT) return FAIL;
-      Iinvpiv = (int *) iinvpiv->R;
-      for ( i=1; i <= Minmn ; i++) Iinvpiv[i-1]=i;
-      for ( i=1; i <= Minmn ; i++) 
-	{
-	  int ip = Ipiv[i-1];
-	  if ( ip != i) { 
-	    int iw = Iinvpiv[i-1]; 
-	    Iinvpiv[i-1] = Iinvpiv[ip-1];
-	    Iinvpiv[ip-1] = iw; 
-	  }
-	}
-      /* use A to store L before E' product */ 
-      for ( i = 0 ; i < Minmn ; i++ ) 
-	{
-	  A->R[(m+1)*i]=1.0; 
-	  for ( j = i+1; j < Minmn ; j++) A->R[i+j*m]=0.0; 
-	}
-      /* store E'*L in L */ 
-      for (i=0; i < Minmn ; i++ ) C2F(dcopy)(&Minmn,&A->R[i],&m,&(*L)->R[Iinvpiv[i]-1],&m);
-      for (i=Minmn; i < m ; i++ ) C2F(dcopy)(&Minmn,&A->R[i],&m,&(*L)->R[i],&m);
-    }
-  else 
-    {
-      static double zero = 0.0,done = 1.0;
-      int one = 1;
-      /* Extract L from A */ 
-      for ( i = 0 ; i < (*L)->mn ; i++ ) (*L)->R[i]=0.0; 
-      C2F(dlacpy)("L", &m, &Minmn,A->R, &m,(*L)->R, &m, 1L);
-      for ( i = 0 ; i < (*L)->m ; i++ ) (*L)->R[(m+1)*i]=1.0; 
-      /* Compute E */
-      C2F(dlaset)("F", &m, &m, &zero, &done,(*E)->R, &m, 1L);
-      C2F(dlaswp)(&m,(*E)->R,&m,&one ,&Minmn, Ipiv,&one );
-    }
-
-  /* XXXXX  Reste le ménage a faire */ 
-
-  return OK;
-}
-
-
-int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
-{
-  static doubleC Czero = {0.0,0.0} ,Cone ={ 1.0,0.0} ;
-  int info, m = A->m, n = A->n ,Minmn,i,j,*Ipiv ;
-  NspMatrix *ipiv;
-  
-  /* A == [] return empty matrices*/ 
-  if ( A->mn == 0 )  {
-    if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if ( E != NULL)
-      {
-	if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  Minmn = Min(m,n);
-
-  if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT) return FAIL;
-  if (( *U =nsp_matrix_create(NVOID,A->rc_type,Minmn,n)) == NULLMAT) return FAIL;
-
-  /* int matrix XXX*/ 
-  if (( ipiv =nsp_matrix_create(NVOID,'r',1,Minmn)) == NULLMAT) return FAIL;
-  Ipiv = (int *) ipiv->R;
-
-  if ( E != NULL) 
-    {
-      if (( *E =nsp_matrix_create(NVOID,'r',m,m)) == NULLMAT) return FAIL;
-    }
-
-  C2F(zgetrf)(&m, &n,A->I, &m,Ipiv, &info);
-  if (info < 0) {
-    Scierror("Error: something wrong in lu\n");
-    return FAIL;
-  }
-  
-  /* Extract U from A */ 
-  for ( i = 0 ; i < (*L)->mn ; i++ ) (*U)->I[i] = Czero; 
-  C2F(zlacpy)("U", &Minmn, &n,A->I, &m, (*U)->I, &Minmn, 1L);
-
-  if (E == NULL ) 
-    {
-      NspMatrix *iinvpiv;
-      int *Iinvpiv;
-      /* E is not requested L must be changed to E'*L */ 
-      /* compute a representation of E' */
-      if (( iinvpiv =nsp_matrix_create(NVOID,'r',1,Minmn)) == NULLMAT) return FAIL;
-      Iinvpiv = (int *) iinvpiv->R;
-      for ( i=1; i <= Minmn ; i++) Iinvpiv[i-1]=i;
-      for ( i=1; i <= Minmn ; i++) 
-	{
-	  int ip = Ipiv[i-1];
-	  if ( ip != i) { 
-	    int iw = Iinvpiv[i-1]; 
-	    Iinvpiv[i-1] = Iinvpiv[ip-1];
-	    Iinvpiv[ip-1] = iw; 
-	  }
-	}
-      /* use A to store L before E' product */ 
-      for ( i = 0 ; i < Minmn ; i++ ) 
-	{
-	  A->I [(m+1)*i].r =1.0; A->I [(m+1)*i].i =0.0; 
-	  for ( j = i+1; j < Minmn ; j++) A->I[i+j*m]= Czero; 
-	}
-      /* store E'*L in L */ 
-      for (i=0; i < Minmn ; i++ ) C2F(zcopy)(&Minmn,&A->I[i],&m,&(*L)->I[Iinvpiv[i]-1],&m);
-      for (i=Minmn; i < m ; i++ ) C2F(zcopy)(&Minmn,&A->I[i],&m,&(*L)->I[i],&m);
-    }
-  else 
-    {
-      int one = 1;
-      /* Extract L from A */ 
-      for ( i = 0 ; i < (*L)->mn ; i++ ) (*L)->I[i]=Czero; 
-      C2F(zlacpy)("L", &m, &Minmn,A->I, &m,(*L)->I, &m, 1L);
-      for ( i = 0 ; i < (*L)->m ; i++ ) { (*L)->I[(m+1)*i].r=1.0; (*L)->I[(m+1)*i].i=0.0; }
-      /* Compute E */
-      C2F(zlaset)("F", &m, &m, &Czero, &Cone,(*E)->I, &m, 1L);
-      C2F(zlaswp)(&m,(*E)->I,&m,&one ,&Minmn, Ipiv,&one );
-    }
-
-  /* XXXX Reste le ménage a faire */ 
-
-  return OK;
-}
 
 
 /*---------------------------------
