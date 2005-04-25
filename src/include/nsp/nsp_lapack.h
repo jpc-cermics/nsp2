@@ -12,5 +12,6 @@ extern int nsp_cholewsky(NspMatrix *A) ;
 extern int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E);
 extern int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
 extern int nsp_inv(NspMatrix *A) ;
+extern double nsp_norm(NspMatrix *A,char flag);
 
 #endif 

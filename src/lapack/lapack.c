@@ -189,17 +189,16 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
     (*rank)->R[0]=j; 
   }
   
-  if ( flag == 'e' ) {
-    int i;
-    nsp_matrix_destroy(work); 
-    /* we must delete the last rows of R */ 
-    if (( work =nsp_matrix_create(NVOID,'r',1,m-n)) == NULLMAT) return FAIL;
-    for ( i = n+1; i <= m ; i++) work->R[i-(n+1)]=i;
-    if (nsp_matrix_delete_rows(*R,work) == FAIL) return FAIL; 
-  }
-
+  if ( flag == 'e' && m-n > 0 )
+    {
+      int i;
+      nsp_matrix_destroy(work); 
+      /* we must delete the last rows of R */ 
+      if (( work =nsp_matrix_create(NVOID,'r',1,m-n)) == NULLMAT) return FAIL;
+      for ( i = n+1; i <= m ; i++) work->R[i-(n+1)]=i;
+      if (nsp_matrix_delete_rows(*R,work) == FAIL) return FAIL; 
+    }
   /* clean workspace */ 
-
   nsp_matrix_destroy(tau); 
   nsp_matrix_destroy(work); 
   if ( E != NULL)  { nsp_matrix_destroy(jpvt);}
@@ -225,7 +224,7 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
     return OK ; 
   }
   /* Q is an mxm matrix or mxMinmn*/ 
-  if (( *Q =nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT) return FAIL;
+  if (( *Q =nsp_matrix_create(NVOID,A->rc_type,m,(flag == 'e') ? Minmn: m)) == NULLMAT) return FAIL;
   /* R is a copy of A: */
   if (( *R =nsp_matrix_copy(A)) == NULLMAT) return FAIL ; 
 
@@ -325,17 +324,17 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
   }
   
   
-  if ( flag == 'e' ) {
-    int i;
-    nsp_matrix_destroy(work); 
-    /* we must delete the last rows of R */ 
-    if (( work =nsp_matrix_create(NVOID,'r',1,m-n)) == NULLMAT) return FAIL;
-    for ( i = n+1; i <= m ; i++) work->R[i-(n+1)]=i;
-    if (nsp_matrix_delete_rows(*R,work) == FAIL) return FAIL; 
-  }
+  if ( flag == 'e' && m-n > 0 ) 
+    {
+      int i;
+      nsp_matrix_destroy(work); 
+      /* we must delete the last rows of R */ 
+      if (( work =nsp_matrix_create(NVOID,'r',1,m-n)) == NULLMAT) return FAIL;
+      for ( i = n+1; i <= m ; i++) work->R[i-(n+1)]=i;
+      if (nsp_matrix_delete_rows(*R,work) == FAIL) return FAIL; 
+    }
   
   /* clean workspace */ 
-
   nsp_matrix_destroy(tau); 
   nsp_matrix_destroy(work); 
   nsp_matrix_destroy(rwork); 
