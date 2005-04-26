@@ -758,7 +758,7 @@ int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag
   
 }
 
-/*----------------------------------------------
+/* OK 
  * svd: 
  *    A is modified 
  *    S is always computed 
@@ -768,7 +768,7 @@ int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag
  *       are computed for U and V (rows of Vt) else 
  *      U and V are fully computed 
  *    rank is computed if non null (using tol if tol != NULL)
- *----------------------------------------------*/
+ */
 
 static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
 
@@ -791,7 +791,7 @@ int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,Nsp
 static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,
 		     NspMatrix **Rank,double *tol)
 {
-  int m = A->m,n=A->n,ix1,ix2,lworkMin,info;
+  int m = A->m,n=A->n,ix1,ix2,lworkMin,info,i;
   int Minmn = Min(m,n);
   NspMatrix *SV,*Vt,*dwork; 
 
@@ -807,8 +807,14 @@ static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
     return OK ; 
   }
 
-  /* vérifie que A != Nan et Inf XXXXX */ 
-  /* c'est dans caml il sans doute rajouter des fonctions  */
+  /* checks that  A != Nan et != Inf */
+
+  for ( i= 0 ; i < A->mn ; i++ ) 
+    if (isinf (A->R[i]) || isnan (A->R[i]))
+      {
+	Scierror("Error: nan or inf in svd first argument\n"); 
+	return FAIL;
+      }
 
   if ((SV =nsp_matrix_create(NVOID,'r',Minmn,1)) == NULLMAT) return FAIL;
   if ( U != NULL ) {
@@ -865,11 +871,25 @@ static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
     /* message for info < 0 is given by xerbla.c */
     return FAIL;
   }
-  
-  /* Build a matrix from the singular values array */ 
 
-  if ((*S =nsp_mat_zeros(m,n)) == NULLMAT) return FAIL;
-  nsp_matrix_set_diag(*S,SV,0);
+  if ( U != NULL )
+    {
+      /* Build a matrix from the singular values array */ 
+      if ( flag == 'S' ) 
+	{
+	  if ((*S =nsp_mat_zeros(Minmn,Minmn)) == NULLMAT) return FAIL;
+	  nsp_matrix_set_diag(*S,SV,0);
+	}
+      else
+	{
+	  if ((*S =nsp_mat_zeros(m,n)) == NULLMAT) return FAIL;
+	  nsp_matrix_set_diag(*S,SV,0);
+	}
+    }
+  else
+    {
+      *S = SV;
+    }
   
   /* build V from its transpose matrix Vt */ 
   
@@ -877,28 +897,33 @@ static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 
   /* compute the rank if requested */ 
 
-  if ( Rank != NULL) {
-    int i;
-    double eps = C2F(dlamch)("eps", 3L);
-    double Tol = ( tol == NULL) ? Max(m,n) * eps * SV->R[0] : *tol ; 
-    int irank =0 ; 
-    for (i = 0 ; i < Minmn; ++i) {
-      if ( SV->R[i] > Tol) irank = i+1;
-      else break;
+  if ( Rank != NULL) 
+    {
+      int i;
+      double eps = C2F(dlamch)("eps", 3L);
+      double Tol = ( tol == NULL) ? Max(m,n) * eps * SV->R[0] : *tol ; 
+      int irank =0 ; 
+      for (i = 0 ; i < Minmn; ++i) {
+	if ( SV->R[i] > Tol) irank = i+1;
+	else break;
+      }
+      if ((*Rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
+      (*Rank)->R[0] = (double) irank ; 
     }
-    if ((*Rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-    (*Rank)->R[0] = (double) irank ; 
-  }
   nsp_matrix_destroy(dwork) ; 
-  if ( U!= NULL) nsp_matrix_destroy(Vt) ; 
-  nsp_matrix_destroy(SV) ; 
+
+  if ( U != NULL)
+    {
+      nsp_matrix_destroy(Vt) ; 
+      nsp_matrix_destroy(SV) ; 
+    }
   return OK;
 } 
 
 
 static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol)
 {
-  int m = A->m,n=A->n,lworkMin,info;
+  int m = A->m,n=A->n,lworkMin,info,i;
   int Minmn = Min(m,n), lrwork;
   NspMatrix *SV,*Vt,*dwork,*rwork; 
 
@@ -910,12 +935,18 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 	if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
 	if (( *V =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
       }
-    if (( *S =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+    if (( *S =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
     return OK ; 
   }
 
-  /* vérifie que A != Nan et Inf XXXXX */ 
-  /* c'est dans caml il sans doute rajouter des fonctions  */
+  /* checks that  A != Nan et != Inf */
+
+  for ( i= 0 ; i < A->mn ; i++ ) 
+    if (nsp_isinf_c (&A->I[i]) || nsp_isnan_c (&A->I[i]))
+      {
+	Scierror("Error: nan or inf in svd first argument\n"); 
+	return FAIL;
+      }
 
   if ((SV =nsp_matrix_create(NVOID,'r',Minmn,1)) == NULLMAT) return FAIL;
   if ( U != NULL ) {
@@ -976,8 +1007,24 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 
   /* Build a matrix from the singular values array */ 
 
-  if ((*S =nsp_mat_zeros(m,n)) == NULLMAT) return FAIL;
-  nsp_matrix_set_diag(*S,SV,0);
+  if ( U != NULL )
+    {
+      /* Build a matrix from the singular values array */ 
+      if ( flag == 'S' ) 
+	{
+	  if ((*S =nsp_mat_zeros(Minmn,Minmn)) == NULLMAT) return FAIL;
+	  nsp_matrix_set_diag(*S,SV,0);
+	}
+      else
+	{
+	  if ((*S =nsp_mat_zeros(m,n)) == NULLMAT) return FAIL;
+	  nsp_matrix_set_diag(*S,SV,0);
+	}
+    }
+  else
+    {
+      *S = SV;
+    }
   
   /* build V from its transpose matrix Vt */
   /* note that tranposition on complex NspMatrix is the conjugate transpose */ 
@@ -1001,8 +1048,11 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 
   nsp_matrix_destroy(dwork) ; 
   nsp_matrix_destroy(rwork) ; 
-  if ( U!= NULL) nsp_matrix_destroy(Vt) ; 
-  nsp_matrix_destroy(SV) ; 
+  if ( U!= NULL) 
+    {
+      nsp_matrix_destroy(Vt) ; 
+      nsp_matrix_destroy(SV) ; 
+    }
   return OK;
 
 }

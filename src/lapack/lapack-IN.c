@@ -135,12 +135,30 @@ static int int_svd( Stack stack, int rhs, int opt, int lhs)
   if ( lhs >= 2) { hU= &U;}
   if ( lhs >= 4) { hrank= &rank;}
   if ( nsp_svd(A,&S,hU,&V,cmode,hrank,Tol)== FAIL) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(S));
-  if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(U));
-  if ( lhs >= 3 ) MoveObj(stack,3,NSP_OBJECT(V));
-  if ( lhs >= 4 ) MoveObj(stack,4,NSP_OBJECT(rank));
-  /* XXX clean V if not requested and computed */
-  return Max(lhs,1);
+  lhs = Max(lhs,1);
+  switch (lhs)
+    {
+    case 1:
+      MoveObj(stack,1,NSP_OBJECT(S)); 
+      break;
+    case 2: 
+      MoveObj(stack,1,NSP_OBJECT(U));
+      MoveObj(stack,2,NSP_OBJECT(S)); 
+      nsp_matrix_destroy(V);
+      break;
+    case 3: 
+      MoveObj(stack,1,NSP_OBJECT(U));
+      MoveObj(stack,2,NSP_OBJECT(S)); 
+      MoveObj(stack,3,NSP_OBJECT(V));
+      break;
+    case 4: 
+      MoveObj(stack,1,NSP_OBJECT(U));
+      MoveObj(stack,2,NSP_OBJECT(S)); 
+      MoveObj(stack,3,NSP_OBJECT(V));
+      MoveObj(stack,4,NSP_OBJECT(rank));
+      break;
+    }
+  return lhs;
 }
 
 /*
