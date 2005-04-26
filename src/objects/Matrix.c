@@ -1784,12 +1784,12 @@ int nsp_matrix_set_diag(NspMatrix *A, NspMatrix *Diag, int k)
     {
       if ( A->rc_type == 'r' ) 
 	{
-	  for ( i = imin ; i < A->m ; i++ ) 
+	  for ( i = imin ; i < imax ; i++ ) 
 	    A->R[i+(i+k)*A->m] = Diag->R[j++] ;
 	}
       else 
 	{
-	  for ( i = imin ; i < A->m ; i++ ) 
+	  for ( i = imin ; i < imax ; i++ ) 
 	    {
 	      A->I[i+(i+k)*A->m].r = Diag->R[j++] ;
 	      A->I[i+(i+k)*A->m].i = 0.00;
@@ -1800,7 +1800,7 @@ int nsp_matrix_set_diag(NspMatrix *A, NspMatrix *Diag, int k)
     {
       if ( A->rc_type == 'r' ) 
 	if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
-      for ( i = imin ; i < A->m ; i++ ) 
+      for ( i = imin ; i < imax ; i++ ) 
 	{
 	  A->I[i+(i+k)*A->m].r = Diag->I[j].r ;
 	  A->I[i+(i+k)*A->m].i = Diag->I[j++].i ;

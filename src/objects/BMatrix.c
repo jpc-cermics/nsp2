@@ -904,7 +904,7 @@ int nsp_bmatrix_set_diag(NspBMatrix *A, NspBMatrix *Diag, integer k)
       if (nsp_bmatrix_enlarge(A,imax,imax+k) == FAIL) return(FAIL);
     }
   j=0;
-  for ( i = imin ; i < A->m ; i++ ) 
+  for ( i = imin ; i < imax ; i++ ) 
     A->B[i+(i+k)*A->m] = Diag->B[j++] ;
 
   return(OK);
