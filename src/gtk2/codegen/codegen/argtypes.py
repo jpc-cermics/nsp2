@@ -103,7 +103,7 @@ class WrapperInfo:
                 self.tylist.append('%s' % (codes) )
 
 class ArgType:
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	"""Add code to the WrapperInfo instance to handle
 	parameter."""
 	raise RuntimeError, "write_param not implemented for %s" % \
@@ -128,7 +128,7 @@ class NoneArg(ArgType):
         info.attrcodeafter.append('  return NULLOBJ;')
 
 class StringArg(ArgType):
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
             if pdflt != 'NULL': pdflt = '"' + pdflt + '"'
 	    info.varlist.add('char', '*' + pname + ' = ' + pdflt)
@@ -163,7 +163,7 @@ class StringArg(ArgType):
 class UCharArg(ArgType):
     # allows strings with embedded NULLs.
     # XXXXX : to be implemented ...
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add('guchar', '*' + pname + ' = "' + pdflt + '"')
 	else:
@@ -179,7 +179,7 @@ class UCharArg(ArgType):
 
 class CharArg(ArgType):
     # a char argument is an int at nsp level 
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add('int', pname + " = '" + pdflt + "'")
 	else:
@@ -203,7 +203,7 @@ class GUniCharArg(ArgType):
                  '      }\n'
                  '      %(name)s = (gunichar)nsp_%(name)s[0];\n'
                  '   }\n')
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add('gunichar', pname + " = '" + pdflt + "'")
             info.codebefore.append(self.dflt_tmpl % {'name':pname})
@@ -222,7 +222,7 @@ class GUniCharArg(ArgType):
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
 
 class IntArg(ArgType):
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add('int', pname + ' = ' + pdflt)
 	else:
@@ -238,8 +238,9 @@ class IntArg(ArgType):
         info.varlist.add('int', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
 
+
 class IntPointerArg(ArgType):
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add('int', pname + ' = ' + pdflt)
 	else:
@@ -248,17 +249,17 @@ class IntPointerArg(ArgType):
         info.add_parselist('s_int', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( IntScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
     def write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('int', 'ret')
-        info.codeafter.append('  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;\n'
+        info.varlist.add('int', '*ret')
+        info.codeafter.append('  if ( nsp_move_double(stack,1,(double) *ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
     def attr_write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('int', 'ret')
-        info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
+        info.varlist.add('int', '*ret')
+        info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
 
 
         
 class BoolArg(IntArg):
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add('int', pname + ' = ' + pdflt)
 	else:
@@ -277,7 +278,7 @@ class BoolArg(IntArg):
         info.attrcodeafter.append('  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);\n  return nsp_ret;')
 
 class TimeTArg(ArgType):
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add('time_t', pname + ' = ' + pdflt)
 	else:
@@ -297,7 +298,7 @@ class ULongArg(ArgType):
     dflt = '  if (nsp_%(name)s)\n' \
            '      %(name)s = PyLong_AsUnsignedLong(nsp_%(name)s);\n'
     before = '  %(name)s = PyLong_AsUnsignedLong(nsp_%(name)s);\n'
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add('gulong', pname + ' = ' + pdflt)
 	else:
@@ -315,7 +316,7 @@ class ULongArg(ArgType):
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
 
 class Int64Arg(ArgType):
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add('gint64', pname + ' = ' + pdflt)
 	else:
@@ -335,7 +336,7 @@ class UInt64Arg(ArgType):
     dflt = '  if (nsp_%(name)s)\n' \
            '      %(name)s = PyLong_AsUnsignedLongLong(nsp_%(name)s);\n'
     before = '  %(name)s = PyLong_AsUnsignedLongLong(nsp_%(name)s);\n'
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
         if pdflt:
             info.varlist.add('guint64', pname + ' = ' + pdflt)
             info.codebefore.append(self.dflt % {'name':pname})            
@@ -353,7 +354,7 @@ class UInt64Arg(ArgType):
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
         
 class DoubleArg(ArgType):
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add('double', pname + ' = ' + pdflt)
 	else:
@@ -387,7 +388,7 @@ class FileArg(ArgType):
             '  }\n')
     dflt = ('  if (nsp_%(name)s)\n'
             '      %(name)s = PyFile_AsFile(nsp_%(name)s);\n')
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pnull:
 	    if pdflt:
 		info.varlist.add('FILE', '*' + pname + ' = ' + pdflt)
@@ -426,7 +427,7 @@ class EnumArg(ArgType):
     def __init__(self, enumname, typecode):
 	self.enumname = enumname
 	self.typecode = typecode
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add(self.enumname, pname + ' = ' + pdflt)
 	else:
@@ -451,7 +452,7 @@ class FlagsArg(ArgType):
     def __init__(self, flagname, typecode):
 	self.flagname = flagname
 	self.typecode = typecode
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pdflt:
 	    info.varlist.add(self.flagname, pname + ' = ' + pdflt)
             default = "nsp_%s && " % (pname,)
@@ -495,7 +496,7 @@ class ObjectArg(ArgType):
 	self.objname = objname
 	self.cast = string.replace(typecode, '_TYPE_', '_', 1)
         self.parent = parent
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pnull:
 	    if pdflt:
 		info.varlist.add(self.objname, '*' + pname + ' = ' + pdflt)
@@ -575,7 +576,7 @@ class BoxedArg(ArgType):
     def __init__(self, ptype, typecode):
 	self.typename = ptype
 	self.typecode = typecode
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pnull:
             info.varlist.add(self.typename, '*' + pname + ' = NULL')
 	    info.varlist.add('NspObject', '*nsp_' + pname + ' = NULL')
@@ -647,7 +648,7 @@ class CustomBoxedArg(ArgType):
 	self.getter = getter
         self.checker = 'Py' + ptype + '_Check'
 	self.new = new
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pnull:
             info.varlist.add(ptype[:-1], '*' + pname + ' = NULL')
 	    info.varlist.add('NspObject', '*nsp_' + pname + ' = NULL')
@@ -686,7 +687,7 @@ class PointerArg(ArgType):
     def __init__(self, ptype, typecode):
 	self.typename = ptype
 	self.typecode = typecode
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pnull:
             info.varlist.add(self.typename, '*' + pname + ' = NULL')
 	    info.varlist.add('NspObject', '*nsp_' + pname + ' = NULL')
@@ -722,7 +723,7 @@ class PointerArg(ArgType):
 
 class AtomArg(IntArg):
     atom = ('  if ( nsp_gdk_atom_from_object(nsp_%(name)s,&%(name)s)==FAIL) return RET_BUG;\n')
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
         info.varlist.add('GdkAtom', pname)
 	info.varlist.add('NspObject', '*nsp_' + pname + ' = NULL')
 	info.codebefore.append(self.atom % {'name': pname})
@@ -741,7 +742,7 @@ class AtomArg(IntArg):
 class GTypeArg(ArgType):
     gtype = ('  if ((%(name)s = nspg_type_from_object(nsp_%(name)s)) == FAIL)\n'
              '      return RET_BUG;\n')
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
         info.varlist.add('GType', pname)
 	info.varlist.add('NspObject', '*nsp_' + pname + ' = NULL')
 	info.codebefore.append(self.gtype % {'name': pname})
@@ -760,7 +761,7 @@ class GErrorArg(ArgType):
     handleerror = ('  if ( %(name)s != NULL ) {\n'
                    '    Scierror("%%s: gtk error\\n",stack.fname);\n'
                    '    return RET_BUG;\n  }\n')
-    def write_param(self, ptype, pname, pdflt, pnull, info): 
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos): 
         info.varlist.add('GError', '*' + pname + ' = NULL') 
         info.arglist.append('&' + pname)
         info.codeafter.append(self.handleerror % { 'name': pname })
@@ -789,7 +790,7 @@ class GtkTreePathArg(ArgType):
                 '      gtk_tree_path_free(%(name)s);\n')
     def __init__(self):
         pass
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
 	if pnull:
             info.varlist.add('GtkTreePath', '*' + pname + ' = NULL')
 	    info.varlist.add('NspObject', '*nsp_' + pname + ' = NULL')
@@ -844,7 +845,7 @@ class GdkRectanglePtrArg(ArgType):
               '      %(name)s = &%(name)s_rect;\n'
               '  else\n'
               '          return RET_BUG;\n')
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
         if pnull:
             info.varlist.add('GdkRectangle', pname + '_rect = { 0, 0, 0, 0 }')
             info.varlist.add('GdkRectangle', '*' + pname)
@@ -871,7 +872,7 @@ class GdkRectangleArg(ArgType):
         info.attrcodeafter.append('  return (NspObject *) gboxed_create(NVOID,GDK_TYPE_RECTANGLE, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle);')
 
 class NspObjectArg(ArgType):
-    def write_param(self, ptype, pname, pdflt, pnull, info):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
         info.varlist.add('NspObject', '*' + pname)
         info.add_parselist('obj', ['&' + pname], [pname])
         info.arglist.append(pname)
@@ -889,6 +890,53 @@ class NspObjectArg(ArgType):
             info.attrcodeafter.append(' return ret;')
         else:
             info.attrcodeafter.append(' return ret;')
+
+# added for nsp : matrix
+# -------------------------
+    
+class NspMatArg(ArgType):
+    def write_param_gen(self, ptype, pname, pdflt, pnull, psize,info, pos, nsp_type):
+	if pdflt:
+	    info.varlist.add('NspMatrix', '*' + pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('NspMatrix', '*' + pname)
+	info.arglist.append(pname)
+        info.add_parselist(nsp_type, ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( IsMat(O) == FAIL) return FAIL;\n')
+        #pos gives the position of the argument
+        if psize:
+            info.codebefore.append(' %s << size %s\n' % (pname,psize) )
+        info.codebefore.append(' %s << %d\n' % (pname,pos) )
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos, 'mat')
+    def write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('NspMatrix', '*ret')
+        info.codeafter.append('  if ( ret == NULLMAT) return RET_BUG;\n'
+                              '  MoveObj(stack,1,NSP_OBJECT(ret));\n'
+                              '  return 1;')
+    def attr_write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('NspMatrix', '*ret')
+        info.attrcodeafter.append('  return ret;')
+
+class NspMatCopyArg(NspMatArg):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'matcopy')
+
+class NspDoubleArrayArg(NspMatArg):
+    def write_param_gen(self, ptype, pname, pdflt, pnull, psize,info, pos, nsp_type):
+	if pdflt:
+	    info.varlist.add('NspMatrix', '*' + pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('NspMatrix', '*' + pname)
+	info.arglist.append(pname+'->R')
+        info.add_parselist(nsp_type, ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( IsMat(O) == FAIL) return FAIL;\n')
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'mat')
+
+class NspDoubleArrayCopyArg(NspDoubleArrayArg):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize, info,pos,'matcopy')
 
 class ArgMatcher:
     def __init__(self):
@@ -986,6 +1034,20 @@ matcher.register('gint8', arg)
 matcher.register('guint16', arg)
 matcher.register('gint16', arg)
 matcher.register('gint32', arg)
+
+arg= NspMatArg()
+matcher.register('mat', arg)
+
+arg= NspMatCopyArg()
+matcher.register('matcopy', arg)
+
+
+arg = NspDoubleArrayArg()
+matcher.register('double_array', arg)
+
+arg = NspDoubleArrayCopyArg()
+matcher.register('double_array_copy', arg)
+
 
 arg = IntPointerArg()
 matcher.register('int*', arg)

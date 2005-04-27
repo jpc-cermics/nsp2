@@ -257,12 +257,15 @@ class MethodDef(Definition):
                     pname = parg[1]
                     pdflt = None
                     pnull = 0
+                    psize  = None
                     for farg in parg[2:]:
                         if farg[0] == 'default':
                             pdflt = farg[1]
                         elif farg[0] == 'null-ok':
                             pnull = 1
-                    self.params.append((ptype, pname, pdflt, pnull))
+                        elif farg[0] == 'size':
+                            psize = farg[1]
+                    self.params.append((ptype, pname, pdflt, pnull, psize))
             elif arg[0] == 'varargs':
                 self.varargs = arg[1] in ('t', '#t')
             elif arg[0] == 'deprecated':
@@ -289,7 +292,7 @@ class MethodDef(Definition):
     def merge(self, old):
 	# here we merge extra parameter flags accross to the new object.
 	for i in range(len(self.params)):
-	    ptype, pname, pdflt, pnull = self.params[i]
+	    ptype, pname, pdflt, pnull, psize = self.params[i]
 	    for p2 in old.params:
 		if p2[1] == pname:
 		    self.params[i] = (ptype, pname, p2[2], p2[3])
@@ -308,10 +311,11 @@ class MethodDef(Definition):
 	    fp.write('  (deprecated "' + self.deprecated + '")\n')
         if self.params:
             fp.write('  (parameters\n')
-            for ptype, pname, pdflt, pnull in self.params:
+            for ptype, pname, pdflt, pnull, psize in self.params:
                 fp.write('    \'("' + ptype + '" "' + pname +'"')
                 if pdflt: fp.write(' (default "' + pdflt + '")')
                 if pnull: fp.write(' (null-ok)')
+                if psize: fp.write(' (size "' + psize + '")')
                 fp.write(')\n')
             fp.write('  )\n')
 	fp.write(')\n\n')
@@ -326,7 +330,7 @@ class FunctionDef(Definition):
         self.caller_owns_return = None
 	self.c_name = None
         self.typecode = None
-	self.params = [] # of form (type, name, default, nullok)
+	self.params = [] # of form (type, name, default, nullok,size)
         self.varargs = 0
         self.deprecated = None
 	for arg in args:
@@ -350,12 +354,15 @@ class FunctionDef(Definition):
                     pname = parg[1]
                     pdflt = None
                     pnull = 0
+                    psize  = None
                     for farg in parg[2:]:
                         if farg[0] == 'default':
                             pdflt = farg[1]
                         elif farg[0] == 'null-ok':
                             pnull = 1
-                    self.params.append((ptype, pname, pdflt, pnull))
+                        elif farg[0] == 'size':
+                            psize = farg[1]
+                    self.params.append((ptype, pname, pdflt, pnull, psize))
             elif arg[0] == 'varargs':
                 self.varargs = arg[1] in ('t', '#t')
             elif arg[0] == 'deprecated':
@@ -386,10 +393,10 @@ class FunctionDef(Definition):
     def merge(self, old):
 	# here we merge extra parameter flags accross to the new object.
 	for i in range(len(self.params)):
-	    ptype, pname, pdflt, pnull = self.params[i]
+	    ptype, pname, pdflt, pnull, psize = self.params[i]
 	    for p2 in old.params:
 		if p2[1] == pname:
-		    self.params[i] = (ptype, pname, p2[2], p2[3])
+		    self.params[i] = (ptype, pname, p2[2], p2[3], p2[4] )
 		    break
 	if not self.is_constructor_of:
             try:
@@ -418,10 +425,11 @@ class FunctionDef(Definition):
 	    fp.write('  (deprecated "' + self.deprecated + '")\n')
         if self.params:
             fp.write('  (parameters\n')
-            for ptype, pname, pdflt, pnull in self.params:
+            for ptype, pname, pdflt, pnull, psize in self.params:
                 fp.write('    \'("' + ptype + '" "' + pname +'"')
                 if pdflt: fp.write(' (default "' + pdflt + '")')
                 if pnull: fp.write(' (null-ok)')
+                if psize: fp.write(' (size "' + psize + '")')
                 fp.write(')\n')
             fp.write('  )\n')
 	fp.write(')\n\n')

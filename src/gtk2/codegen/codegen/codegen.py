@@ -471,12 +471,13 @@ class Wrapper:
 
         if function_obj.varargs:
             raise ValueError, "varargs functions not supported"
-
-        for ptype, pname, pdflt, pnull in function_obj.params:
+        pos = 0
+        for ptype, pname, pdflt, pnull, psize in function_obj.params:
             if pdflt and '|' not in info.parsestr:
                 info.add_parselist('|', [], [])
             handler = argtypes.matcher.get(ptype)
-            handler.write_param(ptype, pname, pdflt, pnull, info)
+            pos = pos+1
+            handler.write_param(ptype, pname, pdflt, pnull, psize, info, pos)
 
         substdict['setreturn'] = ''
         if handle_return:
