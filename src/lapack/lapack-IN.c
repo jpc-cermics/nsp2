@@ -370,6 +370,60 @@ static int int_norm( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/* interface for balanc 
+ * [Ab,X]=balanc(A) 
+ */
+
+static int int_balanc( Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A,*B,*X,*Y;
+  CheckRhs(1,2);
+  if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
+  if (rhs == 1)
+    {
+      CheckLhs(0,2);
+      if ( nsp_balanc(A,&X) == FAIL) return RET_BUG;
+      NSP_OBJECT(A)->ret_pos = 1;
+      if ( lhs == 2 ) 
+	{
+	  MoveObj(stack,2,NSP_OBJECT(X));
+	}
+      else 
+	{
+	  nsp_matrix_destroy(X);
+	}
+    }
+  else 
+    {
+      CheckLhs(0,4);
+      if ((B = GetMatCopy (stack, 2)) == NULLMAT) return RET_BUG;
+      if ( nsp_gbalanc(A,B,&X,&Y) == FAIL) return RET_BUG;
+      NSP_OBJECT(A)->ret_pos = 1;
+      if ( lhs >= 2 ) NSP_OBJECT(B)->ret_pos = 2;
+      if ( lhs >= 3 )
+	{
+	  NthObj(3)= NSP_OBJECT(X);
+	  NthObj(3)->ret_pos = 3;
+	}
+      else 
+	{
+	  nsp_matrix_destroy(X);
+	}
+      if ( lhs >= 4 ) 
+	{
+	  NthObj(4)= NSP_OBJECT(Y);
+	  NthObj(4)->ret_pos = 4;
+	}
+      else 
+	{
+	  nsp_matrix_destroy(Y);
+	}
+    }
+  return Max(lhs,1);
+}
+
+
+
 
 /*
  * interface for testing dlamch
@@ -413,6 +467,7 @@ static OpTab Lapack_func[] = {
   {"rcond",int_rcond},
   {"norm",int_norm},
   {"lu",int_lu},
+  {"balanc",int_balanc},
   {(char *) 0, NULL}
 };
 

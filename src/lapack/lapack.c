@@ -1451,7 +1451,7 @@ int nsp_cholewsky(NspMatrix *A)
   return OK;
 } 
 
-/*
+/* OK 
  * det = det(A) 
  * returns d=det or [e,m] with det = m*10^e
  * according to mode 
@@ -1604,11 +1604,338 @@ static NspMatrix * intzdet(NspMatrix *A,char mode)
 } 
 
 
-/*----------------------------------------------
+/* FIXME: unchecked
+ * nsp_balanc 
+ * [V,D]=balanc(A) 
+ * V is stored in A on exit 
+ */
+
+static int intdgebal(NspMatrix *A,NspMatrix **D);
+static int intzgebal(NspMatrix *A,NspMatrix **D);
+
+int nsp_balanc(NspMatrix *A,NspMatrix **D)
+{
+  if ( A->rc_type == 'r' ) 
+    return  intdgebal(A,D); 
+  else 
+    return  intzgebal(A,D); 
+}
+
+static int intdgebal(NspMatrix *A,NspMatrix **D)
+{
+  int m = A->m, n = A->n,info,i;
+  NspMatrix *work ; 
+  int ilo,ihi;
+
+  /*  A = [] return empty matrices */ 
+  
+  if ( A->mn == 0 ) {
+    if (( *D =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+    return OK ; 
+  }
+  
+  if (m != n) { 
+    Scierror("Error: first argument of balanc should be square and it is (%dx%d)\n", 
+	     m,n);
+    return FAIL;
+  }
+  /* checks that  A != Nan et != Inf */
+
+  for ( i= 0 ; i < A->mn ; i++ ) 
+    if (isinf (A->R[i]) || isnan (A->R[i]))
+      {
+	Scierror("Error: nan or inf in svd first argument\n"); 
+	return FAIL;
+      }
+
+  if (( *D =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
+  if (( work =nsp_matrix_create(NVOID,A->rc_type,1,n)) == NULLMAT) return FAIL;
+
+  C2F(dgebal)("B", &n, A->R, &n, &ilo, &ihi, work->R, &info, 1L);
+  if (info != 0) {
+    Scierror("Error: something wrong in dgebal\n");
+    return FAIL;
+  }
+
+  C2F(dgebak)("B", "R", &n, &ilo, &ihi, work->R, &n, (*D)->R, &n, &info, 1L, 1L);
+  if (info != 0) {
+    Scierror("Error: something wrong in dgebak\n");
+    return FAIL;
+  }
+  nsp_matrix_destroy(work);
+  return OK;
+}
+
+static int intzgebal(NspMatrix *A,NspMatrix **D)
+{
+  int m = A->m, n = A->n,info,i;
+  NspMatrix *work ; 
+  int ilo,ihi;
+  /*  A = [] return empty matrices */ 
+  
+  if ( A->mn == 0 ) {
+    if (( *D =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+    return OK ; 
+  }
+  
+  if (m != n) { 
+    Scierror("Error: first argument of balanc should be square and it is (%dx%d)\n", 
+	     m,n);
+    return FAIL;
+  }
+  /* checks that  A != Nan et != Inf */
+
+  for ( i= 0 ; i < A->mn ; i++ ) 
+    if (nsp_isinf_c (&A->I[i]) || nsp_isnan_c (&A->I[i]))
+      {
+	Scierror("Error: nan or inf in svd first argument\n"); 
+	return FAIL;
+      }
+
+  if (( *D =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
+  if (( work =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
+
+  C2F(zgebal)("B", &n, A->I, &n, &ilo, &ihi, work->R, &info, 1L);
+  if (info != 0) {
+    Scierror("Error: something wrong in zgebal\n");
+    return FAIL;
+  }
+  C2F(dgebak)("B", "R", &n, &ilo, &ihi, work->R, &n, (*D)->R, &n, &info, 1L, 1L);
+    if (info != 0) {
+    Scierror("Error: something wrong in zgebak\n");
+    return FAIL;
+  }
+
+  nsp_matrix_destroy(work);
+  return OK;
+}
+
+
+/*
+ * nsp_gbalanc
+ *     [Ab,Bb,X,Y]=balanc(A,B)
+ */
+
+static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
+static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
+
+int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
+{
+  if (( B =nsp_matrix_copy(B) )== NULLMAT) return FAIL;
+  if (( A =nsp_matrix_copy(A) )== NULLMAT) return FAIL;
+  if ( A->rc_type == 'r' ) 
+    {
+      if ( B->rc_type == 'r') 
+	{
+	  /* A real, b real */
+	  if ( intdggbal(A,B,X,Y) == FAIL) return FAIL; 
+	}
+      else 
+	{
+	  /* A real, b complex */
+	  if (nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
+	  if ( intzggbal(A,B,X,Y) == FAIL) return FAIL; 
+	}
+    } 
+  else
+    {
+      if ( B->rc_type == 'r') 
+	{
+	  /* A complex, B real */
+	  if (nsp_mat_complexify(B,0.0) == FAIL ) return FAIL;
+	  if ( intzggbal(A,B,X,Y) == FAIL) return FAIL; 
+	}
+      else 
+	{
+	  /* A complex, b complex */
+	  if ( intzggbal(A,B,X,Y) == FAIL) return FAIL; 
+	}
+    }
+  return OK;
+}
+
+
+static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
+{
+  NspMatrix *lscale,*rscale,*dwork; 
+  int info,lworkMin,ilo,ihi,i;  
+  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
+  
+  if (m != n) { 
+    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
+	     m,n);
+    return FAIL;
+  }
+
+  if (mb != nb) { 
+    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
+	     mb,nb);
+    return FAIL;
+  }
+
+  if (m != mb || n != nb ) {
+    Scierror("Error: spec, first and second arguments must have equal size\n");
+    return FAIL;
+  }
+
+  /* A = [] return empty matrices */ 
+
+  if ( A->mn == 0 ) {
+    if ( X != NULL)
+      {
+	if (( *X =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+      }
+    if ( Y != NULL)
+      {
+	if (( *Y =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+      }
+    return OK ; 
+  }
+
+  /* checks that  A != Nan et != Inf */
+
+  for ( i= 0 ; i < A->mn ; i++ ) 
+    if (isinf (A->R[i]) || isnan (A->R[i]))
+      {
+	Scierror("Error: nan or inf in svd first argument\n"); 
+	return FAIL;
+      }
+  /* checks that  B != Nan et != Inf */
+
+  for ( i= 0 ; i < B->mn ; i++ ) 
+    if (isinf (B->R[i]) || isnan (B->R[i]))
+      {
+	Scierror("Error: nan or inf in svd first argument\n"); 
+	return FAIL;
+      }
+
+  if (( lscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+  if (( rscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+
+  lworkMin = Max(1,6*n);
+  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+
+  C2F(dggbal)("B",&n,A->R, &n,B->R, &n,&ilo,&ihi,lscale->R, rscale->R,dwork->R, &info, 1L);
+  if (info != 0) {
+    Scierror("Error: something wrong in dggbal\n");
+    return FAIL;
+  }
+  if ( X != NULL) { 
+    if (( *X =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
+    C2F(dggbak)("B", "L", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*X)->R, &n, &info, 1L,1L);
+    if (info != 0) {
+      Scierror("Error: something wrong in dggbak\n");
+      return FAIL;
+    }
+  }
+
+  if ( Y != NULL ) {
+    if (( *Y =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
+    C2F(dggbak)("B", "R", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*Y)->R, &n, &info, 1L, 1L);
+    if (info != 0) {
+      Scierror("Error: something wrong in dggbak\n");
+      return FAIL;
+    }
+  }
+
+  /* un peu de ménage XXXXX */ 
+
+  return OK ; 
+} 
+
+static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
+{
+  NspMatrix *lscale,*rscale,*dwork; 
+  int info,lworkMin,ilo,ihi,i;  
+
+  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
+  
+  if (m != n) { 
+    Scierror("Error: spec, wrong first argument size (%d,%d) should be square \n",m,n);
+    return FAIL;
+  }
+
+  if (mb != nb) { 
+    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
+	     mb,nb);
+    return FAIL;
+  }
+
+  if (m != mb || n != nb ) {
+    Scierror("Error: spec, first and second arguments must have equal size\n");
+    return FAIL;
+  }
+
+  /* A = [] return empty matrices */ 
+
+  if ( A->mn == 0 ) {
+    if ( X != NULL)
+      {
+	if (( *X =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
+      }
+    if ( Y != NULL)
+      {
+	if (( *Y =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
+      }
+    return OK ; 
+  }
+
+  /* checks that  A != Nan et != Inf */
+
+  for ( i= 0 ; i < A->mn ; i++ ) 
+    if (nsp_isinf_c (&A->I[i]) || nsp_isnan_c (&A->I[i]))
+      {
+	Scierror("Error: nan or inf in svd first argument\n"); 
+	return FAIL;
+      }
+  /* checks that  A != Nan et != Inf */
+
+  for ( i= 0 ; i < B->mn ; i++ ) 
+    if (nsp_isinf_c (&B->I[i]) || nsp_isnan_c (&B->I[i]))
+      {
+	Scierror("Error: nan or inf in svd first argument\n"); 
+	return FAIL;
+      }
+
+  if (( lscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+  if (( rscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+
+  lworkMin = Max(1,6*n);
+  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+
+  C2F(zggbal)("B",&n,A->I, &n,B->I, &n,&ilo,&ihi,lscale->R, rscale->R,dwork->R, &info, 1L);
+  if (info != 0) {
+    Scierror("Error: something wrong in zggbal\n");
+    return FAIL;
+  }
+  if ( X != NULL) { 
+    if (( *X =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
+    C2F(dggbak)("B", "L", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*X)->R, &n, &info, 1L, 1L);
+    if (info != 0) {
+      Scierror("Error: something wrong in dggbak\n");
+      return FAIL;
+    }
+  }
+
+  if ( Y != NULL ) {
+    if (( *Y =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
+    C2F(dggbak)("B", "R", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*Y)->R, &n, &info, 1L, 1L);
+    if (info != 0) {
+      Scierror("Error: something wrong in dggbak\n");
+      return FAIL;
+    }
+  }
+
+  /* un peu de ménage XXXXX */ 
+
+  return OK ; 
+} 
+
+/* FIXME: unchecked
  * Lsq computation 
- * XXX using dgelsy or zgelsy 
- * we could also use dgelss
- *----------------------------------------------*/
+ *   using dgelsy or zgelsy 
+ *   we could also use dgelss
+ */
 
 static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag); 
 static int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag); 
@@ -1830,13 +2157,13 @@ int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag
 }
 
 
-/*---------------------------------
+/* FIXME: unchecked 
  * interface pour backslash 
  *   A est changée et 
  *   B aussi 
- * même chose que lsq si ce n'est que si A est carrée inversible on 
- * utilise une autre méthode. 
- *---------------------------------*/ 
+ *   même chose que lsq si ce n'est que si A est carrée inversible on 
+ *   utilise une autre méthode. 
+ */
 
 static int intdgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag);
 static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag);
@@ -1955,7 +2282,6 @@ static int intdgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
 } 
 
 
-
 static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag)
 {
   double Rcond=0.0,eps;
@@ -2063,11 +2389,11 @@ static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
   return OK;
 }
 
-/*---------------------------------
+/* FIXME : unchecked 
  * interface pour slash 
  *   On se ramène a backslash après transposition 
  *   A et B sont inchangées 
- *---------------------------------*/ 
+ */
 
 static int intdgesv4(NspMatrix *A,NspMatrix *B,NspMatrix **Sol,NspMatrix **rank,double *rcond,char flag);
 static int intzgesv4(NspMatrix *A,NspMatrix *B,NspMatrix **Sol,NspMatrix **rank,double *rcond,char flag);
@@ -2106,94 +2432,14 @@ static int intzgesv4(NspMatrix *A,NspMatrix *B,NspMatrix **Sol,NspMatrix **rank,
   return OK;
 }
 
-/*------------------------------
- *     [V,D]=balanc(A) 
- * V is stored in A on exit 
- *----------------------------------*/ 
 
-int intdgebal(NspMatrix *A,NspMatrix **D)
-{
-  int m = A->m, n = A->n,info;
-  NspMatrix *work ; 
-  int ilo,ihi;
-
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if (( *D =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of balanc should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
-
-  if (( *D =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-  if (( work =nsp_matrix_create(NVOID,A->rc_type,1,n)) == NULLMAT) return FAIL;
-
-  C2F(dgebal)("B", &n, A->R, &n, &ilo, &ihi, work->R, &info, 1L);
-  if (info != 0) {
-    Scierror("Error: something wrong in dgebal\n");
-    return FAIL;
-  }
-
-  C2F(dgebak)("B", "R", &n, &ilo, &ihi, work->R, &n, (*D)->R, &n, &info, 1L, 1L);
-  if (info != 0) {
-    Scierror("Error: something wrong in dgebak\n");
-    return FAIL;
-  }
-  
-
-  nsp_matrix_destroy(work);
-  return OK;
-}
-
-int intzgebal(NspMatrix *A,NspMatrix **D)
-{
-  int m = A->m, n = A->n,info;
-  NspMatrix *work ; 
-  int ilo,ihi;
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if (( *D =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of balanc should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
-
-  if (( *D =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-  if (( work =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
-
-  C2F(zgebal)("B", &n, A->I, &n, &ilo, &ihi, work->R, &info, 1L);
-  if (info != 0) {
-    Scierror("Error: something wrong in zgebal\n");
-    return FAIL;
-  }
-  C2F(dgebak)("B", "R", &n, &ilo, &ihi, work->R, &n, (*D)->R, &n, &info, 1L, 1L);
-    if (info != 0) {
-    Scierror("Error: something wrong in zgebak\n");
-    return FAIL;
-  }
-
-  nsp_matrix_destroy(work);
-  return OK;
-}
-
-
-/*------------------------------
+/* FIXME: unchecked 
  * [U,T]=schur(A)  U*T*U' = A
  *     T is returned in A 
  *     U is computed if U != NULL 
  *     F can be null or can be a given function used for reordering 
  *     Sdim is computed if non null 
- XXX  couvre le cas int C2F(intoschur)(fname, fname_len)
+ * XXX  couvre le cas int C2F(intoschur)(fname, fname_len)
  *------------------------------*/
 
 int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMatrix **Sdim) 
@@ -2334,11 +2580,11 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
 }
 
 
-/*-----------------------------------------------------
+/*
  *   [U,T]=schur(A, 'r' | 'c' ) 
  *   like intdgees0 but matrix A can be complexified if 
  *   requested 
- *----------------------------------------------------*/ 
+ */
 
 int intdgees1(NspMatrix *A,NspMatrix **U,char flag)
 {
@@ -2372,72 +2618,209 @@ int intzgees1(NspMatrix *A,NspMatrix **U,char flag)
   return OK;
 }
 
+/*--------------------------------------------
+ * A and B are overwriten by their schur form 
+ *--------------------------------------------*/
 
-/*-----------------------------------------
- *   norm(A,'xxx') 
- *   'M' '1' 'I' 'F' 
- *-----------------------------------------*/
-
-static double intznorm(NspMatrix *A,char flag);
-static double intdnorm(NspMatrix *A,char flag);
-
-double nsp_norm(NspMatrix *A,char flag) 
+int intdgges(NspMatrix *A,NspMatrix *B,
+	     int (*F)(double *alphar,double *alphai,double *beta),
+	     NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim) 
 {
-  if ( A->rc_type == 'r' ) 
-    return intdnorm(A,flag) ;
-  else 
-    return intznorm(A,flag) ;
-}
+  double  *Vsl,*Vsr;
+  NspMatrix *alphar,*alphai,*beta,*dwork,*iwork;
+  int info,lworkMin,sdim,*Iwork; 
+  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
+  char *sort = "N",*jobvsl="N",*jobvsr= "N";
 
-static double intdnorm(NspMatrix *A,char flag)
-{
-  double norm;
-  NspMatrix *dwork;
-  int lworkMin, m = A->m, n = A->n ;
-  /*  A = [] return 0 */ 
-  if ( A->mn == 0 ) return 0.0;
-  if ( flag == 'I') 
-    {
-      lworkMin = Max(1,n);
-      if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-      norm=  C2F(dlange)(&flag, &m, &n,A->R, &m, dwork->R, 1L);
-      nsp_matrix_destroy(dwork);
-    } 
-  else 
-    {
-      norm=  C2F(dlange)(&flag, &m, &n,A->R, &m, NULL , 1L);
-    }
-  return norm;
-} 
-
-static double intznorm(NspMatrix *A,char flag)
-{
-  double norm;
-  NspMatrix *dwork;
-  int lworkMin, m = A->m, n = A->n ;
   /*  A = [] return empty matrices */ 
-  if ( A->mn == 0 ) return 0.0;
-
-  if ( flag == 'I') 
-    {
-      lworkMin = Max(1,n);
-      if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-      norm=  C2F(zlange)(&flag, &m, &n,A->I, &m, dwork->R, 1L);
-      nsp_matrix_destroy(dwork);
-    } 
-  else 
-    {
-      norm=  C2F(zlange)(&flag, &m, &n,A->I, &m, NULL , 1L);
+  
+  if ( A->mn == 0 ) {
+    if ( VSR != NULL) {
+      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
     }
-  return norm;
+    if ( VSL != NULL) {
+      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+    }
+    if ( Sdim != NULL) {
+      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
+      (*Sdim)->R[0] = 0;
+    }
+    return OK ; 
+  }
+  
+  if (m != n) { 
+    Scierror("Error: first argument of gschur should be square and it is (%dx%d)\n", 
+	     m,n);
+    return FAIL;
+  }
+
+  if (mb != nb) { 
+    Scierror("Error: second argument of gschur should be square and it is (%dx%d)\n", 
+	     mb,nb);
+    return FAIL;
+  }
+
+  if (m != mb || n != nb ) {
+    Scierror("Error: gschur, first and second arguments must have equal size\n");
+    return FAIL;
+  }
+
+  if (( alphar =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+  if (( alphai =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+  if (( beta   =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+
+  lworkMin = (n+1) * 7+16;
+  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;   
+  
+  if ( F != NULL ) 
+    {
+      if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;   
+      Iwork = (int *) iwork->R;
+      sort = "S";
+    }
+
+  if ( VSL != NULL ) 
+    {
+      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
+      Vsl = (*VSL)->R;
+      jobvsl = "V"; 
+    }
+
+  if ( VSR != NULL ) 
+    {
+      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
+      Vsr = (*VSR)->R;
+      jobvsr = "V"; 
+    }
+
+  C2F(dgges)(jobvsl, jobvsr, sort,F, &n, A->R, &n, B->R, &n, 
+	     &sdim,alphar->R, alphai->R, beta->R,Vsl, &n,Vsr, &n,
+	     dwork->R, &lworkMin, Iwork, &info, 1L, 1L, 1L);
+  
+  if ( Sdim != NULL ) {
+    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
+    (*Sdim)->R[0] = sdim;
+  }
+
+  if (info > 0) {
+    if (info <= n) 
+      Scierror("Error: schur, the QR algorithm failed to compute all the eigenvalues;\n");
+    else if (info == n + 1) 
+      Scierror("Error: schur, eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
+    else if (info == n + 2) 
+      Scierror("Error: schur, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
+    else if (info == n + 3) 
+      Scierror("Error: schur, reordering failed\n");
+    return FAIL;
+  }
+  /* menage XXXX */ 
+
+  return OK ;
 }
 
-/*-----------------------------
+
+int intzgges(NspMatrix *A,NspMatrix *B,
+	     int (*F)(doubleC *alpha,doubleC *beta),
+	     NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim) 
+{
+  doubleC  *Vsl,*Vsr;
+  NspMatrix *alpha,*beta,*dwork,*iwork,*rwork;
+  int info,lworkMin,sdim,*Iwork; 
+  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
+  char *sort = "N",*jobvsl="N",*jobvsr= "N";
+
+  /*  A = [] return empty matrices */ 
+  
+  if ( A->mn == 0 ) {
+    if ( VSR != NULL) {
+      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+    }
+    if ( VSL != NULL) {
+      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+    }
+    if ( Sdim != NULL) {
+      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
+      (*Sdim)->R[0] = 0;
+    }
+    return OK ; 
+  }
+  
+  if (m != n) { 
+    Scierror("Error: first argument of gschur should be square and it is (%dx%d)\n", 
+	     m,n);
+    return FAIL;
+  }
+
+  if (mb != nb) { 
+    Scierror("Error: second argument of gschur should be square and it is (%dx%d)\n",mb,nb);
+    return FAIL;
+  }
+
+  if (m != mb || n != nb ) {
+    Scierror("Error: gschur, first and second arguments must have equal size\n");
+    return FAIL;
+  }
+
+  if (( alpha =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
+  if (( beta  =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
+
+  if (( rwork =nsp_matrix_create(NVOID,'r',1,8*n)) == NULLMAT) return FAIL;   
+  lworkMin = 2*n;
+  if (( dwork =nsp_matrix_create(NVOID,'i',1,lworkMin)) == NULLMAT) return FAIL;   
+  
+  if ( F != NULL ) 
+    {
+      if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;   
+      Iwork = (int *) iwork->R;
+      sort = "S";
+    }
+
+  if ( VSL != NULL ) 
+    {
+      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
+      Vsl = (*VSL)->I;
+      jobvsl = "V"; 
+    }
+
+  if ( VSR != NULL ) 
+    {
+      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
+      Vsr = (*VSR)->I;
+      jobvsl = "V"; 
+    }
+
+  C2F(zgges)(jobvsl, jobvsr, sort,F, &n, A->I, &n, B->I, &n, 
+	     &sdim,alpha->I, beta->I,Vsl, &n,Vsr, &n,
+	     dwork->I, &lworkMin,rwork->R,Iwork, &info, 1L, 1L, 1L);
+  
+  if ( Sdim != NULL ) {
+    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
+    (*Sdim)->R[0] = sdim;
+  }
+
+  if (info > 0) {
+    if (info <= n) 
+      Scierror("Error: schur, the QR algorithm failed to compute all the eigenvalues;\n");
+    else if (info == n + 1) 
+      Scierror("Error: schur, eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
+    else if (info == n + 2) 
+      Scierror("Error: schur, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
+    else if (info == n + 3) 
+      Scierror("Error: schur, reordering failed\n");
+    return FAIL;
+  }
+  /* menage XXXX */ 
+  return OK ;
+}
+
+
+
+/* FIXME: 
  * [U,H]=hess(A) 
  * forme de hessenberg 
  * H is returned in A 
  * U is computed if requested 
- *---------------------*/ 
+ */
 
 static int intzgehrd(NspMatrix *A, NspMatrix **U);
 static int intdgehrd(NspMatrix *A, NspMatrix **U);
@@ -2537,13 +2920,11 @@ static int intzgehrd(NspMatrix *A, NspMatrix **U)
 } 
 
 
-
-
-/*------------------------------------------------------------------
+/* FIXME 
  * [al,be,Q,Z] = gspec(A,E) returns in addition the matrix Q and Z
  * of generalized left and right eigenvectors of the pencil.
  * Vl = Q , Vr = Z
- *-------------------------------------------------------------------*/
+ */
 
 static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta);
 static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta);
@@ -2806,391 +3187,62 @@ static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
 } 
 
 
-/*     [Ab,Bb,X,Y]=balanc(A,B) */
-/*____________________________*/ 
+  
+/* nsp_norm 
+ *   norm(A,'xxx') 
+ *   'M' '1' 'I' 'F' 
+ */ 
 
-static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
-static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
+static double intznorm(NspMatrix *A,char flag);
+static double intdnorm(NspMatrix *A,char flag);
 
-
-int idl_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
+double nsp_norm(NspMatrix *A,char flag) 
 {
-  if (( B =nsp_matrix_copy(B) )== NULLMAT) return FAIL;
-  if (( A =nsp_matrix_copy(A) )== NULLMAT) return FAIL;
   if ( A->rc_type == 'r' ) 
+    return intdnorm(A,flag) ;
+  else 
+    return intznorm(A,flag) ;
+}
+
+static double intdnorm(NspMatrix *A,char flag)
+{
+  double norm;
+  NspMatrix *dwork;
+  int lworkMin, m = A->m, n = A->n ;
+  /*  A = [] return 0 */ 
+  if ( A->mn == 0 ) return 0.0;
+  if ( flag == 'I') 
     {
-      if ( B->rc_type == 'r') 
-	{
-	  /* A real, b real */
-	  if ( intdggbal(A,B,X,Y) == FAIL) return FAIL; 
-	}
-      else 
-	{
-	  /* A real, b complex */
-	  if (nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
-	  if ( intzggbal(A,B,X,Y) == FAIL) return FAIL; 
-	}
+      lworkMin = Max(1,n);
+      if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+      norm=  C2F(dlange)(&flag, &m, &n,A->R, &m, dwork->R, 1L);
+      nsp_matrix_destroy(dwork);
     } 
-  else
+  else 
     {
-      if ( B->rc_type == 'r') 
-	{
-	  /* A complex, B real */
-	  if (nsp_mat_complexify(B,0.0) == FAIL ) return FAIL;
-	  if ( intzggbal(A,B,X,Y) == FAIL) return FAIL; 
-	}
-      else 
-	{
-	  /* A complex, b complex */
-	  if ( intzggbal(A,B,X,Y) == FAIL) return FAIL; 
-	}
+      norm=  C2F(dlange)(&flag, &m, &n,A->R, &m, NULL , 1L);
     }
-  return OK;
-}
-
-
-static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
-{
-  NspMatrix *lscale,*rscale,*dwork; 
-  int info,lworkMin,ilo,ihi;  
-  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
-  
-  if (m != n) { 
-    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
-
-  if (mb != nb) { 
-    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
-	     mb,nb);
-    return FAIL;
-  }
-
-  if (m != mb || n != nb ) {
-    Scierror("Error: spec, first and second arguments must have equal size\n");
-    return FAIL;
-  }
-
-  /* A = [] return empty matrices */ 
-
-  if ( A->mn == 0 ) {
-    if ( X != NULL)
-      {
-	if (( *X =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    if ( Y != NULL)
-      {
-	if (( *Y =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  /* XXX Check that A and B are finite matrices */ 
-
-  if (( lscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( rscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-
-  lworkMin = Max(1,6*n);
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-
-  C2F(dggbal)("B",&n,A->R, &n,B->R, &n,&ilo,&ihi,lscale->R, rscale->R,dwork->R, &info, 1L);
-  if (info != 0) {
-    Scierror("Error: something wrong in dggbal\n");
-    return FAIL;
-  }
-  if ( X != NULL) { 
-    if (( *X =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-    C2F(dggbak)("B", "L", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*X)->R, &n, &info, 1L,1L);
-    if (info != 0) {
-      Scierror("Error: something wrong in dggbak\n");
-      return FAIL;
-    }
-  }
-
-  if ( Y != NULL ) {
-    if (( *Y =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-    C2F(dggbak)("B", "R", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*Y)->R, &n, &info, 1L, 1L);
-    if (info != 0) {
-      Scierror("Error: something wrong in dggbak\n");
-      return FAIL;
-    }
-  }
-
-  /* un peu de ménage XXXXX */ 
-
-  return OK ; 
+  return norm;
 } 
 
-static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
+static double intznorm(NspMatrix *A,char flag)
 {
-  NspMatrix *lscale,*rscale,*dwork; 
-  int info,lworkMin,ilo,ihi;  
-
-  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
-  
-  if (m != n) { 
-    Scierror("Error: spec, wrong first argument size (%d,%d) should be square \n",m,n);
-    return FAIL;
-  }
-
-  if (mb != nb) { 
-    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
-	     mb,nb);
-    return FAIL;
-  }
-
-  if (m != mb || n != nb ) {
-    Scierror("Error: spec, first and second arguments must have equal size\n");
-    return FAIL;
-  }
-
-  /* A = [] return empty matrices */ 
-
-  if ( A->mn == 0 ) {
-    if ( X != NULL)
-      {
-	if (( *X =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
-      }
-    if ( Y != NULL)
-      {
-	if (( *Y =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  /* XXX Check that A and B are finite matrices */ 
-
-  if (( lscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( rscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-
-  lworkMin = Max(1,6*n);
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-
-  C2F(zggbal)("B",&n,A->I, &n,B->I, &n,&ilo,&ihi,lscale->R, rscale->R,dwork->R, &info, 1L);
-  if (info != 0) {
-    Scierror("Error: something wrong in zggbal\n");
-    return FAIL;
-  }
-  if ( X != NULL) { 
-    if (( *X =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-    C2F(dggbak)("B", "L", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*X)->R, &n, &info, 1L, 1L);
-    if (info != 0) {
-      Scierror("Error: something wrong in dggbak\n");
-      return FAIL;
-    }
-  }
-
-  if ( Y != NULL ) {
-    if (( *Y =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-    C2F(dggbak)("B", "R", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*Y)->R, &n, &info, 1L, 1L);
-    if (info != 0) {
-      Scierror("Error: something wrong in dggbak\n");
-      return FAIL;
-    }
-  }
-
-  /* un peu de ménage XXXXX */ 
-
-  return OK ; 
-} 
-
-
-/*--------------------------------------------
- * A and B are overwriten by their schur form 
- * 
- *--------------------------------------------*/
-
-int intdgges(NspMatrix *A,NspMatrix *B,
-	     int (*F)(double *alphar,double *alphai,double *beta),
-	     NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim) 
-{
-  double  *Vsl,*Vsr;
-  NspMatrix *alphar,*alphai,*beta,*dwork,*iwork;
-  int info,lworkMin,sdim,*Iwork; 
-  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
-  char *sort = "N",*jobvsl="N",*jobvsr= "N";
-
+  double norm;
+  NspMatrix *dwork;
+  int lworkMin, m = A->m, n = A->n ;
   /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if ( VSR != NULL) {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
-    }
-    if ( VSL != NULL) {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
-    }
-    if ( Sdim != NULL) {
-      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
-      (*Sdim)->R[0] = 0;
-    }
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of gschur should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  if ( A->mn == 0 ) return 0.0;
 
-  if (mb != nb) { 
-    Scierror("Error: second argument of gschur should be square and it is (%dx%d)\n", 
-	     mb,nb);
-    return FAIL;
-  }
-
-  if (m != mb || n != nb ) {
-    Scierror("Error: gschur, first and second arguments must have equal size\n");
-    return FAIL;
-  }
-
-  if (( alphar =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( alphai =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( beta   =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-
-  lworkMin = (n+1) * 7+16;
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;   
-  
-  if ( F != NULL ) 
+  if ( flag == 'I') 
     {
-      if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;   
-      Iwork = (int *) iwork->R;
-      sort = "S";
-    }
-
-  if ( VSL != NULL ) 
+      lworkMin = Max(1,n);
+      if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+      norm=  C2F(zlange)(&flag, &m, &n,A->I, &m, dwork->R, 1L);
+      nsp_matrix_destroy(dwork);
+    } 
+  else 
     {
-      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
-      Vsl = (*VSL)->R;
-      jobvsl = "V"; 
+      norm=  C2F(zlange)(&flag, &m, &n,A->I, &m, NULL , 1L);
     }
-
-  if ( VSR != NULL ) 
-    {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
-      Vsr = (*VSR)->R;
-      jobvsr = "V"; 
-    }
-
-  C2F(dgges)(jobvsl, jobvsr, sort,F, &n, A->R, &n, B->R, &n, 
-	     &sdim,alphar->R, alphai->R, beta->R,Vsl, &n,Vsr, &n,
-	     dwork->R, &lworkMin, Iwork, &info, 1L, 1L, 1L);
-  
-  if ( Sdim != NULL ) {
-    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
-    (*Sdim)->R[0] = sdim;
-  }
-
-  if (info > 0) {
-    if (info <= n) 
-      Scierror("Error: schur, the QR algorithm failed to compute all the eigenvalues;\n");
-    else if (info == n + 1) 
-      Scierror("Error: schur, eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
-    else if (info == n + 2) 
-      Scierror("Error: schur, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
-    else if (info == n + 3) 
-      Scierror("Error: schur, reordering failed\n");
-    return FAIL;
-  }
-  /* menage XXXX */ 
-
-  return OK ;
+  return norm;
 }
-
-
-int intzgges(NspMatrix *A,NspMatrix *B,
-	     int (*F)(doubleC *alpha,doubleC *beta),
-	     NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim) 
-{
-  doubleC  *Vsl,*Vsr;
-  NspMatrix *alpha,*beta,*dwork,*iwork,*rwork;
-  int info,lworkMin,sdim,*Iwork; 
-  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
-  char *sort = "N",*jobvsl="N",*jobvsr= "N";
-
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if ( VSR != NULL) {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
-    }
-    if ( VSL != NULL) {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
-    }
-    if ( Sdim != NULL) {
-      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
-      (*Sdim)->R[0] = 0;
-    }
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of gschur should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
-
-  if (mb != nb) { 
-    Scierror("Error: second argument of gschur should be square and it is (%dx%d)\n",mb,nb);
-    return FAIL;
-  }
-
-  if (m != mb || n != nb ) {
-    Scierror("Error: gschur, first and second arguments must have equal size\n");
-    return FAIL;
-  }
-
-  if (( alpha =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
-  if (( beta  =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
-
-  if (( rwork =nsp_matrix_create(NVOID,'r',1,8*n)) == NULLMAT) return FAIL;   
-  lworkMin = 2*n;
-  if (( dwork =nsp_matrix_create(NVOID,'i',1,lworkMin)) == NULLMAT) return FAIL;   
-  
-  if ( F != NULL ) 
-    {
-      if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;   
-      Iwork = (int *) iwork->R;
-      sort = "S";
-    }
-
-  if ( VSL != NULL ) 
-    {
-      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
-      Vsl = (*VSL)->I;
-      jobvsl = "V"; 
-    }
-
-  if ( VSR != NULL ) 
-    {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
-      Vsr = (*VSR)->I;
-      jobvsl = "V"; 
-    }
-
-  C2F(zgges)(jobvsl, jobvsr, sort,F, &n, A->I, &n, B->I, &n, 
-	     &sdim,alpha->I, beta->I,Vsl, &n,Vsr, &n,
-	     dwork->I, &lworkMin,rwork->R,Iwork, &info, 1L, 1L, 1L);
-  
-  if ( Sdim != NULL ) {
-    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
-    (*Sdim)->R[0] = sdim;
-  }
-
-  if (info > 0) {
-    if (info <= n) 
-      Scierror("Error: schur, the QR algorithm failed to compute all the eigenvalues;\n");
-    else if (info == n + 1) 
-      Scierror("Error: schur, eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
-    else if (info == n + 2) 
-      Scierror("Error: schur, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
-    else if (info == n + 3) 
-      Scierror("Error: schur, reordering failed\n");
-    return FAIL;
-  }
-  /* menage XXXX */ 
-  return OK ;
-}
-
-
-  
