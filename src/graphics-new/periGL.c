@@ -50,7 +50,20 @@
 #define FONTMAXSIZE 6
 #define SYMBOLNUMBER 10
 
-#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )  {  nsp_gtk_invalidate(Xgc); Xgc->private->draw = TRUE;  return; }
+/* periGL with the new DRAW_CHECK only works in recoding mode since the drawing actions 
+ * are to be done in expose_event.
+ */ 
+
+#define DRAW_CHECK_XX  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )  {  nsp_gtk_invalidate(Xgc); Xgc->private->draw = TRUE;  return; }
+
+/* just a test to perform graphic when we are not in recording 
+ * mode: this is not supposed to work since graphics are 
+ * not performed in an expose_event context.But this 
+ * is usefull for acquiring for ex the zoom rectangle 
+ */
+
+#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
+   {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
 
 static char Marks[] = {
   /*., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
@@ -368,7 +381,7 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
     PushClickQueue( gc->CurWindow,x, y,event->keyval ,0,1);
   }
 
-  return TRUE;
+  return FALSE;
 }
 
 
@@ -2963,7 +2976,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 static void nsp_gtk_invalidate(BCG *Xgc)
 {
   /* put an expose in the queue as if the window was resized */
-  Xgc->private->resize = 1; 
+  /* Xgc->private->resize = 1;  */
   gdk_window_invalidate_rect(Xgc->private->drawing->window,
 			     &Xgc->private->drawing->allocation,
 			     FALSE);
@@ -2983,23 +2996,17 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 
   if ( dd->private->resize != 0)  
     { 
-  
+      /* redraw after resize 
+       */
       dd->private->resize = 0;
-      if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
-	{
-	  return FALSE;
-	}
-      
+      if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) return FALSE;
       /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
       glClear(GL_DEPTH_BUFFER_BIT);
-
       nsp_ogl_set_view(dd);
-
       dd->private->in_expose= TRUE;
       scig_resize(dd->CurWindow);
       dd->private->in_expose= FALSE;
-
-      /* Swap buffers */
+      /* Swap buffers or flush */
       if (gdk_gl_drawable_is_double_buffered (gldrawable))
 	gdk_gl_drawable_swap_buffers (gldrawable);
       else
@@ -3008,16 +3015,13 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     }
   else 
     {
-      /* just an expose without resizing 
-       * we need to redraw 
-       */ 
-      if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
+      /* just an expose without resizing we need to redraw  */ 
+      if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) return FALSE;
+      /* we could take care here of  dd->private->draw == TRUE 
+       */
+      if ( dd->record_flag == TRUE  ) 
 	{
-	  return FALSE;
-	}
-
-      if ( TRUE || dd->private->draw == TRUE )  /* always redraw */
-	{
+	  /* just redraw if we have recorded stuffs */
 	  /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
 	  glClear(GL_DEPTH_BUFFER_BIT);
 	  nsp_ogl_set_view(dd);
@@ -3026,12 +3030,19 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  dd->private->in_expose= TRUE;
 	  scig_replay(dd->CurWindow);
 	  dd->private->in_expose= FALSE;
+	  if (gdk_gl_drawable_is_double_buffered (gldrawable))
+	    gdk_gl_drawable_swap_buffers (gldrawable);
+	  else
+	    glFlush ();
 	}
-
-      if (gdk_gl_drawable_is_double_buffered (gldrawable))
-	gdk_gl_drawable_swap_buffers (gldrawable);
-      else
-	glFlush ();
+      else 
+	{
+	  /* just try a swp buffer ? */
+	  if (gdk_gl_drawable_is_double_buffered (gldrawable))
+	    gdk_gl_drawable_swap_buffers (gldrawable);
+	  else
+	    glFlush ();
+	}
       gdk_gl_drawable_gl_end (gldrawable);
     }
   return FALSE;
@@ -3140,29 +3151,20 @@ examine_gl_config_attrib (GdkGLConfig *glconfig)
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 {
-  static char gwin_name[100];
+  char gwin_name[100];
   gint iw, ih;
+  guint mode = GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH | GDK_GL_MODE_STENCIL;
   GtkWidget *scrolled_window;
   GtkWidget *vbox;
   GdkGLConfig *glconfig;
   
-  /*
-  ** NEW !!
-  */
-  glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
-					GDK_GL_MODE_DEPTH  |
-					GDK_GL_MODE_STENCIL |
-					//GDK_GL_MODE_SINGLE);
-					GDK_GL_MODE_DOUBLE);
+  glconfig = gdk_gl_config_new_by_mode (mode | GDK_GL_MODE_DOUBLE) ;
   if (glconfig == NULL)
     {
-      g_print ("*** Cannot find the double-buffered visual.\n");
-      g_print ("*** Trying single-buffered visual.\n");
-      /* Try single-buffered visual */
-      glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
-					    GDK_GL_MODE_DEPTH);
+      glconfig = gdk_gl_config_new_by_mode (mode);
       if (glconfig == NULL)
 	{
+	  /* FIXME XXX */
 	  g_print ("*** No appropriate OpenGL-capable visual found.\n");
 	  return;
 	}

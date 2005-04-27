@@ -370,7 +370,7 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
     PushClickQueue( gc->CurWindow,x, y,event->keyval ,0,1);
   }
 
-  return TRUE;
+  return FALSE; /* also want other handlers to be activated */
 }
 
 static void xset_win_protect( BCG *gc, int val) { gc->private->protect=val;}
