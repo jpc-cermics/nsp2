@@ -1,3 +1,8 @@
+2005-04-27    <jpc@cermics.enpc.fr>
+
+	* src/* : nsp_xdr_XXX prototype slighly changed
+	lot of file involved but small change.
+	
 2005-04-19    <jpc@cermics.enpc.fr>
 
 	* src/objects/object.c: 
