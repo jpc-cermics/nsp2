@@ -194,12 +194,12 @@ static int rect_neq(NspRect *A, NspObject *B)
 
 static int rect_xdr_save(NspFile  *F, NspRect *M)
 {
-  if (nsp_xdr_save_i(F,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F,M->color) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F,M->thickness) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F,M->background) == FAIL) return FAIL;
-  if (nsp_xdr_save_array_d(F,M->r,4) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->color) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->thickness) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->background) == FAIL) return FAIL;
+  if (nsp_xdr_save_array_d(F->xdrs,M->r,4) == FAIL) return FAIL;
   return OK;
 }
 
@@ -213,11 +213,11 @@ static NspRect  *rect_xdr_load(NspFile  *F)
   NspRect *M;
   char name[NAME_MAXL];
   double rect[4];
-  if (nsp_xdr_load_string(F,name,NAME_MAXL) == FAIL) return NULLRECT;
-  if (nsp_xdr_load_i(F,&color) == FAIL) return NULLRECT;
-  if (nsp_xdr_load_i(F,&thickness) == FAIL) return NULLRECT;
-  if (nsp_xdr_load_i(F,&background) == FAIL) return NULLRECT;
-  if (nsp_xdr_load_array_d(F,rect,4) == FAIL) return NULLRECT;
+  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLRECT;
+  if (nsp_xdr_load_i(F->xdrs,&color) == FAIL) return NULLRECT;
+  if (nsp_xdr_load_i(F->xdrs,&thickness) == FAIL) return NULLRECT;
+  if (nsp_xdr_load_i(F->xdrs,&background) == FAIL) return NULLRECT;
+  if (nsp_xdr_load_array_d(F->xdrs,rect,4) == FAIL) return NULLRECT;
   if (( M= rect_create(name,NULL,rect,color,thickness,background,NULL)) == NULLRECT ) return NULLRECT;
   return M;
 }

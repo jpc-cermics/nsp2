@@ -1338,7 +1338,7 @@ int int_object_xdrsave(Stack stack, int rhs, int opt, int lhs)
 	  break;
 	}
     }
-  nsp_xdr_save_i(F,nsp_no_type_id); /* flag for detecting end of obj at reload */
+  nsp_xdr_save_i(F->xdrs,nsp_no_type_id); /* flag for detecting end of obj at reload */
   if (nsp_file_close_xdr_w(F) == FAIL) return RET_BUG;
   return rep;
 }

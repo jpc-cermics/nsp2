@@ -300,7 +300,7 @@ NspObject *nsp_object_xdr_load(NspFile  *F)
 {
   int id;
   NspTypeObject *type;
- nsp_xdr_load_i(F,&id);
+ nsp_xdr_load_i(F->xdrs,&id);
   if ( id == nsp_no_type_id ) return NULLOBJ; /* end of saved objects  */
   type = nsp_get_type_from_id(id);
   if ( type == NULL) 

@@ -220,10 +220,10 @@ static NspObject *hash_path_extract(NspHash *H, NspObject *O)
 static int hash_xdr_save(NspFile  *F, NspHash *M)
 {
   int i;
-  if (nsp_xdr_save_i(F,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F,M->hsize) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F,M->filled) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->hsize) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->filled) == FAIL) return FAIL;
   /* last entry is at M->hsize ! */
   for ( i =0 ; i <= M->hsize ; i++) 
     {
@@ -245,9 +245,9 @@ static NspHash  *hash_xdr_load(NspFile  *F)
   int hsize,filled,i;
   NspHash *M;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F,name,NAME_MAXL) == FAIL) return NULLHASH;
-  if (nsp_xdr_load_i(F,&hsize) == FAIL) return NULLHASH;
-  if (nsp_xdr_load_i(F,&filled) == FAIL) return NULLHASH;
+  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLHASH;
+  if (nsp_xdr_load_i(F->xdrs,&hsize) == FAIL) return NULLHASH;
+  if (nsp_xdr_load_i(F->xdrs,&filled) == FAIL) return NULLHASH;
   /* initial mxn matrix with unallocated elements **/
   if ( ( M = nsp_hash_create(name,hsize) ) == NULLHASH) return  NULLHASH;
   /* allocate elements and store copies of A elements **/

@@ -251,13 +251,13 @@ int nsp_list_xdr_save(NspFile  *F, NspList *L)
 {
   Cell *cell = L->first;
   int length;
-  if (nsp_xdr_save_i(F,L->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F, NSP_OBJECT(L)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F,L->tname == NULLSTRING ) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,L->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(L)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,L->tname == NULLSTRING ) == FAIL) return FAIL;
   if ( L->tname != NULLSTRING) 
-    {  if (nsp_xdr_save_string(F, NSP_OBJECT(L)->name) == FAIL) return FAIL;}
+    {  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(L)->name) == FAIL) return FAIL;}
   length =nsp_list_length(L);
-  if (nsp_xdr_save_i(F,length) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,length) == FAIL) return FAIL;
   while ( cell != NULLCELL ) 
     {
       if (nsp_object_xdr_save(F, cell->O) == FAIL) return FAIL;
@@ -277,18 +277,18 @@ NspList*nsp_list_xdr_load(NspFile  *F)
   int flag,length,count;
   static char name[NAME_MAXL];
   static char tname[NAME_MAXL];
-  if (nsp_xdr_load_string(F,name,NAME_MAXL) == FAIL) return NULLLIST;
-  if (nsp_xdr_load_i(F,&flag) == FAIL) return NULLLIST;
+  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLLIST;
+  if (nsp_xdr_load_i(F->xdrs,&flag) == FAIL) return NULLLIST;
   if ( flag ) 
     {
       if (( L =nsp_list_create(name,NULLSTRING)) == NULLLIST ) return NULLLIST;
     }
   else 
     {
-      if (nsp_xdr_load_string(F,tname,NAME_MAXL) == FAIL) return NULLLIST;
+      if (nsp_xdr_load_string(F->xdrs,tname,NAME_MAXL) == FAIL) return NULLLIST;
       if (( L =nsp_list_create(name,tname)) == NULLLIST ) return NULLLIST;
     }
-  if (nsp_xdr_load_i(F,&length) == FAIL) return NULLLIST;
+  if (nsp_xdr_load_i(F->xdrs,&length) == FAIL) return NULLLIST;
   C = L->first;
   count = 0;
   while ( count < length ) 

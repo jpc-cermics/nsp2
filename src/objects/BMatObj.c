@@ -231,11 +231,11 @@ static int bmatrix_is_true(NspBMatrix *A)
 
 static int bmatrix_xdr_save(NspFile  *F, NspBMatrix *M)
 {
-  if (nsp_xdr_save_i(F,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F,M->m) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F,M->n) == FAIL) return FAIL;
-  if (nsp_xdr_save_array_i(F,M->B,M->mn) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->m) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->n) == FAIL) return FAIL;
+  if (nsp_xdr_save_array_i(F->xdrs,M->B,M->mn) == FAIL) return FAIL;
   return OK;
 }
 
@@ -248,11 +248,11 @@ static NspBMatrix  *bmatrix_xdr_load(NspFile  *F)
   int m,n;
   NspBMatrix *M;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F,name,NAME_MAXL) == FAIL) return NULLBMAT;
-  if (nsp_xdr_load_i(F,&m) == FAIL) return NULLBMAT;
-  if (nsp_xdr_load_i(F,&n) == FAIL) return NULLBMAT;
+  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLBMAT;
+  if (nsp_xdr_load_i(F->xdrs,&m) == FAIL) return NULLBMAT;
+  if (nsp_xdr_load_i(F->xdrs,&n) == FAIL) return NULLBMAT;
   if (( M=nsp_bmatrix_create(name,m,n)) == NULLBMAT ) return NULLBMAT;
-  if (nsp_xdr_load_array_i(F,M->B,M->mn) == FAIL) return NULLBMAT;
+  if (nsp_xdr_load_array_i(F->xdrs,M->B,M->mn) == FAIL) return NULLBMAT;
   return M;
 }
 

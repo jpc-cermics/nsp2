@@ -245,15 +245,15 @@ static int mpmatrix_is_true(NspMaxpMatrix *M)
 
 static int mpmatrix_xdr_save(NspFile  *F, NspMaxpMatrix *M)
 {
-  if (nsp_xdr_save_i(F,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F,M->m) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F,M->n) == FAIL) return FAIL;
-  if (nsp_xdr_save_c(F,M->rc_type) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->m) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->n) == FAIL) return FAIL;
+  if (nsp_xdr_save_c(F->xdrs,M->rc_type) == FAIL) return FAIL;
   if ( M->rc_type == 'r') 
-    { if (nsp_xdr_save_array_d(F,M->R,M->mn) == FAIL) return FAIL; }
+    { if (nsp_xdr_save_array_d(F->xdrs,M->R,M->mn) == FAIL) return FAIL; }
   else
-    { if (nsp_xdr_save_array_d(F,(double *) M->I,2*M->mn) == FAIL) return FAIL; }
+    { if (nsp_xdr_save_array_d(F->xdrs,(double *) M->I,2*M->mn) == FAIL) return FAIL; }
   return OK;
 }
 
@@ -267,18 +267,18 @@ static NspMaxpMatrix *mpmatrix_xdr_load(NspFile  *F)
   int m,n;
   NspMaxpMatrix *M;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F,name,NAME_MAXL) == FAIL) return NULLMAXPMAT;
-  if (nsp_xdr_load_i(F,&m) == FAIL) return NULLMAXPMAT;
-  if (nsp_xdr_load_i(F,&n) == FAIL) return NULLMAXPMAT;
-  if (nsp_xdr_load_c(F,&c) == FAIL) return NULLMAXPMAT;
+  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLMAXPMAT;
+  if (nsp_xdr_load_i(F->xdrs,&m) == FAIL) return NULLMAXPMAT;
+  if (nsp_xdr_load_i(F->xdrs,&n) == FAIL) return NULLMAXPMAT;
+  if (nsp_xdr_load_c(F->xdrs,&c) == FAIL) return NULLMAXPMAT;
   if (( M= nsp_mpmatrix_create(name,c,m,n)) == NULLMAXPMAT ) return NULLMAXPMAT;
   if ( M->rc_type == 'r') 
    {
-     if (nsp_xdr_load_array_d(F,M->R,M->mn) == FAIL) return NULLMAXPMAT;
+     if (nsp_xdr_load_array_d(F->xdrs,M->R,M->mn) == FAIL) return NULLMAXPMAT;
    }
   else
    {
-     if (nsp_xdr_load_array_d(F,(double *)M->I,2*M->mn) == FAIL) return NULLMAXPMAT;
+     if (nsp_xdr_load_array_d(F->xdrs,(double *)M->I,2*M->mn) == FAIL) return NULLMAXPMAT;
    }
   return M;
 }

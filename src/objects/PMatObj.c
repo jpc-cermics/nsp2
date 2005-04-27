@@ -209,8 +209,8 @@ int PMatObjNeq(NspObject *A, NspObject *B)
 
 static int PMatXdrSave(NspFile  *F, NspMatrix *M)
 {
-  if (nsp_xdr_save_i(F,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   return OK;
 }
 
@@ -221,7 +221,7 @@ static int PMatXdrSave(NspFile  *F, NspMatrix *M)
 static NspPMatrix *PMatXdrLoad(NspFile  *F)
 {
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F,name,NAME_MAXL) == FAIL) return NULLPMAT;
+  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLPMAT;
   Scierror("pmat_xdr_load: to be implemented \n");
   return NULLPMAT;
 }

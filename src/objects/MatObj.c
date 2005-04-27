@@ -288,24 +288,24 @@ matrix_is_true (NspMatrix * M)
 static int
 matrix_xdr_save (NspFile * F, NspMatrix * M)
 {
-  if (nsp_xdr_save_i(F, M->type->id) == FAIL)
+  if (nsp_xdr_save_i(F->xdrs, M->type->id) == FAIL)
     return FAIL;
-  if (nsp_xdr_save_string(F, NSP_OBJECT (M)->name) == FAIL)
+  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT (M)->name) == FAIL)
     return FAIL;
-  if (nsp_xdr_save_i(F, M->m) == FAIL)
+  if (nsp_xdr_save_i(F->xdrs, M->m) == FAIL)
     return FAIL;
-  if (nsp_xdr_save_i(F, M->n) == FAIL)
+  if (nsp_xdr_save_i(F->xdrs, M->n) == FAIL)
     return FAIL;
-  if (nsp_xdr_save_c(F, M->rc_type) == FAIL)
+  if (nsp_xdr_save_c(F->xdrs, M->rc_type) == FAIL)
     return FAIL;
   if (M->rc_type == 'r')
     {
-      if (nsp_xdr_save_array_d(F, M->R, M->mn) == FAIL)
+      if (nsp_xdr_save_array_d(F->xdrs, M->R, M->mn) == FAIL)
 	return FAIL;
     }
   else
     {
-      if (nsp_xdr_save_array_d(F, (double *) M->I, 2 * M->mn) == FAIL)
+      if (nsp_xdr_save_array_d(F->xdrs, (double *) M->I, 2 * M->mn) == FAIL)
 	return FAIL;
     }
   return OK;
@@ -322,24 +322,24 @@ matrix_xdr_load (NspFile * F)
   int m, n;
   NspMatrix *M;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F, name, NAME_MAXL) == FAIL)
+  if (nsp_xdr_load_string(F->xdrs, name, NAME_MAXL) == FAIL)
     return NULLMAT;
-  if (nsp_xdr_load_i(F, &m) == FAIL)
+  if (nsp_xdr_load_i(F->xdrs, &m) == FAIL)
     return NULLMAT;
-  if (nsp_xdr_load_i(F, &n) == FAIL)
+  if (nsp_xdr_load_i(F->xdrs, &n) == FAIL)
     return NULLMAT;
-  if (nsp_xdr_load_c(F, &c) == FAIL)
+  if (nsp_xdr_load_c(F->xdrs, &c) == FAIL)
     return NULLMAT;
   if ((M = nsp_matrix_create (name, c, m, n)) == NULLMAT)
     return NULLMAT;
   if (M->rc_type == 'r')
     {
-      if (nsp_xdr_load_array_d(F, M->R, M->mn) == FAIL)
+      if (nsp_xdr_load_array_d(F->xdrs, M->R, M->mn) == FAIL)
 	return NULLMAT;
     }
   else
     {
-      if (nsp_xdr_load_array_d(F, (double *) M->I, 2 * M->mn) == FAIL)
+      if (nsp_xdr_load_array_d(F->xdrs, (double *) M->I, 2 * M->mn) == FAIL)
 	return NULLMAT;
     }
   return M;

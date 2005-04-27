@@ -181,7 +181,7 @@ NspFile *nsp_file_open_xdr_r(char *fname)
   XDR_ON(F->flag);
   OPEN_ON(F->flag);
   xdrstdio_create(F->xdrs,F->file, XDR_DECODE) ;
-  if (nsp_xdr_load_string(F,SciF_version,SCIF_V) == FAIL ) 
+  if (nsp_xdr_load_string(F->xdrs,SciF_version,SCIF_V) == FAIL ) 
     {
       Scierror("Error: Wrong xdr header in file : %s\n",fname);
       return NULLSCIFILE;
@@ -223,7 +223,7 @@ int nsp_file_close_xdr_r(NspFile  *F)
       Scierror("Warning: file %s is already closed\n",F->fname);
       return OK;
     }
-  nsp_xdr_load_string(F,type,TYPE_S) ;
+  nsp_xdr_load_string(F->xdrs,type,TYPE_S) ;
   if ( strcmp(type,"endsave") != 0)
     {
       Scierror("Warning: Closing xdr file %s while not at end of file\n",F->fname);
@@ -273,7 +273,7 @@ NspFile *nsp_file_open_xdr_w(char *fname)
   XDR_ON(F->flag);
   OPEN_ON(F->flag);
   xdrstdio_create(F->xdrs, F->file, XDR_ENCODE) ;
-  nsp_xdr_save_string(F,scis);
+  nsp_xdr_save_string(F->xdrs,scis);
   return F;
 }
 
@@ -299,7 +299,7 @@ int nsp_file_close_xdr_w(NspFile  *F)
       Scierror("Warning: file %s is already closed\n",F->fname);
       return OK;
     }
-  nsp_xdr_save_string(F,"endsave");
+  nsp_xdr_save_string(F->xdrs,"endsave");
   assertW(fflush((FILE *) F->xdrs->x_private) != EOF) ; 
   xdr_destroy(F->xdrs);
   assertW(fclose(F->file) != EOF) ;
@@ -318,11 +318,11 @@ int nsp_file_close_xdr_w(NspFile  *F)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_save_d(NspFile  *F, double x)
+int nsp_xdr_save_d(XDR *xdrs, double x)
 {
   szof = sizeof(double) ;
   count = (u_int) 1;
-  assertW(xdr_vector(F->xdrs,(char *) &x,count,szof,(xdrproc_t) xdr_double)) ;
+  assertW(xdr_vector(xdrs,(char *) &x,count,szof,(xdrproc_t) xdr_double)) ;
   return OK;
 }
 
@@ -336,11 +336,11 @@ int nsp_xdr_save_d(NspFile  *F, double x)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_load_d(NspFile  *F, double *x)
+int nsp_xdr_load_d(XDR *xdrs, double *x)
 {
   szof = sizeof(double) ;
   count = (u_int) 1;
-  assertR(xdr_vector(F->xdrs, (char *)x, count, szof ,
+  assertR(xdr_vector(xdrs, (char *)x, count, szof ,
 		     (xdrproc_t) xdr_double)) ;
   return OK;
 }
@@ -355,11 +355,11 @@ int nsp_xdr_load_d(NspFile  *F, double *x)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_save_i(NspFile  *F, integer ix)
+int nsp_xdr_save_i(XDR *xdrs, integer ix)
 {
   szof = sizeof(int) ;
   count = 1;
-  assertW( xdr_vector(F->xdrs, (char *)&ix, count, szof,(xdrproc_t) xdr_int)) ;
+  assertW( xdr_vector(xdrs, (char *)&ix, count, szof,(xdrproc_t) xdr_int)) ;
   return OK;
 }
 
@@ -371,11 +371,11 @@ int nsp_xdr_save_i(NspFile  *F, integer ix)
  * 
  * Return value: %OK or %FAIL
  **/
-int nsp_xdr_load_i(NspFile  *F, integer *ix)
+int nsp_xdr_load_i(XDR *xdrs, integer *ix)
 {
   szof = sizeof(int) ;
   count = (u_int)1;
-  assertR( xdr_vector(F->xdrs, (char *)ix, count,szof,(xdrproc_t) xdr_int)) ;
+  assertR( xdr_vector(xdrs, (char *)ix, count,szof,(xdrproc_t) xdr_int)) ;
   return OK;
 }
 
@@ -390,10 +390,10 @@ int nsp_xdr_load_i(NspFile  *F, integer *ix)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_save_c(NspFile  *F, char c)
+int nsp_xdr_save_c(XDR *xdrs, char c)
 {
   szof = sizeof(char);
-  assertW( xdr_opaque(F->xdrs,&c,szof));
+  assertW( xdr_opaque(xdrs,&c,szof));
   return OK;
 }
 
@@ -404,10 +404,10 @@ int nsp_xdr_save_c(NspFile  *F, char c)
  * 
  * Return value: %OK or %FAIL
  **/
-int nsp_xdr_load_c(NspFile  *F, char *c)
+int nsp_xdr_load_c(XDR *xdrs, char *c)
 {
   szof = sizeof(char);
-  assertR( xdr_opaque(F->xdrs,c,szof));
+  assertR( xdr_opaque(xdrs,c,szof));
   return OK;
 }
 
@@ -421,13 +421,13 @@ int nsp_xdr_load_c(NspFile  *F, char *c)
  *
  * Return value: %OK or %FAIL
  **/
-int nsp_xdr_save_array_i(NspFile  *F, int *nx, int l)
+int nsp_xdr_save_array_i(XDR *xdrs, int *nx, int l)
 { 
   szof = sizeof(int) ;
   count = (int) l;
-  assertW( xdr_vector(F->xdrs,(char *) &count,(u_int)1,
+  assertW( xdr_vector(xdrs,(char *) &count,(u_int)1,
 		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
-  assertW( xdr_vector(F->xdrs, (char *)nx, count, szof,(xdrproc_t) xdr_int)) ;
+  assertW( xdr_vector(xdrs, (char *)nx, count, szof,(xdrproc_t) xdr_int)) ;
   return OK;
 }
 
@@ -440,13 +440,13 @@ int nsp_xdr_save_array_i(NspFile  *F, int *nx, int l)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_load_array_i(NspFile  *F, int *nx, int l)
+int nsp_xdr_load_array_i(XDR *xdrs, int *nx, int l)
 { 
   szof = sizeof(int) ;
-  assertR( xdr_vector(F->xdrs,(char *) &count,(u_int)1,
+  assertR( xdr_vector(xdrs,(char *) &count,(u_int)1,
 		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
   if ( count != (u_int) l ) return(FAIL);
-  assertR( xdr_vector(F->xdrs, (char *)nx, count, szof,(xdrproc_t) xdr_int)) ;
+  assertR( xdr_vector(xdrs, (char *)nx, count, szof,(xdrproc_t) xdr_int)) ;
   return OK;
 }
 
@@ -461,13 +461,13 @@ int nsp_xdr_load_array_i(NspFile  *F, int *nx, int l)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_save_array_d(NspFile  *F, double *nx, integer l)
+int nsp_xdr_save_array_d(XDR *xdrs, double *nx, integer l)
 {
   szof = sizeof(double) ;
   count = (int) l;
-  assertW( xdr_vector(F->xdrs,(char *) &count,(u_int)1,
+  assertW( xdr_vector(xdrs,(char *) &count,(u_int)1,
 		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
-  assertW( xdr_vector(F->xdrs,(char *)nx, count, szof,
+  assertW( xdr_vector(xdrs,(char *)nx, count, szof,
 		      (xdrproc_t) xdr_double)) ;
   return OK;
 }
@@ -482,12 +482,12 @@ int nsp_xdr_save_array_d(NspFile  *F, double *nx, integer l)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_load_array_d(NspFile  *F, double *nx, integer mn)
+int nsp_xdr_load_array_d(XDR *xdrs, double *nx, integer mn)
 {
   szof = sizeof(double) ;
-  assertR( xdr_vector(F->xdrs,(char *) &count,(u_int)1,(u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+  assertR( xdr_vector(xdrs,(char *) &count,(u_int)1,(u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
   if ( count != (u_int) mn ) return(FAIL);
-  assertR( xdr_vector(F->xdrs, (char *) nx, count, szof,(xdrproc_t) xdr_double)) ;
+  assertR( xdr_vector(xdrs, (char *) nx, count, szof,(xdrproc_t) xdr_double)) ;
   return OK;
 }
 
@@ -504,12 +504,12 @@ int nsp_xdr_load_array_d(NspFile  *F, double *nx, integer mn)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_save_string(NspFile  *F, char *str)
+int nsp_xdr_save_string(XDR *xdrs, char *str)
 {
   szof = (strlen(str)+1)*sizeof(char);
-  assertW( xdr_vector(F->xdrs,(char *) &szof,(u_int)1,
+  assertW( xdr_vector(xdrs,(char *) &szof,(u_int)1,
 		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
-  assertW( xdr_opaque(F->xdrs,str,szof));
+  assertW( xdr_opaque(xdrs,str,szof));
   return OK;
 }
 
@@ -522,16 +522,16 @@ int nsp_xdr_save_string(NspFile  *F, char *str)
  * Return value: 
  **/
 
-int nsp_xdr_load_string(NspFile  *F, char *buf, int buf_len)
+int nsp_xdr_load_string(XDR *xdrs, char *buf, int buf_len)
 {
-  assertR( xdr_vector(F->xdrs,(char *) &szof,(u_int)1,
+  assertR( xdr_vector(xdrs,(char *) &szof,(u_int)1,
 		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
   if ( szof > (u_int) buf_len ) 
     {
       Scierror("Error: Buffer too small (%d> %d) for reading a string\n",szof,buf_len);
       return FAIL;
     }
-  assertR( xdr_opaque(F->xdrs, buf ,szof));
+  assertR( xdr_opaque(xdrs, buf ,szof));
   return OK;
 }
 

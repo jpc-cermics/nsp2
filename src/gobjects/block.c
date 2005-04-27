@@ -221,8 +221,8 @@ static int block_neq(NspBlock *A, NspObject *B)
 
 static int block_xdr_save(NspFile  *F, NspBlock *M)
 {
-  if (nsp_xdr_save_i(F,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("block_xdr_save: to be implemented \n");
   return OK;
 }
@@ -235,7 +235,7 @@ static NspBlock  *block_xdr_load(NspFile  *F)
 {
   NspBlock *M=NULLBLOCK;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F,name,NAME_MAXL) == FAIL) return NULLBLOCK;
+  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLBLOCK;
   Scierror("block_xdr_load: to be implemented \n");
   return M;
 }
