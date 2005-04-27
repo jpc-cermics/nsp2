@@ -31,6 +31,8 @@ CC_OPTIONS = @CC_OPTIONS@ @GTKCFLAGS@ -I$(SCIDIR)/src/include
 CC_LDFLAGS = @CC_LDFLAGS@ 
 CC_PICFLAGS = @CC_PICFLAGS@
 
+# CC_OPTIONS with optimize removed if CC=gcc
+CC_OPTIONS1 = @CC_OPTIONS1@ @GTKCFLAGS@ -I$(SCIDIR)/src/include
 ##################
 # Fortran compiler
 # typically, for compiling use: FFLAGS = $(FC_OPTIONS)
@@ -41,6 +43,8 @@ FC_OPTIONS = @FC_OPTIONS@
 FC_LDFLAGS = @FC_LDFLAGS@
 FC_PICFLAGS = @FC_PICFLAGS@
 
+# FC_OPTIONS with optimize removed if FC=g77
+FC_OPTIONS1 = @FC_OPTIONS1@
 ########
 # Linker
 # typically, for linking: $(LD) -o $(PROGRAM) $(OBJS) $(LD_LDFLAGS)
