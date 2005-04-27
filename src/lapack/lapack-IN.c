@@ -169,9 +169,10 @@ static int int_det( Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *res,*A;
   char *mode = NULL,cmode ;
-  int_types T[] = {mat,new_opts,t_end} ;
+  int_types T[] = {matcopy,new_opts,t_end} ;
   nsp_option opts[] ={{ "mode",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
+  CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&A,&opts,&mode) == FAIL) return RET_BUG;
   cmode = ( opts[0].obj == NULLOBJ) ? 'd' : mode[0]; 
   if ( cmode != '\0' && cmode != 'd' ) 
@@ -188,18 +189,74 @@ static int int_det( Stack stack, int rhs, int opt, int lhs)
  * interface for nsp_spec: 
  */
 
+static int nsp_mat_is_symmetric(NspMatrix *A);
+
 static int int_spec( Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A,*d,*v;
   NspMatrix **hv=NULL;
-  int_types T[] = {mat,t_end} ;
+  int_types T[] = {matcopy,t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG;
-  CheckLhs(0,2);
-  if (lhs == 2) hv = &v;
-  if ( nsp_spec(A,&d,hv)== FAIL) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(d));
-  if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(v));
+  CheckLhs(0,3);
+  if ( nsp_mat_is_symmetric(A) == TRUE  ) 
+    {
+      char flag = (lhs == 2) ? 'V' : 'X';
+      if ( nsp_spec_sym(A,&d,flag)== FAIL) return RET_BUG;
+      if ( lhs <= 1) 
+	{
+	  MoveObj(stack,1,NSP_OBJECT(d));
+	}
+      else 
+	{
+	  NSP_OBJECT(A)->ret_pos = 1;
+	  MoveObj(stack,2,NSP_OBJECT(d));
+	}
+    }
+  else
+    {
+      if ( lhs == 2) hv = &v;
+      if ( nsp_spec(A,&d,hv)== FAIL) return RET_BUG;
+      if ( lhs <= 1) 
+	{
+	  MoveObj(stack,1,NSP_OBJECT(d));
+	}
+      else 
+	{
+	  MoveObj(stack,1,NSP_OBJECT(v));
+	  MoveObj(stack,2,NSP_OBJECT(d));
+	}
+    }
   return Max(lhs,1);
+}
+
+/* utility */
+
+static int nsp_mat_is_symmetric(NspMatrix *A)
+{
+  int i,j;
+  if ( A->m != A->n ) return FALSE;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i=0 ; i < A->m ; i++)
+	for ( j=0 ; j < i ; j++)
+	  {
+	    double dx= Abs(A->R[i+j*A->m] - A->R[j+i*A->m]);
+	    if ( A->R[i+j*A->m] + dx > A->R[i+j*A->m]) 
+	      return FALSE;
+	  }
+    }
+  else 
+    {
+      for ( i=0 ; i < A->m ; i++)
+	for ( j=0 ; j < i ; j++)
+	  {
+	    double dxr= Abs(A->I[i+j*A->m].r - A->I[j+i*A->m].r);
+	    double dxi= Abs(A->I[i+j*A->m].i - A->I[j+i*A->m].i);
+	    if ( A->I[i+j*A->m].r + dxr > A->I[i+j*A->m].r) return FALSE;
+	    if ( A->I[i+j*A->m].i + dxi > A->I[i+j*A->m].i) return FALSE;
+	  }
+    }
+  return TRUE;
 }
 
 /*
@@ -228,8 +285,15 @@ static int int_rcond( Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {mat,t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG;
   CheckLhs(0,1);
-  if ( nsp_rcond(A,&rcond)== FAIL) return RET_BUG;
-  if ( nsp_move_double(stack,1,(double)rcond )== FAIL) return RET_BUG;
+  if ( A->mn == 0 ) 
+    {
+      NSP_OBJECT(A)->ret_pos = 1;
+    }
+  else 
+    {
+      if ( nsp_rcond(A,&rcond)== FAIL) return RET_BUG;
+      if ( nsp_move_double(stack,1,(double)rcond )== FAIL) return RET_BUG;
+    }
   return Max(lhs,1);
 }
 
@@ -345,7 +409,7 @@ static OpTab Lapack_func[] = {
   {"det",int_det},
   {"spec",int_spec},
   {"inv",int_inv},
-  {"cholewsky",int_cholewsky},
+  {"chol",int_cholewsky},
   {"rcond",int_rcond},
   {"norm",int_norm},
   {"lu",int_lu},
