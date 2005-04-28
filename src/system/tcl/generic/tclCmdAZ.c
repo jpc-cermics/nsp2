@@ -893,7 +893,8 @@ int int_regexp(Stack stack,int rhs,int opt,int lhs)
   CheckLhs(1,2);
 
   
-  /** First argument must be a string in regexpOptions **/
+  /* extra arguments must be a string in regexpOptions 
+   */
   for ( i = 3 ; i <= rhs ; i++) 
     {
       if ((index = GetStringInArray(stack,i,regexpOptions,0)) == -1 ) 
@@ -913,6 +914,11 @@ int int_regexp(Stack stack,int rhs,int opt,int lhs)
    */
     
   if (noCase) {
+
+    /* FIXME: here me must eventually copy pattern and 
+     * string before changing them
+     */
+
     for (p = pattern; *p != 0; p++) {
       if (isupper(UCHAR(*p))) {
 	*p = (char)tolower(UCHAR(*p));
@@ -936,25 +942,41 @@ int int_regexp(Stack stack,int rhs,int opt,int lhs)
       NspObject *OM;
       if ( match == 0) 
 	 {
-	   /** XXXXX : remettre ici un VOID XXXXX **/
+	   /* XXXXX : remettre ici un VOID XXXXX */
 	   if ( (OM=nsp_create_empty_matrix_object("")) == NULLOBJ) return RET_BUG;   
 	   MoveObj(stack,2,OM);
 	 }
       else 
 	{
-	  /* A Finir : Il faut ici renvoyer XXXXX 
-	   * une matrice avec les [start,end] ou les sous chaines 
+	  NspMatrix *A;
+	  int count=0; 
+	  /* Note that only the first occurence will be returned 
+	   *
 	   */
 	  for (i = 0; i < NSUBEXP ; i++) 
 	    {
 	      Tcl_RegExpRange(regExpr, i, &start, &end);
-	      if ( start != NULL) 
-		fprintf(stderr,"Range : %d %d \n",(int)(start - string),
-			(int)(end - string - 1));
+	      if ( start != NULL) count++;
 	    }
+	  if ((A= nsp_matrix_create(NVOID,'r',count,2))== NULLMAT) 
+	    return RET_BUG;   
+	  count=0;
+	  for (i = 0; i < NSUBEXP ; i++) 
+	    {
+	      Tcl_RegExpRange(regExpr, i, &start, &end);
+	      if ( start != NULL) 
+		{
+		  A->R[count]= (double)(start - string +1);
+		  A->R[count+A->m]= (double)(end - string);
+		  count++;
+		}
+	      /* fprintf(stderr,"Range : %d %d \n",(int)(start - string),
+		 (int)(end - string - 1)); */
+	    }
+	  MoveObj(stack,2,NSP_OBJECT(A));
 	}
     }
-  return lhs;
+  return Max(lhs,1);
 }
 
 
