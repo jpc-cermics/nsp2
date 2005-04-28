@@ -579,6 +579,11 @@ static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 	if (( *V =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
       }
     if (( *S =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+    if ( Rank != NULL) 
+      {
+	if ((*Rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
+	(*Rank)->R[0] = 0.0;
+      }
     return OK ; 
   }
 
@@ -711,6 +716,11 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 	if (( *V =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
       }
     if (( *S =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
+    if ( Rank != NULL) 
+      {
+	if ((*Rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
+	(*Rank)->R[0] = 0.0;
+      }
     return OK ; 
   }
 
