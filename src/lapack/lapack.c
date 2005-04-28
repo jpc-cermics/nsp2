@@ -2814,18 +2814,18 @@ int intzgges(NspMatrix *A,NspMatrix *B,
 }
 
 
-
-/* FIXME: 
+/* OK 
  * [U,H]=hess(A) 
  * forme de hessenberg 
- * H is returned in A 
- * U is computed if requested 
+ *   H is returned in A 
+ *   U is computed if requested 
  */
 
 static int intzgehrd(NspMatrix *A, NspMatrix **U);
 static int intdgehrd(NspMatrix *A, NspMatrix **U);
 
-int idl_hess(NspMatrix *A,NspMatrix **U) {
+int nsp_hess(NspMatrix *A,NspMatrix **U) 
+{
   if ( A->rc_type == 'r') 
     return intdgehrd(A,U);
   else 

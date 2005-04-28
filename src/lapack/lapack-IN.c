@@ -424,6 +424,35 @@ static int int_balanc( Stack stack, int rhs, int opt, int lhs)
 
 
 
+/* 
+ * [U,H]=hess(A) 
+ * interface for hessenberg  form
+ *   H is returned in A 
+ *   U is computed if requested 
+ */
+
+static int int_hess( Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A,*U,**hU=NULL;
+  CheckRhs(1,1);
+  CheckLhs(0,2);
+  if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
+  if ( lhs == 2) hU = &U;
+  if ( nsp_hess(A,hU) == FAIL) return RET_BUG;
+  if ( lhs < 2) 
+    NSP_OBJECT(A)->ret_pos = 1;
+  else 
+    {
+      NthObj(2) = NSP_OBJECT(A);
+      NSP_OBJECT(A)->ret_pos = 2;
+      NthObj(1) = NSP_OBJECT(U);
+      NthObj(1)->ret_pos = 1;
+    }
+  return Max(lhs,1);
+}
+
+
+
 
 /*
  * interface for testing dlamch
@@ -446,11 +475,6 @@ static int int_dlamch( Stack stack, int rhs, int opt, int lhs)
   
 }
 
-
-
-
-
-
 /*
  * The Interface for basic matrices operation 
  */
@@ -468,6 +492,7 @@ static OpTab Lapack_func[] = {
   {"norm",int_norm},
   {"lu",int_lu},
   {"balanc",int_balanc},
+  {"hess",int_hess},
   {(char *) 0, NULL}
 };
 
