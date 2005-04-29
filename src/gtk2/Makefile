@@ -7,7 +7,7 @@ LIBRARY = nsp.a
 
 # gobject.o
 
-OBJSC = gboxed.o gobject.o  gdkatom.o gtk.o atk.o pango.o gdk.o pangoattribute.o to_be_done.o to_be_done1.o gpointer.o
+OBJSC = gboxed.o gobject.o  gdkatom.o gtk.o atk.o pango.o gdk.o pangoattribute.o to_be_done.o to_be_done1.o gpointer.o strings.o
 
 OBJSF = 
 
