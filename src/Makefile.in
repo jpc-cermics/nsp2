@@ -11,6 +11,8 @@ ALLSCIDIRS = zcalelm objects interp functions gtk2 \
 	librand libcdf libmaxplus libinteg libapprox lapack \
 	libblas liblapack 
 
+# rajouter @FFTPACK@ qui est non vide si fftpack est a compiler 
+
 SUBDIRS = $(DLD_SUBDIR) $(SCIDIRS) 
 ALLSUBDIRS = $(DLD_SUBDIR) $(ALLSCIDIRS) 
 

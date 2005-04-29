@@ -1596,6 +1596,51 @@ if test "xx" = yes; then
  fi 
 fi
 
+#################
+## fftw 
+## try first to use pkg-config 
+#################
+
+FFTW3_LIBS=
+FFTPACK=''
+
+AC_ARG_WITH(fftw3, 
+  [  --without-fftw3          use included fftpack instead of installed fftw3],
+  with_fftw3=$withval, with_fftw3=yes)
+
+if test "$with_fftw3" = "yes"; then
+  if test "x$PKG_CONFIG" == x; then
+    # first try to use pkg-config 
+    AC_MSG_CHECKING([if fftw3 exists ])
+    if pkg-config --exists fftw3; then
+       AC_MSG_RESULT([yes])
+       AC_DEFINE(WITH_FFTW3)
+       GTK_PKGS="$GTK_PKGS fftw3"
+       GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
+       GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+    else 
+       AC_MSG_WARN([Could not find the fftw3 package.],)
+       AC_MSG_WARN([fftpack will be used],)
+       with_fftw3=no
+    fi
+  else 
+    # direct try 
+   have_fftw_header=no
+   AC_CHECK_HEADERS(fftw3.h, [have_fftw_header=yes; break])
+   if test "$have_fftw_header" = yes; then
+    AC_CHECK_LIB(fftw3,fftw_plan_dft_1d, FFTW3_LIBS="-lfftw3")
+   else
+    with_fftw3=no
+   fi
+   if test "$with_fftw3" = yes; then
+    FFT_DIR=''
+    echo $FFTW3_LIBS
+   else 
+    FFTPACK='libfftpack'
+   fi
+  fi
+fi
+
 #########################
 ## substituting variables
 #########################
@@ -1705,7 +1750,8 @@ AC_SUBST(BLAS_LIBS)
 AC_SUBST(LAPACK_LIBS)
 AC_SUBST(BLAS_LOCAL)
 AC_SUBST(LAPACK_LOCAL)
-
+AC_SUBST(FFTW3_LIBS)
+AC_SUBST(FFTPACK)
 
 AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile ) 
 

@@ -63,6 +63,9 @@
 /* Define if use maxplus lib  */
 #undef WITH_UMFPACK
 
+/* Define if use fftw3 lib  */
+#undef WITH_FFTW3
+
 /* Define if sizeof(int*)==sizeof(int) */
 #undef POINTER_INT 
 
