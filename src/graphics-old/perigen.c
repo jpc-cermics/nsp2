@@ -16,7 +16,8 @@
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
 
-static void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, double *zmax,double *coeff,
+static void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, 
+			     double *zmax,double *coeff,
 			     const int *colminmax,const double *zminmax,const double z[],int zn);
 
 static driver_fill_grid_rectangles fill_grid_rectangles_gen;
