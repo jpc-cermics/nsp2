@@ -101,22 +101,52 @@ int nsp_message_gtk1(char *message,char **buttons,int n_buttons)
  * message with just an OK button 
  */  
 
+#define DEBUG_STR(x) 
+/* #define DEBUG_STR(x) sciprint(x) */
+  
 char *sci_convert_to_utf8(char *str, int *alloc)
-{
-  gchar *msg_utf8 =NULL;
-  G_CONST_RETURN char *charset;
-  if (g_get_charset (&charset)) 
+{ 
+  gchar *str_utf8 = str;
+  *alloc = FALSE;
+  if ( g_utf8_validate(str,-1,NULL) == TRUE ) 
     {
-      *alloc = FALSE; 
-      msg_utf8 = str; 
+      DEBUG_STR("xname: str is utf8\r\n");
     }
-  else 
+  else
     {
-      msg_utf8= g_locale_to_utf8 (str, -1, NULL, NULL, NULL);
-      *alloc = TRUE; 
+      if (g_get_charset (NULL)) 
+	{
+	  DEBUG_STR("xname: gtk_window_set_title is used with a non utf8 string and your locale is UTF8\r\n");
+	  DEBUG_STR("       assuming that your string is ISO-8859-15\r\n");
+	  str_utf8 = g_convert (str, -1,"UTF8","ISO-8859-15", NULL, NULL, NULL);
+	  if ( str_utf8 != NULL) 
+	    {
+	      *alloc = TRUE; 
+	    }
+	  else 
+	    {
+	      DEBUG_STR("xname: convertion to UTF-8 failed\r\n");
+	      str_utf8 = str;
+	    }
+	}
+      else 
+	{
+	  str_utf8 =g_locale_to_utf8 (str, -1, NULL, NULL, NULL);
+	  DEBUG_STR("xname: from locale to UTF8\r\n");
+	  if ( str_utf8 != NULL)
+	    {
+	      *alloc = TRUE; 
+	    }
+	  else 
+	    {
+	      DEBUG_STR("xname: convertion to UTF-8 failed\r\n");
+	      str_utf8 = str;
+	    }
+	}
     }
-  return msg_utf8; 
+  return str_utf8;
 }
+
 
 int nsp_message_modeless_(char *message)
 {

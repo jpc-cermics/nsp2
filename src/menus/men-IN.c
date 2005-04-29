@@ -1,7 +1,24 @@
- /*-------------------------------------------------------------------
- * This Software is (Copyright ENPC 1998-2003) 
- * Jean-Philippe Chancelier Enpc/Cermics
- *-------------------------------------------------------------------*/
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * A set of predefined gtk menus.
+ *
+ */
 
 #include <math.h>
 #include <stdio.h>
@@ -18,6 +35,69 @@
  * Now the interfaced function for basic menus 
  ***************************************************/
 
+/* get an utf8 string matrix 
+ * an eventual copy is performed if the string is 
+ * to be converted.
+ */
+
+/* FIXME */
+extern int nsp_smatrix_to_utf8(NspSMatrix *A);
+extern int nsp_smatrix_utf8_validate(NspSMatrix *A);
+
+
+static NspSMatrix *GetSMatUtf8(Stack stack,int pos)
+{
+  NspSMatrix *Sm;
+  if ((Sm = GetSMat(stack,pos)) == NULLSMAT) return NULLSMAT;
+  if ( nsp_smatrix_utf8_validate(Sm) == FALSE )
+    {
+      /* need to copy first */
+      if ((Sm = GetSMatCopy(stack,pos)) == NULLSMAT) return NULLSMAT;
+      if ( nsp_smatrix_to_utf8(Sm) == FAIL) 
+	{
+	  Scierror("%s: failed to convert %s to utf8\n",stack.fname,ArgPosition(pos));
+	  return NULLSMAT;
+	}
+    }
+  return Sm;
+}
+
+/* get an utf8 string 
+ * an eventual copy is performed if the string is 
+ * to be converted.
+ */
+
+static char *GetStringUtf8(Stack stack,int pos)
+{
+  NspSMatrix *Sm;
+  if ((Sm = GetSMatUtf8(stack,pos)) == NULLSMAT) return NULL;
+  if ( Sm->mn != 1 ) 
+    {
+      Scierror("%s: %s should be a string\n",stack.fname,ArgPosition(pos));
+      return NULL;
+    }
+  return Sm->S[0];
+}
+
+/* get a copy of a string matrix converted to utf8 
+ */
+
+static NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos)
+{
+  NspSMatrix *Sm;
+  if ((Sm = GetSMatCopy(stack,pos)) == NULLSMAT) return NULLSMAT;
+  if ( nsp_smatrix_utf8_validate(Sm) == FALSE )
+    {
+      if ( nsp_smatrix_to_utf8(Sm) == FAIL) 
+	{
+	  Scierror("%s: failed to convert %s to utf8\n",stack.fname,ArgPosition(pos));
+	  return NULLSMAT;
+	}
+    }
+  return Sm;
+}
+
+
 int int_x_message(Stack stack, int rhs, int opt, int lhs)
 {
   integer nrep;
@@ -25,10 +105,10 @@ int int_x_message(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *Buttons=NULLSMAT;
   CheckRhs(1,2);
   CheckLhs(0,1);
-  if ((Message = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Message = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
   if ( rhs == 2) 
     {
-      if ((Buttons = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
+      if ((Buttons = GetSMatUtf8(stack,2)) == NULLSMAT) return RET_BUG;
       if ( Buttons->mn != 1 &&Buttons->mn != 2) 
 	{
 	  Scierror("%s: second argument should be of size 1 or 2 \n",stack.fname);
@@ -54,10 +134,10 @@ int int_x_message_modeless(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *Buttons=NULLSMAT;
   CheckRhs(1,2);
   CheckLhs(0,1);
-  if ((Message = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Message = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
   if ( rhs == 2) 
     {
-      if ((Buttons = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
+      if ((Buttons = GetSMatUtf8(stack,2)) == NULLSMAT) return RET_BUG;
       if ( Buttons->mn != 1 ) 
 	{
 	  Scierror("%s: second argument should be of size 1 \n",stack.fname);
@@ -81,11 +161,11 @@ int int_x_choose(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *button = NULL;
   CheckRhs(2,3);
   CheckLhs(0,1);
-  if ((Items = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((Title = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
+  if ((Items = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Title = GetSMatUtf8(stack,2)) == NULLSMAT) return RET_BUG;
   if ( rhs == 3 ) 
     {
-      if ((button = GetSMat(stack,3)) == NULLSMAT) return RET_BUG;
+      if ((button = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
     }
   if ( nsp_choose(Items,Title,button,&nrep) == FAIL) return RET_BUG;
   if (( O1 =nsp_create_object_from_double(NVOID,nrep)) == NULLOBJ ) return RET_BUG;
@@ -105,8 +185,8 @@ int int_x_dialog(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *Title;
   CheckRhs(2,2);
   CheckLhs(0,1);
-  if ((Title = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((Init  = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
+  if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Init  = GetSMatUtf8(stack,2)) == NULLSMAT) return RET_BUG;
   rep= nsp_dialog(Title,Init,&O1);
   if (rep == FAIL)
     {
@@ -134,11 +214,11 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *Labels_v, *Labels_h,*Init_matrix;
   CheckRhs(3,4);
   CheckLhs(0,1);
-  if ((Title = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
   if ( rhs == 3 ) 
     {
-      if ((Labels  = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-      if ((Init_values  = GetSMatCopy(stack,3)) == NULLSMAT) return RET_BUG;
+      if ((Labels  = GetSMatUtf8(stack,2)) == NULLSMAT) return RET_BUG;
+      if ((Init_values  = GetSMatCopyUtf8(stack,3)) == NULLSMAT) return RET_BUG;
       Init_values->m =  Init_values->mn; 
       Init_values->n =  1;
       if ( Labels->mn != Init_values->mn ) 
@@ -165,9 +245,9 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      if ((Labels_v  = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-      if ((Labels_h  = GetSMat(stack,3)) == NULLSMAT) return RET_BUG;
-      if ((Init_matrix  = GetSMatCopy(stack,4)) == NULLSMAT) return RET_BUG;
+      if ((Labels_v  = GetSMatUtf8(stack,2)) == NULLSMAT) return RET_BUG;
+      if ((Labels_h  = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
+      if ((Init_matrix  = GetSMatCopyUtf8(stack,4)) == NULLSMAT) return RET_BUG;
       if ( nsp_matrix_dialog(Title,Labels_v,Labels_h,Init_matrix,&cancel) == FAIL) return RET_BUG;
       if ( cancel == 1 ) 
 	{
@@ -206,7 +286,7 @@ int int_set_unset_menu(Stack stack, int rhs, int opt, int lhs, men_f *F)
     {
       /* setmenu(gwin,button [,nsub]) */
       if ( GetScalarInt(stack,1,&gwin) == FAIL) return RET_BUG;
-      if ((button = GetString(stack,2)) == (char*)0) return RET_BUG;
+      if ((button = GetStringUtf8(stack,2)) == (char*)0) return RET_BUG;
       if ( rhs == 3 ) 
 	{
 	  if ( GetScalarInt(stack,3,&nsub) == FAIL) return RET_BUG;
@@ -214,7 +294,7 @@ int int_set_unset_menu(Stack stack, int rhs, int opt, int lhs, men_f *F)
     }
   else 
     {
-      if ((button = GetString(stack,1)) == (char*)0) return RET_BUG;
+      if ((button = GetStringUtf8(stack,1)) == (char*)0) return RET_BUG;
       if ( rhs == 2 ) 
 	{
 	  if ( GetScalarInt(stack,2,&nsub) == FAIL) return RET_BUG;
@@ -291,15 +371,15 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
   if (IsMatObj(stack,1)) 
     {
       if ( GetScalarInt(stack,1,&gwin) == FAIL) return RET_BUG;
-      if ((button = GetString(stack,2)) == (char*)0) return RET_BUG;
+      if ((button = GetStringUtf8(stack,2)) == (char*)0) return RET_BUG;
       if ( rhs >= 3 && IsSMatObj(stack,3))
 	{
-	  if ((SubMenus = GetSMat(stack,3))== NULLSMAT) return RET_BUG;
+	  if ((SubMenus = GetSMatUtf8(stack,3))== NULLSMAT) return RET_BUG;
 	}
     }
   else 
     {
-      if ((button= GetString(stack,1)) == (char*)0) return RET_BUG;
+      if ((button= GetStringUtf8(stack,1)) == (char*)0) return RET_BUG;
       if ( nsp_is_gtk_window() == FALSE) 
 	{
 	  /* we are in -nw mod we ignore add menu  ....*/ 
@@ -307,7 +387,7 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
 	}
       if ( rhs >= 2 && IsSMatObj(stack,2))
 	{
-	  if ((SubMenus = GetSMat(stack,2))== NULLSMAT) return RET_BUG;
+	  if ((SubMenus = GetSMatUtf8(stack,2))== NULLSMAT) return RET_BUG;
 	}
     }
   
@@ -354,11 +434,11 @@ int int_delmenu(Stack stack, int rhs, int opt, int lhs)
     {
       /* setmenu(gwin,button [,nsub]) */
       if ( GetScalarInt(stack,1,&gwin) == FAIL) return RET_BUG;
-      if ((button = GetString(stack,2)) == (char*)0) return RET_BUG;
+      if ((button = GetStringUtf8(stack,2)) == (char*)0) return RET_BUG;
     }
   else 
     {
-      if ((button = GetString(stack,1)) == (char*)0) return RET_BUG;
+      if ((button = GetStringUtf8(stack,1)) == (char*)0) return RET_BUG;
     }
   nsp_menus_delete_button(&gwin,button);
   return 0;
@@ -445,6 +525,11 @@ static int check_sub_list(Stack stack,NspList *L,int count,NspSMatrix **Item,int
       Scierror("%s: list item(%d,1) is not a string \n",stack.fname,count);
       return FAIL;
     }
+  /* since we are working on a copy we can convert on place */
+  if (  nsp_smatrix_to_utf8(*Item) == FAIL) 
+    {
+      Scierror("%s: list item(%d,1) conversion to utf8 failed\n",stack.fname,count);
+    }
   Loc = Loc->next ; 
   /* a scalar */ 
   if ( Loc == NULLCELL) 
@@ -486,6 +571,12 @@ static int check_sub_list(Stack stack,NspList *L,int count,NspSMatrix **Item,int
       return FAIL;
     }
   *values = (NspSMatrix *) Loc->O; 
+  /* since we are working on a copy we can convert on place */
+  if (  nsp_smatrix_to_utf8(*values) == FAIL) 
+    {
+      Scierror("%s: list item(%d,1) conversion to utf8 failed\n",stack.fname,count);
+    }
+
   return OK;
 }
 
@@ -502,8 +593,8 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
   String *title; 
   CheckRhs(2,2);
   CheckLhs(0,1);
-  if ((Title = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((ListItems  = GetList(stack,2)) == NULLLIST) return RET_BUG;
+  if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((ListItems  = GetListCopy(stack,2)) == NULLLIST) return RET_BUG;
   if ((title =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1))== NULL) return RET_BUG;
   /* walk throught list and build arguments */
   m =nsp_list_length(ListItems);

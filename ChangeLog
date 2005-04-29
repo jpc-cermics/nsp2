@@ -1,3 +1,11 @@
+2005-04-29    <jpc@cermics.enpc.fr>
+
+	* src/menus:
+	* src/graphics:
+	* src/gtk2/strings.c 
+	utf8 conversion for a set of prmitives 
+	x_message etc...
+	
 2005-04-27    <jpc@cermics.enpc.fr>
 
 	* src/* : nsp_xdr_XXX prototype slighly changed
