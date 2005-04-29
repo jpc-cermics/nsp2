@@ -211,7 +211,7 @@ static int bmatrix_neq(NspBMatrix *A, NspObject *B)
 
 /*
  * Mat == TRUE ? 
- *  if Mat != [] and all the elements of Mat are != 0
+ *  if Mat != [] and all the elements of Mat are TRUE
  */
 
 static int bmatrix_is_true(NspBMatrix *A)
@@ -1168,6 +1168,8 @@ static OpTab BMatrix_func[]={
   {"addrows_b_m",int_bmatrix_addrows},
   {"and_b",int_bmatrix_and1},
   {"and_b_b",int_bmatrix_and},
+  {"seq_and_b",int_bmatrix_and1},
+  {"seq_and_b_b",int_bmatrix_and},
   {"b2m",int_bmatrix_b2m},
   {"concatd_b_b",int_bmatrix_concatd},
   {"concatr_b_b",int_bmatrix_concatr},
@@ -1192,6 +1194,8 @@ static OpTab BMatrix_func[]={
   {"not_b",int_bmatrix_not},
   {"or_b",int_bmatrix_or1},
   {"or_b_b",int_bmatrix_or},
+  {"seq_or_b",int_bmatrix_or1},
+  {"seq_or_b_b",int_bmatrix_or},
   {"redim_b",int_bmatrix_redim},
   {"resize_b",int_bmatrix_resize},
   {"setrc_b",int_bmatrix_setrc},
