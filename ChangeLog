@@ -1,5 +1,12 @@
 2005-04-29    <jpc@cermics.enpc.fr>
 
+	* src/interp/*:
+	* src/object/MatObj.c:
+	    && and || added  
+	    same function as & and | except 
+	    that when the first argument is scalar 
+	    the evaluation is sequential. 
+		
 	* src/menus:
 	* src/graphics:
 	* src/gtk2/strings.c 
