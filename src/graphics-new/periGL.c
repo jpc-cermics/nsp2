@@ -265,9 +265,14 @@ void xpause(int sec_time)
  * Changes the graphic window popupname 
  *-----------------------------------------------------------------*/
 
-void Setpopupname(BCG *Xgc,char *string)
+/* FIXME */
+extern char * nsp_string_to_utf8( char *str);
+
+static void Setpopupname(BCG *Xgc,char *string)
 { 
-  gtk_window_set_title(GTK_WINDOW(Xgc->private->window),string);
+  char *string_utf8=  nsp_string_to_utf8(string);
+  gtk_window_set_title(GTK_WINDOW(Xgc->private->window),string_utf8);
+  if ( string_utf8 != string ) g_free(string_utf8);
 }
 
 /* appelle ds Xcall.c */
