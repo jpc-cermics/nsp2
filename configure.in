@@ -1633,8 +1633,7 @@ if test "$with_fftw3" = "yes"; then
     with_fftw3=no
    fi
    if test "$with_fftw3" = yes; then
-    FFT_DIR=''
-    echo $FFTW3_LIBS
+    FFTPACK=
    else 
     FFTPACK='libfftpack'
    fi

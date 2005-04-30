@@ -96,6 +96,11 @@
 #define MOINS   ((((int) '-') << 7) + (int) '-' )
 #define NOTCODE 0
 
+/* and or sequential version */
+
+#define SEQAND   ((((int) '&') << 7) + (int) '&' )
+#define SEQOR    ((((int) '|') << 7) + (int) '|' )
+
 /******************************************
  *  SPECIAL code used in internal list coding
  ******************************************/
