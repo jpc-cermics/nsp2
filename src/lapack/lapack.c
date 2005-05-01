@@ -1947,13 +1947,10 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
  *   we could also use dgelss
  */
 
-static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag); 
-static int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag); 
+static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond);
+static int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond);
 
-/* flag = 'n' for minimize Norm */ 
-/* flag = 'z' for zero setting  */
-
-NspMatrix *nsp_lsq(NspMatrix *A,NspMatrix *B,char flag)
+NspMatrix *nsp_lsq(NspMatrix *A,NspMatrix *B)
 {
   if (( B =nsp_matrix_copy(B) )== NULLMAT) return NULLMAT;
   if (( A =nsp_matrix_copy(A) )== NULLMAT) return NULLMAT;
@@ -1962,13 +1959,13 @@ NspMatrix *nsp_lsq(NspMatrix *A,NspMatrix *B,char flag)
       if ( B->rc_type == 'r') 
 	{
 	  /* A real, b real */
-	  if ( intdgelsy(A,B,NULL,NULL,flag) == FAIL) return NULLMAT; 
+	  if ( intdgelsy(A,B,NULL,NULL) == FAIL) return NULLMAT; 
 	}
       else 
 	{
 	  /* A real, b complex */
 	  if (nsp_mat_complexify(A,0.0) == FAIL ) return NULLMAT;
-	  if ( intzgelsy(A,B,NULL,NULL,flag) == FAIL) return NULLMAT; 
+	  if ( intzgelsy(A,B,NULL,NULL) == FAIL) return NULLMAT; 
 	}
     } 
   else
@@ -1977,12 +1974,12 @@ NspMatrix *nsp_lsq(NspMatrix *A,NspMatrix *B,char flag)
 	{
 	  /* A complex, B real */
 	  if (nsp_mat_complexify(B,0.0) == FAIL ) return NULLMAT;
-	  if ( intzgelsy(A,B,NULL,NULL,flag) == FAIL) return NULLMAT; 
+	  if ( intzgelsy(A,B,NULL,NULL) == FAIL) return NULLMAT; 
 	}
       else 
 	{
 	  /* A complex, b complex */
-	  if ( intzgelsy(A,B,NULL,NULL,flag) == FAIL) return NULLMAT; 
+	  if ( intzgelsy(A,B,NULL,NULL) == FAIL) return NULLMAT; 
 	}
     }
   return B;
@@ -1993,7 +1990,7 @@ NspMatrix *nsp_lsq(NspMatrix *A,NspMatrix *B,char flag)
  * result is returned in B which is resized if necessary.
  */
 
-static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag)
+static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond)
 {
   double Rcond,eps;
   NspMatrix *jpvt,*dwork;
@@ -2025,30 +2022,20 @@ static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
   
   if ( n > m )
     {
-      /* now B->m is Max(m,n) */
       if (nsp_matrix_add_rows(B,n-m) == FAIL) return(FAIL);
     }
 
-  /* jpct: int matrix */ 
+  /* jpvt: int matrix */ 
   if (( jpvt =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
   Ijpvt = (int *) jpvt->R; 
   for (i = 0 ; i < n; ++i) Ijpvt[i]=0;
 
   /* the min workspace */ 
   lworkMin = Max(Min(m,n) + n*3 + 1,2*Min(m,n) + nrhs);
-  if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
 
-  if ( flag == 'n' ) 
-    C2F(dgelsy)(&m, &n, &nrhs,A->R, &m,B->R,&B->m,Ijpvt,&Rcond,&irank,
-		dwork->R,&lworkMin, &info);
-  else 
-    {
-      /*
-	XXXX seams not in lapack any more 
-	C2F(dgelsy1)(&m, &n, &nrhs,A->R, &m,B->R,&B->m,Ijpvt,&Rcond,&irank,
-	dwork->R,&lworkMin, &info);
-      */
-    }
+  if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
+  C2F(dgelsy)(&m, &n, &nrhs,A->R, &m,B->R,&B->m,Ijpvt,&Rcond,&irank,
+	      dwork->R,&lworkMin, &info);
       
   if (info != 0) {
     Scierror("Error: computation failed in dgelsy\n");
@@ -2065,7 +2052,6 @@ static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
       for ( i = n+1; i <= m ; i++) dwork->R[i-(n+1)]=i;
       if (nsp_matrix_delete_rows(B,dwork) == FAIL) return FAIL; 
     }
-
   if ( rank != NULL)
     {
       if (( *rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
@@ -2076,7 +2062,7 @@ static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
 } 
 
 
-int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag)
+int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond)
 {
   double Rcond,eps;
   NspMatrix *jpvt,*dwork,*rwork;
@@ -2128,16 +2114,8 @@ int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag
   lworkMin = Min(m,n) + Max(ix1,ix2);
   if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
 
-  if ( flag == 'n' ) 
-    C2F(zgelsy)(&m, &n, &nrhs,A->I, &m, B->I,&B->m,Ijpvt,&Rcond,&irank,
-		dwork->I, &lworkMin, rwork->R, &info);
-  else
-    {
-      /* XXXX not any more in lapack 
-	 C2F(zgelsy1)(&m, &n, &nrhs,A->I, &m, B->I,&B->m,Ijpvt,&Rcond,&irank,
-	 dwork->I, &lworkMin, rwork->R, &info);
-      */
-    }
+  C2F(zgelsy)(&m, &n, &nrhs,A->I, &m, B->I,&B->m,Ijpvt,&Rcond,&irank,
+	      dwork->I, &lworkMin, rwork->R, &info);
       
   if (info != 0) {
     Scierror("Error: computation failed in zgelsy\n");
@@ -2163,7 +2141,6 @@ int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,char flag
     }
 
   return OK ;
-  
 }
 
 

@@ -2,7 +2,7 @@
 #define NSP_LAPACK_LIB
 
 extern int nsp_qr(NspMatrix *A,NspMatrix **q,NspMatrix **r,NspMatrix **rank,NspMatrix **E,double *tol,char mode);
-extern NspMatrix *nsp_lsq(NspMatrix *A,NspMatrix *B,char flag);
+extern NspMatrix *nsp_lsq(NspMatrix *A,NspMatrix *B);
 extern double C2F(dlamch)(char *,int );
 extern double cdf_dlamch(char *,int );
 extern NspMatrix * nsp_det(NspMatrix *A,char mode);

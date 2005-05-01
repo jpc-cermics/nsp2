@@ -84,6 +84,9 @@ extern  sci_interface  ClassD_Interf ;extern  interface_info  ClassD_Interf_Info
 extern  sci_interface  Gtk_Interf ;extern  interface_info  Gtk_Interf_Info ;
 #endif 
 
+extern  sci_interface  Cells_Interf ;extern  interface_info  Cells_Interf_Info ;
+
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -134,6 +137,7 @@ InterfTab Interfaces[]={
 #ifdef WITH_MAXPLUSLIB
   {Maxplus_Interf, Maxplus_Interf_Info},
 #endif 
+  {Cells_Interf, Cells_Interf_Info},
   {NULL,NULL}
 }; 
 

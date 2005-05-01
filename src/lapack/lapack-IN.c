@@ -78,22 +78,12 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
 
 static int int_lsq( Stack stack, int rhs, int opt, int lhs)
 { 
-  char *mode = NULL,cmode ;
   NspMatrix *A,*B;
   NspMatrix *Res;
-  int_types T[] = {mat,mat,new_opts,t_end} ;
-  nsp_option opts[] ={{ "mode",string,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-  if ( GetArgs(stack,rhs,opt,T,&A,&B,&opts,&mode) == FAIL) return RET_BUG;
-
-  cmode = ( opts[0].obj == NULLOBJ) ? 'n' : mode[0]; 
-  if ( cmode != 'n' && cmode != 'z' ) 
-    {
-      Scierror("%s: mode should be 'n' or 'z' \n",stack.fname);
-      return RET_BUG;
-    }
+  int_types T[] = {mat,mat,t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&A,&B) == FAIL) return RET_BUG;
   CheckLhs(1,1);
-  if ((Res= nsp_lsq(A,B,cmode))== NULLMAT) return RET_BUG;
+  if ((Res= nsp_lsq(A,B))== NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(Res));
   return 1;
 }
