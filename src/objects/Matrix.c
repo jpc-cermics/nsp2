@@ -882,9 +882,9 @@ NspMatrix* nsp_matrix_concat_down(const NspMatrix *A,const NspMatrix *B)
       for ( j = 0 ; j < A->n ; j++ ) 
  	{
 	  /*
- 	  C2F(dcopy) (&A->m,A->R+j*A->m,&inc,Loc->R+j*(Loc->m),&inc);
- 	  C2F(dcopy) (&B->m,B->R+j*B->m,&inc,Loc->R+j*(Loc->m)+A->m,&inc);
-	  */
+	   * C2F(dcopy) (&A->m,A->R+j*A->m,&inc,Loc->R+j*(Loc->m),&inc);
+	   * C2F(dcopy) (&B->m,B->R+j*B->m,&inc,Loc->R+j*(Loc->m)+A->m,&inc);
+	   */
 	  memcpy(Loc->R+j*(Loc->m),A->R+j*A->m,A->m*sizeof(double));
 	  memcpy(Loc->R+j*(Loc->m)+A->m,B->R+j*B->m,B->m*sizeof(double));
  	}
@@ -970,7 +970,7 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
       for ( j = 0 ; j < B->n ; j++ ) 
 	{
 	  /* 
-	  C2F(dcopy) (&B->m,B->R+j*A->m,&inc,Loc->R+(j+A->n)*(Loc->m)+A->m,&inc);
+	   * C2F(dcopy) (&B->m,B->R+j*A->m,&inc,Loc->R+(j+A->n)*(Loc->m)+A->m,&inc);
 	  */
 	  memcpy(Loc->R+(j+A->n)*(Loc->m)+A->m,B->R+j*A->m,B->m*sizeof(double));
 	nsp_dset(&A->m,&d,Loc->R+(j+A->n)*(Loc->m),&inc);
@@ -1024,7 +1024,8 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
     {
       for ( j = A->n-1  ; j >= 0 ; j-- ) 
  	{
- 	  C2F(zcopy) (&Am,A->I+j*Am,&inc,A->I+j*(A->m),&inc);
+	  /*  C2F(zcopy) (&Am,A->I+j*Am,&inc,A->I+j*(A->m),&inc); */
+	  memmove(A->I+j*(A->m),A->I+j*Am,Am*sizeof(doubleC));
 	  nsp_csetd(&m,&d,A->I+j*(A->m)+Am,&inc);
  	}
     }
@@ -1032,7 +1033,8 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
     {
       for ( j = A->n-1  ; j >= 0 ; j-- ) 
  	{
- 	  C2F(dcopy) (&Am,A->R+j*Am,&inc,A->R+j*(A->m),&inc);
+	  /*  C2F(dcopy) (&Am,A->R+j*Am,&inc,A->R+j*(A->m),&inc); */
+	  memmove(A->R+j*(A->m),A->R+j*Am,Am*sizeof(double));
 	  nsp_dset(&m,&d,A->R+j*(A->m)+Am,&inc);
  	}
     }
