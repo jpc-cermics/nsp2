@@ -33,8 +33,8 @@
 
 
 static void Kronecker (NspMatrix *A,NspMatrix *B,NspMatrix *PK);
-typedef int (*AdSu) (integer*,double *,integer*,double *,integer*);
-typedef int (*AdSuZ) (integer*,doubleC *,integer*,doubleC *,integer*);
+typedef int (*AdSu) (int*,double *,int*,double *,int*);
+typedef int (*AdSuZ) (int*,doubleC *,int*,doubleC *,int*);
 static int MatOpScalar (NspMatrix *Mat1,NspMatrix *Mat2,AdSu F1,AdSuZ F2);
 
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
@@ -45,7 +45,7 @@ static int MatOpScalar (NspMatrix *Mat1,NspMatrix *Mat2,AdSu F1,AdSuZ F2);
 
 void nsp_mat_set_rval(NspMatrix *A, double dval)
 {
-  integer inc=1;
+  int inc=1;
   switch ( A->rc_type ) 
     { 
     case 'r' :
@@ -67,7 +67,7 @@ void nsp_mat_set_rval(NspMatrix *A, double dval)
 
 int nsp_mat_set_ival(NspMatrix *A, double dval)
 {
-  integer inc=1;
+  int inc=1;
   switch ( A->rc_type ) 
     {
     case 'r' :
@@ -144,8 +144,8 @@ static int MatOp(NspMatrix *A, NspMatrix *B, MPM F1, PM F2, MPM F3, int flag)
 
 static int MatOpScalar(NspMatrix *Mat1, NspMatrix *Mat2, AdSu F1, AdSuZ F2)
 {
-  integer inc=1;
-  integer incs=0;
+  int inc=1;
+  int incs=0;
   if ( Mat1->rc_type == 'r' ) 
     {
       if ( Mat2->rc_type == 'r') 
@@ -352,7 +352,7 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   if (SameDim(Mat1,Mat2))
     {
-      integer inc=1;
+      int inc=1;
       if ( Mat1->rc_type == 'r' ) 
 	{
 	  if ( Mat2->rc_type == 'r') 
@@ -375,7 +375,7 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
 	  if ( Mat2->rc_type == 'r') 
 	    {
 	      double *D1;
-	      integer inc2=2;
+	      int inc2=2;
 	      D1= (double *) Mat1->I;
 	      nsp_dadd(&(Mat1->mn),Mat2->R,&inc,D1,&inc2);
 	    }
@@ -415,7 +415,7 @@ int nsp_mat_dadd_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   if (SameDim(Mat1,Mat2))
     {
-      integer inc=1;
+      int inc=1;
       if ( Mat1->rc_type == 'r' ) 
 	{
 	  if ( Mat2->rc_type == 'r') 
@@ -438,7 +438,7 @@ int nsp_mat_dadd_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
 	  if ( Mat2->rc_type == 'r') 
 	    {
 	      double *D1;
-	      integer inc2=2;
+	      int inc2=2;
 	      D1= (double *) Mat1->I;
 	      nsp_dadd_maxplus(&(Mat1->mn),Mat2->R,&inc,D1,&inc2);
 	    }
@@ -475,7 +475,7 @@ int nsp_mat_dsub(NspMatrix *Mat1, NspMatrix *Mat2)
 {
   if (SameDim(Mat1,Mat2))
     {
-      integer inc=1;
+      int inc=1;
       if ( Mat1->rc_type == 'r' ) 
 	{
 	  if ( Mat2->rc_type == 'r') 
@@ -499,7 +499,7 @@ int nsp_mat_dsub(NspMatrix *Mat1, NspMatrix *Mat2)
 	  if ( Mat2->rc_type == 'r') 
 	    {
 	      double *D1;
-	      integer inc2=2;
+	      int inc2=2;
 	      D1= (double *) Mat1->I;
 	      nsp_dsub(&(Mat1->mn),Mat2->R,&inc,D1,&inc2);
 	    }
@@ -556,7 +556,7 @@ void nsp_mat_clean(NspMatrix *A, int rhs, double epsa, double epsr)
   double d_epsr=1.e-10; /* EPSILON; */
   double d_epsa=1.e-10; /* EPSILON; */
   double norm,eps;
-  integer inc=1;
+  int inc=1;
   if ( A->rc_type == 'r') 
     norm=C2F(dasum)(&A->mn,A->R,&inc);
   else
@@ -649,7 +649,7 @@ int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind,int j,int flag)
  *  A and B must have same size or be scalars.
  */
 
-int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, integer j, integer flag)
+int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j, int flag)
 {
   int i;
   if (  SameDim(A,B) )
@@ -711,7 +711,7 @@ static char Info[256];
 
 NspMatrix **nsp_mat_slec(char *file, int *Count)
 { 
-  integer cols[100],lines[100];
+  int cols[100],lines[100];
   int MatCount,MatCount1,i,j;
   NspMatrix **Loc;
   FILE   *fopen(const char *, const char *), *fd;
@@ -902,20 +902,29 @@ int nsp_numtokens(char *string)
  * The imag part is initialized with the value d
  */
 
-void nsp_ciset(const integer *n,const double *z, doubleC *tab, const integer *inc)
+void nsp_ciset(const int *n,const double *z, doubleC *tab, const int *inc)
 {
   int i;
-  for (i=0; i < *n ; i += *inc) tab[i].i = *z;
+  if ( *inc > 0 ) 
+    for (i=0; i < *n ; i += *inc) tab[i].i = *z;
+  else 
+    for (i=*n-1; i >= 0 ; i += *inc) tab[i].i = *z;
 }
 
 void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc) 
-
 {
   int i;
-  for (i=0; i < *n ; i += *inc) 
-    {
-      tab[i].i = 0.00 ;tab[i].r = *z;
-    }
+  if ( *inc > 0 )
+    for (i=0; i < *n ; i += *inc) 
+      {
+	tab[i].i = 0.00 ;tab[i].r = *z;
+      }
+  else 
+    for (i=*n-1; i >= 0 ; i += *inc) 
+      {
+	tab[i].i = 0.00 ;tab[i].r = *z;
+      }
+    
 }
 
 /*
@@ -925,7 +934,7 @@ void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc)
 
 int nsp_mat_complexify(NspMatrix *Mat, double d)
 {
-  integer incx=1,incy=2;
+  int incx=1,incy=2;
   if ( Mat->rc_type == 'i' ) return(OK);
 #ifdef OCAML
   if ( Mat->proxy != NULL) 
@@ -952,7 +961,7 @@ int nsp_mat_complexify(NspMatrix *Mat, double d)
 
 int nsp_mat_get_real(NspMatrix *A)
 {
-  integer incx=2,incy=1;
+  int incx=2,incy=1;
   if ( A->rc_type == 'r' )  return(OK);
   A->R =nsp_alloc_doubles(A->mn);
   if ( A->R == (double *) 0) 
@@ -975,7 +984,7 @@ int nsp_mat_get_real(NspMatrix *A)
 int nsp_mat_get_imag(NspMatrix *A)
 {
   double d=0.0;
-  integer inc=1,incy=2;
+  int inc=1,incy=2;
   if ( A->rc_type == 'r')
     {
       nsp_dset(&A->mn,&d,A->R,&inc);
@@ -1047,7 +1056,7 @@ NspMatrix *nsp_mat_kron(NspMatrix *A, NspMatrix *B)
 
 NspMatrix *nsp_mat_sort(NspMatrix *A, int flag, char *str1, char *str2)
 {
-  integer iflag=0,inc=-1,*iloc=NULL,Locm=A->m,Locn=A->n;
+  int iflag=0,inc=-1,*iloc=NULL,Locm=A->m,Locn=A->n;
   NspMatrix *Loc=NULL;
   if ( flag == 2 )
     {
@@ -1068,7 +1077,7 @@ NspMatrix *nsp_mat_sort(NspMatrix *A, int flag, char *str1, char *str2)
   C2F(gsort)((int *) A->R,A->R,iloc,&iflag,&A->m,&A->n,str1,str2);
   if ( flag == 2) 
     {
-      /* Loc contains integers, NOTE inc = -1 **/
+      /* Loc contains ints, NOTE inc = -1 **/
       nsp_int2double(&Loc->mn,iloc,&inc,Loc->R,&inc);
     }
   if ( str1[0] == 'l' ) 
@@ -1094,7 +1103,7 @@ NspMatrix *nsp_mat_sum(NspMatrix *A, char *flag)
 {
   NspMatrix *Sum;
   int j;
-  integer inc=1;
+  int inc=1;
   if ( A->mn == 0) 
     {
       if ( flag[0] == 'F' || flag[0]=='f' )
@@ -1174,7 +1183,7 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, char *flag)
 {
   NspMatrix *Prod;
   int j;
-  integer inc=1,zero=0;
+  int inc=1,zero=0;
   if ( A->mn == 0) 
     {
       if ( flag[0] == 'F' || flag[0]=='f' )
@@ -1453,13 +1462,13 @@ NspMatrix *nsp_mat_cum_sum(NspMatrix *A, char *flag)
  * Imax is created if lhs == 2 
  */
 
-typedef int (*MaMi) (integer,double *,integer,double *);
+typedef int (*MaMi) (int,double *,int,double *);
 
 static NspMatrix *MatMaxiMini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs, MaMi F)
 {
   NspMatrix *M;
   int j;
-  integer inc=1,imax;
+  int inc=1,imax;
   if ( A->mn == 0 )    
     {
       if ( lhs == 2) *Imax = nsp_matrix_create(NVOID,'r',0,0);
@@ -1606,7 +1615,7 @@ NspMatrix *nsp_mat_mini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
  * R=func(i,j) or R=func(i,j,&Imag) 
  */
 
-NspMatrix *nsp_mat_createinit(char *name, char type, integer m, integer n, double (*func) (/* ??? */))
+NspMatrix *nsp_mat_createinit(char *name, char type, int m, int n, double (*func) (/* ??? */))
 {
   NspMatrix *Loc;
   int i1,i2;
@@ -1640,7 +1649,7 @@ NspMatrix *nsp_mat_createinit(char *name, char type, integer m, integer n, doubl
  * A is changed  
  */
 
-void nsp_mat_triu(NspMatrix *A, integer k)
+void nsp_mat_triu(NspMatrix *A, int k)
 {
   double d=0.00;
   int i,j;
@@ -1666,7 +1675,7 @@ void nsp_mat_triu(NspMatrix *A, integer k)
  * A is changed  
  */
 
-void nsp_mat_tril(NspMatrix *A, integer k)
+void nsp_mat_tril(NspMatrix *A, int k)
 {
   double d=0.00;
   int i,j;
@@ -1691,7 +1700,7 @@ void nsp_mat_tril(NspMatrix *A, integer k)
  *nsp_mat_eye: A=Eye(m,n)
  */
 
-NspMatrix *nsp_mat_eye(integer m, integer n)
+NspMatrix *nsp_mat_eye(int m, int n)
 {
   NspMatrix *Loc;
   int i;
@@ -1706,7 +1715,7 @@ NspMatrix *nsp_mat_eye(integer m, integer n)
  * A is changed  
  */
 
-NspMatrix *nsp_mat_ones(integer m, integer n)
+NspMatrix *nsp_mat_ones(int m, int n)
 {
   NspMatrix *Loc;
   if ((Loc= nsp_matrix_create(NVOID,'r',m,n))  == NULLMAT) return(NULLMAT);
@@ -1719,7 +1728,7 @@ NspMatrix *nsp_mat_ones(integer m, integer n)
  * A is changed  
  */
 
-NspMatrix *nsp_mat_zeros(integer m, integer n)
+NspMatrix *nsp_mat_zeros(int m, int n)
 {
   NspMatrix *Loc;
   if ((Loc= nsp_matrix_create(NVOID,'r',m,n))  == NULLMAT) return(NULLMAT);
@@ -1732,9 +1741,9 @@ NspMatrix *nsp_mat_zeros(integer m, integer n)
  * A is changed  
  */
 
-static integer rand_data[] = {1,0};
+static int rand_data[] = {1,0};
 
-NspMatrix *nsp_mat_rand(integer m, integer n)
+NspMatrix *nsp_mat_rand(int m, int n)
 {
   NspMatrix *Loc;
   int i;
@@ -2308,7 +2317,7 @@ void nsp_mat_ceil(NspMatrix *A)
 
 /*
  *nsp_mat_modulo: A=nsp_mat_modulo(A,n)
- * A is changed to A / n : remainder of integer division. 
+ * A is changed to A / n : remainder of int division. 
  */
 
 void nsp_mat_modulo(NspMatrix *A, int n)
@@ -2334,7 +2343,7 @@ void nsp_mat_modulo(NspMatrix *A, int n)
 
 /*
  *nsp_mat_idiv: A=nsp_mat_idiv(A,n)
- * A is changed to A / n :  quotient in integer division
+ * A is changed to A / n :  quotient in int division
  */
 
 void nsp_mat_idiv(NspMatrix *A, int n)
@@ -2634,7 +2643,7 @@ int nsp_mat_polar(NspMatrix *A, NspMatrix *B)
 }
 
 /*
- * A= A & B logical integer &  
+ * A= A & B logical int &  
  */
 
 int nsp_mat_iand(NspMatrix *A, NspMatrix *B)
@@ -2656,7 +2665,7 @@ int nsp_mat_iand(NspMatrix *A, NspMatrix *B)
  * @res: 
  * 
  * logical and of all the entries of A 
- * casted to integer 
+ * casted to int 
  * 
  * Return value: %OK or %FAIL.
  **/
@@ -2676,7 +2685,7 @@ int nsp_mat_iandu(NspMatrix *A, unsigned int *res)
 }
 
 /*
- * A= A | B logical integer or 
+ * A= A | B logical int or 
  */
 
 int nsp_mat_ior(NspMatrix *A, NspMatrix *B)
@@ -2720,7 +2729,7 @@ int nsp_mat_ishift(NspMatrix *A,int shift,char dir)
  * @res: 
  * 
  * logical or of the entries of @A 
- * casted to integer 
+ * casted to int 
  * 
  * Return value: 
  **/
@@ -2746,7 +2755,7 @@ int nsp_mat_ioru(NspMatrix *A, unsigned int *res)
 
 void nsp_mat_conj(NspMatrix *A)
 {
-  integer i=1;
+  int i=1;
   switch ( A->rc_type ) 
     {
     case 'r' : break;
@@ -3004,7 +3013,7 @@ int nsp_mat_minus_maxplus(NspMatrix *A)
 
 static void Kronecker(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
 {
-  static integer c__1 = 1;
+  static int c__1 = 1;
   double d0 = 0.00;
   int p,k,j,k0,k1,k2,k3;
   for ( p = 0 ; p < A->n ; p++)
@@ -3061,7 +3070,7 @@ static void Kronecker(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
  */
 
 
-NspMatrix *nsp_mat_magic(integer n)
+NspMatrix *nsp_mat_magic(int n)
 {
   NspMatrix *Loc;
   if (( Loc = nsp_matrix_create(NVOID,'r',n,n))  == NULLMAT) return(NULLMAT);
@@ -3080,7 +3089,7 @@ NspMatrix *nsp_mat_magic(integer n)
  *nsp_mat_franck: A=Franck(n)
  */
 
-NspMatrix *nsp_mat_franck(integer n, integer job)
+NspMatrix *nsp_mat_franck(int n, int job)
 {
   NspMatrix *Loc;
   if (( Loc = nsp_matrix_create(NVOID,'r',n,n)) == NULLMAT) return(NULLMAT);
@@ -3098,7 +3107,7 @@ NspMatrix *nsp_mat_franck(integer n, integer job)
  *nsp_mat_hilbert: A=Hilbert(n)
  */
 
-NspMatrix *nsp_mat_hilbert(integer n,int job)
+NspMatrix *nsp_mat_hilbert(int n,int job)
 {
   NspMatrix *Loc;
   if (( Loc = nsp_matrix_create(NVOID,'r',n,n))== NULLMAT) return(NULLMAT);
@@ -3497,7 +3506,7 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
     }
   if ( lhs == 1) 
     {
-      *Res1 = nsp_matrix_create(NVOID,'r',(integer) 1,(integer) count);
+      *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
       if ( *Res1 == NULLMAT) return FAIL;
       count=0;
       for ( i = 0 ; i < A->mn ; i++ )
@@ -3510,9 +3519,9 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
     }
   else 
     {
-      *Res1 = nsp_matrix_create(NVOID,'r',(integer) 1,(integer) count);
+      *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
       if ( *Res1 == NULLMAT) return FAIL;
-      *Res2 = nsp_matrix_create(NVOID,'r',(integer) 1,(integer) count);
+      *Res2 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
       if ( *Res2 == NULLMAT) return FAIL;
       count=0;
       for ( i = 0 ; i < A->m ; i++ )

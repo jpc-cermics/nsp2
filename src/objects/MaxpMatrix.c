@@ -898,12 +898,12 @@ NspMaxpMatrix*nsp_mpmatrix_concat_diag(const NspMaxpMatrix *A,const NspMaxpMatri
 	{
 	  /* C2F(zcopy) (&A->m,A->I+j*A->m,&inc,Loc->I+j*(Loc->m),&inc); */
 	  memcpy(Loc->I+j*(Loc->m),A->I+j*A->m,A->m*sizeof(doubleC));
-	nsp_csetd(&B->m,&d,Loc->I+j*(Loc->m)+A->m,&inc);
+	  nsp_csetd(&B->m,&d,Loc->I+j*(Loc->m)+A->m,&inc);
 	}
       else 
 	{
-	nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->I+j*(Loc->m),&inc);
-	nsp_csetd(&B->m,&d,Loc->I+j*(Loc->m)+A->m,&inc);
+	  nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->I+j*(Loc->m),&inc);
+	  nsp_csetd(&B->m,&d,Loc->I+j*(Loc->m)+A->m,&inc);
 	}
     }
   if ( Loc->rc_type == 'r' ) 
@@ -925,12 +925,12 @@ NspMaxpMatrix*nsp_mpmatrix_concat_diag(const NspMaxpMatrix *A,const NspMaxpMatri
 	  C2F(zcopy) (&B->m,B->I+j*A->m,&inc,Loc->I+(j+A->n)*(Loc->m)+A->m,&inc);
 	  */
 	  memcpy(Loc->I+(j+A->n)*(Loc->m)+A->m,B->I+j*A->m,B->m*sizeof(doubleC));
-	nsp_csetd(&A->m,&d,Loc->I+(j+A->n)*(Loc->m),&inc);
+	  nsp_csetd(&A->m,&d,Loc->I+(j+A->n)*(Loc->m),&inc);
 	}
       else 
 	{
-	nsp_dzcopy(&B->m,B->R+j*A->m,&inc,Loc->I+(j+A->n)*(Loc->m)+A->m,&inc);
-	nsp_csetd(&A->m,&d,Loc->I+(j+A->n)*(Loc->m),&inc);
+	  nsp_dzcopy(&B->m,B->R+j*A->m,&inc,Loc->I+(j+A->n)*(Loc->m)+A->m,&inc);
+	  nsp_csetd(&A->m,&d,Loc->I+(j+A->n)*(Loc->m),&inc);
 	}
     }
   return(Loc) ;
