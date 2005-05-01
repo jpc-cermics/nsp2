@@ -1,3 +1,11 @@
+2005-05-01    <jpc@cermics.enpc.fr>
+
+	* src/objects/cells:
+	* src/interp/*: 
+
+	first step to introduce cells !
+	(limited to 2 indices) 
+	
 2005-04-29    <jpc@cermics.enpc.fr>
 
 	* src/interp/*:
