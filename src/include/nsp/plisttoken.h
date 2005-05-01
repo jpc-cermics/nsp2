@@ -16,13 +16,14 @@
 #define STRING   -4
 #define EMPTYMAT -5
 #define COMMENT  -6 
+#define EMPTYCELL  -38
 #define OPNAME -30
 
 /* Names are of max size */ 
 #define NAME_MAXL 52
 
 /****************************
- * KEYWORD 
+ * KEYWORDS
  ****************************/
 
 #define WHILE   -7
@@ -56,7 +57,8 @@
 #define CATCH  -35 
 #define FINALLY  -36 
 #define CONTINUE  -37
-#define NOTKEY  -38
+/* -38 is used */
+#define NOTKEY  -39
 
 /*****************************
  * OPERATORS
@@ -120,5 +122,9 @@
 #define PARENTH    -112
 #define DOTARGS    -113
 #define METARGS    -114
+#define CELLROWCONCAT -115
+#define CELLCOLCONCAT -116
+#define CELLDIAGCONCAT -117
+#define P_CELL  -118
 
 #endif 

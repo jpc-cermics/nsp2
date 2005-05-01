@@ -310,7 +310,7 @@ typedef enum { NOOBJ,LIST,MATRIX,SMATRIX,BMATRIX,LIB,
 #include "nsp/modulelt.h"
 #include "nsp/classa.h"
 #include "nsp/classb.h"
-
+#include "nsp/cells.h"
 
 /*----------------------------------------------------------
  * A set of prototypes 
