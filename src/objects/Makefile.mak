@@ -29,7 +29,8 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	Alloc.obj \
 	none.obj \
 	matint.obj \
-	MaxpObj.obj MaxpMatrix.obj
+	MaxpObj.obj MaxpMatrix.obj \
+	cells.obj cellsobj.obj 
 
 OBJSF=
 

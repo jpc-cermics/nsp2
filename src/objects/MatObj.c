@@ -1934,9 +1934,9 @@ int_mxconcatr_mb (Stack stack, int rhs, int opt, int lhs)
 	{
 	  /* [A,B] --> [A, b2m(B)] * */
 	  stack.first += 1;
-	  if (int_bmatrix_b2m (stack, 1, 0, 1) < 0)
-	    return RET_BUG;
+	  if (int_bmatrix_b2m (stack, 1, 0, 1) < 0) return RET_BUG;
 	  stack.first -= 1;
+	  NSP_OBJECT (NthObj (2))->ret_pos = -1;
 	  return int_mxconcatr (stack, rhs, opt, lhs);
 	}
     }
@@ -1952,8 +1952,7 @@ int_mxconcatr_mb (Stack stack, int rhs, int opt, int lhs)
 	  NthObj (1)->ret_pos = 1;
 	  return 1;
 	}
-      if (int_bmatrix_b2m (stack, 1, 0, 1) < 0)
-	return RET_BUG;
+      if (int_bmatrix_b2m (stack, 1, 0, 1) < 0) return RET_BUG;
       return int_mxconcatr (stack, rhs, opt, lhs);
     }
 }
