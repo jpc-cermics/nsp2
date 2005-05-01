@@ -460,8 +460,8 @@ int nsp_bmatrix_add_rows(NspBMatrix *A, integer m)
   if (nsp_bmatrix_resize(A,A->m+m,A->n)== FAIL) return(FAIL);
   for ( j = A->n-1  ; j >= 0 ; j-- ) 
     {
- nsp_icopy(&A->m,A->B+j*Am,&inc,A->B+j*(A->m),&inc);
- nsp_iset(&m,&d,A->B+j*(A->m)+Am,&inc);
+      nsp_icopy(&Am,A->B+j*Am,&inc,A->B+j*(A->m),&inc);
+      nsp_iset(&m,&d,A->B+j*(A->m)+Am,&inc);
     }
   return(OK);
 }

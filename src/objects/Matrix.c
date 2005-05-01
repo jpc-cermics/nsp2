@@ -1024,16 +1024,16 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
     {
       for ( j = A->n-1  ; j >= 0 ; j-- ) 
  	{
- 	  C2F(zcopy) (&A->m,A->I+j*Am,&inc,A->I+j*(A->m),&inc);
- 	nsp_csetd(&m,&d,A->I+j*(A->m)+Am,&inc);
+ 	  C2F(zcopy) (&Am,A->I+j*Am,&inc,A->I+j*(A->m),&inc);
+	  nsp_csetd(&m,&d,A->I+j*(A->m)+Am,&inc);
  	}
     }
   else 
     {
       for ( j = A->n-1  ; j >= 0 ; j-- ) 
  	{
- 	  C2F(dcopy) (&A->m,A->R+j*Am,&inc,A->R+j*(A->m),&inc);
- 	nsp_dset(&m,&d,A->R+j*(A->m)+Am,&inc);
+ 	  C2F(dcopy) (&Am,A->R+j*Am,&inc,A->R+j*(A->m),&inc);
+	  nsp_dset(&m,&d,A->R+j*(A->m)+Am,&inc);
  	}
     }
 
