@@ -26,7 +26,7 @@ struct _nsp_cells {
   NspObject father; 
   NspTypeCells *type; 
   integer m,n,mn;
-  NspObject **S;
+  NspObject **objs;
 };
 
 extern int nsp_type_cells_id;
