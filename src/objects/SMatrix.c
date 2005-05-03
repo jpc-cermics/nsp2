@@ -205,7 +205,7 @@ NspSMatrix*nsp_smatrix_copy(const NspSMatrix *A)
 
 /*
  *nsp_smatrix_resize: Changes NspSMatrix dimensions
- * Warning : this routine only enlarges the array 
+ * Warning : when m*n > A->mn this routine only enlarges the array 
  * of the NspSMatrix storage so as to contain mxn 
  * elements : the previous datas are not moved and 
  * occupy the first array cells 
@@ -1359,12 +1359,12 @@ NspMatrix *nsp_smatrix_strstr(NspSMatrix *A, char *Str)
  * or[] if Motif is not in Str.
  * Contributed by Bruno (to get 
  */
+
 NspMatrix *nsp_smatrix_strindex(char *Str, char *Motif)
 {
   NspMatrix *Loc;
   int k, count, maxcount, lstr = strlen(Str), lmotif = strlen(Motif);
   char *s;
-  double *new_Loc_R;
 
   if (lmotif == 0 || lmotif > lstr) 
     {
@@ -1393,24 +1393,8 @@ NspMatrix *nsp_smatrix_strindex(char *Str, char *Motif)
 	  k += lmotif;
 	}
     }
-
-  Loc->n = count;
-  if ( count == 0 )
-    {
-      Loc->m = 0; free(Loc->R); Loc->R = NULL;
-    }
-  else if ( count < maxcount )
-    {
-      new_Loc_R = realloc(Loc->R, count*sizeof(double));
-      if ( new_Loc_R == NULL )  /* a priori unuseful... realloc must perform the job */
-	{
-	  nsp_matrix_destroy(Loc);
-	  return NULLMAT;
-	}
-      else
-	Loc->R = new_Loc_R;
-    }
-
+  /* resize result, will take care of count == 0  */
+  if ( nsp_matrix_resize(Loc,1,count) == FAIL) return NULLMAT;
   return Loc;
 }
 
