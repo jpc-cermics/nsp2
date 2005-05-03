@@ -913,9 +913,7 @@ int int_smxisxdigit(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * Res = strstr(A,str)
- * strindex(A,str)
- * XXXX: if A is a string it should work as in Scilab 
- * i.e return all the positions 
+ * strstr(A,str)
  */
 
 int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
@@ -929,6 +927,25 @@ int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
   if ((Str = GetString(stack,2)) == (char*)0) return RET_BUG;
   if (( B =nsp_smatrix_strstr(A,Str)) == NULLMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) B);
+  return 1;
+}
+
+
+/*
+ * Res = strindex(str1,str2)
+ * strindex(A,str)
+ */
+
+int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
+{
+  char *Str1, *Str2;
+  NspMatrix *ind;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((Str1 = GetString(stack,1)) == (char*)0) return RET_BUG;
+  if ((Str2 = GetString(stack,2)) == (char*)0) return RET_BUG;
+  if (( ind = nsp_smatrix_strindex(Str1,Str2)) == NULLMAT ) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) ind);
   return 1;
 }
 
@@ -1332,7 +1349,8 @@ static OpTab SMatrix_func[]={
   {"tolower",int_smxtolower},
   {"toupper",int_smxtoupper},
   {"capitalize",int_smxcapitalize},
-  {"strindex",int_smxstrstr},
+  {"strstr",int_smxstrstr},
+  {"strindex",int_smxstrindex},
   {"ascii",int_smxascii},
   {"split",int_smxsplit},
   /** XXXX : comment regler le probleme de sort ? **/

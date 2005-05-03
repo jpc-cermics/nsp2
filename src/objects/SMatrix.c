@@ -1354,6 +1354,67 @@ NspMatrix *nsp_smatrix_strstr(NspSMatrix *A, char *Str)
 }
 
 /*
+ * Res=nsp_smatrix_strindex(Str, Motif)
+ * Returns in Res  the indices of Motif in Str
+ * or[] if Motif is not in Str.
+ * Contributed by Bruno (to get 
+ */
+NspMatrix *nsp_smatrix_strindex(char *Str, char *Motif)
+{
+  NspMatrix *Loc;
+  int k, count, maxcount, lstr = strlen(Str), lmotif = strlen(Motif);
+  char *s;
+  double *new_Loc_R;
+
+  if (lmotif == 0 || lmotif > lstr) 
+    {
+      if ((Loc =  nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) 
+	return NULLMAT;
+      else
+	return Loc;
+    }
+
+  /* usual case lmotif > 0 and lmotif <= lstr */
+  maxcount = lstr/lmotif;
+  if ((Loc =  nsp_matrix_create(NVOID,'r',1,maxcount)) == NULLMAT ) 
+    return NULLMAT;
+
+  k = 0; count = 0;
+  while ( lmotif <= lstr-k )
+    {
+      s = strstr(&(Str[k]),Motif);
+      if ( s == NULL) 
+	break;
+      else
+	{
+	  k = s - Str;
+	  Loc->R[count] = k+1;
+	  count++; 
+	  k += lmotif;
+	}
+    }
+
+  Loc->n = count;
+  if ( count == 0 )
+    {
+      Loc->m = 0; free(Loc->R); Loc->R = NULL;
+    }
+  else if ( count < maxcount )
+    {
+      new_Loc_R = realloc(Loc->R, count*sizeof(double));
+      if ( new_Loc_R == NULL )  /* a priori unuseful... realloc must perform the job */
+	{
+	  nsp_matrix_destroy(Loc);
+	  return NULLMAT;
+	}
+      else
+	Loc->R = new_Loc_R;
+    }
+
+  return Loc;
+}
+
+/*
  * Ascii2SMat : Create a string with 
  *    entries of A which are considered as ascii codes 
  */
@@ -1705,47 +1766,50 @@ NspSMatrix*nsp_smatrix_transpose(const NspSMatrix *A)
  * Res =nsp_smatrix_subst(A,search,replace) 
  */
 
-NspSMatrix*nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char *replace) 
+NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char *replace)
 {
-  int i,count,size,j;
+  /* modified by Bruno (30 april 05) for a gain in speed */
+  int i, more, len_needle = strlen(needle), len_replace = strlen(replace);
   NspSMatrix *Loc;
+  more = len_replace - len_needle;
   /* initial mxn matrix with unallocated elements **/
   if ( ( Loc =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1) ) == NULLSMAT) return(NULLSMAT);
-  for ( i = 0 ; i < A->mn ; i++) 
+  for ( i = 0 ; i < A->mn ; i++)
     {
-      /* faire un realloc XXXX */ 
-      String *loc,*loc1;
-      if ((loc = CopyString(A->S[i])) == (String *) 0) return(NULLSMAT);
-      int locsize= strlen(loc);
-      count=0;
-      loc1=loc;
-      while (loc != NULL) 
+      char *str_to_build, *p_str_to_build, *p_str, *str = A->S[i];
+      int k, kb, len_str_to_build, len_str = strlen(str);
+
+      if ( more > 0 && len_needle > 0 )
+	len_str_to_build = len_str+(len_str/len_needle)*more;
+      else
+	len_str_to_build = len_str;
+      
+      if ( ! (str_to_build = malloc((len_str_to_build+1)*sizeof(char))) )
+	return(NULLSMAT);
+      p_str_to_build = str_to_build;
+
+      k = 0;
+      if ( len_needle > 0 )
+	while ( (p_str = strstr(&(str[k]),needle)) != NULL )
+	  {
+	    kb = p_str - str;
+	    p_str_to_build = strncpy(p_str_to_build, &(str[k]), kb-k) + kb-k;
+	    p_str_to_build = strncpy(p_str_to_build, replace, len_replace) + len_replace;
+	    k = kb + len_needle;
+	  };
+      p_str_to_build = strncpy(p_str_to_build, &(str[k]), len_str-k) + len_str-k;
+      *p_str_to_build = '\0';
+      if (  p_str_to_build - str_to_build <  len_str_to_build )
 	{
-	  loc = strstr(loc, needle); 
-	  if ( loc != NULL) 
-	    {
-	      *loc = '\0'; /* we put a mark */
-	      loc += 1; 
-	      count++;
-	    }
+	  len_str_to_build = p_str_to_build - str_to_build;
+	  p_str_to_build = realloc(str_to_build, (len_str_to_build+1)*sizeof(char));
+	  str_to_build = (p_str_to_build == NULL) ? str_to_build: p_str_to_build; /* a priori unuseful */
 	}
-      /* now we know the number of occurences = count */ 
-      size = locsize + count*(strlen(replace)-strlen(needle))+1;
-      if ((Loc->S[i] = NewStringN(size)) == (String *) 0 )  return(NULLSMAT);
-      /* fill result */ 
-      Loc->S[i][0]='\0';
-      loc = loc1;
-      for ( j = 0 ; j < count ; j++ ) 
-	{
-	  strcat(Loc->S[i],loc);
-	  loc += strlen(loc)+ strlen(needle);
-	  strcat(Loc->S[i],replace);
-	}
-      strcat(Loc->S[i],loc);
-      free(loc1);
+      Loc->S[i] = str_to_build;
     }
   return Loc;
 }
+
 
 /*
  * Res =nsp_smatrix_strip_blanks(A,search,replace) 

@@ -53,6 +53,7 @@ extern function int_smxisspace;
 extern function int_smxisupper;
 extern function int_smxisxdigit;
 extern function int_smxstrstr;
+extern function int_smxstrindex;
 extern function int_smxenlarge;
 extern function int_smxascii;
 extern function int_smxsort;
