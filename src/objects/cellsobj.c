@@ -55,7 +55,7 @@ NspTypeCells *new_type_cells(type_mode mode)
   type->attrs = NULL; /* cells_attrs ; */
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods = NULL ; /* cells_get_methods; */
+  type->methods = cells_get_methods; 
   type->new = (new_func *) new_cells;
 
   top = NSP_TYPE_OBJECT(type->surtype);
@@ -342,9 +342,45 @@ NspCells*GetCells(Stack stack, int i)
   return M;
 }
 
+/*------------------------------------------------------
+ * methods 
+ *------------------------------------------------------*/
+
+
 /*
- * Now the interfaced function for cells 
+ * get first object of a cell 
+ * FIXME : should be replaced by {..}
  */
+
+static int int_meth_cells_get(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspCells *C=self;
+  NspObject *Ob;
+  CheckRhs(0,0);
+  CheckLhs(1,1);
+  lhs=Max(lhs,1);
+  if ( C->mn == 0 || C->objs[0] == NULL) 
+    {
+      Scierror("Cell elt not found\n");
+      return RET_BUG;
+    }
+  if ((Ob= nsp_object_copy(C->objs[0]))==NULL)  return RET_BUG;
+  NthObj(rhs+1) = Ob ;
+  NSP_OBJECT(Ob)->ret_pos = 1;
+  return 1;
+}
+
+static NspMethods cells_methods[] = {
+  { "get", int_meth_cells_get},
+  { (char *) 0, NULL}
+};
+
+static NspMethods *cells_get_methods(void) { return cells_methods;};
+
+/*----------------------------------------------------
+ * Interface 
+ * i.e a set of function which are accessible at nsp level
+ *----------------------------------------------------*/
 
 /*
  * Creation of a cell 
@@ -716,9 +752,9 @@ int int_cells_setrc(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *Rows,*Cols=NULLMAT;
   CheckRhs(3,4);
   CheckLhs(1,1);
-  if ( IsSMatObj(stack,1)  ) 
+  if ( IsCellsObj(stack,1)  ) 
     {
-      /* A is string matrix **/
+      /* A is a cells matrix **/
       if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
     }
   else 
@@ -1129,8 +1165,6 @@ int int_cells_fge(Stack stack, int rhs, int opt, int lhs)
   return int_cells_f_gen(stack,rhs,opt,lhs,">=");
 }
 
-
-
 /*
  * Res =nsp_cells_transpose(A) 
  * Creates a Copy of NspCells A : A is not checked 
@@ -1147,6 +1181,62 @@ int int_cells_transpose(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/*
+ * Res =ce2m(C,indice=i,notm=val1,noti=val2) 
+ * convert a cell matrix to a scalar matrix 
+ * if C{j} is not a matrix val1 is inserted 
+ * if C(j) is a matrix and indice i does not exists then val2 is inserted
+ */
+
+int int_ce2m(Stack stack, int rhs, int opt, int lhs)
+{
+  double d=0.0, nan = d/d, noti = nan, notm = nan;
+  doubleC Cnoti;
+  int indice = 1,i;
+  NspCells *C;
+  NspMatrix *Res;
+  int_types T[] = {obj_check,new_opts, t_end} ;
+
+  nsp_option opts[] ={{ "indice",s_int,NULLOBJ,-1},
+		      { "noti",s_double,NULLOBJ,-1},
+		      { "notm",s_double,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_cells,&C,&opts,&indice,&noti,&notm) == FAIL) return RET_BUG;
+  Cnoti.r = noti; Cnoti.i=noti;
+  if ((Res = nsp_matrix_create(NVOID,'r',C->m,C->n))== NULLMAT) return RET_BUG;
+  for (i= 0 ; i < Res->mn ; i++) 
+    {
+      if ( IsMat(C->objs[i]) )
+	{
+	  NspMatrix *M= (NspMatrix *) C->objs[i];
+	  if ( M->rc_type == 'c' ) 
+	    {
+	      if ( Res->rc_type == 'r' )
+		{
+		  if (nsp_mat_complexify(Res,0.00) == FAIL ) return RET_BUG;
+		}
+	    }
+	  if ( Res->rc_type == 'r')
+	    {
+	      Res->R[i] = ( indice > 0 && indice <= M->mn ) ?  M->R[indice-1]: noti;
+	    }
+	  else 
+	    {
+	      Res->I[i] = ( indice > 0 && indice <= M->mn ) ?  M->I[indice-1]: Cnoti;
+	    }
+	}
+      else 
+	{
+	  Res->R[i]= notm;
+	}
+    }
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
+
+
 
 /*
  * The Interface for basic matrices operation 
@@ -1161,6 +1251,7 @@ static OpTab Cells_func[]={
   {"deletecols_ce_m", int_cells_deletecols},
   {"deleterows_ce_m", int_cells_deleterows},
   {"deleteelts_ce_m", int_cells_deleteelts},
+  {"setrowscols_ce",int_cells_setrc},
   {"cells_create",int_cells_create},
   {"col_cells_create", int_col_cells_create},
   {"row_cells_create", int_row_cells_create},
@@ -1190,6 +1281,7 @@ static OpTab Cells_func[]={
   {"lt_ce_ce" ,  int_cells_lt },
   {"ne_ce_ce" ,  int_cells_neq },
   {"quote_ce", int_cells_transpose},
+  {"ce2m",int_ce2m},
   {(char *) 0, NULL}
 };
 
