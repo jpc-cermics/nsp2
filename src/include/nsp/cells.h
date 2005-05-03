@@ -47,6 +47,7 @@ NspCells *new_cells();
 #ifdef Cells_Private 
 static int init_cells(NspCells *ob,NspTypeCells *type);
 static int nsp_cells_size(NspCells *Mat, int flag);
+static NspMethods *cells_get_methods(void);
 char *nsp_cells_type_as_string(void);
 char *nsp_cells_type_short_string(void);
 NspObject *nsp_cells_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
