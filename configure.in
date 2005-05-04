@@ -48,6 +48,10 @@ AC_ARG_WITH(addedf2c,
 AC_ARG_WITH(maxpluslib,
     [  --with-maxpluslib       add maxplus lib ])
 
+
+AC_ARG_WITH(fftw3,
+    [  --without-fftw3         do not use fftw3 for fft but fftpack])
+
 #################################
 ## check this is a source version
 #################################
@@ -1492,6 +1496,7 @@ LIBS=$ac_save_LIBS
 
 PERIGLEXT=
 
+WITH_GL="no"
 if test "$with_gtkglext" != no; then
     gtkglext_version="1.0.0"
     AC_MSG_CHECKING([if gtkglext exists ])
@@ -1510,6 +1515,7 @@ if test "$with_gtkglext" != no; then
           GTK_PKGS="$GTK_PKGS gtkglext-1.0"
           GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
           GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+          WITH_GL="yes"
        else 
     	  AC_MSG_WARN([Could not find the gtkglext-1.0 package version $gtkglext_version or later .],)
     	  AC_MSG_WARN([WARNING OpenGL driver will not be build .],)
@@ -1598,46 +1604,35 @@ fi
 
 #################
 ## fftw 
-## try first to use pkg-config 
 #################
 
-FFTW3_LIBS=
-FFTPACK=''
-
-AC_ARG_WITH(fftw3, 
-  [  --without-fftw3          use included fftpack instead of installed fftw3],
-  with_fftw3=$withval, with_fftw3=yes)
-
-if test "$with_fftw3" = "yes"; then
-  if test "x$PKG_CONFIG" == x; then
-    # first try to use pkg-config 
-    AC_MSG_CHECKING([if fftw3 exists ])
-    if pkg-config --exists fftw3; then
-       AC_MSG_RESULT([yes])
-       AC_DEFINE(WITH_FFTW3)
-       GTK_PKGS="$GTK_PKGS fftw3"
-       GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
-       GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
-    else 
-       AC_MSG_WARN([Could not find the fftw3 package.],)
-       AC_MSG_WARN([fftpack will be used],)
-       with_fftw3=no
-    fi
-  else 
-    # direct try 
-   have_fftw_header=no
-   AC_CHECK_HEADERS(fftw3.h, [have_fftw_header=yes; break])
-   if test "$have_fftw_header" = yes; then
-    AC_CHECK_LIB(fftw3,fftw_plan_dft_1d, FFTW3_LIBS="-lfftw3")
-   else
-    with_fftw3=no
+if test "$with_fftw3" != no; then                           
+   ## search for fftw3#
+   if test "x$PKG_CONFIG" != x; then # try first to use pkg-config	
+      ## If fftw3.pc is found, set FFTW3_CFLAGS and FFTW3_LIBS
+      PKG_CHECK_MODULES(FFTW3, fftw3 >= 3.0, HAVE_FFTW3="yes", HAVE_FFTW3="no")
    fi
-   if test "$with_fftw3" = yes; then
-    FFTPACK=
-   else 
-    FFTPACK='libfftpack'
+   if test "$HAVE_FFTW3" = "no"; then # try to find fftw3 at usual places
+     AC_CHECK_HEADERS(
+        [fftw3.h],
+        AC_CHECK_LIB(
+           [fftw3],
+           [fftw_plan_dft_1d],
+           FFTW3_CFLAGS=
+           FFTW3_LIBS="-lfftw3 -lm"
+           [HAVE_FFTW3="yes"],
+           [HAVE_FFTW3="no"]),
+        [HAVE_FFTW3="no"])
    fi
-  fi
+else
+   HAVE_FFTW3="no"
+fi
+
+if test "$HAVE_FFTW3" = "yes"; then
+  AC_DEFINE(WITH_FFTW3)
+  IN_FFTPACK=NOTHING    
+else
+  IN_FFTPACK=FFTPACK
 fi
 
 #########################
@@ -1708,6 +1703,9 @@ AC_SUBST(NOINLINE)
 AC_SUBST(WHICH_BLAS)
 AC_SUBST(ATLAS_DIR)
 AC_SUBST(IN_ATLAS)
+AC_SUBST(IN_FFTPACK)
+AC_SUBST(FFTW3_CFLAGS)
+AC_SUBST(FFTW3_LIBS)
 AC_SUBST(SHELL)
 AC_SUBST(DLLTOOL)
 AC_SUBST(LD)
@@ -1749,8 +1747,15 @@ AC_SUBST(BLAS_LIBS)
 AC_SUBST(LAPACK_LIBS)
 AC_SUBST(BLAS_LOCAL)
 AC_SUBST(LAPACK_LOCAL)
-AC_SUBST(FFTW3_LIBS)
-AC_SUBST(FFTPACK)
 
-AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile ) 
+AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile) 
 
+echo
+echo
+echo "*******************"
+echo "*     Summary     *"
+echo "*******************"
+echo
+echo "FFTW3 support..........:" $HAVE_FFTW3
+echo "OpenGl support.........:" $WITH_GL
+echo
