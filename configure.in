@@ -1129,7 +1129,7 @@ LDLAGS=$CC_LDFLAGS
 #########################
 ## sizeof(int*)== sizeof(int)
 #########################
-
+builtin(include,config/ac_check_pointer.m4)
 AC_CHECK_POINTER_SIZE() 
 
 ####################
@@ -1531,6 +1531,7 @@ fi
 ## unsused 
 #################
 
+builtin(include,config/ac_check_tcltk.m4)
 TK_INC_PATH=
 TK_LIB_PATH=
 TCLTK_LIBS=
