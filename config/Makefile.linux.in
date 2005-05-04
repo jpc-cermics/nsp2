@@ -6,7 +6,7 @@ LIBS=-Wl,--whole-archive libs/nsp.a  \
 	libs/zcalelm.a libs/graphics.a \
 	libs/gtksci.a libs/menusX.a libs/rand.a libs/dcd.a  \
 	libs/integ.a libs/approx.a \
-	@MPLUSLIB@ -Wl,--no-whole-archive @LAPACK_LIBS@ @BLAS_LIBS@ 
+	@MPLUSLIB@ -Wl,--no-whole-archive @LAPACK_LIBS@ @BLAS_LIBS@ @FFTW3_LIBS@
 
 bin/scilex: scilex-lib 
 	@$(RM) $@;
