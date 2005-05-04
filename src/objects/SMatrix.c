@@ -1393,8 +1393,11 @@ NspMatrix *nsp_smatrix_strindex(char *Str, char *Motif)
 	  k += lmotif;
 	}
     }
+
   /* resize result, will take care of count == 0  */
-  if ( nsp_matrix_resize(Loc,1,count) == FAIL) return NULLMAT;
+  if ( nsp_matrix_resize(Loc, 1, count) == FAIL )
+    return NULLMAT;
+
   return Loc;
 }
 
@@ -1757,7 +1760,8 @@ NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char 
   NspSMatrix *Loc;
   more = len_replace - len_needle;
   /* initial mxn matrix with unallocated elements **/
-  if ( ( Loc =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1) ) == NULLSMAT) return(NULLSMAT);
+  if ( ( Loc =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1) ) == NULLSMAT) 
+    return(NULLSMAT);
   for ( i = 0 ; i < A->mn ; i++)
     {
       char *str_to_build, *p_str_to_build, *p_str, *str = A->S[i];
@@ -1768,8 +1772,11 @@ NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char 
       else
 	len_str_to_build = len_str;
       
-      if ( ! (str_to_build = malloc((len_str_to_build+1)*sizeof(char))) )
-	return(NULLSMAT);
+      if (  (str_to_build = NewStringN(len_str_to_build)) == NULLSTRING )
+	{
+	  nsp_smatrix_destroy(Loc);
+	  return(NULLSMAT);
+	}
       p_str_to_build = str_to_build;
 
       k = 0;
@@ -1786,8 +1793,11 @@ NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char 
       if (  p_str_to_build - str_to_build <  len_str_to_build )
 	{
 	  len_str_to_build = p_str_to_build - str_to_build;
-	  p_str_to_build = realloc(str_to_build, (len_str_to_build+1)*sizeof(char));
-	  str_to_build = (p_str_to_build == NULL) ? str_to_build: p_str_to_build; /* a priori unuseful */
+	  if ( StringResize(&str_to_build, len_str_to_build) == FAIL )
+	    {
+	      nsp_smatrix_destroy(Loc);
+	      return(NULLSMAT);
+	    }
 	}
       Loc->S[i] = str_to_build;
     }
