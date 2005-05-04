@@ -45,6 +45,7 @@ extern  sci_interface  File_Interf  ;extern  interface_info  File_Interf_Info  ;
 extern  sci_interface  Parse_Interf ;extern  interface_info  Parse_Interf_Info ;
 extern  sci_interface  SpMatrix_Interf  ;extern  interface_info  SpMatrix_Interf_Info  ;
 extern  sci_interface  Functions_Interf  ;extern  interface_info  Functions_Interf_Info  ;
+extern  sci_interface  Function_Interf  ;extern  interface_info  Function_Interf_Info  ;
 extern  sci_interface  mex_Interf  ;extern  interface_info  mex_Interf_Info  ;
 extern  sci_interface  SpMatOps_Interf  ;extern  interface_info  SpMatOps_Interf_Info  ;
 extern  sci_interface  Interf_Interf  ;extern  interface_info  Interf_Interf_Info  ;
@@ -101,6 +102,7 @@ InterfTab Interfaces[]={
   {SpMatrix_Interf,SpMatrix_Interf_Info},
   {Parse_Interf,Parse_Interf_Info},
   {Functions_Interf,Functions_Interf_Info},
+  {Function_Interf,Function_Interf_Info},
   {mex_Interf,mex_Interf_Info},
   {SpMatOps_Interf,SpMatOps_Interf_Info},
   {Interf_Interf,Interf_Interf_Info},
