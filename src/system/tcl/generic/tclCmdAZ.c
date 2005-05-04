@@ -879,62 +879,44 @@ int int_pwd(Stack stack,int rhs,int opt,int lhs)
 
 int int_regexp(Stack stack,int rhs,int opt,int lhs) 
 {
-  int noCase = 0;
-  int indices = 0;
-  int index ;
+  int noCase = FALSE;
   Tcl_RegExp regExpr;
   char  *string, *pattern, *start, *end,*p;
   int match = 0;			/* Initialization needed only to
 					 * prevent compiler warning. */
   int i;
-
-  static char *regexpOptions[] = {"indices","nocase", (char *) NULL};
-  CheckRhs(2,4);
+  nsp_option opts[] ={{ "nocase",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(2,2);
   CheckLhs(1,2);
 
-  
-  /* extra arguments must be a string in regexpOptions 
-   */
-  for ( i = 3 ; i <= rhs ; i++) 
+  if ((string  = GetString(stack,1)) == (char*)0) return RET_BUG;
+  if ((pattern = GetString(stack,2)) == (char*)0) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&noCase) == FAIL) return RET_BUG;
+  if ( noCase == TRUE)
     {
-      if ((index = GetStringInArray(stack,i,regexpOptions,0)) == -1 ) 
-	return RET_BUG;
-      switch ( index ) 
-	{
-	case 0 : indices = 1;break;
-	case 1 : noCase = 1; break;
+      if ((string = CopyString(pattern)) == NULLSTRING)  return  RET_BUG;
+      if ((pattern = CopyString(pattern)) == NULLSTRING)  return  RET_BUG;
+      /*
+       * Convert the string and pattern to lower case, if desired, and
+       * perform the matching operation.
+       */
+      for (p = pattern; *p != 0; p++) {
+	if (isupper(UCHAR(*p))) {
+	  *p = (char)tolower(UCHAR(*p));
 	}
-    }
-
-  if ((pattern = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if ((string  = GetString(stack,2)) == (char*)0) return RET_BUG;
-  /*
-   * Convert the string and pattern to lower case, if desired, and
-   * perform the matching operation.
-   */
-    
-  if (noCase) {
-
-    /* FIXME: here me must eventually copy pattern and 
-     * string before changing them
-     */
-
-    for (p = pattern; *p != 0; p++) {
-      if (isupper(UCHAR(*p))) {
-	*p = (char)tolower(UCHAR(*p));
+      }
+      for (p = string; *p != 0; p++) {
+	if (isupper(UCHAR(*p))) {
+	  *p = (char)tolower(UCHAR(*p));
+	}
       }
     }
-    for (p = string; *p != 0; p++) {
-      if (isupper(UCHAR(*p))) {
-	*p = (char)tolower(UCHAR(*p));
-      }
-    }
-  }
 
   if ((regExpr = Tcl_RegExpCompile( pattern))==  NULL) return RET_BUG;
   if ((match = Tcl_RegExpExec(regExpr, string, string)) < 0) 
     return RET_BUG;
-
+  
   if ( Tcl_SetBooleanObj(stack,1,match) == RET_BUG) return RET_BUG;
   
   if (lhs == 2)
@@ -942,8 +924,7 @@ int int_regexp(Stack stack,int rhs,int opt,int lhs)
       NspObject *OM;
       if ( match == 0) 
 	 {
-	   /* XXXXX : remettre ici un VOID XXXXX */
-	   if ( (OM=nsp_create_empty_matrix_object("")) == NULLOBJ) return RET_BUG;   
+	   if ( (OM=nsp_create_empty_matrix_object(NVOID)) == NULLOBJ) return RET_BUG;   
 	   MoveObj(stack,2,OM);
 	 }
       else 
@@ -1000,59 +981,63 @@ int int_regexp(Stack stack,int rhs,int opt,int lhs)
 
 int int_regsub(Stack stack,int rhs,int opt,int lhs) 
 {
-  int noCase = 0, all = 0;
-  int index ,result;
+  NspSMatrix *S;
+  int noCase = FALSE, all = TRUE;
+  int result, match, code, numMatches,i;
   Tcl_RegExp regExpr;
   char *string,*stringI, *pattern, *subSpec, *p, *firstChar;
-  int match, code, numMatches;
   char *start, *end, *subStart, *subEnd;
   register char *src, c;
   Tcl_DString  resultDString;
-  int i;
-  static char *regexpOptions[] = {"all","nocase", (char *) NULL};
   CheckRhs(3,5);
   CheckLhs(1,2);
 
-  /** First argument must be a string in regexpOptions **/
-  for ( i = 4 ; i <= rhs ; i++) 
-    {
-      if ((index = GetStringInArray(stack,i,regexpOptions,0)) == -1 ) 
-	return RET_BUG;
-      switch ( index ) 
-	{
-	case 0 : all = 1;break;
-	case 1 : noCase = 1; break;
-	}
-    }
-  
-  if ((pattern = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if ((stringI  = GetString(stack,2)) == (char*)0) return RET_BUG;
+  nsp_option opts[] ={{ "nocase",s_bool,NULLOBJ,-1},
+		      { "all",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(3,3);
+  CheckLhs(1,2);
+
+  if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((pattern = GetString(stack,2)) == (char*)0) return RET_BUG;
+  if ((subSpec  = GetString(stack,3)) == (char*)0) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&noCase) == FAIL) return RET_BUG;
+
   /*
    * Convert the string and pattern to lower case, if desired, and
    * perform the matching operation.
    */
-    
-  if (noCase) 
+
+  if ( noCase == TRUE)
     {
+      if ((S = nsp_smatrix_copy(S)) == NULLSMAT) return  RET_BUG;
+      if ((pattern = CopyString(pattern)) == NULLSTRING)  return  RET_BUG;
+      /*
+       * Convert the string and pattern to lower case, if desired, and
+       * perform the matching operation.
+       */
       for (p = pattern; *p != 0; p++) {
 	if (isupper(UCHAR(*p))) {
 	  *p = (char)tolower(UCHAR(*p));
 	}
       }
-      if ((string = CopyString(stringI)) == (String *) 0)   
-	return RET_BUG;
-      for (p = string; *p != 0; p++) {
-	if (isupper(UCHAR(*p))) {
-	  *p = (char)tolower(UCHAR(*p));
+      for ( i = 0 ; i < S->mn; i++) 
+	for (p = S->S[i]; *p != 0; p++) {
+	  if (isupper(UCHAR(*p))) {
+	    *p = (char)tolower(UCHAR(*p));
+	  }
 	}
-      }
     }
-  else
+
+  if ( S->mn != 1 ) 
     {
-      string = stringI;
+      Scierror("A finir pour S->mn != 1 \n");
+      return RET_BUG;
     }
-  /** string fro replacement **/
-  if ((subSpec  = GetString(stack,3)) == (char*)0) return RET_BUG;
+  else 
+    {
+      string = stringI= S->S[0];
+    }
 
   Tcl_DStringInit(&resultDString);
   if (( regExpr = Tcl_RegExpCompile( pattern)) == NULL) 
@@ -1173,7 +1158,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
   result = Tcl_SetStringObj(stack,1, Tcl_DStringValue(&resultDString),
 			    resultDString.length); 
   code = result;
-
+  
   if ( lhs == 2) 
     {
       if ( Tcl_SetDoubleObj(stack,2, (double) numMatches) == RET_BUG )
