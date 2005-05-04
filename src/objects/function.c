@@ -21,6 +21,7 @@
 #define  Function_Private 
 #include "nsp/function.h"
 #include "nsp/interf.h"
+#include "../interp/Eval.h" /* FIXME: FuncEval */
 
 /* 
  * NspFunction inherits from NspObject
@@ -369,12 +370,30 @@ static NspMethods *function_get_methods(void) { return NULL;}
  * function 
  *-------------------------------------------*/
 
+/*
+ * f(....)
+ * we must perform a function call
+ */
+
+static int int_func_extractelts(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckStdRhs (1, 1000);
+  NspFunction  *F;
+  if ( (F = GetFunction(stack,1)) == NULLFUNC) return RET_BUG;
+  /* since we want name mangling we just use the function name */
+  if ( FuncEval(NULL,F->fname,stack,stack.first+1,rhs-1,opt,1)== RET_BUG ) 
+    return RET_BUG;
+  NthObj(2)->ret_pos = 1;
+  return 1;
+}
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
 static OpTab Function_func[]={
+  {"extractelts_f", int_func_extractelts},
   {(char *) 0, NULL}
 };
 
