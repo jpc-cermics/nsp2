@@ -11,10 +11,10 @@
  * Prototypes for local procedures defined in this file:
  */
 
-static char *		GetTypeFromMode _ANSI_ARGS_((int mode));
-static NspSMatrix *	StoreStatData _ANSI_ARGS_((struct stat *statPtr));
-static int              StoreStat _ANSI_ARGS_((NspSMatrix *S,int i,char *str1,char *str2));
-static int              TclFileAttrsCmd   _ANSI_ARGS_((Stack stack,int,int,int));
+static char *		GetTypeFromMode (int mode);
+static NspSMatrix *	StoreStatData(struct stat *statPtr);
+static int              StoreStat(NspSMatrix *S,int i,char *str1,char *str2);
+static int              TclFileAttrsCmd(Stack stack,int,int,int);
 
 /*
  * The following variable holds the full path name of the binary
