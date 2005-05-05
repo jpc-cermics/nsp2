@@ -89,6 +89,7 @@ NspCells*nsp_cells_create_from_table(NspObject **T)
   for ( i = 0 ; i < count ; i++ )
     {
       if ((Loc->objs[i]=nsp_object_copy(T[i])) == NULLOBJ) return NULLCELLS;
+      if (nsp_object_set_name(Loc->objs[i],"ce") == FAIL) return  NULLCELLS;
     }
   return(Loc);
 }
@@ -107,6 +108,7 @@ NspCells* nsp_cells_create_from_array(const char *name,int n, NspObject **T)
   for ( i = 0 ; i < n ; i++ )
     {
       if ((Loc->objs[i]=nsp_object_copy(T[i])) == NULLOBJ) return NULLCELLS;
+      if (nsp_object_set_name(Loc->objs[i],"ce") == FAIL) return  NULLCELLS;
     }
   return(Loc);
 }
@@ -125,7 +127,14 @@ NspCells*nsp_cells_copy(const NspCells *A)
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      if ((Loc->objs[i]=nsp_object_copy(A->objs[i])) == NULLOBJ) return NULLCELLS;
+      if ( A->objs[i] != NULLOBJ) 
+	{
+	  if ((Loc->objs[i]=nsp_object_copy_with_name(A->objs[i])) == NULLOBJ) return NULLCELLS;
+	}
+      else 
+	{
+	  Loc->objs[i]= NULLOBJ;
+	}
     }
   return(Loc);
 }
@@ -345,7 +354,7 @@ static int nsp_copy_cells(integer n, NspObject **s1, NspObject **s2)
       nsp_object_destroy(&(s2[i]));
       if ( s1[i] != NULL) 
 	{
-	  if ((s2[i]=nsp_object_copy(s1[i])) == NULLOBJ) return FAIL;
+	  if ((s2[i]=nsp_object_copy_with_name(s1[i])) == NULLOBJ) return FAIL;
 	}
       else 
 	{
@@ -388,7 +397,7 @@ static int nsp_set_cells(integer n, NspObject *s1, NspObject **s2)
       nsp_object_destroy(&(s2[i]));
       if ( s1 != NULL) 
 	{
-	  if ((s2[i]=nsp_object_copy(s1)) == NULLOBJ) return FAIL;
+	  if ((s2[i]=nsp_object_copy_with_name(s1)) == NULLOBJ) return FAIL;
 	}
       else 
 	{
@@ -501,7 +510,7 @@ int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *C
 	  if ( B->objs[i+B->m*j] != NULLOBJ ) 
 	    {
 	      if (( A->objs[((int) Rows->R[i])-1+ (((int)Cols->R[j])-1)*A->m] 
-		    = nsp_object_copy(B->objs[i+B->m*j]))
+		    = nsp_object_copy_with_name(B->objs[i+B->m*j]))
 		  == NULL)  return(FAIL);
 	    }
 	}
@@ -513,7 +522,7 @@ int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *C
 	  if ( B->objs[0] != NULL )
 	    {
 	      if (( A->objs[((int) Rows->R[i])-1+ (((int)Cols->R[j])-1)*A->m] 
-		    = nsp_object_copy(B->objs[0]))
+		    = nsp_object_copy_with_name(B->objs[0]))
 		  == NULL)  return(FAIL);
 	    }
 	}
@@ -539,7 +548,7 @@ int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B)
 	nsp_object_destroy(&((A->objs[((int) Rows->R[i])-1])));
 	if ( B->objs[i] != NULL) 
 	  {
-	    if (( A->objs[((int) Rows->R[i])-1] = nsp_object_copy(B->objs[i]))
+	    if (( A->objs[((int) Rows->R[i])-1] = nsp_object_copy_with_name(B->objs[i]))
 		== NULL )  return(FAIL);
 	  }
       }
@@ -549,7 +558,7 @@ int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B)
 	nsp_object_destroy(&((A->objs[((int) Rows->R[i])-1])));
 	if ( B->objs[0] != NULL)
 	  {
-	    if (( A->objs[((int) Rows->R[i])-1] = nsp_object_copy(B->objs[0]))
+	    if (( A->objs[((int) Rows->R[i])-1] = nsp_object_copy_with_name(B->objs[0]))
 		== NULL)  return(FAIL);
 	  }
       }
@@ -593,7 +602,7 @@ int nsp_cells_delete_columns(NspCells *A, NspMatrix *Cols)
       for ( j = 0 ; j < nn ; j++ )
 	{
 	  NspObject *Ob;
-	  if (( Ob =nsp_object_copy(A->objs[(col)*A->m+j]))== NULL) 
+	  if (( Ob =nsp_object_copy_with_name(A->objs[(col)*A->m+j]))== NULL) 
 	    return(FAIL);
 	  /* store moved data **/
 	  A->objs[(col-ioff)*A->m+j]=Ob;
@@ -643,7 +652,7 @@ int nsp_cells_delete_rows(NspCells *A, NspMatrix *Rows)
 	for ( k= 0 ; k < nn ; k++) 
 	  {
 	    NspObject *Ob;
-	    if (( Ob =nsp_object_copy(A->objs[ind+k]))== NULL)  return(FAIL);
+	    if (( Ob =nsp_object_copy_with_name(A->objs[ind+k]))== NULL)  return(FAIL);
 	    /* store moved data **/
 	    A->objs[ind-ioff+k]=Ob;
 	  }
@@ -684,7 +693,7 @@ int nsp_cells_delete_elements(NspCells *A, NspMatrix *Elts)
       for ( j = 0 ; j < nn ; j++)
 	{
 	  NspObject *Ob;
-	  if (( Ob =nsp_object_copy(A->objs[ind+j]))== NULL)  return(FAIL);
+	  if (( Ob =nsp_object_copy_with_name(A->objs[ind+j]))== NULL)  return(FAIL);
 	  /* store moved data **/
 	  A->objs[ind-ioff+j]=Ob;
 	}
@@ -725,7 +734,7 @@ NspCells*nsp_cells_extract(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
       {
 	NspObject *Ob=A->objs[((int) Rows->R[i])-1+(((int) Cols->R[j])-1)*A->m];
 	if ( Ob != NULLOBJ )
-	  if ((Loc->objs[i+Loc->m*j] = nsp_object_copy(Ob)) == NULL ) return(NULLCELLS);
+	  if ((Loc->objs[i+Loc->m*j] = nsp_object_copy_with_name(Ob)) == NULL ) return(NULLCELLS);
       }
    return(Loc);
 }
@@ -762,7 +771,7 @@ NspCells*nsp_cells_extract_elements(NspCells *A, NspMatrix *Elts, int *err)
       NspObject *Ob=A->objs[((int) Elts->R[i])-1];
       if ( Ob != NULL) 
 	{
-	  if ((Loc->objs[i] = nsp_object_copy(Ob))== NULL)  return(NULLCELLS);
+	  if ((Loc->objs[i] = nsp_object_copy_with_name(Ob))== NULL)  return(NULLCELLS);
 	}
     }
   return(Loc);
@@ -791,7 +800,7 @@ NspCells*nsp_cells_extract_columns(NspCells *A, NspMatrix *Cols, int *err)
       int ind=(((int) Cols->R[j])-1)*A->m, i, ind1=Loc->m*j;
       for ( i = A->m -1 ; i >= 0 ; i--) 
 	{
-	  if (( Loc->objs[ind1+i] = nsp_object_copy( A->objs[ind+i])) == NULL)  return NULLCELLS;
+	  if (( Loc->objs[ind1+i] = nsp_object_copy_with_name( A->objs[ind+i])) == NULL)  return NULLCELLS;
 	}
     }
   return(Loc);
@@ -846,7 +855,7 @@ NspCells*nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err)
 	NspObject *Ob= A->objs[(((int) Rows->R[i])-1)+ j*A->m];
 	if ( Ob != NULL) 
 	  {
-	    if (( Loc->objs[i+ j*Loc->m]= nsp_object_copy(Ob))  == NULL)  return NULLCELLS;
+	    if (( Loc->objs[i+ j*Loc->m]= nsp_object_copy_with_name(Ob))  == NULL)  return NULLCELLS;
 	  }
       }
   return(Loc);
@@ -1057,7 +1066,7 @@ NspCells*nsp_cells_transpose(const NspCells *A)
 	NspObject *Ob=A->objs[j+(A->m)*i];
 	if ( Ob != NULL) 
 	  {
-	    if ((Loc->objs[i+(Loc->m)*j] = nsp_object_copy(Ob)) == NULL) return(NULLCELLS);
+	    if ((Loc->objs[i+(Loc->m)*j] = nsp_object_copy_with_name(Ob)) == NULL) return(NULLCELLS);
 	  }
       }
   return(Loc);

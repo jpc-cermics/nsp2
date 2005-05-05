@@ -61,7 +61,7 @@ void nsp_object_destroy(NspObject **O)
 void nsp_void_object_destroy(NspObject **O)
 {
   if (*O != NULLOBJ && Ocheckname(*O,NVOID) && (*O)->ret_pos < 0 ) 
- nsp_object_destroy(O);
+    nsp_object_destroy(O);
 }
 
 /**

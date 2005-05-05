@@ -412,7 +412,7 @@ int int_cells_create(Stack stack, int rhs, int opt, int lhs)
 }
 
 /* int_col_cells_create 
- * build a cell matrix given each col element 
+ * build a cell matrix given each col element {..,...,...} 
  */
 
 int int_col_cells_create(Stack stack, int rhs, int opt, int lhs)
@@ -440,7 +440,7 @@ int int_col_cells_create(Stack stack, int rhs, int opt, int lhs)
 /* int_row_cells_create 
  * build a cell matrix given each row element as a Cell 
  * each given cell must be of the same size 
- * 
+ * {..;...;...}
  */
 
 int int_row_cells_create(Stack stack, int rhs, int opt, int lhs)
@@ -486,6 +486,7 @@ int int_row_cells_create(Stack stack, int rhs, int opt, int lhs)
 
 /* int_diag_cells_create 
  * build a diag cell matrix given each block as a Cell 
+ * {...#....}
  */
 
 int int_diag_cells_create(Stack stack, int rhs, int opt, int lhs)
@@ -1236,7 +1237,32 @@ int int_ce2m(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+/*
+ * push the cells elements on the stack 
+ */
 
+static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
+{
+  int i,count=0;
+  NspCells *C;
+  CheckRhs (1, 1);
+  if ((C = GetCellsCopy (stack, 1)) == NULLCELLS) return RET_BUG;
+  for ( i=1 ; i <= C->mn ; i++)
+    {
+      if ( C->objs[i-1] != NULLOBJ) 
+	{
+	  NthObj(count) = C->objs[i-1];
+	  NthObj(count)->ret_pos = i;
+	  C->objs[i-1]= NULLOBJ;
+	  count++;
+	}
+    }
+  /* C can be safely destroyed since each element 
+   * has been set to NULLOBJ
+   */
+  nsp_cells_destroy(C); 
+  return count;
+}
 
 /*
  * The Interface for basic matrices operation 
@@ -1267,7 +1293,6 @@ static OpTab Cells_func[]={
   {"extract_ce",int_cells_extract},
   {"resize_ce",int_cells_resize},
   {"enlarge_ce", int_cells_enlarge },
-  /** XXXX : comment regler le probleme de sort ? **/
   {"eq_ce_ce" ,  int_cells_eq },
   {"feq_ce_ce" ,  int_cells_feq },
   {"fge_ce_ce" ,  int_cells_fge },
@@ -1282,6 +1307,7 @@ static OpTab Cells_func[]={
   {"ne_ce_ce" ,  int_cells_neq },
   {"quote_ce", int_cells_transpose},
   {"ce2m",int_ce2m},
+  {"object2seq_ce",int_cells_to_seq}, /* C{...} = extract +object2seq */
   {(char *) 0, NULL}
 };
 

@@ -126,5 +126,7 @@
 #define CELLCOLCONCAT -116
 #define CELLDIAGCONCAT -117
 #define P_CELL  -118
+#define CELLARGS    -119
+
 
 #endif 
