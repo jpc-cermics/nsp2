@@ -127,6 +127,7 @@ extern int DoubleScalar (NspObject *O, double *val);
 extern int GetScalarDouble (Stack stack, int i, double *val); 
 extern int *Matd2i (NspMatrix *A, integer *imin, integer *imax); 
 extern void Bounds (const NspMatrix *A, integer *imin, integer *imax); 
+extern int *Complement (int mn, const NspMatrix *Elts, int *Count);
 extern NspMatrix *Mat2double (NspMatrix *A); 
 extern NspMatrix *Mat2int (NspMatrix *A); 
 extern NspMatrix *Mat2float (NspMatrix *A); 
