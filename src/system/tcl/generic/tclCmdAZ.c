@@ -992,16 +992,18 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
   CheckRhs(3,5);
   CheckLhs(1,2);
 
-  nsp_option opts[] ={{ "nocase",s_bool,NULLOBJ,-1},
-		      { "all",s_bool,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
+  nsp_option opts[] ={
+    { "all",s_bool,NULLOBJ,-1},
+    { "nocase",s_bool,NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  };
   CheckStdRhs(3,3);
   CheckLhs(1,2);
 
   if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if ((pattern = GetString(stack,2)) == (char*)0) return RET_BUG;
   if ((subSpec  = GetString(stack,3)) == (char*)0) return RET_BUG;
-  if ( get_optional_args(stack,rhs,opt,opts,&noCase) == FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&noCase,&all) == FAIL) return RET_BUG;
 
   /*
    * Convert the string and pattern to lower case, if desired, and
