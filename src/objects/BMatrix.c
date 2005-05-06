@@ -640,44 +640,43 @@ int nsp_bmatrix_delete_rows(NspBMatrix *A, NspMatrix *Rows)
  * @A: a #NspBMatrix
  * @Elts: a #NspMatrix
  *
- * Performs A(Elts) = []. 
- * Important Note: @Elts must be real and increasing 
- * and this is not checked here
+ * Performs A(Elts) = [].
+ *  Modified by Bruno (see nsp_matrix_delete_elements
+ *  in Matrix.c)
  * 
  * returns %OK or %FAIL.
  */
 
 int nsp_bmatrix_delete_elements(NspBMatrix *A, NspMatrix *Elts)
 {
-  integer rmin,rmax,i,ind,last,nn,ioff=0,un=1;
-  if ( Elts->mn == 0) return(OK);
-  /* Bounds(Elts,&rmin,&rmax); **/
-  rmin = (int) Elts->R[0];rmax = (int) Elts->R[Elts->mn-1];
-  if ( rmin < 1 || rmax > A->mn )
+  int i,k,*flag, new_A_mn, count;
+
+  if ( Elts->mn == 0) return OK;
+  
+  if ( (flag = Complement(A->mn, Elts, &count)) == NULL )
+    return FAIL;
+
+  new_A_mn = A->mn - count;
+  k = 0;
+  for ( i = 0 ; i < A->mn && k < new_A_mn ; i++ )
     {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  for ( i = 0 ; i < Elts->mn ; i++)
-    {
-      ind =  ((int) Elts->R[i]);
-      last = (i < Elts->mn -1) ? ((int) Elts->R[i+1])-1 : A->mn ;
-      if ( nn != 0) 
+      if ( flag[i] )
 	{
-	  ioff++;
-	  nn= (last-ind);
-	nsp_icopy(&nn,A->B +ind,&un,A->B +ind -ioff,&un);
+	  A->B[k] = A->B[i];
+	  k++;
 	}
     }
+  free(flag);
+
   if ( A->m == 1)
-    {
-      if (nsp_bmatrix_resize(A,A->m,A->n -Elts->mn)== FAIL) return(FAIL);
+    { 
+      if ( nsp_bmatrix_resize(A,1,new_A_mn) == FAIL) return FAIL;
     }
   else
-    {
-      if (nsp_bmatrix_resize(A,A->mn-Elts->mn,1)== FAIL) return(FAIL);
+    { 
+      if ( nsp_bmatrix_resize(A,new_A_mn,1) == FAIL) return FAIL;
     }
-  return(OK);
+  return OK;
 }
 
 /**

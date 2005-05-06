@@ -687,51 +687,45 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 /*
  *  A(elts) = []
  *  A is changed.
- *  elts must be strictly increasing XXXXXXXXXXX
+ *  modified by Bruno (same modifs than in nsp_matrix_delete_elements).
+ *  The algorithm uses now the function Complement). indices from Elts don't
+ *  need to be in increasing order.
  */
 
 int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
 {
-  integer rmin,rmax,i,j,ind,last,nn,ioff=0;
-  Bounds(Elts,&rmin,&rmax);
-  if ( Elts->mn == 0) return(OK);
-  if ( rmin < 1 || rmax > A->mn )
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  /* Clean data **/
-  for ( i = 0 ; i < Elts->mn ; i++)
-    {
-      ind =  ((int) Elts->R[i]);
-      StringDestroy(&(A->S[ind-1]));
-    }
-  /* Move objects **/
-  for ( i = 0 ; i < Elts->mn ; i++)
-    {
-      ioff++;
-      ind =  ((int) Elts->R[i]);
-      last = (i < Elts->mn -1) ? ((int) Elts->R[i+1])-1 : A->mn ;
-      nn= (last-ind);
-      for ( j = 0 ; j < nn ; j++)
-	{
-	  char *s;
-	  if (( s =CopyString(A->S[ind+j]))== (String *) 0)  return(FAIL);
-	  /* store moved data **/
-	  A->S[ind-ioff+j]=s;
-	}
-    }
+  int i,k,*flag, new_A_mn, count;
+
+  if ( Elts->mn == 0) return OK;
+  
+  if ( (flag = Complement(A->mn, Elts, &count)) == NULL )
+    return FAIL;
+
+  new_A_mn = A->mn - count;
+
+  k = 0;
+  for ( i = 0 ; i < A->mn ; i++ )
+    if ( flag[i] )
+      {
+	A->S[k] = A->S[i];
+	if ( k < i ) A->S[i] = NULL;
+	k++;
+      }
+    else
+      StringDestroy(&A->S[i]);
+  
+  free(flag);
+
   if ( A->m == 1)
     {
-      if ( nsp_smatrix_resize(A,A->m,A->n -Elts->mn)== FAIL) return(FAIL);
+      if ( nsp_smatrix_resize(A,1,new_A_mn) == FAIL ) return FAIL;
     }
   else
     {
-      if ( nsp_smatrix_resize(A,A->mn-Elts->mn,1)== FAIL) return(FAIL);
+      if ( nsp_smatrix_resize(A,new_A_mn,1) == FAIL) return FAIL;
     }
-  return(OK);
+  return OK;
 }
-
 
 /*
  * Res=nsp_smatrix_extract(A,Rows,Cols)
@@ -910,6 +904,7 @@ String *CopyString(const String *str)
 void  StringDestroy(String **str)
 {
   FREE(*str);
+  *str = NULLSTRING;
 }
 
 /*

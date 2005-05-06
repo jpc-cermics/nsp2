@@ -684,6 +684,43 @@ Bounds (const NspMatrix * A, int * imin, int * imax)
 }
 
 /*
+ * Utility function : computes an array of flags
+ * (0 or 1) useful for the A(Elts)=[] operations.
+ * Where mn = A->mn. count is the number of elements
+ * to delete and flag[k] = 0 if A[k] must be deleted
+ * (else flag[k] = 1). Introduced by Bruno (7 mai 05)
+ */
+
+int *Complement(int mn, const NspMatrix *Elts, int *Count)
+{
+  int *flag, count=0, i, k;
+
+  if ( (flag = malloc(mn*sizeof(int))) == NULL )
+    return NULL;
+
+  for ( i = 0 ; i < mn ; i++ )
+    flag[i] = 1;
+
+  for ( i = 0 ; i < Elts->mn ; i++ )
+    {
+      k = (int)(Elts->R[i]);
+      if ( k < 1  ||  k > mn )
+	{
+	  free(flag);
+	  Scierror("Error:\tIndices out of bounds\n"); return NULL;
+	}
+      k--;
+      if ( flag[k] ) 
+	{
+	  count++; flag[k] = 0;
+	}
+    }
+  *Count = count;
+  return flag;
+}
+
+
+/*
  * Utility function : Converts back to double
  * if Matrix was previously converted to int or real
  * A is changed and its adress is also returned

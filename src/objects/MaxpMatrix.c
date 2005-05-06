@@ -1294,48 +1294,50 @@ int nsp_mpmatrix_delete_rows(NspMaxpMatrix *A, NspMatrix *Rows)
  * @Elts: a #NspMatrix
  *
  * Performs A(Elts) = []. 
- * Important Note: @Elts must be real and increasing 
- * and this is not checked here
+ *  Modified by bruno (see nsp_matrix_delete_elements)
  * 
  * returns %OK or %FAIL.
  */
 
 int nsp_mpmatrix_delete_elements(NspMaxpMatrix *A, NspMatrix *Elts)
 {
-  integer rmin,rmax,i,ind,last,nn,ioff=0;
-  if ( Elts->mn == 0) return(OK);
-  /* Bounds(Elts,&rmin,&rmax); **/
-  rmin = (int) Elts->R[0];rmax = (int) Elts->R[Elts->mn-1];
-  if ( rmin < 1 || rmax > A->mn ) 
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  for ( i = 0 ; i < Elts->mn ; i++)
-    {
-      ind =  ((int) Elts->R[i]);
-      last = (i < Elts->mn -1) ? ((int) Elts->R[i+1])-1 : A->mn ;
-      nn= (last-ind);
-      if ( nn != 0 ) 
+  int i,k,*flag, new_A_mn, count;
+
+  if ( Elts->mn == 0) return OK;
+  
+  if ( (flag = Complement(A->mn, Elts, &count)) == NULL )
+    return FAIL;
+
+  new_A_mn = A->mn - count;
+  k = 0;
+  if ( A->rc_type == 'r')
+    for ( i = 0 ; i < A->mn && k < new_A_mn ; i++ )
+      {
+	if ( flag[i] )
+	  {
+	    A->R[k] = A->R[i];
+	    k++;
+	  }
+      }
+  else   /* complex case */
+    for ( i = 0 ; i < A->mn && k < new_A_mn ; i++ )
+      if ( flag[i] )
 	{
-	  ioff++;
-	  if ( A->rc_type == 'r') 
-	    /* C2F(dcopy)(&nn,A->R +ind,&un,A->R +ind -ioff,&un); */
-	    memcpy(A->R +ind -ioff,A->R +ind,nn*sizeof(double));
-	  else 
-	    /* C2F(zcopy)(&nn,A->I +ind,&un,A->I +ind -ioff,&un); */
-	    memcpy(A->I +ind -ioff,A->I +ind,nn*sizeof(doubleC));
+	  A->I[k].r = A->I[i].r;
+	  A->I[k].i = A->I[i].i;
+	  k++;
 	}
+  free(flag);
+
+  if ( A->m == 1)
+    { 
+      if ( nsp_mpmatrix_resize(A,1,new_A_mn) == FAIL) return FAIL;
     }
-  if ( A->m == 1) 
-    {
-      if ( nsp_mpmatrix_resize(A,A->m,A->n -Elts->mn)== FAIL) return(FAIL);
+  else
+    { 
+      if ( nsp_mpmatrix_resize(A,new_A_mn,1) == FAIL) return FAIL;
     }
-  else 
-    {
-       if ( nsp_mpmatrix_resize(A,A->mn-Elts->mn,1)== FAIL) return(FAIL);
-    } 
-  return(OK);
+  return OK;
 }
 
 /**
