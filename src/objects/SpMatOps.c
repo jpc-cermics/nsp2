@@ -61,7 +61,7 @@ int SpClean(NspSpMatrix *A, int rhs, double epsa, double epsr)
       norm=0.0;
       for ( i = 0 ; i < A->m ; i++) 
 	if ( A->D[i]->size != 0) 
-	  norm +=nsp_zasum(&A->D[i]->size,A->D[i]->I,&inc);
+	  norm +=nsp_zasum(&A->D[i]->size,A->D[i]->C,&inc);
     }
   if ( rhs >= 1 ) d_epsa = epsa;
   if ( rhs >= 2 ) d_epsr = epsr;
@@ -74,7 +74,7 @@ int SpClean(NspSpMatrix *A, int rhs, double epsa, double epsr)
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : if ( Abs(A->D[i]->R[j])   < eps) A->D[i]->J[j] = -1;n=1; break ;
-	    case 'i' : if (nsp_abs_c(&A->D[i]->I[j]) < eps) A->D[i]->J[j] = -1;n=1; break ;
+	    case 'i' : if (nsp_abs_c(&A->D[i]->C[j]) < eps) A->D[i]->J[j] = -1;n=1; break ;
 	    }
 	}
       /* remove null elements and resize rows **/
@@ -274,7 +274,7 @@ int SpRealPart(NspSpMatrix *A)
       int count =0; 
       for ( k = 0 ; k < A->D[i]->size ; k++ ) 
 	{
-	  if ( A->D[i]->I[k].r != 0.0) count++;
+	  if ( A->D[i]->C[k].r != 0.0) count++;
 	}
       if ( count != 0) 
 	{
@@ -286,12 +286,12 @@ int SpRealPart(NspSpMatrix *A)
 	  count =0;
 	  for ( k = 0 ; k < A->D[i]->size ; k++ ) 
 	    {
-	      if ( A->D[i]->I[k].r != 0.0) 
+	      if ( A->D[i]->C[k].r != 0.0) 
 		{ 
-		  A->D[i]->R[count] =A->D[i]->I[k].r; count++;
+		  A->D[i]->R[count] =A->D[i]->C[k].r; count++;
 		}
 	    }
-	  FREE ( A->D[i]->I ) ;
+	  FREE ( A->D[i]->C ) ;
 	}
     }
   A->rc_type = 'r';
@@ -315,7 +315,7 @@ int SpImagPart(NspSpMatrix *A)
 	    {
 	      FREE( A->D[i]->J);
 	      FREE( A->D[i]->R);
-	      FREE( A->D[i]->I);
+	      FREE( A->D[i]->C);
 	    }
 	  A->D[i]->size =0;
 	}
@@ -327,7 +327,7 @@ int SpImagPart(NspSpMatrix *A)
 	  int count =0; 
 	  for ( k = 0 ; k < A->D[i]->size ; k++ ) 
 	    {
-	      if ( A->D[i]->I[k].i != 0.0) count++;
+	      if ( A->D[i]->C[k].i != 0.0) count++;
 	    }
 	  if ( count != 0) 
 	    {
@@ -339,12 +339,12 @@ int SpImagPart(NspSpMatrix *A)
 	      count =0;
 	      for ( k = 0 ; k < A->D[i]->size ; k++ ) 
 		{
-		  if ( A->D[i]->I[k].i != 0.0) 
+		  if ( A->D[i]->C[k].i != 0.0) 
 		    { 
-		      A->D[i]->R[count] =A->D[i]->I[k].i; count++;
+		      A->D[i]->R[count] =A->D[i]->C[k].i; count++;
 		    }
 		}
-	      FREE ( A->D[i]->I ) ;
+	      FREE ( A->D[i]->C ) ;
 	    }
 	}
       A->rc_type = 'r';
@@ -422,13 +422,13 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 	  SC.r = SC.i = 0.0;
 	  for ( i= 0 ; i < A->m ; i++ ) 
 	    { 
-	nsp_zsum(&C,&A->D[i]->size,A->D[i]->I,&inc); 
+	nsp_zsum(&C,&A->D[i]->size,A->D[i]->C,&inc); 
 	      SC.r += C.r;SC.i += C.i;
 	    }
 	  if ( SC.r  != 0.0 ||  SC.i != 0.0) 
 	    {
 	      if (nsp_spmatrix_resize_row(Sum,0,1)== FAIL) return NULLSP;
-	      Sum->D[0]->I[0] = SC;
+	      Sum->D[0]->C[0] = SC;
 	      Sum->D[0]->J[0] = 0;
 	    }
 	  break;
@@ -445,7 +445,7 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' :  Sum->D[0]->R[k]=0.0;break;
-	    case 'i' :  Sum->D[0]->I[k].r = Sum->D[0]->I[k].i =0.0;break;
+	    case 'i' :  Sum->D[0]->C[k].r = Sum->D[0]->C[k].i =0.0;break;
 	    }
 	}
       for ( i = 0 ; i < A->m ; i++) 
@@ -455,8 +455,8 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 	      switch ( A->rc_type ) 
 		{
 		case 'r' :  Sum->D[0]->R[A->D[i]->J[k]] += A->D[i]->R[k];break;
-		case 'i' :  Sum->D[0]->I[A->D[i]->J[k]].r += A->D[i]->I[k].r ;
-		  Sum->D[0]->I[A->D[i]->J[k]].i += A->D[i]->I[k].i ;break;
+		case 'i' :  Sum->D[0]->C[A->D[i]->J[k]].r += A->D[i]->C[k].r ;
+		  Sum->D[0]->C[A->D[i]->J[k]].i += A->D[i]->C[k].i ;break;
 		}
 	    }
 	}
@@ -472,7 +472,7 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 	  case 'i' : 
 	    for ( k=0 ; k < Sum->D[0]->size ; k++) 
 	      {
-		if ( Sum->D[0]->I[k].r == 0.0 && Sum->D[0]->I[k].i == 0.0 ) 
+		if ( Sum->D[0]->C[k].r == 0.0 && Sum->D[0]->C[k].i == 0.0 ) 
 		  { count=1; Sum->D[0]->J[k]=-1;}
 	      }
 	    break;
@@ -505,11 +505,11 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 	case 'i' :  
 	  for ( i = 0 ; i < A->m ; i++) 
 	    {
-	nsp_zsum(&C,&A->D[i]->size,A->D[i]->I,&inc); 
+	nsp_zsum(&C,&A->D[i]->size,A->D[i]->C,&inc); 
 	      if ( C.r  != 0.0 || C.i != 0.0 ) 
 		{
 		  if (nsp_spmatrix_resize_row(Sum,i,1)== FAIL) return NULLSP;
-		  Sum->D[i]->I[0] = C;
+		  Sum->D[i]->C[0] = C;
 		  Sum->D[i]->J[0] = 0;
 		}
 	    }
@@ -902,7 +902,7 @@ static NspMatrix* SpUnary2Full(NspSpMatrix *A, Func1 F1, Func2 F2)
 	for ( k = 0 ; k < A->D[i]->size ; k++) 
 	  {
 	    j= A->D[i]->J[k];
-	    (*F2)(&A->D[i]->I[k],&Loc->I[i+Loc->m*j]);
+	    (*F2)(&A->D[i]->C[k],&Loc->C[i+Loc->m*j]);
 	  }
     }
   return Loc;
@@ -959,8 +959,8 @@ static void  SpUnary(NspSpMatrix *A, Func1 F1, Func2 F2)
 	  compress=0;
 	  for ( k=0; k < A->D[i]->size ; k++ ) 
 	    {
-	      (*F2)(&A->D[i]->I[k],&A->D[i]->I[k]);
-	      if ( A->D[i]->I[k].r == 0.0 &&  A->D[i]->I[k].i == 0.0 )
+	      (*F2)(&A->D[i]->C[k],&A->D[i]->C[k]);
+	      if ( A->D[i]->C[k].r == 0.0 &&  A->D[i]->C[k].i == 0.0 )
 		{
 		  compress=1;
 		  A->D[i]->J[k]=-1;
@@ -1085,7 +1085,7 @@ int SpSign(NspSpMatrix *A)
     {
       for ( i = 0 ; i < A->m ; i++)
 	for ( k=0; k < A->D[i]->size ; k++ ) 
-	nsp_signum_c(&A->D[i]->I[k],&A->D[i]->I[k]);
+	nsp_signum_c(&A->D[i]->C[k],&A->D[i]->C[k]);
     }
   return(OK);
 }
@@ -1128,7 +1128,7 @@ int SpAbs(NspSpMatrix *A)
     {
       for ( i = 0 ; i < A->m ; i++)
 	for ( k=0; k < A->D[i]->size ; k++ ) 
-	  A->D[i]->I[k].r =nsp_abs_c(&A->D[i]->I[k]);
+	  A->D[i]->C[k].r =nsp_abs_c(&A->D[i]->C[k]);
       if ( SpRealPart(A) == FAIL) return FAIL;
     }
   return(OK);
@@ -1194,7 +1194,7 @@ int SpArg(NspSpMatrix *A)
 	    {
 	      FREE( A->D[i]->J);
 	      FREE( A->D[i]->R);
-	      FREE( A->D[i]->I);
+	      FREE( A->D[i]->C);
 	    }
 	  A->D[i]->size =0;
 	}
@@ -1203,7 +1203,7 @@ int SpArg(NspSpMatrix *A)
     {
       for ( i = 0 ; i < A->m ; i++)
 	for ( k=0; k < A->D[i]->size ; k++ ) 
-	  A->D[i]->I[k].r =nsp_arg_c(&A->D[i]->I[k]);
+	  A->D[i]->C[k].r =nsp_arg_c(&A->D[i]->C[k]);
       if ( SpRealPart(A) == FAIL) return FAIL;
     }
   return(OK);
@@ -1229,7 +1229,7 @@ void SpConj(NspSpMatrix *A)
       for ( i = 0 ; i < A->m ; i++)
 	{
 	  for ( k= 0 ; k < A->D[i]->size; k++ ) 
-	    A->D[i]->I[k].i = - A->D[i]->I[k].i;
+	    A->D[i]->C[k].i = - A->D[i]->C[k].i;
 	}
       break;
     }
@@ -1389,8 +1389,8 @@ int SpMinus(NspSpMatrix *A)
       for ( i = 0 ; i < A->m ; i++)
 	for ( k = 0 ; k < A->D[i]->size ; k++)
 	  {
-	    A->D[i]->I[k].r = - A->D[i]->I[k].r;
-	    A->D[i]->I[k].i = - A->D[i]->I[k].i;
+	    A->D[i]->C[k].r = - A->D[i]->C[k].r;
+	    A->D[i]->C[k].i = - A->D[i]->C[k].i;
 	  }
     }
   return(OK);

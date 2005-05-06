@@ -1273,7 +1273,7 @@ NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A, char *str, integer flag)
       if ( A->rc_type == 'r') 
 	sprintf(buf,format,A->R[i]);
       else 
-	sprintf(buf,formati,A->I[i].r,A->I[i].i);
+	sprintf(buf,formati,A->C[i].r,A->C[i].i);
       if ((Loc->S[i] = Basic2String(buf)) == (String *) 0)  return(NULLSMAT);
     }
   return(Loc);

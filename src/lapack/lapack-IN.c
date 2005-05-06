@@ -240,10 +240,10 @@ static int nsp_mat_is_symmetric(NspMatrix *A)
       for ( i=0 ; i < A->m ; i++)
 	for ( j=0 ; j < i ; j++)
 	  {
-	    double dxr= Abs(A->I[i+j*A->m].r - A->I[j+i*A->m].r);
-	    double dxi= Abs(A->I[i+j*A->m].i - A->I[j+i*A->m].i);
-	    if ( A->I[i+j*A->m].r + dxr > A->I[i+j*A->m].r) return FALSE;
-	    if ( A->I[i+j*A->m].i + dxi > A->I[i+j*A->m].i) return FALSE;
+	    double dxr= Abs(A->C[i+j*A->m].r - A->C[j+i*A->m].r);
+	    double dxi= Abs(A->C[i+j*A->m].i - A->C[j+i*A->m].i);
+	    if ( A->C[i+j*A->m].r + dxr > A->C[i+j*A->m].r) return FALSE;
+	    if ( A->C[i+j*A->m].i + dxi > A->C[i+j*A->m].i) return FALSE;
 	  }
     }
   return TRUE;

@@ -171,7 +171,7 @@ static void f99(NspMatrix *M)
   if ( M->rc_type == 'r' ) 
     for ( i= 0 ; i < M->mn ; i++) M->R[i] *= 2.0;
   else 
-    for ( i= 0 ; i < M->mn ; i++) { M->I[i].r *= 2.0;M->I[i].i *= 3.0;}
+    for ( i= 0 ; i < M->mn ; i++) { M->C[i].r *= 2.0;M->C[i].i *= 3.0;}
 }
 
 

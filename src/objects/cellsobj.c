@@ -1224,7 +1224,7 @@ int int_ce2m(Stack stack, int rhs, int opt, int lhs)
 	    }
 	  else 
 	    {
-	      Res->I[i] = ( indice > 0 && indice <= M->mn ) ?  M->I[indice-1]: Cnoti;
+	      Res->C[i] = ( indice > 0 && indice <= M->mn ) ?  M->C[indice-1]: Cnoti;
 	    }
 	}
       else 

@@ -434,8 +434,8 @@ NspObject *nsp_complexi_object_(char *str)
 {
   NspMatrix *A;
   if ((A= nsp_matrix_create(str,'i',(integer)1,(integer)1))==NULLMAT) return(NULLOBJ);
-  A->I[0].r = 0;
-  A->I[0].i = 1;
+  A->C[0].r = 0;
+  A->C[0].i = 1;
   return (NspObject *) A;
 }
 
@@ -520,8 +520,8 @@ NspObject *nsp_create_object_from_doubles(integer m, integer n, integer it, doub
     {
       for ( i=0 ; i < A->mn ; i++)
 	{
-	  A->I[i].r = rtab[i];
-	  A->I[i].i = itab[i];
+	  A->C[i].r = rtab[i];
+	  A->C[i].i = itab[i];
 	}
     }
   return (NspObject *) A;

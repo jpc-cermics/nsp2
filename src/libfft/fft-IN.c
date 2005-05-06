@@ -41,8 +41,8 @@ static void transpose_cmplx_mat(NspMatrix *x, NspMatrix *y)
     for ( j = 0 ; j < x->n ; j++) 
       {
 	/* y(j,i) = x(i,j) */
-	y->I[j+y->m*i ].r = x->I[i+x->m*j].r;
-	y->I[j+y->m*i ].i = x->I[i+x->m*j].i;
+	y->C[j+y->m*i ].r = x->C[i+x->m*j].r;
+	y->C[j+y->m*i ].i = x->C[i+x->m*j].i;
       }
 }
 #endif
@@ -108,22 +108,22 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
 	  if ( x->mn != last_forward_n )
 	    {  
 	      fftw_destroy_plan(forward_plan);
-	      forward_plan = fftw_plan_dft_1d(x->mn, (fftw_complex *)x->I, (fftw_complex *)x->I, 
+	      forward_plan = fftw_plan_dft_1d(x->mn, (fftw_complex *)x->C, (fftw_complex *)x->C, 
 					      s, FFTW_ESTIMATE | FFTW_UNALIGNED );
 	      last_forward_n = x->mn;
 	    }
-	  fftw_execute_dft(forward_plan, (fftw_complex *)x->I , (fftw_complex *)x->I);
+	  fftw_execute_dft(forward_plan, (fftw_complex *)x->C , (fftw_complex *)x->C);
 	}
       else  /* backward fft */
 	{
 	  if ( x->mn != last_backward_n )
 	    {  
 	      fftw_destroy_plan(backward_plan);
-	      backward_plan = fftw_plan_dft_1d(x->mn, (fftw_complex *)x->I, (fftw_complex *)x->I, 
+	      backward_plan = fftw_plan_dft_1d(x->mn, (fftw_complex *)x->C, (fftw_complex *)x->C, 
 					       s, FFTW_ESTIMATE | FFTW_UNALIGNED);
 	      last_backward_n = x->mn;
 	    }
-	  fftw_execute_dft(backward_plan, (fftw_complex *)x->I , (fftw_complex *)x->I);
+	  fftw_execute_dft(backward_plan, (fftw_complex *)x->C , (fftw_complex *)x->C);
 	  invn = 1.0 / x->mn;
 	}
     }
@@ -133,16 +133,16 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
 	{
 	  if ( s == 1) invn = 1.0 / x->m;
 	  multi_plan = fftw_plan_many_dft(1, &(x->m), x->n,  
-					 (fftw_complex *)x->I, &(x->mn), 1, x->m,
-					 (fftw_complex *)x->I, &(x->mn), 1, x->m,
+					 (fftw_complex *)x->C, &(x->mn), 1, x->m,
+					 (fftw_complex *)x->C, &(x->mn), 1, x->m,
 					 s, FFTW_ESTIMATE | FFTW_UNALIGNED );
 	}
       else if ( str[0] == 'r' || str[0] == 'R' ) /* fft of the rows */
 	{
 	  if ( s == 1) invn = 1.0 / x->n;
 	  multi_plan = fftw_plan_many_dft(1, &(x->n), x->m,  
-					 (fftw_complex *)x->I, &(x->mn), x->m, 1,
-					 (fftw_complex *)x->I, &(x->mn), x->m, 1,
+					 (fftw_complex *)x->C, &(x->mn), x->m, 1,
+					 (fftw_complex *)x->C, &(x->mn), x->m, 1,
 					 s, FFTW_ESTIMATE | FFTW_UNALIGNED );
 	}
       else
@@ -155,7 +155,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
     }
 
   if ( s == 1 ) /* backward fft => apply normalisation */
-    for (k = 0 ; k < x->mn ; k++) { x->I[k].r *= invn; x->I[k].i *= invn; }
+    for (k = 0 ; k < x->mn ; k++) { x->C[k].r *= invn; x->C[k].i *= invn; }
 
   NSP_OBJECT (x)->ret_pos = 1;
   return 1;
@@ -200,14 +200,14 @@ int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
     if (nsp_mat_set_ival(x,0.00) == FAIL ) 
       return RET_BUG;
 
-  p = fftw_plan_dft_2d(x->n, x->m, (fftw_complex *)x->I, (fftw_complex *)x->I, s, FFTW_ESTIMATE);
+  p = fftw_plan_dft_2d(x->n, x->m, (fftw_complex *)x->C, (fftw_complex *)x->C, s, FFTW_ESTIMATE);
   fftw_execute(p);
   fftw_destroy_plan(p);
 
   if (s == 1)     /* apply normalisation */
     {
       invn = 1.0 / x->mn;
-      for (k = 0 ; k < x->mn ; k++) { x->I[k].r *= invn; x->I[k].i *= invn; }
+      for (k = 0 ; k < x->mn ; k++) { x->C[k].r *= invn; x->C[k].i *= invn; }
     }
 
   NSP_OBJECT (x)->ret_pos = 1;
@@ -303,18 +303,18 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
   if ( flag_orient == ALL || (flag_orient == BY_ROW && x->m == 1) )
     {  
       if ( s == -1 )
-	C2F(zfftf)(&n, x->I, wsave);
+	C2F(zfftf)(&n, x->C, wsave);
       else
-	C2F(zfftb)(&n, x->I, wsave);
+	C2F(zfftb)(&n, x->C, wsave);
     }
   else if ( flag_orient == BY_COL )
     {
       if ( s == -1 )
 	for ( k = 0 ; k < x->n ; k++ )
-	  C2F(zfftf)(&n, &(x->I[k*x->m]), wsave);
+	  C2F(zfftf)(&n, &(x->C[k*x->m]), wsave);
       else
 	for ( k = 0 ; k < x->n ; k++ )
-	  C2F(zfftb)(&n, &(x->I[k*x->m]), wsave);
+	  C2F(zfftb)(&n, &(x->C[k*x->m]), wsave);
     }
   else if ( flag_orient == BY_ROW )
     {
@@ -323,16 +323,16 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
       transpose_cmplx_mat(x, y);
       if ( s == -1 )
 	for ( k = 0 ; k < y->n ; k++ )
-	  C2F(zfftf)(&n, &(y->I[k*y->m]), wsave);
+	  C2F(zfftf)(&n, &(y->C[k*y->m]), wsave);
       else
 	for ( k = 0 ; k < y->n ; k++ )
-	  C2F(zfftb)(&n, &(y->I[k*y->m]), wsave);
+	  C2F(zfftb)(&n, &(y->C[k*y->m]), wsave);
       transpose_cmplx_mat(y, x);
       nsp_matrix_destroy(y);
     }
 
   if ( s == 1 ) /* backward fft => apply normalisation */
-    for (k = 0 ; k < x->mn ; k++) { x->I[k].r *= invn; x->I[k].i *= invn; }
+    for (k = 0 ; k < x->mn ; k++) { x->C[k].r *= invn; x->C[k].i *= invn; }
 
   NSP_OBJECT (x)->ret_pos = 1;
   return 1;
@@ -383,10 +383,10 @@ int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
 
   if ( s == -1 )
     for ( k = 0 ; k < x->n ; k++ )
-      C2F(zfftf)(&(x->m), &(x->I[k*x->m]), wsave);
+      C2F(zfftf)(&(x->m), &(x->C[k*x->m]), wsave);
   else
     for ( k = 0 ; k < x->n ; k++ )
-      C2F(zfftb)(&(x->m), &(x->I[k*x->m]), wsave);
+      C2F(zfftb)(&(x->m), &(x->C[k*x->m]), wsave);
 
   if ( x->n != x->m )
     {
@@ -405,10 +405,10 @@ int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
 
   if ( s == -1 )
     for ( k = 0 ; k < y->n ; k++ )
-      C2F(zfftf)(&(y->m), &(y->I[k*y->m]), wsave);
+      C2F(zfftf)(&(y->m), &(y->C[k*y->m]), wsave);
   else
     for ( k = 0 ; k < y->n ; k++ )
-      C2F(zfftb)(&(y->m), &(y->I[k*y->m]), wsave);
+      C2F(zfftb)(&(y->m), &(y->C[k*y->m]), wsave);
   transpose_cmplx_mat(y, x);
   free(wsave);
   nsp_matrix_destroy(y);
@@ -416,7 +416,7 @@ int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
   if (s == 1)     /* apply normalisation */
     {
       invn = 1.0 / x->mn;
-      for (k = 0 ; k < x->mn ; k++) { x->I[k].r *= invn; x->I[k].i *= invn; }
+      for (k = 0 ; k < x->mn ; k++) { x->C[k].r *= invn; x->C[k].i *= invn; }
     }
 
   NSP_OBJECT (x)->ret_pos = 1;

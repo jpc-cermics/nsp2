@@ -75,13 +75,13 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
     {
       Mat->m = Mat->n=0;
       Mat->R = (double *) 0; 
-      Mat->I = (doubleC *) 0;
+      Mat->C = (doubleC *) 0;
       return(Mat);
     }
   switch ( type ) 
     {
     case 'r' :
-      Mat->I = (doubleC *) 0;
+      Mat->C = (doubleC *) 0;
       Mat->R =nsp_alloc_doubles(Mat->mn);
       if ( Mat->R == (double *) 0 ) 
 	{
@@ -91,8 +91,8 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
       break;
     case 'i' : 
       Mat->R = (double *) 0; 
-      Mat->I =nsp_alloc_doubleC(Mat->mn);
-      if (  Mat->I == (doubleC *) 0) 
+      Mat->C =nsp_alloc_doubleC(Mat->mn);
+      if (  Mat->C == (doubleC *) 0) 
 	{
 	  Scierror("Error:\tRunning out of memory\n");
 	  return(NULLMAT);
@@ -141,18 +141,18 @@ NspMatrix *MatCreateFromData(char *name, char type, int m, int n,
     {
       Mat->m = Mat->n=0;
       Mat->R = (double *) 0; 
-      Mat->I = (doubleC *) 0;
+      Mat->C = (doubleC *) 0;
       return(Mat);
     }
   switch ( type ) 
     {
     case 'r' :
-      Mat->I = (doubleC *) 0;
+      Mat->C = (doubleC *) 0;
       Mat->R = b->data;
       break;
     case 'i' : 
       Mat->R = (double *) 0; 
-      Mat->I = b->data; 
+      Mat->C = b->data; 
     }
   /* dealing with proxy */ 
   /* Nothing to do for un-managed arrays */
@@ -352,7 +352,7 @@ NspMatrix *nsp_matrix_create_from_array(const char *name,int m,int n,const doubl
   else 
     {
       if (( Loc = nsp_matrix_create(name,'i',m,n)) == NULLMAT) return NULLMAT;
-      for ( i= 0; i < Loc->mn; i++) { Loc->I[i].r =valr[i];Loc->I[i].i =valc[i];}
+      for ( i= 0; i < Loc->mn; i++) { Loc->C[i].r =valr[i];Loc->C[i].i =valc[i];}
     }
   return Loc;
 }
@@ -377,8 +377,8 @@ NspMatrix *nsp_matrix_copy(const NspMatrix *A)
       memcpy(Mat->R,A->R, (Mat->mn)*sizeof(double));
       break;
     case 'i' :
-      /* C2F(zcopy)(&(Mat->mn),A->I,&inc,Mat->I,&inc); */
-      memcpy(Mat->I,A->I, (Mat->mn)*sizeof(doubleC));
+      /* C2F(zcopy)(&(Mat->mn),A->C,&inc,Mat->C,&inc); */
+      memcpy(Mat->C,A->C, (Mat->mn)*sizeof(doubleC));
       break;
     }
   return(Mat);
@@ -422,8 +422,8 @@ int nsp_matrix_fill_with(NspMatrix *A,const NspMatrix *B)
       memcpy(A->R,B->R, (A->mn)*sizeof(double));
       break;
     case 'i' :
-      /* C2F(zcopy)(&(A->mn),B->I,&inc,A->I,&inc); */
-      memcpy(A->I,B->I, (A->mn)*sizeof(doubleC));
+      /* C2F(zcopy)(&(A->mn),B->C,&inc,A->C,&inc); */
+      memcpy(A->C,B->C, (A->mn)*sizeof(doubleC));
       break;
     }
   return OK;
@@ -467,7 +467,7 @@ int nsp_matrix_resize(NspMatrix *A, int m, int n)
   if ( m*n == 0 ) /* need to free space */
     {
         A->m =  A->n = A->mn= 0;
-	if ( A->rc_type == 'r' ) {FREE(A->R);} else  {FREE(A->I);}
+	if ( A->rc_type == 'r' ) {FREE(A->R);} else  {FREE(A->C);}
 	return OK;
     }
 
@@ -484,8 +484,8 @@ int nsp_matrix_resize(NspMatrix *A, int m, int n)
       if ( A->R == (double *) 0) return(FAIL);
       break ; 
     case 'i' : 
-      A->I =nsp_realloc_doubleC(A->I,A->mn);
-      if ( A->I == (doubleC *) 0) return(FAIL);
+      A->C =nsp_realloc_doubleC(A->C,A->mn);
+      if ( A->C == (doubleC *) 0) return(FAIL);
       break;
     }
   return(OK);
@@ -515,10 +515,10 @@ int nsp_matrix_scalar_to_mn(NspMatrix *A, int m, int n)
     {
     case 'r' : nsp_mat_set_rval(A,A->R[0]);break; 
     case 'i' : 
-      x= A->I[0]; 
+      x= A->C[0]; 
       for ( i=1; i < A->mn ; i++) 
 	{
-	  A->I[i]= x;
+	  A->C[i]= x;
 	}
       break;
     }
@@ -539,7 +539,7 @@ void nsp_matrix_destroy(NspMatrix *Mat)
 #ifdef OCAML 
   if ( Mat->proxy == NULL ) 
     {
-      FREE(Mat->I) ;
+      FREE(Mat->C) ;
       FREE(Mat->R);
       FREE(NSP_OBJECT(Mat)->name);
       FREE(Mat) ;
@@ -563,7 +563,7 @@ void nsp_matrix_destroy(NspMatrix *Mat)
       FREE(Mat) ;
     }
 #else 
-  FREE(Mat->I) ;
+  FREE(Mat->C) ;
   FREE(Mat->R);
   FREE(NSP_OBJECT(Mat)->name);
   FREE(Mat) ;
@@ -804,17 +804,17 @@ int nsp_matrix_concat_right(NspMatrix *A,const NspMatrix *B)
       else 
 	{
 	  if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
-	  /* C2F(zcopy)(&B->mn,B->I,&inc,A->I+Asize,&inc);*/
-	  memcpy (A->I+Asize,B->I,sizeof(doubleC)*B->mn);
+	  /* C2F(zcopy)(&B->mn,B->C,&inc,A->C+Asize,&inc);*/
+	  memcpy (A->C+Asize,B->C,sizeof(doubleC)*B->mn);
 	}
     }
   else 
     {
       if ( B->rc_type == 'r' )
-	nsp_dzcopy(&B->mn,B->R,&inc,A->I+Asize,&inc);
+	nsp_dzcopy(&B->mn,B->R,&inc,A->C+Asize,&inc);
       else
-	/* C2F(zcopy)(&B->mn,B->I,&inc,A->I+Asize,&inc); */
-	memcpy(A->I+Asize,B->I,sizeof(doubleC)*B->mn);
+	/* C2F(zcopy)(&B->mn,B->C,&inc,A->C+Asize,&inc); */
+	memcpy(A->C+Asize,B->C,sizeof(doubleC)*B->mn);
     }
   return(OK);
 }
@@ -848,7 +848,7 @@ int nsp_matrix_add_columns(NspMatrix *A, int n)
   switch ( A->rc_type )
     {
     case 'r' : nsp_dset(&ns,&d,A->R+Asize,&inc);break;
-    case 'i' : nsp_csetd(&ns,&d,A->I+Asize,&inc);break;
+    case 'i' : nsp_csetd(&ns,&d,A->C+Asize,&inc);break;
     }
   return(OK);
 }
@@ -895,27 +895,27 @@ NspMatrix* nsp_matrix_concat_down(const NspMatrix *A,const NspMatrix *B)
  	{
  	case 'r' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
- 	nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->I+j*(Loc->m),&inc);
+ 	nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->C+j*(Loc->m),&inc);
  	  break;
  	case 'i' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
 	    /*
-		C2F(zcopy) (&A->m,A->I+j*A->m,&inc,Loc->I+j*(Loc->m),&inc); **/
-	    memcpy(Loc->I+j*(Loc->m),A->I+j*A->m,A->m*sizeof(doubleC));
+		C2F(zcopy) (&A->m,A->C+j*A->m,&inc,Loc->C+j*(Loc->m),&inc); **/
+	    memcpy(Loc->C+j*(Loc->m),A->C+j*A->m,A->m*sizeof(doubleC));
  	  break;
  	}
       switch ( B->rc_type ) 
  	{
  	case 'r' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
- 	nsp_dzcopy(&B->m,B->R+j*B->m,&inc,Loc->I+j*(Loc->m)+A->m,&inc);
+ 	nsp_dzcopy(&B->m,B->R+j*B->m,&inc,Loc->C+j*(Loc->m)+A->m,&inc);
  	  break;
  	case 'i' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
 	    /* 
- 	    C2F(zcopy) (&B->m,B->I+j*B->m,&inc,Loc->I+j*(Loc->m)+A->m,&inc);
+ 	    C2F(zcopy) (&B->m,B->C+j*B->m,&inc,Loc->C+j*(Loc->m)+A->m,&inc);
 	    */
-	    memcpy(Loc->I+j*(Loc->m)+A->m,B->I+j*B->m,B->m*sizeof(doubleC));
+	    memcpy(Loc->C+j*(Loc->m)+A->m,B->C+j*B->m,B->m*sizeof(doubleC));
  	  break;
  	}
     }
@@ -955,14 +955,14 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
     {
       if ( A->rc_type == 'i') 
 	{
-	  /* C2F(zcopy) (&A->m,A->I+j*A->m,&inc,Loc->I+j*(Loc->m),&inc); */
-	  memcpy(Loc->I+j*(Loc->m),A->I+j*A->m,A->m*sizeof(doubleC));
-	  nsp_csetd(&B->m,&d,Loc->I+j*(Loc->m)+A->m,&inc);
+	  /* C2F(zcopy) (&A->m,A->C+j*A->m,&inc,Loc->C+j*(Loc->m),&inc); */
+	  memcpy(Loc->C+j*(Loc->m),A->C+j*A->m,A->m*sizeof(doubleC));
+	  nsp_csetd(&B->m,&d,Loc->C+j*(Loc->m)+A->m,&inc);
 	}
       else 
 	{
-	  nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->I+j*(Loc->m),&inc);
-	  nsp_csetd(&B->m,&d,Loc->I+j*(Loc->m)+A->m,&inc);
+	  nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->C+j*(Loc->m),&inc);
+	  nsp_csetd(&B->m,&d,Loc->C+j*(Loc->m)+A->m,&inc);
 	}
     }
   if ( Loc->rc_type == 'r' ) 
@@ -981,15 +981,15 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
       if ( B->rc_type == 'i') 
 	{
 	  /* 
-	  C2F(zcopy) (&B->m,B->I+j*A->m,&inc,Loc->I+(j+A->n)*(Loc->m)+A->m,&inc);
+	  C2F(zcopy) (&B->m,B->C+j*A->m,&inc,Loc->C+(j+A->n)*(Loc->m)+A->m,&inc);
 	  */
-	  memcpy(Loc->I+(j+A->n)*(Loc->m)+A->m,B->I+j*A->m,B->m*sizeof(doubleC));
-	  nsp_csetd(&A->m,&d,Loc->I+(j+A->n)*(Loc->m),&inc);
+	  memcpy(Loc->C+(j+A->n)*(Loc->m)+A->m,B->C+j*A->m,B->m*sizeof(doubleC));
+	  nsp_csetd(&A->m,&d,Loc->C+(j+A->n)*(Loc->m),&inc);
 	}
       else 
 	{
-	  nsp_dzcopy(&B->m,B->R+j*A->m,&inc,Loc->I+(j+A->n)*(Loc->m)+A->m,&inc);
-	  nsp_csetd(&A->m,&d,Loc->I+(j+A->n)*(Loc->m),&inc);
+	  nsp_dzcopy(&B->m,B->R+j*A->m,&inc,Loc->C+(j+A->n)*(Loc->m)+A->m,&inc);
+	  nsp_csetd(&A->m,&d,Loc->C+(j+A->n)*(Loc->m),&inc);
 	}
     }
   return(Loc) ;
@@ -1024,9 +1024,9 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
     {
       for ( j = A->n-1  ; j >= 0 ; j-- ) 
  	{
-	  /*  C2F(zcopy) (&Am,A->I+j*Am,&inc,A->I+j*(A->m),&inc); */
-	  memmove(A->I+j*(A->m),A->I+j*Am,Am*sizeof(doubleC));
-	  nsp_csetd(&m,&d,A->I+j*(A->m)+Am,&inc);
+	  /*  C2F(zcopy) (&Am,A->C+j*Am,&inc,A->C+j*(A->m),&inc); */
+	  memmove(A->C+j*(A->m),A->C+j*Am,Am*sizeof(doubleC));
+	  nsp_csetd(&m,&d,A->C+j*(A->m)+Am,&inc);
  	}
     }
   else 
@@ -1090,15 +1090,15 @@ int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, Nsp
 	for ( i = 0 ; i < Rows->mn ; i++)
 	  for ( j = 0 ; j < Cols->mn ; j++ )
 	    { 
-	      A->I[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->I[i+B->m*j].r;
-	      A->I[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i =B->I[i+B->m*j].i;
+	      A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->C[i+B->m*j].r;
+	      A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i =B->C[i+B->m*j].i;
 	    }
       else
 	for ( i = 0 ; i < Rows->mn ; i++)
 	  for ( j = 0 ; j < Cols->mn ; j++ )
 	    { 
-	      A->I[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->I[0].r;
-	      A->I[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i =B->I[0].i;
+	      A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->C[0].r;
+	      A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i =B->C[0].i;
 	    }
     }
   else 
@@ -1109,15 +1109,15 @@ int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, Nsp
 	    for ( i = 0 ; i < Rows->mn ; i++)
 	      for ( j = 0 ; j < Cols->mn ; j++ )
 		{	
-		  A->I[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->R[i+B->m*j];
-		  A->I[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i = 0.00;
+		  A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->R[i+B->m*j];
+		  A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i = 0.00;
 		}
 	  else
 	    for ( i = 0 ; i < Rows->mn ; i++)
 	      for ( j = 0 ; j < Cols->mn ; j++ )
 		{	
-		  A->I[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->R[0];
-		  A->I[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i = 0.00;
+		  A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->R[0];
+		  A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i = 0.00;
 		}
 	}
       else
@@ -1260,14 +1260,14 @@ int nsp_matrix_set_rows(NspMatrix *A, NspMatrix *Rows, NspMatrix *B)
       if ( Bscal == 0 ) 
 	for ( i = 0 ; i < Rows->mn ; i++)
 	  {	
-	    A->I[((int) Rows->R[i]) -1].r =B->I[i].r;
-	    A->I[((int) Rows->R[i]) -1].i =B->I[i].i;
+	    A->C[((int) Rows->R[i]) -1].r =B->C[i].r;
+	    A->C[((int) Rows->R[i]) -1].i =B->C[i].i;
 	  }
       else
 	for ( i = 0 ; i < Rows->mn ; i++)
 	  {	
-	    A->I[((int) Rows->R[i]) -1].r =B->I[0].r;
-	    A->I[((int) Rows->R[i]) -1].i =B->I[0].i;
+	    A->C[((int) Rows->R[i]) -1].r =B->C[0].r;
+	    A->C[((int) Rows->R[i]) -1].i =B->C[0].i;
 	  }
     }
   else 
@@ -1277,14 +1277,14 @@ int nsp_matrix_set_rows(NspMatrix *A, NspMatrix *Rows, NspMatrix *B)
 	  if ( Bscal == 0) 
 	    for ( i = 0 ; i < Rows->mn ; i++)
 	      {	
-		A->I[((int) Rows->R[i]) -1].r =B->R[i];
-		A->I[((int) Rows->R[i]) -1].i = 0.00;
+		A->C[((int) Rows->R[i]) -1].r =B->R[i];
+		A->C[((int) Rows->R[i]) -1].i = 0.00;
 	      }
 	  else
 	    for ( i = 0 ; i < Rows->mn ; i++)
 	      {	
-		A->I[((int) Rows->R[i]) -1].r =B->R[0];
-		A->I[((int) Rows->R[i]) -1].i = 0.00;
+		A->C[((int) Rows->R[i]) -1].r =B->R[0];
+		A->C[((int) Rows->R[i]) -1].i = 0.00;
 	      }
 	}
       else
@@ -1369,8 +1369,8 @@ int nsp_matrix_delete_columns(NspMatrix *A, NspMatrix *Cols)
 	    /* C2F(dcopy)(&nn,A->R+ (col)*A->m,&un,A->R+(col-ioff)*A->m,&un); */
 	    memcpy(A->R+(col-ioff)*A->m,A->R+ (col)*A->m,nn*sizeof(double));
 	  else 
-	    /*C2F(zcopy)(&nn,A->I+ (col)*A->m,&un,A->I+(col-ioff)*A->m,&un);*/
-	    memcpy(A->I+(col-ioff)*A->m,A->I+ (col)*A->m,nn*sizeof(doubleC));
+	    /*C2F(zcopy)(&nn,A->C+ (col)*A->m,&un,A->C+(col-ioff)*A->m,&un);*/
+	    memcpy(A->C+(col-ioff)*A->m,A->C+ (col)*A->m,nn*sizeof(doubleC));
 	}
     }
   if ( nsp_matrix_resize(A,A->m,A->n-ioff)== FAIL) return(FAIL);
@@ -1415,8 +1415,8 @@ int nsp_matrix_delete_rows(NspMatrix *A, NspMatrix *Rows)
 	      /*C2F(dcopy)(&nn,A->R +ind,&un,A->R +ind -ioff,&un); */
 	      memcpy(A->R +ind -ioff,A->R +ind,nn*sizeof(double));
 	    else 
-	      /* C2F(zcopy)(&nn,A->I +ind,&un,A->I +ind -ioff,&un); */
-	      memcpy(A->I +ind -ioff,A->I +ind,nn*sizeof(doubleC));
+	      /* C2F(zcopy)(&nn,A->C +ind,&un,A->C +ind -ioff,&un); */
+	      memcpy(A->C +ind -ioff,A->C +ind,nn*sizeof(doubleC));
 	  }
       }
   if ( nsp_matrix_resize(A,A->m -Rows->mn,A->n)== FAIL) return(FAIL);
@@ -1461,8 +1461,8 @@ int nsp_matrix_delete_elements(NspMatrix *A, NspMatrix *Elts)
     for ( i = 0 ; i < A->mn && k < new_A_mn ; i++ )
       if ( flag[i] )
 	{
-	  A->I[k].r = A->I[i].r;
-	  A->I[k].i = A->I[i].i;
+	  A->C[k].r = A->C[i].r;
+	  A->C[k].i = A->C[i].i;
 	  k++;
 	}
   free(flag);
@@ -1510,8 +1510,8 @@ NspMatrix *nsp_matrix_extract(const NspMatrix *A,const  NspMatrix *Rows, const N
  	  {	
 	    register int ind;
 	    ind= ((int) Rows->R[i])-1+(((int) Cols->R[j])-1)*A->m;
- 	    Loc->I[i+Loc->m*j].r=A->I[ind].r ;
- 	    Loc->I[i+Loc->m*j].i=A->I[ind].i ;
+ 	    Loc->C[i+Loc->m*j].r=A->C[ind].r ;
+ 	    Loc->C[i+Loc->m*j].i=A->C[ind].i ;
  	  }
     }
   else 
@@ -1561,8 +1561,8 @@ NspMatrix *nsp_matrix_extract_elements(const NspMatrix *A,const NspMatrix *Elts)
     {
       for ( i = 0 ; i < Elts->mn ; i++)
 	{	
-	  Loc->I[i].r=A->I[((int) Elts->R[i])-1].r ;
-	  Loc->I[i].i=A->I[((int) Elts->R[i])-1].i ;
+	  Loc->C[i].r=A->C[((int) Elts->R[i])-1].r ;
+	  Loc->C[i].i=A->C[((int) Elts->R[i])-1].i ;
 	}
     }
   else 
@@ -1602,7 +1602,7 @@ NspMatrix *nsp_matrix_extract_columns(const NspMatrix *A,const NspMatrix *Cols)
   if ( A->rc_type == 'i' )
     {
       for ( j = 0 ; j < Cols->mn ; j++ )
-	memcpy( Loc->I+ Loc->m*j, A->I + (((int) Cols->R[j])-1)*A->m,A->m*sizeof(doubleC));
+	memcpy( Loc->C+ Loc->m*j, A->C + (((int) Cols->R[j])-1)*A->m,A->m*sizeof(doubleC));
     }
   else 
     {
@@ -1642,8 +1642,8 @@ NspMatrix *nsp_matrix_extract_rows(const NspMatrix *A,const NspMatrix *Rows)
 	{
 	  for ( j = 0 ; j < A->n ; j++ )
 	    {	
-	      Loc->I[i+Loc->m*j].r=A->I[(((int) Rows->R[i])-1)+ j*A->m].r ;
-	      Loc->I[i+Loc->m*j].i=A->I[(((int) Rows->R[i])-1)+ j*A->m].i ;
+	      Loc->C[i+Loc->m*j].r=A->C[(((int) Rows->R[i])-1)+ j*A->m].r ;
+	      Loc->C[i+Loc->m*j].i=A->C[(((int) Rows->R[i])-1)+ j*A->m].i ;
 	    }
 	}
     }
@@ -1696,8 +1696,8 @@ NspMatrix *MatLoopCol(char *str, NspMatrix *Col, NspMatrix *A, int icol, int *re
     {
       for ( i = 0 ; i < A->m ; i++)
 	{
-	  Loc->I[i].r=A->I[i+iof].r ;
-	  Loc->I[i].i=A->I[i+iof].i ;
+	  Loc->C[i].r=A->C[i+iof].r ;
+	  Loc->C[i].i=A->C[i+iof].i ;
 	}
     }
   else 
@@ -1739,8 +1739,8 @@ NspMatrix *nsp_matrix_extract_diag(const NspMatrix *A, int k)
       j=0;
       for ( i = imin ; i < imax ; i++ ) 
 	{ 
-          Loc->I[j].r = A->I[i+(i+k)*A->m].r;
-          Loc->I[j++].i = A->I[i+(i+k)*A->m].i;
+          Loc->C[j].r = A->C[i+(i+k)*A->m].r;
+          Loc->C[j++].i = A->C[i+(i+k)*A->m].i;
 	}
     }
   else 
@@ -1796,8 +1796,8 @@ int nsp_matrix_set_diag(NspMatrix *A, NspMatrix *Diag, int k)
 	{
 	  for ( i = imin ; i < imax ; i++ ) 
 	    {
-	      A->I[i+(i+k)*A->m].r = Diag->R[j++] ;
-	      A->I[i+(i+k)*A->m].i = 0.00;
+	      A->C[i+(i+k)*A->m].r = Diag->R[j++] ;
+	      A->C[i+(i+k)*A->m].i = 0.00;
 	    }
 	}
     }
@@ -1807,8 +1807,8 @@ int nsp_matrix_set_diag(NspMatrix *A, NspMatrix *Diag, int k)
 	if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
       for ( i = imin ; i < imax ; i++ ) 
 	{
-	  A->I[i+(i+k)*A->m].r = Diag->I[j].r ;
-	  A->I[i+(i+k)*A->m].i = Diag->I[j++].i ;
+	  A->C[i+(i+k)*A->m].r = Diag->C[j].r ;
+	  A->C[i+(i+k)*A->m].i = Diag->C[j++].i ;
 	}
     }
   return(OK);
@@ -1840,15 +1840,15 @@ NspMatrix *nsp_matrix_create_diag(const NspMatrix *Diag, int k)
   switch (Loc->rc_type ) 
     {
     case 'r' : nsp_mat_set_rval(Loc,0.00);break;
-    case 'i': nsp_csetd(&Loc->mn,&d,Loc->I,&inc);break;
+    case 'i': nsp_csetd(&Loc->mn,&d,Loc->C,&inc);break;
     }
   if ( Loc->rc_type == 'i') 
     {
       j=0;
       for ( i = imin ; i < imax ; i++ ) 
 	{
-	  Loc->I[i+(i+k)*Loc->m].i= Diag->I[j].i;
-	  Loc->I[i+(i+k)*Loc->m].r= Diag->I[j++].r;
+	  Loc->C[i+(i+k)*Loc->m].i= Diag->C[j].i;
+	  Loc->C[i+(i+k)*Loc->m].r= Diag->C[j++].r;
 	}
     }
   else 
@@ -1889,8 +1889,8 @@ NspMatrix *nsp_matrix_transpose(const NspMatrix *A)
       for ( i = 0  ; i < A->m ; i++) 
 	for ( j = 0 ; j < A->n ; j++) 
 	  {
-	    Loc->I[j+Loc->m*i ].r = A->I[i+A->m*j].r;
-	    Loc->I[j+Loc->m*i ].i = -A->I[i+A->m*j].i;
+	    Loc->C[j+Loc->m*i ].r = A->C[i+A->m*j].r;
+	    Loc->C[j+Loc->m*i ].i = -A->C[i+A->m*j].i;
 	  }
       break;
     }

@@ -98,7 +98,7 @@ static int MatNext(void *M, double *r, doubleC *c)
   switch (((NspMatrix *) M)->rc_type) 
     {
     case 'r' : *r = ((NspMatrix *) M)->R[mat_ind++];break;
-    case 'i' : *c = ((NspMatrix *) M)->I[mat_ind++];break;
+    case 'i' : *c = ((NspMatrix *) M)->C[mat_ind++];break;
     }
   return 1;
 }
@@ -136,7 +136,7 @@ static int SpNext(void *M, double *r, doubleC *c)
       switch (Sp->rc_type) 
 	{
 	case 'r' : *r = Sp->D[sp_mat_ind_row]->R[sp_mat_ind_col];break;
-	case 'i' : *c = Sp->D[sp_mat_ind_row]->I[sp_mat_ind_col];break;
+	case 'i' : *c = Sp->D[sp_mat_ind_row]->C[sp_mat_ind_col];break;
 	}
       sp_mat_ind_col++;
       return 1;
@@ -155,7 +155,7 @@ static int SpNext(void *M, double *r, doubleC *c)
       switch (Sp->rc_type) 
 	{
 	case 'r' : *r = Sp->D[sp_mat_ind_row]->R[sp_mat_ind_col];break;
-	case 'i' : *c = Sp->D[sp_mat_ind_row]->I[sp_mat_ind_col];break;
+	case 'i' : *c = Sp->D[sp_mat_ind_row]->C[sp_mat_ind_col];break;
 	}
       sp_mat_ind_col++;
       return 1;
@@ -878,7 +878,7 @@ void nsp_print_internalM (NspMatrix *m, int indent)
 void CMij_plus_format(void *m, int i, int j)
 {
   NspMatrix *M=m;
-  if (M->I[i+(M->m)*j].r == 0.0 && M->I[i+(M->m)*j].i == 0)
+  if (M->C[i+(M->m)*j].r == 0.0 && M->C[i+(M->m)*j].i == 0)
     Sciprintf(" ");
   else
     Sciprintf("+");
@@ -889,7 +889,7 @@ void CMij_float(const void *m, int i, int j)
 {
   const NspMatrix *M=m;
   Sciprintf("  ");
-  pr_complex ( M->I[i+(M->m)*j]);
+  pr_complex ( M->C[i+(M->m)*j]);
 }
 
 void nsp_print_internalCM (NspMatrix *cm, int indent)
@@ -1358,7 +1358,7 @@ static void SpM_general(NspSpMatrix *Sp, int indent)
 	  for ( j = 0; j < Ri->size ; j++)
 	    {
 	      pr_white(indent) ; Sciprintf("(%d,%d) ",i+1,Ri->J[j]+1);
-	      pr_complex( Ri->I[j]);
+	      pr_complex( Ri->C[j]);
 	      Sciprintf("\n");
 	    }
 	}

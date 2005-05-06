@@ -239,14 +239,14 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
   if ( E == NULL) 
     {
       /* XXX make a first query to compute optimal work space ? */
-      C2F(zgeqrf)(&m, &n,(*R)->I, &m, tau->I, work->I, &workMin, &info);
+      C2F(zgeqrf)(&m, &n,(*R)->C, &m, tau->C, work->C, &workMin, &info);
     } 
   else 
     {
       int ix;
       Ijpvt = (int *) jpvt->R;
       for (ix = 0; ix < n ; ++ix) Ijpvt[ix] =0;
-      C2F(zgeqpf)(&m, &n,(*R)->I, &m, Ijpvt,tau->I,work->I,rwork->R, &info);
+      C2F(zgeqpf)(&m, &n,(*R)->C, &m, Ijpvt,tau->C,work->C,rwork->R, &info);
     }
   if (info != 0) {
     Scierror("Error: something wrong in zgeqpf\n"); 
@@ -258,24 +258,24 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
     static doubleC zero = {0.0,0.0};
     int j,ix,ij;
     /* Q = [ R,0 ] */ 
-    C2F(zlacpy)("F", &m, &n,(*R)->I, &m,(*Q)->I, &m, 1L);
+    C2F(zlacpy)("F", &m, &n,(*R)->C, &m,(*Q)->C, &m, 1L);
     if ( flag != 'e' ) {
       for (j = n + 1; j <= m ; ++j) {
 	for (ix = 1; ix <= m ; ++ix) {
 	  ij = ix + (j - 1) * m;
-	  (*Q)->I[ ij - 1] = zero;
+	  (*Q)->C[ ij - 1] = zero;
 	}
       }
     }
   } else {
     /* Q = R(1:m,1:m) */ 
-    C2F(zlacpy)("F", &m, &m, (*R)->I, &m, (*Q)->I, &m, 1L);
+    C2F(zlacpy)("F", &m, &m, (*R)->C, &m, (*Q)->C, &m, 1L);
   }
   
   if ( flag == 'e')   
-    C2F(zungqr)(&m, &Minmn,&Minmn, (*Q)->I, &m, tau->I, work->I, &workMin, &info);
+    C2F(zungqr)(&m, &Minmn,&Minmn, (*Q)->C, &m, tau->C, work->C, &workMin, &info);
   else 
-    C2F(zungqr)(&m, &m,&Minmn, (*Q)->I, &m, tau->I, work->I, &workMin, &info);
+    C2F(zungqr)(&m, &m,&Minmn, (*Q)->C, &m, tau->C, work->C, &workMin, &info);
   if (info != 0) {
     Scierror("Error: something wrong in zungqr\n"); 
     return FAIL;
@@ -303,7 +303,7 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 
   if (rank != NULL ) {
     int k=0,j;
-    doubleC *Rval = (*R)->I ; 
+    doubleC *Rval = (*R)->C ; 
     double tt = nsp_abs_c(Rval);
     double Tol;
     double   eps = C2F(dlamch)("eps", 3L);  
@@ -474,15 +474,15 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
       if (( *E =nsp_matrix_create(NVOID,'r',m,m)) == NULLMAT) return FAIL;
     }
 
-  C2F(zgetrf)(&m, &n,A->I, &m,Ipiv, &info);
+  C2F(zgetrf)(&m, &n,A->C, &m,Ipiv, &info);
   if (info < 0) {
     Scierror("Error: something wrong in lu\n");
     return FAIL;
   }
   
   /* Extract U from A */ 
-  for ( i = 0 ; i < (*U)->mn ; i++ ) (*U)->I[i] = Czero; 
-  C2F(zlacpy)("U", &Minmn, &n,A->I, &m, (*U)->I, &Minmn, 1L);
+  for ( i = 0 ; i < (*U)->mn ; i++ ) (*U)->C[i] = Czero; 
+  C2F(zlacpy)("U", &Minmn, &n,A->C, &m, (*U)->C, &Minmn, 1L);
 
   if (E == NULL ) 
     {
@@ -505,11 +505,11 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
       /* use A to store L before E' product */ 
       for ( i = 0 ; i < Minmn ; i++ ) 
 	{
-	  A->I [(m+1)*i].r =1.0; A->I [(m+1)*i].i =0.0; 
-	  for ( j = i+1; j < Minmn ; j++) A->I[i+j*m]= Czero; 
+	  A->C [(m+1)*i].r =1.0; A->C [(m+1)*i].i =0.0; 
+	  for ( j = i+1; j < Minmn ; j++) A->C[i+j*m]= Czero; 
 	}
       /* store E'*L in L */ 
-      for (i=0; i < m ; i++ ) C2F(zcopy)(&Minmn,&A->I[i],&m,&(*L)->I[Iinvpiv[i]-1],&m);
+      for (i=0; i < m ; i++ ) C2F(zcopy)(&Minmn,&A->C[i],&m,&(*L)->C[Iinvpiv[i]-1],&m);
       nsp_matrix_destroy(iinvpiv); 
     }
   else 
@@ -517,12 +517,12 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
       double zero = 0.0,done = 1.0;
       int one = 1;
       /* Extract L from A */ 
-      for ( i = 0 ; i < (*L)->mn ; i++ ) (*L)->I[i]=Czero; 
-      C2F(zlacpy)("L", &m, &Minmn,A->I, &m,(*L)->I, &m, 1L);
-      for ( i = 0 ; i < Minmn ; i++ ) { (*L)->I[(m+1)*i].r=1.0; (*L)->I[(m+1)*i].i=0.0; }
+      for ( i = 0 ; i < (*L)->mn ; i++ ) (*L)->C[i]=Czero; 
+      C2F(zlacpy)("L", &m, &Minmn,A->C, &m,(*L)->C, &m, 1L);
+      for ( i = 0 ; i < Minmn ; i++ ) { (*L)->C[(m+1)*i].r=1.0; (*L)->C[(m+1)*i].i=0.0; }
       /* Compute E */
-      /* C2F(zlaset)("F", &m, &m, &Czero, &Cone,(*E)->I, &m, 1L);
-       *  C2F(zlaswp)(&m,(*E)->I,&m,&one ,&Minmn, Ipiv,&one ); 
+      /* C2F(zlaset)("F", &m, &m, &Czero, &Cone,(*E)->C, &m, 1L);
+       *  C2F(zlaswp)(&m,(*E)->C,&m,&one ,&Minmn, Ipiv,&one ); 
        */
       /* Compute E as a real matrix */
       C2F(dlaset)("F", &m, &m, &zero, &done,(*E)->R, &m, 1L);
@@ -727,7 +727,7 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
   /* checks that  A != Nan et != Inf */
 
   for ( i= 0 ; i < A->mn ; i++ ) 
-    if (nsp_isinf_c (&A->I[i]) || nsp_isnan_c (&A->I[i]))
+    if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
       {
 	Scierror("Error: nan or inf in svd first argument\n"); 
 	return FAIL;
@@ -753,8 +753,8 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
   if ( U == NULL) 
     {
       /* just compute the singular values */ 
-      C2F(zgesvd)("N","N",&m, &n,A->I,&m,SV->R,NULL,&m,NULL, &n,
-		  dwork->I, &lworkMin,rwork->R, &info, 1L, 1L);
+      C2F(zgesvd)("N","N",&m, &n,A->C,&m,SV->R,NULL,&m,NULL, &n,
+		  dwork->C, &lworkMin,rwork->R, &info, 1L, 1L);
       /*  next lines to patch an error of DGESVD */
       if (info != 0) {
 	if (info > 0) {
@@ -772,14 +772,14 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
       if ( flag == 'S' ) 
 	{
 	  /* compute the singular values and Min(m,n) cols of u and rows of vt */ 
-	  C2F(zgesvd)("S","S", &m, &n,A->I, &m,SV->R,(*U)->I,&m,Vt->I,&Vt->m,
-		      dwork->I, &lworkMin,rwork->R, &info, 1L, 1L);
+	  C2F(zgesvd)("S","S", &m, &n,A->C, &m,SV->R,(*U)->C,&m,Vt->C,&Vt->m,
+		      dwork->C, &lworkMin,rwork->R, &info, 1L, 1L);
 	}
       else 
 	{
 	  /* compute the singular values u and vt */ 
-	  C2F(zgesvd)("A","A", &m, &n,A->I, &m,SV->R,(*U)->I, &m,Vt->I, &n,
-		      dwork->I, &lworkMin,rwork->R, &info, 1L, 1L);
+	  C2F(zgesvd)("A","A", &m, &n,A->C, &m,SV->R,(*U)->C, &m,Vt->C, &n,
+		      dwork->C, &lworkMin,rwork->R, &info, 1L, 1L);
 	}
     }
 
@@ -929,7 +929,7 @@ static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
       if ( type == 'r' )
 	for (i = 0 ; i < n ; ++i) { (*d)->R[i] = wr->R[i]; }
       else 
-	for (i = 0 ; i < n ; ++i) { (*d)->I[i].r = wr->R[i]; (*d)->I[i].i = wi->R[i]; }
+	for (i = 0 ; i < n ; ++i) { (*d)->C[i].r = wr->R[i]; (*d)->C[i].i = wi->R[i]; }
     }
   else 
     {
@@ -950,9 +950,9 @@ static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
 	} 
       else 
 	{
-	  C2F(zlaset)("F", &n, &n, &zero, &zero,(*d)->I, &n, 1L);
+	  C2F(zlaset)("F", &n, &n, &zero, &zero,(*d)->C, &n, 1L);
 	  for ( i = 0;  i < n ; ++i) 
-	    { (*d)->I[i*(m+1)].r =  wr->R[i]; (*d)->I[i*(m+1)].i = wi->R[i]; }
+	    { (*d)->C[i*(m+1)].r =  wr->R[i]; (*d)->C[i*(m+1)].i = wi->R[i]; }
 	  /* store right eigenvectors in v */ 
 	  /* we could check if XXXX v is real or imag before */
 	  j = -1;
@@ -964,8 +964,8 @@ static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
 		for ( i = 0;  i < n ; ++i) 
 		  { 
 		    int k = i+j*n ;
-		    (*v)->I[k].r = vr->R[k]; 
-		    (*v)->I[k].i = 0.0;
+		    (*v)->C[k].r = vr->R[k]; 
+		    (*v)->C[k].i = 0.0;
 		  }
 	      else if ( wi->R[j] > 0.0 ) 
 		{
@@ -973,10 +973,10 @@ static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
 		  for ( i = 0;  i < n ; ++i) 
 		    { 
 		      int k = i+j*n ;
-		      (*v)->I[k].r = vr->R[k]; 
-		      (*v)->I[k].i = vr->R[k+n]; 
-		      (*v)->I[k+n].r = vr->R[k]; 
-		      (*v)->I[k+n].i = - vr->R[k+n]; 
+		      (*v)->C[k].r = vr->R[k]; 
+		      (*v)->C[k].i = vr->R[k+n]; 
+		      (*v)->C[k+n].r = vr->R[k]; 
+		      (*v)->C[k+n].i = - vr->R[k+n]; 
 		    }
 		  j++; 
 		}
@@ -1019,7 +1019,7 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
   /* checks that  A != Nan et != Inf */
 
   for ( i= 0 ; i < A->mn ; i++ ) 
-    if (nsp_isinf_c (&A->I[i]) || nsp_isnan_c (&A->I[i]))
+    if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
       {
 	Scierror("Error: nan or inf in svd first argument\n"); 
 	return FAIL;
@@ -1034,13 +1034,13 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
   
   if (v == NULL ) 
     {
-      C2F(zgeev)("N","N", &n,A->I, &n,(*d)->I,NULL,&n,NULL,&n,dwork->I,&lworkMin,rwork->R,
+      C2F(zgeev)("N","N", &n,A->C, &n,(*d)->C,NULL,&n,NULL,&n,dwork->C,&lworkMin,rwork->R,
 		 &info, 1L, 1L);
     } 
   else 
     {
       if (( *v =nsp_matrix_create(NVOID,'i',n,n)) == NULLMAT) return FAIL;
-      C2F(zgeev)("N","V", &n,A->I, &n,(*d)->I,NULL,&n,(*v)->I,&n,dwork->I,&lworkMin,rwork->R,
+      C2F(zgeev)("N","V", &n,A->C, &n,(*d)->C,NULL,&n,(*v)->C,&n,dwork->C,&lworkMin,rwork->R,
 		 &info, 1L, 1L);
     }
   
@@ -1051,7 +1051,7 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
 
   /* result is real ? or complex */ 
 
-  for (i = 0 ; i < n ; ++i) { if ((*d)->I[i].i != 0.0) { type = 'i'; break;}}
+  for (i = 0 ; i < n ; ++i) { if ((*d)->C[i].i != 0.0) { type = 'i'; break;}}
 
   /* extract results */ 
 
@@ -1075,12 +1075,12 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
       if ( type == 'r' ) 
 	{
 	  C2F(dlaset)("F", &n, &n, &dzero, &dzero,md->R, &n, 1L);
-	  for ( i = 0;  i < n ; ++i) { md->R[i*(m+1)] =  (*d)->I[i].r; }
+	  for ( i = 0;  i < n ; ++i) { md->R[i*(m+1)] =  (*d)->C[i].r; }
 	} 
       else 
 	{
-	  C2F(zlaset)("F", &n, &n, &zero, &zero,md->I, &n, 1L);
-	  for ( i = 0;  i < n ; ++i)  md->I[i*(m+1)] =  (*d)->I[i]; 
+	  C2F(zlaset)("F", &n, &n, &zero, &zero,md->C, &n, 1L);
+	  for ( i = 0;  i < n ; ++i)  md->C[i*(m+1)] =  (*d)->C[i]; 
 	}
       nsp_matrix_destroy(*d); 
       *d = md;
@@ -1191,7 +1191,7 @@ static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
   /* checks that  A != Nan et != Inf */
 
   for ( i= 0 ; i < A->mn ; i++ ) 
-    if (nsp_isinf_c (&A->I[i]) || nsp_isnan_c (&A->I[i]))
+    if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
       {
 	Scierror("Error: nan or inf in svd first argument\n"); 
 	return FAIL;
@@ -1204,7 +1204,7 @@ static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
   lworkMin =  n*2;
   if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
   
-  C2F(zheev)((flag == 'V' ) ? "V" : "N","U" , &n,A->I, &n,wr->R,dwork->I,&lworkMin,rwork->R, &info, 1L, 1L);
+  C2F(zheev)((flag == 'V' ) ? "V" : "N","U" , &n,A->C, &n,wr->R,dwork->C,&lworkMin,rwork->R, &info, 1L, 1L);
   
   if (info != 0) {
     Scierror("Error: convergence problem in zheev\n"); 
@@ -1307,14 +1307,14 @@ int intzgetri(NspMatrix *A)
   lworkMin = Max(1,n);
   if (( dwork =nsp_matrix_create(NVOID,'i',1,lworkMin)) == NULLMAT) return FAIL;
   
-  C2F(zgetrf)(&n, &n,A->I, &n, Iwork, &info);
+  C2F(zgetrf)(&n, &n,A->C, &n, Iwork, &info);
   if (info > 0) {
     Scierror("Error: problem is singular\n");
     return FAIL;
   } else if (info < 0) {
     return FAIL;
   }
-  C2F(zgetri)(&n, A->I, &n, Iwork, dwork->I,&lworkMin, &info);
+  C2F(zgetri)(&n, A->C, &n, Iwork, dwork->C,&lworkMin, &info);
   if (info != 0) {
     Scierror("Error: something wrong in zgetri\n");
     return FAIL;
@@ -1414,10 +1414,10 @@ static int intzgecon(NspMatrix *A,double *rcond)
   lworkMin = 2*n ;
   if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
 
-  anorm = C2F(zlange)("1", &n, &n,A->I, &n,NULL, 1L);
-  C2F(zgetrf)(&n, &n, A->I, &n, Iwork , &info);
+  anorm = C2F(zlange)("1", &n, &n,A->C, &n,NULL, 1L);
+  C2F(zgetrf)(&n, &n, A->C, &n, Iwork , &info);
   if (info == 0) {
-    C2F(zgecon)("1",&n,A->I,&n,&anorm,rcond,dwork->I,rwork->R, &info, 1L);
+    C2F(zgecon)("1",&n,A->C,&n,&anorm,rcond,dwork->C,rwork->R, &info, 1L);
   } else {
     Scierror("Error: something wrong in zgetrf\n");
     return FAIL;
@@ -1450,7 +1450,7 @@ int nsp_cholewsky(NspMatrix *A)
   if ( A->rc_type == 'r' ) 
     C2F(dpotrf)("U", &n,A->R, &n, &info, 1L);
   else 
-    C2F(zpotrf)("U", &n,A->I, &n, &info, 1L);
+    C2F(zpotrf)("U", &n,A->C, &n, &info, 1L);
   if (info != 0) {
     if (info > 0) {
       Scierror("Error: matrix is not positive definite\n"); 
@@ -1572,7 +1572,7 @@ static NspMatrix * intzdet(NspMatrix *A,char mode)
   if (( ipiv =nsp_matrix_create(NVOID,'r',1,m)) == NULLMAT) return NULL;
   Ipiv = (int *) ipiv->R  ;
 
-  C2F(zgetrf)(&m, &n, A->I, &m, Ipiv , &info);
+  C2F(zgetrf)(&m, &n, A->C, &m, Ipiv , &info);
   if (info < 0) {
     Scierror("Error: something wrong in zgetrf\n") ; 
     return NULL;
@@ -1585,17 +1585,17 @@ static NspMatrix * intzdet(NspMatrix *A,char mode)
     for (ix = 0; ix < n ; ++ix) 
       {
 	if ( Ipiv[ix] != ix + 1) { dx.r = -dx.r ;  dx.i = -dx.i;};
-	nsp_prod_c(&dx,&A->I[ ix * (m + 1) ]);
+	nsp_prod_c(&dx,&A->C[ ix * (m + 1) ]);
       }
     if (( det =nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) return NULL;
-    det->I[0] = dx ;
+    det->C[0] = dx ;
   } else {    /*  [e,m]=det(A) */
     const double one=1.0, ten= 10.0;
     doubleC dx = {1.0,0.0};
     double e = 0.0;
     for (ix = 0; ix < n; ++ix) {
       if ( Ipiv[ix] != ix + 1) { dx.r = -dx.r ;  dx.i = -dx.i;};
-      nsp_prod_c(&dx,&A->I[ ix * (m + 1) ]);
+      nsp_prod_c(&dx,&A->C[ ix * (m + 1) ]);
       if ( nsp_abs_c(&dx) == 0.) break ; 
       while ( nsp_abs_c(&dx) < one) {
 	dx.r *= ten; dx.i *= ten;
@@ -1607,8 +1607,8 @@ static NspMatrix * intzdet(NspMatrix *A,char mode)
       }
     }
     if (( det =nsp_matrix_create(NVOID,A->rc_type,1,2)) == NULLMAT) return NULL;
-    (det)->I[0].r  = e;    (det)->I[0].i  = 0.0;
-    (det)->I[1] = dx; 
+    (det)->C[0].r  = e;    (det)->C[0].i  = 0.0;
+    (det)->C[1] = dx; 
   }
   return det;
 } 
@@ -1696,7 +1696,7 @@ static int intzgebal(NspMatrix *A,NspMatrix **D)
   /* checks that  A != Nan et != Inf */
 
   for ( i= 0 ; i < A->mn ; i++ ) 
-    if (nsp_isinf_c (&A->I[i]) || nsp_isnan_c (&A->I[i]))
+    if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
       {
 	Scierror("Error: nan or inf in svd first argument\n"); 
 	return FAIL;
@@ -1705,7 +1705,7 @@ static int intzgebal(NspMatrix *A,NspMatrix **D)
   if (( *D =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
   if (( work =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
 
-  C2F(zgebal)("B", &n, A->I, &n, &ilo, &ihi, work->R, &info, 1L);
+  C2F(zgebal)("B", &n, A->C, &n, &ilo, &ihi, work->R, &info, 1L);
   if (info != 0) {
     Scierror("Error: something wrong in zgebal\n");
     return FAIL;
@@ -1893,7 +1893,7 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   /* checks that  A != Nan et != Inf */
 
   for ( i= 0 ; i < A->mn ; i++ ) 
-    if (nsp_isinf_c (&A->I[i]) || nsp_isnan_c (&A->I[i]))
+    if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
       {
 	Scierror("Error: nan or inf in svd first argument\n"); 
 	return FAIL;
@@ -1901,7 +1901,7 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   /* checks that  A != Nan et != Inf */
 
   for ( i= 0 ; i < B->mn ; i++ ) 
-    if (nsp_isinf_c (&B->I[i]) || nsp_isnan_c (&B->I[i]))
+    if (nsp_isinf_c (&B->C[i]) || nsp_isnan_c (&B->C[i]))
       {
 	Scierror("Error: nan or inf in svd first argument\n"); 
 	return FAIL;
@@ -1913,7 +1913,7 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   lworkMin = Max(1,6*n);
   if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
 
-  C2F(zggbal)("B",&n,A->I, &n,B->I, &n,&ilo,&ihi,lscale->R, rscale->R,dwork->R, &info, 1L);
+  C2F(zggbal)("B",&n,A->C, &n,B->C, &n,&ilo,&ihi,lscale->R, rscale->R,dwork->R, &info, 1L);
   if (info != 0) {
     Scierror("Error: something wrong in zggbal\n");
     return FAIL;
@@ -2114,8 +2114,8 @@ int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond)
   lworkMin = Min(m,n) + Max(ix1,ix2);
   if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
 
-  C2F(zgelsy)(&m, &n, &nrhs,A->I, &m, B->I,&B->m,Ijpvt,&Rcond,&irank,
-	      dwork->I, &lworkMin, rwork->R, &info);
+  C2F(zgelsy)(&m, &n, &nrhs,A->C, &m, B->C,&B->m,Ijpvt,&Rcond,&irank,
+	      dwork->C, &lworkMin, rwork->R, &info);
       
   if (info != 0) {
     Scierror("Error: computation failed in zgelsy\n");
@@ -2328,13 +2328,13 @@ static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
       double anorm ; 
       NspMatrix *Ac ;
       if (( Ac =nsp_matrix_copy(A))== NULLMAT) return FAIL;
-      anorm =  C2F(zlange)("1", &m, &n,Ac->I, &m, NULL , 1L);
-      C2F(zgetrf)(&n, &n, Ac->I , &n, Ijpvt, &info);
+      anorm =  C2F(zlange)("1", &m, &n,Ac->C, &m, NULL , 1L);
+      C2F(zgetrf)(&n, &n, Ac->C , &n, Ijpvt, &info);
       if (info == 0) {
-	C2F(zgecon)("1", &n, Ac->I, &n,&anorm, &Rcond, dwork->I, rwork->R,&info, 1L);
+	C2F(zgecon)("1", &n, Ac->C, &n,&anorm, &Rcond, dwork->C, rwork->R,&info, 1L);
 	if ( Rcond > sqrt(eps)) {
 	  /* we solve the linear systems */
-	  C2F(zgetrs)("N", &n, &nrhs, Ac->I, &n, Ijpvt,B->I, &n, &info, 1L);
+	  C2F(zgetrs)("N", &n, &nrhs, Ac->C, &n, Ijpvt,B->C, &n, &info, 1L);
 	  /* XXXXXX clean workspace here */ 
 	  return OK;
 	}
@@ -2346,13 +2346,13 @@ static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
   for (i = 0 ; i < n; ++i) Ijpvt[i]=0;
   
   if ( flag == 'n' ) 
-    C2F(zgelsy)(&m, &n, &nrhs,A->I, &m, B->I,&B->m,Ijpvt,&Rcond,&irank,
-		dwork->I, &lworkMin, rwork->R, &info);
+    C2F(zgelsy)(&m, &n, &nrhs,A->C, &m, B->C,&B->m,Ijpvt,&Rcond,&irank,
+		dwork->C, &lworkMin, rwork->R, &info);
   else 
     {
       /* XXX
-	 C2F(zgelsy1)(&m, &n, &nrhs,A->I, &m, B->I,&B->m,Ijpvt,&Rcond,&irank,
-	 dwork->I, &lworkMin, rwork->R, &info);
+	 C2F(zgelsy1)(&m, &n, &nrhs,A->C, &m, B->C,&B->m,Ijpvt,&Rcond,&irank,
+	 dwork->C, &lworkMin, rwork->R, &info);
       */
       nsp_matrix_destroy(jpvt); 
       nsp_matrix_destroy(dwork); 
@@ -2548,13 +2548,13 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
   if ( U != NULL ) 
     {
       if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
-      C2F(zgees)("V",sort, F, &n,A->I,&n, &sdim,W->I,(*U)->I,
-		 &n, dwork->I, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
+      C2F(zgees)("V",sort, F, &n,A->C,&n, &sdim,W->C,(*U)->C,
+		 &n, dwork->C, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
     }
   else 
     { 
-      C2F(zgees)("N",sort, F, &n,A->I,&n, &sdim,W->I,NULL,
-		 &n, dwork->I, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
+      C2F(zgees)("N",sort, F, &n,A->C,&n, &sdim,W->C,NULL,
+		 &n, dwork->C, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
     }
   if (info > 0) {
     Scierror("Error: in schur, the QR algorithm failed to compute all the eigenvalues;\n");
@@ -2765,20 +2765,20 @@ int intzgges(NspMatrix *A,NspMatrix *B,
   if ( VSL != NULL ) 
     {
       if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
-      Vsl = (*VSL)->I;
+      Vsl = (*VSL)->C;
       jobvsl = "V"; 
     }
 
   if ( VSR != NULL ) 
     {
       if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
-      Vsr = (*VSR)->I;
+      Vsr = (*VSR)->C;
       jobvsl = "V"; 
     }
 
-  C2F(zgges)(jobvsl, jobvsr, sort,F, &n, A->I, &n, B->I, &n, 
-	     &sdim,alpha->I, beta->I,Vsl, &n,Vsr, &n,
-	     dwork->I, &lworkMin,rwork->R,Iwork, &info, 1L, 1L, 1L);
+  C2F(zgges)(jobvsl, jobvsr, sort,F, &n, A->C, &n, B->C, &n, 
+	     &sdim,alpha->C, beta->C,Vsl, &n,Vsr, &n,
+	     dwork->C, &lworkMin,rwork->R,Iwork, &info, 1L, 1L, 1L);
   
   if ( Sdim != NULL ) {
     if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
@@ -2886,7 +2886,7 @@ static int intzgehrd(NspMatrix *A, NspMatrix **U)
   workMin = Max(1,n);
   if (( dwork =nsp_matrix_create(NVOID,'i',1,workMin)) == NULLMAT) return FAIL;
 
-  C2F(zgehrd)(&n, &un, &n,A->I, &n,tau->I,dwork->I, &workMin, &info);
+  C2F(zgehrd)(&n, &un, &n,A->C, &n,tau->C,dwork->C, &workMin, &info);
   if (info != 0) {
     Scierror("Error: something wrong in zgehrd\n");
     return FAIL;
@@ -2895,7 +2895,7 @@ static int intzgehrd(NspMatrix *A, NspMatrix **U)
   if ( U != NULL) { 
     /* extract U */
     if (( *U =nsp_matrix_copy(A))== NULLMAT) return FAIL;
-    C2F(zunghr)(&n,&un,&n,(*U)->I,&n,tau->I,dwork->I,&workMin,&info);    
+    C2F(zunghr)(&n,&un,&n,(*U)->C,&n,tau->C,dwork->C,&workMin,&info);    
     if (info != 0) {
       Scierror("Error: something wrong in zunghr\n");
       return FAIL;
@@ -3041,7 +3041,7 @@ static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
   else 
     { 
       if (( *alpha =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
-      for (i = 0 ; i < n ; ++i) { (*alpha)->I[i].r = alphar->R[i]; (*alpha)->I[i].i = alphai->R[i]; }
+      for (i = 0 ; i < n ; ++i) { (*alpha)->C[i].r = alphar->R[i]; (*alpha)->C[i].i = alphai->R[i]; }
     }
 
   /* fill Vr if requested */ 
@@ -3055,9 +3055,9 @@ static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
 	for ( i = 0;  i < n ; ++i) 
 	  { 
 	    int k = i+j*n ;
-	    (*Vr)->I[k].i = (*Vr)->I[k+n].r; 
-	    (*Vr)->I[k+n].r = (*Vr)->I[k].r ;
-	    (*Vr)->I[k+n].i = - (*Vr)->I[k].i;
+	    (*Vr)->C[k].i = (*Vr)->C[k+n].r; 
+	    (*Vr)->C[k+n].r = (*Vr)->C[k].r ;
+	    (*Vr)->C[k+n].i = - (*Vr)->C[k].i;
 	  }
 	j++; 
       }
@@ -3076,9 +3076,9 @@ static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
 	for ( i = 0;  i < n ; ++i) 
 	  { 
 	    int k = i+j*n ;
-	    (*Vl)->I[k].i = (*Vl)->I[k+n].r; 
-	    (*Vl)->I[k+n].r = (*Vl)->I[k].r ;
-	    (*Vl)->I[k+n].i = - (*Vl)->I[k].i;
+	    (*Vl)->C[k].i = (*Vl)->C[k+n].r; 
+	    (*Vl)->C[k+n].r = (*Vl)->C[k].r ;
+	    (*Vl)->C[k+n].i = - (*Vl)->C[k].i;
 	  }
 	j++; 
       }
@@ -3142,19 +3142,19 @@ static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
 
   if ( Vl != NULL ) {
     if (( *Vl =nsp_matrix_create(NVOID,'i',m,n)) == NULLMAT) return FAIL;
-    VlI = (*Vl)->I; jobVl = "V";
+    VlI = (*Vl)->C; jobVl = "V";
   }
   if ( Vr != NULL ) {
     if (( *Vr =nsp_matrix_create(NVOID,'i',m,n)) == NULLMAT) return FAIL;
-    VrI = (*Vr)->I; jobVr = "V";
+    VrI = (*Vr)->C; jobVr = "V";
   }
 
   if (( rwork =nsp_matrix_create(NVOID,'r',1,8*n)) == NULLMAT) return FAIL;
   lworkMin = Max(1,8*n);
   if (( dwork =nsp_matrix_create(NVOID,'i',1,lworkMin)) == NULLMAT) return FAIL;
 
-  C2F(zggev)(jobVl,jobVr,&n,A->I, &n,B->I, &n,(*alpha)->I,(*beta)->I,
-	     VlI,&n,VrI, &n,dwork->I,&lworkMin,rwork->R,&info, 1L, 1L);
+  C2F(zggev)(jobVl,jobVr,&n,A->C, &n,B->C, &n,(*alpha)->C,(*beta)->C,
+	     VlI,&n,VrI, &n,dwork->C,&lworkMin,rwork->R,&info, 1L, 1L);
 
   if (info != 0) {
     if (info <= n && info > 0 ) 
@@ -3224,12 +3224,12 @@ static double intznorm(NspMatrix *A,char flag)
     {
       lworkMin = Max(1,n);
       if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-      norm=  C2F(zlange)(&flag, &m, &n,A->I, &m, dwork->R, 1L);
+      norm=  C2F(zlange)(&flag, &m, &n,A->C, &m, dwork->R, 1L);
       nsp_matrix_destroy(dwork);
     } 
   else 
     {
-      norm=  C2F(zlange)(&flag, &m, &n,A->I, &m, NULL , 1L);
+      norm=  C2F(zlange)(&flag, &m, &n,A->C, &m, NULL , 1L);
     }
   return norm;
 }

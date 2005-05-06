@@ -33,7 +33,7 @@ struct _nsp_matrix {
   char convert;  /* 'd','i','f' : double, integer, float
 		    used for array data conversion */
   double *R;     /* Pointer on real values */
-  doubleC *I;    /* Pointer on complex values */
+  doubleC *C;    /* Pointer on complex values */
 };
 
 #include "nsp/bmatrix.h" 

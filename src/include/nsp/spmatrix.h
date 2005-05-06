@@ -33,7 +33,7 @@ typedef struct _nsp_type_SpMatrix {
   D[i]-> size : number of non nul elements in row i 
   D[i]->J : array of column of the elements of lin i
   D[i]->R : array of real part of the elements of lin i
-  D[i]->I : array of imaginary part of the elements of lin i
+  D[i]->C : array of imaginary part of the elements of lin i
  ******************************************************************/
 
 typedef struct SpRow {
@@ -41,7 +41,7 @@ typedef struct SpRow {
   integer *J   ; /* pointer to an integer array giving the columns or row i 
 		in increasing order */
   double  *R; /* pointer to Real datas */
-  doubleC *I; /* pointer to complex  datas */
+  doubleC *C; /* pointer to complex  datas */
 } SpRow ;
   
 

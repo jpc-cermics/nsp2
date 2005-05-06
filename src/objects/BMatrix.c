@@ -974,7 +974,7 @@ NspBMatrix  *nsp_matrix_to_bmatrix(NspMatrix *M)
       Loc->B[i] = ( M->R[i] != 0.0) ? TRUE : FALSE ;
   else
     for ( i = 0 ; i < M->mn ; i++ ) 
-      Loc->B[i] = ( M->I[i].r != 0.0 || M->I[i].i != 0.0) ? TRUE : FALSE;
+      Loc->B[i] = ( M->C[i].r != 0.0 || M->C[i].i != 0.0) ? TRUE : FALSE;
   return(Loc);
 }
 

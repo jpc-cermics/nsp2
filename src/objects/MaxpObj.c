@@ -233,7 +233,7 @@ static int mpmatrix_is_true(NspMaxpMatrix *M)
   else
     for ( i = 0 ; i < M->mn ; i++ ) 
       {
-	if (  M->I[i].r == 0.0 && M->I[i].i == 0.0 ) 
+	if (  M->C[i].r == 0.0 && M->C[i].i == 0.0 ) 
 	  return FALSE;
       }
   return TRUE;
@@ -253,7 +253,7 @@ static int mpmatrix_xdr_save(NspFile  *F, NspMaxpMatrix *M)
   if ( M->rc_type == 'r') 
     { if (nsp_xdr_save_array_d(F->xdrs,M->R,M->mn) == FAIL) return FAIL; }
   else
-    { if (nsp_xdr_save_array_d(F->xdrs,(double *) M->I,2*M->mn) == FAIL) return FAIL; }
+    { if (nsp_xdr_save_array_d(F->xdrs,(double *) M->C,2*M->mn) == FAIL) return FAIL; }
   return OK;
 }
 
@@ -278,7 +278,7 @@ static NspMaxpMatrix *mpmatrix_xdr_load(NspFile  *F)
    }
   else
    {
-     if (nsp_xdr_load_array_d(F->xdrs,(double *)M->I,2*M->mn) == FAIL) return NULLMAXPMAT;
+     if (nsp_xdr_load_array_d(F->xdrs,(double *)M->C,2*M->mn) == FAIL) return NULLMAXPMAT;
    }
   return M;
 }

@@ -275,7 +275,7 @@ matrix_is_true (NspMatrix * M)
   else
     for (i = 0; i < M->mn; i++)
       {
-	if (M->I[i].r == 0.0 && M->I[i].i == 0.0)
+	if (M->C[i].r == 0.0 && M->C[i].i == 0.0)
 	  return FALSE;
       }
   return TRUE;
@@ -305,7 +305,7 @@ matrix_xdr_save (NspFile * F, NspMatrix * M)
     }
   else
     {
-      if (nsp_xdr_save_array_d(F->xdrs, (double *) M->I, 2 * M->mn) == FAIL)
+      if (nsp_xdr_save_array_d(F->xdrs, (double *) M->C, 2 * M->mn) == FAIL)
 	return FAIL;
     }
   return OK;
@@ -339,7 +339,7 @@ matrix_xdr_load (NspFile * F)
     }
   else
     {
-      if (nsp_xdr_load_array_d(F->xdrs, (double *) M->I, 2 * M->mn) == FAIL)
+      if (nsp_xdr_load_array_d(F->xdrs, (double *) M->C, 2 * M->mn) == FAIL)
 	return NULLMAT;
     }
   return M;

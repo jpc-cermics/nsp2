@@ -49,8 +49,8 @@ Poly *Basic2Poly(doubleC *d, char type)
     }
   else 
     {
-      A->I[0].r = d->r ;
-      A->I[0].i = d->i ;
+      A->C[0].r = d->r ;
+      A->C[0].i = d->i ;
     }
   return((Poly *) A);
 }
@@ -114,7 +114,7 @@ void nsp_pmatrix_print(NspPMatrix *Mat, int indent)
 	      if ( loc->rc_type == 'r')
 		Sciprintf(" %8g X^%d",loc->R[k],k);
 	      else 
-		Sciprintf(" (%8g+i%8g) X^%d",loc->I[k].r,loc->I[k].i,k);
+		Sciprintf(" (%8g+i%8g) X^%d",loc->C[k].r,loc->C[k].i,k);
 	    }
 	  Sciprintf("\n");
 	}
@@ -257,7 +257,7 @@ NspPMatrix *Mat2PMat(NspMatrix *A, char *str, integer flag)
       PolyDestroy(Loc->S[i]);
       if ( A->rc_type == 'r') 
 	     d.r= A->R[i];
-      else { d.r= A->I[i].r; d.i= A->I[i].i;}
+      else { d.r= A->C[i].r; d.i= A->C[i].i;}
       if ((Loc->S[i] = Basic2Poly(&d,A->rc_type)) == (Poly *) 0)  return(NULLPMAT);
     }
   return(Loc);

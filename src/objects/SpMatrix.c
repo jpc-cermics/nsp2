@@ -155,7 +155,7 @@ NspSpMatrix *nsp_spmatrix_sparse_old(char *name,NspMatrix *RC, NspMatrix *Values
     case 'i' : 
       for ( i = 0 ; i < RC->m ; i++)  
 	{
-	  if (Values->I[i].r != 0.0 || Values->I[i].i ) Loc->D[Iloc[i]-1]->iw++;
+	  if (Values->C[i].r != 0.0 || Values->C[i].i ) Loc->D[Iloc[i]-1]->iw++;
 	} 
       break;
     }
@@ -196,9 +196,9 @@ NspSpMatrix *nsp_spmatrix_sparse_old(char *name,NspMatrix *RC, NspMatrix *Values
 	    }
 	  break;
 	case 'i' : 
-	  if ( Values->I[i].r != 0.0 || Values->I[i].i != 0.0) 
+	  if ( Values->C[i].r != 0.0 || Values->C[i].i != 0.0) 
 	    {
-	      Loc->D[Iloc[i]-1]->I[count] = Values->I[i];
+	      Loc->D[Iloc[i]-1]->C[count] = Values->C[i];
 	      Loc->D[Iloc[i]-1]->J[count] = Iloc[i+RC->m]-1;
 	      Loc->D[Iloc[i]-1]->iw++;
 	    }
@@ -216,7 +216,7 @@ NspSpMatrix *nsp_spmatrix_sparse_old(char *name,NspMatrix *RC, NspMatrix *Values
 	  if ( Loc->rc_type == 'r' ) 
 	    C2F(dperm)(Loc->D[i]->R,&Loc->D[i]->size,xb);
 	  else 
-	    C2F(zperm)(Loc->D[i]->I,&Loc->D[i]->size,xb);
+	    C2F(zperm)(Loc->D[i]->C,&Loc->D[i]->size,xb);
 	}
     }
   FREE(xb);
@@ -271,7 +271,7 @@ NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, in
     case 'i' : 
       for ( i = 0 ; i < RC->m ; i++)  
 	{
-	  if (Values->I[i].r != 0.0 || Values->I[i].i ) Loc->D[((int) RC->R[i])-1]->iw++;
+	  if (Values->C[i].r != 0.0 || Values->C[i].i ) Loc->D[((int) RC->R[i])-1]->iw++;
 	} 
       break;
     }
@@ -321,15 +321,15 @@ NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, in
 	    }
 	  break;
 	case 'i' : 
-	  if ( Values->I[i].r != 0.0 || Values->I[id].i != 0.0) 
+	  if ( Values->C[i].r != 0.0 || Values->C[id].i != 0.0) 
 	    {
-	      Loc->D[iloc]->I[count] = Values->I[id];
+	      Loc->D[iloc]->C[count] = Values->C[id];
 	      Loc->D[iloc]->J[count] =((int) RC->R[i+RC->m])-1;
 	      if ( count != 0 && ( Loc->D[iloc]->J[count] == Loc->D[iloc]->J[count-1])) 
 		{
 		  Sciprintf("Warning (%d,%d) is duplicated \n",iloc+1,Loc->D[iloc]->J[count]+1);
-		  Loc->D[iloc]->I[count-1].r +=  Loc->D[iloc]->I[count].r;
-		  Loc->D[iloc]->I[count-1].i +=  Loc->D[iloc]->I[count].i;
+		  Loc->D[iloc]->C[count-1].r +=  Loc->D[iloc]->C[count].r;
+		  Loc->D[iloc]->C[count-1].i +=  Loc->D[iloc]->C[count].i;
 		}
 	      else 
 		Loc->D[iloc]->iw++;
@@ -356,7 +356,7 @@ NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, in
   /* 	  if ( Loc->rc_type == 'r' )  */
   /* 	    C2F(dperm)(Loc->D[i]->R,&Loc->D[i]->size,xb); */
   /* 	  else  */
-  /* 	    C2F(zperm)(Loc->D[i]->I,&Loc->D[i]->size,xb); */
+  /* 	    C2F(zperm)(Loc->D[i]->C,&Loc->D[i]->size,xb); */
   /* 	} */
   /*     } */
   /*   FREE(xb); */
@@ -390,7 +390,7 @@ int nsp_spmatrix_get(NspSpMatrix *A, NspMatrix **RC, NspMatrix **Values)
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : (*Values)->R[iw] = A->D[i]->R[j];break;
-	    case 'i' : (*Values)->I[iw] = A->D[i]->I[j];break;
+	    case 'i' : (*Values)->C[iw] = A->D[i]->C[j];break;
 	    }
 	  iw++;
 	}
@@ -417,7 +417,7 @@ NspSpMatrix *nsp_spmatrix_copy(NspSpMatrix *A)
       if ( A->rc_type == 'r' ) 
 	C2F(dcopy)(&A->D[i]->size,A->D[i]->R,&inc,Sp->D[i]->R,&inc);
       else 
-	C2F(zcopy)(&A->D[i]->size,A->D[i]->I,&inc,Sp->D[i]->I,&inc);
+	C2F(zcopy)(&A->D[i]->size,A->D[i]->C,&inc,Sp->D[i]->C,&inc);
     }
   return(Sp);
 }
@@ -444,10 +444,10 @@ int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n)
 	{
 	case 'r' : 
 	  if ( (Row->R =nsp_alloc_doubles((int) n)) == (double *) 0 ) return(FAIL);
-	  Row->I = (doubleC *) 0;
+	  Row->C = (doubleC *) 0;
 	  break;
 	case 'i' : 
-	  if ( (Row->I =nsp_alloc_doubleC((int) n)) == (doubleC *) 0 ) return(FAIL);
+	  if ( (Row->C =nsp_alloc_doubleC((int) n)) == (doubleC *) 0 ) return(FAIL);
 	  Row->R = (double *) 0; 
 	  break;
 	}
@@ -466,7 +466,7 @@ int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n)
 	  FREE(Row->R);
 	  break;
 	case 'i' : 
-	  FREE(Row->I);
+	  FREE(Row->C);
 	}
       Row->size = 0;
       return(OK);
@@ -476,10 +476,10 @@ int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n)
     {
     case 'r' : 
       if (( Row->R =nsp_realloc_doubles(Row->R,(int) n)) == (double *) 0 ) return(FAIL);
-      Row->I = (doubleC *) 0;
+      Row->C = (doubleC *) 0;
       break;
     case 'i' : 
-      if (( Row->I =nsp_realloc_doubleC(Row->I, (int) n)) == (doubleC *) 0 ) return(FAIL);
+      if (( Row->C =nsp_realloc_doubleC(Row->C, (int) n)) == (doubleC *) 0 ) return(FAIL);
       Row->R = (double *) 0; 
       break;
     }
@@ -497,7 +497,7 @@ void SpRowDestroy(SpRow *Row)
     {
       FREE( Row->J);
       FREE( Row->R);
-      FREE( Row->I);
+      FREE( Row->C);
     }
 }
 
@@ -574,7 +574,7 @@ void nsp_spmatrix_print(NspSpMatrix *Sp, int indent)
 	  SpRow *Ri = Sp->D[i];
 	  for  ( k = 0 ;  k < Ri->size ; k++)
 	    { 
-	      Sciprintf(formati ,i+1,Ri->J[k]+1,Ri->I[k].r,Ri->I[k].i);
+	      Sciprintf(formati ,i+1,Ri->J[k]+1,Ri->C[k].r,Ri->C[k].i);
 	    }
 	}
       break;
@@ -638,7 +638,7 @@ NspSpMatrix *nsp_spmatrix_redim(NspSpMatrix *A, int m, int n)
 	  switch (Loc->rc_type ) 
 	    {
 	    case 'r' : Loc->D[i1]->R[Loc->D[i1]->iw]= Ri->R[k];break;
-	    case 'i' : Loc->D[i1]->I[Loc->D[i1]->iw]= Ri->I[k];break;
+	    case 'i' : Loc->D[i1]->C[Loc->D[i1]->iw]= Ri->C[k];break;
 	    }
 	  Loc->D[i1]->iw++;
 	}
@@ -655,7 +655,7 @@ NspSpMatrix *nsp_spmatrix_redim(NspSpMatrix *A, int m, int n)
 	  if ( Loc->rc_type == 'r' ) 
 	    C2F(dperm)(Loc->D[i]->R,&Loc->D[i]->size,xb);
 	  else 
-	    C2F(zperm)(Loc->D[i]->I,&Loc->D[i]->size,xb);
+	    C2F(zperm)(Loc->D[i]->C,&Loc->D[i]->size,xb);
 	}
     }
   FREE(xb);
@@ -746,14 +746,14 @@ int nsp_spmatrix_concatr(NspSpMatrix *A, NspSpMatrix *B)
       if ( B->rc_type == 'r' ) 
 	{
 	  if ( A->rc_type == 'i' ) 
-	nsp_dzcopy(&Bi->size,Bi->R,&inc,Ai->I+ioffset,&inc);
+	nsp_dzcopy(&Bi->size,Bi->R,&inc,Ai->C+ioffset,&inc);
 	  else 
 	    C2F(dcopy)(&Bi->size,Bi->R,&inc,Ai->R+ioffset,&inc);
 	}
       else 
 	{
 	  /* in that case A is complex due to complexify */
-	  C2F(zcopy)(&Bi->size,Bi->I,&inc,Ai->I+ioffset,&inc);
+	  C2F(zcopy)(&Bi->size,Bi->C,&inc,Ai->C+ioffset,&inc);
 	}
     }
   A->n += B->n;
@@ -791,12 +791,12 @@ int nsp_spmatrix_concatd(NspSpMatrix *A, NspSpMatrix *B)
 	  if ( A->rc_type == 'r') 
 	    C2F(dcopy)(&Bi->size,Bi->R,&inc,Ai->R,&inc);
 	  else 
-	nsp_dzcopy(&Bi->size,Bi->R,&inc,Ai->I,&inc);
+	nsp_dzcopy(&Bi->size,Bi->R,&inc,Ai->C,&inc);
 	}
       else 
 	{
 	  /* in that case A is complex due to complexify */
-	  C2F(zcopy)(&Bi->size,Bi->I,&inc,Ai->I,&inc);
+	  C2F(zcopy)(&Bi->size,Bi->C,&inc,Ai->C,&inc);
 	}
     }
   return(OK);
@@ -851,15 +851,15 @@ void  nsp_spmatrix_store(NspSpMatrix *A, int r, int c, int col, NspSpMatrix *B, 
       switch ( B->rc_type ) 
 	{
 	case 'r' : A->D[r]->R[c] = B->D[r1]->R[c1]; break;
-	case 'i' : A->D[r]->R[c] = B->D[r1]->I[c1].r; break;
+	case 'i' : A->D[r]->R[c] = B->D[r1]->C[c1].r; break;
 	}
       break;
     case 'i' :
       switch ( B->rc_type ) 
 	{
-	case 'r' : A->D[r]->I[c].r = B->D[r1]->R[c1]; A->D[r]->I[c].i = 0.0;
+	case 'r' : A->D[r]->C[c].r = B->D[r1]->R[c1]; A->D[r]->C[c].i = 0.0;
 	  break;
-	case 'i' : A->D[r]->I[c] = B->D[r1]->I[c1]; break;
+	case 'i' : A->D[r]->C[c] = B->D[r1]->C[c1]; break;
 	}
       break;
     }
@@ -1260,7 +1260,7 @@ int nsp_spmatrix_compress_row(NspSpMatrix *A, int i)
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : R->R[k-ioff] = R->R[k];break;
-	    case 'i' : R->I[k-ioff] = R->I[k];break;
+	    case 'i' : R->C[k-ioff] = R->C[k];break;
 	    }
 	}
       if ( next == R->size ) return ioff;
@@ -1388,7 +1388,7 @@ static NspSpMatrix *SpExtract_G(NspSpMatrix *A, NspMatrix *Rows, NspMatrix *Cols
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : Li->R[j]= Ai->R[k];break;
-	    case 'i' : Li->I[j]= Ai->I[k];break;
+	    case 'i' : Li->C[j]= Ai->C[k];break;
 	    }
 	}
     }
@@ -1458,7 +1458,7 @@ NspSpMatrix *nsp_spmatrix_extract_elts(NspSpMatrix *A, NspMatrix *Elts)
 	      switch ( A->rc_type ) 
 		{
 		case 'r' : Loc->D[i]->R[0] =  A->D[row]->R[k]; break;
-		case 'i' : Loc->D[i]->I[0] =  A->D[row]->I[k]; break;
+		case 'i' : Loc->D[i]->C[0] =  A->D[row]->C[k]; break;
 		}
 	    }
 	}
@@ -1514,7 +1514,7 @@ NspSpMatrix *nsp_spmatrix_extract_rows(NspSpMatrix *A, NspMatrix *Rows, int *err
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : Li->R[j]= Ai->R[j];break;
-	    case 'i' : Li->I[j]= Ai->I[j];break;
+	    case 'i' : Li->C[j]= Ai->C[j];break;
 	    }
 	}
     }
@@ -1560,7 +1560,7 @@ NspSpMatrix *nsp_spmatrix_diag_extract(NspSpMatrix *A, int k)
 	  if (nsp_spmatrix_resize_row(Loc,i,1)==FAIL) return NULLSP;  
 	  Loc->D[i]->J[0] = 0;
 	  if ( A->rc_type == 'i' )
-	    Loc->D[i]->I[0] = A->D[ia]->I[ok];
+	    Loc->D[i]->C[0] = A->D[ia]->C[ok];
 	  else 
 	    Loc->D[i]->R[0] = A->D[ia]->R[ok];
 	}
@@ -1633,7 +1633,7 @@ int nsp_spmatrix_diag_set(NspSpMatrix *A, NspSpMatrix *Diag, int k)
 		      if ( A->rc_type == 'r' ) 
 			A->D[i]->R[l+1] = A->D[i]->R[l]; 
 		      else 
-			A->D[i]->I[l+1] = A->D[i]->I[l]; 
+			A->D[i]->C[l+1] = A->D[i]->C[l]; 
 		    }
 		}
 	      else 
@@ -1652,11 +1652,11 @@ int nsp_spmatrix_diag_set(NspSpMatrix *A, NspSpMatrix *Diag, int k)
 	    {
 	      if ( Diag->rc_type == 'r') 
 		{
-		  A->D[i]->I[col].r  = val ;
-		  A->D[i]->I[col].i  = 0.0 ;
+		  A->D[i]->C[col].r  = val ;
+		  A->D[i]->C[col].i  = 0.0 ;
 		}
 	      else 
-		A->D[i]->I[col]  = cval;
+		A->D[i]->C[col]  = cval;
 	    }
 	}
     }
@@ -1681,7 +1681,7 @@ static int  GetDiagVal(NspSpMatrix *Diag, int i, double *val, doubleC *cval)
 	  if ( Diag->rc_type == 'r' )
 	    *val = Diag->D[row]->R[k] ;
 	  else 
-	    *cval = Diag->D[row]->I[k] ;
+	    *cval = Diag->D[row]->C[k] ;
 	  return OK ;
 	}
       if ( Diag->D[row]->J[k] > col ) return FAIL;
@@ -1714,7 +1714,7 @@ NspSpMatrix *nsp_spmatrix_diag_create(NspSpMatrix *Diag, int k)
 	  switch ( Loc->rc_type ) 
 	    {
 	    case 'r' : Loc->D[iloc]->R[0] = Diag->D[0]->R[k1];break;
-	    case 'i' : Loc->D[iloc]->I[0] = Diag->D[0]->I[k1];break;
+	    case 'i' : Loc->D[iloc]->C[0] = Diag->D[0]->C[k1];break;
 	    }
 	}
     }
@@ -1731,7 +1731,7 @@ NspSpMatrix *nsp_spmatrix_diag_create(NspSpMatrix *Diag, int k)
 	      switch ( Loc->rc_type ) 
 		{
 		case 'r' : Loc->D[iloc]->R[0] = Diag->D[i]->R[0];break;
-		case 'i' : Loc->D[iloc]->I[0] = Diag->D[i]->I[0];break;
+		case 'i' : Loc->D[iloc]->C[0] = Diag->D[i]->C[0];break;
 		}
 	    }
 	}
@@ -1805,7 +1805,7 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
 		    }
 		  else 
 		    {
-		      x->I[k].r = 0.00; x->I[k].i = 0.00;
+		      x->C[k].r = 0.00; x->C[k].i = 0.00;
 		    }
 		}
 	      if ( C->rc_type == 'r' ) 
@@ -1816,20 +1816,20 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
 		{
 		  if ( A->rc_type == 'r') 
 		    {
-		      x->I[k].i += Ai->R[jp] * Bj->I[kp].i;
-		      x->I[k].r += Ai->R[jp] * Bj->I[kp].r;
+		      x->C[k].i += Ai->R[jp] * Bj->C[kp].i;
+		      x->C[k].r += Ai->R[jp] * Bj->C[kp].r;
 		    }
 		  else 
 		    {
 		      if ( B->rc_type == 'r' ) 
 			{
-			  x->I[k].i += Ai->I[jp].i * Bj->R[kp];
-			  x->I[k].r += Ai->I[jp].r * Bj->R[kp];
+			  x->C[k].i += Ai->C[jp].i * Bj->R[kp];
+			  x->C[k].r += Ai->C[jp].r * Bj->R[kp];
 			}
 		      else 
 			{
-			  x->I[k].r += Ai->I[jp].r * Bj->I[kp].r -  Ai->I[jp].i* Bj->I[kp].i;
-			  x->I[k].i += Ai->I[jp].i * Bj->I[kp].r +  Ai->I[jp].r* Bj->I[kp].i;
+			  x->C[k].r += Ai->C[jp].r * Bj->C[kp].r -  Ai->C[jp].i* Bj->C[kp].i;
+			  x->C[k].i += Ai->C[jp].i * Bj->C[kp].r +  Ai->C[jp].r* Bj->C[kp].i;
 			}
 		    }
 		}
@@ -1850,7 +1850,7 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
 	{
 	  for (v = 0 ; v < B->n ; v++)  
 	    { 
-	      if ( xb[v] == i && ( x->I[v].r != 0.00  || x->I[v].i != 0.00))  cdisize++;
+	      if ( xb[v] == i && ( x->C[v].r != 0.00  || x->C[v].i != 0.00))  cdisize++;
 	    }
 	}
       nsp_spmatrix_resize_row(C,i,cdisize);
@@ -1871,11 +1871,11 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
 	{
           for (v = 0 ; v < B->n ; v++)
             {
-              if ( xb[v] == i &&  ( x->I[v].r != 0.00  || x->I[v].i != 0.00))
+              if ( xb[v] == i &&  ( x->C[v].r != 0.00  || x->C[v].i != 0.00))
                 {
                   C->D[i]->J[ip] = v;
-                  C->D[i]->I[ip].r = x->I[v].r;
-                  C->D[i]->I[ip].i = x->I[v].i;
+                  C->D[i]->C[ip].r = x->C[v].r;
+                  C->D[i]->C[ip].i = x->C[v].i;
                   ip++;
                 }
             }
@@ -1893,7 +1893,7 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
 	  if ( C->rc_type == 'r' ) 
 	    C2F(dperm)(C->D[i]->R,&C->D[i]->size,xb);
 	  else 
-	    C2F(zperm)(C->D[i]->I,&C->D[i]->size,xb);
+	    C2F(zperm)(C->D[i]->C,&C->D[i]->size,xb);
 	}
     }
   FREE(xb);
@@ -1925,7 +1925,7 @@ int nsp_spmatrix_mult_scal_old(NspSpMatrix *A, NspSpMatrix *B)
     {
       for ( i = 0 ; i < A->m ; i++)
 	for ( k=0; k < A->D[i]->size ; k++ ) 
-	nsp_prod_c(&A->D[i]->I[k],&B->D[0]->I[0]);
+	nsp_prod_c(&A->D[i]->C[k],&B->D[0]->C[0]);
     }
   return(OK);
 }
@@ -1948,9 +1948,9 @@ int nsp_spmatrix_complexify(NspSpMatrix *A)
       SpRow *Ai = A->D[i];
       if ( Ai->size != 0) 
 	{ 
-	  Ai->I =nsp_alloc_doubleC((int) Ai->size);
-	  if ( Ai->I == (doubleC *) 0) return(FAIL);
-	nsp_dzcopy(&Ai->size,Ai->R,&inc,Ai->I,&inc);
+	  Ai->C =nsp_alloc_doubleC((int) Ai->size);
+	  if ( Ai->C == (doubleC *) 0) return(FAIL);
+	nsp_dzcopy(&Ai->size,Ai->R,&inc,Ai->C,&inc);
 	  FREE(Ai->R);
 	}
     }
@@ -1985,7 +1985,7 @@ int nsp_spmatrix_setr(NspSpMatrix *A, double d)
 	  if ( Ai->size != 0) 
 	    { 
 	      c1=2;
-	nsp_dset(&Ai->size,&d,(double *) Ai->I, &c1);
+	nsp_dset(&Ai->size,&d,(double *) Ai->C, &c1);
 	    }
 	}
     }
@@ -2011,7 +2011,7 @@ int nsp_spmatrix_seti(NspSpMatrix *A, double d)
       if ( Ai->size != 0) 
 	{ 
 	  c1=2;
-	nsp_dset(&Ai->size,&d,((double *) Ai->I) +1, &c1);
+	nsp_dset(&Ai->size,&d,((double *) Ai->C) +1, &c1);
 	}
     }
   return(OK);
@@ -2034,7 +2034,7 @@ int  RowCountNonNull(NspMatrix *A, int i)
       for ( j = 0 ; j < A->n ; j++ )  if (A->R[i+j*(A->m)] != 0.00 ) count++; break;
     case 'i' :
       for ( j = 0 ; j < A->n ; j++ )  
-	if (A->I[i+j*A->m].r  != 0.00 ||  A->I[i+j*A->m].i != 0.00)  count++;
+	if (A->C[i+j*A->m].r  != 0.00 ||  A->C[i+j*A->m].i != 0.00)  count++;
       break;
     }
   return(count);
@@ -2092,11 +2092,11 @@ NspSpMatrix *nsp_spmatrix_from_mat(NspMatrix *A)
 	case 'i' : 
 	  for ( j = 0 ; j < A->n ; j++ ) 
 	    { 
-	      if ( A->I[i+j*A->m].r != 0.00 || A->I[i+j*A->m].i != 0.00 )
+	      if ( A->C[i+j*A->m].r != 0.00 || A->C[i+j*A->m].i != 0.00 )
 		{
 		  Ri->J[count] = j;
-		  Ri->I[count].r  = A->I[i+j*A->m].r;
-		  Ri->I[count].i  = A->I[i+j*A->m].i;
+		  Ri->C[count].r  = A->C[i+j*A->m].r;
+		  Ri->C[count].i  = A->C[i+j*A->m].i;
 		  count++;
 		}
 	    }
@@ -2133,8 +2133,8 @@ NspMatrix *nsp_spmatrix_to_mat(NspSpMatrix *Sp)
 	case 'i' :
 	  for  ( k = 0  ;  k < Ri->size ; k++)
 	    { 
-	      A->I[i+ Ri->J[k]*A->m].r = Ri->I[k].r ;
-	      A->I[i+ Ri->J[k]*A->m].i = Ri->I[k].i ;
+	      A->C[i+ Ri->J[k]*A->m].r = Ri->C[k].r ;
+	      A->C[i+ Ri->J[k]*A->m].i = Ri->C[k].i ;
 	    }
 	}
     }
@@ -2192,8 +2192,8 @@ NspSpMatrix *nsp_spmatrix_transpose(NspSpMatrix *A)
 	      Loc->D[j]->R[jt]= A->D[i]->R[k] ;
 	      break ;
 	    case 'i' :  
-	      Loc->D[j]->I[jt].r = A->D[i]->I[k].r  ;
-	      Loc->D[j]->I[jt].i = - A->D[i]->I[k].i  ; 
+	      Loc->D[j]->C[jt].r = A->D[i]->C[k].r  ;
+	      Loc->D[j]->C[jt].i = - A->D[i]->C[k].i  ; 
 	      break;
 	    }
 
@@ -2231,13 +2231,13 @@ void PlusLeft(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1)
     { 
       if ( Atype == 'r' )
 	{
-	  Li->I[*count].r = Ai->R[k1];
-	  Li->I[*count].i = 0.00;
+	  Li->C[*count].r = Ai->R[k1];
+	  Li->C[*count].i = 0.00;
 	}
       else 
 	{
-	  Li->I[*count].r = Ai->I[k1].r;
-	  Li->I[*count].i= Ai->I[k1].i;
+	  Li->C[*count].r = Ai->C[k1].r;
+	  Li->C[*count].i= Ai->C[k1].i;
 	}
     }
   (*count)++;
@@ -2254,23 +2254,23 @@ void PlusBoth(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1, 
     {
       if ( Btype == 'r' )
 	{
-	  Li->I[*count].r =  Ai->I[k1].r+Bi->R[k2];
-	  Li->I[*count].i =  Ai->I[k1].i;
+	  Li->C[*count].r =  Ai->C[k1].r+Bi->R[k2];
+	  Li->C[*count].i =  Ai->C[k1].i;
 	}
       else 
 	{
 	  if ( Atype == 'r' ) 
 	    {
-	      Li->I[*count].r =  Ai->R[k1]+Bi->I[k2].r;
-	      Li->I[*count].i =  Bi->I[k2].i;
+	      Li->C[*count].r =  Ai->R[k1]+Bi->C[k2].r;
+	      Li->C[*count].i =  Bi->C[k2].i;
 	    }
 	  else 
 	    {
-	      Li->I[*count].r =   Ai->I[k1].r + Bi->I[k2].r;
-	      Li->I[*count].i =   Ai->I[k1].i + Bi->I[k2].i;
+	      Li->C[*count].r =   Ai->C[k1].r + Bi->C[k2].r;
+	      Li->C[*count].i =   Ai->C[k1].i + Bi->C[k2].i;
 	    }
 	}
-      if ( Li->I[*count].r  != 0.00||  Li->I[*count].i  != 0.00 ) (*count)++; 
+      if ( Li->C[*count].r  != 0.00||  Li->C[*count].i  != 0.00 ) (*count)++; 
     }
 }
 
@@ -2283,13 +2283,13 @@ void PlusRight(SpRow *Li, char Ltype, int *count, SpRow *Bi, char Btype, int k1)
     {
       if ( Btype == 'r' )
 	{
-	  Li->I[*count].r = Bi->R[k1];
-	  Li->I[*count].i = 0.00;
+	  Li->C[*count].r = Bi->R[k1];
+	  Li->C[*count].i = 0.00;
 	}
       else 
 	{
-	  Li->I[*count].r = Bi->I[k1].r;
-	  Li->I[*count].i= Bi->I[k1].i;
+	  Li->C[*count].r = Bi->C[k1].r;
+	  Li->C[*count].i= Bi->C[k1].i;
 	}
     }
   (*count)++;
@@ -2307,13 +2307,13 @@ void MinusLeft(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1)
     { 
       if ( Atype == 'r' )
 	{
-	  Li->I[*count].r =  Ai->R[k1];
-	  Li->I[*count].i = 0.00;
+	  Li->C[*count].r =  Ai->R[k1];
+	  Li->C[*count].i = 0.00;
 	}
       else 
 	{
-	  Li->I[*count].r =  Ai->I[k1].r;
-	  Li->I[*count].i=  Ai->I[k1].i;
+	  Li->C[*count].r =  Ai->C[k1].r;
+	  Li->C[*count].i=  Ai->C[k1].i;
 	}
     }
   (*count)++;
@@ -2330,23 +2330,23 @@ void MinusBoth(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1,
     {
       if ( Btype == 'r' )
 	{
-	  Li->I[*count].r =  Ai->I[k1].r - Bi->R[k2];
-	  Li->I[*count].i =  Ai->I[k1].i;
+	  Li->C[*count].r =  Ai->C[k1].r - Bi->R[k2];
+	  Li->C[*count].i =  Ai->C[k1].i;
 	}
       else 
 	{
 	  if ( Atype == 'r' ) 
 	    {
-	      Li->I[*count].r =  Ai->R[k1] - Bi->I[k2].r;
-	      Li->I[*count].i =  - Bi->I[k2].i;
+	      Li->C[*count].r =  Ai->R[k1] - Bi->C[k2].r;
+	      Li->C[*count].i =  - Bi->C[k2].i;
 	    }
 	  else 
 	    {
-	      Li->I[*count].r =   Ai->I[k1].r - Bi->I[k2].r;
-	      Li->I[*count].i =   Ai->I[k1].i - Bi->I[k2].i;
+	      Li->C[*count].r =   Ai->C[k1].r - Bi->C[k2].r;
+	      Li->C[*count].i =   Ai->C[k1].i - Bi->C[k2].i;
 	    }
 	}
-      if ( Li->I[*count].r  != 0.00||  Li->I[*count].i  != 0.00 ) (*count)++; 
+      if ( Li->C[*count].r  != 0.00||  Li->C[*count].i  != 0.00 ) (*count)++; 
     }
 }
 
@@ -2359,13 +2359,13 @@ void MinusRight(SpRow *Li, char Ltype, int *count, SpRow *Bi, char Btype, int k1
     {
       if ( Btype == 'r' )
 	{
-	  Li->I[*count].r = - Bi->R[k1];
-	  Li->I[*count].i = 0.00;
+	  Li->C[*count].r = - Bi->R[k1];
+	  Li->C[*count].i = 0.00;
 	}
       else 
 	{
-	  Li->I[*count].r = - Bi->I[k1].r;
-	  Li->I[*count].i= - Bi->I[k1].i;
+	  Li->C[*count].r = - Bi->C[k1].r;
+	  Li->C[*count].i= - Bi->C[k1].i;
 	}
     }
   (*count)++;
@@ -2391,23 +2391,23 @@ void MultttBoth(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1
     {
       if ( Btype == 'r' )
 	{
-	  Li->I[*count].r =  Ai->I[k1].r*Bi->R[k2];
-	  Li->I[*count].i =  Ai->I[k1].i*Bi->R[k2];
+	  Li->C[*count].r =  Ai->C[k1].r*Bi->R[k2];
+	  Li->C[*count].i =  Ai->C[k1].i*Bi->R[k2];
 	}
       else 
 	{
 	  if ( Atype == 'r' ) 
 	    {
-	      Li->I[*count].r =  Ai->R[k1]*Bi->I[k2].r;
-	      Li->I[*count].i =  Ai->R[k1]*Bi->I[k2].i;
+	      Li->C[*count].r =  Ai->R[k1]*Bi->C[k2].r;
+	      Li->C[*count].i =  Ai->R[k1]*Bi->C[k2].i;
 	    }
 	  else 
 	    {
-	      Li->I[*count].r =   Ai->I[k1].r * Bi->I[k2].r -   Ai->I[k1].i* Bi->I[k2].i;
-	      Li->I[*count].i =   Ai->I[k1].i * Bi->I[k2].r +   Ai->I[k1].r* Bi->I[k2].i;;
+	      Li->C[*count].r =   Ai->C[k1].r * Bi->C[k2].r -   Ai->C[k1].i* Bi->C[k2].i;
+	      Li->C[*count].i =   Ai->C[k1].i * Bi->C[k2].r +   Ai->C[k1].r* Bi->C[k2].i;;
 	    }
 	}
-      if ( Li->I[*count].r  != 0.00||  Li->I[*count].i  != 0.00 ) (*count)++; 
+      if ( Li->C[*count].r  != 0.00||  Li->C[*count].i  != 0.00 ) (*count)++; 
     }
 }
 
@@ -2546,7 +2546,7 @@ int nsp_spmatrix_mult_scal(NspSpMatrix *A, NspSpMatrix *B)
 	    {
 	      FREE( A->D[i]->J);
 	      FREE( A->D[i]->R);
-	      FREE( A->D[i]->I);
+	      FREE( A->D[i]->C);
 	    }
 	  A->D[i]->size =0;
 	}
@@ -2572,19 +2572,19 @@ int nsp_spmatrix_mult_scal(NspSpMatrix *A, NspSpMatrix *B)
 	for ( i = 0 ; i < A->m ; i++ ) 
 	  for ( k = 0 ; k < A->D[i]->size ; k++) 
 	    {
-	      A->D[i]->I[k].r *= B->D[0]->R[0];
-	      A->D[i]->I[k].i *= B->D[0]->R[0];
+	      A->D[i]->C[k].r *= B->D[0]->R[0];
+	      A->D[i]->C[k].i *= B->D[0]->R[0];
 	    }
       else
 	for ( i = 0 ; i < A->m ; i++ ) 
 	  for ( k = 0 ; k < A->D[i]->size ; k++) 
 	    {
 	      double loc;
-	      loc =   A->D[i]->I[k].r * B->D[0]->I[0].r 
-		- A->D[i]->I[k].i* B->D[0]->I[0].i;
-	      A->D[i]->I[k].i = A->D[i]->I[k].i * B->D[0]->I[0].r 
-		+ A->D[i]->I[k].r* B->D[0]->I[0].i;
-	      A->D[i]->I[k].r = loc;
+	      loc =   A->D[i]->C[k].r * B->D[0]->C[0].r 
+		- A->D[i]->C[k].i* B->D[0]->C[0].i;
+	      A->D[i]->C[k].i = A->D[i]->C[k].i * B->D[0]->C[0].r 
+		+ A->D[i]->C[k].r* B->D[0]->C[0].i;
+	      A->D[i]->C[k].r = loc;
 	      
 	    }
     }
@@ -2628,8 +2628,8 @@ NspMatrix *nsp_spmatrix_op_scal(NspSpMatrix *A, NspSpMatrix *B, int *flag, char 
       }
       break;
     case 'i' : 
- nsp_mat_set_rval(Loc,(op == '-') ? -B->D[0]->I[0].r : B->D[0]->I[0].r);
- nsp_mat_set_ival(Loc,(op == '-') ? -B->D[0]->I[0].i : B->D[0]->I[0].i);
+ nsp_mat_set_rval(Loc,(op == '-') ? -B->D[0]->C[0].r : B->D[0]->C[0].r);
+ nsp_mat_set_ival(Loc,(op == '-') ? -B->D[0]->C[0].i : B->D[0]->C[0].i);
       break;
     }
   /* Loc = Loc +A or Loc -A **/
@@ -2649,7 +2649,7 @@ NspMatrix *nsp_spmatrix_op_scal(NspSpMatrix *A, NspSpMatrix *B, int *flag, char 
 	      for ( k = 0 ; k < A->D[i]->size ; k++) 
 		{
 		  j= A->D[i]->J[k];
-		  Loc->I[i+Loc->m*j].r += A->D[i]->R[k];
+		  Loc->C[i+Loc->m*j].r += A->D[i]->R[k];
 		}
 	}
       else
@@ -2658,8 +2658,8 @@ NspMatrix *nsp_spmatrix_op_scal(NspSpMatrix *A, NspSpMatrix *B, int *flag, char 
 	    for ( k = 0 ; k < A->D[i]->size ; k++) 
 	      {
 		j= A->D[i]->J[k];
-		Loc->I[i+Loc->m*j].r +=   A->D[i]->I[k].r;
-		Loc->I[i+Loc->m*j].i +=   A->D[i]->I[k].i;
+		Loc->C[i+Loc->m*j].r +=   A->D[i]->C[k].r;
+		Loc->C[i+Loc->m*j].i +=   A->D[i]->C[k].i;
 	      }
 	}
     }
@@ -2679,7 +2679,7 @@ NspMatrix *nsp_spmatrix_op_scal(NspSpMatrix *A, NspSpMatrix *B, int *flag, char 
 	      for ( k = 0 ; k < A->D[i]->size ; k++) 
 		{
 		  j= A->D[i]->J[k];
-		  Loc->I[i+Loc->m*j].r -= A->D[i]->R[k];
+		  Loc->C[i+Loc->m*j].r -= A->D[i]->R[k];
 		}
 	}
       else
@@ -2688,8 +2688,8 @@ NspMatrix *nsp_spmatrix_op_scal(NspSpMatrix *A, NspSpMatrix *B, int *flag, char 
 	    for ( k = 0 ; k < A->D[i]->size ; k++) 
 	      {
 		j= A->D[i]->J[k];
-		Loc->I[i+Loc->m*j].r -=   A->D[i]->I[k].r;
-		Loc->I[i+Loc->m*j].i -=   A->D[i]->I[k].i;
+		Loc->C[i+Loc->m*j].r -=   A->D[i]->C[k].r;
+		Loc->C[i+Loc->m*j].i -=   A->D[i]->C[k].i;
 	      }
 	}
     }
