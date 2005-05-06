@@ -664,49 +664,42 @@ int nsp_cells_delete_rows(NspCells *A, NspMatrix *Rows)
 /*
  *  A(elts) = []
  *  A is changed.
- *  elts must be strictly increasing XXXXXXXXXXX
+ *  modified by Bruno (see nsp_smatrix_delete_elements)
  */
 
 int nsp_cells_delete_elements(NspCells *A, NspMatrix *Elts)
 {
-  integer rmin,rmax,i,j,ind,last,nn,ioff=0;
-  Bounds(Elts,&rmin,&rmax);
-  if ( Elts->mn == 0) return(OK);
-  if ( rmin < 1 || rmax > A->mn )
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  /* Clean data **/
-  for ( i = 0 ; i < Elts->mn ; i++)
-    {
-      ind =  ((int) Elts->R[i]);
-      nsp_object_destroy(&(A->objs[ind-1]));
-    }
-  /* Move objects **/
-  for ( i = 0 ; i < Elts->mn ; i++)
-    {
-      ioff++;
-      ind =  ((int) Elts->R[i]);
-      last = (i < Elts->mn -1) ? ((int) Elts->R[i+1])-1 : A->mn ;
-      nn= (last-ind);
-      for ( j = 0 ; j < nn ; j++)
-	{
-	  NspObject *Ob;
-	  if (( Ob =nsp_object_copy_with_name(A->objs[ind+j]))== NULL)  return(FAIL);
-	  /* store moved data **/
-	  A->objs[ind-ioff+j]=Ob;
-	}
-    }
+  int i,k,*flag, new_A_mn, count;
+
+  if ( Elts->mn == 0) return OK;
+  
+  if ( (flag = Complement(A->mn, Elts, &count)) == NULL )
+    return FAIL;
+
+  new_A_mn = A->mn - count;
+
+  k = 0;
+  for ( i = 0 ; i < A->mn ; i++ )
+    if ( flag[i] )
+      {
+	A->objs[k] = A->objs[i];
+	if ( k < i ) A->objs[i] = NULLOBJ;
+	k++;
+      }
+    else
+      nsp_object_destroy(&(A->objs[i]));
+  
+  free(flag);
+
   if ( A->m == 1)
     {
-      if ( nsp_cells_resize(A,A->m,A->n -Elts->mn)== FAIL) return(FAIL);
+      if ( nsp_cells_resize(A,1,new_A_mn) == FAIL ) return FAIL;
     }
   else
     {
-      if ( nsp_cells_resize(A,A->mn-Elts->mn,1)== FAIL) return(FAIL);
+      if ( nsp_cells_resize(A,new_A_mn,1) == FAIL ) return FAIL;
     }
-  return(OK);
+  return OK;
 }
 
 
