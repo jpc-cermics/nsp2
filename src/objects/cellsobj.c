@@ -29,6 +29,7 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 
+static NspObject *nsp_cells_path_extract(NspCells *C, NspObject *O);
 
 /*
  * NspCells inherits from NspObject 
@@ -72,7 +73,7 @@ NspTypeCells *new_type_cells(type_mode mode)
   top->info = (info_func *)nsp_cells_info;                    /* info */  
   top->is_true = (is_true_func  *)nsp_cells_is_true;             /* check if object can be considered as true */  
   top->loop =(loop_func *)nsp_cells_loop_extract;                /* for loops */  
-  top->path_extract =  NULL;        /* used for x(1)(2)(...) */  
+  top->path_extract = (path_func *) nsp_cells_path_extract;        /* used for x(1)(2)(...) */  
   top->get_from_obj = (get_from_obj_func *)nsp_cells_object;    /* get object stored in SciObj */  
   top->eq  = (eq_func *)nsp_cells_eq;                       /* equality check */  
   top->neq  = (eq_func *)nsp_cells_neq;                      /* non-equality check */
@@ -206,6 +207,32 @@ int nsp_cells_neq(NspObject *A, NspObject *B)
   if ( err == 1) return TRUE ; 
   return rep;
 }
+
+/* used for evaluation of H(exp1) in exps like H(exp1)(exp2)....(expn)= val 
+ * note that H(exp1)= val          -> setrowscols
+ *       and H(exp1)(.....) = val  -> pathextract(H,exp1) and then 
+ *       iterate on the result 
+ * FIXME: this is a first try we just assume here that we
+ *        have just one argument nsp_cells_path_extract 
+ *        is to be changed. since it can be used with more that 
+ *        on elements. 
+ */
+
+static NspObject *nsp_cells_path_extract(NspCells *C, NspObject *O)
+{
+  int ival;
+  if ( IsMat(O)  ) 
+    {
+      if ( IntScalar(O,&ival) == FAIL ) return NULLOBJ ;
+      if ( ival >= 1 && ival <= C->mn )
+	{
+	  /* note that we can return NULLOBJ */
+	  return C->objs[ival-1];
+	}
+    }
+  return NULLOBJ;
+}
+
 
 /*
  * Cells == TRUE ? 
@@ -1251,8 +1278,8 @@ static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
     {
       if ( C->objs[i-1] != NULLOBJ) 
 	{
-	  NthObj(count) = C->objs[i-1];
-	  NthObj(count)->ret_pos = i;
+	  NthObj(count+1) = C->objs[i-1];
+	  NthObj(count+1)->ret_pos = i;
 	  C->objs[i-1]= NULLOBJ;
 	  count++;
 	}
