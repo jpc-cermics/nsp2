@@ -1,9 +1,25 @@
-/*-------------------------------------------------------------------
- * This Software is (Copyright ENPC 1998-2003) 
- * Jean-Philippe Chancelier Enpc/Cermics
- *-------------------------------------------------------------------*/
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * gtk menus.
+ * simple dialog with a gtk_tex_view
+ *--------------------------------------------------------------------------*/
 
-#define GTK_ENABLE_BROKEN
 #include <gtk/gtk.h>
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
@@ -21,8 +37,13 @@ typedef struct scigtk_dialog_ {
 
 static void sci_dialog_ok(GtkWidget *widget,scigtk_dialog *answer)
 {
-  answer->txt = gtk_editable_get_chars ( GTK_EDITABLE(answer->text),0,
-					gtk_text_get_length(GTK_TEXT(answer->text)));
+  GtkTextBuffer *buffer;
+  GtkTextIter start, end;
+  
+  buffer = g_object_get_data (G_OBJECT (answer->window), "buffer");
+  if ( buffer != NULL )
+    gtk_text_buffer_get_bounds (buffer, &start, &end);
+  answer->txt  = gtk_text_iter_get_text (&start, &end);
   if ( answer->txt != NULL ) 
     {
       int ind = strlen(answer->txt) - 1 ;
@@ -47,15 +68,16 @@ static void sci_dialog_cancel(GtkWidget *widget,scigtk_dialog *answer)
 
 int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr ,char **dialog_str )
 {
+  GtkTextIter iter;
+  GtkWidget *text;
+  GtkTextBuffer *buffer;
   GtkWidget *window = NULL;
   GtkWidget *vbox;
   GtkWidget *hbbox;
   GtkWidget *button_ok,*button_cancel;
   GtkWidget *separator;
   GtkWidget *scrolled_window;
-  GtkWidget *text;
   GtkWidget *label;
-  GdkFont *font;
 
   static scigtk_dialog answer = {NULL, RESET , NULL,NULL};
 
@@ -90,19 +112,18 @@ int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr 
 				  GTK_POLICY_AUTOMATIC);
   gtk_widget_show (scrolled_window);
   
-  answer.text = text  = gtk_text_new (NULL, NULL);
-  gtk_text_set_editable (GTK_TEXT (text), TRUE);
+  buffer = gtk_text_buffer_new (NULL);
+  gtk_text_buffer_get_iter_at_offset (buffer, &iter, 0);
+  gtk_text_buffer_insert (buffer, &iter,init_value, -1);
+
+  answer.text = text = gtk_text_view_new_with_buffer (buffer);
+  g_object_unref (buffer);
+
   gtk_container_add (GTK_CONTAINER (scrolled_window), text);
+  /* attach the buffer to window */
+  g_object_set_data (G_OBJECT (window), "buffer", buffer);
   gtk_widget_grab_focus (text);
   gtk_widget_show (text);
-
-  gtk_text_freeze (GTK_TEXT (text));
-  font = gdk_font_load ("-adobe-courier-medium-r-normal--*-120-*-*-*-*-*-*");
-  gtk_text_insert (GTK_TEXT (text), font, NULL, NULL, 
-		  init_value , -1);
-  gdk_font_unref (font);
-  gtk_text_thaw (GTK_TEXT (text));
-
   /* separator */
 
   separator = gtk_hseparator_new ();
@@ -161,4 +182,7 @@ int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr 
   *dialog_str = answer.txt ;
   return (answer.st == DIAL_OK ) ? TRUE : FALSE ;
 }
+
+
+
 

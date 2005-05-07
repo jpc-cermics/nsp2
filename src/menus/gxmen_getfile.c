@@ -1,7 +1,23 @@
-/*-------------------------------------------------------------------
- * This Software is (Copyright ENPC 1998-2003) 
- * Jean-Philippe Chancelier Enpc/Cermics
- *-------------------------------------------------------------------*/
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * menus getfile 
+ *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +34,9 @@
  * Gtk version for scilab file selection 
  * GtkFileSelection
  *--------------------------------------------------------------*/
+
+/* FIXME */
+extern char *sci_convert_to_utf8(char *str, int *alloc);
 
 typedef enum { GETF_OK, CANCEL , DESTROY, RESET } state; 
 
@@ -39,6 +58,7 @@ static void file_selection_cancel (GtkWidget *w,  state *rep)
   gtk_main_quit();
 }
 
+
 /* XXXX reste a rajouter un bouton home et un bouton SCI 
  * Il faut aussi expanser les dirname ? SCI HOME etc....
  */
@@ -46,7 +66,9 @@ static void file_selection_cancel (GtkWidget *w,  state *rep)
 int  nsp_get_file_window(char *filemask,char **file,char *dirname,
 			 int flag,int action,int *ierr,char *title)
 {
-  static int last_choice = 0;
+  char *title_utf8;
+  int title_alloc;
+  int last_choice = 0;
   GList *cbitems = NULL;
   GtkWidget *combo=NULL;
   static int n_actions = 4 ;
@@ -57,7 +79,11 @@ int  nsp_get_file_window(char *filemask,char **file,char *dirname,
   rep =RESET ;
 
   start_sci_gtk(); /* be sure that gtk is started */
-  window = gtk_file_selection_new (title);
+
+  title_utf8= sci_convert_to_utf8(title,&title_alloc);
+  window = gtk_file_selection_new (title_utf8);
+  if ( title_alloc == TRUE) g_free (title_utf8);
+
 
   if ( strcmp(dirname,".") == 0) 
     gtk_file_selection_set_filename (GTK_FILE_SELECTION (window),"./");
