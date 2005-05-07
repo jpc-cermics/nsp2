@@ -996,10 +996,7 @@ static int xget_absourel(BCG *Xgc)
 
 /* The alu function for private->drawing : Works only with X11
  * Not in Postscript, Read The X11 manual to get more informations 
- */
-
-/* The alu function for private->drawing : Works only with X11
- * Not in Postscript, Read The X11 manual to get more informations 
+ * default value is GL_COPY for which we disable Xor mode 
  */
 
 static struct alinfo { 
@@ -1043,9 +1040,19 @@ static void xset_alufunction1(BCG *Xgc,int num)
   GLenum value ; 
   Xgc->CurDrawFunction = Min(15,Max(0,num));
   value = AluStruc_[Xgc->CurDrawFunction].id;
-  glLogicOp(value);
+  /* FIXME: is it a good choice ? 
+   * to disable by default for GL_COPY
+   */
+  if ( value == GL_COPY ) 
+    {
+      glDisable(GL_COLOR_LOGIC_OP);
+    }
+  else 
+    {
+      glEnable(GL_COLOR_LOGIC_OP);
+      glLogicOp(value);
+    }
 }
-
 
 static int xget_alufunction(BCG *Xgc)
 { 
@@ -2930,7 +2937,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   glClearStencil(0x0);
   glEnable(GL_STENCIL_TEST);
   /* glEnable(GL_LINE_SMOOTH); */
-  glEnable(GL_BLEND);
+  /* glEnable(GL_BLEND); */
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   /*     glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE); */
   /*     glLineWidth(1.5); */
