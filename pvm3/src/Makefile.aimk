@@ -286,18 +286,18 @@ $(LIBDIR)/lib-os2:	lib-os2
 # sock pvmd3 & libpvm3.a
 
 pvmd3$(EXESFX):	$(REGEXCONF) $(DOBJ) $(SOCKDOBJ)
-	$(CC) $(CFLAGS) -o pvmd3$(EXESFX) $(DOBJ) $(SOCKDOBJ) \
+	@$(CC) $(CFLAGS) -o pvmd3$(EXESFX) $(DOBJ) $(SOCKDOBJ) \
 		$(LOPT) $(ARCHDLIB)
 
 $(LIBPVM).a:	$(REGEXCONF) $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ) $(ADDEDOBJ)
-	rm -f $(LIBPVM).a
-	$(AR) cr $(LIBPVM).a $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ) $(ADDEDOBJ)
-	case x$(HASRANLIB) in xt ) echo ranlib; ranlib $(LIBPVM).a ;; esac
+	@rm -f $(LIBPVM).a
+	@$(AR) cr $(LIBPVM).a $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ) $(ADDEDOBJ)
+	@case x$(HASRANLIB) in xt ) echo ranlib $(LIBPVM).a; ranlib $(LIBPVM).a ;; esac
 
 # shm pvmd3 & libpvm3*.a
 
 pvmd3-shm:	$(REGEXCONF) $(DOBJ) $(SHMEMDOBJ)
-	$(CC) $(CFLAGS) -o pvmd3$(EXESFX) $(DOBJ) $(SHMEMDOBJ) $(ARCHDLIB)
+	@$(CC) $(CFLAGS) -o pvmd3$(EXESFX) $(DOBJ) $(SHMEMDOBJ) $(ARCHDLIB)
 	touch pvmd3-shm
 
 lib-shm:	$(REGEXCONF) $(LOBJ) $(LPVMSHMEM) $(SHMEMLOBJ)
@@ -314,7 +314,7 @@ $(LIBPVM)s.a:	$(REGEXCONF) $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ)
 # mpp pvmd3 & libpvm3*.a
 
 pvmd3-mpp:	$(REGEXCONF) $(DOBJ) $(MPPDOBJ)
-	$(CC) $(CFLAGS) -o pvmd3$(EXESFX) $(DOBJ) $(MPPDOBJ) \
+	@$(CC) $(CFLAGS) -o pvmd3$(EXESFX) $(DOBJ) $(MPPDOBJ) \
 		$(LOPT) $(ARCHDLIB)
 	touch pvmd3-mpp
 
@@ -325,13 +325,13 @@ $(LIBPVM)pe.a:	$(REGEXCONF) $(LOBJ) $(LPVMMIMD) $(MPPLOBJ)
 # Beowulf(LINUX) pvmd3 & libpvm3.a
 
 pvmd3-beo:	$(REGEXCONF) $(DOBJ) $(BEODOBJ) $(SOCKDOBJ)
-	$(CC) $(CFLAGS) -o pvmd3$(EXESFX) $(DOBJ) $(BEODOBJ) $(SOCKDOBJ) \
+	@$(CC) $(CFLAGS) -o pvmd3$(EXESFX) $(DOBJ) $(BEODOBJ) $(SOCKDOBJ) \
 		$(LOPT) $(ARCHDLIB)
 
 # os2 pvmd3 & libpvm3.a
 
 pvmd3-os2:	$(REGEXCONFOS2) $(OS2DOBJ) $(DOBJ) $(SOCKDOBJ)
-	$(CC) $(CFLAGS) -o pvmd3$(EXESFX) $(OS2DOBJ) $(DOBJ) $(SOCKDOBJ) \
+	@$(CC) $(CFLAGS) -o pvmd3$(EXESFX) $(OS2DOBJ) $(DOBJ) $(SOCKDOBJ) \
 		$(LOPT) $(ARCHDLIB)
 	touch pvmd3-os2
 
@@ -344,11 +344,12 @@ lib-os2:	$(REGEXCONFOS2) $(LOBJ) $(OS2LOBJ) $(LPVMSOCK) $(SOCKLOBJ)
 #
 
 clean:	tidy
-	rm -f pvmd3$(EXESFX) $(LIBPVM).a $(LIBPVM)s.a $(LIBPVM)pe.a
-	rm -rf $(REGEXDIR)
+	@rm -f pvmd3$(EXESFX) $(LIBPVM).a $(LIBPVM)s.a $(LIBPVM)pe.a
+	@rm -rf $(REGEXDIR)
 
 tidy:
-	rm -f $(DOBJ) $(SOCKDOBJ) $(SHMEMDOBJ) $(MPPDOBJ) \
+	@echo cleaning 
+	@rm -f $(DOBJ) $(SOCKDOBJ) $(SHMEMDOBJ) $(MPPDOBJ) \
 		$(LOBJ) $(LPVMSOCK) $(SOCKLOBJ) $(LPVMSHMEM) $(SHMEMLOBJ) \
 		$(LPVMMIMD) $(MPPLOBJ) $(REGEXDIR)/*.o \
 		pvmd3-shm lib-shm pvmd3-mpp pvmd3-os2 lib-os2 \
@@ -371,101 +372,144 @@ lintl:
 amem.o:	$(SDIR)/amem.s
 	$(AS) -o amem.o $(SDIR)/amem.s
 ddpro.o:	$(SDIR)/ddpro.c
-	$(CC) $(CFLAGS) -c $(SDIR)/ddpro.c
+	@echo compiling ddpro.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/ddpro.c
 host.o:	$(SDIR)/host.c
-	$(CC) $(CFLAGS) -c $(SDIR)/host.c
+	@echo compiling host.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/host.c
 hoster.o:	$(SDIR)/hoster.c
-	$(CC) $(CFLAGS) -c $(SDIR)/hoster.c
+	@echo compiling hoster.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/hoster.c
 imalloc.o:	$(SDIR)/imalloc.c
-	$(CC) $(CFLAGS) -c $(SDIR)/imalloc.c
+	@echo compiling imalloc.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/imalloc.c
 lmsg.o:	$(SDIR)/lmsg.c
 	$(NODECC) $(CFLAGS) -DIMA_NODE -c $(SDIR)/lmsg.c
 lpvm.o:	$(SDIR)/lpvm.c
-	$(CC) $(CFLAGS) -c $(SDIR)/lpvm.c
+	@echo compiling lpvm.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/lpvm.c
 lpvmshmem.o:	$(SDIR)/lpvmshmem.c
-	$(CC) $(CFLAGS) -c $(SDIR)/lpvmshmem.c $(PLOCKFILE)
+	@echo compiling lpvmshmem.c $(PLOCKFILE)
+	@$(CC) $(CFLAGS) -c $(SDIR)/lpvmshmem.c $(PLOCKFILE)
 lpvmmimd.o:	$(SDIR)/lpvm.c
-	$(CC) $(CFLAGS) -DIMA_MPP -o lpvmmimd.o -c $(SDIR)/lpvm.c
+	@echo compiling $(CC) $(CFLAGS) -DIMA_MPP -o lpvmmimd.o -c $(SDIR)/lpvm.c
+	@$(CC) $(CFLAGS) -DIMA_MPP -o lpvmmimd.o -c $(SDIR)/lpvm.c
 lpvmmpp.o:	$(SDIR)/lpvmmpp.c
 	$(NODECC) $(CFLAGS) -DIMA_MPP -c $(SDIR)/lpvmmpp.c
 lpvmcat.o:	$(SDIR)/lpvmcat.c
-	$(CC) $(CFLAGS) -c $(SDIR)/lpvmcat.c
+	@echo compiling lpvmcat.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/lpvmcat.c
 lpvmgen.o:	$(SDIR)/lpvmgen.c
-	$(CC) $(CFLAGS) -c $(SDIR)/lpvmgen.c
+	@echo compiling lpvmgen.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/lpvmgen.c
 lpvmpack.o:	$(SDIR)/lpvmpack.c
-	$(CC) $(CFLAGS) -c $(SDIR)/lpvmpack.c
+	@echo compiling lpvmpack.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/lpvmpack.c
 lpvmglob.o:	$(SDIR)/lpvmglob.c
-	$(CC) $(CFLAGS) -c $(SDIR)/lpvmglob.c
+	@echo compiling lpvmglob.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/lpvmglob.c
 msgbox.o:	$(SDIR)/msgbox.c
-	$(CC) $(CFLAGS) -c $(SDIR)/msgbox.c
+	@echo compiling msgbox.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/msgbox.c
 mppchunkhost.o:	$(SDIR)/mppchunk.c
-	$(CC) $(CFLAGS) -c -o mppchunkhost.o $(SDIR)/mppchunk.c
+	@echo compiling $(CC) $(CFLAGS) -c -o mppchunkhost.o $(SDIR)/mppchunk.c
+	@$(CC) $(CFLAGS) -c -o mppchunkhost.o $(SDIR)/mppchunk.c
 mppchunknode.o:	$(SDIR)/mppchunk.c
 	$(NODECC) $(CFLAGS) -DIMA_NODE -c -o mppchunknode.o \
 		$(SDIR)/mppchunk.c
 mppmsghost.o:	$(SDIR)/mppmsg.c
-	$(CC) $(CFLAGS) -c -o mppmsghost.o $(SDIR)/mppmsg.c
+	@echo compiling $(CC) $(CFLAGS) -c -o mppmsghost.o $(SDIR)/mppmsg.c
+	@$(CC) $(CFLAGS) -c -o mppmsghost.o $(SDIR)/mppmsg.c
 mppmsgnode.o:	$(SDIR)/mppmsg.c
 	$(NODECC) $(CFLAGS) -DIMA_NODE -c -o mppmsgnode.o $(SDIR)/mppmsg.c
 nmdclass.o:	$(SDIR)/nmdclass.c
-	$(CC) $(CFLAGS) -c $(SDIR)/nmdclass.c
+	@echo compiling nmdclass.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/nmdclass.c
 pkt.o:	$(SDIR)/pkt.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pkt.c
+	@echo compiling pkt.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pkt.c
 pmsg.o:	$(SDIR)/pmsg.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pmsg.c
+	@echo compiling pmsg.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pmsg.c
 pvmalloc.o:	$(SDIR)/pvmalloc.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmalloc.c
+	@echo compiling pvmalloc.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmalloc.c
 pvmcruft.o:	$(SDIR)/pvmcruft.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmcruft.c
+	@echo compiling pvmcruft.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmcruft.c
 pvmd.o:	$(SDIR)/pvmd.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmd.c
+	@echo compiling pvmd.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmd.c
 pvmdabuf.o:	$(SDIR)/pvmdabuf.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmdabuf.c
+	@echo compiling pvmdabuf.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmdabuf.c
 pvmdshmem.o:	$(SDIR)/pvmdshmem.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmdshmem.c $(PLOCKFILE)
+	@echo compiling pvmdshmem.c $(PLOCKFILE)
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmdshmem.c $(PLOCKFILE)
 pvmdmimd.o:	pvmdmimd.c
-	$(CC) $(CFLAGS) -I..  -c pvmdmimd.c
+	@echo compiling $(CC) $(CFLAGS) -I..  -c pvmdmimd.c
+	@$(CC) $(CFLAGS) -I..  -c pvmdmimd.c
 pvmdpack.o:	$(SDIR)/pvmdpack.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmdpack.c
+	@echo compiling pvmdpack.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmdpack.c
 pvmdunix.o:	$(SDIR)/pvmdunix.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmdunix.c
+	@echo compiling pvmdunix.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmdunix.c
 pvmerr.o:	$(SDIR)/pvmerr.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmerr.c
+	@echo compiling pvmerr.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmerr.c
 pvmfrag.o:	$(SDIR)/pvmfrag.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmfrag.c
+	@echo compiling pvmfrag.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmfrag.c
 pvmlog.o:	$(SDIR)/pvmlog.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmlog.c
+	@echo compiling pvmlog.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmlog.c
 pvmshmem.o:	$(SDIR)/pvmshmem.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmshmem.c $(PLOCKFILE)
+	@echo compiling pvmshmem.c $(PLOCKFILE)
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmshmem.c $(PLOCKFILE)
 pvmmpp.o:	$(SDIR)/pvmmpp.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmmpp.c
+	@echo compiling pvmmpp.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmmpp.c
 sdpro.o:	$(SDIR)/sdpro.c
-	$(CC) $(CFLAGS) -c $(SDIR)/sdpro.c
+	@echo compiling sdpro.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/sdpro.c
 task.o:	$(SDIR)/task.c
-	$(CC) $(CFLAGS) -c $(SDIR)/task.c
+	@echo compiling task.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/task.c
 tev.o:	$(SDIR)/tev.c
-	$(CC) $(CFLAGS) -c $(SDIR)/tev.c
+	@echo compiling tev.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/tev.c
 tdpro.o:	$(SDIR)/tdpro.c
-	$(CC) $(CFLAGS) -c $(SDIR)/tdpro.c
+	@echo compiling tdpro.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/tdpro.c
 waitc.o:	$(SDIR)/waitc.c
-	$(CC) $(CFLAGS) -c $(SDIR)/waitc.c
+	@echo compiling waitc.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/waitc.c
 pvmdtev.o:	$(SDIR)/pvmdtev.c
-	$(CC) $(CFLAGS) -c $(SDIR)/pvmdtev.c
+	@echo compiling pvmdtev.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/pvmdtev.c
 global.o:	$(SDIR)/global.c
-	$(CC) $(CFLAGS) -c $(SDIR)/global.c
+	@echo compiling global.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/global.c
 
 deathapi.o:	$(SDIR)/$(PVM_ARCH)/src/deathapi.c 
-	$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/deathapi.c 
+	@echo compiling $(PVM_ARCH)/src/deathapi.c 
+	@$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/deathapi.c 
 stdlog.o:	$(SDIR)/$(PVM_ARCH)/src/stdlog.c 
-	$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/stdlog.c 
+	@echo compiling $(PVM_ARCH)/src/stdlog.c 
+	@$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/stdlog.c 
 sthoster.o:	$(SDIR)/$(PVM_ARCH)/src/sthoster.c 
-	$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/sthoster.c 
+	@echo compiling $(PVM_ARCH)/src/sthoster.c 
+	@$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/sthoster.c 
 rexec.o:	$(SDIR)/$(PVM_ARCH)/src/rexec.c 
-	$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/rexec.c 
+	@echo compiling $(PVM_ARCH)/src/rexec.c 
+	@$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/rexec.c 
 ruserpas.o:	$(SDIR)/$(PVM_ARCH)/src/ruserpas.c 
-	$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/ruserpas.c 
+	@echo compiling $(PVM_ARCH)/src/ruserpas.c 
+	@$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/ruserpas.c 
 os2spawn.o:	$(SDIR)/$(PVM_ARCH)/src/os2spawn.c 
-	$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/os2spawn.c 
+	@echo compiling $(PVM_ARCH)/src/os2spawn.c 
+	@$(CC) $(CFLAGS) -c $(SDIR)/$(PVM_ARCH)/src/os2spawn.c 
 
 pvmregex.o:	$(REGEXDIR)/pvmregex.o
 	cp $(REGEXDIR)/pvmregex.o .

@@ -39,19 +39,25 @@ $(PVMLDIR)/pvm$(EXESFX):	pvm$(EXESFX)
 	cp pvm$(EXESFX) $(PVMLDIR)
 
 pvm$(EXESFX):	$(OBJ) $(PVMLIBDEP) $(TRCLIBDEP)
-	$(CC) $(CFLAGS) -o pvm$(EXESFX) $(OBJ) $(LIBS)
+	@echo linking  pvm$(EXESFX)
+	@$(CC) $(CFLAGS) -o pvm$(EXESFX) $(OBJ) $(LIBS)
 
 cons.o:	$(SDIR)/cons.c
-	$(CC) $(CFLAGS) -c $(SDIR)/cons.c
+	@echo compiling cons.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/cons.c
 cmds.o:	$(SDIR)/cmds.c
-	$(CC) $(CFLAGS) -c $(SDIR)/cmds.c
+	@echo compiling cmds.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/cmds.c
 job.o:	$(SDIR)/job.c
-	$(CC) $(CFLAGS) -c $(SDIR)/job.c
+	@echo compiling job.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/job.c
 trc.o:	$(SDIR)/trc.c
-	$(CC) $(CFLAGS) -c $(SDIR)/trc.c
+	@echo compiling trc.c
+	@$(CC) $(CFLAGS) -c $(SDIR)/trc.c
 
 clean:
-	rm -f *.o pvm$(EXESFX)
+	@echo cleaning
+	@rm -f *.o pvm$(EXESFX)
 
 #
 # Source File Dependencies

@@ -119,21 +119,22 @@ $(PVMXDIR)/trcsort$(EXESFX):  trcsort$(EXESFX)
 local:  tracer$(EXESFX) trcsort$(EXESFX)
 
 tracer$(EXESFX):  $(OBJS) $(TRCLIBDEP) $(PVMLIBDEP)
-	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
+	@$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 objs:  $(OBJS)
 
 trcsort$(EXESFX):  trcsort.o $(TRCLIBDEP) $(PVMLIBDEP)
-	$(CC) $(CFLAGS) -o $@ trcsort.o $(LIBS)
+	@$(CC) $(CFLAGS) -o $@ trcsort.o $(LIBS)
 
 trcsort.o:  $(SRCDIR)/trcsort.c
-	$(CC) $(CFLAGS) -c $(INCL) $(SRCDIR)/trcsort.c
+	@echo compiling trcsort.c
+	@$(CC) $(CFLAGS) -c $(INCL) $(SRCDIR)/trcsort.c
 
 $(TRCLIBDEP):  $(LIBPVMTRC)
 	@ cp $(LIBPVMTRC) $(PVMLDIR)
 
 $(LIBPVMTRC):  $(TRCOBJS) $(PVMLDIR)
-	$(AR) rcv $(LIBPVMTRC) $(TRCOBJS)
+	@$(AR) rc $(LIBPVMTRC) $(TRCOBJS)
 	@ case x$(HASRANLIB) in \
 		xt ) echo "ranlib $(LIBPVMTRC)"; ranlib $(LIBPVMTRC) ;; \
 		xf ) echo "No Ranlib Necessary." ;; esac
@@ -149,11 +150,12 @@ again:
 	cd $(SRCDIR) ; touch *.c *.h ; $(MAKE)
 
 clean:
-	- rm -f *.o
-	- rm -f tracer$(EXESFX) trcsort$(EXESFX) $(LIBPVMTRC)
+	@echo cleaning
+	@rm -f *.o
+	@rm -f tracer$(EXESFX) trcsort$(EXESFX) $(LIBPVMTRC)
 
 veryclean:  clean
-	- rm -f tracer$(EXESFX) trcsort$(EXESFX) $(LIBPVMTRC)
+	@rm -f tracer$(EXESFX) trcsort$(EXESFX) $(LIBPVMTRC)
 
 
 #
@@ -162,15 +164,18 @@ veryclean:  clean
 
 tracer.o:  $(SRCDIR)/tracer.c $(HEADERS)
 	@ touch tracer.o
-	$(CC) $(CFLAGS) -c $(INCL) $(SRCDIR)/tracer.c
+	@echo compiling tracer.c
+	@$(CC) $(CFLAGS) -c $(INCL) $(SRCDIR)/tracer.c
 
 cmd.o:  $(SRCDIR)/cmd.c $(HEADERS)
 	@ touch cmd.o
-	$(CC) $(CFLAGS) -c $(INCL) $(SRCDIR)/cmd.c
+	@echo compiling cmd.c
+	@$(CC) $(CFLAGS) -c $(INCL) $(SRCDIR)/cmd.c
 
 trcglob.o:  $(SRCDIR)/trcglob.c $(HEADERS)
 	@ touch trcglob.o
-	$(CC) $(CFLAGS) -c $(INCL) $(SRCDIR)/trcglob.c
+	@echo compiling trcglob.c
+	@$(CC) $(CFLAGS) -c $(INCL) $(SRCDIR)/trcglob.c
 
 
 #
@@ -179,25 +184,29 @@ trcglob.o:  $(SRCDIR)/trcglob.c $(HEADERS)
 
 trcmess.o:  $(TRCDIR)/trcmess.c $(TRCHEADERS)
 	@ touch trcmess.o
-	$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trcmess.c
+	@echo compiling trcmess.c
+	@$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trcmess.c
 
 trcfile.o:  $(TRCDIR)/trcfile.c $(TRCHEADERS)
 	@ touch trcfile.o
-	$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trcfile.c
+	@$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trcfile.c
 
 trccompat.o:  $(TRCDIR)/trccompat.c $(TRCHEADERS)
 	@ touch trccompat.o
-	$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trccompat.c
+	@echo compiling trccompat.c
+	@$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trccompat.c
 
 trccompatglob.o:  $(TRCDIR)/trccompatglob.c $(TRCHEADERS)
 	@ touch trccompatglob.o
-	$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trccompatglob.c
+	@echo compiling trccompatglob.c
+	@$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trccompatglob.c
 
 trcutil.o:  $(TRCDIR)/trcutil.c $(TRCHEADERS)
 	@ touch trcutil.o
-	$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trcutil.c
+	@echo compiling trcutil.c
+	@$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trcutil.c
 
 trclib.o:  $(TRCDIR)/trclib.c $(TRCHEADERS)
 	@ touch trclib.o
-	$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trclib.c
+	@$(CC) $(CFLAGS) -c $(INCL) $(TRCDIR)/trclib.c
 
