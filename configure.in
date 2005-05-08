@@ -1324,7 +1324,8 @@ PVMSCIDIR=
 PVMSCILIB=
 PVMTARGET=pvm-bidon
 PVMROOT=
-# need an non empty default value for scilab script 
+# need a non empty default value for scilab script 
+# PVMRROTR is used in scripts/*
 PVMROOTR='$SCI/pvm3'
 PVMINST=
 

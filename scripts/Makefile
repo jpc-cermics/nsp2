@@ -14,12 +14,14 @@ XXBPROGRAMS = $(SBIN)/Blatexpr $(SBIN)/Blatexpr2 \
 	$(SBIN)/Blatexprs $(SBIN)/Blpr $(SBIN)/BEpsf \
 	$(UTIL)/Blatdoc $(UTIL)/Blatdocs
 
-PROGRAMS = $(SBIN)/scilab $(BPROGRAMS)
+PROGRAMS = $(SBIN)/scilab scilab-inst $(BPROGRAMS)
 
 all:: $(PROGRAMS)
 
 CYGDRIVE= -e "s+/cygdrive/\([a-zA-Z]*\)/+\1:/+g" 
 SED_CYGDRIVE= 
+
+# script for local use 
 
 $(SBIN)/scilab: scilab-gtk.g $(IP) $(IV)
 	@$(RM) $(SBIN)/scilab
@@ -31,6 +33,13 @@ $(SBIN)/scilab: scilab-gtk.g $(IP) $(IV)
 	@$(RM) scilab
 	@echo $(SBIN)/scilab created
 
+# script which uses prefix 
+
+scilab-inst: scilab-gtk.g $(IP) $(IV) ../Makefile.incl
+	@$(RM) scilab-inst
+	@sed -e "s+SCILAB_DIRECTORY+$(prefix)/lib/nsp+" $(SED_CYGDRIVE) \
+	-e "s+SCILAB_VERSION+$(SCIVERSION)+" \
+	-e "s+SCILABGS+sh+" scilab-gtk.g > scilab-inst;
 
 $(SBIN)/Blatexpr: Blatexpr.g $(IP)
 	@$(RM) $(SBIN)/Blatexpr

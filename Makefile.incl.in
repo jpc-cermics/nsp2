@@ -1,7 +1,19 @@
 #/* -*- Mode: Makefile -*- */
+
 RM = @RM@
 AR = @AR@ @AR_FLAGS@
 FILES_TO_CLEAN = @FILES_TO_CLEAN@
+#
+# $(install_sh) $(opt_DATA) 
+# 
+install_sh=$(SCIDIR)/config/install-sh
+opt_DATA=-c -m 644
+opt_PROG=-c
+opt_SCRIPT=-c
+srcdir=@srcdir@
+top_srcdir=@top_srcdir@
+prefix=@prefix@
+#
 
 all::
 
@@ -15,17 +27,14 @@ RANLIB = @RANLIB@
 
 TERMCAPLIB = @TERMCAPLIB@
 
-##################################################################
-# NOTE: the following schemes for compiling and linking are not  #
-#       exactly used for the main executable scilex; for it, see #
-#       the files Makefile.<host>                                #
-##################################################################
-
-############
+# 
+# nsp linking is performed by Makefiles in config/
+# 
+#
 # C compiler
-# typically, for compiling use: CFLAGS = $(CC_OPTIONS)
-# and for linking: $(CC) -o $(PROGRAM) $(OBJS) $(CC_LDFLAGS)
-###########
+#   compile $(CC) $(CC_OPTIONS) -c file.c 
+#   link    $(CC) -o $(PROGRAM) $(OBJS) $(CC_LDFLAGS)
+#
 CC = @CC@
 CC_OPTIONS = @CC_OPTIONS@ @GTKCFLAGS@ -I$(SCIDIR)/src/include
 CC_LDFLAGS = @CC_LDFLAGS@ 
@@ -33,11 +42,11 @@ CC_PICFLAGS = @CC_PICFLAGS@
 
 # CC_OPTIONS with optimize removed if CC=gcc
 CC_OPTIONS1 = @CC_OPTIONS1@ @GTKCFLAGS@ -I$(SCIDIR)/src/include
-##################
+#
 # Fortran compiler
-# typically, for compiling use: FFLAGS = $(FC_OPTIONS)
-# and for linking: $(FC) -o $(PROGRAM) $(OBJS) $(FC_LDFLAGS)
-##################
+#   compile $(FC) -c $(FC_OPTIONS) -c file.f 
+#   link    $(FC) -o $(PROGRAM) $(OBJS) $(FC_LDFLAGS)
+#
 FC = @FC@
 FC_OPTIONS = @FC_OPTIONS@
 FC_LDFLAGS = @FC_LDFLAGS@

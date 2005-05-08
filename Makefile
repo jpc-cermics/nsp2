@@ -1,4 +1,5 @@
 SHELL = /bin/sh
+TOP=.
 
 binary:
 	@if test -f .binary; then \
@@ -47,7 +48,7 @@ all::
 
 distclean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in src $(SUBDIRS) man;\
+	for i in src $(SUBDIRS) ;\
 	do \
 		(cd $$i ; echo "making distclean in $$i..."; \
 			$(MAKE) $(MFLAGS)  distclean); \
@@ -60,7 +61,7 @@ distclean::
 
 clean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in src $(SUBDIRS) man;\
+	for i in src $(SUBDIRS) ;\
 	do \
 		(cd $$i ; echo "making clean in $$i..."; \
 			$(MAKE) $(MFLAGS)  clean); \
@@ -91,104 +92,46 @@ distclean::
 	$(RM) config.cache config.log config.status .binary foo.f foo.o \
 	conftest conftest.c so_locations
 
-# SCIBASE for scilab binaries generation
-SCIBASE = scilab-2.6
-
-PVMBINDISTFILES = \
-	$(SCIBASE)/pvm3/lib/pvm \
-	$(SCIBASE)/pvm3/lib/pvmd \
-	$(SCIBASE)/pvm3/lib/pvmtmparch \
-	$(SCIBASE)/pvm3/lib/pvmgetarch \
-	$(SCIBASE)/pvm3/lib/LINUX/pvmd3 \
-	$(SCIBASE)/pvm3/lib/LINUX/pvmgs \
-	$(SCIBASE)/pvm3/lib/LINUX/pvm \
-	$(SCIBASE)/pvm3/bin/LINUX/*
-
-BINDISTFILES = \
-	$(SCIBASE)/.binary \
-	$(SCIBASE)/.pvmd.conf \
-	$(SCIBASE)/ACKNOWLEDGEMENTS \
-	$(SCIBASE)/CHANGES \
-	$(SCIBASE)/Makefile \
-        $(SCIBASE)/Makefile.OBJ \
-	$(SCIBASE)/Makefile.incl \
-	$(SCIBASE)/Makemex \
-        $(SCIBASE)/Path.incl \
-	$(SCIBASE)/README \
-	$(SCIBASE)/Version.incl \
-	$(SCIBASE)/configure \
-	$(SCIBASE)/libtool \
-	$(SCIBASE)/license.txt \
-	$(SCIBASE)/licence.txt \
-	$(SCIBASE)/scilab.quit \
-	$(SCIBASE)/scilab.star \
-	$(SCIBASE)/X11_defaults \
-	$(SCIBASE)/bin \
-	$(SCIBASE)/config \
-	$(SCIBASE)/contrib \
-	$(SCIBASE)/demos \
-	$(SCIBASE)/examples \
-	$(SCIBASE)/imp/NperiPos.ps \
-	$(SCIBASE)/imp/giffonts \
-	$(SCIBASE)/macros \
-	$(SCIBASE)/man/eng/*.htm \
-	$(SCIBASE)/man/eng/*/*.htm \
-	$(SCIBASE)/man/fr/*/*.htm \
-	$(SCIBASE)/man/fr/*.htm \
-	$(SCIBASE)/man/*.dtd \
-	$(SCIBASE)/man/*/*.xsl \
-	$(SCIBASE)/src/*.h \
-	$(SCIBASE)/src/*/*.h \
-	$(SCIBASE)/src/Make.lib \
-	$(SCIBASE)/src/default/FCreate \
-	$(SCIBASE)/src/default/Flist \
-	$(SCIBASE)/src/default/README \
-	$(SCIBASE)/src/default/fundef \
-	$(SCIBASE)/src/default/*.c \
-	$(SCIBASE)/src/default/*.f \
-	$(SCIBASE)/scripts \
-	$(SCIBASE)/tcl \
-	$(SCIBASE)/tests \
-	$(SCIBASE)/util
 
 tarbindist:
-	touch .binary
-	strip bin/scilex
-	cd tests; make distclean
-	cd examples; make distclean
-	cd .. ; tar cvf $(SCIBASE)/$(SCIBASE)-bin.tar $(BINDISTFILES) $(PVMBINDISTFILES)
-	$(RM) .binary
+	@echo tarbindist not supported by nsp 
+	@echo use ./configure --prefix=path
+	@echo to get a binary version at path location
 
-LIBPREFIX = /usr
+# this are the files that really need to be installed 
+# from pvm 
+# 
+# PVMBINDISTFILES = \
+# 	$(SCIBASE)/pvm3/lib/pvm \
+# 	$(SCIBASE)/pvm3/lib/pvmd \
+# 	$(SCIBASE)/pvm3/lib/pvmtmparch \
+# 	$(SCIBASE)/pvm3/lib/pvmgetarch \
+# 	$(SCIBASE)/pvm3/lib/LINUX/pvmd3 \
+# 	$(SCIBASE)/pvm3/lib/LINUX/pvmgs \
+# 	$(SCIBASE)/pvm3/lib/LINUX/pvm \
+# 	$(SCIBASE)/pvm3/bin/LINUX/*
 
 install:
-	@if test `pwd` != ${LIBPREFIX}/$(SCIBASE); then \
-		touch .binary; \
-		strip $(SCIDIR)/bin/scilex; \
-		(cd tests; make distclean); \
-		(cd examples; make distclean); \
-		(cd .. ; tar cf - $(BINDISTFILES) $(PVMBINDISTFILES) $(PVMBINDISTFILES1) | (cd ${LIBPREFIX}; tar xf -)); \
-		(cd ${LIBPREFIX}/$(SCIBASE); make); \
-		$(RM) .binary; \
-	fi
-	$(RM) /usr/bin/scilab
-	ln -fs ${LIBPREFIX}/$(SCIBASE)/bin/scilab /usr/bin/scilab
-	$(RM) /usr/bin/intersci
-	ln -fs ${LIBPREFIX}/$(SCIBASE)/bin/intersci /usr/bin/intersci
-	$(RM) /usr/bin/intersci-n
-	ln -fs ${LIBPREFIX}/$(SCIBASE)/bin/intersci-n /usr/bin/intersci-n
-
-
-uninstall:
-	$(RM) -r ${LIBPREFIX}/$(SCIBASE)
-	$(RM) /usr/bin/scilab
-	$(RM) /usr/bin/intersci
-	$(RM) /usr/bin/intersci-n
+	@echo "installing bin files"
+	find bin \( -name '*'  \) \
+		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
+	@echo "installing lib files"
+	find libs \( -name '*'  \) \
+		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/{} \;
+	find pvm3/lib \( -name '*'  \) \
+		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
+	find pvm3/lib \( -name '*.a'  \) \
+		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/{} \;
+	find pvm3/bin \( -name '*'  \) \
+		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
+	$(TOP)/config/install-sh $(opt_PROG) scripts/scilab-inst $(prefix)/lib/nsp/bin/scilab
+	$(TOP)/config/install-sh $(opt_PROG) scripts/scilab-inst $(prefix)/bin/scilab
+	cd demos ; make install;
+	cd macros ; make install;
+	cd src/include ; make install;
 
 
 cvsclean::
-	@$(RM) -f -r geci xless wless xmetanet src/comm src/libcomm
-	@cd man; $(RM) -f -r arma comm control dcd elementary fileio functions graphics gui identification linear metanet nonlinear polynomials programming pvm robust scicos signal sound strings tdcs time-date tksci translation utilities
 
 setversion : 
-	echo "SCIVERSION=scilab-2.7-CVS-`date --iso`" > Version.incl
+	echo "NSPVERSION=nsp-cvs-`date --iso`" > Version.incl
