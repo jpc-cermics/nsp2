@@ -4610,29 +4610,6 @@ int int_seteventhandler(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-/*-----------------------------------------------------------
- * moving the camera 
- *-----------------------------------------------------------*/
-
-extern void change_camera(BCG *Xgc,const double *);
-
-
-int int_camera(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  NspMatrix *c_pos;
-#ifdef WITH_GTKGLEXT 
-  CheckRhs(1,1);
-  CheckLhs(0,0);
-  if ((c_pos = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
-  CheckVector(stack.fname,1,c_pos);
-  CheckLength(stack.fname,1,c_pos,15);
-  Xgc=nsp_check_graphic_context();
-  change_camera(Xgc,c_pos->R);
-#endif
-  return 0;
-}
-
 
 /*-----------------------------------------------------------
  * Utility function for demo 
@@ -4888,7 +4865,6 @@ static OpTab Graphics_func[]={
   {"xs2gif",int_xs2gif},
   {"xs2ppm",int_xs2ppm},
   {"xs2ps",int_xs2ps},
-  {"camera",int_camera},
   {"dsearch", int_dsearch},
   {"draw3d_objs", int_draw3dobj},
 
