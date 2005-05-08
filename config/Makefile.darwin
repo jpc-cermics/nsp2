@@ -3,17 +3,17 @@
 FFLAGS = $(FC_OPTIONS)
 
 # to load all the static libraries 
-
 # -Wl,all_load 
 
-LIBS=  libs/nsp.a libs/zcalelm.a  libs/graphics.a \
-	libs/gtksci.a libs/menusX.a libs/rand.a libs/dcd.a libs/approx.a \
-	libs/integ.a libs/lapack.a libs/blas.a 
+LIBS=  $(NSPLIBS) 
 
 bin/scilex: scilex-lib 
 	@$(RM) $@;
 	@echo "linking"; 
-	$(CC)  $(FFLAGS) -o $@ src/interp/lsci.o $(FC_LDFLAGS) \
-	$(LIBS) $(TCLTK_LIBS) $(XLIBS) -lg2c $(TERMCAPLIB);
+	$(CC)  $(FFLAGS) -o $@ src/interp/lsci.o \
+		$(NSPLIBS) $(EXTERNLIBS) $(FC_LDFLAGS) -lg2c ;
+
+
+
 
 

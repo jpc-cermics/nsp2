@@ -2,15 +2,13 @@
 
 FFLAGS = $(FC_OPTIONS)
 
-LIBS=-Wl,--whole-archive libs/nsp.a  \
-	libs/zcalelm.a libs/graphics.a \
-	libs/gtksci.a libs/menusX.a libs/rand.a libs/dcd.a  \
-	libs/integ.a libs/approx.a \
-	 -Wl,--no-whole-archive -lf77lapack -lcblas -lf77blas -latlas -lfftw3
+LIBS=-Wl,--whole-archive $(NSPLIBS) -Wl,--no-whole-archive 
 
 bin/scilex: scilex-lib 
 	@$(RM) $@;
 	@echo "linking"; 
-	$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o $(FC_LDFLAGS) \
-	$(LIBS) $(TCLTK_LIBS) $(XLIBS) $(TERMCAPLIB);
+	$(FC)  $(FFLAGS) -o $@ src/interp/lsci.o \
+		$(LIBS) $(EXTERNLIBS) $(FC_LDFLAGS) 
+
+
 
