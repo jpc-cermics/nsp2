@@ -1,7 +1,7 @@
 SHELL = /bin/sh
-
-include ../Path.incl
-include ../Makefile.incl
+TOP=..
+include $(TOP)/Path.incl
+include $(TOP)/Makefile.incl
 
 CFLAGS = $(CC_OPTIONS) 
 
@@ -31,3 +31,7 @@ clean::
 		$(MAKE) $(MFLAGS) clean); \
 	done
 
+install::
+	@echo "installing demos files"
+	find . \( -name '*'  \) \
+		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/demos/{} \;
