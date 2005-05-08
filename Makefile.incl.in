@@ -45,43 +45,46 @@ FC_PICFLAGS = @FC_PICFLAGS@
 
 # FC_OPTIONS with optimize removed if FC=g77
 FC_OPTIONS1 = @FC_OPTIONS1@
-########
+#
 # Linker
 # typically, for linking: $(LD) -o $(PROGRAM) $(OBJS) $(LD_LDFLAGS)
-########
+#
 LD = @LD@
 LD_LDFLAGS = @LD_LDFLAGS@
-
-##########
-# X Window: use $(XFLAGS) for compilation and $(XLIBS) for linking
-# typically, for compiling use: CFLAGS = $(CC_OPTIONS) $(XFLAGS)
-# and for linking with X Window
-#  with C compiler: $(CC) -o $(PROGRAM) $(OBJS) $(CC_LDFLAGS) $(XLIBS)
-#  with Fortran compiler: $(FC) -o $(PROGRAM) $(OBJS) $(FC_LDFLAGS) $(XLIBS)
-#  with linker: $(LD) -o $(PROGRAM) $(OBJS) $(LD_LDFLAGS) $(XLIBS)
-##########
+#
+# DLD 
+#
 DLDLIB = @DLDLIB@
 DLD_SUBDIR = @DLD_SUBDIR@
+#
+# PVM 
+#
 PVMLIB = @PVMLIB@
 PVMGLIB = @PVMGLIB@
 PVMROOT = @PVMROOT@
 PVMINCLUDE = @PVMINCLUDE@
-FFTW3_LIBS = @FFTW3_LIBS@
-XLIBS = @GTKLIBS@ $(FFTW3_LIBS)
-#####################
+#
 # TCL/TK
-#####################
+#
 TK_INC_PATH = @TK_INC_PATH@
 TCL_INC_PATH = @TCL_INC_PATH@
 TCLTK_LIBS = @TCLTK_LIBS@
-
-#####################
+#
+# libraries needed for linking 
+# 1- inside nsp 
+NSPLIBS=libs/nsp.a libs/zcalelm.a libs/graphics.a libs/gtksci.a libs/menusX.a \
+	libs/rand.a libs/dcd.a libs/integ.a libs/approx.a @MPLUSLIB@ 
+EXTERNLIBS = @GTKLIBS@ @FFTW3_LIBS@ @LAPACK_LIBS@ @BLAS_LIBS@  @TERMCAPLIB@
+#
 # for WIN32 version 
 # win32 libraries for gcwin32 
+#
 WIN32LIBS=-mwindows -lwsock32 -lshell32 -lcomctl32  -lwinspool -lm 
 WINLIBS = $(TCLTK_LIBS) $(WIN32LIBS)
 LINKEROPT= $(LD_LDFLAGS)
+#
 # Ressource compiler 
+#
 RC=windres 
 RCVARS=-O coff 
 

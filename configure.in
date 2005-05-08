@@ -1136,47 +1136,47 @@ AC_CHECK_POINTER_SIZE()
 ## test for X Window
 ####################
 
-if test "$PERIFILE" = periX11.o; then 
-AC_PATH_XTRA
-
-# fixing a bug for SunOs
-if test "$X_LIBS" = ' -L/usr/lib'; then
-  X_LIBS=
-fi
-
-if test "$no_x" = yes; then
-  AC_MSG_ERROR([X Window not found])
-fi
-fi 
+dnl if test "$PERIFILE" = periX11.o; then 
+dnl AC_PATH_XTRA
+dnl
+dnl # fixing a bug for SunOs
+dnl if test "$X_LIBS" = ' -L/usr/lib'; then
+dnl   X_LIBS=
+dnl fi
+dnl
+dnl if test "$no_x" = yes; then
+dnl   AC_MSG_ERROR([X Window not found])
+dnl fi
+dnl fi 
 
 ###################
 ## find X11 release
 ###################
 
-if test "$PERIFILE" = periX11.o; then 
-AC_CACHE_CHECK([for X11 release],ac_cv_X11_release,
-[
-cat << EOF > testX11.c
-#include <X11/Xlib.h>
-main()
-{
-#ifdef XlibSpecificationRelease
-  if (XlibSpecificationRelease == 5)
-    printf("R5\n");
-  else if (XlibSpecificationRelease == 6)
-    printf("R6\n");
-  else
-    printf("R?\n");
-#else
-  printf("R4\n");
-#endif
-}
-EOF
-eval "$CC $X_CFLAGS -o testX11 testX11.c > /dev/null 2>&1"
-ac_cv_X11_release=`./testX11`
-$RM testX11.c testX11
-])
-fi
+dnl if test "$PERIFILE" = periX11.o; then 
+dnl AC_CACHE_CHECK([for X11 release],ac_cv_X11_release,
+dnl [
+dnl cat << EOF > testX11.c
+dnl #include <X11/Xlib.h>
+dnl main()
+dnl {
+dnl #ifdef XlibSpecificationRelease
+dnl   if (XlibSpecificationRelease == 5)
+dnl     printf("R5\n");
+dnl   else if (XlibSpecificationRelease == 6)
+dnl     printf("R6\n");
+dnl   else
+dnl     printf("R?\n");
+dnl #else
+dnl   printf("R4\n");
+dnl #endif
+dnl }
+dnl EOF
+dnl eval "$CC $X_CFLAGS -o testX11 testX11.c > /dev/null 2>&1"
+dnl ac_cv_X11_release=`./testX11`
+dnl $RM testX11.c testX11
+dnl ])
+dnl fi
 
 #######################
 ## test for underscores
@@ -1612,6 +1612,14 @@ if test "$with_fftw3" != no; then
    if test "x$PKG_CONFIG" != x; then # try first to use pkg-config	
       ## If fftw3.pc is found, set FFTW3_CFLAGS and FFTW3_LIBS
       PKG_CHECK_MODULES(FFTW3, fftw3 >= 3.0, HAVE_FFTW3="yes", HAVE_FFTW3="no")
+      ## In case of success I just want fftw3 be added in GTK_PKGS 
+      if test "$HAVE_FFTW3" = "yes"; then
+	 GTK_PKGS="$GTK_PKGS fftw3"
+         GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
+         GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+	 FFTW3_CFLAGS=""
+	 FFTW3_LIBS=""
+      fi 
    fi
    if test "$HAVE_FFTW3" = "no"; then # try to find fftw3 at usual places
      AC_CHECK_HEADERS(
@@ -1748,6 +1756,7 @@ AC_SUBST(BLAS_LIBS)
 AC_SUBST(LAPACK_LIBS)
 AC_SUBST(BLAS_LOCAL)
 AC_SUBST(LAPACK_LOCAL)
+AC_SUBST(GTK_PKGS)
 
 AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile) 
 
@@ -1759,4 +1768,8 @@ echo "*******************"
 echo
 echo "FFTW3 support..........:" $HAVE_FFTW3
 echo "OpenGl support.........:" $WITH_GL
+echo 
+echo "Managed by pkg-config..:" $GTK_PKGS
+echo "Lapack and Blas........:" $LAPACK_LIBS $BLAS_LIBS
+echo "Terminal...............:" $TERMCAPLIB
 echo
