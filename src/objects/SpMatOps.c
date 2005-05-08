@@ -74,7 +74,7 @@ int SpClean(NspSpMatrix *A, int rhs, double epsa, double epsr)
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : if ( Abs(A->D[i]->R[j])   < eps) A->D[i]->J[j] = -1;n=1; break ;
-	    case 'i' : if (nsp_abs_c(&A->D[i]->C[j]) < eps) A->D[i]->J[j] = -1;n=1; break ;
+	    case 'c' : if (nsp_abs_c(&A->D[i]->C[j]) < eps) A->D[i]->J[j] = -1;n=1; break ;
 	    }
 	}
       /* remove null elements and resize rows **/
@@ -106,7 +106,7 @@ NspMatrix *SpMaxiMinitt_G (NspSpMatrix *A, NspSpMatrix *B, int flag, int minmaxf
   char type = 'r';
   if ( SameDim(A,B) ) 
     {
-      if ( A->rc_type == 'i' || B->rc_type == 'i' ) 
+      if ( A->rc_type == 'c' || B->rc_type == 'c' ) 
 	{
 	  Scierror("Error: Arguments must be real matrices\n");
 	  return NULLMAT;
@@ -418,7 +418,7 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 	      Sum->D[0]->J[0] = 0;
 	    }
 	  break;
-	case 'i' :  
+	case 'c' :  
 	  SC.r = SC.i = 0.0;
 	  for ( i= 0 ; i < A->m ; i++ ) 
 	    { 
@@ -445,7 +445,7 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' :  Sum->D[0]->R[k]=0.0;break;
-	    case 'i' :  Sum->D[0]->C[k].r = Sum->D[0]->C[k].i =0.0;break;
+	    case 'c' :  Sum->D[0]->C[k].r = Sum->D[0]->C[k].i =0.0;break;
 	    }
 	}
       for ( i = 0 ; i < A->m ; i++) 
@@ -455,7 +455,7 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 	      switch ( A->rc_type ) 
 		{
 		case 'r' :  Sum->D[0]->R[A->D[i]->J[k]] += A->D[i]->R[k];break;
-		case 'i' :  Sum->D[0]->C[A->D[i]->J[k]].r += A->D[i]->C[k].r ;
+		case 'c' :  Sum->D[0]->C[A->D[i]->J[k]].r += A->D[i]->C[k].r ;
 		  Sum->D[0]->C[A->D[i]->J[k]].i += A->D[i]->C[k].i ;break;
 		}
 	    }
@@ -469,7 +469,7 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 		if ( Sum->D[0]->R[k] == 0.0 ) { count=1; Sum->D[0]->J[k]=-1;}
 	      }
 	    break;
-	  case 'i' : 
+	  case 'c' : 
 	    for ( k=0 ; k < Sum->D[0]->size ; k++) 
 	      {
 		if ( Sum->D[0]->C[k].r == 0.0 && Sum->D[0]->C[k].i == 0.0 ) 
@@ -502,7 +502,7 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 		}
 	    }
 	  break ;
-	case 'i' :  
+	case 'c' :  
 	  for ( i = 0 ; i < A->m ; i++) 
 	    {
 	nsp_zsum(&C,&A->D[i]->size,A->D[i]->C,&inc); 
@@ -882,7 +882,7 @@ static NspMatrix* SpUnary2Full(NspSpMatrix *A, Func1 F1, Func2 F2)
   switch ( A->rc_type )
     {
     case 'r' : val = (*F1)(0.00); nsp_mat_set_rval(Loc,val); break;
-    case 'i' : (*F2)(&Czero,&Cval);
+    case 'c' : (*F2)(&Czero,&Cval);
  nsp_mat_set_rval(Loc,Cval.r);
  nsp_mat_set_ival(Loc,Cval.i);
       break;
@@ -1225,7 +1225,7 @@ void SpConj(NspSpMatrix *A)
   switch ( A->rc_type ) 
     {
     case 'r' : break;
-    case 'i' : 
+    case 'c' : 
       for ( i = 0 ; i < A->m ; i++)
 	{
 	  for ( k= 0 ; k < A->D[i]->size; k++ ) 

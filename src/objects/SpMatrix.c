@@ -152,7 +152,7 @@ NspSpMatrix *nsp_spmatrix_sparse_old(char *name,NspMatrix *RC, NspMatrix *Values
 	  if (Values->R[i] != 0.0 ) Loc->D[Iloc[i]-1]->iw++;
 	} 
       break;
-    case 'i' : 
+    case 'c' : 
       for ( i = 0 ; i < RC->m ; i++)  
 	{
 	  if (Values->C[i].r != 0.0 || Values->C[i].i ) Loc->D[Iloc[i]-1]->iw++;
@@ -195,7 +195,7 @@ NspSpMatrix *nsp_spmatrix_sparse_old(char *name,NspMatrix *RC, NspMatrix *Values
 	      Loc->D[Iloc[i]-1]->iw++;
 	    }
 	  break;
-	case 'i' : 
+	case 'c' : 
 	  if ( Values->C[i].r != 0.0 || Values->C[i].i != 0.0) 
 	    {
 	      Loc->D[Iloc[i]-1]->C[count] = Values->C[i];
@@ -268,7 +268,7 @@ NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, in
 	  if (Values->R[i] != 0.0 ) Loc->D[((int) RC->R[i])-1]->iw++;
 	} 
       break;
-    case 'i' : 
+    case 'c' : 
       for ( i = 0 ; i < RC->m ; i++)  
 	{
 	  if (Values->C[i].r != 0.0 || Values->C[i].i ) Loc->D[((int) RC->R[i])-1]->iw++;
@@ -320,7 +320,7 @@ NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, in
 		Loc->D[iloc]->iw++;
 	    }
 	  break;
-	case 'i' : 
+	case 'c' : 
 	  if ( Values->C[i].r != 0.0 || Values->C[id].i != 0.0) 
 	    {
 	      Loc->D[iloc]->C[count] = Values->C[id];
@@ -390,7 +390,7 @@ int nsp_spmatrix_get(NspSpMatrix *A, NspMatrix **RC, NspMatrix **Values)
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : (*Values)->R[iw] = A->D[i]->R[j];break;
-	    case 'i' : (*Values)->C[iw] = A->D[i]->C[j];break;
+	    case 'c' : (*Values)->C[iw] = A->D[i]->C[j];break;
 	    }
 	  iw++;
 	}
@@ -446,7 +446,7 @@ int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n)
 	  if ( (Row->R =nsp_alloc_doubles((int) n)) == (double *) 0 ) return(FAIL);
 	  Row->C = (doubleC *) 0;
 	  break;
-	case 'i' : 
+	case 'c' : 
 	  if ( (Row->C =nsp_alloc_doubleC((int) n)) == (doubleC *) 0 ) return(FAIL);
 	  Row->R = (double *) 0; 
 	  break;
@@ -465,7 +465,7 @@ int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n)
 	case 'r' : 
 	  FREE(Row->R);
 	  break;
-	case 'i' : 
+	case 'c' : 
 	  FREE(Row->C);
 	}
       Row->size = 0;
@@ -478,7 +478,7 @@ int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n)
       if (( Row->R =nsp_realloc_doubles(Row->R,(int) n)) == (double *) 0 ) return(FAIL);
       Row->C = (doubleC *) 0;
       break;
-    case 'i' : 
+    case 'c' : 
       if (( Row->C =nsp_realloc_doubleC(Row->C, (int) n)) == (doubleC *) 0 ) return(FAIL);
       Row->R = (double *) 0; 
       break;
@@ -568,7 +568,7 @@ void nsp_spmatrix_print(NspSpMatrix *Sp, int indent)
 	    }
 	}
       break;
-    case 'i' :
+    case 'c' :
       for ( i = 0 ; i < Sp->m ; i++ ) 
 	{
 	  SpRow *Ri = Sp->D[i];
@@ -638,7 +638,7 @@ NspSpMatrix *nsp_spmatrix_redim(NspSpMatrix *A, int m, int n)
 	  switch (Loc->rc_type ) 
 	    {
 	    case 'r' : Loc->D[i1]->R[Loc->D[i1]->iw]= Ri->R[k];break;
-	    case 'i' : Loc->D[i1]->C[Loc->D[i1]->iw]= Ri->C[k];break;
+	    case 'c' : Loc->D[i1]->C[Loc->D[i1]->iw]= Ri->C[k];break;
 	    }
 	  Loc->D[i1]->iw++;
 	}
@@ -718,7 +718,7 @@ int nsp_spmatrix_enlarge(NspSpMatrix *A, int m, int n)
 int nsp_spmatrix_concatr(NspSpMatrix *A, NspSpMatrix *B)
 {
   int i;
-  if ( A->rc_type == 'r' &&  B->rc_type == 'i' )  
+  if ( A->rc_type == 'r' &&  B->rc_type == 'c' )  
     {
       if (nsp_spmatrix_complexify(A) == FAIL ) return(FAIL);
     }
@@ -745,7 +745,7 @@ int nsp_spmatrix_concatr(NspSpMatrix *A, NspSpMatrix *B)
  nsp_iadd(&Bi->size,&A->n,Ai->J+ioffset,&inc);
       if ( B->rc_type == 'r' ) 
 	{
-	  if ( A->rc_type == 'i' ) 
+	  if ( A->rc_type == 'c' ) 
 	nsp_dzcopy(&Bi->size,Bi->R,&inc,Ai->C+ioffset,&inc);
 	  else 
 	    C2F(dcopy)(&Bi->size,Bi->R,&inc,Ai->R+ioffset,&inc);
@@ -775,7 +775,7 @@ int nsp_spmatrix_concatd(NspSpMatrix *A, NspSpMatrix *B)
       return(FAIL);
     }
   Am = A->m;
-  if ( A->rc_type == 'r' && B->rc_type == 'i' ) 
+  if ( A->rc_type == 'r' && B->rc_type == 'c' ) 
     {
       if (nsp_spmatrix_complexify(A) == FAIL ) return(FAIL);
     }
@@ -851,15 +851,15 @@ void  nsp_spmatrix_store(NspSpMatrix *A, int r, int c, int col, NspSpMatrix *B, 
       switch ( B->rc_type ) 
 	{
 	case 'r' : A->D[r]->R[c] = B->D[r1]->R[c1]; break;
-	case 'i' : A->D[r]->R[c] = B->D[r1]->C[c1].r; break;
+	case 'c' : A->D[r]->R[c] = B->D[r1]->C[c1].r; break;
 	}
       break;
-    case 'i' :
+    case 'c' :
       switch ( B->rc_type ) 
 	{
 	case 'r' : A->D[r]->C[c].r = B->D[r1]->R[c1]; A->D[r]->C[c].i = 0.0;
 	  break;
-	case 'i' : A->D[r]->C[c] = B->D[r1]->C[c1]; break;
+	case 'c' : A->D[r]->C[c] = B->D[r1]->C[c1]; break;
 	}
       break;
     }
@@ -1004,9 +1004,9 @@ int nsp_spmatrix_set_rowcol(NspSpMatrix *A, NspMatrix *Rows, NspMatrix *Cols, Ns
   if ( rmax > A->m ||  cmax > A->n ) 
     if (nsp_spmatrix_enlarge(A,rmax,cmax) == FAIL) return(FAIL);
   /* Id result complex ? **/
-  if ( B->rc_type == 'i' &&   A->rc_type == 'r' )
+  if ( B->rc_type == 'c' &&   A->rc_type == 'r' )
     { 
-      type = 'i';
+      type = 'c';
       if (nsp_spmatrix_seti(A,0.00) == FAIL ) return(FAIL);
     }
   /* fill A **/
@@ -1117,7 +1117,7 @@ int nsp_spmatrix_set_row(NspSpMatrix *A, NspMatrix *Inds, NspSpMatrix *B)
 		     B,B->m,B->n,B->mn,(F_Enlarge)nsp_spmatrix_enlarge,&Bscal)== FAIL) 
     return FAIL;
   /* */
-  if ( A->rc_type == 'r' && B->rc_type == 'i' ) 
+  if ( A->rc_type == 'r' && B->rc_type == 'c' ) 
     {
       if (nsp_spmatrix_complexify(A) == FAIL ) return(FAIL);
     }
@@ -1260,7 +1260,7 @@ int nsp_spmatrix_compress_row(NspSpMatrix *A, int i)
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : R->R[k-ioff] = R->R[k];break;
-	    case 'i' : R->C[k-ioff] = R->C[k];break;
+	    case 'c' : R->C[k-ioff] = R->C[k];break;
 	    }
 	}
       if ( next == R->size ) return ioff;
@@ -1388,7 +1388,7 @@ static NspSpMatrix *SpExtract_G(NspSpMatrix *A, NspMatrix *Rows, NspMatrix *Cols
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : Li->R[j]= Ai->R[k];break;
-	    case 'i' : Li->C[j]= Ai->C[k];break;
+	    case 'c' : Li->C[j]= Ai->C[k];break;
 	    }
 	}
     }
@@ -1458,7 +1458,7 @@ NspSpMatrix *nsp_spmatrix_extract_elts(NspSpMatrix *A, NspMatrix *Elts)
 	      switch ( A->rc_type ) 
 		{
 		case 'r' : Loc->D[i]->R[0] =  A->D[row]->R[k]; break;
-		case 'i' : Loc->D[i]->C[0] =  A->D[row]->C[k]; break;
+		case 'c' : Loc->D[i]->C[0] =  A->D[row]->C[k]; break;
 		}
 	    }
 	}
@@ -1514,7 +1514,7 @@ NspSpMatrix *nsp_spmatrix_extract_rows(NspSpMatrix *A, NspMatrix *Rows, int *err
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : Li->R[j]= Ai->R[j];break;
-	    case 'i' : Li->C[j]= Ai->C[j];break;
+	    case 'c' : Li->C[j]= Ai->C[j];break;
 	    }
 	}
     }
@@ -1559,7 +1559,7 @@ NspSpMatrix *nsp_spmatrix_diag_extract(NspSpMatrix *A, int k)
 	{
 	  if (nsp_spmatrix_resize_row(Loc,i,1)==FAIL) return NULLSP;  
 	  Loc->D[i]->J[0] = 0;
-	  if ( A->rc_type == 'i' )
+	  if ( A->rc_type == 'c' )
 	    Loc->D[i]->C[0] = A->D[ia]->C[ok];
 	  else 
 	    Loc->D[i]->R[0] = A->D[ia]->R[ok];
@@ -1596,7 +1596,7 @@ int nsp_spmatrix_diag_set(NspSpMatrix *A, NspSpMatrix *Diag, int k)
       if (nsp_spmatrix_enlarge_rows(A,imax) == FAIL ) return FAIL;
       A->n = imax+k;
     }
-  if ( Diag->rc_type == 'i' && A->rc_type == 'r' ) 
+  if ( Diag->rc_type == 'c' && A->rc_type == 'r' ) 
       if (nsp_spmatrix_complexify(A) == FAIL ) return(FAIL);
   for ( i = imin ; i < A->m ; i++ ) 
     {
@@ -1714,7 +1714,7 @@ NspSpMatrix *nsp_spmatrix_diag_create(NspSpMatrix *Diag, int k)
 	  switch ( Loc->rc_type ) 
 	    {
 	    case 'r' : Loc->D[iloc]->R[0] = Diag->D[0]->R[k1];break;
-	    case 'i' : Loc->D[iloc]->C[0] = Diag->D[0]->C[k1];break;
+	    case 'c' : Loc->D[iloc]->C[0] = Diag->D[0]->C[k1];break;
 	    }
 	}
     }
@@ -1731,7 +1731,7 @@ NspSpMatrix *nsp_spmatrix_diag_create(NspSpMatrix *Diag, int k)
 	      switch ( Loc->rc_type ) 
 		{
 		case 'r' : Loc->D[iloc]->R[0] = Diag->D[i]->R[0];break;
-		case 'i' : Loc->D[iloc]->C[0] = Diag->D[i]->C[0];break;
+		case 'c' : Loc->D[iloc]->C[0] = Diag->D[i]->C[0];break;
 		}
 	    }
 	}
@@ -1760,7 +1760,7 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
   int *xb;
   static int   i, j, k, v, ip, jp, kp;
   char type = 'r';
-  if ( A->rc_type == 'i' || B->rc_type == 'i' ) type = 'i';
+  if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
   if ( A->n != B->m ) 
     {
       Scierror("SpMult : incompatible arguments\n");
@@ -1911,7 +1911,7 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
 int nsp_spmatrix_mult_scal_old(NspSpMatrix *A, NspSpMatrix *B)
 {
   int i,k ;
-  if ( A->rc_type == 'r' &&  B->rc_type == 'i' )  
+  if ( A->rc_type == 'r' &&  B->rc_type == 'c' )  
     {
       if (nsp_spmatrix_complexify(A) == FAIL ) return(FAIL);
     }
@@ -1942,7 +1942,7 @@ int nsp_spmatrix_complexify(NspSpMatrix *A)
 {
   int inc = 1;
   int i;
-  if ( A->rc_type == 'i' ) return(OK);
+  if ( A->rc_type == 'c' ) return(OK);
   for ( i = 0 ; i < A->m ; i++) 
     {
       SpRow *Ai = A->D[i];
@@ -1954,7 +1954,7 @@ int nsp_spmatrix_complexify(NspSpMatrix *A)
 	  FREE(Ai->R);
 	}
     }
-  A->rc_type = 'i';
+  A->rc_type = 'c';
   return(OK);
 }
 
@@ -1978,7 +1978,7 @@ int nsp_spmatrix_setr(NspSpMatrix *A, double d)
 	    }
 	}
       break;
-    case 'i' :
+    case 'c' :
       for ( i = 0 ; i < A->m ; i++) 
 	{
 	  SpRow *Ai = A->D[i];
@@ -2032,7 +2032,7 @@ int  RowCountNonNull(NspMatrix *A, int i)
     {
     case 'r' :
       for ( j = 0 ; j < A->n ; j++ )  if (A->R[i+j*(A->m)] != 0.00 ) count++; break;
-    case 'i' :
+    case 'c' :
       for ( j = 0 ; j < A->n ; j++ )  
 	if (A->C[i+j*A->m].r  != 0.00 ||  A->C[i+j*A->m].i != 0.00)  count++;
       break;
@@ -2089,7 +2089,7 @@ NspSpMatrix *nsp_spmatrix_from_mat(NspMatrix *A)
 		}
 	    }
 	  break ;
-	case 'i' : 
+	case 'c' : 
 	  for ( j = 0 ; j < A->n ; j++ ) 
 	    { 
 	      if ( A->C[i+j*A->m].r != 0.00 || A->C[i+j*A->m].i != 0.00 )
@@ -2118,7 +2118,7 @@ NspMatrix *nsp_spmatrix_to_mat(NspSpMatrix *Sp)
   A = nsp_matrix_create(NVOID,Sp->rc_type,Sp->m,Sp->n) ;
   if ( A == NULLMAT ) { return(NULLMAT);}
  nsp_mat_set_rval(A,0.0);
-  if ( A->rc_type == 'i') if (nsp_mat_set_ival(A,0.00) == FAIL ) return(NULLMAT);
+  if ( A->rc_type == 'c') if (nsp_mat_set_ival(A,0.00) == FAIL ) return(NULLMAT);
   for ( i = 0 ; i < Sp->m ; i++ ) 
     {
       SpRow *Ri = Sp->D[i] ;
@@ -2130,7 +2130,7 @@ NspMatrix *nsp_spmatrix_to_mat(NspSpMatrix *Sp)
 	      A->R[i+ Ri->J[k]*A->m] = Ri->R[k]  ;
 	    }
 	  break ; 
-	case 'i' :
+	case 'c' :
 	  for  ( k = 0  ;  k < Ri->size ; k++)
 	    { 
 	      A->C[i+ Ri->J[k]*A->m].r = Ri->C[k].r ;
@@ -2191,7 +2191,7 @@ NspSpMatrix *nsp_spmatrix_transpose(NspSpMatrix *A)
 	    case 'r' : 
 	      Loc->D[j]->R[jt]= A->D[i]->R[k] ;
 	      break ;
-	    case 'i' :  
+	    case 'c' :  
 	      Loc->D[j]->C[jt].r = A->D[i]->C[k].r  ;
 	      Loc->D[j]->C[jt].i = - A->D[i]->C[k].i  ; 
 	      break;
@@ -2212,7 +2212,7 @@ NspSpMatrix *nsp_spmatrix_transpose(NspSpMatrix *A)
 
 double  plus (double x, double y, double xi, double yi, double *ival, char type)
 { 
-  if ( type == 'i' ) *ival = xi + yi ;
+  if ( type == 'c' ) *ival = xi + yi ;
   return( x+y ) ;
 }
 
@@ -2460,7 +2460,7 @@ static NspSpMatrix *BinaryOp(NspSpMatrix *A, NspSpMatrix *B, BopLeft BinLeft, Bo
   char type = 'r';
   if ( SameDim(A,B) ) 
     {
-      if ( A->rc_type == 'i' || B->rc_type == 'i' ) type = 'i';
+      if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
       Loc =nsp_spmatrix_create(NVOID,type, A->m,A->n);
       if ( Loc == NULLSP ) return(NULLSP) ; 
       for ( i = 0 ; i < Loc->m ; i++ ) 
@@ -2554,7 +2554,7 @@ int nsp_spmatrix_mult_scal(NspSpMatrix *A, NspSpMatrix *B)
       A->m = A->n = A->mn = 0;
       return OK;
     }
-  if ( B->rc_type == 'i' )
+  if ( B->rc_type == 'c' )
     {
       if (nsp_spmatrix_complexify(A) == FAIL ) return(FAIL);
     }
@@ -2614,7 +2614,7 @@ NspMatrix *nsp_spmatrix_op_scal(NspSpMatrix *A, NspSpMatrix *B, int *flag, char 
       return NULLMAT ;
     }
   *flag = 0;
-  if ( B->rc_type == 'i' || A->rc_type == 'i' ) type = 'i';
+  if ( B->rc_type == 'c' || A->rc_type == 'c' ) type = 'c';
   if ((Loc = nsp_matrix_create(NVOID,type,A->m,A->n))== NULLMAT) 
     return(NULLMAT);
   /* Loc == +-B **/
@@ -2622,12 +2622,12 @@ NspMatrix *nsp_spmatrix_op_scal(NspSpMatrix *A, NspSpMatrix *B, int *flag, char 
     {
     case 'r' : 
  nsp_mat_set_rval(Loc,(op == '-') ? -B->D[0]->R[0] :B->D[0]->R[0]);
-      if (Loc->rc_type == 'i' ) 
+      if (Loc->rc_type == 'c' ) 
       {
 	nsp_mat_set_rval(Loc,0.0);
       }
       break;
-    case 'i' : 
+    case 'c' : 
  nsp_mat_set_rval(Loc,(op == '-') ? -B->D[0]->C[0].r : B->D[0]->C[0].r);
  nsp_mat_set_ival(Loc,(op == '-') ? -B->D[0]->C[0].i : B->D[0]->C[0].i);
       break;

@@ -93,7 +93,7 @@ NspMaxpMatrix * nsp_mpmatrix_create(const char *name, char type, integer m, inte
 	  return(NULLMAXPMAT);
 	}
       break;
-    case 'i' : 
+    case 'c' : 
       Mat->R = (double *) 0; 
       Mat->C =nsp_alloc_doubleC(Mat->mn);
       if (  Mat->C == (doubleC *) 0) 
@@ -158,7 +158,7 @@ NspMaxpMatrix * nsp_mp_matrix_from_m(const char *name,NspMatrix *M)
       Mat->C = (doubleC *) 0;
       Mat->R = M->R; 
       break;
-    case 'i' : 
+    case 'c' : 
       Mat->R = (double *) 0; 
       Mat->C = M->C;
     }
@@ -215,7 +215,7 @@ NspMaxpMatrix *MatCreateFromData(char *name, char type, integer m, integer n,
       Mat->C = (doubleC *) 0;
       Mat->R = b->data;
       break;
-    case 'i' : 
+    case 'c' : 
       Mat->R = (double *) 0; 
       Mat->C = b->data; 
     }
@@ -337,7 +337,7 @@ NspMaxpMatrix *nsp_mpmatrix_copy(const NspMaxpMatrix *A)
       /* C2F(dcopy)(&(Mat->mn),A->R,&inc,Mat->R,&inc); */
       memcpy(Mat->R,A->R, (Mat->mn)*sizeof(double));
       break;
-    case 'i' :
+    case 'c' :
       /* C2F(zcopy)(&(Mat->mn),A->C,&inc,Mat->C,&inc); */
       memcpy(Mat->C,A->C, (Mat->mn)*sizeof(doubleC));
       break;
@@ -363,12 +363,12 @@ int nsp_mpmatrix_fill_with(NspMaxpMatrix *A,const NspMaxpMatrix *B)
   switch ( B->rc_type ) 
     {
     case 'r' : 
-      if (A->rc_type == 'i') 
+      if (A->rc_type == 'c') 
 	{ 
 	  if (nsp_mat_get_real((NspMatrix *)A) == FAIL) return FAIL; 
 	}
       break; 
-    case 'i' : 
+    case 'c' : 
       if (A->rc_type == 'r') 
 	{ 
 	  if (nsp_mat_complexify((NspMatrix *)A,0.0) == FAIL) return FAIL; 
@@ -382,7 +382,7 @@ int nsp_mpmatrix_fill_with(NspMaxpMatrix *A,const NspMaxpMatrix *B)
       /* C2F(dcopy)(&(A->mn),B->R,&inc,A->R,&inc); */
       memcpy(A->R,B->R, (A->mn)*sizeof(double));
       break;
-    case 'i' :
+    case 'c' :
       /* C2F(zcopy)(&(A->mn),B->C,&inc,A->C,&inc); */
       memcpy(A->C,B->C, (A->mn)*sizeof(doubleC));
       break;
@@ -444,7 +444,7 @@ int nsp_mpmatrix_resize(NspMaxpMatrix *A, integer m, integer n)
       A->R=nsp_realloc_doubles(A->R,A->mn);
       if ( A->R == (double *) 0) return(FAIL);
       break ; 
-    case 'i' : 
+    case 'c' : 
       A->C =nsp_realloc_doubleC(A->C,A->mn);
       if ( A->C == (doubleC *) 0) return(FAIL);
       break;
@@ -475,7 +475,7 @@ int nsp_mpmatrix_scalar_to_mn(NspMaxpMatrix *A, integer m, integer n)
   switch ( A->rc_type ) 
     {
     case 'r' : nsp_mat_set_rval((NspMatrix *)A,A->R[0]);break; 
-    case 'i' : 
+    case 'c' : 
       x= A->C[0]; 
       for ( i=1; i < A->mn ; i++) 
 	{
@@ -794,7 +794,7 @@ int nsp_mpmatrix_add_columns(NspMaxpMatrix *A, integer n)
   switch ( A->rc_type )
     {
     case 'r' : nsp_dset(&ns,&d,A->R+Asize,&inc);break;
-    case 'i' : nsp_csetd(&ns,&d,A->C+Asize,&inc);break;
+    case 'c' : nsp_csetd(&ns,&d,A->C+Asize,&inc);break;
     }
   return(OK);
 }
@@ -822,7 +822,7 @@ NspMaxpMatrix* nsp_mpmatrix_concat_down(const NspMaxpMatrix *A,const NspMaxpMatr
       return(NULLMAXPMAT);
     }
   cols=Max(A->n,B->n);
-  if ( A->rc_type == 'i' || B->rc_type == 'i' ) type = 'i';
+  if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
   if (( Loc = nsp_mpmatrix_create(NVOID,type,A->m+B->m,cols)) == NULLMAXPMAT)
     return(NULLMAXPMAT);
   if ( Loc->rc_type == 'r' ) 
@@ -840,7 +840,7 @@ NspMaxpMatrix* nsp_mpmatrix_concat_down(const NspMaxpMatrix *A,const NspMaxpMatr
  	  for ( j = 0 ; j < A->n ; j++ ) 
 	    nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->C+j*(Loc->m),&inc);
  	  break;
- 	case 'i' :
+ 	case 'c' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
 	    /*	C2F(zcopy) (&A->m,A->C+j*A->m,&inc,Loc->C+j*(Loc->m),&inc); **/
 	    memcpy(Loc->C+j*(Loc->m),A->C+j*A->m,A->m*sizeof(doubleC));
@@ -852,7 +852,7 @@ NspMaxpMatrix* nsp_mpmatrix_concat_down(const NspMaxpMatrix *A,const NspMaxpMatr
  	  for ( j = 0 ; j < B->n ; j++ ) 
 	    nsp_dzcopy(&B->m,B->R+j*B->m,&inc,Loc->C+j*(Loc->m)+A->m,&inc);
  	  break;
- 	case 'i' :
+ 	case 'c' :
  	  for ( j = 0 ; j < B->n ; j++ ) 
 	    /*   C2F(zcopy) (&B->m,B->C+j*B->m,&inc,Loc->C+j*(Loc->m)+A->m,&inc);
 	    */
@@ -879,7 +879,7 @@ NspMaxpMatrix*nsp_mpmatrix_concat_diag(const NspMaxpMatrix *A,const NspMaxpMatri
   NspMaxpMatrix *Loc;
   double d=0.0;
   integer inc = 1,j=0;
-  if ( A->rc_type == 'i' || B->rc_type == 'i' ) type = 'i';
+  if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
   if ((Loc = nsp_mpmatrix_create(NVOID,type,A->m+B->m,A->n+B->n))==NULLMAXPMAT )
     return NULLMAXPMAT;
    
@@ -894,7 +894,7 @@ NspMaxpMatrix*nsp_mpmatrix_concat_diag(const NspMaxpMatrix *A,const NspMaxpMatri
     }
   else 
     {
-      if ( A->rc_type == 'i') 
+      if ( A->rc_type == 'c') 
 	{
 	  /* C2F(zcopy) (&A->m,A->C+j*A->m,&inc,Loc->C+j*(Loc->m),&inc); */
 	  memcpy(Loc->C+j*(Loc->m),A->C+j*A->m,A->m*sizeof(doubleC));
@@ -919,7 +919,7 @@ NspMaxpMatrix*nsp_mpmatrix_concat_diag(const NspMaxpMatrix *A,const NspMaxpMatri
     }
   else 
     {
-      if ( B->rc_type == 'i') 
+      if ( B->rc_type == 'c') 
 	{
 	  /* 
 	  C2F(zcopy) (&B->m,B->C+j*A->m,&inc,Loc->C+(j+A->n)*(Loc->m)+A->m,&inc);
@@ -961,7 +961,7 @@ int nsp_mpmatrix_add_rows(NspMaxpMatrix *A, integer m)
     }
   Am= A->m;
   if ( nsp_mpmatrix_resize(A,A->m+m,A->n)== FAIL) return(FAIL);
-  if (A->rc_type == 'i' ) 
+  if (A->rc_type == 'c' ) 
     {
       for ( j = A->n-1  ; j >= 0 ; j-- ) 
  	{
@@ -1021,7 +1021,7 @@ int nsp_mpmatrix_set_submatrix(NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Col
     }
   if ( rmax > A->m ||  cmax > A->n ) 
     if ( nsp_mpmatrix_enlarge(A,rmax,cmax) == FAIL) return(FAIL);
-  if ( B->rc_type == 'i' )
+  if ( B->rc_type == 'c' )
     {
       if (  A->rc_type == 'r' )
  	{ 
@@ -1044,7 +1044,7 @@ int nsp_mpmatrix_set_submatrix(NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Col
     }
   else 
     {
-      if (  A->rc_type == 'i' )
+      if (  A->rc_type == 'c' )
  	{ 
 	  if ( B->mn != 1) 
 	    for ( i = 0 ; i < Rows->mn ; i++)
@@ -1114,7 +1114,7 @@ int nsp_mpmatrix_set_rows(NspMaxpMatrix *A, NspMatrix *Rows, NspMaxpMatrix *B)
 		     B,B->m,B->n,B->mn,(F_Enlarge)nsp_mpmatrix_enlarge,&Bscal)== FAIL) 
     return FAIL;
 
-  if ( B->rc_type == 'i' )
+  if ( B->rc_type == 'c' )
     {
       if (  A->rc_type == 'r' )
  	{ 
@@ -1135,7 +1135,7 @@ int nsp_mpmatrix_set_rows(NspMaxpMatrix *A, NspMatrix *Rows, NspMaxpMatrix *B)
     }
   else 
     {
-      if (  A->rc_type == 'i' )
+      if (  A->rc_type == 'c' )
  	{ 
 	  if ( Bscal == 0) 
 	    for ( i = 0 ; i < Rows->mn ; i++)
@@ -1365,7 +1365,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract(const NspMaxpMatrix *A,const  NspMatrix *Row
     }
   if ( (Loc = nsp_mpmatrix_create(NVOID,A->rc_type,Rows->mn,Cols->mn))== NULLMAXPMAT) 
     return(NULLMAXPMAT);
-  if ( A->rc_type == 'i' )
+  if ( A->rc_type == 'c' )
     {
       for ( i = 0 ; i < Rows->mn ; i++)
  	for ( j = 0 ; j < Cols->mn ; j++ )
@@ -1419,7 +1419,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_elements(const NspMaxpMatrix *A,const NspMat
       if ( (Loc = nsp_mpmatrix_create(NVOID,A->rc_type,Elts->mn,1))== NULLMAXPMAT) 
 	return(NULLMAXPMAT);
     }
-  if ( A->rc_type == 'i' )
+  if ( A->rc_type == 'c' )
     {
       for ( i = 0 ; i < Elts->mn ; i++)
 	{	
@@ -1461,7 +1461,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_columns(const NspMaxpMatrix *A,const NspMatr
     }
   if ((Loc = nsp_mpmatrix_create(NVOID,A->rc_type,A->m,Cols->mn)) == NULLMAXPMAT) 
     return(NULLMAXPMAT);
-  if ( A->rc_type == 'i' )
+  if ( A->rc_type == 'c' )
     {
       for ( j = 0 ; j < Cols->mn ; j++ )
 	memcpy( Loc->C+ Loc->m*j, A->C + (((int) Cols->R[j])-1)*A->m,A->m*sizeof(doubleC));
@@ -1498,7 +1498,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_rows(const NspMaxpMatrix *A,const NspMatrix 
   Loc = nsp_mpmatrix_create(NVOID,A->rc_type,Rows->mn,A->n);
   if ( Loc == NULLMAXPMAT) 
       return(NULLMAXPMAT);
-  if ( A->rc_type == 'i' )
+  if ( A->rc_type == 'c' )
     {
       for ( i = 0 ; i < Rows->mn ; i++)
 	{
@@ -1554,7 +1554,7 @@ NspMaxpMatrix *MpMatLoopCol(char *str, NspMaxpMatrix *Col, NspMaxpMatrix *A, int
     Loc = Col;
   if ( Loc == NULLMAXPMAT) return(NULLMAXPMAT);
   iof = (icol-1)*A->m;
-  if ( A->rc_type == 'i' )
+  if ( A->rc_type == 'c' )
     {
       for ( i = 0 ; i < A->m ; i++)
 	{
@@ -1596,7 +1596,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_diag(const NspMaxpMatrix *A, integer k)
   Loc = nsp_mpmatrix_create(NVOID,A->rc_type,imax-imin,(integer)1);
   if ( Loc == NULLMAXPMAT)  return(NULLMAXPMAT);
   j=0;
-  if ( A->rc_type == 'i') 
+  if ( A->rc_type == 'c') 
     {
       j=0;
       for ( i = imin ; i < imax ; i++ ) 
@@ -1702,9 +1702,9 @@ NspMaxpMatrix *nsp_mpmatrix_create_diag(const NspMaxpMatrix *Diag, integer k)
   switch (Loc->rc_type ) 
     {
     case 'r' : nsp_mat_set_rval((NspMatrix *) Loc,0.00);break;
-    case 'i': nsp_csetd(&Loc->mn,&d,Loc->C,&inc);break;
+    case 'c': nsp_csetd(&Loc->mn,&d,Loc->C,&inc);break;
     }
-  if ( Loc->rc_type == 'i') 
+  if ( Loc->rc_type == 'c') 
     {
       j=0;
       for ( i = imin ; i < imax ; i++ ) 
@@ -1748,7 +1748,7 @@ NspMaxpMatrix *nsp_mpmatrix_transpose(const NspMaxpMatrix *A)
 	for ( j = 0 ; j < A->n ; j++) 
 	  Loc->R[j+Loc->m*i ] = A->R[i+A->m*j];
       break;
-    case 'i' :
+    case 'c' :
       for ( i = 0  ; i < A->m ; i++) 
 	for ( j = 0 ; j < A->n ; j++) 
 	  {

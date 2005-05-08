@@ -1292,6 +1292,45 @@ static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * set cells elements 
+ * C{exps}=(....)
+ *   FIXME: work in progress 
+ *   we must expand the size if ind are outside boundaries.
+ */
+
+static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
+{
+  int i,ind;
+  NspCells *C;
+  NspMatrix *Ind;
+  CheckRhs (3, 1000);
+  if ((C = GetCells(stack, 1)) == NULLCELLS) return RET_BUG;
+  if ((Ind = GetMat(stack,2))  == NULLMAT) return RET_BUG;
+  for ( i= 3 ; i <= rhs ; i++) 
+    {
+      NspObject *Ob = nsp_get_object(stack,i);
+      if ( Ocheckname(Ob,NVOID)==FALSE ) 
+	{
+	  if (nsp_object_set_name(Ob,"ce") == FAIL)
+	    return RET_BUG;
+	}
+      else 
+	{
+	  if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) 
+	    return RET_BUG;
+	}
+      ind = Ind->R[i-3]-1;
+      if ( ind >= 0 && ind < C->mn )
+	{
+	  if ( C->objs[ind] != NULLOBJ) nsp_object_destroy(&C->objs[ind]);
+	  C->objs[ind]= Ob;
+	}
+    }
+  NthObj(1)->ret_pos = 1;
+  return 1;
+}
+
+/*
  * The Interface for basic matrices operation 
  */
 
@@ -1334,7 +1373,8 @@ static OpTab Cells_func[]={
   {"ne_ce_ce" ,  int_cells_neq },
   {"quote_ce", int_cells_transpose},
   {"ce2m",int_ce2m},
-  {"object2seq_ce",int_cells_to_seq}, /* C{...} = extract +object2seq */
+  {"object2seq_ce",int_cells_to_seq}, /* C{...} : extract +object2seq */
+  {"cells_setrowscols_ce",int_cells_setrowscols}, /* C{..}=(....) */
   {(char *) 0, NULL}
 };
 

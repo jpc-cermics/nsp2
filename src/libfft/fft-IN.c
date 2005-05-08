@@ -318,7 +318,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
     }
   else if ( flag_orient == BY_ROW )
     {
-      if ( (y = nsp_matrix_create(NVOID, 'i', x->n, x->m)) == NULLMAT )
+      if ( (y = nsp_matrix_create(NVOID, 'c', x->n, x->m)) == NULLMAT )
 	return RET_BUG;
       transpose_cmplx_mat(x, y);
       if ( s == -1 )
@@ -396,7 +396,7 @@ int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
       C2F(zffti)(&(x->n), wsave);
     }
 
-  if ( (y = nsp_matrix_create(NVOID, 'i', x->n, x->m)) == NULLMAT )
+  if ( (y = nsp_matrix_create(NVOID, 'c', x->n, x->m)) == NULLMAT )
     {
       free(wsave);
       return RET_BUG;

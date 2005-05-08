@@ -480,7 +480,7 @@ GetRealMatCopy_G (Stack stack, int i)
   NspMatrix *M;
   if ((M = GetMatCopy_G (stack, i)) == NULLMAT)
     return NULLMAT;
-  if (M->rc_type == 'i')
+  if (M->rc_type == 'c')
     {
       Scierror ("\t%s", ArgPosition (i));
       ArgName (stack, i);
@@ -502,7 +502,7 @@ GetRealMat_G (Stack stack, int i)
   NspMatrix *M;
   if ((M = GetMat_G (stack, i)) == NULLMAT)
     return NULLMAT;
-  if (M->rc_type == 'i')
+  if (M->rc_type == 'c')
     {
       Scierror ("\t%s", ArgPosition (i));
       ArgName (stack, i);
@@ -1021,7 +1021,7 @@ int_mxrealpart (Stack stack, int rhs, int opt, int lhs)
   CheckLhs (1, 1);
   if ((HMat = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
-  if (HMat->rc_type == 'i')
+  if (HMat->rc_type == 'c')
     {
       if ((HMat = GetMatCopy (stack, 1)) == NULLMAT)
 	return RET_BUG;

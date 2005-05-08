@@ -171,7 +171,7 @@ NspPMatrix *nsp_pmatrix_create(char *name, integer m, integer n, doubleC *cval, 
         init = cval ;
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      if ( (Loc->S[ i] = Basic2Poly(init,(flag==2)? 'i':'r')) == (Poly *) 0 )  return(NULLPMAT);
+      if ( (Loc->S[ i] = Basic2Poly(init,(flag==2)? 'c':'r')) == (Poly *) 0 )  return(NULLPMAT);
     }
   return(Loc);
 }

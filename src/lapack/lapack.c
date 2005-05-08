@@ -234,7 +234,7 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 
   /* Max(m,n) for zungqr */ 
   workMin = Max(m,n);
-  if ((work =nsp_matrix_create(NVOID,'i',1,workMin)) == NULLMAT) return FAIL;
+  if ((work =nsp_matrix_create(NVOID,'c',1,workMin)) == NULLMAT) return FAIL;
   
   if ( E == NULL) 
     {
@@ -738,8 +738,8 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
     /* we also compute U and Vt */
     int nU  = ( flag == 'S') ? Minmn : m;
     int mVt = ( flag == 'S') ? Minmn : n;
-    if ((*U =nsp_matrix_create(NVOID,'i',m,nU)) == NULLMAT) return FAIL;
-    if ((Vt =nsp_matrix_create(NVOID,'i',mVt,n)) == NULLMAT) return FAIL;
+    if ((*U =nsp_matrix_create(NVOID,'c',m,nU)) == NULLMAT) return FAIL;
+    if ((Vt =nsp_matrix_create(NVOID,'c',mVt,n)) == NULLMAT) return FAIL;
   }
   
   /* computing work space area */ 
@@ -748,7 +748,7 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
   if (( rwork =nsp_matrix_create(NVOID,'r',1,lrwork)) == NULLMAT) return FAIL;
 
   lworkMin = (Minmn*2) + Max(m,n);
-  if (( dwork =nsp_matrix_create(NVOID,'i',1,lworkMin)) == NULLMAT) return FAIL;
+  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;
 
   if ( U == NULL) 
     {
@@ -918,7 +918,7 @@ static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
 
   /* result is real ? or complex */ 
 
-  for (i = 0 ; i < n ; ++i) { if (wi->R[i] != 0.0) { type = 'i'; break;}}
+  for (i = 0 ; i < n ; ++i) { if (wi->R[i] != 0.0) { type = 'c'; break;}}
 
   /* extract results */ 
 
@@ -1026,11 +1026,11 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
       }
 
 
-  if (( *d =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
+  if (( *d =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
 
   if (( rwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;
   lworkMin = 2*n;
-  if (( dwork =nsp_matrix_create(NVOID,'i',1,lworkMin)) == NULLMAT) return FAIL;
+  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;
   
   if (v == NULL ) 
     {
@@ -1039,7 +1039,7 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
     } 
   else 
     {
-      if (( *v =nsp_matrix_create(NVOID,'i',n,n)) == NULLMAT) return FAIL;
+      if (( *v =nsp_matrix_create(NVOID,'c',n,n)) == NULLMAT) return FAIL;
       C2F(zgeev)("N","V", &n,A->C, &n,(*d)->C,NULL,&n,(*v)->C,&n,dwork->C,&lworkMin,rwork->R,
 		 &info, 1L, 1L);
     }
@@ -1051,7 +1051,7 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
 
   /* result is real ? or complex */ 
 
-  for (i = 0 ; i < n ; ++i) { if ((*d)->C[i].i != 0.0) { type = 'i'; break;}}
+  for (i = 0 ; i < n ; ++i) { if ((*d)->C[i].i != 0.0) { type = 'c'; break;}}
 
   /* extract results */ 
 
@@ -1305,7 +1305,7 @@ int intzgetri(NspMatrix *A)
   Iwork = (int *) iwork->R;
 
   lworkMin = Max(1,n);
-  if (( dwork =nsp_matrix_create(NVOID,'i',1,lworkMin)) == NULLMAT) return FAIL;
+  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;
   
   C2F(zgetrf)(&n, &n,A->C, &n, Iwork, &info);
   if (info > 0) {
@@ -2533,10 +2533,10 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
     return FAIL;
   }
 
-  if (( W =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
+  if (( W =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
 
   lworkMin = n * 2;
-  if (( dwork =nsp_matrix_create(NVOID,'i',1,lworkMin)) == NULLMAT) return FAIL;   
+  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;   
   
   if ( F != NULL ) 
     {
@@ -2748,12 +2748,12 @@ int intzgges(NspMatrix *A,NspMatrix *B,
     return FAIL;
   }
 
-  if (( alpha =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
-  if (( beta  =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
+  if (( alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
+  if (( beta  =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
 
   if (( rwork =nsp_matrix_create(NVOID,'r',1,8*n)) == NULLMAT) return FAIL;   
   lworkMin = 2*n;
-  if (( dwork =nsp_matrix_create(NVOID,'i',1,lworkMin)) == NULLMAT) return FAIL;   
+  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;   
   
   if ( F != NULL ) 
     {
@@ -2882,9 +2882,9 @@ static int intzgehrd(NspMatrix *A, NspMatrix **U)
     return FAIL;
   }
 
-  if (( tau =nsp_matrix_create(NVOID,'i',1,n-1)) == NULLMAT) return FAIL;
+  if (( tau =nsp_matrix_create(NVOID,'c',1,n-1)) == NULLMAT) return FAIL;
   workMin = Max(1,n);
-  if (( dwork =nsp_matrix_create(NVOID,'i',1,workMin)) == NULLMAT) return FAIL;
+  if (( dwork =nsp_matrix_create(NVOID,'c',1,workMin)) == NULLMAT) return FAIL;
 
   C2F(zgehrd)(&n, &un, &n,A->C, &n,tau->C,dwork->C, &workMin, &info);
   if (info != 0) {
@@ -3032,7 +3032,7 @@ static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
   /* return (alphar + %i*alphai) and beta */
   /* result is real ? or complex */ 
   
-  for (i = 0 ; i < n ; ++i) { if (alphai->R[i] != 0.0) { type = 'i'; break;}}
+  for (i = 0 ; i < n ; ++i) { if (alphai->R[i] != 0.0) { type = 'c'; break;}}
 
   /* alpha = (alphar,alphai) */ 
 
@@ -3040,13 +3040,13 @@ static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
     { *alpha = alphar; }
   else 
     { 
-      if (( *alpha =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
+      if (( *alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
       for (i = 0 ; i < n ; ++i) { (*alpha)->C[i].r = alphar->R[i]; (*alpha)->C[i].i = alphai->R[i]; }
     }
 
   /* fill Vr if requested */ 
 
-  if ( Vr != NULL && type == 'i' ) {
+  if ( Vr != NULL && type == 'c' ) {
     if (nsp_mat_complexify(*Vr,0.0) == FAIL ) return FAIL;
     j = -1;
     while (1) {
@@ -3067,7 +3067,7 @@ static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
   
   /* fill Vl if requested */ 
 
-  if ( Vl != NULL && type == 'i' ) {
+  if ( Vl != NULL && type == 'c' ) {
     if (nsp_mat_complexify(*Vl,0.0) == FAIL ) return FAIL;
     j = -1;
     while (1) {
@@ -3137,21 +3137,21 @@ static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
   /* XXX Check that A and B are finite matrices */ 
 
 
-  if (( *alpha =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;  
-  if (( *beta =nsp_matrix_create(NVOID,'i',n,1)) == NULLMAT) return FAIL;
+  if (( *alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;  
+  if (( *beta =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
 
   if ( Vl != NULL ) {
-    if (( *Vl =nsp_matrix_create(NVOID,'i',m,n)) == NULLMAT) return FAIL;
+    if (( *Vl =nsp_matrix_create(NVOID,'c',m,n)) == NULLMAT) return FAIL;
     VlI = (*Vl)->C; jobVl = "V";
   }
   if ( Vr != NULL ) {
-    if (( *Vr =nsp_matrix_create(NVOID,'i',m,n)) == NULLMAT) return FAIL;
+    if (( *Vr =nsp_matrix_create(NVOID,'c',m,n)) == NULLMAT) return FAIL;
     VrI = (*Vr)->C; jobVr = "V";
   }
 
   if (( rwork =nsp_matrix_create(NVOID,'r',1,8*n)) == NULLMAT) return FAIL;
   lworkMin = Max(1,8*n);
-  if (( dwork =nsp_matrix_create(NVOID,'i',1,lworkMin)) == NULLMAT) return FAIL;
+  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;
 
   C2F(zggev)(jobVl,jobVr,&n,A->C, &n,B->C, &n,(*alpha)->C,(*beta)->C,
 	     VlI,&n,VrI, &n,dwork->C,&lworkMin,rwork->R,&info, 1L, 1L);

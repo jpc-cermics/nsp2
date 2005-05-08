@@ -401,7 +401,7 @@ NspMaxpMatrix *GetRealMpMatCopy_G(Stack stack, int i)
 {
   NspMaxpMatrix *M;
   if (( M = GetMpMatCopy_G(stack,i)) == NULLMAXPMAT) return NULLMAXPMAT;
-  if ( M->rc_type == 'i' ) 
+  if ( M->rc_type == 'c' ) 
     {
       Scierror("\t%s", ArgPosition(i));
       ArgName(stack,i);
@@ -421,7 +421,7 @@ NspMaxpMatrix *GetRealMpMat_G(Stack stack, int i)
 {
   NspMaxpMatrix *M;
   if (( M = GetMpMat_G(stack,i)) == NULLMAXPMAT) return NULLMAXPMAT;
-  if ( M->rc_type == 'i' ) 
+  if ( M->rc_type == 'c' ) 
     {
       Scierror("\t%s", ArgPosition(i));
       ArgName(stack,i);
@@ -682,7 +682,7 @@ int int_mprealpart(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-  if ( HMat->rc_type == 'i') 
+  if ( HMat->rc_type == 'c') 
     {
       if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
     }

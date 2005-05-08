@@ -98,7 +98,7 @@ static int MatNext(void *M, double *r, doubleC *c)
   switch (((NspMatrix *) M)->rc_type) 
     {
     case 'r' : *r = ((NspMatrix *) M)->R[mat_ind++];break;
-    case 'i' : *c = ((NspMatrix *) M)->C[mat_ind++];break;
+    case 'c' : *c = ((NspMatrix *) M)->C[mat_ind++];break;
     }
   return 1;
 }
@@ -123,7 +123,7 @@ static int SpNext(void *M, double *r, doubleC *c)
       switch (Sp->rc_type) 
 	{
 	case 'r' : *r = 0.00;break;
-	case 'i' : c->r = c->i = 0.00;break;
+	case 'c' : c->r = c->i = 0.00;break;
 	}
       sp_mat_ind_row++;
       return 1;
@@ -136,7 +136,7 @@ static int SpNext(void *M, double *r, doubleC *c)
       switch (Sp->rc_type) 
 	{
 	case 'r' : *r = Sp->D[sp_mat_ind_row]->R[sp_mat_ind_col];break;
-	case 'i' : *c = Sp->D[sp_mat_ind_row]->C[sp_mat_ind_col];break;
+	case 'c' : *c = Sp->D[sp_mat_ind_row]->C[sp_mat_ind_col];break;
 	}
       sp_mat_ind_col++;
       return 1;
@@ -155,7 +155,7 @@ static int SpNext(void *M, double *r, doubleC *c)
       switch (Sp->rc_type) 
 	{
 	case 'r' : *r = Sp->D[sp_mat_ind_row]->R[sp_mat_ind_col];break;
-	case 'i' : *c = Sp->D[sp_mat_ind_row]->C[sp_mat_ind_col];break;
+	case 'c' : *c = Sp->D[sp_mat_ind_row]->C[sp_mat_ind_col];break;
 	}
       sp_mat_ind_col++;
       return 1;
@@ -196,7 +196,7 @@ static int gen_any_element_is_negative(void *M, Minit Init, Mnext Next)
 	  if ( r < 0.0 ) return 1; 
 	} 
       break;
-    case 'i' :
+    case 'c' :
       while ( Next(M,&r,&c) != 0) 
 	{ if ( c.r < 0.0 ) return 1; }
       break;
@@ -250,7 +250,7 @@ static int gen_any_element_is_inf_or_nan (void *M, Minit Init, Mnext Next)
 	  if (isinf (r) || isnan (r)) return 1; 
 	} 
       break;
-    case 'i':
+    case 'c':
       while ( Next(M,&r,&c) != 0) 
 	{ 
 	  if (nsp_isinf_c(&c) || nsp_isnan_c(&c)) return 1; 
@@ -308,7 +308,7 @@ static int gen_all_elements_are_int_or_inf_or_nan (void *M, Minit Init, Mnext Ne
 	    return 0;
 	} 
       break;
-    case 'i':
+    case 'c':
       while ( Next(M,&r,&c) != 0) 
 	{ 
 	  if ( ( isnan (c.r) || anint(c.r) == c.r ) 
@@ -355,7 +355,7 @@ int Mp_all_elements_are_int_or_inf_or_nan (void *M)
 /*
  * max(abs(m)) for real matrix 
  * max(abs(real(m))) or max(abs(imag(m))) for complex matrix 
- *        according to the flag value ( flag = 'r' or 'i') 
+ *        according to the flag value ( flag = 'r' or 'c') 
  *        ignoring isinf and isnan values 
  * same for min 
  */
@@ -377,7 +377,7 @@ static void gen_pr_min_max_internal (void *M, char flag, double *dmin, double *d
 	  if ( Abs(r) > *dmax ) *dmax = Abs(r);
 	} 
       break;
-    case 'i':
+    case 'c':
       if ( flag == 'r' ) 
 	{
 	  while ( Next(M,&r,&c) != 0) 
@@ -462,7 +462,7 @@ void gen_set_format (void *M, FT is_neg, FT is_inf_or_nan, pr_mima min_max, FT a
   else 
     {
       (*min_max)(M,'r',&r_min_abs,&r_max_abs);      
-      (*min_max)(M,'i',&i_min_abs,&i_max_abs);
+      (*min_max)(M,'c',&i_min_abs,&i_max_abs);
       r_x_max = r_max_abs == 0.0 ? 0 : (int) floor (log10 (r_max_abs) + 1.0);
       r_x_min = r_min_abs == 0.0 ? 0 : (int) floor (log10 (r_min_abs) + 1.0);
       i_x_max = i_max_abs == 0.0 ? 0 : (int) floor (log10 (i_max_abs) + 1.0);
@@ -1351,7 +1351,7 @@ static void SpM_general(NspSpMatrix *Sp, int indent)
 	    }
 	}
       break;
-    case 'i' :
+    case 'c' :
       for ( i = 0; i < Sp->m; i++)
 	{
 	  SpRow *Ri = Sp->D[i];

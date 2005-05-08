@@ -310,7 +310,7 @@ NspSpMatrix *GetRealSp(Stack stack, int i)
   NspSpMatrix *M;
   if (( M =nsp_spmatrix_object(NthObj(i))) == NULLSP )
      ArgMessage(stack,i);
-  if (M->rc_type == 'i')
+  if (M->rc_type == 'c')
     {
       Scierror ("\t%s", ArgPosition (i));
       ArgName (stack, i);

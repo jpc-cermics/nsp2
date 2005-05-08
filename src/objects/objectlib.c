@@ -433,7 +433,7 @@ NspObject *nsp_create_object_from_int(char *str, int ival)
 NspObject *nsp_complexi_object_(char *str)
 {
   NspMatrix *A;
-  if ((A= nsp_matrix_create(str,'i',(integer)1,(integer)1))==NULLMAT) return(NULLOBJ);
+  if ((A= nsp_matrix_create(str,'c',(integer)1,(integer)1))==NULLMAT) return(NULLOBJ);
   A->C[0].r = 0;
   A->C[0].i = 1;
   return (NspObject *) A;
@@ -507,7 +507,7 @@ NspObject *nsp_create_object_from_doubles(integer m, integer n, integer it, doub
   char type; 
   NspMatrix *A;
   int i;
-  type = ( it == 1) ? 'i' : 'r' ;
+  type = ( it == 1) ? 'c' : 'r' ;
   if ( (A= nsp_matrix_create(name,type,m,n)) ==NULLMAT) return NULLOBJ;
   if ( type == 'r' ) 
     {

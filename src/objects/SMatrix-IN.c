@@ -985,7 +985,7 @@ static int int_smxascii2smat(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if (( A = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ( A->rc_type == 'i' ) 
+  if ( A->rc_type == 'c' ) 
     {
       Scierror("\t%s", ArgPosition(1));
       ArgName(stack,1);
