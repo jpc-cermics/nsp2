@@ -1,34 +1,23 @@
 SHELL = /bin/sh
 TOP=.
 
-binary:
-	@if test -f .binary; then \
-		echo "Humm... this is a binary version"; \
-		config/findpath; \
-		(cd scripts; make); \
-		echo "Installation done"; \
-	else \
-		echo "**********************************"; \
-		echo "Humm... this is a source version."; \
-		echo "Please read the README file first."; \
-		echo "**********************************"; \
-	fi
-
-#SCIDIR=.
 include Path.incl
 include Makefile.incl
 
 all:: bin/scilex  
 
-# Add the object files that are used to compile Scilex
-# include Makefile.OBJ
+# can be used to update path.incl 
+# note that thist is done by ./configure
+
+path.incl: 
+	./config/findpath;
+
+# directives for linking 
 
 include config/Makefile.linux
 
 distclean::
 	$(RM) bin/scilex
-
-SUBDIRS = scripts macros demos 
 
 scilex-lib::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
@@ -37,6 +26,8 @@ scilex-lib::
 
 scilex-lib::
 	@cd pvm3; echo "making all in pvm3..."; $(MAKE) $(MFLAGS) "CC=$(CC)";
+
+SUBDIRS = scripts macros demos 
 
 all::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
@@ -58,7 +49,6 @@ distclean::
 	@cd pvm3; echo "making distclean in pvm3..."; \
 	$(MAKE) $(MFLAGS) distclean;
 
-
 clean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in src $(SUBDIRS) ;\
@@ -74,7 +64,6 @@ man::
 		(cd $$i ; echo "making man in $$i..."; \
 			$(MAKE) $(MFLAGS) man); \
 	done
-
 
 manclean:	
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
@@ -92,7 +81,6 @@ distclean::
 	$(RM) config.cache config.log config.status .binary foo.f foo.o \
 	conftest conftest.c so_locations
 
-
 tarbindist:
 	@echo tarbindist not supported by nsp 
 	@echo use ./configure --prefix=path
@@ -100,16 +88,14 @@ tarbindist:
 
 # this are the files that really need to be installed 
 # from pvm 
-# 
-# PVMBINDISTFILES = \
-# 	$(SCIBASE)/pvm3/lib/pvm \
-# 	$(SCIBASE)/pvm3/lib/pvmd \
-# 	$(SCIBASE)/pvm3/lib/pvmtmparch \
-# 	$(SCIBASE)/pvm3/lib/pvmgetarch \
-# 	$(SCIBASE)/pvm3/lib/LINUX/pvmd3 \
-# 	$(SCIBASE)/pvm3/lib/LINUX/pvmgs \
-# 	$(SCIBASE)/pvm3/lib/LINUX/pvm \
-# 	$(SCIBASE)/pvm3/bin/LINUX/*
+# 	pvm3/lib/pvm \
+# 	pvm3/lib/pvmd \
+# 	pvm3/lib/pvmtmparch \
+# 	pvm3/lib/pvmgetarch \
+# 	pvm3/lib/LINUX/pvmd3 \
+# 	pvm3/lib/LINUX/pvmgs \
+# 	pvm3/lib/LINUX/pvm \
+# 	pvm3/bin/LINUX/*
 
 install:
 	@echo "installing bin files"
@@ -129,7 +115,6 @@ install:
 	cd demos ; make install;
 	cd macros ; make install;
 	cd src/include ; make install;
-
 
 cvsclean::
 
