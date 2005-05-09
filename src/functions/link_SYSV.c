@@ -35,12 +35,10 @@
 #include <sys/wait.h>
 #endif 
 
-#ifndef linux
-#ifndef hppa
+#if !defined(linux) && !defined(netbsd)  && !defined(freebsd) && !defined(__APPLE__) && !defined(hppa)
 #if (defined(sun) && ! defined(SYSV)) 
 #else 
 #include <sys/mode.h>
-#endif 
 #endif
 #endif 
 
