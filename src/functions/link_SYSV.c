@@ -347,7 +347,7 @@ static int Sci_dlsym(char *ename, int ishared, char *strf)
   if ( irep == -1 )
 #endif
     {
-#ifdef linux 
+#if defined(linux) || defined(__APPLE__)
       const char *loc;
 #else
       char *loc;
