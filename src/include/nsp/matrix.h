@@ -102,7 +102,6 @@ extern void matrix_print (NspMatrix *Mat, int indent);
 extern NspObject *matrix_loop_extract (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
 extern NspMatrix *matrix_copy (const NspMatrix *A); 
 extern NspMatrix  *matrix_object(NspObject *O);
-
 extern int nsp_mat_fullcomp();
 extern NspMatrix *matrix_object(NspObject *O); 
 extern int IsMatObj (Stack stack, int i); 

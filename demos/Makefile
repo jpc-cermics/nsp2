@@ -33,5 +33,9 @@ clean::
 
 install::
 	@echo "installing demos files"
-	find . \( -name '*'  \) \
-		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/demos/{} \;
+	@find . \( -type f  \) \
+		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/demos/{} \; \
+		-exec echo -n "." \;
+	@echo ""
+
+

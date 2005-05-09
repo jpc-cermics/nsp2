@@ -33,8 +33,11 @@ clean::
 
 install::
 	@echo "installing function files"
-	find . \( -name '*.sci' -o -name '*.bin' -o -name 'Mak*'  \) \
-		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/macros/{} \;
+	@find . \( \( -name '*.sci' -o -name '*.bin' -o -name 'Mak*' \) -a -type f  \) \
+		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/macros/{} \; \
+		-exec echo -n "." \;
+	@echo ""
+
 
 
 
