@@ -642,46 +642,81 @@ int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
  *  A Changer
  */
 
+/* int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows) */
+/* { */
+/*   integer rmin,rmax,i,j,k,ind,last,nn,ioff=0; */
+/*   Bounds(Rows,&rmin,&rmax); */
+/*   if ( Rows->mn == 0) return(OK); */
+/*   if ( rmin < 1 || rmax > A->m ) */
+/*     { */
+/*       Scierror("Error:\tIndices out of bounds\n"); */
+/*       return(FAIL); */
+/*     } */
+/*   /\* clean first **\/ */
+/*   for ( j = 0 ; j < A->n  ; j++) */
+/*     { */
+/*       int j1=j*A->m; */
+/*       for ( i = 0 ; i < Rows->mn ; i++) */
+/* 	{ */
+/* 	  StringDestroy(&(A->S[((int) Rows->R[i])-1 + j1])); */
+/* 	} */
+/*     } */
+/*   /\* then move data : matrix is stored by columns **\/ */
+/*   for ( j = 0 ; j < A->n  ; j++) */
+/*     for ( i = 0 ; i < Rows->mn ; i++) */
+/*       { */
+/*         ioff++; */
+/* 	/\* we move up [ind,last-ind[ --> [ind-1,last-ind-1[**\/ */
+/*         ind =  ((int) Rows->R[i])+ j*A->m; */
+/*         last = (i < Rows->mn -1) ? ((int) Rows->R[i+1])-1 +j*A->m  */
+/* 	  : ((int) Rows->R[0])-1+(j+1)*A->m ; */
+/*         last = ( last < A->mn ) ? last : A->mn; */
+/*         nn= (last-ind); */
+/* 	for ( k= 0 ; k < nn ; k++)  */
+/* 	  { */
+/* 	    char *s; */
+/* 	    if (( s =CopyString(A->S[ind+k]))== (String *) 0)  return(FAIL); */
+/* 	    /\* store moved data **\/ */
+/* 	    A->S[ind-ioff+k]=s; */
+/* 	  } */
+/*       } */
+/*   if ( nsp_smatrix_resize(A,A->m -Rows->mn,A->n)== FAIL) return(FAIL); */
+/*   return(OK); */
+/* } */
+
 int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 {
-  integer rmin,rmax,i,j,k,ind,last,nn,ioff=0;
-  Bounds(Rows,&rmin,&rmax);
-  if ( Rows->mn == 0) return(OK);
-  if ( rmin < 1 || rmax > A->m )
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  /* clean first **/
+  int i, j, k, ij, *flag, new_A_m, count;
+
+  if ( Rows->mn == 0) return OK;
+
+  if ( (flag = Complement(A->m, Rows, &count)) == NULL )
+    return FAIL;
+
+  new_A_m = A->m - count;
+
+  k = 0;
+  ij = 0;
   for ( j = 0 ; j < A->n  ; j++)
-    {
-      int j1=j*A->m;
-      for ( i = 0 ; i < Rows->mn ; i++)
-	{
-	  StringDestroy(&(A->S[((int) Rows->R[i])-1 + j1]));
-	}
-    }
-  /* then move data : matrix is stored by columns **/
-  for ( j = 0 ; j < A->n  ; j++)
-    for ( i = 0 ; i < Rows->mn ; i++)
+    for ( i = 0 ; i < A->m ; i++ )
       {
-        ioff++;
-	/* we move up [ind,last-ind[ --> [ind-1,last-ind-1[**/
-        ind =  ((int) Rows->R[i])+ j*A->m;
-        last = (i < Rows->mn -1) ? ((int) Rows->R[i+1])-1 +j*A->m 
-	  : ((int) Rows->R[0])-1+(j+1)*A->m ;
-        last = ( last < A->mn ) ? last : A->mn;
-        nn= (last-ind);
-	for ( k= 0 ; k < nn ; k++) 
+	if ( flag[i] )
 	  {
-	    char *s;
-	    if (( s =CopyString(A->S[ind+k]))== (String *) 0)  return(FAIL);
-	    /* store moved data **/
-	    A->S[ind-ioff+k]=s;
+	    A->S[k] = A->S[ij];
+	    if ( k < ij ) A->S[ij] = NULL;
+	    k++; 
 	  }
+	else
+	  StringDestroy(&A->S[ij]);
+	ij++;
       }
-  if ( nsp_smatrix_resize(A,A->m -Rows->mn,A->n)== FAIL) return(FAIL);
-  return(OK);
+
+  free(flag);
+
+  if ( nsp_smatrix_resize(A, new_A_m, A->n) == FAIL ) 
+    return FAIL;
+
+  return OK;
 }
 
 /*

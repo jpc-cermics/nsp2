@@ -1405,7 +1405,7 @@ int nsp_matrix_delete_rows(NspMatrix *A, NspMatrix *Rows)
     for ( i = 0 ; i < Rows->mn ; i++)
       {
 	ind =  ((int) Rows->R[i])+ j*A->m;
-	last = (i < Rows->mn -1) ? ((int) Rows->R[i+1]) +j*A->m : ((int) Rows->R[i])-1+(j+1)*A->m ;
+	last = (i < Rows->mn -1) ? ((int) Rows->R[i+1]) +j*A->m : ((int) Rows->R[0])-1+(j+1)*A->m ;
 	last = ( last < A->mn ) ? last : A->mn;
 	nn= (last-ind);
 	if ( nn != 0) 
@@ -1413,10 +1413,10 @@ int nsp_matrix_delete_rows(NspMatrix *A, NspMatrix *Rows)
 	    ioff++;
 	    if ( A->rc_type == 'r') 
 	      /*C2F(dcopy)(&nn,A->R +ind,&un,A->R +ind -ioff,&un); */
-	      memcpy(A->R +ind -ioff,A->R +ind,nn*sizeof(double));
+	      memmove(A->R +ind -ioff,A->R +ind,nn*sizeof(double));
 	    else 
 	      /* C2F(zcopy)(&nn,A->C +ind,&un,A->C +ind -ioff,&un); */
-	      memcpy(A->C +ind -ioff,A->C +ind,nn*sizeof(doubleC));
+	      memmove(A->C +ind -ioff,A->C +ind,nn*sizeof(doubleC));
 	  }
       }
   if ( nsp_matrix_resize(A,A->m -Rows->mn,A->n)== FAIL) return(FAIL);
