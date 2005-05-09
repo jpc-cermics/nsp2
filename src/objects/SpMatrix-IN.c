@@ -567,6 +567,42 @@ static int int_spmult(Stack stack, int rhs, int opt, int lhs)
   return int_spmult_gen(stack,rhs,opt,lhs,nsp_spmatrix_mult);
 }
 
+/*
+ *   Res = A * X , A sparse matrix, X full matrix
+ *   A and X are left unchanged
+ *   added by Bruno
+ */
+static int int_spmultm(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpMatrix *HMat1;
+  NspMatrix *HMat2, *HMat3;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+
+  if ((HMat1 = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((HMat2 = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
+
+  if ( HMat1->mn == 0)  
+    {
+      NSP_OBJECT(HMat1)->ret_pos = 1;
+      return 1;
+    }
+  else if ( HMat2->mn == 0 )
+    {
+      NSP_OBJECT(HMat2)->ret_pos = 1;
+      return 1;
+    }
+
+  if ( HMat1->n != HMat2->m )
+    {
+      Scierror("Error:\tIncompatible dimensions\n");
+      return RET_BUG;
+    }
+
+  if ( (HMat3 = nsp_spmatrix_mult_matrix(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) HMat3);
+  return 1;
+}
 
 /*
  * Res= A'
@@ -732,6 +768,24 @@ static int int_sp_sum(Stack stack, int rhs, int opt, int lhs, SuPro F)
   return 1;
 }
 
+/* added by Bruno : return the number of non zero elements */
+static int int_spnnz(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpMatrix *HMat; 
+  NspMatrix *Res;
+  int i, nnz;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((HMat = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((Res = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) return FAIL;
+
+  nnz = nsp_spmatrix_nnz(HMat);
+  Res->R[0] = (double) nnz;
+  
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
 static int int_spsum(Stack stack, int rhs, int opt, int lhs)
 {
   return ( int_sp_sum(stack,rhs,opt,lhs,SpSum ) );
@@ -803,6 +857,7 @@ static OpTab SpMatrix_func[]={
   {"sp2m",int_spsp2m},
   {"dst_sp_sp",int_spmultt},
   {"mult_sp_sp",int_spmult},
+  {"mult_sp_m",int_spmultm},
   {"plus_sp_sp",int_spplus},
   {"minus_sp_sp",int_spsub},
   {"minus_sp",int_spminus},
@@ -832,6 +887,7 @@ static OpTab SpMatrix_func[]={
   {"maxi_sp" ,  int_spmaxi },
   {"maxi_sp_s" ,  int_spmaxi },
   {"extractelts_sp",int_spextractelts},
+  {"nnz_sp",int_spnnz},
   {(char *) 0, NULL}
 };
 

@@ -504,14 +504,31 @@ void SpRowDestroy(SpRow *Row)
 void nsp_spmatrix_destroy(NspSpMatrix *Mat)
 {
   int i;
-  FREE(NSP_OBJECT(Mat)->name);
-  for ( i = 0  ; i < Mat->m ; i++) 
+  if ( Mat != NULLSP )
     {
-      SpRowDestroy(Mat->D[i]);
-      FREE(Mat->D[i]);
+      FREE(NSP_OBJECT(Mat)->name);
+      for ( i = 0  ; i < Mat->m ; i++) 
+	{
+	  SpRowDestroy(Mat->D[i]);
+	  FREE(Mat->D[i]);
+	}
+      FREE(Mat->D);
+      FREE(Mat) ;
     }
-  FREE(Mat->D);
-  FREE(Mat) ;
+}
+
+/*
+ *  nsp_spmatrix_nnz: computes the number of non nul elements
+ *  (Number of Non Zero elements) of a  Sparse Matrix
+ *  (added by Bruno)
+ */
+int nsp_spmatrix_nnz(NspSpMatrix *HMat)
+{
+  int i, nnz=0;
+  for ( i = 0 ; i < HMat->m ; i++ )
+    nnz += HMat->D[i]->size;
+
+  return nnz;
 }
 
 /*
@@ -1750,15 +1767,15 @@ NspSpMatrix *nsp_spmatrix_diag_create(NspSpMatrix *Diag, int k)
  *  multiply sparse matrices by the method of gustafson,acm t.o.m.s. 
  *  vol 4 (1978) p250. 
  *  C coded version : Chancelier 1996
+ *  some modifs by Bruno Pincon 2005 to improve efficiency
  */
 
 NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
 {
-  int cdisize;
-  NspSpMatrix *C;
-  NspMatrix *x;
-  int *xb;
-  static int   i, j, k, v, ip, jp, kp;
+  NspSpMatrix *C = NULLSP;
+  NspMatrix *x = NULLMAT;
+  int *xb = NULL, *pxb = NULL;
+  int i, j, k, v, ip, jp, kp, neli, final_neli, zero=0,c__1=1;
   char type = 'r';
   if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
   if ( A->n != B->m ) 
@@ -1766,141 +1783,234 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
       Scierror("SpMult : incompatible arguments\n");
       return(NULLSP);
     }
-  C =nsp_spmatrix_create(NVOID,type, A->m,B->n);
-  if ( C == NULLSP ) return(NULLSP) ; 
+
+  if ( (C =nsp_spmatrix_create(NVOID,type, A->m,B->n)) == NULLSP ) return NULLSP; 
+
   /*  x          a one-dimensional array of size ge number of cols of c, 
    *                to contain elements of current row of c, 
    *                in full,i.e. non-sparse form.  */
-  x = nsp_matrix_create(NVOID,type,(int) 1, C->n );
-  if ( x == NULLMAT) return(NULLSP);
+  if ( (x = nsp_matrix_create(NVOID,type,(int) 1, C->n)) == NULLMAT ) goto err;
+
   /*  xb         an array of same size as x. xb(j)=i if element in row i, 
    *                column j of c is non-zero. */
-  if ( (xb =nsp_alloc_int(C->n)) == (int*) 0) return(NULLSP);
-  ip = 0; /* Counts non null elements of C */
+  if ( (xb =nsp_alloc_int(C->n)) == (int*) 0) goto err;
+  /*  pxb        to store the effective non nul indices of row i...
+  *              (act as a pointer to x at the end) */
+  if ( (pxb =nsp_alloc_int(C->n)) == (int*) 0) goto err;
+
   /* initialize the non-zero -element indicator for row i of c. */
   for (v = 0 ; v < B->n ; v++ )  xb[v] = -1;
   /* process the rows of a. */
   for (i = 0 ; i < A->m ; i++) 
     {
+      neli = 0;  /* to count the number of a priori non nul elements of row i */
       SpRow *Ai = A->D[i];
+      SpRow *Ci = C->D[i];
       /*  process row i of a.  */
       for (jp = 0  ; jp <  Ai->size  ; jp++) 
 	{
 	  SpRow *Bj;
 	  /* j is the current col-index for a */
 	  j = Ai->J[jp] ;
-	  Bj= B->D[j];
-	  /* We process the row j of  b. */
-	  for (kp = 0 ; kp < Bj->size ; kp++) 
-	    {
-	      /* getting non nul b(j,k) */
-	      k = Bj->J[kp];
-	      /* check if contribution already exixts to c(i,k) */
-	      if ( xb[k] != i )
-		{ 
-		  xb[k] = i ; 
-		  if ( C->rc_type == 'r' )
-		    {
-		      x->R[k]=0.00;
-		    }
-		  else 
-		    {
-		      x->C[k].r = 0.00; x->C[k].i = 0.00;
-		    }
-		}
-	      if ( C->rc_type == 'r' ) 
-		{
-		  x->R[k] += Ai->R[jp] * Bj->R[kp];
-		}
-	      else 
-		{
-		  if ( A->rc_type == 'r') 
-		    {
-		      x->C[k].i += Ai->R[jp] * Bj->C[kp].i;
-		      x->C[k].r += Ai->R[jp] * Bj->C[kp].r;
-		    }
-		  else 
-		    {
-		      if ( B->rc_type == 'r' ) 
-			{
-			  x->C[k].i += Ai->C[jp].i * Bj->R[kp];
-			  x->C[k].r += Ai->C[jp].r * Bj->R[kp];
-			}
-		      else 
-			{
-			  x->C[k].r += Ai->C[jp].r * Bj->C[kp].r -  Ai->C[jp].i* Bj->C[kp].i;
-			  x->C[k].i += Ai->C[jp].i * Bj->C[kp].r +  Ai->C[jp].r* Bj->C[kp].i;
-			}
-		    }
-		}
-	    }
+	  Bj = B->D[j];
+	  /*  We process the row j of  b. For efficiency we separate the real case 
+           *  from the 3 complex cases (which are nevertheless treated together)
+	   */
+	  if ( C->rc_type == 'r' )
+	    for (kp = 0 ; kp < Bj->size ; kp++) 
+	      {
+		/* getting non nul b(j,k) */
+		k = Bj->J[kp]; 
+		/* check if contribution already exixts to c(i,k) */
+		if ( xb[k] != i )
+		  { 
+		    xb[k] = i; pxb[neli] = k; neli++; x->R[k]=0.00;
+		  }
+		x->R[k] += Ai->R[jp] * Bj->R[kp];
+	      }
+	  else 
+	    for (kp = 0 ; kp < Bj->size ; kp++) 
+	      {
+		/* getting non nul b(j,k) */
+		k = Bj->J[kp];
+		/* check if contribution already exixts to c(i,k) */
+		if ( xb[k] != i )
+		  { 
+		    xb[k] = i; pxb[neli] = k; neli++; x->C[k].r = 0.00; x->C[k].i = 0.00;
+		  }
+		if ( A->rc_type == 'r') 
+		  {
+		    x->C[k].i += Ai->R[jp] * Bj->C[kp].i;
+		    x->C[k].r += Ai->R[jp] * Bj->C[kp].r;
+		  }
+		else if ( B->rc_type == 'r' ) 
+		  {
+		    x->C[k].i += Ai->C[jp].i * Bj->R[kp];
+		    x->C[k].r += Ai->C[jp].r * Bj->R[kp];
+		  }
+		else 
+		  {
+		    x->C[k].r += Ai->C[jp].r * Bj->C[kp].r -  Ai->C[jp].i* Bj->C[kp].i;
+		    x->C[k].i += Ai->C[jp].i * Bj->C[kp].r +  Ai->C[jp].r* Bj->C[kp].i;
+		  }
+	      }
 	}
-      /* we have now computed c(i,.) in expanded form in stored in x,xb */
-      /* we store them in C and exclude number which have cancelled during 
-	 computation */
-      cdisize= C->D[i]->size;
-      if ( C->rc_type == 'r') 
+      /* we have now computed c(i,.) in expanded form and stored it in x,xb */
+      /* pxb[0..neli-1] contains all the non nul column indices (so point to */
+      /* values to retrieve from x) but their are not in order (and so the sort) */
+      /* we store them in C and exclude number which have cancelled during computation */
+      
+      C2F(gsort)(pxb,NULL,NULL,&zero,&c__1,&neli,"i","i");
+
+      /* but as cancellation is unlikely to occur we allocate first the row */
+      /* with the a priori non null element number neli */
+      if ( nsp_spmatrix_resize_row(C,i,neli) == FAIL ) goto err;
+      final_neli = neli;
+      ip = 0;
+      if ( C->rc_type == 'r' )  /* real case */
 	{
-	  for (v = 0 ; v < B->n ; v++)  
+	  for (k = 0 ; k < neli ; k++)  
 	    { 
-	      if ( xb[v] == i && x->R[v] != 0.00 )  cdisize++;
-	    }
-	}
-      else 
-	{
-	  for (v = 0 ; v < B->n ; v++)  
-	    { 
-	      if ( xb[v] == i && ( x->C[v].r != 0.00  || x->C[v].i != 0.00))  cdisize++;
-	    }
-	}
-      nsp_spmatrix_resize_row(C,i,cdisize);
-      ip = 0; 
-      if ( C->rc_type == 'r' ) 
-	{
-	  for (v = 0 ; v < B->n ; v++)  
-	    { 
-	      if ( xb[v] == i && x->R[v] != 0.00 ) 
+	      v = pxb[k];
+	      if ( x->R[v] != 0.00 )  /* take care of cancellation */
 		{
-		  C->D[i]->J[ip] = v;
-		  C->D[i]->R[ip] = x->R[v];
+		  Ci->J[ip] = v; 
+		  Ci->R[ip] = x->R[v];
 		  ip++;
 		}
+	      else
+		final_neli--;  /* cancellation occurs => final resize */
 	    }
 	}
-      else
+      else   /* complex case */
 	{
-          for (v = 0 ; v < B->n ; v++)
+          for (k = 0 ; k < neli ; k++)
             {
-              if ( xb[v] == i &&  ( x->C[v].r != 0.00  || x->C[v].i != 0.00))
-                {
-                  C->D[i]->J[ip] = v;
-                  C->D[i]->C[ip].r = x->C[v].r;
-                  C->D[i]->C[ip].i = x->C[v].i;
-                  ip++;
-                }
+	      v = pxb[k];
+	      if ( x->C[v].r != 0.00  || x->C[v].i != 0.00 ) /* take care of cancellation */
+		{
+		  Ci->J[ip] = v;
+		  Ci->C[ip].r = x->C[v].r; Ci->C[ip].i = x->C[v].i;
+		  ip++;
+		}
+	      else
+		final_neli--; /* cancellation occurs => final resize */
             }
         }
-
+      if ( final_neli < neli )
+	if ( nsp_spmatrix_resize_row(C,i,final_neli) == FAIL ) goto err;
     }
-  /*  sort result */ 
-  for (i = 0 ; i < C->m ; ++i) 
-    {
-      if (C->D[i]->size > 1) 
-	{
-	  int c__1 =1;
-	  /* C2F(isort1)(C->D[i]->J,&C->D[i]->size,xb,&c__1); **/
-	  C2F(gsort)(C->D[i]->J,NULL,xb,&c__1,&c__1,&C->D[i]->size,"i","i");
-	  if ( C->rc_type == 'r' ) 
-	    C2F(dperm)(C->D[i]->R,&C->D[i]->size,xb);
-	  else 
-	    C2F(zperm)(C->D[i]->C,&C->D[i]->size,xb);
-	}
-    }
+  FREE(pxb);
   FREE(xb);
   nsp_matrix_destroy(x);
-  return(C);
+  return C;
+
+ err:
+  FREE(pxb);
+  FREE(xb);
+  nsp_matrix_destroy(x);
+  nsp_spmatrix_destroy(C);
+  return NULLSP;
 }
 
+/*
+ * nsp_spmatrix_mult_matrix(A,X) when A is sparse and X full
+ * result B is a full matrix. Special cases have been checked
+ * in the interface. (added by Bruno)
+ */
+NspMatrix *nsp_spmatrix_mult_matrix(NspSpMatrix *A, NspMatrix *X)
+{
+  int i, j, k, ij, m = A->m, n = X->n, p = X->m;
+  char rtype;
+  NspMatrix *B;
+
+  rtype = 'c';
+  if ( A->rc_type == 'r' && X->rc_type == 'r' )
+    rtype = 'r';
+
+  if ( (B = nsp_matrix_create(NVOID,rtype,m,n)) == NULLMAT ) 
+    return NULLMAT;
+
+  /* la suite est pas belle ... */
+  ij = 0;
+  if ( rtype == 'r' )
+    {
+      for ( j = 0 ; j < n ; j++ )
+	{
+	  double *Xj = (&X->R[p*j]);
+	  for ( i = 0 ; i < m ; i++ )
+	    {
+	      double temp = 0.0, *Ai = A->D[i]->R; int *Ji = A->D[i]->J;
+	      for ( k = 0 ; k < A->D[i]->size ; k++ )
+		temp += Ai[k] * Xj[Ji[k]];
+	      B->R[ij] = temp;
+	      ij++;
+	    }
+	}
+    }
+  else if ( A->rc_type == 'r' && X->rc_type == 'c' ) 
+    {
+      for ( j = 0 ; j < n ; j++ )
+	{
+	  doubleC *Xj = (&X->C[p*j]);
+	  for ( i = 0 ; i < m ; i++ )
+	    {
+	      doubleC temp; double *Ai = A->D[i]->R; int *Ji = A->D[i]->J;
+	      temp.r = 0; temp.i = 0;
+	      for ( k = 0 ; k < A->D[i]->size ; k++ )
+		{
+		  temp.r += Ai[k] * Xj[Ji[k]].r;
+		  temp.i += Ai[k] * Xj[Ji[k]].i;
+		}
+	      B->C[ij].r = temp.r; 
+	      B->C[ij].i = temp.i; 
+	      ij++;
+	    }
+	}
+    }
+  else if ( A->rc_type == 'c' && X->rc_type == 'r' ) 
+    {
+      for ( j = 0 ; j < n ; j++ )
+	{
+	  double *Xj = (&X->R[p*j]);
+	  for ( i = 0 ; i < m ; i++ )
+	    {
+	      doubleC temp, *Ai = A->D[i]->C; int *Ji = A->D[i]->J;
+	      temp.r = 0; temp.i = 0;
+	      for ( k = 0 ; k < A->D[i]->size ; k++ )
+		{
+		  temp.r += Ai[k].r * Xj[Ji[k]];
+		  temp.i += Ai[k].i * Xj[Ji[k]];
+		}
+	      B->C[ij].r = temp.r; 
+	      B->C[ij].i = temp.i; 
+	      ij++;
+	    }
+	}
+    }
+  else
+    {
+      for ( j = 0 ; j < n ; j++ )
+	{
+	  doubleC *Xj = (&X->C[p*j]);
+	  for ( i = 0 ; i < m ; i++ )
+	    {
+	      doubleC temp, *Ai = A->D[i]->C; int *Ji = A->D[i]->J;
+	      temp.r = 0; temp.i = 0;
+	      for ( k = 0 ; k < A->D[i]->size ; k++ )
+		{
+		  temp.r += Ai[k].r * Xj[Ji[k]].r  -  Ai[k].i * Xj[Ji[k]].i;
+		  temp.i += Ai[k].i * Xj[Ji[k]].r  +  Ai[k].r * Xj[Ji[k]].i;
+		}
+	      B->C[ij].r = temp.r; 
+	      B->C[ij].i = temp.i; 
+	      ij++;
+	    }
+	}
+    }
+
+  return B;
+}
 
 /*
  * nsp_spmatrix_mult_scal(A,B) when B is a scalar sparse 
