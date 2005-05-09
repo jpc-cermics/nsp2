@@ -95,14 +95,15 @@ extern NspSpMatrix *GetRealSp(Stack stack, int i);
 /* NspSpMatrix.c */
 
 extern void nsp_spmatrix_destroy(NspSpMatrix *Mat); 
+extern int nsp_spmatrix_nnz(NspSpMatrix *HMat);
 extern void nsp_spmatrix_info(NspSpMatrix *Sp, int indent); 
 extern void nsp_spmatrix_print(NspSpMatrix *Sp, int indent); 
 extern NspSpMatrix *nsp_spmatrix_copy(NspSpMatrix *A); 
 extern NspSpMatrix   *nsp_spmatrix_object(NspObject *O);
 
 
-extern NspSpMatrix *nsp_spmatrix_create(char *name, char type, integer m, integer n); 
-extern NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, int m, int n); 
+ extern NspSpMatrix *nsp_spmatrix_create(char *name, char type, integer m, integer n); 
+ extern NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, int m, int n); 
  extern int nsp_spmatrix_get(NspSpMatrix *A, NspMatrix **RC, NspMatrix **Values); 
  extern int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n); 
  extern void SpRowDestroy (SpRow *Row); 
@@ -129,6 +130,7 @@ extern NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Val
  extern int nsp_spmatrix_diag_set(NspSpMatrix *A, NspSpMatrix *Diag, integer k); 
  extern NspSpMatrix *nsp_spmatrix_diag_create(NspSpMatrix *Diag, integer k); 
  extern NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B); 
+ extern NspMatrix *nsp_spmatrix_mult_matrix(NspSpMatrix *A, NspMatrix *X);
  extern int nsp_spmatrix_mult_scal(NspSpMatrix *A, NspSpMatrix *B); 
  extern int nsp_spmatrix_complexify(NspSpMatrix *A); 
  extern int nsp_spmatrix_setr(NspSpMatrix *A, double d); 
