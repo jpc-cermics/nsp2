@@ -99,22 +99,25 @@ tarbindist:
 
 install:
 	@echo "installing bin files"
-	find bin \( -name '*'  \) \
-		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
+	@find bin -type f -exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
 	@echo "installing lib files"
-	find libs \( -name '*'  \) \
-		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/{} \;
-	find pvm3/lib \( -name '*'  \) \
+	@find libs -type f -exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/{} \;
+	@echo "installing pvm3 files"
+	@find pvm3/lib \( -type f  \) \
 		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
-	find pvm3/lib \( -name '*.a'  \) \
+	@find pvm3/lib \( -name '*.a'  \) \
 		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/{} \;
-	find pvm3/bin \( -name '*'  \) \
+	@find pvm3/bin \( -type f \) \
 		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
-	$(TOP)/config/install-sh $(opt_PROG) scripts/scilab-inst $(prefix)/lib/nsp/bin/scilab
-	$(TOP)/config/install-sh $(opt_PROG) scripts/scilab-inst $(prefix)/bin/scilab
-	cd demos ; make install;
-	cd macros ; make install;
-	cd src/include ; make install;
+	@cd src/include ; make install;
+	@cd config ; make install;
+	@cd demos ; make install;
+	@cd macros ; make install;
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/scilab-inst $(prefix)/lib/nsp/bin/scilab
+	@$(TOP)/config/install-sh $(opt_DATA) scripts/Path.incl $(prefix)/lib/nsp/Path.incl
+	@$(TOP)/config/install-sh $(opt_DATA) Makefile.incl  $(prefix)/lib/nsp/
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/scilab-inst $(prefix)/bin/scilab
+
 
 cvsclean::
 
