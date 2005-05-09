@@ -773,7 +773,7 @@ static int int_spnnz(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpMatrix *HMat; 
   NspMatrix *Res;
-  int i, nnz;
+  int  nnz;
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetSp(stack,1)) == NULLSP) return RET_BUG;
