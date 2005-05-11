@@ -353,7 +353,7 @@ function sd1 =gr_poly(action,sd,pt,pt1)
    case 'inside' then 
     // is pointer near object 
     sd=gr_objects(sd);
-    [pt,kmin,pmin,d]=dist2polyline(sd('x'),sd('y'),pt);
+    [pt,kmin,pmin,d]=gr_dist2polyline(sd('x'),sd('y'),pt);
     if d < 3 then sd1=%t 
     else 
        sd1=%f ;
@@ -1035,7 +1035,7 @@ function gr_copy()
   end
 endfunction 
 
-function [pt,kmin,pmin,dmin]=dist2polyline(xp,yp,pt)
+function [pt,kmin,pmin,dmin]=gr_dist2polyline(xp,yp,pt)
 // utility function 
 // distance from a point to a polyline 
 // the point is on the segment [kmin,kmin+1] (note that 

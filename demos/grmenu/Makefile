@@ -1,9 +1,5 @@
 
-
-all	: 
-	cd ../../; make all
-
-all1	:
+all	:
 	../../bin/scilex -f ./ Names 
 
 clean	:
