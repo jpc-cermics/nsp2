@@ -159,7 +159,7 @@ NspTypeBase *check_implements(void *obj,NspTypeId id);
  * we want to pass Stack by value 
  *-----------------------------------------------------------*/
 
-lstypedef struct _stack Stack;
+typedef struct _stack Stack;
 
 typedef void stack_error(Stack *S,char *fmt,...);
 
