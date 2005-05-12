@@ -32,7 +32,6 @@
 #include "nsp/blas.h"
 #include "nsp/matutil.h"
 
-
 /*
  * Max Plus matrices 
  * It is always possible to cast a NspMaxpMatrix * to a NspMatrix * 
@@ -168,80 +167,45 @@ NspMaxpMatrix * nsp_mp_matrix_from_m(const char *name,NspMatrix *M)
 }
 
 
-
-/*
- * used when data is transmited by caml 
+/**
+ * nsp_matrix_cast_to_mpmatrix
+ * @M: a NspMatrix *
+ * 
+ * Changes the type fields of @M in such a way that 
+ * @M becomes a #NspMaxpMatrix. 
+ * 
+ * Returns a #NspMaxpMatrix 
  */
 
-#ifdef OCAML 
-NspMaxpMatrix *MatCreateFromData(char *name, char type, integer m, integer n,
-				 struct caml_bigarray *b)
+NspMaxpMatrix * nsp_matrix_cast_to_mpmatrix(NspMatrix *M)
 {
-  struct caml_bigarray_proxy * proxy;
-  NspMaxpMatrix *Mat = new_mpmatrix();
-  if ( Mat == NULLMAXPMAT) 
-    {
-      Scierror("Error:\tRunning out of memory\n");
-      return(NULLMAXPMAT);
-    }
-
-  /* shared by all objects */
-  if ((NSP_OBJECT(Mat)->name = NewString(name))== NULLSTRING) 
-    {
-      Scierror("Error:\tRunning out of memory\n");
-      return(NULLMAXPMAT);
-    }
-  NSP_OBJECT(Mat)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
-  /*
-  Mat->otype =  MATRIX; 
-  Mat->ftype = &Matrix_Type;
-  */
-  /* specific for Matrix */
-  Mat->m=m;
-  Mat->n=n;
-  Mat->mn=m*n;
-  Mat->type=type;
-  Mat->convert = 'd'; 
-  if ( Mat->mn == 0 ) 
-    {
-      Mat->m = Mat->n=0;
-      Mat->R = (double *) 0; 
-      Mat->C = (doubleC *) 0;
-      return(Mat);
-    }
-  switch ( type ) 
-    {
-    case 'r' :
-      Mat->C = (doubleC *) 0;
-      Mat->R = b->data;
-      break;
-    case 'c' : 
-      Mat->R = (double *) 0; 
-      Mat->C = b->data; 
-    }
-  /* dealing with proxy */ 
-  /* Nothing to do for un-managed arrays */
-  Mat->flags = b->flags ;
-  if ((b->flags & BIGARRAY_MANAGED_MASK) == BIGARRAY_EXTERNAL) 
-    return Mat;
-  if ( b->proxy != NULL) {
-    /* If b is already a proxy for a larger array, increment refcount of
-       proxy */
-    Mat->proxy = b->proxy;
-    ++ b->proxy->refcount;
-  } else {
-    /* Otherwise, create proxy and attach it to both b1 and b2 */
-    proxy = stat_alloc(sizeof(struct caml_bigarray_proxy));
-    proxy->refcount = 2;      /* original array + sub array */
-    proxy->data = b->data;
-    proxy->size =
-      b->flags & BIGARRAY_MAPPED_FILE ? bigarray_byte_size(b) : 0;
-    Mat->proxy = proxy;
-    b->proxy = proxy;
-  }
-  return(Mat);
+  if ( M == NULLMAT) return NULLMAXPMAT;
+  M->type = (NspTypeMatrix *) new_type_mpmatrix(T_BASE);
+  NSP_OBJECT(M)->type =(NspTypeObject *) M->type->surtype;
+  NSP_OBJECT(M)->basetype =(NspTypeBase *) M->type;
+  return (NspMaxpMatrix *) M;
 }
-#endif 
+
+
+
+/**
+ * nsp_mpmatrix_cast_to_matrix
+ * @M: a NspMatrix *
+ * 
+ * Changes the type fields of @M in such a way that 
+ * @M becomes a #NspMaxpMatrix. 
+ * 
+ * Returns a #NspMaxpMatrix 
+ */
+
+NspMatrix * nsp_mpatrix_cast_to_matrix(NspMaxpMatrix *M)
+{
+  if ( M == NULLMAXPMAT ) return NULLMAT;
+  M->type = (NspTypeMaxpMatrix *) new_type_matrix(T_BASE);
+  NSP_OBJECT(M)->type =(NspTypeObject *) M->type->surtype;
+  NSP_OBJECT(M)->basetype =(NspTypeBase *) M->type;
+  return (NspMatrix *) M;
+}
 
 
 
@@ -334,17 +298,14 @@ NspMaxpMatrix *nsp_mpmatrix_copy(const NspMaxpMatrix *A)
   switch ( Mat->rc_type ) 
     {
     case 'r' :
-      /* C2F(dcopy)(&(Mat->mn),A->R,&inc,Mat->R,&inc); */
       memcpy(Mat->R,A->R, (Mat->mn)*sizeof(double));
       break;
     case 'c' :
-      /* C2F(zcopy)(&(Mat->mn),A->C,&inc,Mat->C,&inc); */
       memcpy(Mat->C,A->C, (Mat->mn)*sizeof(doubleC));
       break;
     }
   return(Mat);
 }
-
 
 /**
  * nsp_mpmatrix_fill_with:
@@ -379,11 +340,9 @@ int nsp_mpmatrix_fill_with(NspMaxpMatrix *A,const NspMaxpMatrix *B)
   switch ( A->rc_type ) 
     {
     case 'r' :
-      /* C2F(dcopy)(&(A->mn),B->R,&inc,A->R,&inc); */
       memcpy(A->R,B->R, (A->mn)*sizeof(double));
       break;
     case 'c' :
-      /* C2F(zcopy)(&(A->mn),B->C,&inc,A->C,&inc); */
       memcpy(A->C,B->C, (A->mn)*sizeof(doubleC));
       break;
     }
@@ -434,10 +393,6 @@ int nsp_mpmatrix_resize(NspMaxpMatrix *A, integer m, integer n)
 
   A->m =m ;  A->n =n;   A->mn=m*n ;
   /* need to realloc */
-#ifdef OCAML 
-  if ( A->proxy != NULL ) 
-    failwith("shared matrix cannot be resized \n");
-#endif
   switch ( A->rc_type ) 
     {
     case 'r' : 
@@ -497,39 +452,10 @@ int nsp_mpmatrix_scalar_to_mn(NspMaxpMatrix *A, integer m, integer n)
 void nsp_mpmatrix_destroy(NspMaxpMatrix *Mat)
 {
   if ( Mat == NULLMAXPMAT ) return ; 
-#ifdef OCAML 
-  if ( Mat->proxy == NULL ) 
-    {
-      FREE(Mat->C) ;
-      FREE(Mat->R);
-      FREE(NSP_OBJECT(Mat)->name);
-      FREE(Mat) ;
-    }
-  else 
-    {
-      /* matrix is shared with a caml bigarray */
-      switch (Mat->flags & BIGARRAY_MANAGED_MASK ) {
-      case BIGARRAY_MANAGED : 
-	if (-- Mat->proxy->refcount == 0) {
-	  free(Mat->proxy->data);
-	  stat_free(Mat->proxy);
-	}
-      case BIGARRAY_MAPPED_FILE:
-	if (-- Mat->proxy->refcount == 0) {
-	  bigarray_unmap_file(Mat->proxy->data, Mat->proxy->size);
-	  stat_free(Mat->proxy);
-	}
-      }
-      FREE(NSP_OBJECT(Mat)->name);
-      FREE(Mat) ;
-    }
-#else 
   FREE(Mat->C) ;
   FREE(Mat->R);
   FREE(NSP_OBJECT(Mat)->name);
   FREE(Mat) ;
-#endif 
-
 }
 
 /**
@@ -1250,7 +1176,7 @@ int nsp_mpmatrix_delete_columns(NspMaxpMatrix *A, NspMatrix *Cols)
  * returns %OK or %FAIL.
  */
 
-int nsp_mpmatrix_delete_rows(NspMaxpMatrix *A, NspMatrix *Rows)
+int nsp_mpmatrix_delete_rows_old(NspMaxpMatrix *A, NspMatrix *Rows)
 {
   int i,j,*ind,k1,k2,nn,nrow,stride=0,ioff=0;
 
@@ -1287,6 +1213,12 @@ int nsp_mpmatrix_delete_rows(NspMaxpMatrix *A, NspMatrix *Rows)
   return OK;
 }
 
+int nsp_mpmatrix_delete_rows(NspMaxpMatrix *A, NspMatrix *Rows)
+{
+  return nsp_matrix_delete_rows((NspMatrix *) A,Rows);
+}
+
+
 /**
  * nsp_mpmatrix_delete_elements:
  * @A: a #NspMaxpMatrix
@@ -1299,7 +1231,7 @@ int nsp_mpmatrix_delete_rows(NspMaxpMatrix *A, NspMatrix *Rows)
  * returns %OK or %FAIL.
  */
 
-int nsp_mpmatrix_delete_elements(NspMaxpMatrix *A, NspMatrix *Elts)
+int nsp_mpmatrix_delete_elements_old(NspMaxpMatrix *A, NspMatrix *Elts)
 {
   int i,*ind,k1,k2,nn,ne,ioff=0;
 
@@ -1334,6 +1266,11 @@ int nsp_mpmatrix_delete_elements(NspMaxpMatrix *A, NspMatrix *Elts)
   return OK;
 }
 
+int nsp_mpmatrix_delete_elements(NspMaxpMatrix *A, NspMatrix *Elts)
+{
+  return nsp_matrix_delete_elements((NspMatrix *)A,Elts);
+}
+
 /**
  * nsp_mpmatrix_extract:
  * @A: a #NspMaxpMatrix
@@ -1345,7 +1282,7 @@ int nsp_mpmatrix_delete_elements(NspMaxpMatrix *A, NspMatrix *Elts)
  * returns a #MspMatrix or %NULLMAXPMAT 
  */
 
-NspMaxpMatrix *nsp_mpmatrix_extract(const NspMaxpMatrix *A,const  NspMatrix *Rows, const NspMatrix *Cols)
+NspMaxpMatrix *nsp_mpmatrix_extract_old(const NspMaxpMatrix *A,const  NspMatrix *Rows, const NspMatrix *Cols)
 {
   NspMaxpMatrix *Loc;
   integer rmin,rmax,cmin,cmax,i,j;
@@ -1381,6 +1318,10 @@ NspMaxpMatrix *nsp_mpmatrix_extract(const NspMaxpMatrix *A,const  NspMatrix *Row
   return(Loc);
 }
 
+NspMaxpMatrix *nsp_mpmatrix_extract(const NspMaxpMatrix *A,const  NspMatrix *Rows, const NspMatrix *Cols)
+{
+  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract((const NspMatrix *)A,Rows,Cols));
+}
 
 /**
  * nsp_mpmatrix_extract_elements:
@@ -1392,7 +1333,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract(const NspMaxpMatrix *A,const  NspMatrix *Row
  * returns a #MspMatrix or %NULLMAXPMAT 
  */
 
-NspMaxpMatrix *nsp_mpmatrix_extract_elements(const NspMaxpMatrix *A,const NspMatrix *Elts)
+NspMaxpMatrix *nsp_mpmatrix_extract_elements_old(const NspMaxpMatrix *A,const NspMatrix *Elts)
 {
   NspMaxpMatrix *Loc;
   integer rmin,rmax,i;
@@ -1431,6 +1372,11 @@ NspMaxpMatrix *nsp_mpmatrix_extract_elements(const NspMaxpMatrix *A,const NspMat
   return(Loc);
 }
 
+NspMaxpMatrix *nsp_mpmatrix_extract_elements(const NspMaxpMatrix *A,const NspMatrix *Elts)
+{
+  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract_elements((const NspMatrix *)A,Elts));
+}
+
 
 /**
  * nsp_mpmatrix_extract_columns:
@@ -1442,7 +1388,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_elements(const NspMaxpMatrix *A,const NspMat
  * returns a #MspMatrix or %NULLMAXPMAT 
  */
 
-NspMaxpMatrix *nsp_mpmatrix_extract_columns(const NspMaxpMatrix *A,const NspMatrix *Cols)
+NspMaxpMatrix *nsp_mpmatrix_extract_columns_old(const NspMaxpMatrix *A,const NspMatrix *Cols)
 {
   NspMaxpMatrix *Loc;
   integer j,cmin,cmax;
@@ -1468,6 +1414,12 @@ NspMaxpMatrix *nsp_mpmatrix_extract_columns(const NspMaxpMatrix *A,const NspMatr
   return(Loc);
 }
 
+NspMaxpMatrix *nsp_mpmatrix_extract_columns(const NspMaxpMatrix *A,const NspMatrix *Cols)
+{
+  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract_columns((const NspMatrix *)A,Cols));
+}
+
+
 /**
  * nsp_mpmatrix_extract_rows:
  * @A: a #NspMaxpMatrix
@@ -1478,7 +1430,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_columns(const NspMaxpMatrix *A,const NspMatr
  * returns a #MspMatrix or %NULLMAXPMAT 
  */
 
-NspMaxpMatrix *nsp_mpmatrix_extract_rows(const NspMaxpMatrix *A,const NspMatrix *Rows)
+NspMaxpMatrix *nsp_mpmatrix_extract_rows_old(const NspMaxpMatrix *A,const NspMatrix *Rows)
 {
   NspMaxpMatrix *Loc;
   integer i,j,cmin,cmax;
@@ -1513,6 +1465,13 @@ NspMaxpMatrix *nsp_mpmatrix_extract_rows(const NspMaxpMatrix *A,const NspMatrix 
     }
   return(Loc);
 }
+
+
+NspMaxpMatrix *nsp_mpmatrix_extract_rows(const NspMaxpMatrix *A,const NspMatrix *Rows)
+{
+  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract_rows((const NspMatrix *)A,Rows));
+}
+
 
 
 /**
@@ -1609,6 +1568,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_diag(const NspMaxpMatrix *A, integer k)
     }
   return(Loc);
 }
+
 
 
 /**
@@ -1718,8 +1678,6 @@ NspMaxpMatrix *nsp_mpmatrix_create_diag(const NspMaxpMatrix *Diag, integer k)
   return(Loc);
 }
 
-
-
 /**
  * nsp_mpmatrix_transpose: 
  * @A: a #NspMaxpMatrix
@@ -1753,8 +1711,6 @@ NspMaxpMatrix *nsp_mpmatrix_transpose(const NspMaxpMatrix *A)
     }
   return Loc;
 }
-
-
 
 
 

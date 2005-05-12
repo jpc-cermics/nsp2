@@ -107,7 +107,7 @@ static int int_spget(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,3);
   if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
-  if (nsp_spmatrix_get(A,&RC,&Values) == FAIL) return RET_BUG;
+  if ( nsp_spmatrix_get(A,&RC,&Values) == FAIL) return RET_BUG;
   if ( lhs == 3) 
     {
       if (( MN = nsp_matrix_create(NVOID,'r',1,2)) == NULLMAT) return RET_BUG;
@@ -116,10 +116,12 @@ static int int_spget(Stack stack, int rhs, int opt, int lhs)
   if ( lhs >= 2) 
     {
       NthObj(2) = (NspObject *)Values;
+      NthObj(2)->ret_pos = 2;
     }
   if ( lhs >= 3) 
     {
       NthObj(3) = (NspObject *)MN;
+      NthObj(3)->ret_pos = 3;
     }
   MoveObj(stack,1,(NspObject *) RC);
   return Max(lhs,1);

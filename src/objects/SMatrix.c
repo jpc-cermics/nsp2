@@ -1200,7 +1200,7 @@ NspSMatrix*nsp_smatrix_part(NspSMatrix *A, NspMatrix *Ind)
 	{
 	  ind = ((int) Ind->R[k])-1;
 	  if ( ind < 0 || ind >= (int) strlen(A->S[i]))
-	    Loc->S[i][k]='*';
+	    Loc->S[i][k]=' ';
 	  else 
 	    Loc->S[i][k] = A->S[i][ind];
 	}

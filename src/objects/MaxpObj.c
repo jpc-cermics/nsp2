@@ -2843,10 +2843,28 @@ int int_mp_finite(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * test of casts 
+ * FIXME : just a test 
+ */
+
+int int_mp_cast(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((A = GetMat(stack,1)) == NULLMAT)  return RET_BUG;
+  nsp_matrix_cast_to_mpmatrix(A);
+  return 0;
+}
+
+
+
+/*
  * The Interface for basic matrices operation 
  */
 
 static OpTab Matrix_func[]={
+  {"cast",int_mp_cast},
   {"m2mp",int_m2mp},
   {"mp2m",int_mp2m},
   {"maxplus",int_m2mp},
