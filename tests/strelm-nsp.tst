@@ -40,7 +40,6 @@ mymacro=null();deff('y=mymacro(x)','y=x+1','n');
 [out,in,text]=string(mymacro);
 if out<>'y'|in<>'x'|text<>'y=x+1' then pause,end
 
-
 //convstr
 if convstr('ABC')<>'abc' then pause,end
 if convstr('ABC','l')<>'abc' then pause,end

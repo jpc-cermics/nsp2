@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 function [y,z]=f(x) 
   try 
     y='try';

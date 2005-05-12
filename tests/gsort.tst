@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 
 N=50;
 x=int(10*rand(N,3));

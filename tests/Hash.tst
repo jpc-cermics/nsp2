@@ -36,7 +36,7 @@ info(h)
 print(h);
 h2= hcreate(4)
 h2.enter[d=90,f=90]
-merge(h1,h2)
+//merge(h1,h2)
 h1.merge[h2]
 h1.__keys 
 h1.__attrs

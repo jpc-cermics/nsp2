@@ -3,47 +3,47 @@
 // --------------------
 
 function [z]=plus_sp_m(a,b) 
-z=full(a)+b 
+  z=full(a)+b 
 endfunction 
 
 function [z]=plus_m_sp(a,b) 
-z=a+full(b)
+  z=a+full(b)
 endfunction 
 
 function [z]=minus_sp_m(a,b) 
-z=full(a)-b 
+  z=full(a)-b 
 endfunction 
 
 function [z]=minus_m_sp(a,b) 
-z=a-full(b)
+  z=a-full(b)
 endfunction 
 
 function [z]=concatr_sp_m(a,b) 
-z=[a,sparse(b)]
+  z=[a,sparse(b)]
 endfunction 
 
 function [z]=concatd_sp_m(a,b) 
-z=[a;sparse(b)]
+  z=[a;sparse(b)]
 endfunction 
 
 function [z]=mult_m_sp(a,b)
 // a*b : eventuellement traiter les cas particulier 
-z=sparse(a)* b 
+  z=sparse(a)* b 
 endfunction
 
 function [z]=mult_sp_m(a,b)
 // a*b : eventuellement traiter les cas particulier 
-z=a * sparse(b)
+  z=a * sparse(b)
 endfunction
 
 function [z]=dst_m_sp(a,b)
 // a*b : eventuellement traiter les cas particulier 
-z=sparse(a)* b 
+  z=sparse(a)* b 
 endfunction
 
 function [z]=dst_sp_m(a,b)
 // a*b : eventuellement traiter les cas particulier 
-z=a * sparse(b)
+  z=a * sparse(b)
 endfunction
 
 // Copyright INRIA/ENPC 
@@ -85,7 +85,7 @@ function [T]=sptest1(ij,v,mn)
 endfunction
 
 function [T]=sptest2(ij,v)
- T=or(sparse1(ij,v,maxi(ij(:,1)),maxi(ij(:,2)))<>full(sparse(ij,v)))
+ T=or(sparse1(ij,v,max(ij(:,1)),max(ij(:,2)))<>full(sparse(ij,v)))
 endfunction
 
 //-- for real matrix
