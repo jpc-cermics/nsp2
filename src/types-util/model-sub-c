@@ -219,25 +219,22 @@ static NspMethods *@TYPEDOWNCASE@_get_methods(void) { return @TYPEDOWNCASE@_meth
  *----------------------------------------------------*/
 
 static OpTab @TYPENAME@_func[]={
-  /* #include "@TYPEDOWNCASE@-in.nam" */ 
   {"@TYPESHORT@_create",int_@TYPESHORT@_create}, 
-  /* 
-  {"setrowscols_@TYPESHORT@",int_set_attribute},
-  {"$dot_@TYPESHORT@",int_get_attribute},
-  {"$set_@TYPESHORT@",int_set_attributes},
-  */
   {(char *) 0, NULL}
 };
 
-/** call ith function in the @TYPENAME@ interface **/
+/* call ith function in the @TYPENAME@ interface 
+ */
 
 int @TYPENAME@_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(@TYPENAME@_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* 
+ * used to walk through the interface table 
+ * (for adding or removing functions) 
+ */
 
 void @TYPENAME@_Interf_Info(int i, char **fname, function (**f))
 {
