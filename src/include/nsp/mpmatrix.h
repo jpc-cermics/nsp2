@@ -234,5 +234,8 @@ extern NspMaxpMatrix *nsp_mpmat_hilbert(integer n,int job);
 extern int nsp_mpmat_fullcomp(NspMaxpMatrix *A, NspMaxpMatrix *B, char *op, int *err); 
 extern int nsp_mpmat_find(NspMaxpMatrix *A, int lhs, NspMaxpMatrix **Res1, NspMaxpMatrix **Res2); 
 
+extern NspMatrix * nsp_mpatrix_cast_to_matrix(NspMaxpMatrix *M);
+extern NspMaxpMatrix * nsp_matrix_cast_to_mpmatrix(NspMatrix *M);
+
 #endif 
 
