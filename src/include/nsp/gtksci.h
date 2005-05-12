@@ -42,13 +42,12 @@ extern void getcolordef (int *screenc);
 extern void setcolordef (int screenc); 
 
 /* zzledt-rl.c */ 
+
 extern int using_readline (void); 
 extern int get_one_char (char *prompt); 
 extern void SciGtkReadLine (char *prompt, char *buffer, int *buf_size, int *len_line, int *eof); 
 extern int nsp_read_history (void); 
 extern int nsp_write_history (void); 
-extern void sci_get_screen_size (int *rows, int *cols); 
-
 
 /* menus.c */ 
 extern void create_plugged_main_menu (void); 

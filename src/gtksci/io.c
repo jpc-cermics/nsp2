@@ -22,6 +22,7 @@
 #include "nsp/math.h"
 #include "../system/Sun.h"
 #include "nsp/gtksci.h"
+#include "nsp/sciio.h"
 
 /* WITH_TK is eventually defined in nsp/machine.h 
  * include by nsp/Math.h 
