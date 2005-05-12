@@ -10,7 +10,8 @@ TESTS= \
 	setro.dia \
 	matrix_io.dia \
 	test_minmax.dia \
-	testsbdiv.dia 
+	testsbdiv.dia \
+	fft.dia
 
 AFINIR= \
 	matelm-nsp.dia \
