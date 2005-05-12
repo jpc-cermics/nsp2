@@ -19,10 +19,11 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *--------------------------------------------------------------------------*/
+
 #include <stdlib.h>
+#include <stdarg.h>
 #include <math.h>
 #include "machine.h"
-#include "numeric.h" /* set of constants */
 
 #ifndef TRUE
 #define TRUE (1)
@@ -123,31 +124,7 @@ double tgamma(double);
 #else 
 #endif 
 
-#if defined(HAS_STDARG)
-#include <stdarg.h>
-#else
-#include <varargs.h>
-#endif 
 
-/* A set of macro for functions with variable numbers of
- * arguments to be used with either varargs.h or stdarg.h.
- * should be moved elsewhere since It could be more widely used XXXXXX
- */
-
-#if defined(HAS_STDARG)
-#   define SCI_VARARGS_DEF(type, name) (type name, ...)
-#   define SCI_VARARGS_2DEF(type1,name1,type2, name2) (type1 name1,type2 name2 , ...)
-#   define SCI_VARARGS_START(type, name, list) va_start(list, name)
-#   define SCI_VARARGS_2START(type1, name1,type2,name2, list) va_start(list, name2)
-#else
-#   define SCI_VARARGS_DEF(type, name) (va_alist) va_dcl
-#   define SCI_VARARGS_2DEF(type1, name1,type2,name2) (va_alist) va_dcl
-#   define SCI_VARARGS_START(type1, name1, list) \
-	type1 name1 ;va_start(list), name1 = va_arg(list, type1);
-#   define SCI_VARARGS_2START(type1, name1,type2,name2, list) \
-	type1 name1 ;type2 name2 ; va_start(list), name1 = va_arg(list, type1);\
-        name2 = va_arg(list, type2);
-#endif
 
 /* M_PI and M_E are defined in math.h */
 
@@ -163,11 +140,19 @@ double tgamma(double);
 #define M_E     2.7182818284590452354
 #endif 
 
+#ifndef M_LOG10E
+#define M_LOG10E 0.43429448190325182765
+#endif
+
 #ifdef WIN32 
 extern double acosh(double);
 extern double asinh(double);
 extern double atanh(double);
 #endif 
+
+/*
+ * 
+ */
 
 extern  double nsp_dlamch (char *cmach);
 

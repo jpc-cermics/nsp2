@@ -6,40 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics                            *
  *********************************************************************/
 
-/** XXXX : je fais pour l'instant comme ds sparse **/
-/** float.h existe chez Gnu **/
-/** pour l'instant je copie le float.h d'un sun **/
-/** lapack doit aussi avoir cela **/
-
-#ifndef DBL_MAX
-#define DBL_MAX 1.7976931348623157e+308
-#endif 
-#ifndef DBL_EPSILON 
-#define DBL_EPSILON 2.2204460492503131e-16
-#endif 
-#ifndef DBL_MIN
-#define DBL_MIN 2.2250738585072014e-308
-#endif 
-#ifndef SHRT_MAX
-#define SHRT_MAX 32767
-#endif 
-#ifndef LONG_MAX 
-#define LONG_MAX 2147483647L
-#endif 
-
-#define  MACHINE_RESOLUTION      DBL_EPSILON
-#define  LARGEST_REAL            DBL_MAX
-#define  SMALLEST_REAL           DBL_MIN
-#define  LARGEST_SHORT_INTEGER   SHRT_MAX
-#define  LARGEST_LONG_INTEGER    LONG_MAX
-
-#ifndef M_LOG10E
-#define M_LOG10E 0.43429448190325182765
-#endif
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+#include "machine.h"
 
 double nsp_abs_c(const  doubleC *x);
 double nsp_arg_c( const doubleC *x);

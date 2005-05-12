@@ -1,7 +1,13 @@
 /* -*- Mode: C -*- */
-/* Copyright INRIA */
+
 #ifndef MACHINE_H 
 #define MACHINE_H 
+
+/* headers */
+#undef HAVE_VALUES_H
+#undef HAVE_FLOAT_H
+#undef HAVE_LIMITS_H
+
 
 /* Define for using dld for sunos */
 #undef SUNOSDLD
@@ -111,23 +117,35 @@
 #define getwd(x) getcwd(x,1024) /* you must define char x[1024] */
 #endif
 
-/* 
-   Define integer C type which must fit Fortran integer
-   For Scilab to work, the rule is: 
-          size of Fortran double precision = 2 * size of Fortran integer
-
-   At the present time, we suppose:
-       size of Fortran integer = 4 bytes
-       size of Fortran double precision = 8 bytes
-       size of C int = 4 bytes
-*/
+/*
+ * obsolete 
+ */
 
 typedef int integer;
 
-/** Intel Blas library on win32 */
+/* Intel Blas library on win32 
+ */
 
 #ifdef MKL 
 #include "MKL.h" 
 #endif 
+
+
+#if defined(HAVE_FLOAT_H) && defined(HAVE_LIMITS_H)
+#   include <limits.h>
+#   include <float.h>
+#else 
+#   define  DBL_EPSILON             2.2204460492503131e-16   
+#   define  DBL_MAX                 1.7976931348623158e+308  
+#   define  DBL_MIN                 2.2250738585072014e-308
+#   define  SHRT_MAX                32767
+#   define  LONG_MAX                2147483647
+#endif 
+
+#   define  MACHINE_RESOLUTION      DBL_EPSILON
+#   define  LARGEST_REAL            DBL_MAX
+#   define  SMALLEST_REAL           DBL_MIN
+#   define  LARGEST_SHORT_INTEGER   SHRT_MAX
+#   define  LARGEST_LONG_INTEGER    LONG_MAX
 
 #endif /* MACHINE_H  */

@@ -77,8 +77,6 @@ NspMaxpMatrix *MatCreateFromData  (char *name, char type, integer m,
 			       integer n,struct caml_bigarray *b);
 #endif 
 
-/* XXXXXX  */ 
-#define EPSILON 1.e-15
 
 #define NULLMAXPMAT (NspMaxpMatrix*) 0
 

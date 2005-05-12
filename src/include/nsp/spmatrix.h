@@ -81,8 +81,6 @@ static int nsp_spmatrix_xdr_save(NspFile  *F, NspSpMatrix *M);
 #endif 
 
 #define NULLSP (  NspSpMatrix *) 0
-/* XXXXXXXXXXX */
-#define EPSILON 1.e-15
 
 /* SpMatObj.c */
 
