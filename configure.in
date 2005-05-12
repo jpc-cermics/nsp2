@@ -1256,6 +1256,8 @@ AC_CHECK_FUNCS(lgamma)
 ########################
 
 AC_CHECK_HEADERS(values.h) 
+AC_CHECK_HEADERS(limits.h) 
+AC_CHECK_HEADERS(float.h) 
 
 ##################
 ## termcap library
