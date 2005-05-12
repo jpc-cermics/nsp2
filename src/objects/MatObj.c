@@ -31,7 +31,7 @@
 #include "nsp/smatrix-in.h"
 #include "nsp/matutil.h"
 #include "nsp/matint.h"
-#include "nsp/gsort.h"
+#include "nsp/gsort-p.h"
 
 /* FIXME: should be here as private */
 extern matint_redim nsp_matrix_redim_iface; 
