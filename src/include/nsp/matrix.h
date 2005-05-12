@@ -22,7 +22,7 @@ typedef int (*matrix_save) (NspFile  *F, NspMatrix *M);
 typedef struct _nsp_type_Matrix { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
-  matrix_save * save;
+  matrix_save * save; /* FIXME: unused since it was move in NSP_TYPE_OBJECT */
 } NspTypeMatrix;
 
 struct _nsp_matrix {
