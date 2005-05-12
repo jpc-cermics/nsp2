@@ -310,7 +310,7 @@ int nsp_file_close_xdr_w(NspFile  *F)
 
 /**
  *nsp_xdr_save_d:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @x: a double precision number to be saved in F.
  * 
  * Saves a double in a file with xdr coding. 
@@ -328,7 +328,7 @@ int nsp_xdr_save_d(XDR *xdrs, double x)
 
 /**
  *nsp_xdr_load_d:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @x: a pointer to a double precision number to be read in F.
  * 
  * Reads a double in a file assuming xdr coding. 
@@ -347,7 +347,7 @@ int nsp_xdr_load_d(XDR *xdrs, double *x)
 
 /**
  *nsp_xdr_save_i:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @ix: 
  * 
  * Saves an int in a file with xdr coding. 
@@ -365,7 +365,7 @@ int nsp_xdr_save_i(XDR *xdrs, integer ix)
 
 /**
  *nsp_xdr_load_i:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @ix: 
  * 
  * 
@@ -381,7 +381,7 @@ int nsp_xdr_load_i(XDR *xdrs, integer *ix)
 
 /**
  *nsp_xdr_save_c:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @c: 
  * 
  * Saves a char in a file with xdr coding. 
@@ -399,7 +399,7 @@ int nsp_xdr_save_c(XDR *xdrs, char c)
 
 /**
  *nsp_xdr_load_c:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @c: 
  * 
  * Return value: %OK or %FAIL
@@ -413,7 +413,7 @@ int nsp_xdr_load_c(XDR *xdrs, char *c)
 
 /**
  *nsp_xdr_save_array_i:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @nx: 
  * @l: 
  * 
@@ -433,7 +433,7 @@ int nsp_xdr_save_array_i(XDR *xdrs, int *nx, int l)
 
 /**
  *nsp_xdr_load_array_i:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @nx: 
  * @l: 
  * 
@@ -453,7 +453,7 @@ int nsp_xdr_load_array_i(XDR *xdrs, int *nx, int l)
 
 /**
  *nsp_xdr_save_array_d:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @nx: 
  * @l: 
  * Saves an array of double in a file with xdr coding. 
@@ -474,7 +474,7 @@ int nsp_xdr_save_array_d(XDR *xdrs, double *nx, integer l)
 
 /**
  *nsp_xdr_load_array_d:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @nx: 
  * @mn: 
  * 
@@ -498,7 +498,7 @@ int nsp_xdr_load_array_d(XDR *xdrs, double *nx, integer mn)
 
 /**
  *nsp_xdr_save_string:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @str: string to be saved 
  * 
  * Return value: %OK or %FAIL
@@ -515,7 +515,7 @@ int nsp_xdr_save_string(XDR *xdrs, char *str)
 
 /**
  *nsp_xdr_load_string:
- * @F: a  #Nspfile Object
+ * @xdrs: a  #XDR structure
  * @buf: 
  * @buf_len: 
  * 
