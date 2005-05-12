@@ -85,7 +85,7 @@ NspObject *nsp_object_copy(NspObject *O)
  * @O: 
  * @j: 
  * 
- * Returns the <<size>> of an object 
+ * Returns the size of an object 
  * The semantic depends on objects
  * 
  * Return value: an integer 

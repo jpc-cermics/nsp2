@@ -35,10 +35,14 @@ NspObject *Null = NULLOBJ;      /* Direct access to %null **/
 NspList  *GlobalFrame = NULLLIST; /* Direct access to GlobalFrame **/
 NspObject   *Reserved= NULLOBJ;      /* used to fill stack with non empty object */
 
+
 /**
  * nsp_init_frames:
+ * @argc: length of @argv 
+ * @argv: array of characters
  * 
  * Initialize frame data structure which is used for function invocation.
+ * 
  * Return value: %OK or %FAIL.
  **/
 

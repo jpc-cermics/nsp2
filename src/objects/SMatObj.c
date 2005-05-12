@@ -515,8 +515,10 @@ int is_string_in_array(const char *key, char **Table, int flag)
 
 /**
  * string_not_in_array:
- * @key: 
- * @Table: 
+ * @stack: nsp calling stack
+ * @key:   key to search 
+ * @Table: array of char *
+ * @message: error message 
  * 
  * used in conjunction with is_string_in_array for error 
  * message. 
