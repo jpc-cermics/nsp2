@@ -802,22 +802,18 @@ static int int_bmatrix_deleteelts_gen(Stack stack, int rhs, int opt, int lhs, de
     {
       /* Elts is boolean: use find(Elts) **/
       NspBMatrix *BElts;
-      if ((BElts = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-      if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) return RET_BUG;
+      if ((BElts = GetBMat(stack,2)) == NULLBMAT) 
+	return RET_BUG;
+      if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) 
+	return RET_BUG;
     }
   else
     {
-      int flag;
-      if ((Elts = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-      /* we must get a copy of Elts if Elts need to be sorted **/
-      flag = mat_is_increasing(Elts);
-      if ( flag == FAIL) 
-	{
-	  if ((Elts = GetRealMatCopy(stack,2)) == NULLMAT) return RET_BUG;
-	nsp_mat_sort(Elts,1,"g","i");
-	}
+      if ((Elts = GetRealMat(stack,2)) == NULLMAT) 
+	return RET_BUG;
     }
-  if ( (*F)( A, Elts) == FAIL ) return RET_BUG;
+  if ( (*F)( A, Elts) == FAIL )
+    return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }

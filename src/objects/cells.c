@@ -673,7 +673,7 @@ int nsp_cells_delete_elements(NspCells *A, NspMatrix *Elts)
 
   if ( Elts->mn == 0) return OK;
   
-  if ( (flag = Complement(A->mn, Elts, &count)) == NULL )
+  if ( (flag = nsp_complement_for_deletions(A->mn, Elts, &count)) == NULL )
     return FAIL;
 
   new_A_mn = A->mn - count;

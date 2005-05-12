@@ -1619,23 +1619,24 @@ static int int_mpdeleteelts_gen(Stack stack, int rhs, int opt, int lhs, mpdelf F
   NspMatrix *Elts;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((A = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
+  if ((A = GetMpMat(stack,1)) == NULLMAXPMAT) 
+    return RET_BUG;
   if ( IsBMatObj(stack,2)  ) 
     {
       /* Elts is boolean : use find(Elts) **/
       NspBMatrix *BElts;
-      if ((BElts = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-      if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) return RET_BUG;
+      if ((BElts = GetBMat(stack,2)) == NULLBMAT) 
+	return RET_BUG;
+      if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) 
+	return RET_BUG;
     }
   else
     {
-      int flag;
-      if ((Elts = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-      /* we must get a copy of Elts if A== Elts or if Elts need to be sorted **/
-      flag = mat_is_increasing(Elts);
-      if ( flag == FAIL) nsp_mat_sort(Elts,1,"g","i");
+      if ((Elts = GetRealMat(stack,2)) == NULLMAT) 
+	return RET_BUG;
     }
-  if ( (*F)( A, Elts) == FAIL ) return RET_BUG;
+  if ( (*F)( A, Elts) == FAIL ) 
+    return RET_BUG;
   NSP_OBJECT(A)->ret_pos =1;
   return 1;
 }
@@ -2854,12 +2855,12 @@ static OpTab Matrix_func[]={
   {"extractrows_mp",int_mpextractrows},
   {"extract_mp",int_mpextract},
   {"extractelts_mp",int_mpextractelts},
-  {"deletecols_mp_mp", int_mpdeletecols},
-  {"deleterows_mp_mp", int_mpdeleterows},
-  {"deleteelts_mp_mp", int_mpdeleteelts},
-  {"deletecols_m_b", int_mpdeletecols},
-  {"deleterows_m_b", int_mpdeleterows},
-  {"deleteelts_m_b", int_mpdeleteelts},
+  {"deletecols_mp_m", int_mpdeletecols},
+  {"deleterows_mp_m", int_mpdeleterows},
+  {"deleteelts_mp_m", int_mpdeleteelts},
+  {"deletecols_mp_b", int_mpdeletecols},
+  {"deleterows_mp_b", int_mpdeleterows},
+  {"deleteelts_mp_b", int_mpdeleteelts},
   {"setrowscols_mp",int_mpsetrc},
   {"addcols_mp_mp" ,  int_mpaddcols },
   {"addrows_mp_mp" ,  int_mpaddrows },

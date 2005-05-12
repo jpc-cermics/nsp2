@@ -31,6 +31,7 @@
 #include "nsp/smatrix-in.h"
 #include "nsp/matutil.h"
 #include "nsp/matint.h"
+#include "nsp/gsort.h"
 
 /* FIXME: should be here as private */
 extern matint_redim nsp_matrix_redim_iface; 
@@ -683,19 +684,32 @@ Bounds (const NspMatrix * A, int * imin, int * imax)
     }
 }
 
-/*
- * Utility function : computes an array of flags
- * (0 or 1) useful for the A(Elts)=[] operations.
- * Where mn = A->mn. count is the number of elements
- * to delete and flag[k] = 0 if A[k] must be deleted
- * (else flag[k] = 1). Introduced by Bruno (7 mai 05)
+/**
+ * nsp_complement_for_deletions
+ * @mn: upper bound for indices stored in @Elts 
+ * @Elts: a #NspMatrix used as a vector of indices 
+ * @Count: is the real number of indices (@Count < @Elts->mn in case of duplicated indices)
+ *
+ * This utility routine is used for deletions operations (A(ind,:)=[], A(:,ind)=[], A(ind)=[],
+ * when elements of the matrix A are String, Poly, Cells, ... 
+ *
+ * It performs:
+ *   1/  the computation of an int array (may be a boolean) flag of size mn with
+ *          flag[i] = 0  if the index i+1 is in @Elts
+ *          flag[i] = 1  if not
+ *   2/  the verification of bounds constraints on indices
+ * 
+ *  returns  the array flag 
+ *           or NULL in case of alloc pb or if indices don't respect bound constraints
+ *           (in this last case an error message is issued and the array ind is freed).
+ *  Routine introduced by Bruno Pincon (mai 2005)
  */
 
-int *Complement(int mn, const NspMatrix *Elts, int *Count)
+int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count)
 {
   int *flag, count=0, i, k;
 
-  if ( (flag = malloc(mn*sizeof(int))) == NULL )
+  if ( (flag = nsp_alloc_int(mn)) == NULL )
     return NULL;
 
   for ( i = 0 ; i < mn ; i++ )
@@ -706,7 +720,7 @@ int *Complement(int mn, const NspMatrix *Elts, int *Count)
       k = (int)(Elts->R[i]);
       if ( k < 1  ||  k > mn )
 	{
-	  free(flag);
+	  FREE(flag);
 	  Scierror("Error:\tIndices out of bounds\n"); return NULL;
 	}
       k--;
@@ -717,6 +731,84 @@ int *Complement(int mn, const NspMatrix *Elts, int *Count)
     }
   *Count = count;
   return flag;
+}
+
+/**
+ * nsp_indices_for_deletions
+ * @mn: upper bound for indices stored in @Elts 
+ * @Elts: a #NspMatrix used as a vector of indices 
+ * @Count: is the real number of indices (@Count < @Elts->mn in case of duplicated indices)
+ *
+ * This utility routine is used for deletions operations (A(ind,:)=[], A(:,ind)=[], A(ind)=[],
+ * when elements of A are of fixed size (that is for simple Matrix, Boolean Matrix, 
+ * Maxplus Matrix,...)
+ * It performs:
+ *   1/  convertion of indices to int 
+ *   2/  re-ordering indices if needed 
+ *   3/  verification of bounds constraints on indices
+ *   4/  in case of duplicated indices it compress the array
+ * 
+ *  returns  the (int) array of indices  ind[0..Count-1] being in strict increasing order.
+ *           or NULL in case of alloc pb or if indices don't respect bound constraints
+ *           (in this last case an error message is issued and the array ind is freed).
+ *
+ *  CAUTION : on output indices are 0-based (while they are 1-based in @Elts).
+ */
+
+int *nsp_indices_for_deletions(int mn, const NspMatrix *Elts, int *Count)
+{
+  int *ind, i, j, ne=Elts->mn, in_order=1, in_strict_order=1, c__1=1, zero=0;
+
+  if ( (ind = nsp_alloc_int(ne)) == NULL )
+    return NULL;
+
+  ind[0] = (int)(Elts->R[0]) - 1;
+      
+  for ( i = 1 ; i < ne ; i++ )
+    {
+      ind[i] = (int)(Elts->R[i]) - 1;
+      if ( ind[i] <= ind[i-1] )
+	{
+	  in_strict_order = 0;
+	  if ( ind[i] != ind[i-1] )  /* so ind[i] < ind[i-1] */
+	    in_order = 0;
+	}
+    }
+
+  if ( ! in_order )
+    C2F(gsort)(ind,NULL,NULL,&zero,&c__1,&ne,"i","i");
+      
+  if ( ind[0] < 0  || ind[ne-1] >= mn )
+    {
+      FREE(ind);
+      Scierror("Error:\tIndices out of bounds\n"); return NULL;
+    }
+
+  if ( ! in_strict_order )  /* may be there are duplicated indices */
+    {
+      i = 0;
+      j = 0;
+      while ( j < ne )
+	{
+	  /*  here ind[j] is the current element to examine for duplication 
+           *  all elements before (if any) are such that ind[k] < ind[j] 
+           */
+	  if ( j == ne-1 )
+	    ind[i] = ind[j];
+	  else
+	    {
+	      while ( j+1 < ne  &&  ind[j+1] == ind[j] )
+		j++;
+	      ind[i] = ind[j];
+	    }
+	  i++; j++;
+	}
+      *Count = i;
+    }
+  else
+    *Count = ne;
+
+  return ind;
 }
 
 
@@ -2213,12 +2305,6 @@ int_mxsetrc (Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/*
- * Res=MatDeletecols(A,Cols)
- *     Cols unchanged  ( restored at end of function if necessary)
- * WARNING : A must be changed by this routine
- * =======
- */
 
 /* generic interface for elts, rows and columns deletion **/
 
@@ -2243,18 +2329,8 @@ int_mxdeleteelts_gen (Stack stack, int rhs, int opt, int lhs, delf F)
     }
   else
     {
-      int flag;
       if ((Elts = GetRealMat (stack, 2)) == NULLMAT)
 	return RET_BUG;
-      /* we must get a copy of Elts if A== Elts or if Elts need to be sorted * */
-      flag = mat_is_increasing (Elts);
-      if (A == Elts || flag == FAIL)
-	{
-	  if ((Elts = GetRealMatCopy (stack, 2)) == NULLMAT)
-	    return RET_BUG;
-	}
-      if (flag == FAIL)
-	nsp_mat_sort (Elts, 1, "g", "i");
     }
   if ((*F) (A, Elts) == FAIL)
     return RET_BUG;
@@ -2262,6 +2338,12 @@ int_mxdeleteelts_gen (Stack stack, int rhs, int opt, int lhs, delf F)
   return 1;
 }
 
+/*
+ * Res=MatDeletecols(A,Cols)
+ *     Cols unchanged  ( restored at end of function if necessary)
+ * WARNING : A must be changed by this routine
+ * =======
+ */
 int
 int_mxdeletecols (Stack stack, int rhs, int opt, int lhs)
 {
@@ -2274,7 +2356,6 @@ int_mxdeletecols (Stack stack, int rhs, int opt, int lhs)
  *     Rows unchanged  ( restored at end of function if necessary)
  * WARNING : A must be changed by this routine
  */
-
 int
 int_mxdeleterows (Stack stack, int rhs, int opt, int lhs)
 {
@@ -2286,7 +2367,6 @@ int_mxdeleterows (Stack stack, int rhs, int opt, int lhs)
  *     Elts unchanged  ( restored at end of function if necessary)
  * WARNING : A must be changed by this routine
  */
-
 int
 int_mxdeleteelts (Stack stack, int rhs, int opt, int lhs)
 {

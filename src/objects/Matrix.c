@@ -1339,42 +1339,40 @@ int mat_is_increasing(const NspMatrix *A)
  * @Cols: a #NspMatrix
  *
  * Performs A(:,Cols) = []. 
- * Important Note: @Cols must be real and increasing 
- * and this is not checked here
- * 
+ * Based on the template code  nsp_TYPEmatrix_delete_columns
+ * (see nsp2_dev/matrix/deletions_templates.c)
+ *
  * returns %OK or %FAIL.
  */
 
 int nsp_matrix_delete_columns(NspMatrix *A, NspMatrix *Cols)
 {
-  int ioff=0,cmin,cmax,i,col,last,nn;
-  if ( Cols->mn == 0) return(OK);
-  /* Bounds(Cols,&cmin,&cmax); */
-  cmin = (int) Cols->R[0]; cmax = (int) Cols->R[Cols->mn-1];
-  if ( cmin < 1 || cmax > A->n ) 
+  int i,*ind,k1,k2,nn,ncol,ioff=0;
+
+  if ( Cols->mn == 0) return OK;
+
+  if ( (ind = nsp_indices_for_deletions(A->n, Cols, &ncol)) == NULL ) 
+    return FAIL;
+
+  for ( i = 0 ; i < ncol ; i++)
     {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  for ( i = 0 ; i < Cols->mn ; i++)
-    {
-      /* mv [Cols[i],Cols[i+1] back ioff columns **/
-      col= ((int) Cols->R[i]);
-      last = (i == Cols->mn -1 ) ? A->n -1 : ((int) Cols->R[i+1]) -1;
-      nn= (last-col+1)*A->m;
+      k1 = ind[i];
+      k2 = (i < ncol-1 ) ? ind[i+1] : A->n;
+      nn = (k2-k1-1)*A->m;  /* nb of elts to move = nb of elts strictly between columns k1 and k2 */
       if ( nn != 0) 
 	{
-	  ioff++;
 	  if ( A->rc_type == 'r') 
-	    /* C2F(dcopy)(&nn,A->R+ (col)*A->m,&un,A->R+(col-ioff)*A->m,&un); */
-	    memcpy(A->R+(col-ioff)*A->m,A->R+ (col)*A->m,nn*sizeof(double));
+	    memmove(A->R+(k1-ioff)*A->m, A->R+ (k1+1)*A->m, nn*sizeof(double));
 	  else 
-	    /*C2F(zcopy)(&nn,A->C+ (col)*A->m,&un,A->C+(col-ioff)*A->m,&un);*/
-	    memcpy(A->C+(col-ioff)*A->m,A->C+ (col)*A->m,nn*sizeof(doubleC));
+	    memmove(A->C+(k1-ioff)*A->m, A->C+ (k1+1)*A->m, nn*sizeof(doubleC));
 	}
+      ioff++;
     }
-  if ( nsp_matrix_resize(A,A->m,A->n-ioff)== FAIL) return(FAIL);
-  return(OK);
+
+  FREE(ind);
+  if ( nsp_matrix_resize(A,A->m,A->n-ncol)== FAIL) 
+    return FAIL;
+  return OK;
 }
 
 
@@ -1384,43 +1382,47 @@ int nsp_matrix_delete_columns(NspMatrix *A, NspMatrix *Cols)
  * @Rows: a #NspMatrix
  *
  * Performs A(Rows,:)  = []. 
- * Important Note: @Rows  must be real and increasing 
- * and this is not checked here
- * 
+ * Based on the template code  nsp_TYPEmatrix_delete_rows
+ * (see nsp2_dev/matrix/deletions_templates.c) * 
+ *
  * returns %OK or %FAIL.
  */
 
 int nsp_matrix_delete_rows(NspMatrix *A, NspMatrix *Rows)
 {
-  int rmin,rmax,i,j,ind,last,nn,ioff=0;
-  if ( Rows->mn == 0) return(OK);
-  /* Bounds(Rows,&rmin,&rmax); */
-  rmin= (int) Rows->R[0]; rmax= (int) Rows->R[Rows->mn-1];
-  if ( rmin < 1 || rmax > A->m ) 
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
+  int i,j,*ind,k1,k2,nn,nrow,stride=0,ioff=0;
+
+  if ( Rows->mn == 0) return OK;
+
+  if ( (ind = nsp_indices_for_deletions(A->m, Rows, &nrow)) == NULL ) 
+    return FAIL;
+
   for ( j = 0 ; j < A->n  ; j++)
-    for ( i = 0 ; i < Rows->mn ; i++)
-      {
-	ind =  ((int) Rows->R[i])+ j*A->m;
-	last = (i < Rows->mn -1) ? ((int) Rows->R[i+1]) +j*A->m : ((int) Rows->R[0])-1+(j+1)*A->m ;
-	last = ( last < A->mn ) ? last : A->mn;
-	nn= (last-ind);
-	if ( nn != 0) 
-	  {
-	    ioff++;
-	    if ( A->rc_type == 'r') 
-	      /*C2F(dcopy)(&nn,A->R +ind,&un,A->R +ind -ioff,&un); */
-	      memmove(A->R +ind -ioff,A->R +ind,nn*sizeof(double));
-	    else 
-	      /* C2F(zcopy)(&nn,A->C +ind,&un,A->C +ind -ioff,&un); */
-	      memmove(A->C +ind -ioff,A->C +ind,nn*sizeof(doubleC));
-	  }
-      }
-  if ( nsp_matrix_resize(A,A->m -Rows->mn,A->n)== FAIL) return(FAIL);
-  return(OK);
+    {
+      k1 = ind[0] + stride;
+      for ( i = 0 ; i < nrow ; i++)
+	{
+	  if ( i < nrow-1 ) 
+	    k2 =  ind[i+1] + stride;
+	  else 
+	    k2 = ( j < A->n-1) ? ind[0] + stride + A->m : A->mn;
+	  nn = k2-k1-1;
+	  if ( nn != 0) 
+	    {
+	      if ( A->rc_type == 'r') 
+		memmove(A->R + k1-ioff, A->R + k1+1, nn*sizeof(double));
+	      else 
+		memmove(A->C + k1-ioff, A->C + k1+1, nn*sizeof(doubleC));
+	    }
+	  ioff++;
+	  k1 = k2;
+	}
+      stride += A->m;
+    }
+
+  FREE(ind);
+  if ( nsp_matrix_resize(A,A->m-nrow,A->n) ==  FAIL ) return FAIL;
+  return OK;
 }
 
 
@@ -1430,50 +1432,43 @@ int nsp_matrix_delete_rows(NspMatrix *A, NspMatrix *Rows)
  * @Elts: a #NspMatrix
  *
  * Performs A(Elts) = []. 
- *  Modified by bruno (bug correction). The new version handles
- *  the case when Elts are not strictly increasing but in any
- *  order.
+ * Based on the template code nsp_TYPEmatrix_delete_elements
+ * (see nsp2_dev/matrix/deletions_templates.c)
  *
  * returns %OK or %FAIL.
  */
 
 int nsp_matrix_delete_elements(NspMatrix *A, NspMatrix *Elts)
 {
-  int i,k,*flag, new_A_mn, count;
+  int i,*ind,k1,k2,nn,ne,ioff=0;
 
-  if ( Elts->mn == 0) return OK;
-  
-  if ( (flag = Complement(A->mn, Elts, &count)) == NULL )
+  if ( (ind = nsp_indices_for_deletions(A->mn, Elts, &ne)) == NULL ) 
     return FAIL;
 
-  new_A_mn = A->mn - count;
-  k = 0;
-  if ( A->rc_type == 'r')
-    for ( i = 0 ; i < A->mn && k < new_A_mn ; i++ )
-      {
-	if ( flag[i] )
-	  {
-	    A->R[k] = A->R[i];
-	    k++;
-	  }
-      }
-  else   /* complex case */
-    for ( i = 0 ; i < A->mn && k < new_A_mn ; i++ )
-      if ( flag[i] )
+  k1 = ind[0];
+  for ( i = 0 ; i < ne ; i++)
+    {
+      k2 = ( i < ne-1 ) ? ind[i+1] : A->mn;
+      nn = k2-k1-1;
+      if ( nn != 0) 
 	{
-	  A->C[k].r = A->C[i].r;
-	  A->C[k].i = A->C[i].i;
-	  k++;
+	  if ( A->rc_type == 'r') 
+	    memmove(A->R + k1-ioff, A->R + k1+1, nn*sizeof(double));
+	  else 
+	    memmove(A->C + k1-ioff, A->C + k1+1, nn*sizeof(doubleC));
 	}
-  free(flag);
+      ioff++;
+      k1 = k2;
+    }
+  FREE(ind);
 
   if ( A->m == 1)
-    { 
-      if ( nsp_matrix_resize(A,1,new_A_mn) == FAIL) return FAIL;
+    {
+      if ( nsp_matrix_resize(A,1,A->mn-ne) == FAIL) return FAIL;
     }
   else
-    { 
-      if ( nsp_matrix_resize(A,new_A_mn,1) == FAIL) return FAIL;
+    {
+      if ( nsp_matrix_resize(A,A->mn-ne,1) == FAIL) return FAIL;
     }
   return OK;
 }

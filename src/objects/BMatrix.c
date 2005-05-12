@@ -559,39 +559,35 @@ int nsp_bmatrix_set_rows(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
  * @Cols: a #NspMatrix
  *
  * Performs A(:,Cols) = []. 
- * Important Note: @Cols must be real and increasing 
- * and this is not checked here
- * 
+ * Based on the template code  nsp_TYPEmatrix_delete_columns
+ * (see nsp2_dev/matrix/deletions_templates.c)
+ *
  * returns %OK or %FAIL.
  */
 
-
 int nsp_bmatrix_delete_columns(NspBMatrix *A, NspMatrix *Cols)
 {
-  integer ioff=0,cmin,cmax,i,un=1,col,last,nn;
-  if ( Cols->mn == 0) return(OK);
-  /* Bounds(Cols,&cmin,&cmax); */
-  cmin = (int) Cols->R[0]; cmax = (int) Cols->R[Cols->mn-1];
-  if ( cmin < 1 || cmax > A->n ) 
+  int i,*ind,k1,k2,nn,ncol,ioff=0;
+
+  if ( Cols->mn == 0) return OK;
+
+  if ( (ind = nsp_indices_for_deletions(A->n, Cols, &ncol)) == NULL ) 
+    return FAIL;
+
+  for ( i = 0 ; i < ncol ; i++)
     {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  for ( i = 0 ; i < Cols->mn ; i++)
-    {
-      /* mv [Cols[i],Cols[i+1] back ioff columns **/
-      col= ((int) Cols->R[i]);
-      last = (i == Cols->mn -1 ) ? A->n -1 : ((int) Cols->R[i+1]) -1;
+      k1 = ind[i];
+      k2 = (i < ncol-1 ) ? ind[i+1] : A->n;
+      nn = (k2-k1-1)*A->m;  /* nb of elts to move = nb of elts strictly between columns k1 and k2 */
       if ( nn != 0) 
-	{
-	  ioff++;
-	  nn= (last-col+1)*A->m;
-	  /* Assuming Boolean are integers **/
-	nsp_icopy(&nn,A->B+ (col)*A->m,&un,A->B+(col-ioff)*A->m,&un);
-	}
+	memmove(A->B+(k1-ioff)*A->m, A->B+ (k1+1)*A->m, nn*sizeof(Boolean));
+      ioff++;
     }
-  if (nsp_bmatrix_resize(A,A->m,A->n-ioff)== FAIL) return(FAIL);
-  return(OK);
+
+  FREE(ind);
+  if ( nsp_bmatrix_resize(A,A->m,A->n-ncol)== FAIL) 
+    return FAIL;
+  return OK;
 }
 
 /**
@@ -600,39 +596,42 @@ int nsp_bmatrix_delete_columns(NspBMatrix *A, NspMatrix *Cols)
  * @Rows: a #NspMatrix
  *
  * Performs A(Rows,:)  = []. 
- * Important Note: @Rows  must be real and increasing 
- * and this is not checked here
+ * Based on the template code  nsp_TYPEmatrix_delete_rows
+ * (see nsp2_dev/matrix/deletions_templates.c) * 
  * 
  * returns %OK or %FAIL.
  */
 
-
 int nsp_bmatrix_delete_rows(NspBMatrix *A, NspMatrix *Rows)
 {
-  integer rmin,rmax,i,j,ind,last,nn,ioff=0,un=1;
-  if ( Rows->mn == 0) return(OK);
-  /* Bounds(Rows,&rmin,&rmax); */
-  rmin= (int) Rows->R[0]; rmax= (int) Rows->R[Rows->mn-1];
-  if ( rmin < 1 || rmax > A->m ) 
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
+  int i,j,*ind,k1,k2,nn,nrow,stride=0,ioff=0;
+
+  if ( Rows->mn == 0) return OK;
+
+  if ( (ind = nsp_indices_for_deletions(A->m, Rows, &nrow)) == NULL ) 
+    return FAIL;
+
   for ( j = 0 ; j < A->n  ; j++)
-    for ( i = 0 ; i < Rows->mn ; i++)
-      {
-	ind =  ((int) Rows->R[i])+ j*A->m;
-	last = (i < Rows->mn -1) ? ((int) Rows->R[i+1])-1 +j*A->m : ((int) Rows->R[i])-1+(j+1)*A->m ;
-	last = ( last < A->mn ) ? last : A->mn;
-	nn= (last-ind);
-	if ( nn != 0) 
-	  {
-	    ioff++;
-	nsp_icopy(&nn,A->B +ind,&un,A->B +ind -ioff,&un);
-	  }
-      }
-  if (nsp_bmatrix_resize(A,A->m -Rows->mn,A->n)== FAIL) return(FAIL);
-  return(OK);
+    {
+      k1 = ind[0] + stride;
+      for ( i = 0 ; i < nrow ; i++)
+	{
+	  if ( i < nrow-1 ) 
+	    k2 =  ind[i+1] + stride;
+	  else 
+	    k2 = ( j < A->n-1) ? ind[0] + stride + A->m : A->mn;
+	  nn = k2-k1-1;
+	  if ( nn != 0) 
+	    memmove(A->B + k1-ioff, A->B + k1+1, nn*sizeof(Boolean));
+	  ioff++;
+	  k1 = k2;
+	}
+      stride += A->m;
+    }
+
+  FREE(ind);
+  if ( nsp_bmatrix_resize(A,A->m-nrow,A->n) ==  FAIL ) return FAIL;
+  return OK;
 }
 
 /**
@@ -640,41 +639,39 @@ int nsp_bmatrix_delete_rows(NspBMatrix *A, NspMatrix *Rows)
  * @A: a #NspBMatrix
  * @Elts: a #NspMatrix
  *
- * Performs A(Elts) = [].
- *  Modified by Bruno (see nsp_matrix_delete_elements
- *  in Matrix.c)
+ * Performs A(Elts) = []. 
+ * Based on the template code nsp_TYPEmatrix_delete_elements
+ * (see nsp2_dev/matrix/deletions_templates.c)
  * 
  * returns %OK or %FAIL.
  */
 
 int nsp_bmatrix_delete_elements(NspBMatrix *A, NspMatrix *Elts)
 {
-  int i,k,*flag, new_A_mn, count;
+  int i,*ind,k1,k2,nn,ne,ioff=0;
 
-  if ( Elts->mn == 0) return OK;
-  
-  if ( (flag = Complement(A->mn, Elts, &count)) == NULL )
+  if ( (ind = nsp_indices_for_deletions(A->mn, Elts, &ne)) == NULL ) 
     return FAIL;
 
-  new_A_mn = A->mn - count;
-  k = 0;
-  for ( i = 0 ; i < A->mn && k < new_A_mn ; i++ )
+  k1 = ind[0];
+  for ( i = 0 ; i < ne ; i++)
     {
-      if ( flag[i] )
-	{
-	  A->B[k] = A->B[i];
-	  k++;
-	}
+      k2 = ( i < ne-1 ) ? ind[i+1] : A->mn;
+      nn = k2-k1-1;
+      if ( nn != 0) 
+	memmove(A->B + k1-ioff, A->B + k1+1, nn*sizeof(Boolean));
+      ioff++;
+      k1 = k2;
     }
-  free(flag);
+  FREE(ind);
 
   if ( A->m == 1)
-    { 
-      if ( nsp_bmatrix_resize(A,1,new_A_mn) == FAIL) return FAIL;
+    {
+      if ( nsp_bmatrix_resize(A,1,A->mn-ne) == FAIL) return FAIL;
     }
   else
-    { 
-      if ( nsp_bmatrix_resize(A,new_A_mn,1) == FAIL) return FAIL;
+    {
+      if ( nsp_bmatrix_resize(A,A->mn-ne,1) == FAIL) return FAIL;
     }
   return OK;
 }
@@ -711,6 +708,8 @@ NspBMatrix  *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols
       }
   return(Loc);
 }
+
+
 /**
  * nsp_bmatrix_extract_elements:
  * @A: a #NspBMatrix
@@ -720,8 +719,6 @@ NspBMatrix  *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols
  * 
  * returns a #MspBMatrix or %NULLMAT 
  */
-
-
 
 NspBMatrix  *nsp_bmatrix_extract_elements(NspBMatrix *A, NspMatrix *Elts)
 {

@@ -591,98 +591,55 @@ int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
 /*
  *  A(:,Cols) = []
  *  A is changed.
- *  Cols must be strictly increasing . XXXXXXX
- *  A changer
  */
-
 int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
 {
-  integer ioff=0,cmin,cmax,i,col,last,nn,j;
-  /* XXXXX Rajouter un test si Cols == [] **/
-  Bounds(Cols,&cmin,&cmax);
-  if ( Cols->mn == 0) return(OK);
-  if ( cmin < 1 || cmax > A->n )
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  /* Must clean data first **/
-  for ( i = 0 ; i < Cols->mn ; i++)
-    {
-      int i1= (((int) Cols->R[i])-1)*A->m;
-      for ( j = 0 ; j < A->m ; j++) 
-	StringDestroy(&(A->S[j+i1]));
-    }
-  /* Move data  **/
-  for ( i = 0 ; i < Cols->mn ; i++)
-    {
-      ioff++;
-      /* mv [Cols[i],Cols[i+1][ back ioff columns **/
-      col= ((int) Cols->R[i]);
-      last = (i == Cols->mn -1 ) ? A->n : ((int) Cols->R[i+1]) -1;
-      nn= (last-col)*A->m;
-      /* Make the move **/
-      for ( j = 0 ; j < nn ; j++ )
+  int i, j, k, ij, *flag, new_A_n, count;
+
+  if ( Cols->mn == 0) return OK;
+
+  if ( (flag = nsp_complement_for_deletions(A->n, Cols, &count)) == NULL )
+    return FAIL;
+
+  new_A_n = A->n - count;
+
+  k = 0;
+  ij = 0;
+  for ( j = 0 ; j < A->n  ; j++)
+    if ( flag[j] )
+      {
+	if ( k < ij )
+	  for ( i = 0 ; i < A->m ; i++ )
+	    {
+	      A->S[k] = A->S[ij];
+	      A->S[ij] = NULLSTRING;
+	      k++; ij++; 
+	    }
+	else
+	  {
+	    k += A->m ; j += A->m;
+	  }
+      }
+    else
+      for ( i = 0 ; i < A->m ; i++ )
 	{
-	  char *s;
-	  if (( s =CopyString(A->S[(col)*A->m+j]))== (String *) 0)  
-	    return(FAIL);
-	  /* store moved data **/
-	  A->S[(col-ioff)*A->m+j]=s;
+	  StringDestroy(&A->S[ij]);  /* DATADestroy: must NULLIFY the pointer */
+	  ij++;
 	}
-    }
-  if ( nsp_smatrix_resize(A,A->m,A->n-ioff)== FAIL) return(FAIL);
-  return(OK);
+  
+  FREE(flag);
+
+  if ( nsp_smatrix_resize(A, A->m, new_A_n) == FAIL ) 
+    return FAIL;
+
+  return OK;
 }
+
 
 /*
  *  A(Rows,:) = []
  *  A is changed.
- *  Rows must be increasing XXXXXXXXXXX
- *  A Changer
  */
-
-/* int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows) */
-/* { */
-/*   integer rmin,rmax,i,j,k,ind,last,nn,ioff=0; */
-/*   Bounds(Rows,&rmin,&rmax); */
-/*   if ( Rows->mn == 0) return(OK); */
-/*   if ( rmin < 1 || rmax > A->m ) */
-/*     { */
-/*       Scierror("Error:\tIndices out of bounds\n"); */
-/*       return(FAIL); */
-/*     } */
-/*   /\* clean first **\/ */
-/*   for ( j = 0 ; j < A->n  ; j++) */
-/*     { */
-/*       int j1=j*A->m; */
-/*       for ( i = 0 ; i < Rows->mn ; i++) */
-/* 	{ */
-/* 	  StringDestroy(&(A->S[((int) Rows->R[i])-1 + j1])); */
-/* 	} */
-/*     } */
-/*   /\* then move data : matrix is stored by columns **\/ */
-/*   for ( j = 0 ; j < A->n  ; j++) */
-/*     for ( i = 0 ; i < Rows->mn ; i++) */
-/*       { */
-/*         ioff++; */
-/* 	/\* we move up [ind,last-ind[ --> [ind-1,last-ind-1[**\/ */
-/*         ind =  ((int) Rows->R[i])+ j*A->m; */
-/*         last = (i < Rows->mn -1) ? ((int) Rows->R[i+1])-1 +j*A->m  */
-/* 	  : ((int) Rows->R[0])-1+(j+1)*A->m ; */
-/*         last = ( last < A->mn ) ? last : A->mn; */
-/*         nn= (last-ind); */
-/* 	for ( k= 0 ; k < nn ; k++)  */
-/* 	  { */
-/* 	    char *s; */
-/* 	    if (( s =CopyString(A->S[ind+k]))== (String *) 0)  return(FAIL); */
-/* 	    /\* store moved data **\/ */
-/* 	    A->S[ind-ioff+k]=s; */
-/* 	  } */
-/*       } */
-/*   if ( nsp_smatrix_resize(A,A->m -Rows->mn,A->n)== FAIL) return(FAIL); */
-/*   return(OK); */
-/* } */
 
 int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 {
@@ -690,7 +647,7 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 
   if ( Rows->mn == 0) return OK;
 
-  if ( (flag = Complement(A->m, Rows, &count)) == NULL )
+  if ( (flag = nsp_complement_for_deletions(A->m, Rows, &count)) == NULL )
     return FAIL;
 
   new_A_m = A->m - count;
@@ -702,8 +659,11 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
       {
 	if ( flag[i] )
 	  {
-	    A->S[k] = A->S[ij];
-	    if ( k < ij ) A->S[ij] = NULL;
+	    if ( k < ij )
+	      {
+		A->S[k] = A->S[ij];
+		A->S[ij] = NULLSTRING;
+	      }
 	    k++; 
 	  }
 	else
@@ -711,7 +671,7 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 	ij++;
       }
 
-  free(flag);
+  FREE(flag);
 
   if ( nsp_smatrix_resize(A, new_A_m, A->n) == FAIL ) 
     return FAIL;
@@ -723,7 +683,7 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
  *  A(elts) = []
  *  A is changed.
  *  modified by Bruno (same modifs than in nsp_matrix_delete_elements).
- *  The algorithm uses now the function Complement). indices from Elts don't
+ *  The algorithm uses now the function nsp_complement_for_deletions). indices from Elts don't
  *  need to be in increasing order.
  */
 
@@ -733,7 +693,7 @@ int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
 
   if ( Elts->mn == 0) return OK;
   
-  if ( (flag = Complement(A->mn, Elts, &count)) == NULL )
+  if ( (flag = nsp_complement_for_deletions(A->mn, Elts, &count)) == NULL )
     return FAIL;
 
   new_A_mn = A->mn - count;
@@ -742,14 +702,17 @@ int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
   for ( i = 0 ; i < A->mn ; i++ )
     if ( flag[i] )
       {
-	A->S[k] = A->S[i];
-	if ( k < i ) A->S[i] = NULL;
+	if ( k < i )
+	  {
+	    A->S[k] = A->S[i];
+	    A->S[i] =  NULLSTRING;
+	  }
 	k++;
       }
     else
       StringDestroy(&A->S[i]);
   
-  free(flag);
+  FREE(flag);
 
   if ( A->m == 1)
     {
