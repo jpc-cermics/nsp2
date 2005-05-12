@@ -8,7 +8,7 @@
   
 /* graphic rectangle */
 
-#include <stdio.h>   /** for file declaration **/
+#include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 
 #include "nsp/object.h"

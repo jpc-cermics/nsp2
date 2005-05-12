@@ -6,7 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics                            *
  *********************************************************************/
 
-#include <stdio.h>   /** for FILE declaration **/
+#include <stdio.h>   /* for FILE declaration **/
 #include "nsp/sciio.h" 
 
 #include "nsp/object.h"

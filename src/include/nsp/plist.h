@@ -6,7 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics                            *
  *********************************************************************/
 
-#include <stdio.h>   /** for file declaration **/
+#include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 
 #include "nsp/object.h"
@@ -40,7 +40,7 @@ typedef struct parse_cell {
 			       for operators */
   int   type;               /* type of object */
   short int arity ;         /* used to store arity of operators */
-} PCell,*PList ; /** definition for a Parse Cell and a ParseList **/
+} PCell,*PList ; /* definition for a Parse Cell and a ParseList **/
 
 /*****************************************************************
  *  Store PList in the data structure of Scilab 
@@ -80,7 +80,7 @@ int NspPListXdrSave(NspFile  *F, NspPList *M);
 #define NULLP_PLIST (NspPList*) 0 
 #define NULLPLIST (PList) 0 
 
-/** Functions declaration **/
+/* Functions declaration **/
 
 /* NspPListObj.c */
 extern NspPList *NspPListObj(NspObject *O);

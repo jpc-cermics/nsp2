@@ -352,31 +352,31 @@ static void CNAME(sorttest,int)()
   int n=Nint,p=Pint;
   flag=1;
 
-  /** Global sort example **/
+  /* Global sort example **/
   CNAME(inita,int)(a,n,p) ;
   CNAME(GlobalSort,int)(a,ind,flag,n,p,'c');
   CNAME(afficher,int)(a,"glob a",n,p);
   afficherint(ind,"glob ind",n,p);
 
-  /** Column sort example **/
+  /* Column sort example **/
   CNAME(inita,int)(a,n,p) ;
   CNAME(ColSort,int)(a,ind,flag,n,p,'c');
   CNAME(afficher,int)(a,"col a",n,p);
   afficherint(ind,"col ind",n,p);
 
-  /** Row sort example **/
+  /* Row sort example **/
   CNAME(inita,int)(a,n,p) ;
   CNAME(RowSort,int)(a,ind,flag,n,p,'c');
   CNAME(afficher,int)(a,"row a",n,p);
   afficherint(ind,"row ind",n,p);
 
-  /** Lexicographic Col sort **/
+  /* Lexicographic Col sort **/
   CNAME(inita,int)(a,n,p) ;
   CNAME(LexiCol,int)(a,ind,flag,n,p,'c');
   CNAME(afficher,int)(a,"lexico col a",n,p);
   afficherint(ind,"lexico col ind",1,p);
 
-  /** Lexicographic Row sort **/
+  /* Lexicographic Row sort **/
   CNAME(inita,int)(a,n,p) ;
   CNAME(LexiRow,int)(a,ind,flag,n,p,'c');
   CNAME(afficher,int)(a,"lexico Row a",n,p);

@@ -6,7 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics        
  *********************************************************************/
 
-#include <stdio.h>   /** for file declaration **/
+#include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 
 /*
@@ -62,7 +62,6 @@ int nsp_cells_xdr_save(NspFile  *F, NspCells *M);
 /* prototypes */
 
 extern NspCells *nsp_cells_object(NspObject *O); 
-extern char *nsp_string_object(NspObject *O); 
 extern int IsCellsObj (Stack stack, int i); 
 extern int IsCells (NspObject *O); 
 extern NspCells *GetCellsCopy (Stack stack, int i); 

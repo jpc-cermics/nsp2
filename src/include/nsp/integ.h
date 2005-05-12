@@ -120,4 +120,4 @@ extern int C2F(xsetun) (int *lun);
 
 
 
-#endif /** SCI_   **/
+#endif /* SCI_   **/

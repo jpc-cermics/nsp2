@@ -6,7 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics                            *
  *********************************************************************/
 
-#include <stdio.h>   /** for file declaration **/
+#include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 
 #include "nsp/object.h"
@@ -56,7 +56,7 @@ NspList *new_list();
 #define NULLCELL ( Cell *) 0 
 #define NULLOBJ  ( NspObject *) 0 
 
-/** Functions declaration **/
+/* Functions declaration */
 
 extern NspObject *nsp_list_path_extract(NspList *L, NspObject *O); 
 extern NspList *nsp_list_object(NspObject *O); 

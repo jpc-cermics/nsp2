@@ -15,5 +15,5 @@ extern function int_moinfo ;
 extern function int_moprint;
 extern function int_moadd ;
 extern function int_modelete ;
-extern function int_htfind ;
+
 

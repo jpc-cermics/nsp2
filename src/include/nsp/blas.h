@@ -72,4 +72,4 @@ extern int C2F(ztrmm) (char *side, char *uplo, char *transa, char *diag, int *m,
 extern int C2F(ztrmv) (char *uplo, char *trans, char *diag, int *n, doubleC *a, int *lda, doubleC *x, int *incx, int uplo_len, int trans_len, int diag_len);
 extern int C2F(ztrsm) (char *side, char *uplo, char *transa, char *diag, int *m, int *n, doubleC *alpha, doubleC *a, int *lda, doubleC *b, int *ldb, int side_len, int uplo_len, int transa_len, int diag_len);
 extern int C2F(ztrsv) (char *uplo, char *trans, char *diag, int *n, doubleC *a, int *lda, doubleC *x, int *incx, int uplo_len, int trans_len, int diag_len);
-#endif /** SCI_BLAS   **/
+#endif /* SCI_BLAS   **/

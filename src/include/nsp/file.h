@@ -6,7 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics                            *
  *********************************************************************/
 
-#include <stdio.h>   /** for file declaration **/
+#include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
 
@@ -81,7 +81,7 @@ void nsp_file_destroy(NspFile *H);
 void nsp_file_info(NspFile *H, int indent);
 void nsp_file_print(NspFile *H, int indent);
 
-/** setting file flags  **/
+/* setting file flags  **/
 
 
 #define OPEN_MASK 0x000f 

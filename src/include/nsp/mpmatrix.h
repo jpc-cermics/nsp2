@@ -2,7 +2,7 @@
 #define INC_NSP_MPMATRIX
 
 /*
- * This Software is (Copyright ENPC 1998-2004) 
+ * This Software is (Copyright ENPC 1998-2005) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
@@ -72,12 +72,6 @@ static NspMethods *mpmatrix_get_methods(void);
 static int mpmatrix_is_true(NspMaxpMatrix *M);
 #endif 
 
-#ifdef OCAML 
-NspMaxpMatrix *MatCreateFromData  (char *name, char type, integer m, 
-			       integer n,struct caml_bigarray *b);
-#endif 
-
-
 #define NULLMAXPMAT (NspMaxpMatrix*) 0
 
 /* from MatObj.c */
@@ -112,10 +106,6 @@ extern NspMaxpMatrix *GetRealMpMatCopyInt (Stack stack, int i);
 extern NspMaxpMatrix *GetRealMpMatInt (Stack stack, int i); 
 extern NspMaxpMatrix *GetRealMpMatCopyFloat (Stack stack, int i); 
 extern NspMaxpMatrix *GetRealMpMatFloat (Stack stack, int i); 
-extern int IntScalar (NspObject *O, integer *val); 
-extern int GetScalarInt (Stack stack, int i, integer *val); 
-extern int DoubleScalar (NspObject *O, double *val); 
-extern int GetScalarDouble (Stack stack, int i, double *val); 
 extern int *MpMatd2i (NspMaxpMatrix *A, integer *imin, integer *imax); 
 extern NspMaxpMatrix *MpMat2double (NspMaxpMatrix *A); 
 extern NspMaxpMatrix *MpMat2int (NspMaxpMatrix *A); 
@@ -170,14 +160,8 @@ extern void nsp_mpmat_clean(NspMaxpMatrix *A, int rhs, double epsa, double epsr)
 extern int nsp_mpmat_maxitt1(NspMaxpMatrix *A, NspMaxpMatrix *B, NspMaxpMatrix *Ind, integer j, integer flag); 
 extern int nsp_mpmat_minitt1(NspMaxpMatrix *A, NspMaxpMatrix *B, NspMaxpMatrix *Ind, integer j, integer flag); 
 extern NspMaxpMatrix **nsp_mpmat_slec(char *file, int *Count); 
-extern FILE *fopen (const char *, const char *);
 extern NspMaxpMatrix *MaxpMatLec (FILE *fd); 
 extern int nsp_mpmat_readline(FILE *fd); 
-extern void nsp_testnumtokens(void); 
-extern int nsp_numtokens(char *string); 
-
-extern void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc) ;
-extern void nsp_ciset(const integer *n,const double *z, doubleC *tab, const integer *inc);
 extern int nsp_mpmat_complexify(NspMaxpMatrix *Mat, double d); 
 extern int nsp_mpmat_get_real(NspMaxpMatrix *A); 
 extern int nsp_mpmat_get_imag(NspMaxpMatrix *A); 
@@ -197,10 +181,6 @@ extern NspMaxpMatrix *nsp_mpmat_eye(integer m, integer n);
 extern NspMaxpMatrix *nsp_mpmat_ones(integer m, integer n); 
 extern NspMaxpMatrix *nsp_mpmat_zeros(integer m, integer n); 
 extern NspMaxpMatrix *nsp_mpmat_rand(integer m, integer n); 
-extern void nsp_set_urandseed(int m); 
-extern int nsp_get_urandseed(void); 
-extern void nsp_set_urandtype(int m); 
-extern int nsp_get_urandtype(void); 
 extern int nsp_mpmat_pow_tt(NspMaxpMatrix *A, NspMaxpMatrix *B); 
 extern int nsp_mpmat_pow_el(NspMaxpMatrix *A, NspMaxpMatrix *B); 
 extern int nsp_mpmat_pow_scalar(NspMaxpMatrix *A, NspMaxpMatrix *B); 

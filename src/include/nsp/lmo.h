@@ -6,7 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics                            *
  *********************************************************************/
 
-#include <stdio.h>   /** for FILE declaration **/
+#include <stdio.h>   /* for FILE declaration **/
 #include "nsp/sciio.h" 
 
 #include "nsp/object.h"
@@ -56,10 +56,8 @@ int LmoObjNeq(NspObject *A,NspObject *B);
 #endif 
 
 #define NULLLMO ( NspLmo *) 0 
-#define NULLCELL ( Cell *) 0 
-#define NULLOBJ  ( NspObject *) 0 
 
-/** Functions declaration **/
+/* Functions declaration **/
 
 NspObject *module_path_search_name(NspList *L,NspSMatrix *Sm,char **oname);
 NspObject *module_path_search_object(NspList *L,NspSMatrix *Sm,char **oname);

@@ -42,4 +42,4 @@ extern void nsp_franck_inverse_matrix (double *a, int n);
 extern void nsp_hilbert_matrix (double *a, int n); 
 extern void nsp_hilbert_inverse_matrix (double *a, int n); 
 
-#endif /** SCI_   **/
+#endif /* SCI_   **/

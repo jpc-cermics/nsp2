@@ -8,7 +8,7 @@
   
 /* class Hash */
 
-#include <stdio.h>   /** for file declaration **/
+#include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
 
@@ -19,7 +19,7 @@
  * an ENTRY and a flag for usage.
  */
 
-/** Element stored in the hashtable **/
+/* Element stored in the hashtable **/
 
 typedef struct { 
   unsigned int   used; /* used to detect if data is present 

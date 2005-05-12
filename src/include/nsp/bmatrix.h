@@ -9,7 +9,7 @@
 /* Boolean Matrix */
 typedef integer Boolean;
 
-#include <stdio.h>   /** for file declaration **/
+#include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 
 /*
