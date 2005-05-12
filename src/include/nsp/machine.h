@@ -112,7 +112,11 @@
 
 #if !defined(HAVE_EXP10)
 #define exp10(x) pow((double) 10.0,x)
+#else 
+/* missing in some math.h : */
+extern double exp10(double);
 #endif
+
 
 #if !defined(HAVE_GETWD)
 #define getwd(x) getcwd(x,1024) /* you must define char x[1024] */

@@ -82,13 +82,8 @@ extern NspHash *nsp_atk_hash_table;
 extern NspHash *nsp_gdk_hash_table; 
 extern NspHash *nsp_pango_hash_table; 
 
-extern int nsp_no_type_id;  /* an id never used by a type */ 
 
-extern NspTypeId  nsp_new_type_id(void);
-extern int nsp_register_type(void *type); 
-extern void *nsp_get_type_from_id(NspTypeId id); 
 extern void *nsp_get_type_from_name(char *name); 
-
 extern char *type_get_name(void *type);
 
 #endif 

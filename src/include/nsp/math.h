@@ -91,9 +91,6 @@ extern double Maxi();  /* XXXX a mettre ailleurs **/
 /* partie entiere **/
 #define aint(x) ((x>= 0 ) ? floor(x)  : ceil(x))
 
-#ifndef exp10
-extern double exp10 (double);
-#endif 
 
 /* missing prototype */
 double tgamma(double);

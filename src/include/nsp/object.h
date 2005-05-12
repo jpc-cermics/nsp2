@@ -85,7 +85,7 @@ typedef struct _nsp_type_object {
  * from type id 
  */
 
-NspTypeId  nsp_new_type_id(void);
+extern NspTypeId  nsp_new_type_id(void);
 
 typedef struct _registered_types registered_types ;
 
@@ -94,13 +94,11 @@ struct _registered_types {
   struct _registered_types *next;
 };
 
+
 extern registered_types *nsp_types;
-
-int nsp_register_type(void *type);
-
+extern int nsp_register_type(void *type);
 extern int nsp_no_type_id; /* this can no be a type id : used in save/load */
-
-void *nsp_get_type_from_id(NspTypeId id); 
+extern void *nsp_get_type_from_id(NspTypeId id); 
 
 /* used in type constructors */ 
 
@@ -208,12 +206,14 @@ struct _attrtab {
   attr_get_object_function *get_object;
 };
 
+/*
 typedef NspObject * (attr_get_function_old) (void *o,Stack stack,int rhs,int opt,int lhs);
 
 typedef struct _attrtab_old {
   char *name;
   attr_get_function_old *fonc;
 } AttrTab_old ;
+*/
 
 
 /* utility function for attributes */
@@ -239,7 +239,7 @@ extern int int_object_create(Stack stack, int rhs, int opt, int lhs);
  * Object methods 
  *-----------------------------------------------------------*/
 
-typedef int (nsp_method) (void *o,Stack stack,int rhs,int opt,int lhs);
+typedef int nsp_method(void *o,Stack stack,int rhs,int opt,int lhs);
 
 /* typedef struct  _methodtab NspMethods; */
 
