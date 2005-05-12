@@ -553,8 +553,8 @@ int nsp_mat_subs_calarm(NspMatrix *Mat1, NspMatrix *Mat2)
 void nsp_mat_clean(NspMatrix *A, int rhs, double epsa, double epsr)
 {
   int j;
-  double d_epsr=1.e-10; /* EPSILON; */
-  double d_epsa=1.e-10; /* EPSILON; */
+  double d_epsr=DBL_EPSILON;
+  double d_epsa=DBL_EPSILON;
   double norm,eps;
   int inc=1;
   if ( A->rc_type == 'r') 

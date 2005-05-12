@@ -45,8 +45,8 @@
 int SpClean(NspSpMatrix *A, int rhs, double epsa, double epsr)
 {
   int j,i,n;
-  double d_epsr=EPSILON;
-  double d_epsa=EPSILON;
+  double d_epsr=DBL_EPSILON;
+  double d_epsa=DBL_EPSILON;
   double norm,eps;
   integer inc=1;
   if ( A->rc_type == 'r') 

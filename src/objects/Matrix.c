@@ -208,12 +208,12 @@ NspMatrix *nsp_matrix_create_impl(double first, double step, double last)
   if ( step > 0 ) 
     {
       while ( vals <= last ) { vals += step ; count++;}
-      if ( vals -last <  Max(Abs(first),Abs(last))*EPSILON*10) count++;
+      if ( vals -last <  Max(Abs(first),Abs(last))*DBL_EPSILON*10) count++;
     }
   else if ( step < 0) 
     {
       while ( vals >= last ) { vals += step ; count++;}
-      if ( last - vals <  Max(Abs(first),Abs(last))*EPSILON*10) count++;
+      if ( last - vals <  Max(Abs(first),Abs(last))*DBL_EPSILON*10) count++;
     }
   else { 
     Scierror("Error:\t step is 0 in an implicit vector specification\n");
