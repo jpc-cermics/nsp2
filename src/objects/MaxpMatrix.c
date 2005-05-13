@@ -151,7 +151,7 @@ NspMaxpMatrix * nsp_matrix_cast_to_mpmatrix(NspMatrix *M)
  * Returns a #NspMaxpMatrix 
  */
 
-NspMatrix * nsp_mpatrix_cast_to_matrix(NspMaxpMatrix *M)
+NspMatrix * nsp_mpmatrix_cast_to_matrix(NspMaxpMatrix *M)
 {
   if ( M == NULLMAXPMAT ) return NULLMAT;
   M->type = (NspTypeMaxpMatrix *) new_type_matrix(T_BASE);
