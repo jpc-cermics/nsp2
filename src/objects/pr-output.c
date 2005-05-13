@@ -74,25 +74,26 @@ static void pr_poly_exp  (NspMatrix *m, int fw, int length);
  * Utility Functions used to get elements 
  * of strutures (NspMatrix SpMatrix ....)
  * in a structure independant way.
+ * In the way iterator works. 
  * 
- * XXXInit : initialize 
- * XXXNext : used to get next value until end 
+ * Init function are used for initialization 
+ * Next : used to get next value until end 
  */
 
-/* NspMatrix case **/
+/* matrix case */
 
-typedef  int (*Mnext) (void *,double *,doubleC *);
-typedef  char (*Minit) (void *);
+typedef  int (*Mnext) (const void *,double *,doubleC *);
+typedef  char (*Minit) (const void *);
 
 static int mat_ind=0;
 
-static char MatInit(void *M)
+static char MatInit(const void *M)
 {
   mat_ind = 0;
   return ( (NspMatrix *) M)->rc_type;
 }
 
-static int MatNext(void *M, double *r, doubleC *c)
+static int MatNext(const void *M, double *r, doubleC *c)
 {
   if ( mat_ind == ((NspMatrix *) M)->mn ) return 0;
   switch (((NspMatrix *) M)->rc_type) 
@@ -102,21 +103,22 @@ static int MatNext(void *M, double *r, doubleC *c)
     }
   return 1;
 }
-/* sparse matrix case **/
+
+/* sparse matrix case */
 
 static int sp_mat_ind_row =0;
 static int sp_mat_ind_col =0;
 
-static char SpInit(void *M)
+static char SpInit(const void *M)
 {
   sp_mat_ind_row = -1;
   sp_mat_ind_col = 0;
   return ( (NspSpMatrix *) M)->rc_type;
 }
 
-static int SpNext(void *M, double *r, doubleC *c)
+static int SpNext(const void *M, double *r, doubleC *c)
 {
-  NspSpMatrix *Sp= M;
+  const NspSpMatrix *Sp= M;
   if ( sp_mat_ind_row == -1 ) 
     {
       /* Return first a zero value **/
@@ -163,11 +165,11 @@ static int SpNext(void *M, double *r, doubleC *c)
   return 1;
 }
 
-/* Polynomial matrix **/
+/* Polynomial matrix */
 
 static int mp_ind=0;
 
-static char MpInit(void *M)
+static char MpInit(const void *M)
 {
   mp_ind = 0;
   return ( (NspPMatrix *) M)->rc_type;
@@ -181,9 +183,9 @@ static char MpInit(void *M)
  *  int Sp_any_element_is_negative (M) 
  */
 
-/* generic code **/
+/* generic code */
 
-static int gen_any_element_is_negative(void *M, Minit Init, Mnext Next)
+static int gen_any_element_is_negative(const void *M, Minit Init, Mnext Next)
 {
   double r;
   doubleC c;
@@ -206,21 +208,21 @@ static int gen_any_element_is_negative(void *M, Minit Init, Mnext Next)
 
 /* NspMatrix specific code **/
 
-int M_any_element_is_negative (void *M)
+int M_any_element_is_negative (const void *M)
 {
   return gen_any_element_is_negative(M,MatInit,MatNext);
 }
 
 /* Sparse NspMatrix specific code **/
 
-int Sp_any_element_is_negative (void *M)
+int Sp_any_element_is_negative (const void *M)
 {
   return gen_any_element_is_negative(M,SpInit,SpNext);
 }
 
 /* Polynomial matrix specific code **/
 
-int Mp_any_element_is_negative (void *M)
+int Mp_any_element_is_negative (const void *M)
 {
   int sign=0,i;
   for ( i = 0 ; i < ((NspPMatrix *) M)->mn ; i++ ) 
@@ -237,7 +239,7 @@ int Mp_any_element_is_negative (void *M)
  * Real or complex matrix 
  */
 
-static int gen_any_element_is_inf_or_nan (void *M, Minit Init, Mnext Next)
+static int gen_any_element_is_inf_or_nan (const void *M, Minit Init, Mnext Next)
 {
   double r;
   doubleC c;
@@ -262,21 +264,21 @@ static int gen_any_element_is_inf_or_nan (void *M, Minit Init, Mnext Next)
 
 /* code for NspMatrix **/
 
-int M_any_element_is_inf_or_nan (void *M)
+int M_any_element_is_inf_or_nan (const void *M)
 {
   return gen_any_element_is_inf_or_nan(M,MatInit,MatNext);
 }
 
 /* code for sparse **/
 
-int Sp_any_element_is_inf_or_nan (void *M)
+int Sp_any_element_is_inf_or_nan (const void *M)
 {
   return gen_any_element_is_inf_or_nan(M,SpInit,SpNext);
 }
 
 /* code for polynomial matrix  **/
 
-int Mp_any_element_is_inf_or_nan (void *M)
+int Mp_any_element_is_inf_or_nan (const void *M)
 {
   int inf_or_nan=0,i;
   for ( i = 0 ; i < ((NspPMatrix *)M)->mn ; i++ ) 
@@ -292,7 +294,7 @@ int Mp_any_element_is_inf_or_nan (void *M)
  * Real or complex matrix 
  */
 
-static int gen_all_elements_are_int_or_inf_or_nan (void *M, Minit Init, Mnext Next)
+static int gen_all_elements_are_int_or_inf_or_nan (const void *M, Minit Init, Mnext Next)
 {
   double r;
   doubleC c;
@@ -324,14 +326,14 @@ static int gen_all_elements_are_int_or_inf_or_nan (void *M, Minit Init, Mnext Ne
 
 /* code for Matrix **/
 
-int M_all_elements_are_int_or_inf_or_nan (void *M)
+int M_all_elements_are_int_or_inf_or_nan (const void *M)
 {
   return gen_all_elements_are_int_or_inf_or_nan (M,MatInit,MatNext);
 }
 
 /* code for sparse **/
 
-int Sp_all_elements_are_int_or_inf_or_nan (void *M)
+int Sp_all_elements_are_int_or_inf_or_nan (const void *M)
 {
   return gen_all_elements_are_int_or_inf_or_nan (M,SpInit,SpNext);
 }
@@ -339,7 +341,7 @@ int Sp_all_elements_are_int_or_inf_or_nan (void *M)
 
 /* code for polynomial matrix **/
 
-int Mp_all_elements_are_int_or_inf_or_nan (void *M)
+int Mp_all_elements_are_int_or_inf_or_nan (const void *M)
 {
   int i, int_or_inf_or_nan=0;
   for ( i = 0 ; i < ((NspPMatrix *)M)->mn ; i++ ) 
@@ -360,7 +362,7 @@ int Mp_all_elements_are_int_or_inf_or_nan (void *M)
  * same for min 
  */
 
-static void gen_pr_min_max_internal (void *M, char flag, double *dmin, double *dmax, Minit Init, Mnext Next)
+static void gen_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax, Minit Init, Mnext Next)
 {
   double r;
   doubleC c;
@@ -400,16 +402,16 @@ static void gen_pr_min_max_internal (void *M, char flag, double *dmin, double *d
     }
 }
 
-/* code for Matrix **/
+/* code for Matrix */
 
-void M_pr_min_max_internal (void *M, char flag, double *dmin, double *dmax)
+void M_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax)
 {
   return gen_pr_min_max_internal (M,flag,dmin,dmax,MatInit,MatNext);
 }
 
 /* code for sparse **/
 
-void Sp_pr_min_max_internal (void *M, char flag, double *dmin, double *dmax)
+void Sp_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax)
 {
   return gen_pr_min_max_internal (M,flag,dmin,dmax,SpInit,SpNext);
 }
@@ -417,7 +419,7 @@ void Sp_pr_min_max_internal (void *M, char flag, double *dmin, double *dmax)
 
 /* code for polynomial matrix **/
 
-void Mp_pr_min_max_internal (void *M, char flag, double *dmin, double *dmax)
+void Mp_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax)
 {
   int i;
   M_pr_min_max_internal (((NspPMatrix*)M)->S[0],'r',dmin,dmax);
@@ -439,8 +441,8 @@ void Mp_pr_min_max_internal (void *M, char flag, double *dmin, double *dmax)
  * curr_real_fw and curr_imag_fw are used to store their length.
  */
 
-typedef  int (*FT) (void *);
-typedef  void (*pr_mima) (void *,char,double *,double *);
+typedef  int (*FT) (const void *);
+typedef  void (*pr_mima) (const void *,char,double *,double *);
 
 
 void gen_set_format (void *M, FT is_neg, FT is_inf_or_nan, pr_mima min_max, FT all_iin, Minit Init)
@@ -655,7 +657,6 @@ static  void pr_imag_float (double d)
 {
   pr_any_float (curr_imag_fmt,  d,curr_imag_fw);
 }
-
 
 static  void pr_complex (doubleC c)
 {
