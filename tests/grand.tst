@@ -18,7 +18,6 @@ PS=(1:N)'/N;
 // theorical result 
 [P]=cdfbet("PQ",RdevS,1-RdevS,A*ones(RdevS),B*ones(RdevS));
 //plot2d(RdevS,P,style=2);
-P=34;
 if norm(P-PS) > prec then pause,end
 
 // test for f 
