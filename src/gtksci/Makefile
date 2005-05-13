@@ -4,7 +4,7 @@ SHELL = /bin/sh
 SCIDIR=../..
 include ../../Version.incl
 
-LIBRARY = gtksci.a
+LIBRARY = nsp.a
 
 OBJSHELP=helpbrowser.o uri.o
 
@@ -15,7 +15,7 @@ OBJSHELP=helpbrowser.o uri.o
 
 OBJSC =	click.o command.o  io.o \
 	menus.o  x_main.o \
-	about.o queue.o $(OBJSHELP) 
+	about.o queue.o $(OBJSHELP) gtkmenu.o
 
 
 OBJSF  = 

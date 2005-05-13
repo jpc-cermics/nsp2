@@ -4,7 +4,7 @@ include ../../Makefile.incl
 SCIDIR=../..
 SCIDIR1=..\..
 
-LIBRARY = zcalelm.a
+LIBRARY = nsp.a
 
 CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)

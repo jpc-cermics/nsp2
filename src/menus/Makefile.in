@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 SCIDIR=../..
 
-LIBRARY = menusX.a
+LIBRARY = nsp.a 
 
 COMM = men_message.o men_choose.o men_dialog.o men_mdial.o  \
 	men_madial.o men_choice.o \

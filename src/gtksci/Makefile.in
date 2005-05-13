@@ -4,7 +4,7 @@ SHELL = /bin/sh
 SCIDIR=../..
 include ../../Version.incl
 
-LIBRARY = gtksci.a
+LIBRARY = nsp.a
 
 OBJSHELP=helpbrowser.o uri.o
 
