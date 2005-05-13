@@ -81,8 +81,7 @@ TCLTK_LIBS =
 #
 # libraries needed for linking 
 # 1- inside nsp 
-NSPLIBS=libs/nsp.a libs/zcalelm.a libs/graphics.a libs/gtksci.a libs/menusX.a \
-	libs/rand.a libs/dcd.a libs/integ.a libs/approx.a  
+NSPLIBS=libs/nsp.a libs/graphics.a libs/rand.a libs/dcd.a libs/integ.a libs/approx.a  
 EXTERNLIBS = `pkg-config gtk+-2.0 libgtkhtml-2.0 gtkglext-1.0 fftw3 --libs`  -lf77lapack -lcblas -lf77blas -latlas  -lreadline -lncurses
 #
 # for WIN32 version 
