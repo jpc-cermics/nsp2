@@ -472,11 +472,11 @@ NspMaxpMatrix *GetRealMpMatFloat(Stack stack, int i)
  * XXXXXX : doit-on mettre 1 et 1 comme valeur par defaut 
  */
 
-integer *MaxpMatd2i(NspMaxpMatrix *A, integer *imin, integer *imax)
+int *MaxpMatd2i(NspMaxpMatrix *A, int *imin, int *imax)
 {
   int i;
-  integer *Iloc;
-  Iloc = (integer *) A->R;
+  int *Iloc;
+  Iloc = (int *) A->R;
   nsp_double2int(&A->mn,A->R,Iloc);
   *imax = 1;  *imin = 1;
   for ( i = 0 ; i < A->mn; i++) 
@@ -488,7 +488,6 @@ integer *MaxpMatd2i(NspMaxpMatrix *A, integer *imin, integer *imax)
     }
   return Iloc;
 }
-
 
 /*
  * Utility function : Converts back to double
@@ -525,9 +524,9 @@ NspMaxpMatrix * MpMat2int(NspMaxpMatrix *A)
       if ( A->rc_type == 'r' )
 	{
 	  if ( A->convert == 'd' ) 
-	    nsp_double2int(&A->mn,A->R,(integer *) A->R);
+	    nsp_double2int(&A->mn,A->R,(int *) A->R);
 	  else if ( A->convert == 'f' ) 
-	    nsp_float2int(&A->mn,(float *) A->R,(integer *) A->R);
+	    nsp_float2int(&A->mn,(float *) A->R,(int *) A->R);
 	  A->convert  = 'i' ;
 	}
       else 
@@ -593,7 +592,7 @@ static NspMethods *mpmatrix_get_methods(void) { return NULL;}
 
 int int_mpcreate(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1,n1;
+  int m1,n1;
   NspMaxpMatrix *HMat;
   CheckRhs(2,2);
   CheckLhs(1,1);
@@ -851,7 +850,7 @@ int int_mpcuprod(Stack stack, int rhs, int opt, int lhs)
  */
 
 typedef NspMatrix *(*MiMax) (NspMatrix *A,char *,NspMatrix **Imax,int lhs);
-typedef int (*MiMax1) (NspMatrix *A, NspMatrix *B, NspMatrix *Ind, integer j,int flag);
+typedef int (*MiMax1) (NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j,int flag);
 
 static int int_mp_maxi(Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
 {
@@ -936,7 +935,7 @@ int int_mpmini(Stack stack, int rhs, int opt, int lhs)
 
 int int_mptriu(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1=0;
+  int k1=0;
   NspMaxpMatrix *HMat;
   CheckRhs(1,2);
   CheckLhs(1,1);
@@ -957,7 +956,7 @@ int int_mptriu(Stack stack, int rhs, int opt, int lhs)
 
 int int_mptril(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1=0;
+  int k1=0;
   NspMaxpMatrix  *HMat; 
   CheckRhs(1,2);
   CheckLhs(1,1);
@@ -982,7 +981,7 @@ typedef NspMatrix * (*Mfunc) (int m,int n);
  
 static int int_mp_gen(Stack stack, int rhs, int opt, int lhs, Mfunc F)
 {
-  integer m1,n1;
+  int m1,n1;
   NspMaxpMatrix *HMat;
   NspMatrix *M;
   CheckRhs(1,2);
@@ -1248,7 +1247,7 @@ int int_mpfge(Stack stack, int rhs, int opt, int lhs)
 
 int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1,n1;
+  int m1,n1;
   NspMaxpMatrix  *A,*B;
   CheckRhs(2,3);
   CheckLhs(1,1);
@@ -1284,7 +1283,7 @@ int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
 
 int int_mpredim(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1,n1;
+  int m1,n1;
   NspMaxpMatrix  *HMat;
   CheckRhs(3,3);
   CheckLhs(1,1);
@@ -1513,7 +1512,7 @@ int int_mpconcatdiag_m(Stack stack, int rhs, int opt, int lhs)
 
 int int_mpaddcols(Stack stack, int rhs, int opt, int lhs)
 {
-  integer n1;
+  int n1;
   NspMaxpMatrix *HMat;
   CheckRhs(2,2);
   CheckLhs(1,1);
@@ -1534,7 +1533,7 @@ int int_mpaddcols(Stack stack, int rhs, int opt, int lhs)
 
 int int_mpaddrows(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1;
+  int m1;
   NspMaxpMatrix *HMat;
   CheckRhs(2,2);
   CheckLhs(1,1);
@@ -1754,7 +1753,7 @@ int int_mpextractrows(Stack stack, int rhs, int opt, int lhs)
 
 int int_mpdiag(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1=0;
+  int k1=0;
   NspMaxpMatrix *A,*Res;
   CheckRhs(1,2);
   CheckLhs(1,1);
@@ -1777,7 +1776,7 @@ int int_mpdiag(Stack stack, int rhs, int opt, int lhs)
 
 int int_mpdiage(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1=0;
+  int k1=0;
   NspMaxpMatrix *A,*Res;
   CheckRhs(1,2);
   CheckLhs(1,1);
@@ -1799,7 +1798,7 @@ int int_mpdiage(Stack stack, int rhs, int opt, int lhs)
 
 int int_mpdiagset(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1;
+  int k1;
   NspMaxpMatrix *A,*Diag;
   CheckRhs(3,3);
   CheckLhs(1,1);
@@ -1817,7 +1816,7 @@ int int_mpdiagset(Stack stack, int rhs, int opt, int lhs)
 
 int int_mpdiagcre(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1=0;
+  int k1=0;
   NspMaxpMatrix *Diag,*Res;
   CheckRhs(1,2);
   CheckLhs(1,1);
@@ -1839,7 +1838,7 @@ int int_mpdiagcre(Stack stack, int rhs, int opt, int lhs)
 
 int int_mpresize(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1,n1;
+  int m1,n1;
   NspMaxpMatrix  *HMat;
   CheckRhs(3,3);
   CheckLhs(1,1);
@@ -2380,7 +2379,7 @@ int int_mpconj(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- *nsp_mat_modulo: A=Modulo(A) remainder in integer division 
+ *nsp_mat_modulo: A=Modulo(A) remainder in int division 
  * A is changed  
  */
 
@@ -2398,7 +2397,7 @@ int int_mpmodulo(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Mat : A= Idiv(A,b) quotient in integer division
+ * Mat : A= Idiv(A,b) quotient in int division
  * A is changed   A(i)=A(i)/b 
  */
 
