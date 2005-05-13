@@ -34,17 +34,17 @@
 #include <rpc/xdr.h>
 #endif
 
-typedef struct _nsp_file NspFile;
+typedef struct _NspFile NspFile;
 
 typedef int (*file_save) (NspFile  *F, NspFile *M);
 
-typedef struct _nsp_type_SciFile { 
+typedef struct _NspTypeSciFile { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   file_save *save;
 } NspTypeSciFile;
 
-struct _nsp_file {
+struct _NspFile {
   NspObject father; 
   NspTypeSciFile *type; 
   FILE *file ;   /* the file */

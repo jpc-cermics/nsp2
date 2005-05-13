@@ -15,17 +15,17 @@
  * NspLmo inherits from NspObject 
  */
 
-typedef struct _nsp_lmo  NspLmo;
+typedef struct _NspLmo  NspLmo;
 
 typedef int (*lmo_save) (NspFile  *F, NspLmo *M);
 
-typedef struct _nsp_type_Lmo { 
+typedef struct _NspTypeLmo { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   lmo_save *save;
 } NspTypeLmo;
 
-struct _nsp_lmo {
+struct _NspLmo {
   NspObject father; 
   NspTypeLmo *type; 
   char *path;  

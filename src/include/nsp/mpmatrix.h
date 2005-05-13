@@ -15,17 +15,17 @@
 
 /* typedef struct { double r, i; } doubleC; */
 
-typedef struct _nsp_mpmatrix NspMaxpMatrix;
+typedef struct _NspMpmatrix NspMaxpMatrix;
 
 typedef int (*mpmatrix_save) (NspFile  *F, NspMaxpMatrix *M);
 
-typedef struct _nsp_type_MaxpMatrix { 
+typedef struct _NspTypeMaxpMatrix { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   mpmatrix_save * save;
 } NspTypeMaxpMatrix;
 
-struct _nsp_mpmatrix {
+struct _NspMpmatrix {
   NspObject father; 
   NspTypeMaxpMatrix *type; 
   integer m,n,mn;/* NspMaxpMatrix dimensions */

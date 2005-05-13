@@ -16,17 +16,17 @@ typedef integer Boolean;
  * NspBMatrix inherits from NspObject 
  */
 
-typedef struct _nsp_bmatrix NspBMatrix;
+typedef struct _NspBmatrix NspBMatrix;
 
 typedef int (*bmatrix_save) (NspFile  *F, NspBMatrix *M);
 
-typedef struct _nsp_type_BMatrix { 
+typedef struct _NspTypeBMatrix { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   bmatrix_save *save;
 } NspTypeBMatrix;
 
-struct _nsp_bmatrix {
+struct _NspBmatrix {
   /*< private >*/
   NspObject father; 
   NspTypeBMatrix *type; 

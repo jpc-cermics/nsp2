@@ -19,11 +19,11 @@
  * and implements GRint 
  */
 
-typedef struct _nsp_connector NspConnector;
+typedef struct _NspConnector NspConnector;
 
 typedef int (*connector_save) (NspFile  *F, NspConnector *M);
 
-typedef struct _nsp_type_Connector { 
+typedef struct _NspTypeConnector { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   connector_save *save;
@@ -40,7 +40,7 @@ typedef struct _lock {
   double pt[2]; /* lock position */
 } gr_lock ; 
 
-struct _nsp_connector {
+struct _NspConnector {
   NspObject father; 
   NspTypeConnector *type; 
   double r[4];

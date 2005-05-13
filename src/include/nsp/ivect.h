@@ -14,18 +14,18 @@
 /*
  * NspIVect inherits from NspObject 
  */
-typedef struct _nsp_ivect  NspIVect;
+typedef struct _NspIvect  NspIVect;
 
 
 typedef int (*ivect_save) (NspFile  *F, NspIVect *M);
 
-typedef struct _nsp_type_IVect { 
+typedef struct _NspTypeIVect { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   ivect_save *save;
 } NspTypeIVect;
 
-struct _nsp_ivect {
+struct _NspIvect {
   NspObject father; 
   NspTypeIVect *type; 
   double first,step,last ; /* implicit bounds  */

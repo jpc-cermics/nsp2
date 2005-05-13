@@ -33,16 +33,16 @@ typedef struct {
  * NspHash inherits from NspObject 
  */
 
-typedef struct _nsp_hash NspHash;
+typedef struct _NspHash NspHash;
 
 typedef int (*hash_save) (NspFile  *F, NspHash *M);
 
-typedef struct _nsp_type_Hash { 
+typedef struct _NspTypeHash { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
 } NspTypeHash;
 
-struct _nsp_hash {
+struct _NspHash {
   NspObject father; 
   NspTypeHash *type; 
   unsigned int hsize,filled; /* size of hash table and number of present entries */

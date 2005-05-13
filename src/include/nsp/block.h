@@ -20,11 +20,11 @@
  * and implements GRint 
  */
 
-typedef struct _nsp_block NspBlock;
+typedef struct _NspBlock NspBlock;
 
 typedef int (*block_save) (NspFile  *F, NspBlock *M);
 
-typedef struct _nsp_type_Block { 
+typedef struct _NspTypeBlock { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   block_save *save;
@@ -35,7 +35,7 @@ typedef struct b_lock {
   double pt[2]; /* lock position */
 } grb_lock ; 
 
-struct _nsp_block {
+struct _NspBlock {
   NspObject father; 
   NspTypeBlock *type; 
   BCG *Xgc;

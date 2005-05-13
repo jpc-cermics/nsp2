@@ -15,16 +15,16 @@
  * NspModuleElt inherits from NspObject
  */
 
-typedef struct _nsp_modulelt NspModuleElt;
+typedef struct _NspModulelt NspModuleElt;
 
 typedef int (*modulelt_save) (NspFile  *F, NspModuleElt *M);
 
-typedef struct _nsp_type_ModuleElt { 
+typedef struct _NspTypeModuleElt { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
 } NspTypeModuleElt;
 
-struct _nsp_modulelt {
+struct _NspModulelt {
   NspObject father; 
   NspTypeModuleElt *type; 
   char *path ;

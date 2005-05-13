@@ -45,7 +45,7 @@ typedef int gr_is_lock_connectable(void *B,int i);
 typedef int gr_is_lock_connected(void *B,int i);
 typedef void gr_set_lock_pos(void *B, int i,const double pt[]);
 
-typedef struct _nsp_type_GRint { 
+typedef struct _NspTypeGRint { 
   NSP_TYPE_OBJECT__ 
 
   /* rajouts */

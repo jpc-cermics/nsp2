@@ -15,17 +15,17 @@
  * NspMe inherits from NspObject 
  */
 
-typedef struct _nsp_me  NspMe;
+typedef struct _NspMe  NspMe;
 
 typedef int (*me_save) (NspFile  *F, NspMe *M);
 
-typedef struct _nsp_type_Me { 
+typedef struct _NspTypeMe { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   me_save *save;
 } NspTypeMe;
 
-struct _nsp_me {
+struct _NspMe {
   NspObject father; 
   NspTypeMe *type; 
   char *path;  

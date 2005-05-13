@@ -15,11 +15,11 @@
  * NspMod inherits from NspObject 
  */
 
-typedef struct _nsp_mod NspMod;
+typedef struct _NspMod NspMod;
 
 typedef int (*mod_save) (NspFile  *F, NspMod *M);
 
-typedef struct _nsp_type_Mod { 
+typedef struct _NspTypeMod { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   mod_save *save;
@@ -35,7 +35,7 @@ typedef struct _nsp_type_Mod {
  */
 typedef NspList Lmo ; /* Lmo is a List */
 
-struct _nsp_mod {
+struct _NspMod {
   NspObject father; 
   NspTypeMod *type; 
   char *path;   /* absolute XXX path of the module */ 

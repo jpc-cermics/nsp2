@@ -12,17 +12,17 @@
 /*
  * NspMatrix inherits from NspObject 
  */
-typedef struct _nsp_cells NspCells ;
+typedef struct _NspCells NspCells ;
 
 typedef int (*cells_save) (NspFile  *F, NspCells *M);
 
-typedef struct _nsp_type_Cells { 
+typedef struct _NspTypeCells { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   cells_save *save;
 } NspTypeCells;
 
-struct _nsp_cells {
+struct _NspCells {
   NspObject father; 
   NspTypeCells *type; 
   integer m,n,mn;

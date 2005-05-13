@@ -14,11 +14,11 @@
 /*
  * NspPList inherits from NspObject 
  */
-typedef struct _nsp_plist  NspPList;
+typedef struct _NspPlist  NspPList;
 
 typedef int (*plist_save) (NspFile  *F, NspPList *M);
 
-typedef struct _nsp_type_PList { 
+typedef struct _NspTypePList { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   plist_save *save;
@@ -46,7 +46,7 @@ typedef struct parse_cell {
  *  Store PList in the data structure of Scilab 
  *****************************************************************/
 
-struct _nsp_plist {
+struct _NspPlist {
   NspObject father; 
   NspTypePList *type; 
   char *file_name;  /* NULL or points to the function source file-name */

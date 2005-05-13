@@ -15,16 +15,16 @@
  * NspClassB inherits from NspClassA
  */
 
-typedef struct _nsp_classb NspClassB;
+typedef struct _NspClassb NspClassB;
 
 typedef int (*classb_save) (NspFile  *F, NspClassB *M);
 
-typedef struct _nsp_type_ClassB { 
+typedef struct _NspTypeClassB { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
 } NspTypeClassB;
 
-struct _nsp_classb {
+struct _NspClassb {
   NspClassA father; 
   NspTypeClassB *type; 
   int classb_color;

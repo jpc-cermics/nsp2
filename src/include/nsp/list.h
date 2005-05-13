@@ -15,11 +15,11 @@
  * NspList inherits from NspObject 
  */
 
-typedef struct _nsp_list  NspList;
+typedef struct _NspList  NspList;
 
 typedef int (*list_save) (NspFile  *F, NspList *M);
 
-typedef struct _nsp_type_List { 
+typedef struct _NspTypeList { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   list_save *save;
@@ -32,7 +32,7 @@ typedef struct cell {
   NspObject *O;             /* points to the stored object */
 } Cell ;
 
-struct _nsp_list {
+struct _NspList {
   NspObject father; 
   NspTypeList *type; 
   char *tname;        /* name of the tlist or NULL **/

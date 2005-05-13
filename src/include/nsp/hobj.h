@@ -14,16 +14,16 @@
 /*
  * NspHobj inherits from NspObject 
  */
-typedef struct _nsp_hobj  NspHobj;
+typedef struct _NspHobj  NspHobj;
 typedef int (*hobj_save) (NspFile  *F, NspHobj *M);
 
-typedef struct _nsp_type_Hobj { 
+typedef struct _NspTypeHobj { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   hobj_save *save;
 } NspTypeHobj;
 
-struct _nsp_hobj {
+struct _NspHobj {
   NspObject father; 
   NspTypeHobj *type; 
   char htype  ;   /* 'o' : optional argument 

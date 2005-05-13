@@ -19,17 +19,17 @@
  * NspGFrame inherits from NspObject 
  */
 
-typedef struct _nsp_gframe NspGFrame;
+typedef struct _NspGframe NspGFrame;
 
 typedef int (*gframe_save) (NspFile  *F, NspGFrame *M);
 
-typedef struct _nsp_type_GFrame { 
+typedef struct _NspTypeGFrame { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   gframe_save *save;
 } NspTypeGFrame;
 
-struct _nsp_gframe {
+struct _NspGframe {
   NspObject father; 
   NspTypeGFrame *type; 
   NspList *objs ;       /* Object of type list: list of internal objects */

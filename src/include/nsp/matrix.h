@@ -2,7 +2,7 @@
 #define INC_NSP_MATRIX
 
 /*
- * This Software is (Copyright ENPC 1998-2004) 
+ * This Software is (Copyright ENPC 1998-2005) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
@@ -15,17 +15,17 @@
 
 typedef struct { double r, i; } doubleC;
 
-typedef struct _nsp_matrix NspMatrix;
+typedef struct _NspMatrix NspMatrix;
 
 typedef int (*matrix_save) (NspFile  *F, NspMatrix *M);
 
-typedef struct _nsp_type_Matrix { 
+typedef struct _NspTypeMatrix { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   matrix_save * save; /* FIXME: unused since it was move in NSP_TYPE_OBJECT */
 } NspTypeMatrix;
 
-struct _nsp_matrix {
+struct _NspMatrix {
   NspObject father; 
   NspTypeMatrix *type; 
   integer m,n,mn;/* NspMatrix dimensions */

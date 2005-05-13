@@ -14,7 +14,7 @@
 typedef int matint_redim(void *M,int m,int n); 
 
 
-typedef struct _nsp_type_Matint {
+typedef struct _NspTypeMatint {
   NSP_TYPE_OBJECT__
   /* added */
   matint_redim *redim; 

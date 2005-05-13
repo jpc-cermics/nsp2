@@ -20,17 +20,17 @@
  * NspRect inherits from NspObject 
  */
 
-typedef struct _nsp_rect NspRect;
+typedef struct _NspRect NspRect;
 
 typedef int (*rect_save) (NspFile  *F, NspRect *M);
 
-typedef struct _nsp_type_Rect { 
+typedef struct _NspTypeRect { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   rect_save *save;
 } NspTypeRect;
 
-struct _nsp_rect {
+struct _NspRect {
   NspObject father; 
   NspTypeRect *type; 
   BCG *Xgc;

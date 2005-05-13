@@ -15,11 +15,11 @@
  * NspPMatrix inherits from NspObject 
  */
 
-typedef struct _nsp_pmatrix  NspPMatrix;
+typedef struct _NspPmatrix  NspPMatrix;
 
 typedef int (*pmatrix_save) (NspFile  *F, NspPMatrix *M);
 
-typedef struct _nsp_type_PMatrix { 
+typedef struct _NspTypePMatrix { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   pmatrix_save *save;
@@ -27,7 +27,7 @@ typedef struct _nsp_type_PMatrix {
 
 typedef NspMatrix Poly;
 
-struct _nsp_pmatrix {
+struct _NspPmatrix {
   NspObject father; 
   NspTypePMatrix *type; 
   char rc_type  ;   /* type 'r' or 'i' */

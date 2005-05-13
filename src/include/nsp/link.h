@@ -19,11 +19,11 @@
  * NspLink inherits from NspObject 
  */
 
-typedef struct _nsp_link NspLink;
+typedef struct _NspLink NspLink;
 
 typedef int (*link_save) (NspFile  *F, NspLink *M);
 
-typedef struct _nsp_type_Link { 
+typedef struct _NspTypeLink { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   link_save *save;
@@ -33,7 +33,7 @@ typedef struct l_lock {
   gr_port port;  /* Only one port */
 } grl_lock ; 
 
-struct _nsp_link {
+struct _NspLink {
   NspObject father; 
   NspTypeLink *type; 
   /* specific*/

@@ -15,16 +15,16 @@
  * NspNone inherits from NspObject
  */
 
-typedef struct _nsp_none NspNone;
+typedef struct _NspNone NspNone;
 
 typedef int (*none_save) (NspFile  *F, NspNone *M);
 
-typedef struct _nsp_type_None { 
+typedef struct _NspTypeNone { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
 } NspTypeNone;
 
-struct _nsp_none {
+struct _NspNone {
   NspObject father; 
   NspTypeNone *type; 
   

@@ -3,7 +3,7 @@
 #define INC_NSP_Function
 
 /*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2004 )
+ * This Software is ( Copyright ENPC 1998-2005 )
  * Jean-Philippe Chancelier Enpc/Cermics
  *-----------------------------------------------------------------*/
   
@@ -15,16 +15,16 @@
  * NspFunction inherits from NspObject
  */
 
-typedef struct _nsp_function NspFunction;
+typedef struct _NspFunction NspFunction;
 
 typedef int (*function_save) (NspFile  *F, NspFunction *M);
 
-typedef struct _nsp_type_Function { 
+typedef struct _NspTypeFunction { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
 } NspTypeFunction;
 
-struct _nsp_function {
+struct _NspFunction {
   NspObject father; 
   NspTypeFunction *type; 
   char *fname; /* function name */

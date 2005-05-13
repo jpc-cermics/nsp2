@@ -12,11 +12,11 @@
 /*
  * NspMatrix inherits from NspObject 
  */
-typedef struct _nsp_smatrix NspSMatrix ;
+typedef struct _NspSmatrix NspSMatrix ;
 
 typedef int (*smatrix_save) (NspFile  *F, NspSMatrix *M);
 
-typedef struct _nsp_type_SMatrix { 
+typedef struct _NspTypeSMatrix { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
   smatrix_save *save;
@@ -24,7 +24,7 @@ typedef struct _nsp_type_SMatrix {
 
 typedef char String ;
 
-struct _nsp_smatrix {
+struct _NspSmatrix {
   NspObject father; 
   NspTypeSMatrix *type; 
   integer m,n,mn;

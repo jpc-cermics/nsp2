@@ -15,16 +15,16 @@
  * NspType inherits from NspObject
  */
 
-typedef struct _nsp_type NspType;
+typedef struct _NspType NspType;
 
 typedef int (*type_save) (NspFile  *F, NspType *M);
 
-typedef struct _nsp_type_Type { 
+typedef struct _NspTypeType { 
   NSP_TYPE_OBJECT__ 
   /* rajouts */
 } NspTypeType;
 
-struct _nsp_type {
+struct _NspType {
   NspObject father; 
   NspTypeType *type; 
   NspTypeBase *nsp_type;
