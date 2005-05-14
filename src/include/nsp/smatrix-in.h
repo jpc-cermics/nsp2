@@ -1,16 +1,9 @@
-
 #ifndef SCI_SMATRIX_IN
 #define SCI_SMATRIX_IN
-
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
 
 #include "nsp/interf.h"
 
 extern function int_smxcreate;
-extern function int_smxcopy;
 extern function int_smxredim;
 extern function int_smxconcatr;
 extern function int_smxconcatr_m_s;
@@ -29,7 +22,6 @@ extern function int_smxextractcols;
 extern function int_smxextractrows;
 extern function int_smxextractcolforloop;
 extern function int_smxresize;
-extern function int_smxdestroy;
 extern function int_smxinfo;
 extern function int_smxprint;
 extern function int_smxconcattt;

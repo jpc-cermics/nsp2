@@ -3,8 +3,6 @@
 
 extern int nsp_qr(NspMatrix *A,NspMatrix **q,NspMatrix **r,NspMatrix **rank,NspMatrix **E,double *tol,char mode);
 extern NspMatrix *nsp_lsq(NspMatrix *A,NspMatrix *B);
-extern double C2F(dlamch)(char *,int );
-extern double cdf_dlamch(char *,int );
 extern NspMatrix * nsp_det(NspMatrix *A,char mode);
 extern int nsp_spec(NspMatrix *A, NspMatrix **d,NspMatrix **v) ;
 extern int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag);

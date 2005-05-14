@@ -1,11 +1,10 @@
-
 #ifndef SCI_BMATRIX_IN
 #define SCI_BMATRIX_IN
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include "nsp/interf.h"
 
