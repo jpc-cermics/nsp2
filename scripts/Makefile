@@ -14,7 +14,7 @@ XXBPROGRAMS = $(SBIN)/Blatexpr $(SBIN)/Blatexpr2 \
 	$(SBIN)/Blatexprs $(SBIN)/Blpr $(SBIN)/BEpsf \
 	$(UTIL)/Blatdoc $(UTIL)/Blatdocs
 
-PROGRAMS = $(SBIN)/scilab scilab-inst $(BPROGRAMS)
+PROGRAMS = $(SBIN)/scilab scilab-inst Path.incl $(BPROGRAMS)
 
 all:: $(PROGRAMS)
 
@@ -40,6 +40,10 @@ scilab-inst: scilab-gtk.g $(IP) $(IV) ../Makefile.incl
 	@sed -e "s+SCILAB_DIRECTORY+$(prefix)/lib/nsp+" $(SED_CYGDRIVE) \
 	-e "s+SCILAB_VERSION+$(SCIVERSION)+" \
 	-e "s+SCILABGS+sh+" scilab-gtk.g > scilab-inst;
+
+Path.incl: $(IP) $(IV) ../Makefile.incl
+	@$(RM) Path.incl
+	@echo "SCIDIR=$(prefix)/lib/nsp" > $@ 
 
 $(SBIN)/Blatexpr: Blatexpr.g $(IP)
 	@$(RM) $(SBIN)/Blatexpr
