@@ -26,9 +26,9 @@
 #include "nsp/object.h"
 #include "nsp/interf.h" /* for ret_endfor */
 #include "nsp/pr-output.h" 
-
 #include "nsp/matutil.h"
 #include "nsp/gsort-p.h"
+#include "nsp/matint.h"
 
 /*
  * Creation of a NspSMatrix all the elements
@@ -685,8 +685,9 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
  *  A(elts) = []
  *  A is changed.
  *  modified by Bruno (same modifs than in nsp_matrix_delete_elements).
- *  The algorithm uses now the function nsp_complement_for_deletions). indices from Elts don't
- *  need to be in increasing order.
+ *  The algorithm uses now the function nsp_complement_for_deletions). 
+ *  Indices from Elts do not need to be in increasing order.
+ *  
  */
 
 int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
@@ -712,7 +713,7 @@ int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
 	k++;
       }
     else
- nsp_string_destroy(&A->S[i]);
+      nsp_string_destroy(&A->S[i]);
   
   FREE(flag);
 
@@ -723,6 +724,55 @@ int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
   else
     {
       if ( nsp_smatrix_resize(A,new_A_mn,1) == FAIL) return FAIL;
+    }
+  return OK;
+}
+
+/* this one is more generic and could be used for cells, */
+
+int nsp_smatrix_delete_elements1(NspSMatrix *A, NspMatrix *Elts)
+{
+  NspTypeBase *type;
+  int i,k,*flag, new_A_mn, count;
+
+  if ( Elts->mn == 0) return OK;
+  
+  if ( (flag = nsp_complement_for_deletions(A->mn, Elts, &count)) == NULL )
+    return FAIL;
+
+  if (( type = check_implements(A,nsp_type_matint_id)) == NULL )
+    {
+      Scierror("Object do not implements matint interface\n");
+      return FAIL;
+    }
+    
+  new_A_mn = A->mn - count;
+
+  k = 0;
+  for ( i = 0 ; i < A->mn ; i++ )
+    if ( flag[i] )
+      {
+	if ( k < i )
+	  {
+	    A->S[k] = A->S[i];
+	    A->S[i] =  NULLSTRING;
+	  }
+	k++;
+      }
+    else
+      {
+	MAT_INT(type)->free_elt((void **) &A->S[i]);
+      }
+  
+  FREE(flag);
+
+  if ( A->m == 1)
+    {
+      if ( MAT_INT(type)->resize(A,1,new_A_mn) == FAIL ) return FAIL;
+    }
+  else
+    {
+      if ( MAT_INT(type)->resize(A,new_A_mn,1) == FAIL) return FAIL;
     }
   return OK;
 }
