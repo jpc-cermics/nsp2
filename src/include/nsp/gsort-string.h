@@ -1,8 +1,10 @@
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- **
- *********************************************************************/
+#ifndef NSP_INC_GSORT_STRING
+#define NSP_INC_GSORT_STRING
+
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 static void CNAME(ColSort,char)();
 static void CNAME(RowSort,char)();
@@ -375,6 +377,7 @@ static void CNAME(sorttest,char)()
   afficherint(ind,"lexico Row ind",n,1);
 }
 
+#endif
 #endif
 
 

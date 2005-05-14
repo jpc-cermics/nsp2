@@ -306,7 +306,7 @@ static NspHobj  *hobj_create_gen(char *name, NspObject *Obj,char htype)
       Sciprintf("No more memory\n");
       return NULLHOBJ;
     }
-  if ((NSP_OBJECT(H)->name = NewString(name))== NULLSTRING) return NULLHOBJ;
+  if ((NSP_OBJECT(H)->name =new_nsp_string(name))== NULLSTRING) return NULLHOBJ;
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   H->htype = htype; 
 

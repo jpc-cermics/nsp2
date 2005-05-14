@@ -1,11 +1,10 @@
-/* -*- Mode: C -*- */
-#ifndef INC_NSP_ClassB
-#define INC_NSP_ClassB
+#ifndef NSP_INC_ClassB
+#define NSP_INC_ClassB
 
-/*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )
- * Jean-Philippe Chancelier Enpc/Cermics
- *-----------------------------------------------------------------*/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* ClassB */
 
@@ -17,11 +16,9 @@
 
 typedef struct _NspClassb NspClassB;
 
-typedef int (*classb_save) (NspFile  *F, NspClassB *M);
-
 typedef struct _NspTypeClassB { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
+  /*< public >*/
 } NspTypeClassB;
 
 struct _NspClassb {

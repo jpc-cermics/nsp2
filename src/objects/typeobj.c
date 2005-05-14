@@ -338,7 +338,7 @@ NspType *type_create(char *name,NspTypeBase *nsp_type ,NspTypeBase *type)
       Sciprintf("No more memory\n");
       return NULLTYPE;
     }
-  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(NULLTYPE);
+  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLTYPE);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->nsp_type = nsp_type;
   return H;

@@ -1,8 +1,8 @@
-#ifndef INC_NSP_SMATRIX 
-#define INC_NSP_SMATRIX
+#ifndef NSP_INC_SMATRIX 
+#define NSP_INC_SMATRIX
 
 /*
- * This Software is (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2005) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
@@ -16,17 +16,16 @@
 
 typedef struct _NspSmatrix NspSMatrix ;
 
-typedef int (*smatrix_save) (NspFile  *F, NspSMatrix *M);
-
 typedef struct _NspTypeSMatrix { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  smatrix_save *save;
+  /*< public >*/
 } NspTypeSMatrix;
 
 struct _NspSmatrix {
+  /*< private >*/
   NspObject father; 
   NspTypeSMatrix *type; 
+  /*< public >*/
   int m,n,mn;
   nsp_string *S;  /* a table of mn+1 strings the last one is NULL */
 };

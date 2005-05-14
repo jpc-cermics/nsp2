@@ -1,13 +1,13 @@
-#ifndef INC_NSP_BMATRIX 
-#define INC_NSP_BMATRIX
+#ifndef NSP_INC_BMATRIX 
+#define NSP_INC_BMATRIX
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* Boolean Matrix */
-typedef integer Boolean;
+typedef int Boolean;
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -18,12 +18,9 @@ typedef integer Boolean;
 
 typedef struct _NspBmatrix NspBMatrix;
 
-typedef int (*bmatrix_save) (NspFile  *F, NspBMatrix *M);
-
 typedef struct _NspTypeBMatrix { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  bmatrix_save *save;
+  /*< public >*/
 } NspTypeBMatrix;
 
 struct _NspBmatrix {
@@ -31,7 +28,7 @@ struct _NspBmatrix {
   NspObject father; 
   NspTypeBMatrix *type; 
   /*< public >*/
-  integer m,n,mn;
+  int m,n,mn;
   Boolean *B;	
 };
 
@@ -87,25 +84,25 @@ extern int IsBMat(NspObject *O);
 extern NspBMatrix *GetBMatCopy (Stack stack, int i); 
 extern NspBMatrix *GetBMat (Stack stack, int i); 
 extern int BoolScalar (NspObject *O, Boolean *val); 
-extern int GetScalarBool (Stack stack, int i, integer *val); 
+extern int GetScalarBool (Stack stack, int i, int *val); 
 
 /* from NspBMatrix.c */
 
-extern NspBMatrix *nsp_bmatrix_create(char *name, integer m, integer n); 
+extern NspBMatrix *nsp_bmatrix_create(char *name, int m, int n); 
 extern NspBMatrix *nsp_bmatrix_copy(NspBMatrix *A); 
-extern int nsp_bmatrix_resize(NspBMatrix *A, integer m, integer n); 
+extern int nsp_bmatrix_resize(NspBMatrix *A, int m, int n); 
 extern void nsp_bmatrix_destroy(NspBMatrix *BMat); 
 extern void nsp_bmatrix_info(NspBMatrix *BMat, int indent); 
 extern void nsp_bmatrix_print(NspBMatrix *BMat, int indent,int header); 
 extern void nsp_bmatrix_latex_print(NspBMatrix *BMat); 
 extern void nsp_bmatrix_latex_tab_print(NspBMatrix *BMat); 
-extern int nsp_bmatrix_redim(NspBMatrix *A, integer m, integer n); 
-extern int nsp_bmatrix_enlarge(NspBMatrix *A, integer m, integer n); 
+extern int nsp_bmatrix_redim(NspBMatrix *A, int m, int n); 
+extern int nsp_bmatrix_enlarge(NspBMatrix *A, int m, int n); 
 extern int nsp_bmatrix_concat_right(NspBMatrix *A, NspBMatrix *B); 
-extern int nsp_bmatrix_add_columns(NspBMatrix *A, integer n); 
+extern int nsp_bmatrix_add_columns(NspBMatrix *A, int n); 
 extern NspBMatrix *nsp_bmatrix_concat_down(NspBMatrix *A, NspBMatrix *B); 
 extern NspBMatrix *nsp_bmatrix_concat_diag(NspBMatrix *A, NspBMatrix *B); 
-extern int nsp_bmatrix_add_rows(NspBMatrix *A, integer m); 
+extern int nsp_bmatrix_add_rows(NspBMatrix *A, int m); 
 extern int nsp_bmatrix_set_submatrix(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B); 
 extern int nsp_bmatrix_set_rows(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B); 
 extern int nsp_bmatrix_delete_columns(NspBMatrix *A, NspMatrix *Cols); 
@@ -116,9 +113,9 @@ extern NspBMatrix *nsp_bmatrix_extract_elements(NspBMatrix *A, NspMatrix *Elts);
 extern NspBMatrix *nsp_bmatrix_extract_columns(NspBMatrix *A, NspMatrix *Cols); 
 extern NspBMatrix *nsp_bmatrix_extract_rows(NspBMatrix *A, NspMatrix *Rows); 
 extern NspBMatrix *BMatLoopCol (char *str, NspBMatrix *Col, NspBMatrix *A, int icol, int *rep); 
-extern NspBMatrix *nsp_bmatrix_extract_diag(NspBMatrix *A, integer k); 
-extern int nsp_bmatrix_set_diag(NspBMatrix *A, NspBMatrix *Diag, integer k); 
-extern NspBMatrix *nsp_bmatrix_create_diag(NspBMatrix *Diag, integer k); 
+extern NspBMatrix *nsp_bmatrix_extract_diag(NspBMatrix *A, int k); 
+extern int nsp_bmatrix_set_diag(NspBMatrix *A, NspBMatrix *Diag, int k); 
+extern NspBMatrix *nsp_bmatrix_create_diag(NspBMatrix *Diag, int k); 
 extern NspBMatrix *nsp_bmatrix_transpose(NspBMatrix *A); 
 extern NspBMatrix *nsp_matrix_to_bmatrix(NspMatrix *M); 
 extern NspMatrix *nsp_bmatrix_to_matrix(NspBMatrix *M); 

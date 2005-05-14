@@ -1,11 +1,10 @@
-/* -*- Mode: C -*- */
-#ifndef INC_NSP_Matint
-#define INC_NSP_Matint
+#ifndef NSP_INC_Matint
+#define NSP_INC_Matint
 
-/*********************************************************************
- * This Software is ( Copyright ENPC/CERMICS 1998-2005) 
- * Jean-Philippe Chancelier Enpc/Cermics 
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* interface Matint */
 

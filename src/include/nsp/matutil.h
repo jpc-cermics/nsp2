@@ -1,10 +1,10 @@
-#ifndef SCI_MATUTIL
-#define SCI_MATUTIL 
+#ifndef NSP_INC_MATUTIL
+#define NSP_INC_MATUTIL 
 
-/*------------------------------------------------------------------------
- *    Copyright (C) 1998-2003 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- *--------------------------------------------------------------------------*/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 extern int nsp_double2int (int *n, double *dx, int *ix); 
 extern int nsp_float2int (int *n, float *dx, int *ix); 
@@ -42,4 +42,4 @@ extern void nsp_franck_inverse_matrix (double *a, int n);
 extern void nsp_hilbert_matrix (double *a, int n); 
 extern void nsp_hilbert_inverse_matrix (double *a, int n); 
 
-#endif /* SCI_   **/
+#endif /* NSP_INC_   **/

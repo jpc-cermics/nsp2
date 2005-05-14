@@ -302,7 +302,7 @@ NspModuleElt *modulelt_create(char *name,NspTypeBase *type)
       Sciprintf("No more memory\n");
       return NULLME;
     }
-  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(NULLME);
+  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLME);
   NSP_OBJECT(H)->ret_pos = -1 ;
   return H;
 }

@@ -1,11 +1,10 @@
-/* -*- Mode: C -*- */
-#ifndef INC_NSP_Module
-#define INC_NSP_Module
+#ifndef NSP_INC_Module
+#define NSP_INC_Module
 
-/*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )
- * Jean-Philippe Chancelier Enpc/Cermics
- *-----------------------------------------------------------------*/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* Module */
 
@@ -17,16 +16,16 @@
 
 typedef struct _NspModule NspModule;
 
-typedef int (*module_save) (NspFile  *F, NspModule *M);
-
 typedef struct _NspTypeModule { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
+  /*< public >*/
 } NspTypeModule;
 
 struct _NspModule {
+  /*< private >*/
   NspObject father; 
   NspTypeModule *type; 
+  /*< public >*/
   char *path ; /* absolute XXX path of the module */
   char *mname;  /* module name */
   NspHash *T;      /* hash table to store module objects of type me (module elts) */

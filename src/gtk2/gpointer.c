@@ -289,7 +289,7 @@ NspGPointer *gpointer_create(char *name,GType gtype, gpointer pointer,NspTypeBas
       return NULLGPOINTER;
     }
   
-  if ( ( NSP_OBJECT(self)->name = NewString(name)) == NULLSTRING) return(NULLGPOINTER);
+  if ( ( NSP_OBJECT(self)->name =new_nsp_string(name)) == NULLSTRING) return(NULLGPOINTER);
   NSP_OBJECT(self)->ret_pos = -1 ;
   
   g_return_val_if_fail(gtype != 0, NULL);

@@ -1,7 +1,10 @@
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 ) 
+#ifndef NSP_INC_GSORT_INT
+#define NSP_INC_GSORT_INT
+
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
  * Jean-Philippe Chancelier Enpc/Cermics         
- *********************************************************************/
+ */
 
 static void CNAME(ColSort,int)();
 static void CNAME(RowSort,int)();
@@ -385,6 +388,8 @@ static void CNAME(sorttest,int)()
 
 
 #endif
+#endif
+
 
 
 

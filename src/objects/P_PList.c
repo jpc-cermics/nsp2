@@ -41,10 +41,10 @@ NspPList *NspPListCreate(char *name, PList L,char *filename)
       Scierror("No more space\n");
       return(NULLP_PLIST);
     }
-  if (( NSP_OBJECT(P_L)->name = NewString(name))== NULLSTRING) return NULLP_PLIST;
+  if (( NSP_OBJECT(P_L)->name =new_nsp_string(name))== NULLSTRING) return NULLP_PLIST;
   if ( filename != NULL)
     {
-      if ((P_L->file_name = NewString(filename))== NULLSTRING) return NULLP_PLIST;
+      if ((P_L->file_name =new_nsp_string(filename))== NULLSTRING) return NULLP_PLIST;
     }
   else 
     P_L->file_name = NULL;

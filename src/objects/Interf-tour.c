@@ -90,7 +90,7 @@ int int_ex1c(Stack stack, int rhs, int opt, int lhs)
 
 /*
  *     inputs:  ch, a,b and c; ia,ib and mc,nc 
- *     ch=character, a=integer, b=float and c=double 
+ *     ch=character, a=int, b=float and c=double 
  *     ia,ib and [mc,nc] are the dimensions of a,b and c resp. 
  *     outputs: a,b,c,d 
  *     if ch='mul'   a,b and c = 2 * (a,b and c) 
@@ -382,7 +382,7 @@ static double *double_array(int *m,int *n)
   return res;
 }
 
-/*  integer array    */
+/*  int array    */
 
 static int *int_array(int *m,int *n) 
 {

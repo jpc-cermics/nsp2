@@ -21,7 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "nsp/datas-in.h"
+#include "nsp/interf.h"
+#include "nsp/datas.h"
 
 /*
  * Now the interfaced function for frame operations 

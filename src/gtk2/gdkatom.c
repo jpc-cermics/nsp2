@@ -320,7 +320,7 @@ NspGdkAtom *gdkatom_create(char *name,char *aname,GdkAtom atom,NspTypeBase *type
       Sciprintf("No more memory\n");
       return NULLGDKATOM;
     }
-  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(NULLGDKATOM);
+  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLGDKATOM);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->name = aname;
   H->atom = atom; 

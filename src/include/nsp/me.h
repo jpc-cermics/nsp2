@@ -1,10 +1,10 @@
-#ifndef INC_NSP_ME 
-#define INC_NSP_ME
+#ifndef NSP_INC_ME 
+#define NSP_INC_ME
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>   /* for FILE declaration **/
 #include "nsp/sciio.h" 
@@ -17,17 +17,16 @@
 
 typedef struct _NspMe  NspMe;
 
-typedef int (*me_save) (NspFile  *F, NspMe *M);
-
 typedef struct _NspTypeMe { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  me_save *save;
+  /*< public >*/
 } NspTypeMe;
 
 struct _NspMe {
+  /*< private >*/
   NspObject father; 
   NspTypeMe *type; 
+  /*< public >*/
   char *path;  
   char *module;
 };

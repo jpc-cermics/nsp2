@@ -1,11 +1,10 @@
-/* -*- Mode: C -*- */
-#ifndef INC_NSP_Type
-#define INC_NSP_Type
+#ifndef NSP_INC_Type
+#define NSP_INC_Type
 
-/*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )
- * Jean-Philippe Chancelier Enpc/Cermics
- *-----------------------------------------------------------------*/
+/*
+ * This Software is GPL(Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* Nsp Types as Nsp Objects  */
 
@@ -17,16 +16,16 @@
 
 typedef struct _NspType NspType;
 
-typedef int (*type_save) (NspFile  *F, NspType *M);
-
 typedef struct _NspTypeType { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
+  /*< public >*/
 } NspTypeType;
 
 struct _NspType {
+  /*< private >*/
   NspObject father; 
   NspTypeType *type; 
+  /*< public >*/
   NspTypeBase *nsp_type;
 };
 

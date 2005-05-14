@@ -1,10 +1,10 @@
-#ifndef INC_NSP_PList 
-#define INC_NSP_PList
+#ifndef NSP_INC_PList 
+#define NSP_INC_PList
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -16,12 +16,9 @@
  */
 typedef struct _NspPlist  NspPList;
 
-typedef int (*plist_save) (NspFile  *F, NspPList *M);
-
 typedef struct _NspTypePList { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  plist_save *save;
+  /*< public >*/
 } NspTypePList;
 
 
@@ -47,8 +44,10 @@ typedef struct parse_cell {
  *****************************************************************/
 
 struct _NspPlist {
+  /*< private >*/
   NspObject father; 
   NspTypePList *type; 
+  /*< public >*/
   char *file_name;  /* NULL or points to the function source file-name */
   PList D;          /* points to the parsed expression */
 };

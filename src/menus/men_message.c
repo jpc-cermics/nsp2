@@ -24,7 +24,7 @@
 int nsp_message(NspSMatrix *Message,NspSMatrix *Buttons,int *rep)
 {
   static char* buttons_def[] = { "Ok", NULL };
-  String *message =nsp_smatrix_elts_concat(Message,"\n",1,"\n",1);
+  nsp_string message =nsp_smatrix_elts_concat(Message,"\n",1,"\n",1);
   if ( message == NULL) return FAIL;
   if ( Buttons == NULLSMAT) 
     {
@@ -34,7 +34,7 @@ int nsp_message(NspSMatrix *Message,NspSMatrix *Buttons,int *rep)
     {
       *rep= nsp_message_(message,Buttons->S,Buttons->mn);
     }
-  StringDestroy(&message);
+ nsp_string_destroy(&message);
   return OK;
 }
 
@@ -44,7 +44,7 @@ int nsp_message(NspSMatrix *Message,NspSMatrix *Buttons,int *rep)
 
 int nsp_message_modeless(NspSMatrix *Message,NspSMatrix *Buttons)
 {
-  String *message =nsp_smatrix_elts_concat(Message,"\n",1,"\n",1);
+  nsp_string message =nsp_smatrix_elts_concat(Message,"\n",1,"\n",1);
   if ( message == NULL) return FAIL;
   nsp_message_modeless_(message);
   return OK;

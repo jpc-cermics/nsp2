@@ -340,7 +340,7 @@ NspGObject *gobject_create(char *name,  GObject *obj, NspTypeBase *type)
       return NULLGOBJECT;
     }
   g_object_ref(obj);
-  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(NULLGOBJECT);
+  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLGOBJECT);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->obj = obj ; 
   return H;
@@ -534,7 +534,7 @@ static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_
       if ((spec->flags & G_PARAM_READABLE) == 0) continue ; 
       if (type_only_flag == TRUE && spec->owner_type != type) continue ; 
       /* g_param_spec_get_nick (spec) */ 
-      if ((nsp_ret->S[count++] = NewString(spec->name)) == (String *) 0 )  return NULLSMAT; 
+      if ((nsp_ret->S[count++] =new_nsp_string(spec->name)) == (nsp_string) 0 )  return NULLSMAT; 
     }
   g_free (specs);
   return nsp_ret; 

@@ -1,5 +1,5 @@
-#ifndef NSP_GTK_COMMAND_H 
-#define NSP_GTK_COMMAND_H 
+#ifndef NSP_INC_GTK_COMMAND_H 
+#define NSP_INC_GTK_COMMAND_H 
 
 typedef int (*Scig_command_handler) (char *);
 extern int scig_command_handler_none (char *command);

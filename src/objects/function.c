@@ -330,12 +330,12 @@ NspFunction *function_create(char *name,char *fname,int iface,int pos,int status
       Sciprintf("No more memory\n");
       return NULLFUNC;
     }
-  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(NULLFUNC);
+  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLFUNC);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->iface = iface;
   H->pos = pos;
   H->status = status;
-  if ((H->fname = NewString(fname))== NULLSTRING) return NULLFUNC;
+  if ((H->fname =new_nsp_string(fname))== NULLSTRING) return NULLFUNC;
   return H;
 }
 

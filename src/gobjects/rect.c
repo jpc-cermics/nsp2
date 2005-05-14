@@ -315,7 +315,7 @@ NspRect *rect_create(char *name,BCG *Xgc,double rect[],int color,int thickness,i
       Sciprintf("No more memory\n");
       return NULLRECT;
     }
-  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(NULLRECT);
+  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLRECT);
   NSP_OBJECT(H)->ret_pos = -1 ;
   for ( i=0; i < 4 ; i++) H->r[i]=rect[i];
   H->color = color;

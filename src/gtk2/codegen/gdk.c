@@ -7512,13 +7512,13 @@ _wrap_gdk_pixbuf_save(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 	  g_free(option_values);
 	  return RET_BUG;
 	}
-      if ((option_keys[i] = NewString(opt_key)) == NULLSTRING)
+      if ((option_keys[i] =new_nsp_string(opt_key)) == NULLSTRING)
 	{
 	  g_free(option_keys);
 	  g_free(option_values);
 	  return RET_BUG;
 	}
-      if ((option_values[i] = NewString(opt_value)) == NULLSTRING)
+      if ((option_values[i] =new_nsp_string(opt_value)) == NULLSTRING)
 	{
 	  g_free(option_keys);
 	  g_free(option_values);

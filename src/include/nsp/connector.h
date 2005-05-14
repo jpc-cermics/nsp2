@@ -1,10 +1,10 @@
-#ifndef INC_NSP_Connector
-#define INC_NSP_Connector
+#ifndef NSP_INC_Connector
+#define NSP_INC_Connector
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* connector */
 
@@ -21,12 +21,10 @@
 
 typedef struct _NspConnector NspConnector;
 
-typedef int (*connector_save) (NspFile  *F, NspConnector *M);
 
 typedef struct _NspTypeConnector { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  connector_save *save;
+  /*< public >*/
 } NspTypeConnector;
 
 
@@ -41,8 +39,10 @@ typedef struct _lock {
 } gr_lock ; 
 
 struct _NspConnector {
+  /*< private >*/
   NspObject father; 
   NspTypeConnector *type; 
+  /*< public >*/
   double r[4];
   int color; 
   int thickness;

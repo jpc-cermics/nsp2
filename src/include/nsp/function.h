@@ -1,11 +1,10 @@
-/* -*- Mode: C -*- */
-#ifndef INC_NSP_Function
-#define INC_NSP_Function
+#ifndef NSP_INC_Function
+#define NSP_INC_Function
 
-/*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2005 )
- * Jean-Philippe Chancelier Enpc/Cermics
- *-----------------------------------------------------------------*/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* Function */
 
@@ -17,16 +16,16 @@
 
 typedef struct _NspFunction NspFunction;
 
-typedef int (*function_save) (NspFile  *F, NspFunction *M);
-
 typedef struct _NspTypeFunction { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
+  /*< public >*/
 } NspTypeFunction;
 
 struct _NspFunction {
+  /*< private >*/
   NspObject father; 
   NspTypeFunction *type; 
+  /*< public >*/
   char *fname; /* function name */
   int  pos;/* function position inside interface */
   int  iface;/* Interface number in which the function is stored */

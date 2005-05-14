@@ -65,7 +65,7 @@ int nsp_smatrix_to_utf8(NspSMatrix *A)
       char *loc= nsp_string_to_utf8(A->S[i]);
       if ( loc != A->S[i] && loc != NULL) 
 	{
-	  StringDestroy(&(A->S[i]));
+	nsp_string_destroy(&(A->S[i]));
 	  A->S[i]= loc;
 	}
       else if ( loc == NULL) 

@@ -223,15 +223,18 @@ static OpTab ClassC_func[]={
   {(char *) 0, NULL}
 };
 
-/** call ith function in the ClassC interface **/
+/* call ith function in the ClassC interface 
+ */
 
 int ClassC_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(ClassC_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* 
+ * used to walk through the interface table 
+ * (for adding or removing functions) 
+ */
 
 void ClassC_Interf_Info(int i, char **fname, function (**f))
 {

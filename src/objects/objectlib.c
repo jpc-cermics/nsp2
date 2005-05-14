@@ -395,7 +395,7 @@ NspObject *nsp_get_object_copy(Stack stack, int i)
 NspObject *nsp_create_object_from_double(char *str, double dval)
 {
   NspMatrix *A;
-  if ((A= nsp_matrix_create(str,'r',(integer)1,(integer)1))==NULLMAT) return(NULLOBJ);
+  if ((A= nsp_matrix_create(str,'r',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
   A->R[0] = dval ;
   return (NspObject *) A;
 }
@@ -415,7 +415,7 @@ NspObject *nsp_create_object_from_double(char *str, double dval)
 NspObject *nsp_create_object_from_int(char *str, int ival)
 {
   NspMatrix *A;
-  if ((A= nsp_matrix_create(str,'r',(integer)1,(integer)1))==NULLMAT) return(NULLOBJ);
+  if ((A= nsp_matrix_create(str,'r',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
   A->R[0] = (double) ival ;
   return (NspObject *) A;
 }
@@ -433,7 +433,7 @@ NspObject *nsp_create_object_from_int(char *str, int ival)
 NspObject *nsp_complexi_object_(char *str)
 {
   NspMatrix *A;
-  if ((A= nsp_matrix_create(str,'c',(integer)1,(integer)1))==NULLMAT) return(NULLOBJ);
+  if ((A= nsp_matrix_create(str,'c',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
   A->C[0].r = 0;
   A->C[0].i = 1;
   return (NspObject *) A;
@@ -502,7 +502,7 @@ NspObject *nsp_create_object_from_str_and_size(char *str, int lstr)
  * Return value:  a new #NspObject ( in fact a #NspMatrix)
  **/
 
-NspObject *nsp_create_object_from_doubles(integer m, integer n, integer it, double *rtab, double *itab, char *name)
+NspObject *nsp_create_object_from_doubles(int m, int n, int it, double *rtab, double *itab, char *name)
 {
   char type; 
   NspMatrix *A;

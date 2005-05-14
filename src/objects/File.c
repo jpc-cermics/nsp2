@@ -355,7 +355,7 @@ int nsp_xdr_load_d(XDR *xdrs, double *x)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_save_i(XDR *xdrs, integer ix)
+int nsp_xdr_save_i(XDR *xdrs, int ix)
 {
   szof = sizeof(int) ;
   count = 1;
@@ -371,7 +371,7 @@ int nsp_xdr_save_i(XDR *xdrs, integer ix)
  * 
  * Return value: %OK or %FAIL
  **/
-int nsp_xdr_load_i(XDR *xdrs, integer *ix)
+int nsp_xdr_load_i(XDR *xdrs, int *ix)
 {
   szof = sizeof(int) ;
   count = (u_int)1;
@@ -461,7 +461,7 @@ int nsp_xdr_load_array_i(XDR *xdrs, int *nx, int l)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_save_array_d(XDR *xdrs, double *nx, integer l)
+int nsp_xdr_save_array_d(XDR *xdrs, double *nx, int l)
 {
   szof = sizeof(double) ;
   count = (int) l;
@@ -482,7 +482,7 @@ int nsp_xdr_save_array_d(XDR *xdrs, double *nx, integer l)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_load_array_d(XDR *xdrs, double *nx, integer mn)
+int nsp_xdr_load_array_d(XDR *xdrs, double *nx, int mn)
 {
   szof = sizeof(double) ;
   assertR( xdr_vector(xdrs,(char *) &count,(u_int)1,(u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
@@ -870,7 +870,7 @@ int nsp_mget(NspFile *F,void *x,int n,const char *type,int *items_read)
  * Return value: 
  **/
 
-int nsp_mgetstr(NspFile *F, char **start, integer n)
+int nsp_mgetstr(NspFile *F, char **start, int n)
 { 
   int count;
   if ( !IS_OPENED(F->flag)) 
@@ -973,7 +973,7 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
       return FAIL;
     }
 
-  if ( Info == NULL && (Info = NewStringN(INFOSIZE)) == NULLSTRING) return FAIL;
+  if ( Info == NULL && (Info =new_nsp_string_n(INFOSIZE)) == NULLSTRING) return FAIL;
   Info_size = INFOSIZE;
 
   /* mark position */
@@ -1031,7 +1031,7 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
       if ( mem == 1) return FAIL;
       if ( flag == TRUE ) 
 	{
-	  if (((*S)->S[i]= NewString(Info))==NULL) return FAIL;
+	  if (((*S)->S[i]=new_nsp_string(Info))==NULL) return FAIL;
 	}
       
     }
@@ -1129,7 +1129,7 @@ int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
       Scierror("File %s is not opened\n",F->fname);
       return FAIL;
     }
-  if ( Info == NULL && (Info = NewStringN(INFOSIZE)) == NULLSTRING) return FAIL;
+  if ( Info == NULL && (Info =new_nsp_string_n(INFOSIZE)) == NULLSTRING) return FAIL;
   Info_size = INFOSIZE;
   if ((*S =nsp_smatrix_create_with_length(NVOID,nlines,1,-1))== NULLSMAT) return FAIL;
   for ( i= 0 ; i < nlines ; i++)
@@ -1137,7 +1137,7 @@ int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
       n = nsp_read_line(F->file,&mem);
       if ( mem == 1) return FAIL;
       if ( n == EOF ||  n == 0 ) break;
-      if (((*S)->S[i]= NewString(Info))==NULL) return FAIL;
+      if (((*S)->S[i]=new_nsp_string(Info))==NULL) return FAIL;
     }
   if ( i < nlines ) 
     {
@@ -1185,7 +1185,7 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
       return FAIL;
     }
 
-  if ( Info == NULL && (Info = NewStringN(INFOSIZE)) == NULLSTRING) return FAIL;
+  if ( Info == NULL && (Info =new_nsp_string_n(INFOSIZE)) == NULLSTRING) return FAIL;
   Info_size = INFOSIZE;
 
   /* mark position */
@@ -1213,7 +1213,7 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
       n = nsp_read_line(F->file,&mem);
       if ( mem == 1) return FAIL;
       if ( n == EOF ||  n == 0 ) break;
-      if (((*S)->S[rows++]= NewString(Info))==NULL) return FAIL;
+      if (((*S)->S[rows++]=new_nsp_string(Info))==NULL) return FAIL;
     }
 
   /* just in case Info is too Big */ 

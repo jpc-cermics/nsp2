@@ -441,30 +441,6 @@ static int int_hess( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-
-
-
-/*
- * interface for testing dlamch
- */
-
-extern double C2F(dlamch)(char *,int );
-extern double cdf_dlamch(char *,int );
-
-static int int_dlamch( Stack stack, int rhs, int opt, int lhs)
-{
-  double x,y,z;
-  char *mode;
-  int_types T[] = {string,t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&mode) == FAIL) return RET_BUG;
-  x = nsp_dlamch(mode);
-  y = C2F(dlamch)(mode,strlen(mode));
-  z = cdf_dlamch(mode,strlen(mode));
-  fprintf(stderr," %e %e %e %d\n",x,y,z,x==y);
-  return 0;
-  
-}
-
 /*
  * The Interface for basic matrices operation 
  */
@@ -472,7 +448,6 @@ static int int_dlamch( Stack stack, int rhs, int opt, int lhs)
 static OpTab Lapack_func[] = {
   {"qr",int_qr},
   {"lsq",int_lsq},
-  {"dlamch",int_dlamch},
   {"svd",int_svd},
   {"det",int_det},
   {"spec",int_spec},

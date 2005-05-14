@@ -1,5 +1,5 @@
-#ifndef NSP_USER_PREFS
-#define NSP_USER_PREFS
+#ifndef NSP_INC_USER_PREFS
+#define NSP_INC_USER_PREFS
 
 /* FIXME: 
  *   should be moved to scilab data 

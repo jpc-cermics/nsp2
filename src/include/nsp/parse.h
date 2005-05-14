@@ -1,5 +1,5 @@
-#ifndef SCI_PARSE 
-#define SCI_PARSE 
+#ifndef NSP_INC_PARSE 
+#define NSP_INC_PARSE 
 
 extern int TokenLineSet(int l);
 

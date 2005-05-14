@@ -18,7 +18,7 @@
  * Search module mname in module list L 
  *********************************************/
 
-NspModule *nsp_search_module(NspList *L,String *mname)
+NspModule *nsp_search_module(NspList *L, nsp_const_string mname)
 {
   Cell *C = ((NspList *) L)->first;
   while ( C != NULLCELL) 

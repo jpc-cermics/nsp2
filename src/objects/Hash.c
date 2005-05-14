@@ -556,7 +556,7 @@ NspHash *nsp_hcreate(char *name, unsigned int nel)
       Sciprintf("No more memory\n");
       return NULLHASH;
     }
-  if ((NSP_OBJECT(H)->name = NewString(name))== NULLSTRING) return NULLHASH;
+  if ((NSP_OBJECT(H)->name =new_nsp_string(name))== NULLSTRING) return NULLHASH;
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   H->hsize  = nel;
   H->filled = 0;

@@ -1,5 +1,5 @@
-#ifndef SCI_MEX 
-#define SCI_MEX 
+#ifndef NSP_INC_MEX 
+#define NSP_INC_MEX 
 
 #define INTERSIZ 256
 
@@ -38,7 +38,7 @@ int *mxCreateString (char *string);
 /* typedef int NspMatrix; */
 #endif 
 
-#endif /* SCI_MEX */
+#endif /* NSP_MEX */
 
 
 

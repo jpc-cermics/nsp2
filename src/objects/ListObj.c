@@ -27,7 +27,6 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include "nsp/list-in.h"
 #include "nsp/plisttoken.h" /* for name_maxl **/
 #include "../interp/Eval.h"
 
@@ -657,7 +656,7 @@ static int int_lxnull(Stack stack, int rhs, int opt, int lhs)
 static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Elts;
-  integer rmin,rmax,i,l,nret,L_name;
+  int rmin,rmax,i,l,nret,L_name;
   NspObject *O;
   NspList *L;
   CheckRhs (2,2);
@@ -776,7 +775,7 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 	}
       if ( C->next != NULL) 
 	{
-	  /* extraction of list element i.e integer or string */
+	  /* extraction of list element i.e int or string */
 	  if ( IsMat(C->O)) 
 	    {
 	      if ( IntScalar(C->O,&n)== FAIL)  return RET_BUG;

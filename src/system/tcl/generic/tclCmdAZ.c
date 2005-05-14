@@ -659,11 +659,11 @@ static NspSMatrix *StoreStatData(struct stat *statPtr)
 static int StoreStat( NspSMatrix *S, int i, char *str1,char *str2)
 {
   char *loc ;
-  if (( loc = NewString(str1)) == (String *) 0)  return FAIL;
-  StringDestroy(&S->S[i]);
+  if (( loc =new_nsp_string(str1)) == (nsp_string) 0)  return FAIL;
+ nsp_string_destroy(&S->S[i]);
   S->S[i] = loc ;
-  if (( loc = NewString(str2)) == (String *) 0)  return FAIL;
-  StringDestroy(&S->S[i+11]);
+  if (( loc =new_nsp_string(str2)) == (nsp_string) 0)  return FAIL;
+ nsp_string_destroy(&S->S[i+11]);
   S->S[i+11] = loc ;
   return OK;
 }
@@ -754,14 +754,14 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
       for (index = 0; tclpFileAttrStrings[index] != NULL; index++) 
 	{
 	  char *loc ;
-	  if (( loc = NewString(tclpFileAttrStrings[index])) == (String *) 0)  goto done;
-	  StringDestroy(&S->S[index]);  S->S[index] = loc ;
+	  if (( loc =new_nsp_string(tclpFileAttrStrings[index])) == (nsp_string) 0)  goto done;
+	nsp_string_destroy(&S->S[index]);  S->S[index] = loc ;
 	  if ((*tclpFileAttrProcs[index].getProc)( index, fileName,&elementObjPtr) != TCL_OK) {
 	    goto done;
 	  }
-	  if (( loc = NewString(((NspSMatrix *) elementObjPtr)->S[0])) == (String *) 0)  
+	  if (( loc =new_nsp_string(((NspSMatrix *) elementObjPtr)->S[0])) == (nsp_string) 0)  
 	    goto done;
-	  StringDestroy(&S->S[index+count]);  S->S[index+count] = loc ;
+	nsp_string_destroy(&S->S[index+count]);  S->S[index+count] = loc ;
 	}
       MoveObj(stack,1,(NspObject*) O);
       result = 1;
@@ -895,8 +895,8 @@ int int_regexp(Stack stack,int rhs,int opt,int lhs)
   if ( get_optional_args(stack,rhs,opt,opts,&noCase) == FAIL) return RET_BUG;
   if ( noCase == TRUE)
     {
-      if ((string = CopyString(pattern)) == NULLSTRING)  return  RET_BUG;
-      if ((pattern = CopyString(pattern)) == NULLSTRING)  return  RET_BUG;
+      if ((string =nsp_string_copy(pattern)) == NULLSTRING)  return  RET_BUG;
+      if ((pattern =nsp_string_copy(pattern)) == NULLSTRING)  return  RET_BUG;
       /*
        * Convert the string and pattern to lower case, if desired, and
        * perform the matching operation.
@@ -1013,7 +1013,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
   if ( noCase == TRUE)
     {
       if ((S = nsp_smatrix_copy(S)) == NULLSMAT) return  RET_BUG;
-      if ((pattern = CopyString(pattern)) == NULLSTRING)  return  RET_BUG;
+      if ((pattern =nsp_string_copy(pattern)) == NULLSTRING)  return  RET_BUG;
       /*
        * Convert the string and pattern to lower case, if desired, and
        * perform the matching operation.

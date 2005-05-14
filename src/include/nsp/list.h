@@ -1,10 +1,10 @@
-#ifndef INC_NSP_LIST 
-#define INC_NSP_LIST
+#ifndef NSP_INC_LIST 
+#define NSP_INC_LIST
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -17,12 +17,9 @@
 
 typedef struct _NspList  NspList;
 
-typedef int (*list_save) (NspFile  *F, NspList *M);
-
 typedef struct _NspTypeList { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  list_save *save;
+  /*< public >*/
 } NspTypeList;
 
 typedef struct cell {
@@ -33,8 +30,10 @@ typedef struct cell {
 } Cell ;
 
 struct _NspList {
+  /*< private >*/
   NspObject father; 
   NspTypeList *type; 
+  /*< public >*/
   char *tname;        /* name of the tlist or NULL **/
   Cell *first; /* pointer to the first cell */
 };
@@ -73,12 +72,12 @@ extern void nsp_list_destroy(NspList *l);
 extern NspList *nsp_list_copy(NspList *L); 
 extern NspList *nsp_list_extract(NspList *L, NspMatrix *Elts); 
 extern int nsp_list_insert(NspList *L, NspObject *O, int n); 
-extern NspObject *nsp_list_get_element(NspList *L, integer nel); 
+extern NspObject *nsp_list_get_element(NspList *L, int nel); 
 extern int nsp_list_end_insert(NspList *L, NspObject *A); 
-extern int nsp_list_store(NspList *L, NspObject *A, integer n); 
+extern int nsp_list_store(NspList *L, NspObject *A, int n); 
 extern void nsp_list_delete_elt_by_name(NspList *L, char *str); 
-extern int nsp_list_delete_elt(NspList *L, integer nel); 
-extern int nsp_list_delete_cell(NspList *L, integer nel); 
+extern int nsp_list_delete_elt(NspList *L, int nel); 
+extern int nsp_list_delete_cell(NspList *L, int nel); 
 extern int nsp_list_length(NspList *L); 
 extern int nsp_list_concat(NspList *L1, NspList *L2); 
 extern void nsp_list_info(NspList *L, int indent); 

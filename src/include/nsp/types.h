@@ -1,5 +1,5 @@
-#ifndef SCI_TYPES
-#define SCI_TYPES
+#ifndef NSP_INC_TYPES
+#define NSP_INC_TYPES
 
 extern SciFType * VoidPt_Type;
 extern SciFType * GtkE_Type ;

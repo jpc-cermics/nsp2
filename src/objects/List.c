@@ -56,7 +56,7 @@ NspList*nsp_list_create(char *name, char *tname)
     }
   if (name != NULLSTRING) 
     { 
-      if (( NSP_OBJECT(Loc)->name = NewString(name)) == NULLSTRING)
+      if (( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING)
 	return(NULLLIST);
     }
   else 
@@ -65,7 +65,7 @@ NspList*nsp_list_create(char *name, char *tname)
     }
   if (tname != NULLSTRING) 
     { 
-      if (( Loc->tname = NewString(tname)) == NULLSTRING)
+      if (( Loc->tname =new_nsp_string(tname)) == NULLSTRING)
 	return(NULLLIST);
     }
   else 
@@ -103,7 +103,7 @@ Cell *nsp_cell_create(char *name, NspObject *O)
     }
   if (name !=  NULLSTRING) 
     { 
-      if (( Loc->name = NewString(name)) == NULLSTRING)
+      if (( Loc->name =new_nsp_string(name)) == NULLSTRING)
 	return(NULLCELL);
     }
   else 
@@ -218,7 +218,7 @@ NspList*nsp_list_copy(NspList *L)
 NspList*nsp_list_extract(NspList *L, NspMatrix *Elts)
 {
   NspList *Loc;
-  integer rmin,rmax,i,l;
+  int rmin,rmax,i,l;
   Bounds(Elts,&rmin,&rmax);
   l =nsp_list_length(L);
   if ( rmin < 1  || rmax > l) 
@@ -320,7 +320,7 @@ int nsp_list_insert(NspList *L, NspObject *O, int n)
  * Return value: 
  **/
 
-NspObject *nsp_list_get_element(NspList *L, integer nel)
+NspObject *nsp_list_get_element(NspList *L, int nel)
 {
   int count = 1;
   Cell *cell = L->first;
@@ -392,7 +392,7 @@ int nsp_list_end_insert(NspList *L, NspObject *A)
  * Return value: 
  **/
 
-int nsp_list_store(NspList *L, NspObject *A, integer n)
+int nsp_list_store(NspList *L, NspObject *A, int n)
 { 
   int count = 1;
   Cell *Loc = L->first, *Loc1;
@@ -477,7 +477,7 @@ void nsp_list_delete_elt_by_name(NspList *L, char *str)
 
 typedef void (*destr)( Cell **c);
 
-static int DeleteNth_g(NspList *L, integer nel, destr F)
+static int DeleteNth_g(NspList *L, int nel, destr F)
 {
   int count = 1;
   Cell *Loc = L->first;
@@ -519,7 +519,7 @@ static int DeleteNth_g(NspList *L, integer nel, destr F)
  * Return value: 
  **/
 
-int nsp_list_delete_elt(NspList *L, integer nel)
+int nsp_list_delete_elt(NspList *L, int nel)
 {
   return DeleteNth_g(L, nel,nsp_cell_destroy);
 }
@@ -534,7 +534,7 @@ int nsp_list_delete_elt(NspList *L, integer nel)
  * Return value: 
  **/
 
-int nsp_list_delete_cell(NspList *L, integer nel)
+int nsp_list_delete_cell(NspList *L, int nel)
 {
   return DeleteNth_g(L, nel,nsp_cell_only_destroy);
 }
@@ -708,7 +708,7 @@ void nsp_list_print(NspList *L, int indent)
 /*
  */
 
-NspObject *ListSearch_Old(NspList *L, String *str)
+NspObject *ListSearch_Old(NspList *L, nsp_const_string str)
 {
   Cell *C;
   C= L->first;
@@ -734,7 +734,7 @@ NspObject *ListSearch_Old(NspList *L, String *str)
  **/
 
 
-NspObject *nsp_list_search(NspList *L, String *str)
+NspObject *nsp_list_search(NspList *L, nsp_const_string str)
 {
   int i;
   Cell *C =  L->first;
@@ -845,7 +845,8 @@ void nsp_cell_only_destroy(Cell **c)
  * 
  * Return value: 
  **/
-NspObject *nsp_sorted_list_search(NspList *L, String *str)
+
+NspObject *nsp_sorted_list_search(NspList *L, nsp_const_string str)
 {
   Cell *C;
   C= L->first;
@@ -876,7 +877,7 @@ NspObject *nsp_sorted_list_search(NspList *L, String *str)
  * Return value: 
  **/
 
-NspObject *nsp_sorted_list_search_and_remove(NspList *L, char *str)
+NspObject *nsp_sorted_list_search_and_remove(NspList *L, nsp_const_string str)
 {
   Cell *Loc = L->first;
   NspObject *Ret;

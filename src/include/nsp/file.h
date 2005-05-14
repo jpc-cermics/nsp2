@@ -1,10 +1,10 @@
-#ifndef INC_NSP_SCIFILE 
-#define INC_NSP_SCIFILE
+#ifndef NSP_INC_SCIFILE 
+#define NSP_INC_SCIFILE
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -36,17 +36,16 @@
 
 typedef struct _NspFile NspFile;
 
-typedef int (*file_save) (NspFile  *F, NspFile *M);
-
 typedef struct _NspTypeSciFile { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  file_save *save;
+  /*< public >*/
 } NspTypeSciFile;
 
 struct _NspFile {
+  /*< private >*/
   NspObject father; 
   NspTypeSciFile *type; 
+  /*< public >*/
   FILE *file ;   /* the file */
   XDR  xdrs[1];  /* xdr struture */
   int  flag;     /* flag for special open (xdr) */
@@ -75,7 +74,7 @@ static int nsp_file_neq(NspObject *A, NspObject *B);
 static NspMethods *nsp_file_get_methods(void);
 #endif 
 
-NspFile *nsp_file_create(char *name, char *fname, char *str, integer flag, FILE *f);
+NspFile *nsp_file_create(char *name, char *fname, char *str, int flag, FILE *f);
 NspFile *nsp_file_copy(NspFile *H);
 void nsp_file_destroy(NspFile *H);
 void nsp_file_info(NspFile *H, int indent);
@@ -117,14 +116,14 @@ extern NspFile *nsp_file_open_xdr_w(char *fname);
 extern int nsp_file_close_xdr_w(NspFile *F);
 extern int nsp_xdr_save_d(XDR *xdrs, double x);
 extern int nsp_xdr_load_d(XDR *xdrs, double *x);
-extern int nsp_xdr_save_i(XDR *xdrs, integer ix);
-extern int nsp_xdr_load_i(XDR *xdrs, integer *ix);
+extern int nsp_xdr_save_i(XDR *xdrs, int ix);
+extern int nsp_xdr_load_i(XDR *xdrs, int *ix);
 extern int nsp_xdr_save_c(XDR *xdrs, char c);
 extern int nsp_xdr_load_c(XDR *xdrs, char *c);
 extern int nsp_xdr_save_array_i(XDR *xdrs, int *nx, int l);
 extern int nsp_xdr_load_array_i(XDR *xdrs, int *nx, int l);
-extern int nsp_xdr_save_array_d(XDR *xdrs, double *nx, integer l);
-extern int nsp_xdr_load_array_d(XDR *xdrs, double *nx, integer mn);
+extern int nsp_xdr_save_array_d(XDR *xdrs, double *nx, int l);
+extern int nsp_xdr_load_array_d(XDR *xdrs, double *nx, int mn);
 extern int nsp_xdr_save_string(XDR *xdrs, char *str);
 extern int nsp_xdr_load_string(XDR *xdrs, char *buf, int buf_len);
 
@@ -136,7 +135,7 @@ extern int nsp_fseek(NspFile *F,long int offset,const char *flag);
 extern int nsp_ftell(NspFile *F,long int *offset);
 extern int nsp_mput(NspFile *F,void *x,int n, char *type);
 extern int nsp_mget(NspFile *F,void *x,int n,const char *type, int *items_read);
-extern int nsp_mgetstr(NspFile *F, char **start, integer n);
+extern int nsp_mgetstr(NspFile *F, char **start, int n);
 extern int nsp_mgetstr1 (NspFile *F, char *start, int n, int *n_read);
 extern int nsp_putstr(NspFile *F, char *str);
 

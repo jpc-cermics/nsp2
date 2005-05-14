@@ -1,10 +1,10 @@
-#ifndef INC_NSP_Hash
-#define INC_NSP_Hash
+#ifndef NSP_INC_Hash
+#define NSP_INC_Hash
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* class Hash */
 
@@ -35,16 +35,16 @@ typedef struct {
 
 typedef struct _NspHash NspHash;
 
-typedef int (*hash_save) (NspFile  *F, NspHash *M);
-
 typedef struct _NspTypeHash { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
+  /*< public >*/
 } NspTypeHash;
 
 struct _NspHash {
+  /*< private >*/
   NspObject father; 
   NspTypeHash *type; 
+  /*< public >*/
   unsigned int hsize,filled; /* size of hash table and number of present entries */
   void  *htable; /* an array of size hsize+1 */
 };

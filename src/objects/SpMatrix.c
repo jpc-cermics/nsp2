@@ -71,7 +71,7 @@ NspSpMatrix *nsp_spmatrix_create(char *name, char type, int m, int n)
     {
       Scierror("No more space\n");      return(NULLSP);
     }
-  if ( ( NSP_OBJECT(Sp)->name = NewString(name)) == NULLSTRING) return(NULLSP);
+  if ( ( NSP_OBJECT(Sp)->name =new_nsp_string(name)) == NULLSTRING) return(NULLSP);
   NSP_OBJECT(Sp)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
     Sp->type = SPMATRIX;

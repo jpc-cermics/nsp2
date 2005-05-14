@@ -1,10 +1,10 @@
-#ifndef INC_NSP_GFrame
-#define INC_NSP_GFrame
+#ifndef NSP_INC_GFrame
+#define NSP_INC_GFrame
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* graphic frame */
 
@@ -21,17 +21,16 @@
 
 typedef struct _NspGframe NspGFrame;
 
-typedef int (*gframe_save) (NspFile  *F, NspGFrame *M);
-
 typedef struct _NspTypeGFrame { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  gframe_save *save;
+  /*< public >*/
 } NspTypeGFrame;
 
 struct _NspGframe {
+  /*< private >*/
   NspObject father; 
   NspTypeGFrame *type; 
+  /*< public >*/
   NspList *objs ;       /* Object of type list: list of internal objects */
   BCG *Xgc;
   double scale[4];  /* the scales */

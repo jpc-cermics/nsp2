@@ -1,10 +1,10 @@
-#ifndef INC_NSP_HOBJ 
-#define INC_NSP_HOBJ
+#ifndef NSP_INC_HOBJ 
+#define NSP_INC_HOBJ
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -15,17 +15,17 @@
  * NspHobj inherits from NspObject 
  */
 typedef struct _NspHobj  NspHobj;
-typedef int (*hobj_save) (NspFile  *F, NspHobj *M);
 
 typedef struct _NspTypeHobj { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  hobj_save *save;
+  /*< public >*/
 } NspTypeHobj;
 
 struct _NspHobj {
+  /*< private >*/
   NspObject father; 
   NspTypeHobj *type; 
+  /*< public >*/
   char htype  ;   /* 'o' : optional argument 
 		  * 'h' : handler 
 		  * 'g' : global variable pointer 

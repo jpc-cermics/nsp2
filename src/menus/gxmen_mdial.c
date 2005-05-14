@@ -182,7 +182,7 @@ int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  n
 	char * text = gtk_editable_get_chars(GTK_EDITABLE(entries[i]),0,
 					     GTK_ENTRY(entries[i])->text_length);
 	if ( text == NULL) { *ierr=1; return FALSE;}
-	if ( (loc = NewString(text)) == NULLSTRING) { *ierr=1; return FALSE;}
+	if ( (loc =new_nsp_string(text)) == NULLSTRING) { *ierr=1; return FALSE;}
 	pszName[i] = loc ;
       }
     }

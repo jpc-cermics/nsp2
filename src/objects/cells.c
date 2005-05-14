@@ -30,8 +30,8 @@
 #include "nsp/matutil.h"
 #include "nsp/gsort-p.h"
 
-static int nsp_set_cells(integer n, NspObject *s1, NspObject **s2);
-static int nsp_copy_cells(integer n, NspObject **s1, NspObject **s2);
+static int nsp_set_cells(int n, NspObject *s1, NspObject **s2);
+static int nsp_copy_cells(int n, NspObject **s1, NspObject **s2);
 
 /*
  * Creation of a NspCells all the elements
@@ -42,7 +42,7 @@ static int nsp_copy_cells(integer n, NspObject **s1, NspObject **s2);
  * This can be used to detect the last element in XXX->S
  */
 
-NspCells *nsp_cells_create(const char *name, integer m, integer n)
+NspCells *nsp_cells_create(const char *name, int m, int n)
 {
   int i;
   NspCells *Loc = new_cells();
@@ -51,7 +51,7 @@ NspCells *nsp_cells_create(const char *name, integer m, integer n)
       Scierror("Error:\tRunning out of memory\n");
       return(NULLCELLS);
     }
-  if ( ( NSP_OBJECT(Loc)->name = NewString(name)) == NULLSTRING) return(NULLCELLS);
+  if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING) return(NULLCELLS);
   NSP_OBJECT(Loc)->ret_pos = -1 ;
   Loc->m =m;
   Loc->n = n;
@@ -150,7 +150,7 @@ NspCells*nsp_cells_copy(const NspCells *A)
  * should also work with A==[] XXXXX 
  */
 
-int nsp_cells_resize(NspCells *A, integer m, integer n)
+int nsp_cells_resize(NspCells *A, int m, int n)
 {
   int i;
   if ( A->mn == m*n ) 
@@ -288,7 +288,7 @@ void nsp_cells_print(const NspCells *Mat, int indent)
  * return 0 on failure 
  */
 
-int nsp_cells_redim(NspCells *A, integer m, integer n)
+int nsp_cells_redim(NspCells *A, int m, int n)
 {
   if ( A->mn ==  m*n ) 
     {
@@ -314,7 +314,7 @@ int nsp_cells_redim(NspCells *A, integer m, integer n)
  * The result is stored in A 
  */
 
-int nsp_cells_enlarge(NspCells *A, integer m, integer n)
+int nsp_cells_enlarge(NspCells *A, int m, int n)
 {
   if ( A->mn == 0) return nsp_cells_resize(A,m,n);
   if ( n > A->n  )
@@ -334,7 +334,7 @@ int nsp_cells_enlarge(NspCells *A, integer m, integer n)
 
 int nsp_cells_concat_right(NspCells *A,const NspCells *B)
 {
-  integer Asize;
+  int Asize;
   Asize=A->mn;
   if ( A->m != B->m ) 
     {
@@ -346,7 +346,7 @@ int nsp_cells_concat_right(NspCells *A,const NspCells *B)
   return(OK);
 }
 
-static int nsp_copy_cells(integer n, NspObject **s1, NspObject **s2)
+static int nsp_copy_cells(int n, NspObject **s1, NspObject **s2)
 {
   int i;
   for ( i = n-1 ; i >= 0 ; i--) 
@@ -372,7 +372,7 @@ static int nsp_copy_cells(integer n, NspObject **s1, NspObject **s2)
  * A is changed 
  */
 
-int nsp_cells_add_columns(NspCells *A, integer n)
+int nsp_cells_add_columns(NspCells *A, int n)
 {
   if (n == 0) return OK;
   else if ( n < 0) 
@@ -382,14 +382,14 @@ int nsp_cells_add_columns(NspCells *A, integer n)
     }
   if ( nsp_cells_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
   /*  normalemeny inutile car Resize le fait deja 
-     integer Asize;
+     int Asize;
      Asize=A->mn;
      ns= (A->m)*n;
      if ( nsp_set_cells(ns,".",A->objs+Asize) == FAIL) return(FAIL);**/
   return(OK);
 }
 
-static int nsp_set_cells(integer n, NspObject *s1, NspObject **s2)
+static int nsp_set_cells(int n, NspObject *s1, NspObject **s2)
 {
   int i;
   for ( i = 0 ; i < n ; i++) 
@@ -450,9 +450,9 @@ NspCells*nsp_cells_concat_down(const NspCells *A,const NspCells *B)
  * A and B are left unchanged 
  */
 
-int nsp_cells_add_rows(NspCells *A, integer m)
+int nsp_cells_add_rows(NspCells *A, int m)
 {
-  integer Am;
+  int Am;
   int j;
   if ( m == 0) return OK;
   else if ( m < 0) 
@@ -484,7 +484,7 @@ int nsp_cells_add_rows(NspCells *A, integer m)
 
 int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspCells *B)
 {
-  integer rmin,rmax,cmin,cmax,i,j;
+  int rmin,rmax,cmin,cmax,i,j;
   if ( B->mn != 1)
     {
       if ( Rows->mn != B->m ||  Cols->mn != B->n )
@@ -538,7 +538,7 @@ int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *C
 
 int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B)
 {
-  integer i,Bscal=0;
+  int i,Bscal=0;
   if (GenericMatSeRo(A,A->m,A->n,A->mn,Rows,B,B->m,B->n,B->mn,
 		     (F_Enlarge) nsp_cells_enlarge,&Bscal)== FAIL) 
     return FAIL;
@@ -574,7 +574,7 @@ int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B)
 
 int nsp_cells_delete_columns(NspCells *A, NspMatrix *Cols)
 {
-  integer ioff=0,cmin,cmax,i,col,last,nn,j;
+  int ioff=0,cmin,cmax,i,col,last,nn,j;
   /* XXXXX Rajouter un test si Cols == [] **/
   Bounds(Cols,&cmin,&cmax);
   if ( Cols->mn == 0) return(OK);
@@ -621,7 +621,7 @@ int nsp_cells_delete_columns(NspCells *A, NspMatrix *Cols)
 
 int nsp_cells_delete_rows(NspCells *A, NspMatrix *Rows)
 {
-  integer rmin,rmax,i,j,k,ind,last,nn,ioff=0;
+  int rmin,rmax,i,j,k,ind,last,nn,ioff=0;
   Bounds(Rows,&rmin,&rmax);
   if ( Rows->mn == 0) return(OK);
   if ( rmin < 1 || rmax > A->m )
@@ -711,7 +711,7 @@ int nsp_cells_delete_elements(NspCells *A, NspMatrix *Elts)
 NspCells*nsp_cells_extract(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   NspCells *Loc;
-  integer rmin,rmax,cmin,cmax,i,j;
+  int rmin,rmax,cmin,cmax,i,j;
   if ( A->mn == 0) return nsp_cells_create(NVOID,0,0);
   Bounds(Rows,&rmin,&rmax);
   Bounds(Cols,&cmin,&cmax);
@@ -742,7 +742,7 @@ NspCells*nsp_cells_extract(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
 NspCells*nsp_cells_extract_elements(NspCells *A, NspMatrix *Elts, int *err)
 {
   NspCells *Loc;
-  integer rmin,rmax,i;
+  int rmin,rmax,i;
   Bounds(Elts,&rmin,&rmax);
   *err=0;
   if ( A->mn == 0) return nsp_cells_create(NVOID,0,0);
@@ -778,7 +778,7 @@ NspCells*nsp_cells_extract_elements(NspCells *A, NspMatrix *Elts, int *err)
 NspCells*nsp_cells_extract_columns(NspCells *A, NspMatrix *Cols, int *err)
 {
   NspCells *Loc;
-  integer j,cmin,cmax;
+  int j,cmin,cmax;
   *err=0;
   if ( A->mn == 0) return nsp_cells_create(NVOID,0,0);
   Bounds(Cols,&cmin,&cmax);
@@ -832,7 +832,7 @@ NspCells*CellsLoopCol(char *str, NspCells *Col, NspCells *A, int icol, int *rep)
 NspCells*nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err)
 {
   NspCells *Loc;
-  integer i,j,cmin,cmax;
+  int i,j,cmin,cmax;
   *err=0;
   if ( A->mn == 0) return nsp_cells_create(NVOID,0,0);
   Bounds(Rows,&cmin,&cmax);

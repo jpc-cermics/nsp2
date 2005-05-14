@@ -39,7 +39,7 @@ typedef int (*SpC) (NspSpMatrix *A,NspSpMatrix *B);
 
 static int int_spcreate(Stack stack, int rhs, int opt, int lhs)
 {  
-  integer m1,n1;
+  int m1,n1;
   NspSpMatrix *HMat;
   CheckRhs(2,2);
   CheckLhs(1,1);
@@ -135,7 +135,7 @@ static int int_spget(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spredim(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1,n1;
+  int m1,n1;
   NspSpMatrix  *A;
   CheckRhs(3,3);
   CheckLhs(1,1);
@@ -353,7 +353,7 @@ static int int_spextractcols(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpMatrix *A,*Res;
   NspMatrix *Cols;
-  integer err=0;
+  int err=0;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
@@ -375,7 +375,7 @@ static int int_spextractrows(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpMatrix *A,*Res;
   NspMatrix *Rows;
-  integer err=0;
+  int err=0;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
@@ -393,7 +393,7 @@ static int int_spextractrows(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spdiage(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1=0;
+  int k1=0;
   NspSpMatrix *A,*Res;
   CheckRhs(1,2);
   CheckLhs(1,1);
@@ -415,7 +415,7 @@ static int int_spdiage(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spdiagset(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1;
+  int k1;
   NspSpMatrix *A,*Diag;
   CheckRhs(3,3);
   CheckLhs(1,1);
@@ -433,7 +433,7 @@ static int int_spdiagset(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spdiagcre(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1=0;
+  int k1=0;
   NspSpMatrix *Diag,*Res;
   CheckRhs(1,2);
   CheckLhs(1,1);

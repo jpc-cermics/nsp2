@@ -1,8 +1,8 @@
-#ifndef INC_NSP_MATRIX 
-#define INC_NSP_MATRIX
+#ifndef NSP_INC_MATRIX 
+#define NSP_INC_MATRIX
 
 /*
- * This Software is (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2005) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
@@ -17,20 +17,19 @@ typedef struct { double r, i; } doubleC;
 
 typedef struct _NspMatrix NspMatrix;
 
-typedef int (*matrix_save) (NspFile  *F, NspMatrix *M);
-
 typedef struct _NspTypeMatrix { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  matrix_save * save; /* FIXME: unused since it was move in NSP_TYPE_OBJECT */
+  /*< public >*/
 } NspTypeMatrix;
 
 struct _NspMatrix {
+  /*< private >*/
   NspObject father; 
   NspTypeMatrix *type; 
-  integer m,n,mn;/* NspMatrix dimensions */
+  /*< public >*/
+  int m,n,mn;/* NspMatrix dimensions */
   char rc_type;     /* 'r' : real or  'i' : complex  */
-  char convert;  /* 'd','i','f' : double, integer, float
+  char convert;  /* 'd','i','f' : double, int, float
 		    used for array data conversion */
   double *R;     /* Pointer on real values */
   doubleC *C;    /* Pointer on complex values */
@@ -73,8 +72,8 @@ static int matrix_is_true(NspMatrix *M);
 #endif 
 
 #ifdef OCAML 
-NspMatrix *MatCreateFromData  (char *name, char type, integer m, 
-			       integer n,struct caml_bigarray *b);
+NspMatrix *MatCreateFromData  (char *name, char type, int m, 
+			       int n,struct caml_bigarray *b);
 #endif 
 
 #define NULLMAT (NspMatrix*) 0
@@ -117,12 +116,12 @@ extern NspMatrix *GetRealMatCopyInt (Stack stack, int i);
 extern NspMatrix *GetRealMatInt (Stack stack, int i); 
 extern NspMatrix *GetRealMatCopyFloat (Stack stack, int i); 
 extern NspMatrix *GetRealMatFloat (Stack stack, int i); 
-extern int IntScalar (NspObject *O, integer *val); 
-extern int GetScalarInt (Stack stack, int i, integer *val); 
+extern int IntScalar (NspObject *O, int *val); 
+extern int GetScalarInt (Stack stack, int i, int *val); 
 extern int DoubleScalar (NspObject *O, double *val); 
 extern int GetScalarDouble (Stack stack, int i, double *val); 
-extern int *Matd2i (NspMatrix *A, integer *imin, integer *imax); 
-extern void Bounds (const NspMatrix *A, integer *imin, integer *imax); 
+extern int *Matd2i (NspMatrix *A, int *imin, int *imax); 
+extern void Bounds (const NspMatrix *A, int *imin, int *imax); 
 extern int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count);
 extern int *nsp_indices_for_deletions(int mn, const NspMatrix *Elts, int *Count);
 extern NspMatrix *Mat2double (NspMatrix *A); 
@@ -131,25 +130,25 @@ extern NspMatrix *Mat2float (NspMatrix *A);
 
 typedef int (*F_Enlarge) (void *A,int m,int n);
 
-extern NspMatrix *nsp_matrix_create (const char *name, char type, integer m, integer n); 
+extern NspMatrix *nsp_matrix_create (const char *name, char type, int m, int n); 
 extern NspMatrix *nsp_matrix_create_impl (double first, double step, double last); 
 extern NspMatrix *nsp_matrix_create_linspace(const double first[],const double last[],int r,int n);
 extern NspMatrix *nsp_matrix_create_logspace(const double first[],const double last[],int r,int n);
-extern NspMatrix *nsp_matrix_create_from_doubles(const char *name,integer m,integer n,...);
+extern NspMatrix *nsp_matrix_create_from_doubles(const char *name,int m,int n,...);
 extern NspMatrix *nsp_matrix_create_from_array(const char *name,int m,int n,const double valr[],const double valc[]);
 
 extern int nsp_matrix_fill_with (NspMatrix *A, const NspMatrix *B); 
-extern int nsp_matrix_resize (NspMatrix *A, integer m, integer n); 
-extern int nsp_matrix_scalar_to_mn (NspMatrix *A, integer m, integer n); 
+extern int nsp_matrix_resize (NspMatrix *A, int m, int n); 
+extern int nsp_matrix_scalar_to_mn (NspMatrix *A, int m, int n); 
 extern void nsp_matrix_latex_print (const NspMatrix *Mat); 
 extern void nsp_matrix_latex_tab_print(const NspMatrix *Mat); 
-extern int nsp_matrix_redim (NspMatrix *A, integer m, integer n); 
-extern int nsp_matrix_enlarge (NspMatrix *A, integer m, integer n); 
+extern int nsp_matrix_redim (NspMatrix *A, int m, int n); 
+extern int nsp_matrix_enlarge (NspMatrix *A, int m, int n); 
 extern int nsp_matrix_concat_right(NspMatrix *A, const NspMatrix *B); 
-extern int nsp_matrix_add_columns(NspMatrix *A, integer n); 
+extern int nsp_matrix_add_columns(NspMatrix *A, int n); 
 extern NspMatrix *nsp_matrix_concat_down(const NspMatrix *A,const NspMatrix *B); 
 extern NspMatrix *nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B); 
-extern int nsp_matrix_add_rows(NspMatrix *A, integer m); 
+extern int nsp_matrix_add_rows(NspMatrix *A, int m); 
 extern int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B); 
 extern int GenericMatSeRo (void *A, int Am, int An, int Amn, NspMatrix *Rows, void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal); 
 extern int nsp_matrix_set_rows(NspMatrix *A, NspMatrix *Rows, NspMatrix *B); 
@@ -162,9 +161,9 @@ extern NspMatrix *nsp_matrix_extract_elements(const NspMatrix *A,const  NspMatri
 extern NspMatrix *nsp_matrix_extract_columns(const NspMatrix *A,const  NspMatrix *Cols); 
 extern NspMatrix *nsp_matrix_extract_rows(const NspMatrix *A,const  NspMatrix *Rows); 
 extern NspMatrix *MatLoopCol (char *str, NspMatrix *Col, NspMatrix *A, int icol, int *rep); 
-extern NspMatrix *nsp_matrix_extract_diag(const NspMatrix *A, integer k); 
-extern int nsp_matrix_set_diag(NspMatrix *A, NspMatrix *Diag, integer k); 
-extern NspMatrix *nsp_matrix_create_diag(const NspMatrix *Diag, integer k); 
+extern NspMatrix *nsp_matrix_extract_diag(const NspMatrix *A, int k); 
+extern int nsp_matrix_set_diag(NspMatrix *A, NspMatrix *Diag, int k); 
+extern NspMatrix *nsp_matrix_create_diag(const NspMatrix *Diag, int k); 
 extern NspMatrix *nsp_matrix_transpose(const NspMatrix *A); 
 
 /* from MatOps.c */
@@ -183,8 +182,8 @@ extern int nsp_mat_sub_scalar(NspMatrix *Mat1, NspMatrix *Mat2);
 extern int nsp_mat_sub_scalar_maxplus(NspMatrix *Mat1, NspMatrix *Mat2); 
 extern int nsp_mat_subs_calarm(NspMatrix *Mat1, NspMatrix *Mat2); 
 extern void nsp_mat_clean(NspMatrix *A, int rhs, double epsa, double epsr); 
-extern int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, integer j, integer flag); 
-extern int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, integer j, integer flag); 
+extern int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j, int flag); 
+extern int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j, int flag); 
 extern NspMatrix **nsp_mat_slec(char *file, int *Count); 
 extern FILE *fopen (const char *, const char *);
 extern NspMatrix *MatLec (FILE *fd); 
@@ -194,7 +193,7 @@ extern void nsp_testnumtokens(void);
 extern int nsp_numtokens(char *string); 
 
 extern void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc) ;
-extern void nsp_ciset(const integer *n,const double *z, doubleC *tab, const integer *inc);
+extern void nsp_ciset(const int *n,const double *z, doubleC *tab, const int *inc);
 extern int nsp_mat_complexify(NspMatrix *Mat, double d); 
 extern int nsp_mat_get_real(NspMatrix *A); 
 extern int nsp_mat_get_imag(NspMatrix *A); 
@@ -207,13 +206,13 @@ extern NspMatrix *nsp_mat_cum_prod(NspMatrix *A, char *flag);
 extern NspMatrix *nsp_mat_cum_sum(NspMatrix *A, char *flag); 
 extern NspMatrix *nsp_mat_maxi(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs); 
 extern NspMatrix *nsp_mat_mini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs); 
-extern NspMatrix *nsp_mat_createinit(char *name, char type, integer m, integer n, double (*func) ()); 
-extern void nsp_mat_triu(NspMatrix *A, integer k); 
-extern void nsp_mat_tril(NspMatrix *A, integer k); 
-extern NspMatrix *nsp_mat_eye(integer m, integer n); 
-extern NspMatrix *nsp_mat_ones(integer m, integer n); 
-extern NspMatrix *nsp_mat_zeros(integer m, integer n); 
-extern NspMatrix *nsp_mat_rand(integer m, integer n); 
+extern NspMatrix *nsp_mat_createinit(char *name, char type, int m, int n, double (*func) ()); 
+extern void nsp_mat_triu(NspMatrix *A, int k); 
+extern void nsp_mat_tril(NspMatrix *A, int k); 
+extern NspMatrix *nsp_mat_eye(int m, int n); 
+extern NspMatrix *nsp_mat_ones(int m, int n); 
+extern NspMatrix *nsp_mat_zeros(int m, int n); 
+extern NspMatrix *nsp_mat_rand(int m, int n); 
 extern void nsp_set_urandseed(int m); 
 extern int nsp_get_urandseed(void); 
 extern void nsp_set_urandtype(int m); 
@@ -270,9 +269,9 @@ extern void nsp_mat_sinh(NspMatrix *A);
 extern int nsp_mat_sqrtel(NspMatrix *A); 
 extern int nsp_mat_minus(NspMatrix *A); 
 extern int nsp_mat_minus_maxplus(NspMatrix *A); 
-extern NspMatrix *nsp_mat_magic(integer n); 
-extern NspMatrix *nsp_mat_franck(integer n, int job); 
-extern NspMatrix *nsp_mat_hilbert(integer n,int job); 
+extern NspMatrix *nsp_mat_magic(int n); 
+extern NspMatrix *nsp_mat_franck(int n, int job); 
+extern NspMatrix *nsp_mat_hilbert(int n,int job); 
 extern int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op, int *err); 
 extern int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
 /* maxplus operations */

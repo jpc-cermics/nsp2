@@ -1,5 +1,5 @@
-#ifndef NSP_TOKENIZER 
-#define NSP_TOKENIZER 
+#ifndef NSP_INC_TOKENIZER 
+#define NSP_INC_TOKENIZER 
 
 #include "nsp/plisttoken.h"
 
@@ -8,9 +8,9 @@
 typedef struct _curline Curline; 
 
 struct _curline {
-    integer lpt1; /* position of the begining of the before last recognised token */
-    integer lpt2; /* position of the begining of the last recognised token */
-    integer lpt3; /* current char position in buf */
+    int lpt1; /* position of the begining of the before last recognised token */
+    int lpt2; /* position of the begining of the last recognised token */
+    int lpt3; /* current char position in buf */
     char buf[LINEMAXSIZE];
 } ;
 

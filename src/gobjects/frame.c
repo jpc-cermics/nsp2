@@ -302,7 +302,7 @@ NspGFrame *gframe_create(char *name,BCG *Xgc,const double scale[],double r[],Nsp
       Sciprintf("No more memory\n");
       return NULLGFRAME;
     }
-  if ((NSP_OBJECT(H)->name = NewString(name))== NULLSTRING) return NULLGFRAME;
+  if ((NSP_OBJECT(H)->name =new_nsp_string(name))== NULLSTRING) return NULLGFRAME;
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   for ( i=0; i < 4 ; i++) H->r[i]=r[i];
   for ( i=0; i < 4 ; i++) H->scale[i]=scale[i];

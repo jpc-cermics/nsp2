@@ -1,8 +1,8 @@
-#ifndef SCI_BMATRIX_IN
-#define SCI_BMATRIX_IN
-
+#ifndef NSP_INC_BMATRIX_IN
+#define NSP_INC_BMATRIX_IN
+  
 /*
- * This Software is (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2005) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 

@@ -1,11 +1,10 @@
-/* -*- Mode: C -*- */
-#ifndef INC_NSP_ClassA
-#define INC_NSP_ClassA
+#ifndef NSP_INC_ClassA
+#define NSP_INC_ClassA
 
-/*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )
- * Jean-Philippe Chancelier Enpc/Cermics
- *-----------------------------------------------------------------*/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* ClassA */
 
@@ -17,16 +16,16 @@
 
 typedef struct _NspClassa NspClassA;
 
-typedef int (*classa_save) (NspFile  *F, NspClassA *M);
-
 typedef struct _NspTypeClassA { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
+  /*< public >*/
 } NspTypeClassA;
 
 struct _NspClassa {
+  /*< private >*/
   NspObject father; 
   NspTypeClassA *type; 
+  /*< public >*/
   int classa_color;
   int classa_thickness;
   NspMatrix *classa_val;

@@ -323,7 +323,7 @@ NspBlock *block_create(char *name,double rect[],int color,int thickness,int back
       return NULLBLOCK;
     }
 
-  if ((NSP_OBJECT(H)->name = NewString(name))== NULLSTRING) return NULLBLOCK;
+  if ((NSP_OBJECT(H)->name =new_nsp_string(name))== NULLSTRING) return NULLBLOCK;
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   for ( i=0; i < 4 ; i++) H->r[i]=rect[i];
   H->color = color;

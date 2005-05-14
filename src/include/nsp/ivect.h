@@ -1,10 +1,10 @@
-#ifndef INC_NSP_IVECT 
-#define INC_NSP_IVECT
+#ifndef NSP_INC_IVECT 
+#define NSP_INC_IVECT
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -16,18 +16,16 @@
  */
 typedef struct _NspIvect  NspIVect;
 
-
-typedef int (*ivect_save) (NspFile  *F, NspIVect *M);
-
 typedef struct _NspTypeIVect { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  ivect_save *save;
+  /*< public >*/
 } NspTypeIVect;
 
 struct _NspIvect {
+  /*< private >*/
   NspObject father; 
   NspTypeIVect *type; 
+  /*< public >*/
   double first,step,last ; /* implicit bounds  */
   int flag ;               /* set to 1 if 1:$ or : else set to 0 */
 };

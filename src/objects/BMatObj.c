@@ -308,7 +308,7 @@ int BoolScalar(NspObject *O, Boolean *val)
   return(OK);
 }
 
-int GetScalarBool(Stack stack, int i, integer *val)
+int GetScalarBool(Stack stack, int i, int *val)
 {
   NspBMatrix *M;
   if (( M = BMatObj(NthObj(i))) == NULLBMAT 
@@ -336,7 +336,7 @@ int GetScalarBool(Stack stack, int i, integer *val)
 static int int_bmatrix_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspBMatrix *HMat;
-  integer m1,n1;
+  int m1,n1;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
@@ -585,7 +585,7 @@ static int int_bmatrix_find(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_redim(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1,n1;
+  int m1,n1;
   NspBMatrix  *HMat;
   CheckRhs(3,3);
   CheckLhs(1,1);
@@ -684,7 +684,7 @@ static int int_bmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_addcols(Stack stack, int rhs, int opt, int lhs)
 {
-  integer n1;
+  int n1;
   NspBMatrix *HMat;
   CheckRhs(2,2);
   CheckLhs(1,1);
@@ -703,7 +703,7 @@ static int int_bmatrix_addcols(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_addrows(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1;
+  int m1;
   NspBMatrix *HMat;
   CheckRhs(2,2);
   CheckLhs(1,1);
@@ -932,7 +932,7 @@ static int int_bmatrix_extractrows(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_diage(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1;
+  int k1;
   NspBMatrix *A,*Res;
   CheckRhs(2,2);
   CheckLhs(1,1);
@@ -953,7 +953,7 @@ static int int_bmatrix_diage(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_diagset(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1;
+  int k1;
   NspBMatrix *A,*Diag;
   CheckRhs(3,3);
   CheckLhs(1,1);
@@ -971,7 +971,7 @@ static int int_bmatrix_diagset(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
 {
-  integer k1=0;
+  int k1=0;
   NspBMatrix *Diag,*Res;
   CheckRhs(1,2);
   CheckLhs(1,1);
@@ -993,7 +993,7 @@ static int int_bmatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_resize(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1,n1;
+  int m1,n1;
   NspBMatrix  *HMat;
   CheckRhs(3,3);
   CheckLhs(1,1);

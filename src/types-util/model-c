@@ -305,7 +305,7 @@ Nsp@TYPENAME@ *@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeB
       Sciprintf("No more memory\n");
       return @NULL@;
     }
-  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(@NULL@);
+  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(@NULL@);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->@TYPEDOWNCASE@_color = color;
   H->@TYPEDOWNCASE@_thickness = thickness;

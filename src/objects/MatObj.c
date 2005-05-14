@@ -569,7 +569,7 @@ IntScalar (NspObject * O, int * val)
       Scierror (mess);
       return (FAIL);
     }
-  *val = (integer) aint (A->R[0]);
+  *val = (int) aint (A->R[0]);
   return (OK);
 }
 
@@ -591,7 +591,7 @@ GetScalarInt (Stack stack, int i, int * val)
       Scierror (" of function %s should be an integer\n", stack.fname);
       return FAIL;
     }
-  *val = (integer) aint (M->R[0]);
+  *val = (int) aint (M->R[0]);
   return (OK);
 }
 

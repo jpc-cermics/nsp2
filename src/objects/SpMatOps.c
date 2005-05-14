@@ -48,7 +48,7 @@ int SpClean(NspSpMatrix *A, int rhs, double epsa, double epsr)
   double d_epsr=DBL_EPSILON;
   double d_epsa=DBL_EPSILON;
   double norm,eps;
-  integer inc=1;
+  int inc=1;
   if ( A->rc_type == 'r') 
     {
       norm=0.0;
@@ -278,7 +278,7 @@ int SpRealPart(NspSpMatrix *A)
 	}
       if ( count != 0) 
 	{
-	  if ((A->D[i]->R =nsp_alloc_doubles((integer) count)) == (double *) 0 ) 
+	  if ((A->D[i]->R =nsp_alloc_doubles((int) count)) == (double *) 0 ) 
 	    {
 	      Scierror("Error:\tRunning out of memory\n");
 	      return(FAIL);
@@ -331,7 +331,7 @@ int SpImagPart(NspSpMatrix *A)
 	    }
 	  if ( count != 0) 
 	    {
-	      if ((A->D[i]->R =nsp_alloc_doubles((integer) count)) == (double *) 0 ) 
+	      if ((A->D[i]->R =nsp_alloc_doubles((int) count)) == (double *) 0 ) 
 		{
 		  Scierror("Error:\tRunning out of memory\n");
 		  return(FAIL);
@@ -385,7 +385,7 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
   doubleC SC,C;
   NspSpMatrix *Sum=NULL;
   int i,k,count;
-  integer inc=1;
+  int inc=1;
   if ( A->mn == 0) 
     {
       if ( flag[0] == 'F' || flag[0]=='f' )
@@ -560,7 +560,7 @@ static NspSpMatrix *SpMaxiMini(NspSpMatrix *A, char *flag, NspMatrix **Imax, int
 {
   NspSpMatrix *M=NULL;
   int j;
-  integer inc=1,imax,count;
+  int inc=1,imax,count;
   if ( A->mn == 0 ) 
     {
       if ( lhs == 2) *Imax = nsp_matrix_create(NVOID,'r',0,0);
@@ -766,7 +766,7 @@ NspSpMatrix *SpMaxi(NspSpMatrix *A, char *flag, NspMatrix **Imax, int lhs)
  *nsp_mat_eye: A=Eye(m,n)
  */
 
-NspSpMatrix *SpEye(integer m, integer n)
+NspSpMatrix *SpEye(int m, int n)
 {
   NspSpMatrix *Loc;
   int i;
@@ -785,7 +785,7 @@ NspSpMatrix *SpEye(integer m, integer n)
  * A is changed  
  */
 
-NspSpMatrix *SpOnes(integer m, integer n)
+NspSpMatrix *SpOnes(int m, int n)
 {
   NspSpMatrix *Loc;
   int i,k;
@@ -807,7 +807,7 @@ NspSpMatrix *SpOnes(integer m, integer n)
  * A is changed  
  */
 
-NspSpMatrix *SpZeros(integer m, integer n)
+NspSpMatrix *SpZeros(int m, int n)
 {
   NspSpMatrix *Loc;
   if (( Loc=nsp_spmatrix_create(NVOID,'r',m,n)) == NULLSP) return(NULLSP);
@@ -1448,7 +1448,7 @@ int SpFind(NspSpMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
     }
   if ( lhs == 1) 
     {
-      *Res1 = nsp_matrix_create(NVOID,'r',(integer) 1,(integer) count);
+      *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
       if ( *Res1 == NULLMAT) return FAIL;
       count=0;
       for ( i = 0 ; i < A->m ; i++ )
@@ -1459,9 +1459,9 @@ int SpFind(NspSpMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
     }
   else 
     {
-      *Res1 = nsp_matrix_create(NVOID,'r',(integer) 1,(integer) count);
+      *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
       if ( *Res1 == NULLMAT) return FAIL;
-      *Res2 = nsp_matrix_create(NVOID,'r',(integer) 1,(integer) count);
+      *Res2 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
       if ( *Res2 == NULLMAT) return FAIL;
       count=0;
       for ( i = 0 ; i < A->m ; i++ )

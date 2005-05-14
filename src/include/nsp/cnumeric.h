@@ -1,10 +1,10 @@
-#ifndef SCI_CNUMERIC
-#define SCI_CNUMERIC
+#ifndef NSP_INC_CNUMERIC
+#define NSP_INC_CNUMERIC
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include "machine.h"
 

@@ -496,7 +496,7 @@ static NspObject * int_hash_get_keys(void *Hv, char *attr)
 	  if (nsp_hash_get_next_object(H,&i,&O) == FAIL ) break;
 	  if ( O != NULLOBJ )
 	    { 
-	      if (( Loc->S[count++] = CopyString(NSP_OBJECT(O)->name)) == (String *) 0)
+	      if (( Loc->S[count++] =nsp_string_copy(NSP_OBJECT(O)->name)) == (nsp_string) 0)
 		return NULLOBJ;
 	    }
 	}

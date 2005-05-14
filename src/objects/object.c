@@ -192,7 +192,7 @@ static char *object_type_short_string(void)
 
 static char *set_name(NspObject *ob, char *name)
 {
-  char *name1 = NewString(name);
+  char *name1 =new_nsp_string(name);
   if ( name1 == NULLSTRING) return NULLSTRING;
   FREE(ob->name) ;
   return ob->name = name1;
@@ -991,13 +991,13 @@ int int_object_sprintf(Stack stack, int rhs, int opt, int lhs)
       for ( i= 0 ; i < rows ; i++)
 	{
 	  if ( do_printf("printf",(FILE*)0,Format,stack,rhs,1,i,&str) < 0) return RET_BUG;
-	  if ((obj->S[i] = CopyString(str)) == (String *) 0) return RET_BUG;
+	  if ((obj->S[i] =nsp_string_copy(str)) == (nsp_string) 0) return RET_BUG;
 	}
     }
   else
     {
       if ( do_printf("printf",(FILE*)0,Format,stack,rhs,1,i,&str) < 0) return RET_BUG;
-      if ((obj->S[i] = CopyString(str)) == (String *) 0) return RET_BUG;
+      if ((obj->S[i] =nsp_string_copy(str)) == (nsp_string) 0) return RET_BUG;
     }
   MoveObj(stack,1,(NspObject *) obj);
   return 1;

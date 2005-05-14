@@ -1,11 +1,10 @@
-/* -*- Mode: C -*- */
-#ifndef INC_NSP_ModuleElt
-#define INC_NSP_ModuleElt
+#ifndef NSP_INC_ModuleElt
+#define NSP_INC_ModuleElt
 
-/*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )
- * Jean-Philippe Chancelier Enpc/Cermics
- *-----------------------------------------------------------------*/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* ModuleElt */
 
@@ -17,16 +16,16 @@
 
 typedef struct _NspModulelt NspModuleElt;
 
-typedef int (*modulelt_save) (NspFile  *F, NspModuleElt *M);
-
 typedef struct _NspTypeModuleElt { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
+  /*< public >*/
 } NspTypeModuleElt;
 
 struct _NspModulelt {
+  /*< private >*/
   NspObject father; 
   NspTypeModuleElt *type; 
+  /*< public >*/
   char *path ;
   char *module;
 };

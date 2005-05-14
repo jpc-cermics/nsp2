@@ -313,7 +313,7 @@ NspPangoAttribute *pangoattribute_create(char *name,  PangoAttribute *attr, NspT
       Sciprintf("No more memory\n");
       return NULLPATTR;
     }
-  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(NULLPATTR);
+  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLPATTR);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->attr = attr;
   return H;

@@ -1,10 +1,10 @@
-#ifndef SCI_IO_H 
-#define SCI_IO_H 
+#ifndef NSP_INC_IO_H 
+#define NSP_INC_IO_H 
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <math.h>
 #include <stdio.h>

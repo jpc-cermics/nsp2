@@ -27,11 +27,11 @@ int nsp_choose(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,int *nrep)
 {
   int Rep,choice=0 ;
   char **but_names; 
-  String *descr =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
+  nsp_string descr =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
   but_names = (button == NULL) ?  button_def : button->S  ; 
   Rep = nsp_choose_(descr,Items->S,Items->mn,but_names,1,&choice);
   *nrep= ( Rep == TRUE ) ? (1+ choice) : 0;
-  StringDestroy(&descr);
+ nsp_string_destroy(&descr);
   return OK;
 }
 

@@ -47,7 +47,7 @@ NspIVect *nsp_ivect_create(char *name, double first, double step, double last, i
       Scierror("No more space\n");
       return(NULLIVECT);
     }
-  if ((NSP_OBJECT(IV)->name = NewString(name))== NULLSTRING) return NULLIVECT;
+  if ((NSP_OBJECT(IV)->name =new_nsp_string(name))== NULLSTRING) return NULLIVECT;
   NSP_OBJECT(IV)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
   IV->otype = IVECT;
@@ -143,12 +143,12 @@ NspMatrix *nsp_ivect_2_mat(NspIVect *IV)
        || ( IV->first >  IV->last && IV->step > 0 ) 
        || IV->step == 0.00)
     {
-      Loc = nsp_matrix_create(NVOID,'r',(integer) 0,(integer) 0);
+      Loc = nsp_matrix_create(NVOID,'r',(int) 0,(int) 0);
       return(Loc);
     }
   /* counting **/
   while ( vals <= IV->last ) { vals += IV->step ; count++;}
-  Loc = nsp_matrix_create(NVOID,'r',(integer) 1,(integer) count);
+  Loc = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
   if ( Loc == NULLMAT) return(NULLMAT);
   for ( i=0 ; i < count; i++) 
     {

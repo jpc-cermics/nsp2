@@ -1,10 +1,10 @@
-#ifndef SCI_NSP_MENUS 
-#define SCI_NSP_MENUS 
+#ifndef NSP_INC_MENUS 
+#define NSP_INC_MENUS 
 
-/*-------------------------------------------------------------------
- * This Software is (Copyright ENPC 1998-2003) 
- * Jean-Philippe Chancelier Enpc/Cermics
- *-------------------------------------------------------------------*/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <string.h>
 #include <stdio.h>

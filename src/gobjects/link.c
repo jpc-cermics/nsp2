@@ -334,7 +334,7 @@ NspLink *link_create(char *name,NspMatrix *D,int color,int thickness,
       Sciprintf("No more memory\n");
       return NULLLINK;
     }
-  if ((NSP_OBJECT(H)->name = NewString(name))== NULLSTRING) return NULLLINK;
+  if ((NSP_OBJECT(H)->name =new_nsp_string(name))== NULLSTRING) return NULLLINK;
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   if (( H->poly = nsp_matrix_copy(D))== NULLMAT) return NULLLINK;
   H->color = color;
@@ -539,7 +539,7 @@ NspLink *LinkCreateN(char *name,int n,int color,int thickness)
       Sciprintf("No more memory\n");
       return NULLLINK;
     }
-  if ((NSP_OBJECT(H)->name = NewString(name))== NULLSTRING) return NULLLINK;
+  if ((NSP_OBJECT(H)->name =new_nsp_string(name))== NULLSTRING) return NULLLINK;
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
 
   if (( H->poly =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;

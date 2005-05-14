@@ -37,9 +37,9 @@
 int int_smxcreate(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *HMat;
-  integer m1,n1;
+  int m1,n1;
   char *str=0;
-  integer flag = 0;
+  int flag = 0;
   CheckRhs(2,3);
   CheckLhs(1,1);
   if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
@@ -81,7 +81,7 @@ int int_smxcopy(Stack stack, int rhs, int opt, int lhs)
 
 int int_smxredim(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1,n1;
+  int m1,n1;
   NspSMatrix  *HMat;
   CheckRhs(3,3);
   CheckLhs(1,1);
@@ -266,7 +266,7 @@ int int_smxconcatdiag(Stack stack, int rhs, int opt, int lhs)
 
 int int_smxaddcols(Stack stack, int rhs, int opt, int lhs)
 {
-  integer n1;
+  int n1;
   NspSMatrix *HMat;
   CheckRhs(2,2);
   CheckLhs(1,1);
@@ -287,7 +287,7 @@ int int_smxaddcols(Stack stack, int rhs, int opt, int lhs)
 
 int int_smxaddrows(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1;
+  int m1;
   NspSMatrix *HMat;
   CheckRhs(2,2);
   CheckLhs(1,1);
@@ -522,7 +522,7 @@ int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A,*Res;
   NspMatrix *Cols;
-  integer err=0;
+  int err=0;
   CheckRhs(2,2);
   CheckLhs(3,3);
   if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
@@ -546,7 +546,7 @@ int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
 
 int int_smxresize(Stack stack, int rhs, int opt, int lhs)
 {
-  integer m1,n1;
+  int m1,n1;
   NspSMatrix  *HMat;
   CheckRhs(3,3);
   CheckLhs(1,1);
@@ -695,7 +695,7 @@ int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
     {
       if ( row != NULL) 
 	{
-	  String *str;
+	  nsp_string str;
 	  if ((str=nsp_smatrix_elts_concat(A,row,1,col,1)) == NULL) return RET_BUG;
 	  rep =nsp_create_object_from_str(str);
 	}
@@ -708,13 +708,13 @@ int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
     }
   else if ( sep != NULL)
     {
-      String *str;
+      nsp_string str;
       if ((str=nsp_smatrix_elts_concat(A,sep,1,sep,1)) == NULL) return RET_BUG;
       rep =nsp_create_object_from_str(str);
     }
   else 
     { 
-      String *str;
+      nsp_string str;
       if ((str=nsp_smatrix_elts_concat(A,sep,0,sep,0)) == NULL) return RET_BUG;
       rep =nsp_create_object_from_str(str);
     }
@@ -773,7 +773,7 @@ int int_smxm2sm(Stack stack, int rhs, int opt, int lhs)
   char *Format=NULL;
   NspMatrix *A;
   NspSMatrix *Res;
-  integer flag = 0;
+  int flag = 0;
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ((A = GetMat(stack,1))  == NULLMAT) return RET_BUG;
@@ -961,7 +961,7 @@ int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
 int int_smxenlarge(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A;
-  integer m1,n1;
+  int m1,n1;
   CheckRhs(3,3);
   CheckLhs(1,1);
   if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;

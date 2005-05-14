@@ -1,10 +1,10 @@
-#ifndef INC_NSP_SPMATRIX 
-#define INC_NSP_SPMATRIX 
+#ifndef NSP_INC_SPMATRIX 
+#define NSP_INC_SPMATRIX 
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -17,12 +17,9 @@
 
 typedef struct _NspSpmatrix NspSpMatrix;
 
-typedef int (*spmatrix_save) (NspFile  *F, NspSpMatrix *M);
-
 typedef struct _NspTypeSpMatrix { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  spmatrix_save *save;
+  /*< public >*/
 } NspTypeSpMatrix;
 
 /* Sparse Matrix */
@@ -37,8 +34,8 @@ typedef struct _NspTypeSpMatrix {
  ******************************************************************/
 
 typedef struct SpRow {
-  integer size,iw ; /* size of a row, iw : used for working storage*/
-  integer *J   ; /* pointer to an integer array giving the columns or row i 
+  int size,iw ; /* size of a row, iw : used for working storage*/
+  int *J   ; /* pointer to an int array giving the columns or row i 
 		in increasing order */
   double  *R; /* pointer to Real datas */
   doubleC *C; /* pointer to complex  datas */
@@ -46,10 +43,12 @@ typedef struct SpRow {
   
 
 struct _NspSpmatrix {
+  /*< private >*/
   NspObject father; 
   NspTypeSpMatrix *type; 
+  /*< public >*/
   char rc_type;        /* 'r' or 'i'  : real or complex matrix */
-  integer m,n,mn;   
+  int m,n,mn;   
   struct SpRow **D; /* array of size m giving the Rows datas */
 } ;
 
@@ -100,14 +99,14 @@ extern NspSpMatrix *nsp_spmatrix_copy(NspSpMatrix *A);
 extern NspSpMatrix   *nsp_spmatrix_object(NspObject *O);
 
 
- extern NspSpMatrix *nsp_spmatrix_create(char *name, char type, integer m, integer n); 
+ extern NspSpMatrix *nsp_spmatrix_create(char *name, char type, int m, int n); 
  extern NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, int m, int n); 
  extern int nsp_spmatrix_get(NspSpMatrix *A, NspMatrix **RC, NspMatrix **Values); 
  extern int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n); 
  extern void SpRowDestroy (SpRow *Row); 
- extern NspSpMatrix *nsp_spmatrix_redim(NspSpMatrix *A, integer m, integer n); 
- extern int nsp_spmatrix_enlarge_rows(NspSpMatrix *Sp, integer m); 
- extern int nsp_spmatrix_enlarge(NspSpMatrix *A, integer m, integer n); 
+ extern NspSpMatrix *nsp_spmatrix_redim(NspSpMatrix *A, int m, int n); 
+ extern int nsp_spmatrix_enlarge_rows(NspSpMatrix *Sp, int m); 
+ extern int nsp_spmatrix_enlarge(NspSpMatrix *A, int m, int n); 
  extern int nsp_spmatrix_concatr(NspSpMatrix *A, NspSpMatrix *B); 
  extern int nsp_spmatrix_concatd(NspSpMatrix *A, NspSpMatrix *B); 
  extern int nsp_spmatrix_concatdiag(NspSpMatrix *A, NspSpMatrix *B); 
@@ -124,16 +123,16 @@ extern NspSpMatrix   *nsp_spmatrix_object(NspObject *O);
  extern NspSpMatrix *nsp_spmatrix_extract_elts(NspSpMatrix *A, NspMatrix *Elts); 
  extern NspSpMatrix *nsp_spmatrix_extract_cols(NspSpMatrix *A, NspMatrix *Cols, int *err); 
  extern NspSpMatrix *nsp_spmatrix_extract_rows(NspSpMatrix *A, NspMatrix *Rows, int *err); 
- extern NspSpMatrix *nsp_spmatrix_diag_extract(NspSpMatrix *A, integer k); 
- extern int nsp_spmatrix_diag_set(NspSpMatrix *A, NspSpMatrix *Diag, integer k); 
- extern NspSpMatrix *nsp_spmatrix_diag_create(NspSpMatrix *Diag, integer k); 
+ extern NspSpMatrix *nsp_spmatrix_diag_extract(NspSpMatrix *A, int k); 
+ extern int nsp_spmatrix_diag_set(NspSpMatrix *A, NspSpMatrix *Diag, int k); 
+ extern NspSpMatrix *nsp_spmatrix_diag_create(NspSpMatrix *Diag, int k); 
  extern NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B); 
  extern NspMatrix *nsp_spmatrix_mult_matrix(NspSpMatrix *A, NspMatrix *X);
  extern int nsp_spmatrix_mult_scal(NspSpMatrix *A, NspSpMatrix *B); 
  extern int nsp_spmatrix_complexify(NspSpMatrix *A); 
  extern int nsp_spmatrix_setr(NspSpMatrix *A, double d); 
  extern int nsp_spmatrix_seti(NspSpMatrix *A, double d); 
- extern int RowCountNonNull (NspMatrix *A, integer i); 
+ extern int RowCountNonNull (NspMatrix *A, int i); 
  extern int CountNonNull (NspMatrix *A); 
  extern NspSpMatrix *nsp_spmatrix_from_mat(NspMatrix *A); 
  extern NspMatrix *nsp_spmatrix_to_mat(NspSpMatrix *Sp); 
@@ -155,9 +154,9 @@ extern NspSpMatrix   *nsp_spmatrix_object(NspObject *O);
  extern int SpImagPart (NspSpMatrix *A); 
  extern NspSpMatrix *SpSum (NspSpMatrix *A, char *flag); 
  extern NspSpMatrix *SpMaxi (NspSpMatrix *A, char *flag, NspMatrix **Imax, int lhs); 
- extern NspSpMatrix *SpEye (integer m, integer n); 
- extern NspSpMatrix *SpOnes (integer m, integer n); 
- extern NspSpMatrix *SpZeros (integer m, integer n); 
+ extern NspSpMatrix *SpEye (int m, int n); 
+ extern NspSpMatrix *SpOnes (int m, int n); 
+ extern NspSpMatrix *SpZeros (int m, int n); 
  extern NspMatrix *SpAcos (NspSpMatrix *A); 
  extern NspMatrix *SpAcosh (NspSpMatrix *A); 
  extern void SpAsin (NspSpMatrix *A); 

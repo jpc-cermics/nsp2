@@ -344,9 +344,9 @@ int int_call(Stack stack, int rhs, int opt, int lhs)
 		  /* A revoir pour faire plus court  XXXXX **/
 		  if ((S=nsp_smatrix_create_with_length(NVOID,1,1,M->mn)) == NULLSMAT ) return RET_BUG;
 		  NthObj(rhs+newout) = (NspObject *) S;
-		  if ((lstr = NewStringN(M->mn)) == (String *) 0) 
+		  if ((lstr =new_nsp_string_n(M->mn)) == (nsp_string) 0) 
 		    return RET_BUG;
-		  StringDestroy(&(S->S[0] ));
+		nsp_string_destroy(&(S->S[0] ));
 		  Data = (void *) S->S[0];
 		  break;
 		default :

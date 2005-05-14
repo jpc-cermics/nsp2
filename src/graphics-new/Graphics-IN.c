@@ -3524,7 +3524,7 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
 
   for ( narg = 1 ; narg <= rhs ; narg++) 
     {
-      String *str;
+      nsp_string str;
       if (( S = GetSMat(stack,narg)) == NULLSMAT) return RET_BUG;
       if ( S->mn == 0 ) continue;
       if (( str =nsp_smatrix_elts_concat(S,"@",1," ",1))== NULL) return RET_BUG;
@@ -3545,7 +3545,7 @@ int int_xstringb(Stack stack, int rhs, int opt, int lhs)
   char * info;
   int fill =0;
   double x,y,w,hx;
-  String *str;
+  nsp_string str;
   NspSMatrix *S;
 
   CheckRhs(5,6);
@@ -3590,7 +3590,7 @@ int int_xstringc(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M;
   double y;
   int fill=0,frame=-1,color=-1,back=-1,thickness=-1;
-  String *str;
+  nsp_string str;
   NspSMatrix *S;
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
 		      { "color",s_int,NULLOBJ,-1},

@@ -59,7 +59,7 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
       return(NULLMAT);
     }
   /* shared by all objects */
-  if ((NSP_OBJECT(Mat)->name = NewString(name))== NULLSTRING) 
+  if ((NSP_OBJECT(Mat)->name =new_nsp_string(name))== NULLSTRING) 
     {
       Scierror("Error:\tRunning out of memory\n");
       return(NULLMAT);
@@ -121,7 +121,7 @@ NspMatrix *MatCreateFromData(char *name, char type, int m, int n,
     }
 
   /* shared by all objects */
-  if ((NSP_OBJECT(Mat)->name = NewString(name))== NULLSTRING) 
+  if ((NSP_OBJECT(Mat)->name =new_nsp_string(name))== NULLSTRING) 
     {
       Scierror("Error:\tRunning out of memory\n");
       return(NULLMAT);

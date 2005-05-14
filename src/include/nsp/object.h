@@ -1,5 +1,5 @@
-#ifndef INC_NSP_TYPE_OBJECT 
-#define INC_NSP_TYPE_OBJECT 
+#ifndef NSP_INC_TYPE_OBJECT 
+#define NSP_INC_TYPE_OBJECT 
 
 /*--------------------------------------
  * base type (NspTypeObject) 
@@ -349,7 +349,7 @@ extern NspObject *nsp_create_object_from_int(char *str, int ival);
 extern NspObject *nsp_complexi_object_(char *str); 
 extern NspObject *nsp_create_object_from_str(char *str); 
 extern NspObject *nsp_create_object_from_str_and_size(char *str, int lstr); 
-extern NspObject *nsp_create_object_from_doubles(integer m, integer n, integer it, double *rtab, double *itab, char *name); 
+extern NspObject *nsp_create_object_from_doubles(int m, int n, int it, double *rtab, double *itab, char *name); 
 extern NspObject *nsp_create_empty_matrix_object(char *str); 
 extern NspObject *nsp_create_true_object(char *str); 
 extern NspObject *nsp_create_boolean_object(char *str,int val);

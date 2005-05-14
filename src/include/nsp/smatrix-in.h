@@ -1,5 +1,5 @@
-#ifndef SCI_SMATRIX_IN
-#define SCI_SMATRIX_IN
+#ifndef NSP_INC_SMATRIX_IN
+#define NSP_INC_SMATRIX_IN
 
 #include "nsp/interf.h"
 

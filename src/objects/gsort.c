@@ -23,7 +23,7 @@
 #include "nsp/math.h"
 #include "nsp/gsort.h"
 
-/* swapcode for indices : indices are integers **/
+/* swapcode for indices : indices are ints **/
 
 /*
  * General sort routine for Scilab 
@@ -38,7 +38,7 @@
  */
 
 
-int C2F(gsort)(int *xI, double *xD, int *ind, int *iflag, int *m, int *n, char *type, char *iord)
+int C2F(gsort)(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord)
 {
   switch ( type[0])
     {
@@ -56,7 +56,6 @@ int C2F(gsort)(int *xI, double *xD, int *ind, int *iflag, int *m, int *n, char *
     }
   return(0);
 }
-
 
 /*
  * just used to prevent warnings about unused functions 
@@ -94,7 +93,7 @@ int C2F(gsort_uuuu)(xI,xD,ind,iflag,m,n,type,iord)
  */
 #ifndef TEST 
 
-void C2F(gsorts)(char **data, int *ind, int *iflag, int *m, int *n, char *type, char *iord)
+void C2F(gsorts)(char **data, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord)
 {
   switch ( type[0])
     {

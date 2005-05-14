@@ -1,5 +1,5 @@
-#ifndef NSP_GTKSCI
-#define NSP_GTKSCI
+#ifndef NSP_INC_GTKSCI
+#define NSP_INC_GTKSCI
 
 /* about.c:11:OF */ extern void create_nsp_about (void); 
 

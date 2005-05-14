@@ -35,11 +35,11 @@ int nsp_dialog(NspSMatrix *Title,NspSMatrix *Init,NspObject **Rep)
   char *answer = NULL;
   static char *buttons[]={"OK","Cancel",NULL};
   int rep,ierr=0 ;
-  String *title =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
-  String *init =nsp_smatrix_elts_concat(Init,"\n",1,"\n",1);
+  nsp_string title =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
+  nsp_string init =nsp_smatrix_elts_concat(Init,"\n",1,"\n",1);
   rep = nsp_dialog_(title,init, buttons,&ierr,&answer );
-  StringDestroy(&init);
-  StringDestroy(&title);
+ nsp_string_destroy(&init);
+ nsp_string_destroy(&title);
   if ( rep == FALSE)   return FAIL;
   /* \n must be converted */ 
   S =nsp_smatrix_split(answer,"\n");

@@ -378,15 +378,15 @@ NspModule *module_create(char *name,const char *path,const char *mname,NspTypeBa
       Sciprintf("No more memory\n");
       return NULLMODULE;
     }
-  if ( ( NSP_OBJECT(M)->name = NewString(name)) == NULLSTRING) return(NULLMODULE);
+  if ( ( NSP_OBJECT(M)->name =new_nsp_string(name)) == NULLSTRING) return(NULLMODULE);
   NSP_OBJECT(M)->ret_pos = -1 ;
   /* specific for Module */
-  if ((M->path = NewString(path))== NULLSTRING)
+  if ((M->path =new_nsp_string(path))== NULLSTRING)
     {
       Scierror("Error:\tRunning out of memory\n");
       return(NULLMODULE);
     }
-  if ((M->mname = NewString(mname))== NULLSTRING) 
+  if ((M->mname =new_nsp_string(mname))== NULLSTRING) 
     {
       Scierror("Error:\tRunning out of memory\n");
       return(NULLMODULE);
@@ -431,15 +431,15 @@ NspModule *module_copy_ref(NspModule *Mod)
       Sciprintf("No more memory\n");
       return NULLMODULE;
     }
-  if ( ( NSP_OBJECT(M)->name = NewString(NSP_OBJECT(Mod)->name)) == NULLSTRING) return(NULLMODULE);
+  if ( ( NSP_OBJECT(M)->name =new_nsp_string(NSP_OBJECT(Mod)->name)) == NULLSTRING) return(NULLMODULE);
   NSP_OBJECT(M)->ret_pos = -1 ;
   /* specific for Module */
-  if ((M->path = NewString(Mod->path))== NULLSTRING)
+  if ((M->path =new_nsp_string(Mod->path))== NULLSTRING)
     {
       Scierror("Error:\tRunning out of memory\n");
       return(NULLMODULE);
     }
-  if ((M->mname = NewString(Mod->mname))== NULLSTRING) 
+  if ((M->mname =new_nsp_string(Mod->mname))== NULLSTRING) 
     {
       Scierror("Error:\tRunning out of memory\n");
       return(NULLMODULE);

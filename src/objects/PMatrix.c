@@ -41,7 +41,7 @@ Poly *CopyPoly(Poly *P)
 Poly *Basic2Poly(doubleC *d, char type)
 {
   NspMatrix *A;
-  if ((A= nsp_matrix_create(NVOID,type,(integer)1,(integer)1))==NULLMAT)
+  if ((A= nsp_matrix_create(NVOID,type,(int)1,(int)1))==NULLMAT)
     return((Poly *) 0);
   if ( type == 'r') 
     {
@@ -133,7 +133,7 @@ void nsp_pmatrix_print(NspPMatrix *Mat, int indent)
 
 static doubleC Czero={0.00,0.00};
 
-NspPMatrix *nsp_pmatrix_create(char *name, integer m, integer n, doubleC *cval, integer flag)
+NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag)
 {
   int i;
   NspPMatrix *Loc;
@@ -144,7 +144,7 @@ NspPMatrix *nsp_pmatrix_create(char *name, integer m, integer n, doubleC *cval, 
       Scierror("PMatCreate : Error no more space ");
       return(NULLPMAT);
     }
-  if ( ( NSP_OBJECT(Loc)->name = NewString(name)) == (char *) 0) return(NULLPMAT);
+  if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == (char *) 0) return(NULLPMAT);
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
   Loc->otype = PMATRIX;
@@ -206,7 +206,7 @@ NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A)
 {
   int i;
   NspPMatrix *Loc;
-  if ( ( Loc =nsp_pmatrix_create(NVOID,A->m,A->n,&Czero,(integer)0) ) == NULLPMAT) return(NULLPMAT);
+  if ( ( Loc =nsp_pmatrix_create(NVOID,A->m,A->n,&Czero,(int)0) ) == NULLPMAT) return(NULLPMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
       PolyDestroy(Loc->S[i]);
@@ -245,12 +245,12 @@ NspMatrix *PMatLength(NspPMatrix *A)
  */
 
 
-NspPMatrix *Mat2PMat(NspMatrix *A, char *str, integer flag)
+NspPMatrix *Mat2PMat(NspMatrix *A, char *str, int flag)
 {
   int i;
   NspPMatrix *Loc;
   doubleC d;
-  if ((Loc =nsp_pmatrix_create(NVOID,A->m,A->n,&Czero,(integer)0) ) == NULLPMAT) 
+  if ((Loc =nsp_pmatrix_create(NVOID,A->m,A->n,&Czero,(int)0) ) == NULLPMAT) 
     return(NULLPMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
@@ -270,7 +270,7 @@ NspPMatrix *Mat2PMat(NspMatrix *A, char *str, integer flag)
  * return 0 on failure 
  */
 
-int nsp_pmatrix_redim(NspPMatrix *A, integer m, integer n)
+int nsp_pmatrix_redim(NspPMatrix *A, int m, int n)
 {
   if ( A->mn ==  m*n ) 
     {
@@ -296,7 +296,7 @@ int nsp_pmatrix_redim(NspPMatrix *A, integer m, integer n)
  * return 0 on failure 
  */
 
-int nsp_pmatrix_resize(NspPMatrix *A, integer m, integer n)
+int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
 {
   int i;
   A->S = (Poly **)  REALLOC (A->S, m*n * sizeof(Poly*));
@@ -319,7 +319,7 @@ int nsp_pmatrix_resize(NspPMatrix *A, integer m, integer n)
  * The result is stored in A 
  */
 
-int nsp_pmatrix_enlarge(NspPMatrix *A, integer m, integer n)
+int nsp_pmatrix_enlarge(NspPMatrix *A, int m, int n)
 {
   if ( n > A->n  )
     if ( nsp_pmatrix_add_columns(A,n- A->n) == FAIL) return(FAIL);
@@ -338,7 +338,7 @@ int nsp_pmatrix_enlarge(NspPMatrix *A, integer m, integer n)
 
 int nsp_pmatrix_concat_right(NspPMatrix *A, NspPMatrix *B)
 {
-  integer Asize;
+  int Asize;
   Asize=A->mn;
   if ( A->m != B->m ) 
     {
@@ -350,7 +350,7 @@ int nsp_pmatrix_concat_right(NspPMatrix *A, NspPMatrix *B)
   return(OK);
 }
 
-int Pcopy(integer n, Poly **s1, Poly **s2)
+int Pcopy(int n, Poly **s1, Poly **s2)
 {
   int i;
   /* Copie ds l'ordre inverse car de temps en temps on fait
@@ -370,10 +370,10 @@ int Pcopy(integer n, Poly **s1, Poly **s2)
  * A is changed 
  */
 
-int nsp_pmatrix_add_columns(NspPMatrix *A, integer n)
+int nsp_pmatrix_add_columns(NspPMatrix *A, int n)
 {
-  integer ns;
-  integer Asize;
+  int ns;
+  int Asize;
   Asize=A->mn;
   ns= (A->m)*n;
   if ( nsp_pmatrix_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
@@ -382,7 +382,7 @@ int nsp_pmatrix_add_columns(NspPMatrix *A, integer n)
   return(OK);
 }
 
-int Pset(integer n, doubleC *s1, Poly **s2)
+int Pset(int n, doubleC *s1, Poly **s2)
 {
   int i;
   for ( i = 0 ; i < n ; i++) 
@@ -409,7 +409,7 @@ NspPMatrix*nsp_pmatrix_concat_down(NspPMatrix *A, NspPMatrix *B)
       Scierror("PMatConcatD : incompatible size  \n");
       return(NULLPMAT);
     }
-   Loc =nsp_pmatrix_create(NVOID,A->m+B->m,A->n,&Czero,(integer) 0);
+   Loc =nsp_pmatrix_create(NVOID,A->m+B->m,A->n,&Czero,(int) 0);
   if ( Loc == NULLPMAT) 
     {
       Scierror("No More Place ");
@@ -433,9 +433,9 @@ NspPMatrix*nsp_pmatrix_concat_down(NspPMatrix *A, NspPMatrix *B)
  * A and B are left unchanged 
  */
 
-int nsp_pmatrix_add_rows(NspPMatrix *A, integer m)
+int nsp_pmatrix_add_rows(NspPMatrix *A, int m)
 {
-  integer Am;
+  int Am;
   int j;
   Am= A->m;
   if ( nsp_pmatrix_resize(A,A->m+m,A->n)== FAIL) return(FAIL);
@@ -461,7 +461,7 @@ int nsp_pmatrix_add_rows(NspPMatrix *A, integer m)
 
 int PMatSetRC(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B)
 {
-  integer rmin,rmax,cmin,cmax,i,j,*Icol,*Irow;
+  int rmin,rmax,cmin,cmax,i,j,*Icol,*Irow;
   if ( Rows->mn != B->m ||  Cols->mn != B->n )
     {
       Scierror("Set incompatible indices ");
@@ -500,7 +500,7 @@ int PMatSetRC(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B)
 NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   NspPMatrix *Loc;
-  integer rmin,rmax,cmin,cmax,i,j,*Irow,*Icol;
+  int rmin,rmax,cmin,cmax,i,j,*Irow,*Icol;
   Irow = Matd2i(Rows,&rmin,&rmax);
   /* Matd2i changes Rows, thus we must check if Rows == Cols 
     before changing Cols again : **/
@@ -513,7 +513,7 @@ NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
       Scierror("Extraction wrong indices");
       return(NULLPMAT);
     }
-   Loc =nsp_pmatrix_create(NVOID,Rows->mn,Cols->mn,&Czero,(integer) 0);
+   Loc =nsp_pmatrix_create(NVOID,Rows->mn,Cols->mn,&Czero,(int) 0);
   if ( Loc == NULLPMAT) 
     {
       return(NULLPMAT);

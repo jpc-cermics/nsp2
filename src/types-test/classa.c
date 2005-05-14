@@ -304,7 +304,7 @@ NspClassA *classa_create(char *name,int color,int thickness,NspTypeBase *type)
       Sciprintf("No more memory\n");
       return NULLCLA;
     }
-  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(NULLCLA);
+  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLCLA);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->classa_color = color;
   H->classa_thickness = thickness;

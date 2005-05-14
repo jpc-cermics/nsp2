@@ -318,7 +318,7 @@ NspGBoxed *gboxed_create(char *name,GType boxed_type, gpointer boxed, gboolean c
       return NULLGBOXED;
     }
   
-  if ( ( NSP_OBJECT(self)->name = NewString(name)) == NULLSTRING) return(NULLGBOXED);
+  if ( ( NSP_OBJECT(self)->name =new_nsp_string(name)) == NULLSTRING) return(NULLGBOXED);
   NSP_OBJECT(self)->ret_pos = -1 ;
   
   g_return_val_if_fail(boxed_type != 0, NULL);

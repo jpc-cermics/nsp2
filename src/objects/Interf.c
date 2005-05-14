@@ -109,7 +109,7 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
 	break;
       case stringcopy :   Foo = (void **) va_arg(ap, char **) ;
 	if ( ( *((char **) Foo)= GetString(stack,count)) == NULL ) { va_end(ap);return FAIL;}
-	if ( ( *((char **) Foo)= NewString(( *((char **) Foo)))) == NULL ) { va_end(ap);return FAIL;}
+	if ( ( *((char **) Foo)=new_nsp_string(( *((char **) Foo)))) == NULL ) { va_end(ap);return FAIL;}
 	break;
       case mat :  Foo = (void **)  va_arg(ap, NspMatrix **) ;
 	if ( ( *((NspMatrix **) Foo)=GetMat(stack,count) )== NULLMAT) { va_end(ap);return FAIL;}
@@ -335,7 +335,7 @@ static int  extract_one_argument(NspObject *Ob,int_types *T,va_list *ap,char Typ
     break;
   case stringcopy :   Foo = (void **) va_arg(*ap, char **) ;
     if ( ( *((char **) Foo)=nsp_string_object(Ob)) == NULL ) return FAIL;
-    if ( ( *((char **) Foo)= NewString(( *((char **) Foo)))) == NULL ) return FAIL;
+    if ( ( *((char **) Foo)=new_nsp_string(( *((char **) Foo)))) == NULL ) return FAIL;
     break;
   case mat :  Foo = (void **)  va_arg(*ap, NspMatrix **) ;
     if ( ( *((NspMatrix **) Foo)= Mat2double(matrix_object(Ob)))== NULLMAT) return FAIL;
@@ -662,7 +662,7 @@ static NspList *BuildListFromArgs_1(int_types *T,va_list *ap)
  * 
  * Returns arguments on the Stack 
  *
- * Return value: %RET_BUG or an integer
+ * Return value: %RET_BUG or an int
  **/
 
 static int RetArgs_1(Stack stack,int lhs,int_types *T,va_list *ap);

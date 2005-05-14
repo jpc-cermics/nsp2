@@ -62,18 +62,18 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
   /* object methods redefined for smatrix */ 
 
   top->pr = (print_func *)nsp_smatrix_print;                    /* printing*/   
-  top->dealloc = (dealloc_func *)nsp_smatrix_destroy;              /* dealloc */  
-  top->copy  =  (copy_func *)nsp_smatrix_copy;                   /* copy object */  
+  top->dealloc = (dealloc_func *)nsp_smatrix_destroy;           /* dealloc */  
+  top->copy  =  (copy_func *)nsp_smatrix_copy;                  /* copy object */  
   top->size  = (size_func *)nsp_smatrix_size;                   /* m,n or m*n  */  
-  top->s_type =  (s_type_func *)nsp_smatrix_type_as_string;                /* type as a String */  
-  top->sh_type = (sh_type_func *)nsp_smatrix_type_short_string;              /* type as a short string */  
+  top->s_type =  (s_type_func *)nsp_smatrix_type_as_string;     /* type as a String */  
+  top->sh_type = (sh_type_func *)nsp_smatrix_type_short_string; /* type as a short string */  
   top->info = (info_func *)nsp_smatrix_info;                    /* info */  
-  top->is_true = (is_true_func  *)nsp_smatrix_is_true;             /* check if object can be considered as true */  
-  top->loop =(loop_func *)nsp_smatrix_loop_extract;                /* for loops */  
-  top->path_extract =  NULL;        /* used for x(1)(2)(...) */  
-  top->get_from_obj = (get_from_obj_func *)nsp_smatrix_object;    /* get object stored in SciObj */  
-  top->eq  = (eq_func *)nsp_smatrix_eq;                       /* equality check */  
-  top->neq  = (eq_func *)nsp_smatrix_neq;                      /* non-equality check */
+  top->is_true = (is_true_func  *)nsp_smatrix_is_true;          /* check if object can be considered as true */  
+  top->loop =(loop_func *)nsp_smatrix_loop_extract;             /* for loops */  
+  top->path_extract =  NULL;                                    /* used for x(1)(2)(...) */  
+  top->get_from_obj = (get_from_obj_func *)nsp_smatrix_object;  /* get object stored in SciObj */  
+  top->eq  = (eq_func *)nsp_smatrix_eq;                         /* equality check */  
+  top->neq  = (eq_func *)nsp_smatrix_neq;                       /* non-equality check */
 
   top->save  = (save_func *)nsp_smatrix_xdr_save;
   top->load  = (load_func *)nsp_smatrix_xdr_load;
@@ -224,8 +224,7 @@ int nsp_smatrix_is_true(NspSMatrix *M)
  * Save a String matrix NspSMatrix 
  */
 
-#define BUF_LEN 1024
-static char s_buf[BUF_LEN+1];
+const int BUF_LEN=1024;
 
 int nsp_smatrix_xdr_save(NspFile  *F, NspSMatrix *M)
 {
@@ -241,7 +240,7 @@ int nsp_smatrix_xdr_save(NspFile  *F, NspSMatrix *M)
 	  Scierror("XXX Lengh of element %d is too big (max=%d)\n",i, BUF_LEN ) ;
 	  return FAIL;
 	}
- nsp_xdr_save_string(F->xdrs,M->S[i]);
+      nsp_xdr_save_string(F->xdrs,M->S[i]);
     }
   return OK;
 }
@@ -252,6 +251,7 @@ int nsp_smatrix_xdr_save(NspFile  *F, NspSMatrix *M)
 
 NspSMatrix *nsp_smatrix_xdr_load(NspFile  *F)
 {
+  char s_buf[BUF_LEN+1];
   int m,n,i;
   NspSMatrix *M;
   static char name[NAME_MAXL];
@@ -268,12 +268,10 @@ NspSMatrix *nsp_smatrix_xdr_load(NspFile  *F)
 	  Scierror("Warning: Lengh of element %d is too big (max=%d)\n",i, BUF_LEN ) ;
 	  return NULLSMAT;
 	}
-      if ((M->S[i] = CopyString(s_buf)) == (String *) 0) return(NULLSMAT);
+      if ((M->S[i] =nsp_string_copy(s_buf)) == NULLSTRING ) return(NULLSMAT);
     }
   return M;
 }
-
-
 
 
 /*

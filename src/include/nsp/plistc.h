@@ -1,11 +1,10 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- **
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include "nsp/math.h"
 #include "nsp/sciio.h" 

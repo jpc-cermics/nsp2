@@ -1,10 +1,10 @@
-#ifndef INC_NSP_CELLS
-#define INC_NSP_CELLS
+#ifndef NSP_INC_CELLS
+#define NSP_INC_CELLS
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2005 )
- * Jean-Philippe Chancelier Enpc/Cermics        
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -14,18 +14,17 @@
  */
 typedef struct _NspCells NspCells ;
 
-typedef int (*cells_save) (NspFile  *F, NspCells *M);
-
 typedef struct _NspTypeCells { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  cells_save *save;
+  /*< public >*/
 } NspTypeCells;
 
 struct _NspCells {
+  /*< private >*/
   NspObject father; 
   NspTypeCells *type; 
-  integer m,n,mn;
+  /*< public >*/
+  int m,n,mn;
   NspObject **objs;
 };
 
@@ -66,20 +65,20 @@ extern int IsCellsObj (Stack stack, int i);
 extern int IsCells (NspObject *O); 
 extern NspCells *GetCellsCopy (Stack stack, int i); 
 extern NspCells *GetCells (Stack stack, int i); 
-extern NspCells *nsp_cells_create(const char *name, integer m, integer n);
+extern NspCells *nsp_cells_create(const char *name, int m, int n);
 extern NspCells *nsp_cells_create_from_table(NspObject **T); 
 extern NspCells *nsp_cells_create_from_array(const char *name,int n, NspObject **T); 
 extern NspCells *nsp_cells_copy(const NspCells *A); 
-extern int nsp_cells_resize(NspCells *A, integer m, integer n); 
+extern int nsp_cells_resize(NspCells *A, int m, int n); 
 extern void nsp_cells_destroy(NspCells *A); 
 extern void nsp_cells_info(const NspCells *Mat, int indent); 
 extern void nsp_cells_print(const NspCells *Mat, int indent); 
-extern int nsp_cells_redim(NspCells *A, integer m, integer n); 
-extern int nsp_cells_enlarge(NspCells *A, integer m, integer n); 
+extern int nsp_cells_redim(NspCells *A, int m, int n); 
+extern int nsp_cells_enlarge(NspCells *A, int m, int n); 
 extern int nsp_cells_concat_right(NspCells *A,const NspCells *B); 
-extern int nsp_cells_add_columns(NspCells *A, integer n); 
+extern int nsp_cells_add_columns(NspCells *A, int n); 
 extern NspCells *nsp_cells_concat_down(const NspCells *A,const NspCells *B); 
-extern int nsp_cells_add_rows(NspCells *A, integer m); 
+extern int nsp_cells_add_rows(NspCells *A, int m); 
 extern int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspCells *B); 
 extern int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B); 
 extern int nsp_cells_delete_columns(NspCells *A, NspMatrix *Cols); 

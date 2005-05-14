@@ -1,11 +1,10 @@
-/* -*- Mode: C -*- */
-#ifndef INC_NSP_None
-#define INC_NSP_None
+#ifndef NSP_INC_None
+#define NSP_INC_None
 
-/*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2003 )
- * Jean-Philippe Chancelier Enpc/Cermics
- *-----------------------------------------------------------------*/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* None */
 
@@ -17,16 +16,16 @@
 
 typedef struct _NspNone NspNone;
 
-typedef int (*none_save) (NspFile  *F, NspNone *M);
-
 typedef struct _NspTypeNone { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
+  /*< public >*/
 } NspTypeNone;
 
 struct _NspNone {
+  /*< private >*/
   NspObject father; 
   NspTypeNone *type; 
+  /*< public >*/
   
 };
 

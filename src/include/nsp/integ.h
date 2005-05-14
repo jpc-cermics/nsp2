@@ -1,5 +1,5 @@
-#ifndef SCI_INTEG
-#define SCI_INTEG
+#ifndef NSP_INC_INTEG
+#define NSP_INC_INTEG
 
 typedef int (*lsoda_f)(int * neq,double *t,double *y,double *ydot);
 typedef int (*lsoda_j)(int * neq,double *t,double *y,int *ml,int *mu,double *pd,
@@ -120,4 +120,4 @@ extern int C2F(xsetun) (int *lun);
 
 
 
-#endif /* SCI_   **/
+#endif /* NSP_INC_   **/

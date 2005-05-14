@@ -1,10 +1,10 @@
-#ifndef INC_NSP_LMO 
-#define INC_NSP_LMO
+#ifndef NSP_INC_LMO 
+#define NSP_INC_LMO
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>   /* for FILE declaration **/
 #include "nsp/sciio.h" 
@@ -17,17 +17,16 @@
 
 typedef struct _NspLmo  NspLmo;
 
-typedef int (*lmo_save) (NspFile  *F, NspLmo *M);
-
 typedef struct _NspTypeLmo { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  lmo_save *save;
+  /*< public >*/
 } NspTypeLmo;
 
 struct _NspLmo {
+  /*< private >*/
   NspObject father; 
   NspTypeLmo *type; 
+  /*< public >*/
   char *path;  
   char *module;
 } ;

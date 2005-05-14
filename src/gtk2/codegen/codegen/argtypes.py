@@ -1035,19 +1035,18 @@ matcher.register('guint16', arg)
 matcher.register('gint16', arg)
 matcher.register('gint32', arg)
 
+# nsp 
 arg= NspMatArg()
 matcher.register('mat', arg)
 
 arg= NspMatCopyArg()
 matcher.register('matcopy', arg)
 
-
 arg = NspDoubleArrayArg()
-matcher.register('double_array', arg)
+matcher.register('double[]', arg)
 
 arg = NspDoubleArrayCopyArg()
-matcher.register('double_array_copy', arg)
-
+matcher.register('const double[]', arg)
 
 arg = IntPointerArg()
 matcher.register('int*', arg)

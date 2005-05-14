@@ -298,7 +298,7 @@ NspObject *nsp_frames_search_object(char *str)
  * Return value: the #NspObject or #NULLOBJ.
  **/
 
-NspObject *nsp_frame_search_object(String *str)
+NspObject *nsp_frame_search_object(nsp_const_string str)
 {
   Cell *C;
   if ( Datas == NULLLIST ) 
@@ -320,7 +320,7 @@ NspObject *nsp_frame_search_object(String *str)
  * Return value:  the #NspObject or #NULLOBJ.
  **/
 
-NspObject *nsp_global_frame_search_object(String *str)
+NspObject *nsp_global_frame_search_object(nsp_const_string str)
 {
   if ( GlobalFrame == NULLLIST )  return NULLOBJ;
   return (nsp_sorted_list_search(GlobalFrame,str) );
@@ -334,7 +334,7 @@ NspObject *nsp_global_frame_search_object(String *str)
  * 
  **/
 
-void nsp_global_frame_remove_object(String *str)
+void nsp_global_frame_remove_object(nsp_const_string str)
 {
   NspObject *O;
   if ( GlobalFrame == NULLLIST )  return ;
@@ -355,7 +355,7 @@ void nsp_global_frame_remove_object(String *str)
  * Return value: the #NspObject or #NULLOBJ.
  **/
 
-NspObject *nsp_frame_search_and_remove_object(String *str)
+NspObject *nsp_frame_search_and_remove_object(nsp_const_string str)
 {
   Cell *C;
   if ( Datas == NULLLIST ) 
@@ -376,7 +376,7 @@ NspObject *nsp_frame_search_and_remove_object(String *str)
  * remove the object 
  **/
 
-void nsp_frame_remove_object(String *str)
+void nsp_frame_remove_object(nsp_const_string str)
 {
   Cell *C;
   if ( Datas == NULLLIST ) return;
@@ -399,7 +399,7 @@ void nsp_frame_remove_object(String *str)
  * Return value:  %OK or %FAIL.
  **/
 
-int nsp_frame_search_and_move_up_object(String *str)
+int nsp_frame_search_and_move_up_object(nsp_const_string str)
 {
   NspObject *O;
   Cell *C;

@@ -1,5 +1,5 @@
-#ifndef SCI_DATAS 
-#define SCI_DATAS 
+#ifndef NSP_INC_DATAS 
+#define NSP_INC_DATAS 
 
 /* XXXX */
 extern NspList *Datas ;

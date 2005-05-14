@@ -1,10 +1,10 @@
-#ifndef SCI_PR_OUTPUT
-#define SCI_PR_OUTPUT
+#ifndef NSP_INC_PR_OUTPUT
+#define NSP_INC_PR_OUTPUT
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )
- * Jean-Philippe Chancelier Enpc/Cermics        
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>
 #include "nsp/object.h"

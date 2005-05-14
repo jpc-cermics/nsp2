@@ -1,13 +1,12 @@
-#ifndef INC_NSP_Link
-#define INC_NSP_Link
+#ifndef NSP_INC_Link
+#define NSP_INC_Link
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
-  
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
+
 /* graphic links */
-
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
@@ -21,12 +20,9 @@
 
 typedef struct _NspLink NspLink;
 
-typedef int (*link_save) (NspFile  *F, NspLink *M);
-
 typedef struct _NspTypeLink { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  link_save *save;
+  /*< public >*/
 } NspTypeLink;
 
 typedef struct l_lock {
@@ -34,8 +30,10 @@ typedef struct l_lock {
 } grl_lock ; 
 
 struct _NspLink {
+  /*< private >*/
   NspObject father; 
   NspTypeLink *type; 
+  /*< public >*/
   /* specific*/
   BCG *Xgc;
   int color; 

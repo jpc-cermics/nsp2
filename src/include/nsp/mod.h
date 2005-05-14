@@ -1,10 +1,10 @@
-#ifndef INC_NSP_MOD 
-#define INC_NSP_MOD
+#ifndef NSP_INC_MOD 
+#define NSP_INC_MOD
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #include <stdio.h>   /* for FILE declaration **/
 #include "nsp/sciio.h" 
@@ -17,12 +17,9 @@
 
 typedef struct _NspMod NspMod;
 
-typedef int (*mod_save) (NspFile  *F, NspMod *M);
-
 typedef struct _NspTypeMod { 
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
-  mod_save *save;
+  /*< public >*/
 } NspTypeMod;
 
 
@@ -36,8 +33,10 @@ typedef struct _NspTypeMod {
 typedef NspList Lmo ; /* Lmo is a List */
 
 struct _NspMod {
+  /*< private >*/
   NspObject father; 
   NspTypeMod *type; 
+  /*< public >*/
   char *path;   /* absolute XXX path of the module */ 
   char *mname;  /* module name */ 
   NspHash *T;      /* hash table to store module objects of type me 

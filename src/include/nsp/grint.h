@@ -1,10 +1,10 @@
-#ifndef INC_NSP_GRint
-#define INC_NSP_GRint
+#ifndef NSP_INC_GRint
+#define NSP_INC_GRint
 
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* graphic object interface */
 
@@ -48,7 +48,7 @@ typedef void gr_set_lock_pos(void *B, int i,const double pt[]);
 typedef struct _NspTypeGRint { 
   NSP_TYPE_OBJECT__ 
 
-  /* rajouts */
+  /*< public >*/
 
   gr_get_hilited *get_hilited ;		     
   gr_set_hilited *set_hilited ;		     

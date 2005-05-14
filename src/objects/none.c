@@ -324,7 +324,7 @@ NspNone *none_create(char *name,NspTypeBase *type)
       Sciprintf("No more memory\n");
       return NULLNONE;
     }
-  if ( ( NSP_OBJECT(H)->name = NewString(name)) == NULLSTRING) return(NULLNONE);
+  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLNONE);
   NSP_OBJECT(H)->ret_pos = -1 ;
   return H;
 }

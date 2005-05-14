@@ -211,7 +211,7 @@ int int_mxtest9(Stack stack, int rhs, int opt, int lhs)
 int int_mxtest(Stack stack, int rhs, int opt, int lhs)
 {
   NspPList *P;
-  integer n;
+  int n;
   NspMatrix *M1;
   CheckRhs(2,2);
   CheckLhs(1,1);

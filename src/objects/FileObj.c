@@ -292,9 +292,9 @@ NspFile *nsp_file_create(char *name, char *fname, char *str,int flag,FILE *f)
       Scierror("Error:\tRunning out of memory\n");
       return NULLSCIFILE;
     }
-  if ((NSP_OBJECT(F)->name = NewString(name)) == NULLSTRING) return NULLSCIFILE;
+  if ((NSP_OBJECT(F)->name =new_nsp_string(name)) == NULLSTRING) return NULLSCIFILE;
   NSP_OBJECT(F)->ret_pos = -1 ; 
-  if ((F->fname = NewString(fname)) == NULLSTRING) return NULLSCIFILE;
+  if ((F->fname =new_nsp_string(fname)) == NULLSTRING) return NULLSCIFILE;
   strncpy(F->openf,str,4);
   F->flag =flag;
   F->file =f;
@@ -398,14 +398,14 @@ static int int_file_getstr(void *self, Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   if ( GetArgs(stack,rhs,opt,T,&opts,&n) == FAIL) return RET_BUG;
   if (( M =nsp_smatrix_create_with_length(NVOID,1,1,-1))== NULLSMAT) return RET_BUG;
-  if (( M->S[0] = NewStringN(n+1))== NULL) return RET_BUG;
+  if (( M->S[0] =new_nsp_string_n(n+1))== NULL) return RET_BUG;
   if ( nsp_mgetstr1(self,M->S[0],n,&count) == FAIL) return RET_BUG; 
   if ( count != n) 
     {
       char *str;
-      if (( str = NewStringN(count+1))== NULL) return RET_BUG;
+      if (( str =new_nsp_string_n(count+1))== NULL) return RET_BUG;
       strncpy(str,M->S[0],count);
-      StringDestroy(&(M->S[0]));
+ nsp_string_destroy(&(M->S[0]));
       M->S[0]=str;
     }
   MoveObj(stack,1,(NspObject *) M);

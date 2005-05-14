@@ -1,5 +1,5 @@
-#ifndef SCI_BLAS
-#define SCI_BLAS
+#ifndef NSP_INC_BLAS
+#define NSP_INC_BLAS
 extern double C2F(dasum) (int *n, double *dx, int *incx);
 extern int C2F(daxpy) (int *n, double *da, double *dx, int *incx, double *dy, int *incy);
 extern double C2F(dcabs1) (doubleC *z__);
@@ -72,4 +72,4 @@ extern int C2F(ztrmm) (char *side, char *uplo, char *transa, char *diag, int *m,
 extern int C2F(ztrmv) (char *uplo, char *trans, char *diag, int *n, doubleC *a, int *lda, doubleC *x, int *incx, int uplo_len, int trans_len, int diag_len);
 extern int C2F(ztrsm) (char *side, char *uplo, char *transa, char *diag, int *m, int *n, doubleC *alpha, doubleC *a, int *lda, doubleC *b, int *ldb, int side_len, int uplo_len, int transa_len, int diag_len);
 extern int C2F(ztrsv) (char *uplo, char *trans, char *diag, int *n, doubleC *a, int *lda, doubleC *x, int *incx, int uplo_len, int trans_len, int diag_len);
-#endif /* SCI_BLAS   **/
+#endif /* NSP_INC_BLAS   **/

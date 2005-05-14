@@ -40,18 +40,19 @@
  * This can be used to detect the last element in XXX->S
  */
 
-NspSMatrix* nsp_smatrix_create(const char *name, integer m, integer n,const char *str, integer flag)
+NspSMatrix* nsp_smatrix_create(nsp_const_string name, int m, int n,nsp_const_string str, int flag)
 {
   int i;
   NspSMatrix *Loc = new_smatrix();
-  const char *init; 
-  static const char *def="";
+  nsp_const_string init; 
+  nsp_const_string def="";
   if ( Loc == NULLSMAT) 
     { 
       Scierror("Error:\tRunning out of memory\n");
       return(NULLSMAT);
     }
-  if ( ( NSP_OBJECT(Loc)->name = NewString(name)) == NULLSTRING) return(NULLSMAT);
+ new_nsp_string(name);
+  if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING) return(NULLSMAT);
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /* Loc->otype = SMATRIX;
      Loc->ftype = SMatrix_Type;
@@ -62,11 +63,11 @@ NspSMatrix* nsp_smatrix_create(const char *name, integer m, integer n,const char
   if ( Loc->mn == 0 ) 
     {
       /* empty string Matrix */
-      Loc->S = (String **) 0;
+      Loc->S = (nsp_string *) 0;
       Loc->m = Loc->n = 0;
       return(Loc);
     }
-  if ((Loc->S = (String **) MALLOC((Loc->mn+1)* sizeof(String *))) == (String **) 0 )
+  if ((Loc->S = (nsp_string *) MALLOC((Loc->mn+1)* sizeof(nsp_string))) == (nsp_string *) 0 )
     { 
       Scierror("SMatCreate : Error no more space\n");
       return(NULLSMAT);
@@ -74,10 +75,10 @@ NspSMatrix* nsp_smatrix_create(const char *name, integer m, integer n,const char
   init = ( flag == 0) ? def : str ;
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      if ((Loc->S[i] = Basic2String(init)) == (String *) 0 )  return(NULLSMAT);
+      if ((Loc->S[i] =nsp_basic_to_string(init)) == NULLSTRING )  return(NULLSMAT);
     }
   /* Last element set to Null pointer **/
-  Loc->S[Loc->mn]=(char *) 0;
+  Loc->S[Loc->mn]=(nsp_string) 0;
   return(Loc);
 }
 
@@ -87,7 +88,7 @@ NspSMatrix* nsp_smatrix_create(const char *name, integer m, integer n,const char
  * Note that if strl is < 0 elements are not initialized 
  */
 
-NspSMatrix*nsp_smatrix_create_with_length(const char *name, integer m, integer n, integer strl)
+NspSMatrix*nsp_smatrix_create_with_length(nsp_const_string name, int m, int n, int strl)
 {
   int i;
   NspSMatrix *Loc = new_smatrix();
@@ -96,7 +97,7 @@ NspSMatrix*nsp_smatrix_create_with_length(const char *name, integer m, integer n
       Scierror("Error:\tRunning out of memory\n");
       return(NULLSMAT);
     }
-  if ( ( NSP_OBJECT(Loc)->name = NewString(name)) == NULLSTRING) return(NULLSMAT);
+  if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING) return(NULLSMAT);
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   Loc->m = Max(m,0);
   Loc->n = Max(n,0);
@@ -105,10 +106,10 @@ NspSMatrix*nsp_smatrix_create_with_length(const char *name, integer m, integer n
     {
       Loc->m = Loc->n = 0;
       /* empty string Matrix */
-      Loc->S = (String **) 0;
+      Loc->S = (nsp_string *) 0;
       return(Loc);
     }
-  if ((Loc->S = (String **) MALLOC((Loc->mn+1)* sizeof(String *))) == (String **) 0 )
+  if ((Loc->S = (nsp_string *) MALLOC((Loc->mn+1)* sizeof(nsp_string))) == (nsp_string *) 0 )
     { 
       Scierror("Error:\tRunning out of memory\n");
       return(NULLSMAT);
@@ -116,10 +117,10 @@ NspSMatrix*nsp_smatrix_create_with_length(const char *name, integer m, integer n
   if ( strl >= 0) 
     for ( i = 0 ; i < Loc->mn ; i++ ) 
       {
-	if ((Loc->S[i] = NewStringN(strl)) == (String *) 0 )  return(NULLSMAT);
+	if ((Loc->S[i] =new_nsp_string_n(strl)) == (nsp_string) 0 )  return(NULLSMAT);
       }
   /* Last element set to Null pointer **/
-  Loc->S[Loc->mn]=(char *) 0;
+  Loc->S[Loc->mn]=(nsp_string) 0;
   return(Loc);
 }
 
@@ -138,7 +139,7 @@ NspSMatrix*nsp_smatrix_create_from_table(char **T)
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < count ; i++ )
     {
-      if ((Loc->S[ i] = CopyString(T[i])) == (String *) 0) return(NULLSMAT);
+      if ((Loc->S[ i] =nsp_string_copy(T[i])) == (nsp_string) 0) return(NULLSMAT);
     }
   return(Loc);
 }
@@ -147,7 +148,7 @@ NspSMatrix*nsp_smatrix_create_from_table(char **T)
  * Res =nsp_smatrix_create_from_array(n,T) 
  */
 
-NspSMatrix* nsp_smatrix_create_from_array(const char *name,int n,const char **T)
+NspSMatrix* nsp_smatrix_create_from_array(nsp_const_string name,int n,const char **T)
 {
   NspSMatrix *Loc;
   int i=0;
@@ -156,7 +157,7 @@ NspSMatrix* nsp_smatrix_create_from_array(const char *name,int n,const char **T)
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < n ; i++ )
     {
-      if ((Loc->S[i] = CopyString(T[i])) == (String *) 0) return(NULLSMAT);
+      if ((Loc->S[i] =nsp_string_copy(T[i])) == (nsp_string) 0) return(NULLSMAT);
     }
   return(Loc);
 }
@@ -167,7 +168,7 @@ NspSMatrix* nsp_smatrix_create_from_array(const char *name,int n,const char **T)
  * each object is supposed to start with a char* field.
  */
 
-NspSMatrix*nsp_smatrix_create_from_struct(const char *name,const void *T,unsigned int size)
+NspSMatrix*nsp_smatrix_create_from_struct(nsp_const_string name,const void *T,unsigned int size)
 {
   NspSMatrix *Loc;
   char **entry;
@@ -178,7 +179,7 @@ NspSMatrix*nsp_smatrix_create_from_struct(const char *name,const void *T,unsigne
   /* allocate elements and store copies of A elements **/
   for (entry = (char **) T, i = 0 ; i < count ;entry = ((char **) (((char *) entry)+ size)), i++ )
     {
-      if ((Loc->S[ i] = CopyString(*entry)) == (String *) 0) return(NULLSMAT);
+      if ((Loc->S[ i] =nsp_string_copy(*entry)) == (nsp_string) 0) return(NULLSMAT);
     }
   return(Loc);
 }
@@ -197,7 +198,7 @@ NspSMatrix*nsp_smatrix_copy(const NspSMatrix *A)
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      if ((Loc->S[ i] = CopyString(A->S[i])) == (String *) 0) return(NULLSMAT);
+      if ((Loc->S[ i] =nsp_string_copy(A->S[i])) == (nsp_string) 0) return(NULLSMAT);
     }
   return(Loc);
 }
@@ -214,7 +215,7 @@ NspSMatrix*nsp_smatrix_copy(const NspSMatrix *A)
  * should also work with A==[] XXXXX 
  */
 
-int nsp_smatrix_resize(NspSMatrix *A, integer m, integer n)
+int nsp_smatrix_resize(NspSMatrix *A, int m, int n)
 {
   int i;
   if ( A->mn == m*n ) 
@@ -236,7 +237,7 @@ int nsp_smatrix_resize(NspSMatrix *A, integer m, integer n)
     {
       /* Clear before Realloc **/
       for ( i = m*n ; i < A->mn ; i++ )
-	StringDestroy(&(A->S[i]));
+	nsp_string_destroy(&(A->S[i]));
     }
   if ( m*n == 0 ) 
     {
@@ -246,16 +247,16 @@ int nsp_smatrix_resize(NspSMatrix *A, integer m, integer n)
     }
   
   if ( A->mn == 0 ) 
-    A->S = (String **)  MALLOC ((m*n+1) * sizeof(String*));
+    A->S = (nsp_string *)  MALLOC ((m*n+1) * sizeof(nsp_string));
   else 
-    A->S = (String **)  REALLOC (A->S, (m*n+1) * sizeof(String*));
-  if ( A->S == (String **) 0) return(FAIL);
+    A->S = (nsp_string *)  REALLOC (A->S, (m*n+1) * sizeof(nsp_string));
+  if ( A->S == (nsp_string *) 0) return(FAIL);
 
   /* Initialize new area **/
-  A->S[(m*n)] = (char *)0;
+  A->S[(m*n)] = (nsp_string)0;
   for ( i = A->mn ; i < m*n ; i++ )
     {
-      if ((A->S[i] = CopyString(".")) == ( String *) 0 )  return(FAIL);
+      if ((A->S[i] =nsp_string_copy(".")) == ( nsp_string) 0 )  return(FAIL);
     }
   A->m =m ;
   A->n =n;
@@ -278,7 +279,7 @@ void nsp_smatrix_destroy(NspSMatrix *A)
     {
       for ( i = 0 ; i < A->mn ; i++ ) 
 	{
-	  StringDestroy(&(A->S[i]));
+	nsp_string_destroy(&(A->S[i]));
 	}
       FREE(A->S);
     }
@@ -338,7 +339,7 @@ void nsp_smatrix_print(const NspSMatrix *Mat, int indent)
  * return 0 on failure 
  */
 
-int nsp_smatrix_redim(NspSMatrix *A, integer m, integer n)
+int nsp_smatrix_redim(NspSMatrix *A, int m, int n)
 {
   if ( A->mn ==  m*n ) 
     {
@@ -364,7 +365,7 @@ int nsp_smatrix_redim(NspSMatrix *A, integer m, integer n)
  * The result is stored in A 
  */
 
-int nsp_smatrix_enlarge(NspSMatrix *A, integer m, integer n)
+int nsp_smatrix_enlarge(NspSMatrix *A, int m, int n)
 {
   if ( A->mn == 0) return nsp_smatrix_resize(A,m,n);
   if ( n > A->n  )
@@ -384,7 +385,7 @@ int nsp_smatrix_enlarge(NspSMatrix *A, integer m, integer n)
 
 int nsp_smatrix_concat_right(NspSMatrix *A,const NspSMatrix *B)
 {
-  integer Asize;
+  int Asize;
   Asize=A->mn;
   if ( A->m != B->m ) 
     {
@@ -396,13 +397,13 @@ int nsp_smatrix_concat_right(NspSMatrix *A,const NspSMatrix *B)
   return(OK);
 }
 
-int Scopy(integer n, String **s1, String **s2)
+int Scopy(int n, nsp_string *s1, nsp_string *s2)
 {
   int i;
   for ( i = n-1 ; i >= 0 ; i--) 
     {
-      StringDestroy(&(s2[i] ));
-      if ((s2[ i] = CopyString(s1[i])) == (String *) 0)  return(FAIL);
+ nsp_string_destroy(&(s2[i] ));
+      if ((s2[ i] =nsp_string_copy(s1[i])) == (nsp_string) 0)  return(FAIL);
     }
   return(OK);
 }
@@ -414,7 +415,7 @@ int Scopy(integer n, String **s1, String **s2)
  * A is changed 
  */
 
-int nsp_smatrix_add_columns(NspSMatrix *A, integer n)
+int nsp_smatrix_add_columns(NspSMatrix *A, int n)
 {
   if (n == 0) return OK;
   else if ( n < 0) 
@@ -424,20 +425,20 @@ int nsp_smatrix_add_columns(NspSMatrix *A, integer n)
     }
   if ( nsp_smatrix_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
   /*  normalemeny inutile car Resize le fait deja 
-     integer Asize;
+     int Asize;
      Asize=A->mn;
      ns= (A->m)*n;
      if ( Sset(ns,".",A->S+Asize) == FAIL) return(FAIL);**/
   return(OK);
 }
 
-int Sset(integer n, String *s1, String **s2)
+int Sset(int n, nsp_string s1, nsp_string *s2)
 {
   int i;
   for ( i = 0 ; i < n ; i++) 
     {
-      StringDestroy(&(s2[i]));
-      if ((s2[ i] = CopyString(s1)) == (String *) 0)  return(FAIL);
+ nsp_string_destroy(&(s2[i]));
+      if ((s2[ i] =nsp_string_copy(s1)) == (nsp_string) 0)  return(FAIL);
     }
   return(OK);
 }
@@ -458,7 +459,7 @@ NspSMatrix*nsp_smatrix_concat_down(const NspSMatrix *A,const NspSMatrix *B)
       Scierror("Error: [.;.] incompatible dimensions\n");
       return(NULLSMAT);
     }
-  if ((Loc =nsp_smatrix_create(NVOID,A->m+B->m,A->n,"v",(integer) 0)) == NULLSMAT) 
+  if ((Loc =nsp_smatrix_create(NVOID,A->m+B->m,A->n,"v",(int) 0)) == NULLSMAT) 
     return(NULLSMAT);
   for ( j = 0 ; j < A->n ; j++ ) 
     {
@@ -485,9 +486,9 @@ NspSMatrix*nsp_smatrix_concat_down(const NspSMatrix *A,const NspSMatrix *B)
  * A and B are left unchanged 
  */
 
-int nsp_smatrix_add_rows(NspSMatrix *A, integer m)
+int nsp_smatrix_add_rows(NspSMatrix *A, int m)
 {
-  integer Am;
+  int Am;
   int j;
   if ( m == 0) return OK;
   else if ( m < 0) 
@@ -519,7 +520,7 @@ int nsp_smatrix_add_rows(NspSMatrix *A, integer m)
 
 int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B)
 {
-  integer rmin,rmax,cmin,cmax,i,j;
+  int rmin,rmax,cmin,cmax,i,j;
   if ( B->mn != 1)
     {
       if ( Rows->mn != B->m ||  Cols->mn != B->n )
@@ -541,19 +542,19 @@ int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatri
     for ( i = 0 ; i < Rows->mn ; i++)
       for ( j = 0 ; j < Cols->mn ; j++ )
 	{
-	  StringDestroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
+	nsp_string_destroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
 	  if (( A->S[((int) Rows->R[i])-1+ (((int)Cols->R[j])-1)*A->m] 
-		= CopyString(B->S[i+B->m*j]))
-	      == (String *) 0)  return(FAIL);
+		=nsp_string_copy(B->S[i+B->m*j]))
+	      == (nsp_string) 0)  return(FAIL);
 	}
   else
     for ( i = 0 ; i < Rows->mn ; i++)
       for ( j = 0 ; j < Cols->mn ; j++ )
 	{
-	  StringDestroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
+	nsp_string_destroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
 	  if (( A->S[((int) Rows->R[i])-1+ (((int)Cols->R[j])-1)*A->m] 
-		= CopyString(B->S[0]))
-	      == (String *) 0)  return(FAIL);
+		=nsp_string_copy(B->S[0]))
+	      == (nsp_string) 0)  return(FAIL);
 	}
   return(OK);
 }
@@ -567,23 +568,23 @@ int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatri
 
 int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
 {
-  integer i,Bscal=0;
+  int i,Bscal=0;
   if (GenericMatSeRo(A,A->m,A->n,A->mn,Rows,B,B->m,B->n,B->mn,
 		     (F_Enlarge) nsp_smatrix_enlarge,&Bscal)== FAIL) 
     return FAIL;
   if ( Bscal == 0) 
     for ( i = 0 ; i < Rows->mn ; i++)
       {
-	StringDestroy(&((A->S[((int) Rows->R[i])-1])));
-	if (( A->S[((int) Rows->R[i])-1] = CopyString(B->S[i]))
-	    == (String *) 0)  return(FAIL);
+	nsp_string_destroy(&((A->S[((int) Rows->R[i])-1])));
+	if (( A->S[((int) Rows->R[i])-1] =nsp_string_copy(B->S[i]))
+	    == (nsp_string) 0)  return(FAIL);
       }
   else
     for ( i = 0 ; i < Rows->mn ; i++)
       {
-	StringDestroy(&((A->S[((int) Rows->R[i])-1])));
-	if (( A->S[((int) Rows->R[i])-1] = CopyString(B->S[0]))
-	    == (String *) 0)  return(FAIL);
+	nsp_string_destroy(&((A->S[((int) Rows->R[i])-1])));
+	if (( A->S[((int) Rows->R[i])-1] =nsp_string_copy(B->S[0]))
+	    == (nsp_string) 0)  return(FAIL);
       }
   return(OK);
 }
@@ -592,6 +593,7 @@ int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
  *  A(:,Cols) = []
  *  A is changed.
  */
+
 int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
 {
   int i, j, k, ij, *flag, new_A_n, count;
@@ -623,7 +625,7 @@ int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
     else
       for ( i = 0 ; i < A->m ; i++ )
 	{
-	  StringDestroy(&A->S[ij]);  /* DATADestroy: must NULLIFY the pointer */
+	nsp_string_destroy(&A->S[ij]);  /* DATADestroy: must NULLIFY the pointer */
 	  ij++;
 	}
   
@@ -667,7 +669,7 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 	    k++; 
 	  }
 	else
-	  StringDestroy(&A->S[ij]);
+	nsp_string_destroy(&A->S[ij]);
 	ij++;
       }
 
@@ -710,7 +712,7 @@ int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
 	k++;
       }
     else
-      StringDestroy(&A->S[i]);
+ nsp_string_destroy(&A->S[i]);
   
   FREE(flag);
 
@@ -733,7 +735,7 @@ int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
 NspSMatrix*nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   NspSMatrix *Loc;
-  integer rmin,rmax,cmin,cmax,i,j;
+  int rmin,rmax,cmin,cmax,i,j;
   if ( A->mn == 0) return nsp_smatrix_create(NVOID,0,0,"v",0);
   Bounds(Rows,&rmin,&rmax);
   Bounds(Cols,&cmin,&cmax);
@@ -748,8 +750,8 @@ NspSMatrix*nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
     for ( j = 0 ; j < Cols->mn ; j++ )
       {
 	if ((Loc->S[i+Loc->m*j] = 
-	     CopyString(A->S[((int) Rows->R[i])-1+(((int) Cols->R[j])-1)*A->m]))
-	    == (String *) 0 ) return(NULLSMAT);
+	nsp_string_copy(A->S[((int) Rows->R[i])-1+(((int) Cols->R[j])-1)*A->m]))
+	    == (nsp_string) 0 ) return(NULLSMAT);
       }
    return(Loc);
 }
@@ -764,7 +766,7 @@ NspSMatrix*nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 NspSMatrix*nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, int *err)
 {
   NspSMatrix *Loc;
-  integer rmin,rmax,i;
+  int rmin,rmax,i;
   Bounds(Elts,&rmin,&rmax);
   *err=0;
   if ( A->mn == 0) return nsp_smatrix_create(NVOID,0,0,"v",0);
@@ -783,7 +785,7 @@ NspSMatrix*nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, int *err
     }
   for ( i = 0 ; i < Elts->mn ; i++)
     { 
-      if ((Loc->S[i] = CopyString(A->S[((int) Elts->R[i])-1]))== (String *) 0)  return(NULLSMAT);
+      if ((Loc->S[i] =nsp_string_copy(A->S[((int) Elts->R[i])-1]))== (nsp_string) 0)  return(NULLSMAT);
     }
   return(Loc);
 }
@@ -796,7 +798,7 @@ NspSMatrix*nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, int *err
 NspSMatrix*nsp_smatrix_extract_columns(NspSMatrix *A, NspMatrix *Cols, int *err)
 {
   NspSMatrix *Loc;
-  integer j,cmin,cmax;
+  int j,cmin,cmax;
   *err=0;
   if ( A->mn == 0) return nsp_smatrix_create(NVOID,0,0,"v",0);
   Bounds(Cols,&cmin,&cmax);
@@ -811,7 +813,7 @@ NspSMatrix*nsp_smatrix_extract_columns(NspSMatrix *A, NspMatrix *Cols, int *err)
       int ind=(((int) Cols->R[j])-1)*A->m, i, ind1=Loc->m*j;
       for ( i = A->m -1 ; i >= 0 ; i--) 
 	{
-	  if (( Loc->S[ind1+i] = CopyString( A->S[ind+i])) == (String *) 0)  return NULLSMAT;
+	  if (( Loc->S[ind1+i] =nsp_string_copy( A->S[ind+i])) == (nsp_string) 0)  return NULLSMAT;
 	}
     }
   return(Loc);
@@ -833,7 +835,7 @@ NspSMatrix*SMatLoopCol(char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int 
     }
   *rep =0;
   if ( Col == NULLSMAT)
-    Loc =nsp_smatrix_create(str,A->m,1,"v",(integer)0);
+    Loc =nsp_smatrix_create(str,A->m,1,"v",(int)0);
   else
     Loc = Col;
   if ( Loc == NULLSMAT) return(NULLSMAT);
@@ -850,7 +852,7 @@ NspSMatrix*SMatLoopCol(char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int 
 NspSMatrix*nsp_smatrix_extract_rows(NspSMatrix *A, NspMatrix *Rows, int *err)
 {
   NspSMatrix *Loc;
-  integer i,j,cmin,cmax;
+  int i,j,cmin,cmax;
   *err=0;
   if ( A->mn == 0) return nsp_smatrix_create(NVOID,0,0,"v",0);
   Bounds(Rows,&cmin,&cmax);
@@ -863,58 +865,58 @@ NspSMatrix*nsp_smatrix_extract_rows(NspSMatrix *A, NspMatrix *Rows, int *err)
   for ( i = 0 ; i < Rows->mn ; i++)
     for ( j = 0 ; j < A->n ; j++ )
       {
-	if (( Loc->S[i+ j*Loc->m]= CopyString(A->S[(((int) Rows->R[i])-1)+ j*A->m]))  == (String *) 0)  return NULLSMAT;
+	if (( Loc->S[i+ j*Loc->m]=nsp_string_copy(A->S[(((int) Rows->R[i])-1)+ j*A->m]))  == (nsp_string) 0)  return NULLSMAT;
       }
   return(Loc);
 }
  
 /*
- * Res= NewString(str) 
+ * Res=new_nsp_string(str) 
  * Creates a copy of str in Res or (char*)0 if no more memory 
  */
 
-char *NewString(const char *str)
+nsp_string new_nsp_string(nsp_const_string str)
 {
-  String *loc;
-  if (( loc = NewStringN(strlen(str))) == (String *) 0) return(loc);
+  nsp_string loc;
+  if (( loc =new_nsp_string_n(strlen(str))) == (nsp_string) 0) return(loc);
   strcpy(loc,str);
   return((char*) loc);
 }
 
-String *Basic2String(const char *str)
+nsp_string nsp_basic_to_string(nsp_const_string str)
 {
-  String *loc;
-  if (( loc = NewStringN(strlen(str))) == (String *) 0) return(loc);
+  nsp_string loc;
+  if (( loc =new_nsp_string_n(strlen(str))) == (nsp_string) 0) return(loc);
   strcpy((char*) loc,(char*) str);
   return(loc);
 }
 
-String *CopyString(const String *str)
+nsp_string nsp_string_copy(nsp_const_string str)
 {
-  String *loc;
+  nsp_string loc;
   int n= strlen((char*) str);
-  if (( loc = NewStringN(n)) == (String *) 0) return(loc);
+  if (( loc =new_nsp_string_n(n)) == (nsp_string) 0) return(loc);
   /* memcpy((void*) loc,(void*) str, (n+1)*sizeof(char)); **/
   strcpy((char*) loc,(char*) str); 
   return(loc);
 }
 
-void  StringDestroy(String **str)
+void nsp_string_destroy(nsp_string *str)
 {
   FREE(*str);
   *str = NULLSTRING;
 }
 
 /*
- * Res= NewStringN(n) 
+ * Res=new_nsp_string_n(n) 
  * Creates a string of size (n+1) : i.e to put n chars + '\0'
  * returns the string or (char*) 0
  */
 
-String *NewStringN(int n)
+nsp_string new_nsp_string_n(int n)
 {
-  String *loc;
-  if ( ( loc = (String *) MALLOC( (n+1)*sizeof(String))) == (String *) 0) 
+  nsp_string loc;
+  if ((loc = (nsp_string) MALLOC((n+1)*sizeof(char))) == (nsp_string) 0) 
     { 
       Scierror("NewString : Error no more space\n");
       return(NULLSTRING);
@@ -924,16 +926,16 @@ String *NewStringN(int n)
 
 
 /*
- * int StringResize(Hstr,n) 
+ * int nsp_string_resize(Hstr,n) 
  * resize the string Hstr to size (n+1)
  * returns OK or FAIL 
  * Hstr is not Checked (MUST BE != NULLSTRING )
  */
 
-int  StringResize(char **Hstr, unsigned int n)
+int nsp_string_resize(nsp_string *Hstr, unsigned int n)
 {
-  char *loc;
-  if ( ( loc = (char *) REALLOC( *Hstr, (n+1)* sizeof(char))) == NULLSTRING) 
+  nsp_string loc;
+  if ( ( loc = (nsp_string) REALLOC( *Hstr, (n+1)* sizeof(char))) == NULLSTRING) 
     { 
       Scierror("Error:\tSring resize, no more memory\n");
       return(FAIL);
@@ -954,7 +956,7 @@ int  StringResize(char **Hstr, unsigned int n)
  * XXXXXXX
  */
 
-int nsp_smatrix_concat_strings(NspSMatrix *A, NspSMatrix *B, char *str, integer flag)
+int nsp_smatrix_concat_strings(NspSMatrix *A, NspSMatrix *B,nsp_const_string str, int flag)
 {
   int i, str_l = (flag == 1) ? strlen(str) : 0;
   if ( A->mn != B->mn ) 
@@ -964,7 +966,7 @@ int nsp_smatrix_concat_strings(NspSMatrix *A, NspSMatrix *B, char *str, integer 
     }
   for ( i = 0 ; i < A->mn ; i++) 
     {	  
-      if (StringResize(&(A->S[i]),(unsigned) strlen(A->S[i])+strlen(B->S[i])+str_l)
+      if (nsp_string_resize(&(A->S[i]),(unsigned) strlen(A->S[i])+strlen(B->S[i])+str_l)
 	  == FAIL )  return(FAIL);
       if (flag == 1) strcat( A->S[i],str);
       strcat(A->S[i],B->S[i]);
@@ -974,14 +976,14 @@ int nsp_smatrix_concat_strings(NspSMatrix *A, NspSMatrix *B, char *str, integer 
 
 /* here B->mn = 1 and  A = A + B */
 
-int nsp_smatrix_concat_string_right(NspSMatrix *A, NspSMatrix *B, char *str, integer flag)
+int nsp_smatrix_concat_string_right(NspSMatrix *A, NspSMatrix *B,nsp_const_string str, int flag)
 {
   char **S = A->S;
   char *strB = B->S[0];
   int str_l = (flag == 1) ? strlen(str) : 0;
   while ( *S != NULL) 
     {	  
-      if (StringResize(S,(unsigned) strlen(*S)+str_l+ strlen(strB)) == FAIL )  return(FAIL);
+      if (nsp_string_resize(S,(unsigned) strlen(*S)+str_l+ strlen(strB)) == FAIL )  return(FAIL);
       if (flag == 1) strcat(*S,str);
       strcat(*S,strB);
       S++;
@@ -989,7 +991,7 @@ int nsp_smatrix_concat_string_right(NspSMatrix *A, NspSMatrix *B, char *str, int
   return OK ;
 }
 
-int nsp_smatrix_concat_string_left(NspSMatrix *A, NspSMatrix *B, char *str, integer flag)
+int nsp_smatrix_concat_string_left(NspSMatrix *A, NspSMatrix *B,nsp_const_string str, int flag)
 {
   char **S = A->S;
   char *strB = B->S[0];
@@ -997,7 +999,7 @@ int nsp_smatrix_concat_string_left(NspSMatrix *A, NspSMatrix *B, char *str, inte
   while ( *S != NULL) 
     {	  
       int ofset=str_l+ strlen(strB);
-      if (StringResize(S,(unsigned) strlen(*S)+ofset) == FAIL )  return(FAIL);
+      if (nsp_string_resize(S,(unsigned) strlen(*S)+ofset) == FAIL )  return(FAIL);
       for ( i = strlen(*S) ; i >=0  ; i--) 
 	(*S)[i+ofset]=(*S)[i];
       for ( i = 0 ; i < strlen(strB) ; i++) 
@@ -1038,7 +1040,7 @@ NspMatrix *nsp_smatrix_strcmp(NspSMatrix *A, NspSMatrix *B)
  * str is used if flag =1 
  */
 
-NspSMatrix*nsp_smatrix_column_concat_padded(NspSMatrix *A, char *str, integer flag)
+NspSMatrix*nsp_smatrix_column_concat_padded(NspSMatrix *A,nsp_const_string str, int flag)
 {
   int i,j,lentot=0;
   NspSMatrix *Loc;
@@ -1062,10 +1064,10 @@ NspSMatrix*nsp_smatrix_column_concat_padded(NspSMatrix *A, char *str, integer fl
   /* New matrix creation */
   for ( i = 0 ; i < Loc->m ; i++ )
     {
-      if (StringResize(&(Loc->S[i]),(unsigned)lentot) == FAIL) return(NULLSMAT);
+      if (nsp_string_resize(&(Loc->S[i]),(unsigned)lentot) == FAIL) return(NULLSMAT);
       for ( j = 0 ; j < A->n -1 ; j++ ) 
 	{
-	  int len = (integer) anint(Lw->R[j]);
+	  int len = (int) anint(Lw->R[j]);
 	  sprintf(Loc->S[i],"%*s",len,A->S[i+j*A->m]);
 	  if ( flag == 1) 
 	    strcat(Loc->S[i],str);
@@ -1080,7 +1082,7 @@ NspSMatrix*nsp_smatrix_column_concat_padded(NspSMatrix *A, char *str, integer fl
  * and using str char as separtor ( if flag == 1) 
  */
 
-NspSMatrix*nsp_smatrix_column_concat(NspSMatrix *A, char *str, integer flag)
+NspSMatrix*nsp_smatrix_column_concat(NspSMatrix *A,nsp_const_string str, int flag)
 {
   int i,j,*Iloc;
   NspSMatrix *Loc;
@@ -1100,7 +1102,7 @@ NspSMatrix*nsp_smatrix_column_concat(NspSMatrix *A, char *str, integer flag)
   /* New matrix creation */
   for ( i = 0 ; i < Loc->m ; i++ )
     {
-      if (StringResize(&(Loc->S[i]),(unsigned) Iloc[i] ) == FAIL) return(NULLSMAT);
+      if (nsp_string_resize(&(Loc->S[i]),(unsigned) Iloc[i] ) == FAIL) return(NULLSMAT);
       strcpy(Loc->S[i],A->S[i]);
       for ( j = 1 ; j < A->n ; j++ ) 
 	{
@@ -1117,7 +1119,7 @@ NspSMatrix*nsp_smatrix_column_concat(NspSMatrix *A, char *str, integer flag)
  * and using str char as separtor ( if flag == 1) 
  */
 
-NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A, char *str, integer flag)
+NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A,nsp_const_string str, int flag)
 {
   int i,j,*Iloc;
   NspSMatrix *Loc;
@@ -1139,7 +1141,7 @@ NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A, char *str, integer flag)
   /* New matrix creation */
   for ( j = 0 ; j < Loc->n ; j++ )
     {
-      if (StringResize(&(Loc->S[j]),(unsigned) Iloc[j] ) == FAIL) return(NULLSMAT);
+      if (nsp_string_resize(&(Loc->S[j]),(unsigned) Iloc[j] ) == FAIL) return(NULLSMAT);
       strcpy(Loc->S[j],A->S[j*A->m]);
       for ( i = 1 ; i < A->m ; i++ )
 	{
@@ -1157,16 +1159,17 @@ NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A, char *str, integer flag)
  * rstr is the row-separator and cflag the col-separator 
  */
 
-String *nsp_smatrix_elts_concat(NspSMatrix *A, char *rstr, integer rflag, char *cstr, integer cflag)
+nsp_string nsp_smatrix_elts_concat(NspSMatrix *A,nsp_const_string rstr, int rflag,
+				   nsp_const_string cstr, int cflag)
 {
   int i,j,lentot=0;
-  String *Loc;
+  nsp_string Loc;
   /* evaluation of sizes */
   for ( j = 0 ; j < A->mn ; j++ )  lentot += strlen(A->S[j]);
   if ( rflag == 1) lentot += (A->m -1)*strlen(rstr);
   if ( cflag == 1) lentot += (A->m*(A->n -1))*strlen(cstr);
   /* New String */
-  if ((Loc = NewStringN(lentot)) == (String *) 0 )  return(NULL);
+  if ((Loc =new_nsp_string_n(lentot)) == (nsp_string) 0 )  return(NULL);
   strcpy(Loc,"");
   for ( i = 0 ; i < A->m ; i++ )
     {
@@ -1235,19 +1238,17 @@ NspMatrix *nsp_smatrix_elts_length(NspSMatrix *A)
 
 /*
  *  Res=nsp_matrix_to_smatrix(A) 
- *  A s not changed 
- *  pour l'instant on utilise %f ou le format pass'e 
- *  en deuxieme argument XXXXXXX
- *  Il faudrait ds le cas par defaut utiliser 
- *  la meme chose que la fonction d'impression de 
- *  Scilab XXXXXXX
+ *      A s not changed 
+ *  str is a format which is used if flag == 1 
+ *  should be replaced by a null test on str. 
+ *  FIXME: the default format should be the format 
+ *    used for printing which is computed from A 
  */
 
-static char buf[1024];
-
-NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A, char *str, integer flag)
+NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
 {
-  static char def[]={"%f"},defi[] ={"%f +%fi"}, *format,formati[256];
+  char buf[1024],formati[256];
+  nsp_const_string def="%f", defi ="%f +%fi", format;
   int i;
   NspSMatrix *Loc;
   if (flag == 1 )
@@ -1272,7 +1273,7 @@ NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A, char *str, integer flag)
 	sprintf(buf,format,A->R[i]);
       else 
 	sprintf(buf,formati,A->C[i].r,A->C[i].i);
-      if ((Loc->S[i] = Basic2String(buf)) == (String *) 0)  return(NULLSMAT);
+      if ((Loc->S[i] =nsp_basic_to_string(buf)) == (nsp_string) 0)  return(NULLSMAT);
     }
   return(Loc);
 }
@@ -1286,7 +1287,7 @@ void nsp_smatrix_tolower(NspSMatrix *A)
   int i;
   unsigned int j;
   for ( i = 0 ; i < A->mn ; i++ ) 
-      if ( A->S[i] != (char *)0) 
+      if ( A->S[i] != (nsp_string) 0 ) 
 	for ( j = 0 ; j < strlen(A->S[i]) ; j++ ) A->S[i][j]= tolower(A->S[i][j]);
 }
 
@@ -1300,7 +1301,7 @@ void nsp_smatrix_toupper(NspSMatrix *A)
   int i;
   unsigned int j;
   for ( i = 0 ; i < A->mn ; i++ ) 
-    if ( A->S[i] != (char *)0) 
+    if ( A->S[i] != (nsp_string) 0) 
       for ( j = 0 ; j < strlen(A->S[i]) ; j++ )  A->S[i][j]= toupper(A->S[i][j]);
 }
 
@@ -1315,7 +1316,7 @@ void nsp_smatrix_capitalize(NspSMatrix *A)
   int i;
   unsigned int j;
   for ( i = 0 ; i < A->mn ; i++ ) 
-    if ( A->S[i] != (char *)0) 
+    if ( A->S[i] != (nsp_string) 0) 
       {
 	A->S[i][0]= toupper(A->S[i][0]);
 	for ( j = 1 ; j < strlen(A->S[i]) ; j++ ) A->S[i][j]= tolower(A->S[i][j]);
@@ -1329,7 +1330,7 @@ void nsp_smatrix_capitalize(NspSMatrix *A)
  */
 
 
-NspMatrix *nsp_smatrix_strstr(NspSMatrix *A, char *Str)
+NspMatrix *nsp_smatrix_strstr(NspSMatrix *A,nsp_const_string Str)
 {
   NspMatrix *Loc;
   int i;
@@ -1353,7 +1354,7 @@ NspMatrix *nsp_smatrix_strstr(NspSMatrix *A, char *Str)
  * Contributed by Bruno (to get 
  */
 
-NspMatrix *nsp_smatrix_strindex(char *Str, char *Motif)
+NspMatrix *nsp_smatrix_strindex(nsp_const_string Str,nsp_const_string Motif)
 {
   NspMatrix *Loc;
   int k, count, maxcount, lstr = strlen(Str), lmotif = strlen(Motif);
@@ -1416,7 +1417,7 @@ NspSMatrix*nsp_ascii_to_smatrix(NspMatrix *A)
  *    A is supposed to be a string check is not done 
  */
 
-NspMatrix *nsp_string_to_ascii(char *S)
+NspMatrix *nsp_string_to_ascii(nsp_const_string S)
 {
   unsigned int i;
   NspMatrix *Loc;
@@ -1434,9 +1435,9 @@ NspMatrix *nsp_string_to_ascii(char *S)
  * ======
  */
 
-NspMatrix *nsp_smatrix_sort(NspSMatrix *A, int flag, char *str1, char *str2)
+NspMatrix *nsp_smatrix_sort(NspSMatrix *A,int flag,nsp_const_string str1,nsp_const_string str2)
 {
-  integer iflag=0,inc=-1,*iloc=NULL,Locm=A->m,Locn=A->n;
+  int iflag=0,inc=-1,*iloc=NULL,Locm=A->m,Locn=A->n;
   NspMatrix *Loc=NULL;
   if ( flag == 2 )
     {
@@ -1452,7 +1453,7 @@ NspMatrix *nsp_smatrix_sort(NspSMatrix *A, int flag, char *str1, char *str2)
   C2F(gsorts)(A->S,iloc,&iflag,&A->m,&A->n,str1,str2);
   if ( flag == 2) 
     {
-      /* Loc contains integers, NOTE inc = -1 **/
+      /* Loc contains ints, NOTE inc = -1 **/
       nsp_int2double(&Loc->mn,iloc,&inc,Loc->R,&inc);
     }
   return Loc;
@@ -1464,10 +1465,10 @@ NspMatrix *nsp_smatrix_sort(NspSMatrix *A, int flag, char *str1, char *str2)
  * M is a Vector which results from the splitting of S
  */
 
-NspSMatrix*nsp_smatrix_split(char *string, char *splitChars)
+NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars)
 {
-  register char *p, *p2;
-  char *elementStart;
+  register nsp_const_string p, p2;
+  nsp_const_string elementStart;
   int  splitCharLen, stringLen, i, j;
   NspSMatrix *A;
   stringLen = strlen(string);
@@ -1494,7 +1495,7 @@ NspSMatrix*nsp_smatrix_split(char *string, char *splitChars)
 	  if (*p2 == *p) {
 	    col++;
 	    if ( nsp_smatrix_resize(A,1,col) == FAIL) return(NULLSMAT);
-	    if ( StringResize(&A->S[col-1],(p-elementStart))== FAIL) 
+	    if (nsp_string_resize(&A->S[col-1],(p-elementStart))== FAIL) 
 	      return(NULLSMAT);
 	    strncpy( A->S[col-1],elementStart,(p-elementStart));
 	    A->S[col-1][p-elementStart]='\0';
@@ -1507,7 +1508,7 @@ NspSMatrix*nsp_smatrix_split(char *string, char *splitChars)
 	int remainingChars = stringLen - (elementStart-string);
 	col++;
 	if ( nsp_smatrix_resize(A,1,col) == FAIL) return(NULLSMAT);
-	if ( StringResize(&A->S[col-1], remainingChars)== FAIL) 
+	if (nsp_string_resize(&A->S[col-1], remainingChars)== FAIL) 
 	  return(NULLSMAT);
 	strncpy( A->S[col-1],elementStart, remainingChars);
 	A->S[col-1][remainingChars]='\0';
@@ -1520,10 +1521,10 @@ NspSMatrix*nsp_smatrix_split(char *string, char *splitChars)
  * Add string str at the end of column string vector A 
  */
 
-int nsp_row_smatrix_append_string(NspSMatrix *A, char *str)
+int nsp_row_smatrix_append_string(NspSMatrix *A,nsp_const_string str)
 {
   if ( nsp_smatrix_resize(A,A->m+1,1) == FAIL) return FAIL;
-  if ( StringResize(&A->S[A->m-1],strlen(str)) ==  FAIL) return FAIL;
+  if (nsp_string_resize(&A->S[A->m-1],strlen(str)) ==  FAIL) return FAIL;
   strcpy( A->S[A->m-1],str);
   return OK;
 }
@@ -1737,7 +1738,7 @@ NspSMatrix*nsp_smatrix_transpose(const NspSMatrix *A)
   for ( i = 0 ; i < Loc->m ; i++ )
     for ( j = 0 ; j < Loc->n ; j++ )
       {
-	if ((Loc->S[i+(Loc->m)*j] = CopyString(A->S[j+(A->m)*i])) == (String *) 0) return(NULLSMAT);
+	if ((Loc->S[i+(Loc->m)*j] =nsp_string_copy(A->S[j+(A->m)*i])) == (nsp_string) 0) return(NULLSMAT);
       }
   return(Loc);
 }
@@ -1765,7 +1766,7 @@ NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char 
       else
 	len_str_to_build = len_str;
       
-      if (  (str_to_build = NewStringN(len_str_to_build)) == NULLSTRING )
+      if (  (str_to_build =new_nsp_string_n(len_str_to_build)) == NULLSTRING )
 	{
 	  nsp_smatrix_destroy(Loc);
 	  return(NULLSMAT);
@@ -1786,7 +1787,7 @@ NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,const char *needle,const char 
       if (  p_str_to_build - str_to_build <  len_str_to_build )
 	{
 	  len_str_to_build = p_str_to_build - str_to_build;
-	  if ( StringResize(&str_to_build, len_str_to_build) == FAIL )
+	  if (nsp_string_resize(&str_to_build, len_str_to_build) == FAIL )
 	    {
 	      nsp_smatrix_destroy(Loc);
 	      return(NULLSMAT);
@@ -1827,9 +1828,9 @@ int nsp_smatrix_strip_blanks(NspSMatrix *A)
 	}
       if ( loc1 != loc ) 
 	{
-	  String *s; 
-	  if ((s = CopyString(loc1)) == (String *) 0) return FAIL;
-	  StringDestroy(&(A->S[i]));
+	  nsp_string s; 
+	  if ((s =nsp_string_copy(loc1)) == (nsp_string) 0) return FAIL;
+	nsp_string_destroy(&(A->S[i]));
 	  A->S[i]= s;
 	}
     }

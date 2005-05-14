@@ -956,7 +956,7 @@ void nsp_print_internalCM (NspMatrix *cm, int indent)
 
 int nsp_print_internalPM (NspPMatrix *M, int indent)
 {
-  integer *Iloc;
+  int *Iloc;
   int inc,column_width,total_width;
   int p_rows=0;
   int col;
@@ -976,7 +976,7 @@ int nsp_print_internalPM (NspPMatrix *M, int indent)
 	   curr_real_fmt);
   /* Allocate a table to store the column width **/
   /* Iloc[j]= degree max of column j **/
-  if ((Iloc =nsp_alloc_int(M->n)) == (integer*) 0) return(FAIL);
+  if ((Iloc =nsp_alloc_int(M->n)) == (int*) 0) return(FAIL);
   for ( j=0 ; j < M->n ; j++ )
     {
       Iloc[j]=M->S[j*M->m]->mn;
@@ -1145,7 +1145,7 @@ static void SMij_string_as_read(const void *m, int i, int j)
 
 int nsp_print_internalSM (const NspSMatrix *m, int indent)
 {
-  integer *Iloc;
+  int *Iloc;
   int inc,column_width=2,total_width;
   int p_rows=0,col;
   int max_width ,winrows,offset;
@@ -1155,7 +1155,7 @@ int nsp_print_internalSM (const NspSMatrix *m, int indent)
   if (nr == 0 || nc == 0) print_empty_matrix ( nr, nc);
    sci_get_screen_size(&winrows,&max_width);
   /* Allocate a table to store each column width **/
-  if ((Iloc =nsp_alloc_int(m->n)) == (integer*) 0) return(FAIL);
+  if ((Iloc =nsp_alloc_int(m->n)) == (int*) 0) return(FAIL);
   /* set Iloc[j] to the max len of column j **/
   for ( j=0 ; j < m->n ; j++ )
     {

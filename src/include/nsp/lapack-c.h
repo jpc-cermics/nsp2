@@ -1,5 +1,5 @@
-#ifndef NSP_LAPACK_
-#define NSP_LAPACK_
+#ifndef NSP_INC_LAPACK_
+#define NSP_INC_LAPACK_
 
 /* prototypes for lapack : extracted with f2c */
 

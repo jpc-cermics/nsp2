@@ -1,7 +1,10 @@
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )                          *
- * Jean-Philippe Chancelier Enpc/Cermics                            *
- *********************************************************************/
+#ifndef NSP_INC_PLIST_TOKEN
+#define NSP_INC_PLIST_TOKEN
+
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
 
 #ifndef PLISTTOKEN_H
 #define PLISTTOKEN_H
@@ -130,3 +133,4 @@
 
 
 #endif 
+#endif
