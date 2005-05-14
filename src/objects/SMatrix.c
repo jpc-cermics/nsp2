@@ -777,6 +777,59 @@ int nsp_smatrix_delete_elements1(NspSMatrix *A, NspMatrix *Elts)
   return OK;
 }
 
+
+int nsp_smatrix_delete_elements3(NspSMatrix *A, NspMatrix *Elts)
+{
+  const int kout=-2;
+  int i,*flag, new_A_mn, count,ks,kf,k;
+
+  if ( Elts->mn == 0) return OK;
+  
+  if ( (flag = nsp_complement_for_deletions(A->mn, Elts, &count)) == NULL )
+    return FAIL;
+  new_A_mn = A->mn - count;
+
+  for ( i = 0 ; i < A->mn ; i++ ) 
+    {
+      if ( flag[i]==0 ) nsp_string_destroy(&(A->S[i]));
+    }
+
+  ks=kf=kout;k=0;
+  for ( i = 0 ; i < A->mn ; i++ ) 
+    {
+      if ( flag[i] == 0 ) 
+	{
+	  if ( kf == i -1 )
+	    {
+	      /* a starting zero zone after a non null zone */
+	      if ( k!=ks) memmove(A->S+k,A->S+ks,(kf-ks+1)*(sizeof(double)));
+	      k+= (kf-ks+1);
+	      ks=kout;
+	    }
+	}
+      else 
+	{
+	  /* accumulate elements in a != 0 zone */
+	  if ( ks == kout ) 
+	    ks=kf=i;
+	  else 
+	    kf++;
+	}
+    }
+  if ( flag[A->mn-1] != 0)  memmove(A->S+k,A->S+ks,(kf-ks+1)*(sizeof(void *)));
+  free(flag);
+
+  if ( A->m == 1)
+    {
+      if ( nsp_smatrix_resize(A,1,new_A_mn) == FAIL ) return FAIL;
+    }
+  else
+    {
+      if ( nsp_smatrix_resize(A,new_A_mn,1) == FAIL ) return FAIL;
+    }
+  return OK;
+}
+
 /*
  * Res=nsp_smatrix_extract(A,Rows,Cols)
  * A, Rows and Cols are unchanged 
