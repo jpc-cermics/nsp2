@@ -24,7 +24,7 @@ $(SCIDIR)/bin/f2c: $(OBJECTS)
 $(OBJECTSd): defs.h ftypes.h defines.h machdefs.h sysdep.h
 
 tokdefs.h: tokens
-	grep -n . <tokens | sed "s/\([^:]*\):\(.*\)/#define \2 \1/" >tokdefs.h
+	@grep -n . <tokens | sed "s/\([^:]*\):\(.*\)/#define \2 \1/" >tokdefs.h
 
 cds.o: sysdep.h
 exec.o: p1defs.h names.h

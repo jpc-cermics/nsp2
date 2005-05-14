@@ -139,13 +139,7 @@ static void output_unary Argdcl((FILEP, Exprp));
 
 
 void
-#ifdef KR_headers
-expr_out(fp, e)
-     FILE *fp;
-     expptr e;
-#else
-     expr_out(FILE *fp, expptr e)
-#endif
+expr_out(FILE *fp, expptr e)
 {
   if (e == (expptr) NULL)
     return;
@@ -257,13 +251,7 @@ expr_out(fp, e)
 
 
 void
-#ifdef KR_headers
-out_and_free_statement(outfile, expr)
-     FILE *outfile;
-     expptr expr;
-#else
-     out_and_free_statement(FILE *outfile, expptr expr)
-#endif
+out_and_free_statement(FILE *outfile, expptr expr)
 {
   if (expr)
     expr_out (outfile, expr);
@@ -274,13 +262,7 @@ out_and_free_statement(outfile, expr)
 
 
 int
-#ifdef KR_headers
-same_ident(left, right)
-     expptr left;
-     expptr right;
-#else
-     same_ident(expptr left, expptr right)
-#endif
+same_ident(expptr left, expptr right)
 {
   if (!left || !right)
     return 0;
@@ -325,14 +307,7 @@ same_ident(left, right)
 } /* same_ident */
 
 static int
-#ifdef KR_headers
-samefpconst(c1, c2, n)
-     register Constp c1;
-     register Constp c2;
-     register int n;
-#else
-     samefpconst(register Constp c1, register Constp c2, register int n)
-#endif
+samefpconst(register Constp c1, register Constp c2, register int n)
 {
   char *s1, *s2;
   if (!c1->vstg && !c2->vstg)
@@ -343,13 +318,7 @@ samefpconst(c1, c2, n)
 }
 
 static int
-#ifdef KR_headers
-sameconst(c1, c2)
-     register Constp c1;
-     register Constp c2;
-#else
-     sameconst(register Constp c1, register Constp c2)
-#endif
+sameconst(register Constp c1, register Constp c2)
 {
   switch(c1->vtype) {
   case TYCOMPLEX:
@@ -379,13 +348,7 @@ sameconst(c1, c2)
    optimize on the assignment operators (+=, -=, etc). */
 
 int
-#ifdef KR_headers
-same_expr(e1, e2)
-     expptr e1;
-     expptr e2;
-#else
-     same_expr(expptr e1, expptr e2)
-#endif
+same_expr(expptr e1, expptr e2)
 {
   if (!e1 || !e2)
     return !e1 && !e2;
@@ -413,13 +376,7 @@ same_expr(e1, e2)
 
 
 void
-#ifdef KR_headers
-out_name(fp, namep)
-     FILE *fp;
-     Namep namep;
-#else
-     out_name(FILE *fp, Namep namep)
-#endif
+out_name(FILE *fp, Namep namep)
 {
   extern int usedefsforcommon;
   Extsym *comm;
@@ -437,7 +394,7 @@ out_name(fp, namep)
   } /* if namep -> vstg == STGCOMMON */
 
   if (namep->vprocclass == PTHISPROC && namep->vtype != TYSUBR)
-    nice_printf(fp, xretslot[namep->vtype]->user.ident);
+    nice_printf(fp, xretslot[(int) namep->vtype]->user.ident);
   else
     nice_printf (fp, "%s", namep->cvarname);
 } /* out_name */
@@ -448,13 +405,7 @@ static char *Longfmt = "%ld";
 #define cpd(n) cp->vstg ? cp->Const.cds[n] : dtos(cp->Const.cd[n])
 
 void
-#ifdef KR_headers
-out_const(fp, cp)
-     FILE *fp;
-     register Constp cp;
-#else
-     out_const(FILE *fp, register Constp cp)
-#endif
+out_const(FILE *fp, register Constp cp)
 {
   static char real_buf[50], imag_buf[50];
   unsigned int k;
@@ -517,13 +468,7 @@ out_const(fp, cp)
 #undef cpd
 
 static void
-#ifdef KR_headers
-out_args(fp, ep)
-     FILE *fp;
-     expptr ep;
-#else
-     out_args(FILE *fp, expptr ep)
-#endif
+out_args(FILE *fp, expptr ep)
 {
   chainp arglist;
 
@@ -543,13 +488,7 @@ out_args(fp, ep)
    system-generated identifier printing routines */
 
 void
-#ifdef KR_headers
-out_addr(fp, addrp)
-     FILE *fp;
-     struct Addrblock *addrp;
-#else
-     out_addr(FILE *fp, struct Addrblock *addrp)
-#endif
+out_addr(FILE *fp, struct Addrblock *addrp)
 {
   extern Extsym *extsymtab;
   int was_array = 0;
@@ -579,7 +518,7 @@ out_addr(fp, addrp)
     if (*(s = addrp->user.ident) == ' ') {
       if (multitype)
 	nice_printf(fp, "%s",
-		    xretslot[addrp->vtype]->user.ident);
+		    xretslot[(int)addrp->vtype]->user.ident);
       else
 	nice_printf(fp, "%s", s+1);
     }
@@ -615,7 +554,7 @@ out_addr(fp, addrp)
   /* It's okay to just throw in the brackets here because they have a
      precedence level of 15, the highest value.  */
 
-  if ((addrp->uname_tag == UNAM_NAME && addrp->user.name->vdim
+  if (((addrp->uname_tag == UNAM_NAME && addrp->user.name->vdim)
        || addrp->ntempelt > 1 || addrp->isarray)
       && addrp->vtype != TYCHAR) {
     expptr offset;
@@ -633,7 +572,7 @@ out_addr(fp, addrp)
     nice_printf (fp, "[");
 
     offset = mkexpr (OPSLASH, offset,
-		     ICON (typesize[addrp -> vtype] * (addrp -> Field ? 2 : 1)));
+		     ICON (typesize[(int) addrp -> vtype] * (addrp -> Field ? 2 : 1)));
     expr_out (fp, offset);
     nice_printf (fp, "]");
   }
@@ -653,8 +592,8 @@ out_addr(fp, addrp)
   /* Check for character subscripting */
 
   if (addrp->vtype == TYCHAR &&
-      (addrp->vclass != CLPROC || addrp->uname_tag == UNAM_NAME
-       && addrp->user.name->vprocclass == PTHISPROC) &&
+      (addrp->vclass != CLPROC || (addrp->uname_tag == UNAM_NAME
+				   && addrp->user.name->vprocclass == PTHISPROC)) &&
       addrp -> memoffset &&
       (addrp -> uname_tag != UNAM_NAME ||
        addrp -> user.name -> vtype == TYCHAR) &&
@@ -697,14 +636,7 @@ out_addr(fp, addrp)
 
 
 static void
-#ifdef KR_headers
-output_literal(fp, memno, cp)
-     FILE *fp;
-     long memno;
-     Constp cp;
-#else
-     output_literal(FILE *fp, long memno, Constp cp)
-#endif
+output_literal(FILE *fp, long memno, Constp cp)
 {
   struct Literal *litp, *lastlit;
 
@@ -725,13 +657,7 @@ output_literal(fp, memno, cp)
 
 
 static void
-#ifdef KR_headers
-output_prim(fp, primp)
-     FILE *fp;
-     struct Primblock *primp;
-#else
-     output_prim(FILE *fp, struct Primblock *primp)
-#endif
+output_prim(FILE *fp, struct Primblock *primp)
 {
   if (primp == NULL)
     return;
@@ -747,13 +673,7 @@ output_prim(fp, primp)
 
 
 static void
-#ifdef KR_headers
-output_arg_list(fp, listp)
-     FILE *fp;
-     struct Listblock *listp;
-#else
-     output_arg_list(FILE *fp, struct Listblock *listp)
-#endif
+output_arg_list(FILE *fp, struct Listblock *listp)
 {
   chainp arg_list;
 
@@ -778,13 +698,7 @@ output_arg_list(fp, listp)
 
 
 static void
-#ifdef KR_headers
-output_unary(fp, e)
-     FILE *fp;
-     struct Exprblock *e;
-#else
-     output_unary(FILE *fp, struct Exprblock *e)
-#endif
+output_unary(FILE *fp, struct Exprblock *e)
 {
   if (e == NULL)
     return;
@@ -822,12 +736,7 @@ output_unary(fp, e)
 
 
 static char *
-#ifdef KR_headers
-findconst(m)
-     register long m;
-#else
-     findconst(register long m)
-#endif
+findconst(register long m)
 {
   register struct Literal *litp, *litpe;
 
@@ -840,13 +749,7 @@ findconst(m)
 }
 
 static int
-#ifdef KR_headers
-opconv_fudge(fp, e)
-     FILE *fp;
-     struct Exprblock *e;
-#else
-     opconv_fudge(FILE *fp, struct Exprblock *e)
-#endif
+opconv_fudge(FILE *fp, struct Exprblock *e)
 {
   /* special handling for conversions, ichar and character*1 */
   register expptr lp;
@@ -954,13 +857,7 @@ opconv_fudge(fp, e)
 
 
 static void
-#ifdef KR_headers
-output_binary(fp, e)
-     FILE *fp;
-     struct Exprblock *e;
-#else
-     output_binary(FILE *fp, struct Exprblock *e)
-#endif
+output_binary(FILE *fp, struct Exprblock *e)
 {
   char *format;
   extern table_entry opcode_table[];
@@ -1083,17 +980,8 @@ output_binary(fp, e)
 } /* output_binary */
 
 void
-#ifdef KR_headers
-out_call(outfile, op, ftype, len, name, args)
-     FILE *outfile;
-     int op;
-     int ftype;
-     expptr len;
-     expptr name;
-     expptr args;
-#else
-     out_call(FILE *outfile, int op, int ftype, expptr len, expptr name, expptr args)
-#endif
+out_call(FILE *outfile, int op, int ftype, expptr len, expptr name, expptr args)
+
 {
   chainp arglist;		/* Pointer to any actual arguments */
   chainp cp;			/* Iterator over argument lists */
@@ -1267,9 +1155,8 @@ out_call(outfile, op, ftype, len, name, args)
 
     if ((q -> tag == TADDR || q-> tag == TNAME) &&
 	(byvalue || q -> headblock.vstg != STGREG)) {
-      if (q -> headblock.vtype != TYCHAR)
+      if (q -> headblock.vtype != TYCHAR) {
 	if (byvalue) {
-
 	  if (q -> tag == TADDR &&
 	      q -> addrblock.uname_tag == UNAM_NAME &&
 	      ! q -> addrblock.user.name -> vdim &&
@@ -1286,24 +1173,22 @@ out_call(outfile, op, ftype, len, name, args)
 	} else {
 	  expptr memoffset;
 
-	  if (q->tag == TADDR &&
-	      !ONEOF (q -> addrblock.vstg, M(STGEXT)|M(STGLENG))
-	      && (
-		  ONEOF(q->addrblock.vstg,
-			M(STGCOMMON)|M(STGEQUIV)|M(STGMEMNO))
-		  || ((memoffset = q->addrblock.memoffset)
-		      && (!ISICON(memoffset)
-			  || memoffset->constblock.Const.ci)))
-	      || ONEOF(q->addrblock.vstg,
-		       M(STGINIT)|M(STGAUTO)|M(STGBSS))
-	      && !q->addrblock.isarray)
+	  if ( ( q->tag == TADDR && !ONEOF (q -> addrblock.vstg, M(STGEXT)|M(STGLENG))
+		 && (
+		     ONEOF(q->addrblock.vstg,
+			   M(STGCOMMON)|M(STGEQUIV)|M(STGMEMNO))
+		     || ((memoffset = q->addrblock.memoffset)
+			 && (!ISICON(memoffset)
+			     || memoffset->constblock.Const.ci))))
+	       || ( ONEOF(q->addrblock.vstg, M(STGINIT)|M(STGAUTO)|M(STGBSS))
+		    && !q->addrblock.isarray))
 	    nice_printf (outfile, "&");
 	  else if (q -> tag == TNAME
 		   && !oneof_stg(&q->nameblock, q -> nameblock.vstg,
 				 M(STGARG)|M(STGEXT)|M(STGEQUIV)))
 	    nice_printf (outfile, "&");
 	} /* else */
-
+      }
       expr_out (outfile, q);
     } /* if q -> tag == TADDR || q -> tag == TNAME */
 
@@ -1343,25 +1228,14 @@ out_call(outfile, op, ftype, len, name, args)
 
 
 char *
-#ifdef KR_headers
-flconst(buf, x)
-     char *buf;
-     char *x;
-#else
-     flconst(char *buf, char *x)
-#endif
+flconst(char *buf, char *x)
 {
   sprintf(buf, fl_fmt_string, x);
   return buf;
 }
 
 char *
-#ifdef KR_headers
-dtos(x)
-     double x;
-#else
-     dtos(double x)
-#endif
+dtos(double x)
 {
   static char buf[64];
 #ifdef USE_DTOA
@@ -1386,7 +1260,7 @@ out_init(Void)
 
   s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_+-.";
   while(*s)
-    tr_tab[*s++] = 3;
+    tr_tab[(int) *s++] = 3;
   tr_tab['>'] = 1;
 
   opeqable[OPPLUS] = 1;
@@ -1426,13 +1300,7 @@ out_init(Void)
 
 
 void
-#ifdef KR_headers
-extern_out(fp, extsym)
-     FILE *fp;
-     Extsym *extsym;
-#else
-     extern_out(FILE *fp, Extsym *extsym)
-#endif
+extern_out(FILE *fp, Extsym *extsym)
 {
   if (extsym == (Extsym *) NULL)
     return;
@@ -1444,13 +1312,7 @@ extern_out(fp, extsym)
 
 
 static void
-#ifdef KR_headers
-output_list(fp, listp)
-     FILE *fp;
-     struct Listblock *listp;
-#else
-     output_list(FILE *fp, struct Listblock *listp)
-#endif
+output_list(FILE *fp, struct Listblock *listp)
 {
   int did_one = 0;
   chainp elts;
@@ -1470,13 +1332,7 @@ output_list(fp, listp)
 
 
 void
-#ifdef KR_headers
-out_asgoto(outfile, expr)
-     FILE *outfile;
-     expptr expr;
-#else
-     out_asgoto(FILE *outfile, expptr expr)
-#endif
+out_asgoto(FILE *outfile, expptr expr)
 {
   chainp value;
   Namep namep;
@@ -1530,13 +1386,7 @@ out_asgoto(outfile, expr)
 } /* out_asgoto */
 
 void
-#ifdef KR_headers
-out_if(outfile, expr)
-     FILE *outfile;
-     expptr expr;
-#else
-     out_if(FILE *outfile, expptr expr)
-#endif
+out_if(FILE *outfile, expptr expr)
 {
   nice_printf (outfile, "if (");
   expr_out (outfile, expr);
@@ -1545,13 +1395,7 @@ out_if(outfile, expr)
 } /* out_if */
 
 static void
-#ifdef KR_headers
-output_rbrace(outfile, s)
-     FILE *outfile;
-     char *s;
-#else
-     output_rbrace(FILE *outfile, char *s)
-#endif
+output_rbrace(FILE *outfile, char *s)
 {
   extern int last_was_label;
   register char *fmt;
@@ -1566,12 +1410,7 @@ output_rbrace(outfile, s)
 }
 
 void
-#ifdef KR_headers
-out_else(outfile)
-     FILE *outfile;
-#else
-     out_else(FILE *outfile)
-#endif
+out_else(FILE *outfile)
 {
   prev_tab (outfile);
   output_rbrace(outfile, "} else {\n");
@@ -1579,13 +1418,7 @@ out_else(outfile)
 } /* out_else */
 
 void
-#ifdef KR_headers
-elif_out(outfile, expr)
-     FILE *outfile;
-     expptr expr;
-#else
-     elif_out(FILE *outfile, expptr expr)
-#endif
+elif_out(FILE *outfile, expptr expr)
 {
   prev_tab (outfile);
   output_rbrace(outfile, "} else ");
@@ -1593,24 +1426,14 @@ elif_out(outfile, expr)
 } /* elif_out */
 
 void
-#ifdef KR_headers
-endif_out(outfile)
-     FILE *outfile;
-#else
-     endif_out(FILE *outfile)
-#endif
+endif_out(FILE *outfile)
 {
   prev_tab (outfile);
   output_rbrace(outfile, "}\n");
 } /* endif_out */
 
 void
-#ifdef KR_headers
-end_else_out(outfile)
-     FILE *outfile;
-#else
-     end_else_out(FILE *outfile)
-#endif
+end_else_out(FILE *outfile)
 {
   prev_tab (outfile);
   output_rbrace(outfile, "}\n");
@@ -1619,14 +1442,7 @@ end_else_out(outfile)
 
 
 void
-#ifdef KR_headers
-compgoto_out(outfile, index, labels)
-     FILE *outfile;
-     expptr index;
-     expptr labels;
-#else
-     compgoto_out(FILE *outfile, expptr index, expptr labels)
-#endif
+compgoto_out(FILE *outfile, expptr index, expptr labels)
 {
   char *s1, *s2;
 
@@ -1642,8 +1458,8 @@ compgoto_out(outfile, index, labels)
     s2 = /*(*/ ") {\n"; /*}*/
     if (Ansi)
       s1 = "switch ("; /*)*/
-    else if (index->tag == TNAME || index->tag == TEXPR
-	     && index->exprblock.opcode == OPWHATSIN)
+    else if (index->tag == TNAME || ( index->tag == TEXPR
+				      && index->exprblock.opcode == OPWHATSIN))
       s1 = "switch ((int)"; /*)*/
     else {
       s1 = "switch ((int)(";
@@ -1670,15 +1486,7 @@ compgoto_out(outfile, index, labels)
 
 
 void
-#ifdef KR_headers
-out_for(outfile, init, test, inc)
-     FILE *outfile;
-     expptr init;
-     expptr test;
-     expptr inc;
-#else
-     out_for(FILE *outfile, expptr init, expptr test, expptr inc)
-#endif
+out_for(FILE *outfile, expptr init, expptr test, expptr inc)
 {
   nice_printf (outfile, "for (");
   expr_out (outfile, init);
@@ -1692,12 +1500,7 @@ out_for(outfile, init, test, inc)
 
 
 void
-#ifdef KR_headers
-out_end_for(outfile)
-     FILE *outfile;
-#else
-     out_end_for(FILE *outfile)
-#endif
+out_end_for(FILE *outfile)
 {
   prev_tab (outfile);
   nice_printf (outfile, "}\n");

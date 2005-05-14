@@ -324,12 +324,7 @@ comm2dcl(Void)
 }
 
 static void
-#ifdef KR_headers
-write_typedefs(outfile)
-     FILE *outfile;
-#else
-     write_typedefs(FILE *outfile)
-#endif
+write_typedefs(FILE *outfile)
 {
   register int i;
   register char *s, *p = 0;
@@ -364,12 +359,7 @@ write_typedefs(outfile)
 }
 
 static void
-#ifdef KR_headers
-commonprotos(outfile)
-     register FILE *outfile;
-#else
-     commonprotos(register FILE *outfile)
-#endif
+commonprotos(register FILE *outfile)
 {
   register Extsym *e, *ee;
   register Argtypes *at;
@@ -434,13 +424,7 @@ commonprotos(outfile)
 }
 
 static int
-#ifdef KR_headers
-I_args(argc, a)
-     int argc;
-     char **a;
-#else
-     I_args(int argc, char **a)
-#endif
+I_args(int argc, char **a)
 {
   char **a0, **a1, **ae, *s;
 
@@ -449,8 +433,8 @@ I_args(argc, a)
   for(a1 = ++a; a < ae; a++) {
     if (!(s = *a))
       break;
-    if (*s == '-' && s[1] == 'I' && s[2]
-	&& (s[3] || s[2] != '2' && s[2] != '4'))
+    if ( *s == '-' && s[1] == 'I' && s[2] && 
+	 (s[3] || (s[2] != '2' && s[2] != '4')))
       Iargs = mkchain(s+2, Iargs);
     else
       *a1++ = s;
@@ -463,13 +447,7 @@ I_args(argc, a)
 int retcode = 0;
 
 int
-#ifdef KR_headers
-main(argc, argv)
-     int argc;
-     char **argv;
-#else
-     main(int argc, char **argv)
-#endif
+main(int argc, char **argv)
 {
   int c2d, k;
   FILE *c_output;
@@ -648,13 +626,7 @@ sed \"s/^\\/\\*>>>'\\(.*\\)'<<<\\*\\/\\$/cat >'\\1' <<'\\/*<<<\\1>>>*\\/'/\" | /
 
 
 FILEP
-#ifdef KR_headers
-opf(fn, mode)
-     char *fn;
-     char *mode;
-#else
-     opf(char *fn, char *mode)
-#endif
+opf(char *fn, char *mode)
 {
   FILEP fp;
   if(( fp = fopen(fn, mode)) )
@@ -666,14 +638,7 @@ opf(fn, mode)
 
 
 void
-#ifdef KR_headers
-clf(p, what, quit)
-     FILEP *p;
-     char *what;
-     int quit;
-#else
-     clf(FILEP *p, char *what, int quit)
-#endif
+clf(FILEP *p, char *what, int quit)
 {
   if(p!=NULL && *p!=NULL && *p!=stdout)
     {
@@ -690,12 +655,7 @@ clf(p, what, quit)
 
 
 void
-#ifdef KR_headers
-done(k)
-     int k;
-#else
-     done(int k)
-#endif
+done(int k)
 {
   clf(&initfile, "initfile", 0);
   clf(&c_file, "c_file", 0);

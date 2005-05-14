@@ -274,10 +274,9 @@ afwalk(P)
 	if (!refs[np->argno]++)
 	  used[nu++] = np->argno;
       if (q->primblock.argsp == 0) {
-	if (q->primblock.namep->vclass == CLPROC
-	    && q->primblock.namep->vprocclass
-	    != PTHISPROC
-	    || q->primblock.namep->vdim != NULL)
+	if ( ( q->primblock.namep->vclass == CLPROC
+	       && q->primblock.namep->vprocclass  != PTHISPROC)
+	     || q->primblock.namep->vdim != NULL)
 	  continue;
       }
     default:

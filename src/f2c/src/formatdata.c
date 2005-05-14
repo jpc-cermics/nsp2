@@ -34,14 +34,7 @@ static int memno2info Argdcl((int, Namep*));
 extern char *initbname;
 
 void
-#ifdef KR_headers
-list_init_data(Infile, Inname, outfile)
-     FILE **Infile;
-     char *Inname;
-     FILE *outfile;
-#else
-     list_init_data(FILE **Infile, char *Inname, FILE *outfile)
-#endif
+list_init_data(FILE **Infile, char *Inname, FILE *outfile)
 {
   FILE *sortfp;
   int status;
@@ -76,13 +69,7 @@ list_init_data(Infile, Inname, outfile)
    written */
 
 int
-#ifdef KR_headers
-do_init_data(outfile, infile)
-     FILE *outfile;
-     FILE *infile;
-#else
-     do_init_data(FILE *outfile, FILE *infile)
-#endif
+do_init_data(FILE *outfile, FILE *infile)
 {
   char varname[NAME_MAX], ovarname[NAME_MAX];
   ftnint offset;
@@ -140,15 +127,7 @@ do_init_data(outfile, infile)
 
 
 ftnint
-#ifdef KR_headers
-wr_char_len(outfile, dimp, n, extra1)
-     FILE *outfile;
-     struct Dimblock *dimp;
-     int n;
-     int extra1;
-#else
-     wr_char_len(FILE *outfile, struct Dimblock *dimp, int n, int extra1)
-#endif
+wr_char_len(FILE *outfile, struct Dimblock *dimp, int n, int extra1)
 {
   int i, nd;
   expptr e;
@@ -190,14 +169,7 @@ static int ch_ar_dim = -1; /* length of each element of char string array */
 static int eqvmemno;	/* kludge */
 
 static void
-#ifdef KR_headers
-write_char_init(outfile, Values, namep)
-     FILE *outfile;
-     chainp *Values;
-     Namep namep;
-#else
-     write_char_init(FILE *outfile, chainp *Values, Namep namep)
-#endif
+write_char_init(FILE *outfile, chainp *Values, Namep namep)
 {
   struct Equivblock *eqv;
   long size;
@@ -252,15 +224,7 @@ write_char_init(outfile, Values, namep)
    treat it as a Namep */
 
 void
-#ifdef KR_headers
-wr_one_init(outfile, varname, Values, keepit)
-     FILE *outfile;
-     char *varname;
-     chainp *Values;
-     int keepit;
-#else
-     wr_one_init(FILE *outfile, char *varname, chainp *Values, int keepit)
-#endif
+wr_one_init(FILE *outfile, char *varname, chainp *Values, int keepit)
 {
   static int memno;
   static union {
@@ -413,14 +377,7 @@ wr_one_init(outfile, varname, Values, keepit)
 
 
 chainp
-#ifdef KR_headers
-data_value(infile, offset, type)
-     FILE *infile;
-     ftnint offset;
-     int type;
-#else
-     data_value(FILE *infile, ftnint offset, int type)
-#endif
+data_value(FILE *infile, ftnint offset, int type)
 {
   char line[MAX_INIT_LINE + 1], *pointer;
   chainp vals, prev_val;
@@ -499,14 +456,7 @@ static void make_one_const Argdcl((int, union Constant*, chainp));
 static long charlen;
 
 void
-#ifdef KR_headers
-wr_output_values(outfile, namep, values)
-     FILE *outfile;
-     Namep namep;
-     chainp values;
-#else
-     wr_output_values(FILE *outfile, Namep namep, chainp values)
-#endif
+wr_output_values(FILE *outfile, Namep namep, chainp values)
 {
   int type = TYUNKNOWN;
   struct Constblock Const;
@@ -542,14 +492,7 @@ wr_output_values(outfile, namep, values)
 
 
 void
-#ifdef KR_headers
-wr_array_init(outfile, type, values)
-     FILE *outfile;
-     int type;
-     chainp values;
-#else
-     wr_array_init(FILE *outfile, int type, chainp values)
-#endif
+wr_array_init(FILE *outfile, int type, chainp values)
 {
   int size = typesize[type];
   long index, main_index = 0;
@@ -655,14 +598,7 @@ wr_array_init(outfile, type, values)
 
 
 static void
-#ifdef KR_headers
-make_one_const(type, storage, values)
-     int type;
-     union Constant *storage;
-     chainp values;
-#else
-     make_one_const(int type, union Constant *storage, chainp values)
-#endif
+make_one_const(int type, union Constant *storage, chainp values)
 {
   union Constant *Const;
   register char **L;
@@ -719,14 +655,7 @@ make_one_const(type, storage, values)
 
 
 int
-#ifdef KR_headers
-rdname(infile, vargroupp, name)
-     FILE *infile;
-     int *vargroupp;
-     char *name;
-#else
-     rdname(FILE *infile, int *vargroupp, char *name)
-#endif
+rdname(FILE *infile, int *vargroupp, char *name)
 {
   register int i, c;
 
@@ -751,13 +680,7 @@ rdname(infile, vargroupp, name)
 } /* rdname */
 
 int
-#ifdef KR_headers
-rdlong(infile, n)
-     FILE *infile;
-     ftnint *n;
-#else
-     rdlong(FILE *infile, ftnint *n)
-#endif
+rdlong(FILE *infile, ftnint *n)
 {
   register int c;
 
@@ -774,13 +697,7 @@ rdlong(infile, n)
 
 
 static int
-#ifdef KR_headers
-memno2info(memno, info)
-     int memno;
-     Namep *info;
-#else
-     memno2info(int memno, Namep *info)
-#endif
+memno2info(int memno, Namep *info)
 {
   chainp this_var;
   extern chainp new_vars;
@@ -814,14 +731,7 @@ memno2info(memno, info)
 } /* memno2info */
 
 static chainp
-#ifdef KR_headers
-do_string(outfile, v, nloc)
-     FILE *outfile;
-     register chainp v;
-     ftnint *nloc;
-#else
-     do_string(FILE *outfile, register chainp v, ftnint *nloc)
-#endif
+do_string(FILE *outfile, register chainp v, ftnint *nloc)
 {
   register chainp cp, v0;
   ftnint dloc, k, loc;
@@ -866,14 +776,7 @@ do_string(outfile, v, nloc)
 }
 
 static chainp
-#ifdef KR_headers
-Ado_string(outfile, v, nloc)
-     FILE *outfile;
-     register chainp v;
-     ftnint *nloc;
-#else
-     Ado_string(FILE *outfile, register chainp v, ftnint *nloc)
-#endif
+Ado_string(FILE *outfile, register chainp v, ftnint *nloc)
 {
   register chainp cp, v0;
   ftnint dloc, k, loc;
@@ -911,13 +814,7 @@ Ado_string(outfile, v, nloc)
 }
 
 static char *
-#ifdef KR_headers
-Len(L, type)
-     long L;
-     int type;
-#else
-     Len(long L, int type)
-#endif
+Len(long L, int type)
 {
   static char buf[24];
   if (L == 1 && type != TYCHAR)
@@ -927,15 +824,7 @@ Len(L, type)
 }
 
 void
-#ifdef KR_headers
-wr_equiv_init(outfile, memno, Values, iscomm)
-     FILE *outfile;
-     int memno;
-     chainp *Values;
-     int iscomm;
-#else
-     wr_equiv_init(FILE *outfile, int memno, chainp *Values, int iscomm)
-#endif
+wr_equiv_init(FILE *outfile, int memno, chainp *Values, int iscomm)
 {
   struct Equivblock *eqv;
   int btype, curtype, dtype, filltype, filltype1, j, k, wasblank, xtype;

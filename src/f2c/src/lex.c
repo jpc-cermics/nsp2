@@ -251,12 +251,7 @@ static void store_comment Argdcl((char*));
 LOCAL char *stbuf[3];
 
 int
-#ifdef KR_headers
-inilex(name)
-     char *name;
-#else
-     inilex(char *name)
-#endif
+inilex(char *name)
 {
   stbuf[0] = Alloc(3*P1_STMTBUFSIZE);
   stbuf[1] = stbuf[0] + P1_STMTBUFSIZE;
@@ -280,12 +275,7 @@ flline(Void)
 
 
 char *
-#ifdef KR_headers
-lexline(n)
-     int *n;
-#else
-     lexline(int *n)
-#endif
+lexline(int *n)
 {
   *n = (lastch - nextch) + 1;
   return(nextch);
@@ -295,12 +285,7 @@ lexline(n)
 
 
 void
-#ifdef KR_headers
-doinclude(name)
-     char *name;
-#else
-     doinclude(char *name)
-#endif
+doinclude(char *name)
 {
   FILEP fp;
   struct Inclfile *t;
@@ -450,12 +435,7 @@ popinclude(Void)
 
 
 void
-#ifdef KR_headers
-p1_line_number(line_number)
-     long line_number;
-#else
-     p1_line_number(long line_number)
-#endif
+p1_line_number(long line_number)
 {
   if (lastfile != lastfile0) {
     p1puts(P1_FILENAME, fbuf);
@@ -643,16 +623,7 @@ getcds(Void)
 }
 
 static void
-#ifdef KR_headers
-bang(a, b, c, d, e)
-     char *a;
-     char *b;
-     char *c;
-     register char *d;
-     register char *e;
-#else
-     bang(char *a, char *b, char *c, register char *d, register char *e)
-#endif
+bang(char *a, char *b, char *c, register char *d, register char *e)
      /* save ! comments */
 {
   char buf[COMMENT_BUFFER_SIZE + 1];
@@ -688,16 +659,10 @@ This function reads the next input card from global file pointer   infile.
 It assumes that   b   points to currently empty storage somewhere in  sbuf  */
 
 LOCAL int
-#ifdef KR_headers
-getcd(b, nocont)
-     register char *b;
-     int nocont;
-#else
-     getcd(register char *b, int nocont)
-#endif
+getcd(register char *b, int nocont)
 {
   register int c;
-  register char *p, *bend;
+  register char *p=NULL, *bend;
   int speclin;		/* Special line - true when the line is allowed
 			   to have more than 66 characters (e.g. the
 			   "&" shorthand for continuation, use of a "\t"
@@ -1153,17 +1118,20 @@ crunch(Void)
 	  j+=2;
 	  prvstr = j;
 	}
-      else	{
-	if(*i == '(') parseen = ++parlev;
-	else if(*i == ')') --parlev;
-	else if(parlev == 0)
-	  if(*i == '=') expeql = 1;
-	  else if(*i == ',') expcom = 1;
-      copychar:		/*not a string or space -- copy, shifting case if necessary */
-	if(shiftcase && isupper(*i))
-	  *j++ = tolower(*i);
-	else	*j++ = *i;
-      }
+      else
+	{
+	  if(*i == '(') parseen = ++parlev;
+	  else if(*i == ')') --parlev;
+	  else if(parlev == 0)
+	    {
+	      if(*i == '=') expeql = 1;
+	      else if(*i == ',') expcom = 1;
+	    }
+	copychar:		/*not a string or space -- copy, shifting case if necessary */
+	  if(shiftcase && isupper(*i))
+	    *j++ = tolower(*i);
+	  else	*j++ = *i;
+	}
     }
   lastch = j - 1;
   nextch = sbuf;
@@ -1309,12 +1277,7 @@ initkey(Void)
 }
 
 LOCAL int
-#ifdef KR_headers
-hexcheck(key)
-     int key;
-#else
-     hexcheck(int key)
-#endif
+hexcheck(int key)
 {
   register int radix;
   register char *p;
@@ -1465,20 +1428,23 @@ gettok(Void)
       return(val);
     }
   if(ch == '.')
-    if(nextch >= lastch) goto badchar;
-    else if(isdigit(nextch[1])) goto numconst;
-    else	{
-      for(pd=dots ; (j=pd->dotname) ; ++pd)
+    {
+      if(nextch >= lastch) goto badchar;
+      else if(isdigit(nextch[1])) goto numconst;
+      else	
 	{
-	  for(i=nextch+1 ; i<=lastch ; ++i)
-	    if(*i != *j) break;
-	    else if(*i != '.') ++j;
-	    else	{
-	      nextch = i+1;
-	      return(pd->dotval);
+	  for(pd=dots ; (j=pd->dotname) ; ++pd)
+	    {
+	      for(i=nextch+1 ; i<=lastch ; ++i)
+		if(*i != *j) break;
+		else if(*i != '.') ++j;
+		else	{
+		  nextch = i+1;
+		  return(pd->dotval);
+		}
 	    }
+	  goto badchar;
 	}
-      goto badchar;
     }
   if( isalpha_(ch) )
     {
@@ -1547,30 +1513,29 @@ gettok(Void)
 
     /* Check for NAG's special hex constant */
 
-    if (nextch[1] == '#' && nextch < lastch
-	||  nextch[2] == '#' && isdigit(nextch[1])
-	&& lastch - nextch >= 2) {
-
-      radix = atoi (nextch);
-      if (*++nextch != '#')
-	nextch++;
-      if (radix != 2 && radix != 8 && radix != 16) {
-	erri("invalid base %d for constant, defaulting to hex",
-	     radix);
-	radix = 16;
-      } /* if */
-      if (++nextch > lastch)
-	goto badchar;
-      for (p = token; hextoi(*nextch) < radix;) {
-	*p++ = *nextch++;
-	if (nextch > lastch)
-	  break;
+    if ( (nextch[1] == '#' && nextch < lastch )
+	|| ( nextch[2] == '#' && isdigit(nextch[1]) && lastch - nextch >= 2))
+      {
+	radix = atoi (nextch);
+	if (*++nextch != '#')
+	  nextch++;
+	if (radix != 2 && radix != 8 && radix != 16) {
+	  erri("invalid base %d for constant, defaulting to hex",
+	       radix);
+	  radix = 16;
+	} /* if */
+	if (++nextch > lastch)
+	  goto badchar;
+	for (p = token; hextoi(*nextch) < radix;) {
+	  *p++ = *nextch++;
+	  if (nextch > lastch)
+	    break;
+	}
+	toklen = p - token;
+	*p = 0;
+	return (radix == 16) ? SHEXCON : ((radix == 8) ? SOCTCON :
+					  SBITCON);
       }
-      toklen = p - token;
-      *p = 0;
-      return (radix == 16) ? SHEXCON : ((radix == 8) ? SOCTCON :
-					SBITCON);
-    }
   }
   else
     goto badchar;
@@ -1626,12 +1591,7 @@ gettok(Void)
 /* Comment buffering code */
 
 static void
-#ifdef KR_headers
-store_comment(str)
-     char *str;
-#else
-     store_comment(char *str)
-#endif
+store_comment(char *str)
 {
   int len;
   comment_buf *ncb;

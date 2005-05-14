@@ -109,7 +109,7 @@ putif(p, else_if_p)
 	  ei_last = ei_first + n;
 	}
       p = putx(p);
-      if (*ei_next++ = ftell(pass1_file) > where) {
+      if ((*ei_next++ = ftell(pass1_file) > where)) {
 	p1_if(p);
 	new_endif();
       }
@@ -1739,10 +1739,10 @@ putcall(p0, temp)
 
       if( ISCHAR(q) &&
 	  (q->headblock.vclass != CLPROC
-	   || q->headblock.vstg == STGARG
-	   && q->tag == TADDR
-	   && q->addrblock.uname_tag == UNAM_NAME
-	   && q->addrblock.user.name->vprocclass == PTHISPROC)
+	   || ( q->headblock.vstg == STGARG
+		&& q->tag == TADDR
+		&& q->addrblock.uname_tag == UNAM_NAME
+		&& q->addrblock.user.name->vprocclass == PTHISPROC))
 	  && (!At || At->type % 100 % TYSUBR == TYCHAR))
 	{
 	  p0 = cpexpr(q->headblock.vleng);

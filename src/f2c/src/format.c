@@ -1182,7 +1182,7 @@ to_upper(register char *s)
   static char buf[64];
   register char *t = buf;
   register int c;
-  while(*t++ = (c = *s++) >= 'a' && c <= 'z' ? c + 'A' - 'a' : c);
+  while( (*t++ = (c = *s++) >= 'a' && c <= 'z' ? c + 'A' - 'a' : c));
   return buf;
 }
 
@@ -1476,9 +1476,9 @@ list_decls(FILE *outfile)
 
       type = nv_type (Var);
       if (Var->vstg == STGINIT
-	  ||  Var->uname_tag == UNAM_IDENT
-	  && *Var->user.ident == ' '
-	  && multitype)
+	  || ( Var->uname_tag == UNAM_IDENT
+	       && *Var->user.ident == ' '
+	       && multitype))
 	continue;
       if (!did_one)
 	nice_printf (outfile, "/* System generated locals */\n");
@@ -1711,8 +1711,8 @@ list_decls(FILE *outfile)
       /* Character type is really a string type.  Put out a '*' for variable
 	 length strings, and also for equivalences */
 
-      if (type == TYCHAR && class != CLPROC
-	  && (!var->vleng || !ISICON (var -> vleng))
+      if (( type == TYCHAR && class != CLPROC
+	    && (!var->vleng || !ISICON (var -> vleng)))
 	  || oneof_stg(var, stg, M(STGEQUIV)|M(STGCOMMON)))
 	nice_printf (outfile, "*%s", var->cvarname);
       else {
@@ -2027,7 +2027,7 @@ p1get_const(FILE *infile, int type, struct Constblock **resultp)
     result->vstg = 1;
     break;
   case TYCHAR:
-    status = fscanf(infile, "%lx", resultp);
+    status = fscanf(infile, "%lx",(long unsigned int *) resultp);
     break;
   default:
     erri ("p1get_const:  bad constant type '%d'", type);
@@ -2113,7 +2113,7 @@ proto(FILE *outfile,  Argtypes *at,  char *fname)
 	if (j == k)
 	  continue;
 	if (j >= 300
-	    ||  j == 200 && k >= 200)
+	    || ( j == 200 && k >= 200))
 	  j = k;
 	else {
 	  if (at->nargs >= 0)

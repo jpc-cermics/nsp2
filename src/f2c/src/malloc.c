@@ -46,12 +46,7 @@ typedef struct mem {
 mem *F;
 
 Char *
-#ifdef KR_headers
-malloc(size)
-     register Unsigned size;
-#else
-     malloc(register Unsigned size)
-#endif
+malloc(register Unsigned size)
 {
   register mem *p, *q, *r, *s;
   unsigned register k, m;
@@ -99,12 +94,7 @@ malloc(size)
 }
 
 void
-#ifdef KR_headers
-free(f)
-     Char *f;
-#else
-     free(Char *f)
-#endif
+free(Char *f)
 {
   mem *p, *q, *r;
   char *pn, *qn;
@@ -134,13 +124,7 @@ free(f)
 }
 
 Char *
-#ifdef KR_headers
-realloc(f, size)
-     Char *f;
-     Unsigned size;
-#else
-     realloc(Char *f, Unsigned size)
-#endif
+realloc(Char *f, Unsigned size)
 {
   mem *p;
   Char *q, *f1;

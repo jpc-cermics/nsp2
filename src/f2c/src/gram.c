@@ -738,7 +738,7 @@ yylex1(void)
   if(c == 0)
     c = yytok2[1];	/* unknown char */
   if(yydebug >= 3)
-    printf("lex %.4X %s\n", yychar, yytokname(c));
+    printf("lex %.4X %s\n",(unsigned int) yychar, yytokname(c));
   return c;
 }
 
@@ -844,8 +844,8 @@ yyparse(void)
 	printf("%s", yystatname(yystate));
 	printf("saw %s\n", yytokname(yychar));
       }
-    yyerrlab:
-      yynerrs++;
+      /* yyerrlab:
+	 yynerrs++; */
 
     case 1:
     case 2: /* incompletely recovered error ... try again */

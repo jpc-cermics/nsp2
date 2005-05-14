@@ -73,12 +73,7 @@ int ops2 [ ] =
 
 
 void
-#ifdef KR_headers
-putexpr(p)
-     expptr p;
-#else
-     putexpr(expptr p)
-#endif
+putexpr(expptr p)
 {
   /* Write the expression to the p1 file */
 
@@ -91,13 +86,7 @@ putexpr(p)
 
 
 expptr
-#ifdef KR_headers
-putassign(lp, rp)
-     expptr lp;
-     expptr rp;
-#else
-     putassign(expptr lp, expptr rp)
-#endif
+putassign(expptr lp, expptr rp)
 {
   return putx(fixexpr((Exprp)mkexpr(OPASSIGN, lp, rp)));
 }
@@ -106,13 +95,7 @@ putassign(lp, rp)
 
 
 void
-#ifdef KR_headers
-puteq(lp, rp)
-     expptr lp;
-     expptr rp;
-#else
-     puteq(expptr lp, expptr rp)
-#endif
+puteq(expptr lp, expptr rp)
 {
   putexpr(mkexpr(OPASSIGN, lp, rp) );
 }
@@ -123,13 +106,7 @@ puteq(lp, rp)
 /* put code for  a *= b */
 
 expptr
-#ifdef KR_headers
-putsteq(a, b)
-     Addrp a;
-     Addrp b;
-#else
-     putsteq(Addrp a, Addrp b)
-#endif
+putsteq(Addrp a, Addrp b)
 {
   return putx( fixexpr((Exprp)
 		       mkexpr(OPSTAREQ, cpexpr((expptr)a), cpexpr((expptr)b))));
@@ -137,16 +114,8 @@ putsteq(a, b)
 
 
 
-
 Addrp
-#ifdef KR_headers
-mkfield(res, f, ty)
-     register Addrp res;
-     char *f;
-     int ty;
-#else
-     mkfield(register Addrp res, char *f, int ty)
-#endif
+mkfield(register Addrp res, char *f, int ty)
 {
   res -> vtype = ty;
   res -> Field = f;
@@ -155,12 +124,7 @@ mkfield(res, f, ty)
 
 
 Addrp
-#ifdef KR_headers
-realpart(p)
-     register Addrp p;
-#else
-     realpart(register Addrp p)
-#endif
+realpart(register Addrp p)
 {
   register Addrp q;
 
@@ -182,12 +146,7 @@ realpart(p)
 
 
 expptr
-#ifdef KR_headers
-imagpart(p)
-     register Addrp p;
-#else
-     imagpart(register Addrp p)
-#endif
+imagpart(register Addrp p)
 {
   register Addrp q;
 
@@ -215,12 +174,7 @@ imagpart(p)
 /* ncat -- computes the number of adjacent concatenation operations */
 
 int
-#ifdef KR_headers
-ncat(p)
-     register expptr p;
-#else
-     ncat(register expptr p)
-#endif
+ncat(register expptr p)
 {
   if(p->tag==TEXPR && p->exprblock.opcode==OPCONCAT)
     return( ncat(p->exprblock.leftp) + ncat(p->exprblock.rightp) );
@@ -234,12 +188,7 @@ ncat(p)
    substring must have a static (i.e. compile-time) fixed length */
 
 ftnint
-#ifdef KR_headers
-lencat(p)
-     register expptr p;
-#else
-     lencat(register expptr p)
-#endif
+lencat(register expptr p)
 {
   if(p->tag==TEXPR && p->exprblock.opcode==OPCONCAT)
     return( lencat(p->exprblock.leftp) + lencat(p->exprblock.rightp) );
@@ -264,12 +213,7 @@ lencat(p)
 */
 
 Addrp
-#ifdef KR_headers
-putconst(p)
-     register Constp p;
-#else
-     putconst(register Constp p)
-#endif
+putconst(register Constp p)
 {
   register Addrp q;
   struct Literal *litp, *lastlit;
@@ -346,8 +290,8 @@ putconst(p)
 #ifdef TYQUAD
     case TYQUAD:
 #endif
-    lit_int_flavor:
-      litflavor = LIT_INT;
+      /*    lit_int_flavor: */
+      litflavor = LIT_INT; 
 
       /* Scan the literal pool for this constant value.  If this same constant
 	 has been assigned before, use the same label.  Note that this routine
@@ -376,8 +320,8 @@ putconst(p)
 	    if(cd[0] == litp->litval.litdval[0]
 	       && !strcmp(ds[0], litp->cds[0])
 	       && (k == 1 ||
-		   cd[1] == litp->litval.litdval[1]
-		   && !strcmp(ds[1], litp->cds[1]))) {
+		   (cd[1] == litp->litval.litdval[1]
+		    && !strcmp(ds[1], litp->cds[1])))) {
 	    ret:
 	      q->memno = litp->litnum;
 	      frexpr((expptr)p);

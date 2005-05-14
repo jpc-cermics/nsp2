@@ -52,12 +52,7 @@ trealloc(Void)
 }
 
 static void
-#ifdef KR_headers
-badchar(c)
-     int c;
-#else
-     badchar(int c)
-#endif
+badchar(int c)
 {
   fprintf(stderr,
 	  "unexpected character 0x%.2x = '%c' on line %ld of %s\n",
@@ -75,13 +70,7 @@ bad_type(Void)
 }
 
 static void
-#ifdef KR_headers
-badflag(tname, option)
-     char *tname;
-     char *option;
-#else
-     badflag(char *tname, char *option)
-#endif
+badflag(char *tname, char *option)
 {
   fprintf(stderr, "%s type from `f2c -%s` on line %ld of %s\n",
 	  tname, option, Plineno, Pfname);
@@ -89,12 +78,7 @@ badflag(tname, option)
 }
 
 static void
-#ifdef KR_headers
-detected(msg)
-     char *msg;
-#else
-     detected(char *msg)
-#endif
+detected(char *msg)
 {
   fprintf(stderr,
 	  "%sdetected on line %ld of %s\n", msg, Plineno, Pfname);
@@ -103,12 +87,7 @@ detected(msg)
 
 #if 0
 static void
-#ifdef KR_headers
-checklogical(k)
-     int k;
-#else
-     checklogical(int k)
-#endif
+checklogical(int k)
 {
   static int lastmsg = 0;
   static int seen[2] = {0,0};
@@ -144,12 +123,7 @@ checklogical(k)
 #endif
 
 static void
-#ifdef KR_headers
-checkreal(k)
-     int k;
-#else
-     checkreal(int k)
-#endif
+checkreal(int k)
 {
   static int warned = 0;
   static int seen[2] = {0,0};
@@ -168,12 +142,7 @@ checkreal(k)
 }
 
 static void
-#ifdef KR_headers
-Pnotboth(e)
-     Extsym *e;
-#else
-     Pnotboth(Extsym *e)
-#endif
+Pnotboth(Extsym *e)
 {
   if (e->curno)
     return;
@@ -185,13 +154,7 @@ Pnotboth(e)
 }
 
 static int
-#ifdef KR_headers
-numread(pf, n)
-     register FILE *pf;
-     int *n;
-#else
-     numread(register FILE *pf, int *n)
-#endif
+numread(register FILE *pf, int *n)
 {
   register int c, k;
 
@@ -214,14 +177,7 @@ static void argverify Argdcl((int, Extsym*));
 static void Pbadret Argdcl((int ftype, Extsym *p));
 
 static int
-#ifdef KR_headers
-readref(pf, e, ftype)
-     register FILE *pf;
-     Extsym *e;
-     int ftype;
-#else
-     readref(register FILE *pf, Extsym *e, int ftype)
-#endif
+readref(register FILE *pf, Extsym *e, int ftype)
 {
   register int c, *t;
   int i, nargs, type;
@@ -251,7 +207,7 @@ readref(pf, e, ftype)
   for(i = 0; i < nargs; i++) {
     if ((c = numread(pf, &type)) != ' '
 	|| type >= 500
-	|| type != TYFTNLEN + 100 && type % 100 > TYSUBR)
+	|| (type != TYFTNLEN + 100 && type % 100 > TYSUBR))
       return c == EOF;
     if (tnext >= tlast)
       trealloc();
@@ -290,12 +246,7 @@ readref(pf, e, ftype)
 }
 
 static int
-#ifdef KR_headers
-comlen(pf)
-     register FILE *pf;
-#else
-     comlen(register FILE *pf)
-#endif
+comlen(register FILE *pf)
 {
   register int c;
   register char *s, *se;
@@ -378,13 +329,7 @@ comlen(pf)
 }
 
 static int
-#ifdef KR_headers
-Ptoken(pf, canend)
-     FILE *pf;
-     int canend;
-#else
-     Ptoken(FILE *pf, int canend)
-#endif
+Ptoken(FILE *pf, int canend)
 {
   register int c;
   register char *s, *se;
@@ -527,13 +472,7 @@ Pftype(Void)
 }
 
 static void
-#ifdef KR_headers
-wanted(i, what)
-     int i;
-     char *what;
-#else
-     wanted(int i, char *what)
-#endif
+wanted(int i, char *what)
 {
   if (i != P_anum) {
     Ptok[0] = i;
@@ -545,12 +484,7 @@ wanted(i, what)
 }
 
 static int
-#ifdef KR_headers
-Ptype(pf)
-     FILE *pf;
-#else
-     Ptype(FILE *pf)
-#endif
+Ptype(FILE *pf)
 {
   int i, rv;
 
@@ -715,13 +649,7 @@ trimunder(Void)
 }
 
 static void
-#ifdef KR_headers
-Pbadmsg(msg, p)
-     char *msg;
-     Extsym *p;
-#else
-     Pbadmsg(char *msg, Extsym *p)
-#endif
+Pbadmsg(char *msg, Extsym *p)
 {
   Pbad++;
   fprintf(stderr, "%s for %s (line %ld of %s):\n\t", msg,
@@ -730,13 +658,7 @@ Pbadmsg(msg, p)
 }
 
 static void
-#ifdef KR_headers
-Pbadret(ftype, p)
-     int ftype;
-     Extsym *p;
-#else
-     Pbadret(int ftype, Extsym *p)
-#endif
+Pbadret(int ftype, Extsym *p)
 {
   char buf1[32], buf2[32];
 
@@ -747,13 +669,7 @@ Pbadret(ftype, p)
 }
 
 static void
-#ifdef KR_headers
-argverify(ftype, p)
-     int ftype;
-     Extsym *p;
-#else
-     argverify(int ftype, Extsym *p)
-#endif
+argverify(int ftype, Extsym *p)
 {
   Argtypes *at;
   register Atype *aty;
@@ -829,13 +745,7 @@ argverify(ftype, p)
 }
 
 static void
-#ifdef KR_headers
-newarg(ftype, p)
-     int ftype;
-     Extsym *p;
-#else
-     newarg(int ftype, Extsym *p)
-#endif
+newarg(int ftype, Extsym *p)
 {
   Argtypes *at;
   register Atype *aty;
@@ -863,12 +773,7 @@ newarg(ftype, p)
 }
 
 static int
-#ifdef KR_headers
-Pfile(fname)
-     char *fname;
-#else
-     Pfile(char *fname)
-#endif
+Pfile(char *fname)
 {
   char *s;
   int ftype, i;
@@ -904,7 +809,7 @@ Pfile(fname)
     if (!(i = Ptoken(pf,1)))
       break;
     if (i != P_anum
-	|| !strcmp(Ptok, "extern") && (i = Ptoken(pf,0)) != P_anum)
+	|| ( !strcmp(Ptok, "extern") && (i = Ptoken(pf,0)) != P_anum))
       badchar(i);
     ftype = Pftype();
   getname:
@@ -943,12 +848,7 @@ Pfile(fname)
 }
 
 void
-#ifdef KR_headers
-read_Pfiles(ffiles)
-     char **ffiles;
-#else
-     read_Pfiles(char **ffiles)
-#endif
+read_Pfiles(char **ffiles)
 {
   char **f1files, **f1files0, *s;
   int k;

@@ -57,13 +57,7 @@ use or performance of this software.
 /* generate variable references */
 
 char *
-#ifdef KR_headers
-c_type_decl(type, is_extern)
-     int type;
-     int is_extern;
-#else
-     c_type_decl(int type, int is_extern)
-#endif
+c_type_decl(int type, int is_extern)
 {
   static char buff[100];
 
@@ -132,12 +126,7 @@ new_func_length(Void)
 { return "ret_val_len"; }
 
 char *
-#ifdef KR_headers
-new_arg_length(arg)
-     Namep arg;
-#else
-     new_arg_length(Namep arg)
-#endif
+new_arg_length(Namep arg)
 {
   static char buf[64];
   char *fmt = "%s_len", *s = arg->fvarname;
@@ -164,12 +153,7 @@ new_arg_length(arg)
    order */
 
 void
-#ifdef KR_headers
-declare_new_addr(addrp)
-     struct Addrblock *addrp;
-#else
-     declare_new_addr(struct Addrblock *addrp)
-#endif
+declare_new_addr(struct Addrblock *addrp)
 {
   extern chainp new_vars;
 
@@ -178,13 +162,7 @@ declare_new_addr(addrp)
 
 
 void
-#ifdef KR_headers
-wr_nv_ident_help(outfile, addrp)
-     FILE *outfile;
-     struct Addrblock *addrp;
-#else
-     wr_nv_ident_help(FILE *outfile, struct Addrblock *addrp)
-#endif
+wr_nv_ident_help(FILE *outfile, struct Addrblock *addrp)
 {
   int eltcount = 0;
 
@@ -204,12 +182,7 @@ wr_nv_ident_help(outfile, addrp)
 } /* wr_nv_ident_help */
 
 int
-#ifdef KR_headers
-nv_type_help(addrp)
-     struct Addrblock *addrp;
-#else
-     nv_type_help(struct Addrblock *addrp)
-#endif
+nv_type_help(struct Addrblock *addrp)
 {
   if (addrp == (struct Addrblock *) NULL)
     return -1;
@@ -235,12 +208,7 @@ nv_type_help(addrp)
 */
 
 char *
-#ifdef KR_headers
-lit_name(litp)
-     struct Literal *litp;
-#else
-     lit_name(struct Literal *litp)
-#endif
+lit_name(struct Literal *litp)
 {
   static char buf[CONST_IDENT_MAX];
   ftnint val;
@@ -314,12 +282,7 @@ lit_name(litp)
 
 
 char *
-#ifdef KR_headers
-comm_union_name(count)
-     int count;
-#else
-     comm_union_name(int count)
-#endif
+comm_union_name(int count)
 {
   static char buf[12];
 
@@ -328,19 +291,12 @@ comm_union_name(count)
 }
 
 
-
-
 /* wr_globals -- after every function has been translated, we need to
    output the global declarations, such as the static table of constant
    values */
 
 void
-#ifdef KR_headers
-wr_globals(outfile)
-     FILE *outfile;
-#else
-     wr_globals(FILE *outfile)
-#endif
+wr_globals(FILE *outfile)
 {
   struct Literal *litp, *lastlit;
   extern int hsize;
@@ -365,7 +321,7 @@ wr_globals(outfile)
     cb.vtype = litp->littype;
     if (litp->littype == TYCHAR) {
       x = litp->litval.litival2[0] + litp->litval.litival2[1];
-      if (y = x % hsize)
+      if ((y = x % hsize))
 	x += y = hsize - y;
       nice_printf(outfile,
 		  "static struct { %s fill; char val[%ld+1];", halign, x);
@@ -404,12 +360,7 @@ wr_globals(outfile)
 } /* wr_globals */
 
 ftnint
-#ifdef KR_headers
-commlen(vl)
-     register chainp vl;
-#else
-     commlen(register chainp vl)
-#endif
+commlen(register chainp vl)
 {
   ftnint size;
   int type;
@@ -430,12 +381,7 @@ commlen(vl)
 }
 
 static void	/* Pad common block if an EQUIVALENCE extended it. */
-#ifdef KR_headers
-pad_common(c)
-     Extsym *c;
-#else
-     pad_common(Extsym *c)
-#endif
+pad_common(Extsym *c)
 {
   register chainp cvl;
   register Namep v;
@@ -498,12 +444,7 @@ pad_common(c)
 #define INIT_STRUCT 3
 
 void
-#ifdef KR_headers
-wr_common_decls(outfile)
-     FILE *outfile;
-#else
-     wr_common_decls(FILE *outfile)
-#endif
+wr_common_decls(FILE *outfile)
 {
   Extsym *ext;
   extern int extcomm;
@@ -612,13 +553,7 @@ wr_common_decls(outfile)
 } /* wr_common_decls */
 
 void
-#ifdef KR_headers
-wr_struct(outfile, var_list)
-     FILE *outfile;
-     chainp var_list;
-#else
-     wr_struct(FILE *outfile, chainp var_list)
-#endif
+wr_struct(FILE *outfile, chainp var_list)
 {
   int last_type = -1;
   int did_one = 0;
@@ -678,12 +613,7 @@ wr_struct(outfile, var_list)
 
 
 char *
-#ifdef KR_headers
-user_label(stateno)
-     ftnint stateno;
-#else
-     user_label(ftnint stateno)
-#endif
+user_label(ftnint stateno)
 {
   static char buf[USER_LABEL_MAX + 1];
   static char *Lfmt[2] = { "L_%ld", "L%ld" };
@@ -697,14 +627,7 @@ user_label(stateno)
 
 
 char *
-#ifdef KR_headers
-temp_name(starter, num, storage)
-     char *starter;
-     int num;
-     char *storage;
-#else
-     temp_name(char *starter, int num, char *storage)
-#endif
+temp_name(char *starter, int num, char *storage)
 {
   static char buf[IDENT_LEN];
   char *pointer = buf;
@@ -722,13 +645,7 @@ temp_name(starter, num, storage)
 
 
 char *
-#ifdef KR_headers
-equiv_name(memno, store)
-     int memno;
-     char *store;
-#else
-     equiv_name(int memno, char *store)
-#endif
+equiv_name(int memno, char *store)
 {
   static char buf[IDENT_LEN];
   char *pointer = buf;
@@ -741,12 +658,7 @@ equiv_name(memno, store)
 } /* equiv_name */
 
 void
-#ifdef KR_headers
-def_commons(of)
-     FILE *of;
-#else
-     def_commons(FILE *of)
-#endif
+def_commons(FILE *of)
 {
   Extsym *ext;
   int c, onefile, Union;

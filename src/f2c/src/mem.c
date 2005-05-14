@@ -28,13 +28,7 @@ use or performance of this software.
 #define GMEMBSIZE	16000
 
 char *
-#ifdef KR_headers
-gmem(n, round)
-     int n;
-     int round;
-#else
-     gmem(int n, int round)
-#endif
+gmem(int n, int round)
 {
   static char *last, *next;
   char *rv;
@@ -85,13 +79,7 @@ mem_init(Void)
 }
 
 char *
-#ifdef KR_headers
-mem(n, round)
-     int n;
-     int round;
-#else
-     mem(int n, int round)
-#endif
+mem(int n, int round)
 {
   memblock *b;
   register char *rv, *s;
@@ -131,13 +119,7 @@ mem(n, round)
 }
 
 char *
-#ifdef KR_headers
-tostring(s, n)
-     register char *s;
-     int n;
-#else
-     tostring(register char *s, int n)
-#endif
+tostring(register char *s, int n)
 {
   register char *s1, *se, **sf;
   char *rv, *s0;
@@ -166,24 +148,13 @@ tostring(s, n)
 }
 
 char *
-#ifdef KR_headers
-cpstring(s)
-     register char *s;
-#else
-     cpstring(register char *s)
-#endif
+cpstring(register char *s)
 {
   return strcpy(mem(strlen(s)+1,0), s);
 }
 
 void
-#ifdef KR_headers
-new_iob_data(ios, name)
-     register io_setup *ios;
-     char *name;
-#else
-     new_iob_data(register io_setup *ios, char *name)
-#endif
+new_iob_data(register io_setup *ios, char *name)
 {
   register iob_data *iod;
   register char **s, **se;
@@ -202,13 +173,7 @@ new_iob_data(ios, name)
 }
 
 char *
-#ifdef KR_headers
-string_num(pfx, n)
-     char *pfx;
-     long n;
-#else
-     string_num(char *pfx, long n)
-#endif
+string_num(char *pfx, long n)
 {
   char buf[32];
   sprintf(buf, "%s%ld", pfx, n);
@@ -219,15 +184,7 @@ string_num(pfx, n)
 static defines *define_list;
 
 void
-#ifdef KR_headers
-def_start(outfile, s1, s2, post)
-     FILE *outfile;
-     char *s1;
-     char *s2;
-     char *post;
-#else
-     def_start(FILE *outfile, char *s1, char *s2, char *post)
-#endif
+def_start(FILE *outfile, char *s1, char *s2, char *post)
 {
   defines *d;
   int n, n1;
@@ -249,20 +206,15 @@ def_start(outfile, s1, s2, post)
 }
 
 void
-#ifdef KR_headers
-other_undefs(outfile)
-     FILE *outfile;
-#else
-     other_undefs(FILE *outfile)
-#endif
+other_undefs(FILE *outfile)
 {
   defines *d;
-  if (d = define_list) {
+  if ((d = define_list)) {
     define_list = 0;
     nice_printf(outfile, "\n");
     do
       nice_printf(outfile, "#undef %s\n", d->defname);
-    while(d = d->next);
+    while((d = d->next));
     nice_printf(outfile, "\n");
   }
 }

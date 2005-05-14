@@ -172,8 +172,11 @@ static char *dflt0proc[] = {
   "(logical (*)())0", "(char (*)())0", "(int (*)())0"
 };
 
-char *dflt1proc[] = { "(U_fp)0", "(??bug??)0", "(I1_fp)0",
+/* char *dflt1proc[] = { "(U_fp)0", "(??bug??)0", "(I1_fp)0",
+   "(J_fp)0", "(I_fp)0", */
+char *dflt1proc[] = { "(U_fp)0", "(bug)0", "(I1_fp)0",
 		      "(J_fp)0", "(I_fp)0",
+
 #ifdef TYQUAD
 		      "(Q_fp)0",
 #endif
@@ -313,7 +316,7 @@ fileinit(Void)
     hextoi(*s) = i;
   for(i = 10, s = "ABCDEF"; *s; i++, s++)
     hextoi(*s) = i;
-  for(j = 0, s = "abcdefghijklmnopqrstuvwxyz"; i = *s++; j++)
+  for(j = 0, s = "abcdefghijklmnopqrstuvwxyz"; (i = *s++); j++)
     Letters[i] = Letters[i+'A'-'a'] = j;
 
   ctls = ALLOCN(maxctl+1, Ctlframe);
@@ -353,7 +356,7 @@ hashclear(Void)	/* clear hash table */
   register int i;
 
   for(hp = hashtab ; hp < lasthash ; ++hp)
-    if(p = hp->varp)
+    if((p = hp->varp))
       {
 	frexpr(p->vleng);
 	if((q = p->vdim))
@@ -472,15 +475,7 @@ procinit(Void)
 
 
 void
-#ifdef KR_headers
-setimpl(type, length, c1, c2)
-     int type;
-     ftnint length;
-     int c1;
-     int c2;
-#else
-     setimpl(int type, ftnint length, int c1, int c2)
-#endif
+setimpl(int type, ftnint length, int c1, int c2)
 {
   int i;
   char buff[100];

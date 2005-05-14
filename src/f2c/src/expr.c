@@ -262,10 +262,10 @@ mkconv(register int t, register expptr p)
 
   /* If we're casting a constant which is not in the literal table ... */
 
-  else if( ISCONST(p) && pt!=TYADDR && pt != TYCHAR
-	   || p->tag == TADDR && p->addrblock.uname_tag == UNAM_CONST)
+  else if( (ISCONST(p) && pt!=TYADDR && pt != TYCHAR) 
+	   || ( p->tag == TADDR && p->addrblock.uname_tag == UNAM_CONST))
     {
-      if (ISINT(t) && ISINT(pt) || ISREAL(t) && ISREAL(pt)) {
+      if ( (ISINT(t) && ISINT(pt)) || ( ISREAL(t) && ISREAL(pt))) {
 	/* avoid trouble with -i2 */
 	p->headblock.vtype = t;
 	return p;
@@ -663,7 +663,7 @@ fixexpr(register Exprp p)
 
     case OPASSIGN:
       if (rtype == TYREAL || ISLOGICAL(ptype)
-	  || rtype == TYDREAL && ltype == TYREAL && !ISCONST(rp))
+	  || (rtype == TYDREAL && ltype == TYREAL && !ISCONST(rp)))
 	break;
     case OPPLUSEQ:
     case OPSTAREQ:
@@ -874,7 +874,7 @@ mkscalar(register Namep np)
       ap->memoffset = mkexpr(OPSTAR,
 			     (np->vtype==TYCHAR ?
 			      cpexpr(np->vleng) :
-			      (tagptr)ICON((int)typesize[np->vtype]) ),
+			      (tagptr)ICON((int)typesize[(int) np->vtype]) ),
 			     cpexpr(dp->baseoffset) );
     }
   return(ap);
@@ -907,7 +907,7 @@ mkfunct(expptr p0)
   Addrp ap;
   Extsym *extp;
   register Namep np;
-  register expptr q;
+  register expptr q=NULL;
   extern chainp new_procs;
   int k, nargs;
   int class;
@@ -1265,9 +1265,9 @@ mklhs(register struct Primblock *p, int subkeep)
 
   if (!replaced)
     s->memoffset = (subkeep && np->vdim
-		    && (np->vdim->ndim > 1 || np->vtype == TYCHAR
-			&& (!ISCONST(np->vleng)
-			    || np->vleng->constblock.Const.ci != 1)))
+		    && (np->vdim->ndim > 1 
+			|| ( np->vtype == TYCHAR
+			     && (!ISCONST(np->vleng) || np->vleng->constblock.Const.ci != 1))))
       ? subskept(p,s)
       : mkexpr(OPPLUS, s->memoffset, suboffset(p) );
   frexpr((expptr)p->argsp);
@@ -1408,7 +1408,7 @@ suboffset(register struct Primblock *p)
       if(checksubs)
 	prod = subcheck(np, prod);
       size = np->vtype == TYCHAR ?
-	(expptr) cpexpr(np->vleng) : ICON((int)typesize[np->vtype]);
+	(expptr) cpexpr(np->vleng) : ICON((int)typesize[(int) np->vtype]);
       prod = mkexpr(OPSTAR, prod, size);
       offp = mkexpr(OPPLUS, offp, prod);
     }
@@ -1709,10 +1709,11 @@ vardcl(register Namep v)
     case STGAUTO:
       if(v->vclass==CLPROC && v->vprocclass==PTHISPROC)
 	break;
-      if((t = v->vdim))
+      if((t = v->vdim)) {
 	if( (neltp = t->nelt) && ISCONST(neltp) ) ;
 	else
 	  dclerr("adjustable automatic array", v);
+      }
       break;
 
     default:
@@ -1754,13 +1755,7 @@ impldcl(register Namep p)
 }
 
 void
-#ifdef KR_headers
-inferdcl(np, type)
-     Namep np;
-     int type;
-#else
-     inferdcl(Namep np, int type)
-#endif
+inferdcl(Namep np, int type)
 {
   int k = impltype[(int)letter((int)np->fvarname[0])];
   if (k != type) {
@@ -1886,8 +1881,8 @@ mkexpr(int opcode, register expptr lp, register expptr rp)
 
       if (lp->exprblock.opcode == OPLSHIFT) {
 	L = 1 << lp->exprblock.rightp->constblock.Const.ci;
-	if (opcode == OPSTAR || ISICON(rp) &&
-	    !(L % rp->constblock.Const.ci)) {
+	if (opcode == OPSTAR || ( ISICON(rp) &&
+				  !(L % rp->constblock.Const.ci))) {
 	  lp->exprblock.opcode = OPSTAR;
 	  lp->exprblock.rightp->constblock.Const.ci = L;
 	}
@@ -2194,8 +2189,8 @@ int cktype(register int op, register int lt, register int rt)
 	  {
 	    if(lt != rt){
 	      if (htype
-		  && (lt == TYCHAR && ISNUMERIC(rt)
-		      || rt == TYCHAR && ISNUMERIC(lt)))
+		  && ((lt == TYCHAR && ISNUMERIC(rt))
+		      || ( rt == TYCHAR && ISNUMERIC(lt))))
 		return TYLOGICAL;
 	      ERR("illegal comparison")
 		}
@@ -2485,7 +2480,7 @@ fold(register expptr e)
 
     case OPPOWER:
       if( !ISINT(rtype)
-	  || rp->constblock.Const.ci < 0 && zeroconst(lp))
+	  || ( rp->constblock.Const.ci < 0 && zeroconst(lp)))
 	goto ereturn;
       conspower(p, (Constp)lp, rp->constblock.Const.ci);
       break;

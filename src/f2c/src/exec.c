@@ -560,7 +560,7 @@ exenddo(Namep np)
     goto misplaced;
   here = ctlstack->dolabel;
   if (ctlstack->ctltype != CTLDO
-      || here >= 0 && (!thislabel || thislabel->labelno != here)) 
+      || ( here >= 0 && (!thislabel || thislabel->labelno != here)))
     {
     misplaced:
       err("misplaced ENDDO");

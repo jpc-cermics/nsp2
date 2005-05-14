@@ -86,12 +86,7 @@ dataval(register expptr repp, register expptr valp)
 
 
 Addrp
-#ifdef KR_headers
-nextdata(elenp)
-     ftnint *elenp;
-#else
-     nextdata(ftnint *elenp)
-#endif
+nextdata(ftnint *elenp)
 {
   register struct Impldoblock *ip;
   struct Primblock *pp;
@@ -233,14 +228,7 @@ nextdata(elenp)
 LOCAL FILEP dfile;
 
 void
-#ifdef KR_headers
-setdata(varp, valp, elen)
-     register Addrp varp;
-     register Constp valp;
-     ftnint elen;
-#else
-     setdata(register Addrp varp, register Constp valp, ftnint elen)
-#endif
+setdata(register Addrp varp, register Constp valp, ftnint elen)
 {
   struct Constblock con;
   register int type;
@@ -362,13 +350,7 @@ setdata(varp, valp, elen)
   with a storage class digit
 */
 char*
-#ifdef KR_headers
-dataname(stg, memno)
-     int stg;
-     long memno;
-#else
-     dataname(int stg, long memno)
-#endif
+dataname(int stg, long memno)
 {
   static char varname[64];
   register char *s, *t;
@@ -392,12 +374,7 @@ dataname(stg, memno)
 
 
 void
-#ifdef KR_headers
-frdata(p0)
-     chainp p0;
-#else
-     frdata(chainp p0)
-#endif
+frdata(chainp p0)
 {
   register struct Chain *p;
   register tagptr q;
@@ -422,26 +399,13 @@ frdata(p0)
 
 
 void
-#ifdef KR_headers
-dataline(varname, offset, type)
-     char *varname;
-     ftnint offset;
-     int type;
-#else
-     dataline(char *varname, ftnint offset, int type)
-#endif
+dataline(char *varname, ftnint offset, int type)
 {
   fprintf(dfile, datafmt, varname, offset, type);
 }
 
 void
-#ifdef KR_headers
-make_param(p, e)
-     register struct Paramblock *p;
-     expptr e;
-#else
-     make_param(register struct Paramblock *p, expptr e)
-#endif
+make_param(register struct Paramblock *p, expptr e)
 {
   register expptr q;
   Constp qc;

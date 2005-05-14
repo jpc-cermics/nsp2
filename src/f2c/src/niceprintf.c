@@ -155,7 +155,7 @@ np_init(Void)
 static char *
 adjust_pointer_in_string(register char *pointer)
 {
-  register char *s, *s1, *se, *s0;
+  register char *s, *s1, *se, *s0=NULL;
 
   /* arrange not to break \002 */
   s1 = string_start ? string_start : output_buf;

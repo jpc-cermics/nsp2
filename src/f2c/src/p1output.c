@@ -51,12 +51,7 @@ static void p1putn Argdcl((int, int, char*));
    null terminated; it may be modified by this function. */
 
 void
-#ifdef KR_headers
-p1_comment(str)
-     char *str;
-#else
-     p1_comment(char *str)
-#endif
+p1_comment(char *str)
 {
   register unsigned char *pointer, *ustr;
 
@@ -69,7 +64,7 @@ p1_comment(str)
   ustr = (unsigned char *)str;
   for(pointer = ustr; *pointer; pointer++)
     if (*pointer == '*' && (pointer[1] == '/'
-			    || pointer > ustr && pointer[-1] == '/'))
+			    || ( pointer > ustr && pointer[-1] == '/')))
       *pointer = '+';
   /* trim trailing white space */
 #ifdef isascii
@@ -85,12 +80,7 @@ p1_comment(str)
    intermediate file */
 
 static void
-#ifdef KR_headers
-p1_name(namep)
-     Namep namep;
-#else
-     p1_name(Namep namep)
-#endif
+p1_name(Namep namep)
 {
   p1putd (P1_NAME_POINTER, (long) namep);
   namep->visused = 1;
@@ -99,12 +89,7 @@ p1_name(namep)
 
 
 void
-#ifdef KR_headers
-p1_expr(expr)
-     expptr expr;
-#else
-     p1_expr(expptr expr)
-#endif
+p1_expr(expptr expr)
 {
   /* An opcode of 0 means a null entry */
 
@@ -156,12 +141,7 @@ p1_expr(expr)
 
 
 static void
-#ifdef KR_headers
-p1_const(cp)
-     register Constp cp;
-#else
-     p1_const(register Constp cp)
-#endif
+p1_const(register Constp cp)
 {
   int type = cp->vtype;
   expptr vleng = cp->vleng;
@@ -204,7 +184,7 @@ p1_const(cp)
       erri("p1_const:  bad vleng '%d'\n", (int) vleng);
     else
       fprintf(pass1_file, "%d: %d %lx\n", P1_CONST, type,
-	      cpexpr((expptr)cp));
+	      (long unsigned int) cpexpr((expptr)cp));
     break;
   default:
     erri ("p1_const:  bad constant type '%d'", type);
@@ -214,12 +194,7 @@ p1_const(cp)
 
 
 void
-#ifdef KR_headers
-p1_asgoto(addrp)
-     Addrp addrp;
-#else
-     p1_asgoto(Addrp addrp)
-#endif
+p1_asgoto(Addrp addrp)
 {
   p1put (P1_ASGOTO);
   p1_addr (addrp);
@@ -227,24 +202,14 @@ p1_asgoto(addrp)
 
 
 void
-#ifdef KR_headers
-p1_goto(stateno)
-     ftnint stateno;
-#else
-     p1_goto(ftnint stateno)
-#endif
+p1_goto(ftnint stateno)
 {
   p1putd (P1_GOTO, stateno);
 } /* p1_goto */
 
 
 static void
-#ifdef KR_headers
-p1_addr(addrp)
-     register struct Addrblock *addrp;
-#else
-     p1_addr(register struct Addrblock *addrp)
-#endif
+p1_addr(register struct Addrblock *addrp)
 {
   int stg;
 
@@ -254,15 +219,15 @@ p1_addr(addrp)
   stg = addrp -> vstg;
 
   if (ONEOF(stg, M(STGINIT)|M(STGREG))
-      || ONEOF(stg, M(STGCOMMON)|M(STGEQUIV)) &&
-      (!ISICON(addrp->memoffset)
-       || (addrp->uname_tag == UNAM_NAME
-	   ? addrp->memoffset->constblock.Const.ci
-	   != addrp->user.name->voffset
-	   : addrp->memoffset->constblock.Const.ci))
-      || ONEOF(stg, M(STGBSS)|M(STGINIT)|M(STGAUTO)|M(STGARG)) &&
-      (!ISICON(addrp->memoffset)
-       || addrp->memoffset->constblock.Const.ci)
+      || ( ONEOF(stg, M(STGCOMMON)|M(STGEQUIV)) &&
+	   (!ISICON(addrp->memoffset)
+	    || (addrp->uname_tag == UNAM_NAME
+		? addrp->memoffset->constblock.Const.ci
+		!= addrp->user.name->voffset
+		: addrp->memoffset->constblock.Const.ci)))
+      || ( ONEOF(stg, M(STGBSS)|M(STGINIT)|M(STGAUTO)|M(STGARG)) &&
+	   (!ISICON(addrp->memoffset)
+	    || addrp->memoffset->constblock.Const.ci))
       || addrp->Field || addrp->isarray || addrp->vstg == STGLENG)
     {
       p1_big_addr (addrp);
@@ -313,12 +278,7 @@ p1_addr(addrp)
 
 
 static void
-#ifdef KR_headers
-p1_list(listp)
-     struct Listblock *listp;
-#else
-     p1_list(struct Listblock *listp)
-#endif
+p1_list(struct Listblock *listp)
 {
   chainp lis;
   int count = 0;
@@ -340,12 +300,7 @@ p1_list(listp)
 
 
 void
-#ifdef KR_headers
-p1_label(lab)
-     long lab;
-#else
-     p1_label(long lab)
-#endif
+p1_label(long lab)
 {
   if (parstate < INDATA)
     earlylabs = mkchain((char *)lab, earlylabs);
@@ -356,24 +311,14 @@ p1_label(lab)
 
 
 static void
-#ifdef KR_headers
-p1_literal(memno)
-     long memno;
-#else
-     p1_literal(long memno)
-#endif
+p1_literal(long memno)
 {
   p1putd (P1_LITERAL, memno);
 } /* p1_literal */
 
 
 void
-#ifdef KR_headers
-p1_if(expr)
-     expptr expr;
-#else
-     p1_if(expptr expr)
-#endif
+p1_if(expptr expr)
 {
   p1put (P1_IF);
   p1_expr (expr);
@@ -383,18 +328,11 @@ p1_if(expr)
 
 
 void
-#ifdef KR_headers
-p1_elif(expr)
-     expptr expr;
-#else
-     p1_elif(expptr expr)
-#endif
+p1_elif(expptr expr)
 {
   p1put (P1_ELIF);
   p1_expr (expr);
 } /* p1_elif */
-
-
 
 
 void
@@ -423,12 +361,7 @@ p1else_end(Void)
 
 
 static void
-#ifdef KR_headers
-p1_big_addr(addrp)
-     Addrp addrp;
-#else
-     p1_big_addr(Addrp addrp)
-#endif
+p1_big_addr(Addrp addrp)
 {
   if (addrp == (Addrp) NULL)
     return;
@@ -443,12 +376,7 @@ p1_big_addr(addrp)
 
 
 static void
-#ifdef KR_headers
-p1_unary(e)
-     struct Exprblock *e;
-#else
-     p1_unary(struct Exprblock *e)
-#endif
+p1_unary(struct Exprblock *e)
 {
   if (e == (struct Exprblock *) NULL)
     return;
@@ -479,12 +407,7 @@ p1_unary(e)
 
 
 static void
-#ifdef KR_headers
-p1_binary(e)
-     struct Exprblock *e;
-#else
-     p1_binary(struct Exprblock *e)
-#endif
+p1_binary(struct Exprblock *e)
 {
   if (e == (struct Exprblock *) NULL)
     return;
@@ -497,25 +420,15 @@ p1_binary(e)
 
 
 void
-#ifdef KR_headers
-p1_head(class, name)
-     int class;
-     char *name;
-#else
-     p1_head(int class, char *name)
-#endif
+p1_head(int class, char *name)
+
 {
   p1putds (P1_HEAD, class, name ? name : "");
 } /* p1_head */
 
 
 void
-#ifdef KR_headers
-p1_subr_ret(retexp)
-     expptr retexp;
-#else
-     p1_subr_ret(expptr retexp)
-#endif
+p1_subr_ret(expptr retexp)
 {
 
   p1put (P1_SUBR_RET);
@@ -525,14 +438,7 @@ p1_subr_ret(retexp)
 
 
 void
-#ifdef KR_headers
-p1comp_goto(index, count, labels)
-     expptr index;
-     int count;
-     struct Labelblock **labels;
-#else
-     p1comp_goto(expptr index, int count, struct Labelblock **labels)
-#endif
+p1comp_goto(expptr index, int count, struct Labelblock **labels)
 {
   struct Constblock c;
   int i;
@@ -559,14 +465,7 @@ p1comp_goto(index, count, labels)
 
 
 void
-#ifdef KR_headers
-p1_for(init, test, inc)
-     expptr init;
-     expptr test;
-     expptr inc;
-#else
-     p1_for(expptr init, expptr test, expptr inc)
-#endif
+p1_for(expptr init, expptr test, expptr inc)
 {
   p1put (P1_FOR);
   p1_expr (init);
@@ -595,13 +494,7 @@ p1for_end(Void)
    str   contains no newlines and is null-terminated. */
 
 void
-#ifdef KR_headers
-p1puts(type, str)
-     int type;
-     char *str;
-#else
-     p1puts(int type, char *str)
-#endif
+p1puts(int type, char *str)
 {
   fprintf (pass1_file, "%d: %s\n", type, str);
 } /* p1puts */
@@ -610,13 +503,7 @@ p1puts(type, str)
 /* p1putd -- Put a typed integer into the Pass 1 intermediate file. */
 
 static void
-#ifdef KR_headers
-p1putd(type, value)
-     int type;
-     long value;
-#else
-     p1putd(int type, long value)
-#endif
+p1putd(int type, long value)
 {
   fprintf (pass1_file, "%d: %ld\n", type, value);
 } /* p1_putd */
@@ -625,14 +512,7 @@ p1putd(type, value)
 /* p1putdd -- Put a typed pair of integers into the intermediate file. */
 
 static void
-#ifdef KR_headers
-p1putdd(type, v1, v2)
-     int type;
-     int v1;
-     int v2;
-#else
-     p1putdd(int type, int v1, int v2)
-#endif
+p1putdd(int type, int v1, int v2)
 {
   fprintf (pass1_file, "%d: %d %d\n", type, v1, v2);
 } /* p1putdd */
@@ -641,15 +521,7 @@ p1putdd(type, v1, v2)
 /* p1putddd -- Put a typed triple of integers into the intermediate file. */
 
 static void
-#ifdef KR_headers
-p1putddd(type, v1, v2, v3)
-     int type;
-     int v1;
-     int v2;
-     int v3;
-#else
-     p1putddd(int type, int v1, int v2, int v3)
-#endif
+p1putddd(int type, int v1, int v2, int v3)
 {
   fprintf (pass1_file, "%d: %d %d %d\n", type, v1, v2, v3);
 } /* p1putddd */
@@ -660,14 +532,7 @@ union dL {
 };
 
 static void
-#ifdef KR_headers
-p1putn(type, count, str)
-     int type;
-     int count;
-     char *str;
-#else
-     p1putn(int type, int count, char *str)
-#endif
+p1putn(int type, int count, char *str)
 {
   int i;
 
@@ -684,12 +549,7 @@ p1putn(type, count, str)
 /* p1put -- Put a type marker into the intermediate file. */
 
 void
-#ifdef KR_headers
-p1put(type)
-     int type;
-#else
-     p1put(int type)
-#endif
+p1put(int type)
 {
   fprintf (pass1_file, "%d:\n", type);
 } /* p1put */
@@ -697,29 +557,14 @@ p1put(type)
 
 
 static void
-#ifdef KR_headers
-p1putds(type, i, str)
-     int type;
-     int i;
-     char *str;
-#else
-     p1putds(int type, int i, char *str)
-#endif
+p1putds(int type, int i, char *str)
 {
   fprintf (pass1_file, "%d: %d %s\n", type, i, str);
 } /* p1putds */
 
 
 static void
-#ifdef KR_headers
-p1putdds(token, type, stg, str)
-     int token;
-     int type;
-     int stg;
-     char *str;
-#else
-     p1putdds(int token, int type, int stg, char *str)
-#endif
+p1putdds(int token, int type, int stg, char *str)
 {
   fprintf (pass1_file, "%d: %d %d %s\n", token, type, stg, str);
 } /* p1putdds */

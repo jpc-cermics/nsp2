@@ -48,182 +48,181 @@ LOCAL struct Intrblock
   struct Intrbits intrval;
 } intrtab[ ] =
   {
-    "int", 		{ INTRCONV, TYLONG },
-    "real", 	{ INTRCONV, TYREAL, 1 },
+    {"int", 		{ INTRCONV, TYLONG }},
+    {    "real", 	{ INTRCONV, TYREAL, 1 }},
     /* 1 ==> real(TYDCOMPLEX) yields TYDREAL */
-    "dreal", 	{ INTRCONV, TYREAL, 1 },
-    "dble", 	{ INTRCONV, TYDREAL },
-    "cmplx", 	{ INTRCONV, TYCOMPLEX },
-    "dcmplx", 	{ INTRCONV, TYDCOMPLEX, 0, 1 },
-    "ifix", 	{ INTRCONV, TYLONG },
-    "idint", 	{ INTRCONV, TYLONG },
-    "float", 	{ INTRCONV, TYREAL },
-    "dfloat",	{ INTRCONV, TYDREAL },
-    "sngl", 	{ INTRCONV, TYREAL },
-    "ichar", 	{ INTRCONV, TYLONG },
-    "iachar", 	{ INTRCONV, TYLONG },
-    "char", 	{ INTRCONV, TYCHAR },
-    "achar", 	{ INTRCONV, TYCHAR },
+    {    "dreal", 	{ INTRCONV, TYREAL, 1 }},
+    {    "dble", 	{ INTRCONV, TYDREAL }},
+    {    "cmplx", 	{ INTRCONV, TYCOMPLEX }},
+    {    "dcmplx", 	{ INTRCONV, TYDCOMPLEX, 0, 1 }},
+    {    "ifix", 	{ INTRCONV, TYLONG }},
+    {    "idint", 	{ INTRCONV, TYLONG }},
+    {    "float", 	{ INTRCONV, TYREAL }},
+    {    "dfloat",	{ INTRCONV, TYDREAL }},
+    {    "sngl", 	{ INTRCONV, TYREAL }},
+    {    "ichar", 	{ INTRCONV, TYLONG }},
+    {    "iachar", 	{ INTRCONV, TYLONG }},
+    {    "char", 	{ INTRCONV, TYCHAR }},
+    {    "achar", 	{ INTRCONV, TYCHAR }},
 
     /* any MAX or MIN can be used with any types; the compiler will cast them
        correctly.  So rules against bad syntax in these expressions are not
        enforced */
 
-    "max", 		{ INTRMAX, TYUNKNOWN },
-    "max0", 	{ INTRMAX, TYLONG },
-    "amax0", 	{ INTRMAX, TYREAL },
-    "max1", 	{ INTRMAX, TYLONG },
-    "amax1", 	{ INTRMAX, TYREAL },
-    "dmax1", 	{ INTRMAX, TYDREAL },
+    {    "max", 		{ INTRMAX, TYUNKNOWN }},
+    {    "max0", 	{ INTRMAX, TYLONG }},
+    {    "amax0", 	{ INTRMAX, TYREAL }},
+    {    "max1", 	{ INTRMAX, TYLONG }},
+    {    "amax1", 	{ INTRMAX, TYREAL }},
+    {    "dmax1", 	{ INTRMAX, TYDREAL }},
 
-    "and",		{ INTRBOOL, TYUNKNOWN, OPBITAND },
-    "or",		{ INTRBOOL, TYUNKNOWN, OPBITOR },
-    "xor",		{ INTRBOOL, TYUNKNOWN, OPBITXOR },
-    "not",		{ INTRBOOL, TYUNKNOWN, OPBITNOT },
-    "lshift",	{ INTRBOOL, TYUNKNOWN, OPLSHIFT },
-    "rshift",	{ INTRBOOL, TYUNKNOWN, OPRSHIFT },
+    {    "and",		{ INTRBOOL, TYUNKNOWN, OPBITAND }},
+    {    "or",		{ INTRBOOL, TYUNKNOWN, OPBITOR }},
+    {    "xor",		{ INTRBOOL, TYUNKNOWN, OPBITXOR }},
+    {    "not",		{ INTRBOOL, TYUNKNOWN, OPBITNOT }},
+    {    "lshift",	{ INTRBOOL, TYUNKNOWN, OPLSHIFT }},
+    {    "rshift",	{ INTRBOOL, TYUNKNOWN, OPRSHIFT }},
+    
+    {    "min", 		{ INTRMIN, TYUNKNOWN }},
+    {    "min0", 	{ INTRMIN, TYLONG }},
+    {    "amin0", 	{ INTRMIN, TYREAL }},
+    {    "min1", 	{ INTRMIN, TYLONG }},
+    {    "amin1", 	{ INTRMIN, TYREAL }},
+    {    "dmin1", 	{ INTRMIN, TYDREAL }},
 
-    "min", 		{ INTRMIN, TYUNKNOWN },
-    "min0", 	{ INTRMIN, TYLONG },
-    "amin0", 	{ INTRMIN, TYREAL },
-    "min1", 	{ INTRMIN, TYLONG },
-    "amin1", 	{ INTRMIN, TYREAL },
-    "dmin1", 	{ INTRMIN, TYDREAL },
+    {    "aint", 	{ INTRGEN, 2, 0 }},
+    {    "dint", 	{ INTRSPEC, TYDREAL, 1 }},
 
-    "aint", 	{ INTRGEN, 2, 0 },
-    "dint", 	{ INTRSPEC, TYDREAL, 1 },
+    {    "anint", 	{ INTRGEN, 2, 2 }},
+    {    "dnint", 	{ INTRSPEC, TYDREAL, 3 }},
 
-    "anint", 	{ INTRGEN, 2, 2 },
-    "dnint", 	{ INTRSPEC, TYDREAL, 3 },
+    {    "nint", 	{ INTRGEN, 4, 4 }},
+    {    "idnint", 	{ INTRGEN, 2, 6 }},
 
-    "nint", 	{ INTRGEN, 4, 4 },
-    "idnint", 	{ INTRGEN, 2, 6 },
+    {    "abs", 		{ INTRGEN, 6, 8 }},
+    {    "iabs", 	{ INTRGEN, 2, 9 }},
+    {    "dabs", 	{ INTRSPEC, TYDREAL, 11 }},
+    {    "cabs", 	{ INTRSPEC, TYREAL, 12, 0, 13 }},
+    {    "zabs", 	{ INTRSPEC, TYDREAL, 13, 1 }},
 
-    "abs", 		{ INTRGEN, 6, 8 },
-    "iabs", 	{ INTRGEN, 2, 9 },
-    "dabs", 	{ INTRSPEC, TYDREAL, 11 },
-    "cabs", 	{ INTRSPEC, TYREAL, 12, 0, 13 },
-    "zabs", 	{ INTRSPEC, TYDREAL, 13, 1 },
+    {    "mod", 		{ INTRGEN, 4, 14 }},
+    {    "amod", 	{ INTRSPEC, TYREAL, 16, 0, 17 }},
+    {    "dmod", 	{ INTRSPEC, TYDREAL, 17 }},
 
-    "mod", 		{ INTRGEN, 4, 14 },
-    "amod", 	{ INTRSPEC, TYREAL, 16, 0, 17 },
-    "dmod", 	{ INTRSPEC, TYDREAL, 17 },
+    {    "sign", 	{ INTRGEN, 4, 18 }},
+    {    "isign", 	{ INTRGEN, 2, 19 }},
+    {    "dsign", 	{ INTRSPEC, TYDREAL, 21 }},
 
-    "sign", 	{ INTRGEN, 4, 18 },
-    "isign", 	{ INTRGEN, 2, 19 },
-    "dsign", 	{ INTRSPEC, TYDREAL, 21 },
+    {    "dim", 		{ INTRGEN, 4, 22 }},
+    {    "idim", 	{ INTRGEN, 2, 23 }},
+    {    "ddim", 	{ INTRSPEC, TYDREAL, 25 }},
 
-    "dim", 		{ INTRGEN, 4, 22 },
-    "idim", 	{ INTRGEN, 2, 23 },
-    "ddim", 	{ INTRSPEC, TYDREAL, 25 },
+    {    "dprod", 	{ INTRSPEC, TYDREAL, 26 }},
 
-    "dprod", 	{ INTRSPEC, TYDREAL, 26 },
+    {    "len", 		{ INTRSPEC, TYLONG, 27 }},
+    {    "index", 	{ INTRSPEC, TYLONG, 29 }},
 
-    "len", 		{ INTRSPEC, TYLONG, 27 },
-    "index", 	{ INTRSPEC, TYLONG, 29 },
+    {    "imag", 	{ INTRGEN, 2, 31 }},
+    {    "aimag", 	{ INTRSPEC, TYREAL, 31, 0, 32 }},
+    {    "dimag", 	{ INTRSPEC, TYDREAL, 32 }},
 
-    "imag", 	{ INTRGEN, 2, 31 },
-    "aimag", 	{ INTRSPEC, TYREAL, 31, 0, 32 },
-    "dimag", 	{ INTRSPEC, TYDREAL, 32 },
+    {    "conjg", 	{ INTRGEN, 2, 33 }},
+    {    "dconjg", 	{ INTRSPEC, TYDCOMPLEX, 34, 1 }},
 
-    "conjg", 	{ INTRGEN, 2, 33 },
-    "dconjg", 	{ INTRSPEC, TYDCOMPLEX, 34, 1 },
+    {    "sqrt", 	{ INTRGEN, 4, 35 }},
+    {    "dsqrt", 	{ INTRSPEC, TYDREAL, 36 }},
+    {    "csqrt", 	{ INTRSPEC, TYCOMPLEX, 37, 0, 38 }},
+    {    "zsqrt", 	{ INTRSPEC, TYDCOMPLEX, 38, 1 }},
 
-    "sqrt", 	{ INTRGEN, 4, 35 },
-    "dsqrt", 	{ INTRSPEC, TYDREAL, 36 },
-    "csqrt", 	{ INTRSPEC, TYCOMPLEX, 37, 0, 38 },
-    "zsqrt", 	{ INTRSPEC, TYDCOMPLEX, 38, 1 },
+    {    "exp", 		{ INTRGEN, 4, 39 }},
+    {    "dexp", 	{ INTRSPEC, TYDREAL, 40 }},
+    {    "cexp", 	{ INTRSPEC, TYCOMPLEX, 41, 0, 42 }},
+    {    "zexp", 	{ INTRSPEC, TYDCOMPLEX, 42, 1 }},
 
-    "exp", 		{ INTRGEN, 4, 39 },
-    "dexp", 	{ INTRSPEC, TYDREAL, 40 },
-    "cexp", 	{ INTRSPEC, TYCOMPLEX, 41, 0, 42 },
-    "zexp", 	{ INTRSPEC, TYDCOMPLEX, 42, 1 },
+    {    "log", 		{ INTRGEN, 4, 43 }},
+    {    "alog", 	{ INTRSPEC, TYREAL, 43, 0, 44 }},
+    {    "dlog", 	{ INTRSPEC, TYDREAL, 44 }},
+    {    "clog", 	{ INTRSPEC, TYCOMPLEX, 45, 0, 46 }},
+    {    "zlog", 	{ INTRSPEC, TYDCOMPLEX, 46, 1 }},
 
-    "log", 		{ INTRGEN, 4, 43 },
-    "alog", 	{ INTRSPEC, TYREAL, 43, 0, 44 },
-    "dlog", 	{ INTRSPEC, TYDREAL, 44 },
-    "clog", 	{ INTRSPEC, TYCOMPLEX, 45, 0, 46 },
-    "zlog", 	{ INTRSPEC, TYDCOMPLEX, 46, 1 },
+    {    "log10", 	{ INTRGEN, 2, 47 }},
+    {    "alog10", 	{ INTRSPEC, TYREAL, 47, 0, 48 }},
+    {    "dlog10", 	{ INTRSPEC, TYDREAL, 48 }},
 
-    "log10", 	{ INTRGEN, 2, 47 },
-    "alog10", 	{ INTRSPEC, TYREAL, 47, 0, 48 },
-    "dlog10", 	{ INTRSPEC, TYDREAL, 48 },
+    {    "sin", 		{ INTRGEN, 4, 49 }},
+    {    "dsin", 	{ INTRSPEC, TYDREAL, 50 }},
+    {    "csin", 	{ INTRSPEC, TYCOMPLEX, 51, 0, 52 }},
+    {    "zsin", 	{ INTRSPEC, TYDCOMPLEX, 52, 1 }},
 
-    "sin", 		{ INTRGEN, 4, 49 },
-    "dsin", 	{ INTRSPEC, TYDREAL, 50 },
-    "csin", 	{ INTRSPEC, TYCOMPLEX, 51, 0, 52 },
-    "zsin", 	{ INTRSPEC, TYDCOMPLEX, 52, 1 },
+    {    "cos", 		{ INTRGEN, 4, 53 }},
+    {    "dcos", 	{ INTRSPEC, TYDREAL, 54 }},
+    {    "ccos", 	{ INTRSPEC, TYCOMPLEX, 55, 0, 56 }},
+    {    "zcos", 	{ INTRSPEC, TYDCOMPLEX, 56, 1 }},
 
-    "cos", 		{ INTRGEN, 4, 53 },
-    "dcos", 	{ INTRSPEC, TYDREAL, 54 },
-    "ccos", 	{ INTRSPEC, TYCOMPLEX, 55, 0, 56 },
-    "zcos", 	{ INTRSPEC, TYDCOMPLEX, 56, 1 },
+    {    "tan", 		{ INTRGEN, 2, 57 }},
+    {    "dtan", 	{ INTRSPEC, TYDREAL, 58 }},
 
-    "tan", 		{ INTRGEN, 2, 57 },
-    "dtan", 	{ INTRSPEC, TYDREAL, 58 },
+    {    "asin", 	{ INTRGEN, 2, 59 }},
+    {    "dasin", 	{ INTRSPEC, TYDREAL, 60 }},
 
-    "asin", 	{ INTRGEN, 2, 59 },
-    "dasin", 	{ INTRSPEC, TYDREAL, 60 },
+    {    "acos", 	{ INTRGEN, 2, 61 }},
+    {    "dacos", 	{ INTRSPEC, TYDREAL, 62 }},
 
-    "acos", 	{ INTRGEN, 2, 61 },
-    "dacos", 	{ INTRSPEC, TYDREAL, 62 },
+    {    "atan", 	{ INTRGEN, 2, 63 }},
+    {    "datan", 	{ INTRSPEC, TYDREAL, 64 }},
 
-    "atan", 	{ INTRGEN, 2, 63 },
-    "datan", 	{ INTRSPEC, TYDREAL, 64 },
+    {    "atan2", 	{ INTRGEN, 2, 65 }},
+    {    "datan2", 	{ INTRSPEC, TYDREAL, 66 }},
 
-    "atan2", 	{ INTRGEN, 2, 65 },
-    "datan2", 	{ INTRSPEC, TYDREAL, 66 },
+    {    "sinh", 	{ INTRGEN, 2, 67 }},
+    {    "dsinh", 	{ INTRSPEC, TYDREAL, 68 }},
 
-    "sinh", 	{ INTRGEN, 2, 67 },
-    "dsinh", 	{ INTRSPEC, TYDREAL, 68 },
+    {    "cosh", 	{ INTRGEN, 2, 69 }},
+    {    "dcosh", 	{ INTRSPEC, TYDREAL, 70 }},
 
-    "cosh", 	{ INTRGEN, 2, 69 },
-    "dcosh", 	{ INTRSPEC, TYDREAL, 70 },
+    {    "tanh", 	{ INTRGEN, 2, 71 }},
+    {    "dtanh", 	{ INTRSPEC, TYDREAL, 72 }},
 
-    "tanh", 	{ INTRGEN, 2, 71 },
-    "dtanh", 	{ INTRSPEC, TYDREAL, 72 },
-
-    "lge",		{ INTRSPEC, TYLOGICAL, 73},
-    "lgt",		{ INTRSPEC, TYLOGICAL, 75},
-    "lle",		{ INTRSPEC, TYLOGICAL, 77},
-    "llt",		{ INTRSPEC, TYLOGICAL, 79},
+    {    "lge",		{ INTRSPEC, TYLOGICAL, 73}},
+    {    "lgt",		{ INTRSPEC, TYLOGICAL, 75}},
+    {    "lle",		{ INTRSPEC, TYLOGICAL, 77}},
+    {    "llt",		{ INTRSPEC, TYLOGICAL, 79}},
 
 #if 0
-    "epbase",	{ INTRCNST, 4, 0 },
-    "epprec",	{ INTRCNST, 4, 4 },
-    "epemin",	{ INTRCNST, 2, 8 },
-    "epemax",	{ INTRCNST, 2, 10 },
-    "eptiny",	{ INTRCNST, 2, 12 },
-    "ephuge",	{ INTRCNST, 4, 14 },
-    "epmrsp",	{ INTRCNST, 2, 18 },
+    {    "epbase",	{ INTRCNST, 4, 0 }},
+    {    "epprec",	{ INTRCNST, 4, 4 }},
+    {    "epemin",	{ INTRCNST, 2, 8 }},
+    {    "epemax",	{ INTRCNST, 2, 10 }},
+    {    "eptiny",	{ INTRCNST, 2, 12 }},
+    {    "ephuge",	{ INTRCNST, 4, 14 }},
+    {    "epmrsp",	{ INTRCNST, 2, 18 }},
 #endif
 
-    "fpexpn",	{ INTRGEN, 4, 81 },
-    "fpabsp",	{ INTRGEN, 2, 85 },
-    "fprrsp",	{ INTRGEN, 2, 87 },
-    "fpfrac",	{ INTRGEN, 2, 89 },
-    "fpmake",	{ INTRGEN, 2, 91 },
-    "fpscal",	{ INTRGEN, 2, 93 },
+    {    "fpexpn",	{ INTRGEN, 4, 81 }},
+    {    "fpabsp",	{ INTRGEN, 2, 85 }},
+    {    "fprrsp",	{ INTRGEN, 2, 87 }},
+    {    "fpfrac",	{ INTRGEN, 2, 89 }},
+    {    "fpmake",	{ INTRGEN, 2, 91 }},
+    {    "fpscal",	{ INTRGEN, 2, 93 }},
 
-    "cdabs", 	{ INTRSPEC, TYDREAL,	13, 1, 0, 1 },
-    "cdsqrt", 	{ INTRSPEC, TYDCOMPLEX, 38, 1, 0, 1 },
-    "cdexp", 	{ INTRSPEC, TYDCOMPLEX, 42, 1, 0, 1 },
-    "cdlog", 	{ INTRSPEC, TYDCOMPLEX, 46, 1, 0, 1 },
-    "cdsin", 	{ INTRSPEC, TYDCOMPLEX, 52, 1, 0, 1 },
-    "cdcos", 	{ INTRSPEC, TYDCOMPLEX, 56, 1, 0, 1 },
+    {    "cdabs", 	{ INTRSPEC, TYDREAL,	13, 1, 0, 1 }},
+    {    "cdsqrt", 	{ INTRSPEC, TYDCOMPLEX, 38, 1, 0, 1 }},
+    {    "cdexp", 	{ INTRSPEC, TYDCOMPLEX, 42, 1, 0, 1 }},
+    {    "cdlog", 	{ INTRSPEC, TYDCOMPLEX, 46, 1, 0, 1 }},
+    {    "cdsin", 	{ INTRSPEC, TYDCOMPLEX, 52, 1, 0, 1 }},
+    {    "cdcos", 	{ INTRSPEC, TYDCOMPLEX, 56, 1, 0, 1 }},
 
-    "iand",		{ INTRBOOL, TYUNKNOWN, OPBITAND, 0, 0, 2 },
-    "ior",		{ INTRBOOL, TYUNKNOWN, OPBITOR,  0, 0, 2 },
-    "ieor",		{ INTRBOOL, TYUNKNOWN, OPBITXOR, 0, 0, 2 },
+    {    "iand",		{ INTRBOOL, TYUNKNOWN, OPBITAND, 0, 0, 2 }},
+    {    "ior",		{ INTRBOOL, TYUNKNOWN, OPBITOR,  0, 0, 2 }},
+    {    "ieor",		{ INTRBOOL, TYUNKNOWN, OPBITXOR, 0, 0, 2 }},
 
-    "btest",	{ INTRBGEN, TYLOGICAL, OPBITTEST,0, 0, 2 },
-    "ibclr",	{ INTRBGEN, TYUNKNOWN, OPBITCLR, 0, 0, 2 },
-    "ibset",	{ INTRBGEN, TYUNKNOWN, OPBITSET, 0, 0, 2 },
-    "ibits",	{ INTRBGEN, TYUNKNOWN, OPBITBITS,0, 0, 2 },
-    "ishft",	{ INTRBGEN, TYUNKNOWN, OPBITSH,  0, 0, 2 },
-    "ishftc",	{ INTRBGEN, TYUNKNOWN, OPBITSHC, 0, 0, 2 },
-
-    "" };
+    {    "btest",	{ INTRBGEN, TYLOGICAL, OPBITTEST,0, 0, 2 }},
+    {    "ibclr",	{ INTRBGEN, TYUNKNOWN, OPBITCLR, 0, 0, 2 }},
+    {    "ibset",	{ INTRBGEN, TYUNKNOWN, OPBITSET, 0, 0, 2 }},
+    {    "ibits",	{ INTRBGEN, TYUNKNOWN, OPBITBITS,0, 0, 2 }},
+    {    "ishft",	{ INTRBGEN, TYUNKNOWN, OPBITSH,  0, 0, 2 }},
+    {    "ishftc",	{ INTRBGEN, TYUNKNOWN, OPBITSHC, 0, 0, 2 }},
+    {""} };
 
 
 LOCAL struct Specblock
@@ -497,14 +496,7 @@ r8fix(Void)	/* adjust tables for -r8 */
 
 
 expptr
-#ifdef KR_headers
-intrcall(np, argsp, nargs)
-     Namep np;
-     struct Listblock *argsp;
-     int nargs;
-#else
-     intrcall(Namep np, struct Listblock *argsp, int nargs)
-#endif
+intrcall(Namep np, struct Listblock *argsp, int nargs)
 {
   int i, rettype;
   Addrp ap;
@@ -721,11 +713,11 @@ intrcall(np, argsp, nargs)
 
     case INTRGEN:
       sp = spectab + f3field;
-      if(no66flag)
+      if(no66flag) {
 	if(sp->atype == mtype)
 	  goto specfunct;
 	else err66("generic function");
-
+      }
       for(i=0; i<f2field ; ++i)
 	if(sp->atype == mtype)
 	  goto specfunct;
@@ -761,7 +753,7 @@ intrcall(np, argsp, nargs)
       fixargs (NO, argsp);
       cast_args (mtype, argsp -> listp);
 
-      if(q = Inline((int)(sp-spectab), mtype, argsp->listp))
+      if((q = Inline((int)(sp-spectab), mtype, argsp->listp)))
 	{
 	  frchain( &(argsp->listp) );
 	  free( (charptr) argsp);
@@ -771,7 +763,7 @@ intrcall(np, argsp, nargs)
 	    /* C library routines that return double... */
 	    /* sp->rtype might be TYREAL */
 	    ap = builtin(sp->rtype,
-			 callbyvalue[sp->othername], 1);
+			 callbyvalue[(int)sp->othername], 1);
 	    q = fixexpr((Exprp)
 			mkexpr(OPCCALL, (expptr)ap, (expptr)argsp) );
 	  } else {
@@ -817,12 +809,7 @@ intrcall(np, argsp, nargs)
 
 
 int
-#ifdef KR_headers
-intrfunct(s)
-     char *s;
-#else
-     intrfunct(char *s)
-#endif
+intrfunct(char *s)
 {
   register struct Intrblock *p;
   int i;
@@ -832,7 +819,7 @@ intrfunct(s)
     {
       if( !strcmp(s, p->intrfname) )
 	{
-	  if (i = p->intrval.extflag) {
+	  if ((i = p->intrval.extflag)) {
 	    if (i & intr_omit)
 	      return 0;
 	    if (noextflag)
@@ -854,12 +841,7 @@ intrfunct(s)
 
 
 Addrp
-#ifdef KR_headers
-intraddr(np)
-     Namep np;
-#else
-     intraddr(Namep np)
-#endif
+intraddr(Namep np)
 {
   Addrp q;
   register struct Specblock *sp;
@@ -903,17 +885,11 @@ intraddr(np)
 
 
 void
-#ifdef KR_headers
-cast_args(maxtype, args)
-     int maxtype;
-     chainp args;
-#else
-     cast_args(int maxtype, chainp args)
-#endif
+cast_args(int maxtype, chainp args)
 {
   for (; args; args = args -> nextp) {
     expptr e = (expptr) args->datap;
-    if (e -> headblock.vtype != maxtype)
+    if (e -> headblock.vtype != maxtype) {
       if (e -> tag == TCONST)
 	args->datap = (char *) mkconv(maxtype, e);
       else {
@@ -922,20 +898,13 @@ cast_args(maxtype, args)
 	puteq(cpexpr((expptr)temp), e);
 	args->datap = (char *)temp;
       } /* else */
+    }
   } /* for */
 } /* cast_args */
 
 
-
 expptr
-#ifdef KR_headers
-Inline(fno, type, args)
-     int fno;
-     int type;
-     struct Chain *args;
-#else
-     Inline(int fno, int type, struct Chain *args)
-#endif
+Inline(int fno, int type, struct Chain *args)
 {
   register expptr q, t, t1;
 

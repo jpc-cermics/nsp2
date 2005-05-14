@@ -273,26 +273,21 @@ LOCAL char **io_fields;
 #define zork(n,t) n, sizeof(n)/sizeof(char *) - 1, t
 
 LOCAL io_setup io_stuff[] = {
-  zork(cilist_names, TYCILIST),	/* external read/write */
-  zork(inlist_names, TYINLIST),	/* inquire */
-  zork(olist_names,  TYOLIST),	/* open */
-  zork(cllist_names, TYCLLIST),	/* close */
-  zork(alist_names,  TYALIST),	/* rewind */
-  zork(alist_names,  TYALIST),	/* backspace */
-  zork(alist_names,  TYALIST),	/* endfile */
-  zork(icilist_names,TYICILIST),	/* internal read */
-  zork(icilist_names,TYICILIST)	/* internal write */
+  {zork(cilist_names, TYCILIST)},	/* external read/write */
+  {zork(inlist_names, TYINLIST)},	/* inquire */
+  {zork(olist_names,  TYOLIST)},	/* open */
+  {zork(cllist_names, TYCLLIST)},	/* close */
+  {zork(alist_names,  TYALIST)},	/* rewind */
+  {zork(alist_names,  TYALIST)},	/* backspace */
+  {zork(alist_names,  TYALIST)},	/* endfile */
+  {zork(icilist_names,TYICILIST)},	/* internal read */
+  {zork(icilist_names,TYICILIST)}	/* internal write */
 };
 
 #undef zork
 
 int
-#ifdef KR_headers
-fmtstmt(lp)
-     register struct Labelblock *lp;
-#else
-     fmtstmt(register struct Labelblock *lp)
-#endif
+fmtstmt(register struct Labelblock *lp)
 {
   if(lp == NULL)
     {
@@ -391,11 +386,7 @@ setfmt(struct Labelblock *lp)
 
 
 void
-#ifdef KR_headers
 startioctl()
-#else
-     startioctl()
-#endif
 {
   register int i;
 
@@ -428,18 +419,18 @@ endioctl(Void)
 
   ioerrlab = ioendlab = skiplab = jumplab = 0;
 
-  if((p = V(IOSEND)))
+  if((p = V(IOSEND))) {
     if(ISICON(p))
       execlab(ioendlab = p->constblock.Const.ci);
     else
       err("bad end= clause");
-
-  if((p = V(IOSERR)))
+  }
+  if((p = V(IOSERR))) {
     if(ISICON(p))
       execlab(ioerrlab = p->constblock.Const.ci);
     else
       err("bad err= clause");
-
+  }
   if(IOSTP)
     if(IOSTP->tag!=TADDR || ! ISINT(IOSTP->addrblock.vtype) )
       {
@@ -565,13 +556,7 @@ iocname(Void)
 
 
 void
-#ifdef KR_headers
-ioclause(n, p)
-     register int n;
-     register expptr p;
-#else
-     ioclause(register int n, register expptr p)
-#endif
+ioclause(register int n, register expptr p)
 {
   struct Ioclist *iocp;
 
@@ -638,12 +623,7 @@ ioclause(n, p)
 /* io list item */
 
 void
-#ifdef KR_headers
-doio(list)
-     chainp list;
-#else
-     doio(chainp list)
-#endif
+doio(chainp list)
 {
   if(ioformatted == NAMEDIRECTED)
     {
@@ -665,12 +645,7 @@ doio(list)
 
 
 LOCAL void
-#ifdef KR_headers
-doiolist(p0)
-     chainp p0;
-#else
-     doiolist(chainp p0)
-#endif
+doiolist(chainp p0)
 {
   chainp p;
   register tagptr q;
@@ -764,13 +739,7 @@ int typeconv[TYERROR+1] = {
 };
 
 LOCAL void
-#ifdef KR_headers
-putio(nelt, addr)
-     expptr nelt;
-     register expptr addr;
-#else
-     putio(expptr nelt, register expptr addr)
-#endif
+putio(expptr nelt, register expptr addr)
 {
   int type;
   register expptr q;
@@ -851,12 +820,7 @@ endio(Void)
 
 
 LOCAL void
-#ifdef KR_headers
-putiocall(q)
-     register expptr q;
-#else
-     putiocall(register expptr q)
-#endif
+putiocall(register expptr q)
 {
   int tyintsave;
 
@@ -878,13 +842,7 @@ putiocall(q)
 }
 
 void
-#ifdef KR_headers
-fmtname(np, q)
-     Namep np;
-     register Addrp q;
-#else
-     fmtname(Namep np, register Addrp q)
-#endif
+fmtname(Namep np, register Addrp q)
 {
   register int k;
   register char *s, *t;
@@ -907,12 +865,7 @@ fmtname(np, q)
 }
 
 LOCAL Addrp
-#ifdef KR_headers
-asg_addr(p)
-     union Expression *p;
-#else
-     asg_addr(union Expression *p)
-#endif
+asg_addr(union Expression *p)
 {
   register Addrp q;
 
@@ -934,8 +887,8 @@ startrw(Void)
 {
   register expptr p;
   register Namep np;
-  register Addrp unitp, fmtp, recp;
-  register expptr nump;
+  register Addrp unitp=NULL, fmtp, recp=NULL;
+  register expptr nump=NULL;
   int iostmt1;
   flag intfile, sequential, ok, varfmt;
   struct io_setup *ios;
@@ -1051,7 +1004,7 @@ startrw(Void)
       if(p->headblock.vtype == TYCHAR
 	 /* Since we allow write(6,n)		*/
 	 /* we may as well allow write(6,n(2))	*/
-	 || p->tag == TADDR && ISINT(p->addrblock.vtype))
+	 || (p->tag == TADDR && ISINT(p->addrblock.vtype)))
 	{
 	  if( ! isstatic(p) )
 	    statstruct = NO;
@@ -1262,12 +1215,7 @@ dofinquire(Void)
 
 
 LOCAL void
-#ifdef KR_headers
-dofmove(subname)
-     char *subname;
-#else
-     dofmove(char *subname)
-#endif
+dofmove(char *subname)
 {
   register expptr p;
 
@@ -1283,18 +1231,11 @@ dofmove(subname)
 static int ioset_assign = OPASSIGN;
 
 LOCAL void
-#ifdef KR_headers
-ioset(type, offset, p)
-     int type;
-     int offset;
-     register expptr p;
-#else
-     ioset(int type, int offset, register expptr p)
-#endif
+ioset(int type, int offset, register expptr p)
 {
   offset /= SZLONG;
   if(statstruct && ISCONST(p)) {
-    register char *s;
+    register char *s=NULL;
     switch(type) {
     case TYADDR:	/* stmt label */
       s = "fmt_";
@@ -1350,13 +1291,7 @@ ioset(type, offset, p)
 
 
 LOCAL void
-#ifdef KR_headers
-iosetc(offset, p)
-     int offset;
-     register expptr p;
-#else
-     iosetc(int offset, register expptr p)
-#endif
+iosetc(int offset, register expptr p)
 {
   if(p == NULL)
     ioset(TYADDR, offset, ICON(0) );
@@ -1371,13 +1306,7 @@ iosetc(offset, p)
 
 
 LOCAL void
-#ifdef KR_headers
-ioseta(offset, p)
-     int offset;
-     register Addrp p;
-#else
-     ioseta(int offset, register Addrp p)
-#endif
+ioseta(int offset, register Addrp p)
 {
   char *s, *s1;
   static char who[] = "ioseta";
@@ -1462,13 +1391,7 @@ ioseta(offset, p)
 
 
 LOCAL void
-#ifdef KR_headers
-iosetip(i, offset)
-     int i;
-     int offset;
-#else
-     iosetip(int i, int offset)
-#endif
+iosetip(int i, int offset)
 {
   register expptr p;
 
@@ -1488,14 +1411,7 @@ iosetip(i, offset)
 
 
 LOCAL void
-#ifdef KR_headers
-iosetlc(i, offp, offl)
-     int i;
-     int offp;
-     int offl;
-#else
-     iosetlc(int i, int offp, int offl)
-#endif
+iosetlc(int i, int offp, int offl)
 {
   register expptr p;
   if( (p = V(i)) && p->headblock.vtype==TYCHAR)

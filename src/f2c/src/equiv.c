@@ -309,14 +309,7 @@ eqvcommon(struct Equivblock *p, int comno, ftnint comoffset)
  */
 
 LOCAL void
-#ifdef KR_headers
-eqveqv(nvarno, ovarno, delta)
-     int nvarno;
-     int ovarno;
-     ftnint delta;
-#else
-     eqveqv(int nvarno, int ovarno, ftnint delta)
-#endif
+eqveqv(int nvarno, int ovarno, ftnint delta)
 {
   register struct Equivblock *neweqv, *oldeqv;
   register Namep np;
@@ -347,12 +340,7 @@ eqveqv(nvarno, ovarno, delta)
 
 
 void
-#ifdef KR_headers
-freqchain(p)
-     register struct Equivblock *p;
-#else
-     freqchain(register struct Equivblock *p)
-#endif
+freqchain(register struct Equivblock *p)
 {
   register struct Eqvchain *q, *oq;
 
@@ -372,12 +360,7 @@ freqchain(p)
    list) */
 
 LOCAL int
-#ifdef KR_headers
-nsubs(p)
-     register struct Listblock *p;
-#else
-     nsubs(register struct Listblock *p)
-#endif
+nsubs(register struct Listblock *p)
 {
   register int n;
   register chainp q;
@@ -391,11 +374,7 @@ nsubs(p)
 }
 
 struct Primblock *
-#ifdef KR_headers
-primchk(e) expptr e;
-#else
 primchk(expptr e)
-#endif
 {
   if (e->headblock.tag != TPRIM) {
     err("Invalid name in EQUIVALENCE.");

@@ -98,17 +98,8 @@ extern int badargs;
 
 
 boolean
-#ifdef KR_headers
-parse_args(argc, argv, table, entries, others, other_count)
-     int argc;
-     char **argv;
-     arg_info *table;
-     int entries;
-     char **others;
-     int other_count;
-#else
-     parse_args(int argc, char **argv, arg_info *table, int entries, char **others, int other_count)
-#endif
+parse_args(int argc, char **argv, arg_info *table, int entries, char **others, int other_count)
+
 {
   boolean result;
 
@@ -197,14 +188,8 @@ parse_args(argc, argv, table, entries, others, other_count)
 
 
 boolean
-#ifdef KR_headers
-arg_verify(argv, table, entries)
-     char **argv;
-     arg_info *table;
-     int entries;
-#else
-     arg_verify(char **argv, arg_info *table, int entries)
-#endif
+arg_verify(char **argv, arg_info *table, int entries)
+
 {
   int i;
   char *this_program = "";
@@ -283,16 +268,7 @@ arg_verify(argv, table, entries)
    in   length   ONLY IF a match was found.   */
 
 int
-#ifdef KR_headers
-match_table(norm_input, table, entries, use_prefix, length)
-     register char *norm_input;
-     arg_info *table;
-     int entries;
-     boolean use_prefix;
-     int *length;
-#else
-     match_table(register char *norm_input, arg_info *table, int entries, boolean use_prefix, int *length)
-#endif
+match_table(register char *norm_input, arg_info *table, int entries, boolean use_prefix, int *length)
 {
   char low_input[MAX_INPUT_SIZE];
   register int i;
@@ -335,15 +311,8 @@ match_table(norm_input, table, entries, use_prefix, length)
 */
 
 static int
-#ifdef KR_headers
-match(norm_input, low_input, entry, use_prefix)
-     char *norm_input;
-     char *low_input;
-     arg_info *entry;
-     boolean use_prefix;
-#else
-     match(char *norm_input, char *low_input, arg_info *entry, boolean use_prefix)
-#endif
+match(char *norm_input, char *low_input, arg_info *entry, boolean use_prefix)
+
 {
   char *norm_prefix = arg_prefix (*entry);
   char *norm_string = arg_string (*entry);
@@ -398,13 +367,7 @@ match(norm_input, low_input, entry, use_prefix)
 
 
 static char *
-#ifdef KR_headers
-lower_string(dest, src)
-     char *dest;
-     char *src;
-#else
-     lower_string(char *dest, char *src)
-#endif
+lower_string(char *dest, char *src)
 {
   char *result = dest;
   register int c;
@@ -412,7 +375,7 @@ lower_string(dest, src)
   if (dest == NULL || src == NULL)
     result = NULL;
   else
-    while (*dest++ = (c = *src++) >= 'A' && c <= 'Z' ? tolower(c) : c);
+    while ((*dest++ = (c = *src++) >= 'A' && c <= 'Z' ? tolower(c) : c));
 
   return result;
 } /* lower_string */
@@ -421,13 +384,7 @@ lower_string(dest, src)
 /* arg_parse -- returns the number of characters parsed for this entry */
 
 static int
-#ifdef KR_headers
-arg_parse(str, entry)
-     char *str;
-     arg_info *entry;
-#else
-     arg_parse(char *str, arg_info *entry)
-#endif
+arg_parse(char *str, arg_info *entry)
 {
   int length = 0;
 
@@ -457,16 +414,7 @@ arg_parse(str, entry)
 
 
 static int
-#ifdef KR_headers
-put_one_arg(type, str, store, prefix, string)
-     int type;
-     char *str;
-     char **store;
-     char *prefix;
-     char *string;
-#else
-     put_one_arg(int type, char *str, char **store, char *prefix, char *string)
-#endif
+put_one_arg(int type, char *str, char **store, char *prefix, char *string)
 {
   int length = 0;
   long L;
@@ -536,13 +484,7 @@ put_one_arg(type, str, store, prefix, string)
 
 
 void
-#ifdef KR_headers
-init_store(table, entries)
-     arg_info *table;
-     int entries;
-#else
-     init_store(arg_info *table, int entries)
-#endif
+init_store(arg_info *table, int entries)
 {
   int index;
 
