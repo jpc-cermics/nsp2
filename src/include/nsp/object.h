@@ -1,15 +1,20 @@
 #ifndef NSP_INC_TYPE_OBJECT 
 #define NSP_INC_TYPE_OBJECT 
 
-/*--------------------------------------
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
+
+/*
  * base type (NspTypeObject) 
- *--------------------------------------*/
+ */
 
 #include "nsp/math.h" 
 
-typedef struct  _nsp_object  NspObject; 
-typedef struct  _attrtab AttrTab;
-typedef struct  _methodtab NspMethods;
+typedef struct  _NspObject  NspObject; 
+typedef struct  _AttrTab AttrTab;
+typedef struct  _NspMethods NspMethods;
 
 typedef void (*print_fun)(void *); 
 typedef unsigned int NspTypeId ;   
@@ -36,7 +41,7 @@ typedef void *(new_func) (void);
 typedef void *(attrs_func) (void);
 typedef void *(create_func) (void);
 
-typedef struct _nsp_type_base  NspTypeBase ;
+typedef struct _NspTypeBase  NspTypeBase ;
 
 #define NSP_TYPE_OBJECT__ \
   NspTypeId id ;                      /* each type has a unique id */ \
@@ -49,12 +54,16 @@ typedef struct _nsp_type_base  NspTypeBase ;
   attrs_func *set_attrs;	      /* get attribute wrapper */ \
   methods_func *methods;	      /* methods */ \
 
-struct _nsp_type_base {
+struct _NspTypeBase {
   NSP_TYPE_OBJECT__ 
 } ;
 
-typedef struct _nsp_type_object {
+typedef struct _NspTypeObject NspTypeObject;
+
+struct _NspTypeObject {
+  /*< private >*/
   NSP_TYPE_OBJECT__ 
+  /*< public >*/
   print_func *pr ;		      /* printing*/   
   dealloc_func *dealloc;              /* dealloc */  
   copy_func *copy ;                   /* copy object */  
@@ -73,7 +82,8 @@ typedef struct _nsp_type_object {
   save_func *save;                    /* file save */
   load_func *load;                    /* file load */
   create_func *create;	      	      /* creates a new object  */ 
-}  NspTypeObject;
+};
+
 
 /* cast a type instance to base type */
 
@@ -94,7 +104,6 @@ struct _registered_types {
   struct _registered_types *next;
 };
 
-
 extern registered_types *nsp_types;
 extern int nsp_register_type(void *type);
 extern int nsp_no_type_id; /* this can no be a type id : used in save/load */
@@ -110,7 +119,7 @@ typedef enum { T_BASE, T_DERIVED } type_mode;
 
 /* typedef struct  _nsp_object  NspObject; */
 
-struct  _nsp_object { 
+struct  _NspObject {
   char *name;			/* object name: must be first */
   NspTypeObject *type;
   NspTypeBase *basetype;        /* type of base child  */
@@ -159,11 +168,11 @@ NspTypeBase *check_implements(void *obj,NspTypeId id);
  * we want to pass Stack by value 
  *-----------------------------------------------------------*/
 
-typedef struct _stack Stack;
+typedef struct _Stack Stack;
 
 typedef void stack_error(Stack *S,char *fmt,...);
 
-struct _stack {
+struct _Stack {
   char *fname; /* function currently evaluated **/
   char *file_name ; /* current evaluated file **/
   int first;   /* position of first argument to be used **/
@@ -196,25 +205,12 @@ extern NspObject * int_get_failed(NspObject *self, char *attr);
 extern NspObject * int_get_object_failed(NspObject *self, char *attr);
 extern int int_set_failed(NspObject *self,char *attr, NspObject *val);
 
-
-/* typedef struct _attrtab AttrTab;  */
-
-struct _attrtab {
+struct _AttrTab {
   char *name;
   attr_get_function *get;
   attr_set_function *set;
   attr_get_object_function *get_object;
 };
-
-/*
-typedef NspObject * (attr_get_function_old) (void *o,Stack stack,int rhs,int opt,int lhs);
-
-typedef struct _attrtab_old {
-  char *name;
-  attr_get_function_old *fonc;
-} AttrTab_old ;
-*/
-
 
 /* utility function for attributes */
 
@@ -241,17 +237,13 @@ extern int int_object_create(Stack stack, int rhs, int opt, int lhs);
 
 typedef int nsp_method(void *o,Stack stack,int rhs,int opt,int lhs);
 
-/* typedef struct  _methodtab NspMethods; */
-
-struct _methodtab {
+struct _NspMethods {
   char *name;
   nsp_method *meth; 
 };
 
 extern int method_search(char *key, NspMethods *Table);
 int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack stack, int rhs, int opt, int lhs);
-
-
 
 /*----------------------------------------------------------
  NOOBJ     : used for load/save 

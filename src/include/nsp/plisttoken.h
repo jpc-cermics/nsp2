@@ -6,9 +6,6 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-#ifndef PLISTTOKEN_H
-#define PLISTTOKEN_H
-
 /****************************
  * BASIC TYPES
  *****************************/
@@ -133,4 +130,4 @@
 
 
 #endif 
-#endif
+
