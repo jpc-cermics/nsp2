@@ -33,9 +33,6 @@
 #include "nsp/matint.h"
 #include "nsp/gsort-p.h"
 
-/* FIXME: should be here as private */
-extern matint_redim nsp_matrix_redim_iface; 
-static NspMethods *matint_get_methods(void);
 
 /* 
  * NspMatrix inherits from NspObject 
@@ -106,15 +103,20 @@ new_type_matrix (type_mode mode)
    * Matrix interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
-   * 
-   * Matrix implements Matint 
+   */
+
+  /*
+   * Matrix implements Matint the matrix interface 
+   * which is common to object that behaves like matrices.
    */
 
   mati = new_type_matint(T_DERIVED);
+  mati->methods = matint_get_methods; 
+  mati->redim = (matint_redim *) nsp_matrix_redim; 
+  mati->resize = (matint_resize  *) nsp_matrix_resize;
+  mati->free_elt = (matint_free_elt *) 0; /* nothing to do */
+
   type->interface = (NspTypeBase *) mati;
-  
-  mati->methods = matint_get_methods ; 
-  mati->redim = (matint_redim *) nsp_matrix_redim_iface; 
 
   if (nsp_type_matrix_id == 0)
     {
@@ -685,12 +687,12 @@ Bounds (const NspMatrix * A, int * imin, int * imax)
 }
 
 /**
- * nsp_complement_for_deletions
+ * nsp_complement_for_deletions:
  * @mn: upper bound for indices stored in @Elts 
  * @Elts: a #NspMatrix used as a vector of indices 
  * @Count: is the real number of indices (@Count < @Elts->mn in case of duplicated indices)
  *
- * This utility routine is used for deletions operations (A(ind,:)=[], A(:,ind)=[], A(ind)=[],
+ * used for deletions operations (A(ind,:)=[], A(:,ind)=[], A(ind)=[],
  * when elements of the matrix A are String, Poly, Cells, ... 
  *
  * It performs:
@@ -699,10 +701,14 @@ Bounds (const NspMatrix * A, int * imin, int * imax)
  *          flag[i] = 1  if not
  *   2/  the verification of bounds constraints on indices
  * 
- *  returns  the array flag 
- *           or NULL in case of alloc pb or if indices don't respect bound constraints
- *           (in this last case an error message is issued and the array ind is freed).
- *  Routine introduced by Bruno Pincon (mai 2005)
+ * In case of alloc pb or if indices don't respect bound constraints
+ * %NULL is returned (an error message is issued and the array ind is freed).
+ * Else an allocated int array is returned. A zero entry is 
+ * set in the returned array for each entry to be deleted.
+ *
+ * Routine introduced by Bruno Pincon (mai 2005)
+ * 
+ * returns  an int arry or %NULL
  */
 
 int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count)
@@ -734,12 +740,12 @@ int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count)
 }
 
 /**
- * nsp_indices_for_deletions
+ * nsp_indices_for_deletions:
  * @mn: upper bound for indices stored in @Elts 
  * @Elts: a #NspMatrix used as a vector of indices 
  * @Count: is the real number of indices (@Count < @Elts->mn in case of duplicated indices)
  *
- * This utility routine is used for deletions operations (A(ind,:)=[], A(:,ind)=[], A(ind)=[],
+ * used for deletions operations (A(ind,:)=[], A(:,ind)=[], A(ind)=[],
  * when elements of A are of fixed size (that is for simple Matrix, Boolean Matrix, 
  * Maxplus Matrix,...)
  * It performs:
@@ -747,12 +753,12 @@ int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count)
  *   2/  re-ordering indices if needed 
  *   3/  verification of bounds constraints on indices
  *   4/  in case of duplicated indices it compress the array
+ *  CAUTION : on output indices are 0-based (while they are 1-based in @Elts).
  * 
  *  returns  the (int) array of indices  ind[0..Count-1] being in strict increasing order.
  *           or NULL in case of alloc pb or if indices don't respect bound constraints
  *           (in this last case an error message is issued and the array ind is freed).
  *
- *  CAUTION : on output indices are 0-based (while they are 1-based in @Elts).
  */
 
 int *nsp_indices_for_deletions(int mn, const NspMatrix *Elts, int *Count)
@@ -3959,45 +3965,4 @@ Matrix_Interf_Info (int i, char **fname, function (**f))
   *fname = Matrix_func[i].name;
   *f = Matrix_func[i].fonc;
 }
-
-/*
- * On trouve dans ce qui suit 
- * redim qui est implémenté en tant que fonction d'une interface 
- */
-
-/*
- * implementation of the Matint interface 
- * function redim 
- */ 
-
-int nsp_matrix_redim_iface(void *M,int m,int n)
-{
-  return nsp_matrix_redim((NspMatrix *)M,m,n);
-}
-
-
-/* 
- * method redim[m,n] at nsp level 
- * XXX: On aimerait bien factoriser ce qui suit en 
- * n'etant pas obligé de le recopier pour chaque 
- * fonction qui implemente le meme interface 
- */
-
-static int int_matint_redim(NspMatrix *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int m1, n1;
-  CheckRhs (2,2);
-  CheckLhs (0,0);
-  if (GetScalarInt (stack, 1, &m1) == FAIL)    return RET_BUG;
-  if (GetScalarInt (stack, 2, &n1) == FAIL)    return RET_BUG;
-  if (nsp_matrix_redim (self, m1, n1) != OK)   return RET_BUG;
-  return 0;
-}
-
-static NspMethods matint_methods[] = {
-  {"redim",(nsp_method *) int_matint_redim},
-  { NULL, NULL}
-};
-
-static NspMethods *matint_get_methods(void) { return matint_methods;};
 
