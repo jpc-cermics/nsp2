@@ -28,6 +28,7 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
+#include "nsp/matint.h"
 
 /*
  * NspSMatrix inherits from NspObject 
@@ -39,6 +40,7 @@ int nsp_type_smatrix_init();
 
 NspTypeSMatrix *new_type_smatrix(type_mode mode)
 {
+  NspTypeMatint *mati;/* interface */
   NspTypeSMatrix *type = NULL;
   NspTypeObject *top;
   if ( nsp_type_smatrix != 0 && mode == T_BASE )
@@ -86,7 +88,19 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
-  
+
+  /*
+   * Matrix implements Matint the matrix interface 
+   * which is common to object that behaves like matrices.
+   */
+
+  mati = new_type_matint(T_DERIVED);
+  mati->methods = matint_get_methods; 
+  mati->redim = (matint_redim *) nsp_smatrix_redim; 
+  mati->resize = (matint_resize  *) nsp_smatrix_resize; 
+  mati->free_elt = (matint_free_elt *) nsp_string_destroy;
+  type->interface = (NspTypeBase *) mati;
+
   if ( nsp_type_smatrix_id == 0 ) 
     {
       /* 
