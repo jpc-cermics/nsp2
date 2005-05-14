@@ -24,11 +24,15 @@
 #define  Matint_Private 
 #include "nsp/object.h"
 #include "nsp/matint.h" 
+#include "nsp/interf.h"
 
 /* 
- * interface NspMatint 
+ * Interface NspMatint 
  * FIXME: should contains methods which are to be implemented 
- * by all Objects which behaves like matrices. 
+ *        by all Objects which behaves like matrices. 
+ * the only method actually implemented is redim 
+ * Note that the interface is to be used at nsp level and 
+ * internally.
  */
 
 int nsp_type_matint_id=0;
@@ -76,4 +80,47 @@ NspTypeMatint *new_type_matint(type_mode mode)
       return type;
     }
 }
+
+/* 
+ * method redim 
+ * A.redim[m,n] at nsp level 
+ *   i.e an interface for redim
+ *   this interface is in the methods table of the interface matint.
+ *   we call the associated redim function which is supposed to be
+ *   implemented in the matint interface. 
+ */
+
+static int int_matint_redim(NspMatrix *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspTypeBase *type;
+  int m1, n1;
+  CheckRhs (2,2);
+  CheckLhs (0,0);
+  if (GetScalarInt (stack, 1, &m1) == FAIL)    return RET_BUG;
+  if (GetScalarInt (stack, 2, &n1) == FAIL)    return RET_BUG;
+  /* interface is supposed to be initialized 
+   *  nsp_type_matint= new_type_matint(T_BASE); 
+   */
+  /* search nsp_type_matint interface which is implemented 
+   * by self 
+   * FIXME: note that we have already searched for matint 
+   *        before calling this function: maybe we should 
+   *        add here the good type in the arg list ? ... 
+   */
+  if (( type = check_implements(self,nsp_type_matint_id)) == NULL )
+    {
+      Scierror("Object do not implements matint interface\n");
+      return RET_BUG;
+    }
+  if ( MAT_INT(type)->redim(self,m1,n1) != OK) return RET_BUG;
+  return 0;
+}
+
+static NspMethods matint_methods[] = {
+  {"redim",(nsp_method *) int_matint_redim},
+  { NULL, NULL}
+};
+
+
+NspMethods *matint_get_methods(void) { return matint_methods;};
 

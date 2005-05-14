@@ -1436,6 +1436,9 @@ static int int_object_length(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * FIXME: just here to test the matrix interface 
+ * the redim function can be factorized here 
+ * it calls the correct redim function for objects 
+ * which implements the matint interface.
  */
 
 #include <nsp/matint.h>
