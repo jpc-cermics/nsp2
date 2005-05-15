@@ -2557,12 +2557,14 @@ static int int_mp_wrap1(Stack stack, int rhs, int opt, int lhs,function *f)
   register NspMaxpMatrix *Mp;
   CheckRhs(1,1);
   if ((Mp=GetMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
-  /* cast without copy */
+  /* cast without copy : */
   nsp_mpmatrix_cast_to_matrix(Mp);
   /* call same interface for matrix */
   rep = (*f)(stack,rhs,opt,lhs);
   /* always recast back even if an error occured */
   nsp_matrix_cast_to_mpmatrix((NspMatrix *) NthObj(1));
+  /* we have to reset Mp to mpmatrix */
+  nsp_matrix_cast_to_mpmatrix((NspMatrix *) Mp);
   return rep;
 }
 
