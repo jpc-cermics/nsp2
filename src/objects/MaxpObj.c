@@ -637,23 +637,6 @@ int int_mp2m(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Copy of a Matrix 
- * The copy has  name NVOID
- * returns NULLMAXPMAT on failure 
- */
-
-int int_mpcopy(Stack stack, int rhs, int opt, int lhs)
-{
-  NspMaxpMatrix *M1,*M2;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if (( M1 = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-  if (( M2 = nsp_mpmatrix_copy(M1)) == NULLMAXPMAT) return RET_BUG;
-  MoveObj(stack,1,(NspObject *)M2);
-  return 1;  
-}
-
-/*
  * Change a matrix of Real type to Imaginary type 
  * The imag part is not initialized 
  */
@@ -1938,6 +1921,7 @@ int int_mp2latextab(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+
 /*
  *  A=op(A) 
  */
@@ -1945,204 +1929,6 @@ int int_mp2latextab(Stack stack, int rhs, int opt, int lhs)
 typedef int (*M11) (NspMatrix *A);
 
 /* generic function for ones,rand,eyes */
- 
-static int int_mp_gen11(Stack stack, int rhs, int opt, int lhs, M11 F)
-{
-  NspMaxpMatrix *HMat;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if ((HMat=GetMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
-  if ( HMat->mn == 0) return 1;
-  if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
-  if (( (*F)((NspMatrix *) HMat)) < 0) return RET_BUG;
-  NSP_OBJECT(HMat)->ret_pos = 1;
-  return 1;
-}
-
-typedef void (*VM11) (NspMatrix *A); 
-
-static int int_mp_genv11(Stack stack, int rhs, int opt, int lhs, VM11 F)
-{
-  NspMaxpMatrix *HMat;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if ((HMat=GetMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
-  if ( HMat->mn == 0) return 1;
-  if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
-  (*F)((NspMatrix *) HMat);
-  NSP_OBJECT(HMat)->ret_pos = 1;
-  return 1;
-}
-
-
-/*
- * A=Abs(A), absolue value or module of each element 
- */
-
-int int_mpabs(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_abs);
-}
-
-/*
- * A=Erf(A)
- */
-
-int int_mperf(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_erf);
-}
-
-/*
- * A=Erfc(A),  * A is changed 
- */
-
-int int_mperfc(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_erfc);
-}
-
-/*
- * A=Arg(A),  * A is changed 
- */
-
-int int_mparg(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_arg);
-}
-
-/*
- *nsp_mat_cos: A=Cos(A)
- * A is changed  
- * return 0 if error 
- */
-
-int int_mpcos(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_genv11(stack,rhs,opt,lhs,nsp_mat_cos);
-}
-
-/*
- *nsp_mat_cosh: A=Cosh(A)
- * A is changed  
- * return 0 if error 
- */
-
-int int_mpcosh(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_genv11(stack,rhs,opt,lhs,nsp_mat_cosh);
-}
-
-/*
- * MatExpl : Exponentiation terme a term 
- * A is changed 
- */
-
-int int_mpexpel(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_genv11(stack,rhs,opt,lhs,nsp_mat_expel);
-}
-
-/*
- * MatLog : A=LogEl(A) 
- */
-
-int int_mplogel(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_logel);
-}
-
-
-/*
- *nsp_mat_sin: A=Sin(A)
- * A is changed  
- * return 0 if error 
- */
-
-int int_mpsin(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_genv11(stack,rhs,opt,lhs,nsp_mat_sin);
-}
-
-/*
- *nsp_mat_sinh: A=Sinh(A)
- * A is changed  
- * return 0 if error 
- */
-
-
-int int_mpsinh(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_genv11(stack,rhs,opt,lhs,nsp_mat_sinh);
-}
-
-
-/*
- *nsp_mat_sqrtel: A=SqrtEl(A)  term to term square root
- * A is changed  
- * return 0 if error 
- */
-
-int int_mpsqrtel(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_sqrtel);
-}
-
-/*
- *nsp_mat_acos: A=Acos(A)
- * A is changed  
- * return 0 if error 
- */
-
-int int_mpacos(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_acos);
-}
-
-/*
- *nsp_mat_acosh: A=Acosh(A)
- * A is changed  
- * return 0 if error 
- */
-
-int int_mpacosh(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_acosh);
-}
-
-/*
- *nsp_mat_asin: A=Asin(A)
- * A is changed  
- * return 0 if error 
- */
-
-int int_mpasin(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_asin);
-}
-
-/*
- *nsp_mat_asinh: A=Asinh(A)
- * A is changed  
- * return 0 if error 
- */
-
-
-int int_mpasinh(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_asinh);
-}
-
-/*
- * MatATan : res= arctang(A) 
- * A is not changed, A must be squared
- * returns 0 on failure 
- */
-
-int int_mpatan(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_atan);
-}
 
 /*
  * Atan2(A,B), 
@@ -2163,101 +1949,6 @@ int int_mpatan2(Stack stack, int rhs, int opt, int lhs)
   if (nsp_mat_atan2((NspMatrix *) A,(NspMatrix *)B) == FAIL ) return RET_BUG;
   return 1;
 }
-
-/*
- * MatArcTangH : res= atanh(A) 
- * A is not changed, A must be squared
- * returns 0 on failure 
- */
-
-int int_mpatanh(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_atanh);
-}
-
-/*
- *nsp_mat_ceil: A=Ceil(A)
- * A is changed  
- */
-
-int int_mpceil(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_genv11(stack,rhs,opt,lhs,nsp_mat_ceil);
-}
-
-/*
- *nsp_mat_int: A=Int(A)
- * A is changed  
- */
-
-int int_mpint(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_genv11(stack,rhs,opt,lhs,nsp_mat_int);
-}
-
-/*
- *nsp_mat_floor: A=Floor(A)
- * A is changed  
- */
- 
-int int_mpfloor(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_genv11(stack,rhs,opt,lhs,nsp_mat_floor);
-}
-
-/*
- *nsp_mat_round: A=Round(A)
- * A is changed  
- */
- 
-int int_mpround(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_genv11(stack,rhs,opt,lhs,nsp_mat_round);
-}
-
-/*
- *nsp_mat_sign: A=Sign(A)
- * A is changed  
- * return 0 if error 
- */
- 
-int int_mpsign(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_sign);
-}
-
-/*
- *nsp_mat_tan: A=Tan(A)
- * A is changed  
- * return 0 if error 
- */
- 
-int int_mptan(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_tan);
-}
-
-/*
- *nsp_mat_tanh: A=Tanh(A)
- * A is changed  
- * return 0 if error 
- */
- 
-int int_mptanh(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_tanh);
-}
-
-/*
- * -(A) 
- * except for -%inf which is not changed 
- */
- 
-int int_mpminus(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mp_gen11(stack,rhs,opt,lhs,nsp_mat_minus_maxplus);
-}
-
 
 /*
  * A=Polar(A,B),  * A is changed 
@@ -2856,148 +2547,170 @@ int int_mp_cast(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/* wrapper for functions  B=f(A)
+ * call the matrix interface after a cast 
+ */
 
+static int int_mp_wrap1(Stack stack, int rhs, int opt, int lhs,function *f)
+{
+  int rep;
+  register NspMaxpMatrix *Mp;
+  CheckRhs(1,1);
+  if ((Mp=GetMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
+  /* cast without copy */
+  nsp_mpmatrix_cast_to_matrix(Mp);
+  /* call same interface for matrix */
+  rep = (*f)(stack,rhs,opt,lhs);
+  /* always recast back even if an error occured */
+  nsp_matrix_cast_to_mpmatrix((NspMatrix *) NthObj(1));
+  return rep;
+}
 
 /*
  * The Interface for basic matrices operation 
  */
 
-static OpTab Matrix_func[]={
-  {"cast",int_mp_cast},
-  {"m2mp",int_m2mp},
-  {"mp2m",int_mp2m},
-  {"maxplus",int_m2mp},
-  {"resize2vect_mp",int_mpmat2vect},
-  {"extractcols_mp",int_mpextractcols},
-  {"extractrows_mp",int_mpextractrows},
-  {"extract_mp",int_mpextract},
-  {"extractelts_mp",int_mpextractelts},
-  {"deletecols_mp_m", int_mpdeletecols},
-  {"deleterows_mp_m", int_mpdeleterows},
-  {"deleteelts_mp_m", int_mpdeleteelts},
-  {"deletecols_mp_b", int_mpdeletecols},
-  {"deleterows_mp_b", int_mpdeleterows},
-  {"deleteelts_mp_b", int_mpdeleteelts},
-  {"setrowscols_mp",int_mpsetrc},
-  {"addcols_mp_mp" ,  int_mpaddcols },
-  {"addrows_mp_mp" ,  int_mpaddrows },
-  {"clean_mp" ,  int_mpclean },
-  {"complexify_mp" ,  int_mpcomplexify },
-  {"concatd_mp_mp" ,  int_mpconcatd },
-  {"concatd_mp_m" ,  int_mpconcatd_m },
-  {"concatd_m_mp" ,  int_mpconcatd_m },
-  {"concatr_mp" ,  int_mpconcatr },
-  {"concatr_m_mp" ,  int_mpconcatr_m},
-  {"copy_mp" ,  int_mpcopy },
-  {"mpcreate_m_m" ,  int_mpcreate },
-  {"dadd_mp_mp" ,   int_mpdadd },
-  {"destroy_mp" ,  int_mpdestroy },
-  {"concatdiag_mp_mp" ,  int_mpconcatdiag },
-  {"concatdiag_m_mp" ,  int_mpconcatdiag_m },
-  {"concatdiag_mp_m" ,  int_mpconcatdiag_m },
-  {"diag_mp",int_mpdiag},
-  {"diag_mp_mp",int_mpdiag},
-  {"diagcre_mp" ,  int_mpdiagcre },
-  {"diagcre_mp_mp" ,  int_mpdiagcre },
-  {"diage_mp" ,  int_mpdiage },
-  {"diage_mp_mp" ,  int_mpdiage },
-  {"diagset_mp" ,  int_mpdiagset },
-  {"eq_mp_mp" ,  int_mpeq },
-  {"eye_mp_mp" ,  int_mpeye },
-  {"ones_mp_mp" ,  int_mpones},
-  {"zeros_mp_mp", int_mpzeros },
-  {"feq_mp_mp" ,  int_mpfeq },
-  {"fge_mp_mp" ,  int_mpfge },
-  {"fgt_mp_mp" ,  int_mpfgt },
-  {"fle_mp_mp" ,  int_mpfle },
-  {"flt_mp_mp" ,  int_mpflt },
-  {"fneq_mp_mp" ,  int_mpfneq },
-  {"ge_mp_mp" ,  int_mpge },
-  {"gt_mp_mp" ,  int_mpgt },
-  {"imag_mp" ,  int_mpimagpart },
-  {"info_mp" ,  int_mpinfo },
-  {"dstd_mp_mp" ,  int_mpkron }, /* operator:  .*. */
-  {"latexmat_mp" ,  int_mp2latexmat },
-  {"latextab_mp" ,  int_mp2latextab },
-  {"le_mp_mp" ,  int_mple },
-  {"lt_mp_mp" ,  int_mplt },
-  {"max_mp" ,  int_mpmaxi}, 
-  {"min_mp" ,  int_mpmini },
-  {"min_mp" ,  int_mpmini },
-  {"sum_mp_s" ,  int_mpsum },
-  {"sum_mp" ,  int_mpsum },
-  {"cumsum_mp_s" ,  int_mpcusum },
-  {"cumsum_mp" ,  int_mpcusum },
-  {"prod_mp_s" ,  int_mpprod },
-  {"prod_mp" ,  int_mpprod },
-  {"cumprod_mp_s" ,  int_mpcuprod },
-  {"cumprod_mp" ,  int_mpcuprod },
-  {"ne_mp_mp" ,  int_mpneq },
-  {"real_mp" ,  int_mprealpart },
-  {"redim_mp" ,  int_mpredim },
-  {"resize_mp_mp" ,  int_mpresize },
-  {"seti_mp_mp" ,  int_mpseti },
-  {"setr_mp_mp" ,  int_mpsetr },
-  {"setrc_mp_mp" ,  int_mpsetrc },
-  {"sort_mp" ,  int_mpsort },
-  {"gsort_mp" ,  int_mpsort },
-  {"tril_mp" ,  int_mptril },
-  {"triu_mp" ,  int_mptriu },
-  {"matrix_mp",int_mpmatrix},
-  {"quote_mp",int_mpquote},
-  {"dprim_mp",int_mpdquote},
-  {"abs_mp",int_mpabs},
-  {"erf_mp",int_mperf},
-  {"erfc_mp",int_mperfc},
-  {"arg_mp",int_mparg},
-  {"cos_mp",int_mpcos},
-  {"cosh_mp",int_mpcosh},
-  {"exp_mp",int_mpexpel},
-  {"log_mp",int_mplogel},
-  {"sin_mp",int_mpsin},
-  {"sinh_mp",int_mpsinh},
-  {"sqrt_mp",int_mpsqrtel},
-  {"acos_mp",int_mpacos},
-  {"acosh_mp",int_mpacosh},
-  {"asin_mp",int_mpasin},
-  {"asinh_mp",int_mpasinh},
-  {"atan_mp",int_mpatan},
-  {"atan_mp_mp",int_mpatan2},
-  {"atanh_mp",int_mpatanh},
-  {"ceil_mp",int_mpceil},
-  {"modulo_mp_mp",int_mpmodulo},
-  {"idiv_mp_mp",int_mpidiv},
-  {"int_mp",int_mpint},
-  {"floor_mp",int_mpfloor},
-  {"round_mp",int_mpround},
-  {"sign_mp",int_mpsign},
-  {"tan_mp",int_mptan},
-  {"tanh_mp",int_mptanh},
-  {"iand_mp_mp",int_mpiand},
-  {"ior_mp_mp",int_mpior},
-  {"conj_mp",int_mpconj},
-  {"dh_mp_m",int_mppowel},
-  {"dst_mp_mp",int_mpmultel},
-  {"plus_mp_mp",   int_mpdadd},
-  {"minus_mp_mp",   int_mpdsub},
-  {"minus_mp", int_mpminus},	
-  {"mult_mp_mp" ,  int_mpmult},
-  {"div_mp_mp" ,  int_mpdiv},
-  {"bdiv_mp_mp" ,  int_mpbdiv},
-  {"find_mp", int_mpfind},
-  {"and_mp_mp", int_mpmini},
+static OpWrapTab Matrix_func[]={
+  {"abs_mp",int_mxabs,int_mp_wrap1},
+  {"acos_mp",int_mxacos,int_mp_wrap1},
+  {"acosh_mp",int_mxacosh,int_mp_wrap1},
+  {"addcols_mp_mp",int_mpaddcols ,NULL},
+  {"addrows_mp_mp",int_mpaddrows ,NULL},
+  {"and_mp_mp",int_mpmini,NULL},
+  {"arg_mp",int_mxarg,int_mp_wrap1},
+  {"asin_mp",int_mxasin,int_mp_wrap1},
+  {"asinh_mp",int_mxasinh,int_mp_wrap1},
+  {"atan_mp",int_mxatan,int_mp_wrap1},
+  {"atan_mp_mp",int_mpatan2,NULL},
+  {"atanh_mp",int_mxatanh,int_mp_wrap1},
+  {"bdiv_mp_mp",int_mpbdiv,NULL},
+  {"cast",int_mp_cast,NULL},
+  {"ceil_mp",int_mxceil,int_mp_wrap1},
+  {"clean_mp" ,  int_mpclean ,NULL},
+  {"complexify_mp" ,  int_mpcomplexify ,NULL},
+  {"concatd_m_mp" ,  int_mpconcatd_m ,NULL},
+  {"concatd_mp_m" ,  int_mpconcatd_m ,NULL},
+  {"concatd_mp_mp" ,  int_mpconcatd ,NULL},
+  {"concatdiag_m_mp" ,  int_mpconcatdiag_m ,NULL},
+  {"concatdiag_mp_m" ,  int_mpconcatdiag_m ,NULL},
+  {"concatdiag_mp_mp" ,  int_mpconcatdiag ,NULL},
+  {"concatr_m_mp" ,  int_mpconcatr_m,NULL},
+  {"concatr_mp" ,  int_mpconcatr ,NULL},
+  {"conj_mp",int_mpconj,NULL},
+  {"cos_mp",int_mxcos,int_mp_wrap1},
+  {"cosh_mp",int_mxcosh,int_mp_wrap1},
+  {"cumprod_mp" ,  int_mpcuprod ,NULL},
+  {"cumprod_mp_s" ,  int_mpcuprod ,NULL},
+  {"cumsum_mp" ,  int_mpcusum ,NULL},
+  {"cumsum_mp_s" ,  int_mpcusum ,NULL},
+  {"dadd_mp_mp" ,   int_mpdadd ,NULL},
+  {"deletecols_mp_b", int_mpdeletecols,NULL},
+  {"deletecols_mp_m", int_mpdeletecols,NULL},
+  {"deleteelts_mp_b", int_mpdeleteelts,NULL},
+  {"deleteelts_mp_m", int_mpdeleteelts,NULL},
+  {"deleterows_mp_b", int_mpdeleterows,NULL},
+  {"deleterows_mp_m", int_mpdeleterows,NULL},
+  {"destroy_mp" ,  int_mpdestroy ,NULL},
+  {"dh_mp_m",int_mppowel,NULL},
+  {"diag_mp",int_mpdiag,NULL},
+  {"diag_mp_mp",int_mpdiag,NULL},
+  {"diagcre_mp" ,  int_mpdiagcre ,NULL},
+  {"diagcre_mp_mp" ,  int_mpdiagcre ,NULL},
+  {"diage_mp" ,  int_mpdiage ,NULL},
+  {"diage_mp_mp" ,  int_mpdiage ,NULL},
+  {"diagset_mp" ,  int_mpdiagset ,NULL},
+  {"div_mp_mp" ,  int_mpdiv,NULL},
+  {"dprim_mp",int_mpdquote,NULL},
+  {"dst_mp_mp",int_mpmultel,NULL},
+  {"dstd_mp_mp" ,  int_mpkron ,NULL}, /* operator:  .*. */
+  {"eq_mp_mp" ,  int_mpeq ,NULL},
+  {"erf_mp",int_mxerf,int_mp_wrap1},
+  {"erfc_mp",int_mxerfc,int_mp_wrap1},
+  {"expel_mp",int_mxexpel,int_mp_wrap1},
+  {"extract_mp",int_mpextract,NULL},
+  {"extractcols_mp",int_mpextractcols,NULL},
+  {"extractelts_mp",int_mpextractelts,NULL},
+  {"extractrows_mp",int_mpextractrows,NULL},
+  {"eye_mp_mp" ,  int_mpeye ,NULL},
+  {"feq_mp_mp" ,  int_mpfeq ,NULL},
+  {"fge_mp_mp" ,  int_mpfge ,NULL},
+  {"fgt_mp_mp" ,  int_mpfgt ,NULL},
+  {"find_mp", int_mpfind,NULL},
+  {"fle_mp_mp" ,  int_mpfle ,NULL},
+  {"floor_mp",int_mxfloor,int_mp_wrap1},
+  {"flt_mp_mp" ,  int_mpflt ,NULL},
+  {"fneq_mp_mp" ,  int_mpfneq ,NULL},
+  {"ge_mp_mp" ,  int_mpge ,NULL},
+  {"gsort_mp" ,  int_mpsort ,NULL},
+  {"gt_mp_mp" ,  int_mpgt ,NULL},
+  {"iand_mp_mp",int_mpiand,NULL},
+  {"idiv_mp_mp",int_mpidiv,NULL},
+  {"imag_mp" ,  int_mpimagpart ,NULL},
+  {"info_mp" ,  int_mpinfo ,NULL},
+  {"int_mp",int_mxint,int_mp_wrap1},
+  {"ior_mp_mp",int_mpior,NULL},
+  {"latexmat_mp" ,  int_mp2latexmat ,NULL},
+  {"latextab_mp" ,  int_mp2latextab ,NULL},
+  {"le_mp_mp" ,  int_mple ,NULL},
+  {"log_mp",int_mxlogel,int_mp_wrap1},
+  {"logel_mp",int_mxlogel,int_mp_wrap1},
+  {"lt_mp_mp" ,  int_mplt ,NULL},
+  {"m2mp",int_m2mp,NULL},
+  {"matrix_mp",int_mpmatrix,NULL},
+  {"max_mp" ,  int_mpmaxi,NULL}, 
+  {"maxplus",int_m2mp,NULL},
+  {"min_mp" ,  int_mpmini ,NULL},
+  {"min_mp" ,  int_mpmini ,NULL},
+  {"minus_mp",int_mxminus,int_mp_wrap1},
+  {"minus_mp_mp",   int_mpdsub,NULL},
+  {"modulo_mp_mp",int_mpmodulo,NULL},
+  {"mp2m",int_mp2m,NULL},
+  {"mpcreate_m_m" ,  int_mpcreate ,NULL},
+  {"mult_mp_mp" ,  int_mpmult,NULL},
+  {"ne_mp_mp" ,  int_mpneq ,NULL},
+  {"ones_mp_mp" ,  int_mpones,NULL},
+  {"plus_mp_mp",   int_mpdadd,NULL},
+  {"prod_mp" ,  int_mpprod ,NULL},
+  {"prod_mp_s" ,  int_mpprod ,NULL},
+  {"quote_mp",int_mpquote,NULL},
+  {"real_mp" ,  int_mprealpart ,NULL},
+  {"redim_mp" ,  int_mpredim ,NULL},
+  {"resize2vect_mp",int_mpmat2vect,NULL},
+  {"resize_mp_mp" ,  int_mpresize ,NULL},
+  {"round_mp",int_mxround,int_mp_wrap1},
+  {"seti_mp_mp" ,  int_mpseti ,NULL},
+  {"setr_mp_mp" ,  int_mpsetr ,NULL},
+  {"setrc_mp_mp" ,  int_mpsetrc ,NULL},
+  {"setrowscols_mp",int_mpsetrc,NULL},
+  {"sign_mp",int_mxsign,int_mp_wrap1},
+  {"sin_mp",int_mxsin,int_mp_wrap1},
+  {"sinh_mp",int_mxsinh,int_mp_wrap1},
+  {"sort_mp" ,  int_mpsort ,NULL},
+  {"sqrt_mp",int_mxsqrtel,int_mp_wrap1},
+  {"sqrtel_mp",int_mxsqrtel,int_mp_wrap1},
+  {"sum_mp" ,  int_mpsum ,NULL},
+  {"sum_mp_s" ,  int_mpsum ,NULL},
+  {"tan_mp",int_mxtan,int_mp_wrap1},
+  {"tanh_mp",int_mxtanh,int_mp_wrap1},
+  {"tril_mp" ,  int_mptril ,NULL},
+  {"triu_mp" ,  int_mptriu ,NULL},
+  {"zeros_mp_mp", int_mpzeros ,NULL},
+
   /* 
-     {"polar",int_mppolar},
-     {"dsl",int_mpdivel},
-     {"dbs",int_mpbackdivel},
+     {"polar",int_mppolar,NULL},
+     {"dsl",int_mpdivel,NULL},
+     {"dbs",int_mpbackdivel,NULL},
   */
-  {(char *) 0, NULL}
+  {(char *) 0, NULL,NULL},
 };
 
 
 int MpMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(Matrix_func[i].fonc))(stack,rhs,opt,lhs);
+  if ( Matrix_func[i].wrapper != NULL) 
+    return (*(Matrix_func[i].wrapper))(stack,rhs,opt,lhs,Matrix_func[i].fonc);
+  else
+    return (*(Matrix_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
@@ -3008,10 +2721,6 @@ void MpMatrix_Interf_Info(int i, char **fname, function (**f))
   *fname = Matrix_func[i].name;
   *f = Matrix_func[i].fonc;
 }
-
-
-
-
 
 
 
