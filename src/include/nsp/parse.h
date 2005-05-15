@@ -2,7 +2,6 @@
 #define NSP_INC_PARSE 
 
 extern int TokenLineSet(int l);
-
 extern int ParseEvalDir(const char *Dir, char *Fname);
 extern int ParseEvalDirFull(const char *Dir);
 extern int ParseEvalFromStd(int display);

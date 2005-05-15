@@ -1353,7 +1353,6 @@ static OpTab SMatrix_func[]={
   {"strindex",int_smxstrindex},
   {"ascii",int_smxascii},
   {"split",int_smxsplit},
-  /** XXXX : comment regler le probleme de sort ? **/
   {"eq_s_s" ,  int_smxeq },
   {"feq_s_s" ,  int_smxfeq },
   {"fge_s_s" ,  int_smxfge },

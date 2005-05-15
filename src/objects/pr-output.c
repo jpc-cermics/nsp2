@@ -1027,11 +1027,13 @@ int nsp_print_internalPM (NspPMatrix *M, int indent)
 	      if ( imore == 1) return(OK);
 	      p_rows=0;
 	    }
+	  /*
 	  if (  lim - col == 1 && 	  t_width > max_width ) 
 	    {
 	      Sciprintf("Must try to cut thhe column \n");
 	    }
 	  else 
+	  */
 	    {
 	      for ( j = col; j < lim; j++)
 		{
@@ -1221,11 +1223,13 @@ int nsp_print_internalSM (const NspSMatrix *m, int indent)
 	      if ( imore == 1) return(OK);
 	      p_rows=0;
 	    }
+	  /*
 	  if (  lim - col == 1 &&  t_width > max_width ) 
 	    {
 	      Sciprintf("Must try to cut the column \n");
 	    }
 	  else 
+	  */
 	    {
 	      for ( j = col; j < lim; j++)
 		{

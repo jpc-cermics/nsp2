@@ -15,11 +15,22 @@ enum { RET_OK=0, RET_ENDFOR=-1,  RET_BREAK=-2,   RET_QUIT=-3,  RET_EOF= -4 ,
 /* structure used to store the functions defined by an interface */
 
 typedef int (function) (Stack S,int rhs,int opt,int lhs);
+typedef int (function_wrapper) (Stack S,int rhs,int opt,int lhs,function *f);
 
-typedef  struct  {
+typedef struct _OpTab OpTab;
+
+struct _OpTab  {
   char *name;
   function *fonc;
-} OpTab ;
+};
+
+typedef struct _OpWrapTab OpWrapTab;
+
+struct _OpWrapTab  {
+  char *name;
+  function *fonc;
+  function_wrapper *wrapper;
+};
 
 /* a metre ailleurs XXXXX */
 
