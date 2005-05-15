@@ -153,7 +153,7 @@ int reorder_stack(Stack stack, int ret) ;
 
 /* XXXXX Only in DEBUG Mode */
 
-void check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char *name)
+void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char *name)
 {
   int count=0;
  NspObject**O;
@@ -211,14 +211,14 @@ void check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char *nam
 }
 
 
-int AllInterf(int i, int num, Stack stack, int rhs, int opt, int lhs)
+int nsp_interfaces(int i, int num, Stack stack, int rhs, int opt, int lhs)
 {
   int ret;
 
   /* debug */ 
   static int first = 0;
   static char buf[128];
-  check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
+ nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
   first=1; 
   strcpy(buf,stack.fname);
   
@@ -271,7 +271,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
   /* debug */ 
   static int first = 0;
   static char buf[128];
-  check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
+ nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
   first=1; 
   strcpy(buf,stack.fname);
   

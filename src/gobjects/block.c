@@ -637,11 +637,11 @@ void block_draw(NspBlock *B)
     case 0: 
       sprintf(str,"Matplot1(rand(1,1)*32,[%5.2f,%5.2f,%5.2f,%5.2f]);",B->r[0],B->r[1]-B->r[3],
 	      B->r[0]+B->r[2],B->r[1]);
-      ParseEvalFromStr(str,FALSE,FALSE,FALSE,TRUE);
+ nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
       break;
     case 1: 
       sprintf(str,"draw_inside([%5.2f,%5.2f,%5.2f,%5.2f]);",B->r[0],B->r[1],B->r[2],B->r[3]);
-      ParseEvalFromStr(str,FALSE,FALSE,FALSE,TRUE);
+ nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
       break;
     default: 
       /* fill rectangle */
