@@ -247,8 +247,25 @@ static int int_object_equal(void *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+static int int_object_get_name(void *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(-1,0);
+  CheckLhs(1,1);
+  /* nsp_get_object takes care of Hobj pointers **/
+  if ( NSP_OBJECT(self)->name == NULL ) 
+    {
+      Scierror("Error: given object has no name !\n");
+      return RET_BUG;
+    }
+  nsp_move_string(stack,1,NSP_OBJECT(self)->name,-1);
+  return 1;
+}
+
+
+
 static NspMethods object_methods[] = {
-  { "set",  int_set_attributes1},
+  { "set",  int_set_attributes1}, /* set attribute of object the get is given by . */
+  { "get_name", int_object_get_name},
   { "equal",  int_object_equal},
   { (char *) 0, NULL}
 };
