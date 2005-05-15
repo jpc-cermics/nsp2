@@ -1062,25 +1062,6 @@ int_mxtestmatrix (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Copy of a Matrix 
- * The copy has  name NVOID
- * returns NULLMAT on failure 
- */
-
-int
-int_mxcopy (Stack stack, int rhs, int opt, int lhs)
-{
-  NspMatrix *M1, *M2;
-  CheckRhs (1, 1);
-  CheckLhs (1, 1);
-  if ((M1 = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((M2 = nsp_matrix_copy (M1)) == NULLMAT)
-    return RET_BUG;
-  MoveObj (stack, 1, (NspObject *) M2);
-  return 1;
-}
 
 /*
  * Change a matrix of Real type to Imaginary type 
@@ -2644,37 +2625,6 @@ int_mxdquote (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Delete the Matrix Mat 
- */
-
-int
-int_mxdestroy (Stack stack, int rhs, int opt, int lhs)
-{
-  NspMatrix *HMat;
-  CheckRhs (1, 1);
-  CheckLhs (0, 0);
-  if ((HMat = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  nsp_object_destroy (&NthObj (1));
-  return 0;
-}
-
-/*
- * Matinfo : display info on Matrix Mat 
- */
-
-int
-int_mxinfo (Stack stack, int rhs, int opt, int lhs)
-{
-  NspMatrix *HMat;
-  CheckRhs (1, 1);
-  CheckLhs (1, 1);
-  if ((HMat = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  nsp_matrix_info (HMat, 0);
-  return 0;
-}
 
 /*
  * nsp_matrix_latex_print: writes Mat Objet on fd in tex language
@@ -3835,10 +3785,8 @@ static OpTab Matrix_func[] = {
   {"concatr_m_m", int_mxconcatr},
   {"concatr_b_m", int_mxconcatr_mb},
   {"concatr_m_b", int_mxconcatr_mb},
-  {"copy_m", int_mxcopy},
   {"create_m_m", int_mxcreate},
   {"dadd_m_m", int_mxdadd},
-  {"destroy_m", int_mxdestroy},
   {"concatdiag", int_mxconcatdiag},
   {"diag_m", int_mxdiag},
   {"diag_m_m", int_mxdiag},
@@ -3860,7 +3808,6 @@ static OpTab Matrix_func[] = {
   {"ge_m_m", int_mxge},
   {"gt_m_m", int_mxgt},
   {"imag_m", int_mximagpart},
-  {"info_m", int_mxinfo},
   {"dstd_m_m", int_mxkron},	/* operator:  .*. */
   {"latexmat_m", int_mx2latexmat},
   {"latextab_m", int_mx2latextab},
