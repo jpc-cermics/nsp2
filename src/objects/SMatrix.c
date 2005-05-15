@@ -51,7 +51,7 @@ NspSMatrix* nsp_smatrix_create(nsp_const_string name, int m, int n,nsp_const_str
       Scierror("Error:\tRunning out of memory\n");
       return(NULLSMAT);
     }
- new_nsp_string(name);
+  new_nsp_string(name);
   if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING) return(NULLSMAT);
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /* Loc->otype = SMATRIX;
@@ -241,9 +241,9 @@ int nsp_smatrix_resize(NspSMatrix *A, int m, int n)
     }
   if ( m*n == 0 ) 
     {
-        A->m =  A->n = A->mn= 0;
-	FREE(A->S);
-	return OK;
+      A->m =  A->n = A->mn= 0;
+      FREE(A->S);
+      return OK;
     }
   
   if ( A->mn == 0 ) 
@@ -279,7 +279,7 @@ void nsp_smatrix_destroy(NspSMatrix *A)
     {
       for ( i = 0 ; i < A->mn ; i++ ) 
 	{
-	nsp_string_destroy(&(A->S[i]));
+	  nsp_string_destroy(&(A->S[i]));
 	}
       FREE(A->S);
     }
@@ -402,7 +402,7 @@ int Scopy(int n, nsp_string *s1, nsp_string *s2)
   int i;
   for ( i = n-1 ; i >= 0 ; i--) 
     {
- nsp_string_destroy(&(s2[i] ));
+      nsp_string_destroy(&(s2[i] ));
       if ((s2[ i] =nsp_string_copy(s1[i])) == (nsp_string) 0)  return(FAIL);
     }
   return(OK);
@@ -425,10 +425,10 @@ int nsp_smatrix_add_columns(NspSMatrix *A, int n)
     }
   if ( nsp_smatrix_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
   /*  normalemeny inutile car Resize le fait deja 
-     int Asize;
-     Asize=A->mn;
-     ns= (A->m)*n;
-     if ( Sset(ns,".",A->S+Asize) == FAIL) return(FAIL);**/
+      int Asize;
+      Asize=A->mn;
+      ns= (A->m)*n;
+      if ( Sset(ns,".",A->S+Asize) == FAIL) return(FAIL);**/
   return(OK);
 }
 
@@ -437,7 +437,7 @@ int Sset(int n, nsp_string s1, nsp_string *s2)
   int i;
   for ( i = 0 ; i < n ; i++) 
     {
- nsp_string_destroy(&(s2[i]));
+      nsp_string_destroy(&(s2[i]));
       if ((s2[ i] =nsp_string_copy(s1)) == (nsp_string) 0)  return(FAIL);
     }
   return(OK);
@@ -512,11 +512,11 @@ int nsp_smatrix_add_rows(NspSMatrix *A, int m)
 }
 
 /*
-*  A(Rows,Cols) = B 
-*  A is changed and enlarged if necessary 
-*  Rows and Cols are unchanged 
-*  Size Compatibility is checked 
-*/
+ *  A(Rows,Cols) = B 
+ *  A is changed and enlarged if necessary 
+ *  Rows and Cols are unchanged 
+ *  Size Compatibility is checked 
+ */
 
 int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B)
 {
@@ -542,7 +542,7 @@ int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatri
     for ( i = 0 ; i < Rows->mn ; i++)
       for ( j = 0 ; j < Cols->mn ; j++ )
 	{
-	nsp_string_destroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
+	  nsp_string_destroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
 	  if (( A->S[((int) Rows->R[i])-1+ (((int)Cols->R[j])-1)*A->m] 
 		=nsp_string_copy(B->S[i+B->m*j]))
 	      == (nsp_string) 0)  return(FAIL);
@@ -551,7 +551,7 @@ int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatri
     for ( i = 0 ; i < Rows->mn ; i++)
       for ( j = 0 ; j < Cols->mn ; j++ )
 	{
-	nsp_string_destroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
+	  nsp_string_destroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
 	  if (( A->S[((int) Rows->R[i])-1+ (((int)Cols->R[j])-1)*A->m] 
 		=nsp_string_copy(B->S[0]))
 	      == (nsp_string) 0)  return(FAIL);
@@ -625,7 +625,7 @@ int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
     else
       for ( i = 0 ; i < A->m ; i++ )
 	{
-	nsp_string_destroy(&A->S[ij]);  /* DATADestroy: must NULLIFY the pointer */
+	  nsp_string_destroy(&A->S[ij]);  /* DATADestroy: must NULLIFY the pointer */
 	  ij++;
 	}
   
@@ -669,7 +669,7 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 	    k++; 
 	  }
 	else
-	nsp_string_destroy(&A->S[ij]);
+	  nsp_string_destroy(&A->S[ij]);
 	ij++;
       }
 
@@ -848,15 +848,15 @@ NspSMatrix*nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
       return(NULLSMAT);
     }
   if ((Loc =nsp_smatrix_create_with_length(NVOID,Rows->mn,Cols->mn, -1))== NULLSMAT) 
-      return(NULLSMAT);
+    return(NULLSMAT);
   for ( i = 0 ; i < Rows->mn ; i++)
     for ( j = 0 ; j < Cols->mn ; j++ )
       {
 	if ((Loc->S[i+Loc->m*j] = 
-	nsp_string_copy(A->S[((int) Rows->R[i])-1+(((int) Cols->R[j])-1)*A->m]))
+	     nsp_string_copy(A->S[((int) Rows->R[i])-1+(((int) Cols->R[j])-1)*A->m]))
 	    == (nsp_string) 0 ) return(NULLSMAT);
       }
-   return(Loc);
+  return(Loc);
 }
 
 
@@ -1122,7 +1122,7 @@ int nsp_smatrix_concat_string_left(NspSMatrix *A, NspSMatrix *B,nsp_const_string
 NspMatrix *nsp_smatrix_strcmp(NspSMatrix *A, NspSMatrix *B)
 {
   int i;
-   NspMatrix *Loc;
+  NspMatrix *Loc;
   if ( A->mn != B->mn ) 
     {
       Scierror("Concattt for strin incompatible dimensions ");
@@ -1390,8 +1390,8 @@ void nsp_smatrix_tolower(NspSMatrix *A)
   int i;
   unsigned int j;
   for ( i = 0 ; i < A->mn ; i++ ) 
-      if ( A->S[i] != (nsp_string) 0 ) 
-	for ( j = 0 ; j < strlen(A->S[i]) ; j++ ) A->S[i][j]= tolower(A->S[i][j]);
+    if ( A->S[i] != (nsp_string) 0 ) 
+      for ( j = 0 ; j < strlen(A->S[i]) ; j++ ) A->S[i][j]= tolower(A->S[i][j]);
 }
 
 
@@ -1933,7 +1933,7 @@ int nsp_smatrix_strip_blanks(NspSMatrix *A)
 	{
 	  nsp_string s; 
 	  if ((s =nsp_string_copy(loc1)) == (nsp_string) 0) return FAIL;
-	nsp_string_destroy(&(A->S[i]));
+	  nsp_string_destroy(&(A->S[i]));
 	  A->S[i]= s;
 	}
     }

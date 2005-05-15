@@ -282,7 +282,7 @@ NspNone   *none_object(NspObject *O)
   if ( check_cast(O,nsp_type_none_id) == TRUE) return ((NspNone *) O);
   else 
     Scierror("Error:\tArgument should be a %s\n",
-type_get_name(nsp_type_none));
+	     type_get_name(nsp_type_none));
   return(NULL);
 }
 
@@ -306,7 +306,7 @@ NspNone  *GetNone(Stack stack, int i)
 {
   NspNone *M;
   if (( M = none_object(NthObj(i))) == NULLNONE)
-     ArgMessage(stack,i);
+    ArgMessage(stack,i);
   return M;
 }
 
@@ -380,7 +380,7 @@ int int_none_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspNone *a;
   if (( a= GetNone(stack,1))== NULLNONE) return RET_BUG;
- nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0);
   return 0;
 }
 

@@ -95,7 +95,7 @@ void sciqsort(char *a, char *tab, int flag, int n, int es, int es1, int (*cmp) (
   char *taba, *tabb, *tabc, *tabd, *tabl, *tabm, *tabn;
   int d,dind, r,r1,  swap_cnt;
  
-loop:	
+ loop:	
   swap_cnt = 0;
   if (n < 7) {
     for (pm = a + es, tabm= tab + es1 ; pm < (char *) a + n * es; pm += es, tabm +=es1 )

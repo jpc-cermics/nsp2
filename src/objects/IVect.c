@@ -50,8 +50,8 @@ NspIVect *nsp_ivect_create(char *name, double first, double step, double last, i
   if ((NSP_OBJECT(IV)->name =new_nsp_string(name))== NULLSTRING) return NULLIVECT;
   NSP_OBJECT(IV)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
-  IV->otype = IVECT;
-  IV->ftype = IVect_Type;
+    IV->otype = IVECT;
+    IV->ftype = IVect_Type;
   */
   IV->first=first;
   IV->step=step;
@@ -97,7 +97,7 @@ void nsp_ivect_destroy(NspIVect *IV)
  * @indent: 
  * 
  * Displays Info on IV
-  **/
+ **/
 
 void nsp_ivect_info(NspIVect *IV, int indent)
 {
@@ -109,7 +109,7 @@ void nsp_ivect_info(NspIVect *IV, int indent)
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("IVect %s %f:%f:%f %d\n",NSP_OBJECT(IV)->name,
-	   IV->first,IV->step,IV->last,IV->flag);
+	    IV->first,IV->step,IV->last,IV->flag);
 }
 
 /**
@@ -122,7 +122,7 @@ void nsp_ivect_info(NspIVect *IV, int indent)
 
 void nsp_ivect_print(NspIVect *IV, int indent)
 {
- nsp_ivect_info(IV,indent);
+  nsp_ivect_info(IV,indent);
 }
 
 /**

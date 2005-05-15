@@ -569,7 +569,7 @@ int int_smxdestroy(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(0,0);
   if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
- nsp_object_destroy(&NthObj(1));
+  nsp_object_destroy(&NthObj(1));
   return 0;
 }
 
@@ -583,7 +583,7 @@ int int_smxinfo(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
- nsp_smatrix_info(HMat,0);
+  nsp_smatrix_info(HMat,0);
   return 0;
 }
 
@@ -597,7 +597,7 @@ int int_smxprint(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
- nsp_smatrix_print(HMat,0);
+  nsp_smatrix_print(HMat,0);
   return 0;
 }
 
@@ -814,7 +814,7 @@ int int_smxtolower(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A = GetSMatCopy(stack,1))  == NULLSMAT) return RET_BUG;
- nsp_smatrix_tolower(A);
+  nsp_smatrix_tolower(A);
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -1084,7 +1084,7 @@ int int_smxsplit(Stack stack, int rhs, int opt, int lhs)
   char *str1,*str2;
   NspSMatrix *A;
   CheckRhs(1,2)
-  CheckLhs(1,1);
+    CheckLhs(1,1);
   if ((str1 =GetString(stack,1)) == (char*)0) return RET_BUG;
   if ( rhs >= 2) 
     {
@@ -1377,7 +1377,7 @@ int SMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 /* used to walk through the interface table 
-    (for adding or removing functions) */
+   (for adding or removing functions) */
 
 void SMatrix_Interf_Info(int i, char **fname, function (**f))
 {

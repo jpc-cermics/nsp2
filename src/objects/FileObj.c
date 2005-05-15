@@ -235,7 +235,7 @@ void nsp_file_info(NspFile  *F, int indent)
 
 void nsp_file_print(NspFile  *F, int indent)
 {
- nsp_file_info(F,indent);
+  nsp_file_info(F,indent);
 }
 
 /*-----------------------------------------------------
@@ -405,7 +405,7 @@ static int int_file_getstr(void *self, Stack stack, int rhs, int opt, int lhs)
       char *str;
       if (( str =new_nsp_string_n(count+1))== NULL) return RET_BUG;
       strncpy(str,M->S[0],count);
- nsp_string_destroy(&(M->S[0]));
+      nsp_string_destroy(&(M->S[0]));
       M->S[0]=str;
     }
   MoveObj(stack,1,(NspObject *) M);
@@ -746,7 +746,7 @@ static int int_file_getfile(Stack stack, int rhs, int opt, int lhs)
   if ((F=nsp_file_open(Fname,mode,xdr,swap)) == NULLSCIFILE) return RET_BUG;
   if ( nsp_fscanf_smatrix(F,&S) == FAIL) 
     {
- nsp_file_close(F);
+      nsp_file_close(F);
       return RET_BUG; 
     }
   if (nsp_file_close(F) == FAIL  ) return RET_BUG;

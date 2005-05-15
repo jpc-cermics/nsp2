@@ -767,8 +767,8 @@ static int int_ht_extract_l(Stack stack, int rhs, int opt, int lhs)
   int rep,n ;
   if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
   /* last extraction : here O can be anything */ 
-  FuncEvalBuildName("extractelts",stack,stack.first+1,1,name);
-  if ((n=FuncEval(NULLOBJ,name,stack,stack.first+1,2,0,1)) < 0) 
+  nsp_build_funcname("extractelts",stack,stack.first+1,1,name);
+  if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first+1,2,0,1)) < 0) 
     {
       return RET_BUG;
     }

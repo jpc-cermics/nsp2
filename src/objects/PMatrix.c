@@ -106,7 +106,7 @@ void nsp_pmatrix_print(NspPMatrix *Mat, int indent)
     {
       for ( j= 0 ; j < Mat->n ; j++) 
 	{
-	   NspMatrix *loc;
+	  NspMatrix *loc;
 	  loc = Mat->S[i+j*Mat->m];
 	  Sciprintf("M(%d,%d):",i,j);
 	  for ( k = 0 ; k < loc->mn ; k ++) 
@@ -147,28 +147,28 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag
   if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == (char *) 0) return(NULLPMAT);
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
-  Loc->otype = PMATRIX;
-  Loc->ftype = PMatrix_Type;
+    Loc->otype = PMATRIX;
+    Loc->ftype = PMatrix_Type;
   */
   Loc->m =m;
   Loc->n = n;
   Loc->mn=m*n;
   Loc->rc_type = 'r' ; /* XXXXX : a preciser ? **/
   if ( Loc -> mn == 0 ) 
-      {
-	  /* empty string Matrix */
-	  Loc->S = (Poly **) 0;
-	  return(Loc);
-      }
+    {
+      /* empty string Matrix */
+      Loc->S = (Poly **) 0;
+      return(Loc);
+    }
   if ((Loc->S = (Poly **) MALLOC( Loc->mn* sizeof(Poly *))) == (Poly **) 0 )
     { 
       Scierror("PMatCreate : Error no more space ");
-       return(NULLPMAT);
+      return(NULLPMAT);
     }
   if ( flag == 0) 
-	init = def ; 
+    init = def ; 
   else 
-        init = cval ;
+    init = cval ;
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
       if ( (Loc->S[ i] = Basic2Poly(init,(flag==2)? 'c':'r')) == (Poly *) 0 )  return(NULLPMAT);
@@ -256,7 +256,7 @@ NspPMatrix *Mat2PMat(NspMatrix *A, char *str, int flag)
     {
       PolyDestroy(Loc->S[i]);
       if ( A->rc_type == 'r') 
-	     d.r= A->R[i];
+	d.r= A->R[i];
       else { d.r= A->C[i].r; d.i= A->C[i].i;}
       if ((Loc->S[i] = Basic2Poly(&d,A->rc_type)) == (Poly *) 0)  return(NULLPMAT);
     }
@@ -308,7 +308,7 @@ int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
   A->m =m ;
   A->n =n;
   A->mn=m*n ;
- return(OK);
+  return(OK);
 }
 
 
@@ -354,7 +354,7 @@ int Pcopy(int n, Poly **s1, Poly **s2)
 {
   int i;
   /* Copie ds l'ordre inverse car de temps en temps on fait
-    des copies sur place **/
+     des copies sur place **/
   for ( i = n-1 ; i >= 0 ; i--) 
     {
       PolyDestroy(s2[i]);
@@ -409,7 +409,7 @@ NspPMatrix*nsp_pmatrix_concat_down(NspPMatrix *A, NspPMatrix *B)
       Scierror("PMatConcatD : incompatible size  \n");
       return(NULLPMAT);
     }
-   Loc =nsp_pmatrix_create(NVOID,A->m+B->m,A->n,&Czero,(int) 0);
+  Loc =nsp_pmatrix_create(NVOID,A->m+B->m,A->n,&Czero,(int) 0);
   if ( Loc == NULLPMAT) 
     {
       Scierror("No More Place ");
@@ -453,11 +453,11 @@ int nsp_pmatrix_add_rows(NspPMatrix *A, int m)
 }
 
 /*
-*  A(Rows,Cols) = B 
-*  A is changed and enlarged if necessary 
-* Rows and Cols are changed (i.e) converted to int (see Matd2i) 
-*  Size Compatibility is checked 
-*/
+ *  A(Rows,Cols) = B 
+ *  A is changed and enlarged if necessary 
+ * Rows and Cols are changed (i.e) converted to int (see Matd2i) 
+ *  Size Compatibility is checked 
+ */
 
 int PMatSetRC(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B)
 {
@@ -469,7 +469,7 @@ int PMatSetRC(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B)
     }
   Irow = Matd2i(Rows,&rmin,&rmax);
   /* Matd2i changes Rows, thus we must check if Rows == Cols 
-    before changing Cols again : **/
+     before changing Cols again : **/
   if ( Cols == Rows ) 
     { cmin=rmin;cmax=rmax ; Icol = Irow ;}
   else 
@@ -503,7 +503,7 @@ NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
   int rmin,rmax,cmin,cmax,i,j,*Irow,*Icol;
   Irow = Matd2i(Rows,&rmin,&rmax);
   /* Matd2i changes Rows, thus we must check if Rows == Cols 
-    before changing Cols again : **/
+     before changing Cols again : **/
   if ( Cols == Rows ) 
     { cmin=rmin;cmax=rmax ; Icol = Irow ;}
   else 
@@ -513,7 +513,7 @@ NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
       Scierror("Extraction wrong indices");
       return(NULLPMAT);
     }
-   Loc =nsp_pmatrix_create(NVOID,Rows->mn,Cols->mn,&Czero,(int) 0);
+  Loc =nsp_pmatrix_create(NVOID,Rows->mn,Cols->mn,&Czero,(int) 0);
   if ( Loc == NULLPMAT) 
     {
       return(NULLPMAT);
@@ -525,7 +525,7 @@ NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 	if ((Loc->S[i+Loc->m*j] = CopyPoly(A->S[Irow[i]-1+(Icol[j]-1)*A->m]))
 	    == (Poly *) 0 ) return(NULLPMAT);
       }
-   return(Loc);
+  return(Loc);
 }
 
 

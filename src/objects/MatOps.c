@@ -77,7 +77,7 @@ int nsp_mat_set_ival(NspMatrix *A, double dval)
 	return(OK);
       break;
     case 'c' :
- nsp_ciset(&A->mn,&dval,A->C,&inc);
+      nsp_ciset(&A->mn,&dval,A->C,&inc);
       break;
     }
   return(OK);
@@ -218,14 +218,14 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
       C2F(dgemm)("N","N",&A->m,&B->n,&A->n,&alpha,A->R,&A->m,B->R,&B->m,
 		 &beta,Loc->R,&A->m,1,1); 
       /* 
-      int i,j,un=1,ib=0,ic=0;
-      for ( j = 0 ; j < B->n ; j++)
-	{
-	  for ( i = 0 ; i < A->m ; i++) 
-	    Loc->R[ic+i]= C2F(ddot)(&A->n,&A->R[i],&A->m,&B->R[ib],&un);
-	  ic += Loc->m;
-	  ib += B->m;
-	}
+	 int i,j,un=1,ib=0,ic=0;
+	 for ( j = 0 ; j < B->n ; j++)
+	 {
+	 for ( i = 0 ; i < A->m ; i++) 
+	 Loc->R[ic+i]= C2F(ddot)(&A->n,&A->R[i],&A->m,&B->R[ib],&un);
+	 ic += Loc->m;
+	 ib += B->m;
+	 }
       */
     }
   return(Loc);
@@ -621,7 +621,7 @@ int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind,int j,int flag)
 	{
 	  int  indval = (int) Ind->R[0];
 	  if ( nsp_matrix_resize(Ind,B->m,B->n) == FAIL) return FAIL;
-	nsp_mat_set_rval(Ind,indval);
+	  nsp_mat_set_rval(Ind,indval);
 	}
       for ( i = 0; i < A->mn ; i++ ) 
 	if  ( ISNAN(aval)  ||  aval < B->R[i] ) 
@@ -1705,7 +1705,7 @@ NspMatrix *nsp_mat_eye(int m, int n)
   NspMatrix *Loc;
   int i;
   if (( Loc= nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return(NULLMAT);
- nsp_mat_set_rval(Loc,(double) 0.00);
+  nsp_mat_set_rval(Loc,(double) 0.00);
   for ( i=0 ; i < Min(m,n) ; i++) Loc->R[i+m*i]= (double) 1.00;
   return(Loc);
 }
@@ -1719,7 +1719,7 @@ NspMatrix *nsp_mat_ones(int m, int n)
 {
   NspMatrix *Loc;
   if ((Loc= nsp_matrix_create(NVOID,'r',m,n))  == NULLMAT) return(NULLMAT);
- nsp_mat_set_rval(Loc,(double) 1.00);
+  nsp_mat_set_rval(Loc,(double) 1.00);
   return(Loc);
 }
 
@@ -1732,7 +1732,7 @@ NspMatrix *nsp_mat_zeros(int m, int n)
 {
   NspMatrix *Loc;
   if ((Loc= nsp_matrix_create(NVOID,'r',m,n))  == NULLMAT) return(NULLMAT);
- nsp_mat_set_rval(Loc,(double) 0.00);
+  nsp_mat_set_rval(Loc,(double) 0.00);
   return(Loc);
 }
 
@@ -2323,7 +2323,7 @@ void nsp_mat_ceil(NspMatrix *A)
 void nsp_mat_modulo(NspMatrix *A, int n)
 {
   int i ;
- nsp_mat_int(A);
+  nsp_mat_int(A);
   switch ( A->rc_type ) 
     {
     case 'r' : 
@@ -2349,7 +2349,7 @@ void nsp_mat_modulo(NspMatrix *A, int n)
 void nsp_mat_idiv(NspMatrix *A, int n)
 {
   int i ;
- nsp_mat_int(A);
+  nsp_mat_int(A);
   switch ( A->rc_type ) 
     {
     case 'r' : 

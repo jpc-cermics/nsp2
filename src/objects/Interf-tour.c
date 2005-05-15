@@ -117,10 +117,10 @@ extern int ex1c (char *ch, int *a, int ia, float *b, int ib, double *c, int mc,
 	  c[i + j *(mc) ] *= 2.;
       for (i = 0 ; i < mc ; ++i) 
 	for (j = 0 ; j < nc ; ++j) 
-	    {
-	      w[i + j * (mc) ] = (double) (i + j);
-	      d[i + j * (mc) ] = w[i + j *(mc)] * c[i + j *(mc)];
-	    }
+	  {
+	    w[i + j * (mc) ] = (double) (i + j);
+	    d[i + j * (mc) ] = w[i + j *(mc)] * c[i + j *(mc)];
+	  }
     } 
   else if (strcmp(ch, "add") == 0) 
     {
@@ -133,10 +133,10 @@ extern int ex1c (char *ch, int *a, int ia, float *b, int ib, double *c, int mc,
 	  c[i + j *(mc) ] += 2.;
       for (i = 0 ; i < mc ; ++i) 
 	for (j = 0 ; j < nc ; ++j) 
-	    {
-	      w[i + j * (mc) ] = (double) (i + j);
-	      d[i + j * (mc) ] = w[i + j *(mc)] + c[i + j *(mc)];
-	    }
+	  {
+	    w[i + j * (mc) ] = (double) (i + j);
+	    d[i + j * (mc) ] = w[i + j *(mc)] + c[i + j *(mc)];
+	  }
     } 
   else 
     {

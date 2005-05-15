@@ -179,9 +179,9 @@ int nsp_cells_resize(NspCells *A, int m, int n)
     }
   if ( m*n == 0 ) 
     {
-        A->m =  A->n = A->mn= 0;
-	FREE(A->objs);
-	return OK;
+      A->m =  A->n = A->mn= 0;
+      FREE(A->objs);
+      return OK;
     }
   
   if ( A->mn == 0 ) 
@@ -382,10 +382,10 @@ int nsp_cells_add_columns(NspCells *A, int n)
     }
   if ( nsp_cells_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
   /*  normalemeny inutile car Resize le fait deja 
-     int Asize;
-     Asize=A->mn;
-     ns= (A->m)*n;
-     if ( nsp_set_cells(ns,".",A->objs+Asize) == FAIL) return(FAIL);**/
+      int Asize;
+      Asize=A->mn;
+      ns= (A->m)*n;
+      if ( nsp_set_cells(ns,".",A->objs+Asize) == FAIL) return(FAIL);**/
   return(OK);
 }
 
@@ -476,11 +476,11 @@ int nsp_cells_add_rows(NspCells *A, int m)
 }
 
 /*
-*  A(Rows,Cols) = B 
-*  A is changed and enlarged if necessary 
-*  Rows and Cols are unchanged 
-*  Size Compatibility is checked 
-*/
+ *  A(Rows,Cols) = B 
+ *  A is changed and enlarged if necessary 
+ *  Rows and Cols are unchanged 
+ *  Size Compatibility is checked 
+ */
 
 int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspCells *B)
 {
@@ -721,7 +721,7 @@ NspCells*nsp_cells_extract(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
       return(NULLCELLS);
     }
   if ((Loc =nsp_cells_create(NVOID,Rows->mn,Cols->mn))== NULLCELLS) 
-      return(NULLCELLS);
+    return(NULLCELLS);
   for ( i = 0 ; i < Rows->mn ; i++)
     for ( j = 0 ; j < Cols->mn ; j++ )
       {
@@ -729,7 +729,7 @@ NspCells*nsp_cells_extract(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
 	if ( Ob != NULLOBJ )
 	  if ((Loc->objs[i+Loc->m*j] = nsp_object_copy_with_name(Ob)) == NULL ) return(NULLCELLS);
       }
-   return(Loc);
+  return(Loc);
 }
 
 

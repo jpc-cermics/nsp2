@@ -550,7 +550,7 @@ static int int_spmult_gen(Stack stack, int rhs, int opt, int lhs, Sp21 F)
       else
 	{
 	  /* since Mat1 is scalar we store the result in Mat2 so we 
-	    must copy it **/
+	     must copy it **/
 	  if ((HMat2 = GetSpCopy(stack,2)) == NULLSP) return RET_BUG;
 	  if (nsp_spmatrix_mult_scal(HMat2,HMat1) != OK) return RET_BUG;
 	  NSP_OBJECT(HMat2)->ret_pos = 1;
@@ -900,7 +900,7 @@ int SpMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 
 
 /* used to walk through the interface table 
-    (for adding or removing functions) **/
+   (for adding or removing functions) **/
 
 void SpMatrix_Interf_Info(int i, char **fname, function (**f))
 {

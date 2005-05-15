@@ -128,8 +128,8 @@ NspMatrix *MatCreateFromData(char *name, char type, int m, int n,
     }
   NSP_OBJECT(Mat)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
-  Mat->otype =  MATRIX; 
-  Mat->ftype = &Matrix_Type;
+    Mat->otype =  MATRIX; 
+    Mat->ftype = &Matrix_Type;
   */
   /* specific for Matrix */
   Mat->m=m;
@@ -466,9 +466,9 @@ int nsp_matrix_resize(NspMatrix *A, int m, int n)
   if ( m*n < 0) return FAIL;
   if ( m*n == 0 ) /* need to free space */
     {
-        A->m =  A->n = A->mn= 0;
-	if ( A->rc_type == 'r' ) {FREE(A->R);} else  {FREE(A->C);}
-	return OK;
+      A->m =  A->n = A->mn= 0;
+      if ( A->rc_type == 'r' ) {FREE(A->R);} else  {FREE(A->C);}
+      return OK;
     }
 
   A->m =m ;  A->n =n;   A->mn=m*n ;
@@ -760,7 +760,7 @@ int nsp_matrix_enlarge(NspMatrix *A, int m, int n)
     {
       /* special case A=[] **/
       if ( nsp_matrix_resize(A,m,n) == FAIL) return(FAIL);
- nsp_mat_set_rval(A,0.00);
+      nsp_mat_set_rval(A,0.00);
       return OK;
     }
   if ( n > A->n  )
@@ -895,12 +895,12 @@ NspMatrix* nsp_matrix_concat_down(const NspMatrix *A,const NspMatrix *B)
  	{
  	case 'r' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
- 	nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->C+j*(Loc->m),&inc);
+	    nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->C+j*(Loc->m),&inc);
  	  break;
  	case 'c' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
 	    /*
-		C2F(zcopy) (&A->m,A->C+j*A->m,&inc,Loc->C+j*(Loc->m),&inc); **/
+	      C2F(zcopy) (&A->m,A->C+j*A->m,&inc,Loc->C+j*(Loc->m),&inc); **/
 	    memcpy(Loc->C+j*(Loc->m),A->C+j*A->m,A->m*sizeof(doubleC));
  	  break;
  	}
@@ -908,12 +908,12 @@ NspMatrix* nsp_matrix_concat_down(const NspMatrix *A,const NspMatrix *B)
  	{
  	case 'r' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
- 	nsp_dzcopy(&B->m,B->R+j*B->m,&inc,Loc->C+j*(Loc->m)+A->m,&inc);
+	    nsp_dzcopy(&B->m,B->R+j*B->m,&inc,Loc->C+j*(Loc->m)+A->m,&inc);
  	  break;
  	case 'c' :
  	  for ( j = 0 ; j < A->n ; j++ ) 
 	    /* 
- 	    C2F(zcopy) (&B->m,B->C+j*B->m,&inc,Loc->C+j*(Loc->m)+A->m,&inc);
+	       C2F(zcopy) (&B->m,B->C+j*B->m,&inc,Loc->C+j*(Loc->m)+A->m,&inc);
 	    */
 	    memcpy(Loc->C+j*(Loc->m)+A->m,B->C+j*B->m,B->m*sizeof(doubleC));
  	  break;
@@ -948,7 +948,7 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
 	{
 	  /* C2F(dcopy) (&A->m,A->R+j*A->m,&inc,Loc->R+j*(Loc->m),&inc); */
 	  memcpy(Loc->R+j*(Loc->m),A->R+j*A->m,A->m*sizeof(double));
-	nsp_dset(&B->m,&d,Loc->R+j*(Loc->m)+A->m,&inc);
+	  nsp_dset(&B->m,&d,Loc->R+j*(Loc->m)+A->m,&inc);
 	}
     }
   else 
@@ -971,7 +971,7 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
 	{
 	  /* 
 	   * C2F(dcopy) (&B->m,B->R+j*A->m,&inc,Loc->R+(j+A->n)*(Loc->m)+A->m,&inc);
-	  */
+	   */
 	  memcpy(Loc->R+(j+A->n)*(Loc->m)+A->m,B->R+j*A->m,B->m*sizeof(double));
 	  nsp_dset(&A->m,&d,Loc->R+(j+A->n)*(Loc->m),&inc);
 	}
@@ -981,7 +981,7 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
       if ( B->rc_type == 'c') 
 	{
 	  /* 
-	  C2F(zcopy) (&B->m,B->C+j*A->m,&inc,Loc->C+(j+A->n)*(Loc->m)+A->m,&inc);
+	     C2F(zcopy) (&B->m,B->C+j*A->m,&inc,Loc->C+(j+A->n)*(Loc->m)+A->m,&inc);
 	  */
 	  memcpy(Loc->C+(j+A->n)*(Loc->m)+A->m,B->C+j*A->m,B->m*sizeof(doubleC));
 	  nsp_csetd(&A->m,&d,Loc->C+(j+A->n)*(Loc->m),&inc);
@@ -1062,7 +1062,7 @@ int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, Nsp
 {
   int rmin,rmax,cmin,cmax,i,j;
   /* Check compatibility : B is a scalar or B must have compatible 
-      size with Rows and Cols **/
+     size with Rows and Cols **/
   if ( B->mn != 1)
     {
       if ( Rows->mn != B->m ||  Cols->mn != B->n )
@@ -1630,7 +1630,7 @@ NspMatrix *nsp_matrix_extract_rows(const NspMatrix *A,const NspMatrix *Rows)
     }
   Loc = nsp_matrix_create(NVOID,A->rc_type,Rows->mn,A->n);
   if ( Loc == NULLMAT) 
-      return(NULLMAT);
+    return(NULLMAT);
   if ( A->rc_type == 'c' )
     {
       for ( i = 0 ; i < Rows->mn ; i++)

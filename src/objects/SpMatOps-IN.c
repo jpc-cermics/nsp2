@@ -469,7 +469,7 @@ int SpMatOps_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 
 
 /* used to walk through the interface table 
-    (for adding or removing functions) **/
+   (for adding or removing functions) **/
 
 void SpMatOps_Interf_Info(int i, char **fname, function (**f))
 {

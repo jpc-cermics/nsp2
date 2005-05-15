@@ -356,7 +356,7 @@ NspHobj  *GobjCreate(char *name, NspObject *O)
 
 NspHobj  *nsp_hobj_copy(NspHobj *H)
 {
- NspHobj *Loc;
+  NspHobj *Loc;
   Loc = HobjCreate(NVOID,H->O);
   if ( Loc == NULLHOBJ ) return NULLHOBJ;
   return(Loc);
@@ -481,7 +481,7 @@ int Hobj_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 /* used to walk through the interface table 
-    (for adding or removing functions) **/
+   (for adding or removing functions) **/
 
 void Hobj_Interf_Info(int i, char **fname, function (**f))
 {

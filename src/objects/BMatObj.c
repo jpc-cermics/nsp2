@@ -96,7 +96,7 @@ NspTypeBMatrix *new_type_bmatrix(type_mode mode)
       nsp_type_bmatrix = type;
       if ( nsp_register_type(nsp_type_bmatrix) == FALSE) return NULL;
       return ( mode == T_BASE ) ? type : new_type_bmatrix(mode);
-      }
+    }
   else 
     {
       type->id = nsp_type_bmatrix_id;
@@ -138,9 +138,9 @@ NspBMatrix *new_bmatrix()
  * Object method redefined for BMatrix 
  *-----------------------------------------------*/
 
- /*
-  * size 
-  */
+/*
+ * size 
+ */
 
 static int bmatrix_size(NspBMatrix *Mat, int flag)
 {
@@ -293,7 +293,7 @@ NspBMatrix  *GetBMat(Stack stack, int i)
 {
   NspBMatrix *M;
   if (( M = BMatObj(NthObj(i))) == NULLBMAT)
-     ArgMessage(stack,i);
+    ArgMessage(stack,i);
   return M;
 }
 
@@ -1015,7 +1015,7 @@ static int int_bmatrix_2latexmat(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
- nsp_bmatrix_latex_print(HMat);
+  nsp_bmatrix_latex_print(HMat);
   return 0;
 }
 
@@ -1029,7 +1029,7 @@ static int int_bmatrix_2latextab(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;    
- nsp_bmatrix_latex_tab_print(HMat);
+  nsp_bmatrix_latex_tab_print(HMat);
   return 0;
 }
 
@@ -1210,7 +1210,7 @@ int BMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 
 
 /* used to walk through the interface table 
-    (for adding or removing functions) **/
+   (for adding or removing functions) **/
 
 void BMatrix_Interf_Info(int i, char **fname, function (**f))
 {

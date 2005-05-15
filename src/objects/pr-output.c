@@ -383,20 +383,20 @@ static void gen_pr_min_max_internal (const void *M, char flag, double *dmin, dou
       if ( flag == 'r' ) 
 	{
 	  while ( Next(M,&r,&c) != 0) 
-	  { 
-	    if ( isinf (c.r) || isnan(c.r)) continue;
-	    if ( Abs(c.r) < *dmin ) *dmin = Abs(c.r);
-	    if ( Abs(c.r) > *dmax ) *dmax = Abs(c.r);
-	  } 
+	    { 
+	      if ( isinf (c.r) || isnan(c.r)) continue;
+	      if ( Abs(c.r) < *dmin ) *dmin = Abs(c.r);
+	      if ( Abs(c.r) > *dmax ) *dmax = Abs(c.r);
+	    } 
 	}
       else 
 	{
 	  while ( Next(M,&r,&c) != 0) 
-	  { 
-	    if ( isinf (c.i) || isnan(c.i)) continue;
-	    if ( Abs(c.i) < *dmin ) *dmin = Abs(c.i);
-	    if ( Abs(c.i) > *dmax ) *dmax = Abs(c.i);
-	  } 
+	    { 
+	      if ( isinf (c.i) || isnan(c.i)) continue;
+	      if ( Abs(c.i) < *dmin ) *dmin = Abs(c.i);
+	      if ( Abs(c.i) > *dmax ) *dmax = Abs(c.i);
+	    } 
 	}
       break;
     }
@@ -916,7 +916,7 @@ void nsp_print_internalCM (NspMatrix *cm, int indent)
       column_width += bank_format ? 2 : 7;
       total_width = nc * column_width;
 
-       sci_get_screen_size(&winrows,&max_width);
+      sci_get_screen_size(&winrows,&max_width);
       if (user_pref.pr_as_read_syntax)
 	max_width -= 4;
 
@@ -966,14 +966,14 @@ int nsp_print_internalPM (NspPMatrix *M, int indent)
   int nc = M->n;
   int fw=0;
   if (nr == 0 || nc == 0) print_empty_matrix ( nr, nc );
-   sci_get_screen_size(&winrows,&max_width);
+  sci_get_screen_size(&winrows,&max_width);
   /* get one format for all polynoms **/ 
   /* XXXXXX need to write the complex case **/
   Mp_set_format (M);
   fw= curr_real_fw;
   Sciprintf("prec= %d,Format [%s]\n",
-	   user_pref.output_precision,
-	   curr_real_fmt);
+	    user_pref.output_precision,
+	    curr_real_fmt);
   /* Allocate a table to store the column width **/
   /* Iloc[j]= degree max of column j **/
   if ((Iloc =nsp_alloc_int(M->n)) == (int*) 0) return(FAIL);
@@ -1028,26 +1028,26 @@ int nsp_print_internalPM (NspPMatrix *M, int indent)
 	      p_rows=0;
 	    }
 	  /*
-	  if (  lim - col == 1 && 	  t_width > max_width ) 
+	    if (  lim - col == 1 && 	  t_width > max_width ) 
 	    {
-	      Sciprintf("Must try to cut thhe column \n");
+	    Sciprintf("Must try to cut thhe column \n");
 	    }
-	  else 
+	    else 
 	  */
-	    {
-	      for ( j = col; j < lim; j++)
-		{
-		  Sciprintf("  ");
-		  pr_poly_exp ( M->S[i+(M->m)*j], fw,Iloc[j]);
-		}
-	      Sciprintf("\n");
-	      for ( j = col; j < lim; j++)
-		{
-		  Sciprintf("  ");
-		  pr_poly ( M->S[i+(M->m)*j], fw,Iloc[j]);
-		}
-	      Sciprintf("\n");
-	    }
+	  {
+	    for ( j = col; j < lim; j++)
+	      {
+		Sciprintf("  ");
+		pr_poly_exp ( M->S[i+(M->m)*j], fw,Iloc[j]);
+	      }
+	    Sciprintf("\n");
+	    for ( j = col; j < lim; j++)
+	      {
+		Sciprintf("  ");
+		pr_poly ( M->S[i+(M->m)*j], fw,Iloc[j]);
+	      }
+	    Sciprintf("\n");
+	  }
 	}
       col += inc;
     }
@@ -1155,7 +1155,7 @@ int nsp_print_internalSM (const NspSMatrix *m, int indent)
   int nr = m->m;
   int nc = m->n;
   if (nr == 0 || nc == 0) print_empty_matrix ( nr, nc);
-   sci_get_screen_size(&winrows,&max_width);
+  sci_get_screen_size(&winrows,&max_width);
   /* Allocate a table to store each column width **/
   if ((Iloc =nsp_alloc_int(m->n)) == (int*) 0) return(FAIL);
   /* set Iloc[j] to the max len of column j **/
@@ -1224,21 +1224,21 @@ int nsp_print_internalSM (const NspSMatrix *m, int indent)
 	      p_rows=0;
 	    }
 	  /*
-	  if (  lim - col == 1 &&  t_width > max_width ) 
+	    if (  lim - col == 1 &&  t_width > max_width ) 
 	    {
-	      Sciprintf("Must try to cut the column \n");
+	    Sciprintf("Must try to cut the column \n");
 	    }
-	  else 
+	    else 
 	  */
-	    {
-	      for ( j = col; j < lim; j++)
-		{
-		  Sciprintf("  ");
-		  Sciprintf("%s",m->S[i+(m->m)*j]);
-		  pr_white(Iloc[j]-strlen(m->S[i+(m->m)*j]));
-		}
-	      Sciprintf("\n");
-	    }
+	  {
+	    for ( j = col; j < lim; j++)
+	      {
+		Sciprintf("  ");
+		Sciprintf("%s",m->S[i+(m->m)*j]);
+		pr_white(Iloc[j]-strlen(m->S[i+(m->m)*j]));
+	      }
+	    Sciprintf("\n");
+	  }
 	}
       col += inc;
     }

@@ -137,7 +137,7 @@ NspObject *nsp_object_copy_and_name(char *name, NspObject *O)
   if ( ( l =nsp_object_copy(O)) == NULLOBJ ) return NULLOBJ;
   if (nsp_object_set_name(l,name) == FAIL)
     {
- nsp_object_destroy(&l);
+      nsp_object_destroy(&l);
       return(NULLOBJ);
     }
   return l;
@@ -300,7 +300,7 @@ NspObject *nsp_object_xdr_load(NspFile  *F)
 {
   int id;
   NspTypeObject *type;
- nsp_xdr_load_i(F->xdrs,&id);
+  nsp_xdr_load_i(F->xdrs,&id);
   if ( id == nsp_no_type_id ) return NULLOBJ; /* end of saved objects  */
   type = nsp_get_type_from_id(id);
   if ( type == NULL) 

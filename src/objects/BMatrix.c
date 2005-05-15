@@ -120,9 +120,9 @@ int nsp_bmatrix_resize(NspBMatrix *A, int m, int n)
   if ( m*n < 0) return FAIL;
   if ( m*n == 0 ) 
     {
-        A->m =  A->n = A->mn= 0;
-	FREE(A->B);
-	return OK;
+      A->m =  A->n = A->mn= 0;
+      FREE(A->B);
+      return OK;
     }
   A->m =m ;  A->n =n;   A->mn=m*n ;
   /* Realloc will realloc or alloc depending on A->B **/
@@ -338,7 +338,7 @@ int nsp_bmatrix_concat_right(NspBMatrix *A, NspBMatrix *B)
       return(FAIL);
     }
   if (nsp_bmatrix_resize(A,A->m,A->n+B->n) == FAIL) return(FAIL);
- nsp_icopy(&B->mn,B->B,&inc,A->B+Asize,&inc);
+  nsp_icopy(&B->mn,B->B,&inc,A->B+Asize,&inc);
   return(OK);
 }
 
@@ -367,7 +367,7 @@ int nsp_bmatrix_add_columns(NspBMatrix *A, int n)
   Asize=A->mn;
   ns= (A->m)*n;
   if (nsp_bmatrix_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
- nsp_iset(&ns,&d,A->B+Asize,&inc);
+  nsp_iset(&ns,&d,A->B+Asize,&inc);
   return(OK);
 }
 
@@ -395,8 +395,8 @@ NspBMatrix *nsp_bmatrix_concat_down(NspBMatrix *A, NspBMatrix *B)
     return(NULLBMAT);
   for ( j = 0 ; j < A->n ; j++ ) 
     {
- nsp_icopy(&A->m,A->B+j*A->m,&inc,Loc->B+j*(Loc->m),&inc);
- nsp_icopy(&B->m,B->B+j*B->m,&inc,Loc->B+j*(Loc->m)+A->m,&inc);
+      nsp_icopy(&A->m,A->B+j*A->m,&inc,Loc->B+j*(Loc->m),&inc);
+      nsp_icopy(&B->m,B->B+j*B->m,&inc,Loc->B+j*(Loc->m)+A->m,&inc);
     }
   return(Loc) ;
 }
@@ -422,13 +422,13 @@ NspBMatrix *nsp_bmatrix_concat_diag(NspBMatrix *A, NspBMatrix *B)
     return(NULLBMAT);
   for ( j = 0 ; j < A->n ; j++ ) 
     {
- nsp_icopy(&A->m,A->B+j*A->m,&inc,Loc->B+j*(Loc->m),&inc);
- nsp_iset(&B->m,&d,Loc->B+j*(Loc->m)+A->m,&inc);
+      nsp_icopy(&A->m,A->B+j*A->m,&inc,Loc->B+j*(Loc->m),&inc);
+      nsp_iset(&B->m,&d,Loc->B+j*(Loc->m)+A->m,&inc);
     }
   for ( j = 0 ; j < B->n ; j++ ) 
     {
- nsp_icopy(&B->m,B->B+j*A->m,&inc,Loc->B+(j+A->n)*(Loc->m)+A->m,&inc);
- nsp_iset(&A->m,&d,Loc->B+(j+A->n)*(Loc->m),&inc);
+      nsp_icopy(&B->m,B->B+j*A->m,&inc,Loc->B+(j+A->n)*(Loc->m)+A->m,&inc);
+      nsp_iset(&A->m,&d,Loc->B+(j+A->n)*(Loc->m),&inc);
     }
 
   return(Loc) ;
@@ -700,7 +700,7 @@ NspBMatrix  *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols
       return(NULLBMAT);
     }
   if (( Loc =nsp_bmatrix_create(NVOID,Rows->mn,Cols->mn)) == NULLBMAT) 
-      return(NULLBMAT);
+    return(NULLBMAT);
   for ( i = 0 ; i < Rows->mn ; i++)
     for ( j = 0 ; j < Cols->mn ; j++ )
       {
@@ -771,7 +771,7 @@ NspBMatrix  *nsp_bmatrix_extract_columns(NspBMatrix *A, NspMatrix *Cols)
     }
   Loc =nsp_bmatrix_create(NVOID,A->m,Cols->mn);
   if ( Loc == NULLBMAT) 
-      return(NULLBMAT);
+    return(NULLBMAT);
   for ( i = 0 ; i < A->m ; i++)
     for ( j = 0 ; j < Cols->mn ; j++ )
       {	
@@ -864,7 +864,7 @@ NspBMatrix  *nsp_bmatrix_extract_diag(NspBMatrix *A, int k)
       return(Loc);
     }
   if (( Loc =nsp_bmatrix_create(NVOID,imax-imin,(int)1)) == NULLBMAT)
-      return(NULLBMAT);
+    return(NULLBMAT);
   j=0;
   for ( i = imin ; i < imax ; i++ ) 
     Loc->B[j++] = A->B[i+(i+k)*A->m];
@@ -925,7 +925,7 @@ NspBMatrix  *nsp_bmatrix_create_diag(NspBMatrix *Diag, int k)
   imin = Max(0,-k);
   imax = Diag->mn +imin;
   if (( Loc =nsp_bmatrix_create(NVOID,imax,imax+k)) == NULLBMAT) 
-      return(NULLBMAT);
+    return(NULLBMAT);
   j=0;
   for ( i = imin ; i < imax ; i++ ) 
     Loc->B[i+(i+k)*Loc->m] = Diag->B[j++] ;
@@ -965,7 +965,7 @@ NspBMatrix  *nsp_matrix_to_bmatrix(NspMatrix *M)
   int i;
   NspBMatrix *Loc;
   if (( Loc =nsp_bmatrix_create(NVOID,M->m,M->n)) == NULLBMAT) 
-      return(NULLBMAT);
+    return(NULLBMAT);
   if ( M->rc_type == 'r') 
     for ( i = 0 ; i < M->mn ; i++ ) 
       Loc->B[i] = ( M->R[i] != 0.0) ? TRUE : FALSE ;
@@ -989,7 +989,7 @@ NspMatrix *nsp_bmatrix_to_matrix(NspBMatrix *M)
   int i;
   NspMatrix *Loc;
   if (( Loc = nsp_matrix_create(NVOID,'r',M->m,M->n)) == NULLMAT) 
-      return(NULLMAT);
+    return(NULLMAT);
   for ( i = 0 ; i < M->mn ; i++ ) 
     Loc->R[i] = M->B[i] ;
   return(Loc);

@@ -230,9 +230,9 @@ int nsp_file_close_xdr_r(NspFile  *F)
       rep = FAIL;
     }
   /* FIXME : here assertR does not work on macOSX 
-  assertR(fflush((FILE *) F->xdrs->x_private) != EOF) ; 
-  xdr_destroy(F->xdrs);
-  assertR(fclose(F->file) != EOF) ;
+     assertR(fflush((FILE *) F->xdrs->x_private) != EOF) ; 
+     xdr_destroy(F->xdrs);
+     assertR(fclose(F->file) != EOF) ;
   */
   fflush((FILE *) F->xdrs->x_private);
   xdr_destroy(F->xdrs);

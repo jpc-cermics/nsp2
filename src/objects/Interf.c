@@ -257,7 +257,7 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
 	Scierror(" of function %s\n",stack.fname);
       va_end(ap);
     }
-    return rep;
+  return rep;
 }
 
 
@@ -367,7 +367,7 @@ static int  extract_one_argument(NspObject *Ob,int_types *T,va_list *ap,char Typ
   case smatcopy : Foo = (void **)  va_arg(*ap, NspSMatrix **) ;
     if ( ( *((NspSMatrix**) Foo)=nsp_smatrix_object(Ob) )== NULLSMAT) return FAIL;
     if ( ( *((NspSMatrix**) Foo)=MaybeObjCopy((NspObject **)Foo)) == NULLSMAT) return FAIL;
-      return FAIL;
+    return FAIL;
     break;
   case list_end :
     Scierror(list_end_message) ;

@@ -312,7 +312,7 @@ NspFunction  *GetFunction(Stack stack, int i)
 {
   NspFunction *M;
   if (( M = function_object(NthObj(i))) == NULLFUNC)
-     ArgMessage(stack,i);
+    ArgMessage(stack,i);
   return M;
 }
 
@@ -381,7 +381,7 @@ static int int_func_extractelts(Stack stack, int rhs, int opt, int lhs)
   NspFunction  *F;
   if ( (F = GetFunction(stack,1)) == NULLFUNC) return RET_BUG;
   /* since we want name mangling we just use the function name */
-  if ( FuncEval(NULL,F->fname,stack,stack.first+1,rhs-1,opt,1)== RET_BUG ) 
+  if (nsp_eval_func(NULL,F->fname,stack,stack.first+1,rhs-1,opt,1)== RET_BUG ) 
     return RET_BUG;
   NthObj(2)->ret_pos = 1;
   return 1;
@@ -405,7 +405,7 @@ int Function_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 /* used to walk through the interface table 
-    (for adding or removing functions) */
+   (for adding or removing functions) */
 
 void Function_Interf_Info(int i, char **fname, function (**f))
 {

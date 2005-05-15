@@ -126,10 +126,10 @@ NspMatrix *SpMaxiMinitt_G (NspSpMatrix *A, NspSpMatrix *B, int flag, int minmaxf
 	  SpRow *Ai = A->D[i];
 	  SpRow *Bi = B->D[i];
 	  /* We explore the ith line of A and B in increasing order of column 
-	      and want to merge the columns found ( in increasing order ) 
-	      when a same column number appear in both A and B we call the 
-	      2-ary operator op 
-	      This is very near to a merge sort of two sorted arrays 
+	     and want to merge the columns found ( in increasing order ) 
+	     when a same column number appear in both A and B we call the 
+	     2-ary operator op 
+	     This is very near to a merge sort of two sorted arrays 
 	  **/ 
 	  k1 = 0 ; k2 = 0 ; 
 	  count = 0 ; 
@@ -232,10 +232,10 @@ NspMatrix *SpMaxitt(NspSpMatrix *A, NspSpMatrix *B, int flag, int *err)
 }
 
 /*
-*  A(i,j) = Maxi(A(i,j),B(i,j)) 
-*  Ind(i,j) set to j if B(i,j) realize the max and flag ==1 
-*  B unchanged A,B are changed 
-*/
+ *  A(i,j) = Maxi(A(i,j),B(i,j)) 
+ *  Ind(i,j) set to j if B(i,j) realize the max and flag ==1 
+ *  B unchanged A,B are changed 
+ */
 
 
 /*
@@ -253,10 +253,10 @@ NspMatrix *SpMinitt(NspSpMatrix *A, NspSpMatrix *B, int flag, int *err)
 
 
 /*
-*  A(i,j) = Mini(A(i,j),B(i,j)) 
-*  Ind(i,j) set to j if B(i,j) realize the max and flag ==1 
-*  B unchanged A,B are changed 
-*/
+ *  A(i,j) = Mini(A(i,j),B(i,j)) 
+ *  Ind(i,j) set to j if B(i,j) realize the max and flag ==1 
+ *  B unchanged A,B are changed 
+ */
 
 /*
  * Return the Real part of Matrix A 
@@ -422,7 +422,7 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 	  SC.r = SC.i = 0.0;
 	  for ( i= 0 ; i < A->m ; i++ ) 
 	    { 
-	nsp_zsum(&C,&A->D[i]->size,A->D[i]->C,&inc); 
+	      nsp_zsum(&C,&A->D[i]->size,A->D[i]->C,&inc); 
 	      SC.r += C.r;SC.i += C.i;
 	    }
 	  if ( SC.r  != 0.0 ||  SC.i != 0.0) 
@@ -463,19 +463,19 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
       count =0;
       switch ( A->rc_type ) 
 	{
-	  case 'r' : 
-	    for ( k=0 ; k < Sum->D[0]->size ; k++) 
-	      {
-		if ( Sum->D[0]->R[k] == 0.0 ) { count=1; Sum->D[0]->J[k]=-1;}
-	      }
-	    break;
-	  case 'c' : 
-	    for ( k=0 ; k < Sum->D[0]->size ; k++) 
-	      {
-		if ( Sum->D[0]->C[k].r == 0.0 && Sum->D[0]->C[k].i == 0.0 ) 
-		  { count=1; Sum->D[0]->J[k]=-1;}
-	      }
-	    break;
+	case 'r' : 
+	  for ( k=0 ; k < Sum->D[0]->size ; k++) 
+	    {
+	      if ( Sum->D[0]->R[k] == 0.0 ) { count=1; Sum->D[0]->J[k]=-1;}
+	    }
+	  break;
+	case 'c' : 
+	  for ( k=0 ; k < Sum->D[0]->size ; k++) 
+	    {
+	      if ( Sum->D[0]->C[k].r == 0.0 && Sum->D[0]->C[k].i == 0.0 ) 
+		{ count=1; Sum->D[0]->J[k]=-1;}
+	    }
+	  break;
 	}
       if ( count != 0 ) 
 	{
@@ -505,7 +505,7 @@ NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
 	case 'c' :  
 	  for ( i = 0 ; i < A->m ; i++) 
 	    {
-	nsp_zsum(&C,&A->D[i]->size,A->D[i]->C,&inc); 
+	      nsp_zsum(&C,&A->D[i]->size,A->D[i]->C,&inc); 
 	      if ( C.r  != 0.0 || C.i != 0.0 ) 
 		{
 		  if (nsp_spmatrix_resize_row(Sum,i,1)== FAIL) return NULLSP;
@@ -883,8 +883,8 @@ static NspMatrix* SpUnary2Full(NspSpMatrix *A, Func1 F1, Func2 F2)
     {
     case 'r' : val = (*F1)(0.00); nsp_mat_set_rval(Loc,val); break;
     case 'c' : (*F2)(&Czero,&Cval);
- nsp_mat_set_rval(Loc,Cval.r);
- nsp_mat_set_ival(Loc,Cval.i);
+      nsp_mat_set_rval(Loc,Cval.r);
+      nsp_mat_set_ival(Loc,Cval.i);
       break;
     }
   if ( A->rc_type == 'r' )
@@ -948,7 +948,7 @@ static void  SpUnary(NspSpMatrix *A, Func1 F1, Func2 F2)
 	  if ( compress == 1) 
 	    {
 	      ndel =nsp_spmatrix_compress_row(A,i);
-	nsp_spmatrix_resize_row(A,i,A->D[i]->size-ndel);
+	      nsp_spmatrix_resize_row(A,i,A->D[i]->size-ndel);
 	    }
 	}
     }
@@ -969,7 +969,7 @@ static void  SpUnary(NspSpMatrix *A, Func1 F1, Func2 F2)
 	  if ( compress == 1) 
 	    {
 	      ndel =nsp_spmatrix_compress_row(A,i);
-	nsp_spmatrix_resize_row(A,i,A->D[i]->size-ndel);
+	      nsp_spmatrix_resize_row(A,i,A->D[i]->size-ndel);
 	    }
 	}
     }
@@ -1085,7 +1085,7 @@ int SpSign(NspSpMatrix *A)
     {
       for ( i = 0 ; i < A->m ; i++)
 	for ( k=0; k < A->D[i]->size ; k++ ) 
-	nsp_signum_c(&A->D[i]->C[k],&A->D[i]->C[k]);
+	  nsp_signum_c(&A->D[i]->C[k],&A->D[i]->C[k]);
     }
   return(OK);
 }
@@ -1160,21 +1160,21 @@ int SpErf(NspSpMatrix *A)
  */
 
 /*
-int SpErfc(A)
-      NspSpMatrix *A;
-{
+  int SpErfc(A)
+  NspSpMatrix *A;
+  {
   int i ;
   if ( A->rc_type == 'r') 
-    {
-      for ( i = 0 ; i < A->mn ; i++) A->R[i]= erfc(A->R[i]);
-    }
+  {
+  for ( i = 0 ; i < A->mn ; i++) A->R[i]= erfc(A->R[i]);
+  }
   else
-    {
-      Scierror("Erf function argument must be real\n");
-      return(FAIL);
-    }
+  {
+  Scierror("Erf function argument must be real\n");
+  return(FAIL);
+  }
   return(OK);
-}
+  }
 **/
 
 /*

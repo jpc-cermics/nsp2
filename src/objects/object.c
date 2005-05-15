@@ -1539,7 +1539,7 @@ int Obj_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 
 
 /* used to walk through the interface table 
-    (for adding or removing functions) */
+   (for adding or removing functions) */
 
 void Obj_Interf_Info(int i, char **fname, function (**f))
 {

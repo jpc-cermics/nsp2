@@ -74,8 +74,8 @@ NspList*nsp_list_create(char *name, char *tname)
     }
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
-  Loc->otype = LIST;
-  Loc->ftype = List_Type;
+    Loc->otype = LIST;
+    Loc->ftype = List_Type;
   */
   return(Loc);
 }
@@ -129,7 +129,7 @@ void nsp_cell_destroy(Cell **c)
   if ((*c) != NULLCELL)
     {
       FREE((*c)->name);
- nsp_object_destroy(&(*c)->O);
+      nsp_object_destroy(&(*c)->O);
       FREE((*c));
     }
 } 
@@ -153,7 +153,7 @@ void nsp_list_destroy(NspList *l)
       while ( loc != NULLCELL) 
 	{
 	  loc1= loc->next ;
-	nsp_cell_destroy(&loc);
+	  nsp_cell_destroy(&loc);
 	  loc = loc1;
 	}
       FREE(l);
@@ -280,7 +280,7 @@ int nsp_list_insert(NspList *L, NspObject *O, int n)
       { Loc = Loc->next;count ++;}
   if ( count == n ) 
     {
- nsp_object_destroy(&Loc->O);
+      nsp_object_destroy(&Loc->O);
       Loc->O = O;
       return(OK) ;
     }
@@ -459,14 +459,14 @@ void nsp_list_delete_elt_by_name(NspList *L, char *str)
 	    {
 	      L->first = Loc->next ;
 	      if ( L->first != NULLCELL) L->first->prev = NULLCELL;
-	nsp_cell_destroy(&Loc);
+	      nsp_cell_destroy(&Loc);
 	      return;
 	    }
 	  else 
 	    {
 	      Loc->prev->next = Loc->next ;
 	      if ( Loc->next != NULLCELL) Loc->next->prev = Loc->prev;
-	nsp_cell_destroy(&Loc);
+	      nsp_cell_destroy(&Loc);
 	      return;
 	    }
 	}
@@ -586,7 +586,7 @@ int nsp_list_concat(NspList *L1, NspList *L2)
       L2copy->first->prev=Loc;
     }
   L2copy->first= NULLCELL;
- nsp_list_destroy(L2copy);
+  nsp_list_destroy(L2copy);
   return(OK);
 }
 
@@ -625,7 +625,7 @@ void nsp_list_info(NspList *L, int indent)
       if ( C->O != NULLOBJ )
 	{
 	  /* if ( C->name !=  NULLSTRING) Sciprintf("<%s>",C->name); **/
-	nsp_object_info(C->O,(i==1)? 0: len);      
+	  nsp_object_info(C->O,(i==1)? 0: len);      
 	}
       else
 	{
@@ -772,14 +772,14 @@ NspObject *nsp_list_search_and_remove(NspList *L, char *str)
 	    {
 	      L->first = Loc->next ;
 	      if ( L->first != NULLCELL) L->first->prev = NULLCELL;
-	nsp_cell_only_destroy(&Loc);
+	      nsp_cell_only_destroy(&Loc);
 	      return Ret;
 	    }
 	  else 
 	    {
 	      Loc->prev->next = Loc->next ;
 	      if ( Loc->next != NULLCELL) Loc->next->prev = Loc->prev;
-	nsp_cell_only_destroy(&Loc);
+	      nsp_cell_only_destroy(&Loc);
 	      return Ret;
 	    }
 	}
@@ -893,14 +893,14 @@ NspObject *nsp_sorted_list_search_and_remove(NspList *L, nsp_const_string str)
 		{
 		  L->first = Loc->next ;
 		  if ( L->first != NULLCELL) L->first->prev = NULLCELL;
-		nsp_cell_only_destroy(&Loc);
+		  nsp_cell_only_destroy(&Loc);
 		  return Ret;
 		}
 	      else 
 		{
 		  Loc->prev->next = Loc->next ;
 		  if ( Loc->next != NULLCELL) Loc->next->prev = Loc->prev;
-		nsp_cell_only_destroy(&Loc);
+		  nsp_cell_only_destroy(&Loc);
 		  return Ret;
 		}
 	    }
@@ -935,7 +935,7 @@ int nsp_sorted_list_insert(NspList *L, NspObject *O)
       if ( cmp == 0 )   
 	{
 	  /* we replace Object by the new one **/ 
-	nsp_object_destroy(&Loc->O);
+	  nsp_object_destroy(&Loc->O);
 	  Loc->O = O;
 	  return(OK) ;	
 	}
@@ -1280,7 +1280,7 @@ int nsp_list_compact(NspList *L1, char flag )
 			    {
 			      NspMatrix *A;
 			      if ((A=nsp_matrix_concat_down((NspMatrix *)cell->O,(NspMatrix *)next->O)) == NULL) return FAIL;
-			nsp_object_destroy(&cell->O);
+			      nsp_object_destroy(&cell->O);
 			      cell->O = (NspObject *) A;
 			      if (nsp_object_set_name(cell->O,"lel") == FAIL) return FAIL;
 			      dflag = TRUE;
@@ -1304,7 +1304,7 @@ int nsp_list_compact(NspList *L1, char flag )
 			    {
 			      NspSMatrix *A;
 			      if ((A=nsp_smatrix_concat_down((NspSMatrix *)cell->O,(NspSMatrix *)next->O)) == NULL) return FAIL;
-			nsp_object_destroy(&cell->O);
+			      nsp_object_destroy(&cell->O);
 			      cell->O = (NspObject *) A;
 			      if (nsp_object_set_name(cell->O,"lel") == FAIL) return FAIL;
 			      dflag = TRUE;
@@ -1328,7 +1328,7 @@ int nsp_list_compact(NspList *L1, char flag )
 			    {
 			      NspBMatrix *A;
 			      if ((A=nsp_bmatrix_concat_down((NspBMatrix *)cell->O,(NspBMatrix *)next->O)) == NULL) return FAIL;
-			nsp_object_destroy(&cell->O);
+			      nsp_object_destroy(&cell->O);
 			      cell->O = (NspObject *) A;
 			      if (nsp_object_set_name(cell->O,"lel") == FAIL) return FAIL;
 			      dflag = TRUE;
@@ -1341,7 +1341,7 @@ int nsp_list_compact(NspList *L1, char flag )
 		    {
 		      cell->next = next->next; 
 		      if ( cell->next != NULL) cell->next->prev = cell;
-		nsp_cell_destroy(&next); 
+		      nsp_cell_destroy(&next); 
 		      next = cell->next ;
 		    }
 		  else 

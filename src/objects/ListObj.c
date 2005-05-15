@@ -450,9 +450,9 @@ static int int_lxlist(Stack stack, int rhs, int opt, int lhs)
       if (nsp_object_set_name(NthObj(i),"lel") == FAIL) return RET_BUG;
       if (nsp_list_end_insert(L,NthObj(i)) == FAIL ) return RET_BUG;
       /* If NthObj(i) is not copied it is inserted in the list 
-      we must set then NthObj(i) to NULLOBJ 
-      to prevent the cleaning process to clean the object 
-      that we have inserted in our list **/
+	 we must set then NthObj(i) to NULLOBJ 
+	 to prevent the cleaning process to clean the object 
+	 that we have inserted in our list **/
       NthObj(i) = NULLOBJ ;
     }
   NthObj(1)=(NspObject *) L;
@@ -484,9 +484,9 @@ static int int_lxsortedlist(Stack stack, int rhs, int opt, int lhs)
       if ( (O1 =nsp_object_copy_with_name(NthObj(i))) == NULLOBJ)  return RET_BUG;
       if (nsp_sorted_list_insert(L,O1) == FAIL ) return RET_BUG;
       /* If NthObj(i) is not copied it is inserted in the list 
-      we must set then NthObj(i) to NULLOBJ 
-      to prevent the cleaning process to clean the object 
-      that we have inserted in our list **/
+	 we must set then NthObj(i) to NULLOBJ 
+	 to prevent the cleaning process to clean the object 
+	 that we have inserted in our list **/
       NthObj(i) = NULLOBJ ;
     }
   NthObj(1)=(NspObject *) L;
@@ -573,9 +573,9 @@ static int int_lx_tlist_as_list(Stack stack, int rhs, int opt, int lhs)
       if (nsp_object_set_name(NthObj(i),oname) == FAIL) return FAIL;
       if (nsp_list_end_insert(L,NthObj(i)) == FAIL ) return RET_BUG;
       /* If NthObj(i) is not copied it is inserted in the list 
-      we must set then NthObj(i) to NULLOBJ 
-      to prevent the cleaning process to clean the object 
-      that we have inserted in our list **/
+	 we must set then NthObj(i) to NULLOBJ 
+	 to prevent the cleaning process to clean the object 
+	 that we have inserted in our list **/
       NthObj(i) = NULLOBJ ;
     }
   NthObj(1)=(NspObject *) L;
@@ -843,8 +843,8 @@ static int int_lxextract_l(Stack stack, int rhs, int opt, int lhs)
   int rep,n ;
   if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
   /* last extraction : here O can be anything */ 
-  FuncEvalBuildName("extractelts",stack,stack.first+1,1,name);
-  if ((n=FuncEval(NULLOBJ,name,stack,stack.first+1,2,0,1)) < 0) 
+  nsp_build_funcname("extractelts",stack,stack.first+1,1,name);
+  if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first+1,2,0,1)) < 0) 
     {
       return RET_BUG;
     }
@@ -1104,7 +1104,7 @@ static int int_lxdestroy(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(0,0);
   if ((L = GetList(stack,1)) == NULLLIST) return RET_BUG;
- nsp_object_destroy(&NthObj(1));
+  nsp_object_destroy(&NthObj(1));
   return 0;
 }
 
@@ -1140,7 +1140,7 @@ static int int_lxnthel(Stack stack, int rhs, int opt, int lhs)
   if ( GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
   if ((O =nsp_list_get_element(L,n1)) == NULLOBJ) return RET_BUG;
   /* XXXX pas clair est-ce que O est une copie */ 
- nsp_void_object_destroy(&NthObj(1));
+  nsp_void_object_destroy(&NthObj(1));
   NthObj(1) = O;
   NSP_OBJECT(NthObj(1))->ret_pos = 1;
   return 1;  
@@ -1161,9 +1161,9 @@ static int int_lxendi(Stack stack, int rhs, int opt, int lhs)
   if ( MaybeObjCopy(&NthObj(2)) == NULL)  return RET_BUG;
   if (nsp_list_end_insert(L,NthObj(2)) == FAIL ) return RET_BUG;
   /* If NthObj(2) is not copied it is inserted in the list 
-      we must set then NthObj(2) to NULLOBJ 
-      to prevent the cleaning process to clean the object 
-      that we have inserted in our list **/
+     we must set then NthObj(2) to NULLOBJ 
+     to prevent the cleaning process to clean the object 
+     that we have inserted in our list **/
   NthObj(2) = NULLOBJ ;
   NSP_OBJECT(L)->ret_pos = 1;
   return 1;
@@ -1185,9 +1185,9 @@ static int int_lxni(Stack stack, int rhs, int opt, int lhs)
   if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
   if (nsp_list_store(L,NthObj(2),n1) == FAIL ) return RET_BUG;
   /* If NthObj(2) is not copied it is inserted in the list 
-      we must set then NthObj(2) to NULLOBJ 
-      to prevent the cleaning process to clean the object 
-      that we have inserted in our list **/
+     we must set then NthObj(2) to NULLOBJ 
+     to prevent the cleaning process to clean the object 
+     that we have inserted in our list **/
   NthObj(2) = NULLOBJ ;
   NSP_OBJECT(L)->ret_pos = 1;
   return 1;
@@ -1396,7 +1396,7 @@ int List_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 
 
 /* used to walk through the interface table 
-    (for adding or removing functions) **/
+   (for adding or removing functions) **/
 
 void List_Interf_Info(int i, char **fname, function (**f))
 {

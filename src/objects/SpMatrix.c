@@ -39,7 +39,7 @@ typedef void (*BopBoth) (SpRow *,char,int *,SpRow *,char,int,SpRow *,char,int);
 typedef void (*BopRight) (SpRow *,char,int *,SpRow *,char,int);
 
 static NspSpMatrix *BinaryOp (NspSpMatrix *,NspSpMatrix *,BopLeft,BopBoth,
-				   BopRight);
+			      BopRight);
 
 static void PlusLeft (SpRow *,char,int *,SpRow *,char,int);
 static void PlusBoth (SpRow *,char,int *,SpRow *,char,int,SpRow *,char,int);
@@ -413,7 +413,7 @@ NspSpMatrix *nsp_spmatrix_copy(NspSpMatrix *A)
   for ( i = 0  ; i < Sp->m ; i++) 
     {
       if (nsp_spmatrix_resize_row(Sp,i,(int)A->D[i]->size) == FAIL) return(NULLSP);
- nsp_icopy(&A->D[i]->size,A->D[i]->J,&inc,Sp->D[i]->J,&inc);
+      nsp_icopy(&A->D[i]->size,A->D[i]->J,&inc,Sp->D[i]->J,&inc);
       if ( A->rc_type == 'r' ) 
 	C2F(dcopy)(&A->D[i]->size,A->D[i]->R,&inc,Sp->D[i]->R,&inc);
       else 
@@ -570,32 +570,32 @@ void nsp_spmatrix_print(NspSpMatrix *Sp, int indent)
     }
 
   /* 
-      int i,k;
-  static char formatr[] = "(%d,%d) %f\n";
-  static char formati[] = "(%d,%d) %f + %f i\n";
-  switch ( Sp->rc_type ) 
-    {
-    case 'r' :
-      for ( i = 0 ; i < Sp->m ; i++ ) 
-	{
-	  SpRow *Ri = Sp->D[i];
-	  for  ( k = 0 ;  k < Ri->size ; k++)
-	    { 
-	      Sciprintf(formatr ,i+1,Ri->J[k]+1,Ri->R[k]);
-	    }
-	}
-      break;
-    case 'c' :
-      for ( i = 0 ; i < Sp->m ; i++ ) 
-	{
-	  SpRow *Ri = Sp->D[i];
-	  for  ( k = 0 ;  k < Ri->size ; k++)
-	    { 
-	      Sciprintf(formati ,i+1,Ri->J[k]+1,Ri->C[k].r,Ri->C[k].i);
-	    }
-	}
-      break;
-    }
+     int i,k;
+     static char formatr[] = "(%d,%d) %f\n";
+     static char formati[] = "(%d,%d) %f + %f i\n";
+     switch ( Sp->rc_type ) 
+     {
+     case 'r' :
+     for ( i = 0 ; i < Sp->m ; i++ ) 
+     {
+     SpRow *Ri = Sp->D[i];
+     for  ( k = 0 ;  k < Ri->size ; k++)
+     { 
+     Sciprintf(formatr ,i+1,Ri->J[k]+1,Ri->R[k]);
+     }
+     }
+     break;
+     case 'c' :
+     for ( i = 0 ; i < Sp->m ; i++ ) 
+     {
+     SpRow *Ri = Sp->D[i];
+     for  ( k = 0 ;  k < Ri->size ; k++)
+     { 
+     Sciprintf(formati ,i+1,Ri->J[k]+1,Ri->C[k].r,Ri->C[k].i);
+     }
+     }
+     break;
+     }
   **/
 
 }
@@ -757,13 +757,13 @@ int nsp_spmatrix_concatr(NspSpMatrix *A, NspSpMatrix *B)
       SpRow *Bi = B->D[i];
       /* SpresizeRow has changed the Ai->size */ 
       int ioffset = Ai->size-Bi->size;
- nsp_icopy(&Bi->size,Bi->J,&inc,Ai->J+ioffset,&inc);
+      nsp_icopy(&Bi->size,Bi->J,&inc,Ai->J+ioffset,&inc);
       /* must add A->n to the inserted column values **/
- nsp_iadd(&Bi->size,&A->n,Ai->J+ioffset,&inc);
+      nsp_iadd(&Bi->size,&A->n,Ai->J+ioffset,&inc);
       if ( B->rc_type == 'r' ) 
 	{
 	  if ( A->rc_type == 'c' ) 
-	nsp_dzcopy(&Bi->size,Bi->R,&inc,Ai->C+ioffset,&inc);
+	    nsp_dzcopy(&Bi->size,Bi->R,&inc,Ai->C+ioffset,&inc);
 	  else 
 	    C2F(dcopy)(&Bi->size,Bi->R,&inc,Ai->R+ioffset,&inc);
 	}
@@ -802,13 +802,13 @@ int nsp_spmatrix_concatd(NspSpMatrix *A, NspSpMatrix *B)
       SpRow *Ai = A->D[i];
       SpRow *Bi = B->D[i-Am];
       if (nsp_spmatrix_resize_row(A,i,(int) Bi->size) == FAIL) return(FAIL) ;
- nsp_icopy(&Bi->size,Bi->J,&inc,Ai->J,&inc);
+      nsp_icopy(&Bi->size,Bi->J,&inc,Ai->J,&inc);
       if ( B->rc_type == 'r' ) 
 	{
 	  if ( A->rc_type == 'r') 
 	    C2F(dcopy)(&Bi->size,Bi->R,&inc,Ai->R,&inc);
 	  else 
-	nsp_dzcopy(&Bi->size,Bi->R,&inc,Ai->C,&inc);
+	    nsp_dzcopy(&Bi->size,Bi->R,&inc,Ai->C,&inc);
 	}
       else 
 	{
@@ -903,7 +903,7 @@ int nsp_spmatrix_insert_elt(NspSpMatrix *A, int i, int j, NspSpMatrix *B, int rb
       if ( insert == 0) 
 	{
 	  /* insert at the end **/
-	 nsp_spmatrix_store(A,i,Ai->size-1,j,B,rb,cb);
+	  nsp_spmatrix_store(A,i,Ai->size-1,j,B,rb,cb);
 	}
       else
 	{
@@ -912,27 +912,27 @@ int nsp_spmatrix_insert_elt(NspSpMatrix *A, int i, int j, NspSpMatrix *B, int rb
 	  /* move right one step **/
 	  for ( k1 = Ai->size -1 ; k1 >= insert ; k1--) 
 	    {
-	 nsp_spmatrix_store(A,i,k1+1,Ai->J[k1],A,i,k1);
+	      nsp_spmatrix_store(A,i,k1+1,Ai->J[k1],A,i,k1);
 	    }
-	 nsp_spmatrix_store(A,i,insert,j,B,rb,cb);
+	  nsp_spmatrix_store(A,i,insert,j,B,rb,cb);
 	}
     }
   else
     {
       /* we must change element **/
-  nsp_spmatrix_store(A,i,ok,j,B,rb,cb);
+      nsp_spmatrix_store(A,i,ok,j,B,rb,cb);
     }
   return OK;
 }
 
 /* 
-    Remove element A(i,j) but the associated row is not resized 
-    returns -1 if A(i,j) was zero before the call (i.e no change )
-    return  k  if A(i,j) is removed and was the k-th non null element 
-    of i-th row of A 
-    A(i,j) is searched in the i-th row of A but only in the range 
-    amin,amax 
-    row = i, col=j 
+   Remove element A(i,j) but the associated row is not resized 
+   returns -1 if A(i,j) was zero before the call (i.e no change )
+   return  k  if A(i,j) is removed and was the k-th non null element 
+   of i-th row of A 
+   A(i,j) is searched in the i-th row of A but only in the range 
+   amin,amax 
+   row = i, col=j 
 **/
 
 
@@ -955,7 +955,7 @@ int nsp_spmatrix_delete_elt(NspSpMatrix *A, int row, int col, int amin, int amax
       /* move left one step **/
       for ( k1 = acol+1 ; k1 < amax ; k1++) 
 	{
-	 nsp_spmatrix_store(A,row,k1-1,A->D[row]->J[k1],A,row,k1);
+	  nsp_spmatrix_store(A,row,k1-1,A->D[row]->J[k1],A,row,k1);
 	}
       return acol;
     }
@@ -996,7 +996,7 @@ int nsp_spmatrix_set_rowcol(NspSpMatrix *A, NspMatrix *Rows, NspMatrix *Cols, Ns
   char type ='r';
   int rmin,rmax,cmin,cmax,i,k,l,acol;
   /* Check compatibility : B is a scalar or B must have compatible 
-      size with Rows and Cols : Note that B=[] is treated elsewhere **/
+     size with Rows and Cols : Note that B=[] is treated elsewhere **/
   if ( B->mn != 1)
     {
       if ( Rows->mn != B->m ||  Cols->mn != B->n )
@@ -1073,21 +1073,21 @@ int nsp_spmatrix_set_rowcol(NspSpMatrix *A, NspMatrix *Rows, NspMatrix *Cols, Ns
 	      switch ( ok1 ) 
 		{
 		case 1: /* replace A(row,col) **/  
-		 nsp_spmatrix_store(A,row,acol, col, B,ib,ok);
+		  nsp_spmatrix_store(A,row,acol, col, B,ib,ok);
 		  /*Cols is not supposed to be increasing  amin = acol ;  **/
 		  break;
 		case 2: /* insert before acol **/
 		  /* move right one step **/
 		  for ( k1 = amax -1 ; k1 >= acol ; k1--) 
 		    {
-		 nsp_spmatrix_store(A,row,k1+1,A->D[row]->J[k1],A,row,k1);
+		      nsp_spmatrix_store(A,row,k1+1,A->D[row]->J[k1],A,row,k1);
 		    }
-		 nsp_spmatrix_store(A,row,acol,col,B,ib,ok);
+		  nsp_spmatrix_store(A,row,acol,col,B,ib,ok);
 		  /*Cols is not supposed to be increasing amin = acol ; **/
 		  amax++ ; break ;
 		default : 
 		  /* insert at end **/
-		 nsp_spmatrix_store(A,row,amax,col,B,ib,ok);
+		  nsp_spmatrix_store(A,row,amax,col,B,ib,ok);
 		  /* Cols is not supposed to be increasing  amin = amax ; **/
 		  amax++;
 		}
@@ -1229,9 +1229,9 @@ int nsp_spmatrix_delete_cols(NspSpMatrix *A, NspMatrix *Cols)
 	  int col = ((int) Cols->R[j]) -1;
 	  /* test if col is non nul in row i **/
 	  /* we use the fact that Cols->R is increasing and Ai->J too 
-	    to limit the search at each step. 
-	    The elements which are to be deleted are marked with -1 
-	    **/
+	     to limit the search at each step. 
+	     The elements which are to be deleted are marked with -1 
+	  **/
 	  for ( k = Ai->iw ; k < Ai->size ; k++) 
 	    {
 	      if (Ai->J[k] == col) { Ai->J[k]=-1; Ai->iw = k+1 ; break;}
@@ -1243,7 +1243,7 @@ int nsp_spmatrix_delete_cols(NspSpMatrix *A, NspMatrix *Cols)
     }
   A->n -= Cols->mn ;
   /* XXXX : Attention ici si A->n devient egal a zero 
-    Il faut detruire les ligne pour renvoyer une matrice vide **/
+     Il faut detruire les ligne pour renvoyer une matrice vide **/
 
   return(OK);
 }
@@ -1614,7 +1614,7 @@ int nsp_spmatrix_diag_set(NspSpMatrix *A, NspSpMatrix *Diag, int k)
       A->n = imax+k;
     }
   if ( Diag->rc_type == 'c' && A->rc_type == 'r' ) 
-      if (nsp_spmatrix_complexify(A) == FAIL ) return(FAIL);
+    if (nsp_spmatrix_complexify(A) == FAIL ) return(FAIL);
   for ( i = imin ; i < A->m ; i++ ) 
     {
       int rep ;
@@ -1795,7 +1795,7 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
    *                column j of c is non-zero. */
   if ( (xb =nsp_alloc_int(C->n)) == (int*) 0) goto err;
   /*  pxb        to store the effective non nul indices of row i...
-  *              (act as a pointer to x at the end) */
+   *              (act as a pointer to x at the end) */
   if ( (pxb =nsp_alloc_int(C->n)) == (int*) 0) goto err;
 
   /* initialize the non-zero -element indicator for row i of c. */
@@ -2035,7 +2035,7 @@ int nsp_spmatrix_mult_scal_old(NspSpMatrix *A, NspSpMatrix *B)
     {
       for ( i = 0 ; i < A->m ; i++)
 	for ( k=0; k < A->D[i]->size ; k++ ) 
-	nsp_prod_c(&A->D[i]->C[k],&B->D[0]->C[0]);
+	  nsp_prod_c(&A->D[i]->C[k],&B->D[0]->C[0]);
     }
   return(OK);
 }
@@ -2060,7 +2060,7 @@ int nsp_spmatrix_complexify(NspSpMatrix *A)
 	{ 
 	  Ai->C =nsp_alloc_doubleC((int) Ai->size);
 	  if ( Ai->C == (doubleC *) 0) return(FAIL);
-	nsp_dzcopy(&Ai->size,Ai->R,&inc,Ai->C,&inc);
+	  nsp_dzcopy(&Ai->size,Ai->R,&inc,Ai->C,&inc);
 	  FREE(Ai->R);
 	}
     }
@@ -2084,7 +2084,7 @@ int nsp_spmatrix_setr(NspSpMatrix *A, double d)
 	  SpRow *Ai = A->D[i];
 	  if ( Ai->size != 0) 
 	    { 
-	nsp_dset(&Ai->size,&d,Ai->R, &c1);
+	      nsp_dset(&Ai->size,&d,Ai->R, &c1);
 	    }
 	}
       break;
@@ -2095,7 +2095,7 @@ int nsp_spmatrix_setr(NspSpMatrix *A, double d)
 	  if ( Ai->size != 0) 
 	    { 
 	      c1=2;
-	nsp_dset(&Ai->size,&d,(double *) Ai->C, &c1);
+	      nsp_dset(&Ai->size,&d,(double *) Ai->C, &c1);
 	    }
 	}
     }
@@ -2121,7 +2121,7 @@ int nsp_spmatrix_seti(NspSpMatrix *A, double d)
       if ( Ai->size != 0) 
 	{ 
 	  c1=2;
-	nsp_dset(&Ai->size,&d,((double *) Ai->C) +1, &c1);
+	  nsp_dset(&Ai->size,&d,((double *) Ai->C) +1, &c1);
 	}
     }
   return(OK);
@@ -2227,7 +2227,7 @@ NspMatrix *nsp_spmatrix_to_mat(NspSpMatrix *Sp)
   int i,k; 
   A = nsp_matrix_create(NVOID,Sp->rc_type,Sp->m,Sp->n) ;
   if ( A == NULLMAT ) { return(NULLMAT);}
- nsp_mat_set_rval(A,0.0);
+  nsp_mat_set_rval(A,0.0);
   if ( A->rc_type == 'c') if (nsp_mat_set_ival(A,0.00) == FAIL ) return(NULLMAT);
   for ( i = 0 ; i < Sp->m ; i++ ) 
     {
@@ -2582,10 +2582,10 @@ static NspSpMatrix *BinaryOp(NspSpMatrix *A, NspSpMatrix *B, BopLeft BinLeft, Bo
 	  iest= Min( A->n, A->D[i]->size+B->D[i]->size);
 	  if (nsp_spmatrix_resize_row(Loc,i,(int)iest ) == FAIL) return(NULLSP) ;
 	  /* We explore the ith line of A and B in increasing order of column 
-	      and want to merge the columns found ( in increasing order ) 
-	      when a same column number appear in both A and B we call the 
-	      2-ary operator op 
-	      This is very near to a merge sort of two sorted arrays 
+	     and want to merge the columns found ( in increasing order ) 
+	     when a same column number appear in both A and B we call the 
+	     2-ary operator op 
+	     This is very near to a merge sort of two sorted arrays 
 	  **/ 
 	  k1 = 0 ; k2 = 0 ; 
 	  count = 0;
@@ -2731,15 +2731,15 @@ NspMatrix *nsp_spmatrix_op_scal(NspSpMatrix *A, NspSpMatrix *B, int *flag, char 
   switch ( B->rc_type )
     {
     case 'r' : 
- nsp_mat_set_rval(Loc,(op == '-') ? -B->D[0]->R[0] :B->D[0]->R[0]);
+      nsp_mat_set_rval(Loc,(op == '-') ? -B->D[0]->R[0] :B->D[0]->R[0]);
       if (Loc->rc_type == 'c' ) 
-      {
-	nsp_mat_set_rval(Loc,0.0);
-      }
+	{
+	  nsp_mat_set_rval(Loc,0.0);
+	}
       break;
     case 'c' : 
- nsp_mat_set_rval(Loc,(op == '-') ? -B->D[0]->C[0].r : B->D[0]->C[0].r);
- nsp_mat_set_ival(Loc,(op == '-') ? -B->D[0]->C[0].i : B->D[0]->C[0].i);
+      nsp_mat_set_rval(Loc,(op == '-') ? -B->D[0]->C[0].r : B->D[0]->C[0].r);
+      nsp_mat_set_ival(Loc,(op == '-') ? -B->D[0]->C[0].i : B->D[0]->C[0].i);
       break;
     }
   /* Loc = Loc +A or Loc -A **/

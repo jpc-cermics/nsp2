@@ -130,7 +130,7 @@ void test_internal_gsort()
 main()
 {
   test_internal_gsort()
-  return(0);
+    return(0);
 }
 #endif
 

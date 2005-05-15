@@ -230,7 +230,7 @@ NspPList *NspPListXdrLoad(NspFile  *F)
 
 int PListXdrSave_I(NspFile  *F, PList L)
 {
- nsp_xdr_save_c(F->xdrs,'L');
+  nsp_xdr_save_c(F->xdrs,'L');
   while ( L != NULLPLIST ) 
     {
       switch ( L->type ) 
@@ -294,19 +294,19 @@ static int PListXdrLoad(NspFile  *F, PList *plist)
       switch (c) 
 	{
 	case 'S' : 
-	nsp_xdr_load_string(F->xdrs,buf,TBUF);
+	  nsp_xdr_load_string(F->xdrs,buf,TBUF);
 	  if ( ParseAddString(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'C' : 
-	nsp_xdr_load_string(F->xdrs,buf,TBUF);
+	  nsp_xdr_load_string(F->xdrs,buf,TBUF);
 	  if ( ParseAddComment(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'D':
-	nsp_xdr_load_string(F->xdrs,buf,TBUF);
+	  nsp_xdr_load_string(F->xdrs,buf,TBUF);
 	  if ( ParseAddDoubleI(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'N':
-	nsp_xdr_load_string(F->xdrs,buf,TBUF);
+	  nsp_xdr_load_string(F->xdrs,buf,TBUF);
 	  if ( ParseAddName(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'L':
@@ -320,9 +320,9 @@ static int PListXdrLoad(NspFile  *F, PList *plist)
 	  if ( ParseAdd(plist,EMPTYMAT,0,oline) == FAIL) return(FAIL);
 	  break;
 	case 'O':
-	nsp_xdr_load_i(F->xdrs,&opar);
-	nsp_xdr_load_i(F->xdrs,&op);
-	nsp_xdr_load_i(F->xdrs,&oline);
+	  nsp_xdr_load_i(F->xdrs,&opar);
+	  nsp_xdr_load_i(F->xdrs,&op);
+	  nsp_xdr_load_i(F->xdrs,&oline);
 	  if ( ParseAdd(plist,op,opar,oline) == FAIL) return(FAIL);
 	  break;
 	case 'E':
@@ -480,7 +480,7 @@ int NspPList_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 
 
 /* used to walk through the interface table 
-    (for adding or removing functions) **/
+   (for adding or removing functions) **/
 
 void NspPList_Interf_Info(int i, char **fname, function (**f))
 {

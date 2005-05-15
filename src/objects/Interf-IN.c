@@ -220,7 +220,7 @@ int int_mxtest(Stack stack, int rhs, int opt, int lhs)
   /* second argument is a PList **/
   NthObj(3) = NthObj(1);
   /* Here we have the choice XXXXX NULLOBJ or a PList **/
-  if ( (n= FuncEval(NULLOBJ,NSP_OBJECT(P)->name,stack,stack.first+2,1,0,1)) < 0 ); return RET_BUG;
+  if ( (n=nsp_eval_func(NULLOBJ,NSP_OBJECT(P)->name,stack,stack.first+2,1,0,1)) < 0 ); return RET_BUG;
   NthObj(1) = NthObj(3);
   NthObj(3) = NULLOBJ;
   return 1;
@@ -239,8 +239,8 @@ int int_mxtest20(Stack stack, int rhs, int opt, int lhs)
   GetStringInArray(stack,1,Strings,0);
   return 0;
   /* int_mx2pmx(stack,rhs,opt,lhs) ;
-  nsp_print_internalPM (NthObj(1)->Element);
-  return 1; **/
+     nsp_print_internalPM (NthObj(1)->Element);
+     return 1; **/
 }  
 
 
@@ -271,10 +271,10 @@ int int_mxtest3(Stack stack, int rhs, int opt, int lhs)
 }
 
 /* 
-    On reste au niveau des interfaces : c'est plus lourd 
-    on doit faire des copies eventuellement inutiles 
-    mais les interface implementent vraiment 
-    <<sementique>> d'une fonction Scilab 
+   On reste au niveau des interfaces : c'est plus lourd 
+   on doit faire des copies eventuellement inutiles 
+   mais les interface implementent vraiment 
+   <<sementique>> d'une fonction Scilab 
 **/
 
 
@@ -284,8 +284,8 @@ int int_mxtest4(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   /* Je copie A a la position suivante stack=[.... A,A....[
-      la il faudrait raffiner soit copier vraiment soit 
-      que les 2 objets pointent sur A si A est nommee **/
+     la il faudrait raffiner soit copier vraiment soit 
+     que les 2 objets pointent sur A si A est nommee **/
   if ((O=nsp_object_copy(NthObj(1)))== NULLOBJ) return RET_BUG;
   NthObj(2)= O;
   /* J'appelle sin avec un stack decall'e **/
@@ -394,7 +394,7 @@ int Interf_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 
 
 /* used to walk through the interface table 
-    (for adding or removing functions) **/
+   (for adding or removing functions) **/
 
 void Interf_Interf_Info(int i, char **fname, function (**f))
 {

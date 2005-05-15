@@ -273,13 +273,13 @@ static NspMaxpMatrix *mpmatrix_xdr_load(NspFile  *F)
   if (nsp_xdr_load_c(F->xdrs,&c) == FAIL) return NULLMAXPMAT;
   if (( M= nsp_mpmatrix_create(name,c,m,n)) == NULLMAXPMAT ) return NULLMAXPMAT;
   if ( M->rc_type == 'r') 
-   {
-     if (nsp_xdr_load_array_d(F->xdrs,M->R,M->mn) == FAIL) return NULLMAXPMAT;
-   }
+    {
+      if (nsp_xdr_load_array_d(F->xdrs,M->R,M->mn) == FAIL) return NULLMAXPMAT;
+    }
   else
-   {
-     if (nsp_xdr_load_array_d(F->xdrs,(double *)M->C,2*M->mn) == FAIL) return NULLMAXPMAT;
-   }
+    {
+      if (nsp_xdr_load_array_d(F->xdrs,(double *)M->C,2*M->mn) == FAIL) return NULLMAXPMAT;
+    }
   return M;
 }
 
@@ -550,9 +550,9 @@ NspMaxpMatrix *MpMat2float(NspMaxpMatrix *A)
       if ( A->rc_type == 'r' )
 	{
 	  if ( A->convert == 'd' ) 
-	nsp_double2float(&A->mn,A->R,(float *) A->R);
+	    nsp_double2float(&A->mn,A->R,(float *) A->R);
 	  else if ( A->convert == 'i' ) 
-	nsp_int2float(&A->mn,(int *) A->R,&inc,(float*)A->R,&inc);
+	    nsp_int2float(&A->mn,(int *) A->R,&inc,(float*)A->R,&inc);
 	  A->convert  = 'i' ;
 	}
       else 
@@ -2180,7 +2180,7 @@ static int int_mp_mopscal(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2
   else if ( HMat1->mn == 1 ) 
     {
       /* since Mat1 is scalar we store the result in Mat2 so we 
-	must copy it **/
+	 must copy it **/
       if ((HMat2 = GetMpMatCopy(stack,2)) == NULLMAXPMAT) return RET_BUG;
       if ( (*F3)((NspMatrix *)HMat2,(NspMatrix *)HMat1) != OK) return RET_BUG;
       NSP_OBJECT(HMat2)->ret_pos = 1;
@@ -2714,7 +2714,7 @@ int MpMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 /* used to walk through the interface table 
-    (for adding or removing functions) **/
+   (for adding or removing functions) **/
 
 void MpMatrix_Interf_Info(int i, char **fname, function (**f))
 {

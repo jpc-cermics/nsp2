@@ -1029,7 +1029,7 @@ int_mxtestmatrix (Stack stack, int rhs, int opt, int lhs)
 {
   static char *Strings[] =
     { "magic", "franck", "franck^-1", "hilbert", "hilbert^-1",
-(char *) NULL };
+      (char *) NULL };
   int ind, n1;
   NspMatrix *A=NULLMAT;
   CheckRhs (2, 2);
@@ -3904,7 +3904,7 @@ Matrix_Interf (int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 /* used to walk through the interface table 
-    (for adding or removing functions) **/
+   (for adding or removing functions) **/
 
 void
 Matrix_Interf_Info (int i, char **fname, function (**f))
