@@ -106,9 +106,10 @@ int mex_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return nsp_mex_wrapper(stack,rhs,opt,lhs,mex_func[i].fonc);
 }
 
-
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/*
+ * used to walk through the interface table 
+ * (for adding or removing functions) 
+ */
 
 void mex_Interf_Info(int i, char **fname, function (**f))
 {
