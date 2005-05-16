@@ -687,6 +687,49 @@ Bounds (const NspMatrix * A, int * imin, int * imax)
 }
 
 /**
+ * nsp_matrix_boundsbis:
+ * @A:  a #NspMatrix supposed to be an indices vector 
+ * @imin: min of @A after cast to int
+ * @imax: max of @A after cast to int
+ *
+ * This routine computes an int array (which is simply a cast to
+ * int of the elements of @A), together with the computation
+ * of the min and max of the indices. It may be used in place 
+ * of Bounds in some cases (for instance to avoid multiple cast 
+ * to int).
+ * Routine introduced by Bruno Pincon (mai 2005) to speed up
+ * A(i,j)=B insertion and extraction A(i,j). 
+ * 
+ * returns  an int array or %NULL
+ *
+ */
+int *
+nsp_matrix_boundsbis(const NspMatrix *A, int *imin, int *imax)
+{
+  int i, ival;
+  int *indices;
+
+  indices = nsp_alloc_int(A->mn);
+
+  if ( indices != NULL )
+    {
+      *imax = 1;
+      *imin = 1;
+      for (i = 0; i < A->mn; i++)
+	{
+	  ival = (int) A->R[i];
+	  if (ival > *imax)
+	    *imax = ival;
+	  else if (ival < *imin)
+	    *imin = ival;
+	  indices[i] = ival-1;
+	}
+    }
+  return indices;
+}
+
+
+/**
  * nsp_complement_for_deletions:
  * @mn: upper bound for indices stored in @Elts 
  * @Elts: a #NspMatrix used as a vector of indices 
@@ -702,13 +745,13 @@ Bounds (const NspMatrix * A, int * imin, int * imax)
  *   2/  the verification of bounds constraints on indices
  * 
  * In case of alloc pb or if indices don't respect bound constraints
- * %NULL is returned (an error message is issued and the array ind is freed).
+ * %NULL is returned (an error message is issued and the array flag is freed).
  * Else an allocated int array is returned. A zero entry is 
  * set in the returned array for each entry to be deleted.
  *
  * Routine introduced by Bruno Pincon (mai 2005)
  * 
- * returns  an int arry or %NULL
+ * returns  an int array or %NULL
  */
 
 int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count)
@@ -755,10 +798,15 @@ int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count)
  *   4/  in case of duplicated indices it compress the array
  *  CAUTION : on output indices are 0-based (while they are 1-based in @Elts).
  * 
- *  returns  the (int) array of indices  ind[0..Count-1] being in strict increasing order.
- *           or NULL in case of alloc pb or if indices don't respect bound constraints
- *           (in this last case an error message is issued and the array ind is freed).
+ * In case of alloc pb or if indices don't respect bound constraints
+ * %NULL is returned (an error message is issued and the array ind is freed).
+ * Else an allocated int array is returned (of size @Elts->mn) and ind[0..Count-1] 
+ * are the indices to delete in strict increasing.
  *
+ * Routine introduced by Bruno Pincon (mai 2005)
+ * 
+ * returns  an int array or %NULL
+ * 
  */
 
 int *nsp_indices_for_deletions(int mn, const NspMatrix *Elts, int *Count)

@@ -1060,7 +1060,7 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
 
 int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B)
 {
-  int rmin,rmax,cmin,cmax,i,j;
+  int rmin,rmax,cmin,cmax,i,j, ib=0, *irow;
   /* Check compatibility : B is a scalar or B must have compatible 
      size with Rows and Cols **/
   if ( B->mn != 1)
@@ -1068,75 +1068,97 @@ int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, Nsp
       if ( Rows->mn != B->m ||  Cols->mn != B->n )
 	{
 	  Scierror("Error:\tIncompatible dimensions\n");
-	  return(FAIL);
+	  return FAIL;
 	}
     }
-  Bounds(Rows,&rmin,&rmax);
+
+  /* be careful irow are 0-based while Cols are 1-based */
+  if ( (irow = nsp_matrix_boundsbis(Rows,&rmin,&rmax)) == NULL ) return FAIL;
   Bounds(Cols,&cmin,&cmax);
+
   if ( rmin < 1 || cmin < 1 ) 
     {
-      Scierror("Error:\tNegative indices are not allowed\n");
-      return(FAIL);
+      Scierror("Error:\tNon Positive indices are not allowed\n");
+      goto err;
     }
+
   if ( rmax > A->m ||  cmax > A->n ) 
-    if ( nsp_matrix_enlarge(A,rmax,cmax) == FAIL) return(FAIL);
+    if ( nsp_matrix_enlarge(A,rmax,cmax) == FAIL ) 
+      goto err;
+
   if ( B->rc_type == 'c' )
     {
       if (  A->rc_type == 'r' )
- 	{ 
- 	  if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
- 	} 
+	if (nsp_mat_complexify(A,0.00) == FAIL ) 
+	  goto err;
+
       if ( B->mn != 1) 
-	for ( i = 0 ; i < Rows->mn ; i++)
-	  for ( j = 0 ; j < Cols->mn ; j++ )
-	    { 
-	      A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->C[i+B->m*j].r;
-	      A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i =B->C[i+B->m*j].i;
-	    }
+	for ( j = 0 ; j < Cols->mn ; j++ )
+	  {
+	    int jm = (((int) Cols->R[j])-1)*A->m;
+	    for ( i = 0 ; i < Rows->mn ; i++)
+	      A->C[irow[i] + jm] = B->C[ib++];
+	  }
       else
-	for ( i = 0 ; i < Rows->mn ; i++)
-	  for ( j = 0 ; j < Cols->mn ; j++ )
-	    { 
-	      A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->C[0].r;
-	      A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i =B->C[0].i;
-	    }
+	for ( j = 0 ; j < Cols->mn ; j++ )
+	  {
+	    int jm = (((int) Cols->R[j])-1)*A->m;
+	    for ( i = 0 ; i < Rows->mn ; i++)
+	      A->C[irow[i] + jm] = B->C[0];
+	  }
+
     }
-  else 
+  else  /* B is a real matrix */ 
     {
       if (  A->rc_type == 'c' )
  	{ 
 	  if ( B->mn != 1) 
-	    for ( i = 0 ; i < Rows->mn ; i++)
-	      for ( j = 0 ; j < Cols->mn ; j++ )
-		{	
-		  A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->R[i+B->m*j];
-		  A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i = 0.00;
-		}
+	    for ( j = 0 ; j < Cols->mn ; j++ )
+	      {
+		int jm = (((int) Cols->R[j])-1)*A->m;
+		for ( i = 0 ; i < Rows->mn ; i++)
+		  {
+		    A->C[irow[i] + jm].r = B->R[ib];
+		    A->C[irow[i] + jm].i = 0.0;
+		    ib++;
+		  }
+	      }
 	  else
-	    for ( i = 0 ; i < Rows->mn ; i++)
-	      for ( j = 0 ; j < Cols->mn ; j++ )
-		{	
-		  A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].r =B->R[0];
-		  A->C[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m].i = 0.00;
-		}
+	    for ( j = 0 ; j < Cols->mn ; j++ )
+	      {
+		int jm = (((int) Cols->R[j])-1)*A->m;
+		for ( i = 0 ; i < Rows->mn ; i++)
+		  {
+		    A->C[irow[i] + jm].r = B->R[0];
+		    A->C[irow[i] + jm].i = 0.0;
+		  }
+	      }
 	}
-      else
+      else   /* A and B are real */
  	{ 
 	  if ( B->mn != 1) 
-	    for ( i = 0 ; i < Rows->mn ; i++)
-	      for ( j = 0 ; j < Cols->mn ; j++ )
-		{	
-		  A->R[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m] =B->R[i+B->m*j];
-		}
+	    for ( j = 0 ; j < Cols->mn ; j++ )
+	      {
+		int jm = (((int) Cols->R[j])-1)*A->m;
+		for ( i = 0 ; i < Rows->mn ; i++)
+		  A->R[irow[i] + jm] = B->R[ib++];
+	      }
 	  else
-	    for ( i = 0 ; i < Rows->mn ; i++)
-	      for ( j = 0 ; j < Cols->mn ; j++ )
-		{	
-		  A->R[((int) Rows->R[i]) -1 +(((int) Cols->R[j])-1)*A->m] =B->R[0];
-		}
+	    for ( j = 0 ; j < Cols->mn ; j++ )
+	      {
+		int jm = (((int) Cols->R[j])-1)*A->m;
+		for ( i = 0 ; i < Rows->mn ; i++)
+		  A->R[irow[i] + jm] = B->R[0];
+	      }
 	}
     }
-  return(OK);
+
+  FREE(irow);
+  return OK;
+
+ err:
+  FREE(irow);
+  return FAIL;
 }
 
 
@@ -1479,46 +1501,81 @@ int nsp_matrix_delete_elements(NspMatrix *A, NspMatrix *Elts)
  * @Rows: a #NspMatrix
  * @Cols: a #NspMatrix
  *
- * Compute A(Rows,Cols) and returns the new #MspMatrix 
+ * Compute A(Rows,Cols) and returns the new #NspMatrix 
  * 
- * returns a #MspMatrix or %NULLMAT 
+ * returns a #NspMatrix or %NULLMAT 
  */
 
-NspMatrix *nsp_matrix_extract(const NspMatrix *A,const  NspMatrix *Rows, const NspMatrix *Cols)
+NspMatrix *nsp_matrix_extract(const NspMatrix *A, const NspMatrix *Rows, const NspMatrix *Cols)
 {
   NspMatrix *Loc;
-  int rmin,rmax,cmin,cmax,i,j;
-  Bounds(Rows,&rmin,&rmax);
+  int rmin, rmax, cmin, cmax, i, j, ij, ind;
+  int *irow;
+
+  if ( A->mn == 0) 
+    return nsp_matrix_create(NVOID,A->rc_type,0,0);
+
+  /*  scalar case (commented because its does't bring any speed up
+   *  currently, but may be it will do an the future...)
+   */
+/*   if (Rows->mn == 1 && Cols->mn == 1) */
+/*     { */
+/*       i = (int) Rows->R[0]; */
+/*       j = (int) Cols->R[0]; */
+/*       if ( i < 1 || j < 1 || i > A->m || j > A->n ) */
+/* 	{ */
+/* 	  Scierror("Error:\tIndices out of bound\n"); */
+/* 	  return NULLMAT; */
+/* 	} */
+
+/*       if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,1,1))== NULLMAT) */
+/* 	return NULLMAT; */
+
+/*       ind = (i-1) + (j-1)*A->m; */
+/*       if ( A->rc_type == 'c' ) */
+/* 	  Loc->C[0] = A->C[ind]; */
+/*       else */
+/* 	  Loc->R[0] = A->R[ind]; */
+/*       return Loc; */
+/*     } */
+
+
+  if ( (irow = nsp_matrix_boundsbis(Rows,&rmin,&rmax)) == NULL ) goto err;
   Bounds(Cols,&cmin,&cmax);
-  if ( A->mn == 0) return nsp_matrix_create(NVOID,A->rc_type,0,0);
+  
+  /* be careful irow are 0-based while Cols->R are 1-based */
   if ( rmin < 1 || cmin < 1 || rmax > A->m || cmax > A->n ) 
     {
       Scierror("Error:\tIndices out of bound\n");
-      return(NULLMAT);
+      goto err;
     }
+
   if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,Rows->mn,Cols->mn))== NULLMAT) 
-    return(NULLMAT);
+    goto err;
+
   if ( A->rc_type == 'c' )
     {
-      for ( i = 0 ; i < Rows->mn ; i++)
- 	for ( j = 0 ; j < Cols->mn ; j++ )
- 	  {	
-	    register int ind;
-	    ind= ((int) Rows->R[i])-1+(((int) Cols->R[j])-1)*A->m;
- 	    Loc->C[i+Loc->m*j].r=A->C[ind].r ;
- 	    Loc->C[i+Loc->m*j].i=A->C[ind].i ;
- 	  }
+      for ( j = 0, ij = 0 ; j < Cols->mn ; j++ )
+        {
+          ind = (((int) Cols->R[j]) -1)*A->m;
+          for ( i = 0  ; i < Rows->mn ; i++)
+            Loc->C[ij++] = A->C[irow[i]+ind];
+        }
     }
   else 
     {
-      for ( i = 0 ; i < Rows->mn ; i++)
- 	for ( j = 0 ; j < Cols->mn ; j++ )
- 	  { 
- 	    Loc->R[i+Loc->m*j]=A->R[((int) Rows->R[i])-1+(((int) Cols->R[j])-1)*A->m] ;
- 	  }
+      for ( j = 0, ij = 0 ; j < Cols->mn ; j++ )
+        {        
+          ind = (((int) Cols->R[j]) -1)*A->m;
+          for ( i = 0 ; i < Rows->mn ; i++)
+            Loc->R[ij++] = A->R[irow[i]+ind];
+        }
     }
-  return(Loc);
+  free(irow); return Loc;
+ err:
+  free(irow); return NULLMAT;
 }
+
 
 
 /**
@@ -1526,9 +1583,9 @@ NspMatrix *nsp_matrix_extract(const NspMatrix *A,const  NspMatrix *Rows, const N
  * @A: a #NspMatrix
  * @Elts: a #NspMatrix
  *
- * Compute A(Elts) and returns the new #MspMatrix 
+ * Compute A(Elts) and returns the new #NspMatrix 
  * 
- * returns a #MspMatrix or %NULLMAT 
+ * returns a #NspMatrix or %NULLMAT 
  */
 
 NspMatrix *nsp_matrix_extract_elements(const NspMatrix *A,const NspMatrix *Elts)
@@ -1576,9 +1633,9 @@ NspMatrix *nsp_matrix_extract_elements(const NspMatrix *A,const NspMatrix *Elts)
  * @A: a #NspMatrix
  * @Cols: a #NspMatrix
  *
- * Compute A(:,Cols) and returns the new #MspMatrix 
+ * Compute A(:,Cols) and returns the new #NspMatrix 
  * 
- * returns a #MspMatrix or %NULLMAT 
+ * returns a #NspMatrix or %NULLMAT 
  */
 
 NspMatrix *nsp_matrix_extract_columns(const NspMatrix *A,const NspMatrix *Cols)
@@ -1612,9 +1669,9 @@ NspMatrix *nsp_matrix_extract_columns(const NspMatrix *A,const NspMatrix *Cols)
  * @A: a #NspMatrix
  * @Rows: a #NspMatrix
  *
- * Compute A(Rows,:) and returns the new #MspMatrix 
+ * Compute A(Rows,:) and returns the new #NspMatrix 
  * 
- * returns a #MspMatrix or %NULLMAT 
+ * returns a #NspMatrix or %NULLMAT 
  */
 
 NspMatrix *nsp_matrix_extract_rows(const NspMatrix *A,const NspMatrix *Rows)
