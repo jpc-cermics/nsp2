@@ -31,11 +31,11 @@ struct _NspMatrix {
   union { 
     double *R;     /* Pointer on real values */
     doubleC *C;    /* Pointer on complex values */
-    doubleC *I;    /* Pointer on integer values */
+    int *I;    /* Pointer on integer values */
   };
-  char rc_type;     /* 'r' : real or  'i' : complex  */
-  char convert;  /* 'd','i','f' : double, int, float
-		    used for array data conversion */
+  char rc_type;    /* 'r' : real or  'c' : complex  */
+  char convert;    /* 'd','i','f' : double, int, float
+		    * used to remember array converted in place */
 };
 
 #include "nsp/bmatrix.h" 
