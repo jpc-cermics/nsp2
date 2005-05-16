@@ -797,15 +797,11 @@ int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count)
  *   3/  verification of bounds constraints on indices
  *   4/  in case of duplicated indices it compress the array
  *  CAUTION : on output indices are 0-based (while they are 1-based in @Elts).
+ * Routine introduced by Bruno Pincon (mai 2005).
  * 
- * In case of alloc pb or if indices don't respect bound constraints
- * %NULL is returned (an error message is issued and the array ind is freed).
- * Else an allocated int array is returned (of size @Elts->mn) and ind[0..Count-1] 
- * are the indices to delete in strict increasing.
- *
- * Routine introduced by Bruno Pincon (mai 2005)
- * 
- * returns  an int array or %NULL
+ *  returns  the (int) array of indices @ind[0..@Count-1]  being in strict increasing order.
+ *           or %NULL in case of alloc pb or if indices don't respect bound constraints
+ *           (in this last case an error message is issued and the array ind is freed).
  * 
  */
 

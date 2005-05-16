@@ -934,24 +934,24 @@ void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc)
 
 int nsp_mat_complexify(NspMatrix *Mat, double d)
 {
+  double *R;
   int incx=1,incy=2;
   if ( Mat->rc_type == 'c' ) return(OK);
-#ifdef OCAML
-  if ( Mat->proxy != NULL) 
-    failwith("shared real matrix cannot be changed to complex\n");
-#endif
+  /* take care that R and C are at the same memory location */
+  R = Mat->R;
   Mat->C =nsp_alloc_doubleC(Mat->mn);
   if ( Mat->C == (doubleC *) 0) 
     {
       Scierror("Error:\tRunning out of memory\n");
-      return(FAIL);
+      return FAIL;
     }
   Mat->rc_type = 'c';
   nsp_ciset(&(Mat->mn),&d,Mat->C,&incx);  
-  C2F(dcopy)(&(Mat->mn),Mat->R,&incx,(double *) Mat->C,&incy);
-  FREE(Mat->R);
-  return(OK);
+  C2F(dcopy)(&(Mat->mn),R,&incx,(double *) Mat->C,&incy);
+  FREE(R);
+  return OK;
 }
+
 /*
  * Return the Real part of Matrix A 
  * In a Real Matrix A
@@ -961,16 +961,19 @@ int nsp_mat_complexify(NspMatrix *Mat, double d)
 
 int nsp_mat_get_real(NspMatrix *A)
 {
+  doubleC *C;
   int incx=2,incy=1;
   if ( A->rc_type == 'r' )  return(OK);
+  /* take care that R and C are at the same memory location */
+  C = A->C;
   A->R =nsp_alloc_doubles(A->mn);
   if ( A->R == (double *) 0) 
     {
       Scierror("Error:\tRunning out of memory\n");
       return(FAIL);
     }
-  C2F(dcopy)(&(A->mn),(double *) A->C,&incx,A->R,&incy);
-  FREE( A->C) ;
+  C2F(dcopy)(&(A->mn),(double *) C,&incx,A->R,&incy);
+  FREE(C) ;
   A->rc_type = 'r';
   return(OK);
 }
@@ -991,15 +994,17 @@ int nsp_mat_get_imag(NspMatrix *A)
     }
   else
     {
+      /* take care that R and C are at the same memory location */
+      doubleC *C = A->C;
       A->R =nsp_alloc_doubles(A->mn);
       if ( A->R == (double *) 0) 
 	{
 	  Scierror("Error:\tRunning out of memory\n");
 	  return(FAIL);
 	}
-      C2F(dcopy)(&(A->mn),((double *) A->C)+1,&incy,A->R,&inc);
+      C2F(dcopy)(&(A->mn),((double *) C)+1,&incy,A->R,&inc);
       A->rc_type = 'r';
-      FREE( A->C) ;
+      FREE(C) ;
     }
   return OK;
 }

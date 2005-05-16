@@ -4,11 +4,15 @@
 #ifndef MACHINE_H
 #define MACHINE_H
 
+/*
+ * This Software is (Copyright ENPC 1998-2005)
+ * Jean-Philippe Chancelier Enpc/Cermics
+ */
+
 /* headers */
 #define HAVE_VALUES_H 1
 #define HAVE_FLOAT_H 1
 #define HAVE_LIMITS_H 1
-
 
 /* Define for using dld for sunos */
 /* #undef SUNOSDLD */

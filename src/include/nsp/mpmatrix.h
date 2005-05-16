@@ -28,11 +28,14 @@ struct _NspMpmatrix {
   NspTypeMaxpMatrix *type; 
   /*< public >*/
   int m,n,mn;/* NspMaxpMatrix dimensions */
+  union { 
+    double *R;     /* Pointer on real values */
+    doubleC *C;    /* Pointer on complex values */
+    doubleC *I;    /* Pointer on integer values */
+  };
   char rc_type;     /* 'r' : real or  'i' : complex  */
   char convert;  /* 'd','i','f' : double, int, float
 		    used for array data conversion */
-  double *R;     /* Pointer on real values */
-  doubleC *C;    /* Pointer on complex values */
 };
 
 #include "nsp/matrix.h" 

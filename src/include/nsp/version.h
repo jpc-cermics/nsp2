@@ -1,7 +1,7 @@
-#ifndef NSP_INC_VERSION_H 
-#define NSP_INC_VERSION_H 
+#ifndef SCI_VERSION_H 
+#define SCI_VERSION_H 
 
-#define VERSION "nsp-0.99"
-#define DEFAULT_MES "nsp-0.99" 
+#define VERSION "scilab-2.7-CVS-2002-11-04"
+#define DEFAULT_MES "scilab-2.7-CVS-2002-11-04 Scilab Group (Inria, Enpc)"
 
 #endif 
