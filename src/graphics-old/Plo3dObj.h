@@ -58,7 +58,7 @@ typedef struct _hfstruct HFstruct ;
 typedef void obj3d_draw_partial(BCG *Xgc,void *Obj,int j);
 typedef void obj3d_draw_ogl(BCG *Xgc,void *Obj);
 typedef void obj3d_free(void *Obj);
-typedef void obj3d_zmean(void *Q,double z[], HFstruct HF[], int *n, int k);
+typedef void obj3d_zmean(void *Q,double *z, HFstruct *HF, int *n, int k);
 
 typedef struct _generic_3dobj func_3dobj;
 
