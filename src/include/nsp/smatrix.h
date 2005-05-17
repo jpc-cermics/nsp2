@@ -84,6 +84,7 @@ extern NspSMatrix *nsp_smatrix_create_with_length(nsp_const_string , int m, int 
 extern NspSMatrix *nsp_smatrix_create_from_table(char **T); 
 extern NspSMatrix *nsp_smatrix_create_from_array(nsp_const_string name,int n,const char **T); 
 extern NspSMatrix*nsp_smatrix_create_from_struct(nsp_const_string name,const void *T,unsigned int size);
+extern unsigned int  nsp_smatrix_elt_size(NspMatrix *M);
 extern NspSMatrix *nsp_smatrix_copy(const NspSMatrix *A); 
 extern int nsp_smatrix_resize(NspSMatrix *A, int m, int n); 
 extern void nsp_smatrix_destroy(NspSMatrix *A); 

@@ -115,6 +115,7 @@ new_type_matrix (type_mode mode)
   mati->redim = (matint_redim *) nsp_matrix_redim; 
   mati->resize = (matint_resize  *) nsp_matrix_resize;
   mati->free_elt = (matint_free_elt *) 0; /* nothing to do */
+  mati->elt_size = (matint_elt_size *) nsp_matrix_elt_size ;
 
   type->interface = (NspTypeBase *) mati;
 
@@ -2405,6 +2406,30 @@ int_mxdeleteelts (Stack stack, int rhs, int opt, int lhs)
 			       nsp_matrix_delete_elements);
 }
 
+extern int nsp_smatrix_delete_elements3(NspSMatrix *A, NspMatrix *Elts);
+extern int nsp_smatrix_delete_elements4(NspSMatrix *A, NspMatrix *Elts);
+
+int
+int_mxdeleteelts3 (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mxdeleteelts_gen (stack, rhs, opt, lhs,
+			       (delf) nsp_smatrix_delete_elements3);
+}
+
+int
+int_mxdeleteelts4 (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mxdeleteelts_gen (stack, rhs, opt, lhs,
+			       (delf) nsp_smatrix_delete_elements4);
+}
+
+
+
+
+
+
+
+
 /*
  * Res=nsp_matrix_extract(Rows,Cols,A)
  * A unchanged, Rows and Cols are unchanged 
@@ -3938,6 +3963,9 @@ static OpTab Matrix_func[] = {
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
   {"number_properties",int_number_properties},
+  {"del1_m", int_mxdeleteelts},/* FIXME: tests ...*/
+  {"del3_m", int_mxdeleteelts3},
+  {"del4_m", int_mxdeleteelts4},
   {(char *) 0, NULL}
 };
 

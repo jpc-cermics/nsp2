@@ -386,6 +386,20 @@ NspMatrix *nsp_matrix_copy(const NspMatrix *A)
 
 
 /**
+ * nsp_matrix_elt_size:
+ * @M: a #NspMatrix 
+ * 
+ * size of matrix elements.
+ * 
+ * Return value: size of @M elements.
+ **/
+
+unsigned int  nsp_matrix_elt_size(NspMatrix *M)
+{
+  return M->rc_type == 'r' ? sizeof(double) : 2*sizeof(double);
+}
+
+/**
  * nsp_matrix_fill_with:
  * @A: a #NspMatrix 
  * @B: a #NspMatrix 
@@ -395,7 +409,7 @@ NspMatrix *nsp_matrix_copy(const NspMatrix *A)
  * with @B data. 
  *
  * Returns %OK or %FAIL. When %OK is returned @A is changed. 
- */
+ **/
 
 int nsp_matrix_fill_with(NspMatrix *A,const NspMatrix *B)
 {

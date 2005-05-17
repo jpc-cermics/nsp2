@@ -426,6 +426,52 @@ int int_smxdeleteelts(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+extern int nsp_smatrix_delete_elements2(NspSMatrix *A, NspMatrix *Elts);
+
+int int_smxdeleteelts2(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *A;
+  NspMatrix *Elts;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Elts = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ( nsp_smatrix_delete_elements2( A, Elts) < 0) return RET_BUG;
+  NSP_OBJECT(A)->ret_pos = 1;
+  return 1;
+}
+
+extern int nsp_smatrix_delete_elements3(NspSMatrix *A, NspMatrix *Elts);
+
+int int_smxdeleteelts3(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *A;
+  NspMatrix *Elts;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Elts = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ( nsp_smatrix_delete_elements3( A, Elts) < 0) return RET_BUG;
+  NSP_OBJECT(A)->ret_pos = 1;
+  return 1;
+}
+
+extern int nsp_smatrix_delete_elements4(NspSMatrix *A, NspMatrix *Elts);
+
+int int_smxdeleteelts4(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *A;
+  NspMatrix *Elts;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((Elts = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ( nsp_smatrix_delete_elements4( A, Elts) < 0) return RET_BUG;
+  NSP_OBJECT(A)->ret_pos = 1;
+  return 1;
+}
+
+
 /*
  * Res=nsp_smatrix_extract(A,Rows,Cols)
  * A unchanged, Rows and Cols are changed (i.e converted to int) 
@@ -1311,6 +1357,10 @@ static OpTab SMatrix_func[]={
   {"deletecols_s_m", int_smxdeletecols},
   {"deleterows_s_m", int_smxdeleterows},
   {"deleteelts_s_m", int_smxdeleteelts},
+  {"del1_s", int_smxdeleteelts},/* FIXME: tests ...*/
+  {"del2_s", int_smxdeleteelts2},
+  {"del3_s", int_smxdeleteelts3},
+  {"del4_s", int_smxdeleteelts4},
   {"setrowscols_s",int_smxsetrc},
   {"smat_create",int_smxcreate},
   {"copy_s",int_smxcopy},

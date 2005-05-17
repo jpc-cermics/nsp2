@@ -99,6 +99,8 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
   mati->redim = (matint_redim *) nsp_smatrix_redim; 
   mati->resize = (matint_resize  *) nsp_smatrix_resize; 
   mati->free_elt = (matint_free_elt *) nsp_string_destroy;
+  mati->elt_size = (matint_elt_size *) nsp_smatrix_elt_size ;
+
   type->interface = (NspTypeBase *) mati;
 
   if ( nsp_type_smatrix_id == 0 ) 

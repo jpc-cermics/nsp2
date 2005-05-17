@@ -13,6 +13,7 @@
 typedef int matint_redim(void *M,int m,int n); 
 typedef int matint_resize(void *M,int m,int n); 
 typedef int matint_free_elt(void **elt);
+typedef unsigned int matint_elt_size(void *M);
 
 typedef struct _NspTypeMatint {
   NSP_TYPE_OBJECT__
@@ -20,6 +21,7 @@ typedef struct _NspTypeMatint {
   matint_redim *redim; 
   matint_resize *resize;
   matint_free_elt *free_elt;
+  matint_elt_size *elt_size;
 } NspTypeMatint ; 
 
 #define MAT_INT(t) ((NspTypeMatint *) t)

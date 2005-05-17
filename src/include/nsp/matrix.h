@@ -94,7 +94,7 @@ extern void nsp_matrix_destroy(NspMatrix *Mat);
 extern void nsp_matrix_info (const NspMatrix *Mat, int indent); 
 extern NspMatrix *nsp_matrix_copy(const NspMatrix *A); 
 extern void nsp_matrix_print (NspMatrix *Mat, int indent,int header); 
-
+extern unsigned int  nsp_matrix_elt_size(NspMatrix *M);
 extern void matrix_destroy (NspMatrix *Mat); 
 extern void matrix_info (const NspMatrix *Mat, int indent); 
 extern void matrix_print (NspMatrix *Mat, int indent); 
@@ -286,6 +286,8 @@ extern NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B);
 /* from lapack */
 
 extern NspMatrix *nsp_mat_bdiv(NspMatrix *A, NspMatrix *B);
+
+
 
 
 #endif 
