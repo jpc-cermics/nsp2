@@ -35,6 +35,9 @@
  *	Generic includes.
  *
  * $Log$
+ * Revision 1.2  2005/05/17 16:20:47  jpc
+ * gcc4
+ *
  * Revision 1.1.1.1  2004/04/26 15:36:58  stochopt
  * Imported sources
  *
@@ -342,8 +345,8 @@ extern	struct pvmmclass *pvmmboxclasses;		/* the mbox database */
 
 /* General Trace Globals Declarations */
 
-extern	struct Pvmtevdid *pvmtevdidlist; /* jpc : gcc4 */
+extern	struct Pvmtevdid pvmtevdidlist[]; /* jpc : gcc4 */
 
-extern	struct Pvmtevinfo *pvmtevinfo;/* jpc : gcc4 */
+extern	struct Pvmtevinfo pvmtevinfo[];/* jpc : gcc4 */
 
 
