@@ -36,6 +36,9 @@ static char rcsid[] =
  *	Mr. pvm daemon.
  *
  * $Log$
+ * Revision 1.1.1.1  2004/04/26 15:36:59  stochopt
+ * Imported sources
+ *
  * Revision 1.1.1.1  2003/11/14 13:02:08  stochopt
  * Imported files
  *
@@ -1732,7 +1735,11 @@ work()
 				size_t oslen;
 #endif
 #else
+#ifdef SOCKLENISsocklen_t
+				socklen_t oslen;
+#else 
 				int oslen;
+#endif
 #endif
 				struct sockaddr_in osad;
 				struct timeval t;
