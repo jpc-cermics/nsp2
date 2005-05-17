@@ -531,7 +531,7 @@ drag_data_get (GtkWidget        *widget,
   gtk_selection_data_set (selection_data,
                           selection_data->target,
                           8, 
-                          current_ref, 
+                          (const guchar *) current_ref, 
                           strlen (current_ref));
 }
 

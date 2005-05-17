@@ -1,5 +1,5 @@
       subroutine rkf45(fydot,neqn,y,t,tout,itol,rerr,aerr,
-     1    itask,iflag,iopt,work,lrw,iwork,liw,bjac,mf)
+     $     itask,iflag,iopt,work,lrw,iwork,liw,bjac,mf)
 c
 c     fehlberg fourth-fifth order runge-kutta method
 c

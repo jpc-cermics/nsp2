@@ -97,7 +97,8 @@ c                         = 5 the integral is probably divergent, or
 c                             slowly convergent. it must be noted
 c                             that divergency can occur
 c                             with any other value of ier.
-c                         = -1 an error occurs during the evaluation of f
+c                         = -1 an error occurs during the evaluati
+c                             -on of f
 c     **********************************************************
 c     .. scalar arguments ..
       double precision a, abserr, b, epsabs, epsrel, result

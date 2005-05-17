@@ -22,7 +22,7 @@ FFTPACK=zfftb.obj cfftb1.obj zfftf.obj cfftf1.obj zffti.obj cffti1.obj dcosqb.ob
 	dfftb.obj rfftb1.obj dfftf.obj rfftf1.obj dffti.obj rffti1.obj dsinqb.obj dsinqf.obj dsinqi.obj\
 	dsint.obj sint1.obj dsinti.obj
  
-OBJSF=$(NOTHING)
+OBJSF=$(FFTPACK)
  
 include ../Make.lib.mak
 

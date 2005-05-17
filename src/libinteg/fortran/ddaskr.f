@@ -2673,7 +2673,8 @@ C     ---------   MASKING THE STUCK ZEROS IN COLD-RESTARTS
             IF (ABS(R0(I)) .EQ. ZERO) THEN
                IWORK(LMASK+I)=1
             ELSE
-c     .        to take one step through DDSTP then then in the next arrival->exit!
+c     .        to take one step through DDSTP then then in 
+c              the next arrival->exit!
                IRT = 2
                JROOT(I)=SIGN(2.0D0,R0(I))
             ENDIF
@@ -2684,7 +2685,8 @@ c     .        to take one step through DDSTP then then in the next arrival->exi
        RETURN
 C     
  200   CONTINUE
-c     in the previous call there was not a root, so this part can be ignored.
+c     in the previous call there was not a root, so this 
+c     part can be ignored.
        IF (IWORK(LIRFND) .EQ. 0) GO TO 260
 c     --------------- INITIALIZING THE MASKS 
        DO 203 I = 1,NRT

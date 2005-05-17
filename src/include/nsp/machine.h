@@ -75,7 +75,7 @@
 /* #undef WITH_UMFPACK */
 
 /* Define if use fftw3 lib  */
-#define WITH_FFTW3 1
+/* #undef WITH_FFTW3 */
 
 /* Define if sizeof(int*)==sizeof(int) */
 #define POINTER_INT 1
