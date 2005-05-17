@@ -4386,7 +4386,7 @@ _wrap_gdk_property_get(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     guint32 *data32;
     switch (aformat) {
     case 8:
-      if ((pdata = nsp_new_string_obj(NVOID,data, alength)) == NULL) return RET_BUG;
+      if ((pdata = nsp_new_string_obj(NVOID,(const char *)data, alength)) == NULL) return RET_BUG;
       break;
     case 16:
       data16 = (guint16 *)data;
@@ -6269,11 +6269,11 @@ _wrap_gdk_gc_set_dashes(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
   gint dash_offset, i; 
   NspMatrix *list; 
-  guchar *dash_list ;
+  gint8 *dash_list ;
   int_types T[] = { s_int, realmat , t_end};
 
   if (GetArgs(stack,rhs,opt,T,&dash_offset, &list)== FAIL)  return RET_BUG;
-  dash_list = g_new(char, list->mn);
+  dash_list = g_new(gint8, list->mn);
   for (i = 0; i < list->mn ; i++)
     {
       dash_list[i]= list->R[i];
@@ -7408,7 +7408,7 @@ _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lh
     Scierror("could not get pixel data");
     return RET_BUG;
   }
-  if ((ret = nsp_new_string_obj(NVOID,pixels, rowstride*height)) == NULL) return RET_BUG; 
+  if ((ret = nsp_new_string_obj(NVOID,(const char *) pixels, rowstride*height)) == NULL) return RET_BUG; 
   MoveObj(stack,1,ret);
   return 1;
 }
@@ -7512,13 +7512,13 @@ _wrap_gdk_pixbuf_save(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 	  g_free(option_values);
 	  return RET_BUG;
 	}
-      if ((option_keys[i] =new_nsp_string(opt_key)) == NULLSTRING)
+      if ((option_keys[i] = new_nsp_string(opt_key)) == NULLSTRING)
 	{
 	  g_free(option_keys);
 	  g_free(option_values);
 	  return RET_BUG;
 	}
-      if ((option_values[i] =new_nsp_string(opt_value)) == NULLSTRING)
+      if ((option_values[i] = new_nsp_string(opt_value)) == NULLSTRING)
 	{
 	  g_free(option_keys);
 	  g_free(option_values);
@@ -10319,7 +10319,7 @@ int _wrap_gdk_pixmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
   int width, height, depth;
   NspGObject *drawable;
   GdkColor *fg = NULL, *bg = NULL;
-  guchar *data;
+  char *data;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdrawable, &drawable, &data, &width, &height, &depth, &nsp_fg, &nsp_bg) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_fg, GDK_TYPE_COLOR))
@@ -10449,8 +10449,8 @@ int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
   NspObject *nsp_ret;
   int width, height;
   NspGObject *nsp_drawable;
+  char *data;
   GdkDrawable *drawable = NULL;
-  guchar *data;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_drawable, &data, &width, &height) == FAIL) return RET_BUG;
   if ( IsGdkDrawable((NspObject *)nsp_drawable))

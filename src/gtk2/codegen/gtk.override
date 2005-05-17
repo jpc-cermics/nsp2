@@ -562,8 +562,8 @@ _wrap_gtk_selection_data__get_data(NspGObject *self, char *attr)
 {
   if (nspg_boxed_get(self, GtkSelectionData)->length >= 0) {
     return nsp_new_string_obj(NVOID, 
-			      nspg_boxed_get(self, GtkSelectionData)->data,
-			      nspg_boxed_get(self, GtkSelectionData)->length);
+			      (const char *) nspg_boxed_get(self, GtkSelectionData)->data,
+			      (int) nspg_boxed_get(self, GtkSelectionData)->length);
   } else {
     return nsp_new_string_obj(NVOID,NULL,0);
   }
@@ -580,13 +580,13 @@ _wrap_gtk_selection_data_set(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
   NspObject *nsp_type;
   GdkAtom type;
   int format, length;
-  guchar *data;
+  char *data;
 
   if (GetArgs(stack,rhs,opt,T,&nsp_type, &format, &data) == FAIL) return RET_BUG;
   length = strlen(data);
   if (nsp_gdk_atom_from_object(nsp_type,&type) == FAIL) return RET_BUG;
   gtk_selection_data_set(nspg_boxed_get(self, GtkSelectionData),
-			 type, format, data, length);
+			 type, format,(const guchar *) data, length);
   return 0;
 }
 %%

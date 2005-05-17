@@ -478,7 +478,7 @@ static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_
   GType type; 
   GObjectClass *class;
   GParamSpec **specs;
-  gint n_specs;
+  guint n_specs;
   int i,count=0;
 
   if ((type = nspg_type_from_object((NspObject *)object)) == 0) return NULL;
@@ -1709,7 +1709,7 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
     break;
   case G_TYPE_FLAGS:
     {
-      guint val = 0;
+      gint val = 0;
       if (nspg_flags_get_value(G_VALUE_TYPE(value), obj, &val) < 0)
 	return FAIL;
       g_value_set_flags(value, val);
@@ -2726,7 +2726,8 @@ static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs)
 {
   NspPList  *callback;
   NspList *extra_args = NULL;
-  guint handlerid,  interval;
+  guint handlerid;
+  int interval;
 
   CheckRhs(2,3);
   CheckLhs(1,1);
@@ -2765,7 +2766,8 @@ static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs)
 {
   NspPList  *callback;
   NspList *extra_args = NULL;
-  guint handlerid, priority;
+  guint handlerid;
+  int priority;
 
   CheckRhs(2,3);
   CheckLhs(1,1);
@@ -2822,7 +2824,8 @@ static int int_gtk_quit_add(Stack stack,int rhs,int opt,int lhs)
 {
   NspPList  *callback;
   NspList *extra_args = NULL;
-  guint handlerid, main_level;
+  guint handlerid;
+  int main_level;
 
   CheckRhs(2,3);
   CheckLhs(1,1);

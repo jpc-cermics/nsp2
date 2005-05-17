@@ -1697,7 +1697,7 @@
   (return-type "GdkPixmap*")
   (parameters
     '("GdkDrawable*" "drawable")
-    '("const-guchar*" "data")
+    '("const-gchar*" "data")
     '("gint" "width")
     '("gint" "height")
     '("gint" "depth")
@@ -1758,7 +1758,7 @@
   (return-type "GdkBitmap*")
   (parameters
     '("GdkDrawable*" "drawable" (null-ok))
-    '("const-guchar*" "data")
+    '("const-gchar*" "data")
     '("gint" "width")
     '("gint" "height")
   )
