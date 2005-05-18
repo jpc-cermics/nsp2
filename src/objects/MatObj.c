@@ -2364,6 +2364,7 @@ int_mxdeleteelts_gen (Stack stack, int rhs, int opt, int lhs, delf F)
       if ((Elts = GetRealMat (stack, 2)) == NULLMAT)
 	return RET_BUG;
     }
+  if ( A == Elts ) NthObj(2) = NULLOBJ;
   if ((*F) (A, Elts) == FAIL)
     return RET_BUG;
   NSP_OBJECT (A)->ret_pos = 1;
@@ -2422,13 +2423,6 @@ int_mxdeleteelts4 (Stack stack, int rhs, int opt, int lhs)
   return int_mxdeleteelts_gen (stack, rhs, opt, lhs,
 			       (delf) nsp_smatrix_delete_elements4);
 }
-
-
-
-
-
-
-
 
 /*
  * Res=nsp_matrix_extract(Rows,Cols,A)

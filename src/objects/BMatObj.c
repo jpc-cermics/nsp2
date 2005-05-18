@@ -786,14 +786,14 @@ int int_bmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 /*
  * Res=BMatDeletecols(A,Cols)
  *     Cols unchanged  ( restored at end of function if necessary)
- * WARNING: A must be changed by this routine
+ *     WARNING: A must be changed by this routine
  */
 
 typedef int (*delf) (NspBMatrix *M,NspMatrix *Elts);
 
 static int int_bmatrix_deleteelts_gen(Stack stack, int rhs, int opt, int lhs, delf F)
 {
-  NspBMatrix *A;
+  NspBMatrix *A,*BElts;
   NspMatrix *Elts;
   CheckRhs(2,2);
   CheckLhs(1,1);
@@ -801,7 +801,6 @@ static int int_bmatrix_deleteelts_gen(Stack stack, int rhs, int opt, int lhs, de
   if ( IsBMatObj(stack,2)  ) 
     {
       /* Elts is boolean: use find(Elts) **/
-      NspBMatrix *BElts;
       if ((BElts = GetBMat(stack,2)) == NULLBMAT) 
 	return RET_BUG;
       if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) 
@@ -814,6 +813,8 @@ static int int_bmatrix_deleteelts_gen(Stack stack, int rhs, int opt, int lhs, de
     }
   if ( (*F)( A, Elts) == FAIL )
     return RET_BUG;
+  /* take care that A and Elts can be the same */
+  if ( A == BElts ) NthObj(2)=NULLOBJ;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
