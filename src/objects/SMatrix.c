@@ -902,7 +902,7 @@ int nsp_smatrix_delete_elements4(NspSMatrix *A, NspMatrix *Elts)
   FREE(ind);
 
   if ( MAT_INT(type)->free_elt != NULL) 
-    for ( i = ne ; i < A->mn ; i++ ) A->S[i]= NULL;
+    for ( i = A->mn-ne ; i < A->mn ; i++ ) A->S[i]= NULL;
 
   if ( A->m == 1)
     {
