@@ -46,7 +46,7 @@ static int nnuees(double *x, double *y, double *z, int *n, double *bx, double *b
   static double idx;
   static int nnn;
 
-    /* Parameter adjustments */
+  /* Parameter adjustments */
   --chaine;
   --z;
   --y;
@@ -80,7 +80,7 @@ static int nnuees(double *x, double *y, double *z, int *n, double *bx, double *b
 	chaine[i] = 0;
       }
       return 0;
-  }
+    }
   /*     init des ancients bary_centres */
   i1 = *nbbary;
   for (i = 1; i <= i1; ++i) {
@@ -355,8 +355,8 @@ static int bblocs(double *x, double *y, double *z, int *n, double *bx, double *b
   }
   tete[0] = 1;
 
-/*     recherche et concentration du premier bloc */
-/*     initialisation du chainage */
+  /*     recherche et concentration du premier bloc */
+  /*     initialisation du chainage */
 
   rmin[0] = 0;
   vmin[0] = 0;
@@ -365,7 +365,7 @@ static int bblocs(double *x, double *y, double *z, int *n, double *bx, double *b
   vmax[0] = 256;
   bmax[0] = 256;
 
-/*     recherche du nombre d'iterations a effectuer */
+  /*     recherche du nombre d'iterations a effectuer */
 
   itmax = 1;
   for (i = 1; i <= 9; ++i) {
@@ -377,7 +377,7 @@ static int bblocs(double *x, double *y, double *z, int *n, double *bx, double *b
   }
   /*     division des blocs en blocs plus petits */
   /*     initialisation */
-L31:
+ L31:
   manque = 1;
   nbbloc = 1;
   rang = 1;
@@ -589,7 +589,7 @@ L31:
 
   /*     calcul des bary_centres */
 
-L100:
+ L100:
   i1 = *nbbary;
   for (i = 1; i <= i1; ++i) {
     j = tete[i - 1];
@@ -635,7 +635,7 @@ static int heapi2(int *criter, int *record, int *n)
   rec = record[l];
   crit = criter[l];
   goto L3;
-L20:
+ L20:
   rec = record[r];
   crit = criter[r];
   record[r] = record[1];
@@ -669,7 +669,7 @@ L20:
   record[i] = rec;
   criter[i] = crit;
   goto L2;
-L999:
+ L999:
   record[1] = rec;
   criter[1] = crit;
   return 0;

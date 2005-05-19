@@ -64,7 +64,7 @@ static void test2D(BCG *Xgc)
       i=1;
       x[i+ XN2DD*j]= ((double) i)/10.0;
       y[i+ XN2DD*j]= 1.10;
-      }
+    }
   for ( i=0 ; i < NCURVES2DD ; i++)
     style[i]= -NCURVES2DD+i;
   n1=NCURVES2DD;n2=XN2DD;
@@ -478,12 +478,12 @@ static void testPattern(BCG *Xgc)
     {
       for ( j =0 ; j < 5 ; j++)
 	{ int pat;
-	  pat=j+5*k;
-	  Xgc->graphic_engine->scale->xset_pattern(Xgc,pat);
-	  Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-	  Xgc->graphic_engine->scale->xset_pattern(Xgc,i);
-	  Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
-	  rect[0] += rect[2]+5.0;
+	pat=j+5*k;
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,pat);
+	Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+	Xgc->graphic_engine->scale->xset_pattern(Xgc,i);
+	Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+	rect[0] += rect[2]+5.0;
 	}
       rect[1] += rect[3]+5.0;
       rect[0]  =10.0;
@@ -529,13 +529,13 @@ static void testPrim(BCG *Xgc)
 }
 
 /**
-static void transl(x,n,val)
-     double x[];
-     int n,val;
-{
-  int i;
-  for (i=0 ; i < n ; i++)    x[i]=x[i]+val;
-}
+   static void transl(x,n,val)
+   double x[];
+   int n,val;
+   {
+   int i;
+   for (i=0 ; i < n ; i++)    x[i]=x[i]+val;
+   }
 **/
 
 static void corps(BCG *Xgc)
@@ -592,12 +592,12 @@ static void corps(BCG *Xgc)
   pats[0]=0;pats[1]=4;pats[2]=8;pats[3]=12;
   pats[4]=15;pats[5]=whiteid;pats[6]=0;
   for (j=0;j<7;j++)
-      for (i=0;i< 7 ; i++) 
-	  ypols[i+j*7]=ypols[i+j*7]+60;
+    for (i=0;i< 7 ; i++) 
+      ypols[i+j*7]=ypols[i+j*7]+60;
   Xgc->graphic_engine->scale->fillpolylines(Xgc,xpols,ypols,pats,n,n,0);
   for (j=0;j<7;j++)
-      for (i=0;i< 7 ; i++) 
-	  ypols[i+j*7]=ypols[i+j*7]+60;
+    for (i=0;i< 7 ; i++) 
+      ypols[i+j*7]=ypols[i+j*7]+60;
   for (j=0;j<7;j++) pats[j]=j;
   Xgc->graphic_engine->scale->drawpolylines(Xgc,xpols,ypols,pats,n,n);
   for (j=0;j<7;j++)
@@ -632,7 +632,7 @@ static void corps(BCG *Xgc)
   iflag=0;
   Xgc->graphic_engine->scale->displaynumbers(Xgc,x,y,n,iflag,xpols,ypols);
 
-  }
+}
 
 static void testString(BCG *Xgc)
 {
@@ -675,14 +675,14 @@ static void testXliness(BCG *Xgc)
     {
       for ( j =0 ; j < 10 ; j++)
 	{ int pat;
-	  pat=j+10*k;
-	  polyx[0]=x;polyx[1]=x+w;polyx[2]=x+w;polyx[3]=x;polyx[4]=x;
-	  polyy[0]=y;polyy[1]=y;polyy[2]=y+h;polyy[3]=y+h;polyy[4]=y;
-	  Xgc->graphic_engine->scale->fillpolylines(Xgc,polyx,polyy,&pat,npoly,polysize,0);
-	  polyy[0]=polyy[0]-10.0;
-	  sprintf(info,"gl=%d",(int)pat);
-	  Xgc->graphic_engine->scale->displaystring(Xgc,info,*polyx,*polyy,ii,ang);
-  	  x=x+w+5;
+	pat=j+10*k;
+	polyx[0]=x;polyx[1]=x+w;polyx[2]=x+w;polyx[3]=x;polyx[4]=x;
+	polyy[0]=y;polyy[1]=y;polyy[2]=y+h;polyy[3]=y+h;polyy[4]=y;
+	Xgc->graphic_engine->scale->fillpolylines(Xgc,polyx,polyy,&pat,npoly,polysize,0);
+	polyy[0]=polyy[0]-10.0;
+	sprintf(info,"gl=%d",(int)pat);
+	Xgc->graphic_engine->scale->displaystring(Xgc,info,*polyx,*polyy,ii,ang);
+	x=x+w+5;
 	}
       y=y+h+20;
       x=10;
@@ -718,10 +718,10 @@ static void testXrects(BCG *Xgc)
     {
       for ( j =0 ; j < 10 ; j++)
 	{ int pat;
-	  pat=j+10*k;
-	  rect[0]=xx;rect[1]=yy;rect[2]=w;rect[3]=h;
-	  Xgc->graphic_engine->scale->drawrectangles(Xgc,rect,&pat,nrect);
-  	  xx=xx+w+5.0;
+	pat=j+10*k;
+	rect[0]=xx;rect[1]=yy;rect[2]=w;rect[3]=h;
+	Xgc->graphic_engine->scale->drawrectangles(Xgc,rect,&pat,nrect);
+	xx=xx+w+5.0;
 	}
       yy=yy+h+5.0;
       xx=10.0;
@@ -771,38 +771,38 @@ typedef  struct  {
   void  (*fonc)();} TestOpTab ;
 
 static void vide()
- {}
+{}
 
 TestOpTab GraphicTestTab[] ={
- {"test2D+xsetech", test2DD},
- {"test2D", test2D},
- {"plot2d with animation", test2D2},
- {"test2D3", test2D3},
- {"test2D4", test2D4},
- {"test2DN 1", test2DN1},
- {"test2DN 2", test2DN2},
- {"test2DN 3", test2DN3},
- {"test3D", test3D},
- {"test3D animation", test3DA},
- {"test3D1", test3D1},
- {"test3D2", test3D2},
- {"testArrows", testArrows},
- {"testC 1", testC1},
- {"testC 2", testC2},
- {"testC 3", testC3},
- {"testC2d", TestC2d},
- {"testCh", testCh},
- {"testG", testG},
- {"testP3D", testP3D},
- {"testPattern", testPattern},
- {"testColor", testColor},
- {"testPrim", testPrim},
- {"testString", testString},
- {"testXor", testXormode},
- {"testXliness", testXliness},
- {"testXrects", testXrects},
- {"testXpoly", testPoly},
- {"testMark", testMarks},
- {(char *) NULL,vide}
+  {"test2D+xsetech", test2DD},
+  {"test2D", test2D},
+  {"plot2d with animation", test2D2},
+  {"test2D3", test2D3},
+  {"test2D4", test2D4},
+  {"test2DN 1", test2DN1},
+  {"test2DN 2", test2DN2},
+  {"test2DN 3", test2DN3},
+  {"test3D", test3D},
+  {"test3D animation", test3DA},
+  {"test3D1", test3D1},
+  {"test3D2", test3D2},
+  {"testArrows", testArrows},
+  {"testC 1", testC1},
+  {"testC 2", testC2},
+  {"testC 3", testC3},
+  {"testC2d", TestC2d},
+  {"testCh", testCh},
+  {"testG", testG},
+  {"testP3D", testP3D},
+  {"testPattern", testPattern},
+  {"testColor", testColor},
+  {"testPrim", testPrim},
+  {"testString", testString},
+  {"testXor", testXormode},
+  {"testXliness", testXliness},
+  {"testXrects", testXrects},
+  {"testXpoly", testPoly},
+  {"testMark", testMarks},
+  {(char *) NULL,vide}
 };
 

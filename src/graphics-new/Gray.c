@@ -779,14 +779,14 @@ static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  dou
      at least 2 colors for painting the triangle : it is divided in elementary
      polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
 
-                             P2           as zxy[0] <= zxy[1] <  zxy[2] or 
+     P2           as zxy[0] <= zxy[1] <  zxy[2] or 
      Notations/Hints :       /\              zxy[0] <  zxy[1] <= zxy[2]
-                     edge2  /  \ edge1    from a previus sort. All the polygons
-                           /    \         have 2 points on edge2, the others points
-                          /______\        are on edge0 and/or edge1. I name the 2 ends
-                        P0        P1      points on each poly PEdge2 and Pedge, they are 
-                            edge0         the 2 first points of the next poly. I start
-                                          from P0 to form the first poly (a triangle or
+     edge2  /  \ edge1    from a previus sort. All the polygons
+     /    \         have 2 points on edge2, the others points
+     /______\        are on edge0 and/or edge1. I name the 2 ends
+     P0        P1      points on each poly PEdge2 and Pedge, they are 
+     edge0         the 2 first points of the next poly. I start
+     from P0 to form the first poly (a triangle or
      a 4 sides depending if zxy[0]=zxy[1]), then the 2, 3, .., npolys - 1 (if they exist)
      and finally the last one which comprise the P2 vertex.  In some special cases
      we can have a degenerate poly but it doesn't matter ! 				  
@@ -795,8 +795,8 @@ static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  dou
   nb0 = zxy[1]-zxy[0]; /* number of intersection points on edge 0 */
 
   /*----------------------------+
-  |   compute the first poly    |
-  +----------------------------*/
+    |   compute the first poly    |
+    +----------------------------*/
   
   resx[0]=inint(sx[0]); resy[0]=inint(sy[0]); nr = 1; edge = 0;
   if ( nb0 == 0 ) {    /* the intersection point is on Edge1 but the next point
@@ -814,8 +814,8 @@ static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  dou
   if ( color != 0 )   Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
 
   /*------------------------------------+ 
-  | compute the intermediary polygon(s) |
-  +------------------------------------*/
+    | compute the intermediary polygon(s) |
+    +------------------------------------*/
 
   for ( izone = zxy[0]+1 ; izone < zxy[2] ; izone++ ) {
     resx[0] = xEdge2; resy[0] = yEdge2;          /* the 2 first points are known */
@@ -837,8 +837,8 @@ static void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  dou
   };
 
   /*-----------------------+ 
-  | compute the last poly  |
-  +-----------------------*/
+    | compute the last poly  |
+    +-----------------------*/
 
   resx[0] = xEdge2; resy[0] = yEdge2;         /* the 2 first points are known */
   resx[1] = xEdge;  resy[1] = yEdge; nr = 2;

@@ -61,10 +61,10 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
 		       double *teta, double *alpha,const  char *legend, int *flag, double *bbox);
 
 static int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
-		double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
+		       double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
 
 static int DPoints1_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
-		 double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
+			double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
 
 static void plot3dg_ogl(BCG *Xgc,char *name,
 			int (*func)(BCG *Xgc,double *polyx, double *polyy, double *polyz,int *fill,
@@ -77,8 +77,8 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 /* typedef enum {plot3d_t ,facettes_t , param3d_t} nsp_plot3d_type;*/
 
 void  nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
-				      double *teta, double *alpha,const char *legend, int *flag, double *bbox,
-				      double *zmin,double *zmax, nsp_plot3d_type t);
+			       double *teta, double *alpha,const char *legend, int *flag, double *bbox,
+			       double *zmin,double *zmax, nsp_plot3d_type t);
 
 static void AxesStrings(BCG *Xgc,int axflag,const nsp_box_3d *box,const char *legend);
 
@@ -300,7 +300,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 	  for ( j =0 ; j < (*q)-1 ; j++)
 	    {
 	      npolyok += (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
-				x,y,z,i,j,npolyok,p,dc,fg1);
+				 x,y,z,i,j,npolyok,p,dc,fg1);
 	    }
 	  if ( npolyok != 0) 
 	    Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
@@ -314,7 +314,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 	    {
 	      npolyok += (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
 				 x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
-	   }
+	    }
 	  if ( npolyok != 0) 
 	    Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
@@ -325,9 +325,9 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 	  int npolyok=0;
 	  for ( j = 0 ; j < (*q)-1 ; j++)
 	    {
-	     npolyok +=     (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
-				    x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
-	   }
+	      npolyok +=     (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
+				     x,y,z,i,(*q)-2-j,npolyok,p,dc,fg1);
+	    }
 	  if ( npolyok != 0) 
 	    Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
@@ -338,9 +338,9 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 	  int npolyok=0;
 	  for ( j =0 ; j < (*q)-1 ; j++)
 	    {
-	     npolyok += (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
-				x,y,z,i,j,npolyok,p,dc,fg1);
-	   }
+	      npolyok += (*func)(Xgc,polyx,polyy,fill,whiteid,zmin,zmax,
+				 x,y,z,i,j,npolyok,p,dc,fg1);
+	    }
 	  if ( npolyok != 0) 
 	    Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npolyok,polysize);
 	}
@@ -359,8 +359,8 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
 
 
 void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
-				     double *teta, double *alpha,const char *legend, int *flag, double *bbox,double *zmin,
-				     double *zmax,nsp_plot3d_type type3d)
+			      double *teta, double *alpha,const char *legend, int *flag, double *bbox,double *zmin,
+			      double *zmax,nsp_plot3d_type type3d)
 {
   int redraw = FALSE;
   int i;
@@ -430,7 +430,7 @@ void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double 
     }
   /* switch to mode with ebox to accelerate replot */
   if ( *flag==2 || *flag==4 || *flag==6 || *flag == 8 ) 
-     (*flag)--;
+    (*flag)--;
 
   /* Redraw other graphics */
   if ( redraw == TRUE )
@@ -460,14 +460,14 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
   nsp_plot3d_update_bounds(Xgc,name,x,y,z,p,q, teta, alpha,legend,&flag[1],bbox,&zmin,&zmax,facettes_t);
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) {
-      if (strcmp(name,"fac3d")==0) 	
-	store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-      else if (strcmp(name,"fac3d1")==0) 	
-	store_Fac3D1(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-      else if (strcmp(name,"fac3d2")==0) 	
-	store_Fac3D2(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-      else 
-	store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+    if (strcmp(name,"fac3d")==0) 	
+      store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+    else if (strcmp(name,"fac3d1")==0) 	
+      store_Fac3D1(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+    else if (strcmp(name,"fac3d2")==0) 	
+      store_Fac3D2(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+    else 
+      store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   }
 
   SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
@@ -924,9 +924,9 @@ static int nsp_plot_box3d(BCG *Xgc, nsp_box_3d *box)
   if (fg1==-1) fg1=0;
   /* Le triedre cache **/
   if (box->z[box->InsideU[0]] > box->z[box->InsideD[0]])
-      DrawAxis(Xgc,box,'D',fg1);
+    DrawAxis(Xgc,box,'D',fg1);
   else 
-      DrawAxis(Xgc,box,'U',fg1);
+    DrawAxis(Xgc,box,'U',fg1);
   return(0);
 }
 
@@ -1065,16 +1065,16 @@ void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double
           ymmin=ymmin-(hy1-hy)/2.0;
           ymmax=ymmax+(hy1-hy)/2.0;
         }
-     }
+    }
   if (flag !=0 )
-     {
-       FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
-       set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
-       Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
-       /* this is used by opengl for zmin zmax and depth */
-       Xgc->scales->zfrect[0]= (double) Mini(box->z,8L);
-       Xgc->scales->zfrect[1]= (double) Maxi(box->z,8L);
-     }
+    {
+      FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
+      set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
+      Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
+      /* this is used by opengl for zmin zmax and depth */
+      Xgc->scales->zfrect[0]= (double) Mini(box->z,8L);
+      Xgc->scales->zfrect[1]= (double) Maxi(box->z,8L);
+    }
   /* end of code added by es */
 #ifdef WITH_GTKGLEXT 
   /* transmit info to opengl */
@@ -1152,10 +1152,10 @@ void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag)
     {
       MaxiInd(box->x,8L,&ind,xmaxi);
       if ( ind > 3)
-	  {
-	    box->xind[0]=ind;
-	    break;
-	  }
+	{
+	  box->xind[0]=ind;
+	  break;
+	}
     }
   if (ind < 0 || ind > 8) 
     {
@@ -1483,24 +1483,24 @@ void TDAxis(BCG *Xgc,int flag, double FPval, double LPval, int *nax, int *FPoint
     }
   for (i=0; i <= nax[1];i++)
     { double angle=0.0;
-      int flag1=0;
-      int xx=0,yy=0, posi[2],rect[4];
-      char foo[100];/*** JPC : must be cleared properly **/
-      double lp;
-      lp = xp + i*(LPval-FPval)/((double)nax[1]);
-      sprintf(foo,fornum,lp);
-      Xgc->graphic_engine->boundingbox(Xgc,foo,xx,yy,rect);
-      posi[0]=inint(FPoint[0]+ i*dx + 2*ticsx );
-      posi[1]=inint(FPoint[1]+ i*dy + 2*ticsy +rect[3]/2 );
-      switch ( flag)
-	{
-	case 1: posi[0] -= rect[2];
-	  /* pour separer ;e 1er arg de l'axe des z de l'axe voisin **/
-	  if ( i== nax[1]) posi[1] -= rect[3]/2;
-	  break;
-	case 2: posi[0] -= rect[2];break;
-	}
-      Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag1,angle);
+    int flag1=0;
+    int xx=0,yy=0, posi[2],rect[4];
+    char foo[100];/*** JPC : must be cleared properly **/
+    double lp;
+    lp = xp + i*(LPval-FPval)/((double)nax[1]);
+    sprintf(foo,fornum,lp);
+    Xgc->graphic_engine->boundingbox(Xgc,foo,xx,yy,rect);
+    posi[0]=inint(FPoint[0]+ i*dx + 2*ticsx );
+    posi[1]=inint(FPoint[1]+ i*dy + 2*ticsy +rect[3]/2 );
+    switch ( flag)
+      {
+      case 1: posi[0] -= rect[2];
+	/* pour separer ;e 1er arg de l'axe des z de l'axe voisin **/
+	if ( i== nax[1]) posi[1] -= rect[3]/2;
+	break;
+      case 2: posi[0] -= rect[2];break;
+      }
+    Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag1,angle);
     }
 }
 
@@ -1651,7 +1651,7 @@ static void dbox(BCG *Xgc,double theta,double alpha)
 #endif 
 
 #ifdef WIN32
-   Xgc->graphic_engine->xset_pattern(pat);
+  Xgc->graphic_engine->xset_pattern(pat);
 #endif
 }
 
@@ -1701,107 +1701,107 @@ static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin
 
 int shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysize, int flag)
 {
-   int px[5],py[5],fil[4],is[3],ie[3],n[3];
-   int npoly=1,k,col,cols,psize,i,s,e;
-   int polyxs[4],polyys[4],fills[4],*x[3],*y[3];
-   double dx,dy;
+  int px[5],py[5],fil[4],is[3],ie[3],n[3];
+  int npoly=1,k,col,cols,psize,i,s,e;
+  int polyxs[4],polyys[4],fills[4],*x[3],*y[3];
+  double dx,dy;
 
-   if (polysize == 3) { /* The triangle case */
+  if (polysize == 3) { /* The triangle case */
  
-     triangleSort(polyx,polyy,fill,polyxs,polyys,fills);
+    triangleSort(polyx,polyy,fill,polyxs,polyys,fills);
   
-     is[0]=0; ie[0]=1;
-     is[1]=1; ie[1]=2;
-     is[2]=0; ie[2]=2;
+    is[0]=0; ie[0]=1;
+    is[1]=1; ie[1]=2;
+    is[2]=0; ie[2]=2;
      
-     /* Computation of coordinates of elementary polygons for each side */
+    /* Computation of coordinates of elementary polygons for each side */
      
-     for(i=0;i<3;i++) {
+    for(i=0;i<3;i++) {
 
-        s=is[i];
-	e=ie[i];
-	n[i]=fills[s]-fills[e];
+      s=is[i];
+      e=ie[i];
+      n[i]=fills[s]-fills[e];
 
-        if (n[i]) {
+      if (n[i]) {
 	
-           x[i]=(int *)malloc((n[i]+2)*sizeof(int));
-	   y[i]=(int *)malloc((n[i]+2)*sizeof(int)); 
-	   if (x[i]==NULL || y[i]==NULL) {
-		Scistring("shade : malloc No more Place\n");
-		return 0;
-	   }
+	x[i]=(int *)malloc((n[i]+2)*sizeof(int));
+	y[i]=(int *)malloc((n[i]+2)*sizeof(int)); 
+	if (x[i]==NULL || y[i]==NULL) {
+	  Scistring("shade : malloc No more Place\n");
+	  return 0;
+	}
 		
-           dx=((double)(polyxs[e]-polyxs[s]))/(double)n[i];
-	   dy=((double)(polyys[e]-polyys[s]))/(double)n[i];
+	dx=((double)(polyxs[e]-polyxs[s]))/(double)n[i];
+	dy=((double)(polyys[e]-polyys[s]))/(double)n[i];
 
-           x[i][0]=polyxs[s];
-	   y[i][0]=polyys[s];
+	x[i][0]=polyxs[s];
+	y[i][0]=polyys[s];
 	   
-           for(k=0;k<n[i];k++) {
-             x[i][k+1]=linint((double)polyxs[s] + (0.5+k)*dx);
-	     y[i][k+1]=linint((double)polyys[s] + (0.5+k)*dy);
-           }
+	for(k=0;k<n[i];k++) {
+	  x[i][k+1]=linint((double)polyxs[s] + (0.5+k)*dx);
+	  y[i][k+1]=linint((double)polyys[s] + (0.5+k)*dy);
+	}
 	   
-           x[i][n[i]+1]=polyxs[e];
-           y[i][n[i]+1]=polyys[e];
-        }
-     }
+	x[i][n[i]+1]=polyxs[e];
+	y[i][n[i]+1]=polyys[e];
+      }
+    }
      
-     /* Fill the whole triangle with color fill[1] if all colors are equal */
+    /* Fill the whole triangle with color fill[1] if all colors are equal */
          
-     if (!n[0] && !n[1]) {
+    if (!n[0] && !n[1]) {
 
-          psize=3;
-          col=fills[0];
-          Xgc->graphic_engine->fillpolylines(Xgc,polyxs,polyys,(cols=-Abs(col),&cols),npoly,psize);
-          return(0);
-     }
+      psize=3;
+      col=fills[0];
+      Xgc->graphic_engine->fillpolylines(Xgc,polyxs,polyys,(cols=-Abs(col),&cols),npoly,psize);
+      return(0);
+    }
      
-     if (n[0]) {
-          psize=4;
-	  col=fills[0];  
-          for(i=0;i<=n[0];i++) {
-	     px[0]=x[2][i]; px[1]=x[0][i]; px[2]=x[0][i+1]; px[3]=x[2][i+1];
-	     py[0]=y[2][i]; py[1]=y[0][i]; py[2]=y[0][i+1]; py[3]=y[2][i+1];
-	     Xgc->graphic_engine->fillpolylines(Xgc,px,py,(cols=-Abs(col),&cols),npoly,psize);
-             col--;
-	  }
-	  free(x[0]);
-	  free(y[0]);
-     }
+    if (n[0]) {
+      psize=4;
+      col=fills[0];  
+      for(i=0;i<=n[0];i++) {
+	px[0]=x[2][i]; px[1]=x[0][i]; px[2]=x[0][i+1]; px[3]=x[2][i+1];
+	py[0]=y[2][i]; py[1]=y[0][i]; py[2]=y[0][i+1]; py[3]=y[2][i+1];
+	Xgc->graphic_engine->fillpolylines(Xgc,px,py,(cols=-Abs(col),&cols),npoly,psize);
+	col--;
+      }
+      free(x[0]);
+      free(y[0]);
+    }
      
-     if (n[1]) {
-          psize=4;
-	  col=fills[1];
-          for(i=0;i<=n[1];i++) {
-	     px[0]=x[2][n[0]+i]; px[1]=x[1][i]; px[2]=x[1][i+1]; px[3]=x[2][n[0]+i+1];
-	     py[0]=y[2][n[0]+i]; py[1]=y[1][i]; py[2]=y[1][i+1]; py[3]=y[2][n[0]+i+1];
-	     Xgc->graphic_engine->fillpolylines(Xgc,px,py,(cols=-Abs(col),&cols),npoly,psize);
-             col--;
-	  }
-          free(x[1]);
-	  free(y[1]);  
-     }
+    if (n[1]) {
+      psize=4;
+      col=fills[1];
+      for(i=0;i<=n[1];i++) {
+	px[0]=x[2][n[0]+i]; px[1]=x[1][i]; px[2]=x[1][i+1]; px[3]=x[2][n[0]+i+1];
+	py[0]=y[2][n[0]+i]; py[1]=y[1][i]; py[2]=y[1][i+1]; py[3]=y[2][n[0]+i+1];
+	Xgc->graphic_engine->fillpolylines(Xgc,px,py,(cols=-Abs(col),&cols),npoly,psize);
+	col--;
+      }
+      free(x[1]);
+      free(y[1]);  
+    }
 
-     if (n[2]) {
-        free(x[2]);
-	free(y[2]);
-     }
+    if (n[2]) {
+      free(x[2]);
+      free(y[2]);
+    }
 
-   }
+  }
    
-   else { /* The 4 vertices case  */
+  else { /* The 4 vertices case  */
      
-      px[0]=polyx[0]; px[1]=polyx[1]; px[2]=polyx[2];
-      py[0]=polyy[0]; py[1]=polyy[1]; py[2]=polyy[2];
-      fil[0]=fill[0]; fil[1]=fill[1]; fil[2]=fill[2];
-      shade(Xgc,px,py,fil,3,flag);
-      px[0]=polyx[0]; px[1]=polyx[2]; px[2]=polyx[3];
-      py[0]=polyy[0]; py[1]=polyy[2]; py[2]=polyy[3];
-      fil[0]=fill[0]; fil[1]=fill[2]; fil[2]=fill[3];
-      shade(Xgc,px,py,fil,3,flag);
-   }
-   return 0;
+    px[0]=polyx[0]; px[1]=polyx[1]; px[2]=polyx[2];
+    py[0]=polyy[0]; py[1]=polyy[1]; py[2]=polyy[2];
+    fil[0]=fill[0]; fil[1]=fill[1]; fil[2]=fill[2];
+    shade(Xgc,px,py,fil,3,flag);
+    px[0]=polyx[0]; px[1]=polyx[2]; px[2]=polyx[3];
+    py[0]=polyy[0]; py[1]=polyy[2]; py[2]=polyy[3];
+    fil[0]=fill[0]; fil[1]=fill[2]; fil[2]=fill[3];
+    shade(Xgc,px,py,fil,3,flag);
+  }
+  return 0;
 }     
 
 /*
@@ -1825,14 +1825,14 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
   /* If Record is on **/
   
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) {
-      if (strcmp(name,"fac3d")==0) 	
-	store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-      else if (strcmp(name,"fac3d1")==0) 	
-	store_Fac3D1(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-      else if (strcmp(name,"fac3d2")==0) 	
-	store_Fac3D2(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-      else 
-	store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+    if (strcmp(name,"fac3d")==0) 	
+      store_Fac3D(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+    else if (strcmp(name,"fac3d1")==0) 	
+      store_Fac3D1(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+    else if (strcmp(name,"fac3d2")==0) 	
+      store_Fac3D2(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+    else 
+      store_Fac3D3(Xgc,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
   }
 
   SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
@@ -2227,9 +2227,9 @@ static int nsp_plot_box3d_ogl(BCG *Xgc,nsp_box_3d *box)
   if (fg1==-1) fg1=0;
   /* Le triedre cache **/
   if ( box->z[box->InsideU[0]] > box->z[box->InsideD[0]])
-      DrawAxis_ogl(Xgc,box,'D',fg1);
+    DrawAxis_ogl(Xgc,box,'D',fg1);
   else
-      DrawAxis_ogl(Xgc,box,'U',fg1);
+    DrawAxis_ogl(Xgc,box,'U',fg1);
   return(0);
 
 }

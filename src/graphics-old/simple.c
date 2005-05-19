@@ -180,7 +180,7 @@ examine_gl_config_attrib (GdkGLConfig *glconfig)
 
 int
 my_gl_main (int   argc,
-      char *argv[])
+	    char *argv[])
 {
   GdkGLConfig *glconfig;
   gint major, minor;

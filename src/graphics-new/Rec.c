@@ -1103,7 +1103,7 @@ static void clean_NEch(void *plot)
  *---------------------------------------------------------------------------*/
 
 static void store_Plot_G(BCG *Xgc,int code, char *xf, double *x, double *y, int *n1, int *n2, int *style,
-		  char *strflag,const  char *legend,int legend_pos, double *brect, int *aint)
+			 char *strflag,const  char *legend,int legend_pos, double *brect, int *aint)
 {
   int nstyle,n1n2;
   struct rec_plot2d *lplot;
@@ -1356,7 +1356,7 @@ static void replay_Param3D(BCG *Xgc,void *theplot)
   struct rec_param3d *pl3d;
   pl3d= (struct rec_param3d *)theplot;
   nsp_param3d(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n,&pl3d->teta,
-	       &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
+	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
 
@@ -1461,7 +1461,7 @@ static void replay_3D(BCG *Xgc,void *theplot)
 {
   struct rec_plot3d *pl3d = (struct rec_plot3d *)theplot;
   nsp_plot3d(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->p,&pl3d->q,&pl3d->teta,
-	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
+	     &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
 static void clean_3D(void *plot)
@@ -1482,7 +1482,7 @@ static void replay_3D1(BCG *Xgc,void *theplot)
 {
   struct rec_plot3d *pl3d = (struct rec_plot3d *)theplot;
   nsp_plot3d_1(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->p,&pl3d->q,&pl3d->teta,
-	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
+	       &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
 static void clean_3D1(void *plot)
@@ -1594,7 +1594,7 @@ void store_Fac3D2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, 
 
 
 void store_Fac3D3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const
- char *legend, int *flag, double *bbox)
+		  char *legend, int *flag, double *bbox)
 {
   store_Fac3D_G(Xgc,CODEFac3D3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
 }
@@ -1603,23 +1603,23 @@ static void replay_Fac3D(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d= (struct rec_fac3d *)theplot;
   nsp_plot_fac3d(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,&pl3d->p,&pl3d->q,&pl3d->teta,
-	     &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
+		 &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
 static void replay_Fac3D1(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d = (struct rec_fac3d *)theplot;
   nsp_plot_fac3d_1(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
-	      &pl3d->p,&pl3d->q,&pl3d->teta,
-	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
+		   &pl3d->p,&pl3d->q,&pl3d->teta,
+		   &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
 static void replay_Fac3D2(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d = (struct rec_fac3d *)theplot;
   nsp_plot_fac3d_2(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
-	      &pl3d->p,&pl3d->q,&pl3d->teta,
-	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
+		   &pl3d->p,&pl3d->q,&pl3d->teta,
+		   &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
 
@@ -1627,8 +1627,8 @@ static void replay_Fac3D3(BCG *Xgc,void *theplot)
 {
   struct rec_fac3d *pl3d =  (struct rec_fac3d *)theplot;
   nsp_plot_fac3d_3(Xgc,pl3d->x,pl3d->y,pl3d->z,pl3d->cvect,
-	      &pl3d->p,&pl3d->q,&pl3d->teta,
-	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
+		   &pl3d->p,&pl3d->q,&pl3d->teta,
+		   &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox);
 }
 
 
@@ -1687,8 +1687,8 @@ static void replay_Fec(BCG *Xgc,void *theplot)
 {
   struct rec_fec *plfec = (struct rec_fec *)theplot;
   nsp_fec(Xgc,plfec->x,plfec->y,plfec->triangles,plfec->func,
-	   &plfec->Nnode,&plfec->Ntr,
-	   plfec->strflag,plfec->legend,plfec->brect,plfec->aaint,
+	  &plfec->Nnode,&plfec->Ntr,
+	  plfec->strflag,plfec->legend,plfec->brect,plfec->aaint,
 	  plfec->zminmax, plfec->colminmax, plfec->colout,plfec->draw );
 }
 
@@ -1717,29 +1717,29 @@ void store_Contour(BCG *Xgc, double *x, double *y, double *z, int *n1, int *n2, 
   lplot= ((struct rec_contour *) MALLOC(sizeof(struct rec_contour)));
   if (lplot != NULL)
     { int res=1;
-      lplot->n1= *n1;
-      lplot->n2= *n2;
-      lplot->nz= *nz;
-      lplot->flagnz= *flagnz;
-      if (*flagnz != 0)
-	res= CopyVectF(&(lplot->zz), zz,*nz);
-      else
-	lplot->zz= (double *) 0;
-      lplot->teta= *teta;
-      lplot->alpha= *alpha;
-      lplot->zlev= *zlev;
-      if ( 
-	  res &&
-	  CopyVectF(&(lplot->x), x,*n1) &&
-	  CopyVectF(&(lplot->y), y,*n2) &&
-	  CopyVectF(&(lplot->z), z,(*n1)*(*n2)) &&
-	  CopyVectC(&(lplot->legend), legend, ((int)strlen(legend))+1) && 
-	  CopyVectLI(&(lplot->flag), flag,3) &&
-	  CopyVectF(&(lplot->bbox), bbox,6L)
-	  ) 
-	{
-	  store_record(Xgc,CODEContour, lplot);
-	  return;}
+    lplot->n1= *n1;
+    lplot->n2= *n2;
+    lplot->nz= *nz;
+    lplot->flagnz= *flagnz;
+    if (*flagnz != 0)
+      res= CopyVectF(&(lplot->zz), zz,*nz);
+    else
+      lplot->zz= (double *) 0;
+    lplot->teta= *teta;
+    lplot->alpha= *alpha;
+    lplot->zlev= *zlev;
+    if ( 
+	res &&
+	CopyVectF(&(lplot->x), x,*n1) &&
+	CopyVectF(&(lplot->y), y,*n2) &&
+	CopyVectF(&(lplot->z), z,(*n1)*(*n2)) &&
+	CopyVectC(&(lplot->legend), legend, ((int)strlen(legend))+1) && 
+	CopyVectLI(&(lplot->flag), flag,3) &&
+	CopyVectF(&(lplot->bbox), bbox,6L)
+	) 
+      {
+	store_record(Xgc,CODEContour, lplot);
+	return;}
     }
   Scistring("\n store_ Plot (storecontour): No more place \n");
 }
@@ -1749,8 +1749,8 @@ static void replay_Contour(BCG *Xgc,void *theplot)
   struct rec_contour *pl3d;
   pl3d= (struct rec_contour *)theplot;
   nsp_contour(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
-	   pl3d->zz,&pl3d->teta,
-	  &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox,&pl3d->zlev,0L);
+	      pl3d->zz,&pl3d->teta,
+	      &pl3d->alpha,pl3d->legend,pl3d->flag,pl3d->bbox,&pl3d->zlev,0L);
 }
 
 
@@ -1771,31 +1771,31 @@ void store_Contour2D(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2,
   lplot= ((struct rec_contour2d *) MALLOC(sizeof(struct rec_contour2d)));
   if (lplot != NULL)
     { int res=1;
-      lplot->n1= *n1;
-      lplot->n2= *n2;
-      lplot->nz= *nz;
-      lplot->flagnz= *flagnz;
-      if (*flagnz != 0)
-	res= CopyVectF(&(lplot->zz),zz,*nz);
-      else
-	lplot->zz= (double *) 0;
-      if ( 
-	  res &&
-	  CopyVectF(&(lplot->x), x,*n1) &&
-	  CopyVectF(&(lplot->y), y,*n2) &&
-	  CopyVectF(&(lplot->z), z,(*n1)*(*n2)) &&
-	  CopyVectLI(&(lplot->style),style,nstyle) &&
-	  CopyVectC(&(lplot->strflag),strflag,((int)strlen(strflag))+1) &&
-	  CopyVectC(&(lplot->strflag_kp),strflag,((int)strlen(strflag))+1) &&
-	  CopyVectC(&(lplot->legend),legend,((int)strlen(legend))+1) && 
-	  CopyVectF(&(lplot->brect),brect,4L) &&
-	  CopyVectF(&(lplot->brect_kp),brect,4L) &&
-	  CopyVectLI(&(lplot->aint),aint,4) &&
-	  CopyVectLI(&(lplot->aint_kp),aint,4) 
-	  ) 
-	{
-	  store_record(Xgc,CODEContour2D, lplot);
-	  return;}
+    lplot->n1= *n1;
+    lplot->n2= *n2;
+    lplot->nz= *nz;
+    lplot->flagnz= *flagnz;
+    if (*flagnz != 0)
+      res= CopyVectF(&(lplot->zz),zz,*nz);
+    else
+      lplot->zz= (double *) 0;
+    if ( 
+	res &&
+	CopyVectF(&(lplot->x), x,*n1) &&
+	CopyVectF(&(lplot->y), y,*n2) &&
+	CopyVectF(&(lplot->z), z,(*n1)*(*n2)) &&
+	CopyVectLI(&(lplot->style),style,nstyle) &&
+	CopyVectC(&(lplot->strflag),strflag,((int)strlen(strflag))+1) &&
+	CopyVectC(&(lplot->strflag_kp),strflag,((int)strlen(strflag))+1) &&
+	CopyVectC(&(lplot->legend),legend,((int)strlen(legend))+1) && 
+	CopyVectF(&(lplot->brect),brect,4L) &&
+	CopyVectF(&(lplot->brect_kp),brect,4L) &&
+	CopyVectLI(&(lplot->aint),aint,4) &&
+	CopyVectLI(&(lplot->aint_kp),aint,4) 
+	) 
+      {
+	store_record(Xgc,CODEContour2D, lplot);
+	return;}
     }
   Scistring("\n store_ Plot (storecontour): No more place \n");
 }
@@ -1805,8 +1805,8 @@ static void replay_Contour2D(BCG *Xgc,void *theplot)
   struct rec_contour2d *pl3d;
   pl3d= (struct rec_contour2d *)theplot;
   nsp_contour2(Xgc,pl3d->x,pl3d->y,pl3d->z,&pl3d->n1,&pl3d->n2,&pl3d->flagnz,&pl3d->nz,
-		pl3d->zz, pl3d->style,pl3d->strflag,pl3d->legend,
-		pl3d->brect,pl3d->aint);
+	       pl3d->zz, pl3d->style,pl3d->strflag,pl3d->legend,
+	       pl3d->brect,pl3d->aint);
 }
 
 
@@ -2040,14 +2040,14 @@ static void replay_Champ(BCG *Xgc,void *theplot)
 {
   struct rec_champ *plch = (struct rec_champ *)theplot;
   nsp_champ(Xgc,plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
-	     plch->strflag,plch->vrect,&(plch->arfact),0L);
+	    plch->strflag,plch->vrect,&(plch->arfact),0L);
 }
 
 static void replay_Champ1(BCG *Xgc,void *theplot)
 {
   struct rec_champ *plch= (struct rec_champ *)theplot;
   nsp_champ1(Xgc,plch->x,plch->y,plch->fx,plch->fy,&(plch->n1),&(plch->n2),
-	      plch->strflag,plch->vrect,&(plch->arfact),0L);
+	     plch->strflag,plch->vrect,&(plch->arfact),0L);
 }
 
 
@@ -2260,10 +2260,10 @@ static void new_angles_Fac3D(void *plot, double *theta, double *alpha, int *ifla
   theplot->teta=*theta;
   theplot->alpha=*alpha;
   for (i=0 ; i< 3 ; i++) 
-      if (iflag[i]!=0) theplot->flag[i] = flag[i];
+    if (iflag[i]!=0) theplot->flag[i] = flag[i];
   if ( iflag[3] != 0) 
     for ( i= 0 ; i < 6 ; i++ ) 
-            theplot->bbox[i] = bbox[i];
+      theplot->bbox[i] = bbox[i];
 }
 
 static void new_angles_Contour(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
@@ -2274,10 +2274,10 @@ static void new_angles_Contour(void *plot, double *theta, double *alpha, int *if
   theplot->teta=*theta;
   theplot->alpha=*alpha;
   for (i=0 ; i< 3 ; i++) 
-      if (iflag[i]!=0) theplot->flag[i] = flag[i];
+    if (iflag[i]!=0) theplot->flag[i] = flag[i];
   if ( iflag[3] != 0) 
     for ( i= 0 ; i < 6 ; i++ ) 
-            theplot->bbox[i] = bbox[i];
+      theplot->bbox[i] = bbox[i];
 }
 
 static void new_angles_Param3D(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
@@ -2288,10 +2288,10 @@ static void new_angles_Param3D(void *plot, double *theta, double *alpha, int *if
   theplot->teta=*theta;
   theplot->alpha=*alpha;
   for (i=0 ; i< 3 ; i++) 
-      if (iflag[i]!=0) theplot->flag[i] = flag[i];
+    if (iflag[i]!=0) theplot->flag[i] = flag[i];
   if ( iflag[3] != 0) 
     for ( i= 0 ; i < 6 ; i++ ) 
-            theplot->bbox[i] = bbox[i];
+      theplot->bbox[i] = bbox[i];
 }
 
 static void new_angles_Param3D1(void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox)
@@ -2302,10 +2302,10 @@ static void new_angles_Param3D1(void *plot, double *theta, double *alpha, int *i
   theplot->teta=*theta;
   theplot->alpha=*alpha;
   for (i=0 ; i< 3 ; i++) 
-      if (iflag[i]!=0) theplot->flag[i] = flag[i];
+    if (iflag[i]!=0) theplot->flag[i] = flag[i];
   if ( iflag[3] != 0) 
     for ( i= 0 ; i < 6 ; i++ ) 
-            theplot->bbox[i] = bbox[i];
+      theplot->bbox[i] = bbox[i];
 }
 
 
@@ -2482,20 +2482,20 @@ static void scale_change_Ech(BCG *Xgc,void *plot, int *flag, double *bbox, int *
   else if ( subwin != NULL) 
     {
       if (    Abs(theplot->Wrect[0] - subwin[0]) < 1.e-8
-	   && Abs(theplot->Wrect[1] - subwin[1]) < 1.e-8
-	   && Abs(theplot->Wrect[2] - subwin[2]) < 1.e-8
-	   && Abs(theplot->Wrect[3] - subwin[3]) < 1.e-8 )
+	      && Abs(theplot->Wrect[1] - subwin[1]) < 1.e-8
+	      && Abs(theplot->Wrect[2] - subwin[2]) < 1.e-8
+	      && Abs(theplot->Wrect[3] - subwin[3]) < 1.e-8 )
 	{
 	  /* we are switching to the good subwindow */
 	  /* sciprint("ech : je suis ds la bonne subwin [%f,%f,%f,%f]\r\n",
-		   subwin[0],subwin[1],subwin[2],subwin[3]);
+	     subwin[0],subwin[1],subwin[2],subwin[3]);
 	  */
 	  flag[0] = 1;
 	}
       else 
 	{
 	  /* sciprint("ech : je suis pas ds la bonne subwin [%f,%f,%f,%f]\r\n",
-		   subwin[0],subwin[1],subwin[2],subwin[3]);
+	     subwin[0],subwin[1],subwin[2],subwin[3]);
 	  */
 	  flag[0] = 0;
 	}
@@ -2541,9 +2541,9 @@ static void scale_change_NEch(BCG *Xgc,void *plot, int *flag, double *bbox, int 
 	      bbox[2] = XPixel2Double(bbox1[2]);
 	      bbox[3] = YPixel2Double(bbox1[3]);
 	      /* sciprint("je trouve un bbox ds [%f %f %f %f ] ds [%f,%f,%f,%f] log=[%c,%c]\r\n",
-		       bbox[0],bbox[1],bbox[2],bbox[3],
-		       theplot->Wrect[0],theplot->Wrect[1],theplot->Wrect[2],theplot->Wrect[3],
-		       Xgc->scales->logflag[0],		       Xgc->scales->logflag[1]);
+		 bbox[0],bbox[1],bbox[2],bbox[3],
+		 theplot->Wrect[0],theplot->Wrect[1],theplot->Wrect[2],theplot->Wrect[3],
+		 Xgc->scales->logflag[0],		       Xgc->scales->logflag[1]);
 	      */
 	      /* flag is changed ==> next recorded plots will use bbox **/
 	      flag[0]=1;
@@ -2577,10 +2577,10 @@ static void scale_change_NEch(BCG *Xgc,void *plot, int *flag, double *bbox, int 
     }
   if (flag[0]==1) 
     for ( i = 0 ; i < 4 ; i++)
-    {
-      theplot->Frect[i]=bbox[i];
-      if (undo == 0)   theplot->Frect_kp[i]=bbox[i];
-    }
+      {
+	theplot->Frect[i]=bbox[i];
+	if (undo == 0)   theplot->Frect_kp[i]=bbox[i];
+      }
 }
 
 /*** code added by ES 21/5/2002 ****/
@@ -2632,35 +2632,35 @@ static void scale_change_Fac3D(BCG *Xgc,void *plot, int *flag, double *b1, int *
   struct rec_fac3d *theplot;
   theplot =   (struct rec_fac3d *) plot;
   if (bbox1 != NULL) 
-  {
-   b1[0] = XPixel2Double(bbox1[0]);
-   b1[1] = YPixel2Double(bbox1[1]);
-   b1[2] = XPixel2Double(bbox1[2]);
-   b1[3] = YPixel2Double(bbox1[3]);
-   /*   sciprint("I'm trying to zoom a 3d fac-plot \r\n");*/
-   /*  sciprint(" zoom area: x={%f:%f};  y={%f:%f}\r\n",b1[0],b1[2],b1[1],b1[3]); */
-   xmin=Maxi(theplot->x,theplot->p*theplot->q);
-   xmax=Mini(theplot->x,theplot->p*theplot->q);
-   ymin=Maxi(theplot->y,theplot->p*theplot->q);
-   ymax=Mini(theplot->y,theplot->p*theplot->q);
-   zmin=Maxi(theplot->z,theplot->p*theplot->q);
-   zmax=Mini(theplot->z,theplot->p*theplot->q);
-   for (i=0; i < theplot->p*theplot->q; i++)
-     {
-      x=theplot->x[i]; y=theplot->y[i]; z=theplot->z[i]; 
-      xp=TRX(x,y,z); yp=TRY(x,y,z); 
-      if(xp >= b1[0] && xp <= b1[2] && yp >= b1[1] && yp <= b1[3])
-       {
-        if(x < xmin) xmin=x; if(x > xmax) xmax=x;
-        if(y < ymin) ymin=y; if(y > ymax) ymax=y;
-        if(z < zmin) zmin=z; if(z > zmax) zmax=z;
-       }
-     }
-   if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
-   if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
-   if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
-   if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1; 
-  }
+    {
+      b1[0] = XPixel2Double(bbox1[0]);
+      b1[1] = YPixel2Double(bbox1[1]);
+      b1[2] = XPixel2Double(bbox1[2]);
+      b1[3] = YPixel2Double(bbox1[3]);
+      /*   sciprint("I'm trying to zoom a 3d fac-plot \r\n");*/
+      /*  sciprint(" zoom area: x={%f:%f};  y={%f:%f}\r\n",b1[0],b1[2],b1[1],b1[3]); */
+      xmin=Maxi(theplot->x,theplot->p*theplot->q);
+      xmax=Mini(theplot->x,theplot->p*theplot->q);
+      ymin=Maxi(theplot->y,theplot->p*theplot->q);
+      ymax=Mini(theplot->y,theplot->p*theplot->q);
+      zmin=Maxi(theplot->z,theplot->p*theplot->q);
+      zmax=Mini(theplot->z,theplot->p*theplot->q);
+      for (i=0; i < theplot->p*theplot->q; i++)
+	{
+	  x=theplot->x[i]; y=theplot->y[i]; z=theplot->z[i]; 
+	  xp=TRX(x,y,z); yp=TRY(x,y,z); 
+	  if(xp >= b1[0] && xp <= b1[2] && yp >= b1[1] && yp <= b1[3])
+	    {
+	      if(x < xmin) xmin=x; if(x > xmax) xmax=x;
+	      if(y < ymin) ymin=y; if(y > ymax) ymax=y;
+	      if(z < zmin) zmin=z; if(z > zmax) zmax=z;
+	    }
+	}
+      if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
+      if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
+      if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
+      if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1; 
+    }
 }
 
 static void scale_change_Param3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag,
@@ -2670,79 +2670,79 @@ static void scale_change_Param3D(BCG *Xgc,void *plot, int *flag, double *b1, int
   struct rec_param3d *theplot;
   theplot =   (struct rec_param3d *) plot;
   if (bbox1 != NULL) 
-  {
-   b1[0] = XPixel2Double(bbox1[0]);
-   b1[1] = YPixel2Double(bbox1[1]);
-   b1[2] = XPixel2Double(bbox1[2]);
-   b1[3] = YPixel2Double(bbox1[3]);
-   /*  sciprint(" zoom area: x={%f:%f};  y={%f:%f}\r\n",b1[0],b1[2],b1[1],b1[3]); */
-   xmin=Maxi(theplot->x,theplot->n); xmax=Mini(theplot->x,theplot->n);
-   ymin=Maxi(theplot->y,theplot->n); ymax=Mini(theplot->y,theplot->n);
-   zmin=Maxi(theplot->z,theplot->n); zmax=Mini(theplot->z,theplot->n);
-   /* search the min and max x, y, z of the points which got projected into the bbox1 */
-   xmin=theplot->bbox[1]; xmax=theplot->bbox[0];
-   ymin=theplot->bbox[3]; ymax=theplot->bbox[2];
-   zmin=theplot->bbox[5]; zmax=theplot->bbox[4];
-   for (i=0; i < theplot->n; i++)
-     {
-      x=theplot->x[i]; y=theplot->y[i]; z=theplot->z[i]; 
-      xp=TRX(x,y,z); yp=TRY(x,y,z); 
-      /*      sciprint("%f %f \r\n",xp,yp); */
-      if(xp >= b1[0] && xp <= b1[2] && yp >= b1[1] && yp <= b1[3])
-       {
-	 /*        sciprint("**\r\n");  */
-        if(x < xmin) xmin=x; if(x > xmax) xmax=x;
-        if(y < ymin) ymin=y; if(y > ymax) ymax=y;
-        if(z < zmin) zmin=z; if(z > zmax) zmax=z;
-       }
-     }
-   if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
-   if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
-   if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
-   /*   sciprint("trying to zoom a 3d param3d plot: x= [%f:%f], y=[%f:%f], z=[%f:%f]\r\n",xmin, xmax, ymin, ymax, zmin, zmax);
-    */
-   if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1; 
-   }
+    {
+      b1[0] = XPixel2Double(bbox1[0]);
+      b1[1] = YPixel2Double(bbox1[1]);
+      b1[2] = XPixel2Double(bbox1[2]);
+      b1[3] = YPixel2Double(bbox1[3]);
+      /*  sciprint(" zoom area: x={%f:%f};  y={%f:%f}\r\n",b1[0],b1[2],b1[1],b1[3]); */
+      xmin=Maxi(theplot->x,theplot->n); xmax=Mini(theplot->x,theplot->n);
+      ymin=Maxi(theplot->y,theplot->n); ymax=Mini(theplot->y,theplot->n);
+      zmin=Maxi(theplot->z,theplot->n); zmax=Mini(theplot->z,theplot->n);
+      /* search the min and max x, y, z of the points which got projected into the bbox1 */
+      xmin=theplot->bbox[1]; xmax=theplot->bbox[0];
+      ymin=theplot->bbox[3]; ymax=theplot->bbox[2];
+      zmin=theplot->bbox[5]; zmax=theplot->bbox[4];
+      for (i=0; i < theplot->n; i++)
+	{
+	  x=theplot->x[i]; y=theplot->y[i]; z=theplot->z[i]; 
+	  xp=TRX(x,y,z); yp=TRY(x,y,z); 
+	  /*      sciprint("%f %f \r\n",xp,yp); */
+	  if(xp >= b1[0] && xp <= b1[2] && yp >= b1[1] && yp <= b1[3])
+	    {
+	      /*        sciprint("**\r\n");  */
+	      if(x < xmin) xmin=x; if(x > xmax) xmax=x;
+	      if(y < ymin) ymin=y; if(y > ymax) ymax=y;
+	      if(z < zmin) zmin=z; if(z > zmax) zmax=z;
+	    }
+	}
+      if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
+      if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
+      if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
+      /*   sciprint("trying to zoom a 3d param3d plot: x= [%f:%f], y=[%f:%f], z=[%f:%f]\r\n",xmin, xmax, ymin, ymax, zmin, zmax);
+       */
+      if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1; 
+    }
 }
 
 static void scale_change_Param3D1(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 
-                       int undo, int *bbox1, double *subwin, int win_num)
+				  int undo, int *bbox1, double *subwin, int win_num)
 {
   int i; 
   double xmin, xmax, ymin, ymax, zmin, zmax, xp, yp, x,y,z;
   struct rec_param3d1 *theplot;
   theplot =   (struct rec_param3d1 *) plot;
   if (bbox1 != NULL) 
-  {
-   b1[0] = XPixel2Double(bbox1[0]);
-   b1[1] = YPixel2Double(bbox1[1]);
-   b1[2] = XPixel2Double(bbox1[2]);
-   b1[3] = YPixel2Double(bbox1[3]);
-   /*   sciprint("I'm trying to zoom a param3d-1 plot  \r\n");*/
-   /*  sciprint(" zoom area: x={%f:%f};  y={%f:%f}\r\n",b1[0],b1[2],b1[1],b1[3]); */
-   xmin=Maxi(theplot->x,theplot->n*theplot->m);
-   xmax=Mini(theplot->x,theplot->n*theplot->m);
-   ymin=Maxi(theplot->y,theplot->n*theplot->m);
-   ymax=Mini(theplot->y,theplot->n*theplot->m);
-   zmin=Maxi(theplot->z,theplot->n*theplot->m);
-   zmax=Mini(theplot->z,theplot->n*theplot->m);
-   for (i=0; i < theplot->n*theplot->m; i++)
-     {
-      x=theplot->x[i]; y=theplot->y[i]; z=theplot->z[i]; 
-      xp=TRX(x,y,z); yp=TRY(x,y,z); 
-      if(xp >= b1[0] && xp <= b1[2] && yp >= b1[1] && yp <= b1[3])
-       {
-        if(x < xmin) xmin=x; if(x > xmax) xmax=x;
-        if(y < ymin) ymin=y; if(y > ymax) ymax=y;
-        if(z < zmin) zmin=z; if(z > zmax) zmax=z;
-       }
-     }
-   if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
-   if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
-   if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
-   if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1;
-   /*   sciprint("I'm trying to zoom a 3d param3d1 plot \r\n"); */
-  } 
+    {
+      b1[0] = XPixel2Double(bbox1[0]);
+      b1[1] = YPixel2Double(bbox1[1]);
+      b1[2] = XPixel2Double(bbox1[2]);
+      b1[3] = YPixel2Double(bbox1[3]);
+      /*   sciprint("I'm trying to zoom a param3d-1 plot  \r\n");*/
+      /*  sciprint(" zoom area: x={%f:%f};  y={%f:%f}\r\n",b1[0],b1[2],b1[1],b1[3]); */
+      xmin=Maxi(theplot->x,theplot->n*theplot->m);
+      xmax=Mini(theplot->x,theplot->n*theplot->m);
+      ymin=Maxi(theplot->y,theplot->n*theplot->m);
+      ymax=Mini(theplot->y,theplot->n*theplot->m);
+      zmin=Maxi(theplot->z,theplot->n*theplot->m);
+      zmax=Mini(theplot->z,theplot->n*theplot->m);
+      for (i=0; i < theplot->n*theplot->m; i++)
+	{
+	  x=theplot->x[i]; y=theplot->y[i]; z=theplot->z[i]; 
+	  xp=TRX(x,y,z); yp=TRY(x,y,z); 
+	  if(xp >= b1[0] && xp <= b1[2] && yp >= b1[1] && yp <= b1[3])
+	    {
+	      if(x < xmin) xmin=x; if(x > xmax) xmax=x;
+	      if(y < ymin) ymin=y; if(y > ymax) ymax=y;
+	      if(z < zmin) zmin=z; if(z > zmax) zmax=z;
+	    }
+	}
+      if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
+      if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
+      if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
+      if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1;
+      /*   sciprint("I'm trying to zoom a 3d param3d1 plot \r\n"); */
+    } 
 }
 
 static void scale_change_Plot3D(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 
@@ -2753,41 +2753,41 @@ static void scale_change_Plot3D(BCG *Xgc,void *plot, int *flag, double *b1, int 
   struct rec_plot3d *theplot;
   theplot =   (struct rec_plot3d *) plot;
   if (bbox1 != NULL) 
-  {
-    /*   sciprint("I'm trying to zoom a 3d plot\r\n"); */
-   b1[0] = XPixel2Double(bbox1[0]);
-   b1[1] = YPixel2Double(bbox1[1]);
-   b1[2] = XPixel2Double(bbox1[2]);
-   b1[3] = YPixel2Double(bbox1[3]);
-   /*  sciprint(" zoom area: x={%f:%f};  y={%f:%f}\r\n",b1[0],b1[2],b1[1],b1[3]); */
-   xmin=Maxi(theplot->x,theplot->p); xmax=Mini(theplot->x,theplot->p);
-   ymin=Maxi(theplot->y,theplot->q); ymax=Mini(theplot->y,theplot->q);
-   zmin=Maxi(theplot->z,theplot->q*theplot->p);
-   zmax=Mini(theplot->z,theplot->q*theplot->p);
-   for (i=0; i < theplot->p; i++)
-    for (j=0; j < theplot->q; j++)
-     {
-      x=theplot->x[i]; y=theplot->y[j]; z=theplot->z[j*theplot->p + i]; 
-      xp=TRX(x,y,z); yp=TRY(x,y,z); 
-      if(xp >= b1[0] && xp <= b1[2] && yp >= b1[1] && yp <= b1[3])
-       {
-        if(x < xmin) xmin=x; if(x > xmax) xmax=x;
-        if(y < ymin) ymin=y; if(y > ymax) ymax=y;
-        if(z < zmin) zmin=z; if(z > zmax) zmax=z;
-	/*        sciprint("%i,%i  (%f,%f,%f)-->(%f,%f)\r\n",i,j,x,y,z,xp,yp); */
-       }
-     }
-   if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
-   if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
-   if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
-   if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1; 
-   /*   sciprint("theplotflags: %i %i %i\r\n", theplot->flag[0], theplot->flag[1],
-	theplot->flag[2]);
-	sciprint("flags: %i %i %\r\n", flag[0], flag[1],flag[2]); */
-   /*   sciprint(" new bbox:: x=%f:%f; y=%f:%f; z=%f:%f\r\n",
-	theplot->bbox[0],theplot->bbox[1],theplot->bbox[2],
-	theplot->bbox[3],theplot->bbox[4],theplot->bbox[5]); */ 
-  }
+    {
+      /*   sciprint("I'm trying to zoom a 3d plot\r\n"); */
+      b1[0] = XPixel2Double(bbox1[0]);
+      b1[1] = YPixel2Double(bbox1[1]);
+      b1[2] = XPixel2Double(bbox1[2]);
+      b1[3] = YPixel2Double(bbox1[3]);
+      /*  sciprint(" zoom area: x={%f:%f};  y={%f:%f}\r\n",b1[0],b1[2],b1[1],b1[3]); */
+      xmin=Maxi(theplot->x,theplot->p); xmax=Mini(theplot->x,theplot->p);
+      ymin=Maxi(theplot->y,theplot->q); ymax=Mini(theplot->y,theplot->q);
+      zmin=Maxi(theplot->z,theplot->q*theplot->p);
+      zmax=Mini(theplot->z,theplot->q*theplot->p);
+      for (i=0; i < theplot->p; i++)
+	for (j=0; j < theplot->q; j++)
+	  {
+	    x=theplot->x[i]; y=theplot->y[j]; z=theplot->z[j*theplot->p + i]; 
+	    xp=TRX(x,y,z); yp=TRY(x,y,z); 
+	    if(xp >= b1[0] && xp <= b1[2] && yp >= b1[1] && yp <= b1[3])
+	      {
+		if(x < xmin) xmin=x; if(x > xmax) xmax=x;
+		if(y < ymin) ymin=y; if(y > ymax) ymax=y;
+		if(z < zmin) zmin=z; if(z > zmax) zmax=z;
+		/*        sciprint("%i,%i  (%f,%f,%f)-->(%f,%f)\r\n",i,j,x,y,z,xp,yp); */
+	      }
+	  }
+      if (xmax > xmin) {theplot->bbox[0]=xmin; theplot->bbox[1]=xmax;}
+      if (ymax > ymin) {theplot->bbox[2]=ymin; theplot->bbox[3]=ymax;}
+      if (zmax > zmin) {theplot->bbox[4]=zmin; theplot->bbox[5]=zmax;}
+      if (theplot->flag[1]>0) theplot->flag[1]=2*Xgc->scales->metric3d-1; 
+      /*   sciprint("theplotflags: %i %i %i\r\n", theplot->flag[0], theplot->flag[1],
+	   theplot->flag[2]);
+	   sciprint("flags: %i %i %\r\n", flag[0], flag[1],flag[2]); */
+      /*   sciprint(" new bbox:: x=%f:%f; y=%f:%f; z=%f:%f\r\n",
+	   theplot->bbox[0],theplot->bbox[1],theplot->bbox[2],
+	   theplot->bbox[3],theplot->bbox[4],theplot->bbox[5]); */ 
+    }
 }
 
 static void scale_change_3dobj(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 

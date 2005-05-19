@@ -519,7 +519,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   nsp_contour(Xgc,x->R,y->R,z->R,&z->m,&z->n, &flagx, &nnz,nz->R, &theta, &alpha,
-	       leg, iflag, ebox, &zlev,strlen(leg));
+	      leg, iflag, ebox, &zlev,strlen(leg));
   return 0;
 }
 
@@ -1506,7 +1506,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) 
 	{
-	nsp_object_destroy((NspObject **) &z);
+	  nsp_object_destroy((NspObject **) &z);
 	  return RET_BUG;
 	}
     }
@@ -2848,31 +2848,31 @@ int int_xlfont(Stack stack, int rhs, int opt, int lhs)
       Scierror("%s: xlfont to be done  \r\n",stack.fname);
       return RET_BUG;
       /* XXXXX 
-      char **S;
-      int m = 0;
-      C2F(dr1)("xgfont",C2F(cha1).buf,&m,sz,&v,&v,&v,&v,&dv,&dv,&dv,&dv);
-      if (m == 0) { LhsVar(1)=0; return 0;}
-      if (( S= (char **) MALLOC( (m+1)*sizeof(char*))) == NULL) 
-	{
-	  Scierror(999,"%s: running out of memory \r\n",fname);
-	  return 0;
-	}
-      count =0;
-      for ( i = 0 ; i < m ; i++) {
-	if ((S[i]= (char *) MALLOC((sz[i]+1)*sizeof(char))) == NULL) 
-	{
-	  Scierror(999,"%s: running out of memory \r\n",fname);
-	  return 0;
-	}
-	strncpy(S[i],C2F(cha1).buf+count,sz[i]);
-	count += sz[i]; 
-	S[i][sz[i]]='\0';
-      } 
-      S[m]= (char *) 0;
-      CreateVarFromPtr(1,"S",&one,&m,S);
-      FreeRhsSVar(S);
-      LhsVar(1)=1;
-      return 0;
+	 char **S;
+	 int m = 0;
+	 C2F(dr1)("xgfont",C2F(cha1).buf,&m,sz,&v,&v,&v,&v,&dv,&dv,&dv,&dv);
+	 if (m == 0) { LhsVar(1)=0; return 0;}
+	 if (( S= (char **) MALLOC( (m+1)*sizeof(char*))) == NULL) 
+	 {
+	 Scierror(999,"%s: running out of memory \r\n",fname);
+	 return 0;
+	 }
+	 count =0;
+	 for ( i = 0 ; i < m ; i++) {
+	 if ((S[i]= (char *) MALLOC((sz[i]+1)*sizeof(char))) == NULL) 
+	 {
+	 Scierror(999,"%s: running out of memory \r\n",fname);
+	 return 0;
+	 }
+	 strncpy(S[i],C2F(cha1).buf+count,sz[i]);
+	 count += sz[i]; 
+	 S[i][sz[i]]='\0';
+	 } 
+	 S[m]= (char *) 0;
+	 CreateVarFromPtr(1,"S",&one,&m,S);
+	 FreeRhsSVar(S);
+	 LhsVar(1)=1;
+	 return 0;
       */
       return 0;
     }
@@ -3168,16 +3168,16 @@ int int_xselect(Stack stack, int rhs, int opt, int lhs)
 /* FIXME:  Attention il faut des xset_1 ici */ 
 
 typedef enum  { 
- xset_alufunction, xset_background, xset_clipoff, xset_clipping, xset_color, xset_colormap
- , xset_dashes  , xset_default, xset_default_colormap
- , xset_font , xset_font_size , xset_foreground, xset_hidden3d
- , xset_lastpattern, xset_line_mode , xset_line_style , xset_mark , xset_mark_size, xset_pattern
- , xset_pixmap ,xset_recording, xset_thickness, xset_use_color, xset_viewport, xset_wdim , xset_white , xset_window
- , xset_wpdim , xset_wpos, xset_wresize, xset_wshow, xset_wwpc, xset_fpf, xset_auto_clear, xset_clipgrf
+  xset_alufunction, xset_background, xset_clipoff, xset_clipping, xset_color, xset_colormap
+  , xset_dashes  , xset_default, xset_default_colormap
+  , xset_font , xset_font_size , xset_foreground, xset_hidden3d
+  , xset_lastpattern, xset_line_mode , xset_line_style , xset_mark , xset_mark_size, xset_pattern
+  , xset_pixmap ,xset_recording, xset_thickness, xset_use_color, xset_viewport, xset_wdim , xset_white , xset_window
+  , xset_wpdim , xset_wpos, xset_wresize, xset_wshow, xset_wwpc, xset_fpf, xset_auto_clear, xset_clipgrf
 } xset_enum ;
 
 static char *xset_Table[] = { 
- "alufunction", "background", "clipoff", "clipping", "color", "colormap",
+  "alufunction", "background", "clipoff", "clipping", "color", "colormap",
   "dashes",     "default",  "default_colormap",
   "font",   "font size",    "foreground",  "hidden3d",
   "lastpattern",  "line mode",   "line style",   "mark",   "mark size", "pattern",
@@ -4421,7 +4421,7 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
   char *Names[]={"dir","fontsize","format_n","seg","sub_int","textcolor","tics","ticscolor","val","x","y",NULL};
   /* types of optional arguments */
   int_types Topt[]={string,s_int,string,s_int,s_int,s_int,string,s_int,smat,realmat,realmat,
-		t_end} ;
+		    t_end} ;
   /* table to store optional arguments */ 
   NspObject *Tab[11]; 
   /* table to store optional arguments position */ 
@@ -4772,10 +4772,10 @@ int int_feval( Stack stack, int rhs, int opt, int lhs)
       if ((M = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULLMAT) return RET_BUG;
       for ( i = 0 ; i < x->mn ; i++) 
 	for ( j = 0 ; j < y->mn ; j++) 
-	{
-	  if ( feval_system(dim,x->R[i],y->R[j],&M->R[i+M->m*j],&feval)==FAIL) 
-	    return RET_BUG;
-	}
+	  {
+	    if ( feval_system(dim,x->R[i],y->R[j],&M->R[i+M->m*j],&feval)==FAIL) 
+	      return RET_BUG;
+	  }
     }
   feval_clean(1,&feval);
   MoveObj(stack,1,NSP_OBJECT(M));

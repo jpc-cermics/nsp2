@@ -47,8 +47,8 @@ BCG  ScilabGCPos ; /* sans doute à changer XXX */
 
 
 /*-----------------------------------------------------
-\encadre{General routines}
------------------------------------------------------*/
+  \encadre{General routines}
+  -----------------------------------------------------*/
 
 /** To select the graphic Window  **/
 
@@ -138,7 +138,7 @@ static void xset_recording(BCG *Xgc, int val)
 static void xget_windowpos(BCG *Xgc,int *x, int *y)
 {
   *x = *y = 0;
- }
+}
 
 /** to set the window upper-left point position (Void) **/
 
@@ -196,7 +196,7 @@ static int xset_curwin(int intnum, int set_menu)
   BCG *Xgc = &ScilabGCPos; 
   int i =  Xgc->CurWindow;
   Xgc->CurWindow  = intnum;
- return i;
+  return i;
 }
 
 /** Get the id number of the Current Graphic Window **/
@@ -244,11 +244,11 @@ static void xget_clip(BCG *Xgc,int *x)
 }
 
 /*----------------------------------------------------------
-\encadre{For the drawing functions dealing with vectors of 
- points, the following routine is used to select the mode 
- absolute or relative }
- Absolute mode if *num==0, relative mode if *num != 0
-------------------------------------------------------------*/
+  \encadre{For the drawing functions dealing with vectors of 
+  points, the following routine is used to select the mode 
+  absolute or relative }
+  Absolute mode if *num==0, relative mode if *num != 0
+  ------------------------------------------------------------*/
 
 static void xset_absourel(BCG *Xgc,int num)
 {
@@ -287,24 +287,24 @@ struct alinfo {
   char *name;
   char id;
   char *info;} AluStrucPos[] =
-{ 
-  {"GXclear" ,GXclear," 0 "},
-  {"GXand" ,GXand," src AND dst "},
-  {"GXandReverse" ,GXandReverse," src AND NOT dst "},
-  {"GXcopy" ,GXcopy," src "},
-  {"GXandInverted" ,GXandInverted," NOT src AND dst "},
-  {"GXnoop" ,GXnoop," dst "},
-  {"GXxor" ,GXxor," src XOR dst "},
-  {"GXor" ,GXor," src OR dst "},
-  {"GXnor" ,GXnor," NOT src AND NOT dst "},
-  {"GXequiv" ,GXequiv," NOT src XOR dst "},
-  {"GXinvert" ,GXinvert," NOT dst "},
-  {"GXorReverse" ,GXorReverse," src OR NOT dst "},
-  {"GXcopyInverted" ,GXcopyInverted," NOT src "},
-  {"GXorInverted" ,GXorInverted," NOT src OR dst "},
-  {"GXnand" ,GXnand," NOT src OR NOT dst "},
-  {"GXset" ,GXset," 1 "}
-};
+    { 
+      {"GXclear" ,GXclear," 0 "},
+      {"GXand" ,GXand," src AND dst "},
+      {"GXandReverse" ,GXandReverse," src AND NOT dst "},
+      {"GXcopy" ,GXcopy," src "},
+      {"GXandInverted" ,GXandInverted," NOT src AND dst "},
+      {"GXnoop" ,GXnoop," dst "},
+      {"GXxor" ,GXxor," src XOR dst "},
+      {"GXor" ,GXor," src OR dst "},
+      {"GXnor" ,GXnor," NOT src AND NOT dst "},
+      {"GXequiv" ,GXequiv," NOT src XOR dst "},
+      {"GXinvert" ,GXinvert," NOT dst "},
+      {"GXorReverse" ,GXorReverse," src OR NOT dst "},
+      {"GXcopyInverted" ,GXcopyInverted," NOT src "},
+      {"GXorInverted" ,GXorInverted," NOT src OR dst "},
+      {"GXnand" ,GXnand," NOT src OR NOT dst "},
+      {"GXset" ,GXset," 1 "}
+    };
 
 /* void idfromname(char *name1, int *num) */
 /* {int i; */
@@ -360,11 +360,11 @@ static int xget_thickness(BCG *Xgc)
      
 
 /*-------------------------------------------------
-\encadre{To set grey level for filing areas.
+  \encadre{To set grey level for filing areas.
   from black (*num =0 ) to white 
   you must use the get function to get the id of 
   the white pattern }
-----------------------------------------------------*/
+  ----------------------------------------------------*/
 
 static int xset_pattern(BCG *Xgc,int num)
 {
@@ -379,7 +379,7 @@ static int xset_pattern(BCG *Xgc,int num)
   else 
     {
       /* used when printing from color to b&white color after GREYNUMBER 
-       are translated to black */
+	 are translated to black */
       if ( num-1 > GREYNUMBER -1 ) 
 	i=0;
       else 
@@ -489,13 +489,13 @@ static int xget_dash(BCG *Xgc)
      *narg = value[1]+2;
      for ( i =0 ; i < value[1]; i++) value[i+2]=DashTabPos[*value-1][i];
      if (*verbose ==1 ) 
-       {
-	 sciprint("\nDash Style %d:<",(int)*value);
-	 for ( i =0 ; i < value[1]; i++)
-	   sciprint("%d ",(int)value[i+2]);
-	 Scistring(">\n");
-       }
-   }
+     {
+     sciprint("\nDash Style %d:<",(int)*value);
+     for ( i =0 ; i < value[1]; i++)
+     sciprint("%d ",(int)value[i+2]);
+     Scistring(">\n");
+     }
+     }
   */
 }
 
@@ -549,7 +549,7 @@ static void xset_usecolor(BCG *Xgc,int num)
 	  FPRINTF((file,"\n/usecolor 1 def "));
 	}
     }
-    FPRINTF((file,"\n%%--end use color %d ",Xgc->CurColorStatus));
+  FPRINTF((file,"\n%%--end use color %d ",Xgc->CurColorStatus));
 }
 
 
@@ -698,7 +698,7 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val)
 }
 
 /** 
-  Initial colormap : The arrays were filled with the numbers that we get with xget("colormap") 
+    Initial colormap : The arrays were filled with the numbers that we get with xget("colormap") 
 **/
 
 
@@ -828,15 +828,15 @@ static void pixmap_resize(BCG *Xgc)
 } 
 
 /*-----------------------------------------------------------
-\encadre{Functions for drawing}
------------------------------------------------------------*/
+  \encadre{Functions for drawing}
+  -----------------------------------------------------------*/
 
 /*----------------------------------------------------
-\encadre{display of a string
- at (x,y) position whith angle (alpha). Angles in degree
- positive when clockwise. If *flag ==1 a framed  box is added 
- around the string.}
------------------------------------------------------*/
+  \encadre{display of a string
+  at (x,y) position whith angle (alpha). Angles in degree
+  positive when clockwise. If *flag ==1 a framed  box is added 
+  around the string.}
+  -----------------------------------------------------*/
 
 static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double angle)
 {     
@@ -853,15 +853,15 @@ static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double 
     }
   FPRINTF((file,") %d %d %d %5.2f [%d %d %d %d] Show", x,yn ,flag,angle,rect[0],rect[1],rect[2],rect[3]));
   FPRINTF((file,"\n%%Latex:\\myput{%d}{%d}{%d}{%s}",x,def_height*prec_fact - yn, fontsizePos(Xgc), string));
- }
+}
 
 
 double bsizePos[6][4]= {{ 0.0,-7.0,4.63,9.0  },  /* normalement inutilise ici avec les modifs suivantes */
-		{ 0.0,-9.0,5.74,12.0 },          
-		{ 0.0,-11.0,6.74,14.0},
-		{ 0.0,-12.0,7.79,15.0},
-		{0.0, -15.0,9.72,19.0 },
-		{0.0,-20.0,13.41,26.0}};
+			{ 0.0,-9.0,5.74,12.0 },          
+			{ 0.0,-11.0,6.74,14.0},
+			{ 0.0,-12.0,7.79,15.0},
+			{0.0, -15.0,9.72,19.0 },
+			{0.0,-20.0,13.41,26.0}};
 
 
 /*** ajouts q&d en attendant mieux.... Bruno (le 24 Nov 2002) ***/
@@ -880,108 +880,108 @@ struct posfont  /* a data type for handling a postscript font in scilab */
 
 typedef struct posfont PosFont;
 
- /**   datas for postscript font : Courier   **/
- static PosFont Courier = { "Courier",
-                             750,         /* Ascender */
-                            -250,         /* Descender */
-                             600,         /* Mean Width */
-                             1,           /* Is Fixed Pitch */
-                             NULL };
+/**   datas for postscript font : Courier   **/
+static PosFont Courier = { "Courier",
+			   750,         /* Ascender */
+			   -250,         /* Descender */
+			   600,         /* Mean Width */
+			   1,           /* Is Fixed Pitch */
+			   NULL };
    
    
- /**   datas for postscript font : Symbol   **/
- static int WidthSymbol[] = { 250 , 333 , 713 , 500 , 549 , 833 , 778 , 439 , 333 , 333 ,
-                              500 , 549 , 250 , 549 , 250 , 278 , 500 , 500 , 500 , 500 ,
-                              500 , 500 , 500 , 500 , 500 , 500 , 278 , 278 , 549 , 549 ,
-                              549 , 444 , 549 , 722 , 667 , 722 , 612 , 611 , 763 , 603 ,
-                              722 , 333 , 631 , 722 , 686 , 889 , 722 , 722 , 768 , 741 ,
-                              556 , 592 , 611 , 690 , 439 , 768 , 645 , 795 , 611 , 333 ,
-                              863 , 333 , 658 , 500 , 500 , 631 , 549 , 549 , 494 , 439 ,
-                              521 , 411 , 603 , 329 , 603 , 549 , 549 , 576 , 521 , 549 ,
-                              549 , 521 , 549 , 603 , 439 , 576 , 713 , 686 , 493 , 686 ,
-                              494 , 480 , 200 , 480 , 549 };
- static PosFont Symbol = { "Symbol",
-                            917,         /* Ascender */
-                           -252,         /* Descender */
-                            548,         /* Mean Width */
-                            0,           /* Is Fixed Pitch */
-                            WidthSymbol };
+/**   datas for postscript font : Symbol   **/
+static int WidthSymbol[] = { 250 , 333 , 713 , 500 , 549 , 833 , 778 , 439 , 333 , 333 ,
+			     500 , 549 , 250 , 549 , 250 , 278 , 500 , 500 , 500 , 500 ,
+			     500 , 500 , 500 , 500 , 500 , 500 , 278 , 278 , 549 , 549 ,
+			     549 , 444 , 549 , 722 , 667 , 722 , 612 , 611 , 763 , 603 ,
+			     722 , 333 , 631 , 722 , 686 , 889 , 722 , 722 , 768 , 741 ,
+			     556 , 592 , 611 , 690 , 439 , 768 , 645 , 795 , 611 , 333 ,
+			     863 , 333 , 658 , 500 , 500 , 631 , 549 , 549 , 494 , 439 ,
+			     521 , 411 , 603 , 329 , 603 , 549 , 549 , 576 , 521 , 549 ,
+			     549 , 521 , 549 , 603 , 439 , 576 , 713 , 686 , 493 , 686 ,
+			     494 , 480 , 200 , 480 , 549 };
+static PosFont Symbol = { "Symbol",
+			  917,         /* Ascender */
+			  -252,         /* Descender */
+			  548,         /* Mean Width */
+			  0,           /* Is Fixed Pitch */
+			  WidthSymbol };
    
    
- /**   datas for postscript font : Times-Roman   **/
- static int WidthTimesR[] = { 250 , 333 , 408 , 500 , 500 , 833 , 778 , 333 , 333 , 333 ,
-                              500 , 564 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
-                              500 , 500 , 500 , 500 , 500 , 500 , 278 , 278 , 564 , 564 ,
-                              564 , 444 , 921 , 722 , 667 , 667 , 722 , 611 , 556 , 722 ,
-                              722 , 333 , 389 , 722 , 611 , 889 , 722 , 722 , 556 , 722 ,
-                              667 , 556 , 611 , 722 , 722 , 944 , 722 , 722 , 611 , 333 ,
-                              278 , 333 , 469 , 500 , 333 , 444 , 500 , 444 , 500 , 444 ,
-                              333 , 500 , 500 , 278 , 278 , 500 , 278 , 778 , 500 , 500 ,
-                              500 , 500 , 333 , 389 , 278 , 500 , 500 , 722 , 500 , 500 ,
-                              444 , 480 , 200 , 480 , 541 };
- static PosFont TimesR = { "Times-Roman",
-                            727,         /* Ascender */
-                           -218,         /* Descender */
-                            512,         /* Mean Width */
-                            0,           /* Is Fixed Pitch */
-                            WidthTimesR };
+/**   datas for postscript font : Times-Roman   **/
+static int WidthTimesR[] = { 250 , 333 , 408 , 500 , 500 , 833 , 778 , 333 , 333 , 333 ,
+			     500 , 564 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
+			     500 , 500 , 500 , 500 , 500 , 500 , 278 , 278 , 564 , 564 ,
+			     564 , 444 , 921 , 722 , 667 , 667 , 722 , 611 , 556 , 722 ,
+			     722 , 333 , 389 , 722 , 611 , 889 , 722 , 722 , 556 , 722 ,
+			     667 , 556 , 611 , 722 , 722 , 944 , 722 , 722 , 611 , 333 ,
+			     278 , 333 , 469 , 500 , 333 , 444 , 500 , 444 , 500 , 444 ,
+			     333 , 500 , 500 , 278 , 278 , 500 , 278 , 778 , 500 , 500 ,
+			     500 , 500 , 333 , 389 , 278 , 500 , 500 , 722 , 500 , 500 ,
+			     444 , 480 , 200 , 480 , 541 };
+static PosFont TimesR = { "Times-Roman",
+			  727,         /* Ascender */
+			  -218,         /* Descender */
+			  512,         /* Mean Width */
+			  0,           /* Is Fixed Pitch */
+			  WidthTimesR };
    
    
- /**   datas for postscript font : Times-Italic   **/
- static int WidthTimesI[] = { 250 , 333 , 420 , 500 , 500 , 833 , 778 , 333 , 333 , 333 ,
-                              500 , 675 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
-                              500 , 500 , 500 , 500 , 500 , 500 , 333 , 333 , 675 , 675 ,
-                              675 , 500 , 920 , 611 , 611 , 667 , 722 , 611 , 611 , 722 ,
-                              722 , 333 , 444 , 667 , 556 , 833 , 667 , 722 , 611 , 722 ,
-                              611 , 500 , 556 , 722 , 611 , 833 , 611 , 556 , 556 , 389 ,
-                              278 , 389 , 422 , 500 , 333 , 500 , 500 , 444 , 500 , 444 ,
-                              278 , 500 , 500 , 278 , 278 , 444 , 278 , 722 , 500 , 500 ,
-                              500 , 500 , 389 , 389 , 278 , 500 , 444 , 667 , 444 , 444 ,
-                              389 , 400 , 275 , 400 , 541 };
- static PosFont TimesI = { "Times-Italic",
-                            731,         /* Ascender */
-                           -209,         /* Descender */
-                            505,         /* Mean Width */
-                            0,           /* Is Fixed Pitch */
-                            WidthTimesI };
+/**   datas for postscript font : Times-Italic   **/
+static int WidthTimesI[] = { 250 , 333 , 420 , 500 , 500 , 833 , 778 , 333 , 333 , 333 ,
+			     500 , 675 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
+			     500 , 500 , 500 , 500 , 500 , 500 , 333 , 333 , 675 , 675 ,
+			     675 , 500 , 920 , 611 , 611 , 667 , 722 , 611 , 611 , 722 ,
+			     722 , 333 , 444 , 667 , 556 , 833 , 667 , 722 , 611 , 722 ,
+			     611 , 500 , 556 , 722 , 611 , 833 , 611 , 556 , 556 , 389 ,
+			     278 , 389 , 422 , 500 , 333 , 500 , 500 , 444 , 500 , 444 ,
+			     278 , 500 , 500 , 278 , 278 , 444 , 278 , 722 , 500 , 500 ,
+			     500 , 500 , 389 , 389 , 278 , 500 , 444 , 667 , 444 , 444 ,
+			     389 , 400 , 275 , 400 , 541 };
+static PosFont TimesI = { "Times-Italic",
+			  731,         /* Ascender */
+			  -209,         /* Descender */
+			  505,         /* Mean Width */
+			  0,           /* Is Fixed Pitch */
+			  WidthTimesI };
    
    
- /**   datas for postscript font : Times-Bold   **/
- static int WidthTimesB[] = { 250 , 333 , 555 , 500 , 500 ,1000 , 833 , 333 , 333 , 333 ,
-                              500 , 570 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
-                              500 , 500 , 500 , 500 , 500 , 500 , 333 , 333 , 570 , 570 ,
-                              570 , 500 , 930 , 722 , 667 , 722 , 722 , 667 , 611 , 778 ,
-                              778 , 389 , 500 , 778 , 667 , 944 , 722 , 778 , 611 , 778 ,
-                              722 , 556 , 667 , 722 , 722 ,1000 , 722 , 722 , 667 , 333 ,
-                              278 , 333 , 581 , 500 , 333 , 500 , 556 , 444 , 556 , 444 ,
-                              333 , 500 , 556 , 278 , 333 , 556 , 278 , 833 , 556 , 500 ,
-                              556 , 556 , 444 , 389 , 333 , 556 , 500 , 722 , 500 , 500 ,
-                              444 , 394 , 220 , 394 , 520 };
- static PosFont TimesB = { "Times-Bold",
-                            750,         /* Ascender */
-                           -206,         /* Descender */
-                            536,         /* Mean Width */
-                            0,           /* Is Fixed Pitch */
-                            WidthTimesB };
+/**   datas for postscript font : Times-Bold   **/
+static int WidthTimesB[] = { 250 , 333 , 555 , 500 , 500 ,1000 , 833 , 333 , 333 , 333 ,
+			     500 , 570 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
+			     500 , 500 , 500 , 500 , 500 , 500 , 333 , 333 , 570 , 570 ,
+			     570 , 500 , 930 , 722 , 667 , 722 , 722 , 667 , 611 , 778 ,
+			     778 , 389 , 500 , 778 , 667 , 944 , 722 , 778 , 611 , 778 ,
+			     722 , 556 , 667 , 722 , 722 ,1000 , 722 , 722 , 667 , 333 ,
+			     278 , 333 , 581 , 500 , 333 , 500 , 556 , 444 , 556 , 444 ,
+			     333 , 500 , 556 , 278 , 333 , 556 , 278 , 833 , 556 , 500 ,
+			     556 , 556 , 444 , 389 , 333 , 556 , 500 , 722 , 500 , 500 ,
+			     444 , 394 , 220 , 394 , 520 };
+static PosFont TimesB = { "Times-Bold",
+			  750,         /* Ascender */
+			  -206,         /* Descender */
+			  536,         /* Mean Width */
+			  0,           /* Is Fixed Pitch */
+			  WidthTimesB };
    
    
- /**   datas for postscript font : Times-BoldItalic   **/
- static int WidthTimesBI[] = { 250 , 389 , 555 , 500 , 500 , 833 , 778 , 333 , 333 , 333 ,
-                               500 , 570 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
-                               500 , 500 , 500 , 500 , 500 , 500 , 333 , 333 , 570 , 570 ,
-                               570 , 500 , 832 , 667 , 667 , 667 , 722 , 667 , 667 , 722 ,
-                               778 , 389 , 500 , 667 , 611 , 889 , 722 , 722 , 611 , 722 ,
-                               667 , 556 , 611 , 722 , 667 , 889 , 667 , 611 , 611 , 333 ,
-                               278 , 333 , 570 , 500 , 333 , 500 , 500 , 444 , 500 , 444 ,
-                               333 , 500 , 556 , 278 , 278 , 500 , 278 , 778 , 556 , 500 ,
-                               500 , 500 , 389 , 389 , 278 , 556 , 444 , 667 , 500 , 444 ,
-                               389 , 348 , 220 , 348 , 570 };
- static PosFont TimesBI = { "Times-BoldItalic",
-                             733,         /* Ascender */
-                            -208,         /* Descender */
-                             515,         /* Mean Width */
-                             0,           /* Is Fixed Pitch */
-                             WidthTimesBI };
+/**   datas for postscript font : Times-BoldItalic   **/
+static int WidthTimesBI[] = { 250 , 389 , 555 , 500 , 500 , 833 , 778 , 333 , 333 , 333 ,
+			      500 , 570 , 250 , 333 , 250 , 278 , 500 , 500 , 500 , 500 ,
+			      500 , 500 , 500 , 500 , 500 , 500 , 333 , 333 , 570 , 570 ,
+			      570 , 500 , 832 , 667 , 667 , 667 , 722 , 667 , 667 , 722 ,
+			      778 , 389 , 500 , 667 , 611 , 889 , 722 , 722 , 611 , 722 ,
+			      667 , 556 , 611 , 722 , 667 , 889 , 667 , 611 , 611 , 333 ,
+			      278 , 333 , 570 , 500 , 333 , 500 , 500 , 444 , 500 , 444 ,
+			      333 , 500 , 556 , 278 , 278 , 500 , 278 , 778 , 556 , 500 ,
+			      500 , 500 , 389 , 389 , 278 , 556 , 444 , 667 , 500 , 444 ,
+			      389 , 348 , 220 , 348 , 570 };
+static PosFont TimesBI = { "Times-BoldItalic",
+			   733,         /* Ascender */
+			   -208,         /* Descender */
+			   515,         /* Mean Width */
+			   0,           /* Is Fixed Pitch */
+			   WidthTimesBI };
    
 #define NB_MAX_POS_FONT 6
 static PosFont *FontArray[NB_MAX_POS_FONT] = {&Courier, &Symbol, &TimesR, &TimesI, &TimesB, &TimesBI};
@@ -1261,11 +1261,11 @@ static void fillarc(BCG *Xgc, int arc[])
 { 
   int cpat= xget_pattern(Xgc);
   fillarcs(Xgc,arc,&cpat,1);
- }
+}
 
 /*--------------------------------------------------------------
-\encadre{Filling or Drawing Polylines and Polygons}
----------------------------------------------------------------*/
+  \encadre{Filling or Drawing Polylines and Polygons}
+  ---------------------------------------------------------------*/
 
 /** Draw a set of *n polylines (each of which have (*p) points) **/
 /** with lines or marks **/
@@ -1305,7 +1305,7 @@ static void drawpolylines(BCG *Xgc, int *vectsx, int *vectsy, int *drawvect, int
  if fillvect[i] > 0  draw the boundaries with current color 
                 then fill with pattern fillvect[i]
  if fillvect[i] < 0  fill with pattern - fillvect[i]
- **************************************************************/
+**************************************************************/
 
 static void fillpolylines(BCG *Xgc, int *vectsx, int *vectsy, int *fillvect, int n, int p)
 {
@@ -1447,9 +1447,9 @@ static void xinfo(BCG *Xgc,char *format,...) {}
 
 
 /*--------------------------------------------------------
-\encadre{Initialisation of the graphic context. Used also 
-to come back to the default graphic state}
----------------------------------------------------------*/
+  \encadre{Initialisation of the graphic context. Used also 
+  to come back to the default graphic state}
+  ---------------------------------------------------------*/
 
 static void xset_default(BCG *Xgc)
 {
@@ -1458,26 +1458,26 @@ static void xset_default(BCG *Xgc)
 
 
 /*-----------------------------------------------------
-\encadre{Draw an axis whith a slope of alpha degree (clockwise)
- . Along the axis marks are set in the direction ( alpha + pi/2), in the 
+  \encadre{Draw an axis whith a slope of alpha degree (clockwise)
+  . Along the axis marks are set in the direction ( alpha + pi/2), in the 
   following way :
-\begin{itemize}
-\item   $n=<n1,n2>$,
-\begin{verbatim}
-     |            |           |
-     |----|---|---|---|---|---|
-     <-----n1---->                 
-     <-------------n2-------->
-\end{verbatim}
-$n1$and $n2$ are int numbers for interval numbers.
-\item $size=<dl,r,coeff>$. $dl$ distance in points between 
-     two marks, $r$ size in points of small mark, $r*coeff$ 
-     size in points of big marks. (they are doubleing points numbers)
-\item $init$. Initial point $<x,y>$. 
-\end{itemize}
-}
+  \begin{itemize}
+  \item   $n=<n1,n2>$,
+  \begin{verbatim}
+  |            |           |
+  |----|---|---|---|---|---|
+  <-----n1---->                 
+  <-------------n2-------->
+  \end{verbatim}
+  $n1$and $n2$ are int numbers for interval numbers.
+  \item $size=<dl,r,coeff>$. $dl$ distance in points between 
+  two marks, $r$ size in points of small mark, $r*coeff$ 
+  size in points of big marks. (they are doubleing points numbers)
+  \item $init$. Initial point $<x,y>$. 
+  \end{itemize}
+  }
 
--------------------------------------------------------------*/
+  -------------------------------------------------------------*/
 
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *size)
 {
@@ -1488,32 +1488,32 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *s
 
 
 /*-----------------------------------------------------
-\encadre{Display numbers z[i] at location (x[i],y[i])
+  \encadre{Display numbers z[i] at location (x[i],y[i])
   with a slope alpha[i] (see displaystring_), if flag==1
   add a box around the string.
------------------------------------------------------*/
+  -----------------------------------------------------*/
 
 static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, double *alpha)
 { int i ;
-  char buf[20];
-  for (i=0 ; i < n ; i++)
-    { 
-      sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
-      displaystring(Xgc,buf,x[i],y[i],flag,(alpha[i]));
-    }
+ char buf[20];
+ for (i=0 ; i < n ; i++)
+   { 
+     sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
+     displaystring(Xgc,buf,x[i],y[i],flag,(alpha[i]));
+   }
 }
 
 /*-------------------------------------------------------
-\encadre{General routine for generating Postscript Code 
-to deal with Vectors. The difficulty is that the size 
-of vectors is limited by Postscript, so the routine 
-must check size and cut into pieces big objects}
-\begin{verbatim}
+  \encadre{General routine for generating Postscript Code 
+  to deal with Vectors. The difficulty is that the size 
+  of vectors is limited by Postscript, so the routine 
+  must check size and cut into pieces big objects}
+  \begin{verbatim}
   clear (string) sizeobj [fvect[0],...,fvect[nobj]]
   (si flag=1)  [ vx[0] vy[0] vx[1] vy[1] ...... vx[sizev] vy[sizev]]
   (si flag=0)  [ vx[0] vx[1] ..... vx[sizev] ] dogrey 
-\end{verbatim}
-----------------------------------------------------------*/
+  \end{verbatim}
+  ----------------------------------------------------------*/
 
 /** WARNING  MAXSIZE must be a multiple of  2 4 8 et 6  **/
 /** 432=8*6*9 **/
@@ -1538,7 +1538,7 @@ static void WriteGeneric(char *string, int nobj, int sizeobj,const  int *vx,
       objres= nobj-objbeg;
       WriteGeneric1(string,Min(nobjpos,objres),objbeg,sizeobj,vx,vy,flag,fvect);
       objbeg = objbeg+nobjpos;
-   }
+    }
   
 }
 
@@ -1548,10 +1548,10 @@ static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj, co
   int from,n,i;
   if (flag == 1) 
     {  from= (objbeg*sizeobj)/2;
-       n= (nobjpos*sizeobj)/2;}
+    n= (nobjpos*sizeobj)/2;}
   else 
     {  from= (objbeg*sizeobj);
-       n= (nobjpos*sizeobj);
+    n= (nobjpos*sizeobj);
     }
   FPRINTF((file,"\n (%s) %d [",string,(int)Min(sizeobj,MAXSIZE)));
   /** exept for the drawarrows case fvect[i] is a pattern **/
@@ -1584,15 +1584,15 @@ static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj, co
 
 /*--------------------------------------------------
   [  perline*valeurs de vx et vy 
-     ......
-     .....
+  ......
+  .....
   ] string 
   [ 
 
   ] string 
   chaque zone entre [] ne doit pas contenir plus de 
   maxsize valeurs.
--------------------------------------------------------*/
+  -------------------------------------------------------*/
 
 
 void Write2Vect(const int *vx,const int *vy, int from, int n, char *string, int flag, int fv)
@@ -1616,7 +1616,7 @@ void Write2Vect(const int *vx,const int *vy, int from, int n, char *string, int 
     {
       if ( i > 0) 
 	FPRINTF((file,"\n (%s) %d [%d]\n",
-		string,(int)Min(MAXSIZE,nco-(co-1)*MAXSIZE),fv1));
+		 string,(int)Min(MAXSIZE,nco-(co-1)*MAXSIZE),fv1));
       co = co +1;
       j =0;
       FPRINTF((file,"["));
@@ -1628,7 +1628,7 @@ void Write2Vect(const int *vx,const int *vy, int from, int n, char *string, int 
 	      FPRINTF((file,FORMATNUM,(int)vx[i+from]));
 	      if (flag == 1) 
 		{ FPRINTF((file,FORMATNUM,(int) vy[i+from]));
-		  k=k+2;i=i+1;j=j+2;}
+		k=k+2;i=i+1;j=j+2;}
 	      else 
 		{k=k+1;i=i+1;j=j+1;}}
 	  FPRINTF((file,"\n"));
@@ -1644,7 +1644,7 @@ void Write2Vect(const int *vx,const int *vy, int from, int n, char *string, int 
 #define SYMBOLNUMBER 10
 int FontsListPos[FONTNUMBER][FONTMAXSIZE];
 struct SciFontInfo { int ok;
-		  char fname[20];} FontInfoTabPos[FONTNUMBER];
+  char fname[20];} FontInfoTabPos[FONTNUMBER];
 
 /* static char *sizePos[] = { "08" ,"10","12","14","18","24"}; */
 static int  isizePos[] = { 8 ,10,12,14,18,24};
@@ -1666,13 +1666,13 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize)
   if ( FontInfoTabPos[i].ok !=1 )
     Scistring("\n Sorry This Font is Not available ");
   else 
-   {
-     Xgc->fontId = i;
-     Xgc->fontSize = fsiz;
-     FPRINTF((file,"\n/%s findfont %d scf mul scalefont setfont",
-	     FontInfoTabPos[i].fname,
-	     (int) (isizePos[fsiz]*prec_fact)));
-   }
+    {
+      Xgc->fontId = i;
+      Xgc->fontSize = fsiz;
+      FPRINTF((file,"\n/%s findfont %d scf mul scalefont setfont",
+	       FontInfoTabPos[i].fname,
+	       (int) (isizePos[fsiz]*prec_fact)));
+    }
 }
 
 /** To get the values id and size of the current font **/
@@ -1690,7 +1690,7 @@ static void xset_mark(BCG *Xgc,int number, int size)
 { 
   Xgc->CurHardSymb =  Max(Min(SYMBOLNUMBER-1,number),0);
   Xgc->CurHardSymbSize =  Max(Min(FONTMAXSIZE-1,size),0);
-;}
+  ;}
 
 /** To get the current mark id **/
 
@@ -1702,8 +1702,8 @@ static void xget_mark(BCG *Xgc,int *symb)
 
 char symb_listPos[] = {
   /*
-     0x2e : . alors que 0xb7 est un o plein trop gros 
-     ., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
+    0x2e : . alors que 0xb7 est un o plein trop gros 
+    ., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
   (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
   (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
 
@@ -1713,7 +1713,7 @@ static void displaysymbols(BCG *Xgc,int *vx, int *vy,int n)
   if ( Xgc->CurVectorStyle !=  CoordModeOrigin)
     FPRINTF((file,"\n/absolu false def"));
   FPRINTF((file,"\nHardMark 0 16#%x put",
-      Char2Int( symb_listPos[Xgc->CurHardSymb])));
+	   Char2Int( symb_listPos[Xgc->CurHardSymb])));
   WriteGeneric("drawpolymark",(int)1L,(n)*2,vx,vy,n,(int)1L,&fvect);
   FPRINTF((file,"\n/absolu true def"));
 }
@@ -1721,9 +1721,9 @@ static void displaysymbols(BCG *Xgc,int *vx, int *vy,int n)
 
 
 /*-------------------------------------------------------
-\encadre{Check if a specified family of font exist in 
-Postscript }
--------------------------------------------------------*/
+  \encadre{Check if a specified family of font exist in 
+  Postscript }
+  -------------------------------------------------------*/
 
 static void loadfamily(char *name, int *j)
 {
@@ -1733,15 +1733,15 @@ static void loadfamily(char *name, int *j)
       FontsListPos[*j][i] = PosQueryFont(name);
     }
   if  (FontsListPos[*j][0] == 0 )
-	  sciprint("\n unknown font family : %s \r\n",name);
+    sciprint("\n unknown font family : %s \r\n",name);
   else 
     {FontInfoTabPos[*j].ok = 1;
-     strcpy(FontInfoTabPos[*j].fname,name) ;}
+    strcpy(FontInfoTabPos[*j].fname,name) ;}
 }
 
 /*--------------------------------------------
-\encadre{always answer ok. Must be Finished}
----------------------------------------------*/
+  \encadre{always answer ok. Must be Finished}
+  ---------------------------------------------*/
 
 static int PosQueryFont(char *name)
 { 
@@ -1834,7 +1834,7 @@ static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
       break;
     case 'l':
       sprintf(geom,"\n90 rotate 0 neg %d neg 10 div translate\n[%f 20 div 0 0 %f 20 div neg %d 10 div %d 10 div] concat",
-	     (int)(h/2.0) + (int) ((wp - hs)/(2.0)) ,2*sc,2*sc,(int) ((hp - ws)/2), (int)(h/2.0)); 
+	      (int)(h/2.0) + (int) ((wp - hs)/(2.0)) ,2*sc,2*sc,(int) ((hp - ws)/2), (int)(h/2.0)); 
       break;
     case 'k': 
       scx = ws/(wdef/2.0);

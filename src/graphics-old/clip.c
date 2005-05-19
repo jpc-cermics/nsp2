@@ -50,7 +50,7 @@ static int clip_point(int x, int y,int xleft,int xright,int ybot,int ytop)
 
 
 void clip_line(int x1, int yy1, int x2, int y2, int *x1n, int *yy1n, int *x2n, int *y2n, int *flag, 
-		      int xleft,int xright,int ybot,int ytop)
+	       int xleft,int xright,int ybot,int ytop)
 {
   int x, y, dx, dy, x_intr[2], y_intr[2], count, pos1, pos2;
   *x1n=x1;*yy1n=yy1;*x2n=x2;*y2n=y2;*flag=4;

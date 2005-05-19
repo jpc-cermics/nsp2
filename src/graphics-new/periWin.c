@@ -43,18 +43,18 @@ extern int tcl_check_one_event();
 #define CoordModeOrigin 0
 
 /** 
-  Warning : the following code won't work if the win.a library is 
-  replaced by a dll. The way to find WndGraphProc should be changed 
+    Warning : the following code won't work if the win.a library is 
+    replaced by a dll. The way to find WndGraphProc should be changed 
 
-  Warning : Potential loop 
-       It's dangerous to use sciprint in the following code 
-       if the argument string to sciprint contains a \n
-       because this will call the TextMessage function (
-       which will enter a message loop).
-       One can enter an infinite loop if TexMessage is activated 
-       while inside WndGraphProc and all the following function 
-       can be called while inside WndGraphProc.
-  **/
+    Warning : Potential loop 
+    It's dangerous to use sciprint in the following code 
+    if the argument string to sciprint contains a \n
+    because this will call the TextMessage function (
+    which will enter a message loop).
+    One can enter an infinite loop if TexMessage is activated 
+    while inside WndGraphProc and all the following function 
+    can be called while inside WndGraphProc.
+**/
 
 LRESULT CALLBACK WndGraphProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndParentGraphProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -75,41 +75,41 @@ LRESULT CALLBACK WndParentGraphProc(HWND hwnd, UINT message, WPARAM wParam, LPAR
 static double *vdouble = 0; /* used when a double argument is needed */
 /* These DEFAULTNUMCOLORS colors come from Xfig 
    used in periPos.c and periFig.c
- */
+*/
 
 unsigned short default_colors[] = {
-   0,   0,   0, /* Black: DEFAULTBLACK */
-   0,   0, 255, /* Blue */
-   0, 255,   0, /* Green */
-   0, 255, 255, /* Cyan */
- 255,   0,   0, /* Red */
- 255,   0, 255, /* Magenta */
- 255,   0,   0, /* Yellow */
- 255, 255, 255, /* White: DEFAULTWHITE */
-   0,   0, 144, /* Blue4 */
-   0,   0, 176, /* Blue3 */
-   0,   0, 208, /* Blue2 */
- 135, 206, 255, /* LtBlue */
-   0, 144,   0, /* Green4 */
-   0, 176,   0, /* Green3 */
-   0, 208,   0, /* Green2 */
-   0, 144, 144, /* Cyan4 */
-   0, 176, 176, /* Cyan3 */
-   0, 208, 208, /* Cyan2 */
- 144,   0,   0, /* Red4 */
- 176,   0,   0, /* Red3 */
- 208,   0,   0, /* Red2 */
- 144,   0, 144, /* Magenta4 */
- 176,   0, 176, /* Magenta3 */
- 208,   0, 208, /* Magenta2 */
- 128,  48,   0, /* Brown4 */
- 160,  64,   0, /* Brown3 */
- 192,  96,   0, /* Brown2 */
- 255, 128, 128, /* Pink4 */
- 255, 160, 160, /* Pink3 */
- 255, 192, 192, /* Pink2 */
- 255, 224, 224, /* Pink */
- 255, 215,   0  /* Gold */
+  0,   0,   0, /* Black: DEFAULTBLACK */
+  0,   0, 255, /* Blue */
+  0, 255,   0, /* Green */
+  0, 255, 255, /* Cyan */
+  255,   0,   0, /* Red */
+  255,   0, 255, /* Magenta */
+  255,   0,   0, /* Yellow */
+  255, 255, 255, /* White: DEFAULTWHITE */
+  0,   0, 144, /* Blue4 */
+  0,   0, 176, /* Blue3 */
+  0,   0, 208, /* Blue2 */
+  135, 206, 255, /* LtBlue */
+  0, 144,   0, /* Green4 */
+  0, 176,   0, /* Green3 */
+  0, 208,   0, /* Green2 */
+  0, 144, 144, /* Cyan4 */
+  0, 176, 176, /* Cyan3 */
+  0, 208, 208, /* Cyan2 */
+  144,   0,   0, /* Red4 */
+  176,   0,   0, /* Red3 */
+  208,   0,   0, /* Red2 */
+  144,   0, 144, /* Magenta4 */
+  176,   0, 176, /* Magenta3 */
+  208,   0, 208, /* Magenta2 */
+  128,  48,   0, /* Brown4 */
+  160,  64,   0, /* Brown3 */
+  192,  96,   0, /* Brown2 */
+  255, 128, 128, /* Pink4 */
+  255, 160, 160, /* Pink3 */
+  255, 192, 192, /* Pink2 */
+  255, 224, 224, /* Pink */
+  255, 215,   0  /* Gold */
 };
 
 
@@ -120,11 +120,11 @@ static int DashTab[MAXDASH] = { PS_SOLID,PS_DASH,PS_DOT,PS_DASHDOT,PS_DASHDOTDOT
 
 
 /** 
-  We need to provide a hdc for each graphic operation 
-  but hdc can be changed to be set to a window a printer a metafile etc...
-  Thus hdc is kept as a global variable 
-  which will be set to what we need : see Xcall.c 
-  **/
+    We need to provide a hdc for each graphic operation 
+    but hdc can be changed to be set to a window a printer a metafile etc...
+    Thus hdc is kept as a global variable 
+    which will be set to what we need : see Xcall.c 
+**/
 
 extern GW graphwin; /** keeps information for the current graphic window **/
 extern TW textwin; /** keeps information for the current scilab window **/
@@ -194,81 +194,81 @@ static HDC  hdc1 = (HDC) 0 ;
 
 int sciGetScrollInfo(struct BCG *Scilabgc, int sb_ctl, SCROLLINFO *si)
 {
-	SCROLLINFO totosi;
+  SCROLLINFO totosi;
 	
-	switch (sb_ctl) {
-	case SB_VERT:
-		/* definition des scroll bars verticalles */
-		si->cbSize = Scilabgc->vertsi.cbSize;
-		si->fMask  = Scilabgc->vertsi.fMask;
-		si->nMin   = Scilabgc->vertsi.nMin;
-		si->nMax   = Scilabgc->vertsi.nMax;
-		si->nPage  = Scilabgc->vertsi.nPage;
-		si->nPos   = Scilabgc->vertsi.nPos;
-		break;
-	case SB_HORZ:
-		/* definition des scroll bars horizontalles */
-		si->cbSize = Scilabgc->horzsi.cbSize;
-		si->fMask  = Scilabgc->horzsi.fMask;
-		si->nMin   = Scilabgc->horzsi.nMin;
-		si->nMax   = Scilabgc->horzsi.nMax;
-		si->nPage  = Scilabgc->horzsi.nPage;
-		si->nPos   = Scilabgc->horzsi.nPos;
-		break;
-	default:
-		break;
-	}
-	/* force le rafraichissement de l'affichage des SB !!! */
-	GetScrollInfo(Scilabgc->CWindow, sb_ctl, &totosi);
-	return 0;
+  switch (sb_ctl) {
+  case SB_VERT:
+    /* definition des scroll bars verticalles */
+    si->cbSize = Scilabgc->vertsi.cbSize;
+    si->fMask  = Scilabgc->vertsi.fMask;
+    si->nMin   = Scilabgc->vertsi.nMin;
+    si->nMax   = Scilabgc->vertsi.nMax;
+    si->nPage  = Scilabgc->vertsi.nPage;
+    si->nPos   = Scilabgc->vertsi.nPos;
+    break;
+  case SB_HORZ:
+    /* definition des scroll bars horizontalles */
+    si->cbSize = Scilabgc->horzsi.cbSize;
+    si->fMask  = Scilabgc->horzsi.fMask;
+    si->nMin   = Scilabgc->horzsi.nMin;
+    si->nMax   = Scilabgc->horzsi.nMax;
+    si->nPage  = Scilabgc->horzsi.nPage;
+    si->nPos   = Scilabgc->horzsi.nPos;
+    break;
+  default:
+    break;
+  }
+  /* force le rafraichissement de l'affichage des SB !!! */
+  GetScrollInfo(Scilabgc->CWindow, sb_ctl, &totosi);
+  return 0;
 }
 
 int sciSetScrollInfo(struct BCG *Scilabgc, int sb_ctl, SCROLLINFO *si, BOOLEAN bRedraw)
 {
-	int inttmp = si->nMax;
-	SCROLLINFO totosi;
+  int inttmp = si->nMax;
+  SCROLLINFO totosi;
 
 
-	switch (sb_ctl) {
-	case SB_VERT:
-		/* definition des scroll bars verticalles */
-		Scilabgc->vertsi.cbSize = si->cbSize;
-		Scilabgc->vertsi.fMask  = si->fMask;
-		Scilabgc->vertsi.nMin   = si->nMin;
-		Scilabgc->vertsi.nMax   = si->nMax;
-		Scilabgc->vertsi.nPage  = si->nPage;
-		if (sciGetwresize() == 1) {
-			//inttmp = si->nMax;
-			si->nMax = 0; /* on effectue un swapp pour ne pas changer la val (pointeur !!) */
-			              /* 0 permet de faire disparaitre les scrollbars */
-		}
-		Scilabgc->vertsi.nPos   = si->nPos;	
-		break;
-	case SB_HORZ:
-		/* definition des scroll bars horizontalles */
-		Scilabgc->horzsi.cbSize = si->cbSize;
-		Scilabgc->horzsi.fMask  = si->fMask;
-		Scilabgc->horzsi.nMin   = si->nMin;
-		Scilabgc->horzsi.nMax   = si->nMax;
-		Scilabgc->horzsi.nPage  = si->nPage;
-		if (sciGetwresize() == 1) {
-			//inttmp = si->nMax;
-			si->nMax = 0;
-		}
-		Scilabgc->horzsi.nPos   = si->nPos;
-		break;
-	default:
-		break;
-	}
-	/* reset clip region after a scroll */
-	set_clip_after_scroll() ;
-	/* ? */  
-	SetScrollInfo(Scilabgc->CWindow, sb_ctl, si, bRedraw);
-	if (sciGetwresize() == 1)
-	  si->nMax = inttmp;
-	/* force le rafraichissement de l'affichage des SB !!! */
-	sciGetScrollInfo(Scilabgc, sb_ctl, &totosi);
-	return 0;
+  switch (sb_ctl) {
+  case SB_VERT:
+    /* definition des scroll bars verticalles */
+    Scilabgc->vertsi.cbSize = si->cbSize;
+    Scilabgc->vertsi.fMask  = si->fMask;
+    Scilabgc->vertsi.nMin   = si->nMin;
+    Scilabgc->vertsi.nMax   = si->nMax;
+    Scilabgc->vertsi.nPage  = si->nPage;
+    if (sciGetwresize() == 1) {
+      //inttmp = si->nMax;
+      si->nMax = 0; /* on effectue un swapp pour ne pas changer la val (pointeur !!) */
+      /* 0 permet de faire disparaitre les scrollbars */
+    }
+    Scilabgc->vertsi.nPos   = si->nPos;	
+    break;
+  case SB_HORZ:
+    /* definition des scroll bars horizontalles */
+    Scilabgc->horzsi.cbSize = si->cbSize;
+    Scilabgc->horzsi.fMask  = si->fMask;
+    Scilabgc->horzsi.nMin   = si->nMin;
+    Scilabgc->horzsi.nMax   = si->nMax;
+    Scilabgc->horzsi.nPage  = si->nPage;
+    if (sciGetwresize() == 1) {
+      //inttmp = si->nMax;
+      si->nMax = 0;
+    }
+    Scilabgc->horzsi.nPos   = si->nPos;
+    break;
+  default:
+    break;
+  }
+  /* reset clip region after a scroll */
+  set_clip_after_scroll() ;
+  /* ? */  
+  SetScrollInfo(Scilabgc->CWindow, sb_ctl, si, bRedraw);
+  if (sciGetwresize() == 1)
+    si->nMax = inttmp;
+  /* force le rafraichissement de l'affichage des SB !!! */
+  sciGetScrollInfo(Scilabgc, sb_ctl, &totosi);
+  return 0;
 }
 
 
@@ -370,8 +370,8 @@ void SetGHdc(lhdc,width,height)
 /** Allocating colors in BCG struct */
 
 int XgcAllocColors(xgc,m)
-struct BCG *xgc;
-int m;
+     struct BCG *xgc;
+     int m;
 {
   int mm;
   /* don't forget black and white */
@@ -404,11 +404,11 @@ int m;
 int XgcFreeColors(xgc)
      struct BCG *xgc;
 {
-    FREE(xgc->Red); xgc->Red = (float *) 0;
-    FREE(xgc->Green);xgc->Green = (float  *) 0;
-    FREE(xgc->Blue); xgc->Blue = (float *) 0;
-    FREE(xgc->Colors); xgc->Colors = (COLORREF *) 0;
-	return(0);
+  FREE(xgc->Red); xgc->Red = (float *) 0;
+  FREE(xgc->Green);xgc->Green = (float  *) 0;
+  FREE(xgc->Blue); xgc->Blue = (float *) 0;
+  FREE(xgc->Colors); xgc->Colors = (COLORREF *) 0;
+  return(0);
 }
 
 
@@ -496,7 +496,7 @@ void CPixmapResize(x, y)
 /* 
    Resize the Pixmap according to window size change 
    But only if there's a pixmap 
-   */
+*/
 
 void nsp_gengine->pixmap_resize()
 {
@@ -508,8 +508,8 @@ void nsp_gengine->pixmap_resize()
 
 
 /*-----------------------------------------------------
-\encadre{General routines}
------------------------------------------------------*/
+  \encadre{General routines}
+  -----------------------------------------------------*/
 
 /** To select (raise on the screen )the current graphic Window  **/
 /** If there's no graphic window then select creates one **/
@@ -567,7 +567,7 @@ void C2F(clearwindow)(v1, v2, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4)
   static COLORREF px;
   HBRUSH hBrush;
   if ( ScilabXgc->ClipRegionSet == 1) 
-     SelectClipRgn(hdc,NULL);
+    SelectClipRgn(hdc,NULL);
   if ( sciGetPixmapStatus() == 1) 
     {
       C2F(pixmapclear)(PI0,PI0,PI0,PI0);
@@ -581,11 +581,11 @@ void C2F(clearwindow)(v1, v2, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4)
       GetClientRect(ScilabXgc->CWindow, &rect);
       /** verifier ce qui se passe si on est en Xor ? XXXXXXXX **/
       hBrush = CreateSolidBrush(px);
-	  /* on met a jour la couleur de fond */
-	  rect.top    = 0;
-	  rect.left   = 0;
-	  rect.right  = ScilabXgc->CWindowWidth;
-	  rect.bottom = ScilabXgc->CWindowHeight;
+      /* on met a jour la couleur de fond */
+      rect.top    = 0;
+      rect.left   = 0;
+      rect.right  = ScilabXgc->CWindowWidth;
+      rect.bottom = ScilabXgc->CWindowHeight;
       FillRect(hdc, &rect,hBrush );
       DeleteObject(hBrush);
     }
@@ -595,8 +595,8 @@ void C2F(clearwindow)(v1, v2, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4)
 
 
 /*-----------------------------------------------------------
- \encadre{To generate a pause, in seconds}
-------------------------------------------------------------*/
+  \encadre{To generate a pause, in seconds}
+  ------------------------------------------------------------*/
 
 void C2F(xpause)(str, sec_time, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4)
      char *str;
@@ -697,8 +697,8 @@ int check_pointer_win(int *x1,int *yy1,int *win)
 }
 
 void C2F(xclick_any_old)(char *str,int *ibutton,int* x1,int * yy1,
-		     int *iwin,int *iflag,int *istr,
-		     double * dv1, double *dv2,double * dv3,double * dv4)
+			 int *iwin,int *iflag,int *istr,
+			 double * dv1, double *dv2,double * dv3,double * dv4)
 {
   WindowList *listptr = The_List;
   Window CW;
@@ -707,10 +707,10 @@ void C2F(xclick_any_old)(char *str,int *ibutton,int* x1,int * yy1,
   int lstr ;
   win = -1;
   if ( *iflag ==1 && CheckClickQueue(&win,x1,yy1,ibutton) == 1) 
-  {
-    /* we already have something stored in the ClickQueue */
-    *iwin = win ; return;
-  }
+    {
+      /* we already have something stored in the ClickQueue */
+      *iwin = win ; return;
+    }
   if ( *iflag ==0 )  ClearClickQueue(-1);
 #ifdef WITH_TK
   flushTKEvents();
@@ -837,10 +837,10 @@ void C2F(xclick_any)(char *str,int *ibutton,int* x1,int * yy1,
   int buttons = 0,win = 0;
   win = -1;
   if ( *iflag ==1 && CheckClickQueue(&win,x1,yy1,ibutton) == 1) 
-  {
-    /* we already have something stored in the ClickQueue */
-    *iwin = win ; return;
-  }
+    {
+      /* we already have something stored in the ClickQueue */
+      *iwin = win ; return;
+    }
   if ( *iflag ==0 )  ClearClickQueue(-1);
   deleted_win=-1;
   set_wait_click(1);
@@ -1027,11 +1027,11 @@ void SciClick_Old(ibutton,x1,yy1,iflag,getmouse,getrelease,dyn_men,str,lstr)
     ShowWindow(ScilabXgc->hWndParent, SW_SHOWNORMAL);
   BringWindowToTop(ScilabXgc->hWndParent);
   /** 
-    remove the previous click events on the queue 
-    not useful anymore 
-    while (flag1) 
-    flag1= PeekMessage(&msg,ScilabXgc->CWindow,WM_MOUSEFIRST,WM_MOUSELAST,PM_REMOVE);
-    **/
+      remove the previous click events on the queue 
+      not useful anymore 
+      while (flag1) 
+      flag1= PeekMessage(&msg,ScilabXgc->CWindow,WM_MOUSEFIRST,WM_MOUSELAST,PM_REMOVE);
+  **/
   SetCursor(LoadCursor(NULL,IDC_CROSS));
   /*  track a mouse click */
 #ifdef WITH_TK
@@ -1047,7 +1047,7 @@ void SciClick_Old(ibutton,x1,yy1,iflag,getmouse,getrelease,dyn_men,str,lstr)
 	}
       if ( CtrlCHit(&textwin) == 1) 
 	{
-	*x1= 0 ;  *yy1= 0;  *ibutton=0; return;
+	  *x1= 0 ;  *yy1= 0;  *ibutton=0; return;
 	}
       if ( msg.hwnd == ScilabXgc->CWindow ) 
 	{
@@ -1062,7 +1062,7 @@ void SciClick_Old(ibutton,x1,yy1,iflag,getmouse,getrelease,dyn_men,str,lstr)
 	  DispatchMessage(&msg);
 	}
       else if ( msg.hwnd == textwin.hWndParent || 
-		  msg.hwnd == textwin.hWndText )
+		msg.hwnd == textwin.hWndText )
 	{
 	  PeekMessage(&msg, 0, 0, 0,PM_REMOVE);
 	  TranslateMessage(&msg);
@@ -1182,7 +1182,7 @@ void SciClick(ibutton,x1,yy1,iflag,getmouse,getrelease,dyn_men,str,lstr)
 
 /*------------------------------------------------
   \encadre{Clear a rectangle }
--------------------------------------------------*/
+  -------------------------------------------------*/
 
 void C2F(cleararea)(str, x, y, w, h, v6, v7, dv1, dv2, dv3, dv4)
      char *str;
@@ -1208,12 +1208,12 @@ void C2F(cleararea)(str, x, y, w, h, v6, v7, dv1, dv2, dv3, dv4)
   FillRect(hdc, &rect,hBrush );
   DeleteObject(hBrush);
   /** XXXX : mettre la background brush ds ScilabXgc pour ne pas 
-    la cr'eer a chaque fois **/
+      la cr'eer a chaque fois **/
 }
 
 /*---------------------------------------------------------------------
-\section{Function for graphic context modification}
-------------------------------------------------------------------------*/
+  \section{Function for graphic context modification}
+  ------------------------------------------------------------------------*/
 
 /** to get the window upper-left point coordinates on the screen  **/
 
@@ -1277,19 +1277,19 @@ void C2F(setwindowdim)(x, y, v3, v4)
   SCROLLINFO vertsi;
   SCROLLINFO horzsi;
   if (ScilabXgc->CWindow != (Window) NULL) 
-  {
-	  /* initialisation des variables SCROLLINFO*/
-	  sciGetScrollInfo(ScilabXgc, SB_VERT, &vertsi);
-	  sciGetScrollInfo(ScilabXgc, SB_HORZ, &horzsi);
+    {
+      /* initialisation des variables SCROLLINFO*/
+      sciGetScrollInfo(ScilabXgc, SB_VERT, &vertsi);
+      sciGetScrollInfo(ScilabXgc, SB_HORZ, &horzsi);
 
       ScilabXgc->CWindowWidth = Max((int) *x,50);
       ScilabXgc->CWindowHeight =Max((int) *y,50);
       if ( sciGetwresize() ) {
-		  ScilabXgc->CWindowWidthView  = ScilabXgc->CWindowWidth;
-		  ScilabXgc->CWindowHeightView = ScilabXgc->CWindowHeight;
-		  vertsi.nPos   = 0;
-		  horzsi.nPos   = 0;
-	  }
+	ScilabXgc->CWindowWidthView  = ScilabXgc->CWindowWidth;
+	ScilabXgc->CWindowHeightView = ScilabXgc->CWindowHeight;
+	vertsi.nPos   = 0;
+	horzsi.nPos   = 0;
+      }
 
       if (ScilabXgc->CWindowWidthView > ScilabXgc->CWindowWidth)
 	ScilabXgc->CWindowWidthView = ScilabXgc->CWindowWidth;
@@ -1298,9 +1298,9 @@ void C2F(setwindowdim)(x, y, v3, v4)
 	ScilabXgc->CWindowHeightView = ScilabXgc->CWindowHeight;
 
       if ( sciGetPixmapStatus() == 1 )
-	  {
-	    CPixmapResize(ScilabXgc->CWindowWidth,ScilabXgc->CWindowHeight);
-	  }
+	{
+	  CPixmapResize(ScilabXgc->CWindowWidth,ScilabXgc->CWindowHeight);
+	}
       GetWindowRect (ScilabXgc->hWndParent, &rect) ;
       GetWindowRect (ScilabXgc->CWindow, &rect1) ;
       xof = (rect.right-rect.left)- (rect1.right - rect1.left);
@@ -1316,20 +1316,20 @@ void C2F(setwindowdim)(x, y, v3, v4)
 	}
       else
 	{
-      SetWindowPos(ScilabXgc->hWndParent,HWND_TOP,0,0,
-		   ScilabXgc->CWindowWidthView  + xof,
-		   ScilabXgc->CWindowHeightView + yof,
-		   SWP_NOMOVE | SWP_NOZORDER );
-	  }
+	  SetWindowPos(ScilabXgc->hWndParent,HWND_TOP,0,0,
+		       ScilabXgc->CWindowWidthView  + xof,
+		       ScilabXgc->CWindowHeightView + yof,
+		       SWP_NOMOVE | SWP_NOZORDER );
+	}
       vertsi.nMax   = ScilabXgc->CWindowHeight;
       vertsi.nPage  = ScilabXgc->CWindowHeightView;
-	  //vertsi.nPos   = 0;
+      //vertsi.nPos   = 0;
       horzsi.nMax   = ScilabXgc->CWindowWidth;
       horzsi.nPage  = ScilabXgc->CWindowWidthView;  
-	  //horzsi.nPos   = 0;
-	  sciSetScrollInfo(ScilabXgc,SB_VERT, &(vertsi), TRUE);
+      //horzsi.nPos   = 0;
+      sciSetScrollInfo(ScilabXgc,SB_VERT, &(vertsi), TRUE);
       sciSetScrollInfo(ScilabXgc,SB_HORZ, &(horzsi), TRUE);
-  }
+    }
 }
 
 /** To get the popup  window size **/
@@ -1340,10 +1340,10 @@ void C2F(getpopupdim)(verbose, x, narg,dummy)
      int *narg;
      double *dummy;
 {
-	x[0]= ScilabXgc->CWindowWidthView; 
-	x[1]= ScilabXgc->CWindowHeightView;
-	*narg = 2;
-	if (*verbose == 1) 
+  x[0]= ScilabXgc->CWindowWidthView; 
+  x[1]= ScilabXgc->CWindowHeightView;
+  *narg = 2;
+  if (*verbose == 1) 
     sciprint("\n ScilabXgc->CWindow dim :%d,%d\r\n",(int) x[0],(int) x[1]);
 }
 
@@ -1439,7 +1439,7 @@ void C2F(setcurwin)(intnum, v2, v3, v4)
       GetClientRect(ScilabXgc->CWindow,&rect);
       ScilabXgc->CWindowWidthView  = rect.right-rect.left;
       ScilabXgc->CWindowHeightView = rect.bottom-rect.top;
-	  /* ajout pour compatibilite */
+      /* ajout pour compatibilite */
       ScilabXgc->CWindowWidth  = ScilabXgc->CWindowWidth;
       ScilabXgc->CWindowHeight = ScilabXgc->CWindowHeight;
     }
@@ -1460,15 +1460,15 @@ int SwitchWindow(int *intnum)
     {
       /** releasing previous hdc **/
       /** nsp_gengine->xinfo("quit window %d with alu %d\r\n",
-	       ScilabXgc->CurWindow,
-	       ScilabXgc->CurDrawFunction); 
-	       **/
+	  ScilabXgc->CurWindow,
+	  ScilabXgc->CurDrawFunction); 
+      **/
       ReleaseWinHdc();
       ScilabXgc = SXgc;
       SetWinhdc();
       ResetScilabXgc ();
       /** nsp_gengine->xinfo("switching to window %d with alu %d\r\n",*intnum,
-	       ScilabXgc->CurDrawFunction); **/
+	  ScilabXgc->CurDrawFunction); **/
       get_window_scale(*intnum,NULL);
     }
   else 
@@ -1476,18 +1476,18 @@ int SwitchWindow(int *intnum)
       /** Create window **/
       C2F(initgraphic)("",intnum,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
     }
-	return(0);
+  return(0);
 }
 
 /** Get the id number of the Current Graphic Window **/
 
 
 /**
-  Get the id number of the Current Graphic Window 
-  In all the other functions we are sure that ScilabXgc exists 
-  when we call them ( see sciwin in matdes.f ) 
-  exept for this function which is called in sciwin and the previous one 
-  **/
+   Get the id number of the Current Graphic Window 
+   In all the other functions we are sure that ScilabXgc exists 
+   when we call them ( see sciwin in matdes.f ) 
+   exept for this function which is called in sciwin and the previous one 
+**/
 void C2F(getcurwin)(verbose, intnum, narg,dummy)
      int *verbose;
      int *intnum;
@@ -1588,10 +1588,10 @@ void C2F(getclip)(verbose, x, narg,dummy)
   if (*verbose == 1) {
     if (ScilabXgc->ClipRegionSet == 1)
       sciprint("\nThere's a Clip Region :x:%d,y:%d,w:%d,h:%d\r\n",
-	      ScilabXgc->CurClipRegion[0],
-	      ScilabXgc->CurClipRegion[1],
-	      ScilabXgc->CurClipRegion[2],
-	      ScilabXgc->CurClipRegion[3]);
+	       ScilabXgc->CurClipRegion[0],
+	       ScilabXgc->CurClipRegion[1],
+	       ScilabXgc->CurClipRegion[2],
+	       ScilabXgc->CurClipRegion[3]);
     else 
       Scistring("\nNo Clip Region");
   }
@@ -1602,7 +1602,7 @@ void C2F(getclip)(verbose, x, narg,dummy)
   points, the following routine is used to select the mode 
   absolute or relative }
   Absolute mode if *num==0, relative mode if *num != 0
-------------------------------------------------------------*/
+  ------------------------------------------------------------*/
 /** to set absolute or relative mode **/
 void C2F(setabsourel)(num, v2, v3, v4)
      int *num;
@@ -1640,24 +1640,24 @@ static struct alinfo {
   char *name;
   int id;
   char *info;} AluStruc_[] =
-{ 
-  {"GXclear" ,R2_WHITE," 0 "},
-  {"GXand" ,R2_MASKPEN," src AND dst "},
-  {"GXandReverse" ,R2_MASKPENNOT," src AND NOT dst "},
-  {"GXcopy" ,R2_COPYPEN," src "},
-  {"GXandInverted" ,R2_MASKNOTPEN," NOT src AND dst "},
-  {"GXnoop" ,R2_NOP," dst "},
-  {"GXxor" ,R2_XORPEN," src XOR dst "},
-  {"GXor" ,R2_MERGEPEN," src OR dst "},
-  {"GXnor" ,R2_NOTMERGEPEN," NOT src AND NOT dst "},
-  {"GXequiv" ,R2_NOTXORPEN," NOT src XOR dst "},
-  {"GXinvert" ,R2_NOT," NOT dst "},
-  {"GXorReverse" ,R2_MERGEPENNOT," src OR NOT dst "},
-  {"GXcopyInverted" ,R2_NOTCOPYPEN," NOT src "}, 
-  {"GXorInverted" ,R2_MERGENOTPEN," NOT src OR dst "},
-  {"GXnand" ,R2_NOTMASKPEN," NOT src OR NOT dst "},
-  {"GXset" ,R2_BLACK," 1 "}
-};
+    { 
+      {"GXclear" ,R2_WHITE," 0 "},
+      {"GXand" ,R2_MASKPEN," src AND dst "},
+      {"GXandReverse" ,R2_MASKPENNOT," src AND NOT dst "},
+      {"GXcopy" ,R2_COPYPEN," src "},
+      {"GXandInverted" ,R2_MASKNOTPEN," NOT src AND dst "},
+      {"GXnoop" ,R2_NOP," dst "},
+      {"GXxor" ,R2_XORPEN," src XOR dst "},
+      {"GXor" ,R2_MERGEPEN," src OR dst "},
+      {"GXnor" ,R2_NOTMERGEPEN," NOT src AND NOT dst "},
+      {"GXequiv" ,R2_NOTXORPEN," NOT src XOR dst "},
+      {"GXinvert" ,R2_NOT," NOT dst "},
+      {"GXorReverse" ,R2_MERGEPENNOT," src OR NOT dst "},
+      {"GXcopyInverted" ,R2_NOTCOPYPEN," NOT src "}, 
+      {"GXorInverted" ,R2_MERGENOTPEN," NOT src OR dst "},
+      {"GXnand" ,R2_NOTMASKPEN," NOT src OR NOT dst "},
+      {"GXset" ,R2_BLACK," 1 "}
+    };
 
 
 static void idfromname(name1, num)
@@ -1673,7 +1673,7 @@ static void idfromname(name1, num)
      Scistring("\n Use the following keys (int in scilab");
      for ( i=0 ; i < 16 ; i++)
        sciprint("\nkey %s   -> %s\r\n",AluStruc_[i].name,
-	       AluStruc_[i].info);
+		AluStruc_[i].info);
    }
 }
 
@@ -1720,8 +1720,8 @@ void C2F(getalufunction)(verbose, value, narg,dummy)
   if (*verbose ==1 ) 
     { 
       sciprint("\nThe Alufunction is %s -> <%s>\r\n",
-	      AluStruc_[*value].name,
-	      AluStruc_[*value].info);}
+	       AluStruc_[*value].name,
+	       AluStruc_[*value].info);}
 }
 
 
@@ -1824,16 +1824,16 @@ void C2F(setpattern)(num, v2, v3, v4)
      int *v3;
      int *v4;
 { int i ; 
-  if ( ScilabXgc->CurColorStatus == 1 ) 
-    {
-      set_c(*num-1);
-    }
-  else 
-    {
-      i= Max(0,Min(*num-1,GREYNUMBER-1));
-      ScilabXgc->CurPattern = i;
-      SelectObject(hdc,Tabpix_[i]);
-    }
+ if ( ScilabXgc->CurColorStatus == 1 ) 
+   {
+     set_c(*num-1);
+   }
+ else 
+   {
+     i= Max(0,Min(*num-1,GREYNUMBER-1));
+     ScilabXgc->CurPattern = i;
+     SelectObject(hdc,Tabpix_[i]);
+   }
 }
 
 /** To get the id of the current pattern  **/
@@ -1875,8 +1875,8 @@ void C2F(getlast)(verbose, num, narg,dummy)
 }
 
 /*--------------------------------------
-\encadre{Line style }
----------------------------------------*/
+  \encadre{Line style }
+  ---------------------------------------*/
 
 /**  use a table of dashes and set default X11-dash style to **/
 /**  one of the possible value. value points **/
@@ -1965,14 +1965,14 @@ void C2F(get_dash_or_color)(verbose, value, narg,dummy)
      double *dummy; 
 {
 
- if ( ScilabXgc->CurColorStatus == 1) 
-   {
-     *narg =1 ;
-     *value =ScilabXgc->CurColor+1;
-     if (*verbose == 1) sciprint("Color %d",(int)*value);
-     return;
-   }
- C2F(getdash)(verbose, value, narg,dummy);
+  if ( ScilabXgc->CurColorStatus == 1) 
+    {
+      *narg =1 ;
+      *value =ScilabXgc->CurColor+1;
+      if (*verbose == 1) sciprint("Color %d",(int)*value);
+      return;
+    }
+  C2F(getdash)(verbose, value, narg,dummy);
 }
 
 void C2F(getdash)(verbose, value, narg,dummy)
@@ -1981,19 +1981,19 @@ void C2F(getdash)(verbose, value, narg,dummy)
      int *narg;
      double *dummy; 
 {
- *narg =1 ;
- *value =ScilabXgc->CurDashStyle+1;
- if ( *verbose == 1) 
-   {
-     switch ( *value )
-       {
-       case 0: Scistring("\nLine style = Line Solid\n"); break ;
-       case 1: Scistring("\nLine style = DASH\n"); break ;
-       case 2: Scistring("\nLine style = DOT\n"); break ;
-       case 3: Scistring("\nLine style = DASHDOT\n"); break ;
-       case 4: Scistring("\nLine style = DASHDOTDOT\n"); break ;
-       }
-   }
+  *narg =1 ;
+  *value =ScilabXgc->CurDashStyle+1;
+  if ( *verbose == 1) 
+    {
+      switch ( *value )
+	{
+	case 0: Scistring("\nLine style = Line Solid\n"); break ;
+	case 1: Scistring("\nLine style = DASH\n"); break ;
+	case 2: Scistring("\nLine style = DOT\n"); break ;
+	case 3: Scistring("\nLine style = DASHDOT\n"); break ;
+	case 4: Scistring("\nLine style = DASHDOTDOT\n"); break ;
+	}
+    }
 }
 static void C2F(get_dash_and_color)(verbose, value, narg,dummy)
      int *verbose;
@@ -2001,7 +2001,7 @@ static void C2F(get_dash_and_color)(verbose, value, narg,dummy)
      int *narg;
      double *dummy;
 {
-/*may be improved replacing 6 by narg */
+  /*may be improved replacing 6 by narg */
   C2F(getdash)(verbose, value, narg,dummy);
   C2F(getpattern)(verbose, value+6, narg,dummy);
   *narg = 6;
@@ -2075,7 +2075,7 @@ void C2F(setpixmapOn)(num, v2, v3, v4)
     {
       /** I add a Background Pixmap to the window **/
       C2F(xinfo)("Animation mode is on,( xset('pixmap',0) to leave)",
-	     PI0,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
+		 PI0,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
       if ((  ScilabXgc->hdcCompat = CreateCompatibleDC (hdc)) == NULL)
 	{
 	  sciprint("Seeting pixmap on is impossible \r\n");
@@ -2088,8 +2088,8 @@ void C2F(setpixmapOn)(num, v2, v3, v4)
 	  SetBkMode(ScilabXgc->hdcCompat,TRANSPARENT);
 	  SetTextAlign(ScilabXgc->hdcCompat, TA_LEFT|TA_BOTTOM);
 	  hbmTemp =CreateCompatibleBitmap (hdc,
-						    ScilabXgc->CWindowWidth,
-						    ScilabXgc->CWindowHeight);
+					   ScilabXgc->CWindowWidth,
+					   ScilabXgc->CWindowHeight);
 	  /* ajout */
 	  if (!hbmTemp)
 	    {
@@ -2107,11 +2107,11 @@ void C2F(setpixmapOn)(num, v2, v3, v4)
 	      C2F(pixmapclear)(PI0,PI0,PI0,PI0); /* background color */
 	      /** the create default font/brush etc... in hdc */ 
 	      SetGHdc(ScilabXgc->hdcCompat,ScilabXgc->CWindowWidth,
-		       ScilabXgc->CWindowHeight);
+		      ScilabXgc->CWindowHeight);
 	      ResetScilabXgc ();
 	      SetGHdc((HDC)0,ScilabXgc->CWindowWidth,
-		       ScilabXgc->CWindowHeight);
-		  /* ajout */
+		      ScilabXgc->CWindowHeight);
+	      /* ajout */
 	      C2F(show)(PI0,PI0,PI0,PI0);
 	    }
 	}
@@ -2151,7 +2151,7 @@ void C2F(getpixmapOn)(verbose, value, narg,dummy)
 
 int sciGetPixmapStatus()
 {
-	return ScilabXgc->CurPixmapStatus;
+  return ScilabXgc->CurPixmapStatus;
 }
 
 /** Change the status of a Graphic Window **/
@@ -2169,7 +2169,7 @@ void C2F(setwresize)(num, v2, v3, v4)
 
   ScilabXgc->CurResizeStatus = num1; /* a faire avant setwindowdim */
   C2F(setwindowdim)((xtmp = ScilabXgc->CWindowWidthView, &xtmp),
-	  (ytmp=ScilabXgc->CWindowHeightView,&ytmp), PI0, PI0);
+		    (ytmp=ScilabXgc->CWindowHeightView,&ytmp), PI0, PI0);
   SetViewportOrgEx(hdc,-ScilabXgc->horzsi.nPos,-ScilabXgc->vertsi.nPos,NULL);
   UpdateWindow(ScilabXgc->CWindow);  
   InvalidateRect(ScilabXgc->CWindow,NULL,TRUE);
@@ -2193,7 +2193,7 @@ void C2F(getwresize)(verbose, value, narg,dummy)
  */
 int sciGetwresize()
 {
-	 return ScilabXgc->CurResizeStatus;
+  return ScilabXgc->CurResizeStatus;
 }
 
 
@@ -2282,10 +2282,10 @@ void set_default_colormap()
 
 /* Setting the colormap 
    a must be a m x 3 double RGB matrix: 
-     a[i] = RED
-     a[i+m] = GREEN
-     a[i+2*m] = BLUE
-     *v2 gives the value of m and *v3 must be equal to 3 */
+   a[i] = RED
+   a[i+m] = GREEN
+   a[i+2*m] = BLUE
+   *v2 gives the value of m and *v3 must be equal to 3 */
 
 void C2F(setcolormap)(v1,v2,v3,v4,v5,v6,a)
      int *v1,*v2;
@@ -2434,15 +2434,15 @@ void C2F(pal_setcolormap)(v1,v2,v3,v4,v5,v6,a)
   if ((GetDeviceCaps(hdc, RASTERCAPS)) & RC_PALETTE )
     {
       if ( SciPalette(m) == FALSE )
-	  {
-	    for (i = 0; i < m; i++) {
-	      ScilabXgc->Colors[i] = RGB((unsigned short) (255.0*a[i]),
-					 (unsigned short) (255.0*a[i+m]),
-					 (unsigned short) (255.0*a[i+2*m]));
-	    }
-	    ScilabXgc->Colors[m]= RGB(0,0,0);
-	    ScilabXgc->Colors[m+1]= RGB(255,255,255);
+	{
+	  for (i = 0; i < m; i++) {
+	    ScilabXgc->Colors[i] = RGB((unsigned short) (255.0*a[i]),
+				       (unsigned short) (255.0*a[i+m]),
+				       (unsigned short) (255.0*a[i+2*m]));
 	  }
+	  ScilabXgc->Colors[m]= RGB(0,0,0);
+	  ScilabXgc->Colors[m+1]= RGB(255,255,255);
+	}
     }
   ScilabXgc->Numcolors = m;
   ScilabXgc->IDLastPattern = m - 1;
@@ -2468,9 +2468,9 @@ static BOOL SciPalette(int iNumClr)
   INT           i;
   uiSizPal = sizeof(WORD)*2 + sizeof(PALETTEENTRY)*iNumClr;
   if ((plogPal = (LOGPALETTE *) LocalAlloc(LMEM_FIXED,uiSizPal)) == NULL) {
-      sciprint("Fail in Allocating palette!\r\n");
-      hPal = NULL;
-      return FALSE;
+    sciprint("Fail in Allocating palette!\r\n");
+    hPal = NULL;
+    return FALSE;
   }
   plogPal->palVersion = 0x300;
   plogPal->palNumEntries = (WORD) iNumClr;
@@ -2489,8 +2489,8 @@ static BOOL SciPalette(int iNumClr)
   if ( hPal != (HPALETTE) NULL) DeleteObject(hPal);
   hPal = CreatePalette((LPLOGPALETTE)plogPal);
   if ((hPal) == NULL) {
-      sciprint("Fail in creating palette!\r\n");
-      return FALSE;
+    sciprint("Fail in creating palette!\r\n");
+    return FALSE;
   }
   SelectPalette(hdc, hPal, FALSE);
   RealizePalette(hdc);
@@ -2537,13 +2537,13 @@ void C2F(setbackground)(num, v2, v3, v4)
       ScilabXgc->NumBackground = Max(0,Min(*num - 1,ScilabXgc->Numcolors + 1));
       C2F(setalufunction1)(&ScilabXgc->CurDrawFunction,PI0,PI0,PI0);
       px = (ScilabXgc->Colors == NULL) ? DefaultBackground 
-	         :  ScilabXgc->Colors[ScilabXgc->NumBackground];
+	:  ScilabXgc->Colors[ScilabXgc->NumBackground];
       /** A finir XXXX 
-	      if (ScilabXgc->Cdrawable != (Drawable) ScilabXgc->CWindow ) 
-	{
+	  if (ScilabXgc->Cdrawable != (Drawable) ScilabXgc->CWindow ) 
+	  {
 	  XSetWindowBackground(dpy, ScilabXgc->CWindow,px);
-	}
-	**/
+	  }
+      **/
     }
 }
 void C2F(getbackground)(verbose, num, narg,dummy)
@@ -2687,7 +2687,7 @@ void get_b(i,b)
 /*-----------------------------------------------------------
   \encadre{general routines accessing the  set<> or get<>
   routines } 
--------------------------------------------------------------*/
+  -------------------------------------------------------------*/
 
 static void InitMissileXgc();
 
@@ -2705,7 +2705,7 @@ void C2F(gempty)(verbose, v2, v3,dummy)
      int *verbose;
      int *v2;
      int *v3;
-	 double *dummy;
+     double *dummy;
 {
   if ( *verbose ==1 ) Scistring("\n No operation ");
 }
@@ -2715,8 +2715,8 @@ void C2F(gempty)(verbose, v2, v3,dummy)
 /** Table in lexicographic order **/
 
 static struct bgc { char *name ;
-	     void  (*setfonc )() ;
-	     void  (*getfonc )() ;}
+  void  (*setfonc )() ;
+  void  (*getfonc )() ;}
 
 MissileGCTab_[] = {
   {"alufunction",C2F(setalufunction1),C2F(getalufunction)},
@@ -2747,7 +2747,7 @@ MissileGCTab_[] = {
   {"wresize",C2F(setwresize),C2F(getwresize)},
   {"wshow",C2F(show),C2F(gempty)},
   {"wwpc",C2F(pixmapclear),C2F(gempty)}
-  };
+};
 
 #ifdef lint 
 
@@ -2759,25 +2759,25 @@ test(str,flag,verbose,x1,x2,x3,x4,x5)
      int flag ;
      int  *verbose,*x1,*x2,*x3,*x4,*x5;
 { 
-double *dv;
-C2F(setalufunction1)(x1,x2,x3,x4);C2F(getalufunction)(verbose,x1,x2,dv);
-C2F(setclip)(x1,x2,x3,x4);C2F(getclip)(verbose,x1,x2,dv);
-C2F(unsetclip)(x1,x2,x3,x4);C2F(getclip)(verbose,x1,x2,dv);
-C2F(setdash)(x1,x2,x3,x4);C2F(getdash)(verbose,x1,x2,dv);
-InitMissileXgc(x1,x2,x3,x4); C2F(gempty)(verbose,x1,x2,dv);
-C2F(xsetfont)(x1,x2,x3,x4);C2F(xgetfont)(verbose,x1,x2,dv);
-C2F(setabsourel)(x1,x2,x3,x4);C2F(getabsourel)(verbose,x1,x2,dv);
-C2F(xsetmark)(x1,x2,x3,x4);C2F(xgetmark)(verbose,x1,x2,dv);
-C2F(setpattern)(x1,x2,x3,x4);C2F(getpattern)(verbose,x1,x2,dv);
-C2F(setpixmapOn)(x1,x2,x3,x4);C2F(getpixmapOn)(verbose,x1,x2,dv);
-C2F(setthickness)(x1,x2,x3,x4);C2F(getthickness)(verbose,x1,x2,dv);
-C2F(usecolor)(x1,x2,x3,x4);C2F(gempty)(verbose,x1,x2,dv);
-C2F(setwindowdim)(x1,x2,x3,x4);C2F(getwindowdim)(verbose,x1,x2,dv);
-C2F(sempty)(x1,x2,x3,x4);C2F(getwhite)(verbose,x1,x2,dv);
-C2F(setcurwin)(x1,x2,x3,x4);C2F(getcurwin)(verbose,x1,x2,dv);
-C2F(setwindowpos)(x1,x2,x3,x4);C2F(getwindowpos)(verbose,x1,x2,dv);
-C2F(show)(x1,x2,x3,x4);C2F(gempty)(verbose,x1,x2,dv);
-C2F(pixmapclear)(x1,x2,x3,x4);gempty(verbose,x1,x2,dv);
+  double *dv;
+  C2F(setalufunction1)(x1,x2,x3,x4);C2F(getalufunction)(verbose,x1,x2,dv);
+  C2F(setclip)(x1,x2,x3,x4);C2F(getclip)(verbose,x1,x2,dv);
+  C2F(unsetclip)(x1,x2,x3,x4);C2F(getclip)(verbose,x1,x2,dv);
+  C2F(setdash)(x1,x2,x3,x4);C2F(getdash)(verbose,x1,x2,dv);
+  InitMissileXgc(x1,x2,x3,x4); C2F(gempty)(verbose,x1,x2,dv);
+  C2F(xsetfont)(x1,x2,x3,x4);C2F(xgetfont)(verbose,x1,x2,dv);
+  C2F(setabsourel)(x1,x2,x3,x4);C2F(getabsourel)(verbose,x1,x2,dv);
+  C2F(xsetmark)(x1,x2,x3,x4);C2F(xgetmark)(verbose,x1,x2,dv);
+  C2F(setpattern)(x1,x2,x3,x4);C2F(getpattern)(verbose,x1,x2,dv);
+  C2F(setpixmapOn)(x1,x2,x3,x4);C2F(getpixmapOn)(verbose,x1,x2,dv);
+  C2F(setthickness)(x1,x2,x3,x4);C2F(getthickness)(verbose,x1,x2,dv);
+  C2F(usecolor)(x1,x2,x3,x4);C2F(gempty)(verbose,x1,x2,dv);
+  C2F(setwindowdim)(x1,x2,x3,x4);C2F(getwindowdim)(verbose,x1,x2,dv);
+  C2F(sempty)(x1,x2,x3,x4);C2F(getwhite)(verbose,x1,x2,dv);
+  C2F(setcurwin)(x1,x2,x3,x4);C2F(getcurwin)(verbose,x1,x2,dv);
+  C2F(setwindowpos)(x1,x2,x3,x4);C2F(getwindowpos)(verbose,x1,x2,dv);
+  C2F(show)(x1,x2,x3,x4);C2F(gempty)(verbose,x1,x2,dv);
+  C2F(pixmapclear)(x1,x2,x3,x4);gempty(verbose,x1,x2,dv);
 }
 
 #endif 
@@ -2821,43 +2821,43 @@ void C2F(MissileGCGetorSet)(str, flag, verbose, x1, x2, x3, x4, x5,x6,dv1)
      int *x6;
      double  *dv1;
 { int i ;
-  for (i=0; i < NUMSETFONC ; i++)
-    {
-      int j;
-      j = strcmp(str,MissileGCTab_[i].name);
-      if ( j == 0 ) 
-	{ if (*verbose == 1)
-	    sciprint("\nGettting Info on %s\r\n",str);
-	  if (flag == 1)
-	    (MissileGCTab_[i].getfonc)(verbose,x1,x2,dv1);
-	  else 
-	    (MissileGCTab_[i].setfonc)(x1,x2,x3,x4,x5,x6,dv1);
-	  return;}
-      else 
-	{ if ( j <= 0)
-	    {
-	      sciprint("\nUnknow X operator <%s>\r\n",str);
-	      return;
-	    }
-	}
-    }
-  sciprint("\n Unknow X operator <%s>\r\n",str);
+ for (i=0; i < NUMSETFONC ; i++)
+   {
+     int j;
+     j = strcmp(str,MissileGCTab_[i].name);
+     if ( j == 0 ) 
+       { if (*verbose == 1)
+	 sciprint("\nGettting Info on %s\r\n",str);
+       if (flag == 1)
+	 (MissileGCTab_[i].getfonc)(verbose,x1,x2,dv1);
+       else 
+	 (MissileGCTab_[i].setfonc)(x1,x2,x3,x4,x5,x6,dv1);
+       return;}
+     else 
+       { if ( j <= 0)
+	 {
+	   sciprint("\nUnknow X operator <%s>\r\n",str);
+	   return;
+	 }
+       }
+   }
+ sciprint("\n Unknow X operator <%s>\r\n",str);
 }
 
 
 /*-------------------------------------------------------
-\section{Functions for drawing}
----------------------------------------------------------*/
+  \section{Functions for drawing}
+  ---------------------------------------------------------*/
 
 /*----------------------------------------------------
-\subsection{String display}
+  \subsection{String display}
 
-\encadre{display of a string
+  \encadre{display of a string
   at (x,y) position whith slope angle alpha in degree . 
   Angle are given clockwise. 
   If *flag ==1 and angle is z\'ero a framed box is added 
   around the string}.
------------------------------------------------------*/
+  -----------------------------------------------------*/
 
 void C2F(displaystring)(string, x, y, v1, flag, v6, v7, angle, dv2, dv3, dv4)
      char *string;
@@ -2921,10 +2921,10 @@ void C2F(DispStringAngle)(x0, yy0, string, angle)
       /** C2F(drawrectangle)(string,rect,rect+1,rect+2,rect+3); **/
       if ( cosa <= 0.0 && i < (int)strlen(string)-1)
 	{ char str2[2];
-	  /** si le cosinus est negatif le deplacement est a calculer **/
-	  /** sur la boite du caractere suivant **/
-	  str2[1]='\0';str2[0]=string[i+1];
-	  C2F(boundingbox)(str2,&x,&y,rect,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
+	/** si le cosinus est negatif le deplacement est a calculer **/
+	/** sur la boite du caractere suivant **/
+	str2[1]='\0';str2[0]=string[i+1];
+	C2F(boundingbox)(str2,&x,&y,rect,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
 	}
       if ( Abs(cosa) >= 1.e-8 )
 	{
@@ -2947,7 +2947,7 @@ int XorString(x,y,string,fWidth,fHeight)
 {
   COLORREF col ;
   /** HPEN hpenOld;
-  HBRUSH hbrushOld; **/
+      HBRUSH hbrushOld; **/
   HFONT hfont,hfontOld;
   HDC hdcMem;
   HBITMAP hbitmap, hbitmapOld;
@@ -2962,9 +2962,9 @@ int XorString(x,y,string,fWidth,fHeight)
       hbitmapOld = SelectObject (hdcMem, hbitmap);
       BitBlt (hdcMem, 0, 0,fWidth,fHeight, NULL, 0, 0, WHITENESS);
       /** unused : 
-	hpenOld=SelectObject(hdcMem,ScilabXgc->hPen);
-	hbrushOld=SelectObject(hdcMem,ScilabXgc->hBrush); 
-	**/
+	  hpenOld=SelectObject(hdcMem,ScilabXgc->hPen);
+	  hbrushOld=SelectObject(hdcMem,ScilabXgc->hBrush); 
+      **/
       hfontOld=SelectObject(hdcMem,hfont);
       if (ScilabXgc->Colors != NULL) 
 	{
@@ -2984,7 +2984,7 @@ int XorString(x,y,string,fWidth,fHeight)
 	}
       SelectObject (hdcMem, hbitmapOld);
       /** SelectObject (hdcMem, hpenOld);
-	SelectObject (hdcMem, hbrushOld); **/
+	  SelectObject (hdcMem, hbrushOld); **/
       SelectObject (hdcMem, hfontOld);
       DeleteObject (hbitmap);
     } else {
@@ -3015,8 +3015,8 @@ void C2F(boundingbox)(string, x, y, rect, v5, v6, v7, dv1, dv2, dv3, dv4)
 }
 
 /*------------------------------------------------
-subsection{ Segments and Arrows }
--------------------------------------------------*/
+  subsection{ Segments and Arrows }
+  -------------------------------------------------*/
 
 void C2F(drawline)(x1, yy1, x2, y2)
      int *x1;
@@ -3115,15 +3115,15 @@ void C2F(drawarrows)(str, vx, vy, n, as, style, iflag, dv1, dv2, dv3, dv4)
       norm = sqrt(dx*dx+dy*dy);
       if ( Abs(norm) >  SMDOUBLE ) 
 	{ int nn=1,p=3;
-	  dx=(*as/10.0)*dx/norm;dy=(*as/10.0)*dy/norm;
-	  polyx[0]= polyx[3]=inint(vx[2*i+1]+dx*cos20);
-	  polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
-	  polyx[2]= inint(polyx[0]  - cos20*dx + sin20*dy);
-	  polyy[0]= polyy[3]=inint(vy[2*i+1]+dy*cos20);
-	  polyy[1]= inint(polyy[0] + sin20*dx -cos20*dy) ;
-	  polyy[2]= inint(polyy[0] - sin20*dx - cos20*dy) ;
-	  C2F(fillpolylines)("v",polyx,polyy,&NDvalue, &nn,&p,PI0,PD0,PD0,PD0,PD0);
-	  }
+	dx=(*as/10.0)*dx/norm;dy=(*as/10.0)*dy/norm;
+	polyx[0]= polyx[3]=inint(vx[2*i+1]+dx*cos20);
+	polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
+	polyx[2]= inint(polyx[0]  - cos20*dx + sin20*dy);
+	polyy[0]= polyy[3]=inint(vy[2*i+1]+dy*cos20);
+	polyy[1]= inint(polyy[0] + sin20*dx -cos20*dy) ;
+	polyy[2]= inint(polyy[0] - sin20*dx - cos20*dy) ;
+	C2F(fillpolylines)("v",polyx,polyy,&NDvalue, &nn,&p,PI0,PD0,PD0,PD0,PD0);
+	}
     }
   C2F(set_dash_and_color)( Dvalue,PI0,PI0,PI0);
 }
@@ -3163,13 +3163,13 @@ void C2F(drawrectangles)(str, vects, fillvect, n, v5, v6, v7, dv1, dv2, dv3, dv4
 	  int dash = - fillvect[i];
 	  C2F(set_line_style)(&dash,PI0,PI0,PI0);
 	  C2F(drawrectangle)(str,vects+4*i,vects+4*i+1,vects+4*i+2,vects+4*i+3
-			 ,PI0,PI0,PD0,PD0,PD0,PD0);
+			     ,PI0,PI0,PD0,PD0,PD0,PD0);
 	}
       else if (fillvect[i] == 0)
 	{
 	  /* C2F(set_line_style)(&cd,PI0,PI0,PI0);*/
 	  C2F(drawrectangle)(str,vects+4*i,vects+4*i+1,vects+4*i+2,vects+4*i+3
-			 ,PI0,PI0,PD0,PD0,PD0,PD0);
+			     ,PI0,PI0,PD0,PD0,PD0,PD0);
 	}
       else
 	{
@@ -3309,8 +3309,8 @@ void fill_grid_rectangles1(x, y, z, n1, n2)
 }
 
 /*----------------------
-\subsection{Circles and Ellipsis }
-------------------------*/
+  \subsection{Circles and Ellipsis }
+  ------------------------*/
 /** Draw or fill a set of ellipsis or part of ellipsis **/
 /** Each is defined by 6-parameters, **/
 /** ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ **/
@@ -3344,15 +3344,15 @@ void C2F(fillarcs)(str, vects, fillvect, n, v5, v6, v7, dv1, dv2, dv3, dv4)
 	{
 	  C2F(setpattern)(&(cpat),PI0,PI0,PI0);
 	  C2F(drawarc)(str,vects+6*i,vects+6*i+1,
-		   vects+6*i+2,vects+6*i+3,
-		   vects+6*i+4,vects+6*i+5,PD0,PD0,PD0,PD0);
+		       vects+6*i+2,vects+6*i+3,
+		       vects+6*i+4,vects+6*i+5,PD0,PD0,PD0,PD0);
 	}
       else
 	{
 	  C2F(setpattern)(&(fillvect[i]),PI0,PI0,PI0);
 	  C2F(fillarc)(str,vects+6*i,vects+6*i+1,
-		   vects+6*i+2,vects+6*i+3,
-		   vects+6*i+4,vects+6*i+5,PD0,PD0,PD0,PD0);
+		       vects+6*i+2,vects+6*i+3,
+		       vects+6*i+4,vects+6*i+5,PD0,PD0,PD0,PD0);
 	}
     }
   C2F(setpattern)(&(cpat),PI0,PI0,PI0);
@@ -3387,8 +3387,8 @@ void C2F(drawarcs)(str, vects, style, n, v5, v6, v7, dv1, dv2, dv3, dv4)
       NDvalue = style[i];
       C2F(set_line_style)(&NDvalue,PI0,PI0,PI0);
       C2F(drawarc)(str,vects+6*i,vects+6*i+1,
-	       vects+6*i+2,vects+6*i+3,
-	       vects+6*i+4,vects+6*i+5,PD0,PD0,PD0,PD0);
+		   vects+6*i+2,vects+6*i+3,
+		   vects+6*i+4,vects+6*i+5,PD0,PD0,PD0,PD0);
     }
   C2F(set_dash_and_color)( Dvalue,PI0,PI0,PI0);
 }
@@ -3432,8 +3432,8 @@ void C2F(fillarc)(str, x, y, width, height, angle1, angle2, dv1, dv2, dv3, dv4)
 }
 
 /*--------------------------------------------------------------
-\encadre{Filling or Drawing Polylines and Polygons}
----------------------------------------------------------------*/
+  \encadre{Filling or Drawing Polylines and Polygons}
+  ---------------------------------------------------------------*/
 
 /** Draw a set of (*n) polylines (each of which have (*p) points) **/
 /** with lines or marks **/
@@ -3453,40 +3453,40 @@ void C2F(drawpolylines)(str, vectsx, vectsy, drawvect, n, p, v7, dv1, dv2, dv3, 
      double *dv3;
      double *dv4;
 { int verbose=0 ,symb[2],Mnarg,Dnarg,Dvalue[10],NDvalue,i,close;
-  /* store the current values */
-  C2F(xgetmark)(&verbose,symb,&Mnarg,vdouble);
-  C2F(get_dash_and_color)(&verbose,Dvalue,&Dnarg,vdouble);
-  for (i=0 ; i< *n ; i++)
-    {
-      if (drawvect[i] <= 0)
-	{ /** we use the markid : drawvect[i] **/
-	  NDvalue = - drawvect[i] ;
-	  C2F(xsetmark)(&NDvalue,symb+1,PI0,PI0);
-	  C2F(setpattern)(Dvalue+6,PI0,PI0,PI0);
-	  C2F(drawpolymark)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
-	}
-      else
-	{/** we use the line-style number abs(drawvect[i])  **/
-	  C2F(set_line_style)(drawvect+i,PI0,PI0,PI0);
-	  close = 0;
-	  C2F(drawpolyline)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,&close,
-			PI0,PI0,PD0,PD0,PD0,PD0);
-	}
-    }
-  /** back to default values **/
-  C2F(set_dash_and_color)( Dvalue,PI0,PI0,PI0);
-  C2F(xsetmark)(symb,symb+1,PI0,PI0);
+/* store the current values */
+ C2F(xgetmark)(&verbose,symb,&Mnarg,vdouble);
+ C2F(get_dash_and_color)(&verbose,Dvalue,&Dnarg,vdouble);
+ for (i=0 ; i< *n ; i++)
+   {
+     if (drawvect[i] <= 0)
+       { /** we use the markid : drawvect[i] **/
+	 NDvalue = - drawvect[i] ;
+	 C2F(xsetmark)(&NDvalue,symb+1,PI0,PI0);
+	 C2F(setpattern)(Dvalue+6,PI0,PI0,PI0);
+	 C2F(drawpolymark)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
+       }
+     else
+       {/** we use the line-style number abs(drawvect[i])  **/
+	 C2F(set_line_style)(drawvect+i,PI0,PI0,PI0);
+	 close = 0;
+	 C2F(drawpolyline)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,&close,
+			   PI0,PI0,PD0,PD0,PD0,PD0);
+       }
+   }
+ /** back to default values **/
+ C2F(set_dash_and_color)( Dvalue,PI0,PI0,PI0);
+ C2F(xsetmark)(symb,symb+1,PI0,PI0);
 }
 
 /** fill a set of polygons each of which is defined by 
- (*p) points (*n) is the number of polygons 
- the polygon is closed by the routine 
- fillvect[*n] :         
- fillvect[*n] :         
- if fillvect[i] == 0 draw the boundaries with current color 
- if fillvect[i] > 0  draw the boundaries with current color 
-                then fill with pattern fillvect[i]
- if fillvect[i] < 0  fill with pattern - fillvect[i]
+    (*p) points (*n) is the number of polygons 
+    the polygon is closed by the routine 
+    fillvect[*n] :         
+    fillvect[*n] :         
+    if fillvect[i] == 0 draw the boundaries with current color 
+    if fillvect[i] > 0  draw the boundaries with current color 
+    then fill with pattern fillvect[i]
+    if fillvect[i] < 0  fill with pattern - fillvect[i]
 **/
 
 void C2F(fillpolylines)(str, vectsx, vectsy, fillvect, n, p, v7, dv1, dv2, dv3, dv4)
@@ -3513,11 +3513,11 @@ void C2F(fillpolylines)(str, vectsx, vectsy, fillvect, n, p, v7, dv1, dv2, dv3, 
 	  /** on peint puis on fait un contour ferme **/
 	  C2F(setpattern)(&fillvect[i],PI0,PI0,PI0);
 	  C2F(fillpolyline)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,(close=1,&close),
-			PI0,PI0,PD0,PD0,PD0,PD0);
+			    PI0,PI0,PD0,PD0,PD0,PD0);
           C2F(set_line_style)(Dvalue,PI0,PI0,PI0);
 	  C2F(setpattern)(&(cpat),PI0,PI0,PI0);
 	  C2F(drawpolyline)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,(close=1,&close)
-			,PI0,PI0,PD0,PD0,PD0,PD0);
+			    ,PI0,PI0,PD0,PD0,PD0,PD0);
 	}
       else  if (fillvect[i] == 0 )
 	{
@@ -3626,9 +3626,9 @@ void C2F(drawpolymark)(str, n, vx, vy, v5, v6, v7, dv1, dv2, dv3, dv4)
 }
 
 static void XDrawPoints(lhdc, points, Npoints)
-	HDC lhdc;
-	POINT *points;
-	int Npoints;
+     HDC lhdc;
+     POINT *points;
+     int Npoints;
 {
   int i ;
   for ( i=0; i < Npoints;i++) 
@@ -3640,8 +3640,8 @@ static void XDrawPoints(lhdc, points, Npoints)
 }
 
 /*-----------------------------------------
- \encadre{List of Window id}
------------------------------------------*/
+  \encadre{List of Window id}
+  -----------------------------------------*/
 
 
 /*
@@ -3665,24 +3665,24 @@ struct BCG *AddNewWindow(listptr)
           Scistring("AddNewWindow No More Place ");
           return((struct BCG *) 0);
         }
-     else
-       {
-         (*listptr)->winxgc.CWindow = (Window) NULL;
-         (*listptr)->winxgc.CurWindow = 0;
-	 (*listptr)->winxgc.Red = (float *) 0;
-	 (*listptr)->winxgc.Green = (float *) 0;
-	 (*listptr)->winxgc.Blue = (float *) 0;
-	 (*listptr)->winxgc.Colors = (COLORREF *) 0;
-	 (*listptr)->winxgc.CmapFlag  = 1;
-	 (*listptr)->winxgc.EventHandler[0]='\0'; 
-         (*listptr)->winxgc.lpgw = &graphwin;
-         (*listptr)->winxgc.hPen  = (HPEN) 0;
-         (*listptr)->winxgc.hBrush  = (HBRUSH) 0;
-	 (*listptr)->winxgc.hbmCompat = (HBITMAP) 0;
-	 (*listptr)->winxgc.hdcCompat = (HDC) 0;
-         (*listptr)->next = (struct WindowList *) NULL ;
-         return(&((*listptr)->winxgc));
-       }
+      else
+	{
+	  (*listptr)->winxgc.CWindow = (Window) NULL;
+	  (*listptr)->winxgc.CurWindow = 0;
+	  (*listptr)->winxgc.Red = (float *) 0;
+	  (*listptr)->winxgc.Green = (float *) 0;
+	  (*listptr)->winxgc.Blue = (float *) 0;
+	  (*listptr)->winxgc.Colors = (COLORREF *) 0;
+	  (*listptr)->winxgc.CmapFlag  = 1;
+	  (*listptr)->winxgc.EventHandler[0]='\0'; 
+	  (*listptr)->winxgc.lpgw = &graphwin;
+	  (*listptr)->winxgc.hPen  = (HPEN) 0;
+	  (*listptr)->winxgc.hBrush  = (HBRUSH) 0;
+	  (*listptr)->winxgc.hbmCompat = (HBITMAP) 0;
+	  (*listptr)->winxgc.hdcCompat = (HDC) 0;
+	  (*listptr)->next = (struct WindowList *) NULL ;
+	  return(&((*listptr)->winxgc));
+	}
     }
   else
     {
@@ -3812,10 +3812,10 @@ struct BCG *GetWinXgc(listptr, i)
       if ((listptr->winxgc.CurWindow) == i)
         {
           return( &(listptr->winxgc));
-         }
+	}
       else
         {
-         return(GetWinXgc((WindowList *) listptr->next,i));
+	  return(GetWinXgc((WindowList *) listptr->next,i));
         }
     }
 }
@@ -3855,7 +3855,7 @@ void C2F(window_list_get_ids)(Num,Ids,flag)
 
 /*--------------------------------------------------------------
   \encadre{Routine for initialisation : string is a display name }
---------------------------------------------------------------*/
+  --------------------------------------------------------------*/
 
 void set_c(coli)
      int coli;
@@ -3948,7 +3948,7 @@ void C2F(initgraphic)(string, v2, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4)
     }
   /** ReadGraphIni takes care of graphwin.Origin and  graphwin.Size **/
   /** ScilabXgc is send to CreateWindow and this information is used 
-    in WndGraphProc **/
+      in WndGraphProc **/
   ScilabXgc->lpgw = &graphwin;
   if (EntryCounter == 0) { ReadGraphIni(ScilabXgc);};
   sprintf(popupname,"ScilabGraphic%d", (int)WinNum);
@@ -3987,7 +3987,7 @@ void C2F(initgraphic)(string, v2, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4)
   ScilabXgc->CWindowWidthView  = ScilabXgc->CWindowWidth;
   ScilabXgc->CWindowHeightView = ScilabXgc->CWindowHeight;
 
-	/* definition des scroll bars verticalles */
+  /* definition des scroll bars verticalles */
   vertsi.cbSize = sizeof(SCROLLINFO);
   vertsi.fMask  = SIF_RANGE | SIF_PAGE | SIF_POS;
   vertsi.nMin   = 0;
@@ -3997,7 +3997,7 @@ void C2F(initgraphic)(string, v2, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4)
   sciSetScrollInfo(ScilabXgc,SB_VERT, &(vertsi), TRUE);
   sciGetScrollInfo(ScilabXgc,SB_VERT, &vertsi);
 
-	/* definition des scroll bars horizontalle */
+  /* definition des scroll bars horizontalle */
   horzsi.cbSize = sizeof(SCROLLINFO);
   horzsi.fMask  = SIF_RANGE | SIF_PAGE | SIF_POS;
   horzsi.nMin   = 0;
@@ -4162,8 +4162,8 @@ static void InitMissileXgc (int *v1,int *v2,int *v3,int *v4)
   /* Choix du mode par defaut (decide dans initgraphic) */
   getcolordef(&i);
   /** we force CurColorStatus to the opposite value of col
-    to force usecolorPos to perform initialisations
-    **/
+      to force usecolorPos to perform initialisations
+  **/
   ScilabXgc->CurColorStatus = (i == 1) ? 0: 1;
   C2F(usecolor)(&i ,PI0,PI0,PI0);
   strcpy(ScilabXgc->CurNumberDispFormat,"%-5.2g");
@@ -4181,9 +4181,9 @@ void getcolordef(screenc)
 }
 
 void setcolordef(screenc)
-	int screenc;
+     int screenc;
 {
-	screencolor = screenc;
+  screencolor = screenc;
 }
 
 /* Utilise le ScilabXgc courant pour reinitialiser le gc XWindow */
@@ -4271,7 +4271,7 @@ ResetScilabXgc ()
   \item $init$. Initial point $<x,y>$. 
   \end{itemize}
   
--------------------------------------------------------------*/
+  -------------------------------------------------------------*/
 
 void C2F(drawaxis)(str, alpha, nsteps, v2, initpoint, v6, v7, size, dx2, dx3, dx4)
      char *str;
@@ -4286,44 +4286,44 @@ void C2F(drawaxis)(str, alpha, nsteps, v2, initpoint, v6, v7, size, dx2, dx3, dx
      double *dx3;
      double *dx4;
 { int i;
-  double xi,yi,xf,yf;
-  double cosal,sinal;
-  cosal= cos( (double)M_PI * (*alpha)/180.0);
-  sinal= sin( (double)M_PI * (*alpha)/180.0);
-  for (i=0; i <= nsteps[0]*nsteps[1]; i++)
-    {
-      if ( ( i % nsteps[0]) != 0) 
-	{
-	  xi = initpoint[0]+i*size[0]*cosal;
-	  yi = initpoint[1]+i*size[0]*sinal;
-	  xf = xi - ( size[1]*sinal);
-	  yf = yi + ( size[1]*cosal);
-	  MoveToEx(hdc,inint(xi),inint(yi),NULL);
-	  LineTo(hdc,inint(xf),inint(yf));
-	}
-    }
-  for (i=0; i <= nsteps[1]; i++)
-    { xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
-      yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
-      xf = xi - ( size[1]*size[2]*sinal);
-      yf = yi + ( size[1]*size[2]*cosal);
-      MoveToEx(hdc,inint(xi),inint(yi),NULL);
-      LineTo(hdc,inint(xf),inint(yf));
-    }
-  /**
-  xi = initpoint[0]; yi= initpoint[1];
-  xf = initpoint[0]+ nsteps[0]*nsteps[1]*size[0]*cosal;
-  yf = initpoint[1]+ nsteps[0]*nsteps[1]*size[0]*sinal;
-  MoveToEx(hdc,inint(xi),inint(yi),NULL);
-  LineTo(hdc,inint(xf),inint(yf));
-  **/
+ double xi,yi,xf,yf;
+ double cosal,sinal;
+ cosal= cos( (double)M_PI * (*alpha)/180.0);
+ sinal= sin( (double)M_PI * (*alpha)/180.0);
+ for (i=0; i <= nsteps[0]*nsteps[1]; i++)
+   {
+     if ( ( i % nsteps[0]) != 0) 
+       {
+	 xi = initpoint[0]+i*size[0]*cosal;
+	 yi = initpoint[1]+i*size[0]*sinal;
+	 xf = xi - ( size[1]*sinal);
+	 yf = yi + ( size[1]*cosal);
+	 MoveToEx(hdc,inint(xi),inint(yi),NULL);
+	 LineTo(hdc,inint(xf),inint(yf));
+       }
+   }
+ for (i=0; i <= nsteps[1]; i++)
+   { xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
+   yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
+   xf = xi - ( size[1]*size[2]*sinal);
+   yf = yi + ( size[1]*size[2]*cosal);
+   MoveToEx(hdc,inint(xi),inint(yi),NULL);
+   LineTo(hdc,inint(xf),inint(yf));
+   }
+ /**
+    xi = initpoint[0]; yi= initpoint[1];
+    xf = initpoint[0]+ nsteps[0]*nsteps[1]*size[0]*cosal;
+    yf = initpoint[1]+ nsteps[0]*nsteps[1]*size[0]*sinal;
+    MoveToEx(hdc,inint(xi),inint(yi),NULL);
+    LineTo(hdc,inint(xf),inint(yf));
+ **/
 }
 
 /*-----------------------------------------------------
   \encadre{Display numbers z[i] at location (x[i],y[i])
   with a slope alpha[i] (see displaystring), if flag==1
   add a box around the string, only if slope =0}
------------------------------------------------------*/
+  -----------------------------------------------------*/
 
 void C2F(displaynumbers)(str, x, y, v1, v2, n, flag, z, alpha, dx3, dx4)
      char *str;
@@ -4353,12 +4353,12 @@ void C2F(bitmap)(string, w, h)
      int h;
 {
   /** 
-  static XImage *setimage;
-  setimage = XCreateImage (dpy, XDefaultVisual (dpy, DefaultScreen(dpy)),
-			       1, XYBitmap, 0, string,w,h, 8, 0);	
-  setimage->data = string;
-  XPutImage (dpy, Cdrawable, gc, setimage, 0, 0, 10,10,w,h);
-  XDestroyImage(setimage);
+      static XImage *setimage;
+      setimage = XCreateImage (dpy, XDefaultVisual (dpy, DefaultScreen(dpy)),
+      1, XYBitmap, 0, string,w,h, 8, 0);	
+      setimage->data = string;
+      XPutImage (dpy, Cdrawable, gc, setimage, 0, 0, 10,10,w,h);
+      XDestroyImage(setimage);
   **/
 }
 
@@ -4398,7 +4398,7 @@ static int size_n_[] = {8,10,12,14,18,24};
 /** so we want to be able to center a Symbol character at a specified point **/
 
 typedef  struct { int xoffset[FONTMAXSIZE][SYMBOLNUMBER];
-		  int yoffset[FONTMAXSIZE][SYMBOLNUMBER];} Offset ;
+  int yoffset[FONTMAXSIZE][SYMBOLNUMBER];} Offset ;
 static Offset ListOffset;
 static Offset ListOffsetPrint;
 static Offset *SymbOffset = &ListOffset;
@@ -4473,7 +4473,7 @@ void  C2F(xgetfont)(verbose, font, nargs,dummy)
      int *verbose;
      int *font;
      int *nargs;
-	 double *dummy;
+     double *dummy;
 {
   *nargs=2;
   font[0]= ScilabXgc->FontId ;
@@ -4482,8 +4482,8 @@ void  C2F(xgetfont)(verbose, font, nargs,dummy)
     {
       sciprint("\r\nFontId : %d ", ScilabXgc->FontId );
       sciprint("--> %s at size %s pts\r\n",
-	     (*FontTab)[ScilabXgc->FontId].fname,
-	     size_[ScilabXgc->FontSize]);
+	       (*FontTab)[ScilabXgc->FontId].fname,
+	       size_[ScilabXgc->FontSize]);
     }
 }
 
@@ -4574,7 +4574,7 @@ void C2F(queryfamily)(name, j, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4)
       strcat(name,(*FontTab)[i].fname);
     else {
       v3[i]=strlen(fonttab[i].Winname);
-       strcat(name,fonttab[i].Winname);
+      strcat(name,fonttab[i].Winname);
     }
   }
   *j=FONTNUMBER;
@@ -4688,7 +4688,7 @@ static void LoadFonts()
       C2F(loadfamily)("TimB",(fnum=4,&fnum),PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
       C2F(loadfamily)("TimBI",(fnum=5,&fnum),PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0); 
       See xsetfont
-      */
+  */
 }
 
 
@@ -4773,8 +4773,8 @@ static void DrawMark(lhdc,x, y)
 }
 
 /*-------------------------------------------------------------------
-\subsection{Allocation and storing function for vectors of X11-points}
-------------------------------------------------------------------------*/
+  \subsection{Allocation and storing function for vectors of X11-points}
+  ------------------------------------------------------------------------*/
 
 static POINT *points;
 static unsigned nbpoints;
@@ -4822,7 +4822,7 @@ static int ReallocVector(n)
   while ( (unsigned) n > nbpoints){
     nbpoints = 2 * nbpoints ;
     points = (POINT *) REALLOC(points,(unsigned)
-				 nbpoints * sizeof (POINT));
+			       nbpoints * sizeof (POINT));
     if (points == 0) 
       { 
 	sciprint(MESSAGE5);
@@ -4846,8 +4846,8 @@ static POINT *C2F(ReturnPoints)() { return(points); }
 /** XXXX a isoler des p'eripheriques car c'est utilis'e dans plot3d **/
 
 /* My own clipping routines  
-  XDrawlines with clipping on the current graphic window 
-  to ovoid trouble on some X servers **/
+   XDrawlines with clipping on the current graphic window 
+   to ovoid trouble on some X servers **/
 
 static int xleft,xright,ybot,ytop;
 
@@ -4861,26 +4861,26 @@ static int xleft,xright,ybot,ytop;
  */
 
 static int clip_point(x, y)
-int x, y;
+     int x, y;
 {
-    int ret_val = 0;
+  int ret_val = 0;
 
-    if (x < xleft) ret_val |= (char)0x01;
-    else if (x > xright) ret_val |= (char)0x02;
-    if (y < ybot) ret_val |= (char)0x04;
-    else if (y > ytop) ret_val |= (char)0x08;
-    return ret_val;
+  if (x < xleft) ret_val |= (char)0x01;
+  else if (x > xright) ret_val |= (char)0x02;
+  if (y < ybot) ret_val |= (char)0x04;
+  else if (y > ytop) ret_val |= (char)0x08;
+  return ret_val;
 }
 
 /* Clip the given line to drawing coords defined as xleft,xright,ybot,ytop.
  *   This routine uses the cohen & sutherland bit mapping for fast clipping -
  * see "Principles of Interactive Computer Graphics" Newman & Sproull page 65.
  return 0  : segment out 
-        1  : (x1,y1) changed 
-	2  : (x2,y2) changed 
-	3  : (x1,y1) and (x2,y2) changed 
-	4  : segment in 
- */
+ 1  : (x1,y1) changed 
+ 2  : (x2,y2) changed 
+ 3  : (x1,y1) and (x2,y2) changed 
+ 4  : segment in 
+*/
 
 
 void set_clip_box(xxleft,xxright,yybot,yytop)
@@ -4896,100 +4896,100 @@ void
 clip_line(x1, yy1, x2, y2, x1n, yy1n, x2n, y2n, flag)
      int x1, yy1, x2, y2, *flag, *x1n, *yy1n, *x2n, *y2n;
 {
-    int x, y, dx, dy, x_intr[2], y_intr[2], count, pos1, pos2;
-    *x1n=x1;*yy1n=yy1;*x2n=x2;*y2n=y2;*flag=4;
-    pos1 = clip_point(x1, yy1);
-    pos2 = clip_point(x2, y2);
-    if (pos1 || pos2) {
-	if (pos1 & pos2) { *flag=0;return;}	  
-	/* segment is totally out. */
+  int x, y, dx, dy, x_intr[2], y_intr[2], count, pos1, pos2;
+  *x1n=x1;*yy1n=yy1;*x2n=x2;*y2n=y2;*flag=4;
+  pos1 = clip_point(x1, yy1);
+  pos2 = clip_point(x2, y2);
+  if (pos1 || pos2) {
+    if (pos1 & pos2) { *flag=0;return;}	  
+    /* segment is totally out. */
 
-	/* Here part of the segment MAy be inside. test the intersection
-	 * of this segment with the 4 boundaries for hopefully 2 intersections
-	 * in. If non found segment is totaly out.
-	 */
-	count = 0;
-	dx = x2 - x1;
-	dy = y2 - yy1;
+    /* Here part of the segment MAy be inside. test the intersection
+     * of this segment with the 4 boundaries for hopefully 2 intersections
+     * in. If non found segment is totaly out.
+     */
+    count = 0;
+    dx = x2 - x1;
+    dy = y2 - yy1;
 
-	/* Find intersections with the x parallel bbox lines: */
-	if (dy != 0) {
-	    x = (int) ((ybot - y2)  * ((double) dx / (double) dy) + x2);
-	    /* Test for ybot boundary. */
-	    if (x >= xleft && x <= xright) {
-		x_intr[count] = x;
-		y_intr[count++] = ybot;
-	    }
-	    x = (int) ((ytop - y2) * ((double) dx / (double) dy) + x2); 
-	    /* Test for ytop boundary. */
-	    if (x >= xleft && x <= xright) {
-		x_intr[count] = x;
-		y_intr[count++] = ytop;
-	    }
-	}
+    /* Find intersections with the x parallel bbox lines: */
+    if (dy != 0) {
+      x = (int) ((ybot - y2)  * ((double) dx / (double) dy) + x2);
+      /* Test for ybot boundary. */
+      if (x >= xleft && x <= xright) {
+	x_intr[count] = x;
+	y_intr[count++] = ybot;
+      }
+      x = (int) ((ytop - y2) * ((double) dx / (double) dy) + x2); 
+      /* Test for ytop boundary. */
+      if (x >= xleft && x <= xright) {
+	x_intr[count] = x;
+	y_intr[count++] = ytop;
+      }
+    }
 
-	if ( count < 2 ) 
-	  {
-	    /* Find intersections with the y parallel bbox lines: */
-	    if (dx != 0) {
-	      y = (xleft - x2) * ((double) dy / (double) dx) + y2;   
-	      /* Test for xleft boundary. */
+    if ( count < 2 ) 
+      {
+	/* Find intersections with the y parallel bbox lines: */
+	if (dx != 0) {
+	  y = (xleft - x2) * ((double) dy / (double) dx) + y2;   
+	  /* Test for xleft boundary. */
+	  if (y >= ybot && y <= ytop) {
+	    x_intr[count] = xleft;
+	    y_intr[count++] = y;
+	  }
+	  if ( count < 2 ) 
+	    {  
+	      y = (xright - x2) * ((double) dy / (double) dx) + y2;  
+	      /* Test for xright boundary. */
 	      if (y >= ybot && y <= ytop) {
-		x_intr[count] = xleft;
+		x_intr[count] = xright;
 		y_intr[count++] = y;
 	      }
-	      if ( count < 2 ) 
-		{  
-		  y = (xright - x2) * ((double) dy / (double) dx) + y2;  
-		  /* Test for xright boundary. */
-		  if (y >= ybot && y <= ytop) {
-		    x_intr[count] = xright;
-		    y_intr[count++] = y;
-		  }
-		}
 	    }
-	  }
+	}
+      }
 
-	if (count == 2) {
-	    if (pos1 && pos2) {	   /* Both were out - update both */
-		*x1n = x_intr[0];
-		*yy1n = y_intr[0];
-		*x2n = x_intr[1];
-		*y2n = y_intr[1];
-		*flag=3;return;
-	      }
-	    else if (pos1) {       /* Only x1/yy1 was out - update only it */
-		if (dx * (x2 - x_intr[0]) + dy * (y2 - y_intr[0]) >= 0) {
-		    *x1n = x_intr[0];
-		    *yy1n = y_intr[0];
-		    *flag=1;return;
-		}
-		else {
-		    *x1n = x_intr[1];
-		    *yy1n = y_intr[1];
-		    *flag=1;return;
-		}
-	    }
-	    else {	         /* Only x2/y2 was out - update only it */
-		if (dx * (x_intr[0] - x1) + dy * (y_intr[0] - yy1) >= 0) {
-		    *x2n = x_intr[0];
-		    *y2n = y_intr[0];
-		    *flag=2;return;
-		}
-		else {
-		    *x2n = x_intr[1];
-		    *y2n = y_intr[1];
-		    *flag=2;return;
-		}
-	      }
-	  }
-	else 
-	  {
-	    /* count != 0 */
-	    *flag=0;return;
-	  }
+    if (count == 2) {
+      if (pos1 && pos2) {	   /* Both were out - update both */
+	*x1n = x_intr[0];
+	*yy1n = y_intr[0];
+	*x2n = x_intr[1];
+	*y2n = y_intr[1];
+	*flag=3;return;
+      }
+      else if (pos1) {       /* Only x1/yy1 was out - update only it */
+	if (dx * (x2 - x_intr[0]) + dy * (y2 - y_intr[0]) >= 0) {
+	  *x1n = x_intr[0];
+	  *yy1n = y_intr[0];
+	  *flag=1;return;
+	}
+	else {
+	  *x1n = x_intr[1];
+	  *yy1n = y_intr[1];
+	  *flag=1;return;
+	}
+      }
+      else {	         /* Only x2/y2 was out - update only it */
+	if (dx * (x_intr[0] - x1) + dy * (y_intr[0] - yy1) >= 0) {
+	  *x2n = x_intr[0];
+	  *y2n = y_intr[0];
+	  *flag=2;return;
+	}
+	else {
+	  *x2n = x_intr[1];
+	  *y2n = y_intr[1];
+	  *flag=2;return;
+	}
+      }
+    }
+    else 
+      {
+	/* count != 0 */
+	*flag=0;return;
       }
   }
+}
 
 
 

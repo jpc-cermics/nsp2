@@ -15,7 +15,7 @@ typedef  struct  {
   void  (*fonc)();} TestOpTab ;
 
 static void vide()
- {}
+{}
 
 extern TestOpTab GraphicTestTab[]; 
 

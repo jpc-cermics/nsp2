@@ -720,10 +720,10 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
 
 
 /* fixe la taille min s'un widget 
-gtk_widget_set_size_request     (GtkWidget *widget,
-                                             gint width,
-                                             gint height
-     XXXXXXXXXXXXXXXXX
+   gtk_widget_set_size_request     (GtkWidget *widget,
+   gint width,
+   gint height
+   XXXXXXXXXXXXXXXXX
 */
 
 static void xset_windowdim(BCG *Xgc,int x, int y)
@@ -960,52 +960,52 @@ static struct alinfo {
   char *name;
   char id;
   char *info;} AluStruc_[] =
-  { 
-    {"GXclear" , GDK_CLEAR," 0 "},
-    {"GXand" , GDK_AND," src AND dst "},
-    {"GXandReverse" , GDK_AND_REVERSE," src AND NOT dst "},
-    {"GXcopy" , GDK_COPY," src "},
-    {"GXandInverted" , GDK_AND_INVERT," NOT src AND dst "},
-    {"GXnoop" , GDK_NOOP," dst "},
-    {"GXxor" , GDK_XOR," src XOR dst "},
-    {"GXor" , GDK_OR," src OR dst "},
-    {"GXnor" , GDK_OR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
-    {"GXequiv" , GDK_EQUIV," NOT src XOR dst "},
-    {"GXinvert" , GDK_INVERT," NOT dst "},
-    {"GXorReverse" , GDK_OR_REVERSE," src OR NOT dst "},
-    {"GXcopyInverted" , GDK_COPY_INVERT," NOT src "},
-    {"GXorInverted" , GDK_OR_INVERT," NOT src OR dst "},
-    {"GXnand" , GDK_NAND," NOT src OR NOT dst "},
-    {"GXset" , GDK_SET," 1 "}
-  };
+    { 
+      {"GXclear" , GDK_CLEAR," 0 "},
+      {"GXand" , GDK_AND," src AND dst "},
+      {"GXandReverse" , GDK_AND_REVERSE," src AND NOT dst "},
+      {"GXcopy" , GDK_COPY," src "},
+      {"GXandInverted" , GDK_AND_INVERT," NOT src AND dst "},
+      {"GXnoop" , GDK_NOOP," dst "},
+      {"GXxor" , GDK_XOR," src XOR dst "},
+      {"GXor" , GDK_OR," src OR dst "},
+      {"GXnor" , GDK_OR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
+      {"GXequiv" , GDK_EQUIV," NOT src XOR dst "},
+      {"GXinvert" , GDK_INVERT," NOT dst "},
+      {"GXorReverse" , GDK_OR_REVERSE," src OR NOT dst "},
+      {"GXcopyInverted" , GDK_COPY_INVERT," NOT src "},
+      {"GXorInverted" , GDK_OR_INVERT," NOT src OR dst "},
+      {"GXnand" , GDK_NAND," NOT src OR NOT dst "},
+      {"GXset" , GDK_SET," 1 "}
+    };
 
 /* 
-static void idfromname(char *name1, int *num)
-{
-  int i;
-  *num = -1;
-  for ( i =0 ; i < 16;i++)
-    if (strcmp(AluStruc_[i].name,name1)== 0)  *num=i;
-  if (*num == -1 ) 
-    {
-      Sciprintf("\n Use the following keys (int in scilab");
-      for ( i=0 ; i < 16 ; i++)
-	Sciprintf("\nkey %s   -> %s\n",AluStruc_[i].name,
-		  AluStruc_[i].info);
-    }
-}
+   static void idfromname(char *name1, int *num)
+   {
+   int i;
+   *num = -1;
+   for ( i =0 ; i < 16;i++)
+   if (strcmp(AluStruc_[i].name,name1)== 0)  *num=i;
+   if (*num == -1 ) 
+   {
+   Sciprintf("\n Use the following keys (int in scilab");
+   for ( i=0 ; i < 16 ; i++)
+   Sciprintf("\nkey %s   -> %s\n",AluStruc_[i].name,
+   AluStruc_[i].info);
+   }
+   }
 
 
-static void xset_alufunction(BCG *Xgc,char *string)
-{   
-  int value;
-  idfromname(string,&value);
-  if ( value != -1)
-    {
-      Xgc->CurDrawFunction = value;
-      gdk_gc_set_function(Xgc->private->wgc, AluStruc_[value].id);
-    }
-}
+   static void xset_alufunction(BCG *Xgc,char *string)
+   {   
+   int value;
+   idfromname(string,&value);
+   if ( value != -1)
+   {
+   Xgc->CurDrawFunction = value;
+   gdk_gc_set_function(Xgc->private->wgc, AluStruc_[value].id);
+   }
+   }
 */
 
 static void xset_alufunction1(BCG *Xgc,int num)
@@ -1074,37 +1074,37 @@ static int xget_thickness(BCG *Xgc)
  * from black (*num =0 ) to white    
  * Pixmap  Tabpix_[GREYNUMBER]; 
 
-static char grey0[GREYNUMBER][8]={
-  {(char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00},
-  {(char)0x00, (char)0x00, (char)0x44, (char)0x00, (char)0x00, (char)0x00, (char)0x44, (char)0x00},
-  {(char)0x00, (char)0x44, (char)0x00, (char)0x22, (char)0x08, (char)0x40, (char)0x01, (char)0x20},
-  {(char)0x00, (char)0x92, (char)0x00, (char)0x25, (char)0x00, (char)0x92, (char)0x00, (char)0xa4},
-  {(char)0x55, (char)0x00, (char)0xaa, (char)0x00, (char)0x55, (char)0x00, (char)0xaa, (char)0x00},
-  {(char)0xad, (char)0x00, (char)0x5b, (char)0x00, (char)0xda, (char)0x00, (char)0x6d, (char)0x00},
-  {(char)0x6d, (char)0x02, (char)0xda, (char)0x08, (char)0x6b, (char)0x10, (char)0xb6, (char)0x20},
-  {(char)0x6d, (char)0x22, (char)0xda, (char)0x0c, (char)0x6b, (char)0x18, (char)0xb6, (char)0x24},
-  {(char)0x55, (char)0xaa, (char)0x55, (char)0xaa, (char)0x55, (char)0xaa, (char)0x55, (char)0xaa},
-  {(char)0x92, (char)0xdd, (char)0x25, (char)0xf3, (char)0x94, (char)0xe7, (char)0x49, (char)0xdb},
-  {(char)0x92, (char)0xfd, (char)0x25, (char)0xf7, (char)0x94, (char)0xef, (char)0x49, (char)0xdf},
-  {(char)0x52, (char)0xff, (char)0xa4, (char)0xff, (char)0x25, (char)0xff, (char)0x92, (char)0xff},
-  {(char)0xaa, (char)0xff, (char)0x55, (char)0xff, (char)0xaa, (char)0xff, (char)0x55, (char)0xff},
-  {(char)0xff, (char)0x6d, (char)0xff, (char)0xda, (char)0xff, (char)0x6d, (char)0xff, (char)0x5b},
-  {(char)0xff, (char)0xbb, (char)0xff, (char)0xdd, (char)0xf7, (char)0xbf, (char)0xfe, (char)0xdf},
-  {(char)0xff, (char)0xff, (char)0xbb, (char)0xff, (char)0xff, (char)0xff, (char)0xbb, (char)0xff},
-  {(char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff},
-};
+ static char grey0[GREYNUMBER][8]={
+ {(char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00},
+ {(char)0x00, (char)0x00, (char)0x44, (char)0x00, (char)0x00, (char)0x00, (char)0x44, (char)0x00},
+ {(char)0x00, (char)0x44, (char)0x00, (char)0x22, (char)0x08, (char)0x40, (char)0x01, (char)0x20},
+ {(char)0x00, (char)0x92, (char)0x00, (char)0x25, (char)0x00, (char)0x92, (char)0x00, (char)0xa4},
+ {(char)0x55, (char)0x00, (char)0xaa, (char)0x00, (char)0x55, (char)0x00, (char)0xaa, (char)0x00},
+ {(char)0xad, (char)0x00, (char)0x5b, (char)0x00, (char)0xda, (char)0x00, (char)0x6d, (char)0x00},
+ {(char)0x6d, (char)0x02, (char)0xda, (char)0x08, (char)0x6b, (char)0x10, (char)0xb6, (char)0x20},
+ {(char)0x6d, (char)0x22, (char)0xda, (char)0x0c, (char)0x6b, (char)0x18, (char)0xb6, (char)0x24},
+ {(char)0x55, (char)0xaa, (char)0x55, (char)0xaa, (char)0x55, (char)0xaa, (char)0x55, (char)0xaa},
+ {(char)0x92, (char)0xdd, (char)0x25, (char)0xf3, (char)0x94, (char)0xe7, (char)0x49, (char)0xdb},
+ {(char)0x92, (char)0xfd, (char)0x25, (char)0xf7, (char)0x94, (char)0xef, (char)0x49, (char)0xdf},
+ {(char)0x52, (char)0xff, (char)0xa4, (char)0xff, (char)0x25, (char)0xff, (char)0x92, (char)0xff},
+ {(char)0xaa, (char)0xff, (char)0x55, (char)0xff, (char)0xaa, (char)0xff, (char)0x55, (char)0xff},
+ {(char)0xff, (char)0x6d, (char)0xff, (char)0xda, (char)0xff, (char)0x6d, (char)0xff, (char)0x5b},
+ {(char)0xff, (char)0xbb, (char)0xff, (char)0xdd, (char)0xf7, (char)0xbf, (char)0xfe, (char)0xdf},
+ {(char)0xff, (char)0xff, (char)0xbb, (char)0xff, (char)0xff, (char)0xff, (char)0xbb, (char)0xff},
+ {(char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff},
+ };
 
-void CreatePatterns(whitepixel, blackpixel)
-     Pixel whitepixel;
-     Pixel blackpixel;
-{ 
+ void CreatePatterns(whitepixel, blackpixel)
+ Pixel whitepixel;
+ Pixel blackpixel;
+ { 
   
-  int i ;
-  for ( i=0 ; i < GREYNUMBER ; i++)
-    Tabpix_[i] =XCreatePixmapFromBitmapData(dpy, root,grey0[i] ,8,8,whitepixel
-					   ,blackpixel,XDefaultDepth (dpy,DefaultScreen(dpy)));
+ int i ;
+ for ( i=0 ; i < GREYNUMBER ; i++)
+ Tabpix_[i] =XCreatePixmapFromBitmapData(dpy, root,grey0[i] ,8,8,whitepixel
+ ,blackpixel,XDefaultDepth (dpy,DefaultScreen(dpy)));
  
-}
+ }
 
 */
 
@@ -1230,18 +1230,18 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 }
 
 /* 
-static void xget_dashstyle(BCG *Xgc,int *n,int *value)
-{
-  int i ;
-  *n =1 ;
-  *value = Xgc->CurDashStyle + 1;
-  if (*value != 1) 
-    {
-      value[1]=4;
-      *n = value[1]+2;
-      for (i = 0 ; i < value[1]; i++) value[i+2]=DashTab[*value-2][i];
-    }
-}
+   static void xget_dashstyle(BCG *Xgc,int *n,int *value)
+   {
+   int i ;
+   *n =1 ;
+   *value = Xgc->CurDashStyle + 1;
+   if (*value != 1) 
+   {
+   value[1]=4;
+   *n = value[1]+2;
+   for (i = 0 ; i < value[1]; i++) value[i+2]=DashTab[*value-2][i];
+   }
+   }
 */
 
 /* to get the current dash-style 
@@ -1485,7 +1485,7 @@ static void xset_colormap(BCG *Xgc,int m,int n,double *a)
       Xgc->private->colors[i].green = (guint16)(a[i+m]*65535);
       Xgc->private->colors[i].blue = (guint16) (a[i+2*m]*65535);
       gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
-  }
+    }
   set_colormap_constants(Xgc,m);
   FREE(colors_old);
 }
@@ -1714,43 +1714,43 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
 }
 
 /* 
-static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle)
-{
-  int i;
-  int x,y, rect[4];
-  double sina ,cosa,l;
-  char str1[2];
-  str1[1]='\0';
-  x= x0;
-  y= yy0;
-  sina= sin(angle * M_PI/180.0);  cosa= cos(angle * M_PI/180.0);
-  for ( i = 0 ; i < (int)strlen(string); i++)
-    { 
-      str1[0]=string[i];
-      displaystring(Xgc, str1, x, y,0,0.0);
-      boundingbox(Xgc,str1,x,y,rect);
-      / * drawrectangle(Xgc,string,rect,rect+1,rect+2,rect+3); * /
-      if ( cosa <= 0.0 && i < (int)strlen(string)-1)
-	{ char str2[2];
-	/ * si le cosinus est negatif le deplacement est a calculer 
-	 * sur la boite du caractere suivant 
-         * /
-	str2[1]='\0';str2[0]=string[i+1];
-	boundingbox(Xgc,str2,x,y,rect);
-	}
-      if ( Abs(cosa) >= 1.e-8 )
-	{
-	  if ( Abs(sina/cosa) <= Abs(((double)rect[3])/((double)rect[2])))
-	    l = Abs(rect[2]/cosa);
-	  else 
-	    l = Abs(rect[3]/sina);
-	}
-      else 
-	l = Abs(rect[3]/sina);
-      x +=  cosa*l*1.1;
-      y +=  sina*l*1.1;
-    }
-}
+   static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle)
+   {
+   int i;
+   int x,y, rect[4];
+   double sina ,cosa,l;
+   char str1[2];
+   str1[1]='\0';
+   x= x0;
+   y= yy0;
+   sina= sin(angle * M_PI/180.0);  cosa= cos(angle * M_PI/180.0);
+   for ( i = 0 ; i < (int)strlen(string); i++)
+   { 
+   str1[0]=string[i];
+   displaystring(Xgc, str1, x, y,0,0.0);
+   boundingbox(Xgc,str1,x,y,rect);
+   / * drawrectangle(Xgc,string,rect,rect+1,rect+2,rect+3); * /
+   if ( cosa <= 0.0 && i < (int)strlen(string)-1)
+   { char str2[2];
+   / * si le cosinus est negatif le deplacement est a calculer 
+   * sur la boite du caractere suivant 
+   * /
+   str2[1]='\0';str2[0]=string[i+1];
+   boundingbox(Xgc,str2,x,y,rect);
+   }
+   if ( Abs(cosa) >= 1.e-8 )
+   {
+   if ( Abs(sina/cosa) <= Abs(((double)rect[3])/((double)rect[2])))
+   l = Abs(rect[2]/cosa);
+   else 
+   l = Abs(rect[3]/sina);
+   }
+   else 
+   l = Abs(rect[3]/sina);
+   x +=  cosa*l*1.1;
+   y +=  sina*l*1.1;
+   }
+   }
 */
 
 /** To get the bounding rectangle of a string **/
@@ -1886,8 +1886,8 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 static void drawrectangle(BCG *Xgc,const int rect[])
 { 
   DRAW_CHECK
-  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,
-		     rect[0],rect[1],rect[2],rect[3]);
+    gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,
+		       rect[0],rect[1],rect[2],rect[3]);
 }
 
 /** fill one rectangle, with current pattern **/
@@ -2545,19 +2545,19 @@ static FontAlias fonttab[] ={
 };
 
 /* 
-static int fontidscale(BCG *Xgc,int fontsize)
-{
-  int nnsiz,i;
-  int isiz = i_size_[fontsize];
-  double d = Min(Xgc->CWindowHeight,Xgc->CWindowWidth);
-  nnsiz = (Xgc != NULL) ? inint((isiz*d/400.0)) : isiz; 
-  / * fprintf(stderr,"Scaling by -->%d %d \n",isiz,nnsiz); * /
-  for ( i=0; i < FONTMAXSIZE ; i++) 
-    {
-      if (i_size_[i] >= nnsiz ) return Max(i-1,0);
-    }
-  return FONTMAXSIZE -1;
-}
+   static int fontidscale(BCG *Xgc,int fontsize)
+   {
+   int nnsiz,i;
+   int isiz = i_size_[fontsize];
+   double d = Min(Xgc->CWindowHeight,Xgc->CWindowWidth);
+   nnsiz = (Xgc != NULL) ? inint((isiz*d/400.0)) : isiz; 
+   / * fprintf(stderr,"Scaling by -->%d %d \n",isiz,nnsiz); * /
+   for ( i=0; i < FONTMAXSIZE ; i++) 
+   {
+   if (i_size_[i] >= nnsiz ) return Max(i-1,0);
+   }
+   return FONTMAXSIZE -1;
+   }
 */
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize)
@@ -3215,102 +3215,102 @@ void gdk_draw_text_rot(GdkDrawable *drawable,
 		       gint text_length,
 		       double angle)
 {
-    GdkColor black, white;
-    GdkPixmap *pixmap;
-    GdkGC *rotgc;
-    GdkImage *image;
+  GdkColor black, white;
+  GdkPixmap *pixmap;
+  GdkGC *rotgc;
+  GdkImage *image;
 
-    int lbearing, rbearing, width, ascent, descent, height;
-    int dx, dy;
-    int i, j, mini, minj, maxi, maxj;
+  int lbearing, rbearing, width, ascent, descent, height;
+  int dx, dy;
+  int i, j, mini, minj, maxi, maxj;
 
-    double sintheta, costheta;
+  double sintheta, costheta;
 
-    /* sanity check */
-    if((text == NULL) || (*text == '\0'))
-	return;
+  /* sanity check */
+  if((text == NULL) || (*text == '\0'))
+    return;
 
-    /* shortcut horizontal text */
-    if(angle == 0.0) {
-	gdk_draw_text(drawable, font, gc, x, y, text, text_length);
-    }
-    else {
-	/* text metrics */
-	gdk_text_extents(font, text, text_length,
-			 &lbearing, &rbearing,
-			 &width, &ascent, &descent);
+  /* shortcut horizontal text */
+  if(angle == 0.0) {
+    gdk_draw_text(drawable, font, gc, x, y, text, text_length);
+  }
+  else {
+    /* text metrics */
+    gdk_text_extents(font, text, text_length,
+		     &lbearing, &rbearing,
+		     &width, &ascent, &descent);
 	
-	height = ascent + descent;
+    height = ascent + descent;
 	
-	/* draw text into pixmap */
-	pixmap = gdk_pixmap_new(drawable, width, height, 1);
-	rotgc = gdk_gc_new(pixmap);
-	gdk_gc_set_font(rotgc, font);
+    /* draw text into pixmap */
+    pixmap = gdk_pixmap_new(drawable, width, height, 1);
+    rotgc = gdk_gc_new(pixmap);
+    gdk_gc_set_font(rotgc, font);
 
-	white.pixel = gdk_rgb_xpixel_from_rgb(0xffffffff);
-	black.pixel = gdk_rgb_xpixel_from_rgb(0);
+    white.pixel = gdk_rgb_xpixel_from_rgb(0xffffffff);
+    black.pixel = gdk_rgb_xpixel_from_rgb(0);
 
-	gdk_gc_set_foreground(rotgc, &white);
-	gdk_draw_rectangle (pixmap, rotgc, 1, 0, 0, width, height);
+    gdk_gc_set_foreground(rotgc, &white);
+    gdk_draw_rectangle (pixmap, rotgc, 1, 0, 0, width, height);
 
-	gdk_gc_set_foreground(rotgc, &black);
-	gdk_draw_text(pixmap, font, rotgc, 0, ascent, text, text_length);
-	image = gdk_image_get(pixmap, 0, 0, width, height); 
+    gdk_gc_set_foreground(rotgc, &black);
+    gdk_draw_text(pixmap, font, rotgc, 0, ascent, text, text_length);
+    image = gdk_image_get(pixmap, 0, 0, width, height); 
 
-	/* precalc cos/sin of angle */
-	/* the floor(x * 1000.0 + 0.5) / 1000.0 is a hack to round things off */
-	costheta = floor(cos(angle) * 1000.0 + 0.5) / 1000.0;
-	sintheta = floor(sin(angle) * 1000.0 + 0.5) / 1000.0;
+    /* precalc cos/sin of angle */
+    /* the floor(x * 1000.0 + 0.5) / 1000.0 is a hack to round things off */
+    costheta = floor(cos(angle) * 1000.0 + 0.5) / 1000.0;
+    sintheta = floor(sin(angle) * 1000.0 + 0.5) / 1000.0;
 
-	/* calculate bounding box for i and j iteration */
-	mini = maxi = floor((double)(0 - ascent) * sintheta) + x;
-	minj = maxj = floor((double)(0 - ascent) * costheta) + y;
+    /* calculate bounding box for i and j iteration */
+    mini = maxi = floor((double)(0 - ascent) * sintheta) + x;
+    minj = maxj = floor((double)(0 - ascent) * costheta) + y;
 
-	i = floor((double)width * costheta + (double)(height - ascent) * sintheta) + x;
-	j = floor(- (double)width * sintheta + (double)(height - ascent) * costheta) + y;
-	if(i < mini) mini = i;
-	if(i > maxi) maxi = i;
-	if(j < minj) minj = j;
-	if(j > maxj) maxj = j;
+    i = floor((double)width * costheta + (double)(height - ascent) * sintheta) + x;
+    j = floor(- (double)width * sintheta + (double)(height - ascent) * costheta) + y;
+    if(i < mini) mini = i;
+    if(i > maxi) maxi = i;
+    if(j < minj) minj = j;
+    if(j > maxj) maxj = j;
 
-	i = floor((double)(height - ascent) * sintheta) + x;
-	j = floor((double)(height - ascent) * costheta) + y;
-	if(i < mini) mini = i;
-	if(i > maxi) maxi = i;
-	if(j < minj) minj = j;
-	if(j > maxj) maxj = j;
+    i = floor((double)(height - ascent) * sintheta) + x;
+    j = floor((double)(height - ascent) * costheta) + y;
+    if(i < mini) mini = i;
+    if(i > maxi) maxi = i;
+    if(j < minj) minj = j;
+    if(j > maxj) maxj = j;
 
-	i = floor((double)width * costheta + (double)(0 - ascent) * sintheta) + x;
-	j = floor(- (double)width * sintheta + (double)(0 - ascent) * costheta) + y;
-	if(i < mini) mini = i;
-	if(i > maxi) maxi = i;
-	if(j < minj) minj = j;
-	if(j > maxj) maxj = j;
+    i = floor((double)width * costheta + (double)(0 - ascent) * sintheta) + x;
+    j = floor(- (double)width * sintheta + (double)(0 - ascent) * costheta) + y;
+    if(i < mini) mini = i;
+    if(i > maxi) maxi = i;
+    if(j < minj) minj = j;
+    if(j > maxj) maxj = j;
 
-	maxi++; maxj++;
+    maxi++; maxj++;
 
-	if(mini < 0) mini = 0;
-	/* jpc : if(maxi > maxx) maxi = maxx; */
-	if(minj < 0) minj = 0;
-	/* if(maxj > maxy) maxj = maxy; */
+    if(mini < 0) mini = 0;
+    /* jpc : if(maxi > maxx) maxi = maxx; */
+    if(minj < 0) minj = 0;
+    /* if(maxj > maxy) maxj = maxy; */
 
-	/* copy pixels */
-	for(j = minj; j < maxj; j++) {
-	    for(i = mini; i < maxi; i++) {
-		dx = floor((double)(i - x) * costheta - (double)(j - y) * sintheta);
-		dy = floor((double)(i - x) * sintheta + (double)(j - y) * costheta) + ascent;
+    /* copy pixels */
+    for(j = minj; j < maxj; j++) {
+      for(i = mini; i < maxi; i++) {
+	dx = floor((double)(i - x) * costheta - (double)(j - y) * sintheta);
+	dy = floor((double)(i - x) * sintheta + (double)(j - y) * costheta) + ascent;
 		
-		if((dx >= 0) && (dx < width) && (dy >= 0) && (dy < height) &&
-		   (gdk_image_get_pixel(image, dx, dy) == black.pixel)) {
-		    gdk_draw_point(drawable, gc, i, j);
-		}
-	    }
+	if((dx >= 0) && (dx < width) && (dy >= 0) && (dy < height) &&
+	   (gdk_image_get_pixel(image, dx, dy) == black.pixel)) {
+	  gdk_draw_point(drawable, gc, i, j);
 	}
-
-	/* clean up */
-	gdk_pixmap_unref(pixmap);
-	gdk_gc_unref(rotgc);
+      }
     }
+
+    /* clean up */
+    gdk_pixmap_unref(pixmap);
+    gdk_gc_unref(rotgc);
+  }
 }
 
 

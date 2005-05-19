@@ -1,35 +1,35 @@
 /*------------------------------------------------------------------------
 
-    SCILAB GIF Output based on GD Library from: http://www.boutell.com/gd
-    Modelled after the original PostScript Driver in periPos.c
+SCILAB GIF Output based on GD Library from: http://www.boutell.com/gd
+Modelled after the original PostScript Driver in periPos.c
 
-    Copyright (C) 1999, Tom Leitner, tom@finwds01.tu-graz.ac.at
-    http://wiis.tu-graz.ac.at/people/tom.html
+Copyright (C) 1999, Tom Leitner, tom@finwds01.tu-graz.ac.at
+http://wiis.tu-graz.ac.at/people/tom.html
 
-    NOTE: This needs the GD Library installed in the "gd"
-    subdirectory of this directory.
+NOTE: This needs the GD Library installed in the "gd"
+subdirectory of this directory.
     
-    WARNING: The following things are not implemented yet:
+WARNING: The following things are not implemented yet:
 
-         - Thick lines.
+- Thick lines.
 
-    Usage of the driver:
+Usage of the driver:
 
-         driver ('GIF');
-	 xinit ('test.gif');
-	 xset('wdim', 800, 600);
-         ......  make your drawings ....
-	 xend();
+driver ('GIF');
+xinit ('test.gif');
+xset('wdim', 800, 600);
+......  make your drawings ....
+xend();
 
-    will produce a 800 by 600 GIF file called test.gif. If you omit the
-    xset(wdim,...) call, the default image size is 640 by 480.
+will produce a 800 by 600 GIF file called test.gif. If you omit the
+xset(wdim,...) call, the default image size is 640 by 480.
     
 --------------------------------------------------------------------------*/
 
 /*----------------------BEGIN----------------------
-\def\encadre#1{\paragraph{}\fbox{\begin{minipage}[t]{15cm}#1 \end{minipage}}}
-\section{A GIF Driver}
----------------------------------------------------*/
+  \def\encadre#1{\paragraph{}\fbox{\begin{minipage}[t]{15cm}#1 \end{minipage}}}
+  \section{A GIF Driver}
+  ---------------------------------------------------*/
 
 #include <stdio.h>
 #include <math.h>
@@ -118,36 +118,36 @@ static void LoadFontsGif(void);
 
 struct BCG 
 { 
-   int FontSize;
-   int FontId;
-   int CurWindowWidth;
-   int CurWindowHeight;
-   int CurHardSymb;
-   int CurHardSymbSize;
-   int CurLineWidth;
-   int CurPattern;
-   int CurColor;
-   int CurWindow;
-   int CurVectorStyle;
-   int CurDrawFunction;
-   int ClipRegionSet;
-   int CurClipRegion[4];
-   int CurDashStyle;
-   char CurNumberDispFormat[20];
-   int CurColorStatus;
-   int IDLastPattern; /* number of last patter or color */
-   int Numcolors; /* number of colors */
-   int NumBackground;  /* number of Background in the color table */
-   int NumForeground; /* number of Foreground in the color table */
-   int NumHidden3d;  /* color for hidden 3d facets **/
+  int FontSize;
+  int FontId;
+  int CurWindowWidth;
+  int CurWindowHeight;
+  int CurHardSymb;
+  int CurHardSymbSize;
+  int CurLineWidth;
+  int CurPattern;
+  int CurColor;
+  int CurWindow;
+  int CurVectorStyle;
+  int CurDrawFunction;
+  int ClipRegionSet;
+  int CurClipRegion[4];
+  int CurDashStyle;
+  char CurNumberDispFormat[20];
+  int CurColorStatus;
+  int IDLastPattern; /* number of last patter or color */
+  int Numcolors; /* number of colors */
+  int NumBackground;  /* number of Background in the color table */
+  int NumForeground; /* number of Foreground in the color table */
+  int NumHidden3d;  /* color for hidden 3d facets **/
 }  ScilabGCGif ;
 
 static int col_index[gdMaxColors];
 static int fillpolylines_closeflag = 0;
 
 /*-----------------------------------------------------
-\encadre{General routines}
------------------------------------------------------*/
+  \encadre{General routines}
+  -----------------------------------------------------*/
 
 /** To select the graphic Window  **/
 
@@ -167,16 +167,16 @@ void C2F(xselgraphicGif)(char *v1, int *v2, int *v3, int *v4, int *v5, int *v6, 
 
 void GetDriverName(char *DriverName)
 {    int *v2;
-     int *v3;
-     int *v4;
-     int *v5;
-     int *v6;
-     int *v7;
-     double *dv1;
-     double *dv2;
-     double *dv3;
-     double *dv4;
-     nsp_gengine->scale->get_driver_name(DriverName, v2, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4);
+ int *v3;
+ int *v4;
+ int *v5;
+ int *v6;
+ int *v7;
+ double *dv1;
+ double *dv2;
+ double *dv3;
+ double *dv4;
+ nsp_gengine->scale->get_driver_name(DriverName, v2, v3, v4, v5, v6, v7, dv1, dv2, dv3, dv4);
 }
 
 void C2F(xendgraphicGif)(void)
@@ -234,14 +234,14 @@ void C2F(xgetmouseGif)(char *str, int *ibutton, int *xx1, int *yy1, int *v5, int
 
 void C2F(clearareaGif)(char *str, int *x, int *y, int *w, int *h, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
-/*  FPRINTF((file,"\n [ %d %d %d %d ] clearzone",(int)*x,(int)*y,(int)*w,(int)*h));*/
+  /*  FPRINTF((file,"\n [ %d %d %d %d ] clearzone",(int)*x,(int)*y,(int)*w,(int)*h));*/
 }
 
 
 
 /*---------------------------------------------------------------------
-\section{Function for graphic context modification}
-------------------------------------------------------------------------*/
+  \section{Function for graphic context modification}
+  ------------------------------------------------------------------------*/
 
 /** to get the window upper-left point coordinates **/
 
@@ -251,7 +251,7 @@ void C2F(getwindowposGif)(int *verbose, int *x, int *narg, double *dummy)
   x[0]= x[1]=0;
   if (*verbose == 1) 
     sciprint("\n CWindow position :%d,%d\r\n",(int)x[0],(int)x[1]);
- }
+}
 
 /** to set the window upper-left point position (Void) **/
 
@@ -290,8 +290,8 @@ void C2F(setwindowdimGif)(int *x, int *y, int *v3, int *v4)
   gdImageFilledRectangle(GifIm, 0, 0, (*x) - 1, (*y) - 1, col_white);
 
   gdImageCopyResized(GifIm, GifImOld, 0, 0, 0, 0, *x, *y, 
-              ScilabGCGif.CurWindowWidth,
-              ScilabGCGif.CurWindowHeight);
+		     ScilabGCGif.CurWindowWidth,
+		     ScilabGCGif.CurWindowHeight);
   gdImageDestroy(GifImOld);
   ScilabGCGif.CurWindowWidth  = *x;
   ScilabGCGif.CurWindowHeight = *y;
@@ -328,7 +328,7 @@ void C2F(setclipGif)(int *x, int *y, int *w, int *h)
   ScilabGCGif.CurClipRegion[2]= *w;
   ScilabGCGif.CurClipRegion[3]= *h;
   gdSetClipping(GifIm,*x,*y,*x+*w,*y+*h); 
-/*  FPRINTF((file,"\n%d %d %d %d setclipzone",(int)*x,(int)*y,(int)*w,(int)*h));*/
+  /*  FPRINTF((file,"\n%d %d %d %d setclipzone",(int)*x,(int)*y,(int)*w,(int)*h));*/
 }
 
 /** unset clip zone **/
@@ -345,7 +345,7 @@ void C2F(unsetclipGif)(int *v1, int *v2, int *v3, int *v4)
   ScilabGCGif.CurClipRegion[2]= 200000;
   ScilabGCGif.CurClipRegion[3]= 200000;
   gdUnsetClipping(GifIm);
-/*  FPRINTF((file,"\n%d %d %d %d setclipzone",-1,-1,200000,200000));*/
+  /*  FPRINTF((file,"\n%d %d %d %d setclipzone",-1,-1,200000,200000));*/
 }
 
 /** Get the boundaries of the current clip zone **/
@@ -376,11 +376,11 @@ void C2F(getclipGif)(int *verbose, int *x, int *narg, double *dummy)
 }
 
 /*----------------------------------------------------------
-\encadre{For the drawing functions dealing with vectors of 
- points, the following routine is used to select the mode 
- absolute or relative }
- Absolute mode if *num==0, relative mode if *num != 0
-------------------------------------------------------------*/
+  \encadre{For the drawing functions dealing with vectors of 
+  points, the following routine is used to select the mode 
+  absolute or relative }
+  Absolute mode if *num==0, relative mode if *num != 0
+  ------------------------------------------------------------*/
 
 void C2F(setabsourelGif)(int *num, int *v2, int *v3, int *v4)
 {
@@ -415,9 +415,9 @@ void C2F(setalufunctionGif)(char *string)
   }
   C2F(idfromnameGif)(string,&value);
   if ( value != -1) {
-     ScilabGCGif.CurDrawFunction = value;
-     gdSetAlu(GifIm, value);
-/*     FPRINTF((file,"\n%% %d setalufunction",(int)value)); */
+    ScilabGCGif.CurDrawFunction = value;
+    gdSetAlu(GifIm, value);
+    /*     FPRINTF((file,"\n%% %d setalufunction",(int)value)); */
   }
 }
 
@@ -427,24 +427,24 @@ struct alinfo {
   char *name;
   char id;
   char *info;} AluStrucGif[] =
-{ 
-  {"GXclear" ,GXclear," 0 "},
-  {"GXand" ,GXand," src AND dst "},
-  {"GXandReverse" ,GXandReverse," src AND NOT dst "},
-  {"GXcopy" ,GXcopy," src "},
-  {"GXandInverted" ,GXandInverted," NOT src AND dst "},
-  {"GXnoop" ,GXnoop," dst "},
-  {"GXxor" ,GXxor," src XOR dst "},
-  {"GXor" ,GXor," src OR dst "},
-  {"GXnor" ,GXnor," NOT src AND NOT dst "},
-  {"GXequiv" ,GXequiv," NOT src XOR dst "},
-  {"GXinvert" ,GXinvert," NOT dst "},
-  {"GXorReverse" ,GXorReverse," src OR NOT dst "},
-  {"GXcopyInverted" ,GXcopyInverted," NOT src "},
-  {"GXorInverted" ,GXorInverted," NOT src OR dst "},
-  {"GXnand" ,GXnand," NOT src OR NOT dst "},
-  {"GXset" ,GXset," 1 "}
-};
+    { 
+      {"GXclear" ,GXclear," 0 "},
+      {"GXand" ,GXand," src AND dst "},
+      {"GXandReverse" ,GXandReverse," src AND NOT dst "},
+      {"GXcopy" ,GXcopy," src "},
+      {"GXandInverted" ,GXandInverted," NOT src AND dst "},
+      {"GXnoop" ,GXnoop," dst "},
+      {"GXxor" ,GXxor," src XOR dst "},
+      {"GXor" ,GXor," src OR dst "},
+      {"GXnor" ,GXnor," NOT src AND NOT dst "},
+      {"GXequiv" ,GXequiv," NOT src XOR dst "},
+      {"GXinvert" ,GXinvert," NOT dst "},
+      {"GXorReverse" ,GXorReverse," src OR NOT dst "},
+      {"GXcopyInverted" ,GXcopyInverted," NOT src "},
+      {"GXorInverted" ,GXorInverted," NOT src OR dst "},
+      {"GXnand" ,GXnand," NOT src OR NOT dst "},
+      {"GXset" ,GXset," 1 "}
+    };
 
 void C2F(idfromnameGif)(char *name1, int *num)
 {int i;
@@ -457,7 +457,7 @@ void C2F(idfromnameGif)(char *name1, int *num)
      Scistring("\n Use the following keys :");
      for ( i=0 ; i < 16 ; i++)
        sciprint("\nkey %s -> %s\r\n",AluStrucGif[i].name,
-	       AluStrucGif[i].info);
+		AluStrucGif[i].info);
    }
 }
 
@@ -484,15 +484,15 @@ void C2F(getalufunctionGif)(int *verbose, int *value, int *narg, double *dummy)
 { 
   *narg =1 ;
   *value = ScilabGCGif.CurDrawFunction ;
-   if (*verbose ==1 ) 
-     { sciprint("\nThe Alufunction is %s -> <%s>\r\n",
+  if (*verbose ==1 ) 
+    { sciprint("\nThe Alufunction is %s -> <%s>\r\n",
 	       AluStrucGif[*value].name,
 	       AluStrucGif[*value].info);}
- }
+}
 
 int GetAluGif(void)
 {
-return ScilabGCGif.CurDrawFunction;
+  return ScilabGCGif.CurDrawFunction;
 }
 /** to set the thickness of lines : 0 is a possible value **/
 /** give the thinest line **/
@@ -502,7 +502,7 @@ return ScilabGCGif.CurDrawFunction;
 void C2F(setthicknessGif)(int *value, int *v2, int *v3, int *v4)
 { 
   ScilabGCGif.CurLineWidth =Max(0, *value);
-/*  FPRINTF((file,"\n%d Thickness",(int)Max(0,*value*Thick_prec))); */
+  /*  FPRINTF((file,"\n%d Thickness",(int)Max(0,*value*Thick_prec))); */
 }
 
 /** to get the thicknes value **/
@@ -513,20 +513,20 @@ void C2F(getthicknessGif)(int *verbose, int *value, int *narg, double *dummy)
   *value = ScilabGCGif.CurLineWidth ;
   if (*verbose ==1 ) 
     sciprint("\nLine Width:%d\r\n",
-	    ScilabGCGif.CurLineWidth ) ;
+	     ScilabGCGif.CurLineWidth ) ;
 }
      
 
 /*-------------------------------------------------
-\encadre{To set grey level for filing areas.
+  \encadre{To set grey level for filing areas.
   from black (*num =0 ) to white 
   you must use the get function to get the id of 
   the white pattern }
-----------------------------------------------------*/
+  ----------------------------------------------------*/
 
 void C2F(setpatternGif)(int *num, int *v2, int *v3, int *v4)
 {
- int i ; 
+  int i ; 
   if ( ScilabGCGif.CurColorStatus ==1) 
     {
       i= Max(0,Min(*num-1,ScilabGCGif.Numcolors+1));
@@ -536,16 +536,16 @@ void C2F(setpatternGif)(int *num, int *v2, int *v3, int *v4)
   else 
     {
       /* used when printing from color to b&white color after GREYNUMBER 
-       are translated to black */
+	 are translated to black */
       if ( *num-1 > GREYNUMBER -1 ) 
 	i=0;
       else 
 	i= Max(0,Min(*num-1,GREYNUMBER-1));
       ScilabGCGif.CurPattern = i;
-/*      if (i ==0)
-	FPRINTF((file,"\nfillsolid"));
-      else 
-	FPRINTF((file,"\n%d Setgray",(int)i)); */
+      /*      if (i ==0)
+	      FPRINTF((file,"\nfillsolid"));
+	      else 
+	      FPRINTF((file,"\n%d Setgray",(int)i)); */
     }
 }
 
@@ -617,26 +617,26 @@ void C2F(setdashGif)(int *value, int *v2, int *v3, int *v4)
 
 static int GifLineColor (void)
 {
-    int i, c = col_index[ScilabGCGif.CurColor];
+  int i, c = col_index[ScilabGCGif.CurColor];
 
-    if (GifIm == (gdImagePtr)0 ) {
-      sciprint("xinit must be called before any action \r\n");
-      return 0;
-    }
-    if (c < 0) c = 0;
-    if (ScilabGCGif.CurDashStyle == 0) return c;
-    for (i = 0; i < nGifDashes; i++) {
-        if (GifDashes[i] != gdTransparent) GifDashes[i] = c;
-    }
-    gdImageSetStyle(GifIm, GifDashes, nGifDashes);
-    return gdStyled;
+  if (GifIm == (gdImagePtr)0 ) {
+    sciprint("xinit must be called before any action \r\n");
+    return 0;
+  }
+  if (c < 0) c = 0;
+  if (ScilabGCGif.CurDashStyle == 0) return c;
+  for (i = 0; i < nGifDashes; i++) {
+    if (GifDashes[i] != gdTransparent) GifDashes[i] = c;
+  }
+  gdImageSetStyle(GifIm, GifDashes, nGifDashes);
+  return gdStyled;
 }
 
 static int GifPatternColor(int pat)
 {
-    int c = col_index[pat - 1];
-    if (c < 0) c = 0;
-    return c;
+  int c = col_index[pat - 1];
+  if (c < 0) c = 0;
+  return c;
 }
 
 /** To change The Gif-default dash style **/
@@ -653,20 +653,20 @@ void C2F(setdashstyleGif)(int *value, int *xx, int *n)
     return;
   }
   if (*value != 0) {
-      cn = 0;
-      c1 = c;
-      for (i = 0; i < *n; i++) {
-          for (j = 0; j < xx[i]; j++) {
-              GifDashes[cn] = c1;
-              cn++;
-          }
-          if (c1 != gdTransparent) c1 = gdTransparent;
-          else                     c1 = c;
+    cn = 0;
+    c1 = c;
+    for (i = 0; i < *n; i++) {
+      for (j = 0; j < xx[i]; j++) {
+	GifDashes[cn] = c1;
+	cn++;
       }
-      nGifDashes = cn;
-      gdImageSetStyle(GifIm, GifDashes, nGifDashes);
+      if (c1 != gdTransparent) c1 = gdTransparent;
+      else                     c1 = c;
+    }
+    nGifDashes = cn;
+    gdImageSetStyle(GifIm, GifDashes, nGifDashes);
   } else {
-      nGifDashes = 0;
+    nGifDashes = 0;
   }
 }
 static void C2F(set_dash_and_color_Gif)(int *value, int *v2, int *v3, int *v4)
@@ -841,35 +841,35 @@ void C2F(setcolormapGif)(int *v1, int *v2, int *v3, int *v4, int *v5, int *v6, d
     col_index[i] = -1;
 
   if (m>gdMaxColors-3) {/* reduce the number of colors */
-      m1 = gdMaxColors-2;
-      if ( (cmap = (double*) malloc(3*m1 * sizeof(double)))== NULL) {
-	Scistring("Not enough memory\n");
-	return;
-      }
-      if ( (ind = (int*) malloc(m * sizeof(int)))== NULL) {
-	Scistring("Not enough memory\n");
-	free(cmap);
-	return;
-      }
+    m1 = gdMaxColors-2;
+    if ( (cmap = (double*) malloc(3*m1 * sizeof(double)))== NULL) {
+      Scistring("Not enough memory\n");
+      return;
+    }
+    if ( (ind = (int*) malloc(m * sizeof(int)))== NULL) {
+      Scistring("Not enough memory\n");
+      free(cmap);
+      return;
+    }
 
-      C2F(nues1)(a,&m,cmap,&m1,ind,&ierr);
-      /* create new colormap */
-      ScilabGCGif.Numcolors = m;
-      for ( i=0; i < ScilabGCGif.Numcolors; i++) {
-	i1 = ind[i] - 1;
-	r=(int)(cmap[i1] * 255);
-	g=(int)(cmap[i1 + m1] * 255);
-	b=(int)(cmap[i1 + 2*m1] * 255);
-	if (r==255 && g==255 && b==255) {
+    C2F(nues1)(a,&m,cmap,&m1,ind,&ierr);
+    /* create new colormap */
+    ScilabGCGif.Numcolors = m;
+    for ( i=0; i < ScilabGCGif.Numcolors; i++) {
+      i1 = ind[i] - 1;
+      r=(int)(cmap[i1] * 255);
+      g=(int)(cmap[i1 + m1] * 255);
+      b=(int)(cmap[i1 + 2*m1] * 255);
+      if (r==255 && g==255 && b==255) {
 	/* move white a little to distinguish it from the background */
 	r=254;g=254;b=254; }
       c = gdImageColorExact(GifIm, r,g,b);
       if (c == -1)
 	c = gdImageColorAllocate(GifIm,r,g,b);
       col_index[i] = c;
-      }
-      free(ind);
-      free(cmap);
+    }
+    free(ind);
+    free(cmap);
   }
   else {
     /* create new colormap */
@@ -909,7 +909,7 @@ void C2F(setcolormapGif)(int *v1, int *v2, int *v3, int *v4, int *v5, int *v6, d
 }
 
 /** 
-  Initial (default) colormap 
+    Initial (default) colormap 
 **/
 
 static void ColorInitGif(void)
@@ -957,7 +957,7 @@ void C2F(set_cGif)(int i)
 {
   int j;
   j=Max(Min(i,ScilabGCGif.Numcolors+1),0);
-/*  FPRINTF((file,"\n%d Setcolorcolormap",(int)j)); */
+  /*  FPRINTF((file,"\n%d Setcolorcolormap",(int)j)); */
 }
 
 
@@ -1043,9 +1043,9 @@ void C2F(gethidden3dGif)(int *verbose, int *num, int *narg, double *dummy)
 
 
 /*--------------------------------------------------------
-\encadre{general routines accessing the  set<> or get<>
- routines } 
--------------------------------------------------------*/
+  \encadre{general routines accessing the  set<> or get<>
+  routines } 
+  -------------------------------------------------------*/
 
 void C2F(semptyGif)(int *verbose, int *v2, int *v3, int *v4)
 {
@@ -1053,7 +1053,7 @@ void C2F(semptyGif)(int *verbose, int *v2, int *v3, int *v4)
 }
 void C2F(setwwhowGif)(int *verbose, int *v2, int *v3, int *v4)
 {
-/*  FPRINTF((file,"\n%% SPLIT HERE")); */
+  /*  FPRINTF((file,"\n%% SPLIT HERE")); */
 }
 
 void C2F(gemptyGif)(int *verbose, int *v2, int *v3, double *dummy)
@@ -1066,38 +1066,38 @@ void C2F(gemptyGif)(int *verbose, int *v2, int *v3, double *dummy)
 /** Table in lexicographic order **/
 
 struct bgc { char *name ;
-	     void  (*setfonc )() ;
-	     void (*getfonc )() ;}
-  ScilabGCTabGif[] = {
-    {"alufunction",C2F(setalufunction1Gif),C2F(getalufunctionGif)},
-    {"background",C2F(setbackgroundGif),C2F(getbackgroundGif)},
-    {"clipoff",C2F(unsetclipGif),C2F(getclipGif)},
-    {"clipping",C2F(setclipGif),C2F(getclipGif)},
-    {"color",C2F(setpatternGif),C2F(getpatternGif)},
-    {"colormap",C2F(setcolormapGif),C2F(gemptyGif)},
-    {"dashes",C2F(set_dash_or_color_Gif),C2F(get_dash_or_color_Gif)},
-    {"default",InitScilabGCGif, C2F(gemptyGif)},
-    {"font",C2F(xsetfontGif),C2F(xgetfontGif)},
-    {"foreground",C2F(setforegroundGif),C2F(getforegroundGif)},
-    {"hidden3d",C2F(sethidden3dGif),C2F(gethidden3dGif)},
-    {"lastpattern",C2F(semptyGif),C2F(getlastGif)},
-    {"line mode",C2F(setabsourelGif),C2F(getabsourelGif)},
-    {"line style",C2F(setdashGif),C2F(getdashGif)},
-    {"mark",C2F(xsetmarkGif),C2F(xgetmarkGif)},
-    {"pattern",C2F(setpatternGif),C2F(getpatternGif)},
-    {"pixmap",C2F(semptyGif),C2F(gemptyGif)},
-    {"thickness",C2F(setthicknessGif),C2F(getthicknessGif)},
-    {"use color",C2F(usecolorGif),C2F(getusecolorGif)},
-    {"viewport",C2F(semptyGif),C2F(gemptyGif)},
-    {"wdim",C2F(setwindowdimGif),C2F(getwindowdimGif)},
-    {"white",C2F(semptyGif),C2F(getlastGif)},
-    {"window",C2F(setcurwinGif),C2F(getcurwinGif)},
-    {"wpdim",C2F(semptyGif),C2F(gemptyGif)},
-    {"wpos",C2F(setwindowposGif),C2F(getwindowposGif)},
-    {"wresize",C2F(semptyGif),C2F(gemptyGif)},
-    {"wshow",C2F(setwwhowGif),C2F(gemptyGif)},
-    {"wwpc",C2F(semptyGif),C2F(gemptyGif)}
- };
+  void  (*setfonc )() ;
+  void (*getfonc )() ;}
+ScilabGCTabGif[] = {
+  {"alufunction",C2F(setalufunction1Gif),C2F(getalufunctionGif)},
+  {"background",C2F(setbackgroundGif),C2F(getbackgroundGif)},
+  {"clipoff",C2F(unsetclipGif),C2F(getclipGif)},
+  {"clipping",C2F(setclipGif),C2F(getclipGif)},
+  {"color",C2F(setpatternGif),C2F(getpatternGif)},
+  {"colormap",C2F(setcolormapGif),C2F(gemptyGif)},
+  {"dashes",C2F(set_dash_or_color_Gif),C2F(get_dash_or_color_Gif)},
+  {"default",InitScilabGCGif, C2F(gemptyGif)},
+  {"font",C2F(xsetfontGif),C2F(xgetfontGif)},
+  {"foreground",C2F(setforegroundGif),C2F(getforegroundGif)},
+  {"hidden3d",C2F(sethidden3dGif),C2F(gethidden3dGif)},
+  {"lastpattern",C2F(semptyGif),C2F(getlastGif)},
+  {"line mode",C2F(setabsourelGif),C2F(getabsourelGif)},
+  {"line style",C2F(setdashGif),C2F(getdashGif)},
+  {"mark",C2F(xsetmarkGif),C2F(xgetmarkGif)},
+  {"pattern",C2F(setpatternGif),C2F(getpatternGif)},
+  {"pixmap",C2F(semptyGif),C2F(gemptyGif)},
+  {"thickness",C2F(setthicknessGif),C2F(getthicknessGif)},
+  {"use color",C2F(usecolorGif),C2F(getusecolorGif)},
+  {"viewport",C2F(semptyGif),C2F(gemptyGif)},
+  {"wdim",C2F(setwindowdimGif),C2F(getwindowdimGif)},
+  {"white",C2F(semptyGif),C2F(getlastGif)},
+  {"window",C2F(setcurwinGif),C2F(getcurwinGif)},
+  {"wpdim",C2F(semptyGif),C2F(gemptyGif)},
+  {"wpos",C2F(setwindowposGif),C2F(getwindowposGif)},
+  {"wresize",C2F(semptyGif),C2F(gemptyGif)},
+  {"wshow",C2F(setwwhowGif),C2F(gemptyGif)},
+  {"wwpc",C2F(semptyGif),C2F(gemptyGif)}
+};
 
 #ifdef lint
 
@@ -1136,47 +1136,47 @@ void C2F(scilabgcgetGif)(char *str, int *verbose, int *x1, int *x2, int *x3, int
 
 void C2F(scilabgcsetGif)(char *str, int *x1, int *x2, int *x3, int *x4, int *x5, int *x6, double *dv1, double *dv2, double *dv3, double *dv4)
 {
- int verbose ;
- verbose = 0 ;
- C2F(ScilabGCGetorSetGif)(str,(int)0L,&verbose,x1,x2,x3,x4,x5,x6,dv1);}
+  int verbose ;
+  verbose = 0 ;
+  C2F(ScilabGCGetorSetGif)(str,(int)0L,&verbose,x1,x2,x3,x4,x5,x6,dv1);}
 
 void C2F(ScilabGCGetorSetGif)(char *str, int flag, int *verbose, int *x1, int *x2, int *x3, int *x4, int *x5, int *x6, double *dv1)
 { int i ;
-  for (i=0; i < NUMSETFONC ; i++)
-     {
-       int j;
-       j = strcmp(str,ScilabGCTabGif[i].name);
-       if ( j == 0 ) 
-	 { if (*verbose == 1)
-	     sciprint("\nGettting Info on %s\r\n",str);
-	   if (flag == 1)
-	     (ScilabGCTabGif[i].getfonc)(verbose,x1,x2,dv1);
-	   else 
-	     (ScilabGCTabGif[i].setfonc)(x1,x2,x3,x4,x5,x6,dv1);
-	   return;}
+ for (i=0; i < NUMSETFONC ; i++)
+   {
+     int j;
+     j = strcmp(str,ScilabGCTabGif[i].name);
+     if ( j == 0 ) 
+       { if (*verbose == 1)
+	 sciprint("\nGettting Info on %s\r\n",str);
+       if (flag == 1)
+	 (ScilabGCTabGif[i].getfonc)(verbose,x1,x2,dv1);
        else 
-	 { if ( j <= 0)
-	     {
-	       sciprint("\nUnknow GIF operator <%s>\r\n",str);
-	       return;
-	     }
+	 (ScilabGCTabGif[i].setfonc)(x1,x2,x3,x4,x5,x6,dv1);
+       return;}
+     else 
+       { if ( j <= 0)
+	 {
+	   sciprint("\nUnknow GIF operator <%s>\r\n",str);
+	   return;
 	 }
-     }
-  sciprint("\n Unknow GIF operator <%s>\r\n",str);
+       }
+   }
+ sciprint("\n Unknow GIF operator <%s>\r\n",str);
 }
 
 /*-----------------------------------------------------------
-\encadre{Functions for drawing}
------------------------------------------------------------*/
+  \encadre{Functions for drawing}
+  -----------------------------------------------------------*/
 
 
 
 /*----------------------------------------------------
-\encadre{display of a string
- at (x,y) position whith angle (alpha). Angles in degree
- positive when clockwise. If *flag ==1 a framed  box is added 
- around the string.}
------------------------------------------------------*/
+  \encadre{display of a string
+  at (x,y) position whith angle (alpha). Angles in degree
+  positive when clockwise. If *flag ==1 a framed  box is added 
+  around the string.}
+  -----------------------------------------------------*/
 void C2F(DispStringAngleGif)(int *x0, int *yy0, char *string, double *angle)
 {
   int i;
@@ -1210,10 +1210,10 @@ void C2F(DispStringAngleGif)(int *x0, int *yy0, char *string, double *angle)
 
       if ( cosa <= 0.0 && i < (int)strlen(string)-1)
 	{ char str2[2];
-	  /** si le cosinus est negatif le deplacement est a calculer **/
-	  /** sur la boite du caractere suivant **/
-	  str2[1]='\0';str2[0]=string[i+1];
-	  C2F(boundingboxGif)(str2,&x,&y,rect,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
+	/** si le cosinus est negatif le deplacement est a calculer **/
+	/** sur la boite du caractere suivant **/
+	str2[1]='\0';str2[0]=string[i+1];
+	C2F(boundingboxGif)(str2,&x,&y,rect,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
 	}
       if ( Abs(cosa) >= 1.e-8 )
 	{
@@ -1306,9 +1306,9 @@ void C2F(drawsegmentsGif)(char *str, int *vx, int *vy, int *n, int *style, int *
       NDvalue= (*style < 1) ? Dvalue[0] : *style;
       C2F(set_dash_or_color_Gif)(&NDvalue,PI0,PI0,PI0);
       for ( i=0 ; i < *n/2 ; i++) {
-          gdImageThickLine(GifIm, vx[2*i], vy[2*i],
-			   vx[2*i + 1], vy[2*i + 1],
-			   GifLineColor(),Max(1,ScilabGCGif.CurLineWidth));
+	gdImageThickLine(GifIm, vx[2*i], vy[2*i],
+			 vx[2*i + 1], vy[2*i + 1],
+			 GifLineColor(),Max(1,ScilabGCGif.CurLineWidth));
       }
     }
   else
@@ -1362,15 +1362,15 @@ void C2F(drawarrowsGif)(char *str, int *vx, int *vy, int *n, int *as, int *style
       norm = sqrt(dx*dx+dy*dy);
       if ( Abs(norm) >  SMDOUBLE ) 
 	{ int nn=1,p=3;
-	  dx=(*as/10.0)*dx/norm;dy=(*as/10.0)*dy/norm;
-	  polyx[0]= polyx[3]=inint(vx[2*i+1]+dx*cos20);
-	  polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
-	  polyx[2]= inint(polyx[0]  - cos20*dx + sin20*dy);
-	  polyy[0]= polyy[3]=inint(vy[2*i+1]+dy*cos20);
-	  polyy[1]= inint(polyy[0] + sin20*dx -cos20*dy) ;
-	  polyy[2]= inint(polyy[0] - sin20*dx - cos20*dy) ;
-	  C2F(fillpolylinesGif)("v",polyx,polyy,&NDvalue, &nn,&p,PI0,PD0,PD0,PD0,PD0);
-	  }
+	dx=(*as/10.0)*dx/norm;dy=(*as/10.0)*dy/norm;
+	polyx[0]= polyx[3]=inint(vx[2*i+1]+dx*cos20);
+	polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
+	polyx[2]= inint(polyx[0]  - cos20*dx + sin20*dy);
+	polyy[0]= polyy[3]=inint(vy[2*i+1]+dy*cos20);
+	polyy[1]= inint(polyy[0] + sin20*dx -cos20*dy) ;
+	polyy[2]= inint(polyy[0] - sin20*dx - cos20*dy) ;
+	C2F(fillpolylinesGif)("v",polyx,polyy,&NDvalue, &nn,&p,PI0,PD0,PD0,PD0,PD0);
+	}
     }
   C2F(set_dash_and_color_Gif)( Dvalue,PI0,PI0,PI0);
 }
@@ -1543,27 +1543,27 @@ void C2F(fillarcGif)(char *str, int *x, int *y, int *width, int *height, int *an
   kmax = n-1;
 
   if (n != 360) {
-  vx[0] = *x + w;
-  vy[0] = *y + h;
-  k0 = 1;
-  kmax = n;}
+    vx[0] = *x + w;
+    vy[0] = *y + h;
+    k0 = 1;
+    kmax = n;}
 
   for (k = k0; k <= kmax; ++k) {
     alpha=((*angle1/64)+k)*fact;
     vx[k] = *x + w*(cos(alpha)+1.0);
     vy[k] = *y + h*(-sin(alpha)+1.0);}
   if (n != 360) {
-  n++;
-  vx[n] = *x + ((*width)/2.0);
-  vy[n] = *y + ((*height)/2.0); 
-  n++;
+    n++;
+    vx[n] = *x + ((*width)/2.0);
+    vy[n] = *y + ((*height)/2.0); 
+    n++;
   }
   C2F(fillpolylineGif)(str, &n, vx, vy, &close, PI0, PI0, dv1, dv2, dv3, dv4);
- }
+}
 
 /*--------------------------------------------------------------
-\encadre{Filling or Drawing Polylines and Polygons}
----------------------------------------------------------------*/
+  \encadre{Filling or Drawing Polylines and Polygons}
+  ---------------------------------------------------------------*/
 
 /** Draw a set of *n polylines (each of which have (*p) points) **/
 /** with lines or marks **/
@@ -1572,36 +1572,36 @@ void C2F(fillarcGif)(char *str, int *x, int *y, int *width, int *height, int *an
 
 void C2F(drawpolylinesGif)(char *str, int *vectsx, int *vectsy, int *drawvect, int *n, int *p, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 { int verbose ,symb[2],Mnarg,Dnarg,Dvalue[10],NDvalue,i,j,close;
-  verbose =0 ;
-  if (GifIm == (gdImagePtr)0 ) {
-    sciprint(" xinit must be called before any action \r\n");
-    return;
-  }
-  /* store the current values */
-  C2F(xgetmarkGif)(&verbose,symb,&Mnarg,vdouble);
-  C2F(get_dash_and_color_Gif)(&verbose,Dvalue,&Dnarg,vdouble);
-  for (i=0 ; i< *n ; i++)
-    {
-      if (drawvect[i] <= 0)
-	{ /** on utilise la marque de numero associ\'ee **/
-	  NDvalue = - drawvect[i];
-	  C2F(setdashGif)((j=1,&j),PI0,PI0,PI0);
-	  C2F(xsetmarkGif)(&NDvalue,symb+1,PI0,PI0);
+ verbose =0 ;
+ if (GifIm == (gdImagePtr)0 ) {
+   sciprint(" xinit must be called before any action \r\n");
+   return;
+ }
+ /* store the current values */
+ C2F(xgetmarkGif)(&verbose,symb,&Mnarg,vdouble);
+ C2F(get_dash_and_color_Gif)(&verbose,Dvalue,&Dnarg,vdouble);
+ for (i=0 ; i< *n ; i++)
+   {
+     if (drawvect[i] <= 0)
+       { /** on utilise la marque de numero associ\'ee **/
+	 NDvalue = - drawvect[i];
+	 C2F(setdashGif)((j=1,&j),PI0,PI0,PI0);
+	 C2F(xsetmarkGif)(&NDvalue,symb+1,PI0,PI0);
 	  
-	  C2F(drawpolymarkGif)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
-	  C2F(setdashGif)(Dvalue,PI0,PI0,PI0);
-	}
-      else
-	{/** on utilise un style pointill\'e  **/
+	 C2F(drawpolymarkGif)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
+	 C2F(setdashGif)(Dvalue,PI0,PI0,PI0);
+       }
+     else
+       {/** on utilise un style pointill\'e  **/
 
-	  C2F(set_line_style_Gif)(drawvect+i,PI0,PI0,PI0);
-	  close = 0;
-	  C2F(drawpolylineGif)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,&close,PI0,PI0,PD0,PD0,PD0,PD0);
-	}
-    }
-  /** back to default values **/
-  C2F(set_dash_and_color_Gif)(Dvalue,PI0,PI0,PI0);
-  C2F(xsetmarkGif)(symb,symb+1,PI0,PI0);
+	 C2F(set_line_style_Gif)(drawvect+i,PI0,PI0,PI0);
+	 close = 0;
+	 C2F(drawpolylineGif)(str,p,vectsx+(*p)*i,vectsy+(*p)*i,&close,PI0,PI0,PD0,PD0,PD0,PD0);
+       }
+   }
+ /** back to default values **/
+ C2F(set_dash_and_color_Gif)(Dvalue,PI0,PI0,PI0);
+ C2F(xsetmarkGif)(symb,symb+1,PI0,PI0);
 }
 
 /**************************************************************
@@ -1613,7 +1613,7 @@ void C2F(drawpolylinesGif)(char *str, int *vectsx, int *vectsy, int *drawvect, i
  if fillvect[i] > 0  draw the boundaries with current color 
                 then fill with pattern fillvect[i]
  if fillvect[i] < 0  fill with pattern - fillvect[i]
- **************************************************************/
+**************************************************************/
 
 void C2F(fillpolylinesGif)(char *str, int *vectsx, int *vectsy, int *fillvect, int *n, int *p, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
@@ -1630,25 +1630,25 @@ void C2F(fillpolylinesGif)(char *str, int *vectsx, int *vectsy, int *fillvect, i
   points = (gdPoint*) malloc(n1 * sizeof(gdPoint));
   if (points == (gdPoint*) NULL) return;
   for (j = 0; j < *n; j++) {
-      o = j * (*p);
-      for (i = 0; i < *p; i++) {
-          points[i].x = vectsx[o + i];
-          points[i].y = vectsy[o + i];
-      }
-      if (fillpolylines_closeflag) {
-          points[*p].x = vectsx[o];
-          points[*p].y = vectsy[o];
-      }
-      if (fillvect[j] != 0) {
-	gdImageFilledPolygon(GifIm, points, n1,
-			     GifPatternColor(abs(fillvect[j])));
-      }
-      if (fillvect[j] >= 0) {
-	c = GifLineColor();
-	thick = Max(1,ScilabGCGif.CurLineWidth);
-	gdImagePolyLine(GifIm, &(vectsx[o]), &(vectsy[o]),
-			*p,c,thick,fillpolylines_closeflag);
-      }
+    o = j * (*p);
+    for (i = 0; i < *p; i++) {
+      points[i].x = vectsx[o + i];
+      points[i].y = vectsy[o + i];
+    }
+    if (fillpolylines_closeflag) {
+      points[*p].x = vectsx[o];
+      points[*p].y = vectsy[o];
+    }
+    if (fillvect[j] != 0) {
+      gdImageFilledPolygon(GifIm, points, n1,
+			   GifPatternColor(abs(fillvect[j])));
+    }
+    if (fillvect[j] >= 0) {
+      c = GifLineColor();
+      thick = Max(1,ScilabGCGif.CurLineWidth);
+      gdImagePolyLine(GifIm, &(vectsx[o]), &(vectsy[o]),
+		      *p,c,thick,fillpolylines_closeflag);
+    }
   }
   free(points);
 }
@@ -1701,11 +1701,11 @@ void C2F(drawpolymarkGif)(char *str, int *n, int *vx, int *vy, int *v5, int *v6,
 }
 
 /*-----------------------------------------------------
-\encadre{Routine for initialisation}
-------------------------------------------------------*/
+  \encadre{Routine for initialisation}
+  ------------------------------------------------------*/
 
 void C2F(
-initgraphicGif)(char *string, int *v2, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
+	 initgraphicGif)(char *string, int *v2, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 { 
   char string1[256];
   static int EntryCounter = 0;
@@ -1847,123 +1847,123 @@ static void FileInitGif(void)
 }
 
 /*--------------------------------------------------------
-\encadre{Initialisation of the graphic context. Used also 
-to come back to the default graphic state}
----------------------------------------------------------*/
+  \encadre{Initialisation of the graphic context. Used also 
+  to come back to the default graphic state}
+  ---------------------------------------------------------*/
 
 
 void InitScilabGCGif(int *v1, int *v2, int *v3, int *v4)
 { int i,j,col;
-  ScilabGCGif.IDLastPattern = GREYNUMBER-1;
-  ScilabGCGif.CurLineWidth=0 ;
-  i=1;
-  C2F(setthicknessGif)(&i,PI0,PI0,PI0);
-  C2F(setalufunctionGif)("GXcopy");
-  /** retirer le clipping **/
-  i=j= -1;
-  C2F(unsetclipGif)(PI0,PI0,PI0,PI0);
-  C2F(xsetfontGif)((i=2,&i),(j=1,&j),PI0,PI0);
-  C2F(xsetmarkGif)((i=0,&i),(j=0,&j),PI0,PI0);
-  /** trac\'e absolu **/
-  ScilabGCGif.CurVectorStyle = CoordModeOrigin ;
-  /* initialisation des pattern dash par defaut en n&b */
-  ScilabGCGif.CurColorStatus =0;
-  C2F(setpatternGif)((i=1,&i),PI0,PI0,PI0);
-  C2F(setdashGif)((i=1,&i),PI0,PI0,PI0);
+ ScilabGCGif.IDLastPattern = GREYNUMBER-1;
+ ScilabGCGif.CurLineWidth=0 ;
+ i=1;
+ C2F(setthicknessGif)(&i,PI0,PI0,PI0);
+ C2F(setalufunctionGif)("GXcopy");
+ /** retirer le clipping **/
+ i=j= -1;
+ C2F(unsetclipGif)(PI0,PI0,PI0,PI0);
+ C2F(xsetfontGif)((i=2,&i),(j=1,&j),PI0,PI0);
+ C2F(xsetmarkGif)((i=0,&i),(j=0,&j),PI0,PI0);
+ /** trac\'e absolu **/
+ ScilabGCGif.CurVectorStyle = CoordModeOrigin ;
+ /* initialisation des pattern dash par defaut en n&b */
+ ScilabGCGif.CurColorStatus =0;
+ C2F(setpatternGif)((i=1,&i),PI0,PI0,PI0);
+ C2F(setdashGif)((i=1,&i),PI0,PI0,PI0);
 
-  /* initialisation de la couleur par defaut */ 
-  ScilabGCGif.Numcolors = DEFAULTNUMCOLORS;
-  ScilabGCGif.CurColorStatus = 1 ;
-  C2F(setpatternGif)((i=1,&i),PI0,PI0,PI0);
-  C2F(setforegroundGif)((i=ScilabGCGif.NumForeground+1,&i),PI0,PI0,PI0);
-  C2F(setbackgroundGif)((i=ScilabGCGif.NumForeground+2,&i),PI0,PI0,PI0);
-  C2F(sethidden3dGif)((i=4,&i),PI0,PI0,PI0);
-  /* Choix du mode par defaut (decide dans initgraphic_ */
-  getcolordef(&col);
-  /** we force CurColorStatus to the opposite value of col 
-    to force usecolorPos to perform initialisations 
-    **/
-  ScilabGCGif.CurColorStatus = (col == 1) ? 0: 1;
-  C2F(usecolorGif)(&col,PI0,PI0,PI0);
-  if (col == 1) ScilabGCGif.IDLastPattern = ScilabGCGif.Numcolors - 1;
-  strcpy(ScilabGCGif.CurNumberDispFormat,"%-5.2g");
+ /* initialisation de la couleur par defaut */ 
+ ScilabGCGif.Numcolors = DEFAULTNUMCOLORS;
+ ScilabGCGif.CurColorStatus = 1 ;
+ C2F(setpatternGif)((i=1,&i),PI0,PI0,PI0);
+ C2F(setforegroundGif)((i=ScilabGCGif.NumForeground+1,&i),PI0,PI0,PI0);
+ C2F(setbackgroundGif)((i=ScilabGCGif.NumForeground+2,&i),PI0,PI0,PI0);
+ C2F(sethidden3dGif)((i=4,&i),PI0,PI0,PI0);
+ /* Choix du mode par defaut (decide dans initgraphic_ */
+ getcolordef(&col);
+ /** we force CurColorStatus to the opposite value of col 
+     to force usecolorPos to perform initialisations 
+ **/
+ ScilabGCGif.CurColorStatus = (col == 1) ? 0: 1;
+ C2F(usecolorGif)(&col,PI0,PI0,PI0);
+ if (col == 1) ScilabGCGif.IDLastPattern = ScilabGCGif.Numcolors - 1;
+ strcpy(ScilabGCGif.CurNumberDispFormat,"%-5.2g");
 }
 
 
 /*-----------------------------------------------------
-\encadre{Draw an axis whith a slope of alpha degree (clockwise)
- . Along the axis marks are set in the direction ( alpha + pi/2), in the 
+  \encadre{Draw an axis whith a slope of alpha degree (clockwise)
+  . Along the axis marks are set in the direction ( alpha + pi/2), in the 
   following way :
-\begin{itemize}
-\item   $n=<n1,n2>$,
-\begin{verbatim}
-     |            |           |
-     |----|---|---|---|---|---|
-     <-----n1---->                 
-     <-------------n2-------->
-\end{verbatim}
-$n1$and $n2$ are int numbers for interval numbers.
-\item $size=<dl,r,coeff>$. $dl$ distance in points between 
-     two marks, $r$ size in points of small mark, $r*coeff$ 
-     size in points of big marks. (they are doubleing points numbers)
-\item $init$. Initial point $<x,y>$. 
-\end{itemize}
-}
+  \begin{itemize}
+  \item   $n=<n1,n2>$,
+  \begin{verbatim}
+  |            |           |
+  |----|---|---|---|---|---|
+  <-----n1---->                 
+  <-------------n2-------->
+  \end{verbatim}
+  $n1$and $n2$ are int numbers for interval numbers.
+  \item $size=<dl,r,coeff>$. $dl$ distance in points between 
+  two marks, $r$ size in points of small mark, $r*coeff$ 
+  size in points of big marks. (they are doubleing points numbers)
+  \item $init$. Initial point $<x,y>$. 
+  \end{itemize}
+  }
 
--------------------------------------------------------------*/
+  -------------------------------------------------------------*/
 void C2F(drawaxisGif)(char *str, int *alpha, int *nsteps, int *v2, int *initpoint, int *v6, int *v7, double *size, double *dx2, double *dx3, double *dx4)
 { int i;
-  double xi,yi,xf,yf;
-  double cosal,sinal;
+ double xi,yi,xf,yf;
+ double cosal,sinal;
 
-  if (GifIm == (gdImagePtr)0 ) {
-    sciprint(" xinit must be called before any action \r\n");
-    return;
-  }
-  cosal= cos( (double)M_PI * (*alpha)/180.0);
-  sinal= sin( (double)M_PI * (*alpha)/180.0);
-  for (i=0; i <= nsteps[0]*nsteps[1]; i++)
-    {
-      if (( i % nsteps[0]) != 0)
-	{
-	  xi = initpoint[0]+i*size[0]*cosal;
-	  yi = initpoint[1]+i*size[0]*sinal;
-	  xf = xi - ( size[1]*sinal);
-	  yf = yi + ( size[1]*cosal);
-	  gdImageThickLine(GifIm,inint(xi),inint(yi),inint(xf),inint(yf), 
-                      GifLineColor(),Max(1,ScilabGCGif.CurLineWidth));
-	}
-    }
-  for (i=0; i <= nsteps[1]; i++)
-    { xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
-      yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
-      xf = xi - ( size[1]*size[2]*sinal);
-      yf = yi + ( size[1]*size[2]*cosal);
-      gdImageThickLine(GifIm,inint(xi),inint(yi),inint(xf),inint(yf), 
-                  GifLineColor(),Max(1,ScilabGCGif.CurLineWidth));
-    }
+ if (GifIm == (gdImagePtr)0 ) {
+   sciprint(" xinit must be called before any action \r\n");
+   return;
+ }
+ cosal= cos( (double)M_PI * (*alpha)/180.0);
+ sinal= sin( (double)M_PI * (*alpha)/180.0);
+ for (i=0; i <= nsteps[0]*nsteps[1]; i++)
+   {
+     if (( i % nsteps[0]) != 0)
+       {
+	 xi = initpoint[0]+i*size[0]*cosal;
+	 yi = initpoint[1]+i*size[0]*sinal;
+	 xf = xi - ( size[1]*sinal);
+	 yf = yi + ( size[1]*cosal);
+	 gdImageThickLine(GifIm,inint(xi),inint(yi),inint(xf),inint(yf), 
+			  GifLineColor(),Max(1,ScilabGCGif.CurLineWidth));
+       }
+   }
+ for (i=0; i <= nsteps[1]; i++)
+   { xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
+   yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
+   xf = xi - ( size[1]*size[2]*sinal);
+   yf = yi + ( size[1]*size[2]*cosal);
+   gdImageThickLine(GifIm,inint(xi),inint(yi),inint(xf),inint(yf), 
+		    GifLineColor(),Max(1,ScilabGCGif.CurLineWidth));
+   }
 
-  xi = initpoint[0]; yi= initpoint[1];
-  xf = initpoint[0]+ nsteps[0]*nsteps[1]*size[0]*cosal;
-  yf = initpoint[1]+ nsteps[0]*nsteps[1]*size[0]*sinal;
-  gdImageThickLine(GifIm, inint(xi),inint(yi),inint(xf),inint(yf),
-              GifLineColor(),Max(1,ScilabGCGif.CurLineWidth));
+ xi = initpoint[0]; yi= initpoint[1];
+ xf = initpoint[0]+ nsteps[0]*nsteps[1]*size[0]*cosal;
+ yf = initpoint[1]+ nsteps[0]*nsteps[1]*size[0]*sinal;
+ gdImageThickLine(GifIm, inint(xi),inint(yi),inint(xf),inint(yf),
+		  GifLineColor(),Max(1,ScilabGCGif.CurLineWidth));
 }
 
 
 /*-----------------------------------------------------
-\encadre{Display numbers z[i] at location (x[i],y[i])
+  \encadre{Display numbers z[i] at location (x[i],y[i])
   with a slope alpha[i] (see displaystring_), if flag==1
   add a box around the string.
------------------------------------------------------*/
+  -----------------------------------------------------*/
 void C2F(displaynumbersGif)(char *str, int *x, int *y, int *v1, int *v2, int *n, int *flag, double *z, double *alpha, double *dx3, double *dx4)
 { int i ;
-  char buf[20];
-  for (i=0 ; i< *n ; i++)
-    { 
-      sprintf(buf,ScilabGCGif.CurNumberDispFormat,z[i]);
-      C2F(displaystringGif)(buf,&(x[i]),&(y[i]),PI0,flag,PI0,PI0,&(alpha[i]),PD0,PD0,PD0) ;
-    }
+ char buf[20];
+ for (i=0 ; i< *n ; i++)
+   { 
+     sprintf(buf,ScilabGCGif.CurNumberDispFormat,z[i]);
+     C2F(displaystringGif)(buf,&(x[i]),&(y[i]),PI0,flag,PI0,PI0,&(alpha[i]),PD0,PD0,PD0) ;
+   }
 }
 
 /** Global variables to deal with fonts **/
@@ -1991,13 +1991,13 @@ gdFont FontListGif[FONTNUMBER][FONTMAXSIZE];
 */
 
 struct FontInfo { int ok;
-		  char fname[100];
-		} FontInfoTabGif[FONTNUMBER];
+  char fname[100];
+} FontInfoTabGif[FONTNUMBER];
 
 typedef  struct  {
   char *alias;
   char *name;
-  }  FontAlias;
+}  FontAlias;
 
 /** ce qui suit marche sur 75dpi ou 100dpi **/
 
@@ -2015,24 +2015,24 @@ static FontAlias fonttab[] ={
 
 void C2F(xsetfontGif)(int *fontid, int *fontsize, int *v3, int *v4)
 { int i,fsiz;
-  i = Min(FONTNUMBER-1,Max(*fontid,0));
-  fsiz = Min(FONTMAXSIZE-1,Max(*fontsize,0));
-  if ( FontInfoTabGif[i].ok !=1 )
-    { 
-      if (i != 6 )
-	{
-	  C2F(loadfamilyGif)(fonttab[i].alias,&i,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
-	}
-      else 
-	{
-	  sciprint(" The Font Id %d is not affected \r\n",(int)i);
-	  Scistring(" use xlfont to set it \n");
-	  return;
-	}
-    }
-  ScilabGCGif.FontId = i;
-  ScilabGCGif.FontSize = fsiz;
-  GifFont = &(FontListGif[i][fsiz]);
+ i = Min(FONTNUMBER-1,Max(*fontid,0));
+ fsiz = Min(FONTMAXSIZE-1,Max(*fontsize,0));
+ if ( FontInfoTabGif[i].ok !=1 )
+   { 
+     if (i != 6 )
+       {
+	 C2F(loadfamilyGif)(fonttab[i].alias,&i,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);
+       }
+     else 
+       {
+	 sciprint(" The Font Id %d is not affected \r\n",(int)i);
+	 Scistring(" use xlfont to set it \n");
+	 return;
+       }
+   }
+ ScilabGCGif.FontId = i;
+ ScilabGCGif.FontSize = fsiz;
+ GifFont = &(FontListGif[i][fsiz]);
 }
 
 /** To get the values id and size of the current font **/
@@ -2046,8 +2046,8 @@ void C2F(xgetfontGif)(int *verbose, int *font, int *nargs, double *dummy)
     {
       sciprint("\nFontId : %d ",	      ScilabGCGif.FontId );
       sciprint("--> %s at size %s pts\r\n",
-	     "GifFont",
-	     sizeGif[ScilabGCGif.FontSize]);
+	       "GifFont",
+	       sizeGif[ScilabGCGif.FontSize]);
     }
 }
 
@@ -2057,7 +2057,7 @@ void C2F(xsetmarkGif)(int *number, int *size, int *v3, int *v4)
 { 
   ScilabGCGif.CurHardSymb = Max(Min(SYMBOLNUMBER-1,*number),0);
   ScilabGCGif.CurHardSymbSize = Max(Min(FONTMAXSIZE-1,*size),0);
-;}
+  ;}
 
 /** To get the current mark id **/
 
@@ -2067,15 +2067,15 @@ void C2F(xgetmarkGif)(int *verbose, int *symb, int *narg, double *dummy)
   symb[0] = ScilabGCGif.CurHardSymb ;
   symb[1] = ScilabGCGif.CurHardSymbSize ;
   if (*verbose == 1) 
-  sciprint("\nMark : %d at size %d pts\r\n",
-	  ScilabGCGif.CurHardSymb,
-	  isizeGif[ScilabGCGif.CurHardSymbSize]);
+    sciprint("\nMark : %d at size %d pts\r\n",
+	     ScilabGCGif.CurHardSymb,
+	     isizeGif[ScilabGCGif.CurHardSymbSize]);
 }
 
 char symb_listGif[] = {
   /*
-     0x2e : . alors que 0xb7 est un o plein trop gros 
-     ., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
+    0x2e : . alors que 0xb7 est un o plein trop gros 
+    ., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
   (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
   (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
 
@@ -2084,16 +2084,16 @@ static void C2F(displaysymbolsGif)(char *str, int *n, int *vx, int *vy)
   int col, i, c, sz;
   col = ( ScilabGCGif.CurColorStatus ==1) ? ScilabGCGif.CurColor : ScilabGCGif.CurPattern ;
   for (i = 0; i < *n; i++) {
-      c = Char2Int(symb_listGif[ScilabGCGif.CurHardSymb]);
-      gdImageSymb(GifIm, GifFont, vx[i], vy[i], c,GifLineColor());
-      /*            sz = isizeGif[ScilabGCGif.CurHardSymbSize];
-		    gdImageChar(GifIm, GifFont, vx[i], vy[i]-sz, c,GifLineColor());*/
+    c = Char2Int(symb_listGif[ScilabGCGif.CurHardSymb]);
+    gdImageSymb(GifIm, GifFont, vx[i], vy[i], c,GifLineColor());
+    /*            sz = isizeGif[ScilabGCGif.CurHardSymbSize];
+		  gdImageChar(GifIm, GifFont, vx[i], vy[i]-sz, c,GifLineColor());*/
   }
 }
 
 /*-------------------------------------------------------
-\encadre{Check if a specified family of font exist in GIF }
--------------------------------------------------------*/
+  \encadre{Check if a specified family of font exist in GIF }
+  -------------------------------------------------------*/
 
 void C2F(loadfamilyGif)(char *name, int *j, int *v3, int *v4, int *v5, int *v6, int *v7, double *dv1, double *dv2, double *dv3, double *dv4)
 {
@@ -2103,7 +2103,7 @@ void C2F(loadfamilyGif)(char *name, int *j, int *v3, int *v4, int *v5, int *v6, 
   char *SciPath;
   gdFontPtr Font;
 
-/** generic name with % **/
+  /** generic name with % **/
   if ( strchr(name,'%') != (char *) NULL)
     {
       sciprint("Generic font names are not supported by gif driver\n");
@@ -2123,7 +2123,7 @@ void C2F(loadfamilyGif)(char *name, int *j, int *v3, int *v4, int *v5, int *v6, 
       FontInfoTabGif[*j].ok = 0;
       for (i=0;i<FONTMAXSIZE;i++) {
 	Font = &(FontListGif[*j][i]);
-	  if (Font != NULL) free(Font->data);
+	if (Font != NULL) free(Font->data);
       }
     }
   }
@@ -2190,9 +2190,9 @@ static void LoadFontsGif(void)
 
   /*timB */
   /* i = 4;
-  C2F(loadfamilyGif)("timB",&i,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);*/
+     C2F(loadfamilyGif)("timB",&i,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);*/
 
- /*timBI */
+  /*timBI */
   /* i = 5;
      C2F(loadfamilyGif)("timBI",&i,PI0,PI0,PI0,PI0,PI0,PD0,PD0,PD0,PD0);*/
 

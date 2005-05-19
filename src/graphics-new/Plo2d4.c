@@ -14,11 +14,11 @@
 static void Plo2d4RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf);
 /*--------------------------------------------------------------------
   nsp_plot2d_4(xf,x,y,n1,n2,style,strflag,legend,brect,aaint)
---------------------------------------------------------------------------*/
+  --------------------------------------------------------------------------*/
   
 
 int nsp_plot2d_4(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
-		const char *legend,int legend_pos,double brect[],int aaint[])
+		 const char *legend,int legend_pos,double brect[],int aaint[])
 {
   int n;
   int *xm=NULL,*ym=NULL;
@@ -93,86 +93,86 @@ static void Plo2d4RealToPixel(BCG *Xgc,int *n1, int *n2, double *x, double *y, i
       for ( i=0 ; i < (*n2)-1 ; i++)
 	for (j=0 ; j< (*n1) ; j++)
 	  ym[2*i+1+2*(*n2)*j]=	  ym[2*i+2+2*(*n2)*j];
-  }
-else 
-  {
-    for ( i=0 ; i < (*n2) ; i++)
-      for (j=0 ; j< (*n1) ; j++)
+    }
+  else 
+    {
+      for ( i=0 ; i < (*n2) ; i++)
+	for (j=0 ; j< (*n1) ; j++)
 	  ym[2*i+2*(*n2)*j]= YScale(y[i+(*n2)*j]);
-    for ( i=0 ; i < (*n2)-1 ; i++)
-      for (j=0 ; j< (*n1) ; j++)
+      for ( i=0 ; i < (*n2)-1 ; i++)
+	for (j=0 ; j< (*n1) ; j++)
 	  ym[2*i+1+2*(*n2)*j]=	  ym[2*i+2+2*(*n2)*j];
 
-  }
+    }
 
-/** Computing x-values **/
-switch (xf[0])
-  {
- case 'e' :
-   /** No X-value given by the user **/
-   if ((int)strlen(xf) >= 2 && xf[1]=='l')
-     {
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2) ; i++)
-	   xm[2*i+2*(*n2)*j]= XLogScale(i+1.0);
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2)-1 ; i++)
-	   xm[2*i+1+2*(*n2)*j]=	   xm[2*i+2+2*(*n2)*j];
-     }
-   else 
-     {
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2) ; i++)
-	     xm[2*i+2*(*n2)*j]= XScale((i+1.0));
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2)-1 ; i++)
-	   xm[2*i+1+2*(*n2)*j]=	   xm[2*i+2+2*(*n2)*j];
-     }
-   break ;
- case 'o' :
-   if ((int)strlen(xf) >= 2 && xf[1]=='l')
-     {
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2) ; i++)
-	     xm[2*i+2*(*n2)*j]= XLogScale(x[i]);
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2)-1 ; i++)
-	   xm[2*i+1+2*(*n2)*j]=	   xm[2*i+2+2*(*n2)*j];
-     }
-   else 
+  /** Computing x-values **/
+  switch (xf[0])
+    {
+    case 'e' :
+      /** No X-value given by the user **/
+      if ((int)strlen(xf) >= 2 && xf[1]=='l')
+	{
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2) ; i++)
+	      xm[2*i+2*(*n2)*j]= XLogScale(i+1.0);
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2)-1 ; i++)
+	      xm[2*i+1+2*(*n2)*j]=	   xm[2*i+2+2*(*n2)*j];
+	}
+      else 
+	{
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2) ; i++)
+	      xm[2*i+2*(*n2)*j]= XScale((i+1.0));
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2)-1 ; i++)
+	      xm[2*i+1+2*(*n2)*j]=	   xm[2*i+2+2*(*n2)*j];
+	}
+      break ;
+    case 'o' :
+      if ((int)strlen(xf) >= 2 && xf[1]=='l')
+	{
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2) ; i++)
+	      xm[2*i+2*(*n2)*j]= XLogScale(x[i]);
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2)-1 ; i++)
+	      xm[2*i+1+2*(*n2)*j]=	   xm[2*i+2+2*(*n2)*j];
+	}
+      else 
      
-     {
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2) ; i++)
-	     xm[2*i+2*(*n2)*j]= XScale(x[i]);
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2)-1 ; i++)
-	   xm[2*i+1+2*(*n2)*j]=	   xm[2*i+2+2*(*n2)*j];
+	{
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2) ; i++)
+	      xm[2*i+2*(*n2)*j]= XScale(x[i]);
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2)-1 ; i++)
+	      xm[2*i+1+2*(*n2)*j]=	   xm[2*i+2+2*(*n2)*j];
 
-     }
-   break;
- case 'g' :
- default:
-   if ((int)strlen(xf) >= 2 && xf[1]=='l')
-     {
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2) ; i++)
-	     xm[2*i+2*(*n2)*j]= XLogScale(x[i+(*n2)*j]);
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2)-1 ; i++)
-	   xm[2*i+1+2*(*n2)*j]=	   xm[2*i+2+2*(*n2)*j];
+	}
+      break;
+    case 'g' :
+    default:
+      if ((int)strlen(xf) >= 2 && xf[1]=='l')
+	{
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2) ; i++)
+	      xm[2*i+2*(*n2)*j]= XLogScale(x[i+(*n2)*j]);
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2)-1 ; i++)
+	      xm[2*i+1+2*(*n2)*j]=	   xm[2*i+2+2*(*n2)*j];
 
-     }
-   else 
-     {
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2) ; i++)
-	     xm[2*i+2*(*n2)*j]= XScale(x[i+(*n2)*j]);
-       for (j=0 ; j< (*n1) ; j++)
-	 for ( i=0 ; i < (*n2)-1 ; i++)
-	   xm[2*i+1+2*(*n2)*j]=	xm[2*i+2+2*(*n2)*j];
+	}
+      else 
+	{
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2) ; i++)
+	      xm[2*i+2*(*n2)*j]= XScale(x[i+(*n2)*j]);
+	  for (j=0 ; j< (*n1) ; j++)
+	    for ( i=0 ; i < (*n2)-1 ; i++)
+	      xm[2*i+1+2*(*n2)*j]=	xm[2*i+2+2*(*n2)*j];
 
-     }
-   break;
- }
+	}
+      break;
+    }
 }

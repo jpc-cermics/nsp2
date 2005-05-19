@@ -59,7 +59,7 @@ static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[]);
 
 static void compute_ticks(double *vmin, double *vmax, double **Ticks, int *Nb_ticks);
 static int build_ticks_segment(Plot3dBox *B, double xmin, double xmax, 
-				double ymin, double ymax, double zmin, double zmax);
+			       double ymin, double ymax, double zmin, double zmax);
 static void build_xtick_seg(double *coord, int *num_sg, double x, double axe[], double sens[]);
 static void build_ytick_seg(double *coord, int *num_sg, double y, double axe[], double sens[]);
 static void build_ztick_seg(double *coord, int *num_sg, double z, double axe[], double sens[]);
@@ -125,10 +125,10 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
 
 /* des  variables globales... */
 GBoolean with_mesh;  /*  actuellement soit on dessine tous les polyedres
-                     *  avec ou sans le maillage mais il serait possible
-                     *  d'en avoir certains avec le maillage et d'autres sans
-                     *  cf variable with_mesh des objets polyedres a ce niveau
-		     */
+		      *  avec ou sans le maillage mais il serait possible
+		      *  d'en avoir certains avec le maillage et d'autres sans
+		      *  cf variable with_mesh des objets polyedres a ce niveau
+		      */
 
 int display_mode = INTERP;
 int ticks_font_type = 2;
@@ -426,7 +426,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
       B->nb_xyz_ticks = B->nb_xticks + B->nb_yticks + B->nb_zticks;
     }
   else
-      B->with_ticks = BFALSE;
+    B->with_ticks = BFALSE;
     
   B->box_style = box_style;
   B->segment = box_segments;
@@ -472,7 +472,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
 #ifdef WITH_GTKGLEXT 
       if ( Xgc->graphic_engine != &GL_gengine ) 
 #endif	
-      apply_transforms(Xgc, B->others_coord,B->others_coord, B->others_pos, lim, 4*(B->nb_xyz_ticks));
+	apply_transforms(Xgc, B->others_coord,B->others_coord, B->others_pos, lim, 4*(B->nb_xyz_ticks));
     }      
   return ( B );
 }
@@ -574,7 +574,7 @@ static void build_ztick_seg(double *coord, int *num_sg, double z, double axe[], 
 }
 
 static int build_box_others_segment(Plot3dBox *B, double xmin, double xmax, 
-				     double ymin, double ymax, double zmin, double zmax)
+				    double ymin, double ymax, double zmin, double zmax)
 {
   /* compute the 3 faces where these segments are drawn */
   int f[3], i, j, k, nf=0, sg=0;
@@ -858,10 +858,10 @@ static void permut_of_sort(int *tab, int *perm)
 static void find_intersection(int *sx, int *sy, double *fxy, double z, 
 			      int inda, int indb, int *xint, int *yint)
 { 
-   double alpha;
-   alpha = (z - fxy[inda])/(fxy[indb] - fxy[inda]);
-   *xint = (int) ((1.0 - alpha)*sx[inda] + alpha*sx[indb]);
-   *yint = (int) ((1.0 - alpha)*sy[inda] + alpha*sy[indb]);
+  double alpha;
+  alpha = (z - fxy[inda])/(fxy[indb] - fxy[inda]);
+  *xint = (int) ((1.0 - alpha)*sx[inda] + alpha*sx[indb]);
+  *yint = (int) ((1.0 - alpha)*sy[inda] + alpha*sy[indb]);
 } 
 
 static int zone(double val, double valmin, double valmax, int nv)
@@ -911,14 +911,14 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
      at least 2 colors for painting the triangle : it is divided in elementary
      polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
 
-                             P2           as zxy[0] <= zxy[1] <  zxy[2] or 
+     P2           as zxy[0] <= zxy[1] <  zxy[2] or 
      Notations/Hints :       /\              zxy[0] <  zxy[1] <= zxy[2]
-                     edge2  /  \ edge1    from a previus sort. All the polygons
-                           /    \         have 2 points on edge2, the others points
-                          /______\        are on edge0 and/or edge1. I name the 2 ends
-                        P0        P1      points on each poly PEdge2 and Pedge, they are 
-                            edge0         the 2 first points of the next poly. I start
-                                          from P0 to form the first poly (a triangle or
+     edge2  /  \ edge1    from a previus sort. All the polygons
+     /    \         have 2 points on edge2, the others points
+     /______\        are on edge0 and/or edge1. I name the 2 ends
+     P0        P1      points on each poly PEdge2 and Pedge, they are 
+     edge0         the 2 first points of the next poly. I start
+     from P0 to form the first poly (a triangle or
      a 4 sides depending if zxy[0]=zxy[1]), then the 2, 3, .., npolys - 1 (if they exist)
      and finally the last one which comprise the P2 vertex.  In some special cases
      we can have a degenerate poly but it doesn't matter ! 				  
@@ -927,8 +927,8 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
   nb0 = zxy[1]-zxy[0]; /* number of intersection points on edge 0 */
 
   /*----------------------------+
-  |   compute the first poly    |
-  +----------------------------*/
+    |   compute the first poly    |
+    +----------------------------*/
   
   resx[0] = sx[0]; resy[0] = sy[0]; nr = 1; edge = 0;
   if ( nb0 == 0 )  /* the intersection point is on Edge1 but */
@@ -949,8 +949,8 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
     Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
 
   /*------------------------------------+ 
-  | compute the intermediary polygon(s) |
-  +------------------------------------*/
+    | compute the intermediary polygon(s) |
+    +------------------------------------*/
 
   for ( izone = zxy[0]+1 ; izone < zxy[2] ; izone++ ) 
     {
@@ -978,8 +978,8 @@ static void interp_color_triangle(BCG *Xgc,int *x, int *y, double *v, int *z, do
     };
 
   /*-----------------------+ 
-  | compute the last poly  |
-  +-----------------------*/
+    | compute the last poly  |
+    +-----------------------*/
   resx[0] = xEdge2; resy[0] = yEdge2;         /* the 2 first points are known */
   resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
   if ( edge == 0 )  /* the next point of the poly is P1 */
@@ -1733,7 +1733,7 @@ static int get_spolyhedron(Stack *stack,int k,NspHash *H,SPolyhedron *Q,int *nf)
 
   dv = (Q->vmax - Q->vmin)/Q->nb_levels;
   Q->vlevel[0] = Q->vmin;
-    for ( i = 1 ; i < Q->nb_levels ; i++ )
+  for ( i = 1 ; i < Q->nb_levels ; i++ )
     Q->vlevel[i] = Q->vmin + i*dv;
   Q->vlevel[Q->nb_levels] = Q->vmax;
 

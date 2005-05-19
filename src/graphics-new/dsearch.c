@@ -1,8 +1,8 @@
- /*------------------------------------------------------------------
-  * Copyright 2004 
-  *   Bruno Pincon  Bruno.Pincon@iecn.u-nancy.fr
-  *   Jean-Philippe Chancelier Enpc/Cermics jpc@cermics.enpc.fr 
-  *------------------------------------------------------------------*/
+/*------------------------------------------------------------------
+ * Copyright 2004 
+ *   Bruno Pincon  Bruno.Pincon@iecn.u-nancy.fr
+ *   Jean-Philippe Chancelier Enpc/Cermics jpc@cermics.enpc.fr 
+ *------------------------------------------------------------------*/
 
 #include <math.h>
 #include <stdio.h>
@@ -48,17 +48,17 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
   /* CheckVector(stack.fname,1,x);*/
   if ((val =GetRealMat(stack,2))== NULLMAT ) return RET_BUG;
   CheckVector(stack.fname,2,val)
-  if ( rhs == 3 ) 
-    {
-      if ((type = GetString(stack,3)) == (char*)0) return RET_BUG;
-      if ( strcmp(type,"c") != 0 && strcmp(type,"d") != 0 ) 
-	{
-	  Scierror("Error: wrong second argument in function %s\n",stack.fname);
-	  Scierror("\tonly 'c' or 'd' are allowed\n");
-	  return RET_BUG;
-	}
-      c = type[0];
-    }
+    if ( rhs == 3 ) 
+      {
+	if ((type = GetString(stack,3)) == (char*)0) return RET_BUG;
+	if ( strcmp(type,"c") != 0 && strcmp(type,"d") != 0 ) 
+	  {
+	    Scierror("Error: wrong second argument in function %s\n",stack.fname);
+	    Scierror("\tonly 'c' or 'd' are allowed\n");
+	    return RET_BUG;
+	  }
+	c = type[0];
+      }
   if (( ind = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT ) return RET_BUG;
   m_occ = val->m ; 
   n_occ = val->n ;

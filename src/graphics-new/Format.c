@@ -21,13 +21,13 @@
 extern double nsp_dlamch (char *cmach);
 
 static void FormatPrec (char *fmt, int *desres, double xmin, double xmax, 
-				double xpas);
+			double xpas);
 static void FormatPrec1 (char *fmt, int *desres, double *xx, int nx);
 static int Fsepare (char *fmt, int dec, int *l, double xmin, double xmax, 
-			    double xpas);
+		    double xpas);
 static int Fsepare1 (char *fmt, int dec, int *l, double *xx, int nx);
 static void graduate1 (double *xmi,double * xma,double * xi,double * xa,
-			       int * np1,int * np2,int * kminr,int * kmaxr,int * ar,int count);
+		       int * np1,int * np2,int * kminr,int * kmaxr,int * ar,int count);
 
 static void gradua ( double *xmi, double *xma,int * kminr,int *kmaxr,int *ar,int *npr,int *b);
 static void decompSup (double x,int * xk,int *  xa,int   b);
@@ -114,10 +114,10 @@ static int Fsepare(char *fmt, int dec, int *l, double xmin, double xmax, double 
   sprintf(buf1,fmt,dec,xmin);
   while ( x < xmax ) 
     { x += xpas;
-      strcpy(buf2,buf1);
-      sprintf(buf1,fmt,dec,x);
-      *l = (((int)strlen(buf1) >= *l) ? strlen(buf1) : *l) ;
-      if ( strcmp(buf1,buf2) == 0) return(0);
+    strcpy(buf2,buf1);
+    sprintf(buf1,fmt,dec,x);
+    *l = (((int)strlen(buf1) >= *l) ? strlen(buf1) : *l) ;
+    if ( strcmp(buf1,buf2) == 0) return(0);
     }
   return(1);
 }
@@ -195,9 +195,9 @@ static int Fsepare1(char *fmt, int dec, int *l, double *xx, int nx)
   sprintf(buf1,fmt,dec,xx[0]);
   for ( i=1 ; i < nx ; i++)
     { strcpy(buf2,buf1);
-      sprintf(buf1,fmt,dec,xx[i]);
-      *l = (((int)strlen(buf1) >= *l) ? strlen(buf1) : *l) ;
-      if ( strcmp(buf1,buf2) == 0) return(0);
+    sprintf(buf1,fmt,dec,xx[i]);
+    *l = (((int)strlen(buf1) >= *l) ? strlen(buf1) : *l) ;
+    if ( strcmp(buf1,buf2) == 0) return(0);
     }
   return(1);
 }
@@ -259,13 +259,13 @@ static void graduate1(double *xmi, double *xma, double *xi, double *xa, int *np1
       int iexp ;
       /* fprintf(stderr,"je ne peux decomposer les 2 nombres sont identiques\n"); */
       /* 
-	a la precision donnee les deux nombre ne peuvent etre decomposer 
-	kmin,kmax devrait sinon depasser maxint
-	on les ecarte de ce qu'il faut pour pouvoir 
-	les separer. 
-	Attention : il faut faire attention de bien choisir iexp
-	pour ne pas boucler la dedans 
-	*/
+	 a la precision donnee les deux nombre ne peuvent etre decomposer 
+	 kmin,kmax devrait sinon depasser maxint
+	 on les ecarte de ce qu'il faut pour pouvoir 
+	 les separer. 
+	 Attention : il faut faire attention de bien choisir iexp
+	 pour ne pas boucler la dedans 
+      */
       iexp = 9 - dxmi -1; 
       xmi1 = *xmi-exp10((double) - iexp);
       xma1 = *xmi+exp10((double) - iexp);
@@ -284,7 +284,7 @@ static void graduate1(double *xmi, double *xma, double *xi, double *xa, int *np1
       *xi= (*kminr)*exp10((double) *ar);
       *xa= (*kmaxr)*exp10((double) *ar);
       /** fprintf(stderr,"\tRes=[%20.10f,%20.10f]-->[%d,%d,10^%d,%d]\n",*xi,*xa
-	      ,*kminr,*kmaxr,*ar,npr); */
+	  ,*kminr,*kmaxr,*ar,npr); */
       *np2= npr;
       if ( *np2 <= 20 ) 
 	{
@@ -296,12 +296,12 @@ static void graduate1(double *xmi, double *xma, double *xi, double *xa, int *np1
 	b--;
     }
   /* 
-    on veut essayer de ne pas depasser 10 intervalles ( *np2 <= 10) 
-    pour les intervalle ou on ecrit un nombre,
-    or on peut en avoir jusqu'a 20. On regarde si le nombre d'intervalle 
-    est divisible. on aura alors une graduation en np2 pour l'ecriture 
-    des nombres et une sous graduation np1 juste avec des tirets.
-    */
+     on veut essayer de ne pas depasser 10 intervalles ( *np2 <= 10) 
+     pour les intervalle ou on ecrit un nombre,
+     or on peut en avoir jusqu'a 20. On regarde si le nombre d'intervalle 
+     est divisible. on aura alors une graduation en np2 pour l'ecriture 
+     des nombres et une sous graduation np1 juste avec des tirets.
+  */
   *np1= 2 ;
   if ( *np2 <= 10 ) return ;
   /* le nombre est > 10 : s'il est impair on rajoute 1 
@@ -581,7 +581,7 @@ static void newbnds(double *xminv,double *xmaxv,double *xmin, double *xmax, doub
   double fmin, fmax, sgmin, sgmax, sclmax,sclmin, arguc, arguf, scl;
   flexpo1(xminv,&fmin,&sgmin,&sclmin);
   flexpo1(xmaxv,&fmax,&sgmax,&sclmax);
-    if ( ABS(*xmaxv) > ABS(*xminv)) 
+  if ( ABS(*xmaxv) > ABS(*xminv)) 
     {scl=sclmax;}
   else
     {scl=sclmin;}
@@ -697,7 +697,7 @@ int gr_compute_ticks(double *xminv,double *xmaxv,double *grads, int *ngrads)
     *ngrads=1;grads[0]=*xminv; return 1; 
   }
   if (*xmaxv != *xmaxv) {
-   *ngrads=1;grads[0]=*xmaxv; return 1; 
+    *ngrads=1;grads[0]=*xmaxv; return 1; 
   }
 
   if (*xminv == *xmaxv) {

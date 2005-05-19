@@ -23,12 +23,12 @@ static void Plo2d1RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, 
   if xf[0]='e' for empty : x can point to nothing, the x -values 
   are assumed to be x[i+(*n2)*j]= i 
   if xf[0]='o' for one   : all the curves have the same x values 
-     x is of size *n2  xx[i+(*n2)*j] = x[i];
+  x is of size *n2  xx[i+(*n2)*j] = x[i];
   if xf[0]='g' for general : x is of size (*n2)*(n1);
 
   xf[1]='l' or 'n' LogAxis or standard on X
   xf[2]='l' or 'n' LogAxis or standard on Y
---------------------------------------------------------------------------*/
+  --------------------------------------------------------------------------*/
 
 int nsp_plot2d_1(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 		 const char *legend,int legend_pos,double brect[],int aaint[])
@@ -73,7 +73,7 @@ int nsp_plot2d_1(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 
 	}
     }
- return(0);
+  return(0);
 
 }
 

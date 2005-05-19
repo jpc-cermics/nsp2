@@ -442,7 +442,7 @@ void C2F(xclick_any)(char *str, int *ibutton, int *x1, int *yy1, int *iwin, int 
 	set_client_message_off();
 	return ;
       }
-   XNextEvent (dpy, &event);
+    XNextEvent (dpy, &event);
 
 #ifdef WITH_TK
     flushTKEvents(); 
@@ -959,24 +959,24 @@ static struct alinfo {
   char *name;
   char id;
   char *info;} AluStruc_[] =
-  { 
-    {"GXclear" ,GXclear," 0 "},
-    {"GXand" ,GXand," src AND dst "},
-    {"GXandReverse" ,GXandReverse," src AND NOT dst "},
-    {"GXcopy" ,GXcopy," src "},
-    {"GXandInverted" ,GXandInverted," NOT src AND dst "},
-    {"GXnoop" ,GXnoop," dst "},
-    {"GXxor" ,GXxor," src XOR dst "},
-    {"GXor" ,GXor," src OR dst "},
-    {"GXnor" ,GXnor," NOT src AND NOT dst "},
-    {"GXequiv" ,GXequiv," NOT src XOR dst "},
-    {"GXinvert" ,GXinvert," NOT dst "},
-    {"GXorReverse" ,GXorReverse," src OR NOT dst "},
-    {"GXcopyInverted" ,GXcopyInverted," NOT src "},
-    {"GXorInverted" ,GXorInverted," NOT src OR dst "},
-    {"GXnand" ,GXnand," NOT src OR NOT dst "},
-    {"GXset" ,GXset," 1 "}
-  };
+    { 
+      {"GXclear" ,GXclear," 0 "},
+      {"GXand" ,GXand," src AND dst "},
+      {"GXandReverse" ,GXandReverse," src AND NOT dst "},
+      {"GXcopy" ,GXcopy," src "},
+      {"GXandInverted" ,GXandInverted," NOT src AND dst "},
+      {"GXnoop" ,GXnoop," dst "},
+      {"GXxor" ,GXxor," src XOR dst "},
+      {"GXor" ,GXor," src OR dst "},
+      {"GXnor" ,GXnor," NOT src AND NOT dst "},
+      {"GXequiv" ,GXequiv," NOT src XOR dst "},
+      {"GXinvert" ,GXinvert," NOT dst "},
+      {"GXorReverse" ,GXorReverse," src OR NOT dst "},
+      {"GXcopyInverted" ,GXcopyInverted," NOT src "},
+      {"GXorInverted" ,GXorInverted," NOT src OR dst "},
+      {"GXnand" ,GXnand," NOT src OR NOT dst "},
+      {"GXset" ,GXset," 1 "}
+    };
 
 
 static void idfromname(char *name1, int *num)
@@ -1285,7 +1285,7 @@ static void xget_dash(int *verbose, int *value, int *narg, double *dummy)
 
 static void xget_dash_and_color(int *verbose, int *value, int *narg, double *dummy)
 {
-/*may be improved replacing 6 by narg */
+  /*may be improved replacing 6 by narg */
   xget_dash(verbose, value, narg,dummy);
   xget_pattern(verbose, value+6, narg,dummy);
   *narg = 6;
@@ -1825,10 +1825,10 @@ void setcolormap3(int m, double *a);
 
 /* Setting the colormap 
    a must be a m x 3 double RGB matrix: 
-     a[i] = RED
-     a[i+m] = GREEN
-     a[i+2*m] = BLUE
-     *v2 gives the value of m and *v3 must be equal to 3 */
+   a[i] = RED
+   a[i+m] = GREEN
+   a[i+2*m] = BLUE
+   *v2 gives the value of m and *v3 must be equal to 3 */
 
 static void xset_colormap(int *v1, int *v2, int *v3, int *v4, int *v5, int *v6, double *a)
 {
@@ -2521,8 +2521,8 @@ void C2F(boundingbox)(char *string, int *x, int *y, int *rect, int *v5, int *v6,
 }
 
 /*------------------------------------------------
-subsection{ Segments and Arrows }
--------------------------------------------------*/
+  subsection{ Segments and Arrows }
+  -------------------------------------------------*/
 
 void C2F(drawline)(int *x1, int *yy1, int *x2, int *y2)
 {
@@ -3355,7 +3355,7 @@ void C2F(xinfo)(char *message, int *v2, int *v3, int *v4, int *v5, int *v6, int 
 #ifdef __STDC__ 
 void wininfo(char *format,...) 
 #else 
-void wininfo(va_alist) va_dcl
+     void wininfo(va_alist) va_dcl
 #endif 
 {
   /* Extended call for C calling */
@@ -3497,26 +3497,26 @@ Window Find_BG_Window(int i)
 
 #define STR2 "objfigure1"
 /*** XXXXXXXXXX
-extern Display *XTKdisplay;
+     extern Display *XTKdisplay;
 
-Window Find_TK_Window(i)
+     Window Find_TK_Window(i)
      int i;
-{
-  char wname[sizeof(STR2)+4];
-  Window w;
-  sprintf(wname,STR2,(int) i);
-  DbugInfo1("Searching %s\n",wname);
-  w=Window_With_Name(RootWindow(dpy,DefaultScreen(dpy)),wname,0,
-			  ResList[1],ResList[2],ResList[2]);
-  dpy = XTKdisplay;
-  return(w);
-}
+     {
+     char wname[sizeof(STR2)+4];
+     Window w;
+     sprintf(wname,STR2,(int) i);
+     DbugInfo1("Searching %s\n",wname);
+     w=Window_With_Name(RootWindow(dpy,DefaultScreen(dpy)),wname,0,
+     ResList[1],ResList[2],ResList[2]);
+     dpy = XTKdisplay;
+     return(w);
+     }
 **/
 
-  /*
-   * make sure that the window is valid
-   * There's no function to really check this in X11
-   */
+/*
+ * make sure that the window is valid
+ * There's no function to really check this in X11
+ */
 #include <setjmp.h>
 
 static jmp_buf my_env;
@@ -3686,7 +3686,7 @@ static void ResetScilabXgc (void)
   \item $init$. Initial point $<x,y>$. 
   \end{itemize}
   
--------------------------------------------------------------*/
+  -------------------------------------------------------------*/
 
 void C2F(drawaxis)(char *str, int *alpha, int *nsteps, int *v2, int *initpoint, int *v6, int *v7, double *size, double *dx2, double *dx3, double *dx4)
 { int i;

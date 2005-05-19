@@ -5,9 +5,9 @@
  --------------------------------------------------------------------------*/
 
 /*----------------------BEGIN----------------------
-\def\encadre#1{\paragraph{}\fbox{\begin{minipage}[t]{15cm}#1 \end{minipage}}}
-\section{A Fig Driver}
----------------------------------------------------*/
+  \def\encadre#1{\paragraph{}\fbox{\begin{minipage}[t]{15cm}#1 \end{minipage}}}
+  \section{A Fig Driver}
+  ---------------------------------------------------*/
 
 #include <stdio.h>
 #include <math.h>
@@ -42,7 +42,7 @@ static void fig_set_color(BCG *Xgc,int c, int *color);
 #define SYMBOLNUMBER 10
 int FontsListXfig_[FONTNUMBER][FONTMAXSIZE];
 struct SciFontInfo { int ok;
-		  char fname[20];} FontInfoTabXfig_[FONTNUMBER];
+  char fname[20];} FontInfoTabXfig_[FONTNUMBER];
 /* xfig code for our fonts **/
 static int  xfig_font[]= { 12,32,0,1,2,3,0};
 /* static char *sizeXfig_[] = { "08" ,"10","12","14","18","24"};*/
@@ -60,8 +60,8 @@ static void FileInit (BCG *Xgc);
 
 static char symb_list[] = {
   /*
-     0x2e : . alors que 0xb7 est un o plein trop gros 
-     ., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
+    0x2e : . alors que 0xb7 est un o plein trop gros 
+    ., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
   (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
   (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
 
@@ -112,8 +112,8 @@ unsigned short  default_colors[] = {
 };
 
 /*-----------------------------------------------------
-\encadre{General routines}
------------------------------------------------------*/
+  \encadre{General routines}
+  -----------------------------------------------------*/
 
 /* To select the graphic Window  **/
 
@@ -245,7 +245,7 @@ static int xset_curwin(int intnum, int set_menu)
   BCG *Xgc = &ScilabGCXfig; 
   int i =  Xgc->CurWindow;
   Xgc->CurWindow  = intnum;
- return i;
+  return i;
 }
 
 /* Get the id number of the Current Graphic Window **/
@@ -295,11 +295,11 @@ static void xget_clip(BCG *Xgc, int *x)
 }
 
 /*----------------------------------------------------------
-\encadre{For the drawing functions dealing with vectors of 
- points, the following routine is used to select the mode 
- absolute or relative }
- Absolute mode if *num==0, relative mode if *num != 0
-------------------------------------------------------------*/
+  \encadre{For the drawing functions dealing with vectors of 
+  points, the following routine is used to select the mode 
+  absolute or relative }
+  Absolute mode if *num==0, relative mode if *num != 0
+  ------------------------------------------------------------*/
 
 static void xset_absourel(BCG *Xgc,int num)
 {
@@ -338,41 +338,41 @@ struct alinfo {
   char *name;
   char id;
   char *info;} AluStrucXfig_[] =
-{ 
-  {"GXclear" ,GXclear," 0 "},
-  {"GXand" ,GXand," src AND dst "},
-  {"GXandReverse" ,GXandReverse," src AND NOT dst "},
-  {"GXcopy" ,GXcopy," src "},
-  {"GXandInverted" ,GXandInverted," NOT src AND dst "},
-  {"GXnoop" ,GXnoop," dst "},
-  {"GXxor" ,GXxor," src XOR dst "},
-  {"GXor" ,GXor," src OR dst "},
-  {"GXnor" ,GXnor," NOT src AND NOT dst "},
-  {"GXequiv" ,GXequiv," NOT src XOR dst "},
-  {"GXinvert" ,GXinvert," NOT dst "},
-  {"GXorReverse" ,GXorReverse," src OR NOT dst "},
-  {"GXcopyInverted" ,GXcopyInverted," NOT src "},
-  {"GXorInverted" ,GXorInverted," NOT src OR dst "},
-  {"GXnand" ,GXnand," NOT src OR NOT dst "},
-  {"GXset" ,GXset," 1 "}
-};
+    { 
+      {"GXclear" ,GXclear," 0 "},
+      {"GXand" ,GXand," src AND dst "},
+      {"GXandReverse" ,GXandReverse," src AND NOT dst "},
+      {"GXcopy" ,GXcopy," src "},
+      {"GXandInverted" ,GXandInverted," NOT src AND dst "},
+      {"GXnoop" ,GXnoop," dst "},
+      {"GXxor" ,GXxor," src XOR dst "},
+      {"GXor" ,GXor," src OR dst "},
+      {"GXnor" ,GXnor," NOT src AND NOT dst "},
+      {"GXequiv" ,GXequiv," NOT src XOR dst "},
+      {"GXinvert" ,GXinvert," NOT dst "},
+      {"GXorReverse" ,GXorReverse," src OR NOT dst "},
+      {"GXcopyInverted" ,GXcopyInverted," NOT src "},
+      {"GXorInverted" ,GXorInverted," NOT src OR dst "},
+      {"GXnand" ,GXnand," NOT src OR NOT dst "},
+      {"GXset" ,GXset," 1 "}
+    };
 
 void idfromname(char *name1, int *num)
 {
   int i;
- *num = -1;
- for ( i =0 ; i < 16;i++)
-   if (strcmp(AluStrucXfig_[i].name,name1)== 0) 
-     *num=AluStrucXfig_[i].id;
- if (*num == -1 ) 
-   {
-     Scistring("\n Use the following keys :");
-     for ( i=0 ; i < 16 ; i++)
-       {
-	 sciprint("\nkey %s ",AluStrucXfig_[i].name);
-	 sciprint("-> %s\r\n",AluStrucXfig_[i].info);
-       }
-   }
+  *num = -1;
+  for ( i =0 ; i < 16;i++)
+    if (strcmp(AluStrucXfig_[i].name,name1)== 0) 
+      *num=AluStrucXfig_[i].id;
+  if (*num == -1 ) 
+    {
+      Scistring("\n Use the following keys :");
+      for ( i=0 ; i < 16 ; i++)
+	{
+	  sciprint("\nkey %s ",AluStrucXfig_[i].name);
+	  sciprint("-> %s\r\n",AluStrucXfig_[i].info);
+	}
+    }
 }
 
 
@@ -411,11 +411,11 @@ static int xget_thickness(BCG *Xgc)
 }
      
 /*-------------------------------------------------
-\encadre{To set grey level for filing areas.
+  \encadre{To set grey level for filing areas.
   from black (*num =0 ) to white 
   you must use the get function to get the id of 
   the white pattern }
-----------------------------------------------------*/
+  ----------------------------------------------------*/
 
 static int xset_pattern(BCG *Xgc,int num)
 { 
@@ -539,16 +539,16 @@ static int xget_dash(BCG *Xgc)
 {
   return Xgc->CurDashStyle+1; 
   /* 
-  *narg = 3;
-  value[0]=i+1;
-  value[1]=DashTab[i];
-  value[2]=DashTabStyle[i];
-  if (*verbose ==1 ) 
-    {
-      sciprint("\nDash Style %d.",(int) *value);
-      sciprint("%d %d ",(int)value[1],(int)value[2]);
-      Scistring(">\n");
-    }
+   *narg = 3;
+   value[0]=i+1;
+   value[1]=DashTab[i];
+   value[2]=DashTabStyle[i];
+   if (*verbose ==1 ) 
+   {
+   sciprint("\nDash Style %d.",(int) *value);
+   sciprint("%d %d ",(int)value[1],(int)value[2]);
+   Scistring(">\n");
+   }
   */
  
 }
@@ -838,15 +838,15 @@ static void pixmap_resize(BCG *Xgc)
 
 
 /*-----------------------------------------------------------
-\encadre{Functions for drawing}
------------------------------------------------------------*/
+  \encadre{Functions for drawing}
+  -----------------------------------------------------------*/
 
 /*----------------------------------------------------
-\encadre{display of a string
- at (x,y) position whith angle (alpha). Angles in degree
- positive when clockwise. If *flag ==1 a framed  box is added 
- around the string.}
------------------------------------------------------*/
+  \encadre{display of a string
+  at (x,y) position whith angle (alpha). Angles in degree
+  positive when clockwise. If *flag ==1 a framed  box is added 
+  around the string.}
+  -----------------------------------------------------*/
 
 static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double angle)
 {    
@@ -867,13 +867,13 @@ static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double 
   Dvalue1 = xget_pattern(Xgc);
   fig_set_color(Xgc,Dvalue1,&pen_color);
   FPRINTF((file,"4 0 %d 0 0 %d %d %5.2f %d %5.2f %5.2f %d %d %s\\001\n",
-	  pen_color,
-	  (int)font,
-	  (int)isizeXfig_[Xgc->fontSize],/*prec_fact,*/
-	  -(M_PI/180.0)*(angle),
-	  (int)font_flag,
-	  (double) rect[3],
-	  (double) rect[2],
+	   pen_color,
+	   (int)font,
+	   (int)isizeXfig_[Xgc->fontSize],/*prec_fact,*/
+	   -(M_PI/180.0)*(angle),
+	   (int)font_flag,
+	   (double) rect[3],
+	   (double) rect[2],
 	   x,y, string));
   if ( flag == 1) 
     {
@@ -883,11 +883,11 @@ static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double 
 }
 
 int bsizeXfig_[6][4]= {{ 0,-7,463,9  },
-		{ 0,-9,574,12 },
-		{ 0,-11,674,14},
-		{ 0,-12,779,15},
-		{0, -15,972,19 },
-		{0,-20,1341,26}};
+		       { 0,-9,574,12 },
+		       { 0,-11,674,14},
+		       { 0,-12,779,15},
+		       {0, -15,972,19 },
+		       {0,-20,1341,26}};
 
 /* To get the bounding rectangle of a string **/
 
@@ -902,8 +902,8 @@ void boundingbox(BCG *Xgc,char *string, int x, int y, int rect[])
 }
 
 /* 
-  Bounding box for marks : we have used xfig to get the  bounding boxes
-  ie the correct w and h ( rect[2],rect[3]) 
+   Bounding box for marks : we have used xfig to get the  bounding boxes
+   ie the correct w and h ( rect[2],rect[3]) 
 **/
 
 
@@ -927,8 +927,8 @@ int symb_yh[FONTMAXSIZE][SYMBOLNUMBER]={
 
 
 /* To get the bounding rectangle of a symbol 
-  in fact just rect[3] is really used 
-  **/
+   in fact just rect[3] is really used 
+**/
 
 
 static void boundingboxM(BCG *Xgc,char *string, int x, int y, int *rect)
@@ -955,8 +955,8 @@ static void boundingboxM(BCG *Xgc,char *string, int x, int y, int *rect)
 /* segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/
 /* for i=0 step 2 **/
 /*   if iflag == 1 style[i] gives the style for each segment
-      if iflag == 0 (if *style >0 ) it   gives the style for all the  segment 
-                    (if *style <0 ) The default style is used for all the  segment 
+     if iflag == 0 (if *style >0 ) it   gives the style for all the  segment 
+     (if *style <0 ) The default style is used for all the  segment 
 **/
 
 static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag)
@@ -981,19 +981,19 @@ static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag
       fill_color = WHITE;
       FPRINTF((file,"# Object : %d %s -<%d>- \n", (int)i,"segments", Xgc->CurPattern));
       FPRINTF((file,"2 1 %d %d %d %d 0 0 -1 %d.000 0 0 0 0 0 2\n",
-	      l_style,
-	      Xgc->CurLineWidth*prec_fact/16,
-	      pen_color,fill_color,
-	      style_val
-	      ));
+	       l_style,
+	       Xgc->CurLineWidth*prec_fact/16,
+	       pen_color,fill_color,
+	       style_val
+	       ));
       FPRINTF((file," %d %d %d %d \n",
-	      (int)vx[2*i], (int)vy[2*i], (int)vx[2*i+1], (int)vy[2*i+1]));
+	       (int)vx[2*i], (int)vy[2*i], (int)vx[2*i+1], (int)vy[2*i+1]));
     }
 }
 
 /* Draw a set of arrows 
-  if iflag == 1 style[i] gives the style for each arrow 
-  if iflag == 0 *style   gives the style for all the arrows
+   if iflag == 1 style[i] gives the style for each arrow 
+   if iflag == 0 *style   gives the style for all the arrows
 **/
 
 static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int iflag)
@@ -1019,15 +1019,15 @@ static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int
       fill_color = WHITE;
       FPRINTF((file,"# Object : %d %s -<%d>-\n", (int)i,"arrows", Xgc->CurPattern));
       FPRINTF((file,"2 1 %d %d %d %d 0 0 -1 %d.000 0 0 0 1 0 2\n",
-	      l_style,
-	      Xgc->CurLineWidth*prec_fact/16,
-	      pen_color,fill_color,
-	      style_val
-	      ));
+	       l_style,
+	       Xgc->CurLineWidth*prec_fact/16,
+	       pen_color,fill_color,
+	       style_val
+	       ));
       FPRINTF((file,"    0 0 %d %d %d\n",
-	      (int)(1*prec_fact/16), (int)(3*prec_fact), (int) (6*prec_fact)));
+	       (int)(1*prec_fact/16), (int)(3*prec_fact), (int) (6*prec_fact)));
       FPRINTF((file," %d %d %d %d \n",
-	      (int)vx[2*i], (int)vy[2*i], (int)vx[2*i+1], (int)vy[2*i+1]));
+	       (int)vx[2*i], (int)vy[2*i], (int)vx[2*i+1], (int)vy[2*i+1]));
     }
 }
 
@@ -1310,8 +1310,8 @@ static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
 }
  
 /*-----------------------------------------------------
-\encadre{Routine for initialisation}
-------------------------------------------------------*/
+  \encadre{Routine for initialisation}
+  ------------------------------------------------------*/
 
 static void initgraphic(char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
 { 
@@ -1360,7 +1360,7 @@ static void FileInit(BCG *Xgc)
   
   FPRINTF((file,"2 2 0 0 -1 -1 0 0 -1 0.000 0 0 0 0 0 5\n"));
   FPRINTF((file," %d %d %d %d %d %d %d %d %d %d \n",
-	  0,0,(int)x[0],0,(int)x[0],(int)x[1],0,(int)x[1],0,0));
+	   0,0,(int)x[0],0,(int)x[0],(int)x[1],0,(int)x[1],0,0));
 }
 
 
@@ -1372,9 +1372,9 @@ static void xinfo(BCG *Xgc,char *format,...) {}
 
 
 /*--------------------------------------------------------
-\encadre{Initialisation of the graphic context. Used also 
-to come back to the default graphic state}
----------------------------------------------------------*/
+  \encadre{Initialisation of the graphic context. Used also 
+  to come back to the default graphic state}
+  ---------------------------------------------------------*/
 static void xset_default(BCG *Xgc)
 {
   InitScilabGCXfig(Xgc);
@@ -1457,81 +1457,81 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *s
   if ( alpha == 90 )
     {cosal = 0.0 ; sinal =1.0 ;}
   else 
-   {
-     if ( alpha == -90 )
-       {cosal = 0.0 ; sinal = -1.0 ;}
-     else 
-       {
-	 cosal= cos( M_PI * (alpha)/180.0);
-	 sinal= sin( M_PI * (alpha)/180.0);
-       }
-   }
+    {
+      if ( alpha == -90 )
+	{cosal = 0.0 ; sinal = -1.0 ;}
+      else 
+	{
+	  cosal= cos( M_PI * (alpha)/180.0);
+	  sinal= sin( M_PI * (alpha)/180.0);
+	}
+    }
   for (i=0; i <= nsteps[0]*nsteps[1]; i++)
     { xi = initpoint[0]+i*size[0]*cosal;
-      yi = initpoint[1]+i*size[0]*sinal;
-      xf = xi - ( size[1]*sinal);
-      yf = yi + ( size[1]*cosal);
-      FPRINTF((file,"2 1 0 %d %d %d 0 0 -1 0.000 0 0 0 0 0 2\n",
-	      Xgc->CurLineWidth*prec_fact/16,
-	      pen_color,
-	      pen_color
-	      ));
-      FPRINTF((file," %d %d %d %d \n",(int)xi, (int)yi,  (int)  xf, (int)yf));
+    yi = initpoint[1]+i*size[0]*sinal;
+    xf = xi - ( size[1]*sinal);
+    yf = yi + ( size[1]*cosal);
+    FPRINTF((file,"2 1 0 %d %d %d 0 0 -1 0.000 0 0 0 0 0 2\n",
+	     Xgc->CurLineWidth*prec_fact/16,
+	     pen_color,
+	     pen_color
+	     ));
+    FPRINTF((file," %d %d %d %d \n",(int)xi, (int)yi,  (int)  xf, (int)yf));
     }
   for (i=0; i <= nsteps[1]; i++)
     { xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
-      yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
-      xf = xi - ( size[1]*size[2]*sinal);
-      yf = yi + ( size[1]*size[2]*cosal);
-      FPRINTF((file,"2 1 0 %d %d %d 0 0 -1 0.000 0 0 0 0 0 2\n",
-	      Xgc->CurLineWidth*prec_fact/16,
-	      pen_color,
-	      pen_color
-	      ));
-      FPRINTF((file," %d %d %d %d \n", (int)xi, (int) yi, (int)xf, (int)yf));
+    yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
+    xf = xi - ( size[1]*size[2]*sinal);
+    yf = yi + ( size[1]*size[2]*cosal);
+    FPRINTF((file,"2 1 0 %d %d %d 0 0 -1 0.000 0 0 0 0 0 2\n",
+	     Xgc->CurLineWidth*prec_fact/16,
+	     pen_color,
+	     pen_color
+	     ));
+    FPRINTF((file," %d %d %d %d \n", (int)xi, (int) yi, (int)xf, (int)yf));
     }
   xi = initpoint[0]; yi= initpoint[1];
   xf = initpoint[0]+ nsteps[0]*nsteps[1]*size[0]*cosal;
   yf = initpoint[1]+ nsteps[0]*nsteps[1]*size[0]*sinal;
   FPRINTF((file,"2 1 0 %d %d %d 0 0 -1 0.000 0 0 0 0 0 2\n",
-	  Xgc->CurLineWidth*prec_fact/16,
-	  pen_color,
-	  pen_color));
+	   Xgc->CurLineWidth*prec_fact/16,
+	   pen_color,
+	   pen_color));
   FPRINTF((file," %d %d %d %d \n",  (int)xi,  (int)yi, (int) xf, (int)yf));
   FPRINTF((file,"# End Of Axis \n"));
 }
 
 
 /*-----------------------------------------------------
-\encadre{Display numbers z[i] at location (x[i],y[i])
+  \encadre{Display numbers z[i] at location (x[i],y[i])
   with a slope alpha[i] (see displaystring_), if flag==1
   add a box around the string.
------------------------------------------------------*/
+  -----------------------------------------------------*/
 
 
 static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, double *alpha)
 { int i ;
-  char buf[20];
-  for (i=0 ; i< n ; i++)
-    { 
-      sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
-      displaystring(Xgc,buf,x[i],y[i],flag,alpha[i]);
-    }
+ char buf[20];
+ for (i=0 ; i< n ; i++)
+   { 
+     sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
+     displaystring(Xgc,buf,x[i],y[i],flag,alpha[i]);
+   }
 }
 
 
 
 /*-------------------------------------------------------
-\encadre{General routine for generating Postscript Code 
-to deal with Vectors. The difficulty is that the size 
-of vectors is limited by Postscript, so the routine 
-must check size and cut into pieces big objects}
-\begin{verbatim}
+  \encadre{General routine for generating Postscript Code 
+  to deal with Vectors. The difficulty is that the size 
+  of vectors is limited by Postscript, so the routine 
+  must check size and cut into pieces big objects}
+  \begin{verbatim}
   clear (string) sizeobj [fvect[0],...,fvect[nobj]]
   (si flag=1)  [ vx[0] vy[0] vx[1] vy[1] ...... vx[sizev] vy[sizev]]
   (si flag=0)  [ vx[0] vx[1] ..... vx[sizev] ] dogrey 
-\end{verbatim}
-----------------------------------------------------------*/
+  \end{verbatim}
+  ----------------------------------------------------------*/
 
 /*
  * give the correct pattern for xfig 0=white-> 20=black 
@@ -1563,7 +1563,7 @@ static void xset_pattern_or_color(BCG *Xgc,int pat, int *areafill, int *color)
       if (  CheckColormap(Xgc,&m) == 1) 
 	{
 	  /* fix the currennt color : if a colormap is set 
-	    we must have an ofset of 32 **/
+	     we must have an ofset of 32 **/
 	  *color += 32;
 	}
       else 
@@ -1598,7 +1598,7 @@ static void fig_set_color(BCG *Xgc,int c, int *color)
   if (  CheckColormap(Xgc,&m) == 1) 
     {
       /* fix the current color : if a colormap is set 
-	  we must have an ofset of 32 **/
+	 we must have an ofset of 32 **/
       *color += 32;
     }
   else 
@@ -1658,15 +1658,15 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
       for ( i =0 ; i < nobj ; i++)
 	{
 	  if (fvect[i] < 0 )
-	   {
-	     /* only fill **/
+	    {
+	      /* only fill **/
 
-	     xset_pattern_or_color(Xgc, - fvect[i],&areafill,&fill_color);
-	     l_style = 0;
-	     style_val = 0;
-	     pen_color = fill_color;
-	     type = 3;
-	   }
+	      xset_pattern_or_color(Xgc, - fvect[i],&areafill,&fill_color);
+	      l_style = 0;
+	      style_val = 0;
+	      pen_color = fill_color;
+	      type = 3;
+	    }
 	  else if (fvect[i] == 0 )
 	    {
 	      /* only draws th polyline **/
@@ -1686,175 +1686,175 @@ static void WriteGeneric(BCG *Xgc,char *string, int nobj, int sizeobj,const int 
 	    }
 	  lg=sizeobj/2;
 	  FPRINTF((file,"# Object : %d %s -<pat:%d,areafill=%d,white=%d>- \n", (int)i,string,
-		  (int)fvect[i],
-		  (int)areafill,
-		  Xgc->IDLastPattern));
+		   (int)fvect[i],
+		   (int)areafill,
+		   Xgc->IDLastPattern));
 	  FPRINTF((file,"2 %d %d %d %d %d 0 0 %d %d.00 0 0 -1 0 0 %d\n",
 		   (int)type,l_style, Xgc->CurLineWidth*prec_fact/16,
-		  pen_color,fill_color,areafill,style_val, (int)lg
-		  ));
+		   pen_color,fill_color,areafill,style_val, (int)lg
+		   ));
 	  Write2Vect(&vx[i*lg],&vy[i*lg],lg,flag);
 	}
     }
   else 
-  if ( strcmp(string,"drawbox")==0)
-    {
-      for ( i =0 ; i < nobj ; i++)
-	{
-	  int deb;
-	  if (fvect[i] < 0  )
-	    {
-	      /* Only draws the rectangle **/
-	      fig_set_dash(Xgc,dash,&l_style,&style_val);
-	      fig_set_color( Xgc,-fvect[i],&pen_color);
-	      /*set_dash_or_color( -fvect[i],&l_style,&style_val,&pen_color);*/
-	      areafill = -1;
-	      fill_color = WHITE;
-	    }
-	  else 	  if (fvect[i] == 0  )
-	    {
-	      /* Only draws the rectangle **/
-	      fig_set_dash(Xgc,dash,&l_style,&style_val);
-	      fig_set_color(Xgc,cpat,&pen_color);
-	      /*set_dash_or_color(Dvalue[0],&l_style,&style_val,&pen_color);*/
-	      areafill = -1;
-	      fill_color = WHITE;
-	    }
-	  else 
-	    {
-	      /* fills the rectangle **/
-	      xset_pattern_or_color(Xgc,fvect[i],&areafill,&fill_color);
-	      pen_color = fill_color;
-	      l_style = 0;
-	      style_val = 0;
-	      type = 3;
-	    }
-	  FPRINTF((file,"# Object : %d %s -<%d>- \n", (int)i,string, (int)fvect[i]));
-	  FPRINTF((file,"2 2 %d %d %d %d 0 0 %d %d.000 0 0 0 0 0 5\n",
-		  l_style, Xgc->CurLineWidth*prec_fact/16,
-		  pen_color,fill_color,areafill,style_val));
-	  deb=i*sizeobj;
-	  FPRINTF((file," %d %d %d %d %d %d %d %d %d %d \n",
-		  (int)vx[deb]                , (int)vx[1+deb],
-		  (int)vx[deb]+ (int)vx[2+deb], (int)vx[1+deb],
-		  (int)vx[deb]+ (int)vx[2+deb], (int)vx[1+deb]+ (int)vx[3+deb],
-		  (int)vx[deb]                , (int)vx[1+deb]+ (int)vx[3+deb],
-		  (int)vx[deb]                , (int)vx[1+deb]));
-	}
-    }
-  else if ( strcmp(string,"drawsegs")==0)      
-    {
-      /* see drawsegsXfig **/
-    }
-  else if ( strcmp(string,"drawarrows")==0)      
-    {
-      /* see drawarrowsXfig **/
-    }
-  else if ( strcmp(string,"drawarc")==0)      
-    {
-      for ( i = 0 ; i < nobj ; i++)
-	{
-	  if (fvect[i] > Xgc->IDLastPattern+1 )
-	    {
-	      /* Only draws the arc **/
-	      fig_set_dash_or_color(Xgc,dash,&l_style,&style_val,&pen_color);
-	      areafill = -1;
-	      fill_color = WHITE;
-	    }
-	  else 
-	    {
-	      /* fills the arc **/
-	      xset_pattern_or_color(Xgc,fvect[i],&areafill,&fill_color);
-	      pen_color = fill_color;
-	      l_style = 0;
-	      style_val = 0;
-	      type = 3;
-	    }
-	  FPRINTF((file,"# Object : %d %s -<%d>-\n", (int)i,string, (int)fvect[0]));
-	  FPRINTF((file,
-		  "1 2 %d %d %d %d 0 0 %d %d.000 1 0.00 %d %d %d %d %d %d %d %d \n",
-		  l_style,
-		  Xgc->CurLineWidth*prec_fact/16,
-		  pen_color,fill_color,areafill,style_val,
-		  (int)vx[6*i]+ (int)vx[6*i+2]/2, 
-		  (int)vx[6*i+1]+ (int)vx[6*i+3]/2,
-		  (int)vx[6*i+2]/2, (int)vx[6*i+3]/2,
-		  (int)vx[6*i]+ (int)vx[6*i+2]/2, (int)vx[6*i+1],
-		  (int)vx[6*i]+ (int)vx[6*i+2]/2, (int)vx[6*i+1]));
-	}
-    }
-  else if ( strcmp(string,"Rdrawarc")==0)      
-    {
-      /* store the current values */
-      for ( i = 0 ; i < nobj ; i++)
-	{
-	  /*setdash(&fvect[i],PI0,PI0,PI0);*/
+    if ( strcmp(string,"drawbox")==0)
+      {
+	for ( i =0 ; i < nobj ; i++)
+	  {
+	    int deb;
+	    if (fvect[i] < 0  )
+	      {
+		/* Only draws the rectangle **/
+		fig_set_dash(Xgc,dash,&l_style,&style_val);
+		fig_set_color( Xgc,-fvect[i],&pen_color);
+		/*set_dash_or_color( -fvect[i],&l_style,&style_val,&pen_color);*/
+		areafill = -1;
+		fill_color = WHITE;
+	      }
+	    else 	  if (fvect[i] == 0  )
+	      {
+		/* Only draws the rectangle **/
+		fig_set_dash(Xgc,dash,&l_style,&style_val);
+		fig_set_color(Xgc,cpat,&pen_color);
+		/*set_dash_or_color(Dvalue[0],&l_style,&style_val,&pen_color);*/
+		areafill = -1;
+		fill_color = WHITE;
+	      }
+	    else 
+	      {
+		/* fills the rectangle **/
+		xset_pattern_or_color(Xgc,fvect[i],&areafill,&fill_color);
+		pen_color = fill_color;
+		l_style = 0;
+		style_val = 0;
+		type = 3;
+	      }
+	    FPRINTF((file,"# Object : %d %s -<%d>- \n", (int)i,string, (int)fvect[i]));
+	    FPRINTF((file,"2 2 %d %d %d %d 0 0 %d %d.000 0 0 0 0 0 5\n",
+		     l_style, Xgc->CurLineWidth*prec_fact/16,
+		     pen_color,fill_color,areafill,style_val));
+	    deb=i*sizeobj;
+	    FPRINTF((file," %d %d %d %d %d %d %d %d %d %d \n",
+		     (int)vx[deb]                , (int)vx[1+deb],
+		     (int)vx[deb]+ (int)vx[2+deb], (int)vx[1+deb],
+		     (int)vx[deb]+ (int)vx[2+deb], (int)vx[1+deb]+ (int)vx[3+deb],
+		     (int)vx[deb]                , (int)vx[1+deb]+ (int)vx[3+deb],
+		     (int)vx[deb]                , (int)vx[1+deb]));
+	  }
+      }
+    else if ( strcmp(string,"drawsegs")==0)      
+      {
+	/* see drawsegsXfig **/
+      }
+    else if ( strcmp(string,"drawarrows")==0)      
+      {
+	/* see drawarrowsXfig **/
+      }
+    else if ( strcmp(string,"drawarc")==0)      
+      {
+	for ( i = 0 ; i < nobj ; i++)
+	  {
+	    if (fvect[i] > Xgc->IDLastPattern+1 )
+	      {
+		/* Only draws the arc **/
+		fig_set_dash_or_color(Xgc,dash,&l_style,&style_val,&pen_color);
+		areafill = -1;
+		fill_color = WHITE;
+	      }
+	    else 
+	      {
+		/* fills the arc **/
+		xset_pattern_or_color(Xgc,fvect[i],&areafill,&fill_color);
+		pen_color = fill_color;
+		l_style = 0;
+		style_val = 0;
+		type = 3;
+	      }
+	    FPRINTF((file,"# Object : %d %s -<%d>-\n", (int)i,string, (int)fvect[0]));
+	    FPRINTF((file,
+		     "1 2 %d %d %d %d 0 0 %d %d.000 1 0.00 %d %d %d %d %d %d %d %d \n",
+		     l_style,
+		     Xgc->CurLineWidth*prec_fact/16,
+		     pen_color,fill_color,areafill,style_val,
+		     (int)vx[6*i]+ (int)vx[6*i+2]/2, 
+		     (int)vx[6*i+1]+ (int)vx[6*i+3]/2,
+		     (int)vx[6*i+2]/2, (int)vx[6*i+3]/2,
+		     (int)vx[6*i]+ (int)vx[6*i+2]/2, (int)vx[6*i+1],
+		     (int)vx[6*i]+ (int)vx[6*i+2]/2, (int)vx[6*i+1]));
+	  }
+      }
+    else if ( strcmp(string,"Rdrawarc")==0)      
+      {
+	/* store the current values */
+	for ( i = 0 ; i < nobj ; i++)
+	  {
+	    /*setdash(&fvect[i],PI0,PI0,PI0);*/
 
-	  fig_set_dash(Xgc,dash,&l_style,&style_val);
-	  fig_set_color(Xgc,fvect[i],&pen_color);
+	    fig_set_dash(Xgc,dash,&l_style,&style_val);
+	    fig_set_color(Xgc,fvect[i],&pen_color);
 
-	  /* in case of min(max()) **/
-	  /*getdash(&verbose,Dvalue1,&Dnarg,vdouble);
-	    set_dash_or_color(Dvalue1[0],&l_style,&style_val,&pen_color);*/
-	  areafill = -1;
-	  fill_color = WHITE;
-	  FPRINTF((file,"# Object : %d %s -<%d>-\n", (int)i,string, (int)fvect[0]));
-	  FPRINTF((file,
-		  "1 2 %d %d %d %d 0 0 %d %d.000 1 0.00 %d %d %d %d %d %d %d %d \n",
-		  l_style,
-		  (int) (Xgc->CurLineWidth*prec_fact/16),
-		  pen_color,fill_color,
-		  areafill, 
-		  style_val,
-		  (int) (vx[6*i]+vx[6*i+2]/2), 
-		  (int) (vx[6*i+1]+vx[6*i+3]/2),
-		  (int) (vx[6*i+2]/2), (int) (vx[6*i+3]/2),
-		  (int) (vx[6*i]+ vx[6*i+2]/2), (int)vx[6*i+1],
-		  (int) (vx[6*i]+ vx[6*i+2]/2), (int)vx[6*i+1]));
-	}
-      /*setdash( Dvalue,PI0,PI0,PI0);*/
-    }
-  else if ( strcmp(string,"drawpolymark")==0)      
-    {
-      int rect[4],x=0,y=0;
-      int Dvalue1 = xget_pattern(Xgc);
-      fig_set_color(Xgc,Dvalue1,&pen_color);
-      l_style=0;style_val=0;
-      boundingboxM(Xgc,"x",x,y,rect);
-      FPRINTF((file,"# Object : %d %s -<%d>- \n", (int)0,string, (int)fvect[0]));
-      for ( i =0 ; i < sizev ; i++)
-	{
-	  int flag = 1;
-	  if ( Xgc->ClipRegionSet == 1 ) 
-	    {
-	      if ( vx[i] > Xgc->CurClipRegion[0] 
-		   +Xgc->CurClipRegion[2]
-		   || vx[i] <  Xgc->CurClipRegion[0] 
-		   || vy[i] > Xgc->CurClipRegion[1] 
-		   +Xgc->CurClipRegion[3]
-		   || vy[i] < Xgc->CurClipRegion[1] )
-		flag = 0;
-	    }
+	    /* in case of min(max()) **/
+	    /*getdash(&verbose,Dvalue1,&Dnarg,vdouble);
+	      set_dash_or_color(Dvalue1[0],&l_style,&style_val,&pen_color);*/
+	    areafill = -1;
+	    fill_color = WHITE;
+	    FPRINTF((file,"# Object : %d %s -<%d>-\n", (int)i,string, (int)fvect[0]));
+	    FPRINTF((file,
+		     "1 2 %d %d %d %d 0 0 %d %d.000 1 0.00 %d %d %d %d %d %d %d %d \n",
+		     l_style,
+		     (int) (Xgc->CurLineWidth*prec_fact/16),
+		     pen_color,fill_color,
+		     areafill, 
+		     style_val,
+		     (int) (vx[6*i]+vx[6*i+2]/2), 
+		     (int) (vx[6*i+1]+vx[6*i+3]/2),
+		     (int) (vx[6*i+2]/2), (int) (vx[6*i+3]/2),
+		     (int) (vx[6*i]+ vx[6*i+2]/2), (int)vx[6*i+1],
+		     (int) (vx[6*i]+ vx[6*i+2]/2), (int)vx[6*i+1]));
+	  }
+	/*setdash( Dvalue,PI0,PI0,PI0);*/
+      }
+    else if ( strcmp(string,"drawpolymark")==0)      
+      {
+	int rect[4],x=0,y=0;
+	int Dvalue1 = xget_pattern(Xgc);
+	fig_set_color(Xgc,Dvalue1,&pen_color);
+	l_style=0;style_val=0;
+	boundingboxM(Xgc,"x",x,y,rect);
+	FPRINTF((file,"# Object : %d %s -<%d>- \n", (int)0,string, (int)fvect[0]));
+	for ( i =0 ; i < sizev ; i++)
+	  {
+	    int flag = 1;
+	    if ( Xgc->ClipRegionSet == 1 ) 
+	      {
+		if ( vx[i] > Xgc->CurClipRegion[0] 
+		     +Xgc->CurClipRegion[2]
+		     || vx[i] <  Xgc->CurClipRegion[0] 
+		     || vy[i] > Xgc->CurClipRegion[1] 
+		     +Xgc->CurClipRegion[3]
+		     || vy[i] < Xgc->CurClipRegion[1] )
+		  flag = 0;
+	      }
 	  
-	  /* polymarks are x-center justified sub-type =1  **/
-	  if ( flag == 1) 
-	  FPRINTF((file,"4 1 %d 0 0 %d %d %5.2f %d %5.2f %5.2f %d %d \\%o\\001\n",
-		  pen_color,
-		  32, /* Postscript font */
-		  (int)isizeXfig_[Xgc->fontSize], /*prec_fact,*/
-		  0.0,
-		  4,  
-		  (double) rect[3],
-		  (double) rect[2],
-		  (int)vx[i],
-		  (int)vy[i] + rect[3]/2,
-		  Char2Int( symb_list[Xgc->CurHardSymb])
-		   ));
+	    /* polymarks are x-center justified sub-type =1  **/
+	    if ( flag == 1) 
+	      FPRINTF((file,"4 1 %d 0 0 %d %d %5.2f %d %5.2f %5.2f %d %d \\%o\\001\n",
+		       pen_color,
+		       32, /* Postscript font */
+		       (int)isizeXfig_[Xgc->fontSize], /*prec_fact,*/
+		       0.0,
+		       4,  
+		       (double) rect[3],
+		       (double) rect[2],
+		       (int)vx[i],
+		       (int)vy[i] + rect[3]/2,
+		       Char2Int( symb_list[Xgc->CurHardSymb])
+		       ));
 
-	}
-    }
-  else
-    sciprint("Can't translate %s\r\n",string);
+	  }
+      }
+    else
+      sciprint("Can't translate %s\r\n",string);
 }
 
 static void Write2Vect(const int *vx,const int *vy, int n, int flag)
@@ -1869,7 +1869,7 @@ static void Write2Vect(const int *vx,const int *vy, int n, int flag)
 	  FPRINTF((file,FORMATNUM,(int) vx[i]));
 	  if (flag == 1) 
 	    {FPRINTF((file,FORMATNUM,(int) vy[i]));
-	      k += 2;i++;}
+	    k += 2;i++;}
 	  else 
 	    {k++;i++;}
 	}
@@ -1892,13 +1892,13 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize)
   if ( FontInfoTabXfig_[i].ok !=1 )
     Scistring("\n Sorry This Font is Not available\n");
   else 
-   {
-     Xgc->fontId = i;
-     Xgc->fontSize = fsiz;
-     FPRINTF((file,"#/%s findfont %d scalefont setfont\n",
-     	     FontInfoTabXfig_[i].fname,
-	     (int)isizeXfig_[fsiz]*prec_fact));
-   }
+    {
+      Xgc->fontId = i;
+      Xgc->fontSize = fsiz;
+      FPRINTF((file,"#/%s findfont %d scalefont setfont\n",
+	       FontInfoTabXfig_[i].fname,
+	       (int)isizeXfig_[fsiz]*prec_fact));
+    }
 }
 
 /* To get the values id and size of the current font **/
@@ -1915,7 +1915,7 @@ void xset_mark(BCG *Xgc,int number,int size)
 { 
   Xgc->CurHardSymb =  Max(Min(SYMBOLNUMBER-1,number),0);
   Xgc->CurHardSymbSize =  Max(Min(FONTMAXSIZE-1,size),0);
-;}
+  ;}
 
 /* To get the current mark id **/
 
@@ -1932,16 +1932,16 @@ static void displaysymbols(BCG *Xgc, int *vx, int *vy,int n)
   if ( Xgc->CurVectorStyle !=  CoordModeOrigin)
     FPRINTF((file,"#/absolu false def\n"));
   FPRINTF((file,"#HardMark 0 16#%x put\n",
-      Char2Int( symb_list[Xgc->CurHardSymb])));
+	   Char2Int( symb_list[Xgc->CurHardSymb])));
   WriteGeneric(Xgc,"drawpolymark",(int)1L,(n)*2,vx,vy,n,(int)1L,&fvect);
   FPRINTF((file,"#/absolu true def\n"));
 }
 
 
 /*-------------------------------------------------------
-\encadre{Check if a specified family of font exist in 
-Figtscript }
--------------------------------------------------------*/
+  \encadre{Check if a specified family of font exist in 
+  Figtscript }
+  -------------------------------------------------------*/
 
 static void loadfamily(char *name, int *j)
 { 
@@ -1951,15 +1951,15 @@ static void loadfamily(char *name, int *j)
       FontsListXfig_[*j][i] = FigQueryFont(name);
     }
   if  (FontsListXfig_[*j][0] == 0 )
-	  sciprint("\n unknown font family : %s\r\n",name);
+    sciprint("\n unknown font family : %s\r\n",name);
   else 
     {FontInfoTabXfig_[*j].ok = 1;
-     strcpy(FontInfoTabXfig_[*j].fname,name) ;}
+    strcpy(FontInfoTabXfig_[*j].fname,name) ;}
 }
 
 /*--------------------------------------------
-\encadre{always answer ok. Must be Finished}
----------------------------------------------*/
+  \encadre{always answer ok. Must be Finished}
+  ---------------------------------------------*/
 
 static int FigQueryFont(char *name) { return(1);}
 

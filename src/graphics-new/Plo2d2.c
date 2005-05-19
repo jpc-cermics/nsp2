@@ -21,7 +21,7 @@ static void Plo2d2RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, 
   --------------------------------------------------------------------------*/
 
 int nsp_plot2d_2(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
-		const char *legend,int legend_pos,double brect[],int aaint[])
+		 const char *legend,int legend_pos,double brect[],int aaint[])
 {
   int n;
   int *xm=NULL,*ym=NULL;

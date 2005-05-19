@@ -229,9 +229,9 @@ static void clearwindow(BCG *Xgc)
   /* we use the private->stdgc graphic context */
   DRAW_CHECK;
   /* XXX
-  gdk_gc_set_foreground(Xgc->private->stdgc, &Xgc->private->gcol_bg);
-  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->stdgc, TRUE, 0, 0,
-		     Xgc->CWindowWidth, Xgc->CWindowHeight);
+     gdk_gc_set_foreground(Xgc->private->stdgc, &Xgc->private->gcol_bg);
+     gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->stdgc, TRUE, 0, 0,
+     Xgc->CWindowWidth, Xgc->CWindowHeight);
   */
 }
 
@@ -655,7 +655,7 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
       gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
     }
   /* XXXX 
-  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,x,y,w,h);
+     gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,x,y,w,h);
   */
   if ( cur_alu != clear )
     xset_alufunction1(Xgc,cur_alu);   /* back to current value */ 
@@ -726,10 +726,10 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
 
 
 /* fixe la taille min s'un widget 
-gtk_widget_set_size_request     (GtkWidget *widget,
-                                             gint width,
-                                             gint height
-     XXXXXXXXXXXXXXXXX
+   gtk_widget_set_size_request     (GtkWidget *widget,
+   gint width,
+   gint height
+   XXXXXXXXXXXXXXXXX
 */
 
 static void xset_windowdim(BCG *Xgc,int x, int y)
@@ -998,51 +998,51 @@ static struct alinfo {
   char *name;
   char id;
   char *info;} AluStruc_[] =
-  { 
-    {"GXclear" , GDK_CLEAR," 0 "},
-    {"GXand" , GDK_AND," src AND dst "},
-    {"GXandReverse" , GDK_AND_REVERSE," src AND NOT dst "},
-    {"GXcopy" , GDK_COPY," src "},
-    {"GXandInverted" , GDK_AND_INVERT," NOT src AND dst "},
-    {"GXnoop" , GDK_NOOP," dst "},
-    {"GXxor" , GDK_XOR," src XOR dst "},
-    {"GXor" , GDK_OR," src OR dst "},
-    {"GXnor" , GDK_OR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
-    {"GXequiv" , GDK_EQUIV," NOT src XOR dst "},
-    {"GXinvert" , GDK_INVERT," NOT dst "},
-    {"GXorReverse" , GDK_OR_REVERSE," src OR NOT dst "},
-    {"GXcopyInverted" , GDK_COPY_INVERT," NOT src "},
-    {"GXorInverted" , GDK_OR_INVERT," NOT src OR dst "},
-    {"GXnand" , GDK_NAND," NOT src OR NOT dst "},
-    {"GXset" , GDK_SET," 1 "}
-  };
+    { 
+      {"GXclear" , GDK_CLEAR," 0 "},
+      {"GXand" , GDK_AND," src AND dst "},
+      {"GXandReverse" , GDK_AND_REVERSE," src AND NOT dst "},
+      {"GXcopy" , GDK_COPY," src "},
+      {"GXandInverted" , GDK_AND_INVERT," NOT src AND dst "},
+      {"GXnoop" , GDK_NOOP," dst "},
+      {"GXxor" , GDK_XOR," src XOR dst "},
+      {"GXor" , GDK_OR," src OR dst "},
+      {"GXnor" , GDK_OR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
+      {"GXequiv" , GDK_EQUIV," NOT src XOR dst "},
+      {"GXinvert" , GDK_INVERT," NOT dst "},
+      {"GXorReverse" , GDK_OR_REVERSE," src OR NOT dst "},
+      {"GXcopyInverted" , GDK_COPY_INVERT," NOT src "},
+      {"GXorInverted" , GDK_OR_INVERT," NOT src OR dst "},
+      {"GXnand" , GDK_NAND," NOT src OR NOT dst "},
+      {"GXset" , GDK_SET," 1 "}
+    };
 
 /*
-static void idfromname(char *name1, int *num)
-{
+  static void idfromname(char *name1, int *num)
+  {
   int i;
   *num = -1;
   for ( i =0 ; i < 16;i++)
-    if (strcmp(AluStruc_[i].name,name1)== 0)  *num=i;
+  if (strcmp(AluStruc_[i].name,name1)== 0)  *num=i;
   if (*num == -1 ) 
-    {
-      Sciprintf("\n Use the following keys (int in scilab");
-      for ( i=0 ; i < 16 ; i++)
-	Sciprintf("\nkey %s   -> %s\n",AluStruc_[i].name,
-		  AluStruc_[i].info);
-    }
-}
+  {
+  Sciprintf("\n Use the following keys (int in scilab");
+  for ( i=0 ; i < 16 ; i++)
+  Sciprintf("\nkey %s   -> %s\n",AluStruc_[i].name,
+  AluStruc_[i].info);
+  }
+  }
 
-static void xset_alufunction(BCG *Xgc,char *string)
-{   
+  static void xset_alufunction(BCG *Xgc,char *string)
+  {   
   int value;
   idfromname(string,&value);
   if ( value != -1)
-    {
-      Xgc->CurDrawFunction = value;
-      gdk_gc_set_function(Xgc->private->wgc, AluStruc_[value].id);
-    }
-}
+  {
+  Xgc->CurDrawFunction = value;
+  gdk_gc_set_function(Xgc->private->wgc, AluStruc_[value].id);
+  }
+  }
 */
 
 static void xset_alufunction1(BCG *Xgc,int num)
@@ -1111,37 +1111,37 @@ static int xget_thickness(BCG *Xgc)
  * from black (*num =0 ) to white    
  * Pixmap  Tabpix_[GREYNUMBER]; 
 
-static char grey0[GREYNUMBER][8]={
-  {(char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00},
-  {(char)0x00, (char)0x00, (char)0x44, (char)0x00, (char)0x00, (char)0x00, (char)0x44, (char)0x00},
-  {(char)0x00, (char)0x44, (char)0x00, (char)0x22, (char)0x08, (char)0x40, (char)0x01, (char)0x20},
-  {(char)0x00, (char)0x92, (char)0x00, (char)0x25, (char)0x00, (char)0x92, (char)0x00, (char)0xa4},
-  {(char)0x55, (char)0x00, (char)0xaa, (char)0x00, (char)0x55, (char)0x00, (char)0xaa, (char)0x00},
-  {(char)0xad, (char)0x00, (char)0x5b, (char)0x00, (char)0xda, (char)0x00, (char)0x6d, (char)0x00},
-  {(char)0x6d, (char)0x02, (char)0xda, (char)0x08, (char)0x6b, (char)0x10, (char)0xb6, (char)0x20},
-  {(char)0x6d, (char)0x22, (char)0xda, (char)0x0c, (char)0x6b, (char)0x18, (char)0xb6, (char)0x24},
-  {(char)0x55, (char)0xaa, (char)0x55, (char)0xaa, (char)0x55, (char)0xaa, (char)0x55, (char)0xaa},
-  {(char)0x92, (char)0xdd, (char)0x25, (char)0xf3, (char)0x94, (char)0xe7, (char)0x49, (char)0xdb},
-  {(char)0x92, (char)0xfd, (char)0x25, (char)0xf7, (char)0x94, (char)0xef, (char)0x49, (char)0xdf},
-  {(char)0x52, (char)0xff, (char)0xa4, (char)0xff, (char)0x25, (char)0xff, (char)0x92, (char)0xff},
-  {(char)0xaa, (char)0xff, (char)0x55, (char)0xff, (char)0xaa, (char)0xff, (char)0x55, (char)0xff},
-  {(char)0xff, (char)0x6d, (char)0xff, (char)0xda, (char)0xff, (char)0x6d, (char)0xff, (char)0x5b},
-  {(char)0xff, (char)0xbb, (char)0xff, (char)0xdd, (char)0xf7, (char)0xbf, (char)0xfe, (char)0xdf},
-  {(char)0xff, (char)0xff, (char)0xbb, (char)0xff, (char)0xff, (char)0xff, (char)0xbb, (char)0xff},
-  {(char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff},
-};
+ static char grey0[GREYNUMBER][8]={
+ {(char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00},
+ {(char)0x00, (char)0x00, (char)0x44, (char)0x00, (char)0x00, (char)0x00, (char)0x44, (char)0x00},
+ {(char)0x00, (char)0x44, (char)0x00, (char)0x22, (char)0x08, (char)0x40, (char)0x01, (char)0x20},
+ {(char)0x00, (char)0x92, (char)0x00, (char)0x25, (char)0x00, (char)0x92, (char)0x00, (char)0xa4},
+ {(char)0x55, (char)0x00, (char)0xaa, (char)0x00, (char)0x55, (char)0x00, (char)0xaa, (char)0x00},
+ {(char)0xad, (char)0x00, (char)0x5b, (char)0x00, (char)0xda, (char)0x00, (char)0x6d, (char)0x00},
+ {(char)0x6d, (char)0x02, (char)0xda, (char)0x08, (char)0x6b, (char)0x10, (char)0xb6, (char)0x20},
+ {(char)0x6d, (char)0x22, (char)0xda, (char)0x0c, (char)0x6b, (char)0x18, (char)0xb6, (char)0x24},
+ {(char)0x55, (char)0xaa, (char)0x55, (char)0xaa, (char)0x55, (char)0xaa, (char)0x55, (char)0xaa},
+ {(char)0x92, (char)0xdd, (char)0x25, (char)0xf3, (char)0x94, (char)0xe7, (char)0x49, (char)0xdb},
+ {(char)0x92, (char)0xfd, (char)0x25, (char)0xf7, (char)0x94, (char)0xef, (char)0x49, (char)0xdf},
+ {(char)0x52, (char)0xff, (char)0xa4, (char)0xff, (char)0x25, (char)0xff, (char)0x92, (char)0xff},
+ {(char)0xaa, (char)0xff, (char)0x55, (char)0xff, (char)0xaa, (char)0xff, (char)0x55, (char)0xff},
+ {(char)0xff, (char)0x6d, (char)0xff, (char)0xda, (char)0xff, (char)0x6d, (char)0xff, (char)0x5b},
+ {(char)0xff, (char)0xbb, (char)0xff, (char)0xdd, (char)0xf7, (char)0xbf, (char)0xfe, (char)0xdf},
+ {(char)0xff, (char)0xff, (char)0xbb, (char)0xff, (char)0xff, (char)0xff, (char)0xbb, (char)0xff},
+ {(char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff},
+ };
 
-void CreatePatterns(whitepixel, blackpixel)
-     Pixel whitepixel;
-     Pixel blackpixel;
-{ 
+ void CreatePatterns(whitepixel, blackpixel)
+ Pixel whitepixel;
+ Pixel blackpixel;
+ { 
   
-  int i ;
-  for ( i=0 ; i < GREYNUMBER ; i++)
-    Tabpix_[i] =XCreatePixmapFromBitmapData(dpy, root,grey0[i] ,8,8,whitepixel
-					   ,blackpixel,XDefaultDepth (dpy,DefaultScreen(dpy)));
+ int i ;
+ for ( i=0 ; i < GREYNUMBER ; i++)
+ Tabpix_[i] =XCreatePixmapFromBitmapData(dpy, root,grey0[i] ,8,8,whitepixel
+ ,blackpixel,XDefaultDepth (dpy,DefaultScreen(dpy)));
  
-}
+ }
 */
 
 static int  xset_pattern(BCG *Xgc,int num)
@@ -1276,26 +1276,26 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
       cairo_set_line_cap(cairo, CAIRO_LINE_CAP_BUTT);
       cairo_set_line_join (cairo, CAIRO_LINE_JOIN_ROUND);
       /* 
-      gdk_gc_set_dashes(Xgc->private->wgc, 0, buffdash, *n);
-      gdk_gc_set_line_attributes(Xgc->private->wgc, 
-				 (Xgc->CurLineWidth == 0 ) ? 1 : Xgc->CurLineWidth,
-				 GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
+	 gdk_gc_set_dashes(Xgc->private->wgc, 0, buffdash, *n);
+	 gdk_gc_set_line_attributes(Xgc->private->wgc, 
+	 (Xgc->CurLineWidth == 0 ) ? 1 : Xgc->CurLineWidth,
+	 GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_ROUND);
       */
     }
 }
 /*
-static void xget_dashstyle(BCG *Xgc,int *n,int *value)
-{
+  static void xget_dashstyle(BCG *Xgc,int *n,int *value)
+  {
   int i ;
   *n =1 ;
   *value = Xgc->CurDashStyle + 1;
   if (*value != 1) 
-    {
-      value[1]=4;
-      *n = value[1]+2;
-      for (i = 0 ; i < value[1]; i++) value[i+2]=DashTab[*value-2][i];
-    }
-}
+  {
+  value[1]=4;
+  *n = value[1]+2;
+  for (i = 0 ; i < value[1]; i++) value[i+2]=DashTab[*value-2][i];
+  }
+  }
 */
 
 /* to get the current dash-style 
@@ -1540,7 +1540,7 @@ static void xset_colormap(BCG *Xgc,int m,int n,double *a)
       Xgc->private->colors[i].green = (guint16)(a[i+m]*65535);
       Xgc->private->colors[i].blue = (guint16) (a[i+2*m]*65535);
       gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
-  }
+    }
   set_colormap_constants(Xgc,m);
   FREE(colors_old);
 }
@@ -1749,11 +1749,11 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
   if ( Abs(angle) <= 0.1) 
     {
       /* 
-      gint lbearing, rbearing, iascent, idescent, iwidth;
-      gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing,
-                         &iwidth, &iascent, &idescent);
-      gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-		    x, y - idescent , string, strlen(string));
+	 gint lbearing, rbearing, iascent, idescent, iwidth;
+	 gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing,
+	 &iwidth, &iascent, &idescent);
+	 gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
+	 x, y - idescent , string, strlen(string));
       */
       gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
       cairo = gtk_cairo_get_cairo (gtkcairo);
@@ -1770,10 +1770,10 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
       if ( flag == 1) 
 	{
 	  /* XXXX 
-	  int rect[] = { x , y- iascent - idescent, 
-			 gdk_string_width(Xgc->private->font, string),
-			 iascent+idescent};
-	  drawrectangle(Xgc,rect);
+	     int rect[] = { x , y- iascent - idescent, 
+	     gdk_string_width(Xgc->private->font, string),
+	     iascent+idescent};
+	     drawrectangle(Xgc,rect);
 
 	  */
 	}
@@ -2193,10 +2193,10 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
        * gdk_flush();
        */
       /* 
-      if ( gtk_store_points(n, vx, vy, closeflag)) 
-	{
-	  gdk_draw_lines(Xgc->private->drawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
-	}
+	 if ( gtk_store_points(n, vx, vy, closeflag)) 
+	 {
+	 gdk_draw_lines(Xgc->private->drawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
+	 }
       */
       gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
       cairo = gtk_cairo_get_cairo (gtkcairo);
@@ -2209,7 +2209,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
       if (cairo_status (cairo)) {
 	fprintf (stderr, "Cairo is unhappy in drawpolyline: %s\n",
 		 cairo_status_string (cairo));
-  }
+      }
     }
 }
 
@@ -2226,17 +2226,17 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   DRAW_CHECK;
   if (closeflag == 1) n1 = n+1;else n1= n;
   /* 
-  if (gtk_store_points(*n, vx, vy,*closeflag)){
-    XFillPolygon (dpy, Xgc->private->drawable, gc, get_xpoints(), n1,
-		  Complex, Xgc->CurVectorStyle);
-  }
-  gdk_flush();
+     if (gtk_store_points(*n, vx, vy,*closeflag)){
+     XFillPolygon (dpy, Xgc->private->drawable, gc, get_xpoints(), n1,
+     Complex, Xgc->CurVectorStyle);
+     }
+     gdk_flush();
   */
   /* 
-  if ( gtk_store_points(n, vx, vy, closeflag)) 
-    {
-      gdk_draw_polygon(Xgc->private->drawable,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
-    }
+     if ( gtk_store_points(n, vx, vy, closeflag)) 
+     {
+     gdk_draw_polygon(Xgc->private->drawable,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
+     }
   */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
@@ -2263,11 +2263,11 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
   if ( Xgc->CurHardSymb == 0 )
     {
       /* XXXX 
-      if (gtk_store_points(n, vx, vy,(int)0L))
-	{
-	  gdk_draw_points(Xgc->private->drawable,
-			  Xgc->private->wgc,gtk_get_xpoints(), n);
-	}
+	 if (gtk_store_points(n, vx, vy,(int)0L))
+	 {
+	 gdk_draw_points(Xgc->private->drawable,
+	 Xgc->private->wgc,gtk_get_xpoints(), n);
+	 }
       */
     }
   else 
@@ -2325,7 +2325,7 @@ static void delete_window(BCG *dd,int intnum)
     {
       GtkWidget *father; 
       /* XXXX 
-      gtk_widget_hide(GTK_WIDGET(winxgc->private->drawing)); 
+	 gtk_widget_hide(GTK_WIDGET(winxgc->private->drawing)); 
       */
       gtk_widget_hide(GTK_WIDGET(winxgc->private->scrolled)); 
       gtk_widget_hide(GTK_WIDGET(winxgc->private->CinfoW)); 
@@ -2362,19 +2362,19 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
 		       Xgc->private->colors[col].green/((double) 0xffff),
 		       Xgc->private->colors[col].blue/((double) 0xffff));
   /* 
-  temp.pixel = PIXEL_FROM_CMAP(col);
-  switch (value) 
-    {
-    case GDK_CLEAR : 
-      break;
-    case GDK_XOR   : 
-      temp.pixel = temp.pixel ^ Xgc->private->gcol_bg.pixel ;
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      break;
-    default :
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      break;
-    }
+     temp.pixel = PIXEL_FROM_CMAP(col);
+     switch (value) 
+     {
+     case GDK_CLEAR : 
+     break;
+     case GDK_XOR   : 
+     temp.pixel = temp.pixel ^ Xgc->private->gcol_bg.pixel ;
+     gdk_gc_set_foreground(Xgc->private->wgc, &temp);
+     break;
+     default :
+     gdk_gc_set_foreground(Xgc->private->wgc, &temp);
+     break;
+     }
   */
 }
 
@@ -2687,19 +2687,19 @@ static FontAlias fonttab[] ={
 };
 
 /* 
-static int fontidscale(BCG *Xgc,int fontsize)
-{
-  int nnsiz,i;
-  int isiz = i_size_[fontsize];
-  double d = Min(Xgc->CWindowHeight,Xgc->CWindowWidth);
-  nnsiz = (Xgc != NULL) ? inint((isiz*d/400.0)) : isiz; 
-  / * fprintf(stderr,"Scaling by -->%d %d \n",isiz,nnsiz); * /
-  for ( i=0; i < FONTMAXSIZE ; i++) 
-    {
-      if (i_size_[i] >= nnsiz ) return Max(i-1,0);
-    }
-  return FONTMAXSIZE -1;
-}
+   static int fontidscale(BCG *Xgc,int fontsize)
+   {
+   int nnsiz,i;
+   int isiz = i_size_[fontsize];
+   double d = Min(Xgc->CWindowHeight,Xgc->CWindowWidth);
+   nnsiz = (Xgc != NULL) ? inint((isiz*d/400.0)) : isiz; 
+   / * fprintf(stderr,"Scaling by -->%d %d \n",isiz,nnsiz); * /
+   for ( i=0; i < FONTMAXSIZE ; i++) 
+   {
+   if (i_size_[i] >= nnsiz ) return Max(i-1,0);
+   }
+   return FONTMAXSIZE -1;
+   }
 */
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize)
@@ -2948,9 +2948,9 @@ static void DrawMark(BCG *Xgc,int *x, int *y)
   char str[1];
   str[0]=Marks[Xgc->CurHardSymb];
   /* XXX
-  gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-		*x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
-		*/
+     gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
+     *x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
+     */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   cairo = gtk_cairo_get_cairo (gtkcairo);
   cairo_select_font (cairo, "sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
@@ -3202,22 +3202,22 @@ static void scig_deconnect_handlers(BCG *winxgc)
 {
   int n=0;
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) configure_event, (gpointer) winxgc);
+					  (GtkSignalFunc) configure_event, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) expose_event, (gpointer) winxgc);
+					  (GtkSignalFunc) expose_event, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
-				       (GtkSignalFunc)  sci_destroy_window, (gpointer) winxgc);
+					  (GtkSignalFunc)  sci_destroy_window, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func (GTK_OBJECT (winxgc->private->window),
-					(GtkSignalFunc) key_press_event, (gpointer) winxgc);
+					   (GtkSignalFunc) key_press_event, (gpointer) winxgc);
 
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) locator_button_press, (gpointer) winxgc);
+					  (GtkSignalFunc) locator_button_press, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) locator_button_release, (gpointer) winxgc);
+					  (GtkSignalFunc) locator_button_release, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) locator_button_motion, (gpointer) winxgc);
+					  (GtkSignalFunc) locator_button_motion, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-				       (GtkSignalFunc) realize_event, (gpointer) winxgc);
+					  (GtkSignalFunc) realize_event, (gpointer) winxgc);
 }
 
 /*---------------------------------------------------------------
@@ -3366,8 +3366,8 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 		     (GtkSignalFunc) cairo_expose_event, (gpointer) dd);
 
   /* 
-  g_signal_connect (G_OBJECT (dd->private->cairo_drawing), "paint", 
-		    G_CALLBACK (cairo_paint),(gpointer) dd );
+     g_signal_connect (G_OBJECT (dd->private->cairo_drawing), "paint", 
+     G_CALLBACK (cairo_paint),(gpointer) dd );
   */
 		  
   gtk_signal_connect(GTK_OBJECT(dd->private->window), "destroy",

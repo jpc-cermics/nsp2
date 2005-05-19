@@ -1003,36 +1003,36 @@ static struct alinfo {
   char *name;
   GLenum id;
   char *info;} AluStruc_[] =
-  { 
-    {"GXclear" , GL_CLEAR," 0 "},
-    {"GXand" , GL_AND," src AND dst "},
-    {"GXandReverse" , GL_AND_REVERSE," src AND NOT dst "},
-    {"GXcopy" , GL_COPY," src "},
-    {"GXandInverted" , GL_AND_INVERTED," NOT src AND dst "},
-    {"GXnoop" , GL_NOOP," dst "},
-    {"GXxor" , GL_XOR," src XOR dst "},
-    {"GXor" , GL_OR," src OR dst "},
-    {"GXnor" , GL_NOR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
-    {"GXequiv" , GL_EQUIV," NOT src XOR dst "},
-    {"GXinvert" , GL_INVERT," NOT dst "},
-    {"GXorReverse" , GL_OR_REVERSE," src OR NOT dst "},
-    {"GXcopyInverted" , GL_COPY_INVERTED," NOT src "},
-    {"GXorInverted" , GL_OR_INVERTED," NOT src OR dst "},
-    {"GXnand" , GL_NAND," NOT src OR NOT dst "},
-    {"GXset" , GL_SET," 1 "}
-  };
+    { 
+      {"GXclear" , GL_CLEAR," 0 "},
+      {"GXand" , GL_AND," src AND dst "},
+      {"GXandReverse" , GL_AND_REVERSE," src AND NOT dst "},
+      {"GXcopy" , GL_COPY," src "},
+      {"GXandInverted" , GL_AND_INVERTED," NOT src AND dst "},
+      {"GXnoop" , GL_NOOP," dst "},
+      {"GXxor" , GL_XOR," src XOR dst "},
+      {"GXor" , GL_OR," src OR dst "},
+      {"GXnor" , GL_NOR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
+      {"GXequiv" , GL_EQUIV," NOT src XOR dst "},
+      {"GXinvert" , GL_INVERT," NOT dst "},
+      {"GXorReverse" , GL_OR_REVERSE," src OR NOT dst "},
+      {"GXcopyInverted" , GL_COPY_INVERTED," NOT src "},
+      {"GXorInverted" , GL_OR_INVERTED," NOT src OR dst "},
+      {"GXnand" , GL_NAND," NOT src OR NOT dst "},
+      {"GXset" , GL_SET," 1 "}
+    };
 
 /* 
-void xset_alufunction(BCG *Xgc,char *string)
-{ 
-  int value;
-  idfromname(string,&value);
-  if ( value != -1)
-    {
-      Xgc->CurDrawFunction = value;
-      glLogicOp(AluStruc_[value].id);
-    }
-}
+   void xset_alufunction(BCG *Xgc,char *string)
+   { 
+   int value;
+   idfromname(string,&value);
+   if ( value != -1)
+   {
+   Xgc->CurDrawFunction = value;
+   glLogicOp(AluStruc_[value].id);
+   }
+   }
 */
 
 static void xset_alufunction1(BCG *Xgc,int num)
@@ -1451,7 +1451,7 @@ static void xset_colormap(BCG *Xgc,int m,int n,double *a)
       Xgc->private->colors[i].green = (guint16)(a[i+m]*65535);
       Xgc->private->colors[i].blue = (guint16) (a[i+2*m]*65535);
       gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
-  }
+    }
   set_colormap_constants(Xgc,m);
   FREE(colors_old);
 }

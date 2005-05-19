@@ -27,11 +27,11 @@ contourI (BCG *Xgc,ptr_level_f,double *, double *, double *,
 
 static void
 look (BCG *Xgc,ptr_level_f, int i, int j, int ib,
-	      int jb, int qq,double Cont, int style);
+      int jb, int qq,double Cont, int style);
 
 static int ffnd (BCG *Xgc,ptr_level_f,int,int,int,int,int,
-		     int,int,int,int,int,
-		     double,int *);
+		 int,int,int,int,int,
+		 double,int *);
 
 static int Gcont_size = 0;
 
@@ -205,31 +205,31 @@ int nsp_contour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int 
   else
     {
       /* Contour on a 3D plot */
-       if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
-	 {
-	   bbox[0]=x[0];bbox[1]=x[*n1-1];
-	   bbox[2]=y[0];bbox[3]=y[*n2-1];
-	   bbox[4]=zmin;bbox[5]=zmax;
-	 }
-       if ( flag[1] !=0)
-	 SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
-       else
-	 SetEch3d1(Xgc,&box,bbox,*teta,*alpha,0L);
-       /** Calcule l' Enveloppe Convexe de la boite **/
-       /** ainsi que les triedres caches ou non **/
-       Convex_Box(Xgc,&box,legend,flag[2]);
-       /** Le triedre cach\'e **/
-       if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
-	 {
-	   /* cache=InsideD[0]; */
-	   if (flag[2] >=2 )DrawAxis(Xgc,&box,'D',HIDDENFRAMECOLOR);
-	 }
-       else 
-	 {
-	   /* cache=InsideU[0]-4; */
-	   if (flag[2] >=2 )DrawAxis(Xgc,&box,'U',HIDDENFRAMECOLOR);
-	 }
-     }
+      if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
+	{
+	  bbox[0]=x[0];bbox[1]=x[*n1-1];
+	  bbox[2]=y[0];bbox[3]=y[*n2-1];
+	  bbox[4]=zmin;bbox[5]=zmax;
+	}
+      if ( flag[1] !=0)
+	SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
+      else
+	SetEch3d1(Xgc,&box,bbox,*teta,*alpha,0L);
+      /** Calcule l' Enveloppe Convexe de la boite **/
+      /** ainsi que les triedres caches ou non **/
+      Convex_Box(Xgc,&box,legend,flag[2]);
+      /** Le triedre cach\'e **/
+      if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
+	{
+	  /* cache=InsideD[0]; */
+	  if (flag[2] >=2 )DrawAxis(Xgc,&box,'D',HIDDENFRAMECOLOR);
+	}
+      else 
+	{
+	  /* cache=InsideU[0]-4; */
+	  if (flag[2] >=2 )DrawAxis(Xgc,&box,'U',HIDDENFRAMECOLOR);
+	}
+    }
   if (*flagnz == 0)
     {
       if ((zconst = graphic_alloc(5,(*nz),sizeof(double)))== 0) 
@@ -242,7 +242,7 @@ int nsp_contour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int 
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
       contourI(Xgc,func,x,y,z,zconst,N,(int *) 0,&err);
     }
-   else
+  else
     {
       N[0]= *n1;N[1]= *n2;N[2]= *nz;
       contourI(Xgc,func,x,y,z,zz,N,(int *) 0,&err);
@@ -437,25 +437,25 @@ static void contourI(BCG *Xgc,ptr_level_f func, double *x, double *y, double *z,
     }
   /* just a parametrization of the boundary points */
   for ( i = 0 ; i <  n2 ; i++)
-	{
-	  ybd_cont[i] = i ;
-	  xbd_cont[i] = 0 ;
-	}
+    {
+      ybd_cont[i] = i ;
+      xbd_cont[i] = 0 ;
+    }
   for ( i = 1 ; i <  n1 ; i++)
-	{
-	  ybd_cont[n2+i-1] = n2-1 ;
-	  xbd_cont[n2+i-1] = i  ;
-	}
+    {
+      ybd_cont[n2+i-1] = n2-1 ;
+      xbd_cont[n2+i-1] = i  ;
+    }
   for ( i = n2-2;  i >= 0  ; i--)
-	{
-	  ybd_cont[2*n2 +n1-3-i] = i ;
-	  xbd_cont[2*n2 +n1-3-i] = n1-1  ;
-	}
+    {
+      ybd_cont[2*n2 +n1-3-i] = i ;
+      xbd_cont[2*n2 +n1-3-i] = n1-1  ;
+    }
   for ( i = n1-2 ; i >= 0 ; i--)
-	{
-	  ybd_cont[2*n2 +2*n1-4-i] = 0 ;
-	  xbd_cont[2*n2 +2*n1-4-i] = i  ;
-	}
+    {
+      ybd_cont[2*n2 +2*n1-4-i] = 0 ;
+      xbd_cont[2*n2 +2*n1-4-i] = i  ;
+    }
   for ( c= 0 ; c < ncont ; c++)
     {
       stylec = ( style != (int *) 0) ? style[c] : c;
@@ -523,18 +523,18 @@ static void look(BCG *Xgc,ptr_level_f func, int i, int j, int ib, int jb, int qq
       ent=3 ; /* le segment est vertical haut */
       /* Storing intersection point */
       (*func)(Xgc,0,Cont,x_cont(i), f_intercept(Cont,phi_cont(i,j),
-					    y_cont(j),phi_cont(i,jp),y_cont(jp)));
+						y_cont(j),phi_cont(i,jp),y_cont(jp)));
       break ;
     case 4 :
       if  (get_itg_cont(i,j) == 1 || get_itg_cont(i,j)==3 ) return;
       ent=4 ; /* le segment est horizontal droit */
       /* Storing intersection point */
       (*func)(Xgc,0,Cont,f_intercept(Cont,phi_cont(i,j),
-				 x_cont(i),phi_cont(ip,j),x_cont(ip)),
+				     x_cont(i),phi_cont(ip,j),x_cont(ip)),
 	      y_cont(j));
       break;
-      default :
-	Scistring(" Error in case wrong value ");
+    default :
+      Scistring(" Error in case wrong value ");
       break;
     }
   wflag=1;
@@ -599,7 +599,7 @@ static void look(BCG *Xgc,ptr_level_f func, int i, int j, int ib, int jb, int qq
 	    }
 	  /** we must quit the while loop **/
 	  wflag = 0 ;
-	  }
+	}
       /**  init point was inside the domain */
       if ( qq == 2) 
 	{
@@ -666,17 +666,17 @@ static int ffnd (BCG *Xgc,ptr_level_f func, int i1, int i2, int i3, int i4, int 
    */
   for  ( i = 0 ;  ; i++)
     { int l1,k1;
-      double phi;
-      if ( not_same_sign ( phi1,phi2))   /** sortir du for **/ break ; 
-      if  ( phiav != 0.0 ) 
-	{
-	  (*func)(Xgc,1,Cont,f_intercept(0.0,phi2,x_cont(i2),phiav,xav),
-		  f_intercept(0.0,phi2,y_cont(jj2),phiav,yav));
-	} 
-      /** on permutte les points du rectangle **/
-      l1=i1; k1= jj1;
-      i1=i2;jj1=jj2;i2=i3;jj2=jj3;i3=i4;jj3=jj4;i4=l1;jj4=k1;
-      phi=phi1; phi1=phi2;phi2=phi3;phi3=phi4;phi4=phi;
+    double phi;
+    if ( not_same_sign ( phi1,phi2))   /** sortir du for **/ break ; 
+    if  ( phiav != 0.0 ) 
+      {
+	(*func)(Xgc,1,Cont,f_intercept(0.0,phi2,x_cont(i2),phiav,xav),
+		f_intercept(0.0,phi2,y_cont(jj2),phiav,yav));
+      } 
+    /** on permutte les points du rectangle **/
+    l1=i1; k1= jj1;
+    i1=i2;jj1=jj2;i2=i3;jj2=jj3;i3=i4;jj3=jj4;i4=l1;jj4=k1;
+    phi=phi1; phi1=phi2;phi2=phi3;phi3=phi4;phi4=phi;
     }
   (*func)(Xgc,1,Cont,f_intercept(0.0,phi1,x_cont(i1),phi2,x_cont(i2)),
 	  f_intercept(0.0,phi1,y_cont(jj1),phi2,y_cont(jj2)));
@@ -723,7 +723,7 @@ static void
 Contstore_(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 {
   G_Contstore_(ival,GEOX(xncont,yncont,Cont),
-	      GEOY(xncont,yncont,Cont));
+	       GEOY(xncont,yncont,Cont));
 }
 
 /*
@@ -736,7 +736,7 @@ static void
 Contstore_1(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 {
   G_Contstore_(ival,GEOX(xncont,yncont,ZC),
-	      GEOY(xncont,yncont,ZC));
+	       GEOY(xncont,yncont,ZC));
 }
 
 /*
