@@ -26,6 +26,7 @@
 #include "nsp/cnumeric.h"
 #include "nsp/matutil.h"
 #include "nsp/gsort-p.h"
+#include "nsp/nsp_lapack.h"
 #include "nsp/lapack-c.h"
 
 #include <nsp/blas.h>
@@ -1792,6 +1793,159 @@ int nsp_get_urandtype(void)
 {
   return rand_data[1];
 }
+
+/*
+ *    A = A^B where B is a scalar, added by Bruno ;
+ *    A is modified and hold the final result
+ */
+int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B) 
+{
+  int p, i, oddflag=0;
+  int A_is_square = A->m==A->n;
+
+  if ( ! A_is_square )
+    {
+      Scierror("Error:\t matrix must be square\n");
+      return FAIL;
+    }
+
+  if ( A->m == 1 ) /* A is a scalar */
+    return nsp_mat_pow_scalar(A,B);
+
+  else if ( B->rc_type == 'c' || B->R[0] != floor(B->R[0]) )
+    {
+      Scierror("Error:\t ^ operator is not currently implemented for non integer power\n");
+      return FAIL;
+    }
+  
+  p = B->R[0];
+
+  if ( p == 0 ) /* return identity matrix */
+    {
+      if ( A->rc_type == 'r' )
+	{
+	  for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = 0.0;
+	  for ( i = 0 ; i < A->mn ; i+=A->m ) A->R[i] = 1.0;
+	}
+      else
+	{
+	  for ( i = 0 ; i < A->mn ; i++ ) { A->C[i].r = 0.0 ; A->C[i].i = 0.0; }  
+	  for ( i = 0 ; i < A->mn ; i+=A->m ) A->C[i].r = 1.0;
+	}
+      return OK;
+    }
+
+
+  if ( p < 0 )
+    {
+      if ( nsp_inv(A) == FAIL ) return FAIL;
+      p = -p;
+    }
+
+  if ( p == 1 ) return OK;
+
+  /* now use the power algorithm */
+  if ( A->rc_type == 'r' )
+    {
+      double alpha=1.0,beta=0.0;
+      double *temp = NULL, *oddmat = NULL;
+      if ( (temp = nsp_alloc_doubles(A->mn)) == NULL ) return FAIL;
+      while ( p > 1 )
+	{
+	  if ( p % 2 == 1 )
+	    {
+	      if ( ! oddflag )
+		{
+		  if ( (oddmat = nsp_alloc_doubles(A->mn)) == NULL ) { FREE(temp); return FAIL; }
+		  oddflag = 1;
+		  memcpy(oddmat, A->R, A->mn*sizeof(double));
+		}
+	      else
+		{
+		  C2F(dgemm)("N","N",&A->m,&A->m,&A->m,&alpha,A->R,&A->m,oddmat,&A->m,
+			     &beta,temp,&A->m,1,1); 
+		  memcpy(oddmat, temp, A->mn*sizeof(double));
+		}
+	    }
+	  C2F(dgemm)("N","N",&A->m,&A->m,&A->m,&alpha,A->R,&A->m,A->R,&A->m,
+		     &beta,temp,&A->m,1,1); 
+	  memcpy(A->R, temp, A->mn*sizeof(double));
+	  p = p/2;
+	}
+      if ( oddflag )
+	{
+	  C2F(dgemm)("N","N",&A->m,&A->m,&A->m,&alpha,A->R,&A->m,oddmat,&A->m,
+		     &beta,temp,&A->m,1,1); 
+	  memcpy(A->R, temp, A->mn*sizeof(double));
+	  FREE(oddmat);
+	}
+      FREE(temp);
+    }
+  else  /* A is complex */
+    {
+      doubleC alpha={1.0,0.0}, beta={0.0,0.0};
+      doubleC *temp = NULL, *oddmat = NULL;
+      if ( (temp = nsp_alloc_doubleC(A->mn)) == NULL ) return FAIL;
+      while ( p > 1 )
+	{
+	  if ( p % 2 == 1 )
+	    {
+	      if ( ! oddflag )
+		{
+		  if ( (oddmat = nsp_alloc_doubleC(A->mn)) == NULL ) { FREE(temp); return FAIL; }
+		  oddflag = 1;
+		  memcpy(oddmat, A->C, A->mn*sizeof(doubleC));
+		}
+	      else
+		{
+		  C2F(zgemm)("N","N",&A->m,&A->m,&A->m,&alpha,A->C,&A->m,oddmat,&A->m,
+			     &beta,temp,&A->m,1,1); 
+		  memcpy(oddmat, temp, A->mn*sizeof(doubleC));
+		}
+	    }
+	  C2F(zgemm)("N","N",&A->m,&A->m,&A->m,&alpha,A->C,&A->m,A->C,&A->m,
+		     &beta,temp,&A->m,1,1); 
+	  memcpy(A->C, temp, A->mn*sizeof(doubleC));
+	  p = p/2;
+	}
+      if ( oddflag )
+	{
+	  C2F(zgemm)("N","N",&A->m,&A->m,&A->m,&alpha,A->C,&A->m,oddmat,&A->m,
+		     &beta,temp,&A->m,1,1); 
+	  memcpy(A->C, temp, A->mn*sizeof(doubleC));
+	  FREE(oddmat);
+	}
+      FREE(temp);
+    }
+
+  return OK;
+}
+/*
+ *    A = A^B where A and B are not scalar => just display an error message
+ *    (this is to use the int_mx_mopscal generic interface)
+ */
+int nsp_mat_pow_matmat(NspMatrix *A, NspMatrix *B) 
+{
+  Scierror("Error:\t for ^ operator at least one operand must be a scalar\n");
+  return FAIL;
+}
+
+/*
+ *    A = B^A where B is a scalar  XXXX FIXME: to complete when
+ *    nsp will have an exponential matrix routine
+ */
+int nsp_mat_pow_scalarmat(NspMatrix *A, NspMatrix *B) 
+{
+  if ( A->m != A->n )
+    {
+      Scierror("Error:\t in s^A, the exponent A must be a square matrix\n");
+      return FAIL;
+    }
+
+  Scierror("Error:\t s^A is not currently implemented\n");
+  return FAIL;
+}
+
 
 
 /*

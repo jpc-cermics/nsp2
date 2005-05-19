@@ -3470,6 +3470,21 @@ int_mxdsub (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * A=nsp_mat_pow(A,B), A^ B 
+ * with special cases Mat^[]  and Mat^scalar
+ *                    []^Mat ans scalar^Mat
+ * added by Bruno
+ */
+
+int
+int_mxpow (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_mopscal (stack, rhs, opt, lhs,
+			 nsp_mat_pow_matscalar, nsp_mat_pow_matmat,
+			 nsp_mat_pow_scalarmat, MatNoOp, 1);
+}
+
+/*
  * A=nsp_mat_pow_el(A,B), A.^ B 
  * with special cases Mat.^[]  and Mat.^scalar
  *                    [].^Mat ans scalar.^Mat
@@ -3941,6 +3956,7 @@ static OpTab Matrix_func[] = {
   {"ior", int_mxior},
   {"ishift", int_mxishift},
   {"conj_m", int_mxconj},
+  {"hat_m_m", int_mxpow},
   {"dh", int_mxpowel},
   {"dsl", int_mxdivel},
   {"dbs", int_mxbackdivel},

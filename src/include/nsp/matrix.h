@@ -31,7 +31,7 @@ struct _NspMatrix {
   union { 
     double *R;     /* Pointer on real values */
     doubleC *C;    /* Pointer on complex values */
-    int *I;    /* Pointer on integer values */
+    int *I;        /* Pointer on integer values */
   };
   char rc_type;    /* 'r' : real or  'c' : complex  */
   char convert;    /* 'd','i','f' : double, int, float
@@ -221,6 +221,9 @@ extern void nsp_set_urandseed(int m);
 extern int nsp_get_urandseed(void); 
 extern void nsp_set_urandtype(int m); 
 extern int nsp_get_urandtype(void); 
+extern int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B); 
+extern int nsp_mat_pow_matmat(NspMatrix *A, NspMatrix *B); 
+extern int nsp_mat_pow_scalarmat(NspMatrix *A, NspMatrix *B); 
 extern int nsp_mat_pow_tt(NspMatrix *A, NspMatrix *B); 
 extern int nsp_mat_pow_el(NspMatrix *A, NspMatrix *B); 
 extern int nsp_mat_pow_scalar(NspMatrix *A, NspMatrix *B); 
