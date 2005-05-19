@@ -190,7 +190,7 @@ static int nsp_menus_choices_I(char *label, int *defval, int nitems)
       info->choice.combo = combo =  gtk_combo_new ();
       gtk_combo_set_popdown_strings (GTK_COMBO (combo), cbitems);
       gtk_entry_set_text (GTK_ENTRY (GTK_COMBO(combo)->entry),
-		     info->name[info->choice.default_toggle]);
+			  info->name[info->choice.default_toggle]);
       gtk_entry_set_editable(GTK_ENTRY (GTK_COMBO(combo)->entry),FALSE);
       gtk_widget_show (combo);
       gtk_widget_show (info->choice.label);
@@ -351,17 +351,17 @@ static void nsp_menus_choices_Free(int nitems)
  */
 
 /* 
-static int choices_cmap(void)
-{
-  int Nchoices=0,i,flag=0 ;			
-  while ( choices_data[Nchoices] != (SciComboData *) NULL ) Nchoices++;
-  for (i=0 ; i < Nchoices ; ++i) 
-    { 
-      if ( strncmp(choices_data[i]->choice.name,"colors",6)==0)
-	flag=1;
-  }
-  return(flag);
-}
+   static int choices_cmap(void)
+   {
+   int Nchoices=0,i,flag=0 ;			
+   while ( choices_data[Nchoices] != (SciComboData *) NULL ) Nchoices++;
+   for (i=0 ; i < Nchoices ; ++i) 
+   { 
+   if ( strncmp(choices_data[i]->choice.name,"colors",6)==0)
+   flag=1;
+   }
+   return(flag);
+   }
 
 */
 

@@ -32,7 +32,7 @@ int  nsp_multi_dialog(NspSMatrix *Title,NspSMatrix *Labels,NspSMatrix *Init_valu
       return FAIL;
     }
   rep =  nsp_multi_dialog_(labels,Labels->S,Init_values->S, nv, &ierr);
- nsp_string_destroy(&labels);
+  nsp_string_destroy(&labels);
   if ( ierr == 0 )
     {
       *cancel = ( rep == FALSE ) ? 1 : 0;

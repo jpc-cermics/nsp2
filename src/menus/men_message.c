@@ -34,7 +34,7 @@ int nsp_message(NspSMatrix *Message,NspSMatrix *Buttons,int *rep)
     {
       *rep= nsp_message_(message,Buttons->S,Buttons->mn);
     }
- nsp_string_destroy(&message);
+  nsp_string_destroy(&message);
   return OK;
 }
 

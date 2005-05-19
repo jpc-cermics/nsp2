@@ -13,9 +13,9 @@ static Widget filedialog=(Widget)0;
 static int ok_Flag_sci;
 static void     okPrint(Widget w, XEvent *event, String *params, Cardinal *num_params);
 static XtActionsRec actionTable[] = 
-{
-  {"go-print", okPrint},
-};
+  {
+    {"go-print", okPrint},
+  };
 
 static void okPrint(Widget w, XEvent *event, String *params, Cardinal *num_params)
 {
@@ -102,7 +102,7 @@ int  ExposePrintdialogWindow(int flag, int *colored, int *orientation)
     NULL,
     "Orientation",    "landscape",    "portrait",
     NULL
-    };
+  };
   static int defval[]={1,0};
   static int nitems= 2;
 
@@ -155,7 +155,7 @@ int  ExposePrintdialogWindow(int flag, int *colored, int *orientation)
       fbox=XtCreateManagedWidget("fileform",formWidgetClass,dpanned,args,iargs);
       XtCreateManagedWidget("filelabel",labelWidgetClass, fbox,args, iargs);
       filedialog = XtCreateManagedWidget("ascii",asciiTextWidgetClass,
-				       fbox, args, iargs);
+					 fbox, args, iargs);
     }
   /* command widgets */
 

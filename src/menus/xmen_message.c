@@ -90,7 +90,7 @@ void MessageOk1(Widget w, XtPointer client_data, caddr_t callData)
   XFlush(datas->dpy);
   XSync(datas->dpy,0);
   FREE(datas)
-}
+    }
 
 int ExposeMessageWindow1(void)
 {

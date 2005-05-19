@@ -29,7 +29,7 @@ int  nsp_matrix_dialog(NspSMatrix *Title,NspSMatrix *Labels_v,NspSMatrix *Labels
   if ( labels == NULL) return FAIL;
   rep =  nsp_matrix_dialog_(labels,Labels_v->S,Labels_h->S, Init_matrix->S,
 			    Labels_v->mn, Labels_h->mn,&ierr);
- nsp_string_destroy(&labels);
+  nsp_string_destroy(&labels);
   if ( ierr == 0) 
     {
       *cancel = ( rep == FALSE) ? 1 : 0;

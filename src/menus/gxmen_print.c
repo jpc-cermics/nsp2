@@ -47,10 +47,10 @@ static void menu_print_destroy (GtkButton *button, state * rep)
 /* convenience routine */
 
 static void make_menu_items( GtkWidget    *option_menu, 
-		      gchar        *name[],
-		      guint        nname,
-		      guint history,
-		      GtkSignalFunc callback) 
+			     gchar        *name[],
+			     guint        nname,
+			     guint history,
+			     GtkSignalFunc callback) 
 {
   guint count = 0; 
   GtkWidget *item,*menu =  gtk_menu_new ();

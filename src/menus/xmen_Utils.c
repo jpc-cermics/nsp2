@@ -46,7 +46,7 @@ void XtMyLoop(Widget w, Display *dpy, int flag, int *ok_Flag)
       /** used in men_choice to get the scilab graphic colormap */
       set_cmap(XtWindow(w));
       /** if scilab graphic window has a private colormap we must redraw 
-	the xchoice widget **/
+	  the xchoice widget **/
     }
   /* On ignore les delete envoyes par le Window Manager */
   wmDeleteWindow = XInternAtom(XtDisplay(w),"WM_DELETE_WINDOW", False);
@@ -78,10 +78,10 @@ ShellFormCreate(char *shellname, Widget *shell, Widget *form, Display **dpyh)
 			      (Arg *) NULL,(Cardinal)ZERO); 
 
   hpaned = XtCreateManagedWidget("hpaned",panedWidgetClass,*shell,
-			     (Arg *) NULL,(Cardinal)ZERO);
+				 (Arg *) NULL,(Cardinal)ZERO);
 
   *form = XtCreateManagedWidget("paned",panedWidgetClass,hpaned,
-			     (Arg *) NULL,(Cardinal)ZERO);
+				(Arg *) NULL,(Cardinal)ZERO);
 }
 
 
@@ -134,11 +134,11 @@ int ViewpListCreate(Widget parentW, Widget *listW, Widget *viewportW, char **str
   iargs=0;
   /* create chooseviewport and chooselist widgets */
   *viewportW = XtCreateManagedWidget("listviewport",viewportWidgetClass,
-					 parentW,args,iargs);
+				     parentW,args,iargs);
   iargs = 0;
   XtSetArg(args[iargs], XtNlist, strings); iargs++;
   *listW=XtCreateManagedWidget("list",listWidgetClass,*viewportW,
-			     args,iargs);
+			       args,iargs);
   return(0);
 }
 

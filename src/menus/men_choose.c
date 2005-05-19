@@ -31,7 +31,7 @@ int nsp_choose(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,int *nrep)
   but_names = (button == NULL) ?  button_def : button->S  ; 
   Rep = nsp_choose_(descr,Items->S,Items->mn,but_names,1,&choice);
   *nrep= ( Rep == TRUE ) ? (1+ choice) : 0;
- nsp_string_destroy(&descr);
+  nsp_string_destroy(&descr);
   return OK;
 }
 

@@ -195,14 +195,14 @@ static BOOL APIENTRY MChoicePage(HWND hDlg,UINT message,UINT wParam,LONG lParam)
       SetDlgItemText(hDlg, IDE_MDTIT, SciMChoice.label);
       break;
       /** sans effets pour l''instant 
-    case WM_DRAWITEM:
-      {
+	  case WM_DRAWITEM:
+	  {
 	  LPDRAWITEMSTRUCT lpdis = (LPDRAWITEMSTRUCT)lParam;
 	  DrawIcon(lpdis->hDC, 0, 0, 
 	  (HICON)GetClassLong(GetParent(hDlg), GCL_HICON));
-      }
-      break;
-	  **/
+	  }
+	  break;
+      **/
     case WM_NOTIFY:
       switch (((NMHDR FAR *) lParam)->code) 
 	{
@@ -226,14 +226,14 @@ static BOOL APIENTRY MChoicePage(HWND hDlg,UINT message,UINT wParam,LONG lParam)
 	  SendMessage(GetDlgItem(hDlg,0x3024 ), BM_SETSTYLE, (WPARAM)BS_PUSHBUTTON, MAKELONG(FALSE, 0));
 
 	  /** Je ne sais pas pourquoi mais ce qui suit fait que le dernier menu est mal mis a jour 
-	    avec gcwin32 avec VC++ ca marche : J'ai donc comment'e ce qui suit 
-	    et mis le meme code plus haut au initdialog 
-	    j'espere que ca ne fout pas la merde SciMChoice.CPageXXXXXX
-	  for ( i =0 ; i < SciMChoice.NItPg[SciMChoice.CPage] ; i++)
-	    SendMessage(GetDlgItem(hDlg, (IDE_MD1+i)), WM_SETTEXT, 0, 
-			(LPARAM)SciMChoice.pszName[SciMChoice.CPage*NITEMMAXPAGE+i]);
+	      avec gcwin32 avec VC++ ca marche : J'ai donc comment'e ce qui suit 
+	      et mis le meme code plus haut au initdialog 
+	      j'espere que ca ne fout pas la merde SciMChoice.CPageXXXXXX
+	      for ( i =0 ; i < SciMChoice.NItPg[SciMChoice.CPage] ; i++)
+	      SendMessage(GetDlgItem(hDlg, (IDE_MD1+i)), WM_SETTEXT, 0, 
+	      (LPARAM)SciMChoice.pszName[SciMChoice.CPage*NITEMMAXPAGE+i]);
 
-	    **/
+	  **/
 	  break;
 	case PSN_WIZBACK:
 	  for ( i =0 ; i < SciMChoice.NItPg[SciMChoice.CPage] ; i++) 

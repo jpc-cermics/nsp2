@@ -14,7 +14,7 @@ extern int ok_end  (void);
 extern int w_init  (  Widget w);
 extern int set_temp_wf_cursor (Cursor cursor);
 extern void Rescan     (Widget widget, XEvent*	event,
-				String* params,    Cardinal* num_params);
+			String* params,    Cardinal* num_params);
 extern int reset_wf_cursor  (void);
 extern int create_file_panel  (  Widget w, char * description);
 extern int getMenuBut0  (  Widget *w);
@@ -118,22 +118,22 @@ int write_getfile(char *dir, char *file)
 
 int popup_file_panel1(Widget w, char *description)
 {
-    extern Atom     wm_delete_window;
-    w_init(w);
-    set_temp_wf_cursor(wait_wf_cursor);
-    XtSetSensitive(w, False);
-    if (!file_popup)
-	create_file_panel(w,description);
-    else
-      Rescan((Widget) 0, (XEvent*) 0, (String*) 0, (Cardinal*) 0);
+  extern Atom     wm_delete_window;
+  w_init(w);
+  set_temp_wf_cursor(wait_wf_cursor);
+  XtSetSensitive(w, False);
+  if (!file_popup)
+    create_file_panel(w,description);
+  else
+    Rescan((Widget) 0, (XEvent*) 0, (String*) 0, (Cardinal*) 0);
 
-    XtPopup(file_popup, XtGrabNonexclusive);
-    (void) XSetWMProtocols(XtDisplay(file_popup), XtWindow(file_popup),
-			   &wm_delete_window, 1);
-    if (file_msg_is_popped)
-	XtAddGrab(file_msg_popup, False, False);
-    reset_wf_cursor();
-    return(0);
+  XtPopup(file_popup, XtGrabNonexclusive);
+  (void) XSetWMProtocols(XtDisplay(file_popup), XtWindow(file_popup),
+			 &wm_delete_window, 1);
+  if (file_msg_is_popped)
+    XtAddGrab(file_msg_popup, False, False);
+  reset_wf_cursor();
+  return(0);
 }
 
 

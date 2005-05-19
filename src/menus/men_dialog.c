@@ -38,8 +38,8 @@ int nsp_dialog(NspSMatrix *Title,NspSMatrix *Init,NspObject **Rep)
   nsp_string title =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
   nsp_string init =nsp_smatrix_elts_concat(Init,"\n",1,"\n",1);
   rep = nsp_dialog_(title,init, buttons,&ierr,&answer );
- nsp_string_destroy(&init);
- nsp_string_destroy(&title);
+  nsp_string_destroy(&init);
+  nsp_string_destroy(&title);
   if ( rep == FALSE)   return FAIL;
   /* \n must be converted */ 
   S =nsp_smatrix_split(answer,"\n");

@@ -108,16 +108,16 @@ int  nsp_get_file_window(char *filemask,char **file,char *dirname,
     }
 
   signals[0]=gtk_signal_connect (GTK_OBJECT (window), "destroy",
-		      GTK_SIGNAL_FUNC(file_selection_destroy),
-		      &rep);
+				 GTK_SIGNAL_FUNC(file_selection_destroy),
+				 &rep);
 
   signals[1]=gtk_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION (window)->ok_button),
-		      "clicked", GTK_SIGNAL_FUNC(file_selection_ok),
-		      &rep);
+				 "clicked", GTK_SIGNAL_FUNC(file_selection_ok),
+				 &rep);
   
   signals[2]=gtk_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION (window)->cancel_button),
-		      "clicked", GTK_SIGNAL_FUNC(file_selection_cancel),
-		      &rep);
+				 "clicked", GTK_SIGNAL_FUNC(file_selection_cancel),
+				 &rep);
   gtk_widget_show (window);
   while (1) 
     {

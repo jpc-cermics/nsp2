@@ -50,7 +50,7 @@ ChooseDlgProc(HWND hdlg, UINT wmsg, WPARAM wparam, LPARAM lparam)
       Ch->choice = (UINT)SendDlgItemMessage(hdlg, CHOOSE_LINENUM, LB_GETCURSEL,
 					    (WPARAM)0, (LPARAM)0);
     }
-  return FALSE;
+    return FALSE;
   }
   return FALSE;
 }
@@ -65,7 +65,7 @@ int ExposeChooseWindow( ChooseMenu *PCh)
   int status = FALSE;
   SetWindowLong(textwin.hWndParent, 4, (LONG) PCh);
   MyChooseDlgProc = (DLGPROC) MyGetProcAddress("ChooseDlgProc",
-						    ChooseDlgProc);
+					       ChooseDlgProc);
   if (DialogBox(hdllInstance, "SciChooseDlgBox", 
 		textwin.hWndParent, MyChooseDlgProc)  == IDOK) 
     {

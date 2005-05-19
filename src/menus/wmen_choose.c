@@ -69,7 +69,7 @@ ChooseDlgProc(HWND hdlg, UINT wmsg, WPARAM wparam, LPARAM lparam)
       Ch->choice = (UINT)SendDlgItemMessage(hdlg, CHOOSE_LINENUM, LB_GETCURSEL,
 					    (WPARAM)0, (LPARAM)0);
     }
-  return FALSE;
+    return FALSE;
   }
   return FALSE;
 }

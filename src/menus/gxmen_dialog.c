@@ -148,8 +148,8 @@ int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr 
     button_ok = gtk_button_new_with_label (button_name[0]);
   gtk_container_add (GTK_CONTAINER (hbbox), button_ok);
   gtk_signal_connect (GTK_OBJECT (button_ok), "clicked",
-				 GTK_SIGNAL_FUNC(sci_dialog_ok),
-				 &answer);
+		      GTK_SIGNAL_FUNC(sci_dialog_ok),
+		      &answer);
   GTK_WIDGET_SET_FLAGS (button_ok, GTK_CAN_DEFAULT);
   gtk_widget_grab_default (button_ok);
   gtk_widget_show (button_ok);
@@ -167,8 +167,8 @@ int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr 
   gtk_container_add (GTK_CONTAINER (hbbox), button_cancel);
   GTK_WIDGET_SET_FLAGS (button_cancel, GTK_CAN_DEFAULT);
   gtk_signal_connect (GTK_OBJECT (button_cancel), "clicked",
-				  GTK_SIGNAL_FUNC(sci_dialog_cancel),
-				  &answer);
+		      GTK_SIGNAL_FUNC(sci_dialog_cancel),
+		      &answer);
   gtk_widget_show (button_cancel);
   gtk_widget_show (window);
   while ( 1) 

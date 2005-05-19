@@ -648,7 +648,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if ( nsp_smatrix_concat_right(Items,(NspSMatrix *)Sep) == FAIL) return RET_BUG;
 	  /* SciChoices use NULL as sep */ 
-	nsp_string_destroy(&(Items->S[Items->mn-1]));
+	  nsp_string_destroy(&(Items->S[Items->mn-1]));
 	  Items->S[Items->mn-1]= NULL;
 	  if ( nsp_smatrix_concat_right(Items,Item) == FAIL) return RET_BUG;
 	  Values->n = Values->mn;  Values->m = 1;
@@ -663,7 +663,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
       if ( nsp_matrix_resize(M,0,0) == FAIL) return RET_BUG;
     }
   nsp_smatrix_destroy(Items);
- nsp_string_destroy(&title);
+  nsp_string_destroy(&title);
   MoveObj(stack,1,(NspObject *) M);
   return 1;
 }
@@ -674,7 +674,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
  *************************************************************/
 
 static OpTab Menus_func[]={
-  #include "men-IN.nam"
+#include "men-IN.nam"
   {(char *) 0, NULL}
 };
 

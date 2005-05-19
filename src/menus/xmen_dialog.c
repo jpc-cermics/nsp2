@@ -33,10 +33,10 @@ static XtCallbackProc DialogOk(Widget w, XtPointer client_data, XtPointer call_d
   dialog_str=(char *) MALLOC( (strlen(lstr)+1)*(sizeof(char)));
   if (dialog_str != 0)
     { int ind ;
-      strcpy(dialog_str,lstr);
-      ind = strlen(dialog_str) - 1 ;
-      if (dialog_str[ind] == '\n') dialog_str[ind] = '\0' ;
-      ok_Flag_sci= 1;
+    strcpy(dialog_str,lstr);
+    ind = strlen(dialog_str) - 1 ;
+    if (dialog_str[ind] == '\n') dialog_str[ind] = '\0' ;
+    ok_Flag_sci= 1;
     }
   else 
     {

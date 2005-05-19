@@ -57,13 +57,13 @@ int C2F(sciquit)(nl,nc)
      
 
 void cerro(str)
-char *str;
+     char *str;
 {
   fprintf(stderr,"%s",str);
 }
 
 void cout(str)
-char *str;
+     char *str;
 {
   fprintf(stdout,"%s",str);
 }

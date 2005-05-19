@@ -68,7 +68,7 @@ int SciChoiceI(char *label, int *defval, int nitems)
     {
       ChangeBF1(toppaned,"viewport",1,0);
       /** ChangeBF1(toppaned,"viewport.vertical",1,0);
-      ChangeBF1(toppaned,"viewport.horizontal",1,0); **/
+	  ChangeBF1(toppaned,"viewport.horizontal",1,0); **/
     }
   iargs=0;
   form = XtCreateManagedWidget("form",formWidgetClass, dviewport , args, iargs);
@@ -283,8 +283,8 @@ Widget create_choices(Widget toppaned, Widget wvert, int flag)
     if ( flag == 1) nres= 5;
     gcchoiceargs[0].value = (XtArgVal) lastChoice;
     lastChoice = XtCreateManagedWidget(Everything[i]->choice.text,
-					 formWidgetClass,toppaned,
-					 gcchoiceargs,nres);
+				       formWidgetClass,toppaned,
+				       gcchoiceargs,nres);
 
     /* now fill up that form */
     create_choice(lastChoice,Everything[i],flag);
@@ -303,31 +303,31 @@ Widget create_choices(Widget toppaned, Widget wvert, int flag)
  * ---------------------
  * What a choice widget is:  A collection of toggle buttons placed inside
  * a form widget.  Exactly one of these toggle buttons can be "on" at
-* any given time;  the rest are "off".  "On" toggle buttons have
-* the foreground and background colors reversed.
-* Also, specifically because it comes in handy in Sci, choosing one
-* of the buttons causes a string associated with it to be printed out
-* (and interpreted).  Half of the string is global to the whole form
-* and the other half is local to each button.
-*
-* For example, pressing the "xor" button in the "function" form would
-* cause Sci to interpret the string "function xor", thus changing the
-* function in the GC to xor.
-*
-* There's also a label widget to the left of that mess, with an
-* incredibly descriptive title.
-*
-* create_choice() makes one.
-*
-* w is the form widget (already created) into which we will place the
-* toggle buttons.  info contains lots of useful information, such
-* as the names of the buttons and their strings (see Sci.h).
-* Nchoice is the number of the choice this is useful for callback 
-*
-* Special names are recognised 
-* if info->choice.name == "colors" then the toggles are colorized 
-* and we get the number of colors 
-*********************************************************************/
+ * any given time;  the rest are "off".  "On" toggle buttons have
+ * the foreground and background colors reversed.
+ * Also, specifically because it comes in handy in Sci, choosing one
+ * of the buttons causes a string associated with it to be printed out
+ * (and interpreted).  Half of the string is global to the whole form
+ * and the other half is local to each button.
+ *
+ * For example, pressing the "xor" button in the "function" form would
+ * cause Sci to interpret the string "function xor", thus changing the
+ * function in the GC to xor.
+ *
+ * There's also a label widget to the left of that mess, with an
+ * incredibly descriptive title.
+ *
+ * create_choice() makes one.
+ *
+ * w is the form widget (already created) into which we will place the
+ * toggle buttons.  info contains lots of useful information, such
+ * as the names of the buttons and their strings (see Sci.h).
+ * Nchoice is the number of the choice this is useful for callback 
+ *
+ * Special names are recognised 
+ * if info->choice.name == "colors" then the toggles are colorized 
+ * and we get the number of colors 
+ *********************************************************************/
 
 
 static void
@@ -439,17 +439,17 @@ create_choice(Widget w, SciStuff *info, int flag)
       
       /* Create it finally */
       (info->data[i]).toggle = XtCreateManagedWidget((info->data[i]).name, 
-					       toggleWidgetClass,
-					       w,
-					       toggleargs,useargs);
-    /* Add the Callback function */
+						     toggleWidgetClass,
+						     w,
+						     toggleargs,useargs);
+      /* Add the Callback function */
 
-    XtAddCallback((info->data[i]).toggle,XtNcallback,(XtCallbackProc)info->choice.function,
-		  (XtPointer) (info->data)[i].cbinfo);
+      XtAddCallback((info->data[i]).toggle,XtNcallback,(XtCallbackProc)info->choice.function,
+		    (XtPointer) (info->data)[i].cbinfo);
     
-    /* set the default toggle on */
+      /* set the default toggle on */
 
-  }
+    }
   
   /* The toggle widgets have all been created;
   ** now make the all the same width if that's
@@ -500,7 +500,7 @@ static int choices_cmap(void)
     { 
       if ( strncmp(Everything[i]->choice.name,"colors",6)==0)
 	flag=1;
-  }
+    }
   return(flag);
 }
 
@@ -559,7 +559,7 @@ line_up_labels(SciStuff **Everything, int num)
 static int
 pttb(Widget w, caddr_t closure, caddr_t call_data)
                
-                                /* contains the string */
+     /* contains the string */
                        
 {
   int itm=0,tog=0;

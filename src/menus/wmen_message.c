@@ -34,7 +34,7 @@ SciMessageDlgProc(HWND hdlg, UINT wmsg, WPARAM wparam, LPARAM lparam)
     switch (LOWORD(wparam)) {
     case IDOK:
       /** GetDlgItemText(hdlg, DI_TEXT, str, MAXSTR-1);
-      if (str[strlen(str)-1] == '\n') str[strlen(str)-1] = '\0' ;
+	  if (str[strlen(str)-1] == '\n') str[strlen(str)-1] = '\0' ;
       **/
       GetWindowRect(hdlg,&SciMenusRect);
       EndDialog(hdlg, IDOK);
@@ -78,7 +78,7 @@ int  ExposeMessageWindow()
   DLGPROC lpfnSciMessageDlgProc ;
   HWND hwndOwner ;
   lpfnSciMessageDlgProc = (DLGPROC) MyGetProcAddress("SciMessageDlgProc",
-						    SciMessageDlgProc);
+						     SciMessageDlgProc);
   MessageWinSize(ScilabMessage.string,&w,&h);
   if ( ScilabMessage.nb == 2) 
     {
@@ -110,7 +110,7 @@ int  ExposeMessageWindow1()
   DLGPROC lpfnSciMessageDlgProc ;
   HWND hwndOwner ;
   lpfnSciMessageDlgProc = (DLGPROC) MyGetProcAddress("SciMessageDlgProc",
-						    SciMessageDlgProc);
+						     SciMessageDlgProc);
   MessageWinSize(ScilabMessage.string,&w,&h);
   if ( ScilabMessage.nb == 2) 
     {

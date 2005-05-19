@@ -21,35 +21,35 @@ static int ok_Flag_sci;
 static XtCallbackProc
 mDialogOk(Widget w, int nv, caddr_t callData)
 { int ind,i,ns;
-  Arg args[2];
-  Cardinal iargs;
-  String str1;
-  for (i=0; i < nv ; i++) {
-    iargs=0;
-    XtSetArg(args[iargs], XtNstring, &str1); iargs++ ;
-    XtGetValues(dialoglist[i],args,iargs);
-    ns=strlen(str1);
-    if ( ns != strlen( SciMDialog.pszName[i]))
-    {
-      char *p;
-      p = (char *) realloc((char*) SciMDialog.pszName[i], (ns+1)*sizeof(char));
-      if ( p == (char *) 0)
-	{
-	  SciMDialog.ierr=1;
-	  return(0);
-	}
-      else 
-	{
-	  SciMDialog.pszName[i] = p ;
-	}
-    }
-    strcpy(SciMDialog.pszName[i] ,str1);
-    ind = ns - 1 ;
-    if ( SciMDialog.pszName[i][ind] == '\n' ) SciMDialog.pszName[i][ind] = '\0' ;
-  }
-  FREE(dialoglist);
-  ok_Flag_sci = 1;
-  return(0);
+ Arg args[2];
+ Cardinal iargs;
+ String str1;
+ for (i=0; i < nv ; i++) {
+   iargs=0;
+   XtSetArg(args[iargs], XtNstring, &str1); iargs++ ;
+   XtGetValues(dialoglist[i],args,iargs);
+   ns=strlen(str1);
+   if ( ns != strlen( SciMDialog.pszName[i]))
+     {
+       char *p;
+       p = (char *) realloc((char*) SciMDialog.pszName[i], (ns+1)*sizeof(char));
+       if ( p == (char *) 0)
+	 {
+	   SciMDialog.ierr=1;
+	   return(0);
+	 }
+       else 
+	 {
+	   SciMDialog.pszName[i] = p ;
+	 }
+     }
+   strcpy(SciMDialog.pszName[i] ,str1);
+   ind = ns - 1 ;
+   if ( SciMDialog.pszName[i][ind] == '\n' ) SciMDialog.pszName[i][ind] = '\0' ;
+ }
+ FREE(dialoglist);
+ ok_Flag_sci = 1;
+ return(0);
 }
 
 /*************************************************     
@@ -88,10 +88,10 @@ int mDialogWindow(void)
 
   iargs=0;
   dviewport = XtCreateManagedWidget("dViewport",viewportWidgetClass,
-				      dform, args, iargs);
+				    dform, args, iargs);
   iargs=0;
   dform1 = XtCreateManagedWidget("form",formWidgetClass,
-				      dviewport, args, iargs);
+				 dviewport, args, iargs);
 
   /* Allocate an array of Widgets */
   dialoglist=(Widget *)MALLOC( (SciMDialog.nv)*sizeof(Widget));
@@ -116,37 +116,37 @@ int mDialogWindow(void)
   /* Widgets creation */
   kform = (Widget)0;
   for (i=0 ; i<SciMDialog.nv ; i++) 
-      {
-	iargs=0;
-	XtSetArg(args[iargs], XtNfromVert,kform);iargs++;
-	kform=XtCreateManagedWidget("kForm",formWidgetClass,dform1,
-				      args,iargs);
-	iargs=0;
-	label=XtCreateManagedWidget("kLabel",labelWidgetClass,kform,
-				    args,iargs);
-	iargs=0;
-	XtSetArg(args[iargs], XtNfromHoriz ,label) ; iargs++;
-	dialoglist[i]=XtCreateManagedWidget("kAscii",asciiTextWidgetClass,
-					    kform,args,iargs);
-	if (i==0) 
-	  {
-	    /* chaque label sera mis a (w1,h1) 
-	       et chaque ascii sera mis a (w2,h2) 
-	       on regarde aussi la taille global prise par 
-	       un label+un ascii de 60 caracteres pour limiter ensuite 
-	       la fenetre globale
-	       */
-	    LabelSize(label,mxdesc+1,1,&w1,&h1);
-	    AsciiSize(dialoglist[0],mxini,1,&w2,&h2);
-	    h1=Max(h1,h2);
-	    LabelSize(label,60,1,&maxw1,&maxh1);
-	    AsciiSize(dialoglist[0],60,1,&maxw2,&maxh2);
-	    maxw1=Max(maxw1,maxw2);
-	    maxh1=Max(maxh1,maxh2);
-	  }
-	SetLabel(label,SciMDialog.pszTitle[i],w1,h1);
-	SetAscii(dialoglist[i],SciMDialog.pszName[i],w2,h1);
-      }
+    {
+      iargs=0;
+      XtSetArg(args[iargs], XtNfromVert,kform);iargs++;
+      kform=XtCreateManagedWidget("kForm",formWidgetClass,dform1,
+				  args,iargs);
+      iargs=0;
+      label=XtCreateManagedWidget("kLabel",labelWidgetClass,kform,
+				  args,iargs);
+      iargs=0;
+      XtSetArg(args[iargs], XtNfromHoriz ,label) ; iargs++;
+      dialoglist[i]=XtCreateManagedWidget("kAscii",asciiTextWidgetClass,
+					  kform,args,iargs);
+      if (i==0) 
+	{
+	  /* chaque label sera mis a (w1,h1) 
+	     et chaque ascii sera mis a (w2,h2) 
+	     on regarde aussi la taille global prise par 
+	     un label+un ascii de 60 caracteres pour limiter ensuite 
+	     la fenetre globale
+	  */
+	  LabelSize(label,mxdesc+1,1,&w1,&h1);
+	  AsciiSize(dialoglist[0],mxini,1,&w2,&h2);
+	  h1=Max(h1,h2);
+	  LabelSize(label,60,1,&maxw1,&maxh1);
+	  AsciiSize(dialoglist[0],60,1,&maxw2,&maxh2);
+	  maxw1=Max(maxw1,maxw2);
+	  maxh1=Max(maxh1,maxh2);
+	}
+      SetLabel(label,SciMDialog.pszTitle[i],w1,h1);
+      SetAscii(dialoglist[i],SciMDialog.pszName[i],w2,h1);
+    }
 
   /* Buttons */
   iargs=0;

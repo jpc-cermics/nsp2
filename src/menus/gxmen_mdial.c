@@ -42,6 +42,8 @@ static void sci_mdialog_cancel (GtkButton       *button, state * rep)
 
 /*---------------------------------------------------------------
  * mdialog window 
+ * FIXME: pszName est reaffecté a la fin mais pas libéré 
+ *        manque un free 
  *---------------------------------------------------------------*/ 
 
 int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  nv, int  *ierr)
@@ -72,8 +74,8 @@ int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  n
   gtk_window_set_wmclass  (GTK_WINDOW (window), "mdialog", "Scilab");
 
   signals[0]=gtk_signal_connect (GTK_OBJECT (window), "destroy",
-		      GTK_SIGNAL_FUNC(sci_mdialog_cancel),
-		      &rep);
+				 GTK_SIGNAL_FUNC(sci_mdialog_cancel),
+				 &rep);
 
   gtk_container_set_border_width (GTK_CONTAINER (window), 0);
 
@@ -147,8 +149,8 @@ int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  n
   gtk_container_add (GTK_CONTAINER (hbbox), button_ok);
 
   signals[1]=gtk_signal_connect (GTK_OBJECT (button_ok), "clicked",
-		      GTK_SIGNAL_FUNC (sci_mdialog_ok),
-		      &rep);
+				 GTK_SIGNAL_FUNC (sci_mdialog_ok),
+				 &rep);
 
   GTK_WIDGET_SET_FLAGS (button_ok, GTK_CAN_DEFAULT);
   gtk_widget_grab_default (button_ok);
@@ -159,8 +161,8 @@ int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  n
   button_cancel = gtk_button_new_with_label ("Cancel");
   gtk_container_add (GTK_CONTAINER (hbbox), button_cancel);
   signals[2]=gtk_signal_connect (GTK_OBJECT (button_cancel), "clicked",
-		      GTK_SIGNAL_FUNC (sci_mdialog_cancel),
-		      &rep);
+				 GTK_SIGNAL_FUNC (sci_mdialog_cancel),
+				 &rep);
   GTK_WIDGET_SET_FLAGS (button_cancel, GTK_CAN_DEFAULT);
   gtk_widget_show (button_cancel);
 
