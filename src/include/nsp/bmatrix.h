@@ -90,6 +90,7 @@ extern int GetScalarBool (Stack stack, int i, int *val);
 
 extern NspBMatrix *nsp_bmatrix_create(char *name, int m, int n); 
 extern NspBMatrix *nsp_bmatrix_copy(NspBMatrix *A); 
+extern unsigned int  nsp_bmatrix_elt_size(NspMatrix *M);
 extern int nsp_bmatrix_resize(NspBMatrix *A, int m, int n); 
 extern void nsp_bmatrix_destroy(NspBMatrix *BMat); 
 extern void nsp_bmatrix_info(NspBMatrix *BMat, int indent); 
