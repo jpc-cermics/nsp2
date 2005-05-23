@@ -188,6 +188,9 @@ enum {STYLE_COLOUR_ARRAY, STYLE_GC_ARRAY, STYLE_PIXMAP_ARRAY} type;
 extern int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 extern int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 
+/* XXXXX : only implemented in 2.4 */
+#define gtk_calendar_set_display_options gtk_calendar_display_options
+#define gtk_calendar_get_display_options(x) 0 
 
 %%
 init

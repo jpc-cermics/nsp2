@@ -3172,12 +3172,12 @@ _wrap_gdk_drag_find_window(NspGObject *self, Stack stack,int rhs,int opt,int lhs
 static int _wrap_gdk_drag_motion(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, s_int, s_int, obj, obj, s_int,t_end};
+  GdkDragProtocol protocol;
   NspObject *nsp_protocol = NULL, *nsp_suggested_action = NULL, *nsp_possible_actions = NULL;
+  GdkDragAction suggested_action, possible_actions;
   int x_root, y_root, ret;
   NspGObject *dest_window;
   gulong time;
-  GdkDragProtocol protocol;
-  GdkDragAction suggested_action, possible_actions;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &dest_window, &nsp_protocol, &x_root, &y_root, &nsp_suggested_action, &nsp_possible_actions, &time) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_DRAG_PROTOCOL, nsp_protocol, (gint *)&protocol)== FAIL)
@@ -7618,10 +7618,10 @@ static int _wrap_gdk_pixbuf_composite_color(NspGdkPixbuf *self,Stack stack,int r
 {
   int_types T[] = {obj_check, s_int, s_int, s_int, s_int, s_double, s_double, s_double, s_double, obj, s_int, s_int, s_int, s_int, s_int, s_int,t_end};
   NspObject *nsp_interp_type = NULL;
+  double offset_x, offset_y, scale_x, scale_y;
   int dest_x, dest_y, dest_width, dest_height, overall_alpha, check_x, check_y, check_size;
   NspGObject *dest;
   gulong color1, color2;
-  double offset_x, offset_y, scale_x, scale_y;
   GdkInterpType interp_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkpixbuf, &dest, &dest_x, &dest_y, &dest_width, &dest_height, &offset_x, &offset_y, &scale_x, &scale_y, &nsp_interp_type, &overall_alpha, &check_x, &check_y, &check_size, &color1, &color2) == FAIL) return RET_BUG;
@@ -9784,12 +9784,12 @@ int _wrap_gdk_pointer_grab(Stack stack, int rhs, int opt, int lhs)
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
   NspObject *nsp_event_mask = NULL, *nsp_cursor = NULL;
-  int owner_events = FALSE;
-  NspGObject *window, *nsp_confine_to = NULL;
-  gulong time = GDK_CURRENT_TIME;
   GdkEventMask event_mask = 0;
   GdkWindow *confine_to = NULL;
   GdkCursor *cursor = NULL;
+  int owner_events = FALSE;
+  NspGObject *window, *nsp_confine_to = NULL;
+  gulong time = GDK_CURRENT_TIME;
   gint ret;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, opts, &owner_events, &nsp_event_mask, &nsp_confine_to, &nsp_cursor, &time) == FAIL) return RET_BUG;
@@ -10314,12 +10314,12 @@ int _wrap_gdk_unicode_to_keyval(Stack stack, int rhs, int opt, int lhs)
 int _wrap_gdk_pixmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj_check, string, s_int, s_int, s_int, obj, obj,t_end};
+  char *data;
   NspObject *nsp_fg, *nsp_bg, *nsp_ret;
   GdkPixmap *ret;
   int width, height, depth;
   NspGObject *drawable;
   GdkColor *fg = NULL, *bg = NULL;
-  char *data;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdrawable, &drawable, &data, &width, &height, &depth, &nsp_fg, &nsp_bg) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_fg, GDK_TYPE_COLOR))
@@ -10445,12 +10445,12 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
 int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj, string, s_int, s_int,t_end};
-  GdkBitmap *ret;
-  NspObject *nsp_ret;
-  int width, height;
-  NspGObject *nsp_drawable;
   char *data;
   GdkDrawable *drawable = NULL;
+  NspObject *nsp_ret;
+  GdkBitmap *ret;
+  int width, height;
+  NspGObject *nsp_drawable;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_drawable, &data, &width, &height) == FAIL) return RET_BUG;
   if ( IsGdkDrawable((NspObject *)nsp_drawable))
