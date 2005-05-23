@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>Nsp internal reference Manual</title>
+    <releaseinfo>for Nsp version xxx;</releaseinfo>
+  </bookinfo>
+
+  <chapter id="nsp-overview">
+    <title>Nsp internal overview</title>
+    <para>
+    Nsp is a Matlab like language which aims at replace Scilab. 
+    this documentation is for nsp developpers who need access 
+    to internal data types and functions.
+    </para>
+  </chapter>
+
+  <chapter id="nsp-objects">
+    <title>Objects</title>
+    <xi:include href="xml/object.xml"/>
+    <xi:include href="xml/matrix.xml"/>
+    <xi:include href="xml/matint.xml"/>
+    <xi:include href="xml/smatrix.xml"/>
+    <xi:include href="xml/string.xml"/>
+    <xi:include href="xml/spmatrix.xml"/>
+    <xi:include href="xml/bmatrix.xml"/>
+    <xi:include href="xml/mpmatrix.xml"/>
+    <xi:include href="xml/pmatrix.xml"/>
+    <xi:include href="xml/list.xml"/>
+    <xi:include href="xml/file.xml"/>
+    <xi:include href="xml/cells.xml"/>
+    <xi:include href="xml/hash.xml"/>
+    <xi:include href="xml/none.xml"/>
+    <xi:include href="xml/ivect.xml"/>
+    <xi:include href="xml/plist.xml"/>
+    <xi:include href="xml/hobj.xml"/>
+    <xi:include href="xml/type.xml"/>
+    <xi:include href="xml/function.xml"/>
+    <xi:include href="xml/classa.xml"/>
+    <xi:include href="xml/classb.xml"/>
+  </chapter>
+
+  <chapter id="nsp-blocks">
+    <title>Graphic object for a scicos like editor</title>
+    <para>
+    Objects which can be used to build scicos like diagrams.
+    </para>
+    <xi:include href="xml/link.xml"/>
+    <xi:include href="xml/gframe.xml"/>
+    <xi:include href="xml/block.xml"/>
+    <xi:include href="xml/rect.xml"/>
+    <xi:include href="xml/connector.xml"/>
+  </chapter>
+
+  <chapter id="nsp-modules">
+    <title>Unused</title>
+    <para>
+    Object not use actually for building modules.
+    </para>
+    <xi:include href="xml/module.xml"/>
+    <xi:include href="xml/modulelt.xml"/>
+    <xi:include href="xml/mod.xml"/>
+    <xi:include href="xml/lmo.xml"/>
+    <xi:include href="xml/me.xml"/>
+  </chapter>
+
+  <chapter id="nsp-numeric">
+    <title>Numerical libraries</title>
+    <para>
+    Note that numerical functions are also 
+    dispatched in matrices and other chapters. 
+    </para>
+    <xi:include href="xml/nsp_lapack.xml"/>
+    <xi:include href="xml/matutil.xml"/>
+    <xi:include href="xml/cnumeric.xml"/>
+  </chapter>
+
+  <chapter id="nsp-system">
+    <title>System</title>
+    <para>
+    functions used in nsp toplevel gtk window. 
+    All the gtk2 functions which are callable 
+    from nsp are not described here. 
+    </para>
+    <xi:include href="xml/gtksci.xml"/>
+    <xi:include href="xml/command.xml"/>
+    <xi:include href="xml/menus.xml"/>
+    <xi:include href="xml/parse.xml"/>
+    <xi:include href="xml/math.xml"/>
+    <xi:include href="xml/pr-output.xml"/>
+    <xi:include href="xml/plisttoken.xml"/>
+    <xi:include href="xml/sciio.xml"/>
+    <xi:include href="xml/plistc.xml"/>
+    <xi:include href="xml/datas.xml"/>
+    <xi:include href="xml/machine.xml"/>
+  </chapter>
+
+  <chapter id="nsp-interfacing">
+    <title>Writing interfaces</title>
+    <para>
+    functions used to write interface functions.
+    </para>
+    <xi:include href="xml/interf.xml"/>
+    <xi:include href="xml/mex.xml"/>
+  </chapter>
+
+  <index>
+    <title>Index</title>
+  </index>
+
+</book>
