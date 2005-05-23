@@ -1422,7 +1422,7 @@ int nsp_matrix_delete_columns(NspMatrix *A, NspMatrix *Cols)
  * (see nsp2_dev/matrix/deletions_templates.c) * 
  *
  * returns %OK or %FAIL.
- */
+ **/
 
 int nsp_matrix_delete_rows(NspMatrix *A, NspMatrix *Rows)
 {
