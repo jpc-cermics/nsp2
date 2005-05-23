@@ -793,6 +793,7 @@ typedef int (*delf) (NspBMatrix *M,NspMatrix *Elts);
 
 static int int_bmatrix_deleteelts_gen(Stack stack, int rhs, int opt, int lhs, delf F)
 {
+  int alloc=FALSE;
   NspBMatrix *A,*BElts;
   NspMatrix *Elts;
   CheckRhs(2,2);
@@ -805,6 +806,7 @@ static int int_bmatrix_deleteelts_gen(Stack stack, int rhs, int opt, int lhs, de
 	return RET_BUG;
       if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) 
 	return RET_BUG;
+      alloc=TRUE;
     }
   else
     {
@@ -812,10 +814,14 @@ static int int_bmatrix_deleteelts_gen(Stack stack, int rhs, int opt, int lhs, de
 	return RET_BUG;
     }
   if ( (*F)( A, Elts) == FAIL )
-    return RET_BUG;
+    {
+      if ( alloc ) nsp_matrix_destroy(Elts) ;
+      return RET_BUG;
+    }
   /* take care that A and Elts can be the same */
   if ( A == BElts ) NthObj(2)=NULLOBJ;
   NSP_OBJECT(A)->ret_pos = 1;
+  if ( alloc ) nsp_matrix_destroy(Elts) ;
   return 1;
 }
 
