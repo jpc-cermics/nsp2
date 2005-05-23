@@ -1127,7 +1127,7 @@ int nsp_string_resize(nsp_string *Hstr, unsigned int n)
   nsp_string loc;
   if ( ( loc = (nsp_string) REALLOC( *Hstr, (n+1)* sizeof(char))) == NULLSTRING) 
     { 
-      Scierror("Error:\tSring resize, no more memory\n");
+      Scierror("Error:\tString resize, no more memory\n");
       return(FAIL);
     }
   *Hstr = loc;
@@ -1305,10 +1305,11 @@ NspSMatrix*nsp_smatrix_column_concat(NspSMatrix *A,nsp_const_string str, int fla
 }
 
 /*
+ * 
  * Catenate the rows of A whitout white space padding 
  * and using str char as separtor ( if flag == 1) 
+ * 
  */
-
 NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A,nsp_const_string str, int flag)
 {
   int i,j,*Iloc;
@@ -1343,34 +1344,56 @@ NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A,nsp_const_string str, int flag)
   return(Loc);
 }
 
-/*
- * Res=nsp_smatrix_elts_concat(A,....) 
+
+/**
+ * nsp_smatrix_elts_concat:
+ * @A: a #NspSMatrix
+ * @rstr: a string, row separator (used if @rflag=1)
+ * @rflag: tell if we add the row separator  
+ * @cstr: a string, column separator (used if @cflag=1)
+ * @cflag: tell if we add the column separator
+ * 
  * catenate all the elements row by row 
  * rstr is the row-separator and cflag the col-separator 
- */
-
+ * improved in speed by bruno 
+ * Return value: a string or NULL
+ **/
 nsp_string nsp_smatrix_elts_concat(NspSMatrix *A,nsp_const_string rstr, int rflag,
 				   nsp_const_string cstr, int cflag)
 {
-  int i,j,lentot=0;
+  int i,j,k,lentot=0,*len, lsc, lsr;
   nsp_string Loc;
+  char *p;
   /* evaluation of sizes */
-  for ( j = 0 ; j < A->mn ; j++ )  lentot += strlen(A->S[j]);
-  if ( rflag == 1) lentot += (A->m -1)*strlen(rstr);
-  if ( cflag == 1) lentot += (A->m*(A->n -1))*strlen(cstr);
+  if ( (len = nsp_alloc_int(A->mn)) == NULL ) return NULL;
+ 
+  for ( j = 0 ; j < A->mn ; j++ ) { len[j] = strlen(A->S[j]); lentot += len[j]; }
+  if ( rflag == 1) 
+    {
+      lsr = strlen(rstr);
+      lentot += (A->m -1)*lsr;
+    }
+  if ( cflag == 1) 
+    {
+      lsc = strlen(cstr);
+      lentot += (A->m*(A->n -1))*lsc;
+    }
   /* New String */
-  if ((Loc =new_nsp_string_n(lentot)) == (nsp_string) 0 )  return(NULL);
-  strcpy(Loc,"");
+  if ( (Loc = new_nsp_string_n(lentot)) == NULLSTRING ) { FREE(len); return NULL;}
+  p = Loc;
   for ( i = 0 ; i < A->m ; i++ )
     {
       for ( j = 0 ; j < A->n ; j++ )
 	{
-	  strcat(Loc,A->S[i+(A->m)*j]);
-	  if ( cflag == 1 && j != A->n-1 ) strcat(Loc,cstr);
+	  k = i+(A->m)*j;
+	  strncpy(p, A->S[k], len[k]); p += len[k];
+	  if ( cflag == 1 && j != A->n-1 ) { strncpy(p,cstr,lsc); p += lsc; }
 	}
-      if ( rflag == 1 && i != A->m-1 ) strcat(Loc,rstr);
+      if ( rflag == 1 && i != A->m-1 )  { strncpy(p,rstr,lsr); p += lsr; }
     }
-  return(Loc);
+  *p='\0';
+  FREE(len);
+  return Loc;
 }
 
 /*
@@ -1649,62 +1672,75 @@ NspMatrix *nsp_smatrix_sort(NspSMatrix *A,int flag,nsp_const_string str1,nsp_con
   return Loc;
 }
 
-/*
- * SMatSplit : M=Split(S,chars) 
- * S is a String.  * chars a set of splitting chars 
- * M is a Vector which results from the splitting of S
- */
-
+/**
+ * nsp_smatrix_split:
+ * @string: the string to be splitted in words
+ * @splitChars: a string with the split characters
+ * 
+ * modified by bruno to fix a bug.
+ * 
+ * Return value: a #NspSMatrix of size 1 x nb_words with the words resulting from the splitting
+ **/
 NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars)
 {
   register nsp_const_string p, p2;
   nsp_const_string elementStart;
-  int  splitCharLen, stringLen, i, j;
+  int stringLen, i, j;
   NspSMatrix *A;
   stringLen = strlen(string);
-  splitCharLen = strlen(splitChars);
-  if (splitCharLen == 0) 
+  if ( strlen(splitChars) == 0 ) 
     {
       /* split to stringLen chars :
        *  split('foo','') --> ['f','o','o']
        */
       if ((A=nsp_smatrix_create(NVOID,1,stringLen,".",0))== NULLSMAT) 
 	return NULLSMAT;
-      for (i = 0 ;  i < stringLen;  i++) A->S[i][0] = string[i];
+      for (i = 0 ; i < stringLen ; i++) A->S[i][0] = string[i];
     }
   else 
     {
       /* split with split characters 
-       * ex: split('foo pooumou',' u') --> ['foo','poo','mou']
+       * ex: split('foo pooumou',' u') --> ['foo','poo','mo']
        */
-      int col=0;
-      if ((A=nsp_smatrix_create(NVOID,0,0,".",0))== NULLSMAT) 
+      int nb_words=0;
+      int nb_chars;
+      Boolean in_a_word=FALSE;
+
+      if ( (A=nsp_smatrix_create(NVOID,0,0,".",0)) == NULLSMAT ) 
 	return NULLSMAT;
-      for (i = 0, p = elementStart = string;  i < stringLen;  i++, p++) {
-	for (j = 0, p2 = splitChars;  j < splitCharLen;  j++, p2++) {
-	  if (*p2 == *p) {
-	    col++;
-	    if ( nsp_smatrix_resize(A,1,col) == FAIL) return(NULLSMAT);
-	    if (nsp_string_resize(&A->S[col-1],(p-elementStart))== FAIL) 
-	      return(NULLSMAT);
-	    strncpy( A->S[col-1],elementStart,(p-elementStart));
-	    A->S[col-1][p-elementStart]='\0';
-	    elementStart = p+1;
-	    break;
-	  }
+
+      for (i = 0, p = string;  i < stringLen;  i++, p++) 
+	{
+	  if ( strchr(splitChars,*p) != NULL ) /* *p is a split character */
+	    {
+	      if ( in_a_word )  /* so this ends the word */
+		{
+		  nb_words++;
+		  if ( nsp_smatrix_resize(A,1,nb_words) == FAIL) goto err;
+		  nb_chars = p - elementStart;
+		  if ( (A->S[nb_words-1] = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+		  strncpy( A->S[nb_words-1],elementStart, nb_chars);
+		  A->S[nb_words-1][p-elementStart]='\0';
+		} 
+	      in_a_word = FALSE;
+	    }
+	  else
+	    if ( !in_a_word ) { elementStart = p; in_a_word = TRUE; }
 	}
-      }
-      if (p != string) {
-	int remainingChars = stringLen - (elementStart-string);
-	col++;
-	if ( nsp_smatrix_resize(A,1,col) == FAIL) return(NULLSMAT);
-	if (nsp_string_resize(&A->S[col-1], remainingChars)== FAIL) 
-	  return(NULLSMAT);
-	strncpy( A->S[col-1],elementStart, remainingChars);
-	A->S[col-1][remainingChars]='\0';
-      }
+      if ( in_a_word )  /* the last word is ended by the end of the string */
+	{
+	  nb_words++;
+	  if ( nsp_smatrix_resize(A,1,nb_words) == FAIL ) goto err;
+	  nb_chars = p - elementStart;
+	  if ( (A->S[nb_words-1] = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+	  strncpy( A->S[nb_words-1],elementStart, nb_chars);
+	  A->S[nb_words-1][p-elementStart]='\0';
+	} 
     }
   return A;
+ err:
+  nsp_smatrix_destroy(A);
+  return NULLSMAT;
 }
 
 /*
