@@ -1,0 +1,10 @@
+*.stamp
+model.txt
+nspdoc-decl-list.txt
+nspdoc-decl.txt
+nspdoc-docs.sgml.kp
+nspdoc-undocumented.txt
+nspdoc-unused.txt
+xml
+
+

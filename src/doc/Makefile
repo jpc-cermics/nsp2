@@ -13,15 +13,8 @@ mkhtml:
 	cd html; gtkdoc-mkhtml nspdoc ../nspdoc-docs.sgml
 
 clean:
-	\rm -f -r html/* xml *.stamp 
+	\rm -f -r html/*.html xml *.stamp 
 
-distclean:
-	\rm -f -r html/* xml *.stamp 
-
-# not to be done !!!
-
-total_clean :
-	$(RM) -f -r html xml tmpl *.txt *.sgml *.bak *.stamp
-	cvs update -d
+distclean: clean
 
 
