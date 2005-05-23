@@ -1358,43 +1358,46 @@ NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A,nsp_const_string str, int flag)
  * improved in speed by bruno 
  * Return value: a string or NULL
  **/
+
 nsp_string nsp_smatrix_elts_concat(NspSMatrix *A,nsp_const_string rstr, int rflag,
 				   nsp_const_string cstr, int cflag)
 {
-  int i,j,k,lentot=0,*len, lsc, lsr;
+  int i,j,k,lentot=0, len, lsc, lsr;
   nsp_string Loc;
   char *p;
   /* evaluation of sizes */
-  if ( (len = nsp_alloc_int(A->mn)) == NULL ) return NULL;
- 
-  for ( j = 0 ; j < A->mn ; j++ ) { len[j] = strlen(A->S[j]); lentot += len[j]; }
-  if ( rflag == 1) 
+  for ( j = 0 ; j < A->mn ; j++ ) lentot += strlen(A->S[j]);
+  if ( rflag == 1)
     {
       lsr = strlen(rstr);
       lentot += (A->m -1)*lsr;
     }
-  if ( cflag == 1) 
+  if ( cflag == 1)
     {
       lsc = strlen(cstr);
       lentot += (A->m*(A->n -1))*lsc;
     }
+
   /* New String */
-  if ( (Loc = new_nsp_string_n(lentot)) == NULLSTRING ) { FREE(len); return NULL;}
-  p = Loc;
-  for ( i = 0 ; i < A->m ; i++ )
+  if ( (Loc = new_nsp_string_n(lentot)) != NULLSTRING )
     {
-      for ( j = 0 ; j < A->n ; j++ )
+      p = Loc;
+      for ( i = 0 ; i < A->m ; i++ )
 	{
-	  k = i+(A->m)*j;
-	  strncpy(p, A->S[k], len[k]); p += len[k];
-	  if ( cflag == 1 && j != A->n-1 ) { strncpy(p,cstr,lsc); p += lsc; }
+	  for ( j = 0 ; j < A->n ; j++ )
+	    {
+	      k = i+(A->m)*j;
+	      len = strlen(A->S[k]);
+	      strncpy(p, A->S[k], len); p += len;
+	      if ( cflag == 1 && j != A->n-1 ) { strncpy(p,cstr,lsc); p += lsc; }
+	    }
+	  if ( rflag == 1 && i != A->m-1 )  { strncpy(p,rstr,lsr); p += lsr; }
 	}
-      if ( rflag == 1 && i != A->m-1 )  { strncpy(p,rstr,lsr); p += lsr; }
+      *p='\0';
     }
-  *p='\0';
-  FREE(len);
   return Loc;
 }
+
 
 /*
  * Res= Part(A,Ind) 
