@@ -155,11 +155,14 @@ static char *errMsg = NULL;
 
 /*
  * Utility definitions.
+ * jpc: when CHARBITS is found his gives a bug 
+ *      I have commented 
  */
-#ifndef CHARBITS
+
+#ifndef CHARBITSZZZ
 #define	UCHARAT(p)	((int)*(unsigned char *)(p))
 #else
-#define	UCHARAT(p)	((int)*(p)&CHARBITS)
+#define	UCHARAT(p)	(((int)*(p))&CHARBITS)
 #endif
 
 #define	REGEXP_FAIL(m)	{ TclRegError(m); return(NULL); }
