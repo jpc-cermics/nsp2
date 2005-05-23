@@ -320,7 +320,7 @@ NspMatrix *nsp_mat_bdiv(NspMatrix *A, NspMatrix *B)
 	for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
 	  for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
 	    B->C[ix] = B->C[iB];
-      /* now we can free the part of B which is not used anymore */
+      /* now we can free the part of B which is not used any more */
       if (  nsp_matrix_resize(B, mx, nx) == FAIL )
 	goto err;
     }
@@ -1794,10 +1794,27 @@ int nsp_get_urandtype(void)
   return rand_data[1];
 }
 
-/*
- *    A = A^B where B is a scalar, added by Bruno ;
- *    A is modified and hold the final result
- */
+/**
+ * nsp_mat_pow_matscalar:
+ * @A: a #NspMatrix
+ * @B: a #NspMatrix with only one element (that is a scalar !) 
+ * 
+ * This routine computes A^B where B must be a scalar (this must
+ * be verified by the calling routine (*)). The matrix @A is modified 
+ * and hold the final result (if OK is returned).  @A must be
+ * square (if not FAIL is returned). When @A is not a scalar
+ * this routine works only if @B is an integer (and when @B is
+ * a negative integer, @A must be numerically invertible).
+ * Added by Bruno. 
+ * 
+ * (*) The operation A^B is done with the generic interface int_mx_mopscal
+ *     which branches to one of the 3 routines:
+ *        1/ nsp_mat_pow_matscalar(A,B) if B is a scalar 
+ *        2/ nsp_mat_pow_matmat(A,B), if neither A and B are scalar
+ *        3/ nsp_mat_pow_scalarmat(B,A), if A is a scalar
+ *
+ * Return value: OK or FAIL
+ **/
 int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B) 
 {
   int p, i, oddflag=0;
@@ -1920,29 +1937,54 @@ int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B)
 
   return OK;
 }
-/*
- *    A = A^B where A and B are not scalar => just display an error message
- *    (this is to use the int_mx_mopscal generic interface)
- */
+
+/**
+ * nsp_mat_pow_matmat:
+ * @A: a #NspMatrix which is not a scalar
+ * @B: a #NspMatrix which is not a scalar
+ * 
+ * The operation A^B is done with the generic interface int_mx_mopscal
+ * which branches to one of the 3 routines:
+ *        1/ nsp_mat_pow_matscalar(A,B) if B is a scalar 
+ *        2/ nsp_mat_pow_matmat(A,B), if neither A and B are scalar
+ *        3/ nsp_mat_pow_scalarmat(B,A), if A is a scalar
+ *
+ * Here this routine is made for the case 2 but as it is not a defined
+ * operation it displays only an error message.  
+ *
+ * Return value: FAIL
+ **/
 int nsp_mat_pow_matmat(NspMatrix *A, NspMatrix *B) 
 {
   Scierror("Error:\t for ^ operator at least one operand must be a scalar\n");
   return FAIL;
 }
 
-/*
- *    A = B^A where B is a scalar  XXXX FIXME: to complete when
- *    nsp will have an exponential matrix routine
- */
-int nsp_mat_pow_scalarmat(NspMatrix *A, NspMatrix *B) 
+/**
+ * nsp_mat_pow_scalarmat:
+ * @A: a #NspMatrix which must be a scalar 
+ * @B: a #NspMatrix which must be square
+ *  
+ * The operation A^B is done with the generic interface int_mx_mopscal
+ * which branches to one of the 3 routines:
+ *        1/ nsp_mat_pow_matscalar(A,B) if B is a scalar 
+ *        2/ nsp_mat_pow_matmat(A,B), if neither A and B are scalar
+ *        3/ nsp_mat_pow_scalarmat(B,A), if A is a scalar
+ *
+ * XXXX FIXME: to complete when nsp will have an exponential 
+ * matrix routine ( A^B = e^(ln(A)*B) )
+ * 
+ * Return value: FAIL 
+ **/
+int nsp_mat_pow_scalarmat(NspMatrix *B, NspMatrix *A) 
 {
-  if ( A->m != A->n )
+  if ( B->m != B->n )
     {
-      Scierror("Error:\t in s^A, the exponent A must be a square matrix\n");
+      Scierror("Error:\t in scalar^M, the exponent M must be a square matrix\n");
       return FAIL;
     }
 
-  Scierror("Error:\t s^A is not currently implemented\n");
+  Scierror("Error:\t  scalar^M is not currently implemented\n");
   return FAIL;
 }
 
