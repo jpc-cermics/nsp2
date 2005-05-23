@@ -778,14 +778,34 @@ int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
 
 int int_smxpart(Stack stack, int rhs, int opt, int lhs)
 {
+  int alloc = FALSE;
   NspMatrix *Ind;
+  NspBMatrix *BElts;
   NspSMatrix *A;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A= GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((Ind = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if (( A =nsp_smatrix_part(A,Ind)) == NULLSMAT)  return RET_BUG;
+  if ( IsBMatObj(stack,2)  ) 
+    {
+      /* Elts is boolean: use find(Elts) **/
+      if ((BElts = GetBMat(stack,2)) == NULLBMAT) 
+	return RET_BUG;
+      if ((Ind =nsp_bmatrix_find(BElts)) == NULLMAT) 
+	return RET_BUG;
+      alloc = TRUE;
+    }
+  else
+    {
+      if ((Ind = GetRealMat(stack,2)) == NULLMAT) 
+	return RET_BUG;
+    }
+  if (( A =nsp_smatrix_part(A,Ind)) == NULLSMAT)  
+    {
+      if ( alloc ) nsp_matrix_destroy(Ind) ;
+      return RET_BUG;
+    }
   MoveObj(stack,1,(NspObject *) A);
+  if ( alloc ) nsp_matrix_destroy(Ind) ;
   return 1;
 }
 
