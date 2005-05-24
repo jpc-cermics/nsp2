@@ -809,7 +809,7 @@ typedef int (*delf) (NspBMatrix *M,NspMatrix *Elts);
 static int int_bmatrix_deleteelts_gen(Stack stack, int rhs, int opt, int lhs, delf F)
 {
   int alloc=FALSE;
-  NspBMatrix *A,*BElts;
+  NspBMatrix *A,*BElts=NULLBMAT;
   NspMatrix *Elts;
   CheckRhs(2,2);
   CheckLhs(1,1);

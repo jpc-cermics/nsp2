@@ -734,7 +734,7 @@ int int_smxpart(Stack stack, int rhs, int opt, int lhs)
 {
   int alloc = FALSE;
   NspMatrix *Ind;
-  NspBMatrix *BElts;
+  NspBMatrix *BElts=NULLBMAT;
   NspSMatrix *A;
   CheckRhs(2,2);
   CheckLhs(1,1);
