@@ -1411,12 +1411,12 @@ static int _wrap_gtk_icon_set_copy(NspGtkIconSet *self,Stack stack,int rhs,int o
 static int _wrap_gtk_icon_set_render_icon(NspGtkIconSet *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj_check, string,t_end};
-  char *detail;
-  GdkPixbuf *ret;
   NspObject *nsp_direction = NULL, *nsp_state = NULL, *nsp_size = NULL, *nsp_ret;
+  NspGObject *style, *widget;
+  GdkPixbuf *ret;
+  char *detail;
   GtkIconSize size;
   GtkTextDirection direction;
-  NspGObject *style, *widget;
   GtkStateType state;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkstyle, &style, &nsp_direction, &nsp_state, &nsp_size, &nsp_type_gtkwidget, &widget, &detail) == FAIL) return RET_BUG;
@@ -9043,13 +9043,13 @@ static int _wrap_gtk_cell_renderer_render(NspGtkCellRenderer *self,Stack stack,i
 static int _wrap_gtk_cell_renderer_activate(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj, obj_check, string, obj, obj, obj,t_end};
+  NspObject *nsp_event, *nsp_background_area, *nsp_cell_area, *nsp_flags = NULL;
+  int ret;
+  NspGObject *widget;
   char *path;
   GtkCellRendererState flags;
-  int ret;
-  NspObject *nsp_event, *nsp_background_area, *nsp_cell_area, *nsp_flags = NULL;
   GdkRectangle background_area = { 0, 0, 0, 0 }, cell_area = { 0, 0, 0, 0 };
   GdkEvent *event = NULL;
-  NspGObject *widget;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_event, &nsp_type_gtkwidget, &widget, &path, &nsp_background_area, &nsp_cell_area, &nsp_flags) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -9072,13 +9072,13 @@ static int _wrap_gtk_cell_renderer_activate(NspGtkCellRenderer *self,Stack stack
 static int _wrap_gtk_cell_renderer_start_editing(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj, obj_check, string, obj, obj, obj,t_end};
+  NspObject *nsp_event, *nsp_background_area, *nsp_cell_area, *nsp_flags = NULL, *nsp_ret;
+  NspGObject *widget;
   char *path;
   GtkCellRendererState flags;
-  NspObject *nsp_event, *nsp_background_area, *nsp_cell_area, *nsp_flags = NULL, *nsp_ret;
   GdkRectangle background_area = { 0, 0, 0, 0 }, cell_area = { 0, 0, 0, 0 };
   GtkCellEditable *ret;
   GdkEvent *event = NULL;
-  NspGObject *widget;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_event, &nsp_type_gtkwidget, &widget, &path, &nsp_background_area, &nsp_cell_area, &nsp_flags) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_event, GDK_TYPE_EVENT))
@@ -11635,13 +11635,13 @@ static int _wrap_gtk_style_lookup_icon_set(NspGtkStyle *self,Stack stack,int rhs
 static int _wrap_gtk_style_render_icon(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj, obj, obj, obj, obj_check, string,t_end};
-  char *detail;
   GtkIconSource *source = NULL;
-  GdkPixbuf *ret;
   NspObject *nsp_source, *nsp_direction = NULL, *nsp_state = NULL, *nsp_size = NULL, *nsp_ret;
+  NspGObject *widget;
+  GdkPixbuf *ret;
+  char *detail;
   GtkIconSize size;
   GtkTextDirection direction;
-  NspGObject *widget;
   GtkStateType state;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_source, &nsp_direction, &nsp_state, &nsp_size, &nsp_type_gtkwidget, &widget, &detail) == FAIL) return RET_BUG;
@@ -11667,12 +11667,12 @@ static int _wrap_gtk_style_render_icon(NspGtkStyle *self,Stack stack,int rhs,int
 static int _wrap_gtk_paint_hline(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, string, s_int, s_int, s_int,t_end};
-  char *detail;
   NspObject *nsp_state_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x1, x2, y;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_area, &nsp_widget, &detail, &x1, &x2, &y) == FAIL) return RET_BUG;
@@ -11697,12 +11697,12 @@ static int _wrap_gtk_paint_hline(NspGtkStyle *self,Stack stack,int rhs,int opt,i
 static int _wrap_gtk_paint_vline(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, string, s_int, s_int, s_int,t_end};
-  char *detail;
   NspObject *nsp_state_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int y1, y2, x;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_area, &nsp_widget, &detail, &y1, &y2, &x) == FAIL) return RET_BUG;
@@ -11727,13 +11727,13 @@ static int _wrap_gtk_paint_vline(NspGtkStyle *self,Stack stack,int rhs,int opt,i
 static int _wrap_gtk_paint_shadow(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height) == FAIL) return RET_BUG;
@@ -11808,13 +11808,13 @@ _wrap_gtk_paint_polygon(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
 static int _wrap_gtk_paint_arrow(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, obj, s_bool, s_int, s_int, s_int, s_int,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL, *nsp_arrow_type = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int fill, x, y, width, height;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
   GtkArrowType arrow_type;
 
@@ -11844,13 +11844,13 @@ static int _wrap_gtk_paint_arrow(NspGtkStyle *self,Stack stack,int rhs,int opt,i
 static int _wrap_gtk_paint_diamond(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height) == FAIL) return RET_BUG;
@@ -11877,13 +11877,13 @@ static int _wrap_gtk_paint_diamond(NspGtkStyle *self,Stack stack,int rhs,int opt
 static int _wrap_gtk_paint_box(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height) == FAIL) return RET_BUG;
@@ -11910,13 +11910,13 @@ static int _wrap_gtk_paint_box(NspGtkStyle *self,Stack stack,int rhs,int opt,int
 static int _wrap_gtk_paint_flat_box(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height) == FAIL) return RET_BUG;
@@ -11943,13 +11943,13 @@ static int _wrap_gtk_paint_flat_box(NspGtkStyle *self,Stack stack,int rhs,int op
 static int _wrap_gtk_paint_check(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height) == FAIL) return RET_BUG;
@@ -11976,13 +11976,13 @@ static int _wrap_gtk_paint_check(NspGtkStyle *self,Stack stack,int rhs,int opt,i
 static int _wrap_gtk_paint_option(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height) == FAIL) return RET_BUG;
@@ -12009,13 +12009,13 @@ static int _wrap_gtk_paint_option(NspGtkStyle *self,Stack stack,int rhs,int opt,
 static int _wrap_gtk_paint_tab(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height) == FAIL) return RET_BUG;
@@ -12042,15 +12042,15 @@ static int _wrap_gtk_paint_tab(NspGtkStyle *self,Stack stack,int rhs,int opt,int
 static int _wrap_gtk_paint_shadow_gap(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int, obj, s_int, s_int,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL, *nsp_gap_side = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height, gap_x, gap_width;
   NspGObject *window, *nsp_widget;
-  GtkStateType state_type;
   GtkPositionType gap_side;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
+  GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height, &nsp_gap_side, &gap_x, &gap_width) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_STATE_TYPE, nsp_state_type, (gint *)&state_type)== FAIL)
@@ -12078,15 +12078,15 @@ static int _wrap_gtk_paint_shadow_gap(NspGtkStyle *self,Stack stack,int rhs,int 
 static int _wrap_gtk_paint_box_gap(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int, obj, s_int, s_int,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL, *nsp_gap_side = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height, gap_x, gap_width;
   NspGObject *window, *nsp_widget;
-  GtkStateType state_type;
   GtkPositionType gap_side;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
+  GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height, &nsp_gap_side, &gap_x, &gap_width) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_STATE_TYPE, nsp_state_type, (gint *)&state_type)== FAIL)
@@ -12114,15 +12114,15 @@ static int _wrap_gtk_paint_box_gap(NspGtkStyle *self,Stack stack,int rhs,int opt
 static int _wrap_gtk_paint_extension(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int, obj,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL, *nsp_gap_side = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
-  GtkStateType state_type;
   GtkPositionType gap_side;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
+  GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height, &nsp_gap_side) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_STATE_TYPE, nsp_state_type, (gint *)&state_type)== FAIL)
@@ -12150,12 +12150,12 @@ static int _wrap_gtk_paint_extension(NspGtkStyle *self,Stack stack,int rhs,int o
 static int _wrap_gtk_paint_focus(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, string, s_int, s_int, s_int, s_int,t_end};
-  char *detail;
   NspObject *nsp_state_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height) == FAIL) return RET_BUG;
@@ -12180,15 +12180,15 @@ static int _wrap_gtk_paint_focus(NspGtkStyle *self,Stack stack,int rhs,int opt,i
 static int _wrap_gtk_paint_slider(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int, obj,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL, *nsp_orientation = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
-  GtkStateType state_type;
+  char *detail;
   GtkOrientation orientation;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
+  GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height, &nsp_orientation) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_STATE_TYPE, nsp_state_type, (gint *)&state_type)== FAIL)
@@ -12216,15 +12216,15 @@ static int _wrap_gtk_paint_slider(NspGtkStyle *self,Stack stack,int rhs,int opt,
 static int _wrap_gtk_paint_handle(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, obj, string, s_int, s_int, s_int, s_int, obj,t_end};
-  char *detail;
   GtkShadowType shadow_type;
   NspObject *nsp_state_type = NULL, *nsp_shadow_type = NULL, *nsp_area = NULL, *nsp_orientation = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
-  GtkStateType state_type;
+  char *detail;
   GtkOrientation orientation;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
+  GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_shadow_type, &nsp_area, &nsp_widget, &detail, &x, &y, &width, &height, &nsp_orientation) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_STATE_TYPE, nsp_state_type, (gint *)&state_type)== FAIL)
@@ -12252,13 +12252,13 @@ static int _wrap_gtk_paint_handle(NspGtkStyle *self,Stack stack,int rhs,int opt,
 static int _wrap_gtk_paint_expander(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, string, s_int, s_int, obj,t_end};
-  char *detail;
-  GtkExpanderStyle expander_style;
   NspObject *nsp_state_type = NULL, *nsp_area = NULL, *nsp_expander_style = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y;
   NspGObject *window, *nsp_widget;
+  char *detail;
+  GtkExpanderStyle expander_style;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_area, &nsp_widget, &detail, &x, &y, &nsp_expander_style) == FAIL) return RET_BUG;
@@ -12285,12 +12285,12 @@ static int _wrap_gtk_paint_expander(NspGtkStyle *self,Stack stack,int rhs,int op
 static int _wrap_gtk_paint_layout(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, s_bool, obj, obj, string, s_int, s_int, obj_check,t_end};
-  char *detail;
   NspObject *nsp_state_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int use_text, x, y;
   NspGObject *window, *nsp_widget, *layout;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &use_text, &nsp_area, &nsp_widget, &detail, &x, &y, &nsp_type_pangolayout, &layout) == FAIL) return RET_BUG;
@@ -12315,14 +12315,14 @@ static int _wrap_gtk_paint_layout(NspGtkStyle *self,Stack stack,int rhs,int opt,
 static int _wrap_gtk_paint_resize_grip(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, string, obj, s_int, s_int, s_int, s_int,t_end};
-  char *detail;
   NspObject *nsp_state_type = NULL, *nsp_area = NULL, *nsp_edge = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y, width, height;
   NspGObject *window, *nsp_widget;
-  GtkStateType state_type;
   GdkWindowEdge edge;
+  char *detail;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
+  GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_area, &nsp_widget, &detail, &nsp_edge, &x, &y, &width, &height) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_STATE_TYPE, nsp_state_type, (gint *)&state_type)== FAIL)
@@ -12364,12 +12364,12 @@ static int _wrap_gtk_style_apply_default_pixmap(NspGtkStyle *self,Stack stack,in
 static int _wrap_gtk_paint_string(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check, obj, obj, obj, string, s_int, s_int, string,t_end};
-  char *detail, *string;
   NspObject *nsp_state_type = NULL, *nsp_area = NULL;
-  GtkWidget *widget = NULL;
-  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
   int x, y;
   NspGObject *window, *nsp_widget;
+  char *detail, *string;
+  GdkRectangle area_rect = { 0, 0, 0, 0 }, *area;
+  GtkWidget *widget = NULL;
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_area, &nsp_widget, &detail, &x, &y, &string) == FAIL) return RET_BUG;
@@ -19038,12 +19038,12 @@ _wrap_gtk_widget_get_child_requisition(NspGObject *self,Stack stack,int rhs,int 
 static int _wrap_gtk_widget_add_accelerator(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string, obj_check, s_int, obj, obj,t_end};
-  char *accel_signal;
   NspObject *nsp_accel_mods = NULL, *nsp_accel_flags = NULL;
   int accel_key;
   NspGObject *accel_group;
   GdkModifierType accel_mods;
   GtkAccelFlags accel_flags;
+  char *accel_signal;
 
   if ( GetArgs(stack,rhs,opt,T,&accel_signal, &nsp_type_gtkaccelgroup, &accel_group, &accel_key, &nsp_accel_mods, &nsp_accel_flags) == FAIL) return RET_BUG;
   if (nspg_flags_get_value(GDK_TYPE_MODIFIER_TYPE, nsp_accel_mods, (gint *)&accel_mods)==FAIL)
@@ -29378,12 +29378,12 @@ static int _wrap_gtk_tree_view_scroll_to_cell(NspGtkTreeView *self,Stack stack,i
 	{"row_align",s_double,NULLOBJ,-1}, 
 	{"col_align",s_double,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
-  int use_align = FALSE;
   NspObject *nsp_path;
   GtkTreePath *path = NULL;
-  double row_align = 0.0, col_align = 0.0;
   GtkTreeViewColumn *column = NULL;
   NspGObject *nsp_column = NULL;
+  int use_align = FALSE;
+  double row_align = 0.0, col_align = 0.0;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_path, opts, &nsp_column, &use_align, &row_align, &col_align) == FAIL) return RET_BUG;
   if (nspg_boxed_check(nsp_path, GTK_TYPE_TREE_PATH))
