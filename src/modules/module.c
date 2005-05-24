@@ -250,7 +250,7 @@ void module_info(NspModule *H, int indent)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("[Module %s, path=%s mname=%s\n", NSP_OBJECT(H)->name,
 	    H->path,H->mname);
-  if ( H->T != NULL) hash_info(H->T,indent+2);
+  if ( H->T != NULL) nsp_hash_info(H->T,indent+2);
   if ( H->L != NULL)nsp_list_info(H->L,indent+2);
   for ( i=0 ; i < indent ; i++) Sciprintf("]\n");
 }
@@ -271,7 +271,7 @@ void module_print(NspModule *H, int indent)
   Sciprintf("%s =\tmodule\n",NSP_OBJECT(H)->name); 
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("<Module name=%s path=%s\n",H->mname,H->path);
-  if ( H->T != NULL)  hash_print(H->T,indent+2);
+  if ( H->T != NULL)  nsp_hash_print(H->T,indent+2);
   if ( H->L != NULL)  nsp_list_print(H->L,indent+2);
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf(">\n");

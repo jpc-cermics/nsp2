@@ -149,15 +149,15 @@ void nsp_type_object_set(NspObject *o,NspTypeObject *type);
 
 /* new object */ 
 
-NspObject  *new_object();
+NspObject  *new_object(void);
 
 /* initialize type for Object */
 
-int nsp_type_object_init(); 
+int nsp_type_object_init(void); 
 
 /* is it safe to cast instance o to object with id as type id */
 
-int check_cast(void *o,NspTypeId id); 
+int check_cast(void *obj,NspTypeId id); 
 
 /* instance o implements interface with id as type */
 
@@ -185,7 +185,7 @@ struct _Stack {
   int pause; 
 } ;
 
-#define STACK_SIZE 500
+#define STACK_SIZE 50000
 extern NspObject *S[STACK_SIZE];    /* this could be malloced XXX **/
 extern Stack SciStack ;
 
@@ -228,7 +228,6 @@ extern int int_get_attribute(Stack stack, int rhs, int opt, int lhs);
 extern NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,char *attr) ;
 extern NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type, char *attr) ;
 extern NspObject *object_path_extract(NspObject *a, NspObject *ob);
-extern int int_object_create(Stack stack, int rhs, int opt, int lhs);
 
 
 /*-----------------------------------------------------------

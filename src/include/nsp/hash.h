@@ -12,33 +12,34 @@
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
 
-
 /*
  * We need a local static variable which contains the pointer to the
  * allocated memory for the hash table. An entry in this table contains
  * an ENTRY and a flag for usage.
  */
 
-/* Element stored in the hashtable **/
+/* Element stored in the hashtable */
 
-typedef struct { 
-  unsigned int   used; /* used to detect if data is present 
-			* we could remove this and use data == NULL 
-			*/ 
+typedef struct _Hash_Entry  Hash_Entry; 
+
+struct _Hash_Entry { 
+  unsigned int used; /* used to detect if data is present */
   NspObject *data;  
-} Hash_Entry ;
-
+};
 
 /*
  * NspHash inherits from NspObject 
  */
 
-typedef struct _NspHash NspHash;
+typedef struct _NspTypeHash NspTypeHash ;
 
-typedef struct _NspTypeHash { 
+struct _NspTypeHash { 
+  /*< private >*/
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspTypeHash;
+};
+
+typedef struct _NspHash NspHash;
 
 struct _NspHash {
   /*< private >*/
@@ -62,18 +63,21 @@ NspTypeHash *new_type_hash(type_mode mode);
 
 NspHash *new_hash();
 
+/**
+ * NULLHASH:
+ **/
 
 #define NULLHASH (NspHash*) 0
 
 extern NspHash *nsp_hash_create(char *name, unsigned int size);
-extern NspHash *hash_copy(NspHash *H);
+extern NspHash *nsp_hash_copy(NspHash *H);
 extern void nsp_hash_destroy(NspHash *H);
-extern void hash_info(NspHash *H, int indent);
-extern void hash_print(NspHash *H, int indent);
+extern void nsp_hash_info(NspHash *H, int indent);
+extern void nsp_hash_print(NspHash *H, int indent);
 
 /* from HashObj.c */
 
-extern NspHash *hash_object (NspObject *O); 
+extern NspHash *nsp_hash_object (NspObject *O); 
 extern int IsHashObj (Stack stack, int i); 
 extern int IsHash(NspObject *O);
 extern NspHash *GetHashCopy (Stack stack, int i); 
@@ -83,9 +87,6 @@ extern NspHash *GetHash (Stack stack, int i);
 
 extern int nsp_hash_resize(NspHash *H, unsigned int new_size); 
 extern int nsp_hash_merge(NspHash *H1, NspHash *H2); 
-extern void HashDestroy (NspHash *H); 
-extern void HashInfo (NspHash *H, int indent); 
-extern void HashPrint (NspHash *H, int indent); 
 extern int nsp_hash_get_next_object(NspHash *H, int *i, NspObject **O); 
 extern int nsp_hash_enter_copy(NspHash *H, NspObject *O); 
 extern int nsp_hash_enter(NspHash *H, NspObject *O); 
@@ -97,11 +98,26 @@ extern NspBMatrix  *nsp_hash_not_equal(NspHash *L1, NspHash *L2);
 extern int nsp_hash_full_equal(NspHash *L1, NspHash *L2);
 extern int nsp_hash_full_not_equal(NspHash *L1, NspHash *L2);
 
+/**
+ * HashOperation:
+ * @H_FIND: find object 
+ * @H_FIND_COPY: find object and return a copy 
+ * @H_ENTER: enter an object 
+ * @H_ENTER_COPY: enter a copyof an object 
+ * @H_REMOVE: remove object
+ *
+ * used to select an operation for nsp_hsearch()
+ **/
+
 typedef enum {
-  H_FIND,H_FIND_COPY,H_ENTER,H_ENTER_COPY,H_REMOVE
+  H_FIND,
+  H_FIND_COPY,
+  H_ENTER,
+  H_ENTER_COPY,
+  H_REMOVE 
 } HashOperation;
- 
-extern int nsp_hsearch (NspHash *H,const char *key, NspObject **data,HashOperation);
+
+extern int nsp_hsearch (NspHash *H,const char *key, NspObject **data,HashOperation action);
 extern NspHash *nsp_hcreate_from_list(char *name,unsigned int nel, NspList *L);
 NspHash *nsp_hcreate(char *name, unsigned int nel);
 extern void nsp_hdestroy (NspHash *H);

@@ -60,17 +60,17 @@ NspTypeHash *new_type_hash(type_mode mode)
 
   /* object methods redefined for hash */ 
 
-  top->pr = (print_func *) hash_print;                    
+  top->pr = (print_func *) nsp_hash_print;                    
   top->dealloc = (dealloc_func *) nsp_hash_destroy;
-  top->copy  =  (copy_func *) hash_copy;                   
+  top->copy  =  (copy_func *) nsp_hash_copy;                   
   top->size  = (size_func *) hash_size;                  
   top->s_type =  (s_type_func *) hash_type_as_string;    
   top->sh_type = (sh_type_func *) hash_type_short_string;
-  top->info = (info_func *) hash_info ;                    
+  top->info = (info_func *) nsp_hash_info ;                    
   /* top->is_true = (is_true_func  *) HashIsTrue; */
   /* top->loop = (loop_func *) hash_loop_extract ; */
   top->path_extract = (path_func *) hash_path_extract ; 
-  top->get_from_obj = (get_from_obj_func *) hash_object;
+  top->get_from_obj = (get_from_obj_func *) nsp_hash_object;
   top->eq  = (eq_func *) hash_eq;
   top->neq  = (eq_func *) hash_neq;
   top->save  = (save_func *) hash_xdr_save;
@@ -283,7 +283,7 @@ void nsp_hash_destroy(NspHash *H)
  * info 
  */
 
-void hash_info(NspHash *H, int indent)
+void nsp_hash_info(NspHash *H, int indent)
 {
   int i;
   unsigned i1;
@@ -307,7 +307,7 @@ void hash_info(NspHash *H, int indent)
  * print 
  */
 
-void hash_print(NspHash *H, int indent)
+void nsp_hash_print(NspHash *H, int indent)
 {
   int i,count = 0;
   unsigned int i1;
@@ -352,7 +352,7 @@ void hash_print(NspHash *H, int indent)
  * Note that some of these functions could become MACROS XXXXX 
  *-----------------------------------------------------*/
 
-NspHash   *hash_object(NspObject *O)
+NspHash   *nsp_hash_object(NspObject *O)
 {
   /* Follow pointer **/
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
@@ -382,7 +382,7 @@ NspHash  *GetHashCopy(Stack stack, int i)
 NspHash  *GetHash(Stack stack, int i)
 {
   NspHash *M;
-  if (( M = hash_object(NthObj(i))) == NULLHASH)
+  if (( M = nsp_hash_object(NthObj(i))) == NULLHASH)
     ArgMessage(stack,i);
   return M;
 }
@@ -401,7 +401,7 @@ NspHash *nsp_hash_create(char *name, unsigned int size)
  * copy 
  */
 
-NspHash *hash_copy(NspHash *H)
+NspHash *nsp_hash_copy(NspHash *H)
 {
   unsigned int i;
   NspHash *Loc;

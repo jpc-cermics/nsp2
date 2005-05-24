@@ -382,10 +382,10 @@ static int  extract_one_argument(NspObject *Ob,int_types *T,va_list *ap,char Typ
     if ( ( *((NspMatrix **) Foo)= Mat2int(*((NspMatrix **) Foo)))== NULLMAT) return FAIL;
     break;
   case hash : Foo = (void **)  va_arg(*ap,NspHash  **) ;
-    if ( ( *((NspHash **) Foo)= hash_object(Ob))== NULLHASH) return FAIL;
+    if ( ( *((NspHash **) Foo)= nsp_hash_object(Ob))== NULLHASH) return FAIL;
     break;
   case hashcopy : Foo = (void **)  va_arg(*ap,NspHash  **) ;
-    if ( ( *((NspHash **) Foo)= hash_object(Ob))== NULLHASH) return FAIL;
+    if ( ( *((NspHash **) Foo)= nsp_hash_object(Ob))== NULLHASH) return FAIL;
     if ( ( *((NspHash **) Foo)= MaybeObjCopy((NspObject **)Foo)) == NULLHASH) return FAIL;
     break;
   case list : Foo = (void **)  va_arg(*ap, NspList **) ;
@@ -587,7 +587,7 @@ static NspList *BuildListFromArgs_1(int_types *T,va_list *ap)
 	  if (nsp_list_end_insert( L,O ) == FAIL ) return NULLLIST;
 	  break;
 	case hashcopy :
-	  if ((O = (NspObject *) hash_copy(va_arg(*ap,NspHash *)))== NULLOBJ) return NULLLIST ;
+	  if ((O = (NspObject *) nsp_hash_copy(va_arg(*ap,NspHash *)))== NULLOBJ) return NULLLIST ;
 	  if (nsp_object_set_name(O,"lel") == FAIL) return NULLLIST;
 	  if (nsp_list_end_insert( L,O) == FAIL ) return NULLLIST;
 	  break;
@@ -725,7 +725,7 @@ static int RetArgs_1(Stack stack,int lhs,int_types *T,va_list *ap)
 	  break;
 	case hashcopy :
 	  if (( O = (NspObject *) va_arg(*ap, NspHash *)) == NULLOBJ) return RET_BUG; 
-	  if ((O = (NspObject *) hash_copy((NspHash *) O))== NULLOBJ) return RET_BUG ;
+	  if ((O = (NspObject *) nsp_hash_copy((NspHash *) O))== NULLOBJ) return RET_BUG ;
 	  MoveObj(stack,count++,O);
 	  break;
 	case smat : 
