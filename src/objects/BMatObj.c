@@ -28,6 +28,7 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
+#include "nsp/matint.h"
 
 /*
  * NspBMatrix inherits from NspObject 
@@ -38,6 +39,7 @@ NspTypeBMatrix *nsp_type_bmatrix=NULL;
 
 NspTypeBMatrix *new_type_bmatrix(type_mode mode)
 {
+  NspTypeMatint *mati;/* interface */
   NspTypeBMatrix *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_bmatrix != 0 && mode == T_BASE ) 
@@ -80,11 +82,24 @@ NspTypeBMatrix *new_type_bmatrix(type_mode mode)
 
   type->init = (init_func *) init_bmatrix;
   /* 
-   * Matrix interfaces can be added here 
+   * BMatrix interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
+  /*
+   * BMatrix implements Matint the matrix interface 
+   * which is common to object that behaves like matrices.
+   */
+
+  mati = new_type_matint(T_DERIVED);
+  mati->methods = matint_get_methods; 
+  mati->redim = (matint_redim *) nsp_bmatrix_redim; 
+  mati->resize = (matint_resize  *) nsp_bmatrix_resize;
+  mati->free_elt = (matint_free_elt *) 0; /* nothing to do */
+  mati->elt_size = (matint_elt_size *) nsp_bmatrix_elt_size ;
+
+  type->interface = (NspTypeBase *) mati;
   
   if ( nsp_type_bmatrix_id == 0 ) 
     {
@@ -847,9 +862,11 @@ static int int_bmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
  * WARNING: A must be changed by this routine
  */
 
+extern int nsp_smatrix_delete_elements4(NspSMatrix *A, NspMatrix *Elts);
 static int int_bmatrix_deleteelts(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_bmatrix_deleteelts_gen(stack,rhs,opt,lhs,nsp_bmatrix_delete_elements);
+  return int_bmatrix_deleteelts_gen(stack,rhs,opt,lhs,
+				    (delf) nsp_smatrix_delete_elements4);
 }
 
 /*

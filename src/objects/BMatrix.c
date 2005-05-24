@@ -85,6 +85,22 @@ NspBMatrix  *nsp_bmatrix_copy(NspBMatrix *A)
   return(Loc);
 }
 
+
+/**
+ * nsp_matrix_elt_size:
+ * @M: a #NspMatrix 
+ * 
+ * size of matrix elements.
+ * 
+ * Return value: size of @M elements.
+ **/
+
+unsigned int  nsp_bmatrix_elt_size(NspMatrix *M)
+{
+  return sizeof(int);
+}
+
+
 /**
  * nsp_bmatrix_resize:
  * @A: a #NspBMatrix 
@@ -957,6 +973,7 @@ NspBMatrix  *nsp_bmatrix_transpose(NspBMatrix *A)
  * @M: a #NspMatrix
  * 
  * #NspMatrix to #NspBMatrix conversion 
+ * 
  * Returns a #NspBMatrix or %NULLBMAT.
  */
 
