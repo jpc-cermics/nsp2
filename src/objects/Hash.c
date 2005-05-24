@@ -58,7 +58,7 @@ NspHash *nsp_hcreate_from_list(char *name,unsigned int nel, NspList *L)
   Cell *C;
   if ( L == NULLLIST ) return NULLHASH;
   if (nel == -1 ) nel = nsp_list_length(L);
-  if(( H = nsp_hash_create(NVOID,nel)) == NULLHASH) return NULLHASH;
+  if(( H = nsp_hash_create(name,nel)) == NULLHASH) return NULLHASH;
   C= L->first;
   while ( C != NULLCELL) 
     {
@@ -535,14 +535,22 @@ static int isprime(unsigned int number)
   return number%div != 0;
 }
 
-/*
+/**
+ * nsp_hcreate:
+ * @name: #NspHash object name 
+ * @nel: initial size of the hash table object.
+ * 
+ * creates a #NspHash object with initial size greater than 
+ * #nel. 
  * Before using the hash table we must allocate memory for it.
  * Test for an existing table are done. We allocate one element
  * more as the found prime number says. This is done for more effective
  * indexing as explained in the comment for the hsearch function.
  * The contents of the table is zeroed, especially the field used 
  * becomes zero.
- */
+ *  
+ * Return value: a #NspHash object or %NULLHASH
+ **/
 
 NspHash *nsp_hcreate(char *name, unsigned int nel)
 {
@@ -569,11 +577,15 @@ NspHash *nsp_hcreate(char *name, unsigned int nel)
   return H;
 }
 
-
-/*
- * After using the hash table it has to be destroyed. The used memory can
- * be freed and the local static variable can be marked as not used.
- */
+/**
+ * nsp_hdestroy:
+ * @H: a #NspHash object 
+ * 
+ * free a #NspHash object but not the elements which were 
+ * stored in the hash table. This function is not to be used 
+ * directly but through nsp_hash_destroy() call.
+ * 
+ **/
 
 void nsp_hdestroy(NspHash *H)
 {
@@ -583,7 +595,13 @@ void nsp_hdestroy(NspHash *H)
   FREE(H);
 }
 
-/*
+/**
+ * nsp_hsearch:
+ * @H: #NspHash object 
+ * @key: key to search in the hash table 
+ * @data: a #NspObject pointer to be set with the searched object
+ * @action: action to perform.
+ * 
  * This is the search function. It uses double hashing with open adressing.
  * The argument item.key has to be a pointer to an zero terminated, most
  * probably strings of chars. The function for generating a number of the
@@ -597,8 +615,10 @@ void nsp_hdestroy(NspHash *H)
  * means used. The used field can be used as a first fast comparison for
  * equality of the stored and the parameter value. This helps to prevent
  * unnecessary expensive calls of strcmp.
- */
-
+ * 
+ * 
+ * Return value: %OK, %FAIL. 
+ **/
 
 int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation action)
 {
