@@ -49,10 +49,10 @@
  * @m: number of rows 
  * @n: number of columns 
  * 
- * Creates a new max plus matrix with unspecified values, returns %NULLMAT on failure. 
- * Returns a #NspMaxpMatrix or %NULLMAT.
- */
-
+ * Creates a new max plus matrix with unspecified values, 
+ * 
+ * Return value: a #NspMaxpMatrix or %NULLMAT.
+ **/
 NspMaxpMatrix * nsp_mpmatrix_create(const char *name, char type, int m, int n)
 {
   return nsp_matrix_cast_to_mpmatrix(nsp_matrix_create(name,type,m,n));
@@ -121,13 +121,13 @@ NspMaxpMatrix * nsp_mp_matrix_from_m(const char *name,NspMatrix *M)
 
 
 /**
- * nsp_matrix_cast_to_mpmatrix
+ * nsp_matrix_cast_to_mpmatrix:
  * @M: a NspMatrix *
  * 
  * Changes the type fields of @M in such a way that 
  * @M becomes a #NspMaxpMatrix. 
  * 
- * Returns a #NspMaxpMatrix 
+ * Returns a #NspMaxpMatrix or %NULLMAXPMAT.
  */
 
 NspMaxpMatrix * nsp_matrix_cast_to_mpmatrix(NspMatrix *M)

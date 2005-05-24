@@ -869,12 +869,12 @@ NspObject *nsp_sorted_list_search(NspList *L, nsp_const_string str)
  * @L: 
  * @str: 
  * 
- * Search for a NspList element named str in NspList L
+ * Search for a NspList element named @str in #NspList @L
  * returns this element and remove the 
  * element from the list (without destroying 
  * the returned object )
  * 
- * Return value: 
+ * Return value: a #NspObject or %NULLOBJ
  **/
 
 NspObject *nsp_sorted_list_search_and_remove(NspList *L, nsp_const_string str)

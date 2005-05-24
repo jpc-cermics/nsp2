@@ -31,6 +31,7 @@
 #include "nsp/plistc.h" /* scigetline */
 #include  "nsp/datas.h" 
 
+/* FIXME: to be moved in object.h private zone */
 static int object_size(NspObject *self, int flag);
 static char *get_name(NspObject *ob) ;
 static char *set_name(NspObject *ob, char *name);
@@ -40,6 +41,8 @@ static int init_object(NspObject *ob,NspTypeObject *type);
 static char *object_type_as_string(void);
 static char *object_type_short_string(void);
 static NspMethods *object_get_methods(void);
+static int int_object_create(Stack stack, int rhs, int opt, int lhs);
+
 /*
  * base object : NspObject 
  */
@@ -47,8 +50,16 @@ static NspMethods *object_get_methods(void);
 int nsp_type_object_id =0;
 NspTypeObject  *nsp_type_object= NULL;
 
-/* new instance of type for object 
- */
+/**
+ * new_type_object:
+ * @mode: %T_BASE or %T_DERIVED 
+ * 
+ * used to create type instances for #NspObject object 
+ * alls the instance of the #NspObject class share the 
+ * same #NspTypeObject instance. 
+ * 
+ * Return value: a #NspTypeObject or %NULL
+ **/
 
 NspTypeObject *new_type_object(type_mode mode)
 {
@@ -111,11 +122,16 @@ static int init_object(NspObject *o,NspTypeObject *type)
   return OK;
 }
 
-/*
- * new instance of Object 
- */
+/**
+ * new_object:
+ * 
+ * Creates a new instance of #NspObject. 
+ * Not used directly since  #NspObject is an abstract class.
+ * 
+ * Return value: a #NspObject or %NULLOBJ 
+ **/
 
-NspObject *new_object() 
+NspObject *new_object(void) 
 {
   NspObject *loc; 
   /* type must exists */
@@ -130,9 +146,20 @@ NspObject *new_object()
  * check that o can be casted to an object of type id 
  */
 
-int check_cast(void *o,NspTypeId id)
+/**
+ * check_cast:
+ * @obj: any object to be checked 
+ * @id: an type instance id.
+ * 
+ * checks that object given by @o inherits 
+ * from class type with @id signature.
+ * 
+ * Return value: %TRUE or %FALSE.
+ **/
+
+int check_cast(void *obj,NspTypeId id)
 {
-  NspObject *ob=o;
+  NspObject *ob=obj;
   /* down to basetype */
   NspTypeBase *type = ob->basetype;
   /* walk up and try to match */
@@ -143,6 +170,17 @@ int check_cast(void *o,NspTypeId id)
     }
   return FALSE;
 }
+
+/**
+ * check_implements:
+ * @obj: any object to be checked 
+ * @id: an type instance id.
+ * 
+ * checks that object @o implements an interface 
+ * type with @id signature
+ * Return value: a #NspTypeBase which contains the 
+ * interface instance for object @obj or %NULL.
+ **/
 
 NspTypeBase *check_implements(void *obj,NspTypeId id)
 {
@@ -163,22 +201,35 @@ NspTypeBase *check_implements(void *obj,NspTypeId id)
   return NULL;
 }
 
-
-/*
- * methods for NspObject 
- */
-
+/**
+ * object_size:
+ * @self: a #NspObject. 
+ * @flag: an int for selecting size to be returned.
+ * 
+ * a default size method which always returns 0.
+ * This method is redefined in each concret class.
+ * 
+ * Return value: an integer.
+ **/
 static int object_size(NspObject *self, int flag)
 {
   return 0;
 }
 
-/*
- * type as string 
- */
-
 static char object_type_name[]="Object";
 static char object_short_type_name[]="obj";
+
+/**
+ * object_type_as_string:
+ * @void: 
+ * 
+ * a unique identifier for #NspObject objects 
+ * as a short string or long string. 
+ * This method is redefined for each concrete class 
+ * which inherits from #NspObject.
+ * 
+ * Return value: a string 
+ **/
 
 static char *object_type_as_string(void)
 {
@@ -190,6 +241,16 @@ static char *object_type_short_string(void)
   return(object_short_type_name);
 }
 
+/**
+ * set_name:
+ * @ob: a #NspObject 
+ * @name: a string 
+ * 
+ * sets the name ob object #NspObject. 
+ * 
+ * Return value: returns a pointer to the name or %NULLSTRING.
+ **/
+
 static char *set_name(NspObject *ob, char *name)
 {
   char *name1 =new_nsp_string(name);
@@ -198,10 +259,32 @@ static char *set_name(NspObject *ob, char *name)
   return ob->name = name1;
 }
 
+/**
+ * get_name:
+ * @ob: 
+ * 
+ * gets the name of object @ob.
+ * 
+ * Return value: a string. 
+ **/
 static char *get_name(NspObject *ob) 
 {
   return ob->name;
 }
+
+/**
+ * object_is_true_def:
+ * @self: a #NspObject.
+ * 
+ * can be redefined for each concrete class 
+ * which inherits from #NspObject. It is used 
+ * in if A then to check if A can be considered as 
+ * a %TRUE value. The default method implemented 
+ * here returns %FALSE which an error message at 
+ * nsp level.
+ * 
+ * Return value: %FALSE.
+ **/
 
 static int object_is_true_def(NspObject *self)
 {
@@ -210,6 +293,24 @@ static int object_is_true_def(NspObject *self)
   return FALSE;
 }
 
+/**
+ * object_loop_def:
+ * @str: 
+ * @O: 
+ * @O1: 
+ * @i: 
+ * @rep: 
+ * 
+ * can be redefined for each concrete class 
+ * which inherits from #NspObject. 
+ * Default method for the loop iterator if x=A 
+ * to iterate throught the columns of A.
+ * The default method implemented 
+ * here returns %FALSE which an error message at 
+ * nsp level.
+ * 
+ * Return value: %NULLOBJ.
+ **/
 static NspObject *object_loop_def(char *str, NspObject *O, NspObject *O1, int i, int *rep)
 {
   Scierror("Error: %s=val not implemented for val of type %s\n",
@@ -221,7 +322,22 @@ static NspObject *object_loop_def(char *str, NspObject *O, NspObject *O1, int i,
  * methods 
  *------------------------------------------------------*/
 
-int int_object_create(Stack stack, int rhs, int opt, int lhs)
+/**
+ * int_object_create:
+ * @stack: a #Stack
+ * @rhs: an int the number of right hand side arguments 
+ * @opt: the number of optional named arguments 
+ * @lhs: the requested number of arguments to return 
+ * 
+ * deprecated ? 
+ * A defaut interface for create method at nsp level. 
+ * This method can be redefined for certain types instance 
+ * in order to give a defaut create method.
+ * 
+ * Return value: 
+ **/
+
+static int int_object_create(Stack stack, int rhs, int opt, int lhs)
 {
   Scierror("Cannot create object \n");
   return RET_BUG;
@@ -230,9 +346,22 @@ int int_object_create(Stack stack, int rhs, int opt, int lhs)
 /* set method common to all objects object.set[attr=val,attr=val,....] */
 
 /*
- * x.equal[y] : checks that x is equal to y 
- *              i.e x is a copy of y 
  */
+
+/**
+ * int_object_equal:
+ * @self: an instance of a nsp object.
+ * @stack: a #Stack
+ * @rhs: an int the number of right hand side arguments 
+ * @opt: the number of optional named arguments 
+ * @lhs: the requested number of arguments to return 
+ * 
+ * a nsp method for checking object equality i.e checks if 
+ * @self is a copy of the first object stored in the stack @stack.
+ * x.equal[y]. The answer is stored in the calling stack @stack.
+ * 
+ * Return value: 1 
+ **/
 
 static int int_object_equal(void *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -247,6 +376,19 @@ static int int_object_equal(void *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+/**
+ * int_object_get_name:
+ * @self: an instance of a nsp object.
+ * @stack: a #Stack
+ * @rhs: an int the number of right hand side arguments 
+ * @opt: the number of optional named arguments 
+ * @lhs: the requested number of arguments to return 
+ * 
+ * a nsp method for getting the name of @self. 
+ * The answer is stored in the calling stack @stack.
+ * 
+ * Return value: 1 or %RET_BUG.
+ **/
 static int int_object_get_name(void *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(-1,0);
@@ -296,7 +438,18 @@ int int_set_failed(NspObject *self,char *attr, NspObject *val)
   return RET_BUG;
 }
 
-/* set attributes called  R.exp = b */
+/**
+ * int_set_attribute:
+ * @stack: a #Stack
+ * @rhs: an int the number of right hand side arguments 
+ * @opt: the number of optional named arguments 
+ * @lhs: the requested number of arguments to return 
+ * 
+ * an interface which is used when settin a nsp object attribute 
+ * in R.exp = b expressions.
+ *
+ * Return value: 1 or %RET_BUG.
+ **/
 
 int int_set_attribute(Stack stack, int rhs, int opt, int lhs)
 {
