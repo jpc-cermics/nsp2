@@ -187,8 +187,19 @@ static int int_insert_env(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/* FIXME: temporary here 
+ * just to test the frames search inhibit 
+ */
 
+int frames_search_inhibit = FALSE ;
 
+static int int_frames_flag(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(1,1);
+  CheckLhs(0,0);
+  if ( GetScalarBool (stack,1,&frames_search_inhibit) == FAIL) return RET_BUG;
+  return 0;
+}
 
 
 /*
@@ -203,6 +214,7 @@ static OpTab Datas_func[]={
   {"clearglobal",int_clearglobal},
   {"insert_env",int_insert_env},
   {"who",int_who},
+  {"frames_inhibit_search",int_frames_flag},
   {(char *) 0, NULL}
 };
 
