@@ -706,186 +706,22 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 
 int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
 {
-  int i,k,*flag, new_A_mn, count;
+  char *Val = (char *) A->S;
+  unsigned int elt_size; /* size in number of bytes */
+  int i,*ind,k1,k2,nn,ne,ioff=0; 
+  NspTypeBase *type; 
 
-  if ( Elts->mn == 0) return OK;
-  
-  if ( (flag = nsp_complement_for_deletions(A->mn, Elts, &count)) == NULL )
-    return FAIL;
+  if ( (ind = nsp_indices_for_deletions(A->mn, Elts, &ne)) == NULL )  
+    return FAIL; 
 
-  new_A_mn = A->mn - count;
-
-  k = 0;
-  for ( i = 0 ; i < A->mn ; i++ )
-    if ( flag[i] )
-      {
-	if ( k < i )
-	  {
-	    A->S[k] = A->S[i];
-	    A->S[i] =  NULLSTRING;
-	  }
-	k++;
-      }
-    else
-      nsp_string_destroy(&A->S[i]);
-  
-  FREE(flag);
-
-  if ( A->m == 1)
-    {
-      if ( nsp_smatrix_resize(A,1,new_A_mn) == FAIL ) return FAIL;
-    }
-  else
-    {
-      if ( nsp_smatrix_resize(A,new_A_mn,1) == FAIL) return FAIL;
-    }
-  return OK;
-}
-
-/* version 2 
- * this one is more generic and could be used for cells, 
- * or all tables with pointers as elements 
- */
-
-int nsp_smatrix_delete_elements2(NspSMatrix *A, NspMatrix *Elts)
-{
-  NspTypeBase *type;
-  int i,k,*flag, new_A_mn, count;
-
-  if ( Elts->mn == 0) return OK;
-  
-  if ( (flag = nsp_complement_for_deletions(A->mn, Elts, &count)) == NULL )
-    return FAIL;
-
-  if (( type = check_implements(A,nsp_type_matint_id)) == NULL )
-    {
-      Scierror("Object do not implements matint interface\n");
-      return FAIL;
-    }
-    
-  new_A_mn = A->mn - count;
-
-  k = 0;
-  for ( i = 0 ; i < A->mn ; i++ )
-    if ( flag[i] )
-      {
-	if ( k < i )
-	  {
-	    A->S[k] = A->S[i];
-	    A->S[i] =  NULLSTRING;
-	  }
-	k++;
-      }
-    else
-      {
-	MAT_INT(type)->free_elt((void **) &A->S[i]);
-      }
-  
-  FREE(flag);
-
-  if ( A->m == 1)
-    {
-      if ( MAT_INT(type)->resize(A,1,new_A_mn) == FAIL ) return FAIL;
-    }
-  else
-    {
-      if ( MAT_INT(type)->resize(A,new_A_mn,1) == FAIL) return FAIL;
-    }
-  return OK;
-}
-
-/* version 3
- * this one is more generic and could be used by all 
- */
-
-
-int nsp_smatrix_delete_elements3(NspSMatrix *A, NspMatrix *Elts)
-{
-  NspTypeBase *type;
-  const int kout=-2;
-  int i,*flag, new_A_mn, count,ks,kf,k,elt_size;
-
-  if ( Elts->mn == 0) return OK;
-  
-  if ( (flag = nsp_complement_for_deletions(A->mn, Elts, &count)) == NULL )
-    return FAIL;
-  new_A_mn = A->mn - count;
-
-  if (( type = check_implements(A,nsp_type_matint_id)) == NULL )
-    {
-      Scierror("Object do not implements matint interface\n");
-      return FAIL;
-    }
-  elt_size = MAT_INT(type)->elt_size(A);
-
-  if ( MAT_INT(type)->free_elt != NULL) 
-    for ( i = 0 ; i < A->mn ; i++ ) 
-      {
-	if ( flag[i]==0 ) nsp_string_destroy(&(A->S[i]));
-      }
-  
-  ks=kf=kout;k=0;
-  for ( i = 0 ; i < A->mn ; i++ ) 
-    {
-      if ( flag[i] == 0 ) 
-	{
-	  if ( kf == i -1 )
-	    {
-	      /* a starting zero zone after a non null zone */
-	      if ( k!=ks) memmove(A->S+k,A->S+ks,(kf-ks+1)*elt_size);
-	      k+= (kf-ks+1);
-	      ks=kout;
-	    }
-	}
-      else 
-	{
-	  /* accumulate elements in a != 0 zone */
-	  if ( ks == kout ) 
-	    ks=kf=i;
-	  else 
-	    kf++;
-	}
-    }
-
-  if ( flag[A->mn-1] != 0)  memmove(A->S+k,A->S+ks,(kf-ks+1)*elt_size);
-  free(flag);
-
-  /* set to NULL moved elements which should not be destroyed by resize */
-  if ( MAT_INT(type)->free_elt != NULL) 
-    for ( i = new_A_mn ; i < A->mn ; i++ ) A->S[i] = NULL;
-
-  if ( A->m == 1)
-    {
-      if ( MAT_INT(type)->resize(A,1,new_A_mn) == FAIL ) return FAIL;
-    }
-  else
-    {
-      if ( MAT_INT(type)->resize(A,new_A_mn,1) == FAIL ) return FAIL;
-    }
-  return OK;
-}
-
-/* version 4 
- * this one is more generic and could be used by all 
- */
-
-int nsp_smatrix_delete_elements4(NspSMatrix *A, NspMatrix *Elts)
-{
-  unsigned int elt_size;
-  int i,*ind,k1,k2,nn,ne,ioff=0;
-  NspTypeBase *type;
-
-  if ( (ind = nsp_indices_for_deletions(A->mn, Elts, &ne)) == NULL ) 
-    return FAIL;
-
-  if (( type = check_implements(A,nsp_type_matint_id)) == NULL )
-    {
-      Scierror("Object do not implements matint interface\n");
-      return FAIL;
-    }
-  elt_size = MAT_INT(type)->elt_size(A);
-  if ( MAT_INT(type)->free_elt != NULL) 
-    for ( i = 0 ; i < ne ; i++ )  nsp_string_destroy(&(A->S[ind[i]]));
+  if (( type = check_implements(A,nsp_type_matint_id)) == NULL ) 
+    { 
+      Scierror("Object do not implements matint interface\n"); 
+      return FAIL; 
+    } 
+  elt_size = MAT_INT(type)->elt_size(A); 
+  if ( MAT_INT(type)->free_elt != NULL)  
+    for ( i = 0 ; i < ne ; i++ )  nsp_string_destroy(&(A->S[ind[i]])); 
 
   k1 = ind[0];
   for ( i = 0 ; i < ne ; i++)
@@ -894,7 +730,7 @@ int nsp_smatrix_delete_elements4(NspSMatrix *A, NspMatrix *Elts)
       nn = k2-k1-1;
       if ( nn != 0) 
 	{
-	  memmove(A->S + k1-ioff, A->S + k1+1, nn*elt_size);
+	  memmove(Val + (k1-ioff)*elt_size, Val + (k1+1)*elt_size, nn*elt_size);
 	}
       ioff++;
       k1 = k2;
@@ -914,7 +750,6 @@ int nsp_smatrix_delete_elements4(NspSMatrix *A, NspMatrix *Elts)
     }
   return OK;
 }
-
 
 
 /*
@@ -1686,9 +1521,9 @@ NspMatrix *nsp_smatrix_sort(NspSMatrix *A,int flag,nsp_const_string str1,nsp_con
  **/
 NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars)
 {
-  register nsp_const_string p, p2;
+  register nsp_const_string p;
   nsp_const_string elementStart;
-  int stringLen, i, j;
+  int stringLen, i;
   NspSMatrix *A;
   stringLen = strlen(string);
   if ( strlen(splitChars) == 0 ) 

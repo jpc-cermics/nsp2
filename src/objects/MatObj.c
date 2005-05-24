@@ -2404,24 +2404,7 @@ int
 int_mxdeleteelts (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mxdeleteelts_gen (stack, rhs, opt, lhs,
-			       nsp_matrix_delete_elements);
-}
-
-extern int nsp_smatrix_delete_elements3(NspSMatrix *A, NspMatrix *Elts);
-extern int nsp_smatrix_delete_elements4(NspSMatrix *A, NspMatrix *Elts);
-
-int
-int_mxdeleteelts3 (Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mxdeleteelts_gen (stack, rhs, opt, lhs,
-			       (delf) nsp_smatrix_delete_elements3);
-}
-
-int
-int_mxdeleteelts4 (Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mxdeleteelts_gen (stack, rhs, opt, lhs,
-			       (delf) nsp_smatrix_delete_elements4);
+			       (delf) nsp_smatrix_delete_elements);
 }
 
 /*
@@ -3973,9 +3956,6 @@ static OpTab Matrix_func[] = {
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
   {"number_properties",int_number_properties},
-  {"del1_m", int_mxdeleteelts},/* FIXME: tests ...*/
-  {"del3_m", int_mxdeleteelts3},
-  {"del4_m", int_mxdeleteelts4},
   {(char *) 0, NULL}
 };
 

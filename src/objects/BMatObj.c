@@ -859,14 +859,13 @@ static int int_bmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
 /*
  * Res=BMatDeleteelts(A,Elts)
  *     Elts unchanged  ( restored at end of function if necessary)
- * WARNING: A must be changed by this routine
+ *     redirect to  nsp_smatrix_delete_elements which is generic now 
  */
 
-extern int nsp_smatrix_delete_elements4(NspSMatrix *A, NspMatrix *Elts);
 static int int_bmatrix_deleteelts(Stack stack, int rhs, int opt, int lhs)
 {
   return int_bmatrix_deleteelts_gen(stack,rhs,opt,lhs,
-				    (delf) nsp_smatrix_delete_elements4);
+				    (delf) nsp_smatrix_delete_elements);
 }
 
 /*
