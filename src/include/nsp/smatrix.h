@@ -127,7 +127,7 @@ extern NspMatrix *nsp_smatrix_strindex(nsp_const_string Str1, nsp_const_string S
 extern NspSMatrix *nsp_ascii_to_smatrix(NspMatrix *A); 
 extern NspMatrix *nsp_string_to_ascii(nsp_const_string S); 
 extern NspMatrix *nsp_smatrix_sort(NspSMatrix *A,int flag,nsp_const_string  str1,nsp_const_string str2); 
-extern NspSMatrix *nsp_smatrix_split(nsp_const_string string, nsp_const_string splitChars); 
+extern NspSMatrix *nsp_smatrix_split(nsp_const_string string, nsp_const_string splitChars, int msep); 
 extern int nsp_row_smatrix_append_string(NspSMatrix *A, nsp_const_string str); 
 
 extern NspBMatrix *SMatCompOp (NspSMatrix *A, NspSMatrix *B, char *op); 

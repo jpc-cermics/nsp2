@@ -42,7 +42,7 @@ int nsp_dialog(NspSMatrix *Title,NspSMatrix *Init,NspObject **Rep)
   nsp_string_destroy(&title);
   if ( rep == FALSE)   return FAIL;
   /* \n must be converted */ 
-  S =nsp_smatrix_split(answer,"\n");
+  S =nsp_smatrix_split(answer,"\n",0);
   if ( S != NULLSMAT ) { S->m = S->n ; S->n=1;} /* column vector */
   *Rep = (NspObject *) S;
   FREE(answer);/** allocated in DialogOK **/
