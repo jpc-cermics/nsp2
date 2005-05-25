@@ -1614,43 +1614,45 @@ NspMatrix *nsp_smatrix_sort(NspSMatrix *A,int flag,nsp_const_string str1,nsp_con
  * @string: the string to be splitted in words
  * @splitChars: a string with the split characters
  * 
- * modified by bruno to fix a bug.
+ * modified by bruno to get 2 differents behavior
  * 
  * Return value: a #NspSMatrix of size 1 x nb_words with the words resulting from the splitting
  **/
-NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars)
+NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars, int msep)
 {
   register nsp_const_string p;
   nsp_const_string elementStart;
   int stringLen, i;
   NspSMatrix *A;
   stringLen = strlen(string);
-  if ( strlen(splitChars) == 0 ) 
+  if ( strlen(splitChars) == 0 )
     {
       /* split to stringLen chars :
        *  split('foo','') --> ['f','o','o']
        */
-      if ((A=nsp_smatrix_create(NVOID,1,stringLen,".",0))== NULLSMAT) 
+      if ( (A=nsp_smatrix_create(NVOID,1,stringLen,".",1)) == NULLSMAT )
 	return NULLSMAT;
       for (i = 0 ; i < stringLen ; i++) A->S[i][0] = string[i];
     }
-  else 
+  else
     {
-      /* split with split characters 
-       * ex: split('foo pooumou',' u') --> ['foo','poo','mo']
+      /* split with split characters
+       * ex: split('foo poouumou',' u') --> ['foo','poo','','mo', ''] if msep=0
+       *                                --> ['foo','poo','mo'] if msep=1
        */
       int nb_words=0;
       int nb_chars;
       Boolean in_a_word=FALSE;
 
-      if ( (A=nsp_smatrix_create(NVOID,0,0,".",0)) == NULLSMAT ) 
+      if ( (A=nsp_smatrix_create(NVOID,0,0,".",0)) == NULLSMAT )
 	return NULLSMAT;
 
-      for (i = 0, p = string;  i < stringLen;  i++, p++) 
+      if ( msep == 0 )
 	{
-	  if ( strchr(splitChars,*p) != NULL ) /* *p is a split character */
+	  elementStart = string;
+	  for (i = 0, p = string;  i < stringLen;  i++, p++)
 	    {
-	      if ( in_a_word )  /* so this ends the word */
+	      if ( strchr(splitChars,*p) != NULL ) /* *p is a split character */
 		{
 		  nb_words++;
 		  if ( nsp_smatrix_resize(A,1,nb_words) == FAIL) goto err;
@@ -1658,27 +1660,53 @@ NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars
 		  if ( (A->S[nb_words-1] = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
 		  strncpy( A->S[nb_words-1],elementStart, nb_chars);
 		  A->S[nb_words-1][p-elementStart]='\0';
-		} 
-	      in_a_word = FALSE;
+		  elementStart = p+1;
+		}
 	    }
-	  else
-	    if ( !in_a_word ) { elementStart = p; in_a_word = TRUE; }
-	}
-      if ( in_a_word )  /* the last word is ended by the end of the string */
-	{
 	  nb_words++;
 	  if ( nsp_smatrix_resize(A,1,nb_words) == FAIL ) goto err;
 	  nb_chars = p - elementStart;
 	  if ( (A->S[nb_words-1] = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
 	  strncpy( A->S[nb_words-1],elementStart, nb_chars);
 	  A->S[nb_words-1][p-elementStart]='\0';
-	} 
+	}
+      else  /* merge separators (don't create empty string between 2 separators) */
+	{
+	  for (i = 0, p = string;  i < stringLen;  i++, p++)
+	    {
+	      if ( strchr(splitChars,*p) != NULL ) /* *p is a split character */
+		{
+		  if ( in_a_word )  /* so this ends the word */
+		    {
+		      nb_words++;
+		      if ( nsp_smatrix_resize(A,1,nb_words) == FAIL) goto err;
+		      nb_chars = p - elementStart;
+		      if ( (A->S[nb_words-1] = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+		      strncpy( A->S[nb_words-1],elementStart, nb_chars);
+		      A->S[nb_words-1][p-elementStart]='\0';
+		    }
+		  in_a_word = FALSE;
+		}
+	      else
+		if ( !in_a_word ) { elementStart = p; in_a_word = TRUE; }
+	    }
+	  if ( in_a_word )  /* the last word is ended by the end of the string */
+	    {
+	      nb_words++;
+	      if ( nsp_smatrix_resize(A,1,nb_words) == FAIL ) goto err;
+	      nb_chars = p - elementStart;
+	      if ( (A->S[nb_words-1] = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+	      strncpy( A->S[nb_words-1],elementStart, nb_chars);
+	      A->S[nb_words-1][p-elementStart]='\0';
+	    }
+	}
     }
   return A;
  err:
   nsp_smatrix_destroy(A);
   return NULLSMAT;
 }
+
 
 /*
  * Add string str at the end of column string vector A 

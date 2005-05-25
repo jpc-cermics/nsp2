@@ -1095,26 +1095,50 @@ int int_smxsort(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * SMatSplit
- * [A]=split(str,'splitchars')
+ * [A]=split(str,sep='splitchars',msep=bool)
  */
 
+/* int int_smxsplit(Stack stack, int rhs, int opt, int lhs) */
+/* { */
+/*   char *defsplit = " \n\t\r"; */
+/*   char *str=NULL,*sep=NULL; */
+/*   Boolean msep=FALSE; */
+/*   NspSMatrix *A; */
+/*   int_types T[] = {string, opts, t_end}; */
+/*   char *Names[]={"msep","sep",NULL}; */
+/*   int_types Topt[]={ s_bool,string, t_end}; */
+/*   NspObject *Tab[2];  */
+/*   int posi[2]; */
+/*   named_opts N = { 2, Names, Topt,Tab, posi}; */
+
+/*   if ( GetArgs(stack,rhs,opt,T,&str,&N,&msep,&sep) == FAIL)  */
+/*     return RET_BUG; */
+/*   if ( sep  == NULL ) */
+/*     sep = defsplit; */
+
+/*   if ( (A=nsp_smatrix_split(str,sep,msep)) == NULLSMAT )  */
+/*     return RET_BUG; */
+/*   MoveObj(stack,1,(NspObject *)A); */
+/*   return 1; */
+/* } */
 int int_smxsplit(Stack stack, int rhs, int opt, int lhs)
 {
   char *defsplit = " \n\t\r";
-  char *str1,*str2;
+  char *str=NULL,*sep=NULL;
+  Boolean msep=FALSE;
   NspSMatrix *A;
-  CheckRhs(1,2)
-    CheckLhs(1,1);
-  if ((str1 =GetString(stack,1)) == (char*)0) return RET_BUG;
-  if ( rhs >= 2) 
-    {
-      if ((str2 = GetString(stack,2)) == (char*)0) return RET_BUG;
-    }
-  else
-    {
-      str2 = defsplit;
-    }
-  if (( A=nsp_smatrix_split(str1,str2)) == NULLSMAT) return RET_BUG;
+  int_types T[] = {string, new_opts, t_end};
+  nsp_option opts[] ={{ "msep",s_bool,NULLOBJ,-1},
+		      { "sep",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&str,&opts,&msep,&sep) == FAIL) 
+    return RET_BUG;
+  if ( sep  == NULL )
+    sep = defsplit;
+
+  if ( (A=nsp_smatrix_split(str,sep,msep)) == NULLSMAT ) 
+    return RET_BUG;
   MoveObj(stack,1,(NspObject *)A);
   return 1;
 }
