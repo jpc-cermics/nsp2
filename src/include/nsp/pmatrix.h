@@ -17,22 +17,26 @@
 
 typedef struct _NspPmatrix  NspPMatrix;
 
-typedef struct _NspTypePMatrix { 
+typedef struct _NspTypePMatrix NspTypePMatrix;
+
+
+struct _NspTypePMatrix { 
+  /*< private >*/
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspTypePMatrix;
+} ;
 
-typedef NspMatrix Poly;
+typedef NspMatrix * nsp_polynom;
 
 struct _NspPmatrix {
   /*< private >*/
   NspObject father; 
   NspTypePMatrix *type; 
   /*< public >*/
+  int m,n,mn;       /* matrix dimension (m,n,m*n) */
+  nsp_polynom *S;     /* Each polynom is a Matrix **/
   char rc_type  ;   /* type 'r' or 'i' */
   char *var  ;   /* name of polynom variable */
-  int m,n,mn;       /* matrix dimension (m,n,m*n) */
-  Poly **S;     /* Each polynom is a Matrix **/
 };
 
 extern int nsp_type_pmatrix_id;
@@ -52,47 +56,68 @@ NspPMatrix *new_pmatrix();
 
 #ifdef PMatrix_Private 
 static int init_pmatrix(NspPMatrix *ob,NspTypePMatrix *type);
-int PMatSize(NspPMatrix *Mat, int flag);
-char *PMatType(void);
-char *PMatShType(void);
-NspObject *PMatLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int PMatObjEq(NspObject *A,NspObject *B);
-int PMatObjNeq(NspObject *A,NspObject *B);
-static int PMatXdrSave(NspFile  *F, NspMatrix *M);
-static NspPMatrix *PMatXdrLoad(NspFile  *F);
+int nsp_pmatrix_size(NspPMatrix *Mat, int flag);
+char *nsp_pmatrix_type_as_string(void);
+char *nsp_pmatrix_type_short_string(void);
+NspObject *nsp_pmatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
+int nsp_pmatrix_eq(NspObject *A,NspObject *B);
+int nsp_pmatrix_neq(NspObject *A,NspObject *B);
+static int nsp_pmatrix_xdr_save(NspFile  *F, NspMatrix *M);
+static NspPMatrix *nsp_pmatrix_xdr_load(NspFile  *F);
 #endif 
 
-
-#define NULLPMAT ( NspPMatrix *) 0
-#define NULLPOLY ( Poly *) 0
+#define NULLPMAT (NspPMatrix *) 0
+#define NULLPOLY (nsp_polynom) 0
 
 /* PMatObj.c */
 
-extern NspPMatrix *PMatObj (NspObject *O); 
+extern NspPMatrix *nsp_pmatrix_object(NspObject *O); 
+
+
 
 /* NspPMatrix.c */
 
-extern Poly *CopyPoly (Poly *P); 
-extern Poly *Basic2Poly (doubleC *d, char type); 
-extern void PolyDestroy (Poly *P); 
-extern NspPMatrix *Mat2Poly (NspMatrix *M); 
-extern void nsp_pmatrix_info(NspPMatrix *Mat, int indent); 
-extern void nsp_pmatrix_print(NspPMatrix *Mat, int indent); 
-extern NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag); 
-extern void nsp_pmatrix_destroy(NspPMatrix *A); 
+extern NspMatrix *nsp_pmatrix_length(NspPMatrix *A); 
+extern NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A, nsp_const_string str, int flag); 
+extern NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M); 
+extern NspPMatrix *nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B); 
 extern NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A); 
-extern NspMatrix *PMatLength (NspPMatrix *A); 
-extern NspPMatrix *Mat2PMat (NspMatrix *A, char *str, int flag); 
+extern NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag); 
+extern NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
+extern NspPMatrix *nsp_pmatrix_extract_columns(NspPMatrix *A, NspMatrix *Cols, int *err); 
+extern NspPMatrix *nsp_pmatrix_extract_elements(NspPMatrix *A, NspMatrix *Elts, int *err); 
+extern NspPMatrix *nsp_pmatrix_extract_rows(NspPMatrix *A, NspMatrix *Rows, int *err); 
+extern NspPMatrix *nsp_pmatrix_transpose(const NspPMatrix *A); 
+extern int nsp_pcopy_polynom(int n, nsp_polynom *s1, nsp_polynom *s2); 
+extern int nsp_pmatrix_add_columns(NspPMatrix *A, int n); 
+extern int nsp_pmatrix_add_rows(NspPMatrix *A, int m); 
+extern int nsp_pmatrix_concat_right(NspPMatrix *A,const NspPMatrix *B); 
+extern int nsp_pmatrix_delete_elements(NspPMatrix *A, NspMatrix *Elts); 
+extern int nsp_pmatrix_delete_rows(NspPMatrix *A, NspMatrix *Rows); 
+extern int nsp_pmatrix_enlarge(NspPMatrix *A, int m, int n); 
 extern int nsp_pmatrix_redim(NspPMatrix *A, int m, int n); 
 extern int nsp_pmatrix_resize(NspPMatrix *A, int m, int n); 
-extern int nsp_pmatrix_enlarge(NspPMatrix *A, int m, int n); 
-extern int nsp_pmatrix_concat_right(NspPMatrix *A, NspPMatrix *B); 
-extern int Pcopy (int n, Poly **s1, Poly **s2); 
-extern int nsp_pmatrix_add_columns(NspPMatrix *A, int n); 
-extern int Pset (int n, doubleC *s1, Poly **s2); 
-extern NspPMatrix *nsp_pmatrix_concat_down(NspPMatrix *A, NspPMatrix *B); 
-extern int nsp_pmatrix_add_rows(NspPMatrix *A, int m); 
-extern int PMatSetRC (NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B); 
-extern NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
+extern int nsp_pmatrix_set_rows(NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B); 
+extern int nsp_pmatrix_set_submatrix(NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B); 
+extern int nsp_pmatrix_setrc(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B); 
+extern int nsp_pset_polynom(int n, doubleC *s1, nsp_polynom *s2); 
+extern nsp_polynom nsp_basic_to_polynom(doubleC *d, char type); 
+extern nsp_polynom nsp_polynom_copy(nsp_polynom P); 
+extern unsigned int  nsp_pmatrix_elt_size(NspPMatrix *M);
+extern void nsp_pmatrix_destroy(NspPMatrix *A); 
+extern void nsp_pmatrix_info(NspPMatrix *Mat, int indent); 
+extern void nsp_pmatrix_print(NspPMatrix *Mat, int indent); 
+extern void nsp_polynom_destroy(nsp_polynom *P); 
+
+extern int IsPMatObj (Stack stack, int i); 
+extern int IsPMat (NspObject *O); 
+extern NspPMatrix *GetPMatCopy (Stack stack, int i); 
+extern NspPMatrix *GetPMat (Stack stack, int i); 
+extern nsp_polynom GetPolynom (Stack stack, int i); 
+
+extern NspBMatrix *PMatCompOp (NspPMatrix *A, NspPMatrix *B, char *op); 
+extern int PMatFullComp (NspPMatrix *A, NspPMatrix *B, char *op, int *err); 
+
+
 
 #endif 

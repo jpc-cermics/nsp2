@@ -607,7 +607,7 @@ int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
  *  A is changed.
  */
 
-int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
+int nsp_smatrix_delete_columns_old(NspSMatrix *A, NspMatrix *Cols)
 {
   int i, j, k, ij, *flag, new_A_n, count;
 
@@ -651,7 +651,7 @@ int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
 }
 
 
-int nsp_smatrix_delete_columns_new(NspSMatrix *A, NspMatrix *Cols)
+int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
 {
   char *Val = (char *) A->S;
   unsigned int elt_size; /* size in number of bytes */
@@ -694,7 +694,6 @@ int nsp_smatrix_delete_columns_new(NspSMatrix *A, NspMatrix *Cols)
   if ( MAT_INT(type)->free_elt != NULL) 
     for ( i = A->mn - ncol*A->m ; i < A->mn ; i++ ) A->S[i]= NULL;
   if ( MAT_INT(type)->resize(A,A->m,A->n-ncol) == FAIL) return FAIL;
-    return FAIL;
   return OK;
 }
 
@@ -704,7 +703,7 @@ int nsp_smatrix_delete_columns_new(NspSMatrix *A, NspMatrix *Cols)
  *  A is changed.
  */
 
-int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
+int nsp_smatrix_delete_rows_old(NspSMatrix *A, NspMatrix *Rows)
 {
   int i, j, k, ij, *flag, new_A_m, count;
 
@@ -742,7 +741,7 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
   return OK;
 }
 
-int nsp_smatrix_delete_rows_new(NspSMatrix *A, NspMatrix *Rows)
+int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 {
   char *Val = (char *) A->S;
   unsigned int elt_size; /* size in number of bytes */

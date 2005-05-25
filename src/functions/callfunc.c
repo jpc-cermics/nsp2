@@ -34,6 +34,7 @@
 
 extern  sci_interface  Matrix_Interf ;extern  interface_info  Matrix_Interf_Info ;
 extern  sci_interface  SMatrix_Interf  ;extern  interface_info  SMatrix_Interf_Info  ;
+extern  sci_interface  PMatrix_Interf  ;extern  interface_info  PMatrix_Interf_Info  ;
 extern  sci_interface  BMatrix_Interf  ;extern  interface_info  BMatrix_Interf_Info  ;
 extern  sci_interface  Hash_Interf  ;extern  interface_info  Hash_Interf_Info  ;
 extern  sci_interface  NspPList_Interf  ;extern  interface_info  NspPList_Interf_Info  ;
@@ -142,6 +143,7 @@ InterfTab Interfaces[]={
   {Maxplus_Interf, Maxplus_Interf_Info},
 #endif 
   {Cells_Interf, Cells_Interf_Info},
+  {PMatrix_Interf,PMatrix_Interf_Info},
   {NULL,NULL}
 }; 
 

@@ -29,20 +29,20 @@
  * Copies a polynom which is nothing but a matrix 1xn
  */
 
-Poly *CopyPoly(Poly *P)
+nsp_polynom nsp_polynom_copy(nsp_polynom P)
 {
-  return((Poly *) nsp_matrix_copy((NspMatrix *) P));
+  return((nsp_polynom ) nsp_matrix_copy((NspMatrix *) P));
 }
 
 /*
  * doubleC --> poly 
  */
 
-Poly *Basic2Poly(doubleC *d, char type)
+nsp_polynom nsp_basic_to_polynom(doubleC *d, char type)
 {
   NspMatrix *A;
   if ((A= nsp_matrix_create(NVOID,type,(int)1,(int)1))==NULLMAT)
-    return((Poly *) 0);
+    return((nsp_polynom ) 0);
   if ( type == 'r') 
     {
       A->R[0] = d->r;
@@ -52,12 +52,13 @@ Poly *Basic2Poly(doubleC *d, char type)
       A->C[0].r = d->r ;
       A->C[0].i = d->i ;
     }
-  return((Poly *) A);
+  return((nsp_polynom ) A);
 }
 
-void PolyDestroy(Poly *P)
+void nsp_polynom_destroy(nsp_polynom *P)
 {
-  nsp_matrix_destroy((NspMatrix *) P);
+  nsp_matrix_destroy((NspMatrix *) *P);
+  *P=NULL;
 }
 
 /*
@@ -66,7 +67,7 @@ void PolyDestroy(Poly *P)
  * xxxxxxxx
  */
 
-NspPMatrix *Mat2Poly(NspMatrix *M)
+NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M)
 {
   NspPMatrix *loc;
   doubleC str;
@@ -129,6 +130,7 @@ void nsp_pmatrix_print(NspPMatrix *Mat, int indent)
 /*
  * Creation of a NspPMatrix all the elements
  *	 are created with &Czero value 
+ *       when flag == -1 the array elements are NULL
  */
 
 static doubleC Czero={0.00,0.00};
@@ -157,21 +159,28 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag
   if ( Loc -> mn == 0 ) 
     {
       /* empty string Matrix */
-      Loc->S = (Poly **) 0;
+      Loc->S = (nsp_polynom *) 0;
       return(Loc);
     }
-  if ((Loc->S = (Poly **) MALLOC( Loc->mn* sizeof(Poly *))) == (Poly **) 0 )
+  if ((Loc->S = (nsp_polynom *) MALLOC( Loc->mn* sizeof(nsp_polynom ))) == (nsp_polynom *) 0 )
     { 
       Scierror("PMatCreate : Error no more space ");
       return(NULLPMAT);
     }
-  if ( flag == 0) 
-    init = def ; 
-  else 
-    init = cval ;
-  for ( i = 0 ; i < Loc->mn ; i++ )
+  if ( flag >= 0) 
     {
-      if ( (Loc->S[ i] = Basic2Poly(init,(flag==2)? 'c':'r')) == (Poly *) 0 )  return(NULLPMAT);
+      if ( flag == 0) 
+	init = def ; 
+      else 
+	init = cval ;
+      for ( i = 0 ; i < Loc->mn ; i++ )
+	{
+	  if ( (Loc->S[ i] =nsp_basic_to_polynom(init,(flag==2)? 'c':'r')) == (nsp_polynom ) 0 )  return(NULLPMAT);
+	}
+    }
+  else
+    {
+      for ( i = 0 ; i < Loc->mn ; i++ ) Loc->S[i] = NULL;
     }
   return(Loc);
 }
@@ -189,7 +198,7 @@ void nsp_pmatrix_destroy(NspPMatrix *A)
     {
       for ( i = 0 ; i < A->mn ; i++ ) 
 	{
-	  PolyDestroy(A->S[i]);
+	  nsp_polynom_destroy(&A->S[i]);
 	}
       FREE(A->S);
     }
@@ -209,8 +218,8 @@ NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A)
   if ( ( Loc =nsp_pmatrix_create(NVOID,A->m,A->n,&Czero,(int)0) ) == NULLPMAT) return(NULLPMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      PolyDestroy(Loc->S[i]);
-      if ((Loc->S[ i] = CopyPoly(A->S[i])) == (Poly *) 0)  return(NULLPMAT);
+      nsp_polynom_destroy(&Loc->S[i]);
+      if ((Loc->S[ i] =nsp_polynom_copy(A->S[i])) == (nsp_polynom ) 0)  return(NULLPMAT);
     }
   return(Loc);
 }
@@ -223,7 +232,7 @@ NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A)
  * for Poly length menas degre of each polynom 
  */
 
-NspMatrix *PMatLength(NspPMatrix *A)
+NspMatrix *nsp_pmatrix_length(NspPMatrix *A)
 {
   int i;
   NspMatrix *Loc;
@@ -238,14 +247,14 @@ NspMatrix *PMatLength(NspPMatrix *A)
 
 
 /*
- *  Res= Mat2PMat(A) 
+ *  Res=nsp_matrix_to_pmatrix(A) 
  *  A s not changed 
  *  pour l'instant on utilise %f ou le format pass'e 
  *  en deuxieme argument
  */
 
 
-NspPMatrix *Mat2PMat(NspMatrix *A, char *str, int flag)
+NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A,nsp_const_string str, int flag)
 {
   int i;
   NspPMatrix *Loc;
@@ -254,11 +263,11 @@ NspPMatrix *Mat2PMat(NspMatrix *A, char *str, int flag)
     return(NULLPMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      PolyDestroy(Loc->S[i]);
+      nsp_polynom_destroy(&Loc->S[i]);
       if ( A->rc_type == 'r') 
 	d.r= A->R[i];
       else { d.r= A->C[i].r; d.i= A->C[i].i;}
-      if ((Loc->S[i] = Basic2Poly(&d,A->rc_type)) == (Poly *) 0)  return(NULLPMAT);
+      if ((Loc->S[i] =nsp_basic_to_polynom(&d,A->rc_type)) == (nsp_polynom ) 0)  return(NULLPMAT);
     }
   return(Loc);
 }
@@ -286,6 +295,21 @@ int nsp_pmatrix_redim(NspPMatrix *A, int m, int n)
 }
 
 
+
+/**
+ * nsp_pmatrix_elt_size:
+ * @M: a #NspSMatrix 
+ * 
+ * size of string matrix elements.
+ * 
+ * Return value: size of @M elements.
+ **/
+
+unsigned int  nsp_pmatrix_elt_size(NspPMatrix *M)
+{
+  return sizeof(nsp_polynom);
+}
+
 /*
  * PMatResize : Changes NspPMatrix dimensions
  * Warning : this routine only enlarges the array 
@@ -299,11 +323,11 @@ int nsp_pmatrix_redim(NspPMatrix *A, int m, int n)
 int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
 {
   int i;
-  A->S = (Poly **)  REALLOC (A->S, m*n * sizeof(Poly*));
-  if ( A->S == (Poly **) 0) return(FAIL);
+  A->S = (nsp_polynom *)  REALLOC (A->S, m*n * sizeof(nsp_polynom));
+  if ( A->S == (nsp_polynom *) 0) return(FAIL);
   for ( i = A->mn ; i < m*n ; i++ )
     {
-      if ((A->S[i] = Basic2Poly(&Czero,'r')) == ( Poly *) 0 )  return(FAIL);
+      if ((A->S[i] =nsp_basic_to_polynom(&Czero,'r')) == ( nsp_polynom ) 0 )  return(FAIL);
     }
   A->m =m ;
   A->n =n;
@@ -336,7 +360,7 @@ int nsp_pmatrix_enlarge(NspPMatrix *A, int m, int n)
  * return 0 on failure ( incompatible size or No more space )
  */
 
-int nsp_pmatrix_concat_right(NspPMatrix *A, NspPMatrix *B)
+int nsp_pmatrix_concat_right(NspPMatrix *A,const NspPMatrix *B)
 {
   int Asize;
   Asize=A->mn;
@@ -346,19 +370,19 @@ int nsp_pmatrix_concat_right(NspPMatrix *A, NspPMatrix *B)
       return(FAIL);
     }
   if ( nsp_pmatrix_resize(A,A->m,A->n+B->n) == FAIL) return(FAIL);
-  if ( Pcopy(B->mn,B->S,A->S+Asize) == FAIL) return(FAIL);
+  if (nsp_pcopy_polynom(B->mn,B->S,A->S+Asize) == FAIL) return(FAIL);
   return(OK);
 }
 
-int Pcopy(int n, Poly **s1, Poly **s2)
+int nsp_pcopy_polynom(int n, nsp_polynom *s1, nsp_polynom *s2)
 {
   int i;
   /* Copie ds l'ordre inverse car de temps en temps on fait
      des copies sur place **/
   for ( i = n-1 ; i >= 0 ; i--) 
     {
-      PolyDestroy(s2[i]);
-      if ((s2[ i] = CopyPoly(s1[i])) == (Poly *) 0)  return(FAIL);
+      nsp_polynom_destroy(&s2[i]);
+      if ((s2[ i] =nsp_polynom_copy(s1[i])) == (nsp_polynom ) 0)  return(FAIL);
     }
   return(OK);
 }
@@ -378,17 +402,17 @@ int nsp_pmatrix_add_columns(NspPMatrix *A, int n)
   ns= (A->m)*n;
   if ( nsp_pmatrix_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
   /* normalemeny inutile car Resize le fait deja **/
-  /* if ( Pset(ns,&Czero,A->S+Asize) == FAIL) return(FAIL);**/
+  /* if (nsp_pset_polynom(ns,&Czero,A->S+Asize) == FAIL) return(FAIL);**/
   return(OK);
 }
 
-int Pset(int n, doubleC *s1, Poly **s2)
+int nsp_pset_polynom(int n, doubleC *s1, nsp_polynom *s2)
 {
   int i;
   for ( i = 0 ; i < n ; i++) 
     {
-      PolyDestroy(s2[i]);
-      if ((s2[ i] = Basic2Poly(s1,'r')) == (Poly *) 0)  return(FAIL);
+      nsp_polynom_destroy(&s2[i]);
+      if ((s2[ i] =nsp_basic_to_polynom(s1,'r')) == (nsp_polynom ) 0)  return(FAIL);
     }
   return(OK);
 }
@@ -400,7 +424,7 @@ int Pset(int n, doubleC *s1, Poly **s2)
  * A and B are left unchanged 
  */
 
-NspPMatrix*nsp_pmatrix_concat_down(NspPMatrix *A, NspPMatrix *B)
+NspPMatrix*nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B)
 {
   NspPMatrix *Loc;
   int j;
@@ -417,9 +441,9 @@ NspPMatrix*nsp_pmatrix_concat_down(NspPMatrix *A, NspPMatrix *B)
     }
   for ( j = 0 ; j < A->n ; j++ ) 
     {
-      if ( Pcopy(A->m,A->S+j*A->m,Loc->S+j*(Loc->m)) == FAIL) 
+      if (nsp_pcopy_polynom(A->m,A->S+j*A->m,Loc->S+j*(Loc->m)) == FAIL) 
 	return(NULLPMAT);
-      if ( Pcopy(B->m,B->S+j*B->m,Loc->S+j*(Loc->m)+A->m) == FAIL)
+      if (nsp_pcopy_polynom(B->m,B->S+j*B->m,Loc->S+j*(Loc->m)+A->m) == FAIL)
 	return(NULLPMAT);
     }
   return(Loc) ;
@@ -441,16 +465,95 @@ int nsp_pmatrix_add_rows(NspPMatrix *A, int m)
   if ( nsp_pmatrix_resize(A,A->m+m,A->n)== FAIL) return(FAIL);
   for ( j = A->n-1  ; j >= 1 ; j-- ) 
     {
-      if (  Pcopy(Am,A->S+j*Am,A->S+j*(A->m)) == FAIL) 
+      if (nsp_pcopy_polynom(Am,A->S+j*Am,A->S+j*(A->m)) == FAIL) 
 	return(FAIL);
     }
   for ( j = A->n-2  ; j >= 0 ; j-- ) 
     {
-      if (  Pset (m,&Czero,A->S+j*(A->m)+Am) == FAIL)
+      if (nsp_pset_polynom(m,&Czero,A->S+j*(A->m)+Am) == FAIL)
 	return(FAIL);
     }
   return(OK);
 }
+
+
+/*
+ *  A(Rows,Cols) = B 
+ *  A is changed and enlarged if necessary 
+ *  Rows and Cols are unchanged 
+ *  Size Compatibility is checked 
+ */
+
+int nsp_pmatrix_set_submatrix(NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B)
+{
+  int rmin,rmax,cmin,cmax,i,j;
+  if ( B->mn != 1)
+    {
+      if ( Rows->mn != B->m ||  Cols->mn != B->n )
+	{
+	  Scierror("Set incompatible indices ");
+	  return(FAIL);
+	}
+    }
+  Bounds(Rows,&rmin,&rmax);
+  Bounds(Cols,&cmin,&cmax);
+  if ( rmin < 1 || cmin < 1 ) 
+    {
+      Scierror("Error:\tNegative indices are not allowed\n");
+      return(FAIL);
+    }
+  if ( rmax > A->m ||  cmax > A->n )
+    if ( nsp_pmatrix_enlarge(A,rmax,cmax) == FAIL) return(FAIL);
+  if ( B->mn != 1) 
+    for ( i = 0 ; i < Rows->mn ; i++)
+      for ( j = 0 ; j < Cols->mn ; j++ )
+	{
+	  nsp_polynom_destroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
+	  if (( A->S[((int) Rows->R[i])-1+ (((int)Cols->R[j])-1)*A->m] 
+		=nsp_polynom_copy(B->S[i+B->m*j]))
+	      == NULLPOLY)  return(FAIL);
+	}
+  else
+    for ( i = 0 ; i < Rows->mn ; i++)
+      for ( j = 0 ; j < Cols->mn ; j++ )
+	{
+	  nsp_polynom_destroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
+	  if (( A->S[((int) Rows->R[i])-1+ (((int)Cols->R[j])-1)*A->m] 
+		=nsp_polynom_copy(B->S[0]))
+	      == NULLPOLY )  return(FAIL);
+	}
+  return(OK);
+}
+
+/*
+ *  A(Rows) = B
+ *  A is changed and enlarged if necessary
+ *  Size Compatibility is checked
+ */
+
+int nsp_pmatrix_set_rows(NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B)
+{
+  int i,Bscal=0;
+  if (GenericMatSeRo(A,A->m,A->n,A->mn,Rows,B,B->m,B->n,B->mn,
+		     (F_Enlarge) nsp_smatrix_enlarge,&Bscal)== FAIL) 
+    return FAIL;
+  if ( Bscal == 0) 
+    for ( i = 0 ; i < Rows->mn ; i++)
+      {
+	nsp_polynom_destroy(&((A->S[((int) Rows->R[i])-1])));
+	if (( A->S[((int) Rows->R[i])-1] =nsp_polynom_copy(B->S[i]))
+	    == (nsp_polynom) 0)  return(FAIL);
+      }
+  else
+    for ( i = 0 ; i < Rows->mn ; i++)
+      {
+	nsp_polynom_destroy(&((A->S[((int) Rows->R[i])-1])));
+	if (( A->S[((int) Rows->R[i])-1] =nsp_polynom_copy(B->S[0]))
+	    == (nsp_polynom) 0)  return(FAIL);
+      }
+  return(OK);
+}
+
 
 /*
  *  A(Rows,Cols) = B 
@@ -459,7 +562,7 @@ int nsp_pmatrix_add_rows(NspPMatrix *A, int m)
  *  Size Compatibility is checked 
  */
 
-int PMatSetRC(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B)
+int nsp_pmatrix_setrc(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B)
 {
   int rmin,rmax,cmin,cmax,i,j,*Icol,*Irow;
   if ( Rows->mn != B->m ||  Cols->mn != B->n )
@@ -484,9 +587,9 @@ int PMatSetRC(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B)
   for ( i = 0 ; i < Rows->mn ; i++)
     for ( j = 0 ; j < Cols->mn ; j++ )
       {
-	PolyDestroy((A->S[Irow[i]-1+ (Icol[j]-1)*A->m]));
-	if (( A->S[Irow[i]-1+ (Icol[j]-1)*A->m] = CopyPoly(B->S[i+B->m*j]))
-	    == (Poly *) 0)  return(FAIL);
+	nsp_polynom_destroy(&(A->S[Irow[i]-1+ (Icol[j]-1)*A->m]));
+	if (( A->S[Irow[i]-1+ (Icol[j]-1)*A->m] =nsp_polynom_copy(B->S[i+B->m*j]))
+	    == (nsp_polynom ) 0)  return(FAIL);
       }
   return(OK);
 }
@@ -521,12 +624,127 @@ NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
   for ( i = 0 ; i < Rows->mn ; i++)
     for ( j = 0 ; j < Cols->mn ; j++ )
       {
-	PolyDestroy(Loc->S[i+Loc->m*j]);
-	if ((Loc->S[i+Loc->m*j] = CopyPoly(A->S[Irow[i]-1+(Icol[j]-1)*A->m]))
-	    == (Poly *) 0 ) return(NULLPMAT);
+	nsp_polynom_destroy(&Loc->S[i+Loc->m*j]);
+	if ((Loc->S[i+Loc->m*j] =nsp_polynom_copy(A->S[Irow[i]-1+(Icol[j]-1)*A->m]))
+	    == (nsp_polynom ) 0 ) return(NULLPMAT);
+      }
+  return(Loc);
+}
+
+/*
+ * Res=nsp_smatrix_extract_elements(A,Elts)
+ * A unchanged, Elts
+ */	
+
+NspPMatrix*nsp_pmatrix_extract_elements(NspPMatrix *A, NspMatrix *Elts, int *err)
+{
+  NspPMatrix *Loc;
+  int rmin,rmax,i;
+  Bounds(Elts,&rmin,&rmax);
+  *err=0;
+  if ( A->mn == 0) return nsp_pmatrix_create(NVOID,0,0,NULL,-1);
+  if ( rmin < 1 || rmax > A->mn )
+    {
+      *err=1;
+      return(NULLPMAT);
+    }
+  if ( A->m == 1 && A->n > 1 ) 
+    {
+      if ((Loc =nsp_pmatrix_create(NVOID,1,Elts->mn,NULL,-1)) ==NULLPMAT) return(NULLPMAT);
+    }
+  else
+    {
+      if ( (Loc =nsp_pmatrix_create(NVOID,Elts->mn,1,NULL,-1)) == NULLPMAT) return(NULLPMAT);
+    }
+  for ( i = 0 ; i < Elts->mn ; i++)
+    { 
+      if ((Loc->S[i] =nsp_polynom_copy(A->S[((int) Elts->R[i])-1]))== NULLPOLY)  return(NULLPMAT);
+    }
+  return(Loc);
+}
+
+/*
+ * Res=nsp_pmatrix_extract_columns(A,Cols,err)
+ * A unchanged
+ */
+
+NspPMatrix*nsp_pmatrix_extract_columns(NspPMatrix *A, NspMatrix *Cols, int *err)
+{
+  NspPMatrix *Loc;
+  int j,cmin,cmax;
+  *err=0;
+  if ( A->mn == 0) return nsp_pmatrix_create(NVOID,0,0,NULL,-1);
+  Bounds(Cols,&cmin,&cmax);
+  if ( cmin < 1 || cmax  > A->n )
+    {
+      *err=1;
+      return(NULLPMAT);
+    }
+  if ((Loc =nsp_pmatrix_create(NVOID,A->m,Cols->mn,NULL,-1))==NULLPMAT)  return(NULLPMAT);
+  for ( j = 0 ; j < Cols->mn ; j++ )
+    {
+      int ind=(((int) Cols->R[j])-1)*A->m, i, ind1=Loc->m*j;
+      for ( i = A->m -1 ; i >= 0 ; i--) 
+	{
+	  if (( Loc->S[ind1+i] =nsp_polynom_copy( A->S[ind+i])) == NULLPOLY)  return NULLPMAT;
+	}
+    }
+  return(Loc);
+}
+
+/*
+ * Res=nsp_pmatrix_extract_rows(A,Rows,err)
+ * A unchanged
+ */
+
+NspPMatrix*nsp_pmatrix_extract_rows(NspPMatrix *A, NspMatrix *Rows, int *err)
+{
+  NspPMatrix *Loc;
+  int i,j,cmin,cmax;
+  *err=0;
+  if ( A->mn == 0) return nsp_pmatrix_create(NVOID,0,0,NULL,-1);
+  Bounds(Rows,&cmin,&cmax);
+  if ( cmin < 1 || cmax  > A->m )
+    {
+      *err=1;
+      return(NULLPMAT);
+    }
+  if ((Loc =nsp_pmatrix_create(NVOID,Rows->mn,A->n,NULL,-1)) == NULLPMAT )   return(NULLPMAT);
+  for ( i = 0 ; i < Rows->mn ; i++)
+    for ( j = 0 ; j < A->n ; j++ )
+      {
+	if (( Loc->S[i+ j*Loc->m]=nsp_polynom_copy(A->S[(((int) Rows->R[i])-1)+ j*A->m]))
+	    == NULLPOLY)  return NULLPMAT;
       }
   return(Loc);
 }
 
 
+NspBMatrix  *PMatCompOp(NspPMatrix *A, NspPMatrix *B, char *op)
+{
+  Scierror("PMatCompOp: to be implemented \n");
+  return NULL;
+}
 
+
+
+
+/*
+ * Res =nsp_smatrix_transpose(A) 
+ * Transpose A 
+ */
+
+NspPMatrix *nsp_pmatrix_transpose(const NspPMatrix *A)
+{
+  int i,j;
+  NspPMatrix *Loc;
+  /* initial mxn matrix with unallocated elements **/
+  if ( ( Loc =nsp_pmatrix_create(NVOID,A->n,A->m,NULL,-1)) == NULLPMAT) return NULLPMAT;
+  /* allocate elements and store copies of A elements **/
+  for ( i = 0 ; i < Loc->m ; i++ )
+    for ( j = 0 ; j < Loc->n ; j++ )
+      {
+	if ((Loc->S[i+(Loc->m)*j] =nsp_polynom_copy(A->S[j+(A->m)*i])) == NULLPOLY ) return(NULLPMAT);
+      }
+  return(Loc);
+}

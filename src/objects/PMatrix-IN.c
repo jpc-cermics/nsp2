@@ -38,7 +38,7 @@ int int_mx2pmx(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if (( A=GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if (( P= Mat2Poly(A))== NULLPMAT) return RET_BUG;
+  if (( P=nsp_matrix_to_polynom(A))== NULLPMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *) P);
   return 1;
 }

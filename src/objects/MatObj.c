@@ -2381,7 +2381,7 @@ int
 int_mxdeletecols (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mxdeleteelts_gen (stack, rhs, opt, lhs,
-			       nsp_matrix_delete_columns);
+			       (delf) nsp_smatrix_delete_columns);
 }
 
 /*
@@ -2392,7 +2392,8 @@ int_mxdeletecols (Stack stack, int rhs, int opt, int lhs)
 int
 int_mxdeleterows (Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mxdeleteelts_gen (stack, rhs, opt, lhs, nsp_matrix_delete_rows);
+  return int_mxdeleteelts_gen (stack, rhs, opt, lhs, 
+			       (delf) nsp_smatrix_delete_rows);
 }
 
 /*

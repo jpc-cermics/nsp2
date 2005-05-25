@@ -842,7 +842,8 @@ static int int_bmatrix_deleteelts_gen(Stack stack, int rhs, int opt, int lhs, de
 
 static int int_bmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_bmatrix_deleteelts_gen(stack,rhs,opt,lhs,nsp_bmatrix_delete_columns);
+  return int_bmatrix_deleteelts_gen(stack,rhs,opt,lhs,
+				    (delf) nsp_smatrix_delete_columns);
 }
 
 /*
@@ -853,7 +854,8 @@ static int int_bmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_bmatrix_deleteelts_gen(stack,rhs,opt,lhs,nsp_bmatrix_delete_rows);
+  return int_bmatrix_deleteelts_gen(stack,rhs,opt,lhs,
+				    (delf) nsp_smatrix_delete_rows);
 }
 
 /*
