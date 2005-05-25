@@ -51,7 +51,6 @@ NspSMatrix* nsp_smatrix_create(nsp_const_string name, int m, int n,nsp_const_str
       Scierror("Error:\tRunning out of memory\n");
       return(NULLSMAT);
     }
-  new_nsp_string(name);
   if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING) return(NULLSMAT);
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /* Loc->otype = SMATRIX;
@@ -652,6 +651,54 @@ int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
 }
 
 
+int nsp_smatrix_delete_columns_new(NspSMatrix *A, NspMatrix *Cols)
+{
+  char *Val = (char *) A->S;
+  unsigned int elt_size; /* size in number of bytes */
+  NspTypeBase *type; 
+  int i,j,*ind,k1,k2,nn,ncol,ioff=0;
+
+  if ( Cols->mn == 0) return OK;
+
+  if ( (ind = nsp_indices_for_deletions(A->n, Cols, &ncol)) == NULL ) 
+    return FAIL;
+
+  if (( type = check_implements(A,nsp_type_matint_id)) == NULL ) 
+    { 
+      Scierror("Object do not implements matint interface\n"); 
+      return FAIL; 
+    } 
+
+  elt_size = MAT_INT(type)->elt_size(A); 
+  if ( MAT_INT(type)->free_elt != NULL)  
+    for ( j = 0 ; j < ncol ; j++ )  
+      {
+	int k=ind[j]*A->m;
+	for ( i = 0 ; i < A->m ; i++ )  
+	  nsp_string_destroy(&(A->S[i+k])); 
+      }
+
+  for ( i = 0 ; i < ncol ; i++)
+    {
+      k1 = ind[i];
+      k2 = (i < ncol-1 ) ? ind[i+1] : A->n;
+      nn = (k2-k1-1)*A->m;
+      /* nb of elts to move = nb of elts strictly between columns k1 and k2 */
+      if ( nn != 0) 
+	{
+	  memmove(Val +(k1-ioff)*A->m*elt_size,Val + (k1+1)*A->m*elt_size, nn*elt_size);
+	}
+      ioff++;
+    }
+  FREE(ind);
+  if ( MAT_INT(type)->free_elt != NULL) 
+    for ( i = A->mn - ncol*A->m ; i < A->mn ; i++ ) A->S[i]= NULL;
+  if ( MAT_INT(type)->resize(A,A->m,A->n-ncol) == FAIL) return FAIL;
+    return FAIL;
+  return OK;
+}
+
+
 /*
  *  A(Rows,:) = []
  *  A is changed.
@@ -694,6 +741,58 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 
   return OK;
 }
+
+int nsp_smatrix_delete_rows_new(NspSMatrix *A, NspMatrix *Rows)
+{
+  char *Val = (char *) A->S;
+  unsigned int elt_size; /* size in number of bytes */
+  NspTypeBase *type; 
+  int i,j,*ind,k1,k2,nn,nrow,stride=0,ioff=0;
+
+  if ( Rows->mn == 0) return OK;
+
+  if ( (ind = nsp_indices_for_deletions(A->m, Rows, &nrow)) == NULL ) 
+    return FAIL;
+
+  if (( type = check_implements(A,nsp_type_matint_id)) == NULL ) 
+    { 
+      Scierror("Object do not implements matint interface\n"); 
+      return FAIL; 
+    } 
+  elt_size = MAT_INT(type)->elt_size(A); 
+  if ( MAT_INT(type)->free_elt != NULL)  
+    for ( i = 0 ; i < nrow ; i++ ) 
+      {
+	int k=ind[i];
+	for ( j = 0 ; j < A->n ; j++ ) 
+	  nsp_string_destroy(&(A->S[k+A->m*j])); 
+      }
+  for ( j = 0 ; j < A->n  ; j++)
+    {
+      k1 = ind[0] + stride;
+      for ( i = 0 ; i < nrow ; i++)
+	{
+	  if ( i < nrow-1 ) 
+	    k2 =  ind[i+1] + stride;
+	  else 
+	    k2 = ( j < A->n-1) ? ind[0] + stride + A->m : A->mn;
+	  nn = k2-k1-1;
+	  if ( nn != 0) 
+	    {
+	      memmove(Val + (k1-ioff)*elt_size, Val + (k1+1)*elt_size, nn*elt_size);
+	    }
+	  ioff++;
+	  k1 = k2;
+	}
+      stride += A->m;
+    }
+  FREE(ind);
+  if ( MAT_INT(type)->free_elt != NULL) 
+    for ( i = A->mn- nrow*A->n ; i < A->mn ; i++ ) A->S[i]= NULL;
+  if ( MAT_INT(type)->resize(A,A->m-nrow,A->n) == FAIL) return FAIL;
+  return OK;
+}
+
 
 /*
  *  A(elts) = []
