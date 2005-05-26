@@ -70,9 +70,7 @@ void nsp_polynom_destroy(nsp_polynom *P)
 NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M)
 {
   NspPMatrix *loc;
-  doubleC str;
-  if ((loc =nsp_pmatrix_create(NVOID,1,1,&str,0))== NULLPMAT) return(NULLPMAT);
-  nsp_matrix_destroy(loc->S[0]);
+  if ((loc =nsp_pmatrix_create(NVOID,1,1,NULL,-1))== NULLPMAT) return(NULLPMAT);
   if (( loc->S[0] = nsp_matrix_copy(M))== NULLPOLY ) return(NULLPMAT);
   return(loc);
 }
@@ -101,27 +99,22 @@ void nsp_pmatrix_info(NspPMatrix *Mat, int indent)
 
 void nsp_pmatrix_print(NspPMatrix *Mat, int indent)
 {
-  int i,j,k;
-  Sciprintf("PMat : [%s (%dx%d)]\n",NSP_OBJECT(Mat)->name,Mat->m,Mat->n);
-  for (i = 0 ; i < Mat->m; i++ ) 
+  int i=0;
+  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
+  if (user_pref.pr_as_read_syntax)
     {
-      for ( j= 0 ; j < Mat->n ; j++) 
+      if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
 	{
-	  NspMatrix *loc;
-	  loc = Mat->S[i+j*Mat->m];
-	  Sciprintf("M(%d,%d):",i,j);
-	  for ( k = 0 ; k < loc->mn ; k ++) 
-	    { 
-	      if ( loc->rc_type == 'r')
-		Sciprintf(" %8g X^%d",loc->R[k],k);
-	      else 
-		Sciprintf(" (%8g+i%8g) X^%d",loc->C[k].r,loc->C[k].i,k);
-	    }
-	  Sciprintf("\n");
+	  Sciprintf("%s=%s",NSP_OBJECT(Mat)->name,(Mat->mn==0 ) ? " m2p([])\n" : "" );
 	}
     }
-  Sciprintf("EndPMat\n");
-  nsp_print_internalPM (Mat,indent);
+  else 
+    {
+      Sciprintf("%s\t=%s\t\tp (%dx%d)\n",NSP_OBJECT(Mat)->name,
+		(Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
+    }
+  if ( Mat->mn != 0) 
+    nsp_print_internalPM (Mat,indent);
 }
 
 
@@ -156,6 +149,7 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag
   Loc->n = n;
   Loc->mn=m*n;
   Loc->rc_type = 'r' ; /* XXXXX : a preciser ? **/
+  Loc->var = NULL;
   if ( Loc -> mn == 0 ) 
     {
       /* empty string Matrix */
@@ -320,11 +314,46 @@ unsigned int  nsp_pmatrix_elt_size(NspPMatrix *M)
  * return 0 on failure 
  */
 
+
 int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
 {
   int i;
-  A->S = (nsp_polynom *)  REALLOC (A->S, m*n * sizeof(nsp_polynom));
+  if ( A->mn == m*n ) 
+    {
+      /* easy case : nothing to allocate **/
+      if ( A->mn == 0) 
+	{
+	  A->m = A->n = 0;
+	}
+      else 
+	{
+	  A->m=m;
+	  A->n=n;
+	}
+      return(OK);
+    };
+  if ( m*n < 0) return FAIL;
+  if ( m*n < A->mn )
+    {
+      /* Clear before Realloc **/
+      for ( i = m*n ; i < A->mn ; i++ )
+	nsp_polynom_destroy(&(A->S[i]));
+    }
+  if ( m*n == 0 ) 
+    {
+      A->m =  A->n = A->mn= 0;
+      FREE(A->S);
+      return OK;
+    }
+  
+  if ( A->mn == 0 ) 
+    A->S = (nsp_polynom *)  MALLOC ((m*n+1) * sizeof(nsp_polynom));
+  else 
+    A->S = (nsp_polynom *)  REALLOC (A->S, (m*n+1) * sizeof(nsp_polynom));
   if ( A->S == (nsp_polynom *) 0) return(FAIL);
+
+  /* Initialize new area **/
+  A->S[(m*n)] = (nsp_polynom) 0;
   for ( i = A->mn ; i < m*n ; i++ )
     {
       if ((A->S[i] =nsp_basic_to_polynom(&Czero,'r')) == ( nsp_polynom ) 0 )  return(FAIL);
@@ -332,9 +361,9 @@ int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
   A->m =m ;
   A->n =n;
   A->mn=m*n ;
+  if ( A->mn == 0) A->m = A->n = 0;
   return(OK);
 }
-
 
 /*
  *nsp_pmatrix_enlarge(A,m,n) 

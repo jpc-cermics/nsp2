@@ -971,9 +971,7 @@ int nsp_print_internalPM (NspPMatrix *M, int indent)
   /* XXXXXX need to write the complex case **/
   Mp_set_format (M);
   fw= curr_real_fw;
-  Sciprintf("prec= %d,Format [%s]\n",
-	    user_pref.output_precision,
-	    curr_real_fmt);
+  /* Sciprintf("prec= %d,Format [%s]\n",  user_pref.output_precision,  curr_real_fmt);*/
   /* Allocate a table to store the column width **/
   /* Iloc[j]= degree max of column j **/
   if ((Iloc =nsp_alloc_int(M->n)) == (int*) 0) return(FAIL);

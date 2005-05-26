@@ -322,7 +322,7 @@ NspObject *nsp_frames_search_object(char *str)
 	      /* FIXME: to find variables which are in globalframe 
 	       * but which are not really global %t %e etc...
 	       */
-	      return nsp_global_frame_search_object(str);
+	      return ((NspList *) C->O != GlobalFrame ) ? nsp_global_frame_search_object(str) : NULLOBJ;
 	    }
 	  else 
 	    C = C->next ;
