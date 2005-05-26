@@ -675,7 +675,7 @@ int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
       {
 	int k=ind[j]*A->m;
 	for ( i = 0 ; i < A->m ; i++ )  
-	  nsp_string_destroy(&(A->S[i+k])); 
+	  MAT_INT(type)->free_elt((void **) &(A->S[i+k])); 
       }
 
   for ( i = 0 ; i < ncol ; i++)
@@ -764,7 +764,7 @@ int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
       {
 	int k=ind[i];
 	for ( j = 0 ; j < A->n ; j++ ) 
-	  nsp_string_destroy(&(A->S[k+A->m*j])); 
+	  MAT_INT(type)->free_elt((void **) &(A->S[k+A->m*j])); 
       }
   for ( j = 0 ; j < A->n  ; j++)
     {
@@ -819,7 +819,7 @@ int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
     } 
   elt_size = MAT_INT(type)->elt_size(A); 
   if ( MAT_INT(type)->free_elt != NULL)  
-    for ( i = 0 ; i < ne ; i++ )  nsp_string_destroy(&(A->S[ind[i]])); 
+    for ( i = 0 ; i < ne ; i++ )  MAT_INT(type)->free_elt((void **) &(A->S[ind[i]])); 
 
   k1 = ind[0];
   for ( i = 0 ; i < ne ; i++)
