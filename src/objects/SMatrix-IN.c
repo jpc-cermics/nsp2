@@ -367,26 +367,57 @@ int int_smxsetrc(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * Res=SMatDeletecols(A,Cols)
- * Cols unchanged  ( restored at end of function if necessary)
- * WARNING : A must be changed by this routine
- */
+/* generic interface for elts, rows and columns deletion **/
 
-int int_smxdeletecols(Stack stack, int rhs, int opt, int lhs)
+typedef int (*delf) (NspSMatrix *M,NspMatrix *Elts);
+
+static int int_smxdeleteelts_gen(Stack stack, int rhs, int opt, int lhs, delf F)
 {
+  int alloc=FALSE;
   NspSMatrix *A;
-  NspMatrix *Cols;
+  NspBMatrix *BElts=NULLBMAT;
+  NspMatrix *Elts;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((Cols = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ( nsp_smatrix_delete_columns( A, Cols) < 0) return RET_BUG;
+  if ( IsBMatObj(stack,2)  ) 
+    {
+      /* Elts is boolean: use find(Elts) **/
+      if ((BElts = GetBMat(stack,2)) == NULLBMAT) 
+	return RET_BUG;
+      if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) 
+	return RET_BUG;
+      alloc=TRUE;
+    }
+  else
+    {
+      if ((Elts = GetRealMat(stack,2)) == NULLMAT) 
+	return RET_BUG;
+    }
+  if ( (*F)( A, Elts) == FAIL )
+    {
+      if ( alloc ) nsp_matrix_destroy(Elts) ;
+      return RET_BUG;
+    }
+  /* take care that A and Elts can be the same */
+  /* if ( A == BElts ) NthObj(2)=NULLOBJ; */
   NSP_OBJECT(A)->ret_pos = 1;
+  if ( alloc ) nsp_matrix_destroy(Elts) ;
   return 1;
 }
 
+/*
+ * Res=SMatDeletecols(A,Cols)
+ *     Cols unchanged  ( restored at end of function if necessary)
+ * WARNING : A must be changed by this routine
+ * =======
+ */
 
+int int_smxdeletecols (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_smxdeleteelts_gen (stack, rhs, opt, lhs,
+				nsp_smatrix_delete_columns);
+}
 
 /*
  * Res=SMatDeleterows(A,Rows)
@@ -394,17 +425,10 @@ int int_smxdeletecols(Stack stack, int rhs, int opt, int lhs)
  * WARNING : A must be changed by this routine
  */
 
-int int_smxdeleterows(Stack stack, int rhs, int opt, int lhs)
+int int_smxdeleterows (Stack stack, int rhs, int opt, int lhs)
 {
-  NspSMatrix *A;
-  NspMatrix *Rows;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((Rows = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ( nsp_smatrix_delete_rows( A, Rows) < 0) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  return 1;
+  return int_smxdeleteelts_gen (stack, rhs, opt, lhs, 
+				nsp_smatrix_delete_rows);
 }
 
 /*
@@ -413,17 +437,10 @@ int int_smxdeleterows(Stack stack, int rhs, int opt, int lhs)
  * WARNING : A must be changed by this routine
  */
 
-int int_smxdeleteelts(Stack stack, int rhs, int opt, int lhs)
+int int_smxdeleteelts (Stack stack, int rhs, int opt, int lhs)
 {
-  NspSMatrix *A;
-  NspMatrix *Elts;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((Elts = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ( nsp_smatrix_delete_elements( A, Elts) < 0) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  return 1;
+  return int_smxdeleteelts_gen (stack, rhs, opt, lhs,
+			        nsp_smatrix_delete_elements);
 }
 
 /*

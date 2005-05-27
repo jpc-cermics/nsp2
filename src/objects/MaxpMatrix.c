@@ -609,15 +609,13 @@ int mpmat_is_increasing(const NspMaxpMatrix *A)
  * @Cols: a #NspMaxpMatrix
  *
  * Performs A(:,Cols) = []. 
- * Based on the template code  nsp_TYPEmatrix_delete_columns
- * (see nsp2_dev/matrix/deletions_templates.c)
  *
  * returns %OK or %FAIL.
  */
 
 int nsp_mpmatrix_delete_columns(NspMaxpMatrix *A, NspMatrix *Cols)
 {
-  int rep = nsp_matrix_delete_columns((NspMatrix *)A,Cols);
+  int rep = nsp_smatrix_delete_columns((NspSMatrix *)A,Cols);
   nsp_matrix_cast_to_mpmatrix((NspMatrix *) A);
   return rep;
 }
@@ -628,15 +626,13 @@ int nsp_mpmatrix_delete_columns(NspMaxpMatrix *A, NspMatrix *Cols)
  * @Rows: a #NspMatrix
  *
  * Performs A(Rows,:)  = []. 
- * Based on the template code  nsp_TYPEmatrix_delete_rows
- * (see nsp2_dev/matrix/deletions_templates.c) * 
  *
  * returns %OK or %FAIL.
  */
 
 int nsp_mpmatrix_delete_rows(NspMaxpMatrix *A, NspMatrix *Rows)
 {
-  return nsp_matrix_delete_rows((NspMatrix *) A,Rows);
+  return nsp_smatrix_delete_rows((NspSMatrix *) A,Rows);
 }
 
 /**
@@ -645,15 +641,13 @@ int nsp_mpmatrix_delete_rows(NspMaxpMatrix *A, NspMatrix *Rows)
  * @Elts: a #NspMatrix
  *
  * Performs A(Elts) = []. 
- * Based on the template code nsp_TYPEmatrix_delete_elements
- * (see nsp2_dev/matrix/deletions_templates.c)
  *
  * returns %OK or %FAIL.
  */
 
 int nsp_mpmatrix_delete_elements(NspMaxpMatrix *A, NspMatrix *Elts)
 {
-  return nsp_matrix_delete_elements((NspMatrix *)A,Elts);
+  return nsp_smatrix_delete_elements((NspSMatrix *)A,Elts);
 }
 
 /**

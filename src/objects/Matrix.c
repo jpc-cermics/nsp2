@@ -1375,42 +1375,17 @@ int mat_is_increasing(const NspMatrix *A)
  * @Cols: a #NspMatrix
  *
  * Performs A(:,Cols) = []. 
- * Based on the template code  nsp_TYPEmatrix_delete_columns
- * (see nsp2_dev/matrix/deletions_templates.c)
+ * this function is only here as a facility since 
+ * in the interface for Matrices nsp_smatrix_delete_columns() is 
+ * directly called.
  *
  * returns %OK or %FAIL.
  */
 
 int nsp_matrix_delete_columns(NspMatrix *A, NspMatrix *Cols)
 {
-  int i,*ind,k1,k2,nn,ncol,ioff=0;
-
-  if ( Cols->mn == 0) return OK;
-
-  if ( (ind = nsp_indices_for_deletions(A->n, Cols, &ncol)) == NULL ) 
-    return FAIL;
-
-  for ( i = 0 ; i < ncol ; i++)
-    {
-      k1 = ind[i];
-      k2 = (i < ncol-1 ) ? ind[i+1] : A->n;
-      nn = (k2-k1-1)*A->m;  /* nb of elts to move = nb of elts strictly between columns k1 and k2 */
-      if ( nn != 0) 
-	{
-	  if ( A->rc_type == 'r') 
-	    memmove(A->R+(k1-ioff)*A->m, A->R+ (k1+1)*A->m, nn*sizeof(double));
-	  else 
-	    memmove(A->C+(k1-ioff)*A->m, A->C+ (k1+1)*A->m, nn*sizeof(doubleC));
-	}
-      ioff++;
-    }
-
-  FREE(ind);
-  if ( nsp_matrix_resize(A,A->m,A->n-ncol)== FAIL) 
-    return FAIL;
-  return OK;
+  return nsp_smatrix_delete_columns((NspSMatrix *)A,Cols);
 }
-
 
 /**
  * nsp_matrix_delete_rows:
@@ -1418,47 +1393,17 @@ int nsp_matrix_delete_columns(NspMatrix *A, NspMatrix *Cols)
  * @Rows: a #NspMatrix
  *
  * Performs A(Rows,:)  = []. 
- * Based on the template code  nsp_TYPEmatrix_delete_rows
- * (see nsp2_dev/matrix/deletions_templates.c) * 
+ * this function is only here as a facility since 
+ * in the interface for Matrices nsp_smatrix_delete_rows() is 
+ * directly called.
+ *
  *
  * returns %OK or %FAIL.
  **/
 
 int nsp_matrix_delete_rows(NspMatrix *A, NspMatrix *Rows)
 {
-  int i,j,*ind,k1,k2,nn,nrow,stride=0,ioff=0;
-
-  if ( Rows->mn == 0) return OK;
-
-  if ( (ind = nsp_indices_for_deletions(A->m, Rows, &nrow)) == NULL ) 
-    return FAIL;
-
-  for ( j = 0 ; j < A->n  ; j++)
-    {
-      k1 = ind[0] + stride;
-      for ( i = 0 ; i < nrow ; i++)
-	{
-	  if ( i < nrow-1 ) 
-	    k2 =  ind[i+1] + stride;
-	  else 
-	    k2 = ( j < A->n-1) ? ind[0] + stride + A->m : A->mn;
-	  nn = k2-k1-1;
-	  if ( nn != 0) 
-	    {
-	      if ( A->rc_type == 'r') 
-		memmove(A->R + k1-ioff, A->R + k1+1, nn*sizeof(double));
-	      else 
-		memmove(A->C + k1-ioff, A->C + k1+1, nn*sizeof(doubleC));
-	    }
-	  ioff++;
-	  k1 = k2;
-	}
-      stride += A->m;
-    }
-
-  FREE(ind);
-  if ( nsp_matrix_resize(A,A->m-nrow,A->n) ==  FAIL ) return FAIL;
-  return OK;
+  return nsp_smatrix_delete_rows((NspSMatrix *)A,Rows);
 }
 
 
@@ -1468,45 +1413,16 @@ int nsp_matrix_delete_rows(NspMatrix *A, NspMatrix *Rows)
  * @Elts: a #NspMatrix
  *
  * Performs A(Elts) = []. 
- * Based on the template code nsp_TYPEmatrix_delete_elements
- * (see nsp2_dev/matrix/deletions_templates.c)
+ * this function is only here as a facility since 
+ * in the interface for Matrices nsp_smatrix_delete_elements() is 
+ * directly called.
  *
  * returns %OK or %FAIL.
  */
 
 int nsp_matrix_delete_elements(NspMatrix *A, NspMatrix *Elts)
 {
-  int i,*ind,k1,k2,nn,ne,ioff=0;
-
-  if ( (ind = nsp_indices_for_deletions(A->mn, Elts, &ne)) == NULL ) 
-    return FAIL;
-
-  k1 = ind[0];
-  for ( i = 0 ; i < ne ; i++)
-    {
-      k2 = ( i < ne-1 ) ? ind[i+1] : A->mn;
-      nn = k2-k1-1;
-      if ( nn != 0) 
-	{
-	  if ( A->rc_type == 'r') 
-	    memmove(A->R + k1-ioff, A->R + k1+1, nn*sizeof(double));
-	  else 
-	    memmove(A->C + k1-ioff, A->C + k1+1, nn*sizeof(doubleC));
-	}
-      ioff++;
-      k1 = k2;
-    }
-  FREE(ind);
-
-  if ( A->m == 1)
-    {
-      if ( nsp_matrix_resize(A,1,A->mn-ne) == FAIL) return FAIL;
-    }
-  else
-    {
-      if ( nsp_matrix_resize(A,A->mn-ne,1) == FAIL) return FAIL;
-    }
-  return OK;
+  return nsp_smatrix_delete_elements((NspSMatrix *)A,Elts);
 }
 
 /**
@@ -1529,30 +1445,27 @@ NspMatrix *nsp_matrix_extract(const NspMatrix *A, const NspMatrix *Rows, const N
   if ( A->mn == 0) 
     return nsp_matrix_create(NVOID,A->rc_type,0,0);
 
-  /*  scalar case (commented because its does't bring any speed up
-   *  currently, but may be it will do an the future...)
+  /*  scalar case: currently unsused (does't speed up 
+   *  but it may in the future...)
    */
-/*   if (Rows->mn == 1 && Cols->mn == 1) */
-/*     { */
-/*       i = (int) Rows->R[0]; */
-/*       j = (int) Cols->R[0]; */
-/*       if ( i < 1 || j < 1 || i > A->m || j > A->n ) */
-/* 	{ */
-/* 	  Scierror("Error:\tIndices out of bound\n"); */
-/* 	  return NULLMAT; */
-/* 	} */
-
-/*       if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,1,1))== NULLMAT) */
-/* 	return NULLMAT; */
-
-/*       ind = (i-1) + (j-1)*A->m; */
-/*       if ( A->rc_type == 'c' ) */
-/* 	  Loc->C[0] = A->C[ind]; */
-/*       else */
-/* 	  Loc->R[0] = A->R[ind]; */
-/*       return Loc; */
-/*     } */
-
+  /*   if (Rows->mn == 1 && Cols->mn == 1) */
+  /*     { */
+  /*       i = (int) Rows->R[0]; */
+  /*       j = (int) Cols->R[0]; */
+  /*       if ( i < 1 || j < 1 || i > A->m || j > A->n ) */
+  /* 	{ */
+  /* 	  Scierror("Error:\tIndices out of bound\n"); */
+  /* 	  return NULLMAT; */
+  /* 	} */
+  /*       if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,1,1))== NULLMAT) */
+  /* 	return NULLMAT; */
+  /*       ind = (i-1) + (j-1)*A->m; */
+  /*       if ( A->rc_type == 'c' ) */
+  /* 	  Loc->C[0] = A->C[ind]; */
+  /*       else */
+  /* 	  Loc->R[0] = A->R[ind]; */
+  /*       return Loc; */
+  /*     } */
 
   if ( (irow = nsp_matrix_boundsbis(Rows,&rmin,&rmax)) == NULL ) goto err;
   Bounds(Cols,&cmin,&cmax);
@@ -1589,8 +1502,6 @@ NspMatrix *nsp_matrix_extract(const NspMatrix *A, const NspMatrix *Rows, const N
  err:
   free(irow); return NULLMAT;
 }
-
-
 
 /**
  * nsp_matrix_extract_elements:

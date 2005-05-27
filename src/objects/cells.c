@@ -567,139 +567,30 @@ int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B)
 
 /*
  *  A(:,Cols) = []
- *  A is changed.
- *  Cols must be strictly increasing . XXXXXXX
- *  A changer
  */
 
 int nsp_cells_delete_columns(NspCells *A, NspMatrix *Cols)
 {
-  int ioff=0,cmin,cmax,i,col,last,nn,j;
-  /* XXXXX Rajouter un test si Cols == [] **/
-  Bounds(Cols,&cmin,&cmax);
-  if ( Cols->mn == 0) return(OK);
-  if ( cmin < 1 || cmax > A->n )
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  /* Must clean data first **/
-  for ( i = 0 ; i < Cols->mn ; i++)
-    {
-      int i1= (((int) Cols->R[i])-1)*A->m;
-      for ( j = 0 ; j < A->m ; j++) 
-	nsp_object_destroy(&(A->objs[j+i1]));
-    }
-  /* Move data  **/
-  for ( i = 0 ; i < Cols->mn ; i++)
-    {
-      ioff++;
-      /* mv [Cols[i],Cols[i+1][ back ioff columns **/
-      col= ((int) Cols->R[i]);
-      last = (i == Cols->mn -1 ) ? A->n : ((int) Cols->R[i+1]) -1;
-      nn= (last-col)*A->m;
-      /* Make the move **/
-      for ( j = 0 ; j < nn ; j++ )
-	{
-	  NspObject *Ob;
-	  if (( Ob =nsp_object_copy_with_name(A->objs[(col)*A->m+j]))== NULL) 
-	    return(FAIL);
-	  /* store moved data **/
-	  A->objs[(col-ioff)*A->m+j]=Ob;
-	}
-    }
-  if ( nsp_cells_resize(A,A->m,A->n-ioff)== FAIL) return(FAIL);
-  return(OK);
+  return nsp_smatrix_delete_columns((NspSMatrix *) A,Cols);
 }
 
 /*
  *  A(Rows,:) = []
- *  A is changed.
- *  Rows must be increasing XXXXXXXXXXX
- *  A Changer
  */
 
 int nsp_cells_delete_rows(NspCells *A, NspMatrix *Rows)
 {
-  int rmin,rmax,i,j,k,ind,last,nn,ioff=0;
-  Bounds(Rows,&rmin,&rmax);
-  if ( Rows->mn == 0) return(OK);
-  if ( rmin < 1 || rmax > A->m )
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  /* clean first **/
-  for ( j = 0 ; j < A->n  ; j++)
-    {
-      int j1=j*A->m;
-      for ( i = 0 ; i < Rows->mn ; i++)
-	{
-	  nsp_object_destroy(&(A->objs[((int) Rows->R[i])-1 + j1]));
-	}
-    }
-  /* then move data : matrix is stored by columns **/
-  for ( j = 0 ; j < A->n  ; j++)
-    for ( i = 0 ; i < Rows->mn ; i++)
-      {
-        ioff++;
-	/* we move up [ind,last-ind[ --> [ind-1,last-ind-1[**/
-        ind =  ((int) Rows->R[i])+ j*A->m;
-        last = (i < Rows->mn -1) ? ((int) Rows->R[i+1])-1 +j*A->m 
-	  : ((int) Rows->R[0])-1+(j+1)*A->m ;
-        last = ( last < A->mn ) ? last : A->mn;
-        nn= (last-ind);
-	for ( k= 0 ; k < nn ; k++) 
-	  {
-	    NspObject *Ob;
-	    if (( Ob =nsp_object_copy_with_name(A->objs[ind+k]))== NULL)  return(FAIL);
-	    /* store moved data **/
-	    A->objs[ind-ioff+k]=Ob;
-	  }
-      }
-  if ( nsp_cells_resize(A,A->m -Rows->mn,A->n)== FAIL) return(FAIL);
-  return(OK);
+  return nsp_smatrix_delete_rows((NspSMatrix *) A,Rows);
 }
 
 /*
  *  A(elts) = []
- *  A is changed.
- *  modified by Bruno (see nsp_smatrix_delete_elements)
+ *
  */
 
 int nsp_cells_delete_elements(NspCells *A, NspMatrix *Elts)
 {
-  int i,k,*flag, new_A_mn, count;
-
-  if ( Elts->mn == 0) return OK;
-  
-  if ( (flag = nsp_complement_for_deletions(A->mn, Elts, &count)) == NULL )
-    return FAIL;
-
-  new_A_mn = A->mn - count;
-
-  k = 0;
-  for ( i = 0 ; i < A->mn ; i++ )
-    if ( flag[i] )
-      {
-	A->objs[k] = A->objs[i];
-	if ( k < i ) A->objs[i] = NULLOBJ;
-	k++;
-      }
-    else
-      nsp_object_destroy(&(A->objs[i]));
-  
-  free(flag);
-
-  if ( A->m == 1)
-    {
-      if ( nsp_cells_resize(A,1,new_A_mn) == FAIL ) return FAIL;
-    }
-  else
-    {
-      if ( nsp_cells_resize(A,new_A_mn,1) == FAIL ) return FAIL;
-    }
-  return OK;
+  return nsp_smatrix_delete_elements((NspSMatrix *) A,Elts);
 }
 
 

@@ -575,35 +575,13 @@ int nsp_bmatrix_set_rows(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
  * @Cols: a #NspMatrix
  *
  * Performs A(:,Cols) = []. 
- * Based on the template code  nsp_TYPEmatrix_delete_columns
- * (see nsp2_dev/matrix/deletions_templates.c)
  *
  * returns %OK or %FAIL.
  */
 
 int nsp_bmatrix_delete_columns(NspBMatrix *A, NspMatrix *Cols)
 {
-  int i,*ind,k1,k2,nn,ncol,ioff=0;
-
-  if ( Cols->mn == 0) return OK;
-
-  if ( (ind = nsp_indices_for_deletions(A->n, Cols, &ncol)) == NULL ) 
-    return FAIL;
-
-  for ( i = 0 ; i < ncol ; i++)
-    {
-      k1 = ind[i];
-      k2 = (i < ncol-1 ) ? ind[i+1] : A->n;
-      nn = (k2-k1-1)*A->m;  /* nb of elts to move = nb of elts strictly between columns k1 and k2 */
-      if ( nn != 0) 
-	memmove(A->B+(k1-ioff)*A->m, A->B+ (k1+1)*A->m, nn*sizeof(Boolean));
-      ioff++;
-    }
-
-  FREE(ind);
-  if ( nsp_bmatrix_resize(A,A->m,A->n-ncol)== FAIL) 
-    return FAIL;
-  return OK;
+  return nsp_smatrix_delete_columns((NspSMatrix *)A,Cols);
 }
 
 /**
@@ -620,34 +598,7 @@ int nsp_bmatrix_delete_columns(NspBMatrix *A, NspMatrix *Cols)
 
 int nsp_bmatrix_delete_rows(NspBMatrix *A, NspMatrix *Rows)
 {
-  int i,j,*ind,k1,k2,nn,nrow,stride=0,ioff=0;
-
-  if ( Rows->mn == 0) return OK;
-
-  if ( (ind = nsp_indices_for_deletions(A->m, Rows, &nrow)) == NULL ) 
-    return FAIL;
-
-  for ( j = 0 ; j < A->n  ; j++)
-    {
-      k1 = ind[0] + stride;
-      for ( i = 0 ; i < nrow ; i++)
-	{
-	  if ( i < nrow-1 ) 
-	    k2 =  ind[i+1] + stride;
-	  else 
-	    k2 = ( j < A->n-1) ? ind[0] + stride + A->m : A->mn;
-	  nn = k2-k1-1;
-	  if ( nn != 0) 
-	    memmove(A->B + k1-ioff, A->B + k1+1, nn*sizeof(Boolean));
-	  ioff++;
-	  k1 = k2;
-	}
-      stride += A->m;
-    }
-
-  FREE(ind);
-  if ( nsp_bmatrix_resize(A,A->m-nrow,A->n) ==  FAIL ) return FAIL;
-  return OK;
+  return nsp_smatrix_delete_rows((NspSMatrix *)A,Rows);
 }
 
 /**
@@ -656,40 +607,13 @@ int nsp_bmatrix_delete_rows(NspBMatrix *A, NspMatrix *Rows)
  * @Elts: a #NspMatrix
  *
  * Performs A(Elts) = []. 
- * Based on the template code nsp_TYPEmatrix_delete_elements
- * (see nsp2_dev/matrix/deletions_templates.c)
  * 
  * returns %OK or %FAIL.
  */
 
 int nsp_bmatrix_delete_elements(NspBMatrix *A, NspMatrix *Elts)
 {
-  int i,*ind,k1,k2,nn,ne,ioff=0;
-
-  if ( (ind = nsp_indices_for_deletions(A->mn, Elts, &ne)) == NULL ) 
-    return FAIL;
-
-  k1 = ind[0];
-  for ( i = 0 ; i < ne ; i++)
-    {
-      k2 = ( i < ne-1 ) ? ind[i+1] : A->mn;
-      nn = k2-k1-1;
-      if ( nn != 0) 
-	memmove(A->B + k1-ioff, A->B + k1+1, nn*sizeof(Boolean));
-      ioff++;
-      k1 = k2;
-    }
-  FREE(ind);
-
-  if ( A->m == 1)
-    {
-      if ( nsp_bmatrix_resize(A,1,A->mn-ne) == FAIL) return FAIL;
-    }
-  else
-    {
-      if ( nsp_bmatrix_resize(A,A->mn-ne,1) == FAIL) return FAIL;
-    }
-  return OK;
+  return nsp_smatrix_delete_elements((NspSMatrix *)A,Elts);
 }
 
 /**

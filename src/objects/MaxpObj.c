@@ -31,6 +31,7 @@
 #include "nsp/bmatrix-in.h"
 #include "nsp/smatrix-in.h"
 #include "nsp/matutil.h"
+#include "nsp/matint.h"
 
 /* 
  * NspMaxpMatrix inherits from NspObject 
@@ -50,6 +51,7 @@ NspTypeMaxpMatrix *nsp_type_mpmatrix=NULL;
 
 NspTypeMaxpMatrix *new_type_mpmatrix(type_mode mode)
 {
+  NspTypeMatint *mati;/* interface */
   NspTypeMaxpMatrix *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_mpmatrix != 0 && mode == T_BASE ) 
@@ -99,6 +101,22 @@ NspTypeMaxpMatrix *new_type_mpmatrix(type_mode mode)
    * type->interface->interface = (NspTypeBase *) new_type_C()
    * ....
    */
+
+
+  /*
+   * Matrix implements Matint the matrix interface 
+   * which is common to object that behaves like matrices.
+   */
+
+  mati = new_type_matint(T_DERIVED);
+  mati->methods = matint_get_methods; 
+  mati->redim = (matint_redim *) nsp_mpmatrix_redim; 
+  mati->resize = (matint_resize  *) nsp_mpmatrix_resize;
+  mati->free_elt = (matint_free_elt *) 0; /* nothing to do */
+  mati->elt_size = (matint_elt_size *) nsp_matrix_elt_size ;/* same as for matrix */
+
+  type->interface = (NspTypeBase *) mati;
+
   
   if ( nsp_type_mpmatrix_id == 0 ) 
     {
