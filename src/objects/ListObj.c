@@ -167,31 +167,30 @@ char *nsp_list_type_short_string(NspList *L)
   return(list_short_type_name);
 }
 
-/* used in for x=list(....) ... **/
+/* used in for x=list(....) ... 
+ * FIXME: this is to be improved since we start 
+ * always at first list element when searching a new object in 
+ * list loop_extract is to be changed.
+ */
 
 NspObject *list_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep)
 {
-  static Cell *cell; 
-  NspObject *ret; 
-  if ( O == NULLOBJ ) 
-    {
-      /* new iteration on O1 */
-      cell =nsp_list_object(O1)->first; 
-    }
-  else 
-    {
-      /* XXXX destroy O */
-    }
-  /* ignore empty cells */
-  while (cell != NULLCELL &&  cell->O == NULLOBJ ) cell = cell->next ; 
-  if ( cell == NULLCELL ) 
+  int count=1;
+  Cell *cell = nsp_list_object(O1)->first;
+  while ( count < i  && cell != NULLCELL ) 
+    { cell = cell->next;count ++;}
+  if ( count != i || cell == NULLCELL) 
     {
       *rep = RET_ENDFOR; 
       return NULLOBJ;
     }
-  if ((ret =nsp_object_copy_and_name(str,cell->O))== NULL) return NULL;
-  cell = cell->next ;
-  return ret; 
+  else 
+    {
+      if ( cell->O == NULLOBJ ) 
+	return (NspObject *) none_create(str,NULL);
+      else
+	return nsp_object_copy_and_name(str,cell->O);
+    }
 }
 
 /* used for L(1)(2)....(expn) evaluation */
@@ -1095,37 +1094,6 @@ static int int_lxcreate(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * delete List
- */
-
-static int int_lxdestroy(Stack stack, int rhs, int opt, int lhs)
-{
-  NspList *L;
-  CheckRhs(1,1);
-  CheckLhs(0,0);
-  if ((L = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  nsp_object_destroy(&NthObj(1));
-  return 0;
-}
-
-/*
- * Res=nsp_list_copy(L)
- * Copy NspList L : the elements are copied 
- */
-
-static int int_lxcopy(Stack stack, int rhs, int opt, int lhs)
-{
-  NspList *L1,*L2;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if (( L1 = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  if (( L2 =nsp_list_copy(L1)) == NULLLIST) return RET_BUG;
-  StackStore(stack,(NspObject *)L2,2) ; 
-  NSP_OBJECT(L2)->ret_pos = 1;
-  return 1;  
-}
-
-/*
  * returns a pointer to the Nth (=nel) NspObject  of a NspList 
  */
 
@@ -1232,9 +1200,9 @@ static int int_lxlength(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
-  Concatenation of two Object of type NspList 
-  O2 is unchanged O1 is changed 
-*/
+ *  Concatenation of two Object of type NspList 
+ * O2 is unchanged O1 is changed 
+ */
 
 static int int_lxconcat(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1250,6 +1218,46 @@ static int int_lxconcat(Stack stack, int rhs, int opt, int lhs)
   NthObj(2) = NULLOBJ; 
   NSP_OBJECT(L1)->ret_pos = 1;
   return 1;
+}
+
+/* lstcat: 
+ * scilab lstcat 
+ *
+ */
+
+
+static int int_lxcat(Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspList *L;
+  CheckLhs(1,1);
+  if ((L =nsp_list_create(NVOID,NULLSTRING))==NULLLIST) return RET_BUG;
+  for ( i = 1; i <= rhs ; i++ )
+    {
+      NspObject *Ob=NthObj(i);
+      if (IsList(Ob) == TRUE) 
+	{
+	  if ( nsp_list_concat(L,(NspList *) Ob) == FAIL) goto err;
+	}
+      else 
+	{
+	  if (MaybeObjCopy(&Ob) == NULL) goto err;  
+	  if (nsp_object_set_name(Ob,"lel") == FAIL) goto err;	  
+	  if (nsp_list_end_insert(L,NthObj(i)) == FAIL ) goto err;
+	}
+      /* If NthObj(i) is not copied it is inserted in the list 
+       *     we must set then NthObj(i) to NULLOBJ 
+       *     to prevent the cleaning process to clean the object 
+       * that we have inserted in our list 
+       */
+      NthObj(i) = NULLOBJ ;
+    }
+  NthObj(1)=(NspObject *) L;
+  NSP_OBJECT(NthObj(1))->ret_pos = 1;
+  return 1;
+ err: 
+  nsp_list_destroy(L);
+  return RET_BUG;
 }
 
 
@@ -1369,14 +1377,13 @@ static OpTab List_func[]={
   {"extractelts_l",int_lxextract}, 
   {"setrowscols_l",int_lxsetrc},
   {"lxcreate",int_lxcreate},
-  {"lxdestroy",int_lxdestroy},
-  {"lxcopy",int_lxcopy},
   {"lxnthel",int_lxnthel},
   {"lxendi",int_lxendi},
   {"lxni",int_lxni},
   {"lxnthdel",int_lxnthdel},
   {"lxlength",int_lxlength},
   {"lxconcat",int_lxconcat},
+  {"list_concat",int_lxcat},
   {"sorted_list", int_lxsortedlist},
   {"sorted_list_search", int_lxsortedsearch},
   {"sorted_list_search_and_remove", int_lxsortedsearchandremove},
