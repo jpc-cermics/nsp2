@@ -1074,7 +1074,7 @@ static OpTab PMatrix_func[]={
   {"deleterows_p_m", int_pmatrix_deleterows},
   {"deleteelts_p_m", int_pmatrix_deleteelts},
   {"setrowscols_p",int_pmatrix_setrc},
-  {"smat_create",int_pmatrix_create},
+  {"pmat_create",int_pmatrix_create},
   {"redim_p",int_pmatrix_redim},
   {"concatr_p_p",int_pmatrix_concatr},
   {"concatr_m_p",int_pmatrix_concatr_m_s},
