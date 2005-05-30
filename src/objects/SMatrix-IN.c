@@ -55,24 +55,6 @@ int int_smxcreate(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Res =nsp_smatrix_copy(A) 
- * Creates a Copy of NspSMatrix A : A is not checked 
- */
-
-int int_smxcopy(Stack stack, int rhs, int opt, int lhs)
-{
-  NspSMatrix *HMat1,*HMat2;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if (( HMat1 = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if (( HMat2 =nsp_smatrix_copy(HMat1)) == NULLSMAT) return RET_BUG;
-  MoveObj(stack,1,(NspObject *) HMat2);
-  return 1;
-}
-
-
-
-/*
  *nsp_smatrix_redim: Changes matrix dimensions
  * m*n must be unchanged 
  * The NspSMatrix is changed (m,n are changed ) 
@@ -573,49 +555,6 @@ int int_smxresize(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_smatrix_resize(HMat,m1,n1) != OK) return RET_BUG;
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
-}
-
-
-/*
- * Delete the NspSMatrix A
- */
-
-int int_smxdestroy(Stack stack, int rhs, int opt, int lhs)
-{
-  NspSMatrix *HMat;
-  CheckRhs(1,1);
-  CheckLhs(0,0);
-  if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  nsp_object_destroy(&NthObj(1));
-  return 0;
-}
-
-/*
- * SMatinfo : display info on NspSMatrix SMat
- */
-
-int int_smxinfo(Stack stack, int rhs, int opt, int lhs)
-{
-  NspSMatrix *HMat;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  nsp_smatrix_info(HMat,0);
-  return 0;
-}
-
-/*
- *nsp_smatrix_print: writes SMat Objet on fd
- */
-
-int int_smxprint(Stack stack, int rhs, int opt, int lhs)
-{
-  NspSMatrix *HMat;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  nsp_smatrix_print(HMat,0);
-  return 0;
 }
 
 /*
@@ -1374,7 +1313,6 @@ static OpTab SMatrix_func[]={
   {"deleteelts_s_m", int_smxdeleteelts},
   {"setrowscols_s",int_smxsetrc},
   {"smat_create",int_smxcreate},
-  {"copy_s",int_smxcopy},
   {"redim_s",int_smxredim},
   {"concatr_s_s",int_smxconcatr},
   {"concatr_m_s",int_smxconcatr_m_s},
@@ -1385,9 +1323,6 @@ static OpTab SMatrix_func[]={
   {"setrc_s",int_smxsetrc},
   {"extract_s",int_smxextract},
   {"resize_s",int_smxresize},
-  {"destroy_s",int_smxdestroy},
-  {"info_s",int_smxinfo},
-  {"print_s",int_smxprint},
   {"concat_s_s", int_smxconcattt },
   {"plus_s_s", int_smxconcattt },
   {"comp_s_s", int_smxcomp },
@@ -1445,3 +1380,13 @@ void SMatrix_Interf_Info(int i, char **fname, function (**f))
   *fname = SMatrix_func[i].name;
   *f = SMatrix_func[i].fonc;
 }
+
+
+
+
+
+
+
+
+
+
