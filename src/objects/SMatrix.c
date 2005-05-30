@@ -809,6 +809,8 @@ int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
   int i,*ind,k1,k2,nn,ne,ioff=0; 
   NspTypeBase *type; 
 
+  if ( Elts->mn == 0) return OK;
+
   if ( (ind = nsp_indices_for_deletions(A->mn, Elts, &ne)) == NULL )  
     return FAIL; 
 
