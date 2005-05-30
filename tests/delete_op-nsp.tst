@@ -59,8 +59,8 @@ if ~and(B == A1c)  then pause,end;
 
 // test 4
 B = A;
-B(:,ind1)=[];
-if ~and(B == A1c)  then pause,end;
+B(:,ind2)=[];
+if ~and(B == A2c)  then pause,end;
 
 // test 5
 B = A;
@@ -101,8 +101,8 @@ if ~and(B == Ab1c)  then pause,end;
 
 // test 4
 B = Ab;
-B(:,ind1)=[];
-if ~and(B == Ab1c)  then pause,end;
+B(:,ind2)=[];
+if ~and(B == Ab2c)  then pause,end;
 
 // test 5
 B = Ab;
@@ -143,8 +143,8 @@ if ~and(B == Am1c) then pause,end;
 
 // test 4
 B = Am;
-B(:,ind1)=[];
-if ~and(B == Am1c) then pause,end;
+B(:,ind2)=[];
+if ~and(B == Am2c) then pause,end;
 
 // test 5
 B = Am;
@@ -181,8 +181,8 @@ if ~and(B == As1c) then pause,end;
 
 // test 4
 B = As;
-B(:,ind1)=[];
-if ~and(B == As1c) then pause,end;
+B(:,ind2)=[];
+if ~and(B == As2c) then pause,end;
 
 // test 5
 B = As;

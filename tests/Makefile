@@ -11,7 +11,8 @@ TESTS= \
 	matrix_io.dia \
 	test_minmax.dia \
 	testsbdiv.dia \
-	fft.dia
+	fft.dia \
+	extract.dia 
 
 AFINIR= \
 	matelm-nsp.dia \
