@@ -556,7 +556,7 @@ static NspList *BuildListFromArgs_1(int_types *T,va_list *ap)
 	    {
 	      if (nsp_object_set_name(O,"lel") == FAIL) return NULLLIST;
 	    }
-	  if (nsp_list_end_insert( L,0) == FAIL ) return NULLLIST;
+	  if (nsp_list_end_insert( L,O) == FAIL ) return NULLLIST;
 	  break;
 	case matcopy_int:
 	case matcopy :
