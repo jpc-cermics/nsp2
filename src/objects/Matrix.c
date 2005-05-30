@@ -1467,6 +1467,10 @@ NspMatrix *nsp_matrix_extract(const NspMatrix *A, const NspMatrix *Rows, const N
   /*       return Loc; */
   /*     } */
 
+  if ( Rows->mn == 0 || Cols->mn == 0)
+    {
+      return nsp_matrix_create(NVOID,A->rc_type,0,0);
+    }
   if ( (irow = nsp_matrix_boundsbis(Rows,&rmin,&rmax)) == NULL ) goto err;
   Bounds(Cols,&cmin,&cmax);
   
