@@ -13,7 +13,7 @@ CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
 OBJSC = lapack.obj lapack-IN.obj
-OBJSF = 
+OBJSF = dspadm.obj dgpadm.obj zhpadm.obj zgpadm.obj
 
 include ../Make.lib.mak
 

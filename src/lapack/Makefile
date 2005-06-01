@@ -10,7 +10,7 @@ CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
 OBJSC = lapack.o lapack-IN.o
-OBJSF = 
+OBJSF = dspadm.o dgpadm.o zhpadm.o zgpadm.o
 
 include ../Make.lib
 

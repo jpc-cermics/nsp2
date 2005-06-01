@@ -30,6 +30,35 @@
 #include "nsp/blas.h"
 #include "nsp/nsp_lapack.h"
 
+
+int nsp_mat_is_symmetric(NspMatrix *A)
+{
+  int i,j;
+  if ( A->m != A->n ) return FALSE;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i=0 ; i < A->m ; i++)
+	for ( j=0 ; j < i ; j++)
+	  {
+	    double dx= Abs(A->R[i+j*A->m] - A->R[j+i*A->m]);
+	    if ( A->R[i+j*A->m] + dx > A->R[i+j*A->m]) 
+	      return FALSE;
+	  }
+    }
+  else 
+    {
+      for ( i=0 ; i < A->m ; i++)
+	for ( j=0 ; j < i ; j++)
+	  {
+	    double dxr= Abs(A->C[i+j*A->m].r - A->C[j+i*A->m].r);
+	    double dxi= Abs(A->C[i+j*A->m].i - A->C[j+i*A->m].i);
+	    if ( A->C[i+j*A->m].r + dxr > A->C[i+j*A->m].r) return FALSE;
+	    if ( A->C[i+j*A->m].i + dxi > A->C[i+j*A->m].i) return FALSE;
+	  }
+    }
+  return TRUE;
+}
+
 /*
  * xerbla_:
  * switch lapack message to nsp message
@@ -1248,10 +1277,44 @@ int nsp_inv(NspMatrix *A)
 }
 
 
+/* static int intdgetri(NspMatrix *A) */
+/* { */
+/*   NspMatrix *iwork,*dwork; */
+/*   int *Iwork; */
+/*   int info,lworkMin, m = A->m, n = A->n ; */
+
+/*   /\*  A = [] return empty matrices *\/  */
+  
+/*   if ( A->mn == 0 )  return OK ;  */
+  
+/*   if (m != n) {  */
+/*     Scierror("Error: first argument of inv should be square and it is (%dx%d)\n",  */
+/* 	     m,n); */
+/*     return FAIL; */
+/*   } */
+
+/*   /\* int NspMatrix XXX *\/  */
+/*   if (( iwork =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL; */
+/*   Iwork = (int *) iwork->R; */
+
+/*   lworkMin = Max(1,n); */
+/*   if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL; */
+  
+/*   C2F(dgetrf)(&n, &n,A->R, &n, Iwork, &info); */
+/*   if (info > 0) { */
+/*     Scierror("inv: problem is singular\n"); */
+/*     return FAIL; */
+/*   } else if (info < 0) { */
+/*     return FAIL; */
+/*   } */
+/*   C2F(dgetri)(&n, A->R, &n, Iwork, dwork->R,&lworkMin, &info); */
+/*   return OK; */
+/* }  */
+
 static int intdgetri(NspMatrix *A)
 {
-  NspMatrix *iwork,*dwork;
-  int *Iwork;
+  int *ipiv = NULL;
+  double *dwork = NULL;
   int info,lworkMin, m = A->m, n = A->n ;
 
   /*  A = [] return empty matrices */ 
@@ -1264,22 +1327,27 @@ static int intdgetri(NspMatrix *A)
     return FAIL;
   }
 
-  /* int NspMatrix XXX */ 
-  if (( iwork =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
-  Iwork = (int *) iwork->R;
+  if ( (ipiv = nsp_alloc_int(n)) == NULL ) goto err;
 
   lworkMin = Max(1,n);
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+  if ( (dwork = nsp_alloc_doubles(lworkMin)) == NULL ) goto err;
   
-  C2F(dgetrf)(&n, &n,A->R, &n, Iwork, &info);
+  C2F(dgetrf)(&n, &n, A->R, &n, ipiv, &info);
   if (info > 0) {
     Scierror("inv: problem is singular\n");
-    return FAIL;
+    goto err;;
   } else if (info < 0) {
-    return FAIL;
+    goto err;
   }
-  C2F(dgetri)(&n, A->R, &n, Iwork, dwork->R,&lworkMin, &info);
+  C2F(dgetri)(&n, A->R, &n, ipiv, dwork, &lworkMin, &info);
+  FREE(dwork);
+  FREE(ipiv);
   return OK;
+
+ err:
+  FREE(dwork);
+  FREE(ipiv);
+  return FAIL;
 } 
 
 int intzgetri(NspMatrix *A)
@@ -3232,4 +3300,83 @@ static double intznorm(NspMatrix *A,char flag)
       norm=  C2F(zlange)(&flag, &m, &n,A->C, &m, NULL , 1L);
     }
   return norm;
+}
+
+/**
+ * nsp_expm:
+ * @A: a #NspMatrix 
+ * 
+ * computes the exponential of the matrix @A.
+ * caution @A is overwritten with the result.
+ * Added by Bruno.
+ * 
+ * Return value: FAIl or OK
+ **/
+int nsp_expm(NspMatrix *A)
+{
+  int m, sym_flag, ideg=6, *ipiv=NULL, lwork, iexph, ns, iflag;
+  double *work=NULL, t=1;
+  doubleC *workC=NULL;
+
+  if ( A->m != A->n )
+    {
+      Scierror("Error: matrix must be square (in nsp_expm)\n");
+      return FAIL;
+    }
+
+  m = A->m;
+
+  if ( (ipiv = nsp_alloc_int(m)) == NULL )
+    return FAIL;
+
+  lwork = 4*m*m + ideg + 1;
+  if ( A->rc_type == 'r' ) 
+    {
+      if ( (work = nsp_alloc_doubles(lwork)) == NULL ) 
+	goto err;
+    }
+  else
+    {
+      if ( (workC = nsp_alloc_doubleC(lwork)) == NULL ) 
+	goto err;
+    }
+
+  sym_flag = nsp_mat_is_symmetric(A);
+
+  if ( A->rc_type == 'r' ) 
+    {
+      if ( sym_flag )
+	C2F(dspadm)(&ideg, &m, &t, A->R, &m, work, &lwork, ipiv, &iexph, &ns, &iflag);
+      else
+	C2F(dgpadm)(&ideg, &m, &t, A->R, &m, work, &lwork, ipiv, &iexph, &ns, &iflag);
+    }
+  else
+    {
+      if ( sym_flag )
+	C2F(zhpadm)(&ideg, &m, &t, A->C, &m, workC, &lwork, ipiv, &iexph, &ns, &iflag);
+      else
+	C2F(zgpadm)(&ideg, &m, &t, A->C, &m, workC, &lwork, ipiv, &iexph, &ns, &iflag);
+    }
+
+  if ( iflag != 0 )
+    {
+      Scierror("Error: failure in nsp_expm\n");
+      goto err;
+    }
+
+  if ( A->rc_type == 'r' ) 
+    memcpy(A->R,&(work[iexph-1]),m*m*sizeof(double));
+  else
+    memcpy(A->C,&(workC[iexph-1]),m*m*sizeof(doubleC));
+
+  FREE(ipiv);
+  FREE(work);
+  FREE(workC);
+  return OK;
+
+ err:
+  FREE(ipiv);
+  FREE(work);
+  FREE(workC);
+  return FAIL;
 }

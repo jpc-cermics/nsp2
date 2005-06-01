@@ -179,8 +179,6 @@ static int int_det( Stack stack, int rhs, int opt, int lhs)
  * interface for nsp_spec: 
  */
 
-static int nsp_mat_is_symmetric(NspMatrix *A);
-
 static int int_spec( Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A,*d,*v;
@@ -219,35 +217,6 @@ static int int_spec( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-/* utility */
-
-static int nsp_mat_is_symmetric(NspMatrix *A)
-{
-  int i,j;
-  if ( A->m != A->n ) return FALSE;
-  if ( A->rc_type == 'r') 
-    {
-      for ( i=0 ; i < A->m ; i++)
-	for ( j=0 ; j < i ; j++)
-	  {
-	    double dx= Abs(A->R[i+j*A->m] - A->R[j+i*A->m]);
-	    if ( A->R[i+j*A->m] + dx > A->R[i+j*A->m]) 
-	      return FALSE;
-	  }
-    }
-  else 
-    {
-      for ( i=0 ; i < A->m ; i++)
-	for ( j=0 ; j < i ; j++)
-	  {
-	    double dxr= Abs(A->C[i+j*A->m].r - A->C[j+i*A->m].r);
-	    double dxi= Abs(A->C[i+j*A->m].i - A->C[j+i*A->m].i);
-	    if ( A->C[i+j*A->m].r + dxr > A->C[i+j*A->m].r) return FALSE;
-	    if ( A->C[i+j*A->m].i + dxi > A->C[i+j*A->m].i) return FALSE;
-	  }
-    }
-  return TRUE;
-}
 
 /*
  * interface for nsp_inv: 
@@ -442,6 +411,21 @@ static int int_hess( Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * interface for nsp_expm: 
+ */
+
+static int int_expm( Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A;
+  int_types T[] = {matcopy,t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG;
+  CheckLhs(0,1);
+  if ( nsp_expm(A) == FAIL) return RET_BUG;
+  NSP_OBJECT(A)->ret_pos=1;
+  return Max(lhs,1);
+}
+
+/*
  * The Interface for basic matrices operation 
  */
 
@@ -458,6 +442,7 @@ static OpTab Lapack_func[] = {
   {"lu",int_lu},
   {"balanc",int_balanc},
   {"hess",int_hess},
+  {"expm",int_expm},
   {(char *) 0, NULL}
 };
 
