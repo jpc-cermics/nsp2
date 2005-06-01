@@ -381,6 +381,7 @@ NspMatrix *nsp_matrix_copy(const NspMatrix *A)
       memcpy(Mat->C,A->C, (Mat->mn)*sizeof(doubleC));
       break;
     }
+  Mat->convert=A->convert;
   return(Mat);
 }
 
