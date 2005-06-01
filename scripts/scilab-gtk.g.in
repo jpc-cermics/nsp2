@@ -33,7 +33,7 @@ export PATH
 rest="no"
 case $# in
     0)
-       $SCI/bin/zterm -e $SCI/bin/scilex $start_file $arguments 
+       $SCI/bin/zterm -e $SCI/bin/scilex $start_file $arguments &
         ;;
     2)
         case $1 in
@@ -193,3 +193,4 @@ if test "$rest" = "yes"; then
       $sci_exe $sci_args 
   fi 
 fi
+
