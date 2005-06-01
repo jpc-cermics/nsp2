@@ -15,5 +15,6 @@ extern double nsp_norm(NspMatrix *A,char flag);
 extern int nsp_balanc(NspMatrix *A,NspMatrix **D);
 extern int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
 extern int nsp_hess(NspMatrix *A,NspMatrix **U) ;
-
+extern int nsp_mat_is_symmetric(NspMatrix *A);
+extern int nsp_expm(NspMatrix *A);
 #endif 

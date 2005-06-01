@@ -291,4 +291,10 @@ extern int C2F(zunmqr) (char *side, char *trans, int *m, int *n, int *k, doubleC
 extern int C2F(zunmr3) (char *side, char *trans, int *m, int *n, int *k, int *l, doubleC *a, int *lda, doubleC *tau, doubleC *c, int *ldc, doubleC *work, int *info, int side_len, int trans_len);
 extern int C2F(zunmrz) (char *side, char *trans, int *m, int *n, int *k, int *l, doubleC *a, int *lda, doubleC *tau, doubleC *c, int *ldc, doubleC *work, int *lwork, int *info, int side_len, int trans_len);
 
+/* headers for expokit routines */
+extern int C2F(dgpadm)(int *ideg,int *m, double *t, double *H, int *ldh, double *wsp, int *lwsp,int *ipiv, int *iexph, int *ns,int *iflag);
+extern int C2F(dspadm)(int *ideg,int *m, double *t, double *H, int *ldh, double *wsp, int *lwsp,int *ipiv, int *iexph, int *ns,int *iflag);
+extern int C2F(zgpadm)(int *ideg,int *m, double *t, doubleC *H, int *ldh, doubleC *wsp, int *lwsp, int *ipiv,int *iexph, int *ns, int *iflag);
+extern int C2F(zhpadm)(int *ideg,int *m, double *t, doubleC *H, int *ldh, doubleC *wsp, int *lwsp, int *ipiv,int *iexph, int *ns, int *iflag);
+
 #endif
