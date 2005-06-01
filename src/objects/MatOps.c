@@ -1842,12 +1842,12 @@ int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B)
       if ( A->rc_type == 'r' )
 	{
 	  for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = 0.0;
-	  for ( i = 0 ; i < A->mn ; i+=A->m ) A->R[i] = 1.0;
+	  for ( i = 0 ; i < A->mn ; i+=A->m+1 ) A->R[i] = 1.0;
 	}
       else
 	{
 	  for ( i = 0 ; i < A->mn ; i++ ) { A->C[i].r = 0.0 ; A->C[i].i = 0.0; }  
-	  for ( i = 0 ; i < A->mn ; i+=A->m ) A->C[i].r = 1.0;
+	  for ( i = 0 ; i < A->mn ; i+=A->m+1 ) A->C[i].r = 1.0;
 	}
       return OK;
     }
@@ -1962,32 +1962,76 @@ int nsp_mat_pow_matmat(NspMatrix *A, NspMatrix *B)
 
 /**
  * nsp_mat_pow_scalarmat:
+ *
+ * @B: a #NspMatrix which must be square 
  * @A: a #NspMatrix which must be a scalar 
- * @B: a #NspMatrix which must be square
  *  
  * The operation A^B is done with the generic interface int_mx_mopscal
  * which branches to one of the 3 routines:
  *        1/ nsp_mat_pow_matscalar(A,B) if B is a scalar 
  *        2/ nsp_mat_pow_matmat(A,B), if neither A and B are scalar
  *        3/ nsp_mat_pow_scalarmat(B,A), if A is a scalar
+ * caution B is overwritten with the resulting matrix.
  *
- * XXXX FIXME: to complete when nsp will have an exponential 
- * matrix routine ( A^B = e^(ln(A)*B) )
+ * algorithm : A^B = e^(ln(A)*B), so we use expm( ln(A)*B )
  * 
- * Return value: FAIL 
+ * Return value: OK or FAIL 
  **/
 int nsp_mat_pow_scalarmat(NspMatrix *B, NspMatrix *A) 
 {
+  double a;
+  doubleC ac, acc;
+  char rc_flag;
+  int i;
+  NspMatrix *C; /* used because A must not be modified : C will contain the scalar ln(a) */
+
   if ( B->m != B->n )
     {
       Scierror("Error:\t in scalar^M, the exponent M must be a square matrix\n");
       return FAIL;
     }
 
-  Scierror("Error:\t  scalar^M is not currently implemented\n");
+  if ( A->rc_type == 'r' )
+    { a = A->R[0]; rc_flag = 'r';}
+  else
+    { ac = A->C[0]; rc_flag = 'c';}
+
+  if ( (rc_flag == 'r' && a == 0.0) || (rc_flag == 'c' && ac.r == 0.0 && ac.i == 0.0) )  /* return nul matrix */
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < B->mn ; i++ ) B->R[i] = 0.0;
+      else
+	for ( i = 0 ; i < B->mn ; i++ ) { B->C[i].r = 0.0; B->C[i].i = 0.0; }  /* a voir */
+      return OK;
+    }
+
+  if ( rc_flag == 'r'  && a < 0.0 ) {ac.r = a; ac.i = 0.0; rc_flag = 'c';}
+
+  if ( (C = nsp_matrix_create(NVOID,rc_flag,1,1)) == NULLMAT ) return FAIL;
+
+  if ( rc_flag == 'c' )
+    {
+      acc = ac;
+      nsp_log_c(&acc, &ac);
+      C->C[0] = ac;
+    }
+  else
+    {
+      a = log(a);
+      C->R[0] = a;
+    }
+
+  if ( nsp_mat_mult_scalar(B, C) == FAIL ) goto err;
+
+  if ( nsp_expm(B) == FAIL ) goto err;
+
+  nsp_matrix_destroy(C); 
+  return OK;
+
+ err:
+  nsp_matrix_destroy(C); 
   return FAIL;
 }
-
 
 
 /*
