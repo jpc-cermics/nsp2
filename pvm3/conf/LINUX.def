@@ -20,6 +20,6 @@ ARCHDLIB	=
 ARCHDOBJ	=
 ARCHLIB		=
 HASRANLIB	=	t
-AR			=	ar
+AR		=	ar
 PVM_ARCH	=	LINUX
 MAKE		=	make
