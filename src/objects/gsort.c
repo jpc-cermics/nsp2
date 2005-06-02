@@ -447,12 +447,12 @@ void mergesort(double *a,int *p,int flag, int fromIndex, int toIndex)
 	      do
 		{
 		  a[j] = a[j - 1];
-		  p[j] = j; /* start at 1 */
+		  if ( p != NULL) p[j] = j; /* start at 1 */
 		  j--;
 		}
 	      while (j > chunk  && a[j - 1] > elem );
 	      a[j] = elem;
-	      p[j] = jinit+1; /* start at 1 */
+	      if ( p != NULL) p[j] = jinit+1; /* start at 1 */
 	    }
 	}
     }
