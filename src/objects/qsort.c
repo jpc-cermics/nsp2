@@ -82,14 +82,14 @@
  * es et es1 
  * par exemple si on veut pour une matrice faire un sort de chacune 
  * de ces lignes la matrice etant stockee par colonne a[i+n*j] 
- * on va faire n appels a sciqsort((char *) &a[i],....)
+ * on va faire n appels a nsp_qsort((char *) &a[i],....)
  * les increments es et es1 doivent etre de la taille n*sizeof(elt-de-a)
  * par contre swap code ne doit permuter que les elements de la ligne i
  * dans ce cas on donnera a escode et es1code la valeur N
  * sinon cas standard on leur donnera la valeur 1;
  */
 
-void sciqsort(char *a, char *tab, int flag, int n, int es, int es1, int (*cmp) (/* ??? */), int (*swapcode) (/* ??? */), int (*swapcodeind) (/* ??? */))
+void nsp_qsort(char *a, char *tab, int flag, int n, int es, int es1, int (*cmp) (/* ??? */), int (*swapcode) (/* ??? */), int (*swapcodeind) (/* ??? */))
 {
   char *pa, *pb, *pc, *pd, *pl, *pm, *pn;
   char *taba, *tabb, *tabc, *tabd, *tabl, *tabm, *tabn;
@@ -194,7 +194,7 @@ void sciqsort(char *a, char *tab, int flag, int n, int es, int es1, int (*cmp) (
   vecswapind(tabb, tabn - r1, r1);
 
   if ((r = pb - pa) > es )
-    sciqsort(a, tab,flag, r / es, es, es1, cmp,swapcode,swapcodeind);
+    nsp_qsort(a, tab,flag, r / es, es, es1, cmp,swapcode,swapcodeind);
   if ((r = pd - pc) > es) { 
     /* Iterate rather than recurse to save stack space */
     a = pn - r;

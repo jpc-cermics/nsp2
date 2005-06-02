@@ -83,7 +83,7 @@ int C2F(gsort_uuuu)(xI,xD,ind,iflag,m,n,type,iord)
     case 'c' :  CNAME(RowSort,int)(xI,ind,*iflag,*m,*n,iord[0]);break;
     case 'l' :  
       if ( type[1] == 'r' ) 
-	CNAME(LexiRow,double)((int *)xD,ind,*iflag,*m,*n,iord[0]);
+	CNAME(LexiRow,double)(xD,ind,*iflag,*m,*n,iord[0]);
       else
 	CNAME(LexiCol,double)(xD,ind,*iflag,*m,*n,iord[0]);
       break;
