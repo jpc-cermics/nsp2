@@ -64,10 +64,10 @@ static void CNAME(ColSort,char)(a,ind,flag,n,p,dir)
     }
   for ( j= 0 ; j < p ; j++ ) 
     {
-      sciqsort((char *) (a+n*j),(char *) (ind+n*j),flag, n, 
-	       sizeof(char *),sizeof(int), 
-	       (dir == 'i' ) ? CNAME(compareC,char) : CNAME(compareD,char),
-	       CNAME(swapcode,char),swapcodeind);
+      nsp_qsort((char *) (a+n*j),(char *) (ind+n*j),flag, n, 
+		sizeof(char *),sizeof(int), 
+		(dir == 'i' ) ? CNAME(compareC,char) : CNAME(compareD,char),
+		CNAME(swapcode,char),swapcodeind);
     }
 }
 
@@ -94,10 +94,10 @@ static void CNAME(RowSort,char)(a,ind,flag,n,p,dir)
     }
   for ( i = 0 ; i < n ; i++) 
     {
-      sciqsort((char *) (a+i),(char *) (ind+i),flag, p, 
-	       n*sizeof(char *),n*sizeof(int), 
-	       (dir == 'i' ) ? CNAME(compareC,char):CNAME(compareD,char),
-	       CNAME(swapcode,char),swapcodeind);
+      nsp_qsort((char *) (a+i),(char *) (ind+i),flag, p, 
+		n*sizeof(char *),n*sizeof(int), 
+		(dir == 'i' ) ? CNAME(compareC,char):CNAME(compareD,char),
+		CNAME(swapcode,char),swapcodeind);
     }
 }
 
@@ -118,10 +118,10 @@ static void CNAME(GlobalSort,char)(a,ind,flag,n,p,dir)
       for ( i = 0 ; i < n*p ; i++) 
 	ind[i]= i+1;
     }
-  sciqsort((char *) (a),(char *) (ind),flag, n*p, 
-	   sizeof(char *),sizeof(int), 
-	   (dir == 'i' ) ? CNAME(compareC,char):CNAME(compareD,char),
-	   CNAME(swapcode,char),swapcodeind);
+  nsp_qsort((char *) (a),(char *) (ind),flag, n*p, 
+	    sizeof(char *),sizeof(int), 
+	    (dir == 'i' ) ? CNAME(compareC,char):CNAME(compareD,char),
+	    CNAME(swapcode,char),swapcodeind);
 }
 
 /*******************************************************
@@ -199,12 +199,12 @@ static void CNAME(LexiRow,char)(a,ind,flag,n,p,dir)
   if ( flag == 1) 
     {
       for ( i = 0 ; i < n ; i++) 
-	  ind[i]= i+1;
+	ind[i]= i+1;
     }
-  sciqsort((char *) (a),(char *) (ind),flag, n, 
-	   sizeof(char*),sizeof(int), 
-	   (dir == 'i' ) ? CNAME(LexiRowcompareC,char):CNAME(LexiRowcompareD,char),
-	   CNAME(LexiRowswapcode,char),swapcodeind);
+  nsp_qsort((char *) (a),(char *) (ind),flag, n, 
+	    sizeof(char*),sizeof(int), 
+	    (dir == 'i' ) ? CNAME(LexiRowcompareC,char):CNAME(LexiRowcompareD,char),
+	    CNAME(LexiRowswapcode,char),swapcodeind);
 }
 
 /******************************************************
@@ -274,13 +274,13 @@ static void CNAME(LexiCol,char)(a,ind,flag,n,p,dir)
   if ( flag == 1) 
     {
       for ( i = 0 ; i < p ; i++) 
-	  ind[i]= i+1;
+	ind[i]= i+1;
     }
-  sciqsort((char *) (a),(char *) (ind),flag, p, 
-	   n*sizeof(char*),sizeof(int), 
-	   (dir == 'i' ) ? CNAME(LexiColcompareC,char):CNAME(LexiColcompareD,char),
-	   CNAME(LexiColswapcode,char),
-	   swapcodeind);
+  nsp_qsort((char *) (a),(char *) (ind),flag, p, 
+	    n*sizeof(char*),sizeof(int), 
+	    (dir == 'i' ) ? CNAME(LexiColcompareC,char):CNAME(LexiColcompareD,char),
+	    CNAME(LexiColswapcode,char),
+	    swapcodeind);
 }
 
 

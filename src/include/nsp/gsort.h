@@ -1,8 +1,8 @@
 #ifndef NSP_INC_GSORT_H 
 #define NSP_INC_GSORT_H 
 
-extern void sciqsort(char *a, char *tab, int flag, int n, int es, int es1, 
-		     int (*cmp) (), int (*swapcode) (), int (*swapcodeind) ());
+extern void nsp_qsort(char *a, char *tab, int flag, int n, int es, int es1, 
+		      int (*cmp) (), int (*swapcode) (), int (*swapcodeind) ());
 
 #define swapcodeind CNAME(swapcode,int)
 
