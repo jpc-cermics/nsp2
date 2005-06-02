@@ -101,7 +101,6 @@ int C2F(gsort_uuuu)(xI,xD,ind,iflag,m,n,type,iord)
  * type : the operation ( see the interface ) 
  * iord : 'i' or 'd' : increasind or decreasing sort 
  */
-#ifndef TEST 
 
 void C2F(gsorts)(char **data, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord)
 {
@@ -119,31 +118,6 @@ void C2F(gsorts)(char **data, int *ind, int *iflag, int *m, int *n,nsp_const_str
     default :  CNAME(GlobalSort,char)(data,ind,*iflag,*m,*n,iord[0]);break;
     }
 }
-#endif 
-
-/*
- * TEST 
- */
-
-#ifdef TEST 
-
-void test_internal_gsort()
-{
-  printf("Test for char \n");
-  CNAME(sorttest,char)() ;
-  printf("Test for int \n");
-  CNAME(sorttest,int)() ;
-  printf("Test for double \n");
-  CNAME(sorttest,double)() ;
-}
-
-main()
-{
-  test_internal_gsort()
-    return(0);
-}
-#endif
-
 
 /* Arrays.java -- Utility class with methods to operate on arrays
  *   Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004
