@@ -1,58 +1,58 @@
-#ifndef NSP_INC_GSORT_GEN
-#define NSP_INC_GSORT_GEN
+#ifndef NSP_INC_GSORT_
+#define NSP_INC_GSORT_
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2005) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-static void CNAME(ColSort,TYPE)();
-static void CNAME(RowSort,TYPE)();
-static void CNAME(GlobalSort,TYPE)();
-static void CNAME(LexiRow,TYPE)();
-static void CNAME(LexiCol,TYPE)();
-static void CNAME(inita,TYPE)();
-static void CNAME(afficher,TYPE)();
-static void CNAME(sorttest,TYPE)();
+static void CNAME(ColSort,ELT_TYPE)();
+static void CNAME(RowSort,ELT_TYPE)();
+static void CNAME(GlobalSort,ELT_TYPE)();
+static void CNAME(LexiRow,ELT_TYPE)();
+static void CNAME(LexiCol,ELT_TYPE)();
 
-
-/******************************************************
+/*
  * Generic code for Sorting Matrices a[i+n*j] 
  * This code is inserted in gsort.c 
- * with TYPE == double or type = int 
- ******************************************************/
+ * with ELT_TYPE == double or int
+ * 
+  sed -e "s/ELT_TYPE/double/g" -e "s/NSP_INC_GSORT_/NSP_INC_GSORT_DOUBLE/" gsort-gen.h >! gsort-double.h
+  sed -e "s/ELT_TYPE/int/g" -e "s/NSP_INC_GSORT_/NSP_INC_GSORT_INT/" gsort-gen.h >! gsort-int.h
+ *
+ */
 
-static int CNAME(swapcode,TYPE)(parmi, parmj, n) 
+static int CNAME(swapcode,ELT_TYPE)(parmi, parmj, n) 
      char *parmi,*parmj;
      int n;
 { 		
   int i = n;
-  register TYPE *pi = (TYPE *) (parmi); 		
-  register TYPE *pj = (TYPE *) (parmj); 
+  register ELT_TYPE *pi = (ELT_TYPE *) (parmi); 		
+  register ELT_TYPE *pj = (ELT_TYPE *) (parmj); 
   do { 						
-    register TYPE t = *pi;		
+    register ELT_TYPE t = *pi;		
     *pi++ = *pj;				
     *pj++ = t;				
   } while (--i > 0);				
   return(0);
 }
 
-static int CNAME(compareC,TYPE)(i,j)
+static int CNAME(compareC,ELT_TYPE)(i,j)
      char *i,*j;
 {
-  if ( *((TYPE *)i) > *((TYPE *)j))
+  if ( *((ELT_TYPE *)i) > *((ELT_TYPE *)j))
     return (1);
-  if ( *((TYPE *)i) < *((TYPE *)j))
+  if ( *((ELT_TYPE *)i) < *((ELT_TYPE *)j))
     return (-1);
   return (0);
 }
 
-static int CNAME(compareD,TYPE)(i,j)
+static int CNAME(compareD,ELT_TYPE)(i,j)
      char *i,*j;
 {
-  if ( *((TYPE *)i) < *((TYPE *)j))
+  if ( *((ELT_TYPE *)i) < *((ELT_TYPE *)j))
     return (1);
-  if ( *((TYPE *)i) > *((TYPE *)j))
+  if ( *((ELT_TYPE *)i) > *((ELT_TYPE *)j))
     return (-1);
   return (0);
 }
@@ -61,8 +61,8 @@ static int CNAME(compareD,TYPE)(i,j)
  * Column sort of a matrix 
  ******************************************************/
 
-static void CNAME(ColSort,TYPE)(a,ind,flag,n,p,dir)
-     TYPE *a;
+static void CNAME(ColSort,ELT_TYPE)(a,ind,flag,n,p,dir)
+     ELT_TYPE *a;
      int *ind;
      int flag,n,p;
      char dir;
@@ -79,9 +79,9 @@ static void CNAME(ColSort,TYPE)(a,ind,flag,n,p,dir)
   for ( j= 0 ; j < p ; j++ ) 
     {
       sciqsort((char *) (a+n*j),(char *) (ind+n*j),flag, n, 
-	       sizeof(TYPE),sizeof(int), 
-	       (dir == 'c' ) ? CNAME(compareC,TYPE) : CNAME(compareD,TYPE),
-	       CNAME(swapcode,TYPE),swapcodeind);
+	       sizeof(ELT_TYPE),sizeof(int), 
+	       (dir == 'i' ) ? CNAME(compareC,ELT_TYPE) : CNAME(compareD,ELT_TYPE),
+	       CNAME(swapcode,ELT_TYPE),swapcodeind);
     }
 }
 
@@ -89,8 +89,8 @@ static void CNAME(ColSort,TYPE)(a,ind,flag,n,p,dir)
  * Row sort of a matrix 
  ******************************************************/
 
-static void CNAME(RowSort,TYPE)(a,ind,flag,n,p,dir)
-     TYPE *a;
+static void CNAME(RowSort,ELT_TYPE)(a,ind,flag,n,p,dir)
+     ELT_TYPE *a;
      int *ind;
      int n,p,flag;
      char dir;
@@ -109,9 +109,9 @@ static void CNAME(RowSort,TYPE)(a,ind,flag,n,p,dir)
   for ( i = 0 ; i < n ; i++) 
     {
       sciqsort((char *) (a+i),(char *) (ind+i),flag, p, 
-	       n*sizeof(TYPE),n*sizeof(int), 
-	       (dir == 'c' ) ? CNAME(compareC,TYPE):CNAME(compareD,TYPE),
-	       CNAME(swapcode,TYPE),swapcodeind);
+	       n*sizeof(ELT_TYPE),n*sizeof(int), 
+	       (dir == 'i' ) ? CNAME(compareC,ELT_TYPE):CNAME(compareD,ELT_TYPE),
+	       CNAME(swapcode,ELT_TYPE),swapcodeind);
     }
 }
 
@@ -120,22 +120,22 @@ static void CNAME(RowSort,TYPE)(a,ind,flag,n,p,dir)
  * Global sort of a Matrix
  ******************************************************/
 
-static void CNAME(GlobalSort,TYPE)(a,ind,flag,n,p,dir)
-     TYPE *a;
+static void CNAME(GlobalSort,ELT_TYPE)(a,ind,flag,n,p,dir)
+     ELT_TYPE *a;
      int *ind;
      int n,p,flag;
      char dir;
 {  
-  int i,j;
+  int i;
   if ( flag == 1) 
     {
       for ( i = 0 ; i < n*p ; i++) 
 	ind[i]= i+1;
     }
   sciqsort((char *) (a),(char *) (ind),flag, n*p, 
-	   sizeof(TYPE),sizeof(int), 
-	   (dir == 'c' ) ? CNAME(compareC,TYPE):CNAME(compareD,TYPE),
-	   CNAME(swapcode,TYPE),swapcodeind);
+	   sizeof(ELT_TYPE),sizeof(int), 
+	   (dir == 'i' ) ? CNAME(compareC,ELT_TYPE):CNAME(compareD,ELT_TYPE),
+	   CNAME(swapcode,ELT_TYPE),swapcodeind);
 }
 
 /*******************************************************
@@ -144,59 +144,61 @@ static void CNAME(GlobalSort,TYPE)(a,ind,flag,n,p,dir)
  *  to sort them 
  ******************************************************/
 
-static int CNAME(lexicols,TYPE) =1;
-static int CNAME(lexirows,TYPE) =1;
+static int CNAME(lexicols,ELT_TYPE) =1;
+static int CNAME(lexirows,ELT_TYPE) =1;
 
-static int CNAME(setLexiSize,TYPE)(n,p) 
+static void CNAME(setLexiSize,ELT_TYPE)(n,p) 
      int p,n;
 {
-  CNAME(lexicols,TYPE) = p;
-  CNAME(lexirows,TYPE) = n;
+  CNAME(lexicols,ELT_TYPE) = p;
+  CNAME(lexirows,ELT_TYPE) = n;
 }
 
-static  int CNAME(LexiRowcompareC,TYPE)(int *i, int *j)
+static  int CNAME(LexiRowcompareC,ELT_TYPE)(i,j)
+     int *i; int *j;
 {
   int jc;
-  for ( jc = 0 ; jc < CNAME(lexicols,TYPE) ; jc++) 
+  for ( jc = 0 ; jc < CNAME(lexicols,ELT_TYPE) ; jc++) 
     {
       if (*i > *j)
 	return (1);
       if (*i < *j)
 	return (-1);
-      i += CNAME(lexirows,TYPE);
-      j += CNAME(lexirows,TYPE);
+      i += CNAME(lexirows,ELT_TYPE);
+      j += CNAME(lexirows,ELT_TYPE);
     }
   return (0);
 }
-static  int CNAME(LexiRowcompareD,TYPE)(int *i, int *j)
+static  int CNAME(LexiRowcompareD,ELT_TYPE)(i,j)
+     int *i; int *j;
 {
   int jc;
-  for ( jc = 0 ; jc < CNAME(lexicols,TYPE) ; jc++) 
+  for ( jc = 0 ; jc < CNAME(lexicols,ELT_TYPE) ; jc++) 
     {
       if (*i < *j)
 	return (1);
       if (*i > *j)
 	return (-1);
-      i += CNAME(lexirows,TYPE);
-      j += CNAME(lexirows,TYPE);
+      i += CNAME(lexirows,ELT_TYPE);
+      j += CNAME(lexirows,ELT_TYPE);
     }
   return (0);
 }
 
-static int CNAME(LexiRowswapcode,TYPE)(parmi, parmj, n) 
+static int CNAME(LexiRowswapcode,ELT_TYPE)(parmi, parmj, n) 
      char *parmi,*parmj;
      int n;
 { 		
   int i = n,j;
-  register TYPE *pi = (TYPE *) (parmi); 		
-  register TYPE *pj = (TYPE *) (parmj); 
-  if ( n!= 1) printf(" swapcode avec n != 1\n");
+  register ELT_TYPE *pi = (ELT_TYPE *) (parmi); 		
+  register ELT_TYPE *pj = (ELT_TYPE *) (parmj); 
+  /* if ( n!= 1) printf(" swapcode avec n != 1\n"); */
   do { 
-    for ( j = 0 ; j < CNAME(lexicols,TYPE) ; j++) 
+    for ( j = 0 ; j < CNAME(lexicols,ELT_TYPE) ; j++) 
       {
-	register TYPE t = *(pi +CNAME(lexirows,TYPE)*j);		
-	*(pi + CNAME(lexirows,TYPE)*j) = *(pj+CNAME(lexirows,TYPE)*j);				
-	*(pj + CNAME(lexirows,TYPE)*j) = t;	
+	register ELT_TYPE t = *(pi +CNAME(lexirows,ELT_TYPE)*j);		
+	*(pi + CNAME(lexirows,ELT_TYPE)*j) = *(pj+CNAME(lexirows,ELT_TYPE)*j);				
+	*(pj + CNAME(lexirows,ELT_TYPE)*j) = t;	
       }
     pi++;
     pj++;
@@ -205,22 +207,22 @@ static int CNAME(LexiRowswapcode,TYPE)(parmi, parmj, n)
 }
 
 
-static void CNAME(LexiRow,TYPE)(a,ind,flag,n,p,dir)
+static void CNAME(LexiRow,ELT_TYPE)(a,ind,flag,n,p,dir)
      int *a,*ind;
      int n,p;
      char dir;
 {
-  int i,j;
-  CNAME(setLexiSize,TYPE)(n,p);
+  int i;
+  CNAME(setLexiSize,ELT_TYPE)(n,p);
   if ( flag == 1) 
     {
       for ( i = 0 ; i < n ; i++) 
 	  ind[i]= i+1;
     }
   sciqsort((char *) (a),(char *) (ind),flag, n, 
-	   sizeof(TYPE),sizeof(int), 
-	   (dir == 'c' ) ? CNAME(LexiRowcompareC,TYPE):CNAME(LexiRowcompareD,TYPE),
-	   CNAME(LexiRowswapcode,TYPE),swapcodeind);
+	   sizeof(ELT_TYPE),sizeof(int), 
+	   (dir == 'i' ) ? CNAME(LexiRowcompareC,ELT_TYPE):CNAME(LexiRowcompareD,ELT_TYPE),
+	   CNAME(LexiRowswapcode,ELT_TYPE),swapcodeind);
 }
 
 /******************************************************
@@ -229,11 +231,11 @@ static void CNAME(LexiRow,TYPE)(a,ind,flag,n,p,dir)
  *  to sort them 
  ******************************************************/
 
-static  int CNAME(LexiColcompareC,TYPE)(i,j)
-     TYPE *i,*j;
+static  int CNAME(LexiColcompareC,ELT_TYPE)(i,j)
+     ELT_TYPE *i,*j;
 {
   int ic;
-  for ( ic = 0 ; ic < CNAME(lexirows,TYPE) ; ic++) 
+  for ( ic = 0 ; ic < CNAME(lexirows,ELT_TYPE) ; ic++) 
     {
       if (*i > *j)
 	return (1);
@@ -244,11 +246,11 @@ static  int CNAME(LexiColcompareC,TYPE)(i,j)
     }
   return (0);
 }
-static  int CNAME(LexiColcompareD,TYPE)(i,j)
-     TYPE *i,*j;
+static  int CNAME(LexiColcompareD,ELT_TYPE)(i,j)
+     ELT_TYPE *i,*j;
 {
   int ic;
-  for ( ic = 0 ; ic < CNAME(lexirows,TYPE) ; ic++) 
+  for ( ic = 0 ; ic < CNAME(lexirows,ELT_TYPE) ; ic++) 
     {
       if (*i < *j)
 	return (1);
@@ -260,130 +262,50 @@ static  int CNAME(LexiColcompareD,TYPE)(i,j)
   return (0);
 }
 
-static int CNAME(LexiColswapcode,TYPE)(parmi, parmj, n) 
+static int CNAME(LexiColswapcode,ELT_TYPE)(parmi, parmj, n) 
      char *parmi,*parmj;
      int n;
 { 		
   int i = n,ir;
-  register TYPE *pi = (TYPE *) (parmi); 		
-  register TYPE *pj = (TYPE *) (parmj); 
-  if ( n!= 1) printf(" swapcode avec n != 1\n");
+  register ELT_TYPE *pi = (ELT_TYPE *) (parmi); 		
+  register ELT_TYPE *pj = (ELT_TYPE *) (parmj); 
+  /* if ( n!= 1) printf(" swapcode avec n != 1\n"); */
   do { 
-    for ( ir = 0 ; ir < CNAME(lexirows,TYPE) ; ir++) 
+    for ( ir = 0 ; ir < CNAME(lexirows,ELT_TYPE) ; ir++) 
       {
-	register TYPE t = *(pi +ir);		
+	register ELT_TYPE t = *(pi +ir);		
 	*(pi +ir) = *(pj+ir);				
 	*(pj +ir) = t;	
       }
-    pi += CNAME(lexirows,TYPE) ;
-    pj += CNAME(lexirows,TYPE) ;
+    pi += CNAME(lexirows,ELT_TYPE) ;
+    pj += CNAME(lexirows,ELT_TYPE) ;
   } while (--i > 0);				
   return(0);
 }
 
 
-static void CNAME(LexiCol,TYPE)(a,ind,flag,n,p,dir)
-     TYPE *a;
+static void CNAME(LexiCol,ELT_TYPE)(a,ind,flag,n,p,dir)
+     ELT_TYPE *a;
      int *ind;
      int n,p;
      char dir;
 {
-  int i,j;
-  CNAME(setLexiSize,TYPE)(n,p);
+  int i;
+  CNAME(setLexiSize,ELT_TYPE)(n,p);
   if ( flag == 1) 
     {
       for ( i = 0 ; i < p ; i++) 
 	  ind[i]= i+1;
     }
   sciqsort((char *) (a),(char *) (ind),flag, p, 
-	   n*sizeof(TYPE),sizeof(int), 
-	   (dir == 'c' ) ? CNAME(LexiColcompareC,TYPE):CNAME(LexiColcompareD,TYPE),
-	   CNAME(LexiColswapcode,TYPE),
+	   n*sizeof(ELT_TYPE),sizeof(int), 
+	   (dir == 'i' ) ? CNAME(LexiColcompareC,ELT_TYPE):CNAME(LexiColcompareD,ELT_TYPE),
+	   CNAME(LexiColswapcode,ELT_TYPE),
 	   swapcodeind);
 }
 
+#endif 
 
-
-#ifdef TEST 
-
-#define N 2
-#define P 2 
-
-static TYPE CNAME(aa,TYPE)[4*4] = {4,4,1,1,6,7,2,1,3,4,5,2,9,8,7,6};
-/*static TYPE aa[4*4] = {6,6,6,6,6,6,6,6,6,6,5,5,5,5,5,5}; */
-
-static void CNAME(inita,TYPE)(a,n,p)
-     TYPE *a;
-     int n,p;
-{
-  int i;
-  if ( n == 4 && p == 4  ) 
-    for (i=0; i < n*p; i++) a[i]=CNAME(aa,TYPE)[i];
-  else 
-    for (i=0; i < n*p; i++) a[i]=n*p-i;
-  CNAME(afficher,TYPE)(a,"a",n,p,sizeof(TYPE));
-}
-
-
-static void CNAME(afficher,TYPE)(a,name,n,p)
-     char *name;
-     TYPE *a;
-     int n,p;
-{
-  int i,j;
-  printf("%s=\n",name);
-  for ( i = 0 ; i < n ; i++) 
-    {
-      for ( j= 0 ; j < p ; j++ ) 
-	{
-	  printf("%4.2f ", a[i+N*j]);
-	}
-      printf("\n");
-    }
-}
-
-
-static void CNAME(sorttest,TYPE)()
-{
-  TYPE a[N*P],b[N*P];
-  int ind[N*P];
-  int i,flag,j;
-  int n=N,p=N;
-  flag=1;
-
-  /* Global sort example **/
-  CNAME(inita,TYPE)(a,n,p) ;
-  CNAME(GlobalSort,TYPE)(a,ind,flag,n,p,'c');
-  CNAME(afficher,TYPE)(a,"glob a",n,p);
-  afficherint(ind,"glob ind",n,p);
-
-  /* Column sort example **/
-  CNAME(inita,TYPE)(a,n,p) ;
-  CNAME(ColSort,TYPE)(a,ind,flag,n,p,'c');
-  CNAME(afficher,TYPE)(a,"col a",n,p);
-  afficherint(ind,"col ind",n,p);
-
-  /* Row sort example **/
-  CNAME(inita,TYPE)(a,n,p) ;
-  CNAME(RowSort,TYPE)(a,ind,flag,n,p,'c');
-  CNAME(afficher,TYPE)(a,"row a",n,p);
-  afficherint(ind,"row ind",n,p);
-
-  /* Lexicographic Col sort **/
-  CNAME(inita,TYPE)(a,n,p) ;
-  CNAME(LexiCol,TYPE)(a,ind,flag,n,p,'c');
-  CNAME(afficher,TYPE)(a,"lexico col a",n,p);
-  afficherint(ind,"lexico col ind",1,p);
-
-  /* Lexicographic Row sort **/
-  CNAME(inita,TYPE)(a,n,p) ;
-  CNAME(LexiRow,TYPE)(a,ind,flag,n,p,'c');
-  CNAME(afficher,TYPE)(a,"lexico Row a",n,p);
-  afficherint(ind,"lexico Row ind",n,1);
-}
-
-#endif
-#endif
 
 
 
