@@ -1250,6 +1250,70 @@ int_mxsort (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * FIXME: test for sort 
+ */
+
+#include "nsp/gsort-p.h"
+
+static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M=NULL,*Index=NULL;
+  char *type_sort[]={ "g", "gs", "gm", "c", "r", "lr" , "lc" , "ldc", "ldr", NULL };
+  char *dir_sort[]={ "i", "d",  NULL };
+  int iflag = FALSE;
+  char direction = 'd';
+  int rep_type,rep_dir;
+
+  CheckRhs(1,3);
+  if ((M=GetRealMatCopy(stack,1)) == NULLMAT ) return RET_BUG;
+
+  if ( rhs >= 2) 
+    {
+      if ((rep_type= GetStringInArray(stack,2,type_sort,1)) == -1) return RET_BUG; 
+    }
+
+  if (rhs >= 3) 
+    {
+      if ((rep_dir= GetStringInArray(stack,3,dir_sort,1)) == -1) return RET_BUG; 
+      direction = dir_sort[rep_dir][0];
+    }
+
+  if (lhs  == 2) 
+    {
+      iflag = TRUE;
+    }
+
+  switch ( rep_type  )
+    {
+    case sort_g : 
+    case sort_gs: 
+    case sort_gm: 
+      nsp_matrix_sort(M,&Index,iflag,direction,rep_type);break;
+      break;
+    case sort_c:
+      nsp_matrix_column_sort(M,&Index,iflag,direction);break;
+    case sort_r:
+      nsp_matrix_row_sort(M,&Index,iflag,direction);break;
+    case sort_lr:
+      nsp_matrix_lexical_row_sort(M,&Index,iflag,direction,'i');break;
+    case sort_lc:
+      nsp_matrix_lexical_column_sort(M,&Index,iflag,direction,'i');break;
+    case sort_ldr:
+      nsp_matrix_lexical_row_sort(M,&Index,iflag,direction,'d');
+      break;
+    case sort_ldc:
+      nsp_matrix_lexical_column_sort(M,&Index,iflag,direction,'d');  break;
+    }
+  if ( iflag == TRUE && Index == NULL) return RET_BUG;
+  NSP_OBJECT(M)->ret_pos = 1;
+  if ( lhs == 2 ) {
+    MoveObj(stack,2, NSP_OBJECT(Index));
+  }
+  return Max(lhs,1);
+} 
+
+
+/*
  *nsp_mat_sum: sum=Sum(a[,b]) 
  * a is unchanged 
  */
@@ -3819,7 +3883,6 @@ int int_number_properties(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
 /*
  * The Interface for basic matrices operation 
  */
@@ -3957,6 +4020,7 @@ static OpTab Matrix_func[] = {
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
   {"number_properties",int_number_properties},
+  {"new_sort", int_matrix_sort },
   {(char *) 0, NULL}
 };
 

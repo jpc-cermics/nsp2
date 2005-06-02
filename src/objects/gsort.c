@@ -24,10 +24,9 @@
 #include "nsp/gsort.h"
 #include "nsp/object.h"
 
-/* swapcode for indices : indices are ints **/
 
 /*
- * General sort routine for Scilab 
+ * General sorting routines 
  * xI is the transmitted table to sort ( if table is int ) 
  * xD is the transmitted table to sort ( if table is double ) 
  * ind is the int table to store the permutation 
@@ -38,8 +37,109 @@
  * iord : "i" or "d" : increasind or decreasing sort 
  */
 
-static void mergesort(double *a,int *p, int fromIndex, int toIndex);
-static void qsort_stable(double *a,int *index, int fromIndex, int toIndex);
+void mergesort(double *a,int *p,int flag, int fromIndex, int toIndex);
+static void qsort_stable(double *a,int *index,int flag, int fromIndex, int toIndex);
+
+/**
+ * nsp_matrix_sort:
+ * @A: 
+ * @Ind: 
+ * @ind_flag: 
+ * @dir: direction 'i' for increasing 'd' for decreasing 
+ * 
+ * global sort of the elements of a matrix. If flag is %TRUE 
+ * Index is computed and returned 
+ * 
+ **/
+
+
+void nsp_matrix_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_sort type)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',1,A->mn) ) == NULLMAT ) return ;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  switch (type)
+    {
+    case sort_gs:
+      /* stable quick sort */
+      qsort_stable(A->R,index,ind_flag,0,A->mn); break;
+    case sort_gm:
+      /* merge sort */
+      mergesort(A->R,index,ind_flag,0,A->mn); break;
+    default: 
+      /* non stable qsort */
+      CNAME(GlobalSort,double)(A->R,index,ind_flag,A->m,A->n,dir);
+    }
+}
+
+void nsp_matrix_column_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return ;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  CNAME(ColSort,double)(A->R,index,ind_flag,A->m,A->n,dir);
+}
+
+void nsp_matrix_row_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return ;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  CNAME(RowSort,double)(A->R,index,ind_flag,A->m,A->n,dir);
+}
+
+
+void nsp_matrix_lexical_column_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir,char mode)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',1,A->n) ) == NULLMAT ) return ;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  if ( mode == 'i') 
+    {
+      A = Mat2int(A);
+      CNAME(LexiCol,int)(A->I,index,ind_flag,A->m,A->n,dir);
+    }
+  else 
+    {
+      CNAME(LexiCol,double)(A->R,index,ind_flag,A->m,A->n,dir);
+    }
+}
+
+void nsp_matrix_lexical_row_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir,char mode)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,1) ) == NULLMAT ) return ;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  if ( mode == 'i') 
+    {
+      A = Mat2int(A);
+      CNAME(LexiRow,int)(A->I,index,ind_flag,A->m,A->n,dir);
+    }
+  else 
+    {
+      CNAME(LexiRow,double)(A->R,index,ind_flag,A->m,A->n,dir);
+    }
+}
 
 int C2F(gsort)(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord)
 {
@@ -59,13 +159,15 @@ int C2F(gsort)(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_con
     default :  
       CNAME(GlobalSort,double)(xD,ind,*iflag,*m,*n,iord[0]);break;
       /* 
-      for ( i = 0 ; i < (*m)*(*n) ; i++) ind[i]= i+1;
-      qsort_stable(xD,ind,0,(*m)*(*n)); break;
-      mergesort(xD,ind,0,(*m)*(*n)); break;
+	 for ( i = 0 ; i < (*m)*(*n) ; i++) ind[i]= i+1;
+	 qsort_stable(xD,ind,0,(*m)*(*n)); break;
+	 mergesort(xD,ind,0,(*m)*(*n)); break;
       */
     }
   return(0);
 }
+
+
 
 /*
  * just used to prevent warnings about unused functions 
@@ -142,8 +244,10 @@ static void qsort__(double *array,int *index, int from, int count);
  * @param toIndex the last index to sort (exclusive)
  */
 
-static void qsort_stable(double *a,int *index, int fromIndex, int toIndex)
+static void qsort_stable(double *a,int *index,int flag, int fromIndex, int toIndex)
 {
+  int i;
+  if ( flag == TRUE) for ( i = fromIndex ; i < toIndex - fromIndex ; i++) index[i]= i+1;
   qsort__(a,index, fromIndex, toIndex - fromIndex);
 }
 
@@ -189,12 +293,15 @@ static int med3(int a, int b, int c, double *d)
 
 static void swap(int i, int j, double *a,int *index)
 {
-  int c1= index[i];
   double c = a[i];
   a[i] = a[j];
   a[j] = c;
-  index[i] = index[j];
-  index[j] = c1;
+  if ( index != NULL) 
+    {
+      int c1= index[i];
+      index[i] = index[j];
+      index[j] = c1;
+    }
 }
 
 /**
@@ -228,8 +335,8 @@ static void qsort__(double *array,int *index, int from, int count)
     {
       for ( i = from + 1; i < from + count; i++)
 	for ( j = i;
-	     j > from && compare(array[j - 1], array[j]) > 0;
-	     j--)
+	      j > from && compare(array[j - 1], array[j]) > 0;
+	      j--)
 	  {
 	    swap(j, j - 1, array,index);
 	  }
@@ -311,166 +418,152 @@ static void qsort__(double *array,int *index, int from, int count)
 #define arraycopy(src,isrc,dest,idest,n) memcpy(dest+idest,src+isrc,(n)*sizeof(double)) 
 #define iarraycopy(src,isrc,dest,idest,n) memcpy(dest+idest,src+isrc,(n)*sizeof(int)) 
 
-void mergesort(double *a,int *p, int fromIndex, int toIndex)
-  {
-    NspMatrix *M,*IM;
-    double *src,*dest,*t;
-    int *psrc,*pdest,*pt;
-    int chunk,i,size,start;
-    /*
-     * In general, the code attempts to be simple rather than fast, the
-     * idea being that a good optimising JIT will be able to optimise it
-     * better than I can, and if I try it will make it more confusing for
-     * the JIT. First presort the array in chunks of length 6 with insertion
-     * sort. A mergesort would give too much overhead for this length.
-     */
-    for (chunk = fromIndex; chunk < toIndex; chunk += 6)
-      {
-        int end = Min(chunk + 6, toIndex);
-        for (i = chunk + 1; i < end; i++)
-          {
-            if ( a[i - 1] > a[i] )
-              {
-                /* not already sorted */
-                int j = i,jinit=i;
-                double elem = a[j];
-                do
-                  {
-                    a[j] = a[j - 1];
-		    p[j] = j; /* start at 1 */
-                    j--;
-                  }
-                while (j > chunk  && a[j - 1] > elem );
-                a[j] = elem;
-		p[j] = jinit;
-              }
-          }
-      }
-    int len = toIndex - fromIndex;
-    /* If length is smaller or equal 6 we are done. */
-    if (len <= 6)   return;
+void mergesort(double *a,int *p,int flag, int fromIndex, int toIndex)
+{
+  NspMatrix *M,*IM;
+  double *src,*dest,*t;
+  int *psrc,*pdest,*pt;
+  int chunk,i,size,start;
+  /*
+   * In general, the code attempts to be simple rather than fast, the
+   * idea being that a good optimising JIT will be able to optimise it
+   * better than I can, and if I try it will make it more confusing for
+   * the JIT. First presort the array in chunks of length 6 with insertion
+   * sort. A mergesort would give too much overhead for this length.
+   */
+    
+  if ( flag == TRUE) for ( i = fromIndex ; i < toIndex -fromIndex  ; i++) p[i]= i+1;
 
-    src = a;
-    if ((M = nsp_matrix_create(NVOID,'r',1,len) ) == NULLMAT ) return ;
-    dest = M->R;
-    t = NULL; /* t is used for swapping src and dest */
+  for (chunk = fromIndex; chunk < toIndex; chunk += 6)
+    {
+      int end = Min(chunk + 6, toIndex);
+      for (i = chunk + 1; i < end; i++)
+	{
+	  if ( a[i - 1] > a[i] )
+	    {
+	      /* not already sorted */
+	      int j = i,jinit=i;
+	      double elem = a[j];
+	      do
+		{
+		  a[j] = a[j - 1];
+		  p[j] = j; /* start at 1 */
+		  j--;
+		}
+	      while (j > chunk  && a[j - 1] > elem );
+	      a[j] = elem;
+	      p[j] = jinit+1; /* start at 1 */
+	    }
+	}
+    }
+  int len = toIndex - fromIndex;
+  /* If length is smaller or equal 6 we are done. */
+  if (len <= 6)   return;
 
-    /* same for p */
-    psrc = p;
-    if ((IM = nsp_matrix_create(NVOID,'r',1,len) ) == NULLMAT ) return ;
-    pdest = IM->I;
-    pt = NULL; /* t is used for swapping src and dest */
+  src = a;
+  if ((M = nsp_matrix_create(NVOID,'r',1,len) ) == NULLMAT ) return ;
+  dest = M->R;
+  t = NULL; /* t is used for swapping src and dest */
 
-    /* The difference of the fromIndex of the src and dest array. */
-    int srcDestDiff = -fromIndex;
+  /* same for p */
+  if ( flag == TRUE ) 
+    {
+      psrc = p;
+      if ((IM = nsp_matrix_create(NVOID,'r',1,len) ) == NULLMAT ) return ;
+      pdest = IM->I;
+      pt = NULL; /* t is used for swapping src and dest */
+    }
 
-    /* The merges are done in this loop */
-    for ( size = 6; size < len; size <<= 1)
-      {
-        for ( start = fromIndex; start < toIndex; start += size << 1)
-          {
-	    /* 
-	     * mid is the start of the second sublist;
-	     * end the start of the next sublist (or end of array).
-	     */
-            int mid = start + size;
-            int end = Min(toIndex, mid + size);
-	    /*
-	     * The second list is empty or the elements are already in
-	     * order - no need to merge
-	     */
-            if (mid >= end  || src[mid - 1] <=  src[mid])
-              {
-                arraycopy(src,start, dest, start + srcDestDiff, end - start);
-                iarraycopy(psrc,start, pdest, start + srcDestDiff, end - start);
-                /* The two halves just need swapping - no need to merge */
-              }
-            else if ( src[start] > src[end - 1] )
-              {
-                arraycopy(src, start, dest, end - size + srcDestDiff, size);
-                arraycopy(src, mid,dest, start + srcDestDiff, end - mid);
-                iarraycopy(psrc, start, pdest, end - size + srcDestDiff, size);
-                iarraycopy(psrc, mid,pdest, start + srcDestDiff, end - mid);
-              }
-            else
-              {
-                int p1 = start;
-                int p2 = mid;
-                int i = start + srcDestDiff;
-		/*
-		 * The main merge loop; terminates as soon as either
-		 * half is ended
-		 */
-                while (p1 < mid && p2 < end)
-                  {
-		    int is=(src[p1] <= src[p2]) ? p1++ : p2++;
-                    dest[i] = src[is];
-                    pdest[i++] = psrc[is];
-                  }
-		/*
-		 * Finish up by copying the remainder of whichever half
-		 * wasn't finished.
-		 */
-                if (p1 < mid)
-		  {
-		    arraycopy(src, p1, dest, i, mid - p1);
-		    iarraycopy(psrc, p1, pdest, i, mid - p1);
-		  }
-                else
-		  {
-		    arraycopy(src, p2, dest, i, end - p2);
-		    iarraycopy(psrc, p2, pdest, i, end - p2);
-		  }
-              }
-	  }
-        /* swap src and dest ready for the next merge */
-        t = src;
-        src = dest;
-        dest = t;
-        fromIndex += srcDestDiff;
-        toIndex += srcDestDiff;
-        srcDestDiff = -srcDestDiff;
-      }
-    /*
-     * make sure the result ends up back in the right place.  Note
-     * that src and dest may have been swapped above, so src
-     * contains the sorted array.
-     */
-    if (src != a)
-      {
-        /* Note that fromIndex == 0. */
-        arraycopy(src, 0, a, srcDestDiff, toIndex);
-        iarraycopy(psrc, 0, p, srcDestDiff, toIndex);
-      }
-  }
+  /* The difference of the fromIndex of the src and dest array. */
+  int srcDestDiff = -fromIndex;
 
+  /* The merges are done in this loop */
+  for ( size = 6; size < len; size <<= 1)
+    {
+      for ( start = fromIndex; start < toIndex; start += size << 1)
+	{
+	  /* 
+	   * mid is the start of the second sublist;
+	   * end the start of the next sublist (or end of array).
+	   */
+	  int mid = start + size;
+	  int end = Min(toIndex, mid + size);
+	  /*
+	   * The second list is empty or the elements are already in
+	   * order - no need to merge
+	   */
+	  if (mid >= end  || src[mid - 1] <=  src[mid])
+	    {
+	      arraycopy(src,start, dest, start + srcDestDiff, end - start);
+	      if ( flag == TRUE) iarraycopy(psrc,start, pdest, start + srcDestDiff, end - start);
+	      /* The two halves just need swapping - no need to merge */
+	    }
+	  else if ( src[start] > src[end - 1] )
+	    {
+	      arraycopy(src, start, dest, end - size + srcDestDiff, size);
+	      arraycopy(src, mid,dest, start + srcDestDiff, end - mid);
+	      if ( flag == TRUE)
+		{
+		  iarraycopy(psrc, start, pdest, end - size + srcDestDiff, size);
+		  iarraycopy(psrc, mid,pdest, start + srcDestDiff, end - mid);
+		}
+	    }
+	  else
+	    {
+	      int p1 = start;
+	      int p2 = mid;
+	      int i = start + srcDestDiff;
+	      /*
+	       * The main merge loop; terminates as soon as either
+	       * half is ended
+	       */
+	      while (p1 < mid && p2 < end)
+		{
+		  int is=(src[p1] <= src[p2]) ? p1++ : p2++;
+		  dest[i] = src[is];
+		  if (flag == TRUE ) pdest[i] = psrc[is];
+		  i++;
+		}
+	      /*
+	       * Finish up by copying the remainder of whichever half
+	       * wasn't finished.
+	       */
+	      if (p1 < mid)
+		{
+		  arraycopy(src, p1, dest, i, mid - p1);
+		  if (flag == TRUE ) iarraycopy(psrc, p1, pdest, i, mid - p1);
+		}
+	      else
+		{
+		  arraycopy(src, p2, dest, i, end - p2);
+		  if (flag == TRUE ) iarraycopy(psrc, p2, pdest, i, end - p2);
+		}
+	    }
+	}
+      /* swap src and dest ready for the next merge */
+      t = src;
+      src = dest;
+      dest = t;
+      if ( flag == TRUE)
+	{
+	  pt=psrc;
+	  psrc=pdest;
+	  pdest=pt;
+	}
+      fromIndex += srcDestDiff;
+      toIndex += srcDestDiff;
+      srcDestDiff = -srcDestDiff;
+    }
+  /*
+   * make sure the result ends up back in the right place.  Note
+   * that src and dest may have been swapped above, so src
+   * contains the sorted array.
+   */
+  if (src != a)
+    {
+      /* Note that fromIndex == 0. */
+      arraycopy(src, 0, a, srcDestDiff, toIndex);
+      if (flag == TRUE ) iarraycopy(psrc, 0, p, srcDestDiff, toIndex);
+    }
+}
 
-
-
-
-
-
-/*
-
-When copying the contents of one array into another, use the System.arraycopy method instead of an iterative loop. For example, consider the following arrays:
-
- 
-int[] first = {1, 2, 3};
-int[] second = {4, 5, 6};
-int[] third = new int[first.length + second.length];
-
-One possible way of copying the contents of the first two arrays into the third one is to use loops, such as:
-
- 
-for (int i = 0; i < first.length; i++)
-third[i] = first[i];
-for (int i = 0; i < second.length; i++)
-third[first.length + i] = second[i];
-
-However, a better way of accomplishing the same task is to use the System.arraycopy method as in the following example:
-
- 
-System.arraycopy(first, 0, third, 0, first.length);
-System.arraycopy(second, 0, third, first.length, second.length); 
-
-*/
