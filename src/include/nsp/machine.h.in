@@ -8,6 +8,9 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+/* Define if you have inline */
+#undef HAVE_INLINE
+
 /* headers */
 #undef HAVE_VALUES_H
 #undef HAVE_FLOAT_H
@@ -154,5 +157,6 @@ typedef int integer;
 #   define  SMALLEST_REAL           DBL_MIN
 #   define  LARGEST_SHORT_INTEGER   SHRT_MAX
 #   define  LARGEST_LONG_INTEGER    LONG_MAX
+
 
 #endif /* MACHINE_H  */
