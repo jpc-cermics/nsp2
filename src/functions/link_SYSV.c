@@ -90,7 +90,7 @@ void SciLink(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **
       *ilib  = Sci_dlopen(shared_path);
     }
   if (*ilib  == -1 ) return;
-  Sciprintf("shared archive loaded\r\n");
+  Sciprintf("shared archive loaded\n");
   if ( *rhs >= 2) 
     {
       i=0 ;
@@ -141,15 +141,15 @@ static int Sci_dlopen(nsp_const_string shared_path)
 #else
   shl_t hd1;
 #endif
-  char tmp_file[FSIZE+1],*getenv(const char *);
   if ( strncmp(shared_path,"nsp",6) !=0)
     {
-      Sciprintf("Loading shared library %s\r\n",shared_path);
-      /* this will load the shared library */
+      /* this will load the shared library 
+       */
+      Sciprintf("Loading shared library %s\n",shared_path);
 #ifndef hppa
-      hd1 = dlopen(tmp_file, RTLD_NOW);
+      hd1 = dlopen(shared_path, RTLD_NOW);
 #else
-      hd1 = shl_load(tmp_file, BIND_IMMEDIATE | BIND_VERBOSE ,0L);
+      hd1 = shl_load(shared_path, BIND_IMMEDIATE | BIND_VERBOSE ,0L);
 #endif
     }
   else
@@ -163,39 +163,40 @@ static int Sci_dlopen(nsp_const_string shared_path)
 #ifdef hppa
       hd1 = PROG_HANDLE;
 #else
-      Sciprintf("Link: nsp is not a valid first argument on your machine\r\n");
+      Sciprintf("Link: nsp is not a valid first argument on your machine\n");
       return(-1);
 #endif
 #endif
     }
 #ifndef hppa
   if ( hd1 == (void *) NULL || hd1 < (void *) 0 ) {
-    Sciprintf("%s\r\n",dlerror());
+    Sciprintf("%s\n",dlerror());
     return(-1);
   }
 #else
   if (  hd1 == NULL) {
-    Sciprintf("link error\r\n");
+    Sciprintf("link error\n");
     return(-1);
   }
 #endif
+  /* try to load the symbols */
   for ( i = 0 ; i < Nshared ; i++ ) 
     {
       if ( hd[i].ok == FAIL) 
 	{
-	  hd[i].shl =  (unsigned long)hd1;
-	  strcpy(hd[i].tmp_file,tmp_file);
-	  hd[i].ok = OK;
-	  return(i);
-	}
-    }
+	  hd[i].shl =  (unsigned long)hd1; 
+	  strcpy(hd[i].tmp_file,shared_path); 
+	  hd[i].ok = OK; 
+	  return(i); 
+	} 
+    } 
   if ( Nshared == ENTRYMAX ) 
     {
-      Sciprintf("You can't open shared files maxentry %d reached\r\n",ENTRYMAX);
+      Sciprintf("You can't open shared files maxentry %d reached\n",ENTRYMAX);
       return(FAIL);
     }
-
-  strcpy(hd[Nshared].tmp_file,tmp_file);
+  
+  strcpy(hd[Nshared].tmp_file,shared_path);
   hd[Nshared].shl = (unsigned long)hd1;
   hd[Nshared].ok = OK;
   Nshared ++;
@@ -219,7 +220,7 @@ int CreateShared_unused (char **loaded_files, char *tmp_file)
       Sciprintf("%s ",loaded_files[i]);
       i++;
     }
-  Sciprintf(" to create a shared executable\r\n");
+  Sciprintf(" to create a shared executable\n");
   count++;
   sprintf(tmp_file, "/tmp/SD_%d_/SL_%d_XXXXXX",(int) getpid(),count);
 #ifdef HAVE_MKSTEMP 
@@ -264,7 +265,7 @@ int CreateShared_unused (char **loaded_files, char *tmp_file)
 	
 #ifdef DEBUG
      for ( i=0 ; i < argc ; i++) 
-       Sciprintf("arg[%d]=%s\r\n",i,argv[i]);
+       Sciprintf("arg[%d]=%s\n",i,argv[i]);
 #endif	
      
      if ((pid = vfork()) == 0) {
@@ -272,16 +273,16 @@ int CreateShared_unused (char **loaded_files, char *tmp_file)
        _exit(1);
      }
      if (pid < 0) {
-       Sciprintf("can't create new process: \r\n");
+       Sciprintf("can't create new process: \n");
        return(-1);
      }
      while ((wpid = wait(&status)) != pid)
        if (wpid < 0) {
-	 Sciprintf("no child !\r\n");
+	 Sciprintf("no child !\n");
 	 return(-1);
        }
      if (status != 0) {
-       Sciprintf("ld returned bad status: %x\r\n", status);
+       Sciprintf("ld returned bad status: %x\n", status);
        return(-1);
      }
    }
@@ -310,18 +311,18 @@ static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
   /* lookup the address of the function to be called */
   if ( NEpoints == ENTRYMAX ) 
     {
-      Sciprintf("You can't link more functions maxentry %d reached\r\n",ENTRYMAX);
+      Sciprintf("You can't link more functions maxentry %d reached\n",ENTRYMAX);
       return(FAIL);
     }
   if ( hd[ish].ok == FAIL ) 
     {
-      Sciprintf("Shared lib %d does not exists\r\n",ish);
+      Sciprintf("Shared lib %d does not exists\n",ish);
       return(FAIL);
     }
   /** entry was previously loaded **/
   if ( SearchFandS(ename,ish) >= 0 ) 
     {
-      Sciprintf("Entry name %s is already loaded from lib %d\r\n",ename,ish);
+      Sciprintf("Entry name %s is already loaded from lib %d\n",ename,ish);
       return(OK);
     }
 #ifndef hppa
@@ -339,19 +340,19 @@ static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
 #else
       char *loc;
 #endif
-      Sciprintf("%s is not an entry point \r\n",enamebuf);
+      Sciprintf("%s is not an entry point \n",enamebuf);
 #ifndef hppa
       loc = dlerror();
-      if ( loc != NULL) Sciprintf("%s \r\n",loc);
+      if ( loc != NULL) Sciprintf("%s \n",loc);
 #else
-      Sciprintf("link error\r\n");
+      Sciprintf("link error\n");
 #endif
       return(FAIL);
     }
   else 
     {
       /* we don't add the _ in the table */
-      Sciprintf("Linking %s (in fact %s)\r\n",ename,enamebuf);
+      Sciprintf("Linking %s (in fact %s)\n",ename,enamebuf);
       strncpy(EP[NEpoints].name,ename,NAME_MAXL);
       EP[NEpoints].Nshared = ish;
       NEpoints++;
@@ -360,11 +361,9 @@ static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
 }
 
 
-/***************************************************
+/*
  * Delete entry points associated with shared lib ishared
- * then delete the shared lib 
- ****************************************************/
-
+ */
 
 static void Sci_Delsym(int ishared)
 {
@@ -391,7 +390,7 @@ static void Sci_Delsym(int ishared)
 #else
       shl_unload((shl_t)  hd[ish].shl);
 #endif
-      unlink(hd[ish].tmp_file);
+      /* unlink(hd[ish].tmp_file);*/
       hd[ish].ok = FAIL;
     }
 }
@@ -428,7 +427,7 @@ static int SetArgv1(char **argv, char *files, int first, int max, int *err)
       argv[j] = loc; j++;
       if ( j == max ) 
 	{
-	  Sciprintf("Link too many files \r\n");
+	  Sciprintf("Link too many files \n");
 	  *err=1;
 	  break;
 	}
