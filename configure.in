@@ -36,6 +36,9 @@ AC_ARG_WITH(f2c,
 AC_ARG_WITH(pvm,
     [  --without-pvm           do not compile with PVM library ])
 
+AC_ARG_WITH(nsp-pvm,
+    [  --with-nsp-pvm          prefer local pvm version to a preinstalled one ])
+
 AC_ARG_WITH(tk,
     [  --with-tk               add tcl-tk support ])
 
@@ -477,7 +480,7 @@ case "$host" in
     AC_CHECK_LIB(ieee,main,
       [LIEEELIB=-lieee])
     GCC=yes
-    CC=cc
+    CC=gcc
     CC_OPTIONS='-O -Dlinux '
     CC_LDFLAGS=$LIEEELIB
     # find Fortran compiler
@@ -526,7 +529,7 @@ case "$host" in
     AC_CHECK_LIB(ieee,main,
       [LIEEELIB=-lieee])
     GCC=yes
-    CC=cc
+    CC=gcc
     CC_OPTIONS='-O -Dlinux '
     CC_LDFLAGS=$LIEEELIB
     # find Fortran compiler
@@ -591,7 +594,7 @@ case "$host" in
        LD_LDFLAGS="$LIEEELIB -lPEPCF90 -Wl,-relax "
     else
        GCC=yes
-       CC=cc
+       CC=gcc
        # CC_PLAT_OPTIONS is optional, and is used to add CPU specific code generation tuning for Athlon64 presumably 
        # Opteron could benefit too but these are not optimized for the Opteron
        CC_PLAT_OPTIONS='-march=athlon64 -mfpmath=sse -msse2 -m3dnow -m64 '
@@ -645,7 +648,7 @@ case "$host" in
   alpha-*-linux-gnu)
     MALLOC=malloc.o
     GCC=yes
-    CC=cc
+    CC=gcc
     CC_OPTIONS='-O -mieee-with-inexact -Dlinux '
     CC_LDFLAGS='-ldl -rdynamic -mieee-with-inexact'
     CC_PICFLAGS=-fPIC
@@ -693,7 +696,7 @@ case "$host" in
     AC_CHECK_LIB(ieee,main,
       [LIEEELIB=-lieee])
     GCC=yes
-    CC=cc
+    CC=gcc
     CC_OPTIONS='-O -D_GNU_SOURCE -Dlinux '
     CC_LDFLAGS=$LIEEELIB
     CC_PICFLAGS=-fPIC
@@ -941,7 +944,7 @@ case "$host" in
 # FreeBSD  systems (not supported by INRIA)
   *-*-freebsd*)
      GCC=yes
-     CC=cc
+     CC=gcc
      CC_OPTIONS="${CFLAGS} -Dfreebsd"
      CC_LDFLAGS=-lm
      CC_PICFLAGS='-fPIC'
@@ -1337,19 +1340,30 @@ PVMHOSTERFILES=
 PVMHOSTER=
 
 if test "$with_pvm" != no; then
-# check for a locally installed PVM
-if test -x $PVM_ROOT/lib/pvmgetarch ; then
-  PVMROOT=$PVM_ROOT
-  PVMROOTR=$PVM_ROOT
-  PVMTARGET=pvm-bidon
-else
+ # check for a locally installed PVM
+ AC_MSG_CHECKING([checking which pvm library to use])
+ if test -x $PVM_ROOT/lib/pvmgetarch ; then
+  if test  "$with_nsp_pvm" != yes; then 
+   AC_MSG_RESULT(local pvm in $PVM_ROOT)
+   PVMROOT=$PVM_ROOT
+   PVMROOTR=$PVM_ROOT
+   PVMTARGET=pvm-bidon
+  else 
+   AC_MSG_RESULT(nsp pvm3)
+   PVMROOT="$SCIDIR/pvm3"
+   PVMROOTR='$SCI/pvm3'
+   PVMTARGET=scilex-lib
+   PVMINST='$(PVMBINDISTFILES) $(PVMBINDISTFILES1)'
+  fi
+ else
+  AC_MSG_RESULT(nsp pvm3)
   PVMROOT="$SCIDIR/pvm3"
   PVMROOTR='$SCI/pvm3'
   PVMTARGET=scilex-lib
   PVMINST='$(PVMBINDISTFILES) $(PVMBINDISTFILES1)'
-fi
+ fi
 
-PVMINCLUDE=$PVMROOT/include
+ PVMINCLUDE=$PVMROOT/include
 
   case "$host" in
       *-*-mingw32*)
@@ -1357,21 +1371,20 @@ PVMINCLUDE=$PVMROOT/include
     ;;
   esac
 
-
-AC_ARG_WITH(pvm-include,
+ AC_ARG_WITH(pvm-include,
     [  --with-pvm-include=DIR  PVM include files are in DIR ],
     [  PVMINCLUDE=$withval
     ])
 
-AC_CACHE_CHECK([for PVM architecture],ac_cv_PVM_arch,
-[
-ac_cv_PVM_arch=`$PVMROOT/lib/pvmgetarch`
-])
-if test "$ac_cv_PVM_arch" = UNKNOWN; then
+ AC_CACHE_CHECK([for PVM architecture],ac_cv_PVM_arch,
+ [
+ ac_cv_PVM_arch=`$PVMROOT/lib/pvmgetarch`
+ ])
+ if test "$ac_cv_PVM_arch" = UNKNOWN; then
   AC_MSG_WARN([PVM unable to find architecture: I will not use PVM])
   PVMTARGET=pvm-bidon
   PVMINST='$(PVMBINDISTFILES)'
-else
+ else
   AC_DEFINE(WITH_PVM)
   PVMARCH="$ac_cv_PVM_arch"
 
@@ -1384,8 +1397,11 @@ else
     ;;
   esac
 
-
-  PVMLIBDIR=$PVMROOT/lib/$ac_cv_PVM_arch
+  if test $PVMROOT == "$SCIDIR/pvm3"; then 
+    PVMLIBDIR=pvm3/lib/$ac_cv_PVM_arch
+  else 
+    PVMLIBDIR=$PVMROOT/lib/$ac_cv_PVM_arch
+  fi
   AC_ARG_WITH(pvm-library,
   	[  --with-pvm-library=DIR  PVM library files are in DIR ],
     	[  PVMLIBDIR=$withval
@@ -1395,7 +1411,7 @@ else
 	
   PVMSCIDIR=pvm
   PVMSCILIB="\$(SCIDIR)/libs/pvm.a"
-fi
+ fi
 
 fi
 

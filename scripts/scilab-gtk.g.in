@@ -1,5 +1,5 @@
 #!/bin/SCILABGS
-
+#/* -*- Mode: Shell-script -*- */
 if test "$PRINTERS" = ""; then
   PRINTERS="lp"
 fi

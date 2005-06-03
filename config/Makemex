@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 # Generated automatically from Makemex.in  by configure.
 # see examples/mex-examples/mex-with-so/Makefile 
 # for an example of Makemex use 

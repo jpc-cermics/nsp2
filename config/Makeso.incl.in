@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 #-----------------------------------------------------------------
 # This file can be used to produce a shared libary instead 
 # a standard .a library 
@@ -67,10 +68,10 @@ tests	: $(LIBRARY_NAME).dia
 $(LIBRARY_NAME).dia	: $(LIBRARY_NAME).la $(LIBRARY_NAME).tst
 	@$(SCIDIR)/bin/scilab -nw -e "scitest(\"$(LIBRARY_NAME).tst\");quit;"
 
-
-.c.o:
-	@echo "compiling $<"
-	@$(COMPILE)  -c $<
+# defined in Makefile.incl 
+# .c.o:
+# 	@echo "compiling $<"
+# 	@$(COMPILE)  -c $<
 
 .c.lo :
 	@echo "Compiling $<"
@@ -100,9 +101,9 @@ $(LIBRARY_NAME).dia	: $(LIBRARY_NAME).la $(LIBRARY_NAME).tst
 	@echo "Compiling $<"
 	@$(FLTCOMPILE)  -c $<
 
-.f.o:
-	@echo "compiling $<"
-	@$(FCOMPILE)  -c $<
+# .f.o:
+# 	@echo "compiling $<"
+# 	@$(FCOMPILE)  -c $<
 
 .f.lo :
 	@echo "Compiling $<"

@@ -14,7 +14,8 @@ XXBPROGRAMS = $(SBIN)/Blatexpr $(SBIN)/Blatexpr2 \
 	$(SBIN)/Blatexprs $(SBIN)/Blpr $(SBIN)/BEpsf \
 	$(UTIL)/Blatdoc $(UTIL)/Blatdocs
 
-PROGRAMS = $(SBIN)/scilab scilab-inst Path.incl $(BPROGRAMS)
+PROGRAMS = $(SBIN)/scilab scilab-inst Path.incl $(BPROGRAMS) \
+	$(SBIN)/nsplibtool nsplibtool-inst
 
 all:: $(PROGRAMS)
 
@@ -40,6 +41,20 @@ scilab-inst: scilab-gtk.g $(IP) $(IV) ../Makefile.incl
 	@sed -e "s+SCILAB_DIRECTORY+$(prefix)/lib/nsp+" $(SED_CYGDRIVE) \
 	-e "s+SCILAB_VERSION+$(SCIVERSION)+" \
 	-e "s+SCILABGS+sh+" scilab-gtk.g > scilab-inst;
+
+$(SBIN)/nsplibtool: nsplibtool $(IP) $(IV)
+	@$(RM) $@
+	@sed 	-e "s+SCILAB_DIRECTORY+$(SCIDIR)+g" \
+		-e "s+SCILABGS+sh+" nsplibtool > $@ 
+	@chmod 775 $@
+	@echo $@ created
+
+# script which uses prefix 
+
+nsplibtool-inst: nsplibtool $(IP) $(IV)
+	@$(RM) $@
+	@sed -e "s+SCILAB_DIRECTORY+$(prefix)/lib/nsp+g" \
+		-e "s+SCILABGS+sh+" nsplibtool > $@ 	
 
 Path.incl: $(IP) $(IV) ../Makefile.incl
 	@$(RM) Path.incl
