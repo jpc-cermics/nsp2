@@ -69,7 +69,7 @@ int int_link(Stack stack, int rhs, int opt, int lhs)
     }
   else
     { 
-      Str = "f";
+      Str = "c";
     }
   SciDynLoad(shared_lib,enames,Str[0],&ilib,iflag,&rhs);
   if ( ilib < 0) 
