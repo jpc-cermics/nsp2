@@ -194,5 +194,3 @@ B = As;
 B(ind4)=[];
 if ~and(B == As4) then pause,end;
 
-
-

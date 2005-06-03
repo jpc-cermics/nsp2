@@ -27,7 +27,7 @@ tests: all
 
 .tst.dia :
 	@echo -n "testing $*: "
-	@../bin/scilex -nw -e "nsptest('$*.tst');quit" 
+	@../bin/scilab -nw -e "nsptest('$*.tst');quit" 
 
 distclean	:
 	@echo cleaning tests
