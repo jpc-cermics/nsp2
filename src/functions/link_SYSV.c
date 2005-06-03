@@ -90,7 +90,6 @@ void SciLink(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **
       *ilib  = Sci_dlopen(shared_path);
     }
   if (*ilib  == -1 ) return;
-  Sciprintf("shared archive loaded\n");
   if ( *rhs >= 2) 
     {
       i=0 ;
@@ -145,7 +144,6 @@ static int Sci_dlopen(nsp_const_string shared_path)
     {
       /* this will load the shared library 
        */
-      Sciprintf("Loading shared library %s\n",shared_path);
 #ifndef hppa
       hd1 = dlopen(shared_path, RTLD_NOW);
 #else
@@ -163,19 +161,20 @@ static int Sci_dlopen(nsp_const_string shared_path)
 #ifdef hppa
       hd1 = PROG_HANDLE;
 #else
-      Sciprintf("Link: nsp is not a valid first argument on your machine\n");
+      Scierror("Error: \"nsp\" is not a valid first argument for link on your machine\n");
       return(-1);
 #endif
 #endif
     }
 #ifndef hppa
   if ( hd1 == (void *) NULL || hd1 < (void *) 0 ) {
-    Sciprintf("%s\n",dlerror());
+    char *loc = dlerror();
+    if ( loc != NULL) Scierror("%s\n",loc);
     return(-1);
   }
 #else
   if (  hd1 == NULL) {
-    Sciprintf("link error\n");
+    Scierror("link error\n");
     return(-1);
   }
 #endif
@@ -192,15 +191,15 @@ static int Sci_dlopen(nsp_const_string shared_path)
     } 
   if ( Nshared == ENTRYMAX ) 
     {
-      Sciprintf("You can't open shared files maxentry %d reached\n",ENTRYMAX);
-      return(FAIL);
+      Scierror("Error: cannot open shared library maxentry %d is reached\n",ENTRYMAX);
+      return -1;
     }
   
   strcpy(hd[Nshared].tmp_file,shared_path);
   hd[Nshared].shl = (unsigned long)hd1;
   hd[Nshared].ok = OK;
   Nshared ++;
-  return(Nshared-1);
+  return (Nshared-1);
 }
 
 /*
@@ -311,18 +310,18 @@ static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
   /* lookup the address of the function to be called */
   if ( NEpoints == ENTRYMAX ) 
     {
-      Sciprintf("You can't link more functions maxentry %d reached\n",ENTRYMAX);
+      Scierror("Error: cannot link more functions maxentry %d reached\n",ENTRYMAX);
       return(FAIL);
     }
   if ( hd[ish].ok == FAIL ) 
     {
-      Sciprintf("Shared lib %d does not exists\n",ish);
+      Scierror("Error: Shared library %d does not exists\n",ish);
       return(FAIL);
     }
   /** entry was previously loaded **/
   if ( SearchFandS(ename,ish) >= 0 ) 
     {
-      Sciprintf("Entry name %s is already loaded from lib %d\n",ename,ish);
+      Scierror("Warning: Entry name %s is already loaded from lib %d\n",ename,ish);
       return(OK);
     }
 #ifndef hppa
@@ -340,19 +339,17 @@ static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
 #else
       char *loc;
 #endif
-      Sciprintf("%s is not an entry point \n",enamebuf);
 #ifndef hppa
       loc = dlerror();
-      if ( loc != NULL) Sciprintf("%s \n",loc);
+      if ( loc != NULL) Scierror("Error: %s\n",loc);
 #else
-      Sciprintf("link error\n");
+      Scierror("Error: %s is not an entry point\n",enamebuf);
 #endif
       return(FAIL);
     }
   else 
     {
       /* we don't add the _ in the table */
-      Sciprintf("Linking %s (in fact %s)\n",ename,enamebuf);
       strncpy(EP[NEpoints].name,ename,NAME_MAXL);
       EP[NEpoints].Nshared = ish;
       NEpoints++;

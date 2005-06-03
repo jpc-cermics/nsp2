@@ -15,14 +15,10 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- */
-
-/***************************************************
- * Interface for nsp primitive dealing with functions 
  *    link 
  *    addinter 
  *    call or fort 
- ***************************************************/
+ */
 
 #include <math.h>
 #include <stdio.h>
@@ -37,9 +33,9 @@ static void link_bug (int i);
 
 static int foo (int *ix,float *fx,double *dx,char *S);
 
-/***********************************************************
+/*
  * interface for link function 
- *********************************************************/
+ */
 
 int int_link(Stack stack, int rhs, int opt, int lhs)
 {
@@ -47,8 +43,19 @@ int int_link(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *Enames;  
   NspObject*OHMat;
   int ilib =0, iflag=1;
-  CheckRhs(1,3);
+  CheckRhs(0,3);
   CheckLhs(0,1);
+
+  if ( rhs == 0)
+    {
+      /* returns all the entry points in a hash table 
+       */
+      NspHash *obj = nsp_get_dlsymbols();
+      if ( obj == NULLHASH) return RET_BUG;
+      MoveObj(stack,1,NSP_OBJECT(obj));
+      return 1;
+    }
+
   if ( IsMatObj(stack,1 ) ) 
     {
       if (GetScalarInt(stack,1,&ilib) == FAIL) return RET_BUG;
@@ -86,19 +93,19 @@ static void  link_bug(int i)
 {
   switch (i)
     {
-    case -1 :Scierror("Error in link: the shared archive was not loaded\n");break;
-    case -2 :Scierror("You cannot link more functions, maxentry reached\n");break;
-    case -3 :Scierror("link: First argument  cannot be a number\n");break;
-    case -4 :Scierror("link: Only one entry point allowed\n\ton this operating system\n");break;
-    case -5 :Scierror("link: problem with one of the entry point\n");break;
+    case -1 :Scierror("Error: the shared archive was not loaded\n");break;
+    case -2 :Scierror("Error: cannot link more functions, maxentry reached\n");break;
+    case -3 :Scierror("Error: first argument cannot be a number\n");break;
+    case -4 :Scierror("Error: only one entry point is allowed\n\ton this operating system\n");break;
+    case -5 :break;
     case -6: Scierror("link: problem with one of the entry point\n");break;
     default: Scierror("Error in function link\n");break;
     }
 }
 
-/***********************************************************
+/*
  * interface for ulink function 
- *********************************************************/
+ */
 
 int int_ulink(Stack stack, int rhs, int opt, int lhs)
 {
@@ -110,42 +117,38 @@ int int_ulink(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/***********************************************************
+/*
  * interface for c_link function 
  *    [%t|%false,number]=c_link(name [,ilib]) 
- *********************************************************/
+ */
 
 int int_c_link(Stack stack, int rhs, int opt, int lhs)
 {
-  char *Str;
+  char *name;
   NspObject *O1,*O2=NULL;
-  int ilib=-1;
+  int ilib=-1,rep,irep;
   CheckRhs(1,2);
   CheckLhs(0,2);
-  if ((Str = GetString(stack,1)) == (char*)0) return RET_BUG;  
-  if (rhs == 2 ) 
+  if ((name = GetString(stack,1)) == (char*)0) return RET_BUG;  
+  if (rhs == 2 ) {
     if (GetScalarInt(stack,2,&ilib) == FAIL) return RET_BUG;
-  C2F(iislink)(Str,&ilib);
-  if ( ilib == -1 ) 
-    { 
-      if (( O1=nsp_create_false_object(NVOID)) == NULLOBJ) return RET_BUG;
-    }
-  else 
-    {
-      if (( O1=nsp_create_true_object(NVOID)) == NULLOBJ) return RET_BUG;
-    }
+  }
+  rep= nsp_is_linked(name,ilib);
+  irep = ( rep == -1) ? FALSE : TRUE;
+  if ((O1 = nsp_create_boolean_object(NVOID,irep)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,O1);
   if ( lhs == 2 ) 
     {
-      if (( O2 =nsp_create_object_from_int(NVOID,ilib)) == NULLOBJ) return RET_BUG;
+      if (( O2 =nsp_create_object_from_int(NVOID,rep)) == NULLOBJ) return RET_BUG;
+      MoveObj(stack,2,O2);
     }
-  MoveObj(stack,1,O1);
-  MoveObj(stack,2,O2);
-  return lhs;
+  return Max(lhs,1);
 }
 
-/***********************************************************
+
+/*
  * addinter function 
- *********************************************************/
+ */
 
 extern int nsp_dynamic_interface(nsp_const_string shared_path,nsp_const_string interface);
 

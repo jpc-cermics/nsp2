@@ -411,9 +411,10 @@ void ShowTable(void)
 	     htable[i].entry.data.Int,htable[i].entry.data.Num);
 }
 
-/** Delete entries associated to interface number Int : by walking through 
-    the whole hash table 
-  **/
+/*
+ * Delete entries associated to interface number Int : by walking through 
+ *  the whole hash table 
+ */
 
 void DeleteFunctionS(int Int)
 {

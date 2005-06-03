@@ -197,6 +197,7 @@ void RemoveInterf(int Nshared)
 	{
 	  DynInterf[i].ok = 0;
 	  DynInterf[i].func = BlankInterface;
+	  DeleteFunctionS(i +  DYN_INTERF_START );
 	  break;
 	}
     }

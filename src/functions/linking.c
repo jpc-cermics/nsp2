@@ -29,6 +29,7 @@
 #include "nsp/plisttoken.h" /* for  name_maxl 52 */
 #include "nsp/sciio.h"
 #include "nsp/string.h"
+#include "nsp/object.h"
 #include "linking.h"
 #include "../system/files.h" /* FSIZE */
 
@@ -86,7 +87,6 @@ void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ili
 
   /* calling the linker */
   SciLink(iflag,rhs,ilib,shared_path,en_names,strf);
-  if (*ilib >= 0) Sciprintf("Link done\n");
 }
 
 #if defined(netbsd) || defined(freebsd) || defined(sun) || defined(__alpha) || defined(sgi) || (!defined(hppa_old) && defined(hppa))  || defined(__APPLE__)
@@ -124,10 +124,9 @@ void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ili
 #endif
 #endif 
 
-/********************************************
- * Underscores : deals with the trailing _ 
- * in entry names 
- ********************************************/
+/*
+ * Underscores : deals with the trailing _  in entry names 
+ */
 
 static void Underscores(int isfor,nsp_const_string ename, char *ename1)
 {
@@ -141,9 +140,9 @@ static void Underscores(int isfor,nsp_const_string ename, char *ename1)
   return;
 }
 
-/**************************************
+/*
  * Initialize tables 
- *************************************/
+ */
 
 void SciLinkInit(void)
 {
@@ -160,37 +159,32 @@ void SciLinkInit(void)
     }
 }
 
-/**************************************
- * if *irep == -1 
- *    checks if buf is a loaded
- *    entry point 
- *    the result is -1 if false 
- *               or the number in the function table 
- * 
- *    
- * if *irep != -1 : 
- *    checks if buf is a loaded
- *    entry point from shared lib *irep
- *    the result is -1 if false 
- *               or the number in the function table 
- * 
- *************************************/
+/* 
+ * checks if @name is in the dynamically 
+ * linked entry points. 
+ * if @ilib == -1 the search is performed in 
+ * the whole table else the search is restricted to 
+ * shared library number @ilib.
+ * the returned value is -1 or the indice of 
+ * @name in the entry point table.
+ *
+ */
 
-void C2F(iislink)(buf,irep)
-     char *buf;
-     integer *irep;
+int nsp_is_linked(nsp_const_string name,int ilib)
 {
   int (*loc)();
-  if ( *irep != -1 ) 
-    *irep=SearchFandS(buf,*irep);
+  if ( ilib  != -1 ) 
+    return SearchFandS(name,ilib);
   else
-    *irep=SearchInDynLinks(buf,&loc);
+    return SearchInDynLinks(name,&loc);
 }
 
 
-/**************************************
- * returns the ii functions 
- *************************************/
+/* get a function in @realop given 
+ * its position in the dynamically 
+ * linked entry points table. 
+ * In case of failure the returned value is NULL.
+ */
 
 void GetDynFunc(int ii, int (**realop)())
 {
@@ -200,12 +194,16 @@ void GetDynFunc(int ii, int (**realop)())
     *realop = (function) 0;
 }
 
-/**************************************
- * Search a function in the table 
- * Search from end to top 
- *************************************/
 
-int SearchInDynLinks(char *op, int (**realop) ())
+/*
+ * Search an entry point named @op in the dynamically 
+ * linked entry points. Search is performed from end to top 
+ * returns -1 in case of failure or the entry point 
+ * indice in the entry points table. In case of success 
+ * the associated function is returned in @realop.
+ */
+
+int SearchInDynLinks(nsp_const_string op, int (**realop) ())
 {
   int i=0;
   for ( i = NEpoints-1 ; i >=0 ; i--) 
@@ -219,10 +217,12 @@ int SearchInDynLinks(char *op, int (**realop) ())
   return(-1);
 }
 
-/**************************************
- * Search a (function,libid) in the table 
- * Search from end to top 
- *************************************/
+/*
+ * Search an entry point named @op in the shared 
+ * library ilib. Search is performed from end to top 
+ * returns -1 in case of failure or the entry point 
+ * indice in the entry points table 
+ */
 
 static int SearchFandS(nsp_const_string op, int ilib)
 {
@@ -237,9 +237,9 @@ static int SearchFandS(nsp_const_string op, int ilib)
   return(-1);
 }
 
-/**************************************
+/*
  * Show the linked files 
- *************************************/
+ */
 
 void  ShowDynLinks(void)
 {
@@ -256,7 +256,28 @@ void  ShowDynLinks(void)
     }
 }
 
+/* get entries as a hash table 
+ */
 
+NspHash *nsp_get_dlsymbols()
+{
+  int i;
+  NspHash *H;
+  if(( H = nsp_hash_create(NVOID,ENTRYMAX)) == NULLHASH) return NULLHASH;
+  for ( i = NEpoints-1 ; i >=0 ; i--) 
+    {
+      NspObject *obj;
+      if ( EP[i].Nshared != -1)
+	{
+	  if ((obj=nsp_create_object_from_double(EP[i].name,EP[i].Nshared))==NULLOBJ) goto clean;
+	  if (nsp_hash_enter(H,obj) == FAIL) goto clean;
+	}
+    }
+  return H;
+ clean:
+  nsp_hash_destroy(H);
+  return NULLHASH;
+} 
 
 
 
