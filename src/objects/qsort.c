@@ -94,7 +94,7 @@ void nsp_qsort(char *a, char *tab, int flag, int n, int es, int es1, int (*cmp) 
   char *pa, *pb, *pc, *pd, *pl, *pm, *pn;
   char *taba, *tabb, *tabc, *tabd, *tabl, *tabm, *tabn;
   int d,dind, r,r1,  swap_cnt;
-  int ndes=n/es;ndes1=n/es1;
+  int ndes=n/es,ndes1=n/es1;
  loop:	
   swap_cnt = 0;
   if (n < 7) {
