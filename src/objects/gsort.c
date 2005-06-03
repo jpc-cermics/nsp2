@@ -36,9 +36,9 @@
  * iord : "i" or "d" : increasind or decreasing sort 
  */
 
-static void mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,char dir);
-static void qsort_stable(double *a,int *index,int flag, int fromIndex, int toIndex,char dir);
-static void dsortc(double x[], int n, int p[],int flag, char dir);
+static void nsp_mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,char dir);
+static void nsp_qsort_stable(double *a,int *index,int flag, int fromIndex, int toIndex,char dir);
+static void nsp_qsort_bp(double x[], int n, int p[],int flag, char dir);
 static void nsp_qsort_double(double *a,int *tab, int flag, int n,char dir);
 
 /**
@@ -67,13 +67,13 @@ void nsp_matrix_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_s
     {
     case sort_gb: 
       /* qsort Bruno */
-      dsortc(A->R,A->mn,index,ind_flag,dir);break;
+      nsp_qsort_bp(A->R,A->mn,index,ind_flag,dir);break;
     case sort_gs:
       /* stable quick sort */
-      qsort_stable(A->R,index,ind_flag,0,A->mn,dir); break;
+      nsp_qsort_stable(A->R,index,ind_flag,0,A->mn,dir); break;
     case sort_gm:
       /* merge sort */
-      mergesort(A->R,index,ind_flag,0,A->mn,dir); break;
+      nsp_mergesort(A->R,index,ind_flag,0,A->mn,dir); break;
     case sort_gd :
       /* non stable qsort */
       nsp_qsort_double(A->R,index,ind_flag,A->mn,dir);break;      
@@ -165,11 +165,6 @@ int C2F(gsort)(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_con
     case 'g' : 
     default :  
       CNAME(GlobalSort,double)(xD,ind,*iflag,*m,*n,iord[0]);break;
-      /* 
-	 for ( i = 0 ; i < (*m)*(*n) ; i++) ind[i]= i+1;
-	 qsort_stable(xD,ind,0,(*m)*(*n)); break;
-	 mergesort(xD,ind,0,(*m)*(*n)); break;
-      */
     }
   return(0);
 }
@@ -342,7 +337,7 @@ static  void vecswap(int i, int j, int n, double *a,int *index,int flag)
  * @param toIndex the last index to sort (exclusive)
  */
 
-static void qsort_stable(double *a,int *index,int flag, int fromIndex, int toIndex,char dir)
+static void nsp_qsort_stable(double *a,int *index,int flag, int fromIndex, int toIndex,char dir)
 {
 #ifndef WITHOUT_MACROS
   double temp;
@@ -473,7 +468,7 @@ static void qsort__(double *array,int *index,int flag, int from, int count)
 #define arraycopy(src,isrc,dest,idest,n) memcpy(dest+idest,src+isrc,(n)*sizeof(double)) 
 #define iarraycopy(src,isrc,dest,idest,n) memcpy(dest+idest,src+isrc,(n)*sizeof(int)) 
 
-static void mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,char dir)
+static void nsp_mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,char dir)
 {
   NspMatrix *M,*IM;
   double *src,*dest,*t;
@@ -639,18 +634,14 @@ static void mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,char
 }
 
 /*
- *     PURPOSE
- *        sort the double precision array x(1..n) in decreasing order
- *        and computes (if perm == 1) the permutation p of the sort :
+ * sort the double precision array x(1..n) in increasing order
+ * and computes (if perm == 1) the permutation p of the sort :
  *
- *               x_sorted(i) = x(p(i))  1<=i<=n
+ *  x_sorted(i) = x(p(i))  1<=i<=n
  *
- *     AUTHOR
- *        B. Pincon (trying to accelerate the initial scilab dsort.f)
- *
- *     NOTES
- *        (i) n must be less than 2**(25) ! due to lengh of work space (ileft, iright)
- *        (ii) quicksort is used with Sedgewick tricks
+ * Author: B. Pincon (trying to accelerate the initial scilab dsort.f)
+ * (i) n must be less than 2**(25) ! due to lengh of work space (ileft, iright)
+ * (ii) quicksort is used with Sedgewick tricks
  */
 
 #define SWAP(i,j)  temp = x[i]; x[i] = x[j]; x[j] = temp; \
@@ -661,8 +652,7 @@ static void mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,char
 #define POP_segment(ia,ib) la--; if ( la >= 0 ) { ia = ileft[la]; ib = iright[la]; }
 #define PUSH_segment(ia,ib) ileft[la] = (ia); iright[la] = (ib); la++
 
-
-static void dsortc(double x[], int n, int p[],int flag,char dir )
+static void nsp_qsort_bp(double x[], int n, int p[],int flag,char dir )
 {
   int ileft[25], iright[25]; /* to store parts (segments) of the array which stay to sort */
   int i, ia, ib, im, la, j, itemp;
@@ -682,7 +672,7 @@ static void dsortc(double x[], int n, int p[],int flag,char dir )
 	  for ( i = ia+1 ; i <= ib ; i++ )
 	    {
 	      j = i;
-	      while ( j > ia  &&  x[j] > x[j-1] )
+	      while ( j > ia  &&  x[j] < x[j-1] )
 		{
 		  SWAP(j,j-1);
 		  j--;
@@ -695,15 +685,15 @@ static void dsortc(double x[], int n, int p[],int flag,char dir )
 	  im = (ia+ib)/2;
 	  SWAP(ia, im);
 	  i = ia+1; j = ib;
-	  if (x[i] < x[j])  { SWAP(i, j); }
-	  if (x[ia] < x[j]) { SWAP(ia, j); }
-	  else if (x[i] < x[ia]) { SWAP(ia, i); }
+	  if (x[i] > x[j])  { SWAP(i, j); }
+	  if (x[ia] > x[j]) { SWAP(ia, j); }
+	  else if (x[i] > x[ia]) { SWAP(ia, i); }
 	  pivot = x[ia];
           /* at this point we have  x[i=ia+1] >= pivot (=x[ia]) >= x[j=ib]  */
 	  while (1)
 	    {
-	      do i++;  while ( x[i] > pivot );
-	      do j--;  while ( x[j] < pivot );
+	      do i++;  while ( x[i] < pivot );
+	      do j--;  while ( x[j] > pivot );
 	      if (i >= j) break;
 	      SWAP(i, j);
 	    }
@@ -719,7 +709,7 @@ static void dsortc(double x[], int n, int p[],int flag,char dir )
 	    { POP_segment(ia,ib); }
 	}
     }
-  if ( dir == 'i' ) 
+  if ( dir == 'd' ) 
     {
       for ( i =0   ; i < n/2 ; i++) 
 	{
@@ -774,15 +764,15 @@ static void dsortc(double x[], int n, int p[],int flag,char dir )
 
 #define qs_swap(a,b) temp = *(a);*(a)=*(b),*(b)=temp;
 #define qs_swapind(a,b) if ( flag== TRUE) {itemp = *(a);*(a)=*(b),*(b)=itemp;}
-#define cmp(a,b) (((*(a)) < (*(b))) ? -1 : ((*(a)) == (*(b)) ? 0 : 1)) 
+#define qs_cmp(a,b) (((*(a)) < (*(b))) ? -1 : ((*(a)) == (*(b)) ? 0 : 1)) 
 #define qs_vecswap(a, b, n) if ((n) > 0) qs_swapcodedouble(a, b, n)
 #define qs_vecswapind(a, b, n) if ((n) > 0 && flag == TRUE) qs_swapcodeint(a,b,n) 
 
 
-#define qs_med3(res,tabres,a, b, c, xa,xb,xc) cmp(a, b) < 0 ? \
-         (cmp(b, c) < 0 ? (res=b,tabres=xb) :  \
-	  (cmp(a, c) < 0 ? (res=c,tabres=xc) : (res=a,tabres=xa) )) \
-	 :(cmp(b, c) > 0 ? (res=b,tabres=xb) : (cmp(a, c) < 0 ? (res=a,tabres=xa) : (res=c,tabres=xc) ))
+#define qs_med3(res,tabres,a, b, c, xa,xb,xc) qs_cmp(a, b) < 0 ? \
+         (qs_cmp(b, c) < 0 ? (res=b,tabres=xb) :  \
+	  (qs_cmp(a, c) < 0 ? (res=c,tabres=xc) : (res=a,tabres=xa) )) \
+	 :(qs_cmp(b, c) > 0 ? (res=b,tabres=xb) : (qs_cmp(a, c) < 0 ? (res=a,tabres=xa) : (res=c,tabres=xc) ))
 
 static void qs_swapcodedouble(double *pi,double* pj,int n) 
 { 		
@@ -835,7 +825,7 @@ static void nsp_qsort_double__(double *a,int *tab, int flag, int n)
   if (n < 7) {
     for (pm = a + es, tabm= tab + es1 ; pm < a + n * es; pm += es, tabm +=es1 )
       {
-	for (pl = pm, tabl= tabm ; pl > a && cmp(pl - es, pl) > 0;  pl -= es, tabl -=es1)
+	for (pl = pm, tabl= tabm ; pl > a && qs_cmp(pl - es, pl) > 0;  pl -= es, tabl -=es1)
 	  {
 	    qs_swapind(tabl,tabl- es1);
 	    qs_swap(pl, pl - es);
@@ -869,7 +859,7 @@ static void nsp_qsort_double__(double *a,int *tab, int flag, int n)
   tabc = tabd = tab + (n - 1) * es1;
 
   for (;;) {
-    while (pb <= pc && (r = cmp(pb, a)) <= 0) {
+    while (pb <= pc && (r = qs_cmp(pb, a)) <= 0) {
       if (r == 0) {
 	swap_cnt = 1;
 	qs_swapind(taba,tabb);
@@ -880,7 +870,7 @@ static void nsp_qsort_double__(double *a,int *tab, int flag, int n)
       pb += es;
       tabb += es1;
     }
-    while (pb <= pc && (r = cmp(pc, a)) >= 0) {
+    while (pb <= pc && (r = qs_cmp(pc, a)) >= 0) {
       if (r == 0) {
 	swap_cnt = 1;
 	qs_swapind(tabc,tabd);
@@ -905,7 +895,7 @@ static void nsp_qsort_double__(double *a,int *tab, int flag, int n)
   if (swap_cnt == 0) {  /* Switch to insertion sort */
     for (pm = a + es, tabm= tab + es1 ; pm < a + n * es; pm += es, tabm +=es1)
       {
-	for (pl = pm, tabl= tabm ; pl > a && cmp(pl - es, pl) > 0;  pl -= es, tabl -=es1)
+	for (pl = pm, tabl= tabm ; pl > a && qs_cmp(pl - es, pl) > 0;  pl -= es, tabl -=es1)
 	  {
 	    qs_swapind(tabl,tabl- es1);
 	    qs_swap(pl, pl - es);
