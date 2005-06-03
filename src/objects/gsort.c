@@ -38,7 +38,7 @@
 
 static void mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,char dir);
 static void qsort_stable(double *a,int *index,int flag, int fromIndex, int toIndex,char dir);
-static void dsortc(double x[], int n, int p[],int flag );
+static void dsortc(double x[], int n, int p[],int flag, char dir);
 static void nsp_qsort_double(double *a,int *tab, int flag, int n,char dir);
 
 /**
@@ -67,7 +67,7 @@ void nsp_matrix_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_s
     {
     case sort_gb: 
       /* qsort Bruno */
-      dsortc(A->R,A->mn,index,ind_flag);break;
+      dsortc(A->R,A->mn,index,ind_flag,dir);break;
     case sort_gs:
       /* stable quick sort */
       qsort_stable(A->R,index,ind_flag,0,A->mn,dir); break;
@@ -239,7 +239,7 @@ void C2F(gsorts)(char **data, int *ind, int *iflag, int *m, int *n,nsp_const_str
  *  any later version.
  */
 
-static void qsort__(double *array,int *index, int from, int count);
+static void qsort__(double *array,int *index, int flag, int from, int count);
 
 /**
  * Compares two integers in natural order, since a - b is inadequate.
@@ -248,7 +248,6 @@ static void qsort__(double *array,int *index, int from, int count);
  * @param b the second int
  * @return &lt; 0, 0, or &gt; 0 accorting to the comparison
  */
-
 /* #define WITHOUT_MACROS */
 
 #ifdef WITHOUT_MACROS
@@ -296,7 +295,7 @@ static  int med3(int a, int b, int c, double *d)
  */
 
 #ifdef WITHOUT_MACROS
-static  void swap(int i, int j, double *a,int *index)
+static  void swap(int i, int j, double *a,int *index,int flag)
 {
   double c = a[i];
   a[i] = a[j];
@@ -309,7 +308,7 @@ static  void swap(int i, int j, double *a,int *index)
     }
 }
 #else 
-#define swap(i,j,a,index) temp = (a)[i];(a)[i] = (a)[j]; (a)[j] = temp; if ( index != NULL) \
+#define swap(i,j,a,index,flag) temp = (a)[i];(a)[i] = (a)[j]; (a)[j] = temp; if ( flag == TRUE ) \
  { int c1= (index)[i]; (index)[i] = (index)[j];  (index)[j] = c1; }
 #endif 
 
@@ -322,13 +321,15 @@ static  void swap(int i, int j, double *a,int *index)
  * @param a the array
  */
 
-static  void vecswap(int i, int j, int n, double *a,int *index)
+static  void vecswap(int i, int j, int n, double *a,int *index,int flag)
 {
 #ifndef WITHOUT_MACROS
   double temp;
 #endif
   for ( ; n > 0; i++, j++, n--)
-    swap(i, j, a,index);
+    {
+      swap(i, j, a,index,flag);
+    }
 }
 
 
@@ -343,16 +344,18 @@ static  void vecswap(int i, int j, int n, double *a,int *index)
 
 static void qsort_stable(double *a,int *index,int flag, int fromIndex, int toIndex,char dir)
 {
+#ifndef WITHOUT_MACROS
   double temp;
+#endif
   int i,n = toIndex - fromIndex;
   if ( flag == TRUE) for ( i = fromIndex ; i < n  ; i++) index[i]= i+1;
 
-  qsort__(a,index, fromIndex, n);
+  qsort__(a,index,flag, fromIndex, n);
   if ( dir == 'd' ) 
     {
       for ( i =fromIndex  ; i < n/2 ; i++) 
 	{
-	  swap(i,n-i-1,a,index);
+	  swap(i,n-i-1,a,index,flag);
 	}
     }
 }
@@ -365,7 +368,7 @@ static void qsort_stable(double *a,int *index,int flag, int fromIndex, int toInd
  * @param count the number of elements to sort
  */
 
-static void qsort__(double *array,int *index, int from, int count)
+static void qsort__(double *array,int *index,int flag, int from, int count)
 {
 #ifndef WITHOUT_MACROS
   double temp;
@@ -379,7 +382,7 @@ static void qsort__(double *array,int *index, int from, int count)
 	      j > from && compare(array[j - 1], array[j]) > 0;
 	      j--)
 	  {
-	    swap(j, j - 1, array,index);
+	    swap(j, j - 1, array,index,flag);
 	  }
       return;
     }
@@ -401,7 +404,7 @@ static void qsort__(double *array,int *index, int from, int count)
   int comp;
 
   /* Pull the median element out of the fray, and use it as a pivot. */
-  swap(from, mid, array,index);
+  swap(from, mid, array,index,flag);
   a = b = from;
   c = d = from + count - 1;
 
@@ -415,7 +418,7 @@ static void qsort__(double *array,int *index, int from, int count)
 	{
 	  if (comp == 0)
 	    {
-	      swap(a, b, array,index);
+	      swap(a, b, array,index,flag);
 	      a++;
 	    }
 	  b++;
@@ -424,14 +427,14 @@ static void qsort__(double *array,int *index, int from, int count)
 	{
 	  if (comp == 0)
 	    {
-	      swap(c, d, array,index);
+	      swap(c, d, array,index,flag);
 	      d--;
 	    }
 	  c--;
 	}
       if (b > c)
 	break;
-      swap(b, c, array,index);
+      swap(b, c, array,index,flag);
       b++;
       c--;
     }
@@ -440,18 +443,18 @@ static void qsort__(double *array,int *index, int from, int count)
   hi = from + count;
   int span;
   span = Min(a - from, b - a);
-  vecswap(from, b - span, span, array,index);
+  vecswap(from, b - span, span, array,index,flag);
 
   span = Min(d - c, hi - d - 1);
-  vecswap(b, hi - span, span, array,index );
+  vecswap(b, hi - span, span, array,index,flag);
 
   span = b - a;
   if (span > 1)
-    qsort__(array,index, from, span);
+    qsort__(array,index,flag, from, span);
 
   span = d - c;
   if (span > 1)
-    qsort__(array,index, hi - span, span);
+    qsort__(array,index,flag, hi - span, span);
 }
 
 
@@ -659,13 +662,13 @@ static void mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,char
 #define PUSH_segment(ia,ib) ileft[la] = (ia); iright[la] = (ib); la++
 
 
-static void dsortc(double x[], int n, int p[],int flag )
+static void dsortc(double x[], int n, int p[],int flag,char dir )
 {
   int ileft[25], iright[25]; /* to store parts (segments) of the array which stay to sort */
   int i, ia, ib, im, la, j, itemp;
   double temp, pivot;
 
-  if ( flag == 1) for ( i = 0 ; i < n ; i++) p[i]=i+1;
+  if ( flag == TRUE) for ( i = 0 ; i < n ; i++) p[i]=i+1;
 
   if ( n == 1 ) return;
 
@@ -716,6 +719,14 @@ static void dsortc(double x[], int n, int p[],int flag )
 	    { POP_segment(ia,ib); }
 	}
     }
+  if ( dir == 'i' ) 
+    {
+      for ( i =0   ; i < n/2 ; i++) 
+	{
+	  SWAP(i,n-i-1);
+	}
+    }
+
 }
 
 
