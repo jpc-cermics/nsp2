@@ -45,7 +45,6 @@ Iel DynInterf[MAXINTERF];
 int LastInterf=0;
 
 static void SciInterInit (void);
-static int DynFuntab  (char **e_names, int N);
 static void ShowInterf  (void);
 
 /************************************************
@@ -53,27 +52,32 @@ static void ShowInterf  (void);
  * files and enames are null terminated String arrays 
  ************************************************/
 
-void AddInter(char **files, char *iname, char **enames, int *err)
-                                     /* interface name */
-                           
-              
+int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface)
 {
-  int i,rhs=2,ilib=0,inum;
-  char *names[2];
-
-  names[0]=iname;
-  names[1]=(char *)0;
+  const char interf[]="_Interf";
+  const char interf_info[]="_Interf_Info";
+  int n=strlen(interface),k;
+  int i,rhs=2,ilib=0,inum,ninterf;
+  char *names[3];
+  int (*info)();
+  
+  if ((names[0] =new_nsp_string_n(n+strlen(interf))) == (nsp_string) 0) return FAIL;
+  if ((names[1] =new_nsp_string_n(n+strlen(interf_info))) == (nsp_string) 0) return FAIL;
+  sprintf(names[0],"%s%s",interface,interf);
+  sprintf(names[1],"%s%s",interface,interf_info);
+  names[2]= NULL;
 
   SciLinkInit();
   SciInterInit();
 
-  /** Try to unlink the interface if it was previously linked **/
+  /* Try to unlink the interface if it was previously linked 
+   */
   
   for ( i = 0 ; i < LastInterf ; i++) 
     {
-      if (strcmp(iname,DynInterf[i].name)==0) 
+      if (strcmp(interface,DynInterf[i].name)==0) 
 	{
-	  /** check if my os accepts unlink **/
+	  /* check if my os accepts unlink */
 	  if ( LinkStatus() == 1) 
 	    {
 	      C2F(isciulink)(&DynInterf[i].Nshared);
@@ -82,7 +86,7 @@ void AddInter(char **files, char *iname, char **enames, int *err)
 	}
     }
 
-  /** Try to find a free position in the interface table : inum **/
+  /* Try to find a free position in the interface table : inum **/
   inum=-1;
   for ( i = 0 ; i < LastInterf ; i++) 
     {
@@ -90,67 +94,65 @@ void AddInter(char **files, char *iname, char **enames, int *err)
     }
   inum = ( inum == -1 ) ? LastInterf : inum ;
   
-  /** Linking Files and add entry point name iname */
+  /* link shared library and search names[0] and names[1] interfaces */
   
   if ( inum >=  MAXINTERF ) 
     {
       Scierror("Error: Maximum number of dynamic interfaces %d\n",MAXINTERF);
-      Scierror("has been reached\r\n");
-      *err=1;
-      return;
+      Scierror("has been reached\n");
+      return 1;
     }
 
-  SciLink(0,&rhs,&ilib,files,names,"f");
+  SciLink(0,&rhs,&ilib,shared_lib,names,'c');
 
   if ( ilib < 0 ) 
     {
-      *err=ilib;  return;
+      return ilib;
     }
 
-  /** store the linked function in the interface function table DynInterf **/
+  /* store the linked function in the interface function table DynInterf */
   DynInterf[inum].Nshared = ilib;
+
 
   if ( SearchInDynLinks(names[0],&DynInterf[inum].func) < 0 ) 
     {
-      Scierror("Error: addinter failed, %s not  found!\n",iname);
-      *err=2;
-      return;
+      Scierror("Error: addinter failed, %s not  found!\n",names[0]);
+      return 2;
     }
-  else
+  if ( SearchInDynLinks(names[1],&DynInterf[inum].func_info) < 0 ) 
     {
-      strncpy(DynInterf[inum].name,iname,NAME_MAXL);
-      DynInterf[inum].ok = 1;
+      Scierror("Error: addinter failed, %s not  found!\n",names[1]);
+      return 2;
     }
+  strncpy(DynInterf[inum].name,names[0],NAME_MAXL);
+  DynInterf[inum].ok = 1;
+  
   if ( inum == LastInterf ) LastInterf++;
 
-  /** we add all the Scilab new entry names 
-    in the scilab function table funtab **/
+  /*
+   * we add all the new entry names 
+   * in the nsp function table funtab 
+   */
 
-  if ( (*err=DynFuntab(enames,DYN_INTERF_START+inum+1)) != 0 ) 
+  info= DynInterf[inum].func_info;
+  k=0;
+  ninterf= inum +  DYN_INTERF_START ;
+  while (1) 
     {
-      Scierror("Error: addinter failed while trying to add entries in\n");
-      Scierror("\t in function table\n");
-      return ;
+      char *fname;
+      function *f;
+      info(k,&fname,&f);
+      if ( fname == NULL) break;
+      if ( EnterFunction(fname,ninterf,k) == FAIL)
+	{
+	  printf("Error: Table for nsp functions is too small \n");
+	}	  
+      k++;
     }
   ShowInterf();
-}
-
-
-/************************************************
- * Add the set of functions in Scilab Function 
- *   Hash Table with interface number N;
- ************************************************/
-
-static int DynFuntab(char **e_names, int N)
-{
-  int i=0;
-  while ( e_names[i] != NULL) 
-    {
-      if ( EnterFunction(e_names[i],N,i)== FAIL) return 3;
-      i++;
-    }
   return 0;
 }
+
 
 /*****************************************
  * A blank interface used as default value 
@@ -158,7 +160,7 @@ static int DynFuntab(char **e_names, int N)
 
 int BlankInterface(int i, char *fname, int first, int rhs, int opt, int lhs)
 {
-  Sciprintf("Error: Interface for function %s is not linked\r\n",fname);
+  Sciprintf("Error: Interface for function %s is not linked\n",fname);
   return RET_BUG;
 }
 
@@ -210,7 +212,7 @@ static void ShowInterf(void)
   for ( i = 0 ; i < LastInterf ; i++ ) 
     {
       if ( DynInterf[i].ok == 1 ) 
-	Sciprintf("Interface %d %s\r\n",i,DynInterf[i].name);
+	Sciprintf("Interface %d %s\n",i,DynInterf[i].name);
     }
 }
 

@@ -1,11 +1,26 @@
-/*********************************************************************
- * This Software is ( Copyright INRIA/ENPC 1998 )                    *
- *********************************************************************/
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
-/********************************************* 
+/*
  * A set of routines for 					       
  * dynamic linking facilities.					       
- ******************************************/ 
+ */
 
 #include <string.h> 
 #include <stdio.h>
@@ -13,10 +28,12 @@
 #include "nsp/math.h"
 #include "nsp/plisttoken.h" /* for  name_maxl 52 */
 #include "nsp/sciio.h"
+#include "nsp/string.h"
 #include "linking.h"
+#include "../system/files.h" /* FSIZE */
 
-static void Underscores (int isfor,char *ename,char *ename1);
-static int SearchFandS   ( char *,int );
+static void Underscores(int isfor,nsp_const_string ename, char *ename1);
+static int SearchFandS(nsp_const_string op, int ilib);
 int LinkStatus (void) ;
 
 /*********************************************
@@ -35,11 +52,9 @@ typedef struct {
   int      Nshared;           /* number of the shared file */
 } Epoints;
 
-#define TMPL 128 /** XXXXX to be changed with PATH **/
-
 typedef struct {
   int ok;
-  char tmp_file[TMPL];
+  char tmp_file[FSIZE+1];
   unsigned long  shl;
 } Hd;
 
@@ -48,38 +63,30 @@ static int Nshared  = 0   ;
 static Epoints EP[ENTRYMAX];  /* entryPoints */
 static int NEpoints = 0   ;        /* Number of Linked names */
 
-/** for debug info **/
-/** #define DEBUG  **/
-
-/************************************************
+/*
  * Dynamically Link entry points given in en_names 
- *    from object files given in files or in ilib 
- *    if files = [name.so] : shared library is loaded 
- *    if files = set of .o : a shared library is created and loaded 
- *    strf = "f" OR "c" ( to decide trailing _ action )
- *    ilib : integer (in/out) value 
- *    iflag: 0 if files is used 1 ilib is used
- *    rhs: number of rhs arguments in link(...)
- *    Warning : files and en_names are null terminated string arrays
- *    ======
- ************************************************/
+ * from shared library given by its path in 
+ * @shared_path. 
+ * strf : 'f' or 'c' ( to decide trailing _ action )
+ * ilib : integer (in/out) value 
+ * iflag: 0 if files is used 1 ilib is used
+ * rhs: number of rhs arguments in link(...)
+ * Warning: en_names should be a  null terminated string arrays
+ */
 
-void SciDynLoad(char **files, char **en_names, char *strf, int *ilib, int iflag, int *rhs)
+void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ilib, int iflag, int *rhs)
 {
-  SciLinkInit(); /** performed only once **/
-  
-  if ( iflag== 0 &&  strncmp(files[0],"show",4)==0) 
+  SciLinkInit(); 
+  if ( iflag== 0 && strncmp(shared_path,"show",4)==0) 
     {
       ShowDynLinks();
       *ilib = LinkStatus();  /* return value for Scilab */
       return;
     }
 
-  /** calling the linker **/
-
-  SciLink(iflag,rhs,ilib,files,en_names,strf);
-
-  if (*ilib >= 0) Sciprintf("Link done\r\n");
+  /* calling the linker */
+  SciLink(iflag,rhs,ilib,shared_path,en_names,strf);
+  if (*ilib >= 0) Sciprintf("Link done\n");
 }
 
 #if defined(netbsd) || defined(freebsd) || defined(sun) || defined(__alpha) || defined(sgi) || (!defined(hppa_old) && defined(hppa))  || defined(__APPLE__)
@@ -122,7 +129,7 @@ void SciDynLoad(char **files, char **en_names, char *strf, int *ilib, int iflag,
  * in entry names 
  ********************************************/
 
-static void Underscores(int isfor, char *ename, char *ename1)
+static void Underscores(int isfor,nsp_const_string ename, char *ename1)
 {
 #ifdef WLU1
   *ename1='_'; ename1++;
@@ -185,7 +192,7 @@ void C2F(iislink)(buf,irep)
  * returns the ii functions 
  *************************************/
 
-void GetDynFunc(int ii, int (**realop) (/* ??? */))
+void GetDynFunc(int ii, int (**realop)())
 {
   if ( EP[ii].Nshared != -1 ) 
     *realop = EP[ii].epoint;
@@ -198,7 +205,7 @@ void GetDynFunc(int ii, int (**realop) (/* ??? */))
  * Search from end to top 
  *************************************/
 
-int SearchInDynLinks(char *op, int (**realop) (/* ??? */))
+int SearchInDynLinks(char *op, int (**realop) ())
 {
   int i=0;
   for ( i = NEpoints-1 ; i >=0 ; i--) 
@@ -217,7 +224,7 @@ int SearchInDynLinks(char *op, int (**realop) (/* ??? */))
  * Search from end to top 
  *************************************/
 
-static int SearchFandS(char *op, int ilib)
+static int SearchFandS(nsp_const_string op, int ilib)
 {
   int i=0;
   for ( i = NEpoints-1 ; i >=0 ; i--) 

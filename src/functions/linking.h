@@ -10,11 +10,11 @@ extern void GetDynFunc ( int ii, int (**realop)());
 extern int SearchInDynLinks (char *op, int (**realop)());
 extern void SciLinkInit (void);
 extern void  ShowDynLinks (void);
-extern void SciLink (int iflag,int *rhs,int *ilib,char *files[],
-			     char *en_names[],char *strf);
 
-extern void SciDynLoad (char **files,char **en_names,char *strf,
-				int *ilib,int iflag,int *rhs);
+extern void SciLink(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf);
+
+extern void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf,
+		       int *ilib, int iflag, int *rhs);
 
 extern void C2F(iislink) (   char *buf,   integer *irep);
 extern void C2F(isciulink) ( integer *i);

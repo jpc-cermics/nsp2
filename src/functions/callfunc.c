@@ -88,6 +88,7 @@ extern  sci_interface  Gtk_Interf ;extern  interface_info  Gtk_Interf_Info ;
 #endif 
 
 extern  sci_interface  Cells_Interf ;extern  interface_info  Cells_Interf_Info ;
+extern  sci_interface  Pvm_Interf ;extern  interface_info  Pvm_Interf_Info ;
 
 
 InterfTab Interfaces[]={
@@ -144,6 +145,7 @@ InterfTab Interfaces[]={
 #endif 
   {Cells_Interf, Cells_Interf_Info},
   {PMatrix_Interf,PMatrix_Interf_Info},
+  {Pvm_Interf,Pvm_Interf_Info},
   {NULL,NULL}
 }; 
 

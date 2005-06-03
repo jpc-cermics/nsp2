@@ -65,11 +65,12 @@
 #define Max(x,y)	(((x)>(y))?(x):(y))
 
 static void Sci_Delsym (int );
-static int Sci_dlopen (char *loaded_files[]);
-static int Sci_dlsym (char *ename,int  ishared,char * strf);
+static int Sci_dlopen(nsp_const_string shared_path);
+static int Sci_dlsym(nsp_const_string ename, int ishared, char strf);
 static int SetArgv  (char *argv[], char *files[],int first,int max,int *err);
 static int SetArgv1  (char *argv[], char *files,int first,int max,int *err);
-static int CreateShared  ( char *loaded_files[], char *tmp_file);
+
+int CreateShared_unused  ( char *loaded_files[], char *tmp_file);
 
 /*************************************
  * New version : link entry names 
@@ -81,12 +82,12 @@ static int CreateShared  ( char *loaded_files[], char *tmp_file);
  *   -5 : pb with one of the entry point 
  *************************************/
 
-void SciLink(int iflag, int *rhs, int *ilib, char **files, char **en_names, char *strf)
+void SciLink(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf)
 {
   int i;
   if ( iflag == 0 )
     {
-      *ilib  = Sci_dlopen(files);
+      *ilib  = Sci_dlopen(shared_path);
     }
   if (*ilib  == -1 ) return;
   Sciprintf("shared archive loaded\r\n");
@@ -126,17 +127,13 @@ void C2F(isciulink)(i)
 }
 
 
-/*************************************
- * This routine 
- *   changes the file list <<loaded_files>>
- *   to a shared archive and call dlopen 
- *   the shared lib handler is stored in a Table 
- *   The return value is == -1 if the dlopen failed 
- *************************************/
+/*
+ * load a shared archive 
+ */
 
 #define MAXARGV 128
 
-static int Sci_dlopen(char **loaded_files)
+static int Sci_dlopen(nsp_const_string shared_path)
 {
   int i=0;
 #ifndef hppa
@@ -144,23 +141,10 @@ static int Sci_dlopen(char **loaded_files)
 #else
   shl_t hd1;
 #endif
-  char tmp_file[TMPL],*getenv(const char *);
-  /** XXXXX **/
-  if ( strncmp(loaded_files[0],"scilab",6) !=0)
+  char tmp_file[FSIZE+1],*getenv(const char *);
+  if ( strncmp(shared_path,"nsp",6) !=0)
     {
-      if ( loaded_files[0] != NULL && loaded_files[1] == NULL 
-	   && strstr(loaded_files[0],".so")!= NULL)
-	{
-	  strcpy(tmp_file,loaded_files[0]);
-	  Sciprintf("Loading shared executable %s\r\n",loaded_files[0]);
-	}
-      else 
-	{
-	  int rep;
-	  rep=CreateShared(loaded_files,tmp_file);
-	  if (rep == -1) 
-	    return(-1);
-	}
+      Sciprintf("Loading shared library %s\r\n",shared_path);
       /* this will load the shared library */
 #ifndef hppa
       hd1 = dlopen(tmp_file, RTLD_NOW);
@@ -170,29 +154,31 @@ static int Sci_dlopen(char **loaded_files)
     }
   else
     {
-      /* use symbols from scilab */
-      /* XXXXXX Only on sun  */
+      /* try to open symbols from nsp executable 
+       * does not work on all architectures 
+       */
 #ifdef sun 
       hd1 = dlopen((char *)0, RTLD_NOW);
 #else
 #ifdef hppa
       hd1 = PROG_HANDLE;
 #else
-      Sciprintf("Link : scilab is not a valid first argument on your machine\r\n");
+      Sciprintf("Link: nsp is not a valid first argument on your machine\r\n");
       return(-1);
 #endif
 #endif
     }
-  /* this will load the shared library */
 #ifndef hppa
   if ( hd1 == (void *) NULL || hd1 < (void *) 0 ) {
     Sciprintf("%s\r\n",dlerror());
+    return(-1);
+  }
 #else
   if (  hd1 == NULL) {
     Sciprintf("link error\r\n");
-#endif
     return(-1);
   }
+#endif
   for ( i = 0 ; i < Nshared ; i++ ) 
     {
       if ( hd[i].ok == FAIL) 
@@ -203,7 +189,6 @@ static int Sci_dlopen(char **loaded_files)
 	  return(i);
 	}
     }
-  
   if ( Nshared == ENTRYMAX ) 
     {
       Sciprintf("You can't open shared files maxentry %d reached\r\n",ENTRYMAX);
@@ -217,48 +202,49 @@ static int Sci_dlopen(char **loaded_files)
   return(Nshared-1);
 }
 
-  /** creates a shared executable from the set of files **/
+/*
+ * creates a shared executable from the set of files 
+ */
 
-int CreateShared(char **loaded_files, char *tmp_file)
+int CreateShared_unused (char **loaded_files, char *tmp_file)
 {
   int argc=3,err=0;
   static int count=0;
   int i=0;
   char *libs;
   libs=getenv("SYSLIBS");
-   /** XXXXX **/
-   Sciprintf("linking files ");
-   while ( loaded_files[i] != NULL) 
-     {
-       Sciprintf("%s ",loaded_files[i]);
-       i++;
-     }
-   Sciprintf(" to create a shared executable\r\n");
-   count++;
-   sprintf(tmp_file, "/tmp/SD_%d_/SL_%d_XXXXXX",(int) getpid(),count);
+  Sciprintf("linking files ");
+  while ( loaded_files[i] != NULL) 
+    {
+      Sciprintf("%s ",loaded_files[i]);
+      i++;
+    }
+  Sciprintf(" to create a shared executable\r\n");
+  count++;
+  sprintf(tmp_file, "/tmp/SD_%d_/SL_%d_XXXXXX",(int) getpid(),count);
 #ifdef HAVE_MKSTEMP 
-   mkstemp(tmp_file);
+  mkstemp(tmp_file);
 #else 
-   mktemp(tmp_file);
+  mktemp(tmp_file);
 #endif
-   {
-     int pid, status, wpid;
-     static char *argv[MAXARGV] = {
-       /*   0        1         2    3  4   */
+  {
+    int pid, status, wpid;
+    static char *argv[MAXARGV] = {
+      /*   0        1         2    3  4   */
 #ifdef sun
 #if defined(SYSV)
-       "/usr/ucb/ld", "-r", "-o", 0, 0
+      "/usr/ucb/ld", "-r", "-o", 0, 0
 #else 
-       "/usr/bin/ld", "-o", 0, 0,0 
+      "/usr/bin/ld", "-o", 0, 0,0 
 #endif
 #else
 #ifdef linux
-       "/usr/bin/ld", "-shared", "-o", 0, 0  
+      "/usr/bin/ld", "-shared", "-o", 0, 0  
 #else
 #ifdef hppa
-       "/bin/ld", "-b", "-o", 0, 0
+      "/bin/ld", "-b", "-o", 0, 0
 #else
-       "/bin/ld", "-shared", "-o", 0, 0  
+      "/bin/ld", "-shared", "-o", 0, 0  
 #endif
 #endif
 #endif
@@ -301,13 +287,14 @@ int CreateShared(char **loaded_files, char *tmp_file)
    }
    return 0;
 }
-/*************************************
+
+/*
  * This routine load the entryname ename 
  *     from shared lib ishared 
  * return FAIL or OK 
- *************************************/
+ */
 
-static int Sci_dlsym(char *ename, int ishared, char *strf)
+static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
 {
 #ifdef hppa
   shl_t hd1;
@@ -315,7 +302,7 @@ static int Sci_dlsym(char *ename, int ishared, char *strf)
 #endif
   int ish = Min(Max(0,ishared),ENTRYMAX-1);
   char enamebuf[NAME_MAXL];
-  if ( strf[0] == 'f' )
+  if ( strf == 'f' )
     Underscores(1,ename,enamebuf);
   else 
     Underscores(0,ename,enamebuf);

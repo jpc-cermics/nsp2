@@ -43,8 +43,8 @@ static int foo (int *ix,float *fx,double *dx,char *S);
 
 int int_link(Stack stack, int rhs, int opt, int lhs)
 {
-  char *Str,**enames=NULL,**files=NULL;
-  NspSMatrix *Files,*Enames;  
+  char *Str,**enames=NULL,*shared_lib;
+  NspSMatrix *Enames;  
   NspObject*OHMat;
   int ilib =0, iflag=1;
   CheckRhs(1,3);
@@ -55,9 +55,8 @@ int int_link(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      if ((Files = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+      if ((shared_lib = GetString(stack,1)) == NULLSTRING) return RET_BUG;
       iflag = 0;
-      files = Files->S;
     }      
   if ( rhs > 1 ) 
     {
@@ -69,10 +68,10 @@ int int_link(Stack stack, int rhs, int opt, int lhs)
       if ((Str = GetString(stack,3)) == (char*)0) return RET_BUG;
     }
   else
-    {
+    { 
       Str = "f";
     }
-  SciDynLoad(files,enames,Str,&ilib,iflag,&rhs);
+  SciDynLoad(shared_lib,enames,Str[0],&ilib,iflag,&rhs);
   if ( ilib < 0) 
     {
       link_bug(ilib); 
@@ -148,17 +147,17 @@ int int_c_link(Stack stack, int rhs, int opt, int lhs)
  * addinter function 
  *********************************************************/
 
+extern int nsp_dynamic_interface(nsp_const_string shared_path,nsp_const_string interface);
+
 int int_addinter(Stack stack, int rhs, int opt, int lhs)
 {
   int err=0;
-  char *Str;
-  NspSMatrix *Files,*Enames;  
-  CheckRhs(3,3);
+  char *Str,*file;
+  CheckRhs(2,2);
   CheckLhs(0,1);
-  if ((Files = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((Str = GetString(stack,2)) == (char*)0) return RET_BUG;
-  if ((Enames = GetSMat(stack,3)) == NULLSMAT) return RET_BUG;
-  AddInter(Files->S,Str,Enames->S,&err);
+  if ((file = GetString(stack,1)) == NULLSTRING) return RET_BUG;
+  if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
+  err= nsp_dynamic_interface(file,Str);
   if ( err < 0 ) 
     {
       link_bug(err);
@@ -179,6 +178,7 @@ int int_addinter(Stack stack, int rhs, int opt, int lhs)
 
 int int_call(Stack stack, int rhs, int opt, int lhs)
 {
+  function *f;
   /* posi[i]=j if i-th argument of function fname 
     is then j-th argument on the stack **/
   int posi[MAXPAR]={0}; 
@@ -198,6 +198,12 @@ int int_call(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(0,1000);
   /* first argument is the function name **/
   if ((Fname = GetString(stack,1)) == NULL) return RET_BUG;
+  if (  SearchInDynLinks(Fname,&f) == -1 )
+    {
+      Scierror("Error: entry point %s not found\n",Fname);
+      return RET_BUG;
+    }
+
   /* checking input arguments arg,position,type **/
   /************************************************/
   i=2;
