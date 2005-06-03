@@ -12,7 +12,7 @@ opt_PROG=-c
 opt_SCRIPT=-c
 srcdir=.
 top_srcdir=.
-prefix=/tmp/usr
+prefix=/usr/local
 #
 
 all::
@@ -35,7 +35,7 @@ TERMCAPLIB = -lreadline -lncurses
 #   compile $(CC) $(CC_OPTIONS) -c file.c 
 #   link    $(CC) -o $(PROGRAM) $(OBJS) $(CC_LDFLAGS)
 #
-CC = cc
+CC = gcc
 CC_OPTIONS = -g -Wall -Dlinux  `pkg-config gtk+-2.0 libgtkhtml-2.0 gtkglext-1.0 fftw3 --cflags` -I$(SCIDIR)/src/include
 CC_LDFLAGS = -lieee 
 CC_PICFLAGS = 
@@ -68,8 +68,8 @@ DLD_SUBDIR =
 #
 # PVM 
 #
-PVMLIB = /usr/local/nsp2/pvm3/lib/LINUX/libpvm3.a
-PVMGLIB = /usr/local/nsp2/pvm3/lib/LINUX/libgpvm3.a
+PVMLIB = pvm3/lib/LINUX/libpvm3.a
+PVMGLIB = pvm3/lib/LINUX/libgpvm3.a
 PVMROOT = /usr/local/nsp2/pvm3
 PVMINCLUDE = /usr/local/nsp2/pvm3/include
 #
@@ -82,7 +82,7 @@ TCLTK_LIBS =
 # libraries needed for linking 
 # 1- inside nsp 
 NSPLIBS=libs/nsp.a libs/graphics.a libs/rand.a libs/dcd.a libs/integ.a libs/approx.a  
-EXTERNLIBS = `pkg-config gtk+-2.0 libgtkhtml-2.0 gtkglext-1.0 fftw3 --libs`  -lf77lapack -lcblas -lf77blas -latlas  -lreadline -lncurses
+EXTERNLIBS = $(PVMLIB) $(PVMGLIB) `pkg-config gtk+-2.0 libgtkhtml-2.0 gtkglext-1.0 fftw3 --libs`  -lf77lapack -lcblas -lf77blas -latlas  -lreadline -lncurses
 #
 # for WIN32 version 
 # win32 libraries for gcwin32 
@@ -95,12 +95,17 @@ LINKEROPT= $(LD_LDFLAGS)
 #
 RC=windres 
 RCVARS=-O coff 
+#
+#
+COMPILE= $(CC)  $(CFLAGS)
+FCOMPILE = $(FC)  $(FFLAGS)
+#
 
 .c.o:
 	@echo "compiling $< (enable debug)"
-	@$(CC) $(CFLAGS)  -c $<
+	@$(COMPILE)  -c $<
 
 .f.o:
 	@echo "compiling $< (enable debug)"
-	@$(FC) $(FFLAGS)  -c $<
+	@$(FCOMPILE)  -c $<
 

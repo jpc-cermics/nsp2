@@ -104,10 +104,9 @@ FCOMPILE = $(FC)  $(FFLAGS)
 .c.o:
 	@echo "compiling $< @ENABLE_DEBUG@"
 	@$(COMPILE)  -c $<
-	@$(CC) $(CFLAGS)  -c $<
 
 .f.o:
 	@echo "compiling $< @ENABLE_DEBUG@"
 	@$(FCOMPILE)  -c $<
-	@$(FC) $(FFLAGS)  -c $<
+
 
