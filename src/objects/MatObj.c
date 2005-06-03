@@ -1258,7 +1258,7 @@ int_mxsort (Stack stack, int rhs, int opt, int lhs)
 static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *M=NULL,*Index=NULL;
-  char *type_sort[]={ "g", "gs", "gm", "c", "r", "lr" , "lc" , "ldc", "ldr", NULL };
+  char *type_sort[]={ "g", "gs", "gm", "c", "r", "lr" , "lc" , "ldc", "ldr","gb","gd", NULL };
   char *dir_sort[]={ "i", "d",  NULL };
   int iflag = FALSE;
   char direction = 'd';
@@ -1288,6 +1288,8 @@ static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
     case sort_g : 
     case sort_gs: 
     case sort_gm: 
+    case sort_gb: 
+    case sort_gd: 
       nsp_matrix_sort(M,&Index,iflag,direction,rep_type);break;
       break;
     case sort_c:
