@@ -82,7 +82,7 @@ TCLTK_LIBS = @TCLTK_LIBS@
 # libraries needed for linking 
 # 1- inside nsp 
 NSPLIBS=libs/nsp.a libs/graphics.a libs/rand.a libs/dcd.a libs/integ.a libs/approx.a @MPLUSLIB@ 
-EXTERNLIBS = @GTKLIBS@ @FFTW3_LIBS@ @LAPACK_LIBS@ @BLAS_LIBS@  @TERMCAPLIB@
+EXTERNLIBS = $(PVMLIB) $(PVMGLIB) @GTKLIBS@ @FFTW3_LIBS@ @LAPACK_LIBS@ @BLAS_LIBS@  @TERMCAPLIB@
 #
 # for WIN32 version 
 # win32 libraries for gcwin32 
@@ -95,12 +95,19 @@ LINKEROPT= $(LD_LDFLAGS)
 #
 RC=windres 
 RCVARS=-O coff 
+#
+#
+COMPILE= $(CC)  $(CFLAGS)
+FCOMPILE = $(FC)  $(FFLAGS)
+#
 
 .c.o:
 	@echo "compiling $< @ENABLE_DEBUG@"
+	@$(COMPILE)  -c $<
 	@$(CC) $(CFLAGS)  -c $<
 
 .f.o:
 	@echo "compiling $< @ENABLE_DEBUG@"
+	@$(FCOMPILE)  -c $<
 	@$(FC) $(FFLAGS)  -c $<
 
