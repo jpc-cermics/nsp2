@@ -20,7 +20,7 @@ LN_S = ln -s
 NM = /usr/bin/nm -B
 LDFLAGS =  $(EXTRA_LDFLAGS) 
 LIBS = -lm 
-FLIBS =  -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.2 -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.2/../../.. -lfrtbegin -lg2c -lm -lgcc_s
+FLIBS =  -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.3 -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.3/../../.. -lfrtbegin -lg2c -lm -lgcc_s
 #******************************************************************* 
 INCLUDES=  $(XFLAGS) $(TK_INC_PATH) $(TCL_INC_PATH) -I$(SCIDIR)/src/include 
 
@@ -66,7 +66,7 @@ distclean:: clean
 tests	: $(LIBRARY_NAME).dia
 
 $(LIBRARY_NAME).dia	: $(LIBRARY_NAME).la $(LIBRARY_NAME).tst
-	@$(SCIDIR)/bin/scilab -nw -e "scitest(\"$(LIBRARY_NAME).tst\");quit;"
+	@$(SCIDIR)/bin/scilab -nw -e "nsptest('$(LIBRARY_NAME).tst');quit;"
 
 # defined in Makefile.incl 
 # .c.o:
