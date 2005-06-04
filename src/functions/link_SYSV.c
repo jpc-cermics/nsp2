@@ -1,6 +1,8 @@
-/*********************************
- * Link version for SYSV machine 
- *********************************/
+/*
+ *  Link version for SYSV machine 
+ *  using dlopen 
+ *
+ */
 
 #include <stdio.h>
 #include <ctype.h>
@@ -59,8 +61,6 @@
 
 #include <string.h>
 
-
-#define round(x,s) (((x) + ((s)-1)) & ~((s)-1))
 #define Min(x,y)	(((x)<(y))?(x):(y))
 #define Max(x,y)	(((x)>(y))?(x):(y))
 
@@ -120,52 +120,55 @@ int LinkStatus(void)
 
 #define MAXARGV 128
 
+/*
+ * a set of macros for hppa to emulate dl functions 
+ * should be obsolete i.e dl family should be used on hp 
+ */
+
+#ifdef hppa 
+static function dlsym(void *handle, const char *symbol)
+{
+  function f;
+  dl handle hd1 = (shl_t) handle;
+  irep= shl_findsym(&hd1,symbol,TYPE_PROCEDURE,&f);
+  return ( irep == -1 ) ? NULL: f;
+}
+
+#define dlopen(x,y) ((x)== NULL) ? PROG_HANDLE : shl_load(x, BIND_IMMEDIATE | BIND_VERBOSE ,0L) 
+#define dlclose(x) shl_unload((shl_t) x)
+#define dlhandle  shl_t 
+#else /* hppa */
+#define dlhandle  void *
+#endif /* hppa */
+
+
 static int Sci_dlopen(nsp_const_string shared_path)
 {
   int i=0;
-#ifndef hppa
-  void *hd1 = (void *) 0;
-#else
-  shl_t hd1;
-#endif
-  if ( strncmp(shared_path,"nsp",6) !=0)
-    {
-      /* this will load the shared library 
-       */
-#ifndef hppa
-      hd1 = dlopen(shared_path, RTLD_NOW);
-#else
-      hd1 = shl_load(shared_path, BIND_IMMEDIATE | BIND_VERBOSE ,0L);
-#endif
-    }
-  else
+  dlhandle hd1;
+  if ( strncmp(shared_path,"nsp",6) ==0 )
     {
       /* try to open symbols from nsp executable 
        * does not work on all architectures 
        */
-#ifdef sun 
-      hd1 = dlopen((char *)0, RTLD_NOW);
+      hd1 = dlopen(NULL, RTLD_NOW);
+    }
+  else
+    {
+      /* this will load the shared library */
+      hd1 = dlopen(shared_path, RTLD_NOW);
+    }
+  if ( hd1 == NULL ) 
+    {
+#ifndef hppa
+      char *loc = dlerror();
+      if ( loc != NULL) Scierror("%s\n",loc);
+      return(-1);
 #else
-#ifdef hppa
-      hd1 = PROG_HANDLE;
-#else
-      Scierror("Error: \"nsp\" is not a valid first argument for link on your machine\n");
+      Scierror("link error\n");
       return(-1);
 #endif
-#endif
     }
-#ifndef hppa
-  if ( hd1 == (void *) NULL || hd1 < (void *) 0 ) {
-    char *loc = dlerror();
-    if ( loc != NULL) Scierror("%s\n",loc);
-    return(-1);
-  }
-#else
-  if (  hd1 == NULL) {
-    Scierror("link error\n");
-    return(-1);
-  }
-#endif
   /* store the shared library in table 
    * first try to detect an unoccupied zone
    */
@@ -179,20 +182,105 @@ static int Sci_dlopen(nsp_const_string shared_path)
 	  /* Ok we stop */
 	  return(i); 
 	} 
-    } 
+    }
   /* we use the last position */
   if ( Nshared == ENTRYMAX ) 
     {
       Scierror("Error: cannot open shared library maxentry %d is reached\n",ENTRYMAX);
       return -1;
     }
-  
-  strcpy(hd[Nshared].tmp_file,shared_path);
+    strcpy(hd[Nshared].tmp_file,shared_path);
   hd[Nshared].shl = (unsigned long)hd1;
   hd[Nshared].ok = OK;
   Nshared ++;
   return (Nshared-1);
 }
+
+
+/*
+ * This routine load the entryname ename 
+ *     from shared lib ishared 
+ * return FAIL or OK 
+ */
+
+static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
+{
+  int ish = Min(Max(0,ishared),ENTRYMAX-1);
+  char enamebuf[NAME_MAXL];
+  if ( strf == 'f' )
+    Underscores(1,ename,enamebuf);
+  else 
+    Underscores(0,ename,enamebuf);
+
+  /* lookup the address of the function to be called */
+  if ( NEpoints == ENTRYMAX ) 
+    {
+      Scierror("Error: cannot link more functions maxentry %d reached\n",ENTRYMAX);
+      return(FAIL);
+    }
+  if ( hd[ish].ok == FAIL ) 
+    {
+      Scierror("Error: Shared library %d does not exists\n",ish);
+      return(FAIL);
+    }
+  /* entry was previously loaded */
+  if ( SearchFandS(ename,ish) >= 0 ) 
+    {
+      Scierror("Warning: Entry name %s is already loaded from lib %d\n",ename,ish);
+      return(OK);
+    }
+  EP[NEpoints].epoint = (function) dlsym((void *) hd[ish].shl, enamebuf);
+  if ( (unsigned long) EP[NEpoints].epoint == (unsigned long) 0 )
+    {
+#ifndef hppa
+      const char *loc = dlerror();
+      if ( loc != NULL) Scierror("Error: %s\n",loc);
+#else
+      Scierror("Error: %s is not an entry point\n",enamebuf);
+#endif
+      return(FAIL);
+    }
+  else 
+    {
+      /* we don't add the _ in the table */
+      strncpy(EP[NEpoints].name,ename,NAME_MAXL);
+      EP[NEpoints].Nshared = ish;
+      NEpoints++;
+    }
+  return(OK);  
+}
+
+/*
+ * Delete entry points associated with shared lib ishared
+ */
+
+static void Sci_Delsym(int ishared)
+{
+  int ish = Min(Max(0,ishared),ENTRYMAX-1);
+  int i=0;
+  for ( i = NEpoints-1 ; i >=0 ; i--) 
+    {
+      if ( EP[i].Nshared == ish )
+	{
+	  int j;
+	  for ( j = i ; j <= NEpoints - 2 ; j++ )
+	    {
+	      EP[j].epoint = EP[j+1].epoint;
+	      EP[j].Nshared = EP[j+1].Nshared;
+	      strcpy(EP[j].name,EP[j+1].name);
+	    }
+	  NEpoints--;
+	}
+    }
+  if ( hd[ish].ok != FAIL)
+    {
+      dlclose( hd[ish].shl);
+      /* unlink(hd[ish].tmp_file);*/
+      hd[ish].ok = FAIL;
+    }
+}
+
+  
 
 /*
  * creates a shared executable from the set of files 
@@ -281,117 +369,13 @@ int CreateShared_unused (char **loaded_files, char *tmp_file)
 }
 
 /*
- * This routine load the entryname ename 
- *     from shared lib ishared 
- * return FAIL or OK 
- */
-
-static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
-{
-#ifdef hppa
-  shl_t hd1;
-  int irep = 0;
-#endif
-  int ish = Min(Max(0,ishared),ENTRYMAX-1);
-  char enamebuf[NAME_MAXL];
-  if ( strf == 'f' )
-    Underscores(1,ename,enamebuf);
-  else 
-    Underscores(0,ename,enamebuf);
-
-  /* lookup the address of the function to be called */
-  if ( NEpoints == ENTRYMAX ) 
-    {
-      Scierror("Error: cannot link more functions maxentry %d reached\n",ENTRYMAX);
-      return(FAIL);
-    }
-  if ( hd[ish].ok == FAIL ) 
-    {
-      Scierror("Error: Shared library %d does not exists\n",ish);
-      return(FAIL);
-    }
-  /** entry was previously loaded **/
-  if ( SearchFandS(ename,ish) >= 0 ) 
-    {
-      Scierror("Warning: Entry name %s is already loaded from lib %d\n",ename,ish);
-      return(OK);
-    }
-#ifndef hppa
-  EP[NEpoints].epoint = (function) dlsym((void *) hd[ish].shl, enamebuf);
-  if ( (unsigned long) EP[NEpoints].epoint == (unsigned long) 0 )
-
-#else
-  hd1 = (shl_t)  hd[ish].shl;
-  irep= shl_findsym(&hd1, enamebuf,TYPE_PROCEDURE,&(EP[NEpoints].epoint));
-  if ( irep == -1 )
-#endif
-    {
-#if defined(linux) || defined(__APPLE__)
-      const char *loc;
-#else
-      char *loc;
-#endif
-#ifndef hppa
-      loc = dlerror();
-      if ( loc != NULL) Scierror("Error: %s\n",loc);
-#else
-      Scierror("Error: %s is not an entry point\n",enamebuf);
-#endif
-      return(FAIL);
-    }
-  else 
-    {
-      /* we don't add the _ in the table */
-      strncpy(EP[NEpoints].name,ename,NAME_MAXL);
-      EP[NEpoints].Nshared = ish;
-      NEpoints++;
-    }
-  return(OK);  
-}
-
-
-/*
- * Delete entry points associated with shared lib ishared
- */
-
-static void Sci_Delsym(int ishared)
-{
-  int ish = Min(Max(0,ishared),ENTRYMAX-1);
-  int i=0;
-  for ( i = NEpoints-1 ; i >=0 ; i--) 
-    {
-      if ( EP[i].Nshared == ish )
-	{
-	  int j;
-	  for ( j = i ; j <= NEpoints - 2 ; j++ )
-	    {
-	      EP[j].epoint = EP[j+1].epoint;
-	      EP[j].Nshared = EP[j+1].Nshared;
-	      strcpy(EP[j].name,EP[j+1].name);
-	    }
-	  NEpoints--;
-	}
-    }
-  if ( hd[ish].ok != FAIL)
-    {
-#ifndef hppa
-      dlclose((void *) hd[ish].shl);
-#else
-      shl_unload((shl_t)  hd[ish].shl);
-#endif
-      /* unlink(hd[ish].tmp_file);*/
-      hd[ish].ok = FAIL;
-    }
-}
-
-  
-/******************************************************
  * Utility function 
  * files is a null terminated array of char pointers 
  * files[i] is broken into pieces ( separated by ' ') 
  * and positions are stored in argv starting at position 
  * first 
- *******************************************************/
+ */
+
 
 static int SetArgv(char **argv, char **files, int first, int max, int *err)
 {
