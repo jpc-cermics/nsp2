@@ -211,14 +211,8 @@ IMPENV=
 # strip executable (not to be done on darwin) 
 STRIP=strip
 
-#########################
-## libtool 
-#########################
 
-echo "configuration of libtool"
-builtin(include,config/libtool.m4)
-AM_PROG_LIBTOOL
-echo "end of configuration of libtool"
+
 
 #########################
 # setting parameters according to system types
@@ -1082,6 +1076,19 @@ case "$host" in
     ;;
 esac
 
+
+#########################
+## libtool 
+#########################
+
+echo "configuration of libtool"
+builtin(include,config/libtool.m4)
+AC_PROG_LIBTOOL()
+echo "end of configuration of libtool"
+
+# get the shared lib extension 
+SHREXT_NAME="$shrext"
+
 #########################################
 # FC_OPTIONS1 and CC_OPTIONS are similar 
 # to FC_OPTIONS and CC_OPTIONS 
@@ -1677,6 +1684,7 @@ fi
 ## substituting variables
 #########################
 
+AC_SUBST(SHREXT_NAME)
 AC_SUBST(RM)
 AC_SUBST(AR)
 AC_SUBST(AR_FLAGS)
@@ -1787,7 +1795,7 @@ AC_SUBST(BLAS_LOCAL)
 AC_SUBST(LAPACK_LOCAL)
 AC_SUBST(GTK_PKGS)
 
-AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile) 
+AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/scilab.g scripts/scilab-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h) 
 
 echo
 echo
