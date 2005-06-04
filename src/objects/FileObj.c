@@ -501,6 +501,7 @@ static int int_file_get_lines(void *self, Stack stack, int rhs, int opt, int lhs
     }
   else
     lines = 1;
+  lines=Max(1,lines);
   if ( nsp_read_lines(self,&S,lines) == FAIL) return RET_BUG; 
   MoveObj(stack,1,(NspObject *) S);
   return 1;
