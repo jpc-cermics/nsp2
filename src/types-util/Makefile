@@ -122,6 +122,12 @@ job_func:
 		PARENT=Object FIELDS="int  Num;/* function position inside interface */\nint  Int;/* Interface number in which the function is stored */\nint  status;/* status of the function */" \
 		PARENTDOWNCASE=object PARENTINC=nsp/object.h 
 
+job_addinter:
+	make job  TNAME=Addinter TDOWNCASE=addinter TSHORT=ai \
+		TASSTRING=Addinter NULL=NULLADDINTER \
+		PARENT=Object FIELDS="addintr *inter;" \
+		PARENTDOWNCASE=object PARENTINC=nsp/object.h 
+
 clean : distclean 
 
 distclean:

@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
-#ifndef INC_NSP_@TYPENAME@
-#define INC_NSP_@TYPENAME@
+#ifndef NSP_INC_@TYPENAME@
+#define NSP_INC_@TYPENAME@
 
-/*-----------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2005 )
- * Jean-Philippe Chancelier Enpc/Cermics
- *-----------------------------------------------------------------*/
+/*
+ * This Software is GPL (Copyright ENPC 1998-2005) 
+ * Jean-Philippe Chancelier Enpc/Cermics         
+ */
   
 /* @TYPENAME@ */
 
@@ -20,13 +20,16 @@ typedef struct _nsp_@TYPEDOWNCASE@ Nsp@TYPENAME@;
 typedef int (*@TYPEDOWNCASE@_save) (NspFile  *F, Nsp@TYPENAME@ *M);
 
 typedef struct _nsp_type_@TYPENAME@ { 
+  /*< private >*/
   NSP_TYPE_OBJECT__ 
-  /* rajouts */
+  /*< public >*/
 } NspType@TYPENAME@;
 
 struct _nsp_@TYPEDOWNCASE@ {
+  /*< private >*/
   Nsp@PARENT@ father; 
   NspType@TYPENAME@ *type; 
+  /*< public >*/
   @FIELDS@
 };
 
