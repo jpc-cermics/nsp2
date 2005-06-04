@@ -18,6 +18,7 @@ extern void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf,
 extern void C2F(isciulink) ( integer *i);
 extern int LinkStatus  (void);
 NspHash *nsp_get_dlsymbols();
+void nsp_unlink_shared(int ilib);
 
 int BlankInterface (int i, char *fname, int first, int rhs, int opt, int lhs);
 void RemoveInterf (int Nshared);

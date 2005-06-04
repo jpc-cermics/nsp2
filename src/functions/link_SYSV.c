@@ -112,18 +112,6 @@ int LinkStatus(void)
   return(1);
 }
 
-/**************************************
- * Unlink a shared lib 
- *************************************/
-
-void C2F(isciulink)(i) 
-     integer *i;
-{
-  /* delete entry points in shared lib *i */
-  Sci_Delsym(*i);
-  /* delete entry points used in addinter in shared lib *i */
-  RemoveInterf(*i);
-}
 
 
 /*
@@ -178,7 +166,9 @@ static int Sci_dlopen(nsp_const_string shared_path)
     return(-1);
   }
 #endif
-  /* try to load the symbols */
+  /* store the shared library in table 
+   * first try to detect an unoccupied zone
+   */
   for ( i = 0 ; i < Nshared ; i++ ) 
     {
       if ( hd[i].ok == FAIL) 
@@ -186,9 +176,11 @@ static int Sci_dlopen(nsp_const_string shared_path)
 	  hd[i].shl =  (unsigned long)hd1; 
 	  strcpy(hd[i].tmp_file,shared_path); 
 	  hd[i].ok = OK; 
+	  /* Ok we stop */
 	  return(i); 
 	} 
     } 
+  /* we use the last position */
   if ( Nshared == ENTRYMAX ) 
     {
       Scierror("Error: cannot open shared library maxentry %d is reached\n",ENTRYMAX);

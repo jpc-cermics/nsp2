@@ -35,14 +35,16 @@
 
 static void Underscores(int isfor,nsp_const_string ename, char *ename1);
 static int SearchFandS(nsp_const_string op, int ilib);
+static int nsp_find_shared(nsp_const_string shared_path);
 int LinkStatus (void) ;
 
-/*********************************************
- * Structure to keep the entry points 
- *********************************************/
+/* sructure used to store entry points 
+ * i.e a function pointer, a name and a shared lib id 
+ */
 
-#define ENTRYMAX 200         /* maximum number of loaded shared libary */
-
+#define ENTRYMAX 200         /* maximum number of loaded shared libary 
+			      * and maximum number of entries in a shared library
+			      */
 typedef int (*function) ();
 
 typedef char Name[NAME_MAXL];   /* could be changed to dynamic structure */
@@ -53,16 +55,20 @@ typedef struct {
   int      Nshared;           /* number of the shared file */
 } Epoints;
 
+/* structure used to store information 
+ * about shared libraries 
+ */
+
 typedef struct {
-  int ok;
-  char tmp_file[FSIZE+1];
-  unsigned long  shl;
+  int ok;                 /* if ok == FAIL then inactive */
+  char tmp_file[FSIZE+1]; /* name of the shared library */
+  unsigned long  shl;     /* dlopen stuffs */
 } Hd;
 
-static Hd  hd[ENTRYMAX]; /* shared libs handler */
+static Hd  hd[ENTRYMAX];      /* shared libs handler */
 static int Nshared  = 0   ;
 static Epoints EP[ENTRYMAX];  /* entryPoints */
-static int NEpoints = 0   ;        /* Number of Linked names */
+static int NEpoints = 0   ;   /* Number of Linked names */
 
 /*
  * Dynamically Link entry points given in en_names 
@@ -77,7 +83,14 @@ static int NEpoints = 0   ;        /* Number of Linked names */
 
 void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ilib, int iflag, int *rhs)
 {
+  int lib;
   SciLinkInit(); 
+  if ( (lib = nsp_find_shared(shared_path)) != -1 ) 
+    {
+      /* Sciprintf("shared library already loaded\n"); */
+      nsp_unlink_shared(lib);
+    }
+
   if ( iflag== 0 && strncmp(shared_path,"show",4)==0) 
     {
       ShowDynLinks();
@@ -125,7 +138,9 @@ void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ili
 #endif 
 
 /*
- * Underscores : deals with the trailing _  in entry names 
+ * utility function : 
+ * add trailing and leading _ when needed 
+ * this information is gathered by configure.
  */
 
 static void Underscores(int isfor,nsp_const_string ename, char *ename1)
@@ -194,7 +209,6 @@ void GetDynFunc(int ii, int (**realop)())
     *realop = (function) 0;
 }
 
-
 /*
  * Search an entry point named @op in the dynamically 
  * linked entry points. Search is performed from end to top 
@@ -244,19 +258,25 @@ static int SearchFandS(nsp_const_string op, int ilib)
 void  ShowDynLinks(void)
 {
   int i=0,count=0;
-  Sciprintf("Number of entry points %d\r\n",NEpoints);
+  Sciprintf("Number of entry points %d\n",NEpoints);
   Sciprintf("Shared libs : [");
   for ( i = 0 ; i < Nshared ; i++) 
     if ( hd[i].ok == OK) { Sciprintf("%d ",i);count++;}
-  Sciprintf("] : %d libs\r\n",count);
+  Sciprintf("] : %d libs (%d)\n",count,Nshared);
   for ( i = NEpoints-1 ; i >=0 ; i--) 
     {
-      Sciprintf("Entry point %s in shared lib %d\r\n",
-	       EP[i].name,EP[i].Nshared);
+      int ish = Min(Max(0,EP[i].Nshared),ENTRYMAX-1);
+      if ( hd[ish].ok == OK) 
+	Sciprintf("Entry point %s in shared lib %d (%s)\n",
+		  EP[i].name,EP[i].Nshared, hd[ish].tmp_file);
+      else 
+	Sciprintf("Entry point %s in shared lib %d (void)\n",
+		  EP[i].name,EP[i].Nshared);
     }
 }
 
-/* get entries as a hash table 
+/* get all entries as a hash table 
+ * names : shared library number
  */
 
 NspHash *nsp_get_dlsymbols()
@@ -280,5 +300,33 @@ NspHash *nsp_get_dlsymbols()
 } 
 
 
+/* 
+ * search linked libraries for a given name 
+ *
+ */
 
 
+static int nsp_find_shared(nsp_const_string shared_path)
+{
+  int i;
+  for ( i = 0 ; i < ENTRYMAX ; i++) 
+    {
+      if ( hd[i].ok != FAIL && strcmp(hd[i].tmp_file,shared_path)==0) 
+	return i;
+    }
+  return -1;
+}
+
+
+/* remove the entry points associated to 
+ * a shared library and the associated interfaced 
+ * functions if it was an addinter 
+ */
+
+void nsp_unlink_shared(int ilib)
+{
+  /* delete entry points in shared lib *i */
+  Sci_Delsym(ilib);
+  /* delete entry points used in addinter in shared lib *i */
+  RemoveInterf(ilib);
+}

@@ -113,7 +113,7 @@ int int_ulink(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(0,1);
   if (GetScalarInt(stack,1,&ilib) == FAIL) return RET_BUG;
-  C2F(isciulink)(&ilib);
+  nsp_unlink_shared(ilib);
   return 0;
 }
 
@@ -154,20 +154,20 @@ extern int nsp_dynamic_interface(nsp_const_string shared_path,nsp_const_string i
 
 int int_addinter(Stack stack, int rhs, int opt, int lhs)
 {
-  int err=0;
+  int ilib=0;
   char *Str,*file;
   CheckRhs(2,2);
   CheckLhs(0,1);
   if ((file = GetString(stack,1)) == NULLSTRING) return RET_BUG;
   if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
-  err= nsp_dynamic_interface(file,Str);
-  if ( err < 0 ) 
+  ilib = nsp_dynamic_interface(file,Str);
+  if ( ilib < 0 ) 
     {
-      link_bug(err);
+      link_bug(ilib);
       return RET_BUG;
     }
-  if ( err != 0) return RET_BUG;
-  return 0;
+  if ( nsp_move_double(stack,1,(double) ilib)== FAIL) return RET_BUG;
+  return 1;
 }
 
 /***********************************************************

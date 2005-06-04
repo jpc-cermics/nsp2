@@ -78,16 +78,6 @@ int LinkStatus()
   return(1);
 }
 
-/**************************************
- * Unlink a shared lib 
- *************************************/
-
-void C2F(isciulink)(i) 
-     integer *i;
-{
-  Sci_Delsym(*i);
-}
-
 
 /*************************************
  * This routine 

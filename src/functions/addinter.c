@@ -45,7 +45,6 @@ Iel DynInterf[MAXINTERF];
 int LastInterf=0;
 
 static void SciInterInit (void);
-static void ShowInterf  (void);
 
 /************************************************
  * Dynamically added interface to Scilab 
@@ -69,23 +68,7 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
 
   SciLinkInit();
   SciInterInit();
-
-  /* Try to unlink the interface if it was previously linked 
-   */
   
-  for ( i = 0 ; i < LastInterf ; i++) 
-    {
-      if (strcmp(interface,DynInterf[i].name)==0) 
-	{
-	  /* check if my os accepts unlink */
-	  if ( LinkStatus() == 1) 
-	    {
-	      C2F(isciulink)(&DynInterf[i].Nshared);
-	    }
-	  break;
-	}
-    }
-
   /* Try to find a free position in the interface table : inum **/
   inum=-1;
   for ( i = 0 ; i < LastInterf ; i++) 
@@ -103,26 +86,22 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
       return 1;
     }
 
-  SciLink(0,&rhs,&ilib,shared_lib,names,'c');
+  SciDynLoad(shared_lib,names,'c',&ilib,0,&rhs);
 
-  if ( ilib < 0 ) 
-    {
-      return ilib;
-    }
+  if ( ilib < 0 ) return ilib;
 
   /* store the linked function in the interface function table DynInterf */
   DynInterf[inum].Nshared = ilib;
 
-
   if ( SearchInDynLinks(names[0],&DynInterf[inum].func) < 0 ) 
     {
       Scierror("Error: addinter failed, %s not  found!\n",names[0]);
-      return 2;
+      return -5;
     }
   if ( SearchInDynLinks(names[1],&DynInterf[inum].func_info) < 0 ) 
     {
       Scierror("Error: addinter failed, %s not  found!\n",names[1]);
-      return 2;
+      return -5;
     }
   strncpy(DynInterf[inum].name,names[0],NAME_MAXL);
   DynInterf[inum].ok = 1;
@@ -149,8 +128,10 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
 	}	  
       k++;
     }
-  ShowInterf();
-  return 0;
+  /* 
+   * ShowInterf();
+   */
+  return inum;
 }
 
 
@@ -183,17 +164,17 @@ static void SciInterInit(void)
     }
 }
 
-/*********************************
- * used in C2F(isciulink)(i) 
- * Revoir ici comment on enleve un interface 
- *********************************/
+/*
+ * remove entries associated to shared lib Nshared 
+ * when It is an interface 
+ */ 
 
 void RemoveInterf(int Nshared)
 {
   int i;
   for ( i = 0 ; i < LastInterf ; i++ ) 
     {
-      if ( DynInterf[i].Nshared == Nshared ) 
+      if (DynInterf[i].ok == 1 &&  DynInterf[i].Nshared == Nshared ) 
 	{
 	  DynInterf[i].ok = 0;
 	  DynInterf[i].func = BlankInterface;
@@ -207,15 +188,15 @@ void RemoveInterf(int Nshared)
  * show the interface table 
  *********************************/
 
-static void ShowInterf(void)
-{
-  int i;
-  for ( i = 0 ; i < LastInterf ; i++ ) 
-    {
-      if ( DynInterf[i].ok == 1 ) 
-	Sciprintf("Interface %d %s\n",i,DynInterf[i].name);
-    }
-}
+/* static void ShowInterf(void) */
+/* { */
+/*   int i; */
+/*   for ( i = 0 ; i < LastInterf ; i++ )  */
+/*     { */
+/*       if ( DynInterf[i].ok == 1 )  */
+/* 	Sciprintf("Interface %d %s\n",i,DynInterf[i].name); */
+/*     } */
+/* } */
 
 
 
