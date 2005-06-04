@@ -12,7 +12,8 @@ TESTS= \
 	test_minmax.dia \
 	testsbdiv.dia \
 	fft.dia \
-	extract.dia 
+	extract.dia \
+	addinter.dia
 
 AFINIR= \
 	matelm-nsp.dia \
@@ -31,6 +32,6 @@ tests: all
 
 distclean	:
 	@echo cleaning tests
-	@$(RM) $(TESTS) 
+	@$(RM) $(TESTS) libaddinter.* .libs 
 
 clean:	distclean
