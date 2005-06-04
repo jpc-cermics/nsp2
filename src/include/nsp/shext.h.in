@@ -11,4 +11,5 @@
 #else 
 #define SHREXT_NAME "@SHREXT_NAME@"
 #endif
+#endif
 

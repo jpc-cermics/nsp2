@@ -21,6 +21,7 @@
 #include "nsp/math.h"
 #include "nsp/object.h"
 #include "nsp/datas.h"
+#include "nsp/shext.h"
 #include "../functions/FunTab.h"
 #include "../interp/LibsTab.h"
 
@@ -103,6 +104,11 @@ int nsp_init_frames(int argc, char **argv)
   /* %i **/
   if ((O =nsp_complexi_object_("%i"))==NULLOBJ) return FAIL;
   nsp_frame_replace_object(O);
+  /* shared lib suffix */
+  if ((O =(NspObject *) nsp_smatrix_create("%shext",1,1,SHREXT_NAME,1) ) == NULLOBJ )
+    return FAIL;
+  nsp_frame_replace_object(O);
+  /* reserved */
   if ((Reserved =nsp_create_empty_matrix_object("@keep@"))==NULLOBJ) return FAIL;
   /* flag to know that we are using nsp !! */
   if ((O =nsp_create_true_object("%nsp"))==NULLOBJ) return FAIL;
