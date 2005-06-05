@@ -65,7 +65,7 @@
 #define Max(x,y)	(((x)>(y))?(x):(y))
 
 static void Sci_Delsym (int );
-static int Sci_dlopen(nsp_const_string shared_path);
+static int Sci_dlopen(nsp_const_string shared_path,int global);
 static int Sci_dlsym(nsp_const_string ename, int ishared, char strf);
 static int SetArgv  (char *argv[], char *files[],int first,int max,int *err);
 static int SetArgv1  (char *argv[], char *files,int first,int max,int *err);
@@ -87,7 +87,8 @@ void SciLink(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **
   int i;
   if ( iflag == 0 )
     {
-      *ilib  = Sci_dlopen(shared_path);
+      /* if no entry names are given we try a dl_open with global option*/
+      *ilib  = Sci_dlopen(shared_path,( *rhs == 1 ) ? TRUE : FALSE );
     }
   if (*ilib  == -1 ) return;
   if ( *rhs >= 2) 
@@ -135,14 +136,14 @@ static function dlsym(void *handle, const char *symbol)
 }
 
 #define dlopen(x,y) ((x)== NULL) ? PROG_HANDLE : shl_load(x, BIND_IMMEDIATE | BIND_VERBOSE ,0L) 
-#define dlclose(x) shl_unload((shl_t) x)
+#define dlclose(x) shl_unload((shl_t)(x))
 #define dlhandle  shl_t 
 #else /* hppa */
 #define dlhandle  void *
 #endif /* hppa */
 
 
-static int Sci_dlopen(nsp_const_string shared_path)
+static int Sci_dlopen(nsp_const_string shared_path,int global)
 {
   int i=0;
   dlhandle hd1;
@@ -155,8 +156,9 @@ static int Sci_dlopen(nsp_const_string shared_path)
     }
   else
     {
+      int flag = ( global == TRUE) ? (RTLD_NOW| RTLD_GLOBAL) : RTLD_NOW;
       /* this will load the shared library */
-      hd1 = dlopen(shared_path, RTLD_NOW);
+      hd1 = dlopen(shared_path,flag);
     }
   if ( hd1 == NULL ) 
     {
@@ -274,7 +276,7 @@ static void Sci_Delsym(int ishared)
     }
   if ( hd[ish].ok != FAIL)
     {
-      dlclose( hd[ish].shl);
+      dlclose((void *) hd[ish].shl);
       /* unlink(hd[ish].tmp_file);*/
       hd[ish].ok = FAIL;
     }
