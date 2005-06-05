@@ -2,9 +2,13 @@ function y=nsptest(fname)
 // run a script in diary mode 
 // Copyright Cermics/Enpc Jean-Philippe Chancelier 
 // 
-  fname_dia = strsubst(fname,'.tst','.dia');
-  // if .tst was missing 
-  if fname_dia == fname then fname_dia+'.dia';end 
+  exten= file('extension',fname);
+  if exten == "" then 
+    fname_dia = fname+'.dia';
+  else
+    fname_dia = strsubst(fname,exten,'.dia');
+    if fname_dia == fname then fname_dia = fname_dia+'1';end 
+  end
   fname_ref = fname_dia+'.ref';
   diary(fname_dia,%f);
   // diary without standard output 

@@ -36,7 +36,7 @@ function ilib_gen_gateway(name,tables)
   for itable=1:L 
     // loop on a list of tables 
     if L<> 1 then 
-      tname = name +string(itable);
+      tname = name +m2s(itable,'%.f');
     else 
        tname = name ;
     end
@@ -54,22 +54,22 @@ function ilib_gen_gateway(name,tables)
        '';
        'extern ' + declar(:) +' '+  names(:) + ';';
        '';
-       'static OpWrapTab '+name+'_func[] = {';
+       'static OpWrapTab '+tname+'_func[] = {';
        '  {""'+table(:,1)+'"",'+ cast(:)+' '+ names(:) +','+ gate(:) +'},';
        '  {(char *) 0, NULL, NULL},';
-       '};\n';
-       'int '+name+'_Interf (int i, Stack stack, int rhs, int opt, int lhs)';
+       '};';
+       'int '+tname+'_Interf (int i, Stack stack, int rhs, int opt, int lhs)';
        '{';
-       '  if ( ' + name +'_func[i].wrapper == NULL)';
-       '     return (*('+name+'_func[i].fonc)) (stack, rhs, opt, lhs);';
+       '  if ( ' + tname +'_func[i].wrapper == NULL)';
+       '     return (*('+tname+'_func[i].fonc)) (stack, rhs, opt, lhs);';
        '  else ';
-       '     return (*('+name+'_func[i].wrapper)) (stack, rhs, opt, lhs,'+name+'_func[i].fonc);';
-       '}\n';
-       'void '+name+'_Interf_Info (int i, char **fname, function (**f))';
+       '     return (*('+tname+'_func[i].wrapper)) (stack, rhs, opt, lhs,'+tname+'_func[i].fonc);';
+       '}';
+       'void '+tname+'_Interf_Info (int i, char **fname, function (**f))';
        '{';
-       ' *fname = '+name+'_func[i].name;';
-       ' *f = '+name+'_func[i].fonc;';
-       '}\n'];
+       ' *fname = '+tname+'_func[i].name;';
+       ' *f = '+tname+'_func[i].fonc;';
+       '}'];
     
     fname= file('join',[path,tname+'.c']);
     gener=%t
@@ -81,10 +81,13 @@ function ilib_gen_gateway(name,tables)
       if t1==t then gener=%f;end
     end
     if gener== %t then 
+      // printf('\n');
       // need to regenerate a gateway
       fd=fopen(fname,mode='w');
       fd.put_smatrix[t];
       fd.close[];
+    else
+      // printf('(unchanged)\n');
     end
   end
 endfunction
@@ -174,7 +177,7 @@ function ilib_gen_loader(name,tables,libs)
      for itable=1:L 
        // loop on a list of tables 
        table = tables(itable);
-       fd.printf["addinter(ilib,''%s'');\n",name+string(itable)];
+       fd.printf["addinter(ilib,''%s'');\n",name+m2s(itable,'%.f')];
      end
   end
   fd.close[];
@@ -247,7 +250,7 @@ function ilib_gen_Make_unix(name,tables,files,libs,Makename,with_gateway,ldflags
     if L==1 then 
       fprintf(fd," %s.o",name);
     else
-       for i=1:L , fprintf(fd," %s.o",name+string(i));end 
+       for i=1:L , fprintf(fd," %s.o",name+m2s(i,'%.f'));end 
     end
   end
   for it=1:L 
@@ -311,7 +314,7 @@ function ilib_gen_Make_win32(name,tables,files,libs,Makename,with_gateway,ldflag
     if L==1 then 
       fprintf(fd," %s.obj",name);
     else
-       for i=1:L , fprintf(fd," %s.obj",name+string(i));end 
+       for i=1:L , fprintf(fd," %s.obj",name+m2s(i,'%.f'));end 
     end
   end
   
@@ -380,7 +383,7 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
     if L==1 then 
       fprintf(fd," %s$(O)",name);
     else
-       for i=1:L , fprintf(fd," %s$(O)",name+string(i));end 
+       for i=1:L , fprintf(fd," %s$(O)",name+m2s(i,'%.f'));end 
     end
   end
   
@@ -425,7 +428,7 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
       fprintf(fd,"	$(CC) $(CFLAGS) $*.c\n");
     else
        for i=1:L ;
-       fprintf(fd,"\n%s$(O):\n",name+string(i));
+       fprintf(fd,"\n%s$(O):\n",name+m2s(i,'%.f'));
        fprintf(fd,"	$(CC) $(CFLAGS) $*.c\n");
        end 
     end
