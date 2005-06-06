@@ -85,7 +85,7 @@ void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ili
 {
   int lib;
   SciLinkInit(); 
-  if ( (lib = nsp_find_shared(shared_path)) != -1 ) 
+  if ( iflag== 0 && (lib = nsp_find_shared(shared_path)) != -1 ) 
     {
       /* Sciprintf("shared library already loaded\n"); */
       nsp_unlink_shared(lib);
