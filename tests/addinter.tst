@@ -22,7 +22,7 @@ rep=system('../bin/nsplibtool OBJS=addinter.o LIBRARY=libaddinter > /dev/null');
 if rep<> 0 then pause;end 
 // link shared library 
 if ~c_link('libaddinter_Interf') then 
-   ilib=addinter('./libaddinter.'+ilib_soname()','libaddinter');
+   ilib=addinter('./libaddinter'+%shext,'libaddinter');
 else 
    error('libaddinter already loaded');
 end
