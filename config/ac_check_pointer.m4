@@ -19,12 +19,13 @@ int main(int argc,char **argv) {
         return 0;
 }
 EOF
+
 eval $ac_link
-if test -s conftest && (./conftest; exit) 2>/dev/null; then
+if test -s conftest$ac_exeext && (./conftest$ac_exeext; exit) 2>/dev/null; then
   SIZEOF_INTP=`cat sizeofintp`
   rm -f cat sizeofintp
 else
-  SIZEOF_INTP="can't happen"
+  SIZEOF_INTP="cannot_happen"
 fi
 
 if test $SIZEOF_INTP = 1; then 
@@ -32,8 +33,8 @@ if test $SIZEOF_INTP = 1; then
 	AC_DEFINE(POINTER_INT)
 else 
 	AC_MSG_RESULT([no])
-	if test $SIZEOF_INTP = "can't happen"; then
-		AC_MSG_ERROR([can(t happen])
+	if test $SIZEOF_INTP = "cannot_happen" ; then
+		AC_MSG_ERROR([cannot happen])
 	fi
 fi
 CFLAGS=$saved_cflags
