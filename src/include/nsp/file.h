@@ -27,8 +27,7 @@
 #endif /* not macintosh */
 
 #ifdef WIN32 
-#include "../xdr/rpc/types.h"
-#include "../xdr/rpc/xdr.h"
+#include "../libxdr/rpc/xdr_inc.h"
 #ifdef interface 
 #undef interface 
 #endif 

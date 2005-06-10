@@ -2325,10 +2325,6 @@ static double swapd(double df)
   return (sdf);
 }
 
-#ifdef __MINGW32__
-#define HAVE_STRERROR
-#endif 
-
 #ifndef HAVE_STRERROR
 /* strerror function */
 char *strerror(int errcode)
