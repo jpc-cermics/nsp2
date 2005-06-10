@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-## Copyright INRIA/Enpc 
+## Copyright Enpc 
 
 AC_REVISION($Revision$)dnl
 AC_INIT(COPYING)
@@ -75,10 +75,10 @@ SCIVERSION=`cat Version.incl | sed -e "s/SCIVERSION=//" `
 ## keep track of debug option
 ###############################
 
-ENABLE_DEBUG= 
-
 if test "$enable_debug" = yes; then 
    ENABLE_DEBUG="(enable debug)"   
+else 
+   ENABLE_DEBUG= 
 fi 
 
 ########################
@@ -446,7 +446,7 @@ case "$host" in
     WINXFLAGS='-I../xdr'
     MAKEFILE_TARGET=Makefile.gcwin32
     ;;
-# FreeBSD  systems (not supported by INRIA)
+# FreeBSD  systems 
   *-*-freebsd*)
      CC_OPTIONS="${CC_OPTIONS} -Dfreebsd"
      CC_LDFLAGS="${CC_LDFLAGS} -lm"
@@ -461,7 +461,7 @@ case "$host" in
      DLD_SUBDIR=dld
      MAKEFILE_TARGET=Makefile.freebsd
     ;;
-# NetBSD  systems (not supported by INRIA)
+# NetBSD  systems 
   *-*-netbsd*)
     # check for --export-dynamic
     ac_save_LDFLAGS="$LDFLAGS"
@@ -489,7 +489,7 @@ case "$host" in
     #
     MAKEFILE_TARGET=Makefile.netbsd
    ;;
-# Darwin/MacOSX (Not supported by INRIA)
+# Darwin/MacOSX 
   *-*-darwin*)
      STRIP=echo
      # -L/sw/lib is needed during configure but seams not best place
@@ -588,13 +588,6 @@ CFLAGS=$CC_OPTIONS
 LDLAGS=$CC_LDFLAGS
 
 ############################
-## test for various programs
-############################
-# Using `AC_PROG_RANLIB' is rendered obsolete by `AC_PROG_LIBTOOL'
-#AC_PROG_RANLIB
-
-
-############################
 ## Check compiler features
 ############################
 
@@ -606,57 +599,14 @@ esac
 #########################
 ## sizeof(int*)== sizeof(int)
 #########################
+
 builtin(include,config/ac_check_pointer.m4)
 AC_CHECK_POINTER_SIZE() 
 
-####################
-## test for X Window
-####################
-
-dnl if test "$PERIFILE" = periX11.o; then 
-dnl AC_PATH_XTRA
-dnl
-dnl # fixing a bug for SunOs
-dnl if test "$X_LIBS" = ' -L/usr/lib'; then
-dnl   X_LIBS=
-dnl fi
-dnl
-dnl if test "$no_x" = yes; then
-dnl   AC_MSG_ERROR([X Window not found])
-dnl fi
-dnl fi 
-
-###################
-## find X11 release
-###################
-
-dnl if test "$PERIFILE" = periX11.o; then 
-dnl AC_CACHE_CHECK([for X11 release],ac_cv_X11_release,
-dnl [
-dnl cat << EOF > testX11.c
-dnl #include <X11/Xlib.h>
-dnl main()
-dnl {
-dnl #ifdef XlibSpecificationRelease
-dnl   if (XlibSpecificationRelease == 5)
-dnl     printf("R5\n");
-dnl   else if (XlibSpecificationRelease == 6)
-dnl     printf("R6\n");
-dnl   else
-dnl     printf("R?\n");
-dnl #else
-dnl   printf("R4\n");
-dnl #endif
-dnl }
-dnl EOF
-dnl eval "$CC $X_CFLAGS -o testX11 testX11.c > /dev/null 2>&1"
-dnl ac_cv_X11_release=`./testX11`
-dnl $RM testX11.c testX11
-dnl ])
-dnl fi
-
 #######################
 ## test for underscores
+## note that trailing underscores is already checked 
+## elsewhere 
 #######################
 
 AC_MSG_CHECKING([for leading and/or trailing underscores])
@@ -672,19 +622,19 @@ eval "$FC1 -c pipof.f > /dev/null 2>&1"
 FC_LEADING_UNDERSCORE=no
 FC_TRAILING_UNDERSCORE=no
 
-output=`nm pipof.o|grep _pipof 2>&1`
+output=`$NM pipof.o|grep _pipof 2>&1`
 if test ! -z "$output"; then
   FC_LEADING_UNDERSCORE=yes
   FC_TRAILING_UNDERSCORE=no
 fi
 
-output=`nm pipof.o|grep pipof_ 2>&1`
+output=`$NM pipof.o|grep pipof_ 2>&1`
 if test ! -z "$output"; then
   FC_LEADING_UNDERSCORE=no
   FC_TRAILING_UNDERSCORE=yes
 fi
 
-output=`nm pipof.o|grep _pipof_ 2>&1`
+output=`$NM pipof.o|grep _pipof_ 2>&1`
 if test ! -z "$output"; then
   FC_LEADING_UNDERSCORE=yes
   FC_TRAILING_UNDERSCORE=yes
