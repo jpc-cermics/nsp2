@@ -27,12 +27,6 @@
  * Mountain View, California  94043
  */
 
-#if defined(LIBC_SCCS) && !defined(lint)
-/*static char *sccsid = "from: @(#)xdr_reference.c 1.11 87/08/11 SMI";*/
-/*static char *sccsid = "from: @(#)xdr_reference.c	2.1 88/07/29 4.0 RPCSRC";*/
-static char *rcsid = "$Id$";
-#endif
-
 /*
  * xdr_reference.c, Generic XDR routines impelmentation.
  *
@@ -45,18 +39,7 @@ static char *rcsid = "$Id$";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef __MINGW32__
-#define __MSC__
-#endif 
-
-#ifndef __MSC__
-#include <rpc/types.h> 
-#include <rpc/xdr.h>
-#else
-#include "rpc/types.h" 
-#include "rpc/xdr.h"
-#endif
-
+#include <rpc/xdr_inc.h>
 
 #define LASTUNSIGNED	((u_int)0-1)
 

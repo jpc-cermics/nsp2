@@ -40,7 +40,7 @@
 #ifndef _RPC_XDR_H
 #define _RPC_XDR_H
 
-#ifndef __MSC__
+#if !defined(__MSC__) && ! defined(__MINGW32__)
 #include <sys/cdefs.h>
 #endif 
 

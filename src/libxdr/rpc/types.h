@@ -76,23 +76,17 @@ typedef char * caddr_t;
 #define	INADDR_LOOPBACK		(u_long)0x7F000001
 #endif
 
-/** not useful for gcwin32 
-#ifdef __GCWIN32__
+/** for MINGWIN32   
+    replaced by winsock.h
 #ifndef PASCAL 
 #define PASCAL      __stdcall
 #endif
 u_long PASCAL htonl (u_long hostlong);
 u_long PASCAL ntohl (u_long netlong);
-#endif 
 **/
-/** for MINGWIN32   **/
 
 #ifdef __MINGW32__
-#ifndef PASCAL 
-#define PASCAL      __stdcall
-#endif
-u_long PASCAL htonl (u_long hostlong);
-u_long PASCAL ntohl (u_long netlong);
+#include <winsock.h>
 #endif 
 
 #endif /* !_RPC_TYPES_H */

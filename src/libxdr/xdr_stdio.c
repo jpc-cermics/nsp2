@@ -27,12 +27,6 @@
  * Mountain View, California  94043
  */
 
-#if defined(LIBC_SCCS) && !defined(lint)
-/*static char *sccsid = "from: @(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";*/
-/*static char *sccsid = "from: @(#)xdr_stdio.c	2.1 88/07/29 4.0 RPCSRC";*/
-static char *rcsid = "$Id$";
-#endif
-
 /*
  * xdr_stdio.c, XDR implementation on standard i/o file.
  *
@@ -43,21 +37,7 @@ static char *rcsid = "$Id$";
  * from the stream.
  */
 #include <stdio.h>
-#ifdef __MINGW32__
-#define __MSC__
-#endif 
-
-#ifndef __MSC__
-#include <netinet/in.h> /** jpc : je met netinet/ avant rpc pour eviter un warning */
-#endif 
-
-#ifndef __MSC__
-#include <rpc/types.h> 
-#include <rpc/xdr.h>
-#else
-#include "rpc/types.h" 
-#include "rpc/xdr.h"
-#endif
+#include <rpc/xdr_inc.h>
 
 static bool_t	xdrstdio_getlong();
 static bool_t	xdrstdio_putlong();

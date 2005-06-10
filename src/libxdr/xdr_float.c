@@ -27,9 +27,6 @@
  * 2550 Garcia Avenue
  * Mountain View, California  94043
  */
-#if !defined(lint) && defined(SCCSIDS)
-static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
-#endif
 
 /*
  * xdr_float.c, Generic XDR routines impelmentation.
@@ -43,20 +40,11 @@ static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
  
 #include <stdio.h>
 #include <sys/types.h>
-
-#ifdef __MINGW32__
-#define __MSC__
-#endif 
+#include <rpc/xdr_inc.h>
 
 #ifndef __MSC__
 #include <sys/param.h>
-#include <rpc/types.h> 
-#include <rpc/xdr.h>
-#else
-#include "rpc/types.h" 
-#include "rpc/xdr.h"
 #endif
-
 
 /*
  * NB: Not portable.

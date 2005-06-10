@@ -45,22 +45,7 @@ static char *rcsid = "$Id$";
 
 #include <stdio.h>
 #include <stdlib.h>
-
-/** #define __INSIDE_CYGWIN32__ **/
-#ifdef __MINGW32__
-#define __MSC__
-#endif 
-
-#ifndef __MSC__
-#include <rpc/types.h> 
-#include <rpc/xdr.h>
-#else
-#ifdef __INSIDE_CYGWIN32__  
-#undef __INSIDE_CYGWIN32__  /** for winsock.h in cygwin for mingw32 **/
-#endif 
-#include "rpc/types.h" 
-#include "rpc/xdr.h"
-#endif
+#include <rpc/xdr_inc.h>
 
 /*
  * constants specific to the xdr "protocol"
@@ -347,7 +332,7 @@ xdr_opaque(xdrs, cp, cnt)
 	register u_int cnt;
 {
 	register u_int rndup;
-	static crud[BYTES_PER_XDR_UNIT];
+	static int crud[BYTES_PER_XDR_UNIT];
 
 	/*
 	 * if no data we are done
