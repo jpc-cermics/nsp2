@@ -20,7 +20,7 @@
 #else /* not macintosh */
 #       ifndef VMS
 #   	include <sys/types.h>	/* for <netinet/in.h> on some systems */
-#   	ifndef __MSC__ 
+#   	if !defined(__MSC__) && ! defined(__MINGW32__)
 #          include <netinet/in.h>	/* for htonl() */
 #   	endif
 #	endif
@@ -29,6 +29,9 @@
 #ifdef WIN32 
 #include "../xdr/rpc/types.h"
 #include "../xdr/rpc/xdr.h"
+#ifdef interface 
+#undef interface 
+#endif 
 #else 
 #include <rpc/types.h>
 #include <rpc/xdr.h>
