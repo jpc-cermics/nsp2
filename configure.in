@@ -19,19 +19,7 @@ ac_default_prefix=/usr/local
 #################################
 
 AC_ARG_ENABLE(debug,
-   [  --enable-debug          compile with "-g" option and do not optimize ])
-
-AC_ARG_WITH(gcc,
-    [  --with-gcc              use gcc C compiler ])
-
-AC_ARG_WITH(g77,
-    [  --with-g77              use g77 Fortran compiler ])
-
-AC_ARG_WITH(gnu,
-    [  --with-gnu              use gcc C compiler and g77 Fortran compiler ])
-
-AC_ARG_WITH(f2c,
-    [  --with-f2c              use f2c C compiler on Linux systems ])
+   [  --enable-debug          compile with "-g -Wall" option and do not optimize ])
 
 AC_ARG_WITH(pvm,
     [  --without-pvm           do not compile with PVM library ])
@@ -54,17 +42,6 @@ AC_ARG_WITH(maxpluslib,
 
 AC_ARG_WITH(fftw3,
     [  --without-fftw3         do not use fftw3 for fft but fftpack])
-
-#################################
-## check this is a source version
-#################################
-
-if test -f .binary; then
-  echo "Humm... this is a binary version";
-  echo "  you'd better read the README file first."
-  exit
-fi
-
 
 ###############################
 ## creating Path.incl if needed
@@ -110,48 +87,6 @@ fi
 
 RM='rm -f'
 FILES_TO_CLEAN='*.CKP *.ln *.BAK *.bak core errs ,* *~ *.a .emacs_* tags TAGS make.log MakeOut .*~ *.trace so_locations *.orig *.cos *.obj' 
-
-##################
-## making archives
-# this is done by the libtool part 
-# AR='ar cq'
-
-######################
-## use GNU compilers ?
-######################
-
-if test "$with_gnu" = yes; then
-  AC_CHECK_PROG(GCC,gcc,yes,no)
-  if test "$GCC" = no; then
-    AC_MSG_ERROR([Unable to configure: gcc compiler not found])
-  fi
-  AC_CHECK_PROG(G77,g77,yes,no)
-  if test "$G77" = no; then
-    AC_MSG_ERROR([Unable to configure: g77 compiler not found])
-  fi
-else
-  if test "$with_gcc" = yes; then
-    AC_CHECK_PROG(GCC,gcc,yes,no)
-    if test "$GCC" = no; then
-      AC_MSG_ERROR([Unable to configure: gcc compiler not found])
-    fi
-  fi
-  if test "$with_g77" = yes; then
-    AC_CHECK_PROG(G77,g77,yes,no)
-    if test "$G77" = no; then
-      AC_MSG_ERROR([Unable to configure: g77 compiler not found])
-    fi
-  fi
-fi
-
-##################################################
-## Fortran libraries required for creating fortran
-## shared libraries.  In particular this is needed
-## for the lapack examples when using f2c.  This
-## will set the FLIBS variable.
-##################################################
-AC_F77_LIBRARY_LDFLAGS
-
 
 #############################################
 ## Compilers and options according to machine
@@ -211,642 +146,242 @@ IMPENV=
 # strip executable (not to be done on darwin) 
 STRIP=strip
 
+dnl Checks for programs.
 
+AC_LANG(C)
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_F77
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_CHECK_TOOL(RANLIB, ranlib, :)
+AC_CHECK_TOOL(AR, ar, :)
 
+dnl Fortran libraries required for creating fortran
+dnl shared libraries.  In particular this is needed
+dnl for the lapack examples when using f2c.  This
+dnl will set the FLIBS variable.
 
-#########################
-# setting parameters according to system types
-#########################
+AC_F77_LIBRARY_LDFLAGS
+
+dnl echo CC=$CC
+dnl echo F77=$F77
+dnl echo CPP=$CPP
+dnl echo CPPFLAGS=$CPPFLAGS
+dnl echo CFLAGS=$CFLAGS
+dnl echo FFLAGS=$FFLAGS
+dnl echo CXX=$CXX
+dnl echo CXXFLAGS=$CXXFLAGS
+dnl echo LD=$LD      defined by 
+dnl echo LDFLAGS=$LDFLAGS
+dnl echo GCC=$GCC
+dnl echo G77=$GCC
+
+############################################
+# ieee flags (from gsl)
+#############################################
+
+save_cflags="$CFLAGS"
+AC_CACHE_CHECK([for IEEE compiler flags], ac_cv_c_ieee_flags,
+[
+case "$host" in
+    alpha*-*-*)
+        if test X"$GCC" = Xyes ; then
+            ieee_flags='-mieee -mfp-rounding-mode=d'
+        else
+            # This assumes Compaq's C compiler.
+            ieee_flags='-ieee -fprm d'
+        fi
+        ;;
+esac
+if test X"$ieee_flags" != X ; then
+  CFLAGS="$ieee_flags $CFLAGS"
+  AC_TRY_COMPILE(,[int foo;],
+  ac_cv_c_ieee_flags="$ieee_flags",
+  ac_cv_c_ieee_flags="none")
+else
+  ac_cv_c_ieee_flags="none"
+fi])
+
+if test "$ac_cv_c_ieee_flags" != "none" ; then
+   CFLAGS="$ac_cv_c_ieee_flags $save_cflags"
+else
+   CFLAGS="$save_cflags"
+fi
+
+############################################
+# ieee lib check 
+#############################################
+
+AC_CHECK_LIB(ieee,main,[LIEEELIB=-lieee],[LIEEELIB=])
+
+#############################################
+## Compilers and options according to machine
+## compilers were detected above 
+#############################################
+
+CC_OPTIONS="${CFLAGS}"
+CC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
+FC=$F77
+FC_OPTIONS="${FFLAGS}"
+FC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
+LD_LDFLAGS="${LDFLAGS}"
 
 case "$host" in
+  # Linux ELF: all standard distributions
+  i*86-*-linux-gnu | *-pc-linux-gnu )
+    CC_PICFLAGS="-fPIC"
+    FC_PICFLAGS="-fPIC"
+    FC_LDFLAGS="${FC_LDFLAGS} -ldl -rdynamic"
+    MAKEFILE_TARGET=Makefile.linux
+   ;;
+  # Linux gnu: x86_64 distributions added by cdh 2004-09-29
+  x86_64-*-linux-gnu)
+    if test X"$CC" = X"$ICC" ; then
+       CC_OPTIONS="${CC_OPTIONS} -Dlinux -DNARROWPROTO -mp"
+       CC_PICFLAGS="-fPIC"
+       # -cm remove comments displays, -w90  -w95 remove warnings abort f90 f95 non standard
+       FC_OPTIONS="${FC_OPTIONS}  -cm -w90 -w95 -mp "
+       CC_LDFLAGS="${CC_LDFLAGS} -Wl,-relax"
+       FC_LDFLAGS="${FC_LDFLAGS} -ldl  -lPEPCF90 -Wl,-relax "
+       LD=xild
+       LD_LDFLAGS="${LDFLAGS} -lPEPCF90 -Wl,-relax "
+    else
+       # CC_PLAT_OPTIONS is optional, and is used to add CPU specific code generation tuning for
+       # Athlon64 presumably 
+       # Opteron could benefit too but these are not optimized for the Opteron
+       CC_PLAT_OPTIONS='-march=athlon64 -mfpmath=sse -msse2 -m3dnow -m64 '
+       CC_OPTIONS="${CC_OPTIONS} ${CC_PLAT_OPTIONS}"
+       CC_PICFLAGS=-fPIC
+       FC_PICFLAGS=-fPIC
+       FC_OPTIONS="${FC_OPTIONS} $CC_PLAT_OPTIONS"
+       FC_LDFLAGS="${FC_LDFLAGS} -ldl -rdynamic -Wl,-relax" 
+       CC_LDFLAGS="${CC_LDFLAGS} -ldl -rdynamic -Wl,-relax"
+       LDFLAGS="${LDFLAGS} -Wl,-relax "
+    fi
+    MAKEFILE_TARGET=Makefile.linux
+   ;;
 # Dec Alpha OSF 4
-  alpha*-dec-osf4.*)
-    # standard compilers
-    CC=cc
-    CC_OPTIONS='-std -O -ieee_with_inexact'
-    CC_LDFLAGS='-ieee_with_inexact'
-    if test "$G77" != yes; then    
-      AC_CHECK_PROG(F77,f77,yes,no)
-      if test "$F77" = no; then
-        AC_MSG_ERROR([Unable to configure: Fortran f77 compiler not found])
-      fi
+   alpha*-dec-osf4.*)
+     # standard compilers
+    if test X"$CC" = Xcc; then
+        CC_OPTIONS="${CC_OPTIONS} -std -ieee_with_inexact"
+	CC_LDFLAGS="${CC_LDFLAGS} -ieee_with_inexact"
     fi
-    FC='f77'
-    FC_OPTIONS='-O -fpe3'
-    FC_LDFLAGS=
-    FC_USE_CDEC='   '
-    LD=ld
-    LD_LDFLAGS=
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-std -g -ieee_with_inexact'
-      FC_OPTIONS='-g -fpe3'
-    fi
-    # GNU compilers
-    if test "$GCC" = yes; then
-      CC=gcc
-      CC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        CC_OPTIONS=-g
-      fi
-    fi
-    if test "$G77" = yes; then
-      FC=g77
-      FC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        FC_OPTIONS=-g
-      fi
+    if test X"$F77" = Xf77; then 
+        FC_OPTIONS="${FC_OPTIONS} -fpe3"
+	FC_USE_CDEC='   '
     fi
     MAKEFILE_TARGET=Makefile.alpha
     ;;
 # Dec Alpha not OSF 4 (NO LONGER SUPPORTED)
   alpha*-dec-osf*)
-    # standard compilers
-    CC=cc
-    CC_OPTIONS='-O -ieee_with_inexact'
-    CC_LDFLAGS='-ieee_with_inexact'
-    if test "$G77" != yes; then    
-      AC_CHECK_PROG(F77,f77,yes,no)
-      if test "$F77" = no; then
-        AC_MSG_ERROR([Unable to configure: Fortran f77 compiler not found])
-      fi
+    if test X"$CC" = Xcc; then
+        # standard compilers
+	CC_OPTIONS="${CC_OPTIONS} -ieee_with_inexact"
+        CC_LDFLAGS="${CC_LDFLAGS} -ieee_with_inexact"
     fi
-    FC='f77'
-    FC_OPTIONS='-O -fpe3 -switch nosqrt_recip'
-    FC_LDFLAGS=
+    if test X"$G77" = Xno; then
+        FC_OPTIONS="${FC_OPTIONS} -fpe3 -switch nosqrt_recip"
+    fi    
     FC_USE_CDEC='   '
-    LD=ld
-    LD_LDFLAGS=
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -ieee_with_inexact'
-      FC_OPTIONS='-g -fpe3 -switch nosqrt_recip'
-    fi
-    # GNU compilers
-    if test "$GCC" = yes; then
-      CC=gcc
-      CC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        CC_OPTIONS=-g
-      fi
-    fi
-    if test "$G77" = yes; then
-      FC=g77
-      FC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        FC_OPTIONS=-g
-      fi
-    fi
     MAKEFILE_TARGET=Makefile.alpha
     ;;
 # IBM AIX RS 6000 (NO LONGER SUPPORTED)
   rs6000-*-*)
-    # standard compilers
-    CC=cc
-    CC_OPTIONS='-Daix -DSYSV'
-    CC_LDFLAGS=
-    if test "$G77" != yes; then    
-      AC_CHECK_PROG(F77,f77,yes,no)
-      if test "$F77" = no; then
-        AC_MSG_ERROR([Unable to configure: Fortran f77 compiler not found])
-      fi
-    fi
-    FC=f77
-    FC_OPTIONS='-qcharlen=4096'
-    FC_LDFLAGS=
-    LD=ld
-    LD_LDFLAGS=
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -Daix -DSYSV'
-      FC_OPTIONS='-g -qcharlen=4096'
-    fi
-    # GNU compilers
-    if test "$GCC" = yes; then
-      CC=gcc
-      CC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        CC_OPTIONS=-g
-      fi
-    fi
-    if test "$G77" = yes; then
-      FC=g77
-      FC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        FC_OPTIONS=-g
-      fi
-    fi
+    if test X"$CC" = Xcc; then
+        # standard compilers
+	CC_OPTIONS="${CC_OPTIONS}  -Daix -DSYSV"
+    fi 
+    if test X"$G77" = Xno; then
+        FC_OPTIONS="${FC_OPTIONS} -qcharlen=4096"
+    fi 
     MAKEFILE_TARGET=Makefile.aix
     ;;
 # Linux sparc
   sparc-*-linux-gnu)
-    LIEEELIB=
-    AC_CHECK_LIB(ieee,main,
-      [LIEEELIB=-lieee])
-    GCC=yes
-    CC=gcc
-    CC_OPTIONS='-O -Dlinux '
-    CC_LDFLAGS=$LIEEELIB
-    # find Fortran compiler
-    # g77 already asked and found: good
-    if test "$G77" = yes; then
-      FC=g77
-    # option with-f2c
-    elif test "$with_f2c" = yes; then
-      AC_CHECK_PROG(F2C,f2c,yes,no)
-      if test "$F2C" = no; then
-        AC_MSG_ERROR([Unable to configure: f2c compiler not found])
-      fi
-      # script shell f77 have bugs, get ours
-      FC='${SCIDIR}/bin/f77-linux'
-    else
-      # first find g77
-      AC_CHECK_PROG(G77,g77,yes,no)
-      if test "$G77" = yes; then
-        FC=g77
-      else
-      # otherwise find f2c
-        AC_CHECK_PROG(F2C,f2c,yes,no)
-        if test "$F2C" = yes; then
-          # script shell f77 have bugs, get ours
-          FC='${SCIDIR}/bin/f77-linux'
-        else
-          AC_MSG_ERROR([Unable to configure: no Fortran compiler found])
-        fi
-      fi
-    fi
-    FC_OPTIONS=-O
-    FC_LDFLAGS="$LIEEELIB -ldl -rdynamic"
-    LD=ld
-    LD_LDFLAGS=$LIEEELIB
-    if test "$enable_debug" = yes; then
-      CC_OPTIONS='-g -Dlinux '
-      FC_OPTIONS=-g
-    fi
+    CC_OPTIONS="${CC_OPTIONS} -Dlinux "
+    FC_LDFLAGS="${FC_LDFLAGS} -ldl -rdynamic"
     MAKEFILE_TARGET=Makefile.linux
    ;;
 # SUN OS (NO LONGER SUPPORTED)
   sparc-*-sunos*)
     # standard compilers
-    CC=cc
-    CC_OPTIONS=-O
-    CC_LDFLAGS=
     CC_PICFLAGS=-PIC
-    if test "$G77" != yes; then    
-      AC_CHECK_PROG(F77,f77,yes,no)
-      if test "$F77" = no; then
-        AC_MSG_ERROR([Unable to configure: Fortran f77 compiler not found])
-      fi
-    fi
-    FC=f77
-    FC_OPTIONS=-O
-    FC_LDFLAGS=
     FC_PICFLAGS=-PIC
-    LD=ld
-    LD_LDFLAGS=
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS=-g
-      FC_OPTIONS=-g
-    fi
-    # GNU compilers
-    if test "$GCC" = yes; then
-      CC=gcc
-      CC_OPTIONS=-O
-      CC_PICFLAGS=
-      if test "$enable_debug" = yes; then 
-        CC_OPTIONS=-g
-      fi
-    fi
-    if test "$G77" = yes; then
-      FC=g77
-      FC_OPTIONS=-O
+    if test X"$G77" = Xyes; then
       FC_PICFLAGS=
-      if test "$enable_debug" = yes; then 
-        FC_OPTIONS=-g
-      fi
-      FC_LDFLAGS='-Xlinker'
+      FC_LDFLAGS="${FC_LDFLAGS} -Xlinker"
     fi
     MAKEFILE_TARGET=Makefile.sunos
     ;;
 # SUN SOLARIS
   *-*-solaris*)
-    # standard compilers
-    CC=cc
-    CC_OPTIONS='-O -DSVR4 -DSYSV -Dsolaris'
-    CC_LDFLAGS=
-    if test "$G77" != yes; then    
-      AC_CHECK_PROG(F77,f77,yes,no)
-      if test "$F77" = no; then
-        AC_MSG_ERROR([Unable to configure: Fortran f77 compiler not found])
-      fi
-    fi
-    FC=f77
-    FC_OPTIONS=-O
-    FC_LDFLAGS=
-    LD=ld
-    LD_LDFLAGS=
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -DSVR4 -DSYSV -Dsolaris'
-      FC_OPTIONS=-g
-    fi
-    # GNU compilers
-    if test "$GCC" = yes; then
-      CC=gcc
-      CC_OPTIONS='-O2 -DSVR4 -DSYSV -Dsolaris'
-      if test "$enable_debug" = yes; then 
-        CC_OPTIONS='-g -DSVR4 -DSYSV -Dsolaris'
-      fi
-    fi
-    if test "$G77" = yes; then
-      FC=g77
-      FC_OPTIONS=-O2
-      FC_LDFLAGS='-t' 
-#     for solaris 2.7 with gcc/g77 2.95.2, binutils 2.9 
-#     the correct value should be 
-#     FC_LDFLAGS='-t -Wl,-export-dynamic'
-#     but we need to check this case 
-      if test "$enable_debug" = yes; then 
-        FC_OPTIONS=-g
-      fi
+    CC_OPTIONS="${CC_OPTIONS} -DSVR4 -DSYSV -Dsolaris"
+    if test X"$G77" = Xyes; then
+      FC_LDFLAGS="${FC_LDFLAGS} -t"
     fi
     MAKEFILE_TARGET=Makefile.solaris
     ;;
 # Linux, old binary format a.out (NO LONGER SUPPORTED)
   *-pc-linux-gnuaout)
-    LIEEELIB=
-    AC_CHECK_LIB(ieee,main,
-      [LIEEELIB=-lieee])
-    GCC=yes
-    CC=gcc
-    CC_OPTIONS='-O -Dlinux '
-    CC_LDFLAGS=$LIEEELIB
-    # find Fortran compiler
-    # g77 already asked and found: good
-    if test "$G77" = yes; then
-      FC=g77
-    # option with-f2c
-    elif test "$with_f2c" = yes; then
-      AC_CHECK_PROG(F2C,f2c,yes,no)
-      if test "$F2C" = no; then
-        AC_MSG_ERROR([Unable to configure: f2c compiler not found])
-      fi
-      # script shell f77 have bugs, get ours
-      FC='${SCIDIR}/bin/f77-linux'
-    else
-      # first find g77
-      AC_CHECK_PROG(G77,g77,yes,no)
-      if test "$G77" = yes; then
-        FC=g77
-      else
-      # otherwise find f2c
-        AC_CHECK_PROG(F2C,f2c,yes,no)
-        if test "$F2C" = yes; then
-          # script shell f77 have bugs, get ours
-          FC='${SCIDIR}/bin/f77-linux'
-        else
-          AC_MSG_ERROR([Unable to configure: no Fortran compiler found])    
-        fi
-      fi
-    fi
-    FC_OPTIONS=-O
-    FC_LDFLAGS=$LIEEELIB
-    LD=ld
-    LD_LDFLAGS=$LIEEELIB
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -Dlinux '
-      FC_OPTIONS=-g
-    fi
     DLDLIB='${SCIDIR}/libs/libdld.a'
     DLD_SUBDIR=dld
-    MAKEFILE_TARGET=Makefile.linux
-   ;;
-# Linux ELF: all standard distributions
-  i*86-*-linux-gnu | *-pc-linux-gnu )
-    LIEEELIB=
-    AC_CHECK_LIB(ieee,main,
-      [LIEEELIB=-lieee])
-    GCC=yes
-    CC=gcc
-    CC_OPTIONS='-O -Dlinux '
-    CC_LDFLAGS=$LIEEELIB
-    # find Fortran compiler
-    # g77 already asked and found: good
-    if test "$G77" = yes; then
-      FC=g77
-    # option with-f2c
-    elif test "$with_f2c" = yes; then
-      AC_CHECK_PROG(F2C,f2c,yes,no)
-      if test "$F2C" = no; then
-        AC_MSG_ERROR([Unable to configure: f2c compiler not found])
-      fi
-      # script shell f77 have bugs, get ours
-      FC='${SCIDIR}/bin/f77-linux'
-    else
-      # first find g77
-      AC_CHECK_PROG(G77,g77,yes,no)
-      if test "$G77" = yes; then
-        FC=g77
-      else
-      # otherwise find f2c
-        AC_CHECK_PROG(F2C,f2c,yes,no)
-        if test "$F2C" = yes; then
-          # script shell f77 have bugs, get ours
-          FC='${SCIDIR}/bin/f77-linux'
-        else
-          AC_MSG_ERROR([Unable to configure: no Fortran compiler found])    
-        fi
-      fi
-    fi
-    FC_OPTIONS=-O
-    FC_LDFLAGS="$LIEEELIB -ldl -rdynamic"
-    LD=ld
-    LD_LDFLAGS=$LIEEELIB
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -Wall -Dlinux '
-      FC_OPTIONS=-g
-    fi
-    MAKEFILE_TARGET=Makefile.linux
-   ;;
-# Linux gnu: x86_64 distributions added by cdh 2004-09-29
-  x86_64-*-linux-gnu)
-    LIEEELIB=
-    AC_CHECK_LIB(ieee,main,
-      [LIEEELIB=-lieee])
-    MALLOC=malloc.o
-    if test "$with_intelcompilers" = yes; then
-       GCC=no
-       CC=$ICC
-       FC=$IFC
-       CC_OPTIONS='-O -Dlinux -DNARROWPROTO -mp'
-       CC_PICFLAGS="-fPIC"
-# -cm remove comments displays, -w90  -w95 remove warnings abort f90 f95 non standard
-       FC_OPTIONS="-O -cm -w90 -w95 -mp "
-       if test "$enable_debug" = yes; then
-         CC_OPTIONS='-g -Wall -Dlinux  -DNARROWPROTO  -mp '
-         FC_OPTIONS="-g -cm  -w90 -w95 -mp "
-       fi
-       CC_LDFLAGS="$LIEEELIB  -Wl,-relax"
-       FC_LDFLAGS="$LIEEELIB -ldl  -lPEPCF90 -Wl,-relax "
-       LD=xild
-       LD_LDFLAGS="$LIEEELIB -lPEPCF90 -Wl,-relax "
-    else
-       GCC=yes
-       CC=gcc
-       # CC_PLAT_OPTIONS is optional, and is used to add CPU specific code generation tuning for Athlon64 presumably 
-       # Opteron could benefit too but these are not optimized for the Opteron
-       CC_PLAT_OPTIONS='-march=athlon64 -mfpmath=sse -msse2 -m3dnow -m64 '
-       CC_OPTIONS="-O2 -Dlinux  -DNARROWPROTO $CC_PLAT_OPTIONS"
-       CC_LDFLAGS=$LIEEELIB
-       CC_PICFLAGS=-fPIC
-       # find Fortran compiler
-       # g77 already asked and found: good
-       if test "$WITH_G77" = yes; then
-         FC=g77
-         FC_PICFLAGS=-fPIC
-       # option with-f2c
-       elif test "$with_f2c" = yes; then
-         AC_CHECK_PROG(F2C,f2c,yes,no)
-         if test "$F2C" = no; then
-           AC_MSG_ERROR([Unable to configure: f2c compiler not found])
-         fi
-         # script shell f77 have bugs, get ours
-         FC='${SCIDIR}/bin/f77-linux'
-       else
-         # first find g77
-         AC_CHECK_PROG(WITH_G77,g77,yes,no)
-         if test "$WITH_G77" = yes; then
-           FC=g77
-           FC_PICFLAGS=-fPIC
-         else
-         # otherwise find f2c
-           AC_CHECK_PROG(F2C,f2c,yes,no)
-           if test "$F2C" = yes; then
-             # script shell f77 have bugs, get ours
-             FC='${SCIDIR}/bin/f77-linux'
-           else
-             AC_MSG_ERROR([Unable to configure: no Fortran compiler found])
-           fi
-         fi
-       fi
-       FC_OPTIONS="-O $CC_PLAT_OPTIONS"
-       FC_LDFLAGS="$LIEEELIB -ldl -rdynamic -Wl,-relax "
-       LD=ld
-       LD_LDFLAGS="$LIEEELIB  -Wl,-relax "
-       if test "$enable_debug" = yes; then
-        # CC_PLAT_OPTIONS is optional, and is used to add CPU specific code generation tuning for Athlon64 presumably Opteron could benefit too but these are not optimized for the Opteron
-         CC_PLAT_OPTIONS='-march=athlon64 -mfpmath=sse -msse2 -m3dnow -m64 '
-         CC_OPTIONS="-g -Wall -Dlinux  -DNARROWPROTO $CC_PLAT_OPTIONS"
-         FC_OPTIONS="-g $CC_PLAT_OPTIONS"
-       fi
-    fi
     MAKEFILE_TARGET=Makefile.linux
    ;;
 # Alpha Linux
   alpha-*-linux-gnu)
     MALLOC=malloc.o
-    GCC=yes
-    CC=gcc
-    CC_OPTIONS='-O -mieee-with-inexact -Dlinux '
-    CC_LDFLAGS='-ldl -rdynamic -mieee-with-inexact'
+    CC_OPTIONS="${CC_OPTIONS} -mieee-with-inexact -Dlinux"
+    CC_LDFLAGS="${CC_LDFLAGS} -ldl -rdynamic -mieee-with-inexact"
     CC_PICFLAGS=-fPIC
-    # find Fortran compiler
-    # g77 already asked and found: good
-    if test "$G77" = yes; then
-      FC=g77
-    # option with-f2c
-    elif test "$with_f2c" = yes; then
-      AC_CHECK_PROG(F2C,f2c,yes,no)
-      if test "$F2C" = no; then
-        AC_MSG_ERROR([Unable to configure: f2c compiler not found])
-      fi
-      # script shell f77 have bugs, get ours
-      FC='${SCIDIR}/bin/f77-linux'
-    else
-      # first find g77
-      AC_CHECK_PROG(G77,g77,yes,no)
-      if test "$G77" = yes; then
-        FC=g77
-      else
-      # otherwise find f2c
-        AC_CHECK_PROG(F2C,f2c,yes,no)
-        if test "$F2C" = yes; then
-          # script shell f77 have bugs, get ours
-          FC='${SCIDIR}/bin/f77-linux'
-        else
-          AC_MSG_ERROR([Unable to configure: no Fortran compiler found])    
-        fi
-      fi
-    fi
-    FC_OPTIONS='-O -mieee-with-inexact'
-    FC_LDFLAGS='-ldl -rdynamic -mieee-with-inexact'
-    LD=ld
-    LD_LDFLAGS=
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -mieee-with-inexact -Dlinux '
-      FC_OPTIONS='-g -mieee-with-inexact'
-    fi
+    FC_OPTIONS= "${FC_OPTIONS} -mieee-with-inexact"
+    FC_LDFLAGS="${FC_LDFLAGS} -ldl -rdynamic -mieee-with-inexact"
     MAKEFILE_TARGET=Makefile.linux
    ;;
 # Mklinux PowerPC (Macintosh)
   powerpc-*-linux-gnu)
-    LIEEELIB=
-    AC_CHECK_LIB(ieee,main,
-      [LIEEELIB=-lieee])
-    GCC=yes
-    CC=gcc
-    CC_OPTIONS='-O -D_GNU_SOURCE -Dlinux '
-    CC_LDFLAGS=$LIEEELIB
+    CC_OPTIONS="${CC_OPTIONS} -D_GNU_SOURCE -Dlinux"
     CC_PICFLAGS=-fPIC
-    # find Fortran compiler
-    # g77 already asked and found: good
-    if test "$G77" = yes; then
-      FC=g77
-    # option with-f2c
-    elif test "$with_f2c" = yes; then
-      AC_CHECK_PROG(F2C,f2c,yes,no)
-      if test "$F2C" = no; then
-        AC_MSG_ERROR([Unable to configure: f2c compiler not found])
-      fi
-      # script shell f77 have bugs, get ours
-      FC='${SCIDIR}/bin/f77-linux'
-    else
-      # first find g77
-      AC_CHECK_PROG(G77,g77,yes,no)
-      if test "$G77" = yes; then
-        FC=g77
-      else
-      # otherwise find f2c
-        AC_CHECK_PROG(F2C,f2c,yes,no)
-        if test "$F2C" = yes; then
-          # script shell f77 have bugs, get ours
-          FC='${SCIDIR}/bin/f77-linux'
-        else
-          AC_MSG_ERROR([Unable to configure: no Fortran compiler found])    
-        fi
-      fi
-    fi
-    FC_OPTIONS=-O
-    FC_LDFLAGS="$LIEEELIB -ldl -rdynamic"
+    FC_LDFLAGS="${FC_LDFLAGS} -ldl -rdynamic"
     FC_PICFLAGS=-fPIC
-    LD=ld
-    LD_LDFLAGS=$LIEEELIB
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -Dlinux -D_GNU_SOURCE '
-      FC_OPTIONS=-g
-    fi
     MAKEFILE_TARGET=Makefile.linux
    ;;
 # SGI MIPS ULTRIX (NO LONGER SUPPORTED)
   mips-*-ultrix*)
-    # standard compilers
-    CC=cc
-    CC_OPTIONS=-O0
-    CC_LDFLAGS=
-    if test "$G77" != yes; then    
-      AC_CHECK_PROG(F77,f77,yes,no)
-      if test "$F77" = no; then
-        AC_MSG_ERROR([Unable to configure: Fortran f77 compiler not found])
-      fi
+    if test X"$CC" = Xcc; then
+        # standard compilers
+	CC_OPTIONS="${CC_OPTIONS} -O0"
     fi
-    FC=f77
-    FC_OPTIONS='-O0 -fpe1'
-    FC_LDFLAGS=
-    LD=ld
-    LD_LDFLAGS=
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS=-g
-      FC_OPTIONS='-g -fpe1'
-    fi
+    if test X"$F77" = Xf77; then
+        FC_OPTIONS="${FC_OPTIONS} -O0 -fpe1"
+    fi 
     SCILAB_GS=sh5
-    # GNU compilers
-    if test "$GCC" = yes; then
-      CC=gcc
-      CC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        CC_OPTIONS=-g
-      fi
-    fi
-    if test "$G77" = yes; then
-      FC=g77
-      FC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        FC_OPTIONS=-g
-      fi
-    fi
     MAKEFILE_TARGET=Makefile.ultrix
     ;;
 # SGI
   mips-sgi-irix*)
-    # standard compilers
-    CC=cc
-    CC_OPTIONS='-O -c -DSYSV -DSVR4'
-    CC_LDFLAGS=
-    if test "$G77" != yes; then    
-      AC_CHECK_PROG(F77,f77,yes,no)
-      if test "$F77" = no; then
-        AC_MSG_ERROR([Unable to configure: Fortran f77 compiler not found])
-      fi
+    if test X"$CC" = Xcc; then
+        # standard compilers
+	CC_OPTIONS="${CC_OPTIONS} -c -DSYSV -DSVR4"
     fi
-    FC=f77
-    FC_OPTIONS='-O -Nl999 -Nn15000'
-    FC_LDFLAGS=
-    LD=ld
-    LD_LDFLAGS=
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -c -DSYSV -DSVR4'
-      FC_OPTIONS='-g -Nl999 -Nn15000'
-    fi
-    # GNU compilers
-    if test "$GCC" = yes; then
-      CC=gcc
-      CC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        CC_OPTIONS=-g
-      fi
-    fi
-    if test "$G77" = yes; then
-      FC=g77
-      FC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        FC_OPTIONS=-g
-      fi
-    fi
-
+    if test X"$F77" = Xf77; then    
+        FC_OPTIONS="${FC_OPTIONS} -Nl999 -Nn15000"
+    fi 
     MAKEFILE_TARGET=Makefile.sgi
     ;;
 # OLD HP (NO LONGER SUPPORTED)
   *-*-hpux9.*)
     # standard compilers
     HPPA_OLD=-Dhppa_old
-    CC=cc
-    CC_OPTIONS='-O -DSYSV -Dhpux'
-    CC_LDFLAGS='-Wl,-a,archive'
-    if test "$G77" != yes; then    
-      AC_CHECK_PROG(F77,fort77,yes,no)
-      if test "$F77" = no; then
-        AC_MSG_ERROR([Unable to configure: Fortran fort77 compiler not found])
-      fi
+    if test X"$CC" = Xcc; then
+        CC_OPTIONS="${CC_OPTIONS} -DSYSV -Dhpux"
+	CC_LDFLAGS="${CC_LDFLAGS} -Wl,-a,archive'
     fi
-    FC=fort77
-    FC_OPTIONS='-O +Obb1200 +E4'
-    FC_LDFLAGS='-Wl,-a,archive'
-    LD=ld
-    LD_LDFLAGS='-a archive'
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -DSYSV -Dhpux'
-      FC_OPTIONS='-g +E4'
-    fi
-    # GNU compilers
-    if test "$GCC" = yes; then
-      CC=gcc
-      CC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        CC_OPTIONS=-g
-      fi
-    fi
-    if test "$G77" = yes; then
-      FC=g77
-      FC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        FC_OPTIONS=-g
-      fi
+    if test X"$F77" = Xfort77; then    
+        FC_OPTIONS="${FC_OPTIONS}  +Obb1200 +E4"
+	FC_LDFLAGS="${FC_LDFLAGS} -Wl,-a,archive"
     fi
     MAKEFILE_TARGET=Makefile.hpux9
     FGETARG=fgetarg-hpux
@@ -854,45 +389,19 @@ case "$host" in
 # HP
   *-*-hpux*)
     # standard compilers
-    CC=cc
-    CC_OPTIONS='-O -DSYSV -Dhpux +Z +DAportable'
-    CC_LDFLAGS='-Wl,+vnocompatwarnings,-E /usr/lib/libdld.sl'
-    if test "$G77" != yes; then    
-      AC_CHECK_PROG(F77,fort77,yes,no)
-      if test "$F77" = no; then
-        AC_MSG_ERROR([Unable to configure: Fortran fort77 compiler not found])
-      fi
+    if test X"$CC" = Xcc; then
+        CC_OPTIONS="${CC_OPTIONS} -DSYSV -Dhpux +Z +DAportable"
+	CC_LDFLAGS=${CC_LDFLAGS} -Wl,+vnocompatwarnings,-E /usr/lib/libdld.sl"
     fi
-    FC=fort77
-    FC_OPTIONS='+O2 +E4 +Z +DAportable'
-    FC_LDFLAGS='-Wl,+vnocompatwarnings,-E /usr/lib/libdld.sl'
-    LD=ld
-    LD_LDFLAGS=
-    if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -DSYSV -Dhpux'
-      FC_OPTIONS='-g +E4'
-    fi
-    # GNU compilers
-    if test "$GCC" = yes; then
-      CC=gcc
-      CC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        CC_OPTIONS=-g
-      fi
-    fi
-    if test "$G77" = yes; then
-      FC=g77
-      FC_OPTIONS=-O
-      if test "$enable_debug" = yes; then 
-        FC_OPTIONS=-g
-      fi
+    if test X"$F77" = Xfort77; then    
+        FC_OPTIONS="${FC_OPTIONS} +E4 +Z +DAportable"
+	FC_LDFLAGS="${FC_LDFLAGS} -Wl,+vnocompatwarnings,-E /usr/lib/libdld.sl"
     fi
     MAKEFILE_TARGET=Makefile.hpux
     FGETARG=fgetarg-hpux
     ;;
 # CYGWIN32 for Windows 9X/NT/XP 
-# mingw32 is detected 
-  *-*-cygwin* |   *-*-mingw32*)
+  *-*-cygwin* )
     SCILABSCRIPT=scilab-gcwin32.g
     PERIFILE=periWin.o
     MAIN='mainwin95.o'
@@ -904,177 +413,125 @@ case "$host" in
     SED_CYGDRIVE='$(CYGDRIVE)'
     IMPPREF=B
     IMPENV=env.o
-    # want to build f2c comand 
-    # which is required for building fortran dlls 
-    # which can be loaded into scilab 
     F2C_SUBDIR=f2c/src
     # just *-so tests 
     EXAMPLES_TESTS='$(SUBDIRS1)'
-    GCC=yes
-    CC=gcc 
-    CC_OPTIONS='-mno-cygwin -mieee-fp -O   -Wall'
-      if test "$enable_debug" = yes; then 
-	CC_OPTIONS='-mno-cygwin -g   -Wall'
-      fi
-    CC_LDFLAGS=
-    FC=g77
-    if test "$G77" = yes; then
-      FC=g77
-    fi 
-    FC_OPTIONS="-O -mno-cygwin"
-      if test "$enable_debug" = yes; then 
-        FC_OPTIONS="-g -mno-cygwin"
-      fi
-    FC_LDFLAGS=
-    if test "$with_f2c" = yes; then
-      # ignore with_f2c here       
-      FC=g77
-    fi    
+    CC_OPTIONS="${CC_OPTIONS} -mno-cygwin -mieee-fp"
+    FC_OPTIONS="${FC_OPTIONS} -mno-cygwin"
     LD=gcc
-    LD_LDFLAGS="-mconsole --enable-stdcall-fixup"
+    LD_LDFLAGS="${LDFLAGS} -mconsole --enable-stdcall-fixup"
+    WINXFLAGS='-I../xdr'
+    MAKEFILE_TARGET=Makefile.gcwin32
+    ;;
+# mingw32 is detected 
+   *-*-mingw32*)
+    SCILABSCRIPT=scilab-gcwin32.g
+    PERIFILE=periWin.o
+    MAIN='mainwin95.o'
+    GUILIB='wsci'
+    XDRLIB='xdr'
+    XDRLIBNAME='libs/xdr.a'
+    MENUSOBJS=WOBJS
+    BLPR_SCRIPTS=
+    SED_CYGDRIVE='$(CYGDRIVE)'
+    IMPPREF=B
+    IMPENV=env.o
+    F2C_SUBDIR=f2c/src
+    # just *-so tests 
+    EXAMPLES_TESTS='$(SUBDIRS1)'
+    CC_OPTIONS="${CC_OPTIONS} -mieee-fp"
+    FC_OPTIONS="${FC_OPTIONS}"
+    LD=gcc
+    LD_LDFLAGS="${LDFLAGS} -mconsole --enable-stdcall-fixup"
     WINXFLAGS='-I../xdr'
     MAKEFILE_TARGET=Makefile.gcwin32
     ;;
 # FreeBSD  systems (not supported by INRIA)
   *-*-freebsd*)
-     GCC=yes
-     CC=gcc
-     CC_OPTIONS="${CFLAGS} -Dfreebsd"
-     CC_LDFLAGS=-lm
+     CC_OPTIONS="${CC_OPTIONS} -Dfreebsd"
+     CC_LDFLAGS="${CC_LDFLAGS} -lm"
      CC_PICFLAGS='-fPIC'
      # script shell f77 have bugs, get ours
-     FC=f77
-     FC_OPTIONS="${CFLAGS} -Dfreebsd"	
-     FC_LDFLAGS='-lm -Wl,--export-dynamic'
+     FC_OPTIONS="${FC_OPTIONS} -Dfreebsd"	
+     FC_LDFLAGS="${FC_LDFLAGS} -lm -Wl,--export-dynamic"
      FC_PICFLAGS='-fPIC'
      LD=ld
-     LD_LDFLAGS=-lm
-
-     if test "$enable_debug" = yes; then 
-       CC_OPTIONS='-g -Dfreebsd'
-       FC_OPTIONS=-g
-     fi
-     if test "$G77" = yes; then
-       # On FreeBSD the gnu fortran compiler is named f77
-       FC=f77
-     fi
-    DLDLIB='${SCIDIR}/libs/libdld.a'
-    DLD_SUBDIR=dld
-    MAKEFILE_TARGET=Makefile.freebsd
+     LD_LDFLAGS="${LDFLAGS} -lm"
+     DLDLIB='${SCIDIR}/libs/libdld.a'
+     DLD_SUBDIR=dld
+     MAKEFILE_TARGET=Makefile.freebsd
     ;;
-
 # NetBSD  systems (not supported by INRIA)
   *-*-netbsd*)
-    #
-    # C Compiler
-    #
-    CC=cc
-    CC_OPTIONS='-O2 -Dnetbsd'
-    CC_LDFLAGS="-Wl,-R${X11BASE}/lib"
-    CC_PICFLAGS='-fPIC'
     # check for --export-dynamic
     ac_save_LDFLAGS="$LDFLAGS"
     LDFLAGS='-Wl,--export-dynamic'
     AC_MSG_CHECKING([if the linker accepts --export-dynamic])
     AC_TRY_LINK(,,
       AC_MSG_RESULT(yes)
-      CC_LDFLAGS=["$CC_LDFLAGS  -Wl,--export-dynamic"],
-      AC_MSG_RESULT(no))
-    LDFLAGS="$ac_save_LDFLAGS"
-   #
-   # Fortran Compiler
-   #
-   if test "$with_f2c" = yes; then
-     AC_CHECK_PROGS(F77,f2c-f77,no)
-     if test "$F77" = no; then
-       AC_MSG_ERROR([Unable to configure: Fortran compiler f2c-f77 not found])
-     fi
-   else		
-     AC_CHECK_PROGS(F77,"${FC}" f77 f2c-f77,no)
-     if test "$F77" = no; then
-       AC_MSG_ERROR([Unable to configure: Fortran, f77 or f2c-f77, compiler not found])
-     fi
-   fi
-   FC="$F77"
-   FC_OPTIONS='-O2'
-   FC_LDFLAGS="-Wl,-R${X11BASE}/lib"
-   FC_PICFLAGS='-fPIC'
-   # check for --export-dynamic
-   ac_save_LDFLAGS="$LDFLAGS"
-   LDFLAGS='-Wl,--export-dynamic'
-   AC_MSG_CHECKING([if the linker accepts --export-dynamic])
-   AC_TRY_LINK(,,
-     AC_MSG_RESULT(yes)
-     FC_LDFLAGS=["$FC_LDFLAGS  -Wl,--export-dynamic"],
-     AC_MSG_RESULT(no))
-   LDFLAGS="$ac_save_LDFLAGS"
-   #
-   # Linker
-   #
-   LD=ld
-   LD_LDFLAGS="-R${X11BASE}/lib"
-   # check for --export-dynamic
-   ac_save_LDFLAGS="$LDFLAGS"
-   LDFLAGS='-Wl,--export-dynamic'
-   AC_MSG_CHECKING([if the linker accepts --export-dynamic])
-   AC_TRY_LINK(,,
-     AC_MSG_RESULT(yes)
-     LD_LDFLAGS=["$LD_LDFLAGS  --export-dynamic"],
-     AC_MSG_RESULT(no))
-   LDFLAGS="$ac_save_LDFLAGS" 
-   #
-   # Compiler Debug Flags
-   #
-   if test "$enable_debug" = yes; then 
-      CC_OPTIONS='-g -Dnetbsd '
-      FC_OPTIONS='-g '
-   fi
-   MAKEFILE_TARGET=Makefile.netbsd
+       LD_LDFLAGS=["$LD_LDFLAGS  --export-dynamic"],
+       AC_MSG_RESULT(no))
+    LDFLAGS="$ac_save_LDFLAGS" 
+    CC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
+    FC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
+    # C compiler 
+    if test X"$CC" = Xcc; then
+        CC_OPTIONS="${CC_OPTIONS}  -Dnetbsd"
+	CC_LDFLAGS="${CC_LDFLAGS} -Wl,-R${X11BASE}/lib"
+    fi
+    CC_PICFLAGS='-fPIC'
+    FC_LDFLAGS="${FC_LDFLAGS}  -Wl,-R${X11BASE}/lib"
+    FC_PICFLAGS='-fPIC'
+    LD=ld
+    LDFLAGS="${LDFLAGS} -R${X11BASE}/lib"
+    #
+    # Compiler Debug Flags
+    #
+    MAKEFILE_TARGET=Makefile.netbsd
    ;;
 # Darwin/MacOSX (Not supported by INRIA)
   *-*-darwin*)
      STRIP=echo
-     GCC=yes
-     CC=gcc
      # -L/sw/lib is needed during configure but seams not best place
-     CC_OPTIONS='-no-cpp-precomp -O2 -I/sw/include -L/sw/lib'
-     CC_LDFLAGS=
+     CC_OPTIONS="${CC_OPTIONS} -no-cpp-precomp -I/sw/include -L/sw/lib"
      CC_PICFLAGS='-fPIC'
      LIBS="$LIBS -L/sw/lib"
      # script shell f77 have bugs, get ours
-     FC=g77
-     FC_OPTIONS='-O2'
-     FC_LDFLAGS='-L/sw/lib -ldl'
+     FC_LDFLAGS="${FC_LDFLAGS} -L/sw/lib -ldl"
      FC_PICFLAGS='-fPIC'
-     LD=ld
-     LD_LDFLAGS=
-     if test "$enable_debug" = yes; then
-       # -L/sw/lib is needed during configure but seams not best place
-       CC_OPTIONS='-g -I/sw/include -L/sw/lib'
-       FC_OPTIONS=-g
-     fi
-     if test "$G77" = yes; then
-       FC=g77
-     fi
-    # just *-so tests 
-    EXAMPLES_TESTS='$(SUBDIRS1)'
-    # FLIBS generated by libtool config should not be used 
-    FLIBS= 
-   # Dyn. loading - ????
-   # DLDLIB=
-   # DLD_SUBDIR=
-   # DLDLIB=
-   # DLD_SUBDIR=
-   MAKEFILE_TARGET=Makefile.darwin
-   # we need to patch libtool 		
-   cp  libtool libtool-cp
-   sed -e 's:\\\\"x\\\$module\\\\" = xyes:\\$module = .yes:' libtool-cp > libtool
-   rm -f libtool-cp
+     # just *-so tests 
+     EXAMPLES_TESTS='$(SUBDIRS1)'
+     # FLIBS generated by libtool config should not be used 
+     FLIBS= 
+     MAKEFILE_TARGET=Makefile.darwin
+     # we need to patch libtool 		
+     #cp  libtool libtool-cp
+     #sed -e 's:\\\\"x\\\$module\\\\" = xyes:\\$module = .yes:' libtool-cp > libtool
+     #rm -f libtool-cp
     ;;
   *)
     AC_MSG_ERROR([Unable to configure for host $host])
     ;;
 esac
+
+
+############################################
+# add -Wall when --enable-debug and 
+# remove optimize 
+#############################################
+
+if test "$enable_debug" = yes; then 
+   CFLAGS=`echo $CFLAGS | sed -e 's/-O2 //' -e 's/-O //' -e 's/-g //'`
+   CFLAGS="${CFLAGS} -g"
+   if test X"$GCC" = Xyes ; then
+      CFLAGS="${CFLAGS} -Wall"
+   fi 
+   FFLAGS=`echo $FFLAGS | sed -e 's/-O2 //' -e 's/-O //' -e 's/-g //'`
+   FFLAGS="${FFLAGS} -g"
+   if test X"$G77" = Xyes ; then
+      FFLAGS="${FFLAGS} -Wall"
+   fi 
+fi 
 
 
 #########################
