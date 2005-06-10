@@ -61,7 +61,7 @@ extern int C2F(dggev) (char *jobvl, char *jobvr, int *n, double *a, int *lda, do
 extern int C2F(dgghrd) (char *compq, char *compz, int *n, int *ilo, int *ihi, double *a, int *lda, double *b, int *ldb, double *q, int *ldq, double *z, int *ldz, int *info, int compq_len, int compz_len);
 extern int C2F(dhgeqz) (char *job, char *compq, char *compz, int *n, int *ilo, int *ihi, double *a, int *lda, double *b, int *ldb, double *alphar, double *alphai, double *beta, double *q, int *ldq, double *z, int *ldz, double *work, int *lwork, int *info, int job_len, int compq_len, int compz_len);
 extern int C2F(dhseqr) (char *job, char *compz, int *n, int *ilo, int *ihi, double *h, int *ldh, double *wr, double *wi, double *z, int *ldz, double *work, int *lwork, int *info, int job_len, int compz_len);
-extern int C2F(dlabad) (double *small, double *large);
+extern int C2F(dlabad) (double *dsmall, double *large);
 extern int C2F(dlabrd) (int *m, int *n, int *nb, double *a, int *lda, double *d, double *e, double *tauq, double *taup, double *x, int *ldx, double *y, int *ldy);
 extern int C2F(dlacon) (int *n, double *v, double *x, int *isgn, double *est, int *kase);
 extern int C2F(dlacpy) (char *uplo, int *m, int *n, double *a, int *lda, double *b, int *ldb, int uplo_len);
