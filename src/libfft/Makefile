@@ -19,7 +19,7 @@ FFTPACK=zfftb.o cfftb1.o zfftf.o cfftf1.o zffti.o cffti1.o dcosqb.o cosqb1.o dco
 	dfftb.o rfftb1.o dfftf.o rfftf1.o dffti.o rffti1.o dsinqb.o dsinqf.o dsinqi.o\
 	dsint.o sint1.o dsinti.o
  
-OBJSF=$(FFTPACK)
+OBJSF=$(NOTHING)
  
 include ../Make.lib
 

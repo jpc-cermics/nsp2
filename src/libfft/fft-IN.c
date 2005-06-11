@@ -58,7 +58,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
    *  using the fftw3  lib
    */
   NspMatrix *x;
-  double invn;
+  double invn=0;
   int s, k;
   char *str;
   static fftw_plan forward_plan=NULL, backward_plan=NULL, multi_plan;
