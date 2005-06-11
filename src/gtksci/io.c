@@ -16,9 +16,13 @@
 #include <sys/select.h>
 #endif
 
+#ifndef WIN32 
 #include <gdk/gdkx.h>
-#include <gtk/gtk.h>
+#else 
+#include <winsock.h>
+#endif 
 
+#include <gtk/gtk.h>
 #include "nsp/math.h"
 #include "../system/Sun.h"
 #include "nsp/gtksci.h"

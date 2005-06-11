@@ -4,9 +4,10 @@
  * Copyright 2001 Inria/Enpc 
  *----------------------------------------------------------*/
 
-#include <pwd.h>
 #include <ctype.h>
+#if !defined(__MSC__) && ! defined(__MINGW32__)
 #include <sys/ioctl.h>
+#endif 
 #include <sys/stat.h>
 #include <string.h>
 #include <stdio.h>
@@ -72,13 +73,14 @@ void nsp_gtk_init(int argc, char **argv,int no_window)
     }
   /* signals */
   signal(SIGINT,sci_clear_and_exit);
-  signal(SIGBUS,sci_clear_and_exit);
   signal(SIGSEGV,sci_clear_and_exit);
+#if !defined(__MSC__) && ! defined(__MINGW32__)
+  signal(SIGBUS,sci_clear_and_exit);
   signal(SIGQUIT,sci_clear_and_exit);
   signal(SIGHUP,sci_clear_and_exit);
   signal(SIGUSR1,sci_usr1_signal);
   signal(SIGWINCH, sci_winch_signal);
-
+#endif
   /* initialize scilab interp  */
   /* C2F(inisci)(&ini, &memory, &ierr); */
   /* set up terminal size */
@@ -175,11 +177,14 @@ static GtkWidget  *window = NULL;
  * the id of a socket button 
  */ 
 
-#include <sys/ipc.h>
+#if !defined(__MSC__) && ! defined(__MINGW32__)
+#include <sys/types.h>
 #include <sys/shm.h>
+#endif 
 
 static char *get_shared(void)
 {
+#if !defined(__MSC__) && ! defined(__MINGW32__)
   int shmid;
   char *shm;
   char *s= getenv("SHMID");
@@ -199,6 +204,9 @@ static char *get_shared(void)
     exit(1);
   }
   return shm;
+#else 
+  return NULL;
+#endif 
 }
 
 /*
