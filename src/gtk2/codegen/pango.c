@@ -892,7 +892,7 @@ static int _wrap_pango_font_description_set_style(NspPangoFontDescription *self,
   NspObject *nsp_style = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_style) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_STYLE, nsp_style, (gint *)&style)== FAIL)
+  if (nspg_enum_get_value(PANGO_TYPE_STYLE, nsp_style, &style)== FAIL)
       return RET_BUG;
   pango_font_description_set_style(NSP_GBOXED_GET(self, PangoFontDescription), style);
   return 0;
@@ -914,7 +914,7 @@ static int _wrap_pango_font_description_set_variant(NspPangoFontDescription *sel
   PangoVariant variant;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_variant) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_VARIANT, nsp_variant, (gint *)&variant)== FAIL)
+  if (nspg_enum_get_value(PANGO_TYPE_VARIANT, nsp_variant, &variant)== FAIL)
       return RET_BUG;
   pango_font_description_set_variant(NSP_GBOXED_GET(self, PangoFontDescription), variant);
   return 0;
@@ -936,7 +936,7 @@ static int _wrap_pango_font_description_set_weight(NspPangoFontDescription *self
   NspObject *nsp_weight = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_weight) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_WEIGHT, nsp_weight, (gint *)&weight)== FAIL)
+  if (nspg_enum_get_value(PANGO_TYPE_WEIGHT, nsp_weight, &weight)== FAIL)
       return RET_BUG;
   pango_font_description_set_weight(NSP_GBOXED_GET(self, PangoFontDescription), weight);
   return 0;
@@ -958,7 +958,7 @@ static int _wrap_pango_font_description_set_stretch(NspPangoFontDescription *sel
   NspObject *nsp_stretch = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_stretch) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_STRETCH, nsp_stretch, (gint *)&stretch)== FAIL)
+  if (nspg_enum_get_value(PANGO_TYPE_STRETCH, nsp_stretch, &stretch)== FAIL)
       return RET_BUG;
   pango_font_description_set_stretch(NSP_GBOXED_GET(self, PangoFontDescription), stretch);
   return 0;
@@ -1008,7 +1008,7 @@ static int _wrap_pango_font_description_unset_fields(NspPangoFontDescription *se
   PangoFontMask to_unset;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_to_unset) == FAIL) return RET_BUG;
-  if (nspg_flags_get_value(PANGO_TYPE_FONT_MASK, nsp_to_unset, (gint *)&to_unset)==FAIL)
+  if (nspg_flags_get_value(PANGO_TYPE_FONT_MASK, nsp_to_unset, &to_unset)==FAIL)
       return RET_BUG;
   pango_font_description_unset_fields(NSP_GBOXED_GET(self, PangoFontDescription), to_unset);
   return 0;
@@ -2186,7 +2186,7 @@ static int _wrap_pango_tab_array_set_tab(NspPangoTabArray *self,Stack stack,int 
   PangoTabAlign alignment;
 
   if ( GetArgs(stack,rhs,opt,T,&tab_index, &nsp_alignment, &location) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_TAB_ALIGN, nsp_alignment, (gint *)&alignment)== FAIL)
+  if (nspg_enum_get_value(PANGO_TYPE_TAB_ALIGN, nsp_alignment, &alignment)== FAIL)
       return RET_BUG;
   pango_tab_array_set_tab(NSP_GBOXED_GET(self, PangoTabArray), tab_index, alignment, location);
   return 0;
@@ -2621,7 +2621,7 @@ static int _wrap_pango_context_set_base_dir(NspPangoContext *self,Stack stack,in
   NspObject *nsp_direction = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_direction) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_DIRECTION, nsp_direction, (gint *)&direction)== FAIL)
+  if (nspg_enum_get_value(PANGO_TYPE_DIRECTION, nsp_direction, &direction)== FAIL)
       return RET_BUG;
   pango_context_set_base_dir(PANGO_CONTEXT(self->obj), direction);
   return 0;
@@ -4289,7 +4289,7 @@ static int _wrap_pango_layout_set_wrap(NspPangoLayout *self,Stack stack,int rhs,
   NspObject *nsp_wrap = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_wrap) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_WRAP_MODE, nsp_wrap, (gint *)&wrap)== FAIL)
+  if (nspg_enum_get_value(PANGO_TYPE_WRAP_MODE, nsp_wrap, &wrap)== FAIL)
       return RET_BUG;
   pango_layout_set_wrap(PANGO_LAYOUT(self->obj), wrap);
   return 0;
@@ -4368,7 +4368,7 @@ static int _wrap_pango_layout_set_alignment(NspPangoLayout *self,Stack stack,int
   PangoAlignment alignment;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_alignment) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_ALIGNMENT, nsp_alignment, (gint *)&alignment)== FAIL)
+  if (nspg_enum_get_value(PANGO_TYPE_ALIGNMENT, nsp_alignment, &alignment)== FAIL)
       return RET_BUG;
   pango_layout_set_alignment(PANGO_LAYOUT(self->obj), alignment);
   return 0;
@@ -4742,7 +4742,7 @@ _wrap_pango_attr_style_new( Stack stack,int rhs,int opt,int lhs)
   NspObject *ret; 
 
   if (GetArgs(stack,rhs,opt,T,&py_style)  == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_STYLE, py_style, (gint *)&style))
+  if (nspg_enum_get_value(PANGO_TYPE_STYLE, py_style, &style))
     return RET_BUG;
   if ((ret =  (NspObject *)pangoattribute_create(NVOID,pango_attr_style_new(style),NULL))==  NULL) return RET_BUG;
   MoveObj(stack,1,ret);
@@ -4761,7 +4761,7 @@ _wrap_pango_attr_weight_new( Stack stack,int rhs,int opt,int lhs)
   NspObject *ret; 
 
   if (GetArgs(stack,rhs,opt,T, &py_weight)   == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_WEIGHT, py_weight, (gint *)&weight))
+  if (nspg_enum_get_value(PANGO_TYPE_WEIGHT, py_weight,&weight))
     return RET_BUG;
   if ((ret =   (NspObject *)pangoattribute_create(NVOID,pango_attr_weight_new(weight),NULL))==  NULL) return RET_BUG;
   MoveObj(stack,1,ret);
@@ -4780,7 +4780,7 @@ _wrap_pango_attr_variant_new( Stack stack,int rhs,int opt,int lhs)
   NspObject *ret; 
   
   if (GetArgs(stack,rhs,opt,T, &py_variant)    == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_VARIANT, py_variant, (gint *)&variant))
+  if (nspg_enum_get_value(PANGO_TYPE_VARIANT, py_variant,&variant))
     return RET_BUG;
 
   if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_variant_new(variant),NULL))==  NULL) return RET_BUG;
@@ -4802,7 +4802,7 @@ _wrap_pango_attr_stretch_new( Stack stack,int rhs,int opt,int lhs)
 
   if (GetArgs(stack,rhs,opt,T, &py_stretch)    == FAIL) return RET_BUG;
 
-  if (nspg_enum_get_value(PANGO_TYPE_STRETCH, py_stretch, (gint *)&stretch))
+  if (nspg_enum_get_value(PANGO_TYPE_STRETCH, py_stretch,&stretch))
     return RET_BUG;
 
   if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_stretch_new(stretch),NULL))==  NULL) return RET_BUG;
@@ -4848,7 +4848,7 @@ _wrap_pango_attr_underline_new( Stack stack,int rhs,int opt,int lhs)
 
   if (GetArgs(stack,rhs,opt,T, &py_underline)  == FAIL ) return RET_BUG;
   if (nspg_enum_get_value(PANGO_TYPE_UNDERLINE, py_underline,
-			 (gint *)&underline))
+			  &underline))
     return RET_BUG;
 
   if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_underline_new(underline),NULL))==  NULL) return RET_BUG;

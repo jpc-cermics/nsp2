@@ -1509,16 +1509,17 @@ nsp_flags_add_constants(NspHash *table, GType flags_type,const gchar *strip_pref
  * Returns: OK on success or FAIL on failure
  */
 
-gint nspg_enum_get_value(GType enum_type, NspObject *obj, gint *val)
+gint nspg_enum_get_value(GType enum_type, NspObject *obj, void *val)
 {
+  gint *gval=val;
   GEnumClass *eclass = NULL;
   char *str;
   if ( val == NULL) return FAIL;
 
-  if (!obj) { * val = 0 ; return OK;}
+  if (!obj) { *gval = 0 ; return OK;}
   if (IsMat(obj))
     {
-      return  IntScalar(obj, val);
+      return  IntScalar(obj, gval);
     }
   if ((str =nsp_string_object(obj)) != NULL)
     {
@@ -1536,7 +1537,7 @@ gint nspg_enum_get_value(GType enum_type, NspObject *obj, gint *val)
 	Scierror("could not convert string %s\n",str);
 	return FAIL;
       }
-      *val = info->value;
+      *gval = info->value;
       return OK;
     } 
   Scierror("enum values must be strings or ints\n");
@@ -1560,14 +1561,15 @@ gint nspg_enum_get_value(GType enum_type, NspObject *obj, gint *val)
  */
 
 gint
-nspg_flags_get_value(GType flag_type, NspObject *obj, gint *val)
+nspg_flags_get_value(GType flag_type, NspObject *obj, void *val)
 {
+  gint *gval=val;
   GFlagsClass *fclass = NULL;
 
-  if ( val == NULL) return FAIL;
+  if ( gval == NULL) return FAIL;
   
-  if (!obj) { *val = 0; return FAIL;} 
-  if ( IntScalar(obj, val) == OK ) { return OK;}
+  if (!obj) { *gval = 0; return FAIL;} 
+  if ( IntScalar(obj, gval) == OK ) { return OK;}
   if ( IsSMat(obj))
     {
       int i;
@@ -1578,7 +1580,7 @@ nspg_flags_get_value(GType flag_type, NspObject *obj, gint *val)
 	Scierror("could not convert string to flag because there is no GType associated to look up the value\n");
 	return FAIL;
       }
-      *val = 0;
+      *gval = 0;
       for ( i= 0 ; i < ((NspSMatrix *)obj)->mn ; i ++) 
 	{
 	  char *str = ((NspSMatrix *)obj)->S[i];
@@ -1588,7 +1590,7 @@ nspg_flags_get_value(GType flag_type, NspObject *obj, gint *val)
 	  if (!info)
 	    info = g_flags_get_value_by_nick(fclass, str);
 	  if (info) {
-	    *val |= info->value;
+	    *gval |= info->value;
 	  } else {
 	    Scierror("could not convert string\n");
 	    return FAIL;

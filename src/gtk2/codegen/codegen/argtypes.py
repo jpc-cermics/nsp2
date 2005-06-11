@@ -422,7 +422,7 @@ class FileArg(ArgType):
                                   '  return PyFile_FromFile(ret, "", "", fclose);\n')
         
 class EnumArg(ArgType):
-    enum = ('  if (nspg_enum_get_value(%(typecode)s, nsp_%(name)s, (gint *)&%(name)s)== FAIL)\n'
+    enum = ('  if (nspg_enum_get_value(%(typecode)s, nsp_%(name)s, &%(name)s)== FAIL)\n'
             '      return RET_BUG;\n')
     def __init__(self, enumname, typecode):
 	self.enumname = enumname
@@ -447,7 +447,7 @@ class EnumArg(ArgType):
                                 
 
 class FlagsArg(ArgType):
-    flag = ('  if (%(default)snspg_flags_get_value(%(typecode)s, nsp_%(name)s, (gint *)&%(name)s)==FAIL)\n'
+    flag = ('  if (%(default)snspg_flags_get_value(%(typecode)s, nsp_%(name)s, &%(name)s)==FAIL)\n'
             '      return RET_BUG;\n')
     def __init__(self, flagname, typecode):
 	self.flagname = flagname

@@ -656,7 +656,7 @@ static int _wrap_atk_object_set_role(NspAtkObject *self,Stack stack,int rhs,int 
   NspObject *nsp_role = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_role) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(G_TYPE_NONE, nsp_role, (gint *)&role)== FAIL)
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_role, &role)== FAIL)
       return RET_BUG;
   atk_object_set_role(ATK_OBJECT(self->obj), role);
   return 0;
@@ -2088,7 +2088,7 @@ static int _wrap_atk_relation_set_contains(NspAtkRelationSet *self,Stack stack,i
   NspObject *nsp_relationship = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_relationship) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(G_TYPE_NONE, nsp_relationship, (gint *)&relationship)== FAIL)
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_relationship, &relationship)== FAIL)
       return RET_BUG;
   ret = atk_relation_set_contains(ATK_RELATION_SET(self->obj), relationship);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2147,7 +2147,7 @@ static int _wrap_atk_relation_set_get_relation_by_type(NspAtkRelationSet *self,S
   AtkRelation *ret;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_relationship) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(G_TYPE_NONE, nsp_relationship, (gint *)&relationship)== FAIL)
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_relationship, &relationship)== FAIL)
       return RET_BUG;
   ret = atk_relation_set_get_relation_by_type(ATK_RELATION_SET(self->obj), relationship);
   nsp_type_atkrelation = new_type_atkrelation(T_BASE);
@@ -2384,7 +2384,7 @@ static int _wrap_atk_state_set_add_state(NspAtkStateSet *self,Stack stack,int rh
   NspObject *nsp_type = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, (gint *)&type)== FAIL)
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, &type)== FAIL)
       return RET_BUG;
   ret = atk_state_set_add_state(ATK_STATE_SET(self->obj), type);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2405,7 +2405,7 @@ static int _wrap_atk_state_set_contains_state(NspAtkStateSet *self,Stack stack,i
   NspObject *nsp_type = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, (gint *)&type)== FAIL)
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, &type)== FAIL)
       return RET_BUG;
   ret = atk_state_set_contains_state(ATK_STATE_SET(self->obj), type);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2420,7 +2420,7 @@ static int _wrap_atk_state_set_remove_state(NspAtkStateSet *self,Stack stack,int
   NspObject *nsp_type = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, (gint *)&type)== FAIL)
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, &type)== FAIL)
       return RET_BUG;
   ret = atk_state_set_remove_state(ATK_STATE_SET(self->obj), type);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -2751,7 +2751,7 @@ int _wrap_atk_text_attribute_get_name(Stack stack, int rhs, int opt, int lhs)
   const gchar *ret;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_attr) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(G_TYPE_NONE, nsp_attr, (gint *)&attr)== FAIL)
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_attr, &attr)== FAIL)
       return RET_BUG;
     ret = atk_text_attribute_get_name(attr);
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
@@ -2767,7 +2767,7 @@ int _wrap_atk_text_attribute_get_value(Stack stack, int rhs, int opt, int lhs)
   const gchar *ret;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_attr, &index) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(G_TYPE_NONE, nsp_attr, (gint *)&attr)== FAIL)
+  if (nspg_enum_get_value(G_TYPE_NONE, nsp_attr, &attr)== FAIL)
       return RET_BUG;
     ret = atk_text_attribute_get_value(attr, index);
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;

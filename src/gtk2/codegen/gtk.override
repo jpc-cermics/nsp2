@@ -536,8 +536,8 @@ _wrap_gtk_paint_polygon(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
 	      &nsp_type_gtkwidget, &widget, &detail,
 	      &nsp_points, &fill) == FAIL) return RET_BUG;
 
-  if (nspg_enum_get_value(GTK_TYPE_STATE_TYPE, nsp_state_type,(gint *)&state_type)== FAIL) return RET_BUG;
-  if (nspg_enum_get_value(GTK_TYPE_SHADOW_TYPE, nsp_shadow_type,(gint *)&shadow_type) == FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_STATE_TYPE, nsp_state_type,&state_type)== FAIL) return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_SHADOW_TYPE, nsp_shadow_type,&shadow_type) == FAIL) return RET_BUG;
   if (!nsp_gdk_rectangle_from_object(nsp_area, &area)) return RET_BUG;
   
   if ( nsp_points->n != 2) { 
@@ -4075,7 +4075,7 @@ static int _wrap_gtk_image_new_from_stock(Stack stack, int rhs, int opt, int lhs
   GtkWidget *ret;
 
   if ( GetArgs(stack,rhs,opt,T,&str,&stock_id, &nsp_size) == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_size, (gint *)&size)== FAIL)
+  if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_size, &size)== FAIL)
       return RET_BUG;
     ret = gtk_image_new_from_stock(stock_id, size);
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
@@ -4100,7 +4100,7 @@ static int _wrap_gtk_image_new_from_icon_set(Stack stack, int rhs, int opt, int 
       Scierror( "icon_set should be a GtkIconSet");
       return RET_BUG;
   }
-  if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_size, (gint *)&size)== FAIL)
+  if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_size, &size)== FAIL)
       return RET_BUG;
     ret = gtk_image_new_from_icon_set(icon_set, size);
   nsp_type_gtkwidget = new_type_gtkwidget(T_BASE);
@@ -4741,7 +4741,7 @@ _wrap_gtk_toolbar_append_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   if ( nsp_icon != NULL)  icon = GTK_WIDGET(((NspGObject *)nsp_icon)->obj);
 
-  if (nspg_enum_get_value(GTK_TYPE_TOOLBAR_CHILD_TYPE,nsp_type, (gint *)&type))   return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_TOOLBAR_CHILD_TYPE,nsp_type,&type))   return RET_BUG;
   widget = GTK_WIDGET(((NspGObject *)nsp_widget)->obj);
 
   ret = gtk_toolbar_append_element(GTK_TOOLBAR(self->obj), type, widget,
@@ -4787,7 +4787,7 @@ _wrap_gtk_toolbar_prepend_element(NspGObject *self,Stack stack,int rhs,int opt,i
   
   if ( nsp_icon != NULL)  icon = GTK_WIDGET(((NspGObject *)nsp_icon)->obj);
 
-  if (nspg_enum_get_value(GTK_TYPE_TOOLBAR_CHILD_TYPE,nsp_type, (gint *)&type))   return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_TOOLBAR_CHILD_TYPE,nsp_type, &type))   return RET_BUG;
   widget = GTK_WIDGET(((NspGObject *)nsp_widget)->obj);
 
   ret = gtk_toolbar_prepend_element(GTK_TOOLBAR(self->obj), type, widget,
@@ -4836,7 +4836,7 @@ _wrap_gtk_toolbar_insert_element(NspGObject *self,Stack stack,int rhs,int opt,in
   
   if ( nsp_icon != NULL)  icon =GTK_WIDGET(((NspGObject *)nsp_icon)->obj);
 
-  if (nspg_enum_get_value(GTK_TYPE_TOOLBAR_CHILD_TYPE,nsp_type, (gint *)&type))   return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_TOOLBAR_CHILD_TYPE,nsp_type, &type))   return RET_BUG;
   widget = GTK_WIDGET(((NspGObject *)nsp_widget)->obj);
 
 
@@ -5040,9 +5040,9 @@ _wrap_gtk_drag_dest_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   gint n_targets;
 
   if (GetArgs(stack,rhs,opt,T, &nsp_flags, &nsp_targets, &nsp_actions)   == FAIL) return RET_BUG;;
-  if (nspg_flags_get_value(GTK_TYPE_DEST_DEFAULTS, nsp_flags, (gint *)&flags))
+  if (nspg_flags_get_value(GTK_TYPE_DEST_DEFAULTS, nsp_flags, &flags))
         return RET_BUG;
-  if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_actions, (gint *)&actions))
+  if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_actions, &actions))
     return RET_BUG;
 
   if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG; 
@@ -5144,9 +5144,9 @@ _wrap_gtk_drag_source_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   gint n_targets;
   
   if (GetArgs(stack,rhs,opt,T,&nsp_sbmask, &nsp_targets, &nsp_actions) == FAIL) return RET_BUG;;
-  if (nspg_flags_get_value(GDK_TYPE_MODIFIER_TYPE,  nsp_sbmask, (gint *)&sbmask))
+  if (nspg_flags_get_value(GDK_TYPE_MODIFIER_TYPE,  nsp_sbmask,&sbmask))
     return RET_BUG;
-  if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION,  nsp_actions, (gint *)&actions))
+  if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION,  nsp_actions, &actions))
     return RET_BUG;
 
   if ((targets = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG; 
@@ -5169,7 +5169,7 @@ _wrap_gtk_drag_begin(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   GdkDragContext *context;
 
   if (GetArgs(stack,rhs,opt,T,&nsp_targets, &nsp_actions, &button,&nsp_type_gdkevent, &event) == FAIL) return RET_BUG;;
-  if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_actions, (gint *)&actions))
+  if (nspg_flags_get_value(GDK_TYPE_DRAG_ACTION, nsp_actions,&actions))
     return RET_BUG;
   
   if ((tents = nsp_gtk_target_entry_from_list(stack,nsp_targets, &n_targets))==NULL) return RET_BUG; 
@@ -5810,7 +5810,7 @@ _wrap_gtk_text_view_buffer_to_window_coords(NspGObject *self,Stack stack,int rhs
   NspObject *nsp_win;
   
   if (GetArgs(stack,rhs,opt,T, &nsp_win, &buffer_x, &buffer_y) == FAIL) return RET_BUG;;
-  if (nspg_enum_get_value(GTK_TYPE_TEXT_WINDOW_TYPE, nsp_win, (gint *)&win))
+  if (nspg_enum_get_value(GTK_TYPE_TEXT_WINDOW_TYPE, nsp_win,&win))
     return RET_BUG;
   gtk_text_view_buffer_to_window_coords(GTK_TEXT_VIEW(self->obj), win,
 					buffer_x, buffer_y,
@@ -5830,7 +5830,7 @@ _wrap_gtk_text_view_window_to_buffer_coords(NspGObject *self,Stack stack,int rhs
   NspObject *nsp_win;
     
   if (GetArgs(stack,rhs,opt,T, &nsp_win, &window_x, &window_y) == FAIL) return RET_BUG;;
-  if (nspg_enum_get_value(GTK_TYPE_TEXT_WINDOW_TYPE, nsp_win, (gint *)&win))
+  if (nspg_enum_get_value(GTK_TYPE_TEXT_WINDOW_TYPE, nsp_win,&win))
     return RET_BUG;
   gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(self->obj), win,
 					window_x, window_y,
@@ -5932,11 +5932,11 @@ _wrap_gtkmessagedialog_new(Stack stack,int rhs,int opt,int lhs)
   if (GetArgs(stack,rhs,opt,T,&opts,&nsp_type_gtkwindow, &nsp_parent, &nsp_flags, &nsp_type, &nsp_buttons, &message_format)== FAIL)
     return RET_BUG;
   if ( nsp_parent != NULL) parent = GTK_WINDOW(nsp_parent->obj);
-  if (nspg_flags_get_value(GTK_TYPE_DIALOG_FLAGS, nsp_flags, (gint *)&flags))
+  if (nspg_flags_get_value(GTK_TYPE_DIALOG_FLAGS, nsp_flags, &flags))
     return RET_BUG;
-  if (nspg_enum_get_value(GTK_TYPE_MESSAGE_TYPE, nsp_type, (gint *)&type))
+  if (nspg_enum_get_value(GTK_TYPE_MESSAGE_TYPE, nsp_type,&type))
     return RET_BUG;
-  if (nspg_enum_get_value(GTK_TYPE_BUTTONS_TYPE, nsp_buttons, (gint *)&buttons))
+  if (nspg_enum_get_value(GTK_TYPE_BUTTONS_TYPE, nsp_buttons, &buttons))
     return RET_BUG;
   
   gobj = (GObject *)gtk_message_dialog_new(parent, flags, type, buttons, "%s", message_format);
@@ -6505,7 +6505,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
   gint width=-1, height=-1;
 
   if (GetArgs(stack,rhs,opt,T, &nsp_icon_size) == FAIL) return RET_BUG;;
-  if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_icon_size, (gint *) &icon_size)) return RET_BUG;
+  if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_icon_size,  &icon_size)) return RET_BUG;
   rep=gtk_icon_size_lookup(icon_size, &width, &height);
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 

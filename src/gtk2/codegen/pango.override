@@ -133,7 +133,7 @@ _wrap_pango_attr_style_new( Stack stack,int rhs,int opt,int lhs)
   NspObject *ret; 
 
   if (GetArgs(stack,rhs,opt,T,&py_style)  == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_STYLE, py_style, (gint *)&style))
+  if (nspg_enum_get_value(PANGO_TYPE_STYLE, py_style, &style))
     return RET_BUG;
   if ((ret =  (NspObject *)pangoattribute_create(NVOID,pango_attr_style_new(style),NULL))==  NULL) return RET_BUG;
   MoveObj(stack,1,ret);
@@ -150,7 +150,7 @@ _wrap_pango_attr_weight_new( Stack stack,int rhs,int opt,int lhs)
   NspObject *ret; 
 
   if (GetArgs(stack,rhs,opt,T, &py_weight)   == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_WEIGHT, py_weight, (gint *)&weight))
+  if (nspg_enum_get_value(PANGO_TYPE_WEIGHT, py_weight,&weight))
     return RET_BUG;
   if ((ret =   (NspObject *)pangoattribute_create(NVOID,pango_attr_weight_new(weight),NULL))==  NULL) return RET_BUG;
   MoveObj(stack,1,ret);
@@ -167,7 +167,7 @@ _wrap_pango_attr_variant_new( Stack stack,int rhs,int opt,int lhs)
   NspObject *ret; 
   
   if (GetArgs(stack,rhs,opt,T, &py_variant)    == FAIL) return RET_BUG;
-  if (nspg_enum_get_value(PANGO_TYPE_VARIANT, py_variant, (gint *)&variant))
+  if (nspg_enum_get_value(PANGO_TYPE_VARIANT, py_variant,&variant))
     return RET_BUG;
 
   if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_variant_new(variant),NULL))==  NULL) return RET_BUG;
@@ -187,7 +187,7 @@ _wrap_pango_attr_stretch_new( Stack stack,int rhs,int opt,int lhs)
 
   if (GetArgs(stack,rhs,opt,T, &py_stretch)    == FAIL) return RET_BUG;
 
-  if (nspg_enum_get_value(PANGO_TYPE_STRETCH, py_stretch, (gint *)&stretch))
+  if (nspg_enum_get_value(PANGO_TYPE_STRETCH, py_stretch,&stretch))
     return RET_BUG;
 
   if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_stretch_new(stretch),NULL))==  NULL) return RET_BUG;
@@ -229,7 +229,7 @@ _wrap_pango_attr_underline_new( Stack stack,int rhs,int opt,int lhs)
 
   if (GetArgs(stack,rhs,opt,T, &py_underline)  == FAIL ) return RET_BUG;
   if (nspg_enum_get_value(PANGO_TYPE_UNDERLINE, py_underline,
-			 (gint *)&underline))
+			  &underline))
     return RET_BUG;
 
   if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_underline_new(underline),NULL))==  NULL) return RET_BUG;
