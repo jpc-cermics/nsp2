@@ -967,10 +967,13 @@ fi
 
 #################
 ## detect tcl/tk
+## unused 
 #################
 
 builtin(include,config/tcl.m4)
 builtin(include,config/ac_tcl.m4)
+
+with_tk=no
 
 if test X"$with_tk" != Xno; then
  SC_PATH_TCLCONFIG()
