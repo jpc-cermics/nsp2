@@ -480,7 +480,7 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) 
 	{
-	  nsp_object_destroy((NspObject **) &z);
+	  nsp_matrix_destroy(z);
 	  return RET_BUG;
 	}
     }
@@ -895,7 +895,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) 
 	{
-	  nsp_object_destroy((NspObject **) &z);
+	  nsp_matrix_destroy(z);
 	  return RET_BUG;
 	}
     }
@@ -1054,8 +1054,8 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
   {
     if ( fargs != NULL)nsp_object_destroy(&args);
     nsp_object_destroy(&func);
-    nsp_object_destroy((NspObject **)&xi);
-    nsp_object_destroy((NspObject **)&yj);
+    nsp_matrix_destroy(xi);
+    nsp_matrix_destroy(yj);
     return ret;
   }
 }
@@ -1186,7 +1186,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
       if ((y = nsp_matrix_create(NVOID,'r',x->m,x->n))== NULL) return RET_BUG;
       if ( plot2d_build_y(stack,x,y,fobj,args)== FAIL) 
 	{
-	  nsp_object_destroy((NspObject **) &y);
+	  nsp_matrix_destroy(y);
 	  return RET_BUG;
 	}
     }
@@ -1417,7 +1417,7 @@ static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, Ns
   {
     if ( fargs != NULL)nsp_object_destroy(&args);
     nsp_object_destroy(&func);
-    nsp_object_destroy((NspObject **)&xi);
+    nsp_matrix_destroy(xi);
     return ret;
   }
 }
@@ -1506,7 +1506,7 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
       if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) 
 	{
-	  nsp_object_destroy((NspObject **) &z);
+	  nsp_matrix_destroy(z);
 	  return RET_BUG;
 	}
     }
