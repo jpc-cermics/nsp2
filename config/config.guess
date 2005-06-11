@@ -2,6 +2,9 @@
 # Attempt to guess a canonical system name.
 #   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
 #   2000, 2001, 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+# 2005 for Nsp 
+# small patch added to detect if a cygwin should not be considered 
+# as mingw32 (using gcc) Jean-Philippe Chancelier 2004
 
 timestamp='2005-05-15'
 
@@ -803,6 +806,26 @@ EOF
 	echo ${UNAME_MACHINE}-unknown-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`
 	exit ;;
     i*:CYGWIN*:*)
+	# jpc 2004/2005 
+	eval $set_cc_for_build
+	dummy_cyg=dummy
+	sed 's/^	//' << EOF > $dummy_cyg.c
+	int main (argc, argv) int argc; char *argv[]; {
+	#if defined (__MINGW32__)
+	  printf ("%s-pc-mingw32\n",argv[1]);
+	#else 	  
+          printf ("%s-pc-cygwin\n",argv[1]);
+	#endif
+          exit (0);
+	}
+EOF
+	# CC_FOR_BUILD pb because of tmp if using mingwin 
+	if test x"$CC_FOR_BUILD" = xno_compiler_found ; then
+	  CC_FOR_BUILD=gcc ;
+	fi
+	$CC_FOR_BUILD $dummy_cyg.c -o $dummy_cyg.exe \
+	    && ./$dummy_cyg.exe "${UNAME_MACHINE}" \
+	    && rm -f $dummy_cyg.c $dummy_cyg.exe && exit 0
 	echo ${UNAME_MACHINE}-pc-cygwin
 	exit ;;
     i*:MINGW*:* | i*:windows32*:*)
