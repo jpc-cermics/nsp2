@@ -101,8 +101,8 @@ int nsp_qr(NspMatrix *A,NspMatrix **q,NspMatrix **r,NspMatrix **rank,NspMatrix *
 static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 		      NspMatrix **rank,double *tol,char flag)
 {
-  NspMatrix *jpvt,*tau,*work;
-  int  workMin, info, *Ijpvt, m = A->m,n=A->n,Minmn= Min(m,n);
+  NspMatrix *jpvt=NULLMAT,*tau,*work;
+  int  workMin, info,  m = A->m,n=A->n,Minmn= Min(m,n);
 
   /* A == [] return empty matrices*/ 
   if ( A->mn == 0 )  {
@@ -139,9 +139,8 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
   else 
     {
       int ix;
-      Ijpvt = (int *) jpvt->R;
-      for (ix = 0; ix < jpvt->mn ; ++ix) Ijpvt[ix]= 0; 
-      C2F(dgeqpf)(&(m),&(n),(*R)->R,&(m),Ijpvt,tau->R,work->R, &info);
+      for (ix = 0; ix < jpvt->mn ; ++ix) jpvt->I[ix]= 0; 
+      C2F(dgeqpf)(&(m),&(n),(*R)->R,&(m),jpvt->I,tau->R,work->R, &info);
       /*     SUBROUTINE DGEQPF( M, N, A, LDA, JPVT, TAU, WORK, INFO ) */
     }
   if (info != 0) {
@@ -185,7 +184,7 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
       double zero = 0.0;
       int j;
       C2F(dlaset)("F", &n, &n, &zero, &zero,(*E)->R, &n, 1L);
-      for (j = 0; j < n; ++j)  (*E)->R[Ijpvt[j]-1 + j* n]=1;
+      for (j = 0; j < n; ++j)  (*E)->R[jpvt->I[j]-1 + j* n]=1;
     }
 
   /* if requested we compute the rank : 
@@ -233,8 +232,8 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 		      NspMatrix **rank,double *tol,char flag)
 {
-  NspMatrix *jpvt,*tau,*work,*rwork;
-  int  workMin, info, *Ijpvt, m = A->m,n=A->n,Minmn= Min(m,n);
+  NspMatrix *jpvt=NULLMAT,*tau,*work,*rwork;
+  int  workMin, info,  m = A->m,n=A->n,Minmn= Min(m,n);
   /* A == [] return empty matrices*/ 
   if ( A->mn == 0 )  {
     if (( *Q =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
@@ -273,9 +272,8 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
   else 
     {
       int ix;
-      Ijpvt = (int *) jpvt->R;
-      for (ix = 0; ix < n ; ++ix) Ijpvt[ix] =0;
-      C2F(zgeqpf)(&m, &n,(*R)->C, &m, Ijpvt,tau->C,work->C,rwork->R, &info);
+      for (ix = 0; ix < n ; ++ix) jpvt->I[ix] =0;
+      C2F(zgeqpf)(&m, &n,(*R)->C, &m, jpvt->I,tau->C,work->C,rwork->R, &info);
     }
   if (info != 0) {
     Scierror("Error: something wrong in zgeqpf\n"); 
@@ -320,7 +318,7 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
     int j,ij;
     C2F(dlaset)("F", &n, &n, &zero, &zero,(*E)->R, &n, 1L);
     for (j = 1; j <= n; ++j) {
-      ij = Ijpvt[ j - 1] + (j - 1) * n;
+      ij = jpvt->I[ j - 1] + (j - 1) * n;
       (*E)->R[ij - 1] = 1.;
     }
   }
@@ -597,7 +595,7 @@ static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 {
   int m = A->m,n=A->n,ix1,ix2,lworkMin,info,i;
   int Minmn = Min(m,n);
-  NspMatrix *SV,*Vt,*dwork; 
+  NspMatrix *SV,*Vt=NULLMAT,*dwork; 
 
   /*  A = [] return empty matrices */ 
   
@@ -734,7 +732,7 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 {
   int m = A->m,n=A->n,lworkMin,info,i;
   int Minmn = Min(m,n), lrwork;
-  NspMatrix *SV,*Vt,*dwork,*rwork; 
+  NspMatrix *SV,*Vt=NULLMAT,*dwork,*rwork; 
 
   /*  A = [] return empty matrices */ 
   
@@ -893,7 +891,7 @@ static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v)
   char type = 'r';
   int m = A->m,n=A->n;
   int info, lworkMin,i,j;
-  NspMatrix *dwork,*wr,*wi,*vr;
+  NspMatrix *dwork,*wr,*wi,*vr=NULLMAT;
 
   /*  A = [] return empty matrices */ 
   
@@ -2572,13 +2570,13 @@ int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMat
 
 /* 
  * XXX  couvre lecas int C2F(intzschur)(fname, fname_len)
+ * XXX  Attention rwork est pas créée a finir 
  */
 
 
 int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim) 
 {
-  int *Iwork = NULL;
-  NspMatrix *W,*dwork,*rwork,*iwork;
+  NspMatrix *W,*dwork,*rwork=NULLMAT,*iwork=NULLMAT;
   int info,lworkMin,sdim; 
   int m = A->m, n = A->n;
   char *sort = "N";
@@ -2609,7 +2607,6 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
   if ( F != NULL ) 
     {
       if (( iwork =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;   
-      Iwork = (int *) iwork->R;
       sort = "S";
     }
 
@@ -2617,12 +2614,12 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
     {
       if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
       C2F(zgees)("V",sort, F, &n,A->C,&n, &sdim,W->C,(*U)->C,
-		 &n, dwork->C, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
+		 &n, dwork->C, &lworkMin,rwork->R, iwork->I, &info, 4L, 4L);
     }
   else 
     { 
       C2F(zgees)("N",sort, F, &n,A->C,&n, &sdim,W->C,NULL,
-		 &n, dwork->C, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
+		 &n, dwork->C, &lworkMin,rwork->R, iwork->I, &info, 4L, 4L);
     }
   if (info > 0) {
     Scierror("Error: in schur, the QR algorithm failed to compute all the eigenvalues;\n");
@@ -2681,9 +2678,9 @@ int intdgges(NspMatrix *A,NspMatrix *B,
 	     int (*F)(double *alphar,double *alphai,double *beta),
 	     NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim) 
 {
-  double  *Vsl,*Vsr;
-  NspMatrix *alphar,*alphai,*beta,*dwork,*iwork;
-  int info,lworkMin,sdim,*Iwork; 
+  double  *Vsl=NULL,*Vsr=NULL;
+  NspMatrix *alphar,*alphai,*beta,*dwork,*iwork=NULLMAT;
+  int info,lworkMin,sdim;
   int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
   char *sort = "N",*jobvsl="N",*jobvsr= "N";
 
@@ -2730,7 +2727,6 @@ int intdgges(NspMatrix *A,NspMatrix *B,
   if ( F != NULL ) 
     {
       if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;   
-      Iwork = (int *) iwork->R;
       sort = "S";
     }
 
@@ -2750,7 +2746,7 @@ int intdgges(NspMatrix *A,NspMatrix *B,
 
   C2F(dgges)(jobvsl, jobvsr, sort,F, &n, A->R, &n, B->R, &n, 
 	     &sdim,alphar->R, alphai->R, beta->R,Vsl, &n,Vsr, &n,
-	     dwork->R, &lworkMin, Iwork, &info, 1L, 1L, 1L);
+	     dwork->R, &lworkMin, iwork->I, &info, 1L, 1L, 1L);
   
   if ( Sdim != NULL ) {
     if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
@@ -2778,9 +2774,9 @@ int intzgges(NspMatrix *A,NspMatrix *B,
 	     int (*F)(doubleC *alpha,doubleC *beta),
 	     NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim) 
 {
-  doubleC  *Vsl,*Vsr;
-  NspMatrix *alpha,*beta,*dwork,*iwork,*rwork;
-  int info,lworkMin,sdim,*Iwork; 
+  doubleC  *Vsl=NULL,*Vsr=NULL;
+  NspMatrix *alpha,*beta,*dwork,*iwork=NULLMAT,*rwork;
+  int info,lworkMin,sdim;
   int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
   char *sort = "N",*jobvsl="N",*jobvsr= "N";
 
@@ -2826,7 +2822,6 @@ int intzgges(NspMatrix *A,NspMatrix *B,
   if ( F != NULL ) 
     {
       if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;   
-      Iwork = (int *) iwork->R;
       sort = "S";
     }
 
@@ -2846,7 +2841,7 @@ int intzgges(NspMatrix *A,NspMatrix *B,
 
   C2F(zgges)(jobvsl, jobvsr, sort,F, &n, A->C, &n, B->C, &n, 
 	     &sdim,alpha->C, beta->C,Vsl, &n,Vsr, &n,
-	     dwork->C, &lworkMin,rwork->R,Iwork, &info, 1L, 1L, 1L);
+	     dwork->C, &lworkMin,rwork->R,iwork->I, &info, 1L, 1L, 1L);
   
   if ( Sdim != NULL ) {
     if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
