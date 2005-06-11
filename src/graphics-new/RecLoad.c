@@ -22,36 +22,10 @@
  * --------------------------------------------------------------------------*/
 
 #include <string.h> 
-
-#ifdef __STDC__
-#include <stdlib.h>
-#else
-#include <malloc.h>
-#endif
-
-#ifdef macintosh
-#	include "types.h"
-#else /* not macintosh */
-#       ifndef VMS
-#	ifndef __ABSC__
-#   	include <sys/types.h>	/* for <netinet/in.h> on some systems */
-#       endif
-#   	if !(defined __MSC__) && !(defined __ABSC__) && !(defined __MINGW32__)
-#          include <netinet/in.h>	/* for htonl() */
-#   	endif
-#	endif
-#endif /* not macintosh */
-
-#ifdef WIN32 
-#include "../xdr/rpc/types.h"
-#include "../xdr/rpc/xdr.h"
-#else 
-#include <rpc/types.h>
-#include <rpc/xdr.h>
-#endif
-
 #include <stdio.h>
+#include <stdlib.h>
 #include "nsp/math.h"
+#include "nsp/xdr.h"
 #include "nsp/graphics/Graphics.h"
 #include "nsp/graphics/Rec.h"
 
@@ -1288,7 +1262,9 @@ static Load_Table load_table [] ={
 
 
 #ifdef __MSC__
+#ifndef __STDC__
 #define __STDC__
+#endif
 #endif 
 
 int tape_load(BCG *Xgc,const char *fname1)

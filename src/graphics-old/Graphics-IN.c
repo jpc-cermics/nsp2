@@ -4424,9 +4424,9 @@ extern void Sci_Help(char *,char *,char *);
 
 int int_gtkhelp(Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef WITH_GTKHTML
   int i;
   char *str[3];
-#ifdef WITH_GTKHTML
   CheckRhs(1,1);
   for (i=0; i < 1 ; i++) {
     if ((str[i] = GetString(stack,i+1)) == (char*)0) return RET_BUG;

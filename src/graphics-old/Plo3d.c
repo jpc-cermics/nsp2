@@ -57,6 +57,7 @@ static void C2F(fac3dg) ( BCG *Xgc,char *name, int iflag, double *x, double *y, 
 
 static void dbox(BCG *Xgc,double theta,double alpha);
 
+#ifdef  WITH_GTKGLEXT 
 static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q,
 		       double *teta, double *alpha,const  char *legend, int *flag, double *bbox);
 
@@ -73,6 +74,15 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 				    int *p, int dc, int fg),
 			double *x, double *y, double *z, int *p, int *q, 
 			double *teta, double *alpha,const char *legend, int *flag, double *bbox);
+static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, 
+			     double *teta, double *alpha,const char *legend, int *flag, double *bbox);
+
+static int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
+			   double *alpha,const char *legend, int *flag, double *bbox);
+
+static int nsp_plot_box3d_ogl(BCG *Xgc,nsp_box_3d *box);
+
+#endif 
 
 /* typedef enum {plot3d_t ,facettes_t , param3d_t} nsp_plot3d_type;*/
 
@@ -88,14 +98,8 @@ static void draw_3d_tics(BCG *Xgc,const nsp_box_3d *box,int axflag,int i1,int i2
 static void BBoxToval(double *x, double *y, double *z, int ind,const double *bbox);
 
 static int nsp_plot_box3d(BCG *Xgc, nsp_box_3d *box);
-static int nsp_plot_box3d_ogl(BCG *Xgc,nsp_box_3d *box);
 static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin, int *polyx, int *polyy, int *fill);
 
-static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, 
-			     double *teta, double *alpha,const char *legend, int *flag, double *bbox);
-
-static int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
-			   double *alpha,const char *legend, int *flag, double *bbox);
 
 /* FIXME 
  */
@@ -104,7 +108,10 @@ extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vec
 extern void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
 extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
+#ifdef  WITH_GTKGLEXT 
 static void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
+#endif
+
 
 
 /*-------------------------------------------------------------------------
@@ -1635,8 +1642,8 @@ static void dbox(BCG *Xgc,double theta,double alpha)
 {
   nsp_box_3d box;
 #ifdef WIN32
-  int verbose=0,pat,pat1=3,narg;
-  pat = Xgc->graphic_engine->xset_pattern(pat1);
+  int pat,pat1=3;
+  pat = Xgc->graphic_engine->xset_pattern(Xgc,pat1);
 #endif
 
   SetEch3d1(Xgc,&box,Xgc->scales->bbox1,theta,alpha,Xgc->scales->metric3d);
@@ -1651,7 +1658,7 @@ static void dbox(BCG *Xgc,double theta,double alpha)
 #endif 
 
 #ifdef WIN32
-  Xgc->graphic_engine->xset_pattern(pat);
+  Xgc->graphic_engine->xset_pattern(Xgc,pat);
 #endif
 }
 

@@ -112,16 +112,15 @@ static obj3d_draw_ogl draw_string3d_ogl;
 static obj3d_free free_string3d;
 static obj3d_zmean zmean_for_string3d;
 
-
-static void draw_justified_string3d(BCG *Xgc,String3d *S, int xj, int yj);
-static void draw_justified_string3d_ogl(BCG *Xgc,String3d *S, int xj, int yj);
-
-static void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
-
-
+#ifdef  WITH_GTKGLEXT 
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,const char *legend,
 				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style);
+#endif 
 
+static void draw_justified_string3d_ogl(BCG *Xgc,String3d *S, int xj, int yj);
+
+static void draw_justified_string3d(BCG *Xgc,String3d *S, int xj, int yj);
+static void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
 /* des  variables globales... */
 GBoolean with_mesh;  /*  actuellement soit on dessine tous les polyedres
@@ -208,7 +207,7 @@ void **obj3d_from_list(Stack stack,NspList *L,int alloc_objs,int *err,int *nf,in
 	    {
 	      if ( alloc_objs == TRUE) 
 		{
-		  Obj[num].obj_type = POINTS;
+		  Obj[num].obj_type = OBJPOINTS;
 		  Obj[num].obj = malloc( sizeof(Points) );
 		  if ( get_points(&stack,num,H, (Points *) Obj[num].obj,nf) == FAIL)
 		    return NULL;
@@ -254,7 +253,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
   int i, j, k, n, *p;
   HFstruct *HF;
   double lim[3], *z;
-  Plot3dBox *B;
+  Plot3dBox *B=NULL;
   int flagx;
 
 #ifdef WITH_GTKGLEXT 
@@ -347,6 +346,8 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
   free(p);
 }
 
+#ifdef  WITH_GTKGLEXT 
+
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,const char *legend,
 				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
 {
@@ -401,11 +402,14 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
   for (k=0; k < nbObj; k++)  OBJ3D(Obj[k].obj)->draw_ogl(Xgc,Obj[k].obj);
   free_Obj3d(Obj,nbObj);
 }
+#endif 
 
 
 static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[])
 {
+#ifdef WITH_GTKGLEXT 
   double coord[24];
+#endif
   Plot3dBox *B;
   double xmin, ymin, zmin, xmax, ymax, zmax;
 
@@ -1021,11 +1025,11 @@ static void zmean_faces_for_Polyhedron(void *Ob, double z[], HFstruct HF[], int 
 	  pos_vertex = Q->pos[*current_vertex];
 	  if (pos_vertex == OUT_Z)
 	    pos_face = OUT_Z;
-	  else if (pos_vertex == IN && pos_face != OUT_Z)
-	    pos_face = IN;
+	  else if (pos_vertex == VIN && pos_face != OUT_Z)
+	    pos_face = VIN;
 	  current_vertex++;
 	}
-      if (pos_face == IN) 
+      if (pos_face == VIN) 
 	{
 	  z[*n] = coef*zmean;
 	  HF[*n].num_obj = k;
@@ -1062,11 +1066,11 @@ static void zmean_faces_for_SPolyhedron(void *Ob, double z[], HFstruct HF[], int
 	  pos_vertex = Q->pos[*current_vertex];
 	  if (pos_vertex == OUT_Z)
 	    pos_face = OUT_Z;
-	  else if (pos_vertex == IN && pos_face != OUT_Z)
-	    pos_face = IN;
+	  else if (pos_vertex == VIN && pos_face != OUT_Z)
+	    pos_face = VIN;
 	  current_vertex++;
 	}
-      if (pos_face == IN) 
+      if (pos_face == VIN) 
 	{
 	  z[*n] = coef*zmean;
 	  HF[*n].num_obj = k;
@@ -1086,7 +1090,7 @@ static void zmean_segments_for_polyline(void *Ob, double z[], HFstruct HF[], int
     {
       zmean = 0.5 * (L->coord[3*j+2] + L->coord[3*j+5]);
       if (L->pos[j] != OUT_Z && L->pos[j+1] != OUT_Z)
-	if (L->pos[j] == IN || L->pos[j+1] == IN)
+	if (L->pos[j] == VIN || L->pos[j+1] == VIN)
 	  { 
 	    /* le segment rentre dans les "facettes" à traiter */
 	    z[*n] = zmean;
@@ -1440,6 +1444,7 @@ static void draw_string3d_ogl(BCG *Xgc,void *Ob)
 
 static void draw_justified_string3d_ogl(BCG *Xgc,String3d *V, int xj, int yj)
 {
+#ifdef  WITH_GTKGLEXT 
   const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
   /* we move to 2d scale */
   double Tcoord[3];
@@ -1450,7 +1455,9 @@ static void draw_justified_string3d_ogl(BCG *Xgc,String3d *V, int xj, int yj)
   Xgc->graphic_engine->xset_font(Xgc,V->font_type,V->font_size);
   draw_justified_string(Xgc,V->str,Tcoord[0],Tcoord[1], xj, yj);
   nsp_ogl_set_3dview(Xgc);
+#endif 
 }
+
 
 static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj, int yj)
 {
@@ -1552,7 +1559,7 @@ static void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos 
 	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+1]) > lim[1] ) 
 	    pos[k] = OUT_XY;
 	  else
-	    pos[k] = IN;
+	    pos[k] = VIN;
 	}
       k++;
     }
@@ -1856,7 +1863,7 @@ static void zmean_for_Points(void *Ob, double z[], HFstruct HF[], int *n, int k)
   int j;
   Points *V = Ob;
   for ( j = 0 ; j < V->nb_coords ; j++)
-    if (V->pos[j] == IN)
+    if (V->pos[j] == VIN)
       {
 	z[*n] = V->coord[3*j+2]; HF[*n].num_obj = k; HF[*n].num_in_obj = j;
 	(*n)++; 
@@ -1925,7 +1932,7 @@ static void zmean_for_string3d(void *Ob, double z[], HFstruct HF[], int *n, int 
   int j;
   String3d *S= Ob;
   for ( j = 0 ; j < S->nb_coords ; j++)
-    if (S->pos[j] == IN)
+    if (S->pos[j] == VIN)
       {
 	z[*n] = S->coord[3*j+2]; HF[*n].num_obj = k; HF[*n].num_in_obj = j;
 	(*n)++; 

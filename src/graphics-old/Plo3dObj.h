@@ -40,13 +40,13 @@
 enum BooleanEnum {BTRUE=1, BFALSE=0};
 typedef enum BooleanEnum GBoolean;
 
-enum VisionPosEnum {IN=1, OUT_XY=0, OUT_Z=-1};
+enum VisionPosEnum {VIN=1, OUT_XY=0, OUT_Z=-1};
 typedef enum VisionPosEnum VisionPos;
 
 enum BoxStyleEnum {MATLAB=0, SCILAB=1, OTHER=2};
 typedef enum BoxStyleEnum BoxStyle;
 
-enum ObjTypeEnum {POLYHEDRON=0, POLYLINE=1, POINTS=2, STRING3D=3, SPOLYHEDRON=4};
+enum ObjTypeEnum {POLYHEDRON=0, POLYLINE=1, OBJPOINTS=2, STRING3D=3, SPOLYHEDRON=4};
 typedef enum ObjTypeEnum ObjType;
 
 typedef struct _hfstruct HFstruct ;

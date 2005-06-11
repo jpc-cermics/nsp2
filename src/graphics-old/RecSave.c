@@ -27,7 +27,6 @@
 #include "nsp/graphics/Graphics.h"
 #include "nsp/graphics/Rec.h"
 
-
 static int save_D  (XDR *xdrs,double x);
 static int save_LI (XDR *xdrs,int ix);
 static int save_C (XDR *xdrs,char *c, int lc); /* save a string with know size which is
@@ -884,26 +883,7 @@ static int save_Champ(BCG *Xgc,void *plot)
  * Saving  
  *---------------------------------------------------------------------------*/
 
-#ifdef macintosh
-#	include "types.h"
-#else /* not macintosh */
-#       ifndef VMS
-#	ifndef __ABSC__
-#   	include <sys/types.h>	/* for <netinet/in.h> on some systems */
-#	endif
-#   	if (!defined __MSC__) && !(defined __ABSC__) && !(defined __MINGW32__) 
-#          include <netinet/in.h>	/* for htonl() */
-#   	endif
-#	endif
-#endif /* not macintosh */
-
-#ifdef WIN32 
-#include "../xdr/rpc/types.h"
-#include "../xdr/rpc/xdr.h"
-#else 
-#include <rpc/types.h>
-#include <rpc/xdr.h>
-#endif
+#include "nsp/xdr.h"
 
 #define assert(ex) {if (!(ex)){ sciprint("Graphic Load/save_ Error \r\n");return(0);}} 
 
