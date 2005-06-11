@@ -26,16 +26,14 @@
 #include <string.h>
 #include <windows.h>
 
-#define round(x,s) (((x) + ((s)-1)) & ~((s)-1))
 #define Min(x,y)	(((x)<(y))?(x):(y))
 #define Max(x,y)	(((x)>(y))?(x):(y))
 
 extern char *strchr();
 
-
 static void Sci_Delsym (int );
-static int Sci_dlopen (char *loaded_files[]);
-static int Sci_dlsym (char *ename,int  ishared,char * strf);
+static int Sci_dlopen(nsp_const_string shared_path,int global);
+static int Sci_dlsym(nsp_const_string ename, int ishared, char strf);
 
 /*************************************
  * New version : link entry names 
@@ -45,14 +43,12 @@ static int Sci_dlsym (char *ename,int  ishared,char * strf);
  *   -5 : pb with one of the entry point 
  *************************************/
 
-void SciLink(iflag,rhs,ilib,files,en_names,strf)
-     int iflag,*ilib,*rhs;
-     char *files[],*en_names[],*strf;
+void SciLink(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf)
 {
   int i;
   if ( iflag == 0 )
     {
-      *ilib  = Sci_dlopen(files);
+      *ilib  = Sci_dlopen(shared_path,( *rhs == 1 ) ? TRUE : FALSE);
     }
   if (*ilib  == -1 ) return;
 
@@ -73,7 +69,7 @@ void SciLink(iflag,rhs,ilib,files,en_names,strf)
  * or 0 elsewhere 
  *************************************/
 
-int LinkStatus()
+int LinkStatus(void)
 {
   return(1);
 }
@@ -86,44 +82,42 @@ int LinkStatus()
  *   The return value is == -1 if the dlopen failed 
  *************************************/
 
-int Sci_dlopen(loaded_files)
-     char *loaded_files[];
+static int Sci_dlopen(nsp_const_string shared_path,int global)
 {
   static HINSTANCE  hd1 = NULL;
   int   i;
-  /** XXXXX **/
-  int count =0;
-  while ( loaded_files[count] != NULL) count++;
-  if ( count != 1 ) 
-    {
-      Sciprintf("link: first argument must be a unique dll name\r\n");
-    }
-  hd1 =   LoadLibrary (loaded_files[0]);
+  hd1 =   LoadLibrary (shared_path);
   if ( hd1 == NULL ) 
     {
-      Sciprintf("link failed for dll %s\r\n",loaded_files[0]);
+      Scierror("Error: link failed for dll %s\n",shared_path);
       return(-1);
     }
+
+  /* store the shared library in table 
+   * first try to detect an unoccupied zone
+   */
   for ( i = 0 ; i < Nshared ; i++ ) 
     {
       if ( hd[i].ok == FAIL) 
 	{
-	  hd[i].shl =  (unsigned long)hd1;
-	  hd[i].ok = OK;
-	  return(i);
-	}
+	  hd[i].shl =  (unsigned long)hd1; 
+	  strcpy(hd[i].tmp_file,shared_path); 
+	  hd[i].ok = OK; 
+	  /* Ok we stop */
+	  return(i); 
+	} 
     }
-  
+  /* we use the last position */
   if ( Nshared == ENTRYMAX ) 
     {
-      Sciprintf("You can't open shared files maxentry %d reached\r\n",ENTRYMAX);
-      return(FAIL);
+      Scierror("Error: cannot open shared library maxentry %d is reached\n",ENTRYMAX);
+      return -1;
     }
-
+  strcpy(hd[Nshared].tmp_file,shared_path);
   hd[Nshared].shl = (unsigned long)hd1;
   hd[Nshared].ok = OK;
   Nshared ++;
-  return(Nshared-1);
+  return (Nshared-1);
 }
 
 
@@ -132,15 +126,12 @@ int Sci_dlopen(loaded_files)
  *     from shared lib ishared 
  *************************************/
 
-int Sci_dlsym(ename,ishared,strf)
-     int ishared;
-     char *ename;
-     char *strf;
+static int Sci_dlsym(nsp_const_string ename, int ishared, char strf)
 {
   HINSTANCE  hd1 = NULL;
   int ish = Min(Max(0,ishared),ENTRYMAX-1);
   char enamebuf[NAME_MAXL];
-  if ( strf[0] == 'f' )
+  if ( strf == 'f' )
     Underscores(1,ename,enamebuf);
   else 
     Underscores(0,ename,enamebuf);
@@ -148,31 +139,31 @@ int Sci_dlsym(ename,ishared,strf)
   /* lookup the address of the function to be called */
   if ( NEpoints == ENTRYMAX ) 
     {
-      Sciprintf("You can't link more functions maxentry %d reached\r\n",ENTRYMAX);
+      Sciprintf("You can't link more functions maxentry %d reached\n",ENTRYMAX);
       return(FAIL);
     }
   if ( hd[ish].ok == FAIL ) 
     {
-      Sciprintf("Shared lib %d does not exists\r\n",ish);
+      Sciprintf("Shared lib %d does not exists\n",ish);
       return(FAIL);
     }
   /** entry was previously loaded **/
   if ( SearchFandS(ename,ish) >= 0 ) 
     {
-      Sciprintf("Entry name %s is already loaded from lib %d\r\n",ename,ish);
+      Sciprintf("Entry name %s is already loaded from lib %d\n",ename,ish);
       return(OK);
     }
   hd1 = (HINSTANCE)  hd[ish].shl;
   EP[NEpoints].epoint = (function) GetProcAddress (hd1,enamebuf);
   if ( EP[NEpoints].epoint == NULL )
     {
-      Sciprintf("%s is not an entry point \r\n",enamebuf);
+      Sciprintf("%s is not an entry point \n",enamebuf);
       return(FAIL);
     }
   else 
     {
       /* we don't add the _ in the table */
-      Sciprintf("Linking %s (in fact %s)\r\n",ename,enamebuf);
+      Sciprintf("Linking %s (in fact %s)\n",ename,enamebuf);
       strncpy(EP[NEpoints].name,ename,NAME_MAXL);
       EP[NEpoints].Nshared = ish;
       NEpoints++;
@@ -181,13 +172,11 @@ int Sci_dlsym(ename,ishared,strf)
 }
 
 
-/***************************************************
+/*
  * Delete entry points associated with shared lib ishared
- * then delete the shared lib 
- ****************************************************/
+ */
 
-void Sci_Delsym( ishared) 
-     int ishared;
+void Sci_Delsym(int ishared)
 {
   int ish = Min(Max(0,ishared),ENTRYMAX-1);
   int i=0;
@@ -205,6 +194,7 @@ void Sci_Delsym( ishared)
 	  NEpoints--;
 	}
     }
+
   if ( hd[ish].ok != FAIL)
     {
       FreeLibrary ((HINSTANCE) hd[ish].shl);

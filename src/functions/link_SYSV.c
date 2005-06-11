@@ -69,7 +69,6 @@ static int Sci_dlopen(nsp_const_string shared_path,int global);
 static int Sci_dlsym(nsp_const_string ename, int ishared, char strf);
 static int SetArgv  (char *argv[], char *files[],int first,int max,int *err);
 static int SetArgv1  (char *argv[], char *files,int first,int max,int *err);
-
 int CreateShared_unused  ( char *loaded_files[], char *tmp_file);
 
 /*************************************
@@ -171,6 +170,7 @@ static int Sci_dlopen(nsp_const_string shared_path,int global)
       return(-1);
 #endif
     }
+
   /* store the shared library in table 
    * first try to detect an unoccupied zone
    */
@@ -191,7 +191,7 @@ static int Sci_dlopen(nsp_const_string shared_path,int global)
       Scierror("Error: cannot open shared library maxentry %d is reached\n",ENTRYMAX);
       return -1;
     }
-    strcpy(hd[Nshared].tmp_file,shared_path);
+  strcpy(hd[Nshared].tmp_file,shared_path);
   hd[Nshared].shl = (unsigned long)hd1;
   hd[Nshared].ok = OK;
   Nshared ++;
@@ -274,6 +274,7 @@ static void Sci_Delsym(int ishared)
 	  NEpoints--;
 	}
     }
+  
   if ( hd[ish].ok != FAIL)
     {
       dlclose((void *) hd[ish].shl);
