@@ -9,32 +9,11 @@
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
+#include "nsp/xdr.h"
 
 /*
  * NspFile inherits from NspObject 
  */
-
-/*** xdr files **/
-#ifdef macintosh
-#	include "types.h"
-#else /* not macintosh */
-#       ifndef VMS
-#   	include <sys/types.h>	/* for <netinet/in.h> on some systems */
-#   	if !defined(__MSC__) && ! defined(__MINGW32__)
-#          include <netinet/in.h>	/* for htonl() */
-#   	endif
-#	endif
-#endif /* not macintosh */
-
-#ifdef WIN32 
-#include "../libxdr/rpc/xdr_inc.h"
-#ifdef interface 
-#undef interface 
-#endif 
-#else 
-#include <rpc/types.h>
-#include <rpc/xdr.h>
-#endif
 
 typedef struct _NspFile NspFile;
 
