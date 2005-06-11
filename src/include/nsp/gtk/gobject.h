@@ -126,8 +126,8 @@ extern void nspg_block_threads(void);
 
 /* marshaling */
 
-gint nspg_enum_get_value(GType enum_type, NspObject *obj, gint *val);
-gint nspg_flags_get_value(GType flag_type, NspObject *obj, gint *val);
+gint nspg_enum_get_value(GType enum_type, NspObject *obj, void *val);
+gint nspg_flags_get_value(GType flag_type, NspObject *obj, void *val);
 int nspg_value_from_nspobject(GValue *value, NspObject *obj);
 NspObject * nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed);
 

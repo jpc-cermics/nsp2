@@ -9,8 +9,7 @@
 #ifdef WIN32 
 #define SHREXT_NAME ".dll"
 #else 
-#define SHREXT_NAME ".so"
+#define SHREXT_NAME ""
 #endif
-
 #endif
 
