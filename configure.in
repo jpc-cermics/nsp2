@@ -18,8 +18,11 @@ ac_default_prefix=/usr/local
 ## all the --with-* argument help
 #################################
 
-AC_ARG_ENABLE(debug,
-   [  --enable-debug          compile with "-g -Wall" option and do not optimize ])
+AC_ARG_ENABLE(wall,
+    [  --disable-wall          do not use Wall compilation option (for gcc g77) ])
+
+AC_ARG_ENABLE(wall,
+    [  --disable-optimize     do not optimize ])
 
 AC_ARG_WITH(pvm,
     [  --without-pvm           do not compile with PVM library ])
@@ -38,7 +41,6 @@ AC_ARG_WITH(addedf2c,
 
 AC_ARG_WITH(maxpluslib,
     [  --with-maxpluslib       add maxplus lib ])
-
 
 AC_ARG_WITH(fftw3,
     [  --without-fftw3         do not use fftw3 for fft but fftpack])
@@ -71,15 +73,6 @@ fi
 
 SCIVERSION=`cat Version.incl | sed -e "s/SCIVERSION=//" `
 
-###############################
-## keep track of debug option
-###############################
-
-if test "$enable_debug" = yes; then 
-   ENABLE_DEBUG="(enable debug)"   
-else 
-   ENABLE_DEBUG= 
-fi 
 
 ########################
 ## removing and cleaning
@@ -514,25 +507,28 @@ case "$host" in
     ;;
 esac
 
-
 ############################################
-# add -Wall when --enable-debug and 
+# add -Wall 
 # remove optimize 
 #############################################
 
-if test "$enable_debug" = yes; then 
-   CFLAGS=`echo $CFLAGS | sed -e 's/-O2 //' -e 's/-O //' -e 's/-g //'`
-   CFLAGS="${CFLAGS} -g"
+if test X"$enable_wall" != Xno; then 
+   ENABLE_DEBUG=" Wall "
    if test X"$GCC" = Xyes ; then
-      CFLAGS="${CFLAGS} -Wall"
+      CC_OPTIONS="${CC_OPTIONS} -Wall"
    fi 
-   FFLAGS=`echo $FFLAGS | sed -e 's/-O2 //' -e 's/-O //' -e 's/-g //'`
-   FFLAGS="${FFLAGS} -g"
    if test X"$G77" = Xyes ; then
-      FFLAGS="${FFLAGS} -Wall"
+      FC_OPTIONS="${FC_OPTIONS} -Wall"
    fi 
+else 
+   ENABLE_DEBUG=
 fi 
 
+if test X"$enable_optimize" = Xno; then 
+   CC_OPTIONS=`echo $CC_OPTIONS | sed -e 's/-O[[0-9]]*//g'`
+   FC_OPTIONS=`echo $FC_OPTIONS | sed -e 's/-O[[0-9]]*//g'`
+   ENABLE_DEBUG="${ENABLE_DEBUG}, optimize off"
+fi 
 
 #########################
 ## libtool 
@@ -970,51 +966,64 @@ if test "$with_gtkglext" != no; then
 fi
 
 #################
-## Tcl/Tk library
-## unsused 
+## detect tcl/tk
 #################
 
-builtin(include,config/ac_check_tcltk.m4)
+builtin(include,config/tcl.m4)
+builtin(include,config/ac_tcl.m4)
+
+if test X"$with_tk" != Xno; then
+ SC_PATH_TCLCONFIG()
+ SC_LOAD_TCLCONFIG()
+
+ SC_PATH_TKCONFIG()
+ SC_LOAD_TKCONFIG()
+
+ AC_CHECK_TCL_VERSION(8,4)
+ AC_CHECK_TK_VERSION(8,4)
+ WITH_TKSCI=0
+ if test $TCL_VERSION_OK == 1;then 
+    if test $TK_VERSION_OK == 1 ; then
+       WITH_TKSCI=1
+    fi
+ fi 
+fi
+
+## Set variables 
+
 TK_INC_PATH=
 TK_LIB_PATH=
 TCLTK_LIBS=
-TKSCILIB=
-TKSCIDIR=
+TCLSCILIB=
+TCLSCIDIR=
 
-if test "$with_tk" = yes; then
-   # check user arguments
-   USER_TCL_LIB_PATH=""
-   USER_TCL_INC_PATH=""
-   AC_ARG_WITH(tcl-library,[  --with-tcl-library=DIR  Tcl library files are in DIR ],
-    [  USER_TCL_LIB_PATH=$withval ])
-   AC_ARG_WITH(tcl-include,
-    [  --with-tcl-include=DIR  Tcl include files are in DIR ],
-    [  USER_TCL_INC_PATH=$withval ])
-
-   USER_TK_LIB_PATH=$USER_TCL_LIB_PATH
-   USER_TK_INC_PATH=$USER_TCL_INC_PATH
-   AC_ARG_WITH(tk-library,
-    [  --with-tk-library=DIR   Tk library files are in DIR ],
-    [  USER_TK_LIB_PATH=$withval ])
-   AC_ARG_WITH(tk-include,
-    [  --with-tk-include=DIR   Tk include files are in DIR ],
-    [  USER_TK_INC_PATH=$withval ])
-
-   saved_cflags="$CFLAGS"
-   saved_ldflags="$LDFLAGS"
-   saved_cppflags="$CPPFLAGS"
-
-   AC_CHECK_LIB(dl, main,TCLTK_LIBS=" -ldl")
-   AC_CHECK_TCLTK()
-
-   # set variables
-   if test $WITH_TKSCI = 1; then
-     AC_DEFINE(WITH_TK)
-     TKSCILIB="\$(SCIDIR)/libs/tksci.a"
-     TKSCIDIR=tksci
-   else
-     AC_MSG_ERROR([TCL/TK not found. Use --without-tk])
-   fi
+if test X"$with_tk" != Xno; then
+ if test $WITH_TKSCI = 1; then
+  AC_DEFINE(WITH_TK)
+  TCLSCILIB="\$(SCIDIR)/libs/tclsci.a"
+  TCLSCIDIR=tclsci
+ else
+  AC_MSG_ERROR([TCL/TK not found. Use --without-tk or specify the librairies and include paths manually])
+ fi
+ TKBASE=
+ case "$host" in
+   *-*-mingw32*)
+	TKBASE=$SCIDIR
+	TK_INC_PATH=`echo $TK_INC_PATH | sed -e "s+$SCIDIR+\\$(TKBASE)+g" `
+	TCL_INC_PATH=`echo $TCL_INC_PATH | sed -e "s+$SCIDIR+\\$(TKBASE)+g" `
+	TCLTK_LIBS=`echo $TCLTK_LIBS | sed -e "s+$SCIDIR+\\$(TKBASE)+g" `
+    ;;
+  esac
+  GETLIBTK=libtk$TK_MAJOR_VERSION.$TK_MINOR_VERSION.$SONAME
+  case "$host" in
+   *-*-darwin*)
+     GETLIBTK=/sw/lib/libtk$TK_MAJOR_VERSION.$TK_MINOR_VERSION.dylib
+   ;;
+  esac 
+ TK_INC_PATH=$TCL_INCLUDE_SPEC
+ TCL_INC_PATH=$TK_INCLUDE_SPEC
+ TCLTK_LIBS="$TK_LIB_SPEC $TCL_LIB_SPEC" 
+ #  $TK_LIBS $TCL_LIBS"
 fi
 
 #################
@@ -1216,4 +1225,10 @@ echo
 echo "Managed by pkg-config..:" $GTK_PKGS
 echo "Lapack and Blas........:" $LAPACK_LIBS $BLAS_LIBS
 echo "Terminal...............:" $TERMCAPLIB
+echo 
+echo "C compiler.............:" $CC
+echo "C options..............:" $CC_OPTIONS 
+echo "Fortran compiler.......:" $FC
+echo "Fortran options........:" $FC_OPTIONS 
 echo
+
