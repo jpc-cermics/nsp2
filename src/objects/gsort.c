@@ -478,7 +478,7 @@ static int nsp_mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,c
 {
   NspMatrix *M=NULLMAT,*IM=NULLMAT;
   double *src,*dest,*t;
-  int *psrc,*pdest,*pt;
+  int *psrc=NULL,*pdest=NULL,*pt;
   int chunk,i,size,start;
   /*
    * In general, the code attempts to be simple rather than fast, the
@@ -498,7 +498,7 @@ static int nsp_mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,c
 	  if ( a[i - 1] > a[i] )
 	    {
 	      /* not already sorted */
-	      int j = i, ielem;
+	      int j = i, ielem=0;
 	      double elem = a[j];
 	      if ( flag == TRUE) ielem = p[j];
 	      do

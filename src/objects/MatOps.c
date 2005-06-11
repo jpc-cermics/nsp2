@@ -1979,7 +1979,7 @@ int nsp_mat_pow_matmat(NspMatrix *A, NspMatrix *B)
  **/
 int nsp_mat_pow_scalarmat(NspMatrix *B, NspMatrix *A) 
 {
-  double a;
+  double a=0.0;
   doubleC ac, acc;
   char rc_flag;
   int i;

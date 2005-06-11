@@ -886,7 +886,7 @@ static int int_mp_maxi(Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F
     }
   else
     {
-      NspMatrix *Ind;
+      NspMatrix *Ind=NULLMAT;
       int flag=0,i;
       /* Maxi(A1,A2,....,An) ***/
       if ((A = GetRealMpMatCopy(stack,1)) == NULLMAXPMAT) return RET_BUG;
@@ -2348,13 +2348,13 @@ static int int_mpmult(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
+  if ((B = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
   if ( A->mn == 0)
     {
       if ( A == B ) NthObj(2) = NULLOBJ;
       NSP_OBJECT (A)->ret_pos = 1;
       return 1;
     }
-  if ((B = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
   if ( B->mn == 0) 
     {
       if ( A == B ) 

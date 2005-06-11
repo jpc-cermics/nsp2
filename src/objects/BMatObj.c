@@ -511,7 +511,7 @@ static int int_bmatrix_and1(Stack stack, int rhs, int opt, int lhs)
 static int int_bmatrix_or1(Stack stack, int rhs, int opt, int lhs)
 {
   int rep=2,i,j;
-  NspBMatrix *HMat1,*HMat;
+  NspBMatrix *HMat1,*HMat=NULLBMAT;
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ((HMat1 = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;

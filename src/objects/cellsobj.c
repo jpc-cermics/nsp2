@@ -473,7 +473,7 @@ int int_col_cells_create(Stack stack, int rhs, int opt, int lhs)
 int int_row_cells_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspCells *C;
-  int i,cols;
+  int i,cols=1;
   CheckRhs(0,1000);
   CheckLhs(1,1);
   if ( rhs == 1 ) 

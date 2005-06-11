@@ -1297,7 +1297,7 @@ NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A,nsp_const_string str, int flag)
 nsp_string nsp_smatrix_elts_concat(NspSMatrix *A,nsp_const_string rstr, int rflag,
 				   nsp_const_string cstr, int cflag)
 {
-  int i,j,k,lentot=0, len, lsc, lsr;
+  int i,j,k,lentot=0, len, lsc=0, lsr=0;
   nsp_string Loc;
   char *p;
   /* evaluation of sizes */
@@ -1399,7 +1399,7 @@ NspMatrix *nsp_smatrix_elts_length(NspSMatrix *A)
 NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
 {
   char buf[1024],formati[256];
-  nsp_const_string def="%f", defi ="%f +%fi", format;
+  nsp_const_string def="%f", defi ="%f +%fi", format=def;
   int i;
   NspSMatrix *Loc;
   if (flag == 1 )
@@ -1619,6 +1619,7 @@ NspMatrix *nsp_smatrix_sort(NspSMatrix *A,int flag,nsp_const_string str1,nsp_con
  * 
  * Return value: a #NspSMatrix of size 1 x nb_words with the words resulting from the splitting
  **/
+
 NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars, int msep)
 {
   register nsp_const_string p;
@@ -1673,6 +1674,7 @@ NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars
 	}
       else  /* merge separators (don't create empty string between 2 separators) */
 	{
+	  elementStart = string;
 	  for (i = 0, p = string;  i < stringLen;  i++, p++)
 	    {
 	      if ( strchr(splitChars,*p) != NULL ) /* *p is a split character */

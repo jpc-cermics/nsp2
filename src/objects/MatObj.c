@@ -1262,7 +1262,7 @@ static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
   char *dir_sort[]={ "i", "d",  NULL };
   int iflag = FALSE;
   char direction = 'd';
-  int rep_type,rep_dir;
+  int rep_type= sort_g,rep_dir;
 
   CheckRhs(1,3);
   if ((M=GetRealMatCopy(stack,1)) == NULLMAT ) return RET_BUG;
@@ -3853,7 +3853,7 @@ int int_number_properties(Stack stack, int rhs, int opt, int lhs)
 {
   int rep;
   double tiniest,b;
-  NspObject *Ob;
+  NspObject *Ob=NULLOBJ;
   CheckRhs(1,1);
   CheckLhs(1,1);  
   /* we accept abbrevs here */
