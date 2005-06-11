@@ -885,7 +885,7 @@ static int save_Champ(BCG *Xgc,void *plot)
 
 #include "nsp/xdr.h"
 
-#define assert(ex) {if (!(ex)){ sciprint("Graphic Load/save_ Error \r\n");return(0);}} 
+#define assert(ex) {if (!(ex)){ sciprint("Graphic Load/save_ Error\n");return(0);}} 
 
 typedef  struct  {
   int code;
@@ -969,7 +969,9 @@ static Save_Table save_table [] ={
 
 
 #ifdef __MSC__
+#ifndef __STDC__
 #define __STDC__
+#endif
 #endif 
 
 int tape_save(BCG *Xgc,const char *fname1, int winnumber)
@@ -991,7 +993,7 @@ int tape_save(BCG *Xgc,const char *fname1, int winnumber)
 #endif
   if( F == NULL)
     {
-      sciprint("fopen failed\r\n") ;
+      sciprint("fopen failed\n") ;
       return(0);
     }
   xdrstdio_create(xdrs, F, XDR_ENCODE) ;

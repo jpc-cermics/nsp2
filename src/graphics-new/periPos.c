@@ -15,6 +15,7 @@
 #include "nsp/graphics/periPos.h"
 #include "nsp/version.h"
 #include "nsp/graphics/color.h"
+#include "../system/files.h" /* FSIZE */
 
 static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,const int *vx,const int *vy, int flag,const int *fvect);
 static void Write2Vect(const int *vx,const  int *vy, int from, int n, char *string, int flag, int fv);
@@ -1849,15 +1850,11 @@ static void get_ps_data(char mode,char *bbox,char *geom, int wdim[2])
 
 static void read_one_line(char **buff,int *stop,FILE *fd,int *buflen);
 
-/*FIXME */
-#define MAX_PATH 1024
-
-
 static int nsp_ps_header(FILE *out,char *bbox)
 {
   static char *buff = NULL;
   static int buflen = 512;
-  char header[MAX_PATH];
+  char header[FSIZE];
   char *env = getenv("SCI");
   FILE *fd;
   int stop=0;
