@@ -39,7 +39,7 @@ static int foo (int *ix,float *fx,double *dx,char *S);
 
 int int_link(Stack stack, int rhs, int opt, int lhs)
 {
-  char *Str,**enames=NULL,*shared_lib;
+  char *Str,**enames=NULL,*shared_lib=NULL;
   NspSMatrix *Enames;  
   NspObject*OHMat;
   int ilib =0, iflag=1;
