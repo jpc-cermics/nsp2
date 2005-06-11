@@ -540,7 +540,7 @@ AC_PROG_LIBTOOL()
 echo "end of configuration of libtool"
 
 # get the shared lib extension 
-SHREXT_NAME="$shrext"
+SHREXT_NAME="$shrext_cmds"
 
 #########################################
 # FC_OPTIONS1 and CC_OPTIONS are similar 
