@@ -16,10 +16,9 @@
  */
 
 typedef struct _NspClassA NspClassA;
+typedef struct _NspTypeClassA NspTypeClassA;
 
 typedef int (*classa_save) (NspFile  *F, NspClassA *M);
-
-typedef struct _NspTypeClassA NspTypeClassA;
 
 struct _NspTypeClassA { 
   /*< private >*/
@@ -54,15 +53,15 @@ NspClassA *new_classa();
 
 #define NULLCLA (NspClassA*) 0
 
-NspClassA *classa_create(char *name,int color,int thickness,NspTypeBase *type);
-NspClassA *classa_copy(NspClassA *H);
-void classa_destroy(NspClassA *H);
-void classa_info(NspClassA *H, int indent);
-void classa_print(NspClassA *H, int indent);
+NspClassA *nsp_classa_create(char *name,int color,int thickness,NspTypeBase *type);
+NspClassA *nsp_classa_copy(NspClassA *H);
+void nsp_classa_destroy(NspClassA *H);
+void nsp_classa_info(NspClassA *H, int indent);
+void nsp_classa_print(NspClassA *H, int indent);
 
 /* from ClassAObj.c */
 
-extern NspClassA *classa_object (NspObject *O); 
+extern NspClassA *nsp_classa_object (NspObject *O); 
 extern int IsClassAObj (Stack stack, int i); 
 extern int IsClassA(NspObject *O);
 extern NspClassA *GetClassACopy (Stack stack, int i); 
@@ -74,13 +73,13 @@ extern NspClassA *GetClassA (Stack stack, int i);
 
 #ifdef ClassA_Private 
 static int init_classa(NspClassA *o,NspTypeClassA *type);
-static int classa_size(NspClassA *Mat, int flag);
-static char *classa_type_as_string(void);
-static char *classa_type_short_string(void);
-static int classa_eq(NspClassA *A, NspObject *B);
-static int classa_neq(NspClassA *A, NspObject *B);
-static int classa_xdr_save(NspFile  *F, NspClassA *M);
-static NspClassA  *classa_xdr_load(NspFile  *F);
+static int nsp_classa_size(NspClassA *Mat, int flag);
+static char *nsp_classa_type_as_string(void);
+static char *nsp_classa_type_short_string(void);
+static int nsp_classa_eq(NspClassA *A, NspObject *B);
+static int nsp_classa_neq(NspClassA *A, NspObject *B);
+static int nsp_classa_xdr_save(NspFile  *F, NspClassA *M);
+static NspClassA  *nsp_classa_xdr_load(NspFile  *F);
 static AttrTab classa_attrs[];
 static NspMethods *classa_get_methods(void); 
 static int int_cla_create(Stack stack, int rhs, int opt, int lhs);

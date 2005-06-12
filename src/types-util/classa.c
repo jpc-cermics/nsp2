@@ -49,21 +49,21 @@ NspTypeClassA *new_type_classa(type_mode mode)
   
   /* object methods redefined for classa */ 
   
-  top->pr = (print_func *) classa_print;                    
-  top->dealloc = (dealloc_func *) classa_destroy;
-  top->copy  =  (copy_func *) classa_copy;                   
-  top->size  = (size_func *) classa_size;                  
-  top->s_type =  (s_type_func *) classa_type_as_string;    
-  top->sh_type = (sh_type_func *) classa_type_short_string;
-  top->info = (info_func *) classa_info ;                    
+  top->pr = (print_func *) nsp_classa_print;                    
+  top->dealloc = (dealloc_func *) nsp_classa_destroy;
+  top->copy  =  (copy_func *) nsp_classa_copy;                   
+  top->size  = (size_func *) nsp_classa_size;                  
+  top->s_type =  (s_type_func *) nsp_classa_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_classa_type_short_string;
+  top->info = (info_func *) nsp_classa_info ;                    
   /* top->is_true = (is_true_func  *) ClassAIsTrue; */
   /* top->loop =(loop_func *) classa_loop;*/
   top->path_extract = (path_func *)  object_path_extract ; 
-  top->get_from_obj = (get_from_obj_func *) classa_object;
-  top->eq  = (eq_func *) classa_eq;
-  top->neq  = (eq_func *) classa_neq;
-  top->save  = (save_func *) classa_xdr_save;
-  top->load  = (load_func *) classa_xdr_load;
+  top->get_from_obj = (get_from_obj_func *) nsp_classa_object;
+  top->eq  = (eq_func *) nsp_classa_eq;
+  top->neq  = (eq_func *) nsp_classa_neq;
+  top->save  = (save_func *) nsp_classa_xdr_save;
+  top->load  = (load_func *) nsp_classa_xdr_load;
   top->create = (create_func*) int_cla_create;
 
   /* specific methods for classa */
@@ -135,7 +135,7 @@ NspClassA *new_classa()
  * size 
  */
 
-static int classa_size(NspClassA *Mat, int flag)
+static int nsp_classa_size(NspClassA *Mat, int flag)
 {
   return 0;
 }
@@ -147,17 +147,17 @@ static int classa_size(NspClassA *Mat, int flag)
 static char classa_type_name[]="ClassA";
 static char classa_short_type_name[]="cla";
 
-static char *classa_type_as_string(void)
+static char *nsp_classa_type_as_string(void)
 {
   return(classa_type_name);
 }
 
-static char *classa_type_short_string(void)
+static char *nsp_classa_type_short_string(void)
 {
   return(classa_short_type_name);
 }
 
-static int classa_full_comp(NspClassA * A,NspClassA * B,char *op,int *err)
+static int nsp_classa_full_comp(NspClassA * A,NspClassA * B,char *op,int *err)
 {
   Scierror("classa_full_comp: to be implemented \n");
   return FALSE;
@@ -167,11 +167,11 @@ static int classa_full_comp(NspClassA * A,NspClassA * B,char *op,int *err)
  * A == B 
  */
 
-static int classa_eq(NspClassA *A, NspObject *B)
+static int nsp_classa_eq(NspClassA *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_classa_id) == FALSE) return FALSE ;
-  rep = classa_full_comp(A,(NspClassA *) B,"==",&err);
+  rep = nsp_classa_full_comp(A,(NspClassA *) B,"==",&err);
   if ( err == 1) return FALSE ; 
   return rep;
 }
@@ -180,11 +180,11 @@ static int classa_eq(NspClassA *A, NspObject *B)
  * A != B 
  */
 
-static int classa_neq(NspClassA *A, NspObject *B)
+static int nsp_classa_neq(NspClassA *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_classa_id) == FALSE) return TRUE;
-  rep = classa_full_comp(A,(NspClassA *) B,"<>",&err);
+  rep = nsp_classa_full_comp(A,(NspClassA *) B,"<>",&err);
   if ( err == 1) return TRUE ; 
   return rep;
 }
@@ -193,7 +193,7 @@ static int classa_neq(NspClassA *A, NspObject *B)
  * save 
  */
 
-static int classa_xdr_save(NspFile  *F, NspClassA *M)
+static int nsp_classa_xdr_save(NspFile  *F, NspClassA *M)
 {
   if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -205,7 +205,7 @@ static int classa_xdr_save(NspFile  *F, NspClassA *M)
  * load 
  */
 
-static NspClassA  *classa_xdr_load(NspFile  *F)
+static NspClassA  *nsp_classa_xdr_load(NspFile  *F)
 {
   NspClassA *M = NULL;
   static char name[NAME_MAXL];
@@ -218,7 +218,7 @@ static NspClassA  *classa_xdr_load(NspFile  *F)
  * delete 
  */
 
-void classa_destroy(NspClassA *H)
+void nsp_classa_destroy(NspClassA *H)
 {
   FREE(NSP_OBJECT(H)->name);
   FREE(H);
@@ -228,7 +228,7 @@ void classa_destroy(NspClassA *H)
  * info 
  */
 
-void classa_info(NspClassA *H, int indent)
+void nsp_classa_info(NspClassA *H, int indent)
 {
   int i;
   if ( H == NULLCLA) 
@@ -245,7 +245,7 @@ void classa_info(NspClassA *H, int indent)
  * print 
  */
 
-void classa_print(NspClassA *H, int indent)
+void nsp_classa_print(NspClassA *H, int indent)
 {
   classa_info(H,indent);
 }
@@ -256,7 +256,7 @@ void classa_print(NspClassA *H, int indent)
  * Note that some of these functions could become MACROS XXXXX 
  *-----------------------------------------------------*/
 
-NspClassA   *classa_object(NspObject *O)
+NspClassA   *nsp_classa_object(NspObject *O)
 {
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
