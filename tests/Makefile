@@ -13,7 +13,8 @@ TESTS= \
 	testsbdiv.dia \
 	fft.dia \
 	extract.dia \
-	addinter.dia
+	addinter.dia \
+	dsearch.dia 
 
 AFINIR= \
 	matelm-nsp.dia \
