@@ -611,6 +611,25 @@ static int int_bmatrix_redim(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+/*
+ * changes a copy of matrix stack object to column vector 
+ */
+
+static int int_bmatrix_to_vect (Stack stack, int rhs, int opt, int lhs)
+{
+  NspBMatrix *HMat;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((HMat = GetBMatCopy (stack, 1)) == NULLBMAT)
+    return RET_BUG;
+  if (nsp_bmatrix_redim (HMat, HMat->mn, 1) != OK)
+    return RET_BUG;
+  NSP_OBJECT (HMat)->ret_pos = 1;
+  return 1;
+}
+
+
 /*
  * Right Concatenation 
  * A= [A,B] 
@@ -1183,6 +1202,7 @@ static int int_bmatrix_feq(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab BMatrix_func[]={
+  {"resize2vect_m", int_bmatrix_to_vect},
   {"latexmat_b",int_bmatrix_2latexmat},
   {"latextab_b",int_bmatrix_2latextab},
   {"addcols_b_m",int_bmatrix_addcols},
