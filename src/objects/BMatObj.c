@@ -1202,7 +1202,7 @@ static int int_bmatrix_feq(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab BMatrix_func[]={
-  {"resize2vect_m", int_bmatrix_to_vect},
+  {"resize2vect_b", int_bmatrix_to_vect},
   {"latexmat_b",int_bmatrix_2latexmat},
   {"latextab_b",int_bmatrix_2latextab},
   {"addcols_b_m",int_bmatrix_addcols},
