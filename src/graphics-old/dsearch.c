@@ -41,24 +41,24 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
   char *type;
   int info, m_occ,n_occ,i;
   char c= 'c';
-  NspMatrix *x, *val, *ind, *occ, *Minfo=NULL;
+  NspMatrix *x, *val, *ind, *occ;
   CheckRhs(2,3);
   CheckLhs(0,3);
   if ((x =GetRealMat(stack,1))== NULLMAT ) return RET_BUG;
   /* CheckVector(stack.fname,1,x);*/
   if ((val =GetRealMat(stack,2))== NULLMAT ) return RET_BUG;
-  CheckVector(stack.fname,2,val)
-    if ( rhs == 3 ) 
-      {
-	if ((type = GetString(stack,3)) == (char*)0) return RET_BUG;
-	if ( strcmp(type,"c") != 0 && strcmp(type,"d") != 0 ) 
-	  {
-	    Scierror("Error: wrong second argument in function %s\n",stack.fname);
-	    Scierror("\tonly 'c' or 'd' are allowed\n");
-	    return RET_BUG;
-	  }
-	c = type[0];
-      }
+  CheckVector(stack.fname,2,val);
+  if ( rhs == 3 ) 
+    {
+      if ((type = GetString(stack,3)) == NULLSTRING ) return RET_BUG;
+      if ( strcmp(type,"c") != 0 && strcmp(type,"d") != 0 ) 
+	{
+	  Scierror("Error: wrong second argument in function %s\n",stack.fname);
+	  Scierror("\tonly 'c' or 'd' are allowed\n");
+	  return RET_BUG;
+	}
+      c = type[0];
+    }
   if (( ind = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT ) return RET_BUG;
   m_occ = val->m ; 
   n_occ = val->n ;
@@ -68,10 +68,6 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
       n_occ = Max(n_occ -1, 1);
     }
   if (( occ = nsp_matrix_create(NVOID,'r',m_occ,n_occ)) == NULLMAT ) return RET_BUG;
-  if ( lhs == 3 ) 
-    {
-      if (( Minfo = nsp_matrix_create(NVOID,'r',1,1 )) == NULLMAT ) return RET_BUG;
-    }
   /* Check that val is increasing */
   for ( i = 0 ; i < val->mn -1 ; i++ ) 
     {
@@ -99,28 +95,25 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
 	}
     }
   if ( c == 'c' ) 
-    nsp_dsearchc(x->R,x->mn,val->R,val->mn-1,(int *) ind->R,(int *) occ->R,&info);
+    nsp_dsearchc(x->R,x->mn,val->R,val->mn-1,ind->I,occ->I,&info);
   else 
-    nsp_dsearchd(x->R,x->mn,val->R,val->mn,(int *) ind->R,(int *) occ->R,&info);
-  if ( lhs >= 0) 
-    {
-      ind->convert = 'i'; /* occ is filed with integers */
-      ind = Mat2double(ind);
-      NthObj(rhs+1) = (NspObject *) ind;
-      NSP_OBJECT(NthObj(rhs+1))->ret_pos = 1;
-    }
+    nsp_dsearchd(x->R,x->mn,val->R,val->mn,ind->I,occ->I,&info);
+  ind->convert = 'i'; /* occ is filed with integers */
+  ind = Mat2double(ind);
+  MoveObj(stack,1,NSP_OBJECT(ind));
   if ( lhs >= 2)
     {
       occ->convert = 'i';
       occ = Mat2double(occ);
-      NthObj(rhs+2) = (NspObject *) occ;
-      NSP_OBJECT(NthObj(rhs+2))->ret_pos = 2;
+      MoveObj(stack,2,NSP_OBJECT(occ));
+    }
+  else 
+    {
+      nsp_matrix_destroy(occ);
     }
   if ( lhs == 3 ) 
     {
-      Minfo->R[0] = info;
-      NthObj(rhs+3) = (NspObject *) Minfo;
-      NSP_OBJECT(NthObj(rhs+3))->ret_pos = 3;
+      if ( nsp_move_double(stack,3,(double) info) == FAIL) return RET_BUG;
     }
   return Max(lhs,1);
 }
@@ -195,44 +188,41 @@ void nsp_dsearchc(const double x[], int m,const double val[], int n,
     }
 }
 
-/*     PURPOSE 
- *        double val[n] being a strictly increasing array, this 
- *        routines by the mean of a dichotomic search computes : 
+/**
+ * nsp_dsearchd:
+ * @x: array of double.
+ * @m: size of @x
+ * @val: a strictly increasing array of double.
+ * @n: size of @val
+ * @indx: int array
+ * @occ: int array
+ * @info: int pointer.
+ * 
+ * @val being a strictly increasing array of size @n,
+ * this routines by the mean of a dichotomic search computes
+ * a/ the number of occurences (@occ[j]) of each value @val[j] 
+ *    in the array @x i.e @occ[j] = card{ x[i] such that x[i] == val[j] } 
  *
- *        a/ the number of occurences (occ[j]) of each value val[j] 
- *           in the array x : 
+ * b/ the array @indx : if x[i] == val[j] then indx[i] = j+1
+ *    (if x[i] is not in val then indx[i] = 0) 
+ * the number of values of @x not matching an entry in @val are 
+ * returned in @info.
  *
- *              occ[j] = #{ x[i] such that x[i] = val[j] } 
- *
- *        b/ the array indx :  if x[i] = val[j] then indx[i] = j+1
- *           (if x[i] is not in val then indx[i] = 0) 
- *
- *     PARAMETERS 
- *        inputs : 
- *           m         int 
- *           x[m]      double float array 
- *           n         int 
- *           val[n]    double float array (must be in a strict increasing order) 
- *        outputs : 
- *           occ[n]    int array 
- *           indx[m]   int array 
- *           info      int  (number of x[i] which are not in val(1..n)) 
- *
- *     AUTHOR 
- *        Bruno Pincon 
- */
+ * Author: Bruno Pincon.
+ * 
+ **/
 
-void nsp_dsearchd(const double x[], int m,const double val[], int n,
-		  int indx[], int occ[], int *info)
+void nsp_dsearchd(const double *x, int m,const double *val, int n,
+		  int *indx, int *occ, int *info)
 {
   int i, j, j1, j2;
 
   for (j = 0; j < n ; j++ ) occ[j]= 0;
   *info = 0;
 
-  for (i = 0 ; i < m ; ++i) 
+  for (i = 0 ; i < m ; i++) 
     {
-      if (val[0] <= x[i] && x[i] < val[n-1]) {
+      if (val[0] <= x[i] && x[i] <= val[n-1]) {
 	/* find j such that x[i] = val(j) by a dicho search */
 	j1 = 0;
 	j2 = n-1;
