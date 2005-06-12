@@ -15,17 +15,18 @@
  * Nsp@TYPENAME@ inherits from Nsp@PARENT@
  */
 
-typedef struct _nsp_@TYPEDOWNCASE@ Nsp@TYPENAME@;
+typedef struct _Nsp@TYPENAME@ Nsp@TYPENAME@;
+typedef struct _NspType@TYPENAME@ NspType@TYPENAME@;
 
 typedef int (*@TYPEDOWNCASE@_save) (NspFile  *F, Nsp@TYPENAME@ *M);
 
-typedef struct _nsp_type_@TYPENAME@ { 
+struct _NspType@TYPENAME@ { 
   /*< private >*/
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspType@TYPENAME@;
+};
 
-struct _nsp_@TYPEDOWNCASE@ {
+struct _Nsp@TYPENAME@ {
   /*< private >*/
   Nsp@PARENT@ father; 
   NspType@TYPENAME@ *type; 
@@ -50,15 +51,15 @@ Nsp@TYPENAME@ *new_@TYPEDOWNCASE@();
 
 #define @NULL@ (Nsp@TYPENAME@*) 0
 
-Nsp@TYPENAME@ *@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeBase *type);
-Nsp@TYPENAME@ *@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H);
-void @TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H);
-void @TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent);
-void @TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent);
+Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeBase *type);
+Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H);
+void nsp_@TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H);
+void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent);
+void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent);
 
 /* from @TYPENAME@Obj.c */
 
-extern Nsp@TYPENAME@ *@TYPEDOWNCASE@_object (NspObject *O); 
+extern Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_object (NspObject *O); 
 extern int Is@TYPENAME@Obj (Stack stack, int i); 
 extern int Is@TYPENAME@(NspObject *O);
 extern Nsp@TYPENAME@ *Get@TYPENAME@Copy (Stack stack, int i); 
@@ -70,13 +71,13 @@ extern Nsp@TYPENAME@ *Get@TYPENAME@ (Stack stack, int i);
 
 #ifdef @TYPENAME@_Private 
 static int init_@TYPEDOWNCASE@(Nsp@TYPENAME@ *o,NspType@TYPENAME@ *type);
-static int @TYPEDOWNCASE@_size(Nsp@TYPENAME@ *Mat, int flag);
-static char *@TYPEDOWNCASE@_type_as_string(void);
-static char *@TYPEDOWNCASE@_type_short_string(void);
-static int @TYPEDOWNCASE@_eq(Nsp@TYPENAME@ *A, NspObject *B);
-static int @TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B);
-static int @TYPEDOWNCASE@_xdr_save(NspFile  *F, Nsp@TYPENAME@ *M);
-static Nsp@TYPENAME@  *@TYPEDOWNCASE@_xdr_load(NspFile  *F);
+static int nsp_@TYPEDOWNCASE@_size(Nsp@TYPENAME@ *Mat, int flag);
+static char *nsp_@TYPEDOWNCASE@_type_as_string(void);
+static char *nsp_@TYPEDOWNCASE@_type_short_string(void);
+static int nsp_@TYPEDOWNCASE@_eq(Nsp@TYPENAME@ *A, NspObject *B);
+static int nsp_@TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B);
+static int nsp_@TYPEDOWNCASE@_xdr_save(NspFile  *F, Nsp@TYPENAME@ *M);
+static Nsp@TYPENAME@  *nsp_@TYPEDOWNCASE@_xdr_load(NspFile  *F);
 static AttrTab @TYPEDOWNCASE@_attrs[];
 static NspMethods *@TYPEDOWNCASE@_get_methods(void); 
 static int int_@TYPESHORT@_create(Stack stack, int rhs, int opt, int lhs);

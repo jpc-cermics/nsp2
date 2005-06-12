@@ -15,17 +15,19 @@
  * NspClassA inherits from NspObject
  */
 
-typedef struct _nsp_classa NspClassA;
+typedef struct _NspClassA NspClassA;
 
 typedef int (*classa_save) (NspFile  *F, NspClassA *M);
 
-typedef struct _nsp_type_ClassA { 
+typedef struct _NspTypeClassA NspTypeClassA;
+
+struct _NspTypeClassA { 
   /*< private >*/
   NSP_TYPE_OBJECT__ 
   /*< public >*/
-} NspTypeClassA;
+};
 
-struct _nsp_classa {
+struct _NspClassA {
   /*< private >*/
   NspObject father; 
   NspTypeClassA *type; 

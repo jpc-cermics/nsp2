@@ -49,21 +49,21 @@ NspType@TYPENAME@ *new_type_@TYPEDOWNCASE@(type_mode mode)
   
   /* object methods redefined for @TYPEDOWNCASE@ */ 
   
-  top->pr = (print_func *) @TYPEDOWNCASE@_print;                    
-  top->dealloc = (dealloc_func *) @TYPEDOWNCASE@_destroy;
-  top->copy  =  (copy_func *) @TYPEDOWNCASE@_copy;                   
-  top->size  = (size_func *) @TYPEDOWNCASE@_size;                  
-  top->s_type =  (s_type_func *) @TYPEDOWNCASE@_type_as_string;    
-  top->sh_type = (sh_type_func *) @TYPEDOWNCASE@_type_short_string;
-  top->info = (info_func *) @TYPEDOWNCASE@_info ;                    
+  top->pr = (print_func *) nsp_@TYPEDOWNCASE@_print;                    
+  top->dealloc = (dealloc_func *) nsp_@TYPEDOWNCASE@_destroy;
+  top->copy  =  (copy_func *) nsp_@TYPEDOWNCASE@_copy;                   
+  top->size  = (size_func *) nsp_@TYPEDOWNCASE@_size;                  
+  top->s_type =  (s_type_func *) nsp_@TYPEDOWNCASE@_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_@TYPEDOWNCASE@_type_short_string;
+  top->info = (info_func *) nsp_@TYPEDOWNCASE@_info ;                    
   /* top->is_true = (is_true_func  *) @TYPENAME@IsTrue; */
   /* top->loop =(loop_func *) @TYPEDOWNCASE@_loop;*/
   top->path_extract = (path_func *)  object_path_extract ; 
-  top->get_from_obj = (get_from_obj_func *) @TYPEDOWNCASE@_object;
-  top->eq  = (eq_func *) @TYPEDOWNCASE@_eq;
-  top->neq  = (eq_func *) @TYPEDOWNCASE@_neq;
-  top->save  = (save_func *) @TYPEDOWNCASE@_xdr_save;
-  top->load  = (load_func *) @TYPEDOWNCASE@_xdr_load;
+  top->get_from_obj = (get_from_obj_func *) nsp_@TYPEDOWNCASE@_object;
+  top->eq  = (eq_func *) nsp_@TYPEDOWNCASE@_eq;
+  top->neq  = (eq_func *) nsp_@TYPEDOWNCASE@_neq;
+  top->save  = (save_func *) nsp_@TYPEDOWNCASE@_xdr_save;
+  top->load  = (load_func *) nsp_@TYPEDOWNCASE@_xdr_load;
   top->create = (create_func*) int_@TYPESHORT@_create;
 
   /* specific methods for @TYPEDOWNCASE@ */
@@ -135,7 +135,7 @@ Nsp@TYPENAME@ *new_@TYPEDOWNCASE@()
  * size 
  */
 
-static int @TYPEDOWNCASE@_size(Nsp@TYPENAME@ *Mat, int flag)
+static int nsp_@TYPEDOWNCASE@_size(Nsp@TYPENAME@ *Mat, int flag)
 {
   return 0;
 }
@@ -147,17 +147,17 @@ static int @TYPEDOWNCASE@_size(Nsp@TYPENAME@ *Mat, int flag)
 static char @TYPEDOWNCASE@_type_name[]="@TYPEASSTRING@";
 static char @TYPEDOWNCASE@_short_type_name[]="@TYPESHORT@";
 
-static char *@TYPEDOWNCASE@_type_as_string(void)
+static char *nsp_@TYPEDOWNCASE@_type_as_string(void)
 {
   return(@TYPEDOWNCASE@_type_name);
 }
 
-static char *@TYPEDOWNCASE@_type_short_string(void)
+static char *nsp_@TYPEDOWNCASE@_type_short_string(void)
 {
   return(@TYPEDOWNCASE@_short_type_name);
 }
 
-static int @TYPEDOWNCASE@_full_comp(Nsp@TYPENAME@ * A,Nsp@TYPENAME@ * B,char *op,int *err)
+static int nsp_@TYPEDOWNCASE@_full_comp(Nsp@TYPENAME@ * A,Nsp@TYPENAME@ * B,char *op,int *err)
 {
   Scierror("@TYPEDOWNCASE@_full_comp: to be implemented \n");
   return FALSE;
@@ -167,11 +167,11 @@ static int @TYPEDOWNCASE@_full_comp(Nsp@TYPENAME@ * A,Nsp@TYPENAME@ * B,char *op
  * A == B 
  */
 
-static int @TYPEDOWNCASE@_eq(Nsp@TYPENAME@ *A, NspObject *B)
+static int nsp_@TYPEDOWNCASE@_eq(Nsp@TYPENAME@ *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_@TYPEDOWNCASE@_id) == FALSE) return FALSE ;
-  rep = @TYPEDOWNCASE@_full_comp(A,(Nsp@TYPENAME@ *) B,"==",&err);
+  rep = nsp_@TYPEDOWNCASE@_full_comp(A,(Nsp@TYPENAME@ *) B,"==",&err);
   if ( err == 1) return FALSE ; 
   return rep;
 }
@@ -180,11 +180,11 @@ static int @TYPEDOWNCASE@_eq(Nsp@TYPENAME@ *A, NspObject *B)
  * A != B 
  */
 
-static int @TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B)
+static int nsp_@TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_@TYPEDOWNCASE@_id) == FALSE) return TRUE;
-  rep = @TYPEDOWNCASE@_full_comp(A,(Nsp@TYPENAME@ *) B,"<>",&err);
+  rep = nsp_@TYPEDOWNCASE@_full_comp(A,(Nsp@TYPENAME@ *) B,"<>",&err);
   if ( err == 1) return TRUE ; 
   return rep;
 }
@@ -193,7 +193,7 @@ static int @TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B)
  * save 
  */
 
-static int @TYPEDOWNCASE@_xdr_save(NspFile  *F, Nsp@TYPENAME@ *M)
+static int nsp_@TYPEDOWNCASE@_xdr_save(NspFile  *F, Nsp@TYPENAME@ *M)
 {
   if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -205,7 +205,7 @@ static int @TYPEDOWNCASE@_xdr_save(NspFile  *F, Nsp@TYPENAME@ *M)
  * load 
  */
 
-static Nsp@TYPENAME@  *@TYPEDOWNCASE@_xdr_load(NspFile  *F)
+static Nsp@TYPENAME@  *nsp_@TYPEDOWNCASE@_xdr_load(NspFile  *F)
 {
   Nsp@TYPENAME@ *M = NULL;
   static char name[NAME_MAXL];
@@ -218,7 +218,7 @@ static Nsp@TYPENAME@  *@TYPEDOWNCASE@_xdr_load(NspFile  *F)
  * delete 
  */
 
-void @TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H)
+void nsp_@TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H)
 {
   FREE(NSP_OBJECT(H)->name);
   FREE(H);
@@ -228,7 +228,7 @@ void @TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H)
  * info 
  */
 
-void @TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent)
+void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent)
 {
   int i;
   if ( H == @NULL@) 
@@ -245,7 +245,7 @@ void @TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent)
  * print 
  */
 
-void @TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent)
+void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent)
 {
   @TYPEDOWNCASE@_info(H,indent);
 }
@@ -256,7 +256,7 @@ void @TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent)
  * Note that some of these functions could become MACROS XXXXX 
  *-----------------------------------------------------*/
 
-Nsp@TYPENAME@   *@TYPEDOWNCASE@_object(NspObject *O)
+Nsp@TYPENAME@   *nsp_@TYPEDOWNCASE@_object(NspObject *O)
 {
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
