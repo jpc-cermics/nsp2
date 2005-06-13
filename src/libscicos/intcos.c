@@ -25,7 +25,7 @@
  *               x,z,iz,tevts,evtspt,pointi,outtb)
  */
 
-int int_scicos(Stack stack, int rhs, int opt, int lhs) 
+static int int_scicos(Stack stack, int rhs, int opt, int lhs) 
 {
   double tcur,tf;
   int i,nout;
@@ -457,7 +457,7 @@ c
 }
 
 
-int int_sctree(Stack stack, int rhs, int opt, int lhs) 
+static int int_sctree(Stack stack, int rhs, int opt, int lhs) 
 {
   int iok,nord,nb,i;
   NspMatrix *M[5],*ilord,*ok,*work;
@@ -489,7 +489,7 @@ int int_sctree(Stack stack, int rhs, int opt, int lhs)
 
 
 
-int int_tree2(Stack stack, int rhs, int opt, int lhs) 
+static int int_tree2(Stack stack, int rhs, int opt, int lhs) 
 {
   int nord,nmvec,iok,i;
   NspMatrix *M[4],*ipord,*ok;
@@ -522,7 +522,7 @@ int int_tree2(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-int int_tree3(Stack stack, int rhs, int opt, int lhs) 
+static int int_tree3(Stack stack, int rhs, int opt, int lhs) 
 {
   NspMatrix *M[7],*ipord,*ok,*ipkk;
   int i,iok,nord,nb;
@@ -550,7 +550,7 @@ int int_tree3(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-int int_tree4(Stack stack, int rhs, int opt, int lhs) 
+static int int_tree4(Stack stack, int rhs, int opt, int lhs) 
 {
   NspMatrix *M[5],*ipr1,*ipr2;
   int i,nmd,nr;
@@ -579,7 +579,7 @@ int int_tree4(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int int_scicos_debug(Stack stack, int rhs, int opt, int lhs) 
+static int int_scicos_debug(Stack stack, int rhs, int opt, int lhs) 
 {
   /*
     FIXME 
@@ -596,7 +596,7 @@ int int_scicos_debug(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int connection(int* path_out,int* path_in) 
+static int connection(int* path_out,int* path_in) 
 {
   /* FIXME : call the routine 
    * under_connection 
@@ -605,7 +605,7 @@ int connection(int* path_out,int* path_in)
   int ninout; 
 }
 
-int badconnection(int* path_out,int prt_out, int nout,int* path_in,int prt_in,int nin) 
+static int badconnection(int* path_out,int prt_out, int nout,int* path_in,int prt_in,int nin) 
 {
   /* FXME : call the routine 
    * bad_connection(path_out,prt_out,nout,path_in,prt_in,nin)
@@ -613,10 +613,29 @@ int badconnection(int* path_out,int prt_out, int nout,int* path_in,int prt_in,in
   return 0;
 }
 
-int Message(char* code) 
+static int Message(char* code) 
 {
   /* FIXME call x_message 
    */
   return 0;
+}
+
+static OpTab Scicos_func[]={
+  {"sci_tree4",int_tree4},
+  {(char *) 0, NULL}
+};
+
+int Scicos_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+{
+  return (*(Scicos_func[i].fonc))(stack,rhs,opt,lhs);
+}
+
+/** used to walk through the interface table 
+    (for adding or removing functions) **/
+
+void Scicos_Interf_Info(int i, char **fname, function (**f))
+{
+  *fname = Scicos_func[i].name;
+  *f = Scicos_func[i].fonc;
 }
 

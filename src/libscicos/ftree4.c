@@ -3,11 +3,8 @@
 int ftree4scicos_ (int *vec, int *nb, int *nd, int *nnd, int *typr, int *outoin,
 		   int *outoinptr, int *r1, int *r2, int *nr)
 {
-  int i__1, i__2, i__3;
-  int fini, nprt, i__, j, k, ii;
-  /*     Copyright INRIA */
-  /* make sure nb > 0 */
-  /* Parameter adjustments */
+  int i1, i2, i3;
+  int fini, nprt, i, j, k, ii;
   --r2;
   --r1;
   --outoinptr;
@@ -15,22 +12,20 @@ int ftree4scicos_ (int *vec, int *nb, int *nd, int *nnd, int *typr, int *outoin,
   --typr;
   --nd;
   --vec;
-
-  /* Function Body */
   *nr = 0;
-  i__1 = *nb - 1;
-  for (j = 1; j <= i__1; ++j)
+  i1 = *nb - 1;
+  for (j = 1; j <= i1 ; ++j)
     {
       fini = 1;
-      i__2 = *nb;
-      for (i__ = 1; i__ <= i__2; ++i__)
+      i2 = *nb;
+      for (i = 1; i <= i2 ; ++i)
 	{
-	  if (vec[i__] > -1)
+	  if (vec[i] > -1)
 	    {
-	      if (outoinptr[i__ + 1] - outoinptr[i__] != 0)
+	      if (outoinptr[i + 1] - outoinptr[i] != 0)
 		{
-		  i__3 = outoinptr[i__ + 1] - 1;
-		  for (k = outoinptr[i__]; k <= i__3; ++k)
+		  i3 = outoinptr[i + 1] - 1;
+		  for (k = outoinptr[i  ]; k <= i3; ++k)
 		    {
 		      ii = outoin[k];
 		      if (typr[ii] == 1)
@@ -50,12 +45,7 @@ int ftree4scicos_ (int *vec, int *nb, int *nd, int *nnd, int *typr, int *outoin,
 		}
 	    }
 	}
-      if (fini == 1)
-	{
-	  goto L200;
-	}
+      if (fini == 1) return ;
     }
- L200:
-  return 0;
 }	
 

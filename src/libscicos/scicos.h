@@ -74,4 +74,7 @@ typedef  struct  {
   ScicosF fonc;
 } OpTab ;
 
+
+#include "scicos-proto.h"
+
 #endif 
