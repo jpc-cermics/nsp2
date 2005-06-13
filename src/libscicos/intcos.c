@@ -11,7 +11,7 @@
 #include "nsp/machine.h"
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
-
+#include "scicos.h"
 /* 
  * [state,t]=scicosim(state,tcur,tf,sim,'start' ,tol) 
  * 
@@ -28,12 +28,12 @@
 static int int_scicos(Stack stack, int rhs, int opt, int lhs) 
 {
   double tcur,tf;
-  int i,nout;
+  int i,nout,rep,flag;
   static char *action_name[]={ "finish","linear", "run", "start", NULL };
   const int nstate = 7, nsim = 30;
   NspHash *State, *Sim;
   NspObject * State_elts[nstate], * Sim_elts[nsim];
-
+  NspMatrix *Msimpar;
   const char *sim[]={"scs","funs","xptr","zptr","izptr","inpptr","outptr",
 		     "inplnk","outlnk","lnkptr","rpar","rpptr","ipar","ipptr",
 		     "clkptr","ordptr","execlk","ordclk","cord","oord","zord",      
@@ -73,7 +73,7 @@ static int int_scicos(Stack stack, int rhs, int opt, int lhs)
   if ((Sim = GetHash(stack,4)) == NULLHASH) return RET_BUG;
   for ( i = 0 ; i < nsim ; i++ ) 
     {
-      if (nsp_hash_find(Sim,sim[i],&Sim_elts[i]) == FAIL) return NULLOBJ ;
+      if (nsp_hash_find(Sim,sim[i],&Sim_elts[i]) == FAIL) return RET_BUG;
     }
 
   /* 4ex */
@@ -175,7 +175,7 @@ c       --   subvariable modptr(sim) --
     case 2: flag=2;break;
     case 3: flag=1;break;
     }
-  if ((simpar = GetRealMat(stack,6)) == NULLMAT) return RET_BUG;
+  if ((Msimpar = GetRealMat(stack,6)) == NULLMAT) return RET_BUG;
   /*      [atol  rtol ttol, deltat, scale, impl, hmax] */
   /*
     il6 = iadr(lstk(top-rhs+6))
@@ -454,6 +454,7 @@ c
       end
 c
   */
+  return 0;
 }
 
 
@@ -475,8 +476,8 @@ static int int_sctree(Stack stack, int rhs, int opt, int lhs)
   if ((ok = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return RET_BUG;
   /* which size ? FIXME */
   if ((work = nsp_matrix_create(NVOID,'r',1,nb)) == NULLMAT) return RET_BUG;
-  sctree(nb,(int *)M[0]->R,(int *)M[1]->R,(int *)M[2]->R,(int *)M[3]->R,(int *)M[4]->R,
-	 (int *)ilord->R,&nord,&iok,(int *)work->R);
+  scicos_sctree(&nb,(int *)M[0]->R,(int *)M[1]->R,(int *)M[2]->R,(int *)M[3]->R,(int *)M[4]->R,
+		(int *)ilord->R,&nord,&iok,(int *)work->R);
   /* renvoyer un tableau de taille nord copie de ilord */
   ilord->convert= 'i';
   ilord = Mat2double(ilord);
@@ -512,7 +513,7 @@ static int int_tree2(Stack stack, int rhs, int opt, int lhs)
       if(.not.createvar(6,'i',1,1,ipok)) return
   */
 
-  ftree2((int *)M[0]->R,nmvec,(int *)M[3]->R,(int *)M[1]->R,(int *)M[2]->R,(int *)ipord->R,&nord,&iok);
+  scicos_ftree2((int *)M[0]->R,&nmvec,(int *)M[3]->R,(int *)M[1]->R,(int *)M[2]->R,(int *)ipord->R,&nord,&iok);
   ipord->convert= 'i';
   ipord = Mat2double(ipord);
   if ( nsp_matrix_resize(ipord,nord,1) == FAIL) return RET_BUG;
@@ -538,7 +539,7 @@ static int int_tree3(Stack stack, int rhs, int opt, int lhs)
   if ((ok = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return RET_BUG;
   if ((ipkk = nsp_matrix_create(NVOID,'r',1,nb)) == NULLMAT) return RET_BUG;
 
-  ftree3((int *)M[0]->R,M[0]->mn,(int *)M[1]->R,(int *)M[2]->R,(int *)M[3]->R,
+  scicos_ftree3((int *)M[0]->R,&M[0]->mn,(int *)M[1]->R,(int *)M[2]->R,(int *)M[3]->R,
 	 (int *)M[4]->R,(int *)M[5]->R,(int *)M[6]->R,(int *)ipkk->R,
 	 (int *)ipord->R,&nord,&iok);
   ipord->convert= 'i';
@@ -558,15 +559,15 @@ static int int_tree4(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(2,2);
   for ( i = 0 ; i < 5 ; i++) 
     {
-      if ((M[i] = GetRealMat(stack,i+1)) == NULLMAT) return RET_BUG;
+      if ((M[i] = GetRealMatCopy(stack,i+1)) == NULLMAT) return RET_BUG;
       M[i]= Mat2int(M[i]);
     }
   nmd = M[3]->mn;
   if ((ipr1 = nsp_matrix_create(NVOID,'r',1,nmd)) == NULLMAT) return RET_BUG;
   if ((ipr2 = nsp_matrix_create(NVOID,'r',1,nmd)) == NULLMAT) return RET_BUG;
 
-  ftree4((int *)M[0]->R,M[3]->mn,(int *)M[4]->R,(int *)M[1]->R,(int *)M[2]->R,
-	 (int *)ipr1->R,(int *)ipr2->R,&nr);
+  scicos_ftree4(M[0]->I,&M[0]->mn,M[3]->I,&M[3]->n,
+		M[4]->I,M[1]->I,M[2]->I,ipr1->I,ipr2->I,&nr);
   ipr1->convert= 'i';
   ipr1 = Mat2double(ipr1);
   if ( nsp_matrix_resize(ipr1,nr,1) == FAIL) return RET_BUG;
@@ -593,6 +594,7 @@ static int int_scicos_debug(Stack stack, int rhs, int opt, int lhs)
       lhsvar(1)=0
       end
   */
+  return 0;
 }
 
 
@@ -602,7 +604,7 @@ static int connection(int* path_out,int* path_in)
    * under_connection 
    * function ninnout=under_connection(path_out,path_in)
    */
-  int ninout; 
+  return 0;
 }
 
 static int badconnection(int* path_out,int prt_out, int nout,int* path_in,int prt_in,int nin) 

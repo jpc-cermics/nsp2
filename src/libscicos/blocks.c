@@ -3,6 +3,9 @@
 #include "nsp/machine.h"
 #include "nsp/math.h" 
 #include "nsp/graphics/Graphics.h" 
+#include "nsp/object.h" 
+#include "nsp/matrix.h" 
+#include "nsp/blas.h" 
 #include "scicos.h"
 
 struct
@@ -106,16 +109,16 @@ int scicos_csslti (scicos_args_poo)
     {
       /*     y=c*x+d*u */
       ld = lc + *nx * *ny;
-      scicos_dmmul (&rpar[lc], ny, &x[1], nx, &y[1], ny, ny, nx, &c__1);
-      dmmul1_fort(&rpar[ld], ny, &u[1], nu, &y[1], ny, ny, nu, &c__1);
+      dmmul_scicos (&rpar[lc], ny, &x[1], nx, &y[1], ny, ny, nx, &c__1);
+      dmmul1_scicos(&rpar[ld], ny, &u[1], nu, &y[1], ny, ny, nu, &c__1);
       /*         if(t.gt.64.0) write(6,'(e15.8,10(e10.3,x))') t,x(1),x(2), */
       /*     $        u(1),y(1) */
     }
   else if (*flag__ == 0)
     {
       /*     xd=a*x+b*u */
-      scicos_dmmul (&rpar[la], nx, &x[1], nx, &xd[1], nx, nx, nx, &c__1);
-      dmmul1_fort(&rpar[lb], nx, &u[1], nu, &xd[1], nx, nx, nu, &c__1);
+      dmmul_scicos (&rpar[la], nx, &x[1], nx, &xd[1], nx, nx, nx, &c__1);
+      dmmul1_scicos(&rpar[lb], nx, &u[1], nu, &xd[1], nx, nx, nu, &c__1);
       /*         if(t.gt.64.0) write(6,'(e15.8,10(e10.3,x))') t,x(1),x(2), */
       /*     $        xd(1),xd(2),u(1) */
     }
@@ -170,7 +173,7 @@ scicos_cstblk (int *flag__, int *nevprt, double *t, double *xd, double *x,
   /*     Scicos block simulator */
   /*     output a vector of constants out(i)=rpar(i) */
   /*     rpar(1:nrpar) : given constants */
-  scicos_dcopy (nrpar, rpar, &c__1, y, &c__1);
+  C2F(dcopy) (nrpar, rpar, &c__1, y, &c__1);
   return 0;
 }			
 
@@ -834,7 +837,7 @@ int scicos_dollar (scicos_args_poo)
 
 int scicos_dsslti (scicos_args_poo)
 {
-  const  int c__1 = 1;
+  int c__1 = 1;
   double w[100];
   int la, lb, lc, ld;
 
@@ -866,16 +869,16 @@ int scicos_dsslti (scicos_args_poo)
   else if (*flag__ == 2)
     {
       /*     x+=a*x+b*u */
-      scicos_dcopy (nz, &z__[1], &c__1, w, &c__1);
-      scicos_dmmul (&rpar[la], nz, w, nz, &z__[1], nz, nz, nz, &c__1);
-      dmmul1_fort(&rpar[lb], nz, &u[1], nu, &z__[1], nz, nz, nu, &c__1);
+      C2F(dcopy) (nz, &z__[1], &c__1, w, &c__1);
+      dmmul_scicos (&rpar[la], nz, w, nz, &z__[1], nz, nz, nz, &c__1);
+      dmmul1_scicos(&rpar[lb], nz, &u[1], nu, &z__[1], nz, nz, nu, &c__1);
     }
   else if (*flag__ == 1 || *flag__ == 6)
     {
       /*     y=c*x+d*u */
       ld = lc + *nz * *ny;
-      scicos_dmmul (&rpar[lc], ny, &z__[1], nz, &y[1], ny, ny, nz, &c__1);
-      dmmul1_fort(&rpar[ld], ny, &u[1], nu, &y[1], ny, ny, nu, &c__1);
+      dmmul_scicos (&rpar[lc], ny, &z__[1], nz, &y[1], ny, ny, nz, &c__1);
+      dmmul1_scicos(&rpar[ld], ny, &u[1], nu, &y[1], ny, ny, nu, &c__1);
     }
   return 0;
 }			
@@ -4183,19 +4186,19 @@ scicos_tcslti (int *flag__, int *nevprt, double *t, double *xd, double *x,
     {
       /*     y=c*x+d*u1 */
       ld = lc + *nx * *ny;
-      scicos_dmmul (&rpar[lc], ny, &x[1], nx, &y[1], ny, ny, nx, &c__1);
-      dmmul1_fort(&rpar[ld], ny, &u1[1], nu1, &y[1], ny, ny, nu1, &c__1);
+      dmmul_scicos (&rpar[lc], ny, &x[1], nx, &y[1], ny, ny, nx, &c__1);
+      dmmul1_scicos(&rpar[ld], ny, &u1[1], nu1, &y[1], ny, ny, nu1, &c__1);
     }
   else if (*flag__ == 2 && *nevprt == 1)
     {
       /*     x+=u2 */
-      scicos_dcopy (nx, &u2[1], &c__1, &x[1], &c__1);
+      C2F(dcopy) (nx, &u2[1], &c__1, &x[1], &c__1);
     }
   else if (*flag__ == 0 && *nevprt == 0)
     {
       /*     xd=a*x+b*u1 */
-      scicos_dmmul (&rpar[la], nx, &x[1], nx, &xd[1], nx, nx, nx, &c__1);
-      dmmul1_fort(&rpar[lb], nx, &u1[1], nu1, &xd[1], nx, nx, nu1, &c__1);
+      dmmul_scicos (&rpar[la], nx, &x[1], nx, &xd[1], nx, nx, nx, &c__1);
+      dmmul1_scicos(&rpar[lb], nx, &u1[1], nu1, &xd[1], nx, nx, nu1, &c__1);
     }
   return 0;
 }			
@@ -4228,17 +4231,17 @@ int scicos_tcsltj (scicos_args_poo)
   if (*flag__ == 1 || *flag__ == 6)
     {
       /*     y=c*x */
-      scicos_dmmul (&rpar[lc], ny, &x[1], nx, &y[1], ny, ny, nx, &c__1);
+      dmmul_scicos (&rpar[lc], ny, &x[1], nx, &y[1], ny, ny, nx, &c__1);
     }
   else if (*flag__ == 2 && *nevprt == 1)
     {
       /*     x+=u2 */
-      scicos_dcopy (nx, &u[1], &c__1, &x[1], &c__1);
+      C2F(dcopy) (nx, &u[1], &c__1, &x[1], &c__1);
     }
   else if (*flag__ == 0 && *nevprt == 0)
     {
       /*     xd=a*x */
-      scicos_dmmul (&rpar[la], nx, &x[1], nx, &xd[1], nx, nx, nx, &c__1);
+      dmmul_scicos  (&rpar[la], nx, &x[1], nx, &xd[1], nx, nx, nx, &c__1);
     }
   return 0;
 }			

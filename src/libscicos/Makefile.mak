@@ -6,7 +6,7 @@ SHELL = /bin/sh
 SCIDIR=../..
 SCIDIR1=..\..
 
-LIBRARY = $(SCIDIR)/libs/scicos.lib
+LIBRARY = $(SCIDIR)/libs/nsp.lib
 
 BLOCKSF=evtdly.obj cstblk.obj \
 	lusat.obj pload.obj qzcel.obj qzflr.obj\
@@ -51,8 +51,6 @@ OBJSC= blocks.obj blocks_new.obj coselm.obj cpass2.obj evaluate_expr.obj ftree2.
 	ftree3.obj ftree4.obj import.obj intcos.obj intcscicos.obj \
 	intrealtime.obj readf.obj realtime.obj sciblk2.obj scicos.obj scicosclip.obj \
 	scicos_free.obj scicos_malloc.obj scifunc.obj 
-
-
 
 BLOCKS=$(BLOCKSF) $(BLOCKSC)
 

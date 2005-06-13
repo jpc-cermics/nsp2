@@ -17,7 +17,7 @@ extern int scicos_fscope (int *flag__, int *nevprt, double *t, double *xd,
 extern int scicos_ftree2 (int *vec, int *nb, int *deput, int *outoin,
 			  int *outoinptr, int *ord, int *nord, int *ok);
 
-extern int scicos_fftree3(int *vec, int *nb, int *deput, int *typl, int *bexe,
+extern int scicos_ftree3(int *vec, int *nb, int *deput, int *typl, int *bexe,
 			  int *boptr, int *blnk, int *blptr, int *kk,
 			  int *ord, int *nord, int *ok);
 
@@ -59,11 +59,7 @@ extern int scicos_sctree (int *nb, int *vec, int *in, int *depu, int *outptr,
 			  int *cmat, int *ord, int *nord, int *ok, int *kk);
 extern  int scicos_dset (int *, double *, double *, int *);
 extern  int scicos_getouttb (int *, int *, double *);
-extern  int plot2scicos_d (double *, double *, int *, int *,
-					   int *, char *, char *, double *,
-					   int *, int *, int *, long int,
-					   long int),
-setscale2scicos_d (double *, double *, char *, long int);
+extern  int setscale2scicos_d (double *, double *, char *, long int);
 extern  int scicos_dr (char *, char *, int *, int *, int *,
 				       int *, int *, int *, double *,
 				       double *, double *, double *, long int,
@@ -83,8 +79,8 @@ extern  int scicos_isort (int *, int *, int *);
 extern  int scicos_getlabel (int *, char *, int *, long int);
 extern  int scicos_dset (int *, double *, double *, int *);
 extern  int plot2scicos_d (double *, double *, int *, int *,
-					   int *, char *, char *, double *,
-					   int *, long int, long int),
+			   int *, char *, char *, double *,
+			   int *, long int, long int),
 setscale2scicos_d (double *, double *, char *, long int);
 extern  int scicos_dr (char *, char *, int *, int *, int *,
 				       int *, int *, int *, double *,
@@ -103,11 +99,7 @@ extern  int scicos_sciwin (void), dr1scicos_ (char *, char *,
 scicos_scicosclip (int *);
 extern  int scicos_getlabel (int *, char *, int *, long int),
 scicos_dset (int *, double *, double *, int *);
-extern  int plot2scicos_d (double *, double *, int *, int *,
-					   int *, char *, char *, double *,
-					   int *, int *, int *, long int,
-					   long int),
-setscale2scicos_d (double *, double *, char *, long int);
+extern int setscale2scicos_d (double *, double *, char *, long int);
 extern  int scicos_dr (char *, char *, int *, int *, int *,
 				       int *, int *, int *, double *,
 				       double *, double *, double *, long int,
@@ -127,8 +119,6 @@ extern  int scicos_getlabel (int *, char *, int *, long int);
 extern  int scicos_sxevents (void);
 extern  int scicos_unsfdcopy (int *, double *, int *,
 					      double *, int *),
-plot2scicos_d (double *, double *, int *, int *, int *, char *, char *,
-	       double *, int *, long int, long int),
 setscale2scicos_d (double *, double *, char *, long int);
 extern  int scicos_dr (char *, char *, int *, int *, int *,
 				       int *, int *, int *, double *,
@@ -146,10 +136,7 @@ extern  int scicos_sciwin (void), dr1scicos_ (char *, char *,
 							      long int);
 extern  int scicos_getlabel (int *, char *, int *, long int);
 extern  int scicos_sxevents (void);
-extern  int plot2scicos_d (double *, double *, int *, int *,
-					   int *, char *, char *, double *,
-					   int *, long int, long int),
-setscale2scicos_d (double *, double *, char *, long int);
+extern  int setscale2scicos_d (double *, double *, char *, long int);
 extern  int scicos_dr (char *, char *, int *, int *, int *,
 				       int *, int *, int *, double *,
 				       double *, double *, double *, long int,

@@ -69,10 +69,18 @@ typedef void (*ScicosFi2) (ARGS_scicosi2);
 typedef void (*ScicosFi2z) (ARGS_scicosi2z);
 typedef void (*ScicosF4) (ARGS_scicos4);
 
+#undef I
+#undef IP
+#undef DP
+#undef DPP
+#undef DB 
+
+
+
 typedef  struct  {
   char *name;
   ScicosF fonc;
-} OpTab ;
+} XXOpTab ;
 
 
 #include "scicos-proto.h"
