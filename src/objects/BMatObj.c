@@ -1049,6 +1049,26 @@ static int int_bmatrix_resize(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+/*
+ * A'
+ */
+
+int
+int_bmatrix_quote (Stack stack, int rhs, int opt, int lhs)
+{
+  NspBMatrix *A, *B;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((A = GetBMat (stack, 1)) == NULLBMAT)
+    return RET_BUG;
+  if ((B = nsp_bmatrix_transpose (A)) == NULLBMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) B);
+  return 1;
+}
+
+
 /*
  * BMat2LaTeXMat: writes BMat Objet on fd in tex language
  */
@@ -1245,6 +1265,7 @@ static OpTab BMatrix_func[]={
   {"ne_b_b" ,  int_bmatrix_neq },
   {"fneq_b_b" ,  int_bmatrix_fneq },
   {"feq_b_b" ,  int_bmatrix_feq },
+  {"quote_b", int_bmatrix_quote},
   {(char *) 0, NULL}
 };
 
