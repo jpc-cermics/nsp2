@@ -551,7 +551,7 @@ static int int_tree3(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-static int int_tree4(Stack stack, int rhs, int opt, int lhs) 
+static int int_scicos_ftree4(Stack stack, int rhs, int opt, int lhs) 
 {
   NspMatrix *M[5],*ipr1,*ipr2;
   int i,nmd,nr;
@@ -623,7 +623,7 @@ static int Message(char* code)
 }
 
 static OpTab Scicos_func[]={
-  {"sci_tree4",int_tree4},
+  {"sci_tree4",int_scicos_ftree4},
   {(char *) 0, NULL}
 };
 
