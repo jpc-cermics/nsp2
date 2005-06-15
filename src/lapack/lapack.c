@@ -59,6 +59,48 @@ int nsp_mat_is_symmetric(NspMatrix *A)
   return TRUE;
 }
 
+int nsp_mat_is_lower_triangular(NspMatrix *A)
+{
+  int i,j;
+  if ( A->m != A->n ) return FALSE;
+  if ( A->rc_type == 'r') 
+    {
+      for ( j=0 ; j < A->m ; j++)
+	for ( i=0 ; i < j ; i++)
+	  if ( A->R[i+j*A->m] != 0.0 ) 
+	    return FALSE;
+    }
+  else 
+    {
+      for ( j=0 ; j < A->m ; j++)
+	for ( i=0 ; i < j ; i++)
+	  if ( A->C[i+j*A->m].r != 0.0  ||  A->C[i+j*A->m].i != 0.0 ) 
+	    return FALSE;
+    }
+  return TRUE;
+}
+
+int nsp_mat_is_upper_triangular(NspMatrix *A)
+{
+  int i,j;
+  if ( A->m != A->n ) return FALSE;
+  if ( A->rc_type == 'r') 
+    {
+      for ( j=0 ; j < A->m ; j++)
+	for ( i=j+1 ; i < A->m ; i++)
+	  if ( A->R[i+j*A->m] != 0.0 ) 
+	    return FALSE;
+    }
+  else 
+    {
+      for ( j=0 ; j < A->m ; j++)
+	for ( i=j+1 ; i < A->m ; i++)
+	  if ( A->C[i+j*A->m].r != 0.0  ||  A->C[i+j*A->m].i != 0.0 ) 
+	    return FALSE;
+    }
+  return TRUE;
+}
+
 /*
  * xerbla_:
  * switch lapack message to nsp message
@@ -3373,5 +3415,254 @@ int nsp_expm(NspMatrix *A)
   FREE(ipiv);
   FREE(work);
   FREE(workC);
+  return FAIL;
+}
+
+
+/*
+ *   Res=nsp_mat_bdiv_lsq(A,B) A \ B. Contributed by Bruno Pincon
+ */
+
+int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B)
+{  
+  int mA = A->m, nA = A->n, mB = B->m, nB = B->n; /* mA must be equal to mB */
+  int mx = A->n, nx = B->n, ldB, ix, iB, j;
+  int *jpvt = NULL, info, lwork, rank;
+  double *work = NULL, qwork[2], *rwork = NULL;
+  double rcond = DBL_EPSILON;  /* FIXME to be choosen more correctly */
+
+  /* FIXME: - to merge with nsp_mat_lsq
+   *        - when B is complex while A is real, something
+   *          better than complexify A can be done
+   */
+  if ( A->rc_type == 'c' ) 
+    {
+      if ( B->rc_type == 'r' ) 
+	{
+	  if (nsp_mat_set_ival(B,0.00) == FAIL ) return FAIL;
+	}
+    }
+  else 
+    { 
+      if ( B->rc_type == 'c' ) 
+	{
+	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return FAIL;
+	}
+    }
+
+  if ( mx > mB )  
+    /* enlarge B so that it can contains the solution x (needed by lapack) */
+    {
+      iB = B->mn-1;
+      if ((nsp_matrix_resize(B,mx,nx)) ==  FAIL) return FAIL;
+      if ( B->rc_type == 'r' )
+	for ( j = nB-1 ; j > 0 ; j--)   /* the first column is already good (so j>0) */
+	  for ( ix = j*mx+mB-1 ; ix >= j*mx ; ix--, iB-- )
+	    B->R[ix] = B->R[iB];
+      else
+	for ( j = nB-1 ; j > 0 ; j--)   /* the first column is already good (so j>0) */
+	  for ( ix = j*mx+mB-1 ; ix >= j*mx ; ix--, iB-- )
+	    B->C[ix] = B->C[iB];
+      ldB = mx;
+    } 
+  else
+    ldB = mB;
+
+  if ( !(jpvt = calloc( nA , sizeof(int))))  /* calloc because jpvt must be initialized with 0 */
+    goto err;
+       
+  if ( A->rc_type == 'r' )
+    { 
+      lwork = -1;  /* query work size */
+      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, qwork, &lwork, &info);
+      lwork = (int) qwork[0];
+      if ( !(work = malloc( lwork*sizeof(double)))) goto err;
+      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, work, &lwork, &info);
+    }
+  else 
+    {
+      lwork = -1;  /* query work size */
+      C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, &rank, (doubleC *)qwork, &lwork, rwork, &info);
+      lwork = (int) qwork[0];
+      rwork = malloc( 2*nA*sizeof(double)); 
+      work = malloc( 2*lwork*sizeof(double));
+      if ( ! (rwork && work) ) goto err;
+      C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, &rank,  (doubleC *)work, &lwork, rwork, &info);
+    }
+  
+  if ( mx < mB )   /* free a part of B which is not needed */
+    {
+      /* first compress B (the solution x is in B but with a "leading" 
+       * dimension mB  => transform with a "leading" dimension mx ...) 
+       */
+      ix = mx;
+      if ( B->rc_type == 'r' )
+	for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
+	  for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
+	    B->R[ix] = B->R[iB];
+      else
+	for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
+	  for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
+	    B->C[ix] = B->C[iB];
+      /* now we can free the part of B which is not used any more */
+      if (  nsp_matrix_resize(B, mx, nx) == FAIL )
+	goto err;
+    }
+
+  free(jpvt); free(rwork); free(work);
+  if ( rank < Min(mA,nA) )
+    Sciprintf("\n warning: matrix is rank-deficient m=%d, n=%d, rank=%d \n", mA, nA, rank);
+
+  return OK;
+
+ err:
+  free(jpvt); free(rwork); free(work);
+  return FAIL;
+      
+}
+
+/* mA must be equal to nA */
+int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond)
+{  
+  int n=A->m, nrhs=B->n; 
+  int *ipiv=NULL, *iwork=NULL, info;
+  double anorm, *work=NULL;
+  doubleC *workC=NULL;
+
+  /* FIXME: - when B is complex while A is real, something
+   *          better than complexify A can be done
+   */
+  if ( A->rc_type == 'c' ) 
+    {
+      if ( B->rc_type == 'r' ) 
+	{
+	  if ( nsp_mat_set_ival(B,0.00) == FAIL ) return FAIL;
+	}
+    }
+  else 
+    { 
+      if ( B->rc_type == 'c' ) 
+	{
+	  if ( nsp_mat_set_ival(A,0.00) == FAIL ) return FAIL;
+	}
+    }
+
+  if ( (ipiv = nsp_alloc_int(n)) == NULL ) return FAIL;
+       
+  if ( A->rc_type == 'r' )
+    { 
+      anorm = C2F(dlange) ("1", &n, &n, A->R, &n, work, 1); /* work is used only for inf norm */
+      C2F(dgetrf) (&n, &n, A->R, &n, ipiv, &info);
+      if ( info != 0 )  /* a pivot is exactly zero */
+	{
+	  *rcond = 0.0; FREE(ipiv); return OK;
+	}
+      if ( (iwork = nsp_alloc_int(n)) == NULL ) goto err;
+      if ( (work = nsp_alloc_doubles(4*n)) == NULL ) goto err;      
+
+      C2F(dgecon) ("1", &n, A->R, &n, &anorm, rcond, work, iwork, &info, 1);
+      if ( *rcond <=  DBL_EPSILON ) /* matrix is too badly conditionned */
+	{
+	  FREE(work); FREE(iwork); FREE(ipiv); return OK;
+	}
+      C2F(dgetrs) ("N", &n, &nrhs, A->R, &n, ipiv, B->R, &n, &info, 1);
+      FREE(work); FREE(iwork); FREE(ipiv); return OK;
+    }
+  else
+    {
+      anorm = C2F(zlange) ("1", &n, &n, A->C, &n, work, 1); /* work is used only for inf norm */
+      C2F(zgetrf) (&n, &n, A->C, &n, ipiv, &info);
+      if ( info != 0 )  /* a pivot is exactly zero */
+	{
+	  *rcond = 0.0; FREE(ipiv); return OK;
+	}
+      if ( (work = nsp_alloc_doubles(2*n)) == NULL ) goto err;      
+      if ( (workC = nsp_alloc_doubleC(2*n)) == NULL ) goto err;
+
+      C2F(zgecon) ("1", &n, A->C, &n, &anorm, rcond, workC, work, &info, 1);
+      if ( *rcond <=  DBL_EPSILON )  /* matrix is too badly conditionned */
+	{
+	  FREE(workC); FREE(work); FREE(ipiv); return OK;
+	}
+      C2F(zgetrs) ("N", &n, &nrhs, A->C, &n, ipiv, B->C, &n, &info, 1);
+      FREE(workC); FREE(work); FREE(ipiv); return OK;
+    }
+
+ err:
+  FREE(workC); FREE(work); FREE(iwork); FREE(ipiv); 
+  return FAIL;
+}
+
+/**
+ * nsp_mat_bdiv_triangular:
+ * @A: a #NspMatrix (not modified)
+ * @B: a #NspMatrix (modified)
+ * @tri_type: a char 'u' for upper triangular, 'l' for lower triangular
+ * @info: an int 0 if all is OK else a zero pivot have been met.
+ * 
+ * solve a linear triangular system A X = B, B is overwritten by the solution X
+ *
+ * Return value: OK or FAIL (due to  malloc failure)
+ **/
+int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info)
+{  
+  int m = A->m, mn, i;
+  double *temp;
+
+  if ( A->rc_type == 'c' ) 
+    if ( B->rc_type == 'r' ) 
+      if (nsp_mat_set_ival(B,0.00) == FAIL ) return FAIL;
+
+  if ( A->rc_type == 'r' )
+    {
+      if ( B->rc_type == 'r' )
+	C2F(dtrtrs) (&tri_type, "N", "N", &m, &(B->n), A->R, &m, B->R, &m, info, 1,1,1);
+      else  /* B is complex */
+	{
+	  mn = m * B->n;
+	  if ( (temp = nsp_alloc_doubles(mn)) == NULL ) return FAIL;
+	  for ( i = 0 ; i < mn ; i++ ) temp[i] = B->C[i].r;
+	  C2F(dtrtrs) (&tri_type, "N", "N", &m, &(B->n), A->R, &m, temp, &m, info, 1,1,1);
+	  if ( *info != 0 ) { FREE(temp); return FAIL;}
+	  for ( i = 0 ; i < mn ; i++ )  { B->C[i].r = temp[i]; temp[i] = B->C[i].i;}
+	  C2F(dtrtrs) (&tri_type, "N", "N", &m, &(B->n), A->R, &m, temp, &m, info, 1,1,1);
+	  for ( i = 0 ; i < mn ; i++ )  B->C[i].i = temp[i];
+	  FREE(temp);
+	}
+    }
+  else
+    C2F(ztrtrs) (&tri_type, "N", "N", &m, &(B->n), A->C, &m, B->C, &m, info, 1,1,1);
+
+  return OK;
+}
+
+int nsp_mat_triangular_cond(NspMatrix *A, char tri_type, double *rcond1)
+{  
+  int m = A->m, info;
+  double *work=NULL;
+  doubleC *workC=NULL;
+  int *iwork=NULL;
+
+  if ( A->rc_type == 'r' )
+    {
+      iwork = nsp_alloc_int(m);
+      work = nsp_alloc_doubles(3*m);
+      if ( iwork == NULL  ||  work == NULL ) goto err;
+      C2F(dtrcon) ("1", &tri_type, "N", &m, A->R, &m, rcond1, work, iwork, &info, 1, 1, 1);
+      FREE(work); FREE(iwork);
+    }
+  else
+    {
+      work = nsp_alloc_doubles(m);
+      workC = nsp_alloc_doubleC(2*m);
+      if ( work == NULL  ||  workC == NULL ) goto err;
+      C2F(ztrcon) ("1", &tri_type, "N", &m, A->C, &m, rcond1, workC, work, &info, 1, 1, 1);
+      FREE(workC); FREE(work);
+    }
+
+  return OK;
+
+ err:
+  FREE(iwork); FREE(workC); FREE(work);
   return FAIL;
 }

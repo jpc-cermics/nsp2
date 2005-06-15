@@ -126,6 +126,7 @@ extern int GetScalarDouble (Stack stack, int i, double *val);
 extern int *Matd2i (NspMatrix *A, int *imin, int *imax); 
 extern void Bounds (const NspMatrix *A, int *imin, int *imax); 
 extern int *nsp_matrix_boundsbis(const NspMatrix * A, int * imin, int * imax);
+extern void nsp_matrix_boundster(const NspMatrix *A, int *ind, int *imin, int *imax);
 extern int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count);
 extern int *nsp_indices_for_deletions(int mn, const NspMatrix *Elts, int *Count);
 extern NspMatrix *Mat2double (NspMatrix *A); 
@@ -285,10 +286,6 @@ extern int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res
 extern int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B) ;
 extern NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B);
 extern NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B);
-
-/* from lapack */
-
-extern NspMatrix *nsp_mat_bdiv(NspMatrix *A, NspMatrix *B);
 
 
 

@@ -267,6 +267,7 @@ extern int C2F(ztgexc) (int *wantq, int *wantz, int *n, doubleC *a, int *lda, do
 extern int C2F(ztgsen) (int *ijob, int *wantq, int *wantz, int *select, int *n, doubleC *a, int *lda, doubleC *b, int *ldb, doubleC *alpha, doubleC *beta, doubleC *q, int *ldq, doubleC *z, int *ldz, int *m, double *pl, double *pr, double *dif, doubleC *work, int *lwork, int *iwork, int *liwork, int *info);
 extern int C2F(ztgsy2) (char *trans, int *ijob, int *m, int *n, doubleC *a, int *lda, doubleC *b, int *ldb, doubleC *c, int *ldc, doubleC *d, int *ldd, doubleC *e, int *lde, doubleC *f, int *ldf, double *scale, double *rdsum, double *rdscal, int *info, int trans_len);
 extern int C2F(ztgsyl) (char *trans, int *ijob, int *m, int *n, doubleC *a, int *lda, doubleC *b, int *ldb, doubleC *c, int *ldc, doubleC *d, int *ldd, doubleC *e, int *lde, doubleC *f, int *ldf, double *scale, double *dif, doubleC *work, int *lwork, int *iwork, int *info, int trans_len);
+extern int C2F(ztrcon) (char *norm, char *uplo, char *diag, int *n, doubleC *a, int *lda, double *rcond, doubleC *workC, double *work, int *info, int norm_len, int uplo_len, int diag_len);
 extern int C2F(ztrevc) (char *side, char *howmny, int *select, int *n, doubleC *t, int *ldt, doubleC *vl, int *ldvl, doubleC *vr, int *ldvr, int *mm, int *m, doubleC *work, double *rwork, int *info, int side_len, int howmny_len);
 extern int C2F(ztrexc) (char *compq, int *n, doubleC *t, int *ldt, doubleC *q, int *ldq, int *ifst, int *ilst, int *info, int compq_len);
 extern int C2F(ztrsen) (char *job, char *compq, int *select, int *n, doubleC *t, int *ldt, doubleC *q, int *ldq, doubleC *w, int *m, double *s, double *sep, doubleC *work, int *lwork, int *info, int job_len, int compq_len);
@@ -274,6 +275,7 @@ extern int C2F(ztrsyl) (char *trana, char *tranb, int *isgn, int *m, int *n, dou
 extern int C2F(ztrti2) (char *uplo, char *diag, int *n, doubleC *a, int *lda, int *info, int uplo_len, int diag_len);
 extern int C2F(ztrtri) (char *uplo, char *diag, int *n, doubleC *a, int *lda, int *info, int uplo_len, int diag_len);
 extern int C2F(ztzrzf) (int *m, int *n, doubleC *a, int *lda, doubleC *tau, doubleC *work, int *lwork, int *info);
+extern int C2F(ztrtrs) (char *uplo, char *trans, char *diag, int *n, int *nrhs, doubleC *a, int *lda, doubleC *b, int *ldb, int *info, int uplo_len, int trans_len, int diag_len);
 extern int C2F(zung2l) (int *m, int *n, int *k, doubleC *a, int *lda, doubleC *tau, doubleC *work, int *info);
 extern int C2F(zung2r) (int *m, int *n, int *k, doubleC *a, int *lda, doubleC *tau, doubleC *work, int *info);
 extern int C2F(zungbr) (char *vect, int *m, int *n, int *k, doubleC *a, int *lda, doubleC *tau, doubleC *work, int *lwork, int *info, int vect_len);

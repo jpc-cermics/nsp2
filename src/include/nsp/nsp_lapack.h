@@ -16,5 +16,11 @@ extern int nsp_balanc(NspMatrix *A,NspMatrix **D);
 extern int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
 extern int nsp_hess(NspMatrix *A,NspMatrix **U) ;
 extern int nsp_mat_is_symmetric(NspMatrix *A);
+extern int nsp_mat_is_upper_triangular(NspMatrix *A);
+extern int nsp_mat_is_lower_triangular(NspMatrix *A);
 extern int nsp_expm(NspMatrix *A);
+extern int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B);
+extern int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond);
+extern int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info);
+extern int nsp_mat_triangular_cond(NspMatrix *A, char tri_type, double *rcond1);
 #endif 
