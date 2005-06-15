@@ -46,17 +46,23 @@ int LastInterf=0;
 
 static void SciInterInit (void);
 
-/************************************************
- * Dynamically added interface to Scilab 
- * files and enames are null terminated String arrays 
- ************************************************/
+/*
+ * if shared_lib is non null 
+ * tries to link shared_lib and try to get 
+ * interface symbols related to interface in the 
+ * shared library. 
+ * if shared_lib is NULL then ilib gives an already 
+ * linked shared library in which to search symbols 
+ *
+ */
 
-int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface)
+
+int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface,int ilib)
 {
   const char interf[]="_Interf";
   const char interf_info[]="_Interf_Info";
   int n=strlen(interface),k;
-  int i,rhs=2,ilib=0,inum,ninterf;
+  int i,rhs=2,inum,ninterf;
   char *names[3];
   int (*info)();
   
@@ -85,8 +91,13 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
       Scierror("has been reached\n");
       return 1;
     }
-
-  SciDynLoad(shared_lib,names,'c',&ilib,0,&rhs);
+  
+  /* using shared lib with id ilib if shared_lib is null 
+   * or try to link a new shared library given by its name 
+   * shared_lib
+   */
+  
+  SciDynLoad(shared_lib,names,'c',&ilib,( shared_lib == NULL) ? 1 : 0,&rhs);
 
   if ( ilib < 0 ) return ilib;
 

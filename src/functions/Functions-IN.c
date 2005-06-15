@@ -28,6 +28,7 @@
 #include "nsp/interf.h"
 #include "callfunc.h"
 #include "linking.h"
+#include "addinter.h"
 
 static void link_bug (int i);
 
@@ -150,17 +151,24 @@ int int_c_link(Stack stack, int rhs, int opt, int lhs)
  * addinter function 
  */
 
-extern int nsp_dynamic_interface(nsp_const_string shared_path,nsp_const_string interface);
 
 int int_addinter(Stack stack, int rhs, int opt, int lhs)
 {
   int ilib=0;
-  char *Str,*file;
+  char *Str,*file=NULL;
   CheckRhs(2,2);
   CheckLhs(0,1);
-  if ((file = GetString(stack,1)) == NULLSTRING) return RET_BUG;
+  if ( IsMatObj(stack,1)) 
+    {
+      if (GetScalarInt(stack,1,&ilib) == FAIL) return RET_BUG;
+    }
+  else
+    {
+      if ((file = GetString(stack,1)) == NULLSTRING) return RET_BUG;
+    }
   if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
-  ilib = nsp_dynamic_interface(file,Str);
+
+  ilib = nsp_dynamic_interface(file,Str,ilib);
   if ( ilib < 0 ) 
     {
       link_bug(ilib);
