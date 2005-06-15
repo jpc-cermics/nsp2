@@ -4,14 +4,14 @@
  * Copyright Jean-Philippe Chancelier 
  *------------------------------------------------------------------*/
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h> 
-
 #include "nsp/machine.h"
-#include "nsp/matrix-in.h"
-#include "nsp/bmatrix-in.h"
-
+#include "nsp/graphics/Graphics.h" 
+#include "nsp/object.h" 
+#include "nsp/interf.h" 
+#include "nsp/blas.h" 
+#include "nsp/matutil.h" 
+#include "scicos.h"
+#include "scicos_block.h"
 
 struct
 {
@@ -100,7 +100,7 @@ int int_setscicosvars(Stack stack, int rhs, int opt, int lhs)
 
 int int_getlabel(Stack stack, int rhs, int opt, int lhs) 
 {
-  double kf;
+  int kf;
   char *label=NULL;
   NspObject *Ob;
   CheckRhs(0,1);
@@ -108,13 +108,13 @@ int int_getlabel(Stack stack, int rhs, int opt, int lhs)
   /*  checking variable scale */
   if ( rhs == 1 ) 
     {
-      if (GetScalarDouble(stack,1,&kf) == FAIL) return RET_BUG;
+      if (GetScalarInt(stack,1,&kf) == FAIL) return RET_BUG;
     }
   else
     {
       kf = C2F(curblk).kfun;
     }
-  if ( scicos_getscilabel(&kf,&label)== FAIL) 
+  if ( scicos_getscilabel(kf,&label)== FAIL) 
     {
       Scierror("scicosim is not running\n");
       return RET_BUG;

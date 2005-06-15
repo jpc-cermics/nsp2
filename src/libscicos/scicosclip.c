@@ -10,7 +10,7 @@
   
 void scicos_clip(BCG *Xgc,int n) 
 {
-  if ( n== 1) 
+  if ( n == TRUE) 
     frame_clip_on(Xgc);
   else
     frame_clip_off(Xgc);

@@ -8,6 +8,14 @@
 #include "nsp/object.h"
 #include "scicos_block.h"
 
+int scicos_scifunc(  NspObject **Args,int mlhs,int mrhs ) 
+{
+  Scierror("To be done scicos_scifunc_n");
+  return  FAIL;
+
+}
+
+
 NspMatrix *scicos_itosci(const int x[],int mx,int nx) 
 {
   int i;
@@ -289,7 +297,7 @@ void sciblk4(scicos_block *Blocks, int flag)
   if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->jroot,Blocks->ng,1))== NULL) goto err;
   if ((Args[p++]= (NspObject *)  scicos_str2sci(Blocks->label,1,1))== NULL) goto err;
   if ((Args[p++]= (NspObject *)  scicos_vvtosci(Blocks->work,0))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->nmode,1,1))== NULL) goto err;
+  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nmode,1,1))== NULL) goto err;
   if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->mode,Blocks->nmode,1))== NULL) goto err; 
   if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->mode,Blocks->nmode,1))== NULL) goto err; 
 

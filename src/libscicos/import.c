@@ -153,7 +153,7 @@ void scicos_clearscicosimport(void)
  * type  type of the imported data 0:int,1:double 
  */
 
-int  scicos_getscicosvars(int *what, double **v, int *nv, int *type)
+int  scicos_getscicosvars(int what, double **v, int *nv, int *type)
 {
   int nblk;
   if (scicos_imp.x == NULL)
@@ -163,7 +163,7 @@ int  scicos_getscicosvars(int *what, double **v, int *nv, int *type)
     }
   nblk=scicos_imp.nblk;
   /* imported from */
-  switch (*what) 
+  switch (what) 
     {
     case 1 :			/* continuous state */
       *nv=(int) (scicos_imp.xptr[nblk]-scicos_imp.xptr[0]);
@@ -245,9 +245,9 @@ int  scicos_getscicosvars(int *what, double **v, int *nv, int *type)
 }
 
 
-void  scicos_getlabel(int *kfun,char **label)
+char *scicos_getlabel(int kfun)
 {
-  *label = scicos_imp.izptr[*kfun];
+  return scicos_imp.izptr[kfun];
 }
 
 
@@ -294,13 +294,13 @@ int scicos_getsciblockbylabel(int *kfun,const char *label)
   return FAIL;
 }
 
-int scicos_getscilabel(int *kfun,char **label)
+int scicos_getscilabel(int kfun,char **label)
 {
   if (scicos_imp.x==(double *)NULL) 
     {
       return FAIL; /* undefined import table scicos is not running */
     }
-  *label = scicos_imp.izptr[*kfun];
+  *label = scicos_imp.izptr[kfun];
   return OK;
 }
 

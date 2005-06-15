@@ -1,17 +1,35 @@
 #include <math.h>
 #include "nsp/machine.h"
+#include "nsp/graphics/Graphics.h" 
+#include "nsp/object.h" 
+#include "nsp/blas.h" 
+#include "nsp/matutil.h" 
+#include "scicos.h"
 #include "scicos_block.h"
-
-extern int C2F(getlabel)();
-extern int C2F(dset)();
-extern int C2F(plot2d)(), C2F(setscale2d)();
-extern int C2F(sciwin)(), C2F(dr1)(), C2F(scicosclip)();
 
 #if WIN32
 extern double asinh(double x);
 extern double acosh(double x);
 extern double atanh(double x);
 #endif
+
+static BCG *scicos_set_win(int wid,int *oldwid)
+{
+  BCG *Xgc;
+  if ((Xgc = window_list_get_first()) != NULL)
+    {
+      *oldwid = Xgc->graphic_engine->xget_curwin();
+      if ( *oldwid != wid) 
+	Xgc->graphic_engine->xset_curwin(Max(wid,0),TRUE);
+    }
+  else 
+    {
+      Xgc= set_graphic_window(Max(wid,0));
+    }
+  return Xgc;
+}
+
+
 
 
 void  absolute_value(scicos_block *block,int flag)
@@ -333,9 +351,9 @@ void gainblk(scicos_block *block,int flag)
       block->outptr[0][i]=block->rpar[0]*block->inptr[0][i];
     }
   }else{
-    C2F(dmmul)(block->rpar,&block->outsz[0],block->inptr[0],
-	       &block->insz[0],block->outptr[0],&block->outsz[0],
-	       &block->outsz[0],&block->insz[0],&un);
+    dmmul_scicos(block->rpar,&block->outsz[0],block->inptr[0],
+		 &block->insz[0],block->outptr[0],&block->outsz[0],
+		 &block->outsz[0],&block->insz[0],&un);
   }
 }
 
@@ -373,8 +391,8 @@ void time_delay(scicos_block *block,int flag)
     t=get_scicos_time();
     td=t-block->rpar[0];
     if(td<pw[*iw]){
-      sciprint("delayed time=%f but last stored time=%f \r\n", td, pw[*iw]);
-      sciprint("Conisder increasing the length of buffer in delay block \r\n");
+      Sciprintf("delayed time=%f but last stored time=%f \r\n", td, pw[*iw]);
+      Sciprintf("Conisder increasing the length of buffer in delay block \r\n");
     }
 
     if (t>pw[(block->ipar[0]+*iw-1)%block->ipar[0]]){
@@ -595,7 +613,7 @@ void summation(scicos_block *block,int flag)
 
 void  switch2(scicos_block *block,int flag)
 {
-  int i,j,phase;
+  int i=0,j,phase;
   if (flag == 1) {
     phase=get_phase_simulation();
     if (phase==1){
@@ -1004,7 +1022,7 @@ void  modulo_count(scicos_block *block,int flag)
 
 void  mswitch(scicos_block *block,int flag)
 {
-  int i,j;
+  int i,j=0;
   i=block->ipar[1];
   if (i==0) {
     if (*block->inptr[0]>0) {
@@ -1062,10 +1080,13 @@ void product(scicos_block *block,int flag)
   }
 }
 
+/*
+ * rpar[0]=rising rate limit, rpar[1]=falling rate limit 
+ */
 
 void ratelimiter(scicos_block *block,int flag)
-{/*  rpar[0]=rising rate limit, rpar[1]=falling rate limit */
-  double* pw,rate,t;
+{
+  double *pw,rate=0.0,t;
   if (flag == 4){/* the workspace is used to store previous values */
     if ((*block->work=
 	 scicos_malloc(sizeof(double)*4))== NULL ) {
@@ -1408,13 +1429,13 @@ void bounce_ball(scicos_block *block,int flag)
 
 void bouncexy(scicos_block *block,int flag)
 {
-
-  static int c__1 = 1;
-  static int c__0 = 0;
-  static int c_n1 = -1;
-  static int c__3 = 3;
-  static int c__5 = 5;
-
+  char *str;
+  BCG *Xgc=NULL;
+  int c__1 = 1;
+  int c_n1 = -1;
+  int c__5 = 5;
+  int c__0 = 0;
+  int c__3 = 3;
   int nevprt=block->nevprt;
   double t;
   double *z__;
@@ -1426,15 +1447,12 @@ void bouncexy(scicos_block *block,int flag)
 
  
   static int cur = 0;
-  static int verb = 0;
   static int c400=400;
   int i__1;
   
   static double rect[4];
   static double xmin, ymin, xmax, ymax;
-  static int i__, n, v;
-  static int na;
-  static double dv;
+  static int i__, n;
   static int on;
   static double zz[10];
   static int nxname;
@@ -1476,30 +1494,21 @@ void bouncexy(scicos_block *block,int flag)
   if (flag == 2) {
     wid = ipar[1];
     n = nu;
-    
-    C2F(dr1)("xget\000", "window\000", &verb, &cur, &na, &v, &v, &v, &dv, &dv,
-	     &dv, &dv);
-    if (cur != wid) {
-      C2F(dr1)("xset\000", "window\000", &wid, &v, &v, &v, &v, &v, &dv, &dv,
-	       &dv, &dv);
-    }
-    C2F(dr1)("xsetdr\000", "X11\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	     dv);
+    Xgc = scicos_set_win(wid,&cur);
+    Xgc->graphic_engine->xset_recording(Xgc,FALSE);
     rect[0] = xmin;
     rect[1] = ymin;
     rect[2] = xmax;
     rect[3] = ymax;
-    C2F(plot2d)(rect, &rect[1], &c__1, &c__1, &c_n1, "030", buf, rect, nax);
+    nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "030", buf,0, rect, nax);
     /*     draw new point */
     i__1 = nu;
     for (i__ = 1; i__ <= i__1; ++i__) {
       z__[(i__ - 1) * 6 + 1] = u[i__] - z__[(i__ - 1) * 6 + 3] / 2;
       z__[(i__ - 1) * 6 + 2] = y[i__] + z__[(i__ - 1) * 6 + 4] / 2;
     }
-    C2F(dr1)("xset\000", "wwpc\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	     dv);
-    C2F(dr1)("xfarcs\000", "v\000", &v, &ipar[3], &n, &v, &v, &v, &z__[1], &
-	     dv, &dv, &dv);
+    Xgc->graphic_engine->xset_pixmapclear(Xgc);
+    Xgc->graphic_engine->scale->fillarcs(Xgc,&z__[1],&ipar[3],n);
     xmin = rpar[1];
     xmax = rpar[2];
     ymin = rpar[3];
@@ -1514,9 +1523,8 @@ void bouncexy(scicos_block *block,int flag)
     zz[7] = ymin;
     zz[8] = ymax;
     zz[9] = ymax;
-    C2F(dr1)("xpolys\000", "v\000", &v, &v, &c__1, &c__1, &c__5, &v, zz, &zz[5], &dv, &dv);
-    C2F(dr1)("xset\000", "wshow\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	     dv);
+    Xgc->graphic_engine->scale->drawpolylines(Xgc, zz, &zz[5], &c__1, c__1, c__5);
+    Xgc->graphic_engine->xset_show(Xgc);
   } else if (flag == 4) {
     wid = ipar[1];
     n = nu;
@@ -1528,39 +1536,23 @@ void bouncexy(scicos_block *block,int flag)
     nax[1] = 10;
     nax[2] = 2;
     nax[3] = 10;
-    C2F(sciwin)();
-
-    C2F(dr1)("xset\000", "window\000", &wid, &v, &v, &v, &v, &v, &dv, &dv,
-	     &dv, &dv);
-    
-    C2F(dr1)("xset\000", "wdim\000", &c400, &c400, &v, &v, &
-	     v, &v, &dv, &dv, &dv, &dv);
-    C2F(dr1)("xset\000", "window\000", &wid, &v, &v, &v, &v, &v, &dv, &dv,
-	     &dv, &dv);
-
-    C2F(dr1)("xsetdr\000", "X11\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	     dv);
+    Xgc = scicos_set_win(wid,&cur);
+    Xgc->graphic_engine->xset_windowdim(Xgc,c400,c400);
+    Xgc = scicos_set_win(wid,&cur);
+    Xgc->graphic_engine->xset_recording(Xgc,FALSE);
     on = 1;
-    C2F(dr1)("xset\000", "pixmap\000", &on, &v, &v, &v, &v, &v, &dv, &dv, &dv,
-	     &dv);
+    Xgc->graphic_engine->scale->xset_pixmapOn(Xgc,on);
     rect[0] = xmin;
     rect[1] = ymin;
     rect[2] = xmax;
     rect[3] = ymax;
-    C2F(dr1)("xset\000", "use color\000", &c__1, &c__0, &c__0, &c__0, &c__0, &
-	     v, &dv, &dv, &dv, &dv);
-    C2F(dr1)("xset\000", "alufunction\000", &c__3, &c__0, &c__0, &c__0, &c__0,
-	     &v, &dv, &dv, &dv, &dv);
-    C2F(dr1)("xclear\000", "v\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	     dv);
-    C2F(dr)("xstart\000", "v\000", &wid, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	    dv);
-    C2F(dr1)("xset\000", "thickness\000", &c__1, &v, &v, &v, &v, &v, &dv, &dv,
-	     &dv, &dv);
-    C2F(dr1)("xset\000", "dashes\000", &c__0, &c__0, &c__0, &c__0, &c__0, &v, 
-	     &dv, &dv, &dv, &dv);
-    C2F(plot2d)(rect, &rect[1], &c__1, &c__1, &c_n1, "030", buf, rect, nax);
-
+    Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
+    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
+    Xgc->graphic_engine->clearwindow(Xgc);
+    Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
+    Xgc->graphic_engine->xset_thickness(Xgc,c__1);
+    Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
+    nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "030", buf,0, rect, nax);
     zz[0] = xmin;
     zz[1] = xmin;
     zz[2] = xmax;
@@ -1571,57 +1563,46 @@ void bouncexy(scicos_block *block,int flag)
     zz[7] = ymin;
     zz[8] = ymax;
     zz[9] = ymax;
-    C2F(dr1)("xpolys\000", "v\000", &v, &v, &c__1, &c__1, &c__5, &v, zz, &zz[5], &dv, &dv);
-    C2F(dr1)("xset\000", "wshow\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	     dv);
+    Xgc->graphic_engine->scale->drawpolylines(Xgc,zz, &zz[5],&c__1, c__1, c__5);
+    Xgc->graphic_engine->xset_show(Xgc);
     nxname = 40;
     kfun=get_block_number();
-    C2F(getlabel)(&kfun, buf, &nxname);
-    if (nxname > 39) {
-      nxname = 39;
-    }
-    i__1 = nxname;
-    *(buf+i__1)=*"\000";
-    if ((nxname == 1 && *(unsigned char *)buf == ' ') || nxname == 0) {
-    } else {
-      C2F(dr)("xname\000", buf, &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &dv);
-    }
-    C2F(sxevents)();
+    str = scicos_getlabel(kfun);
+    if ( str != NULL && strlen(str) != 0) 
+      Xgc->graphic_engine->setpopupname(Xgc,buf);
+    /* XXXXXXXXX C2F(sxevents)(); */
   }
-  C2F(dr1)("xsetdr\000", "Rec\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	   dv);
+  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
 } 
 
 
 
 void cscope(scicos_block *block,int flag)
 {
+  char *str;
+  BCG *Xgc;
+  static int c_n1 = -1;
+  static int c__3 = 3;
+  static double frect[4] = { 0.,0.,1.,1. };
+  int kfun;
+  static int nxname;
+  static char buf[40];
   static int c__1 = 1;
   static int c__0 = 0;
-  static int c_n1 = -1;
-  static int c__4 = 4;
-  static int c__21 = 21;
-  static int c__3 = 3;
   static double c_b84 = 0.;
 
   double t;
   double *z__;
   double *rpar;
-  int *ipar, nipar,nu,kfun;
-  /* Initialized data */
-  static double frect[4] = { 0.,0.,1.,1. };
+  int *ipar, nipar,nu;
   static int cur = 0;
-  static int verb = 0;
   int i__1,i;
   static double rect[4];
   static double ymin, ymax;
-  static int i__, k, n, v;
+  static int i__, k, n;
   static double tsave;
   static int n1, n2;
-  static int na;
-  static double dt, dv;
-  static int nxname;
-  static char buf[40];
+  static double dt;
   static int wid, iwd;
   static double per;
   static int nax[4], iwp;
@@ -1701,21 +1682,14 @@ void cscope(scicos_block *block,int flag)
 	return ;
       }
       /*     plot 1:K points of the buffer */
-      C2F(dr1)("xget\000", "window\000", &verb, &cur, &na, &v, &v, &v, &dv, &dv,
-	       &dv, &dv);
-      if (cur != wid) {
-	C2F(dr1)("xset\000", "window\000", &wid, &v, &v, &v, &v, &v, &dv, &dv,
-		 &dv, &dv);
-      }
-      C2F(dr1)("xsetdr\000", "Rec\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	       dv);
+      Xgc = scicos_set_win(wid,&cur);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
       if (k > 0) {
-	C2F(scicosclip)(&c__1);
+ 	scicos_clip(Xgc,TRUE);
 	for (i__ = 0; i__ < nu; ++i__) {
-	  C2F(dr1)("xpolys\000", "v\000", &v, &v, &ipar[i__ + 4], &c__1, &k,
-		   &v, &z__[2], &z__[n + 2 + i__  * n], &dv, &dv);
+	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + i__  * n], &ipar[i__ + 4], c__1, k);
 	}
-	C2F(scicosclip)(&c__0);
+	scicos_clip(Xgc,FALSE);
       }
       /*     shift buffer left */
       z__[2] = z__[k + 1];
@@ -1729,20 +1703,15 @@ void cscope(scicos_block *block,int flag)
 	nax[1] = 10;
 	nax[2] = 2;
 	nax[3] = 6;
-	C2F(dr1)("xclear\000", "v\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv,
-		 &dv);
-	C2F(dr1)("xset\000", "use color\000", &ipar[2], &c__0, &c__0, &c__0, &
-		 c__0, &v, &dv, &dv, &dv, &dv);
-	C2F(dr)("xstart\000", "v\000", &wid, &v, &v, &v, &v, &v, &dv, &dv, &
-		dv, &dv);
+	Xgc->graphic_engine->clearwindow(Xgc);
+	Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
+	Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
 	rect[0] = per * (n1 + 1);
 	rect[1] = ymin;
 	rect[2] = per * (n1 + 2);
 	rect[3] = ymax;
-	C2F(dr1)("xset\000", "dashes\000", &c__0, &c__0, &c__0, &c__0, &c__0, 
-		 &v, &dv, &dv, &dv, &dv);
-	C2F(plot2d)(rect, &rect[1], &c__1, &c__1, &c_n1, "011", buf, rect, nax,
-		    &c__4, &c__21);
+	Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
+	nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011", buf,0, rect, nax);
       }
       t = tsave;
       
@@ -1772,56 +1741,37 @@ void cscope(scicos_block *block,int flag)
       if (t <= 0.) {
 	--n1;
       }
-      C2F(sciwin)();
-      C2F(dr1)("xset\000", "window\000", &wid, &v, &v, &v, &v, &v, &dv, &dv, &
-	       dv, &dv);
-      C2F(dr1)("xsetdr\000", "Rec\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	       dv);
+      Xgc = scicos_set_win(wid,&cur);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
       if (ipar[iwp] >= 0) {
-	C2F(dr1)("xset\000", "wpos\000", &ipar[iwp], &ipar[iwp + 1], &v, &v, &
-		 v, &v, &dv, &dv, &dv, &dv);
+	Xgc->graphic_engine->xset_windowpos(Xgc,ipar[iwp], ipar[iwp + 1]);
       }
       if (ipar[iwd] >= 0) {
-	C2F(dr1)("xset\000", "wdim\000", &ipar[iwd], &ipar[iwd + 1], &v, &v, &
-		 v, &v, &dv, &dv, &dv, &dv);
-	/*     to force dimensions update */
-	C2F(dr1)("xset\000", "window\000", &wid, &v, &v, &v, &v, &v, &dv, &dv,
-		 &dv, &dv);
+	int cur1;
+	Xgc->graphic_engine->xset_windowdim(Xgc,ipar[iwd], ipar[iwd + 1]);
+	Xgc = scicos_set_win(wid,&cur1);
       }
       rect[0] = per * (n1 + 1);
       rect[1] = ymin;
       rect[2] = per * (n1 + 2);
       rect[3] = ymax;
-      C2F(setscale2d)(frect, rect, "nn\000");
-      C2F(dr1)("xset\000", "use color\000", &ipar[2], &c__0, &c__0, &c__0, &
-	       c__0, &v, &dv, &dv, &dv, &dv);
-      C2F(dr1)("xset\000", "alufunction\000", &c__3, &c__0, &c__0, &c__0, &c__0,
-	       &v, &dv, &dv, &dv, &dv);
-      C2F(dr1)("xclear\000", "v\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	       dv);
-      C2F(dr)("xstart\000", "v\000", &wid, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	      dv);
-      C2F(dr1)("xset\000", "dashes\000", &c__0, &c__0, &c__0, &c__0, &c__0, &v, 
-	       &dv, &dv, &dv, &dv);
-      C2F(plot2d)(rect, &rect[1], &c__1, &c__1, &c_n1, "011", buf, rect, nax, &
-		  c__4, &c__21);
-      C2F(scicosclip)(&c__1);
+      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
+      Xgc->graphic_engine->clearwindow(Xgc);
+      Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
+      Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
+      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011", buf,0, rect, nax);
+      scicos_clip(Xgc,TRUE);
       nxname = 40;
       kfun=get_block_number();
-      C2F(getlabel)(&kfun, buf, &nxname);
-      if (nxname > 39) {
-	nxname = 39;
-      }
-      i__1 = nxname;
-      *(buf+i__1)=*"\000";
-      if ((nxname == 1 && *(unsigned char *)buf == ' ') || (nxname == 0)) {
-      } else {
-	C2F(dr)("xname\000", buf, &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &dv);
-      }
+      str = scicos_getlabel(kfun);
+      if ( str != NULL && strlen(str) != 0) 
+      Xgc->graphic_engine->setpopupname(Xgc,buf);
       z__[1] = 0.;
       z__[2] = t;
       i__1 = nu * n;
-      C2F(dset)(&i__1, &c_b84, &z__[3], &c__1);
+      nsp_dset(&i__1, &c_b84, &z__[3], &c__1);
     } 
   else if (flag == 5) 
     {
@@ -1833,18 +1783,12 @@ void cscope(scicos_block *block,int flag)
 	scicos_free(*block->work);
 	return ;
       }
-      C2F(dr1)("xget\000", "window\000", &verb, &cur, &na, &v, &v, &v, &dv, &dv,
-	       &dv, &dv);
-      if (cur != wid) {
-	C2F(dr1)("xset\000", "window\000", &wid, &v, &v, &v, &v, &v, &dv, &dv,
-		 &dv, &dv);
-      }
-      C2F(scicosclip)(&c__1);
+      Xgc = scicos_set_win(wid,&cur);
+      scicos_clip(Xgc,TRUE);
       for (i__ = 0; i__ < nu; ++i__) {
-	C2F(dr1)("xpolys\000", "v\000", &v, &v, &ipar[i__ + 4], &c__1, &k, &v,
-		 &z__[2], &z__[n + 2 + i__ * n], &dv, &dv);
+	Xgc->graphic_engine->scale->drawpolylines(Xgc, &z__[2], &z__[n + 2 + i__ * n],&ipar[i__ + 4], c__1, k);
       }
-      C2F(scicosclip)(&c__0);
+      scicos_clip(Xgc,FALSE);
       scicos_free(*block->work);
     }
 }
@@ -1854,32 +1798,32 @@ void cscope(scicos_block *block,int flag)
 
 void cmscope(scicos_block *block,int flag)
 {
+  int c_n1=-1;
+  char *str;
+  BCG *Xgc;
+  static int c__3 = 3;
   static int c__1 = 1;
   static int c__0 = 0;
-  static int c_n1 = -1;
-  static int c__3 = 3;
   static double c_b103 = 0.;
-
+  int iwp,iwd;
   double t;
   double *z__;
   double *rpar;
   int *ipar, nipar,nu;
   static int cur = 0;
-  static int verb = 0;
   int i__1, i__2, i__3,nwid,kk,i,j,sum;
   int kfun;  
   static double rect[4];
   static int kwid;
-  static int i__, k, n, v;
+  static int i__, k, n;
   static double frect[4], tsave;
   static int n1, n2;
-  static int na;
-  static double dt, dv;
+  static double dt;
   static int it, nxname;
   static char buf[40];
-  static int wid, iwd;
+  static int wid;
   static double per;
-  static int nax[4], ilt, iwp;
+  static int nax[4], ilt;
 
   /*     Scicos block simulator */
   /*     ipar(1) = win_num */
@@ -1937,7 +1881,7 @@ void cmscope(scicos_block *block,int flag)
     if (t < 0.) {
       --n2;
     }
-
+    
     /*     add new point to the buffer */
     ++k;
     z__[k + 1] = t;
@@ -1956,18 +1900,10 @@ void cmscope(scicos_block *block,int flag)
 
 
     /*     plot 1:K points of the buffer */
-    C2F(dr1)("xget\000", "window\000", &verb, &cur, &na, &v, &v, &v, &dv, &dv,
-	     &dv, &dv);
-    if (cur != wid) {
-      C2F(dr1)("xset\000", "window\000", &wid, &v, &v, &v, &v, &v, &dv, &dv,
-	       &dv, &dv);
-    }
-    C2F(dr1)("xset\000", "use color\000", &c__1, &c__0, &c__0, &c__0, &c__0, &
-	     v, &dv, &dv, &dv, &dv);
-    C2F(dr1)("xset\000", "dashes\000", &c__0, &c__0, &c__0, &c__0, &c__0, &v, 
-	     &dv, &dv, &dv, &dv);
-    C2F(dr1)("xsetdr\000", "Rec\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	     dv);
+    Xgc = scicos_set_win(wid,&cur);
+    Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
+    Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
+    Xgc->graphic_engine->xset_recording(Xgc,TRUE);
     ilt = ipar[2] + 8;
     it = 0;
     /*     loop on input ports */
@@ -1982,17 +1918,15 @@ void cmscope(scicos_block *block,int flag)
 	frect[1] = (kwid - 1) * (1. / nwid);
 	frect[2] = 1.;
 	frect[3] = 1. / nwid;
-	C2F(setscale2d)(frect, rect, "nn\000");
-	C2F(scicosclip)(&c__1);
+	Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	scicos_clip(Xgc,TRUE);
 	/*     loop on input port elements */
 	i__2 = ipar[kwid + 7];
 	for (i__ = 1; i__ <= i__2; ++i__) {
-	  C2F(dr1)("xpolys\000", "v\000", &v, &v, &ipar[ilt + it], &
-		   c__1, &k, &v, &z__[2], &z__[n + 2 + it * n], &dv, 
-		   &dv);
+	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + it * n], &ipar[ilt + it], c__1, k);
 	  ++it;
 	}
-	C2F(scicosclip)(&c__0);
+	scicos_clip(Xgc,FALSE);
       }
     }
     /*     shift buffer left */
@@ -2011,16 +1945,13 @@ void cmscope(scicos_block *block,int flag)
       nax[1] = 10;
       nax[2] = 2;
       nax[3] = 6;
-      C2F(dr1)("xclear\000", "v\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv,
-	       &dv);
-      C2F(dr1)("xset\000", "use color\000", &c__1, &c__0, &c__0, &c__0, &
-	       c__0, &v, &dv, &dv, &dv, &dv);
-      C2F(dr)("xstart\000", "v\000", &wid, &v, &v, &v, &v, &v, &dv, &dv, &
-	      dv, &dv);
-      C2F(dr1)("xset\000", "dashes\000", &c__0, &c__0, &c__0, &c__0, &c__0, 
-	       &v, &dv, &dv, &dv, &dv);
+      Xgc->graphic_engine->clearwindow(Xgc);
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
+      Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
+      Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       i__1 = nwid;
       for (kwid = 1; kwid <= i__1; ++kwid) {
+	
 	rect[0] = per * (n1 + 1);
 	rect[1] = rpar[(kwid << 1) + 1];
 	rect[2] = per * (n1 + 2);
@@ -2029,13 +1960,11 @@ void cmscope(scicos_block *block,int flag)
 	frect[1] = (kwid - 1) * (1. / nwid);
 	frect[2] = 1.;
 	frect[3] = 1. / nwid;
-	C2F(setscale2d)(frect, rect, "nn\000");
-	C2F(plot2d)(rect, &rect[1], &c__1, &c__1, &c_n1, "011", "xlines", rect, 
-		    nax);
+	Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","xlines",0, rect, nax);
       }
     }
     t = tsave;
-
   } else if (flag == 4) {
     sum=0;
     for (i=0;i<block->nin;++i){
@@ -2057,47 +1986,26 @@ void cmscope(scicos_block *block,int flag)
     if (t <= 0.) {
       --n1;
     }
-    C2F(sciwin)();
-    C2F(dr1)("xget\000", "window\000", &verb, &cur, &na, &v, &v, &v, &dv, &dv,
-	     &dv, &dv);
-    if (cur != wid) {
-      C2F(dr1)("xset\000", "window\000", &wid, &v, &v, &v, &v, &v, &dv, &dv,
-	       &dv, &dv);
-    }
+    Xgc = scicos_set_win(wid,&cur);
     iwp = 4;
     if (ipar[iwp] >= 0) {
-      C2F(dr1)("xset\000", "wpos\000", &ipar[iwp], &ipar[iwp + 1], &v, &v, &
-	       v, &v, &dv, &dv, &dv, &dv);
+      Xgc->graphic_engine->xset_windowpos(Xgc,ipar[iwp], ipar[iwp + 1]);
     }
     iwd = 6;
     if (ipar[iwd] >= 0) {
-      C2F(dr1)("xset\000", "wdim\000", &ipar[iwd], &ipar[iwd + 1], &v, &v, &
-	       v, &v, &dv, &dv, &dv, &dv);
+      Xgc->graphic_engine->xset_windowdim(Xgc,ipar[iwd], ipar[iwd + 1]);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
+      Xgc->graphic_engine->clearwindow(Xgc);
+      Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
+      Xgc->graphic_engine->scale->xset_dash(Xgc,c__0); 
     }
-    C2F(dr1)("xsetdr\000", "Rec\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	     dv);
-    C2F(dr1)("xset\000", "use color\000", &c__1, &c__0, &c__0, &c__0, &c__0, &
-	     v, &dv, &dv, &dv, &dv);
-    C2F(dr1)("xset\000", "alufunction\000", &c__3, &c__0, &c__0, &c__0, &c__0,
-	     &v, &dv, &dv, &dv, &dv);
-    C2F(dr1)("xclear\000", "v\000", &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	     dv);
-    C2F(dr)("xstart\000", "v\000", &wid, &v, &v, &v, &v, &v, &dv, &dv, &dv, &
-	    dv);
-    C2F(dr1)("xset\000", "dashes\000", &c__0, &c__0, &c__0, &c__0, &c__0, &v, 
-	     &dv, &dv, &dv, &dv);
     nxname = 40;
     kfun=get_block_number();
-    C2F(getlabel)(&kfun, buf, &nxname);
-    if (nxname > 39) {
-      nxname = 39;
-    }
-    i__1 = nxname;
-    *(buf+i__1)=*"\000";
-    if ((nxname == 1 && *(unsigned char *)buf == ' ') || nxname == 0) {
-    } else {
-      C2F(dr)("xname\000", buf, &v, &v, &v, &v, &v, &v, &dv, &dv, &dv, &dv);
-    }
+    str = scicos_getlabel(kfun);
+    if ( str != NULL && strlen(str) != 0) 
+      Xgc->graphic_engine->setpopupname(Xgc,buf);
     i__1 = nwid;
     for (kwid = 1; kwid <= i__1; ++kwid) {
       rect[0] = per * (n1 + 1);
@@ -2108,15 +2016,16 @@ void cmscope(scicos_block *block,int flag)
       frect[1] = (kwid - 1) * (1. / nwid);
       frect[2] = 1.;
       frect[3] = 1. / nwid;
-      C2F(setscale2d)(frect, rect, "nn\000");
-      C2F(plot2d)(rect, &rect[1], &c__1, &c__1, &c_n1, "011", buf, rect, nax);
+      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "010", buf,0, rect, nax);
     }
     
     z__[1] = 0.;
     z__[2] = t;
     i__1 = sum * n;
-    C2F(dset)(&i__1, &c_b103, &z__[3], &c__1);
-  } else if (flag == 5) {
+    nsp_dset(&i__1, &c_b103, &z__[3], &c__1);
+    }
+    else if (flag == 5) {
     z__=*block->work; 
     --z__;
     k = (int) z__[1];
@@ -2124,15 +2033,8 @@ void cmscope(scicos_block *block,int flag)
       scicos_free(*block->work);
       return ;
     }
-    C2F(dr1)("xget\000", "window\000", &verb, &cur, &na, &v, &v, &v, &dv, &dv,
-	     &dv, &dv);
-    if (cur != wid) {
-      C2F(dr1)("xset\000", "window\000", &wid, &v, &v, &v, &v, &v, &dv, &dv,
-	       &dv, &dv);
-    }
-    C2F(dr1)("xset\000", "use color\000", &c__1, &c__0, &c__0, &c__0, &c__0, &
-	     v, &dv, &dv, &dv, &dv);
-    
+    Xgc = scicos_set_win(wid,&cur);
+    Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
     ilt = ipar[2] + 8;
     it = 0;
     n1 =  (int) (z__[k + 1] / per);
@@ -2148,21 +2050,21 @@ void cmscope(scicos_block *block,int flag)
       frect[1] = (kwid - 1) * (1. / nwid);
       frect[2] = 1.;
       frect[3] = 1. / nwid;
-      F2C(setscale2d)(frect, rect, "nn\000");
-      F2C(scicosclip)(&c__1);
+      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      scicos_clip(Xgc,TRUE);
       /*     loop on input port elements */
       i__2 = ipar[kwid + 7];
       for (i__ = 1; i__ <= i__2; ++i__) {
 	i__3 = k - 1;
-	C2F(dr1)("xpolys\000", "v\000", &v, &v, &ipar[ilt + it], &c__1, &
-		 i__3, &v, &z__[2], &z__[n + 2 + it * n], &dv, &dv);
+	Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + it * n],&ipar[ilt + it], c__1, i__3);
 	++it;
       }
-      C2F(scicosclip)(&c__0);
+      scicos_clip(Xgc,FALSE);
     }
     scicos_free(*block->work);
   }
-} 
+  }
+  
 
 void scalar2vector(scicos_block *block,int flag)
 {

@@ -1,5 +1,9 @@
-static doublereal c_b4 = 1.;
-static doublereal c_b5 = 0.;
+#include "nsp/machine.h"
+#include "nsp/object.h"
+#include "nsp/blas.h"
+
+static double c_b4 = 1.;
+static double c_b5 = 0.;
 
 /*     PURPOSE 
  *        computes the matrix product C = A * B 

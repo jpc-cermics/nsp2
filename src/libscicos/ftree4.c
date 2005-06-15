@@ -1,7 +1,7 @@
 #include "scicos_block.h"
 
-int ftree4scicos_ (int *vec, int *nb, int *nd, int *nnd, int *typr, int *outoin,
-		   int *outoinptr, int *r1, int *r2, int *nr)
+int scicos_ftree4(int *vec, int *nb, int *nd, int *nnd, int *typr, int *outoin,
+		  int *outoinptr, int *r1, int *r2, int *nr)
 {
   int i1, i2, i3;
   int fini, nprt, i, j, k, ii;

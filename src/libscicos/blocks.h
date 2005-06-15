@@ -131,9 +131,8 @@ extern void acosh_blk (ARGS_scicos);
 extern void atanh_blk (ARGS_scicos);
 extern void evtvardly (ARGS_scicos);
  
-/*
-OpTab tabsim[] ={
-{"absblk",(ScicosF) F2C(absblk)},
+scicos_block_table  tabsim[] ={
+  /* {"absblk",(ScicosF) F2C(absblk)},
 {"absolute_value",(ScicosF) absolute_value},
 {"acos_blk",(ScicosF) acos_blk},
 {"acosh_blk",(ScicosF) acosh_blk},
@@ -259,8 +258,10 @@ OpTab tabsim[] ={
 {"writef",(ScicosF) F2C(writef)},
 {"zcross2",(ScicosF) zcross2},
 {"zcross",(ScicosF) F2C(zcross)},
-{(char *) 0, (ScicosF) 0}};
- */
+*/
+{(char *) 0, (ScicosF) 0}
+};
+
 
 int ntabsim= 126 ;
 #endif 

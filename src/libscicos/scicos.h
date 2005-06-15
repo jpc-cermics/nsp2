@@ -11,9 +11,6 @@ of type 0 */
 
 /* common for ? */
 
-extern struct {
-  int ptr;
-} C2F(scsptr);
 
 /* scicos common for debug */
 
@@ -69,11 +66,12 @@ typedef void (*ScicosFi2) (ARGS_scicosi2);
 typedef void (*ScicosFi2z) (ARGS_scicosi2z);
 typedef void (*ScicosF4) (ARGS_scicos4);
 
-typedef  struct  {
+typedef struct _scicos_block_table scicos_block_table ;
+
+struct _scicos_block_table  {
   char *name;
   ScicosF fonc;
-} XXOpTab ;
-
+};
 
 #include "scicos-proto.h"
 

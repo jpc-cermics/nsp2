@@ -40,15 +40,18 @@ int MlistGetFieldNumber(int *ptr, const char *string)
   int nf, longueur, istart, k, ilocal, retval;
   int *headerstr;
   static char str[24];
- 
+  /* FIXME :
   headerstr = listentry(ptr,1);
+  */
   nf=headerstr[1]*headerstr[2]-1;  /* number of fields */
   retval=-1;
   for (k=0; k<nf; k++) {
     longueur=Min(headerstr[6+k]-headerstr[5+k],24);  /* size of kth fieldname */
     istart=5+nf+headerstr[5+k];    /* start of kth fieldname code */
     /*    istart=8+headerstr[4+nf+k]; */
+    /* FIXME :  
     C2F(cvstr)(&longueur, &headerstr[istart], str, (ilocal=1, &ilocal),longueur);
+    */
     str[longueur]='\0';
     if (strcmp(string, str) == 0) {
       retval=k+2;

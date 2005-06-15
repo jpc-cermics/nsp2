@@ -5,6 +5,7 @@
 #include "nsp/graphics/Graphics.h" 
 #include "nsp/object.h" 
 #include "nsp/blas.h" 
+#include "nsp/matutil.h" 
 #include "scicos.h"
 #include "import.h"
 #include "blocks.h"
@@ -52,21 +53,14 @@ void putevs(double *,int *,int *);
 void free_blocks(void);
 int setmode(double *,double *,double *,int *,double);
 
-extern void  F2C(sciblk)();
+extern void  scicos_sciblk();
 extern void  sciblk2();
 extern void  sciblk4();
 extern void  GetDynFunc(int, void (**) (/* ??? */));
-extern void  sciprint();
-extern void  C2F(iislink)();
-extern  int C2F(cvstr)();
-extern  int C2F(dset)();
 extern  int C2F(dcopy)();
-extern  int C2F(iset)();
 extern  int C2F(realtime)();
 extern  int C2F(realtimeinit)();
-extern  int C2F(sxevents)();
 extern  int C2F(stimer)();
-extern  int C2F(xscion)();
 extern  int C2F(ddaskr)();
 extern  int C2F(lsodar2)();
 
@@ -89,13 +83,16 @@ extern  struct {
 } C2F(curblk);
 
 struct {
+  int ptr;
+} C2F(scsptr);
+
+struct {
   double scale;
 }  C2F(rtfactor);
 
-extern struct {
+struct {
   int halt;
 }  C2F(coshlt);
-
 
 struct {
   int cosd;
@@ -107,9 +104,8 @@ struct {
 
 /* Table of constant values */
 
-static int c__90 = 90;
+
 static int c__0 = 0;
-static int c__91 = 91;
 static double c_b14 = 0.;
 static int c__1 = 1;
 static int panj=5;
@@ -168,19 +164,12 @@ int C2F(scicos)
 
 {
   int i1,kf,lprt,in,out,job=1;
-
-  extern /* Subroutine */ int C2F(msgs)();
   static int mxtb, ierr0, kfun0, i, j, k;
-  extern /* Subroutine */ int C2F(makescicosimport)();
-  extern /* Subroutine */ int C2F(getscsmax)();
   static int ni, no;
-  extern /* Subroutine */ int C2F(clearscicosimport)();
   static int nx, nz;
   double *W;
-
   /*     Copyright INRIA */
   /* iz,izptr are used to pass block labels */
-
   t0=t0_in;
   tf=tf_in;
   ierr=ierr_out;
@@ -261,7 +250,7 @@ int C2F(scicos)
     if (funtyp[i] == 1) {
       if (ni + no > 11) {
 	/*     hard coded maxsize in callf.c */
-	C2F(msgs)(&c__90, &c__0);
+	Scierror("Too many input/output ports for hilited block\n");
 	C2F(curblk).kfun = i;
 	*ierr = i + 1005;
 	return 0;
@@ -269,7 +258,7 @@ int C2F(scicos)
     } else if (funtyp[i] == 2 || funtyp[i] == 3) {
       /*     hard coded maxsize in scicos.h */
       if (ni + no > SZ_SIZE) {
-	C2F(msgs)(&c__90, &c__0);
+	Scierror("Too many input/output ports for hilited block\n");
 	C2F(curblk).kfun = i;
 	*ierr = i + 1005;
 	return 0;
@@ -290,7 +279,8 @@ int C2F(scicos)
 	}
       }
       if (mxtb > TB_SIZE) {
-	C2F(msgs)(&c__91, &c__0);
+	Scierror("Too many input/output entries for hilited block\n");
+
 	C2F(curblk).kfun = i;
 	*ierr = i + 1005;
 	return 0;
@@ -317,7 +307,7 @@ int C2F(scicos)
     if (i<0) {
       switch (funtyp[kf+1]) {
       case 0:
-	Blocks[kf].funpt=F2C(sciblk);
+	Blocks[kf].funpt=scicos_sciblk;
 	break;
       case 1:
 	sciprint("type 1 function not allowed for scilab blocks\r\n");
@@ -429,7 +419,9 @@ int C2F(scicos)
       return 0;
     }
     Blocks[kf].label[i1]='\0';
-    C2F(cvstr)(&i1,&(iz[izptr[kf+1]-1]),Blocks[kf].label,&job,i1);    
+    /* XXXXXXXXXXXXXX  FIXME
+     * C2F(cvstr)(&i1,&(iz[izptr[kf+1]-1]),Blocks[kf].label,&job,i1);    
+     */
     if ((Blocks[kf].jroot=calloc(Blocks[kf].ng,sizeof(int)))== NULL ){
       free_blocks();
       *ierr =5;
@@ -449,14 +441,12 @@ int C2F(scicos)
     *ierr =5;
     return 0;
   }
-
-
-  C2F(makescicosimport)(x, &xptr[1], &zcptr[1], z__, &zptr[1],mod,&modptr[1], iz, &izptr[1], 
-			&inpptr[1], &inplnk[1], &outptr[1], &outlnk[1], &lnkptr[1], 
-			nlnkptr, rpar, &rpptr[1], ipar, &ipptr[1], &nblk, outtb, 
-			&nout, subscr, nsubs, &tevts[1], &evtspt[1], nevts, pointi, 
-			&oord[1], &zord[1], funptr, &funtyp[1], &ztyp[1], &cord[1],
-			&ordclk[1], &clkptr[1], &ordptr[1], &critev[1], iwa);
+  scicos_makescicosimport(x, &xptr[1], &zcptr[1], z__, &zptr[1],mod,&modptr[1], iz, &izptr[1], 
+			  &inpptr[1], &inplnk[1], &outptr[1], &outlnk[1], &lnkptr[1], 
+			  nlnkptr, rpar, &rpptr[1], ipar, &ipptr[1], &nblk, outtb, 
+			  &nout, subscr, nsubs, &tevts[1], &evtspt[1], nevts, pointi, 
+			  &oord[1], &zord[1], funptr, &funtyp[1], &ztyp[1], &cord[1],
+			  &ordclk[1], &clkptr[1], &ordptr[1], &critev[1], iwa);
   if (*flag__ == 1) {
     /*     initialisation des blocks */
     for (kf = 0; kf < nblk; ++kf) {
@@ -510,7 +500,7 @@ int C2F(scicos)
   free(iwa);
   free_blocks(); 
 
-  C2F(clearscicosimport)();
+  scicos_clearscicosimport();
   return 0;
 } 
 
@@ -536,7 +526,7 @@ void cosini(double *told)
   /*     initialization (flag 4) */
   /*     loop on blocks */
 
-  C2F(dset)(&jj, &c_b14, W, &c__1);
+  nsp_dset(&jj, &c_b14, W, &c__1);
   nclock = 0;
   for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= nblk; ++C2F(curblk).kfun) {
     if (funtyp[C2F(curblk).kfun] >= 0) {
@@ -744,10 +734,11 @@ void cossim(double *told)
   C2F(coshlt).halt = 0;
   *ierr = 0;
   
-  C2F(xscion)(&inxsci);
+  inxsci = nsp_check_events_activated();
+
   /*     initialization */
-  C2F(iset)(&niwp, &c__0, &ihot[1], &c__1);
-  C2F(dset)(&nrwp, &c_b14, &rhot[1], &c__1);
+  nsp_iset(&niwp, &c__0, &ihot[1], &c__1);
+  nsp_dset(&nrwp, &c_b14, &rhot[1], &c__1);
   C2F(realtimeinit)(told, &C2F(rtfactor).scale);
   
   phase=1;
@@ -781,15 +772,14 @@ void cossim(double *told)
   /*     main loop on time */
   
   while(*told < *tf) {
-    
-    if (inxsci == 1) {
-      ntimer = C2F(stimer)();
-      if (ntimer != otimer) {
-	C2F(sxevents)();
-	otimer = ntimer;
-	/*     .     sxevents can modify halt */
+    if (inxsci == TRUE)
+      {
+	ntimer = C2F(stimer)();
+	if (ntimer != otimer) {
+	  nsp_check_gtk_events();
+	  otimer = ntimer;
+	}
       }
-    }
     if (C2F(coshlt).halt != 0) {
       C2F(coshlt).halt = 0;
       freeall;
@@ -869,8 +859,8 @@ void cossim(double *told)
 	  iopt = 0;
 	}else{
 	  iopt=1;
-	  C2F(iset)(&panj, &c__0, &ihot[5], &c__1);
-	  C2F(dset)(&panj, &c_b14, &rhot[5], &c__1);
+	  nsp_iset(&panj, &c__0, &ihot[5], &c__1);
+	  nsp_dset(&panj, &c_b14, &rhot[5], &c__1);
 	  rhot[6]=hmax;
 	}
 	phase=2;
@@ -1070,7 +1060,7 @@ void cossimdaskr(double *told)
     free(jroot);
     return;
   }
-  C2F(iset)(neq, &c__1, scicos_xproperty, &c__1);
+  nsp_iset(neq, &c__1, scicos_xproperty, &c__1);
   if((zcros=malloc(sizeof(int)*ng))== NULL ){
     *ierr =10000;
     free(rhot);
@@ -1108,10 +1098,11 @@ void cossimdaskr(double *told)
   jt = 2;
 
   /*      stuck=.false. */
-  C2F(xscion)(&inxsci);
+  inxsci = nsp_check_events_activated();
+
   /*     initialization */
-  C2F(iset)(&niwp, &c__0, &ihot[1], &c__1);
-  C2F(dset)(&nrwp, &c_b14, &rhot[1], &c__1);
+  nsp_iset(&niwp, &c__0, &ihot[1], &c__1);
+  nsp_dset(&nrwp, &c_b14, &rhot[1], &c__1);
   C2F(realtimeinit)(told, &C2F(rtfactor).scale);
   /*     ATOL and RTOL are scalars */
   info[1] = 0;
@@ -1159,10 +1150,10 @@ void cossimdaskr(double *told)
   }
   /*     main loop on time */
   while (*told < *tf) {
-    if (inxsci == 1) {
+    if (inxsci == TRUE) {
       ntimer = C2F(stimer)();
       if (ntimer != otimer) {
-	C2F(sxevents)();
+	nsp_check_gtk_events();
 	otimer = ntimer;
 	/*     .     sxevents can modify halt */
       }
@@ -1418,7 +1409,7 @@ void cossimdaskr(double *told)
 	if (inxsci == 1) {
 	  ntimer = C2F(stimer)();
 	  if (ntimer != otimer) {
-	    C2F(sxevents)();
+	    nsp_check_gtk_events();
 	    otimer = ntimer;
 	    /*     .     sxevents can modify halt */
 	  }
@@ -1690,7 +1681,7 @@ void edoit(double *told, int *kiwa)
     if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
       if (funtyp[C2F(curblk).kfun] >= 0) {
 	d__1 =  - 1.;
-	C2F(dset)(&Blocks[C2F(curblk).kfun - 1].nevout, 
+	nsp_dset(&Blocks[C2F(curblk).kfun - 1].nevout, 
 		  &d__1, Blocks[C2F(curblk).kfun-1].evout, &c__1);
 
 	flag__ = 3;
@@ -1996,7 +1987,7 @@ void zdoit(double *g, double *xtd, double *xt, double *told)
   static int ierr1, i,j;
   static int ii, jj;
   /* Function Body */
-  C2F(dset)(&ng, &c_b14,g , &c__1);
+  nsp_dset(&ng, &c_b14,g , &c__1);
 
   kiwa = 0;
   for (jj = 1; jj <= nzord; ++jj) {
@@ -2568,7 +2559,9 @@ int C2F(funnum)(fname)
     i++;
   }
   ln=strlen(fname);
-  C2F(iislink)(fname,&loc);C2F(iislink)(fname,&loc);
+  /* FIXME : check for dynamic linking  
+     C2F(iislink)(fname,&loc);C2F(iislink)(fname,&loc);
+  */
   if (loc >= 0) return(ntabsim+(int)loc+1);
   return(0);
 }
@@ -2589,7 +2582,7 @@ int C2F(simblk)(neq1, t, xc, xcdot)
      int *neq1;
      double *t, *xc, *xcdot;
 { 
-  C2F(dset)(neq, &c_b14,xcdot , &c__1);
+  nsp_dset(neq, &c_b14,xcdot , &c__1);
   C2F(ierode).iero = 0;
   *ierr= 0;
   odoit(xcdot, xc,xcdot,t);

@@ -1,6 +1,6 @@
 #include "scicos_block.h"
 
-int ftree2scicos_ (int *vec, int *nb, int *deput, int *outoin, int *outoinptr,
+int scicos_ftree2 (int *vec, int *nb, int *deput, int *outoin, int *outoinptr,
 		   int *ord, int *nord, int *ok)
 {
   int i__1, i__2, i__3;
