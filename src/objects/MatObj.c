@@ -32,6 +32,7 @@
 #include "nsp/matutil.h"
 #include "nsp/matint.h"
 #include "nsp/gsort-p.h"
+#include "nsp/nsp_lapack.h"
 
 
 /* 
@@ -727,6 +728,24 @@ nsp_matrix_boundsbis(const NspMatrix *A, int *imin, int *imax)
 	}
     }
   return indices;
+}
+
+void
+nsp_matrix_boundster(const NspMatrix *A, int *ind, int *imin, int *imax)
+{
+  int i, ival;
+
+  *imax = 1;
+  *imin = 1;
+  for (i = 0; i < A->mn; i++)
+    {
+      ival = (int) A->R[i];
+      if (ival > *imax)
+	*imax = ival;
+      else if (ival < *imin)
+	*imin = ival;
+      ind[i] = ival-1;
+    }
 }
 
 
@@ -3659,7 +3678,10 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
 static int
 int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *HMat1, *HMat2, *HMat3;
+  NspMatrix *HMat1, *HMat2, *A;
+  char tri_type;
+  int info, stat;
+  double rcond;
   CheckRhs (2, 2);
   CheckLhs (1, 1);
 
@@ -3693,20 +3715,59 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
 
   if ( HMat1->m != HMat2->m )  /* FIXME : the scalar case must be treated one day */
     {
-      Scierror("Error:\tIncompatible dimensions\n", stack.fname);
+      Scierror("Error:\tIncompatible dimensions (in %s)\n", stack.fname);
       return RET_BUG;
     }
 
-  /* get a copy of A and B (if needed...) */
-  if ((HMat1 = GetMatCopy (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if ((HMat2 = GetMatCopy (stack, 2)) == NULLMAT)
+  if ((HMat2 = GetMatCopy (stack, 2)) == NULLMAT) return RET_BUG;
+
+  if ( HMat1->m == HMat1->n )  /* HMat1 is square */
+    {
+      /* test if HMat1 is triangular */
+      if ( nsp_mat_is_upper_triangular(HMat1) ) tri_type = 'u';
+      else if ( nsp_mat_is_lower_triangular(HMat1) ) tri_type = 'l';
+      else tri_type = 'n';
+
+      if ( tri_type != 'n' )
+	{
+	  if ( nsp_mat_bdiv_triangular(HMat1, HMat2, tri_type, &info) == FAIL ) 
+	    return RET_BUG;
+	  else if ( info != 0 )   
+	    /* important note: in this case the rhs HMat2 have not been modified */
+	    Sciprintf("\n Warning: matrix is singular => computes a lsq solution");
+	  else
+	    {
+	      NSP_OBJECT (HMat2)->ret_pos = 1; 
+	      return 1;
+	    }
+	}
+      else
+	{
+	  /* use a LU factorization */
+	  /* here we must be sure to use a real copy of HMat1 (because if the matrix */
+	  /* is badly conditionned we must switch to the lsq solution) */
+	  if ( (A = nsp_matrix_copy(HMat1)) == NULLMAT ) return RET_BUG;
+	  stat = nsp_mat_bdiv_square(A, HMat2, &rcond);
+	  nsp_matrix_destroy(A);
+	  if ( stat == FAIL )
+	    return RET_BUG;
+	  else if ( rcond <= DBL_EPSILON )
+	    Sciprintf("\n Warning: matrix is badly conditionned (rcond = %g) => computes a lsq solution",rcond);
+	  else
+	    {
+	      NSP_OBJECT (HMat2)->ret_pos = 1; 
+	      return 1;
+	    }
+	}
+    }
+  
+  if ( (HMat1 = GetMatCopy(stack, 1)) == NULLMAT )
     return RET_BUG;
 
-  if ((HMat3 = nsp_mat_bdiv (HMat1, HMat2)) == NULLMAT)
+  if ( nsp_mat_bdiv_lsq(HMat1, HMat2) == FAIL )
     return RET_BUG;
 
-  NSP_OBJECT (HMat2)->ret_pos = 1;  /* ceci car HMat2 et HMat3 pointent sur le même objet */
+  NSP_OBJECT (HMat2)->ret_pos = 1; 
 
   return 1;
 }

@@ -184,157 +184,36 @@ static int MatOpScalar(NspMatrix *Mat1, NspMatrix *Mat2, AdSu F1, AdSuZ F2)
 NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
 {  
   doubleC zalpha={1.00,0.00},zbeta={0.00,0.00};
+  double alpha=1.00,beta=0.00;
   NspMatrix *Loc;
   if ( A->n != B->m ) 
     {
       Scierror("Error:\tIncompatible dimensions\n");
-      return(NULLMAT);
+      return NULLMAT;
     }
   if ( A->rc_type == 'c' ) 
     {
       if ( B->rc_type == 'r' ) 
 	{
-	  if (nsp_mat_set_ival(B,0.00) == FAIL ) return(NULLMAT);
+	  if (nsp_mat_set_ival(B,0.00) == FAIL ) return NULLMAT;
 	}
     }
   else 
     { 
       if ( B->rc_type == 'c' ) 
 	{
-	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return(NULLMAT);
+	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return NULLMAT;
 	}
     }
-  if ((Loc = nsp_matrix_create(NVOID,A->rc_type,A->m,B->n))==  NULLMAT) return(NULLMAT);
+  if ((Loc = nsp_matrix_create(NVOID,A->rc_type,A->m,B->n)) ==  NULLMAT) return NULLMAT;
   if ( Loc->rc_type == 'c' ) 
     C2F(zgemm)("N","N",&A->m,&B->n,&A->n,&zalpha,A->C,&A->m,B->C,&B->m,
 	       &zbeta,Loc->C,&A->m,1,1);
   else 
-    {
-      /* XXXX : ce qui suit va bcp plus vite que dgemm 
-	 sans doute ds le cas particulier ou lda,ldb,ldc 
-	 sont conforme a m,n ce qui est le cas ici 
-	 Voir si on peut modifier dgemm en cons'equence 
-      **/
-      double alpha=1.00,beta=0.00;
-      C2F(dgemm)("N","N",&A->m,&B->n,&A->n,&alpha,A->R,&A->m,B->R,&B->m,
-		 &beta,Loc->R,&A->m,1,1); 
-      /* 
-	 int i,j,un=1,ib=0,ic=0;
-	 for ( j = 0 ; j < B->n ; j++)
-	 {
-	 for ( i = 0 ; i < A->m ; i++) 
-	 Loc->R[ic+i]= C2F(ddot)(&A->n,&A->R[i],&A->m,&B->R[ib],&un);
-	 ic += Loc->m;
-	 ib += B->m;
-	 }
-      */
-    }
-  return(Loc);
-}
+    C2F(dgemm)("N","N",&A->m,&B->n,&A->n,&alpha,A->R,&A->m,B->R,&B->m,
+	       &beta,Loc->R,&A->m,1,1); 
 
-/*
- *   Res=nsp_mat_bdiv(A,B) A \ B. Contributed by Bruno Pincon
- */
-
-NspMatrix *nsp_mat_bdiv(NspMatrix *A, NspMatrix *B)
-{  
-  int mA = A->m, nA = A->n, mB = B->m, nB = B->n; /* mA must be equal to mB */
-  int mx = A->n, nx = B->n, ldB, ix, iB, j;
-  int *jpvt = NULL, info, lwork, rank;
-  double *work = NULL, qwork[2], *rwork = NULL;
-  double rcond = DBL_EPSILON;  /* FIXME to be choosen more correctly */
-
-  /* FIXME: I have choosen an easy way :
-   *        - use the high level lapack driver dgelsy, zgelsy
-   *          which is too much is A is square... (in this case
-   *          it is cheaper to do the job with a LU factorization)
-   *        - when B is complex while A is real, something
-   *          better than complexify A can be done
-   */
-  if ( A->rc_type == 'c' ) 
-    {
-      if ( B->rc_type == 'r' ) 
-	{
-	  if (nsp_mat_set_ival(B,0.00) == FAIL ) return(NULLMAT);
-	}
-    }
-  else 
-    { 
-      if ( B->rc_type == 'c' ) 
-	{
-	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return(NULLMAT);
-	}
-    }
-
-  if ( mx > mB )  
-    /* enlarge B so that it can contains the solution x (needed by lapack) */
-    {
-      iB = B->mn-1;
-      if ((nsp_matrix_resize(B,mx,nx)) ==  FAIL) return(NULLMAT);
-      if ( B->rc_type == 'r' )
-	for ( j = nB-1 ; j > 0 ; j--)   /* the first column is already good (so j>0) */
-	  for ( ix = j*mx+mB-1 ; ix >= j*mx ; ix--, iB-- )
-	    B->R[ix] = B->R[iB];
-      else
-	for ( j = nB-1 ; j > 0 ; j--)   /* the first column is already good (so j>0) */
-	  for ( ix = j*mx+mB-1 ; ix >= j*mx ; ix--, iB-- )
-	    B->C[ix] = B->C[iB];
-      ldB = mx;
-    } 
-  else
-    ldB = mB;
-
-  if ( !(jpvt = calloc( nA , sizeof(int))))  /* calloc because jpvt must be initialized with 0 */
-    goto err;
-       
-  if ( A->rc_type == 'r' )
-    { 
-      lwork = -1;  /* query work size */
-      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, qwork, &lwork, &info);
-      lwork = (int) qwork[0];
-      if ( !(work = malloc( lwork*sizeof(double)))) goto err;
-      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, work, &lwork, &info);
-    }
-  else 
-    {
-      lwork = -1;  /* query work size */
-      C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, &rank, (doubleC *)qwork, &lwork, rwork, &info);
-      lwork = (int) qwork[0];
-      rwork = malloc( 2*nA*sizeof(double)); 
-      work = malloc( 2*lwork*sizeof(double));
-      if ( ! (rwork && work) ) goto err;
-      C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, &rank,  (doubleC *)work, &lwork, rwork, &info);
-    }
-  
-  if ( mx < mB )   /* free a part of B which is not needed */
-    {
-      /* first compress B (the solution x is in B but with a "leading" 
-       * dimension mB  => transform with a "leading" dimension mx ...) 
-       */
-      ix = mx;
-      if ( B->rc_type == 'r' )
-	for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
-	  for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
-	    B->R[ix] = B->R[iB];
-      else
-	for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
-	  for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
-	    B->C[ix] = B->C[iB];
-      /* now we can free the part of B which is not used any more */
-      if (  nsp_matrix_resize(B, mx, nx) == FAIL )
-	goto err;
-    }
-
-  free(jpvt); free(rwork); free(work);
-  if ( rank < Min(mA,nA) )
-    Sciprintf("\n warning: matrix is rank-deficient m=%d, n=%d, rank=%d \n", mA, nA, rank);
-
-  return B;
-
- err:
-  free(jpvt); free(rwork); free(work);
-  return NULLMAT;
-      
+  return Loc;
 }
 
 /*
