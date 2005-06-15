@@ -24,39 +24,39 @@ extern struct {
 typedef void (*voidf)();
 
 /* Blocks prototypes */
-#define I int
-#define IP int*
-#define DP double*
-#define DPP double**
-#define DB scicos_block*
+#define P_I int
+#define P_IP int*
+#define P_DP double*
+#define P_DPP double**
+#define P_DB scicos_block*
 
 /*                    flag  nclock ntvec  rpar  nrpar ipar  nipar  u  nu */
-#define ARGS_scicosm1 IP,    IP,    IP,    DP,   IP,  IP,   IP,   DP, IP
+#define ARGS_scicosm1 P_IP,    P_IP,    P_IP,    P_DP,   P_IP,  P_IP,   P_IP,   P_DP, P_IP
 
 /* flag  nclock t    xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar  intabl  ni  outabl no */
-#define ARGS_scicos0 IP,IP,DP,DP,DP,IP,DP,IP,DP,IP,DP,IP,IP,IP,DP,IP,DP,IP
+#define ARGS_scicos0 P_IP,P_IP,P_DP,P_DP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_IP,P_IP,P_DP,P_IP,P_DP,P_IP
 
 /*       flag   nclock t    xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar  intabl  .... */
-#define ARGS_scicos IP,IP,DP,DP,DP,IP,DP,IP,DP,IP,DP,IP,IP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP
+#define ARGS_scicos P_IP,P_IP,P_DP,P_DP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_IP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP
 
 /*        flag   nclock t    xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar   args_in sz_in, n_in  args_out sz_out, n_out  */
-#define ARGS_scicos2 IP,IP,DP,DP,DP,IP,DP,IP,DP,IP,DP,IP,IP,IP,DPP,IP,IP,DPP,IP,IP
+#define ARGS_scicos2 P_IP,P_IP,P_DP,P_DP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_IP,P_IP,P_DPP,P_IP,P_IP,P_DPP,P_IP,P_IP
 
 /*        flag   nclock t    xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar   args_in sz_in, n_in  args_out sz_out, n_out g ng */
-#define ARGS_scicos2z IP,IP,DP,DP,DP,IP,DP,IP,DP,IP,DP,IP,IP,IP,DPP,IP,IP,DPP,IP,IP,DP,IP
+#define ARGS_scicos2z P_IP,P_IP,P_DP,P_DP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_IP,P_IP,P_DPP,P_IP,P_IP,P_DPP,P_IP,P_IP,P_DP,P_IP
 
 /*       flag   nclock t    residual xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar  intabl  .... */
 
-#define ARGS_scicosi IP,IP,DP,DP,DP,DP,IP,DP,IP,DP,IP,DP,IP,IP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP,DP,IP
+#define ARGS_scicosi P_IP,P_IP,P_DP,P_DP,P_DP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_IP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP
 
 /*        flag   nclockf t   residual xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar   args_in sz_in, n_in  args_out sz_out, n_out  */
-#define ARGS_scicosi2 IP,IP,DP,DP,DP,DP,IP,DP,IP,DP,IP,DP,IP,IP,IP,DPP,IP,IP,DPP,IP,IP
+#define ARGS_scicosi2 P_IP,P_IP,P_DP,P_DP,P_DP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_IP,P_IP,P_DPP,P_IP,P_IP,P_DPP,P_IP,P_IP
 
 /*        flag   nclockf t   residual xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar   args_in sz_in, n_in  args_out sz_out, n_out g ng */
-#define ARGS_scicosi2z IP,IP,DP,DP,DP,DP,IP,DP,IP,DP,IP,DP,IP,IP,IP,DPP,IP,IP,DPP,IP,IP,DP,IP
+#define ARGS_scicosi2z P_IP,P_IP,P_DP,P_DP,P_DP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_IP,P_IP,P_DPP,P_IP,P_IP,P_DPP,P_IP,P_IP,P_DP,P_IP
 
 /*         block     flag*/
-#define ARGS_scicos4 DB, I
+#define ARGS_scicos4 P_DB, P_I
 
 
 typedef void (*ScicosFm1) (ARGS_scicosm1);
@@ -68,14 +68,6 @@ typedef void (*ScicosFi) (ARGS_scicosi);
 typedef void (*ScicosFi2) (ARGS_scicosi2);
 typedef void (*ScicosFi2z) (ARGS_scicosi2z);
 typedef void (*ScicosF4) (ARGS_scicos4);
-
-#undef I
-#undef IP
-#undef DP
-#undef DPP
-#undef DB 
-
-
 
 typedef  struct  {
   char *name;

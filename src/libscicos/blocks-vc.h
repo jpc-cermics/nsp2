@@ -1,7 +1,9 @@
 #ifndef __SCICOS_BLOCKS__ 
 #define __SCICOS_BLOCKS__ 
+
 /******* Copyright INRIA *************/
 /******* Please do not edit *************/
+
 extern void F2C(evtdly) (ARGS_scicos);
 extern void F2C(cstblk) (ARGS_scicos);
 extern void F2C(lusat) (ARGS_scicos);

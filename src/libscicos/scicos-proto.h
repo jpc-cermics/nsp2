@@ -6,9 +6,13 @@ extern int scicos_affich (int *flag__, int *nevprt, double *t, double *xd,
 			  double *tvec, int *ntvec, double *rpar, int *nrpar,
 			  int *ipar, int *nipar, double *u, int *nu,
 			  double *y, int *ny);
-extern int scicos_setblockwin (int *win, int *cur);
+
+extern int scicos_setblockwin (BCG *Xgc,int *win, int *cur);
+
 extern int scicos_recterase (double *r__);
-extern int scicos_affdraw (int *fontd, int *form, double *val, double *r__);
+
+extern int scicos_affdraw (BCG *Xgc,const int *fontd,const int *form,const double *val,const double *r);
+
 extern int scicos_fscope (int *flag__, int *nevprt, double *t, double *xd,
 			  double *x, int *nx, double *z__, int *nz,
 			  double *tvec, int *ntvec, double *rpar, int *nrpar,
@@ -152,4 +156,11 @@ extern  int scicos_sciwin (void), dr1scicos_ (char *, char *,
 							      long int,
 							      long int);
 extern  int scicos_isort (int *, int *, int *);
+
+extern int  dmmul_scicos(double *a, int *na, double *b, int *nb, double *c__, int *nc, int *l, int *m, int *n);
+
+
+extern int dmmul1_scicos(double *a, int *na, double *b, int *nb, double *c__, int *nc, int *l, int *m, int *n);
+
+
 #endif 

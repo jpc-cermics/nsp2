@@ -2,6 +2,9 @@
 #include <string.h>
 #include "nsp/machine.h"
 #include "../system/link.h"
+#include "nsp/graphics/Graphics.h" 
+#include "nsp/object.h" 
+#include "nsp/blas.h" 
 #include "scicos.h"
 #include "import.h"
 #include "blocks.h"
@@ -9,8 +12,6 @@
 #define abs(x) ((x) >= 0 ? (x) : -(x))
 #define max(a,b) ((a) >= (b) ? (a) : (b))
 #define min(a,b) ((a) <= (b) ? (a) : (b))
-
-
 
 #define freeall \
 	      free(rhot);\
@@ -50,7 +51,6 @@ void addevs(double ,int *,int *);
 void putevs(double *,int *,int *);
 void free_blocks(void);
 int setmode(double *,double *,double *,int *,double);
-
 
 extern void  F2C(sciblk)();
 extern void  sciblk2();

@@ -1,7 +1,9 @@
 #ifndef __SCICOS_BLOCKS__ 
 #define __SCICOS_BLOCKS__ 
+
 /******* Copyright INRIA *************/
 /******* Please do not edit *************/
+
 extern void F2C(evtdly) (ARGS_scicos);
 extern void F2C(cstblk) (ARGS_scicos);
 extern void F2C(lusat) (ARGS_scicos);
@@ -129,6 +131,7 @@ extern void acosh_blk (ARGS_scicos);
 extern void atanh_blk (ARGS_scicos);
 extern void evtvardly (ARGS_scicos);
  
+/*
 OpTab tabsim[] ={
 {"absblk",(ScicosF) F2C(absblk)},
 {"absolute_value",(ScicosF) absolute_value},
@@ -257,7 +260,8 @@ OpTab tabsim[] ={
 {"zcross2",(ScicosF) zcross2},
 {"zcross",(ScicosF) F2C(zcross)},
 {(char *) 0, (ScicosF) 0}};
- 
+ */
+
 int ntabsim= 126 ;
 #endif 
 /***********************************/

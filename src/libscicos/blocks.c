@@ -785,10 +785,8 @@ int scicos_dlradp (scicos_args_poo)
       scicos_intp (&u[2], &rpar[1], &rpar[npt + 1], &i__1, &npt, yy);
       scicos_wprxc (&m, yy, &yy[m], num, ww);
       scicos_wprxc (&n, &yy[m * 2], &yy[(m << 1) + 1 + n - 1], den, ww);
-      yyp =
-	-scicos_ddot (&n, den, &c__1, &z__[m + 1],
-		      &c__1) + (scicos_ddot (&m, num, &c__1, &z__[1],
-					     &c__1) + u[1]) * yy[mpn * 2];
+      yyp = - C2F(ddot) (&n, den, &c__1, &z__[m + 1], &c__1) 
+	+ (C2F(ddot) (&m, num, &c__1, &z__[1],&c__1) + u[1]) * yy[mpn * 2];
       if (m > 0)
 	{
 	  i__1 = m - 1;
@@ -4158,7 +4156,7 @@ scicos_tcslti (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	       double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
 	       int *nu1, double *u2, int *nu2, double *y, int *ny)
 {
-  const  int c__1 = 1;
+  int c__1 = 1;
   int la, lb, lc, ld;
 
   /*     Scicos block simulator */
@@ -4762,8 +4760,7 @@ void  readau(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
 
 
 
-int worldsize(type)
-     char type[4];
+int worldsize(char type[4])
 {
   char c;
   int wsz;

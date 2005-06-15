@@ -27,10 +27,10 @@ NspMatrix *scicos_dtosci(const double x[],int mx,int nx)
 }
 
 
-NspSMatrix *scicos_str2sci(const char *x[],int n,int m)
+NspSMatrix *scicos_str2sci(nsp_const_string *x,int n,int m)
 {
   NspSMatrix *S;
-  if ((S=nsp_smatrix_create_from_array(n*m,x))== NULLSMAT) return  NULLSMAT;
+  if ((S=nsp_smatrix_create_from_array(NVOID,n*m,x))== NULLSMAT) return  NULLSMAT;
   /* reshape */
   S->m = m;
   S->n = n;
