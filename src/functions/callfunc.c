@@ -156,6 +156,9 @@ InterfTab Interfaces[]={
  * Call function number num in interface i 
  **********************************************/
 
+
+static int show_returned_positions(Stack stack,int pos);
+static int  reorder_follow_cycle(Stack stack,int pos);
 int reorder_stack(Stack stack, int ret) ;
 
 /* XXXXX Only in DEBUG Mode */
@@ -163,7 +166,7 @@ int reorder_stack(Stack stack, int ret) ;
 void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char *name)
 {
   int count=0;
- NspObject**O;
+  NspObject**O;
   if ( stack.first > 0 ) 
     {
       int i;
@@ -225,7 +228,7 @@ int nsp_interfaces(int i, int num, Stack stack, int rhs, int opt, int lhs)
   /* debug */ 
   static int first = 0;
   static char buf[128];
- nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
+  nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
   first=1; 
   strcpy(buf,stack.fname);
   
@@ -278,7 +281,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
   /* debug */ 
   static int first = 0;
   static char buf[128];
- nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
+  nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
   first=1; 
   strcpy(buf,stack.fname);
   
@@ -288,7 +291,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
   if ( ret == RET_BUG ) 
     {
       /* clean the stack before returning */
-     NspObject**O = stack.S + stack.first; 
+      NspObject**O = stack.S + stack.first; 
       while ( *O != NULL) 
 	{ 
 	  (*O)->ret_pos= -1;
@@ -315,18 +318,19 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 
 int  reorder_stack(Stack stack, int ret) 
 {
- NspObject**O1 = stack.S+stack.first;
- NspObject*O,*O2;
-  int count = 1,ans=0,j;
+  NspObject**O1 = stack.S+stack.first;
+  NspObject*O,*O2;
+  int count = 1,j;
  
   /* DEBUG XXXX */
   if ( stack.fname == NULL) 
     {
       stack.fname = "";
     }
-
+ 
   /* reordering and cleaning the stack */ 
-  
+ 
+  /* first pass to deal with pointers */
   while ( *O1 != NULL)  
     {
       O=*O1;
@@ -373,47 +377,41 @@ int  reorder_stack(Stack stack, int ret)
 		}
 	    }
 	}
-      
-      if ( O->ret_pos != -1) 
-	{
-	  ans++;
-	  if ( O->ret_pos != count) 
-	    {
-	      /* Object must be moved */
-	      (stack.S + stack.first)[count-1]= (stack.S + stack.first)[O->ret_pos-1];
-	      (stack.S + stack.first)[O->ret_pos-1]= O;
-	      O = (stack.S + stack.first)[count-1];
-	      if ( O->ret_pos == count) {
-		fprintf(stderr,"Something wrong in interface %s return value %d is used twice\n",
-			stack.fname,count);
-		exit(1);
-	      }
-	      O1++;count++;
-	    } 
-	  else 
-	    {
-	      /* Object is at a correct position: noting to do */
-	      O1++;count++;
-	    }
-	}
-      else 
-	{
-	  O1++;count++;
-	}
+      O1++;
     }
+    
+  /* second pass to move objects at their correct positions */
   
-  if ( ans != ret) {
-    fprintf(stderr,"Something wrong in interface %s: ret(=%d) != %d\n", stack.fname,ret,ans);
-    exit(1);
-  }
+  O1 = stack.S+stack.first;
+  while ( *O1 != NULL)  
+    {
+      O=*O1;
+      if ( O->ret_pos != -1 && O->ret_pos != count) 
+	reorder_follow_cycle(stack,count);
+      O1++;count++;
+    }
 
-  /* XXX */
+  /* third pass to count and check 
+   * Debug only 
+   */
+
   O1 = stack.S + stack.first; 
   for ( j = 1 ; j <= ret ; j++) 
     if ( (*O1++)->ret_pos != j ) {
       fprintf(stderr,"Something wrong at end of %s \n",  stack.fname);
       fprintf(stderr,"returned arguments are not in correct order \n");
+      show_returned_positions(stack,1);
       exit(1);
+    }
+  
+  /* 
+   * clean extra returned arguments 
+   */
+  
+  O1 = stack.S + stack.first + ret ;
+  while ( *O1 != NULL)  
+    {
+      (*O1++)->ret_pos=-1;
     }
 
   /* clean the stack : the pointers cases have already been done*/
@@ -427,12 +425,13 @@ int  reorder_stack(Stack stack, int ret)
        */
       *O1 = NULLOBJ ;
     } else {
+      /* returned values reset to -1 */
       (*O1)->ret_pos = -1 ;
     }
     O1++;
   }
 
-  /* XXXXX Only in DEBUG Mode */
+  /*  Only relevant in DEBUG Mode */
   O1 = stack.S + stack.first; 
   while ( *O1 != NULL ) 
     {
@@ -448,4 +447,47 @@ int  reorder_stack(Stack stack, int ret)
   return ret;
 }
 
+static int  reorder_follow_cycle(Stack stack,int pos) 
+{
+  NspObject **obj = stack.S+stack.first;
+  NspObject *obj1,*obj2;
+  /* reordering and cleaning the stack */ 
+  obj1 = obj[pos-1];
+  while (1) 
+    {
+      if (obj1 == NULLOBJ)
+	{
+	  fprintf(stderr,"Error Something wrong in interface %s you have a hole in returned values\n",
+		  stack.fname);
+	  exit(1);
+	}
+	
+      if ( obj1->ret_pos == -1 || obj1->ret_pos == pos) break;
+      /* obj1 is to be moved at position obj1->ret_pos */
+      obj2 = obj[obj1->ret_pos-1];
+      if ( obj2->ret_pos == obj1->ret_pos ) 
+	{
+	  fprintf(stderr,"Error Something wrong in interface %s return value %d is used twice\n",
+		  stack.fname,obj2->ret_pos);
+	  exit(1);
+	}
+      /* perform the swap */
+      obj[obj1->ret_pos-1]= obj1;
+      obj[pos-1]= obj1=obj2;
+    }
+  return OK;
+}
 
+
+static int show_returned_positions(Stack stack,int pos)
+{
+  NspObject **obj = stack.S+stack.first+pos-1;
+  fprintf(stderr,"from pos=%d ->[",pos);
+  while (*obj != NULL) 
+    {
+      fprintf(stderr,"%d ",(*obj)->ret_pos);
+      obj++;
+    }
+  fprintf(stderr,"]\n");
+  return OK;
+}
