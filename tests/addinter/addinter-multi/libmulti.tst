@@ -2,10 +2,14 @@
 
 exec loader.sce ;
 
-if f1(89)<>89+2 then pause,end
-if f2(89)<>89+3 then pause,end
-if f3(89)<>89 then pause,end
-if f4(89)<>89+5 then pause,end
+A=f1(89);
+if A<>89+2 then pause,end
+A=f2(89);
+if A<>89+2 then pause,end
+A=f3(89);
+if A<>89 then pause,end
+A=f4(89);
+if A<>89+2 then pause,end
 
 
 
