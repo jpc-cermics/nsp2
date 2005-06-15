@@ -92,6 +92,26 @@ static void coord_by_periodicity(double *t,const double x[], int n, int *i)
     *i = isearch(*t, x, n);
 }
 
+/**
+ * nlinear_interp:
+ * @x: the grid abscissae  (x[j][] are the grid abscissae in the dimension j)
+ * @dim: nb of grid points in each dimension (@dim[j] is the nb of points in dimension j)
+ * @n: number of dimensions (@n=1 for linear interpolation, @n=2 for bilinear interpolation, etc...) 
+ * @val: array of the grid node values, for instance if nbdim = 3
+ *       and dim = [nx ny nz] then @val(i,j,k) is stored in i + nx( j + ny k ) 
+ * @xp: the coordinates where we have to interpolate (the coordinate of the 
+ *      i th point are stored at @xp[0][i] ..... @xp[@n-1][i])
+ * @yp: the result (an array 0...@np-1)
+ * @np: nb of points for the evaluation
+ * @outmode: specify the method of evaluation when a point is outside the grid
+ * @u: work array of size @n
+ * @v: work array of size 2^@n
+ * @ad: work array of size 2^@n
+ * @k: work array of size @n
+ *
+ * @n-dimensionnal linear interpolation routine.
+ * 
+ */
 void nlinear_interp(double **x , double val[], int dim[], int n,
 		    double **xp, double yp[], int np, int outmode, 
 		    double u[], double v[], int ad[], int k[])
@@ -106,22 +126,6 @@ void nlinear_interp(double **x , double val[], int dim[], int n,
    .....
    yp = linear_interpn(xp1, ..., xpN, x1, ..., xN, val, outmode)
 
-
-
-   *     x[j][] : the grid abscissae in the dim j
-   *     dim[j] : nb of points in the dim j
-   *     n      : number of dimension
-   *     val[]  : array of the grid node values, for instance if nbdim = 3
-   *              and dim = [nx ny nz] then val(i,j,k) is stored in
-   *              i + nx( j + ny k ) 
-   *     xp[][] : the coordinates where we have to interpolate
-   *              the coordinate of the i th point are stored 
-   *              at xp[0][i] ..... xp[n-1][i]
-   *     yp[]   : the result (an array 0...np-1)
-   *     np     : nb of points for the evaluation
-   *     outmode: specify the method of evaluation when a point is 
-   *              outside the grid
-   *     u, v, ad, k : work arrays
    */  
 
   int i, j, l, p, temp, b,/* toto,*/ two_p_n;
