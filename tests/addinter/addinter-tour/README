@@ -1,0 +1,61 @@
+// -*- Mode: scilab -*- 
+// Copyright (C) 2005 Jean-Philippe Chancelier 
+//                    Francois Delebecque 
+// 
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+// 
+
+This directory contains examples of C interface routines
+which are used to build a shared library.
+The shared library is dynamically linked using addinter 
+
+For building a library of your own you have to provide 
+your own interfaces and to write a specific builder.sce.
+You can take a look at addinter-tutorial which is simpler.
+
+-------------------------------------------------------
+To build the shared library enter 
+	--> exec builder.sce 
+	at scilab prompt 
+To load the shared library enter 
+	--> exec loader.sce 
+	at scilab prompt 
+To run a test just exec the corresponding .sce file
+
+You can also build and run all the tests with 
+	make tests (Unix) 
+	nmake /f Makefile.mak tests (visual C++) 
+-------------------------------------------------------
+
+ex01*: An interface with the function ex1* . Shows how to pass
+	integer, float or double arrays and strings to a C or Fortran 
+	function. 
+
+ex02*: Passing a complex array to the interface.
+
+ex03*: Passing a boolean matrix to the interface.
+
+ex04*: interfacing C function which creates objects on the execution stack 
+	(with malloc). How to transfer these objects to Scilab
+       	Interfaces are given in C and Fortran but the functions 
+       	which are to be interfaced are only given in C (they use malloc)
+       	We give examples with C allocated double array, int array, char array.
+
+ex05*:	Passing string matrices. 
+
+ex06*:  Passing sparse matrices. 
+
+ex07* : Passing lists
+
