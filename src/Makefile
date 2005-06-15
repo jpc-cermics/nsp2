@@ -4,12 +4,12 @@ include ../Makefile.incl
 
 SCIDIRS = zcalelm objects interp functions gtk2 \
 	system graphics menus gtksci gzvt2 modules gobjects types-test \
-	librand libcdf  libfft libinteg libapprox lapack   
+	librand libcdf  libfft libinteg libapprox lapack libscicos
 
 ALLSCIDIRS = zcalelm objects interp functions gtk2 \
 	system graphics menus gtksci gzvt2 modules gobjects types-test \
 	librand libcdf libmaxplus libfft libinteg libapprox lapack \
-	libblas liblapack 
+	libblas liblapack libscicos
 
 SUBDIRS = $(DLD_SUBDIR) $(SCIDIRS) 
 ALLSUBDIRS = $(DLD_SUBDIR) $(ALLSCIDIRS) 
