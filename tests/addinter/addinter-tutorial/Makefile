@@ -1,4 +1,5 @@
-SCIDIR=/usr/local/nsp2
+SCIDIR=../../../
+
 
 include $(SCIDIR)/Makefile.incl
 
