@@ -74,11 +74,6 @@ static NspMethods *matrix_get_methods(void);
 static int matrix_is_true(NspMatrix *M);
 #endif 
 
-#ifdef OCAML 
-NspMatrix *MatCreateFromData  (char *name, char type, int m, 
-			       int n,struct caml_bigarray *b);
-#endif 
-
 #define NULLMAT (NspMatrix*) 0
 
 extern double *nsp_alloc_doubles(unsigned int n);
