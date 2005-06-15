@@ -1148,7 +1148,7 @@ int_mxcomplexify (Stack stack, int rhs, int opt, int lhs)
     {
       return RET_BUG;
     };
-  NSP_OBJECT (HMat)->ret_pos = 1;
+  NSP_OBJECT (HMat)->ret_pos= 1;
   return 1;
 }
 
@@ -2105,50 +2105,38 @@ int_mxconcatr (Stack stack, int rhs, int opt, int lhs)
   CheckLhs (1, 1);
   if ((HMat1 = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
+  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
+    return RET_BUG;
   if (HMat1->mn == 0)
     {
-      /* return 2 */
       /* this is a bit tricky since HMat1 and HMat2 may point 
        * to the same object 
        */
-      if ( NthObj (2) == NthObj(1) ) 
+      if ( HMat1 == HMat2 ) 
 	{
 	  NthObj(2) = NULLOBJ;
-	  NSP_OBJECT (NthObj (1))->ret_pos = 1;
+	  NSP_OBJECT(HMat1)->ret_pos = 1;
 	}
       else 
 	{
-	  NSP_OBJECT (NthObj (2))->ret_pos = 1;
+	  NSP_OBJECT(HMat2)->ret_pos = 1;
 	}
       return 1;
     }
-  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
+
   if (HMat2->mn == 0)
     {
       /* this is a bit tricky since HMat1 and HMat2 may point 
        * to the same object 
        */
-      if ( NthObj (2) == NthObj(1) ) 
-	{
-	  NthObj(2) = NULLOBJ;
-	  NSP_OBJECT (NthObj (1))->ret_pos = 1;
-	}
-      else 
-	{
-	  NSP_OBJECT (HMat1)->ret_pos = 1;
-	}
-      return 1;
+      if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
     }
   else
     {
-      if ((HMat1 = GetMatCopy (stack, 1)) == NULLMAT)
-	return RET_BUG;
-      if (nsp_matrix_concat_right (HMat1, HMat2) != OK)
-	return RET_BUG;
-      NSP_OBJECT (HMat1)->ret_pos = 1;
-      return 1;
+      if ((HMat1 = GetMatCopy (stack, 1)) == NULLMAT)	return RET_BUG;
+      if (nsp_matrix_concat_right (HMat1, HMat2) != OK)	return RET_BUG;
     }
+  NSP_OBJECT(HMat1)->ret_pos = 1;
   return 1;
 }
 
@@ -2221,43 +2209,32 @@ int_mx_concat (Stack stack, int rhs, int opt, int lhs, Fconcat F)
   CheckLhs (1, 1);
   if ((HMat1 = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
+  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
+    return RET_BUG;
   if (HMat1->mn == 0)
     {
-      /* FIXME: this changes are to be propagated to other 
-       * data types 
-       */
-
       /* this is a bit tricky since HMat1 and HMat2 may point 
        * to the same object 
        */
-      if ( NthObj (2) == NthObj(1) ) 
+      if ( HMat1 == HMat2 ) 
 	{
 	  NthObj(2) = NULLOBJ;
-	  NSP_OBJECT (NthObj (1))->ret_pos = 1;
+	  NSP_OBJECT(HMat1)->ret_pos = 1;
 	}
       else 
 	{
-	  NSP_OBJECT (NthObj (2))->ret_pos = 1;
+	  NSP_OBJECT(HMat2)->ret_pos = 1;
 	}
       return 1;
     }
-  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
-    return RET_BUG;
+
   if (HMat2->mn == 0)
     {
       /* this is a bit tricky since HMat1 and HMat2 may point 
        * to the same object 
        */
-      if ( NthObj (2) == NthObj(1) ) 
-	{
-	  NthObj(2) = NULLOBJ;
-	  NSP_OBJECT (NthObj (1))->ret_pos = 1;
-	}
-      else 
-	{
-	  NSP_OBJECT (HMat1)->ret_pos = 1;
-	}
-      return 1;
+      if ( HMat1 == HMat2 )  NthObj(2) = NULLOBJ;
+      NSP_OBJECT(HMat1)->ret_pos = 1;
     }
   else
     {

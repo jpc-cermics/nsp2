@@ -407,12 +407,12 @@ static int int_bmatrix__and_or(Stack stack, int rhs, int opt, int lhs, MPM F1, M
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((HMat1 = GetBMatCopy(stack,1)) == NULLBMAT) return RET_BUG;
+  if ((HMat2 = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
   if ( HMat1->mn == 0) 
     {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
+      NSP_OBJECT(HMat2)->ret_pos = 1;
       return 1;
     }
-  if ((HMat2 = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
   if ( HMat2->mn == 0) 
     {
       NSP_OBJECT(HMat1)->ret_pos = 1;
@@ -642,13 +642,28 @@ static int int_bmatrix_concatr(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((HMat1 = GetBMat(stack,1))  == NULLBMAT) return RET_BUG;
-  if ( HMat1->mn == 0) 
+  if ((HMat2 = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
+  if (HMat1->mn == 0)
     {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
+      /* this is a bit tricky since HMat1 and HMat2 may point 
+       * to the same object 
+       */
+      if ( HMat1 == HMat2 ) 
+	{
+	  NthObj(2) = NULLOBJ;
+	  NSP_OBJECT(HMat1)->ret_pos = 1;
+	}
+      else 
+	{
+	  NSP_OBJECT(HMat2)->ret_pos = 1;
+	}
       return 1;
     }
-  if ((HMat2 = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-  if ( HMat2->mn != 0) 
+  if (HMat2->mn == 0)
+    {
+      if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
+    }
+  else 
     {
       if ((HMat1 = GetBMatCopy(stack,1))  == NULLBMAT) return RET_BUG;
       if (nsp_bmatrix_concat_right(HMat1,HMat2)!= OK) return RET_BUG;
@@ -671,15 +686,33 @@ static int int_bmatrix__concat(Stack stack, int rhs, int opt, int lhs, FBconcat 
   NspBMatrix *HMat1,*HMat2;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((HMat1 = GetBMat(stack,1))  == NULLBMAT) return RET_BUG;
-  if ( HMat1->mn == 0) 
+  if ((HMat1 = GetBMat (stack, 1)) == NULLBMAT)
+    return RET_BUG;
+  if ((HMat2 = GetBMat (stack, 2)) == NULLBMAT)
+    return RET_BUG;
+  if (HMat1->mn == 0)
     {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
+      /* this is a bit tricky since HMat1 and HMat2 may point 
+       * to the same object 
+       */
+      if ( HMat1 == HMat2 ) 
+	{
+	  NthObj(2) = NULLOBJ;
+	  NSP_OBJECT(HMat1)->ret_pos = 1;
+	}
+      else 
+	{
+	  NSP_OBJECT(HMat2)->ret_pos = 1;
+	}
       return 1;
     }
-  if ((HMat2 = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-  if ( HMat2->mn == 0) 
+
+  if (HMat2->mn == 0)
     {
+      /* this is a bit tricky since HMat1 and HMat2 may point 
+       * to the same object 
+       */
+      if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
       NSP_OBJECT(HMat1)->ret_pos = 1;
       return 1;
     }
