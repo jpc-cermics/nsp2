@@ -372,9 +372,10 @@ int  reorder_stack(Stack stack, int ret)
 	      /* O points to O2 */
 	      if ((k= O2->ret_pos) != -1) 
 		{
+		  /* reset O2 */
+		  O2->ret_pos=-1;
 		  /* O2 is on the return list we must copy O2 */ 
-		  if ( (O2 =nsp_object_copy(O2)) == NULLOBJ) 
-		    return RET_BUG;
+		  if ( (O2 =nsp_object_copy(O2)) == NULLOBJ)  return RET_BUG;
 		  O2->ret_pos=k;
 		  /* O2 replace O, O must not be freed, we go on with O2 */
 		  O= *O1= O2;
