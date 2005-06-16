@@ -995,7 +995,7 @@ int int_smxascii(Stack stack, int rhs, int opt, int lhs)
     return int_smxsmat2ascii(stack,rhs,opt,lhs);
 }
 
-/*
+/* FIXME
  * SMatSort 
  * [A_sorted,Index]=sort(A, 'r'| 'c' | 'g' | 'lr'| 'lc' ,'i'|'d')
  */
@@ -1034,7 +1034,7 @@ int int_smxsort(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     { str2 = "d"; }
-  Index=nsp_smatrix_sort(A,lhs,str1,str2);
+  Index=nsp_smatrix_sort_old(A,lhs,str1,str2);
   NSP_OBJECT(A)->ret_pos = 1;
   if ( lhs == 2) 
     {
@@ -1047,6 +1047,62 @@ int int_smxsort(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
 }
+
+/*
+ * new version 
+ */
+
+#include "nsp/gsort-p.h"
+
+int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *M=NULL;
+  NspMatrix *Index=NULL;
+  char *type_sort[]={ "g", "c", "r", "lr" , "lc" , NULL };
+  char *dir_sort[]={ "i", "d",  NULL };
+  int iflag = FALSE;
+  char direction = 'd';
+  int rep_type= sort_g,rep_dir;
+
+  CheckRhs(1,3);
+  if ((M=GetSMatCopy(stack,1)) == NULLSMAT ) return RET_BUG;
+
+  if ( rhs >= 2) 
+    {
+      if ((rep_type= GetStringInArray(stack,2,type_sort,1)) == -1) return RET_BUG; 
+    }
+
+  if (rhs >= 3) 
+    {
+      if ((rep_dir= GetStringInArray(stack,3,dir_sort,1)) == -1) return RET_BUG; 
+      direction = dir_sort[rep_dir][0];
+    }
+
+  if (lhs  == 2) 
+    {
+      iflag = TRUE;
+    }
+
+  switch ( rep_type  )
+    {
+    case 0 : 
+      nsp_smatrix_sort(M,&Index,iflag,direction);break;
+    case 1 : 
+      nsp_smatrix_row_sort(M,&Index,iflag,direction);break;
+    case 2 :
+      nsp_smatrix_column_sort(M,&Index,iflag,direction);break;
+    case 3:
+      nsp_smatrix_lexical_row_sort(M,&Index,iflag,direction);break;
+    case 4:
+      nsp_smatrix_lexical_column_sort(M,&Index,iflag,direction);break;
+    }
+  if ( iflag == TRUE && Index == NULL) return RET_BUG;
+  NSP_OBJECT(M)->ret_pos = 1;
+  if ( lhs == 2 ) {
+    MoveObj(stack,2, NSP_OBJECT(Index));
+  }
+  return Max(lhs,1);
+} 
 
 
 /*
@@ -1077,6 +1133,7 @@ int int_smxsort(Stack stack, int rhs, int opt, int lhs)
 /*   MoveObj(stack,1,(NspObject *)A); */
 /*   return 1; */
 /* } */
+
 int int_smxsplit(Stack stack, int rhs, int opt, int lhs)
 {
   char *defsplit = " \n\t\r";
@@ -1364,6 +1421,9 @@ static OpTab SMatrix_func[]={
   {"quote_s", int_smxtranspose},
   {"strsubst",int_smxsubst},
   {"stripblanks",int_smxstripblanks},
+  {"sort_s", int_smatrix_sort},
+  {"gsort_s", int_smatrix_sort},
+  {"new_sort", int_smatrix_sort },
   {(char *) 0, NULL}
 };
 

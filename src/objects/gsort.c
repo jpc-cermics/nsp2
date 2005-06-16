@@ -53,7 +53,6 @@ static void nsp_qsort_double(double *a,int *tab, int flag, int n,char dir);
  * 
  **/
 
-
 int nsp_matrix_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_sort type)
 {
   int *index = NULL;
@@ -154,6 +153,87 @@ int nsp_matrix_lexical_row_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char
   return OK;
 }
 
+
+/**
+ * nsp_smatrix_sort:
+ * @A: 
+ * @Ind: 
+ * @ind_flag: 
+ * @dir: direction 'i' for increasing 'd' for decreasing 
+ * 
+ * global sort of the elements of a smatrix. If flag is %TRUE 
+ * Index is computed and returned 
+ * 
+ **/
+
+int nsp_smatrix_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',1,A->mn) ) == NULLMAT ) return FAIL;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  CNAME(GlobalSort,nsp_string)(A->S,index,ind_flag,A->m,A->n,dir);
+  return OK;
+}
+
+int nsp_smatrix_column_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return FAIL ;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  CNAME(ColSort,nsp_string)(A->S,index,ind_flag,A->m,A->n,dir);
+  return OK;
+}
+
+int nsp_smatrix_row_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return FAIL;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  CNAME(RowSort,nsp_string)(A->S,index,ind_flag,A->m,A->n,dir);
+  return OK;
+}
+
+
+int nsp_smatrix_lexical_column_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',1,A->n) ) == NULLMAT ) return FAIL;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  CNAME(LexiCol,nsp_string)(A->S,index,ind_flag,A->m,A->n,dir);
+  return OK;
+}
+
+int nsp_smatrix_lexical_row_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir)
+{
+  int *index = NULL;
+  if ( ind_flag == TRUE ) 
+    {
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,1) ) == NULLMAT ) return FAIL;
+      (*Index)->convert='i';
+      index = (*Index)->I;
+    }
+  CNAME(LexiRow,nsp_string)(A->S,index,ind_flag,A->m,A->n,dir);
+  return OK;
+}
+
+
+
 int C2F(gsort)(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord)
 {
   /* int i; */
@@ -211,20 +291,23 @@ int C2F(gsort_uuuu)(xI,xD,ind,iflag,m,n,type,iord)
  * iord : 'i' or 'd' : increasind or decreasing sort 
  */
 
+#define STRR nsp_string
+#define XCNAME(x,y) CNAME(x,y)
+
 void C2F(gsorts)(char **data, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord)
 {
   switch ( type[0])
     {
-    case 'r' :  CNAME(ColSort,char)(data,ind,*iflag,*m,*n,iord[0]);break;
-    case 'c' :  CNAME(RowSort,char)(data,ind,*iflag,*m,*n,iord[0]);break;
+    case 'r' :  XCNAME(ColSort,STRR)(data,ind,*iflag,*m,*n,iord[0]);break;
+    case 'c' :  XCNAME(RowSort,STRR)(data,ind,*iflag,*m,*n,iord[0]);break;
     case 'l' :  
       if ( type[1] == 'r' ) 
-	CNAME(LexiRow,char)((int **)data,ind,*iflag,*m,*n,iord[0]);
+	XCNAME(LexiRow,STRR)(data,ind,*iflag,*m,*n,iord[0]);
       else
-	CNAME(LexiCol,char)(data,ind,*iflag,*m,*n,iord[0]);
+	XCNAME(LexiCol,STRR)(data,ind,*iflag,*m,*n,iord[0]);
       break;
     case 'g' : 
-    default :  CNAME(GlobalSort,char)(data,ind,*iflag,*m,*n,iord[0]);break;
+    default :  XCNAME(GlobalSort,STRR)(data,ind,*iflag,*m,*n,iord[0]);break;
     }
 }
 

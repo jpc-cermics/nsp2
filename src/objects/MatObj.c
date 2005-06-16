@@ -1312,9 +1312,10 @@ static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
       nsp_matrix_sort(M,&Index,iflag,direction,rep_type);break;
       break;
     case sort_c:
-      nsp_matrix_column_sort(M,&Index,iflag,direction);break;
-    case sort_r:
+      /* take care that c -> row */
       nsp_matrix_row_sort(M,&Index,iflag,direction);break;
+    case sort_r:
+      nsp_matrix_column_sort(M,&Index,iflag,direction);break;
     case sort_lr:
       nsp_matrix_lexical_row_sort(M,&Index,iflag,direction,'i');break;
     case sort_lc:
@@ -3999,8 +4000,9 @@ static OpTab Matrix_func[] = {
   {"seti_m_m", int_mxseti},
   {"setr_m_m", int_mxsetr},
   {"setrc_m_m", int_mxsetrc},
-  {"sort", int_mxsort},
-  {"gsort", int_mxsort},
+  {"sort_m", int_matrix_sort},
+  {"gsort_m", int_matrix_sort},
+  {"new_sort", int_matrix_sort },
   {"tril", int_mxtril},
   {"triu", int_mxtriu},
   {"testm", int_mxtestmatrix},
@@ -4060,7 +4062,6 @@ static OpTab Matrix_func[] = {
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
   {"number_properties",int_number_properties},
-  {"new_sort", int_matrix_sort },
   {(char *) 0, NULL}
 };
 

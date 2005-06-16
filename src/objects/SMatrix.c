@@ -1586,7 +1586,7 @@ NspMatrix *nsp_string_to_ascii(nsp_const_string S)
  * ======
  */
 
-NspMatrix *nsp_smatrix_sort(NspSMatrix *A,int flag,nsp_const_string str1,nsp_const_string str2)
+NspMatrix *nsp_smatrix_sort_old(NspSMatrix *A,int flag,nsp_const_string str1,nsp_const_string str2)
 {
   int iflag=0,inc=-1,*iloc=NULL,Locm=A->m,Locn=A->n;
   NspMatrix *Loc=NULL;
