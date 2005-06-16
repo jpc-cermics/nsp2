@@ -10,7 +10,9 @@ CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
 OBJSC = matutil.o matnum.o qsort.o qsort1.o qsort2.o \
-	qsort-stable.o merge-sort.o gsort.o
+	qsort-stable.o merge-sort.o
+
+# gsort.o
 
 OBJSF = dsort.o 
 
