@@ -145,7 +145,7 @@ static  int CNAME(LexiRowcompareC,int)(int *i,int *j)
     }
   return (0);
 }
-static  int CNAME(LexiRowcompareD,int)(int *i,int *j)
+static  int CNAME(LexiRowcompareD,int)(int *i, int*j)
 {
   int jc;
   for ( jc = 0 ; jc < CNAME(lexicols,int) ; jc++) 

@@ -131,7 +131,7 @@ static void CNAME(setLexiSize,ELT_TYPE)(int n,int p)
   CNAME(lexirows,ELT_TYPE) = n;
 }
 
-static  int CNAME(LexiRowcompareC,ELT_TYPE)(int *i,int *j)
+static  int CNAME(LexiRowcompareC,ELT_TYPE)(ELT_TYPE *i,ELT_TYPE *j)
 {
   int jc;
   for ( jc = 0 ; jc < CNAME(lexicols,ELT_TYPE) ; jc++) 
@@ -145,7 +145,7 @@ static  int CNAME(LexiRowcompareC,ELT_TYPE)(int *i,int *j)
     }
   return (0);
 }
-static  int CNAME(LexiRowcompareD,ELT_TYPE)(int *i,int *j)
+static  int CNAME(LexiRowcompareD,ELT_TYPE)(ELT_TYPE *i, ELT_TYPE*j)
 {
   int jc;
   for ( jc = 0 ; jc < CNAME(lexicols,ELT_TYPE) ; jc++) 
