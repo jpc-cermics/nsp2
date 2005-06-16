@@ -4,7 +4,7 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.a 
 
-# gsort.o qsort.o	
+
 
 
 OBJSC = Matrix.o MatOps.o MatObj.o  \
@@ -30,7 +30,9 @@ OBJSC = Matrix.o MatOps.o MatObj.o  \
 	none.o \
 	matint.o \
 	MaxpObj.o MaxpMatrix.o \
-	cells.o cellsobj.o 
+	cells.o cellsobj.o \
+	gsort.o qsort.o	
+
 
 OBJSF=
 
