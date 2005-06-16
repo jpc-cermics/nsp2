@@ -6,6 +6,7 @@ extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1,
 
 #define swapcodeind CNAME(swapcode,int)
 
+#include "nsp/string.h"
 #include "nsp/gsort-int.h"
 #include "nsp/gsort-double.h"
 #include "nsp/gsort-string.h"

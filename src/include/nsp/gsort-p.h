@@ -20,6 +20,11 @@ extern int nsp_matrix_row_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char 
 extern int nsp_matrix_lexical_column_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir,char mode);
 extern int nsp_matrix_lexical_row_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir,char mode);
 
-#endif
+extern int nsp_smatrix_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir);
+extern int nsp_smatrix_column_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir);
+extern int nsp_smatrix_row_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir);
+extern int nsp_smatrix_lexical_column_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir);
+extern int nsp_smatrix_lexical_row_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir);
 
+#endif
 
