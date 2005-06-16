@@ -9,7 +9,9 @@ LIBRARY = nsp.a
 CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
-OBJSC = matutil.o matnum.o 
+OBJSC = matutil.o matnum.o qsort.o qsort1.o qsort2.o \
+	qsort-stable.o merge-sort.o gsort.o
+
 OBJSF = dsort.o 
 
 include ../Make.lib

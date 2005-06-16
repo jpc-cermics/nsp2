@@ -12,7 +12,9 @@ LIBRARY = nsp.lib
 CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
-OBJSC = matutil.obj matnum.obj 
+OBJSC = matutil.obj matnum.obj qsort.obj qsort1.obj qsort2.obj \
+	qsort-stable.obj merge-sort.obj gsort.obj
+
 OBJSF = dsort.obj 
 
 include ../Make.lib.mak
