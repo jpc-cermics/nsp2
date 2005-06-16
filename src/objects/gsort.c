@@ -39,8 +39,7 @@
 static int nsp_mergesort(double *a,int *p,int flag, int fromIndex, int toIndex,char dir);
 static void nsp_qsort_stable(double *a,int *index,int flag, int fromIndex, int toIndex,char dir);
 static void nsp_qsort_bp(double x[], int n, int p[],int flag, char dir);
-static void nsp_qsort_double(double *a,int *tab, int flag, int n,char dir);
-
+static void nsp_qsort1_double(double *a,int *tab, int flag, int n,char dir);
 /**
  * nsp_matrix_sort:
  * @A: 
@@ -76,7 +75,7 @@ int nsp_matrix_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_so
       break;
     case sort_gd :
       /* non stable qsort */
-      nsp_qsort_double(A->R,index,ind_flag,A->mn,dir);break;      
+      nsp_qsort1_double(A->R,index,ind_flag,A->mn,dir);break;      
     default: 
       /* generic non stable qsort */
       CNAME(GlobalSort,double)(A->R,index,ind_flag,A->m,A->n,dir);break;
@@ -887,7 +886,7 @@ static void qs_swapcodeint(int *pi,int* pj,int n)
 
 static void nsp_qsort_double__(double *a,int *tab, int flag, int n);
 
-static void nsp_qsort_double(double *a,int *tab, int flag, int n,char dir)
+static void nsp_qsort1_double(double *a,int *tab, int flag, int n,char dir)
 {
   double temp;
   int i,itemp;
