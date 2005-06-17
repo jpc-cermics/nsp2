@@ -40,8 +40,9 @@ static int int_scicos(Stack stack, int rhs, int opt, int lhs)
 		     "critev","nb","ztyp","nblk","ndcblk","subscr","funtyp",
 		     "iord","labels"};
   char *state[] = {"x","z","iz","tevts","evtspt","pointi","outtb"};
-  const int start=28,run=27,finish=15,linear=21;
+  /* const int start=28,run=27,finish=15,linear=21;
   double simpar[7];
+  */
   CheckRhs(6,6);
   CheckLhs(1,2);
   /* first variable : the state */
@@ -598,7 +599,7 @@ static int int_scicos_debug(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static int connection(int* path_out,int* path_in) 
+int scicos_connection(int* path_out,int* path_in) 
 {
   /* FIXME : call the routine 
    * under_connection 
@@ -607,7 +608,7 @@ static int connection(int* path_out,int* path_in)
   return 0;
 }
 
-static int badconnection(int* path_out,int prt_out, int nout,int* path_in,int prt_in,int nin) 
+int scicos_badconnection(int* path_out,int prt_out, int nout,int* path_in,int prt_in,int nin) 
 {
   /* FXME : call the routine 
    * bad_connection(path_out,prt_out,nout,path_in,prt_in,nin)
@@ -615,7 +616,7 @@ static int badconnection(int* path_out,int prt_out, int nout,int* path_in,int pr
   return 0;
 }
 
-static int Message(char* code) 
+int scicos_Message(char* code) 
 {
   /* FIXME call x_message 
    */
@@ -624,6 +625,11 @@ static int Message(char* code)
 
 static OpTab Scicos_func[]={
   {"sci_tree4",int_scicos_ftree4},
+  {"sci_scicos",int_scicos},
+  {"sci_sctree",int_sctree},
+  {"sci_tree2",int_tree2},
+  {"sci_tree3",int_tree3},
+  {"sci_scicos_debug",int_scicos_debug},
   {(char *) 0, NULL}
 };
 

@@ -6,38 +6,11 @@
 #include "intcscicos.h"
 #include "scicos_block.h"
 
-/*
-typedef int (*des_interf) (char *fname,unsigned long l);
-
-typedef struct table_struct {
-  des_interf f;   
-  char *name;     
-} intcscicosTable;
-
-static intcscicosTable Tab[]={
-  {inttimescicos,"scicos_time"},
-  {intduplicate,"duplicate"},
-  {intdiffobjs,"diffobjs"},
-  {intxproperty,"pointer_xproperty"},
-  {intphasesim,"phase_simulation"},
-  {intsetxproperty,"set_xproperty"},
-  {intsetblockerror,"set_blockerror"},
-};
-
-int C2F(intcscicos)()
-{  
-  Rhs = Max(0, Rhs);
-  (*(Tab[Fin-1].f)) (Tab[Fin-1].name,strlen(Tab[Fin-1].name));
-  C2F(putlhsvar)();
-  return 0;
-}
-
-*/
 
 /* fonction pour recuperer le nombre du champs a partir de son nom */
 int MlistGetFieldNumber(int *ptr, const char *string)
 {
-  int nf, longueur, istart, k, ilocal, retval;
+  int nf, longueur, istart, k, retval;
   int *headerstr;
   static char str[24];
   /* FIXME :
@@ -174,7 +147,7 @@ static int int_setxproperty(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static int intsetblockerror(Stack stack, int rhs, int opt, int lhs) 
+static int int_setblockerror(Stack stack, int rhs, int opt, int lhs) 
 {
   int m1;
   CheckRhs(1,1);
@@ -182,5 +155,60 @@ static int intsetblockerror(Stack stack, int rhs, int opt, int lhs)
   set_block_error(m1);
   return 0;
 }
+
+static OpTab CScicos_func[]={
+  {"int_setblockerror",int_setblockerror},
+  {"int_time_scicos",int_time_scicos},
+  {"int_duplicate",int_duplicate},
+  {"int_diffobjs",int_diffobjs},
+  {"int_xproperty",int_xproperty},
+  {"int_phasesim",int_phasesim},
+  {"int_setxproperty",int_setxproperty},
+  {(char *) 0, NULL}
+};
+
+int CScicos_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+{
+  return (*(CScicos_func[i].fonc))(stack,rhs,opt,lhs);
+}
+
+/** used to walk through the interface table 
+    (for adding or removing functions) **/
+
+void CScicos_Interf_Info(int i, char **fname, function (**f))
+{
+  *fname = CScicos_func[i].name;
+  *f = CScicos_func[i].fonc;
+}
+
+
+
+/*
+typedef int (*des_interf) (char *fname,unsigned long l);
+
+typedef struct table_struct {
+  des_interf f;   
+  char *name;     
+} intcscicosTable;
+
+static intcscicosTable Tab[]={
+  {inttimescicos,"scicos_time"},
+  {intduplicate,"duplicate"},
+  {intdiffobjs,"diffobjs"},
+  {intxproperty,"pointer_xproperty"},
+  {intphasesim,"phase_simulation"},
+  {intsetxproperty,"set_xproperty"},
+  {intsetblockerror,"set_blockerror"},
+};
+
+int C2F(intcscicos)()
+{  
+  Rhs = Max(0, Rhs);
+  (*(Tab[Fin-1].f)) (Tab[Fin-1].name,strlen(Tab[Fin-1].name));
+  C2F(putlhsvar)();
+  return 0;
+}
+
+*/
 
 

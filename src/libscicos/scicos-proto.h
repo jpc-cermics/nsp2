@@ -165,5 +165,11 @@ extern int  scicos_getscicosvars(int what, double **v, int *nv, int *type);
 extern int scicos_getscilabel(int kfun,char **label);
 extern void scicos_clip(BCG *Xgc,int n) ;
 
+extern void  scicos_makescicosimport(double *x, int *xptr, int *zcptr, double *z, int *zptr, int *mod, int *modptr, char **iz, char **izptr, int *inpptr, int *inplnk, int *outptr, int *outlnk, int *lnkptr, int *nlnkptr, double *rpar, int *rpptr, int *ipar, int *ipptr, int *nblk, double *outtb, int *nout, int *subs, int *nsubs, double *tevts, int *evtspt, int *nevts, int *pointi, int *oord, int *zord, int *funptr, int *funtyp, int *ztyp, int *cord, int *ordclk, int *clkptr, int *ordptr, int *critev, int *iwa);
+
+extern int  scicos_getscicosvars(int what, double **v, int *nv, int *type);
+
+extern void scicos_clearscicosimport(void);
+
 
 #endif 

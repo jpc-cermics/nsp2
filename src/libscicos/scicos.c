@@ -10,6 +10,11 @@
 #include "import.h"
 #include "blocks.h"
 
+/* FIXME */
+extern int nsp_check_events_activated(void);
+extern int nsp_check_gtk_events(void);
+
+
 #define abs(x) ((x) >= 0 ? (x) : -(x))
 #define max(a,b) ((a) >= (b) ? (a) : (b))
 #define min(a,b) ((a) <= (b) ? (a) : (b))
@@ -163,7 +168,7 @@ int C2F(scicos)
      int *flag__, *ierr_out;
 
 {
-  int i1,kf,lprt,in,out,job=1;
+  int i1,kf,lprt,in,out; /* job=1; */
   static int mxtb, ierr0, kfun0, i, j, k;
   static int ni, no;
   static int nx, nz;

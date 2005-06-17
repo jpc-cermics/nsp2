@@ -5,33 +5,32 @@
 
 /* FIXME */
 
-int scicos_isort() {};
+int scicos_isort() {return 0;};
 
+/*
+ * nb: number of regular blocks 
+ * vec: int vector of size nb 
+ * in: int vector 
+ * depu: int vector, first column of dep_ut 
+ * outptr: int vector 
+ * cmat: int vector 
+ * kk: int work area of size nb 
+ * 
+ * outputs: 
+ * ok: int 
+ * ord: int vector of size nord (=<nb) 
+ * nord 
+ * Copyright INRIA 
+*/
 
 int scicos_sctree (int *nb, int *vec, int *in, int *depu, int *outptr, int *cmat,
-	       int *ord, int *nord, int *ok, int *kk)
+		   int *ord, int *nord, int *ok, int *kk)
 {
 
   int i__1, i__2, i__3;
   int fini;
   int i__, j, l;
   int ii, lkk;
-
-  /*     inputs: */
-  /*     nb: number of regular blocks */
-  /*     vec: int vector of size nb */
-  /*     in: int vector */
-  /*     depu: int vector, first column of dep_ut */
-  /*     outptr: int vector */
-  /*     cmat: int vector */
-  /*     kk: int work area of size nb */
-
-  /*     outputs: */
-  /*     ok: int */
-  /*     ord: int vector of size nord (=<nb) */
-  /*     nord */
-  /*     Copyright INRIA */
-
 
   --kk;
   --vec;

@@ -1,5 +1,7 @@
 #include "scicos_block.h"
 
+extern int scicos_isort();
+
 int scicos_ftree3(int *vec, int *nb, int *deput, int *typl, int *bexe,
 		   int *boptr, int *blnk, int *blptr, int *kk, int *ord,
 		   int *nord, int *ok)

@@ -1,3 +1,4 @@
+#include "nsp/math.h"
 #include "scicos_block.h"
 
 int scicos_ftree4(int *vec, int *nb, int *nd, int *nnd, int *typr, int *outoin,
@@ -45,7 +46,9 @@ int scicos_ftree4(int *vec, int *nb, int *nd, int *nnd, int *typr, int *outoin,
 		}
 	    }
 	}
-      if (fini == 1) return ;
+      if (fini == 1) return OK;
     }
+  return OK;
 }	
+
 
