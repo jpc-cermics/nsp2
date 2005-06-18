@@ -52,7 +52,7 @@ int nsp_matrix_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_so
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if (((*Index) = nsp_matrix_create(NVOID,'r',1,A->mn) ) == NULLMAT ) return FAIL;
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return FAIL;
       (*Index)->convert='i';
       index = (*Index)->I;
     }
@@ -77,7 +77,7 @@ int nsp_matrix_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_so
       nsp_qsort_double(A->R,index,ind_flag,A->mn,dir);break;      
     default: 
       /* generic non stable qsort */
-      nsp_qsort_double(A->R,index,ind_flag,A->mn,dir);break;      
+      nsp_qsort_gen_double(A->R,index,ind_flag,A->m,A->n,dir);break;      
     }
   return OK;
 }
@@ -169,11 +169,11 @@ int nsp_smatrix_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir)
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if (((*Index) = nsp_matrix_create(NVOID,'r',1,A->mn) ) == NULLMAT ) return FAIL;
+      if (((*Index) = nsp_matrix_create(NVOID,'r',A->m,A->n) ) == NULLMAT ) return FAIL;
       (*Index)->convert='i';
       index = (*Index)->I;
     }
-  nsp_qsort_nsp_string(A->S,index,ind_flag,A->mn,dir);
+  nsp_qsort_gen_nsp_string(A->S,index,ind_flag,A->m,A->n,dir);
   return OK;
 }
 
