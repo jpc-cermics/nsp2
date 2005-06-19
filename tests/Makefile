@@ -33,6 +33,7 @@ tests: all
 
 distclean	:
 	@echo cleaning tests
-	@$(RM) $(TESTS) libaddinter.* .libs 
+	@$(RM) $(TESTS) libaddinter.*
+	@../bin/nsplibtool OBJS=addinter.o LIBRARY=libaddinter distclean
 
 clean:	distclean
