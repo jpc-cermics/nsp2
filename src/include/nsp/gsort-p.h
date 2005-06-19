@@ -9,8 +9,8 @@
 #include "nsp/string.h" 
 #include "nsp/object.h" 
 
-int C2F(gsort) (int *xI,double *xD,int *ind,int *iflag,int *m,int *n,nsp_const_string type,nsp_const_string  iord);
-void C2F(gsorts) (char **data,int *ind,int *iflag,int *m,int *n,nsp_const_string type,nsp_const_string iord);
+/* kept for compatibility */
+extern int nsp_gsort(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord);
 
 typedef enum {sort_g,sort_gs,sort_gm,sort_c,sort_r,sort_lr ,sort_lc ,sort_ldc,sort_ldr, sort_gb,sort_gd} nsp_sort;
 
