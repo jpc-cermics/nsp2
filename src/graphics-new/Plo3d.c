@@ -27,13 +27,11 @@
 #include <stdio.h>
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
+#include "nsp/gsort-p.h"
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
-
-/* FIXME: */
-extern double C2F(dsort)();
 
 /* like GEOX or GEOY in PloEch.h but we keep values in xx1 and yy1 for finite check */ 
 
@@ -527,7 +525,8 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
       /* polyz[i]= zdmin1 + TRZ(xmoy,ymoy,zmoy); */
       polyz[i]=  TRZ(xmoy,ymoy,zmoy);
     }
-  C2F(dsort)(polyz,q,locindex); 
+  nsp_qsort_double(polyz,locindex,TRUE,*q,'d');
+  /*   C2F(dsort)(polyz,q,locindex); */
   for ( i =0 ; i < (*q) ; i++)
     {
       locindex[i] -= 1;  /* Fortran locindex -> C locindex */
