@@ -32,7 +32,7 @@
 #include "nsp/smatrix-in.h"
 #include "nsp/matutil.h"
 #include "nsp/matint.h"
-
+#include "nsp/gsort-p.h"
 /* 
  * NspMaxpMatrix inherits from NspObject 
  * Max Plus matrices 
@@ -727,60 +727,75 @@ int int_mpkron(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+
 /*
  * MatSort 
- * [A_sorted,Index]=sort(A, 'r'| 'c' | 'g' | 'lr'| 'lc' ,'i'|'d')
+ * [A_sorted,Index]=sort(A, type,dir ) 
+ *  type = "g"| "gs"| "gm"| "c"| "r"| "lr" | "lc" | "ldc"| "ldr"|"gb"|"gd"
+ *  dir =  "i"| "d";
  */
 
-int int_mpsort(Stack stack, int rhs, int opt, int lhs)
+static int int_mpmatrix_sort(Stack stack, int rhs, int opt, int lhs)
 {
-  char *str1,*str2;
-  NspMaxpMatrix *A;
-  NspMatrix *Index;
+  NspMaxpMatrix *M=NULL;
+  NspMatrix *Index=NULL;
+  char *type_sort[]={ "g", "gs", "gm", "c", "r", "lr" , "lc" , "ldc", "ldr","gb","gd", NULL };
+  char *dir_sort[]={ "i", "d",  NULL };
+  int iflag = FALSE;
+  char direction = 'd';
+  int rep_type= sort_g,rep_dir;
+
   CheckRhs(1,3);
-  CheckLhs(1,2);
-  /* XXXX*/
-  if ( IsSMatObj(stack,1))  return int_smxsort(stack,rhs,opt,lhs);
-  if ((A=GetRealMpMatCopy(stack,1)) == NULLMAXPMAT) return RET_BUG;
+  if ((M=GetMpMatCopy(stack,1)) == NULLMAXPMAT ) return RET_BUG;
+
   if ( rhs >= 2) 
     {
-      if ((str1 = GetString(stack,2)) == (char*)0) return RET_BUG;
-      if ( strcmp(str1,"c") != 0 && strcmp(str1,"r") != 0 
-	   && strcmp(str1,"g") != 0 && strcmp(str1,"lr") != 0 
-	   && strcmp(str1,"lc") != 0 ) 
-	{
-	  Scierror("Error: wrong second argument in function %s\n",stack.fname);
-	  Scierror("\tonly 'g','c','r','lr','lc' are allowed\n");
-	  return RET_BUG;
-	}
+      if ((rep_type= GetStringInArray(stack,2,type_sort,1)) == -1) return RET_BUG; 
     }
-  else 
-    { str1 = "g"; }
-  if ( rhs == 3) 
+
+  if (rhs >= 3) 
     {
-      if ((str2 = GetString(stack,3)) == (char*)0) return RET_BUG;
-      if ( strcmp(str2,"i") != 0 && strcmp(str2,"d") != 0 )
-	{
-	  Scierror("Error: wrong third argument in function %s\n",stack.fname);
-	  Scierror("\tonly 'i' or 'd' are allowed\n");
-	  return RET_BUG;
-	}
+      if ((rep_dir= GetStringInArray(stack,3,dir_sort,1)) == -1) return RET_BUG; 
+      direction = dir_sort[rep_dir][0];
     }
-  else 
-    { str2 = "d"; }
-  Index=nsp_mat_sort((NspMatrix *) A,lhs,str1,str2);
-  NSP_OBJECT(A)->ret_pos = 1;
-  if ( lhs == 2) 
+
+  if (lhs  == 2) 
     {
-      if ( Index == NULLMAT ) return RET_BUG;
-      MoveObj(stack,2,(NspObject *)Index);
-      return 2;
+      iflag = TRUE;
     }
-  else 
+
+  switch ( rep_type  )
     {
-      return 1;
+    case sort_g : 
+    case sort_gs: 
+    case sort_gm: 
+    case sort_gb: 
+    case sort_gd: 
+      nsp_matrix_sort((NspMatrix *) M,&Index,iflag,direction,rep_type);break;
+      break;
+    case sort_c:
+      /* take care that c -> row */
+      nsp_matrix_row_sort((NspMatrix *)M,&Index,iflag,direction);break;
+    case sort_r:
+      nsp_matrix_column_sort((NspMatrix *)M,&Index,iflag,direction);break;
+    case sort_lr:
+      nsp_matrix_lexical_row_sort((NspMatrix *)M,&Index,iflag,direction,'i');break;
+    case sort_lc:
+      nsp_matrix_lexical_column_sort((NspMatrix *)M,&Index,iflag,direction,'i');break;
+    case sort_ldr:
+      nsp_matrix_lexical_row_sort((NspMatrix *)M,&Index,iflag,direction,'d');
+      break;
+    case sort_ldc:
+      nsp_matrix_lexical_column_sort((NspMatrix *)M,&Index,iflag,direction,'d');  break;
     }
-}
+  if ( iflag == TRUE && Index == NULL) return RET_BUG;
+  NSP_OBJECT(M)->ret_pos = 1;
+  if ( lhs == 2 ) {
+    MoveObj(stack,2, NSP_OBJECT(Index));
+  }
+  return Max(lhs,1);
+} 
+
 
 /*
  *nsp_mpmat_sum: sum=Sum(a[,b]) 
@@ -2661,7 +2676,7 @@ static OpWrapTab Matrix_func[]={
   {"flt_mp_mp" ,  int_mpflt ,NULL},
   {"fneq_mp_mp" ,  int_mpfneq ,NULL},
   {"ge_mp_mp" ,  int_mpge ,NULL},
-  {"gsort_mp" ,  int_mpsort ,NULL},
+  {"gsort_mp" , int_mpmatrix_sort ,NULL},
   {"gt_mp_mp" ,  int_mpgt ,NULL},
   {"iand_mp_mp",int_mpiand,NULL},
   {"idiv_mp_mp",int_mpidiv,NULL},
@@ -2705,7 +2720,7 @@ static OpWrapTab Matrix_func[]={
   {"sign_mp",int_mxsign,int_mp_wrap1},
   {"sin_mp",int_mxsin,int_mp_wrap1},
   {"sinh_mp",int_mxsinh,int_mp_wrap1},
-  {"sort_mp" ,  int_mpsort ,NULL},
+  {"sort_mp" , int_mpmatrix_sort ,NULL},
   {"sqrt_mp",int_mxsqrtel,int_mp_wrap1},
   {"sqrtel_mp",int_mxsqrtel,int_mp_wrap1},
   {"sum_mp" ,  int_mpsum ,NULL},

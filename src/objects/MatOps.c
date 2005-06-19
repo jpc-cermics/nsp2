@@ -932,11 +932,12 @@ NspMatrix *nsp_mat_kron(NspMatrix *A, NspMatrix *B)
 }
 
 /*
- *nsp_mat_sort: Index=Sort(A)
+ * nsp_mat_sort: Index=Sort(A)
  * A is changed, Index created with the indexes 
  * return NULLMAT on error 
  * WARNING : A must be real but the test is not done here 
  * ======
+ * to be updated XXX
  */
 
 NspMatrix *nsp_mat_sort(NspMatrix *A, int flag, char *str1, char *str2)
@@ -959,7 +960,7 @@ NspMatrix *nsp_mat_sort(NspMatrix *A, int flag, char *str1, char *str2)
       /* Change A to int **/
       nsp_double2int(&A->mn,A->R,(int *) A->R);
     }
-  C2F(gsort)((int *) A->R,A->R,iloc,&iflag,&A->m,&A->n,str1,str2);
+  nsp_gsort((int *) A->R,A->R,iloc,&iflag,&A->m,&A->n,str1,str2);
   if ( flag == 2) 
     {
       /* Loc contains ints, NOTE inc = -1 **/

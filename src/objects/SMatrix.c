@@ -1578,37 +1578,6 @@ NspMatrix *nsp_string_to_ascii(nsp_const_string S)
   return Loc;
 }
 
-/*
- * SMatSort : Index=Sort(A)
- * A is changed, Index created with the indexes 
- * return NULLMAT on error 
- * WARNING : A must be real but the test is not done here 
- * ======
- */
-
-NspMatrix *nsp_smatrix_sort_old(NspSMatrix *A,int flag,nsp_const_string str1,nsp_const_string str2)
-{
-  int iflag=0,inc=-1,*iloc=NULL,Locm=A->m,Locn=A->n;
-  NspMatrix *Loc=NULL;
-  if ( flag == 2 )
-    {
-      if ( str1[0] == 'l' ) 
-	{
-	  if ( str1[1] == 'r' ) Locn=Min(Locn,1);
-	  else Locm=Min(Locm,1);
-	}
-      if ((Loc= nsp_matrix_create(NVOID,'r',Locm,Locn))  == NULLMAT) return(NULLMAT);
-      iflag = 1;
-      iloc =(int *) Loc->R;  
-    }
-  C2F(gsorts)(A->S,iloc,&iflag,&A->m,&A->n,str1,str2);
-  if ( flag == 2) 
-    {
-      /* Loc contains ints, NOTE inc = -1 **/
-      nsp_int2double(&Loc->mn,iloc,&inc,Loc->R,&inc);
-    }
-  return Loc;
-}
 
 /**
  * nsp_smatrix_split:

@@ -7,6 +7,9 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.lib 
 
+
+
+
 OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	BMatrix.obj BMatObj.obj \
 	SMatrix.obj SMatrix-IN.obj SMatObj.obj \
@@ -23,7 +26,7 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	Interf.obj Interf-IN.obj \
 	P_PList.obj  P_PListObj.obj \
 	Datas.obj Datas-IN.obj Stack.obj \
-	gsort.obj qsort.obj	pr-output.obj user-prefs.obj Cnumeric.obj \
+	pr-output.obj user-prefs.obj Cnumeric.obj \
 	Perm.obj \
 	File.obj FileObj.obj \
 	Alloc.obj \
@@ -31,6 +34,9 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	matint.obj \
 	MaxpObj.obj MaxpMatrix.obj \
 	cells.obj cellsobj.obj 
+
+OLD=	gsort.obj qsort.obj	
+
 
 OBJSF=
 

@@ -1,11 +1,17 @@
 #include "nsp/machine.h"
 #include "nsp/math.h"
+#include "nsp/gsort-p.h"
 #include "scicos_block.h"
 
 
-/* FIXME */
+/* 
+ */
 
-int scicos_isort() {return 0;};
+void scicos_isort(int *a,int *na, int *index)
+{
+  return nsp_qsort_int(a,index,TRUE,*na,'d');
+}
+
 
 /*
  * nb: number of regular blocks 

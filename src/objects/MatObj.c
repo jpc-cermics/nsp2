@@ -33,6 +33,7 @@
 #include "nsp/matint.h"
 #include "nsp/gsort-p.h"
 #include "nsp/nsp_lapack.h"
+#include "nsp/gsort-p.h"
 
 
 /* 
@@ -827,7 +828,7 @@ int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count)
 
 int *nsp_indices_for_deletions(int mn, const NspMatrix *Elts, int *Count)
 {
-  int *ind, i, j, ne=Elts->mn, in_order=1, in_strict_order=1, c__1=1, zero=0;
+  int *ind, i, j, ne=Elts->mn, in_order=1, in_strict_order=1;
 
   if ( (ind = nsp_alloc_int(ne)) == NULL )
     return NULL;
@@ -844,9 +845,14 @@ int *nsp_indices_for_deletions(int mn, const NspMatrix *Elts, int *Count)
 	    in_order = 0;
 	}
     }
-
   if ( ! in_order )
-    C2F(gsort)(ind,NULL,NULL,&zero,&c__1,&ne,"i","i");
+    {
+      nsp_qsort_int(ind,NULL,FALSE,ne,'i');
+      /* 
+	 int c__1=1, zero=0;
+	 C2F(gsort)(ind,NULL,NULL,&zero,&c__1,&ne,"i","i"); 
+      */
+    }
       
   if ( ind[0] < 0  || ind[ne-1] >= mn )
     {
@@ -1216,63 +1222,10 @@ int_mxkron (Stack stack, int rhs, int opt, int lhs)
 
 /*
  * MatSort 
- * [A_sorted,Index]=sort(A, 'r'| 'c' | 'g' | 'lr'| 'lc' ,'i'|'d')
+ * [A_sorted,Index]=sort(A, type,dir ) 
+ *  type = "g"| "gs"| "gm"| "c"| "r"| "lr" | "lc" | "ldc"| "ldr"|"gb"|"gd"
+ *  dir =  "i"| "d";
  */
-
-
-int
-int_mxsort (Stack stack, int rhs, int opt, int lhs)
-{
-  char *str1, *str2;
-  NspMatrix *A, *Index;
-  CheckRhs (1, 3);
-  CheckLhs (1, 2);
-  /* XXXX */
-  if (IsSMatObj (stack, 1))
-    return int_smxsort (stack, rhs, opt, lhs);
-  if ((A = GetRealMatCopy (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if (rhs >= 2)
-    {
-      int rep;
-      char *sort_options1[] = { "c", "g", "lc", "lr", "r", NULL };
-      if ((rep = GetStringInArray (stack, 2, sort_options1, 1)) == -1)
-	return RET_BUG;
-      str1 = sort_options1[rep];
-    }
-  else
-    {
-      str1 = "g";
-    }
-  if (rhs == 3)
-    {
-      int rep;
-      char *sort_options2[] = { "i", "d", NULL };
-      if ((rep = GetStringInArray (stack, 3, sort_options2, 1)) == -1)
-	return RET_BUG;
-      str2 = sort_options2[rep];
-    }
-  else
-    {
-      str2 = "d";
-    }
-  Index = nsp_mat_sort (A, lhs, str1, str2);
-  NSP_OBJECT (A)->ret_pos = 1;
-  if (lhs == 2)
-    {
-      if (Index == NULLMAT)
-	return RET_BUG;
-      MoveObj (stack, 2, (NspObject *) Index);
-      return 2;
-    }
-  return 1;
-}
-
-/*
- * FIXME: test for sort 
- */
-
-#include "nsp/gsort-p.h"
 
 static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
 {

@@ -25,6 +25,7 @@
 
 #include "nsp/smatrix-in.h"
 #include "nsp/datas.h"
+#include "nsp/gsort-p.h"
 
 /*
  * Now the interfaced function for basic matrices operations
@@ -999,60 +1000,6 @@ int int_smxascii(Stack stack, int rhs, int opt, int lhs)
  * SMatSort 
  * [A_sorted,Index]=sort(A, 'r'| 'c' | 'g' | 'lr'| 'lc' ,'i'|'d')
  */
-
-int int_smxsort(Stack stack, int rhs, int opt, int lhs)
-{
-  char *str1,*str2;
-  NspSMatrix *A;
-  NspMatrix *Index;
-  CheckRhs(1,3);
-  CheckLhs(1,2);
-  if ((A=GetSMatCopy(stack,1)) == NULLSMAT) return RET_BUG;
-  if ( rhs >= 2) 
-    {
-      if ((str1 = GetString(stack,2)) == (char*)0) return RET_BUG;
-      if ( strcmp(str1,"c") != 0 && strcmp(str1,"r") != 0 
-	   && strcmp(str1,"g") != 0 && strcmp(str1,"lr") != 0 
-	   && strcmp(str1,"lc") != 0 ) 
-	{
-	  Scierror("Error: wrong second argument in function %s\n",stack.fname);
-	  Scierror("\tonly 'g','c','r','lr','lc' are allowed\n");
-	  return RET_BUG;
-	}
-    }
-  else 
-    { str1 = "g"; }
-  if ( rhs == 3) 
-    {
-      if ((str2 = GetString(stack,3)) == (char*)0) return RET_BUG;
-      if ( strcmp(str2,"i") != 0 && strcmp(str2,"d") != 0 )
-	{
-	  Scierror("Error: wrong third argument in function %s\n",stack.fname);
-	  Scierror("\tonly 'i' or 'd' are allowed\n");
-	  return RET_BUG;
-	}
-    }
-  else 
-    { str2 = "d"; }
-  Index=nsp_smatrix_sort_old(A,lhs,str1,str2);
-  NSP_OBJECT(A)->ret_pos = 1;
-  if ( lhs == 2) 
-    {
-      if ( Index == NULLMAT ) return RET_BUG;
-      MoveObj(stack,2,(NspObject *)Index);
-      return 2;
-    }
-  else 
-    {
-      return 1;
-    }
-}
-
-/*
- * new version 
- */
-
-#include "nsp/gsort-p.h"
 
 int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
 {
