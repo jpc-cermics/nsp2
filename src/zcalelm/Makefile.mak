@@ -13,11 +13,10 @@ CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
 OBJSC = matutil.obj matnum.obj qsort.obj qsort1.obj qsort2.obj \
-	qsort-stable.obj merge-sort.obj
+	qsort-stable.obj merge-sort.obj gsort.obj
 
-# gsort.obj
+OBJSF = 
 
-OBJSF = dsort.obj 
 
 include ../Make.lib.mak
 
@@ -30,5 +29,10 @@ matnum.obj: matnum.c
 	@echo "compiling matnum.c"
 	@$(CC) $(CC_OPTIONS1)  -c matnum.c 
 
+#dependencies 
 
+qsort1.c : qsort1-gen.c
+qsort2.c : qsort2-gen.c
+qsort.c : qsort-gen.c
+qsort-stable.c: qsort-stable-gen.c
 

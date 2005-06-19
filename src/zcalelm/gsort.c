@@ -76,8 +76,13 @@ int nsp_matrix_sort(NspMatrix *A,NspMatrix **Index,int ind_flag,char dir, nsp_so
       /* non stable qsort */
       nsp_qsort_double(A->R,index,ind_flag,A->mn,dir);break;      
     default: 
-      /* generic non stable qsort */
-      nsp_qsort_gen_double(A->R,index,ind_flag,A->m,A->n,dir);break;      
+      /* non stable qsort specializd for double (faster than the generic one) */
+      nsp_qsort_double(A->R,index,ind_flag,A->mn,dir);break;
+      /* for testing the int case 
+       * A = Mat2int(A);
+       * A->convert = 'i';
+       * nsp_qsort_int(A->I,index,ind_flag,A->mn,dir);break;      
+       */
     }
   return OK;
 }
@@ -173,7 +178,8 @@ int nsp_smatrix_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,char dir)
       (*Index)->convert='i';
       index = (*Index)->I;
     }
-  nsp_qsort_gen_nsp_string(A->S,index,ind_flag,A->m,A->n,dir);
+  /* use the specialized version */
+  nsp_qsort_nsp_string(A->S,index,ind_flag,A->mn,dir);
   return OK;
 }
 
@@ -232,7 +238,7 @@ int nsp_smatrix_lexical_row_sort(NspSMatrix *A,NspMatrix **Index,int ind_flag,ch
 
 /* to be removed FIXME */
 
-int C2F(gsort)(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord)
+int nsp_gsort(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord)
 {
   /* int i; */
   switch ( type[0])
@@ -253,58 +259,3 @@ int C2F(gsort)(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_con
   return(0);
 }
 
-
-/*
- * just used to prevent warnings about unused functions 
- */
-
-int C2F(gsort_uuuu)(xI,xD,ind,iflag,m,n,type,iord)
-     int *xI,*ind;
-     double *xD;
-     int *m,*n,*iflag;
-     char *type,*iord;
-{
-  switch ( type[0])
-    {
-    case 'r' :  nsp_qsort_gen_col_sort_int(xI,ind,*iflag,*m,*n,iord[0]);break;
-    case 'c' :  nsp_qsort_gen_row_sort_int(xI,ind,*iflag,*m,*n,iord[0]);break;
-    case 'l' :  
-      if ( type[1] == 'r' ) 
-	nsp_qsort_gen_lexirow_double(xD,ind,*iflag,*m,*n,iord[0]);
-      else
-	nsp_qsort_gen_lexicol_double(xD,ind,*iflag,*m,*n,iord[0]);
-      break;
-    case 'g' : 
-    default : nsp_qsort_int((int *) xD,ind,*iflag,*m*(*n),iord[0]);break;
-    }
-  return(0);
-}
-
-/*
- * General sort routine for Scilab 
- * The version for Scilab strings 
- * iflag == if 1 ind is to be computed if 0 ind is ignored 
- * m,n : matrix size 
- * type : the operation ( see the interface ) 
- * iord : 'i' or 'd' : increasind or decreasing sort 
- */
-
-#define STRR nsp_string
-#define XCNAME(x,y) CNAME(x,y)
-
-void C2F(gsorts)(char **data, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord)
-{
-  switch ( type[0])
-    {
-    case 'r' :  nsp_qsort_gen_col_sort_nsp_string(data,ind,*iflag,*m,*n,iord[0]);break;
-    case 'c' :  nsp_qsort_gen_row_sort_nsp_string(data,ind,*iflag,*m,*n,iord[0]);break;
-    case 'l' :  
-      if ( type[1] == 'r' ) 
-	nsp_qsort_gen_lexirow_nsp_string(data,ind,*iflag,*m,*n,iord[0]);
-      else
-	nsp_qsort_gen_lexicol_nsp_string(data,ind,*iflag,*m,*n,iord[0]);
-      break;
-    case 'g' : 
-    default :  nsp_qsort_nsp_string(data,ind,*iflag,*m*(*n),iord[0]);break;
-    }
-}

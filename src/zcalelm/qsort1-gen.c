@@ -108,6 +108,7 @@ void XCNAME(nsp_qsort_,ELT_TYPE)(ELT_TYPE *a,int *tab, int flag, int n,char dir)
 {
   ELT_TYPE temp;
   int i,itemp;
+  if ( flag == TRUE) for ( i = 0 ; i < n ; i++) tab[i]=i+1;
   XCNAME(nsp_internal_qsort_,ELT_TYPE)(a,tab,flag,n);
   if ( dir == 'd' ) 
     {
@@ -126,9 +127,7 @@ static void XCNAME(nsp_internal_qsort_,ELT_TYPE) (ELT_TYPE *a,int *tab, int flag
   const int es=1,es1=1;
   ELT_TYPE *pa, *pb, *pc, *pd, *pl, *pm, *pn;
   int *taba, *tabb, *tabc, *tabd, *tabl, *tabm, *tabn;
-  int d,dind, r,r1,  swap_cnt,i;
-
-  if ( flag == TRUE) for ( i = 0 ; i < n ; i++) tab[i]=i+1;
+  int d,dind, r,r1,  swap_cnt;
  
  loop:	
   swap_cnt = 0;
