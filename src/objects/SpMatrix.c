@@ -211,8 +211,11 @@ NspSpMatrix *nsp_spmatrix_sparse_old(char *name,NspMatrix *RC, NspMatrix *Values
     {
       if (Loc->D[i]->size > 1) 
 	{
-	  int c__1 =1;
-	  C2F(gsort)(Loc->D[i]->J,NULL,xb,&c__1,&c__1,&Loc->D[i]->size,"i","i");
+	  nsp_qsort_int(Loc->D[i]->J,xb,TRUE,Loc->D[i]->size,'i');
+	  /* 
+	     int c__1 =1;
+	     C2F(gsort)(Loc->D[i]->J,NULL,xb,&c__1,&c__1,&Loc->D[i]->size,"i","i");
+	  */
 	  if ( Loc->rc_type == 'r' ) 
 	    C2F(dperm)(Loc->D[i]->R,&Loc->D[i]->size,xb);
 	  else 
@@ -352,6 +355,7 @@ NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, in
   /*       if (Loc->D[i]->size > 1)  */
   /* 	{ */
   /* 	  int c__1 =1; */
+  /*      nsp_qsort_int(Loc->D[i]->J,xb,TRUE,Loc->D[i]->size,'i');*/
   /* 	  C2F(gsort)(Loc->D[i]->J,NULL,xb,&c__1,&c__1,&Loc->D[i]->size,"i","i"); */
   /* 	  if ( Loc->rc_type == 'r' )  */
   /* 	    C2F(dperm)(Loc->D[i]->R,&Loc->D[i]->size,xb); */
@@ -667,8 +671,11 @@ NspSpMatrix *nsp_spmatrix_redim(NspSpMatrix *A, int m, int n)
     {
       if (Loc->D[i]->size > 1) 
 	{
-	  int c__1 =1;
-	  C2F(gsort)(Loc->D[i]->J,NULL,xb,&c__1,&c__1,&Loc->D[i]->size,"i","i");
+	  nsp_qsort_int(Loc->D[i]->J,xb,TRUE,Loc->D[i]->size,'i');
+	  /* 
+	     int c__1 =1;
+	     C2F(gsort)(Loc->D[i]->J,NULL,xb,&c__1,&c__1,&Loc->D[i]->size,"i","i");
+	  */
 	  if ( Loc->rc_type == 'r' ) 
 	    C2F(dperm)(Loc->D[i]->R,&Loc->D[i]->size,xb);
 	  else 
@@ -1775,7 +1782,7 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
   NspSpMatrix *C = NULLSP;
   NspMatrix *x = NULLMAT;
   int *xb = NULL, *pxb = NULL;
-  int i, j, k, v, ip, jp, kp, neli, final_neli, zero=0,c__1=1;
+  int i, j, k, v, ip, jp, kp, neli, final_neli;
   char type = 'r';
   if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
   if ( A->n != B->m ) 
@@ -1860,7 +1867,9 @@ NspSpMatrix *nsp_spmatrix_mult(NspSpMatrix *A, NspSpMatrix *B)
       /* values to retrieve from x) but their are not in order (and so the sort) */
       /* we store them in C and exclude number which have cancelled during computation */
       
-      C2F(gsort)(pxb,NULL,NULL,&zero,&c__1,&neli,"i","i");
+      nsp_qsort_int(pxb,NULL,FALSE,neli,'i');      
+      /*  zero=0,c__1=1;
+	  C2F(gsort)(pxb,NULL,NULL,&zero,&c__1,&neli,"i","i"); */
 
       /* but as cancellation is unlikely to occur we allocate first the row */
       /* with the a priori non null element number neli */
