@@ -257,39 +257,64 @@ static int int_rcond( Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * interface for nsp_cholewsky: 
+ * interface for nsp_cholesky: 
  */
 
-static int int_cholewsky( Stack stack, int rhs, int opt, int lhs)
+static int int_cholesky( Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
   int_types T[] = {matcopy,t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG;
   CheckLhs(0,1);
-  if ( nsp_cholewsky(A)== FAIL) return RET_BUG;
+  if ( nsp_cholesky(A)== FAIL) return RET_BUG;
   NSP_OBJECT(A)->ret_pos=1;
   return Max(lhs,1);
 }
 
 /*
- * interface for nsp_lu
+ * interface for nsp_lu. Modified by Bruno June 21 2005
+ * the matrix A is now used to store U on return.
  */
-
 static int int_lu( Stack stack, int rhs, int opt, int lhs)
 { 
   NspMatrix *A;
-  NspMatrix *L=NULL, *U=NULL, *E=NULL;
+  NspMatrix *L=NULL, *E=NULL;
   NspMatrix **hE=NULL;
   int_types T[] = {matcopy,t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG;
   CheckLhs(1,3);
   if ( lhs >= 3) { hE= &E;}
-  if ( nsp_lu(A,&L,&U,hE)== FAIL) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(L));
-  if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(U));
-  if ( lhs >= 3 ) MoveObj(stack,3,NSP_OBJECT(E));
+  if ( nsp_lu(A,&L,hE)== FAIL) return RET_BUG;
+
+  NthObj(rhs+1) = NSP_OBJECT(L);
+  NSP_OBJECT(L)->ret_pos = 1;  
+  if ( lhs >= 2 ) NSP_OBJECT(A)->ret_pos = 2;
+  if ( lhs >= 3 ) 
+    {
+      NthObj(rhs+2) = NSP_OBJECT(E);
+      NSP_OBJECT(E)->ret_pos = 3;        
+    }
   return Max(lhs,1);
 }
+
+/*
+ * interface for nsp_lufact
+ * dans cette routine on ressort la factorisation de manière
+ * compacte dans une table de hachage
+ */
+
+/* static int int_lufact( Stack stack, int rhs, int opt, int lhs) */
+/* {  */
+/*   NspMatrix *A, *E; */
+/*   int_types T[] = {matcopy,t_end} ; */
+/*   CheckLhs(1,1); */
+/*   CheckRhs(1,1); */
+/*   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG; */
+  
+/*   if ( nsp_lu(A,&L,&U,hE)== FAIL) return RET_BUG; */
+/*   MoveObj(stack,1,NSP_OBJECT(L)); */
+/*   return Max(lhs,1); */
+/* } */
 
 /*
  * interface for norm 
@@ -436,7 +461,7 @@ static OpTab Lapack_func[] = {
   {"det",int_det},
   {"spec",int_spec},
   {"inv",int_inv},
-  {"chol",int_cholewsky},
+  {"chol",int_cholesky},
   {"rcond",int_rcond},
   {"norm",int_norm},
   {"lu",int_lu},

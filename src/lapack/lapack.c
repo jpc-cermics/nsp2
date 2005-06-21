@@ -410,197 +410,187 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 
 /* OK 
  * Lu factorization 
- * A is changed by nsp_lu 
+ * A is changed by nsp_lu. Modified by Bruno (June 21 2005) so
+ * as to lowering the memory requirement :
+ *      - use A to store L
+ *      - the permutation E is returned as a permutation and not
+ *        as a permutation matrix (precisely E is the inverse 
+ *        permutation of the one associated to permutation matrix
+ *        P in PA = LU). This brings some speedup in solving
+ *        linear systems with:
+ *
+ *          x = U\(L\b(E,:))
+ * 
+ *        In place of using:  x = U\(L\(P*b))
  */
+int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
+int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
 
-int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E);
-int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E);
-
-int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
+int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **E)
 {
   if (A->rc_type == 'r' ) 
-    return  intdgetrf(A,L,U,E);
+    return  intdgetrf(A,L,E);
   else 
-    return  intzgetrf(A,L,U,E);
+    return  intzgetrf(A,L,E);
 }
 
-int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
+int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
 {
-  int info, m = A->m, n = A->n ,Minmn,i,j,*Ipiv ;
-  NspMatrix *ipiv;
+  int info, m=A->m, n=A->n , Minmn, i, j, k, ind, nbsd;
+  int *ipiv=NULL, *invp=NULL;
+  double zeroD=0.0, oneD=1.0;
 
   /* A == [] return empty matrices*/ 
-  if ( A->mn == 0 )  {
-    if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if ( E != NULL)
-      {
-	if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
+  if ( A->mn == 0 )  
+    {
+      if ( (*L=nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT ) return FAIL;
+      if ( E != NULL )
+	if ( (*E=nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT ) return FAIL;
+      return OK ; 
+    }
 
   Minmn = Min(m,n);
 
-  if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT) return FAIL;
-  if (( *U =nsp_matrix_create(NVOID,A->rc_type,Minmn,n)) == NULLMAT) return FAIL;
+  if ( (*L=nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT ) return FAIL;
+ 
+  if ( E != NULL )
+    if ( (*E=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT ) return FAIL;
+  if ( (ipiv = nsp_alloc_int(Minmn)) == NULL ) return FAIL;
+  if ( (invp = nsp_alloc_int(m)) == NULL ) { FREE(ipiv); return FAIL;}
 
-  /* int matrix XXX*/ 
-  if (( ipiv =nsp_matrix_create(NVOID,A->rc_type,1,Minmn)) == NULLMAT) return FAIL;
-  Ipiv = (int *) ipiv->R;
-
-  if ( E != NULL) 
-    {
-      if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,m)) == NULLMAT) return FAIL;
-    }
-
-  C2F(dgetrf)(&m, &n,A->R, &m,Ipiv, &info);
-  if (info < 0) {
-    Scierror("Error: something wrong in lu\n");
-    return FAIL;
-  }
+  C2F(dgetrf)(&m, &n, A->R, &m, ipiv, &info);
   
-  /* Extract U from A */ 
-  for ( i = 0 ; i < (*U)->mn ; i++ ) (*U)->R[i]=0.0; 
-  C2F(dlacpy)("U", &Minmn, &n,A->R, &m, (*U)->R, &Minmn, 1L);
+  /* compute the inverse permutation invpiv */ 
+  for ( i=1 ; i <= m ; i++) invp[i-1]=i;
+  for ( i=1 ; i <= Minmn ; i++) 
+    {
+      int ip = ipiv[i-1];
+      if ( ip != i) { int iw = invp[i-1]; invp[i-1] = invp[ip-1]; invp[ip-1] = iw;}
+    }
 
-  if (E == NULL ) 
+  /* fill L with the inf triangular part of A */
+  if ( E != NULL )
     {
-      NspMatrix *iinvpiv;
-      int *Iinvpiv;
-      /* E is not requested L must be changed to E'*L */ 
-      /* compute a representation of E' */
-      if (( iinvpiv =nsp_matrix_create(NVOID,A->rc_type,1,m)) == NULLMAT) return FAIL;
-      Iinvpiv = (int *) iinvpiv->R;
-      for ( i=1; i <= m ; i++) Iinvpiv[i-1]=i;
-      for ( i=1; i <= Minmn ; i++) 
+      for ( i = 0 ; i < m ; i++ ) (*E)->R[i] = (double) invp[i];
+      C2F(dlaset)("A", &m, &Minmn, &zeroD, &oneD, (*L)->R, &m, 1L);
+      for ( j = 0 ; j < Minmn ; j++ )
 	{
-	  int ip = Ipiv[i-1];
-	  if ( ip != i) { 
-	    int iw = Iinvpiv[i-1]; 
-	    Iinvpiv[i-1] = Iinvpiv[ip-1];
-	    Iinvpiv[ip-1] = iw; 
-	  }
-	}
-      /* use A to store L before E' product */ 
-      for ( i = 0 ; i < Minmn ; i++ ) 
-	{
-	  A->R[(m+1)*i]=1.0; 
-	  for ( j = i+1; j < Minmn ; j++) A->R[i+j*m]=0.0; 
-	}
-      /* store E'*L in L */ 
-      for (i=0; i < m ; i++ ) 
-	{
-	  C2F(dcopy)(&Minmn,&A->R[i],&m,&(*L)->R[Iinvpiv[i]-1],&m);
-	}
-      nsp_matrix_destroy(iinvpiv); 
+	  ind = (m+1)*j+1; nbsd = m-j-1;
+	  if ( nbsd > 0 )
+	    memcpy(&((*L)->R[ind]), &(A->R[ind]), nbsd*sizeof(double));
+	  for ( k = 0 ; k < nbsd ; k++ ) A->R[ind+k] = 0.0; 	   
+	} 
     }
-  else 
+  else  /* but if the permutation is not required we must return P^(-1) L  */
     {
-      double zero = 0.0,done = 1.0;
-      int one = 1;
-      /* Extract L from A */ 
-      for ( i = 0 ; i < (*L)->mn ; i++ ) (*L)->R[i]=0.0; 
-      C2F(dlacpy)("L", &m, &Minmn,A->R, &m,(*L)->R, &m, 1L);
-      for ( i = 0 ; i < Minmn ; i++ ) (*L)->R[(m+1)*i]=1.0; 
-      /* Compute E */
-      C2F(dlaset)("F", &m, &m, &zero, &done,(*E)->R, &m, 1L);
-      C2F(dlaswp)(&m,(*E)->R,&m,&one ,&Minmn, Ipiv,&one );
+      for ( i = 0 ; i < Minmn ; i++ )
+	{
+	  k = invp[i] - 1;  /* caution invp is 1-based */ 
+	  for ( j = 0 ; j < i ; j++ )
+	    { (*L)->R[k+j*m] = A->R[i+j*m];  A->R[i+j*m] = 0.0;}
+	  (*L)->R[k+i*m] = 1.0;
+	  for ( j = i+1 ; j < Minmn ; j++ )
+	    (*L)->R[k+j*m] = 0.0;
+	}
+      for ( i = Minmn ; i < m ; i++ )
+	{
+	  k = invp[i] - 1;  /* caution invp is 1-based */ 
+	  for ( j = 0 ; j < Minmn ; j++ )
+	    { (*L)->R[k+j*m] = A->R[i+j*m];  A->R[i+j*m] = 0.0;}
+	}
     }
-  nsp_matrix_destroy(ipiv);
+
+  if ( m > n )   /* finally compress A to give U */
+    {
+      for ( j = 1 ; j < n ; j++ )
+	memmove(&(A->R[j*n]), &(A->R[j*m]), n*sizeof(double)); 
+      A->m = n; A->mn = n*n;
+      A->R = realloc(A->R, A->mn*sizeof(double));
+    }
+
+  FREE(ipiv); FREE(invp);
+  return OK;
+}
+
+int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
+{
+  int info, m=A->m, n=A->n , Minmn, i, j, k, ind, nbsd;
+  int *ipiv=NULL, *invp=NULL;
+  doubleC zeroC={0.0,0.0}, oneC={1.0,0.0};
+
+  /* A == [] return empty matrices*/ 
+  if ( A->mn == 0 )  
+    {
+      if ( (*L=nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT ) return FAIL;
+      if ( E != NULL )
+	if ( (*E=nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT ) return FAIL;
+      return OK ; 
+    }
+
+  Minmn = Min(m,n);
+
+  if ( (*L=nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT ) return FAIL;
+ 
+  if ( E != NULL )
+    if ( (*E=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT ) return FAIL;
+  if ( (ipiv = nsp_alloc_int(Minmn)) == NULL ) return FAIL;
+  if ( (invp = nsp_alloc_int(m)) == NULL ) { FREE(ipiv); return FAIL;}
+
+  C2F(zgetrf)(&m, &n, A->C, &m, ipiv, &info);
+  
+  /* compute the inverse permutation invpiv */ 
+  for ( i=1 ; i <= m ; i++) invp[i-1]=i;
+  for ( i=1 ; i <= Minmn ; i++) 
+    {
+      int ip = ipiv[i-1];
+      if ( ip != i) { int iw = invp[i-1]; invp[i-1] = invp[ip-1]; invp[ip-1] = iw;}
+    }
+
+  /* fill L with the inf triangular part of A */
+  if ( E != NULL )
+    {
+      for ( i = 0 ; i < m ; i++ ) (*E)->R[i] = (double) invp[i];
+      C2F(zlaset)("A", &m, &Minmn, &zeroC, &oneC, (*L)->C, &m, 1L);
+      for ( j = 0 ; j < Minmn ; j++ )
+	{
+	  ind = (m+1)*j+1; nbsd = m-j-1;
+	  if ( nbsd > 0 )
+	    memcpy(&((*L)->C[ind]), &(A->C[ind]), nbsd*sizeof(doubleC));
+	  for ( k = 0 ; k < nbsd ; k++ ) A->C[ind+k] = zeroC; 	   
+	} 
+    }
+  else  /* but if the permutation is not required we must return P^(-1) L  */
+    {
+      for ( i = 0 ; i < Minmn ; i++ )
+	{
+	  k = invp[i] - 1;  /* invp is 1-based */ 
+	  for ( j = 0 ; j < i ; j++ )
+	    { (*L)->C[k+j*m] = A->C[i+j*m];  A->C[i+j*m] = zeroC;}
+	  (*L)->C[k+i*m] = oneC;
+	  for ( j = i+1 ; j < Minmn ; j++ )
+	    (*L)->C[k+j*m] = zeroC;
+	}
+      for ( i = Minmn ; i < m ; i++ )
+	{
+	  k = invp[i] - 1;  /* invp is 1-based */ 
+	  for ( j = 0 ; j < Minmn ; j++ )
+	    { (*L)->C[k+j*m] = A->C[i+j*m];  A->C[i+j*m] = zeroC;}
+	}
+     }
+
+  if ( m > n )   /* finally compress A to give U */
+    {
+      for ( j = 1 ; j < n ; j++ )
+	memmove(&(A->C[j*n]), &(A->C[j*m]), n*sizeof(doubleC)); 
+      A->m = n; A->mn = n*n;
+      A->C = realloc(A->C, A->mn*sizeof(doubleC));
+    }
+
+  FREE(ipiv); FREE(invp);
   return OK;
 }
 
 
-int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **U,NspMatrix **E)
-{
-  doubleC Czero = {0.0,0.0}; /*  ,Cone ={ 1.0,0.0} ; */
-  int info, m = A->m, n = A->n ,Minmn,i,j,*Ipiv ;
-  NspMatrix *ipiv;
-  
-  /* A == [] return empty matrices*/ 
-  if ( A->mn == 0 )  {
-    if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if ( E != NULL)
-      {
-	if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  Minmn = Min(m,n);
-
-  if (( *L =nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT) return FAIL;
-  if (( *U =nsp_matrix_create(NVOID,A->rc_type,Minmn,n)) == NULLMAT) return FAIL;
-
-  /* int matrix XXX*/ 
-  if (( ipiv =nsp_matrix_create(NVOID,'r',1,Minmn)) == NULLMAT) return FAIL;
-  Ipiv = (int *) ipiv->R;
-
-  if ( E != NULL) 
-    {
-      if (( *E =nsp_matrix_create(NVOID,'r',m,m)) == NULLMAT) return FAIL;
-    }
-
-  C2F(zgetrf)(&m, &n,A->C, &m,Ipiv, &info);
-  if (info < 0) {
-    Scierror("Error: something wrong in lu\n");
-    return FAIL;
-  }
-  
-  /* Extract U from A */ 
-  for ( i = 0 ; i < (*U)->mn ; i++ ) (*U)->C[i] = Czero; 
-  C2F(zlacpy)("U", &Minmn, &n,A->C, &m, (*U)->C, &Minmn, 1L);
-
-  if (E == NULL ) 
-    {
-      NspMatrix *iinvpiv;
-      int *Iinvpiv;
-      /* E is not requested L must be changed to E'*L */ 
-      /* compute a representation of E' */
-      if (( iinvpiv =nsp_matrix_create(NVOID,'r',1,m)) == NULLMAT) return FAIL;
-      Iinvpiv = (int *) iinvpiv->R;
-      for ( i=1; i <= m ; i++) Iinvpiv[i-1]=i;
-      for ( i=1; i <= Minmn ; i++) 
-	{
-	  int ip = Ipiv[i-1];
-	  if ( ip != i) { 
-	    int iw = Iinvpiv[i-1]; 
-	    Iinvpiv[i-1] = Iinvpiv[ip-1];
-	    Iinvpiv[ip-1] = iw; 
-	  }
-	}
-      /* use A to store L before E' product */ 
-      for ( i = 0 ; i < Minmn ; i++ ) 
-	{
-	  A->C [(m+1)*i].r =1.0; A->C [(m+1)*i].i =0.0; 
-	  for ( j = i+1; j < Minmn ; j++) A->C[i+j*m]= Czero; 
-	}
-      /* store E'*L in L */ 
-      for (i=0; i < m ; i++ ) C2F(zcopy)(&Minmn,&A->C[i],&m,&(*L)->C[Iinvpiv[i]-1],&m);
-      nsp_matrix_destroy(iinvpiv); 
-    }
-  else 
-    {
-      double zero = 0.0,done = 1.0;
-      int one = 1;
-      /* Extract L from A */ 
-      for ( i = 0 ; i < (*L)->mn ; i++ ) (*L)->C[i]=Czero; 
-      C2F(zlacpy)("L", &m, &Minmn,A->C, &m,(*L)->C, &m, 1L);
-      for ( i = 0 ; i < Minmn ; i++ ) { (*L)->C[(m+1)*i].r=1.0; (*L)->C[(m+1)*i].i=0.0; }
-      /* Compute E */
-      /* C2F(zlaset)("F", &m, &m, &Czero, &Cone,(*E)->C, &m, 1L);
-       *  C2F(zlaswp)(&m,(*E)->C,&m,&one ,&Minmn, Ipiv,&one ); 
-       */
-      /* Compute E as a real matrix */
-      C2F(dlaset)("F", &m, &m, &zero, &done,(*E)->R, &m, 1L);
-      C2F(dlaswp)(&m,(*E)->R,&m,&one ,&Minmn, Ipiv,&one );
-
-    }
-  nsp_matrix_destroy(ipiv);
-  return OK;
-}
 
 /* OK 
  * svd: 
@@ -1539,11 +1529,11 @@ static int intzgecon(NspMatrix *A,double *rcond)
 } 
 
 /* OK 
- * nsp_cholewsky
+ * nsp_cholesky
  * A is changed 
  */
 
-int nsp_cholewsky(NspMatrix *A) 
+int nsp_cholesky(NspMatrix *A) 
 {
   int info, m = A->m, n = A->n ;
 
