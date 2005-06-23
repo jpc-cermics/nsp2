@@ -35,12 +35,17 @@ struct
 static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs) 
 {
   double tcur,tf;
-  int i,nout,rep,flag,pointi,ierr,idb,nblk;
+  int i,nout,rep,flag,pointi,ierr,idb,nblk,count;
   static char *action_name[]={ "finish","linear", "run", "start", NULL };
   const int nstate = 7, nsim = 30;
   NspHash *State, *Sim;
   NspMatrix * State_elts[nstate], * Sim_elts[nsim];
-  NspMatrix *Msimpar,*Mfunptr;
+  NspMatrix *Msimpar;
+  NspBMatrix *funflag;
+  NspList *funs;
+  Cell *cloc;
+
+  void **funptr;
 
   const char *sim[]={"funs","xptr","zptr","zcptr","inpptr",
 		     "outptr","inplnk","outlnk","lnkptr","rpar",
@@ -94,52 +99,44 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
 
   /* taille de funptr */
   nblk =Sim_elts[23]->R[0];
-  if (( Mfunptr = nsp_matrix_create(NVOID,'r',nblk,1))== NULLMAT) return RET_BUG;
-  Mfunptr->convert='i';
-  /* Set function table for blocks 
-   * walk in the list Sim_elts[0]
-   */
-  /* 
-  lf=l4e2
-  fo ( i = 0 ; i < nblk ; i++) 
-    {
-      ilf=iadr(lf)
-      if(istk(ilf).eq.11.or.istk(ilf).eq.13) then
-      C     Block is defined by a scilab function given in the structure
-      istk(lfunpt-1+i)=-lf
-      elseif(istk(ilf).eq.10) then
-      buf=' '
-      nn=istk(ilf+5)-1
-      call cvstr(nn,istk(ilf+6),buf,1)
-      buf(nn+1:nn+1)=char(0)
-      ifun=funnum(buf(1:nn+1))
-      if (ifun.gt.0) then
-      C     Block is defined by a C or Fortran procedure
-      istk(lfunpt-1+i)=ifun
-      else
-      C     Block is defined by a predefined scilab function 
-      call namstr(id,istk(ilf+6),nn,0)
-      fin=0
-      call funs(id)
-      if (fun.eq.-1.or.fun.eq.-2) then 
-      istk(lfunpt-1+i)=-lstk(fin)
-      else
-      kfun=i
-      buf='unknown block :'//buf(1:nn)
-      call error(888)
-      return
-      endif
-      endif
-      else
-      err=4
-      call error(44)
-      return
-      endif
-      lf=lf+istk(il4e2+2+i)-istk(il4e2+1+i)
-      10     continue
-    }
-  */
 
+  if (( funflag = nsp_bmatrix_create(NVOID,nblk,1))== NULLBMAT) return RET_BUG;
+  if (( funptr = malloc(nblk*sizeof(void *)))== NULL) return RET_BUG;
+  /*
+   * Sim_elts is a list of chars or functions 
+   */
+  funs = (NspList *) Sim_elts[0];
+  cloc = funs->first ;
+  count = 0;
+  while ( cloc != NULLCELL) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  if ( count >= nblk ) 
+	    {
+	      Scierror("Error: funs lenght should be %d\n",nblk);
+	      return RET_BUG;
+	    }
+	  if ( IsString(cloc->O)) 
+	    {
+	      funflag->B[count]=FALSE;
+	      funptr[count]= 0;/* FIXME : a faire */
+	    }
+	  else if ( IsNspPList(cloc->O) )
+	    {
+	      funflag->B[count]=TRUE;
+	      funptr[count]=cloc->O;
+	    }
+	  else 
+	    {
+	      Scierror("Error: funs should contain strings or macros\n");
+	      return RET_BUG;
+	    }
+	}
+      count++;
+      cloc = cloc->next;
+    }
+  
   Sim_elts[1]= Mat2int((NspMatrix *) Sim_elts[1]);   /* xptr */
   Sim_elts[2]= Mat2int((NspMatrix *) Sim_elts[2]);   /* zptr */
   Sim_elts[3]= Mat2int((NspMatrix *) Sim_elts[3]);   /* zcptr */
@@ -163,7 +160,7 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
   Sim_elts[26]= Mat2int((NspMatrix *) Sim_elts[26]); /* funtyp */
   Sim_elts[27]= Mat2int((NspMatrix *) Sim_elts[27]); /* iord */
   Sim_elts[29]= Mat2int((NspMatrix *) Sim_elts[29]); /* modptr */
-
+  
   State_elts[4]= Mat2int((NspMatrix *) State_elts[4]); /* evtspt */
   pointi = State_elts[5]->R[0];
 
@@ -178,31 +175,32 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
 	      &tcur,
 	      &tf,	 
 	      State_elts[3]->R, /* tevts */
-	      State_elts[4]->I,State_elts[4]->m,/* evtspt */
+	      State_elts[4]->I,&State_elts[4]->m,/* evtspt */
 	      &pointi, 
 	      State_elts[6]->R,&State_elts[6]->m, /* outtb */
-	      Mfunptr->I, /* from funs */
-	      Sim_elts[27]->I, /* funtyp */
+	      funflag->B,
+	      funptr,
+	      Sim_elts[26]->I, /* funtyp */
 	      Sim_elts[4]->I, /* inpptr */
 	      Sim_elts[5]->I, /* outptr*/
 	      Sim_elts[6]->I, 
 	      Sim_elts[7]->I,
-	      Sim_elts[8]->I,Sim_elts[8]->m,
+	      Sim_elts[8]->I,&Sim_elts[8]->m,
 	      Sim_elts[9]->R,
 	      Sim_elts[10]->I /* rpptr  */,
 	      Sim_elts[11]->I /* ipar  */,
 	      Sim_elts[12]->I /* ipptr  */,
 	      Sim_elts[13]->I /* clkptr  */,
-	      Sim_elts[14]->I,Sim_elts[14]->mn /* ordptr  */,
+	      Sim_elts[14]->I,&Sim_elts[14]->mn /* ordptr  */,
 	      Sim_elts[16]->I, /* ordclk */
-	      Sim_elts[17]->I,Sim_elts[17]->m /* cord */,
-	      Sim_elts[27]->I,Sim_elts[27]->m /* iord */,
-	      Sim_elts[18]->I,Sim_elts[18]->m /* oord */,
-	      Sim_elts[19]->I,Sim_elts[19]->m /* zord */,
+	      Sim_elts[17]->I,&Sim_elts[17]->m /* cord */,
+	      Sim_elts[27]->I,&Sim_elts[27]->m /* iord */,
+	      Sim_elts[18]->I,&Sim_elts[18]->m /* oord */,
+	      Sim_elts[19]->I,&Sim_elts[19]->m /* zord */,
 	      Sim_elts[20]->I,&nblk, /* critev */
 	      Sim_elts[22]->I /* ztyp */,
 	      Sim_elts[3]->I /* zcptr */,
-	      Sim_elts[25]->I,Sim_elts[25]->m /* subscr */,
+	      Sim_elts[25]->I,&Sim_elts[25]->m /* subscr */,
 	      simpar,&flag,&ierr);
   idb=0;
   if (ierr > 0 )

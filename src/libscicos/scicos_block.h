@@ -7,13 +7,11 @@
 #include <malloc.h>
 #endif 
 
-typedef void (*voidg)();
-
 typedef struct {
   int nevprt;
-  voidg funpt ;
+  void *funpt ; /* hard coded function */
   int type;
-  int scsptr;
+  void *scsptr;  /* macros (in fact a NspObject *) */
   int nz;
   double *z;
   int nx;

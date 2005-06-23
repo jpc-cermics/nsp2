@@ -159,9 +159,9 @@ static int debug_block;
 
 /* Subroutine */ 
 int scicos_main
-     (double *x_in, int *xptr_in, double *z__, void **work, int *zptr, int *modptr_in,char **names, double *t0_in, double *tf_in, double *tevts_in, int *evtspt_in, int *nevts, int *pointi_in, double *outtb_in, int *nout1, int *funptr, int *funtyp_in, int *inpptr_in, int *outptr_in, int *inplnk_in, int *outlnk_in, int *lnkptr_in, int *nlnkptr, double *rpar, int *rpptr, int *ipar, int *ipptr, int *clkptr_in, int *ordptr_in, int *nordptr1, int *ordclk_in, int *cord_in, int *ncord1, int *iord_in, int *niord1, int *oord_in, int *noord1, int *zord_in, int *nzord1, int *critev_in, int *nblk1, int *ztyp, int *zcptr_in, int *subscr, int *nsubs, double *simpar, int *flag__, int *ierr_out)
+     (double *x_in, int *xptr_in, double *z__, void **work, int *zptr, int *modptr_in,char **names, double *t0_in, double *tf_in, double *tevts_in, int *evtspt_in, int *nevts, int *pointi_in, double *outtb_in, int *nout1,int *funflag,void **funptr, int *funtyp_in, int *inpptr_in, int *outptr_in, int *inplnk_in, int *outlnk_in, int *lnkptr_in, int *nlnkptr, double *rpar, int *rpptr, int *ipar, int *ipptr, int *clkptr_in, int *ordptr_in, int *nordptr1, int *ordclk_in, int *cord_in, int *ncord1, int *iord_in, int *niord1, int *oord_in, int *noord1, int *zord_in, int *nzord1, int *critev_in, int *nblk1, int *ztyp, int *zcptr_in, int *subscr, int *nsubs, double *simpar, int *flag__, int *ierr_out)
 {
-  int i1,kf,lprt,in,out; /* job=1; */
+  int kf,lprt,in,out; /* job=1; */
   static int mxtb, ierr0, kfun0, i, j, k;
   static int ni, no;
   static int nx, nz;
@@ -298,61 +298,57 @@ int scicos_main
 
   for (kf = 0; kf < nblk; ++kf) {
     C2F(curblk).kfun = kf+1;
-    i=funptr[kf];
     Blocks[kf].type=funtyp[kf+1];
-    if (i<0) {
-      switch (funtyp[kf+1]) {
-      case 0:
-	Blocks[kf].funpt=scicos_sciblk;
-	break;
-      case 1:
-	sciprint("type 1 function not allowed for scilab blocks\r\n");
-	*ierr =1000+kf+1;
-	free_blocks();
-	return 0;
-      case 2:
-	sciprint("type 2 function not allowed for scilab blocks\r\n");
-	*ierr =1000+kf+1;
-	free_blocks();
-	return 0;
-      case 3:
-	Blocks[kf].funpt=sciblk2;
-	Blocks[kf].type=2;
-	break;
-      case 5:
-	Blocks[kf].funpt=sciblk4;
-	Blocks[kf].type=4;
-	break;
-      case 99: /* debugging block */
-       Blocks[kf].funpt=sciblk4;
-       Blocks[kf].type=4;
-       debug_block=kf;
-       break;
+    if (funflag[kf] == TRUE) 
+      {
+	/* the function is a macro */
+	switch (funtyp[kf+1]) {
+	case 0:
+	  Blocks[kf].funpt=scicos_sciblk;
+	  break;
+	case 1:
+	  sciprint("type 1 function not allowed for scilab blocks\r\n");
+	  *ierr =1000+kf+1;
+	  free_blocks();
+	  return 0;
+	case 2:
+	  sciprint("type 2 function not allowed for scilab blocks\r\n");
+	  *ierr =1000+kf+1;
+	  free_blocks();
+	  return 0;
+	case 3:
+	  Blocks[kf].funpt=sciblk2;
+	  Blocks[kf].type=2;
+	  break;
+	case 5:
+	  Blocks[kf].funpt=sciblk4;
+	  Blocks[kf].type=4;
+	  break;
+	case 99: /* debugging block */
+	  Blocks[kf].funpt=sciblk4;
+	  Blocks[kf].type=4;
+	  debug_block=kf;
+	  break;
+	case 10005:
+	  Blocks[kf].funpt=sciblk4;
+	  Blocks[kf].type=10004;
+	  break;
+	default :
+	  sciprint("Undefined Function type\r\n");
+	  *ierr =1000+kf+1;
+	  free_blocks();
+	  return 0;
+	}
+	/* a NspObject containing a macro */
+	Blocks[kf].scsptr=funptr[kf];
+	Blocks[kf].funpt= NULL;
+      }
+    else
+      {
+	Blocks[kf].scsptr= NULL;
+	Blocks[kf].funpt= funptr[kf];
+      }
 
-      case 10005:
-	Blocks[kf].funpt=sciblk4;
-	Blocks[kf].type=10004;
-	break;
-      default :
-	sciprint("Undefined Function type\r\n");
-	*ierr =1000+kf+1;
-	free_blocks();
-	return 0;
-      }
-      Blocks[kf].scsptr=-i; /* set scilab function adress for sciblk */
-    }
-    else if (i<=ntabsim)
-      Blocks[kf].funpt=*(tabsim[i-1].fonc);
-    else {
-      i -= (ntabsim+1);
-      GetDynFunc(i,&Blocks[kf].funpt);
-      if ( Blocks[kf].funpt == (voidf) 0) {
-	sciprint("Function not found\r\n");
-	*ierr =1000+kf+1;
-	free_blocks();
-	return 0;
-      }
-    }
     Blocks[kf].ztyp=ztyp[kf+1];
     Blocks[kf].nx=xptr[kf+2]-xptr[kf+1];
     Blocks[kf].ng=zcptr[kf+2]-zcptr[kf+1];
