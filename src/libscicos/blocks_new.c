@@ -13,7 +13,7 @@ extern double acosh(double x);
 extern double atanh(double x);
 #endif
 
-static BCG *scicos_set_win(int wid,int *oldwid)
+BCG *scicos_set_win(int wid,int *oldwid)
 {
   BCG *Xgc;
   if ((Xgc = window_list_get_first()) != NULL)

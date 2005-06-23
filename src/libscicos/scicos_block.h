@@ -1,11 +1,7 @@
 #ifndef __SCICOS_BLOCK_H__
 #define __SCICOS_BLOCK_H__
 
-#ifdef __STDC__
 #include <stdlib.h>
-#else 
-#include <malloc.h>
-#endif 
 
 typedef struct {
   int nevprt;

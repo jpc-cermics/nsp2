@@ -14,10 +14,6 @@ of type 0 */
 
 /* scicos common for debug */
 
-extern struct {
-    int idb;
-} C2F(dbcos);
-
 typedef void (*voidf)();
 
 /* Blocks prototypes */

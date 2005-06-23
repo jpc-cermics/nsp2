@@ -118,6 +118,10 @@ struct {
   int solver;
 } C2F(cmsolver);
 
+struct {
+    int idb;
+} C2F(dbcos);
+
 /* Table of constant values */
 
 
