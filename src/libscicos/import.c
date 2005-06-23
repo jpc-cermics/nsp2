@@ -19,8 +19,7 @@ ScicosImport  scicos_imp={
   (int *) NULL,  /* zptr */
   (int *) NULL,   /* mod */
   (int *) NULL,  /* modptr */
-  (char **) NULL,  /* iz XXX jpc */
-  (char **) NULL,  /* izptr XXX jpc*/
+  (char **) NULL,  /* names XXX jpc*/
   (int *) NULL,  /* inpptr */
   (int *) NULL,  /* inplnk */
   (int *) NULL,  /* outptr */
@@ -53,7 +52,7 @@ ScicosImport  scicos_imp={
   (int *) NULL,    /* iwa */
 };
 
-void  scicos_makescicosimport(double *x, int *xptr, int *zcptr, double *z, int *zptr, int *mod, int *modptr, char **iz, char **izptr, int *inpptr, int *inplnk, int *outptr, int *outlnk, int *lnkptr, int *nlnkptr, double *rpar, int *rpptr, int *ipar, int *ipptr, int *nblk, double *outtb, int *nout, int *subs, int *nsubs, double *tevts, int *evtspt, int *nevts, int *pointi, int *oord, int *zord, int *funptr, int *funtyp, int *ztyp, int *cord, int *ordclk, int *clkptr, int *ordptr, int *critev, int *iwa)
+void  scicos_makescicosimport(double *x, int *xptr, int *zcptr, double *z, int *zptr, int *mod, int *modptr, char **names, int *inpptr, int *inplnk, int *outptr, int *outlnk, int *lnkptr, int *nlnkptr, double *rpar, int *rpptr, int *ipar, int *ipptr, int *nblk, double *outtb, int *nout, int *subs, int *nsubs, double *tevts, int *evtspt, int *nevts, int *pointi, int *oord, int *zord, int *funptr, int *funtyp, int *ztyp, int *cord, int *ordclk, int *clkptr, int *ordptr, int *critev, int *iwa)
 {
     scicos_imp.x=x;
     scicos_imp.xptr=xptr;
@@ -62,8 +61,7 @@ void  scicos_makescicosimport(double *x, int *xptr, int *zcptr, double *z, int *
     scicos_imp.zptr=zptr;
     scicos_imp.mod=mod;
     scicos_imp.modptr=modptr;
-    scicos_imp.iz=iz;
-    scicos_imp.izptr=izptr;
+    scicos_imp.zptr=zptr;
 
     scicos_imp.inpptr=inpptr;
     scicos_imp.inplnk=inplnk;
@@ -112,8 +110,7 @@ void scicos_clearscicosimport(void)
   scicos_imp.zptr=(int *) NULL;
   scicos_imp.mod=(int *) NULL;
   scicos_imp.modptr=(int *) NULL;
-  scicos_imp.iz= NULL;
-  scicos_imp.izptr= NULL;
+  scicos_imp.names= NULL;
   scicos_imp.inpptr=(int *) NULL;
   scicos_imp.inplnk=(int *) NULL;
   scicos_imp.outptr=(int *) NULL;
@@ -247,7 +244,7 @@ int  scicos_getscicosvars(int what, double **v, int *nv, int *type)
 
 char *scicos_getlabel(int kfun)
 {
-  return scicos_imp.izptr[kfun];
+  return scicos_imp.names[kfun];
 }
 
 
@@ -284,7 +281,7 @@ int scicos_getsciblockbylabel(int *kfun,const char *label)
   *kfun=0;
   for( k=0 ; k < nblk ; k++) 
     {
-      if (strcmp(scicos_imp.izptr[k],label)==0) 
+      if (strcmp(scicos_imp.names[k],label)==0) 
 	{
 	  *kfun=k+1;
 	  return OK;
@@ -300,7 +297,7 @@ int scicos_getscilabel(int kfun,char **label)
     {
       return FAIL; /* undefined import table scicos is not running */
     }
-  *label = scicos_imp.izptr[kfun];
+  *label = scicos_imp.names[kfun];
   return OK;
 }
 

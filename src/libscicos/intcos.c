@@ -139,15 +139,16 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
       10     continue
     }
   */
+
   Sim_elts[1]= Mat2int((NspMatrix *) Sim_elts[1]);   /* xptr */
   Sim_elts[2]= Mat2int((NspMatrix *) Sim_elts[2]);   /* zptr */
-  Sim_elts[3]= Mat2int((NspMatrix *) Sim_elts[3]); /* zcptr */
+  Sim_elts[3]= Mat2int((NspMatrix *) Sim_elts[3]);   /* zcptr */
   Sim_elts[4]= Mat2int((NspMatrix *) Sim_elts[4]);   /* inpptr */
   Sim_elts[5]= Mat2int((NspMatrix *) Sim_elts[5]);   /* outptr */
   Sim_elts[6]= Mat2int((NspMatrix *) Sim_elts[6]);   /* inplnk */
   Sim_elts[7]= Mat2int((NspMatrix *) Sim_elts[7]);   /* outlnk */
   Sim_elts[8]= Mat2int((NspMatrix *) Sim_elts[8]);   /* lnkptr */
-  Sim_elts[10]= Mat2int((NspMatrix *) Sim_elts[10]);  /* rpptr  */
+  Sim_elts[10]= Mat2int((NspMatrix *) Sim_elts[10]); /* rpptr  */
   Sim_elts[11]= Mat2int((NspMatrix *) Sim_elts[11]); /* ipar  */
   Sim_elts[12]= Mat2int((NspMatrix *) Sim_elts[12]); /* ipptr  */
   Sim_elts[13]= Mat2int((NspMatrix *) Sim_elts[13]); /* clkptr  */
@@ -158,24 +159,34 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
   Sim_elts[19]= Mat2int((NspMatrix *) Sim_elts[19]); /* zord */
   Sim_elts[20]= Mat2int((NspMatrix *) Sim_elts[20]); /* critev */
   Sim_elts[22]= Mat2int((NspMatrix *) Sim_elts[22]); /* ztyp */
-  Sim_elts[25]= Mat2int((NspMatrix *) Sim_elts[25]);/* subscr */
+  Sim_elts[25]= Mat2int((NspMatrix *) Sim_elts[25]); /* subscr */
   Sim_elts[26]= Mat2int((NspMatrix *) Sim_elts[26]); /* funtyp */
   Sim_elts[27]= Mat2int((NspMatrix *) Sim_elts[27]); /* iord */
   Sim_elts[29]= Mat2int((NspMatrix *) Sim_elts[29]); /* modptr */
 
   State_elts[4]= Mat2int((NspMatrix *) State_elts[4]); /* evtspt */
   pointi = State_elts[5]->R[0];
-  C2F(scicos)(State_elts[0]->R,Sim_elts[1]->I,State_elts[1]->R,State_elts[2]->R,
-	      Sim_elts[2]->I,Sim_elts[30]->I,
-	      ((NspSMatrix *) Sim_elts[28])->S,
-	      &tcur,&tf,	 
-	      State_elts[3]->R,
-	      State_elts[4]->I,State_elts[4]->m,
-	      &pointi,
-	      State_elts[6]->R,&State_elts[6]->m,
-	      Mfunptr->I,
-	      Sim_elts[27]->I,
-	      Sim_elts[4]->I,Sim_elts[5]->I,Sim_elts[6]->I,Sim_elts[7]->I,
+
+
+  scicos_main(State_elts[0]->R, /* state x */
+	      Sim_elts[1]->I, /* xptr */
+	      State_elts[1]->R, /* state z0 */
+	      State_elts[2]->R, /* state iz */
+	      Sim_elts[2]->I, /* zptr */
+	      Sim_elts[29]->I, /* modptr */
+	      ((NspSMatrix *) Sim_elts[28])->S, /* labels */
+	      &tcur,
+	      &tf,	 
+	      State_elts[3]->R, /* tevts */
+	      State_elts[4]->I,State_elts[4]->m,/* evtspt */
+	      &pointi, 
+	      State_elts[6]->R,&State_elts[6]->m, /* outtb */
+	      Mfunptr->I, /* from funs */
+	      Sim_elts[27]->I, /* funtyp */
+	      Sim_elts[4]->I, /* inpptr */
+	      Sim_elts[5]->I, /* outptr*/
+	      Sim_elts[6]->I, 
+	      Sim_elts[7]->I,
 	      Sim_elts[8]->I,Sim_elts[8]->m,
 	      Sim_elts[9]->R,
 	      Sim_elts[10]->I /* rpptr  */,
@@ -193,7 +204,6 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
 	      Sim_elts[3]->I /* zcptr */,
 	      Sim_elts[25]->I,Sim_elts[25]->m /* subscr */,
 	      simpar,&flag,&ierr);
-  
   idb=0;
   if (ierr > 0 )
     {

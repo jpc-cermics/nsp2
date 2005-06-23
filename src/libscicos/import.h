@@ -11,8 +11,7 @@ typedef struct {
   int* zptr;  /* vector of pointers on block states */
   int* mod;      /* modes of the blocks */
   int* modptr;  /* vector of pointers */
-  char** iz;      /* unused */
-  char** izptr;  /* vector of pointers on iz */
+  char**names;  /* vector of strings */
   int* inpptr; /* vector of pointers on block inputs */
   int* inplnk;
   int* outptr;/* vector of pointers on block outputs */
