@@ -12,6 +12,12 @@
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
 #include "scicos.h"
+
+struct
+{
+  int kfun;
+} C2F(curblk);
+
 /* 
  * [state,t]=scicosim(state,tcur,tf,sim,'start' ,tol) 
  * 
@@ -26,7 +32,7 @@
  *               x,z,iz,tevts,evtspt,pointi,outtb)
  */
 
-static int int_scicos(Stack stack, int rhs, int opt, int lhs) 
+static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs) 
 {
   double tcur,tf;
   int i,nout,rep,flag,pointi,ierr,idb,nblk;
@@ -54,7 +60,7 @@ static int int_scicos(Stack stack, int rhs, int opt, int lhs)
       NspObject *obj;
       if ( nsp_hash_find(State,state[i],&obj) == FAIL) return RET_BUG;
       State_elts[i]= (NspMatrix *) obj;
-      if ( IsMat((NspObject *) State_elts[i]) == FAIL) return RET_BUG;
+      if ( IsMat((NspObject *) State_elts[i]) == FALSE ) return RET_BUG;
       if ( ((NspMatrix *)State_elts[i])->rc_type != 'r') 
 	{
 	  Scierror("Elements are supposed to be real matrix \n");
@@ -300,7 +306,6 @@ static int int_sctree(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
 static int int_tree2(Stack stack, int rhs, int opt, int lhs) 
 {
   int nord,nmvec,iok,i;
@@ -324,7 +329,7 @@ static int int_tree2(Stack stack, int rhs, int opt, int lhs)
       if(.not.createvar(6,'i',1,1,ipok)) return
   */
 
-  scicos_ftree2((int *)M[0]->R,&nmvec,(int *)M[3]->R,(int *)M[1]->R,(int *)M[2]->R,(int *)ipord->R,&nord,&iok);
+  scicos_ftree2(M[0]->I,&nmvec,M[3]->I,M[1]->I,M[2]->I,ipord->I,&nord,&iok);
   ipord->convert= 'i';
   ipord = Mat2double(ipord);
   if ( nsp_matrix_resize(ipord,nord,1) == FAIL) return RET_BUG;
@@ -350,9 +355,8 @@ static int int_tree3(Stack stack, int rhs, int opt, int lhs)
   if ((ok = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return RET_BUG;
   if ((ipkk = nsp_matrix_create(NVOID,'r',1,nb)) == NULLMAT) return RET_BUG;
 
-  scicos_ftree3((int *)M[0]->R,&M[0]->mn,(int *)M[1]->R,(int *)M[2]->R,(int *)M[3]->R,
-	 (int *)M[4]->R,(int *)M[5]->R,(int *)M[6]->R,(int *)ipkk->R,
-	 (int *)ipord->R,&nord,&iok);
+  scicos_ftree3(M[0]->I,&M[0]->mn,M[1]->I,M[2]->I,M[3]->I,M[4]->I,M[5]->I,M[6]->I,ipkk->I,
+		ipord->I,&nord,&iok);
   ipord->convert= 'i';
   ipord = Mat2double(ipord);
   if ( nsp_matrix_resize(ipord,nord,1) == FAIL) return RET_BUG;
@@ -433,13 +437,118 @@ int scicos_Message(char* code)
   return 0;
 }
 
+int int_var2vec(Stack stack, int rhs, int opt, int lhs) 
+{
+  Scierror("var2vec !!!!! \n");
+  return RET_BUG;
+}
+
+int int_vec2var(Stack stack, int rhs, int opt, int lhs) 
+{
+  Scierror("vec2var !!!!\n");
+  return RET_BUG;
+}
+
+int int_curblock(Stack stack, int rhs, int opt, int lhs) 
+{
+  NspMatrix *M;
+  CheckRhs(-1,0) ;
+  if ((M=nsp_matrix_create(NVOID,'r',1,1))==NULLMAT) return RET_BUG;
+  M->R[0]= C2F(curblk).kfun;
+  NSP_OBJECT(M)->ret_pos = 1;
+  StackStore(stack,(NspObject *)M,1);
+  return 1;
+}
+
+static char *var_names[]={ "inplnk","inpptr","ipar", "ipptr", "lnkptr", "outlnk",
+			   "outptr", "outtb",  "rpar", "rpptr", 
+			   "x", "xptr","z", "zptr",NULL};
+
+const int reps[]={12,10,7,8,14,13,11,9,5,6,1,2,3,4};
+
+int int_getscicosvars(Stack stack, int rhs, int opt, int lhs) 
+{
+  double *ptr; 
+  int ierr,nv,type,i;
+  NspMatrix *M;
+  int rep;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((rep= GetStringInArray(stack,1,var_names,1)) == -1) return RET_BUG; 
+  ierr= scicos_getscicosvars(reps[rep],&ptr,&nv,&type);
+  if ( ierr != 0 ) 
+    {
+      Scierror("scicosim is not running\n");
+      return RET_BUG;
+    }
+  if ((M = nsp_matrix_create(NVOID,'r',nv,1)) == NULLMAT) return RET_BUG; 
+  if ( type == 0 ) 
+    for ( i = 0 ; i < M->mn; i++) M->R[i]= ((int *) ptr)[i];
+  else 
+    for ( i = 0 ; i < M->mn; i++) M->R[i]= ptr[i];
+  MoveObj(stack,1,(NspObject *)M );
+  return 1;
+}
+
+int int_setscicosvars(Stack stack, int rhs, int opt, int lhs) 
+{
+  double *ptr; 
+  int ierr,nv,type,i, rep;
+  NspMatrix *x1;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((x1 = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG;
+  if ((rep= GetStringInArray(stack,2,var_names,1)) == -1) return RET_BUG; 
+  ierr= scicos_getscicosvars(reps[rep],&ptr,&nv,&type);
+  if ( ierr != 0 ) 
+    {
+      Scierror("scicosim is not running\n");
+      return RET_BUG;
+    }
+  CheckLength(stack.fname,1,x1,nv) ;
+  if( type == 0 )
+    for ( i = 0 ; i < nv ; i++) ((int *) ptr)[i]= (int) x1->R[i];
+  else 
+    for ( i = 0 ; i < nv ; i++) ptr[i]=  x1->R[i];
+  return 0;
+}
+
+int int_getblocklabel(Stack stack, int rhs, int opt, int lhs) 
+{
+  int kf;
+  char *label=NULL;
+  NspObject *Ob;
+  CheckRhs(0,1);
+  CheckLhs(1,1);
+  /*  checking variable scale */
+  if ( rhs == 1 ) 
+    {
+      if (GetScalarInt(stack,1,&kf) == FAIL) return RET_BUG;
+    }
+  else
+    {
+      kf = C2F(curblk).kfun;
+    }
+  if ( scicos_getscilabel(kf,&label)== FAIL) 
+    {
+      Scierror("Error: scicosim is not running\n");
+      return RET_BUG;
+    }
+  if (( Ob =(NspObject *) nsp_new_string_obj(NVOID,label,-1)) == NULL) return RET_BUG;
+  MoveObj(stack,1,Ob);
+  return 1;
+}
+
+
+
 static OpTab Scicos_func[]={
   {"sci_tree4",int_scicos_ftree4},
   {"sci_sctree",int_sctree},
   {"sci_tree2",int_tree2},
   {"sci_tree3",int_tree3},
   {"sci_scicos_debug",int_scicos_debug},
-  {"sci_scicos",int_scicos},
+  {"scicosim",int_scicos_sim},
+  {"curblock", int_curblock},
   {(char *) 0, NULL}
 };
 
