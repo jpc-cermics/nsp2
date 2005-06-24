@@ -947,7 +947,6 @@ int scicos_evscpe (scicos_args_poo)
   double ymin, ymax;
   int i__,  n1;
   double xx[2], yy[2];
-  char buf[40];
   int wid, iwd;
   double per;
   int nax[4], iwp;
@@ -1063,8 +1062,7 @@ int scicos_evscpe (scicos_args_poo)
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output", 0, rect, nax);
       str = scicos_getlabel (C2F(curblk).kfun);
-      if ( str != NULL && strlen(str) != 0) 
-	Xgc->graphic_engine->setpopupname(Xgc,buf);
+      if ( str != NULL && strlen(str) != 0) Xgc->graphic_engine->setpopupname(Xgc,str);
       nsp_check_gtk_events ();
       z__[1] = 0.;
     }
@@ -2163,7 +2161,6 @@ int scicos_mscope (scicos_args_poo)
   int n1, n2;
   double dt;
   int it;
-  char buf[40];
   int wid, iwd;
   double per;
   int nax[4], ilt, iwp;
@@ -2364,7 +2361,7 @@ int scicos_mscope (scicos_args_poo)
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       str = scicos_getlabel (C2F(curblk).kfun);
       if ( str != NULL && strlen(str) != 0) 
-	Xgc->graphic_engine->setpopupname(Xgc,buf);
+	Xgc->graphic_engine->setpopupname(Xgc,str);
       i__1 = nwid;
       for (kwid = 1; kwid <= i__1; ++kwid)
 	{
@@ -3169,7 +3166,6 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
   double tsave;
   int n1, n2;
   double dt;
-  char buf[40];
   int wid, iwd;
   double per;
   int nax[4], iwp;
@@ -3352,10 +3348,9 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		 0, rect, nax);
-      scicos_clip(Xgc,TRUE);
       str = scicos_getlabel (C2F(curblk).kfun);
       if ( str != NULL && strlen(str) != 0) 
-	Xgc->graphic_engine->setpopupname(Xgc,buf);
+	Xgc->graphic_engine->setpopupname(Xgc,str);
       z__[1] = 0.;
       z__[2] = *t;
       i__1 = *nu * n;
@@ -3379,7 +3374,7 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	{
 	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + (i__ - 1) * n],&ipar[i__ + 3], c__1,k);
 	}
-       scicos_clip(Xgc,FALSE);
+      scicos_clip(Xgc,FALSE);
     }
   return 0;
 }			
@@ -3402,7 +3397,6 @@ int scicos_scopxy (scicos_args_poo)
  double rect[4];
  double xmin, ymin, xmax, ymax;
  int n;
- char buf[40];
  int wid, iwd, nax[4], iwp;
  char *str;
  /*     Copyright INRIA */
@@ -3527,7 +3521,7 @@ int scicos_scopxy (scicos_args_poo)
 		0, rect, nax);
      str = scicos_getlabel (C2F(curblk).kfun);
      if ( str != NULL && strlen(str) != 0) 
-       Xgc->graphic_engine->setpopupname(Xgc,buf);
+       Xgc->graphic_engine->setpopupname(Xgc,str);
      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__6);
      nsp_check_gtk_events ();
      /* first point drawing */
@@ -3569,7 +3563,6 @@ int scicos_scoxy (scicos_args_poo)
   double rect[4];
   double xmin, ymin, xmax, ymax;
   int n;
-  char buf[40];
   int wid, iwd, nax[4], iwp;
 
   /*     Copyright INRIA */
@@ -3674,7 +3667,7 @@ int scicos_scoxy (scicos_args_poo)
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
       str = scicos_getlabel (C2F(curblk).kfun);
       if ( str != NULL && strlen(str) != 0) 
-	Xgc->graphic_engine->setpopupname(Xgc,buf);
+	Xgc->graphic_engine->setpopupname(Xgc,str);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		0, rect, nax);
       Xgc->graphic_engine->xset_thickness(Xgc,ipar[5]);

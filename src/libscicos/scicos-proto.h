@@ -131,7 +131,7 @@ extern int  scicos_getscicosvars(int what, double **v, int *nv, int *type);
 extern void scicos_clearscicosimport(void);
 
 int scicos_main
-(double *x_in, int *xptr_in, double *z__, void **work, int *zptr, int *modptr_in,char **names, double *t0_in, double *tf_in, double *tevts_in, int *evtspt_in, int *nevts, int *pointi_in, double *outtb_in, int *nout1,int *funflag,void **funptr, int *funtyp_in, int *inpptr_in, int *outptr_in, int *inplnk_in, int *outlnk_in, int *lnkptr_in, int *nlnkptr, double *rpar, int *rpptr, int *ipar, int *ipptr, int *clkptr_in, int *ordptr_in, int *nordptr1, int *ordclk_in, int *cord_in, int *ncord1, int *iord_in, int *niord1, int *oord_in, int *noord1, int *zord_in, int *nzord1, int *critev_in, int *nblk1, int *ztyp, int *zcptr_in, int *subscr, int *nsubs, double *simpar, int *flag__, int *ierr_out);
+(double *x_in, int *xptr_in, double *z__, double *work, int *zptr, int *modptr_in,char **names, double *t0_in, double *tf_in, double *tevts_in, int *evtspt_in, int *nevts, int *pointi_in, double *outtb_in, int *nout1,int *funflag,void **funptr, int *funtyp_in, int *inpptr_in, int *outptr_in, int *inplnk_in, int *outlnk_in, int *lnkptr_in, int *nlnkptr, double *rpar, int *rpptr, int *ipar, int *ipptr, int *clkptr_in, int *ordptr_in, int *nordptr1, int *ordclk_in, int *cord_in, int *ncord1, int *iord_in, int *niord1, int *oord_in, int *noord1, int *zord_in, int *nzord1, int *critev_in, int *nblk1, int *ztyp, int *zcptr_in, int *subscr, int *nsubs, double *simpar, int *flag__, int *ierr_out);
 
 extern BCG *scicos_set_win(int wid,int *oldwid);
 

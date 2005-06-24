@@ -1569,65 +1569,44 @@ void bouncexy(scicos_block *block,int flag)
     kfun=get_block_number();
     str = scicos_getlabel(kfun);
     if ( str != NULL && strlen(str) != 0) 
-      Xgc->graphic_engine->setpopupname(Xgc,buf);
+      Xgc->graphic_engine->setpopupname(Xgc,str);
     /* XXXXXXXXX C2F(sxevents)(); */
   }
   Xgc->graphic_engine->xset_recording(Xgc,TRUE);
 } 
 
 
+/*     Copyright INRIA */
+/*     Scicos block simulator */
+/*     ipar(1) = win_num */
+/*     ipar(2) = 0/1 color flag */
+/*     ipar(3) = buffer size */
+/*     ipar(4:11) = line type for ith curve */
+/*     ipar(12:13) : window position */
+/*     ipar(14:15) : window dimension */
+/*     rpar(1)=dt */
+/*     rpar(2)=ymin */
+/*     rpar(3)=ymax */
+/*     rpar(4)=periode */
 
 void cscope(scicos_block *block,int flag)
 {
   char *str;
   BCG *Xgc;
-  static int c_n1 = -1;
-  static int c__3 = 3;
-  static double frect[4] = { 0.,0.,1.,1. };
-  int kfun;
-  static int nxname;
-  static char buf[40];
-  static int c__1 = 1;
-  static int c__0 = 0;
-  static double c_b84 = 0.;
+  double frect[4] = { 0.,0.,1.,1. };
+  double t, *z__, *rpar, c_b84 = 0.0;
+  double per, dt, tsave, rect[4],  ymin, ymax;
+  int nax[]={2,10,2,6};
+  int c_n1 = -1, c__1 = 1;
+  int kfun, *ipar, nipar,nu, cur = 0, i__1,i, i__, k, n;
+  int n1, n2,  wid, iwd,  iwp;
 
-  double t;
-  double *z__;
-  double *rpar;
-  int *ipar, nipar,nu;
-  static int cur = 0;
-  int i__1,i;
-  static double rect[4];
-  static double ymin, ymax;
-  static int i__, k, n;
-  static double tsave;
-  static int n1, n2;
-  static double dt;
-  static int wid, iwd;
-  static double per;
-  static int nax[4], iwp;
-  
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     ipar(1) = win_num */
-  /*     ipar(2) = 0/1 color flag */
-  /*     ipar(3) = buffer size */
-  /*     ipar(4:11) = line type for ith curve */
-  /*     ipar(12:13) : window position */
-  /*     ipar(14:15) : window dimension */
-  /*     rpar(1)=dt */
-  /*     rpar(2)=ymin */
-  /*     rpar(3)=ymax */
-  /*     rpar(4)=periode */
-  
-  nu=block->insz[0];
-  if (nu>8) {nu=8;}
+  nu=Min(block->insz[0],8);
   rpar=block->rpar;
   ipar=block->ipar;
   nipar=block->nipar;
   t=get_scicos_time();
   
-  /* character*(4) logf */
   /* Parameter adjustments */
   --ipar;
   --rpar;
@@ -1636,9 +1615,7 @@ void cscope(scicos_block *block,int flag)
   iwd = nipar - 1;
 
   wid = ipar[1];
-  if(wid==-1){
-    wid=20000+get_block_number();
-  }
+  if(wid==-1) wid=20000+get_block_number();
   
   if (flag == 2) 
     {
@@ -1674,7 +1651,6 @@ void cscope(scicos_block *block,int flag)
       z__[k + 1] = t;
       for (i = 0; i < nu; ++i) {
 	z__[n + 1 + i * n + k] = block->inptr[0][i];
-	/* L1: */
       }
       z__[1] = (double) k;
       if (n1 == n2 && k < n) {
@@ -1699,10 +1675,6 @@ void cscope(scicos_block *block,int flag)
       z__[1] = 1.;
       if (n1 != n2) {
 	/*     clear window */
-	nax[0] = 2;
-	nax[1] = 10;
-	nax[2] = 2;
-	nax[3] = 6;
 	Xgc->graphic_engine->clearwindow(Xgc);
 	Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
 	Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
@@ -1710,22 +1682,20 @@ void cscope(scicos_block *block,int flag)
 	rect[1] = ymin;
 	rect[2] = per * (n1 + 2);
 	rect[3] = ymax;
-	Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-	nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011", buf,0, rect, nax);
+	Xgc->graphic_engine->scale->xset_dash(Xgc,0);
+	nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1,"011","",0, rect, nax);
       }
       t = tsave;
-      
     } 
   else if (flag == 4) 
     {
-      /* the workspace is used to store buffer 
-       */
-      if ((*block->work=
-	   scicos_malloc(sizeof(double)*(1+ipar[3]*(1+nu))))== NULL ) {
-	set_block_error(-16);
-	return;
-      }
-      z__=*block->work; 
+      /* the workspace is used as scope store buffer */
+      if ((*block->work =  scicos_malloc(sizeof(double)*(1+ipar[3]*(1+nu))))== NULL ) 
+	{
+	  set_block_error(-16);
+	  return;
+	}
+      z__= *block->work; 
       --z__;
       z__[1]=-1.0;
         
@@ -1733,10 +1703,6 @@ void cscope(scicos_block *block,int flag)
       ymin = rpar[2];
       ymax = rpar[3];
       per = rpar[4];
-      nax[0] = 2;
-      nax[1] = 10;
-      nax[2] = 2;
-      nax[3] = 6;
       n1 = (int) (t / per);
       if (t <= 0.) {
 	--n1;
@@ -1747,9 +1713,7 @@ void cscope(scicos_block *block,int flag)
 	Xgc->graphic_engine->xset_windowpos(Xgc,ipar[iwp], ipar[iwp + 1]);
       }
       if (ipar[iwd] >= 0) {
-	int cur1;
 	Xgc->graphic_engine->xset_windowdim(Xgc,ipar[iwd], ipar[iwd + 1]);
-	Xgc = scicos_set_win(wid,&cur1);
       }
       rect[0] = per * (n1 + 1);
       rect[1] = ymin;
@@ -1757,17 +1721,15 @@ void cscope(scicos_block *block,int flag)
       rect[3] = ymax;
       Nsetscale2d(Xgc,frect,NULL,rect,"nn");
       Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
-      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,3);
       Xgc->graphic_engine->clearwindow(Xgc);
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
-      Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011", buf,0, rect, nax);
-      scicos_clip(Xgc,TRUE);
-      nxname = 40;
+      Xgc->graphic_engine->scale->xset_dash(Xgc,0);
+      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","",0, rect, nax);
       kfun=get_block_number();
       str = scicos_getlabel(kfun);
       if ( str != NULL && strlen(str) != 0) 
-      Xgc->graphic_engine->setpopupname(Xgc,buf);
+	Xgc->graphic_engine->setpopupname(Xgc,str);
       z__[1] = 0.;
       z__[2] = t;
       i__1 = nu * n;
@@ -2005,7 +1967,7 @@ void cmscope(scicos_block *block,int flag)
     kfun=get_block_number();
     str = scicos_getlabel(kfun);
     if ( str != NULL && strlen(str) != 0) 
-      Xgc->graphic_engine->setpopupname(Xgc,buf);
+      Xgc->graphic_engine->setpopupname(Xgc,str);
     i__1 = nwid;
     for (kwid = 1; kwid <= i__1; ++kwid) {
       rect[0] = per * (n1 + 1);

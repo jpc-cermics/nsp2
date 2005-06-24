@@ -35,7 +35,7 @@ struct
 static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs) 
 {
   double tcur,tf;
-  int i,nout,rep,flag,pointi,ierr,idb,nblk,count;
+  int i,nout,rep,flag,pointi,ierr=0,idb,nblk,count;
   static char *action_name[]={ "finish","linear", "run", "start", NULL };
   const int nstate = 7, nsim = 30;
   NspHash *State, *Sim;
@@ -165,7 +165,7 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
   scicos_main(State_elts[0]->R, /* state x */
 	      Sim_elts[1]->I, /* xptr */
 	      State_elts[1]->R, /* state z0 */
-	      State_elts[2]->R, /* state iz */
+	      State_elts[2]->R, /* state iz used to store pointers */
 	      Sim_elts[2]->I, /* zptr */
 	      Sim_elts[29]->I, /* modptr */
 	      ((NspSMatrix *) Sim_elts[28])->S, /* labels */

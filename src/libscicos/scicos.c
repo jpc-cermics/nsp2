@@ -163,7 +163,7 @@ static int debug_block;
 
 /* Subroutine */ 
 int scicos_main
-     (double *x_in, int *xptr_in, double *z__, void **work, int *zptr, int *modptr_in,char **names, double *t0_in, double *tf_in, double *tevts_in, int *evtspt_in, int *nevts, int *pointi_in, double *outtb_in, int *nout1,int *funflag,void **funptr, int *funtyp_in, int *inpptr_in, int *outptr_in, int *inplnk_in, int *outlnk_in, int *lnkptr_in, int *nlnkptr, double *rpar, int *rpptr, int *ipar, int *ipptr, int *clkptr_in, int *ordptr_in, int *nordptr1, int *ordclk_in, int *cord_in, int *ncord1, int *iord_in, int *niord1, int *oord_in, int *noord1, int *zord_in, int *nzord1, int *critev_in, int *nblk1, int *ztyp, int *zcptr_in, int *subscr, int *nsubs, double *simpar, int *flag__, int *ierr_out)
+     (double *x_in, int *xptr_in, double *z__,double *work, int *zptr, int *modptr_in,char **names, double *t0_in, double *tf_in, double *tevts_in, int *evtspt_in, int *nevts, int *pointi_in, double *outtb_in, int *nout1,int *funflag,void **funptr, int *funtyp_in, int *inpptr_in, int *outptr_in, int *inplnk_in, int *outlnk_in, int *lnkptr_in, int *nlnkptr, double *rpar, int *rpptr, int *ipar, int *ipptr, int *clkptr_in, int *ordptr_in, int *nordptr1, int *ordclk_in, int *cord_in, int *ncord1, int *iord_in, int *niord1, int *oord_in, int *noord1, int *zord_in, int *nzord1, int *critev_in, int *nblk1, int *ztyp, int *zcptr_in, int *subscr, int *nsubs, double *simpar, int *flag__, int *ierr_out)
 {
   int kf,lprt,in,out; /* job=1; */
   static int mxtb, ierr0, kfun0, i, j, k;
@@ -422,7 +422,7 @@ int scicos_main
       return 0;
     }
     
-    Blocks[kf].work=(void **)(((double *)work)+kf);
+    Blocks[kf].work= (void **)(work+kf);
     Blocks[kf].nmode=modptr[kf+2]-modptr[kf+1]; 
     if ( Blocks[kf].nmode!=0){
       Blocks[kf].mode=&(mod[modptr[kf+1]-1]);
