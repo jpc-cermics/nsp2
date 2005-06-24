@@ -1262,7 +1262,7 @@ static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
     case sort_gm: 
     case sort_gb: 
     case sort_gd: 
-      nsp_matrix_sort(M,&Index,iflag,direction,rep_type);break;
+      nsp_matrix_sort(M,&Index,iflag,direction,rep_type);
       break;
     case sort_c:
       /* take care that c -> row */

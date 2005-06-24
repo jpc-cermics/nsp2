@@ -1399,7 +1399,8 @@ NspMatrix *nsp_smatrix_elts_length(NspSMatrix *A)
 NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
 {
   char buf[1024],formati[256];
-  nsp_const_string def="%f", defi ="%f +%fi", format=def;
+  nsp_const_string def="%f", format=def;
+  /* nsp_const_string  defi ="%f +%fi", */
   int i;
   NspSMatrix *Loc;
   if (flag == 1 )
@@ -1411,10 +1412,17 @@ NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
     }
   else 
     {
+      /* 
       if  ( A->rc_type == 'r') 
 	format = def;
       else 
 	strcpy(formati,defi);
+      */
+      M_set_format(A);
+      if  ( A->rc_type == 'r') 
+        format = get_curr_real_fmt();
+      else 
+	sprintf(formati,"%s + %si",get_curr_real_fmt(),get_curr_imag_fmt());
     }
   if ((Loc =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1)) == NULLSMAT) 
     return(NULLSMAT);

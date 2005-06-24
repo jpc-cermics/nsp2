@@ -560,6 +560,19 @@ void gen_set_format (void *M, FT is_neg, FT is_inf_or_nan, pr_mima min_max, FT a
   if ( type == 'r' ) curr_imag_fw =0;
 }
 
+
+
+const char *get_curr_real_fmt(void)
+{
+  return curr_real_fmt;
+}
+
+const char *get_curr_imag_fmt(void)
+{
+  return curr_imag_fmt;
+}
+
+
 /* Matrix case **/
 
 void M_set_format(NspMatrix *M)
