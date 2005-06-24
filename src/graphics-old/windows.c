@@ -161,6 +161,7 @@ BCG * window_list_win_to_front(int win)
       /* reinsert loc on top */
       loc->next = The_List ;
       loc->next->prev = loc ;
+      loc->prev = NULL;
       The_List = loc;
       return &loc->winxgc;
     }
