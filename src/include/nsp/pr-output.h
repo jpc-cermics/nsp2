@@ -18,4 +18,13 @@ int nsp_print_internalSM (const NspSMatrix *m,int indent);
 void nsp_print_internalBM (NspBMatrix *m,int indent);
 void nsp_print_internalSpM (NspSpMatrix *m,int indent);
 
+
+/* used to get the format used for displaying numbers of a given 
+ * matrix 
+ */
+
+const char *get_curr_real_fmt(void);
+const char *get_curr_imag_fmt(void);
+void M_set_format(NspMatrix *M);
+
 #endif 
