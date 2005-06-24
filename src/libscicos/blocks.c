@@ -7,7 +7,10 @@
 #include "nsp/matrix.h" 
 #include "nsp/blas.h" 
 #include "nsp/matutil.h" 
+#include "../librand/grand.h" /* rand_ranf() */
 #include "scicos.h"
+
+
 
 struct
 {
@@ -3007,6 +3010,15 @@ int scicos_qztrn (scicos_args_poo)
 }			
 
 
+/*     Copyright INRIA */
+/*     Scicos block simulator */
+/*     ipar(1) */
+/*            0 : uniform */
+/*            1 : normal */
+/*     rpar(1:ny)=mean */
+/*     rpar(ny+1:2*ny)=deviation */
+/*     rpar(2*ny+1)=dt */
+
 int scicos_rndblk (scicos_args_poo)
 {
 
@@ -3015,19 +3027,6 @@ int scicos_rndblk (scicos_args_poo)
   double t1, si;
   int iy;
   double sr;
-
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-
-  /*     ipar(1) */
-  /*            0 : uniform */
-  /*            1 : normal */
-  /*     rpar(1:ny)=mean */
-  /*     rpar(ny+1:2*ny)=deviation */
-  /*     rpar(2*ny+1)=dt */
-
-
-
   --y;
   --u;
   --ipar;
@@ -3054,8 +3053,7 @@ int scicos_rndblk (scicos_args_poo)
 	  i__1 = *nz - 1;
 	  for (i__ = 1; i__ <= i__1; ++i__)
 	    {
-	      sciprint("scicos urand to be done \n");
-	      /* z__[i__ + 1] = scicos_urand (&iy); */
+	      z__[i__ + 1] = nsp_urand(&iy);
 	    }
 	}
       else
@@ -3066,10 +3064,8 @@ int scicos_rndblk (scicos_args_poo)
 	  for (i__ = 1; i__ <= i__1; ++i__)
 	    {
 	    L75:
-	      sciprint("scicos urand to be done \n");
-	      /* sr = scicos_urand (&iy) * 2. - 1.;
-		 si = scicos_urand (&iy) * 2. - 1.;
-	      */
+	      sr = nsp_urand(&iy) * 2. - 1.;
+	      si = nsp_urand(&iy) * 2. - 1.;
 	      t1 = sr * sr + si * si;
 	      if (t1 > 1.)
 		{

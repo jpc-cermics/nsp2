@@ -99,6 +99,8 @@ void  scicos_makescicosimport(double *x, int *xptr, int *zcptr, double *z, int *
     scicos_imp.ordptr=ordptr;
     scicos_imp.critev=critev;
     scicos_imp.iwa=iwa;
+
+    scicos_imp.names = names;
 }
 
 void scicos_clearscicosimport(void)

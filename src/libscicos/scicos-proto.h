@@ -139,4 +139,7 @@ extern BCG *scicos_set_win(int wid,int *oldwid);
 extern double pow_di(double *ap, int *bp);
 extern double pow_dd(double *ap, double *bp);
 
+extern void *get_function(char * fname);
+
+
 #endif 

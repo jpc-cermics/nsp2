@@ -74,7 +74,8 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
     }
   nout = ((NspMatrix *) State_elts[6])->m;
   State_elts[4]=  Mat2int((NspMatrix *) State_elts[4]);
-  
+  pointi = State_elts[5]->R[0];
+  /* next variables */
   if (GetScalarDouble(stack,2,&tcur) == FAIL) return RET_BUG;
   if (GetScalarDouble(stack,3,&tf) == FAIL) return RET_BUG;
   if ((Sim = GetHashCopy(stack,4)) == NULLHASH) return RET_BUG;
@@ -120,7 +121,7 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
 	  if ( IsString(cloc->O)) 
 	    {
 	      funflag->B[count]=FALSE;
-	      funptr[count]= 0;/* FIXME : a faire */
+	      funptr[count]=get_function(((NspSMatrix *) cloc->O)->S[0]);
 	    }
 	  else if ( IsNspPList(cloc->O) )
 	    {
@@ -161,10 +162,6 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
   Sim_elts[27]= Mat2int((NspMatrix *) Sim_elts[27]); /* iord */
   Sim_elts[29]= Mat2int((NspMatrix *) Sim_elts[29]); /* modptr */
   
-  State_elts[4]= Mat2int((NspMatrix *) State_elts[4]); /* evtspt */
-  pointi = State_elts[5]->R[0];
-
-
   scicos_main(State_elts[0]->R, /* state x */
 	      Sim_elts[1]->I, /* xptr */
 	      State_elts[1]->R, /* state z0 */
@@ -258,28 +255,16 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
 	}
     }
   /* 
-     c       output variable: x0(x)
-     c     change pointi to double
-     stk(l1e7)=pointi
-     c     change iz to double
-     c           call int2db(n1e4,istk(iadr(l1e4)),-1,stk(l1e4),-1)
-     c     change evtspt to double
-     call int2db(n1e6,istk(iadr(l1e6)),-1,stk(l1e6),-1)
-     top=top+1
-     endif
-     c     
-     if(lhs .ge. 2) then
-     c     
-     c       output variable: t
-     c     
-     top=top+1
-     endif
-     c     
-     return
-     end
-     c
-  */
-  return 0;
+   * back convert the state 
+   */
+  State_elts[4]=  Mat2double((NspMatrix *) State_elts[4]);
+  State_elts[5]->R[0]=pointi;
+  NthObj(1)->ret_pos = 1;
+  if ( lhs == 2 ) 
+    {
+      if ( nsp_move_double(stack,2,tcur) == FAIL) return RET_BUG;
+    }
+  return Max(lhs,1);
 }
 
 

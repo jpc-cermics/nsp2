@@ -2578,22 +2578,24 @@ void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, dou
 }
   
 
+/*
+ * get a function int blocks functions from its name 
+ * FIXME: dynamic linking part is to be implemented 
+ */
 
-int C2F(funnum)(fname)
-     char * fname;
+
+void *get_function(char * fname)
 {
-  int i=0,ln;
-  int loc=-1;
+  int i=0;
   while ( tabsim[i].name != (char *) NULL) {
-    if ( strcmp(fname,tabsim[i].name) == 0 ) return(i+1);
+    if ( strcmp(fname,tabsim[i].name) == 0 ) 
+      return tabsim[i].fonc;
     i++;
   }
-  ln=strlen(fname);
   /* FIXME : check for dynamic linking  
-     C2F(iislink)(fname,&loc);C2F(iislink)(fname,&loc);
+   *  C2F(iislink)(fname,&loc);C2F(iislink)(fname,&loc);
   */
-  if (loc >= 0) return(ntabsim+(int)loc+1);
-  return(0);
+  return NULL;
 }
 
 
