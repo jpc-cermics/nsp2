@@ -13,6 +13,8 @@ extern double acosh(double x);
 extern double atanh(double x);
 #endif
 
+
+
 BCG *scicos_set_win(int wid,int *oldwid)
 {
   BCG *Xgc;
@@ -20,7 +22,10 @@ BCG *scicos_set_win(int wid,int *oldwid)
     {
       *oldwid = Xgc->graphic_engine->xget_curwin();
       if ( *oldwid != wid) 
-	Xgc->graphic_engine->xset_curwin(Max(wid,0),TRUE);
+	{
+	  Xgc->graphic_engine->xset_curwin(Max(wid,0),TRUE);
+	  Xgc =  window_list_get_first();
+	}
     }
   else 
     {

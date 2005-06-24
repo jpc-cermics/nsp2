@@ -63,9 +63,9 @@ int C2F(realtime)(t)
   realtime_diff = TIME2ULL(now) - realtime_start;
   simulation_diff = (*t - simulation_start) * simulation_scale;
   delay = (long long)(simulation_diff * 1000000) - realtime_diff;
-/*  printf("Realtime diff %Ld %f -> %Ld (t=%f)\n", 
-    realtime_diff, simulation_diff, delay, *t);
-*/
+  /*  printf("Realtime diff %Ld %f -> %Ld (t=%f)\n", 
+      realtime_diff, simulation_diff, delay, *t);
+  */
 
   if (delay > 0) {
     struct timeval d ;
