@@ -1234,7 +1234,7 @@ scicos_fscope (int *flag__, int *nevprt, double *t, double *xd, double *x,
   nu = ipar[16];
   if (*flag__ == 2)
     {
-      scicos_getouttb (&nu, &ipar[17], u);
+      scicos_getouttb (nu, &ipar[17], u);
       dt = rpar[1];
       ymin = rpar[2];
       ymax = rpar[3];

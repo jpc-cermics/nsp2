@@ -30,6 +30,7 @@ typedef struct {
   double *g;
   int ztyp;
   int *jroot;
+  int *jroot_init; /* keep track of initial jroot */
   char *label;
   void **work;
   int nmode;
@@ -49,9 +50,5 @@ void scicos_free(void *p);
 
 #define max(a,b) ((a) >= (b) ? (a) : (b))
 #define min(a,b) ((a) <= (b) ? (a) : (b))
-
-extern int s_copy();
-extern int s_cmp();
-
 
 #endif /* __SCICOS_BLOCK_H__ */

@@ -2,6 +2,8 @@
  * nsp version
  *  Jean-Philippe Chancelier 
  *  Copyright Enpc 
+ *
+ * for blocks coded in nsp 
  */
 
 #include "nsp/machine.h"
@@ -14,7 +16,6 @@ int scicos_scifunc(  NspObject **Args,int mlhs,int mrhs )
   return  FAIL;
 
 }
-
 
 NspMatrix *scicos_itosci(const int x[],int mx,int nx) 
 {
@@ -33,7 +34,6 @@ NspMatrix *scicos_dtosci(const double x[],int mx,int nx)
   for ( i = 0 ; i < M->mn; i++) M->R[i]= x[i];
   return M;
 }
-
 
 NspSMatrix *scicos_str2sci(nsp_const_string *x,int n,int m)
 {

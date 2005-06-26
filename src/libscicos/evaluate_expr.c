@@ -1,18 +1,10 @@
-#include "scicos_block.h"
 #include <math.h>
-#if WIN32
-#include <float.h>
-#endif
-
-#if defined(solaris)
-#include <ieeefp.h>
-int isinf(double x) { return !finite(x) && x==x; }
-#endif
+#include "scicos_block.h"
 
 #if WIN32
 /*
-arcsinh z = log (z+sqrt(1+z2))
-*/
+ * arcsinh z = log (z+sqrt(1+z2))
+ */
 double asinh(double x)
 {
   return log(x+sqrt(x*x+1));

@@ -9,31 +9,27 @@
 #include "scicos.h"
 #include "import.h"
 #include "blocks.h"
+#include "simul.h"
 
 /* FIXME */
 extern int nsp_check_events_activated(void);
 extern int nsp_check_gtk_events(void);
 
-
-#define abs(x) ((x) >= 0 ? (x) : -(x))
-#define max(a,b) ((a) >= (b) ? (a) : (b))
-#define min(a,b) ((a) <= (b) ? (a) : (b))
-
 #define freeall \
-	      free(rhot);\
-	      free(ihot);\
-	      free(jroot);\
-	      free(W);\
-	      free(zcros);
+	      FREE(rhot);\
+	      FREE(ihot);\
+	      FREE(jroot);\
+	      FREE(W);\
+	      FREE(zcros);
 
 #define freeallx \
-	      free(rhot);\
-	      free(ihot);\
-	      free(jroot);\
-	      free(W);\
-	      free(zcros);\
-	      free(scicos_xproperty);\
-              free(Mode_save);
+	      FREE(rhot);\
+	      FREE(ihot);\
+	      FREE(jroot);\
+	      FREE(W);\
+	      FREE(zcros);\
+	      FREE(scicos_xproperty);\
+              FREE(Mode_save);
 
 void cosini(double *);
 void idoit(double *);
@@ -55,7 +51,6 @@ int C2F(grblk)(int *, double *, double *, int *, double *);
 int C2F(grblkdaskr)(int *, double *, double *, double *, int *, double *, double *, int *);
 void addevs(double ,int *,int *);
 void putevs(double *,int *,int *);
-void free_blocks(void);
 int setmode(double *,double *,double *,int *,double);
 
 /* Jacobian*/
@@ -67,7 +62,7 @@ double Get_Jacobian_parameter(void);
 double Get_Scicos_SQUR(void);
 /*void DISP(A,ra ,ca,name);*/
 /* Jacobian*/
-
+void call_debug_scicos(double *, double *, double *, double *,double *,int *,int,int,int);
 
 extern void  scicos_sciblk();
 extern void  sciblk2();
@@ -80,13 +75,10 @@ extern  int C2F(stimer)();
 extern  int C2F(ddaskr)();
 extern  int C2F(lsodar2)();
 
-ScicosImport  scicos_imp;
+/* static int  ng, ncord, noord, nzord,niord,  nclock,nordclk,niord,nmod; */
 
-static int nblk, nordptr, nout, ng, ncord, noord, nzord,niord,
-  nclock,nordclk,niord,nmod;
-
+static int nclock;
 static int *neq;
-
 static  double Atol, rtol, ttol, deltat,hmax;
 static int hot;
 
@@ -124,130 +116,63 @@ struct {
 
 /* Table of constant values */
 
-
 static int c__0 = 0;
 static double c_b14 = 0.;
 static int c__1 = 1;
 static int panj=5;
-
-static int *iwa;
-
-static int *xptr,*modptr, *evtspt;
-static int  *funtyp, *inpptr, *outptr, *inplnk, *outlnk, *lnkptr;
-static int *clkptr, *ordptr, *ordclk, *cord,   *iord, *oord,  *zord,  *critev,  *zcptr;
-static int *pointi;
 static int *ierr;
 
-static double *x,*xd,*tevts,*outtb;
-static int *mod;
+static double *xd;
 static double *t0,*tf,scicos_time;
 
-static scicos_block *Blocks; 
-
 static int phase;
-
 int *pointer_xproperty;
-
 int n_pointer_xproperty;
-
 static int *block_error;
-  /* Jacobian*/
+
+/* Jacobian*/
 static int Jacobian_Flag;
 static double  CJJ;
 static double SQuround;
-  /* Jacobian*/
-
-void call_debug_scicos(double *, double *, double *, double *,double *,int *,int,int,int);
+/* Jacobian*/
 
 static int debug_block;
 
-/* Subroutine */ 
-int scicos_main
-     (double *x_in, int *xptr_in, double *z__,double *work, int *zptr, int *modptr_in,char **names, double *t0_in, double *tf_in, double *tevts_in, int *evtspt_in, int *nevts, int *pointi_in, double *outtb_in, int *nout1,int *funflag,void **funptr, int *funtyp_in, int *inpptr_in, int *outptr_in, int *inplnk_in, int *outlnk_in, int *lnkptr_in, int *nlnkptr, double *rpar, int *rpptr, int *ipar, int *ipptr, int *clkptr_in, int *ordptr_in, int *nordptr1, int *ordclk_in, int *cord_in, int *ncord1, int *iord_in, int *niord1, int *oord_in, int *noord1, int *zord_in, int *nzord1, int *critev_in, int *nblk1, int *ztyp, int *zcptr_in, int *subscr, int *nsubs, double *simpar, int *flag__, int *ierr_out)
+scicos_run *Scicos = NULL;
+
+int scicos_main( scicos_run *sr, double *t0_in, double *tf_in, double *simpar, int *flag__, int *ierr_out)
 {
-  int kf,lprt,in,out; /* job=1; */
-  static int mxtb, ierr0, kfun0, i, j, k;
-  static int ni, no;
-  static int nx, nz;
+  int kf, mxtb, ierr0, kfun0, i, j, k, ni, no;
   double *W;
-  /*     Copyright INRIA */
+
+  Scicos =sr;
   t0=t0_in;
   tf=tf_in;
   ierr=ierr_out;
-
-  /* Parameter adjustments */
-  pointi=pointi_in;
-  x=x_in;
-  xptr=xptr_in-1;
-  modptr=modptr_in-1;
-  --zptr;
-  evtspt=evtspt_in-1;
-  tevts=tevts_in-1;
-  outtb=outtb_in;
-  funtyp=funtyp_in-1;
-  inpptr=inpptr_in-1;
-  outptr=outptr_in-1;
-  inplnk=inplnk_in-1;
-  outlnk=outlnk_in-1;
-  lnkptr=lnkptr_in-1;
-  --rpptr;
-  --ipptr;
-  clkptr=clkptr_in-1;
-  ordptr=ordptr_in-1;
-  ordclk=ordclk_in-1;
-  cord=cord_in-1;
-  iord=iord_in-1;
-  oord=oord_in-1;
-  zord=zord_in-1;
-
-  critev=critev_in-1;
-  --ztyp;
-  zcptr=zcptr_in-1;
-  --simpar;
-
   /* Function Body */
-  Atol = simpar[1];
-  rtol = simpar[2];
-  ttol = simpar[3];
-  deltat = simpar[4];
-  C2F(rtfactor).scale = simpar[5];
-  C2F(cmsolver).solver = (int) simpar[6];
-  hmax=simpar[7];
+  Atol = simpar[0];
+  rtol = simpar[1];
+  ttol = simpar[2];
+  deltat = simpar[3];
+  C2F(rtfactor).scale = simpar[4];
+  C2F(cmsolver).solver = (int) simpar[5];
+  hmax=simpar[6];
 
-  nordptr = *nordptr1;
-  nblk = *nblk1;
-  ncord = *ncord1;
-  noord = *noord1;
-  nzord = *nzord1;
-  niord = *niord1;
-  nout = *nout1;
-
+  debug_block=-1; /* no debug block for start */
   *ierr = 0;
 
-  xd=&x[xptr[nblk+1]-1];
+  xd=&Scicos->state.x[Scicos->sim.xptr[Scicos->sim.nblk]-1];
+  neq=&Scicos->sim.nx;
 
-  nordclk=ordptr[nordptr]-1;
-  /*     computes number of zero crossing surfaces */
-  ng = zcptr[nblk + 1] - 1;
-  nmod = modptr[nblk + 1] - 1;
-
-  /*     number of  discrete real states */
-  nz = zptr[nblk + 1] - 1;
-  /*     number of continuous states */
-  nx = xptr[nblk +1] - 1;
-  neq=&nx;
-  /*        add an error message please */
-  /*     number of rows in ordclk is ordptr(nclkp1)-1 */
-
-  for (i = 1; i <= nblk; ++i) {
-    if (funtyp[i] < 10000) {
-      funtyp[i] %= 1000;
+  for (i = 1; i <= Scicos->sim.nblk; ++i) {
+    if (Scicos->sim.funtyp[-1+i] < 10000) {
+      Scicos->sim.funtyp[-1+i] %= 1000;
     } else {
-      funtyp[i] = funtyp[i] % 1000 + 10000;
+      Scicos->sim.funtyp[-1+i] = Scicos->sim.funtyp[-1+i] % 1000 + 10000;
     }
-    ni = inpptr[i + 1] - inpptr[i];
-    no = outptr[i + 1] - outptr[i];
-    if (funtyp[i] == 1) {
+    ni = Scicos->sim.inpptr[i] - Scicos->sim.inpptr[-1+i];
+    no = Scicos->sim.outptr[i] - Scicos->sim.outptr[-1+i];
+    if (Scicos->sim.funtyp[-1+i] == 1) {
       if (ni + no > 11) {
 	/*     hard coded maxsize in callf.c */
 	Scierror("Too many input/output ports for hilited block\n");
@@ -255,7 +180,7 @@ int scicos_main
 	*ierr = i + 1005;
 	return 0;
       }
-    } else if (funtyp[i] == 2 || funtyp[i] == 3) {
+    } else if (Scicos->sim.funtyp[-1+i] == 2 || Scicos->sim.funtyp[-1+i] == 3) {
       /*     hard coded maxsize in scicos.h */
       if (ni + no > SZ_SIZE) {
 	Scierror("Too many input/output ports for hilited block\n");
@@ -265,17 +190,17 @@ int scicos_main
       }
     }
     mxtb = 0;
-    if (funtyp[i] == 0) {
+    if (Scicos->sim.funtyp[-1+i] == 0) {
       if (ni > 1) {
 	for (j = 1; j <= ni; ++j) {
-	  k = inplnk[inpptr[i] - 1 + j];
-	  mxtb = mxtb + lnkptr[k + 1] - lnkptr[k];
+	  k = Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+i] - 1 + j];
+	  mxtb = mxtb + Scicos->sim.lnkptr[k] - Scicos->sim.lnkptr[-1+k];
 	}
       }
       if (no > 1) {
 	for (j = 1; j <= no; ++j) {
-	  k = outlnk[outptr[i] - 1 + j];
-	  mxtb = mxtb + lnkptr[k + 1] - lnkptr[k];
+	  k = Scicos->sim.outlnk[-1+Scicos->sim.outptr[-1+i] - 1 + j];
+	  mxtb = mxtb + Scicos->sim.lnkptr[k] - Scicos->sim.lnkptr[-1+k];
 	}
       }
       if (mxtb > TB_SIZE) {
@@ -288,163 +213,10 @@ int scicos_main
     }
   }
 
-  if((Blocks=malloc(sizeof(scicos_block)*nblk))== NULL ){
-    *ierr =5;
-    return 0;
-  }
-  if(nmod>0){
-    if((mod=malloc(sizeof(int)*nmod))== NULL ){
-      *ierr =5;
-      return 0;
-    }
-  }
-  debug_block=-1; /* no debug block for start */
-
-  for (kf = 0; kf < nblk; ++kf) {
-    C2F(curblk).kfun = kf+1;
-    Blocks[kf].type=funtyp[kf+1];
-    if (funflag[kf] == TRUE) 
-      {
-	/* the function is a macro */
-	switch (funtyp[kf+1]) {
-	case 0:
-	  Blocks[kf].funpt=scicos_sciblk;
-	  break;
-	case 1:
-	  sciprint("type 1 function not allowed for scilab blocks\r\n");
-	  *ierr =1000+kf+1;
-	  free_blocks();
-	  return 0;
-	case 2:
-	  sciprint("type 2 function not allowed for scilab blocks\r\n");
-	  *ierr =1000+kf+1;
-	  free_blocks();
-	  return 0;
-	case 3:
-	  Blocks[kf].funpt=sciblk2;
-	  Blocks[kf].type=2;
-	  break;
-	case 5:
-	  Blocks[kf].funpt=sciblk4;
-	  Blocks[kf].type=4;
-	  break;
-	case 99: /* debugging block */
-	  Blocks[kf].funpt=sciblk4;
-	  Blocks[kf].type=4;
-	  debug_block=kf;
-	  break;
-	case 10005:
-	  Blocks[kf].funpt=sciblk4;
-	  Blocks[kf].type=10004;
-	  break;
-	default :
-	  sciprint("Undefined Function type\r\n");
-	  *ierr =1000+kf+1;
-	  free_blocks();
-	  return 0;
-	}
-	/* a NspObject containing a macro */
-	Blocks[kf].scsptr=funptr[kf];
-	Blocks[kf].funpt= NULL;
-      }
-    else
-      {
-	Blocks[kf].scsptr= NULL;
-	Blocks[kf].funpt= funptr[kf];
-      }
-
-    Blocks[kf].ztyp=ztyp[kf+1];
-    Blocks[kf].nx=xptr[kf+2]-xptr[kf+1];
-    Blocks[kf].ng=zcptr[kf+2]-zcptr[kf+1];
-    Blocks[kf].nz=zptr[kf+2]-zptr[kf+1];
-    Blocks[kf].nrpar=rpptr[kf+2]-rpptr[kf+1];
-    Blocks[kf].nipar=ipptr[kf+2]-ipptr[kf+1];
-    Blocks[kf].nin=inpptr[kf+2]-inpptr[kf+1]; /* number of input ports */
-    Blocks[kf].nout=outptr[kf+2]-outptr[kf+1];/* number of output ports */
-    if ((Blocks[kf].insz=malloc(sizeof(int)*Blocks[kf].nin))== NULL ){
-      free_blocks();
-      *ierr =5;
-      return 0;
-    }
-    if ((Blocks[kf].inptr=malloc(sizeof(double*)*Blocks[kf].nin))== NULL ){
-      free_blocks();
-      *ierr =5;
-      return 0;
-    }
-    for(in=0;in<Blocks[kf].nin;in++) {
-      lprt=inplnk[inpptr[kf+1]+in];
-      Blocks[kf].inptr[in]=&(outtb[lnkptr[lprt]-1]);
-      Blocks[kf].insz[in]=lnkptr[lprt+1]-lnkptr[lprt];
-    }
-    if ((Blocks[kf].outsz=malloc(sizeof(int)*Blocks[kf].nout))== NULL ){
-      free_blocks();
-      *ierr =5;
-      return 0;
-    }
-    if ((Blocks[kf].outptr=malloc(sizeof(double*)*Blocks[kf].nout))== NULL ){
-      free_blocks();
-      *ierr =5;
-      return 0;
-    }
-    for(out=0;out<Blocks[kf].nout;out++) {
-      lprt=outlnk[outptr[kf+1]+out];
-      Blocks[kf].outptr[out]=&(outtb[lnkptr[lprt]-1]);
-      Blocks[kf].outsz[out]=lnkptr[lprt+1]-lnkptr[lprt];
-    }
-    Blocks[kf].nevout=clkptr[kf+2] - clkptr[kf+1];
-    if ((Blocks[kf].evout=calloc(Blocks[kf].nevout,sizeof(double)))== NULL ){
-      free_blocks();
-      *ierr =5;
-      return 0;
-    }
-
-    Blocks[kf].z=&(z__[zptr[kf+1]-1]);
-    Blocks[kf].rpar=&(rpar[rpptr[kf+1]-1]);
-    Blocks[kf].ipar=&(ipar[ipptr[kf+1]-1]);
-
-    if ((Blocks[kf].res=malloc(sizeof(double)*Blocks[kf].nx))== NULL ){
-      free_blocks();
-      *ierr =5;
-      return 0;
-    }
-
-
-    if ( (Blocks[kf].label  =new_nsp_string(names[kf])) == NULL) 
-      {
-	free_blocks();
-	*ierr =5;
-	return 0;
-      }
-
-    if ((Blocks[kf].jroot=calloc(Blocks[kf].ng,sizeof(int)))== NULL ){
-      free_blocks();
-      *ierr =5;
-      return 0;
-    }
-    
-    Blocks[kf].work= (void **)(work+kf);
-    Blocks[kf].nmode=modptr[kf+2]-modptr[kf+1]; 
-    if ( Blocks[kf].nmode!=0){
-      Blocks[kf].mode=&(mod[modptr[kf+1]-1]);
-    }
-  }
-
-
-  if((iwa=malloc(sizeof(int)*(*nevts)))== NULL ){
-    free_blocks();
-    *ierr =5;
-    return 0;
-  }
-  scicos_makescicosimport(x, &xptr[1], &zcptr[1], z__, &zptr[1],mod,&modptr[1], names, 
-			  &inpptr[1], &inplnk[1], &outptr[1], &outlnk[1], &lnkptr[1], 
-			  nlnkptr, rpar, &rpptr[1], ipar, &ipptr[1], &nblk, outtb, 
-			  &nout, subscr, nsubs, &tevts[1], &evtspt[1], nevts, pointi, 
-			  &oord[1], &zord[1], funptr, &funtyp[1], &ztyp[1], &cord[1],
-			  &ordclk[1], &clkptr[1], &ordptr[1], &critev[1], iwa);
   if (*flag__ == 1) {
     /*     initialisation des blocks */
-    for (kf = 0; kf < nblk; ++kf) {
-      *(Blocks[kf].work)=NULL;
+    for (kf = 0; kf < Scicos->sim.nblk; ++kf) {
+      *(Scicos->Blocks[kf].work)=NULL;
     }
     cosini(t0);
     if (*ierr != 0) {
@@ -477,24 +249,18 @@ int scicos_main
   } else if (*flag__ == 4) {
     idoit(t0);
     if (*ierr == 0) {
-      if((W=malloc(sizeof(double)*nx))== NULL ){
-	free(iwa);
-	free_blocks();
+      if((W=malloc(sizeof(double)*Scicos->sim.nx))== NULL ){
 	*ierr =5;
 	return 0;
       }
     
-      C2F(simblk)(&nx, t0, x, W);
-      for (i = 0; i < nx; ++i) {
-	x[i] = W[i];
+      C2F(simblk)(&Scicos->sim.nx, t0, Scicos->state.x, W);
+      for (i = 0; i < Scicos->sim.nx; ++i) {
+	Scicos->state.x[i] = W[i];
       }
-      free(W);
+      FREE(W);
     }
   }
-  free(iwa);
-  free_blocks(); 
-
-  scicos_clearscicosimport();
   return 0;
 } 
 
@@ -509,7 +275,7 @@ void cosini(double *told)
   static int jj;
 
   double *W;
-  jj=max(ng,nout);
+  jj=Max(Scicos->sim.ng,Scicos->state.nout);
   if((W=malloc(sizeof(double)*(jj)))== NULL ){
     *ierr =10000;
     return;
@@ -525,10 +291,10 @@ void cosini(double *told)
 
   nsp_dset(&jj, &c_b14, W, &c__1);
   nclock = 0;
-  for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= nblk; ++C2F(curblk).kfun) {
-    if (funtyp[C2F(curblk).kfun] >= 0) {
+  for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= Scicos->sim.nblk; ++C2F(curblk).kfun) {
+    if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] >= 0) {
       flag__ = 4;
-      callf(told, xd, x, x,W,&flag__);
+      callf(told, xd, Scicos->state.x, Scicos->state.x,W,&flag__);
       if (flag__ < 0 && *ierr == 0) {
 	*ierr = 5 - flag__;
 	kfune = C2F(curblk).kfun;
@@ -537,35 +303,35 @@ void cosini(double *told)
   }
   if (*ierr != 0) {
     C2F(curblk).kfun = kfune;
-    free(W);
+    FREE(W);
     return;
   }
   /*     initialization (flag 6) */
   nclock = 0;
 
-  for (jj = 1; jj <= ncord; ++jj) {
-    C2F(curblk).kfun = cord[jj];
+  for (jj = 1; jj <= Scicos->sim.ncord; ++jj) {
+    C2F(curblk).kfun = Scicos->sim.cord[-1+jj];
     flag__ = 6;
-    if (funtyp[C2F(curblk).kfun] >= 0) {
-      callf(told, xd, x, x,W,&flag__);
+    if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] >= 0) {
+      callf(told, xd, Scicos->state.x, Scicos->state.x,W,&flag__);
       if (flag__ < 0) {
 	*ierr = 5 - flag__;
-	free(W);
+	FREE(W);
 	return;
       }
     }
   }
   /*     point-fix iterations */
   nclock =0;
-  for (i = 1; i <= nblk + 1; ++i) {
+  for (i = 1; i <= Scicos->sim.nblk + 1; ++i) {
     /*     loop on blocks */
-    for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= nblk; ++C2F(curblk).kfun) {
+    for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= Scicos->sim.nblk; ++C2F(curblk).kfun) {
       flag__ = 6;
-      if (funtyp[C2F(curblk).kfun] >= 0) {
-	callf(told, xd, x, x,W,&flag__);
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] >= 0) {
+	callf(told, xd, Scicos->state.x, Scicos->state.x,W,&flag__);
 	if (flag__ < 0) {
 	  *ierr = 5 - flag__;
-	  free(W);
+	  FREE(W);
 	  return;
 	}
       }
@@ -573,31 +339,31 @@ void cosini(double *told)
 
     nclock = 0;
 
-    for (jj = 1; jj <= ncord; ++jj) {
-      C2F(curblk).kfun = cord[jj];
+    for (jj = 1; jj <= Scicos->sim.ncord; ++jj) {
+      C2F(curblk).kfun = Scicos->sim.cord[-1+jj];
       flag__ = 6;
-      if (funtyp[C2F(curblk).kfun] >= 0) {
-	callf(told, xd, x, x,W,&flag__);
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] >= 0) {
+	callf(told, xd, Scicos->state.x, Scicos->state.x,W,&flag__);
 	if (flag__ < 0) {
 	  *ierr = 5 - flag__;
-	  free(W);
+	  FREE(W);
 	  return;
 	}
       }
     }
-    for (jj = 0; jj <= nout-1; ++jj) {
-      if (outtb[jj] != W[jj]) {
+    for (jj = 0; jj <= Scicos->state.nout-1; ++jj) {
+      if (Scicos->state.outtb[jj] != W[jj]) {
 	goto L30;
       }
     }
-    free(W);
+    FREE(W);
     return;
   L30:
-    C2F(dcopy)(&nout, outtb, &c__1, W, &c__1);
+    C2F(dcopy)(&Scicos->state.nout, Scicos->state.outtb, &c__1, W, &c__1);
 
   }
   *ierr = 20;
-  free(W);
+  FREE(W);
 } 
 
 
@@ -616,32 +382,32 @@ void idoit(double *told)
   /* Function Body */
   /*     initialisation (propagation of constant blocks outputs) */
 
-  for (jj = 1; jj <= niord; ++jj) {
-    C2F(curblk).kfun = iord[jj];
-    if (outptr[C2F(curblk).kfun + 1] - outptr[C2F(curblk).kfun] > 0) {
-      nclock = iord[jj + niord];
+  for (jj = 1; jj <= Scicos->sim.niord; ++jj) {
+    C2F(curblk).kfun = Scicos->sim.iord[-1+jj];
+    if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) {
+      nclock = Scicos->sim.iord[-1+jj + Scicos->sim.niord];
       flag__ = 1;
-      callf(told, xd, x, x,x,&flag__);
+      callf(told, xd, Scicos->state.x, Scicos->state.x,Scicos->state.x,&flag__);
 	
       if (flag__ < 0) {
 	*ierr = 5 - flag__;
 	return;
       }
     }
-    if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
-      if (funtyp[C2F(curblk).kfun] < 0) {
+    if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] < 0) {
 	
-	if (funtyp[C2F(curblk).kfun] == -1) {
-	  if (outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]] <= 0.) {
+	if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	  if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) {
 	    i=2;
 	  } else {
 	    i=1;
 	  }
-	} else if (funtyp[C2F(curblk).kfun] == -2) {
-	  i=max(min((int) outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-		    Blocks[C2F(curblk).kfun - 1].nevout),1);
+	} else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
+	  i=Max(Min((int) Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+		    Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
 	}
-	i2 =i+ clkptr[C2F(curblk).kfun] - 1;
+	i2 =i+ Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
 	putevs(told, &i2, &ierr1);
 	if (ierr1 != 0) {
 	  /*     !                 event conflict */
@@ -688,40 +454,40 @@ void cossim(double *told)
 
   double *W;
 
-  nrwp = (*neq) * max(16,*neq + 9) + 22 + ng * 3;
+  nrwp = (*neq) * Max(16,*neq + 9) + 22 + Scicos->sim.ng * 3;
   /* +1 below is so that rhot starts from 1; one wasted location */
   if((rhot=malloc(sizeof(double)*(nrwp+1)))== NULL ){
     *ierr =10000;
     return;
   }
-  niwp = *neq + 20 + ng;/* + ng is for change in lsodar2 to
+  niwp = *neq + 20 + Scicos->sim.ng;/* + ng is for change in lsodar2 to
 				       handle masking */
 
   /* +1 below is so that ihot starts from 1; one wasted location */
   if((ihot=malloc(sizeof(int)*(niwp+1)))== NULL ){
     *ierr =10000;
-    free(rhot);
+    FREE(rhot);
     return;
   }
-  if((jroot=malloc(sizeof(int)*ng))== NULL ){
+  if((jroot=malloc(sizeof(int)*Scicos->sim.ng))== NULL ){
     *ierr =10000;
-    free(rhot);
-    free(ihot);
+    FREE(rhot);
+    FREE(ihot);
     return;
   }
-  if((zcros=malloc(sizeof(int)*ng))== NULL ){
+  if((zcros=malloc(sizeof(int)*Scicos->sim.ng))== NULL ){
     *ierr =10000;
-    free(rhot);
-    free(ihot);
-    free(jroot);
+    FREE(rhot);
+    FREE(ihot);
+    FREE(jroot);
     return;
   }
-  if((W=malloc(sizeof(double)*ng))== NULL ){
+  if((W=malloc(sizeof(double)*Scicos->sim.ng))== NULL ){
     *ierr =10000;
-    free(rhot);
-    free(ihot);
-    free(jroot);
-    free(zcros);
+    FREE(rhot);
+    FREE(ihot);
+    FREE(jroot);
+    FREE(zcros);
     return;
   }
   
@@ -745,14 +511,14 @@ void cossim(double *told)
   jt = 2;
 
   jj = 0;
-  for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= nblk; ++C2F(curblk).kfun) {
-    if (Blocks[C2F(curblk).kfun-1].ng >= 1) {
+  for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= Scicos->sim.nblk; ++C2F(curblk).kfun) {
+    if (Scicos->Blocks[C2F(curblk).kfun-1].ng >= 1) {
       zcros[jj] = C2F(curblk).kfun;
       ++jj;
     }
   }
   /*     . Il fault:  ng >= jj */
-  if (jj != ng) {
+  if (jj != Scicos->sim.ng) {
     zcros[jj] = -1;
   }
   /*     initialisation (propagation of constant blocks outputs) */
@@ -782,12 +548,12 @@ void cossim(double *told)
       freeall;
       return;
     }
-    if (*pointi == 0) {
+    if (*Scicos->state.pointi == 0) {
       t = *tf;
     } else {
-      t = tevts[*pointi];
+      t = Scicos->state.tevts[-1+*Scicos->state.pointi];
     }
-    if (abs(t - *told) < ttol) {
+    if (Abs(t - *told) < ttol) {
       t = *told;
       /*     update output part */
     }
@@ -798,7 +564,7 @@ void cossim(double *told)
       return;
     }
     if (*told != t) {
-      if (xptr[nblk+1] == 1) {
+      if (Scicos->sim.xptr[Scicos->sim.nblk] == 1) {
 	/*     .     no continuous state */
 	if (*told + deltat + ttol > t) {
 	  *told = t;
@@ -808,7 +574,7 @@ void cossim(double *told)
 	/*     .     update outputs of 'c' type blocks with no continuous state */
 	if (*told >= *tf) {
 	  /*     .     we are at the end, update continuous part before leaving */
-	  if (ncord > 0) {
+	  if ( Scicos->sim.ncord > 0) {
 	    cdoit(told);
 	    freeall;
 	    return;
@@ -817,13 +583,13 @@ void cossim(double *told)
       } else {
 	/*     integrate */
 	rhotmp = *tf + ttol;
-	kpo = *pointi;
+	kpo = *Scicos->state.pointi;
       L20:
-	if (critev[kpo] == 1) {
-	  rhotmp = tevts[kpo];
+	if (Scicos->sim.critev[-1+kpo] == 1) {
+	  rhotmp = Scicos->state.tevts[-1+kpo];
 	  goto L30;
 	}
-	kpo = evtspt[kpo];
+	kpo = Scicos->state.evtspt[kpo-1];
 	if (kpo != 0) {
 	  goto L20;
 	}
@@ -832,10 +598,10 @@ void cossim(double *told)
 	  hot = 0;
 	}
 	rhot[1] = rhotmp;
-	t = min(*told + deltat,min(t,*tf + ttol));
+	t = Min(*told + deltat,Min(t,*tf + ttol));
 	
-	if (ng>0 &&  hot == 0 && nmod>0) {
-	  zdoit(W,x,x,told);
+	if (Scicos->sim.ng>0 &&  hot == 0 && Scicos->sim.nmod>0) {
+	  zdoit(W,Scicos->state.x,Scicos->state.x,told);
 	  if (*ierr != 0){
 	    freeall;
 	    return;
@@ -861,10 +627,10 @@ void cossim(double *told)
 	  rhot[6]=hmax;
 	}
 	phase=2;
-	C2F(lsodar2)(C2F(simblk), neq, x, told, &t, &c__1, &rtol, 
+	C2F(lsodar2)(C2F(simblk), neq, Scicos->state.x, told, &t, &c__1, &rtol, 
 		     &Atol, &itask, &istate, &iopt, &rhot[1], &
 		     nrwp, &ihot[1], &niwp, &jdum, &jt, 
-		     C2F(grblk), &ng, jroot);
+		     C2F(grblk), &Scicos->sim.ng, jroot);
 	phase=1;
 	if (*ierr > 5) {
 	  /*     !           singularity in block */
@@ -885,7 +651,7 @@ void cossim(double *told)
 	
 	/*     .     update outputs of 'c' type  blocks if we are at the end*/
 	if (*told >= *tf) {
-	  if (ncord > 0) {
+	  if ( Scicos->sim.ncord > 0) {
 	    cdoit(told);
 	    freeall;
 	    return;
@@ -899,20 +665,20 @@ void cossim(double *told)
 	    sciprint("root found at t=: %f\r\n",*told);
 	  }
 	  /*     .        update outputs affecting ztyp blocks ONLY FOR OLD BLOCKS */
-	  zdoit(W, xd, x,told);
+	  zdoit(W, xd, Scicos->state.x,told);
 	  if (*ierr != 0) {
 	    freeall;
 	    return;
 	  }
-	  for (jj = 0; jj < ng; ++jj) {
+	  for (jj = 0; jj < Scicos->sim.ng; ++jj) {
 	    C2F(curblk).kfun = zcros[ jj];
 	    if (C2F(curblk).kfun == -1) {
 	      break; 
 	    }
 	    kev = 0;
 	    
-	    for (j = zcptr[C2F(curblk).kfun]-1 ; 
-		 j <zcptr[C2F(curblk).kfun+1]-1 ; ++j) {
+	    for (j = Scicos->sim.zcptr[-1+C2F(curblk).kfun]-1 ; 
+		 j <Scicos->sim.zcptr[-1+C2F(curblk).kfun+1]-1 ; ++j) {
 	      if(jroot[j]!=0){
 		kev=1;
 		break;
@@ -920,24 +686,24 @@ void cossim(double *told)
 	    }
 	    /*   */
 	    if (kev != 0) {
-	      Blocks[C2F(curblk).kfun-1].jroot=&jroot[zcptr[C2F(curblk).kfun]-1];
-	      if (funtyp[C2F(curblk).kfun] > 0) {
+	      Scicos->Blocks[C2F(curblk).kfun-1].jroot=&jroot[Scicos->sim.zcptr[-1+C2F(curblk).kfun]-1];
+	      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] > 0) {
 		
-		if (Blocks[C2F(curblk).kfun-1].nevout > 0) {
+		if (Scicos->Blocks[C2F(curblk).kfun-1].nevout > 0) {
 		  flag__ = 3;
 		  /* call corresponding block to determine output event (kev) */
 		  nclock = -kev;
-		  callf(told, xd, x, x,W,&flag__);
+		  callf(told, xd, Scicos->state.x, Scicos->state.x,W,&flag__);
 		  if (flag__ < 0) {
 		    *ierr = 5 - flag__;
 		    freeall;
 		    return;
 		  }
 		  /*     .              update event agenda */
-		  for (k = 0; k < Blocks[C2F(curblk).kfun-1].nevout; ++k) {
-		    if (Blocks[C2F(curblk).kfun-1].evout[k] >= 0.) {
-		      i3 = k + clkptr[C2F(curblk).kfun] ;
-		      addevs(Blocks[C2F(curblk).kfun-1].evout[k]+(*told), &i3, &ierr1);
+		  for (k = 0; k < Scicos->Blocks[C2F(curblk).kfun-1].nevout; ++k) {
+		    if (Scicos->Blocks[C2F(curblk).kfun-1].evout[k] >= 0.) {
+		      i3 = k + Scicos->sim.clkptr[-1+C2F(curblk).kfun] ;
+		      addevs(Scicos->Blocks[C2F(curblk).kfun-1].evout[k]+(*told), &i3, &ierr1);
 		      if (ierr1 != 0) {
 			/*     .                       nevts too small */
 			*ierr = 3;
@@ -948,11 +714,11 @@ void cossim(double *told)
 		  }
 		}
 		/*     .              update state */
-		if (Blocks[C2F(curblk).kfun-1].nx > 0) {
+		if (Scicos->Blocks[C2F(curblk).kfun-1].nx > 0) {
 		  /*     .              call corresponding block to update state */
 		  flag__ = 2;
 		  nclock = -kev;
-		  callf(told, xd, x, x,W,&flag__);
+		  callf(told, xd, Scicos->state.x, Scicos->state.x,W,&flag__);
 		  
 		  if (flag__ < 0) {
 		    *ierr = 5 - flag__;
@@ -969,10 +735,10 @@ void cossim(double *told)
     } else {
       /*     .  t==told */   
       if (C2F(cosdebug).cosd >= 1) {
-	sciprint("Event: %d activated at t=%f\r\n",*pointi,*told);
-	for(kev=0;kev<nblk;kev++){
-	  if (Blocks[kev].nmode>0){
-	    sciprint("mode of block %d=%d, ",kev,Blocks[kev].mode[0]);
+	sciprint("Event: %d activated at t=%f\r\n",*Scicos->state.pointi,*told);
+	for(kev=0;kev<Scicos->sim.nblk;kev++){
+	  if (Scicos->Blocks[kev].nmode>0){
+	    sciprint("mode of block %d=%d, ",kev,Scicos->Blocks[kev].mode[0]);
 	  }
 	}
 	sciprint("**mod**\r\n");
@@ -1033,14 +799,14 @@ void cossimdaskr(double *told)
   Jactaille=0;   
   if(Jacobian_Flag==1){
     Jn=*neq;
-    Jnx=Blocks[nblk-1].nx;
-    Jno=Blocks[nblk-1].nout;
-    Jni=Blocks[nblk-1].nin;
+    Jnx=Scicos->Blocks[Scicos->sim.nblk-1].nx;
+    Jno=Scicos->Blocks[Scicos->sim.nblk-1].nout;
+    Jni=Scicos->Blocks[Scicos->sim.nblk-1].nin;
     Jactaille= 2+3*Jn+(Jn+Jni)*(Jn+Jno)+Jnx*(Jni+2*Jn+Jno)+(Jn-Jnx)*(2*(Jn-Jnx)+Jno+Jni)+2*Jni*Jno;}
   /*----------------------------Jacobian----------------------------------*/
   maxord = 5;
-  nrwp = max(maxord + 4,7) * (*neq) + 60 + (*neq)*(*neq) + ng * 3 + Jactaille;
-  niwp = (*neq) + 40 + (*neq) +ng ; /* + ng is for change in ddaskr to handle masking */ 
+  nrwp = Max(maxord + 4,7) * (*neq) + 60 + (*neq)*(*neq) + Scicos->sim.ng * 3 + Jactaille;
+  niwp = (*neq) + 40 + (*neq) +Scicos->sim.ng ; /* + ng is for change in ddaskr to handle masking */ 
 
    /* +1 below is so that rhot starts from 1; one wasted location */
   if((rhot=malloc(sizeof(double)*(nrwp+1)))== NULL ){
@@ -1049,49 +815,49 @@ void cossimdaskr(double *told)
   }
   /* +1 below is so that ihot starts from 1; one wasted location */
   if((ihot=malloc(sizeof(int)*(niwp+1)))== NULL ){
-    free(rhot);
+    FREE(rhot);
     *ierr =10000;
     return;
   }
-  if((jroot=malloc(sizeof(int)*ng))== NULL ){
+  if((jroot=malloc(sizeof(int)*Scicos->sim.ng))== NULL ){
     *ierr =10000;
-    free(rhot);
-    free(ihot);
+    FREE(rhot);
+    FREE(ihot);
     return;
   }
   if((scicos_xproperty=malloc(sizeof(int)*(*neq)))== NULL ){
     *ierr =10000;
-    free(rhot);
-    free(ihot);
-    free(jroot);
+    FREE(rhot);
+    FREE(ihot);
+    FREE(jroot);
     return;
   }
   nsp_iset(neq, &c__1, scicos_xproperty, &c__1);
-  if((zcros=malloc(sizeof(int)*ng))== NULL ){
+  if((zcros=malloc(sizeof(int)*Scicos->sim.ng))== NULL ){
     *ierr =10000;
-    free(rhot);
-    free(ihot);
-    free(jroot);
-    free(scicos_xproperty);
+    FREE(rhot);
+    FREE(ihot);
+    FREE(jroot);
+    FREE(scicos_xproperty);
     return;
   }
-  if((W=malloc(sizeof(double)*ng))== NULL ){
+  if((W=malloc(sizeof(double)*Scicos->sim.ng))== NULL ){
     *ierr =10000;
-    free(rhot);
-    free(ihot);
-    free(jroot);
-    free(scicos_xproperty);
-    free(zcros);
+    FREE(rhot);
+    FREE(ihot);
+    FREE(jroot);
+    FREE(scicos_xproperty);
+    FREE(zcros);
     return;
   }
-  if((Mode_save=malloc(sizeof(double)*nmod))== NULL ){
+  if((Mode_save=malloc(sizeof(double)*Scicos->sim.nmod))== NULL ){
     *ierr =10000;
-    free(rhot);
-    free(ihot);
-    free(jroot);
-    free(scicos_xproperty);
-    free(zcros);
-    free(W);
+    FREE(rhot);
+    FREE(ihot);
+    FREE(jroot);
+    FREE(scicos_xproperty);
+    FREE(zcros);
+    FREE(W);
     return;
   }
 
@@ -1153,14 +919,14 @@ void cossimdaskr(double *told)
   info[17] = 0;
 
   jj = 0;
-  for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= nblk; ++C2F(curblk).kfun) {
-    if (Blocks[C2F(curblk).kfun-1].ng >= 1) {
+  for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= Scicos->sim.nblk; ++C2F(curblk).kfun) {
+    if (Scicos->Blocks[C2F(curblk).kfun-1].ng >= 1) {
       zcros[jj] = C2F(curblk).kfun;
       ++jj;
     }
   }
   /*     . Il fault:  ng >= jj */
-  if (jj != ng) {
+  if (jj != Scicos->sim.ng) {
     zcros[jj] = -1;
   }
   /*     initialisation (propagation of constant blocks outputs) */
@@ -1184,12 +950,12 @@ void cossimdaskr(double *told)
       freeallx;
       return;
     }
-    if (*pointi == 0) {
+    if (*Scicos->state.pointi == 0) {
       t = *tf;
     } else {
-      t = tevts[*pointi];
+      t = Scicos->state.tevts[-1+*Scicos->state.pointi];
     }
-    if (abs(t - *told) < ttol) {
+    if (Abs(t - *told) < ttol) {
       t = *told;
       /*     update output part */
     }
@@ -1200,7 +966,7 @@ void cossimdaskr(double *told)
       return;
     }
     if (*told != t) {
-      if (xptr[nblk+1] == 1) {
+      if (Scicos->sim.xptr[Scicos->sim.nblk] == 1) {
 	/*     .     no continuous state */
 	if (*told + deltat + ttol > t) {
 	  *told = t;
@@ -1223,13 +989,13 @@ void cossimdaskr(double *told)
 	  }
 	}      
 	rhotmp = *tf + ttol;
-	kpo = *pointi;
+	kpo = *Scicos->state.pointi;
       L20:
-	if (critev[kpo] == 1) {
-	  rhotmp = tevts[kpo];
+	if (Scicos->sim.critev[-1+kpo] == 1) {
+	  rhotmp = Scicos->state.tevts[-1+kpo];
 	  goto L30;
 	}
-	kpo = evtspt[kpo];
+	kpo = Scicos->state.evtspt[kpo-1];
 	if (kpo != 0) {
 	  goto L20;
 	}
@@ -1238,13 +1004,13 @@ void cossimdaskr(double *told)
 	  hot = 0;/* Do cold-restat the solver:if the new TSTOP isn't beyong the previous one*/ 
 	}
 	rhot[1] = rhotmp;
-	t = min(*told + deltat,min(t,*tf + ttol));
+	t = Min(*told + deltat,Min(t,*tf + ttol));
 
 	if (hot == 0){ /* CIC calculation when hot==0 */
 
-	  if (ng>0&&nmod>0){
+	  if (Scicos->sim.ng>0&&Scicos->sim.nmod>0){
 	    phase=1;
-	    zdoit(W, xd, x,told);
+	    zdoit(W, xd, Scicos->state.x,told);
 	    if (*ierr != 0) {
 	      freeallx;
 	      return;
@@ -1252,7 +1018,7 @@ void cossimdaskr(double *told)
 	  }
 
 
-	  for(j=0;j<=nmod;j++){/* counter to reevaluate the 
+	  for(j=0;j<=Scicos->sim.nmod;j++){/* counter to reevaluate the 
 				  modes in  mode->CIC->mode->CIC-> loop 
 				  do it once in the absence of mode (nmod=0)*/
 	    /* updating the modes through Flag==9, Phase==1 */
@@ -1272,10 +1038,10 @@ void cossimdaskr(double *told)
 	    /* Jacobian*/
 	    info[4] =Jacobian_Flag; 
 	    /*	    info[4] =0; */ /* numerical Jacobian */
-	    C2F(ddaskr)(C2F(simblkdaskr), neq, told, x, xd, &t, info,  &rtol, 
+	    C2F(ddaskr)(C2F(simblkdaskr), neq, told, Scicos->state.x, xd, &t, info,  &rtol, 
 			 &Atol, &istate, &rhot[1],&nrwp, &ihot[1], &niwp,
 			rpardummy, ipardummy, C2F(Jacobian), rpardummy, 
-			C2F(grblkdaskr), &ng, jroot);
+			C2F(grblkdaskr), &Scicos->sim.ng, jroot);
 
 	    if (*ierr > 5) {
 	      freeallx;
@@ -1291,12 +1057,12 @@ void cossimdaskr(double *told)
 	    }
 	    /*-------------------------------------*/
 	    /* saving the previous modes*/
-	    for (jj = 0; jj < nmod; ++jj) {
-	      Mode_save[jj] = mod[jj];
+	    for (jj = 0; jj < Scicos->sim.nmod; ++jj) {
+	      Mode_save[jj] = Scicos->sim.mod[jj];
 	    }
-	    if (ng>0&&nmod>0){	 
+	    if (Scicos->sim.ng>0&&Scicos->sim.nmod>0){	 
 	      phase=1;
-	      zdoit(W, xd, x,told);
+	      zdoit(W, xd, Scicos->state.x,told);
 	      if (*ierr != 0) {
 		freeallx;
 		return; 
@@ -1304,8 +1070,8 @@ void cossimdaskr(double *told)
 	    }
 	    /*------------------------------------*/
 	    Mode_change=0;
-	    for (jj = 0; jj < nmod; ++jj) {
-	      if(Mode_save[jj] != mod[jj])
+	    for (jj = 0; jj < Scicos->sim.nmod; ++jj) {
+	      if(Mode_save[jj] != Scicos->sim.mod[jj])
 		{Mode_change=1;
  		break;
 		}
@@ -1328,10 +1094,10 @@ void cossimdaskr(double *told)
 	if (C2F(cosdebug).cosd >= 1) {
 	  sciprint("****daskr from: %f to %f hot= %d  \r\n", *told,t,hot);
 	}
-	C2F(ddaskr)(C2F(simblkdaskr), neq, told, x, xd, &t, 
+	C2F(ddaskr)(C2F(simblkdaskr), neq, told, Scicos->state.x, xd, &t, 
 		    info, &rtol, &Atol, &istate, &rhot[1], &
 		    nrwp, &ihot[1], &niwp, rpardummy, ipardummy
-		    ,C2F(Jacobian), rpardummy, C2F(grblkdaskr), &ng, jroot);
+		    ,C2F(Jacobian), rpardummy, C2F(grblkdaskr), &Scicos->sim.ng, jroot);
 
 	if (istate == -1)
 	  sciprint("**** Stiffness at: %26.18f %d\r\n",*told,istate);
@@ -1367,42 +1133,42 @@ void cossimdaskr(double *told)
 	    sciprint("root found at t=: %f\r\n",*told);
 	  }
 	  /*     .        update outputs affecting ztyp blocks  ONLY FOR OLD BLOCKS*/
-	  zdoit(W, xd, x,told);
+	  zdoit(W, xd, Scicos->state.x,told);
 	  if (*ierr != 0) {
 	    freeallx;
 	    return;
 	  }
-	  for (jj = 0; jj < ng; ++jj) {
+	  for (jj = 0; jj < Scicos->sim.ng; ++jj) {
 	    C2F(curblk).kfun = zcros[jj];
 	    if (C2F(curblk).kfun == -1) {
 	      break; 
 	    }
 	    kev = 0;
-	    for (j = zcptr[C2F(curblk).kfun]-1 ; 
-		 j <zcptr[C2F(curblk).kfun+1]-1 ; ++j) {
+	    for (j = Scicos->sim.zcptr[-1+C2F(curblk).kfun]-1 ; 
+		 j <Scicos->sim.zcptr[-1+C2F(curblk).kfun+1]-1 ; ++j) {
 	      if(jroot[j]!=0){
 		kev=1;
 		break;
 	      }
 	    }
 	    if (kev != 0) {
-	      Blocks[C2F(curblk).kfun-1].jroot=&jroot[zcptr[C2F(curblk).kfun]-1];
-	      if (funtyp[C2F(curblk).kfun] > 0) {
-		if (Blocks[C2F(curblk).kfun-1].nevout > 0) {
+	      Scicos->Blocks[C2F(curblk).kfun-1].jroot=&jroot[Scicos->sim.zcptr[-1+C2F(curblk).kfun]-1];
+	      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] > 0) {
+		if (Scicos->Blocks[C2F(curblk).kfun-1].nevout > 0) {
 		  flag__ = 3;
 		  /*     call corresponding block to determine output event (kev) */
 		  nclock = -kev;
-		  callf(told, xd, x, x,W,&flag__);
+		  callf(told, xd, Scicos->state.x, Scicos->state.x,W,&flag__);
 		  if (flag__ < 0) {
 		    *ierr = 5 - flag__;
 		    freeallx;
 		    return;
 		  }
 		  /*     update event agenda */
-		  for (k = 0; k < Blocks[C2F(curblk).kfun-1].nevout; ++k) {
-		    if (Blocks[C2F(curblk).kfun-1].evout[k] >= 0) {
-		      i3 = k + clkptr[C2F(curblk).kfun] ;
-		      addevs(Blocks[C2F(curblk).kfun-1].evout[k]+(*told), &i3, &ierr1);
+		  for (k = 0; k < Scicos->Blocks[C2F(curblk).kfun-1].nevout; ++k) {
+		    if (Scicos->Blocks[C2F(curblk).kfun-1].evout[k] >= 0) {
+		      i3 = k + Scicos->sim.clkptr[-1+C2F(curblk).kfun] ;
+		      addevs(Scicos->Blocks[C2F(curblk).kfun-1].evout[k]+(*told), &i3, &ierr1);
 		      if (ierr1 != 0) {
 			/*     .                       nevts too small */
 			*ierr = 3;
@@ -1413,14 +1179,14 @@ void cossimdaskr(double *told)
 		  }
 		}
 		/*     .              update state */
-		if (Blocks[C2F(curblk).kfun-1].nx > 0) {
+		if (Scicos->Blocks[C2F(curblk).kfun-1].nx > 0) {
 		  /*     .call corresponding block to update state */
 		  flag__ = 2;
 		  nclock = -kev;
 		  pointer_xproperty=
-		    &scicos_xproperty[-1+xptr[C2F(curblk).kfun]];
-		  n_pointer_xproperty=Blocks[C2F(curblk).kfun-1].nx;
-		  callf(told, xd, x, x,W,&flag__);
+		    &scicos_xproperty[-1+Scicos->sim.xptr[C2F(curblk).kfun-1]];
+		  n_pointer_xproperty=Scicos->Blocks[C2F(curblk).kfun-1].nx;
+		  callf(told, xd, Scicos->state.x, Scicos->state.x,W,&flag__);
 		  if (flag__ < 0) {
 		    *ierr = 5 - flag__;
 		    freeallx;
@@ -1444,8 +1210,8 @@ void cossimdaskr(double *told)
 	  freeallx;
 	  return;
 	}
-	  /* if(*pointi!=0){
-	    t=tevts[*pointi];
+	  /* if(*Scicos->state.pointi!=0){
+	    t=Scicos->state.tevts[-1+*Scicos->state.pointi];
 	    if(*told<t-ttol){
 	      cdoit(told);
 	      goto L15;
@@ -1461,7 +1227,7 @@ void cossimdaskr(double *told)
     } else {
       /*     .  t==told */
       if (C2F(cosdebug).cosd >= 1) {
-	sciprint("Event: %d activated at t=%f\r\n",*pointi,*told);
+	sciprint("Event: %d activated at t=%f\r\n",*Scicos->state.pointi,*told);
       }
       
       ddoit(told);
@@ -1490,10 +1256,10 @@ void cosend(double *told)
   /*     loop on blocks */
   nclock=0;
 
-  for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= nblk; ++C2F(curblk).kfun) {
+  for (C2F(curblk).kfun = 1; C2F(curblk).kfun <= Scicos->sim.nblk; ++C2F(curblk).kfun) {
     flag__ = 5;
-    if (funtyp[C2F(curblk).kfun] >= 0) {
-      callf(told, xd, x, x,x,&flag__);
+    if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] >= 0) {
+      callf(told, xd, Scicos->state.x,  Scicos->state.x,Scicos->state.x,&flag__);
       if (flag__ < 0 && *ierr == 0) {
 	*ierr = 5 - flag__;
 	kfune = C2F(curblk).kfun;
@@ -1514,21 +1280,21 @@ void doit(double *told)
   static int ierr1;
   int ii, kever;
   /* Function Body */
-  kever = *pointi;
-  *pointi = evtspt[kever];
-  evtspt[kever] = -1;
+  kever = *Scicos->state.pointi;
+  *Scicos->state.pointi = Scicos->state.evtspt[kever-1];
+  Scicos->state.evtspt[kever-1] = -1;
 
-  nord = ordptr[kever + 1] - ordptr[kever];
+  nord = Scicos->sim.ordptr[kever] - Scicos->sim.ordptr[-1+kever];
   if (nord == 0) {
     return;
   }
 
-  for (ii = ordptr[kever]; ii <=ordptr[kever + 1] - 1 ; ++ii) {
-    C2F(curblk).kfun = ordclk[ii];
-    if (outptr[C2F(curblk).kfun + 1] - outptr[C2F(curblk).kfun] > 0) {
-      nclock = abs(ordclk[ii + nordclk]);
+  for (ii = Scicos->sim.ordptr[-1+kever]; ii <=Scicos->sim.ordptr[kever] - 1 ; ++ii) {
+    C2F(curblk).kfun = Scicos->sim.ordclk[-1+ii];
+    if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) {
+      nclock = Abs(Scicos->sim.ordclk[-1+ii + Scicos->sim.nordclk]);
       flag__ = 1;
-      callf(told, xd, x, x,x,&flag__);
+      callf(told, xd, Scicos->state.x, Scicos->state.x,Scicos->state.x,&flag__);
 
       if (flag__ < 0) {
 	*ierr = 5 - flag__;
@@ -1537,20 +1303,20 @@ void doit(double *told)
     }
   
     /*     .     Initialize tvec */
-    if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
-      if (funtyp[C2F(curblk).kfun] < 0) {
-	if (funtyp[C2F(curblk).kfun] == -1) {
-	  if (outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]] <= 0.) {
+    if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] < 0) {
+	if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	  if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) {
 	    i= 2;
 	  } else {
 	    i= 1;
 	  }
-	} else if (funtyp[C2F(curblk).kfun] == -2) {
+	} else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
 
-	  i=max(min((int) outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-		    Blocks[C2F(curblk).kfun - 1].nevout),1);
+	  i=Max(Min((int) Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+		    Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
 	}
-	i2 = i + clkptr[C2F(curblk).kfun] - 1;
+	i2 = i + Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
 	putevs(told, &i2, &ierr1);
 	if (ierr1 != 0) {
 	  /*     !                 event conflict */
@@ -1575,12 +1341,12 @@ void cdoit(double *told)
   static int ierr1;
   static int i,jj;
   /* Function Body */
-  for (jj = 1; jj <= ncord; ++jj) {
-    C2F(curblk).kfun = cord[jj];
-    nclock = cord[jj + ncord];
-    if (outptr[C2F(curblk).kfun + 1] - outptr[C2F(curblk).kfun] > 0) {
+  for (jj = 1; jj <= Scicos->sim.ncord; ++jj) {
+    C2F(curblk).kfun = Scicos->sim.cord[-1+jj];
+    nclock = Scicos->sim.cord[-1+jj + Scicos->sim.ncord];
+    if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) {
       flag__ = 1;
-      callf(told, xd, x, x,x,&flag__);
+      callf(told, xd, Scicos->state.x, Scicos->state.x,Scicos->state.x,&flag__);
 	    
       if (flag__ < 0) {
 	*ierr = 5 - flag__;
@@ -1588,20 +1354,20 @@ void cdoit(double *told)
       }
     }
 
-    if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
-      if (funtyp[C2F(curblk).kfun] < 0) {
+    if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] < 0) {
 
-	if (funtyp[C2F(curblk).kfun] == -1) {
-	  if (outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]] <= 0.) {
+	if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	  if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) {
 	    i = 2;
 	  } else {
 	    i = 1;
 	  }
-	} else if (funtyp[C2F(curblk).kfun] == -2) {
-	  i= max(min((int) outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-		    Blocks[C2F(curblk).kfun - 1].nevout),1);
+	} else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
+	  i= Max(Min((int) Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+		    Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
 	}
-	i2 = i + clkptr[C2F(curblk).kfun] - 1;
+	i2 = i + Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
 	putevs(told, &i2, &ierr1);
 	if (ierr1 != 0) {
 	  /*     !                 event conflict */
@@ -1635,37 +1401,37 @@ void ddoit(double *told)
     return;
   }
   for (i = 0; i < kiwa; ++i) {
-    keve = iwa[i];
-    if(critev[keve]!= 0){
+    keve = Scicos->state.iwa[i];
+    if(Scicos->sim.critev[-1+keve]!= 0){
       hot = 0;
     }
-    i2 = ordptr[keve + 1] - 1;
-    for (ii = ordptr[keve]; ii <= i2; ++ii) {
-      C2F(curblk).kfun = ordclk[ii];
-      nclock=ordclk[ii + nordclk];
+    i2 = Scicos->sim.ordptr[keve] - 1;
+    for (ii = Scicos->sim.ordptr[-1+keve]; ii <= i2; ++ii) {
+      C2F(curblk).kfun = Scicos->sim.ordclk[-1+ii];
+      nclock=Scicos->sim.ordclk[-1+ii + Scicos->sim.nordclk];
 
-      if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
-	if (funtyp[C2F(curblk).kfun] >= 0) {
+      if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
+	if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] >= 0) {
 	  double d__1 =  - 1.;
-	  nsp_dset(&Blocks[C2F(curblk).kfun - 1].nevout, 
-		   &d__1, Blocks[C2F(curblk).kfun-1].evout, &c__1);
+	  nsp_dset(&Scicos->Blocks[C2F(curblk).kfun - 1].nevout, 
+		   &d__1, Scicos->Blocks[C2F(curblk).kfun-1].evout, &c__1);
 	  
 	  flag__ = 3;
 
 	  if(nclock>0){ /* if event has continuous origin don't call*/
-	    callf(told, xd, x, x ,x,&flag__);
+	    callf(told, xd, Scicos->state.x, Scicos->state.x ,Scicos->state.x,&flag__);
 	    if (flag__ < 0) {
 	      *ierr = 5 - flag__;
 	      return;
 	    }
 	  }
 	  
-	  for (j = 0; j < Blocks[C2F(curblk).kfun - 1].nevout; ++j) {
+	  for (j = 0; j < Scicos->Blocks[C2F(curblk).kfun - 1].nevout; ++j) {
 	    int i3;
-	    if (Blocks[C2F(curblk).kfun-1].evout[j] >= 0.) {
+	    if (Scicos->Blocks[C2F(curblk).kfun-1].evout[j] >= 0.) {
 	      int ierr1=0;
-	      i3 = j + clkptr[C2F(curblk).kfun] ;
-	      addevs(Blocks[C2F(curblk).kfun-1].evout[j]+(*told), &i3, &ierr1);
+	      i3 = j + Scicos->sim.clkptr[-1+C2F(curblk).kfun] ;
+	      addevs(Scicos->Blocks[C2F(curblk).kfun-1].evout[j]+(*told), &i3, &ierr1);
 	      if (ierr1 != 0) {
 		/*     !                 event conflict */
 		*ierr = 3;
@@ -1677,22 +1443,22 @@ void ddoit(double *told)
       }
 
       if(nclock> 0) {
-	if (Blocks[C2F(curblk).kfun-1].nx+Blocks[C2F(curblk).kfun-1].nz > 0||
-	    *Blocks[C2F(curblk).kfun-1].work !=NULL) {
+	if (Scicos->Blocks[C2F(curblk).kfun-1].nx+Scicos->Blocks[C2F(curblk).kfun-1].nz > 0||
+	    *Scicos->Blocks[C2F(curblk).kfun-1].work !=NULL) {
 	  /*  if a hidden state exists, must also call (for new scope eg)  */
 	  /*  to avoid calling non-real activations */
 	  flag__ = 2;
-	  callf(told, xd, x, x,x,&flag__);
+	  callf(told, xd, Scicos->state.x, Scicos->state.x,Scicos->state.x,&flag__);
 	  if (flag__ < 0) {
 	    *ierr = 5 - flag__;
 	    return;
 	  }
 	}
       }else{
-	if (*Blocks[C2F(curblk).kfun-1].work !=NULL) {
+	if (*Scicos->Blocks[C2F(curblk).kfun-1].work !=NULL) {
 	  flag__ = 2;
 	  nclock=0;  /* in case some hidden continuous blocks need updating */
-	  callf(told, xd, x, x,x,&flag__);
+	  callf(told, xd, Scicos->state.x, Scicos->state.x,Scicos->state.x,&flag__);
 	  if (flag__ < 0) {
 	    *ierr = 5 - flag__;
 	    return;
@@ -1710,23 +1476,23 @@ void edoit(double *told, int *kiwa)
   static int nord;
   static int ierr1, i;
   int kever, ii;
-  kever = *pointi;
-  *pointi = evtspt[kever];
-  evtspt[kever] = -1;
+  kever = *Scicos->state.pointi;
+  *Scicos->state.pointi = Scicos->state.evtspt[kever-1];
+  Scicos->state.evtspt[kever-1] = -1;
 
-  nord = ordptr[kever + 1] - ordptr[kever];
+  nord = Scicos->sim.ordptr[kever] - Scicos->sim.ordptr[-1+kever];
   if (nord == 0) {
     return;
   }
-  iwa[*kiwa] = kever;
+  Scicos->state.iwa[*kiwa] = kever;
   ++(*kiwa);
-  for (ii = ordptr[kever]; ii <= ordptr[kever + 1] - 1; ++ii) {
-    C2F(curblk).kfun = ordclk[ii];
+  for (ii = Scicos->sim.ordptr[-1+kever]; ii <= Scicos->sim.ordptr[kever] - 1; ++ii) {
+    C2F(curblk).kfun = Scicos->sim.ordclk[-1+ii];
 
-    if (outptr[C2F(curblk).kfun + 1] - outptr[C2F(curblk).kfun] > 0) {
-      nclock = abs(ordclk[ii + nordclk]);
+    if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) {
+      nclock = Abs(Scicos->sim.ordclk[-1+ii + Scicos->sim.nordclk]);
       flag__ = 1;
-      callf(told, xd, x, x,x,&flag__);
+      callf(told, xd, Scicos->state.x, Scicos->state.x,Scicos->state.x,&flag__);
 	    
       if (flag__ < 0) {
 	*ierr = 5 - flag__;
@@ -1735,19 +1501,19 @@ void edoit(double *told, int *kiwa)
     }
  
     /*     .     Initialize tvec */
-    if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
-      if (funtyp[C2F(curblk).kfun] < 0) {
-	if (funtyp[C2F(curblk).kfun] == -1) {
-	  if (outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]] <= 0.) {
+    if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] < 0) {
+	if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	  if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) {
 	    i = 2;
 	  } else {
 	    i = 1;
 	  }
-	} else if (funtyp[C2F(curblk).kfun] == -2) {
-	  i= max(min((int) outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-		    Blocks[C2F(curblk).kfun - 1].nevout),1);
+	} else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
+	  i= Max(Min((int) Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+		    Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
 	}
-	i2 = i + clkptr[C2F(curblk).kfun] - 1;
+	i2 = i + Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
 	putevs(told, &i2, &ierr1);
 	if (ierr1 != 0) {
 	  /*     !                 event conflict */
@@ -1773,12 +1539,12 @@ void odoit(double *residual, double *xt, double *xtd, double *told)
   /* Function Body */
   kiwa = 0;
 
-  for (jj = 1; jj <= noord; ++jj) {
-    C2F(curblk).kfun = oord[jj];
-    nclock = oord[jj + noord];
-    if (outptr[C2F(curblk).kfun + 1] - outptr[C2F(curblk).kfun] > 0) {
+  for (jj = 1; jj <= Scicos->sim.noord; ++jj) {
+    C2F(curblk).kfun = Scicos->sim.oord[-1+jj];
+    nclock = Scicos->sim.oord[-1+jj + Scicos->sim.noord];
+    if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) {
       flag__ = 1;
-      callf(told, xtd, xt, residual,x,&flag__);
+      callf(told, xtd, xt, residual,Scicos->state.x,&flag__);
 
       if (flag__ < 0) {
 	*ierr = 5 - flag__;
@@ -1786,23 +1552,23 @@ void odoit(double *residual, double *xt, double *xtd, double *told)
       }
     }
 
-    if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
-      if (funtyp[C2F(curblk).kfun] < 0) {
-	if(Blocks[C2F(curblk).kfun - 1].nmode > 0){
-	  i2 = Blocks[C2F(curblk).kfun - 1].mode[0] + 
-	    clkptr[C2F(curblk).kfun] - 1;
+    if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] < 0) {
+	if(Scicos->Blocks[C2F(curblk).kfun - 1].nmode > 0){
+	  i2 = Scicos->Blocks[C2F(curblk).kfun - 1].mode[0] + 
+	    Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
 	} else{
-	  if (funtyp[C2F(curblk).kfun] == -1) {
-	    if (outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]] <= 0.) {
+	  if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	    if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) {
 	      i=2;
 	    } else {
 	      i=1;
 	    }
-	  } else if (funtyp[C2F(curblk).kfun] == -2) {
-	    i=max(min((int) outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-		      Blocks[C2F(curblk).kfun - 1].nevout),1);
+	  } else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
+	    i=Max(Min((int) Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+		      Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
 	  }
-	  i2 =i+ clkptr[C2F(curblk).kfun] - 1;
+	  i2 =i+ Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
 	}
 	putevs(told, &i2, &ierr1);
 	if (ierr1 != 0) {
@@ -1816,13 +1582,13 @@ void odoit(double *residual, double *xt, double *xtd, double *told)
   }
   
   /*     .  update states derivatives */
-  for (ii = 1; ii <= noord; ++ii) {
-    C2F(curblk).kfun = oord[ii];
-    if (Blocks[C2F(curblk).kfun-1].nx > 0||
-	*Blocks[C2F(curblk).kfun-1].work !=NULL) {
+  for (ii = 1; ii <= Scicos->sim.noord; ++ii) {
+    C2F(curblk).kfun = Scicos->sim.oord[-1+ii];
+    if (Scicos->Blocks[C2F(curblk).kfun-1].nx > 0||
+	*Scicos->Blocks[C2F(curblk).kfun-1].work !=NULL) {
       /* work tests if a hidden state exists, used for delay block */
       flag__ = 0;
-      nclock = oord[ii + noord];
+      nclock = Scicos->sim.oord[-1+ii + Scicos->sim.noord];
       callf(told, xtd, xt, residual,xt,&flag__);
 
       if (flag__ < 0) {
@@ -1833,14 +1599,14 @@ void odoit(double *residual, double *xt, double *xtd, double *told)
   }
 
   for (i = 0; i < kiwa; ++i) {
-    keve = iwa[i];
-    for (ii = ordptr[keve]; ii <= ordptr[keve + 1] - 1; ++ii) {
-      C2F(curblk).kfun = ordclk[ii ];
-      if (Blocks[C2F(curblk).kfun-1].nx > 0||
-	*Blocks[C2F(curblk).kfun-1].work !=NULL) {
+    keve = Scicos->state.iwa[i];
+    for (ii = Scicos->sim.ordptr[-1+keve]; ii <= Scicos->sim.ordptr[keve] - 1; ++ii) {
+      C2F(curblk).kfun = Scicos->sim.ordclk[-1+ii ];
+      if (Scicos->Blocks[C2F(curblk).kfun-1].nx > 0||
+	*Scicos->Blocks[C2F(curblk).kfun-1].work !=NULL) {
 	/* work tests if a hidden state exists */
 	flag__ = 0;
-	nclock = abs(ordclk[ii + nordclk]);
+	nclock = Abs(Scicos->sim.ordclk[-1+ii + Scicos->sim.nordclk]);
 	callf(told, xtd, xt, residual,xt,&flag__);
 
 	if (flag__ < 0) {
@@ -1861,12 +1627,12 @@ void reinitdoit(double *told, int *scicos_xproperty)
   static int ii, jj;
   /* Function Body */
   kiwa = 0;
-  for (jj = 1; jj <= noord; ++jj) {
-    C2F(curblk).kfun = oord[jj];
-    nclock = oord[jj + noord];
-    if (outptr[C2F(curblk).kfun + 1] - outptr[C2F(curblk).kfun] > 0) {
+  for (jj = 1; jj <= Scicos->sim.noord; ++jj) {
+    C2F(curblk).kfun = Scicos->sim.oord[-1+jj];
+    nclock = Scicos->sim.oord[-1+jj +Scicos->sim.noord];
+    if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) {
       flag__ = 1;
-      callf(told, xd, x, x,x,&flag__);
+      callf(told, xd, Scicos->state.x, Scicos->state.x,Scicos->state.x,&flag__);
       
       if (flag__ < 0) {
 	*ierr = 5 - flag__;
@@ -1874,21 +1640,21 @@ void reinitdoit(double *told, int *scicos_xproperty)
       }
     }
     
-    if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
-      if (funtyp[C2F(curblk).kfun] == -1) {
-	if (outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]] <= 0.) {
+    if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) {
 	  i=2;
 	} else {
 	  i=1;
 	}
-      } else if (funtyp[C2F(curblk).kfun] == -2) {
-	i= max(min((int) outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-		  Blocks[C2F(curblk).kfun - 1].nevout),1);
+      } else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
+	i= Max(Min((int) Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+		  Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
       }
-      if(Blocks[C2F(curblk).kfun - 1].nmode>0){
-	Blocks[C2F(curblk).kfun - 1].mode[0]=i;
+      if(Scicos->Blocks[C2F(curblk).kfun - 1].nmode>0){
+	Scicos->Blocks[C2F(curblk).kfun - 1].mode[0]=i;
       }
-      i2 =i+ clkptr[C2F(curblk).kfun] - 1;
+      i2 =i+ Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
       putevs(told, &i2, &ierr1);
       if (ierr1 != 0) {
 	/*     !                 event conflict */
@@ -1903,14 +1669,14 @@ void reinitdoit(double *told, int *scicos_xproperty)
   }
   
   /*     .  re-initialize */
-  for (ii = 1; ii <= noord; ++ii) {
-    C2F(curblk).kfun = oord[ii];
-    if (Blocks[C2F(curblk).kfun-1].nx > 0) {
+  for (ii = 1; ii <= Scicos->sim.noord; ++ii) {
+    C2F(curblk).kfun = Scicos->sim.oord[-1+ii];
+    if (Scicos->Blocks[C2F(curblk).kfun-1].nx > 0) {
       flag__ = 7;
-      nclock = oord[ii + noord];
-      pointer_xproperty=&scicos_xproperty[-1+xptr[C2F(curblk).kfun]];
-      n_pointer_xproperty=Blocks[C2F(curblk).kfun-1].nx;
-      callf(told, xd, x, xd,x,&flag__);
+      nclock = Scicos->sim.oord[-1+ii + Scicos->sim.noord];
+      pointer_xproperty=&scicos_xproperty[-1+Scicos->sim.xptr[C2F(curblk).kfun-1]];
+      n_pointer_xproperty=Scicos->Blocks[C2F(curblk).kfun-1].nx;
+      callf(told, xd, Scicos->state.x, xd,Scicos->state.x,&flag__);
 
       if (flag__ < 0) {
 	*ierr = 5 - flag__;
@@ -1920,15 +1686,15 @@ void reinitdoit(double *told, int *scicos_xproperty)
   }
 
   for (i = 0; i < kiwa; ++i) {
-    keve = iwa[i];
-    for (ii = ordptr[keve]; ii <= ordptr[keve + 1] - 1; ++ii) {
-      C2F(curblk).kfun = ordclk[ii ];
-      if (Blocks[C2F(curblk).kfun-1].nx > 0) {
+    keve = Scicos->state.iwa[i];
+    for (ii = Scicos->sim.ordptr[-1+keve]; ii <= Scicos->sim.ordptr[keve] - 1; ++ii) {
+      C2F(curblk).kfun = Scicos->sim.ordclk[-1+ii ];
+      if (Scicos->Blocks[C2F(curblk).kfun-1].nx > 0) {
 	flag__ = 7;
-	nclock = abs(ordclk[ii + nordclk]);
-	n_pointer_xproperty=Blocks[C2F(curblk).kfun-1].nx;
-	pointer_xproperty=&scicos_xproperty[-1+xptr[C2F(curblk).kfun]];
-	callf(told, xd, x, xd,x,&flag__);
+	nclock = Abs(Scicos->sim.ordclk[-1+ii + Scicos->sim.nordclk]);
+	n_pointer_xproperty=Scicos->Blocks[C2F(curblk).kfun-1].nx;
+	pointer_xproperty=&scicos_xproperty[-1+Scicos->sim.xptr[C2F(curblk).kfun-1]];
+	callf(told, xd, Scicos->state.x, xd,Scicos->state.x,&flag__);
 
 	if (flag__ < 0) {
 	  *ierr = 5 - flag__;
@@ -1948,23 +1714,23 @@ void ozdoit(double *xtd, double *xt, double *told, int *kiwa)
   static int ierr1, i;
   int ii, kever; 
   /* Function Body */
-  kever = *pointi;
-  *pointi = evtspt[kever];
-  evtspt[kever] = -1;
+  kever = *Scicos->state.pointi;
+  *Scicos->state.pointi = Scicos->state.evtspt[kever-1];
+  Scicos->state.evtspt[kever-1] = -1;
 
-  nord = ordptr[kever + 1] - ordptr[kever];
+  nord = Scicos->sim.ordptr[kever] - Scicos->sim.ordptr[-1+kever];
   if (nord == 0) {
     return;
   }
-  iwa[*kiwa] = kever;
+  Scicos->state.iwa[*kiwa] = kever;
   ++(*kiwa);
 
-  for (ii = ordptr[kever]; ii <= ordptr[kever + 1] - 1; ++ii) {
-    C2F(curblk).kfun = ordclk[ii];
-    if (outptr[C2F(curblk).kfun + 1] - outptr[C2F(curblk).kfun] > 0) {
-      nclock = abs(ordclk[ii + nordclk]);
+  for (ii = Scicos->sim.ordptr[-1+kever]; ii <= Scicos->sim.ordptr[kever] - 1; ++ii) {
+    C2F(curblk).kfun = Scicos->sim.ordclk[-1+ii];
+    if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) {
+      nclock = Abs(Scicos->sim.ordclk[-1+ii +Scicos->sim.nordclk]);
       flag__ = 1;
-      callf(told, xtd, xt, xt,x,&flag__);
+      callf(told, xtd, xt, xt,Scicos->state.x,&flag__);
 
       if (flag__ < 0) {
 	*ierr = 5 - flag__;
@@ -1973,31 +1739,31 @@ void ozdoit(double *xtd, double *xt, double *told, int *kiwa)
     }
     /*     .     Initialize tvec */
     
-    if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
+    if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
 
-      if (funtyp[C2F(curblk).kfun] < 0) {
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] < 0) {
 
-	if (funtyp[C2F(curblk).kfun] == -1) {
-	  if (phase==1 || Blocks[C2F(curblk).kfun - 1].nmode==0){
-	    if (outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]] <= 0.) {
+	if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	  if (phase==1 || Scicos->Blocks[C2F(curblk).kfun - 1].nmode==0){
+	    if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) {
 	      i=2;
 	    } else {
 	      i=1;
 	    }
 	  }else{
-	    i=Blocks[C2F(curblk).kfun - 1].mode[0];
+	    i=Scicos->Blocks[C2F(curblk).kfun - 1].mode[0];
 	  }
-	} else if (funtyp[C2F(curblk).kfun] == -2) {
-	  if (phase==1 || Blocks[C2F(curblk).kfun - 1].nmode==0){
-	    i= max(min((int) 
-		       outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-		       Blocks[C2F(curblk).kfun - 1].nevout),1);
+	} else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
+	  if (phase==1 || Scicos->Blocks[C2F(curblk).kfun - 1].nmode==0){
+	    i= Max(Min((int) 
+		       Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+		       Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
 	  }else{
-	    i=Blocks[C2F(curblk).kfun - 1].mode[0];
+	    i=Scicos->Blocks[C2F(curblk).kfun - 1].mode[0];
 	    
 	  }
 	}
-	i2 =i+clkptr[C2F(curblk).kfun] - 1;
+	i2 =i+Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
 	putevs(told, &i2, &ierr1);
 	if (ierr1 != 0) {
 	  /*     !                 event conflict */
@@ -2018,13 +1784,13 @@ void zdoit(double *g, double *xtd, double *xt, double *told)
   static int ierr1, i,j;
   static int ii, jj;
   /* Function Body */
-  nsp_dset(&ng, &c_b14,g , &c__1);
+  nsp_dset(&Scicos->sim.ng, &c_b14,g , &c__1);
 
   kiwa = 0;
-  for (jj = 1; jj <= nzord; ++jj) {
-    C2F(curblk).kfun = zord[jj];
-    nclock = zord[jj + nzord];
-    if (outptr[C2F(curblk).kfun + 1] - outptr[C2F(curblk).kfun] > 0) {
+  for (jj = 1; jj <= Scicos->sim.nzord; ++jj) {
+    C2F(curblk).kfun = Scicos->sim.zord[-1+jj];
+    nclock = Scicos->sim.zord[-1+jj + Scicos->sim.nzord];
+    if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) {
       flag__ = 1;
       callf(told, xtd, xt, xt,xt,&flag__);
 
@@ -2034,30 +1800,30 @@ void zdoit(double *g, double *xtd, double *xt, double *told)
       }
     }
 
-    if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
-      if (funtyp[C2F(curblk).kfun] < 0) {
+    if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] < 0) {
 
 
-	if (funtyp[C2F(curblk).kfun] == -1) {
-	  if (phase==1|| Blocks[C2F(curblk).kfun - 1].nmode==0){
-	    if (outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]] <= 0.) {
+	if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	  if (phase==1|| Scicos->Blocks[C2F(curblk).kfun - 1].nmode==0){
+	    if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) {
 	      i=2;
 	    } else {
 	      i=1;
 	    }
 	  }else{
-	    i=Blocks[C2F(curblk).kfun - 1].mode[0];
+	    i=Scicos->Blocks[C2F(curblk).kfun - 1].mode[0];
 	  }
-	} else if (funtyp[C2F(curblk).kfun] == -2) {
-	  if (phase==1|| Blocks[C2F(curblk).kfun - 1].nmode==0){
-	    i=max(min((int) 
-		      outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-		      Blocks[C2F(curblk).kfun - 1].nevout),1);
+	} else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
+	  if (phase==1|| Scicos->Blocks[C2F(curblk).kfun - 1].nmode==0){
+	    i=Max(Min((int) 
+		      Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+		      Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
 	  }else{
-	    i=Blocks[C2F(curblk).kfun - 1].mode[0];
+	    i=Scicos->Blocks[C2F(curblk).kfun - 1].mode[0];
 	  }
 	}
-	i2 =i+clkptr[C2F(curblk).kfun] - 1;
+	i2 =i+Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
 	putevs(told, &i2, &ierr1);
 	if (ierr1 != 0) {
 	  /*     !                 event conflict */
@@ -2070,52 +1836,52 @@ void zdoit(double *g, double *xtd, double *xt, double *told)
   }
     
   /*     .  update zero crossing surfaces */
-  for (ii = 1; ii <= nzord; ++ii) {
-    C2F(curblk).kfun = zord[ii];
-    if (Blocks[C2F(curblk).kfun-1].ng > 0) {
-      if (funtyp[C2F(curblk).kfun] > 0) {
+  for (ii = 1; ii <= Scicos->sim.nzord; ++ii) {
+    C2F(curblk).kfun = Scicos->sim.zord[-1+ii];
+    if (Scicos->Blocks[C2F(curblk).kfun-1].ng > 0) {
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] > 0) {
 	flag__ = 9;
-	nclock = zord[ii +nzord];
+	nclock = Scicos->sim.zord[-1+ii +Scicos->sim.nzord];
 	callf(told, xtd, xt, xtd,g,&flag__);
 	if (flag__ < 0) {
 	  *ierr = 5 - flag__;
 	  return;
 	}
       }else{
-	if (funtyp[C2F(curblk).kfun] == -1) {
-	  g[zcptr[C2F(curblk).kfun]-1]=outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]];
-	  if(phase==1&&Blocks[C2F(curblk).kfun - 1].nmode>0){
-	    if (g[zcptr[C2F(curblk).kfun]-1] <= 0.) {
-	      Blocks[C2F(curblk).kfun - 1].mode[0] = 2;
+	if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	  g[Scicos->sim.zcptr[-1+C2F(curblk).kfun]-1]=Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]];
+	  if(phase==1&&Scicos->Blocks[C2F(curblk).kfun - 1].nmode>0){
+	    if (g[Scicos->sim.zcptr[-1+C2F(curblk).kfun]-1] <= 0.) {
+	      Scicos->Blocks[C2F(curblk).kfun - 1].mode[0] = 2;
 	    }
 	    else {
-	      Blocks[C2F(curblk).kfun - 1].mode[0] = 1;
+	      Scicos->Blocks[C2F(curblk).kfun - 1].mode[0] = 1;
 	    }
 	  }
-	} else if (funtyp[C2F(curblk).kfun] == -2) {
-	  for (jj=0;jj<Blocks[C2F(curblk).kfun - 1].nevout-1;++jj) {
-	    g[zcptr[C2F(curblk).kfun]-1+jj]=
-	      outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]]
+	} else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
+	  for (jj=0;jj<Scicos->Blocks[C2F(curblk).kfun - 1].nevout-1;++jj) {
+	    g[Scicos->sim.zcptr[-1+C2F(curblk).kfun]-1+jj]=
+	      Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]]
 	      -(double)(jj+2);
 	  }
-	  if(phase==1&&Blocks[C2F(curblk).kfun - 1].nmode>0){
-	    j=max(min((int) 
-		      outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-		      Blocks[C2F(curblk).kfun - 1].nevout),1);
-	    Blocks[C2F(curblk).kfun - 1].mode[0]= j;
+	  if(phase==1&&Scicos->Blocks[C2F(curblk).kfun - 1].nmode>0){
+	    j=Max(Min((int) 
+		      Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+		      Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
+	    Scicos->Blocks[C2F(curblk).kfun - 1].mode[0]= j;
 	  }
 	}
       }
     }
   }
   for (i = 0; i < kiwa; ++i) {
-    keve = iwa[i];
-    for (ii = ordptr[keve]; ii <= ordptr[keve + 1] - 1; ++ii) {
-      C2F(curblk).kfun = ordclk[ii ];
-      if (Blocks[C2F(curblk).kfun-1].ng > 0) {
-	if (funtyp[C2F(curblk).kfun] > 0) {
+    keve = Scicos->state.iwa[i];
+    for (ii = Scicos->sim.ordptr[-1+keve]; ii <= Scicos->sim.ordptr[keve] - 1; ++ii) {
+      C2F(curblk).kfun = Scicos->sim.ordclk[-1+ii ];
+      if (Scicos->Blocks[C2F(curblk).kfun-1].ng > 0) {
+	if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] > 0) {
 	  flag__ = 9;
-	  nclock = abs(ordclk[ii + nordclk]);
+	  nclock = Abs(Scicos->sim.ordclk[-1+ii + Scicos->sim.nordclk]);
 	  callf(told, xtd, xt, xtd,g,&flag__);
 	  
 	  if (flag__ < 0) {
@@ -2123,27 +1889,27 @@ void zdoit(double *g, double *xtd, double *xt, double *told)
 	    return;
 	  }
 	}else{
-	  if (funtyp[C2F(curblk).kfun] == -1) {
-	    g[zcptr[C2F(curblk).kfun]-1]=
-	      outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]];
-	    if(phase==1&&Blocks[C2F(curblk).kfun - 1].nmode>0){
-	      if (g[zcptr[C2F(curblk).kfun]-1] <= 0.) {
-		Blocks[C2F(curblk).kfun - 1].mode[0] = 2;
+	  if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	    g[Scicos->sim.zcptr[-1+C2F(curblk).kfun]-1]=
+	      Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]];
+	    if(phase==1&&Scicos->Blocks[C2F(curblk).kfun - 1].nmode>0){
+	      if (g[Scicos->sim.zcptr[-1+C2F(curblk).kfun]-1] <= 0.) {
+		Scicos->Blocks[C2F(curblk).kfun - 1].mode[0] = 2;
 	      } else {
-		Blocks[C2F(curblk).kfun - 1].mode[0] = 1;
+		Scicos->Blocks[C2F(curblk).kfun - 1].mode[0] = 1;
 	      }
 	    }
-	  } else if (funtyp[C2F(curblk).kfun] == -2) {
-	    for (jj=0;jj<Blocks[C2F(curblk).kfun - 1].nevout-1;++jj) {
-	      g[zcptr[C2F(curblk).kfun]-1+jj]=
-		outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]]
+	  } else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
+	    for (jj=0;jj<Scicos->Blocks[C2F(curblk).kfun - 1].nevout-1;++jj) {
+	      g[Scicos->sim.zcptr[-1+C2F(curblk).kfun]-1+jj]=
+		Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]]
 		-(double)(jj+2);
 	    }
-	    if(phase==1&&Blocks[C2F(curblk).kfun - 1].nmode>0){
-	      j=max(min((int) 
-			outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-			Blocks[C2F(curblk).kfun - 1].nevout),1);
-	      Blocks[C2F(curblk).kfun - 1].mode[0]= j;
+	    if(phase==1&&Scicos->Blocks[C2F(curblk).kfun - 1].nmode>0){
+	      j=Max(Min((int) 
+			Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+			Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
+	      Scicos->Blocks[C2F(curblk).kfun - 1].mode[0]= j;
 	    }
 	  }
 	}
@@ -2180,7 +1946,7 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
   block_error=flag;  /* to return error from blocks of type 4 */
 
   flagi=*flag; /* flag 7 implicit initialization */
-  if(flagi==7 && Blocks[kf-1].type<10000) *flag=0;
+  if(flagi==7 && Scicos->Blocks[kf-1].type<10000) *flag=0;
 
   if ( cosd > 1){
     sciprint("block %d is called ",kf);
@@ -2193,47 +1959,47 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
     }
   }
   
-  C2F(scsptr).ptr=Blocks[kf-1].scsptr; /* set scilab function adress for sciblk */
+  C2F(scsptr).ptr=Scicos->Blocks[kf-1].scsptr; /* set scilab function adress for sciblk */
 
-  loc=Blocks[kf-1].funpt;
-  if (Blocks[kf-1].type==4||Blocks[kf-1].type==10004) {
+  loc=Scicos->Blocks[kf-1].funpt;
+  if (Scicos->Blocks[kf-1].type==4||Scicos->Blocks[kf-1].type==10004) {
     scicos_time=*t;
-    Blocks[kf-1].nevprt=nclock;
+    Scicos->Blocks[kf-1].nevprt=nclock;
     loc4 = (ScicosF4) loc;
-    if(Blocks[kf-1].ng>0){
-	Blocks[kf-1].g=&g[zcptr[kf]-1];
+    if(Scicos->Blocks[kf-1].ng>0){
+	Scicos->Blocks[kf-1].g=&g[Scicos->sim.zcptr[-1+kf]-1];
       }
-    if(Blocks[kf-1].nx==0){
-      (*loc4)(&Blocks[kf-1],*flag);
+    if(Scicos->Blocks[kf-1].nx==0){
+      (*loc4)(&Scicos->Blocks[kf-1],*flag);
     } 
     else {
-      Blocks[kf-1].x=&xt[xptr[kf]-1];
-      if(Blocks[kf-1].type==4) {
+      Scicos->Blocks[kf-1].x=&xt[Scicos->sim.xptr[kf-1]-1];
+      if(Scicos->Blocks[kf-1].type==4) {
 	if(*flag==0 && solver==100) {
-	  Blocks[kf-1].res=&residual[xptr[kf]-1];
-	  Blocks[kf-1].xd=&residual[xptr[kf]-1];
-	  (*loc4)(&Blocks[kf-1],*flag);
-	  Blocks[kf-1].xd=&xtd[xptr[kf]-1];
+	  Scicos->Blocks[kf-1].res=&residual[Scicos->sim.xptr[kf-1]-1];
+	  Scicos->Blocks[kf-1].xd=&residual[Scicos->sim.xptr[kf-1]-1];
+	  (*loc4)(&Scicos->Blocks[kf-1],*flag);
+	  Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
 	  if(flagi!=7) {
-	    for (k=0;k<Blocks[kf-1].nx;k++) {
-	      Blocks[kf-1].res[k]=Blocks[kf-1].res[k]-Blocks[kf-1].xd[k];
+	    for (k=0;k<Scicos->Blocks[kf-1].nx;k++) {
+	      Scicos->Blocks[kf-1].res[k]=Scicos->Blocks[kf-1].res[k]-Scicos->Blocks[kf-1].xd[k];
 	    }
 	  }
 	  else {
-	    for (k=0;k<Blocks[kf-1].nx;k++) {
-	      Blocks[kf-1].xd[k]=Blocks[kf-1].res[k];
+	    for (k=0;k<Scicos->Blocks[kf-1].nx;k++) {
+	      Scicos->Blocks[kf-1].xd[k]=Scicos->Blocks[kf-1].res[k];
 	    } 
 	  }
 	}
 	else {
-	  Blocks[kf-1].xd=&xtd[xptr[kf]-1];
-	  (*loc4)(&Blocks[kf-1],*flag);
+	  Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
+	  (*loc4)(&Scicos->Blocks[kf-1],*flag);
 	}
       }
       else {
-	Blocks[kf-1].xd=&xtd[xptr[kf]-1];
-	Blocks[kf-1].res=&residual[xptr[kf]-1];
-	(*loc4)(&Blocks[kf-1],*flag);
+	Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
+	Scicos->Blocks[kf-1].res=&residual[Scicos->sim.xptr[kf-1]-1];
+	(*loc4)(&Scicos->Blocks[kf-1],*flag);
       }
     }
     if ( cosd > 1){
@@ -2248,46 +2014,46 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
   
   /*This is for compatibility*/
   if(nclock<0){
-      for (j =0;j<Blocks[kf-1].ng;++j){
-	Blocks[kf-1].g[j]=(double)Blocks[kf-1].jroot[j];
+      for (j =0;j<Scicos->Blocks[kf-1].ng;++j){
+	Scicos->Blocks[kf-1].g[j]=(double)Scicos->Blocks[kf-1].jroot[j];
     }
   }
 
-  if(Blocks[kf-1].ztyp>0){
-    Blocks[kf-1].g=&g[zcptr[kf]-1];
+  if(Scicos->Blocks[kf-1].ztyp>0){
+    Scicos->Blocks[kf-1].g=&g[Scicos->sim.zcptr[-1+kf]-1];
   }
-  if(Blocks[kf-1].nx>0){
-    Blocks[kf-1].x=&xt[xptr[kf]-1];
-    Blocks[kf-1].xd=&xtd[xptr[kf]-1];
+  if(Scicos->Blocks[kf-1].nx>0){
+    Scicos->Blocks[kf-1].x=&xt[Scicos->sim.xptr[kf-1]-1];
+    Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
     if(solver==100) {
-      Blocks[kf-1].res=&residual[xptr[kf]-1];
+      Scicos->Blocks[kf-1].res=&residual[Scicos->sim.xptr[kf-1]-1];
     }
   }
 
-  switch (Blocks[kf-1].type) {
+  switch (Scicos->Blocks[kf-1].type) {
 
   case 1 :			
     /* one entry for each input or output */
-    for (in = 0 ; in < Blocks[kf-1].nin ; in++) 
+    for (in = 0 ; in < Scicos->Blocks[kf-1].nin ; in++) 
       {
-	args[in]=Blocks[kf-1].inptr[in];
-	sz[in]=Blocks[kf-1].insz[in];
+	args[in]=Scicos->Blocks[kf-1].inptr[in];
+	sz[in]=Scicos->Blocks[kf-1].insz[in];
       }
-    for (out=0;out<Blocks[kf-1].nout;out++) {
-      args[in+out]=Blocks[kf-1].outptr[out];
-      sz[in+out]=Blocks[kf-1].outsz[out];
+    for (out=0;out<Scicos->Blocks[kf-1].nout;out++) {
+      args[in+out]=Scicos->Blocks[kf-1].outptr[out];
+      sz[in+out]=Scicos->Blocks[kf-1].outsz[out];
     }
-    if(Blocks[kf-1].ztyp>0){
-      Blocks[kf-1].g=&g[zcptr[kf]-1];
-      args[Blocks[kf-1].nin+Blocks[kf-1].nout]=Blocks[kf-1].g;
-      sz[Blocks[kf-1].nin+Blocks[kf-1].nout]=Blocks[kf-1].ng;
+    if(Scicos->Blocks[kf-1].ztyp>0){
+      Scicos->Blocks[kf-1].g=&g[Scicos->sim.zcptr[-1+kf]-1];
+      args[Scicos->Blocks[kf-1].nin+Scicos->Blocks[kf-1].nout]=Scicos->Blocks[kf-1].g;
+      sz[Scicos->Blocks[kf-1].nin+Scicos->Blocks[kf-1].nout]=Scicos->Blocks[kf-1].ng;
     }
     loc1 = (ScicosF) loc;
     if (solver==100) {
-      (*loc1)(flag,&nclock,t,Blocks[kf-1].res,Blocks[kf-1].x,&Blocks[kf-1].nx,
-	      Blocks[kf-1].z,&Blocks[kf-1].nz,
-	      Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-	      Blocks[kf-1].ipar,&Blocks[kf-1].nipar,
+      (*loc1)(flag,&nclock,t,Scicos->Blocks[kf-1].res,Scicos->Blocks[kf-1].x,&Scicos->Blocks[kf-1].nx,
+	      Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+	      Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+	      Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,
 	      (double *)args[0],&sz[0],
 	      (double *)args[1],&sz[1],(double *)args[2],&sz[2],
 	      (double *)args[3],&sz[3],(double *)args[4],&sz[4],
@@ -2300,10 +2066,10 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
 	      (double *)args[17],&sz[17]); 
     }
     else {
-      (*loc1)(flag,&nclock,t,Blocks[kf-1].xd,Blocks[kf-1].x,&Blocks[kf-1].nx,
-	      Blocks[kf-1].z,&Blocks[kf-1].nz,
-	      Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-	      Blocks[kf-1].ipar,&Blocks[kf-1].nipar,
+      (*loc1)(flag,&nclock,t,Scicos->Blocks[kf-1].xd,Scicos->Blocks[kf-1].x,&Scicos->Blocks[kf-1].nx,
+	      Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+	      Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+	      Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,
 	      (double *)args[0],&sz[0],
 	      (double *)args[1],&sz[1],(double *)args[2],&sz[2],
 	      (double *)args[3],&sz[3],(double *)args[4],&sz[4],
@@ -2321,80 +2087,80 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
     ni=0;
     /* catenate inputs if necessary */
 
-    if (Blocks[kf-1].nin>1) {
+    if (Scicos->Blocks[kf-1].nin>1) {
       ki=0;
-      for (in=0;in<Blocks[kf-1].nin;in++) {
-	lprt=inplnk[inpptr[kf]+in];
-	szi=lnkptr[lprt+1]-lnkptr[lprt];
+      for (in=0;in<Scicos->Blocks[kf-1].nin;in++) {
+	lprt=Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+kf]+in];
+	szi=Scicos->sim.lnkptr[lprt]-Scicos->sim.lnkptr[-1+lprt];
 	for (ii=0;ii<szi;ii++) 
-	  intabl[ki++]=outtb[lnkptr[lprt]-1+ii];
+	  intabl[ki++]=Scicos->state.outtb[Scicos->sim.lnkptr[-1+lprt]-1+ii];
 	ni=ni+szi;
       }
       args[0]=&(intabl[0]);
     }
     else {
-      if (Blocks[kf-1].nin==0) {
+      if (Scicos->Blocks[kf-1].nin==0) {
 	ni=0;
-	args[0]=&(outtb[0]);
+	args[0]=&(Scicos->state.outtb[0]);
       }
       else {
-	lprt=inplnk[inpptr[kf]];
-	args[0]=&(outtb[lnkptr[lprt]-1]);
-	ni=lnkptr[lprt+1]-lnkptr[lprt];
+	lprt=Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+kf]];
+	args[0]=&(Scicos->state.outtb[Scicos->sim.lnkptr[-1+lprt]-1]);
+	ni=Scicos->sim.lnkptr[lprt]-Scicos->sim.lnkptr[-1+lprt];
       }
     }
-    in=Blocks[kf-1].nin;
+    in=Scicos->Blocks[kf-1].nin;
     
     /* catenate outputs if necessary */
 	no=0;
-    if (Blocks[kf-1].nout>1) {
+    if (Scicos->Blocks[kf-1].nout>1) {
       ko=0;
-      for (out=0;out<Blocks[kf-1].nout;out++) {
-	lprt=outlnk[outptr[kf]+out];
-	szi=lnkptr[lprt+1]-lnkptr[lprt];
+      for (out=0;out<Scicos->Blocks[kf-1].nout;out++) {
+	lprt=Scicos->sim.outlnk[-1+Scicos->sim.outptr[-1+kf]+out];
+	szi=Scicos->sim.lnkptr[lprt]-Scicos->sim.lnkptr[-1+lprt];
 	
 	for (ii=0;ii<szi;ii++)  
-	  outabl[ko++]=outtb[lnkptr[lprt]-1+ii];
+	  outabl[ko++]=Scicos->state.outtb[Scicos->sim.lnkptr[-1+lprt]-1+ii];
 	no=no+szi;
       }
       args[1]=&(outabl[0]);
     }
     else {
-      if (Blocks[kf-1].nout==0) {
+      if (Scicos->Blocks[kf-1].nout==0) {
 	no=0;
-	args[1]=&(outtb[0]);
+	args[1]=&(Scicos->state.outtb[0]);
       }
       else {
-	lprt=outlnk[outptr[kf]];
-	args[1]=&(outtb[lnkptr[lprt]-1]);
-	no=lnkptr[lprt+1]-lnkptr[lprt];
+	lprt=Scicos->sim.outlnk[-1+Scicos->sim.outptr[-1+kf]];
+	args[1]=&(Scicos->state.outtb[Scicos->sim.lnkptr[-1+lprt]-1]);
+	no=Scicos->sim.lnkptr[lprt]-Scicos->sim.lnkptr[-1+lprt];
       }
     }
 
     loc0 = (ScicosF0) loc;
     if (solver==100) {
-      (*loc0)(flag,&nclock,t,Blocks[kf-1].res,Blocks[kf-1].x,&Blocks[kf-1].nx,
-	      Blocks[kf-1].z,&Blocks[kf-1].nz,
-	      Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-	      Blocks[kf-1].ipar,&Blocks[kf-1].nipar,(double *)args[0],&ni,
+      (*loc0)(flag,&nclock,t,Scicos->Blocks[kf-1].res,Scicos->Blocks[kf-1].x,&Scicos->Blocks[kf-1].nx,
+	      Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+	      Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+	      Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,(double *)args[0],&ni,
 	      (double *)args[1],&no);
     }
     else {
-      (*loc0)(flag,&nclock,t,Blocks[kf-1].xd,Blocks[kf-1].x,&Blocks[kf-1].nx,
-	      Blocks[kf-1].z,&Blocks[kf-1].nz,
-	      Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-	      Blocks[kf-1].ipar,&Blocks[kf-1].nipar,(double *)args[0],&ni,
+      (*loc0)(flag,&nclock,t,Scicos->Blocks[kf-1].xd,Scicos->Blocks[kf-1].x,&Scicos->Blocks[kf-1].nx,
+	      Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+	      Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+	      Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,(double *)args[0],&ni,
 	      (double *)args[1],&no);
     }
     
     /* split output vector on each port if necessary */
-    if (Blocks[kf-1].nout>1) {
+    if (Scicos->Blocks[kf-1].nout>1) {
       ko=0;
-      for (out=0;out<Blocks[kf-1].nout;out++) {
-	lprt=outlnk[outptr[kf]+out];
-	szi=lnkptr[lprt+1]-lnkptr[lprt];
+      for (out=0;out<Scicos->Blocks[kf-1].nout;out++) {
+	lprt=Scicos->sim.outlnk[-1+Scicos->sim.outptr[-1+kf]+out];
+	szi=Scicos->sim.lnkptr[lprt]-Scicos->sim.lnkptr[-1+lprt];
 	for (ii=0;ii<szi;ii++)  
-	  outtb[lnkptr[lprt]-1+ii]=outabl[ko++];
+	  Scicos->state.outtb[Scicos->sim.lnkptr[-1+lprt]-1+ii]=outabl[ko++];
       }
     }
     break;
@@ -2402,69 +2168,69 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
 
     
     if (solver==100) {
-      if (Blocks[kf-1].ztyp==0){
+      if (Scicos->Blocks[kf-1].ztyp==0){
 	loc2 = (ScicosF2) loc;
-	(*loc2)(flag,&nclock,t,Blocks[kf-1].res,Blocks[kf-1].x,&Blocks[kf-1].nx,
-		Blocks[kf-1].z,&Blocks[kf-1].nz,
-		Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-		Blocks[kf-1].ipar,&Blocks[kf-1].nipar,Blocks[kf-1].inptr,
-		Blocks[kf-1].insz,&Blocks[kf-1].nin,
-		Blocks[kf-1].outptr,Blocks[kf-1].outsz,&Blocks[kf-1].nout);
+	(*loc2)(flag,&nclock,t,Scicos->Blocks[kf-1].res,Scicos->Blocks[kf-1].x,&Scicos->Blocks[kf-1].nx,
+		Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+		Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+		Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,Scicos->Blocks[kf-1].inptr,
+		Scicos->Blocks[kf-1].insz,&Scicos->Blocks[kf-1].nin,
+		Scicos->Blocks[kf-1].outptr,Scicos->Blocks[kf-1].outsz,&Scicos->Blocks[kf-1].nout);
       }
       else{
 	loc2z = (ScicosF2z) loc;
-	(*loc2z)(flag,&nclock,t,Blocks[kf-1].res,Blocks[kf-1].x,&Blocks[kf-1].nx,
-		 Blocks[kf-1].z,&Blocks[kf-1].nz,
-		 Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-		 Blocks[kf-1].ipar,&Blocks[kf-1].nipar,Blocks[kf-1].inptr,Blocks[kf-1].insz,&Blocks[kf-1].nin,
-		 Blocks[kf-1].outptr,Blocks[kf-1].outsz,&Blocks[kf-1].nout,
-		 Blocks[kf-1].g,&Blocks[kf-1].ng);
+	(*loc2z)(flag,&nclock,t,Scicos->Blocks[kf-1].res,Scicos->Blocks[kf-1].x,&Scicos->Blocks[kf-1].nx,
+		 Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+		 Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+		 Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,Scicos->Blocks[kf-1].inptr,Scicos->Blocks[kf-1].insz,&Scicos->Blocks[kf-1].nin,
+		 Scicos->Blocks[kf-1].outptr,Scicos->Blocks[kf-1].outsz,&Scicos->Blocks[kf-1].nout,
+		 Scicos->Blocks[kf-1].g,&Scicos->Blocks[kf-1].ng);
       }
     }
     else {
-      if (Blocks[kf-1].ztyp==0){
+      if (Scicos->Blocks[kf-1].ztyp==0){
 	loc2 = (ScicosF2) loc;
-	(*loc2)(flag,&nclock,t,Blocks[kf-1].xd,Blocks[kf-1].x,&Blocks[kf-1].nx,
-		Blocks[kf-1].z,&Blocks[kf-1].nz,
-		Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-		Blocks[kf-1].ipar,&Blocks[kf-1].nipar,Blocks[kf-1].inptr,
-		Blocks[kf-1].insz,&Blocks[kf-1].nin,
-		Blocks[kf-1].outptr,Blocks[kf-1].outsz,&Blocks[kf-1].nout);
+	(*loc2)(flag,&nclock,t,Scicos->Blocks[kf-1].xd,Scicos->Blocks[kf-1].x,&Scicos->Blocks[kf-1].nx,
+		Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+		Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+		Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,Scicos->Blocks[kf-1].inptr,
+		Scicos->Blocks[kf-1].insz,&Scicos->Blocks[kf-1].nin,
+		Scicos->Blocks[kf-1].outptr,Scicos->Blocks[kf-1].outsz,&Scicos->Blocks[kf-1].nout);
       }
       else{
 	loc2z = (ScicosF2z) loc;
-	(*loc2z)(flag,&nclock,t,Blocks[kf-1].xd,Blocks[kf-1].x,&Blocks[kf-1].nx,
-		 Blocks[kf-1].z,&Blocks[kf-1].nz,
-		 Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-		 Blocks[kf-1].ipar,&Blocks[kf-1].nipar,Blocks[kf-1].inptr,
-		 Blocks[kf-1].insz,&Blocks[kf-1].nin,
-		 Blocks[kf-1].outptr,Blocks[kf-1].outsz,&Blocks[kf-1].nout,
-		 Blocks[kf-1].g,&Blocks[kf-1].ng);
+	(*loc2z)(flag,&nclock,t,Scicos->Blocks[kf-1].xd,Scicos->Blocks[kf-1].x,&Scicos->Blocks[kf-1].nx,
+		 Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+		 Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+		 Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,Scicos->Blocks[kf-1].inptr,
+		 Scicos->Blocks[kf-1].insz,&Scicos->Blocks[kf-1].nin,
+		 Scicos->Blocks[kf-1].outptr,Scicos->Blocks[kf-1].outsz,&Scicos->Blocks[kf-1].nout,
+		 Scicos->Blocks[kf-1].g,&Scicos->Blocks[kf-1].ng);
       }
     }
     break;
   case 10001 :			
     /* implicit block one entry for each input or output */
-      for (in = 0 ; in < Blocks[kf-1].nin ; in++) 
+      for (in = 0 ; in < Scicos->Blocks[kf-1].nin ; in++) 
 	{
-	  args[in]=Blocks[kf-1].inptr[in];
-	  sz[in]=Blocks[kf-1].insz[in];
+	  args[in]=Scicos->Blocks[kf-1].inptr[in];
+	  sz[in]=Scicos->Blocks[kf-1].insz[in];
 	}
-    for (out=0;out<Blocks[kf-1].nout;out++) {
-      args[in+out]=Blocks[kf-1].outptr[out];
-      sz[in+out]=Blocks[kf-1].outsz[out];
+    for (out=0;out<Scicos->Blocks[kf-1].nout;out++) {
+      args[in+out]=Scicos->Blocks[kf-1].outptr[out];
+      sz[in+out]=Scicos->Blocks[kf-1].outsz[out];
     }
-    if(Blocks[kf-1].ztyp>0){
-      Blocks[kf-1].g=&g[zcptr[kf]-1];
-      args[Blocks[kf-1].nin+Blocks[kf-1].nout]=Blocks[kf-1].g;
-      sz[Blocks[kf-1].nin+Blocks[kf-1].nout]=Blocks[kf-1].ng;
+    if(Scicos->Blocks[kf-1].ztyp>0){
+      Scicos->Blocks[kf-1].g=&g[Scicos->sim.zcptr[-1+kf]-1];
+      args[Scicos->Blocks[kf-1].nin+Scicos->Blocks[kf-1].nout]=Scicos->Blocks[kf-1].g;
+      sz[Scicos->Blocks[kf-1].nin+Scicos->Blocks[kf-1].nout]=Scicos->Blocks[kf-1].ng;
     }
     loci1 = (ScicosFi) loc;
 
-    (*loci1)(flag,&nclock,t,Blocks[kf-1].res,Blocks[kf-1].xd,Blocks[kf-1].x,
-	     &Blocks[kf-1].nx,Blocks[kf-1].z,&Blocks[kf-1].nz,
-	     Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-	     Blocks[kf-1].ipar,&Blocks[kf-1].nipar,
+    (*loci1)(flag,&nclock,t,Scicos->Blocks[kf-1].res,Scicos->Blocks[kf-1].xd,Scicos->Blocks[kf-1].x,
+	     &Scicos->Blocks[kf-1].nx,Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+	     Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+	     Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,
 	     (double *)args[0],&sz[0],
 	     (double *)args[1],&sz[1],(double *)args[2],&sz[2],
 	     (double *)args[3],&sz[3],(double *)args[4],&sz[4],
@@ -2479,27 +2245,27 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
   case 10002 :			
     /* implicit block, inputs and outputs given by a table of pointers */
    
-    if(Blocks[kf-1].ztyp==0) {
+    if(Scicos->Blocks[kf-1].ztyp==0) {
       loci2 = (ScicosFi2) loc;
       
-      (*loci2)(flag,&nclock,t,Blocks[kf-1].res,
-	       Blocks[kf-1].xd,Blocks[kf-1].x,&Blocks[kf-1].nx,
-	       Blocks[kf-1].z,&Blocks[kf-1].nz,
-	       Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-	       Blocks[kf-1].ipar,&Blocks[kf-1].nipar,Blocks[kf-1].inptr,
-	       Blocks[kf-1].insz,&Blocks[kf-1].nin,
-	       Blocks[kf-1].outptr,Blocks[kf-1].outsz,&Blocks[kf-1].nout);
+      (*loci2)(flag,&nclock,t,Scicos->Blocks[kf-1].res,
+	       Scicos->Blocks[kf-1].xd,Scicos->Blocks[kf-1].x,&Scicos->Blocks[kf-1].nx,
+	       Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+	       Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+	       Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,Scicos->Blocks[kf-1].inptr,
+	       Scicos->Blocks[kf-1].insz,&Scicos->Blocks[kf-1].nin,
+	       Scicos->Blocks[kf-1].outptr,Scicos->Blocks[kf-1].outsz,&Scicos->Blocks[kf-1].nout);
     }
     else {
       loci2z = (ScicosFi2z) loc;
       
-      (*loci2z)(flag,&nclock,t,Blocks[kf-1].res,
-		Blocks[kf-1].xd,Blocks[kf-1].x,&Blocks[kf-1].nx,
-		Blocks[kf-1].z,&Blocks[kf-1].nz,
-		Blocks[kf-1].evout,&Blocks[kf-1].nevout,Blocks[kf-1].rpar,&Blocks[kf-1].nrpar,
-		Blocks[kf-1].ipar,&Blocks[kf-1].nipar,Blocks[kf-1].inptr,Blocks[kf-1].insz,&Blocks[kf-1].nin,
-		Blocks[kf-1].outptr,Blocks[kf-1].outsz,&Blocks[kf-1].nout,
-		Blocks[kf-1].g,&Blocks[kf-1].ng);
+      (*loci2z)(flag,&nclock,t,Scicos->Blocks[kf-1].res,
+		Scicos->Blocks[kf-1].xd,Scicos->Blocks[kf-1].x,&Scicos->Blocks[kf-1].nx,
+		Scicos->Blocks[kf-1].z,&Scicos->Blocks[kf-1].nz,
+		Scicos->Blocks[kf-1].evout,&Scicos->Blocks[kf-1].nevout,Scicos->Blocks[kf-1].rpar,&Scicos->Blocks[kf-1].nrpar,
+		Scicos->Blocks[kf-1].ipar,&Scicos->Blocks[kf-1].nipar,Scicos->Blocks[kf-1].inptr,Scicos->Blocks[kf-1].insz,&Scicos->Blocks[kf-1].nin,
+		Scicos->Blocks[kf-1].outptr,Scicos->Blocks[kf-1].outsz,&Scicos->Blocks[kf-1].nout,
+		Scicos->Blocks[kf-1].g,&Scicos->Blocks[kf-1].ng);
     }
     break;  
   default:
@@ -2507,21 +2273,21 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
     *flag=-1000;
     return;
   }
-  if(solver==100 && Blocks[kf-1].type<10000 && *flag==0) { /* Implicit Solver */
+  if(solver==100 && Scicos->Blocks[kf-1].type<10000 && *flag==0) { /* Implicit Solver */
 
     if(flagi!=7) {
-      for (k=0;k<Blocks[kf-1].nx;k++) {
-	Blocks[kf-1].res[k]=Blocks[kf-1].res[k]-Blocks[kf-1].xd[k];
+      for (k=0;k<Scicos->Blocks[kf-1].nx;k++) {
+	Scicos->Blocks[kf-1].res[k]=Scicos->Blocks[kf-1].res[k]-Scicos->Blocks[kf-1].xd[k];
       }
     }
     else {
-      for (k=0;k<Blocks[kf-1].nx;k++) {
-	Blocks[kf-1].xd[k]=Blocks[kf-1].res[k];
+      for (k=0;k<Scicos->Blocks[kf-1].nx;k++) {
+	Scicos->Blocks[kf-1].xd[k]=Scicos->Blocks[kf-1].res[k];
       } 
     }
   }
-  for(in=0;in<Blocks[kf-1].nevout;++in){
-    Blocks[kf-1].evout[in]=Blocks[kf-1].evout[in]-*t;
+  for(in=0;in<Scicos->Blocks[kf-1].nevout;++in){
+    Scicos->Blocks[kf-1].evout[in]=Scicos->Blocks[kf-1].evout[in]-*t;
   }
   if ( cosd > 1){
     if(debug_block>-1){
@@ -2540,38 +2306,38 @@ void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, dou
   int solver=C2F(cmsolver).solver,k;
   ScicosF4 loc4;
 
-  C2F(scsptr).ptr=Blocks[deb_blk].scsptr;
-  loc=Blocks[deb_blk].funpt;
+  C2F(scsptr).ptr=Scicos->Blocks[deb_blk].scsptr;
+  loc=Scicos->Blocks[deb_blk].funpt;
   scicos_time=*t;
-  Blocks[kf-1].nevprt=nclock;
+  Scicos->Blocks[kf-1].nevprt=nclock;
   loc4 = (ScicosF4) loc;
-  if(Blocks[kf-1].ng>0){
-    Blocks[kf-1].g=&g[zcptr[kf]-1];
+  if(Scicos->Blocks[kf-1].ng>0){
+    Scicos->Blocks[kf-1].g=&g[Scicos->sim.zcptr[-1+kf]-1];
   }
-  if(Blocks[kf-1].nx==0){
-    (*loc4)(&Blocks[kf-1],*flag);
+  if(Scicos->Blocks[kf-1].nx==0){
+    (*loc4)(&Scicos->Blocks[kf-1],*flag);
   } 
   else {
-    Blocks[kf-1].x=&xt[xptr[kf]-1];
+    Scicos->Blocks[kf-1].x=&xt[Scicos->sim.xptr[kf-1]-1];
     if(*flag==0 && solver==100) {
-      Blocks[kf-1].res=&residual[xptr[kf]-1];
-      Blocks[kf-1].xd=&residual[xptr[kf]-1];
-      (*loc4)(&Blocks[kf-1],*flag);
-      Blocks[kf-1].xd=&xtd[xptr[kf]-1];
+      Scicos->Blocks[kf-1].res=&residual[Scicos->sim.xptr[kf-1]-1];
+      Scicos->Blocks[kf-1].xd=&residual[Scicos->sim.xptr[kf-1]-1];
+      (*loc4)(&Scicos->Blocks[kf-1],*flag);
+      Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
       if(flagi!=7) {
-	for (k=0;k<Blocks[kf-1].nx;k++) {
-	  Blocks[kf-1].res[k]=Blocks[kf-1].res[k]-Blocks[kf-1].xd[k];
+	for (k=0;k<Scicos->Blocks[kf-1].nx;k++) {
+	  Scicos->Blocks[kf-1].res[k]=Scicos->Blocks[kf-1].res[k]-Scicos->Blocks[kf-1].xd[k];
 	}
       }
       else {
-	for (k=0;k<Blocks[kf-1].nx;k++) {
-	  Blocks[kf-1].xd[k]=Blocks[kf-1].res[k];
+	for (k=0;k<Scicos->Blocks[kf-1].nx;k++) {
+	  Scicos->Blocks[kf-1].xd[k]=Scicos->Blocks[kf-1].res[k];
 	} 
       }
     }
     else {
-      Blocks[kf-1].xd=&xtd[xptr[kf]-1];
-      (*loc4)(&Blocks[kf-1],*flag);
+      Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
+      (*loc4)(&Scicos->Blocks[kf-1],*flag);
     }
   }
   if (*flag<0) sciprint("Error in the Debug block \r\n");
@@ -2676,40 +2442,40 @@ void addevs(double t, int *evtnb, int *ierr1)
 {
   static int i, j;
   *ierr1 = 0;
-  if (evtspt[*evtnb] != -1) {
+  if (Scicos->state.evtspt[*evtnb-1] != -1) {
     *ierr1 = 1;
     return;
   } else {
-    evtspt[*evtnb] = 0;
-    tevts[*evtnb] = t;
+    Scicos->state.evtspt[*evtnb-1] = 0;
+    Scicos->state.tevts[-1+*evtnb] = t;
   }
-  if (*pointi == 0) {
-    *pointi = *evtnb;
+  if (*Scicos->state.pointi == 0) {
+    *Scicos->state.pointi = *evtnb;
     return;
   }
-  if (t < tevts[*pointi]) {
-    evtspt[*evtnb] = *pointi;
-    *pointi = *evtnb;
+  if (t < Scicos->state.tevts[-1+*Scicos->state.pointi]) {
+    Scicos->state.evtspt[*evtnb-1] = *Scicos->state.pointi;
+    *Scicos->state.pointi = *evtnb;
     return;
   }
-  i = *pointi;
+  i = *Scicos->state.pointi;
 
  L100:
-  if (evtspt[i] == 0) {
-    evtspt[i] = *evtnb;
+  if (Scicos->state.evtspt[i-1] == 0) {
+    Scicos->state.evtspt[i-1] = *evtnb;
     return;
   }
-  if (t >= tevts[evtspt[i]]) {
-    j = evtspt[i];
-    if (evtspt[j] == 0) {
-      evtspt[j] = *evtnb;
+  if (t >= Scicos->state.tevts[-1+Scicos->state.evtspt[i-1]]) {
+    j = Scicos->state.evtspt[i-1];
+    if (Scicos->state.evtspt[j-1] == 0) {
+      Scicos->state.evtspt[j-1] = *evtnb;
       return;
     }
     i = j;
     goto L100;
   } else {
-    evtspt[*evtnb] = evtspt[i];
-    evtspt[i] = *evtnb;
+    Scicos->state.evtspt[*evtnb-1] = Scicos->state.evtspt[i-1];
+    Scicos->state.evtspt[i-1] = *evtnb;
   }
 } 
 
@@ -2717,64 +2483,22 @@ void addevs(double t, int *evtnb, int *ierr1)
 void putevs(double *t, int *evtnb, int *ierr1)
 {
   *ierr1 = 0;
-  if (evtspt[*evtnb] != -1) {
+  if (Scicos->state.evtspt[*evtnb-1] != -1) {
     *ierr1 = 1;
     return;
   } else {
-    evtspt[*evtnb] = 0;
-    tevts[*evtnb] = *t;
+    Scicos->state.evtspt[*evtnb-1] = 0;
+    Scicos->state.tevts[-1+*evtnb] = *t;
   }
-  if (*pointi == 0) {
-    *pointi = *evtnb;
+  if (*Scicos->state.pointi == 0) {
+    *Scicos->state.pointi = *evtnb;
     return;
   }
-  evtspt[*evtnb] = *pointi;
-  *pointi = *evtnb;
+  Scicos->state.evtspt[*evtnb-1] = *Scicos->state.pointi;
+  *Scicos->state.pointi = *evtnb;
 } 
 
 
-
-void free_blocks(void)
-{
-  int kf;
-  for (kf = 0; kf < nblk; ++kf) {
-    if (Blocks[kf].insz!=NULL) {
-      free(Blocks[kf].insz);
-    }else {
-      break;
-    }
-    if (Blocks[kf].inptr!=NULL){
-      free(Blocks[kf].inptr);
-    }else {
-      break;
-    }
-    if (Blocks[kf].outsz!=NULL){
-      free(Blocks[kf].outsz);
-    }else {
-      break;
-    }
-    if (Blocks[kf].outptr!=NULL){
-      free(Blocks[kf].outptr);
-    }else {
-      break;
-    }
-    if (Blocks[kf].label!=NULL){
-      free(Blocks[kf].label);
-    }else {
-      break;
-    }
-    if (Blocks[kf].evout!=NULL){
-      free(Blocks[kf].evout);
-    }else {
-      break;
-    }
-  }
-  free(Blocks);
-  if(nmod>0){
-    free(mod);
-  }
-  return;
-}
   
 /* work space W needs to be ng+*neq*2 */
 
@@ -2793,8 +2517,8 @@ int setmode(double *W, double *x, double *told, int *jroot, double ttol)
   k=0;
   while (diff!=0){
     /*save modes */
-    for(jj=0;jj<nmod;++jj){ 
-      jroot[jj]=mod[jj];
+    for(jj=0;jj<Scicos->sim.nmod;++jj){ 
+      jroot[jj]=Scicos->sim.mod[jj];
     }
     for(j=0;j<=*neq;++j){
       C2F(simblk)(neq, &ttmp, W, &W[*neq]);  
@@ -2808,8 +2532,8 @@ int setmode(double *W, double *x, double *told, int *jroot, double ttol)
     if (*ierr != 0) return 1;
     /*test against saved modes*/
     diff=0;
-    for(jj=0;jj<nmod;++jj){ 
-      if (jroot[jj]!=mod[jj]) {
+    for(jj=0;jj<Scicos->sim.nmod;++jj){ 
+      if (jroot[jj]!=Scicos->sim.mod[jj]) {
 	if(k>*neq) {
 	  *ierr=22;
 	  return 1;
@@ -2892,38 +2616,38 @@ void Jdoit(double *residual, double *xt, double *xtd, double *told, int *job)
   static int ii, jj;
   /* Function Body */
   kiwa = 0;
-  for (jj = 1; jj <= noord; ++jj) {
-    C2F(curblk).kfun = oord[jj];
-    nclock = oord[jj + noord];
-    if (outptr[C2F(curblk).kfun + 1] - outptr[C2F(curblk).kfun] > 0) {
+  for (jj = 1; jj <= Scicos->sim.noord; ++jj) {
+    C2F(curblk).kfun = Scicos->sim.oord[-1+jj];
+    nclock = Scicos->sim.oord[-1+jj + Scicos->sim.noord];
+    if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) {
       flag__ = 1;
 
-      if ((*job==2)&&(oord[jj]==nblk)) {/* applying desired output */
+      if ((*job==2)&&(Scicos->sim.oord[-1+jj]==Scicos->sim.nblk)) {/* applying desired output */
       }else
-	callf(told, xtd, xt, residual,x,&flag__);      
+	callf(told, xtd, xt, residual,Scicos->state.x,&flag__);      
       if (flag__ < 0) {
 	*ierr = 5 - flag__;
 	return;
       }
     }
 
-    if (Blocks[C2F(curblk).kfun - 1].nevout > 0) {
-      if (funtyp[C2F(curblk).kfun] < 0) {
-	if(Blocks[C2F(curblk).kfun - 1].nmode > 0){
-	  i2 = Blocks[C2F(curblk).kfun - 1].mode[0] + 
-	    clkptr[C2F(curblk).kfun] - 1;
+    if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
+      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] < 0) {
+	if(Scicos->Blocks[C2F(curblk).kfun - 1].nmode > 0){
+	  i2 = Scicos->Blocks[C2F(curblk).kfun - 1].mode[0] + 
+	    Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
 	} else{
-	  if (funtyp[C2F(curblk).kfun] == -1) {
-	    if (outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]] <= 0.) {
+	  if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
+	    if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) {
 	      i=2;
 	    } else {
 	      i=1;
 	    }
-	  } else if (funtyp[C2F(curblk).kfun] == -2) {
-	    i=max(min((int) outtb[-1+lnkptr[inplnk[inpptr[C2F(curblk).kfun]]]],
-		      Blocks[C2F(curblk).kfun - 1].nevout),1);
+	  } else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
+	    i=Max(Min((int) Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+		      Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
 	  }
-	  i2 =i+ clkptr[C2F(curblk).kfun] - 1;
+	  i2 =i+ Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
 	}
 	putevs(told, &i2, &ierr1);
 	if (ierr1 != 0) {
@@ -2937,15 +2661,15 @@ void Jdoit(double *residual, double *xt, double *xtd, double *told, int *job)
   }
 
   /*     .  update states derivatives */
-  for (ii = 1; ii <= noord; ++ii) {
-    C2F(curblk).kfun = oord[ii];
-    if (Blocks[C2F(curblk).kfun-1].nx > 0||
-	*Blocks[C2F(curblk).kfun-1].work !=NULL) {
+  for (ii = 1; ii <= Scicos->sim.noord; ++ii) {
+    C2F(curblk).kfun = Scicos->sim.oord[-1+ii];
+    if (Scicos->Blocks[C2F(curblk).kfun-1].nx > 0||
+	*Scicos->Blocks[C2F(curblk).kfun-1].work !=NULL) {
       /* work tests if a hidden state exists, used for delay block */
       flag__ = 0;
-      if (((*job==1)&&(oord[ii]==nblk))||(*job!=1)){
+      if (((*job==1)&&(Scicos->sim.oord[-1+ii]==Scicos->sim.nblk))||(*job!=1)){
 	if (*job==1)  flag__ = 10;
-	nclock = oord[ii + noord];
+	nclock = Scicos->sim.oord[-1+ii + Scicos->sim.noord];
 	callf(told, xtd, xt, residual,xt,&flag__);
       };
       if (flag__ < 0) {
@@ -2956,17 +2680,17 @@ void Jdoit(double *residual, double *xt, double *xtd, double *told, int *job)
   }
 
   for (i = 0; i < kiwa; ++i) {
-    keve = iwa[i];
-    for (ii = ordptr[keve]; ii <= ordptr[keve + 1] - 1; ++ii) {
-      C2F(curblk).kfun = ordclk[ii ];
-      if (Blocks[C2F(curblk).kfun-1].nx > 0||
-	*Blocks[C2F(curblk).kfun-1].work !=NULL) {
+    keve = Scicos->state.iwa[i];
+    for (ii = Scicos->sim.ordptr[-1+keve]; ii <= Scicos->sim.ordptr[keve] - 1; ++ii) {
+      C2F(curblk).kfun = Scicos->sim.ordclk[-1+ii ];
+      if (Scicos->Blocks[C2F(curblk).kfun-1].nx > 0||
+	*Scicos->Blocks[C2F(curblk).kfun-1].work !=NULL) {
 	/* work tests if a hidden state exists */
 
 	flag__ = 0;
-	if (((*job==1)&&(oord[ii]==nblk))||(*job!=1)){
+	if (((*job==1)&&(Scicos->sim.oord[-1+ii]==Scicos->sim.nblk))||(*job!=1)){
 	  if (*job==1)  flag__ = 10;
-	  nclock = abs(ordclk[ii + nordclk]);
+	  nclock = Abs(Scicos->sim.ordclk[-1+ii + Scicos->sim.nordclk]);
 	  callf(told, xtd, xt, residual,xt,&flag__);
 	}
 	if (flag__ < 0) {
@@ -2990,16 +2714,16 @@ int C2F(Jacobian)(t,xc, xcdot,residual,cj,rpar1,ipar1)
   double del,delinv,xsave,xdsave,ysave;
   double a,b;
   int job;
-  double **y = Blocks[nblk-1].outptr;
-  double **u = Blocks[nblk-1].inptr;
+  double **y = Scicos->Blocks[Scicos->sim.nblk-1].outptr;
+  double **u = Scicos->Blocks[Scicos->sim.nblk-1].inptr;
   /*  taill1= 2+3*n+(n+ni)*(n+no)+nx(2*nx+ni+2*m+no)+m*(2*m+no+ni)+2*ni*no*/
   *ierr= 0;
   CJJ=*cj;
   n=*neq; 
-  nb=nblk;
-  nx=Blocks[nblk-1].nx;m=n-nx;
-  no=Blocks[nblk-1].nout;
-  ni=Blocks[nblk-1].nin;
+  nb=Scicos->sim.nblk;
+  nx=Scicos->Blocks[Scicos->sim.nblk-1].nx;m=n-nx;
+  no=Scicos->Blocks[Scicos->sim.nblk-1].nout;
+  ni=Scicos->Blocks[Scicos->sim.nblk-1].nin;
   H=residual+ n * n;
   SQUR=H+1;
   Ewt=SQUR+1;
@@ -3029,9 +2753,9 @@ int C2F(Jacobian)(t,xc, xcdot,residual,cj,rpar1,ipar1)
       Kx[j+i*ni]=u[j][0];
 
   for(i=0;i<m;i++){
-    a= max(abs(H[0]*xcdot[i]),abs(1.0/Ewt[i]));
-    b= max(1.0,abs(xc[i]));
-    del=SQUR[0]*max(a,b);
+    a= Max(Abs(H[0]*xcdot[i]),Abs(1.0/Ewt[i]));
+    b= Max(1.0,Abs(xc[i]));
+    del=SQUR[0]*Max(a,b);
     if (H[0]*xcdot[i]<0) del*=-1;
     del=(xc[i]+del)-xc[i];
     xsave=xc[i];
@@ -3057,7 +2781,7 @@ int C2F(Jacobian)(t,xc, xcdot,residual,cj,rpar1,ipar1)
       Ku[j+i*ni]=u[j][0];
 
   for(i=0;i<no;i++){
-    del=SQUR[0]* max(1.0,abs(y[i][0]));
+    del=SQUR[0]* Max(1.0,Abs(y[i][0]));
     del=(y[i][0]+del)-y[i][0];
     ysave=y[i][0];
     y[i][0]+=del;

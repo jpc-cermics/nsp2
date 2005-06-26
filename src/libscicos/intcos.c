@@ -1,8 +1,23 @@
-/*------------------------------------------------------------------
- * Copyright ENPC 2004
- * Jean-Philippe Chancelier Enpc/Cermics
- * jpc@cermics.enpc.fr 
- *------------------------------------------------------------------*/
+/* Nsp
+ * Copyright (C) 2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Nsp interfaces for scicos
+ *--------------------------------------------------------------------------*/
 
 #include <math.h>
 #include <stdio.h>
@@ -12,6 +27,7 @@
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
 #include "scicos.h"
+#include "simul.h"
 
 struct
 {
@@ -34,57 +50,22 @@ struct
 
 static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs) 
 {
+  scicos_run Scicos;
+
   double tcur,tf;
-  int i,nout,rep,flag,pointi,ierr=0,idb,nblk,count;
+  int i,rep,flag,ierr=0;
   static char *action_name[]={ "finish","linear", "run", "start", NULL };
-  const int nstate = 7, nsim = 30;
   NspHash *State, *Sim;
-  NspMatrix * State_elts[nstate], * Sim_elts[nsim];
   NspMatrix *Msimpar;
-  NspBMatrix *funflag;
-  NspList *funs;
-  Cell *cloc;
-
-  void **funptr;
-
-  const char *sim[]={"funs","xptr","zptr","zcptr","inpptr",
-		     "outptr","inplnk","outlnk","lnkptr","rpar",
-		     "rpptr","ipar","ipptr","clkptr", "ordptr",
-		     "execlk","ordclk","cord","oord","zord",
-		     "critev","nb","ztyp","nblk","ndcblk", 
-		     "subscr","funtyp","iord","labels","modptr"};
-
-  char *state[] = {"x","z","iz","tevts","evtspt","pointi","outtb"};
   double simpar[7];
   CheckRhs(6,6);
   CheckLhs(1,2);
   /* first variable : the state */
   if ((State = GetHashCopy(stack,1)) == NULLHASH) return RET_BUG;
-  for ( i = 0 ; i < nstate ; i++ ) 
-    {
-      NspObject *obj;
-      if ( nsp_hash_find(State,state[i],&obj) == FAIL) return RET_BUG;
-      State_elts[i]= (NspMatrix *) obj;
-      if ( IsMat((NspObject *) State_elts[i]) == FALSE ) return RET_BUG;
-      if ( ((NspMatrix *)State_elts[i])->rc_type != 'r') 
-	{
-	  Scierror("Elements are supposed to be real matrix \n");
-	  return RET_BUG;
-	}
-    }
-  nout = ((NspMatrix *) State_elts[6])->m;
-  State_elts[4]=  Mat2int((NspMatrix *) State_elts[4]);
-  pointi = State_elts[5]->R[0];
   /* next variables */
   if (GetScalarDouble(stack,2,&tcur) == FAIL) return RET_BUG;
   if (GetScalarDouble(stack,3,&tf) == FAIL) return RET_BUG;
   if ((Sim = GetHashCopy(stack,4)) == NULLHASH) return RET_BUG;
-  for ( i = 0 ; i < nsim ; i++ ) 
-    {
-      NspObject *obj;
-      if (nsp_hash_find(Sim,sim[i],&obj) == FAIL) return RET_BUG;
-      Sim_elts[i]= (NspMatrix *) obj;
-    }
   if ((rep= GetStringInArray(stack,5,action_name,1)) == -1) return RET_BUG; 
   switch (rep ) 
     {
@@ -93,113 +74,15 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
     case 2: flag=2;break;
     case 3: flag=1;break;
     }
-  /*      [atol  rtol ttol, deltat, scale, impl, hmax] */
+  /* [atol  rtol ttol, deltat, scale, impl, hmax] */
   if ((Msimpar = GetRealMat(stack,6)) == NULLMAT) return RET_BUG;
   for ( i=Min(Msimpar->mn,7) ; i < 7 ; i++) simpar[i]= 0.0;
   for ( i=0 ; i < Min(Msimpar->mn,7) ; i++ ) simpar[i]= Msimpar->R[i];
 
-  /* taille de funptr */
-  nblk =Sim_elts[23]->R[0];
+  if ( scicos_fill_run(&Scicos,Sim,State)== FAIL) return RET_BUG;
 
-  if (( funflag = nsp_bmatrix_create(NVOID,nblk,1))== NULLBMAT) return RET_BUG;
-  if (( funptr = malloc(nblk*sizeof(void *)))== NULL) return RET_BUG;
-  /*
-   * Sim_elts is a list of chars or functions 
-   */
-  funs = (NspList *) Sim_elts[0];
-  cloc = funs->first ;
-  count = 0;
-  while ( cloc != NULLCELL) 
-    {
-      if ( cloc->O != NULLOBJ ) 
-	{
-	  if ( count >= nblk ) 
-	    {
-	      Scierror("Error: funs lenght should be %d\n",nblk);
-	      return RET_BUG;
-	    }
-	  if ( IsString(cloc->O)) 
-	    {
-	      funflag->B[count]=FALSE;
-	      funptr[count]=get_function(((NspSMatrix *) cloc->O)->S[0]);
-	    }
-	  else if ( IsNspPList(cloc->O) )
-	    {
-	      funflag->B[count]=TRUE;
-	      funptr[count]=cloc->O;
-	    }
-	  else 
-	    {
-	      Scierror("Error: funs should contain strings or macros\n");
-	      return RET_BUG;
-	    }
-	}
-      count++;
-      cloc = cloc->next;
-    }
+  scicos_main(&Scicos,&tcur,&tf,simpar,&flag,&ierr);
   
-  Sim_elts[1]= Mat2int((NspMatrix *) Sim_elts[1]);   /* xptr */
-  Sim_elts[2]= Mat2int((NspMatrix *) Sim_elts[2]);   /* zptr */
-  Sim_elts[3]= Mat2int((NspMatrix *) Sim_elts[3]);   /* zcptr */
-  Sim_elts[4]= Mat2int((NspMatrix *) Sim_elts[4]);   /* inpptr */
-  Sim_elts[5]= Mat2int((NspMatrix *) Sim_elts[5]);   /* outptr */
-  Sim_elts[6]= Mat2int((NspMatrix *) Sim_elts[6]);   /* inplnk */
-  Sim_elts[7]= Mat2int((NspMatrix *) Sim_elts[7]);   /* outlnk */
-  Sim_elts[8]= Mat2int((NspMatrix *) Sim_elts[8]);   /* lnkptr */
-  Sim_elts[10]= Mat2int((NspMatrix *) Sim_elts[10]); /* rpptr  */
-  Sim_elts[11]= Mat2int((NspMatrix *) Sim_elts[11]); /* ipar  */
-  Sim_elts[12]= Mat2int((NspMatrix *) Sim_elts[12]); /* ipptr  */
-  Sim_elts[13]= Mat2int((NspMatrix *) Sim_elts[13]); /* clkptr  */
-  Sim_elts[14]= Mat2int((NspMatrix *) Sim_elts[14]); /* ordptr  */
-  Sim_elts[16]= Mat2int((NspMatrix *) Sim_elts[16]); /* ordclk */
-  Sim_elts[17]= Mat2int((NspMatrix *) Sim_elts[17]); /* cord */
-  Sim_elts[18]= Mat2int((NspMatrix *) Sim_elts[18]); /* oord */
-  Sim_elts[19]= Mat2int((NspMatrix *) Sim_elts[19]); /* zord */
-  Sim_elts[20]= Mat2int((NspMatrix *) Sim_elts[20]); /* critev */
-  Sim_elts[22]= Mat2int((NspMatrix *) Sim_elts[22]); /* ztyp */
-  Sim_elts[25]= Mat2int((NspMatrix *) Sim_elts[25]); /* subscr */
-  Sim_elts[26]= Mat2int((NspMatrix *) Sim_elts[26]); /* funtyp */
-  Sim_elts[27]= Mat2int((NspMatrix *) Sim_elts[27]); /* iord */
-  Sim_elts[29]= Mat2int((NspMatrix *) Sim_elts[29]); /* modptr */
-  
-  scicos_main(State_elts[0]->R, /* state x */
-	      Sim_elts[1]->I, /* xptr */
-	      State_elts[1]->R, /* state z0 */
-	      State_elts[2]->R, /* state iz used to store pointers */
-	      Sim_elts[2]->I, /* zptr */
-	      Sim_elts[29]->I, /* modptr */
-	      ((NspSMatrix *) Sim_elts[28])->S, /* labels */
-	      &tcur,
-	      &tf,	 
-	      State_elts[3]->R, /* tevts */
-	      State_elts[4]->I,&State_elts[4]->m,/* evtspt */
-	      &pointi, 
-	      State_elts[6]->R,&State_elts[6]->m, /* outtb */
-	      funflag->B,
-	      funptr,
-	      Sim_elts[26]->I, /* funtyp */
-	      Sim_elts[4]->I, /* inpptr */
-	      Sim_elts[5]->I, /* outptr*/
-	      Sim_elts[6]->I, 
-	      Sim_elts[7]->I,
-	      Sim_elts[8]->I,&Sim_elts[8]->m,
-	      Sim_elts[9]->R,
-	      Sim_elts[10]->I /* rpptr  */,
-	      Sim_elts[11]->I /* ipar  */,
-	      Sim_elts[12]->I /* ipptr  */,
-	      Sim_elts[13]->I /* clkptr  */,
-	      Sim_elts[14]->I,&Sim_elts[14]->mn /* ordptr  */,
-	      Sim_elts[16]->I, /* ordclk */
-	      Sim_elts[17]->I,&Sim_elts[17]->m /* cord */,
-	      Sim_elts[27]->I,&Sim_elts[27]->m /* iord */,
-	      Sim_elts[18]->I,&Sim_elts[18]->m /* oord */,
-	      Sim_elts[19]->I,&Sim_elts[19]->m /* zord */,
-	      Sim_elts[20]->I,&nblk, /* critev */
-	      Sim_elts[22]->I /* ztyp */,
-	      Sim_elts[3]->I /* zcptr */,
-	      Sim_elts[25]->I,&Sim_elts[25]->m /* subscr */,
-	      simpar,&flag,&ierr);
-  idb=0;
   if (ierr > 0 )
     {
       switch (ierr) 
@@ -255,10 +138,9 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
 	}
     }
   /* 
-   * back convert the state 
+   * back convert variables 
    */
-  State_elts[4]=  Mat2double((NspMatrix *) State_elts[4]);
-  State_elts[5]->R[0]=pointi;
+  scicos_clear_run(&Scicos);
   NthObj(1)->ret_pos = 1;
   if ( lhs == 2 ) 
     {
@@ -373,13 +255,14 @@ static int int_scicos_ftree4(Stack stack, int rhs, int opt, int lhs)
   nmd = M[3]->mn;
   if ((ipr1 = nsp_matrix_create(NVOID,'r',1,nmd)) == NULLMAT) return RET_BUG;
   if ((ipr2 = nsp_matrix_create(NVOID,'r',1,nmd)) == NULLMAT) return RET_BUG;
-
+  ipr1->convert= 'i';
+  ipr2->convert= 'i';
+  /* scicos_ftree4 does not fill all the values thus we init the arrays */
+  for ( i = 0 ; i < nmd ; i++) { ipr1->I[i]=0;ipr2->I[i]=0;}
   scicos_ftree4(M[0]->I,&M[0]->mn,M[3]->I,&M[3]->n,
 		M[4]->I,M[1]->I,M[2]->I,ipr1->I,ipr2->I,&nr);
-  ipr1->convert= 'i';
   ipr1 = Mat2double(ipr1);
   if ( nsp_matrix_resize(ipr1,nr,1) == FAIL) return RET_BUG;
-  ipr2->convert= 'i';
   ipr2 = Mat2double(ipr2);
   if ( nsp_matrix_resize(ipr2,nr,1) == FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject *) ipr1);
