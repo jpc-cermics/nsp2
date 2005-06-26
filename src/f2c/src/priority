@@ -1,0 +1,8 @@
+Unary ! for logical not, binary && and || for logical or.
+Logical && has higher priority than ||, but both have lower
+priority than <, <=, ..., ==, and !=, so
+
+a + 1 < c && d == e || f >= g
+means the same thing as
+((a+1) < c && (d == e)) || (f >= g)
+
