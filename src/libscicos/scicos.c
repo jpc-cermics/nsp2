@@ -358,7 +358,6 @@ void cosini(double *told)
     return;
   L30:
     C2F(dcopy)(&Scicos->state.nout, Scicos->state.outtb, &c__1, W, &c__1);
-
   }
   *ierr = 20;
   FREE(W);
