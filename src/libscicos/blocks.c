@@ -971,7 +971,6 @@ int scicos_evscpe (scicos_args_poo)
   --x;
   --xd;
   /*      data yy / 0.00d0,0.80d0/ */
-  
 
   if (*flag__ == 2)
     {
@@ -1062,7 +1061,8 @@ int scicos_evscpe (scicos_args_poo)
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output", 0, rect, nax);
       str = scicos_getlabel (C2F(curblk).kfun);
-      if ( str != NULL && strlen(str) != 0) Xgc->graphic_engine->setpopupname(Xgc,str);
+      if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
+	Xgc->graphic_engine->setpopupname(Xgc,str);
       nsp_check_gtk_events ();
       z__[1] = 0.;
     }
@@ -2360,7 +2360,7 @@ int scicos_mscope (scicos_args_poo)
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       str = scicos_getlabel (C2F(curblk).kfun);
-      if ( str != NULL && strlen(str) != 0) 
+      if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
       i__1 = nwid;
       for (kwid = 1; kwid <= i__1; ++kwid)
@@ -3349,7 +3349,7 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		 0, rect, nax);
       str = scicos_getlabel (C2F(curblk).kfun);
-      if ( str != NULL && strlen(str) != 0) 
+      if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
       z__[1] = 0.;
       z__[2] = *t;
@@ -3520,7 +3520,7 @@ int scicos_scopxy (scicos_args_poo)
      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		0, rect, nax);
      str = scicos_getlabel (C2F(curblk).kfun);
-     if ( str != NULL && strlen(str) != 0) 
+     if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
        Xgc->graphic_engine->setpopupname(Xgc,str);
      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__6);
      nsp_check_gtk_events ();
@@ -3666,7 +3666,7 @@ int scicos_scoxy (scicos_args_poo)
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
       str = scicos_getlabel (C2F(curblk).kfun);
-      if ( str != NULL && strlen(str) != 0) 
+      if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		0, rect, nax);

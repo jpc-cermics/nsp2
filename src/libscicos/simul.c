@@ -106,6 +106,8 @@ static void scicos_clear_state(scicos_state *scst)
  * 
  */
 
+
+
 int scicos_fill_sim(NspHash *Sim,scicos_sim *scsim)
 {
   const int convert[]={1,2,3,4,5,6,7,8,10,11,12,13,14,16,17,18,19,20,21,22,23,24,25,26,27,29,-1};
@@ -174,12 +176,24 @@ int scicos_fill_sim(NspHash *Sim,scicos_sim *scsim)
 	    }
 	  if ( IsString(cloc->O)) 
 	    {
-	      scsim->funflag[count]=FALSE;
-	      scsim->funptr[count]=get_function(((NspSMatrix *) cloc->O)->S[0]);
+	      void *fptr = get_function(((NspSMatrix *) cloc->O)->S[0]);
+	      if ( fptr != NULL) 
+		{
+		  /* a hard code function given by its adress */
+		  scsim->funflag[count]= fun_pointer;
+		  scsim->funptr[count]= fptr;
+		}
+	      else 
+		{
+		  /* a macros given ny its name */
+		  scsim->funflag[count]= fun_macro_name;
+		  scsim->funptr[count]= ((NspSMatrix *) cloc->O)->S[0];
+		}
 	    }
 	  else if ( IsNspPList(cloc->O) )
 	    {
-	      scsim->funflag[count]=TRUE;
+	      /* a macro given by a pointer to its code */
+	      scsim->funflag[count]= fun_macros;
 	      scsim->funptr[count]=cloc->O;
 	    }
 	  else 
@@ -210,6 +224,9 @@ int scicos_fill_sim(NspHash *Sim,scicos_sim *scsim)
   scsim->nz = scsim->zptr[scsim->nblk] - 1;
   /*     number of continuous states */
   scsim->nx = scsim->xptr[scsim->nblk] - 1;
+
+  scsim->debug_block=-1; /* no debug block for start */
+
   /* extra arguments allocated here */
   if( scsim->nmod > 0 )
     {
@@ -270,9 +287,17 @@ void *scicos_fill_blocks(scicos_sim *scsim,scicos_state *scst)
     {
       /* C2F(curblk).kfun = kf+1; */
       Blocks[kf].type= scsim->funtyp[kf];
-      if ( scsim->funflag[kf] == TRUE) 
+      if ( scsim->funflag[kf] == fun_pointer ) 
 	{
-	  /* the function is a macro */
+	  Blocks[kf].scsptr= NULL;
+	  Blocks[kf].funpt= scsim->funptr[kf];
+	}
+      else 
+	{
+	  /* a NspObject containing a macro or a macro name */
+	  Blocks[kf].scsptr=scsim->funptr[kf];
+	  Blocks[kf].scsptr_flag = scsim->funflag[kf];
+	  /* the function is a macro or it is a Debug block*/
 	  switch (scsim->funtyp[kf])
 	    {
 	    case 0:
@@ -306,14 +331,6 @@ void *scicos_fill_blocks(scicos_sim *scsim,scicos_state *scst)
 	      scicos_clear_blocks(Blocks,kf+1);
 	      return NULL;
 	    }
-	  /* a NspObject containing a macro */
-	  Blocks[kf].scsptr=scsim->funptr[kf];
-	  Blocks[kf].funpt= NULL;
-	}
-      else
-	{
-	  Blocks[kf].scsptr= NULL;
-	  Blocks[kf].funpt= scsim->funptr[kf];
 	}
       Blocks[kf].ztyp=scsim->ztyp[kf];
       Blocks[kf].nx=scsim->xptr[kf+1]-scsim->xptr[kf];

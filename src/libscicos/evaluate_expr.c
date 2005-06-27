@@ -1,5 +1,5 @@
 #include <math.h>
-#include "scicos_block.h"
+#include "scicos.h"
 
 #if WIN32
 /*
@@ -442,7 +442,7 @@ void evaluate_expr(scicos_block *block,int flag)
 	    if(phase==1) block->mode[nzcr]=i;
 	  }
 	  if(phase==1||block->ng==0){
-	    stack[bottom-1]=max(stack[bottom-1],stack[bottom]);
+	    stack[bottom-1]=Max(stack[bottom-1],stack[bottom]);
 	  }else{
 	    stack[bottom-1]=stack[bottom-block->mode[nzcr]];
 	  }
@@ -460,7 +460,7 @@ void evaluate_expr(scicos_block *block,int flag)
 	    if(phase==1) block->mode[nzcr]=i;
 	  }
 	  if(phase==1||block->ng==0){
-	    stack[bottom-1]=min(stack[bottom-1],stack[bottom]);
+	    stack[bottom-1]=Min(stack[bottom-1],stack[bottom]);
 	  }else{
 	    stack[bottom-1]=stack[bottom-block->mode[nzcr]];
 	  }

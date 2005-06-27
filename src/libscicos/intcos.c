@@ -389,6 +389,7 @@ int int_setscicosvars(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+
 int int_getblocklabel(Stack stack, int rhs, int opt, int lhs) 
 {
   int kf;
@@ -415,6 +416,118 @@ int int_getblocklabel(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_time_scicos(Stack stack, int rhs, int opt, int lhs) 
+{ 
+  CheckRhs(-1,0);
+  CheckLhs(1,1);
+  if ( nsp_move_double(stack,1,(double) get_scicos_time() )== FAIL) return RET_BUG;
+  return 1;
+}
+
+/* v=duplicate(u,count) 
+ * returns v=[u(1)*ones(count(1),1);
+ *            u(2)*ones(count(2),1);
+ *            ...
+ */
+
+static int duplicata(int n,const double *v,const double *w,double *ww)
+{
+  int i,j,k;
+  k=0;
+  for ( i=0 ; i< n ; i++) 
+    {
+      for (j=0 ; j<(int) w[i] ; j++) 
+	{
+	  ww[k]=v[i];
+	  k=k+1;
+	}
+    }
+  return k;
+}
+
+static int comp_size(const double *v,int n)
+{  
+  int i;
+  int nw=0;
+  for (i=0;i<n;i++) {
+    if (v[i]>0) nw += (int) v[i];
+  }
+  return nw;
+}
+
+static int int_duplicate(Stack stack, int rhs, int opt, int lhs) 
+{
+  int nres;
+  NspMatrix *A,*B,*Res;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((B = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  if( A->mn == 0) 
+    {
+      if (( Res =nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT) return  RET_BUG;
+      MoveObj(stack,1,NSP_OBJECT(Res));
+      return 1;
+    }
+  CheckSameDims (stack.fname, 1, 2, A, B);
+  nres = comp_size(B->R,A->mn);
+  if (( Res =nsp_matrix_create(NVOID,'r',nres,1)) == NULLMAT) return  RET_BUG;
+  nres= duplicata(A->mn,A->R,B->R,Res->R);
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  return 1;
+}
+
+
+/* renvoi le type d'equation get_pointer_xproperty() 
+ *	(-1: algebriques, +1 differentielles) 
+ */
+
+static int int_xproperty(Stack stack, int rhs, int opt, int lhs) 
+{
+  /* 
+  int un;
+  extern int* pointer_xproperty;
+  extern int n_pointer_xproperty;
+  CheckRhs(-1,0);
+  CheckLhs(1,1);
+  CreateVarFromPtr(1,"i",&n_pointer_xproperty,(un=1,&un),&pointer_xproperty);
+  LhsVar(1)=1;
+  */
+  return 0;
+}
+
+/* renvoi la phase de simulation phase=get_phase_simulation() */
+ 
+static int int_phasesim(Stack stack, int rhs, int opt, int lhs) 
+{ 
+  CheckRhs(-1,0);
+  CheckLhs(1,1);
+  if ( nsp_move_double(stack,1,(double) get_phase_simulation() )== FAIL) return RET_BUG;
+  return 1;
+}
+
+/* renvoi le type d'equation get_pointer_xproperty() 
+ *	(-1: algebriques, +1 differentielles) 
+ */
+ 
+static int int_setxproperty(Stack stack, int rhs, int opt, int lhs) 
+{
+  int m1;
+  CheckRhs(1,1);
+  if ( GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
+  set_pointer_xproperty(&m1);
+  return 0;
+}
+
+
+static int int_setblockerror(Stack stack, int rhs, int opt, int lhs) 
+{
+  int m1;
+  CheckRhs(1,1);
+  if ( GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
+  set_block_error(m1);
+  return 0;
+}
 
 
 static OpTab Scicos_func[]={
@@ -425,6 +538,12 @@ static OpTab Scicos_func[]={
   {"sci_scicos_debug",int_scicos_debug},
   {"scicosim",int_scicos_sim},
   {"curblock", int_curblock},
+  {"setblockerror",int_setblockerror},
+  {"time_scicos",int_time_scicos},
+  {"duplicate",int_duplicate},
+  {"xproperty",int_xproperty},
+  {"phasesim",int_phasesim},
+  {"setxproperty",int_setxproperty},
   {(char *) 0, NULL}
 };
 

@@ -6,7 +6,7 @@ SCIDIR1=..\..
 LIBRARY=nsp.a
 
 OBJSF=
-OBJSC=  blocks_new.o coselm.o evaluate_expr.o import.o intcos.o intcscicos.o \
+OBJSC=  blocks_new.o coselm.o evaluate_expr.o import.o intcos.o \
 	intrealtime.o readf.o realtime.o sciblk2.o scicos.o scicosclip.o \
 	scicos_free.o scicos_malloc.o scifunc.o dmmul.o  blocks.o trees.o simul.o
 

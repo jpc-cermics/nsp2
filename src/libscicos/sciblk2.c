@@ -8,10 +8,11 @@
 
 #include "nsp/machine.h"
 #include "nsp/object.h"
-#include "scicos_block.h"
+#include "scicos.h"
 
 int scicos_scifunc(  NspObject **Args,int mlhs,int mrhs ) 
 {
+  /* here we must call the macro scsptr ? */
   Scierror("To be done scicos_scifunc_n");
   return  FAIL;
 
@@ -35,14 +36,9 @@ NspMatrix *scicos_dtosci(const double x[],int mx,int nx)
   return M;
 }
 
-NspSMatrix *scicos_str2sci(nsp_const_string *x,int n,int m)
+static NspSMatrix *scicos_str2sci(nsp_const_string x)
 {
-  NspSMatrix *S;
-  if ((S=nsp_smatrix_create_from_array(NVOID,n*m,x))== NULLSMAT) return  NULLSMAT;
-  /* reshape */
-  S->m = m;
-  S->n = n;
-  return S;
+  return nsp_smatrix_create(NVOID,1,1,x,1);
 }
 
 void scicos_scitovv(double x[],int nx, NspObject *Ob )
@@ -62,6 +58,19 @@ NspMatrix *scicos_vvtosci(const double x[],int nx)
 }
 
 int scicos_scitod(double x[],int mx,int nx, NspObject *Ob)
+{
+  NspMatrix *M= ((NspMatrix *) Ob);
+  int i;
+  if ( M->m != mx || M->n != nx ) 
+    {
+      Scierror("Expecting a (%d,%d) matrix\n",mx,nx);
+      return FAIL;
+    }
+  for ( i = 0 ; i < M->mn; i++) x[i]= M->R[i];
+  return OK;
+}
+
+int scicos_scitoi(int x[],int mx,int nx, NspObject *Ob)
 {
   NspMatrix *M= ((NspMatrix *) Ob);
   int i;
@@ -264,15 +273,17 @@ void sciblk4(scicos_block *Blocks, int flag)
   NspObject * Ret[5];
   int p = 0;
   /* this are the tlist names */
-  char *str[]={ "scicos_block","nevprt","funpt","type",
-		"scsptr","nz","z","nx","x","xd","res","nin",
-		"insz","inptr","nout","outsz","outptr","nevout",
-		"evout","nrpar","rpar","nipar","ipar","ng","g",
-		"ztyp","jroot","label","work","nmode","mode"};
+  /* 
+     char *str[]={ "scicos_block","nevprt","funpt","type",
+     "scsptr","nz","z","nx","x","xd","res","nin",
+     "insz","inptr","nout","outsz","outptr","nevout",
+     "evout","nrpar","rpar","nipar","ipar","ng","g",
+     "ztyp","jroot","label","work","nmode","mode"};
+  */
   if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nevprt,1,1))== NULL) goto err;
   if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->funpt,0,1))== NULL) goto err;
   if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->type,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->scsptr,0,1))== NULL) goto err;
+  /* if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->scsptr,0,1))== NULL) goto err; */
   if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nz,1,1))== NULL) goto err;
   if ((Args[p++]= (NspObject *)  scicos_vvtosci(Blocks->z,Blocks->nz))== NULL) goto err;
   if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nx,1,1))== NULL) goto err;
@@ -295,8 +306,8 @@ void sciblk4(scicos_block *Blocks, int flag)
   if ((Args[p++]= (NspObject *)  scicos_dtosci(Blocks->g,Blocks->ng,1))== NULL) goto err;
   if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->ztyp,1,1))== NULL) goto err;
   if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->jroot,Blocks->ng,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_str2sci(Blocks->label,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_vvtosci(Blocks->work,0))== NULL) goto err;
+  if ((Args[p++]= (NspObject *)  scicos_str2sci(Blocks->label))== NULL) goto err;
+  /* if ((Args[p++]= (NspObject *)  scicos_vvtosci(Blocks->work,0))== NULL) goto err; */
   if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nmode,1,1))== NULL) goto err;
   if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->mode,Blocks->nmode,1))== NULL) goto err; 
   if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->mode,Blocks->nmode,1))== NULL) goto err; 
@@ -342,7 +353,7 @@ void sciblk4(scicos_block *Blocks, int flag)
 	scicos_scitod(Blocks->xd,Blocks->nx,1,Ob);
       }
     if ( nsp_hash_find(H,"mode",&Ob) == FAIL) goto err;
-    scicos_scitod(Blocks->mode,Blocks->nmode,1,Ob);
+    scicos_scitoi(Blocks->mode,Blocks->nmode,1,Ob);
     break;
   case 3 :
     if ( nsp_hash_find(H,"evout",&Ob) == FAIL) goto err;
@@ -413,7 +424,7 @@ void sciblk4(scicos_block *Blocks, int flag)
       }
     /* 30 ieme element de la tlist mode */
     if ( nsp_hash_find(H,"mode",&Ob) == FAIL) goto err;
-    scicos_scitod(Blocks->mode,Blocks->nmode,1,Ob);
+    scicos_scitoi(Blocks->mode,Blocks->nmode,1,Ob);
     break;
   case 9 :
     /* 24 ieme element de la tlist g */
@@ -421,7 +432,7 @@ void sciblk4(scicos_block *Blocks, int flag)
     scicos_scitod(Blocks->g,Blocks->ng,1,Ob);
     /* 30 ieme element de la tlist mode */
     if ( nsp_hash_find(H,"mode",&Ob) == FAIL) goto err;
-    scicos_scitod(Blocks->mode,Blocks->nmode,1,Ob);
+    scicos_scitoi(Blocks->mode,Blocks->nmode,1,Ob);
     break;
   }
   return;

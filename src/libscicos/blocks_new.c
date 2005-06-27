@@ -5,14 +5,12 @@
 #include "nsp/blas.h" 
 #include "nsp/matutil.h" 
 #include "scicos.h"
-#include "scicos_block.h"
 
 #if WIN32
 extern double asinh(double x);
 extern double acosh(double x);
 extern double atanh(double x);
 #endif
-
 
 
 BCG *scicos_set_win(int wid,int *oldwid)
@@ -485,7 +483,7 @@ void variable_delay(scicos_block *block,int flag)
     pw=*block->work; 
     iw=(int *) (pw+block->ipar[0]*(1+block->insz[0]));
     t=get_scicos_time();
-    del=min(max(0,block->inptr[1][0]),block->rpar[0]);
+    del=Min(Max(0,block->inptr[1][0]),block->rpar[0]);
     td=t-del;
     if(td<pw[*iw]){
       sciprint("delayed time=%f but last stored time=%f \r\n", td, pw[*iw]);
@@ -950,9 +948,9 @@ void minmax(scicos_block *block,int flag)
       for (i=0;i<block->insz[0];++i){
 	if((block->ng==0)|(phase==1)){
 	  if(block->ipar[0]==1){
-	    block->outptr[0][i]=min(block->inptr[0][i],block->inptr[1][i]);
+	    block->outptr[0][i]=Min(block->inptr[0][i],block->inptr[1][i]);
 	  } else {
-	    block->outptr[0][i]=max(block->inptr[0][i],block->inptr[1][i]);
+	    block->outptr[0][i]=Max(block->inptr[0][i],block->inptr[1][i]);
 	  }
 	}else{
 	  block->outptr[0][i]=block->inptr[block->mode[0]-1][i];
@@ -1022,8 +1020,6 @@ void  modulo_count(scicos_block *block,int flag)
 }
 
 
-#define max(a,b) ((a) >= (b) ? (a) : (b))
-#define min(a,b) ((a) <= (b) ? (a) : (b))
 
 void  mswitch(scicos_block *block,int flag)
 {
@@ -1047,8 +1043,8 @@ void  mswitch(scicos_block *block,int flag)
     j=(int)floor(*block->inptr[0]);
   }
   j=j+1-block->ipar[0];
-  j=max(j,1);
-  j=min(j,block->nin-1);
+  j=Max(j,1);
+  j=Min(j,block->nin-1);
   for (i=0;i<block->insz[j];i++) {
     block->outptr[0][i]=block->inptr[j][i];
   }

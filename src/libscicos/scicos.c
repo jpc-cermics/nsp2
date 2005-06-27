@@ -11,9 +11,6 @@
 #include "blocks.h"
 #include "simul.h"
 
-/* FIXME */
-extern int nsp_check_events_activated(void);
-extern int nsp_check_gtk_events(void);
 
 #define freeall \
 	      FREE(rhot);\
@@ -91,7 +88,7 @@ extern  struct {
 } C2F(curblk);
 
 struct {
-  int ptr;
+  void *ptr;
 } C2F(scsptr);
 
 struct {
@@ -136,7 +133,6 @@ static double  CJJ;
 static double SQuround;
 /* Jacobian*/
 
-static int debug_block;
 
 scicos_run *Scicos = NULL;
 
@@ -146,6 +142,9 @@ int scicos_main( scicos_run *sr, double *t0_in, double *tf_in, double *simpar, i
   double *W;
 
   Scicos =sr;
+
+  C2F(cosdebug).cosd = 2;
+
   t0=t0_in;
   tf=tf_in;
   ierr=ierr_out;
@@ -158,7 +157,6 @@ int scicos_main( scicos_run *sr, double *t0_in, double *tf_in, double *simpar, i
   C2F(cmsolver).solver = (int) simpar[5];
   hmax=simpar[6];
 
-  debug_block=-1; /* no debug block for start */
   *ierr = 0;
 
   xd=&Scicos->state.x[Scicos->sim.xptr[Scicos->sim.nblk]-1];
@@ -1941,7 +1939,7 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
 
   kf=C2F(curblk).kfun;
   
-  if (kf==(debug_block+1)) return; /* debug block is never called */
+  if (kf==(Scicos->sim.debug_block+1)) return; /* debug block is never called */
 
   block_error=flag;  /* to return error from blocks of type 4 */
 
@@ -1952,9 +1950,9 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
     sciprint("block %d is called ",kf);
     sciprint("with flag %d ",*flag);
     sciprint("at time %f \r\n",*t);
-    if(debug_block>-1){
+    if(Scicos->sim.debug_block>-1){
       sciprint("Entering the block \r\n");
-      call_debug_scicos(t,xtd,xt,residual,g,flag,kf,flagi,debug_block);
+      call_debug_scicos(t,xtd,xt,residual,g,flag,kf,flagi,Scicos->sim.debug_block);
       if (*flag<0) return;  /* error in debug block */
     }
   }
@@ -2003,10 +2001,10 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
       }
     }
     if ( cosd > 1){
-      if(debug_block>-1){
+      if(Scicos->sim.debug_block>-1){
 	if (*flag<0) return;  /* error in block */
 	sciprint("Leaving block %d \r\n",kf);
-	call_debug_scicos(t,xtd,xt,residual,g,flag,kf,flagi,debug_block);
+	call_debug_scicos(t,xtd,xt,residual,g,flag,kf,flagi,Scicos->sim.debug_block);
       }
     }
     return;
@@ -2290,10 +2288,10 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
     Scicos->Blocks[kf-1].evout[in]=Scicos->Blocks[kf-1].evout[in]-*t;
   }
   if ( cosd > 1){
-    if(debug_block>-1){
+    if(Scicos->sim.debug_block>-1){
       if (*flag<0) return;  /* error in block */
       sciprint("Leaving block %d \r\n",kf);
-      call_debug_scicos(t,xtd,xt,residual,g,flag,kf,flagi,debug_block);
+      call_debug_scicos(t,xtd,xt,residual,g,flag,kf,flagi,Scicos->sim.debug_block);
     }
   }
 }
@@ -2345,7 +2343,7 @@ void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, dou
   
 
 /*
- * get a function int blocks functions from its name 
+ * get a function in blocks functions from its name 
  * FIXME: dynamic linking part is to be implemented 
  */
 
