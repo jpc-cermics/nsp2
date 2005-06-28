@@ -632,7 +632,7 @@ static NspSMatrix *StoreStatData(struct stat *statPtr)
 {
   char string[30];
   NspSMatrix *S;
-  if (( S =nsp_smatrix_create("void",11,2,"v",0)) ==  NULLSMAT ) return NULLSMAT;
+  if (( S =nsp_smatrix_create(NVOID,11,2,"v",0)) ==  NULLSMAT ) return NULLSMAT;
   sprintf(string, "%ld", (long) statPtr->st_dev);
   if ( StoreStat(S,0,"dev",string) == FAIL ) return NULLSMAT;
   sprintf(string, "%ld", (long) statPtr->st_ino);
@@ -853,7 +853,7 @@ int int_pwd(Stack stack,int rhs,int opt,int lhs)
   CheckRhs(0,0)
     CheckLhs(1,1);
   if ((dirName = TclGetCwd() ) == NULL) return RET_BUG;
-  if (( S =nsp_smatrix_create("void",1,1,dirName,1) ) == NULLSMAT ) 
+  if (( S =nsp_smatrix_create(NVOID,1,1,dirName,1) ) == NULLSMAT ) 
     return RET_BUG;
   NthObj(1)= (NspObject*) S;
   NSP_OBJECT(S)->ret_pos = 1;
