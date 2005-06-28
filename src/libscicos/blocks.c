@@ -4,13 +4,10 @@
 #include "nsp/math.h" 
 #include "nsp/graphics/Graphics.h" 
 #include "nsp/object.h" 
-#include "nsp/matrix.h" 
 #include "nsp/blas.h" 
 #include "nsp/matutil.h" 
 #include "../librand/grand.h" /* rand_ranf() */
 #include "scicos.h"
-
-
 
 struct
 {
@@ -33,6 +30,10 @@ struct
 {
   int kfun;
 } C2F(curblk);
+
+/* 
+ * most of the blocks defined here have the following calling sequence
+ */
 
 #define scicos_args_poo int *flag__, int *nevprt, double *t, double *xd, double *x, \
 	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,\
@@ -101,7 +102,6 @@ int scicos_csslti (scicos_args_poo)
   /*     rpar(nx*nx+1:nx*nx+nx*nu)=B */
   /*     rpar(nx*nx+nx*nu+1:nx*nx+nx*nu+nx*ny)=C */
   /*     rpar(nx*nx+nx*nu+nx*ny+1:nx*nx+nx*nu+nx*ny+ny*nu)=D */
-
 
   --y;
   --u;
@@ -1368,7 +1368,7 @@ scicos_fscope (int *flag__, int *nevprt, double *t, double *xd, double *x,
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
-		     0, rect, nax);
+		 0, rect, nax);
       z__[1] = 0.;
       z__[2] = *t;
       i__1 = nu * n;
@@ -1600,7 +1600,7 @@ scicos_intplt (scicos_args_poo)
   np = ipar[1];
   Scierror("Error: intp to be done \n");
   /* 
-  scicos_intp (t, &rpar[1], &rpar[np + 1], ny, &np, &y[1]);
+     scicos_intp (t, &rpar[1], &rpar[np + 1], ny, &np, &y[1]);
   */
   return 0;
 }			
@@ -1633,9 +1633,9 @@ int scicos_intpol (scicos_args_poo)
 
 
 int scicos_intrp2(int *flag__, int *nevprt, double *t, double *xd, double *x,
-	    int *nx, double *z__, int *nz, double *tvec, int *ntvec,
-	    double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
-	    int *nu1, double *u2, int *nu2, double *y1, int *ny1)
+		  int *nx, double *z__, int *nz, double *tvec, int *ntvec,
+		  double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
+		  int *nu1, double *u2, int *nu2, double *y1, int *ny1)
 {
   int i__1;
   int i__, j;
@@ -2425,7 +2425,7 @@ int scicos_mscope (scicos_args_poo)
 	      ++it;
 	      /* L30: */
 	    }
-	   scicos_clip(Xgc,FALSE);
+	  scicos_clip(Xgc,FALSE);
 	  /* L35: */
 	}
       Xgc->graphic_engine->xset_recording(Xgc,record);
@@ -3276,7 +3276,7 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	      /*               if(ipar(3+i).ge.0.or.flag.eq.1) then */
 	      Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + (i__ - 1) * n],&ipar[i__ + 3], c__1,k);
 	    }
-	   scicos_clip(Xgc,FALSE);
+	  scicos_clip(Xgc,FALSE);
 	}
       /*     shift buffer left */
       z__[2] = z__[k + 1];
@@ -3394,158 +3394,157 @@ int scicos_scopxy (scicos_args_poo)
   static int c__6 = 6;
   static double frect[4] = { 0., 0., 1., 1. };
   static int cur = 0;
- double rect[4];
- double xmin, ymin, xmax, ymax;
- int n;
- int wid, iwd, nax[4], iwp;
- char *str;
- /*     Copyright INRIA */
- /*     Scicos block simulator */
- /*     ipar(1) = win_num */
- /*     ipar(2) = 0/1 color flag */
- /*     ipar(3) = buffer size */
- /*     ipar(4) = dash,color or mark choice */
- /*     ipar(5) = line or mark size */
- /*     ipar(6) = mode : animated =0 fixed=1 */
- /*     ipar(7:8) = window position */
- /*     ipar(9:10) = window size */
+  double rect[4];
+  double xmin, ymin, xmax, ymax;
+  int n;
+  int wid, iwd, nax[4], iwp;
+  char *str;
+  /*     Copyright INRIA */
+  /*     Scicos block simulator */
+  /*     ipar(1) = win_num */
+  /*     ipar(2) = 0/1 color flag */
+  /*     ipar(3) = buffer size */
+  /*     ipar(4) = dash,color or mark choice */
+  /*     ipar(5) = line or mark size */
+  /*     ipar(6) = mode : animated =0 fixed=1 */
+  /*     ipar(7:8) = window position */
+  /*     ipar(9:10) = window size */
 
- /*     rpar(1)=xmin */
- /*     rpar(2)=xmax */
- /*     rpar(3)=ymin */
- /*     rpar(4)=ymax */
+  /*     rpar(1)=xmin */
+  /*     rpar(2)=xmax */
+  /*     rpar(3)=ymin */
+  /*     rpar(4)=ymax */
 
 
 
- --y;
- --u;
- --ipar;
- --rpar;
- --tvec;
- --z__;
- --x;
- --xd;
+  --y;
+  --u;
+  --ipar;
+  --rpar;
+  --tvec;
+  --z__;
+  --x;
+  --xd;
 
- if (*flag__ == 2)
-   {
-     wid = ipar[1];
-     n = ipar[3];
-
-     Xgc = scicos_set_win(wid,&cur);
-     /*     erase first point */
-     if (ipar[6] == 0)
-       {
-	 z__[1] += 1.;
-	 if (ipar[4] < 0)
-	   {
-	     Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2],&ipar[4], c__1, c__1);
-	   }
-	 else
-	   {
-	     Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2],&ipar[4], c__1, c__2);
-	   }
-       }
-     /*     shift buffer left */
-     /* i__1 = n - 1;
-	scicos_unsfdcopy (&i__1, &z__[3], &c__1, &z__[2], &c__1);
-     */
-     memmove(&z__[2], &z__[3],(n-1)*sizeof(double));
-     z__[n + 1] = u[1];
-     /* i__1 = n - 1;
-	scicos_unsfdcopy (&i__1, &z__[n + 3], &c__1, &z__[n + 2], &c__1);
-     */
-     memmove(&z__[n+2], &z__[n+3],(n-1)*sizeof(double));
-     z__[(n << 1) + 1] = u[2];
-     /*     draw new point */
-     if (ipar[4] < 0)
-       {
-	 Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[n + 1], &z__[(n << 1) + 1],&ipar[4], c__1, c__1);
-       }
-     else
-       {
-	 Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[n], &z__[n*3],&ipar[4], c__1, c__2);
-       }
-     if ((int) z__[1] > n && ipar[6] == 0)
-       {
-	 /*     erase memory */
-	 Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
-	 xmin = rpar[1];
-	 xmax = rpar[2];
-	 ymin = rpar[3];
-	 ymax = rpar[4];
-	 rect[0] = xmin;
-	 rect[1] = ymin;
-	 rect[2] = xmax;
-	 rect[3] = ymax;
-	 Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	 z__[1] = 0.;
-       }
-   }
- else if (*flag__ == 4)
-   {
-     wid = ipar[1];
-     n = ipar[3];
-     xmin = rpar[1];
-     xmax = rpar[2];
-     ymin = rpar[3];
-     ymax = rpar[4];
-     nax[0] = 2;
-     nax[1] = 10;
-     nax[2] = 2;
-     nax[3] = 10;
-     Xgc = scicos_set_win(wid,&cur);
-     Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-     iwp = 7;
-     if (ipar[iwp] >= 0)
-       {
-	 Xgc->graphic_engine->xset_windowpos(Xgc,ipar[iwp], ipar[iwp + 1]);
-       }
-     iwd = 9;
-     if (ipar[iwd] >= 0)
-       {
-	 Xgc->graphic_engine->xset_windowdim(Xgc,ipar[iwd], ipar[iwd + 1]);
-       }
-     rect[0] = xmin;
-     rect[1] = ymin;
-     rect[2] = xmax;
-     rect[3] = ymax;
-     Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-     Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
-     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
-     Xgc->graphic_engine->clearwindow(Xgc);
-     Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
-     Xgc->graphic_engine->xset_thickness(Xgc,c__1);
-     Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
-     nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
-		0, rect, nax);
-     str = scicos_getlabel (C2F(curblk).kfun);
-     if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
-       Xgc->graphic_engine->setpopupname(Xgc,str);
-     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__6);
-     nsp_check_gtk_events ();
-     /* first point drawing */
-     if (ipar[4] < 0)
-       {
-	 Xgc->graphic_engine->xset_mark(Xgc,ipar[4], ipar[5]);
-	 Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n+2],&ipar[4], c__1, c__1);
-       }
-     else
-       {
-	 Xgc->graphic_engine->xset_thickness(Xgc,ipar[5]);
-	 Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n+2],&ipar[4], c__1, c__2);
-       }
-     z__[1] = 0.;
-   }
- else if (*flag__ == 5)
-   {
-     wid = ipar[1];
-     n = ipar[3];
+  if (*flag__ == 2)
+    {
+      wid = ipar[1];
+      n = ipar[3];
 
       Xgc = scicos_set_win(wid,&cur);
-     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
-   }
- return 0;
+      /*     erase first point */
+      if (ipar[6] == 0)
+	{
+	  z__[1] += 1.;
+	  if (ipar[4] < 0)
+	    {
+	      Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2],&ipar[4], c__1, c__1);
+	    }
+	  else
+	    {
+	      Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2],&ipar[4], c__1, c__2);
+	    }
+	}
+      /*     shift buffer left */
+      /* i__1 = n - 1;
+	 scicos_unsfdcopy (&i__1, &z__[3], &c__1, &z__[2], &c__1);
+      */
+      memmove(&z__[2], &z__[3],(n-1)*sizeof(double));
+      z__[n + 1] = u[1];
+      /* i__1 = n - 1;
+	 scicos_unsfdcopy (&i__1, &z__[n + 3], &c__1, &z__[n + 2], &c__1);
+      */
+      memmove(&z__[n+2], &z__[n+3],(n-1)*sizeof(double));
+      z__[(n << 1) + 1] = u[2];
+      /*     draw new point */
+      if (ipar[4] < 0)
+	{
+	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[n + 1], &z__[(n << 1) + 1],&ipar[4], c__1, c__1);
+	}
+      else
+	{
+	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[n], &z__[n*3],&ipar[4], c__1, c__2);
+	}
+      if ((int) z__[1] > n && ipar[6] == 0)
+	{
+	  /*     erase memory */
+	  Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
+	  xmin = rpar[1];
+	  xmax = rpar[2];
+	  ymin = rpar[3];
+	  ymax = rpar[4];
+	  rect[0] = xmin;
+	  rect[1] = ymin;
+	  rect[2] = xmax;
+	  rect[3] = ymax;
+	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	  z__[1] = 0.;
+	}
+    }
+  else if (*flag__ == 4)
+    {
+      wid = ipar[1];
+      n = ipar[3];
+      xmin = rpar[1];
+      xmax = rpar[2];
+      ymin = rpar[3];
+      ymax = rpar[4];
+      nax[0] = 2;
+      nax[1] = 10;
+      nax[2] = 2;
+      nax[3] = 10;
+      Xgc = scicos_set_win(wid,&cur);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+      iwp = 7;
+      if (ipar[iwp] >= 0)
+	{
+	  Xgc->graphic_engine->xset_windowpos(Xgc,ipar[iwp], ipar[iwp + 1]);
+	}
+      iwd = 9;
+      if (ipar[iwd] >= 0)
+	{
+	  Xgc->graphic_engine->xset_windowdim(Xgc,ipar[iwd], ipar[iwd + 1]);
+	}
+      rect[0] = xmin;
+      rect[1] = ymin;
+      rect[2] = xmax;
+      rect[3] = ymax;
+      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
+      Xgc->graphic_engine->clearwindow(Xgc);
+      Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
+      Xgc->graphic_engine->xset_thickness(Xgc,c__1);
+      Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
+      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+		 0, rect, nax);
+      str = scicos_getlabel (C2F(curblk).kfun);
+      if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
+	Xgc->graphic_engine->setpopupname(Xgc,str);
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__6);
+      nsp_check_gtk_events ();
+      /* first point drawing */
+      if (ipar[4] < 0)
+	{
+	  Xgc->graphic_engine->xset_mark(Xgc,ipar[4], ipar[5]);
+	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n+2],&ipar[4], c__1, c__1);
+	}
+      else
+	{
+	  Xgc->graphic_engine->xset_thickness(Xgc,ipar[5]);
+	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n+2],&ipar[4], c__1, c__2);
+	}
+      z__[1] = 0.;
+    }
+  else if (*flag__ == 5)
+    {
+      wid = ipar[1];
+      n = ipar[3];
+      Xgc = scicos_set_win(wid,&cur);
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
+    }
+  return 0;
 }
 
 
@@ -3669,7 +3668,7 @@ int scicos_scoxy (scicos_args_poo)
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
-		0, rect, nax);
+		 0, rect, nax);
       Xgc->graphic_engine->xset_thickness(Xgc,ipar[5]);
       nsp_check_gtk_events ();
       /* first point drawing */
@@ -3735,59 +3734,32 @@ int scicos_selblk (scicos_args_poo)
 }			
 
 
-
 int scicos_sinblk (scicos_args_poo)
 {
-  int i__1;
-  int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  i__1 = *nu;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      y[i__] = sin (u[i__]);
-      /* L15: */
-    }
+  int i;
+  for (i = 0 ; i < *nu ; ++i)  y[i] = sin (u[i]);
   return 0;
 }			
 
+/*
+ * y=sqrt(u);
+ */
 
 
 int scicos_sqrblk (scicos_args_poo)
 {
-  int i__1;
-  int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  i__1 = *nu;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  int i;
+  for (i = 0; i < *nu ; ++i)
     {
-      if (u[i__] >= 0.)
+      if (u[i] >= 0.)
 	{
-	  y[i__] = sqrt (u[i__]);
+	  y[i] = sqrt (u[i]);
 	}
       else
 	{
 	  *flag__ = -2;
 	  return 0;
 	}
-      /* L15: */
     }
   return 0;
 }			
@@ -3795,9 +3767,9 @@ int scicos_sqrblk (scicos_args_poo)
 
 
 int scicos_sum2(int *flag__, int *nevprt, double *t, double *xd, double *x,
-	      int *nx, double *z__, int *nz, double *tvec, int *ntvec,
-	      double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
-	      int *nu1, double *u2, int *nu2, double *y, int *ny)
+		int *nx, double *z__, int *nz, double *tvec, int *ntvec,
+		double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
+		int *nu1, double *u2, int *nu2, double *y, int *ny)
 {
   int i__1;
   int i__;
@@ -3825,10 +3797,10 @@ int scicos_sum2(int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 
 int scicos_sum3(int *flag__, int *nevprt, double *t, double *xd, double *x,
-	      int *nx, double *z__, int *nz, double *tvec, int *ntvec,
-	      double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
-	      int *nu1, double *u2, int *nu2, double *u3, int *nu3, double *y,
-	      int *ny)
+		int *nx, double *z__, int *nz, double *tvec, int *ntvec,
+		double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
+		int *nu1, double *u2, int *nu2, double *u3, int *nu3, double *y,
+		int *ny)
 {
   int i__1;
   int i__;
@@ -4335,8 +4307,7 @@ int scicos_bound (scicos_args_poo)
 
 
 
-void  readau(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
-	     ipar,nipar,inptr,insz,nin,outptr,outsz,nout)
+void  readau(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, int *outsz, int *nout)
      /*
        ipar[1]   = lfil : file name length
        ipar[2:4] = fmt  : numbers type ascii code
@@ -4347,10 +4318,10 @@ void  readau(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
        ipar[9]   = first : first record to read
        ipar[10:9+lfil] = character codes for file name
      */
-     int *flag,*nevprt,*nx,*nz,*ntvec,*nrpar,ipar[],*nipar;
-     int insz[],*nin,outsz[],*nout;
-     double x[],xd[],z[],tvec[],rpar[];
-     double *inptr[],*outptr[],*t;
+                                                           
+                                   
+                                       
+                                  
 
 {
   char str[100],type[4];
@@ -4424,12 +4395,12 @@ void  readau(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
 	/*     read a new buffer */
 	Scierror("Error: in readau to be done \n");
 	/* XXXXXXX
-	m=ipar[6]*ipar[7];
-	F2C(cvstr)(&three,&(ipar[2]),type,&job,strlen(type));
-	for (i=2;i>=0;i--)
-	  if (type[i]!=' ') { type[i+1]='\0';break;}
-	ierr=0;
-	mget2(fd,ipar[8],buffer,m,type,&ierr);
+	   m=ipar[6]*ipar[7];
+	   F2C(cvstr)(&three,&(ipar[2]),type,&job,strlen(type));
+	   for (i=2;i>=0;i--)
+	   if (type[i]!=' ') { type[i+1]='\0';break;}
+	   ierr=0;
+	   mget2(fd,ipar[8],buffer,m,type,&ierr);
 	*/
 	ierr=1;
 	if (ierr>0) {
@@ -4516,32 +4487,22 @@ void  readau(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
 
 
 
-int worldsize(char type[4])
+static int worldsize(char type[4])
 {
-  char c;
-  int wsz;
-
-  c=type[0];
-  if (c=='u') c=type[1];
+  char c = ( type[0]=='u' ) ? type[1] : type[0];
   switch ( c )
     {
-    case 'l' : wsz=sizeof(long);
-      break;
-    case 's' : wsz=sizeof(short);
-      break;
-    case 'c' : wsz=sizeof(char);
-      break;
-    case 'd' : wsz=sizeof(double);
-      break;
-    case 'f' : wsz=sizeof(float); 
-      break;
+    case 'l' : return sizeof(long);
+    case 's' : return sizeof(short);
+    case 'c' : return sizeof(char);
+    case 'd' : return sizeof(double);
+    case 'f' : return sizeof(float); 
     }
-  return wsz;
+  return 0;
 }
 
 
-void  readc(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
-	    ipar,nipar,inptr,insz,nin,outptr,outsz,nout)
+void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, int *outsz, int *nout)
      /*
        ipar[1]   = lfil : file name length
        ipar[2:4] = fmt  : numbers type ascii code
@@ -4553,10 +4514,10 @@ void  readc(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
        ipar[10:9+lfil] = character codes for file name
        ipar[10+lfil:9+lfil++ny+ievt] = reading mask
      */
-     int *flag,*nevprt,*nx,*nz,*ntvec,*nrpar,ipar[],*nipar;
-     int insz[],*nin,outsz[],*nout;
-     double x[],xd[],z[],tvec[],rpar[];
-     double *inptr[],*outptr[],*t;
+                                                           
+                                   
+                                       
+                                  
 
 {
   char str[100],type[4];
@@ -4738,7 +4699,7 @@ static void block_draw_rect_2(BCG *Xgc,double r[],double percent)
   */
 
   if ( alumode != in ) 
-     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
+    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
 }
 
 
@@ -4751,11 +4712,11 @@ static void block_draw_rect_3(BCG *Xgc,double r[],double percent)
   double y = r[1] - r[3] + 2 ;
   alumode  = Xgc->graphic_engine->xget_alufunction(Xgc);
   if ( alumode != in ) 
-     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,in);
+    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,in);
   sprintf(foo,"%5.3f",percent);
   Xgc->graphic_engine->scale->displaystring(Xgc,foo,x,y,flag,ang);
   if ( alumode != in ) 
-     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
+    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
 }
 
 

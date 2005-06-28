@@ -11,7 +11,7 @@ LIBRARY=nsp.lib
 OBJSF=
 OBJSC=  blocks_new.obj coselm.obj evaluate_expr.obj import.obj intcos.obj \
 	intrealtime.obj readf.obj realtime.obj sciblk2.obj scicos.obj scicosclip.obj \
-	scicos_free.obj scicos_malloc.obj scifunc.obj dmmul.obj  blocks.obj trees.obj simul.obj
+	scicos_free.obj scicos_malloc.obj  dmmul.obj  blocks.obj trees.obj simul.obj
 
 # blocks.obj
 

@@ -789,7 +789,7 @@ void cossimdaskr(double *told)
 
   double *W;
   int *Mode_save;
-  int Mode_change;
+  int Mode_change=0;
   /*-------------------- Analytical Jacobian memory allocation ----------*/
   int  Jn, Jnx, Jno, Jni, Jactaille;
   double uround;
@@ -1272,61 +1272,65 @@ void cosend(double *told)
 
 void doit(double *told)
 {
-  int i,i2;
-  static int flag__, nord;
-  static int ierr1;
-  int ii, kever;
-  /* Function Body */
+  int i=0,i2, flag__, nord, ierr1, ii, kever;
+
   kever = *Scicos->state.pointi;
   *Scicos->state.pointi = Scicos->state.evtspt[kever-1];
   Scicos->state.evtspt[kever-1] = -1;
 
   nord = Scicos->sim.ordptr[kever] - Scicos->sim.ordptr[-1+kever];
-  if (nord == 0) {
-    return;
-  }
+  if (nord == 0) return;
 
-  for (ii = Scicos->sim.ordptr[-1+kever]; ii <=Scicos->sim.ordptr[kever] - 1 ; ++ii) {
-    C2F(curblk).kfun = Scicos->sim.ordclk[-1+ii];
-    if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) {
-      nclock = Abs(Scicos->sim.ordclk[-1+ii + Scicos->sim.nordclk]);
-      flag__ = 1;
-      callf(told, xd, Scicos->state.x, Scicos->state.x,Scicos->state.x,&flag__);
+  for (ii = Scicos->sim.ordptr[-1+kever]; ii <=Scicos->sim.ordptr[kever] - 1 ; ++ii) 
+    {
+      C2F(curblk).kfun = Scicos->sim.ordclk[-1+ii];
+      if (Scicos->sim.outptr[-1+C2F(curblk).kfun + 1] - Scicos->sim.outptr[-1+C2F(curblk).kfun] > 0) 
+	{
+	  nclock = Abs(Scicos->sim.ordclk[-1+ii + Scicos->sim.nordclk]);
+	  flag__ = 1;
+	  callf(told, xd, Scicos->state.x, Scicos->state.x,Scicos->state.x,&flag__);
 
-      if (flag__ < 0) {
-	*ierr = 5 - flag__;
-	return;
-      }
+	  if (flag__ < 0) 
+	    {
+	      *ierr = 5 - flag__;
+	      return;
+	    }
+	}
+      /*  Initialize tvec */
+      if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) 
+	{
+	  if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] < 0) 
+	    {
+	      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) 
+		{
+		  if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) 
+		    {
+		      i= 2;
+		    } 
+		  else 
+		    {
+		      i= 1;
+		    }
+		} 
+	      else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) 
+		{
+		  i=Max(Min((int) Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
+			    Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
+		}
+	      i2 = i + Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
+	      putevs(told, &i2, &ierr1);
+	      if (ierr1 != 0) {
+		/*     !                 event conflict */
+		*ierr = 3;
+		return;
+	      }
+	      doit(told);
+	      if (*ierr != 0) {
+		return;
+	      }
+	    }
+	}
     }
-  
-    /*     .     Initialize tvec */
-    if (Scicos->Blocks[C2F(curblk).kfun - 1].nevout > 0) {
-      if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] < 0) {
-	if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -1) {
-	  if (Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]] <= 0.) {
-	    i= 2;
-	  } else {
-	    i= 1;
-	  }
-	} else if (Scicos->sim.funtyp[-1+C2F(curblk).kfun] == -2) {
-
-	  i=Max(Min((int) Scicos->state.outtb[-1+Scicos->sim.lnkptr[-1+Scicos->sim.inplnk[-1+Scicos->sim.inpptr[-1+C2F(curblk).kfun]]]],
-		    Scicos->Blocks[C2F(curblk).kfun - 1].nevout),1);
-	}
-	i2 = i + Scicos->sim.clkptr[-1+C2F(curblk).kfun] - 1;
-	putevs(told, &i2, &ierr1);
-	if (ierr1 != 0) {
-	  /*     !                 event conflict */
-	  *ierr = 3;
-	  return;
-	}
-	doit(told);
-	if (*ierr != 0) {
-	  return;
-	}
-      }
-    }
-  }
 } 
 
 
