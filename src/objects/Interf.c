@@ -814,7 +814,7 @@ void SwapObjs(Stack stack, int i, int j)
 void MoveObj(Stack stack, int j, NspObject *O)
 {
   NspObject *obj = NthObj(j),*O2;
-  if ( IsHobj(obj) ) 
+  if ( obj != NULLOBJ && IsHobj(obj) ) 
     {
       O2= ((NspHobj *) obj)->O;
       if ( IsHopt(obj) ) nsp_object_destroy(&obj);
