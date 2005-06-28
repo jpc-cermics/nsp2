@@ -813,10 +813,13 @@ void SwapObjs(Stack stack, int i, int j)
 
 void MoveObj(Stack stack, int j, NspObject *O)
 {
-  /* XXXXX attention si l'objet a detruire est une variable optionnelle 
-   *  c'est plus compliqué 
-   *  voir le code standard 
-   */
+  NspObject *obj = NthObj(j),*O2;
+  if ( IsHobj(obj) ) 
+    {
+      O2= ((NspHobj *) obj)->O;
+      if ( IsHopt(obj) ) nsp_object_destroy(&obj);
+      NthObj(j) = O2;
+    }
   nsp_void_object_destroy(&NthObj(j));
   NthObj(j)= O;    
   NSP_OBJECT(O)->ret_pos =j;
