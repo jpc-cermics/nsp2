@@ -314,7 +314,7 @@ NspBMatrix  *GetBMat(Stack stack, int i)
 
 int BoolScalar(NspObject *O, Boolean *val)
 {
-  static char mess[]="Argument should be an integer";
+  static char mess[]="Argument should be a boolean";
   NspBMatrix *A;
   if (( A= BMatObj(O)) == NULLBMAT
       || ( A->mn != 1 ))
