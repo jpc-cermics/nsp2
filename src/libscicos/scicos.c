@@ -612,7 +612,7 @@ void cossim(double *told)
 	  istate = 1;
 	}
 	if (C2F(cosdebug).cosd >= 1) {
-	  sciprint("****lsodar from: %f to %f hot= %d  \r\n", *told,t,hot);
+	  sciprint("****lsodar from: %f to %f hot= %d  \n", *told,t,hot);
 	}
 
 	if(hmax==0){
@@ -641,7 +641,7 @@ void cossim(double *told)
 	  return;
 	} else {
 	  if (C2F(cosdebug).cosd >= 1) {
-	    sciprint("****lsodar reached: %f\r\n",*told);
+	    sciprint("****lsodar reached: %f\n",*told);
 	  }
 	  hot = 1;
 	}
@@ -659,7 +659,7 @@ void cossim(double *told)
 	  /*     .        at a least one root has been found */
 	  hot = 0;
 	  if (C2F(cosdebug).cosd >= 1) {
-	    sciprint("root found at t=: %f\r\n",*told);
+	    sciprint("root found at t=: %f\n",*told);
 	  }
 	  /*     .        update outputs affecting ztyp blocks ONLY FOR OLD BLOCKS */
 	  zdoit(W, xd, Scicos->state.x,told);
@@ -732,18 +732,18 @@ void cossim(double *told)
     } else {
       /*     .  t==told */   
       if (C2F(cosdebug).cosd >= 1) {
-	sciprint("Event: %d activated at t=%f\r\n",*Scicos->state.pointi,*told);
+	sciprint("Event: %d activated at t=%f\n",*Scicos->state.pointi,*told);
 	for(kev=0;kev<Scicos->sim.nblk;kev++){
 	  if (Scicos->Blocks[kev].nmode>0){
 	    sciprint("mode of block %d=%d, ",kev,Scicos->Blocks[kev].mode[0]);
 	  }
 	}
-	sciprint("**mod**\r\n");
+	sciprint("**mod**\n");
       }
 
       ddoit(told);
       if (C2F(cosdebug).cosd >= 1) {
-	sciprint("End of activation\r\n");
+	sciprint("End of activation\n");
       }
       if (*ierr != 0) {
 	freeall;
@@ -1089,7 +1089,7 @@ void cossimdaskr(double *told)
 	/*     Warning rpar and ipar are used here as dummy pointers */
 	phase=2;
 	if (C2F(cosdebug).cosd >= 1) {
-	  sciprint("****daskr from: %f to %f hot= %d  \r\n", *told,t,hot);
+	  sciprint("****daskr from: %f to %f hot= %d  \n", *told,t,hot);
 	}
 	C2F(ddaskr)(C2F(simblkdaskr), neq, told, Scicos->state.x, xd, &t, 
 		    info, &rtol, &Atol, &istate, &rhot[1], &
@@ -1097,7 +1097,7 @@ void cossimdaskr(double *told)
 		    ,C2F(Jacobian), rpardummy, C2F(grblkdaskr), &Scicos->sim.ng, jroot);
 
 	if (istate == -1)
-	  sciprint("**** Stiffness at: %26.18f %d\r\n",*told,istate);
+	  sciprint("**** Stiffness at: %26.18f %d\n",*told,istate);
 
 	phase=1;
 	if (*ierr > 5) {
@@ -1111,7 +1111,7 @@ void cossimdaskr(double *told)
 	  return;
 	} else {
 	  if (C2F(cosdebug).cosd >= 1) {
-	    sciprint("****daskr reached: %f\r\n",*told);
+	    sciprint("****daskr reached: %f\n",*told);
 	  }
 	  hot = 1;/* successful return from DDASKR => hot restart*/
 	}
@@ -1127,7 +1127,7 @@ void cossimdaskr(double *told)
 	  /*     .        at a least one root has been found */
 	  hot = 0;
 	  if (C2F(cosdebug).cosd >= 1) {
-	    sciprint("root found at t=: %f\r\n",*told);
+	    sciprint("root found at t=: %f\n",*told);
 	  }
 	  /*     .        update outputs affecting ztyp blocks  ONLY FOR OLD BLOCKS*/
 	  zdoit(W, xd, Scicos->state.x,told);
@@ -1224,7 +1224,7 @@ void cossimdaskr(double *told)
     } else {
       /*     .  t==told */
       if (C2F(cosdebug).cosd >= 1) {
-	sciprint("Event: %d activated at t=%f\r\n",*Scicos->state.pointi,*told);
+	sciprint("Event: %d activated at t=%f\n",*Scicos->state.pointi,*told);
       }
       
       ddoit(told);
@@ -1952,9 +1952,9 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
   if ( cosd > 1){
     sciprint("block %d is called ",kf);
     sciprint("with flag %d ",*flag);
-    sciprint("at time %f \r\n",*t);
+    sciprint("at time %f \n",*t);
     if(Scicos->sim.debug_block>-1){
-      sciprint("Entering the block \r\n");
+      sciprint("Entering the block \n");
       call_debug_scicos(t,xtd,xt,residual,g,flag,kf,flagi,Scicos->sim.debug_block);
       if (*flag<0) return;  /* error in debug block */
     }
@@ -2006,7 +2006,7 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
     if ( cosd > 1){
       if(Scicos->sim.debug_block>-1){
 	if (*flag<0) return;  /* error in block */
-	sciprint("Leaving block %d \r\n",kf);
+	sciprint("Leaving block %d \n",kf);
 	call_debug_scicos(t,xtd,xt,residual,g,flag,kf,flagi,Scicos->sim.debug_block);
       }
     }
@@ -2270,7 +2270,7 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
     }
     break;  
   default:
-    sciprint("Undefined Function type\r\n");
+    sciprint("Undefined Function type\n");
     *flag=-1000;
     return;
   }
@@ -2293,7 +2293,7 @@ void  callf(double *t, double *xtd, double *xt, double *residual, double *g, int
   if ( cosd > 1){
     if(Scicos->sim.debug_block>-1){
       if (*flag<0) return;  /* error in block */
-      sciprint("Leaving block %d \r\n",kf);
+      sciprint("Leaving block %d \n",kf);
       call_debug_scicos(t,xtd,xt,residual,g,flag,kf,flagi,Scicos->sim.debug_block);
     }
   }
@@ -2341,7 +2341,7 @@ void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, dou
       (*loc4)(&Scicos->Blocks[kf-1],*flag);
     }
   }
-  if (*flag<0) sciprint("Error in the Debug block \r\n");
+  if (*flag<0) sciprint("Error in the Debug block \n");
 }
   
 

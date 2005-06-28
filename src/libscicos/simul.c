@@ -96,6 +96,7 @@ static void scicos_clear_state(scicos_state *scst)
   FREE(scst->iwa);
   Mat2double((NspMatrix *) scst->State_elts[4]);
   Mat2double((NspMatrix *) scst->State_elts[5]);
+  
 }
 
 

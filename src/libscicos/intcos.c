@@ -82,7 +82,11 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
   if ( scicos_fill_run(&Scicos,Sim,State)== FAIL) return RET_BUG;
 
   scicos_main(&Scicos,&tcur,&tf,simpar,&flag,&ierr);
-  
+
+
+  /* back convert variables and free allocated variables */
+  scicos_clear_run(&Scicos);
+
   if (ierr > 0 )
     {
       switch (ierr) 
@@ -137,10 +141,6 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
-  /* 
-   * back convert variables 
-   */
-  scicos_clear_run(&Scicos);
   NthObj(1)->ret_pos = 1;
   if ( lhs == 2 ) 
     {
