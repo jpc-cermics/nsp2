@@ -83,6 +83,10 @@ extern int *nsp_realloc_int(int *dp, unsigned int n);
 extern doubleC *nsp_alloc_doubleC(unsigned int n);
 extern doubleC *nsp_realloc_doubleC(doubleC *dp, unsigned int n);
 
+extern double *nsp_alloc_work_doubles(unsigned int n);
+extern int *nsp_alloc_work_int(unsigned int n);
+extern doubleC *nsp_alloc_work_doubleC(unsigned int n);
+
 /* from MatObj.c */
 
 extern void nsp_matrix_destroy(NspMatrix *Mat); 
