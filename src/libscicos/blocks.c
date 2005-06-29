@@ -4487,20 +4487,20 @@ static int worldsize(char type[4])
 }
 
 
-void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, int *outsz, int *nout)
-     /*
-       ipar[1]   = lfil : file name length
-       ipar[2:4] = fmt  : numbers type ascii code
-       ipar[5]   = is there a time record
-       ipar[6]   = n : buffer length in number of records
-       ipar[7]   = maxvoie : record size
-       ipar[8]   = swap
-       ipar[9]   = first : first record to read
-       ipar[10:9+lfil] = character codes for file name
-       ipar[10+lfil:9+lfil++ny+ievt] = reading mask
-     */
+void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, 
+	    double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr, 
+	    int *insz, int *nin, double **outptr, int *outsz, int *nout)
 {
-  /* ipar code model.ipar=[length(fname);str2code(frmt);N;swap;str2code(fname)] */
+  /* ipar[1]   = lfil : file name length
+   * ipar[2:4] = fmt  : numbers type ascii code
+   * ipar[5]   = is there a time record
+   * ipar[6]   = n : buffer length in number of records
+   * ipar[7]   = maxvoie : record size
+   * ipar[8]   = swap
+   * ipar[9]   = first : first record to read
+   * ipar[10:9+lfil] = character codes for file name
+   * ipar[10+lfil:9+lfil++ny+ievt] = reading mask
+   */
   typedef struct _writec_ipar writec_ipar ;
   struct _writec_ipar { int len, fmt[3],ievt,n,maxvoie,swap,first,fname;};
   writec_ipar *wi =  (writec_ipar*) ipar;
@@ -4517,7 +4517,7 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
   mask = &wi->fname  + wi->len ;
     
   /*
-   *    k    : record counter within the buffer
+   *    k  : record counter within the buffer
    *    kmax :  number of records in the buffer
    */
 
@@ -4531,7 +4531,7 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
       /* value of k */
       k    = (int)z[1];
       /* copy current record to output */
-      record=buffer+(k-1)*wi->maxvoie-1;
+      record=buffer+(k-1)*wi->maxvoie;
       for (i=0;i<outsz[0];i++)
 	*(outptr[0]+i)=record[mask[wi->ievt+i]];
       if (*nevprt>0) {
@@ -4549,11 +4549,13 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
 	      z[3] = 0.0;
 	      return;
 	    }
-	  /* A faire si moins a lire  
-	     else if (ierr<0) {
-	    kmax=-(ierr+1)/wi->maxvoie;
+	  if (nread < m ) 
+	    {
+	      /* fill with zero when no more inputs */
+	      int un=1,nc=m-nread;
+	      double zero=0.0;
+	      nsp_dset (&nc,&zero,buffer+nread, &un);
 	    }
-	  */
 	  kmax=wi->n;
 	  z[1] = 1.0;
 	  z[2] = kmax;
@@ -4573,7 +4575,7 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
 	  tvec[0] = *t*(1.0+0.0000000001);
       }
       else {
-	record=buffer+(k-1)*wi->maxvoie-1;
+	record=buffer+(k-1)*wi->maxvoie;
 	if(wi->ievt) tvec[0] = record[mask[0]];
       }
     }
@@ -4585,7 +4587,6 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
       /* get the file name from its ascii code  */
       for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
       str[wi->len]='\0';
-      sciprint("Trying to open [%s]\n",str);
       if (( F= nsp_file_open(str,"rb",FALSE,wi->swap)) == NULL) 
 	{
 	  Scierror("Error: in writec, could not open the file %s !\n",str);
@@ -4615,18 +4616,20 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
       m=wi->n*wi->maxvoie;
       if ( nsp_mget(F,buffer,m,type,&nread) == FAIL) 
 	{
-	  Scierror("Error: in readc, read error during fseek\n");
+	  Scierror("Error: in readc, read error during mget\n");
 	  *flag = -1;
 	  nsp_file_close(F);
 	  nsp_file_destroy(F);
 	  z[3] = 0.0;
 	  return;
 	}
-      /*  XXXXX voir ce qui se passe quand nread < m 
-	  else if (ierr<0) { 
-	  kmax=-(ierr+1)/wi->maxvoie;
-	  }
-      */
+      if (nread < m ) 
+	{
+	  /* fill with last value when no more inputs */
+	  int un=1,nc=m-nread;
+	  double zero=0.0;
+	  nsp_dset (&nc,&zero,buffer+nread, &un);
+	}
       kmax=wi->n;
       z[1] = 1.0;
       z[2] = kmax;
