@@ -5132,6 +5132,7 @@ int scicos_getgeom (double *g)
 {
   /* FIXME XXXXXXXX
    */
+  sciprint("getgeom is not implemented_n");
   return 0;
 }	
 
@@ -5149,8 +5150,7 @@ extern scicos0_block blocks_cdummy, blocks_dband, blocks_cosblk;
  *     returns Absolute value of the input 
  *------------------------------------------------*/
 
-
-void blocks_absblk(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double *u, int *nu, double *y, int *ny)
+void blocks_absblk(scicos_args_poo)
 {
   int i;
   for (i = 0 ; i <  *nu ; ++i ) y[i] = Abs(u[i]);
@@ -5163,9 +5163,9 @@ void blocks_absblk(int *flag, int *nevprt, double *t, double *xd, double *x, int
  *     if event input exists synchronuously, output is 1 else -1
  *------------------------------------------------*/
 
-void blocks_andlog(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double *u, int *nu, double *y, int *ny)
+void blocks_andlog(scicos_args_poo)
 {
-  if ( *flag == 1)  y[0] = ( *nevprt != 3 ) ? -1.00 :  1.00; 
+  if ( *flag__ == 1)  y[0] = ( *nevprt != 3 ) ? -1.00 :  1.00; 
 }
 
 
@@ -5174,7 +5174,7 @@ void blocks_andlog(int *flag, int *nevprt, double *t, double *xd, double *x, int
  *     does nothing 
  *------------------------------------------------*/
 
-void blocks_bidon(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double *u, int *nu, double *y, int *ny)
+void blocks_bidon(scicos_args_poo)
 {
 }
 
@@ -5186,7 +5186,7 @@ void blocks_bidon(int *flag, int *nevprt, double *t, double *xd, double *x, int 
  *     rpar=gain matrix
  *------------------------------------------------*/
 
-void blocks_gain(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double *u, int *nu, double *y, int *ny)
+void blocks_gain(scicos_args_poo)
 {
   int un=1;
   dmmul_scicos(rpar,ny,u,nu,y,ny,ny,nu,&un);
@@ -5197,9 +5197,9 @@ void blocks_gain(int *flag, int *nevprt, double *t, double *xd, double *x, int *
  *     Dummy state space x'=sin(t)
  *------------------------------------------------*/
 
-void blocks_cdummy(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double *u, int *nu, double *y, int *ny)
+void blocks_cdummy(scicos_args_poo)
 {
-  if ( *flag == 0 ) xd[0]=sin(*t);
+  if ( *flag__ == 0 ) xd[0]=sin(*t);
 }
 
 /*------------------------------------------------
@@ -5210,7 +5210,7 @@ void blocks_cdummy(int *flag, int *nevprt, double *t, double *xd, double *x, int
  *     DB(i)=rpar(i) 
  *------------------------------------------------*/
 
-void blocks_dband(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double *u, int *nu, double *y, int *ny)
+void blocks_dband(scicos_args_poo)
 {
   int i;
   
@@ -5228,7 +5228,7 @@ void blocks_dband(int *flag, int *nevprt, double *t, double *xd, double *x, int 
  *     Scicos block simulator 
  *------------------------------------------------*/
 
-void blocks_cosblk(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double *u, int *nu, double *y, int *ny)
+void blocks_cosblk(scicos_args_poo)
 {
 
   int i;
