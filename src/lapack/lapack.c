@@ -51,7 +51,7 @@ int nsp_mat_is_symmetric(NspMatrix *A)
 	for ( j=0 ; j < i ; j++)
 	  {
 	    double dxr= Abs(A->C[i+j*A->m].r - A->C[j+i*A->m].r);
-	    double dxi= Abs(A->C[i+j*A->m].i - A->C[j+i*A->m].i);
+	    double dxi= Abs(A->C[i+j*A->m].i + A->C[j+i*A->m].i);
 	    if ( A->C[i+j*A->m].r + dxr > A->C[i+j*A->m].r) return FALSE;
 	    if ( A->C[i+j*A->m].i + dxi > A->C[i+j*A->m].i) return FALSE;
 	  }
@@ -408,7 +408,7 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 }
 
 
-/* OK 
+/*  
  * Lu factorization 
  * A is changed by nsp_lu. Modified by Bruno (June 21 2005) so
  * as to lowering the memory requirement :
@@ -455,8 +455,8 @@ int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
  
   if ( E != NULL )
     if ( (*E=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT ) return FAIL;
-  if ( (ipiv = nsp_alloc_int(Minmn)) == NULL ) return FAIL;
-  if ( (invp = nsp_alloc_int(m)) == NULL ) { FREE(ipiv); return FAIL;}
+  if ( (ipiv = nsp_alloc_work_int(Minmn)) == NULL ) return FAIL;
+  if ( (invp = nsp_alloc_work_int(m)) == NULL ) { FREE(ipiv); return FAIL;}
 
   C2F(dgetrf)(&m, &n, A->R, &m, ipiv, &info);
   
@@ -533,8 +533,8 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
  
   if ( E != NULL )
     if ( (*E=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT ) return FAIL;
-  if ( (ipiv = nsp_alloc_int(Minmn)) == NULL ) return FAIL;
-  if ( (invp = nsp_alloc_int(m)) == NULL ) { FREE(ipiv); return FAIL;}
+  if ( (ipiv = nsp_alloc_work_int(Minmn)) == NULL ) return FAIL;
+  if ( (invp = nsp_alloc_work_int(m)) == NULL ) { FREE(ipiv); return FAIL;}
 
   C2F(zgetrf)(&m, &n, A->C, &m, ipiv, &info);
   
@@ -903,7 +903,7 @@ static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 
 /* OK
  * nsp_spec 
- * spec(A) for nonsymmetric matrices dgeev 
+ * spec(A) for nonsymmetric matrices using dgeev or zgeev 
  * A is changed, if v != NULL v is computed 
  */
 
@@ -912,242 +912,189 @@ static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v);
 
 int nsp_spec(NspMatrix *A, NspMatrix **d,NspMatrix **v) 
 {
+  /*  A = [] return empty matrices */ 
+  int m = A->m,n=A->n;
+  if ( A->mn == 0 ) 
+    {
+      if (( *d =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+      if ( v != NULL) 
+	{
+	  if (( *v =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+	}
+      return OK ; 
+    }
+  
+  if (m != n) 
+    { 
+      Scierror("Error: first argument for spec should be square and it is (%dx%d)\n", 
+	       m,n);
+      return FAIL;
+    }
+
   if ( A->rc_type == 'r' ) 
     return  intdgeev(A,d,v); 
   else 
     return  intzgeev(A,d,v); 
 }
 
-static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v) 
+static int intdgeev(NspMatrix *A, NspMatrix **D, NspMatrix **V) 
 {
   char type = 'r';
-  int m = A->m,n=A->n;
-  int info, lworkMin,i,j;
-  NspMatrix *dwork,*wr,*wi,*vr=NULLMAT;
-
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if (( *d =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if ( v != NULL) 
-      {
-	if (( *v =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument for spec should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  int n=A->n;
+  int info, lwork,i,j;
+  double *dwork=NULL,*wr=NULL,*wi=NULL;
+  NspMatrix *vr=NULLMAT, *d=NULLMAT, *v=NULLMAT;
+  double qwork[1];
 
   /* checks that  A != Nan et != Inf */
-
   for ( i= 0 ; i < A->mn ; i++ ) 
     if (isinf (A->R[i]) || isnan (A->R[i]))
       {
-	Scierror("Error: nan or inf in svd first argument\n"); 
+	Scierror("Error: nan or inf in spec first argument\n"); 
 	return FAIL;
       }
 
-  if (( wr =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( wi =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+  wr = nsp_alloc_work_doubles(n);
+  wi = nsp_alloc_work_doubles(n);
+  if ( wr == NULL || wi == NULL ) goto err;
 
-  lworkMin = ( v == NULL) ?  n*3 : n*4 ;
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-  
-  if (v == NULL ) 
+  if ( V != NULL )
+    if ( (vr=nsp_matrix_create(NVOID,'r',n,n)) == NULLMAT ) goto err;
+
+  lwork = -1;
+  C2F(dgeev)("N",(V==NULL)?"N":"V", &n, A->R, &n, wr, wi, NULL, &n, (V==NULL)?NULL:vr->R, 
+	     &n, qwork, &lwork, &info, 1L, 1L);
+  lwork = (int) qwork[0];
+  if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+  C2F(dgeev)("N",(V==NULL)?"N":"V", &n, A->R, &n, wr, wi, NULL, &n, (V==NULL)?NULL:vr->R, 
+	     &n, dwork, &lwork, &info, 1L, 1L);
+
+  if (info != 0) 
     {
-      C2F(dgeev)("N","N", &n,A->R, &n,wr->R,wi->R,NULL,&n,NULL,&n,
-		 dwork->R,&lworkMin, &info, 1L, 1L);
-      
-    } 
-  else 
-    {
-      if (( vr =nsp_matrix_create(NVOID,'r',n,n)) == NULLMAT) return FAIL;
-      C2F(dgeev)("N","V", &n,A->R, &n,wr->R,wi->R,NULL,&n,vr->R,&n,
-		 dwork->R,&lworkMin, &info, 1L, 1L);
+      Scierror("Error: convergence problem in dgeev\n"); 
+      goto err;
     }
-  
-  if (info != 0) {
-    Scierror("Error: convergence problem in dgeev\n"); 
-    return FAIL;
-  }
 
   /* result is real ? or complex */ 
 
-  for (i = 0 ; i < n ; ++i) { if (wi->R[i] != 0.0) { type = 'c'; break;}}
+  for (i = 0 ; i < n ; ++i)
+    if (wi[i] != 0.0) { type = 'c'; break;};
 
   /* extract results */ 
 
-  if ( v == NULL ) 
-    {
-      /* the spec is copied into d */ 
-      if (( *d =nsp_matrix_create(NVOID,type,n,1)) == NULLMAT) return FAIL;
-      if ( type == 'r' )
-	for (i = 0 ; i < n ; ++i) { (*d)->R[i] = wr->R[i]; }
-      else 
-	for (i = 0 ; i < n ; ++i) { (*d)->C[i].r = wr->R[i]; (*d)->C[i].i = wi->R[i]; }
-    }
+  /* the spec is copied into d */ 
+  if ( (d=nsp_matrix_create(NVOID,type,n,1)) == NULLMAT ) goto err;
+  if ( type == 'r' )
+    for (i = 0 ; i < n ; ++i) { d->R[i] = wr[i]; }
   else 
+    for (i = 0 ; i < n ; ++i) { d->C[i].r = wr[i]; d->C[i].i = wi[i]; }
+
+  if ( V != NULL ) 
     {
-      /* diagonal of d is set with spec (wr,wi) 
-       * and right engeinvectors in v 
-       */ 
-
-      static doubleC  zero= { 0.0,0.0};
-      static double   dzero=0.0;
-      if (( *v =nsp_matrix_create(NVOID,type,n,n)) == NULLMAT) return FAIL;
-      if (( *d =nsp_matrix_create(NVOID,type,n,n)) == NULLMAT) return FAIL;
-
-      if ( type == 'r' ) 
+      if ( type == 'r' )
+	*V = vr;
+      else   /* store right (complex) eigenvectors in v */ 
 	{
-	  C2F(dlaset)("F", &n, &n, &dzero, &dzero,(*d)->R, &n, 1L);
-	  for ( i = 0;  i < n ; ++i) { (*d)->R[i*(m+1)] =  wr->R[i]; }
-	  for ( i = 0;  i < n*n ; ++i) (*v)->R[i] = vr->R[i]; 
-	} 
-      else 
-	{
-	  C2F(zlaset)("F", &n, &n, &zero, &zero,(*d)->C, &n, 1L);
-	  for ( i = 0;  i < n ; ++i) 
-	    { (*d)->C[i*(m+1)].r =  wr->R[i]; (*d)->C[i*(m+1)].i = wi->R[i]; }
-	  /* store right eigenvectors in v */ 
-	  /* we could check if XXXX v is real or imag before */
+	  if ( (v =nsp_matrix_create(NVOID,type,n,n)) == NULLMAT ) goto err;
 	  j = -1;
 	  while (1) 
 	    {
 	      j ++ ; 
 	      if (j >= n) break; 
-	      if( wi->R[j] == 0.0 ) 
+	      if( wi[j] == 0.0 )  /* real eigenvalue => v(j) = vr(j) */
 		for ( i = 0;  i < n ; ++i) 
 		  { 
 		    int k = i+j*n ;
-		    (*v)->C[k].r = vr->R[k]; 
-		    (*v)->C[k].i = 0.0;
+		    v->C[k].r = vr->R[k]; 
+		    v->C[k].i = 0.0;
 		  }
-	      else if ( wi->R[j] > 0.0 ) 
+	      else  /* complex eigenvalue => conjugate pair of eigenvectors: */
+                    /*        v(j) = vr(j) + i vr(j+1)   */
+                    /*      v(j+1) = vr(j) - i vr(j+1)   */
 		{
-		  /* complex conjugate case */
 		  for ( i = 0;  i < n ; ++i) 
 		    { 
 		      int k = i+j*n ;
-		      (*v)->C[k].r = vr->R[k]; 
-		      (*v)->C[k].i = vr->R[k+n]; 
-		      (*v)->C[k+n].r = vr->R[k]; 
-		      (*v)->C[k+n].i = - vr->R[k+n]; 
+		      v->C[k].r = vr->R[k]; 
+		      v->C[k].i = vr->R[k+n]; 
+		      v->C[k+n].r = vr->R[k]; 
+		      v->C[k+n].i = -vr->R[k+n]; 
 		    }
 		  j++; 
 		}
 	    }
+	  nsp_matrix_destroy(vr);
+	  *V = v;
 	}
     }
-
-  nsp_matrix_destroy(dwork); 
-  nsp_matrix_destroy(wr); 
-  nsp_matrix_destroy(wi); 
-  if (v != NULL )nsp_matrix_destroy(vr); 
+  *D = d;
+  FREE(wr); FREE(wi); FREE(dwork);
   return OK;
+
+ err:
+  FREE(wr); FREE(wi); FREE(dwork);  
+  nsp_matrix_destroy(vr);
+  nsp_matrix_destroy(v);
+  nsp_matrix_destroy(d);
+  return FAIL;
 }
 
 
-static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v) 
+static int intzgeev(NspMatrix *A,NspMatrix **D,NspMatrix **V) 
 {
   char type = 'r';
-  int m = A->m,n=A->n;
-  int info, lworkMin,i;
-  NspMatrix *dwork,*rwork;
-
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if (( *d =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if ( v != NULL) 
-      {
-	if (( *v =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument for spec should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  int n=A->n;
+  int info, lwork,i;
+  NspMatrix *d=NULLMAT, *v=NULLMAT;
+  double *rwork=NULL;
+  doubleC  qcwork[1], *cwork=NULL;
 
   /* checks that  A != Nan et != Inf */
-
   for ( i= 0 ; i < A->mn ; i++ ) 
     if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
       {
-	Scierror("Error: nan or inf in svd first argument\n"); 
+	Scierror("Error: nan or inf in spec first argument\n"); 
 	return FAIL;
       }
 
+  if ( (d=nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) return FAIL;
 
-  if (( *d =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
+  if ( (rwork=nsp_alloc_work_doubles(2*n)) == NULL ) goto err;
 
-  if (( rwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;
-  lworkMin = 2*n;
-  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;
+  if (V != NULL ) 
+    if ( (v=nsp_matrix_create(NVOID,'c',n,n)) == NULLMAT ) goto err;;
+
+  lwork = -1;
+  C2F(zgeev)("N", (V==NULL)?"N":"V", &n, A->C, &n, d->C, NULL, &n, (V==NULL)?NULL:v->C, 
+	     &n, qcwork, &lwork, rwork, &info, 1L, 1L);
+  lwork = (int) qcwork[0].r;
+  if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
+  C2F(zgeev)("N", (V==NULL)?"N":"V", &n, A->C, &n, d->C, NULL, &n, (V==NULL)?NULL:v->C, 
+	     &n, cwork, &lwork, rwork, &info, 1L, 1L);
   
-  if (v == NULL ) 
+  if (info != 0) 
     {
-      C2F(zgeev)("N","N", &n,A->C, &n,(*d)->C,NULL,&n,NULL,&n,dwork->C,&lworkMin,rwork->R,
-		 &info, 1L, 1L);
-    } 
-  else 
-    {
-      if (( *v =nsp_matrix_create(NVOID,'c',n,n)) == NULLMAT) return FAIL;
-      C2F(zgeev)("N","V", &n,A->C, &n,(*d)->C,NULL,&n,(*v)->C,&n,dwork->C,&lworkMin,rwork->R,
-		 &info, 1L, 1L);
+      Scierror("Error: convergence problem in zgeev\n"); 
+      goto err;
     }
-  
-  if (info != 0) {
-    Scierror("Error: convergence problem in zgeev\n"); 
-    return FAIL;
-  }
-
-  /* result is real ? or complex */ 
-
-  for (i = 0 ; i < n ; ++i) { if ((*d)->C[i].i != 0.0) { type = 'c'; break;}}
 
   /* extract results */ 
+  /* result is real ? or complex */ 
+  for (i = 0 ; i < n ; ++i) { if (d->C[i].i != 0.0) { type = 'c'; break;}}
+  if ( type == 'r' )    /* FIXME: est-ce utile ? */
+    if (nsp_mat_get_real(d) == FAIL ) goto err; 
 
-  if ( v == NULL ) 
-    {
-      /* the spec is copied into d */ 
-      if ( type == 'r' ) {
-	if (nsp_mat_get_real(*d) == FAIL ) return FAIL;
-      }
-    }
-  else 
-    {
-      /* diagonal of d is set with spec (wr,wi) 
-       * and right engeinvectors in v 
-       */ 
-      NspMatrix *md;
-      static doubleC  zero= { 0.0,0.0};
-      static double   dzero=0.0;
-      if (( md =nsp_matrix_create(NVOID,type,n,n)) == NULLMAT) return FAIL;
+  *D = d; 
+  if ( V != NULL ) *V = v;
       
-      if ( type == 'r' ) 
-	{
-	  C2F(dlaset)("F", &n, &n, &dzero, &dzero,md->R, &n, 1L);
-	  for ( i = 0;  i < n ; ++i) { md->R[i*(m+1)] =  (*d)->C[i].r; }
-	} 
-      else 
-	{
-	  C2F(zlaset)("F", &n, &n, &zero, &zero,md->C, &n, 1L);
-	  for ( i = 0;  i < n ; ++i)  md->C[i*(m+1)] =  (*d)->C[i]; 
-	}
-      nsp_matrix_destroy(*d); 
-      *d = md;
-    }
-      
-  nsp_matrix_destroy(dwork); 
-  nsp_matrix_destroy(rwork); 
+  FREE(rwork); FREE(cwork);
   return OK;
+
+ err:
+  FREE(rwork); FREE(cwork);
+  nsp_matrix_destroy(d); 
+  nsp_matrix_destroy(v); 
+  return FAIL;
 }
 
 
@@ -1162,6 +1109,21 @@ static int intzheev(NspMatrix *A,NspMatrix **d,char flag);
 
 int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag)
 {
+  int m=A->m, n=A->m;
+  /*  A = [] return empty matrices */ 
+  if ( A->mn == 0 ) 
+    {
+      if (( *d =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+      return OK ; 
+    }
+  
+  if (m != n) 
+    { 
+      Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
+	       m,n);
+      return FAIL;
+    }
+
   if ( A->rc_type == 'r' ) 
     return  intdsyev(A,d,flag); 
   else 
@@ -1170,25 +1132,13 @@ int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag)
 
 static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
 {
-  int m = A->m,n=A->n;
-  int info, lworkMin,i;
-  NspMatrix *dwork,*wr;
-
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if (( *d =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  int n=A->n;
+  int info, lwork,i;
+  NspMatrix *wr;
+  double *dwork;
+  double qwork[1];
 
   /* checks that  A != Nan et != Inf */
-
   for ( i= 0 ; i < A->mn ; i++ ) 
     if (isinf (A->R[i]) || isnan (A->R[i]))
       {
@@ -1196,99 +1146,71 @@ static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
 	return FAIL;
       }
 
-  if (( wr =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+  if ( (wr=nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
 
-  lworkMin =  n*3;
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+  lwork =  -1;
+  C2F(dsyev)((flag == 'V' ) ? "V" : "N","U" , &n,A->R, &n,wr->R,qwork,&lwork, &info, 1L, 1L);
+  lwork = (int) qwork[0];
+  if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) {nsp_matrix_destroy(wr); return FAIL;}
   
-  C2F(dsyev)((flag == 'V' ) ? "V" : "N","U" , &n,A->R, &n,wr->R,dwork->R,&lworkMin, &info, 1L, 1L);
+  C2F(dsyev)((flag == 'V' ) ? "V" : "N","U", &n, A->R, &n, wr->R, dwork, &lwork, &info, 1L, 1L);
   
-  if (info != 0) {
-    Scierror("Error: convergence problem in dsyev\n"); 
-    return FAIL;
-  }
-
-  /* extract results */ 
-
-  if ( flag != 'V' ) 
+  if (info != 0) 
     {
-      *d = wr ; 
-    }
-  else 
-    {
-      /* diagonal of d is set with spec (wr,wi) 
-       * and right engeinvectors in v 
-       */ 
-      if (( *d =nsp_mat_zeros(m,n)) == NULLMAT) return FAIL;
-      for ( i = 0;  i < n ; ++i) { (*d)->R[i*(m+1)] =  wr->R[i]; }
-      nsp_matrix_destroy(wr); 
+      Scierror("Error: convergence problem in dsyev\n"); 
+      nsp_matrix_destroy(wr);
+      FREE(dwork);
+      return FAIL;
     }
 
-  nsp_matrix_destroy(dwork); 
+  *d = wr ; 
+  FREE(dwork);
   return OK;
 }
 
 static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
 {
-  int m = A->m,n=A->n;
-  int info, lworkMin,i;
-  NspMatrix *dwork,*wr,*rwork;
-
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if (( *d =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  int n=A->n;
+  int info, lwork,i;
+  NspMatrix *wr=NULLMAT;
+  double *rwork=NULL;
+  doubleC *cwork=NULL, qwork[1];
 
   /* checks that  A != Nan et != Inf */
-
   for ( i= 0 ; i < A->mn ; i++ ) 
     if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
       {
-	Scierror("Error: nan or inf in svd first argument\n"); 
+	Scierror("Error: nan or inf in spec first argument\n"); 
 	return FAIL;
       }
 
+  if ( (wr=nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
 
-  if (( wr =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+  if ( (rwork=nsp_alloc_work_doubles(n*3-2)) == NULL ) goto err;
 
-  if (( rwork =nsp_matrix_create(NVOID,'r',1,n*3-2)) == NULLMAT) return FAIL;
-  lworkMin =  n*2;
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+  lwork = -1;
+  C2F(zheev)((flag == 'V' ) ? "V" : "N","U" , &n, A->C, &n,wr->R, qwork, &lwork, rwork, &info, 1L, 1L);
+  lwork = (int) qwork[0].r;
+  if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
   
-  C2F(zheev)((flag == 'V' ) ? "V" : "N","U" , &n,A->C, &n,wr->R,dwork->C,&lworkMin,rwork->R, &info, 1L, 1L);
+  C2F(zheev)((flag == 'V' ) ? "V" : "N","U" , &n, A->C, &n,wr->R, cwork, &lwork, rwork, &info, 1L, 1L);
   
-  if (info != 0) {
-    Scierror("Error: convergence problem in zheev\n"); 
-    return FAIL;
-  }
-
-  /* extract results */ 
-
-  if ( flag != 'V' ) 
+  if (info != 0) 
     {
-      *d = wr ; 
-    }
-  else 
-    {
-      /* diagonal of d is set with spec (wr,wi) 
-       * and right engeinvectors in v 
-       */ 
-      if (( *d =nsp_mat_zeros(m,n)) == NULLMAT) return FAIL;
-      for ( i = 0;  i < n ; ++i) { (*d)->R[i*(m+1)] =  wr->R[i]; }
-      nsp_matrix_destroy(wr); 
+      Scierror("Error: convergence problem in zheev\n"); 
+      goto err;
     }
 
-  nsp_matrix_destroy(dwork); 
-  nsp_matrix_destroy(rwork); 
+  *d = wr ; 
+  FREE(rwork);
+  FREE(cwork);
   return OK;
+
+ err:
+  nsp_matrix_destroy(wr); 
+  FREE(rwork);
+  FREE(cwork);
+  return FAIL;
 }
 
 /* OK 
@@ -3342,8 +3264,8 @@ static double intznorm(NspMatrix *A,char flag)
 int nsp_expm(NspMatrix *A)
 {
   int m, sym_flag, ideg=6, *ipiv=NULL, lwork, iexph, ns, iflag;
-  double *work=NULL, t=1;
-  doubleC *workC=NULL;
+  double *rwork=NULL, t=1;
+  doubleC *cwork=NULL;
 
   if ( A->m != A->n )
     {
@@ -3353,18 +3275,18 @@ int nsp_expm(NspMatrix *A)
 
   m = A->m;
 
-  if ( (ipiv = nsp_alloc_int(m)) == NULL )
+  if ( (ipiv = nsp_alloc_work_int(m)) == NULL )
     return FAIL;
 
   lwork = 4*m*m + ideg + 1;
   if ( A->rc_type == 'r' ) 
     {
-      if ( (work = nsp_alloc_doubles(lwork)) == NULL ) 
+      if ( (rwork = nsp_alloc_work_doubles(lwork)) == NULL ) 
 	goto err;
     }
   else
     {
-      if ( (workC = nsp_alloc_doubleC(lwork)) == NULL ) 
+      if ( (cwork = nsp_alloc_work_doubleC(lwork)) == NULL ) 
 	goto err;
     }
 
@@ -3373,16 +3295,16 @@ int nsp_expm(NspMatrix *A)
   if ( A->rc_type == 'r' ) 
     {
       if ( sym_flag )
-	C2F(dspadm)(&ideg, &m, &t, A->R, &m, work, &lwork, ipiv, &iexph, &ns, &iflag);
+	C2F(dspadm)(&ideg, &m, &t, A->R, &m, rwork, &lwork, ipiv, &iexph, &ns, &iflag);
       else
-	C2F(dgpadm)(&ideg, &m, &t, A->R, &m, work, &lwork, ipiv, &iexph, &ns, &iflag);
+	C2F(dgpadm)(&ideg, &m, &t, A->R, &m, rwork, &lwork, ipiv, &iexph, &ns, &iflag);
     }
   else
     {
       if ( sym_flag )
-	C2F(zhpadm)(&ideg, &m, &t, A->C, &m, workC, &lwork, ipiv, &iexph, &ns, &iflag);
+	C2F(zhpadm)(&ideg, &m, &t, A->C, &m, cwork, &lwork, ipiv, &iexph, &ns, &iflag);
       else
-	C2F(zgpadm)(&ideg, &m, &t, A->C, &m, workC, &lwork, ipiv, &iexph, &ns, &iflag);
+	C2F(zgpadm)(&ideg, &m, &t, A->C, &m, cwork, &lwork, ipiv, &iexph, &ns, &iflag);
     }
 
   if ( iflag != 0 )
@@ -3392,19 +3314,19 @@ int nsp_expm(NspMatrix *A)
     }
 
   if ( A->rc_type == 'r' ) 
-    memcpy(A->R,&(work[iexph-1]),m*m*sizeof(double));
+    memcpy(A->R,&(rwork[iexph-1]),m*m*sizeof(double));
   else
-    memcpy(A->C,&(workC[iexph-1]),m*m*sizeof(doubleC));
+    memcpy(A->C,&(cwork[iexph-1]),m*m*sizeof(doubleC));
 
   FREE(ipiv);
-  FREE(work);
-  FREE(workC);
+  FREE(rwork);
+  FREE(cwork);
   return OK;
 
  err:
   FREE(ipiv);
-  FREE(work);
-  FREE(workC);
+  FREE(rwork);
+  FREE(cwork);
   return FAIL;
 }
 
@@ -3418,7 +3340,8 @@ int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B)
   int mA = A->m, nA = A->n, mB = B->m, nB = B->n; /* mA must be equal to mB */
   int mx = A->n, nx = B->n, ldB, ix, iB, j;
   int *jpvt = NULL, info, lwork, rank;
-  double *work = NULL, qwork[2], *rwork = NULL;
+  double qrwork[1], *rwork = NULL;
+  doubleC qcwork[1], *cwork = NULL;
   double rcond = DBL_EPSILON;  /* FIXME to be choosen more correctly */
 
   /* FIXME: - to merge with nsp_mat_lsq
@@ -3458,26 +3381,28 @@ int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B)
   else
     ldB = mB;
 
-  if ( !(jpvt = calloc( nA , sizeof(int))))  /* calloc because jpvt must be initialized with 0 */
+  if ( (jpvt = nsp_alloc_work_int(nA)) == NULL )
     goto err;
+  else
+    for ( j = 0 ; j < nA ; j++ ) jpvt[j] = 0;
        
   if ( A->rc_type == 'r' )
     { 
       lwork = -1;  /* query work size */
-      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, qwork, &lwork, &info);
-      lwork = (int) qwork[0];
-      if ( !(work = malloc( lwork*sizeof(double)))) goto err;
-      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, work, &lwork, &info);
+      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, qrwork, &lwork, &info);
+      lwork = (int) qrwork[0];
+      if ( (rwork = nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, rwork, &lwork, &info);
     }
   else 
     {
       lwork = -1;  /* query work size */
-      C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, &rank, (doubleC *)qwork, &lwork, rwork, &info);
-      lwork = (int) qwork[0];
-      rwork = malloc( 2*nA*sizeof(double)); 
-      work = malloc( 2*lwork*sizeof(double));
-      if ( ! (rwork && work) ) goto err;
-      C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, &rank,  (doubleC *)work, &lwork, rwork, &info);
+      C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, &rank, qcwork, &lwork, rwork, &info);
+      lwork = (int) qcwork[0].r;
+      rwork = nsp_alloc_work_doubles(2*nA); 
+      cwork = nsp_alloc_work_doubleC(lwork);
+      if ( (rwork == NULL) || (cwork==NULL) ) goto err;
+      C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, &rank, cwork, &lwork, rwork, &info);
     }
   
   if ( mx < mB )   /* free a part of B which is not needed */
@@ -3494,19 +3419,19 @@ int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B)
 	for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
 	  for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
 	    B->C[ix] = B->C[iB];
-      /* now we can free the part of B which is not used any more */
+      /* now we can free the part of B which is not used anymore */
       if (  nsp_matrix_resize(B, mx, nx) == FAIL )
 	goto err;
     }
 
-  free(jpvt); free(rwork); free(work);
+  FREE(jpvt); FREE(rwork); FREE(cwork);
   if ( rank < Min(mA,nA) )
     Sciprintf("\n warning: matrix is rank-deficient m=%d, n=%d, rank=%d \n", mA, nA, rank);
 
   return OK;
 
  err:
-  free(jpvt); free(rwork); free(work);
+  FREE(jpvt); FREE(rwork); FREE(cwork);
   return FAIL;
       
 }
@@ -3516,8 +3441,8 @@ int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond)
 {  
   int n=A->m, nrhs=B->n; 
   int *ipiv=NULL, *iwork=NULL, info;
-  double anorm, *work=NULL;
-  doubleC *workC=NULL;
+  double anorm, *rwork=NULL;
+  doubleC *cwork=NULL;
 
   /* FIXME: - when B is complex while A is real, something
    *          better than complexify A can be done
@@ -3537,49 +3462,49 @@ int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond)
 	}
     }
 
-  if ( (ipiv = nsp_alloc_int(n)) == NULL ) return FAIL;
+  if ( (ipiv = nsp_alloc_work_int(n)) == NULL ) return FAIL;
        
   if ( A->rc_type == 'r' )
     { 
-      anorm = C2F(dlange) ("1", &n, &n, A->R, &n, work, 1); /* work is used only for inf norm */
+      anorm = C2F(dlange) ("1", &n, &n, A->R, &n, rwork, 1); /* rwork is used only for inf norm */
       C2F(dgetrf) (&n, &n, A->R, &n, ipiv, &info);
       if ( info != 0 )  /* a pivot is exactly zero */
 	{
 	  *rcond = 0.0; FREE(ipiv); return OK;
 	}
-      if ( (iwork = nsp_alloc_int(n)) == NULL ) goto err;
-      if ( (work = nsp_alloc_doubles(4*n)) == NULL ) goto err;      
+      if ( (iwork = nsp_alloc_work_int(n)) == NULL ) goto err;
+      if ( (rwork = nsp_alloc_work_doubles(4*n)) == NULL ) goto err;      
 
-      C2F(dgecon) ("1", &n, A->R, &n, &anorm, rcond, work, iwork, &info, 1);
+      C2F(dgecon) ("1", &n, A->R, &n, &anorm, rcond, rwork, iwork, &info, 1);
       if ( *rcond <=  DBL_EPSILON ) /* matrix is too badly conditionned */
 	{
-	  FREE(work); FREE(iwork); FREE(ipiv); return OK;
+	  FREE(rwork); FREE(iwork); FREE(ipiv); return OK;
 	}
       C2F(dgetrs) ("N", &n, &nrhs, A->R, &n, ipiv, B->R, &n, &info, 1);
-      FREE(work); FREE(iwork); FREE(ipiv); return OK;
+      FREE(rwork); FREE(iwork); FREE(ipiv); return OK;
     }
   else
     {
-      anorm = C2F(zlange) ("1", &n, &n, A->C, &n, work, 1); /* work is used only for inf norm */
+      anorm = C2F(zlange) ("1", &n, &n, A->C, &n, rwork, 1); /* rwork is used only for inf norm */
       C2F(zgetrf) (&n, &n, A->C, &n, ipiv, &info);
       if ( info != 0 )  /* a pivot is exactly zero */
 	{
 	  *rcond = 0.0; FREE(ipiv); return OK;
 	}
-      if ( (work = nsp_alloc_doubles(2*n)) == NULL ) goto err;      
-      if ( (workC = nsp_alloc_doubleC(2*n)) == NULL ) goto err;
+      if ( (rwork = nsp_alloc_doubles(2*n)) == NULL ) goto err;      
+      if ( (cwork = nsp_alloc_doubleC(2*n)) == NULL ) goto err;
 
-      C2F(zgecon) ("1", &n, A->C, &n, &anorm, rcond, workC, work, &info, 1);
+      C2F(zgecon) ("1", &n, A->C, &n, &anorm, rcond, cwork, rwork, &info, 1);
       if ( *rcond <=  DBL_EPSILON )  /* matrix is too badly conditionned */
 	{
-	  FREE(workC); FREE(work); FREE(ipiv); return OK;
+	  FREE(cwork); FREE(rwork); FREE(ipiv); return OK;
 	}
       C2F(zgetrs) ("N", &n, &nrhs, A->C, &n, ipiv, B->C, &n, &info, 1);
-      FREE(workC); FREE(work); FREE(ipiv); return OK;
+      FREE(cwork); FREE(rwork); FREE(ipiv); return OK;
     }
 
  err:
-  FREE(workC); FREE(work); FREE(iwork); FREE(ipiv); 
+  FREE(cwork); FREE(rwork); FREE(iwork); FREE(ipiv); 
   return FAIL;
 }
 
@@ -3610,7 +3535,7 @@ int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info
       else  /* B is complex */
 	{
 	  mn = m * B->n;
-	  if ( (temp = nsp_alloc_doubles(mn)) == NULL ) return FAIL;
+	  if ( (temp = nsp_alloc_work_doubles(mn)) == NULL ) return FAIL;
 	  for ( i = 0 ; i < mn ; i++ ) temp[i] = B->C[i].r;
 	  C2F(dtrtrs) (&tri_type, "N", "N", &m, &(B->n), A->R, &m, temp, &m, info, 1,1,1);
 	  if ( *info != 0 ) { FREE(temp); return FAIL;}
@@ -3629,30 +3554,30 @@ int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info
 int nsp_mat_triangular_cond(NspMatrix *A, char tri_type, double *rcond1)
 {  
   int m = A->m, info;
-  double *work=NULL;
-  doubleC *workC=NULL;
+  double *rwork=NULL;
+  doubleC *cwork=NULL;
   int *iwork=NULL;
 
   if ( A->rc_type == 'r' )
     {
-      iwork = nsp_alloc_int(m);
-      work = nsp_alloc_doubles(3*m);
-      if ( iwork == NULL  ||  work == NULL ) goto err;
-      C2F(dtrcon) ("1", &tri_type, "N", &m, A->R, &m, rcond1, work, iwork, &info, 1, 1, 1);
-      FREE(work); FREE(iwork);
+      iwork = nsp_alloc_work_int(m);
+      rwork = nsp_alloc_work_doubles(3*m);
+      if ( iwork == NULL  ||  rwork == NULL ) goto err;
+      C2F(dtrcon) ("1", &tri_type, "N", &m, A->R, &m, rcond1, rwork, iwork, &info, 1, 1, 1);
+      FREE(rwork); FREE(iwork);
     }
   else
     {
-      work = nsp_alloc_doubles(m);
-      workC = nsp_alloc_doubleC(2*m);
-      if ( work == NULL  ||  workC == NULL ) goto err;
-      C2F(ztrcon) ("1", &tri_type, "N", &m, A->C, &m, rcond1, workC, work, &info, 1, 1, 1);
-      FREE(workC); FREE(work);
+      rwork = nsp_alloc_doubles(m);
+      cwork = nsp_alloc_doubleC(2*m);
+      if ( rwork == NULL  ||  cwork == NULL ) goto err;
+      C2F(ztrcon) ("1", &tri_type, "N", &m, A->C, &m, rcond1, cwork, rwork, &info, 1, 1, 1);
+      FREE(cwork); FREE(rwork);
     }
 
   return OK;
 
  err:
-  FREE(iwork); FREE(workC); FREE(work);
+  FREE(iwork); FREE(cwork); FREE(rwork);
   return FAIL;
 }
