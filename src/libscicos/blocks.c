@@ -171,7 +171,8 @@ int scicos_delay (scicos_args_poo)
   return 0;
 }			
 
-
+/* XXX    output a vector of constants out(i)=rpar(i) 
+ */
 
 int
 scicos_cstblk (int *flag__, int *nevprt, double *t, double *xd, double *x,
@@ -179,15 +180,13 @@ scicos_cstblk (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	       double *rpar, int *nrpar, int *ipar, int *nipar, double *y,
 	       int *ny)
 {
-  static int c__1 = 1;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     output a vector of constants out(i)=rpar(i) */
-  /*     rpar(1:nrpar) : given constants */
+  int c__1 = 1;
   C2F(dcopy) (nrpar, rpar, &c__1, y, &c__1);
   return 0;
 }			
 
+/* XXX
+ */
 
 int
 scicos_constraint (int *flag__, int *nevprt, double *t, double *res,
@@ -236,8 +235,9 @@ scicos_constraint (int *flag__, int *nevprt, double *t, double *res,
 
 
 
-
-
+/* XXXX 
+ *
+ */
 
 int
 scicos_delayv (int *flag__, int *nevprt, double *t, double *xd, double *x,
@@ -363,7 +363,7 @@ scicos_delayv (int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 
 int
-scicos_demux (int *flag__, int *nevprt, double *t, double *xd, double *x,
+scicos_demux_old (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	      int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 	      double *rpar, int *nrpar, int *ipar, int *nipar, double *uy1,
 	      int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
@@ -676,10 +676,37 @@ scicos_demux (int *flag__, int *nevprt, double *t, double *xd, double *x,
       /* L88: */
     }
   return 0;
+}	
+
+
+/* demux revisited, Copyright Enpc Jean-Philippe Chancelier */
+
+int
+scicos_demux (int *flag__, int *nevprt, double *t, double *xd, double *x,
+	      int *nx, double *z__, int *nz, double *tvec, int *ntvec,
+	      double *rpar, int *nrpar, int *ipar, int *nipar, double *uy1,
+	      int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
+	      double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+	      int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8,
+	      double *uy9, int *nuy9)
+{
+  int dim = ipar[0] - 1, offset=0;
+  memcpy(uy2,uy1+offset,(*nuy2)*sizeof(double));offset+=(*nuy2);
+  memcpy(uy3,uy1+offset,(*nuy3)*sizeof(double));offset+=(*nuy3);
+  if ( dim <= 1) return 0;
+  memcpy(uy4,uy1+offset,(*nuy4)*sizeof(double));offset+=(*nuy4);
+  if ( dim <= 2) return 0;
+  memcpy(uy5,uy1+offset,(*nuy5)*sizeof(double));offset+=(*nuy5);
+  if ( dim <= 3) return 0;
+  memcpy(uy6,uy1+offset,(*nuy6)*sizeof(double));offset+=(*nuy6);
+  if ( dim <= 4) return 0;
+  memcpy(uy7,uy1+offset,(*nuy7)*sizeof(double));offset+=(*nuy7);
+  if ( dim <= 5) return 0;
+  memcpy(uy8,uy1+offset,(*nuy8)*sizeof(double));offset+=(*nuy8);
+  if ( dim <= 6) return 0;
+  memcpy(uy9,uy1+offset,(*nuy9)*sizeof(double));
+  return 0;
 }			
-
-
-
 
 
 int
@@ -688,50 +715,18 @@ scicos_diffblk (int *flag__, int *nevprt, double *t, double *res, double *xd,
 		int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar,
 		double *u, int *nu, double *y, int *ny)
 {
-
-  int i__1;
-  int i__;
-
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-
-
-
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  --res;
+  int i;
   if (*flag__ == 0)
     {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  res[i__] = x[i__] - u[i__];
-	  /* L10: */
-	}
+      for (i = 0; i < *nu; ++i)  res[i] = x[i] - u[i];
     }
   else if (*flag__ == 1)
     {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  y[i__] = xd[i__];
-	  /* L11: */
-	}
+      memcpy(y,xd,(*nu)*sizeof(double));
     }
   else if (*flag__ == 6 || *flag__ == 7)
     {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  x[i__] = u[i__];
-	  /* L12: */
-	}
+      memcpy(x,u,(*nu)*sizeof(double));
     }
   return 0;
 }			
@@ -752,10 +747,8 @@ int scicos_dlradp (scicos_args_poo)
   /*     Copyright INRIA */
   /*     Scicos block simulator */
   /*     SISO, strictly proper adapted transfer function */
-
   /*     u(1)    : main input */
   /*     u(2)    : modes adaptation input */
-
   /*     m = ipar(1) : degree of numerator */
   /*     n = ipar(2) : degree of denominator n>m */
   /*     npt = ipar(3) : number of mesh points */
@@ -833,19 +826,17 @@ int scicos_dlradp (scicos_args_poo)
 }			
 
 
+/* Ouputs delayed input */
+
 int scicos_dollar (scicos_args_poo)
 {
-  int j;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     Ouputs delayed input */
   if (*flag__ == 1 || *flag__ == 6 || *flag__ == 4)
     {
-      for (j = 0 ; j < *nu ; ++j)  y[j] = z__[j];
+      memcpy(y,z__,(*nu)*sizeof(double));
     }
   else if (*flag__ == 2)
     {
-      for (j = 0 ; j < *nu ; ++j)  z__[j] = u[j];
+      memcpy(z__,u,(*nu)*sizeof(double));
     }
   return 0;
 }			
@@ -1484,48 +1475,31 @@ int scicos_gensqr (scicos_args_poo)
   return 0;
 }			
 
+/*     Notify simulation to stop  when called 
+ *     ipar(1) : stop reference 
+ */
 
 
 int scicos_hltblk (scicos_args_poo)
 {
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     Notify simulation to stop  when called */
-  /*     ipar(1) : stop reference */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
   if (*flag__ == 2)
     {
       C2F(coshlt).halt = 1;
-      if (*nipar > 0)
-	{
-	  z__[1] = (double) ipar[1];
-	}
-      else
-	{
-	  z__[1] = 0.;
-	}
+      z__[0] =  (*nipar > 0) ? (double) ipar[0] : 0.0;
     }
   return 0;
 }			
 
-
+/* 
+ * if-then-else block
+ * if event input exits from then or else clock ouputs based 
+ * on the sign of the unique input (if input>0 then  else )
+ */
 
 int
 scicos_ifthel (int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar,
 	       int *ipar, int *nipar, double *u, int *nu)
 {
-  /*     Scicos block simulator */
-  /*     if-then-else block */
-  /*     if event input exits from then or else clock ouputs based */
-  /*     on the sign of the unique input (if input>0 then  else ) */
-  /*     Copyright INRIA */
   --u;
   --ipar;
   --rpar; 
@@ -1548,49 +1522,35 @@ scicos_ifthel (int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar,
   return 0;
 }			
 
+/*     Integrator */
 
 int
 scicos_integr (scicos_args_poo)
 {
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     Integrator */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
   if (*flag__ == 1 || *flag__ == 6)
     {
-      y[1] = x[1];
+      y[0] = x[0];
     }
   else if (*flag__ == 0)
     {
-      xd[1] = u[1];
+      xd[0] = u[0];
     }
   return 0;
 }			
 
 
-
+/*     y=f(t) for f a tabulated function from R to R^ny 
+ *     ipar(1)             : np number of mesh points 
+ *     rpar(1:ny+1,1:np) : matrix of mesh point coordinates 
+ *                       first row contains t coordinate mesh points 
+ *                       next rows contains y coordinates mesh points 
+ *                       (one row for each output) 
+ */
 
 int
 scicos_intplt (scicos_args_poo)
 {
   int np;
-
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     y=f(t) for f a tabulated function from R to R^ny */
-
-  /*     ipar(1)             : np number of mesh points */
-  /*     rpar(1:ny+1,1:np) : matrix of mesh point coordinates */
-  /*                       first row contains t coordinate mesh points */
-  /*                       next rows contains y coordinates mesh points */
-  /*                       (one row for each output) */
   --y;
   --u;
   --ipar;
@@ -1600,7 +1560,8 @@ scicos_intplt (scicos_args_poo)
   --x;
   --xd;
   np = ipar[1];
-  Scierror("Error: intp to be done \n");
+  Scierror("Error: intplt block is to be done \n");
+  *flag__ = -1;
   /* 
      scicos_intp (t, &rpar[1], &rpar[np + 1], ny, &np, &y[1]);
   */
@@ -1631,7 +1592,6 @@ int scicos_intpol (scicos_args_poo)
   /* scicos_intp (&u[1], &rpar[1], &rpar[np + 1], ny, &np, &y[1]); */
   return 0;
 }			
-
 
 
 int scicos_intrp2(int *flag__, int *nevprt, double *t, double *xd, double *x,
@@ -1695,50 +1655,39 @@ int scicos_intrp2(int *flag__, int *nevprt, double *t, double *xd, double *x,
 }			
 
 
+/*     ipar(1) : the number of input */
 
 int scicos_intrpl (scicos_args_poo) 
 {
-  int i__1;
-  int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     ipar(1) : the number of input */
+  int i,i1=(*nrpar / 2);
   --ipar;
   --rpar;
   --tvec;
   --z__;
   --x;
   --xd;
-  i__1 = *nrpar / 2;
-  for (i__ = 2; i__ <= i__1; ++i__)
+  for (i = 2; i <= i1 ; ++i)
     {
-      if (*u <= rpar[i__])
+      if (*u <= rpar[i])
 	{
 	  goto L200;
 	}
-      /* L100: */
     }
-  i__ = *nrpar / 2;
+  i = *nrpar / 2;
  L200:
-  *y =
-    rpar[*nrpar / 2 + i__ - 1] + (rpar[*nrpar / 2 + i__] -
-				  rpar[*nrpar / 2 + i__ - 1]) / (rpar[i__] -
-								 rpar[i__ -
-								      1]) *
-    (*u - rpar[i__ - 1]);
+  *y =  rpar[i1 + i - 1] + 
+    (rpar[i1 + i] - rpar[i1 + i - 1]) / (rpar[i] - rpar[i - 1]) *
+    (*u - rpar[i - 1]);
   return 0;
 }			
 
-
+/*     Outputs the inverse of the input */
 
 int scicos_invblk (scicos_args_poo)
 {
-  int i__1;
-  int i__;
+  int i;
   double ww;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     Outputs the inverse of the input */
+
   --y;
   --u;
   --ipar;
@@ -1749,34 +1698,27 @@ int scicos_invblk (scicos_args_poo)
   --xd;
   if (*flag__ == 6)
     {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
+      for (i = 1; i <= *nu ; ++i)
 	{
-	  ww = u[i__];
-	  if (ww != 0.)
-	    {
-	      y[i__] = 1. / ww;
-	    }
-	  /* L10: */
+	  ww = u[i];
+	  if (ww != 0.)  y[i] = 1. / ww;
 	}
     }
 
   if (*flag__ == 1)
     {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
+      for (i = 1; i <= *nu ; ++i)
 	{
-	  ww = u[i__];
+	  ww = u[i];
 	  if (ww != 0.)
 	    {
-	      y[i__] = 1. / ww;
+	      y[i] = 1. / ww;
 	    }
 	  else
 	    {
 	      *flag__ = -2;
 	      return 0;
 	    }
-	  /* L15: */
 	}
     }
   return 0;
@@ -1785,29 +1727,11 @@ int scicos_invblk (scicos_args_poo)
 
 int scicos_iocopy (scicos_args_poo)
 {
-  int i__1;
-  int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
   if (C2F(dbcos).idb == 1)
     {
       sciprint("ifthel: t=%10.3f, flag=%d\n",*t,*flag__);
     }
-
-  i__1 = *nu;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      y[i__] = u[i__];
-      /* L15: */
-    }
+  memcpy(y,u,*nu*sizeof(double));
   return 0;
 }			
 
@@ -2852,23 +2776,14 @@ int scicos_powblk (scicos_args_poo)
 }			
 
 
+/*     Gives quantized signal by ceiling method */
+/*     rpar(i) quantization step used for i input */
+
 int scicos_qzcel (scicos_args_poo) 
 {
-
-  int i__1;
   double d__1;
-
-  /* Builtin functions */
   double d_nint (double *);
   int i__;
-
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-
-  /*     Gives quantized signal by ceiling method */
-  /*     rpar(i) quantization step used for i input */
-
-
   --y;
   --u;
   --ipar;
@@ -2877,34 +2792,22 @@ int scicos_qzcel (scicos_args_poo)
   --z__;
   --x;
   --xd;
-  i__1 = *nu;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  for (i__ = 1; i__ <= *nu ; ++i__)
     {
       d__1 = u[i__] / rpar[i__] - .5;
       y[i__] = rpar[i__] * d_nint (&d__1);
-      /* L15: */
     }
   return 0;
 }			
 
+/*     Gives quantized signal by floor method */
+/*     rpar(i) quantization step used for i input */
 
 int scicos_qzflr (scicos_args_poo) 
 {
-
-  int i__1;
   double d__1;
-
-  /* Builtin functions */
   double d_nint (double *);
   int i__;
-
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-
-  /*     Gives quantized signal by floor method */
-  /*     rpar(i) quantization step used for i input */
-
-
   --y;
   --u;
   --ipar;
@@ -2913,35 +2816,22 @@ int scicos_qzflr (scicos_args_poo)
   --z__;
   --x;
   --xd;
-  i__1 = *nu;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  for (i__ = 1; i__ <= *nu ; ++i__)
     {
       d__1 = u[i__] / rpar[i__] + .5;
       y[i__] = rpar[i__] * d_nint (&d__1);
-      /* L15: */
     }
   return 0;
 }			
 
-
+/*     Gives quantized signal by round method */
+/*     rpar(i) quantization step used for i input */
 
 int scicos_qzrnd (scicos_args_poo)
 {
-
-  int i__1;
   double d__1;
-
-  /* Builtin functions */
   double d_nint (double *);
   int i__;
-
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-
-  /*     Gives quantized signal by round method */
-  /*     rpar(i) quantization step used for i input */
-
-
   --y;
   --u;
   --ipar;
@@ -2950,8 +2840,7 @@ int scicos_qzrnd (scicos_args_poo)
   --z__;
   --x;
   --xd;
-  i__1 = *nu;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  for (i__ = 1; i__ <= *nu ; ++i__)
     {
       if (u[i__] < 0.)
 	{
@@ -2963,23 +2852,17 @@ int scicos_qzrnd (scicos_args_poo)
 	  d__1 = u[i__] / rpar[i__] - .5;
 	  y[i__] = rpar[i__] * (d_nint (&d__1) + .5);
 	}
-      /* L15: */
     }
   return 0;
 }			
 
 
-
+/*     Gives quantized signal by truncation method */
+/*     rpar(i) quantization step used for i input */
 
 int scicos_qztrn (scicos_args_poo)
 {
-
-  int i__1;
   int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     Gives quantized signal by truncation method */
-  /*     rpar(i) quantization step used for i input */
   --y;
   --u;
   --ipar;
@@ -2988,8 +2871,7 @@ int scicos_qztrn (scicos_args_poo)
   --z__;
   --x;
   --xd;
-  i__1 = *nu;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  for (i__ = 1; i__ <= *nu ; ++i__)
     {
       if (u[i__] < 0.)
 	{
@@ -3000,7 +2882,6 @@ int scicos_qztrn (scicos_args_poo)
 	  y[i__] = rpar[i__] * anint(u[i__] / rpar[i__] - .5);
 
 	}
-      /* L15: */
     }
   return 0;
 }			
@@ -3037,7 +2918,6 @@ int scicos_rndblk (scicos_args_poo)
       for (i__ = 1; i__ <= i__1; ++i__)
 	{
 	  y[i__] = rpar[i__] + rpar[*ny + i__] * z__[i__ + 1];
-	  /* L10: */
 	}
     }
   else if (*flag__ == 2 || *flag__ == 4)
@@ -3068,7 +2948,6 @@ int scicos_rndblk (scicos_args_poo)
 		  goto L75;
 		}
 	      z__[i__ + 1] = sr * sqrt (log (t1) * -2. / t1);
-	      /* L30: */
 	    }
 	}
       z__[1] = (double) iy;
@@ -3077,35 +2956,13 @@ int scicos_rndblk (scicos_args_poo)
   return 0;
 }			
 
-
+/*     returns sample and hold  of the input */
 
 int scicos_samphold (scicos_args_poo) 
 {
-
-  int i__1;
-  int i__;
-
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     returns sample and hold  of the input */
-
-
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
   if (*flag__ == 1)
     {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  y[i__] = u[i__];
-	  /* L15: */
-	}
+      memcpy(y,u,*nu*sizeof(double));
     }
   return 0;
 }			
@@ -3113,31 +2970,21 @@ int scicos_samphold (scicos_args_poo)
 
 int scicos_sawtth (scicos_args_poo)
 {
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
   if (*flag__ == 1 && *nevprt == 0)
     {
-      y[1] = *t - z__[1];
+      y[0] = *t - z__[0];
     }
   else if (*flag__ == 1 && *nevprt == 1)
     {
-      y[1] = 0.;
+      y[0] = 0.;
     }
   else if (*flag__ == 2 && *nevprt == 1)
     {
-      z__[1] = *t;
+      z__[0] = *t;
     }
   else if (*flag__ == 4)
     {
-      z__[1] = 0.;
+      z__[0] = 0.;
     }
   return 0;
 }			
@@ -4303,11 +4150,6 @@ void  readau(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, 
        ipar[9]   = first : first record to read
        ipar[10:9+lfil] = character codes for file name
      */
-                                                           
-                                   
-                                       
-                                  
-
 {
   char str[100],type[4];
   /* int job = 1,three=3; */
@@ -5111,7 +4953,6 @@ int scicos_recterase (BCG *Xgc,const double r[])
   return 0;
 }	
 
-
 int scicos_affdraw (BCG *Xgc,const int fontd[],const int form[],const double *val,const double r[])
 {
   int fontid[2],rect[4],flag=0,pixmode;
@@ -5182,7 +5023,6 @@ void blocks_bidon(scicos_args_poo)
 }
 
 
-
 /*------------------------------------------------
  *     Scicos block simulator 
  *     input to output Gain
@@ -5226,10 +5066,9 @@ void blocks_dband(scicos_args_poo)
     }
 }
 
-
-/*------------------------------------------------
- *     Scicos block simulator 
- *------------------------------------------------*/
+/*
+ *
+ */
 
 void blocks_cosblk(scicos_args_poo)
 {
