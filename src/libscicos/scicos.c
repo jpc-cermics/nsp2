@@ -424,32 +424,23 @@ void idoit(double *told)
 
 void cossim(double *told)
 {
-  /* Initialized data */
   static int otimer = 0;
-  /* System generated locals */
   int i3;
-  
-  /* Local variables */
-  static int flag__, jdum;
-  static int iopt;
-  
-  static int ierr1;
-  static int j, k;
-  static double t;
-  static int itask;
-  static int jj, jt;
-  static int istate, ntimer;
-
-  static double rhotmp;
-  static int inxsci;
-
-  static int kpo, kev;
-  
+  int flag__, jdum=0;
+  int iopt;
+  int ierr1;
+  int j, k;
+  double t;
+  int itask;
+  int jj, jt;
+  int istate, ntimer;
+  double rhotmp;
+  int inxsci;
+  int kpo, kev;
   double *rhot;
   int *ihot,niwp,nrwp;
   int *jroot,*zcros;
-
-  double *W;
+  double *W=NULL;
 
   nrwp = (*neq) * Max(16,*neq + 9) + 22 + Scicos->sim.ng * 3;
   /* +1 below is so that rhot starts from 1; one wasted location */
@@ -487,7 +478,6 @@ void cossim(double *told)
     FREE(zcros);
     return;
   }
-  
   
   /* Function Body */
   
@@ -605,12 +595,7 @@ void cossim(double *told)
 	  }
 	}
 	
-	
-	if (hot){
-	  istate=2;
-	}else{
-	  istate = 1;
-	}
+	istate = (hot) ? 2 : 1 ;
 	if (C2F(cosdebug).cosd >= 1) {
 	  sciprint("****lsodar from: %f to %f hot= %d  \n", *told,t,hot);
 	}

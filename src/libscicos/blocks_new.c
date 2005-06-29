@@ -1653,11 +1653,11 @@ void cscope(scicos_block *block,int flag)
       Xgc = scicos_set_win(wid,&cur);
       Xgc->graphic_engine->xset_recording(Xgc,TRUE);
       if (k > 0) {
- 	scicos_clip(Xgc,TRUE);
+	frame_clip_on(Xgc);
 	for (i__ = 0; i__ < nu; ++i__) {
 	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[csi->n + 2 + i__  *csi->n], &csi->type[i__], c__1, k);
 	}
-	scicos_clip(Xgc,FALSE);
+	frame_clip_off(Xgc);
       }
       /*     shift buffer left */
       z__[2] = z__[k + 1];
@@ -1732,11 +1732,11 @@ void cscope(scicos_block *block,int flag)
 	return ;
       }
       Xgc = scicos_set_win(wid,&cur);
-      scicos_clip(Xgc,TRUE);
+      frame_clip_on(Xgc);
       for (i__ = 0; i__ < nu; ++i__) {
 	Xgc->graphic_engine->scale->drawpolylines(Xgc, &z__[2], &z__[csi->n + 2 + i__ * csi->n],&csi->type[i__], c__1, k);
       }
-      scicos_clip(Xgc,FALSE);
+      frame_clip_off(Xgc);
       scicos_free(*block->work);
     }
 }
@@ -1866,14 +1866,14 @@ void cmscope(scicos_block *block,int flag)
 	frect[2] = 1.;
 	frect[3] = 1. / nwid;
 	Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	scicos_clip(Xgc,TRUE);
+	frame_clip_on(Xgc);
 	/*     loop on input port elements */
 	i__2 = ipar[kwid + 7];
 	for (i__ = 1; i__ <= i__2; ++i__) {
 	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + it * n], &ipar[ilt + it], c__1, k);
 	  ++it;
 	}
-	scicos_clip(Xgc,FALSE);
+	frame_clip_off(Xgc);
       }
     }
     /*     shift buffer left */
@@ -1996,7 +1996,7 @@ void cmscope(scicos_block *block,int flag)
       frect[2] = 1.;
       frect[3] = 1. / nwid;
       Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-      scicos_clip(Xgc,TRUE);
+      frame_clip_on(Xgc);
       /*     loop on input port elements */
       i__2 = ipar[kwid + 7];
       for (i__ = 1; i__ <= i__2; ++i__) {
@@ -2004,7 +2004,7 @@ void cmscope(scicos_block *block,int flag)
 	Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + it * n],&ipar[ilt + it], c__1, i__3);
 	++it;
       }
-      scicos_clip(Xgc,FALSE);
+      frame_clip_off(Xgc);
     }
     scicos_free(*block->work);
   }

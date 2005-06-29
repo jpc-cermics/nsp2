@@ -85,7 +85,7 @@ int scicos_tanblk (scicos_args_poo);
 int scicos_tcsltj (scicos_args_poo) ;
 int scicos_timblk (scicos_args_poo);
 int scicos_trash (scicos_args_poo);
-int  scicos_zcross (scicos_args_poo) ;
+int scicos_zcross (scicos_args_poo) ;
 int scicos_bound (scicos_args_poo);
 int scicos_affich (scicos_args_poo);
 
@@ -2277,7 +2277,7 @@ int scicos_mscope (scicos_args_poo)
 	      frect[2] = 1.;
 	      frect[3] = 1. / nwid;
 	      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	      scicos_clip(Xgc,TRUE);
+	      frame_clip_on(Xgc);
 	      /*     loop on input port elements */
 	      i__2 = ipar[kwid + 7];
 	      for (i__ = 1; i__ <= i__2; ++i__)
@@ -2286,8 +2286,7 @@ int scicos_mscope (scicos_args_poo)
 		  ++it;
 		  /* L10: */
 		}
-	      scicos_clip(Xgc,c__0);
-	      /* L11: */
+	      frame_clip_off(Xgc);
 	    }
 	}
       /*     shift buffer left */
@@ -2415,7 +2414,7 @@ int scicos_mscope (scicos_args_poo)
 	  frect[2] = 1.;
 	  frect[3] = 1. / nwid;
 	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	  scicos_clip(Xgc,TRUE);
+	  frame_clip_on(Xgc);
 	  /*     loop on input port elements */
 	  i__2 = ipar[kwid + 7];
 	  for (i__ = 1; i__ <= i__2; ++i__)
@@ -2423,10 +2422,8 @@ int scicos_mscope (scicos_args_poo)
 	      i__3 = k - 1;
 	      Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + it * n],&ipar[ilt + it], c__1, i__3);
 	      ++it;
-	      /* L30: */
 	    }
-	  scicos_clip(Xgc,FALSE);
-	  /* L35: */
+	  frame_clip_off(Xgc);
 	}
       Xgc->graphic_engine->xset_recording(Xgc,record);
     }
@@ -3269,14 +3266,14 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
       /*     &        0,0,v,dv,dv,dv,dv) */
       if (k > 0)
 	{
-	  scicos_clip(Xgc,TRUE);
+	  frame_clip_on(Xgc);
 	  i__1 = *nu;
 	  for (i__ = 1; i__ <= i__1; ++i__)
 	    {
 	      /*               if(ipar(3+i).ge.0.or.flag.eq.1) then */
 	      Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + (i__ - 1) * n],&ipar[i__ + 3], c__1,k);
 	    }
-	  scicos_clip(Xgc,FALSE);
+	  frame_clip_off(Xgc);
 	}
       /*     shift buffer left */
       z__[2] = z__[k + 1];
@@ -3366,15 +3363,13 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	  return 0;
 	}
       Xgc = scicos_set_win(wid,&cur);
-      /*         call dr1('xset'//char(0),'use color'//char(0),ipar(2),0,0, */
-      /*     &        0,0,v,dv,dv,dv,dv) */
-      scicos_clip(Xgc,TRUE);
+      frame_clip_on(Xgc);
       i__1 = *nu;
       for (i__ = 1; i__ <= i__1; ++i__)
 	{
 	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + (i__ - 1) * n],&ipar[i__ + 3], c__1,k);
 	}
-      scicos_clip(Xgc,FALSE);
+      frame_clip_off(Xgc);
     }
   return 0;
 }			
