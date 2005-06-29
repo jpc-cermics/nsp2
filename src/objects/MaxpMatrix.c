@@ -338,6 +338,11 @@ void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,int header )
 	{
 	  Sciprintf("%s=%s",NSP_OBJECT(Mat)->name,(Mat->mn==0 ) ? " m2mp([])\n" : "" );
 	}
+      else 
+	{
+	  Sciprintf("%s",(Mat->mn==0 ) ? " m2mp([])\n" : "" );
+	}
+
     }
   else 
     {

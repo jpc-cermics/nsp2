@@ -334,6 +334,10 @@ void nsp_smatrix_print(const NspSMatrix *Mat, int indent)
 	{
 	  Sciprintf("%s=%s",NSP_OBJECT(Mat)->name,(Mat->mn==0 ) ? " m2s([])\n" : "" );
 	}
+      else 
+	{
+	  Sciprintf("%s",(Mat->mn==0 ) ? " m2s([])\n" : "" );
+	}
     }
   else 
     {

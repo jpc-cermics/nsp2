@@ -529,6 +529,10 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,int header )
 	{
 	  Sciprintf("%s=%s",NSP_OBJECT(Mat)->name,(Mat->mn==0 ) ? " []\n" : "" );
 	}
+      else 
+	{
+	  Sciprintf("%s",(Mat->mn==0 ) ? " []\n" : "" );
+	}
     }
   else 
     {
