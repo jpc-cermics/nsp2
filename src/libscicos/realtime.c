@@ -55,6 +55,7 @@ int C2F(realtime)(t)
   double simulation_diff;
   long long delay;
 
+  return 0; /* XXXXXX */
   if (simulation_doinit) {
     simulation_doinit = 0;
     simulation_start = *t;

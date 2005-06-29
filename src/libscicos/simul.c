@@ -31,6 +31,9 @@
 
 static void scicos_clear_state(scicos_state *scst);
 static void scicos_clear_sim(scicos_sim *scsim);
+static void scicos_clear_blocks(scicos_block *Blocks,int nblk);
+static int scicos_fill_state(NspHash *State,scicos_state *scst);
+static int scicos_fill_sim(NspHash *Sim,scicos_sim *scsim);
 
 /*
  * fill a scicos_state structure 
@@ -38,7 +41,7 @@ static void scicos_clear_sim(scicos_sim *scsim);
  * 
  */
 
-int scicos_fill_state(NspHash *State,scicos_state *scst)
+static int scicos_fill_state(NspHash *State,scicos_state *scst)
 {
   int i;
   void **loc= (void **) scst;
@@ -49,6 +52,7 @@ int scicos_fill_state(NspHash *State,scicos_state *scst)
       Scierror("Error: internal error in scicos_fill_state !!\n");
       return FAIL;
     }
+  scst->State = State;
   for ( i = 0 ; i < nstate ; i++ ) 
     {
       NspObject *obj;
@@ -80,12 +84,6 @@ int scicos_fill_state(NspHash *State,scicos_state *scst)
   return OK;
 }  
 
-int scicos_fill_state_test(NspHash *State)
-{
-  scicos_state scst;
-  return scicos_fill_state(State,&scst);
-}
-
 /*
  * clear extra allocated variables and 
  * restore the data to their original state 
@@ -96,9 +94,17 @@ static void scicos_clear_state(scicos_state *scst)
   FREE(scst->iwa);
   Mat2double((NspMatrix *) scst->State_elts[4]);
   Mat2double((NspMatrix *) scst->State_elts[5]);
-  
 }
 
+/* get a copy of the state NspHash *State 
+ * variable (this is useful during simulation) 
+ * to debug. 
+ */
+
+NspHash *scicos_get_state_copy(scicos_state *scst)
+{
+  return nsp_hash_copy((NspHash *) scst->State);
+}
 
 /*
  * fill a scicos_sim structure 
@@ -107,9 +113,7 @@ static void scicos_clear_state(scicos_state *scst)
  * 
  */
 
-
-
-int scicos_fill_sim(NspHash *Sim,scicos_sim *scsim)
+static int scicos_fill_sim(NspHash *Sim,scicos_sim *scsim)
 {
   const int convert[]={1,2,3,4,5,6,7,8,10,11,12,13,14,16,17,18,19,20,21,22,23,24,25,26,27,29,-1};
   const int nsim = 30;
@@ -140,6 +144,8 @@ int scicos_fill_sim(NspHash *Sim,scicos_sim *scsim)
       if ( loc+i != (void *)&scsim->funs && loc+i != (void *) &scsim->labels )
 	loc[i]= (void *)  ((NspMatrix *) scsim->Sim_elts[i])->R;      
     }
+
+  scsim->Sim = Sim;
   /* convert to int in place */
   i=0;
   while (1)
@@ -245,11 +251,10 @@ int scicos_fill_sim(NspHash *Sim,scicos_sim *scsim)
   return FAIL;
 }  
 
-int scicos_fill_sim_test(NspHash *Sim)
-{
-  scicos_sim scsim;
-  return scicos_fill_sim(Sim,&scsim);
-}
+/*
+ * clear extra allocated variables and 
+ * restore the data to their original state 
+ */
 
 static void scicos_clear_sim(scicos_sim *scsim)
 {
@@ -269,11 +274,27 @@ static void scicos_clear_sim(scicos_sim *scsim)
 }  
 
 
+/* get a copy of the state NspHash *State 
+ * variable (this is useful during simulation) 
+ * to debug. 
+ */
+
+NspHash *scicos_get_sim_copy(scicos_sim *scsim)
+{
+  return  nsp_hash_copy((NspHash *) scsim->Sim);
+}
+
+
 extern void  scicos_sciblk();
 extern void  sciblk2();
 extern void  sciblk4();
 
-void *scicos_fill_blocks(scicos_sim *scsim,scicos_state *scst)
+/*
+ * creates and fills an array of Blocks.
+ */
+
+
+static void *scicos_fill_blocks(scicos_sim *scsim,scicos_state *scst)
 {
   int kf,in,out,mtag;
   scicos_block *Blocks; 
@@ -390,7 +411,7 @@ void *scicos_fill_blocks(scicos_sim *scsim,scicos_state *scst)
   return Blocks;
 }
 
-void scicos_clear_blocks(scicos_block *Blocks,int nblk)
+static void scicos_clear_blocks(scicos_block *Blocks,int nblk)
 {
   int kf;
   for ( kf = 0; kf < nblk; ++kf) 

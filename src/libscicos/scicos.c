@@ -65,7 +65,6 @@ extern void  scicos_sciblk();
 extern void  sciblk2();
 extern void  sciblk4();
 extern void  GetDynFunc(int, void (**) (/* ??? */));
-extern  int C2F(dcopy)();
 extern  int C2F(realtime)();
 extern  int C2F(realtimeinit)();
 extern  int C2F(stimer)();
@@ -143,7 +142,7 @@ int scicos_main( scicos_run *sr, double *t0_in, double *tf_in, double *simpar, i
 
   Scicos =sr;
 
-  C2F(cosdebug).cosd = 2;
+  C2F(cosdebug).cosd = 0;
 
   t0=t0_in;
   tf=tf_in;

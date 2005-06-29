@@ -1573,18 +1573,9 @@ void bouncexy(scicos_block *block,int flag)
 } 
 
 
-/*     Copyright INRIA */
-/*     Scicos block simulator */
-/*     ipar(1) = win_num */
-/*     ipar(2) = 0/1 color flag */
-/*     ipar(3) = buffer size */
-/*     ipar(4:11) = line type for ith curve */
-/*     ipar(12:13) : window position */
-/*     ipar(14:15) : window dimension */
-/*     rpar(1)=dt */
-/*     rpar(2)=ymin */
-/*     rpar(3)=ymax */
-/*     rpar(4)=periode */
+/*
+ * a scope 
+ */
 
 typedef struct _cscope_ipar cscope_ipar ;
 struct _cscope_ipar {
@@ -1653,11 +1644,11 @@ void cscope(scicos_block *block,int flag)
       Xgc = scicos_set_win(wid,&cur);
       Xgc->graphic_engine->xset_recording(Xgc,TRUE);
       if (k > 0) {
-	frame_clip_on(Xgc);
+	Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
 	for (i__ = 0; i__ < nu; ++i__) {
 	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[csi->n + 2 + i__  *csi->n], &csi->type[i__], c__1, k);
 	}
-	frame_clip_off(Xgc);
+	Xgc->graphic_engine->scale->xset_unclip(Xgc);
       }
       /*     shift buffer left */
       z__[2] = z__[k + 1];
@@ -1732,11 +1723,11 @@ void cscope(scicos_block *block,int flag)
 	return ;
       }
       Xgc = scicos_set_win(wid,&cur);
-      frame_clip_on(Xgc);
+      Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
       for (i__ = 0; i__ < nu; ++i__) {
 	Xgc->graphic_engine->scale->drawpolylines(Xgc, &z__[2], &z__[csi->n + 2 + i__ * csi->n],&csi->type[i__], c__1, k);
       }
-      frame_clip_off(Xgc);
+      Xgc->graphic_engine->scale->xset_unclip(Xgc);
       scicos_free(*block->work);
     }
 }
@@ -1866,14 +1857,14 @@ void cmscope(scicos_block *block,int flag)
 	frect[2] = 1.;
 	frect[3] = 1. / nwid;
 	Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	frame_clip_on(Xgc);
+	Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
 	/*     loop on input port elements */
 	i__2 = ipar[kwid + 7];
 	for (i__ = 1; i__ <= i__2; ++i__) {
 	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + it * n], &ipar[ilt + it], c__1, k);
 	  ++it;
 	}
-	frame_clip_off(Xgc);
+	Xgc->graphic_engine->scale->xset_unclip(Xgc);
       }
     }
     /*     shift buffer left */
@@ -1996,7 +1987,7 @@ void cmscope(scicos_block *block,int flag)
       frect[2] = 1.;
       frect[3] = 1. / nwid;
       Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-      frame_clip_on(Xgc);
+      Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
       /*     loop on input port elements */
       i__2 = ipar[kwid + 7];
       for (i__ = 1; i__ <= i__2; ++i__) {
@@ -2004,7 +1995,7 @@ void cmscope(scicos_block *block,int flag)
 	Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + it * n],&ipar[ilt + it], c__1, i__3);
 	++it;
       }
-      frame_clip_off(Xgc);
+      Xgc->graphic_engine->scale->xset_unclip(Xgc);
     }
     scicos_free(*block->work);
   }

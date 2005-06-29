@@ -79,6 +79,7 @@ struct _scicos_state {
   int *pointi;
   double *outtb;
   /* extra arguments */
+  void * State; /* original hash table */
   void * State_elts[7]; /* keep track of original data */
   int nevts; 
   int nout;
@@ -124,6 +125,7 @@ struct _scicos_sim {
   nsp_string *labels;
   int *modptr;
   /* extra elements */
+  void * Sim; /* original hash table */
   void *Sim_elts[30]; /* keep track of original data */
   /* extra arguments allocated  */
   int *funflag;

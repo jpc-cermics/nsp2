@@ -7,6 +7,8 @@
 #include "nsp/blas.h" 
 #include "nsp/matutil.h" 
 #include "../librand/grand.h" /* rand_ranf() */
+#include "../system/files.h" /*  FSIZE */
+
 #include "scicos.h"
 
 struct
@@ -2277,7 +2279,7 @@ int scicos_mscope (scicos_args_poo)
 	      frect[2] = 1.;
 	      frect[3] = 1. / nwid;
 	      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	      frame_clip_on(Xgc);
+	      Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
 	      /*     loop on input port elements */
 	      i__2 = ipar[kwid + 7];
 	      for (i__ = 1; i__ <= i__2; ++i__)
@@ -2286,7 +2288,7 @@ int scicos_mscope (scicos_args_poo)
 		  ++it;
 		  /* L10: */
 		}
-	      frame_clip_off(Xgc);
+	      Xgc->graphic_engine->scale->xset_unclip(Xgc);
 	    }
 	}
       /*     shift buffer left */
@@ -2414,7 +2416,7 @@ int scicos_mscope (scicos_args_poo)
 	  frect[2] = 1.;
 	  frect[3] = 1. / nwid;
 	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	  frame_clip_on(Xgc);
+	  Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
 	  /*     loop on input port elements */
 	  i__2 = ipar[kwid + 7];
 	  for (i__ = 1; i__ <= i__2; ++i__)
@@ -2423,7 +2425,7 @@ int scicos_mscope (scicos_args_poo)
 	      Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + it * n],&ipar[ilt + it], c__1, i__3);
 	      ++it;
 	    }
-	  frame_clip_off(Xgc);
+	  Xgc->graphic_engine->scale->xset_unclip(Xgc);
 	}
       Xgc->graphic_engine->xset_recording(Xgc,record);
     }
@@ -3148,6 +3150,7 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	      int *nu)
 {
   BCG *Xgc;
+  int nax[]={2,10,2,10};
   static int c__1 = 1;
   static int c__0 = 0;
   static int c_n1 = -1;
@@ -3165,7 +3168,7 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
   double dt;
   int wid, iwd;
   double per;
-  int nax[4], iwp;
+  int iwp;
   int herited;
 
   /*     Copyright INRIA */
@@ -3174,18 +3177,13 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
   /*     ipar(2) = 0/1 color flag */
   /*     ipar(3) = buffer size */
   /*     ipar(4:11) = line type for ith curve */
-
   /*     ipar(12:13) : window position */
   /*     ipar(14:15) : window dimension */
   /*     ipar(16) : acceptance of inherited events */
-
   /*     rpar(1)=dt */
   /*     rpar(2)=ymin */
   /*     rpar(3)=ymax */
   /*     rpar(4)=periode */
-
-
-
   /*      character*(4) logf */
   --u;
   --ipar;
@@ -3266,14 +3264,14 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
       /*     &        0,0,v,dv,dv,dv,dv) */
       if (k > 0)
 	{
-	  frame_clip_on(Xgc);
+	  Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
 	  i__1 = *nu;
 	  for (i__ = 1; i__ <= i__1; ++i__)
 	    {
 	      /*               if(ipar(3+i).ge.0.or.flag.eq.1) then */
 	      Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + (i__ - 1) * n],&ipar[i__ + 3], c__1,k);
 	    }
-	  frame_clip_off(Xgc);
+	  Xgc->graphic_engine->scale->xset_unclip(Xgc);
 	}
       /*     shift buffer left */
       z__[2] = z__[k + 1];
@@ -3287,10 +3285,6 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
       if (n1 != n2)
 	{
 	  /*     clear window */
-	  nax[0] = 2;
-	  nax[1] = 10;
-	  nax[2] = 2;
-	  nax[3] = 10;
 	  Xgc->graphic_engine->clearwindow(Xgc);
 	  Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
 	  Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
@@ -3312,10 +3306,6 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
       ymin = rpar[2];
       ymax = rpar[3];
       per = rpar[4];
-      nax[0] = 2;
-      nax[1] = 10;
-      nax[2] = 2;
-      nax[3] = 10;
       n1 = (int) ((int) (*t) / per);
       if (*t <= 0.)
 	{
@@ -3363,13 +3353,13 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	  return 0;
 	}
       Xgc = scicos_set_win(wid,&cur);
-      frame_clip_on(Xgc);
+      Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
       i__1 = *nu;
       for (i__ = 1; i__ <= i__1; ++i__)
 	{
 	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + (i__ - 1) * n],&ipar[i__ + 3], c__1,k);
 	}
-      frame_clip_off(Xgc);
+      Xgc->graphic_engine->scale->xset_unclip(Xgc);
     }
   return 0;
 }			
@@ -4509,147 +4499,147 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
        ipar[10:9+lfil] = character codes for file name
        ipar[10+lfil:9+lfil++ny+ievt] = reading mask
      */
-                                                           
-                                   
-                                       
-                                  
-
 {
-  char str[100],type[4];
-  /* int job = 1,three=3; */
-  FILE *fd;
-  int n, k, ievt, kmax,/* no,*//* lfil,*/ m, i, irep,/* nm,*/ ierr;
+  /* ipar code model.ipar=[length(fname);str2code(frmt);N;swap;str2code(fname)] */
+  typedef struct _writec_ipar writec_ipar ;
+  struct _writec_ipar { int len, fmt[3],ievt,n,maxvoie,swap,first,fname;};
+  writec_ipar *wi =  (writec_ipar*) ipar;
+  NspFile *F;
   double *buffer,*record;
-  int *mask;
+  int k, kmax, m, *mask, nread;
   long offset;
-  
 
-  --ipar;
   --z;
-  fd=(FILE *)(long)z[3];
+  F=(NspFile *)(long)z[3];
   buffer = (z+4);
-  mask = ipar+11+ipar[1]-ipar[5];
+  
+  /* pointer to the mask start position */
+  mask = &wi->fname  + wi->len ;
     
   /*
-    k    : record counter within the buffer
-    kmax :  number of records in the buffer
-  */
+   *    k    : record counter within the buffer
+   *    kmax :  number of records in the buffer
+   */
 
-  if (*flag==1) {
-    n    = ipar[6];
-    ievt = ipar[5];
-    k    = (int)z[1];
-    /* copy current record to output */
-    record=buffer+(k-1)*ipar[7]-1;
-
-    for (i=0;i<outsz[0];i++)
-      *(outptr[0]+i)=record[mask[ievt+i]];
-
-    if (*nevprt>0) {
-      /*     discrete state */
-      kmax = (int)z[2];
-      if (k>=kmax&&kmax==n) {
-	/*     read a new buffer */
-	m=ipar[6]*ipar[7];
-	/* F2C(cvstr)(&three,&(ipar[2]),type,&job, strlen(type)); */
-	for (i=2;i>=0;i--)
-	  if (type[i]!=' ') { type[i+1]='\0';break;}
-	ierr=0;
-	/* XXXXXXXX mget2(fd,ipar[8],buffer,m,type,&ierr);*/
-	ierr=1;
-	if (ierr>0) {
-	  sciprint("Read error!\n");
-	  fclose(fd);
-	  z[3] = 0.0;
-	  *flag = -1;
-	  return;
+  if (*flag==1) 
+    {
+      char type[4];
+      int i;
+      /* get the type from its ascii code  */
+      for ( i=0; i < 3; i++) type[i]= wi->fmt[i];
+      for ( i=2 ; i >= 0 ; i--) if (type[i]==' ') type[i]='\0';
+      /* value of k */
+      k    = (int)z[1];
+      /* copy current record to output */
+      record=buffer+(k-1)*wi->maxvoie-1;
+      for (i=0;i<outsz[0];i++)
+	*(outptr[0]+i)=record[mask[wi->ievt+i]];
+      if (*nevprt>0) {
+	/*     discrete state */
+	kmax = (int)z[2];
+	if ( k >= kmax && kmax == wi->n) {
+	  /*     read a new buffer */
+	  m=wi->n*wi->maxvoie;
+	  if ( nsp_mget(F,buffer,m,type,&nread) == FAIL) 
+	    {
+	      Scierror("Error: in readc, read error during fseek\n");
+	      *flag = -1;
+	      nsp_file_close(F);
+	      nsp_file_destroy(F);
+	      z[3] = 0.0;
+	      return;
+	    }
+	  /* A faire si moins a lire  
+	     else if (ierr<0) {
+	    kmax=-(ierr+1)/wi->maxvoie;
+	    }
+	  */
+	  kmax=wi->n;
+	  z[1] = 1.0;
+	  z[2] = kmax;
 	}
-	else if (ierr<0) { /* EOF reached */
-	  kmax=-(ierr+1)/ipar[7];
-	}
-	else
-	  kmax=ipar[6];
-
-	z[1] = 1.0;
-	z[2] = kmax;
+	else if (k<kmax) 
+	  z[1] = z[1]+1.0;
       }
-      else if (k<kmax) 
-	z[1] = z[1]+1.0;
     }
-  }
-  else if (*flag==3) {
-    ievt = ipar[5];
-    n    = ipar[6];
-    k    = (int)z[1];
-    kmax = (int) z[2];
-    if (k > kmax && kmax < n) {
-      if(ievt) 
-	tvec[0] = *t-1.0;
-      else
-	tvec[0] = *t*(1.0+0.0000000001);
+  else if (*flag==3) 
+    {
+      k    = (int)z[1];
+      kmax = (int) z[2];
+      if (k > kmax && kmax < wi->n) {
+	if(wi->ievt) 
+	  tvec[0] = *t-1.0;
+	else
+	  tvec[0] = *t*(1.0+0.0000000001);
+      }
+      else {
+	record=buffer+(k-1)*wi->maxvoie-1;
+	if(wi->ievt) tvec[0] = record[mask[0]];
+      }
     }
-    else {
-      record=buffer+(k-1)*ipar[7]-1;
-      if(ievt) tvec[0] = record[mask[0]];
-    }
-  }
-  else if (*flag==4) {
-    /* F2C(cvstr)(&(ipar[1]),&(ipar[10]),str,&job,strlen(str)); */
-    str[ipar[1]] = '\0';
-    fd = fopen(str,"rb");
-    if (!fd ) {
-      sciprint("Could not open the file!\n");
-      *flag = -1;
-      return;
-    }
-    z[3]=(long)fd;
-    /* skip first records */
-    if (ipar[9]>1) {
-      /* F2C(cvstr)(&three,&(ipar[2]),type,&job,strlen(type)); */
-      for (i=2;i>=0;i--)
-	if (type[i]!=' ') { type[i+1]='\0';break;}
-      offset=(ipar[9]-1)*ipar[7]*worldsize(type);
-      irep = fseek(fd,offset,0) ;
-      if ( irep != 0 ) 
+  else if (*flag==4) 
+    {
+      char type[4];
+      char str[FSIZE];
+      int i;
+      /* get the file name from its ascii code  */
+      for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
+      str[wi->len]='\0';
+      sciprint("Trying to open [%s]\n",str);
+      if (( F= nsp_file_open(str,"rb",FALSE,wi->swap)) == NULL) 
 	{
-	  sciprint("Read error\r\n");
+	  Scierror("Error: in writec, could not open the file %s !\n",str);
+	  *flag = -3;
+	  return;
+	}
+      z[3]=(long)F;
+      
+      /* get the type from its ascii code  */
+      for ( i=0; i < 3; i++) type[i]= wi->fmt[i];
+      for ( i=2 ; i >= 0 ; i--) if (type[i]==' ') type[i]='\0';
+      
+      /* skip first records */
+      if ( wi->first > 1) 
+	{
+	  offset=(wi->first -1)*wi->maxvoie*worldsize(type);
+	  if ( nsp_fseek(F,offset,"set") == FAIL) 
+	    {
+	      Scierror("Error: in readc, read error during fseek\n");
+	      *flag = -1;
+	      nsp_file_close(F);
+	      nsp_file_destroy(F);
+	      return;
+	    }
+	}
+      /* read first buffer */
+      m=wi->n*wi->maxvoie;
+      if ( nsp_mget(F,buffer,m,type,&nread) == FAIL) 
+	{
+	  Scierror("Error: in readc, read error during fseek\n");
 	  *flag = -1;
-	  fclose(fd);
+	  nsp_file_close(F);
+	  nsp_file_destroy(F);
 	  z[3] = 0.0;
 	  return;
 	}
+      /*  XXXXX voir ce qui se passe quand nread < m 
+	  else if (ierr<0) { 
+	  kmax=-(ierr+1)/wi->maxvoie;
+	  }
+      */
+      kmax=wi->n;
+      z[1] = 1.0;
+      z[2] = kmax;
     }
-    /* read first buffer */
-    m=ipar[6]*ipar[7];
-    /* F2C(cvstr)(&three,&(ipar[2]),type,&job,strlen(type));*/
-    for (i=2;i>=0;i--)
-      if (type[i]!=' ') { type[i+1]='\0';break;}
-    /* XXXXXXXX mget2(fd,ipar[8],buffer,m,type,&ierr); */
-    ierr=1;
-    if (ierr>0) {
-      sciprint("Read error!\n");
-      *flag = -1;
-      fclose(fd);
+  else if (*flag==5) 
+    {
+      if(z[3]==0) return;
+      nsp_file_close(F);
+      nsp_file_destroy(F);
       z[3] = 0.0;
-      return;
     }
-    else if (ierr<0) { /* EOF reached */
-      kmax=-(ierr+1)/ipar[7];
-    }
-    else
-      kmax=ipar[6];
-
-    z[1] = 1.0;
-    z[2] = kmax;
-  }
-  else if (*flag==5) {
-    if(z[3]==0) return;
-    fclose(fd);
-    z[3] = 0.0;
-  }
   return;
 }
-
 
 
 /*
@@ -4930,6 +4920,9 @@ void writeau(int *flag, int *nevprt, double *t, double *xd, double *x,
   return;
 }
 
+/*
+ * Write in binary mode 
+ */
 
 void 
 writec(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, 
@@ -4937,80 +4930,92 @@ writec(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx,
        int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, 
        int *outsz, int *nout)
 {
-  /*
-    ipar[1]   = lfil : file name length
-    ipar[2:4] = fmt  : numbers type ascii code
-    ipar[5]   = n : buffer length in number of records
-    ipar[6]   = swap
-    ipar[7:6+lfil] = character codes for file name
-  */
-  char str[100],type[4];
-  /* int job = 1,three=3; */
-  FILE *fd;
-  int n, k,/* m,*/ i, ierr;
+  /* ipar code model.ipar=[length(fname);str2code(frmt);N;swap;str2code(fname)] */
+  typedef struct _writec_ipar writec_ipar ;
+  struct _writec_ipar { int len, fmt[3],n,swap,fname;};
+  writec_ipar *wi =  (writec_ipar*) ipar;
+
+  NspFile *F;
+  int k, i;
   double *buffer,*record;
-  /*  long offset;*/
-  --ipar;
+
   --z;
-  fd=(FILE *)(long)z[2];
+  F=(NspFile *)(long)z[2];
   buffer = (z+3);
-  ierr=0;
+  k = (int) z[1];
   /*
-    k    : record counter within the buffer
-  */
+   * k    : record counter within the buffer
+   */
 
-  if (*flag==2&&*nevprt>0) { /* add a new record to the buffer */
-    n    = ipar[5];
-    k    = (int)z[1];
-    /* copy current record to output */
-    record=buffer+(k-1)*(insz[0]);
-
-    for (i=0;i<insz[0];i++)
-      record[i] = *(inptr[0]+i);
-    if (k<n) 
-      z[1] = z[1]+1.0;
-    else {/* buffer is full write it to the file */
-      /* F2C(cvstr)(&three,&(ipar[2]),type,&job,strlen(type)); */
-      for (i=2;i>=0;i--)
-	if (type[i]!=' ') { type[i+1]='\0';break;}
-      /*XXXXXXXX mput2(fd,ipar[6],buffer,ipar[5]*insz[0],type,&ierr); */
-      ierr=1;
-      if(ierr!=0) {
-	*flag = -3;
-	return;
-      }
+  if ( *flag==2 && *nevprt>0) 
+    { 
+      /* add a new record to the buffer */
+      /* copy current record to output */
+      record=buffer+(k-1)*(insz[0]);
+      for ( i=0 ; i < insz[0] ; i++) record[i] = *(inptr[0]+i);
+      if ( k < wi->n ) 
+	{
+	  z[1] = z[1]+1.0;
+	}
+      else 
+	{
+	  char type[4];
+	  int i;
+	  /* get the type from its ascii code  */
+	  for ( i=0; i < 3; i++) type[i]= wi->fmt[i];
+	  type[3]='\0';
+	  /* buffer is full write it to the file */
+	  if ( nsp_mput(F,buffer,wi->n*insz[0],type) == FAIL) 
+	    {
+	      *flag = -3;
+	      return;
+	    }
+	  z[1] = 1.0;
+	}
+    }
+  else if (*flag==4) 
+    {
+      char str[FSIZE];
+      int i;
+      /* get the file name from its ascii code  */
+      for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
+      str[wi->len]='\0';
+      sciprint("Trying to open [%s]\n",str);
+      if (( F= nsp_file_open(str,"wb",FALSE,wi->swap)) == NULL) 
+	{
+	  Scierror("Error: in writec, could not open the file %s !\n",str);
+	  *flag = -3;
+	  return;
+	}
+      z[2]=(long)F;
       z[1] = 1.0;
     }
-  }
-  else if (*flag==4) {
-    /* F2C(cvstr)(&(ipar[1]),&(ipar[7]),str,&job,strlen(str)); */
-    str[ipar[1]] = '\0';
-    fd = fopen(str,"wb");
-    if (!fd ) {
-      sciprint("Could not open the file!\n");
-      *flag = -3;
-      return;
+  else if (*flag==5) 
+    {
+      if(z[2]==0) return;
+      k    =(int) z[1];
+      if ( k >= 1 ) 
+	{
+	  /* flush rest of buffer */
+	  char type[4];
+	  int i;
+	  /* get the type from its ascii code  */
+	  for ( i=0; i < 3; i++) type[i]= wi->fmt[i];
+	  type[3]='\0';
+	  if ( nsp_mput(F,buffer,(k-1)*insz[0],type) == FAIL) 
+	    {
+	      *flag = -3;
+	      return;
+	    }
+	}
+      if (( nsp_file_close(F)) == FAIL) 
+	{
+	  *flag = -3;
+	  return;
+	}
+      nsp_file_destroy(F);
+      z[2] = 0.0;
     }
-    z[2]=(long)fd;
-    z[1] = 1.0;
-  }
-  else if (*flag==5) {
-    if(z[2]==0) return;
-    k    =(int) z[1];
-    if (k>=1) {/* flush rest of buffer */
-      /* F2C(cvstr)(&three,&(ipar[2]),type,&job,strlen(type)); */
-      for (i=2;i>=0;i--)
-	if (type[i]!=' ') { type[i+1]='\0';break;}
-      /* XXXXXXXX mput2(fd,ipar[6],buffer,(k-1)*insz[0],type,&ierr); */
-      ierr=1;
-      if(ierr!=0) {
-	*flag = -3;
-	return;
-      }
-    }
-    fclose(fd);
-    z[2] = 0.0;
-  }
   return;
 }
 
