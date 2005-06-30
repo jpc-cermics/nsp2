@@ -1180,16 +1180,18 @@ static int int_lxnthdel(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
-  return the length of a list L
-  L is not changed 
-*/
+ * returns the length of a list L
+ * L is not changed. 
+ * used to redefined size for List 
+ * the second optional argument is ignored 
+ */
 
 static int int_lxlength(Stack stack, int rhs, int opt, int lhs)
 {
   double d;
   NspObject *O;
   NspList *L;
-  CheckRhs(1,1);
+  CheckRhs(1,2);
   CheckLhs(1,1);
   if (( L = GetList(stack,1)) == NULLLIST) return RET_BUG;
   d = (double)nsp_list_length(L);
@@ -1393,6 +1395,7 @@ static OpTab List_func[]={
   {"eq_l_l",int_lxeq},
   {"ne_l_l",int_lxneq},
   {"compact",int_lxcompact},
+  {"size_l",int_lxlength}, /* redefined for list so as to always return just one number */
   {(char *) 0, NULL}
 };
 
