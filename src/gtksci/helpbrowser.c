@@ -703,7 +703,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
   char *sci = getenv("SCI");
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
-    mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S, "xmltoxml",G_DIR_SEPARATOR_S, "html",  NULL);
+    mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
   if ( window == NULL) 
     open_browser_dialog (mandir,l,help_file);
   else if ( help_file != NULL)

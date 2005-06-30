@@ -446,6 +446,33 @@ static void menu_entry_delete(menu_entry *me)
   FREE(me);
 }
 
+/*
+ * decode a name = "entry|accel|action";
+ * by returning pointers to entry accel and action 
+ * the pointers give position in a new allocated string 
+ * which is returned in entry. entry is to be freed 
+ * when entry, accel and action are no more used 
+ */
+
+static void nsp_menu_decode_name(char *name,char **entry,char **accel,char **action)
+{
+  *accel = NULL,*action=NULL;
+  if ((*entry=strdup(name))== NULL) return;
+  *accel = strchr(*entry,'|');
+  if ( *accel != NULL) 
+    {
+      **accel = '\0';
+      (*accel)++;
+      *action = strchr(*accel,'|');
+      if ( *action != NULL ) 
+	{ 
+	  **action = '\0';
+	  (*action)++;
+	  if ( *action == *accel + 1) *accel = NULL;
+	}
+    }
+}  
+
 /*----------------------------------------------------------------
  * Add a menu in a menu_item list
  *  win_num     : graphic window number or -1 for main scilab window
@@ -463,47 +490,20 @@ static void menu_entry_delete(menu_entry *me)
 static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int ne, 
 			int action_type,char *fname)
 {  
+  char *e_entry,*e_accel,*e_action,*action;
   int i;
-  char *entry=NULL;
   /* here we must find the menu_entry associated to win_num */
   menu_entry *me1=NULL,*me2,*top,*subs=NULL;
   /* first build the sub_menus */
   for (i=0 ; i < ne ;i++) 
     {
-      char *accel;
-      entry=strdup(entries[i]);
-      accel = strchr(entry,'|');
-      if (accel != NULL) 
-	{
-	  char * action =  strchr(accel+1,'|');
-	  *accel = '\0';
-	  if ( action != NULL ) 
-	    { 
-	      *action = '\0';
-	      if ( action == accel + 1 ) 
-		me2 = new_menu_entry(entry,NULL,1,i+1,NULL,winid,
-				     action_type,action+1);
-	      else 
-		me2 = new_menu_entry(entry,accel+1,1,i+1,NULL,winid,
-				     action_type,action+1);
-	      *action = '|';
-	    }
-	  else 
-	    {
-	      me2 = new_menu_entry(entry,accel+1,1,i+1,NULL,winid,
-				   action_type,fname);
-	    }
-	  *accel='|';
-	}
-      else 
-	{
-	  me2 = new_menu_entry(entry,NULL,1,i+1,NULL,winid,
-			       action_type,fname);
-	}
+      nsp_menu_decode_name(entries[i],&e_entry,&e_accel,&e_action);
+      action = (e_action != NULL) ? e_action : fname ;
+      me2 = new_menu_entry(e_entry,e_accel,1,i+1,NULL,winid, action_type,action);
       if ( me2 == NULL) 
 	{
-	  /* XXXXX clean and return */
-	  if(entry != NULL) free(entry);
+	  /* XXXX e_entry is to be always cleaned ? */
+	  if(e_entry != NULL) free(e_entry);
 	  return 1;
 	}
       if ( i != 0) me1->next = me2;
@@ -511,11 +511,13 @@ static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int n
       me1=me2;
     }
   /* now the menu entry */
-  top = new_menu_entry(name,NULL,1,1,subs,winid,action_type,fname);
+  nsp_menu_decode_name(name,&e_entry,&e_accel,&e_action);
+  action = (e_action != NULL) ? e_action : fname ;
+  top = new_menu_entry(e_entry,e_accel,1,1,subs,winid,action_type,action);
   if ( top == NULL) 
     {
       /* XXXXX clean and return */
-      if(entry != NULL) free(entry);
+      if(e_entry != NULL) free(e_entry);
       return 1;
     }
   if ( *m == NULL) *m = top ;
@@ -525,9 +527,9 @@ static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int n
       while (loc->next != NULL) loc=loc->next;
       loc->next = top;
     }
-  if(entry != NULL) free(entry);
   return 0;
 }
+
 
 /*----------------------------------------------------------------
  *Delete the menu name in menu_entry list 
@@ -769,7 +771,7 @@ static void * sci_window_initial_menu(void)
  * w and client_data are unused 
  *-----------------------------------------------------------------*/
 
-static void scig_menu_erase(int winid) 
+static void nspg_menu_erase(int winid) 
 {
   scig_erase(winid);
 }
@@ -778,7 +780,7 @@ static void scig_menu_erase(int winid)
  * To select the graphic window 
  -----------------------------------------------*/
 
-static void scig_menu_select(int winid)
+static void nspg_menu_select(int winid)
 {
   scig_sel(winid);
 }
@@ -787,7 +789,7 @@ static void scig_menu_select(int winid)
  * To delete the graphic window 
  -----------------------------------------------*/
 
-static void scig_menu_delete(int winid) 
+static void nspg_menu_delete(int winid) 
 {
   scig_delete(winid);
 }
@@ -800,7 +802,7 @@ static  char bufname[256];
 static  char printer[128];
 static  char file[256];
 
-static void scig_menu_print(int winid)
+static void nspg_menu_print(int winid)
 {
   char *p1;
   integer colored,orientation,flag=1,ok;
@@ -824,16 +826,16 @@ static void scig_menu_print(int winid)
 
 /* for use inside menus */
 
-void scig_print(int winid) 
+void nspg_print(int winid) 
 {
-  scig_menu_print( winid);
+  nspg_menu_print( winid);
 }
 
 /*-----------------------------------------------------------------
  * Replot in Postscript or Xfig style and save 
  *-----------------------------------------------------------------*/
 
-static void scig_menu_saveps(int winid) 
+static void nspg_menu_saveps(int winid) 
 {
   integer colored,orientation,flag=2,ok;
   nsp_print_dialog(&flag,printer,&colored,&orientation,file,&ok);
@@ -883,16 +885,16 @@ static void scig_menu_saveps(int winid)
 
 /* for use inside menus */
 
-static void scig_menu_export(int winid)
+static void nspg_menu_export(int winid)
 {
-  scig_menu_saveps(winid) ;
+  nspg_menu_saveps(winid) ;
 }
 
 /*-----------------------------------------------------------------*
  * Binary File save 
  *-----------------------------------------------------------------*/
 
-static void scig_menu_save(int winid) 
+static void nspg_menu_save(int winid) 
 {
   char *filename;
   int ierr=0,rep;
@@ -909,7 +911,7 @@ static void scig_menu_save(int winid)
  * Binary File load 
  *-----------------------------------------------------------------*/
 
-static void scig_menu_load(int winid) 
+static void nspg_menu_load(int winid) 
 {
   char *filename;
   int ierr=0,rep;
@@ -926,7 +928,7 @@ static void scig_menu_load(int winid)
  * file operations 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_fileops(void)
+static void nsp_menu_fileops(void)
 {
   char * file = NULL ;
   int rep,ierr;
@@ -942,7 +944,7 @@ static void sci_menu_fileops(void)
  * 2D Zoom calback 
  *-----------------------------------------------------------------*/
 
-static void scig_menu_zoom(int winid) 
+static void nspg_menu_zoom(int winid) 
 {
   integer ne=0;
   nsp_menus_set_unset(&winid,"Zoom",&ne,FALSE);
@@ -961,7 +963,7 @@ static void scig_menu_zoom(int winid)
  * Unzoom Callback 
  *-----------------------------------------------------------------*/
 
-static void scig_menu_unzoom(int winid) 
+static void nspg_menu_unzoom(int winid) 
 {
   integer ne=0;
   nsp_menus_set_unset(&winid,"UnZoom",&ne,FALSE);
@@ -974,7 +976,7 @@ static void scig_menu_unzoom(int winid)
  * 3D Rotation callback 
  *-----------------------------------------------------------------*/
 
-static void scig_menu_rot3d(int winid) 
+static void nspg_menu_rot3d(int winid) 
 {
   integer ne=0;
   nsp_menus_set_unset(&winid,"3D Rot.",&ne,FALSE);
@@ -993,7 +995,7 @@ static void scig_menu_rot3d(int winid)
  * kill scilab 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_kill(void)
+static void nsp_menu_kill(void)
 {
   sci_clear_and_exit(1);
 }
@@ -1002,7 +1004,7 @@ static void sci_menu_kill(void)
  * make a stop 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_stop (void)
+static void nsp_menu_stop (void)
 {
   /* int j = SIGINT; */ 
   Sciprintf("sci_menu_stop: to be done \n");
@@ -1011,10 +1013,23 @@ static void sci_menu_stop (void)
 }
 
 /*-----------------------------------------------------------------
+ * make a stop for scicos 
+ *-----------------------------------------------------------------*/
+
+extern struct {
+  int halt;
+} C2F(coshlt);
+
+static void nsp_menu_scicos_stop (void)
+{
+  C2F(coshlt).halt = 1;
+}
+
+/*-----------------------------------------------------------------
  * run the help 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_help(void)
+static void nsp_menu_help(void)
 {
   enqueue_nsp_command("help();");
 }
@@ -1023,40 +1038,40 @@ static void sci_menu_help(void)
  * run the demos 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_demos(void)
+static void nsp_menu_demos(void)
 {
   enqueue_nsp_command( get_sci_data_strings(2));
 }
-
 
 /*-----------------------------------------------------------------
  * Callbacks for the Graphic Window main menu 
  *-----------------------------------------------------------------*/
 
-static void sci_menu_gwplus(void)
+static void nsp_menu_gwplus(void)
 {
   MenuFixCurrentWin(lab_count+1); 
 }
 
-static void sci_menu_gwminus(void)
+static void nsp_menu_gwminus(void)
 {
   MenuFixCurrentWin(lab_count-1); 
 }
 
-static void sci_menu_gwcreate_or_select(void)
+static void nsp_menu_gwcreate_or_select(void)
 {
   scig_sel(lab_count);
 }
 
-static void sci_menu_gwraise(void)
+static void nsp_menu_gwraise(void)
 {
   scig_raise(lab_count);
 }
 
-static void sci_menu_gwdelete(void)
+static void nsp_menu_gwdelete(void)
 {
-  scig_menu_delete(lab_count);
+  nspg_menu_delete(lab_count);
 }
+
 
 /*-----------------------------------------------------------------
  * Execute predefined callbacks 
@@ -1064,31 +1079,32 @@ static void sci_menu_gwdelete(void)
 
 static int call_predefined_callbacks(char *name, int winid)
 {
-  if      (strcmp(name,"$clear")== 0)  scig_menu_erase(winid) ;
-  else if (strcmp(name,"$select")== 0) scig_menu_select(winid) ;
-  else if (strcmp(name,"$print")== 0)  scig_menu_print(winid); 
-  else if (strcmp(name,"$export")== 0) scig_menu_export(winid);
-  else if (strcmp(name,"$save")== 0)   scig_menu_save(winid);
-  else if (strcmp(name,"$load")== 0)   scig_menu_load(winid);
-  else if (strcmp(name,"$close")== 0)  scig_menu_delete(winid);
-  else if (strcmp(name,"$zoom")== 0)   scig_menu_zoom(winid);
-  else if (strcmp(name,"$unzoom")== 0) scig_menu_unzoom(winid);
-  else if (strcmp(name,"$rot3d")== 0)  scig_menu_rot3d(winid);
-  else if (strcmp(name,"$help")== 0)   sci_menu_help();
-  else if (strcmp(name,"$stop")== 0)   sci_menu_stop();
-  else if (strcmp(name,"$kill")== 0)   sci_menu_kill();
-  else if (strcmp(name,"$demos")== 0)  sci_menu_demos();
-  else if (strcmp(name,"$fileops")== 0) sci_menu_fileops();
-  else if (strcmp(name,"$gwselect")== 0) sci_menu_gwcreate_or_select();
-  else if (strcmp(name,"$gwraise")== 0) sci_menu_gwraise();
-  else if (strcmp(name,"$gwdelete")== 0) sci_menu_gwdelete();
-  else if (strcmp(name,"$gwplus")== 0)  sci_menu_gwplus();
-  else if (strcmp(name,"$gwminus")== 0)  sci_menu_gwminus();
+  if      (strcmp(name,"$clear")== 0)  nspg_menu_erase(winid) ;
+  else if (strcmp(name,"$select")== 0) nspg_menu_select(winid) ;
+  else if (strcmp(name,"$print")== 0)  nspg_menu_print(winid); 
+  else if (strcmp(name,"$export")== 0) nspg_menu_export(winid);
+  else if (strcmp(name,"$save")== 0)   nspg_menu_save(winid);
+  else if (strcmp(name,"$load")== 0)   nspg_menu_load(winid);
+  else if (strcmp(name,"$close")== 0)  nspg_menu_delete(winid);
+  else if (strcmp(name,"$zoom")== 0)   nspg_menu_zoom(winid);
+  else if (strcmp(name,"$unzoom")== 0) nspg_menu_unzoom(winid);
+  else if (strcmp(name,"$rot3d")== 0)  nspg_menu_rot3d(winid);
+  else if (strcmp(name,"$help")== 0)   nsp_menu_help();
+  else if (strcmp(name,"$stop")== 0)   nsp_menu_stop();
+  else if (strcmp(name,"$kill")== 0)   nsp_menu_kill();
+  else if (strcmp(name,"$demos")== 0)  nsp_menu_demos();
+  else if (strcmp(name,"$fileops")== 0) nsp_menu_fileops();
+  else if (strcmp(name,"$gwselect")== 0) nsp_menu_gwcreate_or_select();
+  else if (strcmp(name,"$gwraise")== 0) nsp_menu_gwraise();
+  else if (strcmp(name,"$gwdelete")== 0) nsp_menu_gwdelete();
+  else if (strcmp(name,"$gwplus")== 0)  nsp_menu_gwplus();
+  else if (strcmp(name,"$gwminus")== 0)  nsp_menu_gwminus();
   else if (strcmp(name,"$about")== 0)  create_nsp_about ();
   else if (strcmp(name,"$resume")== 0)  enqueue_nsp_command("resume");
   else if (strcmp(name,"$abort")== 0)   enqueue_nsp_command("abort");
   else if (strcmp(name,"$restart")== 0) enqueue_nsp_command("exec SCI/scilab.star;");
   else if (strcmp(name,"$quit")== 0) enqueue_nsp_command("quit;");
+  else if (strcmp(name,"$scicos_stop")== 0) nsp_menu_scicos_stop ();
   else return 0;
   return 1;
 }

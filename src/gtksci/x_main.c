@@ -1,8 +1,24 @@
-/*---------------------------------------------------------- 
- * mainsci.f directly call this function 
- * thus this is the real main for scilab 
- * Copyright 2001 Inria/Enpc 
- *----------------------------------------------------------*/
+/* Nsp
+ * 
+ * Copyright (C) 2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * main 
+ *--------------------------------------------------------------------------*/
 
 #include <ctype.h>
 #if !defined(__MSC__) && ! defined(__MINGW32__)
@@ -24,20 +40,24 @@
 #include "nsp/gtksci.h"
 #include "menus.h"
 
-#if 0 
+/* #define STATUS_BAR 1  */
+
+#ifdef STATUS_BAR 
 static void create_scilab_status(void);
 #endif 
 
 static void nsp_gtk_gl_init (int *argc,char ***argv);
 static void nsp_create_gtk_toplevel(gint argc, gchar *argv[]);
 
-/*---------------------------------------------------------- 
- * mainsci.f directly call this function 
- * thus this is the real main for scilab 
- * Copyright Inria/Enpc 
- *----------------------------------------------------------*/
 
-/* global var */
+/**
+ * nsp_gtk_init:
+ * @argc: 
+ * @argv: 
+ * @no_window: 
+ * 
+ * Initialize gtk 
+ **/
 
 void nsp_gtk_init(int argc, char **argv,int no_window)
 {
@@ -68,8 +88,11 @@ void nsp_gtk_init(int argc, char **argv,int no_window)
 	}
       /* create a status bar 
        * FIXME: unsused up to now 
-       * create_scilab_status();
+       * 
        */
+#ifdef STATUS_BAR 
+      create_scilab_status();
+#endif 
     }
   /* signals */
   signal(SIGINT,sci_clear_and_exit);
@@ -138,7 +161,7 @@ void setcolordef( int screenc)
  * status bar 
  *-------------------------------------------------------*/
 
-#if 0 
+#ifdef STATUS_BAR 
 
 static GtkWidget *status = NULL; 
 
