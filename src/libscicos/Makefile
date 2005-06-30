@@ -8,7 +8,8 @@ LIBRARY=nsp.a
 OBJSF=
 OBJSC=  blocks_new.o coselm.o evaluate_expr.o import.o intcos.o \
 	intrealtime.o readf.o realtime.o sciblk2.o scicos.o \
-	scicos_free.o scicos_malloc.o  dmmul.o  blocks.o trees.o simul.o
+	scicos_free.o scicos_malloc.o  dmmul.o  blocks.o trees.o simul.o \
+	testrange.o 
 
 # blocks.o
 

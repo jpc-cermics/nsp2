@@ -12,7 +12,6 @@ c     ipar(4) = N : buffer length
 c     ipar(5:4+lfil) = character codes for file name
 c     ipar(5+lfil:4+lfil+lfmt) = character codes for format if any
 c     ipar(5+lfil+lfmt:5+lfil+lfmt+ny+ievt) = reading mask
-
 c
       double precision t,xd(*),x(*),z(*),tvec(*),rpar(*),u(*),y(*)
       integer flag,nevprt,nx,nz,ntvec,nrpar,ipar(*)

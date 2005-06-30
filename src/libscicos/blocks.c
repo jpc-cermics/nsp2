@@ -1425,26 +1425,23 @@ int scicos_fsv (scicos_args_poo)
   return 0;
 }			
 
+/* just a test */
 
+
+int scicos_gensin_test (scicos_args_poo)
+{
+  static double val;
+  if ( *flag__ == 4)
+    {
+      create_range_controls(&val);
+    }
+  y[0] = val * sin (rpar[1] * *t + rpar[2]);
+  return 0;
+}			
 
 int scicos_gensin (scicos_args_poo)
 {
-  /* Builtin functions */
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     Sine genrator */
-  /*     ampl=rpar(1) */
-  /*     freq=rpar(2) */
-  /*     phase=rpar(3) */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  y[1] = rpar[1] * sin (rpar[2] * *t + rpar[3]);
+  y[0] = rpar[0] * sin (rpar[1] * *t + rpar[2]);
   return 0;
 }			
 
