@@ -1737,51 +1737,37 @@ void cscope(scicos_block *block,int flag)
 }
 
 
+/* multiscope 
+ * 
+ * ipar = [win_num, number of subwindows (input ports),  buffer size,
+ *         wpos(1),wpos(2) //  window position 
+ *         wdim(1),wdim(2) // window dimension 
+ *         ipar(8:7+ipar(2)) // input port sizes 
+ *         ipar(8+ipar(2):7+ipar(2)+nu) // line type for ith curve 
+ * rpar=[dt, per, ymin_1, ymax_1,...  ymin_k, ymax_k] 
+ */
 
+typedef struct _cmscope_ipar cmscope_ipar ;
+struct _cmscope_ipar {
+  int wid, nwid, n,wpos[2],wdim[2];};
+
+typedef struct _cmscope_rpar cmscope_rpar ;
+struct _cmscope_rpar {
+  double dt,per,ymin,ymax;};
 
 void cmscope(scicos_block *block,int flag)
 {
-  int c_n1=-1;
   char *str;
   BCG *Xgc;
-  static int c__3 = 3;
-  static int c__1 = 1;
-  static int c__0 = 0;
-  static double c_b103 = 0.;
-  int iwp,iwd;
-  double t;
-  double *z__;
-  double *rpar;
-  int *ipar, nipar,nu;
-  static int cur = 0;
-  int i__1, i__2, i__3,nwid,kk,i,j,sum;
-  static double rect[4];
-  static int kwid;
-  static int i__, k, n;
-  static double frect[4], tsave;
-  static int n1, n2;
-  static double dt;
-  static int it;
-  static char buf[40];
-  static int wid;
-  static double per;
-  static int nax[4], ilt;
-
-  /*     Scicos block simulator */
-  /*     ipar(1) = win_num */
-  /*     ipar(2) = number of subwindows (input ports) */
-  /*     ipar(3) = buffer size */
-  /*     ipar(4:5) : window position */
-  /*     ipar(6:7) : window dimension */
-  /*     ipar(8:7+ipar(2)) = input port sizes */
-  /*     ipar(8+ipar(2):7+ipar(2)+nu) = line type for ith curve */
-  /*     rpar(1)=dt */
-  /*     rpar(2)=periode */
-  /*     rpar(3)=ymin_1 */
-  /*     rpar(4)=ymax_1 */
-  /*     ... */
-  /*     rpar(2*k+1)=ymin_k */
-  /*     rpar(2*k+2)=ymax_k */
+  /* used to decode parameters by name */
+  cmscope_ipar *csi = (cmscope_ipar*) block->ipar;
+  cmscope_rpar *csr = (cmscope_rpar*) block->rpar;
+  int nax[]={2,10,2,6};
+  double frect[]={ 0.0,0.0,1.0,1.0};
+  int c_n1=-1, c__1 = 1,  c__0 = 0, *ipar, nipar,nu,  cur = 0;
+  int i__1, kk,i,j,sum;
+  int kwid, wid,  i__, k, n1,n2,it ;
+  double rect[4], tsave, c_b103 = 0., t,  *z__,  *rpar;
 
   nu=block->insz[0];
   rpar=block->rpar;
@@ -1791,22 +1777,15 @@ void cmscope(scicos_block *block,int flag)
 
   --ipar;
   --rpar;
-  
-  wid = ipar[1];
-  if(wid==-1){
-    wid=20000+get_block_number();
-  }
-  nwid = ipar[2];
-  n = ipar[3];
-  per = rpar[2];
-  dt = rpar[1];
+
+  wid = ( csi->wid == -1 ) ? 20000+get_block_number() : csi->wid;
 
   if (flag == 2) {
     z__=*block->work; 
     --z__;
     k = (int) z__[1];
     if (k > 0) {
-      n1 = (int) (z__[k + 1] / per);
+      n1 = (int) (z__[k + 1] / csr->per);
       if (z__[k + 1] < 0.) {
 	--n1;
       }
@@ -1815,11 +1794,11 @@ void cmscope(scicos_block *block,int flag)
     }
 
     tsave = t;
-    if (dt > 0.) {
-      t = z__[k + 1] + dt;
+    if (csr->dt > 0.) {
+      t = z__[k + 1] + csr->dt;
     }
 
-    n2 = (int) (t / per);
+    n2 = (int) (t / csr->per);
     if (t < 0.) {
       --n2;
     }
@@ -1828,181 +1807,155 @@ void cmscope(scicos_block *block,int flag)
     ++k;
     z__[k + 1] = t;
     kk=0;
-    for (i=0;i<block->nin;++i){
-      for (j = 0; j <block->insz[i] ; ++j) {
-	z__[n + 1 + kk * n + k] =block->inptr[i][j] ;
+    for ( i=0 ; i<block->nin ; i++ ) 
+      for (j = 0; j <block->insz[i] ; j++) {
+	z__[csi->n + 1 + kk * csi->n + k] =block->inptr[i][j] ;
 	++kk;
       }
-    }
     z__[1] = (double) k;
-    if (n1 == n2 && k < n) {
+    if (n1 == n2 && k < csi->n) {
       t = tsave;
       return ;
     }
-
-
     /*     plot 1:K points of the buffer */
     Xgc = scicos_set_win(wid,&cur);
-    Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
-    Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
+    Xgc->graphic_engine->scale->xset_usecolor(Xgc,TRUE);
+    Xgc->graphic_engine->scale->xset_dash(Xgc,0);
     Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-    ilt = ipar[2] + 8;
-    it = 0;
     /*     loop on input ports */
+    it=0;
     if (k > 0) {
-      i__1 = nwid;
-      for (kwid = 1; kwid <= i__1; ++kwid) {
-	rect[0] = per * n1;
-	rect[1] = rpar[(kwid << 1) + 1];
-	rect[2] = per * (n1 + 1);
-	rect[3] = rpar[(kwid << 1) + 2];
-	frect[0] = 0.;
-	frect[1] = (kwid - 1) * (1. / nwid);
-	frect[2] = 1.;
-	frect[3] = 1. / nwid;
-	Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
-	/*     loop on input port elements */
-	i__2 = ipar[kwid + 7];
-	for (i__ = 1; i__ <= i__2; ++i__) {
-	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + it * n], &ipar[ilt + it], c__1, k);
-	  ++it;
+      for (kwid = 1; kwid <= csi->nwid ; ++kwid) 
+	{
+	  int ilt = csi->nwid + 8 ; /* start of line type */
+	  rect[0] = csr->per * n1;
+	  rect[1] = rpar[(kwid << 1) + 1];
+	  rect[2] = csr->per * (n1 + 1);
+	  rect[3] = rpar[(kwid << 1) + 2];
+	  frect[1] = (kwid - 1) * (1. / csi->nwid);
+	  frect[3] = 1. / csi->nwid;
+	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	  Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
+	  /*     loop on input port elements */
+	  for (i__ = 1; i__ <= ipar[kwid + 7] ; ++i__) {
+	    Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[csi->n + 2 + it * csi->n], &ipar[ilt+it], c__1, k);
+	    it++;
+	  }
+	  Xgc->graphic_engine->scale->xset_unclip(Xgc);
 	}
-	Xgc->graphic_engine->scale->xset_unclip(Xgc);
-      }
     }
     /*     shift buffer left */
     z__[2] = z__[k + 1];
     sum=0;
     for (i=0;i<block->nin;++i){
       sum=sum+block->insz[i];
-    }    i__1 = sum;
-    for (i__ = 1; i__ <= i__1; ++i__) {
-      z__[n + 1 + (i__ - 1) * n + 1] = z__[n + 1 + (i__ - 1) * n + k];
+    }    
+    for (i__ = 1; i__ <= sum ; ++i__) {
+      z__[csi->n + 1 + (i__ - 1) * csi->n + 1] = z__[csi->n + 1 + (i__ - 1) * csi->n + k];
     }
     z__[1] = 1.;
     if (n1 != n2) {
       /*     clear window */
-      nax[0] = 2;
-      nax[1] = 10;
-      nax[2] = 2;
-      nax[3] = 6;
       Xgc->graphic_engine->clearwindow(Xgc);
-      Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,TRUE);
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
-      Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-      i__1 = nwid;
-      for (kwid = 1; kwid <= i__1; ++kwid) {
-	
-	rect[0] = per * (n1 + 1);
-	rect[1] = rpar[(kwid << 1) + 1];
-	rect[2] = per * (n1 + 2);
-	rect[3] = rpar[(kwid << 1) + 2];
-	frect[0] = 0.;
-	frect[1] = (kwid - 1) * (1. / nwid);
-	frect[2] = 1.;
-	frect[3] = 1. / nwid;
-	Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","xlines",0, rect, nax);
-      }
+      Xgc->graphic_engine->scale->xset_dash(Xgc,0);
+      for (kwid = 1; kwid <= csi->nwid ; ++kwid) 
+	{
+	  rect[0] = csr->per * (n1 + 1);
+	  rect[1] = rpar[(kwid << 1) + 1];
+	  rect[2] = csr->per * (n1 + 2);
+	  rect[3] = rpar[(kwid << 1) + 2];
+	  frect[1] = (kwid - 1) * (1. / csi->nwid);
+	  frect[3] = 1. / csi->nwid;
+	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	  nsp_plot2d(Xgc,rect,&rect[1],&c__1, &c__1, &c_n1, "011","xlines",0, rect, nax);
+	}
     }
     t = tsave;
-  } else if (flag == 4) {
-    sum=0;
-    for (i=0;i<block->nin;++i){
-      sum=sum+block->insz[i];
-    }
-    if ((*block->work=
-	 scicos_malloc(sizeof(double)*(1+ipar[3]*(1+sum))))== NULL ) {
-      set_block_error(-16);
-      return;
-    }
-    z__=*block->work; 
-    --z__;
-    z__[1]=-1.0;
-    nax[0] = 2;
-    nax[1] = 10;
-    nax[2] = 2;
-    nax[3] = 6;
-    n1 = (int) (t / per);
-    if (t <= 0.) {
-      --n1;
-    }
-    Xgc = scicos_set_win(wid,&cur);
-    iwp = 4;
-    if (ipar[iwp] >= 0) {
-      Xgc->graphic_engine->xset_windowpos(Xgc,ipar[iwp], ipar[iwp + 1]);
-    }
-    iwd = 6;
-    if (ipar[iwd] >= 0) {
-      Xgc->graphic_engine->xset_windowdim(Xgc,ipar[iwd], ipar[iwd + 1]);
+  } 
+  else if (flag == 4) 
+    {
+      sum=0;
+      for ( i=0 ; i < block->nin ; ++i) sum=sum+block->insz[i];
+      if ((*block->work=  scicos_malloc(sizeof(double)*(1+ipar[3]*(1+sum))))== NULL ) 
+	{
+	  set_block_error(-16);
+	  return;
+	}
+      z__=*block->work; 
+      --z__;
+      z__[1]=-1.0;
+      n1 = (int) (t / csr->per);
+      if (t <= 0.) --n1;
+      Xgc = scicos_set_win(wid,&cur);
+      if (csi->wpos[0] >= 0) {
+	Xgc->graphic_engine->xset_windowpos(Xgc,csi->wpos[0],csi->wpos[1]);
+      }
+      if (csi->wdim[0] >= 0) {
+	Xgc->graphic_engine->xset_windowdim(Xgc,csi->wdim[0],csi->wdim[1]);
+      }
       Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-      Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
-      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,TRUE);
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,3);
       Xgc->graphic_engine->clearwindow(Xgc);
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0); 
+      str = block->label ;
+      if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
+	Xgc->graphic_engine->setpopupname(Xgc,str);
+      for (kwid = 1; kwid <= csi->nwid ; ++kwid) 
+	{
+	  rect[0] = csr->per * (n1 + 1);
+	  rect[1] = rpar[(kwid << 1) + 1];
+	  rect[2] = csr->per * (n1 + 2);
+	  rect[3] = rpar[(kwid << 1) + 2];
+	  frect[1] = (kwid - 1) * (1. / csi->nwid);
+	  frect[3] = 1. / csi->nwid;
+	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	  nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","",0, rect, nax);
+	}
+      z__[1] = 0.;
+      z__[2] = t;
+      i__1 = sum * csi->n;
+      nsp_dset(&i__1, &c_b103, &z__[3], &c__1);
     }
-    str = block->label ;
-    if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
-      Xgc->graphic_engine->setpopupname(Xgc,str);
-    i__1 = nwid;
-    for (kwid = 1; kwid <= i__1; ++kwid) {
-      rect[0] = per * (n1 + 1);
-      rect[1] = rpar[(kwid << 1) + 1];
-      rect[2] = per * (n1 + 2);
-      rect[3] = rpar[(kwid << 1) + 2];
-      frect[0] = 0.;
-      frect[1] = (kwid - 1) * (1. / nwid);
-      frect[2] = 1.;
-      frect[3] = 1. / nwid;
-      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "010", buf,0, rect, nax);
-    }
-    
-    z__[1] = 0.;
-    z__[2] = t;
-    i__1 = sum * n;
-    nsp_dset(&i__1, &c_b103, &z__[3], &c__1);
-    }
-    else if (flag == 5) {
-    z__=*block->work; 
-    --z__;
-    k = (int) z__[1];
-    if (k <= 1) {
-      scicos_free(*block->work);
-      return ;
-    }
-    Xgc = scicos_set_win(wid,&cur);
-    Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
-    ilt = ipar[2] + 8;
-    it = 0;
-    n1 =  (int) (z__[k + 1] / per);
-
-    /*     loop on input ports */
-    i__1 = nwid;
-    for (kwid = 1; kwid <= i__1; ++kwid) {
-      rect[0] = per * (n1 );
-      rect[1] = rpar[(kwid << 1) + 1];
-      rect[2] = per * (n1 + 1);
-      rect[3] = rpar[(kwid << 1) + 2];
-      frect[0] = 0.;
-      frect[1] = (kwid - 1) * (1. / nwid);
-      frect[2] = 1.;
-      frect[3] = 1. / nwid;
-      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-      Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
-      /*     loop on input port elements */
-      i__2 = ipar[kwid + 7];
-      for (i__ = 1; i__ <= i__2; ++i__) {
-	i__3 = k - 1;
-	Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + it * n],&ipar[ilt + it], c__1, i__3);
-	++it;
+  else if (flag == 5) 
+    {
+      z__=*block->work; 
+      --z__;
+      k = (int) z__[1];
+      if (k <= 1) {
+	scicos_free(*block->work);
+	return ;
       }
-      Xgc->graphic_engine->scale->xset_unclip(Xgc);
+      Xgc = scicos_set_win(wid,&cur);
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
+      n1 =  (int) (z__[k + 1] / csr->per);
+      /*     loop on input ports */
+      it=0;
+      for (kwid = 1; kwid <= csi->nwid ; ++kwid) 
+	{
+	  int ilt = csi->nwid + 8 ; /* start of line type */
+	  rect[0] = csr->per * (n1 );
+	  rect[1] = rpar[(kwid << 1) + 1];
+	  rect[2] = csr->per * (n1 + 1);
+	  rect[3] = rpar[(kwid << 1) + 2];
+	  frect[0] = 0.;
+	  frect[1] = (kwid - 1) * (1. /csi->nwid);
+	  frect[2] = 1.;
+	  frect[3] = 1. / csi->nwid;
+	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	  Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
+	  /*     loop on input port elements */
+	  for (i__ = 1; i__ <=  ipar[kwid + 7]; ++i__) {
+	    Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[csi->n + 2 + it * csi->n],&ipar[ilt+it], c__1,k-1);
+	    it++;
+	  }
+	  Xgc->graphic_engine->scale->xset_unclip(Xgc);
+	}
+      scicos_free(*block->work);
     }
-    scicos_free(*block->work);
-  }
 }
   
 
