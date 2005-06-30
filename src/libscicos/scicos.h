@@ -2,20 +2,24 @@
 #define __SCICOS_H 
 
 #include "simul.h"
-/* maximum value for sum of number of inputs and outputs ports of a given 
-block of type 2 */
+
+/* maximum value for sum of number of inputs 
+ * and outputs ports of a given 
+ * block of type 2 
+ */
+
 #define SZ_SIZE 60
-/* maximum value for sum of number of inputs and outputs of a given block 
-of type 0 */
+
+/* maximum value for sum of number of inputs 
+ * and outputs of a given block 
+ * of type 0 */
+
 #define TB_SIZE 500
-
-/* common for ? */
-
-/* scicos common for debug */
 
 typedef void (*voidf)();
 
 /* Blocks prototypes */
+
 #define P_I int
 #define P_IP int*
 #define P_DP double*
@@ -23,7 +27,7 @@ typedef void (*voidf)();
 #define P_DB scicos_block*
 
 /*                    flag  nclock ntvec  rpar  nrpar ipar  nipar  u  nu */
-#define ARGS_scicosm1 P_IP,    P_IP,    P_IP,    P_DP,   P_IP,  P_IP,   P_IP,   P_DP, P_IP
+#define ARGS_scicosm1 P_IP,P_IP,P_IP,P_DP,P_IP,P_IP,P_IP,P_DP,P_IP
 
 /* flag  nclock t    xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar  intabl  ni  outabl no */
 #define ARGS_scicos0 P_IP,P_IP,P_DP,P_DP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_DP,P_IP,P_IP,P_IP,P_DP,P_IP,P_DP,P_IP
@@ -49,7 +53,6 @@ typedef void (*voidf)();
 
 /*         block     flag*/
 #define ARGS_scicos4 P_DB, P_I
-
 
 typedef void (*ScicosFm1) (ARGS_scicosm1);
 typedef void (*ScicosF0) (ARGS_scicos0);

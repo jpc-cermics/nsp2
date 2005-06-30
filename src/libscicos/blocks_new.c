@@ -12,6 +12,9 @@ extern double acosh(double x);
 extern double atanh(double x);
 #endif
 
+/*
+ * utility to set wid as the current graphic window
+ */
 
 BCG *scicos_set_win(int wid,int *oldwid)
 {
@@ -395,7 +398,7 @@ void time_delay(scicos_block *block,int flag)
     td=t-block->rpar[0];
     if(td<pw[*iw]){
       Sciprintf("delayed time=%f but last stored time=%f \r\n", td, pw[*iw]);
-      Sciprintf("Conisder increasing the length of buffer in delay block \r\n");
+      Sciprintf("Consider increasing the length of buffer in delay block \r\n");
     }
 
     if (t>pw[(block->ipar[0]+*iw-1)%block->ipar[0]]){
@@ -893,38 +896,39 @@ void  hystheresis(scicos_block *block,int flag)
 
 
 void ramp(scicos_block *block,int flag)
-{double dt;
- if (flag==1){
-   dt=get_scicos_time()-block->rpar[1];
-   if (get_phase_simulation()==1) {
-     if(dt>0) {
-       block->outptr[0][0]=block->rpar[2]+block->rpar[0]*dt;
-     }else{
-       block->outptr[0][0]=block->rpar[2];
-     }
-   }else{
-     if(block->mode[0]==1) {
-       block->outptr[0][0]=block->rpar[2]+block->rpar[0]*dt;
-     }else {
-       block->outptr[0][0]=block->rpar[2];
+{
+  double dt;
+  if (flag==1){
+    dt=get_scicos_time()-block->rpar[1];
+    if (get_phase_simulation()==1) {
+      if(dt>0) {
+	block->outptr[0][0]=block->rpar[2]+block->rpar[0]*dt;
+      }else{
+	block->outptr[0][0]=block->rpar[2];
+      }
+    }else{
+      if(block->mode[0]==1) {
+	block->outptr[0][0]=block->rpar[2]+block->rpar[0]*dt;
+      }else {
+	block->outptr[0][0]=block->rpar[2];
+      }
+    }
+  } else if (flag==9){
+    block->g[0]=get_scicos_time()-(block->rpar[1]);
+    if (get_phase_simulation()==1) {
+      if (block->g[0]>=0){
+	block->mode[0]=1;
+      }else{
+	block->mode[0]=2;
      }
    }
- } else if (flag==9){
-   block->g[0]=get_scicos_time()-(block->rpar[1]);
-   if (get_phase_simulation()==1) {
-     if (block->g[0]>=0){
-       block->mode[0]=1;
-     }else{
-       block->mode[0]=2;
-     }
-   }
- }
+  }
 }
 
 
 void minmax(scicos_block *block,int flag)
-{ /*ipar[0]=1 -> min,  ipar[0]=2 -> max */
-  
+{
+  /*ipar[0]=1 -> min,  ipar[0]=2 -> max */
   int i,phase;
   double maxmin;
   phase=get_phase_simulation();
