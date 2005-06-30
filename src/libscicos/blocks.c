@@ -1433,7 +1433,7 @@ int scicos_gensin_test (scicos_args_poo)
   static double val;
   if ( *flag__ == 4)
     {
-      create_range_controls(&val);
+      /* create_range_controls(&val);*/
     }
   y[0] = val * sin (rpar[1] * *t + rpar[2]);
   return 0;
@@ -1444,8 +1444,6 @@ int scicos_gensin (scicos_args_poo)
   y[0] = rpar[0] * sin (rpar[1] * *t + rpar[2]);
   return 0;
 }			
-
-
 
 int scicos_gensqr (scicos_args_poo)
 {
