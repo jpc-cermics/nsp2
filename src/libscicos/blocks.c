@@ -4864,18 +4864,13 @@ writec(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx,
   return;
 }
 
+/*  Displays the value of the input in the diagram block */
 
 int scicos_affich (scicos_args_poo)
 {
   BCG *Xgc;
-  int record;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     Displays the value of the input in a graphic window */
-  static int cur = 0;
-  int i__1;
+  int record, cur = 0, wid;
   double  ur;
-  int wid;
   /*     ipar(1) = font */
   /*     ipar(2) = fontsize */
   /*     ipar(3) = color */
@@ -4883,7 +4878,7 @@ int scicos_affich (scicos_args_poo)
   /*     ipar(5) = nt : total number of output digits */
   /*     ipar(6) = nd number of rationnal part digits */
   /*     z(1)=value */
-  /*     w(2)=window */
+  /*     z(2)=window */
   /*     z(3)=x */
   /*     z(4)=y */
   /*     z(5)=width */
@@ -4906,12 +4901,8 @@ int scicos_affich (scicos_args_poo)
 	  return 0;
 	}
       wid = (int) z__[2];
-      if (wid < 0)
-	{
-	  return 0;
-	}
-      i__1 = (int) z__[2];
-      Xgc = scicos_set_win(i__1,&cur);
+      if (wid < 0) return 0;
+      Xgc = scicos_set_win(wid,&cur);
       record= Xgc->graphic_engine->xget_recording(Xgc);
       Xgc->graphic_engine->xset_recording(Xgc,FALSE);
       scicos_recterase (Xgc,&z__[3]);
@@ -4921,17 +4912,12 @@ int scicos_affich (scicos_args_poo)
     }
   else if (*flag__ == 4)
     {
-      /*     init */
       /*     .  initial value */
       z__[1] = 0.;
-      /*     .  get geometry of the block */
       scicos_getgeom (&z__[2]);
-      if (z__[2] < 0.)
-	{
-	  return 0;
-	}
-      i__1 = (int) z__[2];
-      Xgc = scicos_set_win(i__1,&cur);
+      wid = (int) z__[2];
+      if (wid < 0) return 0;
+      Xgc = scicos_set_win(wid,&cur);
       record= Xgc->graphic_engine->xget_recording(Xgc);
       Xgc->graphic_engine->xset_recording(Xgc,FALSE);
       scicos_recterase (Xgc,&z__[3]);
@@ -4964,7 +4950,7 @@ int scicos_affdraw (BCG *Xgc,const int fontd[],const int form[],const double *va
   Xgc->graphic_engine->boundingbox(Xgc,buf,r[0],r[1],rect);
   x = r[0] + Max (0.0,(r[2] - rect[2]) / 2.);
   y = r[1] + Max (0.0,(r[3] - rect[3]) / 2.);
-  Xgc->graphic_engine->displaystring(Xgc,buf,x,y,flag,angle);
+  Xgc->graphic_engine->scale->displaystring(Xgc,buf,x,y,flag,angle);
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
   if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
@@ -4976,7 +4962,12 @@ int scicos_getgeom (double *g)
 {
   /* FIXME XXXXXXXX
    */
-  sciprint("getgeom is not implemented_n");
+  *g = 1000;
+  *(g+1)= 333;
+  *(g+2)= 124;
+  *(g+3)= 60;
+  *(g+4)= 40;
+  sciprint("getgeom is not implemented just a test mode\n");
   return 0;
 }	
 
