@@ -103,6 +103,7 @@ extern int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B);
 extern int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols); 
 extern int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows); 
 extern int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts); 
+extern int nsp_smatrix_delete_elements2(NspSMatrix *A, NspMatrix *EltsR, NspMatrix *EltsC);
 extern NspSMatrix *nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
 extern NspSMatrix *nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, int *err); 
 extern NspSMatrix *nsp_smatrix_extract_columns(NspSMatrix *A, NspMatrix *Cols, int *err); 

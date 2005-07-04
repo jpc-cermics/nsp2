@@ -787,7 +787,8 @@ int scicos_dlradp (scicos_args_poo)
       npt = ipar[3];
       i__1 = (mpn << 1) + 1;
       Scierror("Error : scicos_intp to be done \n");
-      /* scicos_intp (&u[2], &rpar[1], &rpar[npt + 1], &i__1, &npt, yy);
+      /* XXXXXXXXXXXX
+	 scicos_intp (&u[2], &rpar[1], &rpar[npt + 1], &i__1, &npt, yy);
 	 scicos_wprxc (&m, yy, &yy[m], num, ww);
 	 scicos_wprxc (&n, &yy[m * 2], &yy[(m << 1) + 1 + n - 1], den, ww);
       */
@@ -922,38 +923,23 @@ scicos_eselect (int *flag__, int *nevprt, int *ntvec, double *rpar,
   return 0;
 }			
 
-
+/*     Event scope */
 
 int scicos_evscpe (scicos_args_poo)
 {
-  BCG *Xgc;
-  int record;
-  static int c__0 = 0;
-  static int c__1 = 1;
-  static int c_n1 = -1;
-  static int c__2 = 2;
-  static int c__3 = 3;
-  /* Initialized data */
-  static double frect[4] = { 0., 0., 1., 1. };
-  static int cur = 0;
-  double rect[4];
-  double ymin, ymax;
-  int i__,  n1;
-  double xx[2], yy[2];
-  int wid, iwd;
-  double per;
-  int nax[4], iwp;
-
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     Event scope */
-  /*     ipar(1) = win_num */
-  /*     ipar(2) = 0/1 color flag */
-  /*     ipar(3:10) = color */
+  /* ipar=[win_num, ipar(2) = 0/1 color flag,  ipar(3:10) = color */
   /*     ipar(nipar-3:nipar-2) = window position */
   /*     ipar(nipar-1:nipar)= window position */
-
   /*     rpar(1)=periode */
+  BCG *Xgc;
+  int record,  c__0 = 0,  c__1 = 1,  c_n1 = -1,  c__2 = 2,  c__3 = 3;
+  /* Initialized data */
+  double frect[] = { 0., 0., 1., 1. };
+  int nax[] ={ 2,10,2,10};
+  int cur = 0;
+  double rect[]={0.0,0.0,1.0,1.0};
+  int i__,  n1, wid, iwd, iwp;
+  double xx[2], yy[2], per;
 
   --y;
   --u;
@@ -963,8 +949,8 @@ int scicos_evscpe (scicos_args_poo)
   --z__;
   --x;
   --xd;
-  /*      data yy / 0.00d0,0.80d0/ */
 
+  /*      data yy / 0.00d0,0.80d0/ */
   if (*flag__ == 2)
     {
       per = rpar[1];
@@ -977,40 +963,27 @@ int scicos_evscpe (scicos_args_poo)
 	{
 	  z__[1] = (int) (*t / per) + 1.;
 	  /*     clear window */
-	  nax[0] = 2;
-	  nax[1] = 10;
-	  nax[2] = 2;
-	  nax[3] = 10;
-	  Xgc = scicos_set_win(wid,&cur);
 	  Xgc->graphic_engine->clearwindow(Xgc);
-	  Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
 	  Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
 	  rect[0] = per * (z__[1] - 1.);
-	  rect[1] = 0.;
 	  rect[2] = per * z__[1];
-	  rect[3] = 1.;
 	  Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-	  nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
-		     0, rect, nax);
+	  nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output", 0, rect, nax);
 	}
-
-      xx[0] = *t;
-      xx[1] = *t;
-      yy[0] = 0.;
-      yy[1] = .8;
+      xx[0] = *t;      xx[1] = *t;
+      yy[0] = 0.;      yy[1] = .8;
       i__ = 1;
       *nx = 1;
-    L10:
-      if ((*nevprt & *nx) != 0)
+      while (1) 
 	{
-	  Xgc->graphic_engine->scale->drawpolylines(Xgc,xx, yy, &ipar[i__ + 2], c__1, c__2);
-	  yy[0] = (yy[0] + yy[1]) / 2;
-	}
-      ++i__;
-      *nx <<= 1;
-      if (*nx <= *nevprt)
-	{
-	  goto L10;
+	  if ((*nevprt & *nx) != 0)
+	    {
+	      Xgc->graphic_engine->scale->drawpolylines(Xgc,xx, yy, &ipar[i__ + 2], c__1, c__2);
+	      yy[0] = (yy[0] + yy[1]) / 2;
+	    }
+	  ++i__;
+	  *nx <<= 1;
+	  if (*nx > *nevprt) break;
 	}
       yy[0] = 0.;
       Xgc->graphic_engine->xset_recording(Xgc,record);
@@ -1019,23 +992,12 @@ int scicos_evscpe (scicos_args_poo)
     {
       char *str;
       wid = ipar[1];
-      ymin = 0.;
-      ymax = 1.;
       per = rpar[1];
-      nax[0] = 2;
-      nax[1] = 10;
-      nax[2] = 2;
-      nax[3] = 10;
       n1 = (int) ((int) (*t) / per);
-      if (*t <= 0.)
-	{
-	  --n1;
-	}
+      if (*t <= 0.)  --n1;
       Xgc = scicos_set_win(wid,&cur);
       rect[0] = per * (n1 + 1);
-      rect[1] = ymin;
       rect[2] = per * (n1 + 2);
-      rect[3] = ymax;
       Nsetscale2d(Xgc,frect,NULL,rect,"nn");
       iwp = *nipar - 3;
       if (ipar[iwp] >= 0)
@@ -1062,13 +1024,10 @@ int scicos_evscpe (scicos_args_poo)
   return 0;
 }			
 
+/* event delay,  delay=rpar(1) */
 
 int scicos_evtdly (scicos_args_poo)
 {
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     event delay */
-  /*     delay=rpar(1) */
   if (*flag__ == 3)
     {
       tvec[0] = *t + rpar[0];
@@ -1076,51 +1035,24 @@ int scicos_evtdly (scicos_args_poo)
   return 0;
 }			
 
+/*     Outputs a^u(i), a =rpar(1) */
 
 int scicos_expblk (scicos_args_poo)
 {
-  int i__1;
-  /* Builtin functions */
-  int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     Outputs a^u(i) */
-  /*     a=rpar(1) */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  if (*flag__ == 1)
+  int i;
+  if (*flag__ == 1 ||  *flag__ >= 4) 
     {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  y[i__] = exp (log (rpar[1]) * u[i__]);
-	  /* L15: */
-	}
-    }
-  if (*flag__ >= 4)
-    {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  y[i__] = exp (log (rpar[1]) * u[i__]);
-	  /* L20: */
-	}
+      for (i = 0 ; i <= *nu ; ++i)  y[i] = exp (log (rpar[0]) * u[i]);
     }
   return 0;
 }			
 
+/*  For block */
 
 int scicos_forblk (scicos_args_poo)
 {
   /*     Copyright INRIA */
   /*     Scicos block simulator */
-  /*     For block */
   --y;
   --u;
   --ipar;
@@ -1203,17 +1135,12 @@ scicos_fscope (int *flag__, int *nevprt, double *t, double *xd, double *x,
   /*     ipar(2) = 0/1 color flag */
   /*     ipar(3) = buffer size */
   /*     ipar(4:11) = line type for ith curve */
-
   /*     ipar(12:13) : window position */
   /*     ipar(14:15) : window dimension */
-
   /*     rpar(1)=dt */
   /*     rpar(2)=ymin */
   /*     rpar(3)=ymax */
   /*     rpar(4)=periode */
-
-
-
   /*      character*(4) logf */
   --ipar;
   --rpar;
