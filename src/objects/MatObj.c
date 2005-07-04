@@ -2354,7 +2354,9 @@ int_mxsetrc (Stack stack, int rhs, int opt, int lhs)
 
 
 
-/* generic interface for elts, rows and columns deletion **/
+/* generic interface for elts, rows and columns deletion 
+ * ( A(:,x)=[], A(x,:)=[], A(x)=[] 
+ */
 
 typedef int (*delf) (NspMatrix * M, NspMatrix * Elts);
 
@@ -2362,7 +2364,8 @@ static int
 int_mxdeleteelts_gen (Stack stack, int rhs, int opt, int lhs, delf F)
 {
   NspMatrix *A, *Elts;
-  CheckRhs (2, 2);
+  int alloc=FALSE;
+  CheckRhs (2,2 );
   CheckLhs (1, 1);
   if ((A = GetMat (stack, 1)) == NULLMAT)
     return RET_BUG;
@@ -2374,6 +2377,7 @@ int_mxdeleteelts_gen (Stack stack, int rhs, int opt, int lhs, delf F)
 	return RET_BUG;
       if ((Elts = nsp_bmatrix_find (BElts)) == NULLMAT)
 	return RET_BUG;
+      alloc = TRUE;
     }
   else
     {
@@ -2381,11 +2385,66 @@ int_mxdeleteelts_gen (Stack stack, int rhs, int opt, int lhs, delf F)
 	return RET_BUG;
     }
   if ( A == Elts ) NthObj(2) = NULLOBJ;
-  if ((*F) (A, Elts) == FAIL)
-    return RET_BUG;
+  if ((*F) (A, Elts) == FAIL) 
+    {
+      if ( alloc == TRUE ) nsp_matrix_destroy(Elts);
+      return RET_BUG;
+    }
   NSP_OBJECT (A)->ret_pos = 1;
+  if ( alloc == TRUE ) nsp_matrix_destroy(Elts);
   return 1;
 }
+
+
+typedef int (*delf1) (NspMatrix * M, NspMatrix * EltsR, NspMatrix * EltsC);
+
+static int
+int_mxdeleteelts_gen1 (Stack stack, int rhs, int opt, int lhs, delf1 F)
+{
+  NspMatrix *A, *EltsR,*EltsC;
+  int allocR=FALSE, allocC=FALSE, ret= RET_BUG;
+  CheckRhs (3,3);
+  CheckLhs (1,1);
+  if ((A = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if (IsBMatObj (stack, 2))
+    {
+      /* Elts is boolean : use find(Elts) * */
+      NspBMatrix *BElts;
+      if ((BElts = GetBMat (stack, 2)) == NULLBMAT)
+	return RET_BUG;
+      if ((EltsR = nsp_bmatrix_find (BElts)) == NULLMAT)
+	return RET_BUG;
+      allocR = TRUE;
+    }
+  else
+    {
+      if ((EltsR = GetRealMat (stack, 2)) == NULLMAT)
+	return RET_BUG;
+    }
+  if ( A == EltsR ) NthObj(2) = NULLOBJ;
+  if (IsBMatObj (stack, 3))
+    {
+      /* Elts is boolean : use find(Elts) * */
+      NspBMatrix *BElts;
+      if ((BElts = GetBMat (stack, 3)) == NULLBMAT) goto bug;
+      if ((EltsC = nsp_bmatrix_find (BElts)) == NULLMAT) goto bug;
+      allocC = TRUE;
+    }
+  else
+    {
+      if ((EltsC = GetRealMat (stack,3)) == NULLMAT) goto bug;
+    }
+  if ( A == EltsC ) NthObj(3) = NULLOBJ;
+  if ((*F) (A, EltsR,EltsC) == FAIL) goto bug;
+  NSP_OBJECT (A)->ret_pos = 1;
+  ret = 1;
+  bug : {} 
+  if ( allocR == TRUE ) nsp_matrix_destroy(EltsR);
+  if ( allocC == TRUE ) nsp_matrix_destroy(EltsC);
+  return ret ;
+}
+
 
 /*
  * Res=MatDeletecols(A,Cols)
@@ -2393,6 +2452,7 @@ int_mxdeleteelts_gen (Stack stack, int rhs, int opt, int lhs, delf F)
  * WARNING : A must be changed by this routine
  * =======
  */
+
 int
 int_mxdeletecols (Stack stack, int rhs, int opt, int lhs)
 {
@@ -2420,8 +2480,12 @@ int_mxdeleterows (Stack stack, int rhs, int opt, int lhs)
 int
 int_mxdeleteelts (Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mxdeleteelts_gen (stack, rhs, opt, lhs,
-			       (delf) nsp_smatrix_delete_elements);
+  if (rhs == 2) 
+    return int_mxdeleteelts_gen (stack, rhs, opt, lhs,
+				 (delf) nsp_smatrix_delete_elements);
+  else 
+    return int_mxdeleteelts_gen1 (stack, rhs, opt, lhs,
+				  (delf1) nsp_smatrix_delete_elements2);
 }
 
 /*

@@ -857,6 +857,84 @@ int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
 
 
 /*
+ *  A(rows,cols) = []
+ *  
+ */
+
+int nsp_smatrix_delete_elements2(NspSMatrix *A, NspMatrix *EltsR, NspMatrix *EltsC)
+{
+  char *Val = (char *) A->S;
+  unsigned int elt_size; /* size in number of bytes */
+  int i,j,ne,*indrow,*indcol,k1,k2,nn,nrow,ncol,ioff=0; 
+  NspTypeBase *type; 
+
+  if ( EltsR->mn == 0 || EltsC->mn == 0 ) return OK;
+
+  if ( (indrow = nsp_indices_for_deletions(A->m, EltsR, &nrow)) == NULL )  
+    return FAIL; 
+  if ( (indcol = nsp_indices_for_deletions(A->n, EltsC, &ncol)) == NULL )  
+    return FAIL; 
+
+  if (( type = check_implements(A,nsp_type_matint_id)) == NULL ) 
+    { 
+      Scierror("Object do not implements matint interface\n"); 
+      return FAIL; 
+    } 
+
+  elt_size = MAT_INT(type)->elt_size(A); 
+  if ( MAT_INT(type)->free_elt != NULL)  
+    for ( i = 0 ; i < nrow ; i++ ) 
+      for ( j = 0 ; j < ncol ; j++ ) 
+	MAT_INT(type)->free_elt((void **) &(A->S[indrow[i]+A->m*indcol[j]])); 
+
+  k1 = indrow[0]+A->m*indcol[0];
+  for ( j = 0 ; j < ncol ; j++ ) 
+    {
+      int offset = A->m*indcol[j];
+      for ( i = 0 ; i < nrow ; i++)
+	{
+	  /* compute in k2 the point to delete after the current 
+	   * one or return A->mn at the end 
+	   */
+	  if ( i < nrow-1 )
+	    {
+	      k2 = indrow[i+1] + offset;
+	    }
+	  else 
+	    {
+	      if ( j == ncol-1 ) 
+		k2 = A->mn;
+	      else 
+		k2 = indrow[0] + A->m*indcol[j+1];
+	    }
+	  nn = k2-k1-1;
+	  if ( nn != 0) 
+	    {
+	      memmove(Val + (k1-ioff)*elt_size, Val + (k1+1)*elt_size, nn*elt_size);
+	    }
+	  ioff++;
+	  k1 = k2;
+	}
+    }
+  FREE(indrow);
+  FREE(indcol);
+  ne = nrow*ncol;
+  if ( MAT_INT(type)->free_elt != NULL) 
+    for ( i = A->mn-ne ; i < A->mn ; i++ ) A->S[i]= NULL;
+  if ( A->m == 1)
+    {
+      if ( MAT_INT(type)->resize(A,1,A->mn-ne) == FAIL) return FAIL;
+    }
+  else
+    {
+      if ( MAT_INT(type)->resize(A,A->mn-ne,1) == FAIL) return FAIL;
+    }
+  return OK;
+}
+
+
+
+/*
  * Res=nsp_smatrix_extract(A,Rows,Cols)
  * A, Rows and Cols are unchanged 
  */	
