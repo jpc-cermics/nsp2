@@ -37,74 +37,64 @@ struct
  * most of the blocks defined here have the following calling sequence
  */
 
-#define scicos_args_poo int *flag__, int *nevprt, double *t, double *xd, double *x, \
-	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,\
-	       double *rpar, int *nrpar, int *ipar, int *nipar, double *u,\
-	       int *nu, double *y, int *ny 
+int scicos_csslti (scicos_args_F0);
+int scicos_delay (scicos_args_F0) ;
+int scicos_dlradp (scicos_args_F0);
+int scicos_dollar (scicos_args_F0);
+int scicos_dsslti (scicos_args_F0);
+int scicos_evscpe (scicos_args_F0);
+int scicos_evtdly (scicos_args_F0);
+int scicos_expblk (scicos_args_F0);
+int scicos_forblk (scicos_args_F0);
+int scicos_fsv (scicos_args_F0) ;
+int scicos_gensin (scicos_args_F0);
+int scicos_gensqr (scicos_args_F0);
+int scicos_hltblk (scicos_args_F0);
+int scicos_integr (scicos_args_F0);
+int scicos_intplt (scicos_args_F0);
+int scicos_intpol (scicos_args_F0);
+int scicos_intrpl (scicos_args_F0) ;
+int scicos_invblk (scicos_args_F0);
+int scicos_iocopy (scicos_args_F0);
+int scicos_logblk (scicos_args_F0);
+int scicos_lookup (scicos_args_F0);
+int scicos_lsplit (scicos_args_F0);
+int scicos_maxblk (scicos_args_F0);
+int scicos_memo (scicos_args_F0) ;
+int scicos_mfclck (scicos_args_F0);
+int scicos_minblk (scicos_args_F0);
+int scicos_mscope (scicos_args_F0);
+int scicos_pload ( scicos_args_F0) ;
+int scicos_powblk (scicos_args_F0);
+int scicos_qzcel (scicos_args_F0) ;
+int scicos_qzflr (scicos_args_F0) ;
+int scicos_qzrnd (scicos_args_F0);
+int scicos_qztrn (scicos_args_F0);
+int scicos_rndblk (scicos_args_F0);
+int scicos_samphold (scicos_args_F0) ;
+int scicos_sawtth (scicos_args_F0);
+int scicos_scopxy (scicos_args_F0);
+int scicos_scoxy (scicos_args_F0);
+int scicos_selblk (scicos_args_F0);
+int scicos_sinblk (scicos_args_F0);
+int scicos_sqrblk (scicos_args_F0);
+int scicos_tanblk (scicos_args_F0);
+int scicos_tcsltj (scicos_args_F0) ;
+int scicos_timblk (scicos_args_F0);
+int scicos_trash (scicos_args_F0);
+int scicos_zcross (scicos_args_F0) ;
+int scicos_bound (scicos_args_F0);
+int scicos_affich (scicos_args_F0);
 
-int scicos_csslti (scicos_args_poo);
-int scicos_delay (scicos_args_poo) ;
-int scicos_dlradp (scicos_args_poo);
-int scicos_dollar (scicos_args_poo);
-int scicos_dsslti (scicos_args_poo);
-int scicos_evscpe (scicos_args_poo);
-int scicos_evtdly (scicos_args_poo);
-int scicos_expblk (scicos_args_poo);
-int scicos_forblk (scicos_args_poo);
-int scicos_fsv (scicos_args_poo) ;
-int scicos_gensin (scicos_args_poo);
-int scicos_gensqr (scicos_args_poo);
-int scicos_hltblk (scicos_args_poo);
-int scicos_integr (scicos_args_poo);
-int scicos_intplt (scicos_args_poo);
-int scicos_intpol (scicos_args_poo);
-int scicos_intrpl (scicos_args_poo) ;
-int scicos_invblk (scicos_args_poo);
-int scicos_iocopy (scicos_args_poo);
-int scicos_logblk (scicos_args_poo);
-int scicos_lookup (scicos_args_poo);
-int scicos_lsplit (scicos_args_poo);
-int scicos_maxblk (scicos_args_poo);
-int scicos_memo (scicos_args_poo) ;
-int scicos_mfclck (scicos_args_poo);
-int scicos_minblk (scicos_args_poo);
-int scicos_mscope (scicos_args_poo);
-int scicos_pload ( scicos_args_poo) ;
-int scicos_powblk (scicos_args_poo);
-int scicos_qzcel (scicos_args_poo) ;
-int scicos_qzflr (scicos_args_poo) ;
-int scicos_qzrnd (scicos_args_poo);
-int scicos_qztrn (scicos_args_poo);
-int scicos_rndblk (scicos_args_poo);
-int scicos_samphold (scicos_args_poo) ;
-int scicos_sawtth (scicos_args_poo);
-int scicos_scopxy (scicos_args_poo);
-int scicos_scoxy (scicos_args_poo);
-int scicos_selblk (scicos_args_poo);
-int scicos_sinblk (scicos_args_poo);
-int scicos_sqrblk (scicos_args_poo);
-int scicos_tanblk (scicos_args_poo);
-int scicos_tcsltj (scicos_args_poo) ;
-int scicos_timblk (scicos_args_poo);
-int scicos_trash (scicos_args_poo);
-int scicos_zcross (scicos_args_poo) ;
-int scicos_bound (scicos_args_poo);
-int scicos_affich (scicos_args_poo);
+/*     continuous state space linear system simulator */
+/*     rpar(1:nx*nx)=A */
+/*     rpar(nx*nx+1:nx*nx+nx*nu)=B */
+/*     rpar(nx*nx+nx*nu+1:nx*nx+nx*nu+nx*ny)=C */
+/*     rpar(nx*nx+nx*nu+nx*ny+1:nx*nx+nx*nu+nx*ny+ny*nu)=D */
 
-
-
-int scicos_csslti (scicos_args_poo)
+int scicos_csslti (scicos_args_F0)
 {
-  int la, lb, lc, ld;
-  static int c__1 = 1;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     continuous state space linear system simulator */
-  /*     rpar(1:nx*nx)=A */
-  /*     rpar(nx*nx+1:nx*nx+nx*nu)=B */
-  /*     rpar(nx*nx+nx*nu+1:nx*nx+nx*nu+nx*ny)=C */
-  /*     rpar(nx*nx+nx*nu+nx*ny+1:nx*nx+nx*nu+nx*ny+ny*nu)=D */
-
+  int la, lb, lc, ld, c__1 = 1;
   --y;
   --u;
   --ipar;
@@ -122,618 +112,36 @@ int scicos_csslti (scicos_args_poo)
       ld = lc + *nx * *ny;
       dmmul_scicos (&rpar[lc], ny, &x[1], nx, &y[1], ny, ny, nx, &c__1);
       dmmul1_scicos(&rpar[ld], ny, &u[1], nu, &y[1], ny, ny, nu, &c__1);
-      /*         if(t.gt.64.0) write(6,'(e15.8,10(e10.3,x))') t,x(1),x(2), */
-      /*     $        u(1),y(1) */
     }
   else if (*flag__ == 0)
     {
       /*     xd=a*x+b*u */
       dmmul_scicos (&rpar[la], nx, &x[1], nx, &xd[1], nx, nx, nx, &c__1);
       dmmul1_scicos(&rpar[lb], nx, &u[1], nu, &xd[1], nx, nx, nu, &c__1);
-      /*         if(t.gt.64.0) write(6,'(e15.8,10(e10.3,x))') t,x(1),x(2), */
-      /*     $        xd(1),xd(2),u(1) */
     }
   return 0;
 }
 
+/*     Ouputs nx*dt delayed input */
 
-int scicos_delay (scicos_args_poo) 
+int scicos_delay (scicos_args_F0) 
 {
-  int i__1;
-  int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     Ouputs nx*dt delayed input */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
   if (*flag__ == 1 || *flag__ == 4 || *flag__ == 6)
     {
-      y[1] = z__[1];
+      y[0] = z__[0];
     }
   else if (*flag__ == 2)
     {
       /*     .  shift buffer */
-      i__1 = *nz - 1;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  z__[i__] = z__[i__ + 1];
-	  /* L10: */
-	}
-      /*     .  add new point to the buffer */
-      z__[*nz] = u[1];
-    }
-  return 0;
-}			
-
-/* XXX    output a vector of constants out(i)=rpar(i) 
- */
-
-int
-scicos_cstblk (int *flag__, int *nevprt, double *t, double *xd, double *x,
-	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
-	       double *rpar, int *nrpar, int *ipar, int *nipar, double *y,
-	       int *ny)
-{
-  int c__1 = 1;
-  C2F(dcopy) (nrpar, rpar, &c__1, y, &c__1);
-  return 0;
-}			
-
-/* XXX
- */
-
-int
-scicos_constraint (int *flag__, int *nevprt, double *t, double *res,
-		   double *xd, double *x, int *nx, double *z__, int *nz,
-		   double *tvec, int *ntvec, double *rpar, int *nrpar,
-		   int *ipar, int *nipar, double *u, int *nu, double *y,
-		   int *ny)
-{
-  int i__1;
-  int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  --res;
-  if (*flag__ == 0)
-    {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  res[i__] = xd[i__] - u[i__];
-	  res[i__ + *nu] = xd[i__];
-	  /* L12: */
-	}
-    }
-  else if (*flag__ == 1)
-    {
-      i__1 = *ny;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  y[i__] = xd[i__ + *nu];
-	  /* L14: */
-	}
-      /*      elseif(flag.eq.6.or.flag.eq.7) then */
-      /*         do 12 i=1,nu */
-      /* 12      continue */
-    }
-  return 0;
-}
-
-
-
-/* XXXX 
- *
- */
-
-int
-scicos_delayv (int *flag__, int *nevprt, double *t, double *xd, double *x,
-	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
-	       double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
-	       int *nu1, double *u2, int *nu2, double *y, int *ny)
-{
-
-  int i__1, i__2;
-  double dtat, a;
-  int i__, j, k, ii, in;
-  double u2r;
-
-  /*     Copyright INRIA */
-  /*     rpar(1)=dt */
-  /*     delayv=u(nin) */
-
-  --y;
-  --u2;
-  --u1;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  j = (*nz - 1) / *nu1;
-  if (*flag__ == 3)
-    {
-      tvec[1] = *t + rpar[1];
-      k = (int) (u2[1] / rpar[1]);
-      if (k > j - 3)
-	{
-	  tvec[2] = *t;
-	}
-      if (k < 1)
-	{
-	  tvec[2] = *t;
-	}
-    }
-
-  /*     .   shift buffer */
-  if (*flag__ == 2)
-    {
-      i__1 = j;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  z__[i__] = z__[i__ + 1];
-	  /* L10: */
-	}
-      i__1 = *nu1 - 1;
-      for (in = 1; in <= i__1; ++in)
-	{
-	  i__2 = (in + 1) * j;
-	  for (ii = in * j + 1; ii <= i__2; ++ii)
-	    {
-	      z__[ii] = z__[ii + 1];
-	      /* L35: */
-	    }
-	  /* L30: */
-	}
-      z__[*nz] = *t;
-      i__1 = *nu1;
-      for (in = 1; in <= i__1; ++in)
-	{
-	  z__[j * in] = u1[in];
-	  /* L20: */
-	}
-    }
-  if (*flag__ == 1 || *flag__ == 6)
-    {
-      dtat = *t - z__[*nz];
-      i__1 = *nu1;
-      for (in = 1; in <= i__1; ++in)
-	{
-	  /*     extrapolate to find values at delta.t */
-	  if (u2[1] <= dtat)
-	    {
-	      /*     initialisation start */
-	      if (dtat < rpar[1] / 100.)
-		{
-		  a = u2[1] / (rpar[1] + dtat);
-		  /*     delete negative delay */
-		  if (a <= 0.)
-		    {
-		      a = 0.;
-		    }
-		  y[in] = (1 - a) * z__[j * in] + a * z__[j * in - 1];
-		}
-	      else
-		{
-		  a = u2[1] / dtat;
-		  /*     delete negative delay */
-		  if (a <= 0.)
-		    {
-		      a = 0.;
-		    }
-		  y[in] = (1 - a) * u1[in] + a * z__[j * in];
-		}
-	    }
-	  else
-	    {
-	      u2r = u2[1] - dtat;
-	      k = (int) (u2r / rpar[1]);
-	      /*     limitation of size buffer */
-	      if (k > j - 3)
-		{
-		  k = j - 3;
-		  a = 1.;
-		}
-	      else
-		{
-		  a = (u2r - k * rpar[1]) / rpar[1];
-		}
-	      /*     interpolate to find values at t-delay */
-	      y[in] = (1 - a) * z__[j * in - k] + a * z__[j * in - k - 1];
-	    }
-	  /* L8: */
-	}
-    }
-  return 0;
-}
-
-
-int
-scicos_demux_old (int *flag__, int *nevprt, double *t, double *xd, double *x,
-	      int *nx, double *z__, int *nz, double *tvec, int *ntvec,
-	      double *rpar, int *nrpar, int *ipar, int *nipar, double *uy1,
-	      int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
-	      double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
-	      int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8,
-	      double *uy9, int *nuy9)
-{
-
-  int i__1;
-  int i__, k;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-
-  --uy9;
-  --uy8;
-  --uy7;
-  --uy6;
-  --uy5;
-  --uy4;
-  --uy3;
-  --uy2;
-  --uy1;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  k = 0;
-  switch (ipar[1] - 1)
-    {
-    case 1:
-      goto L20;
-    case 2:
-      goto L30;
-    case 3:
-      goto L40;
-    case 4:
-      goto L50;
-    case 5:
-      goto L60;
-    case 6:
-      goto L70;
-    case 7:
-      goto L80;
-    }
-
- L20:
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy2[i__] = uy1[k];
-      /* L25: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy3[i__] = uy1[k];
-      /* L27: */
-    }
-  return 0;
-
- L30:
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy2[i__] = uy1[k];
-      /* L35: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy3[i__] = uy1[k];
-      /* L37: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy4[i__] = uy1[k];
-      /* L38: */
-    }
-  return 0;
-
- L40:
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy2[i__] = uy1[k];
-      /* L41: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy3[i__] = uy1[k];
-      /* L42: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy4[i__] = uy1[k];
-      /* L43: */
-    }
-  i__1 = *nuy5;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy5[i__] = uy1[k];
-      /* L44: */
-    }
-  return 0;
-
- L50:
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy2[i__] = uy1[k];
-      /* L51: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy3[i__] = uy1[k];
-      /* L52: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy4[i__] = uy1[k];
-      /* L53: */
-    }
-  i__1 = *nuy5;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy5[i__] = uy1[k];
-      /* L54: */
-    }
-  i__1 = *nuy6;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy6[i__] = uy1[k];
-      /* L55: */
-    }
-  return 0;
-
- L60:
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy2[i__] = uy1[k];
-      /* L61: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy3[i__] = uy1[k];
-      /* L62: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy4[i__] = uy1[k];
-      /* L63: */
-    }
-  i__1 = *nuy5;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy5[i__] = uy1[k];
-      /* L64: */
-    }
-  i__1 = *nuy6;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy6[i__] = uy1[k];
-      /* L65: */
-    }
-  i__1 = *nuy7;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy7[i__] = uy1[k];
-      /* L66: */
-    }
-  return 0;
-
- L70:
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy2[i__] = uy1[k];
-      /* L71: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy3[i__] = uy1[k];
-      /* L72: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy4[i__] = uy1[k];
-      /* L73: */
-    }
-  i__1 = *nuy5;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy5[i__] = uy1[k];
-      /* L74: */
-    }
-  i__1 = *nuy6;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy6[i__] = uy1[k];
-      /* L75: */
-    }
-  i__1 = *nuy7;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy7[i__] = uy1[k];
-      /* L76: */
-    }
-  i__1 = *nuy8;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy8[i__] = uy1[k];
-      /* L77: */
-    }
-  return 0;
-
- L80:
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy2[i__] = uy1[k];
-      /* L81: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy3[i__] = uy1[k];
-      /* L82: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy4[i__] = uy1[k];
-      /* L83: */
-    }
-  i__1 = *nuy5;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy5[i__] = uy1[k];
-      /* L84: */
-    }
-  i__1 = *nuy6;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy6[i__] = uy1[k];
-      /* L85: */
-    }
-  i__1 = *nuy7;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy7[i__] = uy1[k];
-      /* L86: */
-    }
-  i__1 = *nuy8;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy8[i__] = uy1[k];
-      /* L87: */
-    }
-  i__1 = *nuy9;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy9[i__] = uy1[k];
-      /* L88: */
-    }
-  return 0;
-}	
-
-
-/* demux revisited, Copyright Enpc Jean-Philippe Chancelier */
-
-int
-scicos_demux (int *flag__, int *nevprt, double *t, double *xd, double *x,
-	      int *nx, double *z__, int *nz, double *tvec, int *ntvec,
-	      double *rpar, int *nrpar, int *ipar, int *nipar, double *uy1,
-	      int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
-	      double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
-	      int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8,
-	      double *uy9, int *nuy9)
-{
-  int dim = ipar[0] - 1, offset=0;
-  memcpy(uy2,uy1+offset,(*nuy2)*sizeof(double));offset+=(*nuy2);
-  memcpy(uy3,uy1+offset,(*nuy3)*sizeof(double));offset+=(*nuy3);
-  if ( dim <= 1) return 0;
-  memcpy(uy4,uy1+offset,(*nuy4)*sizeof(double));offset+=(*nuy4);
-  if ( dim <= 2) return 0;
-  memcpy(uy5,uy1+offset,(*nuy5)*sizeof(double));offset+=(*nuy5);
-  if ( dim <= 3) return 0;
-  memcpy(uy6,uy1+offset,(*nuy6)*sizeof(double));offset+=(*nuy6);
-  if ( dim <= 4) return 0;
-  memcpy(uy7,uy1+offset,(*nuy7)*sizeof(double));offset+=(*nuy7);
-  if ( dim <= 5) return 0;
-  memcpy(uy8,uy1+offset,(*nuy8)*sizeof(double));offset+=(*nuy8);
-  if ( dim <= 6) return 0;
-  memcpy(uy9,uy1+offset,(*nuy9)*sizeof(double));
-  return 0;
-}			
-
-
-int
-scicos_diffblk (int *flag__, int *nevprt, double *t, double *res, double *xd,
-		double *x, int *nx, double *z__, int *nz, double *tvec,
-		int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar,
-		double *u, int *nu, double *y, int *ny)
-{
-  int i;
-  if (*flag__ == 0)
-    {
-      for (i = 0; i < *nu; ++i)  res[i] = x[i] - u[i];
-    }
-  else if (*flag__ == 1)
-    {
-      memcpy(y,xd,(*nu)*sizeof(double));
-    }
-  else if (*flag__ == 6 || *flag__ == 7)
-    {
-      memcpy(x,u,(*nu)*sizeof(double));
+      memmove(&z__[0],&z__[1],sizeof(double)*(*nz-1));
+      z__[*nz-1] = u[0];
     }
   return 0;
 }			
 
 
 
-int scicos_dlradp (scicos_args_poo)
+int scicos_dlradp (scicos_args_F0)
 {
   static int c__1 = 1;
   /* static int c_n1 = -1; */
@@ -829,7 +237,7 @@ int scicos_dlradp (scicos_args_poo)
 
 /* Ouputs delayed input */
 
-int scicos_dollar (scicos_args_poo)
+int scicos_dollar (scicos_args_F0)
 {
   if (*flag__ == 1 || *flag__ == 6 || *flag__ == 4)
     {
@@ -844,7 +252,7 @@ int scicos_dollar (scicos_args_poo)
 
 
 
-int scicos_dsslti (scicos_args_poo)
+int scicos_dsslti (scicos_args_F0)
 {
   int c__1 = 1;
   double w[100];
@@ -892,40 +300,10 @@ int scicos_dsslti (scicos_args_poo)
   return 0;
 }			
 
-int
-scicos_eselect (int *flag__, int *nevprt, int *ntvec, double *rpar,
-		int *nrpar, int *ipar, int *nipar, double *u, int *nu)
-{
-  int i__1, i__2;
-  int iu;
-  /*     Scicos block simulator */
-  /*     if-then-else block */
-  /*     if event input exits from then or else clock ouputs based */
-  /*     on the sign of the unique input (if input>0 then  else ) */
-  /*     Copyright INRIA */
-  --u;
-  --ipar;
-  --rpar;
-
-  if (C2F(dbcos).idb == 1)
-    {
-      sciprint("ifthel:  flag=%d\n",*flag__);
-    }
-  /* Computing MAX */
-  /* Computing MIN */
-  i__2 = (int) u[1];
-  i__1 = Min (i__2, ipar[1]);
-  iu = Max (i__1, 1);
-  if (*flag__ == 3)
-    {
-      *ntvec = iu;
-    }
-  return 0;
-}			
 
 /*     Event scope */
 
-int scicos_evscpe (scicos_args_poo)
+int scicos_evscpe (scicos_args_F0)
 {
   /* ipar=[win_num, ipar(2) = 0/1 color flag,  ipar(3:10) = color */
   /*     ipar(nipar-3:nipar-2) = window position */
@@ -1026,7 +404,7 @@ int scicos_evscpe (scicos_args_poo)
 
 /* event delay,  delay=rpar(1) */
 
-int scicos_evtdly (scicos_args_poo)
+int scicos_evtdly (scicos_args_F0)
 {
   if (*flag__ == 3)
     {
@@ -1037,7 +415,7 @@ int scicos_evtdly (scicos_args_poo)
 
 /*     Outputs a^u(i), a =rpar(1) */
 
-int scicos_expblk (scicos_args_poo)
+int scicos_expblk (scicos_args_F0)
 {
   int i;
   if (*flag__ == 1 ||  *flag__ >= 4) 
@@ -1049,7 +427,7 @@ int scicos_expblk (scicos_args_poo)
 
 /*  For block */
 
-int scicos_forblk (scicos_args_poo)
+int scicos_forblk (scicos_args_F0)
 {
   /*     Copyright INRIA */
   /*     Scicos block simulator */
@@ -1103,224 +481,7 @@ int scicos_forblk (scicos_args_poo)
 }			
 
 
-int
-scicos_fscope (int *flag__, int *nevprt, double *t, double *xd, double *x,
-	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
-	       double *rpar, int *nrpar, int *ipar, int *nipar)
-{
-  BCG *Xgc;
-  static int c__0 = 0;
-  static int c__1 = 1;
-  static int c_n1 = -1;
-  static int c__3 = 3;
-  static double c_b88 = 0.;
-  static double frect[4] = { 0., 0., 1., 1. };
-  static int cur = 0;
-  int i__1, i__2;
-  double rect[4];
-  double ymin, ymax;
-  int i__, k, n;
-  double u[8];
-  double tsave;
-  int n1, n2;
-  double dt;
-  int nu;
-  int wid, iwd;
-  double per;
-  int nax[4], iwp;
-  int record;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     ipar(1) = win_num */
-  /*     ipar(2) = 0/1 color flag */
-  /*     ipar(3) = buffer size */
-  /*     ipar(4:11) = line type for ith curve */
-  /*     ipar(12:13) : window position */
-  /*     ipar(14:15) : window dimension */
-  /*     rpar(1)=dt */
-  /*     rpar(2)=ymin */
-  /*     rpar(3)=ymax */
-  /*     rpar(4)=periode */
-  /*      character*(4) logf */
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-
-  iwp = 12;
-  iwd = 14;
-  nu = ipar[16];
-  if (*flag__ == 2)
-    {
-      scicos_getouttb (nu, &ipar[17], u);
-      dt = rpar[1];
-      ymin = rpar[2];
-      ymax = rpar[3];
-      per = rpar[4];
-      wid = ipar[1];
-      n = ipar[3];
-      k = (int) z__[1];
-      if (k > 0)
-	{
-	  n1 = (int) (z__[k + 1] / per);
-	  if (z__[k + 1] < 0.)
-	    {
-	      --n1;
-	    }
-	}
-      else
-	{
-	  n1 = 0;
-	}
-
-      tsave = *t;
-      if (dt > 0.)
-	{
-	  *t = z__[k + 1] + dt;
-	}
-
-      n2 = (int) (*t / per);
-      if (*t < 0.)
-	{
-	  --n2;
-	}
-
-      /*     add new point to the buffer */
-      ++k;
-      z__[k + 1] = *t;
-      i__1 = nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  z__[n + 1 + (i__ - 1) * n + k] = u[i__ - 1];
-	  /* L1: */
-	}
-      z__[1] = (double) k;
-      if (n1 == n2 && k < n)
-	{
-	  *t = tsave;
-	  return 0;
-	}
-
-      /*     plot 1:K points of the buffer */
-      Xgc = scicos_set_win(wid,&cur);
-      record= Xgc->graphic_engine->xget_recording(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-      Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
-      if (k > 0)
-	{
-	  i__1 = nu;
-	  for (i__ = 1; i__ <= i__1; ++i__)
-	    {
-	      /*               if(ipar(3+i).ge.0.or.flag.eq.1) then */
-	      Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 +(i__ - 1) * n],&ipar[i__ + 3], c__1,k);
-	      /* L10: */
-	    }
-	}
-      /*     shift buffer left */
-      z__[2] = z__[k + 1];
-      i__1 = nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  z__[n + 1 + (i__ - 1) * n + 1] = z__[n + 1 + (i__ - 1) * n + k];
-	  /* L15: */
-	}
-      z__[1] = 1.;
-      if (n1 != n2)
-	{
-	  /*     clear window */
-	  nax[0] = 2;
-	  nax[1] = 10;
-	  nax[2] = 2;
-	  nax[3] = 10;
-	  Xgc->graphic_engine->clearwindow(Xgc);
-	  Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
-	  Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
-	  rect[0] = per * (n1 + 1);
-	  rect[1] = ymin;
-	  rect[2] = per * (n1 + 2);
-	  rect[3] = ymax;
-	  Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-	  nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
-		     0, rect, nax);
-	}
-      *t = tsave;
-      Xgc->graphic_engine->xset_recording(Xgc,record);
-    }
-  else if (*flag__ == 4)
-    {
-      wid = ipar[1];
-      n = ipar[3];
-      ymin = rpar[2];
-      ymax = rpar[3];
-      per = rpar[4];
-      nax[0] = 2;
-      nax[1] = 10;
-      nax[2] = 2;
-      nax[3] = 10;
-      n1 = (int) ((int) (*t) / per);
-      if (*t <= 0.)
-	{
-	  --n1;
-	}
-      Xgc = scicos_set_win(wid,&cur);
-      record= Xgc->graphic_engine->xget_recording(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-      if (ipar[iwp] >= 0)
-	{
-	  Xgc->graphic_engine->xset_windowpos(Xgc,ipar[iwp], ipar[iwp + 1]);
-	}
-      if (ipar[iwd] >= 0)
-	{
-	  Xgc->graphic_engine->xset_windowdim(Xgc,ipar[iwd], ipar[iwd + 1]);
-	  /*     to force dimensions update */
-	  Xgc = scicos_set_win(wid,&cur);
-	}
-      rect[0] = per * (n1 + 1);
-      rect[1] = ymin;
-      rect[2] = per * (n1 + 2);
-      rect[3] = ymax;
-      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-      Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
-      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
-      Xgc->graphic_engine->clearwindow(Xgc);
-      Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
-      Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
-		 0, rect, nax);
-      z__[1] = 0.;
-      z__[2] = *t;
-      i__1 = nu * n;
-      nsp_dset (&i__1, &c_b88, &z__[3], &c__1);
-      Xgc->graphic_engine->xset_recording(Xgc,record);
-    }
-  else if (*flag__ == 5)
-    {
-      wid = ipar[1];
-      n = ipar[3];
-      k = (int) z__[1];
-      if (k <= 1)
-	{
-	  return 0;
-	}
-      Xgc = scicos_set_win(wid,&cur);
-      record= Xgc->graphic_engine->xget_recording(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-      Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
-      i__1 = nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  i__2 = k - 1;
-	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + (i__ - 1) * n],&ipar[i__ + 3], c__1, i__2);
-	}
-      Xgc->graphic_engine->xset_recording(Xgc,record);
-    }
-  return 0;
-}			
-
-
-int scicos_fsv (scicos_args_poo) 
+int scicos_fsv (scicos_args_F0) 
 {
   double d__1, d__2;
   double a, g, a0, b0;
@@ -1355,7 +516,7 @@ int scicos_fsv (scicos_args_poo)
 /* just a test */
 
 
-int scicos_gensin_test (scicos_args_poo)
+int scicos_gensin_test (scicos_args_F0)
 {
   static double val;
   if ( *flag__ == 4)
@@ -1366,33 +527,27 @@ int scicos_gensin_test (scicos_args_poo)
   return 0;
 }			
 
-int scicos_gensin (scicos_args_poo)
+int scicos_gensin (scicos_args_F0)
 {
   y[0] = rpar[0] * sin (rpar[1] * *t + rpar[2]);
   return 0;
 }			
 
-int scicos_gensqr (scicos_args_poo)
+/*     Square wave generator 
+ *     period=2*rpar(1) 
+ */
+
+int scicos_gensqr (scicos_args_F0)
 {
   /*     Copyright INRIA */
   /*     Scicos block simulator */
-  /*     Square wave generator */
-  /*     period=2*rpar(1) */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
   if (*flag__ == 2)
     {
-      z__[1] = -z__[1];
+      z__[0] = -z__[0];
     }
   else if (*flag__ == 1 || *flag__ == 6)
     {
-      y[1] = z__[1];
+      y[0] = z__[0];
     }
   return 0;
 }			
@@ -1402,7 +557,7 @@ int scicos_gensqr (scicos_args_poo)
  */
 
 
-int scicos_hltblk (scicos_args_poo)
+int scicos_hltblk (scicos_args_F0)
 {
   if (*flag__ == 2)
     {
@@ -1412,42 +567,11 @@ int scicos_hltblk (scicos_args_poo)
   return 0;
 }			
 
-/* 
- * if-then-else block
- * if event input exits from then or else clock ouputs based 
- * on the sign of the unique input (if input>0 then  else )
- */
-
-int
-scicos_ifthel (int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar,
-	       int *ipar, int *nipar, double *u, int *nu)
-{
-  --u;
-  --ipar;
-  --rpar; 
-  if (C2F(dbcos).idb == 1)
-    {
-      sciprint("ifthel: flag=%d\n",*flag__);
-    }
-
-  if (*flag__ == 3)
-    {
-      if (u[1] <= 0.)
-	{
-	  *ntvec = 2;
-	}
-      else
-	{
-	  *ntvec = 1;
-	}
-    }
-  return 0;
-}			
 
 /*     Integrator */
 
 int
-scicos_integr (scicos_args_poo)
+scicos_integr (scicos_args_F0)
 {
   if (*flag__ == 1 || *flag__ == 6)
     {
@@ -1470,7 +594,7 @@ scicos_integr (scicos_args_poo)
  */
 
 int
-scicos_intplt (scicos_args_poo)
+scicos_intplt (scicos_args_F0)
 {
   int np;
   --y;
@@ -1485,13 +609,13 @@ scicos_intplt (scicos_args_poo)
   Scierror("Error: intplt block is to be done \n");
   *flag__ = -1;
   /* 
-     scicos_intp (t, &rpar[1], &rpar[np + 1], ny, &np, &y[1]);
-  */
+   *  scicos_intp (t, &rpar[1], &rpar[np + 1], ny, &np, &y[1]);
+   */
   return 0;
 }			
 
 
-int scicos_intpol (scicos_args_poo)
+int scicos_intpol (scicos_args_F0)
 {
   int np;
   /*     Copyright INRIA */
@@ -1516,21 +640,25 @@ int scicos_intpol (scicos_args_poo)
 }			
 
 
+int scicos_intrp2(scicos_args_F);
+
 int scicos_intrp2(int *flag__, int *nevprt, double *t, double *xd, double *x,
 		  int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 		  double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
-		  int *nu1, double *u2, int *nu2, double *y1, int *ny1)
+		  int *nu1, double *u2, int *nu2, double *y1, int *ny1, 
+		  double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+		  int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8, 
+		  double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, 
+		  double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
+		  double *uy17, int *nuy17, double *uy18, int *nuy18)
+
 {
   int i__1;
   int i__, j;
   double vx1, vx2, vy1, vy2, vz1, vz2, vz3, vz4;
-
   /*     Copyright INRIA */
   /*     Scicos block simulator */
   /*     ipar(1) : the number of input */
-
-
-
   --ipar;
   --rpar;
   --tvec;
@@ -1579,7 +707,7 @@ int scicos_intrp2(int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 /*     ipar(1) : the number of input */
 
-int scicos_intrpl (scicos_args_poo) 
+int scicos_intrpl (scicos_args_F0) 
 {
   int i,i1=(*nrpar / 2);
   --ipar;
@@ -1605,7 +733,7 @@ int scicos_intrpl (scicos_args_poo)
 
 /*     Outputs the inverse of the input */
 
-int scicos_invblk (scicos_args_poo)
+int scicos_invblk (scicos_args_F0)
 {
   int i;
   double ww;
@@ -1647,7 +775,7 @@ int scicos_invblk (scicos_args_poo)
 }			
 
 
-int scicos_iocopy (scicos_args_poo)
+int scicos_iocopy (scicos_args_F0)
 {
   if (C2F(dbcos).idb == 1)
     {
@@ -1659,7 +787,7 @@ int scicos_iocopy (scicos_args_poo)
 
 
 
-int scicos_logblk (scicos_args_poo)
+int scicos_logblk (scicos_args_F0)
 {
   int i__1;
   int i__;
@@ -1706,7 +834,7 @@ int scicos_logblk (scicos_args_poo)
   return 0;
 }			
 
-int scicos_lookup (scicos_args_poo)
+int scicos_lookup (scicos_args_F0)
 {
   int i__1;
   double dout;
@@ -1756,7 +884,7 @@ int scicos_lookup (scicos_args_poo)
 
 
 
-int scicos_lsplit (scicos_args_poo)
+int scicos_lsplit (scicos_args_F0)
 {
 
   int i__1, i__2;
@@ -1784,18 +912,24 @@ int scicos_lsplit (scicos_args_poo)
 	{
 	  ++j;
 	  y[j] = u[k];
-	  /* L1: */
 	}
-      /* L2: */
     }
   return 0;
 }			
+
+int scicos_lusat (scicos_args_F);
 
 
 int scicos_lusat (int *flag__, int *nevprt, double *t, double *xd, double *x,
 		  int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 		  double *rpar, int *nrpar, int *ipar, int *nipar, double *u,
-		  int *nu, double *y, int *ny, double *g, int *ng)
+		  int *nu, double *y, int *ny, double *g, int *ng,
+		  double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+		  int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8, 
+		  double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, 
+		  double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
+		  double *uy17, int *nuy17, double *uy18, int *nuy18)
+
 {
   int i__1;
   int i__;
@@ -1846,7 +980,7 @@ int scicos_lusat (int *flag__, int *nevprt, double *t, double *xd, double *x,
 }			
 
 
-int scicos_maxblk (scicos_args_poo)
+int scicos_maxblk (scicos_args_F0)
 {
   int i__1;
   double d__1, d__2;
@@ -1878,120 +1012,67 @@ int scicos_maxblk (scicos_args_poo)
   return 0;
 }			
 
+/*     returns sample and hold  of the input */
 
-
-
-int scicos_memo (scicos_args_poo) 
+int scicos_memo (scicos_args_F0) 
 {
-  int i__1;
-  int i__;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     returns sample and hold  of the input */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
   if (*flag__ == 2)
     {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  y[i__] = u[i__];
-	  /* L15: */
-	}
+      memcpy(y,u,(*nu)*sizeof(double));
     }
   else if (*flag__ == 4)
     {
-      i__1 = *nu;
-      for (i__ = 1; i__ <= i__1; ++i__)
-	{
-	  y[i__] = rpar[i__];
-	  /* L25: */
-	}
+      memcpy(y,rpar,(*nu)*sizeof(double));
     }
   return 0;
 }		
 
 
-int scicos_mfclck (scicos_args_poo)
+/*     multifrequency clock */
+
+int scicos_mfclck (scicos_args_F0)
 {
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     multifrequency clock */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
   if (*flag__ == 4)
     {
-      z__[1] = 0.;
+      z__[0] = 0.;
     }
   else if (*flag__ == 2)
     {
-      z__[1] += 1.;
-      if (z__[1] == (double) ipar[1])
+      z__[0] += 1.;
+      if (z__[0] == (double) ipar[0])
 	{
-	  z__[1] = 0.;
+	  z__[0] = 0.;
 	}
     }
   else if (*flag__ == 3)
     {
-      if (z__[1] == (double) (ipar[1] - 1))
+      if (z__[0] == (double) (ipar[0] - 1))
 	{
-	  tvec[1] = *t - 1.;
-	  tvec[2] = *t + rpar[1];
+	  tvec[0] = *t - 1.;
+	  tvec[1] = *t + rpar[0];
 	}
       else
 	{
-	  tvec[1] = *t + rpar[1];
-	  tvec[2] = *t - 1.;
+	  tvec[0] = *t + rpar[0];
+	  tvec[1] = *t - 1.;
 	}
     }
   return 0;
 }			
 
-int scicos_minblk (scicos_args_poo)
+/*     outputs the minimum of all inputs */
+
+int scicos_minblk (scicos_args_F0)
 {
-  int i__1;
-  double d__1, d__2;
-  int i__;
-  double ww;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     outputs the minimum of all inputs */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  ww = u[1];
-  i__1 = *nu;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      /* Computing MIN */
-      d__1 = ww, d__2 = u[i__];
-      ww = Min (d__1, d__2);
-      /* L15: */
-    }
-  y[1] = ww;
+  int i;
+  double ww =  u[0];
+  for (i = 1; i < *nu ; i++ )  ww = Min (ww , u[i] );
+  y[0] = ww;
   return 0;
 }			
 
 
-
-int scicos_mscope (scicos_args_poo)
+int scicos_mscope (scicos_args_F0)
 {
   static int c__1 = 1;
   static int c__0 = 0;
@@ -2279,323 +1360,7 @@ int scicos_mscope (scicos_args_poo)
 }		
 
 
-
-int scicos_mux (int *flag__, int *nevprt, double *t, double *xd, double *x,
-		int *nx, double *z__, int *nz, double *tvec, int *ntvec,
-		double *rpar, int *nrpar, int *ipar, int *nipar, double *uy1,
-		int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
-		double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
-		int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8,
-		double *uy9, int *nuy9)
-{
-  int i__1;
-  int i__, k;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     ipar(1) : the number of input */
-  --uy9;
-  --uy8;
-  --uy7;
-  --uy6;
-  --uy5;
-  --uy4;
-  --uy3;
-  --uy2;
-  --uy1;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  k = 0;
-  switch (ipar[1] - 1)
-    {
-    case 1:
-      goto L20;
-    case 2:
-      goto L30;
-    case 3:
-      goto L40;
-    case 4:
-      goto L50;
-    case 5:
-      goto L60;
-    case 6:
-      goto L70;
-    case 7:
-      goto L80;
-    }
-
- L20:
-  i__1 = *nuy1;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy3[k] = uy1[i__];
-      /* L25: */
-    }
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy3[k] = uy2[i__];
-      /* L27: */
-    }
-  return 0;
-
- L30:
-  i__1 = *nuy1;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy4[k] = uy1[i__];
-      /* L35: */
-    }
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy4[k] = uy2[i__];
-      /* L37: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy4[k] = uy3[i__];
-      /* L38: */
-    }
-  return 0;
-
- L40:
-  i__1 = *nuy1;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy5[k] = uy1[i__];
-      /* L41: */
-    }
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy5[k] = uy2[i__];
-      /* L42: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy5[k] = uy3[i__];
-      /* L43: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy5[k] = uy4[i__];
-      /* L44: */
-    }
-  return 0;
-
- L50:
-  i__1 = *nuy1;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy6[k] = uy1[i__];
-      /* L51: */
-    }
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy6[k] = uy2[i__];
-      /* L52: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy6[k] = uy3[i__];
-      /* L53: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy6[k] = uy4[i__];
-      /* L54: */
-    }
-  i__1 = *nuy5;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy6[k] = uy5[i__];
-      /* L55: */
-    }
-  return 0;
-
- L60:
-  i__1 = *nuy1;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy7[k] = uy1[i__];
-      /* L61: */
-    }
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy7[k] = uy2[i__];
-      /* L62: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy7[k] = uy3[i__];
-      /* L63: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy7[k] = uy4[i__];
-      /* L64: */
-    }
-  i__1 = *nuy5;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy7[k] = uy5[i__];
-      /* L65: */
-    }
-  i__1 = *nuy6;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy7[k] = uy6[i__];
-      /* L66: */
-    }
-  return 0;
-
- L70:
-  i__1 = *nuy1;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy8[k] = uy1[i__];
-      /* L71: */
-    }
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy8[k] = uy2[i__];
-      /* L72: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy8[k] = uy3[i__];
-      /* L73: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy8[k] = uy4[i__];
-      /* L74: */
-    }
-  i__1 = *nuy5;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy8[k] = uy5[i__];
-      /* L75: */
-    }
-  i__1 = *nuy6;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy8[k] = uy6[i__];
-      /* L76: */
-    }
-  i__1 = *nuy7;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy8[k] = uy7[i__];
-      /* L77: */
-    }
-  return 0;
-
- L80:
-  i__1 = *nuy1;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy9[k] = uy1[i__];
-      /* L81: */
-    }
-  i__1 = *nuy2;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy9[k] = uy2[i__];
-      /* L82: */
-    }
-  i__1 = *nuy3;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy9[k] = uy3[i__];
-      /* L83: */
-    }
-  i__1 = *nuy4;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy9[k] = uy4[i__];
-      /* L84: */
-    }
-  i__1 = *nuy5;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy9[k] = uy5[i__];
-      /* L85: */
-    }
-  i__1 = *nuy6;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy9[k] = uy6[i__];
-      /* L86: */
-    }
-  i__1 = *nuy7;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy9[k] = uy7[i__];
-      /* L87: */
-    }
-  i__1 = *nuy8;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ++k;
-      uy9[k] = uy8[i__];
-      /* L88: */
-    }
-  return 0;
-}	
-
-
-int scicos_pload ( scicos_args_poo) 
+int scicos_pload ( scicos_args_F0) 
 {
   int i__1;
   int i__;
@@ -2634,7 +1399,7 @@ int scicos_pload ( scicos_args_poo)
 }			
 
 
-int scicos_powblk (scicos_args_poo)
+int scicos_powblk (scicos_args_F0)
 {
   int i__1;
   int i__;
@@ -2701,7 +1466,7 @@ int scicos_powblk (scicos_args_poo)
 /*     Gives quantized signal by ceiling method */
 /*     rpar(i) quantization step used for i input */
 
-int scicos_qzcel (scicos_args_poo) 
+int scicos_qzcel (scicos_args_F0) 
 {
   double d__1;
   double d_nint (double *);
@@ -2725,7 +1490,7 @@ int scicos_qzcel (scicos_args_poo)
 /*     Gives quantized signal by floor method */
 /*     rpar(i) quantization step used for i input */
 
-int scicos_qzflr (scicos_args_poo) 
+int scicos_qzflr (scicos_args_F0) 
 {
   double d__1;
   double d_nint (double *);
@@ -2749,7 +1514,7 @@ int scicos_qzflr (scicos_args_poo)
 /*     Gives quantized signal by round method */
 /*     rpar(i) quantization step used for i input */
 
-int scicos_qzrnd (scicos_args_poo)
+int scicos_qzrnd (scicos_args_F0)
 {
   double d__1;
   double d_nint (double *);
@@ -2782,7 +1547,7 @@ int scicos_qzrnd (scicos_args_poo)
 /*     Gives quantized signal by truncation method */
 /*     rpar(i) quantization step used for i input */
 
-int scicos_qztrn (scicos_args_poo)
+int scicos_qztrn (scicos_args_F0)
 {
   int i__;
   --y;
@@ -2818,7 +1583,7 @@ int scicos_qztrn (scicos_args_poo)
 /*     rpar(ny+1:2*ny)=deviation */
 /*     rpar(2*ny+1)=dt */
 
-int scicos_rndblk (scicos_args_poo)
+int scicos_rndblk (scicos_args_F0)
 {
 
   int i__1;
@@ -2880,7 +1645,7 @@ int scicos_rndblk (scicos_args_poo)
 
 /*     returns sample and hold  of the input */
 
-int scicos_samphold (scicos_args_poo) 
+int scicos_samphold (scicos_args_F0) 
 {
   if (*flag__ == 1)
     {
@@ -2890,7 +1655,7 @@ int scicos_samphold (scicos_args_poo)
 }			
 
 
-int scicos_sawtth (scicos_args_poo)
+int scicos_sawtth (scicos_args_F0)
 {
   if (*flag__ == 1 && *nevprt == 0)
     {
@@ -2911,12 +1676,19 @@ int scicos_sawtth (scicos_args_poo)
   return 0;
 }			
 
+int scicos_scope(scicos_args_F);
 
 int
 scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	      int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 	      double *rpar, int *nrpar, int *ipar, int *nipar, double *u,
-	      int *nu)
+	      int *nu,
+	      double *uy2,int *nuy2, double *uy3,int *nuy3,
+	      double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+	      int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8, 
+	      double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, 
+	      double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
+	      double *uy17, int *nuy17, double *uy18, int *nuy18)
 {
   BCG *Xgc;
   int nax[]={2,10,2,10};
@@ -3137,7 +1909,7 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
 /* Table of constant values */
 
 
-int scicos_scopxy (scicos_args_poo)
+int scicos_scopxy (scicos_args_F0)
 {
   BCG *Xgc;
   static int c__1 = 1;
@@ -3302,7 +2074,7 @@ int scicos_scopxy (scicos_args_poo)
 }
 
 
-int scicos_scoxy (scicos_args_poo)
+int scicos_scoxy (scicos_args_F0)
 {
   BCG *Xgc;
   char *str;
@@ -3450,15 +2222,13 @@ int scicos_scoxy (scicos_args_poo)
   return 0;
 }			
 
+/*     Selector block */
 
-
-
-int scicos_selblk (scicos_args_poo)
+int scicos_selblk (scicos_args_F0)
 {
   int ic, nev;
   /*     Copyright INRIA */
   /*     Scicos block simulator */
-  /*     Selector block */
   --y;
   --u;
   --ipar;
@@ -3488,7 +2258,7 @@ int scicos_selblk (scicos_args_poo)
 }			
 
 
-int scicos_sinblk (scicos_args_poo)
+int scicos_sinblk (scicos_args_F0)
 {
   int i;
   for (i = 0 ; i < *nu ; ++i)  y[i] = sin (u[i]);
@@ -3500,7 +2270,7 @@ int scicos_sinblk (scicos_args_poo)
  */
 
 
-int scicos_sqrblk (scicos_args_poo)
+int scicos_sqrblk (scicos_args_F0)
 {
   int i;
   for (i = 0; i < *nu ; ++i)
@@ -3518,18 +2288,26 @@ int scicos_sqrblk (scicos_args_poo)
   return 0;
 }			
 
+/*     adds the inputs weighed by rpar */
 
+int scicos_sum2(scicos_args_F);
 
 int scicos_sum2(int *flag__, int *nevprt, double *t, double *xd, double *x,
 		int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 		double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
-		int *nu1, double *u2, int *nu2, double *y, int *ny)
+		int *nu1, double *u2, int *nu2, double *y, int *ny,
+		double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+		int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8, 
+		double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, 
+		double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
+		double *uy17, int *nuy17, double *uy18, int *nuy18)
+
 {
   int i__1;
   int i__;
   /*     Copyright INRIA */
   /*     Scicos block simulator */
-  /*     adds the inputs weighed by rpar */
+
   --y;
   --u2;
   --u1;
@@ -3543,18 +2321,22 @@ int scicos_sum2(int *flag__, int *nevprt, double *t, double *xd, double *x,
   for (i__ = 1; i__ <= i__1; ++i__)
     {
       y[i__] = u1[i__] * rpar[1] + u2[i__] * rpar[2];
-      /* L1: */
     }
   return 0;
 }			
 
-
+int scicos_sum3(scicos_args_F);
 
 int scicos_sum3(int *flag__, int *nevprt, double *t, double *xd, double *x,
 		int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 		double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
 		int *nu1, double *u2, int *nu2, double *u3, int *nu3, double *y,
-		int *ny)
+		int *ny,
+		double *uy5, int *nuy5, double *uy6,
+		int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8, 
+		double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, 
+		double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
+		double *uy17, int *nuy17, double *uy18, int *nuy18)
 {
   int i__1;
   int i__;
@@ -3582,51 +2364,43 @@ int scicos_sum3(int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 
 
-int scicos_tanblk (scicos_args_poo)
+int scicos_tanblk (scicos_args_F0)
 {
-  int i__1;
-  int i__;
+  int i;
   double ww;
 
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  i__1 = *nu;
-  for (i__ = 1; i__ <= i__1; ++i__)
+  for (i = 0 ; i < *nu ; i++ )
     {
-      ww = cos (u[i__]);
+      ww = cos (u[i]);
       if (ww != 0.)
 	{
-	  y[i__] = sin (u[i__]) / ww;
+	  y[i] = sin (u[i]) / ww;
 	}
       else
 	{
 	  *flag__ = -2;
 	  return 0;
 	}
-      /* L15: */
     }
   return 0;
 }			
 
 
-
 /* Table of constant values */
 
-
+int scicos_tcslti(scicos_args_F);
 
 int
 scicos_tcslti (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 	       double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
-	       int *nu1, double *u2, int *nu2, double *y, int *ny)
+	       int *nu1, double *u2, int *nu2, double *y, int *ny,
+	       double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+	       int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8, 
+	       double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, 
+	       double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
+	       double *uy17, int *nuy17, double *uy18, int *nuy18)
+
 {
   int c__1 = 1;
   int la, lb, lc, ld;
@@ -3674,7 +2448,7 @@ scicos_tcslti (int *flag__, int *nevprt, double *t, double *xd, double *x,
 }			
 
 
-int scicos_tcsltj (scicos_args_poo) 
+int scicos_tcsltj (scicos_args_F0) 
 {
   static int c__1 = 1;
   int la, lb, lc;
@@ -3717,7 +2491,7 @@ int scicos_tcsltj (scicos_args_poo)
 }			
 
 
-int scicos_timblk (scicos_args_poo)
+int scicos_timblk (scicos_args_F0)
 {
   /*     Copyright INRIA */
   /*     Scicos block simulator */
@@ -3726,8 +2500,7 @@ int scicos_timblk (scicos_args_poo)
 }
 
 
-
-int scicos_trash (scicos_args_poo)
+int scicos_trash (scicos_args_F0)
 {
   /*     Copyright INRIA */
   /*     Scicos block simulator */
@@ -3735,7 +2508,7 @@ int scicos_trash (scicos_args_poo)
 }			
 
 
-int  scicos_zcross (scicos_args_poo) 
+int  scicos_zcross (scicos_args_F0) 
 {
   int i__1;
   double d__1;
@@ -3793,6 +2566,7 @@ int  scicos_zcross (scicos_args_poo)
   return 0;
 }
 
+void plusblk(scicos_args_F2);
 
 void 
 plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
@@ -3817,6 +2591,7 @@ plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
+void scicos_plusblk(scicos_args_F2);
 
 void  scicos_plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
 		     int *nx, double *z, int *nz, double *tvec, int *ntvec,
@@ -3840,6 +2615,7 @@ void  scicos_plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
+void switchn(scicos_args_F2);
 
 void switchn(int *flag, int *nevprt, double *t, double *xd, double *x,
 	     int *nx, double *z, int *nz, double *tvec, int *ntvec,
@@ -3866,7 +2642,7 @@ void switchn(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
-
+void selector(scicos_args_F2);
 
 void 
 selector(int *flag, int *nevprt, double *t, double *xd, double *x,
@@ -3902,6 +2678,8 @@ selector(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
+
+void relay(scicos_args_F2);
 
 void 
 relay(int *flag, int *nevprt, double *t, double *xd, double *x,
@@ -3940,6 +2718,9 @@ relay(int *flag, int *nevprt, double *t, double *xd, double *x,
 }
 
 
+void prod(scicos_args_F2);
+
+
 void 
 prod(int *flag, int *nevprt, double *t, double *xd, double *x,
      int *nx, double *z, int *nz, double *tvec, int *ntvec,
@@ -3963,6 +2744,7 @@ prod(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
+void sum(scicos_args_F2);
 
 void 
 sum(int *flag, int *nevprt, double *t, double *xd, double *x,
@@ -3987,6 +2769,7 @@ sum(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
+void zcross2(scicos_args_F0);
 
 void 
 zcross2(int *flag, int *nevprt, double *t, double *xd, double *x,
@@ -4027,7 +2810,7 @@ zcross2(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
-int scicos_bound (scicos_args_poo)
+int scicos_bound (scicos_args_F0)
 {
 
   int i__1;
@@ -4059,9 +2842,12 @@ int scicos_bound (scicos_args_poo)
   return 0;
 }
 
+void  readau(scicos_args_F2);
 
-
-void  readau(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, int *outsz, int *nout)
+void  readau(int *flag, int *nevprt, double *t, double *xd, double *x, 
+	     int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, 
+	     int *nrpar, int *ipar, int *nipar, double **inptr, int *insz, int *nin, 
+	     double **outptr, int *outsz, int *nout)
      /*
        ipar[1]   = lfil : file name length
        ipar[2:4] = fmt  : numbers type ascii code
@@ -4236,6 +3022,758 @@ void  readau(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, 
 
 
 
+
+/*
+ * Copyright Enpc jpc 
+ */
+
+extern int scicos_getgeom(double *);
+
+/*----------------------------------------------------
+ * erase a rectangle 
+ *----------------------------------------------------*/ 
+
+static void block_draw_rect_1(BCG *Xgc,double r[],double percent)
+{
+  int alumode;
+  static int in=6;
+  double w = r[2]*percent;
+  double x = r[0];
+  double rect[]={x,r[1],w,r[3]};
+  alumode  = Xgc->graphic_engine->xget_alufunction(Xgc);
+  if ( alumode != in ) 
+    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,in);
+  Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+  if ( alumode != in ) 
+    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
+}
+
+static void block_draw_rect_2(BCG *Xgc,double r[],double percent)
+{
+  int alumode;
+  /* int flag =0;  double ang=0.0;  char foo[24]; */
+  static int in=6;
+  double x = r[0]+ r[2]*percent-2;
+  double w = 4;
+  double rect[]={x,r[1],w,r[3]};
+  alumode  = Xgc->graphic_engine->xget_alufunction(Xgc);
+  if ( alumode != in )
+    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,in);
+  Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+  /* sprintf(foo,"%5.3f",percent);
+     C2F(dr1)("xstring",foo,PI0,PI0,PI0,&flag,PI0,PI0,r,r+1,&ang,PD0,0L,0L);
+  */
+
+  if ( alumode != in ) 
+    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
+}
+
+
+static void block_draw_rect_3(BCG *Xgc,double r[],double percent)
+{
+  int alumode;
+  int flag =0;  double ang=0.0;  char foo[24];
+  static int in=6;
+  double x = r[0] + (1.0/10)*r[2];
+  double y = r[1] - r[3] + 2 ;
+  alumode  = Xgc->graphic_engine->xget_alufunction(Xgc);
+  if ( alumode != in ) 
+    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,in);
+  sprintf(foo,"%5.3f",percent);
+  Xgc->graphic_engine->scale->displaystring(Xgc,foo,x,y,flag,ang);
+  if ( alumode != in ) 
+    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
+}
+
+
+
+
+
+/*----------------------------------------------------
+ * changes the current color to color 
+ * returns the old color
+ *----------------------------------------------------*/ 
+
+
+static int set_slider_color(BCG *Xgc, int color)
+{
+  int cur;
+  cur = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( cur != color ) 
+    Xgc->graphic_engine->xset_pattern(Xgc,color);
+  return cur ;
+}
+
+/*----------------------------------------------------
+ * follow an input value with a graphic slider 
+ * 
+ *  rpar = [min-range, max-range] 
+ *  ipar = [type (1,2),color]
+ *  z = [val,window,x,y,w,h] 
+ *----------------------------------------------------*/
+
+void slider(scicos_args_F0);
+
+void slider(int *flag, int *nevprt, double *t, double *xd,
+	    double *x, int *nx, double *z, int *nz,
+	    double *tvec, int *ntvec, double *rpar,
+	    int *nrpar, int *ipar, int *nipar,
+	    double * u, int *nu, double * y, int *ny) 
+{
+  BCG *Xgc;
+  int wid, idb = 0 ; /* XXX remettre idb avec son common */
+  int cur; 
+  static double th=2 ; /* border thickness */
+  static double t3d = 4.0 ; /* 3d look thickness */
+  int curcolor;
+  if ( idb == 1 ) 
+    sciprint("Slider t=%10.3f, flag=%d \r\n",*t,*flag);
+
+  switch ( *flag ) {
+  case 2 : 
+    /* standard case */ 
+    wid= (int) z[1];
+    if( wid < 0) return;
+    Xgc = scicos_set_win(wid,&cur);
+    {
+      double val = Min(rpar[1],Max(rpar[0],u[0]));
+      double percent = (val - rpar[0])/(rpar[1]-rpar[0]);
+      if ( Abs(z[0] - percent) > 0.01 ) /* a mettre en parametre XXXXX */
+	{
+	  int record= Xgc->graphic_engine->xget_recording(Xgc);
+	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+	  curcolor=set_slider_color(Xgc,ipar[1]);
+	  switch (ipar[0]) 
+	    {
+	    case 1 : 
+	      block_draw_rect_1(Xgc,z+2,z[0]);
+	      block_draw_rect_1(Xgc,z+2,percent);
+	      break;
+	    case 2 :
+	      block_draw_rect_2(Xgc,z+2,z[0]);
+	      block_draw_rect_2(Xgc,z+2,percent);
+	      break;
+	    case 3 :
+	      block_draw_rect_3(Xgc,z+2,z[0]);
+	      block_draw_rect_3(Xgc,z+2,percent);
+	      break;
+	    }
+	  curcolor=set_slider_color(Xgc,curcolor);
+	  z[0] = percent;
+	  Xgc->graphic_engine->xset_recording(Xgc,record);
+	}
+    }
+    Xgc = scicos_set_win(cur,&cur);
+    break;
+  case 4 : 
+    /* initial case */ 
+    z[0]= 0.0;
+    scicos_getgeom(z+1);
+    z[2] = z[2]+ t3d +th ; 
+    z[4] -= t3d + 2*th  ;
+    z[3] = z[3] + z[5] ;
+    z[5] -= t3d  ;
+    wid= (int) z[1];
+    if( wid < 0) return;
+    Xgc = scicos_set_win(wid,&cur);
+    {
+      int record= Xgc->graphic_engine->xget_recording(Xgc);
+      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+      curcolor=set_slider_color(Xgc,ipar[1]);
+      Xgc->graphic_engine->scale->cleararea(Xgc,z[2],z[3],z[4],z[5]);
+      switch (ipar[0]) 
+	{
+	case 1 : 
+	  block_draw_rect_1(Xgc,z+2,z[0]);
+	  break;
+	case 2 :
+	  block_draw_rect_2(Xgc,z+2,z[0]);
+	  break;
+	case 3 :
+	  block_draw_rect_3(Xgc,z+2,z[0]);
+	  break;
+
+	}
+      curcolor=set_slider_color(Xgc,curcolor);
+      Xgc->graphic_engine->xset_recording(Xgc,record);
+    }
+    Xgc = scicos_set_win(cur,&cur);
+    break;
+  }
+}
+
+
+void writeau(scicos_args_F2);
+
+void writeau(int *flag, int *nevprt, double *t, double *xd, double *x,
+	     int *nx, double *z, int *nz, double *tvec, int *ntvec,
+	     double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
+	     int *insz, int *nin, double **outptr, int *outsz, int *nout)
+{
+  /*
+    ipar[1]   = lfil : file name length
+    ipar[2:4] = fmt  : numbers type ascii code
+    ipar[5]   = n : buffer length in number of records
+    ipar[6]   = swap
+    ipar[7:6+lfil] = character codes for file name
+  */
+  FILE *fd;
+  int n, k,/* m,*/ i, ierr;
+  double *buffer,*record;
+  /*  long offset;*/
+  int SCALE  = 32768;
+  int BIAS   =   132;
+  int CLIP   = 32635;
+  int OFFSET =   335;
+  double y;
+  int sig;
+  int e;
+  double f;
+  --ipar;
+  --z;
+  fd=(FILE *)(long)z[2];
+  buffer = (z+3);
+  ierr=0;
+  /*
+    k    : record counter within the buffer
+  */
+
+  if (*flag==2&&*nevprt>0) 
+    { /* add a new record to the buffer */
+      n    = ipar[5];
+      k    = (int)z[1];
+      /* copy current record to output 
+	 printf("%i\n",k);*/
+      record=buffer+(k-1)*(*nin); 
+
+      for (i=0;i<*nin;i++)
+	{
+	  y= *inptr[i];
+	  y=SCALE*y;
+	  if (y<0.0)
+	    {
+	      y=-y;
+	      sig=-1;
+	    }
+	  else
+	    sig=1;
+	  if(y>CLIP)
+	    y=CLIP;
+	  y=y+BIAS;
+	  f=frexp(y,&e);
+	  y=64*sig-16*e- (int) (32*f)+OFFSET;
+	  record[i] = y;
+	}
+      if (k<n) 
+	z[1] = z[1]+1.0;
+      else {
+	/*XXXXXXXX mput2(fd,ipar[6],buffer,ipar[5]*(*nin),"uc",&ierr); */
+	ierr=1;
+	if(ierr!=0) {
+	  *flag = -3;
+	  return;
+	}
+	z[1] = 1.0;
+	
+      }
+      
+    }
+  else if (*flag==4) {
+    fd = fopen("/dev/audio","wb");
+    if (!fd ) {
+      sciprint("Could not open /dev/audio!\n");
+      *flag = -3;
+      return;
+    }
+    z[2]=(double)(long)fd;
+    z[1] = 1.0;
+  }
+  else if (*flag==5) {
+    if(z[2]==0) return;
+    k    =(int) z[1];
+    if (k>1) {/* flush rest of buffer */
+      /*XXXXXXXX mput2(fd,ipar[6],buffer,(k-1)*(*nin),"uc",&ierr); */
+      ierr=1;
+      if(ierr!=0) {
+	*flag = -3;
+	return;
+      }
+    }
+    fclose(fd);
+    z[2] = 0.0;
+  }
+  return;
+}
+
+
+/*  Displays the value of the input in the diagram block */
+
+int scicos_affich (scicos_args_F0)
+{
+  BCG *Xgc;
+  int record, cur = 0, wid;
+  double  ur;
+  /*     ipar(1) = font */
+  /*     ipar(2) = fontsize */
+  /*     ipar(3) = color */
+  /*     ipar(4) = win */
+  /*     ipar(5) = nt : total number of output digits */
+  /*     ipar(6) = nd number of rationnal part digits */
+  /*     z(1)=value */
+  /*     z(2)=window */
+  /*     z(3)=x */
+  /*     z(4)=y */
+  /*     z(5)=width */
+  /*     z(6)=height */
+  --y;
+  --u;
+  --ipar;
+  --rpar;
+  --tvec;
+  --z__;
+  --x;
+  --xd;
+  if (*flag__ == 2)
+    {
+      /*     state evolution */
+      ur = pow(10.0, ipar[6]);
+      ur = anint(u[1] * ur) / ur; /* round */
+      if (ur == z__[1])
+	{
+	  return 0;
+	}
+      wid = (int) z__[2];
+      if (wid < 0) return 0;
+      Xgc = scicos_set_win(wid,&cur);
+      record= Xgc->graphic_engine->xget_recording(Xgc);
+      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+      scicos_recterase (Xgc,&z__[3]);
+      z__[1] = ur;
+      scicos_affdraw (Xgc,&ipar[1], &ipar[5], &z__[1], &z__[3]);
+      Xgc->graphic_engine->xset_recording(Xgc,record);
+    }
+  else if (*flag__ == 4)
+    {
+      /*     .  initial value */
+      z__[1] = 0.;
+      scicos_getgeom (&z__[2]);
+      wid = (int) z__[2];
+      if (wid < 0) return 0;
+      Xgc = scicos_set_win(wid,&cur);
+      record= Xgc->graphic_engine->xget_recording(Xgc);
+      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+      scicos_recterase (Xgc,&z__[3]);
+      scicos_affdraw (Xgc,&ipar[1], &ipar[5], &z__[1], &z__[3]);
+      Xgc->graphic_engine->xset_recording(Xgc,record);
+    }
+  return 0;
+}			
+
+int scicos_recterase (BCG *Xgc,const double r[])
+{
+  const double dx = .06, dy = .06;
+  double w,x,y,h;
+  x = r[0] + dx * r[2];
+  y = r[1] + r[3];
+  w = r[2] * (1. - dx);
+  h = r[3] * (1. - dy);
+  Xgc->graphic_engine->scale->cleararea(Xgc,x,y,w,h);
+  return 0;
+}	
+
+int scicos_affdraw (BCG *Xgc,const int fontd[],const int form[],const double *val,const double r[])
+{
+  int fontid[2],rect[4],flag=0,pixmode;
+  char buf[128];
+  double x,y,angle=0.0;
+  sprintf(buf,"%*.*f",form[0],form[1],*val);
+  Xgc->graphic_engine->xget_font(Xgc,fontid);
+  Xgc->graphic_engine->xset_font(Xgc,fontd[0],fontd[1]);
+  Xgc->graphic_engine->boundingbox(Xgc,buf,r[0],r[1],rect);
+  x = r[0] + Max (0.0,(r[2] - rect[2]) / 2.);
+  y = r[1] + Max (0.0,(r[3] - rect[3]) / 2.);
+  Xgc->graphic_engine->scale->displaystring(Xgc,buf,x,y,flag,angle);
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
+  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
+  return 0;
+} 
+
+
+int scicos_getgeom (double *g)
+{
+  /* FIXME XXXXXXXX
+   */
+  *g = 1000;
+  *(g+1)= 333;
+  *(g+2)= 124;
+  *(g+3)= 60;
+  *(g+4)= 40;
+  sciprint("getgeom is not implemented just a test mode\n");
+  return 0;
+}	
+
+
+/*------------------------------------------------
+ *     returns Absolute value of the input 
+ *------------------------------------------------*/
+
+void blocks_absblk(scicos_args_F0)
+{
+  int i;
+  for (i = 0 ; i <  *nu ; ++i ) y[i] = Abs(u[i]);
+} 
+
+/*------------------------------------------------
+ *     Logical and block
+ *     if event input exists synchronuously, output is 1 else -1
+ *------------------------------------------------*/
+
+void blocks_andlog(scicos_args_F0)
+{
+  if ( *flag__ == 1)  y[0] = ( *nevprt != 3 ) ? -1.00 :  1.00; 
+}
+
+
+/*------------------------------------------------
+ *     Scicos block simulator 
+ *     does nothing 
+ *------------------------------------------------*/
+
+void blocks_bidon(scicos_args_F0)
+{
+}
+
+/*------------------------------------------------
+ *     input to output Gain
+ *     rpar=gain matrix
+ *------------------------------------------------*/
+
+void blocks_gain(scicos_args_F0)
+{
+  int un=1;
+  dmmul_scicos(rpar,ny,u,nu,y,ny,ny,nu,&un);
+}
+
+/*------------------------------------------------
+ *     Dummy state space x'=sin(t)
+ *------------------------------------------------*/
+
+void blocks_cdummy(scicos_args_F0)
+{
+  if ( *flag__ == 0 ) xd[0]=sin(*t);
+}
+
+/*------------------------------------------------
+ *     Dead Band, 
+ *     if u(i)<0 ,y(i)=min(0,u+DB(i)/2) 
+ *     else       y(i)=max(0,u-DB(i)/2) 
+ *     DB(i)=rpar(i) 
+ *------------------------------------------------*/
+
+void blocks_dband(scicos_args_F0)
+{
+  int i;
+  
+  for ( i=0 ; i < *nu ; i++ ) 
+    {
+      if ( u[i] < 0 ) 
+	y[i] = Min(0.00,u[i]+rpar[i]/2.00);
+      else  
+	y[i] = Max(0.00,u[i]-rpar[i]/2.00);
+    }
+}
+
+/*
+ * cos 
+ */
+
+void blocks_cosblk(scicos_args_F0)
+{
+
+  int i;
+  for ( i=0; i < *nu ; i++)     y[i]= cos(u[i]);
+}
+
+
+/* XXX : blovk de type   ScicosFi 
+ * apres nipar ce sont des arguments optionnels 
+ * jusqu'a ? 
+ */
+
+int scicos_constraint(scicos_args_Fi);
+
+int
+scicos_constraint (int *flag__, int *nevprt, double *t, double *res, double *xd,
+		double *x, int *nx, double *z__, int *nz, double *tvec,
+		int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar,
+		double *u, int *nu, double *y, int *ny ,
+		double *uy3, int *nuy3,  double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+		int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8, 
+		double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, 
+		double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
+		double *uy17, int *nuy17, double *uy18, int *nuy18 )
+
+
+{
+  int i__1;
+  int i__;
+  /*     Copyright INRIA */
+  /*     Scicos block simulator */
+  --y;
+  --u;
+  --ipar;
+  --rpar;
+  --tvec;
+  --z__;
+  --x;
+  --xd;
+  --res;
+  if (*flag__ == 0)
+    {
+      i__1 = *nu;
+      for (i__ = 1; i__ <= i__1; ++i__)
+	{
+	  res[i__] = xd[i__] - u[i__];
+	  res[i__ + *nu] = xd[i__];
+	  /* L12: */
+	}
+    }
+  else if (*flag__ == 1)
+    {
+      i__1 = *ny;
+      for (i__ = 1; i__ <= i__1; ++i__)
+	{
+	  y[i__] = xd[i__ + *nu];
+	  /* L14: */
+	}
+      /*      elseif(flag.eq.6.or.flag.eq.7) then */
+      /*         do 12 i=1,nu */
+      /* 12      continue */
+    }
+  return 0;
+}
+
+/* XXX : blovk de type   ScicosFi  */ 
+
+int scicos_diffblk(scicos_args_Fi);
+
+int
+scicos_diffblk (int *flag__, int *nevprt, double *t, double *res, double *xd,
+		double *x, int *nx, double *z__, int *nz, double *tvec,
+		int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar,
+		double *u, int *nu, double *y, int *ny ,
+		double *uy3, int *nuy3,  double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+		int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8, 
+		double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, 
+		double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
+		double *uy17, int *nuy17, double *uy18, int *nuy18 )
+{
+  int i;
+  if (*flag__ == 0)
+    {
+      for (i = 0; i < *nu; ++i)  res[i] = x[i] - u[i];
+    }
+  else if (*flag__ == 1)
+    {
+      memcpy(y,xd,(*nu)*sizeof(double));
+    }
+  else if (*flag__ == 6 || *flag__ == 7)
+    {
+      memcpy(x,u,(*nu)*sizeof(double));
+    }
+  return 0;
+}			
+
+
+/* demux revisited, Copyright Enpc Jean-Philippe Chancelier */
+
+int scicos_demux(scicos_args_F);
+
+int
+scicos_demux (int *flag__, int *nevprt, double *t, double *xd, double *x,
+	      int *nx, double *z__, int *nz, double *tvec, int *ntvec,
+	      double *rpar, int *nrpar, int *ipar, int *nipar, double *uy1,
+	      int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
+	      double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+	      int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8,
+	      double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11,
+	      int *nuy11,double *uy12, int *nuy12,
+	      double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15,
+	      int *nuy15,double *uy16, int *nuy16, double *uy17, int *nuy17, double *uy18, int *nuy18)
+{
+  int dim = ipar[0] - 1, offset=0;
+  memcpy(uy2,uy1+offset,(*nuy2)*sizeof(double));offset+=(*nuy2);
+  memcpy(uy3,uy1+offset,(*nuy3)*sizeof(double));offset+=(*nuy3);
+  if ( dim <= 1) return 0;
+  memcpy(uy4,uy1+offset,(*nuy4)*sizeof(double));offset+=(*nuy4);
+  if ( dim <= 2) return 0;
+  memcpy(uy5,uy1+offset,(*nuy5)*sizeof(double));offset+=(*nuy5);
+  if ( dim <= 3) return 0;
+  memcpy(uy6,uy1+offset,(*nuy6)*sizeof(double));offset+=(*nuy6);
+  if ( dim <= 4) return 0;
+  memcpy(uy7,uy1+offset,(*nuy7)*sizeof(double));offset+=(*nuy7);
+  if ( dim <= 5) return 0;
+  memcpy(uy8,uy1+offset,(*nuy8)*sizeof(double));offset+=(*nuy8);
+  if ( dim <= 6) return 0;
+  memcpy(uy9,uy1+offset,(*nuy9)*sizeof(double));
+  return 0;
+}			
+
+
+
+int scicos_mux(scicos_args_F);
+
+/* mux revisited, Copyright Enpc Jean-Philippe Chancelier */
+
+int
+scicos_mux (int *flag__, int *nevprt, double *t, double *xd, double *x,
+	    int *nx, double *z__, int *nz, double *tvec, int *ntvec,
+	    double *rpar, int *nrpar, int *ipar, int *nipar, double *uy1,
+	    int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
+	    double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+	    int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8,
+	    double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11,
+	    int *nuy11,double *uy12, int *nuy12,
+ 	    double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15,
+	    int *nuy15,double *uy16, int *nuy16, double *uy17, int *nuy17, double *uy18, int *nuy18)
+
+{
+  double *res= NULL;
+  int dim = ipar[0] - 1, offset=0;
+  switch ( dim ) 
+    {
+    case 1: res = uy3;break;
+    case 2: res = uy4;break;
+    case 3: res = uy5;break;
+    case 4: res = uy6;break;
+    case 5: res = uy7;break;
+    case 6: res = uy8;break;
+    case 7: res = uy9;break;
+    }
+  memcpy(res+offset,uy1,(*nuy2)*sizeof(double));offset+=(*nuy2);
+  memcpy(res+offset,uy2,(*nuy3)*sizeof(double));offset+=(*nuy3);
+  if ( dim <= 1) return 0;
+  memcpy(res+offset,uy3,(*nuy4)*sizeof(double));offset+=(*nuy4);
+  if ( dim <= 2) return 0;
+  memcpy(res+offset,uy4,(*nuy5)*sizeof(double));offset+=(*nuy5);
+  if ( dim <= 3) return 0;
+  memcpy(res+offset,uy5,(*nuy6)*sizeof(double));offset+=(*nuy6);
+  if ( dim <= 4) return 0;
+  memcpy(res+offset,uy6,(*nuy7)*sizeof(double));offset+=(*nuy7);
+  if ( dim <= 5) return 0;
+  memcpy(res+offset,uy7,(*nuy8)*sizeof(double));offset+=(*nuy8);
+  if ( dim <= 6) return 0;
+  memcpy(res+offset,uy8,(*nuy9)*sizeof(double));
+  return 0;
+}			
+
+
+
+
+/*
+ * Write in binary mode 
+ */
+
+
+void writec(scicos_args_F2);
+
+void 
+writec(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, 
+       double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, 
+       int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, 
+       int *outsz, int *nout)
+{
+  /* ipar code model.ipar=[length(fname);str2code(frmt);N;swap;str2code(fname)] */
+  typedef struct _writec_ipar writec_ipar ;
+  struct _writec_ipar { int len, fmt[3],n,swap,fname;};
+  writec_ipar *wi =  (writec_ipar*) ipar;
+
+  NspFile *F;
+  int k, i;
+  double *buffer,*record;
+
+  --z;
+  F=(NspFile *)(long)z[2];
+  buffer = (z+3);
+  k = (int) z[1];
+  /*
+   * k    : record counter within the buffer
+   */
+
+  if ( *flag==2 && *nevprt>0) 
+    { 
+      /* add a new record to the buffer */
+      /* copy current record to output */
+      record=buffer+(k-1)*(insz[0]);
+      for ( i=0 ; i < insz[0] ; i++) record[i] = *(inptr[0]+i);
+      if ( k < wi->n ) 
+	{
+	  z[1] = z[1]+1.0;
+	}
+      else 
+	{
+	  char type[4];
+	  int i;
+	  /* get the type from its ascii code  */
+	  for ( i=0; i < 3; i++) type[i]= wi->fmt[i];
+	  type[3]='\0';
+	  /* buffer is full write it to the file */
+	  if ( nsp_mput(F,buffer,wi->n*insz[0],type) == FAIL) 
+	    {
+	      *flag = -3;
+	      return;
+	    }
+	  z[1] = 1.0;
+	}
+    }
+  else if (*flag==4) 
+    {
+      char str[FSIZE];
+      int i;
+      /* get the file name from its ascii code  */
+      for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
+      str[wi->len]='\0';
+      sciprint("Trying to open [%s]\n",str);
+      if (( F= nsp_file_open(str,"wb",FALSE,wi->swap)) == NULL) 
+	{
+	  Scierror("Error: in writec, could not open the file %s !\n",str);
+	  *flag = -3;
+	  return;
+	}
+      z[2]=(long)F;
+      z[1] = 1.0;
+    }
+  else if (*flag==5) 
+    {
+      if(z[2]==0) return;
+      k    =(int) z[1];
+      if ( k >= 1 ) 
+	{
+	  /* flush rest of buffer */
+	  char type[4];
+	  int i;
+	  /* get the type from its ascii code  */
+	  for ( i=0; i < 3; i++) type[i]= wi->fmt[i];
+	  type[3]='\0';
+	  if ( nsp_mput(F,buffer,(k-1)*insz[0],type) == FAIL) 
+	    {
+	      *flag = -3;
+	      return;
+	    }
+	}
+      if (( nsp_file_close(F)) == FAIL) 
+	{
+	  *flag = -3;
+	  return;
+	}
+      nsp_file_destroy(F);
+      z[2] = 0.0;
+    }
+  return;
+}
+
+
 static int worldsize(char type[4])
 {
   char c = ( type[0]=='u' ) ? type[1] : type[0];
@@ -4250,6 +3788,7 @@ static int worldsize(char type[4])
   return 0;
 }
 
+void  readc(scicos_args_F2);
 
 void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, 
 	    double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr, 
@@ -4409,584 +3948,442 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
 }
 
 
-/*
- * Copyright Enpc jpc 
+/* XXX    output a vector of constants out(i)=rpar(i) 
  */
 
-extern int scicos_getgeom(double *);
+int scicos_cstblk(scicos_args_F);
 
-/*----------------------------------------------------
- * erase a rectangle 
- *----------------------------------------------------*/ 
-
-static void block_draw_rect_1(BCG *Xgc,double r[],double percent)
+int
+scicos_cstblk (int *flag__, int *nevprt, double *t, double *xd, double *x,
+	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
+	       double *rpar, int *nrpar, int *ipar, int *nipar, double *y,
+	       int *ny, double *uy2, int *nuy2, double *uy3, int *nuy3, 
+	       double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+	       int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8, 
+	       double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, 
+	       double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
+	       double *uy17, int *nuy17, double *uy18, int *nuy18)
 {
-  int alumode;
-  static int in=6;
-  double w = r[2]*percent;
-  double x = r[0];
-  double rect[]={x,r[1],w,r[3]};
-  alumode  = Xgc->graphic_engine->xget_alufunction(Xgc);
-  if ( alumode != in ) 
-    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,in);
-  Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-  if ( alumode != in ) 
-    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
-}
+  int c__1 = 1;
+  C2F(dcopy) (nrpar, rpar, &c__1, y, &c__1);
+  return 0;
+}			
 
-static void block_draw_rect_2(BCG *Xgc,double r[],double percent)
+
+int scicos_delayv(scicos_args_F);
+
+int
+scicos_delayv (int *flag__, int *nevprt, double *t, double *xd, double *x,
+	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
+	       double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
+	       int *nu1, double *u2, int *nu2, double *y, int *ny, 
+	       double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+	       int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8, 
+	       double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11, int *nuy11,double *uy12, int *nuy12, 
+	       double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
+	       double *uy17, int *nuy17, double *uy18, int *nuy18)
 {
-  int alumode;
-  /* int flag =0;  double ang=0.0;  char foo[24]; */
-  static int in=6;
-  double x = r[0]+ r[2]*percent-2;
-  double w = 4;
-  double rect[]={x,r[1],w,r[3]};
-  alumode  = Xgc->graphic_engine->xget_alufunction(Xgc);
-  if ( alumode != in )
-    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,in);
-  Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-  /* sprintf(foo,"%5.3f",percent);
-     C2F(dr1)("xstring",foo,PI0,PI0,PI0,&flag,PI0,PI0,r,r+1,&ang,PD0,0L,0L);
-  */
 
-  if ( alumode != in ) 
-    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
-}
+  int i__1, i__2;
+  double dtat, a;
+  int i__, j, k, ii, in;
+  double u2r;
 
+  /*     Copyright INRIA */
+  /*     rpar(1)=dt */
+  /*     delayv=u(nin) */
 
-static void block_draw_rect_3(BCG *Xgc,double r[],double percent)
-{
-  int alumode;
-  int flag =0;  double ang=0.0;  char foo[24];
-  static int in=6;
-  double x = r[0] + (1.0/10)*r[2];
-  double y = r[1] - r[3] + 2 ;
-  alumode  = Xgc->graphic_engine->xget_alufunction(Xgc);
-  if ( alumode != in ) 
-    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,in);
-  sprintf(foo,"%5.3f",percent);
-  Xgc->graphic_engine->scale->displaystring(Xgc,foo,x,y,flag,ang);
-  if ( alumode != in ) 
-    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
-}
-
-
-
-
-
-/*----------------------------------------------------
- * changes the current color to color 
- * returns the old color
- *----------------------------------------------------*/ 
-
-
-static int set_slider_color(BCG *Xgc, int color)
-{
-  int cur;
-  cur = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( cur != color ) 
-    Xgc->graphic_engine->xset_pattern(Xgc,color);
-  return cur ;
-}
-
-/*----------------------------------------------------
- * follow an input value with a graphic slider 
- * 
- *  rpar = [min-range, max-range] 
- *  ipar = [type (1,2),color]
- *  z = [val,window,x,y,w,h] 
- *----------------------------------------------------*/
-
-void slider(int *flag, int *nevprt, double *t, double *xd,
-	    double *x, int *nx, double *z, int *nz,
-	    double *tvec, int *ntvec, double *rpar,
-	    int *nrpar, int *ipar, int *nipar,
-	    double * u, int *nu, double * y, int *ny) 
-{
-  BCG *Xgc;
-  int wid, idb = 0 ; /* XXX remettre idb avec son common */
-  int cur; 
-  static double th=2 ; /* border thickness */
-  static double t3d = 4.0 ; /* 3d look thickness */
-  int curcolor;
-  if ( idb == 1 ) 
-    sciprint("Slider t=%10.3f, flag=%d \r\n",*t,*flag);
-
-  switch ( *flag ) {
-  case 2 : 
-    /* standard case */ 
-    wid= (int) z[1];
-    if( wid < 0) return;
-    Xgc = scicos_set_win(wid,&cur);
-    {
-      double val = Min(rpar[1],Max(rpar[0],u[0]));
-      double percent = (val - rpar[0])/(rpar[1]-rpar[0]);
-      if ( Abs(z[0] - percent) > 0.01 ) /* a mettre en parametre XXXXX */
-	{
-	  int record= Xgc->graphic_engine->xget_recording(Xgc);
-	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-	  curcolor=set_slider_color(Xgc,ipar[1]);
-	  switch (ipar[0]) 
-	    {
-	    case 1 : 
-	      block_draw_rect_1(Xgc,z+2,z[0]);
-	      block_draw_rect_1(Xgc,z+2,percent);
-	      break;
-	    case 2 :
-	      block_draw_rect_2(Xgc,z+2,z[0]);
-	      block_draw_rect_2(Xgc,z+2,percent);
-	      break;
-	    case 3 :
-	      block_draw_rect_3(Xgc,z+2,z[0]);
-	      block_draw_rect_3(Xgc,z+2,percent);
-	      break;
-	    }
-	  curcolor=set_slider_color(Xgc,curcolor);
-	  z[0] = percent;
-	  Xgc->graphic_engine->xset_recording(Xgc,record);
-	}
-    }
-    Xgc = scicos_set_win(cur,&cur);
-    break;
-  case 4 : 
-    /* initial case */ 
-    z[0]= 0.0;
-    scicos_getgeom(z+1);
-    z[2] = z[2]+ t3d +th ; 
-    z[4] -= t3d + 2*th  ;
-    z[3] = z[3] + z[5] ;
-    z[5] -= t3d  ;
-    wid= (int) z[1];
-    if( wid < 0) return;
-    Xgc = scicos_set_win(wid,&cur);
-    {
-      int record= Xgc->graphic_engine->xget_recording(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-      curcolor=set_slider_color(Xgc,ipar[1]);
-      Xgc->graphic_engine->scale->cleararea(Xgc,z[2],z[3],z[4],z[5]);
-      switch (ipar[0]) 
-	{
-	case 1 : 
-	  block_draw_rect_1(Xgc,z+2,z[0]);
-	  break;
-	case 2 :
-	  block_draw_rect_2(Xgc,z+2,z[0]);
-	  break;
-	case 3 :
-	  block_draw_rect_3(Xgc,z+2,z[0]);
-	  break;
-
-	}
-      curcolor=set_slider_color(Xgc,curcolor);
-      Xgc->graphic_engine->xset_recording(Xgc,record);
-    }
-    Xgc = scicos_set_win(cur,&cur);
-    break;
-  }
-}
-
-
-void writeau(int *flag, int *nevprt, double *t, double *xd, double *x,
-	     int *nx, double *z, int *nz, double *tvec, int *ntvec,
-	     double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
-	     int *insz, int *nin, double **outptr, int *outsz, int *nout)
-{
-  /*
-    ipar[1]   = lfil : file name length
-    ipar[2:4] = fmt  : numbers type ascii code
-    ipar[5]   = n : buffer length in number of records
-    ipar[6]   = swap
-    ipar[7:6+lfil] = character codes for file name
-  */
-  FILE *fd;
-  int n, k,/* m,*/ i, ierr;
-  double *buffer,*record;
-  /*  long offset;*/
-  int SCALE  = 32768;
-  int BIAS   =   132;
-  int CLIP   = 32635;
-  int OFFSET =   335;
-  double y;
-  int sig;
-  int e;
-  double f;
-  --ipar;
-  --z;
-  fd=(FILE *)(long)z[2];
-  buffer = (z+3);
-  ierr=0;
-  /*
-    k    : record counter within the buffer
-  */
-
-  if (*flag==2&&*nevprt>0) 
-    { /* add a new record to the buffer */
-      n    = ipar[5];
-      k    = (int)z[1];
-      /* copy current record to output 
-	 printf("%i\n",k);*/
-      record=buffer+(k-1)*(*nin); 
-
-      for (i=0;i<*nin;i++)
-	{
-	  y= *inptr[i];
-	  y=SCALE*y;
-	  if (y<0.0)
-	    {
-	      y=-y;
-	      sig=-1;
-	    }
-	  else
-	    sig=1;
-	  if(y>CLIP)
-	    y=CLIP;
-	  y=y+BIAS;
-	  f=frexp(y,&e);
-	  y=64*sig-16*e- (int) (32*f)+OFFSET;
-	  record[i] = y;
-	}
-      if (k<n) 
-	z[1] = z[1]+1.0;
-      else {
-	/*XXXXXXXX mput2(fd,ipar[6],buffer,ipar[5]*(*nin),"uc",&ierr); */
-	ierr=1;
-	if(ierr!=0) {
-	  *flag = -3;
-	  return;
-	}
-	z[1] = 1.0;
-	
-      }
-      
-    }
-  else if (*flag==4) {
-    fd = fopen("/dev/audio","wb");
-    if (!fd ) {
-      sciprint("Could not open /dev/audio!\n");
-      *flag = -3;
-      return;
-    }
-    z[2]=(double)(long)fd;
-    z[1] = 1.0;
-  }
-  else if (*flag==5) {
-    if(z[2]==0) return;
-    k    =(int) z[1];
-    if (k>1) {/* flush rest of buffer */
-      /*XXXXXXXX mput2(fd,ipar[6],buffer,(k-1)*(*nin),"uc",&ierr); */
-      ierr=1;
-      if(ierr!=0) {
-	*flag = -3;
-	return;
-      }
-    }
-    fclose(fd);
-    z[2] = 0.0;
-  }
-  return;
-}
-
-/*
- * Write in binary mode 
- */
-
-void 
-writec(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, 
-       double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, 
-       int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, 
-       int *outsz, int *nout)
-{
-  /* ipar code model.ipar=[length(fname);str2code(frmt);N;swap;str2code(fname)] */
-  typedef struct _writec_ipar writec_ipar ;
-  struct _writec_ipar { int len, fmt[3],n,swap,fname;};
-  writec_ipar *wi =  (writec_ipar*) ipar;
-
-  NspFile *F;
-  int k, i;
-  double *buffer,*record;
-
-  --z;
-  F=(NspFile *)(long)z[2];
-  buffer = (z+3);
-  k = (int) z[1];
-  /*
-   * k    : record counter within the buffer
-   */
-
-  if ( *flag==2 && *nevprt>0) 
-    { 
-      /* add a new record to the buffer */
-      /* copy current record to output */
-      record=buffer+(k-1)*(insz[0]);
-      for ( i=0 ; i < insz[0] ; i++) record[i] = *(inptr[0]+i);
-      if ( k < wi->n ) 
-	{
-	  z[1] = z[1]+1.0;
-	}
-      else 
-	{
-	  char type[4];
-	  int i;
-	  /* get the type from its ascii code  */
-	  for ( i=0; i < 3; i++) type[i]= wi->fmt[i];
-	  type[3]='\0';
-	  /* buffer is full write it to the file */
-	  if ( nsp_mput(F,buffer,wi->n*insz[0],type) == FAIL) 
-	    {
-	      *flag = -3;
-	      return;
-	    }
-	  z[1] = 1.0;
-	}
-    }
-  else if (*flag==4) 
-    {
-      char str[FSIZE];
-      int i;
-      /* get the file name from its ascii code  */
-      for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
-      str[wi->len]='\0';
-      sciprint("Trying to open [%s]\n",str);
-      if (( F= nsp_file_open(str,"wb",FALSE,wi->swap)) == NULL) 
-	{
-	  Scierror("Error: in writec, could not open the file %s !\n",str);
-	  *flag = -3;
-	  return;
-	}
-      z[2]=(long)F;
-      z[1] = 1.0;
-    }
-  else if (*flag==5) 
-    {
-      if(z[2]==0) return;
-      k    =(int) z[1];
-      if ( k >= 1 ) 
-	{
-	  /* flush rest of buffer */
-	  char type[4];
-	  int i;
-	  /* get the type from its ascii code  */
-	  for ( i=0; i < 3; i++) type[i]= wi->fmt[i];
-	  type[3]='\0';
-	  if ( nsp_mput(F,buffer,(k-1)*insz[0],type) == FAIL) 
-	    {
-	      *flag = -3;
-	      return;
-	    }
-	}
-      if (( nsp_file_close(F)) == FAIL) 
-	{
-	  *flag = -3;
-	  return;
-	}
-      nsp_file_destroy(F);
-      z[2] = 0.0;
-    }
-  return;
-}
-
-/*  Displays the value of the input in the diagram block */
-
-int scicos_affich (scicos_args_poo)
-{
-  BCG *Xgc;
-  int record, cur = 0, wid;
-  double  ur;
-  /*     ipar(1) = font */
-  /*     ipar(2) = fontsize */
-  /*     ipar(3) = color */
-  /*     ipar(4) = win */
-  /*     ipar(5) = nt : total number of output digits */
-  /*     ipar(6) = nd number of rationnal part digits */
-  /*     z(1)=value */
-  /*     z(2)=window */
-  /*     z(3)=x */
-  /*     z(4)=y */
-  /*     z(5)=width */
-  /*     z(6)=height */
   --y;
-  --u;
+  --u2;
+  --u1;
   --ipar;
   --rpar;
   --tvec;
   --z__;
   --x;
   --xd;
+  j = (*nz - 1) / *nu1;
+  if (*flag__ == 3)
+    {
+      tvec[1] = *t + rpar[1];
+      k = (int) (u2[1] / rpar[1]);
+      if (k > j - 3)
+	{
+	  tvec[2] = *t;
+	}
+      if (k < 1)
+	{
+	  tvec[2] = *t;
+	}
+    }
+
+  /*     .   shift buffer */
   if (*flag__ == 2)
     {
-      /*     state evolution */
-      ur = pow(10.0, ipar[6]);
-      ur = anint(u[1] * ur) / ur; /* round */
-      if (ur == z__[1])
+      i__1 = j;
+      for (i__ = 1; i__ <= i__1; ++i__)
 	{
+	  z__[i__] = z__[i__ + 1];
+	  /* L10: */
+	}
+      i__1 = *nu1 - 1;
+      for (in = 1; in <= i__1; ++in)
+	{
+	  i__2 = (in + 1) * j;
+	  for (ii = in * j + 1; ii <= i__2; ++ii)
+	    {
+	      z__[ii] = z__[ii + 1];
+	      /* L35: */
+	    }
+	  /* L30: */
+	}
+      z__[*nz] = *t;
+      i__1 = *nu1;
+      for (in = 1; in <= i__1; ++in)
+	{
+	  z__[j * in] = u1[in];
+	  /* L20: */
+	}
+    }
+  if (*flag__ == 1 || *flag__ == 6)
+    {
+      dtat = *t - z__[*nz];
+      i__1 = *nu1;
+      for (in = 1; in <= i__1; ++in)
+	{
+	  /*     extrapolate to find values at delta.t */
+	  if (u2[1] <= dtat)
+	    {
+	      /*     initialisation start */
+	      if (dtat < rpar[1] / 100.)
+		{
+		  a = u2[1] / (rpar[1] + dtat);
+		  /*     delete negative delay */
+		  if (a <= 0.)
+		    {
+		      a = 0.;
+		    }
+		  y[in] = (1 - a) * z__[j * in] + a * z__[j * in - 1];
+		}
+	      else
+		{
+		  a = u2[1] / dtat;
+		  /*     delete negative delay */
+		  if (a <= 0.)
+		    {
+		      a = 0.;
+		    }
+		  y[in] = (1 - a) * u1[in] + a * z__[j * in];
+		}
+	    }
+	  else
+	    {
+	      u2r = u2[1] - dtat;
+	      k = (int) (u2r / rpar[1]);
+	      /*     limitation of size buffer */
+	      if (k > j - 3)
+		{
+		  k = j - 3;
+		  a = 1.;
+		}
+	      else
+		{
+		  a = (u2r - k * rpar[1]) / rpar[1];
+		}
+	      /*     interpolate to find values at t-delay */
+	      y[in] = (1 - a) * z__[j * in - k] + a * z__[j * in - k - 1];
+	    }
+	  /* L8: */
+	}
+    }
+  return 0;
+}
+
+
+
+int scicos_fscope(scicos_args_F);
+
+int
+scicos_fscope (int *flag__, int *nevprt, double *t, double *xd, double *x,
+	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
+	       double *rpar, int *nrpar, int *ipar, int *nipar,
+	       double *uy1, int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
+	       double *uy4, int *nuy4, double *uy5, int *nuy5, double *uy6,
+	       int *nuy6, double *uy7, int *nuy7, double *uy8, int *nuy8,
+	       double *uy9, int *nuy9, double *uy10, int *nuy10, double *uy11,
+	       int *nuy11,double *uy12, int *nuy12,
+	       double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15,
+	       int *nuy15,double *uy16, int *nuy16, double *uy17, int *nuy17, double *uy18, int *nuy18)
+{
+  BCG *Xgc;
+  static int c__0 = 0;
+  static int c__1 = 1;
+  static int c_n1 = -1;
+  static int c__3 = 3;
+  static double c_b88 = 0.;
+  static double frect[4] = { 0., 0., 1., 1. };
+  static int cur = 0;
+  int i__1, i__2;
+  double rect[4];
+  double ymin, ymax;
+  int i__, k, n;
+  double u[8];
+  double tsave;
+  int n1, n2;
+  double dt;
+  int nu;
+  int wid, iwd;
+  double per;
+  int nax[4], iwp;
+  int record;
+  /*     Copyright INRIA */
+  /*     Scicos block simulator */
+  /*     ipar(1) = win_num */
+  /*     ipar(2) = 0/1 color flag */
+  /*     ipar(3) = buffer size */
+  /*     ipar(4:11) = line type for ith curve */
+  /*     ipar(12:13) : window position */
+  /*     ipar(14:15) : window dimension */
+  /*     rpar(1)=dt */
+  /*     rpar(2)=ymin */
+  /*     rpar(3)=ymax */
+  /*     rpar(4)=periode */
+  /*      character*(4) logf */
+  --ipar;
+  --rpar;
+  --tvec;
+  --z__;
+  --x;
+  --xd;
+
+  iwp = 12;
+  iwd = 14;
+  nu = ipar[16];
+  if (*flag__ == 2)
+    {
+      scicos_getouttb (nu, &ipar[17], u);
+      dt = rpar[1];
+      ymin = rpar[2];
+      ymax = rpar[3];
+      per = rpar[4];
+      wid = ipar[1];
+      n = ipar[3];
+      k = (int) z__[1];
+      if (k > 0)
+	{
+	  n1 = (int) (z__[k + 1] / per);
+	  if (z__[k + 1] < 0.)
+	    {
+	      --n1;
+	    }
+	}
+      else
+	{
+	  n1 = 0;
+	}
+
+      tsave = *t;
+      if (dt > 0.)
+	{
+	  *t = z__[k + 1] + dt;
+	}
+
+      n2 = (int) (*t / per);
+      if (*t < 0.)
+	{
+	  --n2;
+	}
+
+      /*     add new point to the buffer */
+      ++k;
+      z__[k + 1] = *t;
+      i__1 = nu;
+      for (i__ = 1; i__ <= i__1; ++i__)
+	{
+	  z__[n + 1 + (i__ - 1) * n + k] = u[i__ - 1];
+	  /* L1: */
+	}
+      z__[1] = (double) k;
+      if (n1 == n2 && k < n)
+	{
+	  *t = tsave;
 	  return 0;
 	}
-      wid = (int) z__[2];
-      if (wid < 0) return 0;
+
+      /*     plot 1:K points of the buffer */
       Xgc = scicos_set_win(wid,&cur);
       record= Xgc->graphic_engine->xget_recording(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-      scicos_recterase (Xgc,&z__[3]);
-      z__[1] = ur;
-      scicos_affdraw (Xgc,&ipar[1], &ipar[5], &z__[1], &z__[3]);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
+      if (k > 0)
+	{
+	  i__1 = nu;
+	  for (i__ = 1; i__ <= i__1; ++i__)
+	    {
+	      /*               if(ipar(3+i).ge.0.or.flag.eq.1) then */
+	      Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 +(i__ - 1) * n],&ipar[i__ + 3], c__1,k);
+	      /* L10: */
+	    }
+	}
+      /*     shift buffer left */
+      z__[2] = z__[k + 1];
+      i__1 = nu;
+      for (i__ = 1; i__ <= i__1; ++i__)
+	{
+	  z__[n + 1 + (i__ - 1) * n + 1] = z__[n + 1 + (i__ - 1) * n + k];
+	  /* L15: */
+	}
+      z__[1] = 1.;
+      if (n1 != n2)
+	{
+	  /*     clear window */
+	  nax[0] = 2;
+	  nax[1] = 10;
+	  nax[2] = 2;
+	  nax[3] = 10;
+	  Xgc->graphic_engine->clearwindow(Xgc);
+	  Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
+	  Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
+	  rect[0] = per * (n1 + 1);
+	  rect[1] = ymin;
+	  rect[2] = per * (n1 + 2);
+	  rect[3] = ymax;
+	  Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
+	  nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+		     0, rect, nax);
+	}
+      *t = tsave;
       Xgc->graphic_engine->xset_recording(Xgc,record);
     }
   else if (*flag__ == 4)
     {
-      /*     .  initial value */
-      z__[1] = 0.;
-      scicos_getgeom (&z__[2]);
-      wid = (int) z__[2];
-      if (wid < 0) return 0;
+      wid = ipar[1];
+      n = ipar[3];
+      ymin = rpar[2];
+      ymax = rpar[3];
+      per = rpar[4];
+      nax[0] = 2;
+      nax[1] = 10;
+      nax[2] = 2;
+      nax[3] = 10;
+      n1 = (int) ((int) (*t) / per);
+      if (*t <= 0.)
+	{
+	  --n1;
+	}
       Xgc = scicos_set_win(wid,&cur);
       record= Xgc->graphic_engine->xget_recording(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-      scicos_recterase (Xgc,&z__[3]);
-      scicos_affdraw (Xgc,&ipar[1], &ipar[5], &z__[1], &z__[3]);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+      if (ipar[iwp] >= 0)
+	{
+	  Xgc->graphic_engine->xset_windowpos(Xgc,ipar[iwp], ipar[iwp + 1]);
+	}
+      if (ipar[iwd] >= 0)
+	{
+	  Xgc->graphic_engine->xset_windowdim(Xgc,ipar[iwd], ipar[iwd + 1]);
+	  /*     to force dimensions update */
+	  Xgc = scicos_set_win(wid,&cur);
+	}
+      rect[0] = per * (n1 + 1);
+      rect[1] = ymin;
+      rect[2] = per * (n1 + 2);
+      rect[3] = ymax;
+      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
+      Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
+      Xgc->graphic_engine->clearwindow(Xgc);
+      Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
+      Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
+      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+		 0, rect, nax);
+      z__[1] = 0.;
+      z__[2] = *t;
+      i__1 = nu * n;
+      nsp_dset (&i__1, &c_b88, &z__[3], &c__1);
+      Xgc->graphic_engine->xset_recording(Xgc,record);
+    }
+  else if (*flag__ == 5)
+    {
+      wid = ipar[1];
+      n = ipar[3];
+      k = (int) z__[1];
+      if (k <= 1)
+	{
+	  return 0;
+	}
+      Xgc = scicos_set_win(wid,&cur);
+      record= Xgc->graphic_engine->xget_recording(Xgc);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+      Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
+      i__1 = nu;
+      for (i__ = 1; i__ <= i__1; ++i__)
+	{
+	  i__2 = k - 1;
+	  Xgc->graphic_engine->scale->drawpolylines(Xgc,&z__[2], &z__[n + 2 + (i__ - 1) * n],&ipar[i__ + 3], c__1, i__2);
+	}
       Xgc->graphic_engine->xset_recording(Xgc,record);
     }
   return 0;
 }			
 
-int scicos_recterase (BCG *Xgc,const double r[])
-{
-  const double dx = .06, dy = .06;
-  double w,x,y,h;
-  x = r[0] + dx * r[2];
-  y = r[1] + r[3];
-  w = r[2] * (1. - dx);
-  h = r[3] * (1. - dy);
-  Xgc->graphic_engine->scale->cleararea(Xgc,x,y,w,h);
-  return 0;
-}	
-
-int scicos_affdraw (BCG *Xgc,const int fontd[],const int form[],const double *val,const double r[])
-{
-  int fontid[2],rect[4],flag=0,pixmode;
-  char buf[128];
-  double x,y,angle=0.0;
-  sprintf(buf,"%*.*f",form[0],form[1],*val);
-  Xgc->graphic_engine->xget_font(Xgc,fontid);
-  Xgc->graphic_engine->xset_font(Xgc,fontd[0],fontd[1]);
-  Xgc->graphic_engine->boundingbox(Xgc,buf,r[0],r[1],rect);
-  x = r[0] + Max (0.0,(r[2] - rect[2]) / 2.);
-  y = r[1] + Max (0.0,(r[3] - rect[3]) / 2.);
-  Xgc->graphic_engine->scale->displaystring(Xgc,buf,x,y,flag,angle);
-  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
-  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
-  if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
-  return 0;
-} 
 
 
-int scicos_getgeom (double *g)
-{
-  /* FIXME XXXXXXXX
-   */
-  *g = 1000;
-  *(g+1)= 333;
-  *(g+2)= 124;
-  *(g+3)= 60;
-  *(g+4)= 40;
-  sciprint("getgeom is not implemented just a test mode\n");
-  return 0;
-}	
 
-/*------------------------------------------------
- *     Scicos block simulator 
- *     A set of elementary blocks 
- *------------------------------------------------*/
-
-typedef  void (scicos0_block) (ARGS_scicos0);
-extern scicos0_block blocks_absblk, blocks_andlog, blocks_bidon, blocks_gain;
-extern scicos0_block blocks_cdummy, blocks_dband, blocks_cosblk;
-
-/*------------------------------------------------
- *     Scicos block simulator 
- *     returns Absolute value of the input 
- *------------------------------------------------*/
-
-void blocks_absblk(scicos_args_poo)
-{
-  int i;
-  for (i = 0 ; i <  *nu ; ++i ) y[i] = Abs(u[i]);
-} 
-
-
-/*------------------------------------------------
- *     Scicos block simulator 
- *     Logical and block
- *     if event input exists synchronuously, output is 1 else -1
- *------------------------------------------------*/
-
-void blocks_andlog(scicos_args_poo)
-{
-  if ( *flag__ == 1)  y[0] = ( *nevprt != 3 ) ? -1.00 :  1.00; 
-}
-
-
-/*------------------------------------------------
- *     Scicos block simulator 
- *     does nothing 
- *------------------------------------------------*/
-
-void blocks_bidon(scicos_args_poo)
-{
-}
-
-
-/*------------------------------------------------
- *     Scicos block simulator 
- *     input to output Gain
- *     rpar=gain matrix
- *------------------------------------------------*/
-
-void blocks_gain(scicos_args_poo)
-{
-  int un=1;
-  dmmul_scicos(rpar,ny,u,nu,y,ny,ny,nu,&un);
-}
-
-/*------------------------------------------------
- *     Scicos block simulator 
- *     Dummy state space x'=sin(t)
- *------------------------------------------------*/
-
-void blocks_cdummy(scicos_args_poo)
-{
-  if ( *flag__ == 0 ) xd[0]=sin(*t);
-}
-
-/*------------------------------------------------
- *     Scicos block simulator 
- *     Dead Band, 
- *     if u(i)<0 ,y(i)=min(0,u+DB(i)/2) 
- *     else       y(i)=max(0,u-DB(i)/2) 
- *     DB(i)=rpar(i) 
- *------------------------------------------------*/
-
-void blocks_dband(scicos_args_poo)
-{
-  int i;
-  
-  for ( i=0 ; i < *nu ; i++ ) 
-    {
-      if ( u[i] < 0 ) 
-	y[i] = Min(0.00,u[i]+rpar[i]/2.00);
-      else  
-	y[i] = Max(0.00,u[i]-rpar[i]/2.00);
-    }
-}
-
-/*
- *
+/*     if-then-else block 
+ *     if event input exits from then or else clock ouputs based 
+ *     on the sign of the unique input (if input>0 then  else )
  */
 
-void blocks_cosblk(scicos_args_poo)
+
+int scicos_eselect(scicos_args_Fm1);
+
+int
+scicos_eselect (int *flag__, int *nevprt, int *ntvec, double *rpar,
+		int *nrpar, int *ipar, int *nipar, double *u, int *nu)
 {
+  int i__1, i__2;
+  int iu;
 
-  int i;
-  for ( i=0; i < *nu ; i++)     y[i]= cos(u[i]);
-}
+  --u;
+  --ipar;
+  --rpar;
 
+  if (C2F(dbcos).idb == 1)
+    {
+      sciprint("ifthel:  flag=%d\n",*flag__);
+    }
+  /* Computing MAX */
+  /* Computing MIN */
+  i__2 = (int) u[1];
+  i__1 = Min (i__2, ipar[1]);
+  iu = Max (i__1, 1);
+  if (*flag__ == 3)
+    {
+      *ntvec = iu;
+    }
+  return 0;
+}			
+
+/* 
+ * if-then-else block
+ * if event input exits from then or else clock ouputs based 
+ * on the sign of the unique input (if input>0 then  else )
+ */
+
+int scicos_ifthel(scicos_args_Fm1);
+
+int
+scicos_ifthel (int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar,
+	       int *ipar, int *nipar, double *u, int *nu)
+{
+  if (C2F(dbcos).idb == 1)
+    {
+      sciprint("ifthel: flag=%d\n",*flag__);
+    }
+
+  if (*flag__ == 3)
+    {
+      *ntvec = ( u[0] <= 0.) ? 2 : 1;
+    }
+  return 0;
+}			
