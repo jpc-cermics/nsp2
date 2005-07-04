@@ -1,5 +1,6 @@
 /* Nsp
  * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -31,6 +32,14 @@
 #include "nsp/nsp_lapack.h"
 
 
+/**
+ * nsp_mat_is_symmetric:
+ * @A: a #NspMatrix
+ * 
+ * test if the matrix @A is symetric (real case) or hermitian (complex case)
+ * 
+ * Return value: TRUE or FALSE
+ **/
 int nsp_mat_is_symmetric(NspMatrix *A)
 {
   int i,j;
@@ -130,281 +139,193 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
  * tol can be given or computed if null is transmited 
  */
 
-int nsp_qr(NspMatrix *A,NspMatrix **q,NspMatrix **r,NspMatrix **rank,NspMatrix **E,double *tol,char mode)
+int nsp_qr(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **rank,NspMatrix **E,double *tol,char mode)
 {
+  /* A == [] return empty matrices*/ 
+  if ( A->mn == 0 )  {
+    if (( *Q =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) return FAIL;
+    if (( *R =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) return FAIL;
+    if ( E != NULL)
+      {
+	if ( (*E =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) return FAIL;
+      }
+    if (rank != NULL ) 
+    {
+      if ( (*rank =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT ) return FAIL;
+    }
+    return OK ; 
+  }
+
   if (A->rc_type == 'r' ) 
-    return  intdgeqrpf(A,q,r,E,rank,tol,mode);
+    return  intdgeqrpf(A,Q,R,E,rank,tol,mode);
   else 
-    return  intzgeqrpf(A,q,r,E,rank,tol,mode);
+    return  intzgeqrpf(A,Q,R,E,rank,tol,mode);
 }
 
-/*  with real NspMatrix A */ 
-
+/*  qr for real NspMatrix A */ 
 static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 		      NspMatrix **rank,double *tol,char flag)
 {
-  NspMatrix *jpvt=NULLMAT,*tau,*work;
-  int  workMin, info,  m = A->m,n=A->n,Minmn= Min(m,n);
+  int i, j;
+  NspMatrix *q=NULLMAT, *r=NULLMAT, *e=NULLMAT;
+  double *work=NULL, qwork[1], *tau=NULL;
+  int lwork, info, *jpvt=NULL, m=A->m, n=A->n, Minmn=Min(m,n);
 
-  /* A == [] return empty matrices*/ 
-  if ( A->mn == 0 )  {
-    if (( *Q =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if (( *R =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if ( E != NULL)
-      {
-	if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-  /* Q is an mxm matrix or mxMinmn*/ 
-  if (( *Q =nsp_matrix_create(NVOID,A->rc_type,m,(flag == 'e') ? Minmn : m)) == NULLMAT) return FAIL;
-  /* R is a copy of A: */
-  if (( *R =nsp_matrix_copy(A)) == NULLMAT) return FAIL ; 
+  if ( (r=nsp_matrix_copy(A)) == NULLMAT ) return FAIL ; 
 
-  if ( E != NULL ) {
-    if ((*E =nsp_matrix_create(NVOID,A->rc_type,n,n))== NULLMAT) return FAIL;
-    /* jpvt is int NspMatrix */ 
-    if ((jpvt =nsp_matrix_create(NVOID,'r',1,n))== NULLMAT) return FAIL;
-  }
-  if ((tau =nsp_matrix_create(NVOID,'r',1,Min(m,n)))== NULLMAT) return FAIL;
-  
-  /* Max(m,n) for dorgqr */ 
-  workMin =( E == NULL) ? ( Max(1,Max(m,n))) :  Max(n,m) * 3;
-  
-  if ((work =nsp_matrix_create(NVOID,'r',1,workMin)) == NULLMAT) return FAIL;
+  if ( (tau=nsp_alloc_work_doubles(Minmn)) == NULL ) goto err;
+
+  lwork = -1;
 
   if ( E == NULL ) 
     {
-      C2F(dgeqrf)(&(m),&(n),(*R)->R,&(m),tau->R,work->R,&workMin,
-		  &info);
+      C2F(dgeqrf)(&m, &n, r->R, &m, tau, qwork, &lwork, &info);
+      lwork = (int) qwork[0];
+      if ( (work=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+      C2F(dgeqrf)(&m, &n, r->R, &m, tau, work, &lwork, &info);
     } 
   else 
     {
-      int ix;
-      for (ix = 0; ix < jpvt->mn ; ++ix) jpvt->I[ix]= 0; 
-      C2F(dgeqpf)(&(m),&(n),(*R)->R,&(m),jpvt->I,tau->R,work->R, &info);
-      /*     SUBROUTINE DGEQPF( M, N, A, LDA, JPVT, TAU, WORK, INFO ) */
-    }
-  if (info != 0) {
-    Scierror("Error: something wrong in dgeqpf\n"); 
-    return FAIL;
-  }
+      if ( (jpvt=nsp_alloc_work_int(n)) == NULL ) goto err;
+      for (i = 0; i < n ; i++) jpvt[i]= 0;
+      C2F(dgeqp3)(&m, &n, r->R, &m, jpvt, tau, qwork, &lwork, &info);
+      lwork = (int) qwork[0];
+      if ( (work=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+      C2F(dgeqp3)(&m, &n, r->R, &m, jpvt, tau, work, &lwork, &info);
+      if ( (e=nsp_matrix_create(NVOID,'r', n, 1)) == NULLMAT ) goto err; 
+      for ( i = 0 ; i < n ; i++ ) e->R[i] = (double) jpvt[i];
+   }
 
-  /* Now we must extract Q from R and tau  */ 
+  /* make Q (Q is an mxm matrix or mxMinmn) */ 
+  if ( (q=nsp_matrix_create(NVOID,'r',m, (flag=='e') ? Minmn:m)) == NULLMAT ) 
+    goto err;
+  memcpy(q->R, r->R, m*Minmn*sizeof(double));
+  C2F(dorgqr)(&m, (flag=='e') ? (&Minmn):(&m), &Minmn, q->R, &m, tau, work, &lwork, &info);
 
-  if (m > n) 
+  /* make R */ 
+  nsp_mat_triu(r,0); 
+  if ( flag == 'e' && m > n )  /* we must delete the last rows of R */ 
     {
-      int j,ix,ij;
-      /* Q = [ R,0 ] */ 
-      C2F(dlacpy)("F", &m, &n,(*R)->R, &m,(*Q)->R, &m, 1L);
-      if ( flag != 'e' ) {
-	for (j = n + 1; j <= m ; ++j) {
-	  for (ix = 1; ix <= m ; ++ix) {
-	    ij = ix + (j - 1) * m;
-	    (*Q)->R[ ij - 1] = 0.;
-	  }
+      for ( j = 1 ; j < n ; j++ )
+	memmove(&(r->R[j*n]), &(r->R[j*m]), n*sizeof(double)); 
+      r->m = n; r->mn = n*n;
+      r->R = realloc(r->R, r->mn*sizeof(double));
+    }
+
+  /* if requested we compute the rank */ 
+  if (rank != NULL ) 
+    {
+      int k=0,j;
+      double tt = Abs(r->R[0]), Tol;
+      if (tol == NULL ) 
+	Tol = ((double) Max(m,n)) * nsp_dlamch("eps") * tt;
+      else 
+	Tol = *tol; 
+      for (j = 0 ; j < Min(m,n) ; j++) 
+	{
+	  if ( Abs(r->R[k]) <= Tol ) break; 
+	  k += r->m+1;
 	}
-      }
-    } else {
-      /* Q = R(1:m,1:m) */ 
-      C2F(dlacpy)("F", &m, &m, (*R)->R, &m, (*Q)->R, &m, 1L);
+      if ( (*rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto err;
+      (*rank)->R[0]=j; 
     }
-
-  if ( flag == 'e') 
-    C2F(dorgqr)(&m, &Minmn,&Minmn, (*Q)->R, &m, tau->R, work->R, &workMin, &info);
-  else 
-    C2F(dorgqr)(&m, &m,&Minmn, (*Q)->R, &m, tau->R, work->R, &workMin, &info);
-  if (info != 0) {
-    Scierror("Error: something wrong dorgqr\n"); 
-    return FAIL;
-  }
-  /* Extract R from R  */ 
-  nsp_mat_triu(*R,0); 
-  /* compute E if requested */ 
-  if ( E != NULL ) 
-    {
-      double zero = 0.0;
-      int j;
-      C2F(dlaset)("F", &n, &n, &zero, &zero,(*E)->R, &n, 1L);
-      for (j = 0; j < n; ++j)  (*E)->R[jpvt->I[j]-1 + j* n]=1;
-    }
-
-  /* if requested we compute the rank : 
-   * Note that, since R diagonal values are assumed to be in decreasing order 
-   * the rank is corectly computed if E is also computed 
-   */ 
-
-  if (rank != NULL ) {
-    int k=0,j;
-    double *Rval = (*R)->R ; 
-    double tt = Abs(Rval[0]);
-    double Tol;
-    double eps = C2F(dlamch)("eps", 3L);  
-    if (tol == NULL ) 
-      Tol = ((double) Max(m,n)) * eps * tt;
-    else 
-      Tol = *tol; 
-    for (j = 0 ; j < Min(m,n) ; ++j) {
-      if ( Abs(Rval[k]) <= Tol ) break; 
-      k += m+1;
-    }
-    if ((*rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-    (*rank)->R[0]=j; 
-  }
   
-  if ( flag == 'e' && m-n > 0 )
-    {
-      int i;
-      nsp_matrix_destroy(work); 
-      /* we must delete the last rows of R */ 
-      if (( work =nsp_matrix_create(NVOID,'r',1,m-n)) == NULLMAT) return FAIL;
-      for ( i = n+1; i <= m ; i++) work->R[i-(n+1)]=i;
-      if (nsp_matrix_delete_rows(*R,work) == FAIL) return FAIL; 
-    }
-  /* clean workspace */ 
-  nsp_matrix_destroy(tau); 
-  nsp_matrix_destroy(work); 
-  if ( E != NULL)  { nsp_matrix_destroy(jpvt);}
+  FREE(tau); FREE(work);
+  if ( E != NULL) {FREE(jpvt); *E = e;}
+  *R = r; *Q = q;
   return OK;
+
+ err:
+  FREE(tau); FREE(work); FREE(jpvt);
+  nsp_matrix_destroy(q);
+  nsp_matrix_destroy(r);
+  nsp_matrix_destroy(e);
+  return FAIL;
 }
 
 
-/* with complex NspMatrix A */ 
-
+/*  qr for complex NspMatrix A */ 
 static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 		      NspMatrix **rank,double *tol,char flag)
 {
-  NspMatrix *jpvt=NULLMAT,*tau,*work,*rwork;
-  int  workMin, info,  m = A->m,n=A->n,Minmn= Min(m,n);
-  /* A == [] return empty matrices*/ 
-  if ( A->mn == 0 )  {
-    if (( *Q =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if (( *R =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if ( E != NULL)
-      {
-	if (( *E =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-  /* Q is an mxm matrix or mxMinmn*/ 
-  if (( *Q =nsp_matrix_create(NVOID,A->rc_type,m,(flag == 'e') ? Minmn: m)) == NULLMAT) return FAIL;
-  /* R is a copy of A: */
-  if (( *R =nsp_matrix_copy(A)) == NULLMAT) return FAIL ; 
+  int i, j;
+  NspMatrix *q=NULLMAT, *r=NULLMAT, *e=NULLMAT;
+  double *rwork=NULL;
+  doubleC *cwork=NULL, qwork[1], *tau=NULL;
+  int lwork, info, *jpvt=NULL, m=A->m, n=A->n, Minmn=Min(m,n);
 
-  if ( E != NULL ) {
-    /* E is a real matrix */
-    if ((*E =nsp_matrix_create(NVOID,'r',n,n))== NULLMAT) return FAIL;
-    /* jpvt is int NspMatrix */ 
-    if ((jpvt =nsp_matrix_create(NVOID,'r',1,n))== NULLMAT) return FAIL;
-  }
-  if ((tau =nsp_matrix_create(NVOID,A->rc_type,1,Min(m,n)))== NULLMAT) return FAIL;
+  if ( (r=nsp_matrix_copy(A)) == NULLMAT ) return FAIL ; 
 
+  if ( (tau=nsp_alloc_work_doubleC(Minmn)) == NULL ) goto err;
 
-  if ((rwork =nsp_matrix_create(NVOID,'r',1,2*n)) == NULLMAT) return FAIL;
+  lwork = -1;
 
-  /* Max(m,n) for zungqr */ 
-  workMin = Max(m,n);
-  if ((work =nsp_matrix_create(NVOID,'c',1,workMin)) == NULLMAT) return FAIL;
-  
-  if ( E == NULL) 
+  if ( E == NULL ) 
     {
-      /* XXX make a first query to compute optimal work space ? */
-      C2F(zgeqrf)(&m, &n,(*R)->C, &m, tau->C, work->C, &workMin, &info);
+      C2F(zgeqrf)(&m, &n, r->C, &m, tau, qwork, &lwork, &info);
+      lwork = (int) qwork[0].r;
+      if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
+      C2F(zgeqrf)(&m, &n, r->C, &m, tau, cwork, &lwork, &info);
     } 
   else 
     {
-      int ix;
-      for (ix = 0; ix < n ; ++ix) jpvt->I[ix] =0;
-      C2F(zgeqpf)(&m, &n,(*R)->C, &m, jpvt->I,tau->C,work->C,rwork->R, &info);
-    }
-  if (info != 0) {
-    Scierror("Error: something wrong in zgeqpf\n"); 
-    return FAIL;
-  }
-  /* Now we must extract Q from R and tau  */ 
+      if ( (rwork=nsp_alloc_work_doubles(2*n)) == NULL ) goto err;
+      if ( (jpvt=nsp_alloc_work_int(n)) == NULL ) goto err;
+      for (i = 0; i < n ; i++) jpvt[i]= 0;
+      C2F(zgeqp3)(&m, &n, r->C, &m, jpvt, tau, qwork, &lwork, rwork, &info);
+      lwork = (int) qwork[0].r;
+      if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
+      C2F(zgeqp3)(&m, &n, r->C, &m, jpvt, tau, cwork, &lwork, rwork, &info);
+      if ( (e=nsp_matrix_create(NVOID,'r', n, 1)) == NULLMAT ) goto err; 
+      for ( i = 0 ; i < n ; i++ ) e->R[i] = (double) jpvt[i];
+   }
 
-  if (m > n) {
-    static doubleC zero = {0.0,0.0};
-    int j,ix,ij;
-    /* Q = [ R,0 ] */ 
-    C2F(zlacpy)("F", &m, &n,(*R)->C, &m,(*Q)->C, &m, 1L);
-    if ( flag != 'e' ) {
-      for (j = n + 1; j <= m ; ++j) {
-	for (ix = 1; ix <= m ; ++ix) {
-	  ij = ix + (j - 1) * m;
-	  (*Q)->C[ ij - 1] = zero;
-	}
-      }
-    }
-  } else {
-    /* Q = R(1:m,1:m) */ 
-    C2F(zlacpy)("F", &m, &m, (*R)->C, &m, (*Q)->C, &m, 1L);
-  }
-  
-  if ( flag == 'e')   
-    C2F(zungqr)(&m, &Minmn,&Minmn, (*Q)->C, &m, tau->C, work->C, &workMin, &info);
-  else 
-    C2F(zungqr)(&m, &m,&Minmn, (*Q)->C, &m, tau->C, work->C, &workMin, &info);
-  if (info != 0) {
-    Scierror("Error: something wrong in zungqr\n"); 
-    return FAIL;
-  }
+  /* make Q (Q is an mxm matrix or mxMinmn) */ 
+  if ( (q=nsp_matrix_create(NVOID,'c',m, (flag=='e') ? Minmn:m)) == NULLMAT ) 
+    goto err;
+  memcpy(q->C, r->C, m*Minmn*sizeof(doubleC));
+  C2F(zungqr)(&m, (flag=='e') ? (&Minmn):(&m), &Minmn, q->C, &m, tau, cwork, &lwork, &info);
 
-  /* Now we extract R from R  */ 
-  nsp_mat_triu(*R,0); 
-
-  /* And if necessary we compute E */ 
-
-  if ( E != NULL ) {
-    double zero = 0.0;
-    int j,ij;
-    C2F(dlaset)("F", &n, &n, &zero, &zero,(*E)->R, &n, 1L);
-    for (j = 1; j <= n; ++j) {
-      ij = jpvt->I[ j - 1] + (j - 1) * n;
-      (*E)->R[ij - 1] = 1.;
-    }
-  }
-
-  /* if requested we compute the rank : 
-   * Note: since R diagonal values are assumed to be in decreasing order 
-   * here the rank is corectly computed if E is also computed 
-   */ 
-
-  if (rank != NULL ) {
-    int k=0,j;
-    doubleC *Rval = (*R)->C ; 
-    double tt = nsp_abs_c(Rval);
-    double Tol;
-    double   eps = C2F(dlamch)("eps", 3L);  
-    if (tol == NULL ) 
-      Tol = ((double) Max(m,n)) * eps * tt;
-    else 
-      Tol = *tol; 
-    for (j = 0 ; j < Min(m,n) ; ++j) {
-      if ( nsp_abs_c(&Rval[k]) <= Tol ) break; 
-      k += m+1;
-    }
-    if ((*rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-    (*rank)->R[0]=j; 
-  }
-  
-  
-  if ( flag == 'e' && m-n > 0 ) 
+  /* make R */ 
+  nsp_mat_triu(r,0); 
+  if ( flag == 'e' && m > n )  /* we must delete the last rows of R */ 
     {
-      int i;
-      nsp_matrix_destroy(work); 
-      /* we must delete the last rows of R */ 
-      if (( work =nsp_matrix_create(NVOID,'r',1,m-n)) == NULLMAT) return FAIL;
-      for ( i = n+1; i <= m ; i++) work->R[i-(n+1)]=i;
-      if (nsp_matrix_delete_rows(*R,work) == FAIL) return FAIL; 
+      for ( j = 1 ; j < n ; j++ )
+	memmove(&(r->C[j*n]), &(r->C[j*m]), n*sizeof(doubleC)); 
+      r->m = n; r->mn = n*n;
+      r->C = realloc(r->C, r->mn*sizeof(doubleC));
+    }
+
+  /* if requested we compute the rank */ 
+  if (rank != NULL ) 
+    {
+      int k=0,j;
+      double tt = nsp_abs_c(&(r->C[0])), Tol;
+      if (tol == NULL ) 
+	Tol = ((double) Max(m,n)) * nsp_dlamch("eps") * tt;
+      else 
+	Tol = *tol; 
+      for (j = 0 ; j < Min(m,n) ; j++) 
+	{
+	  if ( nsp_abs_c(&(r->C[k])) <= Tol ) break; 
+	  k += r->m+1;
+	}
+      if ( (*rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto err;
+      (*rank)->R[0]=j; 
     }
   
-  /* clean workspace */ 
-  nsp_matrix_destroy(tau); 
-  nsp_matrix_destroy(work); 
-  nsp_matrix_destroy(rwork); 
-  if ( E != NULL)  { nsp_matrix_destroy(jpvt);}
+  FREE(tau); FREE(cwork);
+  if ( E != NULL) {FREE(rwork); FREE(jpvt); *E = e;}
+  *R = r; *Q = q;
   return OK;
+
+ err:
+  FREE(tau); FREE(cwork);
+  FREE(rwork); FREE(jpvt);
+  nsp_matrix_destroy(q);
+  nsp_matrix_destroy(r);
+  nsp_matrix_destroy(e);
+  return FAIL;
 }
 
 
@@ -428,6 +349,15 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
 
 int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **E)
 {
+  /* A == [] return empty matrices*/ 
+  if ( A->mn == 0 )  
+    {
+      if ( (*L=nsp_matrix_create(NVOID,A->rc_type,0,0)) == NULLMAT ) return FAIL;
+      if ( E != NULL )
+	if ( (*E=nsp_matrix_create(NVOID,A->rc_type,0,0)) == NULLMAT ) return FAIL;
+      return OK ; 
+    }
+
   if (A->rc_type == 'r' ) 
     return  intdgetrf(A,L,E);
   else 
@@ -440,16 +370,7 @@ int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
   int *ipiv=NULL, *invp=NULL;
   double zeroD=0.0, oneD=1.0;
 
-  /* A == [] return empty matrices*/ 
-  if ( A->mn == 0 )  
-    {
-      if ( (*L=nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT ) return FAIL;
-      if ( E != NULL )
-	if ( (*E=nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT ) return FAIL;
-      return OK ; 
-    }
-
-  Minmn = Min(m,n);
+   Minmn = Min(m,n);
 
   if ( (*L=nsp_matrix_create(NVOID,A->rc_type,m,Minmn)) == NULLMAT ) return FAIL;
  
@@ -468,7 +389,7 @@ int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
       if ( ip != i) { int iw = invp[i-1]; invp[i-1] = invp[ip-1]; invp[ip-1] = iw;}
     }
 
-  /* fill L with the inf triangular part of A */
+  /* fill L with the lower triangular part of A */
   if ( E != NULL )
     {
       for ( i = 0 ; i < m ; i++ ) (*E)->R[i] = (double) invp[i];
@@ -517,15 +438,6 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
   int info, m=A->m, n=A->n , Minmn, i, j, k, ind, nbsd;
   int *ipiv=NULL, *invp=NULL;
   doubleC zeroC={0.0,0.0}, oneC={1.0,0.0};
-
-  /* A == [] return empty matrices*/ 
-  if ( A->mn == 0 )  
-    {
-      if ( (*L=nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT ) return FAIL;
-      if ( E != NULL )
-	if ( (*E=nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT ) return FAIL;
-      return OK ; 
-    }
 
   Minmn = Min(m,n);
 
@@ -2925,7 +2837,7 @@ static int intzgehrd(NspMatrix *A, NspMatrix **U)
 
 
 /* FIXME 
- * [al,be,Q,Z] = gspec(A,E) returns in addition the matrix Q and Z
+ * [al,be,Q,Z] = gspec(A,B) returns in addition the matrix Q and Z
  * of generalized left and right eigenvectors of the pencil.
  * Vl = Q , Vr = Z
  */
@@ -3257,7 +3169,6 @@ static double intznorm(NspMatrix *A,char flag)
  * 
  * computes the exponential of the matrix @A.
  * caution @A is overwritten with the result.
- * Added by Bruno.
  * 
  * Return value: FAIl or OK
  **/
