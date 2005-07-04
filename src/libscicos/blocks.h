@@ -6,269 +6,267 @@
  * table of functions associated to predefined blocks 
  */
 
-extern int scicos_affich (scicos_args_F0);
+extern int scicos_affich_block(scicos_args_F0);
 extern int scicos_bound (scicos_args_F0);
-extern int scicos_constraint(scicos_args_Fi);
-extern int scicos_csslti (scicos_args_F0);
-extern int scicos_cstblk(scicos_args_F);
-extern int scicos_delay (scicos_args_F0);
-extern int scicos_delayv(scicos_args_F);
-extern int scicos_diffblk(scicos_args_Fi);
-extern int scicos_dlradp (scicos_args_F0);
-extern int scicos_dollar (scicos_args_F0);
-extern int scicos_dsslti (scicos_args_F0);
-extern int scicos_eselect (scicos_args_Fm1);
-extern int scicos_evscpe (scicos_args_F0);
-extern int scicos_evtdly (scicos_args_F0);
-extern int scicos_expblk (scicos_args_F0);
-extern int scicos_forblk (scicos_args_F0);
-extern int scicos_fscope(scicos_args_F);
-extern int scicos_fsv (scicos_args_F0);
-extern int scicos_gensin (scicos_args_F0);
-extern int scicos_gensin (scicos_args_F0);
+extern int scicos_constraint_block(scicos_args_Fi);
+extern int scicos_csslti_block(scicos_args_F0);
+extern int scicos_cst_block(scicos_args_F);
+extern int scicos_delay_block(scicos_args_F0);
+extern int scicos_delayv_block(scicos_args_F);
+extern int scicos_diff_block(scicos_args_Fi);
+extern int scicos_dlradp_block(scicos_args_F0);
+extern int scicos_dollar_block(scicos_args_F0);
+extern int scicos_dsslti_block(scicos_args_F0);
+extern int scicos_eselect_block(scicos_args_Fm1);
+extern int scicos_evscpe_block(scicos_args_F0);
+extern int scicos_evtdly_block(scicos_args_F0);
+extern int scicos_exp_block(scicos_args_F0);
+extern int scicos_for_block(scicos_args_F0);
+extern int scicos_fscope_block(scicos_args_F);
+extern int scicos_fsv_block(scicos_args_F0);
+extern int scicos_gensin_block(scicos_args_F0);
+extern int scicos_gensin_block(scicos_args_F0);
 extern int scicos_gensin_test (scicos_args_F0);
-extern int scicos_gensqr (scicos_args_F0);
-extern int scicos_hltblk (scicos_args_F0);
-extern int scicos_ifthel(scicos_args_Fm1);
-extern int scicos_integr (scicos_args_F0);
-extern int scicos_intplt (scicos_args_F0);
-extern int scicos_intpol (scicos_args_F0);
-extern int scicos_intrp2(scicos_args_F);
-extern int scicos_intrpl (scicos_args_F0);
-extern int scicos_invblk (scicos_args_F0);
-extern int scicos_iocopy (scicos_args_F0);
-extern int scicos_logblk (scicos_args_F0);
-extern int scicos_lookup (scicos_args_F0);
-extern int scicos_lsplit (scicos_args_F0);
-extern int scicos_lsplit (scicos_args_F0);
-extern int scicos_lusat (scicos_args_F);
-extern int scicos_maxblk (scicos_args_F0);
-extern int scicos_memo (scicos_args_F0);
-extern int scicos_mfclck (scicos_args_F0);
-extern int scicos_minblk (scicos_args_F0);
-extern int scicos_mscope (scicos_args_F0);
-extern int scicos_mux(scicos_args_F);
-extern int scicos_demux(scicos_args_F);
-extern int scicos_pload ( scicos_args_F0);
-extern int scicos_powblk (scicos_args_F0);
-extern int scicos_qzcel (scicos_args_F0);
-extern int scicos_qzflr (scicos_args_F0);
-extern int scicos_qzrnd (scicos_args_F0);
-extern int scicos_qztrn (scicos_args_F0);
-extern int scicos_rndblk (scicos_args_F0);
-extern int scicos_samphold (scicos_args_F0);
-extern int scicos_sawtth (scicos_args_F0);
-extern int scicos_scope(scicos_args_F);
-extern int scicos_scopxy (scicos_args_F0);
-extern int scicos_scoxy (scicos_args_F0);
-extern int scicos_selblk (scicos_args_F0);
-extern int scicos_sinblk (scicos_args_F0);
-extern int scicos_sqrblk (scicos_args_F0);
-extern int scicos_sum2(scicos_args_F);
-extern int scicos_sum3(scicos_args_F);
-extern int scicos_tanblk (scicos_args_F0);
-extern int scicos_tcslti(scicos_args_F);
-extern int scicos_tcsltj (scicos_args_F0);
-extern int scicos_timblk (scicos_args_F0);
-extern int scicos_trash (scicos_args_F0);
-extern int scicos_zcross (scicos_args_F0);
-extern int scicos_integr (scicos_args_F0);
-extern int scicos_intplt (scicos_args_F0);
-extern void blocks_absblk(scicos_args_F0);
-extern void blocks_andlog(scicos_args_F0);
-extern void blocks_bidon(scicos_args_F0);
-extern void blocks_cdummy(scicos_args_F0);
-extern void blocks_cosblk(scicos_args_F0);
-extern void blocks_dband(scicos_args_F0);
-extern void blocks_gain(scicos_args_F0);
-extern void plusblk(scicos_args_F2);
-extern void prod(scicos_args_F2);
-extern void readau(scicos_args_F2);
-extern void readc(scicos_args_F2);
-extern void relay(scicos_args_F2);
+extern int scicos_gensqr_block(scicos_args_F0);
+extern int scicos_hlt_block(scicos_args_F0);
+extern int scicos_ifthel_block(scicos_args_Fm1);
+extern int scicos_integr_block(scicos_args_F0);
+extern int scicos_intplt_block(scicos_args_F0);
+extern int scicos_intpol_block(scicos_args_F0);
+extern int scicos_intrp2_block(scicos_args_F);
+extern int scicos_intrpl_block(scicos_args_F0);
+extern int scicos_inv_block(scicos_args_F0);
+extern int scicos_iocopy_block(scicos_args_F0);
+extern int scicos_log_block(scicos_args_F0);
+extern int scicos_lookup_block(scicos_args_F0);
+extern int scicos_lsplit_block(scicos_args_F0);
+extern int scicos_lsplit_block(scicos_args_F0);
+extern int scicos_lusat_block(scicos_args_F);
+extern int scicos_max_block(scicos_args_F0);
+extern int scicos_memo_block(scicos_args_F0);
+extern int scicos_mfclck_block(scicos_args_F0);
+extern int scicos_min_block(scicos_args_F0);
+extern int scicos_mscope_block(scicos_args_F0);
+extern int scicos_mux_block(scicos_args_F);
+extern int scicos_demux_block(scicos_args_F);
+extern int scicos_pload_block( scicos_args_F0);
+extern int scicos_pow_block(scicos_args_F0);
+extern int scicos_qzcel_block(scicos_args_F0);
+extern int scicos_qzflr_block(scicos_args_F0);
+extern int scicos_qzrnd_block(scicos_args_F0);
+extern int scicos_qztrn_block(scicos_args_F0);
+extern int scicos_rnd_block(scicos_args_F0);
+extern int scicos_samphold_block(scicos_args_F0);
+extern int scicos_sawtth_block(scicos_args_F0);
+extern int scicos_scope_block(scicos_args_F);
+extern int scicos_scopxy_block(scicos_args_F0);
+extern int scicos_scoxy_block(scicos_args_F0);
+extern int scicos_sel_block(scicos_args_F0);
+extern int scicos_sinblk_block(scicos_args_F0);
+extern int scicos_sqr_block(scicos_args_F0);
+extern int scicos_sum2_block(scicos_args_F);
+extern int scicos_sum3_block(scicos_args_F);
+extern int scicos_tanblk_block(scicos_args_F0);
+extern int scicos_tcslti_block(scicos_args_F);
+extern int scicos_tcsltj_block(scicos_args_F0);
+extern int scicos_timblk_block(scicos_args_F0);
+extern int scicos_trash_block(scicos_args_F0);
+extern int scicos_zcross_block(scicos_args_F0);
+extern int scicos_integr_block(scicos_args_F0);
+extern int scicos_intplt_block(scicos_args_F0);
+extern void scicos_abs_block(scicos_args_F0);
+extern void scicos_andlog_block(scicos_args_F0);
+extern void scicos_bidon_block(scicos_args_F0);
+extern void scicos_cdummy_block(scicos_args_F0);
+extern void scicos_cosblk_block(scicos_args_F0);
+extern void scicos_dband_block(scicos_args_F0);
+extern void scicos_gain_block(scicos_args_F0);
+extern void scicos_plus_block(scicos_args_F2);
+extern void scicos_prod_block(scicos_args_F2);
+extern void scicos_readau_block(scicos_args_F2);
+extern void scicos_readc_block(scicos_args_F2);
+extern void scicos_relay_block(scicos_args_F2);
 extern void scicos_plusblk(scicos_args_F2);
-extern void selector(scicos_args_F2);
-extern void slider(scicos_args_F0);
-extern void sum(scicos_args_F2);
-extern void switchn(scicos_args_F2);
-extern void writeau(scicos_args_F2);
-extern void writec(scicos_args_F2);
-extern void zcross2(scicos_args_F0);
+extern void scicos_selector_block(scicos_args_F2);
+extern void scicos_slider_block(scicos_args_F0);
+extern void scicos_sum_block(scicos_args_F2);
+extern void scicos_switchn_block(scicos_args_F2);
+extern void scicos_writeau_block(scicos_args_F2);
+extern void scicos_writec_block(scicos_args_F2);
+extern void scicos_zcross2_block(scicos_args_F0);
 
-extern void absolute_value(scicos_block *block,int flag); 
-extern void acos_blk(scicos_block *block,int flag);
-extern void acosh_blk(scicos_block *block,int flag);
-extern void asin_blk(scicos_block *block,int flag);
-extern void asinh_blk(scicos_block *block,int flag);
-extern void atan_blk(scicos_block *block,int flag);
-extern void atanh_blk(scicos_block *block,int flag);
-extern void tanh_blk(scicos_block *block,int flag);
-extern void tan_blk(scicos_block *block,int flag);
-extern void sin_blk(scicos_block *block,int flag);
-extern void sinh_blk(scicos_block *block,int flag);
-extern void backlash(scicos_block *block,int flag);
-extern void cos_blk(scicos_block *block,int flag);
-extern void cosh_blk(scicos_block *block,int flag);
-extern void deadband(scicos_block *block,int flag);
-extern void deriv(scicos_block *block,int flag);
-extern void extractor(scicos_block *block,int flag);
-extern void gainblk(scicos_block *block,int flag);
-extern void time_delay(scicos_block *block,int flag);
-extern void variable_delay(scicos_block *block,int flag);
-extern void step_func(scicos_block *block,int flag);
-extern void signum(scicos_block *block,int flag);
-extern void summation(scicos_block *block,int flag);
-extern void switch2(scicos_block *block,int flag);
-extern void satur(scicos_block *block,int flag);
-extern void logicalop(scicos_block *block,int flag);
-extern void multiplex(scicos_block *block,int flag);
-extern void hystheresis(scicos_block *block,int flag);
-extern void ramp(scicos_block *block,int flag);
-extern void minmax(scicos_block *block,int flag);
-extern void modulo_count(scicos_block *block,int flag);
-extern void mswitch(scicos_block *block,int flag);
-extern void product(scicos_block *block,int flag);
-extern void ratelimiter(scicos_block *block,int flag);
-extern void integral_func(scicos_block *block,int flag);
-extern void evtvardly(scicos_block *block,int flag);
-extern void relationalop(scicos_block *block,int flag);
-extern void bounce_ball(scicos_block *block,int flag);
-extern void bouncexy(scicos_block *block,int flag);
-extern void cscope(scicos_block *block,int flag);
-extern void cmscope(scicos_block *block,int flag);
-extern void scalar2vector(scicos_block *block,int flag);
-extern void evaluate_expr(scicos_block *block,int flag);
-
-
+extern void scicos_absolute_value_block(scicos_block *block,int flag); 
+extern void scicos_acos_block(scicos_block *block,int flag);
+extern void scicos_acosh_block(scicos_block *block,int flag);
+extern void scicos_asin_block(scicos_block *block,int flag);
+extern void scicos_asinh_block(scicos_block *block,int flag);
+extern void scicos_atan_block(scicos_block *block,int flag);
+extern void scicos_atanh_block(scicos_block *block,int flag);
+extern void scicos_tanh_block(scicos_block *block,int flag);
+extern void scicos_tan_block(scicos_block *block,int flag);
+extern void scicos_sin_block(scicos_block *block,int flag);
+extern void scicos_sinh_block(scicos_block *block,int flag);
+extern void scicos_backlash_block(scicos_block *block,int flag);
+extern void scicos_cos_block(scicos_block *block,int flag);
+extern void scicos_cosh_block(scicos_block *block,int flag);
+extern void scicos_deadband_block(scicos_block *block,int flag);
+extern void scicos_deriv_block(scicos_block *block,int flag);
+extern void scicos_extractor_block(scicos_block *block,int flag);
+extern void scicos_gainblk_block(scicos_block *block,int flag);
+extern void scicos_time_delay_block(scicos_block *block,int flag);
+extern void scicos_variable_delay_block(scicos_block *block,int flag);
+extern void scicos_step_func_block(scicos_block *block,int flag);
+extern void scicos_signum_block(scicos_block *block,int flag);
+extern void scicos_summation_block(scicos_block *block,int flag);
+extern void scicos_switch2_block(scicos_block *block,int flag);
+extern void scicos_satur_block(scicos_block *block,int flag);
+extern void scicos_logicalop_block(scicos_block *block,int flag);
+extern void scicos_multiplex_block(scicos_block *block,int flag);
+extern void scicos_hystheresis_block(scicos_block *block,int flag);
+extern void scicos_ramp_block(scicos_block *block,int flag);
+extern void scicos_minmax_block(scicos_block *block,int flag);
+extern void scicos_modulo_count_block(scicos_block *block,int flag);
+extern void scicos_mswitch_block(scicos_block *block,int flag);
+extern void scicos_product_block(scicos_block *block,int flag);
+extern void scicos_ratelimiter_block(scicos_block *block,int flag);
+extern void scicos_integral_func_block(scicos_block *block,int flag);
+extern void scicos_evtvardly_block(scicos_block *block,int flag);
+extern void scicos_relationalop_block(scicos_block *block,int flag);
+extern void scicos_bounce_ball_block(scicos_block *block,int flag);
+extern void scicos_bouncexy_block(scicos_block *block,int flag);
+extern void scicos_cscope_block(scicos_block *block,int flag);
+extern void scicos_cmscope_block(scicos_block *block,int flag);
+extern void scicos_scalar2vector_block(scicos_block *block,int flag);
+extern void scicos_evaluate_expr_block(scicos_block *block,int flag);
  
 scicos_block_table  tabsim[] ={
-  {"absblk",(ScicosF) blocks_absblk},
-  {"absolute_value",(ScicosF) absolute_value},
-  {"acos_blk",(ScicosF) acos_blk},
-  {"acosh_blk",(ScicosF) acosh_blk},
-  {"affich",(ScicosF) scicos_affich},
-  {"andlog",(ScicosF) blocks_andlog},
-  {"asin_blk",(ScicosF) asin_blk},
-  {"asinh_blk",(ScicosF) asinh_blk},
-  {"atan_blk",(ScicosF) atan_blk},
-  {"atanh_blk",(ScicosF) atanh_blk},
-  {"backlash",(ScicosF) backlash},
-  {"bidon",(ScicosF) blocks_bidon},
-  {"bounce_ball",(ScicosF) bounce_ball},
-  {"bouncexy",(ScicosF) bouncexy},
-  {"cdummy",(ScicosF) blocks_cdummy},
-  {"cmscope",(ScicosF) cmscope},
-  {"constraint",(ScicosF) scicos_constraint},
-  {"cos_blk",(ScicosF) cos_blk},
-  {"cosblk",(ScicosF) blocks_cosblk},
-  {"cosh_blk",(ScicosF) cosh_blk},
-  {"cscope",(ScicosF) cscope},
-  {"csslti",(ScicosF) scicos_csslti},
-  {"cstblk",(ScicosF) scicos_cstblk},
-  {"dband",(ScicosF) blocks_dband},
-  {"deadband",(ScicosF) deadband},
-  {"delay",(ScicosF) scicos_delay},
-  {"delayv",(ScicosF) scicos_delayv},
-  {"demux",(ScicosF) scicos_demux},
-  {"deriv",(ScicosF) deriv},
-  {"diffblk",(ScicosF) scicos_diffblk},
-  {"dlradp",(ScicosF) scicos_dlradp},
-  {"dollar",(ScicosF) scicos_dollar},
-  {"dsslti",(ScicosF) scicos_dsslti},
-  {"eselect",(ScicosF) scicos_eselect},
-  {"evaluate_expr",(ScicosF) evaluate_expr},
-  {"evscpe",(ScicosF) scicos_evscpe},
-  {"evtdly",(ScicosF) scicos_evtdly},
-  {"evtvardly",(ScicosF) evtvardly},
-  {"expblk",(ScicosF) scicos_expblk},
-  {"extractor",(ScicosF) extractor},
-  {"forblk",(ScicosF) scicos_forblk},
-  {"fscope",(ScicosF) scicos_fscope},
-  {"fsv",(ScicosF) scicos_fsv},
-  {"gainblk",(ScicosF) gainblk},
-  {"gain",(ScicosF) blocks_gain},
-  {"gensin",(ScicosF) scicos_gensin},
-  {"gensqr",(ScicosF) scicos_gensqr},
-  {"hltblk",(ScicosF) scicos_hltblk},
-  {"hystheresis",(ScicosF) hystheresis},
-  {"ifthel",(ScicosF) scicos_ifthel},
-  {"integral_func",(ScicosF) integral_func},
-  {"integr",(ScicosF) scicos_integr},
-  {"intplt",(ScicosF) scicos_intplt},
-  {"intpol",(ScicosF) scicos_intpol},
-  {"intrp2",(ScicosF) scicos_intrp2},
-  {"intrpl",(ScicosF) scicos_intrpl},
-  {"invblk",(ScicosF) scicos_invblk},
-  {"iocopy",(ScicosF) scicos_iocopy},
-  {"logblk",(ScicosF) scicos_logblk},
-  {"logicalop",(ScicosF) logicalop},
-  {"lookup",(ScicosF) scicos_lookup},
-  {"lsplit",(ScicosF) scicos_lsplit},
-  {"lusat",(ScicosF) scicos_lusat},
-  {"maxblk",(ScicosF) scicos_maxblk},
-  {"memo",(ScicosF) scicos_memo},
-  {"mfclck",(ScicosF) scicos_mfclck},
-  {"minblk",(ScicosF) scicos_minblk},
-  {"minmax",(ScicosF) minmax},
-  {"modulo_count",(ScicosF) modulo_count},
-  {"mscope",(ScicosF) scicos_mscope},
-  {"mswitch",(ScicosF) mswitch},
-  {"multiplex",(ScicosF) multiplex},
-  {"mux",(ScicosF) scicos_mux},
-  {"pload",(ScicosF) scicos_pload},
-  {"plusblk",(ScicosF) plusblk},
-  {"powblk",(ScicosF) scicos_powblk},
-  {"prod",(ScicosF) prod},
-  {"product",(ScicosF) product},
-  {"qzcel",(ScicosF) scicos_qzcel},
-  {"qzflr",(ScicosF) scicos_qzflr},
-  {"qzrnd",(ScicosF) scicos_qzrnd},
-  {"qztrn",(ScicosF) scicos_qztrn},
-  {"ramp",(ScicosF) ramp},
-  {"ratelimiter",(ScicosF) ratelimiter},
-  {"readau",(ScicosF) readau},
-  {"readc",(ScicosF) readc},
-  /* {"readf",(ScicosF) scicos_readf}, */
-  {"relationalop",(ScicosF) relationalop},
-  {"relay",(ScicosF) relay},
-  {"rndblk",(ScicosF) scicos_rndblk},
-  {"samphold",(ScicosF) scicos_samphold},
-  {"satur",(ScicosF) satur},
-  {"sawtth",(ScicosF) scicos_sawtth},
-  {"scalar2vector",(ScicosF) scalar2vector},
-  {"scope",(ScicosF) scicos_scope},
-  {"scopxy",(ScicosF) scicos_scopxy},
-  {"scoxy",(ScicosF) scicos_scoxy},
-  {"selblk",(ScicosF) scicos_selblk},
-  {"selector",(ScicosF) selector},
-  {"signum",(ScicosF) signum},
-  {"sinblk",(ScicosF) scicos_sinblk},
-  {"sin_blk",(ScicosF) sin_blk},
-  {"sinh_blk",(ScicosF) sinh_blk},
-  {"slider",(ScicosF) slider},
-  {"sqrblk",(ScicosF) scicos_sqrblk},
-  {"step_func",(ScicosF) step_func},
-  {"sum2",(ScicosF) scicos_sum2},
-  {"sum3",(ScicosF) scicos_sum3},
-  {"summation",(ScicosF) summation},
-  {"sum",(ScicosF) sum},
-  {"switch2",(ScicosF) switch2},
-  {"switchn",(ScicosF) switchn},
-  {"tanblk",(ScicosF) scicos_tanblk},
-  {"tan_blk",(ScicosF) tan_blk},
-  {"tanh_blk",(ScicosF) tanh_blk},
-  {"tcslti",(ScicosF) scicos_tcslti},
-  {"tcsltj",(ScicosF) scicos_tcsltj},
-  {"timblk",(ScicosF) scicos_timblk},
-  {"time_delay",(ScicosF) time_delay},
-  {"trash",(ScicosF) scicos_trash},
-  {"variable_delay",(ScicosF) variable_delay},
-  {"writeau",(ScicosF) writeau},
-  {"writec",(ScicosF) writec},
-  /* {"writef",(ScicosF) scicos_writef}, */
-  {"zcross2",(ScicosF) zcross2},
-  {"zcross",(ScicosF) scicos_zcross} ,
-  {(char *) 0, (ScicosF) 0}
+  {"absblk",(ScicosF) scicos_abs_block},
+  {"absolute_value",(ScicosF) scicos_absolute_value_block},
+  {"acos_blk",(ScicosF) scicos_acos_block},
+  {"acosh_blk",(ScicosF) scicos_acosh_block},
+  {"affich",(ScicosF) scicos_affich_block},
+  {"andlog",(ScicosF) scicos_andlog_block},
+  {"asin_blk",(ScicosF) scicos_asin_block},
+  {"asinh_blk",(ScicosF) scicos_asinh_block},
+  {"atan_blk",(ScicosF) scicos_atan_block},
+  {"atanh_blk",(ScicosF) scicos_atanh_block},
+  {"backlash",(ScicosF) scicos_backlash_block},
+  {"bidon",(ScicosF) scicos_bidon_block},
+  {"bounce_ball",(ScicosF) scicos_bounce_ball_block},
+  {"bouncexy",(ScicosF) scicos_bouncexy_block},
+  {"cdummy",(ScicosF) scicos_cdummy_block},
+  {"cmscope",(ScicosF) scicos_cmscope_block},
+  {"constraint",(ScicosF) scicos_constraint_block},
+  {"cos_blk",(ScicosF) scicos_cos_block},
+  {"cosblk",(ScicosF) scicos_cosblk_block},
+  {"cosh_blk",(ScicosF) scicos_cosh_block},
+  {"cscope",(ScicosF) scicos_cscope_block},
+  {"csslti",(ScicosF) scicos_csslti_block},
+  {"cstblk",(ScicosF) scicos_cst_block},
+  {"dband",(ScicosF) scicos_dband_block},
+  {"deadband",(ScicosF) scicos_deadband_block},
+  {"delay",(ScicosF) scicos_delay_block},
+  {"delayv",(ScicosF) scicos_delayv_block},
+  {"demux",(ScicosF) scicos_demux_block},
+  {"deriv",(ScicosF) scicos_deriv_block},
+  {"diffblk",(ScicosF) scicos_diff_block},
+  {"dlradp",(ScicosF) scicos_dlradp_block},
+  {"dollar",(ScicosF) scicos_dollar_block},
+  {"dsslti",(ScicosF) scicos_dsslti_block},
+  {"eselect",(ScicosF) scicos_eselect_block},
+  {"evaluate_expr",(ScicosF) scicos_evaluate_expr_block},
+  {"evscpe",(ScicosF) scicos_evscpe_block},
+  {"evtdly",(ScicosF) scicos_evtdly_block},
+  {"evtvardly",(ScicosF) scicos_evtvardly_block},
+  {"expblk",(ScicosF) scicos_exp_block},
+  {"extractor",(ScicosF) scicos_extractor_block},
+  {"forblk",(ScicosF) scicos_for_block},
+  {"fscope",(ScicosF) scicos_fscope_block},
+  {"fsv",(ScicosF) scicos_fsv_block},
+  {"gainblk",(ScicosF) scicos_gainblk_block},
+  {"gain",(ScicosF) scicos_gain_block},
+  {"gensin",(ScicosF) scicos_gensin_block},
+  {"gensqr",(ScicosF) scicos_gensqr_block},
+  {"hltblk",(ScicosF) scicos_hlt_block},
+  {"hystheresis",(ScicosF) scicos_hystheresis_block},
+  {"ifthel",(ScicosF) scicos_ifthel_block},
+  {"integral_func",(ScicosF) scicos_integral_func_block},
+  {"integr",(ScicosF) scicos_integr_block},
+  {"intplt",(ScicosF) scicos_intplt_block},
+  {"intpol",(ScicosF) scicos_intpol_block},
+  {"intrp2",(ScicosF) scicos_intrp2_block},
+  {"intrpl",(ScicosF) scicos_intrpl_block},
+  {"invblk",(ScicosF) scicos_inv_block},
+  {"iocopy",(ScicosF) scicos_iocopy_block},
+  {"logblk",(ScicosF) scicos_log_block},
+  {"logicalop",(ScicosF) scicos_logicalop_block},
+  {"lookup",(ScicosF) scicos_lookup_block},
+  {"lsplit",(ScicosF) scicos_lsplit_block},
+  {"lusat",(ScicosF) scicos_lusat_block},
+  {"maxblk",(ScicosF) scicos_max_block},
+  {"memo",(ScicosF) scicos_memo_block},
+  {"mfclck",(ScicosF) scicos_mfclck_block},
+  {"minblk",(ScicosF) scicos_min_block},
+  {"minmax",(ScicosF) scicos_minmax_block},
+  {"modulo_count",(ScicosF) scicos_modulo_count_block},
+  {"mscope",(ScicosF) scicos_mscope_block},
+  {"mswitch",(ScicosF) scicos_mswitch_block},
+  {"multiplex",(ScicosF) scicos_multiplex_block},
+  {"mux",(ScicosF) scicos_mux_block},
+  {"pload",(ScicosF) scicos_pload_block},
+  {"plusblk",(ScicosF) scicos_plus_block},
+  {"powblk",(ScicosF) scicos_pow_block},
+  {"prod",(ScicosF) scicos_prod_block},
+  {"product",(ScicosF) scicos_product_block},
+  {"qzcel",(ScicosF) scicos_qzcel_block},
+  {"qzflr",(ScicosF) scicos_qzflr_block},
+  {"qzrnd",(ScicosF) scicos_qzrnd_block},
+  {"qztrn",(ScicosF) scicos_qztrn_block},
+  {"ramp",(ScicosF) scicos_ramp_block},
+  {"ratelimiter",(ScicosF) scicos_ratelimiter_block},
+  {"readau",(ScicosF) scicos_readau_block},
+  {"readc",(ScicosF) scicos_readc_block},
+  /* {"readf",(ScicosF) scicos_readf_block}, */
+  {"relationalop",(ScicosF) scicos_relationalop_block},
+  {"relay",(ScicosF) scicos_relay_block},
+  {"rndblk",(ScicosF) scicos_rnd_block},
+  {"samphold",(ScicosF) scicos_samphold_block},
+  {"satur",(ScicosF) scicos_satur_block},
+  {"sawtth",(ScicosF) scicos_sawtth_block},
+  {"scalar2vector",(ScicosF) scicos_scalar2vector_block},
+  {"scope",(ScicosF) scicos_scope_block},
+  {"scopxy",(ScicosF) scicos_scopxy_block},
+  {"scoxy",(ScicosF) scicos_scoxy_block},
+  {"selblk",(ScicosF) scicos_sel_block},
+  {"selector",(ScicosF) scicos_selector_block},
+  {"signum",(ScicosF) scicos_signum_block},
+  {"sinblk",(ScicosF) scicos_sinblk_block},
+  {"sin_blk",(ScicosF) scicos_sin_block},
+  {"sinh_blk",(ScicosF) scicos_sinh_block},
+  {"slider",(ScicosF) scicos_slider_block},
+  {"sqrblk",(ScicosF) scicos_sqr_block},
+  {"step_func",(ScicosF) scicos_step_func_block},
+  {"sum2",(ScicosF) scicos_sum2_block},
+  {"sum3",(ScicosF) scicos_sum3_block},
+  {"summation",(ScicosF) scicos_summation_block},
+  {"sum",(ScicosF) scicos_sum_block},
+  {"switch2",(ScicosF) scicos_switch2_block},
+  {"switchn",(ScicosF) scicos_switchn_block},
+  {"tanblk",(ScicosF) scicos_tanblk_block},
+  {"tan_blk",(ScicosF) scicos_tan_block},
+  {"tanh_blk",(ScicosF) scicos_tanh_block},
+  {"tcslti",(ScicosF) scicos_tcslti_block},
+  {"tcsltj",(ScicosF) scicos_tcsltj_block},
+  {"timblk",(ScicosF) scicos_timblk_block},
+  {"time_delay",(ScicosF) scicos_time_delay_block},
+  {"trash",(ScicosF) scicos_trash_block},
+  {"variable_delay",(ScicosF) scicos_variable_delay_block},
+  {"writeau",(ScicosF) scicos_writeau_block},
+  {"writec",(ScicosF) scicos_writec_block},
+  /* {"writef",(ScicosF) scicos_writef_block}, */
+  {"zcross2",(ScicosF) scicos_zcross2_block},  
+  {"zcross",(ScicosF) scicos_zcross_block} ,
+  {NULL , (ScicosF) 0}
 };
 
 

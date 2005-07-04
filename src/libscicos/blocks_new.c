@@ -38,7 +38,7 @@ BCG *scicos_set_win(int wid,int *oldwid)
 
 
 
-void  absolute_value(scicos_block *block,int flag)
+void scicos_absolute_value_block(scicos_block *block,int flag)
 {
   int i,j;
   switch (flag) 
@@ -87,7 +87,7 @@ void  absolute_value(scicos_block *block,int flag)
 
 
 
-void acos_blk(scicos_block *block,int flag)
+void scicos_acos_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -97,7 +97,7 @@ void acos_blk(scicos_block *block,int flag)
   }
 }
 
-void acosh_blk(scicos_block *block,int flag)
+void scicos_acosh_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -107,7 +107,7 @@ void acosh_blk(scicos_block *block,int flag)
   }
 }
 
-void asin_blk(scicos_block *block,int flag)
+void scicos_asin_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -117,7 +117,7 @@ void asin_blk(scicos_block *block,int flag)
   }
 }
 
-void asinh_blk(scicos_block *block,int flag)
+void scicos_asinh_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -127,7 +127,7 @@ void asinh_blk(scicos_block *block,int flag)
   }
 }
 
-void atan_blk(scicos_block *block,int flag)
+void scicos_atan_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -137,7 +137,7 @@ void atan_blk(scicos_block *block,int flag)
   }
 }
 
-void atanh_blk(scicos_block *block,int flag)
+void scicos_atanh_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -148,7 +148,7 @@ void atanh_blk(scicos_block *block,int flag)
 }
 
 
-void tanh_blk(scicos_block *block,int flag)
+void scicos_tanh_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -159,7 +159,7 @@ void tanh_blk(scicos_block *block,int flag)
 }
 
 
-void tan_blk(scicos_block *block,int flag)
+void scicos_tan_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -170,7 +170,7 @@ void tan_blk(scicos_block *block,int flag)
 }
 
 
-void sin_blk(scicos_block *block,int flag)
+void scicos_sin_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -180,7 +180,7 @@ void sin_blk(scicos_block *block,int flag)
   }
 }
 
-void sinh_blk(scicos_block *block,int flag)
+void scicos_sinh_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -192,7 +192,7 @@ void sinh_blk(scicos_block *block,int flag)
 
 
 
-void backlash(scicos_block *block,int flag)
+void scicos_backlash_block(scicos_block *block,int flag)
 { 
   double* rw,t;
   if (flag == 4){/* the workspace is used to store previous values */
@@ -237,7 +237,7 @@ void backlash(scicos_block *block,int flag)
   } 
 }
 
-void cos_blk(scicos_block *block,int flag)
+void scicos_cos_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -247,7 +247,7 @@ void cos_blk(scicos_block *block,int flag)
   }
 }
 
-void cosh_blk(scicos_block *block,int flag)
+void scicos_cosh_block(scicos_block *block,int flag)
 {
   int j;
   if(flag==1){
@@ -257,7 +257,7 @@ void cosh_blk(scicos_block *block,int flag)
   }
 }
 
-void deadband(scicos_block *block,int flag)
+void scicos_deadband_block(scicos_block *block,int flag)
 {/* rpar[0]:upper limit,  rpar[1]:lower limit */
   if (flag==1){
     if (get_phase_simulation()==1||block->ng==0) {
@@ -293,7 +293,7 @@ void deadband(scicos_block *block,int flag)
 }
 
 
-void deriv(scicos_block *block,int flag)
+void scicos_deriv_block(scicos_block *block,int flag)
 { 
   double* rw;
   double t,dt;
@@ -335,7 +335,7 @@ void deriv(scicos_block *block,int flag)
 }
   
 
-void extractor(scicos_block *block,int flag)
+void scicos_extractor_block(scicos_block *block,int flag)
 {
   int i,j;
   if(flag==1){
@@ -349,7 +349,7 @@ void extractor(scicos_block *block,int flag)
 }
 
 
-void gainblk(scicos_block *block,int flag)
+void scicos_gainblk_block(scicos_block *block,int flag)
 {
   int i,un=1;
   if (block->nrpar==1){
@@ -366,7 +366,7 @@ void gainblk(scicos_block *block,int flag)
 
 
 
-void time_delay(scicos_block *block,int flag)
+void scicos_time_delay_block(scicos_block *block,int flag)
 {/*  rpar[0]=delay, rpar[1]=init value, ipar[0]=buffer length */
   double* pw,del,t,td;
   int* iw;
@@ -457,7 +457,7 @@ void time_delay(scicos_block *block,int flag)
 
 
 
-void variable_delay(scicos_block *block,int flag)
+void scicos_variable_delay_block(scicos_block *block,int flag)
 {/*  rpar[0]=max delay, rpar[1]=init value, ipar[0]=buffer length */
   double* pw,del,t,td;
   int* iw;
@@ -536,7 +536,7 @@ void variable_delay(scicos_block *block,int flag)
 }
 
 
-void  step_func(scicos_block *block,int flag)
+void scicos_step_func_block(scicos_block *block,int flag)
 {
   int i;
   if (flag==1&&block->nevprt==1) {
@@ -552,7 +552,7 @@ void  step_func(scicos_block *block,int flag)
 
 
 
-void  signum(scicos_block *block,int flag)
+void scicos_signum_block(scicos_block *block,int flag)
 {
   int i,j;
   if (flag==1){
@@ -591,7 +591,7 @@ void  signum(scicos_block *block,int flag)
 }
 
 
-void summation(scicos_block *block,int flag)
+void scicos_summation_block(scicos_block *block,int flag)
 {
   int j,k;
   if(flag==1){
@@ -617,7 +617,7 @@ void summation(scicos_block *block,int flag)
 }
 
 
-void  switch2(scicos_block *block,int flag)
+void scicos_switch2_block(scicos_block *block,int flag)
 {
   int i=0,j,phase;
   if (flag == 1) {
@@ -664,7 +664,7 @@ void  switch2(scicos_block *block,int flag)
 
 
 
-void  satur(scicos_block *block,int flag)
+void scicos_satur_block(scicos_block *block,int flag)
 {/* rpar[0]:upper limit,  rpar[1]:lower limit */
   if (flag==1){
     if (get_phase_simulation()==1||block->ng==0) {
@@ -700,7 +700,7 @@ void  satur(scicos_block *block,int flag)
 }
 
 
-void logicalop(scicos_block *block,int flag)
+void scicos_logicalop_block(scicos_block *block,int flag)
 {
   int i,j,k,l;
   i=block->ipar[0];
@@ -841,7 +841,7 @@ void logicalop(scicos_block *block,int flag)
 }
 
 
-void multiplex(scicos_block *block,int flag)
+void scicos_multiplex_block(scicos_block *block,int flag)
 {
   int i,j,k;
   if (block->nin==1){
@@ -864,7 +864,7 @@ void multiplex(scicos_block *block,int flag)
 }
 
 
-void  hystheresis(scicos_block *block,int flag)
+void scicos_hystheresis_block(scicos_block *block,int flag)
 {
   if (flag==1){
     if (get_phase_simulation()==1) {
@@ -895,7 +895,7 @@ void  hystheresis(scicos_block *block,int flag)
 
 
 
-void ramp(scicos_block *block,int flag)
+void scicos_ramp_block(scicos_block *block,int flag)
 {
   double dt;
   if (flag==1){
@@ -926,7 +926,7 @@ void ramp(scicos_block *block,int flag)
 }
 
 
-void minmax(scicos_block *block,int flag)
+void scicos_minmax_block(scicos_block *block,int flag)
 {
   /*ipar[0]=1 -> min,  ipar[0]=2 -> max */
   int i,phase;
@@ -1014,7 +1014,7 @@ void minmax(scicos_block *block,int flag)
 }
 
 
-void  modulo_count(scicos_block *block,int flag)
+void scicos_modulo_count_block(scicos_block *block,int flag)
 {
   if(flag == 1) {
     *block->outptr[0]=block->z[0];
@@ -1025,7 +1025,7 @@ void  modulo_count(scicos_block *block,int flag)
 
 
 
-void  mswitch(scicos_block *block,int flag)
+void scicos_mswitch_block(scicos_block *block,int flag)
 {
   int i,j=0;
   i=block->ipar[1];
@@ -1055,7 +1055,7 @@ void  mswitch(scicos_block *block,int flag)
 }
 
 
-void product(scicos_block *block,int flag)
+void scicos_product_block(scicos_block *block,int flag)
 {
   int j,k;
   if(flag==1){
@@ -1089,7 +1089,7 @@ void product(scicos_block *block,int flag)
  * rpar[0]=rising rate limit, rpar[1]=falling rate limit 
  */
 
-void ratelimiter(scicos_block *block,int flag)
+void scicos_ratelimiter_block(scicos_block *block,int flag)
 {
   double *pw,rate=0.0,t;
   if (flag == 4){/* the workspace is used to store previous values */
@@ -1133,7 +1133,7 @@ void ratelimiter(scicos_block *block,int flag)
   }
 }
 
-void  integral_func(scicos_block *block,int flag)
+void scicos_integral_func_block(scicos_block *block,int flag)
 {
   int i;
   if (flag==0){
@@ -1178,7 +1178,7 @@ void  integral_func(scicos_block *block,int flag)
   }
 }
 
-void evtvardly(scicos_block *block,int flag)
+void scicos_evtvardly_block(scicos_block *block,int flag)
 { 
   if (flag==3){
     block->evout[0]=block->inptr[0][0];
@@ -1186,7 +1186,7 @@ void evtvardly(scicos_block *block,int flag)
 }
 
 
-void relationalop(scicos_block *block,int flag)
+void scicos_relationalop_block(scicos_block *block,int flag)
 {
   int i;
   i=block->ipar[0];
@@ -1298,7 +1298,7 @@ void relationalop(scicos_block *block,int flag)
 }
 
 
-void bounce_ball(scicos_block *block,int flag)
+void scicos_bounce_ball_block(scicos_block *block,int flag)
 {
   int nevprt,nx,*ipar;
   int *outsz;
@@ -1432,7 +1432,7 @@ void bounce_ball(scicos_block *block,int flag)
 } 
 
 
-void bouncexy(scicos_block *block,int flag)
+void scicos_bouncexy_block(scicos_block *block,int flag)
 {
   char *str;
   BCG *Xgc=NULL;
@@ -1589,7 +1589,7 @@ typedef struct _cscope_rpar cscope_rpar ;
 struct _cscope_rpar {
   double dt,ymin,ymax,per;};
 
-void cscope(scicos_block *block,int flag)
+void scicos_cscope_block(scicos_block *block,int flag)
 {
   char *str;
   BCG *Xgc;
@@ -1755,7 +1755,7 @@ typedef struct _cmscope_rpar cmscope_rpar ;
 struct _cmscope_rpar {
   double dt,per,ymin,ymax;};
 
-void cmscope(scicos_block *block,int flag)
+void scicos_cmscope_block(scicos_block *block,int flag)
 {
   char *str;
   BCG *Xgc;
@@ -1850,7 +1850,7 @@ void cmscope(scicos_block *block,int flag)
     for (i=0;i<block->nin;++i){
       sum=sum+block->insz[i];
     }    
-    for (i__ = 1; i__ <= sum ; ++i__) {
+    for (i__ = 1; i__ <= sum; ++i__) {
       z__[csi->n + 1 + (i__ - 1) * csi->n + 1] = z__[csi->n + 1 + (i__ - 1) * csi->n + k];
     }
     z__[1] = 1.;
@@ -1959,7 +1959,7 @@ void cmscope(scicos_block *block,int flag)
 }
   
 
-void scalar2vector(scicos_block *block,int flag)
+void scicos_scalar2vector_block(scicos_block *block,int flag)
 {
   int i;
   if(flag==1){

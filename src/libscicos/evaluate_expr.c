@@ -40,7 +40,7 @@ double atanh(double x)
 }
 #endif
 
-void evaluate_expr(scicos_block *block,int flag)
+void scicos_evaluate_expr_block(scicos_block *block,int flag)
 {
   static double stack [1000];
   static int count,bottom,nzcr,i,phase; 

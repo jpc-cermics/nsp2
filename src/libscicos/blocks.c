@@ -37,54 +37,54 @@ struct
  * most of the blocks defined here have the following calling sequence
  */
 
-int scicos_csslti (scicos_args_F0);
-int scicos_delay (scicos_args_F0) ;
-int scicos_dlradp (scicos_args_F0);
-int scicos_dollar (scicos_args_F0);
-int scicos_dsslti (scicos_args_F0);
-int scicos_evscpe (scicos_args_F0);
-int scicos_evtdly (scicos_args_F0);
-int scicos_expblk (scicos_args_F0);
-int scicos_forblk (scicos_args_F0);
-int scicos_fsv (scicos_args_F0) ;
-int scicos_gensin (scicos_args_F0);
-int scicos_gensqr (scicos_args_F0);
-int scicos_hltblk (scicos_args_F0);
-int scicos_integr (scicos_args_F0);
-int scicos_intplt (scicos_args_F0);
-int scicos_intpol (scicos_args_F0);
-int scicos_intrpl (scicos_args_F0) ;
-int scicos_invblk (scicos_args_F0);
-int scicos_iocopy (scicos_args_F0);
-int scicos_logblk (scicos_args_F0);
-int scicos_lookup (scicos_args_F0);
-int scicos_lsplit (scicos_args_F0);
-int scicos_maxblk (scicos_args_F0);
-int scicos_memo (scicos_args_F0) ;
-int scicos_mfclck (scicos_args_F0);
-int scicos_minblk (scicos_args_F0);
-int scicos_mscope (scicos_args_F0);
-int scicos_pload ( scicos_args_F0) ;
-int scicos_powblk (scicos_args_F0);
-int scicos_qzcel (scicos_args_F0) ;
-int scicos_qzflr (scicos_args_F0) ;
-int scicos_qzrnd (scicos_args_F0);
-int scicos_qztrn (scicos_args_F0);
-int scicos_rndblk (scicos_args_F0);
-int scicos_samphold (scicos_args_F0) ;
-int scicos_sawtth (scicos_args_F0);
-int scicos_scopxy (scicos_args_F0);
-int scicos_scoxy (scicos_args_F0);
-int scicos_selblk (scicos_args_F0);
-int scicos_sinblk (scicos_args_F0);
-int scicos_sqrblk (scicos_args_F0);
-int scicos_tanblk (scicos_args_F0);
-int scicos_tcsltj (scicos_args_F0) ;
-int scicos_timblk (scicos_args_F0);
-int scicos_trash (scicos_args_F0);
-int scicos_zcross (scicos_args_F0) ;
+int scicos_csslti_block(scicos_args_F0);
+int scicos_delay_block(scicos_args_F0) ;
+int scicos_dlradp_block(scicos_args_F0);
+int scicos_dollar_block(scicos_args_F0);
+int scicos_dsslti_block(scicos_args_F0);
+int scicos_evscpe_block(scicos_args_F0);
+int scicos_evtdly_block(scicos_args_F0);
+int scicos_exp_block(scicos_args_F0);
+int scicos_for_block(scicos_args_F0);
+int scicos_fsv_block(scicos_args_F0) ;
+int scicos_gensin_block(scicos_args_F0);
+int scicos_gensqr_block(scicos_args_F0);
+int scicos_hlt_block(scicos_args_F0);
+int scicos_integr_block(scicos_args_F0);
+int scicos_intplt_block(scicos_args_F0);
+int scicos_intpol_block(scicos_args_F0);
+int scicos_intrpl_block(scicos_args_F0) ;
+int scicos_inv_block(scicos_args_F0);
+int scicos_iocopy_block(scicos_args_F0);
+int scicos_log_block(scicos_args_F0);
+int scicos_lookup_block(scicos_args_F0);
+int scicos_lsplit_block(scicos_args_F0);
+int scicos_max_block(scicos_args_F0);
+int scicos_memo_block(scicos_args_F0) ;
+int scicos_mfclck_block(scicos_args_F0);
+int scicos_min_block(scicos_args_F0);
+int scicos_mscope_block(scicos_args_F0);
+int scicos_pload_block( scicos_args_F0) ;
+int scicos_pow_block(scicos_args_F0);
+int scicos_qzcel_block(scicos_args_F0) ;
+int scicos_qzflr_block(scicos_args_F0) ;
+int scicos_qzrnd_block(scicos_args_F0);
+int scicos_qztrn_block(scicos_args_F0);
+int scicos_rnd_block(scicos_args_F0);
+int scicos_samphold_block(scicos_args_F0) ;
+int scicos_sawtth_block(scicos_args_F0);
+int scicos_scopxy_block(scicos_args_F0);
+int scicos_scoxy_block(scicos_args_F0);
+int scicos_sel_block(scicos_args_F0);
+int scicos_sinblk_block(scicos_args_F0);
+int scicos_sqr_block(scicos_args_F0);
+int scicos_tanblk_block(scicos_args_F0);
+int scicos_tcsltj_block(scicos_args_F0) ;
+int scicos_timblk_block(scicos_args_F0);
+int scicos_trash_block(scicos_args_F0);
+int scicos_zcross_block(scicos_args_F0) ;
 int scicos_bound (scicos_args_F0);
-int scicos_affich (scicos_args_F0);
+int scicos_affich_block(scicos_args_F0);
 
 /*     continuous state space linear system simulator */
 /*     rpar(1:nx*nx)=A */
@@ -92,7 +92,7 @@ int scicos_affich (scicos_args_F0);
 /*     rpar(nx*nx+nx*nu+1:nx*nx+nx*nu+nx*ny)=C */
 /*     rpar(nx*nx+nx*nu+nx*ny+1:nx*nx+nx*nu+nx*ny+ny*nu)=D */
 
-int scicos_csslti (scicos_args_F0)
+int scicos_csslti_block(scicos_args_F0)
 {
   int la, lb, lc, ld, c__1 = 1;
   --y;
@@ -124,7 +124,7 @@ int scicos_csslti (scicos_args_F0)
 
 /*     Ouputs nx*dt delayed input */
 
-int scicos_delay (scicos_args_F0) 
+int scicos_delay_block(scicos_args_F0) 
 {
   if (*flag__ == 1 || *flag__ == 4 || *flag__ == 6)
     {
@@ -141,7 +141,7 @@ int scicos_delay (scicos_args_F0)
 
 
 
-int scicos_dlradp (scicos_args_F0)
+int scicos_dlradp_block(scicos_args_F0)
 {
   static int c__1 = 1;
   /* static int c_n1 = -1; */
@@ -237,7 +237,7 @@ int scicos_dlradp (scicos_args_F0)
 
 /* Ouputs delayed input */
 
-int scicos_dollar (scicos_args_F0)
+int scicos_dollar_block(scicos_args_F0)
 {
   if (*flag__ == 1 || *flag__ == 6 || *flag__ == 4)
     {
@@ -252,7 +252,7 @@ int scicos_dollar (scicos_args_F0)
 
 
 
-int scicos_dsslti (scicos_args_F0)
+int scicos_dsslti_block(scicos_args_F0)
 {
   int c__1 = 1;
   double w[100];
@@ -303,7 +303,7 @@ int scicos_dsslti (scicos_args_F0)
 
 /*     Event scope */
 
-int scicos_evscpe (scicos_args_F0)
+int scicos_evscpe_block(scicos_args_F0)
 {
   /* ipar=[win_num, ipar(2) = 0/1 color flag,  ipar(3:10) = color */
   /*     ipar(nipar-3:nipar-2) = window position */
@@ -404,7 +404,7 @@ int scicos_evscpe (scicos_args_F0)
 
 /* event delay,  delay=rpar(1) */
 
-int scicos_evtdly (scicos_args_F0)
+int scicos_evtdly_block(scicos_args_F0)
 {
   if (*flag__ == 3)
     {
@@ -415,7 +415,7 @@ int scicos_evtdly (scicos_args_F0)
 
 /*     Outputs a^u(i), a =rpar(1) */
 
-int scicos_expblk (scicos_args_F0)
+int scicos_exp_block(scicos_args_F0)
 {
   int i;
   if (*flag__ == 1 ||  *flag__ >= 4) 
@@ -427,7 +427,7 @@ int scicos_expblk (scicos_args_F0)
 
 /*  For block */
 
-int scicos_forblk (scicos_args_F0)
+int scicos_for_block(scicos_args_F0)
 {
   /*     Copyright INRIA */
   /*     Scicos block simulator */
@@ -481,7 +481,7 @@ int scicos_forblk (scicos_args_F0)
 }			
 
 
-int scicos_fsv (scicos_args_F0) 
+int scicos_fsv_block(scicos_args_F0) 
 {
   double d__1, d__2;
   double a, g, a0, b0;
@@ -527,7 +527,7 @@ int scicos_gensin_test (scicos_args_F0)
   return 0;
 }			
 
-int scicos_gensin (scicos_args_F0)
+int scicos_gensin_block(scicos_args_F0)
 {
   y[0] = rpar[0] * sin (rpar[1] * *t + rpar[2]);
   return 0;
@@ -537,7 +537,7 @@ int scicos_gensin (scicos_args_F0)
  *     period=2*rpar(1) 
  */
 
-int scicos_gensqr (scicos_args_F0)
+int scicos_gensqr_block(scicos_args_F0)
 {
   /*     Copyright INRIA */
   /*     Scicos block simulator */
@@ -557,7 +557,7 @@ int scicos_gensqr (scicos_args_F0)
  */
 
 
-int scicos_hltblk (scicos_args_F0)
+int scicos_hlt_block(scicos_args_F0)
 {
   if (*flag__ == 2)
     {
@@ -571,7 +571,7 @@ int scicos_hltblk (scicos_args_F0)
 /*     Integrator */
 
 int
-scicos_integr (scicos_args_F0)
+scicos_integr_block (scicos_args_F0)
 {
   if (*flag__ == 1 || *flag__ == 6)
     {
@@ -594,7 +594,7 @@ scicos_integr (scicos_args_F0)
  */
 
 int
-scicos_intplt (scicos_args_F0)
+scicos_intplt_block (scicos_args_F0)
 {
   int np;
   --y;
@@ -615,7 +615,7 @@ scicos_intplt (scicos_args_F0)
 }			
 
 
-int scicos_intpol (scicos_args_F0)
+int scicos_intpol_block(scicos_args_F0)
 {
   int np;
   /*     Copyright INRIA */
@@ -640,9 +640,9 @@ int scicos_intpol (scicos_args_F0)
 }			
 
 
-int scicos_intrp2(scicos_args_F);
+int scicos_intrp2_block(scicos_args_F);
 
-int scicos_intrp2(int *flag__, int *nevprt, double *t, double *xd, double *x,
+int scicos_intrp2_block(int *flag__, int *nevprt, double *t, double *xd, double *x,
 		  int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 		  double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
 		  int *nu1, double *u2, int *nu2, double *y1, int *ny1, 
@@ -707,7 +707,7 @@ int scicos_intrp2(int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 /*     ipar(1) : the number of input */
 
-int scicos_intrpl (scicos_args_F0) 
+int scicos_intrpl_block(scicos_args_F0) 
 {
   int i,i1=(*nrpar / 2);
   --ipar;
@@ -733,7 +733,7 @@ int scicos_intrpl (scicos_args_F0)
 
 /*     Outputs the inverse of the input */
 
-int scicos_invblk (scicos_args_F0)
+int scicos_inv_block(scicos_args_F0)
 {
   int i;
   double ww;
@@ -775,7 +775,7 @@ int scicos_invblk (scicos_args_F0)
 }			
 
 
-int scicos_iocopy (scicos_args_F0)
+int scicos_iocopy_block(scicos_args_F0)
 {
   if (C2F(dbcos).idb == 1)
     {
@@ -787,7 +787,7 @@ int scicos_iocopy (scicos_args_F0)
 
 
 
-int scicos_logblk (scicos_args_F0)
+int scicos_log_block(scicos_args_F0)
 {
   int i__1;
   int i__;
@@ -834,7 +834,7 @@ int scicos_logblk (scicos_args_F0)
   return 0;
 }			
 
-int scicos_lookup (scicos_args_F0)
+int scicos_lookup_block(scicos_args_F0)
 {
   int i__1;
   double dout;
@@ -884,7 +884,7 @@ int scicos_lookup (scicos_args_F0)
 
 
 
-int scicos_lsplit (scicos_args_F0)
+int scicos_lsplit_block(scicos_args_F0)
 {
 
   int i__1, i__2;
@@ -917,10 +917,10 @@ int scicos_lsplit (scicos_args_F0)
   return 0;
 }			
 
-int scicos_lusat (scicos_args_F);
+int scicos_lusat_block(scicos_args_F);
 
 
-int scicos_lusat (int *flag__, int *nevprt, double *t, double *xd, double *x,
+int scicos_lusat_block(int *flag__, int *nevprt, double *t, double *xd, double *x,
 		  int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 		  double *rpar, int *nrpar, int *ipar, int *nipar, double *u,
 		  int *nu, double *y, int *ny, double *g, int *ng,
@@ -980,7 +980,7 @@ int scicos_lusat (int *flag__, int *nevprt, double *t, double *xd, double *x,
 }			
 
 
-int scicos_maxblk (scicos_args_F0)
+int scicos_max_block(scicos_args_F0)
 {
   int i__1;
   double d__1, d__2;
@@ -1014,7 +1014,7 @@ int scicos_maxblk (scicos_args_F0)
 
 /*     returns sample and hold  of the input */
 
-int scicos_memo (scicos_args_F0) 
+int scicos_memo_block(scicos_args_F0) 
 {
   if (*flag__ == 2)
     {
@@ -1030,7 +1030,7 @@ int scicos_memo (scicos_args_F0)
 
 /*     multifrequency clock */
 
-int scicos_mfclck (scicos_args_F0)
+int scicos_mfclck_block(scicos_args_F0)
 {
   if (*flag__ == 4)
     {
@@ -1062,7 +1062,7 @@ int scicos_mfclck (scicos_args_F0)
 
 /*     outputs the minimum of all inputs */
 
-int scicos_minblk (scicos_args_F0)
+int scicos_min_block(scicos_args_F0)
 {
   int i;
   double ww =  u[0];
@@ -1072,7 +1072,7 @@ int scicos_minblk (scicos_args_F0)
 }			
 
 
-int scicos_mscope (scicos_args_F0)
+int scicos_mscope_block(scicos_args_F0)
 {
   static int c__1 = 1;
   static int c__0 = 0;
@@ -1360,7 +1360,7 @@ int scicos_mscope (scicos_args_F0)
 }		
 
 
-int scicos_pload ( scicos_args_F0) 
+int scicos_pload_block( scicos_args_F0) 
 {
   int i__1;
   int i__;
@@ -1399,7 +1399,7 @@ int scicos_pload ( scicos_args_F0)
 }			
 
 
-int scicos_powblk (scicos_args_F0)
+int scicos_pow_block(scicos_args_F0)
 {
   int i__1;
   int i__;
@@ -1466,7 +1466,7 @@ int scicos_powblk (scicos_args_F0)
 /*     Gives quantized signal by ceiling method */
 /*     rpar(i) quantization step used for i input */
 
-int scicos_qzcel (scicos_args_F0) 
+int scicos_qzcel_block(scicos_args_F0) 
 {
   double d__1;
   double d_nint (double *);
@@ -1490,7 +1490,7 @@ int scicos_qzcel (scicos_args_F0)
 /*     Gives quantized signal by floor method */
 /*     rpar(i) quantization step used for i input */
 
-int scicos_qzflr (scicos_args_F0) 
+int scicos_qzflr_block(scicos_args_F0) 
 {
   double d__1;
   double d_nint (double *);
@@ -1514,7 +1514,7 @@ int scicos_qzflr (scicos_args_F0)
 /*     Gives quantized signal by round method */
 /*     rpar(i) quantization step used for i input */
 
-int scicos_qzrnd (scicos_args_F0)
+int scicos_qzrnd_block(scicos_args_F0)
 {
   double d__1;
   double d_nint (double *);
@@ -1547,7 +1547,7 @@ int scicos_qzrnd (scicos_args_F0)
 /*     Gives quantized signal by truncation method */
 /*     rpar(i) quantization step used for i input */
 
-int scicos_qztrn (scicos_args_F0)
+int scicos_qztrn_block(scicos_args_F0)
 {
   int i__;
   --y;
@@ -1583,7 +1583,7 @@ int scicos_qztrn (scicos_args_F0)
 /*     rpar(ny+1:2*ny)=deviation */
 /*     rpar(2*ny+1)=dt */
 
-int scicos_rndblk (scicos_args_F0)
+int scicos_rnd_block(scicos_args_F0)
 {
 
   int i__1;
@@ -1645,7 +1645,7 @@ int scicos_rndblk (scicos_args_F0)
 
 /*     returns sample and hold  of the input */
 
-int scicos_samphold (scicos_args_F0) 
+int scicos_samphold_block(scicos_args_F0) 
 {
   if (*flag__ == 1)
     {
@@ -1655,7 +1655,7 @@ int scicos_samphold (scicos_args_F0)
 }			
 
 
-int scicos_sawtth (scicos_args_F0)
+int scicos_sawtth_block(scicos_args_F0)
 {
   if (*flag__ == 1 && *nevprt == 0)
     {
@@ -1676,10 +1676,10 @@ int scicos_sawtth (scicos_args_F0)
   return 0;
 }			
 
-int scicos_scope(scicos_args_F);
+int scicos_scope_block(scicos_args_F);
 
 int
-scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
+scicos_scope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	      int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 	      double *rpar, int *nrpar, int *ipar, int *nipar, double *u,
 	      int *nu,
@@ -1909,7 +1909,7 @@ scicos_scope (int *flag__, int *nevprt, double *t, double *xd, double *x,
 /* Table of constant values */
 
 
-int scicos_scopxy (scicos_args_F0)
+int scicos_scopxy_block(scicos_args_F0)
 {
   BCG *Xgc;
   static int c__1 = 1;
@@ -2074,7 +2074,7 @@ int scicos_scopxy (scicos_args_F0)
 }
 
 
-int scicos_scoxy (scicos_args_F0)
+int scicos_scoxy_block(scicos_args_F0)
 {
   BCG *Xgc;
   char *str;
@@ -2224,7 +2224,7 @@ int scicos_scoxy (scicos_args_F0)
 
 /*     Selector block */
 
-int scicos_selblk (scicos_args_F0)
+int scicos_sel_block(scicos_args_F0)
 {
   int ic, nev;
   /*     Copyright INRIA */
@@ -2258,7 +2258,7 @@ int scicos_selblk (scicos_args_F0)
 }			
 
 
-int scicos_sinblk (scicos_args_F0)
+int scicos_sinblk_block(scicos_args_F0)
 {
   int i;
   for (i = 0 ; i < *nu ; ++i)  y[i] = sin (u[i]);
@@ -2270,7 +2270,7 @@ int scicos_sinblk (scicos_args_F0)
  */
 
 
-int scicos_sqrblk (scicos_args_F0)
+int scicos_sqr_block(scicos_args_F0)
 {
   int i;
   for (i = 0; i < *nu ; ++i)
@@ -2290,9 +2290,9 @@ int scicos_sqrblk (scicos_args_F0)
 
 /*     adds the inputs weighed by rpar */
 
-int scicos_sum2(scicos_args_F);
+int scicos_sum2_block(scicos_args_F);
 
-int scicos_sum2(int *flag__, int *nevprt, double *t, double *xd, double *x,
+int scicos_sum2_block(int *flag__, int *nevprt, double *t, double *xd, double *x,
 		int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 		double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
 		int *nu1, double *u2, int *nu2, double *y, int *ny,
@@ -2325,9 +2325,9 @@ int scicos_sum2(int *flag__, int *nevprt, double *t, double *xd, double *x,
   return 0;
 }			
 
-int scicos_sum3(scicos_args_F);
+int scicos_sum3_block(scicos_args_F);
 
-int scicos_sum3(int *flag__, int *nevprt, double *t, double *xd, double *x,
+int scicos_sum3_block(int *flag__, int *nevprt, double *t, double *xd, double *x,
 		int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 		double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
 		int *nu1, double *u2, int *nu2, double *u3, int *nu3, double *y,
@@ -2364,7 +2364,7 @@ int scicos_sum3(int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 
 
-int scicos_tanblk (scicos_args_F0)
+int scicos_tanblk_block(scicos_args_F0)
 {
   int i;
   double ww;
@@ -2388,10 +2388,10 @@ int scicos_tanblk (scicos_args_F0)
 
 /* Table of constant values */
 
-int scicos_tcslti(scicos_args_F);
+int scicos_tcslti_block(scicos_args_F);
 
 int
-scicos_tcslti (int *flag__, int *nevprt, double *t, double *xd, double *x,
+scicos_tcslti_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 	       double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
 	       int *nu1, double *u2, int *nu2, double *y, int *ny,
@@ -2448,7 +2448,7 @@ scicos_tcslti (int *flag__, int *nevprt, double *t, double *xd, double *x,
 }			
 
 
-int scicos_tcsltj (scicos_args_F0) 
+int scicos_tcsltj_block(scicos_args_F0) 
 {
   static int c__1 = 1;
   int la, lb, lc;
@@ -2491,7 +2491,7 @@ int scicos_tcsltj (scicos_args_F0)
 }			
 
 
-int scicos_timblk (scicos_args_F0)
+int scicos_timblk_block(scicos_args_F0)
 {
   /*     Copyright INRIA */
   /*     Scicos block simulator */
@@ -2500,7 +2500,7 @@ int scicos_timblk (scicos_args_F0)
 }
 
 
-int scicos_trash (scicos_args_F0)
+int scicos_trash_block(scicos_args_F0)
 {
   /*     Copyright INRIA */
   /*     Scicos block simulator */
@@ -2508,7 +2508,7 @@ int scicos_trash (scicos_args_F0)
 }			
 
 
-int  scicos_zcross (scicos_args_F0) 
+int scicos_zcross_block(scicos_args_F0) 
 {
   int i__1;
   double d__1;
@@ -2566,7 +2566,7 @@ int  scicos_zcross (scicos_args_F0)
   return 0;
 }
 
-void plusblk(scicos_args_F2);
+void scicos_plus_block(scicos_args_F2);
 
 void 
 plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
@@ -2591,9 +2591,9 @@ plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
-void scicos_plusblk(scicos_args_F2);
+void scicos_plus_block(scicos_args_F2);
 
-void  scicos_plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
+void scicos_plus_block(int *flag, int *nevprt, double *t, double *xd, double *x,
 		     int *nx, double *z, int *nz, double *tvec, int *ntvec,
 		     double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
 		     int *insz, int *nin, double **outptr, int *outsz, int *nout)
@@ -2615,9 +2615,9 @@ void  scicos_plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
-void switchn(scicos_args_F2);
+void scicos_switchn_block(scicos_args_F2);
 
-void switchn(int *flag, int *nevprt, double *t, double *xd, double *x,
+void scicos_switchn_block(int *flag, int *nevprt, double *t, double *xd, double *x,
 	     int *nx, double *z, int *nz, double *tvec, int *ntvec,
 	     double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
 	     int *insz, int *nin, double **outptr, int *outsz, int *nout)
@@ -2642,10 +2642,10 @@ void switchn(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
-void selector(scicos_args_F2);
+void scicos_selector_block(scicos_args_F2);
 
 void 
-selector(int *flag, int *nevprt, double *t, double *xd, double *x,
+scicos_selector_block(int *flag, int *nevprt, double *t, double *xd, double *x,
 	 int *nx, double *z, int *nz, double *tvec, int *ntvec,
 	 double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
 	 int *insz, int *nin, double **outptr, int *outsz, int *nout)
@@ -2679,10 +2679,10 @@ selector(int *flag, int *nevprt, double *t, double *xd, double *x,
 }
 
 
-void relay(scicos_args_F2);
+void scicos_relay_block(scicos_args_F2);
 
 void 
-relay(int *flag, int *nevprt, double *t, double *xd, double *x,
+scicos_relay_block(int *flag, int *nevprt, double *t, double *xd, double *x,
       int *nx, double *z, int *nz, double *tvec, int *ntvec,
       double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
       int *insz, int *nin, double **outptr, int *outsz, int *nout)
@@ -2718,14 +2718,14 @@ relay(int *flag, int *nevprt, double *t, double *xd, double *x,
 }
 
 
-void prod(scicos_args_F2);
+void scicos_prod_block(scicos_args_F2);
 
 
 void 
-prod(int *flag, int *nevprt, double *t, double *xd, double *x,
-     int *nx, double *z, int *nz, double *tvec, int *ntvec,
-     double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
-     int *insz, int *nin, double **outptr, int *outsz, int *nout)
+scicos_prod_block(int *flag, int *nevprt, double *t, double *xd, double *x,
+		  int *nx, double *z, int *nz, double *tvec, int *ntvec,
+		  double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
+		  int *insz, int *nin, double **outptr, int *outsz, int *nout)
 {
   int k,i,n;
   double *y;
@@ -2744,10 +2744,9 @@ prod(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
-void sum(scicos_args_F2);
+void scicos_sum_block(scicos_args_F2);
 
-void 
-sum(int *flag, int *nevprt, double *t, double *xd, double *x,
+void scicos_sum_block(int *flag, int *nevprt, double *t, double *xd, double *x,
     int *nx, double *z, int *nz, double *tvec, int *ntvec,
     double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
     int *insz, int *nin, double **outptr, int *outsz, int *nout)
@@ -2769,12 +2768,13 @@ sum(int *flag, int *nevprt, double *t, double *xd, double *x,
   }
 }
 
-void zcross2(scicos_args_F0);
+void scicos_zcross2_block(scicos_args_F0);
 
 void 
-zcross2(int *flag, int *nevprt, double *t, double *xd, double *x,
-	int *nx, double *z, int *nz, double *tvec, int *ntvec,
-	double *rpar, int *nrpar, int *ipar, int *nipar, double *u, int *nu, double *g, int *ng)
+scicos_zcross2_block(int *flag, int *nevprt, double *t, double *xd, double *x,
+		     int *nx, double *z, int *nz, double *tvec, int *ntvec,
+		     double *rpar, int *nrpar, int *ipar, int *nipar, 
+		     double *u, int *nu, double *g, int *ng)
 {
   
   int i,j;
@@ -2842,9 +2842,9 @@ int scicos_bound (scicos_args_F0)
   return 0;
 }
 
-void  readau(scicos_args_F2);
+void scicos_readau_block(scicos_args_F2);
 
-void  readau(int *flag, int *nevprt, double *t, double *xd, double *x, 
+void scicos_readau_block(int *flag, int *nevprt, double *t, double *xd, double *x, 
 	     int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, 
 	     int *nrpar, int *ipar, int *nipar, double **inptr, int *insz, int *nin, 
 	     double **outptr, int *outsz, int *nout)
@@ -3112,9 +3112,9 @@ static int set_slider_color(BCG *Xgc, int color)
  *  z = [val,window,x,y,w,h] 
  *----------------------------------------------------*/
 
-void slider(scicos_args_F0);
+void scicos_slider_block(scicos_args_F0);
 
-void slider(int *flag, int *nevprt, double *t, double *xd,
+void scicos_slider_block(int *flag, int *nevprt, double *t, double *xd,
 	    double *x, int *nx, double *z, int *nz,
 	    double *tvec, int *ntvec, double *rpar,
 	    int *nrpar, int *ipar, int *nipar,
@@ -3203,9 +3203,9 @@ void slider(int *flag, int *nevprt, double *t, double *xd,
 }
 
 
-void writeau(scicos_args_F2);
+void scicos_writeau_block(scicos_args_F2);
 
-void writeau(int *flag, int *nevprt, double *t, double *xd, double *x,
+void scicos_writeau_block(int *flag, int *nevprt, double *t, double *xd, double *x,
 	     int *nx, double *z, int *nz, double *tvec, int *ntvec,
 	     double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
 	     int *insz, int *nin, double **outptr, int *outsz, int *nout)
@@ -3308,7 +3308,7 @@ void writeau(int *flag, int *nevprt, double *t, double *xd, double *x,
 
 /*  Displays the value of the input in the diagram block */
 
-int scicos_affich (scicos_args_F0)
+int scicos_affich_block(scicos_args_F0)
 {
   BCG *Xgc;
   int record, cur = 0, wid;
@@ -3418,7 +3418,7 @@ int scicos_getgeom (double *g)
  *     returns Absolute value of the input 
  *------------------------------------------------*/
 
-void blocks_absblk(scicos_args_F0)
+void scicos_abs_block(scicos_args_F0)
 {
   int i;
   for (i = 0 ; i <  *nu ; ++i ) y[i] = Abs(u[i]);
@@ -3429,7 +3429,7 @@ void blocks_absblk(scicos_args_F0)
  *     if event input exists synchronuously, output is 1 else -1
  *------------------------------------------------*/
 
-void blocks_andlog(scicos_args_F0)
+void scicos_andlog_block(scicos_args_F0)
 {
   if ( *flag__ == 1)  y[0] = ( *nevprt != 3 ) ? -1.00 :  1.00; 
 }
@@ -3440,7 +3440,7 @@ void blocks_andlog(scicos_args_F0)
  *     does nothing 
  *------------------------------------------------*/
 
-void blocks_bidon(scicos_args_F0)
+void scicos_bidon_block(scicos_args_F0)
 {
 }
 
@@ -3449,7 +3449,7 @@ void blocks_bidon(scicos_args_F0)
  *     rpar=gain matrix
  *------------------------------------------------*/
 
-void blocks_gain(scicos_args_F0)
+void scicos_gain_block(scicos_args_F0)
 {
   int un=1;
   dmmul_scicos(rpar,ny,u,nu,y,ny,ny,nu,&un);
@@ -3459,7 +3459,7 @@ void blocks_gain(scicos_args_F0)
  *     Dummy state space x'=sin(t)
  *------------------------------------------------*/
 
-void blocks_cdummy(scicos_args_F0)
+void scicos_cdummy_block(scicos_args_F0)
 {
   if ( *flag__ == 0 ) xd[0]=sin(*t);
 }
@@ -3471,7 +3471,7 @@ void blocks_cdummy(scicos_args_F0)
  *     DB(i)=rpar(i) 
  *------------------------------------------------*/
 
-void blocks_dband(scicos_args_F0)
+void scicos_dband_block(scicos_args_F0)
 {
   int i;
   
@@ -3488,7 +3488,7 @@ void blocks_dband(scicos_args_F0)
  * cos 
  */
 
-void blocks_cosblk(scicos_args_F0)
+void scicos_cosblk_block(scicos_args_F0)
 {
 
   int i;
@@ -3501,10 +3501,10 @@ void blocks_cosblk(scicos_args_F0)
  * jusqu'a ? 
  */
 
-int scicos_constraint(scicos_args_Fi);
+int scicos_constraint_block(scicos_args_Fi);
 
 int
-scicos_constraint (int *flag__, int *nevprt, double *t, double *res, double *xd,
+scicos_constraint_block (int *flag__, int *nevprt, double *t, double *res, double *xd,
 		double *x, int *nx, double *z__, int *nz, double *tvec,
 		int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar,
 		double *u, int *nu, double *y, int *ny ,
@@ -3556,10 +3556,10 @@ scicos_constraint (int *flag__, int *nevprt, double *t, double *res, double *xd,
 
 /* XXX : blovk de type   ScicosFi  */ 
 
-int scicos_diffblk(scicos_args_Fi);
+int scicos_diff_block(scicos_args_Fi);
 
 int
-scicos_diffblk (int *flag__, int *nevprt, double *t, double *res, double *xd,
+scicos_diff_block (int *flag__, int *nevprt, double *t, double *res, double *xd,
 		double *x, int *nx, double *z__, int *nz, double *tvec,
 		int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar,
 		double *u, int *nu, double *y, int *ny ,
@@ -3588,10 +3588,10 @@ scicos_diffblk (int *flag__, int *nevprt, double *t, double *res, double *xd,
 
 /* demux revisited, Copyright Enpc Jean-Philippe Chancelier */
 
-int scicos_demux(scicos_args_F);
+int scicos_demux_block(scicos_args_F);
 
 int
-scicos_demux (int *flag__, int *nevprt, double *t, double *xd, double *x,
+scicos_demux_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	      int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 	      double *rpar, int *nrpar, int *ipar, int *nipar, double *uy1,
 	      int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
@@ -3622,12 +3622,12 @@ scicos_demux (int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 
 
-int scicos_mux(scicos_args_F);
+int scicos_mux_block(scicos_args_F);
 
 /* mux revisited, Copyright Enpc Jean-Philippe Chancelier */
 
 int
-scicos_mux (int *flag__, int *nevprt, double *t, double *xd, double *x,
+scicos_mux_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	    int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 	    double *rpar, int *nrpar, int *ipar, int *nipar, double *uy1,
 	    int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
@@ -3676,10 +3676,10 @@ scicos_mux (int *flag__, int *nevprt, double *t, double *xd, double *x,
  */
 
 
-void writec(scicos_args_F2);
+void scicos_writec_block(scicos_args_F2);
 
 void 
-writec(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, 
+scicos_writec_block(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, 
        double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, 
        int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, 
        int *outsz, int *nout)
@@ -3737,7 +3737,7 @@ writec(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx,
       sciprint("Trying to open [%s]\n",str);
       if (( F= nsp_file_open(str,"wb",FALSE,wi->swap)) == NULL) 
 	{
-	  Scierror("Error: in writec, could not open the file %s !\n",str);
+	  Scierror("Error: in scicos_writec_block, could not open the file %s !\n",str);
 	  *flag = -3;
 	  return;
 	}
@@ -3788,9 +3788,9 @@ static int worldsize(char type[4])
   return 0;
 }
 
-void  readc(scicos_args_F2);
+void scicos_readc_block(scicos_args_F2);
 
-void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, 
+void scicos_readc_block(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z, int *nz, 
 	    double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr, 
 	    int *insz, int *nin, double **outptr, int *outsz, int *nout)
 {
@@ -3845,7 +3845,7 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
 	  m=wi->n*wi->maxvoie;
 	  if ( nsp_mget(F,buffer,m,type,&nread) == FAIL) 
 	    {
-	      Scierror("Error: in readc, read error during fseek\n");
+	      Scierror("Error: in scicos_readc_block, read error during fseek\n");
 	      *flag = -1;
 	      nsp_file_close(F);
 	      nsp_file_destroy(F);
@@ -3892,7 +3892,7 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
       str[wi->len]='\0';
       if (( F= nsp_file_open(str,"rb",FALSE,wi->swap)) == NULL) 
 	{
-	  Scierror("Error: in writec, could not open the file %s !\n",str);
+	  Scierror("Error: in scicos_writec_block, could not open the file %s !\n",str);
 	  *flag = -3;
 	  return;
 	}
@@ -3908,7 +3908,7 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
 	  offset=(wi->first -1)*wi->maxvoie*worldsize(type);
 	  if ( nsp_fseek(F,offset,"set") == FAIL) 
 	    {
-	      Scierror("Error: in readc, read error during fseek\n");
+	      Scierror("Error: in scicos_readc_block, read error during fseek\n");
 	      *flag = -1;
 	      nsp_file_close(F);
 	      nsp_file_destroy(F);
@@ -3919,7 +3919,7 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
       m=wi->n*wi->maxvoie;
       if ( nsp_mget(F,buffer,m,type,&nread) == FAIL) 
 	{
-	  Scierror("Error: in readc, read error during mget\n");
+	  Scierror("Error: in scicos_readc_block, read error during mget\n");
 	  *flag = -1;
 	  nsp_file_close(F);
 	  nsp_file_destroy(F);
@@ -3951,10 +3951,10 @@ void  readc(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, d
 /* XXX    output a vector of constants out(i)=rpar(i) 
  */
 
-int scicos_cstblk(scicos_args_F);
+int scicos_cst_block(scicos_args_F);
 
 int
-scicos_cstblk (int *flag__, int *nevprt, double *t, double *xd, double *x,
+scicos_cst_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 	       double *rpar, int *nrpar, int *ipar, int *nipar, double *y,
 	       int *ny, double *uy2, int *nuy2, double *uy3, int *nuy3, 
@@ -3970,10 +3970,10 @@ scicos_cstblk (int *flag__, int *nevprt, double *t, double *xd, double *x,
 }			
 
 
-int scicos_delayv(scicos_args_F);
+int scicos_delayv_block(scicos_args_F);
 
 int
-scicos_delayv (int *flag__, int *nevprt, double *t, double *xd, double *x,
+scicos_delayv_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 	       double *rpar, int *nrpar, int *ipar, int *nipar, double *u1,
 	       int *nu1, double *u2, int *nu2, double *y, int *ny, 
@@ -4101,10 +4101,10 @@ scicos_delayv (int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 
 
-int scicos_fscope(scicos_args_F);
+int scicos_fscope_block(scicos_args_F);
 
 int
-scicos_fscope (int *flag__, int *nevprt, double *t, double *xd, double *x,
+scicos_fscope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,
 	       double *rpar, int *nrpar, int *ipar, int *nipar,
 	       double *uy1, int *nuy1, double *uy2, int *nuy2, double *uy3, int *nuy3,
@@ -4335,10 +4335,10 @@ scicos_fscope (int *flag__, int *nevprt, double *t, double *xd, double *x,
  */
 
 
-int scicos_eselect(scicos_args_Fm1);
+int scicos_eselect_block(scicos_args_Fm1);
 
 int
-scicos_eselect (int *flag__, int *nevprt, int *ntvec, double *rpar,
+scicos_eselect_block (int *flag__, int *nevprt, int *ntvec, double *rpar,
 		int *nrpar, int *ipar, int *nipar, double *u, int *nu)
 {
   int i__1, i__2;
@@ -4370,10 +4370,10 @@ scicos_eselect (int *flag__, int *nevprt, int *ntvec, double *rpar,
  * on the sign of the unique input (if input>0 then  else )
  */
 
-int scicos_ifthel(scicos_args_Fm1);
+int scicos_ifthel_block(scicos_args_Fm1);
 
 int
-scicos_ifthel (int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar,
+scicos_ifthel_block (int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar,
 	       int *ipar, int *nipar, double *u, int *nu)
 {
   if (C2F(dbcos).idb == 1)

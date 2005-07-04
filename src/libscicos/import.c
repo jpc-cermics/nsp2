@@ -143,6 +143,10 @@ int scicos_getcurblock(void)
 void scicos_getouttb(int nsize,int *nvec, double *outtc)
 {
   int i;
-  for (i=0 ; i < nsize ; i++)
-    outtc[i]=(double)Scicos->state.outtb[nvec[i]-1];  
+  if ( Scicos->state.nout == 0 ) 
+    for (i=0 ; i < nsize ; i++)
+      outtc[i]= 0.0;
+  else 
+    for (i=0 ; i < nsize ; i++)
+      outtc[i]=  (double)Scicos->state.outtb[nvec[i]-1];  
 }
