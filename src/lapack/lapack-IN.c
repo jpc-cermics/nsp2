@@ -38,8 +38,8 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
   char *mode = NULL,cmode ;
   double tol = 0, *Tol=NULL;
   NspMatrix *A;
-  NspMatrix *Q=NULL, *R=NULL, *rank=NULL, *E=NULL;
-  NspMatrix **hrank=NULL,**hE=NULL;
+  NspMatrix *Q=NULL, *R=NULL, *E=NULL, *rank=NULL, *sval;
+  NspMatrix **hE=NULL,**hrank=NULL,**hsval=NULL;
   int_types T[] = {mat,new_opts,t_end} ;
   nsp_option opts[] ={{ "tol",s_double,NULLOBJ,-1},
 		      { "mode",string,NULLOBJ,-1},
@@ -53,18 +53,17 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
       Scierror("%s: mode should be 'x' or 'e' \n",stack.fname);
       return RET_BUG;
     }
-  CheckLhs(1,4);
+  CheckLhs(1,5);
   if ( lhs >= 3) { hE= &E;}
   if ( lhs >= 4) { hrank= &rank;}
-  if ( nsp_qr(A,&Q,&R,hrank,hE,Tol,cmode)== FAIL) return RET_BUG;
+  if ( lhs >= 5) { hsval= &sval;}
+  if ( nsp_qr(A,&Q,&R,hE,hrank,hsval,Tol,cmode)== FAIL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(Q));
   if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(R));
-  if ( lhs == 3 ) MoveObj(stack,3,NSP_OBJECT(E));
-  if ( lhs == 4 ) 
-    {
-      MoveObj(stack,4,NSP_OBJECT(E));
-      MoveObj(stack,3,NSP_OBJECT(rank));
-    }
+  if ( lhs >= 3 ) MoveObj(stack,3,NSP_OBJECT(E));
+  if ( lhs >= 4 ) MoveObj(stack,4,NSP_OBJECT(rank));
+  if ( lhs >= 5 ) MoveObj(stack,5,NSP_OBJECT(sval));
+
   return Max(lhs,1);
 }
 

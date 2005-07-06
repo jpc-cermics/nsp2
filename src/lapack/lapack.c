@@ -128,9 +128,9 @@ int C2F(xerbla)(char *srname,int * info,int srname_len)
 }
 
 static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
-		      NspMatrix **rank,double *tol,char flag);
+		      NspMatrix **Rank, NspMatrix **Sval, double *tol,char flag);
 static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
-		      NspMatrix **rank,double *tol,char flag);
+		      NspMatrix **Rank, NspMatrix **Sval, double *tol,char flag);
 
 /* OK 
  * QR decomposition  
@@ -139,7 +139,8 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
  * tol can be given or computed if null is transmited 
  */
 
-int nsp_qr(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **rank,NspMatrix **E,double *tol,char mode)
+int nsp_qr(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E, NspMatrix **Rank, 
+	   NspMatrix **Sval, double *tol,char mode)
 {
   /* A == [] return empty matrices*/ 
   if ( A->mn == 0 )  {
@@ -149,25 +150,29 @@ int nsp_qr(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **rank,NspMatrix *
       {
 	if ( (*E =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) return FAIL;
       }
-    if (rank != NULL ) 
+    if (Rank != NULL ) 
     {
-      if ( (*rank =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT ) return FAIL;
+      if ( (*Rank =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT ) return FAIL;
+    }
+    if (Sval != NULL ) 
+    {
+      if ( (*Sval =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT ) return FAIL;
     }
     return OK ; 
   }
 
   if (A->rc_type == 'r' ) 
-    return  intdgeqrpf(A,Q,R,E,rank,tol,mode);
+    return  intdgeqrpf(A,Q,R,E,Rank,Sval,tol,mode);
   else 
-    return  intzgeqrpf(A,Q,R,E,rank,tol,mode);
+    return  intzgeqrpf(A,Q,R,E,Rank,Sval,tol,mode);
 }
 
 /*  qr for real NspMatrix A */ 
 static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
-		      NspMatrix **rank,double *tol,char flag)
+		      NspMatrix **Rank, NspMatrix **Sval, double *tol_rcond,char flag)
 {
   int i, j;
-  NspMatrix *q=NULLMAT, *r=NULLMAT, *e=NULLMAT;
+  NspMatrix *q=NULLMAT, *r=NULLMAT, *e=NULLMAT, *rank=NULLMAT, *sval=NULLMAT;
   double *work=NULL, qwork[1], *tau=NULL;
   int lwork, info, *jpvt=NULL, m=A->m, n=A->n, Minmn=Min(m,n);
 
@@ -212,44 +217,73 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
       r->R = realloc(r->R, r->mn*sizeof(double));
     }
 
-  /* if requested we compute the rank */ 
-  if (rank != NULL ) 
+  /* if requested we compute the rank by incremental estimation of min and max */
+  /* singular values and vectors of the triangular matrice R (see dgelsy.f) */ 
+  if (Rank != NULL ) 
     {
-      int k=0,j;
-      double tt = Abs(r->R[0]), Tol;
-      if (tol == NULL ) 
-	Tol = ((double) Max(m,n)) * nsp_dlamch("eps") * tt;
+      int IRank, imin=2, imax=1, ic, id;
+      double Tol_rcond, smax, smin, tt=Abs(r->R[0]), *vmin=work, *vmax=&work[Minmn];
+      double sminpr, smaxpr, s1, c1, s2, c2;
+      if (tol_rcond == NULL ) 
+	Tol_rcond = nsp_dlamch("eps");
       else 
-	Tol = *tol; 
-      for (j = 0 ; j < Min(m,n) ; j++) 
+	Tol_rcond = *tol_rcond;
+
+      if ( tt == 0.0 )
+	IRank = 0;
+      else
 	{
-	  if ( Abs(r->R[k]) <= Tol ) break; 
-	  k += r->m+1;
+	  IRank = 1; vmin[0] = 1.0; vmax[0] = 1.0; 
+	  smin = tt; smax = tt; ic = r->m; id = r->m+1;
+	  while ( IRank < Minmn )
+	    {
+	      C2F(dlaic1)(&imin, &IRank, vmin, &smin, &(r->R[ic]), &(r->R[id]), &sminpr, &s1, &c1);
+ 	      C2F(dlaic1)(&imax, &IRank, vmax, &smax, &(r->R[ic]), &(r->R[id]), &smaxpr, &s2, &c2);
+	      if ( smaxpr*Tol_rcond > sminpr ) break;
+	      for ( i = 0 ; i < IRank; i++ ) { vmin[i] *= s1; vmax[i] *= s2; }
+	      vmin[IRank] = c1; vmax[IRank] = c2;
+	      smin = sminpr; smax = smaxpr;
+	      IRank++; ic += r->m; id += r->m+1;
+	    }
 	}
-      if ( (*rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto err;
-      (*rank)->R[0]=j; 
+
+      if ( (rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto err;
+      rank->R[0]=IRank;
+
+      if ( Sval != NULL )
+	{
+	  if ( (sval=nsp_matrix_create(NVOID,'r',3,1)) == NULLMAT) goto err;
+	  if ( IRank == 0 ) 
+	    { sval->R[0] = sval->R[1] = sval->R[2] = 0.0; }
+	  else 
+	    {
+	      sval->R[0] = smax; sval->R[1] = smin;
+	      if ( IRank < Minmn ) sval->R[2] = sminpr; else sval->R[2] = smin;
+	    }
+	}
     }
   
   FREE(tau); FREE(work);
   if ( E != NULL) {FREE(jpvt); *E = e;}
   *R = r; *Q = q;
+  if ( Rank != NULL ) *Rank = rank;
+  if ( Sval != NULL ) *Sval = sval;
   return OK;
 
  err:
   FREE(tau); FREE(work); FREE(jpvt);
-  nsp_matrix_destroy(q);
-  nsp_matrix_destroy(r);
-  nsp_matrix_destroy(e);
+  nsp_matrix_destroy(q); nsp_matrix_destroy(r);
+  nsp_matrix_destroy(e); nsp_matrix_destroy(rank);
   return FAIL;
 }
 
 
 /*  qr for complex NspMatrix A */ 
 static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
-		      NspMatrix **rank,double *tol,char flag)
+		      NspMatrix **Rank, NspMatrix **Sval, double *tol_rcond,char flag)
 {
   int i, j;
-  NspMatrix *q=NULLMAT, *r=NULLMAT, *e=NULLMAT;
+  NspMatrix *q=NULLMAT, *r=NULLMAT, *e=NULLMAT, *rank=NULLMAT, *sval=NULLMAT;
   double *rwork=NULL;
   doubleC *cwork=NULL, qwork[1], *tau=NULL;
   int lwork, info, *jpvt=NULL, m=A->m, n=A->n, Minmn=Min(m,n);
@@ -296,35 +330,63 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
       r->C = realloc(r->C, r->mn*sizeof(doubleC));
     }
 
-  /* if requested we compute the rank */ 
-  if (rank != NULL ) 
+  /* if requested we compute the rank by incremental estimation of min and max */
+  /* singular values and vectors of the triangular matrice R (see zgelsy.f) */ 
+  if ( Rank != NULL ) 
     {
-      int k=0,j;
-      double tt = nsp_abs_c(&(r->C[0])), Tol;
-      if (tol == NULL ) 
-	Tol = ((double) Max(m,n)) * nsp_dlamch("eps") * tt;
+      int IRank, imin=2, imax=1, ic, id;
+      double Tol_rcond, smax, smin, tt=nsp_abs_c(&(r->C[0]));
+      doubleC *vmin=cwork, *vmax=&cwork[Minmn], cone={1.0,0.0}, s1, c1, s2, c2;
+      double sminpr, smaxpr;
+      if (tol_rcond == NULL ) 
+	Tol_rcond = nsp_dlamch("eps");
       else 
-	Tol = *tol; 
-      for (j = 0 ; j < Min(m,n) ; j++) 
+	Tol_rcond = *tol_rcond;
+
+      if ( tt == 0.0 )
+	IRank = 0;
+      else
 	{
-	  if ( nsp_abs_c(&(r->C[k])) <= Tol ) break; 
-	  k += r->m+1;
+	  IRank = 1; vmin[0] = cone; vmax[0] = cone; 
+	  smin = tt; smax = tt; ic = r->m; id = r->m+1;
+	  while ( IRank < Minmn )
+	    {
+	      C2F(zlaic1)(&imin, &IRank, vmin, &smin, &(r->C[ic]), &(r->C[id]), &sminpr, &s1, &c1);
+ 	      C2F(zlaic1)(&imax, &IRank, vmax, &smax, &(r->C[ic]), &(r->C[id]), &smaxpr, &s2, &c2);
+	      if ( smaxpr*Tol_rcond > sminpr ) break;
+	      for ( i = 0 ; i < IRank; i++ ) { nsp_prod_c(&(vmin[i]),&s1); nsp_prod_c(&(vmax[i]),&s2);}
+	      vmin[IRank] = c1; vmax[IRank] = c2;
+	      smin = sminpr; smax = smaxpr;
+	      IRank++; ic += r->m; id += r->m+1;
+	    }
 	}
-      if ( (*rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto err;
-      (*rank)->R[0]=j; 
+      if ( (rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto err;
+      rank->R[0]=IRank;
+
+      if ( Sval != NULL )
+	{
+	  if ( (sval=nsp_matrix_create(NVOID,'r',3,1)) == NULLMAT) goto err;
+	  if ( IRank == 0 ) 
+	    { sval->R[0] = sval->R[1] = sval->R[2] = 0.0; }
+	  else 
+	    {
+	      sval->R[0] = smax; sval->R[1] = smin;
+	      if ( IRank < Minmn ) sval->R[2] = sminpr; else sval->R[2] = smin;
+	    }
+	}
     }
   
   FREE(tau); FREE(cwork);
   if ( E != NULL) {FREE(rwork); FREE(jpvt); *E = e;}
   *R = r; *Q = q;
+  if ( Rank != NULL ) *Rank = rank;
+  if ( Sval != NULL ) *Sval = sval;
   return OK;
 
  err:
-  FREE(tau); FREE(cwork);
-  FREE(rwork); FREE(jpvt);
-  nsp_matrix_destroy(q);
-  nsp_matrix_destroy(r);
-  nsp_matrix_destroy(e);
+  FREE(tau); FREE(cwork); FREE(rwork); FREE(jpvt);
+  nsp_matrix_destroy(q); nsp_matrix_destroy(r);
+  nsp_matrix_destroy(e); nsp_matrix_destroy(rank);
   return FAIL;
 }
 

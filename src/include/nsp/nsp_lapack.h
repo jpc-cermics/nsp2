@@ -1,7 +1,7 @@
 #ifndef NSP_INC_LAPACK_LIB
 #define NSP_INC_LAPACK_LIB
 
-extern int nsp_qr(NspMatrix *A,NspMatrix **q,NspMatrix **r,NspMatrix **rank,NspMatrix **E,double *tol,char mode);
+extern int nsp_qr(NspMatrix *A,NspMatrix **q,NspMatrix **r,NspMatrix **E,NspMatrix **Rank,NspMatrix **Sval,double *tol,char mode);
 extern NspMatrix *nsp_lsq(NspMatrix *A,NspMatrix *B);
 extern NspMatrix * nsp_det(NspMatrix *A,char mode);
 extern int nsp_spec(NspMatrix *A, NspMatrix **d,NspMatrix **v) ;
