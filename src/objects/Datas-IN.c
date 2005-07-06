@@ -24,6 +24,9 @@
 #include "nsp/interf.h"
 #include "nsp/datas.h"
 
+extern NspObject *Reserved;
+
+
 /*
  * Now the interfaced function for frame operations 
  */
@@ -52,12 +55,36 @@ static int int_dataresume(Stack stack, int rhs, int opt, int lhs)
 	  Scierror("\t%s of function %s\n",ArgPosition(rhs),stack.fname);
 	  return RET_BUG;
 	}
-      /* A copy of object is added in the hash table **/
-      /* GetObj takes care of Hobj pointers **/
+      /* A copy of object moved in the calling frame 
+       * we must take care here of the fact that when we move an 
+       * object in an upper frame this can lead to the destruction 
+       * of an object which is in the calling stack.
+       */
+      /* GetObj takes care of Hobj pointers */
       if (( O =nsp_object_copy(nsp_get_object(stack,i))) == NULLOBJ ) return RET_BUG;
       if (nsp_object_set_name(O,nsp_object_get_name(NthObj(i))) == FAIL) return RET_BUG;
+      /* tricky  */
+      if( IsHobj(NthObj(i))== FALSE ) 
+	{
+	  /* here NthObj(i) can be an object of the calling frame : which can 
+	   * be destroyed by nsp_frame_move_up_object so we do not want to 
+	   * look at this object again in reorder_stack
+	   * Ex:     a=5;function f();resume(a);endfunction
+	   *         f() 
+	   */
+	  NthObj(i) = Reserved;
+	} 
+      else 
+	{
+	  /* as in the first branch but with a pointer */
+	  NspHobj *hobj =(NspHobj *) NthObj(i) ;
+	  if ( Ocheckname(hobj->O,NVOID) == FALSE ) 
+	    hobj->O = Reserved;
+	
+	}
+      /* A copy of object is added in the upper env **/
       if (nsp_frame_move_up_object(O) == FAIL) return RET_BUG;
-      /* A copy of object is added in the hash table **/
+
     }
   return 0;
 }
