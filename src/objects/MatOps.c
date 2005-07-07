@@ -3473,7 +3473,7 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 	    }
 	  return(Loc);
 	}
-      /* Incompatible dimensions **/
+      /* Incompatible dimensions */
       if ( strcmp(op,"==") == 0) 
 	{
 	  if ((Loc =nsp_bmatrix_create(NVOID,1,1))== NULLBMAT)return(NULLBMAT);
@@ -3488,6 +3488,10 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 	}
       else 
 	{
+	  if ((Loc =nsp_bmatrix_create(NVOID,1,1))== NULLBMAT)return(NULLBMAT);
+	  Loc->B[0] = FALSE;
+	  return Loc;
+	  /* this is the scilab way ! I prefer to return %f as for == 
 	  if ( ( B->mn == 1 && A->mn == 0 ) || ( A->mn == 1 && B->mn == 0 ) )
 	    {
 	      if ((Loc =nsp_bmatrix_create(NVOID,0,0))== NULLBMAT)return(NULLBMAT);
@@ -3498,6 +3502,7 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 	      Scierror("Error:\tIncompatible dimensions\n");
 	      return( NULLBMAT);
 	    }
+	  */
 	}
     }
   else 

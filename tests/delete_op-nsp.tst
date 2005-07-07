@@ -37,6 +37,9 @@ A3 = [5,9,13,17,10,18,3,7,11,15,19,8,12,16,20]';
 ind4 = [13 13 13 14 1];
 A4 = [5,9,13,17,2,6,10,14,18,3,7,19,4,8,12,16,20]';
 
+// A(ind1,ind2)=[] -> A5
+A5=[5,13,17,6,14,18,3,7,11,15,19,8,16,20]';
+
 
 // ----------------------------------------
 //  matrix deletion
@@ -71,6 +74,12 @@ if ~and(B == A3)  then pause,end;
 B = A;
 B(ind4)=[];
 if ~and(B == A4)  then pause,end;
+
+// test7 XXXX to be done for other types 
+
+B=A;
+B(ind1,ind2)=[] 
+if ~and(B == A5) then pause,end;
 
 // ----------------------------------------
 // boolean matrix deletion

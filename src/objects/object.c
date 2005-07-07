@@ -376,6 +376,19 @@ static int int_object_equal(void *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+static int int_object_not_equal(void *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int rep;
+  NspObject *O;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  /* nsp_get_object takes care of Hobj pointers **/
+  if (( O =nsp_get_object(stack,1)) == NULLOBJ ) return RET_BUG;
+  rep = NSP_OBJECT(self)->type->neq(self,O);
+  nsp_move_boolean(stack,1,rep);
+  return 1;
+}
+
 /**
  * int_object_get_name:
  * @self: an instance of a nsp object.
@@ -409,6 +422,7 @@ static NspMethods object_methods[] = {
   { "set",  int_set_attributes1}, /* set attribute of object the get is given by . */
   { "get_name", int_object_get_name},
   { "equal",  int_object_equal},
+  { "not_equal",  int_object_not_equal},
   { (char *) 0, NULL}
 };
 
@@ -1540,14 +1554,8 @@ int int_object_xdrload(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*
- * A == B 
- * when A and B do not have the same type 
- * when type(A) == type(B) a specilaized function is used 
- * 
- */
 
-int int_object_eq(Stack stack, int rhs, int opt, int lhs) 
+static int int_object_log_gen(Stack stack, int rhs, int opt, int lhs,char *mes) 
 {
   NspObject *O1,*O2;
   CheckRhs(2,2);
@@ -1558,7 +1566,7 @@ int int_object_eq(Stack stack, int rhs, int opt, int lhs)
   if ( NSP_OBJECT(O1)->type == NSP_OBJECT(O2)->type )
     {
       /* should never get there */
-      Scierror("Error: a specialized function eq_%s_%s is missing\n",
+      Scierror("Error: a specialized function %s_%s_%s is missing\n",mes,
 	       NSP_OBJECT(O1)->type->s_type(),NSP_OBJECT(O1)->type->s_type());
       return RET_BUG;
     }
@@ -1567,9 +1575,48 @@ int int_object_eq(Stack stack, int rhs, int opt, int lhs)
 } 
 
 /*
+ * A == B 
+ *  when A and B do not have the same type 
+ *  and when a specialized function do not exists 
+ *  when type(A) == type(B) a specialized function should 
+ *  exists if not a warning message is displayed
+ */
+
+int int_object_eq(Stack stack, int rhs, int opt, int lhs) 
+{
+  return  int_object_log_gen(stack,rhs,opt,lhs,"eq");
+}
+
+/*
+ * the same for >= <= > < 
+ */
+
+int int_object_le(Stack stack, int rhs, int opt, int lhs) 
+{
+  return  int_object_log_gen(stack,rhs,opt,lhs,"le");
+}
+
+int int_object_lt(Stack stack, int rhs, int opt, int lhs) 
+{
+  return  int_object_log_gen(stack,rhs,opt,lhs,"le");
+}
+
+int int_object_ge(Stack stack, int rhs, int opt, int lhs) 
+{
+  return  int_object_log_gen(stack,rhs,opt,lhs,"le");
+}
+
+int int_object_gt(Stack stack, int rhs, int opt, int lhs) 
+{
+  return  int_object_log_gen(stack,rhs,opt,lhs,"le");
+}
+
+/*
  * A <> B 
  * when A and B do not have the same type 
- * when type(A) == type(B) a specilaized function is used 
+ * and when a specialized function do not exists 
+ * when type(A) == type(B) a specialized function should 
+ * exists if not a warning message is displayed
  * 
  */
 
@@ -1657,6 +1704,10 @@ int int_matrix_testredim(Stack stack, int rhs, int opt, int lhs)
 static OpTab Obj_func[]={
   {"eq",int_object_eq},
   {"ne",int_object_neq},
+  {"le",int_object_le},
+  {"lt",int_object_lt},
+  {"ge",int_object_ge},
+  {"gt",int_object_gt},
   {"eye", int_object_eye},
   {"ones", int_object_ones},
   {"zeros", int_object_zeros},
