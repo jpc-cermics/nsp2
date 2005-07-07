@@ -221,7 +221,7 @@ int mpmatrix_eq(NspObject *A,NspObject *B)
   int err,rep;
   if ( check_cast(B,nsp_type_mpmatrix_id) == FALSE) return FALSE ;
   rep =nsp_mat_fullcomp((NspMatrix *) A,(NspMatrix *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
+  if ( err == TRUE) return FALSE ; 
   return rep;
 }
 
@@ -230,7 +230,7 @@ int mpmatrix_neq(NspObject *A,NspObject *B)
   int err,rep;
   if ( check_cast(B,nsp_type_mpmatrix_id) == FALSE) return TRUE;
   rep =nsp_mat_fullcomp((NspMatrix *) A,(NspMatrix *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
+  if ( err == TRUE ) return TRUE ; 
   return rep;
 }
 
@@ -1208,7 +1208,7 @@ static int int_mpf_gen(Stack stack, int rhs, int opt, int lhs,char *op)
   if ((A = GetRealMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
   if ((B = GetRealMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
   rep =nsp_mat_fullcomp((NspMatrix *)A,(NspMatrix *)B,op,&err);
-  if ( err == 1) 
+  if ( err == TRUE) 
     {
       Scierror("Error: operator %s , arguments with incompatible dimensions\n",op);
       return RET_BUG;

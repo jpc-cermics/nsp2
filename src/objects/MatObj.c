@@ -244,7 +244,7 @@ matrix_eq (NspObject * A, NspObject * B)
   if (check_cast (B, nsp_type_matrix_id) == FALSE)
     return FALSE;
   rep = nsp_mat_fullcomp ((NspMatrix *) A, (NspMatrix *) B, "==", &err);
-  if (err == 1)
+  if (err == TRUE)
     return FALSE;
   return rep;
 }
@@ -256,7 +256,7 @@ matrix_neq (NspObject * A, NspObject * B)
   if (check_cast (B, nsp_type_matrix_id) == FALSE)
     return TRUE;
   rep = nsp_mat_fullcomp ((NspMatrix *) A, (NspMatrix *) B, "<>", &err);
-  if (err == 1)
+  if (err == TRUE )
     return TRUE;
   return rep;
 }
@@ -1901,7 +1901,7 @@ int_mxf_gen (Stack stack, int rhs, int opt, int lhs, char *op)
   if ((B = GetRealMat (stack, 2)) == NULLMAT)
     return RET_BUG;
   rep = nsp_mat_fullcomp (A, B, op, &err);
-  if (err == 1)
+  if (err == TRUE)
     {
       Scierror
 	("Error: operator %s , arguments with incompatible dimensions\n", op);
