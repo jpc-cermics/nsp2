@@ -237,28 +237,27 @@ matrix_loop_extract (char *str, NspObject * O, NspObject * O1, int i,
     }
 }
 
+/* A is <<equal>> to B i.e they are copies */
+
 int
 matrix_eq (NspObject * A, NspObject * B)
 {
   int err, rep;
-  if (check_cast (B, nsp_type_matrix_id) == FALSE)
-    return FALSE;
+  if (check_cast (B, nsp_type_matrix_id) == FALSE)     return FALSE;
+  if ( ! ( ((NspMatrix *) A)->m == ((NspMatrix *) B)->m 
+	   && ((NspMatrix *) A)->n == ((NspMatrix *) B)->n)) return FALSE;
   rep = nsp_mat_fullcomp ((NspMatrix *) A, (NspMatrix *) B, "==", &err);
   if (err == TRUE)
     return FALSE;
   return rep;
 }
 
+/* A is not <<equal>> to B i.e they are not copies */
+
 int
 matrix_neq (NspObject * A, NspObject * B)
 {
-  int err, rep;
-  if (check_cast (B, nsp_type_matrix_id) == FALSE)
-    return TRUE;
-  rep = nsp_mat_fullcomp ((NspMatrix *) A, (NspMatrix *) B, "<>", &err);
-  if (err == TRUE )
-    return TRUE;
-  return rep;
+  return ( matrix_eq(A,B) == TRUE ) ? FALSE : TRUE ;
 }
 
 /*
@@ -1934,7 +1933,7 @@ int_mxfle (Stack stack, int rhs, int opt, int lhs)
 }
 
 int
-int_mxfneq (Stack stack, int rhs, int opt, int lhs)
+int_mxfne (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mxf_gen (stack, rhs, opt, lhs, "<>");
 }
@@ -3987,7 +3986,7 @@ static OpTab Matrix_func[] = {
   {"fgt_m_m", int_mxfgt},
   {"fle_m_m", int_mxfle},
   {"flt_m_m", int_mxflt},
-  {"fneq_m_m", int_mxfneq},
+  {"fne_m_m", int_mxfne},
   {"ge_m_m", int_mxge},
   {"gt_m_m", int_mxgt},
   {"imag_m", int_mximagpart},

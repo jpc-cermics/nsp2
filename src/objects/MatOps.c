@@ -3396,7 +3396,7 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
   int i;
   NspBMatrix *Loc ;
   if ( SearchComp(op,&realop,&C_realop) == FAIL) return(NULLBMAT);
-  if ( A->mn != B->mn)
+  if ( !( A->m == B->m && A->n == B->n ) )
     {
       if ( B->mn == 1 && A->mn != 0 ) 
 	{
@@ -3572,7 +3572,7 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
   int Loc=TRUE ;
   *err=FALSE;
   if ( SearchComp(op,&realop,&C_realop) == FAIL) { *err=TRUE; return FALSE;}
-  if ( A->mn != B->mn)
+  if ( !( A->m == B->m && A->n == B->n ) )
     {
       if ( B->mn == 1 && A->mn != 0 ) 
 	{
