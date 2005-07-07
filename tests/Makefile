@@ -14,7 +14,8 @@ TESTS= \
 	fft.dia \
 	extract.dia \
 	addinter.dia \
-	dsearch.dia 
+	dsearch.dia \
+	qr.dia 
 
 AFINIR= \
 	matelm-nsp.dia \
