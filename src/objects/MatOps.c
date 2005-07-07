@@ -3558,62 +3558,183 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
 }
 
 /* 
- * Deuxieme chose a faire :  la meme chose mais Globale
- *  Le resultat est un booleen qui vaut True si 
- *  A(i;i) <= B(i,j) pour tout les (i,j) 
- * return err = 1 if dimensions are not compatibles 
- * XXXXX Attention le cas complexe est pas pris en compte 
+ * returns and(nsp_mat_comp(A,B,op))
+ * err is set to TRUE if an  allocation error is raised or if 
+ * op is not found 
  */ 
+
 
 int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
 {
   CompOp *realop;
   C_CompOp *C_realop;
-  int i, rep = TRUE;
-  *err=0;
-  if ( SearchComp(op,&realop,&C_realop) == FAIL) return FALSE ; 
+  int i;
+  int Loc=TRUE ;
+  *err=FALSE;
+  if ( SearchComp(op,&realop,&C_realop) == FAIL) { *err=TRUE; return FALSE;}
   if ( A->mn != B->mn)
     {
-      if ( B->mn == 1 ) 
+      if ( B->mn == 1 && A->mn != 0 ) 
 	{
-	  for ( i = 0 ; i < A->mn ; i++ )  
+	  /* Special case B is a constant, Loc created with true */
+	  if ( A->rc_type == 'r') 
 	    {
-	      if ( (*realop)(A->R[i],B->R[0]) ) 
-		{ 
-		  rep = FALSE;
-		  break;
+	      if ( B->rc_type == 'r' ) 
+		{
+		  for ( i = 0 ; i < A->mn ; i++ )  
+		    if ( (*realop)(A->R[i],B->R[0]) ) return FALSE;
+		}
+	      else 
+		{
+		  NspMatrix *LocA ; 
+		  if ( ( LocA =nsp_matrix_copy(A)) == NULLMAT) { *err=TRUE; return FALSE;}
+		  if (nsp_mat_complexify(LocA,0.00) == FAIL ) { *err=TRUE; return FALSE;}
+		  for ( i = 0 ; i < A->mn ; i++ )  
+		    if ( (*C_realop)(&LocA->C[i],&B->C[0])) 
+		      {
+			nsp_matrix_destroy(LocA);
+			return FALSE;
+		      }
+		  nsp_matrix_destroy(LocA);
 		}
 	    }
-	  return rep;
-	}
-      if ( A->mn == 1) 
-	{
-	  for ( i = 0 ; i < B->mn ; i++ )  
+	  else 
 	    {
-	      if ( (*realop)(A->R[i],B->R[0]) ) 
-		{ 
-		  rep = FALSE;
-		  break;
+	      if ( B->rc_type == 'r' ) 
+		{
+		  doubleC Z={ B->R[0],0.0};
+		  for ( i = 0 ; i < A->mn ; i++ )  
+		    if ( (*C_realop)(&A->C[i],&Z) ) return FALSE;
+		}
+	      else 
+		{
+		  for ( i = 0 ; i < A->mn ; i++ )  
+		    if ( (*C_realop)(&A->C[i],&B->C[0]) ) return FALSE;
 		}
 	    }
-	  return rep;
+	  return(Loc);
 	}
-      /* Scierror("Error:\tIncompatible dimensions\n"); */
-      *err=1 ;
-      return rep = FALSE ;
+      if ( A->mn == 1 && B->mn != 0 ) 
+	{
+	  /* Special case A is a constant */
+	  if ( A->rc_type == 'r' ) 
+	    {
+	      if ( B->rc_type == 'r' ) 
+		{
+		  for ( i = 0 ; i < B->mn ; i++ )  
+		    if ( (*realop)(A->R[0],B->R[i]) ) return FALSE;
+		}
+	      else
+		{
+		  doubleC Z={ A->R[0],0.0};
+		  for ( i = 0 ; i < B->mn ; i++ )  
+		    if ( (*C_realop)(&Z,&B->C[i]) ) return  FALSE;
+		}
+	    }
+	  else
+	    {
+	      if ( B->rc_type == 'r' ) 
+		{
+		  NspMatrix *LocB ; 
+		  if ( ( LocB =nsp_matrix_copy(B)) == NULLMAT) { *err=TRUE; return FALSE;}
+		  if (nsp_mat_complexify(LocB,0.00) == FAIL ) { *err=TRUE; return FALSE;} 
+		  for ( i = 0 ; i < B->mn ; i++ )  
+		    if ( (*C_realop)(&A->C[0],&B->C[i])) 
+		      {
+			nsp_matrix_destroy(LocB);
+			return  FALSE;
+		      }
+		  nsp_matrix_destroy(LocB);
+
+		}
+	      else
+		{
+		  for ( i = 0 ; i < B->mn ; i++ )  
+		    if ( (*C_realop)(&A->C[i],&B->C[i]) ) return FALSE;
+		}
+	    }
+	  return(Loc);
+	}
+      /* Incompatible dimensions */
+      if ( strcmp(op,"==") == 0) 
+	{
+	  return FALSE;
+	}
+      else if ( strcmp(op,"<>") == 0) 
+	{
+	  return TRUE;
+	}
+      else 
+	{
+	  return FALSE;
+	  /* this is the scilab way ! I prefer to return %f as for == 
+	  if ( ( B->mn == 1 && A->mn == 0 ) || ( A->mn == 1 && B->mn == 0 ) )
+	    {
+	      if ((Loc =nsp_bmatrix_create(NVOID,0,0))== NULLBMAT) { *err=TRUE; return FALSE;} 
+	      return Loc;
+	    }
+	  else 
+	    {
+	      Scierror("Error:\tIncompatible dimensions\n");
+	      return FALSE;
+	    }
+	  */
+	}
     }
   else 
     {
-      for ( i = 0 ; i < A->mn ; i++ )  
+      /* A and B are of same dimensions */
+      if ( A->mn == 0) 
 	{
-	  if ( (*realop)(A->R[i],B->R[i]) ) 
+	  if ( (*realop)(1.0,1.0)) return  FALSE;
+	}
+      else
+	{
+	  if ( A->rc_type == 'r' )
 	    {
-	      rep = FALSE ;
-	      break ;
+	      if ( B->rc_type == 'r') 
+		{
+		  for ( i = 0 ; i < A->mn ; i++ )  
+		    if ( (*realop)(A->R[i],B->R[i])) return FALSE;
+		}
+	      else
+		{
+		  NspMatrix *LocA ; 
+		  if ( ( LocA =nsp_matrix_copy(A)) == NULLMAT) { *err=TRUE; return FALSE;}
+		  if (nsp_mat_complexify(LocA,0.00) == FAIL ) { *err=TRUE; return FALSE;} 
+		  for ( i = 0 ; i < A->mn ; i++ )  
+		    if ( (*C_realop)(&LocA->C[i],&B->C[i])) 
+		      {
+			nsp_matrix_destroy(LocA);
+			return FALSE;
+		      }
+		  nsp_matrix_destroy(LocA);
+		}
+	    }
+	  else 
+	    {
+	      if ( B->rc_type == 'r') 
+		{
+		  NspMatrix *LocB ; 
+		  if ( ( LocB =nsp_matrix_copy(B)) == NULLMAT) { *err=TRUE; return FALSE;}
+		  if (nsp_mat_complexify(LocB,0.00) == FAIL ) { *err=TRUE; return FALSE;} 
+		  for ( i = 0 ; i < A->mn ; i++ )  
+		    if ( (*C_realop)(&A->C[i],&LocB->C[i])) 
+		      {
+			nsp_matrix_destroy(LocB);
+			return FALSE;
+		      }
+		  nsp_matrix_destroy(LocB);
+		}
+	      else
+		{
+		  for ( i = 0 ; i < A->mn ; i++ )  
+		    if ( (*C_realop)(&A->C[i],&B->C[i])) return FALSE;
+		}
 	    }
 	}
     }
-  return rep;
+  return TRUE;
 }
 
 
