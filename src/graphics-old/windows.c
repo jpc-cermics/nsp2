@@ -343,7 +343,8 @@ static void scale_copy (window_scale_list *s1, window_scale_list *s2);
 static window_scale_list *new_wcscale ( window_scale_list *val);
 static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
 
-/* Current Scale FIXME XXXXXX to be removed */
+/* Current Scale 
+   DEPRECATED 
 
 window_scale_list current_scale = 
   { 
@@ -365,10 +366,12 @@ window_scale_list current_scale =
     {-1.0,1.0,-1.0,1.0,-1.0,1.0},
     {0.0,0.0,0.0},
     35.0,45.0,
-    1,                 /* added by es */
-    (window_scale_list *) 0, /*unused */
-    (window_scale_list *) 0 /*unused */
+    1,                 
+    (window_scale_list *) 0, 
+    (window_scale_list *) 0 
   };
+*/
+
 
 /*
  * default values 
@@ -417,8 +420,10 @@ void set_window_scale_with_default(int win)
  *   If no scale are found we do nothing and return 0
  *   else the scale is moved on front
  *   a subwindow is described by an array of four doubles 
+ * DEPRECATED 
  *-------------------------------------------------------------*/
 
+/* 
 int get_window_scale(int win,double *subwin)
 { 
   window_scale_list *listptr;
@@ -441,6 +446,7 @@ int get_window_scale(int win,double *subwin)
     }
   return FAIL;
 }
+*/
 
 /*------------------------------------------------------------
  * int move_subwindow_scale_to_front(Xgc,subwin)
@@ -713,18 +719,23 @@ void show_scales(BCG *Xgc)
     }
 }
 
-
-/*-------------------------------------------
- * setscale2d 
- * uses WRect,FRect,logscale to update 
- * current scale (current_scale) 
- *  WRect gives the subwindow to use 
- *  FRect gives the bounds 
- *  WRect=[<x-upperleft>,<y-upperleft>,largeur,hauteur]
- *    example WRect=[0,0,1.0,1.0] we use all the window 
- *            WRect=[0.5,0.5,0.5,0.5] we use the down right 
- *            quarter of the window 
- *-------------------------------------------*/
+/**
+ * setscale2d:
+ * @Xgc: a graphic context 
+ * @WRect: 
+ * @FRect: 
+ * @logscale: 
+ * 
+ * uses @WRect,@FRect,@logscale to update the graphic scales 
+ * contained in @Xgc. @WRect gives the subwindow to use 
+ * @FRect gives the bounds. 
+ * @WRect=[<x-upperleft>,<y-upperleft>,largeur,hauteur]
+ * example WRect=[0,0,1.0,1.0] we use all the window 
+ *         WRect=[0.5,0.5,0.5,0.5] we use the down right 
+ *         quarter of the window 
+ *
+ * Return value: unused.
+ **/
 
 int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
 {
@@ -747,9 +758,8 @@ int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
 
 /*-------------------------------------------
  * setscale2d 
- * uses WRect,ARect,FRect,logscale to update 
- * current scale (current_scale) 
- *  WRect gives the subwindow to use 
+ * uses @WRect,@FRect,@logscale to update the graphic scales 
+ * contained in @Xgc. @WRect gives the subwindow to use 
  *  ARect gives the axis rectangle 
  *  FRect gives the bounds 
  *  WRect=[<x-upperleft>,<y-upperleft>,largeur,hauteur]
@@ -770,7 +780,7 @@ int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *l
 {
   /* if some arguments are null pointer we set them to 
    * the corresponding current_scale value. 
-   * this is only important for store_NEch which do not work with null arguments 
+   * this is only important for store_NEch which does not work with null arguments 
    */ 
   /* char flag[] = "tfffff";*/ /* flag to specify which arguments have changed*/
   char flag[7];
@@ -851,12 +861,12 @@ int getscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale,double AR
 }
 
 /*-------------------------------------------
- * changes selected items in the current scale 
+ * changes selected items in Xgc scale 
  * flag gives which component must be used for 
  *      upgrading or setting the current scale 
  * flag[0]   : used for window dim upgrade 
  * flag[1:5] : subwin,frame_values,aaint,logflag,axis_values
- * Result: current_scale is changed 
+ *
  * Warning : frame_values[i] must be log10(val[i]) 
  *           when using log scales 
  *-------------------------------------------*/
