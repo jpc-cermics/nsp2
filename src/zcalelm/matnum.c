@@ -54,6 +54,29 @@ double C2F(dlamch)(char *cmach, long int lstr)
   return nsp_dlamch(cmach);
 }
 
+int C2F(dlamc1)(int *beta, int *t, int *rnd, int *ieee1)
+{
+  return nsp_dlamc1(beta,t,rnd,ieee1);
+}
+
+int C2F(dlamc2)(int *beta, int *t, int *rnd, double *eps, 
+		int *emin, double *rmin,  int *emax, double *rmax)
+{
+  return nsp_dlamc2(beta,t,rnd,eps,emin,rmin,emax,rmax);
+}
+
+double C2F(dlamc3) (double *a, double *b) 
+{
+  return nsp_dlamc3 (a,b) ;
+}
+int C2F(dlamc4) (int *emin, double *start, int *base)
+{
+  return nsp_dlamc4 (emin,start,base);
+}
+int C2F(dlamc5) (int *beta, int *p, int *emin, int *ieee, int *emax, double *rmax)
+{
+  return nsp_dlamc5 (beta,p,emin,ieee,emax,rmax);
+}
 /*--------------------------------------------------------------------
  *     LAPACK auxiliary routine (version 2.0) -- 
  *     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., 
