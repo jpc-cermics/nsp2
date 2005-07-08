@@ -18,7 +18,8 @@
  * Boston, MA 02111-1307, USA.
  *
  * a set of linear algebra functions with lapack 
- * 
+ *
+ *   FIXME : use dsyevr / zheevr for spec_sym ?
  */
 
 #include <string.h>
@@ -225,7 +226,7 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
       double Tol_rcond, smax, smin, tt=Abs(r->R[0]), *vmin=work, *vmax=&work[Minmn];
       double sminpr, smaxpr, s1, c1, s2, c2;
       if (tol_rcond == NULL ) 
-	Tol_rcond = nsp_dlamch("eps");
+	Tol_rcond = Max(m,n)*nsp_dlamch("eps");
       else 
 	Tol_rcond = *tol_rcond;
 
@@ -339,7 +340,7 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
       doubleC *vmin=cwork, *vmax=&cwork[Minmn], cone={1.0,0.0}, s1, c1, s2, c2;
       double sminpr, smaxpr;
       if (tol_rcond == NULL ) 
-	Tol_rcond = nsp_dlamch("eps");
+	Tol_rcond = Max(m,n)*nsp_dlamch("eps");
       else 
 	Tol_rcond = *tol_rcond;
 
@@ -565,7 +566,6 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
 }
 
 
-
 /* OK 
  * svd: 
  *    A is modified 
@@ -577,51 +577,50 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
  *      U and V are fully computed 
  *    rank is computed if non null (using tol if tol != NULL)
  */
-
-static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
-
-static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
+static int intdgesdd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
+static int intzgesdd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
 
 int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol)
 {
-  if (( A =nsp_matrix_copy(A) )== NULLMAT) return FAIL;
+/*   if ( (A=nsp_matrix_copy(A)) == NULLMAT ) return FAIL; */
+
+  /*  A = [] return empty matrices */ 
+  if ( A->mn == 0 ) 
+    {
+      if ( U != NULL)
+	{
+	  if ( (*U=nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+	  if ( (*V=nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+	}
+      if ( (*S=nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+      if ( Rank != NULL )  /* a voir : pourquoi ne pas renvoyer une [] */
+	{
+	  if ( (*Rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) return FAIL;
+	  (*Rank)->R[0] = 0.0;
+	}
+      return OK ; 
+    }
+
+
   if ( A->rc_type == 'r' ) 
     {
-      if ( intdgesvd(A,S,U,V,flag,Rank,tol) == FAIL) return FAIL;
+      if ( intdgesdd(A,S,U,V,flag,Rank,tol) == FAIL) return FAIL;
     } 
   else
     {
-      if ( intzgesvd(A,S,U,V,flag,Rank,tol) == FAIL) return FAIL;
+      if ( intzgesdd(A,S,U,V,flag,Rank,tol) == FAIL) return FAIL;
     }
   return OK;
 }
 
-static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,
-		     NspMatrix **Rank,double *tol)
+static int intdgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, char flag,
+		     NspMatrix **Rank, double *tol)
 {
-  int m = A->m,n=A->n,ix1,ix2,lworkMin,info,i;
-  int Minmn = Min(m,n);
-  NspMatrix *SV,*Vt=NULLMAT,*dwork; 
-
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if ( U != NULL)
-      {
-	if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-	if (( *V =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    if (( *S =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if ( Rank != NULL) 
-      {
-	if ((*Rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-	(*Rank)->R[0] = 0.0;
-      }
-    return OK ; 
-  }
+  int m = A->m, n=A->n, lwork, info, i, Minmn = Min(m,n), *iwork=NULL;
+  NspMatrix *u=NULLMAT, *s=NULLMAT, *vt=NULLMAT, *v=NULLMAT;
+  double *dwork=NULL, qwork[1]; 
 
   /* checks that  A != Nan et != Inf */
-
   for ( i= 0 ; i < A->mn ; i++ ) 
     if (isinf (A->R[i]) || isnan (A->R[i]))
       {
@@ -629,251 +628,143 @@ static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 	return FAIL;
       }
 
-  if ((SV =nsp_matrix_create(NVOID,'r',Minmn,1)) == NULLMAT) return FAIL;
-  if ( U != NULL ) {
-    /* we also compute U and Vt */
-    int nU  = ( flag == 'S') ? Minmn : m;
-    int mVt = ( flag == 'S') ? Minmn : n;
-    if ((*U =nsp_matrix_create(NVOID,'r',m,nU)) == NULLMAT) return FAIL;
-    if ((Vt =nsp_matrix_create(NVOID,'r',mVt,n)) == NULLMAT) return FAIL;
-  }
-  
-  /* computing work space area */ 
+  if ( (s=nsp_matrix_create(NVOID,'r',Minmn,1)) == NULLMAT ) return FAIL;
 
-  ix1 = Minmn * 3 + Max(m,n), ix2 = Minmn * 5;
-  lworkMin = Max(ix1,ix2);
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-
-  if ( U == NULL) 
+  if ( (iwork=nsp_alloc_work_int(8*Minmn)) == NULL ) goto err;
+  lwork = -1;
+  if ( U == NULL ) /* just compute the singular values */  
     {
-      /* just compute the singular values */ 
-      C2F(dgesvd)("N","N",&m, &n,A->R,&m,SV->R,NULL,&m,NULL, &n,
-		  dwork->R, &lworkMin, &info, 1L, 1L);
-      if (info != 0) {
-	if (info > 0) {
-	  Scierror("Error: convergence problem in svd\n"); 
-	} 
-	/* message for info < 0 is given by xerbla.c */
-	return FAIL;
-      }
-      /*  next lines to patch an error of DGESVD */
-      nsp_mat_abs(SV); 
-      /*  sort sv */ 
-      C2F(dlasrt)("D", &Minmn,SV->R, &info, 1L);
+      C2F(dgesdd)("N", &m, &n, A->R, &m, s->R, NULL, &m, NULL, &n, qwork, &lwork, iwork, &info, 1L);
+      lwork = (int) qwork[0];
+      if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+      C2F(dgesdd)("N", &m, &n, A->R, &m, s->R, NULL, &m, NULL, &n, dwork, &lwork, iwork, &info, 1L);
     } 
-  else 
+  else             /* we also compute U and Vt */ 
     {
-      if ( flag== 'S' ) 
-	{
-	  /* compute the singular values and Min(m,n) cols of u and rows of vt */ 
-	  C2F(dgesvd)("S","S", &m, &n,A->R, &m,SV->R,(*U)->R,&m,Vt->R,&Vt->m,
-		      dwork->R, &lworkMin, &info, 1L, 1L);
-	}
-      else 
-	{
-	  /* compute the singular values u and vt */ 
-	  C2F(dgesvd)("A","A", &m, &n,A->R, &m,SV->R,(*U)->R, &m,Vt->R, &n,
-		      dwork->R, &lworkMin, &info, 1L, 1L);
-	}
+      int nU  = ( flag == 'e') ? Minmn : m;
+      int mVt = ( flag == 'e') ? Minmn : n;
+      if ( (u=nsp_matrix_create(NVOID,'r',m,nU)) == NULLMAT ) goto err;
+      if ( (vt=nsp_matrix_create(NVOID,'r',mVt,n)) == NULLMAT ) goto err;
+      C2F(dgesdd)(flag=='e'?"S":"A", &m, &n, A->R, &m, s->R, u->R, &m, vt->R, &mVt, qwork, &lwork, iwork, &info, 1L);
+      lwork = (int) qwork[0];
+      if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+      C2F(dgesdd)(flag=='e'?"S":"A", &m, &n, A->R, &m, s->R, u->R, &m, vt->R, &mVt, dwork, &lwork, iwork, &info, 1L);
+      /* build V from its transpose matrix Vt */ 
+      if ( (v=nsp_matrix_transpose(vt)) == NULLMAT ) goto err;
     }
 
-  if (info != 0) {
-    if (info > 0) {
-      Scierror("Error: convergence problem in svd\n"); 
+  if (info != 0) 
+    {
+      if (info > 0) Scierror("Error: convergence problem in svd\n");
+      goto err;   /* message for info < 0 is given by xerbla.c but this doesn't happen no ? */
     } 
-    /* message for info < 0 is given by xerbla.c */
-    return FAIL;
-  }
-
-  if ( U != NULL )
-    {
-      /* Build a matrix from the singular values array */ 
-      if ( flag == 'S' ) 
-	{
-	  if ((*S =nsp_mat_zeros(Minmn,Minmn)) == NULLMAT) return FAIL;
-	  nsp_matrix_set_diag(*S,SV,0);
-	}
-      else
-	{
-	  if ((*S =nsp_mat_zeros(m,n)) == NULLMAT) return FAIL;
-	  nsp_matrix_set_diag(*S,SV,0);
-	}
-    }
-  else
-    {
-      *S = SV;
-    }
-  
-  /* build V from its transpose matrix Vt */ 
-  
-  if ( U != NULL && (( *V =nsp_matrix_transpose(Vt)) == NULLMAT)) return FAIL;
 
   /* compute the rank if requested */ 
-
-  if ( Rank != NULL) 
+  if ( Rank != NULL ) 
     {
       int i;
-      double eps = C2F(dlamch)("eps", 3L);
-      double Tol = ( tol == NULL) ? Max(m,n) * eps * SV->R[0] : *tol ; 
+      double eps = nsp_dlamch("eps");
+      double Tol = ( tol == NULL) ? Max(m,n) * eps * s->R[0] : *tol ; 
       int irank =0 ; 
-      for (i = 0 ; i < Minmn; ++i) {
-	if ( SV->R[i] > Tol) irank = i+1;
-	else break;
-      }
-      if ((*Rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
+      for (i = 0 ; i < Minmn; ++i)
+	if ( s->R[i] > Tol ) irank = i+1;
+	else  break;
+      
+      if ( (*Rank=nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) goto err;
       (*Rank)->R[0] = (double) irank ; 
     }
-  nsp_matrix_destroy(dwork) ; 
-
-  if ( U != NULL)
-    {
-      nsp_matrix_destroy(Vt) ; 
-      nsp_matrix_destroy(SV) ; 
-    }
+  
+  FREE(iwork); FREE(dwork);
+  *S = s;
+  if ( U != NULL) { nsp_matrix_destroy(vt) ; *V = v; *U = u; } 
   return OK;
+
+ err:
+  FREE(iwork); FREE(dwork);  
+  nsp_matrix_destroy(v); 
+  nsp_matrix_destroy(vt);
+  nsp_matrix_destroy(u);
+  return FAIL;
 } 
 
-
-static int intzgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol)
+static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, char flag,
+		     NspMatrix **Rank, double *tol)
 {
-  int m = A->m,n=A->n,lworkMin,info,i;
-  int Minmn = Min(m,n), lrwork;
-  NspMatrix *SV,*Vt=NULLMAT,*dwork,*rwork; 
-
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if ( U != NULL)
-      {
-	if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-	if (( *V =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    if (( *S =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
-    if ( Rank != NULL) 
-      {
-	if ((*Rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-	(*Rank)->R[0] = 0.0;
-      }
-    return OK ; 
-  }
+  int m = A->m, n=A->n, lwork, info, i, Minmn = Min(m,n), *iwork=NULL;
+  NspMatrix *u=NULLMAT, *s=NULLMAT, *vt=NULLMAT, *v=NULLMAT;
+  doubleC *cwork=NULL, qwork[1]; 
+  double *rwork=NULL;
 
   /* checks that  A != Nan et != Inf */
-
   for ( i= 0 ; i < A->mn ; i++ ) 
-    if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
+    if (isinf (A->R[i]) || isnan (A->R[i]))
       {
 	Scierror("Error: nan or inf in svd first argument\n"); 
 	return FAIL;
       }
 
-  if ((SV =nsp_matrix_create(NVOID,'r',Minmn,1)) == NULLMAT) return FAIL;
-  if ( U != NULL ) {
-    /* we also compute U and Vt */
-    int nU  = ( flag == 'S') ? Minmn : m;
-    int mVt = ( flag == 'S') ? Minmn : n;
-    if ((*U =nsp_matrix_create(NVOID,'c',m,nU)) == NULLMAT) return FAIL;
-    if ((Vt =nsp_matrix_create(NVOID,'c',mVt,n)) == NULLMAT) return FAIL;
-  }
-  
-  /* computing work space area */ 
+  if ( (s=nsp_matrix_create(NVOID,'r',Minmn,1)) == NULLMAT ) return FAIL;
 
-  lrwork = Max(Minmn * 3,Minmn * 5) ;
-  if (( rwork =nsp_matrix_create(NVOID,'r',1,lrwork)) == NULLMAT) return FAIL;
-
-  lworkMin = (Minmn*2) + Max(m,n);
-  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;
-
-  if ( U == NULL) 
+  if ( (iwork=nsp_alloc_work_int(8*Minmn)) == NULL ) goto err;
+  lwork = -1;
+  if ( U == NULL ) /* just compute the singular values */  
     {
-      /* just compute the singular values */ 
-      C2F(zgesvd)("N","N",&m, &n,A->C,&m,SV->R,NULL,&m,NULL, &n,
-		  dwork->C, &lworkMin,rwork->R, &info, 1L, 1L);
-      /*  next lines to patch an error of DGESVD */
-      if (info != 0) {
-	if (info > 0) {
-	  Scierror("Error: convergence problem in svd\n"); 
-	} 
-	/* message for info < 0 is given by xerbla.c */
-	return FAIL;
-      }
-      nsp_mat_abs(SV); 
-      /*  sort sv */ 
-      C2F(dlasrt)("D", &Minmn,SV->R, &info, 1L);
+      if ( (rwork=nsp_alloc_work_doubles(5*Minmn)) == NULL ) goto err;
+      C2F(zgesdd)("N", &m, &n, A->C, &m, s->R, NULL, &m, NULL, &n, qwork, &lwork, rwork, iwork, &info, 1L);
+      lwork = (int) qwork[0].r;
+      if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
+      C2F(zgesdd)("N", &m, &n, A->C, &m, s->R, NULL, &m, NULL, &n, cwork, &lwork, rwork, iwork, &info, 1L);
     } 
-  else 
+  else             /* we also compute U and Vt */ 
     {
-      if ( flag == 'S' ) 
-	{
-	  /* compute the singular values and Min(m,n) cols of u and rows of vt */ 
-	  C2F(zgesvd)("S","S", &m, &n,A->C, &m,SV->R,(*U)->C,&m,Vt->C,&Vt->m,
-		      dwork->C, &lworkMin,rwork->R, &info, 1L, 1L);
-	}
-      else 
-	{
-	  /* compute the singular values u and vt */ 
-	  C2F(zgesvd)("A","A", &m, &n,A->C, &m,SV->R,(*U)->C, &m,Vt->C, &n,
-		      dwork->C, &lworkMin,rwork->R, &info, 1L, 1L);
-	}
+      int nU  = ( flag == 'e') ? Minmn : m;
+      int mVt = ( flag == 'e') ? Minmn : n;
+      if ( (u=nsp_matrix_create(NVOID,'c',m,nU)) == NULLMAT ) goto err;
+      if ( (vt=nsp_matrix_create(NVOID,'c',mVt,n)) == NULLMAT ) goto err;
+      if ( (rwork=nsp_alloc_work_doubles(5*Minmn*Minmn+7*Minmn)) == NULL ) goto err;
+      C2F(zgesdd)(flag=='e'?"S":"A", &m, &n, A->C, &m, s->R, u->C, &m, vt->C, &mVt, qwork, &lwork, rwork, iwork, &info, 1L);
+      lwork = (int) qwork[0].r;
+      if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
+      C2F(zgesdd)(flag=='e'?"S":"A", &m, &n, A->C, &m, s->R, u->C, &m, vt->C, &mVt, cwork, &lwork, rwork, iwork, &info, 1L);
+      /* build V from its transpose matrix Vt */ 
+      if ( (v=nsp_matrix_transpose(vt)) == NULLMAT ) goto err;
     }
 
-  if (info != 0) {
-    if (info > 0) {
-      Scierror("Error: convergence problem in svd\n"); 
+  if (info != 0) 
+    {
+      if (info > 0) Scierror("Error: convergence problem in svd\n");
+      goto err;   /* message for info < 0 is given by xerbla.c but this doesn't happen no ? */
     } 
-    return FAIL;
-  }
-
-  /* Build a matrix from the singular values array */ 
-
-  if ( U != NULL )
-    {
-      /* Build a matrix from the singular values array */ 
-      if ( flag == 'S' ) 
-	{
-	  if ((*S =nsp_mat_zeros(Minmn,Minmn)) == NULLMAT) return FAIL;
-	  nsp_matrix_set_diag(*S,SV,0);
-	}
-      else
-	{
-	  if ((*S =nsp_mat_zeros(m,n)) == NULLMAT) return FAIL;
-	  nsp_matrix_set_diag(*S,SV,0);
-	}
-    }
-  else
-    {
-      *S = SV;
-    }
-  
-  /* build V from its transpose matrix Vt */
-  /* note that tranposition on complex NspMatrix is the conjugate transpose */ 
-  
-  if ( U != NULL && (( *V =nsp_matrix_transpose(Vt)) == NULLMAT)) return FAIL;
 
   /* compute the rank if requested */ 
-
-  if ( Rank != NULL) {
-    int i;
-    double eps = C2F(dlamch)("eps", 3L);
-    double Tol = ( tol == NULL) ? Max(m,n) * eps * SV->R[0] : *tol ; 
-    int irank =0 ; 
-    for (i = 0 ; i < Minmn; ++i) {
-      if ( SV->R[i] > Tol) irank = i+1;
-      else break;
-    }
-    if ((*Rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-    (*Rank)->R[0] = (double) irank ; 
-  }
-
-  nsp_matrix_destroy(dwork) ; 
-  nsp_matrix_destroy(rwork) ; 
-  if ( U!= NULL) 
+  if ( Rank != NULL ) 
     {
-      nsp_matrix_destroy(Vt) ; 
-      nsp_matrix_destroy(SV) ; 
+      int i;
+      double eps = nsp_dlamch("eps");
+      double Tol = ( tol == NULL) ? Max(m,n) * eps * s->R[0] : *tol ; 
+      int irank =0 ; 
+      for (i = 0 ; i < Minmn; ++i)
+	if ( s->R[i] > Tol ) irank = i+1;
+	else  break;
+      
+      if ( (*Rank=nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) goto err;
+      (*Rank)->R[0] = (double) irank ; 
     }
+  
+  FREE(iwork); FREE(rwork); FREE(cwork);
+  *S = s;
+  if ( U != NULL) { nsp_matrix_destroy(vt) ; *V = v; *U = u; } 
   return OK;
 
-}
+ err:
+  FREE(iwork); FREE(rwork); FREE(cwork); 
+  nsp_matrix_destroy(v); 
+  nsp_matrix_destroy(vt);
+  nsp_matrix_destroy(u);
+  return FAIL;
+} 
+
+
 
 /* OK
  * nsp_spec 
@@ -1077,7 +968,6 @@ static int intzgeev(NspMatrix *A,NspMatrix **D,NspMatrix **V)
  * spec(A) for symmetric matrices dgeev 
  * if flag == 'V',  V is returned in A 
  */
-
 static int intdsyev(NspMatrix *A,NspMatrix **d,char flag);
 static int intzheev(NspMatrix *A,NspMatrix **d,char flag);
 
@@ -1116,7 +1006,7 @@ static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
   for ( i= 0 ; i < A->mn ; i++ ) 
     if (isinf (A->R[i]) || isnan (A->R[i]))
       {
-	Scierror("Error: nan or inf in svd first argument\n"); 
+	Scierror("Error: nan or inf in spec first argument\n"); 
 	return FAIL;
       }
 
@@ -1190,132 +1080,85 @@ static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
 /* OK 
  * nsp_inv 
  */
-
 static int intdgetri(NspMatrix *A);
 static int intzgetri(NspMatrix *A);
 
 int nsp_inv(NspMatrix *A) 
 {
+
+  /*  A = [] return empty matrices */ 
+  if ( A->mn == 0 )  return OK ; 
+  
+  if (A->m != A->n) 
+    { 
+      Scierror("Error: first argument of inv should be square and it is (%dx%d)\n", A->m,A->n);
+      return FAIL;
+    }
+
   if ( A->rc_type == 'r') 
     return intdgetri(A);
   else 
     return intzgetri(A);
 }
 
-
-/* static int intdgetri(NspMatrix *A) */
-/* { */
-/*   NspMatrix *iwork,*dwork; */
-/*   int *Iwork; */
-/*   int info,lworkMin, m = A->m, n = A->n ; */
-
-/*   /\*  A = [] return empty matrices *\/  */
-  
-/*   if ( A->mn == 0 )  return OK ;  */
-  
-/*   if (m != n) {  */
-/*     Scierror("Error: first argument of inv should be square and it is (%dx%d)\n",  */
-/* 	     m,n); */
-/*     return FAIL; */
-/*   } */
-
-/*   /\* int NspMatrix XXX *\/  */
-/*   if (( iwork =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL; */
-/*   Iwork = (int *) iwork->R; */
-
-/*   lworkMin = Max(1,n); */
-/*   if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL; */
-  
-/*   C2F(dgetrf)(&n, &n,A->R, &n, Iwork, &info); */
-/*   if (info > 0) { */
-/*     Scierror("inv: problem is singular\n"); */
-/*     return FAIL; */
-/*   } else if (info < 0) { */
-/*     return FAIL; */
-/*   } */
-/*   C2F(dgetri)(&n, A->R, &n, Iwork, dwork->R,&lworkMin, &info); */
-/*   return OK; */
-/* }  */
-
 static int intdgetri(NspMatrix *A)
 {
-  int *ipiv = NULL;
-  double *dwork = NULL;
-  int info,lworkMin, m = A->m, n = A->n ;
-
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 )  return OK ; 
-  
-  if (m != n) { 
-    Scierror("Error: first argument of inv should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  int *ipiv=NULL;
+  double *dwork=NULL, qwork[1];
+  int info, lwork, n=A->n ;
 
   if ( (ipiv = nsp_alloc_int(n)) == NULL ) goto err;
 
-  lworkMin = Max(1,n);
-  if ( (dwork = nsp_alloc_doubles(lworkMin)) == NULL ) goto err;
-  
   C2F(dgetrf)(&n, &n, A->R, &n, ipiv, &info);
-  if (info > 0) {
-    Scierror("inv: problem is singular\n");
-    goto err;;
-  } else if (info < 0) {
-    goto err;
-  }
-  C2F(dgetri)(&n, A->R, &n, ipiv, dwork, &lworkMin, &info);
-  FREE(dwork);
-  FREE(ipiv);
+  if (info != 0) 
+    {
+      Scierror("inv: problem is singular\n");
+      goto err;
+    };
+
+  lwork = -1;
+  C2F(dgetri)(&n, A->R, &n, ipiv, qwork, &lwork, &info);
+  lwork = (int) qwork[0];
+  if ( (dwork = nsp_alloc_doubles(lwork)) == NULL ) goto err;
+  C2F(dgetri)(&n, A->R, &n, ipiv, dwork, &lwork, &info);
+
+  FREE(dwork); FREE(ipiv);
   return OK;
 
  err:
-  FREE(dwork);
-  FREE(ipiv);
+  FREE(dwork); FREE(ipiv);
   return FAIL;
 } 
 
-int intzgetri(NspMatrix *A)
+static int intzgetri(NspMatrix *A)
 {
-  NspMatrix *iwork,*dwork;
-  int *Iwork;
+  int *ipiv=NULL;
+  doubleC *cwork=NULL, qwork[1];
+  int info, lwork, n = A->n;
 
-  int info,lworkMin, m = A->m, n = A->n ;
+  if ( (ipiv = nsp_alloc_int(n)) == NULL ) goto err;
 
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 )  return OK ; 
-  
-  if (m != n) { 
-    Scierror("Error: first argument of inv should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  C2F(zgetrf)(&n, &n, A->C, &n, ipiv, &info);
+  if (info != 0) 
+    {
+      Scierror("inv: problem is singular\n");
+      goto err;
+    };
 
-  /* int NspMatrix XXX */ 
-  
-  if (( iwork =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
-  Iwork = (int *) iwork->R;
+  lwork = -1;
+  C2F(zgetri)(&n, A->C, &n, ipiv, qwork, &lwork, &info);
+  lwork = (int) qwork[0].r;
+  if ( (cwork = nsp_alloc_doubleC(lwork)) == NULL ) goto err;
+  C2F(zgetri)(&n, A->C, &n, ipiv, cwork, &lwork, &info);
 
-  lworkMin = Max(1,n);
-  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;
-  
-  C2F(zgetrf)(&n, &n,A->C, &n, Iwork, &info);
-  if (info > 0) {
-    Scierror("Error: problem is singular\n");
-    return FAIL;
-  } else if (info < 0) {
-    return FAIL;
-  }
-  C2F(zgetri)(&n, A->C, &n, Iwork, dwork->C,&lworkMin, &info);
-  if (info != 0) {
-    Scierror("Error: something wrong in zgetri\n");
-    return FAIL;
-  }
+  FREE(cwork); FREE(ipiv);
   return OK;
 
-}
+ err:
+  FREE(cwork); FREE(ipiv);
+  return FAIL;
+} 
+
 
 /* OK
  * nsp_rcond(A)

@@ -107,7 +107,7 @@ static int int_svd( Stack stack, int rhs, int opt, int lhs)
   NspMatrix *A;
   NspMatrix *S=NULL, *U=NULL,*V=NULL, *rank=NULL;
   NspMatrix **hrank=NULL,**hU=NULL;
-  int_types T[] = {mat,new_opts,t_end} ;
+  int_types T[] = {matcopy,new_opts,t_end} ;
   nsp_option opts[] ={{ "tol",s_double,NULLOBJ,-1},
 		      { "mode",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
@@ -115,9 +115,9 @@ static int int_svd( Stack stack, int rhs, int opt, int lhs)
   
   Tol = ( opts[0].obj == NULLOBJ) ? NULL : &tol; 
   cmode = ( opts[1].obj == NULLOBJ) ? '\0' : mode[0]; 
-  if ( cmode != '\0' && cmode != 'S' ) 
+  if ( cmode != '\0' && cmode != 'e' ) 
     {
-      Scierror("%s: mode should be '' or  'S' \n",stack.fname);
+      Scierror("%s: mode should be '' or  'e' \n",stack.fname);
       return RET_BUG;
     }
   CheckLhs(1,4);
