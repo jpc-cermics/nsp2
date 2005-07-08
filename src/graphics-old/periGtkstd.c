@@ -2207,6 +2207,11 @@ static void delete_window(BCG *dd,int intnum)
   FREE(winxgc->private->colors);
   /* free data associated to menus */
   menu_entry_delete(winxgc->private->menu_entries);
+  gdk_cursor_unref (winxgc->private->gcursor);
+  gdk_cursor_unref (winxgc->private->ccursor);
+  g_object_unref(winxgc->private->stdgc);
+  g_object_unref(winxgc->private->wgc);
+  g_object_unref(winxgc->private->item_factory);
   FREE(winxgc->private);
   /* remove current window from window list */
   window_list_remove(intnum);
