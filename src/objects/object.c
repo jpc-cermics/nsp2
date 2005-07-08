@@ -1026,7 +1026,12 @@ int int_object_diary(Stack stack, int rhs, int opt, int lhs)
   else 
     {
       /* end of diary */
-      if ( F != NULL)nsp_file_close(F);
+      if ( F != NULL) 
+	{ 
+	  nsp_file_close(F);
+	  nsp_file_destroy(F);
+	  F=NULL;
+	}
       Sciprint_set_diary(NULL,TRUE);
       if ( def != NULL) SetScilabIO(def);
       def = NULL;
@@ -1523,7 +1528,12 @@ int int_object_xdrsave(Stack stack, int rhs, int opt, int lhs)
 	}
     }
   nsp_xdr_save_i(F->xdrs,nsp_no_type_id); /* flag for detecting end of obj at reload */
-  if (nsp_file_close_xdr_w(F) == FAIL) return RET_BUG;
+  if (nsp_file_close_xdr_w(F) == FAIL) 
+    {
+      nsp_file_destroy(F);
+      return RET_BUG;
+    }
+  nsp_file_destroy(F);
   return rep;
 }
 
@@ -1550,7 +1560,12 @@ int int_object_xdrload(Stack stack, int rhs, int opt, int lhs)
 	break;
       nsp_frame_replace_object(O);
     }
-  if (nsp_file_close_xdr_r(F) == FAIL) return RET_BUG;
+  if (nsp_file_close_xdr_r(F) == FAIL)
+    {
+      nsp_file_destroy(F);
+      return RET_BUG;
+    }
+  nsp_file_destroy(F);
   return 0;
 }
 
