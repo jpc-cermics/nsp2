@@ -2987,9 +2987,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
    */
   NewXgc->graphic_engine->xset_pixmapOn(NewXgc,0);
   NewXgc->graphic_engine->xset_wresize(NewXgc,1);
-  /* now initialize the scale list */
-  NewXgc->scales = NULL;
-  xgc_add_default_scale(NewXgc);
+  /* now initialize the scale list : already performed in window_list_new */
+  /* NewXgc->scales = NULL; xgc_add_default_scale(NewXgc);*/
   nsp_set_win_counter(WinNum);
   gdk_flush();
 }
