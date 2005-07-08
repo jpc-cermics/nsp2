@@ -1,9 +1,24 @@
-/*------------------------------------------------------------------------
- *    Copyright (C) 2001-2003 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- *    
- *    nsp main menu and graphic window menus 
- *--------------------------------------------------------------*/
+/* Nsp
+ * Copyright (C) 2001-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Nsp menu functions
+ * jpc@cermics.enpc.fr 
+ *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -389,9 +404,8 @@ void menu_entry_show(menu_entry *m)
   menu_entry_show(m->next);
 }
 
-static menu_entry *new_menu_entry(char *name,char *accel,int status,int nsub,
-				  menu_entry *subs,int winid,
-				  int action_type,char *fname)
+static menu_entry *new_menu_entry(const char *name,const char *accel,int status,int nsub,
+				  menu_entry *subs,int winid, int action_type,const char *fname)
 {
   menu_entry *loc; 
   if ((loc = MALLOC(sizeof(menu_entry)))== NULL) 
@@ -434,7 +448,11 @@ static void submenu_entry_set_menu(menu_entry *subs,menu_entry *father)
   submenu_entry_set_menu(subs->next,father);
 }
 
-static void menu_entry_delete(menu_entry *me)
+/* recursively delete menu_entries.
+ */
+
+
+void menu_entry_delete(menu_entry *me)
 {
   if ( me == NULL) return ;
   /* recursive free  */
@@ -500,10 +518,9 @@ static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int n
       nsp_menu_decode_name(entries[i],&e_entry,&e_accel,&e_action);
       action = (e_action != NULL) ? e_action : fname ;
       me2 = new_menu_entry(e_entry,e_accel,1,i+1,NULL,winid, action_type,action);
+      if(e_entry != NULL) free(e_entry);
       if ( me2 == NULL) 
 	{
-	  /* XXXX e_entry is to be always cleaned ? */
-	  if(e_entry != NULL) free(e_entry);
 	  return 1;
 	}
       if ( i != 0) me1->next = me2;
@@ -514,10 +531,9 @@ static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int n
   nsp_menu_decode_name(name,&e_entry,&e_accel,&e_action);
   action = (e_action != NULL) ? e_action : fname ;
   top = new_menu_entry(e_entry,e_accel,1,1,subs,winid,action_type,action);
+  if(e_entry != NULL) free(e_entry);
   if ( top == NULL) 
     {
-      /* XXXXX clean and return */
-      if(e_entry != NULL) free(e_entry);
       return 1;
     }
   if ( *m == NULL) *m = top ;
@@ -535,7 +551,6 @@ static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int n
  *Delete the menu name in menu_entry list 
  *----------------------------------------------------------------*/
 
-
 static void sci_menu_delete(menu_entry **m, char *name) 
 { 
   menu_entry *loc,*nloc;
@@ -546,6 +561,7 @@ static void sci_menu_delete(menu_entry **m, char *name)
     {
       /* we delete the first entry of m */
       *m = (*m)->next ; 
+      /* change loc->next to prevent menu_entry_delete to recursively delete */
       loc->next = NULL;
       menu_entry_delete(loc);
       return ;
@@ -556,6 +572,7 @@ static void sci_menu_delete(menu_entry **m, char *name)
       if ( is_menu_name(nloc->name,name)==0) 
 	{
 	  loc->next = nloc->next ;
+	  /* change nloc->next to prevent menu_entry_delete to recursively delete */
 	  nloc->next = NULL;
 	  menu_entry_delete(nloc);
 	  return ;

@@ -2205,6 +2205,8 @@ static void delete_window(BCG *dd,int intnum)
     }
   /* free gui private area */
   FREE(winxgc->private->colors);
+  /* free data associated to menus */
+  menu_entry_delete(winxgc->private->menu_entries);
   FREE(winxgc->private);
   /* remove current window from window list */
   window_list_remove(intnum);
