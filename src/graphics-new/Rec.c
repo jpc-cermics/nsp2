@@ -2146,7 +2146,7 @@ void tape_clean_plots(BCG *Xgc,int winnumber)
 {
   int flag = FAIL;
   list_plot *list = Xgc->plots,* list1 ;
-  if ( Xgc->record_flag == FALSE ) return ;
+  /* if ( Xgc->record_flag == FALSE ) return ; */
   while (list)
     {
       if (list->theplot != NULL) 
