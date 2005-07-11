@@ -709,7 +709,7 @@ static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
   lwork = -1;
   if ( U == NULL ) /* just compute the singular values */  
     {
-      if ( (rwork=nsp_alloc_work_doubles(5*Minmn)) == NULL ) goto err;
+      if ( (rwork=nsp_alloc_work_doubles(7*Minmn)) == NULL ) goto err;
       C2F(zgesdd)("N", &m, &n, A->C, &m, s->R, NULL, &m, NULL, &n, qwork, &lwork, rwork, iwork, &info, 1L);
       lwork = (int) qwork[0].r;
       if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
@@ -721,7 +721,7 @@ static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
       int mVt = ( flag == 'e') ? Minmn : n;
       if ( (u=nsp_matrix_create(NVOID,'c',m,nU)) == NULLMAT ) goto err;
       if ( (vt=nsp_matrix_create(NVOID,'c',mVt,n)) == NULLMAT ) goto err;
-      if ( (rwork=nsp_alloc_work_doubles(5*Minmn*Minmn+7*Minmn)) == NULL ) goto err;
+      if ( (rwork=nsp_alloc_work_doubles(5*Minmn*Minmn+5*Minmn)) == NULL ) goto err;
       C2F(zgesdd)(flag=='e'?"S":"A", &m, &n, A->C, &m, s->R, u->C, &m, vt->C, &mVt, qwork, &lwork, rwork, iwork, &info, 1L);
       lwork = (int) qwork[0].r;
       if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
@@ -733,7 +733,7 @@ static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
   if (info != 0) 
     {
       if (info > 0) Scierror("Error: convergence problem in svd\n");
-      goto err;   /* message for info < 0 is given by xerbla.c but this doesn't happen no ? */
+      goto err;   /* message for info < 0 is given by xerbla.c (but this must not happen normally) */
     } 
 
   /* compute the rank if requested */ 
@@ -751,7 +751,9 @@ static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
       (*Rank)->R[0] = (double) irank ; 
     }
   
-  FREE(iwork); FREE(rwork); FREE(cwork);
+  FREE(cwork);
+  FREE(rwork); 
+  FREE(iwork); 
   *S = s;
   if ( U != NULL) { nsp_matrix_destroy(vt) ; *V = v; *U = u; } 
   return OK;
@@ -1236,11 +1238,12 @@ static int intzgecon(NspMatrix *A,double *rcond)
   /*  A = [] return empty matrices */ 
   if ( A->mn == 0 )  return OK ; 
   
-  if (m != n) { 
-    Scierror("Error: first argument of rcond should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  if (m != n) 
+    { 
+      Scierror("Error: first argument of rcond should be square and it is (%dx%d)\n", 
+	       m,n);
+      return FAIL;
+    }
 
   /* int matrix XXX */ 
 
