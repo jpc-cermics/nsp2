@@ -77,6 +77,7 @@ void NspPListDestroy(NspPList *P_L)
   if ( P_L!= NULLP_PLIST) 
     {
       FREE(NSP_OBJECT(P_L)->name) ;
+      FREE(P_L->file_name) ;
       PListDestroy(&P_L->D);
       FREE(P_L) ;
     };

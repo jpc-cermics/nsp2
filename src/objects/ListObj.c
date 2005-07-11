@@ -577,8 +577,7 @@ static int int_lx_tlist_as_list(Stack stack, int rhs, int opt, int lhs)
 	 that we have inserted in our list **/
       NthObj(i) = NULLOBJ ;
     }
-  NthObj(1)=(NspObject *) L;
-  NSP_OBJECT(NthObj(1))->ret_pos = 1;
+  MoveObj(stack,1,(NspObject *) L);
   return 1;
 }
 
@@ -625,8 +624,7 @@ static int int_lx_tlist_as_hash(Stack stack, int rhs, int opt, int lhs)
        */
       NthObj(i) = NULLOBJ ;
     }
-  NthObj(1)=(NspObject *) H;
-  NSP_OBJECT(NthObj(1))->ret_pos = 1;
+  MoveObj(stack,1,(NspObject *) H);
   return 1;
 }
 
@@ -1189,15 +1187,14 @@ static int int_lxnthdel(Stack stack, int rhs, int opt, int lhs)
 static int int_lxlength(Stack stack, int rhs, int opt, int lhs)
 {
   double d;
-  NspObject *O;
+  NspObject *obj;
   NspList *L;
   CheckRhs(1,2);
   CheckLhs(1,1);
   if (( L = GetList(stack,1)) == NULLLIST) return RET_BUG;
   d = (double)nsp_list_length(L);
-  if (( O =nsp_create_object_from_double(NVOID,d)) == NULLOBJ ) return RET_BUG;
-  StackStore(stack,O,2); 
-  NSP_OBJECT(O)->ret_pos = 1;
+  if (( obj =nsp_create_object_from_double(NVOID,d)) == NULLOBJ ) return RET_BUG;
+  MoveObj(stack,1,obj);
   return 1;
 }
 
