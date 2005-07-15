@@ -107,10 +107,11 @@ PERIFILE=periX11.o
 GUILIB=xsci 
 # specific for gnome/gtk version 
 GZVT=
-# specific scilab dirs for xdr:  default is void for X11
-#   xdr for Win32
-XDRLIB=
-XDRLIBNAME=
+# a directory providing the xdr support 
+# used only for win32 target 
+# 
+LIBXDR_LOCAL=
+LIBXDR=
 # objects files in src/menus: default is XOBJS for UNIX
 #   for Win32 use WOBJS
 MENUSOBJS=XOBJS
@@ -399,8 +400,6 @@ case "$host" in
     PERIFILE=periWin.o
     MAIN='mainwin95.o'
     GUILIB='wsci'
-    XDRLIB='xdr'
-    XDRLIBNAME='libs/xdr.a'
     MENUSOBJS=WOBJS
     BLPR_SCRIPTS=
     SED_CYGDRIVE='$(CYGDRIVE)'
@@ -411,6 +410,7 @@ case "$host" in
     EXAMPLES_TESTS='$(SUBDIRS1)'
     CC_OPTIONS="${CC_OPTIONS} -mno-cygwin -mieee-fp"
     FC_OPTIONS="${FC_OPTIONS} -mno-cygwin"
+    LIBXDR="-lrpc -lrpclib"
     LD=gcc
     LD_LDFLAGS="${LDFLAGS} -mconsole --enable-stdcall-fixup"
     WINXFLAGS='-I../xdr'
@@ -422,8 +422,7 @@ case "$host" in
     PERIFILE=periWin.o
     MAIN='mainwin95.o'
     GUILIB='wsci'
-    XDRLIB='xdr'
-    XDRLIBNAME='libs/xdr.a'
+    LIBXDR_LOCAL='libxdr'
     MENUSOBJS=WOBJS
     BLPR_SCRIPTS=
     SED_CYGDRIVE='$(CYGDRIVE)'
@@ -1141,8 +1140,8 @@ AC_SUBST(MAKEFILE_TARGET)
 AC_SUBST(PERIFILE)
 AC_SUBST(GUILIB)
 AC_SUBST(GZVT)
-AC_SUBST(XDRLIB)
-AC_SUBST(XDRLIBNAME)
+AC_SUBST(LIBXDR_LOCAL)
+AC_SUBST(LIBXDR)
 AC_SUBST(WINXFLAGS)
 AC_SUBST(MENUSOBJS)
 AC_SUBST(MALLOC)
