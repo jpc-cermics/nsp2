@@ -414,7 +414,7 @@ case "$host" in
     LD=gcc
     LD_LDFLAGS="${LDFLAGS} -mconsole --enable-stdcall-fixup"
     WINXFLAGS='-I../xdr'
-    MAKEFILE_TARGET=Makefile.gcwin32
+    MAKEFILE_TARGET=Makefile.cygwin
     ;;
 # mingw32 is detected 
    *-*-mingw32*)
