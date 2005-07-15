@@ -71,6 +71,7 @@ struct	vax_single {
 #define VAX_SNG_BIAS	0x81
 #define IEEE_SNG_BIAS	0x7f
 
+#if !defined(mc68000) && !defined(sparc) && !defined(mips) && !defined(mmax) && !defined(_X86_)
 static struct sgl_limits {
 	struct vax_single s;
 	struct ieee_single ieee;
@@ -80,6 +81,7 @@ static struct sgl_limits {
 	{{ 0x0, 0x0, 0x0, 0x0 },	/* Min Vax */
 	{ 0x0, 0x0, 0x0 }}		/* Min IEEE */
 };
+#endif
 #endif /* vax */
 
 bool_t
