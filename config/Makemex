@@ -21,7 +21,7 @@ STATIC =
 CPPFLAGS = 
 LDFLAGS = 
 LIBS = -lm 
-FLIBS =  -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.3 -L/usr/lib/gcc-lib/i386-redhat-linux/3.3.3/../../.. -lfrtbegin -lg2c -lm -lgcc_s
+FLIBS =  -L/usr/lib/gcc/i686-pc-cygwin/3.4.4 -L/usr/lib/gcc/i686-pc-cygwin/3.4.4/../../.. -lfrtbegin -lg2c -lcygwin -luser32 -lkernel32 -ladvapi32 -lshell32
 
 INCLUDES= -I$(SCIDIR)/src/include
 CFLAGS = $(CC_OPTIONS) 
