@@ -408,8 +408,8 @@ case "$host" in
     F2C_SUBDIR=f2c/src
     # just *-so tests 
     EXAMPLES_TESTS='$(SUBDIRS1)'
-    CC_OPTIONS="${CC_OPTIONS} -mno-cygwin -mieee-fp"
-    FC_OPTIONS="${FC_OPTIONS} -mno-cygwin"
+    CC_OPTIONS="${CC_OPTIONS} -mieee-fp"
+    FC_OPTIONS="${FC_OPTIONS} "
     LIBXDR="-lrpc -lrpclib"
     LD=gcc
     LD_LDFLAGS="${LDFLAGS} -mconsole --enable-stdcall-fixup"
