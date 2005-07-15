@@ -1158,6 +1158,7 @@ static void draw_spolyhedron_face(BCG *Xgc,void *Ob, int j)
 
 static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 {
+#ifdef  WITH_GTKGLEXT 
   SPolyhedron *Q = (SPolyhedron *) Ob;
   int i,j, np=1, m, zero=0,colors[4];
   int numpt, *current_vertex, color;
@@ -1194,6 +1195,7 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	    fillpolylines3D(Xgc, x, y,z, &zero, np, m);	  
 	}
     }
+#endif
 }
 
 static void draw_polyhedron_face(BCG *Xgc,void *Ob, int j)
@@ -1237,6 +1239,7 @@ static void draw_polyhedron_face(BCG *Xgc,void *Ob, int j)
 
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 {
+#ifdef  WITH_GTKGLEXT 
   Polyhedron *Q = (Polyhedron *) Ob;
   int i,j, np=1, m;
   double x[6], y[6], z[6];   /* a changer */
@@ -1271,6 +1274,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
       Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
       fillpolylines3D(Xgc, x, y, z, &color, np, m);
     }
+#endif
 }
 
 
@@ -1319,6 +1323,7 @@ static void draw_polyline_segment(BCG *Xgc,void *Ob, int j)
 
 static void draw_polyline_ogl(BCG *Xgc,void *Ob)
 {
+#ifdef  WITH_GTKGLEXT 
   PolyLine *L = (PolyLine *) Ob;
   int j,color;
   double x[2], y[2],z[2];
@@ -1334,6 +1339,7 @@ static void draw_polyline_ogl(BCG *Xgc,void *Ob)
       z[1] = L->coord[3*j+5];
       drawsegments3D(Xgc, x, y ,z, n, &color, flag);
     }
+#endif
 }
 
 static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)

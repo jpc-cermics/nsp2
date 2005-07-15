@@ -240,7 +240,7 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
      *    into its differents zones (polygons) by the function PaintTriangle   
      */
 
-#if 1     
+#ifdef  WITH_GTKGLEXT 
     if (  Xgc->graphic_engine == &GL_gengine ) 
       {
 	for ( i = 0 ; i < nx -1 ; i++ )
