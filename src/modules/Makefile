@@ -10,7 +10,7 @@ OBJSF=
 
 include ../../Makefile.incl
 
-CFLAGS = $(CC_OPTIONS) -pg
+CFLAGS = $(CC_OPTIONS) 
 FFLAGS = $(FC_OPTIONS)
 
 include ../Make.lib
