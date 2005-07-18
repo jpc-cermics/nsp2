@@ -16,11 +16,9 @@ struct
   int halt;
 } C2F(coshlt);
 
-
 extern struct {
   int idb;
 } C2F(dbcos);
-
 
 struct
 {
@@ -2842,182 +2840,138 @@ int scicos_bound (scicos_args_F0)
   return 0;
 }
 
+
+/* extracted from libst.c */
+
+static int st_ulaw_to_linear(unsigned char ulawbyte )
+{
+  static int exp_lut[8] = { 0, 132, 396, 924, 1980, 4092, 8316, 16764 };
+  int sign, exponent, mantissa, sample;
+
+  ulawbyte = ~ ulawbyte;
+  sign = ( ulawbyte & 0x80 );
+  exponent = ( ulawbyte >> 4 ) & 0x07;
+  mantissa = ulawbyte & 0x0F;
+  sample = exp_lut[exponent] + ( mantissa << ( exponent + 3 ) );
+  if ( sign != 0 ) sample = -sample;
+  return sample;
+}
+
 void scicos_readau_block(scicos_args_F2);
 
 void scicos_readau_block(int *flag, int *nevprt, double *t, double *xd, double *x, 
-	     int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, 
-	     int *nrpar, int *ipar, int *nipar, double **inptr, int *insz, int *nin, 
-	     double **outptr, int *outsz, int *nout)
-     /*
-       ipar[1]   = lfil : file name length
-       ipar[2:4] = fmt  : numbers type ascii code
-       ipar[5]   = void
-       ipar[6]   = n : buffer length in number of records
-       ipar[7]   = maxvoie : record size
-       ipar[8]   = swap
-       ipar[9]   = first : first record to read
-       ipar[10:9+lfil] = character codes for file name
-     */
+			 int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, 
+			 int *nrpar, int *ipar, int *nipar, double **inptr, int *insz, int *nin, 
+			 double **outptr, int *outsz, int *nout)
 {
-  char str[100],type[4];
-  /* int job = 1,three=3; */
-  FILE *fd;
-  int n, k, kmax, /*no, lfil,*/ m, i, irep,/* nm,*/ ierr;
-  double *buffer,*record;
-  long offset;
-  double y;
-  /*  div_t divt;*/int quot, rem;
-  double SCALE=0.000030517578125;
-  /*  int ETAB[8]={0, 132, 396, 924, 1980, 4092, 8316, 16764}; */
-  int ETAB[8];
-  int mu;
-  int sig;
-  int e;
-  int f;
-  /*  double ff;*/
-
-  ETAB[0]=0; ETAB[1]=132; ETAB[2]= 396; ETAB[3]=924; ETAB[4]=1980;
-  ETAB[5]=4092; ETAB[6]=8316; ETAB[7]=16764;
-
-  --ipar;
+  /* ipar=[len : file name length,  ipar[2:4] = fmt  : numbers type ascii code,
+   *       unused, nchannels, swap, first : first record to read, 
+   *       ipar[10:9+lfil] character codes for file name]
+   */
+  typedef struct _writec_ipar writec_ipar ;
+  struct _writec_ipar { int len, fmt[3],ievt,n,maxvoie,swap,first,fname;};
+  writec_ipar *wi =  (writec_ipar*) ipar;
+  NspFile *F;
+  int n, k, kmax, nread, m, i,mu;
+  double *buffer;
+  unsigned long offset;
   --z;
-  fd=(FILE *)(long)z[3];
+  F=(NspFile *)(long)z[3];
   buffer = (z+4);
     
   /*
-    k    : record counter within the buffer
-    kmax :  number of records in the buffer
-  */
+   *  k    : record counter within the buffer
+   *  kmax :  number of records in the buffer
+   */
 
-  if (*flag==1) {
-    n    = ipar[6];
-    k    = (int)z[1];
-    /* copy current record to output */
-    record=buffer+(k-1)*ipar[7];
-
-    for (i=0;i<*nout;i++)
-      {
-	mu=(int) record[i];
-
-	mu=255-mu;
-	if(mu>127)
-	  sig=1;
-	else
-	  sig=0;
-	/* comment out for SUNOS SS 8/10/99 
-	   divt=div(mu,16);
-	   e=divt.quot-8*sig+1;
-	   f=divt.rem;
-	*/
-	quot=mu/16;rem=mu-16*quot;
-	e=quot-8*sig+1;
-	f=rem;
-
-	y=ldexp((double)(f),(e+2));
-	/* ff=(double)(e+2);
-	   y=((double) f) * pow(two, ff); */
-
-	e=ETAB[e-1];
-
-	y=SCALE*(1-2*sig)*(e+y);
-
-	*outptr[i]=y;
-      }
-    if (*nevprt>0) {
-      /*     discrete state */
-      kmax =(int) z[2];
-      if (k>=kmax&&kmax==n) {
-	/*     read a new buffer */
-	Scierror("Error: in readau to be done \n");
-	/* XXXXXXX
-	   m=ipar[6]*ipar[7];
-	   F2C(cvstr)(&three,&(ipar[2]),type,&job,strlen(type));
-	   for (i=2;i>=0;i--)
-	   if (type[i]!=' ') { type[i+1]='\0';break;}
-	   ierr=0;
-	   mget2(fd,ipar[8],buffer,m,type,&ierr);
-	*/
-	ierr=1;
-	if (ierr>0) {
-	  sciprint("Read error!\n");
-	  fclose(fd);
-	  z[3] = 0.0;
-	  *flag = -1;
-	  return;
-	}
-	else if (ierr<0) { /* EOF reached */
-	  kmax=-(ierr+1)/ipar[7];
-	}
-	else
-	  kmax=ipar[6];
-
-	z[1] = 1.0;
-	z[2] = kmax;
-      }
-      else if (k<kmax) 
-	z[1] = z[1]+1.0;
-    }
-  }
-  else if (*flag==4) {
-    /* F2C(cvstr)(&(ipar[1]),&(ipar[10]),str,&job,strlen(str)); */
-    sciprint("Error: to be finished !\n");
-    *flag = -1;
-    return;
-    str[ipar[1]] = '\0';
-    fd = fopen(str,"rb");
-    if (!fd ) {
-      sciprint("Could not open the file!\n");
-      *flag = -1;
-      return;
-    }
-    z[3]=(long)fd;
-    /* skip first records */
-    if (ipar[9]>1) {
-      sciprint("Error: to be done \r\n");
-      /* F2C(cvstr)(&three,&(ipar[2]),type,&job,strlen(type)); */
-      for (i=2;i>=0;i--)
-	if (type[i]!=' ') { type[i+1]='\0';break;}
-      offset=(ipar[9]-1)*ipar[7]*sizeof(char);
-      irep = fseek(fd,offset,0) ;
-      if ( irep != 0 ) 
+  if (*flag==1) 
+    {
+      unsigned char *record=(unsigned char *) buffer;
+      n    = wi->n;
+      k    = (int)z[1];
+      /* copy current record to output */
+      record += (k-1)*wi->maxvoie;
+      for (i=0;i<*nout;i++)
 	{
-	  sciprint("Read error\r\n");
-	  *flag = -1;
-	  fclose(fd);
-	  z[3] = 0.0;
-	  return;
+	  mu= st_ulaw_to_linear(record[i]);
+	  *outptr[i]= mu/32768.0;
+	}
+      if (*nevprt >0 ) 
+	{
+	  /*     discrete state */
+	  kmax =(int) z[2];
+	  if( k >= kmax && kmax==n ) 
+	    {
+	      m= wi->n*wi->maxvoie;
+	      /* assuming 8-bits mu-law */
+	      if ( nsp_mget(F,buffer,m,"uc",&nread) == FAIL) goto read_fail;
+	      /* XXX : check eof */
+	      kmax=wi->n;
+	      z[1] = 1.0;
+	      z[2] = kmax;
+	    }
+	  else if (k<kmax) 
+	    z[1] = z[1]+1.0;
 	}
     }
-    /* read first buffer */
-    m=ipar[6]*ipar[7];
-    /* F2C(cvstr)(&three,&(ipar[2]),type,&job,strlen(type)); */
-    sciprint("Error: cvstr to be done !\n");
-    for (i=2;i>=0;i--)
-      if (type[i]!=' ') { type[i+1]='\0';break;}
-    /* XXXXXXXX mget2(fd,ipar[8],buffer,m,type,&ierr); */
-    ierr=1;
-    if (ierr>0) {
-      sciprint("Read error!\n");
-      *flag = -1;
-      fclose(fd);
+  else if (*flag==4) 
+    {
+      char str[FSIZE];
+      int i;
+      unsigned int au_format;
+      /* get the file name from its ascii code  */
+      for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
+      str[wi->len]='\0';
+      if (( F= nsp_file_open(str,"rb",FALSE,wi->swap)) == NULL) 
+	{
+	  Scierror("Error: in scicos_readau_block, could not open the file %s !\n",str);
+	  *flag = -3;
+	  return;
+	}
+      z[3]=(long)F;
+      /* read the header */
+      if ( nsp_mget(F,buffer,4,"c",&nread) == FAIL) goto read_fail;
+      if ( strncmp((char *)buffer,".snd",4) != 0 ) goto read_fail;
+      if ( nsp_mget(F,buffer,1,"ulb",&nread) == FAIL) goto read_fail; /* offset */
+      offset = *((unsigned int *) buffer);
+      if ( nsp_mget(F,buffer,1,"ulb",&nread) == FAIL) goto read_fail;/* databytes */
+      if ( nsp_mget(F,buffer,1,"ulb",&nread) == FAIL) goto read_fail;/* format */
+      au_format = *((unsigned int *) buffer);
+      if ( nsp_mget(F,buffer,1,"ulb",&nread) == FAIL) goto read_fail;/* rate */
+      if ( nsp_mget(F,buffer,1,"ulb",&nread) == FAIL) goto read_fail;/* channels*/
+      if ( nsp_fseek(F,offset-24,"set") == FAIL) goto read_fail;/* last comment */
+      if ( au_format != 1 )  goto read_fail;/* assuming 8-bits au-law */
+      /* skip first records */
+      if ( wi->first > 1 ) 
+	{
+	  offset=(wi->first-1)*wi->maxvoie*sizeof(char);
+	  if ( nsp_fseek(F,offset,"set") == FAIL) goto read_fail;/* last comment */
+	}
+      /* read data in buffer */
+      m= wi->n*wi->maxvoie;
+      /* assuming 8-bits mu-law */
+      if ( nsp_mget(F,buffer,m,"uc",&nread) == FAIL) goto read_fail;
+      /* XXXXX eof reached is to be done */
+      kmax=wi->n;
+      z[1] = 1.0;
+      z[2] = kmax;
+    }
+  else if (*flag==5) 
+    {
+      if(z[3]==0) return;
+      nsp_file_close(F);
+      nsp_file_destroy(F);
       z[3] = 0.0;
-      return;
     }
-    else if (ierr<0) { /* EOF reached */
-      kmax=-(ierr+1)/ipar[7];
-    }
-    else
-      kmax=ipar[6];
-
-    z[1] = 1.0;
-    z[2] = kmax;
-  }
-  else if (*flag==5) {
-    if(z[3]==0) return;
-    fclose(fd);
-    z[3] = 0.0;
-  }
   return;
+ read_fail:
+  Scierror("Error: in scicos_readau_block, read error \n");
+  *flag = -1;
+  nsp_file_close(F);
+  nsp_file_destroy(F);
+  z[3] = 0.0;
+  return;
+
 }
 
 
@@ -3202,106 +3156,135 @@ void scicos_slider_block(int *flag, int *nevprt, double *t, double *xd,
   }
 }
 
+#undef ZEROTRAP      /* turn off the trap as per the MIL-STD */
+#define uBIAS 0x84   /* define the add-in bias for 16 bit samples */
+#define uCLIP 32635
+#define ACLIP 31744
+
+static unsigned char st_linear_to_ulaw(int  sample )
+{
+  static int exp_lut[256] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
+			     4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+			     5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+			     5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+			     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+			     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+			     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+			     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+			     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7};
+  int sign, exponent, mantissa;
+  unsigned char ulawbyte;
+
+  /* Get the sample into sign-magnitude. */
+  sign = (sample >> 8) & 0x80;		/* set aside the sign */
+  if ( sign != 0 ) sample = -sample;		/* get magnitude */
+  if ( sample > uCLIP ) sample = uCLIP;		/* clip the magnitude */
+
+  /* Convert from 16 bit linear to ulaw. */
+  sample = sample + uBIAS;
+  exponent = exp_lut[( sample >> 7 ) & 0xFF];
+  mantissa = ( sample >> ( exponent + 3 ) ) & 0x0F;
+  ulawbyte = ~ ( sign | ( exponent << 4 ) | mantissa );
+#ifdef ZEROTRAP
+  if ( ulawbyte == 0 ) ulawbyte = 0x02;	/* optional CCITT trap */
+#endif
+  return ulawbyte;
+}
 
 void scicos_writeau_block(scicos_args_F2);
 
 void scicos_writeau_block(int *flag, int *nevprt, double *t, double *xd, double *x,
-	     int *nx, double *z, int *nz, double *tvec, int *ntvec,
-	     double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
-	     int *insz, int *nin, double **outptr, int *outsz, int *nout)
+			  int *nx, double *z, int *nz, double *tvec, int *ntvec,
+			  double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr,
+			  int *insz, int *nin, double **outptr, int *outsz, int *nout)
 {
-  /*
-    ipar[1]   = lfil : file name length
-    ipar[2:4] = fmt  : numbers type ascii code
-    ipar[5]   = n : buffer length in number of records
-    ipar[6]   = swap
-    ipar[7:6+lfil] = character codes for file name
-  */
-  FILE *fd;
-  int n, k,/* m,*/ i, ierr;
-  double *buffer,*record;
-  /*  long offset;*/
-  int SCALE  = 32768;
-  int BIAS   =   132;
-  int CLIP   = 32635;
-  int OFFSET =   335;
-  double y;
-  int sig;
-  int e;
-  double f;
-  --ipar;
+  /* ipar=[len : file name length,  ipar[2:4] = fmt  : numbers type ascii code,
+   *       n, swap, ipar[10:9+lfil] character codes for file name]
+   */
+  typedef struct _writeau_ipar writeau_ipar ;
+  struct _writeau_ipar {int len, fmt[3],n,swap,fname;};
+  writeau_ipar *wi =  (writeau_ipar*) ipar;
+  NspFile *F;
+  int n, k, i;
+  double *buffer;
+  const int SCALE  = 32768;
   --z;
-  fd=(FILE *)(long)z[2];
+  F=(NspFile *)(long)z[2];
   buffer = (z+3);
-  ierr=0;
+
+
   /*
-    k    : record counter within the buffer
-  */
+   *    k    : record counter within the buffer
+   */
 
-  if (*flag==2&&*nevprt>0) 
-    { /* add a new record to the buffer */
-      n    = ipar[5];
+  if ( *flag==2 && *nevprt>0 ) 
+    { 
+      unsigned char *record =( unsigned char * ) buffer;
+      /* add a new record to the buffer */
+      n    = wi->n;
       k    = (int)z[1];
-      /* copy current record to output 
-	 printf("%i\n",k);*/
-      record=buffer+(k-1)*(*nin); 
-
+      record += (k-1)*(*nin);
       for (i=0;i<*nin;i++)
 	{
-	  y= *inptr[i];
-	  y=SCALE*y;
-	  if (y<0.0)
-	    {
-	      y=-y;
-	      sig=-1;
-	    }
-	  else
-	    sig=1;
-	  if(y>CLIP)
-	    y=CLIP;
-	  y=y+BIAS;
-	  f=frexp(y,&e);
-	  y=64*sig-16*e- (int) (32*f)+OFFSET;
-	  record[i] = y;
+	  record[i] = st_linear_to_ulaw((int) (SCALE*(*inptr[i])));
 	}
-      if (k<n) 
+      if ( k<n ) 
 	z[1] = z[1]+1.0;
       else {
-	/*XXXXXXXX mput2(fd,ipar[6],buffer,ipar[5]*(*nin),"uc",&ierr); */
-	ierr=1;
-	if(ierr!=0) {
+	if ( nsp_mput(F,buffer,wi->n*(*nin),"uc") == FAIL) goto write_fail; /* offset */
+	z[1] = 1.0;
+      }
+    }
+  else if (*flag==4) 
+    {
+      char str[FSIZE];
+      int i;
+      unsigned int xx;
+      /* get the file name from its ascii code  */
+      for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
+      str[wi->len]='\0';
+      if (( F= nsp_file_open(str,"wb",FALSE,wi->swap)) == NULL) 
+	{
+	  Scierror("Error: in scicos_readau_block, could not open the file %s !\n",str);
 	  *flag = -3;
 	  return;
 	}
-	z[1] = 1.0;
-	
-      }
-      
+      z[2]=(long)F;
+      /* write the header */
+      if ( nsp_mput(F,".snd",4,"c") == FAIL) goto write_fail;
+      xx=24;if ( nsp_mput(F,&xx,1,"ulb") == FAIL) goto write_fail; /* offset */
+      xx=0; if ( nsp_mput(F,&xx,1,"ulb") == FAIL) goto write_fail;/* databytes (optional) */
+      xx=1; if ( nsp_mput(F,&xx,1,"ulb") == FAIL) goto write_fail;/* format mu-law 8-bits*/
+      xx=22050/(*nin);if ( nsp_mput(F,&xx,1,"ulb") == FAIL) goto write_fail;/* rate */
+      xx=*nin;if ( nsp_mput(F,&xx,1,"ulb") == FAIL) goto write_fail;/* channels*/
+      z[1] = 1.0;
     }
-  else if (*flag==4) {
-    fd = fopen("/dev/audio","wb");
-    if (!fd ) {
-      sciprint("Could not open /dev/audio!\n");
-      *flag = -3;
-      return;
+  else if (*flag==5) 
+    {
+      if(z[2]==0) return;
+      k    =(int) z[1];
+      if ( k>1 ) 
+	{
+	  if ( nsp_mput(F,buffer,(k-1)*(*nin),"uc") == FAIL) goto write_fail; /* offset */
+	}
+      nsp_file_close(F);
+      nsp_file_destroy(F);
+      z[2] = 0.0;
     }
-    z[2]=(double)(long)fd;
-    z[1] = 1.0;
-  }
-  else if (*flag==5) {
-    if(z[2]==0) return;
-    k    =(int) z[1];
-    if (k>1) {/* flush rest of buffer */
-      /*XXXXXXXX mput2(fd,ipar[6],buffer,(k-1)*(*nin),"uc",&ierr); */
-      ierr=1;
-      if(ierr!=0) {
-	*flag = -3;
-	return;
-      }
-    }
-    fclose(fd);
-    z[2] = 0.0;
-  }
+  return;
+ write_fail:
+  Scierror("Error: in scicos_writedau_block, write error \n");
+  *flag = -1;
+  nsp_file_close(F);
+  nsp_file_destroy(F);
+  z[2] = 0.0;
   return;
 }
 
@@ -3811,7 +3794,6 @@ void scicos_readc_block(int *flag, int *nevprt, double *t, double *xd, double *x
   double *buffer,*record;
   int k, kmax, m, *mask, nread;
   long offset;
-
   --z;
   F=(NspFile *)(long)z[3];
   buffer = (z+4);
@@ -4374,7 +4356,7 @@ int scicos_ifthel_block(scicos_args_Fm1);
 
 int
 scicos_ifthel_block (int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar,
-	       int *ipar, int *nipar, double *u, int *nu)
+		     int *ipar, int *nipar, double *u, int *nu)
 {
   if (C2F(dbcos).idb == 1)
     {
