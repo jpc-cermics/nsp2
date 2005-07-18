@@ -529,7 +529,13 @@ static int int_hash_get_attribute(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(-1,1);
   if ((H = GetHash(stack,1)) == NULLHASH) return RET_BUG;
   if ((key = GetString(stack,2)) == (char*)0) return RET_BUG;  
-  if (nsp_hash_find_and_copy(H,key,&O) == OK ) 
+  /* if (nsp_hash_find_and_copy(H,key,&O) == OK )  */
+  /* here we do not copy the object since we can be in the 
+   * middle of the evaluation of an expression like H.x in 
+   * H.x.y= 6;
+   * XXX pb ça donne un plantage 
+   */
+  if (nsp_hash_find(H,key,&O) == OK )
     {
       /* H('key') **/
       MoveObj(stack,1,O);

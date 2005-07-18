@@ -68,7 +68,7 @@ st_linear_to_ulaw(int  sample )
 #endif
 
     return ulawbyte;
-    }
+}
 
 /*
 ** This routine converts from ulaw to 16 bit linear.
@@ -93,13 +93,12 @@ st_ulaw_to_linear(unsigned char ulawbyte )
   int sign, exponent, mantissa, sample;
 
   ulawbyte = ~ ulawbyte;
-    sign = ( ulawbyte & 0x80 );
-    exponent = ( ulawbyte >> 4 ) & 0x07;
-    mantissa = ulawbyte & 0x0F;
-    sample = exp_lut[exponent] + ( mantissa << ( exponent + 3 ) );
-    if ( sign != 0 ) sample = -sample;
-
-    return sample;
+  sign = ( ulawbyte & 0x80 );
+  exponent = ( ulawbyte >> 4 ) & 0x07;
+  mantissa = ulawbyte & 0x0F;
+  sample = exp_lut[exponent] + ( mantissa << ( exponent + 3 ) );
+  if ( sign != 0 ) sample = -sample;
+  return sample;
 }
 
 #else
