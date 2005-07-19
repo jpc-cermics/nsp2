@@ -646,8 +646,11 @@ static int int_lxnull(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Extract requested elements of the list 
- * an store them on the stack 
+ * Extract requested elements of the list an store them on the stack 
+ * Note that the extracted elements has a name (lel) and is not copied.
+ * It is important not to copy extracted element since extract 
+ * will be called in expression like L(1).set[cla_color=29] 
+ * and a method can change an object. 
  */
 
 static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
@@ -659,6 +662,7 @@ static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
   CheckRhs (2,2);
   if ((L    = GetList(stack,1)) == NULLLIST) return RET_BUG;
   if ((Elts = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  L_name=Ocheckname(L,NVOID);
   l =nsp_list_length(L);
   Bounds(Elts,&rmin,&rmax);
   if ( rmin < 1  || rmax > l) 
@@ -677,7 +681,11 @@ static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
 		   ArgPosition((int) Elts->R[i]));
 	  return RET_BUG;
 	}
-      if ((O=nsp_object_copy(O)) == NULLOBJ) return RET_BUG;
+      /* If NspList has no name or list element has no name we must copy */
+      if ( L_name || Ocheckname(O,NVOID) ) 
+	{
+	  if ((O=nsp_object_copy(O)) == NULLOBJ) return RET_BUG;
+	}
       NthObj(rhs+i+1)= O;
     }
   /* 
@@ -694,8 +702,11 @@ static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
   return nret;
 }
 
-/* Un Pb a régler : la variable retournée a un nom .... */
-/* XXXXX */
+/*
+ * Extract requested elements of the list an store them on the stack 
+ * Note that the extracted elements have names and is not copied.
+ */
+
 
 static int int_lxextract_s(Stack stack, int rhs, int opt, int lhs)
 {
