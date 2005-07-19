@@ -223,20 +223,20 @@ static int int_spconcatdiag(Stack stack, int rhs, int opt, int lhs)
 static int int_spsetrc(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpMatrix *A,*B;
-  NspMatrix *Rows,*Cols=NULLMAT;
+  NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT;
   CheckRhs(3,4);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((A = GetSp(stack,1)) == NULLSP) goto ret_bug;
   if ( IsBMatObj(stack,2)  ) 
     {
       /* Rows is boolean : use find(Rows) **/
       NspBMatrix *BRows ;
-      if ((BRows = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-      if ((Rows =nsp_bmatrix_find(BRows)) == NULLMAT) return RET_BUG;
+      if ((BRows = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
+      if ((Rows = Rows1 = nsp_bmatrix_find(BRows)) == NULLMAT) goto ret_bug;
     }
   else
     {
-      if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+      if ((Rows = GetRealMat(stack,2)) == NULLMAT) goto ret_bug;
     }
   if ( rhs == 4 )
     {
@@ -244,23 +244,30 @@ static int int_spsetrc(Stack stack, int rhs, int opt, int lhs)
       if ( IsBMatObj(stack,3)  ) 
 	{
 	  NspBMatrix *BCols ;
-	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-	  if ((Cols =nsp_bmatrix_find(BCols)) == NULLMAT) return RET_BUG;
+	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
+	  if ((Cols = Cols1 = nsp_bmatrix_find(BCols)) == NULLMAT) goto ret_bug;
 	}  
       else
 	{
-	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) return RET_BUG;
+	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
 	}
     }
-  if ((B = GetSp(stack,rhs)) == NULLSP ) return RET_BUG;
+  if ((B = GetSp(stack,rhs)) == NULLSP ) goto ret_bug;
   if ( B == A ) 
-    { if ((B = GetSpCopy(stack,rhs)) == NULLSP ) return RET_BUG;}
+    { if ((B = GetSpCopy(stack,rhs)) == NULLSP ) goto ret_bug;}
   if ( rhs == 3 ) 
-    { if (nsp_spmatrix_set_row( A, Rows,B) == FAIL) return RET_BUG; }
+    { if (nsp_spmatrix_set_row( A, Rows,B) == FAIL) goto ret_bug; }
   else 
-    { if (nsp_spmatrix_set_rowcol( A, Rows,Cols,B) == FAIL )  return RET_BUG;} 
+    { if (nsp_spmatrix_set_rowcol( A, Rows,Cols,B) == FAIL )  goto ret_bug;} 
   NSP_OBJECT(A)->ret_pos = 1;
+  nsp_matrix_destroy(Rows1);
+  nsp_matrix_destroy(Cols1);
   return 1;
+ ret_bug: 
+  /* delete if non null; */
+  nsp_matrix_destroy(Rows1);
+  nsp_matrix_destroy(Cols1);
+  return RET_BUG;
 }
 
 

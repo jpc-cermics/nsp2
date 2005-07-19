@@ -2279,7 +2279,7 @@ int
 int_mxsetrc (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *B;
-  NspMatrix *Rows, *Cols = NULLMAT;
+  NspMatrix *Rows,*Rows1=NULLMAT, *Cols = NULLMAT, *Cols1 = NULLMAT;
   CheckRhs (3, 4);
   CheckLhs (1, 1);
   if (IsBMatObj (stack, rhs))
@@ -2287,25 +2287,25 @@ int_mxsetrc (Stack stack, int rhs, int opt, int lhs)
   else if (IsSMatObj (stack, rhs))
     return int_smxsetrc (stack, rhs, opt, lhs);
   if ((A = GetMat (stack, 1)) == NULLMAT)
-    return RET_BUG;
+    goto ret_bug;
   if (IsBMatObj (stack, 2))
     {
       /* Rows is boolean : use find(Rows) * */
       NspBMatrix *BRows;
       if ((BRows = GetBMat (stack, 2)) == NULLBMAT)
-	return RET_BUG;
-      if ((Rows = nsp_bmatrix_find (BRows)) == NULLMAT)
-	return RET_BUG;
+	goto ret_bug;
+      if ((Rows = Rows1 = nsp_bmatrix_find (BRows)) == NULLMAT)
+	goto ret_bug;
     }
   else
     {
       /* Rows is a real matrix : make a copy if Rows == A * */
       if ((Rows = GetRealMat (stack, 2)) == NULLMAT)
-	return RET_BUG;
+	goto ret_bug;
       if (A == Rows)
 	{
 	  if ((Rows = GetRealMatCopy (stack, 2)) == NULLMAT)
-	    return RET_BUG;
+	    goto ret_bug;
 	}
     }
   if (rhs == 4)
@@ -2315,40 +2315,47 @@ int_mxsetrc (Stack stack, int rhs, int opt, int lhs)
 	{
 	  NspBMatrix *BCols;
 	  if ((BCols = GetBMat (stack, 2)) == NULLBMAT)
-	    return RET_BUG;
-	  if ((Cols = nsp_bmatrix_find (BCols)) == NULLMAT)
-	    return RET_BUG;
+	    goto ret_bug;
+	  if ((Cols = Cols1 = nsp_bmatrix_find (BCols)) == NULLMAT)
+	    goto ret_bug;
 	}
       else
 	{
 	  if ((Cols = GetRealMat (stack, 3)) == NULLMAT)
-	    return RET_BUG;
+	    goto ret_bug;
 	  if (Cols == A)
 	    {
 	      if ((Cols = GetRealMatCopy (stack, 3)) == NULLMAT)
-		return RET_BUG;
+		goto ret_bug;
 	    }
 	}
     }
   if ((B = GetMat (stack, rhs)) == NULLMAT)
-    return RET_BUG;
+    goto ret_bug;
   if (B == A)
     {
       if ((B = GetMatCopy (stack, rhs)) == NULLMAT)
-	return RET_BUG;
+	goto ret_bug;
     }
   if (rhs == 3)
     {
       if (nsp_matrix_set_rows (A, Rows, B) == FAIL)
-	return RET_BUG;
+	goto ret_bug;
     }
   else
     {
       if (nsp_matrix_set_submatrix (A, Rows, Cols, B) == FAIL)
-	return RET_BUG;
+	goto ret_bug;
     }
   NSP_OBJECT (A)->ret_pos = 1;
+  nsp_matrix_destroy(Rows1);
+  nsp_matrix_destroy(Cols1);
   return 1;
+ ret_bug: 
+  /* delete if non null; */
+  nsp_matrix_destroy(Rows1);
+  nsp_matrix_destroy(Cols1);
+  return RET_BUG;
 }
 
 
@@ -2400,7 +2407,7 @@ typedef int (*delf1) (NspMatrix * M, NspMatrix * EltsR, NspMatrix * EltsC);
 static int
 int_mxdeleteelts_gen1 (Stack stack, int rhs, int opt, int lhs, delf1 F)
 {
-  NspMatrix *A, *EltsR,*EltsC;
+  NspMatrix *A, *EltsR=NULL,*EltsC=NULL;
   int allocR=FALSE, allocC=FALSE, ret= RET_BUG;
   CheckRhs (3,3);
   CheckLhs (1,1);
@@ -2527,7 +2534,7 @@ static int
 int_mxextractelts_gen (Stack stack, int rhs, int opt, int lhs, extrf F)
 {
   NspMatrix *A, *Res;
-  NspMatrix *Elts;
+  NspMatrix *Elts,*Elts1=NULL; /* Elts1 is here to track object to be freed */
   CheckRhs (2, 2);
   CheckLhs (1, 1);
   if ((A = GetMat (stack, 1)) == NULLMAT)
@@ -2539,7 +2546,7 @@ int_mxextractelts_gen (Stack stack, int rhs, int opt, int lhs, extrf F)
       NspBMatrix *BElts;
       if ((BElts = GetBMat (stack, 2)) == NULLBMAT)
 	return RET_BUG;
-      if ((Elts = nsp_bmatrix_find (BElts)) == NULLMAT)
+      if ((Elts =  Elts1= nsp_bmatrix_find (BElts)) == NULLMAT)
 	return RET_BUG;
     }
   else
@@ -2550,7 +2557,11 @@ int_mxextractelts_gen (Stack stack, int rhs, int opt, int lhs, extrf F)
     }
 
   if ((Res = (*F) (A, Elts)) == NULLMAT)
-    return RET_BUG;
+    {
+      nsp_matrix_destroy(Elts1); 
+      return RET_BUG;
+    }
+  nsp_matrix_destroy(Elts1); 
   MoveObj (stack, 1, (NspObject *) Res);
   return 1;
 }

@@ -295,30 +295,30 @@ int int_smxaddrows(Stack stack, int rhs, int opt, int lhs)
 int int_smxsetrc(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A,*B;
-  NspMatrix *Rows,*Cols=NULLMAT;
+  NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT;
   CheckRhs(3,4);
   CheckLhs(1,1);
   if ( IsSMatObj(stack,1)  ) 
     {
       /* A is string matrix **/
-      if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+      if ((A = GetSMat(stack,1)) == NULLSMAT) goto ret_bug;
     }
   else 
     {
       Scierror("Error: A(...)= B, A and B must be of the same type\n");
-      return RET_BUG;
+      goto ret_bug;
     }
   if ( IsBMatObj(stack,2)  ) 
     {
       /* Rows is boolean : use find(Rows) **/
       NspBMatrix *BRows ;
-      if ((BRows = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-      if ((Rows =nsp_bmatrix_find(BRows)) == NULLMAT) return RET_BUG;
+      if ((BRows = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
+      if ((Rows = Rows1 = nsp_bmatrix_find(BRows)) == NULLMAT) goto ret_bug;
     }
   else
     {
       /* Rows is a real matrix **/
-      if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+      if ((Rows = GetRealMat(stack,2)) == NULLMAT) goto ret_bug;
     }
   if ( rhs == 4 )
     {
@@ -326,28 +326,33 @@ int int_smxsetrc(Stack stack, int rhs, int opt, int lhs)
       if ( IsBMatObj(stack,3)  ) 
 	{
 	  NspBMatrix *BCols ;
-	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-	  if ((Cols =nsp_bmatrix_find(BCols)) == NULLMAT) return RET_BUG;
+	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
+	  if ((Cols = Cols1 = nsp_bmatrix_find(BCols)) == NULLMAT) goto ret_bug;
 	}  
       else
 	{
-	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) return RET_BUG;
+	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
 	}
     }
   /* last argument is B a String NspMatrix **/
-  if ((B = GetSMat(stack,rhs)) == NULLSMAT) return RET_BUG;
+  if ((B = GetSMat(stack,rhs)) == NULLSMAT) goto ret_bug;
   if ( B == A) 
     {
-      if ((B = GetSMatCopy(stack,rhs)) == NULLSMAT) return RET_BUG;
+      if ((B = GetSMatCopy(stack,rhs)) == NULLSMAT) goto ret_bug;
     }
   if ( rhs == 3 )
-    {  if ( nsp_smatrix_set_rows( A, Rows,B) != OK) return RET_BUG; }
+    {  if ( nsp_smatrix_set_rows( A, Rows,B) != OK) goto ret_bug; }
   else
-    {  if ( nsp_smatrix_set_submatrix( A, Rows,Cols,B) != OK) return RET_BUG;}
-
-
+    {  if ( nsp_smatrix_set_submatrix( A, Rows,Cols,B) != OK) goto ret_bug;}
   NSP_OBJECT(A)->ret_pos = 1;
+  nsp_matrix_destroy(Rows1);
+  nsp_matrix_destroy(Cols1);
   return 1;
+ ret_bug: 
+  /* delete if non null; */
+  nsp_matrix_destroy(Rows1);
+  nsp_matrix_destroy(Cols1);
+  return RET_BUG;
 }
 
 /* generic interface for elts, rows and columns deletion **/
@@ -460,7 +465,7 @@ int int_smxextractelts_gen(Stack stack, int rhs, int opt, int lhs, extrf F)
 {
   int err;
   NspSMatrix *A,*Res;
-  NspMatrix *Elts;
+  NspMatrix *Elts,*Elts1=NULL; /* Elts1 is here to track object to be freed */
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
@@ -470,7 +475,7 @@ int int_smxextractelts_gen(Stack stack, int rhs, int opt, int lhs, extrf F)
       /* Elts is boolean : use find(Elts) **/
       NspBMatrix *BElts;
       if ((BElts = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-      if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) return RET_BUG;
+      if ((Elts = Elts1 = nsp_bmatrix_find(BElts)) == NULLMAT) return RET_BUG;
     }
   else
     {
@@ -481,11 +486,16 @@ int int_smxextractelts_gen(Stack stack, int rhs, int opt, int lhs, extrf F)
   Res = (*F)( A, Elts,&err);
   if ( err == 1) 
     {
+      nsp_matrix_destroy(Elts1); 
       Scierror("Error:\tIndices out of bound\n");
       return RET_BUG;
     }
-  if ( Res  == NULLSMAT) return RET_BUG;
-
+  if ( Res  == NULLSMAT) 
+    {
+      nsp_matrix_destroy(Elts1); 
+      return RET_BUG;
+    }
+  nsp_matrix_destroy(Elts1); 
   MoveObj(stack,1,(NspObject *)Res);
   return 1;
 }

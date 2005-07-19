@@ -794,32 +794,32 @@ static int int_bmatrix_addrows(Stack stack, int rhs, int opt, int lhs)
 int int_bmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 {
   NspBMatrix *A,*B;
-  NspMatrix *Rows,*Cols=NULLMAT;
+  NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT;
   CheckRhs(3,4);
   CheckLhs(1,1);
 
   if ( IsBMatObj(stack,1) ) 
     {
       /* A is boolean **/
-      if ((A = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
+      if ((A = GetBMat(stack,1)) == NULLBMAT) goto ret_bug;
     }
   else 
     {
       Scierror("Error: A(...)= B, A and B must be of the same type\n");
-      return RET_BUG;
+      goto ret_bug;
     }
 
   if ( IsBMatObj(stack,2)  ) 
     {
       /* Rows is boolean: use find(Rows) **/
       NspBMatrix *BRows ;
-      if ((BRows = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-      if ((Rows =nsp_bmatrix_find(BRows)) == NULLMAT) return RET_BUG;
+      if ((BRows = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
+      if ((Rows = Rows1 = nsp_bmatrix_find(BRows)) == NULLMAT) goto ret_bug;
     }
   else
     {
       /* Rows is a real matrix **/
-      if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+      if ((Rows = GetRealMat(stack,2)) == NULLMAT) goto ret_bug;
     }
   if ( rhs == 4 )
     {
@@ -827,26 +827,33 @@ int int_bmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
       if ( IsBMatObj(stack,3) ) 
 	{
 	  NspBMatrix *BCols ;
-	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-	  if ((Cols =nsp_bmatrix_find(BCols)) == NULLMAT) return RET_BUG;
+	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
+	  if ((Cols = Cols1 = nsp_bmatrix_find(BCols)) == NULLMAT) goto ret_bug;
 	}  
       else
 	{
-	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) return RET_BUG;
+	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
 	}
     }
-  if ((B = GetBMat(stack,rhs)) == NULLBMAT) return RET_BUG;
+  if ((B = GetBMat(stack,rhs)) == NULLBMAT) goto ret_bug;
   if ( B == A) 
     {
-      if ((B = GetBMatCopy(stack,rhs)) == NULLBMAT) return RET_BUG;
+      if ((B = GetBMatCopy(stack,rhs)) == NULLBMAT) goto ret_bug;
     }
   if ( rhs == 3 )
-    {  if (nsp_bmatrix_set_rows( A, Rows,B) != OK) return RET_BUG; }
+    {  if (nsp_bmatrix_set_rows( A, Rows,B) != OK) goto ret_bug; }
   else
-    {  if (nsp_bmatrix_set_submatrix( A, Rows,Cols,B) != OK) return RET_BUG;}
+    {  if (nsp_bmatrix_set_submatrix( A, Rows,Cols,B) != OK) goto ret_bug;}
 
   NSP_OBJECT(A)->ret_pos = 1;
+  nsp_matrix_destroy(Rows1);
+  nsp_matrix_destroy(Cols1);
   return 1;
+ ret_bug: 
+  /* delete if non null; */
+  nsp_matrix_destroy(Rows1);
+  nsp_matrix_destroy(Cols1);
+  return RET_BUG;
 }
 
 
@@ -957,7 +964,7 @@ typedef NspBMatrix * (*extrf) (NspBMatrix *M,NspMatrix *Elts);
 static int int_bmatrix_extractelts_gen(Stack stack, int rhs, int opt, int lhs, extrf F)
 {
   NspBMatrix *A,*Res;
-  NspMatrix *Elts;
+  NspMatrix *Elts,*Elts1=NULL; /* Elts1 is here to track object to be freed */
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((A = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
@@ -967,7 +974,7 @@ static int int_bmatrix_extractelts_gen(Stack stack, int rhs, int opt, int lhs, e
       /* Elts is boolean: use find(Elts) **/
       NspBMatrix *BElts;
       if ((BElts = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-      if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) return RET_BUG;
+      if ((Elts = Elts1 = nsp_bmatrix_find(BElts)) == NULLMAT) return RET_BUG;
     }
   else
     {
@@ -975,7 +982,13 @@ static int int_bmatrix_extractelts_gen(Stack stack, int rhs, int opt, int lhs, e
       if ((Elts = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
     }
 
-  if ((Res = (*F)( A, Elts)) == NULLBMAT) return RET_BUG;
+  if ((Res = (*F)( A, Elts)) == NULLBMAT)
+    {
+      nsp_matrix_destroy(Elts1); 
+      return RET_BUG;
+    }
+  nsp_matrix_destroy(Elts1); 
+
   MoveObj(stack,1,(NspObject *)Res);
   return 1;
 }
