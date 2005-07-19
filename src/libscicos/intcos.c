@@ -227,17 +227,21 @@ static int int_tree3(Stack stack, int rhs, int opt, int lhs)
     }
   nb = M[0]->mn;
   if ((ipord = nsp_matrix_create(NVOID,'r',1,nb)) == NULLMAT) return RET_BUG;
-  if ((ok = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return RET_BUG;
   if ((ipkk = nsp_matrix_create(NVOID,'r',1,nb)) == NULLMAT) return RET_BUG;
-
   scicos_ftree3(M[0]->I,&M[0]->mn,M[1]->I,M[2]->I,M[3]->I,M[4]->I,M[5]->I,M[6]->I,ipkk->I,
 		ipord->I,&nord,&iok);
+  nsp_matrix_destroy(ipkk);
   ipord->convert= 'i';
   ipord = Mat2double(ipord);
   if ( nsp_matrix_resize(ipord,nord,1) == FAIL) return RET_BUG;
-  ok->R[0]=iok;
   MoveObj(stack,1,(NspObject *)ipord);
-  if ( lhs == 2) MoveObj(stack,2,(NspObject *)ok);
+  if ( lhs == 2) 
+    {
+      if ((ok = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return RET_BUG;
+      ok->R[0]=iok;
+      MoveObj(stack,2,(NspObject *)ok);
+    }
+  
   return Max(lhs,1);
 }
 

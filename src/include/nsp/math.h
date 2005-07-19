@@ -76,6 +76,8 @@ extern double Maxi();  /* XXXX a mettre ailleurs **/
 #define anint(x) rint(x) 
 /* partie entiere **/
 #define aint(x) ((x>= 0 ) ? floor(x)  : ceil(x))
+/* from fortran but no pointer here */
+#define d_nint(x) (x)>=0 ? floor(x + .5) : -floor(.5 - x)
 
 
 /* missing prototype */

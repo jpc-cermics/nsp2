@@ -416,7 +416,7 @@ L130:
 /*     INVERSE CDF LOGIC FOR MEAN LESS THAN 30 */
 
 L140:
-  qn = pow_di (&q, n);
+  qn = pow(q, *n); /* pow_di */
   r__ = p / q;
   g = r__ * (*n + 1);
 L150:

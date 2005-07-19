@@ -125,13 +125,13 @@ double nsp_dlamch (char *cmach)
 	{
 	  rnd = one;
 	  i_1 = 1 - it;
-	  eps = pow_di (&base, &i_1) / 2;
+	  eps = pow(base, i_1) / 2; /* pow_di */
 	}
       else
 	{
 	  rnd = zero;
 	  i_1 = 1 - it;
-	  eps = pow_di (&base, &i_1);
+	  eps = pow(base, i_1);/* pow_di */
 	}
       prec = eps * base;
       emin = (double) imin;
@@ -438,7 +438,7 @@ static int nsp_dlamc2 (int *beta, int *t, int *rnd, double *eps,
 
       b = (double) lbeta;
       i_1 = -lt;
-      a = pow_di (&b, &i_1);
+      a = pow(b, i_1); /* pow_di */
       leps = a;
       /*        Try some tricks to see whether or not this is the correct  EPS. */
       b = two / 3;

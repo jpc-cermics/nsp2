@@ -69,13 +69,13 @@ double cdf_dlamch (char *cmach, long int cmach_len)
 	{
 	  rnd = one;
 	  i__1 = 1 - it;
-	  eps = pow_di (&base, &i__1) / 2;
+	  eps = pow (base, i__1) / 2;
 	}
       else
 	{
 	  rnd = zero;
 	  i__1 = 1 - it;
-	  eps = pow_di (&base, &i__1);
+	  eps = pow(base, i__1);
 	}
       prec = eps * base;
       emin = (double) imin;
@@ -385,7 +385,7 @@ static int cdf_dlamc2 (int *beta, int *t, int *rnd, double *eps,
 
       b = (double) lbeta;
       i__1 = -lt;
-      a = pow_di (&b, &i__1);
+      a = pow (b, i__1);
       leps = a;
 
 /*        Try some tricks to see whether or not this is the correct  EPS. */

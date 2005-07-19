@@ -187,7 +187,7 @@ L70:
       goto L80;
     }
   px = -(*mu);
-  py = pow_di (mu, &ret_val) / fact[ret_val];
+  py = pow (*mu, ret_val) / fact[ret_val];
   goto L110;
   /*             CASE IGNPOI .GE. 10 USES POLYNOMIAL APPROXIMATION */
   /*             A0-A7 FOR ACCURACY WHEN ADVISABLE */

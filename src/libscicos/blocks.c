@@ -504,9 +504,9 @@ int scicos_fsv_block(scicos_args_F0)
     {
       d__1 = 2 / (g + 1.);
       d__2 = g / (g - 1.);
-      a = pow_dd (&d__1, &d__2);
+      a = pow(d__1,d__2);
     }
-  y[1] = sqrt (g * 2. * (pow_dd (&a, &a0) - pow_dd (&a, &b0)) / (g - 1.));
+  y[1] = sqrt (g * 2. * (pow(a,a0) - pow(a,b0)) / (g - 1.));
 
   return 0;
 }			
@@ -1435,7 +1435,7 @@ int scicos_pow_block(scicos_args_F0)
 	      *flag__ = -2;
 	      return 0;
 	    }
-	  y[i__] = pow_dd (&u[i__], &rpar[1]);
+	  y[i__] = pow(u[i__],rpar[1]);
 	  /* L15: */
 	}
     }
@@ -1453,8 +1453,7 @@ int scicos_pow_block(scicos_args_F0)
 	      *flag__ = -2;
 	      return 0;
 	    }
-	  y[i__] = pow_di (&u[i__], &ipar[1]);
-	  /* L25: */
+	  y[i__] = pow(u[i__], ipar[1]); /* pow_di */
 	}
     }
   return 0;
@@ -1467,7 +1466,6 @@ int scicos_pow_block(scicos_args_F0)
 int scicos_qzcel_block(scicos_args_F0) 
 {
   double d__1;
-  double d_nint (double *);
   int i__;
   --y;
   --u;
@@ -1480,7 +1478,7 @@ int scicos_qzcel_block(scicos_args_F0)
   for (i__ = 1; i__ <= *nu ; ++i__)
     {
       d__1 = u[i__] / rpar[i__] - .5;
-      y[i__] = rpar[i__] * d_nint (&d__1);
+      y[i__] = rpar[i__] * d_nint (d__1);
     }
   return 0;
 }			
@@ -1491,7 +1489,6 @@ int scicos_qzcel_block(scicos_args_F0)
 int scicos_qzflr_block(scicos_args_F0) 
 {
   double d__1;
-  double d_nint (double *);
   int i__;
   --y;
   --u;
@@ -1504,7 +1501,7 @@ int scicos_qzflr_block(scicos_args_F0)
   for (i__ = 1; i__ <= *nu ; ++i__)
     {
       d__1 = u[i__] / rpar[i__] + .5;
-      y[i__] = rpar[i__] * d_nint (&d__1);
+      y[i__] = rpar[i__] * d_nint (d__1);
     }
   return 0;
 }			
@@ -1515,7 +1512,6 @@ int scicos_qzflr_block(scicos_args_F0)
 int scicos_qzrnd_block(scicos_args_F0)
 {
   double d__1;
-  double d_nint (double *);
   int i__;
   --y;
   --u;
@@ -1530,12 +1526,12 @@ int scicos_qzrnd_block(scicos_args_F0)
       if (u[i__] < 0.)
 	{
 	  d__1 = u[i__] / rpar[i__] + .5;
-	  y[i__] = rpar[i__] * (d_nint (&d__1) - .5);
+	  y[i__] = rpar[i__] * (d_nint (d__1) - .5);
 	}
       else
 	{
 	  d__1 = u[i__] / rpar[i__] - .5;
-	  y[i__] = rpar[i__] * (d_nint (&d__1) + .5);
+	  y[i__] = rpar[i__] * (d_nint (d__1) + .5);
 	}
     }
   return 0;
