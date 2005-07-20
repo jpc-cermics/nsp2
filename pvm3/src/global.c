@@ -36,6 +36,9 @@ static char rcsid[] =
  *	General PVM Globals.
  *
  * $Log$
+ * Revision 1.1.1.1  2004/04/26 15:36:58  stochopt
+ * Imported sources
+ *
  * Revision 1.1.1.1  2003/11/14 13:02:08  stochopt
  * Imported files
  *
@@ -222,7 +225,7 @@ struct pvmmclass *pvmmboxclasses = 0;	/* the mbox database */
 
 /* Trace Data Identifier Structures */
 
-struct Pvmtevdid pvmtevdidlist[] =
+struct Pvmtevdid pvmtevdidlist__[] =
 {
 	/* TEV_DID_AN */	"AN",	"PVM Architecture Name",
 	/* TEV_DID_AC */	"AC",	"PVM Architecture Code",
@@ -352,7 +355,7 @@ struct Pvmtevdid pvmtevdidlist[] =
 
 /* Trace Event Info */
 
-struct Pvmtevinfo pvmtevinfo[] =
+struct Pvmtevinfo pvmtevinfo__[] =
 {
 	/* TEV_ADDHOSTS */		"addhosts",		0,	{ 0, 0 }, { 0, 0 }, 0,
 	/* TEV_BARRIER */		"barrier",		0,	{ 0, 0 }, { 0, 0 }, 0,
@@ -464,4 +467,7 @@ struct Pvmtevinfo pvmtevinfo[] =
 	/* TEV_PROFILING */		"profiling",	0,	{ 0, 0 }, { 0, 0 }, 0,
 	/* TEV_USER_DEFINED */	"user_defined",	0,	{ 0, 0 }, { 0, 0 }, 0
 };
+
+struct Pvmtevdid *pvmtevdidlist = pvmtevdidlist__; /* jpc : gcc4 */
+struct Pvmtevinfo *pvmtevinfo = pvmtevinfo__ ;/* jpc : gcc4 */
 
