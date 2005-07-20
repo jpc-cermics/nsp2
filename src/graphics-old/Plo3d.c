@@ -609,7 +609,7 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	      else
 		{
 		  /* fill */
-		  shade(Xgc,polyx,polyy,cvect+(*p)*locindex[i],*p,flag[0]);
+		  nsp_shade(Xgc,polyx,polyy,cvect+(*p)*locindex[i],*p,flag[0]);
 		  /* draw if requested but just check on the first color */ 
 		  if ( cvect[(*p)*locindex[i]] >= 0 ) 
 		    {
@@ -1705,7 +1705,7 @@ static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin
  *       routines 
  *-----------------------------------------------------------------------*/
 
-int shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysize, int flag)
+int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysize, int flag)
 {
   int px[5],py[5],fil[4],is[3],ie[3],n[3];
   int npoly=1,k,col,cols,psize,i,s,e;
@@ -1801,11 +1801,11 @@ int shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysi
     px[0]=polyx[0]; px[1]=polyx[1]; px[2]=polyx[2];
     py[0]=polyy[0]; py[1]=polyy[1]; py[2]=polyy[2];
     fil[0]=fill[0]; fil[1]=fill[1]; fil[2]=fill[2];
-    shade(Xgc,px,py,fil,3,flag);
+    nsp_shade(Xgc,px,py,fil,3,flag);
     px[0]=polyx[0]; px[1]=polyx[2]; px[2]=polyx[3];
     py[0]=polyy[0]; py[1]=polyy[2]; py[2]=polyy[3];
     fil[0]=fill[0]; fil[1]=fill[2]; fil[2]=fill[3];
-    shade(Xgc,px,py,fil,3,flag);
+    nsp_shade(Xgc,px,py,fil,3,flag);
   }
   return 0;
 }     

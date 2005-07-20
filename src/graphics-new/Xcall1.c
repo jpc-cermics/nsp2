@@ -621,7 +621,7 @@ static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int
   if (Xgc->record_flag == TRUE) store_fillpolylines_1(Xgc,vx,vy,fillvect,n,p,v1);
 
   if (v1 == 2) {
-    for (i=0 ; i< (n) ;i++) shade(Xgc,&xm[(p)*i],&ym[(p)*i],&fillvect[(p)*i],p,0);
+    for (i=0 ; i< (n) ;i++) nsp_shade(Xgc,&xm[(p)*i],&ym[(p)*i],&fillvect[(p)*i],p,0);
   }
   else 
     Xgc->graphic_engine->fillpolylines(Xgc,xm,ym,fillvect,n,p);

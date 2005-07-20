@@ -66,10 +66,10 @@
 #define WITH_PVM 1
 
 /* Define if have and use GTKGLEXT */
-/* #undef WITH_GTKGLEXT */
+#define WITH_GTKGLEXT 1
 
 /* Define if have and use GTKHTML */
-/* #undef WITH_GTKHTML */
+#define WITH_GTKHTML 1
 
 /* Define if use maxplus lib  */
 /* #undef WITH_MAXPLUSLIB */
@@ -78,7 +78,7 @@
 /* #undef WITH_UMFPACK */
 
 /* Define if use fftw3 lib  */
-/* #undef WITH_FFTW3 */
+#define WITH_FFTW3 1
 
 /* Define if sizeof(int*)==sizeof(int) */
 #define POINTER_INT 1
