@@ -25,6 +25,12 @@ static char rcsid[] =
  */
 
 
+/* jpc */
+
+#ifdef	HASSTDLIB
+#include <stdlib.h>
+#endif
+
 #include "trclib.h"
 
 #ifdef WIN32

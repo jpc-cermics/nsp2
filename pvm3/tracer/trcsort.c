@@ -24,6 +24,11 @@ static char rcsid[] =
  * Tracer was funded by the U.S. Department of Energy.
  */
 
+/* jpc */
+
+#ifdef	HASSTDLIB
+#include <stdlib.h>
+#endif
 
 /* Tracer Headers */
 

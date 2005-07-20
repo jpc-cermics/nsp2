@@ -26,6 +26,12 @@
 
 /* System Header Files */
 
+/* jpc */
+
+#ifdef	HASSTDLIB
+#include <stdlib.h>
+#endif
+
 #include <stdio.h>
 #ifdef	SYSVSTR
 #include <string.h>

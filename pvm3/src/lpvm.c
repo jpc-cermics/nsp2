@@ -36,6 +36,9 @@ static char rcsid[] =
  *	Libpvm core for unix environment.
  *
  * $Log$
+ * Revision 1.1.1.1  2004/04/26 15:36:58  stochopt
+ * Imported sources
+ *
  * Revision 1.1.1.1  2003/11/14 13:02:08  stochopt
  * Imported files
  *
@@ -649,6 +652,22 @@ static char rcsid[] =
 #define	TTSOCKBUF	0x8000
 #endif
 
+/* jpc 2005  */
+
+#ifdef SOCKLENISUINT
+#ifdef IMA_AIX4SP2
+#define SOCKLEN_T  unsigned int
+#else
+#define SOCKLEN_T  size_t 
+#endif
+#else
+#ifdef SOCKLENISsocklen_t
+#define SOCKLEN_T socklen_t
+#else 
+#define SOCKLEN_T int 
+#endif
+#endif
+
 
 /***************
  **  Globals  **
@@ -1113,15 +1132,7 @@ pvm_tc_conreq(mid)
 	char *addr = "";			/* socket address */
 	int i;
 	int ictx;
-#ifdef SOCKLENISUINT
-#ifdef IMA_AIX4SP2
-	unsigned int oslen;
-#else
-	size_t oslen;
-#endif
-#else
-	int oslen;
-#endif
+	SOCKLEN_T oslen;
 #ifndef NOUNIXDOM
 	struct sockaddr_un uns;
 	char spath[PVMTMPNAMLEN];
@@ -1777,15 +1788,7 @@ mxfer(txup, tmout)
 	int gotem = 0;				/* count of received msgs downloaded */
 	int ff;
 	int n;
-#ifdef SOCKLENISUINT
-#ifdef IMA_AIX4SP2
-	unsigned int oslen;
-#else
-	size_t oslen;
-#endif
-#else
-	int oslen;
-#endif
+	SOCKLEN_T oslen;
 	char *txcp = 0;				/* point to remainder of txfp */
 	int txtogo = 0;				/* len of remainder of txfp */
 	struct sockaddr_in sad;
@@ -2344,15 +2347,7 @@ mroute(mid, dtid, tag, tmout)
 	struct pmsg *up, *up2;
 	struct sockaddr_in sad;
 	int l;
-#ifdef SOCKLENISUINT
-#ifdef IMA_AIX4SP2
-	unsigned int oslen;
-#else
-	size_t oslen;
-#endif
-#else
-	int oslen;
-#endif
+	SOCKLEN_T oslen;
 	int cc = 0;
 	int gotem = 0;				/* count of received messages */
 	static struct timeval ztv = { 0, 0 };
@@ -2764,15 +2759,7 @@ mksocs()
 	HANDLE d;
 #endif
 
-#ifdef SOCKLENISUINT
-#ifdef IMA_AIX4SP2
-	unsigned int oslen;
-#else
-	size_t oslen;
-#endif
-#else
-	int oslen;
-#endif
+	SOCKLEN_T oslen;
 	int n;
 	int try;
 	char *p;

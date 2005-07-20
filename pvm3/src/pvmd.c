@@ -36,6 +36,9 @@ static char rcsid[] =
  *	Mr. pvm daemon.
  *
  * $Log$
+ * Revision 1.2  2005/05/17 16:20:47  jpc
+ * gcc4
+ *
  * Revision 1.1.1.1  2004/04/26 15:36:59  stochopt
  * Imported sources
  *
@@ -739,6 +742,23 @@ struct deaddata {
 	struct timeval dd_ut;	/* user time used */
 	struct timeval dd_st;	/* system time used */
 };
+
+/* jpc 2005  */
+
+#ifdef SOCKLENISUINT
+#ifdef IMA_AIX4SP2
+#define SOCKLEN_T  unsigned int
+#else
+#define SOCKLEN_T  size_t 
+#endif
+#else
+#ifdef SOCKLENISsocklen_t
+#define SOCKLEN_T socklen_t
+#else 
+#define SOCKLEN_T int 
+#endif
+#endif
+
 
 void catch();
 char *debug_flags();
@@ -1728,19 +1748,7 @@ work()
 		while (rdead != wdead) {
 			if (deads[rdead].dd_pid == pprime) {
 				int cc;
-#ifdef SOCKLENISUINT
-#ifdef IMA_AIX4SP2
-				unsigned int oslen;
-#else
-				size_t oslen;
-#endif
-#else
-#ifdef SOCKLENISsocklen_t
-				socklen_t oslen;
-#else 
-				int oslen;
-#endif
-#endif
+				SOCKLEN_T oslen;
 				struct sockaddr_in osad;
 				struct timeval t;
 				char buf[DDFRAGHDR];
@@ -2328,15 +2336,7 @@ int
 netinput()
 {
 	struct sockaddr_in osad;		/* sender's ip addr */
-#ifdef SOCKLENISUINT
-#ifdef IMA_AIX4SP2
-	unsigned int oslen;
-#else
-	size_t oslen;
-#endif
-#else
-	int oslen;
-#endif						/* sockaddr length */
+	SOCKLEN_T oslen;
 	struct timeval tnow;
 	struct pkt *pp, *pp2;
 	struct hostd *hp;
@@ -2808,15 +2808,7 @@ done:
 loclconn()
 {
 	struct task *tp;			/* new task context */
-#ifdef SOCKLENISUINT
-#ifdef IMA_AIX4SP2
-	unsigned int oslen;
-#else
-	size_t oslen;
-#endif
-#else
-	int oslen;
-#endif
+	SOCKLEN_T oslen;
 	int i;
 #ifndef NOUNIXDOM
 	struct sockaddr_un uns;
@@ -4750,15 +4742,7 @@ mksocs()
 	int bsz;
 #endif
 	char *p;
-#ifdef SOCKLENISUINT
-#ifdef IMA_AIX4SP2
-	unsigned int oslen;
-#else
-	size_t oslen;
-#endif
-#else
-	int oslen;
-#endif
+	SOCKLEN_T oslen;
 	int cc;
 #ifndef NOUNIXDOM
 	char spath[PVMTMPNAMLEN];	/* local socket path */

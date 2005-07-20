@@ -25,6 +25,13 @@ static char rcsid[] =
  */
 
 
+/* jpc */
+
+#ifdef	HASSTDLIB
+#include <stdlib.h>
+#endif
+
+
 /* Tracer Headers */
 
 #include "trclib.h"

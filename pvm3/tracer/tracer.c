@@ -24,7 +24,6 @@ static char rcsid[] =
  * Tracer was funded by the U.S. Department of Energy.
  */
 
-
 /* Tracer Headers */
 
 #include "tracer.h"
@@ -293,6 +292,8 @@ char *cmd;
 	return( TRC_TRUE );
 }
 
+
+extern void exit(int);
 
 int
 recv_events()
