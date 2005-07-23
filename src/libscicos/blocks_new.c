@@ -6,6 +6,7 @@
 #include "nsp/matutil.h" 
 #include "scicos.h"
 
+/* to be moved elsewhere XXXX  */
 #if WIN32
 extern double asinh(double x);
 extern double acosh(double x);

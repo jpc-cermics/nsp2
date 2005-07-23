@@ -11,25 +11,7 @@
 
 #include "scicos.h"
 
-struct
-{
-  int halt;
-} C2F(coshlt);
-
-extern struct {
-  int idb;
-} C2F(dbcos);
-
-struct
-{
-  double atol, rtol, ttol, deltat;
-} C2F(costol);
-
-
-struct
-{
-  int kfun;
-} C2F(curblk);
+extern scicos_run *Scicos;
 
 /* 
  * most of the blocks defined here have the following calling sequence
@@ -391,7 +373,7 @@ int scicos_evscpe_block(scicos_args_F0)
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output", 0, rect, nax);
-      str = scicos_getlabel (C2F(curblk).kfun);
+      str = scicos_getlabel (Scicos->params.curblk);
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
       nsp_check_gtk_events ();
@@ -447,7 +429,7 @@ int scicos_for_block(scicos_args_F0)
 	  if (u[1] >= 1.)
 	    {
 	      tvec[1] = *t - 1.;
-	      tvec[2] = *t + C2F(costol).ttol / 2.;
+	      tvec[2] = *t + Scicos->params.ttol / 2.;
 	    }
 	  else
 	    {
@@ -461,13 +443,13 @@ int scicos_for_block(scicos_args_F0)
 
 	  if (z__[1] >= z__[2])
 	    {
-	      tvec[1] = *t + C2F(costol).ttol / 2.;
+	      tvec[1] = *t + Scicos->params.ttol / 2.;
 	      tvec[2] = *t - 1.;
 	    }
 	  else
 	    {
 	      tvec[1] = *t - 1.;
-	      tvec[2] = *t + C2F(costol).ttol / 2.;
+	      tvec[2] = *t + Scicos->params.ttol / 2.;
 	    }
 	}
     }
@@ -559,7 +541,7 @@ int scicos_hlt_block(scicos_args_F0)
 {
   if (*flag__ == 2)
     {
-      C2F(coshlt).halt = 1;
+      Scicos->params.halt = 1;
       z__[0] =  (*nipar > 0) ? (double) ipar[0] : 0.0;
     }
   return 0;
@@ -775,10 +757,6 @@ int scicos_inv_block(scicos_args_F0)
 
 int scicos_iocopy_block(scicos_args_F0)
 {
-  if (C2F(dbcos).idb == 1)
-    {
-      sciprint("ifthel: t=%10.3f, flag=%d\n",*t,*flag__);
-    }
   memcpy(y,u,*nu*sizeof(double));
   return 0;
 }			
@@ -1285,7 +1263,7 @@ int scicos_mscope_block(scicos_args_F0)
       Xgc->graphic_engine->clearwindow(Xgc);
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-      str = scicos_getlabel (C2F(curblk).kfun);
+      str = scicos_getlabel (Scicos->params.curblk);
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
       i__1 = nwid;
@@ -1870,7 +1848,7 @@ scicos_scope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		 0, rect, nax);
-      str = scicos_getlabel (C2F(curblk).kfun);
+      str = scicos_getlabel (Scicos->params.curblk);
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
       z__[1] = 0.;
@@ -2039,7 +2017,7 @@ int scicos_scopxy_block(scicos_args_F0)
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		 0, rect, nax);
-      str = scicos_getlabel (C2F(curblk).kfun);
+      str = scicos_getlabel (Scicos->params.curblk);
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__6);
@@ -2184,7 +2162,7 @@ int scicos_scoxy_block(scicos_args_F0)
       Xgc->graphic_engine->xset_thickness(Xgc,c__1);
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
-      str = scicos_getlabel (C2F(curblk).kfun);
+      str = scicos_getlabel (Scicos->params.curblk);
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
       nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
@@ -4325,11 +4303,6 @@ scicos_eselect_block (int *flag__, int *nevprt, int *ntvec, double *rpar,
   --u;
   --ipar;
   --rpar;
-
-  if (C2F(dbcos).idb == 1)
-    {
-      sciprint("ifthel:  flag=%d\n",*flag__);
-    }
   /* Computing MAX */
   /* Computing MIN */
   i__2 = (int) u[1];
@@ -4354,11 +4327,6 @@ int
 scicos_ifthel_block (int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar,
 		     int *ipar, int *nipar, double *u, int *nu)
 {
-  if (C2F(dbcos).idb == 1)
-    {
-      sciprint("ifthel: flag=%d\n",*flag__);
-    }
-
   if (*flag__ == 3)
     {
       *ntvec = ( u[0] <= 0.) ? 2 : 1;

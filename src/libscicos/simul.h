@@ -149,6 +149,26 @@ struct _scicos_sim {
   int debug_block ; /* debug block id */
 };
 
+/*
+ * scicos parameters 
+ */
+
+typedef struct _scicos_params scicos_params;
+
+struct _scicos_params {
+  int curblk; /* current activated block  */
+  double scale ; /* real time  scale factor */
+  int halt; /* halt event activated */
+  int solver; /* solver used */
+  int debug; /* debug level */
+  void *scsptr; /* external function to be used */
+  int nclock;
+  int *neq;
+  double Atol, rtol, ttol, deltat,hmax;
+  int hot;
+};
+
+
 typedef struct _scicos_run scicos_run;
 typedef enum { run_on , run_off } scicos_run_status;
 
@@ -157,7 +177,10 @@ struct _scicos_run {
   scicos_sim sim;
   scicos_state state;
   scicos_block *Blocks;
+  scicos_params params;
 };
+
+
 
 extern int scicos_fill_run(scicos_run *sr,NspHash *Sim,NspHash *State);
 extern void scicos_clear_run(scicos_run *sr);
