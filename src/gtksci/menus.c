@@ -1032,14 +1032,16 @@ static void nsp_menu_stop (void)
 /*-----------------------------------------------------------------
  * make a stop for scicos 
  *-----------------------------------------------------------------*/
-
+/* 
 extern struct {
   int halt;
 } C2F(coshlt);
-
+*/
 static void nsp_menu_scicos_stop (void)
 {
+  /* XXX  
   C2F(coshlt).halt = 1;
+  */
 }
 
 /*-----------------------------------------------------------------
