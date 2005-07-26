@@ -871,8 +871,8 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   NspObject  *args = NULL,*fobj;/* when z is a function */
   double alpha=35.0,theta=45.0,*ebox ;
   const char *leg=NULL, *leg1;
-  NspMatrix *x,*y,*z,*Mcolors=NULL,*Mflag=NULL,*Mebox=NULL;
-  int izcol=0, *zcol=NULL,*iflag;
+  NspMatrix *x,*y,*z,*zloc=NULL,*Mcolors=NULL,*Mflag=NULL,*Mebox=NULL;
+  int izcol=0, *zcol=NULL,*iflag, ret=0;
   
   int_types T[] = {realmat,realmat,obj,new_opts, t_end} ;
 
@@ -892,11 +892,11 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   if ( IsNspPList(fobj) )
     {
       /* third argument can be a macro */
-      if ((z = nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
+      if ((z = zloc= nsp_matrix_create(NVOID,'r',x->mn,y->mn))== NULL) return RET_BUG;
       if ( plot3d_build_z(stack,x,y,z,fobj,args)== FAIL) 
 	{
-	  nsp_matrix_destroy(z);
-	  return RET_BUG;
+	  ret= RET_BUG;
+	  goto end;
 	}
     }
   else if (IsMat(fobj) && ((NspMatrix *) fobj)->rc_type == 'r')
@@ -907,7 +907,8 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
     {
       /* here we could accept list(z,colors) to emulate scilab code */
       Scierror("%s: third argument should be a real matrix or a function\n",stack.fname);
-      return RET_BUG;
+      ret= RET_BUG;
+      goto end;
     }
 
   if (Mcolors == NULLMAT)
@@ -929,15 +930,26 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       if ( Mcolors->mn == z->mn ) izcol=2  ;
     }
 
-  if (( iflag = check_iflag(stack,stack.fname,"flag",Mflag,3))==NULL) return RET_BUG;
-  if (( ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
-  if (( leg1 = check_legend_3d(stack,stack.fname,"leg",leg)) == NULL) return RET_BUG;
+  if (( iflag = check_iflag(stack,stack.fname,"flag",Mflag,3))==NULL) 
+    {
+      ret= RET_BUG; goto end;
+    }
+  if (( ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) 
+    {
+      ret= RET_BUG; goto end;
+    }
+
+  if (( leg1 = check_legend_3d(stack,stack.fname,"leg",leg)) == NULL) 
+    {
+      ret= RET_BUG; goto end;
+    }
+
 
   if ( x->mn == z->mn && x->mn == z->mn && x->mn != 1) 
     {
       if (! ( x->m == y->m && y->m == z->m && x->n == y->n && y->n == z->n)) {
 	Scierror("%s: The three first arguments have incompatible length\n",stack.fname);
-	return RET_BUG;
+	ret= RET_BUG; goto end;
       }
     } 
   else 
@@ -947,7 +959,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       if ( x->mn  <= 1 || y->mn <= 1 ) 
 	{
 	  Scierror("%s: first and second arguments should be of size >= 2\n",stack.fname);
-	  return RET_BUG;
+	  ret= RET_BUG; goto end;
 	}
     }
   /* 7 and 8 are the mode for superposed graphics */
@@ -969,7 +981,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
    */
   if (leg !=  NULL && strlen(leg) != 0 ) iflag[2]=4;
 
-  if ( x->mn == 0 || y->mn == 0 || z->mn == 0) { return 0;} 
+  if ( x->mn == 0 || y->mn == 0 || z->mn == 0) { goto end;}
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
@@ -996,7 +1008,10 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       /*  Here we are in the standard case  */
       (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
     }
-  return 0;
+ end:
+  nsp_matrix_destroy(zloc);
+  return ret;
+
 }
 
 /* 
@@ -1042,9 +1057,11 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
 	if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' && ((NspMatrix *) nsp_ret)->mn==1 )
 	  {
 	    z->R[i+z->m*j]= ((NspMatrix *) nsp_ret)->R[0];
+	    nsp_matrix_destroy((NspMatrix *) nsp_ret);
 	  }
 	else 
 	  {
+	    if ( nret == 1) nsp_object_destroy(&nsp_ret);
 	    Scierror("%s: evaluation failed for z(%d,%d)\n",stack.fname,i+1,j+1);
 	    goto end; 
 	  }
