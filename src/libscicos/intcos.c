@@ -29,10 +29,7 @@
 #include "scicos.h"
 #include "simul.h"
 
-struct
-{
-  int kfun;
-} C2F(curblk);
+extern scicos_run *Scicos;
 
 /* 
  * [state,t]=scicosim(state,tcur,tf,sim,'start' ,tol) 
@@ -334,7 +331,7 @@ int int_curblock(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M;
   CheckRhs(-1,0) ;
   if ((M=nsp_matrix_create(NVOID,'r',1,1))==NULLMAT) return RET_BUG;
-  M->R[0]= C2F(curblk).kfun;
+  M->R[0]= Scicos->params.curblk ;
   NSP_OBJECT(M)->ret_pos = 1;
   StackStore(stack,(NspObject *)M,1);
   return 1;
@@ -408,7 +405,7 @@ int int_getblocklabel(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      kf = C2F(curblk).kfun;
+      kf = Scicos->params.curblk ;
     }
   if ( scicos_getscilabel(kf,&label)== FAIL) 
     {

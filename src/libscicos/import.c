@@ -6,9 +6,6 @@
 #include "import.h"
 #include "simul.h"
 
-extern struct {
-  int kfun;
-} C2F(curblk);
 
 extern scicos_run *Scicos;
 
@@ -136,7 +133,7 @@ int scicos_getscilabel(int kfun,char **label)
 
 int scicos_getcurblock(void)
 {
-  return(C2F(curblk).kfun);
+  return Scicos->params.curblk ;
 }
 
 

@@ -46,13 +46,14 @@ void nsp_init_stack(Stack *stack,NspObject **S)
   stack->first = 0;
   stack->S = S ;
   stack->L = S + STACK_SIZE;
-  stack->error_msg = (NspObject *) nsp_smatrix_create(NVOID,0,0,NULL,0);
+  if ( stack->error_msg == NULL) 
+    stack->error_msg = (NspObject *) nsp_smatrix_create(NVOID,0,0,NULL,0);
   stack->error = error;
   stack->errcatch = FALSE;
   stack->pause = TRUE;
 }
 
-Stack SciStack ;
+Stack SciStack={NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,0,0} ;
 
 /* store object o at position pos (relative from first ) */ 
 

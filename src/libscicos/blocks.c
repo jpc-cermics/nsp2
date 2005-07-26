@@ -3096,7 +3096,7 @@ void scicos_slider_block(int *flag, int *nevprt, double *t, double *xd,
   case 4 : 
     /* initial case */ 
     z[0]= 0.0;
-    scicos_getgeom(z+1);
+    if ( scicos_getgeom (&z[1]) == FAIL) return;
     z[2] = z[2]+ t3d +th ; 
     z[4] -= t3d + 2*th  ;
     z[3] = z[3] + z[5] ;
@@ -3192,12 +3192,9 @@ void scicos_writeau_block(int *flag, int *nevprt, double *t, double *xd, double 
   --z;
   F=(NspFile *)(long)z[2];
   buffer = (z+3);
-
-
   /*
    *    k    : record counter within the buffer
    */
-
   if ( *flag==2 && *nevprt>0 ) 
     { 
       unsigned char *record =( unsigned char * ) buffer;
@@ -3313,7 +3310,7 @@ int scicos_affich_block(scicos_args_F0)
     {
       /*     .  initial value */
       z__[1] = 0.;
-      scicos_getgeom (&z__[2]);
+      if ( scicos_getgeom (&z__[2]) == FAIL) return 0;
       wid = (int) z__[2];
       if (wid < 0) return 0;
       Xgc = scicos_set_win(wid,&cur);
@@ -3356,18 +3353,31 @@ int scicos_affdraw (BCG *Xgc,const int fontd[],const int form[],const double *va
   return 0;
 } 
 
+/* XXXXX a mettre ailleurs */
+#include "../interp/LibsTab.h"
+#include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 
 int scicos_getgeom (double *g)
 {
-  /* FIXME XXXXXXXX
-   */
-  *g = 1000;
-  *(g+1)= 333;
-  *(g+2)= 124;
-  *(g+3)= 60;
-  *(g+4)= 40;
-  sciprint("getgeom is not implemented just a test mode\n");
-  return 0;
+  NspObject *targs[1];
+  NspObject *nsp_ret;
+  int nret = 1,nargs = 0;
+  NspObject *func;
+  int i;
+  g[0]=-1;
+  if ( (func = FindMacro("getgeom")) == NULLOBJ) 
+    return FAIL;
+  /* FIXME : a changer pour metre une fonction eval standard */
+  if ( nsp_gtk_eval_function((NspPList *)func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+    return FAIL;
+  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' && ((NspMatrix *) nsp_ret)->mn==5 )
+    {
+      for ( i=0 ; i < 5 ; i++) 
+	g[i]= ((NspMatrix *) nsp_ret)->R[i];
+      return OK;
+    }
+  else 
+    return FAIL;
 }	
 
 
