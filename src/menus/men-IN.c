@@ -31,9 +31,9 @@
 #include "nsp/graphics/Graphics.h"
 #include "nsp/gtksci.h" 
 
-/***************************************************
+/*
  * Now the interfaced function for basic menus 
- ***************************************************/
+ */
 
 /* get an utf8 string matrix 
  * an eventual copy is performed if the string is 
@@ -43,7 +43,6 @@
 /* FIXME */
 extern int nsp_smatrix_to_utf8(NspSMatrix *A);
 extern int nsp_smatrix_utf8_validate(NspSMatrix *A);
-
 
 static NspSMatrix *GetSMatUtf8(Stack stack,int pos)
 {
@@ -97,6 +96,9 @@ static NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos)
   return Sm;
 }
 
+/*
+ * interface for x_message 
+ */
 
 int int_x_message(Stack stack, int rhs, int opt, int lhs)
 {
@@ -128,6 +130,10 @@ int int_x_message(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/*
+ * interface for modeless message 
+ */
+
 int int_x_message_modeless(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *Message;
@@ -148,9 +154,9 @@ int int_x_message_modeless(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*************************************************************
+/*
  * x_choose 
- *************************************************************/
+ */
 
 int int_x_choose(Stack stack, int rhs, int opt, int lhs)
 {
@@ -173,9 +179,9 @@ int int_x_choose(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*************************************************************
+/*
  * x_dialog
- *************************************************************/
+ */
 
 int int_x_dialog(Stack stack, int rhs, int opt, int lhs)
 {
@@ -202,9 +208,9 @@ int int_x_dialog(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*************************************************************
+/*
  * x_mdialog
- *************************************************************/
+ */
 
 int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
 {
@@ -263,9 +269,9 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/*************************************************************
+/*
  * setmenu 
- *************************************************************/
+ */
 
 typedef int men_f(int *win_num, char *button_name, int *entries, int *ptrentries, int *ne, int *ierr);
 
@@ -320,10 +326,9 @@ int int_unset_menu(Stack stack, int rhs, int opt, int lhs)
 
 }
 
-
-/*************************************************************
+/*
  * addmenu 
- *************************************************************/
+ */
 
 int int_add_menu(Stack stack, int rhs, int opt, int lhs)
 {
@@ -417,9 +422,9 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/*************************************************************
+/*
  * delmenu 
- *************************************************************/
+ */
 
 int int_delmenu(Stack stack, int rhs, int opt, int lhs)
 {
@@ -444,53 +449,46 @@ int int_delmenu(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*************************************************************
+/*
  * xgetfile 
- *************************************************************/
+ */
      
-static int get_file(char *filemask, char *dirname,char *title,char **res)
-{
-  static char def_filemask[]="*";
-  static char def_title[]="Choose file name";
-  static char dir_expanded[FSIZE+1];
-  int flag=0,rep,ierr=0;
-  if ( dirname != NULL ) 
-    {
-      flag =1 ;
-      nsp_path_expand(dirname,dir_expanded,FSIZE);
-    }
-  if ( title == NULL) title = def_title;
-  if ( filemask == NULL) filemask = def_filemask;
-  rep = nsp_get_file_window(filemask,res,dir_expanded,flag,0,&ierr,title);
-  if ( ierr >= 1 || rep == FALSE )  return FAIL;
-  return OK;
-}
 
 
 int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 {
+  int ierr=0,rep,flag=0;
   NspObject *Rep;
-  char *dir = NULL;
-  char *title = NULL;
-  char *filemask = NULL;
-  char *res; 
-  int_types T[] = {opts, t_end} ;
-  /* 3 optional named arguments */
-  /* names of optional arguments: must be NULL terminated*/
-  char *Names[]={"dir","mask","title",NULL};
-  /* types of optional arguments */
-  int_types Topt[]={string,string,string, t_end} ;
-  /* table to store optional arguments */ 
-  NspObject *Tab[3]; 
-  /* table to store optional arguments position */ 
-  int posi[3];
-  /* structure for optional arguments */
-  named_opts N = {3, Names, Topt,Tab, posi};
-  /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
-  if ( GetArgs(stack,rhs,opt,T,&N,&dir,&filemask,&title) == FAIL) return RET_BUG;
-  if ( get_file(filemask,dir,title,&res) == FAIL) return RET_BUG;
-  if (( Rep =nsp_create_object_from_str(res))==NULLOBJ ) return RET_BUG;
-  FREE(res);
+  char *dir = NULL, dir_expanded[FSIZE+1];
+  char *title = "Choose file name";
+  char *filemask = "*";
+  char *res = NULL; 
+  int_types T[] = {new_opts, t_end} ;
+
+  nsp_option opts[] ={{ "dir",string,NULLOBJ,-1},
+		      { "mask",string,NULLOBJ,-1},
+		      { "title",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&opts,&dir,&filemask,&title) == FAIL) return RET_BUG;
+
+  if ( dir != NULL ) 
+    {
+      flag = 1 ;
+      nsp_path_expand(dir,dir_expanded,FSIZE);
+    }
+
+  rep= nsp_get_file_window(filemask,&res,dir_expanded,flag,0,&ierr,title); 
+  if ( ierr != 0) return RET_BUG; 
+  if ( rep == FALSE ) 
+    {
+      if (( Rep =nsp_create_object_from_str(""))==NULLOBJ ) return RET_BUG;
+    }
+  else
+    {
+      if (( Rep =nsp_create_object_from_str(res))==NULLOBJ ) return RET_BUG;
+      FREE(res);
+    }
   MoveObj(stack,1,Rep);
   return 1;
 }  

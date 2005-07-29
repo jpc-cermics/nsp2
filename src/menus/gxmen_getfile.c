@@ -30,9 +30,9 @@
 
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
+
 /*--------------------------------------------------------------
- * Gtk version for scilab file selection 
- * GtkFileSelection
+ * Gtk version for file selection 
  *--------------------------------------------------------------*/
 
 /* FIXME */
@@ -60,7 +60,7 @@ static void file_selection_cancel (GtkWidget *w,  state *rep)
 
 
 /* XXXX reste a rajouter un bouton home et un bouton SCI 
- * Il faut aussi expanser les dirname ? SCI HOME etc....
+ * 
  */
 
 int  nsp_get_file_window(char *filemask,char **file,char *dirname,
@@ -83,12 +83,13 @@ int  nsp_get_file_window(char *filemask,char **file,char *dirname,
   title_utf8= sci_convert_to_utf8(title,&title_alloc);
   window = gtk_file_selection_new (title_utf8);
   if ( title_alloc == TRUE) g_free (title_utf8);
-
-
-  if ( strcmp(dirname,".") == 0) 
-    gtk_file_selection_set_filename (GTK_FILE_SELECTION (window),"./");
-  else 
-    gtk_file_selection_set_filename (GTK_FILE_SELECTION (window),dirname);
+  if ( flag == 1) 
+    {
+      if ( strcmp(dirname,".") == 0) 
+	gtk_file_selection_set_filename (GTK_FILE_SELECTION (window),"./");
+      else 
+	gtk_file_selection_set_filename (GTK_FILE_SELECTION (window),dirname);
+    }
   gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
 
   if ( action == 1 ) 
@@ -148,7 +149,7 @@ int  nsp_get_file_window(char *filemask,char **file,char *dirname,
       /* take care to keep synchronised with "%s('%s');" */
       if (( *file = (char *) MALLOC((strlen(loc)+6+action_length)*sizeof(char))) == NULL) 
 	{
-	  Scistring("Malloc : running out of memory");
+	  Scierror("Malloc: running out of memory");
 	  *ierr = 1;
 	}
       else 
@@ -157,7 +158,7 @@ int  nsp_get_file_window(char *filemask,char **file,char *dirname,
 	    sprintf(*file,"%s('%s');",actions[last_choice],loc);
 	  else 
 	    strcpy(*file,loc);
-	  *ierr=0;
+	  *ierr= 0;
 	}
 
     }
