@@ -147,3 +147,9 @@ void scicos_getouttb(int nsize,int *nvec, double *outtc)
     for (i=0 ; i < nsize ; i++)
       outtc[i]=  (double)Scicos->state.outtb[nvec[i]-1];  
 }
+
+
+void scicos_send_halt(void)
+{
+  Scicos->params.halt = 1;
+}

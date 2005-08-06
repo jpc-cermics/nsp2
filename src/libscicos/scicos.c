@@ -1440,9 +1440,7 @@ static void odoit(double *residual, double *xt, double *xtd, double *told)
   static int flag__, keve, kiwa;
   static int ierr1, i;
   static int ii, jj;
-  /* Function Body */
   kiwa = 0;
-
   for (jj = 1; jj <= Scicos->sim.noord; ++jj) {
     Scicos->params.curblk = Scicos->sim.oord[-1+jj];
     Scicos->params.nclock = Scicos->sim.oord[-1+jj + Scicos->sim.noord];
@@ -1529,7 +1527,6 @@ static void reinitdoit(double *told, int *scicos_xproperty)
   static int flag__, keve, kiwa;
   static int ierr1, i;
   static int ii, jj;
-  /* Function Body */
   kiwa = 0;
   for (jj = 1; jj <= Scicos->sim.noord; ++jj) {
     Scicos->params.curblk = Scicos->sim.oord[-1+jj];
@@ -1617,7 +1614,7 @@ static void ozdoit(double *xtd, double *xt, double *told, int *kiwa)
   static int flag__, nord;
   static int ierr1, i;
   int ii, kever; 
-  /* Function Body */
+
   kever = *Scicos->state.pointi;
   *Scicos->state.pointi = Scicos->state.evtspt[kever-1];
   Scicos->state.evtspt[kever-1] = -1;
@@ -1688,7 +1685,7 @@ static void zdoit(double *g, double *xtd, double *xt, double *told)
   static int flag__, keve, kiwa;
   static int ierr1, i,j;
   static int ii, jj;
-  /* Function Body */
+
   nsp_dset(&Scicos->sim.ng, &c_b14,g , &c__1);
 
   kiwa = 0;
