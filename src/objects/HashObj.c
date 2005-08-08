@@ -559,8 +559,20 @@ static int int_hash_set_attribute(Stack stack, int rhs, int opt, int lhs)
       Scierror("%s should not be used as a hash table entry\n",name);
       return RET_BUG;
     }
-  /* A copy of object is added in the hash table **/
-  if (( O =nsp_object_copy(nsp_get_object(stack,3))) == NULLOBJ ) return RET_BUG;
+  if ((  O = nsp_get_object(stack,3)) == NULLOBJ ) return RET_BUG;
+  if ( Ocheckname(O,NVOID)==FALSE )
+    {
+      if (( O =nsp_object_copy(O)) == NULLOBJ ) return RET_BUG;
+      /* Object at position 3 had a name and is not an object pointed to 
+       * we remove it from the stack since it could be destroyed 
+       * during nsp_hash_enter (ex in H;a = H.a) and should not be kept 
+       * on the stack. 
+       */
+      if( IsHobj(NthObj(3))== FALSE )
+	{
+	  NthObj(3) = NULLOBJ;
+	}
+    }
   if (nsp_object_set_name(O,name) == FAIL) return RET_BUG;
   if (nsp_hash_enter(H,O) == FAIL) return RET_BUG;
   NSP_OBJECT(H)->ret_pos = 1;
