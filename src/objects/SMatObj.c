@@ -553,7 +553,8 @@ void string_not_in_array(Stack stack,const char *key, char **Table,char *message
   }
 }
 
-/* Table : Array of strings to compare against str
+/* Table : Array of object which can be casted to string  to compare against str
+ * size gives the object size 
  * last entry must be NULL
  * and there must not be duplicate entries.
  * 0 or 1, 1 for exact match 

@@ -366,7 +366,7 @@ NspObject *nsp_get_object(Stack stack, int i)
  * 
  * Returns a copy of the object which is at stack position @i 
  * if object is itself an #Hobj a copy of the object it points to 
- * is returned. 
+ * is returned. Note that the copy is not put on the stack.
  * 
  * 
  * Return value: 
