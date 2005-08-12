@@ -680,6 +680,7 @@ AC_CHECK_FUNCS(lgamma)
 AC_CHECK_HEADERS(values.h) 
 AC_CHECK_HEADERS(limits.h) 
 AC_CHECK_HEADERS(float.h) 
+AC_CHECK_HEADERS(sys/time.h)
 
 ##################
 ## termcap library
@@ -963,6 +964,29 @@ if test "$with_gtkglext" != no; then
        AC_MSG_WARN([WARNING OpenGL driver will not be build .],)
     fi
 fi
+
+# check that we have glut if gtkglext-1.0 is used 
+
+if test "$WITH_GL" == yes; then 
+     AC_CHECK_HEADERS(
+        [GL/glut.h],
+        AC_CHECK_LIB(
+           [glut],
+           [gluLookAt],
+           FFTW3_CFLAGS=
+           FFTW3_LIBS="-lglut -lm"
+           [HAVE_GLUT="yes"],
+           [HAVE_GLUT="no"]),
+        [HAVE_GLUT="no"])
+     if test "$HAVE_GLUT" == no; then 
+	AC_MSG_WARN([Could not find the glut library.],)
+	AC_MSG_WARN([WARNING OpenGL driver will not be build .],)
+	WITH_GL="no"
+	GTK_PKGS=`echo $GTK_PKGS | sed -e 's+/gtkglext-1.0//+g' `
+	GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
+	GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+     fi
+fi 
 
 #################
 ## detect tcl/tk
