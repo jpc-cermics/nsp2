@@ -32,6 +32,11 @@
 #include "nsp/interf.h"
 
 extern double nsp_timer(void);
+extern int nsp_realtime(double *t);
+extern int nsp_realtime_init( double *t,  double *scale);
+
+/* defined in the tcl subdir 
+ */
 
 extern char *TclGetEnv (char *name);
 extern void TclSetEnv (const char *name,const char *value);
@@ -154,6 +159,38 @@ static int int_unsetenv(Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
+/*
+ *
+ */
+
+int int_realtime_init(Stack stack, int rhs, int opt, int lhs) 
+{
+ double zer=0.0,rtv;
+ CheckRhs(1,1);
+ CheckLhs(1,1);
+ /*  checking variable scale */
+ if (GetScalarDouble(stack,1,&rtv) == FAIL) return RET_BUG;
+ /* cross variable size checking */
+ nsp_realtime_init(&zer,&rtv);
+ return 0;
+}
+
+/*
+ *
+ */
+ 
+int int_realtime(Stack stack, int rhs, int opt, int lhs) 
+{
+  double rtv;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  /*  checking variable t */
+  if (GetScalarDouble(stack,1,&rtv) == FAIL) return RET_BUG;
+  /* cross variable size checking */
+  nsp_realtime(&rtv);
+  return 0;
+}               
+
 
 /*
  * The Interface for system functions 
@@ -171,6 +208,8 @@ static OpTab System_func[]={
   {"unsetenv",int_unsetenv},
   {"timer", int_timer},
   {"system",int_system},
+  {"realtime",int_realtime},
+  {"realtimeinit",int_realtime_init},
   {(char *) 0, NULL}
 };
 

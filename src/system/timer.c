@@ -1,5 +1,6 @@
-/*
- * This Software is ( Copyright INRIA/ENPC 1998 ) 
+/* 
+ * modified Scilab file 
+ * This Software is ( Copyright INRIA/ENPC )
  * 
  */
 
