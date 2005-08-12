@@ -801,10 +801,10 @@ endfunction
 function my_eventhandler(win,x,y,ibut)
   global('gr_objects');
   global('count');
-  if count == 1 then 
-    printf("event handler aborted =%d\n",count)
-    return
-  end
+  //if count == 1 then 
+  //  printf("event handler aborted =%d\n",count)
+  //  return
+  //end
   count = 1;
   if ibut == -100 then 
     printf('window killed ')
@@ -928,7 +928,7 @@ endfunction
 
 function [k,rep]=gr_lock(pt) 
   global('gr_objects');
-  for k=1:lstsize(gr_objects)
+  for k=1:size(gr_objects)
     o=gr_objects(k);
     execstr('rep=gr_'+o.type+'(''inside lock'',k,pt);');
     if rep(1)==1 then
@@ -946,7 +946,7 @@ endfunction
 
 function k=gr_find(x,y)
   global('gr_objects');
-  for k=1:lstsize(gr_objects)
+  for k=1:size(gr_objects)
     o=gr_objects(k);
     execstr('ok=gr_'+o.type+'(''inside'',k,[x,y]);');
     if ok then return ; end 
@@ -966,7 +966,7 @@ function gr_draw(win)
   xsetech(frect=fr)
   xrect([0,100,100,100]);
   //pause
-  for k=1:lstsize(gr_objects)
+  for k=1:size(gr_objects)
     o=gr_objects(k);
     execstr('gr_'+o.type+'(''draw'',k);');
   end
@@ -981,7 +981,7 @@ function gr_unhilite(win=-1,draw=%t)
   global('gr_objects');
   ok=%f;
   if win == -1 then win=xget('window');end 
-  for k=1:lstsize(gr_objects)
+  for k=1:size(gr_objects)
     o=gr_objects(k);
     if o('hilited') then ok=%t;end 
     gr_objects(k)('hilited')=%f;
@@ -993,13 +993,13 @@ function gr_delete()
   // delete hilited objects 
   global('gr_objects');
   g_rep=%f
-  for k=lstsize(gr_objects):-1:1
+  for k=size(gr_objects):-1:1
     o=gr_objects(k);
     if o('hilited') then 
       execstr('rep=gr_'+o.type+'(''unlock all'',k);');
       gr_objects(k)=null();
       // we must update all the numbers contained in lock 
-      for j=1:lstsize(gr_objects)
+      for j=1:size(gr_objects)
 	lkcs=gr_objects(j)('locks status')
 	for i=1:size(lkcs,'*')
 	  if lkcs(i) >= k then 
@@ -1019,7 +1019,7 @@ function gr_copy()
   // copy  hilited objects 
   global('gr_objects');
   g_rep=%f
-  k1=lstsize(gr_objects):-1:1;
+  k1=size(gr_objects):-1:1;
   for k=k1;
     o=gr_objects(k);
     if o('hilited') then 

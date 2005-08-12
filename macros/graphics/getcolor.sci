@@ -4,12 +4,12 @@ function icol=getcolor(win=-1,cinit=-1)
 // or in the current window if it exists.
 // 
   if winsid()==[] then 
-    printf('error: you must open a graphic window');
+    printf('error: you must open a graphic window\n');
     icol=[];
     return;
   end
   curwin=xget('window');
-  if nargin <= 0 then 
+  if win == -1 then 
     win=curwin;
   end
   if win<>curwin then 
@@ -17,7 +17,7 @@ function icol=getcolor(win=-1,cinit=-1)
   end
   cl=xget('colormap');
   ccol=xget('color');
-  if cinit<>-1 then ccol=cinit;else ccol=xget('color'); end
+  if cinit<>-1 then ccol=cinit;end
   xinit(dim=[100,100]);
   getcolwin=xget('window');
   xset('colormap',cl);
@@ -34,9 +34,10 @@ function icol=getcolor(win=-1,cinit=-1)
   xsetech(frect=[0,-1,n+2,m+1],arect=[0,0,0,0])
   rects=[xx;yy;ones(xx);ones(yy)];
   rects=rects(:,1:p);
-  xrects(rects(:,ccol),-(p+1));
+  xset('thickness',1);
   xrects(rects,[1:p]);
-  xrects(rects,-(p+2)*ones(1,p));
+  xrects(rects,-(p)*ones(1,p));
+  xrects(rects(:,ccol),-(p-1));
   while %t
     [c,x,y]=xclick(clearq=%t)
     ix=floor(x);
@@ -44,8 +45,8 @@ function icol=getcolor(win=-1,cinit=-1)
     icol=ix+n*iy;
     if icol >= 1 & icol <= p then 
       xinfo(sprintf('selected color %d',icol));
-      xrects(rects(:,ccol),-(p+2));
-      xrects(rects(:,icol),-(p+1));
+      xrects(rects(:,ccol),-p);
+      xrects(rects(:,icol),-(p-1));
       xset('window',curwin);
       xdel(getcolwin);
       break;
