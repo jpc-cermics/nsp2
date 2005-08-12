@@ -30,10 +30,7 @@
 #include "nsp/object.h"
 #include "nsp/stack.h"
 #include "nsp/interf.h"
-
-extern double nsp_timer(void);
-extern int nsp_realtime(double *t);
-extern int nsp_realtime_init( double *t,  double *scale);
+#include "nsp/system.h"
 
 /* defined in the tcl subdir 
  */

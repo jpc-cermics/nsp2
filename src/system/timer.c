@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "nsp/machine.h"
+#include "nsp/system.h"
 
 #ifdef HAVE_SYS_TIME_H 
 #include <sys/time.h>
