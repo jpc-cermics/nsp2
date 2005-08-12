@@ -1,7 +1,26 @@
-/*********************************************************************
- * This Software is ( Copyright ENPC 1998-2003 )
- * Jean-Philippe Chancelier Enpc/Cergrene       
- *********************************************************************/
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * interface for system  functions.
+ * the tcl subdirectory was made from tcl code 
+ * to get a portable set of system functions 
+ * This code is unfinished. 
+ *--------------------------------------------------------------------------*/
 
 #include <math.h>
 #include <stdio.h>
@@ -12,7 +31,8 @@
 #include "nsp/stack.h"
 #include "nsp/interf.h"
 
-extern int C2F(timer) (double *d);
+extern double nsp_timer(void);
+
 extern char *TclGetEnv (char *name);
 extern void TclSetEnv (const char *name,const char *value);
 extern void TclUnsetEnv (const char *name);
@@ -25,34 +45,26 @@ extern function int_regexp;
 extern function int_regsub;
 extern function int_glob;
 
-/***************************************************
- * A set of system functions 
- * the tcl subdirectory was made from tcl code 
- * to get a portable set of system functions 
- * This code is unfinished XXXXX
- ***************************************************/
-
-/*************************************************
+/*
  * Interface for timer 
- ************************************************/
+ */
 
-int int_timer(Stack stack,int rhs,int opt,int lhs) 
+static int int_timer(Stack stack,int rhs,int opt,int lhs) 
 {
   NspObject *OM;
-  double d;
   CheckRhs(0,0);
   CheckLhs(0,1);
-  C2F(timer)(&d);
-  if ( (OM=nsp_create_object_from_double(NVOID,d)) == NULLOBJ) return RET_BUG;
+  if ( (OM=nsp_create_object_from_double(NVOID,nsp_timer())) == NULLOBJ) 
+    return RET_BUG;
   MoveObj(stack,1,OM);
   return 1;
 }
 
-/*************************************************
+/*
  * Interface for system(str)
- ************************************************/
+ */
 
-int int_system(Stack stack,int rhs,int opt,int lhs) 
+static int int_system(Stack stack,int rhs,int opt,int lhs) 
 {
   NspObject *OM;
   double rep;
@@ -66,11 +78,11 @@ int int_system(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-/*************************************************
+/*
  * Interface for getenv(A [,def ] ) 
- ************************************************/
+ */
 
-int int_getenv(Stack stack,int rhs,int opt,int lhs) 
+static int int_getenv(Stack stack,int rhs,int opt,int lhs) 
 {
   NspSMatrix *S;
   char *envname,*env,*def;
@@ -102,11 +114,11 @@ int int_getenv(Stack stack,int rhs,int opt,int lhs)
     }
 }
 
-/*************************************************
+/*
  * Interface for setenv(A,value)
- ************************************************/
+ */
 
-int int_setenv(Stack stack,int rhs,int opt,int lhs) 
+static int int_setenv(Stack stack,int rhs,int opt,int lhs) 
 {
   char *envname,*val;
   CheckRhs(2,2);
@@ -115,41 +127,50 @@ int int_setenv(Stack stack,int rhs,int opt,int lhs)
   if ((val = GetString(stack,2)) == (char*)0) return RET_BUG;
   TclSetEnv(envname, val);
   TclPlatformInit() ; /* XXXXXXXX : temporaire pour tester */
-  /*** XXXXXX setenv does not exists on all Ops 
+  /* XXXXXX setenv does not exists on all Ops 
   if ( setenv(envname,val,1) == -1 ) 
     {
       Scierror("Error: setenv failed, there was insufficient space in the environment\n");
       return RET_BUG;
     }
-  ***/
+  */
   return 0;
 }
 
-
-/*************************************************
+/*
  * Interface for unsetenv(A)
- ************************************************/
+ */
 
-int int_unsetenv(Stack stack,int rhs,int opt,int lhs) 
+static int int_unsetenv(Stack stack,int rhs,int opt,int lhs) 
 {
   char *envname;
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
   TclUnsetEnv(envname);
-  /*** XXXXXX setenv does not exists on all Ops 
+  /* XXXXXX setenv does not exists on all Ops 
   unsetenv(envname);
-  ***/
+  */
   return 0;
 }
 
 
-/*************************************************************
- * The Interface for basic matrices operation 
- *************************************************************/
+/*
+ * The Interface for system functions 
+ */ 
 
 static OpTab System_func[]={
-#include "System-IN.nam" 
+  {"chdir", int_syscd},
+  {"getcwd", int_pwd},
+  {"file", int_sysfile},
+  {"regexp", int_regexp},
+  {"regsub", int_regsub},
+  {"glob",int_glob},
+  {"getenv",int_getenv},
+  {"setenv",int_setenv},
+  {"unsetenv",int_unsetenv},
+  {"timer", int_timer},
+  {"system",int_system},
   {(char *) 0, NULL}
 };
 
@@ -158,8 +179,9 @@ int System_Interf(int i,Stack stack,int rhs,int opt,int lhs)
   return (*(System_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+ * (for adding or removing functions) 
+ */
 
 void System_Interf_Info(int i, char **fname, function **f)
 {
