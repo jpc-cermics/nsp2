@@ -1643,6 +1643,11 @@ _wrap_gtk_tree_model_get_value(NspGObject *self,Stack stack,int rhs,int opt,int 
 			   nspg_boxed_get(iter, GtkTreeIter), column, &value);
   ret = nspg_value_as_nspobject(&value, TRUE);
   g_value_unset(&value);
+  if ( ret == NULLOBJ ) 
+    {
+      Scierror("Error: get_value method return a NULL Object \n");
+      return RET_BUG;
+    }
   MoveObj(stack,1,ret);
   return 1;
 }
