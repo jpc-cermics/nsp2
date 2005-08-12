@@ -1,7 +1,6 @@
 #ifndef NSP_SCICOS_PROTO_H
 #define NSP_SCICOS_PROTO_H
 
-
 extern int scicos_setblockwin (BCG *Xgc,int *win, int *cur);
 extern int scicos_recterase (BCG *Xgc,const double r[]);
 extern int scicos_affdraw (BCG *Xgc,const int *fontd,const int *form,const double *val,const double *r);
@@ -37,8 +36,6 @@ extern int  scicos_getscicosvars(int what, double **v, int *nv, int *type);
 extern int scicos_getscilabel(int kfun,char **label);
 extern void scicos_clip(BCG *Xgc,int n) ;
 extern BCG *scicos_set_win(int wid,int *oldwid);
-extern double pow_di(double *ap, int *bp);
-extern double pow_dd(double *ap, double *bp);
 extern void *get_function(char * fname);
 extern void do_cold_restart(void);
 extern int get_phase_simulation(void);
@@ -49,7 +46,7 @@ extern void set_pointer_xproperty(int* pointer);
 extern void * scicos_malloc(size_t );
 extern void scicos_free(void *p);
 
-/* FIXME */
+/* FIXME should be defined elsewhere */
 extern int nsp_check_events_activated(void);
 extern int nsp_check_gtk_events(void);
 

@@ -9,9 +9,9 @@ SCIDIR1=..\..
 LIBRARY=nsp.lib
 
 OBJSF=
-OBJSC=  blocks_new.obj coselm.obj evaluate_expr.obj import.obj intcos.obj \
-	intrealtime.obj readf.obj realtime.obj sciblk2.obj scicos.obj \
-	scicos_free.obj scicos_malloc.obj  dmmul.obj  blocks.obj trees.obj simul.obj \
+OBJSC=  blocks_new.obj evaluate_expr.obj import.obj intcos.obj \
+	sciblk2.obj scicos.obj scicos_malloc.obj  \
+	dmmul.obj  blocks.obj trees.obj simul.obj \
 
 # blocks.obj
 

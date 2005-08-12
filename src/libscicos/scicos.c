@@ -1,15 +1,19 @@
 #include <stdlib.h> 
 #include <string.h>
+
 #include "nsp/machine.h"
 #include "../system/link.h"
 #include "nsp/graphics/Graphics.h" 
 #include "nsp/object.h" 
 #include "nsp/blas.h" 
 #include "nsp/matutil.h" 
+#include "nsp/system.h" 
+
+
 #include "scicos.h"
-#include "import.h"
+#define TABSIM /* to force include of tabsim definition */
 #include "blocks.h"
-#include "simul.h"
+
 
 /* to be moved elsewhere */
 void Set_Jacobian_flag(int flag);
@@ -20,11 +24,6 @@ void call_debug_scicos(double *, double *, double *, double *,double *,int *,int
 extern void  scicos_sciblk();
 extern void  sciblk2();
 extern void  sciblk4();
-extern void  GetDynFunc(int, void (**) (/* ??? */));
-
-extern  int C2F(realtime)();
-extern  int C2F(realtimeinit)();
-extern  int nsp_stimer(void);
 extern  int C2F(ddaskr)();
 extern  int C2F(lsodar2)();
 
@@ -420,7 +419,7 @@ static void cossim(double *told)
   /*     initialization */
   nsp_iset(&niwp, &c__0, &ihot[1], &c__1);
   nsp_dset(&nrwp, &c_b14, &rhot[1], &c__1);
-  C2F(realtimeinit)(told, &Scicos->params.scale);
+  nsp_realtime_init(told, &Scicos->params.scale);
   
   phase=1;
   Scicos->params.hot = 0;
@@ -641,7 +640,7 @@ static void cossim(double *told)
 	  }
 	}
       }
-      C2F(realtime)(told);
+      nsp_realtime(told);
     } else {
       /*     .  t==told */   
       if (Scicos->params.debug >= 1) {
@@ -780,7 +779,7 @@ static void cossimdaskr(double *told)
   /*     initialization */
   nsp_iset(&niwp, &c__0, &ihot[1], &c__1);
   nsp_dset(&nrwp, &c_b14, &rhot[1], &c__1);
-  C2F(realtimeinit)(told, &Scicos->params.scale);
+  nsp_realtime_init(told, &Scicos->params.scale);
   /*     ATOL and RTOL are scalars */
   info[1] = 0;
   info[2] = 0;
@@ -1121,7 +1120,7 @@ static void cossimdaskr(double *told)
 	    }
 	    }*/
       }
-      C2F(realtime)(told);
+      nsp_realtime(told);
     } else {
       /*     .  t==told */
       if (Scicos->params.debug >= 1) {

@@ -28,14 +28,14 @@ double acosh(double x)
 
 double atanh(double x)
 {
-	if (x >=0.5) 
-	{
-		return 0.5*log((1+x)/(1-x));
-	}
-	else
-	{
-		return 0.5*log((2*x)+(2*x)*x/(1-x));
-	}
+  if (x >=0.5) 
+    {
+      return 0.5*log((1+x)/(1-x));
+    }
+  else
+    {
+      return 0.5*log((2*x)+(2*x)*x/(1-x));
+    }
   
 }
 #endif
@@ -309,9 +309,9 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
 	  }
 	  break;
 	  /*
-	  if (stack[bottom]>0) {
+	    if (stack[bottom]>0) {
 	    stack[bottom]=floor(stack[bottom]);
-	  }else{
+	    }else{
 	    stack[bottom]=ceil(stack[bottom]);
 	    }*/
 	  break;
@@ -338,10 +338,10 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
 	  }
 	  break;
 	  /*  if (stack[bottom]>0) {
-	    stack[bottom]=floor(stack[bottom]+.5);
-	  }else{
-	    stack[bottom]=ceil(stack[bottom]-.5);
-	  }*/
+	      stack[bottom]=floor(stack[bottom]+.5);
+	      }else{
+	      stack[bottom]=ceil(stack[bottom]-.5);
+	      }*/
 	case 111:
 	  if(block->ng>0) nzcr=nzcr+1;
 	  if (flag==9) {
@@ -396,12 +396,12 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
 	  }
 	  break;
 	  /* if (stack[bottom]>0) {
-	    stack[bottom]=1.0;
-	  }else if(stack[bottom]<0){
-	    stack[bottom]=-1.0;
-	  }else{
-	    stack[bottom]=0.0;
-	    }*/
+	     stack[bottom]=1.0;
+	     }else if(stack[bottom]<0){
+	     stack[bottom]=-1.0;
+	     }else{
+	     stack[bottom]=0.0;
+	     }*/
 	case 114:  /* abs */
 	  if(block->ng>0) nzcr=nzcr+1;
 	  if (flag==9) {
@@ -426,10 +426,10 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
 	  }
 	  break;
 	  /* if (stack[bottom]>0) {
-	    stack[bottom]=stack[bottom];
-	  }else {
-	    stack[bottom]=-stack[bottom];
-	    }*/
+	     stack[bottom]=stack[bottom];
+	     }else {
+	     stack[bottom]=-stack[bottom];
+	     }*/
 	case 115:
 	  if(block->ng>0) nzcr=nzcr+1;
 	  if (flag==9) {
@@ -495,15 +495,15 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
 	}
       }
     }
-    #if WIN32
+#if WIN32
     if(!_finite(stack[bottom])||_isnan(stack[bottom])){
-    #else
-     if(isinf(stack[bottom])||isnan(stack[bottom])){
-    #endif
-      set_block_error(-2);
-      return;
-    }else{
-      block->outptr[0][0]=stack[bottom];
+#else
+      if(isinf(stack[bottom])||isnan(stack[bottom])){
+#endif
+	set_block_error(-2);
+	return;
+      }else{
+	block->outptr[0][0]=stack[bottom];
+      }
     }
   }
-}

@@ -2,12 +2,8 @@
 #include "nsp/math.h"
 #include "nsp/machine.h"
 #include "nsp/object.h"
+
 #include "scicos.h"
-#include "import.h"
-#include "simul.h"
-
-
-extern scicos_run *Scicos;
 
 /* 
  * data structure selection 

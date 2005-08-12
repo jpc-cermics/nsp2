@@ -2,9 +2,6 @@
 #include "nsp/object.h"
 #include "nsp/blas.h"
 
-static double c_b4 = 1.;
-static double c_b5 = 0.;
-
 /*     PURPOSE 
  *        computes the matrix product C = A * B 
  *            C   =   A   *   B 
@@ -29,6 +26,7 @@ static double c_b5 = 0.;
 
 int dmmul_scicos(double *a, int *na, double *b, int *nb, double *c__, int *nc, int *l, int *m, int *n)
 {
+  double c_b4 = 1.0, c_b5 = 0.0;
   int a_dim1, a_offset, b_dim1, b_offset, c_dim1, c_offset;
   a_dim1 = *na;
   a_offset = a_dim1 + 1;
@@ -54,29 +52,17 @@ int dmmul_scicos(double *a, int *na, double *b, int *nb, double *c__, int *nc, i
  *     Copyright INRIA 
  */
 
-static integer c__1 = 1;
-
-int dmmul1_scicos(double *a, int *na, double *b, int *nb, double *c__, int *nc, int *l, int *m, int *n)
+int dmmul1_scicos(double *a, int *na, double *b, int *nb, double *c, int *nc, int *l, int *m, int *n)
 {
-  int i__1, i__2;
-  static int i__, j, ib, ic;
-  --c__;
-  --b;
-  --a;
-
-  ib = 1;
-  ic = 0;
-  i__1 = *n;
-  for (j = 1; j <= i__1; ++j) {
-    i__2 = *l;
-    for (i__ = 1; i__ <= i__2; ++i__) {
-      /* L20: */
-      c__[ic + i__] += ddot_(m, &a[i__], na, &b[ib], &c__1);
+  int i1=*n , i2=*l , i, j, ib=0, ic=0 , c1 = 1;
+  for (j = 0 ; j < i1; ++j) 
+    {
+      for (i = 0; i < i2; ++i) {
+	c[ic + i] += ddot_(m, &a[i], na, &b[ib], &c1);
+      }
+      ic += *nc;
+      ib += *nb;
     }
-    ic += *nc;
-    ib += *nb;
-    /* L30: */
-  }
   return 0;
 } 
 

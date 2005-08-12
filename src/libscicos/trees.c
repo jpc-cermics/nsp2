@@ -3,7 +3,6 @@
 #include "nsp/machine.h"
 #include "nsp/math.h"
 #include "nsp/gsort-p.h"
-#include "scicos_block.h"
 
 /* 
  * 

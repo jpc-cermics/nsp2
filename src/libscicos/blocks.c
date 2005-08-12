@@ -10,61 +10,12 @@
 #include "../system/files.h" /*  FSIZE */
 
 #include "scicos.h"
+#include "blocks.h"
 
-extern scicos_run *Scicos;
 
 /* 
  * most of the blocks defined here have the following calling sequence
  */
-
-int scicos_csslti_block(scicos_args_F0);
-int scicos_delay_block(scicos_args_F0) ;
-int scicos_dlradp_block(scicos_args_F0);
-int scicos_dollar_block(scicos_args_F0);
-int scicos_dsslti_block(scicos_args_F0);
-int scicos_evscpe_block(scicos_args_F0);
-int scicos_evtdly_block(scicos_args_F0);
-int scicos_exp_block(scicos_args_F0);
-int scicos_for_block(scicos_args_F0);
-int scicos_fsv_block(scicos_args_F0) ;
-int scicos_gensin_block(scicos_args_F0);
-int scicos_gensqr_block(scicos_args_F0);
-int scicos_hlt_block(scicos_args_F0);
-int scicos_integr_block(scicos_args_F0);
-int scicos_intplt_block(scicos_args_F0);
-int scicos_intpol_block(scicos_args_F0);
-int scicos_intrpl_block(scicos_args_F0) ;
-int scicos_inv_block(scicos_args_F0);
-int scicos_iocopy_block(scicos_args_F0);
-int scicos_log_block(scicos_args_F0);
-int scicos_lookup_block(scicos_args_F0);
-int scicos_lsplit_block(scicos_args_F0);
-int scicos_max_block(scicos_args_F0);
-int scicos_memo_block(scicos_args_F0) ;
-int scicos_mfclck_block(scicos_args_F0);
-int scicos_min_block(scicos_args_F0);
-int scicos_mscope_block(scicos_args_F0);
-int scicos_pload_block( scicos_args_F0) ;
-int scicos_pow_block(scicos_args_F0);
-int scicos_qzcel_block(scicos_args_F0) ;
-int scicos_qzflr_block(scicos_args_F0) ;
-int scicos_qzrnd_block(scicos_args_F0);
-int scicos_qztrn_block(scicos_args_F0);
-int scicos_rnd_block(scicos_args_F0);
-int scicos_samphold_block(scicos_args_F0) ;
-int scicos_sawtth_block(scicos_args_F0);
-int scicos_scopxy_block(scicos_args_F0);
-int scicos_scoxy_block(scicos_args_F0);
-int scicos_sel_block(scicos_args_F0);
-int scicos_sinblk_block(scicos_args_F0);
-int scicos_sqr_block(scicos_args_F0);
-int scicos_tanblk_block(scicos_args_F0);
-int scicos_tcsltj_block(scicos_args_F0) ;
-int scicos_timblk_block(scicos_args_F0);
-int scicos_trash_block(scicos_args_F0);
-int scicos_zcross_block(scicos_args_F0) ;
-int scicos_bound (scicos_args_F0);
-int scicos_affich_block(scicos_args_F0);
 
 /*     continuous state space linear system simulator */
 /*     rpar(1:nx*nx)=A */
@@ -2540,11 +2491,10 @@ int scicos_zcross_block(scicos_args_F0)
 
 void scicos_plus_block(scicos_args_F2);
 
-void 
-plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
-	int *nx, double *z, int *nz, double *tvec, int *ntvec, 
-	double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr, 
-	int *insz, int *nin, double **outptr, int *outsz, int *nout)
+void plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
+	     int *nx, double *z, int *nz, double *tvec, int *ntvec, 
+	     double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr, 
+	     int *insz, int *nin, double **outptr, int *outsz, int *nout)
 {
   int k,i,n;
   double *y;
@@ -4331,7 +4281,7 @@ scicos_eselect_block (int *flag__, int *nevprt, int *ntvec, double *rpar,
  * on the sign of the unique input (if input>0 then  else )
  */
 
-int scicos_ifthel_block(scicos_args_Fm1);
+int scicos_ifthel_block(scicos_args_Fm1); 
 
 int
 scicos_ifthel_block (int *flag__, int *nevprt, int *ntvec, double *rpar, int *nrpar,

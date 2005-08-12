@@ -26,10 +26,8 @@
 #include "nsp/machine.h"
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
-#include "scicos.h"
-#include "simul.h"
 
-extern scicos_run *Scicos;
+#include "scicos.h"
 
 /* 
  * [state,t]=scicosim(state,tcur,tf,sim,'start' ,tol) 

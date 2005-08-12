@@ -4,9 +4,12 @@
 #include "nsp/object.h" 
 #include "nsp/blas.h" 
 #include "nsp/matutil.h" 
+
 #include "scicos.h"
+#include "blocks.h"
 
 /* to be moved elsewhere XXXX  */
+
 #if WIN32
 extern double asinh(double x);
 extern double acosh(double x);
