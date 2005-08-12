@@ -16,13 +16,15 @@ void Set_Jacobian_flag(int flag);
 double Get_Jacobian_parameter(void);
 double Get_Scicos_SQUR(void);
 void call_debug_scicos(double *, double *, double *, double *,double *,int *,int,int,int);
+
 extern void  scicos_sciblk();
 extern void  sciblk2();
 extern void  sciblk4();
 extern void  GetDynFunc(int, void (**) (/* ??? */));
+
 extern  int C2F(realtime)();
 extern  int C2F(realtimeinit)();
-extern  int C2F(stimer)();
+extern  int nsp_stimer(void);
 extern  int C2F(ddaskr)();
 extern  int C2F(lsodar2)();
 
@@ -449,7 +451,7 @@ static void cossim(double *told)
   while(*told < *tf) {
     if (inxsci == TRUE)
       {
-	ntimer = C2F(stimer)();
+	ntimer = nsp_stimer();
 	if (ntimer != otimer) {
 	  nsp_check_gtk_events();
 	  otimer = ntimer;
@@ -833,7 +835,7 @@ static void cossimdaskr(double *told)
   /*     main loop on time */
   while (*told < *tf) {
     if (inxsci == TRUE) {
-      ntimer = C2F(stimer)();
+      ntimer = nsp_stimer();
       if (ntimer != otimer) {
 	nsp_check_gtk_events();
 	otimer = ntimer;
@@ -1094,7 +1096,7 @@ static void cossimdaskr(double *told)
 	  }
 	}
 	if (inxsci == 1) {
-	  ntimer = C2F(stimer)();
+	  ntimer = nsp_stimer();
 	  if (ntimer != otimer) {
 	    nsp_check_gtk_events();
 	    otimer = ntimer;
