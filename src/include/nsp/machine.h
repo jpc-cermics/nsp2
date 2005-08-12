@@ -16,6 +16,7 @@
 #define HAVE_VALUES_H 1
 #define HAVE_FLOAT_H 1
 #define HAVE_LIMITS_H 1
+#define HAVE_SYS_TIME_H 1
 
 /* Define for using dld for sunos */
 /* #undef SUNOSDLD */

@@ -1,3 +1,4 @@
+/* -*- Mode: C -*- */
 #ifndef NSP_INC_ClassA
 #define NSP_INC_ClassA
 
@@ -5,7 +6,7 @@
  * This Software is GPL (Copyright ENPC 1998-2005) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
-  
+
 /* ClassA */
 
 #include "nsp/object.h"
@@ -14,27 +15,28 @@
  * NspClassA inherits from NspObject
  */
 
-typedef struct _NspClassa NspClassA;
+typedef struct _NspClassA NspClassA ;
+typedef struct _NspTypeClassA NspTypeClassA ;
 
-typedef struct _NspTypeClassA { 
-  NSP_TYPE_OBJECT__ 
-  /*< public >*/
-} NspTypeClassA;
-
-struct _NspClassa {
+struct _NspTypeClassA {
   /*< private >*/
-  NspObject father; 
-  NspTypeClassA *type; 
+  NSP_TYPE_OBJECT__
   /*< public >*/
-  int classa_color;
-  int classa_thickness;
-  NspMatrix *classa_val;
+};
+
+struct _NspClassA {
+  /*< private >*/
+  NspObject father;
+  NspTypeClassA*type;
+  /*< public >*/
+  int color;
+  int thickness;
 };
 
 extern int nsp_type_classa_id;
 extern NspTypeClassA *nsp_type_classa;
 
-/* type instances for classa */
+/* type instances for object */
 
 NspTypeClassA *new_type_classa(type_mode mode);
 
@@ -43,39 +45,39 @@ NspTypeClassA *new_type_classa(type_mode mode);
 NspClassA *new_classa();
 
 /*
- * Object methods redefined for classa 
- */
+* Object methods redefined for classa 
+*/
 
-#define NULLCLA (NspClassA*) 0
 
-NspClassA *classa_create(char *name,int color,int thickness,NspTypeBase *type);
-NspClassA *classa_copy(NspClassA *H);
-void classa_destroy(NspClassA *H);
-void classa_info(NspClassA *H, int indent);
-void classa_print(NspClassA *H, int indent);
+#define NULLCLASSA (NspClassA*) 0
+
+extern NspClassA *classa_create(char *name,int color,int thickness,NspTypeBase *type);
 
 /* from ClassAObj.c */
 
-extern NspClassA *classa_object (NspObject *O); 
+extern NspClassA *nsp_classa_copy(NspClassA *H);
+extern void nsp_classa_destroy(NspClassA *H);
+extern void nsp_classa_info(NspClassA *H, int indent);
+extern void nsp_classa_print(NspClassA *H, int indent);
+extern NspClassA *nsp_classa_object (NspObject *O); 
 extern int IsClassAObj (Stack stack, int i); 
 extern int IsClassA(NspObject *O);
 extern NspClassA *GetClassACopy (Stack stack, int i); 
 extern NspClassA *GetClassA (Stack stack, int i); 
 
-#endif 
-
-/* private part */
+#endif /* NSP_INC_ClassA */ 
 
 #ifdef ClassA_Private 
 static int init_classa(NspClassA *o,NspTypeClassA *type);
-static int classa_size(NspClassA *Mat, int flag);
-static char *classa_type_as_string(void);
-static char *classa_type_short_string(void);
-static int classa_eq(NspClassA *A, NspObject *B);
-static int classa_neq(NspClassA *A, NspObject *B);
-static int classa_xdr_save(NspFile  *F, NspClassA *M);
-static NspClassA  *classa_xdr_load(NspFile  *F);
+static int nsp_classa_size(NspClassA *Mat, int flag);
+static char *nsp_classa_type_as_string(void);
+static char *nsp_classa_type_short_string(void);
+static int nsp_classa_eq(NspClassA *A, NspObject *B);
+static int nsp_classa_neq(NspClassA *A, NspObject *B);
+static int nsp_classa_xdr_save(NspFile  *F, NspClassA *M);
+static NspClassA *nsp_classa_xdr_load(NspFile  *F);
 static AttrTab classa_attrs[];
-static NspMethods *classa_get_methods(void); 
-static int int_cla_create(Stack stack, int rhs, int opt, int lhs);
+static NspMethods *classa_get_methods(void);
+static int int_classa_create(Stack stack, int rhs, int opt, int lhs);
 #endif /* ClassA_Private */
+
