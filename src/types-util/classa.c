@@ -247,7 +247,7 @@ void nsp_classa_info(NspClassA *H, int indent)
 
 void nsp_classa_print(NspClassA *H, int indent)
 {
-  classa_info(H,indent);
+  nsp_classa_info(H,indent);
 }
 
 /*-----------------------------------------------------
@@ -286,7 +286,7 @@ NspClassA  *GetClassACopy(Stack stack, int i)
 NspClassA  *GetClassA(Stack stack, int i)
 {
   NspClassA *M;
-  if (( M = classa_object(NthObj(i))) == NULLCLA)
+  if (( M = nsp_classa_object(NthObj(i))) == NULLCLA)
      ArgMessage(stack,i);
   return M;
 }
@@ -316,7 +316,7 @@ NspClassA *classa_create(char *name,int color,int thickness,NspTypeBase *type)
  * copy 
  */
 
-NspClassA *classa_copy(NspClassA *H)
+NspClassA *nsp_classa_copy(NspClassA *H)
 {
   return classa_create(NVOID,H->classa_color,H->classa_thickness,NULL);
 }

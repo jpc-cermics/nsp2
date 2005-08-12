@@ -247,7 +247,7 @@ void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent)
 
 void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent)
 {
-  @TYPEDOWNCASE@_info(H,indent);
+  nsp_@TYPEDOWNCASE@_info(H,indent);
 }
 
 /*-----------------------------------------------------
@@ -286,7 +286,7 @@ Nsp@TYPENAME@  *Get@TYPENAME@Copy(Stack stack, int i)
 Nsp@TYPENAME@  *Get@TYPENAME@(Stack stack, int i)
 {
   Nsp@TYPENAME@ *M;
-  if (( M = @TYPEDOWNCASE@_object(NthObj(i))) == @NULL@)
+  if (( M = nsp_@TYPEDOWNCASE@_object(NthObj(i))) == @NULL@)
      ArgMessage(stack,i);
   return M;
 }
@@ -316,7 +316,7 @@ Nsp@TYPENAME@ *@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeB
  * copy 
  */
 
-Nsp@TYPENAME@ *@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H)
+Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H)
 {
   return @TYPEDOWNCASE@_create(NVOID,H->@TYPEDOWNCASE@_color,H->@TYPEDOWNCASE@_thickness,NULL);
 }
