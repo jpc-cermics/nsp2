@@ -451,28 +451,32 @@ static int scifunc_hsearch(char *key, Fdata *data, ACTION action)
 {
   register unsigned hval;
   register unsigned hval2;
-  register unsigned count;
   register unsigned len = NAME_MAXL;
   register unsigned idx;
+  register char *str;
 
     /*
      * If table is full and another entry should be entered return with 
      * error.
      */
-
     if (action == ENTER && filled == hsize) 
         return FAIL;
 
     /* Compute a value for the given string. Perhaps use a better method. */
+    /* modifs (bruno) : avoid the call to strlen and put the modulo outside the loop */
+    /*                  then compute hval % hsize efficiently */
     hval  = len;
-    count = strlen(key);
-    while (count-- > 0) {
-      hval += key[count];
-      hval %= hsize;
-    }
+    str = key;
+    while (*str != '\0') { hval += *str ; str++; }
+    /* compute hval %= hsize efficiently */
+    if ( hval >= hsize)
+      {
+	hval -= hsize;
+	if ( hval >= hsize)
+	  hval %= hsize;
+      }
 
     /* First hash function: simply take the modul but prevent zero. */
-
     if (hval == 0) hval++;
 
     /* The first index tried. */

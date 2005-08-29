@@ -262,7 +262,7 @@ int nsp_hash_find_and_copy(NspHash *H, char *str, NspObject **O)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_hash_find(NspHash *H,const char *str, NspObject **O)
+int nsp_hash_find(NspHash *H,char *str, NspObject **O)
 {
   *O = NULLOBJ;
   return( nsp_hsearch(H,str,O,H_FIND));
@@ -620,18 +620,18 @@ void nsp_hdestroy(NspHash *H)
  * Return value: %OK, %FAIL. 
  **/
 
-int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation action)
+int nsp_hsearch(NspHash *H,char *key, NspObject **data, HashOperation action)
 {
   register unsigned hval;
   register unsigned hval2;
-  register unsigned count;
   register unsigned idx;
-  Hash_Entry *htable =  H->htable;
+  register char *str;
+  Hash_Entry *htable = H->htable;
+
   /*
    * If table is full and another entry should be entered return with 
    * error.
    */
-
   if (action == H_ENTER && H->filled == H->hsize ) 
     {
       Scierror("Hash Table %s is full\n",NSP_OBJECT(H)->name);
@@ -639,15 +639,13 @@ int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation acti
     }
 
   /* Compute a value for the given string. Perhaps use a better method. */
+  /* modifs (bruno) : avoid the call to strlen and put the modulo outside the loop */
   hval  = 33;
-  count = strlen(key);
-  while (count-- > 0) {
-    hval += key[count];
-    hval %= H->hsize;
-  }
+  str = key;
+  while (*str != '\0') { hval += *str ; str++; }
+  hval %= H->hsize;
 
-  /* First hash function: simply take the modul but prevent zero. */
-
+  /* First hash function: simply take the modulo but prevent zero. */
   if (hval == 0) hval++;
 
   /* The first index tried. */
