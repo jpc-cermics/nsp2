@@ -1080,27 +1080,54 @@ static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
 }
 
 /* OK 
- * nsp_inv 
+ * nsp_inv (triangular case added)
  */
 static int intdgetri(NspMatrix *A);
 static int intzgetri(NspMatrix *A);
 
 int nsp_inv(NspMatrix *A) 
 {
+  char tflag;  /* N : non triangular, U : upper triangular, L : lower triangular */
+  int n=A->n, m = A->m, info;
 
   /*  A = [] return empty matrices */ 
   if ( A->mn == 0 )  return OK ; 
   
-  if (A->m != A->n) 
+  if (m != n) 
     { 
-      Scierror("Error: first argument of inv should be square and it is (%dx%d)\n", A->m,A->n);
+      Scierror("Error: first argument of inv should be square and it is (%dx%d)\n", m, n);
       return FAIL;
     }
 
-  if ( A->rc_type == 'r') 
-    return intdgetri(A);
+  if ( nsp_mat_is_upper_triangular(A) )
+    tflag = 'U';
+  else if ( nsp_mat_is_lower_triangular(A) )
+    tflag = 'L';
   else 
-    return intzgetri(A);
+    tflag = 'N';
+
+  if ( tflag == 'N' )
+    {
+      if ( A->rc_type == 'r')
+	return intdgetri(A);
+      else
+	return intzgetri(A);
+    }
+  else  /* triangular case */
+    {
+      if ( A->rc_type == 'r')
+	C2F(dtrtri) (&tflag, "N", &n, A->R, &n, &info, 1L, 1L);
+      else
+	C2F(ztrtri) (&tflag, "N", &n, A->C, &n, &info, 1L, 1L);
+
+      if (info == 0) 
+	return OK; 
+      else 
+	{
+	  Scierror("inv: matrix is singular\n");
+	  return FAIL;
+	}
+    }
 }
 
 static int intdgetri(NspMatrix *A)
@@ -1114,7 +1141,7 @@ static int intdgetri(NspMatrix *A)
   C2F(dgetrf)(&n, &n, A->R, &n, ipiv, &info);
   if (info != 0) 
     {
-      Scierror("inv: problem is singular\n");
+      Scierror("inv: matrix is singular\n");
       goto err;
     };
 
@@ -1143,7 +1170,7 @@ static int intzgetri(NspMatrix *A)
   C2F(zgetrf)(&n, &n, A->C, &n, ipiv, &info);
   if (info != 0) 
     {
-      Scierror("inv: problem is singular\n");
+      Scierror("inv: matrix is singular\n");
       goto err;
     };
 
@@ -1164,111 +1191,134 @@ static int intzgetri(NspMatrix *A)
 
 /* OK
  * nsp_rcond(A)
- * A is modified 
  */
 
 static int intdgecon(NspMatrix *A,double *rcond);
 static int intzgecon(NspMatrix *A,double *rcond);
+static int inttrcon(NspMatrix *A, char tri_type, double *rcond);
 
 int nsp_rcond(NspMatrix *A,double *rcond)
 {
-  if ( A->rc_type == 'r') 
-    return intdgecon(A,rcond);
-  else 
-    return intzgecon(A,rcond);
-}
-
-
-static int intdgecon(NspMatrix *A,double *rcond) 
-{
-  NspMatrix *iwork,*dwork;
-  double anorm;
-  int *Iwork, info,lworkMin, m = A->m, n = A->n ;
-  *rcond = 0.0;
-
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 )  return OK ; 
-  
-  if (m != n) { 
-    Scierror("Error: first argument of rcond should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
-
-  /* int matrix XXX */ 
-
-  if (( iwork =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
-  Iwork = (int *) iwork->R  ;
-
-  lworkMin = 4*n ;
-  if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
-
-  anorm = C2F(dlange)("1", &n, &n,A->R, &n, NULL, 1L);
-  C2F(dgetrf)(&n, &n, A->R, &n, Iwork , &info);
-  if (info == 0) {
-    C2F(dgecon)("1",&n,A->R,&n,&anorm,rcond,dwork->R,Iwork, &info, 1L);
-    if ( info != 0 ) 
-      {
-	Scierror("Error: something wrong in dgecon\n");
-	return FAIL;
-      }
-      
-  } else {
-    Scierror("Error: something wrong in dgetrf\n");
-    return FAIL;
-  }
-
-  nsp_matrix_destroy(dwork); 
-  nsp_matrix_destroy(iwork); 
-  
-  return OK;
-
-} 
-
-
-static int intzgecon(NspMatrix *A,double *rcond) 
-{
-  double anorm;
-  NspMatrix *iwork,*dwork,*rwork;
-  int *Iwork;
-  int info,lworkMin, m = A->m, n = A->n ;
-  *rcond=0.0;
+  NspMatrix *Ac;
+  int stat;
 
   /*  A = [] return empty matrices */ 
   if ( A->mn == 0 )  return OK ; 
   
-  if (m != n) 
+  if (A->m != A->n) 
     { 
       Scierror("Error: first argument of rcond should be square and it is (%dx%d)\n", 
-	       m,n);
+	       A->m,A->n);
       return FAIL;
     }
 
-  /* int matrix XXX */ 
+  if ( nsp_mat_is_upper_triangular(A) )
+    return inttrcon(A, 'u', rcond);
+  else if ( nsp_mat_is_lower_triangular(A) )
+    return inttrcon(A, 'l', rcond);
+  else 
+    {
+      if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) return FAIL;
+      if ( A->rc_type == 'r') 
+	stat = intdgecon(Ac, rcond);
+      else 
+	stat = intzgecon(Ac, rcond);
+      nsp_matrix_destroy(Ac);
+      return stat;
+    }
+}
 
-  if (( iwork =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
-  Iwork = (int *) iwork->R  ;
+static int intdgecon(NspMatrix *A,double *rcond) 
+{
+  int *iwork=NULL;
+  double *dwork=NULL, anorm;
+  int info, n=A->n;
+  *rcond = 0.0;
 
-  if (( rwork =nsp_matrix_create(NVOID,'r',1,2*n)) == NULLMAT) return FAIL;
-  lworkMin = 2*n ;
-  if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
+  if ( (iwork=nsp_alloc_work_int(n)) == NULL ) return FAIL;
+  if ( (dwork =nsp_alloc_work_doubles(4*n)) == NULL ) goto err;
 
-  anorm = C2F(zlange)("1", &n, &n,A->C, &n,NULL, 1L);
-  C2F(zgetrf)(&n, &n, A->C, &n, Iwork , &info);
-  if (info == 0) {
-    C2F(zgecon)("1",&n,A->C,&n,&anorm,rcond,dwork->C,rwork->R, &info, 1L);
-  } else {
-    Scierror("Error: something wrong in zgetrf\n");
-    return FAIL;
-  }
-
-  nsp_matrix_destroy(dwork); 
-  nsp_matrix_destroy(rwork); 
-  nsp_matrix_destroy(iwork); 
+  anorm = C2F(dlange)("1", &n, &n, A->R, &n, NULL, 1L);
+  C2F(dgetrf)(&n, &n, A->R, &n, iwork , &info);
+  if (info == 0) 
+    C2F(dgecon)("1", &n, A->R, &n, &anorm, rcond, dwork, iwork, &info, 1L);
+  else 
+    {
+      Scierror("Error: something wrong in dgetrf\n"); 
+      /* FIXME : the only pb is a 0 pivot (so we could improve the message) */
+      goto err;
+    }
   
+  FREE(dwork); FREE(iwork); 
   return OK;
+
+ err:
+  FREE(dwork); FREE(iwork); 
+  return FAIL;
 } 
+
+static int intzgecon(NspMatrix *A,double *rcond) 
+{
+  double anorm, *rwork=NULL;
+  doubleC *cwork=NULL;
+  int *iwork=NULL, info, n=A->n;
+
+  *rcond=0.0;
+
+  if ( (iwork=nsp_alloc_work_int(n)) == NULL ) return FAIL;
+  if ( (rwork=nsp_alloc_work_doubles(2*n)) == NULL ) goto err;
+  if ( (cwork=nsp_alloc_work_doubleC(2*n)) == NULL ) goto err;
+
+  anorm = C2F(zlange)("1", &n, &n, A->C, &n, NULL, 1L);
+  C2F(zgetrf)(&n, &n, A->C, &n, iwork , &info);
+  if (info == 0) 
+    C2F(zgecon)("1", &n, A->C, &n, &anorm, rcond, cwork, rwork, &info, 1L);
+  else 
+    {
+      Scierror("Error: something wrong in zgetrf\n"); 
+      /* FIXME : the only pb is a null pivot (so we could improve the message) */
+      return FAIL;
+    }
+  
+  FREE(cwork); FREE(rwork); FREE(iwork); 
+  return OK;
+
+ err:
+  FREE(cwork); FREE(rwork); FREE(iwork); 
+  return FAIL;
+} 
+
+static int inttrcon(NspMatrix *A, char tri_type, double *rcond1)
+{  
+  int m = A->m, info;
+  double *rwork=NULL;
+  doubleC *cwork=NULL;
+  int *iwork=NULL;
+
+  if ( A->rc_type == 'r' )
+    {
+      iwork = nsp_alloc_work_int(m);
+      rwork = nsp_alloc_work_doubles(3*m);
+      if ( iwork == NULL  ||  rwork == NULL ) goto err;
+      C2F(dtrcon) ("1", &tri_type, "N", &m, A->R, &m, rcond1, rwork, iwork, &info, 1, 1, 1);
+      FREE(rwork); FREE(iwork);
+    }
+  else
+    {
+      rwork = nsp_alloc_work_doubles(m);
+      cwork = nsp_alloc_work_doubleC(2*m);
+      if ( rwork == NULL  ||  cwork == NULL ) goto err;
+      C2F(ztrcon) ("1", &tri_type, "N", &m, A->C, &m, rcond1, cwork, rwork, &info, 1, 1, 1);
+      FREE(cwork); FREE(rwork);
+    }
+
+  return OK;
+
+ err:
+  FREE(iwork); FREE(cwork); FREE(rwork);
+  return FAIL;
+}
+
 
 /* OK 
  * nsp_cholesky
@@ -1282,21 +1332,21 @@ int nsp_cholesky(NspMatrix *A)
   /*  A = [] return empty matrices */ 
   if ( A->mn == 0 )  return OK ; 
   
-  if (m != n) { 
-    Scierror("Error: first argument of chol should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  if (m != n) 
+    { 
+      Scierror("Error: first argument of chol should be square and it is (%dx%d)\n", m,n);
+      return FAIL;
+    }
   if ( A->rc_type == 'r' ) 
     C2F(dpotrf)("U", &n,A->R, &n, &info, 1L);
   else 
     C2F(zpotrf)("U", &n,A->C, &n, &info, 1L);
-  if (info != 0) {
-    if (info > 0) {
-      Scierror("Error: matrix is not positive definite\n"); 
+  if (info != 0) 
+    {
+      if (info > 0)
+	Scierror("Error: matrix is not positive definite\n"); 
+      return FAIL;
     }
-    return FAIL;
-  }
   nsp_mat_triu(A,0);  
   return OK;
 } 
@@ -1313,6 +1363,22 @@ static NspMatrix * intddet(NspMatrix *A,char mode);
 
 NspMatrix * nsp_det(NspMatrix *A,char mode)
 {
+  /*  A = [] return empty matrices */ 
+  if ( A->mn == 0 ) 
+    {
+      NspMatrix *det; 
+      if ( (det=nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) 
+	return NULL;
+      return det ; 
+    }
+  
+  if (A->m != A->n) 
+    { 
+      Scierror("Error: first argument for det should be square and it is (%dx%d)\n", 
+	       A->m, A->n);
+      return NULL;
+    }
+
   if ( A->rc_type == 'r' ) 
     return  intddet(A,mode); 
   else 
@@ -1322,135 +1388,92 @@ NspMatrix * nsp_det(NspMatrix *A,char mode)
 
 static NspMatrix * intddet(NspMatrix *A,char mode)
 {
-  NspMatrix *det;
-  int info,ix;
-  NspMatrix *ipiv;
-  int m = A->m,n=A->n; 
-  int *Ipiv;
+  NspMatrix *det; 
+  int info, ix, n=A->n, *ipiv=NULL;
 
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if ((det =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return NULL;
-    return det ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument for det should be square and it is (%dx%d)\n", 
-	     m,n);
-    return NULL;
-  }
+  if ( (ipiv=nsp_alloc_work_int(n)) == NULL ) return NULLMAT;
 
-  /* int matrix XXX */ 
-  if (( ipiv =nsp_matrix_create(NVOID,'r',1,m)) == NULLMAT) return NULL;
-  Ipiv = (int *) ipiv->R  ;
-
-  C2F(dgetrf)(&m, &n, A->R, &m, Ipiv , &info);
-  if (info < 0) {
-    Scierror("Error: something wrong in dgetrf\n") ; 
-    return NULL;
-  }
+  C2F(dgetrf)(&n, &n, A->R, &n, ipiv , &info);
   
-  if (mode == 'd')
+  if (mode == 'd')  /* det(A) */
     { 
-      /* det(A) */
       double dx = 1.;
-      /* loop on diag(A) */ 
-      for (ix = 0; ix < n ; ++ix) 
+      for (ix = 0; ix < n ; ++ix)  /* loop on diag(A) */ 
 	{
-	  if ( Ipiv[ix] != ix + 1) dx = -dx; 
-	  dx *= A->R[ ix * (m + 1) ];
+	  if ( ipiv[ix] != ix+1 ) dx = -dx; 
+	  dx *= A->R[ix*(n+1)];
 	}
-      if (( det =nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) return NULL;
-      det->R[0] = dx ;
+      if ( (det=nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT ) goto err;
+      det->R[0] = dx;
     } 
-  else 
-    {    /*  [e,m]=det(A) */
-      const double one=1.0, ten= 10.0;
-      double dx = 1.0, e = 0.0;
-      for (ix = 0; ix < n; ++ix) {
-	if ( Ipiv[ix] != ix + 1) dx = -dx; 
-	dx *= A->R[ ix * (m + 1) ];
-	if (dx == 0.) break ; 
-	while ( Abs(dx) < one) {
-	  dx *= ten;
-	  e -= one; 
+  else   /*  [e,m]=det(A) */
+    {   
+      const double one=1.0, ten=10.0;
+      double dx=1.0, e=0.0;
+      for (ix = 0; ix < n; ++ix) 
+	{
+	  if ( ipiv[ix] != ix+1) dx = -dx; 
+	  dx *= A->R[ix*(n+1)];
+	  if (dx == 0.0) break; 
+	  while ( Abs(dx) < one ) { dx *= ten; e -= one; }
+	  /* attention si Inf on va boucler à l'infini */
+	  while ( Abs(dx) >= ten ) { dx /= ten; e += one; }
 	}
-	while ( Abs(dx) >= ten ) {
-	  dx /= ten; e += one ; 
-	}
-      }
-      if (( det =nsp_matrix_create(NVOID,A->rc_type,1,2)) == NULLMAT) return NULL;
+      if (( det =nsp_matrix_create(NVOID,A->rc_type,1,2)) == NULLMAT) goto err;
       det->R[0]= e; 
       det->R[1]= dx; 
     } 
-  return det ;
+  FREE(ipiv);
+  return det;
+
+ err:
+  FREE(ipiv);
+  return NULLMAT;
 }
   
-
 static NspMatrix * intzdet(NspMatrix *A,char mode)
 {
-  NspMatrix *ipiv,*det;
-  int info,ix;
-  int m = A->m,n=A->n; 
-  int *Ipiv;
+  NspMatrix *det;
+  int info, ix, n=A->n, *ipiv=NULL;
 
-  /*  A = [] return empty matrices */ 
+  if ( (ipiv=nsp_alloc_work_int(n)) == NULL ) return NULLMAT;
+
+  C2F(zgetrf)(&n, &n, A->C, &n, ipiv, &info);
   
-  if ( A->mn == 0 ) {
-    if (( det =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return NULL;
-    return det;
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument for det should be square and it is (%dx%d)\n", 
-	     m,n);
-    return NULL;
-  }
-
-  /* int matrix XXX */ 
-  if (( ipiv =nsp_matrix_create(NVOID,'r',1,m)) == NULLMAT) return NULL;
-  Ipiv = (int *) ipiv->R  ;
-
-  C2F(zgetrf)(&m, &n, A->C, &m, Ipiv , &info);
-  if (info < 0) {
-    Scierror("Error: something wrong in zgetrf\n") ; 
-    return NULL;
-  }
-
-  
-  if (mode == 'd' ) {    /* det(A) */
-    doubleC dx = {1.0,0.0} ;
-    /* loop on diag(A) */ 
-    for (ix = 0; ix < n ; ++ix) 
-      {
-	if ( Ipiv[ix] != ix + 1) { dx.r = -dx.r ;  dx.i = -dx.i;};
-	nsp_prod_c(&dx,&A->C[ ix * (m + 1) ]);
-      }
-    if (( det =nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) return NULL;
-    det->C[0] = dx ;
-  } else {    /*  [e,m]=det(A) */
-    const double one=1.0, ten= 10.0;
-    doubleC dx = {1.0,0.0};
-    double e = 0.0;
-    for (ix = 0; ix < n; ++ix) {
-      if ( Ipiv[ix] != ix + 1) { dx.r = -dx.r ;  dx.i = -dx.i;};
-      nsp_prod_c(&dx,&A->C[ ix * (m + 1) ]);
-      if ( nsp_abs_c(&dx) == 0.) break ; 
-      while ( nsp_abs_c(&dx) < one) {
-	dx.r *= ten; dx.i *= ten;
-	e -= one; 
-      }
-      while (nsp_abs_c(&dx) >= ten  ) {
-	dx.r /= ten; dx.i /= ten;
-	e += one ; 
-      }
+  if (mode == 'd' )  /* det(A) */ 
+    {   
+      doubleC dx={1.0,0.0};
+      for (ix = 0; ix < n ; ++ix)  /* loop on diag(A) */ 
+	{
+	  if ( ipiv[ix] != ix+1 ) { dx.r = -dx.r;  dx.i = -dx.i;}
+	  nsp_prod_c(&dx,&A->C[ix*(n+1)]);
+	}
+      if ( (det=nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) goto err;
+      det->C[0] = dx ;
+    } 
+  else              /* [e,m]=det(A) */
+    {   
+      const double one=1.0, ten=10.0;
+      doubleC dx={1.0,0.0};
+      double e = 0.0;
+      for (ix = 0; ix < n; ++ix) 
+	{
+	  if ( ipiv[ix] != ix+1) { dx.r = -dx.r;  dx.i = -dx.i;}
+	  nsp_prod_c(&dx,&A->C[ix*(n+1)]);
+	  if ( nsp_abs_c(&dx) == 0.0) break;  /* FIXME : on peut ecrire dx.r==0 && dx.i==0 */
+	  while ( nsp_abs_c(&dx) < one ) { dx.r *= ten; dx.i *= ten; e -= one; }
+	  /* attention si Inf on va boucler à l'infini */
+	  while ( nsp_abs_c(&dx) >= ten ) { dx.r /= ten; dx.i /= ten; e += one; }
+	}
+      if ( (det=nsp_matrix_create(NVOID,A->rc_type,1,2)) == NULLMAT ) goto err;
+      (det)->C[0].r = e; (det)->C[0].i = 0.0; (det)->C[1] = dx; 
     }
-    if (( det =nsp_matrix_create(NVOID,A->rc_type,1,2)) == NULLMAT) return NULL;
-    (det)->C[0].r  = e;    (det)->C[0].i  = 0.0;
-    (det)->C[1] = dx; 
-  }
+  FREE(ipiv);
   return det;
+
+ err:
+  FREE(ipiv);
+  return NULLMAT;
 } 
 
 
@@ -3370,33 +3393,3 @@ int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info
   return OK;
 }
 
-int nsp_mat_triangular_cond(NspMatrix *A, char tri_type, double *rcond1)
-{  
-  int m = A->m, info;
-  double *rwork=NULL;
-  doubleC *cwork=NULL;
-  int *iwork=NULL;
-
-  if ( A->rc_type == 'r' )
-    {
-      iwork = nsp_alloc_work_int(m);
-      rwork = nsp_alloc_work_doubles(3*m);
-      if ( iwork == NULL  ||  rwork == NULL ) goto err;
-      C2F(dtrcon) ("1", &tri_type, "N", &m, A->R, &m, rcond1, rwork, iwork, &info, 1, 1, 1);
-      FREE(rwork); FREE(iwork);
-    }
-  else
-    {
-      rwork = nsp_alloc_doubles(m);
-      cwork = nsp_alloc_doubleC(2*m);
-      if ( rwork == NULL  ||  cwork == NULL ) goto err;
-      C2F(ztrcon) ("1", &tri_type, "N", &m, A->C, &m, rcond1, cwork, rwork, &info, 1, 1, 1);
-      FREE(cwork); FREE(rwork);
-    }
-
-  return OK;
-
- err:
-  FREE(iwork); FREE(cwork); FREE(rwork);
-  return FAIL;
-}

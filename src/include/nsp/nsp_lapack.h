@@ -22,5 +22,4 @@ extern int nsp_expm(NspMatrix *A);
 extern int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B);
 extern int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond);
 extern int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info);
-extern int nsp_mat_triangular_cond(NspMatrix *A, char tri_type, double *rcond1);
 #endif 
