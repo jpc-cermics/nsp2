@@ -1775,29 +1775,16 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
   gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, x1, yy1, x2, y2);
 }
 
-/** Draw a set of segments **/
-/** segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/
-/** for i=0 step 2 **/
-/** n is the size of vx and vy **/
+/* Draw a set of segments 
+ * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
+ * for i=0 step 2 
+ * n is the size of vx and vy 
+ */
 
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
-  int dash,color,i;
   DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
-  if ( iflag == 1) { /* one style per segment */
-    for (i=0 ; i < n/2 ; i++) {
-      xset_line_style(Xgc,style[i]);
-      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-    }
-  }
-  else {
-    if (*style >= 1) xset_line_style(Xgc,*style);
-    /* une fonction gtk existe ici FIXME */
-    for (i=0 ; i < n/2 ; i++) 
-      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-  }
-  xset_dash_and_color(Xgc,dash,color);
+  Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
 }
 
 /* Draw a set of arrows 
@@ -1809,35 +1796,8 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
 
 static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
 { 
-  int dash,color,i,lstyle;
-  double cos20=cos(20.0*M_PI/180.0);
-  double sin20=sin(20.0*M_PI/180.0);
-  int polyx[4],polyy[4];
   DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
-  for (i=0 ; i < n/2 ; i++)
-    { 
-      double dx,dy,norm;
-      lstyle = (iflag == 1) ? style[i] : ( *style < 1 ) ? color : *style; 
-      xset_line_style(Xgc,lstyle);
-      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-      dx=( vx[2*i+1]-vx[2*i]);
-      dy=( vy[2*i+1]-vy[2*i]);
-      norm = sqrt(dx*dx+dy*dy);
-      if ( Abs(norm) >  SMDOUBLE ) 
-	{
-	  int nn=1,p=3;
-	  dx=(as/10.0)*dx/norm;dy=(as/10.0)*dy/norm;
-	  polyx[0]= polyx[3]=vx[2*i+1]; /* +dx*cos20;*/
-	  polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
-	  polyx[2]= inint(polyx[0]  - cos20*dx + sin20*dy);
-	  polyy[0]= polyy[3]=vy[2*i+1]; /* +dy*cos20;*/
-	  polyy[1]= inint(polyy[0] + sin20*dx -cos20*dy) ;
-	  polyy[2]= inint(polyy[0] - sin20*dx - cos20*dy) ;
-	  fillpolylines(Xgc,polyx,polyy,&lstyle,nn,p);
-	}
-    }
-  xset_dash_and_color(Xgc,dash,color);
+  Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
 }
 
 /*
@@ -1881,16 +1841,16 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
   xset_dash_and_color(Xgc,dash,color);
 }
 
-/** Draw one rectangle with current line style **/
+/* Draw one rectangle with current line style */
 
 static void drawrectangle(BCG *Xgc,const int rect[])
 { 
-  DRAW_CHECK
-    gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,
-		       rect[0],rect[1],rect[2],rect[3]);
+  DRAW_CHECK;
+  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,
+		     rect[0],rect[1],rect[2],rect[3]);
 }
 
-/** fill one rectangle, with current pattern **/
+/* fill one rectangle, with current pattern */
 
 static void fillrectangle(BCG *Xgc,const int rect[])
 { 

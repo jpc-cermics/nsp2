@@ -946,18 +946,18 @@ static void boundingboxM(BCG *Xgc,char *string, int x, int y, int *rect)
 /* Draw a single line in current style **/
 /* Unused in fact **/ 
 
-/* static void drawline(int *x1, int *yy1, int *x2, int *y2) */
-/* { */
-/*   FPRINTF((file,"# %d %d %d %d L\n",(int)*x1,(int)*yy1,(int)*x2,(int)*y2)); */
-/* } */
+static void drawline(BCG *Xgc,int xx1, int yy1, int x2, int y2) 
+{ 
+  FPRINTF((file,"# %d %d %d %d L\n",xx1,yy1,x2,y2));
+}
 
-/* Draw a set of segments **/
-/* segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/
-/* for i=0 step 2 **/
-/*   if iflag == 1 style[i] gives the style for each segment
-     if iflag == 0 (if *style >0 ) it   gives the style for all the  segment 
-     (if *style <0 ) The default style is used for all the  segment 
-**/
+/* Draw a set of segments 
+ * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
+ * for i=0 step 2 
+ *   if iflag == 1 style[i] gives the style for each segment
+ *     if iflag == 0 (if *style >0 ) it   gives the style for all the  segment 
+ *   (if *style <0 ) The default style is used for all the  segment 
+ */
 
 static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag)
 {

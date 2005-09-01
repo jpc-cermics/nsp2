@@ -1074,7 +1074,7 @@ void boundingbox(BCG *Xgc,char *string, int x, int y, int rect[])
 }
 
 /* approximation of ascent using (asc + dsc) /2  */ 
-/** modified by bruno **/
+/* modified by Bruno */
 
 static double ascentPos(BCG *Xgc) 
 { 
@@ -1084,16 +1084,17 @@ static double ascentPos(BCG *Xgc)
   /* old: return ((bsizePos[font[1]][1] +(bsizePos[font[1]][3]/2.0) ))*((double) prec_fact); */
 }
 
-/** Draw a single line in current style **/
+/* Draw a single line in current style */
 
-/* static void drawline(int *xx1, int *yy1, int *x2, int *y2) */
-/* { */
-/*     FPRINTF((file,"\n %d %d %d %d L",(int)*xx1,(int)*yy1,(int)*x2,(int)*y2)); */
-/*   } */
+static void drawline(BCG *Xgc,int xx1, int yy1, int x2, int y2) 
+{ 
+  FPRINTF((file,"\n %d %d %d %d L",xx1,yy1,x2,y2));
+}
 
-/** Draw a set of segments **/
-/** segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/
-/** for i=0 step 2 **/
+/* Draw a set of segments 
+ * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
+ * for i=0 step 2 
+ */
 
 static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag)
 {
@@ -1117,7 +1118,7 @@ static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag
   xset_dash_and_color(Xgc,dash,color);
 }
 
-/** Draw a set of arrows **/
+/* Draw a set of arrows */
 
 static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int iflag)
 {
@@ -1145,11 +1146,12 @@ static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int
 }
 
 
-/** Draw or fill a set of rectangle **/
-/** rectangles are defined by (vect[i],vect[i+1],vect[i+2],vect[i+3]) **/
-/** for i=0 step 4 **/
-/** (*n) : number of rectangles **/
-/** fillvect[*n] : specify the action (see periX11.c) **/
+/* Draw or fill a set of rectangle 
+ * rectangles are defined by (vect[i],vect[i+1],vect[i+2],vect[i+3]) 
+ * for i=0 step 4 
+ * (*n) : number of rectangles 
+ *  fillvect[*n] : specify the action (see periX11.c) 
+ */
 
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
@@ -1158,7 +1160,7 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
   xset_pattern(Xgc,cpat);
 }
 
-/** Draw one rectangle **/
+/* Draw one rectangle **/
 
 
 static void drawrectangle(BCG *Xgc,const int rect[])
@@ -1174,7 +1176,6 @@ static void fillrectangle(BCG *Xgc,const int rect[])
   int cpat = xget_pattern(Xgc);
   drawrectangles(Xgc,rect,&cpat,1);
 }
-
 
 /*----------------------------------------------------------------------------------
  * draw a set of rectangles, provided here to accelerate GraySquare for X11 device 

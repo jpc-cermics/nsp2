@@ -1,7 +1,26 @@
-/*------------------------------------------------------------------------
- *    Graphic library
- *    Copyright (C) 2004 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
+/* Nsp
+ * Copyright (C) 2004-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Graphic library
+ * A set of generic routines which can be used by all the drivers 
+ * if the do not implement an accelerated function
+ * jpc@cermics.enpc.fr 
+ * 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -22,16 +41,17 @@ static void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *
 
 static driver_fill_grid_rectangles fill_grid_rectangles_gen;
 static driver_fill_grid_rectangles1 fill_grid_rectangles1_gen ;
+static driver_drawarrows drawarrows_gen;
+static driver_drawsegments drawsegments_gen;
+
+
 
 nsp_gengine_generic nsp_peri_generic = {
   fill_grid_rectangles_gen,
-  fill_grid_rectangles1_gen
+  fill_grid_rectangles1_gen,
+  drawarrows_gen,
+  drawsegments_gen
 };
-
-/*
- * A set of generic routines which can be used 
- * by all the drivers 
- */
 
 /**
  * fill_grid_rectangles1_gen:
@@ -55,7 +75,6 @@ nsp_gengine_generic nsp_peri_generic = {
  *         and rectangles outside the range are not drawn 
  * 
  **/
-
 
 static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				      int remap,const int *colminmax,const double *zminmax)
@@ -88,7 +107,6 @@ static void fill_grid_rectangles1_gen(BCG *Xgc,const int x[],const int y[],const
       }
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
 }
-
 
 
 /**
@@ -151,10 +169,6 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
 
 
 /*
- * FIXME: 
- *   set of generic functions which are to be moved on 
- *   perigen.h 
- *   they can be accelerated for each periXXXX
  */
 
 static void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, double *zmax,double *coeff,
@@ -185,3 +199,72 @@ static void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *
 }
 
 
+/* Draw a set of segments 
+ *
+ * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
+ * for i=0 step 2  n is the size of vx and vy 
+ */
+
+static void drawsegments_gen(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
+{
+  int dash,color,i;
+  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( iflag == 1) 
+    { 
+      /* one style per segment */
+      for (i=0 ; i < n/2 ; i++) 
+	{
+	  Xgc->graphic_engine->xset_line_style(Xgc,style[i]);
+	  Xgc->graphic_engine->drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+	}
+    }
+  else 
+    {
+      if (*style >= 1) Xgc->graphic_engine->xset_line_style(Xgc,*style);
+      /* une fonction gtk existe ici FIXME */
+      for (i=0 ; i < n/2 ; i++) 
+	Xgc->graphic_engine->drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+    }
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
+}
+
+/* Draw a set of arrows 
+ * arrows are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
+ * for i=0 step 2 
+ * n is the size of vx and vy 
+ * as is 10*arsize (arsize) the size of the arrow head in pixels 
+ */
+
+static void drawarrows_gen(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
+{ 
+  int dash,color,i,lstyle,polyx[4],polyy[4];
+  double cos20=cos(20.0*M_PI/180.0), sin20=sin(20.0*M_PI/180.0);
+  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  for (i=0 ; i < n/2 ; i++)
+    { 
+      double dx,dy,norm;
+      lstyle = (iflag == 1) ? style[i] : ( *style < 1 ) ? color : *style; 
+      Xgc->graphic_engine->xset_line_style(Xgc,lstyle);
+      Xgc->graphic_engine->drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
+      dx=( vx[2*i+1]-vx[2*i]);
+      dy=( vy[2*i+1]-vy[2*i]);
+      norm = sqrt(dx*dx+dy*dy);
+      if ( Abs(norm) >  SMDOUBLE ) 
+	{
+	  int nn=1,p=3;
+	  dx=(as/10.0)*dx/norm;dy=(as/10.0)*dy/norm;
+	  polyx[0]= polyx[3]=vx[2*i+1]; /* +dx*cos20;*/
+	  polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
+	  polyx[2]= inint(polyx[0]  - cos20*dx + sin20*dy);
+	  polyy[0]= polyy[3]=vy[2*i+1]; /* +dy*cos20;*/
+	  polyy[1]= inint(polyy[0] + sin20*dx -cos20*dy) ;
+	  polyy[2]= inint(polyy[0] - sin20*dx - cos20*dy) ;
+	  Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,&lstyle,nn,p);
+	}
+    }
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
+}
