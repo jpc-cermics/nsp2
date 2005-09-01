@@ -1486,7 +1486,7 @@ int do_scanf (char *command, FILE *fp, char *format, Stack stack,int iline, int 
 	  break;
 	case 's':
 	  if (l_flag + h_flag)
-	    Scierror("Error: scanf: bad conversion");
+	    Scierror("Error: scanf: bad conversion\n");
 	  if (width_flag == 0 ) str_width_flag = 1;
 	  if (width_flag == 1 && width_val > MAX_STR-1 )
 	    {
@@ -2149,9 +2149,9 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	case 'f':
 	case 'E':
 	case 'G':
-	  if (h_flag + l_flag)
+	  if (h_flag ) /* + l_flag) */
 	    {
-	      Scierror("Error: printf: bad conversion");
+	      Scierror("Error: printf: bad conversion\n");
 	      return RET_BUG;
 	    }
 	  /* use strod() here */
@@ -2160,7 +2160,7 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  break;
 
 	default:
-	  Scierror("Error: printf: bad conversion");
+	  Scierror("Error: printf: bad conversion\n");
 	  return RET_BUG;
 	}
 
