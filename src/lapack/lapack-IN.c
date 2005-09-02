@@ -96,8 +96,6 @@ static int int_lsq( Stack stack, int rhs, int opt, int lhs)
  *       are computed for U and V (rows of Vt) else 
  *      U and V are fully computed 
  *    rank is computed if non null (using tol if tol != NULL)
- * FIXME: if U and V are not computed maybe S could 
- *    be returned as a vector and not as a Matrix
  */
 
 static int int_svd( Stack stack, int rhs, int opt, int lhs)
@@ -321,35 +319,67 @@ static int int_lu( Stack stack, int rhs, int opt, int lhs)
 
 static int int_norm( Stack stack, int rhs, int opt, int lhs)
 {
-  double norm;
-  int rep=1;
-  char *norm_table[] = {  "1","2","inf","fro","Inf","Fro","M",NULL};
-  char norm_lapack_table[] = {  '1','M','I','F','I','F','M'};
+  double norm, p=2.0;
+  int id=1, is_vector;
+  char *norm_table[] =       {"1","2","inf","fro","Inf","Fro","M",NULL};
+  char norm_lapack_table[] = {'1','2','I'  ,'F'  ,'I'  ,'F'  ,'M'};
   NspMatrix *A;
+
   CheckRhs(1,2);
   CheckLhs(0,1);
-  if ((A = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+
+  if ( (A=GetMat(stack, 1)) == NULLMAT ) return RET_BUG;
+  is_vector = A->m==1 || A->n==1;
+ 
   if (rhs == 2)
     {
-      int repi;
       if (IsMatObj(stack,2))
 	{
-	  if (GetScalarInt(stack,2,&repi) == FAIL) return RET_BUG;
-	  if ( repi == 1 || repi == 2 ) rep=repi-1;
-	  else if ( isinf(repi)) rep=2;
+	  if ( GetScalarDouble(stack, 2, &p) == FAIL ) return RET_BUG; 
+	  if ( is_vector )
+	    {
+	      if ( !(p >= 1.0) )   /* to detect also nan */ 
+		{ 
+		  Scierror("%s: second argument must be >= 1 and also not %%nan\n",stack.fname);
+		  return RET_BUG;
+		}
+	    }
+	  else  /* A is a matrix */
+	    {
+	      if ( !(p==1.0 || p==2.0 || isinf(p)) )
+		{ 
+		  Scierror("%s: second argument must be 1, 2 or %%inf \n",stack.fname);
+		  return RET_BUG;
+		}
+	      if ( isinf(p) ) id = 2; else id = floor(p)-1;
+	    }
 	}
       else if ( IsSMatObj(stack,2))
 	{
-	  if ((rep= GetStringInArray(stack,2,norm_table,1)) == -1) return RET_BUG; 
+	  if ( (id=GetStringInArray(stack,2,norm_table,1)) == -1) return RET_BUG; 
+	  if ( is_vector ) /* define p (p is initialised with 2 so corresponding to id == 1 || id == 3 || id == 5)  */
+	    {
+	      if ( id == 0 ) p = 1.0;
+	      else if ( id == 2 || id == 4 || id == 6 ) p = 1.0/(2.0 - p);  /* got an Inf */
+	    }
 	}
       else
 	{
-	  Scierror("%s: second argument can be 1,2,%inf or '1','2','inf','fro','Inf','Fro','M' \n",stack.fname);
+	  Scierror("%s: second argument must be 1,2,%%inf or '1','2','inf','fro','Inf','Fro','M' \n      (or any real >= 1 for a vector)\n",
+		   stack.fname);
 	  return RET_BUG;
 	}
     }
-  norm = nsp_norm(A,norm_lapack_table[rep]);
-  if ( nsp_move_double(stack,1,norm )== FAIL) return RET_BUG;
+
+  if ( is_vector )
+    norm = nsp_vector_norm(A, p);
+  else
+    norm = nsp_matrix_norm(A,norm_lapack_table[id]);
+
+  if ( norm < 0 ) return RET_BUG;  /* in some cases a work array must be allocated  */ 
+                                   /* and if this fails, nsp_xxxx_norm return -1.0  */
+
+  if ( nsp_move_double(stack,1,norm) == FAIL ) return RET_BUG;
   return Max(lhs,1);
 }
 

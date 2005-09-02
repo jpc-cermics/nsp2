@@ -684,6 +684,7 @@ static int intdgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
   nsp_matrix_destroy(v); 
   nsp_matrix_destroy(vt);
   nsp_matrix_destroy(u);
+  nsp_matrix_destroy(s);
   return FAIL;
 } 
 
@@ -763,6 +764,7 @@ static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
   nsp_matrix_destroy(v); 
   nsp_matrix_destroy(vt);
   nsp_matrix_destroy(u);
+  nsp_matrix_destroy(s);
   return FAIL;
 } 
 
@@ -3034,8 +3036,103 @@ static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
 } 
 
 
+/* nsp_vector_norm 
+ *   norm(A,p) 
+ */ 
+static double intzvnorm(NspMatrix *A, double p);
+static double intdvnorm(NspMatrix *A, double p);
+
+double nsp_vector_norm(NspMatrix *A, double p) 
+{
+  if ( A->mn == 0 ) return 0.0;  /*  A = [] return 0 */ 
+
+  if ( A->rc_type == 'r' ) 
+    return intdvnorm(A, p) ;
+  else 
+    return intzvnorm(A, p) ;
+}
+
+static double intdvnorm(NspMatrix *A, double p)
+{
+  int i;
+  double norm=0.0, scale, xi_abs, temp;
+
+  if ( p == 1.0 )
+    for ( i = 0 ; i < A->mn ; i++ )
+      norm += fabs(A->R[i]);
+  else
+    {
+      scale = fabs(A->R[0]);
+      for ( i = 1 ; i < A->mn ; i++ )
+	{
+	  xi_abs = fabs(A->R[i]);
+	  if ( xi_abs > scale ) scale = xi_abs;
+	}
+      if ( isinf(p) )
+	norm = scale;
+      else if ( p == 2.0 )
+	{
+	  for ( i = 0 ; i < A->mn ; i++ )
+	    {
+	      temp = fabs(A->R[i])/scale;
+	      norm += temp*temp;
+	    }
+	  norm = scale*sqrt(norm);
+	}
+      else
+	{
+	  for ( i = 0 ; i < A->mn ; i++ )
+	    norm += pow(fabs(A->R[i])/scale, p);
+	  norm = scale*pow(norm,1.0/p);
+	}
+    }
+  return norm;
+}
+
+static double intzvnorm(NspMatrix *A, double p)
+{
+  int i;
+  double norm=0.0, scale=0.0, temp, *work;
+
+  if ( p == 1.0 )
+    {
+      for ( i = 0 ; i < A->mn ; i++ )
+	norm +=  nsp_abs_c(&(A->C[i]));
+      return norm;
+    }
   
-/* nsp_norm 
+  if ( (work=nsp_alloc_work_doubles(A->mn)) == NULL ) return -1.0;
+
+  for ( i = 0 ; i < A->mn ; i++ )
+    {
+      work[i] = nsp_abs_c(&(A->C[i]));
+      if ( work[i] > scale ) scale = work[i];
+    }
+
+  if ( isinf(p) )
+    norm = scale;
+  else if ( p == 2.0 )
+    {
+      for ( i = 0 ; i < A->mn ; i++ )
+	{
+	  temp = work[i]/scale;
+	  norm += temp*temp;
+	}
+      norm = scale*sqrt(norm);
+    }
+  else
+    {
+      for ( i = 0 ; i < A->mn ; i++ )
+	norm += pow(work[i]/scale, p);
+      norm = scale*pow(norm,1.0/p);
+    }
+
+  FREE(work);
+  return norm;
+}
+
+  
+/* nsp_matrix_norm 
  *   norm(A,'xxx') 
  *   'M' '1' 'I' 'F' 
  */ 
@@ -3043,54 +3140,60 @@ static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
 static double intznorm(NspMatrix *A,char flag);
 static double intdnorm(NspMatrix *A,char flag);
 
-double nsp_norm(NspMatrix *A,char flag) 
+double nsp_matrix_norm(NspMatrix *A,char flag) 
 {
+  if ( A->mn == 0 ) return 0.0;  /*  A = [] return 0 */ 
+
+  if ( flag == '2' )   /* brute force method : compute the max of the singular values */
+    {
+      NspMatrix *S=NULLMAT;
+      if ( nsp_svd(A, &S, NULL, NULL, 'r', NULL, NULL) == FAIL )  /* rmk: the flag 'r' is not used */
+	return -1.0;  /* bad trick... */
+      else
+	{
+	  double norm = S->R[0];
+	  nsp_matrix_destroy(S);
+	  return norm;
+	}
+    }
+
   if ( A->rc_type == 'r' ) 
-    return intdnorm(A,flag) ;
+    return intdnorm(A,flag);
   else 
-    return intznorm(A,flag) ;
+    return intznorm(A,flag);
 }
 
-static double intdnorm(NspMatrix *A,char flag)
+static double intdnorm(NspMatrix *A, char flag)
 {
-  double norm;
-  NspMatrix *dwork;
-  int lworkMin, m = A->m, n = A->n ;
-  /*  A = [] return 0 */ 
-  if ( A->mn == 0 ) return 0.0;
+  double norm, *dwork;
+  int m=A->m, n=A->n;
+
   if ( flag == 'I') 
     {
-      lworkMin = Max(1,n);
-      if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-      norm=  C2F(dlange)(&flag, &m, &n,A->R, &m, dwork->R, 1L);
-      nsp_matrix_destroy(dwork);
+      if ( (dwork=nsp_alloc_work_doubles(m)) == NULL ) return -1.0;  /* bad trick... */
+      norm = C2F(dlange)(&flag, &m, &n, A->R, &m, dwork, 1L);
+      FREE(dwork);
     } 
   else 
-    {
-      norm=  C2F(dlange)(&flag, &m, &n,A->R, &m, NULL , 1L);
-    }
+    norm=  C2F(dlange)(&flag, &m, &n, A->R, &m, NULL , 1L);
+
   return norm;
 } 
 
 static double intznorm(NspMatrix *A,char flag)
 {
-  double norm;
-  NspMatrix *dwork;
-  int lworkMin, m = A->m, n = A->n ;
-  /*  A = [] return empty matrices */ 
-  if ( A->mn == 0 ) return 0.0;
+  double norm, *dwork;
+  int m=A->m, n=A->n ;
 
   if ( flag == 'I') 
     {
-      lworkMin = Max(1,n);
-      if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-      norm=  C2F(zlange)(&flag, &m, &n,A->C, &m, dwork->R, 1L);
-      nsp_matrix_destroy(dwork);
+      if ( (dwork=nsp_alloc_work_doubles(m)) == NULL ) return -1.0;  /* bad trick... */
+      norm = C2F(zlange)(&flag, &m, &n, A->C, &m, dwork, 1L);
+      FREE(dwork);
     } 
   else 
-    {
-      norm=  C2F(zlange)(&flag, &m, &n,A->C, &m, NULL , 1L);
-    }
+    norm = C2F(zlange)(&flag, &m, &n, A->C, &m, NULL , 1L);
+
   return norm;
 }
 
