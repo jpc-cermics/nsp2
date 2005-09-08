@@ -245,7 +245,7 @@ int PListXdrSave_I(NspFile  *F, PList L)
 	  break;
 	case NUMBER:
 	  nsp_xdr_save_c(F->xdrs,'D');
-	  nsp_xdr_save_string(F->xdrs,(char *) L->O);
+	  nsp_xdr_save_string(F->xdrs,((parse_double *) L->O)->str);
 	  break;
 	case NAME :
 	  nsp_xdr_save_c(F->xdrs,'N');
