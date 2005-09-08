@@ -22,13 +22,13 @@ typedef struct _NspTypePList {
 } NspTypePList;
 
 
-/*****************************************************************
+/*
  *  Parse List : Used to store parsed expressions 
  *  Element can be one of 
  *      short int   giving the code of an operator 
  *      char *name  where name is a Scilab object name (func|macro|matrix)
  *  PList 
- *****************************************************************/
+ */
 
 typedef struct parse_cell {
   struct parse_cell *prev;  /* points to the previous cell or 0 */
@@ -39,9 +39,18 @@ typedef struct parse_cell {
   short int arity ;         /* used to store arity of operators */
 } PCell,*PList ; /* definition for a Parse Cell and a ParseList **/
 
-/*****************************************************************
+/*
+ * used for storing numbers a string and a double 
+ */
+
+typedef struct _parse_double {
+  double val ; /* the value of the parsed double */
+  nsp_string str;
+} parse_double ;
+
+/*
  *  Store PList in the data structure of Scilab 
- *****************************************************************/
+ */
 
 struct _NspPlist {
   /*< private >*/
