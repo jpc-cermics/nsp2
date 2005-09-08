@@ -1519,7 +1519,7 @@ static int intdgebal(NspMatrix *A,NspMatrix **D)
   for ( i= 0 ; i < A->mn ; i++ ) 
     if (isinf (A->R[i]) || isnan (A->R[i]))
       {
-	Scierror("Error: nan or inf in svd first argument\n"); 
+	Scierror("Error: nan or inf in balanc first argument\n"); 
 	return FAIL;
       }
 
@@ -1563,7 +1563,7 @@ static int intzgebal(NspMatrix *A,NspMatrix **D)
   for ( i= 0 ; i < A->mn ; i++ ) 
     if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
       {
-	Scierror("Error: nan or inf in svd first argument\n"); 
+	Scierror("Error: nan or inf in balanc first argument\n"); 
 	return FAIL;
       }
 
@@ -1672,7 +1672,7 @@ static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   for ( i= 0 ; i < A->mn ; i++ ) 
     if (isinf (A->R[i]) || isnan (A->R[i]))
       {
-	Scierror("Error: nan or inf in svd first argument\n"); 
+	Scierror("Error: nan or inf in balanc first argument\n"); 
 	return FAIL;
       }
   /* checks that  B != Nan et != Inf */
@@ -1680,7 +1680,7 @@ static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   for ( i= 0 ; i < B->mn ; i++ ) 
     if (isinf (B->R[i]) || isnan (B->R[i]))
       {
-	Scierror("Error: nan or inf in svd first argument\n"); 
+	Scierror("Error: nan or inf in balanc second argument\n"); 
 	return FAIL;
       }
 
@@ -1760,15 +1760,15 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   for ( i= 0 ; i < A->mn ; i++ ) 
     if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
       {
-	Scierror("Error: nan or inf in svd first argument\n"); 
+	Scierror("Error: nan or inf in balanc first argument\n"); 
 	return FAIL;
       }
-  /* checks that  A != Nan et != Inf */
+  /* checks that  B != Nan et != Inf */
 
   for ( i= 0 ; i < B->mn ; i++ ) 
     if (nsp_isinf_c (&B->C[i]) || nsp_isnan_c (&B->C[i]))
       {
-	Scierror("Error: nan or inf in svd first argument\n"); 
+	Scierror("Error: nan or inf in balanc second argument\n"); 
 	return FAIL;
       }
 
