@@ -238,6 +238,8 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
 	  if ( Mat2->rc_type == 'r') 
 	    {
 	      nsp_dadd(&(Mat1->mn),Mat2->R,&inc,Mat1->R,&inc);
+/* 	      double alpha=1.0; */
+/* 	      C2F(daxpy)(&(Mat1->mn),&alpha,Mat2->R,&inc,Mat1->R,&inc); */
 	    }
 	  else 
 	    {
@@ -360,6 +362,8 @@ int nsp_mat_dsub(NspMatrix *Mat1, NspMatrix *Mat2)
 	{
 	  if ( Mat2->rc_type == 'r') 
 	    {
+/* 	      double alpha=-1.0; */
+/* 	      C2F(daxpy)(&(Mat1->mn),&alpha,Mat2->R,&inc,Mat1->R,&inc); */
 	      nsp_dsub(&(Mat1->mn),Mat2->R,&inc,Mat1->R,&inc);
 	    }
 	  else 
@@ -900,7 +904,7 @@ int nsp_mat_inv_el(NspMatrix *A)
     {
       for ( k=0 ; k < A->mn ; k++ )
 	{
-	  A->R[k]=1.0E0/A->R[k];
+	  A->R[k] = 1.0/A->R[k];
 	}
     }
   else
@@ -2216,8 +2220,14 @@ int nsp_mat_mult_tt(NspMatrix *A, NspMatrix *B)
   return MatOp(A,B,nsp_mat_mult_scalar,MatNoOp,nsp_mat_mult_el,1);
 }
 
-/* deals with the case dim A == dim B **/
-
+/* 
+ *  deals with the case dim A == dim B plus the special following cases
+ *  which add the possibility to compute efficiently with a diag matrix
+ *  represented by a vector (Bruno, sept 8 2005) by adding 2 new rules
+ *  for the .* operator :
+ *      1/ In place of diag(A)*B we do A.*B (if B is m x n, A must be m x 1)
+ *      2/ In place of A*diag(B) we do A.*B (if A is m x n, B must be 1 x n)
+ */
 int nsp_mat_mult_el(NspMatrix *A, NspMatrix *B)
 {
   if (SameDim(A,B))
@@ -2226,9 +2236,7 @@ int nsp_mat_mult_el(NspMatrix *A, NspMatrix *B)
       if(A->rc_type == 'r' ) 
 	{
 	  if ( B->rc_type == 'r') 
-	    {
-	      for ( i = 0 ; i < A->mn ; i++ ) A->R[i] *= B->R[i];
-	    }
+	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] *= B->R[i];
 	  else 
 	    {
 	      if (nsp_mat_set_ival(A,0.00) == FAIL ) return(FAIL);
@@ -2242,25 +2250,103 @@ int nsp_mat_mult_el(NspMatrix *A, NspMatrix *B)
       else
 	{
 	  if ( B->rc_type == 'r') 
+	    for ( i = 0 ; i < A->mn ; i++ ) 
+	      {
+		A->C[i].r *= B->R[i];
+		A->C[i].i *= B->R[i];
+	      }
+	  else 
+	    for ( i = 0 ; i < A->mn ; i++ )nsp_prod_c(&A->C[i],&B->C[i]);
+	}
+      return OK;
+    }
+  else if ( A->m == B->m  &&  A->n == 1 )    /* diag(A)*B */
+    {
+      /* result must be in A so copy A first in coef then resize A to the sizes of B */
+      NspMatrix *coef;
+      int i,j, k=0;
+      if ( (coef=nsp_matrix_copy(A)) == NULLMAT ) return FAIL;
+      if ( nsp_matrix_resize(A,B->m,B->n) == FAIL ) {nsp_matrix_destroy(coef); return FAIL;}
+
+      if(A->rc_type == 'r' ) 
+	{
+	  if ( B->rc_type == 'r') 
 	    {
-	      for ( i = 0 ; i < A->mn ; i++ ) 
-		{
-		  A->C[i].r *= B->R[i];
-		  A->C[i].i *= B->R[i];
-		}
+	      for ( j = 0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) A->R[k] = B->R[k]*coef->R[i];
 	    }
 	  else 
 	    {
-	      for ( i = 0 ; i < A->mn ; i++ )nsp_prod_c(&A->C[i],&B->C[i]);
+	      if (nsp_mat_set_ival(A,0.00) == FAIL ) {nsp_matrix_destroy(coef); return FAIL;}
+	      for ( j = 0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  {
+		    A->C[k].r = B->C[k].r * coef->R[i];
+		    A->C[k].i = B->C[k].i * coef->R[i];
+		  }
 	    }
-	  
 	}
-      return(OK);
+      else
+	{
+	  if ( B->rc_type == 'r') 
+	    for ( j = 0 ; j < A->n ; j++)
+	      for ( i = 0 ; i < A->m ; i++, k++ ) 
+		{
+		  A->C[k].r = B->R[k] * coef->C[i].r;
+		  A->C[k].i = B->R[k] * coef->C[i].i;;
+		}
+	  else 
+	    for ( j = 0 ; j < A->n ; j++)
+	      for ( i = 0 ; i < A->m ; i++, k++ ) 
+		{
+		  A->C[k].r = B->C[k].r * coef->C[i].r -  B->C[k].i * coef->C[i].i;
+		  A->C[k].i = B->C[k].r * coef->C[i].i +  B->C[k].i * coef->C[i].r;
+		}
+	}
+      nsp_matrix_destroy(coef);
+      return OK;
+    }
+  else if ( A->n == B->n  &&  B->m == 1 )    /* A*diag(B) */
+    {
+      int i,j, k=0;
+      if(A->rc_type == 'r' ) 
+	{
+	  if ( B->rc_type == 'r') 
+	    {
+	      for ( j = 0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) A->R[k] *= B->R[j];
+	    }
+	  else 
+	    {
+	      if (nsp_mat_set_ival(A,0.00) == FAIL ) return FAIL;
+	      for ( j = 0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  {
+		    A->C[k].i = A->C[k].r * B->C[j].i;
+		    A->C[k].r = A->C[k].r * B->C[j].r;
+		  }
+	    }
+	}
+      else
+	{
+	  if ( B->rc_type == 'r') 
+	    for ( j = 0 ; j < A->n ; j++)
+	      for ( i = 0 ; i < A->m ; i++, k++ ) 
+		{
+		  A->C[k].r *= B->R[j];
+		  A->C[k].i *= B->R[j];
+		}
+	  else 
+	    for ( j = 0 ; j < A->n ; j++)
+	      for ( i = 0 ; i < A->m ; i++, k++ ) 
+		nsp_prod_c(&A->C[k],&B->C[j]);
+	}
+      return OK;
     }
   else 
     {
       Scierror("Error:\tArguments must have the same size\n");
-      return(FAIL);
+      return FAIL;
     }
 }
 
