@@ -1,6 +1,7 @@
 /* 
  * interface of lapack for Nsp 
  * Copyright (C) 2005 Jean-Philippe Chancelier
+ * Copyright (C) 2005 Bruno Pinçon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -69,21 +70,18 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * interface for lsq 
- *   flag = 'n' for minimize Norm 
- *   flag = 'z' for zero setting  
- * FIXME: this is to be merged with a next routine 
+ * interface for lsq : prévoir le passage de rcond (+ verif)
+ * ainsi que le choix de la méthode (qr ou svd)
  */
-
 static int int_lsq( Stack stack, int rhs, int opt, int lhs)
 { 
   NspMatrix *A,*B;
-  NspMatrix *Res;
-  int_types T[] = {mat,mat,t_end} ;
+  int_types T[] = {matcopy,matcopy,t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A,&B) == FAIL) return RET_BUG;
   CheckLhs(1,1);
-  if ((Res= nsp_lsq(A,B))== NULLMAT) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(Res));
+  if ( nsp_lsq(A,B) == FAIL ) return RET_BUG;
+
+  NSP_OBJECT(B)->ret_pos = 1;  
   return 1;
 }
 

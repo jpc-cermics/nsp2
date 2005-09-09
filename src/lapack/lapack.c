@@ -69,6 +69,14 @@ int nsp_mat_is_symmetric(NspMatrix *A)
   return TRUE;
 }
 
+/**
+ * nsp_mat_is_lower_triangular:
+ * @A: a #NspMatrix 
+ * 
+ * test if the matrix @A is lower triangular
+ * 
+ * Return value: TRUE or FALSE 
+ **/
 int nsp_mat_is_lower_triangular(NspMatrix *A)
 {
   int i,j;
@@ -90,6 +98,14 @@ int nsp_mat_is_lower_triangular(NspMatrix *A)
   return TRUE;
 }
 
+/**
+ * nsp_mat_is_upper_triangular:
+ * @A: a #NspMatrix 
+ * 
+ * test if the matrix @A is upper triangular
+ * 
+ * Return value: TRUE or FALSE 
+ **/
 int nsp_mat_is_upper_triangular(NspMatrix *A)
 {
   int i,j;
@@ -116,7 +132,6 @@ int nsp_mat_is_upper_triangular(NspMatrix *A)
  * switch lapack message to nsp message
  * Return value: 
  **/
-
 int C2F(xerbla)(char *srname,int * info,int srname_len)
 {
   int i;
@@ -127,6 +142,7 @@ int C2F(xerbla)(char *srname,int * info,int srname_len)
 	   mes,*info);
   return 0;
 }
+
 
 static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 		      NspMatrix **Rank, NspMatrix **Sval, double *tol,char flag);
@@ -139,7 +155,6 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
  * rank and E are computed if non null arguments are transmited 
  * tol can be given or computed if null is transmited 
  */
-
 int nsp_qr(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E, NspMatrix **Rank, 
 	   NspMatrix **Sval, double *tol,char mode)
 {
@@ -582,8 +597,6 @@ static int intzgesdd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
 
 int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol)
 {
-/*   if ( (A=nsp_matrix_copy(A)) == NULLMAT ) return FAIL; */
-
   /*  A = [] return empty matrices */ 
   if ( A->mn == 0 ) 
     {
@@ -1806,206 +1819,151 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   return OK ; 
 } 
 
-/* FIXME: unchecked
- * Lsq computation 
- *   using dgelsy or zgelsy 
- *   we could also use dgelss
+/*
+ * Lsq computation  using dgelsy or zgelsy 
+ * FIXME : the interface must be modified to pass rcond and to retrieve rank
+ *         also an option to solve with svd could be interesting
  */
+static int intdgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank);
+static int intzgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank);
 
-static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond);
-static int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond);
-
-NspMatrix *nsp_lsq(NspMatrix *A,NspMatrix *B)
+int nsp_lsq(NspMatrix *A,NspMatrix *B)
 {
-  if (( B =nsp_matrix_copy(B) )== NULLMAT) return NULLMAT;
-  if (( A =nsp_matrix_copy(A) )== NULLMAT) return NULLMAT;
-  if ( A->rc_type == 'r' ) 
+  double rcond = DBL_EPSILON;
+  int rank, stat;
+
+  if ( A->rc_type == 'c' ) 
     {
-      if ( B->rc_type == 'r') 
+      if ( B->rc_type == 'r' ) 
 	{
-	  /* A real, b real */
-	  if ( intdgelsy(A,B,NULL,NULL) == FAIL) return NULLMAT; 
-	}
-      else 
-	{
-	  /* A real, b complex */
-	  if (nsp_mat_complexify(A,0.0) == FAIL ) return NULLMAT;
-	  if ( intzgelsy(A,B,NULL,NULL) == FAIL) return NULLMAT; 
-	}
-    } 
-  else
-    {
-      if ( B->rc_type == 'r') 
-	{
-	  /* A complex, B real */
-	  if (nsp_mat_complexify(B,0.0) == FAIL ) return NULLMAT;
-	  if ( intzgelsy(A,B,NULL,NULL) == FAIL) return NULLMAT; 
-	}
-      else 
-	{
-	  /* A complex, b complex */
-	  if ( intzgelsy(A,B,NULL,NULL) == FAIL) return NULLMAT; 
+	  if (nsp_mat_set_ival(B,0.00) == FAIL ) return FAIL;
 	}
     }
-  return B;
+  else 
+    { 
+      if ( B->rc_type == 'c' ) 
+	{
+	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return FAIL;
+	}
+    }
+
+  if ( A->rc_type == 'r')
+    stat = intdgelsy(A, B, rcond, &rank);
+  else
+    stat = intzgelsy(A, B, rcond, &rank);
+
+  return stat;
+}
+
+static int intdgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank)
+{
+  int mA = A->m, nA = A->n, mB = B->m, nB = B->n; /* mA must be equal to mB */
+  int mx = A->n, nx = B->n, ldB, ix, iB, j;
+  int *jpvt = NULL, info, lwork;
+  double qrwork[1], *rwork = NULL;
+
+  if ( mx > mB )
+    /* enlarge B so that it can contains the solution x (needed by lapack) */
+    {
+      iB = B->mn-1;
+      if ((nsp_matrix_resize(B,mx,nx)) ==  FAIL) return FAIL;
+      for ( j = nB-1 ; j > 0 ; j--)   /* the first column is already good (so j>0) */
+	for ( ix = j*mx+mB-1 ; ix >= j*mx ; ix--, iB-- )
+	  B->R[ix] = B->R[iB];
+      ldB = mx;
+    }
+  else
+    ldB = mB;
+
+  if ( (jpvt = nsp_alloc_work_int(nA)) == NULL )
+    goto err;
+  else
+    for ( j = 0 ; j < nA ; j++ ) jpvt[j] = 0;
+       
+  lwork = -1;  /* query work size */
+  C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, rank, qrwork, &lwork, &info);
+  lwork = (int) qrwork[0];
+  if ( (rwork = nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+  C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, rank, rwork, &lwork, &info);
+
+  
+  if ( mx < mB )   /* free a part of B which is not needed */
+    {
+      /* first compress B (the solution x is in B but with a "leading"
+       * dimension mB  => transform with a "leading" dimension mx ...)
+       */
+      ix = mx;
+      for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
+	for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
+	  B->R[ix] = B->R[iB];
+      /* now we can free the part of B which is not used anymore */
+      if (  nsp_matrix_resize(B, mx, nx) == FAIL )
+	goto err;
+    }
+
+  FREE(jpvt); FREE(rwork);
+  return OK;
+
+ err:
+  FREE(jpvt); FREE(rwork);
+  return FAIL;
 }
 
 
-/* A is modified and B too. 
- * result is returned in B which is resized if necessary.
- */
-
-static int intdgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond)
+static int intzgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank)
 {
-  double Rcond,eps;
-  NspMatrix *jpvt,*dwork;
-  int *Ijpvt,irank,info,lworkMin,i; 
-  /*  [X,rank]=lsq(A,B,rcond) */
-  int m = A->m, n = A->n, mb = B->m,nrhs = B->n ; 
+  int mA = A->m, nA = A->n, mB = B->m, nB = B->n; /* mA must be equal to mB */
+  int mx = A->n, nx = B->n, ldB, ix, iB, j;
+  int *jpvt = NULL, info, lwork;
+  doubleC qcwork[1], *cwork = NULL;
+  double *rwork = NULL;
 
-  if (m != mb) {
-    Scierror("lsq: first and second arguments must have equal rows\n");
-    return FAIL;
-  }
+  if ( mx > mB )
+    /* enlarge B so that it can contains the solution x (needed by lapack) */
+    {
+      iB = B->mn-1;
+      if ((nsp_matrix_resize(B,mx,nx)) ==  FAIL) return FAIL;
+      for ( j = nB-1 ; j > 0 ; j--)   /* the first column is already good (so j>0) */
+	for ( ix = j*mx+mB-1 ; ix >= j*mx ; ix--, iB-- )
+	  B->C[ix] = B->C[iB];
+      ldB = mx;
+    }
+  else
+    ldB = mB;
 
-  /* A = [] return empty matrices */ 
-
-  if ( A->mn == 0 ) {
-    if ( rank != NULL)
-      {
-	if (( *rank =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  /* if rcond is not provided */
+  if ( (jpvt = nsp_alloc_work_int(nA)) == NULL )
+    goto err;
+  else
+    for ( j = 0 ; j < nA ; j++ ) jpvt[j] = 0;
+       
+  lwork = -1;  /* query work size */
+  C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, rank, qcwork, &lwork, rwork, &info);
+  lwork = (int) qcwork[0].r;
+  rwork = nsp_alloc_work_doubles(2*nA);
+  cwork = nsp_alloc_work_doubleC(lwork);
+  if ( (rwork == NULL) || (cwork==NULL) ) goto err;
+  C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, rank, cwork, &lwork, rwork, &info);
   
-  eps = C2F(dlamch)("eps", 3L);  
-  Rcond = (rcond  == NULL) ? sqrt(eps) : *rcond; 
-
-  /* if n > m then we add empty rows to B */ 
-  
-  if ( n > m )
+  if ( mx < mB )   /* free a part of B which is not needed */
     {
-      if (nsp_matrix_add_rows(B,n-m) == FAIL) return(FAIL);
+      /* first compress B (the solution x is in B but with a "leading"
+       * dimension mB  => transform with a "leading" dimension mx ...)
+       */
+      ix = mx;
+      for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
+	for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
+	  B->C[ix] = B->C[iB];
+      /* now we can free the part of B which is not used anymore */
+      if (  nsp_matrix_resize(B, mx, nx) == FAIL )
+	goto err;
     }
 
-  /* jpvt: int matrix */ 
-  if (( jpvt =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
-  Ijpvt = (int *) jpvt->R; 
-  for (i = 0 ; i < n; ++i) Ijpvt[i]=0;
+  FREE(jpvt); FREE(rwork); FREE(cwork);
+  return OK;
 
-  /* the min workspace */ 
-  lworkMin = Max(Min(m,n) + n*3 + 1,2*Min(m,n) + nrhs);
-
-  if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
-  C2F(dgelsy)(&m, &n, &nrhs,A->R, &m,B->R,&B->m,Ijpvt,&Rcond,&irank,
-	      dwork->R,&lworkMin, &info);
-      
-  if (info != 0) {
-    Scierror("Error: computation failed in dgelsy\n");
-    return FAIL;
-  }
-
-  nsp_matrix_destroy(jpvt); 
-  nsp_matrix_destroy(dwork); 
-
-  if ( n < m) 
-    {
-      /* we must delete the last rows of B */ 
-      if (( dwork =nsp_matrix_create(NVOID,'r',1,m-n)) == NULLMAT) return FAIL;
-      for ( i = n+1; i <= m ; i++) dwork->R[i-(n+1)]=i;
-      if (nsp_matrix_delete_rows(B,dwork) == FAIL) return FAIL; 
-    }
-  if ( rank != NULL)
-    {
-      if (( *rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-      (*rank)->R[0]=irank;
-    }
-
-  return OK ;
-} 
-
-
-int intzgelsy(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond)
-{
-  double Rcond,eps;
-  NspMatrix *jpvt,*dwork,*rwork;
-  int *Ijpvt,ix1,ix2,irank,info,lworkMin,i; 
-  /*  [X,rank]=lsq(A,B,rcond) */
-  int m = A->m, n = A->n, mb = B->m,nrhs = B->n ; 
-
-  if (m != mb) {
-    Scierror("Error: first and second arguments in lsq must have equal rows\n");
-    return FAIL;
-  }
-
-  /* A = [] return empty matrices */ 
-
-  if ( A->mn == 0 ) {
-    if ( rank != NULL)
-      {
-	if (( *rank =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  /* if rcond is not provided */
-  
-  eps = C2F(dlamch)("eps", 3L);  
-  Rcond = (rcond  == NULL) ? sqrt(eps) : *rcond; 
-
-  /* if n > m then we add empty rows to B */ 
-  
-  if ( n > m )
-    {
-      /* now B->m is Max(m,n) */
-      if (nsp_matrix_add_rows(B,n-m) == FAIL) return(FAIL);
-    }
-
-
-  /* jpct: int matrix */ 
-  if (( jpvt =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
-  Ijpvt = (int *) jpvt->R; 
-  for (i = 0 ; i < n; ++i) Ijpvt[i]=0;
-
-  /* workspace */ 
-  
-  if (( rwork =nsp_matrix_create(NVOID,'r',1,2*n)) == NULLMAT) return FAIL;
-
-  /* the min workspace */ 
-
-  ix1 = Max(2*Min(m,n),n+1); ix2 = Min(m,n) + nrhs;
-  lworkMin = Min(m,n) + Max(ix1,ix2);
-  if (( dwork =nsp_matrix_create(NVOID,A->rc_type,1,lworkMin)) == NULLMAT) return FAIL;
-
-  C2F(zgelsy)(&m, &n, &nrhs,A->C, &m, B->C,&B->m,Ijpvt,&Rcond,&irank,
-	      dwork->C, &lworkMin, rwork->R, &info);
-      
-  if (info != 0) {
-    Scierror("Error: computation failed in zgelsy\n");
-    return FAIL;
-  }
-
-  nsp_matrix_destroy(jpvt); 
-  nsp_matrix_destroy(dwork); 
-  nsp_matrix_destroy(rwork); 
-
-  if ( n < m) 
-    {
-      /* we must delete the last rows of B */ 
-      if (( dwork =nsp_matrix_create(NVOID,'r',1,m-n)) == NULLMAT) return FAIL;
-      for ( i = n+1; i <= m ; i++) dwork->R[i-(n+1)]=i;
-      if (nsp_matrix_delete_rows(B,dwork) == FAIL) return FAIL; 
-    }
-
-  if ( rank != NULL)
-    {
-      if (( *rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;
-      (*rank)->R[0]=irank;
-    }
-
-  return OK ;
+ err:
+  FREE(jpvt); FREE(rwork); FREE(cwork);
+  return FAIL;
 }
 
 
@@ -2675,6 +2633,20 @@ static int intdgehrd(NspMatrix *A, NspMatrix **U);
 
 int nsp_hess(NspMatrix *A,NspMatrix **U) 
 {
+  /* A == [] return empty matrices*/ 
+  if ( A->mn == 0 )  
+    {
+      if ( U != NULL) 
+	if ( (*U=nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+      return OK ; 
+    }
+
+  if (A->m != A->n) 
+    { 
+      Scierror("Error: first argument of hess should be square and it is (%dx%d)\n", A->m,A->n);
+      return FAIL;
+    }
+
   if ( A->rc_type == 'r') 
     return intdgehrd(A,U);
   else 
@@ -2683,89 +2655,101 @@ int nsp_hess(NspMatrix *A,NspMatrix **U)
 
 static int intdgehrd(NspMatrix *A, NspMatrix **U)
 {
-  NspMatrix *tau,*dwork;
-  int workMin, info, m = A->m,n=A->n,un=1;
+  double *tau=NULL, *work=NULL, qwork[1];
+  NspMatrix *u=NULLMAT;
+  int lwork, info, n=A->n, un=1, sym_flag;
 
-  /* A == [] return empty matrices*/ 
-  if ( A->mn == 0 )  {
-    if ( U != NULL) {
-      if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+  sym_flag = nsp_mat_is_symmetric(A);
+
+  if ( (tau=nsp_alloc_work_doubles(n-1)) == NULL ) return FAIL;
+
+  /* query work size */
+  lwork = -1; C2F(dgehrd)(&n, &un, &n, A->R, &n, tau, qwork, &lwork, &info);
+  lwork = (int) qwork[0];
+
+  if ( (work=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+
+  C2F(dgehrd)(&n, &un, &n, A->R, &n, tau, work, &lwork, &info);
+
+  if (info != 0)   /* this must not happen */
+    {
+      Scierror("Error: something wrong in dgehrd\n");
+      goto err;
     }
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of hess should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
 
-  if (( tau =nsp_matrix_create(NVOID,'r',1,n-1)) == NULLMAT) return FAIL;
-  workMin = Max(1,n);
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,workMin)) == NULLMAT) return FAIL;
-
-  C2F(dgehrd)(&n, &un, &n,A->R, &n,tau->R,dwork->R, &workMin, &info);
-  if (info != 0) {
-    Scierror("Error: something wrong in dgehrd\n");
-    return FAIL;
-  }
-
-  if ( U != NULL) { 
-    /* extract U */
-    if (( *U =nsp_matrix_copy(A))== NULLMAT) return FAIL;
-    C2F(dorghr)(&n,&un,&n,(*U)->R,&n,tau->R,dwork->R,&workMin,&info);    
-    if (info != 0) {
-      Scierror("Error: something wrong in dorghr\n");
-      return FAIL;
+  if ( U != NULL)  /* extract U */
+    { 
+      if ( (u=nsp_matrix_copy(A)) == NULLMAT ) goto err;
+      C2F(dorghr)(&n, &un, &n, u->R, &n, tau, work, &lwork, &info);    
+      if (info != 0)  /* this must not happen */
+	{
+	  Scierror("Error: something wrong in dorghr\n");
+	  goto err;
+	}
+      *U = u;
     }
-  }
+
   /* extract H */ 
-  nsp_mat_triu(A,-1);    
+  nsp_mat_triu(A,-1);  
+  if ( sym_flag ) nsp_mat_tril(A,1); /* FIXME : il faudrait peut être aussi forcer la symétrie */
+
+  FREE(tau); FREE(work);
   return OK;
+
+ err:
+  FREE(tau); FREE(work);
+  nsp_matrix_destroy(u);
+  return FAIL;
 } 
 
 
 static int intzgehrd(NspMatrix *A, NspMatrix **U)
 {
-  NspMatrix *tau,*dwork;
-  int  workMin, info, m = A->m,n=A->n,un=1;
+  doubleC *tau=NULL, *work=NULL, qwork[1];
+  NspMatrix *u=NULLMAT;
+  int lwork, info, n=A->n, un=1, sym_flag;
 
-  /* A == [] return empty matrices*/ 
-  if ( A->mn == 0 )  {
-    if ( U != NULL) {
-      if (( *U =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+  sym_flag = nsp_mat_is_symmetric(A);
+
+  if ( (tau=nsp_alloc_work_doubleC(n-1)) == NULL ) return FAIL;
+
+  /* query work size */
+  lwork = -1; C2F(zgehrd)(&n, &un, &n, A->C, &n, tau, qwork, &lwork, &info);
+  lwork = (int) qwork[0].r;
+
+  if ( (work=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
+
+  C2F(zgehrd)(&n, &un, &n, A->C, &n, tau, work, &lwork, &info);
+
+  if (info != 0)   /* this must not happen */
+    {
+      Scierror("Error: something wrong in zgehrd\n");
+      goto err;
     }
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of hess should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
 
-  if (( tau =nsp_matrix_create(NVOID,'c',1,n-1)) == NULLMAT) return FAIL;
-  workMin = Max(1,n);
-  if (( dwork =nsp_matrix_create(NVOID,'c',1,workMin)) == NULLMAT) return FAIL;
-
-  C2F(zgehrd)(&n, &un, &n,A->C, &n,tau->C,dwork->C, &workMin, &info);
-  if (info != 0) {
-    Scierror("Error: something wrong in zgehrd\n");
-    return FAIL;
-  }
-
-  if ( U != NULL) { 
-    /* extract U */
-    if (( *U =nsp_matrix_copy(A))== NULLMAT) return FAIL;
-    C2F(zunghr)(&n,&un,&n,(*U)->C,&n,tau->C,dwork->C,&workMin,&info);    
-    if (info != 0) {
-      Scierror("Error: something wrong in zunghr\n");
-      return FAIL;
+  if ( U != NULL)  /* extract U */
+    { 
+      if ( (u=nsp_matrix_copy(A)) == NULLMAT ) goto err;
+      C2F(zunghr)(&n, &un, &n, u->C, &n, tau, work, &lwork, &info);    
+      if (info != 0)  /* this must not happen */
+	{
+	  Scierror("Error: something wrong in zunghr\n");
+	  goto err;
+	}
+      *U = u;
     }
-  }
+
   /* extract H */ 
-  nsp_mat_triu(A,-1);    
+  nsp_mat_triu(A,-1);  
+  if ( sym_flag ) nsp_mat_tril(A,1); /* FIXME : il faudrait peut être aussi forcer la symétrie */
+
+  FREE(tau); FREE(work);
   return OK;
+
+ err:
+  FREE(tau); FREE(work);
+  nsp_matrix_destroy(u);
+  return FAIL;
 } 
 
 
@@ -3036,12 +3020,20 @@ static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
 } 
 
 
-/* nsp_vector_norm 
- *   norm(A,p) 
- */ 
 static double intzvnorm(NspMatrix *A, double p);
 static double intdvnorm(NspMatrix *A, double p);
-
+/**
+ * nsp_vector_norm:
+ * @A: a #NspMatrix (which must be a vector)
+ * @p: a #double which must be >= 1 
+ * 
+ * Computes the p-norm of the vector @A : ( sum_k |A_k|^p )^(1/p) 
+ * @p must be +Inf to compute the infinite norm ( max_k |A_k| )
+ * @A is not modified
+ * 
+ * Return value: the p-norm of the vector @A or -1.0 in case of alloc
+ *               problem (which may happen only for intzvnorm)
+ **/
 double nsp_vector_norm(NspMatrix *A, double p) 
 {
   if ( A->mn == 0 ) return 0.0;  /*  A = [] return 0 */ 
@@ -3132,14 +3124,23 @@ static double intzvnorm(NspMatrix *A, double p)
 }
 
   
-/* nsp_matrix_norm 
- *   norm(A,'xxx') 
- *   'M' '1' 'I' 'F' 
- */ 
-
 static double intznorm(NspMatrix *A,char flag);
 static double intdnorm(NspMatrix *A,char flag);
-
+/**
+ * nsp_matrix_norm:
+ * @A: an #NspMatrix
+ * @flag: character defining the kind of matrix norm to compute:
+ *        @flag='1' for 1-norm ||A||_1 = max of ||Ax||_1 for all x such that ||x||_1 = 1
+ *        @flag='2' for 2-norm ||A||_2 = max of ||Ax||_2 for all x such that ||x||_2 = 1
+ *        @flag='I' for Inf-norm ||A||_I = max of ||Ax||_inf for all x such that ||x||_inf = 1
+ *        @flag='F' for Frobenius norm ||A||_F = sqrt( sum_{i,j} A(i,j)^2 )
+ *        @flag='M' for  ||A||_F = max_{i,j} |A(i,j)|  (which is not exactly a matrix-norm)
+ *
+ * @A is not modified.
+ * 
+ * Return value: the matrix norm or -1 in case of failure (alloc problem or problem in
+ *               svd (2-norm))
+ **/
 double nsp_matrix_norm(NspMatrix *A,char flag) 
 {
   if ( A->mn == 0 ) return 0.0;  /*  A = [] return 0 */ 
@@ -3276,23 +3277,18 @@ int nsp_expm(NspMatrix *A)
 }
 
 
+
 /*
- *   Res=nsp_mat_bdiv_lsq(A,B) A \ B. Contributed by Bruno Pincon
+ *   nsp_mat_bdiv_lsq implements A\B when A is not square (or
+ *   when A is square but badly conditionned or singular)
  */
 
 int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B)
 {  
-  int mA = A->m, nA = A->n, mB = B->m, nB = B->n; /* mA must be equal to mB */
-  int mx = A->n, nx = B->n, ldB, ix, iB, j;
-  int *jpvt = NULL, info, lwork, rank;
-  double qrwork[1], *rwork = NULL;
-  doubleC qcwork[1], *cwork = NULL;
-  double rcond = DBL_EPSILON;  /* FIXME to be choosen more correctly */
+  /* A->m must be equal to B->m but this is verified at the upper level */
+  int mA = A->m, nA = A->n, stat, rank;
+  double rcond = DBL_EPSILON;  /* FIXME : to be choosen more correctly ? */
 
-  /* FIXME: - to merge with nsp_mat_lsq
-   *        - when B is complex while A is real, something
-   *          better than complexify A can be done
-   */
   if ( A->rc_type == 'c' ) 
     {
       if ( B->rc_type == 'r' ) 
@@ -3308,90 +3304,29 @@ int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B)
 	}
     }
 
-  if ( mx > mB )  
-    /* enlarge B so that it can contains the solution x (needed by lapack) */
-    {
-      iB = B->mn-1;
-      if ((nsp_matrix_resize(B,mx,nx)) ==  FAIL) return FAIL;
-      if ( B->rc_type == 'r' )
-	for ( j = nB-1 ; j > 0 ; j--)   /* the first column is already good (so j>0) */
-	  for ( ix = j*mx+mB-1 ; ix >= j*mx ; ix--, iB-- )
-	    B->R[ix] = B->R[iB];
-      else
-	for ( j = nB-1 ; j > 0 ; j--)   /* the first column is already good (so j>0) */
-	  for ( ix = j*mx+mB-1 ; ix >= j*mx ; ix--, iB-- )
-	    B->C[ix] = B->C[iB];
-      ldB = mx;
-    } 
+  if ( A->rc_type == 'r')
+    stat = intdgelsy(A, B, rcond, &rank);
   else
-    ldB = mB;
+    stat = intzgelsy(A, B, rcond, &rank);
 
-  if ( (jpvt = nsp_alloc_work_int(nA)) == NULL )
-    goto err;
-  else
-    for ( j = 0 ; j < nA ; j++ ) jpvt[j] = 0;
-       
-  if ( A->rc_type == 'r' )
-    { 
-      lwork = -1;  /* query work size */
-      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, qrwork, &lwork, &info);
-      lwork = (int) qrwork[0];
-      if ( (rwork = nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
-      C2F(dgelsy)(&mA, &nA, &nB, A->R, &mA, B->R, &ldB, jpvt, &rcond, &rank, rwork, &lwork, &info);
-    }
-  else 
-    {
-      lwork = -1;  /* query work size */
-      C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, &rank, qcwork, &lwork, rwork, &info);
-      lwork = (int) qcwork[0].r;
-      rwork = nsp_alloc_work_doubles(2*nA); 
-      cwork = nsp_alloc_work_doubleC(lwork);
-      if ( (rwork == NULL) || (cwork==NULL) ) goto err;
-      C2F(zgelsy)(&mA, &nA, &nB, A->C, &mA, B->C, &ldB, jpvt, &rcond, &rank, cwork, &lwork, rwork, &info);
-    }
-  
-  if ( mx < mB )   /* free a part of B which is not needed */
-    {
-      /* first compress B (the solution x is in B but with a "leading" 
-       * dimension mB  => transform with a "leading" dimension mx ...) 
-       */
-      ix = mx;
-      if ( B->rc_type == 'r' )
-	for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
-	  for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
-	    B->R[ix] = B->R[iB];
-      else
-	for ( j = 1 ; j < nB ; j++)   /* the first column is already good */
-	  for ( iB = j*mB ; iB < j*mB+mx ; iB++, ix++)
-	    B->C[ix] = B->C[iB];
-      /* now we can free the part of B which is not used anymore */
-      if (  nsp_matrix_resize(B, mx, nx) == FAIL )
-	goto err;
-    }
+  if ( stat == OK )
+    if ( rank < Min(mA,nA) )
+      Sciprintf("\n Warning: matrix is rank-deficient m=%d, n=%d, rank=%d \n", mA, nA, rank);
 
-  FREE(jpvt); FREE(rwork); FREE(cwork);
-  if ( rank < Min(mA,nA) )
-    Sciprintf("\n warning: matrix is rank-deficient m=%d, n=%d, rank=%d \n", mA, nA, rank);
-
-  return OK;
-
- err:
-  FREE(jpvt); FREE(rwork); FREE(cwork);
-  return FAIL;
-      
+  return stat;
 }
 
-/* mA must be equal to nA */
+/*
+ *   nsp_mat_bdiv_square implements A\B when A is square
+ */
 int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond)
 {  
-  int n=A->m, nrhs=B->n; 
+  int n=A->m, nrhs=B->n;  /* mA must be equal to nA */
   int *ipiv=NULL, *iwork=NULL, info;
   double anorm, *rwork=NULL;
   doubleC *cwork=NULL;
 
-  /* FIXME: - when B is complex while A is real, something
-   *          better than complexify A can be done
-   */
+  /* rmk: - when B is complex while A is real, something better than complexify A can be done */
   if ( A->rc_type == 'c' ) 
     {
       if ( B->rc_type == 'r' ) 
@@ -3411,7 +3346,7 @@ int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond)
        
   if ( A->rc_type == 'r' )
     { 
-      anorm = C2F(dlange) ("1", &n, &n, A->R, &n, rwork, 1); /* rwork is used only for inf norm */
+      anorm = C2F(dlange) ("1", &n, &n, A->R, &n, NULL, 1);
       C2F(dgetrf) (&n, &n, A->R, &n, ipiv, &info);
       if ( info != 0 )  /* a pivot is exactly zero */
 	{
@@ -3430,14 +3365,14 @@ int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond)
     }
   else
     {
-      anorm = C2F(zlange) ("1", &n, &n, A->C, &n, rwork, 1); /* rwork is used only for inf norm */
+      anorm = C2F(zlange) ("1", &n, &n, A->C, &n, NULL, 1);
       C2F(zgetrf) (&n, &n, A->C, &n, ipiv, &info);
       if ( info != 0 )  /* a pivot is exactly zero */
 	{
 	  *rcond = 0.0; FREE(ipiv); return OK;
 	}
-      if ( (rwork = nsp_alloc_doubles(2*n)) == NULL ) goto err;      
-      if ( (cwork = nsp_alloc_doubleC(2*n)) == NULL ) goto err;
+      if ( (rwork = nsp_alloc_work_doubles(2*n)) == NULL ) goto err;      
+      if ( (cwork = nsp_alloc_work_doubleC(2*n)) == NULL ) goto err;
 
       C2F(zgecon) ("1", &n, A->C, &n, &anorm, rcond, cwork, rwork, &info, 1);
       if ( *rcond <=  DBL_EPSILON )  /* matrix is too badly conditionned */
