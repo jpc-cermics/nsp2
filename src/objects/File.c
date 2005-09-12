@@ -645,7 +645,7 @@ int nsp_fseek(NspFile *F,long int offset,const char *flag)
     iflag = SEEK_END;
   else 
     {
-      Scierror("fseek : flag = %s not recognized\n");
+      Scierror("fseek : flag = %s not recognized\n",flag);
       return FAIL;
     }
 #if (defined(sun) && !defined(SYSV)) || defined(sgi)
