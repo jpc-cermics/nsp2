@@ -3685,9 +3685,10 @@ static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot
   glDisable(GL_TEXTURE_2D);
 }
 
-#include <GL/glut.h>
 
 #if 0
+#include <GL/glut.h>
+
 static void glut_display_string(BCG *Xgc, GLfloat x, GLfloat y, const char *string)
 {
   int j;
