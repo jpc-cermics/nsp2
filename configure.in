@@ -210,6 +210,18 @@ fi
 
 AC_CHECK_LIB(ieee,main,[LIEEELIB=-lieee],[LIEEELIB=])
 
+#########################
+## libtool 
+#########################
+
+echo "configuration of libtool"
+builtin(include,config/libtool.m4)
+AC_PROG_LIBTOOL()
+echo "end of configuration of libtool"
+
+# get the shared lib extension 
+SHREXT_NAME="$shrext_cmds"
+
 #############################################
 ## Compilers and options according to machine
 ## compilers were detected above 
@@ -221,6 +233,10 @@ FC=$F77
 FC_OPTIONS="${FFLAGS}"
 FC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
 LD_LDFLAGS="${LDFLAGS}"
+
+echo PPPPPPPPPP $lt_lt_prog_compiler_pic $lt_prog_compiler_pic_works
+echo QQQQQQQQQQ $lt_lt_prog_compiler_pic_F77 $lt_prog_compiler_pic_F77_works
+echo QQQQQQQQQQ $lt_lt_prog_compiler_pic_CXX $lt_prog_compiler_pic_CXX_works
 
 case "$host" in
   # Linux ELF: all standard distributions
@@ -528,18 +544,6 @@ if test X"$enable_optimize" = Xno; then
    FC_OPTIONS=`echo $FC_OPTIONS | sed -e 's/-O[[0-9]]*//g'`
    ENABLE_DEBUG="${ENABLE_DEBUG}, optimize off"
 fi 
-
-#########################
-## libtool 
-#########################
-
-echo "configuration of libtool"
-builtin(include,config/libtool.m4)
-AC_PROG_LIBTOOL()
-echo "end of configuration of libtool"
-
-# get the shared lib extension 
-SHREXT_NAME="$shrext_cmds"
 
 #########################################
 # FC_OPTIONS1 and CC_OPTIONS are similar 
@@ -991,6 +995,8 @@ fi
 #################
 ## detect tcl/tk
 ## unused 
+## uncomment the with_tk=no
+## to check tcl/tk detection
 #################
 
 builtin(include,config/tcl.m4)
