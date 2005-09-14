@@ -89,6 +89,8 @@ NspTypeObject *new_type_object(type_mode mode)
   type->get_attrs = (attrs_func*) int_get_attribute ;  
   type->set_attrs = (attrs_func *) int_set_attribute ; 
   type->create = (create_func*) int_object_create;
+  type->save = (save_func *) nsp_object_save_def;
+  type->load = (load_func *) nsp_object_load_def;
 
   if ( nsp_type_object_id == 0 ) 
     {
@@ -316,6 +318,25 @@ static NspObject *object_loop_def(char *str, NspObject *O, NspObject *O1, int i,
   Scierror("Error: %s=val not implemented for val of type %s\n",
 	   str,O1->type->s_type());
   return NULLOBJ;
+}
+
+
+
+
+/*
+ * save and load when not redefined locally 
+ */
+
+int  nsp_object_save_def(void * F, NspObject * M)
+{
+  Scierror("Error: save not implemented for objects of type %s\n",M->type->s_type());
+  return FAIL;
+}
+
+NspObject *nsp_object_load_def(void  * F)
+{
+  Scierror("Error: should not get there, trying to load an object without a load method\n");
+  return NULL;
 }
 
 /*------------------------------------------------------
