@@ -3060,7 +3060,8 @@ static double intdvnorm(NspMatrix *A, double p)
 	  xi_abs = fabs(A->R[i]);
 	  if ( xi_abs > scale ) scale = xi_abs;
 	}
-      if ( isinf(p) )
+
+      if ( isinf(p) || scale == 0.0 )
 	norm = scale;
       else if ( p == 2.0 )
 	{
@@ -3101,7 +3102,7 @@ static double intzvnorm(NspMatrix *A, double p)
       if ( work[i] > scale ) scale = work[i];
     }
 
-  if ( isinf(p) )
+  if ( isinf(p) || scale == 0.0 )
     norm = scale;
   else if ( p == 2.0 )
     {
