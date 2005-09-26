@@ -1,0 +1,69 @@
+\usepackage{a4wide}
+
+%\usepackage[french]{babel}
+\usepackage[dvips]{epsfig} 
+\usepackage[dvips]{hyperref}
+\usepackage[latin1]{inputenc}
+\usepackage{verbatim,moreverb,alltt}
+\usepackage{makeidx}
+\usepackage[dvips]{color}
+
+\newenvironment{mansection}[1]{\newpage\section*{\color[named]{Blue} #1}}
+
+\def\mansep{ -- }
+
+\def\short#1#2{%
+  \index{#1}\label{#1}%
+  \addcontentsline{toc}{section}{\texttt{#1}\mansep #2} \texttt{#1} \mansep #2}%
+
+%% mandesc with color in latex 
+\newsavebox{\manbox}
+\newenvironment{mandesc}{%
+  \begin{lrbox}{\manbox}\begin{minipage}{\linewidth}\begin{flushleft}}{\end{flushleft}\end{minipage}\end{lrbox}\colorbox[rgb]{0.9,0.9,0.9}{\noindent\usebox{\manbox}}}
+
+\newenvironment{calling_sequence}{\subsection*{\color[named]{Blue} Calling sequence}}{}
+\newenvironment{parameters}{\subsection*{\color[named]{Blue} Parameters}}{}
+\newenvironment{mandescription}{\subsection*{\color[named]{Blue} Description}}{} 
+\newenvironment{manseealso}{\subsection*{\color[named]{Blue} See also}}{}
+\newenvironment{examples}{\subsection*{\color[named]{Blue} Examples}}{}
+\newenvironment{authors}{\subsection*{\color[named]{Blue} Authors}}{}
+\newenvironment{secbiblio}{\subsection*{\color[named]{Blue} Bibliography}}{}
+
+\newenvironment{varlist}{%
+  \renewcommand{\descriptionlabel}[1]{\hspace{\labelsep}\texttt{##1}}%
+  \begin{description}}{\end{description}}
+
+\def\vname#1{\item \texttt{#1}}
+\renewenvironment{varlist}{%
+  \begin{itemize}}{\end{itemize}}
+
+\def\manlink#1#2{{#1} (\ref{#2})\quad}
+
+\def\itemdesc#1{{\color[named]{Maroon}#1}}
+
+%% verbatim with a background color 
+
+\def\program{%
+  \def\verbatim@processline{%
+    {\setbox0=\hbox{\the\verbatim@line}%
+    \hsize=\linewidth \the\verbatim@line\par}}%
+  \@minipagetrue%%%DPC%%%
+  \@tempswatrue%%%DPC%%%
+  \setbox0=\vbox\bgroup \verbatim
+}
+\def\endprogram{%
+  \endverbatim
+  \unskip\setbox0=\lastbox %%%DPC%%%
+  \egroup
+  \colorbox[rgb]{0.85,0.85,0.90}{\box0}% <<<=== change here for centering,...
+}
+
+%% alltt with a background color 
+
+\newsavebox{\myprogrambox}
+\newenvironment{ttprogram}{%
+ \begin{lrbox}{\myprogrambox}\begin{minipage}{\linewidth}\alltt}%
+ {\endalltt\end{minipage}\end{lrbox}\colorbox[rgb]{0.9,0.9,0.95}{\noindent\usebox{\myprogrambox}}}
+
+
+

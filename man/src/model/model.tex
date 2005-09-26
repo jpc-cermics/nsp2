@@ -1,0 +1,84 @@
+% -*- mode: latex -*-
+
+\mansection{grand}
+\begin{mandesc}
+  \short{f}{short description for f} \\
+  \short{g}{short description for g} \\
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+Y=f(m, n, dist_type [,p1,...,pk])  
+Y=f(X, dist_type [,p1,...,pk])  
+Y=g(n, dist_type [,p1,...,pk])  
+S=g(action [,q1,....,ql])  
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{m, n} : integers, size of the wanted matrix \verb!Y!
+    \vname{X} : a matrix whom only the dimensions (say \verb!m x n!) are used
+    \vname{dist\_type} : a string given the distribution which (independants) variates are to be 
+    generated ('bin', 'nor', 'poi', etc ...)
+    \vname{p1, ..., pk} : the parameters (reals or integers) required to define completly the distribution 
+    \verb!dist_type!
+    \vname{Y} : the resulting \verb!m x n! random matrix
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  This function may be used to generate random numbers from various distributions. In this 
+  case you must apply one of the 
+  \verb!three first forms! of the possible calling sequences to get an \verb!m x n! matrix. 
+  The two firsts are equivalent if \verb!X! is a \verb!m x n! matrix, 
+  and the third form corresponds to 'multivalued' distributions (e.g. multinomial, multivariate
+  gaussian, etc...) where a sample is a column vector (says of dim \verb!m!)
+  and you get then \verb!n! such random vectors (as an \verb! m x n! matrix). 
+  \verb!The last form! is used to undertake various manipulations onto the base generators
+  like changing the base generator (since v 2.7 you may choose between several base generators), 
+  changing or retrieving its internal state (seeds), etc ... These base generators give random
+  integers following a uniform distribution on a large integer interval (lgi), all the others 
+  distributions being gotten from it (in general via a scheme lgi -$>$ U([0,1)) -$>$ wanted distribution).
+\end{mandescription}
+
+\begin{examples}
+  a first example 
+
+  \begin{program}
+    u=prbs_a(50,10);
+    plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);
+  \end{program}
+
+  a second example 
+
+  \begin{program}
+    u=prbs_a(50,10);
+    plot2d2("onn",(1:50)',u',1,"151",' ',[0,-1.5,50,1.5]);
+  \end{program}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{rand}{rand}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  \paragraph{randlib} 
+  The codes to generate sequences following other distributions than def, unf, lgi,  uin and geom are
+  from "Library of Fortran Routines for Random Number  Generation", by Barry W. Brown 
+  and James Lovato, Department of Biomathematics, The University of Texas, Houston.  
+  \paragraph{mt} 
+  The code is the mt19937int.c by M. Matsumoto and  T. Nishimura, "Mersenne Twister: 
+  A 623-dimensionally equidistributed  uniform pseudorandom number generator", 
+  ACM Trans. on Modeling and  Computer Simulation Vol. 8, No. 1, January, pp.3-30 1998.
+  \paragraph{kiss} 
+  The code was given by G. Marsaglia at the end of a thread concerning RNG in C in several 
+  newsgroups (whom sci.math.num-analysis) "My offer of  RNG's for C was an invitation 
+  to dance..." only kiss have been included in Scilab (kiss is made of a combinaison of 
+  severals others which are not visible at the scilab level).
+  \paragraph{clcg2} 
+  The method is from P. L'Ecuyer but the C code is provided at the Luc  Devroye home page 
+  (http://cgm.cs.mcgill.ca/~luc/rng.html).
+\end{authors}

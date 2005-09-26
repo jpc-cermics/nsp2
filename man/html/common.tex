@@ -1,0 +1,48 @@
+\usepackage{a4wide}
+%\usepackage[french]{babel}
+\usepackage[dvips]{epsfig} 
+%\usepackage[dvips]{hyperref}
+\usepackage[latin1]{inputenc}
+\usepackage{verbatim,moreverb,alltt}
+\usepackage{makeidx}
+
+\newenvironment{mansection}[1]{\newpage\subsection*{#1}}
+
+\newenvironment{mandesc-old}{%
+  \renewcommand{\descriptionlabel}[1]{\hspace{\labelsep}\texttt{##1}}%
+  \HCode{<div class="manref">}\begin{description}}{\end{description}\HCode{</div>}}
+
+\newenvironment{mandesc}{%
+  \HCode{<div class="manref">}\begin{flushleft}}{\end{flushleft}\HCode{</div>}}
+
+\def\short#1#2{%
+  \index{#1}\label{#1}%
+  \addcontentsline{toc}{section}{\texttt{#1}\mansep #2} \texttt{#1} \mansep #2}%
+
+\newenvironment{calling_sequence}{\paragraph{Calling sequence}}{}
+\newenvironment{parameters}{\paragraph{Parameters}}{}
+\newenvironment{mandescription}{\paragraph{Description}\\\noindent}{} 
+\newenvironment{manseealso}{\paragraph{See also}}{}
+\newenvironment{examples}{\paragraph{Examples}}{}
+\newenvironment{authors}{\paragraph{Authors}}{}
+\newenvironment{secbiblio}{\paragraph{Bibliography}}{}
+
+\newenvironment{varlist}{%
+  \renewcommand{\descriptionlabel}[1]{\hspace{\labelsep}\texttt{##1}}%
+  \begin{description}}{\end{description}}
+
+\def\vname#1{\item \texttt{#1}}
+\renewenvironment{varlist}{%
+  \begin{itemize}}{\end{itemize}}
+
+\def\manlink#1#2{{#1} (\ref{#2})\quad}
+
+\newenvironment{program}%
+ {\HCode{<div class="programlisting">}\verbatim}%
+ {\endverbatim\HCode{</div>}}
+
+\def\itemdesc#1{\HCode{<div class="itemdesc">}#1{\HCode{</div>}}}
+
+\def\mansep{ -- \hfill}
+
+
