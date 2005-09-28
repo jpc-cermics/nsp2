@@ -122,12 +122,12 @@ static int scicos_fill_sim(NspHash *Sim,scicos_sim *scsim)
   NspList *funs;
   Cell *cloc;
 
-  const char *sim[]={"funs","xptr","zptr","zcptr","inpptr",
-		     "outptr","inplnk","outlnk","lnkptr","rpar",
-		     "rpptr","ipar","ipptr","clkptr", "ordptr",
-		     "execlk","ordclk","cord","oord","zord",
-		     "critev","nb","ztyp","nblk","ndcblk", 
-		     "subscr","funtyp","iord","labels","modptr"};
+  char *sim[]={"funs","xptr","zptr","zcptr","inpptr",
+	       "outptr","inplnk","outlnk","lnkptr","rpar",
+	       "rpptr","ipar","ipptr","clkptr", "ordptr",
+	       "execlk","ordclk","cord","oord","zord",
+	       "critev","nb","ztyp","nblk","ndcblk", 
+	       "subscr","funtyp","iord","labels","modptr"};
 
   if ( loc + nsim -1 != (void *) &scsim->modptr )
     {
