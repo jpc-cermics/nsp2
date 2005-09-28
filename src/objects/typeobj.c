@@ -233,8 +233,7 @@ static int type_xdr_save(NspFile  *F, NspType *M)
  * load 
  */
 
-static NspType  *type_xdr_load(NspFile
-			       *F)
+static NspType  *type_xdr_load(NspFile *F)
 {
   NspType *M = NULL;
   static char name[NAME_MAXL];
