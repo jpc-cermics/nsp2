@@ -218,10 +218,10 @@ int nsp_pmatrix_neq(NspObject *A, NspObject *B)
  * Save a Matrix in a file stream 
  */
 
-static int nsp_pmatrix_xdr_save(NspFile  *F, NspMatrix *M)
+static int nsp_pmatrix_xdr_save(XDR *xdrs, NspMatrix *M)
 {
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("pmat_xdr_save: to be implemented \n");
   return OK;
 }
@@ -230,10 +230,10 @@ static int nsp_pmatrix_xdr_save(NspFile  *F, NspMatrix *M)
  * Load a Matrix from a file stream 
  **/
 
-static NspPMatrix *nsp_pmatrix_xdr_load(NspFile  *F)
+static NspPMatrix *nsp_pmatrix_xdr_load(XDR *xdrs)
 {
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLPMAT;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLPMAT;
   Scierror("pmat_xdr_load: to be implemented \n");
   return NULLPMAT;
 }

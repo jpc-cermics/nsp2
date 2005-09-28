@@ -56,8 +56,8 @@ static char *gobject_type_as_string(void);
 static char *gobject_type_short_string(void);
 static int gobject_eq(NspGObject *A, NspObject *B);
 static int gobject_neq(NspGObject *A, NspObject *B);
-static int gobject_xdr_save(NspFile  *F, NspGObject *M);
-static NspGObject  *gobject_xdr_load(NspFile  *F);
+static int gobject_xdr_save(XDR  *F, NspGObject *M);
+static NspGObject  *gobject_xdr_load(XDR  *F);
 static NspMethods *gobject_get_methods(void); 
 static NspObject *gobject_path_extract(NspGObject *A, NspObject *O);
 #endif /* NspGObject_Private */

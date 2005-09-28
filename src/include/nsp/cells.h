@@ -53,8 +53,8 @@ NspObject *nsp_cells_loop_extract(char *str, NspObject *O, NspObject *O1, int i,
 int nsp_cells_eq(NspObject *A,NspObject *B);
 int nsp_cells_neq(NspObject *A,NspObject *B);
 int nsp_cells_is_true(NspCells *M);
-NspCells *nsp_cells_xdr_load(NspFile  *F);
-int nsp_cells_xdr_save(NspFile  *F, NspCells *M);
+NspCells *nsp_cells_xdr_load(XDR  *F);
+int nsp_cells_xdr_save(XDR *xdrs, NspCells *M);
 #endif 
 
 

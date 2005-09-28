@@ -242,13 +242,13 @@ int nsp_smatrix_is_true(NspSMatrix *M)
 
 const int BUF_LEN=1024;
 
-int nsp_smatrix_xdr_save(NspFile  *F, NspSMatrix *M)
+int nsp_smatrix_xdr_save(XDR *xdrs, NspSMatrix *M)
 {
   int i;
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->m) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->n) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->m) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->n) == FAIL) return FAIL;
   for ( i= 0 ; i < M->mn ; i++) 
     {
       if ( strlen(M->S[i]) > BUF_LEN ) 
@@ -256,7 +256,7 @@ int nsp_smatrix_xdr_save(NspFile  *F, NspSMatrix *M)
 	  Scierror("XXX Lengh of element %d is too big (max=%d)\n",i, BUF_LEN ) ;
 	  return FAIL;
 	}
-      nsp_xdr_save_string(F->xdrs,M->S[i]);
+      nsp_xdr_save_string(xdrs,M->S[i]);
     }
   return OK;
 }
@@ -265,21 +265,21 @@ int nsp_smatrix_xdr_save(NspFile  *F, NspSMatrix *M)
  * Load a NspSMatrix 
  */
 
-NspSMatrix *nsp_smatrix_xdr_load(NspFile  *F)
+NspSMatrix *nsp_smatrix_xdr_load(XDR *xdrs)
 {
   char s_buf[BUF_LEN+1];
   int m,n,i;
   NspSMatrix *M;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLSMAT;
-  if (nsp_xdr_load_i(F->xdrs,&m) == FAIL) return NULLSMAT;
-  if (nsp_xdr_load_i(F->xdrs,&n) == FAIL) return NULLSMAT ;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSMAT;
+  if (nsp_xdr_load_i(xdrs,&m) == FAIL) return NULLSMAT;
+  if (nsp_xdr_load_i(xdrs,&n) == FAIL) return NULLSMAT ;
   /* initial mxn matrix with unallocated elements **/
   if ( ( M =nsp_smatrix_create_with_length(name,m,n,-1) ) == NULLSMAT) return(NULLSMAT);
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < m*n ; i++ )
     {
-      if (nsp_xdr_load_string(F->xdrs,s_buf,BUF_LEN)== FAIL) 
+      if (nsp_xdr_load_string(xdrs,s_buf,BUF_LEN)== FAIL) 
 	{
 	  Scierror("Warning: Lengh of element %d is too big (max=%d)\n",i, BUF_LEN ) ;
 	  return NULLSMAT;

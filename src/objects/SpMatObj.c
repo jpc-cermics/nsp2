@@ -199,16 +199,16 @@ int nsp_spmatrix_neq(NspObject *A, NspObject *B)
  * Save a Matrix in a file stream 
  */
 
-static int nsp_spmatrix_xdr_save(NspFile  *F, NspSpMatrix *M)
+static int nsp_spmatrix_xdr_save(XDR *xdrs, NspSpMatrix *M)
 {
   NspMatrix *RC, *Values;
   if ( nsp_spmatrix_get(M,&RC,&Values) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs, M->m) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs, M->n) == FAIL) return FAIL;
-  if ( NSP_OBJECT(RC)->type->save (F,RC) == FAIL) return FAIL;
-  if ( NSP_OBJECT(Values)->type->save (F,Values) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->m) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->n) == FAIL) return FAIL;
+  if ( NSP_OBJECT(RC)->type->save (xdrs,RC) == FAIL) return FAIL;
+  if ( NSP_OBJECT(Values)->type->save (xdrs,Values) == FAIL) return FAIL;
   return OK;
 }
 
@@ -216,17 +216,17 @@ static int nsp_spmatrix_xdr_save(NspFile  *F, NspSpMatrix *M)
  * Load a Matrix from a file stream 
  **/
 
-static NspSpMatrix *nsp_spmatrix_xdr_load(NspFile  *F)
+static NspSpMatrix *nsp_spmatrix_xdr_load(XDR *xdrs)
 {
   int m,n;
   NspObject *RC, *Values;
   NspSpMatrix *Loc;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLSP;
-  if (nsp_xdr_load_i(F->xdrs, &m) == FAIL)  return NULLSP;
-  if (nsp_xdr_load_i(F->xdrs, &n) == FAIL)  return NULLSP;
-  if ( (RC= nsp_object_xdr_load(F) ) == NULL) return NULLSP;
-  if ( (Values= nsp_object_xdr_load(F) ) == NULL) return NULLSP;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSP;
+  if (nsp_xdr_load_i(xdrs, &m) == FAIL)  return NULLSP;
+  if (nsp_xdr_load_i(xdrs, &n) == FAIL)  return NULLSP;
+  if ( (RC= nsp_object_xdr_load(xdrs) ) == NULL) return NULLSP;
+  if ( (Values= nsp_object_xdr_load(xdrs) ) == NULL) return NULLSP;
   if ((Loc = nsp_spmatrix_sparse(name,(NspMatrix *)RC,(NspMatrix *)Values,m,n)) == NULLSP) return NULLSP;
   return Loc;
 }

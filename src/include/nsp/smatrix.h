@@ -57,8 +57,8 @@ NspObject *nsp_smatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int 
 int nsp_smatrix_eq(NspObject *A,NspObject *B);
 int nsp_smatrix_neq(NspObject *A,NspObject *B);
 int nsp_smatrix_is_true(NspSMatrix *M);
-NspSMatrix *nsp_smatrix_xdr_load(NspFile  *F);
-int nsp_smatrix_xdr_save(NspFile  *F, NspSMatrix *M);
+NspSMatrix *nsp_smatrix_xdr_load(XDR  *F);
+int nsp_smatrix_xdr_save(XDR  *F, NspSMatrix *M);
 #endif 
 
 #define NULLSTRING (nsp_string) 0

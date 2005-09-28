@@ -201,10 +201,10 @@ static NspObject *pangoattribute_path_extract(NspPangoAttribute *a, NspObject *o
  * save 
  */
 
-static int pangoattribute_xdr_save(NspFile  *F, NspPangoAttribute *M)
+static int pangoattribute_xdr_save(XDR  *xdrs, NspPangoAttribute *M)
 {
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("pangoattribute_xdr_save: to be implemented \n");
   return OK;
 }
@@ -213,11 +213,11 @@ static int pangoattribute_xdr_save(NspFile  *F, NspPangoAttribute *M)
  * load 
  */
 
-static NspPangoAttribute  *pangoattribute_xdr_load(NspFile  *F)
+static NspPangoAttribute  *pangoattribute_xdr_load(XDR  *xdrs)
 {
   NspPangoAttribute *M = NULL;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLPATTR;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLPATTR;
   Scierror("pangoattribute_xdr_load: to be implemented \n");
   return M;
 }

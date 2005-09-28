@@ -191,31 +191,31 @@ int NspPListObjNeq(NspObject *A, NspObject *B)
  * Save a NspPList
  */
 
-static int PListXdrSave(NspFile  *F, PList L);
+static int PListXdrSave(XDR *xdrs, PList L);
 
-int NspPListXdrSave(NspFile  *F, NspPList *M)
+int NspPListXdrSave(XDR *xdrs, NspPList *M)
 {
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs,M->file_name == NULL ? "" : M->file_name) == FAIL)
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,M->file_name == NULL ? "" : M->file_name) == FAIL)
     return FAIL;
-  return ( PListXdrSave(F,M->D) );
+  return ( PListXdrSave(xdrs,M->D) );
 }
 
 /*
  * Load a NspPList
  */
 
-static int PListXdrLoad(NspFile  *F, PList *plist);
+static int PListXdrLoad(XDR *xdrs, PList *plist);
 
-NspPList *NspPListXdrLoad(NspFile  *F)
+NspPList *NspPListXdrLoad(XDR *xdrs)
 {
   PList L=NULLPLIST,L1;
   char file_name[FSIZE]; 
   char name[NAME_MAXL]; 
-  if (nsp_xdr_load_string(F->xdrs, name,NAME_MAXL) == FAIL) return NULLP_PLIST;
-  if (nsp_xdr_load_string(F->xdrs, file_name,FSIZE) == FAIL) return NULLP_PLIST;
-  if ( PListXdrLoad(F,&L) == FAIL) return NULLP_PLIST;
+  if (nsp_xdr_load_string(xdrs, name,NAME_MAXL) == FAIL) return NULLP_PLIST;
+  if (nsp_xdr_load_string(xdrs, file_name,FSIZE) == FAIL) return NULLP_PLIST;
+  if ( PListXdrLoad(xdrs,&L) == FAIL) return NULLP_PLIST;
   if ( L->type != PLIST ) return NULLP_PLIST;
   L1= L->O;
   L->O = NULLPLIST;
@@ -228,59 +228,59 @@ NspPList *NspPListXdrLoad(NspFile  *F)
  * Save a PList to a File 
  */
 
-int PListXdrSave_I(NspFile  *F, PList L)
+int PListXdrSave_I(XDR *xdrs, PList L)
 {
-  nsp_xdr_save_c(F->xdrs,'L');
+  nsp_xdr_save_c(xdrs,'L');
   while ( L != NULLPLIST ) 
     {
       switch ( L->type ) 
 	{
 	case STRING:
-	  nsp_xdr_save_c(F->xdrs,'S');
-	  nsp_xdr_save_string(F->xdrs,(char *) L->O);
+	  nsp_xdr_save_c(xdrs,'S');
+	  nsp_xdr_save_string(xdrs,(char *) L->O);
 	  break;
 	case COMMENT:
-	  nsp_xdr_save_c(F->xdrs,'C');
-	  nsp_xdr_save_string(F->xdrs,(char *) L->O);
+	  nsp_xdr_save_c(xdrs,'C');
+	  nsp_xdr_save_string(xdrs,(char *) L->O);
 	  break;
 	case NUMBER:
-	  nsp_xdr_save_c(F->xdrs,'D');
-	  nsp_xdr_save_string(F->xdrs,((parse_double *) L->O)->str);
+	  nsp_xdr_save_c(xdrs,'D');
+	  nsp_xdr_save_string(xdrs,((parse_double *) L->O)->str);
 	  break;
 	case NAME :
-	  nsp_xdr_save_c(F->xdrs,'N');
-	  nsp_xdr_save_string(F->xdrs,(char *) L->O);
+	  nsp_xdr_save_c(xdrs,'N');
+	  nsp_xdr_save_string(xdrs,(char *) L->O);
 	  break;
 	case PLIST:
-	  PListXdrSave_I(F, L->O);
+	  PListXdrSave_I(xdrs, L->O);
 	  break;
 	case EMPTYMAT:
-	  nsp_xdr_save_c(F->xdrs,'M');
-	  nsp_xdr_save_i(F->xdrs, NSP_POINTER_TO_INT(L->O));
+	  nsp_xdr_save_c(xdrs,'M');
+	  nsp_xdr_save_i(xdrs, NSP_POINTER_TO_INT(L->O));
 	  break; /* XXXX */
 	default:
-	  nsp_xdr_save_c(F->xdrs,'O');
-	  nsp_xdr_save_i(F->xdrs,L->arity);
-	  nsp_xdr_save_i(F->xdrs,L->type);
-	  nsp_xdr_save_i(F->xdrs, NSP_POINTER_TO_INT(L->O));
+	  nsp_xdr_save_c(xdrs,'O');
+	  nsp_xdr_save_i(xdrs,L->arity);
+	  nsp_xdr_save_i(xdrs,L->type);
+	  nsp_xdr_save_i(xdrs, NSP_POINTER_TO_INT(L->O));
 	}
       L = L->next ;
     }
-  nsp_xdr_save_c(F->xdrs,'E');  
+  nsp_xdr_save_c(xdrs,'E');  
   return OK ;
 }
 
-static int PListXdrSave(NspFile  *F, PList L)
+static int PListXdrSave(XDR *xdrs, PList L)
 {
-  if ( PListXdrSave_I(F,L) == FAIL) return FAIL;
-  return nsp_xdr_save_c(F->xdrs,'Z');
+  if ( PListXdrSave_I(xdrs,L) == FAIL) return FAIL;
+  return nsp_xdr_save_c(xdrs,'Z');
 }
 
 /*
  * Read a PList from a file 
  */
 
-static int PListXdrLoad(NspFile  *F, PList *plist)
+static int PListXdrLoad(XDR *xdrs, PList *plist)
 {
   int opar,op,oline;
   PList loc=NULLPLIST;
@@ -290,39 +290,39 @@ static int PListXdrLoad(NspFile  *F, PList *plist)
   while ( 1) 
     {
       c= EOF;
-      nsp_xdr_load_c(F->xdrs,&c);
+      nsp_xdr_load_c(xdrs,&c);
       switch (c) 
 	{
 	case 'S' : 
-	  nsp_xdr_load_string(F->xdrs,buf,TBUF);
+	  nsp_xdr_load_string(xdrs,buf,TBUF);
 	  if ( ParseAddString(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'C' : 
-	  nsp_xdr_load_string(F->xdrs,buf,TBUF);
+	  nsp_xdr_load_string(xdrs,buf,TBUF);
 	  if ( ParseAddComment(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'D':
-	  nsp_xdr_load_string(F->xdrs,buf,TBUF);
+	  nsp_xdr_load_string(xdrs,buf,TBUF);
 	  if ( ParseAddDoubleI(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'N':
-	  nsp_xdr_load_string(F->xdrs,buf,TBUF);
+	  nsp_xdr_load_string(xdrs,buf,TBUF);
 	  if ( ParseAddName(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'L':
 	  loc1 = loc = NULLPLIST;
-	  if (PListXdrLoad(F,&loc) == FAIL) return (FAIL);
+	  if (PListXdrLoad(xdrs,&loc) == FAIL) return (FAIL);
 	  if (ParseAddList1(&loc1,&loc) == FAIL) return (FAIL);
 	  if (ParseAddList(plist,&loc1)== FAIL)  return (FAIL);
 	  break;
 	case 'M': 
-	  nsp_xdr_load_i(F->xdrs,&oline);
+	  nsp_xdr_load_i(xdrs,&oline);
 	  if ( ParseAdd(plist,EMPTYMAT,0,oline) == FAIL) return(FAIL);
 	  break;
 	case 'O':
-	  nsp_xdr_load_i(F->xdrs,&opar);
-	  nsp_xdr_load_i(F->xdrs,&op);
-	  nsp_xdr_load_i(F->xdrs,&oline);
+	  nsp_xdr_load_i(xdrs,&opar);
+	  nsp_xdr_load_i(xdrs,&op);
+	  nsp_xdr_load_i(xdrs,&oline);
 	  if ( ParseAdd(plist,op,opar,oline) == FAIL) return(FAIL);
 	  break;
 	case 'E':

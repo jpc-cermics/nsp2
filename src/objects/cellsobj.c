@@ -255,13 +255,13 @@ int nsp_cells_is_true(NspCells *M)
  *   NULL elements are badly processed
  */
 
-int nsp_cells_xdr_save(NspFile  *F, NspCells *M)
+int nsp_cells_xdr_save(XDR *xdrs, NspCells *M)
 {
   int i,rep;
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->m) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->n) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->m) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->n) == FAIL) return FAIL;
   for ( i= 0 ; i < M->mn ; i++) 
     {
       if (M->objs[i]   == NULLOBJ)
@@ -269,7 +269,7 @@ int nsp_cells_xdr_save(NspFile  *F, NspCells *M)
 	  Scierror("Warning:\t trying to save a null object in a cell\n");
 	  return FAIL;
 	}
-      rep = M->objs[i]->type->save(F,M->objs[i]);
+      rep = M->objs[i]->type->save(xdrs,M->objs[i]);
       if ( rep == FAIL) return FAIL;
     }
   return OK;
@@ -279,20 +279,20 @@ int nsp_cells_xdr_save(NspFile  *F, NspCells *M)
  * Load a NspCells 
  */
 
-NspCells *nsp_cells_xdr_load(NspFile  *F)
+NspCells *nsp_cells_xdr_load(XDR *xdrs)
 {
   int m,n,i;
   NspCells *M;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLCELLS;
-  if (nsp_xdr_load_i(F->xdrs,&m) == FAIL) return NULLCELLS;
-  if (nsp_xdr_load_i(F->xdrs,&n) == FAIL) return NULLCELLS ;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCELLS;
+  if (nsp_xdr_load_i(xdrs,&m) == FAIL) return NULLCELLS;
+  if (nsp_xdr_load_i(xdrs,&n) == FAIL) return NULLCELLS ;
   /* initial mxn matrix with unallocated elements **/
   if ( ( M =nsp_cells_create(name,m,n)) == NULLCELLS) return(NULLCELLS);
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < m*n ; i++ )
     {
-      NspObject *Ob= nsp_object_xdr_load(F);
+      NspObject *Ob= nsp_object_xdr_load(xdrs);
       if ( Ob == NULLOBJ ) return NULLCELLS;
       M->objs[i] = Ob;
     }

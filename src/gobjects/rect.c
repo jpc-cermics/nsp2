@@ -192,14 +192,14 @@ static int rect_neq(NspRect *A, NspObject *B)
  * save 
  */
 
-static int rect_xdr_save(NspFile  *F, NspRect *M)
+static int rect_xdr_save(XDR  *xdrs, NspRect *M)
 {
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->color) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->thickness) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->background) == FAIL) return FAIL;
-  if (nsp_xdr_save_array_d(F->xdrs,M->r,4) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->color) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->thickness) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->background) == FAIL) return FAIL;
+  if (nsp_xdr_save_array_d(xdrs,M->r,4) == FAIL) return FAIL;
   return OK;
 }
 
@@ -207,17 +207,17 @@ static int rect_xdr_save(NspFile  *F, NspRect *M)
  * load 
  */
 
-static NspRect  *rect_xdr_load(NspFile  *F)
+static NspRect  *rect_xdr_load(XDR  *xdrs)
 {
   int color,thickness,background;
   NspRect *M;
   char name[NAME_MAXL];
   double rect[4];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLRECT;
-  if (nsp_xdr_load_i(F->xdrs,&color) == FAIL) return NULLRECT;
-  if (nsp_xdr_load_i(F->xdrs,&thickness) == FAIL) return NULLRECT;
-  if (nsp_xdr_load_i(F->xdrs,&background) == FAIL) return NULLRECT;
-  if (nsp_xdr_load_array_d(F->xdrs,rect,4) == FAIL) return NULLRECT;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLRECT;
+  if (nsp_xdr_load_i(xdrs,&color) == FAIL) return NULLRECT;
+  if (nsp_xdr_load_i(xdrs,&thickness) == FAIL) return NULLRECT;
+  if (nsp_xdr_load_i(xdrs,&background) == FAIL) return NULLRECT;
+  if (nsp_xdr_load_array_d(xdrs,rect,4) == FAIL) return NULLRECT;
   if (( M= rect_create(name,NULL,rect,color,thickness,background,NULL)) == NULLRECT ) return NULLRECT;
   return M;
 }

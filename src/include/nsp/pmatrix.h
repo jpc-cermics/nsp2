@@ -61,8 +61,8 @@ char *nsp_pmatrix_type_short_string(void);
 NspObject *nsp_pmatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 int nsp_pmatrix_eq(NspObject *A,NspObject *B);
 int nsp_pmatrix_neq(NspObject *A,NspObject *B);
-static int nsp_pmatrix_xdr_save(NspFile  *F, NspMatrix *M);
-static NspPMatrix *nsp_pmatrix_xdr_load(NspFile  *F);
+static int nsp_pmatrix_xdr_save(XDR  *F, NspMatrix *M);
+static NspPMatrix *nsp_pmatrix_xdr_load(XDR  *F);
 #endif 
 
 #define NULLPMAT (NspPMatrix *) 0

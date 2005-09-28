@@ -112,7 +112,7 @@ static NspObject *list_loop_extract(char *str, NspObject *O, NspObject *O1, int 
 static int nsp_list_eq(NspObject *A,NspObject *B);
 static int nsp_list_neq(NspObject *A,NspObject *B);
 static int nsp_list_is_true(NspList *l);
-static NspList *nsp_list_xdr_load(NspFile  *F);
-static int nsp_list_xdr_save(NspFile  *F, NspList *L);
+static NspList *nsp_list_xdr_load(XDR  *F);
+static int nsp_list_xdr_save(XDR  *F, NspList *L);
 static NspMethods *nsp_list_get_methods(void);
 #endif 

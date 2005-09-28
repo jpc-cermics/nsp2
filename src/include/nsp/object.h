@@ -319,8 +319,8 @@ NspObject *nsp_create_object_from_doubles( int m,int n,int it,double *rtab,doubl
 void *MaybeObjCopy (NspObject **O);
 NspObject *nsp_object_copy_and_name(char *name,NspObject *O);
 
-int nsp_object_xdr_save(NspFile *F, NspObject *O);
-NspObject *nsp_object_xdr_load(NspFile *F); 
+int nsp_object_xdr_save(XDR *F, NspObject *O);
+NspObject *nsp_object_xdr_load(XDR *F); 
 extern void nsp_object_destroy(NspObject **O); 
 extern void nsp_void_object_destroy(NspObject **O); 
 extern NspObject *nsp_object_copy(NspObject *O); 

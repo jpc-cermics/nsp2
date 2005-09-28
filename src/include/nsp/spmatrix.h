@@ -75,8 +75,8 @@ char *nsp_spmatrix_type_short_string(void);
 NspObject *SpLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 int nsp_spmatrix_eq(NspObject *A,NspObject *B);
 int nsp_spmatrix_neq(NspObject *A,NspObject *B);
-static NspSpMatrix *nsp_spmatrix_xdr_load(NspFile  *F);
-static int nsp_spmatrix_xdr_save(NspFile  *F, NspSpMatrix *M);
+static NspSpMatrix *nsp_spmatrix_xdr_load(XDR  *F);
+static int nsp_spmatrix_xdr_save(XDR  *F, NspSpMatrix *M);
 #endif 
 
 #define NULLSP (  NspSpMatrix *) 0

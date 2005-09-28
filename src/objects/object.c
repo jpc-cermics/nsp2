@@ -1542,7 +1542,7 @@ int int_object_xdrsave(Stack stack, int rhs, int opt, int lhs)
   if (( F =nsp_file_open_xdr_w(buf)) == NULLSCIFILE) return RET_BUG;
   for ( i = 2 ; i <= rhs ; i++ )
     {
-      if (nsp_object_xdr_save(F,NthObj(i))== FAIL) 
+      if (nsp_object_xdr_save(F->xdrs,NthObj(i))== FAIL) 
 	{
 	  rep = RET_BUG;
 	  break;
@@ -1577,7 +1577,7 @@ int int_object_xdrload(Stack stack, int rhs, int opt, int lhs)
   if (( F =nsp_file_open_xdr_r(buf)) == NULLSCIFILE) return RET_BUG;
   while (1) 
     {
-      if ((O=nsp_object_xdr_load(F))== NULLOBJ ) 
+      if ((O=nsp_object_xdr_load(F->xdrs))== NULLOBJ ) 
 	break;
       nsp_frame_replace_object(O);
     }

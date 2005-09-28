@@ -208,10 +208,10 @@ static int function_neq(NspFunction *A, NspObject *B)
  * save 
  */
 
-static int function_xdr_save(NspFile  *F, NspFunction *M)
+static int function_xdr_save(XDR *xdrs, NspFunction *M)
 {
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("function_xdr_save: to be implemented, cannot save %s\n",
 	   NSP_OBJECT(M)->name);
   return FAIL;
@@ -221,11 +221,11 @@ static int function_xdr_save(NspFile  *F, NspFunction *M)
  * load 
  */
 
-static NspFunction  *function_xdr_load(NspFile  *F)
+static NspFunction  *function_xdr_load(XDR *xdrs)
 {
   NspFunction *M = NULL;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLFUNC;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLFUNC;
   Scierror("function_xdr_load: to be implemented \n");
   return M;
 }

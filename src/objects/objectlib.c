@@ -275,7 +275,7 @@ int nsp_object_is_true(NspObject *O)
  * Return value: %OK or %FALSE 
  **/
 
-int nsp_object_xdr_save(NspFile  *F, NspObject *O)
+int nsp_object_xdr_save(XDR *xdrs, NspObject *O)
 {
   if ( O  == NULLOBJ) return OK;
   if ( Ocheckname(O,NVOID) )  
@@ -283,7 +283,7 @@ int nsp_object_xdr_save(NspFile  *F, NspObject *O)
       Scierror("Warning:\t trying to save an object without name\n");
       return OK;
     }
-  return O->type->save(F,O);
+  return O->type->save(xdrs,O);
 }
 
 /**
@@ -296,11 +296,11 @@ int nsp_object_xdr_save(NspFile  *F, NspObject *O)
  * Return value: a new #NspObject
  **/
 
-NspObject *nsp_object_xdr_load(NspFile  *F)
+NspObject *nsp_object_xdr_load(XDR *xdrs)
 {
   int id;
   NspTypeObject *type;
-  nsp_xdr_load_i(F->xdrs,&id);
+  nsp_xdr_load_i(xdrs,&id);
   if ( id == nsp_no_type_id ) return NULLOBJ; /* end of saved objects  */
   type = nsp_get_type_from_id(id);
   if ( type == NULL) 
@@ -309,7 +309,7 @@ NspObject *nsp_object_xdr_load(NspFile  *F)
       return NULLOBJ;
     }
   while ( type->surtype != NULL ) type= NSP_TYPE_OBJECT(type->surtype);
-  return type->load(F);
+  return type->load(xdrs);
 }
 
 /**

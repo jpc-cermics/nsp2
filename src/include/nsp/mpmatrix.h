@@ -66,8 +66,8 @@ static char *mpmatrix_type_as_string(void);
 static char *mpmatrix_type_short_string(void);
 static int mpmatrix_neq(NspObject *A,NspObject *B);
 static int mpmatrix_eq(NspObject *A,NspObject *B);
-static int mpmatrix_xdr_save(NspFile  *F, NspMaxpMatrix *M);
-static NspMaxpMatrix  *mpmatrix_xdr_load(NspFile  *F);
+static int mpmatrix_xdr_save(XDR  *F, NspMaxpMatrix *M);
+static NspMaxpMatrix  *mpmatrix_xdr_load(XDR  *F);
 static AttrTab mpmatrix_attrs[];
 static NspMethods *mpmatrix_get_methods(void); 
 /*static NspObject *mpmatrix_path_extract(NspMaxpMatrix *A, NspObject *O); */

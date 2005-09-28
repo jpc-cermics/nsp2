@@ -53,8 +53,8 @@ static char *gdkatom_type_as_string(void);
 static char *gdkatom_type_short_string(void);
 static int gdkatom_eq(NspGdkAtom *A, NspObject *B);
 static int gdkatom_neq(NspGdkAtom *A, NspObject *B);
-static int gdkatom_xdr_save(NspFile  *F, NspGdkAtom *M);
-static NspGdkAtom  *gdkatom_xdr_load(NspFile  *F);
+static int gdkatom_xdr_save(XDR *xdrs, NspGdkAtom *M);
+static NspGdkAtom  *gdkatom_xdr_load(XDR *xdrs);
 static NspMethods *gdkatom_get_methods(void); 
 static NspObject *gdkatom_path_extract(NspGdkAtom *A, NspObject *O);
 #endif /* GdkAtom_Private */

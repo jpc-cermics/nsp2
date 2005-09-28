@@ -48,8 +48,8 @@ static char *nsp_ivect_type_as_string(void);
 static char *nsp_ivect_type_short_string(NspIVect *M);
 static int nsp_ivect_eq(NspObject *A,NspObject *B);
 static int nsp_ivect_neq(NspObject *A,NspObject *B);
-static int nsp_ivect_xdr_save(NspFile  *F, NspIVect *M);
-static NspIVect *nsp_ivect_xdr_load(NspFile  *F);
+static int nsp_ivect_xdr_save(XDR  *F, NspIVect *M);
+static NspIVect *nsp_ivect_xdr_load(XDR  *F);
 #endif 
 
 

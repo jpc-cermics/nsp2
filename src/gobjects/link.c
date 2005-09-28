@@ -222,11 +222,11 @@ static int link_neq(NspLink *A, NspObject *B)
  * save 
  */
 
-static int link_xdr_save(NspFile  *F, NspLink *M)
+static int link_xdr_save(XDR  *xdrs, NspLink *M)
 {
   Scierror("link_xdr_save to be implemented \n");
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   return OK;
 }
 
@@ -234,12 +234,12 @@ static int link_xdr_save(NspFile  *F, NspLink *M)
  * load 
  */
 
-static NspLink  *link_xdr_load(NspFile  *F)
+static NspLink  *link_xdr_load(XDR  *xdrs)
 {
   NspLink *M=NULLLINK;
   static char name[NAME_MAXL];
   Scierror("link_xdr_load to be implemented \n");
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLLINK;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLLINK;
   return M;
 }
 

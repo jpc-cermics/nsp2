@@ -1297,7 +1297,7 @@ int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Res =  stripblanks(A,str,rep) 
+ * Res =  stripblanks(A)
  */
 
 int int_smxstripblanks(Stack stack, int rhs, int opt, int lhs)

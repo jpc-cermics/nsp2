@@ -245,20 +245,20 @@ static int nsp_list_is_true(NspList *l)
  * Save a NspList 
  */
 
-int nsp_list_xdr_save(NspFile  *F, NspList *L)
+int nsp_list_xdr_save(XDR *xdrs, NspList *L)
 {
   Cell *cell = L->first;
   int length;
-  if (nsp_xdr_save_i(F->xdrs,L->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(L)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,L->tname == NULLSTRING ) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,L->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(L)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,L->tname == NULLSTRING ) == FAIL) return FAIL;
   if ( L->tname != NULLSTRING) 
-    {  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(L)->name) == FAIL) return FAIL;}
+    {  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(L)->name) == FAIL) return FAIL;}
   length =nsp_list_length(L);
-  if (nsp_xdr_save_i(F->xdrs,length) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,length) == FAIL) return FAIL;
   while ( cell != NULLCELL ) 
     {
-      if (nsp_object_xdr_save(F, cell->O) == FAIL) return FAIL;
+      if (nsp_object_xdr_save(xdrs, cell->O) == FAIL) return FAIL;
       cell = cell->next;
     }
   return OK;
@@ -268,31 +268,31 @@ int nsp_list_xdr_save(NspFile  *F, NspList *L)
  * Load a NspList 
  */
 
-NspList*nsp_list_xdr_load(NspFile  *F)
+NspList*nsp_list_xdr_load(XDR *xdrs)
 {
   Cell *C;
   NspList *L;
   int flag,length,count;
   static char name[NAME_MAXL];
   static char tname[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLLIST;
-  if (nsp_xdr_load_i(F->xdrs,&flag) == FAIL) return NULLLIST;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLLIST;
+  if (nsp_xdr_load_i(xdrs,&flag) == FAIL) return NULLLIST;
   if ( flag ) 
     {
       if (( L =nsp_list_create(name,NULLSTRING)) == NULLLIST ) return NULLLIST;
     }
   else 
     {
-      if (nsp_xdr_load_string(F->xdrs,tname,NAME_MAXL) == FAIL) return NULLLIST;
+      if (nsp_xdr_load_string(xdrs,tname,NAME_MAXL) == FAIL) return NULLLIST;
       if (( L =nsp_list_create(name,tname)) == NULLLIST ) return NULLLIST;
     }
-  if (nsp_xdr_load_i(F->xdrs,&length) == FAIL) return NULLLIST;
+  if (nsp_xdr_load_i(xdrs,&length) == FAIL) return NULLLIST;
   C = L->first;
   count = 0;
   while ( count < length ) 
     {
       Cell *Loc;
-      NspObject *O =nsp_object_xdr_load(F); 
+      NspObject *O =nsp_object_xdr_load(xdrs); 
       if ( O == NULLOBJ ) return NULLLIST;
       if (( Loc =nsp_cell_create( NULLSTRING,O))== NULLCELL) return NULLLIST;
       if ( C == NULLCELL) 

@@ -192,14 +192,14 @@ static int nsp_ivect_neq(NspObject *A, NspObject *B)
  * Save an IVect in a file stream 
  */
 
-static int nsp_ivect_xdr_save(NspFile  *F, NspIVect *M)
+static int nsp_ivect_xdr_save(XDR *xdrs, NspIVect *M)
 {
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_d(F->xdrs,M->first) == FAIL) return FAIL;
-  if (nsp_xdr_save_d(F->xdrs,M->step) == FAIL) return FAIL;
-  if (nsp_xdr_save_d(F->xdrs,M->last) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->flag) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_d(xdrs,M->first) == FAIL) return FAIL;
+  if (nsp_xdr_save_d(xdrs,M->step) == FAIL) return FAIL;
+  if (nsp_xdr_save_d(xdrs,M->last) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->flag) == FAIL) return FAIL;
   return OK;
 }
 
@@ -207,16 +207,16 @@ static int nsp_ivect_xdr_save(NspFile  *F, NspIVect *M)
  * Load an IVectr from a file stream 
  */
 
-static NspIVect *nsp_ivect_xdr_load(NspFile  *F)
+static NspIVect *nsp_ivect_xdr_load(XDR *xdrs)
 {
   int flag;
   double first,step,last;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLIVECT;
-  if (nsp_xdr_load_d(F->xdrs,&first) == FAIL) return NULLIVECT;
-  if (nsp_xdr_load_d(F->xdrs,&step) == FAIL) return NULLIVECT;
-  if (nsp_xdr_load_d(F->xdrs,&last) == FAIL) return NULLIVECT;
-  if (nsp_xdr_load_i(F->xdrs,&flag) == FAIL) return NULLIVECT;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLIVECT;
+  if (nsp_xdr_load_d(xdrs,&first) == FAIL) return NULLIVECT;
+  if (nsp_xdr_load_d(xdrs,&step) == FAIL) return NULLIVECT;
+  if (nsp_xdr_load_d(xdrs,&last) == FAIL) return NULLIVECT;
+  if (nsp_xdr_load_i(xdrs,&flag) == FAIL) return NULLIVECT;
   return nsp_ivect_create(name,first,step,last,flag); 
 }
 

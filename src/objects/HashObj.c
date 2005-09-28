@@ -217,20 +217,20 @@ static NspObject *hash_path_extract(NspHash *H, NspObject *O)
  * save 
  */
 
-static int hash_xdr_save(NspFile  *F, NspHash *M)
+static int hash_xdr_save(XDR *xdrs, NspHash *M)
 {
   int i;
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->hsize) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(F->xdrs,M->filled) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->hsize) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->filled) == FAIL) return FAIL;
   /* last entry is at M->hsize ! */
   for ( i =0 ; i <= M->hsize ; i++) 
     {
       Hash_Entry *loc = ((Hash_Entry *)M->htable) + i;
       if ( loc->used )
 	{
-	  if (nsp_object_xdr_save(F, loc->data ) == FAIL) return FAIL;
+	  if (nsp_object_xdr_save(xdrs, loc->data ) == FAIL) return FAIL;
 	}
     }
   return OK;
@@ -240,20 +240,20 @@ static int hash_xdr_save(NspFile  *F, NspHash *M)
  * load 
  */
 
-static NspHash  *hash_xdr_load(NspFile  *F)
+static NspHash  *hash_xdr_load(XDR *xdrs)
 {
   int hsize,filled,i;
   NspHash *M;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return NULLHASH;
-  if (nsp_xdr_load_i(F->xdrs,&hsize) == FAIL) return NULLHASH;
-  if (nsp_xdr_load_i(F->xdrs,&filled) == FAIL) return NULLHASH;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLHASH;
+  if (nsp_xdr_load_i(xdrs,&hsize) == FAIL) return NULLHASH;
+  if (nsp_xdr_load_i(xdrs,&filled) == FAIL) return NULLHASH;
   /* initial mxn matrix with unallocated elements **/
   if ( ( M = nsp_hash_create(name,hsize) ) == NULLHASH) return  NULLHASH;
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < filled ; i++ )
     {
-      NspObject *O =nsp_object_xdr_load(F); 
+      NspObject *O =nsp_object_xdr_load(xdrs); 
       if ( O == NULLOBJ ) return NULLHASH;
       if (nsp_hash_enter(M,O)== FAIL) return NULLHASH;
     }

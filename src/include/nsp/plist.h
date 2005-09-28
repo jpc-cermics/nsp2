@@ -80,8 +80,8 @@ char *NspPListShType(void);
 NspObject *NspPListLoopExtract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 int NspPListObjEq(NspObject *A,NspObject *B);
 int NspPListObjNeq(NspObject *A,NspObject *B);
-NspPList *NspPListXdrLoad(NspFile  *F);
-int NspPListXdrSave(NspFile  *F, NspPList *M);
+NspPList *NspPListXdrLoad(XDR *xdrs);
+int NspPListXdrSave(XDR *xdrs, NspPList *M);
 #endif 
 
 

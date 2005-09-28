@@ -51,7 +51,7 @@ static char *nsp_hobj_type_as_string(void);
 static char *nsp_hobj_type_short_string(NspHobj *M);
 static int nsp_hobj_eq(NspObject *A,NspObject *B);
 static int nsp_hobj_neq(NspObject *A,NspObject *B);
-static int nsp_hobj_xdr_save(NspFile  *F, NspHobj *O);
+static int nsp_hobj_xdr_save(XDR  *F, NspHobj *O);
 static  int nsp_hobj_is_true(NspHobj *M);
 #endif /* Hobj_Private */
 

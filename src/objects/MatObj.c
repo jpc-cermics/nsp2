@@ -291,26 +291,26 @@ matrix_is_true (NspMatrix * M)
  */
 
 static int
-matrix_xdr_save (NspFile * F, NspMatrix * M)
+matrix_xdr_save (XDR *xdrs, NspMatrix * M)
 {
-  if (nsp_xdr_save_i(F->xdrs, M->type->id) == FAIL)
+  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)
     return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT (M)->name) == FAIL)
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT (M)->name) == FAIL)
     return FAIL;
-  if (nsp_xdr_save_i(F->xdrs, M->m) == FAIL)
+  if (nsp_xdr_save_i(xdrs, M->m) == FAIL)
     return FAIL;
-  if (nsp_xdr_save_i(F->xdrs, M->n) == FAIL)
+  if (nsp_xdr_save_i(xdrs, M->n) == FAIL)
     return FAIL;
-  if (nsp_xdr_save_c(F->xdrs, M->rc_type) == FAIL)
+  if (nsp_xdr_save_c(xdrs, M->rc_type) == FAIL)
     return FAIL;
   if (M->rc_type == 'r')
     {
-      if (nsp_xdr_save_array_d(F->xdrs, M->R, M->mn) == FAIL)
+      if (nsp_xdr_save_array_d(xdrs, M->R, M->mn) == FAIL)
 	return FAIL;
     }
   else
     {
-      if (nsp_xdr_save_array_d(F->xdrs, (double *) M->C, 2 * M->mn) == FAIL)
+      if (nsp_xdr_save_array_d(xdrs, (double *) M->C, 2 * M->mn) == FAIL)
 	return FAIL;
     }
   return OK;
@@ -320,31 +320,30 @@ matrix_xdr_save (NspFile * F, NspMatrix * M)
  * Load a Matrix from a file stream 
  **/
 
-static NspMatrix *
-matrix_xdr_load (NspFile * F)
+static NspMatrix *matrix_xdr_load(XDR *xdrs)
 {
   char c;
   int m, n;
   NspMatrix *M;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs, name, NAME_MAXL) == FAIL)
+  if (nsp_xdr_load_string(xdrs, name, NAME_MAXL) == FAIL)
     return NULLMAT;
-  if (nsp_xdr_load_i(F->xdrs, &m) == FAIL)
+  if (nsp_xdr_load_i(xdrs, &m) == FAIL)
     return NULLMAT;
-  if (nsp_xdr_load_i(F->xdrs, &n) == FAIL)
+  if (nsp_xdr_load_i(xdrs, &n) == FAIL)
     return NULLMAT;
-  if (nsp_xdr_load_c(F->xdrs, &c) == FAIL)
+  if (nsp_xdr_load_c(xdrs, &c) == FAIL)
     return NULLMAT;
   if ((M = nsp_matrix_create (name, c, m, n)) == NULLMAT)
     return NULLMAT;
   if (M->rc_type == 'r')
     {
-      if (nsp_xdr_load_array_d(F->xdrs, M->R, M->mn) == FAIL)
+      if (nsp_xdr_load_array_d(xdrs, M->R, M->mn) == FAIL)
 	return NULLMAT;
     }
   else
     {
-      if (nsp_xdr_load_array_d(F->xdrs, (double *) M->C, 2 * M->mn) == FAIL)
+      if (nsp_xdr_load_array_d(xdrs, (double *) M->C, 2 * M->mn) == FAIL)
 	return NULLMAT;
     }
   return M;

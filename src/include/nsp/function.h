@@ -74,8 +74,8 @@ static char *function_type_as_string(void);
 static char *function_type_short_string(void);
 static int function_eq(NspFunction *A, NspObject *B);
 static int function_neq(NspFunction *A, NspObject *B);
-static int function_xdr_save(NspFile  *F, NspFunction *M);
-static NspFunction  *function_xdr_load(NspFile  *F);
+static int function_xdr_save(XDR  *F, NspFunction *M);
+static NspFunction  *function_xdr_load(XDR  *F);
 /* static AttrTab function_attrs[]; */
 static NspMethods *function_get_methods(void); 
 #endif /* Function_Private */
