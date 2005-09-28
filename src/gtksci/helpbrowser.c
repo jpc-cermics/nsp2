@@ -112,6 +112,15 @@ static gboolean io_handler  (GIOChannel   *io,
                              gpointer      data);
 
 
+/*
+ * 
+ */
+
+static void nsp_void_print_handler(const gchar *format, ...)
+{
+}
+  
+
 /* Taken from glib/gconvert.c:
  * Test of haystack has the needle prefix, comparing case
  * insensitive. haystack may be UTF-8, but needle must
@@ -700,14 +709,23 @@ open_browser_dialog (const gchar *help_path,
 
 int Sci_Help(char *mandir,char *locale,char *help_file) 
 {
+  GPrintFunc old;
   char *sci = getenv("SCI");
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
     mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
+
+  /* ignore g_print in libgtkhtml library */
+  old=g_set_print_handler ((GPrintFunc) nsp_void_print_handler);
   if ( window == NULL) 
-    open_browser_dialog (mandir,l,help_file);
+    {
+      open_browser_dialog (mandir,l,help_file);
+    }
   else if ( help_file != NULL)
-    load_page ( help_file, TRUE);
+    {
+      load_page ( help_file, TRUE);
+    }
+  /* g_set_print_handler (old); */
   return 0;
 }
 
