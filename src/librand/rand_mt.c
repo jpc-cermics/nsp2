@@ -48,6 +48,7 @@
  *       changed the simple initialisation (but not put the init via array)
  *
  *   Modif by Jean-Philippe Chancelier for nsp Nov 2004 
+ *   fix a bug (like the 1568 of scilab) Bruno Pinçon Sept 2005
  */
 
 #include <math.h>
@@ -87,10 +88,7 @@ unsigned long randmt()
     int kk;
 
     if ( ! is_init )
-      {
-	set_state_mt_simple(DEFAULT_SEED);
-	is_init = 1;
-      }
+      set_state_mt_simple(DEFAULT_SEED);
 
     for (kk=0;kk<N-M;kk++) {
       y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
@@ -134,6 +132,7 @@ int set_state_mt_simple(double s)
 	  /* 2002/01/09 modified by Makoto Matsumoto             */
 	  mt[mti] &= 0xffffffffUL;   /* for >32 bit machines */
 	}
+      is_init = 1;
       return OK;
     }
   else
@@ -171,6 +170,7 @@ int set_state_mt(double seed_array[])
   mti = mti_try;
   for (i=0;i<N;i++) 
     mt[i] = ((unsigned long) seed_array[i+1]) & 0xffffffff;
+  is_init = 1;
   return OK;
 }
 
@@ -181,10 +181,7 @@ void get_state_mt(double state[])
   int i;
 
   if ( ! is_init )
-    {
-      set_state_mt_simple(DEFAULT_SEED);
-      is_init = 1;
-    }
+    set_state_mt_simple(DEFAULT_SEED);
     
   state[0] = (double) mti;
   for (i=0;i<N;i++) 
