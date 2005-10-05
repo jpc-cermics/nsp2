@@ -178,11 +178,14 @@ void nsp_bmatrix_info(NspBMatrix *BMat, int indent)
   int i;
   if ( BMat == NULLBMAT) 
     {
-      Sciprintf("Null Pointer NspBMatrix \n");
+      Sciprintf("Null Pointer BMatrix \n");
       return;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("%s [b (%d,%d)]\n",NSP_OBJECT(BMat)->name,BMat->m,BMat->n);
+  if ( strcmp(NSP_OBJECT(BMat)->name,NVOID) == 0) 
+    Sciprintf("BMatrix (%d,%d) type b\n",BMat->m,BMat->n);
+  else
+    Sciprintf("BMatrix %s(%d,%d) type b\n",NSP_OBJECT(BMat)->name,BMat->m,BMat->n);
 }
 
 /**
@@ -204,6 +207,10 @@ void nsp_bmatrix_print(NspBMatrix *BMat, int indent,int header)
       if ( strcmp(NSP_OBJECT(BMat)->name,NVOID) != 0) 
 	{
 	  Sciprintf("%s=%s",NSP_OBJECT(BMat)->name,(BMat->mn==0 ) ? " m2b([])\n" : "" );
+	}
+      else 
+	{
+	  Sciprintf("%s",(BMat->mn==0 ) ? " m2b([])\n" : "" );
 	}
     }
   else 
