@@ -21,16 +21,15 @@
 
 /* choose */
 
-int nsp_choose(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,int *nrep);
-int nsp_choose_(char *choose_title,char **Items,int nItems,char **but_names, int n_but,int *choice);
+extern int nsp_choose(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,int *nrep);
+extern int nsp_choose_(char *choose_title,char **Items,int nItems,char **but_names, int n_but,int *choice);
 
 /* dialog */
 
-
-int nsp_message(NspSMatrix *Message,NspSMatrix *Buttons,int *rep);
-int nsp_message_modeless(NspSMatrix *Message,NspSMatrix *Buttons);
-int nsp_message_(char *message,char **butons,int n_buttons);
-int nsp_message_modeless_(char *message);
+extern int nsp_message(NspSMatrix *Message,NspSMatrix *Buttons,int *rep);
+extern int nsp_message_modeless(NspSMatrix *Message,NspSMatrix *Buttons);
+extern int nsp_message_(char *message,char **butons,int n_buttons);
+extern int nsp_message_modeless_(char *message);
 
 /* mdialog */
 /* WARNING: it's not enough to change the following
@@ -42,30 +41,37 @@ int nsp_message_modeless_(char *message);
 
 /* choices */
 
-int nsp_choices(char *label, char **items, int *defval, int nitems);
+extern int nsp_choices(char *label, char **items, int *defval, int nitems);
 
 /* print */
 
-int nsp_print_dialog(int  *flag,char *printer, int  *colored, int  *orientation, char *file, int  *ok);
-int nsp_menu_export (int *colored,int *orient,char **choices,int n_choices,int *answer,char **filename);
-int nsp_menu_print (int *colored,int *orient,char **choices,int n_choices,int *answer);
+extern int nsp_print_dialog(int  *flag,char *printer, int  *colored, int  *orientation, char *file, int  *ok);
+extern int nsp_menu_export (int *colored,int *orient,char **choices,int n_choices,int *answer,char **filename);
+extern int nsp_menu_print (int *colored,int *orient,char **choices,int n_choices,int *answer);
 
 /* dialog */
 
 
-int nsp_dialog(NspSMatrix *Title,NspSMatrix *Init,NspObject **Rep);
-int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr ,char **dialog_str );
+extern int nsp_dialog(NspSMatrix *Title,NspSMatrix *Init,NspObject **Rep);
+extern int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr ,char **dialog_str );
 
 /* file */
 
-int  nsp_get_file_window(char *filemask,char **file,char *dirname,int flag,int action,int *ierr,char *title);
+extern int  nsp_get_file_window(char *filemask,char **file,char *dirname,int flag,int action,int *ierr,char *title);
 
 /* madialog */
 
-int nsp_matrix_dialog(NspSMatrix *Title,NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatrix *Init_matrix,int *cancel);
-int nsp_multi_dialog(NspSMatrix *Title,NspSMatrix *Labels,NspSMatrix  *Init_values, int *cancel);
-int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  nv, int  *ierr);
-int nsp_matrix_dialog_(char *labels,char **Labels_v,char **Labels_h,char **Init, int nl,int nc, int *ierr);
+extern int nsp_matrix_dialog(NspSMatrix *Title,NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatrix *Init_matrix,int *cancel);
+extern int nsp_multi_dialog(NspSMatrix *Title,NspSMatrix *Labels,NspSMatrix  *Init_values, int *cancel);
+extern int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  nv, int  *ierr);
+extern int nsp_matrix_dialog_(char *labels,char **Labels_v,char **Labels_h,char **Init, int nl,int nc, int *ierr);
+
+/* menus */
+
+extern void nsp_menus_set(int win_num,const char *button_name,int ne);
+extern void nsp_menus_unset(int win_num,const char *button_name,int ne);
+extern int nsp_menus_delete_button (int win_num,const char *button_name); 
+extern int nsp_menus_add(int win_num,const char * button_name,char ** entries,int ne,int typ,char *fname);
 
 #endif 
 

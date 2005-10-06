@@ -50,12 +50,9 @@ extern int nsp_read_history (void);
 extern int nsp_write_history (void); 
 
 /* menus.c */ 
+
 extern void create_plugged_main_menu (void); 
 extern void MenuFixCurrentWin (int ivalue); 
-extern int nsp_menus_delete_button (int *win_num, char *button_name); 
-extern void nsp_menus_add (int *win_num, char *button_name, char **entries, int *ne, int *typ, char *fname, int *ierr); 
-extern int nsp_menus_set (int *win_num, char *button_name, int *entries, int *ptrentries, int *ne, int *ierr); 
-extern int nsp_menus_unset (int *win_num, char *button_name, int *entries, int *ptrentries, int *ne, int *ierr); 
 extern void *graphic_initial_menu (int winid); 
 extern void scig_print (int winid); 
 
