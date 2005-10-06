@@ -29,7 +29,7 @@
 #include "nsp/menus.h" 
 #include "../system/files.h"
 #include "nsp/graphics/Graphics.h"
-#include "nsp/gtksci.h" 
+#include "nsp/gtksci.h"
 
 /*
  * Now the interfaced function for basic menus 
@@ -270,17 +270,12 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * setmenu 
+ * interface for set/unset menus 
  */
-
-typedef int men_f(int *win_num, char *button_name, int *entries, int *ptrentries, int *ne, int *ierr);
-
-extern men_f nsp_menus_set;
-extern men_f nsp_menus_unset;
+typedef void men_f(int win_num, const char *button_name, int ne);
 
 int int_set_unset_menu(Stack stack, int rhs, int opt, int lhs, men_f *F)
 {
-  int zero=0;
   int gwin=-1,nsub=0,ierr=0;
   char *button;
 
@@ -306,7 +301,7 @@ int int_set_unset_menu(Stack stack, int rhs, int opt, int lhs, men_f *F)
 	  if ( GetScalarInt(stack,2,&nsub) == FAIL) return RET_BUG;
 	}
     }
-  (*F)(&gwin,button,&zero,&zero,&nsub,&ierr);
+  (*F)(gwin,button,nsub);
   if ( ierr != 0 ) 
     {
       Scierror("%s: Error\n",stack.fname);

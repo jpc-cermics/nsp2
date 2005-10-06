@@ -39,6 +39,8 @@
 #include "../system/files.h"
 #include "nsp/gtksci.h"
 
+extern GtkWidget *create_main_menu( GtkWidget  *window);
+
 /* #define STATUS_BAR 1  */
 
 #ifdef STATUS_BAR 
