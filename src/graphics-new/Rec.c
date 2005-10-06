@@ -3058,6 +3058,8 @@ void tape_replay(BCG *Xgc,int winnumber)
 	record_table[((plot_code *) list->theplot)->code ].replay(Xgc,list->theplot);
       list =list->next;
     }
+  /* Is there a replay handler */
+  scig_handler(Xgc,winnumber);
   Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
 }
 

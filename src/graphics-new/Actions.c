@@ -37,7 +37,7 @@ static int scig_buzy = 0;
  * which is called by tape_replay. 
  */ 
 
-int scig_handler_none(int win_num) {return win_num;}
+int scig_handler_none(BCG *Xgc,int win_num) {return win_num;}
 
 Scig_handler scig_handler = scig_handler_none;
 
