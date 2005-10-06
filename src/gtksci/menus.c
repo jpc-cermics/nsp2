@@ -43,8 +43,8 @@ extern char GetDriver();
 
 static void *sci_window_initial_menu(void) ;
 static void sci_menu_to_item_factory(GtkItemFactory *ifactory,menu_entry *m);
-static void sci_menu_delete(menu_entry **m, char *name) ;
-static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int ne,int action_type,char *fname);
+static void sci_menu_delete(menu_entry **m,const char *name) ;
+static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne,int action_type,char *fname);
 static menu_entry * sci_menu_set_status(menu_entry *m,int winid,const char *name,int subid,int status);
 static int call_predefined_callbacks(char *name, int winid);
 static void sci_factory_add_menu_entry(GtkItemFactory *ifactory,menu_entry *m);
@@ -155,7 +155,7 @@ void MenuFixCurrentWin(int ivalue)
   if ( ivalue == lab_count ) return ; 
   if ( main_item_factory == NULL ) return;
   sprintf( gwin_name, "Graphic Window %d", (int) lab_count );
-  nsp_menus_delete_button(&w, gwin_name);
+  nsp_menus_delete_button(w, gwin_name);
   sprintf( gwin_name, "Graphic Window %d", (int) ivalue );
   lab_count = ivalue;
   sci_menu_add(&main_menu_entries,-1,gwin_name,
@@ -200,11 +200,12 @@ void create_graphic_window_menu(BCG *dd)
  * number win_num 
  *---------------------------------------------------*/
 
-int nsp_menus_delete_button(int *win_num,char *button_name)
+int nsp_menus_delete_button(int win_num,const char *button_name)
 {
   GtkItemFactory  *item_factory;
   static char btn[64];
-  char *p,*but= button_name;
+  char *p;
+  const char *but= button_name;
   p = btn ; 
   *(p++) = '/';
   while ( *but != '\0' ) {
@@ -213,14 +214,14 @@ int nsp_menus_delete_button(int *win_num,char *button_name)
     else { *(p++)= *(but++);}
   }
   *p = '\0';
-  if ( *win_num == -1 ) 
+  if ( win_num == -1 ) 
     {
       item_factory = main_item_factory; 
       sci_menu_delete(&main_menu_entries,button_name);
     }
   else 
     {
-      BCG *dd = window_list_search(*win_num);
+      BCG *dd = window_list_search(win_num);
       if ( dd == NULL || dd->private->item_factory == NULL) return 0;
       item_factory = dd->private->item_factory;
       sci_menu_delete(&dd->private->menu_entries,button_name);
@@ -241,32 +242,30 @@ int nsp_menus_delete_button(int *win_num,char *button_name)
  *  fname;      : name of the action function  
  *---------------------------------------------------*/
 
-void nsp_menus_add(int *win_num,char * button_name,char ** entries,int * ne,int *typ,char * fname, int *ierr)
+int nsp_menus_add(int win_num,const char * button_name,char ** entries,int ne,int typ,char *fname)
 { 
-  if ( *win_num == -1 ) 
+  if ( win_num == -1 ) 
     {
       /* Scilab main menu */ 
-      if ( main_item_factory == NULL ) return;
-      if ( sci_menu_add(&main_menu_entries,*win_num,button_name,entries,*ne,
-			*typ,fname) == 1 ) 
+      if ( main_item_factory == NULL ) return OK;
+      if ( sci_menu_add(&main_menu_entries,win_num,button_name,entries,ne,typ,fname) == 1 ) 
 	{
-	  *ierr=1;
-	  return ;
+	  return FAIL;
 	}
       sci_factory_add_last_menu_entry(main_item_factory,main_menu_entries);
     }
   else 
     {
-      BCG *dd = window_list_search(*win_num);
-      if ( dd == NULL || dd->private->item_factory == NULL ) return;
-      if ( sci_menu_add(&dd->private->menu_entries,*win_num,button_name,entries,
-			*ne,*typ,fname) == 1 ) 
+      BCG *dd = window_list_search(win_num);
+      if ( dd == NULL || dd->private->item_factory == NULL ) return OK;
+      if ( sci_menu_add(&dd->private->menu_entries,win_num,button_name,entries,
+			ne,typ,fname) == 1 ) 
 	{
-	  *ierr=1;
-	  return ;
+	  return FAIL;
 	}
       sci_factory_add_last_menu_entry(dd->private->item_factory,dd->private->menu_entries);
     }
+  return OK;
 }
 
 /*--------------------------------------------------
@@ -469,7 +468,7 @@ void menu_entry_delete(menu_entry *me)
  * when entry, accel and action are no more used 
  */
 
-static void nsp_menu_decode_name(char *name,char **entry,char **accel,char **action)
+static void nsp_menu_decode_name(const char *name,char **entry,char **accel,char **action)
 {
   *accel = NULL,*action=NULL;
   if ((*entry=strdup(name))== NULL) return;
@@ -502,7 +501,7 @@ static void nsp_menu_decode_name(char *name,char **entry,char **accel,char **act
  *  fname;      : name of the action function  
  *----------------------------------------------------------------*/
 
-static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int ne, 
+static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne, 
 			int action_type,char *fname)
 {  
   char *e_entry,*e_accel,*e_action,*action;
@@ -548,7 +547,7 @@ static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int n
  *Delete the menu name in menu_entry list 
  *----------------------------------------------------------------*/
 
-static void sci_menu_delete(menu_entry **m, char *name) 
+static void sci_menu_delete(menu_entry **m,const char *name) 
 { 
   menu_entry *loc,*nloc;
   if ( *m == NULL ) return ;

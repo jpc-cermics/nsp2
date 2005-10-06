@@ -399,16 +399,16 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
   if ( mname == NULL) mname = button;
 
   if ( SubMenus != NULLSMAT)
-    nsp_menus_add(&gwin,button,SubMenus->S,&SubMenus->mn,&typ,mname,&ierr);
+    ierr= nsp_menus_add(gwin,button,SubMenus->S,SubMenus->mn,typ,mname);
   else 
-    nsp_menus_add(&gwin,button,NULL,&zero,&typ,mname,&ierr);
+    ierr= nsp_menus_add(gwin,button,NULL,zero,typ,mname);
 
   if ( gwin != -1 ) 
     {
       win = scig_change(gwin);
     } 
 
-  if (ierr != 0 ) 
+  if (ierr == FAIL ) 
     {
       Scierror("%s: error \n",stack.fname);
       return RET_BUG;
@@ -440,7 +440,7 @@ int int_delmenu(Stack stack, int rhs, int opt, int lhs)
     {
       if ((button = GetStringUtf8(stack,1)) == (char*)0) return RET_BUG;
     }
-  nsp_menus_delete_button(&gwin,button);
+  nsp_menus_delete_button(gwin,button);
   return 0;
 }
 
