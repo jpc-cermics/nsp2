@@ -38,7 +38,6 @@
 #include "nsp/sciio.h"
 #include "../system/files.h"
 #include "nsp/gtksci.h"
-#include "menus.h"
 
 /* #define STATUS_BAR 1  */
 

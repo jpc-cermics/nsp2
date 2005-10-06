@@ -37,7 +37,6 @@
 #include "../system/files.h" 
 #include "nsp/sciio.h" 
 #include "nsp/gtksci.h"
-#include "menus.h"
 
 extern void create_nsp_about(void); 
 extern char GetDriver();
@@ -46,7 +45,7 @@ static void *sci_window_initial_menu(void) ;
 static void sci_menu_to_item_factory(GtkItemFactory *ifactory,menu_entry *m);
 static void sci_menu_delete(menu_entry **m, char *name) ;
 static int sci_menu_add(menu_entry **m,int winid,char *name,char** entries,int ne,int action_type,char *fname);
-static menu_entry * sci_menu_set_status(menu_entry *m,int winid,char *name,int subid,int status);
+static menu_entry * sci_menu_set_status(menu_entry *m,int winid,const char *name,int subid,int status);
 static int call_predefined_callbacks(char *name, int winid);
 static void sci_factory_add_menu_entry(GtkItemFactory *ifactory,menu_entry *m);
 static void sci_factory_add_last_menu_entry(GtkItemFactory *ifactory,menu_entry *m);
@@ -274,29 +273,29 @@ void nsp_menus_add(int *win_num,char * button_name,char ** entries,int * ne,int 
  * Activate or deactivate a menu 
  *---------------------------------------------------*/
 
-static void nsp_menus_set_unset(int *win_num,char * button_name,int * ne,int flag)
+static void nsp_menus_set_unset(int win_num,const char *button_name,int ne,int flag)
 { 
   menu_entry *e,*entries;
   GtkItemFactory  *item_factory;
-  if ( *win_num == -1 ) 
+  if ( win_num == -1 ) 
     {
       item_factory = main_item_factory; 
       entries =main_menu_entries;
     }
   else 
     {
-      BCG *dd = window_list_search(*win_num);
+      BCG *dd = window_list_search(win_num);
       if ( dd == NULL || dd->private->item_factory == NULL) return ;
       item_factory = dd->private->item_factory;
       entries = dd->private->menu_entries;
     }
   
-  e = sci_menu_set_status(entries,*win_num,button_name,*ne,flag);
+  e = sci_menu_set_status(entries,win_num,button_name,ne,flag);
   if ( e != NULL) 
     {
       GtkWidget *w;
       char buf[128];
-      if ( *ne == 0)
+      if ( ne == 0)
 	{ 
 	  /* top menu */ 
 	  char *loc = e->name, *pbuf; 
@@ -341,18 +340,16 @@ static void nsp_menus_set_unset(int *win_num,char * button_name,int * ne,int fla
     }
 }
 
-/** activate a menu (scilab interface) **/
+/* activate a menu */
 
-int nsp_menus_set(int *win_num,char *button_name,int *entries,int *ptrentries,int *ne,int *ierr)
+void nsp_menus_set(int win_num,const char *button_name,int ne)
 {
   nsp_menus_set_unset(win_num,button_name,ne,TRUE);
-  return(0);
 }
 
-int nsp_menus_unset(int *win_num,char *button_name,int *entries,int *ptrentries,int *ne,int *ierr)
+void nsp_menus_unset(int win_num,const char *button_name,int ne)
 {
   nsp_menus_set_unset(win_num,button_name,ne,FALSE);
-  return(0);
 }
 
 /*--------------------------------------------------------
@@ -367,7 +364,7 @@ static void submenu_entry_set_menu(menu_entry *subs,menu_entry *father);
 
 /* checks that name and name1 are the same taking care of _ */
 
-static int is_menu_name(char *name,char *name1) 
+static int is_menu_name(const char *name,const char *name1) 
 {
   while ( *name != 0) 
     {
@@ -586,8 +583,7 @@ static void sci_menu_delete(menu_entry **m, char *name)
  * Set the status of a menu 
  *----------------------------------------------------------------*/
 
-static menu_entry * sci_menu_set_status(menu_entry *m,int winid,char *name,
-					int subid,int status)
+static menu_entry * sci_menu_set_status(menu_entry *m,int winid,const char *name,int subid,int status)
 {  
   menu_entry *loc = m ;
   while ( loc != NULL) 
@@ -963,16 +959,16 @@ static void nsp_menu_fileops(void)
 
 static void nspg_menu_zoom(int winid) 
 {
-  integer ne=0;
-  nsp_menus_set_unset(&winid,"Zoom",&ne,FALSE);
-  nsp_menus_set_unset(&winid,"3D Rot.",&ne,FALSE);
-  nsp_menus_set_unset(&winid,"UnZoom",&ne,FALSE);
-  nsp_menus_set_unset(&winid,"File",&ne,FALSE);
+  int ne=0;
+  nsp_menus_set_unset(winid,"Zoom",ne,FALSE);
+  nsp_menus_set_unset(winid,"3D Rot.",ne,FALSE);
+  nsp_menus_set_unset(winid,"UnZoom",ne,FALSE);
+  nsp_menus_set_unset(winid,"File",ne,FALSE);
   scig_2dzoom(winid);
-  nsp_menus_set_unset(&winid,"Zoom",&ne,TRUE);
-  nsp_menus_set_unset(&winid,"3D Rot.",&ne,TRUE);
-  nsp_menus_set_unset(&winid,"UnZoom",&ne,TRUE);
-  nsp_menus_set_unset(&winid,"File",&ne,TRUE);
+  nsp_menus_set_unset(winid,"Zoom",ne,TRUE);
+  nsp_menus_set_unset(winid,"3D Rot.",ne,TRUE);
+  nsp_menus_set_unset(winid,"UnZoom",ne,TRUE);
+  nsp_menus_set_unset(winid,"File",ne,TRUE);
 }
 
 
@@ -983,9 +979,9 @@ static void nspg_menu_zoom(int winid)
 static void nspg_menu_unzoom(int winid) 
 {
   integer ne=0;
-  nsp_menus_set_unset(&winid,"UnZoom",&ne,FALSE);
+  nsp_menus_set_unset(winid,"UnZoom",ne,FALSE);
   scig_unzoom(winid);
-  nsp_menus_set_unset(&winid,"UnZoom",&ne,TRUE);
+  nsp_menus_set_unset(winid,"UnZoom",ne,TRUE);
 }
 
 
@@ -996,15 +992,15 @@ static void nspg_menu_unzoom(int winid)
 static void nspg_menu_rot3d(int winid) 
 {
   integer ne=0;
-  nsp_menus_set_unset(&winid,"3D Rot.",&ne,FALSE);
-  nsp_menus_set_unset(&winid,"UnZoom",&ne,FALSE);
-  nsp_menus_set_unset(&winid,"Zoom",&ne,FALSE);
-  nsp_menus_set_unset(&winid,"File",&ne,FALSE);
+  nsp_menus_set_unset(winid,"3D Rot.",ne,FALSE);
+  nsp_menus_set_unset(winid,"UnZoom",ne,FALSE);
+  nsp_menus_set_unset(winid,"Zoom",ne,FALSE);
+  nsp_menus_set_unset(winid,"File",ne,FALSE);
   scig_3drot(winid);
-  nsp_menus_set_unset(&winid,"3D Rot.",&ne,TRUE);
-  nsp_menus_set_unset(&winid,"UnZoom",&ne,TRUE);
-  nsp_menus_set_unset(&winid,"Zoom",&ne,TRUE);
-  nsp_menus_set_unset(&winid,"File",&ne,TRUE);
+  nsp_menus_set_unset(winid,"3D Rot.",ne,TRUE);
+  nsp_menus_set_unset(winid,"UnZoom",ne,TRUE);
+  nsp_menus_set_unset(winid,"Zoom",ne,TRUE);
+  nsp_menus_set_unset(winid,"File",ne,TRUE);
 }
 
 
