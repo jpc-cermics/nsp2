@@ -205,7 +205,7 @@ static int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M)
  * load 
  */
 
-static NspClassA  *nsp_classa_xdr_load(XDR  *xdrs)
+static NspClassA  *nsp_classa_xdr_load(XDR *xdrs)
 {
   NspClassA *M = NULL;
   static char name[NAME_MAXL];
@@ -297,7 +297,7 @@ NspClassA  *GetClassA(Stack stack, int i)
  * create a NspClassA instance 
  *-----------------------------------------------------*/
 
-NspClassA *classa_create(char *name,int color,int thickness,NspTypeBase *type)
+NspClassA *nsp_classa_create(char *name,int color,int thickness,NspTypeBase *type)
 {
   NspClassA *H  = (type == NULL) ? new_classa() : type->new();
   if ( H ==  NULLCLA)
@@ -318,7 +318,7 @@ NspClassA *classa_create(char *name,int color,int thickness,NspTypeBase *type)
 
 NspClassA *nsp_classa_copy(NspClassA *H)
 {
-  return classa_create(NVOID,H->classa_color,H->classa_thickness,NULL);
+  return nsp_classa_create(NVOID,H->classa_color,H->classa_thickness,NULL);
 }
 
 /*-------------------------------------------------------------------
@@ -333,7 +333,7 @@ static int int_cla_create(Stack stack, int rhs, int opt, int lhs)
   /* first argument is a unused its a NspType */
   CheckRhs(1,100);
   /* we first create a default object */
-  if(( H = classa_create(NVOID,color,thickness,NULL)) == NULLCLA) return RET_BUG;
+  if(( H = nsp_classa_create(NVOID,color,thickness,NULL)) == NULLCLA) return RET_BUG;
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
@@ -383,7 +383,7 @@ static NspObject *int_cla_get_object_val(void *Hv,char *str)
 static int int_cla_set_val(void *Hv, char *attr, NspObject *O)
 {
   NspMatrix *m;
-  if ((m = (NspMatrix *) nsp_object_copy(O)) == NULLMAT) return RET_BUG;
+  if ((m = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return RET_BUG;
   ((NspClassA *)Hv)->classa_val = m;
   return OK ;
 }

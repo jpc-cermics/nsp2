@@ -193,10 +193,10 @@ static int nsp_@TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B)
  * save 
  */
 
-static int nsp_@TYPEDOWNCASE@_xdr_save(NspFile  *F, Nsp@TYPENAME@ *M)
+static int nsp_@TYPEDOWNCASE@_xdr_save(XDR  *xdrs, Nsp@TYPENAME@ *M)
 {
-  if (nsp_xdr_save_i(F->xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(F->xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("@TYPEDOWNCASE@_xdr_save: to be implemented \n");
   return OK;
 }
@@ -205,11 +205,11 @@ static int nsp_@TYPEDOWNCASE@_xdr_save(NspFile  *F, Nsp@TYPENAME@ *M)
  * load 
  */
 
-static Nsp@TYPENAME@  *nsp_@TYPEDOWNCASE@_xdr_load(NspFile  *F)
+static Nsp@TYPENAME@  *nsp_@TYPEDOWNCASE@_xdr_load(XDR *xdrs)
 {
   Nsp@TYPENAME@ *M = NULL;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(F->xdrs,name,NAME_MAXL) == FAIL) return @NULL@;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return @NULL@;
   Scierror("@TYPEDOWNCASE@_xdr_load: to be implemented \n");
   return M;
 }
@@ -297,7 +297,7 @@ Nsp@TYPENAME@  *Get@TYPENAME@(Stack stack, int i)
  * create a Nsp@TYPENAME@ instance 
  *-----------------------------------------------------*/
 
-Nsp@TYPENAME@ *@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeBase *type)
+Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeBase *type)
 {
   Nsp@TYPENAME@ *H  = (type == NULL) ? new_@TYPEDOWNCASE@() : type->new();
   if ( H ==  @NULL@)
@@ -318,7 +318,7 @@ Nsp@TYPENAME@ *@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeB
 
 Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H)
 {
-  return @TYPEDOWNCASE@_create(NVOID,H->@TYPEDOWNCASE@_color,H->@TYPEDOWNCASE@_thickness,NULL);
+  return nsp_@TYPEDOWNCASE@_create(NVOID,H->@TYPEDOWNCASE@_color,H->@TYPEDOWNCASE@_thickness,NULL);
 }
 
 /*-------------------------------------------------------------------
@@ -333,7 +333,7 @@ static int int_@TYPESHORT@_create(Stack stack, int rhs, int opt, int lhs)
   /* first argument is a unused its a NspType */
   CheckRhs(1,100);
   /* we first create a default object */
-  if(( H = @TYPEDOWNCASE@_create(NVOID,color,thickness,NULL)) == @NULL@) return RET_BUG;
+  if(( H = nsp_@TYPEDOWNCASE@_create(NVOID,color,thickness,NULL)) == @NULL@) return RET_BUG;
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
@@ -383,7 +383,7 @@ static NspObject *int_@TYPESHORT@_get_object_val(void *Hv,char *str)
 static int int_@TYPESHORT@_set_val(void *Hv, char *attr, NspObject *O)
 {
   NspMatrix *m;
-  if ((m = (NspMatrix *) nsp_object_copy(O)) == NULLMAT) return RET_BUG;
+  if ((m = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return RET_BUG;
   ((Nsp@TYPENAME@ *)Hv)->@TYPEDOWNCASE@_val = m;
   return OK ;
 }
