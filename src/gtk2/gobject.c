@@ -1217,7 +1217,7 @@ nspg_closure_new(NspPList *callback, NspList *extra_args, NspObject *swap_data)
  * execute the closure 
  */
 
-static Stack Marshal_stack={NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,0,0} ;
+static Stack Marshal_stack={NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,0,0,NULL} ;
 static NspObject *Marshal_stack_S[STACK_SIZE];
 static int  stack_count=0; /* should be added in the stack */
 

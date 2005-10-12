@@ -18,6 +18,8 @@
 #define COMMENT  -6 
 #define EMPTYCELL  -38
 #define OPNAME -30
+#define OBJECT -39  
+
 
 /* Names are of max size */ 
 #define NAME_MAXL 52
@@ -58,7 +60,9 @@
 #define FINALLY  -36 
 #define CONTINUE  -37
 /* -38 is used */
-#define NOTKEY  -39
+/* -39 is used */
+#define NOTKEY  -40
+
 
 /*****************************
  * OPERATORS

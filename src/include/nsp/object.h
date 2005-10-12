@@ -186,6 +186,7 @@ struct _Stack {
   stack_error *error;
   int errcatch; 
   int pause; 
+  NspObject *symbols; /* table of symbols of functions */
 } ;
 
 #define STACK_SIZE 50000
