@@ -446,7 +446,7 @@ int int_pl2s(Stack stack, int rhs, int opt, int lhs)
  * FIXME: should be a method of NspPList 
  */
 
-int int_inout(Stack stack, int rhs, int opt, int lhs)
+static int int_inout(Stack stack, int rhs, int opt, int lhs)
 {
   int pl_lhs,pl_rhsp1;
   NspPList *PL;
@@ -463,6 +463,16 @@ int int_inout(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_print_internal(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPList *PL;
+  CheckRhs(1,1);
+  if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
+  PListPrInt(PL->D);
+  return 0;
+}
+
+
 /*
  * The Interface for parsed lists
  */
@@ -470,6 +480,7 @@ int int_inout(Stack stack, int rhs, int opt, int lhs)
 static OpTab NspPList_func[]={
   {"pl2s", int_pl2s},
   {"inout", int_inout},
+  {"print_internal", int_print_internal},
   {(char *) 0, NULL}
 };
 
