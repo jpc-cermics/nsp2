@@ -973,12 +973,22 @@ Mat2float (NspMatrix * A)
  * methods 
  *------------------------------------------------------*/
 
-static NspMethods *
-matrix_get_methods (void)
+static int int_meth_matrix_add(void *a,Stack stack,int rhs,int opt,int lhs)
 {
-  return NULL;
+  NspMatrix *B;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((B = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  if ( nsp_mat_add(a,B) == FAIL )  return RET_BUG;
+  return 0;
 }
 
+static NspMethods matrix_methods[] = {
+  { "add", int_meth_matrix_add},
+  { (char *) 0, NULL}
+};
+
+static NspMethods *matrix_get_methods(void) { return matrix_methods;};
 
 /*
  * Now the interfaced function for basic matrices operations
@@ -3528,6 +3538,113 @@ int_mxdadd (Stack stack, int rhs, int opt, int lhs)
 			 MatNoOp, 0);
 }
 
+/* FIXME: 
+ *   just a test version 
+ *
+ */
+
+NspMatrix *GetMatSafeCopy (Stack stack, int i)
+{
+  return Mat2double(MaybeObjCopy (&NthObj (i)));
+}
+
+NspMatrix *GetMatSafe(Stack stack, int i)
+{
+  NspObject *ob = NthObj(i);
+  if ( check_cast(ob,nsp_type_hobj_id) == TRUE)  ob = ((NspHobj *) ob)->O ;
+  return Mat2double ((NspMatrix *) ob);
+}
+
+static int
+int_mx_mopscal1(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
+		MPM F3, M11 F4, int flag)
+{
+  NspMatrix *HMat1, *HMat2;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if ((HMat1 = GetMatSafeCopy (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if (HMat1->mn == 0)
+    {
+      if (flag == 1)
+	{
+	  /* flag == 1 ==> [] op A  returns [] * */
+	  NSP_OBJECT (HMat1)->ret_pos = 1;
+	  return 1;
+	}
+      else
+	{
+	  /* flag == 1 ==> [] op A  returns F4(A) * */
+	  if (F4 != MatNoOp)
+	    {
+	      if ((HMat2 = GetMatSafeCopy (stack, 2)) == NULLMAT)
+		return RET_BUG;
+	      if ((*F4) (HMat2) == FAIL)
+		return RET_BUG;
+	      NSP_OBJECT (HMat2)->ret_pos = 1;
+	    }
+	  else
+	    {
+	      if ((HMat2 = GetMatSafe (stack, 2)) == NULLMAT)
+		return RET_BUG;
+	      NSP_OBJECT (HMat2)->ret_pos = 1;
+	    }
+	  return 1;
+	}
+    }
+  if ((HMat2 = GetMatSafe (stack, 2)) == NULLMAT)
+    return RET_BUG;
+  if (HMat2->mn == 0)
+    {
+      if (flag == 1)
+	{
+	  /* flag == 1 ==> A op [] returns [] * */
+	  NSP_OBJECT (HMat2)->ret_pos = 1;
+	  return 1;
+	}
+      else
+	{
+	  /* flag == 1 ==> A op [] returns A * */
+	  NSP_OBJECT (HMat1)->ret_pos = 1;
+	  return 1;
+	}
+    }
+  if (HMat2->mn == 1)
+    {
+      if ((*F1) (HMat1, HMat2) != OK)
+	return RET_BUG;
+      NSP_OBJECT (HMat1)->ret_pos = 1;
+    }
+  else if (HMat1->mn == 1)
+    {
+      /* since Mat1 is scalar we store the result in Mat2 so we 
+         must copy it * */
+      if ((HMat2 = GetMatSafeCopy (stack, 2)) == NULLMAT)
+	return RET_BUG;
+      if ((*F3) (HMat2, HMat1) != OK)
+	return RET_BUG;
+      NSP_OBJECT (HMat2)->ret_pos = 1;
+    }
+  else
+    {
+      if ((*F2) (HMat1, HMat2) != OK)
+	return RET_BUG;
+      NSP_OBJECT (HMat1)->ret_pos = 1;
+    }
+  return 1;
+}
+
+
+int
+int_mxdadd1(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_mx_mopscal1 (stack, rhs, opt, lhs,
+			 nsp_mat_add_scalar, nsp_mat_dadd, nsp_mat_add_scalar,
+			 MatNoOp, 0);
+}
+
+
+
 /*
  * term to term substraction 
  * with special cases Mat - [] and Mat - scalar
@@ -3950,12 +4067,45 @@ int int_number_properties(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+int int_harmloop1(Stack stack, int rhs, int opt, int lhs)
+{
+  int n,i;
+  NspMatrix *M,*M1=NULLMAT,*Ob1;
+  NspObject *Ob=NULLOBJ;
+  CheckRhs(1,1);
+  CheckLhs(1,1);  
+  /* we accept abbrevs here */
+  if (GetScalarInt (stack, 1, &n) == FAIL) return RET_BUG;
+  /*
+    s = 1;
+    for i=2:n
+    s = s + 1/i
+    end
+   */
+  Ob = nsp_new_double_obj(1.0); 
+  if ((M = nsp_matrix_create_impl (2, 1, n)) == NULLMAT) return RET_BUG;
+  for ( i = 1 ; i <= M->n ; i++)
+    {
+      int rep;
+      if ((M1 = MatLoopCol (NVOID,M1, M, i, &rep)) == NULLMAT) return RET_BUG;
+      Ob1 =(NspMatrix *) nsp_new_double_obj(1.0); 
+      nsp_mat_div_scalar(Ob1,M1);
+      nsp_mat_add((NspMatrix *) Ob,Ob1);
+      nsp_matrix_destroy(Ob1);
+    }
+  NthObj(1) = Ob;
+  NthObj(1)->ret_pos  = 1;
+  return 1;
+}
+
+
 /*
  * The Interface for basic matrices operation 
  */
 
 
 static OpTab Matrix_func[] = {
+  {"harmloop1",int_harmloop1},
   {"resize2vect_m", int_mxmat2vect},
   {"extractcols_m", int_mxextractcols},
   {"extractrows_m", int_mxextractrows},
@@ -3978,6 +4128,7 @@ static OpTab Matrix_func[] = {
   {"concatr_b_m", int_mxconcatr_mb},
   {"concatr_m_b", int_mxconcatr_mb},
   {"create_m_m", int_mxcreate},
+  {"dadd_m_m", int_mxdadd},
   {"dadd_m_m", int_mxdadd},
   {"concatdiag", int_mxconcatdiag},
   {"diag_m", int_mxdiag},
@@ -4077,6 +4228,7 @@ static OpTab Matrix_func[] = {
   {"dbs", int_mxbackdivel},
   {"dst_m_m", int_mxmultel},
   {"plus_m_m", int_mxdadd},
+  {"plussafe_m_m", int_mxdadd1}, /* XXX experimental */
   {"minus_m_m", int_mxdsub},
   {"minus_m", int_mxminus},
   {"mult_m_m", int_mxmult},
