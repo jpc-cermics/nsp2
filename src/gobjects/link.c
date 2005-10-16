@@ -869,20 +869,33 @@ void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2])
     }
 }
 
+/**
+ * link_move_control:
+ * @F: 
+ * @L: 
+ * @mpt: mouse position  
+ * @cp: control point id
+ * @ptc: the control point position 
+ * 
+ * moves the control point @cp of a link toward the mouse position @mpt.
+ * @mpt is the mouse position and @ptc the control point position 
+ * which is to be updated by the routine.
+ * 
+ **/
 
-void link_move_control(NspGFrame *F, NspLink *L,const double pt[2], int cp,double ptc[2])
+void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,double ptc[2])
 {
-  double ptnew[2],ptb[2],ptn[2];
+  double ptb[2],ptn[2];
   /* move a control point : here the point cp of the polyline */
   int n = L->poly->m;
   double *xp= L->poly->R;
   double *yp= L->poly->R + n;
-  /* we keep in ptc the current point position 
-   * since magnetism can move us to a new position 
+  /* 
+   * ptc is where we should move ptc but due to magnetism 
+   * it can be different.
    */
-  ptnew[0]  = ptc[0]+pt[0];
-  ptnew[1]  = ptc[1]+pt[1];
-  ptc[0] = ptnew[0]; ptc[1] = ptnew[1];
+  ptc[0]  = mpt[0];
+  ptc[1]  = mpt[1];
 
   if ( cp >= 1 && cp < n -1 ) 
     {
@@ -890,22 +903,23 @@ void link_move_control(NspGFrame *F, NspLink *L,const double pt[2], int cp,doubl
       /*  magnetism toward horizontal or vertival lines */
       ptb[0] = xp[cp-1]; ptb[1] = yp[cp-1];
       ptn[0] = xp[cp+1]; ptn[1] = yp[cp+1];
-      if ( Abs( ptb[0] - ptnew[0]) < hvfactor ) ptnew[0]= ptb[0];
-      if ( Abs( ptn[0] - ptnew[0]) < hvfactor ) ptnew[0]= ptn[0];
-      if ( Abs( ptb[1] - ptnew[1]) < hvfactor ) ptnew[1]= ptb[1];
-      if ( Abs( ptn[1] - ptnew[1]) < hvfactor ) ptnew[1]= ptn[1];
+      if ( Abs( ptb[0] - ptc[0]) < hvfactor ) ptc[0]= ptb[0];
+      if ( Abs( ptn[0] - ptc[0]) < hvfactor ) ptc[0]= ptn[0];
+      if ( Abs( ptb[1] - ptc[1]) < hvfactor ) ptc[1]= ptb[1];
+      if ( Abs( ptn[1] - ptc[1]) < hvfactor ) ptc[1]= ptn[1];
     }
   else if ( cp == 0 || cp == n-1 )
     {
       /* try to check if we are in the vivinity of 
        * a lock point lock of a Block 
-       * if true this will change ptnew 
+       * if true this will change ptc due to block magnetism.
        */
       int lp= (cp == 0) ? 0 : 1 ;
-      link_lock_update(F,L,lp,ptnew);
+      link_lock_update(F,L,lp,ptc);
     }
-  xp[cp] = ptnew[0];
-  yp[cp] = ptnew[1];
+  xp[cp]=ptc[0];
+  yp[cp]=ptc[1];
+  
 }
 
 /** 

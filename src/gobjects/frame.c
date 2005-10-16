@@ -848,7 +848,17 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
   record = Xgc->graphic_engine->xget_recording(Xgc);
   Xgc->graphic_engine->xset_recording(Xgc,FALSE);
   Xgc->graphic_engine->xset_alufunction1(Xgc,6);
-  
+
+  if ( action == MOVE_CONTROL) 
+    {
+      
+      bf->move_control_init(O,cp,ptwork);
+    }
+  /*
+   * mpt is the mouse position, 
+   * ptwork is the control point position 
+   */
+
   while ( wstop==0 ) 
     {
       bf->draw(O);
@@ -876,7 +886,7 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
 	  bf->translate(O,(pt1[0]= mpt[0] -pt1[0],pt1[1]=mpt[1] -pt1[1],pt1));
 	  break;
 	case MOVE_CONTROL :
-	  bf->move_control(F,O,(pt1[0]= mpt[0] -pt1[0],pt1[1]=mpt[1] -pt1[1],pt1),cp, ptwork);
+	  bf->move_control(F,O,mpt,cp, ptwork);
 	}
       /* update locks positions int locked objects  */ 
       gframe_locks_update(F,O);

@@ -795,10 +795,12 @@ void connector_move_control_init( NspConnector *B,int cp,double ptc[2])
  * for connectors) is moved. 
  **/
 
-void connector_move_control(NspGFrame *F, NspConnector *B,const double pt[2], int cp,double ptc[2])
+void connector_move_control(NspGFrame *F, NspConnector *B,const double mpt[2], int cp,double ptc[2])
 {
-  B->r[2] = Max(  B->r[2] + pt[0],0);
-  B->r[3] = Max(  B->r[3] - pt[1],0);
+  B->r[2] =  Max(  mpt[0] - B->r[0] ,0);
+  B->r[3] =  Max(  B->r[1] -mpt[1] ,0);
+  ptc[0]=mpt[0];
+  ptc[1]=mpt[1];
   connector_update_locks(B);
 }
 
