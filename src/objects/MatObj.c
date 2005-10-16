@@ -4074,14 +4074,35 @@ int int_harmloop1(Stack stack, int rhs, int opt, int lhs)
   NspObject *Ob=NULLOBJ;
   CheckRhs(1,1);
   CheckLhs(1,1);  
-  /* we accept abbrevs here */
   if (GetScalarInt (stack, 1, &n) == FAIL) return RET_BUG;
-  /*
-    s = 1;
-    for i=2:n
-    s = s + 1/i
-    end
-   */
+  Ob = nsp_new_double_obj(1.0); 
+  if ((M = nsp_matrix_create_impl (2, 1, n)) == NULLMAT) return RET_BUG;
+  for ( i = 1 ; i <= M->n ; i++)
+    {
+      int rep;
+      if ((M1 = MatLoopCol ("@",M1, M, i, &rep)) == NULLMAT) return RET_BUG;
+      Ob1 =(NspMatrix *) nsp_new_double_obj(1.0); 
+      NthObj(2)= Ob1;
+      NthObj(3)= M1;
+      if (( rep = nsp_eval_func(NULL,"div",stack,stack.first+1,2,0,1)) <0 )
+	  return RET_BUG;
+      NthObj(3)=NthObj(2);
+      NthObj(2)=Ob;
+      if (( rep = nsp_eval_func(NULL,"plus",stack,stack.first+1,2,0,1)) <0 )
+	  return RET_BUG;
+    }
+  NthObj(2)->ret_pos  = 1;
+  return 1;
+}
+
+int int_harmloop2(Stack stack, int rhs, int opt, int lhs)
+{
+  int n,i;
+  NspMatrix *M,*M1=NULLMAT,*Ob1;
+  NspObject *Ob=NULLOBJ;
+  CheckRhs(1,1);
+  CheckLhs(1,1);  
+  if (GetScalarInt (stack, 1, &n) == FAIL) return RET_BUG;
   Ob = nsp_new_double_obj(1.0); 
   if ((M = nsp_matrix_create_impl (2, 1, n)) == NULLMAT) return RET_BUG;
   for ( i = 1 ; i <= M->n ; i++)
@@ -4098,6 +4119,52 @@ int int_harmloop1(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+int int_harmloop3(Stack stack, int rhs, int opt, int lhs)
+{
+  int n,i;
+  NspMatrix *M,*M1=NULLMAT,*Ob1;
+  NspObject *Ob=NULLOBJ;
+  CheckRhs(1,1);
+  CheckLhs(1,1);  
+  if (GetScalarInt (stack, 1, &n) == FAIL) return RET_BUG;
+  Ob = nsp_new_double_obj(1.0); 
+  Ob1 =(NspMatrix *) nsp_new_double_obj(1.0); 
+  if ((M = nsp_matrix_create_impl (2, 1, n)) == NULLMAT) return RET_BUG;
+  for ( i = 1 ; i <= M->n ; i++)
+    {
+      int rep;
+      if ((M1 = MatLoopCol (NVOID,M1, M, i, &rep)) == NULLMAT) return RET_BUG;
+      Ob1->R[0]=1.0; 
+      nsp_mat_div_scalar(Ob1,M1);
+      nsp_mat_add((NspMatrix *) Ob,Ob1);
+    }
+  nsp_matrix_destroy(Ob1);
+  NthObj(1) = Ob;
+  NthObj(1)->ret_pos  = 1;
+  return 1;
+}
+
+int int_harmloop4(Stack stack, int rhs, int opt, int lhs)
+{
+  double s=1;
+  int n,i;
+  NspMatrix *M;
+  NspObject *Ob=NULLOBJ;
+  CheckRhs(1,1);
+  CheckLhs(1,1);  
+  if (GetScalarInt (stack, 1, &n) == FAIL) return RET_BUG;
+  if ((M = nsp_matrix_create_impl (2, 1, n)) == NULLMAT) return RET_BUG;
+  for ( i = 1 ; i <= M->n ; i++)
+    {
+      s = s + 1/M->R[i];
+    }
+  Ob = nsp_new_double_obj(s); 
+  nsp_matrix_destroy(M);
+  NthObj(1) = Ob;
+  NthObj(1)->ret_pos  = 1;
+  return 1;
+}
+
 
 /*
  * The Interface for basic matrices operation 
@@ -4105,7 +4172,10 @@ int int_harmloop1(Stack stack, int rhs, int opt, int lhs)
 
 
 static OpTab Matrix_func[] = {
-  {"harmloop1",int_harmloop1},
+  {"harmloop1_i",int_harmloop1},
+  {"harmloop2_i",int_harmloop2},
+  {"harmloop3_i",int_harmloop3},
+  {"harmloop4_i",int_harmloop4},
   {"resize2vect_m", int_mxmat2vect},
   {"extractcols_m", int_mxextractcols},
   {"extractrows_m", int_mxextractrows},
