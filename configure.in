@@ -1136,7 +1136,7 @@ fi
 if test "$with_gmp" != no; then                           
    ## search for gmp since gmp.pc does not exists 
    ## the next test is deactivated 
-   if test "x$PKG_CONFIG" != xXXX ; then 
+   if test "x$PKG_CONFIG" == xDEACTIVATED ; then 
       ## try first to use pkg-config	
       ## If gmp.pc is found, set GMP_CFLAGS and GMP_LIBS
       ## this is not supposed to work since gmp.pc does not exists
@@ -1174,6 +1174,8 @@ fi
 ## libsndfile 
 #################
 
+SNDFILE_LIB= 
+
 if test "$with_sndfile" != no; then                           
    ## search for sndfile 
    if test "x$PKG_CONFIG" != x ; then 
@@ -1208,6 +1210,7 @@ fi
 
 if test "$HAVE_SNDFILE" = "yes"; then
   AC_DEFINE(WITH_SNDFILE)
+  SNDFILE_LIB=libsndfile 
 fi
 
 #################
@@ -1327,6 +1330,7 @@ AC_SUBST(GMP_CFLAGS)
 AC_SUBST(GMP_LIBS)
 AC_SUBST(SNDFILE_CFLAGS)
 AC_SUBST(SNDFILE_LIBS)
+AC_SUBST(SNDFILE_LIB)
 AC_SUBST(ASOUND_CFLAGS)
 AC_SUBST(ASOUND_LIBS)
 AC_SUBST(SHELL)
