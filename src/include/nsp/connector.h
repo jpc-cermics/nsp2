@@ -28,8 +28,7 @@ typedef struct _NspTypeConnector {
 } NspTypeConnector;
 
 
-
-typedef struct _lock {
+typedef struct _gr_lock {
   int n_ports ;
   int fixed ;   /* flag: if fixed == TRUE the number of ports cannot be changed 
 		 * after creation
@@ -38,11 +37,10 @@ typedef struct _lock {
   double pt[2]; /* lock position */
 } gr_lock ; 
 
-struct _NspConnector {
-  /*< private >*/
-  NspObject father; 
-  NspTypeConnector *type; 
-  /*< public >*/
+typedef struct _nsp_connector nsp_connector;
+
+struct _nsp_connector {
+  NspGFrame *frame; /* a link must be in a frame to be drawn */
   double r[4];
   int color; 
   int thickness;
@@ -50,6 +48,15 @@ struct _NspConnector {
   gr_lock lock; /* Only one lock point for a connector */
   int hilited ; 
   int show    ;   
+  int ref_count;
+};
+
+struct _NspConnector {
+  /*< private >*/
+  NspObject father; 
+  NspTypeConnector *type; 
+  /*< public >*/
+  nsp_connector *obj;
 };
 
 extern int nsp_type_connector_id;

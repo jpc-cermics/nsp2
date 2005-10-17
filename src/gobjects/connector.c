@@ -242,7 +242,12 @@ static NspConnector  *connector_xdr_load(XDR  *xdrs)
 static void connector_destroy(NspConnector *H)
 {
   FREE(NSP_OBJECT(H)->name);
-  FREE(H->lock.ports);
+  H->obj->ref_count--;
+  if ( H->obj->ref_count == 0 )
+   {
+     FREE(H->obj->lock.ports);
+     FREE(H->obj);
+   }
   FREE(H);
 }
 
@@ -256,7 +261,8 @@ static void connector_info(NspConnector *H, int indent)
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("[Connector %s, r=[%5.2f,%5.2f,%5.2f,%5.2f] co=%d, th=%d bg=%d]\n",
-	    NSP_OBJECT(H)->name,H->r[0],H->r[1],H->r[2],H->r[3],H->color,H->thickness,H->background);
+	    NSP_OBJECT(H)->name,H->obj->r[0],H->obj->r[1],H->obj->r[2],H->obj->r[3],
+	    H->obj->color,H->obj->thickness,H->obj->background);
 }
 
 static void connector_print(NspConnector *H, int indent)
@@ -311,36 +317,56 @@ NspConnector  *GetConnector(Stack stack, int i)
  * create a NspClassA instance 
  *-----------------------------------------------------*/
 
+static NspConnector *connector_create_void(char *name,NspTypeBase *type)
+{
+ NspConnector *H  = (type == NULL) ? new_connector() : type->new();
+ if ( H ==  NULLCONNECTOR)
+  {
+   Sciprintf("No more memory\n");
+   return NULLCONNECTOR;
+  }
+ if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return NULLCONNECTOR;
+ NSP_OBJECT(H)->ret_pos = -1 ;
+ H->obj = NULL;
+ return H;
+}
+
 NspConnector *connector_create(char *name,double rect[],int color,int thickness,int background,
-		       NspTypeBase *type )
+			       NspTypeBase *type )
 {
   int i;
-  NspConnector *H =  (type == NULL) ? new_connector() : type->new();
-  if ( H == NULLCONNECTOR)
-    {
-      Sciprintf("No more memory\n");
-      return NULLCONNECTOR;
-    }
-  if ((NSP_OBJECT(H)->name =new_nsp_string(name))== NULLSTRING) return NULLCONNECTOR;
-  NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
-  for ( i=0; i < 4 ; i++) H->r[i]=rect[i];
-  H->color = color;
-  H->thickness = thickness;
-  H->background = background;
-  H->hilited = FALSE ; 
+  NspConnector *H  = connector_create_void(name,type);
+  if ( H ==  NULLCONNECTOR) return NULLCONNECTOR;
+  if ((H->obj = malloc(sizeof(nsp_connector))) == NULL) return NULL;
+  H->obj->ref_count=1;
+  H->obj->frame = NULL; 
+  /* fields */
+  for ( i=0; i < 4 ; i++) H->obj->r[i]=rect[i];
+  H->obj->color = color;
+  H->obj->thickness = thickness;
+  H->obj->background = background;
+  H->obj->hilited = FALSE ; 
 
-  H->show = TRUE   ; 
-  H->lock.n_ports  = 1;  /* initial number of ports */ 
-  H->lock.fixed = FALSE; /* number of ports can be changed */
-  if (( H->lock.ports = malloc(sizeof(gr_port))) == NULL) return NULLCONNECTOR;
-  H->lock.ports[0].object_id = NULL; /* port is unused */
+  H->obj->show = TRUE   ; 
+  H->obj->lock.n_ports  = 1;  /* initial number of ports */ 
+  H->obj->lock.fixed = FALSE; /* number of ports can be changed */
+  if (( H->obj->lock.ports = malloc(sizeof(gr_port))) == NULL) return NULLCONNECTOR;
+  H->obj->lock.ports[0].object_id = NULL; /* port is unused */
   connector_update_locks(H);
   return H;
 }
 
-NspConnector *connector_copy(NspConnector *H)
+/*
+ * copy for gobject derived class  
+ */
+
+NspConnector *connector_copy(NspConnector *self)
 {
-  return connector_create(NVOID,H->r,H->color,H->thickness,H->background,NULL);
+  NspConnector *H  =connector_create_void(NVOID,(NspTypeBase *) nsp_type_connector);
+  if ( H ==  NULLCONNECTOR) return NULLCONNECTOR;
+  H->obj = self->obj;
+  self->obj->ref_count++;
+  return H;
 }
 
 /*-------------------------------------------------------------------
@@ -352,7 +378,6 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 
 static int int_connector_create(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc;
   NspConnector *H;
   double *val;
   int back=-1,color=-1,thickness=-1;
@@ -366,11 +391,6 @@ static int int_connector_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-
-  Xgc=check_graphic_window();
-  if ( back <= 0 )  back  = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( color <= 0 ) color = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( thickness < 0 ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
   if(( H = connector_create(NVOID,val,color,thickness,back,NULL)) == NULLCONNECTOR) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -409,66 +429,66 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 
 static NspObject * int_gconnector_get_color(void *Hv,char *attr)
 {
-  return nsp_create_object_from_double(NVOID,((NspConnector *) Hv)->color);
+  return nsp_create_object_from_double(NVOID,((NspConnector *) Hv)->obj->color);
 }
 
 static int int_gconnector_set_color(void *Hv, char *attr, NspObject *O)
 {
   int color;
   if (  IntScalar(O,&color) == FAIL) return FAIL;
-  ((NspConnector *)Hv)->color = color;
+  ((NspConnector *)Hv)->obj->color = color;
   return OK ;
 }
 
 static NspObject * int_gconnector_get_thickness(void *Hv,char *attr)
 {
-  return nsp_create_object_from_double(NVOID,((NspConnector *) Hv)->thickness);
+  return nsp_create_object_from_double(NVOID,((NspConnector *) Hv)->obj->thickness);
 }
                                                                                                       
 static int int_gconnector_set_thickness(void *Hv, char *attr, NspObject *O)
 {
   int thickness;
   if (  IntScalar(O,&thickness) == FAIL) return FAIL;
-  ((NspConnector *)Hv)->thickness = thickness;
+  ((NspConnector *)Hv)->obj->thickness = thickness;
   return OK ;
 }
 
 static NspObject * int_gconnector_get_background(void *Hv,char *attr)
 {
-  return nsp_create_object_from_double(NVOID,((NspConnector *) Hv)->background);
+  return nsp_create_object_from_double(NVOID,((NspConnector *) Hv)->obj->background);
 }
                                                                                                       
 static int int_gconnector_set_background(void *Hv, char *attr, NspObject *O)
 {
   int background;
   if (  IntScalar(O,&background) == FAIL) return FAIL;
-  ((NspConnector *)Hv)->background = background;
+  ((NspConnector *)Hv)->obj->background = background;
   return OK ;
 }
 
 static NspObject * int_gconnector_get_hilited(void *Hv,char *attr)
 {
-  return nsp_new_boolean_obj(((NspConnector *) Hv)->hilited);
+  return nsp_new_boolean_obj(((NspConnector *) Hv)->obj->hilited);
 }
                                                                                                       
 static int int_gconnector_set_hilited(void *Hv, char *attr, NspObject *O)
 {
   int hilited;
   if (  BoolScalar(O,&hilited) == FAIL) return FAIL;
-  ((NspConnector *)Hv)->hilited = hilited;
+  ((NspConnector *)Hv)->obj->hilited = hilited;
   return OK ;
 }
 
 static NspObject * int_gconnector_get_show(void *Hv,char *attr)
 {
-  return nsp_new_boolean_obj(((NspConnector *) Hv)->show);
+  return nsp_new_boolean_obj(((NspConnector *) Hv)->obj->show);
 }
                                                                                                       
 static int int_gconnector_set_show(void *Hv, char *attr, NspObject *O)
 {
   int show;
   if (  BoolScalar(O,&show) == FAIL) return FAIL;
-  ((NspConnector *)Hv)->show = show;
+  ((NspConnector *)Hv)->obj->show = show;
   return OK ;
 }
 
@@ -577,7 +597,7 @@ void Connector_Interf_Info(int i, char **fname, function (**f))
  *
  **/
 
-int connector_get_hilited(NspConnector *B) {  return B->hilited; } 
+int connector_get_hilited(NspConnector *B) {  return B->obj->hilited; } 
 
 /**
  * connector_set_hilited:
@@ -588,7 +608,7 @@ int connector_get_hilited(NspConnector *B) {  return B->hilited; }
  *
  **/
 
-void connector_set_hilited(NspConnector *B,int val) {  B->hilited = val; } 
+void connector_set_hilited(NspConnector *B,int val) {  B->obj->hilited = val; } 
 
 /**
  * connector_get_show:
@@ -599,7 +619,7 @@ void connector_set_hilited(NspConnector *B,int val) {  B->hilited = val; }
  *
  **/
 
-int connector_get_show(NspConnector *B) {  return B->show; } 
+int connector_get_show(NspConnector *B) {  return B->obj->show; } 
 
 /**
  * connector_set_show:
@@ -609,7 +629,7 @@ int connector_get_show(NspConnector *B) {  return B->show; }
  *
  **/
 
-void connector_set_show(NspConnector *B,int val) {  B->show = val; } 
+void connector_set_show(NspConnector *B,int val) {  B->obj->show = val; } 
 
 /**
  * connector_draw:
@@ -627,22 +647,22 @@ void connector_draw(NspConnector *B)
   BCG *Xgc;
   double loc[4];
   int cpat, cwidth,i;
-
-  if ( B->show == FALSE ) return ;
-
-  Xgc=check_graphic_window();
+  /* only draw block which are in a frame */
+  if ( B->obj->frame == NULL) return;
+  if ( B->obj->show == FALSE ) return ;
+  Xgc=B->obj->frame->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   /* draw frame rectangle only if hilited */
-  Xgc->graphic_engine->xset_pattern(Xgc,B->color);
-  Xgc->graphic_engine->scale->drawrectangle(Xgc,B->r);
+  Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
+  Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
   /* add hilited */ 
   Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
-  if ( B->hilited == TRUE ) 
+  if ( B->obj->hilited == TRUE ) 
     {
-      loc[0]=B->r[0]; loc[1]=B->r[1];loc[2]=loc[3]= lock_size;
+      loc[0]=B->obj->r[0]; loc[1]=B->obj->r[1];loc[2]=loc[3]= lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
-      loc[0]+= B->r[2] -2; loc[1] -= B->r[3] -2;
+      loc[0]+= B->obj->r[2] -2; loc[1] -= B->obj->r[3] -2;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
     }
   i=0; 
@@ -669,8 +689,8 @@ void connector_draw(NspConnector *B)
 
 void connector_translate(NspConnector *B,const double pt[2])
 {
-  B->r[0] += pt[0] ;
-  B->r[1] += pt[1] ;
+  B->obj->r[0] += pt[0] ;
+  B->obj->r[1] += pt[1] ;
   connector_update_locks(B);
 }
 
@@ -685,8 +705,8 @@ void connector_translate(NspConnector *B,const double pt[2])
 
 void connector_resize(NspConnector *B,const double size[2])
 {
-  B->r[2] = size[0] ;
-  B->r[3] = size[1] ;
+  B->obj->r[2] = size[0] ;
+  B->obj->r[3] = size[1] ;
   connector_update_locks(B);
 }
 
@@ -701,8 +721,8 @@ void connector_resize(NspConnector *B,const double size[2])
 
 void connector_update_locks(NspConnector *B)
 {
-  B->lock.pt[0]=B->r[0]+B->r[2]/2; 
-  B->lock.pt[1]=B->r[1]-B->r[3]/2;
+  B->obj->lock.pt[0]=B->obj->r[0]+B->obj->r[2]/2; 
+  B->obj->lock.pt[1]=B->obj->r[1]-B->obj->r[3]/2;
 }
 
 /**
@@ -717,7 +737,8 @@ void connector_update_locks(NspConnector *B)
 
 int connector_contains_pt(const NspConnector *B,const double pt[2])
 {
-  return B->r[0] <= pt[0] && B->r[1] >= pt[1] && B->r[0]+B->r[2] >= pt[0] && B->r[1]- B->r[3] <= pt[1];
+  return B->obj->r[0] <= pt[0] && B->obj->r[1] >= pt[1] 
+    && B->obj->r[0]+B->obj->r[2] >= pt[0] && B->obj->r[1]- B->obj->r[3] <= pt[1];
 }
 
 /**
@@ -733,7 +754,7 @@ int connector_contains_pt(const NspConnector *B,const double pt[2])
 
 int connector_control_near_pt(const NspConnector *B,const double pt[2], int *cp)
 {
-  double d = Max(Abs( B->r[0]+B->r[2] -pt[0]),Abs( B->r[1]-B->r[3] -pt[1])) ;
+  double d = Max(Abs( B->obj->r[0]+B->obj->r[2] -pt[0]),Abs( B->obj->r[1]-B->obj->r[3] -pt[1])) ;
   if ( d < lock_size ) 
     { 
       *cp = 0 ;
@@ -758,12 +779,12 @@ int connector_control_near_pt(const NspConnector *B,const double pt[2], int *cp)
 int connector_lock_near_pt(const NspConnector *B,double pt[2], int *cp)
 {
   int i=0;
-  double d = Max(Abs( B->lock.pt[0] -pt[0]),Abs( B->lock.pt[1] -pt[1])) ;
+  double d = Max(Abs( B->obj->lock.pt[0] -pt[0]),Abs( B->obj->lock.pt[1] -pt[1])) ;
   if ( d < lock_size ) 
     { 
       *cp = i;
-      pt[0]=B->lock.pt[0];
-      pt[1]=B->lock.pt[1];
+      pt[0]=B->obj->lock.pt[0];
+      pt[1]=B->obj->lock.pt[1];
       return TRUE;
     }
   return FALSE;
@@ -797,8 +818,8 @@ void connector_move_control_init( NspConnector *B,int cp,double ptc[2])
 
 void connector_move_control(NspGFrame *F, NspConnector *B,const double mpt[2], int cp,double ptc[2])
 {
-  B->r[2] =  Max(  mpt[0] - B->r[0] ,0);
-  B->r[3] =  Max(  B->r[1] -mpt[1] ,0);
+  B->obj->r[2] =  Max(  mpt[0] - B->obj->r[0] ,0);
+  B->obj->r[3] =  Max(  B->obj->r[1] -mpt[1] ,0);
   ptc[0]=mpt[0];
   ptc[1]=mpt[1];
   connector_update_locks(B);
@@ -830,7 +851,7 @@ int connector_get_number_of_locks(const NspConnector *B)
 
 int connector_get_number_of_ports(const NspConnector *B,int lp) 
 {
-  return  B->lock.n_ports; 
+  return  B->obj->lock.n_ports; 
 }
 
 /**
@@ -847,10 +868,10 @@ int connector_get_number_of_ports(const NspConnector *B,int lp)
 
 int connector_get_lock_connection(const NspConnector *B,int i,int port, gr_port *p )
 {
-  int np = B->lock.n_ports; 
+  int np = B->obj->lock.n_ports; 
   if ( i == 0 && port >= 0 && port < np ) 
     {
-      gr_port *gport= &B->lock.ports[port]; 
+      gr_port *gport= &B->obj->lock.ports[port]; 
       if ( gport->object_id == NULL) return FAIL;
       p->object_id = gport->object_id;
       p->lock = gport->lock;
@@ -875,8 +896,8 @@ void connector_get_lock_pos(const NspConnector *B,int i,double pt[])
 {
   if ( i ==  0 ) 
     {
-      pt[0]= B->lock.pt[0];
-      pt[1]= B->lock.pt[1];
+      pt[0]= B->obj->lock.pt[0];
+      pt[1]= B->obj->lock.pt[1];
     }
 }
 
@@ -897,26 +918,26 @@ int connector_set_lock_connection(NspConnector *B,int i,const gr_port *p)
   if ( i ==  0 ) 
     {
       int j;
-      for ( j= 0 ; j < B->lock.n_ports ; j++) 
+      for ( j= 0 ; j < B->obj->lock.n_ports ; j++) 
 	{
-	  if ( B->lock.ports[j].object_id == NULL) 
+	  if ( B->obj->lock.ports[j].object_id == NULL) 
 	    {
-	      port= &B->lock.ports[j]; 
+	      port= &B->obj->lock.ports[j]; 
 	      port_number = j;
 	      break;
 	    }
 	}
       if ( port == NULL ) 
 	{
-	  if ( B->lock.fixed == FALSE ) 
+	  if ( B->obj->lock.fixed == FALSE ) 
 	    {
 	      gr_port *loc= NULL;
-	      B->lock.n_ports++; 
-	      if ((loc = realloc(B->lock.ports, B->lock.n_ports*sizeof(gr_port)))==NULL) 
+	      B->obj->lock.n_ports++; 
+	      if ((loc = realloc(B->obj->lock.ports, B->obj->lock.n_ports*sizeof(gr_port)))==NULL) 
 		return -1; 
-	      B->lock.ports = loc;
-	      port = &B->lock.ports[B->lock.n_ports-1];
-	      port_number = B->lock.n_ports-1;
+	      B->obj->lock.ports = loc;
+	      port = &B->obj->lock.ports[B->obj->lock.n_ports-1];
+	      port_number = B->obj->lock.n_ports-1;
 	    }
 	  else 
 	    return -1;
@@ -943,11 +964,11 @@ int connector_set_lock_connection(NspConnector *B,int i,const gr_port *p)
 
 void connector_unset_lock_connection(NspConnector *B,int i,int port)
 {
-  int n_port= B->lock.n_ports;
+  int n_port= B->obj->lock.n_ports;
   if ( i ==  0 && port >= 0 && port < n_port  ) 
     {
       /* XXXX : faut-il aussi propager l'info sur l'object locké ? */
-      B->lock.ports[port].object_id = NULL;
+      B->obj->lock.ports[port].object_id = NULL;
     }
 }
 
@@ -966,11 +987,11 @@ int connector_is_lock_connectable(NspConnector *B,int i)
   if ( i ==  0 ) 
     {
       int j;
-      for ( j= 0 ; j < B->lock.n_ports ; j++) 
+      for ( j= 0 ; j < B->obj->lock.n_ports ; j++) 
 	{
-	  if ( B->lock.ports[j].object_id == NULL) return TRUE; 
+	  if ( B->obj->lock.ports[j].object_id == NULL) return TRUE; 
 	}
-      if ( B->lock.fixed == FALSE ) 
+      if ( B->obj->lock.fixed == FALSE ) 
 	return TRUE; 
       else 
 	return FALSE;
@@ -993,9 +1014,9 @@ int connector_is_lock_connected(NspConnector *B,int i)
   if ( i ==  0 ) 
     {
       int j;
-      for ( j= 0 ; j < B->lock.n_ports ; j++) 
+      for ( j= 0 ; j < B->obj->lock.n_ports ; j++) 
 	{
-	  if ( B->lock.ports[j].object_id != NULL) return TRUE; 
+	  if ( B->obj->lock.ports[j].object_id != NULL) return TRUE; 
 	}
     }
   return FALSE;
@@ -1014,8 +1035,8 @@ void connector_set_lock_pos(NspConnector *B, int i,const double pt[])
 {
   if ( i == 0 )
     {
-      B->lock.pt[0] = pt[0];
-      B->lock.pt[1] = pt[1];
+      B->obj->lock.pt[0] = pt[0];
+      B->obj->lock.pt[1] = pt[1];
     }
 }
 

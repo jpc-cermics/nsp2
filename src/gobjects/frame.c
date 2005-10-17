@@ -1097,7 +1097,7 @@ int gframe_create_new_connector(NspGFrame *F)
   gframe_unhilite_objs(F,FALSE);
   B=connector_create(NVOID,rect,color,thickness,background,NULL);
   if ( B == NULL) return FAIL;
-  B->hilited = TRUE;
+  B->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->objs,(NspObject  *) B) == FAIL) return FAIL;
   rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return FAIL;
