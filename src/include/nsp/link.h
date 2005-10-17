@@ -25,9 +25,22 @@ typedef struct _NspTypeLink {
   /*< public >*/
 } NspTypeLink;
 
-typedef struct l_lock {
+typedef struct _grl_lock {
   gr_port port;  /* Only one port */
 } grl_lock ; 
+
+typedef struct _nsp_link nsp_link;
+
+struct _nsp_link {
+  NspGFrame *frame; /* a link must be in a frame to be drawn */
+  int color; 
+  int thickness;
+  NspMatrix *poly ;       /* the polyline */
+  grl_lock locks[2];      /* two lock points */
+  int hilited ; 
+  int show    ; 
+  int ref_count;
+};
 
 struct _NspLink {
   /*< private >*/
@@ -35,13 +48,7 @@ struct _NspLink {
   NspTypeLink *type; 
   /*< public >*/
   /* specific*/
-  BCG *Xgc;
-  int color; 
-  int thickness;
-  NspMatrix *poly ;       /* the polyline */
-  grl_lock locks[2];      /* two lock points */
-  int hilited ; 
-  int show    ; 
+  nsp_link *obj;
 };
 
 extern int nsp_type_link_id;
@@ -106,7 +113,7 @@ static int int_link_create(Stack stack, int rhs, int opt, int lhs);
 extern int IsLinkObj (Stack stack, int i); 
 extern NspLink *GetLinkCopy (Stack stack, int i); 
 extern NspLink *GetLink (Stack stack, int i); 
-extern NspLink *LinkCreateN(char *name,int n,int color,int thickness);
+extern NspLink *link_create_n(char *name,int n,int color,int thickness);
 extern void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2]);
 extern int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2]);
 extern void link_check(NspGFrame *F,NspLink *L);

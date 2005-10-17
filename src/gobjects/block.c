@@ -378,7 +378,6 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 
 static int int_block_create(Stack stack, int rhs, int opt, int lhs)
 {
-  /* BCG *Xgc; */
   NspBlock *H;
   double *val;
   int back=-1,color=-1,thickness=-1;
@@ -392,12 +391,6 @@ static int int_block_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  /* 
-     Xgc=check_graphic_window();
-     if ( back <= 0 )  back  = Xgc->graphic_engine->xget_pattern(Xgc);
-     if ( color <= 0 ) color = Xgc->graphic_engine->xget_pattern(Xgc);
-     if ( thickness < 0 ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
-  */
   if(( H = block_create(NVOID,val,color,thickness,back,NULL)) == NULLBLOCK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -652,7 +645,7 @@ void block_draw(NspBlock *B)
   /* check the show attribute */
   if ( B->obj->show == FALSE ) return ;
 
-  Xgc=check_graphic_window();
+  Xgc=B->obj->frame->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
 

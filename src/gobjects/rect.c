@@ -450,10 +450,9 @@ static AttrTab rect_attrs[] = {
 
 int int_grect_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
-  CheckRhs(1,1);
+  CheckRhs(0,0);
   RectDraw((NspRect *) self);
-  NSP_OBJECT(self)->ret_pos = 1;
-  return 1;
+  return 0;
 }
 
 /* translate */

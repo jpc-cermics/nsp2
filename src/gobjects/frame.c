@@ -1164,13 +1164,15 @@ int gframe_create_new_link(NspGFrame *F)
   Xgc->graphic_engine->xset_recording(Xgc,FALSE);
   Xgc->graphic_engine->xset_alufunction1(Xgc,6);
   /* prepare a link with 1 points */
-  L= LinkCreateN(NVOID,1,color,thickness);
+  L= link_create_n(NVOID,1,color,thickness);
+  L->obj->frame = F;
+
   bf = GR_INT(((NspObject *) L)->basetype->interface);
 
   if ( L == NULLLINK) return FAIL;
-  L->hilited = TRUE;
-  L->poly->R[0]=mpt[0];
-  L->poly->R[1]=mpt[0];
+  L->obj->hilited = TRUE;
+  L->obj->poly->R[0]=mpt[0];
+  L->obj->poly->R[1]=mpt[0];
   while ( wstop==0 ) 
     {
       /* draw the link */
@@ -1203,14 +1205,14 @@ int gframe_create_new_link(NspGFrame *F)
 	  if ( rep != 0 )
 	    {
 	      /* set last point to lock position and stop if it's not the first point*/
-	      L->poly->R[count]= mpt[0];
-	      L->poly->R[count+L->poly->m]= mpt[1];
+	      L->obj->poly->R[count]= mpt[0];
+	      L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
 	      if ( count != 0) break;
 	    }
-	  if ( nsp_matrix_add_rows(L->poly,1)== FAIL ) return FAIL;	  
+	  if ( nsp_matrix_add_rows(L->obj->poly,1)== FAIL ) return FAIL;	  
 	  count ++;
-	  L->poly->R[count]= mpt[0];
-	  L->poly->R[count+L->poly->m]= mpt[1];
+	  L->obj->poly->R[count]= mpt[0];
+	  L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
 	}
       else 
 	{
@@ -1221,12 +1223,12 @@ int gframe_create_new_link(NspGFrame *F)
 	  if ( rep == 0 && count != 0 ) 
 	    {
 	      /*  try to keep horizontal and vertical lines */
-	      if ( Abs( L->poly->R[count-1] - mpt[0]) < hvfactor ) mpt[0]=L->poly->R[count-1];
-	      if ( Abs( L->poly->R[count-1+L->poly->m] - mpt[1]) < hvfactor ) 
-		mpt[1]=L->poly->R[count-1+L->poly->m];
+	      if ( Abs( L->obj->poly->R[count-1] - mpt[0]) < hvfactor ) mpt[0]=L->obj->poly->R[count-1];
+	      if ( Abs( L->obj->poly->R[count-1+L->obj->poly->m] - mpt[1]) < hvfactor ) 
+		mpt[1]=L->obj->poly->R[count-1+L->obj->poly->m];
 	    }              
-	  L->poly->R[count]= mpt[0];
-	  L->poly->R[count+L->poly->m]= mpt[1];
+	  L->obj->poly->R[count]= mpt[0];
+	  L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
 	}
     }
   Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
@@ -1235,11 +1237,11 @@ int gframe_create_new_link(NspGFrame *F)
   /* check if first and last points are locked 
    * if true update locks 
    */
-  mpt[0]=L->poly->R[0];
-  mpt[1]=L->poly->R[L->poly->m];
+  mpt[0]=L->obj->poly->R[0];
+  mpt[1]=L->obj->poly->R[L->obj->poly->m];
   link_lock_update(F,L,0,mpt);
-  mpt[0]=L->poly->R[L->poly->m-1];
-  mpt[1]=L->poly->R[2*L->poly->m-1];
+  mpt[0]=L->obj->poly->R[L->obj->poly->m-1];
+  mpt[1]=L->obj->poly->R[2*L->obj->poly->m-1];
   link_lock_update(F,L,1,mpt);
   link_check(F,L);
   bf->draw(L);
