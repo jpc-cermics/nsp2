@@ -94,6 +94,7 @@ extern void gframe_delete_hilited (NspGFrame *R);
 extern int gframe_create_new_block(NspGFrame *R);
 extern int gframe_create_new_connector(NspGFrame *R);
 extern int gframe_create_new_link(NspGFrame *F);
+extern int gframe_create_new_rect(NspGFrame *F);
 extern int  gframe_hilite_near_pt(NspGFrame *R,const double pt[2]);
 
 extern void gframe_locks_update(NspGFrame *R,NspObject *O);

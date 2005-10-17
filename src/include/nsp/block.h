@@ -33,12 +33,10 @@ typedef struct b_lock {
   double pt[2]; /* lock position */
 } grb_lock ; 
 
-struct _NspBlock {
-  /*< private >*/
-  NspObject father; 
-  NspTypeBlock *type; 
-  /*< public >*/
-  BCG *Xgc;
+typedef struct _nsp_block nsp_block;
+
+struct _nsp_block {
+  NspGFrame *frame; /* a block must be in a frame to be drawn */
   double r[4]; 		
   int color;
   int thickness;
@@ -47,6 +45,15 @@ struct _NspBlock {
   grb_lock *locks; 
   int hilited ; 
   int show    ;   
+  int ref_count;
+};
+
+struct _NspBlock {
+  /*< private >*/
+  NspObject father; 
+  NspTypeBlock *type; 
+  /*< public >*/
+  nsp_block *obj;
 };
 
 extern int nsp_type_block_id;
@@ -101,7 +108,6 @@ static void block_set_lock_pos(NspBlock *B, int i,const double pt[]);
 #endif /* Block_Private */
 
 #define NULLBLOCK (NspBlock*) 0
-
 
 extern NspBlock *block_object(NspObject *O); 
 extern int IsBlockObj (Stack stack, int i); 

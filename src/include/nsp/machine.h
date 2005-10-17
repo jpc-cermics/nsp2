@@ -81,6 +81,15 @@
 /* Define if use fftw3 lib  */
 #define WITH_FFTW3 1
 
+/* Define if use sndfile lib  */
+#define WITH_SNDFILE 1
+
+/* Define if use asound lib  */
+#define WITH_ASOUND 1
+
+/* Define if use gmp lib  */
+#define WITH_GMP 1
+
 /* Define if sizeof(int*)==sizeof(int) */
 #define POINTER_INT 1
 

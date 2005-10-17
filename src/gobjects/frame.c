@@ -500,6 +500,14 @@ int int_gf_new_connector(void *self,Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+int int_gf_new_rect(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  gframe_create_new_rect(((NspGFrame *) self));
+  return 0;
+}
+
 int int_gf_new_link(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
@@ -513,6 +521,7 @@ static NspMethods gframe_methods[] = {
   { "new_link", int_gf_new_link },
   { "new_block", int_gf_new_block },
   { "new_connector", int_gf_new_connector },
+  { "new_rect", int_gf_new_rect },
   { "hilite_near_pt", int_gf_hilite_near_pt },
   { "select_and_move", int_gf_select_and_move},
   { "select_and_split", int_gf_select_and_split},
@@ -554,9 +563,13 @@ void GFrame_Interf_Info(int i, char **fname, function (**f))
 
 static int pixmap = TRUE ; /* XXXXX */
 
-/**************************************************
- * Draw 
- **************************************************/
+/**
+ * gframe_draw:
+ * @R: a graphic frame  
+ * 
+ * draw the objects contained in frame @R.
+ * 
+ **/
 
 void gframe_draw(NspGFrame *R)
 {
@@ -584,9 +597,19 @@ void gframe_draw(NspGFrame *R)
 }
 
 
-/**************************************************
- * frame_select_obj 
- **************************************************/
+/**
+ * gframe_select_obj:
+ * @R: a graphic frame  
+ * @pt: point coordinates.
+ * @O: an array of objects
+ * @exclude: an object.
+ * 
+ * selects the first object of array @O which contains the point @pt.
+ * @exclude can be used to exclude an object from the search.
+ * 
+ * Return value: 0 or the position of the object found in the list.
+ *
+ **/
 
 int gframe_select_obj(NspGFrame *R,const double pt[2], NspObject **O, NspObject *exclude) 
 {
@@ -609,8 +632,6 @@ int gframe_select_obj(NspGFrame *R,const double pt[2], NspObject **O, NspObject 
     }
   return 0;
 }
-
-
 
 /**
  * gframe_select_lock:
@@ -650,9 +671,16 @@ int gframe_select_lock(NspGFrame *F,double pt[2], NspObject **O, int *cp, int *l
   return 0;
 }
 
-/**************************************************
- * select_and_move
- **************************************************/
+
+/**
+ * gframe_locks_set_show:
+ * @F:  a #NspGFrame 
+ * @O: a #NspObject 
+ * @val: a flag as an integer
+ * 
+ * sets the whow attribute to value @val for all the objects which 
+ * are connected to object @O by lock connections.
+ **/
 
 static void gframe_locks_set_show(NspGFrame *F,NspObject *O,int val)
 {
@@ -677,6 +705,17 @@ static void gframe_locks_set_show(NspGFrame *F,NspObject *O,int val)
 	}
     }
 }
+
+/**
+ * gframe_select_and_move:
+ * @R: a #NspGFrame 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and move it with the mouse.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int gframe_select_and_move(NspGFrame *R,const double pt[2])
 {
@@ -712,8 +751,15 @@ int gframe_select_and_move(NspGFrame *R,const double pt[2])
 }
 
 /**
- * XXXX split a link 
- */
+ * gframe_select_and_split:
+ * @R: a #NspGFrame 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and if this object is a link the link is splited.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int gframe_select_and_split(NspGFrame *R,const double pt[2])
 {
@@ -731,9 +777,16 @@ int gframe_select_and_split(NspGFrame *R,const double pt[2])
 }
 
 /**
- * faut il en profiter pour hiliter ici ? 
- * ou faire appel avant a une autre fonction ? 
- */
+ * gframe_select_link_and_add_control:
+ * @R: a #NspGFrame 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and if this object is a link a control point is added to the link.
+ * 
+ * Return value: %OK or %FAIL
+ * FIXME: are we also supposed to highlight the link ? 
+ **/
 
 int gframe_select_link_and_add_control(NspGFrame *R,const double pt[2])
 {
@@ -749,9 +802,15 @@ int gframe_select_link_and_add_control(NspGFrame *R,const double pt[2])
   return rep;
 }
 
-/**************************************************
- * hilite nearest object 
- **************************************************/
+/**
+ * gframe_hilite_near_pt:
+ * @R: a #NspGFrame 
+ * @pt: a point position 
+ * 
+ * highlights the object which is near the point @pt.
+ * 
+ * Return value: 
+ **/
 
 int  gframe_hilite_near_pt(NspGFrame *R,const double pt[2])
 {
@@ -771,12 +830,14 @@ int  gframe_hilite_near_pt(NspGFrame *R,const double pt[2])
   return OK;
 }
 
-
-
-
-/**************************************************
- * move obj 
- **************************************************/
+/**
+ * gframe_locks_draw:
+ * @R: a #NspGFrame 
+ * @O: a #NspObject. 
+ * 
+ * calls the draw method on the objects which are connected
+ * to object @O by lock points.
+ **/
 
 static void gframe_locks_draw(NspGFrame *R,NspObject *O)
 {
@@ -805,6 +866,16 @@ static void gframe_locks_draw(NspGFrame *R,NspObject *O)
     }
 }
 
+
+/**
+ * gframe_locks_update:
+ * @R: a #NspGFrame 
+ * @O: a #NspObject. 
+ *
+ * Updates the position of the control points of 
+ * objects which are locked to object @O. 
+ * 
+ **/
 
 void gframe_locks_update(NspGFrame *R,NspObject *O)
 {
@@ -835,6 +906,20 @@ void gframe_locks_update(NspGFrame *R,NspObject *O)
 }
 
 
+
+/**
+ * gframe_move_obj:
+ * @F: : a #NspGFrame 
+ * @O: the #NspObject to be moved. 
+ * @pt: the initial position of the mouse.
+ * @stop: an integer giving the mouse code to accept for ending the move 
+ * @cp: the id of the control point to be moved
+ * @action: %MOVE or %MOVE_CONTROL
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 
 int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp,move_action action)
 {
@@ -902,9 +987,15 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
 
 
 
-/**************************************************
- * unhilite objects and redraw
- **************************************************/
+/**
+ * gframe_unhilite_objs:
+ * @R:  a #NspGFrame 
+ * @draw: an integer 
+ * 
+ * unhighlight the highlighted objects of @R if 
+ * @draw is equal to %TRUE the objects are redrawn.
+ * 
+ **/
 
 void gframe_unhilite_objs(NspGFrame *R,int draw )
 {
@@ -927,11 +1018,12 @@ void gframe_unhilite_objs(NspGFrame *R,int draw )
   if ( ok == TRUE && draw == TRUE )  gframe_draw(R);
 }
 
-
-
-/**************************************************
- * delete hilited objects 
- **************************************************/
+/**
+ * gframe_delete_hilited:
+ * @R: : a #NspGFrame 
+ * 
+ * delete hilited objects of @F.
+ **/
 
 void gframe_delete_hilited(NspGFrame *R) 
 {
@@ -951,15 +1043,21 @@ void gframe_delete_hilited(NspGFrame *R)
       C = C->next ;
     }
   /* 
-   * here we must compact the list zhich can have holes 
+   * here we must compact the list which can have holes 
    * but it implies that lock number are to be properly updated 
-   * XXXXXXXXXXXXX 
+   * FIXME ? 
    */
 }
 
-/**************************************************
- * using move to position a new block with default size 
- **************************************************/
+/**
+ * gframe_create_new_block:
+ * @F: a #NspGFrame 
+ * 
+ * creates a new block which is positioned interactively and 
+ * inserted in @F.
+ * 
+ * Return value: %OK or %FALSE.
+ **/
 
 int gframe_create_new_block(NspGFrame *F)
 {
@@ -970,7 +1068,8 @@ int gframe_create_new_block(NspGFrame *F)
   gframe_unhilite_objs(F,FALSE);
   B=block_create(NVOID,rect,color,thickness,background,NULL);
   if ( B == NULLBLOCK) return FAIL;
-  B->hilited = TRUE;
+  B->obj->frame = F;
+  B->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->objs,(NspObject  *) B) == FAIL) return FAIL;
   rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return FAIL;
@@ -978,6 +1077,16 @@ int gframe_create_new_block(NspGFrame *F)
   if ( pixmap ) F->Xgc->graphic_engine->xset_show(F->Xgc);
   return OK;
 }
+
+/**
+ * gframe_create_new_connector:
+ * @F: a #NspGFrame 
+ * 
+ * create a new connector which is positioned interactively and 
+ * inserted in @F.
+ * 
+ * Return value: %OK or %FALSE
+ **/
 
 int gframe_create_new_connector(NspGFrame *F)
 {
@@ -997,6 +1106,44 @@ int gframe_create_new_connector(NspGFrame *F)
   return OK;
 }
 
+/**
+ * gframe_create_new_rect:
+ * @F: a #NspGFrame 
+ * 
+ * create a new rectangle which is positioned interactively and 
+ * inserted in @F.
+ * 
+ * Return value: %OK or %FALSE
+ **/
+
+int gframe_create_new_rect(NspGFrame *F)
+{
+  int color=4,thickness=1, background=9,rep;
+  double rect[]={0,100,4,4}, pt[]={0,100};
+  NspRect *B;
+  /* unhilite all */
+  gframe_unhilite_objs(F,FALSE);
+  B=rect_create(NVOID,F->Xgc,rect,color,thickness,background,NULL);
+  if ( B == NULL) return FAIL;
+  if (nsp_list_end_insert(F->objs,(NspObject  *) B) == FAIL) return FAIL;
+  rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
+  if ( rep== -100 )  return FAIL;
+  /* XXXX block_draw(B); */
+  if ( pixmap ) F->Xgc->graphic_engine->xset_show(F->Xgc);
+  return OK;
+}
+
+
+/**
+ * gframe_create_new_link:
+ * @F: a #NspGFrame 
+ * 
+ * Interactively creates a new link (#NspLink) and inserts 
+ * the link in object @F.
+ * 
+ * Return value: %FAIL or %OK.
+ *
+ **/
 
 int gframe_create_new_link(NspGFrame *F)
 {

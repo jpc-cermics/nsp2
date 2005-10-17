@@ -243,7 +243,12 @@ static NspBlock  *block_xdr_load(XDR  *xdrs)
 static void block_destroy(NspBlock *H)
 {
   FREE(NSP_OBJECT(H)->name);
-  FREE(H->locks);
+  H->obj->ref_count--;
+  if ( H->obj->ref_count == 0 )
+   {
+     FREE(H->obj->locks);
+     FREE(H->obj);
+   }
   FREE(H);
 }
 
@@ -257,7 +262,8 @@ static void block_info(NspBlock *H, int indent)
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t = Block r=[%5.2f,%5.2f,%5.2f,%5.2f] co=%d, th=%d bg=%d\n",
-	    NSP_OBJECT(H)->name,H->r[0],H->r[1],H->r[2],H->r[3],H->color,H->thickness,H->background);
+	    NSP_OBJECT(H)->name,H->obj->r[0],H->obj->r[1],H->obj->r[2],H->obj->r[3],
+	    H->obj->color,H->obj->thickness,H->obj->background);
 }
 
 static void block_print(NspBlock *H, int indent)
@@ -312,37 +318,55 @@ NspBlock  *GetBlock(Stack stack, int i)
  * create a NspClassA instance 
  *-----------------------------------------------------*/
 
+static NspBlock *block_create_void(char *name,NspTypeBase *type)
+{
+ NspBlock *H  = (type == NULL) ? new_block() : type->new();
+ if ( H ==  NULLBLOCK)
+  {
+   Sciprintf("No more memory\n");
+   return NULLBLOCK;
+  }
+ if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return NULLBLOCK;
+ NSP_OBJECT(H)->ret_pos = -1 ;
+ H->obj = NULL;
+ return H;
+}
+
 NspBlock *block_create(char *name,double rect[],int color,int thickness,int background,
 		       NspTypeBase *type )
 {
   int i;
-  NspBlock *H =  (type == NULL) ? new_block() : type->new();
-  if ( H == NULLBLOCK)
-    {
-      Sciprintf("No more memory\n");
-      return NULLBLOCK;
-    }
-
-  if ((NSP_OBJECT(H)->name =new_nsp_string(name))== NULLSTRING) return NULLBLOCK;
-  NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
-  for ( i=0; i < 4 ; i++) H->r[i]=rect[i];
-  H->color = color;
-  H->thickness = thickness;
-  H->background = background;
-  
-  H->hilited = FALSE ; 
-  H->show = TRUE   ; 
-  H->n_locks = 4 ; /* a changer  XXXXX */
-  if (( H->locks = malloc(H->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
-  for (i=0; i < H->n_locks ; i++) 
-    H->locks[i].port.object_id = NULL; 
+  NspBlock *H  = block_create_void(name,type);
+  if ( H ==  NULLBLOCK) return NULLBLOCK;
+  if ((H->obj = malloc(sizeof(nsp_block))) == NULL) return NULL;
+  H->obj->ref_count=1;
+  H->obj->frame = NULL; 
+  /* fields */
+  for ( i=0; i < 4 ; i++) H->obj->r[i]=rect[i];
+  H->obj->color = color;
+  H->obj->thickness = thickness;
+  H->obj->background = background;
+  H->obj->hilited = FALSE ; 
+  H->obj->show = TRUE   ; 
+  H->obj->n_locks = 4 ; /* a changer  XXXXX */
+  if (( H->obj->locks = malloc(H->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
+  for (i=0; i < H->obj->n_locks ; i++) 
+    H->obj->locks[i].port.object_id = NULL; 
   block_update_locks(H);
   return H;
 }
 
-NspBlock *block_copy(NspBlock *H)
+/*
+ * copy for gobject derived class  
+ */
+
+NspBlock *block_copy(NspBlock *self)
 {
-  return block_create(NVOID,H->r,H->color,H->thickness,H->background,NULL);
+  NspBlock *H  =block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
+  if ( H ==  NULLBLOCK) return NULLBLOCK;
+  H->obj = self->obj;
+  self->obj->ref_count++;
+  return H;
 }
 
 /*-------------------------------------------------------------------
@@ -354,7 +378,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 
 static int int_block_create(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc;
+  /* BCG *Xgc; */
   NspBlock *H;
   double *val;
   int back=-1,color=-1,thickness=-1;
@@ -368,11 +392,12 @@ static int int_block_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-
-  Xgc=check_graphic_window();
-  if ( back <= 0 )  back  = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( color <= 0 ) color = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( thickness < 0 ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
+  /* 
+     Xgc=check_graphic_window();
+     if ( back <= 0 )  back  = Xgc->graphic_engine->xget_pattern(Xgc);
+     if ( color <= 0 ) color = Xgc->graphic_engine->xget_pattern(Xgc);
+     if ( thickness < 0 ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
+  */
   if(( H = block_create(NVOID,val,color,thickness,back,NULL)) == NULLBLOCK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -410,66 +435,66 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 
 static NspObject * int_gblock_get_color(void *Hv,char *attr)
 {
-  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->color);
+  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->obj->color);
 }
 
 static int int_gblock_set_color(void *Hv, char *attr, NspObject *O)
 {
   int color;
   if (  IntScalar(O,&color) == FAIL) return FAIL;
-  ((NspBlock *)Hv)->color = color;
+  ((NspBlock *)Hv)->obj->color = color;
   return OK ;
 }
 
 static NspObject * int_gblock_get_thickness(void *Hv,char *attr)
 {
-  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->thickness);
+  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->obj->thickness);
 }
                                                                                                       
 static int int_gblock_set_thickness(void *Hv, char *attr, NspObject *O)
 {
   int thickness;
   if (  IntScalar(O,&thickness) == FAIL) return FAIL;
-  ((NspBlock *)Hv)->thickness = thickness;
+  ((NspBlock *)Hv)->obj->thickness = thickness;
   return OK ;
 }
 
 static NspObject * int_gblock_get_background(void *Hv,char *attr)
 {
-  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->background);
+  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->obj->background);
 }
                                                                                                       
 static int int_gblock_set_background(void *Hv, char *attr, NspObject *O)
 {
   int background;
   if (  IntScalar(O,&background) == FAIL) return FAIL;
-  ((NspBlock *)Hv)->background = background;
+  ((NspBlock *)Hv)->obj->background = background;
   return OK ;
 }
 
 static NspObject * int_gblock_get_hilited(void *Hv,char *attr)
 {
-  return nsp_new_boolean_obj(((NspBlock *) Hv)->hilited);
+  return nsp_new_boolean_obj(((NspBlock *) Hv)->obj->hilited);
 }
                                                                                                       
 static int int_gblock_set_hilited(void *Hv, char *attr, NspObject *O)
 {
   int hilited;
   if (  BoolScalar(O,&hilited) == FAIL) return FAIL;
-  ((NspBlock *)Hv)->hilited = hilited;
+  ((NspBlock *)Hv)->obj->hilited = hilited;
   return OK ;
 }
 
 static NspObject * int_gblock_get_show(void *Hv,char *attr)
 {
-  return nsp_new_boolean_obj(((NspBlock *) Hv)->show);
+  return nsp_new_boolean_obj(((NspBlock *) Hv)->obj->show);
 }
                                                                                                       
 static int int_gblock_set_show(void *Hv, char *attr, NspObject *O)
 {
   int show;
   if (  BoolScalar(O,&show) == FAIL) return FAIL;
-  ((NspBlock *)Hv)->show = show;
+  ((NspBlock *)Hv)->obj->show = show;
   return OK ;
 }
 
@@ -571,7 +596,7 @@ void Block_Interf_Info(int i, char **fname, function (**f))
  *
  **/
 
-int block_get_hilited(NspBlock *B) {  return B->hilited; } 
+int block_get_hilited(NspBlock *B) {  return B->obj->hilited; } 
 
 /**
  * block_set_hilited:
@@ -582,7 +607,7 @@ int block_get_hilited(NspBlock *B) {  return B->hilited; }
  *
  **/
 
-void block_set_hilited(NspBlock *B,int val) {  B->hilited = val; } 
+void block_set_hilited(NspBlock *B,int val) {  B->obj->hilited = val; } 
 
 /**
  * block_get_show:
@@ -593,7 +618,7 @@ void block_set_hilited(NspBlock *B,int val) {  B->hilited = val; }
  *
  **/
 
-int block_get_show(NspBlock *B) {  return B->show; } 
+int block_get_show(NspBlock *B) {  return B->obj->show; } 
 
 /**
  * block_set_show:
@@ -603,7 +628,7 @@ int block_get_show(NspBlock *B) {  return B->show; }
  *
  **/
 
-void block_set_show(NspBlock *B,int val) {  B->show = val; } 
+void block_set_show(NspBlock *B,int val) {  B->obj->show = val; } 
 
 /**
  * block_draw:
@@ -622,8 +647,10 @@ void block_draw(NspBlock *B)
   char str[256];
   double loc[4];
   int cpat, cwidth,i, draw_script ; 
-
-  if ( B->show == FALSE ) return ;
+  /* only draw block which are in a frame */
+  if ( B->obj->frame == NULL) return;
+  /* check the show attribute */
+  if ( B->obj->show == FALSE ) return ;
 
   Xgc=check_graphic_window();
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -635,33 +662,33 @@ void block_draw(NspBlock *B)
   switch (draw_script)
     {
     case 0: 
-      sprintf(str,"Matplot1(rand(1,1)*32,[%5.2f,%5.2f,%5.2f,%5.2f]);",B->r[0],B->r[1]-B->r[3],
-	      B->r[0]+B->r[2],B->r[1]);
- nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
+      sprintf(str,"Matplot1(rand(10,10)*32,[%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1]-B->obj->r[3],
+	      B->obj->r[0]+B->obj->r[2],B->obj->r[1]);
+      nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
       break;
     case 1: 
-      sprintf(str,"draw_inside([%5.2f,%5.2f,%5.2f,%5.2f]);",B->r[0],B->r[1],B->r[2],B->r[3]);
- nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
+      sprintf(str,"draw_inside([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
+      nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
       break;
     default: 
       /* fill rectangle */
-      Xgc->graphic_engine->xset_pattern(Xgc,B->background);
-      Xgc->graphic_engine->scale->fillrectangle(Xgc,B->r);
+      Xgc->graphic_engine->xset_pattern(Xgc,B->obj->background);
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
       break;
     }
   /* draw rectangle */
-  Xgc->graphic_engine->xset_pattern(Xgc,B->color);
-  Xgc->graphic_engine->scale->drawrectangle(Xgc,B->r);
+  Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
+  Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
   /* add hilited */ 
   Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
-  if ( B->hilited == TRUE ) 
+  if ( B->obj->hilited == TRUE ) 
     {
-      loc[0]=B->r[0]; loc[1]=B->r[1];loc[2]=loc[3]= lock_size;
+      loc[0]=B->obj->r[0]; loc[1]=B->obj->r[1];loc[2]=loc[3]= lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
-      loc[0]+= B->r[2] -2; loc[1] -= B->r[3] -2;
+      loc[0]+= B->obj->r[2] -2; loc[1] -= B->obj->r[3] -2;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
     }
-  for ( i=0 ; i < B->n_locks  ; i++ ) 
+  for ( i=0 ; i < B->obj->n_locks  ; i++ ) 
     {
       if ( block_is_lock_connected(B,i)== TRUE)
 	Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
@@ -687,8 +714,8 @@ void block_draw(NspBlock *B)
 
 void block_translate(NspBlock *B,const double tr[2])
 {
-  B->r[0] += tr[0] ;
-  B->r[1] += tr[1] ;
+  B->obj->r[0] += tr[0] ;
+  B->obj->r[1] += tr[1] ;
   block_update_locks(B);
 }
 
@@ -703,8 +730,8 @@ void block_translate(NspBlock *B,const double tr[2])
 
 void block_resize(NspBlock *B,const double size[2])
 {
-  B->r[2] = size[0] ;
-  B->r[3] = size[1] ;
+  B->obj->r[2] = size[0] ;
+  B->obj->r[3] = size[1] ;
   block_update_locks(B);
 }
 
@@ -719,14 +746,14 @@ void block_resize(NspBlock *B,const double size[2])
 
 void block_update_locks(NspBlock *B)
 {
-  B->locks[0].pt[0]=B->r[0]+B->r[2]/2; 
-  B->locks[0].pt[1]=B->r[1];
-  B->locks[1].pt[0]=B->r[0]+B->r[2]/2; 
-  B->locks[1].pt[1]=B->r[1]-B->r[3];
-  B->locks[2].pt[0]=B->r[0];        
-  B->locks[2].pt[1]=B->r[1]-B->r[3]/2;
-  B->locks[3].pt[0]=B->r[0]+B->r[2];   
-  B->locks[3].pt[1]=B->r[1]-B->r[3]/2;
+  B->obj->locks[0].pt[0]=B->obj->r[0]+B->obj->r[2]/2; 
+  B->obj->locks[0].pt[1]=B->obj->r[1];
+  B->obj->locks[1].pt[0]=B->obj->r[0]+B->obj->r[2]/2; 
+  B->obj->locks[1].pt[1]=B->obj->r[1]-B->obj->r[3];
+  B->obj->locks[2].pt[0]=B->obj->r[0];        
+  B->obj->locks[2].pt[1]=B->obj->r[1]-B->obj->r[3]/2;
+  B->obj->locks[3].pt[0]=B->obj->r[0]+B->obj->r[2];   
+  B->obj->locks[3].pt[1]=B->obj->r[1]-B->obj->r[3]/2;
 }
 
 /**
@@ -741,7 +768,7 @@ void block_update_locks(NspBlock *B)
 
 int block_contains_pt(const NspBlock *B,const double pt[2])
 {
-  return B->r[0] <= pt[0] && B->r[1] >= pt[1] && B->r[0]+B->r[2] >= pt[0] && B->r[1]- B->r[3] <= pt[1];
+  return B->obj->r[0] <= pt[0] && B->obj->r[1] >= pt[1] && B->obj->r[0]+B->obj->r[2] >= pt[0] && B->obj->r[1]- B->obj->r[3] <= pt[1];
 }
 
 /**
@@ -757,7 +784,7 @@ int block_contains_pt(const NspBlock *B,const double pt[2])
 
 int block_control_near_pt(const NspBlock *B,const double pt[2], int *cp)
 {
-  double d = Max(Abs( B->r[0]+B->r[2] -pt[0]),Abs( B->r[1]-B->r[3] -pt[1])) ;
+  double d = Max(Abs( B->obj->r[0]+B->obj->r[2] -pt[0]),Abs( B->obj->r[1]-B->obj->r[3] -pt[1])) ;
   if ( d < lock_size ) 
     { 
       *cp = 0 ;
@@ -782,14 +809,14 @@ int block_control_near_pt(const NspBlock *B,const double pt[2], int *cp)
 int block_lock_near_pt(const NspBlock *B,double pt[2], int *cp)
 {
   int i;
-  for ( i=0 ; i < B->n_locks ; i++ ) 
+  for ( i=0 ; i < B->obj->n_locks ; i++ ) 
     {
-      double d= Max(Abs( B->locks[i].pt[0] -pt[0]),Abs( B->locks[i].pt[1] -pt[1])) ;
+      double d= Max(Abs( B->obj->locks[i].pt[0] -pt[0]),Abs( B->obj->locks[i].pt[1] -pt[1])) ;
       if ( d < lock_size ) 
 	{ 
 	  *cp = i;
-	  pt[0]=B->locks[i].pt[0];
-	  pt[1]=B->locks[i].pt[1];
+	  pt[0]=B->obj->locks[i].pt[0];
+	  pt[1]=B->obj->locks[i].pt[1];
 	  return TRUE;
 	}
     }
@@ -826,8 +853,8 @@ void block_move_control_init( NspBlock *B,int cp,double ptc[2])
 
 void block_move_control(NspGFrame *F, NspBlock *B,const double mpt[2], int cp,double ptc[2])
 {
-  B->r[2] =  Max(  mpt[0] - B->r[0] ,0);
-  B->r[3] =  Max(  B->r[1] -mpt[1] ,0);
+  B->obj->r[2] =  Max(  mpt[0] - B->obj->r[0] ,0);
+  B->obj->r[3] =  Max(  B->obj->r[1] -mpt[1] ,0);
   ptc[0]=mpt[0];
   ptc[1]=mpt[1];
   block_update_locks(B);
@@ -844,7 +871,7 @@ void block_move_control(NspGFrame *F, NspBlock *B,const double mpt[2], int cp,do
 
 int block_get_number_of_locks(const NspBlock *B) 
 {
-  return B->n_locks;
+  return B->obj->n_locks;
 }
 
 /**
@@ -876,9 +903,9 @@ int block_get_number_of_ports(const NspBlock *B,int lp)
 
 int block_get_lock_connection(const NspBlock *B,int i,int port, gr_port *p )
 {
-  if ( i >= 0 && i < B->n_locks && port == 0  ) 
+  if ( i >= 0 && i < B->obj->n_locks && port == 0  ) 
     {
-      gr_port *gport= &B->locks[i].port; 
+      gr_port *gport= &B->obj->locks[i].port; 
       p->object_id = gport->object_id;
       p->lock = gport->lock;
       p->port = gport->port;
@@ -898,10 +925,10 @@ int block_get_lock_connection(const NspBlock *B,int i,int port, gr_port *p )
 
 void block_get_lock_pos(const NspBlock *B, int i,double pt[])
 {
-  if ( i >=  0 && i < B->n_locks )
+  if ( i >=  0 && i < B->obj->n_locks )
     {
-      pt[0]= B->locks[i].pt[0];
-      pt[1]= B->locks[i].pt[1];
+      pt[0]= B->obj->locks[i].pt[0];
+      pt[1]= B->obj->locks[i].pt[1];
     }
 }
 
@@ -917,9 +944,9 @@ void block_get_lock_pos(const NspBlock *B, int i,double pt[])
 
 int block_set_lock_connection(NspBlock *B,int i,const gr_port *p)
 {
-  if ( i >=  0  && i < B->n_locks ) 
+  if ( i >=  0  && i < B->obj->n_locks ) 
     {
-      gr_port *port= &B->locks[i].port;
+      gr_port *port= &B->obj->locks[i].port;
       if ( port->object_id != NULL) return FALSE; 
       port->object_id = p->object_id;
       port->lock = p->lock;
@@ -941,9 +968,9 @@ int block_set_lock_connection(NspBlock *B,int i,const gr_port *p)
 
 void block_unset_lock_connection(NspBlock *B,int i,int port)
 {
-  if ( i >= 0 && i < B->n_locks && port == 0)
+  if ( i >= 0 && i < B->obj->n_locks && port == 0)
     {
-      B->locks[i].port.object_id = NULL;
+      B->obj->locks[i].port.object_id = NULL;
     }
 }
 
@@ -959,9 +986,9 @@ void block_unset_lock_connection(NspBlock *B,int i,int port)
 
 int block_is_lock_connectable(NspBlock *B,int i)
 {
-  if ( i >=  0 && i < B->n_locks )
+  if ( i >=  0 && i < B->obj->n_locks )
     {
-      if ( B->locks[i].port.object_id == NULL) return TRUE; 
+      if ( B->obj->locks[i].port.object_id == NULL) return TRUE; 
     }
   return FALSE;
 }
@@ -978,9 +1005,9 @@ int block_is_lock_connectable(NspBlock *B,int i)
 
 int block_is_lock_connected(NspBlock *B,int i)
 {
-  if ( i >=  0  && i < B->n_locks ) 
+  if ( i >=  0  && i < B->obj->n_locks ) 
     {
-      if ( B->locks[i].port.object_id != NULL) return TRUE; 
+      if ( B->obj->locks[i].port.object_id != NULL) return TRUE; 
     }
   return FALSE;
 }
@@ -996,10 +1023,10 @@ int block_is_lock_connected(NspBlock *B,int i)
 
 void block_set_lock_pos(NspBlock *B, int i,const double pt[])
 {
-  if ( i >= 0 && i < B->n_locks )
+  if ( i >= 0 && i < B->obj->n_locks )
     {
-      B->locks[i].pt[0] = pt[0];
-      B->locks[i].pt[1] = pt[1];
+      B->obj->locks[i].pt[0] = pt[0];
+      B->obj->locks[i].pt[1] = pt[1];
     }
 }
 
