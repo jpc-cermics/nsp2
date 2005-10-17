@@ -4066,6 +4066,7 @@ int int_number_properties(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+#include "../interp/Eval.h"
 
 int int_harmloop1(Stack stack, int rhs, int opt, int lhs)
 {
@@ -4082,8 +4083,8 @@ int int_harmloop1(Stack stack, int rhs, int opt, int lhs)
       int rep;
       if ((M1 = MatLoopCol ("@",M1, M, i, &rep)) == NULLMAT) return RET_BUG;
       Ob1 =(NspMatrix *) nsp_new_double_obj(1.0); 
-      NthObj(2)= Ob1;
-      NthObj(3)= M1;
+      NthObj(2)= NSP_OBJECT(Ob1);
+      NthObj(3)= NSP_OBJECT(M1);
       if (( rep = nsp_eval_func(NULL,"div",stack,stack.first+1,2,0,1)) <0 )
 	  return RET_BUG;
       NthObj(3)=NthObj(2);
