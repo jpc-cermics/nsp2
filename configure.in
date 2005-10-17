@@ -234,9 +234,9 @@ FC_OPTIONS="${FFLAGS}"
 FC_LDFLAGS="${LDFLAGS} ${LIEEELIB}"
 LD_LDFLAGS="${LDFLAGS}"
 
-echo PPPPPPPPPP $lt_lt_prog_compiler_pic $lt_prog_compiler_pic_works
-echo QQQQQQQQQQ $lt_lt_prog_compiler_pic_F77 $lt_prog_compiler_pic_F77_works
-echo QQQQQQQQQQ $lt_lt_prog_compiler_pic_CXX $lt_prog_compiler_pic_CXX_works
+#echo PPPPPPPPPP $lt_lt_prog_compiler_pic $lt_prog_compiler_pic_works
+#echo QQQQQQQQQQ $lt_lt_prog_compiler_pic_F77 $lt_prog_compiler_pic_F77_works
+#echo QQQQQQQQQQ $lt_lt_prog_compiler_pic_CXX $lt_prog_compiler_pic_CXX_works
 
 case "$host" in
   # Linux ELF: all standard distributions
@@ -1128,6 +1128,129 @@ else
   IN_FFTPACK=FFTPACK
 fi
 
+
+#################
+## gmp 
+#################
+
+if test "$with_gmp" != no; then                           
+   ## search for gmp since gmp.pc does not exists 
+   ## the next test is deactivated 
+   if test "x$PKG_CONFIG" != xXXX ; then 
+      ## try first to use pkg-config	
+      ## If gmp.pc is found, set GMP_CFLAGS and GMP_LIBS
+      ## this is not supposed to work since gmp.pc does not exists
+      PKG_CHECK_MODULES(GMP, gmp >= 1.0, HAVE_GMP="yes", HAVE_GMP="no")
+      ## In case of success I just want fftw3 be added in GTK_PKGS 
+      if test "$HAVE_GMP" = "yes"; then
+	 GTK_PKGS="$GTK_PKGS gmp"
+         GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
+         GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+	 GMP_CFLAGS=""
+	 GMP_LIBS=""
+      fi 
+   fi
+   if test "$HAVE_GMP" = "no"; then # try to find fftw3 at usual places
+     AC_CHECK_HEADERS(
+        [gmp.h],
+        AC_CHECK_LIB(
+           [gmp],
+           [__gmpz_mul],
+           GMP_CFLAGS=
+           GMP_LIBS="-lgmp"
+           [HAVE_GMP="yes"],
+           [HAVE_GMP="no"]),
+        [HAVE_GMP="no"])
+   fi
+else
+   HAVE_GMP="no"
+fi
+
+if test "$HAVE_GMP" = "yes"; then
+  AC_DEFINE(WITH_GMP)
+fi
+
+#################
+## libsndfile 
+#################
+
+if test "$with_sndfile" != no; then                           
+   ## search for sndfile 
+   if test "x$PKG_CONFIG" != x ; then 
+      ## try first to use pkg-config	
+      ## If sndfile.pc is found, set GMP_CFLAGS and GMP_LIBS
+      ## this is not supposed to work since sndfile.pc does not exists
+      PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0, HAVE_SNDFILE="yes", HAVE_SNDFILE="no")
+      ## In case of success I just want fftw3 be added in GTK_PKGS 
+      if test "$HAVE_SNDFILE" = "yes"; then
+	 GTK_PKGS="$GTK_PKGS sndfile"
+         GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
+         GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+	 SNDFILE_CFLAGS=""
+	 SNDFILE_LIBS=""
+      fi 
+   fi
+   if test "$HAVE_SNDFILE" = "no"; then # try to find sndfile at usual places
+     AC_CHECK_HEADERS(
+        [sndfile.h],
+        AC_CHECK_LIB(
+           [sndfile],
+           [sf_write_double],
+           SNDFILE_CFLAGS=
+           SNDFILE_LIBS="-lsndfile"
+           [HAVE_SNDFILE="yes"],
+           [HAVE_SNDFILE="no"]),
+        [HAVE_SNDFILE="no"])
+   fi
+else
+   HAVE_SNDFILE="no"
+fi
+
+if test "$HAVE_SNDFILE" = "yes"; then
+  AC_DEFINE(WITH_SNDFILE)
+fi
+
+#################
+## libasound
+#################
+
+if test "$with_asound" != no; then                           
+   ## search for sndfile 
+   if test "x$PKG_CONFIG" != x ; then 
+      ## try first to use pkg-config	
+      ## If sndfile.pc is found, set GMP_CFLAGS and GMP_LIBS
+      ## this is not supposed to work since sndfile.pc does not exists
+      PKG_CHECK_MODULES(ASOUND, alsa >= 1.0, HAVE_ASOUND="yes", HAVE_ASOUND="no")
+      ## In case of success I just want fftw3 be added in GTK_PKGS 
+      if test "$HAVE_ASOUND" = "yes"; then
+	 GTK_PKGS="$GTK_PKGS alsa"
+         GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
+         GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+	 ASOUND_CFLAGS=""
+	 ASOUND_LIBS=""
+      fi 
+   fi
+   if test "$HAVE_ASOUND" = "no"; then # try to find sndfile at usual places
+     AC_CHECK_HEADERS(
+        [sndfile.h],
+        AC_CHECK_LIB(
+           [asound],
+           [alsa_open],
+           ASOUND_CFLAGS=
+	   ASOUND_LIBS="-lasound"
+           [HAVE_ASOUND="yes"],
+           [HAVE_ASOUND="no"]),
+        [HAVE_ASOUND="no"])
+   fi
+else
+   HAVE_ASOUND="no"
+fi
+
+if test "$HAVE_ASOUND" = "yes"; then
+  AC_DEFINE(WITH_ASOUND)
+fi
+
+
 #########################
 ## substituting variables
 #########################
@@ -1200,6 +1323,12 @@ AC_SUBST(IN_ATLAS)
 AC_SUBST(IN_FFTPACK)
 AC_SUBST(FFTW3_CFLAGS)
 AC_SUBST(FFTW3_LIBS)
+AC_SUBST(GMP_CFLAGS)
+AC_SUBST(GMP_LIBS)
+AC_SUBST(SNDFILE_CFLAGS)
+AC_SUBST(SNDFILE_LIBS)
+AC_SUBST(ASOUND_CFLAGS)
+AC_SUBST(ASOUND_LIBS)
 AC_SUBST(SHELL)
 AC_SUBST(DLLTOOL)
 AC_SUBST(LD)
@@ -1256,6 +1385,9 @@ echo "OpenGl support.........:" $WITH_GL
 echo 
 echo "Managed by pkg-config..:" $GTK_PKGS
 echo "Lapack and Blas........:" $LAPACK_LIBS $BLAS_LIBS
+if test "$HAVE_GMP" = "yes"; then
+   echo "gmp....................:" $GMP_LIBS
+fi
 echo "Terminal...............:" $TERMCAPLIB
 echo 
 echo "C compiler.............:" $CC
