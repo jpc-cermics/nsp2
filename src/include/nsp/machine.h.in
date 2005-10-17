@@ -80,6 +80,15 @@
 /* Define if use fftw3 lib  */
 #undef WITH_FFTW3
 
+/* Define if use sndfile lib  */
+#undef WITH_SNDFILE
+
+/* Define if use asound lib  */
+#undef WITH_ASOUND
+
+/* Define if use gmp lib  */
+#undef WITH_GMP
+
 /* Define if sizeof(int*)==sizeof(int) */
 #undef POINTER_INT 
 
