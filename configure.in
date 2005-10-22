@@ -970,15 +970,15 @@ if test "$with_gtkglext" != no; then
 fi
 
 # check that we have glut if gtkglext-1.0 is used 
+# this is not used (ZZZyes) we do not need glut for the moment
 
-if test "$WITH_GL" == yes; then 
+if test "$WITH_GL" == ZZZyes; then 
      AC_CHECK_HEADERS(
         [GL/glut.h],
         AC_CHECK_LIB(
            [glut],
-           [gluLookAt],
-           FFTW3_CFLAGS=
-           FFTW3_LIBS="-lglut -lm"
+           [glutStrokeCharacter],
+           GLUT_LIBS="-lglut"
            [HAVE_GLUT="yes"],
            [HAVE_GLUT="no"]),
         [HAVE_GLUT="no"])
@@ -986,7 +986,7 @@ if test "$WITH_GL" == yes; then
 	AC_MSG_WARN([Could not find the glut library.],)
 	AC_MSG_WARN([WARNING OpenGL driver will not be build .],)
 	WITH_GL="no"
-	GTK_PKGS=`echo $GTK_PKGS | sed -e 's+/gtkglext-1.0//+g' `
+	GTK_PKGS=`echo $GTK_PKGS | sed -e 's+gtkglext-1.0++g' `
 	GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
 	GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
      fi
