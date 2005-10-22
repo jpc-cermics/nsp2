@@ -12,7 +12,8 @@ OBJSC = rect.obj \
 	link.obj  \
 	grint.obj \
 	frame.obj \
-	connector.obj 
+	connector.obj \
+	gport.obj 
 
 OBJSF=
 
