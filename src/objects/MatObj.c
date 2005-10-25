@@ -431,8 +431,9 @@ GetMatCopy_G (Stack stack, int i)
   return MaybeObjCopy (&NthObj (i));
 }
 
+#ifndef HAVE_INLINE 
 /*
- * GetMat_G and GetMatCopy_G and conversions 
+ * GetMat and GetMatCopy and conversions 
  */
 
 NspMatrix *
@@ -446,6 +447,7 @@ GetMat (Stack stack, int i)
 {
   return Mat2double (GetMat_G (stack, i));
 }
+#endif 
 
 NspMatrix *
 GetMatCopyInt (Stack stack, int i)

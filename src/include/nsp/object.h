@@ -278,6 +278,13 @@ typedef enum { NOOBJ,LIST,MATRIX,SMATRIX,BMATRIX,LIB,
 } SciType;
 */
 
+extern void ArgMessage (Stack stack, int i );
+extern void *MaybeObjCopy (NspObject **O);
+
+/* 
+ *  objects 
+ */
+
 #include "nsp/plisttoken.h"
 #include "nsp/file.h"
 #include "nsp/matrix.h"
@@ -307,6 +314,7 @@ typedef enum { NOOBJ,LIST,MATRIX,SMATRIX,BMATRIX,LIB,
 #include "nsp/classb.h"
 #include "nsp/cells.h"
 
+
 /*----------------------------------------------------------
  * A set of prototypes 
  *----------------------------------------------------------*/
@@ -317,7 +325,6 @@ void nsp_void_object_destroy(NspObject **O);
 
 NspObject *nsp_create_empty_matrix_object(char *str);
 NspObject *nsp_create_object_from_doubles( int m,int n,int it,double *rtab,double *itab,char *name);
-void *MaybeObjCopy (NspObject **O);
 NspObject *nsp_object_copy_and_name(char *name,NspObject *O);
 
 int nsp_object_xdr_save(XDR *F, NspObject *O);
@@ -352,6 +359,8 @@ extern NspObject *nsp_create_false_object(char *str);
 extern char *nsp_object_get_name(NspObject *O); 
 extern int nsp_object_set_name(NspObject *O, char *str); 
 extern int print_count_rows(Stack stack,int first_arg,int last_arg);
+
+
 
 #endif /*  NSP_TYPE_OBJECT  */
 

@@ -104,8 +104,7 @@ extern int nsp_mat_fullcomp();
 extern NspMatrix *matrix_object(NspObject *O); 
 extern int IsMatObj (Stack stack, int i); 
 extern int IsMat (NspObject *O); 
-extern NspMatrix *GetMatCopy (Stack stack, int i); 
-extern NspMatrix *GetMat (Stack stack, int i); 
+
 extern NspMatrix *GetMatCopyInt (Stack stack, int i); 
 extern NspMatrix *GetMatInt (Stack stack, int i); 
 extern NspMatrix *GetMatCopyFloat (Stack stack, int i); 
@@ -286,7 +285,28 @@ extern int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B) ;
 extern NspMatrix *nsp_mat_maxplus_mult(NspMatrix *A, NspMatrix *B);
 extern NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B);
 
+/*
+ * inlined functions 
+ */
 
+#ifndef HAVE_INLINE 
+extern NspMatrix *GetMatCopy (Stack stack, int i); 
+extern NspMatrix *GetMat (Stack stack, int i); 
+#else 
+static inline NspMatrix *GetMatCopy(Stack stack, int i)
+{
+  NspMatrix *M= Mat2double(matrix_object(stack.S[stack.first+i-1]));
+  if ( M== NULLMAT) { ArgMessage (stack, i);return M;}
+  return MaybeObjCopy (&stack.S[stack.first+i-1]);
+}
+
+static inline NspMatrix *GetMat(Stack stack, int i)
+{
+  NspMatrix *M= Mat2double(matrix_object(stack.S[stack.first+i-1]));
+  if ( M== NULLMAT) ArgMessage (stack, i);
+  return M;
+}
+#endif 
 
 
 #endif 

@@ -120,7 +120,6 @@ extern void PutLhsObj (Stack stack,int nv,int ind[]);
 extern void OptCheck (NspObject **Os,NspObject **DefO,char **Names,int n,Stack ,int nopt);
 extern char *ArgPosition (int i);
 extern void ArgName (Stack stack, int i );
-extern void ArgMessage (Stack stack, int i );
 
 extern void SwapObjs (Stack stack,int i,int j);
 extern void MoveObj  (Stack stack ,int j,NspObject *O);
@@ -192,6 +191,9 @@ extern NspLmo *GetLmo (Stack S,int i);
 
 extern int call_interf(function *f, Stack stack, int rhs, int opt, int lhs); 
 extern int AllInterf(int i, int num, Stack stack, int rhs, int opt, int lhs);
+
+
+
 
 #endif 
 
