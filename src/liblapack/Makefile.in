@@ -19,6 +19,8 @@ ATLAS=
 
 LOCAL= dgesv.o dgetrf.o dgetrs.o dpotrs.o dpotrf.o  zgetrf.o zgetrs.o zpotrf.o
 
+UNUSED= dlamch.o xerbla.o 
+
 OBJSF = dbdsdc.o dbdsqr.o ddisna.o dgbbrd.o dgbcon.o dgbequ.o dgbrfs.o dgbsv.o \
 	 dgbsvx.o dgbtf2.o dgbtrf.o dgbtrs.o dgebak.o dgebal.o dgebd2.o dgebrd.o \
 	dgecon.o dgeequ.o dgees.o dgeesx.o dgeev.o dgeevx.o dgegs.o dgegv.o dgehd2.o \
@@ -31,7 +33,7 @@ OBJSF = dbdsdc.o dbdsqr.o ddisna.o dgbbrd.o dgbcon.o dgbequ.o dgbrfs.o dgbsv.o \
 	dladiv.o dlae2.o dlaebz.o dlaed0.o dlaed1.o dlaed2.o dlaed3.o dlaed4.o dlaed5.o \
 	dlaed6.o dlaed7.o dlaed8.o dlaed9.o dlaeda.o dlaein.o dlaev2.o dlaexc.o dlag2.o \
 	dlags2.o dlagtf.o dlagtm.o dlagts.o dlagv2.o dlahqr.o dlahrd.o dlaic1.o dlaln2.o \
-	dlals0.o dlalsa.o dlalsd.o dlamch.o dlamrg.o dlangb.o dlange.o dlangt.o dlanhs.o \
+	dlals0.o dlalsa.o dlalsd.o dlamrg.o dlangb.o dlange.o dlangt.o dlanhs.o \
 	dlansb.o dlansp.o dlanst.o dlansy.o dlantb.o dlantp.o dlantr.o dlanv2.o dlapll.o \
 	dlapmt.o dlapy2.o dlapy3.o dlaqgb.o dlaqge.o dlaqp2.o dlaqps.o dlaqsb.o dlaqsp.o \
 	dlaqsy.o dlaqtr.o dlar1v.o dlar2v.o dlarfb.o dlarf.o dlarfg.o dlarft.o dlarfx.o \
@@ -56,7 +58,7 @@ OBJSF = dbdsdc.o dbdsqr.o ddisna.o dgbbrd.o dgbcon.o dgbequ.o dgbrfs.o dgbsv.o \
 	dtgexc.o dtgsen.o dtgsja.o dtgsna.o dtgsy2.o dtgsyl.o dtpcon.o dtprfs.o dtptri.o dtptrs.o \
 	dtrcon.o dtrevc.o dtrexc.o dtrrfs.o dtrsen.o dtrsna.o dtrsyl.o dtrti2.o dtrtri.o dtrtrs.o \
 	dtzrqf.o dtzrzf.o dzsum1.o icmax1.o ieeeck.o ilaenv.o izmax1.o lsame.o lsamen.o slamch.o \
-	xerbla.o zbdsqr.o zdrot.o zdrscl.o zgbbrd.o zgbcon.o zgbequ.o zgbrfs.o zgbsv.o zgbsvx.o \
+	zbdsqr.o zdrot.o zdrscl.o zgbbrd.o zgbcon.o zgbequ.o zgbrfs.o zgbsv.o zgbsvx.o \
 	zgbtf2.o zgbtrf.o zgbtrs.o zgebak.o zgebal.o zgebd2.o zgebrd.o zgecon.o zgeequ.o zgees.o \
 	zgeesx.o zgeev.o zgeevx.o zgegs.o zgegv.o zgehd2.o zgehrd.o zgelq2.o zgelqf.o zgelsd.o \
 	zgels.o zgelss.o zgelsx.o zgelsy.o zgeql2.o zgeqlf.o zgeqp3.o zgeqpf.o zgeqr2.o zgeqrf.o \
