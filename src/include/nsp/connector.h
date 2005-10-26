@@ -107,9 +107,7 @@ static void connector_unset_lock_connection(NspConnector *B,int i,int port);
 static int connector_is_lock_connectable(NspConnector *B,int i);
 static int connector_is_lock_connected(NspConnector *B,int i);
 static void connector_set_lock_pos(NspConnector *B, int i,const double pt[]);
-
-
-
+static void connector_unlock( NspConnector *B,int lp) ;
 #endif /* Connector_Private */
 
 #define NULLCONNECTOR (NspConnector*) 0

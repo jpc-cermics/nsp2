@@ -962,6 +962,7 @@ int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
   /* for proj to end of link */
   n1 = L->obj->poly->m-kmin;
   if ((*L1= link_create_n(NVOID,n1,L->obj->color,L->obj->thickness))==NULL) return FAIL;
+  (*L1)->obj->frame = F;
   (*L1)->obj->poly->R[0]=proj[0];
   (*L1)->obj->poly->R[n1]=proj[1];
   for ( i=1; i < n1 ; i++) 
@@ -1064,6 +1065,8 @@ void link_check(NspGFrame *F,NspLink *L)
 		      gr_port p;
 		      C=connector_create(NVOID,rect,color,thickness,background,NULL);
 		      if ( C == NULL) return;
+		      /* herits the frame graphic context */
+		      C->obj->frame = F;
 		      if (nsp_list_end_insert(F->objs,NSP_OBJECT(C)) == FAIL) return ; 
 		      /* and link obj,link and L to the connector */
 		      p.object_id =NSP_OBJECT(C); 

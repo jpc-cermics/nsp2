@@ -91,7 +91,7 @@ typedef enum { MOVE, MOVE_CONTROL } move_action ;
 extern int gframe_move_obj (NspGFrame *R,NspObject *O, const double *pt, int stop, int cp,move_action  action ); 
 extern void gframe_unhilite_objs (NspGFrame *R, int draw); 
 extern void gframe_delete_hilited (NspGFrame *R); 
-extern int gframe_create_new_block(NspGFrame *R);
+extern NspObject* gframe_create_new_block(NspGFrame *R);
 extern int gframe_create_new_connector(NspGFrame *R);
 extern int gframe_create_new_link(NspGFrame *F);
 extern int gframe_create_new_rect(NspGFrame *F);

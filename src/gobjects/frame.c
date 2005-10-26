@@ -484,12 +484,19 @@ int int_gf_hilite_near_pt(void *self,Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+
+
+
 int int_gf_new_block(void *self,Stack stack, int rhs, int opt, int lhs)
 {
+  NspObject *obj;
   CheckRhs(0,0);
   CheckLhs(-1,1);
-  gframe_create_new_block(((NspGFrame *) self));
-  return 0;
+  if ((obj = gframe_create_new_block(((NspGFrame *) self)))== NULL) return RET_BUG;
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
 }
 
 int int_gf_new_connector(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -516,6 +523,14 @@ int int_gf_new_link(void *self,Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+int int_gf_delete_hilited(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  gframe_delete_hilited(((NspGFrame *) self));
+  return 0;
+}
+
 static NspMethods gframe_methods[] = {
   { "draw",   int_gfdraw},
   { "new_link", int_gf_new_link },
@@ -526,6 +541,8 @@ static NspMethods gframe_methods[] = {
   { "select_and_move", int_gf_select_and_move},
   { "select_and_split", int_gf_select_and_split},
   { "select_link_and_add_control", int_gf_select_link_and_add_control},
+  { "delete_hilited", int_gf_delete_hilited },
+
   { (char *) 0, NULL}
 };
 
@@ -632,6 +649,7 @@ int gframe_select_obj(NspGFrame *R,const double pt[2], NspObject **O, NspObject 
     }
   return 0;
 }
+
 
 /**
  * gframe_select_lock:
@@ -874,6 +892,8 @@ static void gframe_locks_draw(NspGFrame *R,NspObject *O)
  *
  * Updates the position of the control points of 
  * objects which are locked to object @O. 
+ * this is usefull when movin a block to update links 
+ * positions.
  * 
  **/
 
@@ -1036,7 +1056,7 @@ void gframe_delete_hilited(NspGFrame *R)
 	  NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
 	  if ( bf->get_hilited(C->O) == TRUE ) 
 	    {
-	      /* XXX detruire l'object O */
+	      nsp_object_destroy(&C->O);
 	      C->O = NULLOBJ;
 	    }
 	}
@@ -1059,7 +1079,7 @@ void gframe_delete_hilited(NspGFrame *R)
  * Return value: %OK or %FALSE.
  **/
 
-int gframe_create_new_block(NspGFrame *F)
+NspObject * gframe_create_new_block(NspGFrame *F)
 {
   int color=4,thickness=1, background=9,rep;
   double rect[]={0,100,10,10}, pt[]={0,100};
@@ -1067,15 +1087,15 @@ int gframe_create_new_block(NspGFrame *F)
   /* unhilite all */
   gframe_unhilite_objs(F,FALSE);
   B=block_create(NVOID,rect,color,thickness,background,NULL);
-  if ( B == NULLBLOCK) return FAIL;
+  if ( B == NULLBLOCK) return NULLOBJ;
   B->obj->frame = F;
   B->obj->hilited = TRUE;
-  if (nsp_list_end_insert(F->objs,(NspObject  *) B) == FAIL) return FAIL;
+  if (nsp_list_end_insert(F->objs,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
-  if ( rep== -100 )  return FAIL;
+  if ( rep== -100 )  return NULLOBJ;
   /* XXXX block_draw(B); */
   if ( pixmap ) F->Xgc->graphic_engine->xset_show(F->Xgc);
-  return OK;
+  return NSP_OBJECT(B);
 }
 
 /**
@@ -1097,6 +1117,7 @@ int gframe_create_new_connector(NspGFrame *F)
   gframe_unhilite_objs(F,FALSE);
   B=connector_create(NVOID,rect,color,thickness,background,NULL);
   if ( B == NULL) return FAIL;
+  B->obj->frame = F;
   B->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->objs,(NspObject  *) B) == FAIL) return FAIL;
   rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);

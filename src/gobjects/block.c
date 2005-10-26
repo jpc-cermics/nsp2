@@ -246,6 +246,11 @@ static void block_destroy(NspBlock *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+     int i;
+     for ( i = 0 ; i <  H->obj->n_locks ;i++)
+       {
+	 block_unlock(H,i);
+       }
      FREE(H->obj->locks);
      FREE(H->obj);
    }
@@ -335,6 +340,7 @@ static NspBlock *block_create_void(char *name,NspTypeBase *type)
 NspBlock *block_create(char *name,double rect[],int color,int thickness,int background,
 		       NspTypeBase *type )
 {
+  double pt[2];
   int i;
   NspBlock *H  = block_create_void(name,type);
   if ( H ==  NULLBLOCK) return NULLBLOCK;
@@ -348,11 +354,16 @@ NspBlock *block_create(char *name,double rect[],int color,int thickness,int back
   H->obj->background = background;
   H->obj->hilited = FALSE ; 
   H->obj->show = TRUE   ; 
-  H->obj->n_locks = 4 ; /* a changer  XXXXX */
+  /* initial lock points */
+  H->obj->n_locks = 4 ;
   if (( H->obj->locks = malloc(H->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
   for (i=0; i < H->obj->n_locks ; i++) 
     H->obj->locks[i].port.object_id = NULL; 
-  block_update_locks(H);
+  /* fix the relative position of the four initial locks */
+  block_set_lock_pos_rel(H,0,(pt[0]=0.5,pt[1]=0,pt));
+  block_set_lock_pos_rel(H,1,(pt[0]=0.5,pt[1]=1,pt));
+  block_set_lock_pos_rel(H,2,(pt[0]=0,pt[1]=0.5,pt));
+  block_set_lock_pos_rel(H,3,(pt[0]=1,pt[1]=0.5,pt));
   return H;
 }
 
@@ -491,6 +502,8 @@ static int int_gblock_set_show(void *Hv, char *attr, NspObject *O)
   return OK ;
 }
 
+
+
 static AttrTab block_attrs[] = {
   { "color",        int_gblock_get_color ,     int_gblock_set_color ,     NULL },
   { "background",    int_gblock_get_background,  int_gblock_set_background,  NULL },
@@ -541,10 +554,52 @@ static int int_gblock_resize(void  *self, Stack stack, int rhs, int opt, int lhs
   return 1;
 }
 
+/* fix a lock point position 
+ * in relative coordinates 
+ */
+
+static int int_gblock_set_lock_pos(void  *self, Stack stack, int rhs, int opt, int lhs)
+{
+  int lock;
+  NspMatrix *M;
+  CheckRhs(2,2);
+  CheckLhs(-1,1);
+  if ( GetScalarInt(stack,1,&lock) == FAIL) return RET_BUG;
+  if ((M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+  CheckLength(stack.fname,1,M,2);
+  block_set_lock_pos_rel(self,lock,M->R);
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+/*
+ * reset the locks pos
+ */
+
+static int int_gblock_set_locks_pos(void  *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *Pt,*Type;
+  CheckRhs(2,2);
+  CheckLhs(-1,1);
+  if ((Pt= GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  if ((Type= GetMatInt(stack,2)) == NULLMAT ) return RET_BUG;
+  if ( Pt->m != 2 || Pt->n != Type->mn )
+    {
+      Scierror("Error: wrong dimensions\n");
+      return RET_BUG;
+    }
+  if ( block_set_locks(self,Pt,Type) == FAIL) return RET_BUG;
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+
 static NspMethods block_methods[] = {
   { "translate", int_gblock_translate},
   { "resize",   int_gblock_resize},
   { "draw",   int_gblock_draw},
+  { "set_lock_pos", int_gblock_set_lock_pos},
+  { "set_locks_pos", int_gblock_set_locks_pos},
   { (char *) 0, NULL}
 };
 
@@ -651,7 +706,7 @@ void block_draw(NspBlock *B)
 
   /* first draw inside */
   /* just a test we draw a Matrix inside the block */
-  draw_script = 0;
+  draw_script = 2;
   switch (draw_script)
     {
     case 0: 
@@ -739,14 +794,12 @@ void block_resize(NspBlock *B,const double size[2])
 
 void block_update_locks(NspBlock *B)
 {
-  B->obj->locks[0].pt[0]=B->obj->r[0]+B->obj->r[2]/2; 
-  B->obj->locks[0].pt[1]=B->obj->r[1];
-  B->obj->locks[1].pt[0]=B->obj->r[0]+B->obj->r[2]/2; 
-  B->obj->locks[1].pt[1]=B->obj->r[1]-B->obj->r[3];
-  B->obj->locks[2].pt[0]=B->obj->r[0];        
-  B->obj->locks[2].pt[1]=B->obj->r[1]-B->obj->r[3]/2;
-  B->obj->locks[3].pt[0]=B->obj->r[0]+B->obj->r[2];   
-  B->obj->locks[3].pt[1]=B->obj->r[1]-B->obj->r[3]/2;
+  int i;
+  for (i=0; i < B->obj->n_locks ; i++) 
+    {
+      B->obj->locks[i].pt[0]=B->obj->r[0]+B->obj->r[2]*B->obj->locks[i].ptr[0]; 
+      B->obj->locks[i].pt[1]=B->obj->r[1]-B->obj->r[3]*B->obj->locks[i].ptr[1];
+    }
 }
 
 /**
@@ -761,7 +814,18 @@ void block_update_locks(NspBlock *B)
 
 int block_contains_pt(const NspBlock *B,const double pt[2])
 {
-  return B->obj->r[0] <= pt[0] && B->obj->r[1] >= pt[1] && B->obj->r[0]+B->obj->r[2] >= pt[0] && B->obj->r[1]- B->obj->r[3] <= pt[1];
+  int rep = B->obj->r[0] <= pt[0] && B->obj->r[1] >= pt[1] && B->obj->r[0]+B->obj->r[2] >= pt[0] && B->obj->r[1]- B->obj->r[3] <= pt[1];
+  if (rep == TRUE )
+    {
+      int i;
+      for ( i=0 ; i < B->obj->n_locks ; i++ ) 
+	{
+	  double d= Max(Abs( B->obj->locks[i].pt[0] -pt[0]),Abs( B->obj->locks[i].pt[1] -pt[1])) ;
+	  if ( d < lock_size ) 
+	    return FALSE;
+	}
+    }
+  return rep;
 }
 
 /**
@@ -1011,10 +1075,13 @@ int block_is_lock_connected(NspBlock *B,int i)
  * @i: a lock point id. 
  * @pt: a point coordinates 
  * 
- * Sets the lock point @i poistion to @pt. 
+ * Sets the lock point @i position to @pt. 
+ * XXXX : not supposed to call ths function since 
+ *        relative positions should be moved !!
+ *        But it is maybe only called for links.
  **/
 
-void block_set_lock_pos(NspBlock *B, int i,const double pt[])
+static void block_set_lock_pos(NspBlock *B, int i,const double pt[])
 {
   if ( i >= 0 && i < B->obj->n_locks )
     {
@@ -1023,10 +1090,91 @@ void block_set_lock_pos(NspBlock *B, int i,const double pt[])
     }
 }
 
+/**
+ * block_set_lock_pos_rel: 
+ * @B: a block 
+ * @i: a lock point id. 
+ * @pt: a point coordinates 
+ * 
+ * Sets the lock point @i relative position (i.e in % of the 
+ * block rect) to @pt. The absolute value is updated accordingly.
+ **/
+
+static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[])
+{
+  if ( i >= 0 && i < B->obj->n_locks )
+    {
+      B->obj->locks[i].ptr[0] = pt[0];
+      B->obj->locks[i].ptr[1] = pt[1];
+      B->obj->locks[i].pt[0]=B->obj->r[0]+B->obj->r[2]*B->obj->locks[i].ptr[0]; 
+      B->obj->locks[i].pt[1]=B->obj->r[1]-B->obj->r[3]*B->obj->locks[i].ptr[1];
+    }
+}
+
+/**
+ * block_set_locks:
+ * @B: 
+ * @Pt: 2xn 
+ * @type: n 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+static int block_set_locks(NspBlock *B,NspMatrix *Pt,NspMatrix *type)
+{
+  void *lock;
+  int i;
+  /* first unlock the locks */
+  for ( i = 0 ; i <  B->obj->n_locks ;i++)
+    {
+      block_unlock(B,i);
+    }
+  /* now create new lock */
+  B->obj->n_locks = Pt->n ;
+  
+  if (( lock  = malloc(B->obj->n_locks*sizeof(grb_lock))) == NULL ) 
+    {
+      Scierror("Error: no more memory\n");
+      return FAIL;
+    }
+  B->obj->locks = lock;
+  for (i=0; i < B->obj->n_locks ; i++) 
+    {
+      B->obj->locks[i].port.object_id = NULL; 
+      B->obj->locks[i].type = type->I[i];
+      block_set_lock_pos_rel(B,i,Pt->R+2*i);
+    }
+  return OK;
+}
 
 
+/**
+ * block_unlock:
+ * @L: 
+ * @lp: 
+ * 
+ * unlock the associated lock point of the block 
+ **/
 
-
+static void block_unlock( NspBlock *B,int lp) 
+{
+  NspObject *O1;
+  gr_port p; 
+  /* just test if unlock is necessary */
+  if ( block_is_lock_connected(B,lp)==FALSE ) return; 
+  if ( block_get_lock_connection(B,lp,0,&p)==FAIL) return;
+  /* we are locked to a block, unlock it */
+  O1 = p.object_id;
+  if ( O1 != NULLOBJ ) 
+    {
+      /* propagate unlock to the locked object */
+      GR_INT(O1->basetype->interface)->unset_lock_connection(O1,p.lock,p.port);
+    }
+  /* unset the lock on the block */
+  block_unset_lock_connection(B,lp,0);
+}
 
 
 

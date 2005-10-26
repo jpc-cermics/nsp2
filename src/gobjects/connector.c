@@ -245,6 +245,7 @@ static void connector_destroy(NspConnector *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+     connector_unlock(H,0);
      FREE(H->obj->lock.ports);
      FREE(H->obj);
    }
@@ -1041,7 +1042,35 @@ void connector_set_lock_pos(NspConnector *B, int i,const double pt[])
 }
 
 
+/**
+ * connector_unlock:
+ * @L: 
+ * @lp: 
+ * 
+ * unlock the associated lock point of the connector 
+ **/
 
+static void connector_unlock( NspConnector *B,int lp) 
+{
+  NspObject *O1;
+  gr_port p; 
+  int i;
+  /* just test if unlock is necessary */
+  if ( connector_is_lock_connected(B,lp)==FALSE ) return; 
+  for ( i= 0 ; i < B->obj->lock.n_ports ; i++) 
+    {
+      if ( connector_get_lock_connection(B,0,i,&p)==FAIL) continue;
+      /* we are locked to to an object unlock it */
+      O1 = p.object_id;
+      if ( O1 != NULLOBJ ) 
+	{
+	  /* propagate unlock to the locked object */
+	  GR_INT(O1->basetype->interface)->unset_lock_connection(O1,p.lock,p.port);
+	}
+      /* unset the lock on the connector */
+      connector_unset_lock_connection(B,0,i);
+    }
+}
 
 
 

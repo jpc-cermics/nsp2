@@ -30,7 +30,9 @@ typedef struct _NspTypeBlock {
 
 typedef struct b_lock {
   gr_port port;  /* Only one port */
-  double pt[2]; /* lock position */
+  double pt[2]; /* lock position in the frame*/
+  double ptr[2]; /* lock position (relative position in the block)*/
+  int type ; /* type of the lock point */
 } grb_lock ; 
 
 typedef struct _nsp_block nsp_block;
@@ -104,6 +106,10 @@ static void block_unset_lock_connection(NspBlock *B,int i,int port);
 static int block_is_lock_connectable(NspBlock *B,int i);
 static int block_is_lock_connected(NspBlock *B,int i);
 static void block_set_lock_pos(NspBlock *B, int i,const double pt[]);
+static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[]);
+
+static void block_unlock( NspBlock *B,int lp) ;
+static int block_set_locks(NspBlock *B,NspMatrix *Pt,NspMatrix *type);
 
 #endif /* Block_Private */
 
