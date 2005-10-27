@@ -1472,7 +1472,99 @@ void nsp_hilbert_inverse_matrix(double *a,int n)
 }
 
 
+/*------------------------------------------------------------------------
+ * next functions are copyrighted 
+ *    Copyright (c) 1997-2002 by Inria Lorraine.  All Rights Reserved 
+ *    fleury - Jun 29, 1999: Created. 
+ *    modified by jpc
+ *------------------------------------------------------------------------*/
+
+static void swap (double*, double*, int);
+
+/* utility */ 
+
+static void swap(double* ptr1, double* ptr2, int size)
+{
+  double tmp;
+  int i;
+  for (i = 0; i < size; ++i) {
+    tmp = ptr1[i];
+    ptr1[i] = ptr2[i];
+    ptr2[i] = tmp;
+  }
+}
 
 
+/**
+ * nsp_double2complex:
+ * @tab: array of double to be converted 
+ * @size: size of array 
+ *    Converts complex representation in @tab 
+ *     [r_0, r_1,..., r_n, i_0, i_1,..., i_n]
+ *    into [r_0, i_0, r_1, i_1, ..., r_n, i_n]
+ *     Complexity O(nlogn) for this version. One can easly have
+ *     O(nloglogn) by pruning the recursion. Next version wil take care 
+ *     of the cache size.
+ *     fleury - May 7, 1999: Created.
+ **/
 
+void nsp_double2complex( double *tab, int size)
+{
+  int nb;
+  if (size == 1) {
+    return;
+  }
+  nb = size / 2;
+  if ( size % 2) {		
+    /* si le nbr est impaire on "coupe" un
+     * complexe en deux et donc il faut
+     * reparer ce crime... 
+     */
+    swap(&(tab[nb]), &(tab[size + nb]), 1);
+    swap(&tab[size - nb - 1], &tab[size], nb + 1); 
+    nsp_double2complex(&tab[0], nb);
+    nsp_double2complex(&tab[size + 1], nb);
+  }
+  else {
+    swap(&tab[size - nb], &tab[size], nb); 
+    nsp_double2complex(&tab[0], nb);
+    nsp_double2complex(&tab[size], nb);
+  }
+}
+
+
+/*--------------------------------------------------------
+ * f772sci 
+ *    Converts f77 complex representation 
+ *    into scilab  representation 
+ *     Complexity O(nlogn) for this version. One can easly have
+ *     O(nloglogn) by pruning the recursion. Next version wil take care 
+ *     of the cache size.
+ *     fleury - May 7, 1999: Created.
+ *--------------------------------------------------------*/
+
+void nsp_complex2double(double *tab, int size)
+{
+  int nb;
+  
+  if (size == 1) {
+    return;
+  }
+  nb = size / 2;
+  if (size % 2) {		
+    /* si le nbr est impaire on "coupe" un
+     * complexe en deux et donc il faut
+     * reparer ce crime... 
+     */
+    nsp_complex2double(&tab[0], nb);
+    nsp_complex2double(&tab[size + 1], nb);
+    swap(&(tab[size - 1]), &(tab[size]), 1);
+    swap(&tab[size - nb - 1], &tab[size], nb + 1); 
+  }
+  else {
+    nsp_complex2double(&tab[0], nb);
+    nsp_complex2double(&tab[size], nb);
+    swap(&tab[size - nb], &tab[size], nb); 
+  }
+} 
 
