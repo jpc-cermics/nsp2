@@ -119,7 +119,7 @@ extern int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2]);
 extern void link_check(NspGFrame *F,NspLink *L);
 extern int IsLink(NspObject *O);
 extern int link_add_control(NspLink *L,const double pt[2]);
-
+extern int link_remove_control(NspLink *L,const double pt[2]);
 
 #endif
 

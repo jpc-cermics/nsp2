@@ -34,7 +34,7 @@ struct _NspMatrix {
     int *I;        /* Pointer on integer values */
   };
   char rc_type;    /* 'r' : real or  'c' : complex  */
-  char convert;    /* 'd','i','f' : double, int, float
+  char convert;    /* 'd','i','f','c' : double, int, float, old_complex
 		    * used to remember array converted in place */
 };
 
@@ -117,6 +117,9 @@ extern NspMatrix *GetRealMatCopyInt (Stack stack, int i);
 extern NspMatrix *GetRealMatInt (Stack stack, int i); 
 extern NspMatrix *GetRealMatCopyFloat (Stack stack, int i); 
 extern NspMatrix *GetRealMatFloat (Stack stack, int i); 
+extern NspMatrix *GetMtlbMatCopy (Stack stack, int i);
+extern NspMatrix *GetMtlbMat (Stack stack, int i);
+
 extern int IntScalar (NspObject *O, int *val); 
 extern int GetScalarInt (Stack stack, int i, int *val); 
 extern int DoubleScalar (NspObject *O, double *val); 
@@ -130,6 +133,7 @@ extern int *nsp_indices_for_deletions(int mn, const NspMatrix *Elts, int *Count)
 extern NspMatrix *Mat2double (NspMatrix *A); 
 extern NspMatrix *Mat2int (NspMatrix *A); 
 extern NspMatrix *Mat2float (NspMatrix *A); 
+extern NspMatrix *Mat2mtlb_cplx (NspMatrix * A);
 
 typedef int (*F_Enlarge) (void *A,int m,int n);
 

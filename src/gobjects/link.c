@@ -939,6 +939,16 @@ void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,doub
        */
       int lp= (cp == 0) ? 0 : 1 ;
       link_lock_update(F,L,lp,ptc);
+      if ( L->obj->poly->m >= 3 && link_is_lock_connected(L,lp)== TRUE)
+	{
+	  /* magnetize previous point toward horiwontal or vertical line */
+	  int next = ( cp == 0) ? 1 : n-2;
+	  int hvfactor=5;
+	  double *x = L->obj->poly->R, *y = L->obj->poly->R + L->obj->poly->m;
+	  /*  magnetism toward horizontal or vertival lines */
+	  if ( Abs( x[cp] - x[next] ) < hvfactor ) x[next] = x[cp];
+	  if ( Abs( y[cp] - y[next] ) < hvfactor ) y[next] = y[cp];
+	}
     }
   xp[cp]=ptc[0];
   yp[cp]=ptc[1];
@@ -1015,6 +1025,26 @@ int link_add_control(NspLink *L,const double pt[2])
     L->obj->poly->R[i]= L->obj->poly->R[i-1];
   L->obj->poly->R[kmin+1]=pt[0];
   return OK;
+}
+
+/** 
+ * link_remove_control_point: 
+ * 
+ * XXXX 
+ * 
+ */
+
+int link_remove_control(NspLink *L,const double pt[2])
+{
+  NspMatrix *Rows;
+  int cp,rep=OK;
+  if ( link_control_near_pt(L,pt,&cp) == FALSE ) return OK;
+  if ( cp == 0 || cp == L->obj->poly->m -1 ) return OK;
+  /* remove point in matrix */
+  if ((Rows = nsp_matrix_create_from_doubles(NVOID,1,1,(double) cp +1))== NULLMAT) return FAIL;
+  if ( nsp_matrix_delete_rows(L->obj->poly,Rows)== FAIL) rep = FAIL;
+  nsp_matrix_destroy(Rows);
+  return rep;
 }
 
 /** 
@@ -1270,53 +1300,38 @@ int link_is_lock_connected(NspLink *B,int i)
  * @pt: a point coordinates 
  * @keep_angle: an integer 
  * 
- * Sets the lock point @i poistion to @pt. 
+ * Sets the lock point @i position to @pt. 
+ * XXXX : keep_angle should be replaced in order 
+ *      to impose pref for horizontal or vertical direction.
+ *      according to the port position of the block 
+ *      
  **/
 
-void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angle)
+static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angle)
 {
+  int hvfactor = 5;
   NspMatrix *M = B->obj->poly;
   int m= B->obj->poly->m;
-  if ( i ==  0 ) 
+  int xp = ( i== 0) ? 0 : m-1;
+  int yp = xp + m;
+  int next = ( i==0 ) ? 1 : -1;
+  int flagx,flagy;
+  if ( keep_angle == TRUE && m >= 3 ) 
     {
-      int flagx,flagy;
-      if ( keep_angle == TRUE && m >= 3 ) 
-	{
-	  flagx = M->R[0] == M->R[1];
-	  flagy=  M->R[m] == M->R[m+1];
-	  M->R[0]=pt[0];
-	  M->R[m]=pt[1];
-	  if ( flagx )  M->R[1]= pt[0];
-	  if ( flagy )  M->R[m+1]= pt[1];
-	}
-      else 
-	{
-	  M->R[0]=pt[0];
-	  M->R[m]=pt[1];
-	}
+      flagx = Abs( M->R[xp] - M->R[xp+next]) < hvfactor ;
+      flagy=  Abs( M->R[yp] - M->R[yp+next]) < hvfactor ;
+      M->R[xp]=pt[0];
+      M->R[yp]=pt[1];
+      /* do not collapse both */
+      if ( flagx )  M->R[xp+next]= pt[0];
+      else if ( flagy )  M->R[yp+next]= pt[1];
     }
-  else if ( i == 1 ) 
+  else 
     {
-      int flagx,flagy;
-      if ( keep_angle == TRUE && m >= 3 ) 
-	{
-	  flagx = M->R[m-1] == M->R[m-2];
-	  flagy=  M->R[2*m-1] == M->R[2*m-2];
-	  M->R[m-1]=pt[0];
-	  M->R[2*m-1]=pt[1];
-	  if ( flagx )  M->R[m-2]= pt[0];
-	  if ( flagy )  M->R[2*m-2]= pt[1];
-	}
-      else
-	{
-	  M->R[m-1]=pt[0];
-	  M->R[2*m-1]=pt[1];
-	}
+      M->R[xp]=pt[0];
+      M->R[yp]=pt[1];
     }
 }
-
-
-
 
 
 

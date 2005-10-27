@@ -13,8 +13,7 @@ OBJSC = rect.obj \
 	grint.obj \
 	frame.obj \
 	connector.obj \
-	gport.obj \
-	glock.obj 
+	gport.obj 
 
 OBJSF=
 

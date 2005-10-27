@@ -41,5 +41,7 @@ extern void nsp_franck_matrix (double *a, int n);
 extern void nsp_franck_inverse_matrix (double *a, int n); 
 extern void nsp_hilbert_matrix (double *a, int n); 
 extern void nsp_hilbert_inverse_matrix (double *a, int n); 
+extern void nsp_complex2double(double *tab, int size);
+extern void nsp_double2complex( double *tab, int size);
 
 #endif /* NSP_INC_   **/

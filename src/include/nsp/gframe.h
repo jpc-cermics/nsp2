@@ -100,6 +100,7 @@ extern int  gframe_hilite_near_pt(NspGFrame *R,const double pt[2]);
 extern void gframe_locks_update(NspGFrame *R,NspObject *O);
 extern int gframe_select_and_split(NspGFrame *R,const double pt[2]);
 extern int gframe_select_link_and_add_control(NspGFrame *R,const double pt[2]);
+extern int gframe_select_link_and_remove_control(NspGFrame *R,const double pt[2]);
 
 
 

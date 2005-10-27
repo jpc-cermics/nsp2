@@ -472,6 +472,19 @@ int int_gf_select_link_and_add_control(void *self,Stack stack, int rhs, int opt,
   return 0;
 }
 
+/* shorten link */
+
+int int_gf_select_link_and_remove_control(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(stack.fname,1,pt,2);
+  gframe_select_link_and_remove_control(((NspGFrame *) self),pt->R);
+  return 0;
+}
+
 
 int int_gf_hilite_near_pt(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -541,6 +554,7 @@ static NspMethods gframe_methods[] = {
   { "select_and_move", int_gf_select_and_move},
   { "select_and_split", int_gf_select_and_split},
   { "select_link_and_add_control", int_gf_select_link_and_add_control},
+  { "select_link_and_remove_control", int_gf_select_link_and_remove_control},
   { "delete_hilited", int_gf_delete_hilited },
 
   { (char *) 0, NULL}
@@ -821,6 +835,31 @@ int gframe_select_link_and_add_control(NspGFrame *R,const double pt[2])
 }
 
 /**
+ * gframe_select_link_and_remove_control:
+ * @R: a #NspGFrame 
+ * @pt: a point position 
+ * 
+ * selects the object which is near the point @pt 
+ * and if this object is a link a control point is added to the link.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int gframe_select_link_and_remove_control(NspGFrame *R,const double pt[2])
+{
+  int rep=OK;
+  NspObject *O;
+  int k = gframe_select_obj(R,pt,&O,NULL);
+  if ( k==0 ) return FAIL;
+  if ( IsLink(O) ) 
+    {
+      rep= link_remove_control((NspLink *)O,pt);
+      gframe_draw(R);
+    }
+  return rep;
+}
+
+/**
  * gframe_hilite_near_pt:
  * @R: a #NspGFrame 
  * @pt: a point position 
@@ -892,7 +931,7 @@ static void gframe_locks_draw(NspGFrame *R,NspObject *O)
  *
  * Updates the position of the control points of 
  * objects which are locked to object @O. 
- * this is usefull when movin  block to update links 
+ * this is usefull when moving  block to update links 
  * positions.
  * 
  **/
@@ -912,7 +951,6 @@ void gframe_locks_update(NspGFrame *R,NspObject *O)
 	      gr_port p;
 	      if ( bf->get_lock_connection(O,i,j,&p)== OK) 
 		{
-		  
 		  NspObject *O1 = p.object_id; 
 		  NspTypeGRint *bf1 = GR_INT(O1->basetype->interface);
 		  double pt[2];
@@ -1211,16 +1249,32 @@ int gframe_create_new_link(NspGFrame *F)
 	  Xgc->graphic_engine->xset_recording(Xgc,record);
 	  return ibutton;
 	}
-      if ( ibutton == stop ) wstop= 1;
+      if ( ibutton == stop ) 
+	{
+	  /* here we stop with a right click 
+	   */
+	  if (  count >= 2  ) 
+	    {
+	      double *x = L->obj->poly->R, *y = L->obj->poly->R + L->obj->poly->m;
+	      /* try to improve angles before quit */
+	      /*  magnetism toward horizontal or vertival lines */
+	      if ( Abs( x[count] - x[count-1] ) < hvfactor ) x[count-1] = x[count];
+	      if ( Abs( y[count] - y[count-1] ) < hvfactor ) y[count-1] = y[count];
+	    }              
+	}
       /* clear link shape using redraw */
       bf->draw(L);
+      
       if ( ibutton == stop ) 
 	{
 	  break; 
 	}
       else if ( ibutton == 0 ) 
 	{
-	  /* click */
+	  /* this is a left click click 
+	   * If the left click is near a lock point we stop 
+	   * 
+	   */
 	  int lock_c, rep;
 	  /* are we near a lock point ? if true mpt is changed  */
 	  pt[0]=mpt[0]; pt[1]=mpt[1];
@@ -1231,7 +1285,19 @@ int gframe_create_new_link(NspGFrame *F)
 	      /* set last point to lock position and stop if it's not the first point*/
 	      L->obj->poly->R[count]= mpt[0];
 	      L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
-	      if ( count != 0) break;
+	      if ( count != 0) 
+		{
+		  if ( count >= 2 ) 
+		    {
+		      double *x = L->obj->poly->R, *y = L->obj->poly->R + L->obj->poly->m;
+		      /* try to improve angles before quit */
+		      /*  magnetism toward horizontal or vertival lines */
+		      if ( Abs( x[count] - x[count-1] ) < hvfactor ) x[count-1] = x[count];
+		      if ( Abs( y[count] - y[count-1] ) < hvfactor ) y[count-1] = y[count];
+		    }		  
+		  /* we have finished */
+		  break;
+		}
 	    }
 	  if ( nsp_matrix_add_rows(L->obj->poly,1)== FAIL ) return FAIL;	  
 	  count ++;
