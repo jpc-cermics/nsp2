@@ -43,7 +43,7 @@ typedef int gr_set_lock_connection(void *B,int i,const gr_port *p);
 typedef void gr_unset_lock_connection(void *B,int i,int port);
 typedef int gr_is_lock_connectable(void *B,int i);
 typedef int gr_is_lock_connected(void *B,int i);
-typedef void gr_set_lock_pos(void *B, int i,const double pt[]);
+typedef void gr_set_lock_pos(void *B, int i,const double pt[],int keep_flag);
 
 typedef struct _NspTypeGRint { 
   NSP_TYPE_OBJECT__ 

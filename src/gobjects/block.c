@@ -390,7 +390,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 static int int_block_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspBlock *H;
-  double *val;
+  double *val=NULL;
   int back=-1,color=-1,thickness=-1;
 
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
@@ -1081,7 +1081,7 @@ int block_is_lock_connected(NspBlock *B,int i)
  *        But it is maybe only called for links.
  **/
 
-static void block_set_lock_pos(NspBlock *B, int i,const double pt[])
+static void block_set_lock_pos(NspBlock *B, int i,const double pt[],int keep_angle)
 {
   if ( i >= 0 && i < B->obj->n_locks )
     {

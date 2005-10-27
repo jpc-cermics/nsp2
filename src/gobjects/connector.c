@@ -380,7 +380,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 static int int_connector_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspConnector *H;
-  double *val;
+  double *val=NULL;
   int back=-1,color=-1,thickness=-1;
 
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
@@ -1032,7 +1032,7 @@ int connector_is_lock_connected(NspConnector *B,int i)
  * Sets the lock point @i poistion to @pt. 
  **/
 
-void connector_set_lock_pos(NspConnector *B, int i,const double pt[])
+void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle)
 {
   if ( i == 0 )
     {

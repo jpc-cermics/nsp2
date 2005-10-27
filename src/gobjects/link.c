@@ -1043,7 +1043,7 @@ void link_check(NspGFrame *F,NspLink *L)
 	    {
 	      Scierror("Link lock point is over an object lock and lock is not active\n");
 	      pt[0]+= lock_size*2;
-	      link_set_lock_pos(L,i,pt);
+	      link_set_lock_pos(L,i,pt,FALSE);
 	    }
 	}
       /* checks if lock point is over a link */
@@ -1268,22 +1268,50 @@ int link_is_lock_connected(NspLink *B,int i)
  * @B: a link 
  * @i: a lock point id. 
  * @pt: a point coordinates 
+ * @keep_angle: an integer 
  * 
  * Sets the lock point @i poistion to @pt. 
  **/
 
-void link_set_lock_pos(NspLink *B, int i,const double pt[])
+void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angle)
 {
-
+  NspMatrix *M = B->obj->poly;
+  int m= B->obj->poly->m;
   if ( i ==  0 ) 
     {
-      B->obj->poly->R[0]=pt[0];
-      B->obj->poly->R[B->obj->poly->m]=pt[1];
+      int flagx,flagy;
+      if ( keep_angle == TRUE && m >= 3 ) 
+	{
+	  flagx = M->R[0] == M->R[1];
+	  flagy=  M->R[m] == M->R[m+1];
+	  M->R[0]=pt[0];
+	  M->R[m]=pt[1];
+	  if ( flagx )  M->R[1]= pt[0];
+	  if ( flagy )  M->R[m+1]= pt[1];
+	}
+      else 
+	{
+	  M->R[0]=pt[0];
+	  M->R[m]=pt[1];
+	}
     }
   else if ( i == 1 ) 
     {
-      B->obj->poly->R[B->obj->poly->m-1]=pt[0];
-      B->obj->poly->R[2*B->obj->poly->m-1]=pt[1];
+      int flagx,flagy;
+      if ( keep_angle == TRUE && m >= 3 ) 
+	{
+	  flagx = M->R[m-1] == M->R[m-2];
+	  flagy=  M->R[2*m-1] == M->R[2*m-2];
+	  M->R[m-1]=pt[0];
+	  M->R[2*m-1]=pt[1];
+	  if ( flagx )  M->R[m-2]= pt[0];
+	  if ( flagy )  M->R[2*m-2]= pt[1];
+	}
+      else
+	{
+	  M->R[m-1]=pt[0];
+	  M->R[2*m-1]=pt[1];
+	}
     }
 }
 

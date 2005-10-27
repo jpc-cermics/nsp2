@@ -892,7 +892,7 @@ static void gframe_locks_draw(NspGFrame *R,NspObject *O)
  *
  * Updates the position of the control points of 
  * objects which are locked to object @O. 
- * this is usefull when movin a block to update links 
+ * this is usefull when movin  block to update links 
  * positions.
  * 
  **/
@@ -917,7 +917,10 @@ void gframe_locks_update(NspGFrame *R,NspObject *O)
 		  NspTypeGRint *bf1 = GR_INT(O1->basetype->interface);
 		  double pt[2];
 		  bf->get_lock_pos(O,i,pt);
-		  bf1->set_lock_pos(O1,p.lock,pt);
+		  /* updates links acordingly and try to keep 
+		   * angles 
+		   */
+		  bf1->set_lock_pos(O1,p.lock,pt,TRUE);
 		}
 	    }
 	}

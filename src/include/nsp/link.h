@@ -101,7 +101,7 @@ static int link_set_lock_connection(NspLink *B,int i,const gr_port *p);
 static void link_unset_lock_connection(NspLink *B,int i,int port);
 static int link_is_lock_connectable(NspLink *B,int i);
 static int link_is_lock_connected(NspLink *B,int i);
-static void link_set_lock_pos(NspLink *B, int i,const double pt[]);
+static void link_set_lock_pos(NspLink *B, int i,const double pt[],int keep_angle);
 
 static int int_link_create(Stack stack, int rhs, int opt, int lhs);
 #endif /* Link_Private */
