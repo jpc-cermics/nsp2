@@ -10,8 +10,7 @@ OBJSC = rect.o \
 	grint.o \
 	frame.o \
 	connector.o \
-	gport.o \
-	glock.o 
+	gport.o 
 
 OBJSF=
 
