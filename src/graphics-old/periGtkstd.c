@@ -295,18 +295,29 @@ static gboolean locator_button_press(GtkWidget *widget,
 				     GdkEventButton *event,
 				     BCG *gc)
 {
+  int id;
+  switch (event->type) 
+    {
+    case GDK_BUTTON_PRESS : id= event->button-1 ;break;
+    case GDK_2BUTTON_PRESS : id= event->button-1 +3;break;
+    case GDK_3BUTTON_PRESS : id= event->button-1 +6;break;
+    default: 
+      break;
+    }
+
   if ( info.sci_click_activated == FALSE ) 
     {
-      PushClickQueue( gc->CurWindow,event->x, event->y,event->button-1 ,0,0);
+      PushClickQueue( gc->CurWindow,event->x, event->y,id,0,0);
     }
   else 
     {
       info.ok = 1; info.win=  gc->CurWindow; info.x = event->x; info.y = event->y; 
-      info.button = event->button -1;
+      info.button = id;
       gtk_main_quit();
     }
   return TRUE;
 }
+
 
 static gboolean locator_button_release(GtkWidget *widget,
 				       GdkEventButton *event,
