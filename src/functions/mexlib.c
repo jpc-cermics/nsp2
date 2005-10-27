@@ -82,7 +82,7 @@ static void nsp_initmex(char *name,int *lfirst,int lhs,int  *plhs[], int rhs,con
   stack.first = *lfirst;
   stack.fname = name;
   for (k = 0; k < rhs ; ++k) prhs[k]= NSP_INT_TO_POINTER(k+1);
-  for (k = 0; k < Max(lhs,1) ; ++k) plhs[k]= -1;
+  for (k = 0; k < Max(lhs,1) ; ++k) plhs[k]=NSP_INT_TO_POINTER(-1);
 } 
 
 static void nsp_endmex(int lhs,int  *plhs[],int rhs,const int  *prhs[])
@@ -114,7 +114,7 @@ int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
     }
   nsp_initmex(stack.fname,&stack.first,lhs, plhs, rhs, prhs);
   mexFunction(lhs, plhs, rhs, prhs);
-  if ( lhs <= 0 && plhs[0] != -1 ) lhs = 1;
+  if ( lhs <= 0 && NSP_POINTER_TO_INT(plhs[0]) != -1 ) lhs = 1;
   nsp_endmex(lhs, plhs, rhs, prhs);
   return lhs;
 }
