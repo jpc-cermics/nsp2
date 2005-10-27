@@ -75,6 +75,28 @@ static void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs
   }
 }  
 
+static void mexFunction1(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[])
+{
+ int      rows=2, cols=4; 
+ double   pr_data[] = {5.2, 7.9, 1.3, 4.2, 6.7, 5.9, 1.9, 9.4};
+ double   pi_data[] = {3.4, 6.5, 2.2, 9.1, 8.3, 4.7, 2.5, 7.5};
+ double  *start_of_pr, *start_of_pi;
+ mxArray *array_ptr;
+
+ /* Create a 2-by-4 real double matrix named "B". */ 
+ array_ptr = mxCreateFull(rows, cols, 1 );
+
+ /* Populate the real part of the created array. */ 
+ start_of_pr = (double *)mxGetPr(array_ptr);
+ memcpy(start_of_pr, pr_data, rows * cols * sizeof(double) );
+
+ /* Populate the imaginary part of the created array.  */
+ start_of_pi = (double *)mxGetPi(array_ptr);
+ memcpy(start_of_pi, pi_data, rows * cols * sizeof(double) );
+ plhs[0] = array_ptr;
+}
+
+
 /*
  * called function 
  */
@@ -98,6 +120,7 @@ typedef  struct  {
 
 static nsp_mex_tab mex_func[]={
   {"mexfun",mexFunction},
+  {"mexfun1",mexFunction1},
   {(char *) 0, NULL}
 };
 

@@ -82,15 +82,16 @@ static void nsp_initmex(char *name,int *lfirst,int lhs,int  *plhs[], int rhs,con
   stack.first = *lfirst;
   stack.fname = name;
   for (k = 0; k < rhs ; ++k) prhs[k]= NSP_INT_TO_POINTER(k+1);
+  for (k = 0; k < Max(lhs,1) ; ++k) plhs[k]= -1;
 } 
 
 static void nsp_endmex(int lhs,int  *plhs[],int rhs,const int  *prhs[])
 {
   int i;
-  for ( i= 0 ; i < lhs ; i++) 
+  for ( i= 0 ; i < Max(lhs,1) ; i++) 
     {
       int j= NSP_POINTER_TO_INT(plhs[i]);
-      NthObj(j)->ret_pos = i+1;
+      if ( j != -1 ) NthObj(j)->ret_pos = i+1;
     }
   onlyone =0;
 }
@@ -113,7 +114,7 @@ int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
     }
   nsp_initmex(stack.fname,&stack.first,lhs, plhs, rhs, prhs);
   mexFunction(lhs, plhs, rhs, prhs);
-  lhs=Max(lhs,0);
+  if ( lhs <= 0 && plhs[0] != -1 ) lhs = 1;
   nsp_endmex(lhs, plhs, rhs, prhs);
   return lhs;
 }
@@ -133,7 +134,7 @@ double *mxGetPr(const mxArray *ptr)
 {
   int i= NSP_POINTER_TO_INT( ptr);
   NspMatrix *A;
-  if ((A=GetRealMat(stack,i)) == NULLMAT)   
+  if (( A=GetMtlbMat(stack,i)) == NULLMAT)   
     {
       nsp_mex_errjump();
     }
@@ -141,16 +142,12 @@ double *mxGetPr(const mxArray *ptr)
 }
 
 /* Get imaginary part of matrix */
-/* we need to make a copy since Matlab complex matrix are 
- *  not implemented as complex arrays 
- *  XXXX : pas bon a revoir 
- **/
 
 double *mxGetPi(const mxArray *ptr)
 {  
   int i= NSP_POINTER_TO_INT(ptr);
   NspMatrix *A;
-  if ((A=GetRealMat(stack,i)) == NULLMAT) 
+  if ((A=GetMtlbMat(stack,i)) == NULLMAT) 
     nsp_mex_errjump();
   if ( A->rc_type == 'r' )
     {
@@ -160,12 +157,7 @@ double *mxGetPi(const mxArray *ptr)
       Scierror("is a real matrix\n");
       nsp_mex_errjump();
     }
-  else
-    {
-      if ( (A=GetMatCopy(stack,i))== NULLMAT) nsp_mex_errjump();
-      if (nsp_mat_get_imag(A) !=  OK ) nsp_mex_errjump(); ;
-    }
-  return A->R;
+  return A->R+ A->mn;
 }
 
 /* Get m dimension of matrix **/
@@ -328,6 +320,7 @@ int *mxCreateFull(int m, int n, int it)
   else
     {
       if ((A = nsp_matrix_create(NVOID,'c',m,n) ) == NULLMAT) nsp_mex_errjump();
+      A->convert = 'c'; /* matab complex style */
     }
   newmat++;
   NthObj(rhs+newmat)= (NspObject*) A;
