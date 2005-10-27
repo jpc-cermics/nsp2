@@ -449,6 +449,23 @@ GetMat (Stack stack, int i)
 }
 #endif 
 
+/*
+ * GetMat and GetMatCopy and conversions 
+ */
+
+NspMatrix *
+GetMtlbMatCopy (Stack stack, int i)
+{
+  return Mat2mtlb_cplx (GetMatCopy_G (stack, i));
+}
+
+NspMatrix *
+GetMtlbMat (Stack stack, int i)
+{
+  return Mat2mtlb_cplx (GetMat_G (stack, i));
+}
+
+
 NspMatrix *
 GetMatCopyInt (Stack stack, int i)
 {
@@ -898,18 +915,65 @@ NspMatrix *
 Mat2double (NspMatrix * A)
 {
   int inc = -1;
-  if (A != NULLMAT && A->rc_type == 'r')
-    switch (A->convert)
-      {
-      case 'i':
-	nsp_int2double (&A->mn, (int *) A->R, &inc, A->R, &inc);
-	A->convert = 'd';
-	break;
-      case 'f':
-	nsp_float2double (&A->mn, (float *) A->R, &inc, A->R, &inc);
-	A->convert = 'd';
-	break;
-      }
+  if (A == NULLMAT ) return A;
+  if ( A->rc_type == 'r')
+    {
+      switch (A->convert)
+	{
+	case 'i':
+	  nsp_int2double (&A->mn, (int *) A->R, &inc, A->R, &inc);
+	  A->convert = 'd';
+	  break;
+	case 'f':
+	  nsp_float2double (&A->mn, (float *) A->R, &inc, A->R, &inc);
+	  A->convert = 'd';
+	  break;
+	}
+    }
+  else 
+    {
+      if ( A->convert == 'c') 
+	{
+	  nsp_double2complex(A->R, A->mn);
+	  A->convert = 'd';
+	}
+    }
+  return A;
+}
+
+/*
+ * Utility function : 
+ * If the matrix is complex it is converted to 
+ * old style complex mode (used in mexlib)
+ */
+
+NspMatrix *
+Mat2mtlb_cplx (NspMatrix * A)
+{
+  int inc = -1;
+  if (A == NULLMAT ) return A;
+  if ( A->rc_type == 'r')
+    {
+      switch (A->convert)
+	{
+	case 'i':
+	  nsp_int2double (&A->mn, (int *) A->R, &inc, A->R, &inc);
+	  A->convert = 'd';
+	  break;
+	case 'f':
+	  nsp_float2double (&A->mn, (float *) A->R, &inc, A->R, &inc);
+	  A->convert = 'd';
+	  break;
+	}
+    }
+  else 
+    {
+      if ( A->convert == 'd') 
+	{
+	  nsp_complex2double(A->R, A->mn);
+	  A->convert = 'c';
+	}
+    }
   return A;
 }
 
