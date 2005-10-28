@@ -189,30 +189,18 @@ static char *block_type_short_string(void)
   return(block_short_type_name);
 }
 
-/** used in for x=y where y is a Block **/
-
-int BlockFullComp(NspBlock * A,NspBlock * B,char *op,int *err)
-{
-  Scierror("BlockFullComp: to be implemented \n");
-  return FALSE;
-}
+/* used in for x=y where y is a Block */
 
 static int block_eq(NspBlock *A, NspObject *B)
 {
-  int err,rep;
   if ( check_cast(B,nsp_type_block_id) == FALSE) return FALSE ;
-  rep = BlockFullComp(A,(NspBlock *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  if ( A->obj == ((NspBlock *) B)->obj ) return TRUE ;
+  return FALSE;
 }
 
 static int block_neq(NspBlock *A, NspObject *B)
 {
-  int err,rep;
-  if ( check_cast(B,nsp_type_block_id) == FALSE) return TRUE;
-  rep = BlockFullComp(A,(NspBlock *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  return block_eq(A,B)== TRUE ? FALSE : TRUE ;
 }
 
 /*
