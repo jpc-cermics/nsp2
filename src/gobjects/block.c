@@ -105,6 +105,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   gri->get_number_of_ports =(gr_get_number_of_ports *) block_get_number_of_ports;
   gri->get_lock_connection =(gr_get_lock_connection *) block_get_lock_connection;
   gri->get_lock_pos =(gr_get_lock_pos *) block_get_lock_pos;
+  gri->get_lock_dir =(gr_get_lock_dir *) block_get_lock_dir;
   gri->set_lock_connection =(gr_set_lock_connection *) block_set_lock_connection;
   gri->unset_lock_connection =(gr_unset_lock_connection *) block_unset_lock_connection;
   gri->is_lock_connectable =(gr_is_lock_connectable *) block_is_lock_connectable;
@@ -355,6 +356,10 @@ NspBlock *block_create(char *name,double rect[],int color,int thickness,int back
   /* 
    * move the lock pos to the triangle head XXX !! 
    */
+  H->obj->locks[0].type = LNORTH;
+  H->obj->locks[1].type = LSOUTH;
+  H->obj->locks[2].type = LWEST;
+  H->obj->locks[3].type = LEAST;
   block_set_lock_pos_rel(H,0,(pt[0]=0.5,pt[1]=- lock_size/H->obj->r[3],pt));
   block_set_lock_pos_rel(H,1,(pt[0]=0.5,pt[1]=1+lock_size/H->obj->r[3],pt));
   block_set_lock_pos_rel(H,2,(pt[0]=- lock_size/H->obj->r[2],pt[1]=0.5,pt));
@@ -685,8 +690,6 @@ void block_set_show(NspBlock *B,int val) {  B->obj->show = val; }
  * 
  * Return value: 
  **/
-typedef  enum { LNORTH=0, LSOUTH=1, LEAST=2, LWEST=3 } lock_dir;
-typedef  enum { IN=0,OUT=1,EVIN=2,EVOUT=3 } lock_type;
 
 static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked)
 {
@@ -744,7 +747,7 @@ void block_draw(NspBlock *B)
 
   /* first draw inside */
   /* just a test we draw a Matrix inside the block */
-  draw_script = 2;
+  draw_script = 1;
   switch (draw_script)
     {
     case 0: 
@@ -753,7 +756,7 @@ void block_draw(NspBlock *B)
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
       break;
     case 1: 
-      sprintf(str,"draw_inside([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
+      sprintf(str,"draw_vanne([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
       break;
     case 2:
@@ -876,7 +879,8 @@ void block_update_locks(NspBlock *B)
  * @B: a block 
  * @pt: a point position 
  * 
- * Checks if the given point in inside the block enclosing rectangle.
+ * Checks if the given point is inside the block enclosing rectangle but not 
+ * in a lock point of block @B.
  * 
  * Return value: %True or %False.
  **/
@@ -1059,6 +1063,29 @@ void block_get_lock_pos(const NspBlock *B, int i,double pt[])
     }
 }
 
+
+
+/**
+ * block_get_lock_dir:
+ * @B: 
+ * @i: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+lock_dir block_get_lock_dir(const NspBlock *B, int i)
+{
+  if ( i >=  0 && i < B->obj->n_locks )
+    {
+      return B->obj->locks[i].type;
+    }
+  return ANY;
+}
+
+
+
 /**
  * block_set_lock_connection: 
  * @B: a block 
@@ -1151,7 +1178,7 @@ int block_is_lock_connected(NspBlock *B,int i)
  *        But it is maybe only called for links.
  **/
 
-static void block_set_lock_pos(NspBlock *B, int i,const double pt[],int keep_angle)
+static void block_set_lock_pos(NspBlock *B, int i,const double pt[],int keep_angle,lock_dir dir)
 {
   if ( i >= 0 && i < B->obj->n_locks )
     {

@@ -110,6 +110,7 @@ NspTypeLink *new_type_link(type_mode mode)
   gri->get_number_of_ports =(gr_get_number_of_ports *) link_get_number_of_ports;
   gri->get_lock_connection =(gr_get_lock_connection *) link_get_lock_connection;
   gri->get_lock_pos =(gr_get_lock_pos *) link_get_lock_pos;
+  gri->get_lock_dir =(gr_get_lock_dir *) link_get_lock_dir;
   gri->set_lock_connection =(gr_set_lock_connection *) link_set_lock_connection;
   gri->unset_lock_connection =(gr_unset_lock_connection *) link_unset_lock_connection;
   gri->is_lock_connectable =(gr_is_lock_connectable *) link_is_lock_connectable;
@@ -1073,7 +1074,7 @@ void link_check(NspGFrame *F,NspLink *L)
 	    {
 	      Scierror("Link lock point is over an object lock and lock is not active\n");
 	      pt[0]+= lock_size*2;
-	      link_set_lock_pos(L,i,pt,FALSE);
+	      link_set_lock_pos(L,i,pt,FALSE,ANY);
 	    }
 	}
       /* checks if lock point is over a link */
@@ -1212,6 +1213,21 @@ void link_get_lock_pos(const NspLink *B, int i,double pt[])
     }
 }
 
+
+/**
+ * link_get_lock_dir:
+ * @B: 
+ * @i: 
+ * 
+ * Return value: 
+ **/
+
+lock_dir link_get_lock_dir(const NspLink *L, int i)
+{
+  return ANY;
+}
+
+
 /**
  * link_set_lock_connection: 
  * @B: a link 
@@ -1307,24 +1323,33 @@ int link_is_lock_connected(NspLink *B,int i)
  *      
  **/
 
-static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angle)
+static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angle,lock_dir dir)
 {
+  double ptl[2];
   int hvfactor = 5;
   NspMatrix *M = B->obj->poly;
   int m= B->obj->poly->m;
   int xp = ( i== 0) ? 0 : m-1;
   int yp = xp + m;
   int next = ( i==0 ) ? 1 : -1;
-  int flagx,flagy;
-  if ( keep_angle == TRUE && m >= 3 ) 
+
+  if ( keep_angle == TRUE && dir != ANY && m >= 3 ) 
     {
-      flagx = Abs( M->R[xp] - M->R[xp+next]) < hvfactor ;
-      flagy=  Abs( M->R[yp] - M->R[yp+next]) < hvfactor ;
+      ptl[0]=M->R[xp];
+      ptl[1]=M->R[yp];
+      switch ( dir ) 
+	{
+	case LNORTH: 
+	case LSOUTH: 
+	  if ( Abs( M->R[xp] - M->R[xp+next]) < hvfactor )  M->R[xp+next]= pt[0];break;
+	case LWEST:
+	case LEAST: 
+	  if ( Abs( M->R[yp] - M->R[yp+next]) < hvfactor )   M->R[yp+next]= pt[1];break;
+	case ANY: 
+	  break;
+	}
       M->R[xp]=pt[0];
       M->R[yp]=pt[1];
-      /* do not collapse both */
-      if ( flagx )  M->R[xp+next]= pt[0];
-      else if ( flagy )  M->R[yp+next]= pt[1];
     }
   else 
     {

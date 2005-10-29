@@ -13,6 +13,9 @@
 
 #include "nsp/object.h"
 
+typedef  enum { LNORTH=0, LSOUTH=1, LEAST=2, LWEST=3, ANY=4 } lock_dir;
+typedef  enum { IN=0,OUT=1,EVIN=2,EVOUT=3 } lock_type;
+
 typedef int gr_get_hilited (void *B); 
 typedef void gr_set_hilited (void *B, int val); 
 typedef int gr_get_show (void *B); 
@@ -39,11 +42,13 @@ typedef int gr_get_number_of_locks(const void *B) ;
 typedef int gr_get_number_of_ports(const void *B,int lp) ;
 typedef int gr_get_lock_connection(const void *B,int i,int port, gr_port *p );
 typedef void gr_get_lock_pos(const void *B,int i,double pt[]);
+typedef lock_dir gr_get_lock_dir(const void *B,int i);
 typedef int gr_set_lock_connection(void *B,int i,const gr_port *p);
 typedef void gr_unset_lock_connection(void *B,int i,int port);
 typedef int gr_is_lock_connectable(void *B,int i);
 typedef int gr_is_lock_connected(void *B,int i);
-typedef void gr_set_lock_pos(void *B, int i,const double pt[],int keep_flag);
+
+typedef void gr_set_lock_pos(void *B, int i,const double pt[],int keep_flag,lock_dir dir);
 
 typedef struct _NspTypeGRint { 
   NSP_TYPE_OBJECT__ 
@@ -68,6 +73,7 @@ typedef struct _NspTypeGRint {
   gr_get_number_of_ports * get_number_of_ports;
   gr_get_lock_connection * get_lock_connection;
   gr_get_lock_pos * get_lock_pos;
+  gr_get_lock_dir * get_lock_dir;
   gr_set_lock_connection * set_lock_connection;
   gr_unset_lock_connection * unset_lock_connection;
   gr_is_lock_connectable * is_lock_connectable;

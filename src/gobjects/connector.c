@@ -104,6 +104,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
   gri->get_number_of_ports =(gr_get_number_of_ports *) connector_get_number_of_ports;
   gri->get_lock_connection =(gr_get_lock_connection *) connector_get_lock_connection;
   gri->get_lock_pos =(gr_get_lock_pos *) connector_get_lock_pos;
+  gri->get_lock_dir =(gr_get_lock_dir *) connector_get_lock_dir;
   gri->set_lock_connection =(gr_set_lock_connection *) connector_set_lock_connection;
   gri->unset_lock_connection =(gr_unset_lock_connection *) connector_unset_lock_connection;
   gri->is_lock_connectable =(gr_is_lock_connectable *) connector_is_lock_connectable;
@@ -640,40 +641,63 @@ void connector_set_show(NspConnector *B,int val) {  B->obj->show = val; }
  *
  **/
 
-static int lock_size=2;
+static double lock_size=1;
 static int lock_color=10;
 
 void connector_draw(NspConnector *B)
 {
   BCG *Xgc;
-  double loc[4];
-  int cpat, cwidth,i;
+  double loc[6];
+  int cpat, cwidth,locked,lockid=0;
   /* only draw block which are in a frame */
   if ( B->obj->frame == NULL) return;
   if ( B->obj->show == FALSE ) return ;
   Xgc=B->obj->frame->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
-  /* draw frame rectangle only if hilited */
-  Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
-  Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
-  /* add hilited */ 
-  Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+
+  locked =  connector_is_lock_connected(B,lockid);
+
+  if ( B->obj->hilited == TRUE || locked == FALSE ) 
+    {
+      /* draw frame rectangle if hilited or non connected connector */
+      Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
+      Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
+    }
   if ( B->obj->hilited == TRUE ) 
     {
+      /* draw control points when hilited */ 
       loc[0]=B->obj->r[0]; loc[1]=B->obj->r[1];loc[2]=loc[3]= lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
-      loc[0]+= B->obj->r[2] -2; loc[1] -= B->obj->r[3] -2;
+      loc[0]+= B->obj->r[2] -lock_size; loc[1] -= B->obj->r[3] -lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
     }
-  i=0; 
-  if ( connector_is_lock_connected(B,i)== TRUE)
-    Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
+  /* draw the lock point when connected 
+   */
+  if ( locked == TRUE)
+    {
+      Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
+    }
   else 
-    Xgc->graphic_engine->xset_pattern(Xgc,1); 
-  connector_get_lock_pos(B,i,loc);
-  loc[0] += -1; loc[1] += 1;loc[2]=loc[3]= lock_size;
-  Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
+    {
+      Xgc->graphic_engine->xset_pattern(Xgc,1); 
+    }
+  connector_get_lock_pos(B,lockid,loc);
+  loc[0] -= lock_size/2; loc[1] += lock_size/2;loc[2]=loc[3]= lock_size;
+  if (0) 
+    {
+      if ( locked ) 
+	Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
+      Xgc->graphic_engine->scale->drawrectangle(Xgc,loc);
+    }
+  else
+    {
+      loc[4]=0;loc[5]=360*64;
+      if ( locked ) 
+	Xgc->graphic_engine->scale->fillarc(Xgc,loc);
+      Xgc->graphic_engine->scale->drawarc(Xgc,loc);
+    }
+  /* back to default */
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
   Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
@@ -706,8 +730,8 @@ void connector_translate(NspConnector *B,const double pt[2])
 
 void connector_resize(NspConnector *B,const double size[2])
 {
-  B->obj->r[2] = size[0] ;
-  B->obj->r[3] = size[1] ;
+  B->obj->r[2] = Max(size[0],3*lock_size) ;
+  B->obj->r[3] = Max(size[1],3*lock_size) ;
   connector_update_locks(B);
 }
 
@@ -731,16 +755,29 @@ void connector_update_locks(NspConnector *B)
  * @B: a connector 
  * @pt: a point position 
  * 
- * Checks if the given point in inside the connector rectangle
- * 
+ * Checks if the given point in inside the connector rectangle.
+ * If the point is inside the lock point of connector and 
+ * the connector is connected then %FALSE is returned
+ * (Because we want to be able to select a link lock point connected 
+ *  to the connector lock point) 
+ *
  * Return value: %True or %False.
  **/
 
 int connector_contains_pt(const NspConnector *B,const double pt[2])
 {
-  return B->obj->r[0] <= pt[0] && B->obj->r[1] >= pt[1] 
+  int rep = B->obj->r[0] <= pt[0] && B->obj->r[1] >= pt[1] 
     && B->obj->r[0]+B->obj->r[2] >= pt[0] && B->obj->r[1]- B->obj->r[3] <= pt[1];
+  if (rep == TRUE &&  connector_is_lock_connected(B,0))
+    {
+      double d= Max(Abs( B->obj->lock.pt[0] -pt[0]),Abs( B->obj->lock.pt[1] -pt[1])) ;
+      if ( d < lock_size ) 
+	return FALSE;
+    }
+  return rep;
 }
+
+
 
 /**
  * connector_control_near_pt:
@@ -903,6 +940,19 @@ void connector_get_lock_pos(const NspConnector *B,int i,double pt[])
 }
 
 /**
+ * connector_get_lock_dir:
+ * @B: 
+ * @i: 
+ * 
+ * Return value: 
+ **/
+
+lock_dir connector_get_lock_dir(const NspConnector *L, int i)
+{
+  return ANY;
+}
+
+/**
  * connector_set_lock_connection: 
  * @B: a connector 
  * @i: a lock point id. 
@@ -1010,7 +1060,7 @@ int connector_is_lock_connectable(NspConnector *B,int i)
  * return value: #TRUE or #FALSE.
  **/
 
-int connector_is_lock_connected(NspConnector *B,int i)
+int connector_is_lock_connected(const NspConnector *B,int i)
 {
   if ( i ==  0 ) 
     {
@@ -1032,7 +1082,7 @@ int connector_is_lock_connected(NspConnector *B,int i)
  * Sets the lock point @i poistion to @pt. 
  **/
 
-void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle)
+void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle,lock_dir dir)
 {
   if ( i == 0 )
     {

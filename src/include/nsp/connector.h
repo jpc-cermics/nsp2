@@ -102,11 +102,12 @@ static int connector_get_number_of_locks(const NspConnector *B) ;
 static int connector_get_number_of_ports(const NspConnector *B,int lp) ;
 static int connector_get_lock_connection(const NspConnector *B,int i,int port, gr_port *p );
 static void connector_get_lock_pos(const NspConnector *B,int i,double pt[]);
+static lock_dir connector_get_lock_dir(const NspConnector *B,int i);
 static int connector_set_lock_connection(NspConnector *B,int i,const gr_port *p);
 static void connector_unset_lock_connection(NspConnector *B,int i,int port);
 static int connector_is_lock_connectable(NspConnector *B,int i);
-static int connector_is_lock_connected(NspConnector *B,int i);
-static void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle);
+static int connector_is_lock_connected(const NspConnector *B,int i);
+static void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle,lock_dir dir);
 static void connector_unlock( NspConnector *B,int lp) ;
 #endif /* Connector_Private */
 

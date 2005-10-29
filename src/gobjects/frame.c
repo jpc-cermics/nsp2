@@ -949,6 +949,7 @@ void gframe_locks_update(NspGFrame *R,NspObject *O)
 	  for ( j= 0 ; j < np ; j++) 
 	    {
 	      gr_port p;
+	      lock_dir dir;
 	      if ( bf->get_lock_connection(O,i,j,&p)== OK) 
 		{
 		  NspObject *O1 = p.object_id; 
@@ -956,9 +957,10 @@ void gframe_locks_update(NspGFrame *R,NspObject *O)
 		  double pt[2];
 		  bf->get_lock_pos(O,i,pt);
 		  /* updates links acordingly and try to keep 
-		   * angles 
+		   * prefered direction 
 		   */
-		  bf1->set_lock_pos(O1,p.lock,pt,TRUE);
+		  dir = bf->get_lock_dir(O,i);		  
+		  bf1->set_lock_pos(O1,p.lock,pt,TRUE,dir);
 		}
 	    }
 	}

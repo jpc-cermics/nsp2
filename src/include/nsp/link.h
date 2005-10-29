@@ -97,11 +97,13 @@ static int link_get_number_of_locks(const NspLink *B) ;
 static int link_get_number_of_ports(const NspLink *B,int lp) ;
 static int link_get_lock_connection(const NspLink *B,int i,int port, gr_port *p );
 static void link_get_lock_pos(const NspLink *B,int i,double pt[]);
+static lock_dir link_get_lock_dir(const NspLink *B,int i);
+
 static int link_set_lock_connection(NspLink *B,int i,const gr_port *p);
 static void link_unset_lock_connection(NspLink *B,int i,int port);
 static int link_is_lock_connectable(NspLink *B,int i);
 static int link_is_lock_connected(NspLink *B,int i);
-static void link_set_lock_pos(NspLink *B, int i,const double pt[],int keep_angle);
+static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angle,lock_dir dir);
 
 static int int_link_create(Stack stack, int rhs, int opt, int lhs);
 #endif /* Link_Private */
