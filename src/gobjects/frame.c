@@ -1024,7 +1024,6 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
       bf->draw(O);
       if ( IsBlock(O)|| IsConnector(O) ) gframe_locks_draw(F,O);
       /* if ( pixmap ) Xgc->graphic_engine->xset_show(); */
-
       /* move object */
       switch ( action ) 
 	{
@@ -1034,7 +1033,7 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
 	case MOVE_CONTROL :
 	  bf->move_control(F,O,mpt,cp, ptwork);
 	}
-      /* update locks positions int locked objects  */ 
+      /* update locks positions for objects locked to objects  */ 
       gframe_locks_update(F,O);
       pt1[0] = mpt[0];
       pt1[1] = mpt[1];
@@ -1045,7 +1044,6 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
   Xgc->graphic_engine->xset_recording(Xgc,record);
   return ibutton;
 }
-
 
 
 /**

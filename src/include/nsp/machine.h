@@ -88,7 +88,7 @@
 #define WITH_ASOUND 1
 
 /* Define if use gmp lib  */
-#define WITH_GMP 1
+/* #undef WITH_GMP */
 
 /* Define if sizeof(int*)==sizeof(int) */
 #define POINTER_INT 1

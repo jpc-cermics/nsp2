@@ -591,7 +591,7 @@ void link_set_show(NspLink *B,int val) {  B->obj->show = val; }
  * Draw 
  **************************************************/
 
-static int lock_size=2;
+static double lock_size=1;
 static int lock_color=10;
 static int link_unconnected_color=10;
 
@@ -624,7 +624,7 @@ void link_draw(NspLink *L)
       /* link points except first and last */
       for ( i=1 ; i < m -1; i++) 
 	{
-	  loc[0]=x[i]-1; loc[1]=y[i]+1;loc[2]=loc[3]= lock_size;
+	  loc[0]=x[i]-lock_size/2; loc[1]=y[i]+lock_size/2;loc[2]=loc[3]= lock_size;
 	  Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
 	}
       /* firts and last link points which are lock points */
@@ -636,7 +636,7 @@ void link_draw(NspLink *L)
 	  else 
 	    Xgc->graphic_engine->xset_pattern(Xgc,1); 
 	  link_get_lock_pos(L,i,loc);
-	  loc[0] += -1; loc[1] += 1;loc[2]=loc[3]= lock_size;
+	  loc[0] += -lock_size/2; loc[1] += lock_size/2;loc[2]=loc[3]= lock_size;
 	  Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
 	}
     }

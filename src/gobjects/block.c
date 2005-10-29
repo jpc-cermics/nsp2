@@ -325,6 +325,9 @@ static NspBlock *block_create_void(char *name,NspTypeBase *type)
  return H;
 }
 
+static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
+static int lock_color=10;
+
 NspBlock *block_create(char *name,double rect[],int color,int thickness,int background,
 		       NspTypeBase *type )
 {
@@ -348,10 +351,14 @@ NspBlock *block_create(char *name,double rect[],int color,int thickness,int back
   for (i=0; i < H->obj->n_locks ; i++) 
     H->obj->locks[i].port.object_id = NULL; 
   /* fix the relative position of the four initial locks */
-  block_set_lock_pos_rel(H,0,(pt[0]=0.5,pt[1]=0,pt));
-  block_set_lock_pos_rel(H,1,(pt[0]=0.5,pt[1]=1,pt));
-  block_set_lock_pos_rel(H,2,(pt[0]=0,pt[1]=0.5,pt));
-  block_set_lock_pos_rel(H,3,(pt[0]=1,pt[1]=0.5,pt));
+
+  /* 
+   * move the lock pos to the triangle head XXX !! 
+   */
+  block_set_lock_pos_rel(H,0,(pt[0]=0.5,pt[1]=- lock_size/H->obj->r[3],pt));
+  block_set_lock_pos_rel(H,1,(pt[0]=0.5,pt[1]=1+lock_size/H->obj->r[3],pt));
+  block_set_lock_pos_rel(H,2,(pt[0]=- lock_size/H->obj->r[2],pt[1]=0.5,pt));
+  block_set_lock_pos_rel(H,3,(pt[0]=1+lock_size/H->obj->r[2] ,pt[1]=0.5,pt));
   return H;
 }
 
@@ -666,6 +673,24 @@ int block_get_show(NspBlock *B) {  return B->obj->show; }
 
 void block_set_show(NspBlock *B,int val) {  B->obj->show = val; } 
 
+typedef  enum { LNORTH=0, LSOUTH=1, LEAST=2, LWEST=3 } lock_dir;
+
+static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir)
+{
+  double alpha[]= {0,180,-90,90},cosa,sina;
+  double lock_shape_x[]={-lock_size/2,lock_size/2,0}, x[3];
+  double lock_shape_y[]={-lock_size,-lock_size,0},y[3];
+  int npt=3 , i;
+  cosa= cos(alpha[dir]*M_PI/180);
+  sina= sin(alpha[dir]*M_PI/180);
+  for ( i = 0 ; i < npt ; i++) 
+    {
+      x[i] = cosa*lock_shape_x[i] -sina*lock_shape_y[i]+pt[0];
+      y[i] = sina*lock_shape_x[i] +cosa*lock_shape_y[i]+pt[1];
+    }
+  Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
+}
+
 /**
  * block_draw:
  * @B: a block 
@@ -674,15 +699,14 @@ void block_set_show(NspBlock *B,int val) {  B->obj->show = val; }
  *
  **/
 
-static int lock_size=2; /*  XXX a factoriser quelque part ... */ 
-static int lock_color=10;
-
 void block_draw(NspBlock *B)
 {
+  /* take care of the fact that str1 must be writable */
+  char str1[] = "my\nblock";
   BCG *Xgc;
   char str[256];
   double loc[4];
-  int cpat, cwidth,i, draw_script ; 
+  int cpat, cwidth,i, draw_script, fill=FALSE;
   /* only draw block which are in a frame */
   if ( B->obj->frame == NULL) return;
   /* check the show attribute */
@@ -706,22 +730,32 @@ void block_draw(NspBlock *B)
       sprintf(str,"draw_inside([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
       break;
+    case 2:
+      /* filling with white */
+      Xgc->graphic_engine->xset_pattern(Xgc,8);
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
+      /* drawing a string */
+      Xgc->graphic_engine->xset_pattern(Xgc,0);
+      loc[0] = B->obj->r[1] - B->obj->r[3];
+      Xgc->graphic_engine->scale->xstringb(Xgc,str1,&fill,
+					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
+      break;
     default: 
       /* fill rectangle */
       Xgc->graphic_engine->xset_pattern(Xgc,B->obj->background);
       Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
       break;
     }
-  /* draw rectangle */
+  /* draw frame rectangle */
   Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
   Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
-  /* add hilited */ 
+  /* add the control points if block is hilited */ 
   Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
   if ( B->obj->hilited == TRUE ) 
     {
       loc[0]=B->obj->r[0]; loc[1]=B->obj->r[1];loc[2]=loc[3]= lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
-      loc[0]+= B->obj->r[2] -2; loc[1] -= B->obj->r[3] -2;
+      loc[0]+= B->obj->r[2] -lock_size; loc[1] -= B->obj->r[3] -lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
     }
   for ( i=0 ; i < B->obj->n_locks  ; i++ ) 
@@ -731,8 +765,16 @@ void block_draw(NspBlock *B)
       else 
 	Xgc->graphic_engine->xset_pattern(Xgc,1); 
       block_get_lock_pos(B,i,loc);
-      loc[0] += -1; loc[1] += 1;loc[2]=loc[3]= lock_size;
-      Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
+      switch (i) 
+	{
+	case 0: lock_draw(Xgc,loc,LNORTH);break;
+	case 1: lock_draw(Xgc,loc,LSOUTH);break;
+	case 2: lock_draw(Xgc,loc,LWEST);break;
+	case 3: lock_draw(Xgc,loc,LEAST);break;
+	}
+      /* loc[0] += -1; loc[1] += 1;loc[2]=loc[3]= lock_size;
+	 Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
+      */
     }
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
   Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
@@ -766,8 +808,14 @@ void block_translate(NspBlock *B,const double tr[2])
 
 void block_resize(NspBlock *B,const double size[2])
 {
+  double pt[2];
   B->obj->r[2] = size[0] ;
   B->obj->r[3] = size[1] ;
+  /* if resized the lock relative positions should change to XXXXX */
+  block_set_lock_pos_rel(B,0,(pt[0]=0.5,pt[1]=- lock_size/B->obj->r[3],pt));
+  block_set_lock_pos_rel(B,1,(pt[0]=0.5,pt[1]=1+lock_size/B->obj->r[3],pt));
+  block_set_lock_pos_rel(B,2,(pt[0]=- lock_size/B->obj->r[2],pt[1]=0.5,pt));
+  block_set_lock_pos_rel(B,3,(pt[0]=1+lock_size/B->obj->r[2] ,pt[1]=0.5,pt));
   block_update_locks(B);
 }
 
@@ -898,11 +946,12 @@ void block_move_control_init( NspBlock *B,int cp,double ptc[2])
 
 void block_move_control(NspGFrame *F, NspBlock *B,const double mpt[2], int cp,double ptc[2])
 {
-  B->obj->r[2] =  Max(  mpt[0] - B->obj->r[0] ,0);
-  B->obj->r[3] =  Max(  B->obj->r[1] -mpt[1] ,0);
+  ptc[0]  =  Max(  mpt[0] - B->obj->r[0] ,0);
+  ptc[1]  =  Max(  B->obj->r[1] -mpt[1] ,0);
+  block_resize(B,ptc);
+  /* return a copy of mpt */
   ptc[0]=mpt[0];
   ptc[1]=mpt[1];
-  block_update_locks(B);
 }
 
 /**
@@ -1163,6 +1212,7 @@ static void block_unlock( NspBlock *B,int lp)
   /* unset the lock on the block */
   block_unset_lock_connection(B,lp,0);
 }
+
 
 
 

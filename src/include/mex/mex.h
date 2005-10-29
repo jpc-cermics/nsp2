@@ -9,28 +9,30 @@
 
 typedef int mxArray;
 typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
-int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction);
 
+extern int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction);
+extern double *mxGetPr (const mxArray *ptr);
+extern double *mxGetPi (const mxArray *ptr);
+extern int mxGetM (const mxArray *ptr);
+extern int mxGetN (const mxArray *ptr);
+extern int mxIsString (const mxArray *ptr);
+extern int mxIsNumeric (const mxArray *ptr);
+extern int mxIsFull (const mxArray *ptr);
+extern int mxIsSparse (const mxArray *ptr);
+extern int mxIsComplex (const mxArray *ptr);
+extern double mxGetScalar (const mxArray *ptr);
+extern void mexErrMsgTxt (char *error_msg);
+extern int *mxCreateFull (int m, int n, int it);
+extern void *mxCalloc (unsigned int n, unsigned int size);
+extern int mxGetString (const mxArray *ptr, char *str, int strl);
+extern void mxFreeMatrix (mxArray *ptr);
+extern void mxFree (void *ptr);
+extern int mexAtExit(void (*ExitFcn)(void));
+extern void mxCreateSparse (mxArray *ptr);
+extern int *mxCreateString (char *string);
+extern int *mxGetJc(const mxArray *ptr);
+extern int *mxGetIr(const mxArray *ptr);
 
-double *mxGetPr (const mxArray *ptr);
-double *mxGetPi (const mxArray *ptr);
-int mxGetM (const mxArray *ptr);
-int mxGetN (const mxArray *ptr);
-int mxIsString (const mxArray *ptr);
-int mxIsNumeric (const mxArray *ptr);
-int mxIsFull (const mxArray *ptr);
-int mxIsSparse (const mxArray *ptr);
-int mxIsComplex (const mxArray *ptr);
-double mxGetScalar (const mxArray *ptr);
-void mexErrMsgTxt (char *error_msg);
-int *mxCreateFull (int m, int n, int it);
-void *mxCalloc (unsigned int n, unsigned int size);
-int mxGetString (const mxArray *ptr, char *str, int strl);
-void mxFreeMatrix (mxArray *ptr);
-void mxFree (mxArray *ptr);
-int mexAtExit (mxArray *ptr);
-void mxCreateSparse (mxArray *ptr);
-int *mxCreateString (char *string);
 
 #define mexPrintf Sciprintf
 
