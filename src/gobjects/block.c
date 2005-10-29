@@ -673,23 +673,49 @@ int block_get_show(NspBlock *B) {  return B->obj->show; }
 
 void block_set_show(NspBlock *B,int val) {  B->obj->show = val; } 
 
+/**
+ * lock_draw:
+ * @Xgc: 
+ * @: 
+ * @dir: 
+ * 
+ * draw a lock point at lock position @pt 
+ * It a lock point in thus the lock point is a the 
+ * arraw end 
+ * 
+ * Return value: 
+ **/
 typedef  enum { LNORTH=0, LSOUTH=1, LEAST=2, LWEST=3 } lock_dir;
+typedef  enum { IN=0,OUT=1,EVIN=2,EVOUT=3 } lock_type;
 
-static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir)
+static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked)
 {
   double alpha[]= {0,180,-90,90},cosa,sina;
   double lock_shape_x[]={-lock_size/2,lock_size/2,0}, x[3];
-  double lock_shape_y[]={-lock_size,-lock_size,0},y[3];
+  double lock_shape_yout[]={-lock_size,-lock_size,0},y[3];
+  double lock_shape_yin[]={0,0,-lock_size}, *ly;
   int npt=3 , i;
+  switch (typ) 
+    {
+    case IN:
+    case EVIN: 
+      ly = lock_shape_yin; break;
+    case OUT:
+    case EVOUT: 
+      ly = lock_shape_yout; break;
+    }
   cosa= cos(alpha[dir]*M_PI/180);
   sina= sin(alpha[dir]*M_PI/180);
   for ( i = 0 ; i < npt ; i++) 
     {
-      x[i] = cosa*lock_shape_x[i] -sina*lock_shape_y[i]+pt[0];
-      y[i] = sina*lock_shape_x[i] +cosa*lock_shape_y[i]+pt[1];
+      x[i] = cosa*lock_shape_x[i] -sina*ly[i]+pt[0];
+      y[i] = sina*lock_shape_x[i] +cosa*ly[i]+pt[1];
     }
-  Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
+  if ( locked ) 
+    Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
 }
+
 
 /**
  * block_draw:
@@ -760,17 +786,24 @@ void block_draw(NspBlock *B)
     }
   for ( i=0 ; i < B->obj->n_locks  ; i++ ) 
     {
+      int locked;
       if ( block_is_lock_connected(B,i)== TRUE)
-	Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
+	{
+	  locked = TRUE;
+	  Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
+	}
       else 
-	Xgc->graphic_engine->xset_pattern(Xgc,1); 
+	{
+	  locked = FALSE;
+	  Xgc->graphic_engine->xset_pattern(Xgc,1); 
+	}
       block_get_lock_pos(B,i,loc);
       switch (i) 
 	{
-	case 0: lock_draw(Xgc,loc,LNORTH);break;
-	case 1: lock_draw(Xgc,loc,LSOUTH);break;
-	case 2: lock_draw(Xgc,loc,LWEST);break;
-	case 3: lock_draw(Xgc,loc,LEAST);break;
+	case 0: lock_draw(Xgc,loc,LNORTH,EVIN,locked);break;
+	case 1: lock_draw(Xgc,loc,LSOUTH,EVOUT,locked);break;
+	case 2: lock_draw(Xgc,loc,LWEST,IN,locked);break;
+	case 3: lock_draw(Xgc,loc,LEAST,OUT,locked);break;
 	}
       /* loc[0] += -1; loc[1] += 1;loc[2]=loc[3]= lock_size;
 	 Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
