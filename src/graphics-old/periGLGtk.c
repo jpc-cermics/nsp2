@@ -107,8 +107,7 @@ static void nsp_gtk_set_color(BCG *Xgc,int col);
 static void LoadFonts(void), LoadSymbFonts(void);
 static void loadfamily_n(char *name, int *j);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
-static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag,int getmotion,
-		     int getrelease,int getkey,char *str, int lstr);
+static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin,int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr, int change_cursor);
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 static void scig_deconnect_handlers(BCG *winxgc);
@@ -527,105 +526,27 @@ static gint timeout_tk (void *v)
 }
 #endif
 
-
-void xclick_any(char *str, int *ibutton, int *x1,int *yy1, int *iwin, int iflag,int motion,int release,int key,int istr)
+void xclick_any(BCG *Xgc,char *str, int *ibutton, int *x1,int *yy1, int *iwin, int iflag,int getmotion,int getrelease,int getkey,int lstr)
 {
-#ifdef WITH_TK
-  guint timer_tk;
-#endif 
-  GTK_locator_info rec_info ; 
-  int win = -1,i;
-  int wincount = window_list_get_max_id()+1;
-  if (wincount == 0) 
-    {
-      *x1=0;  *yy1=0;  *iwin=0;  *ibutton = -100;
-      return; 
-    }
-  
-  /* checks  if we already have something on the queue **/  
-
-  if ( iflag == TRUE && CheckClickQueue(&win,x1,yy1,ibutton) == 1)  
-    {
-      *iwin = win ; return;
-    }
-  if ( iflag == FALSE )   ClearClickQueue(-1);
-
-  /* change the cursors */ 
-
-  for (i=0; i < wincount ; i++ ) 
-    {
-      BCG *bcg =  window_list_search(i);
-      if ( bcg  != NULL)
-	gdk_window_set_cursor(bcg->private->drawing->window,bcg->private->gcursor);
-    }
-
-  /* save info in local variable  */
-  rec_info = info;
-  /* set info */ 
-  info.ok = 0 ; 
-  info.getrelease = release ;
-  info.getmotion   = motion ; 
-  info.getkey     = key ; 
-  info.getmen     = (istr != 0) ? TRUE : FALSE ; 
-  info.sci_click_activated = TRUE;
-
-  if ( info.getmen == TRUE  ) 
-    {
-      /*  Check soft menu activation during xclick_any */ 
-      info.timer = gtk_timeout_add(100, (GtkFunction) timeout_test,NULL);/*  Xgc);*/
-      info.str   = str;
-      info.lstr  = istr; /* on entry it gives the size of str buffer */
-    }
-
-  /* take care of tck/tk */
-  
-#ifdef WITH_TK
-  timer_tk=  gtk_timeout_add(100,  (GtkFunction) timeout_tk , NULL);
-#endif
-
-
-  while (1) 
-    {
-      /* take care of window destroy during this .....XXXXXX */
-      gtk_main();
-      /* be sure that gtk_main_quit was activated by proper event */
-      if ( info.ok == 1 ) break;
-    }
-  
-  *x1 = info.x; 
-  *yy1 = info.y;
-  *ibutton = info.button;
-  *iwin = info.win;
-
-  /* remove timer if it was set by us */ 
-  if ( info.getmen == TRUE )  gtk_timeout_remove (info.timer);
-
-#ifdef WITH_TK
-  gtk_timeout_remove(timer_tk);
-#endif
-  /* take care of recursive calls i.e restore info  */
-  info = rec_info ; 
-
-  for (i=0; i < wincount ; i++ ) 
-    {
-      BCG *bcg =  window_list_search(i);
-      if ( bcg  != NULL) 
-	gdk_window_set_cursor(bcg->private->drawing->window,bcg->private->ccursor);
-    }
+  int change_cursor = TRUE;
+  SciClick(Xgc,ibutton,x1,yy1,iwin,iflag,getmotion,getrelease,getkey,str,lstr,change_cursor);
 }
-
 
 void xclick(BCG * Xgc,char *str, int *ibutton, int *x1,int *yy1,int iflag,int motion,int release,int key, int istr)
 {
-  SciClick(Xgc,ibutton,x1, yy1,iflag,motion,release,key,str,istr);
+  int change_cursor = TRUE;
+  int win = ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) ? 0 : Xgc->CurWindow;
+  SciClick(Xgc,ibutton,x1, yy1,&win,iflag,motion,release,key,str,istr,change_cursor);
 }
 
 void xgetmouse(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int usequeue, int motion,int release,int key)
 {
-  SciClick(Xgc,ibutton,x1, yy1,usequeue,motion,release,key,(char *) 0,0);
+  int change_cursor = TRUE;
+  int win = ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) ? 0 : Xgc->CurWindow;
+  SciClick(Xgc,ibutton,x1, yy1,&win,usequeue,motion,release,key,(char *) 0,0,change_cursor);
 }
 
-/*
+/*------------------------------------------------------------------------------
  * wait for events: mouse motion and mouse press and release 
  *                  and dynamic menu activation through a timeout 
  * 
@@ -638,31 +559,45 @@ void xgetmouse(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int usequeue
  *                -5,-4,-3: if button release
  *                -100 : error or window destroyed 
  *                -2   : menu activated 
- */
+ *------------------------------------------------------------------------------*/
 
 /* 
  * A finir pour tenir compte des control C de l'utilisateur  
  */
 
-static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int getmotion, int getrelease,int getkey, char *str, int lstr)
+
+static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag );
+
+static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int iflag, int getmotion, int getrelease,int getkey, char *str, int lstr,int change_cursor)
 {
 #ifdef WITH_TK
   guint timer_tk;
 #endif 
   GTK_locator_info rec_info ; 
-  int win;
+  int win=*iwin,wincount=0,win1;
   if ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) {
     *ibutton = -100;     return;
   }
-  win = Xgc->CurWindow;
-  if ( iflag == TRUE && CheckClickQueue(&win,x1,yy1,ibutton) == 1) 
-    { 
-      /* sciprint("ds la queue %f %f \n",(double) *x1,(double) *yy1);*/ /* XXXX */
-      return ;
-    }
-  if ( iflag == FALSE )  ClearClickQueue(Xgc->CurWindow);
 
-  gdk_window_set_cursor (Xgc->private->drawing->window,Xgc->private->gcursor);
+  if ( win == -1 ) 
+    {
+      /* we will check all the graphic windows */
+      wincount = window_list_get_max_id()+1;
+    }
+  else 
+    {
+      /* just work on current win */
+      win = Xgc->CurWindow;
+    }
+  win1= win; /* CheckClickQueue change its first argument if -1 */
+  /* check for already stored event */
+  if ( iflag == TRUE && CheckClickQueue(&win1,x1,yy1,ibutton) == 1) 
+    { 
+      *iwin = win1 ; return;
+    }
+  if ( iflag == FALSE )  ClearClickQueue(win);
+
+  if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,1);
   
   /* save info in local variable  */
   rec_info = info;
@@ -681,7 +616,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
       info.str   = str;
       info.lstr  = lstr; /* on entry it gives the size of str buffer */
     }
-    
+  
 #ifdef WITH_TK
   timer_tk=  gtk_timeout_add(100,  (GtkFunction) timeout_tk , NULL);
 #endif
@@ -690,7 +625,11 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
     {
       gtk_main();
       /* be sure that gtk_main_quit was activated by proper event */
-      if ( info.ok == 1 &&  info.win == win  ) break;
+      if ( info.ok == 1 ) 
+	{
+	  if ( win == -1 ) break;
+	  if ( info.win == win  ) break;
+	}
     }
 
 #ifdef WITH_TK
@@ -700,6 +639,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
   *x1 = info.x;
   *yy1 = info.y;
   *ibutton = info.button;
+  *iwin = info.win;
   
   /* remove timer if it was set by us */ 
   if ( info.getmen == TRUE )  gtk_timeout_remove (info.timer);
@@ -707,11 +647,36 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag, int ge
   /* take care of recursive calls i.e restore info  */
   info = rec_info ; 
 
-  if ( Xgc != (BCG *) 0 && Xgc->private != NULL &&  Xgc->private->drawing != NULL ) {
-    gdk_window_set_cursor (Xgc->private->drawing->window,Xgc->private->ccursor);
-  }
-
+  if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,0);
 }
+
+
+static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
+{
+  GdkCursor *cursor;
+  if ( win == -1 ) 
+    {
+      int i;
+      for (i=0; i < wincount ; i++ ) 
+	{
+	  BCG *bcg =  window_list_search(i);
+	  if ( bcg  != NULL)
+	    {
+	      cursor =  ( flag == 0 ) ? bcg->private->ccursor : bcg->private->gcursor;
+	      gdk_window_set_cursor(bcg->private->drawing->window,cursor);
+	    }
+	}
+    }
+  else
+    {
+      if ( Xgc != (BCG *) 0 && Xgc->private != NULL &&  Xgc->private->drawing != NULL ) {
+	cursor =  ( flag == 0 ) ? Xgc->private->ccursor : Xgc->private->gcursor;
+	gdk_window_set_cursor (Xgc->private->drawing->window,cursor);
+      }
+    }
+}
+  
+
 
 /*
  * clear a rectangle zone 

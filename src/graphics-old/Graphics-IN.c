@@ -2369,6 +2369,7 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
 
   if ( winall ) 
     {
+      iw=-1;
       Xgc->graphic_engine->scale->xclick_any(Xgc,buf,&button,&drep[1],&drep[2],&iw,iflag,motion,release,key,istr);
     }
   else 
