@@ -652,7 +652,7 @@ void connector_draw(NspConnector *B)
   /* only draw block which are in a frame */
   if ( B->obj->frame == NULL) return;
   if ( B->obj->show == FALSE ) return ;
-  Xgc=B->obj->frame->Xgc;
+  Xgc=B->obj->frame->obj->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
 
@@ -856,11 +856,12 @@ void connector_move_control_init( NspConnector *B,int cp,double ptc[2])
 
 void connector_move_control(NspGFrame *F, NspConnector *B,const double mpt[2], int cp,double ptc[2])
 {
-  B->obj->r[2] =  Max(  mpt[0] - B->obj->r[0] ,0);
-  B->obj->r[3] =  Max(  B->obj->r[1] -mpt[1] ,0);
+  ptc[0]  =  Max(  mpt[0] - B->obj->r[0] ,0);
+  ptc[1]  =  Max(  B->obj->r[1] -mpt[1] ,0);
+  connector_resize(B,ptc);
+  /* return a copy of mpt */
   ptc[0]=mpt[0];
   ptc[1]=mpt[1];
-  connector_update_locks(B);
 }
 
 /**

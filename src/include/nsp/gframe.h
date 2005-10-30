@@ -26,16 +26,23 @@ typedef struct _NspTypeGFrame {
   /*< public >*/
 } NspTypeGFrame;
 
+typedef struct _nsp_gframe nsp_gframe;
+
+struct _nsp_gframe {
+  NspList *objs ;       /* Object of type list: list of internal objects */
+  BCG *Xgc;
+  double scale[4];  /* the scales */
+  double r[4] ;     /* frame position in its father */
+  int ref_count;
+};
+
+
 struct _NspGframe {
   /*< private >*/
   NspObject father; 
   NspTypeGFrame *type; 
   /*< public >*/
-  NspList *objs ;       /* Object of type list: list of internal objects */
-  BCG *Xgc;
-  double scale[4];  /* the scales */
-  double r[4] ;     /* frame position in its father */
-  struct frame *gfather;
+  nsp_gframe *obj;
 };
 
 extern int nsp_type_gframe_id;

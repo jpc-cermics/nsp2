@@ -732,7 +732,7 @@ void block_draw(NspBlock *B)
 {
   /* take care of the fact that str1 must be writable */
   char str1[] = "my\nblock";
-  BCG *Xgc;
+  BCG *Xgc,*Xgc1;
   char str[256];
   double loc[4];
   int cpat, cwidth,i, draw_script, fill=FALSE;
@@ -741,7 +741,7 @@ void block_draw(NspBlock *B)
   /* check the show attribute */
   if ( B->obj->show == FALSE ) return ;
 
-  Xgc=B->obj->frame->Xgc;
+  Xgc=B->obj->frame->obj->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
 
@@ -751,13 +751,19 @@ void block_draw(NspBlock *B)
   switch (draw_script)
     {
     case 0: 
+      Xgc1 = window_list_get_first(); 
+      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
       sprintf(str,"Matplot1(rand(10,10)*32,[%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1]-B->obj->r[3],
 	      B->obj->r[0]+B->obj->r[2],B->obj->r[1]);
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
+      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
       break;
     case 1: 
+      Xgc1 = window_list_get_first(); 
+      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
       sprintf(str,"draw_vanne([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
+      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
       break;
     case 2:
       /* filling with white */
@@ -845,8 +851,8 @@ void block_translate(NspBlock *B,const double tr[2])
 void block_resize(NspBlock *B,const double size[2])
 {
   double pt[2];
-  B->obj->r[2] = size[0] ;
-  B->obj->r[3] = size[1] ;
+  B->obj->r[2] = Max(size[0],3*lock_size) ;
+  B->obj->r[3] = Max(size[1],3*lock_size) ;
   /* if resized the lock relative positions should change to XXXXX */
   block_set_lock_pos_rel(B,0,(pt[0]=0.5,pt[1]=- lock_size/B->obj->r[3],pt));
   block_set_lock_pos_rel(B,1,(pt[0]=0.5,pt[1]=1+lock_size/B->obj->r[3],pt));

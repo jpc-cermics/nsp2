@@ -605,7 +605,7 @@ void link_draw(NspLink *L)
   if ( L->obj->frame == NULL) return;
   if ( L->obj->show == FALSE ) return ;
 
-  Xgc=L->obj->frame->Xgc;
+  Xgc=L->obj->frame->obj->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   /* draw polyline */
@@ -794,7 +794,7 @@ void link_move_control_init( NspLink *B,int cp,double pt[2])
 int link_get_number(NspGFrame *F, NspLink *B) 
 {
   int count = 1;
-  Cell *C = F->objs->first;
+  Cell *C = F->obj->objs->first;
   while ( C != NULLCELL) 
     {
       if ( C->O == (NspObject  *) B) return count;
@@ -923,7 +923,7 @@ void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,doub
 
   if ( cp >= 1 && cp < n -1 ) 
     {
-      int hvfactor=5;
+      int hvfactor=2*lock_size;
       /*  magnetism toward horizontal or vertival lines */
       ptb[0] = xp[cp-1]; ptb[1] = yp[cp-1];
       ptn[0] = xp[cp+1]; ptn[1] = yp[cp+1];
@@ -944,7 +944,7 @@ void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,doub
 	{
 	  /* magnetize previous point toward horiwontal or vertical line */
 	  int next = ( cp == 0) ? 1 : n-2;
-	  int hvfactor=5;
+	  int hvfactor=2*lock_size;
 	  double *x = L->obj->poly->R, *y = L->obj->poly->R + L->obj->poly->m;
 	  /*  magnetism toward horizontal or vertival lines */
 	  if ( Abs( x[cp] - x[next] ) < hvfactor ) x[next] = x[cp];
@@ -997,7 +997,7 @@ int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
       link_lock(F,(*L1),1,&p); 
     }
   /* add L1 in the frame */ 
-  if (nsp_list_end_insert(F->objs,(NspObject  *) (*L1)) == FAIL) return FAIL;
+  if (nsp_list_end_insert(F->obj->objs,(NspObject  *) (*L1)) == FAIL) return FAIL;
   return OK;
 }
 
@@ -1098,7 +1098,7 @@ void link_check(NspGFrame *F,NspLink *L)
 		      if ( C == NULL) return;
 		      /* herits the frame graphic context */
 		      C->obj->frame = F;
-		      if (nsp_list_end_insert(F->objs,NSP_OBJECT(C)) == FAIL) return ; 
+		      if (nsp_list_end_insert(F->obj->objs,NSP_OBJECT(C)) == FAIL) return ; 
 		      /* and link obj,link and L to the connector */
 		      p.object_id =NSP_OBJECT(C); 
 		      p.lock = 0; 
@@ -1326,7 +1326,7 @@ int link_is_lock_connected(NspLink *B,int i)
 static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angle,lock_dir dir)
 {
   double ptl[2];
-  int hvfactor = 5;
+  int hvfactor = 2*lock_size;
   NspMatrix *M = B->obj->poly;
   int m= B->obj->poly->m;
   int xp = ( i== 0) ? 0 : m-1;
