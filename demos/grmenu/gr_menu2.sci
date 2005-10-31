@@ -25,6 +25,16 @@ function w=create_midle_menu (win,xc,yc)
   menuitem.connect["activate",midle_menuitem_response,list(3,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
+  //
+  menuitem = gtkmenuitem_new(label="copy to clipboard");
+  menuitem.connect["activate",midle_menuitem_response,list(4,xc,yc,win)];
+  menu.append[menuitem]
+  menuitem.show[];
+  //  
+  menuitem = gtkmenuitem_new(label="paste from clipboard");
+  menuitem.connect["activate",midle_menuitem_response,list(5,xc,yc,win)];
+  menu.append[menuitem]
+  menuitem.show[];
   //  
   w=menu;
 endfunction 
@@ -43,6 +53,22 @@ function midle_menuitem_response(w,args)
    case 3 then  
     GF(win).hilite_near_pt[[args(2),args(3)]];
     GF(win).select_link_and_remove_control[[args(2),args(3)]];
+   case 4 then 
+    [test,obj]= GF(win).get_selection_copy[];
+    if test then GF('clipboard') = list(obj); 
+    else x_message('No selection');end 
+   case 5 then 
+    // attention ici il faut que l'on insere des 
+    // copies car on veut pouvoir inserer plusieurs 
+    // fois 
+    if GF.iskey['clipboard'] then 
+      if length(GF('clipboard'))<> 0 then
+	GF('clipboard')(1).translate[[2,2]];
+	GF(win).insert[GF('clipboard')(1)];
+      else 
+	x_message('Clipboard is empty');end 
+    end
+    GF('clipboard') = list();
   end
   GF(win).draw[]
 endfunction
@@ -68,7 +94,7 @@ function w=create_right_menu (win)
   menu.append[menuitem]
   menuitem.show[];
   
-  menuitem = gtkmenuitem_new(label="new rect");
+  menuitem = gtkmenuitem_new(label="new connector");
   menuitem.connect["activate",menuitem_response,list(3,win)];
   menu.append[menuitem]
   menuitem.show[];
@@ -83,7 +109,7 @@ function menuitem_response(w,args)
   select args(1) 
    case 1 then  GF(win).new_link[] 
    case 2 then  GF(win).new_block[] 
-   case 3 then  GF(win).new_rect[] 
+   case 3 then  GF(win).new_connector[] 
   end
   GF(win).draw[]
 endfunction
@@ -182,6 +208,8 @@ function my_eventhandler(win,x,y,ibut)
   count=0;
 endfunction
 
+// plusieurs fonctions de test pour draw_vanne 
+
 function draw_vanne(rect)
 // test function for block drawing 
   orig=[rect(1),rect(2)-rect(4)];
@@ -207,6 +235,18 @@ function draw_plot2d(rect)
   xsetech(wrect=wrect,frect=frect,arect=arect);
 endfunction;
 
+function draw_scope(rect)
+// test function for block drawing 
+  orig=[rect(1),rect(2)-rect(4)];
+  sz=[rect(3),rect(4)];
+  //B=CLOCK_f('define');
+  B=SCOPE_f('define');
+  str=B.graphics.gr_i(1);
+  execstr(str);
+endfunction;
+
+function y=scs_color(i);y=i;endfunction
+
 
 global('GF');
 //R=%types.Block.new[[10,20,20,20],color=6,background=7];
@@ -218,7 +258,6 @@ xinit(name='My diagram',dim=[1000,1000],popup_dim=[600,400])
 xset('recording',0)
 xsetech(arect=[0,0,0,0]);
 
-pause
 seteventhandler('my_eventhandler');
 
 xinit(name='My second diagram',dim=[1000,1000],popup_dim=[600,400])

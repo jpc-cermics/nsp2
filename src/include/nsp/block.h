@@ -39,6 +39,7 @@ typedef struct _nsp_block nsp_block;
 
 struct _nsp_block {
   NspGFrame *frame; /* a block must be in a frame to be drawn */
+  void *object_sid;
   double r[4]; 		
   int color;
   int thickness;
@@ -112,6 +113,7 @@ static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[]);
 
 static void block_unlock( NspBlock *B,int lp) ;
 static int block_set_locks(NspBlock *B,NspMatrix *Pt,NspMatrix *type);
+static NspBlock * block_full_copy( NspBlock *B);
 
 #endif /* Block_Private */
 

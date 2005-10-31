@@ -110,7 +110,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
   gri->is_lock_connectable =(gr_is_lock_connectable *) connector_is_lock_connectable;
   gri->is_lock_connected =(gr_is_lock_connected *) connector_is_lock_connected;
   gri->set_lock_pos =(gr_set_lock_pos *) connector_set_lock_pos;
-  
+  gri->full_copy =(gr_full_copy *) connector_full_copy;
   if ( nsp_type_connector_id == 0 ) 
     {
       /* 
@@ -219,11 +219,30 @@ static int connector_neq(NspConnector *A, NspObject *B)
  * save 
  */
 
+
 static int connector_xdr_save(XDR  *xdrs, NspConnector *M)
 {
+  int i;
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  Scierror("connector_xdr_save: to be implemented \n");
+  /* the connector */
+  if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(M)) == FAIL) return FAIL;
+  if ( nsp_xdr_save_array_d(xdrs,M->obj->r,4) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->color) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->thickness) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->background) == FAIL) return FAIL;
+  /* the lock point */
+  if ( nsp_xdr_save_i(xdrs,M->obj->lock.n_ports) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->lock.fixed) == FAIL) return FAIL;
+  /* the ports of the unique lock point */
+  for ( i = 0 ; i < M->obj->lock.n_ports  ; i++) 
+    {
+      gr_port *port = M->obj->lock.ports+i;
+      /* the port */
+      if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(port->object_id)) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,port->lock) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,port->port) == FAIL) return FAIL;
+    }
   return OK;
 }
 
@@ -233,10 +252,40 @@ static int connector_xdr_save(XDR  *xdrs, NspConnector *M)
 
 static NspConnector  *connector_xdr_load(XDR  *xdrs)
 {
+  double r[4];
+  int i,id;
   NspConnector *M=NULLCONNECTOR;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCONNECTOR;
-  Scierror("connector_xdr_load: to be implemented \n");
+  if (( M = connector_create(name,r,-1,-1,-1,NULL)) == NULLCONNECTOR) return NULLCONNECTOR;
+  if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLCONNECTOR;
+  M->obj->object_sid = NSP_INT_TO_POINTER(id);
+  if ( nsp_xdr_load_array_d(xdrs,M->obj->r,4) == FAIL) return NULLCONNECTOR;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->color) == FAIL) return NULLCONNECTOR;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->thickness) == FAIL) return NULLCONNECTOR;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->background) == FAIL) return NULLCONNECTOR;
+  /* the lock points */
+  if ( nsp_xdr_load_i(xdrs,&M->obj->lock.n_ports) == FAIL) return NULLCONNECTOR;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->lock.fixed) == FAIL) return NULLCONNECTOR;
+  if ( M->obj->lock.n_ports == 0) 
+    {
+      M->obj->lock.ports=NULL;
+    }
+  else 
+    {
+      if (( M->obj->lock.ports = malloc(M->obj->lock.n_ports*sizeof(gr_port))) == NULL) 
+	return NULLCONNECTOR;
+    }
+  for ( i = 0 ; i < M->obj->lock.n_ports  ; i++) 
+    {
+      gr_port *port = M->obj->lock.ports+i;
+      /* the port */
+      port->object_id = NULL;
+      if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return NULLCONNECTOR;
+      port->object_sid = NSP_INT_TO_POINTER(id);
+      if ( nsp_xdr_save_i(xdrs,port->lock) == FAIL) return NULLCONNECTOR;
+      if ( nsp_xdr_save_i(xdrs,port->port) == FAIL) return NULLCONNECTOR;
+    }
   return M;
 }
 
@@ -350,10 +399,13 @@ NspConnector *connector_create(char *name,double rect[],int color,int thickness,
   H->obj->hilited = FALSE ; 
 
   H->obj->show = TRUE   ; 
-  H->obj->lock.n_ports  = 1;  /* initial number of ports */ 
+  H->obj->lock.n_ports  = 0;  /* initial number of ports */ 
   H->obj->lock.fixed = FALSE; /* number of ports can be changed */
-  if (( H->obj->lock.ports = malloc(sizeof(gr_port))) == NULL) return NULLCONNECTOR;
-  H->obj->lock.ports[0].object_id = NULL; /* port is unused */
+  H->obj->lock.ports = NULL; 
+  /* 
+     if (( H->obj->lock.ports = malloc(sizeof(gr_port))) == NULL) return NULLCONNECTOR;
+     H->obj->lock.ports[0].object_id = NULL; 
+  */
   connector_update_locks(H);
   return H;
 }
@@ -912,9 +964,7 @@ int connector_get_lock_connection(const NspConnector *B,int i,int port, gr_port 
     {
       gr_port *gport= &B->obj->lock.ports[port]; 
       if ( gport->object_id == NULL) return FAIL;
-      p->object_id = gport->object_id;
-      p->lock = gport->lock;
-      p->port = gport->port;
+      *p = B->obj->lock.ports[port];
       Scierror("XXXget lock connection OK %d %d\n",p->lock,p->port);
       return OK;
     }
@@ -984,9 +1034,18 @@ int connector_set_lock_connection(NspConnector *B,int i,const gr_port *p)
 	  if ( B->obj->lock.fixed == FALSE ) 
 	    {
 	      gr_port *loc= NULL;
+	      if ( B->obj->lock.ports == NULL ) 
+		{
+		  if ((loc = malloc((B->obj->lock.n_ports+1)*sizeof(gr_port)))==NULL)
+		    
+		    return -1;
+		}
+	      else 
+		{
+		  if ((loc = realloc(B->obj->lock.ports,(B->obj->lock.n_ports+1)*sizeof(gr_port)))==NULL) 
+		    return -1; 
+		}
 	      B->obj->lock.n_ports++; 
-	      if ((loc = realloc(B->obj->lock.ports, B->obj->lock.n_ports*sizeof(gr_port)))==NULL) 
-		return -1; 
 	      B->obj->lock.ports = loc;
 	      port = &B->obj->lock.ports[B->obj->lock.n_ports-1];
 	      port_number = B->obj->lock.n_ports-1;
@@ -994,11 +1053,8 @@ int connector_set_lock_connection(NspConnector *B,int i,const gr_port *p)
 	  else 
 	    return -1;
 	}
-      port->object_id = p->object_id;
-      port->lock = p->lock;
-      port->port= p->port; 
-      Scierror("XXXget connection OK on port %d\n",port_number);
-
+      *port = *p;
+      /* Scierror("XXXget connection OK on port %d\n",port_number); */
       return port_number;
     }
   return -1;
@@ -1126,3 +1182,25 @@ static void connector_unlock( NspConnector *B,int lp)
 
 
 
+/*
+ */
+
+static NspConnector  *connector_full_copy(NspConnector *C)
+{
+  int i;
+  NspConnector *C1=NULLCONNECTOR;
+  if (( C1 = connector_create(NVOID,C->obj->r,C->obj->color,C->obj->thickness,C->obj->background,NULL))
+      == NULLCONNECTOR) return NULLCONNECTOR;
+  /* the lock points */
+  C1->obj->lock.n_ports = C->obj->lock.n_ports;
+  C1->obj->lock.fixed = C->obj->lock.fixed;
+  if (( C1->obj->lock.ports = malloc(C1->obj->lock.n_ports*sizeof(gr_port))) == NULL)
+    return NULLCONNECTOR;
+  for ( i = 0 ; i < C1->obj->lock.n_ports  ; i++) 
+    {
+      C1->obj->lock.ports[i]= C->obj->lock.ports[i];
+      C1->obj->lock.ports[i].object_id = NULLOBJ;
+      C1->obj->lock.ports[i].object_sid = C->obj->lock.ports[i].object_id ;
+    }
+  return C1;
+}

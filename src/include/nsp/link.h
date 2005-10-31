@@ -33,6 +33,7 @@ typedef struct _nsp_link nsp_link;
 
 struct _nsp_link {
   NspGFrame *frame; /* a link must be in a frame to be drawn */
+  void *object_sid;
   int color; 
   int thickness;
   NspMatrix *poly ;       /* the polyline */
@@ -104,8 +105,11 @@ static void link_unset_lock_connection(NspLink *B,int i,int port);
 static int link_is_lock_connectable(NspLink *B,int i);
 static int link_is_lock_connected(NspLink *B,int i);
 static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angle,lock_dir dir);
+static NspLink * link_full_copy( NspLink *L);
 
 static int int_link_create(Stack stack, int rhs, int opt, int lhs);
+
+
 #endif /* Link_Private */
 
 #define NULLLINK (NspLink*) 0
@@ -122,6 +126,9 @@ extern void link_check(NspGFrame *F,NspLink *L);
 extern int IsLink(NspObject *O);
 extern int link_add_control(NspLink *L,const double pt[2]);
 extern int link_remove_control(NspLink *L,const double pt[2]);
+extern NspLink *link_create(char *name,NspMatrix *D,int color,int thickness, NspTypeBase *type );
+
+
 
 #endif
 

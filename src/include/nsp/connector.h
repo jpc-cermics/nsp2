@@ -41,6 +41,7 @@ typedef struct _nsp_connector nsp_connector;
 
 struct _nsp_connector {
   NspGFrame *frame; /* a link must be in a frame to be drawn */
+  void *object_sid;
   double r[4];
   int color; 
   int thickness;
@@ -109,6 +110,9 @@ static int connector_is_lock_connectable(NspConnector *B,int i);
 static int connector_is_lock_connected(const NspConnector *B,int i);
 static void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle,lock_dir dir);
 static void connector_unlock( NspConnector *B,int lp) ;
+static NspConnector * connector_full_copy( NspConnector *C);
+
+
 #endif /* Connector_Private */
 
 #define NULLCONNECTOR (NspConnector*) 0

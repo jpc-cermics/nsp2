@@ -116,7 +116,7 @@ NspTypeLink *new_type_link(type_mode mode)
   gri->is_lock_connectable =(gr_is_lock_connectable *) link_is_lock_connectable;
   gri->is_lock_connected =(gr_is_lock_connected *) link_is_lock_connected;
   gri->set_lock_pos =(gr_set_lock_pos *) link_set_lock_pos;
-  
+  gri->full_copy =(gr_full_copy *) link_full_copy;
   if ( nsp_type_link_id == 0 ) 
     {
       /* 
@@ -227,9 +227,23 @@ static int link_neq(NspLink *A, NspObject *B)
 
 static int link_xdr_save(XDR  *xdrs, NspLink *M)
 {
-  Scierror("link_xdr_save to be implemented \n");
+  int i;
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  /* the link */
+  if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(M)) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->color) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->thickness) == FAIL) return FAIL;
+  if ( nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->poly))== FAIL)  return FAIL;
+  /* the lock points */
+  for ( i = 0 ; i < 2  ; i++) 
+    {
+      grl_lock *lock= M->obj->locks+i;
+      /* the port */
+      if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(lock->port.object_id)) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,lock->port.lock) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,lock->port.port) == FAIL) return FAIL;
+    }
   return OK;
 }
 
@@ -239,11 +253,30 @@ static int link_xdr_save(XDR  *xdrs, NspLink *M)
 
 static NspLink  *link_xdr_load(XDR  *xdrs)
 {
-  NspLink *M=NULLLINK;
+  int i,id;
+  NspLink *L=NULLLINK;
   static char name[NAME_MAXL];
-  Scierror("link_xdr_load to be implemented \n");
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLLINK;
-  return M;
+  /* the link */
+  if (( L = link_create(name,NULL,-1,-1,NULL)) == NULLLINK) return NULLLINK;
+  if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLLINK;
+  L->obj->object_sid = NSP_INT_TO_POINTER(id);
+  if ( nsp_xdr_load_i(xdrs,&L->obj->color) == FAIL) return NULLLINK;
+  if ( nsp_xdr_load_i(xdrs,&L->obj->thickness) == FAIL) return NULLLINK;
+  if ((L->obj->poly =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULL)  return NULLLINK;
+  /* the lock points */
+  for ( i = 0 ; i < 2  ; i++) 
+    {
+      int id;
+      grl_lock *lock= L->obj->locks+i;
+      /* the port */
+      lock->port.object_id = NULLOBJ;
+      if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLLINK;
+      lock->port.object_sid = NSP_INT_TO_POINTER(id);
+      if ( nsp_xdr_load_i(xdrs,&lock->port.lock) == FAIL) return NULLLINK;
+      if ( nsp_xdr_load_i(xdrs,&lock->port.port) == FAIL) return NULLLINK;
+    }
+  return L;
 }
 
 /*
@@ -360,7 +393,11 @@ NspLink *link_create(char *name,NspMatrix *D,int color,int thickness, NspTypeBas
   H->obj->ref_count=1;
   H->obj->frame = NULL; 
   /* fields */
-  if (( H->obj->poly = nsp_matrix_copy(D))== NULLMAT) return NULLLINK;
+  if ( D != NULL) 
+    {
+      if (( H->obj->poly = nsp_matrix_copy(D))== NULLMAT) return NULLLINK;
+      if (nsp_object_set_name(NSP_OBJECT(H->obj->poly),"lpt") == FAIL) return NULLLINK;
+    }
   H->obj->color = color;
   H->obj->thickness = thickness;
   H->obj->hilited = FALSE ; 
@@ -566,6 +603,8 @@ NspLink *link_create_n(char *name,int n,int color,int thickness)
   H->obj->frame = NULL; 
   /* fields */
   if (( H->obj->poly =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;
+  /* need a name here to be able to save object */
+  if (nsp_object_set_name(NSP_OBJECT(H->obj->poly),"lpt") == FAIL) return NULLLINK;
   H->obj->color = color;
   H->obj->thickness = thickness;
   H->obj->hilited = FALSE ; 
@@ -844,7 +883,7 @@ static void link_lock(NspGFrame *F, NspLink *L,int lp,gr_port *p)
 {
   int port;
   NspObject *O1;
-  gr_port p1 = {(NspObject *) L,lp,0};
+  gr_port p1 = {(NspObject *) L,NULL,lp,0};
   link_unlock( L,lp); /* unlock lp */
   /* we first update the Object we want to lock */
   O1 = p->object_id;
@@ -882,7 +921,7 @@ void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2])
 	{
 	  if ( lock_c == TRUE)
 	    {
-	      gr_port p ={ Ob,cp1,0};/* link_lock will find the available port */
+	      gr_port p ={ Ob,NULL,cp1,0};/* link_lock will find the available port */
 	      link_lock(F,L,lp,&p);
 	    }
 	}
@@ -1180,10 +1219,7 @@ int link_get_lock_connection(const NspLink *B,int i,int port, gr_port *p )
 {
   if (( i == 0 || i == 1 ) && port == 0)
     {
-      const gr_port *gport= &B->obj->locks[i].port; 
-      p->object_id = gport->object_id;
-      p->lock = gport->lock;
-      p->port = gport->port;
+      *p = B->obj->locks[i].port; 
       return OK;
     }
   return FAIL;
@@ -1243,10 +1279,8 @@ int link_set_lock_connection(NspLink *B,int i,const gr_port *p)
   if ( i ==  0 || i == 1 ) 
     {
       gr_port *port= &B->obj->locks[i].port;
-      if ( port->object_id != NULL) return FALSE; 
-      port->object_id = p->object_id;
-      port->lock = p->lock;
-      port->port= p->port; 
+      if ( port->object_id != NULL) return -2;
+      *port = *p;
       return 0;
     }
   return -1;
@@ -1359,5 +1393,25 @@ static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angl
 }
 
 
+/*
+ *
+ */
 
 
+
+
+/*
+ * load 
+ */
+
+static NspLink  *link_full_copy(NspLink *L)
+{
+  NspLink *L1=NULLLINK;
+  if (( L1 = link_create(NVOID,L->obj->poly,L->obj->color,L->obj->thickness,NULL)) == NULLLINK) return NULLLINK;
+  /* the lock points */
+  L1->obj->locks[0] =   L->obj->locks[0];
+  L1->obj->locks[1] =   L->obj->locks[1];
+  L1->obj->locks[0].port.object_id = NULLOBJ;
+  L1->obj->locks[1].port.object_id = NULLOBJ;
+  return L1;
+}

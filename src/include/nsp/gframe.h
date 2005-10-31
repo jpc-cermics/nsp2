@@ -89,7 +89,7 @@ extern NspGFrame *GetGFrame (Stack stack, int i);
 extern int IsGFrame (NspObject *O); 
 
 extern NspObject *gframe_path_extract (NspGFrame *H, NspObject *O); 
-extern NspGFrame *gframe_create (char *name,BCG *Xgc, const double *scale, double *r,NspTypeBase *type); 
+extern NspGFrame *gframe_create(char *name,BCG *Xgc,int init_objs,const double scale[],double r[],NspTypeBase *type);
 extern void gframe_draw (NspGFrame *R); 
 extern int gframe_select_obj (NspGFrame *R, const double *pt, NspObject **O,NspObject *exclude); 
 extern int gframe_select_lock(NspGFrame *F,double pt[2], NspObject **O, int *cp, int *lock_c) ;
@@ -109,6 +109,8 @@ extern int gframe_select_and_split(NspGFrame *R,const double pt[2]);
 extern int gframe_select_link_and_add_control(NspGFrame *R,const double pt[2]);
 extern int gframe_select_link_and_remove_control(NspGFrame *R,const double pt[2]);
 
+extern NspObject * gframe_get_hilited(NspGFrame *R) ;
+extern void gframe_set_frame_field(NspGFrame *F);
 
 
 #endif

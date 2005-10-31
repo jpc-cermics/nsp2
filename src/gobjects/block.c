@@ -111,6 +111,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   gri->is_lock_connectable =(gr_is_lock_connectable *) block_is_lock_connectable;
   gri->is_lock_connected =(gr_is_lock_connected *) block_is_lock_connected;
   gri->set_lock_pos =(gr_set_lock_pos *) block_set_lock_pos;
+  gri->full_copy =(gr_full_copy *) block_full_copy;
   
   if ( nsp_type_block_id == 0 ) 
     {
@@ -208,11 +209,31 @@ static int block_neq(NspBlock *A, NspObject *B)
  * save 
  */
 
+
 static int block_xdr_save(XDR  *xdrs, NspBlock *M)
 {
+  int i;
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  Scierror("block_xdr_save: to be implemented \n");
+  /* the block */
+  if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(M)) == FAIL) return FAIL;
+  if ( nsp_xdr_save_array_d(xdrs,M->obj->r,4) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->color) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->thickness) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->background) == FAIL) return FAIL;
+  /* the lock points */
+  if ( nsp_xdr_save_i(xdrs,M->obj->n_locks) == FAIL) return FAIL;
+  for ( i = 0 ; i < M->obj->n_locks ; i++) 
+    {
+      grb_lock *lock= M->obj->locks+i;
+      if ( nsp_xdr_save_array_d(xdrs,lock->pt,2) == FAIL) return FAIL;
+      if ( nsp_xdr_save_array_d(xdrs,lock->ptr,2) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,lock->type) == FAIL) return FAIL;
+      /* the port */
+      if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(lock->port.object_id)) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,lock->port.lock) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,lock->port.port) == FAIL) return FAIL;
+    }
   return OK;
 }
 
@@ -222,10 +243,36 @@ static int block_xdr_save(XDR  *xdrs, NspBlock *M)
 
 static NspBlock  *block_xdr_load(XDR  *xdrs)
 {
+  double r[4];
+  int i,id;
   NspBlock *M=NULLBLOCK;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLBLOCK;
-  Scierror("block_xdr_load: to be implemented \n");
+  /* the block */
+  if (( M = block_create(name,r,-1,-1,-1,NULL)) == NULLBLOCK) return NULLBLOCK;
+  if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLBLOCK;
+  M->obj->object_sid = NSP_INT_TO_POINTER(id);
+  if ( nsp_xdr_load_array_d(xdrs,M->obj->r,4) == FAIL) return NULLBLOCK;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->color) == FAIL) return NULLBLOCK;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->thickness) == FAIL) return NULLBLOCK;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->background) == FAIL) return NULLBLOCK;
+  /* the lock points */
+  if ( nsp_xdr_load_i(xdrs,&M->obj->n_locks) == FAIL) return NULLBLOCK;
+  if ( M->obj->locks != NULL) FREE(M->obj->locks);
+  if (( M->obj->locks = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
+  for ( i = 0 ; i < M->obj->n_locks ; i++) 
+    {
+      grb_lock *lock= M->obj->locks+i;
+      if ( nsp_xdr_load_array_d(xdrs,lock->pt,2) == FAIL) return NULLBLOCK;
+      if ( nsp_xdr_load_array_d(xdrs,lock->ptr,2) == FAIL) return NULLBLOCK;
+      if ( nsp_xdr_load_i(xdrs,&lock->type) == FAIL) return NULLBLOCK;
+      /* the port */
+      lock->port.object_id = NULLOBJ;
+      if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLBLOCK;
+      lock->port.object_sid = NSP_INT_TO_POINTER(id);
+      if ( nsp_xdr_load_i(xdrs,&lock->port.lock) == FAIL) return NULLBLOCK;
+      if ( nsp_xdr_load_i(xdrs,&lock->port.port) == FAIL) return NULLBLOCK;
+    }
   return M;
 }
 
@@ -350,7 +397,10 @@ NspBlock *block_create(char *name,double rect[],int color,int thickness,int back
   H->obj->n_locks = 4 ;
   if (( H->obj->locks = malloc(H->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
   for (i=0; i < H->obj->n_locks ; i++) 
-    H->obj->locks[i].port.object_id = NULL; 
+    {
+      H->obj->locks[i].port.object_id = NULL; 
+      H->obj->locks[i].port.object_sid = NULL; 
+    }
   /* fix the relative position of the four initial locks */
 
   /* 
@@ -1042,10 +1092,7 @@ int block_get_lock_connection(const NspBlock *B,int i,int port, gr_port *p )
 {
   if ( i >= 0 && i < B->obj->n_locks && port == 0  ) 
     {
-      gr_port *gport= &B->obj->locks[i].port; 
-      p->object_id = gport->object_id;
-      p->lock = gport->lock;
-      p->port = gport->port;
+      *p = B->obj->locks[i].port;
       return OK;
     }
   return FAIL;
@@ -1099,7 +1146,7 @@ lock_dir block_get_lock_dir(const NspBlock *B, int i)
  * @p: information to be connected to one port of lock point i;
  * 
  * the port described by @p is connected to a port of lock point i; 
- * return value: -1 or the port number used for connection.
+ * return value: -2 or -1 or the port number used for connection. 
  **/
 
 int block_set_lock_connection(NspBlock *B,int i,const gr_port *p)
@@ -1107,10 +1154,8 @@ int block_set_lock_connection(NspBlock *B,int i,const gr_port *p)
   if ( i >=  0  && i < B->obj->n_locks ) 
     {
       gr_port *port= &B->obj->locks[i].port;
-      if ( port->object_id != NULL) return FALSE; 
-      port->object_id = p->object_id;
-      port->lock = p->lock;
-      port->port= p->port; 
+      if ( port->object_id != NULL) return -2;
+      *port = *p;
       return 0;
     }
   return -1;
@@ -1280,5 +1325,27 @@ static void block_unlock( NspBlock *B,int lp)
 }
 
 
+/*
+ * Make a full copy of object B
+ * this is to be inserted in grint 
+ */
 
+static NspBlock * block_full_copy( NspBlock *B)
+{
+  int i;
+  NspBlock *M=NULLBLOCK;
+  if (( M = block_create(NVOID,B->obj->r,B->obj->color,B->obj->thickness,B->obj->background,NULL))
+      == NULLBLOCK) return NULLBLOCK;
+  /* the lock points */
+  if ( M->obj->locks != NULL) FREE(M->obj->locks);
+  M->obj->n_locks =   B->obj->n_locks;
+  if (( M->obj->locks = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
+  for ( i = 0 ; i < M->obj->n_locks ; i++) 
+    {
+      M->obj->locks[i]= B->obj->locks[i];
+      M->obj->locks[i].port.object_id = NULLOBJ;
+      M->obj->locks[i].port.object_sid = B->obj->locks[i].port.object_id;
+    }
+  return M;
+}
 
