@@ -954,7 +954,7 @@ int connector_get_number_of_ports(const NspConnector *B,int lp)
  * Returns in a gr_port structure information about the object 
  * connected to the port @port of lock point @i. 
  * 
- * Return value: #TRUE if lock point and port number exists or #FALSE. 
+ * Return value: #OK if lock point and port number exists or #FAIL.
  **/
 
 int connector_get_lock_connection(const NspConnector *B,int i,int port, gr_port *p )

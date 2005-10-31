@@ -899,7 +899,7 @@ static void gframe_locks_set_show(NspGFrame *F,NspObject *O,int val)
 	  for ( j= 0 ; j < np ; j++) 
 	    {
 	      gr_port p;
-	      if ( bf->get_lock_connection(O,i,j,&p)== OK) 
+	      if ( bf->get_lock_connection(O,i,j,&p)== OK && p.object_id != NULL) 
 		{
 		  NspObject *O1 = p.object_id; 
 		  NspTypeGRint *bf1 = GR_INT(O1->basetype->interface);
@@ -1083,7 +1083,7 @@ static void gframe_locks_draw(NspGFrame *R,NspObject *O)
 	  for ( j= 0 ; j < np ; j++) 
 	    {
 	      gr_port p;
-	      if ( bf->get_lock_connection(O,i,j,&p)== OK) 
+	      if ( bf->get_lock_connection(O,i,j,&p)== OK && p.object_id != NULL) 
 		{
 		  NspObject *O1 = p.object_id; 
 		  NspTypeGRint *bf1 = GR_INT(O1->basetype->interface);
@@ -1122,7 +1122,7 @@ void gframe_locks_update(NspGFrame *R,NspObject *O)
 	    {
 	      gr_port p;
 	      lock_dir dir;
-	      if ( bf->get_lock_connection(O,i,j,&p)== OK) 
+	      if ( bf->get_lock_connection(O,i,j,&p)== OK && p.object_id != NULL) 
 		{
 		  NspObject *O1 = p.object_id; 
 		  NspTypeGRint *bf1 = GR_INT(O1->basetype->interface);
@@ -1155,7 +1155,7 @@ static void gframe_recompute_obj_pointers(NspGFrame *R,NspObject *O)
       for ( j= 0 ; j < np ; j++) 
 	{
 	  gr_port p;
-	  if ( bf->get_lock_connection(O,i,j,&p)== OK) 
+	  if ( bf->get_lock_connection(O,i,j,&p)== OK ) 
 	    {
 	      if ( p.object_sid != NULL) 
 		{
