@@ -283,8 +283,8 @@ static NspConnector  *connector_xdr_load(XDR  *xdrs)
       port->object_id = NULL;
       if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return NULLCONNECTOR;
       port->object_sid = NSP_INT_TO_POINTER(id);
-      if ( nsp_xdr_save_i(xdrs,port->lock) == FAIL) return NULLCONNECTOR;
-      if ( nsp_xdr_save_i(xdrs,port->port) == FAIL) return NULLCONNECTOR;
+      if ( nsp_xdr_load_i(xdrs,&port->lock) == FAIL) return NULLCONNECTOR;
+      if ( nsp_xdr_load_i(xdrs,&port->port) == FAIL) return NULLCONNECTOR;
     }
   return M;
 }
@@ -962,13 +962,9 @@ int connector_get_lock_connection(const NspConnector *B,int i,int port, gr_port 
   int np = B->obj->lock.n_ports; 
   if ( i == 0 && port >= 0 && port < np ) 
     {
-      gr_port *gport= &B->obj->lock.ports[port]; 
-      if ( gport->object_id == NULL) return FAIL;
       *p = B->obj->lock.ports[port];
-      Scierror("XXXget lock connection OK %d %d\n",p->lock,p->port);
       return OK;
     }
-  Scierror("XXXget lock connection failed\n");
   return FAIL;
 }
 
@@ -1089,7 +1085,6 @@ void connector_unset_lock_connection(NspConnector *B,int i,int port)
   int n_port= B->obj->lock.n_ports;
   if ( i ==  0 && port >= 0 && port < n_port  ) 
     {
-      /* XXXX : faut-il aussi propager l'info sur l'object locké ? */
       B->obj->lock.ports[port].object_id = NULL;
     }
 }
@@ -1189,7 +1184,7 @@ static void connector_unlock( NspConnector *B,int lp)
 	  GR_INT(O1->basetype->interface)->unset_lock_connection(O1,p.lock,p.port);
 	}
       /* unset the lock on the connector */
-      connector_unset_lock_connection(B,0,i);
+      connector_unset_lock_connection(B,lp,i);
     }
 }
 
