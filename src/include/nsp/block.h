@@ -104,7 +104,7 @@ static int block_get_lock_connection(const NspBlock *B,int i,int port, gr_port *
 static void block_get_lock_pos(const NspBlock *B,int i,double pt[]);
 static lock_dir block_get_lock_dir(const NspBlock *B,int i);
 
-static int block_set_lock_connection(NspBlock *B,int i,const gr_port *p);
+static int block_set_lock_connection(NspBlock *B,int i,int prt,const gr_port *p);
 static void block_unset_lock_connection(NspBlock *B,int i,int port);
 static int block_is_lock_connectable(NspBlock *B,int i);
 static int block_is_lock_connected(NspBlock *B,int i);

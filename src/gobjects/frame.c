@@ -1163,7 +1163,7 @@ static void gframe_recompute_obj_pointers(NspGFrame *R,NspObject *O)
 		  p.object_id = new;
 		  p.object_sid = NULL;
 		  /* A uniformiser */
-		  /* FIXME bf->set_lock_connection(O,i,j,&p); */
+		  bf->set_lock_connection(O,i,j,&p);
 		}
 	    }
 	}

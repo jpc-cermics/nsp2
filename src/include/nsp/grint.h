@@ -45,7 +45,7 @@ typedef int gr_get_number_of_ports(const void *B,int lp) ;
 typedef int gr_get_lock_connection(const void *B,int i,int port, gr_port *p );
 typedef void gr_get_lock_pos(const void *B,int i,double pt[]);
 typedef lock_dir gr_get_lock_dir(const void *B,int i);
-typedef int gr_set_lock_connection(void *B,int i,const gr_port *p);
+typedef int gr_set_lock_connection(void *B,int i,int prt,const gr_port *p);
 typedef void gr_unset_lock_connection(void *B,int i,int port);
 typedef int gr_is_lock_connectable(void *B,int i);
 typedef int gr_is_lock_connected(void *B,int i);

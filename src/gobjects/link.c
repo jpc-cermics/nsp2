@@ -887,12 +887,12 @@ static void link_lock(NspGFrame *F, NspLink *L,int lp,gr_port *p)
   link_unlock( L,lp); /* unlock lp */
   /* we first update the Object we want to lock */
   O1 = p->object_id;
-  port=GR_INT(O1->basetype->interface)->set_lock_connection(O1,p->lock,&p1);
+  port=GR_INT(O1->basetype->interface)->set_lock_connection(O1,p->lock,-1,&p1);
   /* should not get through port == -1 */
   if ( port == -1 ) Scierror("Unable to connect link to object \n");
   p->port = port; 
   /* Now we lock the link loc to p */
-  link_set_lock_connection(L,lp,p);
+  link_set_lock_connection(L,lp,0,p);
 }
 
 /**
@@ -1011,7 +1011,7 @@ int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
   n = L->obj->poly->m;
   /* for proj to end of link */
   n1 = L->obj->poly->m-kmin;
-  if ((*L1= link_create_n(NVOID,n1,L->obj->color,L->obj->thickness))==NULL) return FAIL;
+  if ((*L1= link_create_n("fe",n1,L->obj->color,L->obj->thickness))==NULL) return FAIL;
   (*L1)->obj->frame = F;
   (*L1)->obj->poly->R[0]=proj[0];
   (*L1)->obj->poly->R[n1]=proj[1];
@@ -1133,7 +1133,7 @@ void link_check(NspGFrame *F,NspLink *L)
 		      double rect[]={pt[0]-lock_size,pt[1]+lock_size,lock_size*3,lock_size*3}; 
 		      NspConnector *C;
 		      gr_port p;
-		      C=connector_create(NVOID,rect,color,thickness,background,NULL);
+		      C=connector_create("fe",rect,color,thickness,background,NULL);
 		      if ( C == NULL) return;
 		      /* herits the frame graphic context */
 		      C->obj->frame = F;
@@ -1268,13 +1268,14 @@ lock_dir link_get_lock_dir(const NspLink *L, int i)
  * link_set_lock_connection: 
  * @B: a link 
  * @i: a lock point id. 
+ * @prt: port id (0 for links)
  * @p: information to be connected to one port of lock point i;
  * 
  * the port described by @p is connected to a port of lock point i; 
  * return value: -1 or the port number used for connection.
  **/
 
-int link_set_lock_connection(NspLink *B,int i,const gr_port *p)
+int link_set_lock_connection(NspLink *B,int i,int prt,const gr_port *p)
 {
   if ( i ==  0 || i == 1 ) 
     {

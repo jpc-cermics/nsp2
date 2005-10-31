@@ -100,7 +100,7 @@ static int link_get_lock_connection(const NspLink *B,int i,int port, gr_port *p 
 static void link_get_lock_pos(const NspLink *B,int i,double pt[]);
 static lock_dir link_get_lock_dir(const NspLink *B,int i);
 
-static int link_set_lock_connection(NspLink *B,int i,const gr_port *p);
+static int link_set_lock_connection(NspLink *B,int i,int prt,const gr_port *p);
 static void link_unset_lock_connection(NspLink *B,int i,int port);
 static int link_is_lock_connectable(NspLink *B,int i);
 static int link_is_lock_connected(NspLink *B,int i);

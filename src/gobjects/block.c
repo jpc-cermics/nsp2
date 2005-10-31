@@ -1143,13 +1143,14 @@ lock_dir block_get_lock_dir(const NspBlock *B, int i)
  * block_set_lock_connection: 
  * @B: a block 
  * @i: a lock point id. 
+ * @prt: a port id (0 for block).
  * @p: information to be connected to one port of lock point i;
  * 
  * the port described by @p is connected to a port of lock point i; 
  * return value: -2 or -1 or the port number used for connection. 
  **/
 
-int block_set_lock_connection(NspBlock *B,int i,const gr_port *p)
+int block_set_lock_connection(NspBlock *B,int i,int prt,const gr_port *p)
 {
   if ( i >=  0  && i < B->obj->n_locks ) 
     {

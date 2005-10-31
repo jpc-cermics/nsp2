@@ -1009,17 +1009,32 @@ lock_dir connector_get_lock_dir(const NspConnector *L, int i)
  * @i: a lock point id. 
  * @p: information to be connected to one port of lock point i;
  * 
- * the port described by @p is connected to a port of lock point i; 
+ * the port described by @p is connected to a port @prt of lock point @i 
+ * (a connector just has one lock point). If @prt is equal to -1 a free 
+ * port is checked else the port @prt is used.
  * return value: -1 or the port number used for connection.
  **/
 
-int connector_set_lock_connection(NspConnector *B,int i,const gr_port *p)
+int connector_set_lock_connection(NspConnector *B,int i,int prt,const gr_port *p)
 {
-  int port_number=0;
+  int port_number=0,j;
   gr_port *port= NULL;
-  if ( i ==  0 ) 
+  if ( i !=  0 ) return -1;
+  if ( prt != -1 ) 
     {
-      int j;
+      /* using an existing port */
+      if ( prt >= 0 && prt < B->obj->lock.n_ports )
+	{
+	  port= &B->obj->lock.ports[prt]; 
+	  port_number = prt;
+	}
+      else 
+	{
+	  return -1;
+	}
+    }
+  else 
+    {
       for ( j= 0 ; j < B->obj->lock.n_ports ; j++) 
 	{
 	  if ( B->obj->lock.ports[j].object_id == NULL) 
@@ -1037,7 +1052,6 @@ int connector_set_lock_connection(NspConnector *B,int i,const gr_port *p)
 	      if ( B->obj->lock.ports == NULL ) 
 		{
 		  if ((loc = malloc((B->obj->lock.n_ports+1)*sizeof(gr_port)))==NULL)
-		    
 		    return -1;
 		}
 	      else 
@@ -1053,11 +1067,11 @@ int connector_set_lock_connection(NspConnector *B,int i,const gr_port *p)
 	  else 
 	    return -1;
 	}
-      *port = *p;
-      /* Scierror("XXXget connection OK on port %d\n",port_number); */
-      return port_number;
     }
-  return -1;
+  /* copy p values in port */
+  *port = *p;
+  /* Scierror("XXXget connection OK on port %d\n",port_number); */
+  return port_number;
 }
 
 /**
