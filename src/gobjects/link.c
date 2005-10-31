@@ -1395,24 +1395,21 @@ static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angl
 
 
 /*
- *
- */
-
-
-
-
-/*
  * load 
  */
 
 static NspLink  *link_full_copy(NspLink *L)
 {
+  int i;
   NspLink *L1=NULLLINK;
   if (( L1 = link_create(NVOID,L->obj->poly,L->obj->color,L->obj->thickness,NULL)) == NULLLINK) return NULLLINK;
+  L1->obj->object_sid = L;
   /* the lock points */
-  L1->obj->locks[0] =   L->obj->locks[0];
-  L1->obj->locks[1] =   L->obj->locks[1];
-  L1->obj->locks[0].port.object_id = NULLOBJ;
-  L1->obj->locks[1].port.object_id = NULLOBJ;
+  for ( i= 0 ; i < 2 ; i++)
+    {
+      L1->obj->locks[i] =   L->obj->locks[i];
+      L1->obj->locks[i].port.object_id = NULLOBJ;
+      L1->obj->locks[i].port.object_sid = L->obj->locks[i].port.object_id;
+    }
   return L1;
 }

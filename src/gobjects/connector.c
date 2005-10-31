@@ -1201,6 +1201,7 @@ static NspConnector  *connector_full_copy(NspConnector *C)
   if (( C1 = connector_create(NVOID,C->obj->r,C->obj->color,C->obj->thickness,C->obj->background,NULL))
       == NULLCONNECTOR) return NULLCONNECTOR;
   /* the lock points */
+  C1->obj->object_sid = C;
   C1->obj->lock.n_ports = C->obj->lock.n_ports;
   C1->obj->lock.fixed = C->obj->lock.fixed;
   if (( C1->obj->lock.ports = malloc(C1->obj->lock.n_ports*sizeof(gr_port))) == NULL)

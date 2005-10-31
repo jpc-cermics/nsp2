@@ -666,6 +666,20 @@ int int_gf_attach_to_window(void *self,Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+int int_gf_full_copy(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspGFrame *F;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((F = frame_full_copy((NspGFrame *) self))== NULLGFRAME) 
+    {
+      Scierror("Error: copy failed\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(F));
+  return 1;
+}
+
 
 static NspMethods gframe_methods[] = {
   { "draw",   int_gfdraw},
@@ -683,6 +697,7 @@ static NspMethods gframe_methods[] = {
   { "get_selection",int_gf_get_selection},
   { "get_selection_copy",int_gf_get_selection_copy},
   { "attach_to_window",int_gf_attach_to_window},
+  { "copy",int_gf_full_copy},
   { (char *) 0, NULL}
 };
 
@@ -1590,6 +1605,59 @@ int gframe_create_new_link(NspGFrame *F)
   Xgc->graphic_engine->xset_recording(Xgc,record);
   return ibutton;
 }
+
+/*
+ * Make a full copy of object B
+ * this is to be inserted in grint 
+ */
+
+static NspList * nsp_list_full_copy(NspList *L);
+
+static NspGFrame *frame_full_copy( NspGFrame *F)
+{
+  NspGFrame *M=NULLGFRAME;
+  if (( M = gframe_create(NVOID,NULL,FALSE,F->obj->scale,F->obj->r,NULL)) == NULLGFRAME) 
+    return NULLGFRAME;
+  if ((M->obj->objs = nsp_list_full_copy(F->obj->objs))== NULL)  return NULLGFRAME;
+  /* restore lost pointers */
+  gframe_set_frame_field(M);
+  /*
+   * restore interconnections 
+   */
+  gframe_recompute_pointers(M);
+  return M;
+}
+
+static NspList * nsp_list_full_copy(NspList *L)
+{
+  NspObject *obj;
+  NspList *Loc;
+  Cell *cloc,*cloc1=NULLCELL,*cloc2=NULLCELL;
+  if ( ( Loc =nsp_list_create(NVOID,L->tname) ) == NULLLIST) return(NULLLIST) ;
+  cloc = L->first ;
+  while ( cloc != NULLCELL) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspTypeGRint *bf=  GR_INT(cloc->O->basetype->interface);
+	  if ((obj = bf->full_copy(cloc->O))== NULLOBJ)  return NULLLIST;
+	  if (nsp_object_set_name(obj,nsp_object_get_name(cloc->O)) == FAIL) return NULLLIST;
+	}
+      if ((cloc1 =nsp_cell_create(cloc->name,obj))== NULLCELL) return(NULLLIST);
+      if ( cloc->prev == NULLCELL) 
+	{
+	  Loc->first = cloc1;
+	}
+      else 
+	{
+	  cloc1->prev = cloc2;
+	  cloc2->next = cloc1;
+	}
+      cloc2= cloc1;
+      cloc = cloc->next;
+    }
+  return(Loc);
+} 
 
 
 
