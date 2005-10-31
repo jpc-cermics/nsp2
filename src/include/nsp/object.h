@@ -313,7 +313,7 @@ extern void *MaybeObjCopy (NspObject **O);
 #include "nsp/classa.h"
 #include "nsp/classb.h"
 #include "nsp/cells.h"
-
+#include "nsp/matint.h"
 
 /*----------------------------------------------------------
  * A set of prototypes 

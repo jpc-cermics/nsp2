@@ -519,9 +519,10 @@ void primitive_types_register() {
   nsp_init_gtk_types(); 
   /* cells */
   new_type_cells(T_BASE); 
+  new_type_connector(T_BASE);
+  new_type_matint(T_BASE);
 #ifdef MAXPLUS 
   new_type_mpmatrix(T_BASE);
-  new_type_matint(T_BASE);
 #endif 
 }
 
