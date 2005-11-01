@@ -89,7 +89,7 @@ static void block_set_hilited (NspBlock *B, int val);
 static int block_get_show (NspBlock *B); 
 static void block_set_show (NspBlock *B, int val); 
 static void block_draw (NspBlock *R); 
-static void block_translate (NspBlock *R, const double *pt); 
+static int block_translate (NspBlock *R, const double *pt); 
 static void block_resize (NspBlock *R, const double *size); 
 static void block_update_locks (NspBlock *R); 
 static int block_contains_pt (const NspBlock *B, const double *pt); 

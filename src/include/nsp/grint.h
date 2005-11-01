@@ -21,7 +21,7 @@ typedef void gr_set_hilited (void *B, int val);
 typedef int gr_get_show (void *B); 
 typedef void gr_set_show (void *B, int val); 
 typedef void gr_draw (void *R); 
-typedef void gr_translate (void *R, const double *pt); 
+typedef int gr_translate (void *R, const double *pt); 
 typedef void gr_resize (void *R, const double *size); 
 typedef void gr_update_locks (void *R); 
 typedef int gr_contains_pt (const void *B, const double *pt); 

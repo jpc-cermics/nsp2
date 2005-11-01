@@ -302,9 +302,8 @@ static void block_info(NspBlock *H, int indent)
       return;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("%s\t = Block r=[%5.2f,%5.2f,%5.2f,%5.2f] co=%d, th=%d bg=%d\n",
-	    NSP_OBJECT(H)->name,H->obj->r[0],H->obj->r[1],H->obj->r[2],H->obj->r[3],
-	    H->obj->color,H->obj->thickness,H->obj->background);
+  Sciprintf("%s\t=\t\t%s (1) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
+	    block_type_short_string(), H->obj,H->obj->ref_count );
 }
 
 static void block_print(NspBlock *H, int indent)
@@ -643,7 +642,6 @@ static int int_gblock_set_locks_pos(void  *self, Stack stack, int rhs, int opt, 
   return 1;
 }
 
-
 static NspMethods block_methods[] = {
   { "translate", int_gblock_translate},
   { "resize",   int_gblock_resize},
@@ -882,11 +880,12 @@ void block_draw(NspBlock *B)
  *
  **/
 
-void block_translate(NspBlock *B,const double tr[2])
+int block_translate(NspBlock *B,const double tr[2])
 {
   B->obj->r[0] += tr[0] ;
   B->obj->r[1] += tr[1] ;
   block_update_locks(B);
+  return OK;
 }
 
 /**
@@ -950,7 +949,7 @@ int block_contains_pt(const NspBlock *B,const double pt[2])
       for ( i=0 ; i < B->obj->n_locks ; i++ ) 
 	{
 	  double d= Max(Abs( B->obj->locks[i].pt[0] -pt[0]),Abs( B->obj->locks[i].pt[1] -pt[1])) ;
-	  if ( d < lock_size ) 
+	  if ( d < lock_size/2 ) 
 	    return FALSE;
 	}
     }

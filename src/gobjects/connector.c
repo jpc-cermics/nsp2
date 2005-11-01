@@ -311,9 +311,8 @@ static void connector_info(NspConnector *H, int indent)
       return;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("[Connector %s, r=[%5.2f,%5.2f,%5.2f,%5.2f] co=%d, th=%d bg=%d]\n",
-	    NSP_OBJECT(H)->name,H->obj->r[0],H->obj->r[1],H->obj->r[2],H->obj->r[3],
-	    H->obj->color,H->obj->thickness,H->obj->background);
+  Sciprintf("%s\t=\t\t%s (1) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
+	    connector_type_short_string(), H->obj,H->obj->ref_count );
 }
 
 static void connector_print(NspConnector *H, int indent)
@@ -764,11 +763,12 @@ void connector_draw(NspConnector *B)
  *
  **/
 
-void connector_translate(NspConnector *B,const double pt[2])
+int connector_translate(NspConnector *B,const double pt[2])
 {
   B->obj->r[0] += pt[0] ;
   B->obj->r[1] += pt[1] ;
   connector_update_locks(B);
+  return OK;
 }
 
 /**
@@ -823,7 +823,7 @@ int connector_contains_pt(const NspConnector *B,const double pt[2])
   if (rep == TRUE &&  connector_is_lock_connected(B,0))
     {
       double d= Max(Abs( B->obj->lock.pt[0] -pt[0]),Abs( B->obj->lock.pt[1] -pt[1])) ;
-      if ( d < lock_size ) 
+      if ( d < lock_size/2 ) 
 	return FALSE;
     }
   return rep;

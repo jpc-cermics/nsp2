@@ -90,7 +90,7 @@ static void connector_set_hilited (NspConnector *B, int val);
 static int connector_get_show (NspConnector *B); 
 static void connector_set_show (NspConnector *B, int val); 
 static void connector_draw (NspConnector *R); 
-static void connector_translate (NspConnector *R, const double *pt); 
+static int connector_translate (NspConnector *R, const double *pt); 
 static void connector_resize (NspConnector *R, const double *size); 
 static void connector_update_locks (NspConnector *R); 
 static int connector_contains_pt (const NspConnector *B, const double *pt); 

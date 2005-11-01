@@ -85,7 +85,7 @@ static void link_set_hilited (NspLink *B, int val);
 static int link_get_show (NspLink *B); 
 static void link_set_show (NspLink *B, int val); 
 static void link_draw (NspLink *R); 
-static void link_translate (NspLink *R, const double *pt); 
+static int link_translate (NspLink *R, const double *pt); 
 static void link_resize (NspLink *R, const double *size); 
 static void link_update_locks (NspLink *R); 
 static int link_contains_pt (const NspLink *B, const double *pt); 

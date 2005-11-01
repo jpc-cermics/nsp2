@@ -314,8 +314,8 @@ static void link_info(NspLink *H, int indent)
       return;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("%s\t =  Link co=%d, th=%d\n",
-	    NSP_OBJECT(H)->name,H->obj->color,H->obj->thickness);
+  Sciprintf("%s\t=\t\t%s (1) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
+	    link_type_short_string(), H->obj,H->obj->ref_count );
 }
 
 static void link_print(NspLink *H, int indent)
@@ -552,10 +552,32 @@ int int_glresize(void  *self, Stack stack, int rhs, int opt, int lhs)
 }
 
 
+/*
+ * connect 
+ */
+
+static int link_connect(NspLink *L,int lock, NspObject *Obj,int obj_lock,int obj_port);
+
+static int int_glconnect(void  *self, Stack stack, int rhs, int opt, int lhs)
+{
+  int lock,lock_dest;
+  NspBlock *L;
+  CheckRhs(3,4);
+  CheckLhs(-1,1);
+  if ( GetScalarInt(stack,1,&lock) == FAIL) return RET_BUG;
+  if ( (L=GetBlock(stack,2))== NULLBLOCK) return RET_BUG;
+  if ( GetScalarInt(stack,3,&lock_dest) == FAIL) return RET_BUG;
+  if ( link_connect(self,lock,NSP_OBJECT(L),lock_dest,0) == FAIL) return RET_BUG;
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+
 static NspMethods link_methods[] = {
   { "translate", int_gltranslate},
   { "resize",   int_glresize},
   { "draw",   int_gldraw},
+  { "connect", int_glconnect},
   { (char *) 0, NULL}
 };
                                                                                                       
@@ -688,18 +710,38 @@ void link_draw(NspLink *L)
  * translate 
  **************************************************/
 
-void link_translate(NspLink *L,const double pt[2])
+/* XXXXX */
+extern int nsp_message_(char *message,char **buttons,int n_buttons);
+
+int link_translate(NspLink *L,const double pt[2])
 {
   int i,m= L->obj->poly->m;
   double *x= L->obj->poly->R, *y = x + m; 
   /* cannot translate locked link */
-  if ( link_is_lock_connected(L,0)) return; 
-  if ( link_is_lock_connected(L,1)) return; 
+  if ( link_is_lock_connected(L,0) 
+       ||  link_is_lock_connected(L,1))
+    {
+      if (0)
+	{
+	  static char* buttons_def[] = { "Ok", NULL };
+	  nsp_string message = "Cannot move a locked link\n";
+	  nsp_message_(message,buttons_def,1);
+	  return FAIL;
+	}
+      else 
+	{
+	  if ( L->obj->frame != NULL &&  L->obj->frame->obj->Xgc != NULL) 
+	    L->obj->frame->obj->Xgc->graphic_engine->xinfo(L->obj->frame->obj->Xgc,
+						      "Cannot move a locked link\n");
+	  return FAIL;
+	}
+    }
   for ( i= 0 ; i < m ; i++) 
     {
       x[i] += pt[0] ;
       y[i] += pt[1] ;
     }
+  return OK;
 }
 
 /**************************************************
@@ -730,7 +772,7 @@ int link_contains_pt(const NspLink *B,const double pt[2])
   double pt_proj[2],pmin,d;
   int kmin=-1;
   dist_2_polyline(B->obj->poly,pt,pt_proj,&kmin,&pmin,&d);
-  if ( kmin != -1 && d <  lock_size ) 
+  if ( kmin != -1 && d <  lock_size/2 ) 
     return TRUE;
   else 
     return FALSE;
@@ -1035,8 +1077,8 @@ int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
       link_unlock(L,1);  
       link_lock(F,(*L1),1,&p); 
     }
-  /* add L1 in the frame */ 
-  if (nsp_list_end_insert(F->obj->objs,(NspObject  *) (*L1)) == FAIL) return FAIL;
+  /* add L1 in the frame at start */ 
+  if (nsp_list_insert(F->obj->objs,(NspObject  *) (*L1),0) == FAIL) return FAIL;
   return OK;
 }
 
@@ -1412,4 +1454,36 @@ static NspLink  *link_full_copy(NspLink *L)
       L1->obj->locks[i].port.object_sid = L->obj->locks[i].port.object_id;
     }
   return L1;
+}
+
+/*
+ * Lock the port of Link L 
+ * to object Obj at obj_lock, obj_port.
+ */
+
+static int link_connect(NspLink *L,int lock, NspObject *Obj,int obj_lock,int obj_port)
+{
+  double pt[2];
+  gr_port p;
+  NspTypeGRint *bf,*obj_bf;
+  if ( L == NULLLINK) return FAIL;
+  bf = GR_INT(((NspObject *) L)->basetype->interface);
+  obj_bf = GR_INT(((NspObject *) Obj)->basetype->interface);
+  if ( obj_bf->get_lock_connection(Obj,obj_lock,obj_port,&p)== FAIL) return FAIL;
+  if ( p.object_id != NULLOBJ ) return FAIL;
+  /* first unlock */
+  link_unlock( L,lock) ;
+  /* relock to new object */
+  p.object_id = Obj;
+  p.lock = obj_lock;
+  p.port = 0;
+  link_set_lock_connection(L,lock,0,&p);
+  /* relock Obj to L */
+  p.object_id = (NspObject *) L;
+  p.lock = lock;
+  p.port = 0;
+  obj_bf->set_lock_connection(Obj,obj_lock,0,&p);
+  obj_bf->get_lock_pos(Obj,obj_lock,pt);
+  link_set_lock_pos(L,lock,pt,FALSE,ANY);
+  return OK;
 }

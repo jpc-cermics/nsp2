@@ -76,6 +76,8 @@ static void gframe_info (NspGFrame *H, int indent);
 static void gframe_print (NspGFrame *H, int indent); 
 static NspMethods *gframe_get_methods(void);
 static int int_gframe_create(Stack stack, int rhs, int opt, int lhs);
+static NspGFrame *frame_full_copy( NspGFrame *F);
+
 #endif /* GFrame_Private */
 
 #define NULLGFRAME (NspGFrame*) 0
@@ -99,8 +101,8 @@ extern int gframe_move_obj (NspGFrame *R,NspObject *O, const double *pt, int sto
 extern void gframe_unhilite_objs (NspGFrame *R, int draw); 
 extern void gframe_delete_hilited (NspGFrame *R); 
 extern NspObject* gframe_create_new_block(NspGFrame *R);
-extern int gframe_create_new_connector(NspGFrame *R);
-extern int gframe_create_new_link(NspGFrame *F);
+extern NspObject* gframe_create_new_connector(NspGFrame *R);
+extern NspObject* gframe_create_new_link(NspGFrame *F);
 extern int gframe_create_new_rect(NspGFrame *F);
 extern int  gframe_hilite_near_pt(NspGFrame *R,const double pt[2]);
 

@@ -244,10 +244,9 @@ static void gframe_info(NspGFrame *H, int indent)
       return;
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("[GFrame %s, scale=[%5.2f,%5.2f,%5.2f,%5.2f] r=[%5.2f,%5.2f,%5.2f,%5.2f]\n",
-	    NSP_OBJECT(H)->name,H->obj->scale[0],H->obj->scale[1],H->obj->scale[2],H->obj->scale[3],
-	    H->obj->scale[0],H->obj->scale[1],H->obj->scale[2],H->obj->scale[3]);
-  /* Faire un Map sur les elts XXXXX */
+  Sciprintf("%s\t=\t\t%s (%d) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
+	    gframe_type_short_string(), nsp_list_length(H->obj->objs),
+	    H->obj,H->obj->ref_count );
 }
 
 static void gframe_print(NspGFrame *H, int indent)
@@ -354,7 +353,7 @@ NspGFrame *gframe_copy(NspGFrame *self)
 
 static int int_gframe_create(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc;
+  BCG *Xgc=NULL;
   int i,winid;
   NspGFrame *H;
   NspMatrix *scale,*r;
@@ -371,19 +370,30 @@ static int int_gframe_create(Stack stack, int rhs, int opt, int lhs)
   if ((r =GetRealMat(stack,2)) == NULLMAT ) return FAIL;
   CheckLength(stack.fname,2,r,4);
   if ( GetScalarInt(stack,3,&winid) == FAIL) return RET_BUG;
-
-  Xgc =  window_list_search(winid);
-  if ( Xgc == NULL ) Xgc= check_graphic_window();
+  if (winid != -1) 
+    {
+      Xgc =  window_list_search(winid);
+      if ( Xgc == NULL ) Xgc= check_graphic_window();
+    }
+  
   if(( H = gframe_create(NVOID,Xgc,TRUE,scale->R,r->R,NULL)) == NULLGFRAME) return RET_BUG;
   for ( i = 4 ; i <= rhs ; i++ )
     {
       if ( MaybeObjCopy(&NthObj(i)) == NULL)  return RET_BUG;
-      if (nsp_object_set_name(NthObj(i),"lel") == FAIL) return RET_BUG;
-      if (nsp_list_end_insert(H->obj->objs,NthObj(i)) == FAIL ) return RET_BUG;
-      /** If NthObj(i) is not copied it is inserted in the list 
-      we must set then NthObj(i) to NULLOBJ 
-      to prevent the cleaning process to clean the object 
-      that we have inserted in our list **/
+      if ( nsp_object_set_name(NthObj(i),"lel") == FAIL) return RET_BUG;
+      /* change according to object type */
+      if ( IsBlock(NthObj(i)) ||  IsConnector(NthObj(i)))
+	{
+	  if (nsp_list_end_insert(H->obj->objs,NthObj(i)) == FAIL ) return RET_BUG;
+	}
+      else if ( IsLink(NthObj(i))) 
+	{ 
+	  if (nsp_list_insert(H->obj->objs,NthObj(i),0) == FAIL ) return RET_BUG;
+	}
+      /* If NthObj(i) is not copied it is inserted in the list 
+       * we must set then NthObj(i) to NULLOBJ 
+       * to prevent the cleaning process to clean the object 
+       * that we have inserted in our list */
       NthObj(i) = NULLOBJ ;
     }
   MoveObj(stack,1,(NspObject  *) H);
@@ -539,10 +549,14 @@ int int_gf_new_block(void *self,Stack stack, int rhs, int opt, int lhs)
 
 int int_gf_new_connector(void *self,Stack stack, int rhs, int opt, int lhs)
 {
+  NspObject *obj;
   CheckRhs(0,0);
   CheckLhs(-1,1);
-  gframe_create_new_connector(((NspGFrame *) self));
-  return 0;
+  if ((obj = gframe_create_new_connector(((NspGFrame *) self)))== NULL) return RET_BUG;
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
 }
 
 int int_gf_new_rect(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -555,10 +569,14 @@ int int_gf_new_rect(void *self,Stack stack, int rhs, int opt, int lhs)
 
 int int_gf_new_link(void *self,Stack stack, int rhs, int opt, int lhs)
 {
+  NspObject *obj;
   CheckRhs(0,0);
   CheckLhs(-1,1);
-  gframe_create_new_link(((NspGFrame *) self));
-  return 0;
+  if ((obj =   gframe_create_new_link(((NspGFrame *) self)))== NULL) return RET_BUG;
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
 }
 
 int int_gf_delete_hilited(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -624,6 +642,7 @@ int int_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
   NspLink *L;
   NspConnector *C;
   NspObject *obj;
+  int flag = TRUE;
   if ( IsBlockObj(stack,1) )
     { 
       if ((B=GetBlockCopy(stack,1)) == NULLBLOCK) return RET_BUG;
@@ -635,6 +654,7 @@ int int_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
       if ((L=GetLinkCopy(stack,1)) == NULLLINK) return RET_BUG;
       L->obj->frame = (NspGFrame *) self;
       obj = NSP_OBJECT(L);
+      flag = FALSE;
     }
   else if ( IsConnectorObj(stack,1))
     { 
@@ -642,8 +662,16 @@ int int_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
       C->obj->frame = (NspGFrame *) self;
       obj = NSP_OBJECT(C);
     }
+
   if (nsp_object_set_name(obj,"lel") == FAIL) return RET_BUG;
-  if (nsp_list_end_insert(((NspGFrame *) self)->obj->objs,obj) == FAIL ) return RET_BUG;
+  if ( flag ) 
+    {
+      if (nsp_list_end_insert(((NspGFrame *) self)->obj->objs,obj) == FAIL ) return RET_BUG;
+    }
+  else 
+    {
+      if (nsp_list_insert(((NspGFrame *) self)->obj->objs,obj,0) == FAIL ) return RET_BUG;
+    }
   return 0;
 }
 
@@ -680,9 +708,35 @@ int int_gf_full_copy(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+void gframe_tops(NspGFrame *R,char *fname);
+
+int int_gf_tops(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int rep=1,color=-1;
+  char *filename= NULL, *mode = NULL;
+  static char *Table[] = {"d", "l", "n", "p", "k", NULL};
+  int_types T[] = {string, new_opts, t_end} ;
+  nsp_option opts[] ={{ "color",s_bool,NULLOBJ,-1},
+		      { "mode",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&filename,&opts,&color,&mode) == FAIL) return RET_BUG;
+  if ( mode != NULL) 
+    {
+      rep = is_string_in_array(mode,Table,1);
+      if ( rep < 0 ) 
+	{
+	  string_not_in_array(stack,mode,Table,"optional argument mode");
+	  return RET_BUG;
+	}
+    }
+  /* XXXXXXXXX gframe_tops(self,filename); */
+  return 0;
+}
+
 
 static NspMethods gframe_methods[] = {
   { "draw",   int_gfdraw},
+  { "tops",   int_gf_tops},
   { "new_link", int_gf_new_link },
   { "new_block", int_gf_new_block },
   { "new_connector", int_gf_new_connector },
@@ -766,6 +820,37 @@ void gframe_draw(NspGFrame *R)
       C = C->next ;
     }
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
+}
+
+/**
+ * gframe_draw:
+ * @R: a graphic frame  
+ * 
+ * draw the objects contained in frame @R.
+ * 
+ **/
+
+extern BCG ScilabGCPos ; /* Postscript */
+extern Gengine Pos_gengine;
+
+void gframe_tops(NspGFrame *R,char *fname)
+{
+  int wdim[2],*wdim_p=NULL;
+  int zero=0,un=1,colored=TRUE;
+  BCG *Xgc = R->obj->Xgc;
+  if ( Xgc == NULL) return;
+  R->obj->Xgc->graphic_engine->xget_windowdim(R->obj->Xgc,wdim,wdim+1);
+  wdim_p = wdim;
+  ScilabGCPos.graphic_engine = &Pos_gengine;
+  ScilabGCPos.graphic_engine->initgraphic(fname,&Xgc->CurWindow,wdim_p,NULL,NULL,NULL,'k');
+  if (colored == TRUE ) 
+    ScilabGCPos.graphic_engine->xset_usecolor(&ScilabGCPos,un);
+  else
+    ScilabGCPos.graphic_engine->xset_usecolor(&ScilabGCPos,zero);
+  R->obj->Xgc = &ScilabGCPos;
+  gframe_draw(R);
+  ScilabGCPos.graphic_engine->xend(&ScilabGCPos);
+  R->obj->Xgc = Xgc;
 }
 
 
@@ -897,7 +982,7 @@ void * gframe_get_adress(NspGFrame *F,void *old )
  * @O: a #NspObject 
  * @val: a flag as an integer
  * 
- * sets the whow attribute to value @val for all the objects which 
+ * sets the show attribute to value @val for all the objects which 
  * are connected to object @O by lock connections.
  **/
 
@@ -1222,7 +1307,7 @@ static void gframe_recompute_pointers(NspGFrame *F)
 
 int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp,move_action action)
 {
-  int record;
+  int record,rep;
   BCG *Xgc = F->obj->Xgc;
   int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0, ibutton, iwait=FALSE;
   double mpt[2],pt1[2]= {pt[0],pt[1]},ptwork[2];
@@ -1266,7 +1351,8 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
       switch ( action ) 
 	{
 	case MOVE : 
-	  bf->translate(O,(pt1[0]= mpt[0] -pt1[0],pt1[1]=mpt[1] -pt1[1],pt1));
+	  rep= bf->translate(O,(pt1[0]= mpt[0] -pt1[0],pt1[1]=mpt[1] -pt1[1],pt1));
+	  if ( rep == FAIL) wstop=1; /* quit untranslatable objects */
 	  break;
 	case MOVE_CONTROL :
 	  bf->move_control(F,O,mpt,cp, ptwork);
@@ -1412,7 +1498,7 @@ NspObject * gframe_create_new_block(NspGFrame *F)
  * Return value: %OK or %FALSE
  **/
 
-int gframe_create_new_connector(NspGFrame *F)
+NspObject * gframe_create_new_connector(NspGFrame *F)
 {
   int color=4,thickness=1, background=9,rep;
   double rect[]={0,100,4,4}, pt[]={0,100};
@@ -1420,15 +1506,15 @@ int gframe_create_new_connector(NspGFrame *F)
   /* unhilite all */
   gframe_unhilite_objs(F,FALSE);
   B=connector_create("fe",rect,color,thickness,background,NULL);
-  if ( B == NULL) return FAIL;
+  if ( B == NULL) return NULLOBJ;
   B->obj->frame = F;
   B->obj->hilited = TRUE;
-  if (nsp_list_end_insert(F->obj->objs,(NspObject  *) B) == FAIL) return FAIL;
+  if (nsp_list_end_insert(F->obj->objs,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
-  if ( rep== -100 )  return FAIL;
+  if ( rep== -100 )  return NULLOBJ;
   /* XXXX block_draw(B); */
   if ( pixmap ) F->obj->Xgc->graphic_engine->xset_show(F->obj->Xgc);
-  return OK;
+  return NSP_OBJECT(B);
 }
 
 /**
@@ -1472,7 +1558,7 @@ int gframe_create_new_rect(NspGFrame *F)
 
 static double lock_size=1;
 
-int gframe_create_new_link(NspGFrame *F)
+NspObject * gframe_create_new_link(NspGFrame *F)
 {
   BCG *Xgc= F->obj->Xgc;
   NspObject *Ob;
@@ -1496,7 +1582,7 @@ int gframe_create_new_link(NspGFrame *F)
 
   bf = GR_INT(((NspObject *) L)->basetype->interface);
 
-  if ( L == NULLLINK) return FAIL;
+  if ( L == NULLLINK) return NULLOBJ;
   L->obj->hilited = TRUE;
   L->obj->poly->R[0]=mpt[0];
   L->obj->poly->R[1]=mpt[0];
@@ -1512,7 +1598,7 @@ int gframe_create_new_link(NspGFrame *F)
 	  /* we stop : window was killed */
 	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
 	  Xgc->graphic_engine->xset_recording(Xgc,record);
-	  return ibutton;
+	  return NULLOBJ;
 	}
       if ( ibutton == stop ) 
 	{
@@ -1564,7 +1650,7 @@ int gframe_create_new_link(NspGFrame *F)
 		  break;
 		}
 	    }
-	  if ( nsp_matrix_add_rows(L->obj->poly,1)== FAIL ) return FAIL;	  
+	  if ( nsp_matrix_add_rows(L->obj->poly,1)== FAIL ) return NULLOBJ;	  
 	  count ++;
 	  L->obj->poly->R[count]= mpt[0];
 	  L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
@@ -1587,8 +1673,10 @@ int gframe_create_new_link(NspGFrame *F)
 	}
     }
   Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-  /* insert link in frame */
-  if (nsp_list_end_insert(F->obj->objs,(NspObject  *) L) == FAIL) return FAIL;
+  /* insert link in frame 
+   * at the start 
+   */
+  if (nsp_list_insert(F->obj->objs,(NspObject  *) L,0) == FAIL) return NULLOBJ;
   /* check if first and last points are locked 
    * if true update locks 
    */
@@ -1603,7 +1691,7 @@ int gframe_create_new_link(NspGFrame *F)
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
   Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
   Xgc->graphic_engine->xset_recording(Xgc,record);
-  return ibutton;
+  return NSP_OBJECT(L);
 }
 
 /*
