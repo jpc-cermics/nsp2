@@ -715,28 +715,12 @@ extern int nsp_message_(char *message,char **buttons,int n_buttons);
 
 int link_translate(NspLink *L,const double pt[2])
 {
-  int i,m= L->obj->poly->m;
+  int i,m= L->obj->poly->m,min=0,max=m;
   double *x= L->obj->poly->R, *y = x + m; 
   /* cannot translate locked link */
-  if ( link_is_lock_connected(L,0) 
-       ||  link_is_lock_connected(L,1))
-    {
-      if (0)
-	{
-	  static char* buttons_def[] = { "Ok", NULL };
-	  nsp_string message = "Cannot move a locked link\n";
-	  nsp_message_(message,buttons_def,1);
-	  return FAIL;
-	}
-      else 
-	{
-	  if ( L->obj->frame != NULL &&  L->obj->frame->obj->Xgc != NULL) 
-	    L->obj->frame->obj->Xgc->graphic_engine->xinfo(L->obj->frame->obj->Xgc,
-						      "Cannot move a locked link\n");
-	  return FAIL;
-	}
-    }
-  for ( i= 0 ; i < m ; i++) 
+  if ( link_is_lock_connected(L,0) ) min=1;
+  if ( link_is_lock_connected(L,1) ) max=m-1;
+  for ( i= min ; i < max ; i++) 
     {
       x[i] += pt[0] ;
       y[i] += pt[1] ;
@@ -762,7 +746,6 @@ void link_update_locks(NspLink *R)
   
 }
 
-
 /**************************************************
  * pt is inside NspLink 
  **************************************************/
@@ -778,8 +761,6 @@ int link_contains_pt(const NspLink *B,const double pt[2])
     return FALSE;
 }
     
-
-
 /**************************************************
  * utility function 
  * distance from a point to a polyline 

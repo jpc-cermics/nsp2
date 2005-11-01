@@ -206,11 +206,10 @@ static void gframe_recompute_pointers(NspGFrame *F);
 
 static NspGFrame  *gframe_xdr_load(XDR  *xdrs)
 {
-  double r[4];
   NspGFrame *M=NULLGFRAME;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGFRAME;
-  if (( M = gframe_create(name,NULL,FALSE,r,r,NULL)) == NULLGFRAME) return NULLGFRAME;
+  if (( M = gframe_create(name,NULL,FALSE,NULL,NULL,NULL)) == NULLGFRAME) return NULLGFRAME;
   if ( nsp_xdr_load_array_d(xdrs,M->obj->scale,4) == FAIL) return NULLGFRAME;
   if ( nsp_xdr_load_array_d(xdrs,M->obj->r,4) == FAIL) return NULLGFRAME;
   if ((M->obj->objs =(NspList *) nsp_object_xdr_load(xdrs))== NULL)  return NULLGFRAME;
@@ -315,15 +314,16 @@ static NspGFrame *gframe_create_void(char *name,NspTypeBase *type)
   return H;
 }
 
-NspGFrame *gframe_create(char *name,BCG *Xgc,int init_objs,const double scale[],double r[],NspTypeBase *type)
+NspGFrame *gframe_create(char *name,BCG *Xgc,int init_objs,const double *scale,
+			 double *r,NspTypeBase *type)
 {
   int i;
   NspGFrame *H  = gframe_create_void(name,type);
   if ( H ==  NULLGFRAME ) return NULLGFRAME;
   if ((H->obj = malloc(sizeof(nsp_gframe))) == NULL) return NULL;
   H->obj->ref_count=1;
-  for ( i=0; i < 4 ; i++) H->obj->r[i]=r[i];
-  for ( i=0; i < 4 ; i++) H->obj->scale[i]=scale[i];
+  if ( r!= NULL)   for ( i=0; i < 4 ; i++) H->obj->r[i]=r[i];
+  if ( scale != NULL) for ( i=0; i < 4 ; i++) H->obj->scale[i]=scale[i];
   if ( init_objs ) 
     {
       if ( ( H->obj->objs =nsp_list_create("objs",NULL))== NULLLIST) return NULLGFRAME;

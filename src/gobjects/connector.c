@@ -252,12 +252,11 @@ static int connector_xdr_save(XDR  *xdrs, NspConnector *M)
 
 static NspConnector  *connector_xdr_load(XDR  *xdrs)
 {
-  double r[4];
   int i,id;
   NspConnector *M=NULLCONNECTOR;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCONNECTOR;
-  if (( M = connector_create(name,r,-1,-1,-1,NULL)) == NULLCONNECTOR) return NULLCONNECTOR;
+  if (( M = connector_create(name,NULL,-1,-1,-1,NULL)) == NULLCONNECTOR) return NULLCONNECTOR;
   if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLCONNECTOR;
   M->obj->object_sid = NSP_INT_TO_POINTER(id);
   if ( nsp_xdr_load_array_d(xdrs,M->obj->r,4) == FAIL) return NULLCONNECTOR;
@@ -381,7 +380,7 @@ static NspConnector *connector_create_void(char *name,NspTypeBase *type)
  return H;
 }
 
-NspConnector *connector_create(char *name,double rect[],int color,int thickness,int background,
+NspConnector *connector_create(char *name,double *rect,int color,int thickness,int background,
 			       NspTypeBase *type )
 {
   int i;
@@ -391,7 +390,8 @@ NspConnector *connector_create(char *name,double rect[],int color,int thickness,
   H->obj->ref_count=1;
   H->obj->frame = NULL; 
   /* fields */
-  for ( i=0; i < 4 ; i++) H->obj->r[i]=rect[i];
+  if ( rect != NULL) 
+    for ( i=0; i < 4 ; i++) H->obj->r[i]=rect[i];
   H->obj->color = color;
   H->obj->thickness = thickness;
   H->obj->background = background;

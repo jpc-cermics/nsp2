@@ -244,22 +244,24 @@ static int block_xdr_save(XDR  *xdrs, NspBlock *M)
 static NspBlock  *block_xdr_load(XDR  *xdrs)
 {
   double r[4];
-  int i,id;
+  int i,id,color,thickness,background;
   NspBlock *M=NULLBLOCK;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLBLOCK;
   /* the block */
-  if (( M = block_create(name,r,-1,-1,-1,NULL)) == NULLBLOCK) return NULLBLOCK;
   if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLBLOCK;
+  if ( nsp_xdr_load_array_d(xdrs,r,4) == FAIL) return NULLBLOCK;
+  if ( nsp_xdr_load_i(xdrs,&color) == FAIL) return NULLBLOCK;
+  if ( nsp_xdr_load_i(xdrs,&thickness) == FAIL) return NULLBLOCK;
+  if ( nsp_xdr_load_i(xdrs,&background) == FAIL) return NULLBLOCK;
+  if (( M = block_create(name,r,color,thickness,background,NULL)) == NULLBLOCK)
+    return NULLBLOCK;
   M->obj->object_sid = NSP_INT_TO_POINTER(id);
-  if ( nsp_xdr_load_array_d(xdrs,M->obj->r,4) == FAIL) return NULLBLOCK;
-  if ( nsp_xdr_load_i(xdrs,&M->obj->color) == FAIL) return NULLBLOCK;
-  if ( nsp_xdr_load_i(xdrs,&M->obj->thickness) == FAIL) return NULLBLOCK;
-  if ( nsp_xdr_load_i(xdrs,&M->obj->background) == FAIL) return NULLBLOCK;
   /* the lock points */
   if ( nsp_xdr_load_i(xdrs,&M->obj->n_locks) == FAIL) return NULLBLOCK;
   if ( M->obj->locks != NULL) FREE(M->obj->locks);
-  if (( M->obj->locks = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
+  if (( M->obj->locks = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) 
+    return NULLBLOCK;
   for ( i = 0 ; i < M->obj->n_locks ; i++) 
     {
       grb_lock *lock= M->obj->locks+i;
@@ -375,7 +377,7 @@ static NspBlock *block_create_void(char *name,NspTypeBase *type)
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
 
-NspBlock *block_create(char *name,double rect[],int color,int thickness,int background,
+NspBlock *block_create(char *name,double *rect,int color,int thickness,int background,
 		       NspTypeBase *type )
 {
   double pt[2];
@@ -386,7 +388,8 @@ NspBlock *block_create(char *name,double rect[],int color,int thickness,int back
   H->obj->ref_count=1;
   H->obj->frame = NULL; 
   /* fields */
-  for ( i=0; i < 4 ; i++) H->obj->r[i]=rect[i];
+  if ( rect != NULL)
+    for ( i=0; i < 4 ; i++) H->obj->r[i]= rect[i];
   H->obj->color = color;
   H->obj->thickness = thickness;
   H->obj->background = background;
@@ -642,12 +645,26 @@ static int int_gblock_set_locks_pos(void  *self, Stack stack, int rhs, int opt, 
   return 1;
 }
 
+
+int int_gblock_test(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj;
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  if ((obj = nsp_create_object_from_double(NVOID,89))==NULLOBJ) 
+    return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
+}
+
+
 static NspMethods block_methods[] = {
   { "translate", int_gblock_translate},
   { "resize",   int_gblock_resize},
   { "draw",   int_gblock_draw},
   { "set_lock_pos", int_gblock_set_lock_pos},
   { "set_locks_pos", int_gblock_set_locks_pos},
+  { "test",int_gblock_test},
   { (char *) 0, NULL}
 };
 
