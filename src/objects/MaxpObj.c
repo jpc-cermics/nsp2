@@ -2679,6 +2679,7 @@ static OpWrapTab Matrix_func[]={
   {"extractelts_mp",int_mpextractelts,NULL},
   {"extractrows_mp",int_mpextractrows,NULL},
   {"eye_mp_mp" ,  int_mpeye ,NULL},
+  {"eye_mp" ,  int_mpeye ,NULL},
   {"feq_mp_mp" ,  int_mpfeq ,NULL},
   {"fge_mp_mp" ,  int_mpfge ,NULL},
   {"fgt_mp_mp" ,  int_mpfgt ,NULL},

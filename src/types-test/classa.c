@@ -383,7 +383,7 @@ static NspObject *int_cla_get_object_val(void *Hv,char *str)
 static int int_cla_set_val(void *Hv, char *attr, NspObject *O)
 {
   NspMatrix *m;
-  if ((m = (NspMatrix *) nsp_object_copy(O)) == NULLMAT) return RET_BUG;
+  if ((m = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return RET_BUG;
   ((NspClassA *)Hv)->classa_val = m;
   return OK ;
 }
