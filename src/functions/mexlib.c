@@ -363,14 +363,14 @@ void mxFreeMatrix(int *ptr)
 
 /* libere le Calloc **/
 
-void mxFree(int *ptr)
+void mxFree(void *ptr)
 {
   return ;
 }
 
 /* exit function : mexAtExit : **/
 
-int mexAtExit(int *ptr)
+int mexAtExit(void (*ExitFcn)(void))
 {
   return 0;
 }
