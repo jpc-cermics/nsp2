@@ -91,6 +91,9 @@ extern  sci_interface  Cells_Interf ;extern  interface_info  Cells_Interf_Info ;
 extern  sci_interface  Sound_Interf ;extern  interface_info  Sound_Interf_Info ;
 extern  sci_interface  Pvm_Interf ;extern  interface_info  Pvm_Interf_Info ;
 extern  sci_interface  Scicos_Interf ;extern  interface_info  Scicos_Interf_Info ;
+extern  sci_interface  SndFile_Interf ;extern  interface_info  SndFile_Interf_Info ;
+extern  sci_interface  kiko_Interf ;extern  interface_info  kiko_Interf_Info ;
+extern  sci_interface  mpz_Interf ;extern  interface_info  mpz_Interf_Info ;
 
 
 InterfTab Interfaces[]={
@@ -153,6 +156,13 @@ InterfTab Interfaces[]={
   {Sound_Interf , Sound_Interf_Info},
   {Pvm_Interf , Pvm_Interf_Info},
   */
+  /*
+  {kiko_Interf , kiko_Interf_Info},
+  {mpz_Interf , mpz_Interf_Info},
+  */
+#ifdef WITH_SNDFILE
+  {SndFile_Interf , SndFile_Interf_Info},
+#endif
   {NULL,NULL}
 }; 
 
