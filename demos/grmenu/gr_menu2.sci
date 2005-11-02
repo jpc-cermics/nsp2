@@ -73,7 +73,7 @@ function midle_menuitem_response(w,args)
   GF(win).draw[]
 endfunction
 
-function w=create_right_menu (win)
+function menu=create_right_menu (win)
 // midle button menu construction 
 // midle button is for the current selected object 
 // if more than one object is selected this menu is deactivated.
@@ -84,21 +84,13 @@ function w=create_right_menu (win)
     menu.append[  menuitem]
     menuitem.show[];
   end
-  menuitem = gtkmenuitem_new(label="new link");
-  menuitem.connect["activate",menuitem_response,list(1,win)];
-  menu.append[menuitem]
-  menuitem.show[];
-  
-  menuitem = gtkmenuitem_new(label="new block");
-  menuitem.connect["activate",menuitem_response,list(2,win)];
-  menu.append[menuitem]
-  menuitem.show[];
-  
-  menuitem = gtkmenuitem_new(label="new connector");
-  menuitem.connect["activate",menuitem_response,list(3,win)];
-  menu.append[menuitem]
-  menuitem.show[];
-  w=menu;
+  tags = ['new link';'new block';'new_connector';'save';'load';'merge'];
+  for i=1:size(tags,'*')
+    menuitem = gtkmenuitem_new(label=tags(i));
+    menuitem.connect["activate",menuitem_response,list(i,win)];
+    menu.append[menuitem]
+    menuitem.show[];
+  end
 endfunction 
 
 function menuitem_response(w,args) 
@@ -107,13 +99,24 @@ function menuitem_response(w,args)
   printf("Menu item [%d] activated \n",args(1));
   win='win'+string(args($));
   select args(1) 
-   case 1 then  GF(win).new_link[] 
-   case 2 then  GF(win).new_block[] 
-   case 3 then  GF(win).new_connector[] 
+   case 1 then  GF(win).new_link[];
+   case 2 then  
+    print(GF(win));
+    GF(win).new_block[];
+    print(GF(win));
+   case 3 then  GF(win).new_connector[] ;
+   case 4 then  
+    fname = xgetfile();
+    save(fname,diagram=GF(win));
+   case 5 then 
+    fname = xgetfile();
+    load(fname);
+    diagram.attach_to_window[args($)];
+    GF(win)=diagram;
+   case 6 then 
   end
   GF(win).draw[]
 endfunction
-
 
 function w=create_menu (depth, length, tearoff)
 // provisoire 
@@ -247,7 +250,25 @@ endfunction;
 
 function y=scs_color(i);y=i;endfunction
 
+function F= diagram()
+// build a diagram non intercatively 
+  F=%types.GFrame.new[[0,0,100,100],[0,0,100,100],-1];
+  B1=%types.Block.new[[10,80,10,10],color=6,background=7];
+  F.insert[B1];
+  B2=%types.Block.new[[25,80,10,10],color=6,background=7];
+  F.insert[B2];
+  B3=%types.Block.new[[40,80,10,10],color=6,background=7];
+  F.insert[B3];
+  L=%types.Link.new[[0,10;0,10]];
+  L.connect[0,B1,1];  L.connect[1,B2,1];
+  F.insert[L];
+  L=%types.Link.new[[0,10;0,10]];
+  L.connect[0,B2,2];  L.connect[1,B3,2];
+  F.insert[L];
+endfunction;
 
+pause;
+  
 global('GF');
 //R=%types.Block.new[[10,20,20,20],color=6,background=7];
 GF=hcreate(6);
