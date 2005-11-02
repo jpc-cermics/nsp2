@@ -182,7 +182,7 @@ static char *pangoattrlist_type_short_string(void)
 NspPangoAttrList   *pangoattrlist_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangoattrlist_id) ) return ((NspPangoAttrList *) O);
   else 
@@ -487,7 +487,7 @@ static char *pangocolor_type_short_string(void)
 NspPangoColor   *pangocolor_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangocolor_id) ) return ((NspPangoColor *) O);
   else 
@@ -735,7 +735,7 @@ static char *pangofontdescription_type_short_string(void)
 NspPangoFontDescription   *pangofontdescription_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangofontdescription_id) ) return ((NspPangoFontDescription *) O);
   else 
@@ -1264,7 +1264,7 @@ static char *pangofontmetrics_type_short_string(void)
 NspPangoFontMetrics   *pangofontmetrics_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangofontmetrics_id) ) return ((NspPangoFontMetrics *) O);
   else 
@@ -1509,7 +1509,7 @@ static char *pangoglyphstring_type_short_string(void)
 NspPangoGlyphString   *pangoglyphstring_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangoglyphstring_id) ) return ((NspPangoGlyphString *) O);
   else 
@@ -1852,7 +1852,7 @@ static char *pangolanguage_type_short_string(void)
 NspPangoLanguage   *pangolanguage_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangolanguage_id) ) return ((NspPangoLanguage *) O);
   else 
@@ -2070,7 +2070,7 @@ static char *pangotabarray_type_short_string(void)
 NspPangoTabArray   *pangotabarray_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangotabarray_id) ) return ((NspPangoTabArray *) O);
   else 
@@ -2395,7 +2395,7 @@ static char *pangocontext_type_short_string(void)
 NspPangoContext   *pangocontext_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangocontext_id) ) return ((NspPangoContext *) O);
   else 
@@ -2792,7 +2792,7 @@ static char *pangofont_type_short_string(void)
 NspPangoFont   *pangofont_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangofont_id) ) return ((NspPangoFont *) O);
   else 
@@ -3057,7 +3057,7 @@ static char *pangofontface_type_short_string(void)
 NspPangoFontFace   *pangofontface_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangofontface_id) ) return ((NspPangoFontFace *) O);
   else 
@@ -3286,7 +3286,7 @@ static char *pangofontfamily_type_short_string(void)
 NspPangoFontFamily   *pangofontfamily_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangofontfamily_id) ) return ((NspPangoFontFamily *) O);
   else 
@@ -3524,7 +3524,7 @@ static char *pangofontmap_type_short_string(void)
 NspPangoFontMap   *pangofontmap_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangofontmap_id) ) return ((NspPangoFontMap *) O);
   else 
@@ -3804,7 +3804,7 @@ static char *pangofontset_type_short_string(void)
 NspPangoFontset   *pangofontset_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangofontset_id) ) return ((NspPangoFontset *) O);
   else 
@@ -4039,7 +4039,7 @@ static char *pangolayout_type_short_string(void)
 NspPangoLayout   *pangolayout_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_pangolayout_id) ) return ((NspPangoLayout *) O);
   else 

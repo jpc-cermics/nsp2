@@ -310,7 +310,7 @@ NspCells *nsp_cells_xdr_load(XDR *xdrs)
 NspCells   *nsp_cells_object(NspObject *O)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_cells_id) == TRUE) return ((NspCells *) O);
   else 

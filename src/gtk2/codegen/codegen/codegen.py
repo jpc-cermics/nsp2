@@ -189,7 +189,7 @@ class Wrapper:
               'Nsp%(typename)s   *%(typename_dc)s_object(NspObject *O)\n'  \
               '{\n'  \
               '  /** Follow pointer **/\n'  \
-              '  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;\n'  \
+              '  HOBJ_GET_OBJECT(O,NULL);\n'  \
               '  /** Check type **/\n'  \
               '  if ( %(interface_1)s (O,nsp_type_%(typename_dc)s_id) ) return ((Nsp%(typename)s *) O);\n'  \
               '  else \n'  \

@@ -300,7 +300,7 @@ NspSMatrix *nsp_smatrix_xdr_load(XDR *xdrs)
 NspSMatrix   *nsp_smatrix_object(NspObject *O)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_smatrix_id) == TRUE) return ((NspSMatrix *) O);
   else 
@@ -319,7 +319,7 @@ NspSMatrix   *nsp_smatrix_object(NspObject *O)
 char *nsp_string_object(NspObject *O)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_smatrix_id) == TRUE 
        && ((NspSMatrix *) O)->mn == 1 )
@@ -355,7 +355,7 @@ int IsSMat(NspObject *O)
 int IsString(NspObject *O)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O;
+  HOBJ_GET_OBJECT(O,FALSE);
   /* Check type **/
   if ( check_cast(O,nsp_type_smatrix_id ) == TRUE  
        && ((NspSMatrix *)O)->mn == 1) 

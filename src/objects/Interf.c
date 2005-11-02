@@ -396,8 +396,8 @@ static int  extract_one_argument(NspObject *Ob,int_types *T,va_list *ap,char Typ
     T++;
     if ( GetListArgs_1(L1,pos,T,ap) == FAIL) return FAIL;
     break;
-  case obj : Foo = (void **)  va_arg(*ap, NspObject **) ;
-    if ( check_cast(Ob,nsp_type_hobj_id) == TRUE)  Ob = ((NspHobj *) Ob)->O ;
+  case obj : Foo = (void **)  va_arg(*ap, NspObject **) ; 
+    HOBJ_GET_OBJECT(Ob,FAIL);
     *((NspObject **) Foo) = Ob;
     break;
   case objcopy : Foo = (void **)  va_arg(*ap, NspObject **) ;
@@ -1266,7 +1266,8 @@ void ObjConvert(NspObject *O)
 void *MaybeObjCopy(NspObject **O)
 {
   if ( Ocheckname(*O,NVOID) ) return *O;
-  if ( check_cast(*O,nsp_type_hobj_id) == TRUE)  *O= ((NspHobj *) *O)->O ;
+  HOBJ_GET_OBJECT((*O),NULL);
+  /* if ( check_cast(*O,nsp_type_hobj_id) == TRUE)  *O= ((NspHobj *) *O)->O ;*/
   *O =nsp_object_copy(*O);
   return *O;
 }

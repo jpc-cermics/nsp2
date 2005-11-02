@@ -243,7 +243,7 @@ void gpointer_print(NspGPointer *self, int indent)
 NspGPointer   *gpointer_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast(O,nsp_type_gpointer_id) == TRUE) return ((NspGPointer *) O);
   else 

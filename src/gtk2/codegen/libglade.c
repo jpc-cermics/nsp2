@@ -157,7 +157,7 @@ static char *gladexml_type_short_string(void)
 NspGladeXML   *gladexml_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gladexml_id) ) return ((NspGladeXML *) O);
   else 

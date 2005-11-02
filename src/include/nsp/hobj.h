@@ -40,20 +40,6 @@ NspTypeHobj *new_type_hobj(type_mode mode);
 
 NspHobj *new_hobj();
 
-/*
- * Object methods redefined for hobj 
- */
-
-#ifdef Hobj_Private 
-static int init_hobj(NspHobj *ob,NspTypeHobj *type);
-static int nsp_hobj_size(NspHobj *Mat, int flag);
-static char *nsp_hobj_type_as_string(void);
-static char *nsp_hobj_type_short_string(NspHobj *M);
-static int nsp_hobj_eq(NspObject *A,NspObject *B);
-static int nsp_hobj_neq(NspObject *A,NspObject *B);
-static int nsp_hobj_xdr_save(XDR  *F, NspHobj *O);
-static  int nsp_hobj_is_true(NspHobj *M);
-#endif /* Hobj_Private */
 
 #define NULLHOBJ (NspHobj *) 0
 #define NULLHOPT (NspHobj *) 0
@@ -70,5 +56,31 @@ int IsHopt        (NspObject *O);
 NspHobj  *nsp_hobj_object(NspObject *O);
 int IsGlobal      (NspObject *O);
 
-#endif
+#define HOBJ_GET_OBJECT(Obj,rep)						\
+  if (check_cast (Obj, nsp_type_hobj_id) == TRUE)			\
+    {									\
+      if (((NspHobj *)Obj)->htype != 'g') Obj = ((NspHobj *) Obj)->O;     \
+      else {								\
+	if ((Obj= nsp_global_frame_search_object(NSP_OBJECT(Obj)->name)) == NULLOBJ) \
+	  {								\
+	    Scierror("Pointer to a global non existant variable\n"); \
+	    return rep;					     \
+	  } \
+      } \
+    } 
 
+#endif /* NSP_INC_HOBJ */
+
+#ifdef Hobj_Private 
+/* Private part 
+ * Object methods redefined for hobj 
+ */
+static int init_hobj(NspHobj *ob,NspTypeHobj *type);
+static int nsp_hobj_size(NspHobj *Mat, int flag);
+static char *nsp_hobj_type_as_string(void);
+static char *nsp_hobj_type_short_string(NspHobj *M);
+static int nsp_hobj_eq(NspObject *A,NspObject *B);
+static int nsp_hobj_neq(NspObject *A,NspObject *B);
+static int nsp_hobj_xdr_save(XDR  *F, NspHobj *O);
+static  int nsp_hobj_is_true(NspHobj *M);
+#endif /* Hobj_Private */

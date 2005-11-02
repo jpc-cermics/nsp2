@@ -134,7 +134,7 @@ static char *classc_type_short_string(void)
 NspClassC   *classc_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast(O,nsp_type_classc_id) == TRUE) return ((NspClassC *) O);
   else 

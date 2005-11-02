@@ -266,7 +266,7 @@ void nsp_port_print(NspPort *M, int indent)
 NspPort   *nsp_port_object(NspObject *O)
 {
   /* Follow pointer */
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type */
   if ( check_cast (O,nsp_type_port_id) == TRUE ) return ((NspPort *) O);
   else 

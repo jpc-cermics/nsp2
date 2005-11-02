@@ -268,7 +268,7 @@ static void rect_print(NspRect *H, int indent)
 NspRect   *rect_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast(O,nsp_type_rect_id) == TRUE) return ((NspRect *) O);
   else 

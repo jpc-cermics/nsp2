@@ -332,7 +332,7 @@ static void link_print(NspLink *H, int indent)
 NspLink   *link_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast(O,nsp_type_link_id) == TRUE) return ((NspLink *) O);
   else 

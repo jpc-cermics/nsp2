@@ -313,7 +313,7 @@ NspMaxpMatrix  *mpmatrix_object(NspObject *O)
 {
 
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_mpmatrix_id) == TRUE) return ((NspMaxpMatrix *) O);
   else 

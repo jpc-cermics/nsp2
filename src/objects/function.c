@@ -284,7 +284,7 @@ void function_print(NspFunction *H, int indent)
 NspFunction   *function_object(NspObject *O)
 {
   /* Follow pointer */
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type */
   if ( check_cast(O,nsp_type_function_id) == TRUE) return ((NspFunction *) O);
   else 

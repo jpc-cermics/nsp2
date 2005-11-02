@@ -278,13 +278,20 @@ typedef enum { NOOBJ,LIST,MATRIX,SMATRIX,BMATRIX,LIB,
 } SciType;
 */
 
+/*
+ * needed in object definitions 
+ */
+
 extern void ArgMessage (Stack stack, int i );
 extern void *MaybeObjCopy (NspObject **O);
+#include "nsp/string.h"
+extern NspObject *nsp_global_frame_search_object(nsp_const_string str);
 
 /* 
  *  objects 
  */
 
+#include "nsp/hobj.h"
 #include "nsp/plisttoken.h"
 #include "nsp/file.h"
 #include "nsp/matrix.h"
@@ -295,7 +302,6 @@ extern void *MaybeObjCopy (NspObject **O);
 #include "nsp/plist.h"
 #include "nsp/list.h"
 #include "nsp/hash.h"
-#include "nsp/hobj.h"
 #include "nsp/function.h"
 #include "nsp/ivect.h"
 #include "nsp/mod.h" 

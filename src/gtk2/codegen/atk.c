@@ -171,7 +171,7 @@ static char *atkhyperlink_type_short_string(void)
 NspAtkHyperlink   *atkhyperlink_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_atkhyperlink_id) ) return ((NspAtkHyperlink *) O);
   else 
@@ -446,7 +446,7 @@ static char *atkobject_type_short_string(void)
 NspAtkObject   *atkobject_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_atkobject_id) ) return ((NspAtkObject *) O);
   else 
@@ -834,7 +834,7 @@ static char *atknoopobject_type_short_string(void)
 NspAtkNoOpObject   *atknoopobject_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_atknoopobject_id) ) return ((NspAtkNoOpObject *) O);
   else 
@@ -1052,7 +1052,7 @@ static char *atkobjectfactory_type_short_string(void)
 NspAtkObjectFactory   *atkobjectfactory_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_atkobjectfactory_id) ) return ((NspAtkObjectFactory *) O);
   else 
@@ -1280,7 +1280,7 @@ static char *atknoopobjectfactory_type_short_string(void)
 NspAtkNoOpObjectFactory   *atknoopobjectfactory_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_atknoopobjectfactory_id) ) return ((NspAtkNoOpObjectFactory *) O);
   else 
@@ -1495,7 +1495,7 @@ static char *atkregistry_type_short_string(void)
 NspAtkRegistry   *atkregistry_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_atkregistry_id) ) return ((NspAtkRegistry *) O);
   else 
@@ -1748,7 +1748,7 @@ static char *atkrelation_type_short_string(void)
 NspAtkRelation   *atkrelation_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_atkrelation_id) ) return ((NspAtkRelation *) O);
   else 
@@ -2007,7 +2007,7 @@ static char *atkrelationset_type_short_string(void)
 NspAtkRelationSet   *atkrelationset_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_atkrelationset_id) ) return ((NspAtkRelationSet *) O);
   else 
@@ -2308,7 +2308,7 @@ static char *atkstateset_type_short_string(void)
 NspAtkStateSet   *atkstateset_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_atkstateset_id) ) return ((NspAtkStateSet *) O);
   else 
@@ -2626,7 +2626,7 @@ static char *atkutil_type_short_string(void)
 NspAtkUtil   *atkutil_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_atkutil_id) ) return ((NspAtkUtil *) O);
   else 

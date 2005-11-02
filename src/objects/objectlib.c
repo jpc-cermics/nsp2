@@ -194,7 +194,7 @@ char *nsp_object_type_short(NspObject *O)
 int nsp_object_type(NspObject *O,NspTypeId id)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O;
+  HOBJ_GET_OBJECT(O,FALSE);
   /* Check type **/
   return  check_cast(O,id) ;
 }
@@ -213,7 +213,7 @@ int nsp_object_type(NspObject *O,NspTypeId id)
 int nsp_object_implements(NspObject *O,NspTypeId id)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O;
+  HOBJ_GET_OBJECT(O,FALSE);
   /* Check type **/
   return  check_implements(O,id) != NULL ;
 }
@@ -355,7 +355,7 @@ NspObject *nsp_get_object(Stack stack, int i)
 {
   NspObject *ob = NthObj(i);
   /* Follow pointer **/
-  if ( check_cast(ob,nsp_type_hobj_id) == TRUE)  ob = ((NspHobj *) ob)->O ;
+  HOBJ_GET_OBJECT(ob,NULL);
   return ob;
 }
 

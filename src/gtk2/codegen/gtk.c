@@ -612,7 +612,7 @@ static char *gtktreepath_type_short_string(void)
 NspGtkTreePath   *gtktreepath_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktreepath_id) ) return ((NspGtkTreePath *) O);
   else 
@@ -704,7 +704,7 @@ GtkTreePath *nsp_gtk_tree_path_from_nspobject(NspObject *object)
 {
   GtkTreePath *path;
   /** Follow pointer **/
-  if ( check_cast(object,nsp_type_hobj_id) == TRUE)  object = ((NspHobj *) object)->O ;
+  HOBJ_GET_OBJECT(object,NULL);
   
   if ( IsGtkTreePath(object) )
     {
@@ -1026,7 +1026,7 @@ static char *gtkrequisition_type_short_string(void)
 NspGtkRequisition   *gtkrequisition_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkrequisition_id) ) return ((NspGtkRequisition *) O);
   else 
@@ -1293,7 +1293,7 @@ static char *gtkiconset_type_short_string(void)
 NspGtkIconSet   *gtkiconset_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkiconset_id) ) return ((NspGtkIconSet *) O);
   else 
@@ -1617,7 +1617,7 @@ static char *gtkiconsource_type_short_string(void)
 NspGtkIconSource   *gtkiconsource_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkiconsource_id) ) return ((NspGtkIconSource *) O);
   else 
@@ -2037,7 +2037,7 @@ static char *gtkselectiondata_type_short_string(void)
 NspGtkSelectionData   *gtkselectiondata_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkselectiondata_id) ) return ((NspGtkSelectionData *) O);
   else 
@@ -2429,7 +2429,7 @@ static char *gtktextattributes_type_short_string(void)
 NspGtkTextAttributes   *gtktextattributes_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktextattributes_id) ) return ((NspGtkTextAttributes *) O);
   else 
@@ -2958,7 +2958,7 @@ static char *gtktextiter_type_short_string(void)
 NspGtkTextIter   *gtktextiter_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktextiter_id) ) return ((NspGtkTextIter *) O);
   else 
@@ -4233,7 +4233,7 @@ static char *gtktreeiter_type_short_string(void)
 NspGtkTreeIter   *gtktreeiter_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktreeiter_id) ) return ((NspGtkTreeIter *) O);
   else 
@@ -4459,7 +4459,7 @@ static char *gtkeditable_type_short_string(void)
 NspGtkEditable   *gtkeditable_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_implements (O,nsp_type_gtkeditable_id) ) return ((NspGtkEditable *) O);
   else 
@@ -4802,7 +4802,7 @@ static char *gtkcelleditable_type_short_string(void)
 NspGtkCellEditable   *gtkcelleditable_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_implements (O,nsp_type_gtkcelleditable_id) ) return ((NspGtkCellEditable *) O);
   else 
@@ -5035,7 +5035,7 @@ static char *gtktreemodel_type_short_string(void)
 NspGtkTreeModel   *gtktreemodel_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_implements (O,nsp_type_gtktreemodel_id) ) return ((NspGtkTreeModel *) O);
   else 
@@ -5798,7 +5798,7 @@ static char *gtktreedragsource_type_short_string(void)
 NspGtkTreeDragSource   *gtktreedragsource_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_implements (O,nsp_type_gtktreedragsource_id) ) return ((NspGtkTreeDragSource *) O);
   else 
@@ -6066,7 +6066,7 @@ static char *gtktreedragdest_type_short_string(void)
 NspGtkTreeDragDest   *gtktreedragdest_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_implements (O,nsp_type_gtktreedragdest_id) ) return ((NspGtkTreeDragDest *) O);
   else 
@@ -6321,7 +6321,7 @@ static char *gtktreesortable_type_short_string(void)
 NspGtkTreeSortable   *gtktreesortable_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_implements (O,nsp_type_gtktreesortable_id) ) return ((NspGtkTreeSortable *) O);
   else 
@@ -6664,7 +6664,7 @@ static char *gtkaccelgroup_type_short_string(void)
 NspGtkAccelGroup   *gtkaccelgroup_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkaccelgroup_id) ) return ((NspGtkAccelGroup *) O);
   else 
@@ -6913,7 +6913,7 @@ static char *gtkaccessible_type_short_string(void)
 NspGtkAccessible   *gtkaccessible_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkaccessible_id) ) return ((NspGtkAccessible *) O);
   else 
@@ -7125,7 +7125,7 @@ static char *gtkiconfactory_type_short_string(void)
 NspGtkIconFactory   *gtkiconfactory_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkiconfactory_id) ) return ((NspGtkIconFactory *) O);
   else 
@@ -7394,7 +7394,7 @@ static char *gtkobject_type_short_string(void)
 NspGtkObject   *gtkobject_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkobject_id) ) return ((NspGtkObject *) O);
   else 
@@ -7638,7 +7638,7 @@ static char *gtkitemfactory_type_short_string(void)
 NspGtkItemFactory   *gtkitemfactory_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkitemfactory_id) ) return ((NspGtkItemFactory *) O);
   else 
@@ -8126,7 +8126,7 @@ static char *gtkimcontext_type_short_string(void)
 NspGtkIMContext   *gtkimcontext_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkimcontext_id) ) return ((NspGtkIMContext *) O);
   else 
@@ -8484,7 +8484,7 @@ static char *gtkimcontextsimple_type_short_string(void)
 NspGtkIMContextSimple   *gtkimcontextsimple_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkimcontextsimple_id) ) return ((NspGtkIMContextSimple *) O);
   else 
@@ -8699,7 +8699,7 @@ static char *gtkimmulticontext_type_short_string(void)
 NspGtkIMMulticontext   *gtkimmulticontext_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkimmulticontext_id) ) return ((NspGtkIMMulticontext *) O);
   else 
@@ -8929,7 +8929,7 @@ static char *gtkcellrenderer_type_short_string(void)
 NspGtkCellRenderer   *gtkcellrenderer_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcellrenderer_id) ) return ((NspGtkCellRenderer *) O);
   else 
@@ -9283,7 +9283,7 @@ static char *gtkcellrenderertoggle_type_short_string(void)
 NspGtkCellRendererToggle   *gtkcellrenderertoggle_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcellrenderertoggle_id) ) return ((NspGtkCellRendererToggle *) O);
   else 
@@ -9544,7 +9544,7 @@ static char *gtkcellrenderertext_type_short_string(void)
 NspGtkCellRendererText   *gtkcellrenderertext_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcellrenderertext_id) ) return ((NspGtkCellRendererText *) O);
   else 
@@ -9774,7 +9774,7 @@ static char *gtkcellrendererpixbuf_type_short_string(void)
 NspGtkCellRendererPixbuf   *gtkcellrendererpixbuf_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcellrendererpixbuf_id) ) return ((NspGtkCellRendererPixbuf *) O);
   else 
@@ -9989,7 +9989,7 @@ static char *gtkadjustment_type_short_string(void)
 NspGtkAdjustment   *gtkadjustment_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkadjustment_id) ) return ((NspGtkAdjustment *) O);
   else 
@@ -10417,7 +10417,7 @@ static char *gtkrcstyle_type_short_string(void)
 NspGtkRcStyle   *gtkrcstyle_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkrcstyle_id) ) return ((NspGtkRcStyle *) O);
   else 
@@ -10672,7 +10672,7 @@ static char *gtksettings_type_short_string(void)
 NspGtkSettings   *gtksettings_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtksettings_id) ) return ((NspGtkSettings *) O);
   else 
@@ -10912,7 +10912,7 @@ static char *gtksizegroup_type_short_string(void)
 NspGtkSizeGroup   *gtksizegroup_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtksizegroup_id) ) return ((NspGtkSizeGroup *) O);
   else 
@@ -11183,7 +11183,7 @@ static char *gtkstyle_type_short_string(void)
 NspGtkStyle   *gtkstyle_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkstyle_id) ) return ((NspGtkStyle *) O);
   else 
@@ -12855,7 +12855,7 @@ static char *gtktextbuffer_type_short_string(void)
 NspGtkTextBuffer   *gtktextbuffer_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktextbuffer_id) ) return ((NspGtkTextBuffer *) O);
   else 
@@ -14093,7 +14093,7 @@ static char *gtktextchildanchor_type_short_string(void)
 NspGtkTextChildAnchor   *gtktextchildanchor_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktextchildanchor_id) ) return ((NspGtkTextChildAnchor *) O);
   else 
@@ -14336,7 +14336,7 @@ static char *gtktextmark_type_short_string(void)
 NspGtkTextMark   *gtktextmark_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktextmark_id) ) return ((NspGtkTextMark *) O);
   else 
@@ -14605,7 +14605,7 @@ static char *gtktexttag_type_short_string(void)
 NspGtkTextTag   *gtktexttag_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktexttag_id) ) return ((NspGtkTextTag *) O);
   else 
@@ -14879,7 +14879,7 @@ static char *gtktexttagtable_type_short_string(void)
 NspGtkTextTagTable   *gtktexttagtable_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktexttagtable_id) ) return ((NspGtkTextTagTable *) O);
   else 
@@ -15146,7 +15146,7 @@ static char *gtktooltips_type_short_string(void)
 NspGtkTooltips   *gtktooltips_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktooltips_id) ) return ((NspGtkTooltips *) O);
   else 
@@ -15521,7 +15521,7 @@ static char *gtkliststore_type_short_string(void)
 NspGtkListStore   *gtkliststore_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkliststore_id) ) return ((NspGtkListStore *) O);
   else 
@@ -16004,7 +16004,7 @@ static char *gtktreemodelsort_type_short_string(void)
 NspGtkTreeModelSort   *gtktreemodelsort_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktreemodelsort_id) ) return ((NspGtkTreeModelSort *) O);
   else 
@@ -16345,7 +16345,7 @@ static char *gtktreeselection_type_short_string(void)
 NspGtkTreeSelection   *gtktreeselection_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktreeselection_id) ) return ((NspGtkTreeSelection *) O);
   else 
@@ -16920,7 +16920,7 @@ static char *gtktreestore_type_short_string(void)
 NspGtkTreeStore   *gtktreestore_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktreestore_id) ) return ((NspGtkTreeStore *) O);
   else 
@@ -17524,7 +17524,7 @@ static char *gtktreeviewcolumn_type_short_string(void)
 NspGtkTreeViewColumn   *gtktreeviewcolumn_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktreeviewcolumn_id) ) return ((NspGtkTreeViewColumn *) O);
   else 
@@ -18359,7 +18359,7 @@ static char *gtkwidget_type_short_string(void)
 NspGtkWidget   *gtkwidget_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkwidget_id) ) return ((NspGtkWidget *) O);
   else 
@@ -20359,7 +20359,7 @@ static char *gtkseparator_type_short_string(void)
 NspGtkSeparator   *gtkseparator_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkseparator_id) ) return ((NspGtkSeparator *) O);
   else 
@@ -20560,7 +20560,7 @@ static char *gtkvseparator_type_short_string(void)
 NspGtkVSeparator   *gtkvseparator_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkvseparator_id) ) return ((NspGtkVSeparator *) O);
   else 
@@ -20775,7 +20775,7 @@ static char *gtkhseparator_type_short_string(void)
 NspGtkHSeparator   *gtkhseparator_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkhseparator_id) ) return ((NspGtkHSeparator *) O);
   else 
@@ -20990,7 +20990,7 @@ static char *gtkruler_type_short_string(void)
 NspGtkRuler   *gtkruler_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkruler_id) ) return ((NspGtkRuler *) O);
   else 
@@ -21259,7 +21259,7 @@ static char *gtkvruler_type_short_string(void)
 NspGtkVRuler   *gtkvruler_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkvruler_id) ) return ((NspGtkVRuler *) O);
   else 
@@ -21474,7 +21474,7 @@ static char *gtkhruler_type_short_string(void)
 NspGtkHRuler   *gtkhruler_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkhruler_id) ) return ((NspGtkHRuler *) O);
   else 
@@ -21689,7 +21689,7 @@ static char *gtkrange_type_short_string(void)
 NspGtkRange   *gtkrange_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkrange_id) ) return ((NspGtkRange *) O);
   else 
@@ -22006,7 +22006,7 @@ static char *gtkscrollbar_type_short_string(void)
 NspGtkScrollbar   *gtkscrollbar_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkscrollbar_id) ) return ((NspGtkScrollbar *) O);
   else 
@@ -22207,7 +22207,7 @@ static char *gtkvscrollbar_type_short_string(void)
 NspGtkVScrollbar   *gtkvscrollbar_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkvscrollbar_id) ) return ((NspGtkVScrollbar *) O);
   else 
@@ -22437,7 +22437,7 @@ static char *gtkhscrollbar_type_short_string(void)
 NspGtkHScrollbar   *gtkhscrollbar_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkhscrollbar_id) ) return ((NspGtkHScrollbar *) O);
   else 
@@ -22667,7 +22667,7 @@ static char *gtkscale_type_short_string(void)
 NspGtkScale   *gtkscale_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkscale_id) ) return ((NspGtkScale *) O);
   else 
@@ -22938,7 +22938,7 @@ static char *gtkvscale_type_short_string(void)
 NspGtkVScale   *gtkvscale_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkvscale_id) ) return ((NspGtkVScale *) O);
   else 
@@ -23168,7 +23168,7 @@ static char *gtkhscale_type_short_string(void)
 NspGtkHScale   *gtkhscale_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkhscale_id) ) return ((NspGtkHScale *) O);
   else 
@@ -23398,7 +23398,7 @@ static char *gtkprogress_type_short_string(void)
 NspGtkProgress   *gtkprogress_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkprogress_id) ) return ((NspGtkProgress *) O);
   else 
@@ -23599,7 +23599,7 @@ static char *gtkprogressbar_type_short_string(void)
 NspGtkProgressBar   *gtkprogressbar_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkprogressbar_id) ) return ((NspGtkProgressBar *) O);
   else 
@@ -23912,7 +23912,7 @@ static char *gtkpreview_type_short_string(void)
 NspGtkPreview   *gtkpreview_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkpreview_id) ) return ((NspGtkPreview *) O);
   else 
@@ -24200,7 +24200,7 @@ static char *gtkoldeditable_type_short_string(void)
 NspGtkOldEditable   *gtkoldeditable_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkoldeditable_id) ) return ((NspGtkOldEditable *) O);
   else 
@@ -24427,7 +24427,7 @@ static char *gtkmisc_type_short_string(void)
 NspGtkMisc   *gtkmisc_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkmisc_id) ) return ((NspGtkMisc *) O);
   else 
@@ -24682,7 +24682,7 @@ static char *gtkarrow_type_short_string(void)
 NspGtkArrow   *gtkarrow_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkarrow_id) ) return ((NspGtkArrow *) O);
   else 
@@ -24927,7 +24927,7 @@ static char *gtkimage_type_short_string(void)
 NspGtkImage   *gtkimage_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkimage_id) ) return ((NspGtkImage *) O);
   else 
@@ -25468,7 +25468,7 @@ static char *gtklabel_type_short_string(void)
 NspGtkLabel   *gtklabel_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtklabel_id) ) return ((NspGtkLabel *) O);
   else 
@@ -26070,7 +26070,7 @@ static char *gtkaccellabel_type_short_string(void)
 NspGtkAccelLabel   *gtkaccellabel_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkaccellabel_id) ) return ((NspGtkAccelLabel *) O);
   else 
@@ -26347,7 +26347,7 @@ static char *gtkinvisible_type_short_string(void)
 NspGtkInvisible   *gtkinvisible_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkinvisible_id) ) return ((NspGtkInvisible *) O);
   else 
@@ -26565,7 +26565,7 @@ static char *gtkentry_type_short_string(void)
 NspGtkEntry   *gtkentry_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkentry_id) ) return ((NspGtkEntry *) O);
   else 
@@ -26991,7 +26991,7 @@ static char *gtkspinbutton_type_short_string(void)
 NspGtkSpinButton   *gtkspinbutton_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkspinbutton_id) ) return ((NspGtkSpinButton *) O);
   else 
@@ -27489,7 +27489,7 @@ static char *gtkdrawingarea_type_short_string(void)
 NspGtkDrawingArea   *gtkdrawingarea_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkdrawingarea_id) ) return ((NspGtkDrawingArea *) O);
   else 
@@ -27720,7 +27720,7 @@ static char *gtkcurve_type_short_string(void)
 NspGtkCurve   *gtkcurve_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcurve_id) ) return ((NspGtkCurve *) O);
   else 
@@ -28026,7 +28026,7 @@ static char *gtkcontainer_type_short_string(void)
 NspGtkContainer   *gtkcontainer_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcontainer_id) ) return ((NspGtkContainer *) O);
   else 
@@ -28910,7 +28910,7 @@ static char *gtktreeview_type_short_string(void)
 NspGtkTreeView   *gtktreeview_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktreeview_id) ) return ((NspGtkTreeView *) O);
   else 
@@ -30011,7 +30011,7 @@ static char *gtktoolbar_type_short_string(void)
 NspGtkToolbar   *gtktoolbar_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktoolbar_id) ) return ((NspGtkToolbar *) O);
   else 
@@ -30691,7 +30691,7 @@ static char *gtktextview_type_short_string(void)
 NspGtkTextView   *gtktextview_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktextview_id) ) return ((NspGtkTextView *) O);
   else 
@@ -31657,7 +31657,7 @@ static char *gtktable_type_short_string(void)
 NspGtkTable   *gtktable_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktable_id) ) return ((NspGtkTable *) O);
   else 
@@ -32040,7 +32040,7 @@ static char *gtksocket_type_short_string(void)
 NspGtkSocket   *gtksocket_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtksocket_id) ) return ((NspGtkSocket *) O);
   else 
@@ -32292,7 +32292,7 @@ static char *gtkpaned_type_short_string(void)
 NspGtkPaned   *gtkpaned_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkpaned_id) ) return ((NspGtkPaned *) O);
   else 
@@ -32630,7 +32630,7 @@ static char *gtkvpaned_type_short_string(void)
 NspGtkVPaned   *gtkvpaned_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkvpaned_id) ) return ((NspGtkVPaned *) O);
   else 
@@ -32845,7 +32845,7 @@ static char *gtkhpaned_type_short_string(void)
 NspGtkHPaned   *gtkhpaned_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkhpaned_id) ) return ((NspGtkHPaned *) O);
   else 
@@ -33060,7 +33060,7 @@ static char *gtknotebook_type_short_string(void)
 NspGtkNotebook   *gtknotebook_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtknotebook_id) ) return ((NspGtkNotebook *) O);
   else 
@@ -33759,7 +33759,7 @@ static char *gtkmenushell_type_short_string(void)
 NspGtkMenuShell   *gtkmenushell_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkmenushell_id) ) return ((NspGtkMenuShell *) O);
   else 
@@ -34035,7 +34035,7 @@ static char *gtkmenu_type_short_string(void)
 NspGtkMenu   *gtkmenu_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkmenu_id) ) return ((NspGtkMenu *) O);
   else 
@@ -34539,7 +34539,7 @@ static char *gtkmenubar_type_short_string(void)
 NspGtkMenuBar   *gtkmenubar_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkmenubar_id) ) return ((NspGtkMenuBar *) O);
   else 
@@ -34754,7 +34754,7 @@ static char *gtklayout_type_short_string(void)
 NspGtkLayout   *gtklayout_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtklayout_id) ) return ((NspGtkLayout *) O);
   else 
@@ -35139,7 +35139,7 @@ static char *gtkfixed_type_short_string(void)
 NspGtkFixed   *gtkfixed_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkfixed_id) ) return ((NspGtkFixed *) O);
   else 
@@ -35403,7 +35403,7 @@ static char *gtkbin_type_short_string(void)
 NspGtkBin   *gtkbin_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkbin_id) ) return ((NspGtkBin *) O);
   else 
@@ -35634,7 +35634,7 @@ static char *gtkviewport_type_short_string(void)
 NspGtkViewport   *gtkviewport_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkviewport_id) ) return ((NspGtkViewport *) O);
   else 
@@ -35963,7 +35963,7 @@ static char *gtkscrolledwindow_type_short_string(void)
 NspGtkScrolledWindow   *gtkscrolledwindow_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkscrolledwindow_id) ) return ((NspGtkScrolledWindow *) O);
   else 
@@ -36329,7 +36329,7 @@ static char *gtkitem_type_short_string(void)
 NspGtkItem   *gtkitem_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkitem_id) ) return ((NspGtkItem *) O);
   else 
@@ -36555,7 +36555,7 @@ static char *gtkmenuitem_type_short_string(void)
 NspGtkMenuItem   *gtkmenuitem_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkmenuitem_id) ) return ((NspGtkMenuItem *) O);
   else 
@@ -36903,7 +36903,7 @@ static char *gtktearoffmenuitem_type_short_string(void)
 NspGtkTearoffMenuItem   *gtktearoffmenuitem_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktearoffmenuitem_id) ) return ((NspGtkTearoffMenuItem *) O);
   else 
@@ -37118,7 +37118,7 @@ static char *gtkseparatormenuitem_type_short_string(void)
 NspGtkSeparatorMenuItem   *gtkseparatormenuitem_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkseparatormenuitem_id) ) return ((NspGtkSeparatorMenuItem *) O);
   else 
@@ -37333,7 +37333,7 @@ static char *gtkcheckmenuitem_type_short_string(void)
 NspGtkCheckMenuItem   *gtkcheckmenuitem_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcheckmenuitem_id) ) return ((NspGtkCheckMenuItem *) O);
   else 
@@ -37653,7 +37653,7 @@ static char *gtkradiomenuitem_type_short_string(void)
 NspGtkRadioMenuItem   *gtkradiomenuitem_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkradiomenuitem_id) ) return ((NspGtkRadioMenuItem *) O);
   else 
@@ -37903,7 +37903,7 @@ static char *gtkimagemenuitem_type_short_string(void)
 NspGtkImageMenuItem   *gtkimagemenuitem_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkimagemenuitem_id) ) return ((NspGtkImageMenuItem *) O);
   else 
@@ -38176,7 +38176,7 @@ static char *gtkhandlebox_type_short_string(void)
 NspGtkHandleBox   *gtkhandlebox_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkhandlebox_id) ) return ((NspGtkHandleBox *) O);
   else 
@@ -38467,7 +38467,7 @@ static char *gtkframe_type_short_string(void)
 NspGtkFrame   *gtkframe_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkframe_id) ) return ((NspGtkFrame *) O);
   else 
@@ -38787,7 +38787,7 @@ static char *gtkaspectframe_type_short_string(void)
 NspGtkAspectFrame   *gtkaspectframe_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkaspectframe_id) ) return ((NspGtkAspectFrame *) O);
   else 
@@ -39036,7 +39036,7 @@ static char *gtkeventbox_type_short_string(void)
 NspGtkEventBox   *gtkeventbox_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkeventbox_id) ) return ((NspGtkEventBox *) O);
   else 
@@ -39251,7 +39251,7 @@ static char *gtkalignment_type_short_string(void)
 NspGtkAlignment   *gtkalignment_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkalignment_id) ) return ((NspGtkAlignment *) O);
   else 
@@ -39490,7 +39490,7 @@ static char *gtkbutton_type_short_string(void)
 NspGtkButton   *gtkbutton_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkbutton_id) ) return ((NspGtkButton *) O);
   else 
@@ -39854,7 +39854,7 @@ static char *gtktogglebutton_type_short_string(void)
 NspGtkToggleButton   *gtktogglebutton_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtktogglebutton_id) ) return ((NspGtkToggleButton *) O);
   else 
@@ -40189,7 +40189,7 @@ static char *gtkcheckbutton_type_short_string(void)
 NspGtkCheckButton   *gtkcheckbutton_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcheckbutton_id) ) return ((NspGtkCheckButton *) O);
   else 
@@ -40423,7 +40423,7 @@ static char *gtkradiobutton_type_short_string(void)
 NspGtkRadioButton   *gtkradiobutton_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkradiobutton_id) ) return ((NspGtkRadioButton *) O);
   else 
@@ -40691,7 +40691,7 @@ static char *gtkoptionmenu_type_short_string(void)
 NspGtkOptionMenu   *gtkoptionmenu_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkoptionmenu_id) ) return ((NspGtkOptionMenu *) O);
   else 
@@ -40962,7 +40962,7 @@ static char *gtkbox_type_short_string(void)
 NspGtkBox   *gtkbox_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkbox_id) ) return ((NspGtkBox *) O);
   else 
@@ -41326,7 +41326,7 @@ static char *gtkvbox_type_short_string(void)
 NspGtkVBox   *gtkvbox_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkvbox_id) ) return ((NspGtkVBox *) O);
   else 
@@ -41548,7 +41548,7 @@ static char *gtkcolorselection_type_short_string(void)
 NspGtkColorSelection   *gtkcolorselection_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcolorselection_id) ) return ((NspGtkColorSelection *) O);
   else 
@@ -41972,7 +41972,7 @@ static char *gtkfontselection_type_short_string(void)
 NspGtkFontSelection   *gtkfontselection_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkfontselection_id) ) return ((NspGtkFontSelection *) O);
   else 
@@ -42251,7 +42251,7 @@ static char *gtkgammacurve_type_short_string(void)
 NspGtkGammaCurve   *gtkgammacurve_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkgammacurve_id) ) return ((NspGtkGammaCurve *) O);
   else 
@@ -42520,7 +42520,7 @@ static char *gtkhbox_type_short_string(void)
 NspGtkHBox   *gtkhbox_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkhbox_id) ) return ((NspGtkHBox *) O);
   else 
@@ -42742,7 +42742,7 @@ static char *gtkstatusbar_type_short_string(void)
 NspGtkStatusbar   *gtkstatusbar_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkstatusbar_id) ) return ((NspGtkStatusbar *) O);
   else 
@@ -43030,7 +43030,7 @@ static char *gtkcombo_type_short_string(void)
 NspGtkCombo   *gtkcombo_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcombo_id) ) return ((NspGtkCombo *) O);
   else 
@@ -43347,7 +43347,7 @@ static char *gtkbuttonbox_type_short_string(void)
 NspGtkButtonBox   *gtkbuttonbox_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkbuttonbox_id) ) return ((NspGtkButtonBox *) O);
   else 
@@ -43641,7 +43641,7 @@ static char *gtkvbuttonbox_type_short_string(void)
 NspGtkVButtonBox   *gtkvbuttonbox_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkvbuttonbox_id) ) return ((NspGtkVButtonBox *) O);
   else 
@@ -43856,7 +43856,7 @@ static char *gtkhbuttonbox_type_short_string(void)
 NspGtkHButtonBox   *gtkhbuttonbox_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkhbuttonbox_id) ) return ((NspGtkHButtonBox *) O);
   else 
@@ -44071,7 +44071,7 @@ static char *gtkcalendar_type_short_string(void)
 NspGtkCalendar   *gtkcalendar_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcalendar_id) ) return ((NspGtkCalendar *) O);
   else 
@@ -44417,7 +44417,7 @@ static char *gtkwindow_type_short_string(void)
 NspGtkWindow   *gtkwindow_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkwindow_id) ) return ((NspGtkWindow *) O);
   else 
@@ -45757,7 +45757,7 @@ static char *gtkplug_type_short_string(void)
 NspGtkPlug   *gtkplug_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkplug_id) ) return ((NspGtkPlug *) O);
   else 
@@ -46001,7 +46001,7 @@ static char *gtkdialog_type_short_string(void)
 NspGtkDialog   *gtkdialog_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkdialog_id) ) return ((NspGtkDialog *) O);
   else 
@@ -46380,7 +46380,7 @@ static char *gtkmessagedialog_type_short_string(void)
 NspGtkMessageDialog   *gtkmessagedialog_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkmessagedialog_id) ) return ((NspGtkMessageDialog *) O);
   else 
@@ -46654,7 +46654,7 @@ static char *gtkinputdialog_type_short_string(void)
 NspGtkInputDialog   *gtkinputdialog_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkinputdialog_id) ) return ((NspGtkInputDialog *) O);
   else 
@@ -46870,7 +46870,7 @@ static char *gtkfontselectiondialog_type_short_string(void)
 NspGtkFontSelectionDialog   *gtkfontselectiondialog_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkfontselectiondialog_id) ) return ((NspGtkFontSelectionDialog *) O);
   else 
@@ -47216,7 +47216,7 @@ static char *gtkfileselection_type_short_string(void)
 NspGtkFileSelection   *gtkfileselection_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkfileselection_id) ) return ((NspGtkFileSelection *) O);
   else 
@@ -47710,7 +47710,7 @@ static char *gtkcolorselectiondialog_type_short_string(void)
 NspGtkColorSelectionDialog   *gtkcolorselectiondialog_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkcolorselectiondialog_id) ) return ((NspGtkColorSelectionDialog *) O);
   else 
@@ -47972,7 +47972,7 @@ static char *gtkwindowgroup_type_short_string(void)
 NspGtkWindowGroup   *gtkwindowgroup_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gtkwindowgroup_id) ) return ((NspGtkWindowGroup *) O);
   else 

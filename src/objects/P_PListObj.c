@@ -351,7 +351,7 @@ static int PListXdrLoad(XDR *xdrs, PList *plist)
 NspPList *NspPListObj(NspObject *O)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_plist_id) == TRUE) return ((NspPList *) O);
   else 

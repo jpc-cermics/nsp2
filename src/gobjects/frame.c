@@ -262,7 +262,7 @@ static void gframe_print(NspGFrame *H, int indent)
 NspGFrame   *gframe_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast(O,nsp_type_gframe_id) == TRUE) return ((NspGFrame *) O);
   else 

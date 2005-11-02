@@ -360,10 +360,8 @@ static NspMatrix *matrix_xdr_load(XDR *xdrs)
 NspMatrix *
 matrix_object (NspObject * O)
 {
-
-  /* Follow pointer * */
-  if (check_cast (O, nsp_type_hobj_id) == TRUE)
-    O = ((NspHobj *) O)->O;
+  /* Follow pointer  if necessary */
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type * */
   if (check_cast (O, nsp_type_matrix_id) == TRUE)
     return ((NspMatrix *) O);
@@ -3617,7 +3615,7 @@ NspMatrix *GetMatSafeCopy (Stack stack, int i)
 NspMatrix *GetMatSafe(Stack stack, int i)
 {
   NspObject *ob = NthObj(i);
-  if ( check_cast(ob,nsp_type_hobj_id) == TRUE)  ob = ((NspHobj *) ob)->O ;
+  HOBJ_GET_OBJECT(ob,NULL);
   return Mat2double ((NspMatrix *) ob);
 }
 

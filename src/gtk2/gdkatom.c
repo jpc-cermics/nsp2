@@ -274,7 +274,7 @@ void gdkatom_print(NspGdkAtom *H, int indent)
 NspGdkAtom   *gdkatom_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast(O,nsp_type_gdkatom_id) == TRUE) return ((NspGdkAtom *) O);
   else 
@@ -436,7 +436,7 @@ void GdkAtom_Interf_Info(int i, char **fname, function (**f))
 GdkAtom nsp_gdkatom_get(NspObject *object)
 {
   /** Follow pointer **/
-  if ( check_cast(object,nsp_type_hobj_id) == TRUE)  object = ((NspHobj *) object)->O;
+  HOBJ_GET_OBJECT(object,NULL);
   return ((NspGdkAtom *) object)->atom;
 }
 

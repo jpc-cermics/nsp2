@@ -267,7 +267,7 @@ GtkTreePath *nsp_gtk_tree_path_from_nspobject(NspObject *object)
 {
   GtkTreePath *path;
   /** Follow pointer **/
-  if ( check_cast(object,nsp_type_hobj_id) == TRUE)  object = ((NspHobj *) object)->O ;
+  HOBJ_GET_OBJECT(object,NULL);
   
   if ( IsGtkTreePath(object) )
     {

@@ -355,7 +355,7 @@ void nsp_hash_print(NspHash *H, int indent)
 NspHash   *nsp_hash_object(NspObject *O)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_hash_id) == TRUE) return ((NspHash *) O);
   else 

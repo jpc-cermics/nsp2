@@ -277,7 +277,7 @@ void none_print(NspNone *H, int indent)
 NspNone   *none_object(NspObject *O)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_none_id) == TRUE) return ((NspNone *) O);
   else 

@@ -295,7 +295,7 @@ void gobject_print(NspGObject *H, int indent)
 NspGObject   *gobject_object(NspObject *O)
 {
   /*Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /*Check type **/
   if ( check_cast(O,nsp_type_gobject_id) == TRUE) return ((NspGObject *) O);
   else 
@@ -1938,7 +1938,7 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
 int 
 nsp_gdk_rectangle_from_object(NspObject *object, GdkRectangle *rectangle)
 {
-  if (check_cast(object,nsp_type_hobj_id) == TRUE)  object = ((NspHobj *) object)->O ;
+  HOBJ_GET_OBJECT(object,FALSE);
   if (IsMat(object) && ((NspMatrix *) object)->rc_type == 'r'  ) {
     rectangle->x= ((NspMatrix *) object)->R[0]; 
     rectangle->y= ((NspMatrix *) object)->R[1];

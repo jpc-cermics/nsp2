@@ -22,12 +22,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define Hobj_Private 
 #include "nsp/object.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/datas.h"
+
+/* include Private Part */
+#define Hobj_Private 
+#include "nsp/hobj.h" 
 
 /*
  * NspHobj inherits from NspObject 

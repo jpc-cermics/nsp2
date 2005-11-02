@@ -251,7 +251,7 @@ void nsp_sndfile_print(NspSndFile  *F, int indent)
 NspSndFile  *nsp_sndfile_object(NspObject *O)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_sndfile_id) == TRUE) return ((NspSndFile *) O);
   else 

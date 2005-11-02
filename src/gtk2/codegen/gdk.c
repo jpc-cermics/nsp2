@@ -205,7 +205,7 @@ static char *gdkevent_type_short_string(void)
 NspGdkEvent   *gdkevent_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkevent_id) ) return ((NspGdkEvent *) O);
   else 
@@ -834,7 +834,7 @@ static char *gdkfont_type_short_string(void)
 NspGdkFont   *gdkfont_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkfont_id) ) return ((NspGdkFont *) O);
   else 
@@ -1275,7 +1275,7 @@ static char *gdkcolor_type_short_string(void)
 NspGdkColor   *gdkcolor_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkcolor_id) ) return ((NspGdkColor *) O);
   else 
@@ -1571,7 +1571,7 @@ static char *gdkcursor_type_short_string(void)
 NspGdkCursor   *gdkcursor_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkcursor_id) ) return ((NspGdkCursor *) O);
   else 
@@ -1848,7 +1848,7 @@ static char *gdkrectangle_type_short_string(void)
 NspGdkRectangle   *gdkrectangle_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkrectangle_id) ) return ((NspGdkRectangle *) O);
   else 
@@ -2170,7 +2170,7 @@ static char *gdkcolormap_type_short_string(void)
 NspGdkColormap   *gdkcolormap_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkcolormap_id) ) return ((NspGdkColormap *) O);
   else 
@@ -2545,7 +2545,7 @@ static char *gdkdevice_type_short_string(void)
 NspGdkDevice   *gdkdevice_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkdevice_id) ) return ((NspGdkDevice *) O);
   else 
@@ -3009,7 +3009,7 @@ static char *gdkdragcontext_type_short_string(void)
 NspGdkDragContext   *gdkdragcontext_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkdragcontext_id) ) return ((NspGdkDragContext *) O);
   else 
@@ -3550,7 +3550,7 @@ static char *gdkdrawable_type_short_string(void)
 NspGdkDrawable   *gdkdrawable_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkdrawable_id) ) return ((NspGdkDrawable *) O);
   else 
@@ -4252,7 +4252,7 @@ static char *gdkwindow_type_short_string(void)
 NspGdkWindow   *gdkwindow_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkwindow_id) ) return ((NspGdkWindow *) O);
   else 
@@ -5446,7 +5446,7 @@ static char *gdkpixmap_type_short_string(void)
 NspGdkPixmap   *gdkpixmap_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkpixmap_id) ) return ((NspGdkPixmap *) O);
   else 
@@ -5675,7 +5675,7 @@ static char *gdkbitmap_type_short_string(void)
 NspGdkBitmap   *gdkbitmap_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkbitmap_id) ) return ((NspGdkBitmap *) O);
   else 
@@ -5878,7 +5878,7 @@ static char *gdkgc_type_short_string(void)
 NspGdkGC   *gdkgc_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkgc_id) ) return ((NspGdkGC *) O);
   else 
@@ -6695,7 +6695,7 @@ static char *gdkimage_type_short_string(void)
 NspGdkImage   *gdkimage_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkimage_id) ) return ((NspGdkImage *) O);
   else 
@@ -6971,7 +6971,7 @@ static char *gdkkeymap_type_short_string(void)
 NspGdkKeymap   *gdkkeymap_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkkeymap_id) ) return ((NspGdkKeymap *) O);
   else 
@@ -7186,7 +7186,7 @@ static char *gdkpixbuf_type_short_string(void)
 NspGdkPixbuf   *gdkpixbuf_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkpixbuf_id) ) return ((NspGdkPixbuf *) O);
   else 
@@ -7863,7 +7863,7 @@ static char *gdkpixbufanimation_type_short_string(void)
 NspGdkPixbufAnimation   *gdkpixbufanimation_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkpixbufanimation_id) ) return ((NspGdkPixbufAnimation *) O);
   else 
@@ -8133,7 +8133,7 @@ static char *gdkpixbufanimationiter_type_short_string(void)
 NspGdkPixbufAnimationIter   *gdkpixbufanimationiter_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkpixbufanimationiter_id) ) return ((NspGdkPixbufAnimationIter *) O);
   else 
@@ -8371,7 +8371,7 @@ static char *gdkpixbufloader_type_short_string(void)
 NspGdkPixbufLoader   *gdkpixbufloader_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkpixbufloader_id) ) return ((NspGdkPixbufLoader *) O);
   else 
@@ -8657,7 +8657,7 @@ static char *gdkvisual_type_short_string(void)
 NspGdkVisual   *gdkvisual_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkvisual_id) ) return ((NspGdkVisual *) O);
   else 
@@ -9075,7 +9075,7 @@ static char *gdkscreen_type_short_string(void)
 NspGdkScreen   *gdkscreen_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkscreen_id) ) return ((NspGdkScreen *) O);
   else 
@@ -9511,7 +9511,7 @@ static char *gdkdisplay_type_short_string(void)
 NspGdkDisplay   *gdkdisplay_object(NspObject *O)
 {
   /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /** Check type **/
   if ( check_cast (O,nsp_type_gdkdisplay_id) ) return ((NspGdkDisplay *) O);
   else 

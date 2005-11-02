@@ -242,7 +242,7 @@ static NspSpMatrix *nsp_spmatrix_xdr_load(XDR *xdrs)
 NspSpMatrix   *nsp_spmatrix_object(NspObject *O)
 {
   /* Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
   if ( check_cast(O,nsp_type_spmatrix_id) == TRUE) return ((NspSpMatrix *) O);
   else 
