@@ -813,14 +813,19 @@ void SwapObjs(Stack stack, int i, int j)
 
 void MoveObj(Stack stack, int j, NspObject *O)
 {
-  NspObject *obj = NthObj(j),*O2;
+  NspObject *obj = NthObj(j);
   if ( obj != NULLOBJ && IsHobj(obj) ) 
     {
-      O2= ((NspHobj *) obj)->O;
+      /* Hopt was created when entering the interface */
       if ( IsHopt(obj) ) nsp_object_destroy(&obj);
-      NthObj(j) = O2;
+      /* the object Hopt points to is not to be destroyed since 
+       * it is always named 
+       */
     }
-  nsp_void_object_destroy(&NthObj(j));
+  else 
+    {
+      nsp_void_object_destroy(&NthObj(j)); 
+    }
   NthObj(j)= O;    
   NSP_OBJECT(O)->ret_pos =j;
 }
