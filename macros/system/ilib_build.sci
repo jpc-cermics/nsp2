@@ -189,7 +189,9 @@ function Makename=ilib_gen_Make(name,tables,files,libs,makename,with_gateway,ldf
 //------------------------------------
 // generate a Makefile for gateway
   if nargin < 6 then with_gateway=%t,ldflags='',cflags='',fflags='';end
-  files=strsubst(strsubst(files,'.obj','') ,'.o',''); //compat
+  if files<>[] then 
+    files=strsubst(strsubst(files,'.obj','') ,'.o',''); //compat
+  end
   // change table if necessary 
   if type(tables,'short')<>'l' then 
     tables= list(tables)
@@ -460,7 +462,11 @@ function libn=ilib_compile(lib_name,makename,files)
   end
   oldpath=getcwd();
   files=files(:)';
-  files1=strsubst(strsubst(files,'.obj','') ,'.o','');
+  if files<>[] then 
+    files1=strsubst(strsubst(files,'.obj','') ,'.o','');
+  else 
+    files1=m2s([]);
+  end
   [make_command,lib_name_make,lib_name,path,makename,files]= ...
       ilib_compile_get_names(lib_name,makename,files)  
   if path<> '';  chdir(path);  end 
@@ -481,7 +487,9 @@ endfunction
 function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_get_names(lib_name,makename,files) 
 // return is res the correct name for 
 // makefile, libname, files 
-  files=strsubst(strsubst(files,'.obj','') ,'.o',''); //compat
+  if files<>[] then 
+    files=strsubst(strsubst(files,'.obj','') ,'.o',''); //compat
+  end
   arg_makename=makename;
   makename=file('tail',makename);
   path=file('dirname',arg_makename);
