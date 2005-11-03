@@ -194,7 +194,6 @@ static char *connector_type_short_string(void)
 
 static int connector_eq(NspConnector *A, NspObject *B)
 {
-  int err,rep;
   if ( check_cast(B,nsp_type_connector_id) == FALSE) return FALSE ;
   if ( A->obj == ((NspConnector *) B)->obj ) return TRUE ;
   return FALSE;
