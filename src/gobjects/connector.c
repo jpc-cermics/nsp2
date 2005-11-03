@@ -726,6 +726,15 @@ void connector_draw(NspConnector *B)
       loc[0]+= B->obj->r[2] -lock_size; loc[1] -= B->obj->r[3] -lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
     }
+  if ( 0 )
+    {
+      /* test file */
+      int i;
+      for ( i = 0; i < 4 ;i++) loc[i]=B->obj->r[i];
+      loc[4]=0;loc[5]=360*64;
+      Xgc->graphic_engine->scale->fillarc(Xgc,loc);
+      Xgc->graphic_engine->scale->drawarc(Xgc,loc);
+    }
   /* draw the lock point when connected 
    */
   if ( locked == TRUE)

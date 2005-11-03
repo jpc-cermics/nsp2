@@ -11,7 +11,7 @@ function w=create_midle_menu (win,xc,yc)
     menu.append[  menuitem]
     menuitem.show[];
   end
-  menuitem = gtkmenuitem_new(label="delete");
+  menuitem = gtkimagemenuitem_new(stock_id="gtk-delete");
   menuitem.connect["activate",midle_menuitem_response,list(1,win)];
   menu.append[menuitem]
   menuitem.show[];
@@ -26,12 +26,14 @@ function w=create_midle_menu (win,xc,yc)
   menu.append[menuitem]
   menuitem.show[];
   //
-  menuitem = gtkmenuitem_new(label="copy to clipboard");
+  menuitem = gtkimagemenuitem_new(stock_id="gtk-copy");
   menuitem.connect["activate",midle_menuitem_response,list(4,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
-  //  
-  menuitem = gtkmenuitem_new(label="paste from clipboard");
+  // sensitive or not 
+  // menuitem.set_sensitive[%f];
+  //
+  menuitem = gtkimagemenuitem_new(stock_id="gtk-paste");
   menuitem.connect["activate",midle_menuitem_response,list(5,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
@@ -84,6 +86,8 @@ function menu=create_right_menu (win)
     menu.append[  menuitem]
     menuitem.show[];
   end
+  // a test 
+  // 
   tags = ['new link';'new block';'new_connector';'save';'load';'merge'];
   for i=1:size(tags,'*')
     menuitem = gtkmenuitem_new(label=tags(i));
@@ -164,7 +168,6 @@ function my_eventhandler(win,x,y,ibut)
     GF(winid)=%types.GFrame.new[[0,0,100,100],[0,0,100,100],win];
     GF(winid).draw[];// this will fix the initial scale 
   end
-    
   if count == 1 then 
     printf("event handler aborted =%d\n",count)
     return
@@ -197,12 +200,13 @@ function my_eventhandler(win,x,y,ibut)
     x_message('double click');
   elseif ibut==100 
     x_message('100');
-    gr_delete();
-    gr_draw(win);
+    x_message('click on d: 99');
+    //gr_delete();
+    //gr_draw(win);
   elseif ibut==99
-    x_message('99');
-    gr_copy();
-    gr_draw(win);
+    x_message('click on c: 99');
+    //gr_copy();
+    //gr_draw(win);
   else
     xinfo('Mouse action: ['+string(ibut)+']');
     // test a popup menu 

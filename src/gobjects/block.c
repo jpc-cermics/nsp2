@@ -810,6 +810,8 @@ static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int
  *
  **/
 
+static void draw_3d(BCG *Xgc,double r[]);
+
 void block_draw(NspBlock *B)
 {
   /* take care of the fact that str1 must be writable */
@@ -865,6 +867,7 @@ void block_draw(NspBlock *B)
     }
   /* draw frame rectangle */
   Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
+  draw_3d(Xgc,B->obj->r);
   Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
   /* add the control points if block is hilited */ 
   Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
@@ -903,6 +906,22 @@ void block_draw(NspBlock *B)
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
   Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
+
+static void draw_3d(BCG *Xgc,double r[])
+{
+  int npt=4;
+  double size3d=0.5;
+  double x[]={r[0],r[0],r[0]- size3d,r[0]-size3d};
+  double y[]={r[1],r[1]-r[3],r[1]-r[3]-size3d,r[1]-size3d};
+  double x1[]={r[0],r[0]+r[2],r[0]+r[2]- size3d,r[0]-size3d};
+  double y1[]={r[1]-r[3],r[1]-r[3],r[1]-r[3]-size3d,r[1]-r[3]-size3d};
+  Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
+  Xgc->graphic_engine->scale->fillpolyline(Xgc,x1,y1,npt,TRUE);
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,x1,y1,npt,TRUE);
+  
+}
+
 
 /**
  * block_tranlate:
