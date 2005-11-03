@@ -1430,28 +1430,27 @@ NspMatrix *nsp_matrix_extract(const NspMatrix *A, const NspMatrix *Rows, const N
   if ( A->mn == 0) 
     return nsp_matrix_create(NVOID,A->rc_type,0,0);
 
-  /*  scalar case: currently unsused (does't speed up 
-   *  but it may in the future...)
-   */
-  /*   if (Rows->mn == 1 && Cols->mn == 1) */
-  /*     { */
-  /*       i = (int) Rows->R[0]; */
-  /*       j = (int) Cols->R[0]; */
-  /*       if ( i < 1 || j < 1 || i > A->m || j > A->n ) */
-  /* 	{ */
-  /* 	  Scierror("Error:\tIndices out of bound\n"); */
-  /* 	  return NULLMAT; */
-  /* 	} */
-  /*       if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,1,1))== NULLMAT) */
-  /* 	return NULLMAT; */
-  /*       ind = (i-1) + (j-1)*A->m; */
-  /*       if ( A->rc_type == 'c' ) */
-  /* 	  Loc->C[0] = A->C[ind]; */
-  /*       else */
-  /* 	  Loc->R[0] = A->R[ind]; */
-  /*       return Loc; */
-  /*     } */
+  /*  one index in each dim (this speed up a little scalar computation) */ 
+  if (Rows->mn == 1 && Cols->mn == 1)
+    {
+      i = (int) Rows->R[0];
+      j = (int) Cols->R[0];
+      if ( i < 1 || j < 1 || i > A->m || j > A->n )
+  	{
+  	  Scierror("Error:\tIndices out of bound\n");
+  	  return NULLMAT;
+  	}
+      if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,1,1))== NULLMAT)
+  	return NULLMAT;
+      ind = (i-1) + (j-1)*A->m;
+      if ( A->rc_type == 'c' )
+	Loc->C[0] = A->C[ind];
+      else
+	Loc->R[0] = A->R[ind];
+      return Loc;
+    }
 
+  /* at least several indices in one dim */
   if ( Rows->mn == 0 || Cols->mn == 0)
     {
       return nsp_matrix_create(NVOID,A->rc_type,0,0);
@@ -1525,6 +1524,25 @@ NspMatrix *nsp_matrix_extract_elements(const NspMatrix *A,const NspMatrix *Elts)
 
   if ( A->mn == 0) return nsp_matrix_create(NVOID,A->rc_type,0,0);
 
+  /* one index only */
+  if ( Elts->mn == 1 )
+    {
+      i = (int) Elts->R[0];
+      if ( i < 1  ||  i > A->mn )
+  	{
+  	  Scierror("Error:\tIndices out of bound\n");
+  	  return NULLMAT;
+  	}
+      if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,1,1))== NULLMAT)
+  	return NULLMAT;
+      if ( A->rc_type == 'c' )
+	Loc->C[0] = A->C[i-1];
+      else
+	Loc->R[0] = A->R[i-1];
+      return Loc;
+    }
+
+  /*  several indices */
   if ( Elts->mn > WORK_SIZE ) 
     { if ( (ind = nsp_alloc_int(Elts->mn)) == NULL ) return NULLMAT; }
   else
@@ -1693,13 +1711,19 @@ NspMatrix *MatLoopCol(char *str, NspMatrix *Col, NspMatrix *A, int icol, int *re
   else 
     Loc = Col;
   if ( Loc == NULLMAT) return NULLMAT;
-  iof = (icol-1)*A->m;
-  if ( A->rc_type == 'c' )
-    for ( i = 0 ; i < A->m ; i++)
-      Loc->C[i] = A->C[i+iof];
-  else 
-    for ( i = 0 ; i < A->m ; i++)
-      Loc->R[i]=A->R[i+iof];
+
+  if ( A->m == 1 && A->rc_type == 'r' ) /* to speed up the usual case (for i=v  with v a row vector) */
+    Loc->R[0]=A->R[icol-1];
+  else
+    {
+      iof = (icol-1)*A->m;
+      if ( A->rc_type == 'c' )
+	for ( i = 0 ; i < A->m ; i++)
+	  Loc->C[i] = A->C[i+iof];
+      else
+	for ( i = 0 ; i < A->m ; i++)
+	  Loc->R[i]=A->R[i+iof];
+    }
 
   return Loc;
 }
