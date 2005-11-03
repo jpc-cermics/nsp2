@@ -251,7 +251,7 @@ endfunction;
 function y=scs_color(i);y=i;endfunction
 
 function F= diagram()
-// build a diagram non intercatively 
+// build a diagram non interactively 
   F=%types.GFrame.new[[0,0,100,100],[0,0,100,100],-1];
   B1=%types.Block.new[[10,80,10,10],color=6,background=7];
   F.insert[B1];
@@ -266,14 +266,9 @@ function F= diagram()
   L.connect[0,B2,2];  L.connect[1,B3,2];
   F.insert[L];
 endfunction;
-
-pause;
   
 global('GF');
-//R=%types.Block.new[[10,20,20,20],color=6,background=7];
 GF=hcreate(6);
-//GF('win0')=%types.GFrame.new[[0,0,100,100],[0,0,100,100]];
-//GF('win0').draw[];
 
 xinit(name='My diagram',dim=[1000,1000],popup_dim=[600,400])
 xset('recording',0)
