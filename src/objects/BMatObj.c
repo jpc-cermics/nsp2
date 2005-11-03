@@ -209,18 +209,17 @@ static int bmatrix_eq(NspBMatrix *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_bmatrix_id) == FALSE) return FALSE ;
-  rep =nsp_bmatrix_full_compare(A,(NspBMatrix *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
+  if ( ! ( ((NspBMatrix *) A)->m == ((NspBMatrix *) B)->m 
+	   && ((NspBMatrix *) A)->n == ((NspBMatrix *) B)->n)) return FALSE;
+  rep = nsp_bmatrix_full_compare (A, (NspBMatrix *) B, "==", &err);
+  if (err == TRUE)
+    return FALSE;
   return rep;
 }
 
 static int bmatrix_neq(NspBMatrix *A, NspObject *B)
 {
-  int err,rep;
-  if ( check_cast(B,nsp_type_bmatrix_id) == FALSE) return TRUE;
-  rep =nsp_bmatrix_full_compare(A,(NspBMatrix *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+   return ( bmatrix_eq(A,B) == TRUE ) ? FALSE : TRUE ;
 }
 
 

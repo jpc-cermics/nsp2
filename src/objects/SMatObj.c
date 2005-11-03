@@ -207,18 +207,18 @@ int nsp_smatrix_eq(NspObject *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_smatrix_id) == FALSE) return FALSE ;
-  rep = SMatFullComp((NspSMatrix *) A,(NspSMatrix *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
+  if ( ! ( ((NspSMatrix *) A)->m == ((NspSMatrix *) B)->m 
+	   && ((NspSMatrix *) A)->n == ((NspSMatrix *) B)->n)) return FALSE;
+  rep = SMatFullComp((NspSMatrix *)A, (NspSMatrix *) B, "==", &err);
+  if (err == TRUE)
+    return FALSE;
   return rep;
+
 }
 
 int nsp_smatrix_neq(NspObject *A, NspObject *B)
 {
-  int err,rep;
-  if ( check_cast(B,nsp_type_smatrix_id) == FALSE) return TRUE;
-  rep = SMatFullComp((NspSMatrix *) A,(NspSMatrix *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  return ( nsp_smatrix_eq(A,B) == TRUE ) ? FALSE : TRUE ;
 }
 
 /*

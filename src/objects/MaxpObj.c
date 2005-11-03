@@ -220,18 +220,17 @@ int mpmatrix_eq(NspObject *A,NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_mpmatrix_id) == FALSE) return FALSE ;
-  rep =nsp_mat_fullcomp((NspMatrix *) A,(NspMatrix *) B,"==",&err);
-  if ( err == TRUE) return FALSE ; 
+  if ( ! ( ((NspMaxpMatrix *) A)->m == ((NspMaxpMatrix *) B)->m 
+	   && ((NspMaxpMatrix *) A)->n == ((NspMaxpMatrix *) B)->n)) return FALSE;
+  rep = nsp_mat_fullcomp ((NspMatrix *) A, (NspMatrix *) B, "==", &err);
+  if (err == TRUE)
+    return FALSE;
   return rep;
 }
 
 int mpmatrix_neq(NspObject *A,NspObject *B)
 {
-  int err,rep;
-  if ( check_cast(B,nsp_type_mpmatrix_id) == FALSE) return TRUE;
-  rep =nsp_mat_fullcomp((NspMatrix *) A,(NspMatrix *) B,"<>",&err);
-  if ( err == TRUE ) return TRUE ; 
-  return rep;
+  return ( mpmatrix_eq(A,B) == TRUE ) ? FALSE : TRUE ;
 }
 
 /*
