@@ -38,7 +38,7 @@ typedef struct b_lock {
 typedef struct _nsp_block nsp_block;
 
 struct _nsp_block {
-  NspGFrame *frame; /* a block must be in a frame to be drawn */
+  nsp_gframe *frame;/* a block must be in a frame to be drawn */
   void *object_sid;
   double r[4]; 		
   int color;
@@ -90,6 +90,7 @@ static int block_get_show (NspBlock *B);
 static void block_set_show (NspBlock *B, int val); 
 static void block_draw (NspBlock *R); 
 static int block_translate (NspBlock *R, const double *pt); 
+static int block_set_pos (NspBlock *R, const double *pt); 
 static void block_resize (NspBlock *R, const double *size); 
 static void block_update_locks (NspBlock *R); 
 static int block_contains_pt (const NspBlock *B, const double *pt); 

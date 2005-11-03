@@ -93,6 +93,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   gri->set_show		=(gr_set_show *) block_set_show;
   gri->draw    		=(gr_draw *) block_draw;
   gri->translate 	=(gr_translate *) block_translate;
+  gri->set_pos  	=(gr_set_pos *) block_set_pos;
   gri->resize 		=(gr_resize *) block_resize;
   gri->update_locks 	=(gr_update_locks *) block_update_locks;
   gri->contains_pt 	=(gr_contains_pt *) block_contains_pt;
@@ -556,6 +557,7 @@ static int int_gblock_set_show(void *Hv, char *attr, NspObject *O)
 
 
 
+
 static AttrTab block_attrs[] = {
   { "color",        int_gblock_get_color ,     int_gblock_set_color ,     NULL },
   { "background",    int_gblock_get_background,  int_gblock_set_background,  NULL },
@@ -588,6 +590,20 @@ static int int_gblock_translate(void  *self,Stack stack, int rhs, int opt, int l
   if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   CheckLength(stack.fname,1,M,2);
   block_translate(self,M->R);
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+/* set_position */
+
+static int int_gblock_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(stack.fname,1,M,2);
+  block_set_pos(self,M->R);
   MoveObj(stack,1,self);
   return 1;
 }
@@ -660,6 +676,7 @@ int int_gblock_test(void *self,Stack stack, int rhs, int opt, int lhs)
 
 static NspMethods block_methods[] = {
   { "translate", int_gblock_translate},
+  { "set_pos", int_gblock_set_pos},
   { "resize",   int_gblock_resize},
   { "draw",   int_gblock_draw},
   { "set_lock_pos", int_gblock_set_lock_pos},
@@ -806,7 +823,7 @@ void block_draw(NspBlock *B)
   /* check the show attribute */
   if ( B->obj->show == FALSE ) return ;
 
-  Xgc=B->obj->frame->obj->Xgc;
+  Xgc=B->obj->frame->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
 
@@ -904,6 +921,15 @@ int block_translate(NspBlock *B,const double tr[2])
   block_update_locks(B);
   return OK;
 }
+
+int block_set_pos(NspBlock *B,const double tr[2])
+{
+  B->obj->r[0] = tr[0] ;
+  B->obj->r[1] = tr[1] ;
+  block_update_locks(B);
+  return OK;
+}
+
 
 /**
  * block_resize: 

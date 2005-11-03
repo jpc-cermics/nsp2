@@ -40,7 +40,7 @@ typedef struct _gr_lock {
 typedef struct _nsp_connector nsp_connector;
 
 struct _nsp_connector {
-  NspGFrame *frame; /* a link must be in a frame to be drawn */
+  nsp_gframe *frame; /* a link must be in a frame to be drawn */
   void *object_sid;
   double r[4];
   int color; 
@@ -91,6 +91,7 @@ static int connector_get_show (NspConnector *B);
 static void connector_set_show (NspConnector *B, int val); 
 static void connector_draw (NspConnector *R); 
 static int connector_translate (NspConnector *R, const double *pt); 
+static int connector_set_pos (NspConnector *R, const double *pt); 
 static void connector_resize (NspConnector *R, const double *size); 
 static void connector_update_locks (NspConnector *R); 
 static int connector_contains_pt (const NspConnector *B, const double *pt); 

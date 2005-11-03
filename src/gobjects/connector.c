@@ -92,6 +92,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
   gri->set_show		=(gr_set_show *) connector_set_show;
   gri->draw    		=(gr_draw *) connector_draw;
   gri->translate 	=(gr_translate *) connector_translate;
+  gri->set_pos  	=(gr_set_pos *) connector_set_pos;
   gri->resize 		=(gr_resize *) connector_resize;
   gri->update_locks 	=(gr_update_locks *) connector_update_locks;
   gri->contains_pt 	=(gr_contains_pt *) connector_contains_pt;
@@ -189,30 +190,19 @@ static char *connector_type_short_string(void)
   return(connector_short_type_name);
 }
 
-/** used in for x=y where y is a Connector **/
-
-int ConnectorFullComp(NspConnector * A,NspConnector * B,char *op,int *err)
-{
-  Scierror("ConnectorFullComp: to be implemented \n");
-  return FALSE;
-}
+/* used in for x=y where y is a Connector **/
 
 static int connector_eq(NspConnector *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_connector_id) == FALSE) return FALSE ;
-  rep = ConnectorFullComp(A,(NspConnector *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  if ( A->obj == ((NspConnector *) B)->obj ) return TRUE ;
+  return FALSE;
 }
 
 static int connector_neq(NspConnector *A, NspObject *B)
 {
-  int err,rep;
-  if ( check_cast(B,nsp_type_connector_id) == FALSE) return TRUE;
-  rep = ConnectorFullComp(A,(NspConnector *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  return connector_eq(A,B)== TRUE ? FALSE : TRUE ;
 }
 
 /*
@@ -580,6 +570,19 @@ static int int_gctranslate(void  *self,Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,self);
   return 1;
 }
+/* translate */
+
+static int int_gcset_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(stack.fname,1,M,2);
+  connector_set_pos(self,M->R);
+  MoveObj(stack,1,self);
+  return 1;
+}
 
 /* resize */ 
 
@@ -597,6 +600,7 @@ static int int_gcresize(void  *self, Stack stack, int rhs, int opt, int lhs)
 
 static NspMethods connector_methods[] = {
   { "translate", int_gctranslate},
+  { "set_pos", int_gcset_pos},
   { "resize",   int_gcresize},
   { "draw",   int_gcdraw},
   { (char *) 0, NULL}
@@ -703,7 +707,7 @@ void connector_draw(NspConnector *B)
   /* only draw block which are in a frame */
   if ( B->obj->frame == NULL) return;
   if ( B->obj->show == FALSE ) return ;
-  Xgc=B->obj->frame->obj->Xgc;
+  Xgc=B->obj->frame->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
 
@@ -767,6 +771,14 @@ int connector_translate(NspConnector *B,const double pt[2])
 {
   B->obj->r[0] += pt[0] ;
   B->obj->r[1] += pt[1] ;
+  connector_update_locks(B);
+  return OK;
+}
+
+int connector_set_pos(NspConnector *B,const double pt[2])
+{
+  B->obj->r[0] = pt[0] ;
+  B->obj->r[1] = pt[1] ;
   connector_update_locks(B);
   return OK;
 }

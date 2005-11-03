@@ -646,20 +646,20 @@ int int_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
   if ( IsBlockObj(stack,1) )
     { 
       if ((B=GetBlockCopy(stack,1)) == NULLBLOCK) return RET_BUG;
-      B->obj->frame = (NspGFrame *) self;
+      B->obj->frame = ((NspGFrame *) self)->obj;
       obj = NSP_OBJECT(B);
     }
   else if ( IsLinkObj(stack,1))
     { 
       if ((L=GetLinkCopy(stack,1)) == NULLLINK) return RET_BUG;
-      L->obj->frame = (NspGFrame *) self;
+      L->obj->frame = ((NspGFrame *) self)->obj;
       obj = NSP_OBJECT(L);
       flag = FALSE;
     }
   else if ( IsConnectorObj(stack,1))
     { 
       if ((C=GetConnectorCopy(stack,1)) == NULLCONNECTOR) return RET_BUG;
-      C->obj->frame = (NspGFrame *) self;
+      C->obj->frame = ((NspGFrame *) self)->obj;
       obj = NSP_OBJECT(C);
     }
 
@@ -944,7 +944,7 @@ void gframe_set_frame_field(NspGFrame *F)
       if ( C->O != NULLOBJ )
 	{
 	  NspBlock *B = (NspBlock *) C->O; 
-	  B->obj->frame = F;
+	  B->obj->frame = F->obj;
 	}
       C = C->next ;
       count++;
@@ -1172,14 +1172,13 @@ static void gframe_locks_draw(NspGFrame *R,NspObject *O)
 {
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
   int   n = bf->get_number_of_locks(O), i;
-  Scierror("XXX gframe_locks_draw n_locks = %d\n",n);
   for ( i = 0 ; i < n ; i++) 
     {
       if ( bf->is_lock_connected(O,i) == TRUE) 
 	{
 	  int np = bf->get_number_of_ports(O,i);
 	  int j;
-	  Scierror("XXX gframe_locks_draw lock= %d ports=%d\n",i,np);
+	  /* Scierror("XXX gframe_locks_draw lock= %d ports=%d\n",i,np); */
 	  for ( j= 0 ; j < np ; j++) 
 	    {
 	      gr_port p;
@@ -1187,7 +1186,6 @@ static void gframe_locks_draw(NspGFrame *R,NspObject *O)
 		{
 		  NspObject *O1 = p.object_id; 
 		  NspTypeGRint *bf1 = GR_INT(O1->basetype->interface);
-		  Scierror("XXX gframe_locks_draw lock= %d port=%d is connected 0x%lx\n",i,j,(long) O1);
 		  bf1->draw(O1);
 		}
 	    }
@@ -1478,7 +1476,7 @@ NspObject * gframe_create_new_block(NspGFrame *F)
   gframe_unhilite_objs(F,FALSE);
   B=block_create("fe",rect,color,thickness,background,NULL);
   if ( B == NULLBLOCK) return NULLOBJ;
-  B->obj->frame = F;
+  B->obj->frame = F->obj;
   B->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->obj->objs,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
@@ -1507,7 +1505,7 @@ NspObject * gframe_create_new_connector(NspGFrame *F)
   gframe_unhilite_objs(F,FALSE);
   B=connector_create("fe",rect,color,thickness,background,NULL);
   if ( B == NULL) return NULLOBJ;
-  B->obj->frame = F;
+  B->obj->frame = F->obj;
   B->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->obj->objs,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= gframe_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
@@ -1578,7 +1576,7 @@ NspObject * gframe_create_new_link(NspGFrame *F)
   Xgc->graphic_engine->xset_alufunction1(Xgc,6);
   /* prepare a link with 1 points */
   L= link_create_n("fe",1,color,thickness);
-  L->obj->frame = F;
+  L->obj->frame = F->obj;
 
   bf = GR_INT(((NspObject *) L)->basetype->interface);
 

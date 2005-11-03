@@ -98,6 +98,7 @@ NspTypeLink *new_type_link(type_mode mode)
   gri->set_show		=(gr_set_show *) link_set_show;
   gri->draw    		=(gr_draw *) link_draw;
   gri->translate 	=(gr_translate *) link_translate;
+  gri->set_pos  	=(gr_set_pos *) link_set_pos;
   gri->resize 		=(gr_resize *) link_resize;
   gri->update_locks 	=(gr_update_locks *) link_update_locks;
   gri->contains_pt 	=(gr_contains_pt *) link_contains_pt;
@@ -195,30 +196,18 @@ static char *link_type_short_string(void)
   return(link_short_type_name);
 }
 
-/** used in for x=y where y is a Link **/
-
-int LinkFullComp(NspLink * A,NspLink * B,char *op,int *err)
-{
-  Scierror("LinkFullComp: to be implemented \n");
-  return FALSE;
-}
+/* used in for x=y where y is a Link **/
 
 static int link_eq(NspLink *A, NspObject *B)
 {
-  int err,rep;
   if ( check_cast(B,nsp_type_link_id) == FALSE) return FALSE ;
-  rep = LinkFullComp(A,(NspLink *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  if ( A->obj == ((NspLink *) B)->obj ) return TRUE ;
+  return FALSE;
 }
 
 static int link_neq(NspLink *A, NspObject *B)
 {
-  int err,rep;
-  if ( check_cast(B,nsp_type_link_id) == FALSE) return TRUE;
-  rep = LinkFullComp(A,(NspLink *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  return link_eq(A,B)== TRUE ? FALSE : TRUE ;
 }
 
 /*
@@ -528,12 +517,25 @@ int int_gldraw(void  *self, Stack stack, int rhs, int opt, int lhs)
 int int_gltranslate(void  *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *M;
-  CheckRhs(2,2);
+  CheckRhs(1,1);
   CheckLhs(0,1);
-  if ((M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,2,M,2);
+  if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(stack.fname,1,M,2);
   link_translate(self,M->R);
-  NSP_OBJECT(self)->ret_pos = 1;
+  MoveObj(stack,1,self);
+  return 1;
+}
+/* translate */
+
+int int_glset_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(stack.fname,1,M,2);
+  link_set_pos(self,M->R);
+  MoveObj(stack,1,self);
   return 1;
 }
 
@@ -547,7 +549,7 @@ int int_glresize(void  *self, Stack stack, int rhs, int opt, int lhs)
   if ((M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   CheckLength(stack.fname,2,M,2);
   link_resize(self,M->R);
-  NSP_OBJECT(self)->ret_pos = 1;
+  MoveObj(stack,1,self);
   return 1;
 }
 
@@ -575,6 +577,7 @@ static int int_glconnect(void  *self, Stack stack, int rhs, int opt, int lhs)
 
 static NspMethods link_methods[] = {
   { "translate", int_gltranslate},
+  { "set_pos", int_glset_pos},
   { "resize",   int_glresize},
   { "draw",   int_gldraw},
   { "connect", int_glconnect},
@@ -666,7 +669,7 @@ void link_draw(NspLink *L)
   if ( L->obj->frame == NULL) return;
   if ( L->obj->show == FALSE ) return ;
 
-  Xgc=L->obj->frame->obj->Xgc;
+  Xgc=L->obj->frame->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   /* draw polyline */
@@ -727,6 +730,17 @@ int link_translate(NspLink *L,const double pt[2])
     }
   return OK;
 }
+
+int link_set_pos(NspLink *L,const double pt[2])
+{
+  double tr[2];
+  int m= L->obj->poly->m;
+  double *x= L->obj->poly->R, *y = x + m; 
+  tr[0]=pt[0]-x[m/2];
+  tr[1]=pt[1]-y[m/2];
+  return link_translate(L,tr);
+}
+
 
 /**************************************************
  * resize 
@@ -1035,7 +1049,7 @@ int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
   /* for proj to end of link */
   n1 = L->obj->poly->m-kmin;
   if ((*L1= link_create_n("fe",n1,L->obj->color,L->obj->thickness))==NULL) return FAIL;
-  (*L1)->obj->frame = F;
+  (*L1)->obj->frame = F->obj;
   (*L1)->obj->poly->R[0]=proj[0];
   (*L1)->obj->poly->R[n1]=proj[1];
   for ( i=1; i < n1 ; i++) 
@@ -1134,8 +1148,19 @@ void link_check(NspGFrame *F,NspLink *L)
 	  /* pt is near a lock point */ 
 	  if ( link_is_lock_connected(L,i)== FALSE) 
 	    {
-	      Scierror("Link lock point is over an object lock and lock is not active\n");
-	      pt[0]+= lock_size*2;
+	      int m= L->obj->poly->m;
+	      double *x= L->obj->poly->R, *y = x + m; 
+	      /* Scierror("Link lock point is over an object lock and lock is not active\n"); */
+	      if ( i==0 && m >= 2 ) 
+		{
+		  pt[0] += (x[1]-pt[0])/2;
+		  pt[1] += (y[1]-pt[1])/2;
+		}
+	      else if ( i == 1 && m >= 2)
+		{
+		  pt[0] += (x[m-2]-pt[0])/2;
+		  pt[1] += (y[m-2]-pt[1])/2;
+		}
 	      link_set_lock_pos(L,i,pt,FALSE,ANY);
 	    }
 	}
@@ -1159,7 +1184,7 @@ void link_check(NspGFrame *F,NspLink *L)
 		      C=connector_create("fe",rect,color,thickness,background,NULL);
 		      if ( C == NULL) return;
 		      /* herits the frame graphic context */
-		      C->obj->frame = F;
+		      C->obj->frame = F->obj;
 		      if (nsp_list_end_insert(F->obj->objs,NSP_OBJECT(C)) == FAIL) return ; 
 		      /* and link obj,link and L to the connector */
 		      p.object_id =NSP_OBJECT(C); 
