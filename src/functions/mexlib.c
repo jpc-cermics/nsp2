@@ -164,17 +164,13 @@ double *mxGetPi(const mxArray *ptr)
 
 int mxGetM(const mxArray *ptr)
 {
-  int i= NSP_POINTER_TO_INT( ptr);
-  if ( check_cast(NthObj(i),nsp_type_matrix_id) ) 
-    return ((NspMatrix *) NthObj(i))->m; 
-  else if ( check_cast(NthObj(i),nsp_type_smatrix_id) ) 
-    return i;
-  else
+  NspObject *Obj;
+  int ih= NSP_POINTER_TO_INT( ptr);
+  if (( Obj=nsp_get_object(stack,ih)) == NULL)
     {
-      Scierror("Error in %s: mxGetM size not implement for type xxx \n",stack.fname);
-      if (! Ocheckname(NthObj(i),NVOID)) Scierror("%s",nsp_object_get_name((NthObj(i))));
+      nsp_mex_errjump();
     }
-  return 0;
+  return nsp_object_get_size(Obj,1);
 }
 
 /* int array de taille n+1 tel que 
@@ -200,21 +196,13 @@ int *mxGetIr(const mxArray *ptr)
 
 int mxGetN(const mxArray *ptr)
 {
-  int i= NSP_POINTER_TO_INT(ptr);
-  char *Str;
-  if ( check_cast(NthObj(i),nsp_type_matrix_id) ) 
-    return ((NspMatrix *) NthObj(i))->n;
-  else if ( check_cast(NthObj(i),nsp_type_smatrix_id) ) 
+  NspObject *Obj;
+  int ih= NSP_POINTER_TO_INT( ptr);
+  if (( Obj=nsp_get_object(stack,ih)) == NULL)
     {
-      Str =  ((NspSMatrix*) NthObj(i))->S[0];
-      return strlen(Str);
+      nsp_mex_errjump();
     }
-  else 
-    {
-      Scierror("Error in %s: mxGetM size not implement for type xxx \n",stack.fname);
-      if ( ! Ocheckname(NthObj(i),NVOID) ) Scierror("%s",nsp_object_get_name((NthObj(i))));
-    }
-  return 0;
+  return nsp_object_get_size(Obj,2);
 }
 
 /* Check that object is a String **/
@@ -359,15 +347,26 @@ void *mxCalloc(unsigned int n, unsigned int size)
  * string NspMatrix pointed by ptr ( ptr is assumed to be a String NspMatrix )
  **************************************************************/
 
-/* Get an SMatrix 1x1 **/
+/* Get all the strings of Matrix SMatrix 
+ * in one buffer 
+ **/
 
 int mxGetString(const mxArray *ptr, char *str, int strl)
 {
+  nsp_string message;
   int i= NSP_POINTER_TO_INT( ptr);
-  char *Str;
-  if ((Str = GetString(stack,i)) == (char*)0) nsp_mex_errjump();
-  strncpy(str,Str,strl);
-  str[strl]='\0';
+  NspSMatrix *A;
+  if (( A=GetSMat(stack,i)) == NULLSMAT)   
+    {
+      nsp_mex_errjump();
+    }
+  message =nsp_smatrix_elts_concat(A,"",1,"",1);
+  if ( message == NULL) 
+    {
+      nsp_mex_errjump();
+    }
+  strncpy(str,message,strl);
+  nsp_string_destroy(&message);
   return 0;
 }
       
@@ -434,8 +433,11 @@ mxArray *mxGetField (const mxArray *pa, int i, char *fieldname)
     }
   if ( nsp_hash_find(H,fieldname,&Obj) == FAIL) 
     {
-      Scierror("Error: cannot find field %s\n",fieldname);
-      nsp_mex_errjump();
+      return NULL;
+      /* 
+	 Scierror("Error: cannot find field %s\n",fieldname);
+	 nsp_mex_errjump();
+      */
     }
   newmat++;
   NthObj(rhs+newmat)= (NspObject*) Obj;
@@ -510,8 +512,10 @@ int mxGetNumberOfFields (const mxArray *ptr)
 
 bool mxIsChar(const mxArray *ptr)
 {
-  /* XXXXXXXXXXXXX */
-  return FALSE;
+  int ih= NSP_POINTER_TO_INT( ptr);
+  if (! IsSMatObj(stack,ih) ) return FALSE;
+  /* XXXX if (((NspSMatrix *)NthObj(ih))->n != 1) return FALSE; */
+  return TRUE;
 }
 
 void mexWarnMsgTxt(char *error_msg)
@@ -544,10 +548,14 @@ int mxGetNumberOfElements(const mxArray *ptr)
     {
       nsp_mex_errjump();
     }
-  /* XXXXXXXXXXXXX Attention renvoit les 
-     dimensions 
-     mais pour une chaine c'est le nbre de characteres 
-  */
+  if ( IsSMat(Obj) )
+    {
+      int n=0,i;
+      if ( ((NspSMatrix*) Obj)->mn == 0 ) return 0;
+      for ( i=0 ; i < ((NspSMatrix*) Obj)->mn ; i++)
+	n += strlen(((NspSMatrix*) Obj)->S[i]);
+      return n;
+    }
   return nsp_object_get_size(Obj,0);
 }
 
