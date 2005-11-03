@@ -26,7 +26,7 @@ extern int mxIsComplex (const mxArray *ptr);
 extern double mxGetScalar (const mxArray *ptr);
 extern void mexErrMsgTxt (char *error_msg);
 extern int *mxCreateFull (int m, int n, int it);
-extern int *mxCreateDoubleMatrix (int m, int n, int it);
+extern int *mxCreateDoubleMatrix (int m, int n, mxComplexity it);
 extern void *mxCalloc (unsigned int n, unsigned int size);
 extern int mxGetString (const mxArray *ptr, char *str, int strl);
 extern void mxFreeMatrix (mxArray *ptr);

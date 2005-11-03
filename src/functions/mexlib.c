@@ -298,10 +298,10 @@ void mexErrMsgTxt(char *error_msg)
 
 /*  New matrix **/
 
-int *mxCreateDoubleMatrix(int m, int n, int it)
+int *mxCreateDoubleMatrix(int m, int n,  mxComplexity it)
 {
   NspMatrix *A;
-  if ( it == 0) 
+  if ( it == mxREAL ) 
     {
       if ((A = nsp_matrix_create(NVOID,'r',m,n) ) == NULLMAT) nsp_mex_errjump();
     }
