@@ -63,7 +63,7 @@ function midle_menuitem_response(w,args)
     // fois 
     if GF.iskey['clipboard'] then 
       if length(GF('clipboard'))<> 0 then
-	GF('clipboard')(1).translate[[2,2]];
+	GF('clipboard')(1).set_pos[[args(2),args(3)]];
 	GF(win).insert[GF('clipboard')(1)];
       else 
 	x_message('Clipboard is empty');end 
