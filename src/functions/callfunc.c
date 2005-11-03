@@ -330,177 +330,11 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
  * reorder the stack after a function call 
  *------------------------------------------------------*/
 
-/* int  reorder_stack(Stack stack, int ret) */
-/* { */
-/*   NspObject**O1 = stack.S+stack.first; */
-/*   NspObject*O,*O2; */
-/*   int count = 1,j; */
- 
-/*   /\* DEBUG XXXX *\/ */
-/*   if ( stack.fname == NULL) */
-/*     { */
-/*       stack.fname = ""; */
-/*     } */
- 
-/*   /\* reordering and cleaning the stack *\/ */
- 
-/*   /\* first pass to deal with pointers *\/ */
-/*   while ( *O1 != NULL) */
-/*     { */
-/*       O=*O1; */
-/*       /\* XXX : we keep here special cases for handler and resize2vect_h */
-/*        * which are authorized to return a Hobj. Maybe not a good idea to */
-/*        * keep special cases here. */
-/*        *\/ */
-/*       if ( IsHobj(O) && strcmp(stack.fname,"handler") != 0 && strcmp(stack.fname,"resize2vect_h") != 0) */
-/* 	{ */
-/* 	  int k; */
-/* 	  /\* O is of type pointer *\/ */
-/* 	  O2= ((NspHobj *) O)->O; */
-/* 	  if ( IsHopt(O) ) */
-/* 	    { */
-/* 	      if ( O->ret_pos != -1 ) */
-/* 		{ */
-/* 		  /\* XXXX should not get there *\/ */
-/* 		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", stack.fname); */
-/* 		  exit(1); */
-/* 		} */
-/* 	      /\* O is an optional argument,O2 is the value *\/ */
-/* 	      nsp_object_destroy(&O); */
-/* 	      /\* we go on with O2 *\/ */
-/* 	      O = *O1=O2; */
-/* 	    } */
-/* 	  else */
-/* 	    { */
-/* 	      /\* O is a pointer *\/ */
-/* 	      if ( O->ret_pos != -1 ) */
-/* 		{ */
-/* 		  /\* XXXX should not get there *\/ */
-/* 		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", stack.fname); */
-/* 		  exit(1); */
-/* 		} */
-/* 	      /\* O points to O2 *\/ */
-/* 	      if ((k= O2->ret_pos) != -1) */
-/* 		{ */
-/* 		  /\* reset O2 *\/ */
-/* 		  O2->ret_pos=-1; */
-/* 		  /\* O2 is on the return list we must copy O2 *\/ */
-/* 		  if ( (O2 =nsp_object_copy(O2)) == NULLOBJ)  return RET_BUG; */
-/* 		  O2->ret_pos=k; */
-/* 		  /\* O2 replace O, O must not be freed, we go on with O2 *\/ */
-/* 		  O= *O1= O2; */
-/* 		} */
-/* 	    } */
-/* 	} */
-/*       O1++; */
-/*     } */
-
-/*   /\* second pass to move objects at their correct positions *\/ */
-  
-/*   O1 = stack.S+stack.first; */
-/*   while ( *O1 != NULL) */
-/*     { */
-/*       O=*O1; */
-/*       if ( O->ret_pos != -1 && O->ret_pos != count) */
-/* 	reorder_follow_cycle(stack,count); */
-/*       O1++;count++; */
-/*     } */
-
- 
-/*   /\* third pass to count and check */
-/*    * Debug only */
-/*    *\/ */
-
-/*   O1 = stack.S + stack.first; */
-/*   for ( j = 1 ; j <= ret ; j++) */
-/*     if ( (*O1++)->ret_pos != j ) { */
-/*       fprintf(stderr,"Something wrong at end of %s \n",  stack.fname); */
-/*       fprintf(stderr,"returned arguments are not in correct order \n"); */
-/*       show_returned_positions(stack,1); */
-/*       exit(1); */
-/*     } */
-  
-/*   /\* */
-/*    * clean extra returned arguments */
-/*    *\/ */
-  
-/*   O1 = stack.S + stack.first + ret ; */
-/*   while ( *O1 != NULL) */
-/*     { */
-/*       (*O1++)->ret_pos=-1; */
-/*     } */
-
-
-/*   /\* clean the stack : the pointers cases have already been done*\/ */
-  
-/*   O1 = stack.S+stack.first; */
-/*   while ( *O1 != NULL) { */
-/*     if ( (*O1)->ret_pos == -1 ) { */
-/*       nsp_void_object_destroy(O1); */
-/*       /\* if object was not destroyed we must remove it from the stack */
-/*        * Attention pose un pb avec pvirg et virg XXXX */
-/*        *\/ */
-/*       *O1 = NULLOBJ ; */
-/*     } else { */
-/*       /\* returned values reset to -1 *\/ */
-/*       (*O1)->ret_pos = -1 ; */
-/*     } */
-/*     O1++; */
-/*   } */
-
-/*   /\*  Only relevant in DEBUG Mode *\/ */
-/*   O1 = stack.S + stack.first; */
-/*   while ( *O1 != NULL ) */
-/*     { */
-/*       if ( (*O1)->ret_pos != -1 ) */
-/* 	{ */
-/* 	  fprintf(stderr,"Something wrong before entering interface for %s \n",  stack.fname); */
-/* 	  fprintf(stderr,"Stack is corrupted ret_pos !=-1 ! but I go on "); */
-/* 	  break; */
-/* 	} */
-/*       O1++; */
-/*     } */
-
-/*   return ret; */
-/* } */
-
-
-/* static int  reorder_follow_cycle(Stack stack,int pos) */
-/* { */
-/*   NspObject **obj = stack.S+stack.first; */
-/*   NspObject *obj1,*obj2; */
-/*   /\* reordering and cleaning the stack *\/ */
-/*   obj1 = obj[pos-1]; */
-/*   while (1) */
-/*     { */
-/*       if (obj1 == NULLOBJ) */
-/* 	{ */
-/* 	  fprintf(stderr,"Error Something wrong in interface %s you have a hole in returned values\n", */
-/* 		  stack.fname); */
-/* 	  exit(1); */
-/* 	} */
-	
-/*       if ( obj1->ret_pos == -1 || obj1->ret_pos == pos) break; */
-/*       /\* obj1 is to be moved at position obj1->ret_pos *\/ */
-/*       obj2 = obj[obj1->ret_pos-1]; */
-/*       if ( obj2->ret_pos == obj1->ret_pos ) */
-/* 	{ */
-/* 	  fprintf(stderr,"Error Something wrong in interface %s return value %d is used twice\n", */
-/* 		  stack.fname,obj2->ret_pos); */
-/* 	  exit(1); */
-/* 	} */
-/*       /\* perform the swap *\/ */
-/*       obj[obj1->ret_pos-1]= obj1; */
-/*       obj[pos-1]= obj1=obj2; */
-/*     } */
-/*   return OK; */
-/* } */
-
 int  reorder_stack(Stack stack, int ret)
 {
-  NspObject **O1=stack.S+stack.first, **obj=stack.S+stack.first-1;
+  NspObject**O1 = stack.S+stack.first;
   NspObject*O,*O2;
-  int count=0, k, kn, ret_pos, must_be_reordered=0;
+  int count = 1,j;
  
   /* DEBUG XXXX */
   if ( stack.fname == NULL)
@@ -520,6 +354,7 @@ int  reorder_stack(Stack stack, int ret)
        */
       if ( IsHobj(O) && strcmp(stack.fname,"handler") != 0 && strcmp(stack.fname,"resize2vect_h") != 0)
 	{
+	  int k;
 	  /* O is of type pointer */
 	  O2= ((NspHobj *) O)->O;
 	  if ( IsHopt(O) )
@@ -533,7 +368,7 @@ int  reorder_stack(Stack stack, int ret)
 	      /* O is an optional argument,O2 is the value */
 	      nsp_object_destroy(&O);
 	      /* we go on with O2 */
-	      O = *O1=O2;       /* a priori inutile *01 = 02 suffit ! */
+	      O = *O1=O2;
 	    }
 	  else
 	    {
@@ -553,70 +388,235 @@ int  reorder_stack(Stack stack, int ret)
 		  if ( (O2 =nsp_object_copy(O2)) == NULLOBJ)  return RET_BUG;
 		  O2->ret_pos=k;
 		  /* O2 replace O, O must not be freed, we go on with O2 */
-		  O= *O1= O2;     /* a priori inutile *01 = 02 suffit ! */
+		  O= *O1= O2;
 		}
 	    }
 	}
-      O1++; count++;
-    }
-    
-  /* second pass to destroy non returned objects  */
-  kn = 0;
-  for ( k = 1 ; k <= count ; k++ )
-    {
-      ret_pos = obj[k]->ret_pos;
-      if ( ret_pos == -1 )
-	{
-	  nsp_void_object_destroy(&(obj[k]));
-	  obj[k] = NULLOBJ;
-	}
-      else
-	{
-	  kn++;
-	  obj[kn] = obj[k];
-	  if ( kn < k) obj[k] = NULLOBJ;
-	  if ( ret_pos != kn ) must_be_reordered = 1; else obj[kn]->ret_pos = -1;
-	}
-    }
-  count = kn;
-
-  /* third pass to reorder if needed */
-  if ( must_be_reordered )
-    {
-      NspObject *otemp; int knn;
-      for ( k = 1 ; k <= count ; k++ )
-	{
-	  if ( (kn=obj[k]->ret_pos) != -1 )
-	    {
-	      do
-		{
-		  if ( kn <= k || kn > count || (knn = obj[kn]->ret_pos)==-1 )
-		    {
-		      fprintf(stderr,"Something wrong at end of %s \n",  stack.fname);
-		      fprintf(stderr,"duplication or hole in returned arguments numbering\n");
-		      show_returned_positions(stack,1);
-		      exit(1);
-		    }
-		  otemp = obj[kn]; obj[kn] = obj[k]; obj[k] = otemp;
-		  obj[kn]->ret_pos = -1;
-		  kn = knn;
-		}
-	      while (kn != k);
-	      obj[k]->ret_pos = -1;
-	    }
-	}
+      O1++;
     }
 
-  /* clean extra returned arguments */
-  if ( ret < count )
-    for ( k = ret+1 ; k <= count ; k++ )
-      {
-	nsp_void_object_destroy(&(obj[k]));
-	obj[k] = NULLOBJ;
-      }
+  /* second pass to move objects at their correct positions */
+  
+  O1 = stack.S+stack.first;
+  while ( *O1 != NULL)
+    {
+      O=*O1;
+      if ( O->ret_pos != -1 && O->ret_pos != count)
+	reorder_follow_cycle(stack,count);
+      O1++;count++;
+    }
+
+ 
+  /* third pass to count and check
+   * Debug only
+   */
+
+  O1 = stack.S + stack.first;
+  for ( j = 1 ; j <= ret ; j++)
+    if ( (*O1++)->ret_pos != j ) {
+      fprintf(stderr,"Something wrong at end of %s \n",  stack.fname);
+      fprintf(stderr,"returned arguments are not in correct order \n");
+      show_returned_positions(stack,1);
+      exit(1);
+    }
+  
+  /*
+   * clean extra returned arguments
+   */
+  
+  O1 = stack.S + stack.first + ret ;
+  while ( *O1 != NULL)
+    {
+      (*O1++)->ret_pos=-1;
+    }
+
+
+  /* clean the stack : the pointers cases have already been done*/
+  
+  O1 = stack.S+stack.first;
+  while ( *O1 != NULL) {
+    if ( (*O1)->ret_pos == -1 ) {
+      nsp_void_object_destroy(O1);
+      /* if object was not destroyed we must remove it from the stack
+       * Attention pose un pb avec pvirg et virg XXXX
+       */
+      *O1 = NULLOBJ ;
+    } else {
+      /* returned values reset to -1 */
+      (*O1)->ret_pos = -1 ;
+    }
+    O1++;
+  }
+
+  /*  Only relevant in DEBUG Mode */
+  O1 = stack.S + stack.first;
+  while ( *O1 != NULL )
+    {
+      if ( (*O1)->ret_pos != -1 )
+	{
+	  fprintf(stderr,"Something wrong before entering interface for %s \n",  stack.fname);
+	  fprintf(stderr,"Stack is corrupted ret_pos !=-1 ! but I go on ");
+	  break;
+	}
+      O1++;
+    }
 
   return ret;
 }
+
+
+static int  reorder_follow_cycle(Stack stack,int pos)
+{
+  NspObject **obj = stack.S+stack.first;
+  NspObject *obj1,*obj2;
+  /* reordering and cleaning the stack */
+  obj1 = obj[pos-1];
+  while (1)
+    {
+      if (obj1 == NULLOBJ)
+	{
+	  fprintf(stderr,"Error Something wrong in interface %s you have a hole in returned values\n",
+		  stack.fname);
+	  exit(1);
+	}
+	
+      if ( obj1->ret_pos == -1 || obj1->ret_pos == pos) break;
+      /* obj1 is to be moved at position obj1->ret_pos */
+      obj2 = obj[obj1->ret_pos-1];
+      if ( obj2->ret_pos == obj1->ret_pos )
+	{
+	  fprintf(stderr,"Error Something wrong in interface %s return value %d is used twice\n",
+		  stack.fname,obj2->ret_pos);
+	  exit(1);
+	}
+      /* perform the swap */
+      obj[obj1->ret_pos-1]= obj1;
+      obj[pos-1]= obj1=obj2;
+    }
+  return OK;
+}
+
+/* int  reorder_stack(Stack stack, int ret) */
+/* { */
+/*   NspObject **O1=stack.S+stack.first, **obj=stack.S+stack.first-1; */
+/*   NspObject*O,*O2; */
+/*   int count=0, k, kn, ret_pos, must_be_reordered=0; */
+ 
+/*   /\* DEBUG XXXX *\/ */
+/*   if ( stack.fname == NULL) */
+/*     { */
+/*       stack.fname = ""; */
+/*     } */
+ 
+/*   /\* reordering and cleaning the stack *\/ */
+ 
+/*   /\* first pass to deal with pointers *\/ */
+/*   while ( *O1 != NULL) */
+/*     { */
+/*       O=*O1; */
+/*       /\* XXX : we keep here special cases for handler and resize2vect_h */
+/*        * which are authorized to return a Hobj. Maybe not a good idea to */
+/*        * keep special cases here. */
+/*        *\/ */
+/*       if ( IsHobj(O) && strcmp(stack.fname,"handler") != 0 && strcmp(stack.fname,"resize2vect_h") != 0) */
+/* 	{ */
+/* 	  /\* O is of type pointer *\/ */
+/* 	  O2= ((NspHobj *) O)->O; */
+/* 	  if ( IsHopt(O) ) */
+/* 	    { */
+/* 	      if ( O->ret_pos != -1 ) */
+/* 		{ */
+/* 		  /\* XXXX should not get there *\/ */
+/* 		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", stack.fname); */
+/* 		  exit(1); */
+/* 		} */
+/* 	      /\* O is an optional argument,O2 is the value *\/ */
+/* 	      nsp_object_destroy(&O); */
+/* 	      /\* we go on with O2 *\/ */
+/* 	      O = *O1=O2;       /\* a priori inutile *01 = 02 suffit ! *\/ */
+/* 	    } */
+/* 	  else */
+/* 	    { */
+/* 	      /\* O is a pointer *\/ */
+/* 	      if ( O->ret_pos != -1 ) */
+/* 		{ */
+/* 		  /\* XXXX should not get there *\/ */
+/* 		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", stack.fname); */
+/* 		  exit(1); */
+/* 		} */
+/* 	      /\* O points to O2 *\/ */
+/* 	      if ((k= O2->ret_pos) != -1) */
+/* 		{ */
+/* 		  /\* reset O2 *\/ */
+/* 		  O2->ret_pos=-1; */
+/* 		  /\* O2 is on the return list we must copy O2 *\/ */
+/* 		  if ( (O2 =nsp_object_copy(O2)) == NULLOBJ)  return RET_BUG; */
+/* 		  O2->ret_pos=k; */
+/* 		  /\* O2 replace O, O must not be freed, we go on with O2 *\/ */
+/* 		  O= *O1= O2;     /\* a priori inutile *01 = 02 suffit ! *\/ */
+/* 		} */
+/* 	    } */
+/* 	} */
+/*       O1++; count++; */
+/*     } */
+    
+/*   /\* second pass to destroy non returned objects  *\/ */
+/*   kn = 0; */
+/*   for ( k = 1 ; k <= count ; k++ ) */
+/*     { */
+/*       ret_pos = obj[k]->ret_pos; */
+/*       if ( ret_pos == -1 ) */
+/* 	{ */
+/* 	  nsp_void_object_destroy(&(obj[k])); */
+/* 	  obj[k] = NULLOBJ; */
+/* 	} */
+/*       else */
+/* 	{ */
+/* 	  kn++; */
+/* 	  obj[kn] = obj[k]; */
+/* 	  if ( kn < k) obj[k] = NULLOBJ; */
+/* 	  if ( ret_pos != kn ) must_be_reordered = 1; else obj[kn]->ret_pos = -1; */
+/* 	} */
+/*     } */
+/*   count = kn; */
+
+/*   /\* third pass to reorder if needed *\/ */
+/*   if ( must_be_reordered ) */
+/*     { */
+/*       NspObject *otemp; int knn; */
+/*       for ( k = 1 ; k <= count ; k++ ) */
+/* 	{ */
+/* 	  if ( (kn=obj[k]->ret_pos) != -1 ) */
+/* 	    { */
+/* 	      do */
+/* 		{ */
+/* 		  if ( kn <= k || kn > count || (knn = obj[kn]->ret_pos)==-1 ) */
+/* 		    { */
+/* 		      fprintf(stderr,"Something wrong at end of %s \n",  stack.fname); */
+/* 		      fprintf(stderr,"duplication or hole in returned arguments numbering\n"); */
+/* 		      show_returned_positions(stack,1); */
+/* 		      exit(1); */
+/* 		    } */
+/* 		  otemp = obj[kn]; obj[kn] = obj[k]; obj[k] = otemp; */
+/* 		  obj[kn]->ret_pos = -1; */
+/* 		  kn = knn; */
+/* 		} */
+/* 	      while (kn != k); */
+/* 	      obj[k]->ret_pos = -1; */
+/* 	    } */
+/* 	} */
+/*     } */
+
+/*   /\* clean extra returned arguments *\/ */
+/*   if ( ret < count ) */
+/*     for ( k = ret+1 ; k <= count ; k++ ) */
+/*       { */
+/* 	nsp_void_object_destroy(&(obj[k])); */
+/* 	obj[k] = NULLOBJ; */
+/*       } */
+
+/*   return ret; */
+/* } */
 
 
 
