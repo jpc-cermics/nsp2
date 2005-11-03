@@ -310,6 +310,23 @@ void mexErrMsgTxt(char *error_msg)
 
 /*  New matrix **/
 
+int *mxCreateDoubleMatrix(int m, int n, int it)
+{
+  NspMatrix *A;
+  if ( it == 0) 
+    {
+      if ((A = nsp_matrix_create(NVOID,'r',m,n) ) == NULLMAT) nsp_mex_errjump();
+    }
+  else
+    {
+      if ((A = nsp_matrix_create(NVOID,'c',m,n) ) == NULLMAT) nsp_mex_errjump();
+      A->convert = 'c'; /* matab complex style */
+    }
+  newmat++;
+  NthObj(rhs+newmat)= (NspObject*) A;
+  return NSP_INT_TO_POINTER(rhs+newmat);
+}
+
 int *mxCreateFull(int m, int n, int it)
 {
   NspMatrix *A;
@@ -394,5 +411,149 @@ int *mxCreateString(char *string)
 }
 
 
+/* here pas is supposed to be a Hash Table 
+ * the index is not used i.e we only accept 
+ * i==0;
+ * fieldname ->  const char *fieldname
+ */
 
 
+mxArray *mxGetField (const mxArray *pa, int i, char *fieldname)
+{
+  NspObject *Obj;
+  int ih= NSP_POINTER_TO_INT( pa);
+  NspHash *H;
+  if ( i != 0 )
+    {
+      Scierror("Struct just have a zero index \n");
+      nsp_mex_errjump();
+    }
+  if (( H=GetHash(stack,ih)) == NULLHASH)   
+    {
+      nsp_mex_errjump();
+    }
+  if ( nsp_hash_find(H,fieldname,&Obj) == FAIL) 
+    {
+      Scierror("Error: cannot find field %s\n",fieldname);
+      nsp_mex_errjump();
+    }
+  newmat++;
+  NthObj(rhs+newmat)= (NspObject*) Obj;
+  return NSP_INT_TO_POINTER(rhs+newmat);
+}
+
+/*
+ *
+ */
+
+extern mxArray *mxCreateStructMatrix(int m, int n, int nfields, const char **field_names)
+{
+  NspHash *H;
+  if ( m != 1 || n != 1) 
+    {
+      Scierror("Struct are just 1x1 \n");
+      nsp_mex_errjump();
+    }
+  if (( H = nsp_hcreate(NVOID,nfields)) == NULLHASH)
+    {
+      nsp_mex_errjump();
+    }
+  newmat++;
+  NthObj(rhs+newmat)= (NspObject*) H;
+  return NSP_INT_TO_POINTER(rhs+newmat);
+}
+
+
+extern void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value)
+{
+  NspObject *Obj;
+  int ih= NSP_POINTER_TO_INT( pa);
+  int ivalue = NSP_POINTER_TO_INT(value);
+  NspHash *H;
+  if ( i != 0 )
+    {
+      Scierror("Struct just have a zero index \n");
+      nsp_mex_errjump();
+    }
+  if (( H=GetHash(stack,ih)) == NULLHASH)   
+    {
+      nsp_mex_errjump();
+    }
+  if (( Obj=nsp_get_object(stack,ivalue)) == NULL)
+    {
+      nsp_mex_errjump();
+    }
+  if (  nsp_hash_enter_copy(H,Obj)==FAIL)
+    {
+      nsp_mex_errjump();
+    }
+}
+
+int mxGetNumberOfDimensions (const mxArray *ptr)
+{
+  return 2;
+}
+
+
+int mxGetNumberOfFields (const mxArray *ptr)
+{
+  int ih= NSP_POINTER_TO_INT( ptr);
+  NspHash *H;
+  if (( H=GetHash(stack,ih)) == NULLHASH)   
+    {
+      nsp_mex_errjump();
+    }
+  return H->filled;
+}
+
+
+
+bool mxIsChar(const mxArray *ptr)
+{
+  /* XXXXXXXXXXXXX */
+  return FALSE;
+}
+
+void mexWarnMsgTxt(char *error_msg)
+{
+  Sciprintf(error_msg);
+}
+
+
+double mxGetInf(void)
+{
+  double d=0;d=1/d;
+  return d;
+}
+double mxGetNaN(void)
+{
+  double d=0;d=d/d;  
+  return d;
+}
+
+double mxGetEps(void)
+{
+  return nsp_dlamch("e");
+}
+
+int mxGetNumberOfElements(const mxArray *ptr)
+{
+  NspObject *Obj;
+  int ih= NSP_POINTER_TO_INT( ptr);
+  if (( Obj=nsp_get_object(stack,ih)) == NULL)
+    {
+      nsp_mex_errjump();
+    }
+  /* XXXXXXXXXXXXX Attention renvoit les 
+     dimensions 
+     mais pour une chaine c'est le nbre de characteres 
+  */
+  return nsp_object_get_size(Obj,0);
+}
+
+
+bool mxIsStruct(const mxArray *ptr)
+{
+  int ih= NSP_POINTER_TO_INT( ptr);
+  return IsHashObj(stack,ih);
+}
