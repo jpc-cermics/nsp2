@@ -202,6 +202,15 @@ int mxGetN(const mxArray *ptr)
     {
       nsp_mex_errjump();
     }
+  if ( IsSMat(Obj)) 
+    {
+      int n=0,i;
+      if ( ((NspSMatrix*) Obj)->mn == 0 ) return 0;
+      n = strlen(((NspSMatrix*) Obj)->S[0]);
+      for ( i=1 ; i < ((NspSMatrix*) Obj)->mn ; i++)
+	n =Max(n, strlen(((NspSMatrix*) Obj)->S[i]));
+      return n;
+    }
   return nsp_object_get_size(Obj,2);
 }
 
