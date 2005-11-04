@@ -531,6 +531,22 @@ int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *C
 
 
 /*
+ */
+
+int nsp_cells_set_element(NspCells *A,int index, NspObject *B)
+{
+  if ( index < 0 || index > A->mn ) 
+    {
+      Scierror("Error:\tindex %d is out of range\n",index);
+      return FAIL;
+    }
+  nsp_object_destroy(&A->objs[index]);
+  A->objs[index]=B;
+  return(OK);
+}
+
+
+/*
  *  A(Rows) = B
  *  A is changed and enlarged if necessary
  *  Size Compatibility is checked
