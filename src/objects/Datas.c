@@ -404,15 +404,19 @@ NspObject *nsp_global_frame_search_object(nsp_const_string str)
 
 void nsp_global_frame_remove_object(nsp_const_string str)
 {
-  NspObject *O;
+  NspObject *Ob=NULLOBJ;
   if ( GlobalFrame == NULL )  return ;
 #ifdef FRAME_AS_LIST
-  O=nsp_sorted_list_search(GlobalFrame,str);
+  Ob = nsp_sorted_list_search_and_remove(GlobalFrame,str);
+  nsp_object_destroy(&Ob);
 #else 
-  nsp_hash_find(GlobalFrame,str,&O);
-#endif 
-  /*nsp_object_destroy(&O); */
-  Sciprintf("FIXME: Ref to global data must be removed too \n");
+  /* FIXME: we need here a unique option nsp_hash_find_and_remove */
+  if ( nsp_hash_find_and_copy(GlobalFrame,str,&Ob)== OK)
+    {
+      nsp_hash_remove(GlobalFrame,str);
+      nsp_object_destroy(&Ob);
+    }
+#endif
 } 
 
 
