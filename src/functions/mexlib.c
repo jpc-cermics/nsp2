@@ -116,7 +116,7 @@ int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
   mexFunction(lhs, plhs, rhs, prhs);
   if ( lhs <= 0 && NSP_POINTER_TO_INT(plhs[0]) != -1 ) lhs = 1;
   nsp_endmex(lhs, plhs, rhs, prhs);
-  return lhs;
+  return Max(0,lhs);
 }
 
 static  jmp_buf MexEnv;
@@ -573,4 +573,66 @@ bool mxIsStruct(const mxArray *ptr)
 {
   int ih= NSP_POINTER_TO_INT( ptr);
   return IsHashObj(stack,ih);
+}
+
+
+bool mxIsCell(const mxArray *ptr)
+{
+  int ih= NSP_POINTER_TO_INT( ptr);
+  return IsCellsObj(stack,ih);
+}
+
+
+
+mxArray *mxGetCell(const mxArray *ptr, int index)
+{
+  NspObject *Obj;
+  int ih= NSP_POINTER_TO_INT( ptr);
+  NspCells *C;
+  if (( C=GetCells(stack,ih)) == NULL)   
+    {
+      nsp_mex_errjump();
+    }
+  if ( index >= 0 && index < C->mn )
+    {
+      Obj= C->objs[index];
+    }
+  else 
+    {
+      nsp_mex_errjump();
+    }
+  newmat++;
+  NthObj(rhs+newmat)= (NspObject*) Obj;
+  return NSP_INT_TO_POINTER(rhs+newmat);
+}
+
+void mxSetCell(mxArray *array_ptr, int index, mxArray *value)
+{
+  NspObject *Obj;
+  int ih= NSP_POINTER_TO_INT( array_ptr);
+  NspCells *C;
+  int iv= NSP_POINTER_TO_INT( value);
+  if (( Obj=nsp_get_object(stack,iv)) == NULL)
+    {
+      nsp_mex_errjump();
+    }
+  if (( C=GetCells(stack,ih)) == NULL)   
+    {
+      nsp_mex_errjump();
+    }
+  if ( nsp_cells_set_element(C, index,Obj) == FAIL) 
+    {
+      nsp_mex_errjump();
+    }
+}
+
+
+mxArray *mxCreateCellMatrix(int m, int n)
+{
+  NspCells *A;
+  if ((A = nsp_cells_create(NVOID,m,n) ) == NULLCELLS) 
+    nsp_mex_errjump();
+  newmat++;
+  NthObj(rhs+newmat)= (NspObject*) A;
+  return NSP_INT_TO_POINTER(rhs+newmat);
 }

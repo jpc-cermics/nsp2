@@ -89,6 +89,7 @@ extern NspCells *nsp_cells_extract_elements(NspCells *A, NspMatrix *Elts, int *e
 extern NspCells *nsp_cells_extract_columns(NspCells *A, NspMatrix *Cols, int *err); 
 extern NspCells *CellsLoopCol (char *str, NspCells *Col, NspCells *A, int icol, int *rep); 
 extern NspCells *nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err); 
+extern int nsp_cells_set_element(NspCells *A,int index, NspObject *B);
 
 #define NULLCELLS (NspCells *) NULL
 
@@ -96,6 +97,7 @@ extern NspMatrix *nsp_cells_strcmp(NspCells *A, NspCells *B);
 extern NspBMatrix *CellsCompOp (NspCells *A, NspCells *B, char *op); 
 extern int CellsFullComp (NspCells *A, NspCells *B, char *op, int *err); 
 extern NspCells *nsp_cells_transpose(const NspCells *A); 
+
 
 
 #endif 
