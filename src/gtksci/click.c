@@ -167,5 +167,46 @@ int ClearClickQueue(int win)
   return(0);
 }
 
+/* 
+ * Replacement for previous code 
+ * but we need a queue by graphic window 
+ * this is to be moved in the XGC of each window 
+ */
+
+static nsp_event_queue q= { 0,0 , MaxCB };
+
+int nsp_enqueue(nsp_gwin_event *ev)
+{
+  /* first let a click_handler do the job  */
+  if ( scig_click_handler(ev->win,ev->x,ev->y,ev->ibutton,ev->motion,ev->release)== 1) return 0;
+  /* do not record motion events and release button 
+   * this is left for a futur release 
+   */
+  if ( ev->motion == 1 || ev->release == 1 ) return 0;
+  
+  q.elems[q.in++] = *ev;
+  if (q.in == q.size) q.in = 0;
+  return 0;
+}
+
+nsp_gwin_event nsp_dequeue()
+{
+  nsp_gwin_event ev = q.elems[q.out++];
+  if (q.out == q.size) q.out = 0;
+  return ev;
+}
+
+int nsp_queue_empty()
+{
+  return (q.in == 0) ? TRUE : FALSE ;
+}
+
+void nsp_clear_queue()
+{
+  q.in =0;
+}
+
+
+
 
 

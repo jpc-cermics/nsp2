@@ -400,7 +400,7 @@ void menu_entry_show(menu_entry *m)
   menu_entry_show(m->next);
 }
 
-static menu_entry *new_menu_entry(const char *name,const char *accel,int status,int nsub,
+static menu_entry *new_menu_entry(const char *name,const char *accel,const char *stock_name,int status,int nsub,
 				  menu_entry *subs,int winid, int action_type,const char *fname)
 {
   menu_entry *loc; 
@@ -417,6 +417,14 @@ static menu_entry *new_menu_entry(const char *name,const char *accel,int status,
       strcpy(loc->accel,accel);
     }
   else loc->accel = NULL;
+
+  if ( stock_name  != NULL) 
+    {
+      if ((loc->stock_name = MALLOC((strlen(stock_name)+1)*sizeof(stock_name)))==NULL) 
+	return NULL;
+      strcpy(loc->stock_name,stock_name);
+    }
+  else loc->stock_name = NULL;
 
   if (fname != NULL) 
     {
@@ -455,22 +463,23 @@ void menu_entry_delete(menu_entry *me)
   FREE(me->name); 
   FREE(me->fname); 
   FREE(me->accel); 
+  FREE(me->stock_name); 
   menu_entry_delete(me->subs);
   menu_entry_delete(me->next);
   FREE(me);
 }
 
 /*
- * decode a name = "entry|accel|action";
+ * decode a name = "entry|accel|action|stock-name";
  * by returning pointers to entry accel and action 
  * the pointers give position in a new allocated string 
  * which is returned in entry. entry is to be freed 
  * when entry, accel and action are no more used 
  */
 
-static void nsp_menu_decode_name(const char *name,char **entry,char **accel,char **action)
+static void nsp_menu_decode_name(const char *name,char **entry,char **accel,char **action,char **stock_name)
 {
-  *accel = NULL,*action=NULL;
+  *accel = NULL,*action=NULL,*stock_name = NULL;
   if ((*entry=strdup(name))== NULL) return;
   *accel = strchr(*entry,'|');
   if ( *accel != NULL) 
@@ -483,9 +492,17 @@ static void nsp_menu_decode_name(const char *name,char **entry,char **accel,char
 	  **action = '\0';
 	  (*action)++;
 	  if ( *action == *accel + 1) *accel = NULL;
+	  *stock_name = strchr(*action,'|');
+	  if ( *stock_name != NULL ) 
+	    { 
+	      **stock_name = '\0';
+	      (*stock_name)++;
+	      if ( *stock_name == *action +  1) *action = NULL;
+	    }
 	}
     }
-}  
+}
+
 
 /*----------------------------------------------------------------
  * Add a menu in a menu_item list
@@ -504,16 +521,16 @@ static void nsp_menu_decode_name(const char *name,char **entry,char **accel,char
 static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne, 
 			int action_type,char *fname)
 {  
-  char *e_entry,*e_accel,*e_action,*action;
+  char *e_entry,*e_accel,*e_action,*e_stock_name,*action;
   int i;
   /* here we must find the menu_entry associated to win_num */
   menu_entry *me1=NULL,*me2,*top,*subs=NULL;
   /* first build the sub_menus */
   for (i=0 ; i < ne ;i++) 
     {
-      nsp_menu_decode_name(entries[i],&e_entry,&e_accel,&e_action);
+      nsp_menu_decode_name(entries[i],&e_entry,&e_accel,&e_action,&e_stock_name);
       action = (e_action != NULL) ? e_action : fname ;
-      me2 = new_menu_entry(e_entry,e_accel,1,i+1,NULL,winid, action_type,action);
+      me2 = new_menu_entry(e_entry,e_accel,e_stock_name,1,i+1,NULL,winid, action_type,action);
       if(e_entry != NULL) free(e_entry);
       if ( me2 == NULL) 
 	{
@@ -524,9 +541,9 @@ static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries
       me1=me2;
     }
   /* now the menu entry */
-  nsp_menu_decode_name(name,&e_entry,&e_accel,&e_action);
+  nsp_menu_decode_name(name,&e_entry,&e_accel,&e_action,&e_stock_name);
   action = (e_action != NULL) ? e_action : fname ;
-  top = new_menu_entry(e_entry,e_accel,1,1,subs,winid,action_type,action);
+  top = new_menu_entry(e_entry,e_accel,e_stock_name,1,1,subs,winid,action_type,action);
   if(e_entry != NULL) free(e_entry);
   if ( top == NULL) 
     {
@@ -695,15 +712,24 @@ static void sci_factory_add_last_menu_entry(GtkItemFactory *ifactory,menu_entry 
 static void sci_factory_add_menu_entry(GtkItemFactory *ifactory,menu_entry *m)
 {
   char buf_path[128];
-  static GtkItemFactoryEntry entry = { NULL,NULL, sci_menu_default_callback,0,NULL};
+  GtkItemFactoryEntry entry = { NULL,NULL, sci_menu_default_callback,0,NULL};
   if ( m == NULL ) return ;
   sprintf(buf_path,"/%s",m->name);
   entry.path = buf_path;
   entry.accelerator = m->accel;
+  entry.extra_data = m->stock_name;
   if ( m->subs == NULL) 
     {
-      entry.item_type = "<Item>";
-      gtk_item_factory_create_item(ifactory,&entry,(void *)m,1);
+      if ( entry.extra_data == NULL ) 
+	{
+	  entry.item_type = "<Item>";
+	  gtk_item_factory_create_item(ifactory,&entry,(void *)m,1);
+	}
+      else 
+	{
+	  entry.item_type = "<StockItem>";
+	  gtk_item_factory_create_item(ifactory,&entry,(void *)m,1);
+	}
     }
   else 
     {
@@ -715,9 +741,10 @@ static void sci_factory_add_menu_entry(GtkItemFactory *ifactory,menu_entry *m)
       entry.callback = NULL;
       gtk_item_factory_create_item(ifactory,&entry,(void *)m,1);
       loc =  m->subs ; 
-      entry.item_type = "<Item>";
       while ( loc != NULL) 
 	{
+	  entry.extra_data = loc->stock_name;
+	  entry.item_type =  ( entry.extra_data == NULL ) ?  "<Item>" :  "<StockItem>";
 	  sprintf(buf_path,"/%s/%s",m->name,loc->name);
 	  entry.path = buf_path;
 	  entry.accelerator = loc->accel;
