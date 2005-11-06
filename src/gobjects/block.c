@@ -409,14 +409,14 @@ NspBlock *block_create(char *name,double *rect,int color,int thickness,int backg
   /* 
    * move the lock pos to the triangle head XXX !! 
    */
-  H->obj->locks[0].type = LNORTH;
-  H->obj->locks[1].type = LSOUTH;
-  H->obj->locks[2].type = LWEST;
-  H->obj->locks[3].type = LEAST;
-  block_set_lock_pos_rel(H,0,(pt[0]=0.5,pt[1]=- lock_size/H->obj->r[3],pt));
-  block_set_lock_pos_rel(H,1,(pt[0]=0.5,pt[1]=1+lock_size/H->obj->r[3],pt));
-  block_set_lock_pos_rel(H,2,(pt[0]=- lock_size/H->obj->r[2],pt[1]=0.5,pt));
-  block_set_lock_pos_rel(H,3,(pt[0]=1+lock_size/H->obj->r[2] ,pt[1]=0.5,pt));
+  H->obj->locks[0].type = LD_NORTH | L_EVIN ;
+  H->obj->locks[1].type = LD_SOUTH | L_EVOUT ;
+  H->obj->locks[2].type = LD_WEST | L_IN ;
+  H->obj->locks[3].type = LD_EAST | L_OUT ;
+  block_set_lock_pos_rel(H,0,(pt[0]=0.5,pt[1]=0,pt));
+  block_set_lock_pos_rel(H,1,(pt[0]=0.5,pt[1]=1,pt));
+  block_set_lock_pos_rel(H,2,(pt[0]=0.0,pt[1]=0.5,pt));
+  block_set_lock_pos_rel(H,3,(pt[0]=1,pt[1]=0.5,pt));
   return H;
 }
 
@@ -646,17 +646,16 @@ static int int_gblock_set_lock_pos(void  *self, Stack stack, int rhs, int opt, i
 
 static int int_gblock_set_locks_pos(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *Pt,*Type;
-  CheckRhs(2,2);
+  NspMatrix *Pt;
+  CheckRhs(1,1);
   CheckLhs(-1,1);
   if ((Pt= GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  if ((Type= GetMatInt(stack,2)) == NULLMAT ) return RET_BUG;
-  if ( Pt->m != 2 || Pt->n != Type->mn )
+  if ( Pt->m != 3 ) 
     {
-      Scierror("Error: wrong dimensions\n");
+      Scierror("Error: wrong dimensions should have 3 rows\n");
       return RET_BUG;
     }
-  if ( block_set_locks(self,Pt,Type) == FAIL) return RET_BUG;
+  if ( block_set_locks(self,Pt) == FAIL) return RET_BUG;
   MoveObj(stack,1,self);
   return 1;
 }
@@ -775,26 +774,44 @@ void block_set_show(NspBlock *B,int val) {  B->obj->show = val; }
 
 static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked)
 {
-  double alpha[]= {0,180,-90,90},cosa,sina;
-  double lock_shape_x[]={-lock_size/2,lock_size/2,0}, x[3];
-  double lock_shape_yout[]={-lock_size,-lock_size,0},y[3];
-  double lock_shape_yin[]={0,0,-lock_size}, *ly;
+  /* angle according to dir */
+  /*  LD_NORTH=0, LD_SOUTH=1, LD_EAST=2, LD_WEST=3, LD_ANY=4 */
+  const double alpha[]= {0,180,-90,90,0};
+  const double lock_triangle_x[]={-lock_size/2,lock_size/2,0};
+  const double lock_triangle_yout[]={-lock_size,-lock_size,0};
+  const double lock_triangle_yin[]={0,0,-lock_size}; 
+  const double lock_square_x[]={-lock_size/2,lock_size/2,lock_size/2,-lock_size/2};
+  const double lock_square_y[]={-lock_size,-lock_size,0,0};
+  const double *ly,*lx;
+  double cosa,sina;
+  double x[4];
+  double y[4];
   int npt=3 , i;
   switch (typ) 
     {
-    case IN:
-    case EVIN: 
-      ly = lock_shape_yin; break;
-    case OUT:
-    case EVOUT: 
-      ly = lock_shape_yout; break;
+    case L_SQP:
+    case L_SQM: 
+      npt=4;
+      lx=  lock_square_x;
+      ly=  lock_square_y;
+      break;
+    case L_IN:
+    case L_EVIN: 
+      ly = lock_triangle_yin; 
+      lx = lock_triangle_x; 
+      break;
+    case L_OUT:
+    case L_EVOUT: 
+      ly = lock_triangle_yout;
+      lx = lock_triangle_x; 
+      break;
     }
   cosa= cos(alpha[dir]*M_PI/180);
   sina= sin(alpha[dir]*M_PI/180);
   for ( i = 0 ; i < npt ; i++) 
     {
-      x[i] = cosa*lock_shape_x[i] -sina*ly[i]+pt[0];
-      y[i] = sina*lock_shape_x[i] +cosa*ly[i]+pt[1];
+      x[i] = cosa*lx[i] -sina*ly[i]+pt[0];
+      y[i] = sina*lx[i] +cosa*ly[i]+pt[1];
     }
   if ( locked ) 
     Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
@@ -880,7 +897,7 @@ void block_draw(NspBlock *B)
     }
   for ( i=0 ; i < B->obj->n_locks  ; i++ ) 
     {
-      int locked;
+      int locked,type;
       if ( block_is_lock_connected(B,i)== TRUE)
 	{
 	  locked = TRUE;
@@ -892,16 +909,12 @@ void block_draw(NspBlock *B)
 	  Xgc->graphic_engine->xset_pattern(Xgc,1); 
 	}
       block_get_lock_pos(B,i,loc);
-      switch (i) 
-	{
-	case 0: lock_draw(Xgc,loc,LNORTH,EVIN,locked);break;
-	case 1: lock_draw(Xgc,loc,LSOUTH,EVOUT,locked);break;
-	case 2: lock_draw(Xgc,loc,LWEST,IN,locked);break;
-	case 3: lock_draw(Xgc,loc,LEAST,OUT,locked);break;
-	}
+      /* need a method here ? */
+      type = B->obj->locks[i].type;
+      lock_draw(Xgc,loc,type & LOCK_DIR_FLAG ,type &LOCK_TYPE_FLAG ,locked);
       /* loc[0] += -1; loc[1] += 1;loc[2]=loc[3]= lock_size;
-	 Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
-      */
+       *  Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
+       */
     }
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
   Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
@@ -961,14 +974,10 @@ int block_set_pos(NspBlock *B,const double tr[2])
 
 void block_resize(NspBlock *B,const double size[2])
 {
-  double pt[2];
+  /* double pt[2]; */
   B->obj->r[2] = Max(size[0],3*lock_size) ;
   B->obj->r[3] = Max(size[1],3*lock_size) ;
   /* if resized the lock relative positions should change to XXXXX */
-  block_set_lock_pos_rel(B,0,(pt[0]=0.5,pt[1]=- lock_size/B->obj->r[3],pt));
-  block_set_lock_pos_rel(B,1,(pt[0]=0.5,pt[1]=1+lock_size/B->obj->r[3],pt));
-  block_set_lock_pos_rel(B,2,(pt[0]=- lock_size/B->obj->r[2],pt[1]=0.5,pt));
-  block_set_lock_pos_rel(B,3,(pt[0]=1+lock_size/B->obj->r[2] ,pt[1]=0.5,pt));
   block_update_locks(B);
 }
 
@@ -981,13 +990,14 @@ void block_resize(NspBlock *B,const double size[2])
  *
  **/
 
+static void block_set_lock_pos_from_rel(NspBlock *B, int i);
+
 void block_update_locks(NspBlock *B)
 {
   int i;
   for (i=0; i < B->obj->n_locks ; i++) 
     {
-      B->obj->locks[i].pt[0]=B->obj->r[0]+B->obj->r[2]*B->obj->locks[i].ptr[0]; 
-      B->obj->locks[i].pt[1]=B->obj->r[1]-B->obj->r[3]*B->obj->locks[i].ptr[1];
+      block_set_lock_pos_from_rel(B,i);
     }
 }
 
@@ -1177,8 +1187,6 @@ void block_get_lock_pos(const NspBlock *B, int i,double pt[])
     }
 }
 
-
-
 /**
  * block_get_lock_dir:
  * @B: 
@@ -1193,9 +1201,9 @@ lock_dir block_get_lock_dir(const NspBlock *B, int i)
 {
   if ( i >=  0 && i < B->obj->n_locks )
     {
-      return B->obj->locks[i].type;
+      return B->obj->locks[i].type & LOCK_DIR_FLAG ;
     }
-  return ANY;
+  return LD_ANY;
 }
 
 
@@ -1316,23 +1324,35 @@ static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[])
     {
       B->obj->locks[i].ptr[0] = pt[0];
       B->obj->locks[i].ptr[1] = pt[1];
-      B->obj->locks[i].pt[0]=B->obj->r[0]+B->obj->r[2]*B->obj->locks[i].ptr[0]; 
-      B->obj->locks[i].pt[1]=B->obj->r[1]-B->obj->r[3]*B->obj->locks[i].ptr[1];
+      block_set_lock_pos_from_rel(B,i);
     }
 }
+
+static void block_set_lock_pos_from_rel(NspBlock *B, int i)
+{
+  const double xoffset[]={0,0,lock_size,-lock_size,0};
+  const double yoffset[]={lock_size,-lock_size,0,0,0};
+  if ( i >= 0 && i < B->obj->n_locks )
+    {
+      int dir = B->obj->locks[i].type & LOCK_DIR_FLAG ;
+      double xof = xoffset[dir];
+      double yof = yoffset[dir];
+      B->obj->locks[i].pt[0]=B->obj->r[0]+B->obj->r[2]*B->obj->locks[i].ptr[0]+xof; 
+      B->obj->locks[i].pt[1]=B->obj->r[1]-B->obj->r[3]*B->obj->locks[i].ptr[1]+yof;
+    }
+}
+
+
 
 /**
  * block_set_locks:
  * @B: 
- * @Pt: 2xn 
- * @type: n 
- * 
- * 
+ * @Pt: 3xn 
  * 
  * Return value: 
  **/
 
-static int block_set_locks(NspBlock *B,NspMatrix *Pt,NspMatrix *type)
+static int block_set_locks(NspBlock *B,NspMatrix *Pt)
 {
   void *lock;
   int i;
@@ -1353,7 +1373,7 @@ static int block_set_locks(NspBlock *B,NspMatrix *Pt,NspMatrix *type)
   for (i=0; i < B->obj->n_locks ; i++) 
     {
       B->obj->locks[i].port.object_id = NULL; 
-      B->obj->locks[i].type = type->I[i];
+      B->obj->locks[i].type = (int) *(Pt->R+2*i+2);
       block_set_lock_pos_rel(B,i,Pt->R+2*i);
     }
   return OK;

@@ -1016,7 +1016,7 @@ void connector_get_lock_pos(const NspConnector *B,int i,double pt[])
 
 lock_dir connector_get_lock_dir(const NspConnector *L, int i)
 {
-  return ANY;
+  return LD_ANY;
 }
 
 /**

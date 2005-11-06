@@ -13,8 +13,17 @@
 
 #include "nsp/object.h"
 
-typedef  enum { LNORTH=0, LSOUTH=1, LEAST=2, LWEST=3, ANY=4 } lock_dir;
-typedef  enum { IN=0,OUT=1,EVIN=2,EVOUT=3 } lock_type;
+/* to code in a same var lock_dir and lock_type 
+ * lock_dir = type & LOCK_DIR_FLAG
+ * lock_type = type & LOCK_TYPE_FLAG
+ * type = LNORTH | IN 
+ */
+
+#define LOCK_DIR_FLAG 0x0f 
+#define LOCK_TYPE_FLAG 0xf0
+
+typedef  enum { LD_NORTH=0, LD_SOUTH=1, LD_EAST=2, LD_WEST=3, LD_ANY=4 } lock_dir;
+typedef  enum { L_IN=0 <<4 ,L_OUT=1 <<4 ,L_EVIN=2 << 4,L_EVOUT=3 <<4 , L_SQP=4 <<4, L_SQM=5 <<4  } lock_type;
 
 typedef int gr_get_hilited (void *B); 
 typedef void gr_set_hilited (void *B, int val); 

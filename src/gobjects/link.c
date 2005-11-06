@@ -1161,7 +1161,7 @@ void link_check(NspGFrame *F,NspLink *L)
 		  pt[0] += (x[m-2]-pt[0])/2;
 		  pt[1] += (y[m-2]-pt[1])/2;
 		}
-	      link_set_lock_pos(L,i,pt,FALSE,ANY);
+	      link_set_lock_pos(L,i,pt,FALSE,LD_ANY);
 	    }
 	}
       /* checks if lock point is over a link */
@@ -1308,7 +1308,7 @@ void link_get_lock_pos(const NspLink *B, int i,double pt[])
 
 lock_dir link_get_lock_dir(const NspLink *L, int i)
 {
-  return ANY;
+  return LD_ANY;
 }
 
 
@@ -1416,19 +1416,19 @@ static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angl
   int yp = xp + m;
   int next = ( i==0 ) ? 1 : -1;
 
-  if ( keep_angle == TRUE && dir != ANY && m >= 3 ) 
+  if ( keep_angle == TRUE && dir != LD_ANY && m >= 3 ) 
     {
       ptl[0]=M->R[xp];
       ptl[1]=M->R[yp];
       switch ( dir ) 
 	{
-	case LNORTH: 
-	case LSOUTH: 
+	case LD_NORTH: 
+	case LD_SOUTH: 
 	  if ( Abs( M->R[xp] - M->R[xp+next]) < hvfactor )  M->R[xp+next]= pt[0];break;
-	case LWEST:
-	case LEAST: 
+	case LD_WEST:
+	case LD_EAST: 
 	  if ( Abs( M->R[yp] - M->R[yp+next]) < hvfactor )   M->R[yp+next]= pt[1];break;
-	case ANY: 
+	case LD_ANY: 
 	  break;
 	}
       M->R[xp]=pt[0];
@@ -1490,6 +1490,6 @@ static int link_connect(NspLink *L,int lock, NspObject *Obj,int obj_lock,int obj
   p.port = 0;
   obj_bf->set_lock_connection(Obj,obj_lock,0,&p);
   obj_bf->get_lock_pos(Obj,obj_lock,pt);
-  link_set_lock_pos(L,lock,pt,FALSE,ANY);
+  link_set_lock_pos(L,lock,pt,FALSE,LD_ANY);
   return OK;
 }

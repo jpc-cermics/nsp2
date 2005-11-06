@@ -404,17 +404,24 @@ static int int_gframe_create(Stack stack, int rhs, int opt, int lhs)
  * attributes  (set/get methods) 
  *------------------------------------------------------*/
 
+/* generic function for scalar attribute */
 #ifdef NOK
+#define INT_ATTRIBUTE_GET_SCALAR(name,path)	\
+  static NspObject *CNAME(int_attribute_get_,name)(void *Hv,char *attr) { \
+    return nsp_create_object_from_double(NVOID,(path)->name); } 
+
+INT_ATTRIBUTE_GET_SCALAR(mycolor,((NspBlock *) Hv)->obj);
+
 static NspObject * int_gframe_get_color(void *Hv,char *attr)
 {
-  return nsp_create_object_from_double(NVOID,((NspGFrame *) Hv)->color);
+  return nsp_create_object_from_double(NVOID,((NspGFrame *) Hv)->obj->color);
 }
 
 static int int_gframe_set_color(void *Hv, char *attr, NspObject *O)
 {
   int color;
   if (  IntScalar(O,&color) == FAIL) return FAIL;
-  ((NspGFrame *)Hv)->color = color;
+  ((NspGFrame *)Hv)->obj->color = color;
   return OK ;
 }
 
@@ -422,7 +429,7 @@ static NspObject * int_gframe_get_thickness(void *Hv,char *attr)
 {
   return nsp_create_object_from_double(NVOID,((NspGFrame *) Hv)->thickness);
 }
-                                                                                                      
+                           
 static int int_gframe_set_thickness(void *Hv, char *attr, NspObject *O)
 {
   int thickness;
@@ -435,7 +442,7 @@ static NspObject * int_gframe_get_background(void *Hv,char *attr)
 {
   return nsp_create_object_from_double(NVOID,((NspGFrame *) Hv)->background);
 }
-                                                                                                      
+ 
 static int int_gframe_set_background(void *Hv, char *attr, NspObject *O)
 {
   int background;
@@ -446,6 +453,21 @@ static int int_gframe_set_background(void *Hv, char *attr, NspObject *O)
 
 #endif 
 
+static NspObject *int_gframe_get_scale(void *self,char *attr)
+{
+  return (NspObject *) nsp_matrix_create_from_array(NVOID,1,4,((NspGFrame *)self)->obj->r,NULL);
+}
+
+static int int_gframe_set_scale(void *self, char *attr, NspObject *O)
+{
+  int i;
+  NspMatrix *A; 
+  if ((A = matrix_object (O)) == NULLMAT ) return RET_BUG;
+  if ( A->mn != 4 && A->rc_type == 'r' ) return RET_BUG;
+  for ( i= 0 ; i < 4 ; i++) 
+    ((NspGFrame *) self)->obj->r[i]= A->R[i];
+  return OK;
+}
 
 static AttrTab gframe_attrs[] = {
 #ifdef NOK
@@ -453,6 +475,7 @@ static AttrTab gframe_attrs[] = {
   { "background",    int_gframe_get_background,  int_gframe_set_background,  NULL },
   { "thickness",    int_gframe_get_thickness,  int_gframe_set_thickness,  NULL },
 #endif
+  { "scale", int_gframe_get_scale, int_gframe_set_scale, NULL},
   { (char *) 0, NULL}
 
 };

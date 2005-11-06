@@ -113,7 +113,7 @@ static void block_set_lock_pos(NspBlock *B, int i,const double pt[],int keep_ang
 static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[]);
 
 static void block_unlock( NspBlock *B,int lp) ;
-static int block_set_locks(NspBlock *B,NspMatrix *Pt,NspMatrix *type);
+static int block_set_locks(NspBlock *B,NspMatrix *Pt);
 static NspBlock * block_full_copy( NspBlock *B);
 
 #endif /* Block_Private */
