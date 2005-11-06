@@ -764,15 +764,15 @@ class Wrapper:
         type_tmpl_4 = \
               '};\n'  \
               '\n'  \
-              '/** call ith function in the %(typename)s interface **/\n'  \
+              '/* call ith function in the %(typename)s interface */\n'  \
               '\n'  \
               'int %(typename)s_Interf(int i, Stack stack, int rhs, int opt, int lhs)\n'  \
               '{\n'  \
               '  return (*(%(typename)s_func[i].fonc))(stack,rhs,opt,lhs);\n'  \
               '}\n'  \
               '\n'  \
-              '/** used to walk through the interface table \n'  \
-              '    (for adding or removing functions) **/\n'  \
+              '/* used to walk through the interface table \n'  \
+              '    (for adding or removing functions) */\n'  \
               '\n'  \
               'void %(typename)s_Interf_Info(int i, char **fname, function (**f))\n'  \
               '{\n'  \
