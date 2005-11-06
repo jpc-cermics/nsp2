@@ -716,6 +716,59 @@ _wrap_gtk_widget_get_child_requisition(NspGObject *self,Stack stack,int rhs,int 
   return 1;
 }
 %%
+override gtk_widget_add_accelerator
+/* adding the case where the accelerator is transmited as a string to be decoded */
+
+static int _wrap_gtk_widget_add_string_accelerator(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs);
+
+static int _wrap_gtk_widget_add_accelerator(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, obj_check, s_int, obj, obj,t_end};
+  NspObject *nsp_accel_mods = NULL, *nsp_accel_flags = NULL;
+  int accel_key;
+  NspGObject *accel_group;
+  GdkModifierType accel_mods;
+  GtkAccelFlags accel_flags;
+  char *accel_signal;
+  if ( rhs == 4 )  return _wrap_gtk_widget_add_string_accelerator(self,stack,rhs,opt,lhs);
+  if ( GetArgs(stack,rhs,opt,T,&accel_signal, &nsp_type_gtkaccelgroup, &accel_group, &accel_key, &nsp_accel_mods, &nsp_accel_flags) == FAIL) return RET_BUG;
+  if (nspg_flags_get_value(GDK_TYPE_MODIFIER_TYPE, nsp_accel_mods, &accel_mods)==FAIL)
+      return RET_BUG;
+  if (nspg_flags_get_value(GTK_TYPE_ACCEL_FLAGS, nsp_accel_flags, &accel_flags)==FAIL)
+      return RET_BUG;
+  gtk_widget_add_accelerator(GTK_WIDGET(self->obj), accel_signal, GTK_ACCEL_GROUP(accel_group->obj), accel_key, accel_mods, accel_flags);
+  return 0;
+}
+
+/* added */
+static int _wrap_gtk_widget_add_string_accelerator(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, obj_check,string , obj,t_end};
+  NspObject *nsp_accel_flags = NULL;
+  guint accel_key;
+  NspGObject *accel_group;
+  GdkModifierType accel_mods;
+  GtkAccelFlags accel_flags;
+  char *accel_signal;
+  char *accel_string;
+
+  if ( GetArgs(stack,rhs,opt,T,&accel_signal, &nsp_type_gtkaccelgroup, &accel_group,&accel_string,
+	       &nsp_accel_flags) == FAIL) return RET_BUG;
+  if (nspg_flags_get_value(GTK_TYPE_ACCEL_FLAGS, nsp_accel_flags, &accel_flags)==FAIL)
+    return RET_BUG;
+  gtk_accelerator_parse (accel_string, &accel_key, &accel_mods);
+  if ( accel_key == 0 && accel_mods == 0) 
+    {
+      Scierror("Error: invalid accelerator %s\n",accel_string);
+      return RET_BUG;
+    }
+  gtk_widget_add_accelerator(GTK_WIDGET(self->obj), accel_signal, GTK_ACCEL_GROUP(accel_group->obj), accel_key, accel_mods, accel_flags);
+  return 0;
+}
+
+
+
+%%
 override gtk_widget_get_allocation noargs
 static int
 _wrap_gtk_widget_get_allocation(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
