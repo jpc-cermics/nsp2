@@ -506,6 +506,23 @@ int int_gf_select_and_move(void *self,Stack stack, int rhs, int opt, int lhs)
   gframe_select_and_move(((NspGFrame *) self),pt->R);
   return 0;
 }
+/* select_and_move */
+
+int int_gf_select_and_hilite(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int rep;
+  NspObject *bool;
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,1);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(stack.fname,1,pt,2);
+  rep= gframe_select_and_hilite(((NspGFrame *) self),pt->R);
+  if ((bool = nsp_create_boolean_object(NVOID,(rep == OK) ? TRUE : FALSE))
+      == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,bool);
+  return 1;
+}
 
 /* split link */
 
@@ -766,6 +783,7 @@ static NspMethods gframe_methods[] = {
   { "new_rect", int_gf_new_rect },
   { "hilite_near_pt", int_gf_hilite_near_pt },
   { "select_and_move", int_gf_select_and_move},
+  { "select_and_hilite", int_gf_select_and_hilite},
   { "select_and_split", int_gf_select_and_split},
   { "select_link_and_add_control", int_gf_select_link_and_add_control},
   { "select_link_and_remove_control", int_gf_select_link_and_remove_control},
@@ -1076,6 +1094,34 @@ int gframe_select_and_move(NspGFrame *R,const double pt[2])
   gframe_draw(R);
   return OK;
 }
+
+
+
+/**
+ * gframe_select_and_hilite:
+ * @R: a #NspGFrame 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and hilite the object. Other hilite objects are 
+ * unhilited.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int gframe_select_and_hilite(NspGFrame *R,const double pt[2])
+{
+  NspTypeGRint *bf;
+  NspObject *O;
+  int k = gframe_select_obj(R,pt,&O,NULL);
+  if ( k==0 ) return FAIL;
+  bf = GR_INT(O->basetype->interface);
+  gframe_unhilite_objs(R,FALSE);
+  bf->set_hilited(O,TRUE);
+  return OK;
+}
+
+
 
 /**
  * gframe_select_and_split:

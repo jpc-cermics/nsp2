@@ -4,36 +4,68 @@
 
 function w=create_midle_menu (win,xc,yc)
 // midle button menu construction 
-  tearoff=%t;
-  menu = gtkmenu_new ();
-  if tearoff then 
-    menuitem = gtktearoffmenuitem_new ();
-    menu.append[  menuitem]
-    menuitem.show[];
+  global('GF');
+  s_win='win'+string(win);
+  [is_sel,ov]= GF(s_win).get_selection[];
+  if ~is_sel then 
+    // no selection try to find one 
+    rep=GF(s_win).select_and_hilite[[xc,yc]];
+    if rep then 
+      GF(s_win).draw[];
+      [is_sel,ov]= GF(s_win).get_selection[];
+    end
   end
+
+  menu = gtkmenu_new ();
+  // title of the sub menu 
+  if is_sel then 
+    name = type(ov,'string')
+    menuitem = gtkmenuitem_new(label=name+ ' Menu' );
+    menu.append[menuitem]
+    menuitem.show[];
+    menuitem = gtkseparatormenuitem_new()
+    menu.append[menuitem]
+    menuitem.show[];
+  else
+    name = 'void';
+  end
+  
+  //
   menuitem = gtkimagemenuitem_new(stock_id="gtk-delete");
+  if ~is_sel then 
+    menuitem.set_sensitive[%f];
+  end
   menuitem.connect["activate",midle_menuitem_response,list(1,win)];
   menu.append[menuitem]
   menuitem.show[];
   //
-  menuitem = gtkmenuitem_new(label="add control point");
-  menuitem.connect["activate",midle_menuitem_response,list(2,xc,yc,win)];
-  menu.append[menuitem]
-  menuitem.show[];
-  //
-  menuitem = gtkmenuitem_new(label="remove control point");
-  menuitem.connect["activate",midle_menuitem_response,list(3,xc,yc,win)];
-  menu.append[menuitem]
-  menuitem.show[];
-  //
+  if name == 'Link' then 
+    menuitem = gtkmenuitem_new(label="add control point");
+    menuitem.connect["activate",midle_menuitem_response,list(2,xc,yc,win)];
+    menu.append[menuitem]
+    menuitem.show[];
+    //
+    menuitem = gtkmenuitem_new(label="remove control point");
+    menuitem.connect["activate",midle_menuitem_response,list(3,xc,yc,win)];
+    menu.append[menuitem]
+    menuitem.show[];
+  end
+  //-- copy 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-copy");
+  if ~is_sel then 
+    menuitem.set_sensitive[%f];
+  end
   menuitem.connect["activate",midle_menuitem_response,list(4,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
   // sensitive or not 
   // menuitem.set_sensitive[%f];
-  //
+  //-- paste 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-paste");
+  if ~( GF.iskey['clipboard'] && length(GF('clipboard')) ==  1) then 
+    // nothing to paste 
+    menuitem.set_sensitive[%f];
+  end
   menuitem.connect["activate",midle_menuitem_response,list(5,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
@@ -86,16 +118,32 @@ function menu=create_right_menu (win)
     menu.append[  menuitem]
     menuitem.show[];
   end
-  // a test 
-  // 
-  tags = ['new link';'new block';'new_connector';'save';'load';'merge'];
+  // new
+  tags = ['new link';'new block';'new_connector']
   for i=1:size(tags,'*')
+    // BUG: mnemonic and label are not active ?
+    // menuitem = gtkimagemenuitem_new(stock_id="gtk-new",mnemonic=tags(i),label=tags(i));
     menuitem = gtkmenuitem_new(label=tags(i));
     menuitem.connect["activate",menuitem_response,list(i,win)];
     menu.append[menuitem]
     menuitem.show[];
   end
+  // separator 
+  menuitem = gtkseparatormenuitem_new()
+  menu.append[menuitem]
+  menuitem.show[];
+  // save to file 
+  menuitem = gtkimagemenuitem_new(stock_id="gtk-save-as");
+  menuitem.connect["activate",menuitem_response,list(4,win)];
+  menu.append[menuitem]
+  menuitem.show[];
+  // load file 
+  menuitem = gtkimagemenuitem_new(stock_id="gtk-open");
+  menuitem.connect["activate",menuitem_response,list(5,win)];
+  menu.append[menuitem]
+  menuitem.show[];
 endfunction 
+
 
 function menuitem_response(w,args) 
 // midle button menu activation 
@@ -105,18 +153,24 @@ function menuitem_response(w,args)
   select args(1) 
    case 1 then  GF(win).new_link[];
    case 2 then  
-    print(GF(win));
+    // print(GF(win));
     GF(win).new_block[];
-    print(GF(win));
+    // print(GF(win));
    case 3 then  GF(win).new_connector[] ;
    case 4 then  
     fname = xgetfile();
-    save(fname,diagram=GF(win));
+    if fname <> "" then 
+      save(fname,diagram=GF(win));
+    end
    case 5 then 
     fname = xgetfile();
-    load(fname);
-    diagram.attach_to_window[args($)];
-    GF(win)=diagram;
+    if fname <> "" then 
+      load(fname);
+      if exists('diagram') then 
+	diagram.attach_to_window[args($)];
+	GF(win)=diagram;
+      end
+    end
    case 6 then 
   end
   GF(win).draw[]
@@ -198,6 +252,7 @@ function my_eventhandler(win,x,y,ibut)
   elseif ibut==3 then 
     // a double click 
     x_message('double click');
+    getcolor();
   elseif ibut==100 
     x_message('100');
     x_message('click on d: 99');
@@ -263,6 +318,15 @@ function F= diagram()
   F.insert[B2];
   B3=%types.Block.new[[40,80,10,10],color=6,background=7];
   F.insert[B3];
+  // we fix the lock points 
+  B4=%types.Block.new[[40,80,10,10],color=6,background=7];
+  // ior(dir,ishift(type,4))
+  // with :
+  // dir = LD_NORTH=0, LD_SOUTH=1, LD_EAST=2, LD_WEST=3, LD_ANY=4;
+  // type = L_IN=0 ,L_OUT=1 ,L_EVIN=2 ,L_EVOUT=3 , L_SQP=4 , L_SQM=5 ;
+  B4.set_locks_pos[[0.80;0.0;ior(4,ishift(2,4))]]
+  F.insert[B4];
+  
   L=%types.Link.new[[0,10;0,10]];
   L.connect[0,B1,1];  L.connect[1,B2,1];
   F.insert[L];
