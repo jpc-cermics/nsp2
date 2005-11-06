@@ -115,16 +115,18 @@ function demo_menus1()
   menu.append[  menuitem]
   menuitem.show[];
   //menuitem.add_accelerator[ "activate", accel_group, GDK_F1, 0,  GTK.ACCEL_VISIBLE]
+  menuitem.add_accelerator[ "activate", accel_group, "F1",  GTK.ACCEL_VISIBLE]
   menuitem = gtkcheckmenuitem_new(label="Accelerator Locked");
   menu.append[  menuitem]
   menuitem.show[];
+  // 
   //menuitem.add_accelerator[ "activate", accel_group, GDK_F2, 0, ior(GTK.ACCEL_VISIBLE,GTK.ACCEL_LOCKED)]
+  menuitem.add_accelerator[ "activate", accel_group, "F2", ior(GTK.ACCEL_VISIBLE,GTK.ACCEL_LOCKED)]
   menuitem = gtkcheckmenuitem_new(label="Accelerators Frozen");
   menu.append[  menuitem]
   menuitem.show[];
-  //menuitem.add_accelerator[ "activate", accel_group, GDK_F2, 0, GTK.ACCEL_VISIBLE]
-  //menuitem.add_accelerator[  "activate", accel_group, GDK_F3, 0, GTK.ACCEL_VISIBLE]
-      
+  menuitem.add_accelerator[ "activate", accel_group, "F2", GTK.ACCEL_VISIBLE]
+  menuitem.add_accelerator[  "activate", accel_group, "F3", GTK.ACCEL_VISIBLE]
   optionmenu = gtkoptionmenu_new ();
   optionmenu.set_menu[menu]
   optionmenu.set_history[3]
