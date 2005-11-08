@@ -1499,6 +1499,110 @@ NspMatrix *nsp_mat_mini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
   return MatMaxiMini(A,flag,Imax,lhs,VMini);
 }
 
+
+/* compute at the same time the min and max of a vector 
+ * (routine introduced by bruno)
+ */
+static void VMiniMaxi(int n, double *A, int incr, double *amin, double *amax, 
+		      int *imin, int *imax)
+{
+  int i,i1;
+  *imin = *imax = 1;
+  *amax = *amin = A[0];
+
+  /* look for the first non Nan component */
+  i = 0; i1 = 1;
+  while ( i < n && ISNAN(A[i]) ) { i += incr; i1++; }
+
+  if ( i < n )  /* this vector is not only with Nan... */
+    {
+      /* init with the first non Nan component then do the usual loop */
+      *amin = *amax = A[i]; *imin = *imax = i1;
+      for (  ; i < n ; i += incr, i1++ )
+	{
+	  if ( A[i] < *amin ) 
+	    { 
+	      *amin = A[i]; *imin = i1;
+	    }
+	  else if ( A[i] > *amax ) 
+	    {
+	      *amax = A[i];
+	      *imax = i1;
+	    }
+	}
+    }
+  return;
+}
+
+/*
+ * int nsp_mat_minmax: 
+ * A is unchanged 
+ * Amin, Amx, Imin, Imax are set to the result
+ * routine introduced by bruno 
+ */
+int nsp_mat_minmax(NspMatrix *A, char *str, NspMatrix **Amin, NspMatrix **Imin,
+		   NspMatrix **Amax, NspMatrix **Imax, int lhs)
+{
+  NspMatrix *amin=NULLMAT, *imin=NULLMAT, *amax=NULLMAT, *imax=NULLMAT;
+  int k, m, n, flag, indmin, indmax;
+
+  switch (str[0]) 
+    {
+    default:
+      Sciprintf("\nInvalid flag '%c'  must be 'r','c' or 'F'\n",str[0]);
+      return FAIL;
+    case 'f': 
+    case 'F':
+      m = 1; n = 1; flag = 0; break;
+    case 'r':
+    case 'R':
+      m = 1; n = A->n; flag = 1; break;
+    case 'c':
+    case 'C':
+      m = A->m; n = 1; flag = 2; break;
+    }
+
+  if (    (amin = nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT
+       || (amax = nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT ) goto err;
+  if ( lhs > 2 )
+    if (    (imin = nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT
+         || (imax = nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT ) goto err;
+
+  
+  if ( A->mn == 0 )  /* special case : quick return */
+    { 
+      *Amin = amin; *Amax = amax; *Imin = imin; *Imax = imax; 
+      return OK; 
+    }
+
+  if ( flag == 0 )
+    {
+      VMiniMaxi(A->mn, A->R, 1, amin->R, amax->R, &indmin, &indmax);
+      if (lhs > 2) {imin->R[0] = (double) indmin; imax->R[0] = (double) indmax;}
+    }
+  else if ( flag == 1 )
+    for ( k = 0 ; k < A->n ; k++ )
+      {
+	VMiniMaxi(A->m, &(A->R[k*A->m]), 1, &(amin->R[k]), &(amax->R[k]), &indmin, &indmax);
+	if (lhs > 2) {imin->R[k] = (double) indmin; imax->R[k] = (double) indmax;}
+      }
+  else
+    for ( k = 0 ; k < A->m ; k++ )
+      {
+	VMiniMaxi(A->mn, &(A->R[k]), A->m, &(amin->R[k]), &(amax->R[k]), &indmin, &indmax);
+	if (lhs > 2) {imin->R[k] = (double) indmin; imax->R[k] = (double) indmax;}
+      }
+
+  *Amin = amin; *Amax = amax; *Imin = imin; *Imax = imax; 
+  return OK;
+
+ err:
+  nsp_matrix_destroy(amin); nsp_matrix_destroy(amax); 
+  nsp_matrix_destroy(imin); nsp_matrix_destroy(imax);
+  return FAIL;
+}
+
+
 /*
  * Creates a Matrix and initialize it with the 
  * function func 
@@ -1532,6 +1636,7 @@ NspMatrix *nsp_mat_createinit(char *name, char type, int m, int n, double (*func
     }
   return(Loc);
 }
+
 
 
 /*
@@ -1721,7 +1826,9 @@ int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B)
   
   p = B->R[0];
 
-  if ( p == 0 ) /* return identity matrix */
+  if ( p == 0 ) /* return identity matrix */  
+    /* FIXME : must we do something if A has Nan ? */
+    /* (Matlab : nan^0 => nan but [nan nan;nan nan]^0 => Identity */
     {
       if ( A->rc_type == 'r' )
 	{

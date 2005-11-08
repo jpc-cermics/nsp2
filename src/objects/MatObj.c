@@ -1525,6 +1525,55 @@ int_mxmini (Stack stack, int rhs, int opt, int lhs)
   return (int_mx_maxi (stack, rhs, opt, lhs, nsp_mat_mini, nsp_mat_minitt1));
 }
 
+
+/* 
+ *  [amin, amax, imin, imax] = minmax(A) or minmax(A,'c' or 'r' or 'F')
+ *  to compute min and max at same time 3n/2 comparizons in place of 2n
+ *  Routine introduced by Bruno Pinçon
+ */
+static int
+int_mxminmax(Stack stack, int rhs, int opt, int lhs)
+{
+  char *str;
+  NspMatrix *A, *Amin, *Imin, *Amax, *Imax;
+
+  if ( rhs < 1  ||  rhs > 2 )
+    {
+      Scierror ("Error:\t Rhs must be 1 or 2 for function %s\n", stack.fname);
+      return RET_BUG;
+    }
+  CheckLhs (2, 4);
+
+
+  if ((A = GetRealMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if (rhs == 2)
+    {
+      if ((str = GetString (stack, 2)) == (char *) 0)
+	return RET_BUG;
+    }
+  else
+    {
+      str = "F";
+    }
+
+  if ( nsp_mat_minmax(A, str, &Amin, &Imin, &Amax, &Imax, lhs) == FAIL )
+    return RET_BUG;
+
+  MoveObj (stack, 1, (NspObject *) Amin);
+  MoveObj (stack, 2, (NspObject *) Amax);
+  if ( lhs >= 3 ) 
+    {
+      MoveObj (stack, 3, (NspObject *) Imin);
+      if ( lhs == 4 )
+	MoveObj (stack, 4, (NspObject *) Imax);
+      else
+	nsp_matrix_destroy(Imax);   /* if lhs >= 3 both Imin and Imax are allocated */
+    }
+
+  return Max (lhs, 1);
+}
+
 /*
  *nsp_mat_triu: A=Triu(a)
  * A is changed  
@@ -3937,7 +3986,7 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
 	  if ( stat == FAIL )
 	    return RET_BUG;
 	  else if ( rcond <= DBL_EPSILON )
-	    Sciprintf("\n Warning: matrix is badly conditionned (rcond = %g) => computes a lsq solution",rcond);
+	    Sciprintf("\n Warning: matrix is badly conditionned (rcond = %g)\n          => computes a lsq solution",rcond);
 	  else
 	    {
 	      NSP_OBJECT (HMat2)->ret_pos = 1; 
@@ -4261,7 +4310,7 @@ static OpTab Matrix_func[] = {
   {"concatd_m_m", int_mxconcatd},
   {"concatr_m_m", int_mxconcatr},
   {"concatr_b_m", int_mxconcatr_mb},
-  {"concatr_m_b", int_mxconcatr_mb},
+  {"concatr_m_b", int_mxconcatr_mb}, 
   {"create_m_m", int_mxcreate},
   {"dadd_m_m", int_mxdadd},
   {"dadd_m_m", int_mxdadd},
@@ -4295,6 +4344,8 @@ static OpTab Matrix_func[] = {
   {"max", int_mxmaxi},
   {"min_m", int_mxmini},
   {"min", int_mxmini},
+  {"minmax_m", int_mxminmax},  
+  {"minmax", int_mxminmax},  
   {"sum_m_s", int_mxsum},
   {"sum_m", int_mxsum},
   {"cumsum_m_s", int_mxcusum},
