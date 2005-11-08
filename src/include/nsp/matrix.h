@@ -191,6 +191,8 @@ extern int nsp_mat_subs_calarm(NspMatrix *Mat1, NspMatrix *Mat2);
 extern void nsp_mat_clean(NspMatrix *A, int rhs, double epsa, double epsr); 
 extern int nsp_mat_maxitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j, int flag); 
 extern int nsp_mat_minitt1(NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j, int flag); 
+extern int nsp_mat_minmax(NspMatrix *A, char *str, NspMatrix **Amin, NspMatrix **Imin,
+			  NspMatrix **Amax, NspMatrix **Imax, int lhs);
 extern NspMatrix **nsp_mat_slec(char *file, int *Count); 
 extern FILE *fopen (const char *, const char *);
 extern NspMatrix *MatLec (FILE *fd); 
