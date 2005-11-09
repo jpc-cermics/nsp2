@@ -19,6 +19,7 @@ extern int nsp_hess(NspMatrix *A,NspMatrix **U) ;
 extern int nsp_mat_is_symmetric(NspMatrix *A);
 extern int nsp_mat_is_upper_triangular(NspMatrix *A);
 extern int nsp_mat_is_lower_triangular(NspMatrix *A);
+extern int nsp_mat_have_nan_or_inf(NspMatrix *A);
 extern int nsp_expm(NspMatrix *A);
 extern int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B);
 extern int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond);
