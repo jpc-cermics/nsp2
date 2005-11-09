@@ -127,6 +127,34 @@ int nsp_mat_is_upper_triangular(NspMatrix *A)
   return TRUE;
 }
 
+/**
+ * nsp_mat_have_nan_or_inf:
+ * @A: a #NspMatrix 
+ * 
+ * test if the matrix @A contains Nan or +-Inf
+ * 
+ * Return value: TRUE (if at least one element is Nan or +-Inf) or FALSE 
+ **/
+int nsp_mat_have_nan_or_inf(NspMatrix *A)
+{
+  int i;
+
+  if ( A->rc_type == 'r')
+    {
+      for ( i= 0 ; i < A->mn ; i++ ) 
+	if (isinf (A->R[i]) || isnan (A->R[i]))
+	  return TRUE;
+    }
+  else /* A->rc_type == 'i' */
+    {
+      for ( i= 0 ; i < A->mn ; i++ ) 
+	if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
+	  return TRUE;
+    }
+
+  return FALSE;
+}
+
 /*
  * xerbla_:
  * switch lapack message to nsp message
@@ -160,11 +188,11 @@ int nsp_qr(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E, NspMatrix **R
 {
   /* A == [] return empty matrices*/ 
   if ( A->mn == 0 )  {
-    if (( *Q =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) return FAIL;
-    if (( *R =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) return FAIL;
+    if ( (*Q =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+    if ( (*R =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
     if ( E != NULL)
       {
-	if ( (*E =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) return FAIL;
+	if ( (*E =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
       }
     if (Rank != NULL ) 
     {
@@ -614,6 +642,11 @@ int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,Nsp
       return OK ; 
     }
 
+  if ( nsp_mat_have_nan_or_inf(A) )
+    {
+      Scierror("Error: nan or inf in svd first argument\n"); 
+      return FAIL;
+    }
 
   if ( A->rc_type == 'r' ) 
     {
@@ -629,17 +662,9 @@ int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,Nsp
 static int intdgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, char flag,
 		     NspMatrix **Rank, double *tol)
 {
-  int m = A->m, n=A->n, lwork, info, i, Minmn = Min(m,n), *iwork=NULL;
+  int m = A->m, n=A->n, lwork, info, Minmn = Min(m,n), *iwork=NULL;
   NspMatrix *u=NULLMAT, *s=NULLMAT, *vt=NULLMAT, *v=NULLMAT;
   double *dwork=NULL, qwork[1]; 
-
-  /* checks that  A != Nan et != Inf */
-  for ( i= 0 ; i < A->mn ; i++ ) 
-    if (isinf (A->R[i]) || isnan (A->R[i]))
-      {
-	Scierror("Error: nan or inf in svd first argument\n"); 
-	return FAIL;
-      }
 
   if ( (s=nsp_matrix_create(NVOID,'r',Minmn,1)) == NULLMAT ) return FAIL;
 
@@ -704,18 +729,10 @@ static int intdgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
 static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, char flag,
 		     NspMatrix **Rank, double *tol)
 {
-  int m = A->m, n=A->n, lwork, info, i, Minmn = Min(m,n), *iwork=NULL;
+  int m = A->m, n=A->n, lwork, info, Minmn = Min(m,n), *iwork=NULL;
   NspMatrix *u=NULLMAT, *s=NULLMAT, *vt=NULLMAT, *v=NULLMAT;
   doubleC *cwork=NULL, qwork[1]; 
   double *rwork=NULL;
-
-  /* checks that  A != Nan et != Inf */
-  for ( i= 0 ; i < A->mn ; i++ ) 
-    if (isinf (A->R[i]) || isnan (A->R[i]))
-      {
-	Scierror("Error: nan or inf in svd first argument\n"); 
-	return FAIL;
-      }
 
   if ( (s=nsp_matrix_create(NVOID,'r',Minmn,1)) == NULLMAT ) return FAIL;
 
@@ -813,6 +830,12 @@ int nsp_spec(NspMatrix *A, NspMatrix **d,NspMatrix **v)
       return FAIL;
     }
 
+  if ( nsp_mat_have_nan_or_inf(A) )
+    {
+      Scierror("Error: nan or inf in spec first argument\n"); 
+      return FAIL;
+    }
+
   if ( A->rc_type == 'r' ) 
     return  intdgeev(A,d,v); 
   else 
@@ -827,14 +850,6 @@ static int intdgeev(NspMatrix *A, NspMatrix **D, NspMatrix **V)
   double *dwork=NULL,*wr=NULL,*wi=NULL;
   NspMatrix *vr=NULLMAT, *d=NULLMAT, *v=NULLMAT;
   double qwork[1];
-
-  /* checks that  A != Nan et != Inf */
-  for ( i= 0 ; i < A->mn ; i++ ) 
-    if (isinf (A->R[i]) || isnan (A->R[i]))
-      {
-	Scierror("Error: nan or inf in spec first argument\n"); 
-	return FAIL;
-      }
 
   wr = nsp_alloc_work_doubles(n);
   wi = nsp_alloc_work_doubles(n);
@@ -931,14 +946,6 @@ static int intzgeev(NspMatrix *A,NspMatrix **D,NspMatrix **V)
   double *rwork=NULL;
   doubleC  qcwork[1], *cwork=NULL;
 
-  /* checks that  A != Nan et != Inf */
-  for ( i= 0 ; i < A->mn ; i++ ) 
-    if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
-      {
-	Scierror("Error: nan or inf in spec first argument\n"); 
-	return FAIL;
-      }
-
   if ( (d=nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) return FAIL;
 
   if ( (rwork=nsp_alloc_work_doubles(2*n)) == NULL ) goto err;
@@ -1005,6 +1012,12 @@ int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag)
       return FAIL;
     }
 
+  if ( nsp_mat_have_nan_or_inf(A) )
+    {
+      Scierror("Error: nan or inf in spec first argument\n"); 
+      return FAIL;
+    }
+  
   if ( A->rc_type == 'r' ) 
     return  intdsyev(A,d,flag); 
   else 
@@ -1014,18 +1027,10 @@ int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag)
 static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
 {
   int n=A->n;
-  int info, lwork,i;
+  int info, lwork;
   NspMatrix *wr;
   double *dwork;
   double qwork[1];
-
-  /* checks that  A != Nan et != Inf */
-  for ( i= 0 ; i < A->mn ; i++ ) 
-    if (isinf (A->R[i]) || isnan (A->R[i]))
-      {
-	Scierror("Error: nan or inf in spec first argument\n"); 
-	return FAIL;
-      }
 
   if ( (wr=nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
 
@@ -1052,18 +1057,10 @@ static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
 static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
 {
   int n=A->n;
-  int info, lwork,i;
+  int info, lwork;
   NspMatrix *wr=NULLMAT;
   double *rwork=NULL;
   doubleC *cwork=NULL, qwork[1];
-
-  /* checks that  A != Nan et != Inf */
-  for ( i= 0 ; i < A->mn ; i++ ) 
-    if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
-      {
-	Scierror("Error: nan or inf in spec first argument\n"); 
-	return FAIL;
-      }
 
   if ( (wr=nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
 
@@ -1492,10 +1489,11 @@ static NspMatrix * intzdet(NspMatrix *A,char mode)
 } 
 
 
-/* FIXME: unchecked
+/*
  * nsp_balanc 
  * [V,D]=balanc(A) 
  * V is stored in A on exit 
+ *  FIXME: cleaned but to be verified
  */
 
 static int intdgebal(NspMatrix *A,NspMatrix **D);
@@ -1503,6 +1501,26 @@ static int intzgebal(NspMatrix *A,NspMatrix **D);
 
 int nsp_balanc(NspMatrix *A,NspMatrix **D)
 {
+
+  if ( A->mn == 0 )   /*  A = [] return empty matrices */ 
+    {
+      if ( (*D=nsp_matrix_create(NVOID,A->rc_type,0,0)) == NULLMAT ) return FAIL;
+      return OK ; 
+    }
+  
+  if (A->m != A->n) 
+    { 
+      Scierror("Error: first argument of balanc should be square and it is (%dx%d)\n", 
+	       A->m,A->n);
+      return FAIL;
+    }
+
+  if ( nsp_mat_have_nan_or_inf(A) )
+    {
+      Scierror("Error: nan or inf in balanc first argument\n"); 
+      return FAIL;
+    }
+
   if ( A->rc_type == 'r' ) 
     return  intdgebal(A,D); 
   else 
@@ -1511,97 +1529,73 @@ int nsp_balanc(NspMatrix *A,NspMatrix **D)
 
 static int intdgebal(NspMatrix *A,NspMatrix **D)
 {
-  int m = A->m, n = A->n,info,i;
-  NspMatrix *work ; 
-  int ilo,ihi;
+  int n = A->n, info;
+  double *work=NULL; 
+  int ilo, ihi;
 
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if (( *D =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of balanc should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
-  /* checks that  A != Nan et != Inf */
+  if ( (*D =nsp_mat_eye(n,n)) == NULLMAT ) return FAIL;
+  if ( (work = nsp_alloc_work_doubles(n)) == NULL ) goto err;
 
-  for ( i= 0 ; i < A->mn ; i++ ) 
-    if (isinf (A->R[i]) || isnan (A->R[i]))
-      {
-	Scierror("Error: nan or inf in balanc first argument\n"); 
-	return FAIL;
-      }
+  C2F(dgebal)("B", &n, A->R, &n, &ilo, &ihi, work, &info, 1L);
+  if (info != 0) 
+    {
+      Scierror("Error: something wrong in dgebal\n");
+      goto err;
+    }
 
-  if (( *D =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-  if (( work =nsp_matrix_create(NVOID,A->rc_type,1,n)) == NULLMAT) return FAIL;
+  C2F(dgebak)("B", "R", &n, &ilo, &ihi, work, &n, (*D)->R, &n, &info, 1L, 1L);
+  if (info != 0) 
+    {
+      Scierror("Error: something wrong in dgebak\n");
+      goto err;
+    }
 
-  C2F(dgebal)("B", &n, A->R, &n, &ilo, &ihi, work->R, &info, 1L);
-  if (info != 0) {
-    Scierror("Error: something wrong in dgebal\n");
-    return FAIL;
-  }
-
-  C2F(dgebak)("B", "R", &n, &ilo, &ihi, work->R, &n, (*D)->R, &n, &info, 1L, 1L);
-  if (info != 0) {
-    Scierror("Error: something wrong in dgebak\n");
-    return FAIL;
-  }
-  nsp_matrix_destroy(work);
+  FREE(work);
   return OK;
+
+ err:
+  nsp_matrix_destroy(*D); 
+  FREE(work);
+  return FAIL;
 }
 
 static int intzgebal(NspMatrix *A,NspMatrix **D)
 {
-  int m = A->m, n = A->n,info,i;
-  NspMatrix *work ; 
-  int ilo,ihi;
-  /*  A = [] return empty matrices */ 
-  
-  if ( A->mn == 0 ) {
-    if (( *D =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of balanc should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
-  /* checks that  A != Nan et != Inf */
+  int n = A->n, info;
+  double *work ; 
+  int ilo, ihi;
 
-  for ( i= 0 ; i < A->mn ; i++ ) 
-    if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
-      {
-	Scierror("Error: nan or inf in balanc first argument\n"); 
-	return FAIL;
-      }
+  if ( (*D=nsp_mat_eye(n,n)) == NULLMAT ) return FAIL;
+  if ( (work = nsp_alloc_work_doubles(n)) == NULL ) goto err;
 
-  if (( *D =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-  if (( work =nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT) return FAIL;
+  C2F(zgebal)("B", &n, A->C, &n, &ilo, &ihi, work, &info, 1L);
+  if (info != 0) 
+    {
+      Scierror("Error: something wrong in zgebal\n");
+      goto err;
+    }
 
-  C2F(zgebal)("B", &n, A->C, &n, &ilo, &ihi, work->R, &info, 1L);
-  if (info != 0) {
-    Scierror("Error: something wrong in zgebal\n");
-    return FAIL;
-  }
-  C2F(dgebak)("B", "R", &n, &ilo, &ihi, work->R, &n, (*D)->R, &n, &info, 1L, 1L);
-    if (info != 0) {
-    Scierror("Error: something wrong in zgebak\n");
-    return FAIL;
-  }
+  C2F(dgebak)("B", "R", &n, &ilo, &ihi, work, &n, (*D)->R, &n, &info, 1L, 1L);
+  if (info != 0) 
+    {
+      Scierror("Error: something wrong in dgebak\n");
+      goto err;
+    }
 
-  nsp_matrix_destroy(work);
+  FREE(work);
   return OK;
+
+ err:
+  nsp_matrix_destroy(*D); 
+  FREE(work);
+  return FAIL;
 }
 
 
 /*
  * nsp_gbalanc
  *     [Ab,Bb,X,Y]=balanc(A,B)
+ *  FIXME: cleaned but to be verified
  */
 
 static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
@@ -1609,8 +1603,48 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
 
 int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
 {
+
+  if (A->m != A->n) 
+    { 
+      Scierror("Error: first argument of balanc should be square and it is (%dx%d)\n", 
+	       A->m,A->n);
+      return FAIL;
+    }
+
+  if (B->m != B->n || B->m != A->m) 
+    { 
+      Scierror("Error: first and second arguments of balanc must have equal size\n");
+      return FAIL;
+    }
+
   if (( B =nsp_matrix_copy(B) )== NULLMAT) return FAIL;
   if (( A =nsp_matrix_copy(A) )== NULLMAT) return FAIL;
+
+  if ( A->mn == 0 )   /* A = [] return empty matrices */ 
+    {
+      if ( X != NULL)
+	{
+	  if (( *X =nsp_matrix_create(NVOID,A->rc_type,0,0)) == NULLMAT) return FAIL;
+	}
+      if ( Y != NULL)
+	{
+	  if (( *Y =nsp_matrix_create(NVOID,A->rc_type,0,0)) == NULLMAT) return FAIL;
+	}
+      return OK ; 
+    }
+
+  if ( nsp_mat_have_nan_or_inf(A) )
+    {
+      Scierror("Error: nan or inf in balanc first argument\n"); 
+      return FAIL;
+    }
+
+  if ( nsp_mat_have_nan_or_inf(B) )
+    {
+      Scierror("Error: nan or inf in balanc first argument\n"); 
+      return FAIL;
+    }
+
   if ( A->rc_type == 'r' ) 
     {
       if ( B->rc_type == 'r') 
@@ -1645,178 +1679,106 @@ int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
 
 static int intdggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
 {
-  NspMatrix *lscale,*rscale,*dwork; 
-  int info,lworkMin,ilo,ihi,i;  
-  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
+  double *lscale=NULL,*rscale=NULL,*dwork=NULL;
+  NspMatrix *XX=NULLMAT, *YY=NULLMAT;
+  int info,lworkMin,ilo,ihi;  
+  int n = A->n;
   
-  if (m != n) { 
-    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
-
-  if (mb != nb) { 
-    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
-	     mb,nb);
-    return FAIL;
-  }
-
-  if (m != mb || n != nb ) {
-    Scierror("Error: spec, first and second arguments must have equal size\n");
-    return FAIL;
-  }
-
-  /* A = [] return empty matrices */ 
-
-  if ( A->mn == 0 ) {
-    if ( X != NULL)
-      {
-	if (( *X =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    if ( Y != NULL)
-      {
-	if (( *Y =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  /* checks that  A != Nan et != Inf */
-
-  for ( i= 0 ; i < A->mn ; i++ ) 
-    if (isinf (A->R[i]) || isnan (A->R[i]))
-      {
-	Scierror("Error: nan or inf in balanc first argument\n"); 
-	return FAIL;
-      }
-  /* checks that  B != Nan et != Inf */
-
-  for ( i= 0 ; i < B->mn ; i++ ) 
-    if (isinf (B->R[i]) || isnan (B->R[i]))
-      {
-	Scierror("Error: nan or inf in balanc second argument\n"); 
-	return FAIL;
-      }
-
-  if (( lscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( rscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-
+  if ( (lscale=nsp_alloc_work_doubles(n)) == NULL ) return FAIL;
+  if ( (rscale=nsp_alloc_work_doubles(n)) == NULL ) goto err;
   lworkMin = Max(1,6*n);
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+  if ( (rscale=nsp_alloc_work_doubles(lworkMin)) == NULL ) goto err;
 
-  C2F(dggbal)("B",&n,A->R, &n,B->R, &n,&ilo,&ihi,lscale->R, rscale->R,dwork->R, &info, 1L);
-  if (info != 0) {
-    Scierror("Error: something wrong in dggbal\n");
-    return FAIL;
-  }
-  if ( X != NULL) { 
-    if (( *X =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-    C2F(dggbak)("B", "L", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*X)->R, &n, &info, 1L,1L);
-    if (info != 0) {
-      Scierror("Error: something wrong in dggbak\n");
-      return FAIL;
+  C2F(dggbal)("B",&n,A->R, &n,B->R, &n,&ilo,&ihi, lscale, rscale, dwork, &info, 1L);
+  if (info != 0) 
+    {
+      Scierror("Error: something wrong in dggbal\n");
+      goto err;
     }
-  }
 
-  if ( Y != NULL ) {
-    if (( *Y =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-    C2F(dggbak)("B", "R", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*Y)->R, &n, &info, 1L, 1L);
-    if (info != 0) {
-      Scierror("Error: something wrong in dggbak\n");
-      return FAIL;
+  if ( X != NULL ) 
+    { 
+      if ( (XX=nsp_mat_eye(n,n)) == NULLMAT ) goto err;
+      C2F(dggbak)("B", "L", &n, &ilo, &ihi, lscale, rscale, &n, XX->R, &n, &info, 1L,1L);
+      if (info != 0) 
+	{
+	  Scierror("Error: something wrong in dggbak\n");
+	  goto err;
+	}
     }
-  }
 
-  /* un peu de ménage XXXXX */ 
+  if ( Y != NULL ) 
+    {
+      if ( (YY=nsp_mat_eye(n,n)) == NULLMAT ) goto err;
+      C2F(dggbak)("B", "R", &n, &ilo, &ihi, lscale, rscale, &n, YY->R, &n, &info, 1L, 1L);
+      if (info != 0) 
+	{
+	  Scierror("Error: something wrong in dggbak\n");
+	  goto err;
+	}
+    }
 
+  FREE(lscale); FREE(rscale); FREE(dwork);
+  if ( X != NULL ) *X = XX;
+  if ( Y != NULL ) *Y = YY;
   return OK ; 
+
+ err:
+  FREE(lscale); FREE(rscale); FREE(dwork);
+  nsp_matrix_destroy(XX); nsp_matrix_destroy(YY);
+  return FAIL;
 } 
 
 static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
 {
-  NspMatrix *lscale,*rscale,*dwork; 
-  int info,lworkMin,ilo,ihi,i;  
+  double *lscale=NULL,*rscale=NULL,*dwork=NULL;
+  NspMatrix *XX=NULLMAT, *YY=NULLMAT;
+  int info,lworkMin,ilo,ihi;  
+  int n = A->n;
 
-  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
-  
-  if (m != n) { 
-    Scierror("Error: spec, wrong first argument size (%d,%d) should be square \n",m,n);
-    return FAIL;
-  }
-
-  if (mb != nb) { 
-    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
-	     mb,nb);
-    return FAIL;
-  }
-
-  if (m != mb || n != nb ) {
-    Scierror("Error: spec, first and second arguments must have equal size\n");
-    return FAIL;
-  }
-
-  /* A = [] return empty matrices */ 
-
-  if ( A->mn == 0 ) {
-    if ( X != NULL)
-      {
-	if (( *X =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
-      }
-    if ( Y != NULL)
-      {
-	if (( *Y =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
-      }
-    return OK ; 
-  }
-
-  /* checks that  A != Nan et != Inf */
-
-  for ( i= 0 ; i < A->mn ; i++ ) 
-    if (nsp_isinf_c (&A->C[i]) || nsp_isnan_c (&A->C[i]))
-      {
-	Scierror("Error: nan or inf in balanc first argument\n"); 
-	return FAIL;
-      }
-  /* checks that  B != Nan et != Inf */
-
-  for ( i= 0 ; i < B->mn ; i++ ) 
-    if (nsp_isinf_c (&B->C[i]) || nsp_isnan_c (&B->C[i]))
-      {
-	Scierror("Error: nan or inf in balanc second argument\n"); 
-	return FAIL;
-      }
-
-  if (( lscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( rscale =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-
+  if ( (lscale=nsp_alloc_work_doubles(n)) == NULL ) return FAIL;
+  if ( (rscale=nsp_alloc_work_doubles(n)) == NULL ) goto err;
   lworkMin = Max(1,6*n);
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
+  if ( (rscale=nsp_alloc_work_doubles(lworkMin)) == NULL ) goto err;
 
-  C2F(zggbal)("B",&n,A->C, &n,B->C, &n,&ilo,&ihi,lscale->R, rscale->R,dwork->R, &info, 1L);
-  if (info != 0) {
-    Scierror("Error: something wrong in zggbal\n");
-    return FAIL;
-  }
-  if ( X != NULL) { 
-    if (( *X =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-    C2F(dggbak)("B", "L", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*X)->R, &n, &info, 1L, 1L);
-    if (info != 0) {
-      Scierror("Error: something wrong in dggbak\n");
-      return FAIL;
+  C2F(zggbal)("B",&n, A->C, &n, B->C, &n, &ilo, &ihi, lscale, rscale, dwork, &info, 1L);
+  if (info != 0) 
+    {
+      Scierror("Error: something wrong in zggbal\n");
+      goto err;
     }
-  }
 
-  if ( Y != NULL ) {
-    if (( *Y =nsp_mat_eye(m,n)) == NULLMAT) return FAIL;
-    C2F(dggbak)("B", "R", &n, &ilo, &ihi, lscale->R, rscale->R, &n,(*Y)->R, &n, &info, 1L, 1L);
-    if (info != 0) {
-      Scierror("Error: something wrong in dggbak\n");
-      return FAIL;
+  if ( X != NULL ) 
+    { 
+      if ( (XX=nsp_mat_eye(n,n)) == NULLMAT ) goto err;
+      C2F(dggbak)("B", "L", &n, &ilo, &ihi, lscale, rscale, &n, XX->R, &n, &info, 1L, 1L);
+      if (info != 0) 
+	{
+	  Scierror("Error: something wrong in dggbak\n");
+	  goto err;
+	}
     }
-  }
 
-  /* un peu de ménage XXXXX */ 
+  if ( Y != NULL ) 
+    {
+      if ( (YY=nsp_mat_eye(n,n)) == NULLMAT ) goto err;
+      C2F(dggbak)("B", "R", &n, &ilo, &ihi, lscale, rscale, &n, YY->R, &n, &info, 1L, 1L);
+      if (info != 0) 
+	{
+	  Scierror("Error: something wrong in dggbak\n");
+	  goto err;
+	}
+    }
 
+  FREE(lscale); FREE(rscale); FREE(dwork);
+  if ( X != NULL ) *X = XX;
+  if ( Y != NULL ) *Y = YY;
   return OK ; 
+
+ err:
+  FREE(lscale); FREE(rscale); FREE(dwork);
+  nsp_matrix_destroy(XX); nsp_matrix_destroy(YY);
+  return FAIL;
 } 
 
 /*
