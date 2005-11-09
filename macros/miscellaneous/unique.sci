@@ -19,12 +19,15 @@ function [y,ind,occ] = unique(x,first_ind=%f)
 //  Purpose
 //  -------
 //   A unique function for nsp, to extract unique components of a vector
-//   or list). Currently only Matrix, String Matrix and Lists are
-//   treated (list with the slow method). Cells may be add soon.
+//   or list). Currently Matrix, String Matrix, Lists and Cells are
+//   treated (list with the slow method). For Lists and Cells unique
+//   are implemented by respectively unique_l and unique_ce at the end
+//   of this file.
+//
 //
 //  Inputs
 //  ------
-//   x : a vector of numbers or strings or a list (x may be a
+//   x : a vector of numbers or strings or a list or cells (x may be a
 //       matrix and in this case it is considered as a big column 
 //       vector using the column major order)
 //   first_ind : optional, a boolean scalar (%f by default)  
@@ -58,47 +61,62 @@ function [y,ind,occ] = unique(x,first_ind=%f)
 	 if id ~= [] then, id = id + 1, end
 	 y(id) = []; ind(id) = []
 	 if nargout == 3
-	    occ = 1:n+1; occ(id) = []; occ = occ(2:$)-occ(1:$-1)
+	    occ = (1:n+1)'; occ(id) = []; occ = occ(2:$)-occ(1:$-1)
 	 else
 	    occ = []
 	 end
       end
-      if size(x,1) == 1 then, y=y', end
+      if size(x,1) == 1 then, y=y', ind=ind', occ=occ', end
    
-   elseif type_x == "List" then
-      // the slow method
-      n = size(x)
-      if n == 0 then
-	 y = list(); ind=[]; occ=[]; return
-      else
-	 y = x
-	 i = 1; 
-	 occ = [];
-	 while i <= size(y)
-	    occ = [occ ; 1];
-	    j = i+1;
-	    while j <= size(y)
-	       if y(j) == y(i) then
-		  y(j) = null(), occ(i)=occ(i)+1
-	       else
-		  j = j+1
-	       end
-	    end
-	    i = i + 1
-	 end
-	 ind = []
-	 if nargout >= 2 then // compute ind ...
-	    for i = 1:size(y)
-	       for j = 1:size(x)
-		  if y(i) == x(j) then, ind = [ind;j], break, end
-	       end
-	    end
-	 end
-      end
-   
-   else // all others types
+   else
       
       error("unique not implemented for "+type_x)
       
    end
 endfunction
+
+function [y,ind,occ] = unique_ce(x)
+   
+// the slow method
+   n = size(x,"*")
+   if n == 0 then
+      y = {}; ind=[]; occ=[];
+   else
+      y = {x(1)}; j = 1; ind(1) = 1; occ(1) = 1;
+      for i=2:n
+	 elem = x{i}
+	 k = 1; found = %f;
+	 for k = 1:j
+	    if  elem == y{k} then, occ(k) = occ(k)+1, found = %t, break, end
+	 end
+	 if ~found then
+	    j=j+1; ind(j) = i; occ(j) = 1; y(j) = {elem}
+	 end   
+      end
+      if size(x,1) == 1 then, y = y', ind = ind', occ = occ', end
+   end
+endfunction
+
+function [y,ind,occ] = unique_l(x)
+   
+// the slow method
+   n = size(x)
+   if n == 0 then
+      y = list(); ind=[]; occ=[]; return
+   else
+      y = list(x(1)); j = 1; ind(1) = 1; occ(1) = 1;
+      for i=2:n
+	 elem = x(i)
+	 k = 1; found = %f;
+	 for k = 1:j
+	    if  elem == y(k) then, occ(k) = occ(k)+1, found = %t, break, end
+	 end
+	 if ~found then
+	    j=j+1; ind(j) = i; occ(j) = 1; y(j) = elem
+	 end   
+      end
+      occ = occ'; ind = ind';
+   end
+endfunction
+
+
