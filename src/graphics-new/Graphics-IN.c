@@ -2582,11 +2582,25 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
       return 1;
       break;
     case xget_colormap:
-      Xgc->graphic_engine->xget_colormap(Xgc,&m3,NULL); /*just to get m3 */
-      if ((M = nsp_matrix_create(NVOID,'r',m3,3))== NULLMAT) return RET_BUG;
-      Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R);
-      StackStore(stack,(NspObject *) M,rhs+1);
-      NSP_OBJECT(M)->ret_pos = 1;
+      /* flagx can be used if != 0 , to only get color flagx */
+      flagx = Max(flagx,0);
+      if ( flagx != 0) 
+	{
+	  /* just get one color */
+	  if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
+	  Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R,flagx);
+	  StackStore(stack,(NspObject *) M,rhs+1);
+	  NSP_OBJECT(M)->ret_pos = 1;
+	}
+      else
+	{
+	  /* get all colors */
+	  Xgc->graphic_engine->xget_colormap(Xgc,&m3,NULL,flagx); /*just to get m3 */
+	  if ((M = nsp_matrix_create(NVOID,'r',m3,3))== NULLMAT) return RET_BUG;
+	  Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R,flagx);
+	  StackStore(stack,(NspObject *) M,rhs+1);
+	  NSP_OBJECT(M)->ret_pos = 1;
+	}
       return 1;
       break;
     case xget_dashes:

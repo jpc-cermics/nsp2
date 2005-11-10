@@ -710,7 +710,7 @@ static void xset_default_colormap(BCG *Xgc)
 
 /* getting the colormap XXXX */
 
-static void xget_colormap(BCG *Xgc, int *num,  double *val)
+static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 {
   *num=0 ; /* XXX */
 }

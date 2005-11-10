@@ -1467,17 +1467,36 @@ static void set_colormap_constants(BCG *Xgc,int m)
 
 /* getting the colormap */
 
-static void xget_colormap(BCG *Xgc, int *num,  double *val)
+
+static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 {
   int m = Xgc->Numcolors;
   int i;
   *num = m;
   if ( val != NULL )
     {
-      for (i = 0; i < m; i++) {
-	val[i] = (double)Xgc->private->colors[i].red/65535.0;
-	val[i+m] = (double)Xgc->private->colors[i].green/65535.0;
-	val[i+2*m] = (double)Xgc->private->colors[i].blue/65535.0;
+      if ( color_id != 0 ) 
+	{
+	  /* just return one color */
+	  if ( color_id >= 1 && color_id <= m )
+	    {
+	      int i=color_id-1;
+	      val[0] = (double)Xgc->private->colors[i].red/65535.0;
+	      val[1] = (double)Xgc->private->colors[i].green/65535.0;
+	      val[2] = (double)Xgc->private->colors[i].blue/65535.0;
+	    }
+	  else 
+	    {
+	      val[0]= val[1] =val[2]=0;
+	    }
+	}
+      else 
+	{
+	  for (i = 0; i < m; i++) {
+	    val[i] = (double)Xgc->private->colors[i].red/65535.0;
+	    val[i+m] = (double)Xgc->private->colors[i].green/65535.0;
+	    val[i+2*m] = (double)Xgc->private->colors[i].blue/65535.0;
+	  }
       }
     }
 }

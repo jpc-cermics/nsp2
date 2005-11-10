@@ -2144,7 +2144,7 @@ void setcolormap3(int m, double *a)
 
 /* getting the colormap */
 
-static void xget_colormap(int *verbose, int *num, int *narg, double *val)
+static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 {
   int m = ScilabXgc->Numcolors;
   int i;
