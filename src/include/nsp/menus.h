@@ -77,6 +77,7 @@ extern int nsp_menus_add(int win_num,const char * button_name,char ** entries,in
 /* men_combo_color */
 
 extern GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc);
+extern int gtkcombobox_select_color(BCG *Xgc) ;
 
 
 #endif 

@@ -660,12 +660,13 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/* creates a combo box for choosing colors and 
- * return the combo box. 
- *
+/* 
+ * creates a combo box for choosing colors and 
+ * return the combo box 
+ * (see demo) 
  */
 
-int int_nsp_gtkcombobox_colormap_new(Stack stack, int rhs, int opt, int lhs)
+static int int_nsp_gtkcombobox_colormap_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   GObject *ret; NspObject *nsp_ret;
@@ -679,6 +680,22 @@ int int_nsp_gtkcombobox_colormap_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* 
+ * menu to get a color id for the current window 
+ */
+
+static int int_nsp_choose_color(Stack stack, int rhs, int opt, int lhs)
+{
+  int col;
+  BCG *Xgc;
+  NspObject *O1;
+  CheckRhs(0,0);
+  Xgc=check_graphic_window();
+  col = gtkcombobox_select_color(Xgc);
+  if (( O1 =nsp_create_object_from_double(NVOID,col)) == NULLOBJ ) return RET_BUG;
+  MoveObj(stack,1,O1);
+  return 1;
+}
 
 /*
  * The Interface for basic matrices operation 
@@ -698,6 +715,7 @@ static OpTab Menus_func[]={
   {"xgetfile", int_xgetfile},
   {"x_choices",int_x_choices},
   {"gtk_combo_colormap_new",int_nsp_gtkcombobox_colormap_new},
+  {"choose_color",int_nsp_choose_color},
   {(char *) 0, NULL}
 };
 

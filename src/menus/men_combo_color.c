@@ -108,45 +108,82 @@ GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc)
     }
 
   g_object_unref (store);
-
-  gtk_combo_box_set_active (GTK_COMBO_BOX (combo), 0);
-
+  gtk_combo_box_set_active (GTK_COMBO_BOX (combo), Xgc->graphic_engine->xget_pattern(Xgc) );
   return combo;
 }
 
-typedef enum { COMBO_OK, COMBO_RESET } state;
+typedef enum { COMBO_OK,COMBO_CANCEL, COMBO_RESET } state;
+
+static void nsp_ok(GtkWidget *widget,int *answer)
+{
+  *answer = COMBO_OK;
+  gtk_main_quit();
+}
+
+static void nsp_cancel(GtkWidget *widget,int *answer)
+{
+  *answer = COMBO_CANCEL;
+  gtk_main_quit();
+}
 
 int gtkcombobox_select_color(BCG *Xgc) 
 {
-  GtkWidget *window,*mainbox;
+  GtkWidget *window,*mainbox,*button_ok,*button_cancel;
   GtkWidget *comboboxgrid;
-  GtkWidget *tmp, *boom;
+  GtkWidget *frame, *vbox, *hbbox;
   int answer = COMBO_RESET ;
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_container_set_border_width (GTK_CONTAINER (window), 5);
   
-  g_signal_connect (window, "destroy", gtk_main_quit, NULL);
+  /* g_signal_connect (window, "destroy", gtk_main_quit, NULL); */
 
   mainbox = gtk_vbox_new (FALSE, 2);
   gtk_container_add (GTK_CONTAINER (window), mainbox);
 
   /* GtkComboBox (grid mode) */
-  tmp = gtk_frame_new ("GtkComboBox (grid mode)");
-  gtk_box_pack_start (GTK_BOX (mainbox), tmp, FALSE, FALSE, 0);
+  frame = gtk_frame_new ("Choose a color");
+  gtk_box_pack_start (GTK_BOX (mainbox), frame, FALSE, FALSE, 0);
 
-  boom = gtk_vbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (boom), 5);
-  gtk_container_add (GTK_CONTAINER (tmp), boom);
+  vbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
+  gtk_container_add (GTK_CONTAINER (frame), vbox);
 
   comboboxgrid = nsp_gtkcombobox_colormap_new(Xgc);
 
-  gtk_box_pack_start (GTK_BOX (boom), comboboxgrid, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), comboboxgrid, FALSE, FALSE, 0);
 
+  hbbox = gtk_hbutton_box_new ();
+  gtk_box_pack_start (GTK_BOX (vbox), hbbox, FALSE, FALSE , 2);
+  gtk_widget_show (hbbox);
+  button_ok = gtk_button_new_with_label ("OK");
+  gtk_container_add (GTK_CONTAINER (hbbox), button_ok);
+  gtk_signal_connect (GTK_OBJECT (button_ok), "clicked",
+		      GTK_SIGNAL_FUNC(nsp_ok),
+		      &answer);
+  GTK_WIDGET_SET_FLAGS (button_ok, GTK_CAN_DEFAULT);
+  gtk_widget_grab_default (button_ok);
+
+  button_cancel = gtk_button_new_with_label ("Cancel");
+  gtk_container_add (GTK_CONTAINER (hbbox), button_cancel);
+  GTK_WIDGET_SET_FLAGS (button_cancel, GTK_CAN_DEFAULT);
+  gtk_signal_connect (GTK_OBJECT (button_cancel), "clicked",
+		      GTK_SIGNAL_FUNC(nsp_cancel),
+		      &answer);
+
+  gtk_widget_show (button_ok);
   gtk_widget_show_all (window);
-  gtk_main();
 
+  while (1) 
+    {
+      gtk_main();
+      if (answer == COMBO_OK || answer == COMBO_CANCEL ) break;
+    }
+  if ( answer == COMBO_OK ) 
+    answer = gtk_combo_box_get_active (GTK_COMBO_BOX(comboboxgrid))+1;
+  else 
+    answer = 0;
   gtk_widget_destroy(window);
-  return answer ;
+  return answer;
 }
 
