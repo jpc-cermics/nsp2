@@ -385,15 +385,15 @@ static OpTab gtkgl_func[]={
   { NULL, NULL}
 };
 
-/** call ith function in the gtkgl interface **/
+/* call ith function in the gtkgl interface */
 
 int gtkgl_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(gtkgl_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void gtkgl_Interf_Info(int i, char **fname, function (**f))
 {

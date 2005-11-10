@@ -10955,15 +10955,15 @@ static OpTab gdk_func[]={
   { NULL, NULL}
 };
 
-/** call ith function in the gdk interface **/
+/* call ith function in the gdk interface */
 
 int gdk_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(gdk_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void gdk_Interf_Info(int i, char **fname, function (**f))
 {

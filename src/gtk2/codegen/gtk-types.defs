@@ -77,6 +77,14 @@
   (gtype-id "GTK_TYPE_CELL_EDITABLE")
 )
 
+
+(define-interface CellLayout
+  (in-module "Gtk")
+  (c-name "GtkCellLayout")
+  (gtype-id "GTK_TYPE_CELL_LAYOUT")
+)
+
+
 (define-object CellRendererToggle
   (in-module "Gtk")
   (parent "GtkCellRenderer")
@@ -879,6 +887,23 @@
     '("GtkList*" "list")
   )
 )
+
+(define-object ComboBox
+  (in-module "Gtk")
+  (parent "GtkBin")
+  (c-name "GtkComboBox")
+  (gtype-id "GTK_TYPE_COMBO_BOX")
+  (implements "GtkCellLayout")
+)
+
+(define-object ComboBoxEntry
+  (in-module "Gtk")
+  (parent "GtkComboBox")
+  (c-name "GtkComboBoxEntry")
+  (gtype-id "GTK_TYPE_COMBO_BOX_ENTRY")
+  (implements "GtkCellLayout")
+)
+
 
 (define-object ButtonBox
   (in-module "Gtk")

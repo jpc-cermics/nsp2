@@ -557,15 +557,15 @@ static OpTab libglade_func[]={
   { NULL, NULL}
 };
 
-/** call ith function in the libglade interface **/
+/* call ith function in the libglade interface */
 
 int libglade_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(libglade_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void libglade_Interf_Info(int i, char **fname, function (**f))
 {

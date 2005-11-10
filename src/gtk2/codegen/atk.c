@@ -2883,15 +2883,15 @@ static OpTab atk_func[]={
   { NULL, NULL}
 };
 
-/** call ith function in the atk interface **/
+/* call ith function in the atk interface */
 
 int atk_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(atk_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void atk_Interf_Info(int i, char **fname, function (**f))
 {

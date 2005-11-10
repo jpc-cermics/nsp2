@@ -5038,15 +5038,15 @@ static OpTab pango_func[]={
   { NULL, NULL}
 };
 
-/** call ith function in the pango interface **/
+/* call ith function in the pango interface */
 
 int pango_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(pango_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void pango_Interf_Info(int i, char **fname, function (**f))
 {
