@@ -370,6 +370,26 @@ class DoubleArg(ArgType):
         info.varlist.add('double', 'ret')
         info.varlist.add('NspObject', '*nsp_ret')
         info.attrcodeafter.append('  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
+
+class GSList(ArgType):
+    def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos):
+	if pdflt:
+	    info.varlist.add('GSListdouble', pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('GSListdouble', pname)
+        info.arglist.append(pname)
+        info.add_parselist('GSLists_double', ['&' + pname], [pname])
+        info.attrcodebefore.append('GSList  if ( DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+    def write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('GSListdouble', 'ret')
+        info.codeafter.append('GSList  if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;\n'
+                              '  return 1;')
+    def attr_write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('GSListdouble', 'ret')
+        info.varlist.add('GSListNspObject', '*nsp_ret')
+        info.attrcodeafter.append('GSList  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);\n  return nsp_ret;')
+
+
         
 class FileArg(ArgType):
     nulldflt = ('  if ( IsNOne(nsp_%(name)s)\n'
@@ -1087,6 +1107,8 @@ arg = FileArg()
 matcher.register('FILE*', arg)
 
 # enums, flags, objects
+
+## matcher.register('GSList*', GSList())
 
 matcher.register('GdkAtom', AtomArg())
 
