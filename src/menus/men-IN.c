@@ -661,13 +661,44 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* creates a combo box for choosing colors and 
+ * return the combo box. 
+ *
+ */
 
-/*************************************************************
+int int_nsp_gtkcombo_colormap_new(Stack stack, int rhs, int opt, int lhs)
+{
+  BCG *Xgc;
+  GObject *ret; NspObject *nsp_ret;
+  CheckRhs(0,0);
+  Xgc=check_graphic_window();
+  if ((ret = (GObject *) nsp_gtkcombo_colormap_new(Xgc))== NULL) return RET_BUG;
+  nsp_type_gtkcombo = new_type_gtkcombo(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcombo );
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+
+/*
  * The Interface for basic matrices operation 
- *************************************************************/
+ */
 
 static OpTab Menus_func[]={
-#include "men-IN.nam"
+  {"x_message",int_x_message},
+  {"x_message_modeless",int_x_message_modeless},
+  {"x_choose",int_x_choose},
+  {"x_dialog",int_x_dialog},
+  {"x_choices",int_x_choices},
+  {"x_mdialog",int_x_mdialog},
+  {"setmenu", int_set_menu},
+  {"addmenu", int_add_menu},
+  {"unsetmenu",int_unset_menu},
+  {"delmenu",int_delmenu},
+  {"xgetfile", int_xgetfile},
+  {"x_choices",int_x_choices},
+  {"gtk_combo_colormap_new",int_nsp_gtkcombo_colormap_new},
   {(char *) 0, NULL}
 };
 
