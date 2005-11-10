@@ -12,8 +12,7 @@
 #include "nsp/math.h"
 #include "nsp/graphics/Graphics.h"
 #include "nsp/object.h"
-#include <nsp/gtk/gtkcombo.h>
-
+#include <nsp/gtk/gtkcombobox.h>
 
 #if defined(__MWERKS__)||defined(THINK_C)
 #define Widget int
@@ -77,7 +76,7 @@ extern int nsp_menus_add(int win_num,const char * button_name,char ** entries,in
 
 /* men_combo_color */
 
-extern GtkWidget *nsp_gtkcombo_colormap_new( BCG *Xgc);
+extern GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc);
 
 
 #endif 
