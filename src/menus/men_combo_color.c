@@ -79,7 +79,7 @@ static GdkPixbuf *create_color_pixbuf (BCG *Xgc,int color_id)
   return pixbuf;
 }
 
-GtkWidget *nsp_gtkcombo_colormap_new( BCG *Xgc)
+GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc)
 {
   GtkWidget *combo;
   GtkTreeIter iter;
@@ -116,7 +116,7 @@ GtkWidget *nsp_gtkcombo_colormap_new( BCG *Xgc)
 
 typedef enum { COMBO_OK, COMBO_RESET } state;
 
-int gtkcombo_select_color(BCG *Xgc) 
+int gtkcombobox_select_color(BCG *Xgc) 
 {
   GtkWidget *window,*mainbox;
   GtkWidget *comboboxgrid;
@@ -139,7 +139,7 @@ int gtkcombo_select_color(BCG *Xgc)
   gtk_container_set_border_width (GTK_CONTAINER (boom), 5);
   gtk_container_add (GTK_CONTAINER (tmp), boom);
 
-  comboboxgrid = nsp_gtkcombo_colormap_new(Xgc);
+  comboboxgrid = nsp_gtkcombobox_colormap_new(Xgc);
 
   gtk_box_pack_start (GTK_BOX (boom), comboboxgrid, FALSE, FALSE, 0);
 
