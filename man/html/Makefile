@@ -11,3 +11,8 @@ distclean::
 	cd generated ; make distclean
 
 clean:: 
+
+
+show:
+	firefox file://`pwd`/generated/manual.html
+
