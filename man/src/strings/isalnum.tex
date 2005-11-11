@@ -1,0 +1,37 @@
+% -*- mode: latex -*-
+
+\mansection{isalnum}
+\begin{mandesc}
+\short{isalnum}{...}\\
+\short{isalpha}{...}\\
+\short{isascii}{...}\\
+\short{isdigit}{...}\\
+\short{isgraph}{...}\\
+\short{islower}{...}\\
+\short{isprint}{...}\\
+\short{ispunct}{...}\\
+\short{isspace}{...}\\
+\short{isupper}{...}\\
+\short{isxdigit}{...}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+A=isxxx(str)
+\end{verbatim}
+\end{calling_sequence}
+
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{str} : a string.
+    \vname{A} : a boolean vector.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+returns in a boolean vector the result of the coresponding test 
+for each character of string \verb+str+.
+\end{mandescription}
+% -- see also
+

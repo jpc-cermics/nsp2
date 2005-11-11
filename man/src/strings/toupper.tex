@@ -1,0 +1,34 @@
+% -*- mode: latex -*-
+
+\mansection{toupper}
+\begin{mandesc}
+  \short{toupper}{convert letter to upper case} \\
+  \short{tolower}{convert letter to lower case} \\
+  \short{capitalize}{capitalize strings}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+B=toupper(A)
+B=tolower(A)
+B=capitalize(A)
+\end{verbatim}
+\end{calling_sequence}
+
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B} : two string matrices
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\noindent  \verb+toupper(M)+ converts the entries of \verb+M+ to upper case, if possible.
+\noindent  \verb+tolower(M)+ converts the entries of \verb+M+ to lower case, if possible.
+\noindent \verb+capitalize(M)+ converts the entries of matrix \verb+M+ to 
+capitalized strings.
+\end{mandescription}
+
+
+% -- see also
+

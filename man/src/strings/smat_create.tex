@@ -1,0 +1,34 @@
+% -*- mode: latex -*-
+
+\mansection{smat\_create}
+\begin{mandesc}
+  \short{smat_create}{create a string matrix}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+y = smat_create(m,n [,val]);
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{m,n} : integers, size of the wanted matrix \verb!y!.
+    \vname{val} : an optional string giving the matrix \verb!y! elements value.
+    \vname{y}   : a string matrix.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  This function may be used to create a \verb+mxn+ string matrix. 
+  The elements of the matrix are by default set to the empty string \verb+""+ 
+  or if given set to the value of \verb+val+.
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}
+    A = smat_create(2,4,"xx");
+  \end{program}
+\end{examples}
+

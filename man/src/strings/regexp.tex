@@ -1,0 +1,49 @@
+% -*- mode: latex -*-
+
+\mansection{regexp}
+\begin{mandesc}
+  \short{regexp}{convert letter to upper case} \\
+  \short{regsub}{convert letter to lower case} \\
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[b,A]=regexp(str,regexp)
+str=regsub(str,regexp,regsub)
+\end{verbatim}
+\end{calling_sequence}
+
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{str} : a string.
+    \vname{b}:  a boolean.
+    \vname{A}:  a scalar Matrix.
+    \vname{regexp,regsub}: two strings
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\noindent \verb+regexp+ and \verb+regsub+ are used to search or substitute regular expression
+in a given string. The syntax for specifying regular expression is the \verb+tcl+ 
+regexp syntax. 
+\verb+regexp+ returns \verb+%t+ in a boolean \verb+b+ if a match was found and the 
+position of the matched string in the original string is returned in 
+the first line of matrix \verb+A+ (first character, last character). 
+Note that position of sub-expressions if asked (see example below) 
+are also returned in the other lines of \verb+A+. 
+
+In the \verb+regsub+ string matched sub expressions can be specified with the 
+syntax \verb+\\n+ where \verb+n+ stands for the \verb+n+-th sub-expression of 
+\verb+regexp+.
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}
+    [a,b]=regexp('pipopopopa','p(i[po]+)(pa)')
+    regsub('pipopopopa','p(i[po]+)(pa)','poo\\1')
+  \end{program}
+\end{examples}
+
+% -- see also
+

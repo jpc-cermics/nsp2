@@ -1,0 +1,30 @@
+% -*- mode: latex -*-
+
+\mansection{ascii}
+\begin{mandesc}
+  \short{ascii}{ascii conversion}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+A=ascii(str)  
+str=ascii(A)  
+\end{verbatim}
+\end{calling_sequence}
+
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: a scalar matrix.
+    \vname{str}: a string
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb+ascii(str)+ returns in a vector the ascii code of the characters of 
+  string \verb+str+. 
+  \verb+ascii(A)+ returns a string the string abtained from the ascii codes 
+  obtained from \verb+A+ used in a column order mode. 
+\end{mandescription}
+% -- see also
+

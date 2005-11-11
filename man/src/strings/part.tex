@@ -1,0 +1,37 @@
+% -*- mode: latex -*-
+
+\mansection{part}
+\begin{mandesc}
+  \short{part}{substring extraction}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ B=part(A,v)  
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B} : string matrices
+    \vname{v} : integer vector.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Let \verb!s[k]! stands for the string made of the \verb!k!-th 
+  character of string \verb!s! (if \verb!k! $>$ \verb+length(s)+) then 
+  \verb+s[k]+ is a string made of a white space character). 
+  \verb!part! returns a string matrix, say \verb+B+, such that 
+  \verb!B(i,j)= s[v(1)]+...+s[v(n)]!
+\end{mandescription}
+% --example 
+\begin{examples}
+  \begin{program}
+    c=part(['a','abc','abcd'],[1,1,2])
+  \end{program}
+\end{examples}
+% -- see also
+\begin{manseealso}
+  \manlink{string}{string} \manlink{length}{length}  
+\end{manseealso}
+

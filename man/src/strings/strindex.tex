@@ -1,0 +1,28 @@
+% -*- mode: latex -*-
+
+\mansection{strindex}
+\begin{mandesc}
+\short{strindex}{search occurences of a string in a string}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+B=strindex(str1,str2)
+\end{verbatim}
+\end{calling_sequence}
+
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{str1,str2} : two strings.
+    \vname{B} : a scalar matrix. 
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+returns in \verb+B(i)+, the position of the \verb+i+-th occurence 
+of string \verb+str2+ in string \verb+str1+. The length of \verb+B+ 
+gives the number of occurences of \verb+str2+ in string \verb+str1+.
+\end{mandescription}
+% -- see also
+

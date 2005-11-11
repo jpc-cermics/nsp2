@@ -1,0 +1,43 @@
+% -*- mode: latex -*-
+
+\mansection{length}
+\begin{mandesc}
+  \short{length}{length of object}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+n=length(M)   
+\end{verbatim}
+\end{calling_sequence}
+
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{M} : an object.
+    \vname{n} : integer or integer matrix
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\begin{itemize}
+  \item  For all type of matrices  except string matrices, \verb!length(M)! is equal to \verb!size(M,'*')!  number of columns of \verb!M!.
+  \item For a string matrix \verb+M+, \verb+n=length(M)+ returns a numerical matrix \verb+n+ such that 
+    \verb+n(i,j)+ is the string length of string \verb+M(i,j)+.
+  \item For \verb+M+ of type list, the function returns the index of the last list entry in list \verb+M+.
+\end{itemize}
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}
+    length(string(rand(3,4)))
+    L = list(1,2); L(5)=78; length(L)
+    length(rand(5,7))
+  \end{program}
+\end{examples}
+
+% -- see also
+\begin{manseealso}
+  \manlink{size}{size}  
+\end{manseealso}
+
