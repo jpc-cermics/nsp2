@@ -1,6 +1,7 @@
 \documentclass[11pt]{book}
 
-\input common.tex 
+\def\dir{../}
+\input \dir common.tex 
 
 \title{Nsp online manual}
 
@@ -14,8 +15,28 @@
 
 \chapter{Info}
 
-\input ../src/model/model.tex 
-\input ../src/model/unique.tex 
+\input \dir ../src/model/model.tex 
+\input \dir ../src/model/unique.tex 
+
+\chapter{Strings}
+
+\input \dir ../src/strings/ascii.tex
+\input \dir ../src/strings/catenate.tex
+\input \dir ../src/strings/concat.tex
+\input \dir ../src/strings/isalnum.tex
+\input \dir ../src/strings/length.tex
+\input \dir ../src/strings/m2s.tex
+\input \dir ../src/strings/part.tex
+\input \dir ../src/strings/regexp.tex
+\input \dir ../src/strings/smat_create.tex
+\input \dir ../src/strings/split.tex
+\input \dir ../src/strings/strindex.tex
+\input \dir ../src/strings/stripblanks.tex
+\input \dir ../src/strings/strstr.tex
+\input \dir ../src/strings/subst.tex
+\input \dir ../src/strings/toupper.tex
+\chapter{Index}
+
 \printindex
 \end{document}
 
