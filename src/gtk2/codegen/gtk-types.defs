@@ -71,6 +71,7 @@
   (gtype-id "GTK_TYPE_CELL_RENDERER")
 )
 
+
 (define-interface CellEditable
   (in-module "Gtk")
   (c-name "GtkCellEditable")
@@ -2252,3 +2253,12 @@
   )
 )
 
+;; nov 205 
+
+(define-object CellView
+  (in-module "Gtk")
+  (parent "GtkWidget")
+  (c-name "GtkCellView")
+  (gtype-id "GTK_TYPE_CELL_VIEW")
+  (implements "GtkCellLayout")
+)

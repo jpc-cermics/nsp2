@@ -6642,6 +6642,75 @@ _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
 %%
+override gtk_cell_layout_set_cell_data_func kwargs
+
+static void
+nspgtk_cell_layout_data_func_marshal (GtkCellLayout *tree_column,
+				      GtkCellRenderer *cell,
+				      GtkTreeModel *tree_model,
+				      GtkTreeIter *iter, gpointer data)
+{
+  NspObject *args[5], *nsp_ret;
+  NspGtkCustomNotify *cunote = data;
+  int nret = 1,nargs = 4;
+  gboolean ret = FALSE;
+
+  g_assert (cunote->func);
+
+  nspg_block_threads();
+
+  args[0] =  (NspObject *) gobject_create("tree_column",(GObject *)tree_column,(NspTypeBase *) nsp_type_gtktreeviewcolumn );
+  args[1] = (NspObject *) gobject_create("cell",(GObject *) cell, (NspTypeBase *) nsp_type_gtkcellrenderer);
+  args[2] =  (NspObject *) gobject_create("model",(GObject *)tree_model,(NspTypeBase *) nsp_type_gtktreemodel );
+  args[3] =  (NspObject *) gboxed_create("iter",GTK_TYPE_TREE_ITER, iter,TRUE, TRUE,(NspTypeBase *)nsp_type_gtktreeiter);
+  
+  if ( args[0]== NULL ||args[1]== NULL ||args[2]== NULL||args[3]== NULL ) goto end;
+  if (cunote->data) 
+    {
+      args[4]= cunote->data; 
+      nargs= 5;
+    }
+  if ( nsp_gtk_eval_function((NspPList *)cunote->func ,args,nargs,&nsp_ret,&nret)== FAIL) 
+    goto end; 
+
+  if (nret ==1 && IsBMat(nsp_ret) && ((NspBMatrix *) nsp_ret)->mn==1 )
+    ret =  ((NspBMatrix *) nsp_ret)->B[0];
+  nspg_unblock_threads();
+ end: 
+  {
+    nspg_unblock_threads();
+  }
+}
+
+static int
+_wrap_gtk_cell_layout_set_cell_data_func (NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *nsp_func, *nsp_arg = NULL;
+  GtkCellRenderer *cell;
+  NspGtkCellRenderer *nsp_cell;
+  NspGtkCustomNotify *cunote; 
+  CheckRhs(2,3);
+  if ((nsp_cell = GetGtkCellRenderer(stack,1)) == NULL) return RET_BUG; 
+  cell = GTK_CELL_RENDERER(nspgobject_get(nsp_cell));
+  if (( nsp_func = (NspObject *) GetNspPListCopy(stack,2)) == NULL) return RET_BUG;
+  if ((nsp_object_set_name(nsp_func,"tree_foreach")== FAIL)) return RET_BUG;
+  /** extra arguments **/
+  if ( rhs == 3 ) 
+    {
+      if (( nsp_arg = (NspObject *) GetListCopy(stack,3)) == NULL ) return RET_BUG;
+      if ((nsp_object_set_name(nsp_arg,"m")== FAIL)) return RET_BUG;
+    }
+  cunote = g_new(NspGtkCustomNotify, 1);
+  cunote->func = nsp_func;
+  cunote->data = nsp_arg;
+
+  gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (self->obj), cell,
+				    nspgtk_cell_layout_data_func_marshal,
+				    cunote,
+				    nspgtk_custom_destroy_notify);
+  return 0;
+}
+%%
 ignore-win32
         GTK_TYPE_PLUG
         GTK_TYPE_SOCKET

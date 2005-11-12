@@ -1914,13 +1914,14 @@
 (define-function gtk_combo_box_new
   (c-name "gtk_combo_box_new")
   (is-constructor-of "GtkComboBox")
-  (return-type "GtkWidget*")
+  (return-type "GtkComboBox*");;jpc
 )
 
 (define-function gtk_combo_box_new_with_model
   (c-name "gtk_combo_box_new_with_model")
-  (is-constructor-of "GtkComboBox")
-  (return-type "GtkWidget*")
+  ;; jpc -> inserted in gtk_combo_box_new(model=model)
+  ;;(is-constructor-of "GtkComboBox")
+  (return-type "GtkComboBox*")
   (parameters
     '("GtkTreeModel*" "model")
   )
@@ -2001,9 +2002,9 @@
   (return-type "GtkTreeModel*")
 )
 
-(define-function combo_box_new_text
+(define-function gtk_combo_box_new_text
   (c-name "gtk_combo_box_new_text")
-  (return-type "GtkWidget*")
+  (return-type "GtkComboBox*")
 )
 
 (define-method append_text
@@ -2147,12 +2148,12 @@
 (define-function gtk_combo_box_entry_new
   (c-name "gtk_combo_box_entry_new")
   (is-constructor-of "GtkComboBoxEntry")
-  (return-type "GtkWidget*")
+  (return-type "GtkComboBoxEntry*")
 )
 
-(define-function combo_box_entry_new_with_model
+(define-function gtk_combo_box_entry_new_with_model
   (c-name "gtk_combo_box_entry_new_with_model")
-  (return-type "GtkWidget*")
+  (return-type "GtkComboBoxEntry*")
   (parameters
     '("GtkTreeModel*" "model")
     '("gint" "text_column")
@@ -2174,9 +2175,9 @@
   (return-type "gint")
 )
 
-(define-function combo_box_entry_new_text
+(define-function gtk_combo_box_entry_new_text
   (c-name "gtk_combo_box_entry_new_text")
-  (return-type "GtkWidget*")
+  (return-type "GtkComboBoxEntry*")
 )
 
 
@@ -15836,3 +15837,90 @@
 
 
 
+;; From /opt/gnome-2.10/include/gtk-2.0/gtk/gtkcellview.h
+;; added from python nov 2005 
+;; new are changed to to return a GtkCellView* 
+
+(define-function gtk_cell_view_get_type
+  (c-name "gtk_cell_view_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_cell_view_new
+  (c-name "gtk_cell_view_new")
+  (is-constructor-of "GtkCellView")
+  (return-type "GtkCellView*")
+)
+
+(define-function cell_view_new_with_text
+  (c-name "gtk_cell_view_new_with_text")
+  (return-type "CellView*")
+  (parameters
+    '("const-gchar*" "text")
+  )
+)
+
+(define-function cell_view_new_with_markup
+  (c-name "gtk_cell_view_new_with_markup")
+  (return-type "CellView*")
+  (parameters
+    '("const-gchar*" "markup")
+  )
+)
+
+(define-function cell_view_new_with_pixbuf
+  (c-name "gtk_cell_view_new_with_pixbuf")
+  (return-type "CellView*")
+  (parameters
+    '("GdkPixbuf*" "pixbuf")
+  )
+)
+
+(define-method set_model
+  (of-object "GtkCellView")
+  (c-name "gtk_cell_view_set_model")
+  (return-type "none")
+  (parameters
+    '("GtkTreeModel*" "model" (null-ok))
+  )
+)
+
+(define-method set_displayed_row
+  (of-object "GtkCellView")
+  (c-name "gtk_cell_view_set_displayed_row")
+  (return-type "none")
+  (parameters
+    '("GtkTreePath*" "path" (null-ok))
+  )
+)
+
+(define-method get_displayed_row
+  (of-object "GtkCellView")
+  (c-name "gtk_cell_view_get_displayed_row")
+  (return-type "GtkTreePath*")
+)
+
+(define-method get_size_of_row
+  (of-object "GtkCellView")
+  (c-name "gtk_cell_view_get_size_of_row")
+  (return-type "gboolean")
+  (parameters
+    '("GtkTreePath*" "path")
+    '("GtkRequisition*" "requisition")
+  )
+)
+
+(define-method set_background_color
+  (of-object "GtkCellView")
+  (c-name "gtk_cell_view_set_background_color")
+  (return-type "none")
+  (parameters
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method get_cell_renderers
+  (of-object "GtkCellView")
+  (c-name "gtk_cell_view_get_cell_renderers")
+  (return-type "GList*")
+)
