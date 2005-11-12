@@ -21,6 +21,7 @@
  *--------------------------------------------------------------------------*/
 
 #include "nsp/menus.h" 
+#include "nsp/gtksci.h"
 
 /*
  * A combo box for choosing a color 
@@ -79,7 +80,7 @@ static GdkPixbuf *create_color_pixbuf (BCG *Xgc,int color_id)
   return pixbuf;
 }
 
-GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc)
+GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc,int init_color)
 {
   GtkWidget *combo;
   GtkTreeIter iter;
@@ -108,11 +109,13 @@ GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc)
     }
 
   g_object_unref (store);
-  gtk_combo_box_set_active (GTK_COMBO_BOX (combo), Xgc->graphic_engine->xget_pattern(Xgc) );
+  if (init_color == -1 ) 
+    init_color=  Xgc->graphic_engine->xget_pattern(Xgc);
+  gtk_combo_box_set_active (GTK_COMBO_BOX (combo),Min(Max(init_color-1,0),n_colors-1));
   return combo;
 }
 
-typedef enum { COMBO_OK,COMBO_CANCEL, COMBO_RESET } state;
+typedef enum { COMBO_OK,COMBO_CANCEL,COMBO_DESTROYED, COMBO_RESET } state;
 
 static void nsp_ok(GtkWidget *widget,int *answer)
 {
@@ -126,17 +129,36 @@ static void nsp_cancel(GtkWidget *widget,int *answer)
   gtk_main_quit();
 }
 
-int gtkcombobox_select_color(BCG *Xgc) 
+static void nsp_destroyed(GtkWidget *widget,int *answer)
+{
+  if ( *answer == COMBO_RESET ) 
+    {
+      /* we get there when we destroy the window after an OK 
+       * or a Cancel and we do not want to quit gtk_main twice 
+       */
+
+      *answer = COMBO_DESTROYED;
+      gtk_main_quit();
+    }
+  else 
+    *answer = COMBO_DESTROYED;
+}
+
+int gtkcombobox_select_color(BCG *Xgc,int init_color) 
 {
   GtkWidget *window,*mainbox,*button_ok,*button_cancel;
   GtkWidget *comboboxgrid;
   GtkWidget *frame, *vbox, *hbbox;
   int answer = COMBO_RESET ;
 
+  start_sci_gtk(); /* be sure that gtk is started */
+
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_container_set_border_width (GTK_CONTAINER (window), 5);
-  
-  /* g_signal_connect (window, "destroy", gtk_main_quit, NULL); */
+
+  gtk_signal_connect (GTK_OBJECT (window), "destroy",
+		      GTK_SIGNAL_FUNC(nsp_destroyed),
+		      &answer);
 
   mainbox = gtk_vbox_new (FALSE, 2);
   gtk_container_add (GTK_CONTAINER (window), mainbox);
@@ -149,14 +171,16 @@ int gtkcombobox_select_color(BCG *Xgc)
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
   gtk_container_add (GTK_CONTAINER (frame), vbox);
 
-  comboboxgrid = nsp_gtkcombobox_colormap_new(Xgc);
+  comboboxgrid = nsp_gtkcombobox_colormap_new(Xgc,init_color);
 
   gtk_box_pack_start (GTK_BOX (vbox), comboboxgrid, FALSE, FALSE, 0);
 
   hbbox = gtk_hbutton_box_new ();
   gtk_box_pack_start (GTK_BOX (vbox), hbbox, FALSE, FALSE , 2);
   gtk_widget_show (hbbox);
-  button_ok = gtk_button_new_with_label ("OK");
+
+  button_ok = gtk_button_new_from_stock (GTK_STOCK_OK);
+
   gtk_container_add (GTK_CONTAINER (hbbox), button_ok);
   gtk_signal_connect (GTK_OBJECT (button_ok), "clicked",
 		      GTK_SIGNAL_FUNC(nsp_ok),
@@ -164,7 +188,7 @@ int gtkcombobox_select_color(BCG *Xgc)
   GTK_WIDGET_SET_FLAGS (button_ok, GTK_CAN_DEFAULT);
   gtk_widget_grab_default (button_ok);
 
-  button_cancel = gtk_button_new_with_label ("Cancel");
+  button_cancel = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
   gtk_container_add (GTK_CONTAINER (hbbox), button_cancel);
   GTK_WIDGET_SET_FLAGS (button_cancel, GTK_CAN_DEFAULT);
   gtk_signal_connect (GTK_OBJECT (button_cancel), "clicked",
@@ -177,13 +201,22 @@ int gtkcombobox_select_color(BCG *Xgc)
   while (1) 
     {
       gtk_main();
-      if (answer == COMBO_OK || answer == COMBO_CANCEL ) break;
+      if (answer != COMBO_RESET ) break;
     }
-  if ( answer == COMBO_OK ) 
-    answer = gtk_combo_box_get_active (GTK_COMBO_BOX(comboboxgrid))+1;
-  else 
-    answer = 0;
-  gtk_widget_destroy(window);
+  switch (answer) 
+    {
+    case COMBO_OK :
+      answer = gtk_combo_box_get_active (GTK_COMBO_BOX(comboboxgrid))+1;
+      gtk_widget_destroy(window);
+      break;
+    case COMBO_CANCEL :
+      answer = 0;
+      gtk_widget_destroy(window);
+      break;
+    case COMBO_DESTROYED:
+      answer = 0;
+      break;
+    }
   return answer;
 }
 

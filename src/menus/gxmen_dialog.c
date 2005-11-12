@@ -20,7 +20,6 @@
  * simple dialog with a gtk_tex_view
  *--------------------------------------------------------------------------*/
 
-#include <gtk/gtk.h>
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
  
@@ -84,9 +83,9 @@ int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr 
   start_sci_gtk(); /* be sure that gtk is started */
 
   answer.window = window  = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window),"Scilab dialog");
+  gtk_window_set_title (GTK_WINDOW (window),"Nsp dialog");
   gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
-  gtk_window_set_wmclass (GTK_WINDOW (window), "dialog", "Scilab");
+  gtk_window_set_wmclass (GTK_WINDOW (window), "dialog", "Nsp");
 
   gtk_signal_connect (GTK_OBJECT (window), "destroy",
 		      GTK_SIGNAL_FUNC(sci_dialog_cancel),
@@ -136,16 +135,13 @@ int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr 
   gtk_box_pack_start (GTK_BOX (vbox), hbbox, FALSE, FALSE , 2);
   gtk_widget_show (hbbox);
 
-  if ( strcmp(button_name[0],"OK")==0)
+  if ( strcmp(button_name[0],"OK")==0 || strcmp(button_name[0],"Ok")==0) 
     {
-#ifdef USE_GNOME
-      button_ok = gnome_stock_button (GNOME_STOCK_BUTTON_OK);
-#else
-      button_ok = gtk_button_new_with_label ("OK");
-#endif
+      button_ok = gtk_button_new_from_stock (GTK_STOCK_OK);
     }
   else 
     button_ok = gtk_button_new_with_label (button_name[0]);
+
   gtk_container_add (GTK_CONTAINER (hbbox), button_ok);
   gtk_signal_connect (GTK_OBJECT (button_ok), "clicked",
 		      GTK_SIGNAL_FUNC(sci_dialog_ok),
@@ -156,11 +152,7 @@ int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr 
 
   if ( strcmp(button_name[1],"Cancel")==0)
     {
-#ifdef USE_GNOME
-      button_cancel = gnome_stock_button (GNOME_STOCK_BUTTON_CANCEL);
-#else
-      button_cancel = gtk_button_new_with_label ("Cancel");
-#endif
+      button_cancel = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
     }
   else 
     button_cancel = gtk_button_new_with_label (button_name[1]);

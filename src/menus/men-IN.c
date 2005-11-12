@@ -488,37 +488,88 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 }  
 
 
-/*************************************************************
+/*
  * choices 
- *************************************************************/
+ */
 
-static int check_sub_list(Stack stack,NspList *L,int count,NspSMatrix **Item,int *def,NspSMatrix **values)
+static int check_choices_sub_list(Stack stack,NspList *L,int count);
+
+int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 {
   Cell *Loc;
-  Loc = L->first;
-  if ( Loc == NULLCELL) 
+  int count=0,m;
+  NspMatrix *M;
+  NspSMatrix *Title;
+  NspList *ListItems ; 
+  nsp_string title; 
+  CheckRhs(2,2);
+  CheckLhs(0,2);
+  if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
+  if ((ListItems  = GetListCopy(stack,2)) == NULLLIST) return RET_BUG;
+  if ((title =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1))== NULL) return RET_BUG;
+
+  /* walk throught list, check if its OK and convert to Utf8 */
+
+  Loc = ListItems->first;
+  count=0;
+  while (Loc != NULL) 
+    {
+      if ( check_choices_sub_list(stack,(NspList *) Loc->O,count)==FAIL)
+	return RET_BUG;
+      Loc= Loc->next;
+      count++;
+    }
+
+  /* run the widget */
+
+  if ( nsp_choices_with_combobox(title,ListItems) == FAIL) 
+    return RET_BUG;
+
+  /* walk throught list and collect results */
+
+  m =nsp_list_length(ListItems);
+  if ((M= nsp_matrix_create(NVOID,'r',m,1))== NULLMAT) return RET_BUG; 
+
+  /* walk though the list */ 
+  Loc = ListItems->first;
+  count = 0;
+
+  while (Loc != NULL) 
+    {
+      NspMatrix *active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->O);
+      M->R[count]= active_field->R[0]+1;
+      Loc= Loc->next;
+      count++;
+    }
+  MoveObj(stack,1,(NspObject *) M);
+  if ( lhs == 2 ) NSP_OBJECT(ListItems)->ret_pos = 2;
+  return Max(lhs,1); 
+}
+
+/*
+ *
+ */
+
+static int check_choices_sub_list(Stack stack,NspList *L,int count)
+{
+  Cell *Loc = L->first;
+  if ( Loc == NULLCELL ) 
     {
       Scierror("%s: list item(%d) is null\n",stack.fname,count);
       return FAIL;
     }
-  if (Loc->O == NULLOBJ) 
+  if ( Loc->O == NULLOBJ) 
     {
       Scierror("%s: list item(%d,1) is null\n",stack.fname,count);
       return FAIL;
     }
-  if ( ! IsSMat(Loc->O) ) 
-    {
-      Scierror("%s: list item(%d,1) is not a string \n",stack.fname,count);
-      return FAIL;
-    }
-  *Item = (NspSMatrix *) Loc->O;
-  if ( (*Item)->mn != 1 ) 
+  if ( ! IsString(Loc->O) ) 
     {
       Scierror("%s: list item(%d,1) is not a string \n",stack.fname,count);
       return FAIL;
     }
   /* since we are working on a copy we can convert on place */
-  if (  nsp_smatrix_to_utf8(*Item) == FAIL) 
+  if (  nsp_smatrix_to_utf8((NspSMatrix *)Loc->O) == FAIL) 
     {
       Scierror("%s: list item(%d,1) conversion to utf8 failed\n",stack.fname,count);
     }
@@ -544,7 +595,6 @@ static int check_sub_list(Stack stack,NspList *L,int count,NspSMatrix **Item,int
       Scierror("%s: list item(%d,1) is not a real scalar \n",stack.fname,count);
       return FAIL;
     }
-  *def = (int) ((NspMatrix *) Loc->O)->R[0];
   /* A string Matrix */ 
   Loc = Loc->next ; 
   if ( Loc == NULLCELL) 
@@ -562,103 +612,15 @@ static int check_sub_list(Stack stack,NspList *L,int count,NspSMatrix **Item,int
       Scierror("%s: list item(%d,2) is not a string matrix \n",stack.fname,count);
       return FAIL;
     }
-  *values = (NspSMatrix *) Loc->O; 
   /* since we are working on a copy we can convert on place */
-  if (  nsp_smatrix_to_utf8(*values) == FAIL) 
+  if (  nsp_smatrix_to_utf8((NspSMatrix *) Loc->O) == FAIL) 
     {
       Scierror("%s: list item(%d,1) conversion to utf8 failed\n",stack.fname,count);
+      return FAIL;
     }
-
   return OK;
 }
 
-/* XXXX should improve the cleaning process in case of problems */ 
-
-int int_x_choices(Stack stack, int rhs, int opt, int lhs)
-{
-  Cell *Loc;
-  int *def,count=0,m;
-  NspObject *Sep;
-  NspSMatrix *Title,*Item,*Values,*Items=NULL;
-  NspMatrix *M;
-  NspList *ListItems ; 
-  nsp_string title; 
-  CheckRhs(2,2);
-  CheckLhs(0,1);
-  if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((ListItems  = GetListCopy(stack,2)) == NULLLIST) return RET_BUG;
-  if ((title =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1))== NULL) return RET_BUG;
-  /* walk throught list and build arguments */
-  m =nsp_list_length(ListItems);
-  if ((M= nsp_matrix_create(NVOID,'r',m,1))== NULLMAT) return RET_BUG; 
-  if ( m == 0 ) 
-    {
-      MoveObj(stack,1,(NspObject *) M);
-      return 1;
-    }
-
-  def = (int *) M->R;
-  M->convert = 'i';
-
-  if ( (Sep =nsp_create_object_from_str(""))== NULLOBJ) return RET_BUG;
-
-  /* walk though the list */ 
-  Loc = ListItems->first;
-  while ( Loc != NULLCELL) 
-    {
-      int idef;
-      NspObject *lsub= Loc->O;
-      count++; 
-      if (lsub == NULLOBJ) 
-	{
-	  Scierror("%s: list item %d is null\n",stack.fname,count);
-	  return RET_BUG;
-	}
-      if ( ! IsList(lsub) ) 
-	{
-	  Scierror("%s: list item %d is not a list \n",stack.fname,count);
-	  return RET_BUG;
-	}
-      if (nsp_list_length((NspList *) lsub) != 3 ) 
-	{
-	  Scierror("%s: list item %d is not a list \n",stack.fname,count);
-	  return RET_BUG;
-	}
-      if ( check_sub_list(stack,(NspList *)lsub,count,&Item,&idef,&Values) == FAIL) 
-	{
-	  return RET_BUG;
-	}
-      def[count-1]=idef;
-      /* store Item and Values */ 
-      if ( count == 1) 
-	{
-	  if ((Items =nsp_smatrix_copy(Item)) == NULLSMAT) return RET_BUG;
-	  Values->n = Values->mn;  Values->m = 1;
-	  if ( nsp_smatrix_concat_right(Items,Values) == FAIL) return RET_BUG;
-	}
-      else 
-	{
-	  if ( nsp_smatrix_concat_right(Items,(NspSMatrix *)Sep) == FAIL) return RET_BUG;
-	  /* SciChoices use NULL as sep */ 
-	  nsp_string_destroy(&(Items->S[Items->mn-1]));
-	  Items->S[Items->mn-1]= NULL;
-	  if ( nsp_smatrix_concat_right(Items,Item) == FAIL) return RET_BUG;
-	  Values->n = Values->mn;  Values->m = 1;
-	  if ( nsp_smatrix_concat_right(Items,Values) == FAIL) return RET_BUG;
-	}
-      Loc = Loc->next;
-    }
-  if ( nsp_choices(title,Items->S, def, count) == FAIL)  return RET_BUG;
-  if ( def[0] == -1 ) 
-    {
-      /* this is a cancel */
-      if ( nsp_matrix_resize(M,0,0) == FAIL) return RET_BUG;
-    }
-  nsp_smatrix_destroy(Items);
-  nsp_string_destroy(&title);
-  MoveObj(stack,1,(NspObject *) M);
-  return 1;
-}
 
 /* 
  * creates a combo box for choosing colors and 
@@ -672,7 +634,7 @@ static int int_nsp_gtkcombobox_colormap_new(Stack stack, int rhs, int opt, int l
   GObject *ret; NspObject *nsp_ret;
   CheckRhs(0,0);
   Xgc=check_graphic_window();
-  if ((ret = (GObject *) nsp_gtkcombobox_colormap_new(Xgc))== NULL) return RET_BUG;
+  if ((ret = (GObject *) nsp_gtkcombobox_colormap_new(Xgc,-1))== NULL) return RET_BUG;
   nsp_type_gtkcombobox = new_type_gtkcombobox(T_BASE);
   nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkcombobox );
   if ( nsp_ret == NULL) return RET_BUG;
@@ -686,12 +648,17 @@ static int int_nsp_gtkcombobox_colormap_new(Stack stack, int rhs, int opt, int l
 
 static int int_nsp_choose_color(Stack stack, int rhs, int opt, int lhs)
 {
-  int col;
+  int col,init=-1;
   BCG *Xgc;
   NspObject *O1;
-  CheckRhs(0,0);
+  CheckRhs(0,1);
+  if ( rhs == 1) 
+    {
+      if ( GetScalarInt(stack,1,&init) == FAIL) return RET_BUG;
+      init = Max(init,0);
+    }
   Xgc=check_graphic_window();
-  col = gtkcombobox_select_color(Xgc);
+  col = gtkcombobox_select_color(Xgc,init);
   if (( O1 =nsp_create_object_from_double(NVOID,col)) == NULLOBJ ) return RET_BUG;
   MoveObj(stack,1,O1);
   return 1;

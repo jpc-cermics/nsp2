@@ -43,6 +43,7 @@ extern int nsp_message_modeless_(char *message);
 /* choices */
 
 extern int nsp_choices(char *label, char **items, int *defval, int nitems);
+extern int nsp_choices_with_combobox(char *title,NspList *L);
 
 /* print */
 
@@ -76,8 +77,8 @@ extern int nsp_menus_add(int win_num,const char * button_name,char ** entries,in
 
 /* men_combo_color */
 
-extern GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc);
-extern int gtkcombobox_select_color(BCG *Xgc) ;
+extern GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc,int init_color);
+extern int gtkcombobox_select_color(BCG *Xgc,int init_color) ;
 
 
 #endif 

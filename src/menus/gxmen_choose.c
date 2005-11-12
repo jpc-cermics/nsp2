@@ -132,7 +132,13 @@ int nsp_choose_(char *choose_title,char **Items,int nItems,char **but_names, int
   gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, TRUE, 0);
   cbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), cbox, FALSE, TRUE, 0);
-  button = gtk_button_new_with_label (but_names[0]);
+  if ( strcmp(but_names[0],"OK")==0 || strcmp(but_names[0],"Ok")==0) 
+    {
+      button = gtk_button_new_from_stock (GTK_STOCK_OK);
+    }
+  else 
+    button = gtk_button_new_with_label (but_names[0]);
+
   gtk_container_set_border_width (GTK_CONTAINER (button), 10);
   gtk_box_pack_start (GTK_BOX (cbox), button, TRUE, TRUE, 0);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",

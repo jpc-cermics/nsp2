@@ -85,7 +85,12 @@ int nsp_message_gtk1(char *message,char **buttons,int n_buttons)
   gtk_box_pack_start (GTK_BOX (box1), box2, FALSE, TRUE, 0);
   gtk_widget_show (box2);
 
-  button = gtk_button_new_with_label (buttons[0]);
+
+  if ( strcmp(buttons[0],"OK")==0 || strcmp(buttons[0],"Ok")==0) 
+    button = gtk_button_new_from_stock (GTK_STOCK_OK);
+  else 
+    button = gtk_button_new_with_label (buttons[0]);
+
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC(sci_message_ok),
 		      &answer);

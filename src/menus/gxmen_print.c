@@ -174,8 +174,7 @@ int nsp_menu_export (int *colored,int *orient,char **choices,int n_choices,int *
       gtk_widget_show(entry);
 
       /* ok */ 
-
-      okbutton = gtk_button_new_with_label ("OK");
+      okbutton = gtk_button_new_from_stock (GTK_STOCK_OK);
       gtk_signal_connect (GTK_OBJECT (okbutton), "clicked",
 			  GTK_SIGNAL_FUNC (menu_print_ok),
 			  &rep);
@@ -183,8 +182,7 @@ int nsp_menu_export (int *colored,int *orient,char **choices,int n_choices,int *
       gtk_table_attach (GTK_TABLE (table), okbutton, 0, 1, 4, 5,0,0,0,0);
       
       /* cancel */
-
-      cancelbutton = gtk_button_new_with_label ("Cancel");
+      cancelbutton = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
       gtk_signal_connect (GTK_OBJECT (cancelbutton), "clicked",
 			  GTK_SIGNAL_FUNC (menu_print_cancel),
 			  &rep);
@@ -328,7 +326,7 @@ int nsp_menu_print (int *colored,int *orient,char **choices,int n_choices,int *a
 
       /* ok */ 
 
-      okbutton = gtk_button_new_with_label ("OK");
+      okbutton = gtk_button_new_from_stock (GTK_STOCK_OK);
       gtk_signal_connect (GTK_OBJECT (okbutton), "clicked",
 			  GTK_SIGNAL_FUNC (menu_print_ok),
 			  &rep);
@@ -339,7 +337,7 @@ int nsp_menu_print (int *colored,int *orient,char **choices,int n_choices,int *a
 			(GtkAttachOptions) (0), 0, 0);
       
       /* cancel */
-      cancelbutton = gtk_button_new_with_label ("Cancel");
+      cancelbutton = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
       gtk_signal_connect (GTK_OBJECT (cancelbutton), "clicked",
 			  GTK_SIGNAL_FUNC (menu_print_cancel),
 			  &rep);

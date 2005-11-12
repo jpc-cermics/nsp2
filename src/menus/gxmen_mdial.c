@@ -145,7 +145,8 @@ int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  n
   gtk_box_pack_start (GTK_BOX (vbox), hbbox, FALSE, FALSE , 2);
   gtk_widget_show (hbbox);
 
-  button_ok = gtk_button_new_with_label ("OK");
+  button_ok = gtk_button_new_from_stock (GTK_STOCK_OK);
+
   gtk_container_add (GTK_CONTAINER (hbbox), button_ok);
 
   signals[1]=gtk_signal_connect (GTK_OBJECT (button_ok), "clicked",
@@ -158,7 +159,7 @@ int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  n
 
   /* cancel */
 
-  button_cancel = gtk_button_new_with_label ("Cancel");
+  button_cancel = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
   gtk_container_add (GTK_CONTAINER (hbbox), button_cancel);
   signals[2]=gtk_signal_connect (GTK_OBJECT (button_cancel), "clicked",
 				 GTK_SIGNAL_FUNC (sci_mdialog_cancel),

@@ -137,11 +137,7 @@ int nsp_matrix_dialog_(char *labels,char **Labels_v,char **Labels_h,char **Init,
   gtk_box_pack_start (GTK_BOX (vbox), hbbox, TRUE, TRUE, 2);
   gtk_widget_show (hbbox);
 
-#ifdef USE_GNOME
-  button = gnome_stock_button (GNOME_STOCK_BUTTON_OK);
-#else
-  button = gtk_button_new_with_label ("OK");
-#endif
+  button = gtk_button_new_from_stock (GTK_STOCK_OK);
   gtk_container_add (GTK_CONTAINER (hbbox), button);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
 		      GTK_SIGNAL_FUNC(sci_matdialog_ok),
@@ -150,11 +146,7 @@ int nsp_matrix_dialog_(char *labels,char **Labels_v,char **Labels_h,char **Init,
   gtk_widget_grab_default (button);
   gtk_widget_show (button);
 
-#ifdef USE_GNOME
-  button = gnome_stock_button (GNOME_STOCK_BUTTON_CANCEL);
-#else
-  button = gtk_button_new_with_label ("Cancel");
-#endif
+  button = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
   gtk_container_add (GTK_CONTAINER (hbbox), button);
   GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
   gtk_signal_connect (GTK_OBJECT (button), "clicked",
