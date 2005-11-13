@@ -15,6 +15,7 @@ function w=create_menu (depth, length, tearoff)
     menuitem.show[];
   end
   menuitem = gtkimagemenuitem_new(stock_id="gtk-open");
+  menuitem.connect["activate",menuitem_response,list("open activated")];
   menu.append[menuitem]
   menuitem.show[];
     
