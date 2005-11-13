@@ -378,4 +378,3 @@ int nsp_menu_print (int *colored,int *orient,char **choices,int n_choices,int *a
 }
 
 
-

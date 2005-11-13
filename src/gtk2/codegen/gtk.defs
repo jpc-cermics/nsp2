@@ -15854,7 +15854,7 @@
 
 (define-function cell_view_new_with_text
   (c-name "gtk_cell_view_new_with_text")
-  (return-type "CellView*")
+  (return-type "GtkCellView*")
   (parameters
     '("const-gchar*" "text")
   )
@@ -15862,7 +15862,7 @@
 
 (define-function cell_view_new_with_markup
   (c-name "gtk_cell_view_new_with_markup")
-  (return-type "CellView*")
+  (return-type "GtkCellView*")
   (parameters
     '("const-gchar*" "markup")
   )
@@ -15870,7 +15870,7 @@
 
 (define-function cell_view_new_with_pixbuf
   (c-name "gtk_cell_view_new_with_pixbuf")
-  (return-type "CellView*")
+  (return-type "GtkCellView*")
   (parameters
     '("GdkPixbuf*" "pixbuf")
   )

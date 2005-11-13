@@ -43,7 +43,7 @@ extern int nsp_message_modeless_(char *message);
 /* choices */
 
 extern int nsp_choices(char *label, char **items, int *defval, int nitems);
-extern int nsp_choices_with_combobox(char *title,NspList *L);
+extern int nsp_choices_with_combobox(char *title,NspList *L,int use_table);
 
 /* print */
 

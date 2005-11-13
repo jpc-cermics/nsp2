@@ -497,15 +497,19 @@ static int check_choices_sub_list(Stack stack,NspList *L,int count);
 int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 {
   Cell *Loc;
-  int count=0,m;
+  int count=0,m,use_table = FALSE;
   NspMatrix *M;
   NspSMatrix *Title;
   NspList *ListItems ; 
   nsp_string title; 
-  CheckRhs(2,2);
+  CheckRhs(2,3);
   CheckLhs(0,2);
   if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
   if ((ListItems  = GetListCopy(stack,2)) == NULLLIST) return RET_BUG;
+  if ( rhs == 3 ) 
+    {
+     if ( GetScalarBool (stack,3,&use_table) == FAIL) return RET_BUG;
+    }
   if ((title =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1))== NULL) return RET_BUG;
 
   /* walk throught list, check if its OK and convert to Utf8 */
@@ -522,24 +526,26 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 
   /* run the widget */
 
-  if ( nsp_choices_with_combobox(title,ListItems) == FAIL) 
-    return RET_BUG;
-
-  /* walk throught list and collect results */
-
-  m =nsp_list_length(ListItems);
-  if ((M= nsp_matrix_create(NVOID,'r',m,1))== NULLMAT) return RET_BUG; 
-
-  /* walk though the list */ 
-  Loc = ListItems->first;
-  count = 0;
-
-  while (Loc != NULL) 
+  if ( nsp_choices_with_combobox(title,ListItems,use_table) == FAIL) 
     {
-      NspMatrix *active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->O);
-      M->R[count]= active_field->R[0]+1;
-      Loc= Loc->next;
-      count++;
+      if ((M= nsp_matrix_create(NVOID,'r',0,0))== NULLMAT) return RET_BUG; 
+    }
+  else 
+    {
+      /* walk throught list and collect results */
+      m =nsp_list_length(ListItems);
+      if ((M= nsp_matrix_create(NVOID,'r',m,1))== NULLMAT) return RET_BUG; 
+      /* walk though the list */ 
+      Loc = ListItems->first;
+      count = 0;
+
+      while (Loc != NULL) 
+	{
+	  NspMatrix *active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->O);
+	  M->R[count]= active_field->R[0]+1;
+	  Loc= Loc->next;
+	  count++;
+	}
     }
   MoveObj(stack,1,(NspObject *) M);
   if ( lhs == 2 ) NSP_OBJECT(ListItems)->ret_pos = 2;
