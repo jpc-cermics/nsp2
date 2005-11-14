@@ -149,6 +149,9 @@ if test "$rest" = "yes"; then
        -font)
 	  prevarg="fontname"
 	  ;;
+       -n)
+	  prevarg="history"
+	  ;;
        -l)
           prevarg="language"
           ;;
@@ -183,6 +186,9 @@ if test "$rest" = "yes"; then
   zterm_arg=
   if test -n "$fontname"; then
     zterm_arg="-f $fontname"
+  fi
+  if test -n "$history"; then
+    zterm_arg="$zterm_arg -n $history"
   fi
 
   if test -n "$now"; then
