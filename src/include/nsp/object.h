@@ -157,7 +157,7 @@ int nsp_type_object_init(void);
 
 /* is it safe to cast instance o to object with id as type id */
 
-int check_cast(void *obj,NspTypeId id); 
+__inline__ int check_cast(void *obj,NspTypeId id); 
 
 /* instance o implements interface with id as type */
 
