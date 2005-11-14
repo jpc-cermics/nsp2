@@ -22,7 +22,7 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-typedef enum { choice_combo, choice_chooser_save, choice_chooser_open,choice_button_save,choice_button_open} 
+typedef enum { choice_combo,choice_color,choice_chooser_save, choice_chooser_open,choice_button_save,choice_button_open} 
   nsp_choice_value;
 typedef struct _nsp_choice_array 
 {
@@ -36,6 +36,7 @@ static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Msmn,int active);
 static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *title,char **Ms,int Msmn,int active);
 static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,char *title,char **Ms,int Msmn,int active);
 static void nsp_setup_combo_from_list(nsp_choice_array *ca,GtkWidget *box,NspList *L,int row);
+static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,int Msmn,int active);
 
 /*
     l1=list('choice 1',1,['toggle c1','toggle c2','toggle c3']);
@@ -197,54 +198,20 @@ static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Msmn,int active)
  * Return value: 
  **/
 
-static void nsp_button_filename_save(GtkWidget *widget,char *title);
 
 #ifdef OPEN26
-static void nsp_file_chooser_button_open_2_6(nsp_choice_array *ca,char *title,char **Ms,int Msmn);
+static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Msmn);
 #else 
-static void nsp_file_chooser_button_open_2_4(nsp_choice_array *ca,char *title,char **Ms,int Msmn);
+static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Msmn);
 #endif 
+
+static GtkWidget * nsp_file_chooser_button_save(char *title,char **Ms,int Msmn,int active);
 
 static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *title,char **Ms,int Msmn,int active)
 {
-  GtkWidget *tmp;
-  GtkWidget *boom; 
-  if ( strncmp(title,"colors",6)==0 &&  strlen(title) > 7 )
-    {
-      BCG *Xgc;
-      Xgc=check_graphic_window();
-      ca->widget = nsp_gtkcombobox_colormap_new(Xgc,active+1);
-      ca->type = choice_combo;
-      tmp = gtk_frame_new (title+6);
-    }
-  else   if ( strncmp(title,"filename_open",13)==0 &&  strlen(title) > 14 )
-    {
-#ifdef OPEN26
-      nsp_file_chooser_button_open_2_6(ca,title+13,Ms,Msmn);
-#else 
-      nsp_file_chooser_button_open_2_4(ca,title+13,Ms,Msmn);
-#endif
-      tmp = gtk_frame_new (title+14);
-    }
-  else   if ( strncmp(title,"filename_save",13)==0 &&  strlen(title) > 14 )
-    {
-      /*  gtk_file_chooser_button_new do not support GTK_FILE_CHOOSER_ACTION_SAVE  */
-      if ( active == 1 && Msmn >= 1) 
-	ca->widget = gtk_button_new_with_label(Ms[0]);
-      else
-	ca->widget  = gtk_button_new_with_label("");
-      gtk_signal_connect (GTK_OBJECT (ca->widget), "clicked",
-			  GTK_SIGNAL_FUNC(nsp_button_filename_save),
-			  title+14);
-      ca->type = choice_button_save;
-      tmp = gtk_frame_new (title+14);
-    }
-  else
-    {
-      ca->widget  = nsp_setup_combo_box_text(Ms,Msmn, active);
-      ca->type = choice_combo;
-      tmp = gtk_frame_new (title);
-    }
+  GtkWidget *tmp,*boom;
+  ca->widget = nsp_setup_choice(ca->type,title,Ms,Msmn,active);
+  tmp = gtk_frame_new (title);
   gtk_box_pack_start (GTK_BOX (box), tmp, FALSE, FALSE, 0);
   boom = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (boom), 5);
@@ -257,51 +224,108 @@ static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *tit
 static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,char *title,char **Ms,int Msmn,int active)
 {
   GtkWidget *tmp;
-  if ( strncmp(title,"colors",6)==0 &&  strlen(title) > 7 )
-    {
-      BCG *Xgc;
-      Xgc=check_graphic_window();
-      ca->widget = nsp_gtkcombobox_colormap_new(Xgc,active+1);
-      tmp = gtk_label_new (title+6);
-      ca->type = choice_combo;
-    }
-  else   if ( strncmp(title,"filename_open",13)==0 &&  strlen(title) > 14 )
-    {
-#ifdef OPEN26
-      nsp_file_chooser_button_open_2_6(ca,title+13,Ms,Msmn);
-#else 
-      nsp_file_chooser_button_open_2_4(ca,title+13,Ms,Msmn);
-#endif
-      tmp = gtk_label_new (title+14);
-    }
-  else   if ( strncmp(title,"filename_save",13)==0 &&  strlen(title) > 14 )
-    {
-      /*  gtk_file_chooser_button_new do not support GTK_FILE_CHOOSER_ACTION_SAVE  */
-      if ( active == 1 && Msmn >= 1) 
-	ca->widget = gtk_button_new_with_label(Ms[0]);
-      else
-	ca->widget = gtk_button_new_with_label("");
-      gtk_signal_connect (GTK_OBJECT (ca->widget), "clicked",
-			  GTK_SIGNAL_FUNC(nsp_button_filename_save),
-			  title+14);
-      ca->type = choice_button_save;
-      tmp = gtk_label_new (title+14);
-    }
-  else 
-    {
-      ca->widget  = nsp_setup_combo_box_text(Ms,Msmn, active);
-      ca->type = choice_combo;
-      tmp = gtk_label_new (title);
-    }
-
+  ca->widget = nsp_setup_choice(ca->type,title,Ms,Msmn,active);
+  tmp = gtk_label_new (title);
   gtk_misc_set_alignment (GTK_MISC (tmp), 0.0, 0.5);
   gtk_table_attach_defaults (GTK_TABLE (table), tmp, 0, 1, row,row+1);
   gtk_table_attach_defaults (GTK_TABLE (table), ca->widget, 1, 2, row,row+1);
 }
 
+/* creates a widget according to type  */
 
-/* if gtk_file_chooser_button_new 
- * does not work we use our own button.
+static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,int Msmn,int active)
+{
+  BCG *Xgc;
+  switch (type) 
+    {
+    case choice_combo: 
+      return nsp_setup_combo_box_text(Ms,Msmn, active);
+      break;
+    case choice_color: 
+      Xgc=check_graphic_window();
+      return  nsp_gtkcombobox_colormap_new(Xgc,active+1);
+      break;
+    case choice_chooser_save:
+      break;
+    case choice_chooser_open:
+#ifdef OPEN26
+      return nsp_file_chooser_button_open_2_6(title,Ms,Msmn);
+#endif 
+      break;
+    case choice_button_save:
+      return nsp_file_chooser_button_save(title,Ms,Msmn,active);
+      break;
+    case choice_button_open: 
+#ifndef OPEN26
+      return nsp_file_chooser_button_open_2_4(title,Ms,Msmn);
+#endif 
+      break;
+    }
+  return NULL;
+}
+
+
+static char * nsp_get_choice_from_title(char *title,nsp_choice_value *type)
+{
+  if ( strncmp(title,"colors",6)==0 &&  strlen(title) > 7 )
+    {
+      *type = choice_color;
+      return title+6;
+    }
+  else   if ( strncmp(title,"filename_open",13)==0 &&  strlen(title) > 14 )
+    {
+#ifdef OPEN26
+      *type = choice_chooser_open;
+#else 
+      *type = choice_button_open;
+#endif
+      return title+13;
+    }
+  else   if ( strncmp(title,"filename_save",13)==0 &&  strlen(title) > 14 )
+    {
+      *type = choice_button_save;
+      return title+13;
+    }
+  else 
+    {
+      *type = choice_combo;
+      return title;
+    }
+  return NULL;
+}
+
+
+
+/* 
+ * a button which activate a gtk_file_chooser_dialog 
+ * for saving a file
+ * even in gtk 2.8  gtk_file_chooser_button_new do not work 
+ * for saving. 
+ */
+
+static void nsp_button_filename_save(GtkWidget *widget,char *title);
+
+
+static GtkWidget * nsp_file_chooser_button_save(char *title,char **Ms,int Msmn,int active)
+{
+  GtkWidget *cbox;
+  if ( active == 1 && Msmn >= 1) 
+    {
+      cbox = gtk_button_new_with_label(Ms[0]);
+      g_object_set_data_full (G_OBJECT(cbox),"filename",g_strdup(Ms[0]), g_free);
+    }
+  else
+    {
+      cbox = gtk_button_new_with_label("");
+    }
+  gtk_signal_connect (GTK_OBJECT (cbox), "clicked",
+		      GTK_SIGNAL_FUNC(nsp_button_filename_save),
+		      title);
+  return cbox;
+}
+
+/* associated handler 
+ *
  */
 
 static void nsp_button_filename_save(GtkWidget *widget,char *title)
@@ -326,17 +350,15 @@ static void nsp_button_filename_save(GtkWidget *widget,char *title)
 }
 
 
-
 #ifdef OPEN26
 
 /* used when gtk_file_chooser_button_new exists 
  * version 2.6 
  */
 
-static void nsp_file_chooser_button_open_2_6(nsp_choice_array *ca,char *title,char **Ms,int Msmn)
+static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Msmn);
 {
   GtkWidget *cbox;
-
   cbox = gtk_file_chooser_button_new (title,GTK_FILE_CHOOSER_ACTION_OPEN);
   if (  Msmn > 2 ) 
     {
@@ -354,8 +376,7 @@ static void nsp_file_chooser_button_open_2_6(nsp_choice_array *ca,char *title,ch
       gtk_file_filter_add_pattern(filter,"*");
       gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(cbox),filter);
     }
-  ca->widget = cbox;
-  ca->type = choice_chooser_open;
+  return cbox;
 }
 
 #else 
@@ -375,7 +396,7 @@ struct _nsp_open_filename_open_data {
 static void nsp_button_filename_open(GtkWidget *widget,void *args);
 
 
-static void nsp_file_chooser_button_open_2_4(nsp_choice_array *ca,char *title,char **Ms,int Msmn)
+static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Msmn)
 {
   nsp_button_filename_open_data *data= NULL;
   GtkWidget *cbox;
@@ -394,8 +415,7 @@ static void nsp_file_chooser_button_open_2_4(nsp_choice_array *ca,char *title,ch
   gtk_signal_connect (GTK_OBJECT (cbox), "clicked",
 		      GTK_SIGNAL_FUNC(nsp_button_filename_open),
 		      NULL);
-  ca->widget = cbox;
-  ca->type = choice_button_open;
+  return  cbox;
 }
 
 /* handler for button 
@@ -456,13 +476,17 @@ static void nsp_button_filename_open(GtkWidget *widget,void *args)
 
 static void nsp_setup_combo_from_list(nsp_choice_array *ca,GtkWidget *box,NspList *L,int use_row)
 {
+  nsp_choice_value type;
   int active ;
-  char *title;
+  char *title,*title_and_type;
   NspSMatrix *entries;
   Cell *Loc= L->first;
-  title = ((NspSMatrix *) Loc->O)->S[0]; Loc= Loc->next;
+  title_and_type = ((NspSMatrix *) Loc->O)->S[0]; Loc= Loc->next;
   active = ((NspMatrix *) Loc->O)->R[0]; Loc= Loc->next;
   entries = ((NspSMatrix *) Loc->O);
+ 
+  title= nsp_get_choice_from_title(title_and_type,&type);
+  ca->type = type;
   if ( use_row == -1 )
     {
       /* here box is a box */
@@ -488,6 +512,7 @@ static void nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
       switch (  array[i].type )
 	{
 	case  choice_combo :
+	case  choice_color :
 	  active_field->R[0] = gtk_combo_box_get_active(GTK_COMBO_BOX (array[i].widget));
 	  break;
 	case choice_chooser_save:
@@ -526,153 +551,6 @@ static void nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
     }
 }
 
-/*
- * old version 
- */
-
-typedef enum { COMBO_OK,COMBO_CANCEL,COMBO_DESTROYED, COMBO_RESET } combo_state;
-
-static void nsp_ok(GtkWidget *widget,int *answer)
-{
-  *answer = COMBO_OK;
-  gtk_main_quit();
-}
-
-static void nsp_cancel(GtkWidget *widget,int *answer)
-{
-  *answer = COMBO_CANCEL;
-  gtk_main_quit();
-}
-
-static void nsp_destroyed(GtkWidget *widget,int *answer)
-{
-  if ( *answer == COMBO_RESET ) 
-    {
-      /* we get there when we destroy the window after an OK 
-       * or a Cancel and we do not want to quit gtk_main twice 
-       */
-
-      *answer = COMBO_DESTROYED;
-      gtk_main_quit();
-    }
-  else 
-    *answer = COMBO_DESTROYED;
-}
-
-int nsp_choices_with_combobox_old(char *title,NspList *L)
-{
-  GtkWidget *window,*mainbox,*button_ok,*button_cancel, *hbbox,*labelw,*table;
-  int i,  n = nsp_list_length(L), use_table = 0;
-  int answer = COMBO_RESET ;
-  Cell *Loc= L->first;
-  nsp_choice_array *combo_entry_array;
-
-  start_sci_gtk(); /* be sure that gtk is started */
-
-  if ((combo_entry_array = malloc(n*sizeof(nsp_choice_array)))== NULL) return FAIL;
-
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), "Nsp choices");
-  gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
-  gtk_window_set_wmclass  (GTK_WINDOW (window), "choices", "Nsp");
-
-
-  gtk_signal_connect (GTK_OBJECT (window), "destroy",
-		      GTK_SIGNAL_FUNC(nsp_destroyed),
-		      &answer);
-
-  gtk_container_set_border_width (GTK_CONTAINER (window), 5);
-  /* g_signal_connect (window, "destroy", gtk_main_quit, NULL); */
-
-  mainbox = gtk_vbox_new (FALSE, 2);
-  gtk_container_add (GTK_CONTAINER (window), mainbox);
-
-
-  /* set the combo : arranged in frames 
-   * or in a table 
-   */
-
-  if ( use_table ) 
-    {
-      labelw = gtk_frame_new (title);
-      gtk_box_pack_start (GTK_BOX (mainbox), labelw, FALSE, FALSE, 0);
-      gtk_widget_show (labelw);
-
-      table = gtk_table_new (n, 2, FALSE);    
-      gtk_container_set_border_width (GTK_CONTAINER (table),5);
-      gtk_table_set_col_spacing (GTK_TABLE (table), 0, 10);
-      gtk_table_set_row_spacings (GTK_TABLE (table), 3);
-      for ( i = 0 ; i < n ; i++) 
-	{
-	  nsp_setup_combo_from_list(&combo_entry_array[i],table,(NspList *) Loc->O,i);
-	  Loc = Loc->next;
-	}
-      gtk_container_add (GTK_CONTAINER (labelw), table);
-    }
-  else 
-    {
-      /* label widget description of the choices */
-      labelw = gtk_label_new (title);
-      gtk_box_pack_start (GTK_BOX (mainbox), labelw, FALSE, FALSE, 0);
-      gtk_widget_show (labelw);
-
-      for ( i = 0 ; i < n ; i++) 
-	{
-	  nsp_setup_combo_from_list(&combo_entry_array[i],mainbox,(NspList *) Loc->O,-1);
-	  Loc = Loc->next;
-	}
-    }
-
-  /* hbox for buttons */
-
-  hbbox = gtk_hbutton_box_new ();
-  gtk_box_pack_start (GTK_BOX (mainbox), hbbox, FALSE, FALSE , 2);
-  gtk_widget_show (hbbox);
-
-  /* Ok and Cancel buttons */
-
-  button_ok = gtk_button_new_from_stock (GTK_STOCK_OK);
-  gtk_container_add (GTK_CONTAINER (hbbox), button_ok);
-  gtk_signal_connect (GTK_OBJECT (button_ok), "clicked",
-		      GTK_SIGNAL_FUNC(nsp_ok),
-		      &answer);
-  GTK_WIDGET_SET_FLAGS (button_ok, GTK_CAN_DEFAULT);
-  gtk_widget_grab_default (button_ok);
-
-  button_cancel = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
-  gtk_container_add (GTK_CONTAINER (hbbox), button_cancel);
-  GTK_WIDGET_SET_FLAGS (button_cancel, GTK_CAN_DEFAULT);
-  gtk_signal_connect (GTK_OBJECT (button_cancel), "clicked",
-		      GTK_SIGNAL_FUNC(nsp_cancel),
-		      &answer);
-
-  gtk_widget_show_all (window);
-
-  while (1) 
-    {
-      gtk_main();
-      if (answer != COMBO_RESET ) break;
-    }
-  switch (answer) 
-    {
-    case COMBO_OK :
-      /* fill L with results 
-       */
-      nsp_combo_update_choices(L,combo_entry_array);
-      FREE(combo_entry_array);
-      gtk_widget_destroy(window);
-      answer = OK;
-      break;
-    case COMBO_CANCEL :
-      answer = FAIL;
-      gtk_widget_destroy(window);
-      break;
-    case COMBO_DESTROYED:
-      answer = FAIL;
-      break;
-    }
-  return answer;
-}
 
 
 
