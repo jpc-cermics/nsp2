@@ -31,6 +31,9 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
+char * nsp_get_filename_save(const char *title,const char *dirname);
+char * nsp_get_filename_open(const char *title,const char *dirname,char **filters);
+
 /*--------------------------------------------------------------
  * Gtk version for file selection 
  *--------------------------------------------------------------*/
@@ -172,5 +175,98 @@ int  nsp_get_file_window(char *filemask,char **file,char *dirname,
       gtk_signal_disconnect(GTK_OBJECT (GTK_FILE_SELECTION (window)->cancel_button),signals[2]);
       gtk_widget_destroy(window);
     }
+#if 0
+  {
+    char *res ; 
+    char *filters[]={"eps","*.eps","pdf","*.pdf","both","*.pdf,*.eps",NULL};
+    res= nsp_get_filename_save("Save file","/tmp",filters);
+    Sciprintf("filename = %s\n",res);g_free(res);
+    res = nsp_get_filename_open("Open","/tmp",filters);
+    Sciprintf("filename = %s\n",res);g_free(res);
+  }
+#endif
+
   return (rep == GETF_OK) ? TRUE : FALSE ; 
+}
+
+
+/* specific widget for save or open 
+ */
+
+/**
+ * nsp_get_filename_save:
+ * @title: 
+ * @dirname: 
+ * 
+ * returned value should be freed by g_free 
+ * 
+ * Return value: 
+ **/
+
+char * nsp_get_filename_save(const char *title,const char *dirname)
+{
+  char *filename = NULL;
+  GtkWidget *dialog;
+  dialog = gtk_file_chooser_dialog_new (title,
+					NULL,
+					GTK_FILE_CHOOSER_ACTION_SAVE,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+					NULL);
+  if ( dirname ) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),dirname);
+
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+    {
+      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+    }
+  gtk_widget_destroy (dialog);
+  return filename ;
+}
+
+/**
+ * nsp_get_filename_open:
+ * @title: 
+ * @dirname: 
+ * @filters: 
+ * @err: 
+ * 
+ * 
+ * returned value should be freed by g_free 
+ * 
+ * Return value: 
+ **/
+
+char * nsp_get_filename_open(const char *title,const char *dirname,char **filters)
+{
+  char *filename=NULL;
+  GtkWidget *dialog;
+
+  dialog = gtk_file_chooser_dialog_new (title,
+					NULL,
+					GTK_FILE_CHOOSER_ACTION_OPEN,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					NULL);
+  if ( dirname ) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),dirname);
+  if ( filters != NULL  ) 
+    {
+      GtkFileFilter* filter ;
+      while ( *filters != NULL) 
+	{
+	  filter = gtk_file_filter_new();
+	  gtk_file_filter_set_name (GTK_FILE_FILTER(filter),*filters);filters++;
+	  gtk_file_filter_add_pattern(filter,*filters);filters++;
+	  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog),filter);
+	}
+      filter = gtk_file_filter_new();
+      gtk_file_filter_set_name (GTK_FILE_FILTER(filter),"all files");
+      gtk_file_filter_add_pattern(filter,"*");
+      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog),filter);
+    }
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+    {
+      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+    }
+  gtk_widget_destroy (dialog);
+  return filename;
 }
