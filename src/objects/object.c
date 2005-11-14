@@ -159,9 +159,10 @@ NspObject *new_object(void)
  * Return value: %TRUE or %FALSE.
  **/
 
-#ifndef HAVE_INLINE 
+#ifndef HAVE_INLINEXX 
 /* we need here to insert code */
-#include "object-inlined.h"
+#define NSP_OBJECT_INLINED 
+#include "nsp/object-inlined.h"
 #endif
 
 /**
