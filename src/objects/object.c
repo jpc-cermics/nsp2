@@ -159,24 +159,21 @@ NspObject *new_object(void)
  * Return value: %TRUE or %FALSE.
  **/
 
-__inline__ int check_cast(void *obj,NspTypeId id)
+#ifndef HAVE_INLINE 
+int check_cast(void *obj,NspTypeId id)
 {
-  NspObject *ob=obj;
   /* down to basetype */
-  NspTypeBase *type = ob->basetype;
-
+  NspTypeBase *type = ((NspObject *)obj)->basetype;
   /* the following line speed up the usual case (bruno) */
   if ( type->id == id ) return TRUE;
-
   /* walk up and try to match */
-  type = type->surtype;
-  while ( type != NULL )
+  while ((type= type->surtype) != NULL )
     {
       if ( type->id == id ) return TRUE;
-      type = type->surtype;
     }
   return FALSE;
 }
+#endif 
 
 /**
  * check_implements:

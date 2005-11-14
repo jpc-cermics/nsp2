@@ -157,7 +157,23 @@ int nsp_type_object_init(void);
 
 /* is it safe to cast instance o to object with id as type id */
 
-__inline__ int check_cast(void *obj,NspTypeId id); 
+#ifndef HAVE_INLINE 
+extern int check_cast(void *obj,NspTypeId id);
+#else 
+static inline int check_cast(void *obj,NspTypeId id)
+{
+  /* down to basetype */
+  NspTypeBase *type = ((NspObject *)obj)->basetype;
+  /* the following line speed up the usual case (bruno) */
+  if ( type->id == id ) return TRUE;
+  /* walk up and try to match */
+  while ((type= type->surtype) != NULL )
+    {
+      if ( type->id == id ) return TRUE;
+    }
+  return FALSE;
+}
+#endif
 
 /* instance o implements interface with id as type */
 
