@@ -159,15 +159,20 @@ NspObject *new_object(void)
  * Return value: %TRUE or %FALSE.
  **/
 
-int check_cast(void *obj,NspTypeId id)
+__inline__ int check_cast(void *obj,NspTypeId id)
 {
   NspObject *ob=obj;
   /* down to basetype */
   NspTypeBase *type = ob->basetype;
+
+  /* the following line speed up the usual case (bruno) */
+  if ( type->id == id ) return TRUE;
+
   /* walk up and try to match */
-  while ( type != NULL) 
+  type = type->surtype;
+  while ( type != NULL )
     {
-      if ( type->id == id) return TRUE;
+      if ( type->id == id ) return TRUE;
       type = type->surtype;
     }
   return FALSE;
