@@ -22,7 +22,8 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-typedef enum { choice_combo, choice_chooser_save, choice_chooser_open,choice_button_save} nsp_choice_value;
+typedef enum { choice_combo, choice_chooser_save, choice_chooser_open,choice_button_save,choice_button_open} 
+  nsp_choice_value;
 typedef struct _nsp_choice_array 
 {
   GtkWidget *widget;
@@ -198,80 +199,108 @@ static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Msmn,int active)
 
 static void nsp_button_filename_save(GtkWidget *widget,char *title);
 
+#ifdef OPEN26
+static void nsp_file_chooser_button_open_2_6(nsp_choice_array *ca,char *title,char **Ms,int Msmn);
+#else 
+static void nsp_file_chooser_button_open_2_4(nsp_choice_array *ca,char *title,char **Ms,int Msmn);
+#endif 
+
 static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *title,char **Ms,int Msmn,int active)
 {
   GtkWidget *tmp;
-  GtkWidget *boom,*cbox;
+  GtkWidget *boom; 
   if ( strncmp(title,"colors",6)==0 &&  strlen(title) > 7 )
     {
       BCG *Xgc;
       Xgc=check_graphic_window();
-      cbox = nsp_gtkcombobox_colormap_new(Xgc,active+1);
-      tmp = gtk_frame_new (title+6);
+      ca->widget = nsp_gtkcombobox_colormap_new(Xgc,active+1);
       ca->type = choice_combo;
+      tmp = gtk_frame_new (title+6);
     }
   else   if ( strncmp(title,"filename_open",13)==0 &&  strlen(title) > 14 )
     {
-      cbox = gtk_file_chooser_button_new (title+13,GTK_FILE_CHOOSER_ACTION_OPEN);
-      if (  Msmn > 2 ) 
-	{
-	  int i;
-	  GtkFileFilter* filter ;
-	  for ( i=1; i < Msmn ; i++) 
-	    {
-	      filter = gtk_file_filter_new();
-	      gtk_file_filter_set_name (GTK_FILE_FILTER(filter),Ms[i]);
-	      gtk_file_filter_add_pattern(filter,Ms[i]);
-	      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(cbox),filter);
-	    }
-	  filter = gtk_file_filter_new();
-	  gtk_file_filter_set_name (GTK_FILE_FILTER(filter),"all files");
-	  gtk_file_filter_add_pattern(filter,"*");
-	  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(cbox),filter);
-	}
+#ifdef OPEN26
+      nsp_file_chooser_button_open_2_6(ca,title+13,Ms,Msmn);
+#else 
+      nsp_file_chooser_button_open_2_4(ca,title+13,Ms,Msmn);
+#endif
       tmp = gtk_frame_new (title+14);
-      ca->type = choice_chooser_open;
     }
   else   if ( strncmp(title,"filename_save",13)==0 &&  strlen(title) > 14 )
     {
-      /* pb with save which does not support GTK_FILE_CHOOSER_ACTION_SAVE
-       * in my version.
-       */
-#if 1
+      /*  gtk_file_chooser_button_new do not support GTK_FILE_CHOOSER_ACTION_SAVE  */
       if ( active == 1 && Msmn >= 1) 
-	cbox = gtk_button_new_with_label(Ms[0]);
+	ca->widget = gtk_button_new_with_label(Ms[0]);
       else
-	cbox = gtk_button_new_with_label("");
-      gtk_signal_connect (GTK_OBJECT (cbox), "clicked",
+	ca->widget  = gtk_button_new_with_label("");
+      gtk_signal_connect (GTK_OBJECT (ca->widget), "clicked",
 			  GTK_SIGNAL_FUNC(nsp_button_filename_save),
 			  title+14);
       ca->type = choice_button_save;
-#else 
-      /* cbox = gtk_file_chooser_button_new_with_dialog(dialog); */
-      cbox = gtk_file_chooser_button_new (title+13,GTK_FILE_CHOOSER_ACTION_SAVE );
-      ca->type = choice_chooser_save;
-      if ( active == 1 && Msmn > 1 ) 
-	{
-	  gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(cbox),Ms[0]);
-	}
-#endif
       tmp = gtk_frame_new (title+14);
     }
   else
     {
-      cbox = nsp_setup_combo_box_text(Ms,Msmn, active);
-      tmp = gtk_frame_new (title);
+      ca->widget  = nsp_setup_combo_box_text(Ms,Msmn, active);
       ca->type = choice_combo;
+      tmp = gtk_frame_new (title);
     }
-  ca->widget = cbox;
   gtk_box_pack_start (GTK_BOX (box), tmp, FALSE, FALSE, 0);
   boom = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (boom), 5);
   gtk_container_add (GTK_CONTAINER (tmp), boom);
-  gtk_container_add (GTK_CONTAINER (boom),cbox);
+  gtk_container_add (GTK_CONTAINER (boom),ca->widget);
 }
 
-/* if gtk_file_chooser_button_new (title+13,GTK_FILE_CHOOSER_ACTION_SAVE );
+/* the same but we store in a table */
+
+static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,char *title,char **Ms,int Msmn,int active)
+{
+  GtkWidget *tmp;
+  if ( strncmp(title,"colors",6)==0 &&  strlen(title) > 7 )
+    {
+      BCG *Xgc;
+      Xgc=check_graphic_window();
+      ca->widget = nsp_gtkcombobox_colormap_new(Xgc,active+1);
+      tmp = gtk_label_new (title+6);
+      ca->type = choice_combo;
+    }
+  else   if ( strncmp(title,"filename_open",13)==0 &&  strlen(title) > 14 )
+    {
+#ifdef OPEN26
+      nsp_file_chooser_button_open_2_6(ca,title+13,Ms,Msmn);
+#else 
+      nsp_file_chooser_button_open_2_4(ca,title+13,Ms,Msmn);
+#endif
+      tmp = gtk_label_new (title+14);
+    }
+  else   if ( strncmp(title,"filename_save",13)==0 &&  strlen(title) > 14 )
+    {
+      /*  gtk_file_chooser_button_new do not support GTK_FILE_CHOOSER_ACTION_SAVE  */
+      if ( active == 1 && Msmn >= 1) 
+	ca->widget = gtk_button_new_with_label(Ms[0]);
+      else
+	ca->widget = gtk_button_new_with_label("");
+      gtk_signal_connect (GTK_OBJECT (ca->widget), "clicked",
+			  GTK_SIGNAL_FUNC(nsp_button_filename_save),
+			  title+14);
+      ca->type = choice_button_save;
+      tmp = gtk_label_new (title+14);
+    }
+  else 
+    {
+      ca->widget  = nsp_setup_combo_box_text(Ms,Msmn, active);
+      ca->type = choice_combo;
+      tmp = gtk_label_new (title);
+    }
+
+  gtk_misc_set_alignment (GTK_MISC (tmp), 0.0, 0.5);
+  gtk_table_attach_defaults (GTK_TABLE (table), tmp, 0, 1, row,row+1);
+  gtk_table_attach_defaults (GTK_TABLE (table), ca->widget, 1, 2, row,row+1);
+}
+
+
+/* if gtk_file_chooser_button_new 
  * does not work we use our own button.
  */
 
@@ -282,91 +311,138 @@ static void nsp_button_filename_save(GtkWidget *widget,char *title)
 					NULL,
 					GTK_FILE_CHOOSER_ACTION_SAVE,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
 					NULL);
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-      char *filename;
+      char *filename,*base;
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-      gtk_button_set_label(GTK_BUTTON(widget),filename);
-      g_free (filename);
+      base = g_path_get_basename(filename);
+      gtk_button_set_label(GTK_BUTTON(widget),base);
+      g_object_set_data_full (G_OBJECT(widget),"filename",filename, g_free);
+      g_free (base); 
     }
   gtk_widget_destroy (dialog);
 }
 
 
-/* the same but we store in a table */
 
-static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,char *title,char **Ms,int Msmn,int active)
+#ifdef OPEN26
+
+/* used when gtk_file_chooser_button_new exists 
+ * version 2.6 
+ */
+
+static void nsp_file_chooser_button_open_2_6(nsp_choice_array *ca,char *title,char **Ms,int Msmn)
 {
-  GtkWidget *tmp;
   GtkWidget *cbox;
-  if ( strncmp(title,"colors",6)==0 &&  strlen(title) > 7 )
+
+  cbox = gtk_file_chooser_button_new (title,GTK_FILE_CHOOSER_ACTION_OPEN);
+  if (  Msmn > 2 ) 
     {
-      BCG *Xgc;
-      Xgc=check_graphic_window();
-      cbox = nsp_gtkcombobox_colormap_new(Xgc,active+1);
-      tmp = gtk_label_new (title+6);
-      ca->type = choice_combo;
-    }
-  else   if ( strncmp(title,"filename_open",13)==0 &&  strlen(title) > 14 )
-    {
-      cbox = gtk_file_chooser_button_new (title+13,GTK_FILE_CHOOSER_ACTION_OPEN);
-      tmp = gtk_label_new (title+14);
-      if (  Msmn > 2 ) 
+      int i;
+      GtkFileFilter* filter ;
+      for ( i=1; i < Msmn ; i++) 
 	{
-	  int i;
-	  GtkFileFilter* filter ;
-	  for ( i=1; i < Msmn ; i++) 
-	    {
-	      filter = gtk_file_filter_new();
-	      gtk_file_filter_set_name (GTK_FILE_FILTER(filter),Ms[i]);
-	      gtk_file_filter_add_pattern(filter,Ms[i]);
-	      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(cbox),filter);
-	    }
 	  filter = gtk_file_filter_new();
-	  gtk_file_filter_set_name (GTK_FILE_FILTER(filter),"all files");
-	  gtk_file_filter_add_pattern(filter,"*");
+	  gtk_file_filter_set_name (GTK_FILE_FILTER(filter),Ms[i]);
+	  gtk_file_filter_add_pattern(filter,Ms[i]);
 	  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(cbox),filter);
 	}
-      ca->type = choice_chooser_open;
-    }
-  else   if ( strncmp(title,"filename_save",13)==0 &&  strlen(title) > 14 )
-    {
-      /* pb with save which does not support GTK_FILE_CHOOSER_ACTION_SAVE
-       * in my version.
-       */
-#if 1 
-      if ( active == 1 && Msmn >= 1) 
-	cbox = gtk_button_new_with_label(Ms[0]);
-      else
-	cbox = gtk_button_new_with_label("");
-      gtk_signal_connect (GTK_OBJECT (cbox), "clicked",
-			  GTK_SIGNAL_FUNC(nsp_button_filename_save),
-			  title+14);
-      ca->type = choice_button_save;
-#else 
-      /* cbox = gtk_file_chooser_button_new_with_dialog(dialog); */
-      cbox = gtk_file_chooser_button_new (title+13,GTK_FILE_CHOOSER_ACTION_SAVE );
-      ca->type = choice_chooser_save;
-      if ( active == 1 && Msmn > 1 ) 
-	{
-	  gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(cbox),Ms[0]);
-	}
-#endif
-      tmp = gtk_label_new (title+14);
-    }
-  else 
-    {
-      cbox = nsp_setup_combo_box_text(Ms,Msmn, active);
-      ca->type = choice_combo;
-      tmp = gtk_label_new (title);
+      filter = gtk_file_filter_new();
+      gtk_file_filter_set_name (GTK_FILE_FILTER(filter),"all files");
+      gtk_file_filter_add_pattern(filter,"*");
+      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(cbox),filter);
     }
   ca->widget = cbox;
-  gtk_misc_set_alignment (GTK_MISC (tmp), 0.0, 0.5);
-  gtk_table_attach_defaults (GTK_TABLE (table), tmp, 0, 1, row,row+1);
-  gtk_table_attach_defaults (GTK_TABLE (table), cbox, 1, 2, row,row+1);
+  ca->type = choice_chooser_open;
 }
+
+#else 
+
+/* version for gtk 2.4 
+ *
+ */
+
+typedef struct _nsp_open_filename_open_data nsp_button_filename_open_data;
+
+struct _nsp_open_filename_open_data {
+  int Msmn;
+  char **Ms;
+  char *title;
+};
+
+static void nsp_button_filename_open(GtkWidget *widget,void *args);
+
+
+static void nsp_file_chooser_button_open_2_4(nsp_choice_array *ca,char *title,char **Ms,int Msmn)
+{
+  nsp_button_filename_open_data *data= NULL;
+  GtkWidget *cbox;
+  cbox = gtk_button_new_with_label("");
+  data = malloc( sizeof(nsp_button_filename_open_data));
+  if ( data != NULL) 
+    {
+      data->Msmn = Msmn;
+      data->Ms = Ms;
+      data->title= title;
+    }
+  /* attach data to cbox */
+  g_object_set_data_full (G_OBJECT(cbox),"button_open",data, g_free);
+
+  /* the handler will have to free data */
+  gtk_signal_connect (GTK_OBJECT (cbox), "clicked",
+		      GTK_SIGNAL_FUNC(nsp_button_filename_open),
+		      NULL);
+  ca->widget = cbox;
+  ca->type = choice_button_open;
+}
+
+/* handler for button 
+ *
+ */
+
+static void nsp_button_filename_open(GtkWidget *widget,void *args)
+{
+  nsp_button_filename_open_data *data;
+  GtkWidget *dialog;
+  data  = g_object_get_data(G_OBJECT(widget),"button_open");
+
+  dialog = gtk_file_chooser_dialog_new (data->title,
+					NULL,
+					GTK_FILE_CHOOSER_ACTION_OPEN,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					NULL);
+  if (  data->Msmn > 2 ) 
+    {
+      int i;
+      GtkFileFilter* filter ;
+      for ( i=1; i < data->Msmn ; i++) 
+	{
+	  filter = gtk_file_filter_new();
+	  gtk_file_filter_set_name (GTK_FILE_FILTER(filter),data->Ms[i]);
+	  gtk_file_filter_add_pattern(filter,data->Ms[i]);
+	  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog),filter);
+	}
+      filter = gtk_file_filter_new();
+      gtk_file_filter_set_name (GTK_FILE_FILTER(filter),"all files");
+      gtk_file_filter_add_pattern(filter,"*");
+      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog),filter);
+    }
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+    {
+      char *filename,*base;
+      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+      base = g_path_get_basename(filename);
+      gtk_button_set_label(GTK_BUTTON(widget),base);
+      g_object_set_data_full (G_OBJECT(widget),"filename",filename, g_free);
+      g_free (base); 
+    }
+  gtk_widget_destroy (dialog);
+}
+
+#endif /* OPEN26*/
 
 /**
  * nsp_setup_combo_from_list:
@@ -430,7 +506,9 @@ static void nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 	    }
 	  break;
 	case choice_button_save:
-	  fname1 = gtk_button_get_label(GTK_BUTTON(array[i].widget));
+	case choice_button_open:
+	  fname1 = g_object_get_data (G_OBJECT(array[i].widget),"filename");
+	  /* fname1 = gtk_button_get_label(GTK_BUTTON(array[i].widget)); */
 	  if ( fname1 != NULL) 
 	    {
 	      Sciprintf("save: %s\n",fname1);
