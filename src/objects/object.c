@@ -160,20 +160,9 @@ NspObject *new_object(void)
  **/
 
 #ifndef HAVE_INLINE 
-int check_cast(void *obj,NspTypeId id)
-{
-  /* down to basetype */
-  NspTypeBase *type = ((NspObject *)obj)->basetype;
-  /* the following line speed up the usual case (bruno) */
-  if ( type->id == id ) return TRUE;
-  /* walk up and try to match */
-  while ((type= type->surtype) != NULL )
-    {
-      if ( type->id == id ) return TRUE;
-    }
-  return FALSE;
-}
-#endif 
+/* we need here to insert code */
+#include "object-inlined.h"
+#endif
 
 /**
  * check_implements:
