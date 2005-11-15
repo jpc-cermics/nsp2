@@ -492,7 +492,7 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
  * choices 
  */
 
-static int check_choices_sub_list(Stack stack,NspList *L,int count);
+static int nsp_check_choice_list(Stack stack,NspList *L);
 
 int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 {
@@ -514,15 +514,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 
   /* walk throught list, check if its OK and convert to Utf8 */
 
-  Loc = ListItems->first;
-  count=0;
-  while (Loc != NULL) 
-    {
-      if ( check_choices_sub_list(stack,(NspList *) Loc->O,count)==FAIL)
-	return RET_BUG;
-      Loc= Loc->next;
-      count++;
-    }
+  if (  nsp_check_choice_list(stack,ListItems) == FAIL) return RET_BUG;
 
   /* run the widget */
 
@@ -553,79 +545,109 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * checks that a list is of the form 
+ * list(string,string,scalar,smat)
+ * and convert strings to utf8 
  *
  */
 
-static int check_choices_sub_list(Stack stack,NspList *L,int count)
+static int nsp_check_choice(Stack stack,NspList *L)
 {
-  Cell *Loc = L->first;
-  if ( Loc == NULLCELL ) 
+  NspSMatrix *MS1,*MS2,*MS3;
+  int i;
+  int_types Tc[]={ smat,smat,s_int,smat ,list_end} ;
+  if ( GetListArgs(L,1,Tc,&MS1,&MS2,&i,&MS3) == FAIL) return FAIL;
+  if (  nsp_smatrix_to_utf8(MS1) == FAIL 
+	|| nsp_smatrix_to_utf8(MS2) == FAIL
+	|| nsp_smatrix_to_utf8(MS3) == FAIL )
     {
-      Scierror("%s: list item(%d) is null\n",stack.fname,count);
-      return FAIL;
-    }
-  if ( Loc->O == NULLOBJ) 
-    {
-      Scierror("%s: list item(%d,1) is null\n",stack.fname,count);
-      return FAIL;
-    }
-  if ( ! IsString(Loc->O) ) 
-    {
-      Scierror("%s: list item(%d,1) is not a string \n",stack.fname,count);
-      return FAIL;
-    }
-  /* since we are working on a copy we can convert on place */
-  if (  nsp_smatrix_to_utf8((NspSMatrix *)Loc->O) == FAIL) 
-    {
-      Scierror("%s: list item(%d,1) conversion to utf8 failed\n",stack.fname,count);
-    }
-  Loc = Loc->next ; 
-  /* a scalar */ 
-  if ( Loc == NULLCELL) 
-    {
-      Scierror("%s: list item(%d,2) is null\n",stack.fname,count);
-      return FAIL;
-    }
-  if (Loc->O == NULLOBJ) 
-    {
-      Scierror("%s: list item(%d,2) is null\n",stack.fname,count);
-      return FAIL;
-    }
-  if ( ! IsMat(Loc->O) ) 
-    {
-      Scierror("%s: list item(%d,2) is not a scalar \n",stack.fname,count);
-      return FAIL;
-    }
-  if ( ((NspMatrix *) Loc->O)->mn != 1 || ((NspMatrix *) Loc->O)->rc_type != 'r')
-    {
-      Scierror("%s: list item(%d,1) is not a real scalar \n",stack.fname,count);
-      return FAIL;
-    }
-  /* A string Matrix */ 
-  Loc = Loc->next ; 
-  if ( Loc == NULLCELL) 
-    {
-      Scierror("%s: list item(%d,2) is null\n",stack.fname,count);
-      return FAIL;
-    }
-  if (Loc->O == NULLOBJ) 
-    {
-      Scierror("%s: list item(%d,2) is null\n",stack.fname,count);
-      return FAIL;
-    }
-  if ( ! IsSMat(Loc->O) ) 
-    {
-      Scierror("%s: list item(%d,2) is not a string matrix \n",stack.fname,count);
-      return FAIL;
-    }
-  /* since we are working on a copy we can convert on place */
-  if (  nsp_smatrix_to_utf8((NspSMatrix *) Loc->O) == FAIL) 
-    {
-      Scierror("%s: list item(%d,1) conversion to utf8 failed\n",stack.fname,count);
+      Scierror("Error: in %s conversion to utf8 failed\n",stack.fname);
       return FAIL;
     }
   return OK;
 }
+
+static int nsp_check_choice_list(Stack stack,NspList *L)
+{
+  Cell *Loc = L->first;
+  int count=1;
+  while (Loc != NULL) 
+    {
+      if (Loc->O != NULL && IsList(Loc->O)) 
+	{
+	  if ( nsp_check_choice(stack,(NspList *) Loc->O)==FAIL)
+	    {
+	      char *arg =nsp_object_get_name((NthObj(2)));
+	      if (  strcmp(arg ,NVOID) != 0)
+		{
+		  Scierror("Error: second argument of function %s has a wrong element %s(%d) \n",
+			   stack.fname,arg,count);
+		}
+	      else 
+		{
+		  Scierror("Error: element %d of second argument of function %s is wrong\n",count,stack.fname);
+		}
+	      return FAIL;
+	    }
+	}
+      else
+	{
+	  char *arg =nsp_object_get_name((NthObj(2)));
+	  if (  strcmp(arg ,NVOID) != 0)
+	    Scierror("Error: second argument of function %s, %s(%d) is not a list\n",
+		     stack.fname,arg,count);
+	  else 
+	    Scierror("Error: element %d of second argument of function %s is not a list\n",
+		     count,stack.fname);
+	  return FAIL;
+	}
+      Loc= Loc->next;
+      count++;
+    }
+  return OK;
+}
+
+/* just a test 
+ *
+ */
+
+static int int_print_menu(Stack stack, int rhs, int opt, int lhs)
+{
+  static NspList *L=NULL;
+  char *format[] = {"Postscript", "Postscript No Preamble",  "Postscript-Latex",
+		    "Xfig",  "Gif", "PPM",  NULL };
+  char *printer[]={ "lpr ", NULL};
+  char *color[]={ "color", "black and white",NULL};
+  char *modes[]={"landscape", "portrait", "keep size",NULL };
+  char *save[]={"",NULL};
+  NspSMatrix *S;
+  NspList *L1,*L2,*L3,*L4,*L5;
+  NspObject *Obj;
+  int_types Ret[]={ string ,string, s_int ,smatcopy , t_end};
+  int_types Ret1[]={ obj,obj,obj,obj,obj, t_end};
+  CheckRhs(0,0); 
+  /* test the list builder **/
+  if ( L == NULL) 
+    {
+      if (( S = nsp_smatrix_create_from_table(modes)) == NULL) return RET_BUG;
+      if (( L1 = BuildListFromArgs(Ret,"combo","mode",1,S)) == NULL ) return RET_BUG;
+      if (( S = nsp_smatrix_create_from_table(color)) == NULL) return RET_BUG;
+      if (( L2 = BuildListFromArgs(Ret,"combo","color",0,S)) == NULL ) return RET_BUG;
+      if (( S = nsp_smatrix_create_from_table(format)) == NULL) return RET_BUG;
+      if (( L3 = BuildListFromArgs(Ret,"combo","format",0,S)) == NULL ) return RET_BUG;
+      if (( S = nsp_smatrix_create_from_table(printer)) == NULL) return RET_BUG;
+      if (( L4 = BuildListFromArgs(Ret,"entry","print command",0,S)) == NULL ) return RET_BUG;
+      if (( S = nsp_smatrix_create_from_table(save)) == NULL) return RET_BUG;
+      if (( L5 = BuildListFromArgs(Ret,"save","file name",0,S)) == NULL ) return RET_BUG;
+      if (( L = BuildListFromArgs(Ret1,L4,L5,L3,L2,L1))== NULL) return RET_BUG;
+    }
+  if ( nsp_choices_with_combobox("Print dialog",L,TRUE) == FAIL)
+    return RET_BUG;
+  if ((Obj=nsp_object_copy(NSP_OBJECT(L)))== NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,Obj);
+  return 1;
+}
+
 
 
 /* 
@@ -689,6 +711,7 @@ static OpTab Menus_func[]={
   {"x_choices",int_x_choices},
   {"gtk_combo_colormap_new",int_nsp_gtkcombobox_colormap_new},
   {"choose_color",int_nsp_choose_color},
+  {"print_menu",int_print_menu},
   {(char *) 0, NULL}
 };
 
