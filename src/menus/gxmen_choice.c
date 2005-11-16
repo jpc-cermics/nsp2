@@ -24,7 +24,7 @@
 
 typedef enum { choice_combo,choice_color,choice_chooser_save, 
 	       choice_chooser_open,choice_button_save,choice_button_open,choice_entry,
-	       choice_unknown } 
+	       choice_unknown,choice_matrix} 
   nsp_choice_value;
 
 typedef struct _nsp_choice_array 
@@ -39,14 +39,16 @@ static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *tit
 static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,char *title,char **Ms,int Msmn,int active);
 static void nsp_setup_combo_from_list(nsp_choice_array *ca,GtkWidget *box,NspList *L,int row);
 static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,int Msmn,int active);
+static GtkWidget * nsp_setup_matrix_entry(char **Ms,int m,int n,int entry_size);
 
 /*
   l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
-  l2=list('entry','entry title',1,['initial']);
+  l2=list('entry','entry title',1,['initial']); // 1 is unused 
+  l3=list('matrix','enter matrix',30,string(rand(6,2)));// l(3) is for entry size
   l4=list('colors','colors choice 4',29,['']);
   l5=list('save','file save',1,['foo.sav']); // initial value 
   l6=list('open','file open',1,['foo.rep','*.eps','*.pdf']); // answer, filter 
-  rep=x_choices('Toggle Menu',list(l1,l2,l4,l5,l6));
+  rep=x_choices('Toggle Menu',list(l1,l2,l3,l4,l5,l6));
 */
 
 /**
@@ -63,6 +65,7 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
 
 int nsp_choices_with_combobox(char *title,NspList *L,int use_table)
 {
+  GdkGeometry geometry;
   GtkWidget *window,*mainbox,*table,*hbox;
   int i,  n = nsp_list_length(L);
   int answer, result ;
@@ -136,8 +139,14 @@ int nsp_choices_with_combobox(char *title,NspList *L,int use_table)
 	  Loc = Loc->next;
 	}
     }
-
-
+  
+  /* gtk_widget_set_size_request (window,500,-1); */
+  geometry.max_width = 300;
+  geometry.max_height = 0;
+  gtk_window_set_geometry_hints (GTK_WINDOW (window),window,
+				 &geometry,
+				 GDK_HINT_MAX_SIZE );
+  
   gtk_widget_show_all (window);
 
   result = gtk_dialog_run(GTK_DIALOG(window));
@@ -157,12 +166,16 @@ int nsp_choices_with_combobox(char *title,NspList *L,int use_table)
   return answer;
 }
 
+
+
+
+
 /**
  * nsp_setup_combo_box_text:
  * @Ms: 
  * @active: 
  * 
- * returns a GtkComboBoxEntry filled with text from.
+ * returns a GtkComboBox filled with text from.
  * @active is used to set the active entry.
  * 
  * Return value: 
@@ -231,6 +244,9 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
   BCG *Xgc;
   switch (type) 
     {
+    case choice_matrix :
+      return nsp_setup_matrix_entry(Ms,2,Msmn/2,active);/* XXXXXXX */
+      break;
     case choice_combo: 
       return nsp_setup_combo_box_text(Ms,Msmn, active);
       break;
@@ -268,7 +284,7 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
 
 static int nsp_get_choice_from_title(char *type)
 {
-  char *table[]= {"combo","entry","colors","save","open",NULL};
+  char *table[]= {"combo","entry","colors","save","open","matrix",NULL};
   int rep = is_string_in_array(type,table,1);
   if ( rep < 0 ) return choice_unknown;
   switch (rep) 
@@ -283,6 +299,8 @@ static int nsp_get_choice_from_title(char *type)
 #else 
       return choice_button_open;
 #endif
+      break;
+    case 5:  return choice_matrix;break;
       break;
     }
   return choice_unknown;
@@ -514,6 +532,8 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
       NspSMatrix *Ms = ((NspSMatrix *) ((NspList *) Loc->O)->first->next->next->next->O);
       switch (  array[i].type )
 	{
+	case choice_matrix: 
+	  break;
 	case choice_unknown : 
 	  break;
 	case  choice_combo :
@@ -588,4 +608,48 @@ static int nsp_smatrix_set_first(NspSMatrix *A,const char *str)
   return OK;
 }
 
+
+
+/**
+ * nsp_setup_matrix_entry:
+ * @Ms: 
+ * @active: unused 
+ * 
+ * returns a table filled with entries one for each component 
+ * of Ms 
+ * 
+ * Return value: 
+ **/
+
+static GtkWidget * nsp_setup_matrix_entry(char **Ms,int m,int n,int entry_size)
+{
+  int i,j;
+  GtkWidget *table = gtk_table_new (m,n, FALSE);
+  GtkWidget *box;
+  void *data = malloc(sizeof(GtkWidget *)*m*n);
+  if ( data == NULL) return NULL;
+  /* attach data to table 
+   * may be useless since the entries are children of table 
+   * and we can get them this way 
+   */
+  g_object_set_data_full(G_OBJECT(table),"entries",data, g_free);
+  gtk_container_set_border_width (GTK_CONTAINER (table), 5);
+  /* gtk_widget_set_size_request (table,entry_size*n,-1);
+     gtk_window_set_default_size(GTK_WINDOW(table), entry_size*n,-1);
+  */
+  gtk_widget_show(table);
+  box= gtk_vbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (box),table);
+  gtk_table_set_homogeneous(GTK_TABLE(table),TRUE);
+  for (i= 0 ; i < n ; i++) 
+    for ( j = 0 ; j < m ; j++)
+      {
+	GtkWidget *entry =  gtk_entry_new() ;
+	gtk_widget_set_size_request (entry,entry_size,-1);
+	gtk_table_attach (GTK_TABLE (table),entry,i,i+1,j,j+1,0,0,0,0);
+	gtk_entry_set_text (GTK_ENTRY(entry),Ms[i+m*j]);
+	/* gtk_entry_set_max_length (GTK_ENTRY(entry),entry_size);*/
+      }
+  return box;
+}
 
