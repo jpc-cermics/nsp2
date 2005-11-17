@@ -273,15 +273,6 @@ class Wrapper:
                 '* Object methods redefined for %(typename_dc)s \n' \
                 '*/\n' \
                 '\n' \
-                '#ifdef %(typename)s_Private \n' \
-                'static int init_%(typename_dc)s(Nsp%(typename)s *o,NspType%(typename)s *type);\n' \
-                'static char *%(typename_dc)s_type_as_string(void);\n' \
-                'static char *%(typename_dc)s_type_short_string(void);\n' \
-                'static AttrTab %(typename_dc)s_attrs[];\n' \
-                '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/\n' \
-                'static NspMethods *%(typename_dc)s_get_methods(void); \n' \
-                '#endif /* %(typename)s_Private */\n' \
-                '\n' \
                 '#define NULL%(typename_uc)s (Nsp%(typename)s*) 0\n' \
                 '\n' \
                 'Nsp%(typename)s *%(typename_dc)s_create(char *name,NspTypeBase *type);\n' \
@@ -295,8 +286,16 @@ class Wrapper:
                 'extern Nsp%(typename)s *Get%(typename)s (Stack stack, int i); \n' \
                 '\n' \
                 '#endif \n' \
-
-
+                '\n' \
+                '#ifdef %(typename)s_Private \n' \
+                'static int init_%(typename_dc)s(Nsp%(typename)s *o,NspType%(typename)s *type);\n' \
+                'static char *%(typename_dc)s_type_as_string(void);\n' \
+                'static char *%(typename_dc)s_type_short_string(void);\n' \
+                'static AttrTab %(typename_dc)s_attrs[];\n' \
+                '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/\n' \
+                'static NspMethods *%(typename_dc)s_get_methods(void); \n' \
+                '#endif /* %(typename)s_Private */\n'
+    
     slots_list = ['tp_getattr', 'tp_setattr' ]
 
 ##                  , 'tp_compare', 'tp_repr',
@@ -1094,11 +1093,14 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     fp.write('\n\n')
     fp.write('/* ---------- forward type declarations ---------- */\n')
     for obj in parser.boxes:
-        fp.write('#define %s_Private\n#include "nsp/gtk/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
+        # fp.write('#define %s_Private\n#include "nsp/gtk/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
+        fp.write('#include "nsp/gtk/%s.h"\n' % (string.lower(obj.c_name)))
     for obj in parser.objects:
-        fp.write('#define %s_Private\n#include "nsp/gtk/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
+        # fp.write('#define %s_Private\n#include "nsp/gtk/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
+        fp.write('#include "nsp/gtk/%s.h"\n' % (string.lower(obj.c_name)))
     for interface in parser.interfaces:
-        fp.write('#define %s_Private\n#include "nsp/gtk/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
+        # fp.write('#define %s_Private\n#include "nsp/gtk/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
+        fp.write('#include "nsp/gtk/%s.h"\n' % (string.lower(obj.c_name)))
     fp.write('\n')
 
     # used to collect constructors 
