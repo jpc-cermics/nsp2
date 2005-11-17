@@ -18,33 +18,19 @@
 
 
 /* ---------- forward type declarations ---------- */
-#define PangoAttrList_Private
 #include "nsp/gtk/pangoattrlist.h"
-#define PangoColor_Private
 #include "nsp/gtk/pangocolor.h"
-#define PangoFontDescription_Private
 #include "nsp/gtk/pangofontdescription.h"
-#define PangoFontMetrics_Private
 #include "nsp/gtk/pangofontmetrics.h"
-#define PangoGlyphString_Private
 #include "nsp/gtk/pangoglyphstring.h"
-#define PangoLanguage_Private
 #include "nsp/gtk/pangolanguage.h"
-#define PangoTabArray_Private
 #include "nsp/gtk/pangotabarray.h"
-#define PangoContext_Private
 #include "nsp/gtk/pangocontext.h"
-#define PangoFont_Private
 #include "nsp/gtk/pangofont.h"
-#define PangoFontFace_Private
 #include "nsp/gtk/pangofontface.h"
-#define PangoFontFamily_Private
 #include "nsp/gtk/pangofontfamily.h"
-#define PangoFontMap_Private
 #include "nsp/gtk/pangofontmap.h"
-#define PangoFontset_Private
 #include "nsp/gtk/pangofontset.h"
-#define PangoLayout_Private
 #include "nsp/gtk/pangolayout.h"
 
 
@@ -281,7 +267,7 @@ _wrap_pango_attr_list_insert(NspObject *self, Stack stack,int rhs,int opt,int lh
   pango_attr_list_insert(nspg_boxed_get(self, PangoAttrList), attr);
   return 0;
 }
-#line 285 "pango.c"
+#line 271 "pango.c"
 
 
 #line 317 "pango.override"
@@ -298,7 +284,7 @@ _wrap_pango_attr_list_insert_before(NspObject *self, Stack stack,int rhs,int opt
   pango_attr_list_insert_before(nspg_boxed_get(self, PangoAttrList), attr);
   return 0;
 }
-#line 302 "pango.c"
+#line 288 "pango.c"
 
 
 #line 332 "pango.override"
@@ -315,7 +301,7 @@ _wrap_pango_attr_list_change(NspObject *self, Stack stack,int rhs,int opt,int lh
   pango_attr_list_change(nspg_boxed_get(self, PangoAttrList), attr);
   return 0;
 }
-#line 319 "pango.c"
+#line 305 "pango.c"
 
 
 static int _wrap_pango_attr_list_splice(NspPangoAttrList *self,Stack stack,int rhs,int opt,int lhs)
@@ -820,7 +806,7 @@ _wrap_pangofontdescription_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 824 "pango.c"
+#line 810 "pango.c"
 
 
 #line 397 "pango.override"
@@ -831,7 +817,7 @@ _wrap_pango_font_description_copy(NspObject *self)
 				    nspg_boxed_get(self, PangoFontDescription),
 				    TRUE, TRUE, NULL);
 }
-#line 835 "pango.c"
+#line 821 "pango.c"
 
 
 static int _wrap_pango_font_description_copy_static(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
@@ -1630,7 +1616,7 @@ _wrap_pango_glyph_string_extents(NspObject *self, Stack stack,int rhs,int opt,in
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 1634 "pango.c"
+#line 1620 "pango.c"
 
 
 #line 511 "pango.override"
@@ -1660,7 +1646,7 @@ _wrap_pango_glyph_string_extents_range(NspObject *self, Stack stack,int rhs,int 
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 1664 "pango.c"
+#line 1650 "pango.c"
 
 
 #line 539 "pango.override"
@@ -1686,7 +1672,7 @@ _wrap_pango_glyph_string_get_logical_widths(NspObject *self, Stack stack,int rhs
   MoveObj(stack,1,(NspObject *)ret);
   return 1;
 }
-#line 1690 "pango.c"
+#line 1676 "pango.c"
 
 
 static NspMethods pangoglyphstring_methods[] = {
@@ -2207,7 +2193,7 @@ _wrap_pango_tab_array_get_tab(NspObject *self, Stack stack,int rhs,int opt,int l
   if ( nsp_move_doubles(stack,1,1,2,(double)alignment,(double) location)  == FAIL) return RET_BUG;
   return 1;
 }
-#line 2211 "pango.c"
+#line 2197 "pango.c"
 
 
 #line 800 "pango.override"
@@ -2230,7 +2216,7 @@ _wrap_pango_tab_array_get_tabs(NspObject *self, Stack stack,int rhs,int opt,int 
   MoveObj(stack,1,(NspObject *)ret);
   return 1;
 }
-#line 2234 "pango.c"
+#line 2220 "pango.c"
 
 
 static int _wrap_pango_tab_array_get_positions_in_pixels(NspPangoTabArray *self,Stack stack,int rhs,int opt,int lhs)
@@ -2473,7 +2459,7 @@ _wrap_pango_context_list_families(NspGObject *self)
   g_free(families);
   return ret;
 }
-#line 2477 "pango.c"
+#line 2463 "pango.c"
 
 
 static int _wrap_pango_context_load_font(NspPangoContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -2905,7 +2891,7 @@ _wrap_pango_font_get_glyph_extents(NspGObject *self, Stack stack,int rhs,int opt
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 2909 "pango.c"
+#line 2895 "pango.c"
 
 
 static NspMethods pangofont_methods[] = {
@@ -3364,7 +3350,7 @@ _wrap_pango_font_family_list_faces(NspGObject *self)
   g_free(faces);
   return ret;
 }
-#line 3368 "pango.c"
+#line 3354 "pango.c"
 
 
 static int _wrap_pango_font_family_get_name(NspPangoFontFamily *self,Stack stack,int rhs,int opt,int lhs)
@@ -3652,7 +3638,7 @@ _wrap_pango_font_map_list_families(NspGObject *self)
   g_free(families);
   return ret;
 }
-#line 3656 "pango.c"
+#line 3642 "pango.c"
 
 
 static NspMethods pangofontmap_methods[] = {
@@ -4181,7 +4167,7 @@ _wrap_pango_layout_set_text(NspGObject *self, Stack stack,int rhs,int opt,int lh
   pango_layout_set_text(PANGO_LAYOUT(self->obj), text, length);
   return 0;
 }
-#line 4185 "pango.c"
+#line 4171 "pango.c"
 
 
 static int _wrap_pango_layout_get_text(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -4205,7 +4191,7 @@ _wrap_pango_layout_set_markup(NspGObject *self, Stack stack,int rhs,int opt,int 
   pango_layout_set_markup(PANGO_LAYOUT(self->obj), markup, length);
   return 0;
 }
-#line 4209 "pango.c"
+#line 4195 "pango.c"
 
 
 #line 576 "pango.override"
@@ -4243,7 +4229,7 @@ _wrap_pango_layout_set_markup_with_accel(NspGObject *self, Stack stack,int rhs,i
   Scierror("%s: To be done \n",stack.fname); 
   return RET_BUG; 
 }
-#line 4247 "pango.c"
+#line 4233 "pango.c"
 
 
 static int _wrap_pango_layout_set_font_description(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -4451,7 +4437,7 @@ _wrap_pango_layout_index_to_pos(NspGObject *self, Stack stack,int rhs,int opt,in
     return RET_BUG;
   return 1;
 }
-#line 4455 "pango.c"
+#line 4441 "pango.c"
 
 
 #line 626 "pango.override"
@@ -4473,7 +4459,7 @@ _wrap_pango_layout_get_cursor_pos(NspGObject *self, Stack stack,int rhs,int opt,
 			(double)	weak_pos.width,(double) weak_pos.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 4477 "pango.c"
+#line 4463 "pango.c"
 
 
 #line 646 "pango.override"
@@ -4494,7 +4480,7 @@ _wrap_pango_layout_move_cursor_visually(NspGObject *self, Stack stack,int rhs,in
   if ( nsp_move_doubles(stack,1,1,2,(double) new_index,(double) new_trailing)  == FAIL) return RET_BUG;
   return 1;
 }
-#line 4498 "pango.c"
+#line 4484 "pango.c"
 
 
 #line 665 "pango.override"
@@ -4512,7 +4498,7 @@ _wrap_pango_layout_xy_to_index(NspGObject *self, Stack stack,int rhs,int opt,int
   if ( nsp_move_doubles(stack,1,1,2,(double) index,(double) trailing)== FAIL)  return RET_BUG;
   return 1;
 }
-#line 4516 "pango.c"
+#line 4502 "pango.c"
 
 
 #line 681 "pango.override"
@@ -4529,7 +4515,7 @@ _wrap_pango_layout_get_extents(NspGObject *self, Stack stack,int rhs,int opt,int
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 4533 "pango.c"
+#line 4519 "pango.c"
 
 
 #line 696 "pango.override"
@@ -4547,7 +4533,7 @@ _wrap_pango_layout_get_pixel_extents(NspGObject *self, Stack stack,int rhs,int o
   return 2; 
 
 }
-#line 4551 "pango.c"
+#line 4537 "pango.c"
 
 
 #line 712 "pango.override"
@@ -4561,7 +4547,7 @@ _wrap_pango_layout_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG;
   return 1;
 }
-#line 4565 "pango.c"
+#line 4551 "pango.c"
 
 
 #line 724 "pango.override"
@@ -4575,7 +4561,7 @@ _wrap_pango_layout_get_pixel_size(NspGObject *self, Stack stack,int rhs,int opt,
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height)  == FAIL) return RET_BUG;
   return 1;
 }
-#line 4579 "pango.c"
+#line 4565 "pango.c"
 
 
 static int _wrap_pango_layout_get_line_count(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -4663,7 +4649,7 @@ _wrap_pango_attr_language_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret) ;
   return 1;
 }
-#line 4667 "pango.c"
+#line 4653 "pango.c"
 
 
 #line 69 "pango.override"
@@ -4679,7 +4665,7 @@ _wrap_pango_attr_family_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret) ;
   return 1;
 }
-#line 4683 "pango.c"
+#line 4669 "pango.c"
 
 
 #line 83 "pango.override"
@@ -4696,7 +4682,7 @@ _wrap_pango_attr_foreground_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4700 "pango.c"
+#line 4686 "pango.c"
 
 
 #line 98 "pango.override"
@@ -4713,7 +4699,7 @@ _wrap_pango_attr_background_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4717 "pango.c"
+#line 4703 "pango.c"
 
 
 #line 113 "pango.override"
@@ -4729,7 +4715,7 @@ _wrap_pango_attr_size_new( Stack stack,int rhs,int opt,int lhs)
   return 1;
 
 }
-#line 4733 "pango.c"
+#line 4719 "pango.c"
 
 
 #line 127 "pango.override"
@@ -4748,7 +4734,7 @@ _wrap_pango_attr_style_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4752 "pango.c"
+#line 4738 "pango.c"
 
 
 #line 144 "pango.override"
@@ -4767,7 +4753,7 @@ _wrap_pango_attr_weight_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4771 "pango.c"
+#line 4757 "pango.c"
 
 
 #line 161 "pango.override"
@@ -4788,7 +4774,7 @@ _wrap_pango_attr_variant_new( Stack stack,int rhs,int opt,int lhs)
   return 1;
 
 }
-#line 4792 "pango.c"
+#line 4778 "pango.c"
 
 
 #line 180 "pango.override"
@@ -4809,7 +4795,7 @@ _wrap_pango_attr_stretch_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4813 "pango.c"
+#line 4799 "pango.c"
 
 
 #line 199 "pango.override"
@@ -4833,7 +4819,7 @@ _wrap_pango_attr_font_desc_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4837 "pango.c"
+#line 4823 "pango.c"
 
 
 #line 221 "pango.override"
@@ -4855,7 +4841,7 @@ _wrap_pango_attr_underline_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4859 "pango.c"
+#line 4845 "pango.c"
 
 
 #line 241 "pango.override"
@@ -4872,7 +4858,7 @@ _wrap_pango_attr_strikethrough_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4876 "pango.c"
+#line 4862 "pango.c"
 
 
 #line 256 "pango.override"
@@ -4888,7 +4874,7 @@ _wrap_pango_attr_rise_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4892 "pango.c"
+#line 4878 "pango.c"
 
 
 #line 270 "pango.override"
@@ -4909,7 +4895,7 @@ _wrap_pango_attr_shape_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4913 "pango.c"
+#line 4899 "pango.c"
 
 
 #line 289 "pango.override"
@@ -4925,7 +4911,7 @@ _wrap_pango_attr_scale_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4929 "pango.c"
+#line 4915 "pango.c"
 
 
 #line 736 "pango.override"
@@ -4975,7 +4961,7 @@ _wrap_pango_parse_markup( Stack stack,int rhs,int opt,int lhs)
   Scierror("%s: To be done \n",stack.fname); 
   return RET_BUG; 
 }
-#line 4979 "pango.c"
+#line 4965 "pango.c"
 
 
 int _wrap_pango_find_paragraph_boundary(Stack stack, int rhs, int opt, int lhs)
@@ -5092,7 +5078,7 @@ pango_register_classes(NspObject *d)
 #line 14 "pango.override"
 
 
-#line 5096 "pango.c"
+#line 5082 "pango.c"
   nspg_register_boxed(d, "AttrList", PANGO_TYPE_ATTR_LIST, &PyPangoAttrList_Type);
   nspg_register_boxed(d, "Color", PANGO_TYPE_COLOR, &PyPangoColor_Type);
   nspg_register_boxed(d, "FontDescription", PANGO_TYPE_FONT_DESCRIPTION, &PyPangoFontDescription_Type);

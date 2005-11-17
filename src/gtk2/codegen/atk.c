@@ -15,25 +15,15 @@
 
 
 /* ---------- forward type declarations ---------- */
-#define AtkHyperlink_Private
 #include "nsp/gtk/atkhyperlink.h"
-#define AtkObject_Private
 #include "nsp/gtk/atkobject.h"
-#define AtkNoOpObject_Private
 #include "nsp/gtk/atknoopobject.h"
-#define AtkObjectFactory_Private
 #include "nsp/gtk/atkobjectfactory.h"
-#define AtkNoOpObjectFactory_Private
 #include "nsp/gtk/atknoopobjectfactory.h"
-#define AtkRegistry_Private
 #include "nsp/gtk/atkregistry.h"
-#define AtkRelation_Private
 #include "nsp/gtk/atkrelation.h"
-#define AtkRelationSet_Private
 #include "nsp/gtk/atkrelationset.h"
-#define AtkStateSet_Private
 #include "nsp/gtk/atkstateset.h"
-#define AtkUtil_Private
 #include "nsp/gtk/atkutil.h"
 
 
@@ -1848,7 +1838,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1852 "atk.c"
+#line 1842 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -3076,7 +3066,7 @@ atk_register_classes(NspObject *d)
   }
 
 
-#line 3080 "atk.c"
+#line 3070 "atk.c"
   nspgobject_register_class(d, "AtkHyperlink", ATK_TYPE_HYPERLINK, &PyAtkHyperlink_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "AtkObject", ATK_TYPE_OBJECT, &PyAtkObject_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "AtkNoOpObject", ATK_TYPE_NO_OP_OBJECT, &PyAtkNoOpObject_Type, Py_BuildValue("(O)", &PyAtkObject_Type));
