@@ -32,15 +32,6 @@ NspGtkTextIter *new_gtktextiter();
 * Object methods redefined for gtktextiter 
 */
 
-#ifdef GtkTextIter_Private 
-static int init_gtktextiter(NspGtkTextIter *o,NspTypeGtkTextIter *type);
-static char *gtktextiter_type_as_string(void);
-static char *gtktextiter_type_short_string(void);
-static AttrTab gtktextiter_attrs[];
-/* static int int_gtktextiter_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktextiter_get_methods(void); 
-#endif /* GtkTextIter_Private */
-
 #define NULLGTKTEXTITER (NspGtkTextIter*) 0
 
 NspGtkTextIter *gtktextiter_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTextIter *GetGtkTextIterCopy (Stack stack, int i);
 extern NspGtkTextIter *GetGtkTextIter (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTextIter_Private 
+static int init_gtktextiter(NspGtkTextIter *o,NspTypeGtkTextIter *type);
+static char *gtktextiter_type_as_string(void);
+static char *gtktextiter_type_short_string(void);
+static AttrTab gtktextiter_attrs[];
+/* static int int_gtktextiter_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktextiter_get_methods(void); 
+#endif /* GtkTextIter_Private */

@@ -32,15 +32,6 @@ NspGtkFontSelection *new_gtkfontselection();
 * Object methods redefined for gtkfontselection 
 */
 
-#ifdef GtkFontSelection_Private 
-static int init_gtkfontselection(NspGtkFontSelection *o,NspTypeGtkFontSelection *type);
-static char *gtkfontselection_type_as_string(void);
-static char *gtkfontselection_type_short_string(void);
-static AttrTab gtkfontselection_attrs[];
-/* static int int_gtkfontselection_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkfontselection_get_methods(void); 
-#endif /* GtkFontSelection_Private */
-
 #define NULLGTKFONTSELECTION (NspGtkFontSelection*) 0
 
 NspGtkFontSelection *gtkfontselection_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkFontSelection *GetGtkFontSelectionCopy (Stack stack, int i);
 extern NspGtkFontSelection *GetGtkFontSelection (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkFontSelection_Private 
+static int init_gtkfontselection(NspGtkFontSelection *o,NspTypeGtkFontSelection *type);
+static char *gtkfontselection_type_as_string(void);
+static char *gtkfontselection_type_short_string(void);
+static AttrTab gtkfontselection_attrs[];
+/* static int int_gtkfontselection_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfontselection_get_methods(void); 
+#endif /* GtkFontSelection_Private */

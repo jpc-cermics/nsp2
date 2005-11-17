@@ -32,15 +32,6 @@ NspGtkHandleBox *new_gtkhandlebox();
 * Object methods redefined for gtkhandlebox 
 */
 
-#ifdef GtkHandleBox_Private 
-static int init_gtkhandlebox(NspGtkHandleBox *o,NspTypeGtkHandleBox *type);
-static char *gtkhandlebox_type_as_string(void);
-static char *gtkhandlebox_type_short_string(void);
-static AttrTab gtkhandlebox_attrs[];
-/* static int int_gtkhandlebox_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkhandlebox_get_methods(void); 
-#endif /* GtkHandleBox_Private */
-
 #define NULLGTKHANDLEBOX (NspGtkHandleBox*) 0
 
 NspGtkHandleBox *gtkhandlebox_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkHandleBox *GetGtkHandleBoxCopy (Stack stack, int i);
 extern NspGtkHandleBox *GetGtkHandleBox (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkHandleBox_Private 
+static int init_gtkhandlebox(NspGtkHandleBox *o,NspTypeGtkHandleBox *type);
+static char *gtkhandlebox_type_as_string(void);
+static char *gtkhandlebox_type_short_string(void);
+static AttrTab gtkhandlebox_attrs[];
+/* static int int_gtkhandlebox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkhandlebox_get_methods(void); 
+#endif /* GtkHandleBox_Private */

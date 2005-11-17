@@ -32,15 +32,6 @@ NspGtkCellRendererPixbuf *new_gtkcellrendererpixbuf();
 * Object methods redefined for gtkcellrendererpixbuf 
 */
 
-#ifdef GtkCellRendererPixbuf_Private 
-static int init_gtkcellrendererpixbuf(NspGtkCellRendererPixbuf *o,NspTypeGtkCellRendererPixbuf *type);
-static char *gtkcellrendererpixbuf_type_as_string(void);
-static char *gtkcellrendererpixbuf_type_short_string(void);
-static AttrTab gtkcellrendererpixbuf_attrs[];
-/* static int int_gtkcellrendererpixbuf_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcellrendererpixbuf_get_methods(void); 
-#endif /* GtkCellRendererPixbuf_Private */
-
 #define NULLGTKCELLRENDERERPIXBUF (NspGtkCellRendererPixbuf*) 0
 
 NspGtkCellRendererPixbuf *gtkcellrendererpixbuf_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkCellRendererPixbuf *GetGtkCellRendererPixbufCopy (Stack stack, int 
 extern NspGtkCellRendererPixbuf *GetGtkCellRendererPixbuf (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkCellRendererPixbuf_Private 
+static int init_gtkcellrendererpixbuf(NspGtkCellRendererPixbuf *o,NspTypeGtkCellRendererPixbuf *type);
+static char *gtkcellrendererpixbuf_type_as_string(void);
+static char *gtkcellrendererpixbuf_type_short_string(void);
+static AttrTab gtkcellrendererpixbuf_attrs[];
+/* static int int_gtkcellrendererpixbuf_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcellrendererpixbuf_get_methods(void); 
+#endif /* GtkCellRendererPixbuf_Private */

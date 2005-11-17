@@ -32,15 +32,6 @@ NspGtkCheckButton *new_gtkcheckbutton();
 * Object methods redefined for gtkcheckbutton 
 */
 
-#ifdef GtkCheckButton_Private 
-static int init_gtkcheckbutton(NspGtkCheckButton *o,NspTypeGtkCheckButton *type);
-static char *gtkcheckbutton_type_as_string(void);
-static char *gtkcheckbutton_type_short_string(void);
-static AttrTab gtkcheckbutton_attrs[];
-/* static int int_gtkcheckbutton_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcheckbutton_get_methods(void); 
-#endif /* GtkCheckButton_Private */
-
 #define NULLGTKCHECKBUTTON (NspGtkCheckButton*) 0
 
 NspGtkCheckButton *gtkcheckbutton_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkCheckButton *GetGtkCheckButtonCopy (Stack stack, int i);
 extern NspGtkCheckButton *GetGtkCheckButton (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkCheckButton_Private 
+static int init_gtkcheckbutton(NspGtkCheckButton *o,NspTypeGtkCheckButton *type);
+static char *gtkcheckbutton_type_as_string(void);
+static char *gtkcheckbutton_type_short_string(void);
+static AttrTab gtkcheckbutton_attrs[];
+/* static int int_gtkcheckbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcheckbutton_get_methods(void); 
+#endif /* GtkCheckButton_Private */

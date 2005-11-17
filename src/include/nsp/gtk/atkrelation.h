@@ -32,15 +32,6 @@ NspAtkRelation *new_atkrelation();
 * Object methods redefined for atkrelation 
 */
 
-#ifdef AtkRelation_Private 
-static int init_atkrelation(NspAtkRelation *o,NspTypeAtkRelation *type);
-static char *atkrelation_type_as_string(void);
-static char *atkrelation_type_short_string(void);
-static AttrTab atkrelation_attrs[];
-/* static int int_atkrelation_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *atkrelation_get_methods(void); 
-#endif /* AtkRelation_Private */
-
 #define NULLATKRELATION (NspAtkRelation*) 0
 
 NspAtkRelation *atkrelation_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspAtkRelation *GetAtkRelationCopy (Stack stack, int i);
 extern NspAtkRelation *GetAtkRelation (Stack stack, int i); 
 
 #endif 
+
+#ifdef AtkRelation_Private 
+static int init_atkrelation(NspAtkRelation *o,NspTypeAtkRelation *type);
+static char *atkrelation_type_as_string(void);
+static char *atkrelation_type_short_string(void);
+static AttrTab atkrelation_attrs[];
+/* static int int_atkrelation_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkrelation_get_methods(void); 
+#endif /* AtkRelation_Private */

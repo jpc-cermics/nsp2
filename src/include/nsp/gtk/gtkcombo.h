@@ -32,15 +32,6 @@ NspGtkCombo *new_gtkcombo();
 * Object methods redefined for gtkcombo 
 */
 
-#ifdef GtkCombo_Private 
-static int init_gtkcombo(NspGtkCombo *o,NspTypeGtkCombo *type);
-static char *gtkcombo_type_as_string(void);
-static char *gtkcombo_type_short_string(void);
-static AttrTab gtkcombo_attrs[];
-/* static int int_gtkcombo_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcombo_get_methods(void); 
-#endif /* GtkCombo_Private */
-
 #define NULLGTKCOMBO (NspGtkCombo*) 0
 
 NspGtkCombo *gtkcombo_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkCombo *GetGtkComboCopy (Stack stack, int i);
 extern NspGtkCombo *GetGtkCombo (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkCombo_Private 
+static int init_gtkcombo(NspGtkCombo *o,NspTypeGtkCombo *type);
+static char *gtkcombo_type_as_string(void);
+static char *gtkcombo_type_short_string(void);
+static AttrTab gtkcombo_attrs[];
+/* static int int_gtkcombo_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcombo_get_methods(void); 
+#endif /* GtkCombo_Private */

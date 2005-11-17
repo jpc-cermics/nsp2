@@ -32,15 +32,6 @@ NspAtkObject *new_atkobject();
 * Object methods redefined for atkobject 
 */
 
-#ifdef AtkObject_Private 
-static int init_atkobject(NspAtkObject *o,NspTypeAtkObject *type);
-static char *atkobject_type_as_string(void);
-static char *atkobject_type_short_string(void);
-static AttrTab atkobject_attrs[];
-/* static int int_atkobject_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *atkobject_get_methods(void); 
-#endif /* AtkObject_Private */
-
 #define NULLATKOBJECT (NspAtkObject*) 0
 
 NspAtkObject *atkobject_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspAtkObject *GetAtkObjectCopy (Stack stack, int i);
 extern NspAtkObject *GetAtkObject (Stack stack, int i); 
 
 #endif 
+
+#ifdef AtkObject_Private 
+static int init_atkobject(NspAtkObject *o,NspTypeAtkObject *type);
+static char *atkobject_type_as_string(void);
+static char *atkobject_type_short_string(void);
+static AttrTab atkobject_attrs[];
+/* static int int_atkobject_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkobject_get_methods(void); 
+#endif /* AtkObject_Private */

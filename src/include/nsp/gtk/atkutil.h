@@ -32,15 +32,6 @@ NspAtkUtil *new_atkutil();
 * Object methods redefined for atkutil 
 */
 
-#ifdef AtkUtil_Private 
-static int init_atkutil(NspAtkUtil *o,NspTypeAtkUtil *type);
-static char *atkutil_type_as_string(void);
-static char *atkutil_type_short_string(void);
-static AttrTab atkutil_attrs[];
-/* static int int_atkutil_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *atkutil_get_methods(void); 
-#endif /* AtkUtil_Private */
-
 #define NULLATKUTIL (NspAtkUtil*) 0
 
 NspAtkUtil *atkutil_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspAtkUtil *GetAtkUtilCopy (Stack stack, int i);
 extern NspAtkUtil *GetAtkUtil (Stack stack, int i); 
 
 #endif 
+
+#ifdef AtkUtil_Private 
+static int init_atkutil(NspAtkUtil *o,NspTypeAtkUtil *type);
+static char *atkutil_type_as_string(void);
+static char *atkutil_type_short_string(void);
+static AttrTab atkutil_attrs[];
+/* static int int_atkutil_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkutil_get_methods(void); 
+#endif /* AtkUtil_Private */

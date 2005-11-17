@@ -32,15 +32,6 @@ NspGtkCellLayout *new_gtkcelllayout();
 * Object methods redefined for gtkcelllayout 
 */
 
-#ifdef GtkCellLayout_Private 
-static int init_gtkcelllayout(NspGtkCellLayout *o,NspTypeGtkCellLayout *type);
-static char *gtkcelllayout_type_as_string(void);
-static char *gtkcelllayout_type_short_string(void);
-static AttrTab gtkcelllayout_attrs[];
-/* static int int_gtkcelllayout_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcelllayout_get_methods(void); 
-#endif /* GtkCellLayout_Private */
-
 #define NULLGTKCELLLAYOUT (NspGtkCellLayout*) 0
 
 NspGtkCellLayout *gtkcelllayout_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkCellLayout *GetGtkCellLayoutCopy (Stack stack, int i);
 extern NspGtkCellLayout *GetGtkCellLayout (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkCellLayout_Private 
+static int init_gtkcelllayout(NspGtkCellLayout *o,NspTypeGtkCellLayout *type);
+static char *gtkcelllayout_type_as_string(void);
+static char *gtkcelllayout_type_short_string(void);
+static AttrTab gtkcelllayout_attrs[];
+/* static int int_gtkcelllayout_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcelllayout_get_methods(void); 
+#endif /* GtkCellLayout_Private */

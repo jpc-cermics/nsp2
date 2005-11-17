@@ -32,15 +32,6 @@ NspGdkKeymap *new_gdkkeymap();
 * Object methods redefined for gdkkeymap 
 */
 
-#ifdef GdkKeymap_Private 
-static int init_gdkkeymap(NspGdkKeymap *o,NspTypeGdkKeymap *type);
-static char *gdkkeymap_type_as_string(void);
-static char *gdkkeymap_type_short_string(void);
-static AttrTab gdkkeymap_attrs[];
-/* static int int_gdkkeymap_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkkeymap_get_methods(void); 
-#endif /* GdkKeymap_Private */
-
 #define NULLGDKKEYMAP (NspGdkKeymap*) 0
 
 NspGdkKeymap *gdkkeymap_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkKeymap *GetGdkKeymapCopy (Stack stack, int i);
 extern NspGdkKeymap *GetGdkKeymap (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkKeymap_Private 
+static int init_gdkkeymap(NspGdkKeymap *o,NspTypeGdkKeymap *type);
+static char *gdkkeymap_type_as_string(void);
+static char *gdkkeymap_type_short_string(void);
+static AttrTab gdkkeymap_attrs[];
+/* static int int_gdkkeymap_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkkeymap_get_methods(void); 
+#endif /* GdkKeymap_Private */

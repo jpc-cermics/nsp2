@@ -32,15 +32,6 @@ NspGdkFont *new_gdkfont();
 * Object methods redefined for gdkfont 
 */
 
-#ifdef GdkFont_Private 
-static int init_gdkfont(NspGdkFont *o,NspTypeGdkFont *type);
-static char *gdkfont_type_as_string(void);
-static char *gdkfont_type_short_string(void);
-static AttrTab gdkfont_attrs[];
-/* static int int_gdkfont_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkfont_get_methods(void); 
-#endif /* GdkFont_Private */
-
 #define NULLGDKFONT (NspGdkFont*) 0
 
 NspGdkFont *gdkfont_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkFont *GetGdkFontCopy (Stack stack, int i);
 extern NspGdkFont *GetGdkFont (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkFont_Private 
+static int init_gdkfont(NspGdkFont *o,NspTypeGdkFont *type);
+static char *gdkfont_type_as_string(void);
+static char *gdkfont_type_short_string(void);
+static AttrTab gdkfont_attrs[];
+/* static int int_gdkfont_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkfont_get_methods(void); 
+#endif /* GdkFont_Private */

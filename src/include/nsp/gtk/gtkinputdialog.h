@@ -32,15 +32,6 @@ NspGtkInputDialog *new_gtkinputdialog();
 * Object methods redefined for gtkinputdialog 
 */
 
-#ifdef GtkInputDialog_Private 
-static int init_gtkinputdialog(NspGtkInputDialog *o,NspTypeGtkInputDialog *type);
-static char *gtkinputdialog_type_as_string(void);
-static char *gtkinputdialog_type_short_string(void);
-static AttrTab gtkinputdialog_attrs[];
-/* static int int_gtkinputdialog_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkinputdialog_get_methods(void); 
-#endif /* GtkInputDialog_Private */
-
 #define NULLGTKINPUTDIALOG (NspGtkInputDialog*) 0
 
 NspGtkInputDialog *gtkinputdialog_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkInputDialog *GetGtkInputDialogCopy (Stack stack, int i);
 extern NspGtkInputDialog *GetGtkInputDialog (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkInputDialog_Private 
+static int init_gtkinputdialog(NspGtkInputDialog *o,NspTypeGtkInputDialog *type);
+static char *gtkinputdialog_type_as_string(void);
+static char *gtkinputdialog_type_short_string(void);
+static AttrTab gtkinputdialog_attrs[];
+/* static int int_gtkinputdialog_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkinputdialog_get_methods(void); 
+#endif /* GtkInputDialog_Private */

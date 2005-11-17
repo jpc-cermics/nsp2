@@ -32,15 +32,6 @@ NspGtkVBox *new_gtkvbox();
 * Object methods redefined for gtkvbox 
 */
 
-#ifdef GtkVBox_Private 
-static int init_gtkvbox(NspGtkVBox *o,NspTypeGtkVBox *type);
-static char *gtkvbox_type_as_string(void);
-static char *gtkvbox_type_short_string(void);
-static AttrTab gtkvbox_attrs[];
-/* static int int_gtkvbox_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkvbox_get_methods(void); 
-#endif /* GtkVBox_Private */
-
 #define NULLGTKVBOX (NspGtkVBox*) 0
 
 NspGtkVBox *gtkvbox_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkVBox *GetGtkVBoxCopy (Stack stack, int i);
 extern NspGtkVBox *GetGtkVBox (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkVBox_Private 
+static int init_gtkvbox(NspGtkVBox *o,NspTypeGtkVBox *type);
+static char *gtkvbox_type_as_string(void);
+static char *gtkvbox_type_short_string(void);
+static AttrTab gtkvbox_attrs[];
+/* static int int_gtkvbox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkvbox_get_methods(void); 
+#endif /* GtkVBox_Private */

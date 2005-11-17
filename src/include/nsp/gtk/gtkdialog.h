@@ -32,15 +32,6 @@ NspGtkDialog *new_gtkdialog();
 * Object methods redefined for gtkdialog 
 */
 
-#ifdef GtkDialog_Private 
-static int init_gtkdialog(NspGtkDialog *o,NspTypeGtkDialog *type);
-static char *gtkdialog_type_as_string(void);
-static char *gtkdialog_type_short_string(void);
-static AttrTab gtkdialog_attrs[];
-/* static int int_gtkdialog_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkdialog_get_methods(void); 
-#endif /* GtkDialog_Private */
-
 #define NULLGTKDIALOG (NspGtkDialog*) 0
 
 NspGtkDialog *gtkdialog_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkDialog *GetGtkDialogCopy (Stack stack, int i);
 extern NspGtkDialog *GetGtkDialog (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkDialog_Private 
+static int init_gtkdialog(NspGtkDialog *o,NspTypeGtkDialog *type);
+static char *gtkdialog_type_as_string(void);
+static char *gtkdialog_type_short_string(void);
+static AttrTab gtkdialog_attrs[];
+/* static int int_gtkdialog_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkdialog_get_methods(void); 
+#endif /* GtkDialog_Private */

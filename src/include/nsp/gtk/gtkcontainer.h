@@ -32,15 +32,6 @@ NspGtkContainer *new_gtkcontainer();
 * Object methods redefined for gtkcontainer 
 */
 
-#ifdef GtkContainer_Private 
-static int init_gtkcontainer(NspGtkContainer *o,NspTypeGtkContainer *type);
-static char *gtkcontainer_type_as_string(void);
-static char *gtkcontainer_type_short_string(void);
-static AttrTab gtkcontainer_attrs[];
-/* static int int_gtkcontainer_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcontainer_get_methods(void); 
-#endif /* GtkContainer_Private */
-
 #define NULLGTKCONTAINER (NspGtkContainer*) 0
 
 NspGtkContainer *gtkcontainer_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkContainer *GetGtkContainerCopy (Stack stack, int i);
 extern NspGtkContainer *GetGtkContainer (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkContainer_Private 
+static int init_gtkcontainer(NspGtkContainer *o,NspTypeGtkContainer *type);
+static char *gtkcontainer_type_as_string(void);
+static char *gtkcontainer_type_short_string(void);
+static AttrTab gtkcontainer_attrs[];
+/* static int int_gtkcontainer_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcontainer_get_methods(void); 
+#endif /* GtkContainer_Private */

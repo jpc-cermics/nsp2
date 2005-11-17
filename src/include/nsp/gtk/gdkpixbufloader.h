@@ -32,15 +32,6 @@ NspGdkPixbufLoader *new_gdkpixbufloader();
 * Object methods redefined for gdkpixbufloader 
 */
 
-#ifdef GdkPixbufLoader_Private 
-static int init_gdkpixbufloader(NspGdkPixbufLoader *o,NspTypeGdkPixbufLoader *type);
-static char *gdkpixbufloader_type_as_string(void);
-static char *gdkpixbufloader_type_short_string(void);
-static AttrTab gdkpixbufloader_attrs[];
-/* static int int_gdkpixbufloader_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkpixbufloader_get_methods(void); 
-#endif /* GdkPixbufLoader_Private */
-
 #define NULLGDKPIXBUFLOADER (NspGdkPixbufLoader*) 0
 
 NspGdkPixbufLoader *gdkpixbufloader_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkPixbufLoader *GetGdkPixbufLoaderCopy (Stack stack, int i);
 extern NspGdkPixbufLoader *GetGdkPixbufLoader (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkPixbufLoader_Private 
+static int init_gdkpixbufloader(NspGdkPixbufLoader *o,NspTypeGdkPixbufLoader *type);
+static char *gdkpixbufloader_type_as_string(void);
+static char *gdkpixbufloader_type_short_string(void);
+static AttrTab gdkpixbufloader_attrs[];
+/* static int int_gdkpixbufloader_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkpixbufloader_get_methods(void); 
+#endif /* GdkPixbufLoader_Private */

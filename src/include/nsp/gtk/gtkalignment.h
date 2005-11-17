@@ -32,15 +32,6 @@ NspGtkAlignment *new_gtkalignment();
 * Object methods redefined for gtkalignment 
 */
 
-#ifdef GtkAlignment_Private 
-static int init_gtkalignment(NspGtkAlignment *o,NspTypeGtkAlignment *type);
-static char *gtkalignment_type_as_string(void);
-static char *gtkalignment_type_short_string(void);
-static AttrTab gtkalignment_attrs[];
-/* static int int_gtkalignment_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkalignment_get_methods(void); 
-#endif /* GtkAlignment_Private */
-
 #define NULLGTKALIGNMENT (NspGtkAlignment*) 0
 
 NspGtkAlignment *gtkalignment_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkAlignment *GetGtkAlignmentCopy (Stack stack, int i);
 extern NspGtkAlignment *GetGtkAlignment (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkAlignment_Private 
+static int init_gtkalignment(NspGtkAlignment *o,NspTypeGtkAlignment *type);
+static char *gtkalignment_type_as_string(void);
+static char *gtkalignment_type_short_string(void);
+static AttrTab gtkalignment_attrs[];
+/* static int int_gtkalignment_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkalignment_get_methods(void); 
+#endif /* GtkAlignment_Private */

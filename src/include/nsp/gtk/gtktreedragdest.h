@@ -32,15 +32,6 @@ NspGtkTreeDragDest *new_gtktreedragdest();
 * Object methods redefined for gtktreedragdest 
 */
 
-#ifdef GtkTreeDragDest_Private 
-static int init_gtktreedragdest(NspGtkTreeDragDest *o,NspTypeGtkTreeDragDest *type);
-static char *gtktreedragdest_type_as_string(void);
-static char *gtktreedragdest_type_short_string(void);
-static AttrTab gtktreedragdest_attrs[];
-/* static int int_gtktreedragdest_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktreedragdest_get_methods(void); 
-#endif /* GtkTreeDragDest_Private */
-
 #define NULLGTKTREEDRAGDEST (NspGtkTreeDragDest*) 0
 
 NspGtkTreeDragDest *gtktreedragdest_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTreeDragDest *GetGtkTreeDragDestCopy (Stack stack, int i);
 extern NspGtkTreeDragDest *GetGtkTreeDragDest (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTreeDragDest_Private 
+static int init_gtktreedragdest(NspGtkTreeDragDest *o,NspTypeGtkTreeDragDest *type);
+static char *gtktreedragdest_type_as_string(void);
+static char *gtktreedragdest_type_short_string(void);
+static AttrTab gtktreedragdest_attrs[];
+/* static int int_gtktreedragdest_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreedragdest_get_methods(void); 
+#endif /* GtkTreeDragDest_Private */

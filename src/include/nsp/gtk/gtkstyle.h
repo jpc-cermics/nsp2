@@ -32,15 +32,6 @@ NspGtkStyle *new_gtkstyle();
 * Object methods redefined for gtkstyle 
 */
 
-#ifdef GtkStyle_Private 
-static int init_gtkstyle(NspGtkStyle *o,NspTypeGtkStyle *type);
-static char *gtkstyle_type_as_string(void);
-static char *gtkstyle_type_short_string(void);
-static AttrTab gtkstyle_attrs[];
-/* static int int_gtkstyle_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkstyle_get_methods(void); 
-#endif /* GtkStyle_Private */
-
 #define NULLGTKSTYLE (NspGtkStyle*) 0
 
 NspGtkStyle *gtkstyle_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkStyle *GetGtkStyleCopy (Stack stack, int i);
 extern NspGtkStyle *GetGtkStyle (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkStyle_Private 
+static int init_gtkstyle(NspGtkStyle *o,NspTypeGtkStyle *type);
+static char *gtkstyle_type_as_string(void);
+static char *gtkstyle_type_short_string(void);
+static AttrTab gtkstyle_attrs[];
+/* static int int_gtkstyle_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkstyle_get_methods(void); 
+#endif /* GtkStyle_Private */

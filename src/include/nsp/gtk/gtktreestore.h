@@ -32,15 +32,6 @@ NspGtkTreeStore *new_gtktreestore();
 * Object methods redefined for gtktreestore 
 */
 
-#ifdef GtkTreeStore_Private 
-static int init_gtktreestore(NspGtkTreeStore *o,NspTypeGtkTreeStore *type);
-static char *gtktreestore_type_as_string(void);
-static char *gtktreestore_type_short_string(void);
-static AttrTab gtktreestore_attrs[];
-/* static int int_gtktreestore_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktreestore_get_methods(void); 
-#endif /* GtkTreeStore_Private */
-
 #define NULLGTKTREESTORE (NspGtkTreeStore*) 0
 
 NspGtkTreeStore *gtktreestore_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTreeStore *GetGtkTreeStoreCopy (Stack stack, int i);
 extern NspGtkTreeStore *GetGtkTreeStore (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTreeStore_Private 
+static int init_gtktreestore(NspGtkTreeStore *o,NspTypeGtkTreeStore *type);
+static char *gtktreestore_type_as_string(void);
+static char *gtktreestore_type_short_string(void);
+static AttrTab gtktreestore_attrs[];
+/* static int int_gtktreestore_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreestore_get_methods(void); 
+#endif /* GtkTreeStore_Private */

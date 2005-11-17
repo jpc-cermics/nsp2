@@ -32,15 +32,6 @@ NspGtkPreview *new_gtkpreview();
 * Object methods redefined for gtkpreview 
 */
 
-#ifdef GtkPreview_Private 
-static int init_gtkpreview(NspGtkPreview *o,NspTypeGtkPreview *type);
-static char *gtkpreview_type_as_string(void);
-static char *gtkpreview_type_short_string(void);
-static AttrTab gtkpreview_attrs[];
-/* static int int_gtkpreview_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkpreview_get_methods(void); 
-#endif /* GtkPreview_Private */
-
 #define NULLGTKPREVIEW (NspGtkPreview*) 0
 
 NspGtkPreview *gtkpreview_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkPreview *GetGtkPreviewCopy (Stack stack, int i);
 extern NspGtkPreview *GetGtkPreview (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkPreview_Private 
+static int init_gtkpreview(NspGtkPreview *o,NspTypeGtkPreview *type);
+static char *gtkpreview_type_as_string(void);
+static char *gtkpreview_type_short_string(void);
+static AttrTab gtkpreview_attrs[];
+/* static int int_gtkpreview_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkpreview_get_methods(void); 
+#endif /* GtkPreview_Private */

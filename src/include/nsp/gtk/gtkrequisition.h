@@ -32,15 +32,6 @@ NspGtkRequisition *new_gtkrequisition();
 * Object methods redefined for gtkrequisition 
 */
 
-#ifdef GtkRequisition_Private 
-static int init_gtkrequisition(NspGtkRequisition *o,NspTypeGtkRequisition *type);
-static char *gtkrequisition_type_as_string(void);
-static char *gtkrequisition_type_short_string(void);
-static AttrTab gtkrequisition_attrs[];
-/* static int int_gtkrequisition_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkrequisition_get_methods(void); 
-#endif /* GtkRequisition_Private */
-
 #define NULLGTKREQUISITION (NspGtkRequisition*) 0
 
 NspGtkRequisition *gtkrequisition_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkRequisition *GetGtkRequisitionCopy (Stack stack, int i);
 extern NspGtkRequisition *GetGtkRequisition (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkRequisition_Private 
+static int init_gtkrequisition(NspGtkRequisition *o,NspTypeGtkRequisition *type);
+static char *gtkrequisition_type_as_string(void);
+static char *gtkrequisition_type_short_string(void);
+static AttrTab gtkrequisition_attrs[];
+/* static int int_gtkrequisition_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkrequisition_get_methods(void); 
+#endif /* GtkRequisition_Private */

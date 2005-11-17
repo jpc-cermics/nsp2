@@ -32,15 +32,6 @@ NspAtkObjectFactory *new_atkobjectfactory();
 * Object methods redefined for atkobjectfactory 
 */
 
-#ifdef AtkObjectFactory_Private 
-static int init_atkobjectfactory(NspAtkObjectFactory *o,NspTypeAtkObjectFactory *type);
-static char *atkobjectfactory_type_as_string(void);
-static char *atkobjectfactory_type_short_string(void);
-static AttrTab atkobjectfactory_attrs[];
-/* static int int_atkobjectfactory_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *atkobjectfactory_get_methods(void); 
-#endif /* AtkObjectFactory_Private */
-
 #define NULLATKOBJECTFACTORY (NspAtkObjectFactory*) 0
 
 NspAtkObjectFactory *atkobjectfactory_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspAtkObjectFactory *GetAtkObjectFactoryCopy (Stack stack, int i);
 extern NspAtkObjectFactory *GetAtkObjectFactory (Stack stack, int i); 
 
 #endif 
+
+#ifdef AtkObjectFactory_Private 
+static int init_atkobjectfactory(NspAtkObjectFactory *o,NspTypeAtkObjectFactory *type);
+static char *atkobjectfactory_type_as_string(void);
+static char *atkobjectfactory_type_short_string(void);
+static AttrTab atkobjectfactory_attrs[];
+/* static int int_atkobjectfactory_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkobjectfactory_get_methods(void); 
+#endif /* AtkObjectFactory_Private */

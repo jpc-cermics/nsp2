@@ -32,15 +32,6 @@ NspGtkViewport *new_gtkviewport();
 * Object methods redefined for gtkviewport 
 */
 
-#ifdef GtkViewport_Private 
-static int init_gtkviewport(NspGtkViewport *o,NspTypeGtkViewport *type);
-static char *gtkviewport_type_as_string(void);
-static char *gtkviewport_type_short_string(void);
-static AttrTab gtkviewport_attrs[];
-/* static int int_gtkviewport_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkviewport_get_methods(void); 
-#endif /* GtkViewport_Private */
-
 #define NULLGTKVIEWPORT (NspGtkViewport*) 0
 
 NspGtkViewport *gtkviewport_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkViewport *GetGtkViewportCopy (Stack stack, int i);
 extern NspGtkViewport *GetGtkViewport (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkViewport_Private 
+static int init_gtkviewport(NspGtkViewport *o,NspTypeGtkViewport *type);
+static char *gtkviewport_type_as_string(void);
+static char *gtkviewport_type_short_string(void);
+static AttrTab gtkviewport_attrs[];
+/* static int int_gtkviewport_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkviewport_get_methods(void); 
+#endif /* GtkViewport_Private */

@@ -32,15 +32,6 @@ NspPangoContext *new_pangocontext();
 * Object methods redefined for pangocontext 
 */
 
-#ifdef PangoContext_Private 
-static int init_pangocontext(NspPangoContext *o,NspTypePangoContext *type);
-static char *pangocontext_type_as_string(void);
-static char *pangocontext_type_short_string(void);
-static AttrTab pangocontext_attrs[];
-/* static int int_pangocontext_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *pangocontext_get_methods(void); 
-#endif /* PangoContext_Private */
-
 #define NULLPANGOCONTEXT (NspPangoContext*) 0
 
 NspPangoContext *pangocontext_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspPangoContext *GetPangoContextCopy (Stack stack, int i);
 extern NspPangoContext *GetPangoContext (Stack stack, int i); 
 
 #endif 
+
+#ifdef PangoContext_Private 
+static int init_pangocontext(NspPangoContext *o,NspTypePangoContext *type);
+static char *pangocontext_type_as_string(void);
+static char *pangocontext_type_short_string(void);
+static AttrTab pangocontext_attrs[];
+/* static int int_pangocontext_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangocontext_get_methods(void); 
+#endif /* PangoContext_Private */

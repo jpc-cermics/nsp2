@@ -32,15 +32,6 @@ NspGtkObject *new_gtkobject();
 * Object methods redefined for gtkobject 
 */
 
-#ifdef GtkObject_Private 
-static int init_gtkobject(NspGtkObject *o,NspTypeGtkObject *type);
-static char *gtkobject_type_as_string(void);
-static char *gtkobject_type_short_string(void);
-static AttrTab gtkobject_attrs[];
-/* static int int_gtkobject_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkobject_get_methods(void); 
-#endif /* GtkObject_Private */
-
 #define NULLGTKOBJECT (NspGtkObject*) 0
 
 NspGtkObject *gtkobject_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkObject *GetGtkObjectCopy (Stack stack, int i);
 extern NspGtkObject *GetGtkObject (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkObject_Private 
+static int init_gtkobject(NspGtkObject *o,NspTypeGtkObject *type);
+static char *gtkobject_type_as_string(void);
+static char *gtkobject_type_short_string(void);
+static AttrTab gtkobject_attrs[];
+/* static int int_gtkobject_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkobject_get_methods(void); 
+#endif /* GtkObject_Private */

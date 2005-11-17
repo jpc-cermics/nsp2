@@ -32,15 +32,6 @@ NspGtkAdjustment *new_gtkadjustment();
 * Object methods redefined for gtkadjustment 
 */
 
-#ifdef GtkAdjustment_Private 
-static int init_gtkadjustment(NspGtkAdjustment *o,NspTypeGtkAdjustment *type);
-static char *gtkadjustment_type_as_string(void);
-static char *gtkadjustment_type_short_string(void);
-static AttrTab gtkadjustment_attrs[];
-/* static int int_gtkadjustment_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkadjustment_get_methods(void); 
-#endif /* GtkAdjustment_Private */
-
 #define NULLGTKADJUSTMENT (NspGtkAdjustment*) 0
 
 NspGtkAdjustment *gtkadjustment_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkAdjustment *GetGtkAdjustmentCopy (Stack stack, int i);
 extern NspGtkAdjustment *GetGtkAdjustment (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkAdjustment_Private 
+static int init_gtkadjustment(NspGtkAdjustment *o,NspTypeGtkAdjustment *type);
+static char *gtkadjustment_type_as_string(void);
+static char *gtkadjustment_type_short_string(void);
+static AttrTab gtkadjustment_attrs[];
+/* static int int_gtkadjustment_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkadjustment_get_methods(void); 
+#endif /* GtkAdjustment_Private */

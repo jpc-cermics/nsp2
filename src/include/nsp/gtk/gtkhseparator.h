@@ -32,15 +32,6 @@ NspGtkHSeparator *new_gtkhseparator();
 * Object methods redefined for gtkhseparator 
 */
 
-#ifdef GtkHSeparator_Private 
-static int init_gtkhseparator(NspGtkHSeparator *o,NspTypeGtkHSeparator *type);
-static char *gtkhseparator_type_as_string(void);
-static char *gtkhseparator_type_short_string(void);
-static AttrTab gtkhseparator_attrs[];
-/* static int int_gtkhseparator_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkhseparator_get_methods(void); 
-#endif /* GtkHSeparator_Private */
-
 #define NULLGTKHSEPARATOR (NspGtkHSeparator*) 0
 
 NspGtkHSeparator *gtkhseparator_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkHSeparator *GetGtkHSeparatorCopy (Stack stack, int i);
 extern NspGtkHSeparator *GetGtkHSeparator (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkHSeparator_Private 
+static int init_gtkhseparator(NspGtkHSeparator *o,NspTypeGtkHSeparator *type);
+static char *gtkhseparator_type_as_string(void);
+static char *gtkhseparator_type_short_string(void);
+static AttrTab gtkhseparator_attrs[];
+/* static int int_gtkhseparator_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkhseparator_get_methods(void); 
+#endif /* GtkHSeparator_Private */

@@ -32,15 +32,6 @@ NspGtkColorSelection *new_gtkcolorselection();
 * Object methods redefined for gtkcolorselection 
 */
 
-#ifdef GtkColorSelection_Private 
-static int init_gtkcolorselection(NspGtkColorSelection *o,NspTypeGtkColorSelection *type);
-static char *gtkcolorselection_type_as_string(void);
-static char *gtkcolorselection_type_short_string(void);
-static AttrTab gtkcolorselection_attrs[];
-/* static int int_gtkcolorselection_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcolorselection_get_methods(void); 
-#endif /* GtkColorSelection_Private */
-
 #define NULLGTKCOLORSELECTION (NspGtkColorSelection*) 0
 
 NspGtkColorSelection *gtkcolorselection_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkColorSelection *GetGtkColorSelectionCopy (Stack stack, int i);
 extern NspGtkColorSelection *GetGtkColorSelection (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkColorSelection_Private 
+static int init_gtkcolorselection(NspGtkColorSelection *o,NspTypeGtkColorSelection *type);
+static char *gtkcolorselection_type_as_string(void);
+static char *gtkcolorselection_type_short_string(void);
+static AttrTab gtkcolorselection_attrs[];
+/* static int int_gtkcolorselection_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcolorselection_get_methods(void); 
+#endif /* GtkColorSelection_Private */

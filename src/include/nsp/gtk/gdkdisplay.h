@@ -32,15 +32,6 @@ NspGdkDisplay *new_gdkdisplay();
 * Object methods redefined for gdkdisplay 
 */
 
-#ifdef GdkDisplay_Private 
-static int init_gdkdisplay(NspGdkDisplay *o,NspTypeGdkDisplay *type);
-static char *gdkdisplay_type_as_string(void);
-static char *gdkdisplay_type_short_string(void);
-static AttrTab gdkdisplay_attrs[];
-/* static int int_gdkdisplay_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkdisplay_get_methods(void); 
-#endif /* GdkDisplay_Private */
-
 #define NULLGDKDISPLAY (NspGdkDisplay*) 0
 
 NspGdkDisplay *gdkdisplay_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkDisplay *GetGdkDisplayCopy (Stack stack, int i);
 extern NspGdkDisplay *GetGdkDisplay (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkDisplay_Private 
+static int init_gdkdisplay(NspGdkDisplay *o,NspTypeGdkDisplay *type);
+static char *gdkdisplay_type_as_string(void);
+static char *gdkdisplay_type_short_string(void);
+static AttrTab gdkdisplay_attrs[];
+/* static int int_gdkdisplay_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkdisplay_get_methods(void); 
+#endif /* GdkDisplay_Private */

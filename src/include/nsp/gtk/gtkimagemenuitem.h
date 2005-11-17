@@ -32,15 +32,6 @@ NspGtkImageMenuItem *new_gtkimagemenuitem();
 * Object methods redefined for gtkimagemenuitem 
 */
 
-#ifdef GtkImageMenuItem_Private 
-static int init_gtkimagemenuitem(NspGtkImageMenuItem *o,NspTypeGtkImageMenuItem *type);
-static char *gtkimagemenuitem_type_as_string(void);
-static char *gtkimagemenuitem_type_short_string(void);
-static AttrTab gtkimagemenuitem_attrs[];
-/* static int int_gtkimagemenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkimagemenuitem_get_methods(void); 
-#endif /* GtkImageMenuItem_Private */
-
 #define NULLGTKIMAGEMENUITEM (NspGtkImageMenuItem*) 0
 
 NspGtkImageMenuItem *gtkimagemenuitem_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkImageMenuItem *GetGtkImageMenuItemCopy (Stack stack, int i);
 extern NspGtkImageMenuItem *GetGtkImageMenuItem (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkImageMenuItem_Private 
+static int init_gtkimagemenuitem(NspGtkImageMenuItem *o,NspTypeGtkImageMenuItem *type);
+static char *gtkimagemenuitem_type_as_string(void);
+static char *gtkimagemenuitem_type_short_string(void);
+static AttrTab gtkimagemenuitem_attrs[];
+/* static int int_gtkimagemenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkimagemenuitem_get_methods(void); 
+#endif /* GtkImageMenuItem_Private */

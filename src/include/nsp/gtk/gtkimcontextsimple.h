@@ -32,15 +32,6 @@ NspGtkIMContextSimple *new_gtkimcontextsimple();
 * Object methods redefined for gtkimcontextsimple 
 */
 
-#ifdef GtkIMContextSimple_Private 
-static int init_gtkimcontextsimple(NspGtkIMContextSimple *o,NspTypeGtkIMContextSimple *type);
-static char *gtkimcontextsimple_type_as_string(void);
-static char *gtkimcontextsimple_type_short_string(void);
-static AttrTab gtkimcontextsimple_attrs[];
-/* static int int_gtkimcontextsimple_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkimcontextsimple_get_methods(void); 
-#endif /* GtkIMContextSimple_Private */
-
 #define NULLGTKIMCONTEXTSIMPLE (NspGtkIMContextSimple*) 0
 
 NspGtkIMContextSimple *gtkimcontextsimple_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkIMContextSimple *GetGtkIMContextSimpleCopy (Stack stack, int i);
 extern NspGtkIMContextSimple *GetGtkIMContextSimple (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkIMContextSimple_Private 
+static int init_gtkimcontextsimple(NspGtkIMContextSimple *o,NspTypeGtkIMContextSimple *type);
+static char *gtkimcontextsimple_type_as_string(void);
+static char *gtkimcontextsimple_type_short_string(void);
+static AttrTab gtkimcontextsimple_attrs[];
+/* static int int_gtkimcontextsimple_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkimcontextsimple_get_methods(void); 
+#endif /* GtkIMContextSimple_Private */

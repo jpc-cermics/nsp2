@@ -32,15 +32,6 @@ NspGtkArrow *new_gtkarrow();
 * Object methods redefined for gtkarrow 
 */
 
-#ifdef GtkArrow_Private 
-static int init_gtkarrow(NspGtkArrow *o,NspTypeGtkArrow *type);
-static char *gtkarrow_type_as_string(void);
-static char *gtkarrow_type_short_string(void);
-static AttrTab gtkarrow_attrs[];
-/* static int int_gtkarrow_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkarrow_get_methods(void); 
-#endif /* GtkArrow_Private */
-
 #define NULLGTKARROW (NspGtkArrow*) 0
 
 NspGtkArrow *gtkarrow_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkArrow *GetGtkArrowCopy (Stack stack, int i);
 extern NspGtkArrow *GetGtkArrow (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkArrow_Private 
+static int init_gtkarrow(NspGtkArrow *o,NspTypeGtkArrow *type);
+static char *gtkarrow_type_as_string(void);
+static char *gtkarrow_type_short_string(void);
+static AttrTab gtkarrow_attrs[];
+/* static int int_gtkarrow_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkarrow_get_methods(void); 
+#endif /* GtkArrow_Private */

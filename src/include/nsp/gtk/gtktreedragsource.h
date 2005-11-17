@@ -32,15 +32,6 @@ NspGtkTreeDragSource *new_gtktreedragsource();
 * Object methods redefined for gtktreedragsource 
 */
 
-#ifdef GtkTreeDragSource_Private 
-static int init_gtktreedragsource(NspGtkTreeDragSource *o,NspTypeGtkTreeDragSource *type);
-static char *gtktreedragsource_type_as_string(void);
-static char *gtktreedragsource_type_short_string(void);
-static AttrTab gtktreedragsource_attrs[];
-/* static int int_gtktreedragsource_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktreedragsource_get_methods(void); 
-#endif /* GtkTreeDragSource_Private */
-
 #define NULLGTKTREEDRAGSOURCE (NspGtkTreeDragSource*) 0
 
 NspGtkTreeDragSource *gtktreedragsource_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTreeDragSource *GetGtkTreeDragSourceCopy (Stack stack, int i);
 extern NspGtkTreeDragSource *GetGtkTreeDragSource (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTreeDragSource_Private 
+static int init_gtktreedragsource(NspGtkTreeDragSource *o,NspTypeGtkTreeDragSource *type);
+static char *gtktreedragsource_type_as_string(void);
+static char *gtktreedragsource_type_short_string(void);
+static AttrTab gtktreedragsource_attrs[];
+/* static int int_gtktreedragsource_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreedragsource_get_methods(void); 
+#endif /* GtkTreeDragSource_Private */

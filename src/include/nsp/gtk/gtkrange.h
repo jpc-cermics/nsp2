@@ -32,15 +32,6 @@ NspGtkRange *new_gtkrange();
 * Object methods redefined for gtkrange 
 */
 
-#ifdef GtkRange_Private 
-static int init_gtkrange(NspGtkRange *o,NspTypeGtkRange *type);
-static char *gtkrange_type_as_string(void);
-static char *gtkrange_type_short_string(void);
-static AttrTab gtkrange_attrs[];
-/* static int int_gtkrange_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkrange_get_methods(void); 
-#endif /* GtkRange_Private */
-
 #define NULLGTKRANGE (NspGtkRange*) 0
 
 NspGtkRange *gtkrange_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkRange *GetGtkRangeCopy (Stack stack, int i);
 extern NspGtkRange *GetGtkRange (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkRange_Private 
+static int init_gtkrange(NspGtkRange *o,NspTypeGtkRange *type);
+static char *gtkrange_type_as_string(void);
+static char *gtkrange_type_short_string(void);
+static AttrTab gtkrange_attrs[];
+/* static int int_gtkrange_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkrange_get_methods(void); 
+#endif /* GtkRange_Private */

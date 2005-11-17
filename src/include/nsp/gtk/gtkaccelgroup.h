@@ -32,15 +32,6 @@ NspGtkAccelGroup *new_gtkaccelgroup();
 * Object methods redefined for gtkaccelgroup 
 */
 
-#ifdef GtkAccelGroup_Private 
-static int init_gtkaccelgroup(NspGtkAccelGroup *o,NspTypeGtkAccelGroup *type);
-static char *gtkaccelgroup_type_as_string(void);
-static char *gtkaccelgroup_type_short_string(void);
-static AttrTab gtkaccelgroup_attrs[];
-/* static int int_gtkaccelgroup_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkaccelgroup_get_methods(void); 
-#endif /* GtkAccelGroup_Private */
-
 #define NULLGTKACCELGROUP (NspGtkAccelGroup*) 0
 
 NspGtkAccelGroup *gtkaccelgroup_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkAccelGroup *GetGtkAccelGroupCopy (Stack stack, int i);
 extern NspGtkAccelGroup *GetGtkAccelGroup (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkAccelGroup_Private 
+static int init_gtkaccelgroup(NspGtkAccelGroup *o,NspTypeGtkAccelGroup *type);
+static char *gtkaccelgroup_type_as_string(void);
+static char *gtkaccelgroup_type_short_string(void);
+static AttrTab gtkaccelgroup_attrs[];
+/* static int int_gtkaccelgroup_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkaccelgroup_get_methods(void); 
+#endif /* GtkAccelGroup_Private */

@@ -32,15 +32,6 @@ NspGtkBox *new_gtkbox();
 * Object methods redefined for gtkbox 
 */
 
-#ifdef GtkBox_Private 
-static int init_gtkbox(NspGtkBox *o,NspTypeGtkBox *type);
-static char *gtkbox_type_as_string(void);
-static char *gtkbox_type_short_string(void);
-static AttrTab gtkbox_attrs[];
-/* static int int_gtkbox_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkbox_get_methods(void); 
-#endif /* GtkBox_Private */
-
 #define NULLGTKBOX (NspGtkBox*) 0
 
 NspGtkBox *gtkbox_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkBox *GetGtkBoxCopy (Stack stack, int i);
 extern NspGtkBox *GetGtkBox (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkBox_Private 
+static int init_gtkbox(NspGtkBox *o,NspTypeGtkBox *type);
+static char *gtkbox_type_as_string(void);
+static char *gtkbox_type_short_string(void);
+static AttrTab gtkbox_attrs[];
+/* static int int_gtkbox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkbox_get_methods(void); 
+#endif /* GtkBox_Private */

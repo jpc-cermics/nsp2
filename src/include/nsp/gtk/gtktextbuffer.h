@@ -32,15 +32,6 @@ NspGtkTextBuffer *new_gtktextbuffer();
 * Object methods redefined for gtktextbuffer 
 */
 
-#ifdef GtkTextBuffer_Private 
-static int init_gtktextbuffer(NspGtkTextBuffer *o,NspTypeGtkTextBuffer *type);
-static char *gtktextbuffer_type_as_string(void);
-static char *gtktextbuffer_type_short_string(void);
-static AttrTab gtktextbuffer_attrs[];
-/* static int int_gtktextbuffer_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktextbuffer_get_methods(void); 
-#endif /* GtkTextBuffer_Private */
-
 #define NULLGTKTEXTBUFFER (NspGtkTextBuffer*) 0
 
 NspGtkTextBuffer *gtktextbuffer_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTextBuffer *GetGtkTextBufferCopy (Stack stack, int i);
 extern NspGtkTextBuffer *GetGtkTextBuffer (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTextBuffer_Private 
+static int init_gtktextbuffer(NspGtkTextBuffer *o,NspTypeGtkTextBuffer *type);
+static char *gtktextbuffer_type_as_string(void);
+static char *gtktextbuffer_type_short_string(void);
+static AttrTab gtktextbuffer_attrs[];
+/* static int int_gtktextbuffer_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktextbuffer_get_methods(void); 
+#endif /* GtkTextBuffer_Private */

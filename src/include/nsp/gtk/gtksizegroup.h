@@ -32,15 +32,6 @@ NspGtkSizeGroup *new_gtksizegroup();
 * Object methods redefined for gtksizegroup 
 */
 
-#ifdef GtkSizeGroup_Private 
-static int init_gtksizegroup(NspGtkSizeGroup *o,NspTypeGtkSizeGroup *type);
-static char *gtksizegroup_type_as_string(void);
-static char *gtksizegroup_type_short_string(void);
-static AttrTab gtksizegroup_attrs[];
-/* static int int_gtksizegroup_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtksizegroup_get_methods(void); 
-#endif /* GtkSizeGroup_Private */
-
 #define NULLGTKSIZEGROUP (NspGtkSizeGroup*) 0
 
 NspGtkSizeGroup *gtksizegroup_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkSizeGroup *GetGtkSizeGroupCopy (Stack stack, int i);
 extern NspGtkSizeGroup *GetGtkSizeGroup (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkSizeGroup_Private 
+static int init_gtksizegroup(NspGtkSizeGroup *o,NspTypeGtkSizeGroup *type);
+static char *gtksizegroup_type_as_string(void);
+static char *gtksizegroup_type_short_string(void);
+static AttrTab gtksizegroup_attrs[];
+/* static int int_gtksizegroup_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtksizegroup_get_methods(void); 
+#endif /* GtkSizeGroup_Private */

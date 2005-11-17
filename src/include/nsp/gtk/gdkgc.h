@@ -32,15 +32,6 @@ NspGdkGC *new_gdkgc();
 * Object methods redefined for gdkgc 
 */
 
-#ifdef GdkGC_Private 
-static int init_gdkgc(NspGdkGC *o,NspTypeGdkGC *type);
-static char *gdkgc_type_as_string(void);
-static char *gdkgc_type_short_string(void);
-static AttrTab gdkgc_attrs[];
-/* static int int_gdkgc_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkgc_get_methods(void); 
-#endif /* GdkGC_Private */
-
 #define NULLGDKGC (NspGdkGC*) 0
 
 NspGdkGC *gdkgc_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkGC *GetGdkGCCopy (Stack stack, int i);
 extern NspGdkGC *GetGdkGC (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkGC_Private 
+static int init_gdkgc(NspGdkGC *o,NspTypeGdkGC *type);
+static char *gdkgc_type_as_string(void);
+static char *gdkgc_type_short_string(void);
+static AttrTab gdkgc_attrs[];
+/* static int int_gdkgc_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkgc_get_methods(void); 
+#endif /* GdkGC_Private */

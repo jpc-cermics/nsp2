@@ -32,15 +32,6 @@ NspGtkTreeModel *new_gtktreemodel();
 * Object methods redefined for gtktreemodel 
 */
 
-#ifdef GtkTreeModel_Private 
-static int init_gtktreemodel(NspGtkTreeModel *o,NspTypeGtkTreeModel *type);
-static char *gtktreemodel_type_as_string(void);
-static char *gtktreemodel_type_short_string(void);
-static AttrTab gtktreemodel_attrs[];
-/* static int int_gtktreemodel_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktreemodel_get_methods(void); 
-#endif /* GtkTreeModel_Private */
-
 #define NULLGTKTREEMODEL (NspGtkTreeModel*) 0
 
 NspGtkTreeModel *gtktreemodel_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTreeModel *GetGtkTreeModelCopy (Stack stack, int i);
 extern NspGtkTreeModel *GetGtkTreeModel (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTreeModel_Private 
+static int init_gtktreemodel(NspGtkTreeModel *o,NspTypeGtkTreeModel *type);
+static char *gtktreemodel_type_as_string(void);
+static char *gtktreemodel_type_short_string(void);
+static AttrTab gtktreemodel_attrs[];
+/* static int int_gtktreemodel_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreemodel_get_methods(void); 
+#endif /* GtkTreeModel_Private */

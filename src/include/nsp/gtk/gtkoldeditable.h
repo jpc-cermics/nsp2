@@ -32,15 +32,6 @@ NspGtkOldEditable *new_gtkoldeditable();
 * Object methods redefined for gtkoldeditable 
 */
 
-#ifdef GtkOldEditable_Private 
-static int init_gtkoldeditable(NspGtkOldEditable *o,NspTypeGtkOldEditable *type);
-static char *gtkoldeditable_type_as_string(void);
-static char *gtkoldeditable_type_short_string(void);
-static AttrTab gtkoldeditable_attrs[];
-/* static int int_gtkoldeditable_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkoldeditable_get_methods(void); 
-#endif /* GtkOldEditable_Private */
-
 #define NULLGTKOLDEDITABLE (NspGtkOldEditable*) 0
 
 NspGtkOldEditable *gtkoldeditable_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkOldEditable *GetGtkOldEditableCopy (Stack stack, int i);
 extern NspGtkOldEditable *GetGtkOldEditable (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkOldEditable_Private 
+static int init_gtkoldeditable(NspGtkOldEditable *o,NspTypeGtkOldEditable *type);
+static char *gtkoldeditable_type_as_string(void);
+static char *gtkoldeditable_type_short_string(void);
+static AttrTab gtkoldeditable_attrs[];
+/* static int int_gtkoldeditable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkoldeditable_get_methods(void); 
+#endif /* GtkOldEditable_Private */

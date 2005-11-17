@@ -32,15 +32,6 @@ NspPangoLanguage *new_pangolanguage();
 * Object methods redefined for pangolanguage 
 */
 
-#ifdef PangoLanguage_Private 
-static int init_pangolanguage(NspPangoLanguage *o,NspTypePangoLanguage *type);
-static char *pangolanguage_type_as_string(void);
-static char *pangolanguage_type_short_string(void);
-static AttrTab pangolanguage_attrs[];
-/* static int int_pangolanguage_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *pangolanguage_get_methods(void); 
-#endif /* PangoLanguage_Private */
-
 #define NULLPANGOLANGUAGE (NspPangoLanguage*) 0
 
 NspPangoLanguage *pangolanguage_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspPangoLanguage *GetPangoLanguageCopy (Stack stack, int i);
 extern NspPangoLanguage *GetPangoLanguage (Stack stack, int i); 
 
 #endif 
+
+#ifdef PangoLanguage_Private 
+static int init_pangolanguage(NspPangoLanguage *o,NspTypePangoLanguage *type);
+static char *pangolanguage_type_as_string(void);
+static char *pangolanguage_type_short_string(void);
+static AttrTab pangolanguage_attrs[];
+/* static int int_pangolanguage_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangolanguage_get_methods(void); 
+#endif /* PangoLanguage_Private */

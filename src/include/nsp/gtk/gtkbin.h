@@ -32,15 +32,6 @@ NspGtkBin *new_gtkbin();
 * Object methods redefined for gtkbin 
 */
 
-#ifdef GtkBin_Private 
-static int init_gtkbin(NspGtkBin *o,NspTypeGtkBin *type);
-static char *gtkbin_type_as_string(void);
-static char *gtkbin_type_short_string(void);
-static AttrTab gtkbin_attrs[];
-/* static int int_gtkbin_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkbin_get_methods(void); 
-#endif /* GtkBin_Private */
-
 #define NULLGTKBIN (NspGtkBin*) 0
 
 NspGtkBin *gtkbin_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkBin *GetGtkBinCopy (Stack stack, int i);
 extern NspGtkBin *GetGtkBin (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkBin_Private 
+static int init_gtkbin(NspGtkBin *o,NspTypeGtkBin *type);
+static char *gtkbin_type_as_string(void);
+static char *gtkbin_type_short_string(void);
+static AttrTab gtkbin_attrs[];
+/* static int int_gtkbin_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkbin_get_methods(void); 
+#endif /* GtkBin_Private */

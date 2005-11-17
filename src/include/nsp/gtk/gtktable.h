@@ -32,15 +32,6 @@ NspGtkTable *new_gtktable();
 * Object methods redefined for gtktable 
 */
 
-#ifdef GtkTable_Private 
-static int init_gtktable(NspGtkTable *o,NspTypeGtkTable *type);
-static char *gtktable_type_as_string(void);
-static char *gtktable_type_short_string(void);
-static AttrTab gtktable_attrs[];
-/* static int int_gtktable_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktable_get_methods(void); 
-#endif /* GtkTable_Private */
-
 #define NULLGTKTABLE (NspGtkTable*) 0
 
 NspGtkTable *gtktable_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTable *GetGtkTableCopy (Stack stack, int i);
 extern NspGtkTable *GetGtkTable (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTable_Private 
+static int init_gtktable(NspGtkTable *o,NspTypeGtkTable *type);
+static char *gtktable_type_as_string(void);
+static char *gtktable_type_short_string(void);
+static AttrTab gtktable_attrs[];
+/* static int int_gtktable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktable_get_methods(void); 
+#endif /* GtkTable_Private */

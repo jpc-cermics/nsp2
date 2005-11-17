@@ -32,15 +32,6 @@ NspGtkFixed *new_gtkfixed();
 * Object methods redefined for gtkfixed 
 */
 
-#ifdef GtkFixed_Private 
-static int init_gtkfixed(NspGtkFixed *o,NspTypeGtkFixed *type);
-static char *gtkfixed_type_as_string(void);
-static char *gtkfixed_type_short_string(void);
-static AttrTab gtkfixed_attrs[];
-/* static int int_gtkfixed_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkfixed_get_methods(void); 
-#endif /* GtkFixed_Private */
-
 #define NULLGTKFIXED (NspGtkFixed*) 0
 
 NspGtkFixed *gtkfixed_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkFixed *GetGtkFixedCopy (Stack stack, int i);
 extern NspGtkFixed *GetGtkFixed (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkFixed_Private 
+static int init_gtkfixed(NspGtkFixed *o,NspTypeGtkFixed *type);
+static char *gtkfixed_type_as_string(void);
+static char *gtkfixed_type_short_string(void);
+static AttrTab gtkfixed_attrs[];
+/* static int int_gtkfixed_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkfixed_get_methods(void); 
+#endif /* GtkFixed_Private */

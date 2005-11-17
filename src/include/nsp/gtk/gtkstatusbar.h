@@ -32,15 +32,6 @@ NspGtkStatusbar *new_gtkstatusbar();
 * Object methods redefined for gtkstatusbar 
 */
 
-#ifdef GtkStatusbar_Private 
-static int init_gtkstatusbar(NspGtkStatusbar *o,NspTypeGtkStatusbar *type);
-static char *gtkstatusbar_type_as_string(void);
-static char *gtkstatusbar_type_short_string(void);
-static AttrTab gtkstatusbar_attrs[];
-/* static int int_gtkstatusbar_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkstatusbar_get_methods(void); 
-#endif /* GtkStatusbar_Private */
-
 #define NULLGTKSTATUSBAR (NspGtkStatusbar*) 0
 
 NspGtkStatusbar *gtkstatusbar_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkStatusbar *GetGtkStatusbarCopy (Stack stack, int i);
 extern NspGtkStatusbar *GetGtkStatusbar (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkStatusbar_Private 
+static int init_gtkstatusbar(NspGtkStatusbar *o,NspTypeGtkStatusbar *type);
+static char *gtkstatusbar_type_as_string(void);
+static char *gtkstatusbar_type_short_string(void);
+static AttrTab gtkstatusbar_attrs[];
+/* static int int_gtkstatusbar_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkstatusbar_get_methods(void); 
+#endif /* GtkStatusbar_Private */

@@ -32,15 +32,6 @@ NspGtkTearoffMenuItem *new_gtktearoffmenuitem();
 * Object methods redefined for gtktearoffmenuitem 
 */
 
-#ifdef GtkTearoffMenuItem_Private 
-static int init_gtktearoffmenuitem(NspGtkTearoffMenuItem *o,NspTypeGtkTearoffMenuItem *type);
-static char *gtktearoffmenuitem_type_as_string(void);
-static char *gtktearoffmenuitem_type_short_string(void);
-static AttrTab gtktearoffmenuitem_attrs[];
-/* static int int_gtktearoffmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktearoffmenuitem_get_methods(void); 
-#endif /* GtkTearoffMenuItem_Private */
-
 #define NULLGTKTEAROFFMENUITEM (NspGtkTearoffMenuItem*) 0
 
 NspGtkTearoffMenuItem *gtktearoffmenuitem_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTearoffMenuItem *GetGtkTearoffMenuItemCopy (Stack stack, int i);
 extern NspGtkTearoffMenuItem *GetGtkTearoffMenuItem (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTearoffMenuItem_Private 
+static int init_gtktearoffmenuitem(NspGtkTearoffMenuItem *o,NspTypeGtkTearoffMenuItem *type);
+static char *gtktearoffmenuitem_type_as_string(void);
+static char *gtktearoffmenuitem_type_short_string(void);
+static AttrTab gtktearoffmenuitem_attrs[];
+/* static int int_gtktearoffmenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktearoffmenuitem_get_methods(void); 
+#endif /* GtkTearoffMenuItem_Private */

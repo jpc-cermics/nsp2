@@ -32,15 +32,6 @@ NspAtkHyperlink *new_atkhyperlink();
 * Object methods redefined for atkhyperlink 
 */
 
-#ifdef AtkHyperlink_Private 
-static int init_atkhyperlink(NspAtkHyperlink *o,NspTypeAtkHyperlink *type);
-static char *atkhyperlink_type_as_string(void);
-static char *atkhyperlink_type_short_string(void);
-static AttrTab atkhyperlink_attrs[];
-/* static int int_atkhyperlink_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *atkhyperlink_get_methods(void); 
-#endif /* AtkHyperlink_Private */
-
 #define NULLATKHYPERLINK (NspAtkHyperlink*) 0
 
 NspAtkHyperlink *atkhyperlink_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspAtkHyperlink *GetAtkHyperlinkCopy (Stack stack, int i);
 extern NspAtkHyperlink *GetAtkHyperlink (Stack stack, int i); 
 
 #endif 
+
+#ifdef AtkHyperlink_Private 
+static int init_atkhyperlink(NspAtkHyperlink *o,NspTypeAtkHyperlink *type);
+static char *atkhyperlink_type_as_string(void);
+static char *atkhyperlink_type_short_string(void);
+static AttrTab atkhyperlink_attrs[];
+/* static int int_atkhyperlink_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkhyperlink_get_methods(void); 
+#endif /* AtkHyperlink_Private */

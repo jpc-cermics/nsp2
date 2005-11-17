@@ -32,15 +32,6 @@ NspGtkVSeparator *new_gtkvseparator();
 * Object methods redefined for gtkvseparator 
 */
 
-#ifdef GtkVSeparator_Private 
-static int init_gtkvseparator(NspGtkVSeparator *o,NspTypeGtkVSeparator *type);
-static char *gtkvseparator_type_as_string(void);
-static char *gtkvseparator_type_short_string(void);
-static AttrTab gtkvseparator_attrs[];
-/* static int int_gtkvseparator_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkvseparator_get_methods(void); 
-#endif /* GtkVSeparator_Private */
-
 #define NULLGTKVSEPARATOR (NspGtkVSeparator*) 0
 
 NspGtkVSeparator *gtkvseparator_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkVSeparator *GetGtkVSeparatorCopy (Stack stack, int i);
 extern NspGtkVSeparator *GetGtkVSeparator (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkVSeparator_Private 
+static int init_gtkvseparator(NspGtkVSeparator *o,NspTypeGtkVSeparator *type);
+static char *gtkvseparator_type_as_string(void);
+static char *gtkvseparator_type_short_string(void);
+static AttrTab gtkvseparator_attrs[];
+/* static int int_gtkvseparator_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkvseparator_get_methods(void); 
+#endif /* GtkVSeparator_Private */

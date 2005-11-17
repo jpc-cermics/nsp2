@@ -32,15 +32,6 @@ NspGdkPixmap *new_gdkpixmap();
 * Object methods redefined for gdkpixmap 
 */
 
-#ifdef GdkPixmap_Private 
-static int init_gdkpixmap(NspGdkPixmap *o,NspTypeGdkPixmap *type);
-static char *gdkpixmap_type_as_string(void);
-static char *gdkpixmap_type_short_string(void);
-static AttrTab gdkpixmap_attrs[];
-/* static int int_gdkpixmap_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkpixmap_get_methods(void); 
-#endif /* GdkPixmap_Private */
-
 #define NULLGDKPIXMAP (NspGdkPixmap*) 0
 
 NspGdkPixmap *gdkpixmap_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkPixmap *GetGdkPixmapCopy (Stack stack, int i);
 extern NspGdkPixmap *GetGdkPixmap (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkPixmap_Private 
+static int init_gdkpixmap(NspGdkPixmap *o,NspTypeGdkPixmap *type);
+static char *gdkpixmap_type_as_string(void);
+static char *gdkpixmap_type_short_string(void);
+static AttrTab gdkpixmap_attrs[];
+/* static int int_gdkpixmap_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkpixmap_get_methods(void); 
+#endif /* GdkPixmap_Private */

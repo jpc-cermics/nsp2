@@ -32,15 +32,6 @@ NspGtkTooltips *new_gtktooltips();
 * Object methods redefined for gtktooltips 
 */
 
-#ifdef GtkTooltips_Private 
-static int init_gtktooltips(NspGtkTooltips *o,NspTypeGtkTooltips *type);
-static char *gtktooltips_type_as_string(void);
-static char *gtktooltips_type_short_string(void);
-static AttrTab gtktooltips_attrs[];
-/* static int int_gtktooltips_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktooltips_get_methods(void); 
-#endif /* GtkTooltips_Private */
-
 #define NULLGTKTOOLTIPS (NspGtkTooltips*) 0
 
 NspGtkTooltips *gtktooltips_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTooltips *GetGtkTooltipsCopy (Stack stack, int i);
 extern NspGtkTooltips *GetGtkTooltips (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTooltips_Private 
+static int init_gtktooltips(NspGtkTooltips *o,NspTypeGtkTooltips *type);
+static char *gtktooltips_type_as_string(void);
+static char *gtktooltips_type_short_string(void);
+static AttrTab gtktooltips_attrs[];
+/* static int int_gtktooltips_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktooltips_get_methods(void); 
+#endif /* GtkTooltips_Private */

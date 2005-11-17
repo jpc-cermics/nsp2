@@ -32,15 +32,6 @@ NspGtkSettings *new_gtksettings();
 * Object methods redefined for gtksettings 
 */
 
-#ifdef GtkSettings_Private 
-static int init_gtksettings(NspGtkSettings *o,NspTypeGtkSettings *type);
-static char *gtksettings_type_as_string(void);
-static char *gtksettings_type_short_string(void);
-static AttrTab gtksettings_attrs[];
-/* static int int_gtksettings_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtksettings_get_methods(void); 
-#endif /* GtkSettings_Private */
-
 #define NULLGTKSETTINGS (NspGtkSettings*) 0
 
 NspGtkSettings *gtksettings_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkSettings *GetGtkSettingsCopy (Stack stack, int i);
 extern NspGtkSettings *GetGtkSettings (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkSettings_Private 
+static int init_gtksettings(NspGtkSettings *o,NspTypeGtkSettings *type);
+static char *gtksettings_type_as_string(void);
+static char *gtksettings_type_short_string(void);
+static AttrTab gtksettings_attrs[];
+/* static int int_gtksettings_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtksettings_get_methods(void); 
+#endif /* GtkSettings_Private */

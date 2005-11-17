@@ -32,15 +32,6 @@ NspGtkMenu *new_gtkmenu();
 * Object methods redefined for gtkmenu 
 */
 
-#ifdef GtkMenu_Private 
-static int init_gtkmenu(NspGtkMenu *o,NspTypeGtkMenu *type);
-static char *gtkmenu_type_as_string(void);
-static char *gtkmenu_type_short_string(void);
-static AttrTab gtkmenu_attrs[];
-/* static int int_gtkmenu_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkmenu_get_methods(void); 
-#endif /* GtkMenu_Private */
-
 #define NULLGTKMENU (NspGtkMenu*) 0
 
 NspGtkMenu *gtkmenu_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkMenu *GetGtkMenuCopy (Stack stack, int i);
 extern NspGtkMenu *GetGtkMenu (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkMenu_Private 
+static int init_gtkmenu(NspGtkMenu *o,NspTypeGtkMenu *type);
+static char *gtkmenu_type_as_string(void);
+static char *gtkmenu_type_short_string(void);
+static AttrTab gtkmenu_attrs[];
+/* static int int_gtkmenu_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkmenu_get_methods(void); 
+#endif /* GtkMenu_Private */

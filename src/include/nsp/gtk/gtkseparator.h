@@ -32,15 +32,6 @@ NspGtkSeparator *new_gtkseparator();
 * Object methods redefined for gtkseparator 
 */
 
-#ifdef GtkSeparator_Private 
-static int init_gtkseparator(NspGtkSeparator *o,NspTypeGtkSeparator *type);
-static char *gtkseparator_type_as_string(void);
-static char *gtkseparator_type_short_string(void);
-static AttrTab gtkseparator_attrs[];
-/* static int int_gtkseparator_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkseparator_get_methods(void); 
-#endif /* GtkSeparator_Private */
-
 #define NULLGTKSEPARATOR (NspGtkSeparator*) 0
 
 NspGtkSeparator *gtkseparator_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkSeparator *GetGtkSeparatorCopy (Stack stack, int i);
 extern NspGtkSeparator *GetGtkSeparator (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkSeparator_Private 
+static int init_gtkseparator(NspGtkSeparator *o,NspTypeGtkSeparator *type);
+static char *gtkseparator_type_as_string(void);
+static char *gtkseparator_type_short_string(void);
+static AttrTab gtkseparator_attrs[];
+/* static int int_gtkseparator_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkseparator_get_methods(void); 
+#endif /* GtkSeparator_Private */

@@ -32,15 +32,6 @@ NspGtkProgress *new_gtkprogress();
 * Object methods redefined for gtkprogress 
 */
 
-#ifdef GtkProgress_Private 
-static int init_gtkprogress(NspGtkProgress *o,NspTypeGtkProgress *type);
-static char *gtkprogress_type_as_string(void);
-static char *gtkprogress_type_short_string(void);
-static AttrTab gtkprogress_attrs[];
-/* static int int_gtkprogress_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkprogress_get_methods(void); 
-#endif /* GtkProgress_Private */
-
 #define NULLGTKPROGRESS (NspGtkProgress*) 0
 
 NspGtkProgress *gtkprogress_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkProgress *GetGtkProgressCopy (Stack stack, int i);
 extern NspGtkProgress *GetGtkProgress (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkProgress_Private 
+static int init_gtkprogress(NspGtkProgress *o,NspTypeGtkProgress *type);
+static char *gtkprogress_type_as_string(void);
+static char *gtkprogress_type_short_string(void);
+static AttrTab gtkprogress_attrs[];
+/* static int int_gtkprogress_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkprogress_get_methods(void); 
+#endif /* GtkProgress_Private */

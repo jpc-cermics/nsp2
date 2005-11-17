@@ -32,15 +32,6 @@ NspGtkTextView *new_gtktextview();
 * Object methods redefined for gtktextview 
 */
 
-#ifdef GtkTextView_Private 
-static int init_gtktextview(NspGtkTextView *o,NspTypeGtkTextView *type);
-static char *gtktextview_type_as_string(void);
-static char *gtktextview_type_short_string(void);
-static AttrTab gtktextview_attrs[];
-/* static int int_gtktextview_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktextview_get_methods(void); 
-#endif /* GtkTextView_Private */
-
 #define NULLGTKTEXTVIEW (NspGtkTextView*) 0
 
 NspGtkTextView *gtktextview_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTextView *GetGtkTextViewCopy (Stack stack, int i);
 extern NspGtkTextView *GetGtkTextView (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTextView_Private 
+static int init_gtktextview(NspGtkTextView *o,NspTypeGtkTextView *type);
+static char *gtktextview_type_as_string(void);
+static char *gtktextview_type_short_string(void);
+static AttrTab gtktextview_attrs[];
+/* static int int_gtktextview_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktextview_get_methods(void); 
+#endif /* GtkTextView_Private */

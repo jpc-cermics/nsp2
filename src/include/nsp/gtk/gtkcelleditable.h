@@ -32,15 +32,6 @@ NspGtkCellEditable *new_gtkcelleditable();
 * Object methods redefined for gtkcelleditable 
 */
 
-#ifdef GtkCellEditable_Private 
-static int init_gtkcelleditable(NspGtkCellEditable *o,NspTypeGtkCellEditable *type);
-static char *gtkcelleditable_type_as_string(void);
-static char *gtkcelleditable_type_short_string(void);
-static AttrTab gtkcelleditable_attrs[];
-/* static int int_gtkcelleditable_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcelleditable_get_methods(void); 
-#endif /* GtkCellEditable_Private */
-
 #define NULLGTKCELLEDITABLE (NspGtkCellEditable*) 0
 
 NspGtkCellEditable *gtkcelleditable_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkCellEditable *GetGtkCellEditableCopy (Stack stack, int i);
 extern NspGtkCellEditable *GetGtkCellEditable (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkCellEditable_Private 
+static int init_gtkcelleditable(NspGtkCellEditable *o,NspTypeGtkCellEditable *type);
+static char *gtkcelleditable_type_as_string(void);
+static char *gtkcelleditable_type_short_string(void);
+static AttrTab gtkcelleditable_attrs[];
+/* static int int_gtkcelleditable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcelleditable_get_methods(void); 
+#endif /* GtkCellEditable_Private */

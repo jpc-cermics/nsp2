@@ -32,15 +32,6 @@ NspGtkCellRendererToggle *new_gtkcellrenderertoggle();
 * Object methods redefined for gtkcellrenderertoggle 
 */
 
-#ifdef GtkCellRendererToggle_Private 
-static int init_gtkcellrenderertoggle(NspGtkCellRendererToggle *o,NspTypeGtkCellRendererToggle *type);
-static char *gtkcellrenderertoggle_type_as_string(void);
-static char *gtkcellrenderertoggle_type_short_string(void);
-static AttrTab gtkcellrenderertoggle_attrs[];
-/* static int int_gtkcellrenderertoggle_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcellrenderertoggle_get_methods(void); 
-#endif /* GtkCellRendererToggle_Private */
-
 #define NULLGTKCELLRENDERERTOGGLE (NspGtkCellRendererToggle*) 0
 
 NspGtkCellRendererToggle *gtkcellrenderertoggle_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkCellRendererToggle *GetGtkCellRendererToggleCopy (Stack stack, int 
 extern NspGtkCellRendererToggle *GetGtkCellRendererToggle (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkCellRendererToggle_Private 
+static int init_gtkcellrenderertoggle(NspGtkCellRendererToggle *o,NspTypeGtkCellRendererToggle *type);
+static char *gtkcellrenderertoggle_type_as_string(void);
+static char *gtkcellrenderertoggle_type_short_string(void);
+static AttrTab gtkcellrenderertoggle_attrs[];
+/* static int int_gtkcellrenderertoggle_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcellrenderertoggle_get_methods(void); 
+#endif /* GtkCellRendererToggle_Private */

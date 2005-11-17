@@ -32,15 +32,6 @@ NspPangoGlyphString *new_pangoglyphstring();
 * Object methods redefined for pangoglyphstring 
 */
 
-#ifdef PangoGlyphString_Private 
-static int init_pangoglyphstring(NspPangoGlyphString *o,NspTypePangoGlyphString *type);
-static char *pangoglyphstring_type_as_string(void);
-static char *pangoglyphstring_type_short_string(void);
-static AttrTab pangoglyphstring_attrs[];
-/* static int int_pangoglyphstring_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *pangoglyphstring_get_methods(void); 
-#endif /* PangoGlyphString_Private */
-
 #define NULLPANGOGLYPHSTRING (NspPangoGlyphString*) 0
 
 NspPangoGlyphString *pangoglyphstring_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspPangoGlyphString *GetPangoGlyphStringCopy (Stack stack, int i);
 extern NspPangoGlyphString *GetPangoGlyphString (Stack stack, int i); 
 
 #endif 
+
+#ifdef PangoGlyphString_Private 
+static int init_pangoglyphstring(NspPangoGlyphString *o,NspTypePangoGlyphString *type);
+static char *pangoglyphstring_type_as_string(void);
+static char *pangoglyphstring_type_short_string(void);
+static AttrTab pangoglyphstring_attrs[];
+/* static int int_pangoglyphstring_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangoglyphstring_get_methods(void); 
+#endif /* PangoGlyphString_Private */

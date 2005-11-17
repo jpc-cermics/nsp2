@@ -32,15 +32,6 @@ NspGtkTextChildAnchor *new_gtktextchildanchor();
 * Object methods redefined for gtktextchildanchor 
 */
 
-#ifdef GtkTextChildAnchor_Private 
-static int init_gtktextchildanchor(NspGtkTextChildAnchor *o,NspTypeGtkTextChildAnchor *type);
-static char *gtktextchildanchor_type_as_string(void);
-static char *gtktextchildanchor_type_short_string(void);
-static AttrTab gtktextchildanchor_attrs[];
-/* static int int_gtktextchildanchor_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktextchildanchor_get_methods(void); 
-#endif /* GtkTextChildAnchor_Private */
-
 #define NULLGTKTEXTCHILDANCHOR (NspGtkTextChildAnchor*) 0
 
 NspGtkTextChildAnchor *gtktextchildanchor_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTextChildAnchor *GetGtkTextChildAnchorCopy (Stack stack, int i);
 extern NspGtkTextChildAnchor *GetGtkTextChildAnchor (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTextChildAnchor_Private 
+static int init_gtktextchildanchor(NspGtkTextChildAnchor *o,NspTypeGtkTextChildAnchor *type);
+static char *gtktextchildanchor_type_as_string(void);
+static char *gtktextchildanchor_type_short_string(void);
+static AttrTab gtktextchildanchor_attrs[];
+/* static int int_gtktextchildanchor_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktextchildanchor_get_methods(void); 
+#endif /* GtkTextChildAnchor_Private */

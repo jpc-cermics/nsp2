@@ -32,15 +32,6 @@ NspAtkNoOpObject *new_atknoopobject();
 * Object methods redefined for atknoopobject 
 */
 
-#ifdef AtkNoOpObject_Private 
-static int init_atknoopobject(NspAtkNoOpObject *o,NspTypeAtkNoOpObject *type);
-static char *atknoopobject_type_as_string(void);
-static char *atknoopobject_type_short_string(void);
-static AttrTab atknoopobject_attrs[];
-/* static int int_atknoopobject_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *atknoopobject_get_methods(void); 
-#endif /* AtkNoOpObject_Private */
-
 #define NULLATKNOOPOBJECT (NspAtkNoOpObject*) 0
 
 NspAtkNoOpObject *atknoopobject_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspAtkNoOpObject *GetAtkNoOpObjectCopy (Stack stack, int i);
 extern NspAtkNoOpObject *GetAtkNoOpObject (Stack stack, int i); 
 
 #endif 
+
+#ifdef AtkNoOpObject_Private 
+static int init_atknoopobject(NspAtkNoOpObject *o,NspTypeAtkNoOpObject *type);
+static char *atknoopobject_type_as_string(void);
+static char *atknoopobject_type_short_string(void);
+static AttrTab atknoopobject_attrs[];
+/* static int int_atknoopobject_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atknoopobject_get_methods(void); 
+#endif /* AtkNoOpObject_Private */

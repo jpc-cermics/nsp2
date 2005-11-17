@@ -32,15 +32,6 @@ NspGtkTreeSelection *new_gtktreeselection();
 * Object methods redefined for gtktreeselection 
 */
 
-#ifdef GtkTreeSelection_Private 
-static int init_gtktreeselection(NspGtkTreeSelection *o,NspTypeGtkTreeSelection *type);
-static char *gtktreeselection_type_as_string(void);
-static char *gtktreeselection_type_short_string(void);
-static AttrTab gtktreeselection_attrs[];
-/* static int int_gtktreeselection_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktreeselection_get_methods(void); 
-#endif /* GtkTreeSelection_Private */
-
 #define NULLGTKTREESELECTION (NspGtkTreeSelection*) 0
 
 NspGtkTreeSelection *gtktreeselection_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTreeSelection *GetGtkTreeSelectionCopy (Stack stack, int i);
 extern NspGtkTreeSelection *GetGtkTreeSelection (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTreeSelection_Private 
+static int init_gtktreeselection(NspGtkTreeSelection *o,NspTypeGtkTreeSelection *type);
+static char *gtktreeselection_type_as_string(void);
+static char *gtktreeselection_type_short_string(void);
+static AttrTab gtktreeselection_attrs[];
+/* static int int_gtktreeselection_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreeselection_get_methods(void); 
+#endif /* GtkTreeSelection_Private */

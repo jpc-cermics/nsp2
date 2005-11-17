@@ -32,15 +32,6 @@ NspGdkPixbuf *new_gdkpixbuf();
 * Object methods redefined for gdkpixbuf 
 */
 
-#ifdef GdkPixbuf_Private 
-static int init_gdkpixbuf(NspGdkPixbuf *o,NspTypeGdkPixbuf *type);
-static char *gdkpixbuf_type_as_string(void);
-static char *gdkpixbuf_type_short_string(void);
-static AttrTab gdkpixbuf_attrs[];
-/* static int int_gdkpixbuf_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkpixbuf_get_methods(void); 
-#endif /* GdkPixbuf_Private */
-
 #define NULLGDKPIXBUF (NspGdkPixbuf*) 0
 
 NspGdkPixbuf *gdkpixbuf_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkPixbuf *GetGdkPixbufCopy (Stack stack, int i);
 extern NspGdkPixbuf *GetGdkPixbuf (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkPixbuf_Private 
+static int init_gdkpixbuf(NspGdkPixbuf *o,NspTypeGdkPixbuf *type);
+static char *gdkpixbuf_type_as_string(void);
+static char *gdkpixbuf_type_short_string(void);
+static AttrTab gdkpixbuf_attrs[];
+/* static int int_gdkpixbuf_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkpixbuf_get_methods(void); 
+#endif /* GdkPixbuf_Private */

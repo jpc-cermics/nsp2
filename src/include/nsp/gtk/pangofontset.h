@@ -32,15 +32,6 @@ NspPangoFontset *new_pangofontset();
 * Object methods redefined for pangofontset 
 */
 
-#ifdef PangoFontset_Private 
-static int init_pangofontset(NspPangoFontset *o,NspTypePangoFontset *type);
-static char *pangofontset_type_as_string(void);
-static char *pangofontset_type_short_string(void);
-static AttrTab pangofontset_attrs[];
-/* static int int_pangofontset_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *pangofontset_get_methods(void); 
-#endif /* PangoFontset_Private */
-
 #define NULLPANGOFONTSET (NspPangoFontset*) 0
 
 NspPangoFontset *pangofontset_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspPangoFontset *GetPangoFontsetCopy (Stack stack, int i);
 extern NspPangoFontset *GetPangoFontset (Stack stack, int i); 
 
 #endif 
+
+#ifdef PangoFontset_Private 
+static int init_pangofontset(NspPangoFontset *o,NspTypePangoFontset *type);
+static char *pangofontset_type_as_string(void);
+static char *pangofontset_type_short_string(void);
+static AttrTab pangofontset_attrs[];
+/* static int int_pangofontset_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangofontset_get_methods(void); 
+#endif /* PangoFontset_Private */

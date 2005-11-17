@@ -32,15 +32,6 @@ NspGtkTreePath *new_gtktreepath();
 * Object methods redefined for gtktreepath 
 */
 
-#ifdef GtkTreePath_Private 
-static int init_gtktreepath(NspGtkTreePath *o,NspTypeGtkTreePath *type);
-static char *gtktreepath_type_as_string(void);
-static char *gtktreepath_type_short_string(void);
-static AttrTab gtktreepath_attrs[];
-/* static int int_gtktreepath_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktreepath_get_methods(void); 
-#endif /* GtkTreePath_Private */
-
 #define NULLGTKTREEPATH (NspGtkTreePath*) 0
 
 NspGtkTreePath *gtktreepath_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTreePath *GetGtkTreePathCopy (Stack stack, int i);
 extern NspGtkTreePath *GetGtkTreePath (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTreePath_Private 
+static int init_gtktreepath(NspGtkTreePath *o,NspTypeGtkTreePath *type);
+static char *gtktreepath_type_as_string(void);
+static char *gtktreepath_type_short_string(void);
+static AttrTab gtktreepath_attrs[];
+/* static int int_gtktreepath_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreepath_get_methods(void); 
+#endif /* GtkTreePath_Private */

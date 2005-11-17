@@ -32,15 +32,6 @@ NspPangoFontDescription *new_pangofontdescription();
 * Object methods redefined for pangofontdescription 
 */
 
-#ifdef PangoFontDescription_Private 
-static int init_pangofontdescription(NspPangoFontDescription *o,NspTypePangoFontDescription *type);
-static char *pangofontdescription_type_as_string(void);
-static char *pangofontdescription_type_short_string(void);
-static AttrTab pangofontdescription_attrs[];
-/* static int int_pangofontdescription_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *pangofontdescription_get_methods(void); 
-#endif /* PangoFontDescription_Private */
-
 #define NULLPANGOFONTDESCRIPTION (NspPangoFontDescription*) 0
 
 NspPangoFontDescription *pangofontdescription_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspPangoFontDescription *GetPangoFontDescriptionCopy (Stack stack, int i)
 extern NspPangoFontDescription *GetPangoFontDescription (Stack stack, int i); 
 
 #endif 
+
+#ifdef PangoFontDescription_Private 
+static int init_pangofontdescription(NspPangoFontDescription *o,NspTypePangoFontDescription *type);
+static char *pangofontdescription_type_as_string(void);
+static char *pangofontdescription_type_short_string(void);
+static AttrTab pangofontdescription_attrs[];
+/* static int int_pangofontdescription_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangofontdescription_get_methods(void); 
+#endif /* PangoFontDescription_Private */

@@ -32,15 +32,6 @@ NspGtkRadioMenuItem *new_gtkradiomenuitem();
 * Object methods redefined for gtkradiomenuitem 
 */
 
-#ifdef GtkRadioMenuItem_Private 
-static int init_gtkradiomenuitem(NspGtkRadioMenuItem *o,NspTypeGtkRadioMenuItem *type);
-static char *gtkradiomenuitem_type_as_string(void);
-static char *gtkradiomenuitem_type_short_string(void);
-static AttrTab gtkradiomenuitem_attrs[];
-/* static int int_gtkradiomenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkradiomenuitem_get_methods(void); 
-#endif /* GtkRadioMenuItem_Private */
-
 #define NULLGTKRADIOMENUITEM (NspGtkRadioMenuItem*) 0
 
 NspGtkRadioMenuItem *gtkradiomenuitem_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkRadioMenuItem *GetGtkRadioMenuItemCopy (Stack stack, int i);
 extern NspGtkRadioMenuItem *GetGtkRadioMenuItem (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkRadioMenuItem_Private 
+static int init_gtkradiomenuitem(NspGtkRadioMenuItem *o,NspTypeGtkRadioMenuItem *type);
+static char *gtkradiomenuitem_type_as_string(void);
+static char *gtkradiomenuitem_type_short_string(void);
+static AttrTab gtkradiomenuitem_attrs[];
+/* static int int_gtkradiomenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkradiomenuitem_get_methods(void); 
+#endif /* GtkRadioMenuItem_Private */

@@ -32,15 +32,6 @@ NspGtkColorSelectionDialog *new_gtkcolorselectiondialog();
 * Object methods redefined for gtkcolorselectiondialog 
 */
 
-#ifdef GtkColorSelectionDialog_Private 
-static int init_gtkcolorselectiondialog(NspGtkColorSelectionDialog *o,NspTypeGtkColorSelectionDialog *type);
-static char *gtkcolorselectiondialog_type_as_string(void);
-static char *gtkcolorselectiondialog_type_short_string(void);
-static AttrTab gtkcolorselectiondialog_attrs[];
-/* static int int_gtkcolorselectiondialog_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcolorselectiondialog_get_methods(void); 
-#endif /* GtkColorSelectionDialog_Private */
-
 #define NULLGTKCOLORSELECTIONDIALOG (NspGtkColorSelectionDialog*) 0
 
 NspGtkColorSelectionDialog *gtkcolorselectiondialog_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkColorSelectionDialog *GetGtkColorSelectionDialogCopy (Stack stack, 
 extern NspGtkColorSelectionDialog *GetGtkColorSelectionDialog (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkColorSelectionDialog_Private 
+static int init_gtkcolorselectiondialog(NspGtkColorSelectionDialog *o,NspTypeGtkColorSelectionDialog *type);
+static char *gtkcolorselectiondialog_type_as_string(void);
+static char *gtkcolorselectiondialog_type_short_string(void);
+static AttrTab gtkcolorselectiondialog_attrs[];
+/* static int int_gtkcolorselectiondialog_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcolorselectiondialog_get_methods(void); 
+#endif /* GtkColorSelectionDialog_Private */

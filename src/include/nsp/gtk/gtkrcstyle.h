@@ -32,15 +32,6 @@ NspGtkRcStyle *new_gtkrcstyle();
 * Object methods redefined for gtkrcstyle 
 */
 
-#ifdef GtkRcStyle_Private 
-static int init_gtkrcstyle(NspGtkRcStyle *o,NspTypeGtkRcStyle *type);
-static char *gtkrcstyle_type_as_string(void);
-static char *gtkrcstyle_type_short_string(void);
-static AttrTab gtkrcstyle_attrs[];
-/* static int int_gtkrcstyle_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkrcstyle_get_methods(void); 
-#endif /* GtkRcStyle_Private */
-
 #define NULLGTKRCSTYLE (NspGtkRcStyle*) 0
 
 NspGtkRcStyle *gtkrcstyle_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkRcStyle *GetGtkRcStyleCopy (Stack stack, int i);
 extern NspGtkRcStyle *GetGtkRcStyle (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkRcStyle_Private 
+static int init_gtkrcstyle(NspGtkRcStyle *o,NspTypeGtkRcStyle *type);
+static char *gtkrcstyle_type_as_string(void);
+static char *gtkrcstyle_type_short_string(void);
+static AttrTab gtkrcstyle_attrs[];
+/* static int int_gtkrcstyle_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkrcstyle_get_methods(void); 
+#endif /* GtkRcStyle_Private */

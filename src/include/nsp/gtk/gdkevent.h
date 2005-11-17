@@ -32,15 +32,6 @@ NspGdkEvent *new_gdkevent();
 * Object methods redefined for gdkevent 
 */
 
-#ifdef GdkEvent_Private 
-static int init_gdkevent(NspGdkEvent *o,NspTypeGdkEvent *type);
-static char *gdkevent_type_as_string(void);
-static char *gdkevent_type_short_string(void);
-static AttrTab gdkevent_attrs[];
-/* static int int_gdkevent_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkevent_get_methods(void); 
-#endif /* GdkEvent_Private */
-
 #define NULLGDKEVENT (NspGdkEvent*) 0
 
 NspGdkEvent *gdkevent_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkEvent *GetGdkEventCopy (Stack stack, int i);
 extern NspGdkEvent *GetGdkEvent (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkEvent_Private 
+static int init_gdkevent(NspGdkEvent *o,NspTypeGdkEvent *type);
+static char *gdkevent_type_as_string(void);
+static char *gdkevent_type_short_string(void);
+static AttrTab gdkevent_attrs[];
+/* static int int_gdkevent_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkevent_get_methods(void); 
+#endif /* GdkEvent_Private */

@@ -32,15 +32,6 @@ NspGtkDrawingArea *new_gtkdrawingarea();
 * Object methods redefined for gtkdrawingarea 
 */
 
-#ifdef GtkDrawingArea_Private 
-static int init_gtkdrawingarea(NspGtkDrawingArea *o,NspTypeGtkDrawingArea *type);
-static char *gtkdrawingarea_type_as_string(void);
-static char *gtkdrawingarea_type_short_string(void);
-static AttrTab gtkdrawingarea_attrs[];
-/* static int int_gtkdrawingarea_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkdrawingarea_get_methods(void); 
-#endif /* GtkDrawingArea_Private */
-
 #define NULLGTKDRAWINGAREA (NspGtkDrawingArea*) 0
 
 NspGtkDrawingArea *gtkdrawingarea_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkDrawingArea *GetGtkDrawingAreaCopy (Stack stack, int i);
 extern NspGtkDrawingArea *GetGtkDrawingArea (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkDrawingArea_Private 
+static int init_gtkdrawingarea(NspGtkDrawingArea *o,NspTypeGtkDrawingArea *type);
+static char *gtkdrawingarea_type_as_string(void);
+static char *gtkdrawingarea_type_short_string(void);
+static AttrTab gtkdrawingarea_attrs[];
+/* static int int_gtkdrawingarea_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkdrawingarea_get_methods(void); 
+#endif /* GtkDrawingArea_Private */

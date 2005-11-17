@@ -32,15 +32,6 @@ NspGtkLayout *new_gtklayout();
 * Object methods redefined for gtklayout 
 */
 
-#ifdef GtkLayout_Private 
-static int init_gtklayout(NspGtkLayout *o,NspTypeGtkLayout *type);
-static char *gtklayout_type_as_string(void);
-static char *gtklayout_type_short_string(void);
-static AttrTab gtklayout_attrs[];
-/* static int int_gtklayout_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtklayout_get_methods(void); 
-#endif /* GtkLayout_Private */
-
 #define NULLGTKLAYOUT (NspGtkLayout*) 0
 
 NspGtkLayout *gtklayout_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkLayout *GetGtkLayoutCopy (Stack stack, int i);
 extern NspGtkLayout *GetGtkLayout (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkLayout_Private 
+static int init_gtklayout(NspGtkLayout *o,NspTypeGtkLayout *type);
+static char *gtklayout_type_as_string(void);
+static char *gtklayout_type_short_string(void);
+static AttrTab gtklayout_attrs[];
+/* static int int_gtklayout_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtklayout_get_methods(void); 
+#endif /* GtkLayout_Private */

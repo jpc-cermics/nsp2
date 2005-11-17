@@ -32,15 +32,6 @@ NspGtkComboBox *new_gtkcombobox();
 * Object methods redefined for gtkcombobox 
 */
 
-#ifdef GtkComboBox_Private 
-static int init_gtkcombobox(NspGtkComboBox *o,NspTypeGtkComboBox *type);
-static char *gtkcombobox_type_as_string(void);
-static char *gtkcombobox_type_short_string(void);
-static AttrTab gtkcombobox_attrs[];
-/* static int int_gtkcombobox_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcombobox_get_methods(void); 
-#endif /* GtkComboBox_Private */
-
 #define NULLGTKCOMBOBOX (NspGtkComboBox*) 0
 
 NspGtkComboBox *gtkcombobox_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkComboBox *GetGtkComboBoxCopy (Stack stack, int i);
 extern NspGtkComboBox *GetGtkComboBox (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkComboBox_Private 
+static int init_gtkcombobox(NspGtkComboBox *o,NspTypeGtkComboBox *type);
+static char *gtkcombobox_type_as_string(void);
+static char *gtkcombobox_type_short_string(void);
+static AttrTab gtkcombobox_attrs[];
+/* static int int_gtkcombobox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcombobox_get_methods(void); 
+#endif /* GtkComboBox_Private */

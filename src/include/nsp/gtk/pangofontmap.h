@@ -32,15 +32,6 @@ NspPangoFontMap *new_pangofontmap();
 * Object methods redefined for pangofontmap 
 */
 
-#ifdef PangoFontMap_Private 
-static int init_pangofontmap(NspPangoFontMap *o,NspTypePangoFontMap *type);
-static char *pangofontmap_type_as_string(void);
-static char *pangofontmap_type_short_string(void);
-static AttrTab pangofontmap_attrs[];
-/* static int int_pangofontmap_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *pangofontmap_get_methods(void); 
-#endif /* PangoFontMap_Private */
-
 #define NULLPANGOFONTMAP (NspPangoFontMap*) 0
 
 NspPangoFontMap *pangofontmap_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspPangoFontMap *GetPangoFontMapCopy (Stack stack, int i);
 extern NspPangoFontMap *GetPangoFontMap (Stack stack, int i); 
 
 #endif 
+
+#ifdef PangoFontMap_Private 
+static int init_pangofontmap(NspPangoFontMap *o,NspTypePangoFontMap *type);
+static char *pangofontmap_type_as_string(void);
+static char *pangofontmap_type_short_string(void);
+static AttrTab pangofontmap_attrs[];
+/* static int int_pangofontmap_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangofontmap_get_methods(void); 
+#endif /* PangoFontMap_Private */

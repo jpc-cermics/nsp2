@@ -50,19 +50,9 @@ clean ::
 	&& cp gen-$*.c $*.c \
 	&& rm -f gen-$*.c
 
-gtk24.c: gtk24.defs gtk.objverride
-	($(PYTHON) codegen/codegen.py \
-	    --override gtk.objverride \
-	    --register ./pango-types.defs \
-	    --register ./atk-types.defs \
-	    --register ./gdk-types.defs \
-	    --register ./gtk-types.defs \
-	    --prefix $* $*.defs) > gen-$*.c \
-	&& cp gen-$*.c $*.c \
-	&& rm -f gen-$*.c
-
 gdk.c : gdk.defs  gdk.objverride gdk-types.defs 
 gtk.c : gtk.defs  gtk.objverride gtk-types.defs gtk-extrafuncs.defs
+gtk24.c : gtk24.defs  gtk24.objverride gtk24-types.defs gtk-extrafuncs.defs
 gtkgl.c : gtkgl.defs  gtkgl.objverride 
 libglade.c : libglade.defs  libglade.objverride 
 atk.c : atk.defs  atk.objverride atk-types.defs 

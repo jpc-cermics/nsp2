@@ -32,15 +32,6 @@ NspGtkSeparatorMenuItem *new_gtkseparatormenuitem();
 * Object methods redefined for gtkseparatormenuitem 
 */
 
-#ifdef GtkSeparatorMenuItem_Private 
-static int init_gtkseparatormenuitem(NspGtkSeparatorMenuItem *o,NspTypeGtkSeparatorMenuItem *type);
-static char *gtkseparatormenuitem_type_as_string(void);
-static char *gtkseparatormenuitem_type_short_string(void);
-static AttrTab gtkseparatormenuitem_attrs[];
-/* static int int_gtkseparatormenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkseparatormenuitem_get_methods(void); 
-#endif /* GtkSeparatorMenuItem_Private */
-
 #define NULLGTKSEPARATORMENUITEM (NspGtkSeparatorMenuItem*) 0
 
 NspGtkSeparatorMenuItem *gtkseparatormenuitem_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkSeparatorMenuItem *GetGtkSeparatorMenuItemCopy (Stack stack, int i)
 extern NspGtkSeparatorMenuItem *GetGtkSeparatorMenuItem (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkSeparatorMenuItem_Private 
+static int init_gtkseparatormenuitem(NspGtkSeparatorMenuItem *o,NspTypeGtkSeparatorMenuItem *type);
+static char *gtkseparatormenuitem_type_as_string(void);
+static char *gtkseparatormenuitem_type_short_string(void);
+static AttrTab gtkseparatormenuitem_attrs[];
+/* static int int_gtkseparatormenuitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkseparatormenuitem_get_methods(void); 
+#endif /* GtkSeparatorMenuItem_Private */

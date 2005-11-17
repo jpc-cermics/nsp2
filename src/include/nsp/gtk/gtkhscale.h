@@ -32,15 +32,6 @@ NspGtkHScale *new_gtkhscale();
 * Object methods redefined for gtkhscale 
 */
 
-#ifdef GtkHScale_Private 
-static int init_gtkhscale(NspGtkHScale *o,NspTypeGtkHScale *type);
-static char *gtkhscale_type_as_string(void);
-static char *gtkhscale_type_short_string(void);
-static AttrTab gtkhscale_attrs[];
-/* static int int_gtkhscale_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkhscale_get_methods(void); 
-#endif /* GtkHScale_Private */
-
 #define NULLGTKHSCALE (NspGtkHScale*) 0
 
 NspGtkHScale *gtkhscale_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkHScale *GetGtkHScaleCopy (Stack stack, int i);
 extern NspGtkHScale *GetGtkHScale (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkHScale_Private 
+static int init_gtkhscale(NspGtkHScale *o,NspTypeGtkHScale *type);
+static char *gtkhscale_type_as_string(void);
+static char *gtkhscale_type_short_string(void);
+static AttrTab gtkhscale_attrs[];
+/* static int int_gtkhscale_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkhscale_get_methods(void); 
+#endif /* GtkHScale_Private */

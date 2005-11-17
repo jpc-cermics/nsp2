@@ -32,15 +32,6 @@ NspGtkIconSource *new_gtkiconsource();
 * Object methods redefined for gtkiconsource 
 */
 
-#ifdef GtkIconSource_Private 
-static int init_gtkiconsource(NspGtkIconSource *o,NspTypeGtkIconSource *type);
-static char *gtkiconsource_type_as_string(void);
-static char *gtkiconsource_type_short_string(void);
-static AttrTab gtkiconsource_attrs[];
-/* static int int_gtkiconsource_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkiconsource_get_methods(void); 
-#endif /* GtkIconSource_Private */
-
 #define NULLGTKICONSOURCE (NspGtkIconSource*) 0
 
 NspGtkIconSource *gtkiconsource_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkIconSource *GetGtkIconSourceCopy (Stack stack, int i);
 extern NspGtkIconSource *GetGtkIconSource (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkIconSource_Private 
+static int init_gtkiconsource(NspGtkIconSource *o,NspTypeGtkIconSource *type);
+static char *gtkiconsource_type_as_string(void);
+static char *gtkiconsource_type_short_string(void);
+static AttrTab gtkiconsource_attrs[];
+/* static int int_gtkiconsource_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkiconsource_get_methods(void); 
+#endif /* GtkIconSource_Private */

@@ -32,15 +32,6 @@ NspGdkDevice *new_gdkdevice();
 * Object methods redefined for gdkdevice 
 */
 
-#ifdef GdkDevice_Private 
-static int init_gdkdevice(NspGdkDevice *o,NspTypeGdkDevice *type);
-static char *gdkdevice_type_as_string(void);
-static char *gdkdevice_type_short_string(void);
-static AttrTab gdkdevice_attrs[];
-/* static int int_gdkdevice_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkdevice_get_methods(void); 
-#endif /* GdkDevice_Private */
-
 #define NULLGDKDEVICE (NspGdkDevice*) 0
 
 NspGdkDevice *gdkdevice_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkDevice *GetGdkDeviceCopy (Stack stack, int i);
 extern NspGdkDevice *GetGdkDevice (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkDevice_Private 
+static int init_gdkdevice(NspGdkDevice *o,NspTypeGdkDevice *type);
+static char *gdkdevice_type_as_string(void);
+static char *gdkdevice_type_short_string(void);
+static AttrTab gdkdevice_attrs[];
+/* static int int_gdkdevice_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkdevice_get_methods(void); 
+#endif /* GdkDevice_Private */

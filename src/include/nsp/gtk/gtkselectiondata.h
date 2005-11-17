@@ -32,15 +32,6 @@ NspGtkSelectionData *new_gtkselectiondata();
 * Object methods redefined for gtkselectiondata 
 */
 
-#ifdef GtkSelectionData_Private 
-static int init_gtkselectiondata(NspGtkSelectionData *o,NspTypeGtkSelectionData *type);
-static char *gtkselectiondata_type_as_string(void);
-static char *gtkselectiondata_type_short_string(void);
-static AttrTab gtkselectiondata_attrs[];
-/* static int int_gtkselectiondata_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkselectiondata_get_methods(void); 
-#endif /* GtkSelectionData_Private */
-
 #define NULLGTKSELECTIONDATA (NspGtkSelectionData*) 0
 
 NspGtkSelectionData *gtkselectiondata_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkSelectionData *GetGtkSelectionDataCopy (Stack stack, int i);
 extern NspGtkSelectionData *GetGtkSelectionData (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkSelectionData_Private 
+static int init_gtkselectiondata(NspGtkSelectionData *o,NspTypeGtkSelectionData *type);
+static char *gtkselectiondata_type_as_string(void);
+static char *gtkselectiondata_type_short_string(void);
+static AttrTab gtkselectiondata_attrs[];
+/* static int int_gtkselectiondata_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkselectiondata_get_methods(void); 
+#endif /* GtkSelectionData_Private */

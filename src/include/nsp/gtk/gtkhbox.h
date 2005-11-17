@@ -32,15 +32,6 @@ NspGtkHBox *new_gtkhbox();
 * Object methods redefined for gtkhbox 
 */
 
-#ifdef GtkHBox_Private 
-static int init_gtkhbox(NspGtkHBox *o,NspTypeGtkHBox *type);
-static char *gtkhbox_type_as_string(void);
-static char *gtkhbox_type_short_string(void);
-static AttrTab gtkhbox_attrs[];
-/* static int int_gtkhbox_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkhbox_get_methods(void); 
-#endif /* GtkHBox_Private */
-
 #define NULLGTKHBOX (NspGtkHBox*) 0
 
 NspGtkHBox *gtkhbox_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkHBox *GetGtkHBoxCopy (Stack stack, int i);
 extern NspGtkHBox *GetGtkHBox (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkHBox_Private 
+static int init_gtkhbox(NspGtkHBox *o,NspTypeGtkHBox *type);
+static char *gtkhbox_type_as_string(void);
+static char *gtkhbox_type_short_string(void);
+static AttrTab gtkhbox_attrs[];
+/* static int int_gtkhbox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkhbox_get_methods(void); 
+#endif /* GtkHBox_Private */

@@ -32,15 +32,6 @@ NspGtkToolbar *new_gtktoolbar();
 * Object methods redefined for gtktoolbar 
 */
 
-#ifdef GtkToolbar_Private 
-static int init_gtktoolbar(NspGtkToolbar *o,NspTypeGtkToolbar *type);
-static char *gtktoolbar_type_as_string(void);
-static char *gtktoolbar_type_short_string(void);
-static AttrTab gtktoolbar_attrs[];
-/* static int int_gtktoolbar_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktoolbar_get_methods(void); 
-#endif /* GtkToolbar_Private */
-
 #define NULLGTKTOOLBAR (NspGtkToolbar*) 0
 
 NspGtkToolbar *gtktoolbar_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkToolbar *GetGtkToolbarCopy (Stack stack, int i);
 extern NspGtkToolbar *GetGtkToolbar (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkToolbar_Private 
+static int init_gtktoolbar(NspGtkToolbar *o,NspTypeGtkToolbar *type);
+static char *gtktoolbar_type_as_string(void);
+static char *gtktoolbar_type_short_string(void);
+static AttrTab gtktoolbar_attrs[];
+/* static int int_gtktoolbar_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktoolbar_get_methods(void); 
+#endif /* GtkToolbar_Private */

@@ -32,15 +32,6 @@ NspGdkVisual *new_gdkvisual();
 * Object methods redefined for gdkvisual 
 */
 
-#ifdef GdkVisual_Private 
-static int init_gdkvisual(NspGdkVisual *o,NspTypeGdkVisual *type);
-static char *gdkvisual_type_as_string(void);
-static char *gdkvisual_type_short_string(void);
-static AttrTab gdkvisual_attrs[];
-/* static int int_gdkvisual_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkvisual_get_methods(void); 
-#endif /* GdkVisual_Private */
-
 #define NULLGDKVISUAL (NspGdkVisual*) 0
 
 NspGdkVisual *gdkvisual_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkVisual *GetGdkVisualCopy (Stack stack, int i);
 extern NspGdkVisual *GetGdkVisual (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkVisual_Private 
+static int init_gdkvisual(NspGdkVisual *o,NspTypeGdkVisual *type);
+static char *gdkvisual_type_as_string(void);
+static char *gdkvisual_type_short_string(void);
+static AttrTab gdkvisual_attrs[];
+/* static int int_gdkvisual_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkvisual_get_methods(void); 
+#endif /* GdkVisual_Private */

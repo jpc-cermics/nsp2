@@ -32,15 +32,6 @@ NspAtkStateSet *new_atkstateset();
 * Object methods redefined for atkstateset 
 */
 
-#ifdef AtkStateSet_Private 
-static int init_atkstateset(NspAtkStateSet *o,NspTypeAtkStateSet *type);
-static char *atkstateset_type_as_string(void);
-static char *atkstateset_type_short_string(void);
-static AttrTab atkstateset_attrs[];
-/* static int int_atkstateset_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *atkstateset_get_methods(void); 
-#endif /* AtkStateSet_Private */
-
 #define NULLATKSTATESET (NspAtkStateSet*) 0
 
 NspAtkStateSet *atkstateset_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspAtkStateSet *GetAtkStateSetCopy (Stack stack, int i);
 extern NspAtkStateSet *GetAtkStateSet (Stack stack, int i); 
 
 #endif 
+
+#ifdef AtkStateSet_Private 
+static int init_atkstateset(NspAtkStateSet *o,NspTypeAtkStateSet *type);
+static char *atkstateset_type_as_string(void);
+static char *atkstateset_type_short_string(void);
+static AttrTab atkstateset_attrs[];
+/* static int int_atkstateset_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *atkstateset_get_methods(void); 
+#endif /* AtkStateSet_Private */

@@ -32,15 +32,6 @@ NspPangoColor *new_pangocolor();
 * Object methods redefined for pangocolor 
 */
 
-#ifdef PangoColor_Private 
-static int init_pangocolor(NspPangoColor *o,NspTypePangoColor *type);
-static char *pangocolor_type_as_string(void);
-static char *pangocolor_type_short_string(void);
-static AttrTab pangocolor_attrs[];
-/* static int int_pangocolor_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *pangocolor_get_methods(void); 
-#endif /* PangoColor_Private */
-
 #define NULLPANGOCOLOR (NspPangoColor*) 0
 
 NspPangoColor *pangocolor_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspPangoColor *GetPangoColorCopy (Stack stack, int i);
 extern NspPangoColor *GetPangoColor (Stack stack, int i); 
 
 #endif 
+
+#ifdef PangoColor_Private 
+static int init_pangocolor(NspPangoColor *o,NspTypePangoColor *type);
+static char *pangocolor_type_as_string(void);
+static char *pangocolor_type_short_string(void);
+static AttrTab pangocolor_attrs[];
+/* static int int_pangocolor_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangocolor_get_methods(void); 
+#endif /* PangoColor_Private */

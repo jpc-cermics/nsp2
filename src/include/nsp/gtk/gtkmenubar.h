@@ -32,15 +32,6 @@ NspGtkMenuBar *new_gtkmenubar();
 * Object methods redefined for gtkmenubar 
 */
 
-#ifdef GtkMenuBar_Private 
-static int init_gtkmenubar(NspGtkMenuBar *o,NspTypeGtkMenuBar *type);
-static char *gtkmenubar_type_as_string(void);
-static char *gtkmenubar_type_short_string(void);
-static AttrTab gtkmenubar_attrs[];
-/* static int int_gtkmenubar_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkmenubar_get_methods(void); 
-#endif /* GtkMenuBar_Private */
-
 #define NULLGTKMENUBAR (NspGtkMenuBar*) 0
 
 NspGtkMenuBar *gtkmenubar_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkMenuBar *GetGtkMenuBarCopy (Stack stack, int i);
 extern NspGtkMenuBar *GetGtkMenuBar (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkMenuBar_Private 
+static int init_gtkmenubar(NspGtkMenuBar *o,NspTypeGtkMenuBar *type);
+static char *gtkmenubar_type_as_string(void);
+static char *gtkmenubar_type_short_string(void);
+static AttrTab gtkmenubar_attrs[];
+/* static int int_gtkmenubar_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkmenubar_get_methods(void); 
+#endif /* GtkMenuBar_Private */

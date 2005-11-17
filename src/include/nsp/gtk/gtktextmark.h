@@ -32,15 +32,6 @@ NspGtkTextMark *new_gtktextmark();
 * Object methods redefined for gtktextmark 
 */
 
-#ifdef GtkTextMark_Private 
-static int init_gtktextmark(NspGtkTextMark *o,NspTypeGtkTextMark *type);
-static char *gtktextmark_type_as_string(void);
-static char *gtktextmark_type_short_string(void);
-static AttrTab gtktextmark_attrs[];
-/* static int int_gtktextmark_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktextmark_get_methods(void); 
-#endif /* GtkTextMark_Private */
-
 #define NULLGTKTEXTMARK (NspGtkTextMark*) 0
 
 NspGtkTextMark *gtktextmark_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTextMark *GetGtkTextMarkCopy (Stack stack, int i);
 extern NspGtkTextMark *GetGtkTextMark (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTextMark_Private 
+static int init_gtktextmark(NspGtkTextMark *o,NspTypeGtkTextMark *type);
+static char *gtktextmark_type_as_string(void);
+static char *gtktextmark_type_short_string(void);
+static AttrTab gtktextmark_attrs[];
+/* static int int_gtktextmark_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktextmark_get_methods(void); 
+#endif /* GtkTextMark_Private */

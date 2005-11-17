@@ -32,15 +32,6 @@ NspGtkEditable *new_gtkeditable();
 * Object methods redefined for gtkeditable 
 */
 
-#ifdef GtkEditable_Private 
-static int init_gtkeditable(NspGtkEditable *o,NspTypeGtkEditable *type);
-static char *gtkeditable_type_as_string(void);
-static char *gtkeditable_type_short_string(void);
-static AttrTab gtkeditable_attrs[];
-/* static int int_gtkeditable_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkeditable_get_methods(void); 
-#endif /* GtkEditable_Private */
-
 #define NULLGTKEDITABLE (NspGtkEditable*) 0
 
 NspGtkEditable *gtkeditable_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkEditable *GetGtkEditableCopy (Stack stack, int i);
 extern NspGtkEditable *GetGtkEditable (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkEditable_Private 
+static int init_gtkeditable(NspGtkEditable *o,NspTypeGtkEditable *type);
+static char *gtkeditable_type_as_string(void);
+static char *gtkeditable_type_short_string(void);
+static AttrTab gtkeditable_attrs[];
+/* static int int_gtkeditable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkeditable_get_methods(void); 
+#endif /* GtkEditable_Private */

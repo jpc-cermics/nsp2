@@ -32,15 +32,6 @@ NspPangoLayout *new_pangolayout();
 * Object methods redefined for pangolayout 
 */
 
-#ifdef PangoLayout_Private 
-static int init_pangolayout(NspPangoLayout *o,NspTypePangoLayout *type);
-static char *pangolayout_type_as_string(void);
-static char *pangolayout_type_short_string(void);
-static AttrTab pangolayout_attrs[];
-/* static int int_pangolayout_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *pangolayout_get_methods(void); 
-#endif /* PangoLayout_Private */
-
 #define NULLPANGOLAYOUT (NspPangoLayout*) 0
 
 NspPangoLayout *pangolayout_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspPangoLayout *GetPangoLayoutCopy (Stack stack, int i);
 extern NspPangoLayout *GetPangoLayout (Stack stack, int i); 
 
 #endif 
+
+#ifdef PangoLayout_Private 
+static int init_pangolayout(NspPangoLayout *o,NspTypePangoLayout *type);
+static char *pangolayout_type_as_string(void);
+static char *pangolayout_type_short_string(void);
+static AttrTab pangolayout_attrs[];
+/* static int int_pangolayout_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangolayout_get_methods(void); 
+#endif /* PangoLayout_Private */

@@ -32,15 +32,6 @@ NspGtkFrame *new_gtkframe();
 * Object methods redefined for gtkframe 
 */
 
-#ifdef GtkFrame_Private 
-static int init_gtkframe(NspGtkFrame *o,NspTypeGtkFrame *type);
-static char *gtkframe_type_as_string(void);
-static char *gtkframe_type_short_string(void);
-static AttrTab gtkframe_attrs[];
-/* static int int_gtkframe_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkframe_get_methods(void); 
-#endif /* GtkFrame_Private */
-
 #define NULLGTKFRAME (NspGtkFrame*) 0
 
 NspGtkFrame *gtkframe_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkFrame *GetGtkFrameCopy (Stack stack, int i);
 extern NspGtkFrame *GetGtkFrame (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkFrame_Private 
+static int init_gtkframe(NspGtkFrame *o,NspTypeGtkFrame *type);
+static char *gtkframe_type_as_string(void);
+static char *gtkframe_type_short_string(void);
+static AttrTab gtkframe_attrs[];
+/* static int int_gtkframe_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkframe_get_methods(void); 
+#endif /* GtkFrame_Private */

@@ -32,15 +32,6 @@ NspGtkLabel *new_gtklabel();
 * Object methods redefined for gtklabel 
 */
 
-#ifdef GtkLabel_Private 
-static int init_gtklabel(NspGtkLabel *o,NspTypeGtkLabel *type);
-static char *gtklabel_type_as_string(void);
-static char *gtklabel_type_short_string(void);
-static AttrTab gtklabel_attrs[];
-/* static int int_gtklabel_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtklabel_get_methods(void); 
-#endif /* GtkLabel_Private */
-
 #define NULLGTKLABEL (NspGtkLabel*) 0
 
 NspGtkLabel *gtklabel_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkLabel *GetGtkLabelCopy (Stack stack, int i);
 extern NspGtkLabel *GetGtkLabel (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkLabel_Private 
+static int init_gtklabel(NspGtkLabel *o,NspTypeGtkLabel *type);
+static char *gtklabel_type_as_string(void);
+static char *gtklabel_type_short_string(void);
+static AttrTab gtklabel_attrs[];
+/* static int int_gtklabel_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtklabel_get_methods(void); 
+#endif /* GtkLabel_Private */

@@ -32,15 +32,6 @@ NspGtkHRuler *new_gtkhruler();
 * Object methods redefined for gtkhruler 
 */
 
-#ifdef GtkHRuler_Private 
-static int init_gtkhruler(NspGtkHRuler *o,NspTypeGtkHRuler *type);
-static char *gtkhruler_type_as_string(void);
-static char *gtkhruler_type_short_string(void);
-static AttrTab gtkhruler_attrs[];
-/* static int int_gtkhruler_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkhruler_get_methods(void); 
-#endif /* GtkHRuler_Private */
-
 #define NULLGTKHRULER (NspGtkHRuler*) 0
 
 NspGtkHRuler *gtkhruler_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkHRuler *GetGtkHRulerCopy (Stack stack, int i);
 extern NspGtkHRuler *GetGtkHRuler (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkHRuler_Private 
+static int init_gtkhruler(NspGtkHRuler *o,NspTypeGtkHRuler *type);
+static char *gtkhruler_type_as_string(void);
+static char *gtkhruler_type_short_string(void);
+static AttrTab gtkhruler_attrs[];
+/* static int int_gtkhruler_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkhruler_get_methods(void); 
+#endif /* GtkHRuler_Private */

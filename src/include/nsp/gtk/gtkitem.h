@@ -32,15 +32,6 @@ NspGtkItem *new_gtkitem();
 * Object methods redefined for gtkitem 
 */
 
-#ifdef GtkItem_Private 
-static int init_gtkitem(NspGtkItem *o,NspTypeGtkItem *type);
-static char *gtkitem_type_as_string(void);
-static char *gtkitem_type_short_string(void);
-static AttrTab gtkitem_attrs[];
-/* static int int_gtkitem_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkitem_get_methods(void); 
-#endif /* GtkItem_Private */
-
 #define NULLGTKITEM (NspGtkItem*) 0
 
 NspGtkItem *gtkitem_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkItem *GetGtkItemCopy (Stack stack, int i);
 extern NspGtkItem *GetGtkItem (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkItem_Private 
+static int init_gtkitem(NspGtkItem *o,NspTypeGtkItem *type);
+static char *gtkitem_type_as_string(void);
+static char *gtkitem_type_short_string(void);
+static AttrTab gtkitem_attrs[];
+/* static int int_gtkitem_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkitem_get_methods(void); 
+#endif /* GtkItem_Private */

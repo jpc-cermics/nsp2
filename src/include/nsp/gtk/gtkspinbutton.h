@@ -32,15 +32,6 @@ NspGtkSpinButton *new_gtkspinbutton();
 * Object methods redefined for gtkspinbutton 
 */
 
-#ifdef GtkSpinButton_Private 
-static int init_gtkspinbutton(NspGtkSpinButton *o,NspTypeGtkSpinButton *type);
-static char *gtkspinbutton_type_as_string(void);
-static char *gtkspinbutton_type_short_string(void);
-static AttrTab gtkspinbutton_attrs[];
-/* static int int_gtkspinbutton_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkspinbutton_get_methods(void); 
-#endif /* GtkSpinButton_Private */
-
 #define NULLGTKSPINBUTTON (NspGtkSpinButton*) 0
 
 NspGtkSpinButton *gtkspinbutton_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkSpinButton *GetGtkSpinButtonCopy (Stack stack, int i);
 extern NspGtkSpinButton *GetGtkSpinButton (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkSpinButton_Private 
+static int init_gtkspinbutton(NspGtkSpinButton *o,NspTypeGtkSpinButton *type);
+static char *gtkspinbutton_type_as_string(void);
+static char *gtkspinbutton_type_short_string(void);
+static AttrTab gtkspinbutton_attrs[];
+/* static int int_gtkspinbutton_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkspinbutton_get_methods(void); 
+#endif /* GtkSpinButton_Private */

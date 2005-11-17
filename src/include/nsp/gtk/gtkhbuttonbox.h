@@ -32,15 +32,6 @@ NspGtkHButtonBox *new_gtkhbuttonbox();
 * Object methods redefined for gtkhbuttonbox 
 */
 
-#ifdef GtkHButtonBox_Private 
-static int init_gtkhbuttonbox(NspGtkHButtonBox *o,NspTypeGtkHButtonBox *type);
-static char *gtkhbuttonbox_type_as_string(void);
-static char *gtkhbuttonbox_type_short_string(void);
-static AttrTab gtkhbuttonbox_attrs[];
-/* static int int_gtkhbuttonbox_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkhbuttonbox_get_methods(void); 
-#endif /* GtkHButtonBox_Private */
-
 #define NULLGTKHBUTTONBOX (NspGtkHButtonBox*) 0
 
 NspGtkHButtonBox *gtkhbuttonbox_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkHButtonBox *GetGtkHButtonBoxCopy (Stack stack, int i);
 extern NspGtkHButtonBox *GetGtkHButtonBox (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkHButtonBox_Private 
+static int init_gtkhbuttonbox(NspGtkHButtonBox *o,NspTypeGtkHButtonBox *type);
+static char *gtkhbuttonbox_type_as_string(void);
+static char *gtkhbuttonbox_type_short_string(void);
+static AttrTab gtkhbuttonbox_attrs[];
+/* static int int_gtkhbuttonbox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkhbuttonbox_get_methods(void); 
+#endif /* GtkHButtonBox_Private */

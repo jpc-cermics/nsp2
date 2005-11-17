@@ -32,15 +32,6 @@ NspGtkTreeViewColumn *new_gtktreeviewcolumn();
 * Object methods redefined for gtktreeviewcolumn 
 */
 
-#ifdef GtkTreeViewColumn_Private 
-static int init_gtktreeviewcolumn(NspGtkTreeViewColumn *o,NspTypeGtkTreeViewColumn *type);
-static char *gtktreeviewcolumn_type_as_string(void);
-static char *gtktreeviewcolumn_type_short_string(void);
-static AttrTab gtktreeviewcolumn_attrs[];
-/* static int int_gtktreeviewcolumn_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktreeviewcolumn_get_methods(void); 
-#endif /* GtkTreeViewColumn_Private */
-
 #define NULLGTKTREEVIEWCOLUMN (NspGtkTreeViewColumn*) 0
 
 NspGtkTreeViewColumn *gtktreeviewcolumn_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTreeViewColumn *GetGtkTreeViewColumnCopy (Stack stack, int i);
 extern NspGtkTreeViewColumn *GetGtkTreeViewColumn (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTreeViewColumn_Private 
+static int init_gtktreeviewcolumn(NspGtkTreeViewColumn *o,NspTypeGtkTreeViewColumn *type);
+static char *gtktreeviewcolumn_type_as_string(void);
+static char *gtktreeviewcolumn_type_short_string(void);
+static AttrTab gtktreeviewcolumn_attrs[];
+/* static int int_gtktreeviewcolumn_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreeviewcolumn_get_methods(void); 
+#endif /* GtkTreeViewColumn_Private */

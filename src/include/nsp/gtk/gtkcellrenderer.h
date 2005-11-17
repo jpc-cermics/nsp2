@@ -32,15 +32,6 @@ NspGtkCellRenderer *new_gtkcellrenderer();
 * Object methods redefined for gtkcellrenderer 
 */
 
-#ifdef GtkCellRenderer_Private 
-static int init_gtkcellrenderer(NspGtkCellRenderer *o,NspTypeGtkCellRenderer *type);
-static char *gtkcellrenderer_type_as_string(void);
-static char *gtkcellrenderer_type_short_string(void);
-static AttrTab gtkcellrenderer_attrs[];
-/* static int int_gtkcellrenderer_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcellrenderer_get_methods(void); 
-#endif /* GtkCellRenderer_Private */
-
 #define NULLGTKCELLRENDERER (NspGtkCellRenderer*) 0
 
 NspGtkCellRenderer *gtkcellrenderer_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkCellRenderer *GetGtkCellRendererCopy (Stack stack, int i);
 extern NspGtkCellRenderer *GetGtkCellRenderer (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkCellRenderer_Private 
+static int init_gtkcellrenderer(NspGtkCellRenderer *o,NspTypeGtkCellRenderer *type);
+static char *gtkcellrenderer_type_as_string(void);
+static char *gtkcellrenderer_type_short_string(void);
+static AttrTab gtkcellrenderer_attrs[];
+/* static int int_gtkcellrenderer_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcellrenderer_get_methods(void); 
+#endif /* GtkCellRenderer_Private */

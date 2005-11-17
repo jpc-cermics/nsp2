@@ -32,15 +32,6 @@ NspGtkVPaned *new_gtkvpaned();
 * Object methods redefined for gtkvpaned 
 */
 
-#ifdef GtkVPaned_Private 
-static int init_gtkvpaned(NspGtkVPaned *o,NspTypeGtkVPaned *type);
-static char *gtkvpaned_type_as_string(void);
-static char *gtkvpaned_type_short_string(void);
-static AttrTab gtkvpaned_attrs[];
-/* static int int_gtkvpaned_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkvpaned_get_methods(void); 
-#endif /* GtkVPaned_Private */
-
 #define NULLGTKVPANED (NspGtkVPaned*) 0
 
 NspGtkVPaned *gtkvpaned_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkVPaned *GetGtkVPanedCopy (Stack stack, int i);
 extern NspGtkVPaned *GetGtkVPaned (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkVPaned_Private 
+static int init_gtkvpaned(NspGtkVPaned *o,NspTypeGtkVPaned *type);
+static char *gtkvpaned_type_as_string(void);
+static char *gtkvpaned_type_short_string(void);
+static AttrTab gtkvpaned_attrs[];
+/* static int int_gtkvpaned_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkvpaned_get_methods(void); 
+#endif /* GtkVPaned_Private */

@@ -32,15 +32,6 @@ NspGtkNotebook *new_gtknotebook();
 * Object methods redefined for gtknotebook 
 */
 
-#ifdef GtkNotebook_Private 
-static int init_gtknotebook(NspGtkNotebook *o,NspTypeGtkNotebook *type);
-static char *gtknotebook_type_as_string(void);
-static char *gtknotebook_type_short_string(void);
-static AttrTab gtknotebook_attrs[];
-/* static int int_gtknotebook_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtknotebook_get_methods(void); 
-#endif /* GtkNotebook_Private */
-
 #define NULLGTKNOTEBOOK (NspGtkNotebook*) 0
 
 NspGtkNotebook *gtknotebook_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkNotebook *GetGtkNotebookCopy (Stack stack, int i);
 extern NspGtkNotebook *GetGtkNotebook (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkNotebook_Private 
+static int init_gtknotebook(NspGtkNotebook *o,NspTypeGtkNotebook *type);
+static char *gtknotebook_type_as_string(void);
+static char *gtknotebook_type_short_string(void);
+static AttrTab gtknotebook_attrs[];
+/* static int int_gtknotebook_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtknotebook_get_methods(void); 
+#endif /* GtkNotebook_Private */

@@ -32,15 +32,6 @@ NspGtkCurve *new_gtkcurve();
 * Object methods redefined for gtkcurve 
 */
 
-#ifdef GtkCurve_Private 
-static int init_gtkcurve(NspGtkCurve *o,NspTypeGtkCurve *type);
-static char *gtkcurve_type_as_string(void);
-static char *gtkcurve_type_short_string(void);
-static AttrTab gtkcurve_attrs[];
-/* static int int_gtkcurve_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcurve_get_methods(void); 
-#endif /* GtkCurve_Private */
-
 #define NULLGTKCURVE (NspGtkCurve*) 0
 
 NspGtkCurve *gtkcurve_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkCurve *GetGtkCurveCopy (Stack stack, int i);
 extern NspGtkCurve *GetGtkCurve (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkCurve_Private 
+static int init_gtkcurve(NspGtkCurve *o,NspTypeGtkCurve *type);
+static char *gtkcurve_type_as_string(void);
+static char *gtkcurve_type_short_string(void);
+static AttrTab gtkcurve_attrs[];
+/* static int int_gtkcurve_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcurve_get_methods(void); 
+#endif /* GtkCurve_Private */

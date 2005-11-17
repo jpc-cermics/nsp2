@@ -32,15 +32,6 @@ NspGdkDrawable *new_gdkdrawable();
 * Object methods redefined for gdkdrawable 
 */
 
-#ifdef GdkDrawable_Private 
-static int init_gdkdrawable(NspGdkDrawable *o,NspTypeGdkDrawable *type);
-static char *gdkdrawable_type_as_string(void);
-static char *gdkdrawable_type_short_string(void);
-static AttrTab gdkdrawable_attrs[];
-/* static int int_gdkdrawable_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkdrawable_get_methods(void); 
-#endif /* GdkDrawable_Private */
-
 #define NULLGDKDRAWABLE (NspGdkDrawable*) 0
 
 NspGdkDrawable *gdkdrawable_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkDrawable *GetGdkDrawableCopy (Stack stack, int i);
 extern NspGdkDrawable *GetGdkDrawable (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkDrawable_Private 
+static int init_gdkdrawable(NspGdkDrawable *o,NspTypeGdkDrawable *type);
+static char *gdkdrawable_type_as_string(void);
+static char *gdkdrawable_type_short_string(void);
+static AttrTab gdkdrawable_attrs[];
+/* static int int_gdkdrawable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkdrawable_get_methods(void); 
+#endif /* GdkDrawable_Private */

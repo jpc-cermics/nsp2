@@ -32,15 +32,6 @@ NspGladeXML *new_gladexml();
 * Object methods redefined for gladexml 
 */
 
-#ifdef GladeXML_Private 
-static int init_gladexml(NspGladeXML *o,NspTypeGladeXML *type);
-static char *gladexml_type_as_string(void);
-static char *gladexml_type_short_string(void);
-static AttrTab gladexml_attrs[];
-/* static int int_gladexml_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gladexml_get_methods(void); 
-#endif /* GladeXML_Private */
-
 #define NULLGLADEXML (NspGladeXML*) 0
 
 NspGladeXML *gladexml_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGladeXML *GetGladeXMLCopy (Stack stack, int i);
 extern NspGladeXML *GetGladeXML (Stack stack, int i); 
 
 #endif 
+
+#ifdef GladeXML_Private 
+static int init_gladexml(NspGladeXML *o,NspTypeGladeXML *type);
+static char *gladexml_type_as_string(void);
+static char *gladexml_type_short_string(void);
+static AttrTab gladexml_attrs[];
+/* static int int_gladexml_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gladexml_get_methods(void); 
+#endif /* GladeXML_Private */

@@ -32,15 +32,6 @@ NspGtkWindow *new_gtkwindow();
 * Object methods redefined for gtkwindow 
 */
 
-#ifdef GtkWindow_Private 
-static int init_gtkwindow(NspGtkWindow *o,NspTypeGtkWindow *type);
-static char *gtkwindow_type_as_string(void);
-static char *gtkwindow_type_short_string(void);
-static AttrTab gtkwindow_attrs[];
-/* static int int_gtkwindow_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkwindow_get_methods(void); 
-#endif /* GtkWindow_Private */
-
 #define NULLGTKWINDOW (NspGtkWindow*) 0
 
 NspGtkWindow *gtkwindow_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkWindow *GetGtkWindowCopy (Stack stack, int i);
 extern NspGtkWindow *GetGtkWindow (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkWindow_Private 
+static int init_gtkwindow(NspGtkWindow *o,NspTypeGtkWindow *type);
+static char *gtkwindow_type_as_string(void);
+static char *gtkwindow_type_short_string(void);
+static AttrTab gtkwindow_attrs[];
+/* static int int_gtkwindow_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkwindow_get_methods(void); 
+#endif /* GtkWindow_Private */

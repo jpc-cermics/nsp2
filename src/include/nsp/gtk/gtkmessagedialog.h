@@ -32,15 +32,6 @@ NspGtkMessageDialog *new_gtkmessagedialog();
 * Object methods redefined for gtkmessagedialog 
 */
 
-#ifdef GtkMessageDialog_Private 
-static int init_gtkmessagedialog(NspGtkMessageDialog *o,NspTypeGtkMessageDialog *type);
-static char *gtkmessagedialog_type_as_string(void);
-static char *gtkmessagedialog_type_short_string(void);
-static AttrTab gtkmessagedialog_attrs[];
-/* static int int_gtkmessagedialog_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkmessagedialog_get_methods(void); 
-#endif /* GtkMessageDialog_Private */
-
 #define NULLGTKMESSAGEDIALOG (NspGtkMessageDialog*) 0
 
 NspGtkMessageDialog *gtkmessagedialog_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkMessageDialog *GetGtkMessageDialogCopy (Stack stack, int i);
 extern NspGtkMessageDialog *GetGtkMessageDialog (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkMessageDialog_Private 
+static int init_gtkmessagedialog(NspGtkMessageDialog *o,NspTypeGtkMessageDialog *type);
+static char *gtkmessagedialog_type_as_string(void);
+static char *gtkmessagedialog_type_short_string(void);
+static AttrTab gtkmessagedialog_attrs[];
+/* static int int_gtkmessagedialog_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkmessagedialog_get_methods(void); 
+#endif /* GtkMessageDialog_Private */

@@ -32,15 +32,6 @@ NspGtkEntry *new_gtkentry();
 * Object methods redefined for gtkentry 
 */
 
-#ifdef GtkEntry_Private 
-static int init_gtkentry(NspGtkEntry *o,NspTypeGtkEntry *type);
-static char *gtkentry_type_as_string(void);
-static char *gtkentry_type_short_string(void);
-static AttrTab gtkentry_attrs[];
-/* static int int_gtkentry_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkentry_get_methods(void); 
-#endif /* GtkEntry_Private */
-
 #define NULLGTKENTRY (NspGtkEntry*) 0
 
 NspGtkEntry *gtkentry_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkEntry *GetGtkEntryCopy (Stack stack, int i);
 extern NspGtkEntry *GetGtkEntry (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkEntry_Private 
+static int init_gtkentry(NspGtkEntry *o,NspTypeGtkEntry *type);
+static char *gtkentry_type_as_string(void);
+static char *gtkentry_type_short_string(void);
+static AttrTab gtkentry_attrs[];
+/* static int int_gtkentry_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkentry_get_methods(void); 
+#endif /* GtkEntry_Private */

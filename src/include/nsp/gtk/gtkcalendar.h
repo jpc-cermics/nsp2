@@ -32,15 +32,6 @@ NspGtkCalendar *new_gtkcalendar();
 * Object methods redefined for gtkcalendar 
 */
 
-#ifdef GtkCalendar_Private 
-static int init_gtkcalendar(NspGtkCalendar *o,NspTypeGtkCalendar *type);
-static char *gtkcalendar_type_as_string(void);
-static char *gtkcalendar_type_short_string(void);
-static AttrTab gtkcalendar_attrs[];
-/* static int int_gtkcalendar_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkcalendar_get_methods(void); 
-#endif /* GtkCalendar_Private */
-
 #define NULLGTKCALENDAR (NspGtkCalendar*) 0
 
 NspGtkCalendar *gtkcalendar_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkCalendar *GetGtkCalendarCopy (Stack stack, int i);
 extern NspGtkCalendar *GetGtkCalendar (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkCalendar_Private 
+static int init_gtkcalendar(NspGtkCalendar *o,NspTypeGtkCalendar *type);
+static char *gtkcalendar_type_as_string(void);
+static char *gtkcalendar_type_short_string(void);
+static AttrTab gtkcalendar_attrs[];
+/* static int int_gtkcalendar_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkcalendar_get_methods(void); 
+#endif /* GtkCalendar_Private */

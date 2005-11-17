@@ -32,15 +32,6 @@ NspGtkImage *new_gtkimage();
 * Object methods redefined for gtkimage 
 */
 
-#ifdef GtkImage_Private 
-static int init_gtkimage(NspGtkImage *o,NspTypeGtkImage *type);
-static char *gtkimage_type_as_string(void);
-static char *gtkimage_type_short_string(void);
-static AttrTab gtkimage_attrs[];
-/* static int int_gtkimage_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkimage_get_methods(void); 
-#endif /* GtkImage_Private */
-
 #define NULLGTKIMAGE (NspGtkImage*) 0
 
 NspGtkImage *gtkimage_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkImage *GetGtkImageCopy (Stack stack, int i);
 extern NspGtkImage *GetGtkImage (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkImage_Private 
+static int init_gtkimage(NspGtkImage *o,NspTypeGtkImage *type);
+static char *gtkimage_type_as_string(void);
+static char *gtkimage_type_short_string(void);
+static AttrTab gtkimage_attrs[];
+/* static int int_gtkimage_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkimage_get_methods(void); 
+#endif /* GtkImage_Private */

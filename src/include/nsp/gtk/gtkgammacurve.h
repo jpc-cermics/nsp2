@@ -32,15 +32,6 @@ NspGtkGammaCurve *new_gtkgammacurve();
 * Object methods redefined for gtkgammacurve 
 */
 
-#ifdef GtkGammaCurve_Private 
-static int init_gtkgammacurve(NspGtkGammaCurve *o,NspTypeGtkGammaCurve *type);
-static char *gtkgammacurve_type_as_string(void);
-static char *gtkgammacurve_type_short_string(void);
-static AttrTab gtkgammacurve_attrs[];
-/* static int int_gtkgammacurve_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkgammacurve_get_methods(void); 
-#endif /* GtkGammaCurve_Private */
-
 #define NULLGTKGAMMACURVE (NspGtkGammaCurve*) 0
 
 NspGtkGammaCurve *gtkgammacurve_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkGammaCurve *GetGtkGammaCurveCopy (Stack stack, int i);
 extern NspGtkGammaCurve *GetGtkGammaCurve (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkGammaCurve_Private 
+static int init_gtkgammacurve(NspGtkGammaCurve *o,NspTypeGtkGammaCurve *type);
+static char *gtkgammacurve_type_as_string(void);
+static char *gtkgammacurve_type_short_string(void);
+static AttrTab gtkgammacurve_attrs[];
+/* static int int_gtkgammacurve_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkgammacurve_get_methods(void); 
+#endif /* GtkGammaCurve_Private */

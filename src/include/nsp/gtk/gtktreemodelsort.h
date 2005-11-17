@@ -32,15 +32,6 @@ NspGtkTreeModelSort *new_gtktreemodelsort();
 * Object methods redefined for gtktreemodelsort 
 */
 
-#ifdef GtkTreeModelSort_Private 
-static int init_gtktreemodelsort(NspGtkTreeModelSort *o,NspTypeGtkTreeModelSort *type);
-static char *gtktreemodelsort_type_as_string(void);
-static char *gtktreemodelsort_type_short_string(void);
-static AttrTab gtktreemodelsort_attrs[];
-/* static int int_gtktreemodelsort_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktreemodelsort_get_methods(void); 
-#endif /* GtkTreeModelSort_Private */
-
 #define NULLGTKTREEMODELSORT (NspGtkTreeModelSort*) 0
 
 NspGtkTreeModelSort *gtktreemodelsort_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTreeModelSort *GetGtkTreeModelSortCopy (Stack stack, int i);
 extern NspGtkTreeModelSort *GetGtkTreeModelSort (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTreeModelSort_Private 
+static int init_gtktreemodelsort(NspGtkTreeModelSort *o,NspTypeGtkTreeModelSort *type);
+static char *gtktreemodelsort_type_as_string(void);
+static char *gtktreemodelsort_type_short_string(void);
+static AttrTab gtktreemodelsort_attrs[];
+/* static int int_gtktreemodelsort_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktreemodelsort_get_methods(void); 
+#endif /* GtkTreeModelSort_Private */

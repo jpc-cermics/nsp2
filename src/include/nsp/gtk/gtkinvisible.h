@@ -32,15 +32,6 @@ NspGtkInvisible *new_gtkinvisible();
 * Object methods redefined for gtkinvisible 
 */
 
-#ifdef GtkInvisible_Private 
-static int init_gtkinvisible(NspGtkInvisible *o,NspTypeGtkInvisible *type);
-static char *gtkinvisible_type_as_string(void);
-static char *gtkinvisible_type_short_string(void);
-static AttrTab gtkinvisible_attrs[];
-/* static int int_gtkinvisible_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkinvisible_get_methods(void); 
-#endif /* GtkInvisible_Private */
-
 #define NULLGTKINVISIBLE (NspGtkInvisible*) 0
 
 NspGtkInvisible *gtkinvisible_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkInvisible *GetGtkInvisibleCopy (Stack stack, int i);
 extern NspGtkInvisible *GetGtkInvisible (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkInvisible_Private 
+static int init_gtkinvisible(NspGtkInvisible *o,NspTypeGtkInvisible *type);
+static char *gtkinvisible_type_as_string(void);
+static char *gtkinvisible_type_short_string(void);
+static AttrTab gtkinvisible_attrs[];
+/* static int int_gtkinvisible_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkinvisible_get_methods(void); 
+#endif /* GtkInvisible_Private */

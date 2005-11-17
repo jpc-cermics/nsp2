@@ -32,15 +32,6 @@ NspGtkSocket *new_gtksocket();
 * Object methods redefined for gtksocket 
 */
 
-#ifdef GtkSocket_Private 
-static int init_gtksocket(NspGtkSocket *o,NspTypeGtkSocket *type);
-static char *gtksocket_type_as_string(void);
-static char *gtksocket_type_short_string(void);
-static AttrTab gtksocket_attrs[];
-/* static int int_gtksocket_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtksocket_get_methods(void); 
-#endif /* GtkSocket_Private */
-
 #define NULLGTKSOCKET (NspGtkSocket*) 0
 
 NspGtkSocket *gtksocket_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkSocket *GetGtkSocketCopy (Stack stack, int i);
 extern NspGtkSocket *GetGtkSocket (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkSocket_Private 
+static int init_gtksocket(NspGtkSocket *o,NspTypeGtkSocket *type);
+static char *gtksocket_type_as_string(void);
+static char *gtksocket_type_short_string(void);
+static AttrTab gtksocket_attrs[];
+/* static int int_gtksocket_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtksocket_get_methods(void); 
+#endif /* GtkSocket_Private */

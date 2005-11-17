@@ -32,15 +32,6 @@ NspPangoFontFamily *new_pangofontfamily();
 * Object methods redefined for pangofontfamily 
 */
 
-#ifdef PangoFontFamily_Private 
-static int init_pangofontfamily(NspPangoFontFamily *o,NspTypePangoFontFamily *type);
-static char *pangofontfamily_type_as_string(void);
-static char *pangofontfamily_type_short_string(void);
-static AttrTab pangofontfamily_attrs[];
-/* static int int_pangofontfamily_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *pangofontfamily_get_methods(void); 
-#endif /* PangoFontFamily_Private */
-
 #define NULLPANGOFONTFAMILY (NspPangoFontFamily*) 0
 
 NspPangoFontFamily *pangofontfamily_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspPangoFontFamily *GetPangoFontFamilyCopy (Stack stack, int i);
 extern NspPangoFontFamily *GetPangoFontFamily (Stack stack, int i); 
 
 #endif 
+
+#ifdef PangoFontFamily_Private 
+static int init_pangofontfamily(NspPangoFontFamily *o,NspTypePangoFontFamily *type);
+static char *pangofontfamily_type_as_string(void);
+static char *pangofontfamily_type_short_string(void);
+static AttrTab pangofontfamily_attrs[];
+/* static int int_pangofontfamily_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *pangofontfamily_get_methods(void); 
+#endif /* PangoFontFamily_Private */

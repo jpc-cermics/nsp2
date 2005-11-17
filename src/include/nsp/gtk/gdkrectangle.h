@@ -32,15 +32,6 @@ NspGdkRectangle *new_gdkrectangle();
 * Object methods redefined for gdkrectangle 
 */
 
-#ifdef GdkRectangle_Private 
-static int init_gdkrectangle(NspGdkRectangle *o,NspTypeGdkRectangle *type);
-static char *gdkrectangle_type_as_string(void);
-static char *gdkrectangle_type_short_string(void);
-static AttrTab gdkrectangle_attrs[];
-/* static int int_gdkrectangle_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkrectangle_get_methods(void); 
-#endif /* GdkRectangle_Private */
-
 #define NULLGDKRECTANGLE (NspGdkRectangle*) 0
 
 NspGdkRectangle *gdkrectangle_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkRectangle *GetGdkRectangleCopy (Stack stack, int i);
 extern NspGdkRectangle *GetGdkRectangle (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkRectangle_Private 
+static int init_gdkrectangle(NspGdkRectangle *o,NspTypeGdkRectangle *type);
+static char *gdkrectangle_type_as_string(void);
+static char *gdkrectangle_type_short_string(void);
+static AttrTab gdkrectangle_attrs[];
+/* static int int_gdkrectangle_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkrectangle_get_methods(void); 
+#endif /* GdkRectangle_Private */

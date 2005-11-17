@@ -32,15 +32,6 @@ NspGtkTextTagTable *new_gtktexttagtable();
 * Object methods redefined for gtktexttagtable 
 */
 
-#ifdef GtkTextTagTable_Private 
-static int init_gtktexttagtable(NspGtkTextTagTable *o,NspTypeGtkTextTagTable *type);
-static char *gtktexttagtable_type_as_string(void);
-static char *gtktexttagtable_type_short_string(void);
-static AttrTab gtktexttagtable_attrs[];
-/* static int int_gtktexttagtable_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtktexttagtable_get_methods(void); 
-#endif /* GtkTextTagTable_Private */
-
 #define NULLGTKTEXTTAGTABLE (NspGtkTextTagTable*) 0
 
 NspGtkTextTagTable *gtktexttagtable_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkTextTagTable *GetGtkTextTagTableCopy (Stack stack, int i);
 extern NspGtkTextTagTable *GetGtkTextTagTable (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkTextTagTable_Private 
+static int init_gtktexttagtable(NspGtkTextTagTable *o,NspTypeGtkTextTagTable *type);
+static char *gtktexttagtable_type_as_string(void);
+static char *gtktexttagtable_type_short_string(void);
+static AttrTab gtktexttagtable_attrs[];
+/* static int int_gtktexttagtable_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtktexttagtable_get_methods(void); 
+#endif /* GtkTextTagTable_Private */

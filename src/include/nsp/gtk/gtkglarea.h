@@ -32,15 +32,6 @@ NspGtkGLArea *new_gtkglarea();
 * Object methods redefined for gtkglarea 
 */
 
-#ifdef GtkGLArea_Private 
-static int init_gtkglarea(NspGtkGLArea *o,NspTypeGtkGLArea *type);
-static char *gtkglarea_type_as_string(void);
-static char *gtkglarea_type_short_string(void);
-static AttrTab gtkglarea_attrs[];
-/* static int int_gtkglarea_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkglarea_get_methods(void); 
-#endif /* GtkGLArea_Private */
-
 #define NULLGTKGLAREA (NspGtkGLArea*) 0
 
 NspGtkGLArea *gtkglarea_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkGLArea *GetGtkGLAreaCopy (Stack stack, int i);
 extern NspGtkGLArea *GetGtkGLArea (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkGLArea_Private 
+static int init_gtkglarea(NspGtkGLArea *o,NspTypeGtkGLArea *type);
+static char *gtkglarea_type_as_string(void);
+static char *gtkglarea_type_short_string(void);
+static AttrTab gtkglarea_attrs[];
+/* static int int_gtkglarea_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkglarea_get_methods(void); 
+#endif /* GtkGLArea_Private */

@@ -32,15 +32,6 @@ NspGtkWindowGroup *new_gtkwindowgroup();
 * Object methods redefined for gtkwindowgroup 
 */
 
-#ifdef GtkWindowGroup_Private 
-static int init_gtkwindowgroup(NspGtkWindowGroup *o,NspTypeGtkWindowGroup *type);
-static char *gtkwindowgroup_type_as_string(void);
-static char *gtkwindowgroup_type_short_string(void);
-static AttrTab gtkwindowgroup_attrs[];
-/* static int int_gtkwindowgroup_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkwindowgroup_get_methods(void); 
-#endif /* GtkWindowGroup_Private */
-
 #define NULLGTKWINDOWGROUP (NspGtkWindowGroup*) 0
 
 NspGtkWindowGroup *gtkwindowgroup_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkWindowGroup *GetGtkWindowGroupCopy (Stack stack, int i);
 extern NspGtkWindowGroup *GetGtkWindowGroup (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkWindowGroup_Private 
+static int init_gtkwindowgroup(NspGtkWindowGroup *o,NspTypeGtkWindowGroup *type);
+static char *gtkwindowgroup_type_as_string(void);
+static char *gtkwindowgroup_type_short_string(void);
+static AttrTab gtkwindowgroup_attrs[];
+/* static int int_gtkwindowgroup_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkwindowgroup_get_methods(void); 
+#endif /* GtkWindowGroup_Private */

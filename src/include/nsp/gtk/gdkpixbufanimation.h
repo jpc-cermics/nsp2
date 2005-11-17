@@ -32,15 +32,6 @@ NspGdkPixbufAnimation *new_gdkpixbufanimation();
 * Object methods redefined for gdkpixbufanimation 
 */
 
-#ifdef GdkPixbufAnimation_Private 
-static int init_gdkpixbufanimation(NspGdkPixbufAnimation *o,NspTypeGdkPixbufAnimation *type);
-static char *gdkpixbufanimation_type_as_string(void);
-static char *gdkpixbufanimation_type_short_string(void);
-static AttrTab gdkpixbufanimation_attrs[];
-/* static int int_gdkpixbufanimation_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkpixbufanimation_get_methods(void); 
-#endif /* GdkPixbufAnimation_Private */
-
 #define NULLGDKPIXBUFANIMATION (NspGdkPixbufAnimation*) 0
 
 NspGdkPixbufAnimation *gdkpixbufanimation_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkPixbufAnimation *GetGdkPixbufAnimationCopy (Stack stack, int i);
 extern NspGdkPixbufAnimation *GetGdkPixbufAnimation (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkPixbufAnimation_Private 
+static int init_gdkpixbufanimation(NspGdkPixbufAnimation *o,NspTypeGdkPixbufAnimation *type);
+static char *gdkpixbufanimation_type_as_string(void);
+static char *gdkpixbufanimation_type_short_string(void);
+static AttrTab gdkpixbufanimation_attrs[];
+/* static int int_gdkpixbufanimation_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkpixbufanimation_get_methods(void); 
+#endif /* GdkPixbufAnimation_Private */

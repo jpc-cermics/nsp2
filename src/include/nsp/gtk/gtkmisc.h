@@ -32,15 +32,6 @@ NspGtkMisc *new_gtkmisc();
 * Object methods redefined for gtkmisc 
 */
 
-#ifdef GtkMisc_Private 
-static int init_gtkmisc(NspGtkMisc *o,NspTypeGtkMisc *type);
-static char *gtkmisc_type_as_string(void);
-static char *gtkmisc_type_short_string(void);
-static AttrTab gtkmisc_attrs[];
-/* static int int_gtkmisc_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkmisc_get_methods(void); 
-#endif /* GtkMisc_Private */
-
 #define NULLGTKMISC (NspGtkMisc*) 0
 
 NspGtkMisc *gtkmisc_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkMisc *GetGtkMiscCopy (Stack stack, int i);
 extern NspGtkMisc *GetGtkMisc (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkMisc_Private 
+static int init_gtkmisc(NspGtkMisc *o,NspTypeGtkMisc *type);
+static char *gtkmisc_type_as_string(void);
+static char *gtkmisc_type_short_string(void);
+static AttrTab gtkmisc_attrs[];
+/* static int int_gtkmisc_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkmisc_get_methods(void); 
+#endif /* GtkMisc_Private */

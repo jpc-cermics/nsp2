@@ -32,15 +32,6 @@ NspGtkScrolledWindow *new_gtkscrolledwindow();
 * Object methods redefined for gtkscrolledwindow 
 */
 
-#ifdef GtkScrolledWindow_Private 
-static int init_gtkscrolledwindow(NspGtkScrolledWindow *o,NspTypeGtkScrolledWindow *type);
-static char *gtkscrolledwindow_type_as_string(void);
-static char *gtkscrolledwindow_type_short_string(void);
-static AttrTab gtkscrolledwindow_attrs[];
-/* static int int_gtkscrolledwindow_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkscrolledwindow_get_methods(void); 
-#endif /* GtkScrolledWindow_Private */
-
 #define NULLGTKSCROLLEDWINDOW (NspGtkScrolledWindow*) 0
 
 NspGtkScrolledWindow *gtkscrolledwindow_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkScrolledWindow *GetGtkScrolledWindowCopy (Stack stack, int i);
 extern NspGtkScrolledWindow *GetGtkScrolledWindow (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkScrolledWindow_Private 
+static int init_gtkscrolledwindow(NspGtkScrolledWindow *o,NspTypeGtkScrolledWindow *type);
+static char *gtkscrolledwindow_type_as_string(void);
+static char *gtkscrolledwindow_type_short_string(void);
+static AttrTab gtkscrolledwindow_attrs[];
+/* static int int_gtkscrolledwindow_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkscrolledwindow_get_methods(void); 
+#endif /* GtkScrolledWindow_Private */

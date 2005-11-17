@@ -32,15 +32,6 @@ NspGtkVButtonBox *new_gtkvbuttonbox();
 * Object methods redefined for gtkvbuttonbox 
 */
 
-#ifdef GtkVButtonBox_Private 
-static int init_gtkvbuttonbox(NspGtkVButtonBox *o,NspTypeGtkVButtonBox *type);
-static char *gtkvbuttonbox_type_as_string(void);
-static char *gtkvbuttonbox_type_short_string(void);
-static AttrTab gtkvbuttonbox_attrs[];
-/* static int int_gtkvbuttonbox_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkvbuttonbox_get_methods(void); 
-#endif /* GtkVButtonBox_Private */
-
 #define NULLGTKVBUTTONBOX (NspGtkVButtonBox*) 0
 
 NspGtkVButtonBox *gtkvbuttonbox_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkVButtonBox *GetGtkVButtonBoxCopy (Stack stack, int i);
 extern NspGtkVButtonBox *GetGtkVButtonBox (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkVButtonBox_Private 
+static int init_gtkvbuttonbox(NspGtkVButtonBox *o,NspTypeGtkVButtonBox *type);
+static char *gtkvbuttonbox_type_as_string(void);
+static char *gtkvbuttonbox_type_short_string(void);
+static AttrTab gtkvbuttonbox_attrs[];
+/* static int int_gtkvbuttonbox_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkvbuttonbox_get_methods(void); 
+#endif /* GtkVButtonBox_Private */

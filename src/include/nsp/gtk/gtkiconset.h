@@ -32,15 +32,6 @@ NspGtkIconSet *new_gtkiconset();
 * Object methods redefined for gtkiconset 
 */
 
-#ifdef GtkIconSet_Private 
-static int init_gtkiconset(NspGtkIconSet *o,NspTypeGtkIconSet *type);
-static char *gtkiconset_type_as_string(void);
-static char *gtkiconset_type_short_string(void);
-static AttrTab gtkiconset_attrs[];
-/* static int int_gtkiconset_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gtkiconset_get_methods(void); 
-#endif /* GtkIconSet_Private */
-
 #define NULLGTKICONSET (NspGtkIconSet*) 0
 
 NspGtkIconSet *gtkiconset_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGtkIconSet *GetGtkIconSetCopy (Stack stack, int i);
 extern NspGtkIconSet *GetGtkIconSet (Stack stack, int i); 
 
 #endif 
+
+#ifdef GtkIconSet_Private 
+static int init_gtkiconset(NspGtkIconSet *o,NspTypeGtkIconSet *type);
+static char *gtkiconset_type_as_string(void);
+static char *gtkiconset_type_short_string(void);
+static AttrTab gtkiconset_attrs[];
+/* static int int_gtkiconset_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gtkiconset_get_methods(void); 
+#endif /* GtkIconSet_Private */

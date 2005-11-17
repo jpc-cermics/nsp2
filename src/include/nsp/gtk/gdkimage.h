@@ -32,15 +32,6 @@ NspGdkImage *new_gdkimage();
 * Object methods redefined for gdkimage 
 */
 
-#ifdef GdkImage_Private 
-static int init_gdkimage(NspGdkImage *o,NspTypeGdkImage *type);
-static char *gdkimage_type_as_string(void);
-static char *gdkimage_type_short_string(void);
-static AttrTab gdkimage_attrs[];
-/* static int int_gdkimage_create(Stack stack, int rhs, int opt, int lhs);*/
-static NspMethods *gdkimage_get_methods(void); 
-#endif /* GdkImage_Private */
-
 #define NULLGDKIMAGE (NspGdkImage*) 0
 
 NspGdkImage *gdkimage_create(char *name,NspTypeBase *type);
@@ -54,3 +45,12 @@ extern NspGdkImage *GetGdkImageCopy (Stack stack, int i);
 extern NspGdkImage *GetGdkImage (Stack stack, int i); 
 
 #endif 
+
+#ifdef GdkImage_Private 
+static int init_gdkimage(NspGdkImage *o,NspTypeGdkImage *type);
+static char *gdkimage_type_as_string(void);
+static char *gdkimage_type_short_string(void);
+static AttrTab gdkimage_attrs[];
+/* static int int_gdkimage_create(Stack stack, int rhs, int opt, int lhs);*/
+static NspMethods *gdkimage_get_methods(void); 
+#endif /* GdkImage_Private */
