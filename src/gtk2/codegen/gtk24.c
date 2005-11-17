@@ -50371,7 +50371,7 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-static OpTab gtk24_func[]={
+static OpTab gtk_func[]={
   {"gtktreepath_new", _wrap_gtktreepath_new},
   {"gtkiconset_new", _wrap_gtkiconset_new},
   {"gtkiconsource_new", _wrap_gtkiconsource_new},
@@ -50560,26 +50560,26 @@ static OpTab gtk24_func[]={
   { NULL, NULL}
 };
 
-/* call ith function in the gtk24 interface */
+/* call ith function in the gtk interface */
 
-int gtk24_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+int gtk_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(gtk24_func[i].fonc))(stack,rhs,opt,lhs);
+  return (*(gtk_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void gtk24_Interf_Info(int i, char **fname, function (**f))
+void gtk_Interf_Info(int i, char **fname, function (**f))
 {
-  *fname = gtk24_func[i].name;
-  *f = gtk24_func[i].fonc;
+  *fname = gtk_func[i].name;
+  *f = gtk_func[i].fonc;
 }
 
 /* ----------- enums and flags ----------- */
 
 void
-gtk24_add_constants(NspObject *module, const gchar *strip_prefix)
+gtk_add_constants(NspObject *module, const gchar *strip_prefix)
 {
   nsp_flags_add_constants((NspHash *)module, GTK_TYPE_ACCEL_FLAGS, strip_prefix);
   nsp_flags_add_constants((NspHash *)module, GTK_TYPE_CALENDAR_DISPLAY_OPTIONS, strip_prefix);
@@ -50659,7 +50659,7 @@ gtk24_add_constants(NspObject *module, const gchar *strip_prefix)
 
 /* intialise stuff extension classes */
 /* void
-gtk24_register_classes(NspObject *d)
+gtk_register_classes(NspObject *d)
 {
   NspObject *module;
 
