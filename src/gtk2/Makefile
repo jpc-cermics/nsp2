@@ -22,22 +22,18 @@ gtksci.o : gtksci-generated.c
 
 atk.c : 
 	@ln -s codegen/atk.c .
-	@ln -s codegen/atk.override .
 
 gdk.c : 
 	@ln -s codegen/gdk.c .	
-	@ln -s codegen/gdk.override .	
 
-gtk.c : 
-	@ln -s codegen/gtk.c .	
-	@ln -s codegen/gtk.override .	
+# gtk.c is not a link 
 
 pango.c : 
 	@ln -s codegen/pango.c .	
-	@ln -s codegen/pango.override .	
 
 clean :: 
-	$(RM) atk.c gdk.c gtk.c pango.c
-	$(RM) atk.override gdk.override gtk.override pango.override
+	$(RM) atk.c gdk.c  pango.c
+
+
 
 

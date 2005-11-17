@@ -172,7 +172,6 @@ extern void * new_type_gtktreepath(type_mode);
 extern void * new_type_gtktreedragsource(type_mode);
 extern void * new_type_gtktreedragdest(type_mode);
 extern void * new_type_gtktreesortable(type_mode);
-extern void * new_type_gtkcellview(type_mode);
 extern void * new_type_pangoattribute(type_mode);
 extern void * new_type_pangoattrlist(type_mode);
 extern void * new_type_pangocolor(type_mode);
@@ -188,6 +187,9 @@ extern void * new_type_pangofontfamily(type_mode);
 extern void * new_type_pangofontmap(type_mode);
 extern void * new_type_pangofontset(type_mode);
 extern void * new_type_pangolayout(type_mode);
+extern void * new_type_gtkcellview(type_mode);
+
+
 
 static int add_constants(void);
 
@@ -368,7 +370,6 @@ void nsp_init_gtk_types(void)
   new_type_gtktreedragsource(T_BASE);
   new_type_gtktreedragdest(T_BASE);
   new_type_gtktreesortable(T_BASE);
-  new_type_gtkcellview(T_BASE);
   new_type_pangoattribute(T_BASE);
   new_type_pangoattrlist(T_BASE);
   new_type_pangocolor(T_BASE);
@@ -384,6 +385,10 @@ void nsp_init_gtk_types(void)
   new_type_pangofontmap(T_BASE);
   new_type_pangofontset(T_BASE);
   new_type_pangolayout(T_BASE);
+
+#if GTK_CHECK_VERSION(2,6,0)
+  new_type_gtkcellview(T_BASE);
+#endif 
 
   add_constants();
 
