@@ -35,5 +35,6 @@ clean ::
 	$(RM) atk.c gdk.c  pango.c
 
 
+gtk.o : codegen/gtk.c codegen/gtk24.c
 
 
