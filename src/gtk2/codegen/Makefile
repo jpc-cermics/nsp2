@@ -19,7 +19,7 @@ FFLAGS = $(FC_OPTIONS)
 all:: Makefile.mak
 
 Makefile.mak	: Makefile
-	$(SCIDIR)/util/Mak2VCMak Makefile
+	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
 %.X : %.c 
 	protoize -k -c -I../include $*.c 
@@ -39,6 +39,17 @@ clean ::
 .defs.c:
 	($(PYTHON) codegen/codegen.py \
 	    --override $*.override \
+	    --register ./pango-types.defs \
+	    --register ./atk-types.defs \
+	    --register ./gdk-types.defs \
+	    --register ./gtk-types.defs \
+	    --prefix $* $*.defs) > gen-$*.c \
+	&& cp gen-$*.c $*.c \
+	&& rm -f gen-$*.c
+
+gtk24.c: gtk24.defs gtk.override
+	($(PYTHON) codegen/codegen.py \
+	    --override gtk.override \
 	    --register ./pango-types.defs \
 	    --register ./atk-types.defs \
 	    --register ./gdk-types.defs \
