@@ -15,6 +15,8 @@ extern nsp_string nsp_string_copy(nsp_const_string str);
 extern void nsp_string_destroy(nsp_string *str); 
 extern nsp_string new_nsp_string_n(int n); 
 extern int nsp_string_resize(nsp_string *hstr, unsigned int n); 
+extern nsp_string nsp_string_to_utf8(nsp_string str);
+
 
 #endif 
 

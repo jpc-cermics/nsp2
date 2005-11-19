@@ -59,7 +59,10 @@ extern int nsp_dialog_(char *Title, char * init_value, char **button_name , int 
 
 /* file */
 
-extern int  nsp_get_file_window(char *filemask,char **file,char *dirname,int flag,int action,int *ierr,char *title);
+extern int nsp_get_file_window(const char *title,const char *dirname,int action,char **file,int *ierr);
+extern char * nsp_get_filename_open(const char *title,const char *dirname,char **filters);
+extern char * nsp_get_filename_save(const char *title,const char *dirname);
+
 
 /* madialog */
 
