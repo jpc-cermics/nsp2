@@ -443,48 +443,105 @@ int int_delmenu(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*
- * xgetfile 
- */
-     
-
-
+/**
+ * int_xgetfile:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * A unique function used to open a dialog widget with 
+ * a GtkFileChooserDialog (open or save) or a 
+ * GtkFileSelection.
+ * 
+ * Return value: %RET_BUG or 1 
+ **/
+ 
 int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 {
-  int ierr=0,rep,flag=0;
+  int ierr=0,rep,action=FALSE,save=FALSE,open=FALSE,free_f=0;
   NspObject *Rep;
-  char *dir = NULL, dir_expanded[FSIZE+1];
-  char *title = "Choose file name";
-  char *filemask = "*";
-  char *res = NULL; 
+  NspSMatrix *Masks=NULL;
+  char *dirname = NULL,dir_expanded[FSIZE+1];
+  char *title = "Choose file name", *title_utf8=NULL;
+  char *res = NULL;
+  char def_res[] = "";
   int_types T[] = {new_opts, t_end} ;
 
   nsp_option opts[] ={{ "dir",string,NULLOBJ,-1},
-		      { "mask",string,NULLOBJ,-1},
+		      { "masks",smat,NULLOBJ,-1},
 		      { "title",string,NULLOBJ,-1},
+		      { "action",s_bool,NULLOBJ,-1},
+		      { "save",s_bool,NULLOBJ,-1},
+		      { "open",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&opts,&dir,&filemask,&title) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&opts,&dirname,&Masks,&title,&action,&save,&open) == FAIL) 
+    return RET_BUG;
 
-  if ( dir != NULL ) 
+  if ( dirname != NULL ) 
     {
-      flag = 1 ;
-      nsp_path_expand(dir,dir_expanded,FSIZE);
+      char *dirname_utf8;
+      if ((dirname_utf8= nsp_string_to_utf8(dirname)) == NULL) {
+	Scierror("Error: cannot convert dir to utf8\n");
+	return RET_BUG;
+      }
+      nsp_path_expand(dirname_utf8,dir_expanded,FSIZE);
+      if ( dirname_utf8 != dirname ) g_free (dirname_utf8);
+      dirname = dir_expanded;
     }
 
-  rep= nsp_get_file_window(filemask,&res,dir_expanded,flag,0,&ierr,title); 
-  if ( ierr != 0) return RET_BUG; 
-  if ( rep == FALSE ) 
+  if ((title_utf8= nsp_string_to_utf8(title)) == NULL) {
+    Scierror("Error: cannot convert title to utf8\n");
+    return RET_BUG;
+  }
+
+  if ( save == TRUE ) 
     {
-      if (( Rep =nsp_create_object_from_str(""))==NULLOBJ ) return RET_BUG;
+      /* specific dialog for saving */
+      if (( res= nsp_get_filename_save(title_utf8,dirname)) != NULL)
+	  free_f= 1;
+      else 
+	res = def_res;
     }
-  else
+  else if ( open == TRUE )
     {
-      if (( Rep =nsp_create_object_from_str(res))==NULLOBJ ) return RET_BUG;
-      FREE(res);
+      char **masks= NULL;
+      /* specific dialog for opening */
+      if ( Masks != NULL) 
+	{
+	  if ( Masks->mn %2 != 0) {
+	    Scierror("masks should be given as a 2xm sized matrix\n");
+	    return RET_BUG;
+	  }
+	  masks = Masks->S;
+	}
+      if ((res = nsp_get_filename_open(title_utf8,dirname,masks)) != NULL)
+	free_f= 1;
+      else 
+	res = def_res;
     }
+  else 
+    {
+      rep= nsp_get_file_window(title_utf8,dirname,action,&res,&ierr);
+      if ( ierr != 0) return RET_BUG; 
+      if ( rep == FALSE )
+	res = def_res;
+      else 
+	free_f=2;
+    }
+  if (( Rep =nsp_create_object_from_str(res))==NULLOBJ ) goto ret_bug;
   MoveObj(stack,1,Rep);
+  if (title_utf8 != NULL&& title_utf8 != title ) g_free (title_utf8);
   return 1;
+ ret_bug: 
+  switch (free_f)
+    {
+    case 1: g_free(res);break;
+    case 2: FREE(res);break;
+    }
+  if ( title_utf8 != NULL && title_utf8 != title ) g_free (title_utf8);
+  return RET_BUG;
 }  
 
 

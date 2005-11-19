@@ -31,13 +31,26 @@
  *        
  */
 
+/**
+ * nsp_smatrix_convert:
+ * @name: a string 
+ * @A: a #NspSMatrix 
+ * @to_codeset: name of character set into which to convert @A
+ * @from_codeset: character set of @A.
+ * 
+ * returns a new #NspMatrix named @name which is a copy of @A 
+ * where characters are converted from @from_codeset to @to_codeset
+ * 
+ * Return value: %NULLSMAT or the newly created #NspSMatrix
+ **/
+
 NspSMatrix* nsp_smatrix_convert(const char *name,NspSMatrix *A,const char *to_codeset,
 				const char *from_codeset)
 {
   NspSMatrix *Loc;
   int i=0;
   /* initial mxn matrix with unallocated elements **/
-  if ( ( Loc =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1) ) == NULLSMAT) return(NULLSMAT);
+  if ( ( Loc =nsp_smatrix_create_with_length(name,A->m,A->n,-1) ) == NULLSMAT) return(NULLSMAT);
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < A->mn ; i++ )
     {
@@ -50,12 +63,14 @@ NspSMatrix* nsp_smatrix_convert(const char *name,NspSMatrix *A,const char *to_co
 #define DEBUG_STR(x) 
 /* #define DEBUG_STR(x) sciprint(x) */
   
-/*
- * convert A to utf8 
- * if conversion fails A is unchanged 
- */
-
-extern char * nsp_string_to_utf8( char *str);
+/**
+ * nsp_smatrix_to_utf8:
+ * @A: a #NspSMatrix 
+ * 
+ * converts @A to Utf8 using #nsp_string_to_utf8.
+ *
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_smatrix_to_utf8(NspSMatrix *A)
 { 
@@ -76,13 +91,21 @@ int nsp_smatrix_to_utf8(NspSMatrix *A)
   return ret;
 }
 
-/* 
- * convert a string to utf8 
- * return value is NULL, or a new string 
- * or the adress of the original string if it was already utf8
- */
+/**
+ * nsp_string_to_utf8:
+ * @str: string to be converted to Utf8
+ * 
+ * converts a string to Utf8 with the following assumptions.
+ * if string is utf8 do nothing and return @str. If locale 
+ * is UTF8 and the string is not utf8 then assume that the string is 
+ * ISO-8859-15. If locale is not UTF8 then assume that the string is 
+ * given with locale coding.
+ *
+ * Return value: a pointer to the new allocated string or %NULL in case of allocation failure 
+ * or a pointer to @str if the string was not converted.
+ **/
 
-char * nsp_string_to_utf8( char *str)
+nsp_string nsp_string_to_utf8(nsp_string str)
 { 
   char *str_utf8;
   if ( g_utf8_validate(str,-1,NULL) == TRUE ) 
@@ -109,6 +132,16 @@ char * nsp_string_to_utf8( char *str)
   return str_utf8;
 }
 
+
+
+/**
+ * nsp_smatrix_utf8_validate:
+ * @A: a #NspSMatrix 
+ * 
+ * %TRUE if all the elements of @A are Utf8.
+ * 
+ * Return value: %TRUE or %FALSE 
+ **/
 
 int nsp_smatrix_utf8_validate(NspSMatrix *A)
 {

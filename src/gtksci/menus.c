@@ -936,10 +936,7 @@ static void nspg_menu_export(int winid)
 static void nspg_menu_save(int winid) 
 {
   char *filename;
-  int ierr=0,rep;
-  static char *init ="*.scg";
-  rep=nsp_get_file_window(init,&filename,".",0,0,&ierr,"Save Graphic File");
-  if ( ierr == 0 && rep == TRUE )
+  if ((filename = nsp_get_filename_save("Save Graphic File",NULL)) != NULL) 
     {
       /* faie un scig_save XXXXX */
       scig_savesg(filename,winid);
@@ -953,11 +950,8 @@ static void nspg_menu_save(int winid)
 static void nspg_menu_load(int winid) 
 {
   char *filename;
-  int ierr=0,rep;
-  static char *init ="*.scg";
-  rep=nsp_get_file_window(init,&filename,".",0,0,&ierr,"Load Graphic File");
-
-  if ( ierr == 0 && rep == TRUE )
+  static char *filters[] ={"Nsp binary graphics","*.scg",NULL};
+  if ((filename = nsp_get_filename_open("Load Graphic File",NULL,filters)) != NULL) 
     {
       scig_loadsg(winid, filename);
     }
@@ -971,7 +965,7 @@ static void nsp_menu_fileops(void)
 {
   char * file = NULL ;
   int rep,ierr;
-  rep=nsp_get_file_window(NULL,&file,".",0,1,&ierr,"File operations");
+  rep=nsp_get_file_window("File operations",NULL,1,&file,&ierr);
   if ( ierr == 0 && rep == TRUE ) 
     { 
       enqueue_nsp_command(file);

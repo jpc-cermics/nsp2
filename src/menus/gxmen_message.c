@@ -122,62 +122,16 @@ int nsp_message_gtk1(char *message,char **buttons,int n_buttons)
  * message with just an OK button 
  */  
 
-#define DEBUG_STR(x) 
-/* #define DEBUG_STR(x) sciprint(x) */
-  
-char *sci_convert_to_utf8(char *str, int *alloc)
-{ 
-  gchar *str_utf8 = str;
-  *alloc = FALSE;
-  if ( g_utf8_validate(str,-1,NULL) == TRUE ) 
-    {
-      DEBUG_STR("xname: str is utf8\r\n");
-    }
-  else
-    {
-      if (g_get_charset (NULL)) 
-	{
-	  DEBUG_STR("xname: gtk_window_set_title is used with a non utf8 string and your locale is UTF8\r\n");
-	  DEBUG_STR("       assuming that your string is ISO-8859-15\r\n");
-	  str_utf8 = g_convert (str, -1,"UTF8","ISO-8859-15", NULL, NULL, NULL);
-	  if ( str_utf8 != NULL) 
-	    {
-	      *alloc = TRUE; 
-	    }
-	  else 
-	    {
-	      DEBUG_STR("xname: convertion to UTF-8 failed\r\n");
-	      str_utf8 = str;
-	    }
-	}
-      else 
-	{
-	  str_utf8 =g_locale_to_utf8 (str, -1, NULL, NULL, NULL);
-	  DEBUG_STR("xname: from locale to UTF8\r\n");
-	  if ( str_utf8 != NULL)
-	    {
-	      *alloc = TRUE; 
-	    }
-	  else 
-	    {
-	      DEBUG_STR("xname: convertion to UTF-8 failed\r\n");
-	      str_utf8 = str;
-	    }
-	}
-    }
-  return str_utf8;
-}
-
-
 int nsp_message_modeless_(char *message)
 {
-  int alloc;
   GtkWidget *dialog, *window=NULL;
   char *msg_utf8;
 
   start_sci_gtk(); /* be sure that gtk is started */
-  msg_utf8 = sci_convert_to_utf8(message,&alloc);
   
+  if ((msg_utf8= nsp_string_to_utf8(message)) == NULL) 
+    return -1;
+
   dialog = gtk_message_dialog_new (GTK_WINDOW (window),
 				   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 				   GTK_MESSAGE_INFO,
@@ -185,7 +139,7 @@ int nsp_message_modeless_(char *message)
 				   message);
   g_signal_connect (dialog, "response",  G_CALLBACK (gtk_widget_destroy),  NULL);
   gtk_widget_show (dialog);
-  if ( alloc == TRUE) g_free (msg_utf8);
+  if ( msg_utf8 != message ) g_free (msg_utf8);
   return 1;
 }
 
@@ -197,12 +151,11 @@ int nsp_message_(char *message,char **buttons,int n_buttons)
   GtkWidget *label;
   GtkWidget *window=NULL;
   gint response;
-  char *ok_mess, *cancel_mess;
-  int alloc;
-  char *msg_utf8;
+  char *ok_mess, *cancel_mess, *msg_utf8;
 
   start_sci_gtk(); /* be sure that gtk is started */
-  msg_utf8 = sci_convert_to_utf8(message,&alloc);
+  if ((msg_utf8= nsp_string_to_utf8(message)) == NULL) 
+    return -1;
 
   ok_mess = buttons[0];
   if ( strcasecmp(ok_mess,"Ok")==0 ) ok_mess = GTK_STOCK_OK; 
@@ -245,7 +198,7 @@ int nsp_message_(char *message,char **buttons,int n_buttons)
   gtk_widget_show (label);
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   gtk_widget_destroy (dialog);
-  if ( alloc == TRUE) g_free (msg_utf8);
+  if ( msg_utf8 != message ) g_free (msg_utf8);
   if (response == GTK_RESPONSE_OK)
     return 1; 
   else 

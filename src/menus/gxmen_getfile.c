@@ -38,9 +38,6 @@ char * nsp_get_filename_open(const char *title,const char *dirname,char **filter
  * Gtk version for file selection 
  *--------------------------------------------------------------*/
 
-/* FIXME */
-extern char *sci_convert_to_utf8(char *str, int *alloc);
-
 typedef enum { GETF_OK, CANCEL , DESTROY, RESET } state; 
 
 static void file_selection_ok (GtkWidget  *w,  state *rep)
@@ -62,15 +59,22 @@ static void file_selection_cancel (GtkWidget *w,  state *rep)
 }
 
 
-/* XXXX reste a rajouter un bouton home et un bouton SCI 
- * 
- */
 
-int  nsp_get_file_window(char *filemask,char **file,char *dirname,
-			 int flag,int action,int *ierr,char *title)
+/**
+ * nsp_get_file_window:
+ * @title: 
+ * @dirname: 
+ * @action: 
+ * @file: 
+ * @ierr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+int nsp_get_file_window(const char *title,const char *dirname,int action,char **file,int *ierr)
 {
-  char *title_utf8;
-  int title_alloc;
   int last_choice = 0;
   GList *cbitems = NULL;
   GtkWidget *combo=NULL;
@@ -82,11 +86,8 @@ int  nsp_get_file_window(char *filemask,char **file,char *dirname,
   rep =RESET ;
 
   start_sci_gtk(); /* be sure that gtk is started */
-
-  title_utf8= sci_convert_to_utf8(title,&title_alloc);
-  window = gtk_file_selection_new (title_utf8);
-  if ( title_alloc == TRUE) g_free (title_utf8);
-  if ( flag == 1) 
+  window = gtk_file_selection_new (title);
+  if ( dirname != NULL ) 
     {
       if ( strcmp(dirname,".") == 0) 
 	gtk_file_selection_set_filename (GTK_FILE_SELECTION (window),"./");
@@ -95,8 +96,12 @@ int  nsp_get_file_window(char *filemask,char **file,char *dirname,
     }
   gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
 
-  if ( action == 1 ) 
+  if ( action == TRUE ) 
     {
+      /* add a menu with default actions ... 
+       * this should be passed as arguments 
+       */
+
       int j;
       for (j = 0; j < n_actions  ; ++j) 
 	cbitems = g_list_append(cbitems, actions[j]);
@@ -152,7 +157,7 @@ int  nsp_get_file_window(char *filemask,char **file,char *dirname,
       /* take care to keep synchronised with "%s('%s');" */
       if (( *file = (char *) MALLOC((strlen(loc)+6+action_length)*sizeof(char))) == NULL) 
 	{
-	  Scierror("Malloc: running out of memory");
+	  Scierror("Malloc: running out of memory\n");
 	  *ierr = 1;
 	}
       else 
@@ -175,17 +180,6 @@ int  nsp_get_file_window(char *filemask,char **file,char *dirname,
       gtk_signal_disconnect(GTK_OBJECT (GTK_FILE_SELECTION (window)->cancel_button),signals[2]);
       gtk_widget_destroy(window);
     }
-#if 0
-  {
-    char *res ; 
-    char *filters[]={"eps","*.eps","pdf","*.pdf","both","*.pdf,*.eps",NULL};
-    res= nsp_get_filename_save("Save file","/tmp",filters);
-    Sciprintf("filename = %s\n",res);g_free(res);
-    res = nsp_get_filename_open("Open","/tmp",filters);
-    Sciprintf("filename = %s\n",res);g_free(res);
-  }
-#endif
-
   return (rep == GETF_OK) ? TRUE : FALSE ; 
 }
 
