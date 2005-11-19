@@ -59,11 +59,11 @@
 
 static int OptCheck1(Stack stack,int rhs, int nopt, named_opts *Opts);
 static int GetFromTable_1(NspObject **Objs,int_types *T,va_list *ap,char *format);
-static int extract_one_argument(NspObject *Ob,int_types *T,va_list *ap,char Type,int pos, char *arg_message,char *list_end_message);
+static int extract_one_argument(NspObject *Ob,int_types **T,va_list *ap,char Type,int pos, char *arg_message,char *list_end_message);
 
 static int options_check(Stack stack,int rhs, int opt,nsp_option Opts[]);
 static int get_from_options(nsp_option Opts[],va_list *ap,char *format);
-static int GetListArgs_1(NspList *L,int pos,int_types *T,va_list *ap);
+static int GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap);
 
 /**
  * GetArgs:
@@ -174,7 +174,7 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
       case list_begin : 
 	if ( (L=GetList(stack,count) )== NULLLIST) return FAIL;
 	T++;
-	if ( GetListArgs_1(L,count,T,&ap) == FAIL)
+	if ( GetListArgs_1(L,count,&T,&ap) == FAIL)
 	  {
 	    Scierror("\t%s", ArgPosition(count));
 	    ArgName(stack,count);
@@ -300,7 +300,7 @@ static int  GetFromTable_1(NspObject **Objs,int_types *T,va_list *ap,char *forma
 	{
 	  /* extract argument according to Type T */
  	  static char mes[]="Error: found a list_end in while decoding arguments\n";
-	  if ( extract_one_argument(Objs[count],T,ap,'T',count, "argument",mes) == FAIL) 
+	  if ( extract_one_argument(Objs[count],&T,ap,'T',count, "argument",mes) == FAIL) 
 	    {
 	      Scierror(format,count+1);
 	      return(FAIL) ;
@@ -315,12 +315,12 @@ static int  GetFromTable_1(NspObject **Objs,int_types *T,va_list *ap,char *forma
 
 /* utility function */
 
-static int  extract_one_argument(NspObject *Ob,int_types *T,va_list *ap,char Type,int pos, char *arg_message,char *list_end_message)
+static int  extract_one_argument(NspObject *Ob,int_types **T,va_list *ap,char Type,int pos, char *arg_message,char *list_end_message)
 {
   NspList *L1;
   void **Foo;
   NspTypeObject **Foo1,*type;
-  switch ( *T )     {
+  switch ( **T )     {
   case s_int : Foo = (void *) va_arg(*ap,int *) ;
     if ( IntScalar(Ob,(int *) Foo) == FAIL) return FAIL;
     break;
@@ -393,8 +393,8 @@ static int  extract_one_argument(NspObject *Ob,int_types *T,va_list *ap,char Typ
     break;
   case list_begin : 
     if ( (L1=nsp_list_object(Ob)) == NULLLIST) return FAIL;
-    T++;
-    if ( GetListArgs_1(L1,pos,T,ap) == FAIL) return FAIL;
+    (*T)++;
+    if ( GetListArgs_1(L1,pos+1,T,ap) == FAIL) return FAIL;
     break;
   case obj : Foo = (void **)  va_arg(*ap, NspObject **) ; 
     HOBJ_GET_OBJECT(Ob,FAIL);
@@ -455,26 +455,32 @@ int  GetListArgs(NspList *L,int pos,int_types *T,...)
 {
   va_list ap;
   va_start(ap,T);
-  return GetListArgs_1(L,pos,T,&ap);
+  return GetListArgs_1(L,pos,&T,&ap);
 }
 
-static int  GetListArgs_1(NspList *L,int pos,int_types *T,va_list *ap)
+static int  GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap)
 {
   int count = 0;
   Cell *cell =  L->first;
   while ( 1 )
     {
       char mes[256];
-      sprintf(mes,"%s is a list with more than %d elements\n", ArgPosition(pos),count);
-      if ( cell == NULLCELL || cell->O == NULLOBJ ) 
+      sprintf(mes,"Error: %s is a list with more than %d elements\n", ArgPosition(pos),count);
+      if ( cell == NULLCELL ) 
 	{
-	  if (*T == list_end || *T == t_end ) 
+	  if (**T == list_end || **T == t_end ) 
 	    return OK;
 	  else {
-	    Scierror("Error %s is a too small list\n",ArgPosition(pos));
+	    Scierror("Error: %s is a too small list\n",ArgPosition(pos));
 	    return FAIL;
 	  }
 	}
+      if ( cell->O == NULLOBJ ) 
+	{
+	  Scierror("Error: %s is a list with undefined element %d !\n",ArgPosition(pos),count+1);
+	  return FAIL;
+	}
+
       /* extract argument */
       if ( extract_one_argument(cell->O,T,ap,'L',count,"list argument",mes) == FAIL) 
 	{
@@ -482,7 +488,7 @@ static int  GetListArgs_1(NspList *L,int pos,int_types *T,va_list *ap)
 	  return(FAIL) ;
 	  break;
 	}
-      T++; cell = cell->next;      count++;
+      (*T)++; cell = cell->next;      count++;
     }
   return OK;
 }
@@ -1106,9 +1112,10 @@ static int get_from_options(nsp_option Opts[],va_list *ap,char *format)
 	}
       else 
 	{
+	  int_types *typ = &(Opts[count].type);
 	  /* extract argument according to Type T */
  	  static char mes[]="Error: found a list_end in while decoding arguments\n";
-	  if ( extract_one_argument(Opts[count].obj,&Opts[count].type,ap,'T',count, "argument",mes) == FAIL) 
+	  if ( extract_one_argument(Opts[count].obj,&typ,ap,'T',count, "argument",mes) == FAIL) 
 	    {
 	      Scierror(format,Opts[count].name); /* count+1); */
 	      return(FAIL) ;

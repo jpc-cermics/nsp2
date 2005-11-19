@@ -131,10 +131,11 @@ int int_mxtest5(Stack stack, int rhs, int opt, int lhs)
   nsp_mat_mult_el(A,B);
   nsp_matrix_print(Al,0,TRUE);
   nsp_smatrix_print(S,0);
+  NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }  
 
-/* test6(10,20,list(10,'foo',list(30,'foo')),[10,20],[45,67]); **/
+/* test6(10,20,list(10,'foo',list(30,'foo')),[10,20],[45,67]); */
 
 int int_mxtest6(Stack stack, int rhs, int opt, int lhs)
 {
@@ -147,16 +148,31 @@ int int_mxtest6(Stack stack, int rhs, int opt, int lhs)
   int_types T[]={matcopy, mat,list_begin,s_int,smat,list_begin,s_double,smat,list_end,
 		 list_end,obj,obj_check, t_end} ;
   int_types Ret[]={ s_int,s_double,matcopy,string,list_begin,s_int,s_int,list_end, t_end};
-  if ( GetArgs(stack,rhs,opt, T,&A,&B,&L_1,&L_2,&L_31,&L_32,&O1,&nsp_type_matrix,&O2) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt, T,&A,&B,&L_1,&L_2,&L_31,&L_32,&O1,&nsp_type_matrix,&O2) == FAIL) 
+    return RET_BUG;
   nsp_mat_mult_el(A,B);
   nsp_smatrix_print(L_2,0);
   nsp_smatrix_print(L_32,0);
+  nsp_object_print(O1,0);
   /* test the list builder **/
   if (( O = (NspObject *) BuildListFromArgs(Ret,10,20.67,A,"foo",10,20 ))== NULLOBJ ) 
     return RET_BUG;
   MoveObj(stack,1,O);
   return 1;
 }  
+
+
+/* test6(%t,list(10,%f),'fin'); */
+
+int int_mxtest6_simp(Stack stack, int rhs, int opt, int lhs)
+{
+  int b,a,b1;
+  char *str;
+  int_types T[]={s_bool,list_begin,s_int,s_bool,list_end,string,t_end};
+  if ( GetArgs(stack,rhs,opt, T,&b,&a,&b1,&str) == FAIL) return RET_BUG;
+  return 0;
+}  
+
 
 
 int int_mxtest8(Stack stack, int rhs, int opt, int lhs)
@@ -376,7 +392,7 @@ static OpTab Interf_func[]={
   {"test2", int_mxtest2},
   {"test3", int_mxtest3},
   {"test4", int_mxtest4},
-  {"test5", int_mxtest5_2},
+  {"test5", int_mxtest5},
   {"test6", int_mxtest6},
   {"test7", int_mxtest7},
   {"test8", int_mxtest8},
