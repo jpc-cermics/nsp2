@@ -21,7 +21,7 @@
 
 #include "nsp/menus.h"
 
-static char *button_def[]={"Cancel",NULL};
+static char *button_def[]={"gtk-cancel",NULL};
 
 int nsp_choose(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,int *nrep)
 {

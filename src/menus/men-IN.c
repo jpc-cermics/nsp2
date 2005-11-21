@@ -193,15 +193,23 @@ int int_x_dialog(Stack stack, int rhs, int opt, int lhs)
   if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
   if ((Init  = GetSMatUtf8(stack,2)) == NULLSMAT) return RET_BUG;
   rep= nsp_dialog(Title,Init,&O1);
-  if (rep == FAIL)
+  switch (rep) 
     {
-      /* cancel */
+    case  FAIL : 
+      /* cancel or dialog deleted */
       if ((O1 = (NspObject *) nsp_smatrix_create(NVOID,0,0,NULL,0))== NULLOBJ ) return RET_BUG;
-    }
-  else 
-    {
-      /* lack of memory */
-      if ( O1 == NULLOBJ) return RET_BUG;
+      break;
+    case OK: 
+      if ( O1 == NULLOBJ) 
+	{
+	  /* memory failure */
+	  return RET_BUG;
+	}
+      break;
+    default :
+      Scierror("Error: internal error nsp_dialog returns a wrong result\n");
+      return RET_BUG;
+      break;
     }
   MoveObj(stack,1,O1);
   return 1;

@@ -19,74 +19,57 @@
  * menu madial
  *--------------------------------------------------------------------------*/
 
-#include <stdio.h>
-#include <gtk/gtk.h>
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-/*---------------------------------------------------------------
- * data and callbacks for print and export menu  
- *---------------------------------------------------------------*/
-
-typedef enum { pOK, pCANCEL , RESET } state; 
-
-static void sci_matdialog_ok (GtkButton       *button, state * rep) 
+int  nsp_matrix_dialog(NspSMatrix *Title,NspSMatrix *Labels_v,NspSMatrix *Labels_h,
+		       NspSMatrix *Init_matrix,int *cancel)
 {
-  *rep = pOK;  gtk_main_quit();
-} 
-
-static void sci_matdialog_cancel (GtkButton       *button, state * rep) 
-{
-  *rep = pCANCEL;  gtk_main_quit();
+  int rep,ierr=0;
+  char *labels =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
+  if ( labels == NULL) return FAIL;
+  rep =  nsp_matrix_dialog_(labels,Labels_v->S,Labels_h->S, Init_matrix->S,
+			    Labels_v->mn, Labels_h->mn,&ierr);
+  nsp_string_destroy(&labels);
+  if ( ierr == 0) 
+    {
+      *cancel = ( rep == FALSE) ? 1 : 0;
+      return OK;
+    }
+  return FAIL;
 }
 
-/*---------------------------------------------------------------
- * export_menu 
- *---------------------------------------------------------------*/
-
-int nsp_matrix_dialog_(char *labels,char **Labels_v,char **Labels_h,char **Init, int nl,int nc, int *ierr)
+int nsp_matrix_dialog_(const char *title,char **Labels_v,char **Labels_h,char **Init, int nl,int nc, int *ierr)
 {
-  int i,j;
-  static GtkWidget *window = NULL;
-  static GtkWidget **entries,** h_labels, **v_labels;
-  static state rep = RESET ;
-  GtkWidget *table;
-  GtkWidget *label;
-  GtkWidget *button;
-  GtkWidget *vbox; 
-  GtkWidget *separator; 
-  GtkWidget *hbbox; 
-
-  rep =RESET;
+  int i,j,result,answer = FALSE;
+  GtkWidget *window, **entries, *table, *vbox; 
 
   start_sci_gtk(); /* be sure that gtk is started */
+  window = gtk_dialog_new_with_buttons ("Nsp mdialog",NULL, 0,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_OK, GTK_RESPONSE_OK,
+					NULL);
+  /*
+   *    gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
+   *    gtk_window_set_wmclass (GTK_WINDOW (window), "mdialog", "Nsp");
+   */
+  vbox = GTK_DIALOG(window)->vbox;
 
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window),"Scilab matrix dialog");
-  gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
-  gtk_window_set_wmclass (GTK_WINDOW (window), "mat_dialog", "Scilab");
+  if ( title[0] != '\0' )
+    {
+      GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
+      gtk_box_pack_start (GTK_BOX (vbox),hbox, FALSE, FALSE, 0);
+      gtk_box_pack_start (GTK_BOX (hbox),
+			  gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION,
+						    GTK_ICON_SIZE_DIALOG),
+			  TRUE, TRUE, 0);  
+      gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new (title), FALSE, FALSE, 0);
+    }
 
-  /* XXXXX attention il faut aussi un gtk_main_quit */
-  gtk_signal_connect (GTK_OBJECT (window), "destroy",
-		      GTK_SIGNAL_FUNC(gtk_widget_destroyed),
-		      &window);
-
-  gtk_container_set_border_width (GTK_CONTAINER (window), 0);
-
-  vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (window), vbox);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 10);
-
-  gtk_widget_show (vbox);
-  label = gtk_label_new (labels);
-  gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
-  gtk_widget_show (label);
 
   /* Allocation of table of widgets */
   entries=(GtkWidget **)MALLOC(  (nc*nl)*sizeof(GtkWidget *));
-  h_labels=(GtkWidget **)MALLOC( (nc)*sizeof(GtkWidget*));
-  v_labels=(GtkWidget **)MALLOC( (nl)*sizeof(GtkWidget*));
-  if ( entries == NULL || h_labels == NULL || v_labels == NULL)
+  if ( entries == NULL )
     {
       *ierr=1; 
       return FALSE;
@@ -95,18 +78,19 @@ int nsp_matrix_dialog_(char *labels,char **Labels_v,char **Labels_h,char **Init,
   /* XXXX faire un label a viewport */
 
   table = gtk_table_new (nl+1,nc+1, FALSE);
+  gtk_table_set_homogeneous(GTK_TABLE(table),FALSE);
   gtk_widget_show (table);
   gtk_container_set_border_width (GTK_CONTAINER (table), 5);
   gtk_box_pack_start (GTK_BOX (vbox), table ,TRUE,TRUE,0);
 
-  /* The first row : a set of labels */
+  /* The first column : a set of labels */
 
   for (j=0 ; j < nl ; j++)
     {
       GtkWidget *label;
-      v_labels[j] = label = gtk_label_new (Labels_v[j]);
+      label = gtk_label_new (Labels_v[j]);
       gtk_widget_show (label);
-      gtk_table_attach (GTK_TABLE (table),label,0,1,j+1,j+2,0,0,0,0);
+      gtk_table_attach (GTK_TABLE (table),label,0,1,j+1,j+2,0,0,5,0);
     }
   
   /* The other rows */
@@ -115,78 +99,44 @@ int nsp_matrix_dialog_(char *labels,char **Labels_v,char **Labels_h,char **Init,
     {
       /* first a label */ 
       GtkWidget *label;
-      h_labels[i]= label = gtk_label_new (Labels_h[i]);
+      label = gtk_label_new (Labels_h[i]);
       gtk_widget_show (label);
-      gtk_table_attach (GTK_TABLE (table),label,i+1,i+2,0,1,0,0,0,0);
+      gtk_table_attach (GTK_TABLE (table),label,i+1,i+2,0,1,0,0,0,2);
       for (j=0 ; j<nl ; j++)
 	{
 	  GtkWidget *entry;
 	  entries[j + i*(nl)] = entry =  gtk_entry_new() ;
+	  /* could be passed as parameter 0 for no restriction;*/
+	  gtk_entry_set_max_length(GTK_ENTRY(entry),0);
 	  gtk_entry_set_text (GTK_ENTRY(entry),Init[j+i*(nl)]);
 	  gtk_widget_show (entry);
-	  gtk_table_attach (GTK_TABLE (table),entry,i+1,i+2,j+1,j+2,0,0,0,0);
+	  gtk_table_attach (GTK_TABLE (table),entry,i+1,i+2,j+1,j+2,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0);
 	}
     }
-  separator = gtk_hseparator_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, TRUE, 0);
-  gtk_widget_show (separator);
 
-  /* ok and cancel buttons at the bottom */
-
-  hbbox = gtk_hbutton_box_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), hbbox, TRUE, TRUE, 2);
-  gtk_widget_show (hbbox);
-
-  button = gtk_button_new_from_stock (GTK_STOCK_OK);
-  gtk_container_add (GTK_CONTAINER (hbbox), button);
-  gtk_signal_connect (GTK_OBJECT (button), "clicked",
-		      GTK_SIGNAL_FUNC(sci_matdialog_ok),
-		      &rep);
-  GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
-  gtk_widget_grab_default (button);
-  gtk_widget_show (button);
-
-  button = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
-  gtk_container_add (GTK_CONTAINER (hbbox), button);
-  GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
-  gtk_signal_connect (GTK_OBJECT (button), "clicked",
-		      GTK_SIGNAL_FUNC(sci_matdialog_cancel),
-		      &rep);
-  gtk_widget_show (button);
-
-  gtk_widget_show (window);
-
-  while (1) 
+  gtk_widget_show_all (window);
+  result = gtk_dialog_run(GTK_DIALOG(window));
+  switch (result)
     {
-      /* here we only want to quit gtk_main after a selection in 
-       * this menu XXXXX attention rajouter un test sur destroy 
-       */
-      gtk_main();
-      if ( rep != RESET ) break;
+      case GTK_RESPONSE_ACCEPT:
+      case GTK_RESPONSE_OK:
+	for (i=0; i < nc*nl  ; i++) 
+	  {
+	    char *loc;
+	    char * text = gtk_editable_get_chars(GTK_EDITABLE(entries[i]),0,
+						 GTK_ENTRY(entries[i])->text_length);
+	    if ( text == NULL ||  (loc =new_nsp_string(text)) == NULLSTRING)
+	      {
+		*ierr=1;
+		break;
+	      }
+	    /* XXXXX free Init before replacing */
+	    Init[i] = loc ;
+	  }
+	answer=TRUE;
+	break;
     }
-
-  if ( rep == pOK ) 
-    {
-      for (i=0; i < nc*nl  ; i++) {
-	char *loc;
-	char * text = gtk_editable_get_chars(GTK_EDITABLE(entries[i]),0,
-					     GTK_ENTRY(entries[i])->text_length);
-	if ( text == NULL) { *ierr=1; return FALSE;}
-	if ( (loc =new_nsp_string(text)) == NULLSTRING) { *ierr=1; return FALSE;}
-	Init[i] = loc ;
-      }
-      FREE(entries);
-      FREE(h_labels);
-      FREE(v_labels);
-      gtk_widget_destroy(window);
-      return(TRUE);
-    }
-  else
-    {
-      FREE(entries);
-      FREE(h_labels);
-      FREE(v_labels);
-      gtk_widget_destroy(window);
-      return(FALSE);
-    }
+  FREE(entries);
+  gtk_widget_destroy(window);
+  return answer;
 }

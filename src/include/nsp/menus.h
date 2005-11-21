@@ -32,14 +32,6 @@ extern int nsp_message_modeless(NspSMatrix *Message,NspSMatrix *Buttons);
 extern int nsp_message_(char *message,char **butons,int n_buttons);
 extern int nsp_message_modeless_(char *message);
 
-/* mdialog */
-/* WARNING: it's not enough to change the following
- * define in order to increase the number of possible items 
- */
-
-#define NPAGESMAX 10000
-#define NITEMMAXPAGE 3000
-
 /* choices */
 
 extern int nsp_choices(char *label, char **items, int *defval, int nitems);
@@ -53,9 +45,8 @@ extern int nsp_menu_print (int *colored,int *orient,char **choices,int n_choices
 
 /* dialog */
 
-
 extern int nsp_dialog(NspSMatrix *Title,NspSMatrix *Init,NspObject **Rep);
-extern int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr ,char **dialog_str );
+extern int nsp_dialog1(const char *title,const char *init_value,char **answer);
 
 /* file */
 
@@ -69,7 +60,7 @@ extern char * nsp_get_filename_save(const char *title,const char *dirname);
 extern int nsp_matrix_dialog(NspSMatrix *Title,NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatrix *Init_matrix,int *cancel);
 extern int nsp_multi_dialog(NspSMatrix *Title,NspSMatrix *Labels,NspSMatrix  *Init_values, int *cancel);
 extern int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  nv, int  *ierr);
-extern int nsp_matrix_dialog_(char *labels,char **Labels_v,char **Labels_h,char **Init, int nl,int nc, int *ierr);
+extern int nsp_matrix_dialog_(const char *title,char **Labels_v,char **Labels_h,char **Init, int nl,int nc, int *ierr);
 
 /* menus */
 

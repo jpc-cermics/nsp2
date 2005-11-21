@@ -22,86 +22,94 @@
 
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
- 
-typedef enum { DIAL_OK, CANCEL , RESET } state; 
 
-typedef struct scigtk_dialog_ { 
-  char *txt;
-  state st;
-  GtkWidget *text;
-  GtkWidget *window;
-} scigtk_dialog;
+static int nsp_dialog_(const char *title,const char *init_value,char **answer);
 
-/* ok handler */
+/**
+ * nsp_dialog:
+ * @title: 
+ * @init: 
+ * @answer: 
+ * 
+ * returns FAIL if the dialog was canceled, OK if the dialog was done.
+ * If the dialog is OK the answer is in object Rep (Rep may be NULL 
+ * in case of memory failure.
+ * 
+ * Return value: 
+ **/
 
-static void sci_dialog_ok(GtkWidget *widget,scigtk_dialog *answer)
+int nsp_dialog(NspSMatrix *title,NspSMatrix *init,NspObject **answer)
 {
-  GtkTextBuffer *buffer;
-  GtkTextIter start, end;
-  
-  buffer = g_object_get_data (G_OBJECT (answer->window), "buffer");
-  if ( buffer != NULL )
-    gtk_text_buffer_get_bounds (buffer, &start, &end);
-  answer->txt  = gtk_text_iter_get_text (&start, &end);
-  if ( answer->txt != NULL ) 
-    {
-      int ind = strlen(answer->txt) - 1 ;
-      if ( answer->txt[ind] == '\n') answer->txt[ind] = '\0' ;
-    }
-  gtk_widget_destroy(answer->window);
-  /* this must be here since gtk_widget_destroy will also change answer->st */
-  answer->st =  ( answer->txt != NULL) ? DIAL_OK : CANCEL;
-  gtk_main_quit();
+  NspSMatrix *S;
+  char *text_answer = NULL;
+  int rep ;
+  nsp_string str_title =nsp_smatrix_elts_concat(title,"\n",1,"\n",1);
+  nsp_string str_init =nsp_smatrix_elts_concat(init,"\n",1,"\n",1);
+  /* answer is allocated and must be freed here  */
+  rep = nsp_dialog_(str_title,str_init,&text_answer);
+  nsp_string_destroy(&str_init);
+  nsp_string_destroy(&str_title);
+  *answer = NULL;
+  if ( rep == FALSE)  return FAIL;
+  /* \n must be converted */
+  S = nsp_smatrix_split(text_answer,"\n",0);
+  FREE(text_answer);
+  if ( S != NULLSMAT ) { S->m = S->n ; S->n=1;} /* column vector */
+  *answer = (NspObject *) S; 
+  return OK;
 }
 
-/* cancel and destroy handlers  */
 
-static void sci_dialog_cancel(GtkWidget *widget,scigtk_dialog *answer)
+int nsp_dialog1(const char *title,const char *init,char **answer)
 {
-  answer->st = CANCEL;
-  gtk_widget_destroy(answer->window);
-  gtk_main_quit();
+  /* answer is allocated and must be freed here  */
+  int rep = nsp_dialog_(title,init,answer);
+  return ( rep == FALSE ) ? FAIL : OK ;
 }
 
-/* the main function */
 
-int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr ,char **dialog_str )
+/**
+ * nsp_dialog_:
+ * @title: 
+ * @init_value: 
+ * @answer: 
+ * 
+ * reprendre but_names qui est milité a deux ? 
+ * attention answer est allouée 
+ * 
+ * Return value: 
+ **/
+
+static int nsp_dialog_(const char *title,const char *init_value,char **answer)
 {
-  GtkTextIter iter;
-  GtkWidget *text;
+  char *text_answer;
+  GtkWidget *window, *vbox, *scrolled_window, *text;
+  GtkTextIter iter, start, end;
   GtkTextBuffer *buffer;
-  GtkWidget *window = NULL;
-  GtkWidget *vbox;
-  GtkWidget *hbbox;
-  GtkWidget *button_ok,*button_cancel;
-  GtkWidget *separator;
-  GtkWidget *scrolled_window;
-  GtkWidget *label;
-
-  static scigtk_dialog answer = {NULL, RESET , NULL,NULL};
+  int result = FALSE;
 
   start_sci_gtk(); /* be sure that gtk is started */
 
-  answer.window = window  = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window),"Nsp dialog");
-  gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
-  gtk_window_set_wmclass (GTK_WINDOW (window), "dialog", "Nsp");
+  window = gtk_dialog_new_with_buttons ("Nsp dialog",NULL, 0,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_OK, GTK_RESPONSE_OK,
+					NULL);
+  /*
+   *    gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
+   *    gtk_window_set_wmclass (GTK_WINDOW (window), "dialog", "Nsp");
+   */
+  vbox = GTK_DIALOG(window)->vbox;
 
-  gtk_signal_connect (GTK_OBJECT (window), "destroy",
-		      GTK_SIGNAL_FUNC(sci_dialog_cancel),
-		      &answer);
-
-  gtk_container_set_border_width (GTK_CONTAINER (window), 0);
-
-  vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (window), vbox);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 10);
-  gtk_widget_show (vbox);
-
-  /* label widget description of the dialog */
-  label = gtk_label_new (Title);
-  gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
-  gtk_widget_show (label);
+  if ( title[0] != '\0' )
+    {
+      GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
+      gtk_box_pack_start (GTK_BOX (vbox),hbox, FALSE, FALSE, 0);
+      gtk_box_pack_start (GTK_BOX (hbox),
+			  gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION,
+						    GTK_ICON_SIZE_DIALOG),
+			  TRUE, TRUE, 0);  
+      gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new (title), FALSE, FALSE, 0);
+    }
 
   /* A scrolled window which will contain the dialog text to be edited */
   scrolled_window = gtk_scrolled_window_new (NULL, NULL);
@@ -114,66 +122,37 @@ int nsp_dialog_(char *Title, char * init_value, char **button_name , int * ierr 
   buffer = gtk_text_buffer_new (NULL);
   gtk_text_buffer_get_iter_at_offset (buffer, &iter, 0);
   gtk_text_buffer_insert (buffer, &iter,init_value, -1);
-
-  answer.text = text = gtk_text_view_new_with_buffer (buffer);
-  g_object_unref (buffer);
-
+  text = gtk_text_view_new_with_buffer (buffer);
   gtk_container_add (GTK_CONTAINER (scrolled_window), text);
-  /* attach the buffer to window */
-  g_object_set_data (G_OBJECT (window), "buffer", buffer);
+
   gtk_widget_grab_focus (text);
-  gtk_widget_show (text);
-  /* separator */
-
-  separator = gtk_hseparator_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, FALSE, 0);
-  gtk_widget_show (separator);
-
-  /* ok and cancel buttons at the bottom */
-
-  hbbox = gtk_hbutton_box_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), hbbox, FALSE, FALSE , 2);
-  gtk_widget_show (hbbox);
-
-  if ( strcmp(button_name[0],"OK")==0 || strcmp(button_name[0],"Ok")==0) 
+  gtk_widget_show_all (window);
+  result = gtk_dialog_run(GTK_DIALOG(window));
+  *answer = NULL;
+  switch (result)
     {
-      button_ok = gtk_button_new_from_stock (GTK_STOCK_OK);
+    case GTK_RESPONSE_ACCEPT:
+    case GTK_RESPONSE_OK:
+      gtk_text_buffer_get_bounds (buffer, &start, &end);
+      text_answer  = gtk_text_iter_get_text (&start, &end);
+      if ( text_answer != NULL ) 
+	{
+	  int ind = strlen(text_answer) - 1 ;
+	  if (  text_answer[ind] == '\n')  text_answer[ind] = '\0' ;
+	  if (( *answer =new_nsp_string(text_answer)) == NULLSTRING)  
+	    result= FALSE;
+	  else 
+	    result = TRUE;	
+	}
+      break;
+    default: 
+      result = FALSE;
+      break;
     }
-  else 
-    button_ok = gtk_button_new_with_label (button_name[0]);
-
-  gtk_container_add (GTK_CONTAINER (hbbox), button_ok);
-  gtk_signal_connect (GTK_OBJECT (button_ok), "clicked",
-		      GTK_SIGNAL_FUNC(sci_dialog_ok),
-		      &answer);
-  GTK_WIDGET_SET_FLAGS (button_ok, GTK_CAN_DEFAULT);
-  gtk_widget_grab_default (button_ok);
-  gtk_widget_show (button_ok);
-
-  if ( strcmp(button_name[1],"Cancel")==0)
-    {
-      button_cancel = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
-    }
-  else 
-    button_cancel = gtk_button_new_with_label (button_name[1]);
-  gtk_container_add (GTK_CONTAINER (hbbox), button_cancel);
-  GTK_WIDGET_SET_FLAGS (button_cancel, GTK_CAN_DEFAULT);
-  gtk_signal_connect (GTK_OBJECT (button_cancel), "clicked",
-		      GTK_SIGNAL_FUNC(sci_dialog_cancel),
-		      &answer);
-  gtk_widget_show (button_cancel);
-  gtk_widget_show (window);
-  while ( 1) 
-    {
-      gtk_main();
-      /* want to quit the gtk_main only when this 
-       * list menu is achieved 
-       */
-      if ( answer.st != RESET ) break;
-    }
-  *dialog_str = answer.txt ;
-  return (answer.st == DIAL_OK ) ? TRUE : FALSE ;
+  gtk_widget_destroy(window);
+  return result;
 }
+
 
 
 

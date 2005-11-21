@@ -19,46 +19,8 @@
  * menus getfile 
  *--------------------------------------------------------------------------*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <sys/stat.h>
-#include <time.h>
-#include <unistd.h>
-#include <gtk/gtk.h>
-
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
-
-char * nsp_get_filename_save(const char *title,const char *dirname);
-char * nsp_get_filename_open(const char *title,const char *dirname,char **filters);
-
-/*--------------------------------------------------------------
- * Gtk version for file selection 
- *--------------------------------------------------------------*/
-
-typedef enum { GETF_OK, CANCEL , DESTROY, RESET } state; 
-
-static void file_selection_ok (GtkWidget  *w,  state *rep)
-{
-  *rep = GETF_OK;
-  gtk_main_quit();
-}
-
-static void file_selection_destroy (GtkWidget  *w,  state *rep)
-{
-  *rep = DESTROY;
-  gtk_main_quit();
-}
-
-static void file_selection_cancel (GtkWidget *w,  state *rep)
-{
-  *rep = CANCEL;
-  gtk_main_quit();
-}
-
-
 
 /**
  * nsp_get_file_window:
@@ -75,18 +37,14 @@ static void file_selection_cancel (GtkWidget *w,  state *rep)
 
 int nsp_get_file_window(const char *title,const char *dirname,int action,char **file,int *ierr)
 {
-  int last_choice = 0;
-  GList *cbitems = NULL;
-  GtkWidget *combo=NULL;
-  static int n_actions = 3 ;
-  static char *actions[]={"exec","load","chdir",NULL };
-  guint signals[3];
-  static state rep;
-  GtkWidget *window;
-  rep =RESET ;
+  G_CONST_RETURN char *loc;
+  int result, n_actions = 3, rep,action_length=0,active=0;
+  GtkWidget *combo=NULL,  *window;
+  char *actions[]={"exec","load","chdir",NULL };
 
   start_sci_gtk(); /* be sure that gtk is started */
   window = gtk_file_selection_new (title);
+
   if ( dirname != NULL ) 
     {
       if ( strcmp(dirname,".") == 0) 
@@ -101,88 +59,50 @@ int nsp_get_file_window(const char *title,const char *dirname,int action,char **
       /* add a menu with default actions ... 
        * this should be passed as arguments 
        */
-
-      int j;
-      for (j = 0; j < n_actions  ; ++j) 
-	cbitems = g_list_append(cbitems, actions[j]);
-      combo =  gtk_combo_new ();
-      gtk_combo_set_popdown_strings (GTK_COMBO (combo), cbitems);
-      gtk_entry_set_text (GTK_ENTRY (GTK_COMBO(combo)->entry),
-			  actions[last_choice]);
-      gtk_entry_set_editable(GTK_ENTRY (GTK_COMBO(combo)->entry),FALSE);
-      
-      gtk_box_pack_start (GTK_BOX (GTK_FILE_SELECTION (window)->action_area), 
+      int i;
+      combo = gtk_combo_box_new_text ();
+      for (i = 0 ; i < n_actions ; i++) 
+	gtk_combo_box_append_text (GTK_COMBO_BOX (combo),actions[i]);
+      gtk_combo_box_set_active (GTK_COMBO_BOX(combo),0);
+      gtk_box_pack_start (GTK_BOX(GTK_FILE_SELECTION(window)->action_area), 
 			  combo, FALSE, FALSE, 0);
       gtk_widget_show (combo);
     }
 
-  signals[0]=gtk_signal_connect (GTK_OBJECT (window), "destroy",
-				 GTK_SIGNAL_FUNC(file_selection_destroy),
-				 &rep);
-
-  signals[1]=gtk_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION (window)->ok_button),
-				 "clicked", GTK_SIGNAL_FUNC(file_selection_ok),
-				 &rep);
-  
-  signals[2]=gtk_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION (window)->cancel_button),
-				 "clicked", GTK_SIGNAL_FUNC(file_selection_cancel),
-				 &rep);
   gtk_widget_show (window);
-  while (1) 
+  result = gtk_dialog_run (GTK_DIALOG (window));
+  switch (result)
     {
-      gtk_main();
-      /* want to quit the gtk_main only when this getfile is achieved 
-       */
-      if ( rep != RESET ) break;
+      case GTK_RESPONSE_ACCEPT:
+      case GTK_RESPONSE_OK :
+	loc = gtk_file_selection_get_filename(GTK_FILE_SELECTION(window));
+	if ( action == TRUE ) 
+	  {
+	    active = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
+	    action_length = strlen(actions[active])+3;
+	  }
+    	/* take care to keep synchronised with "%s('%s');" */
+	if (( *file = new_nsp_string_n(strlen(loc)+6+action_length)) == NULL) 
+	  {
+	    *ierr = 1;
+	  }
+	else 
+	  { 
+	    if ( action == TRUE ) 
+	      sprintf(*file,"%s('%s');",actions[active],loc);
+	    else 
+	      strcpy(*file,loc);
+	    *ierr= 0;
+	  }
+	rep = TRUE;
+	break;
+      default:
+	rep = FALSE;
+	break;
     }
-  if ( rep == GETF_OK ) 
-    {
-      int action_length=0;
-      G_CONST_RETURN char *loc = gtk_file_selection_get_filename(GTK_FILE_SELECTION(window));
-      if ( action == 1 ) 
-	{
-	  int j;
-	  G_CONST_RETURN gchar *entry_text;
-	  entry_text = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(combo)->entry));
-	  for (j = 0; j < n_actions ; ++j) 
-	    { 
-	      if ( strcmp(entry_text, actions[j]) == 0) 
-		{
-		  last_choice = j ;
-		  action_length = strlen(actions[j])+3;
-		  break;
-		}
-	    }
-	}
-      /* take care to keep synchronised with "%s('%s');" */
-      if (( *file = (char *) MALLOC((strlen(loc)+6+action_length)*sizeof(char))) == NULL) 
-	{
-	  Scierror("Malloc: running out of memory\n");
-	  *ierr = 1;
-	}
-      else 
-	{ 
-	  if ( action == 1) 
-	    sprintf(*file,"%s('%s');",actions[last_choice],loc);
-	  else 
-	    strcpy(*file,loc);
-	  *ierr= 0;
-	}
-
-    }
-  /* since here we are no more in a gtk_main we must disconnect signals 
-   * before destroying widget window 
-   */
-  if ( rep != DESTROY ) 
-    {
-      gtk_signal_disconnect(GTK_OBJECT(window),signals[0]);
-      gtk_signal_disconnect(GTK_OBJECT (GTK_FILE_SELECTION (window)->ok_button),signals[1]);
-      gtk_signal_disconnect(GTK_OBJECT (GTK_FILE_SELECTION (window)->cancel_button),signals[2]);
-      gtk_widget_destroy(window);
-    }
-  return (rep == GETF_OK) ? TRUE : FALSE ; 
+  gtk_widget_destroy (window);
+  return rep;
 }
-
 
 /* specific widget for save or open 
  */

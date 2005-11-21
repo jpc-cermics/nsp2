@@ -23,57 +23,50 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-static int num_item_selected = -1 ;
-static GtkWidget *window = NULL; 
+static GtkWidget * nsp_choose_create_tree_view(char **Items,int nItems);
+static gboolean
+button_press_event (GtkWidget *widget, GdkEventButton *event,GtkWidget *dialog);
 
-static void item_selected(GtkWidget *widget,  int selected)
-{
-  gtk_widget_destroy(window); 
-  /* must be there since gtk_widget_destroy will change num_item_selected */
-  num_item_selected = selected ;
-  gtk_main_quit();
-}
 
-int nsp_choose_(char *choose_title,char **Items,int nItems,char **but_names, int n_but,int *choice)
+int nsp_choose_(char *title,char **Items,int nItems,char **but_names, 
+		int n_but,int *choice)
 {
-  guint destroy_id;
+  int result;
   int i,maxl;
-  GtkWidget *cbox;
+  GtkWidget *window;
   GtkWidget *vbox;
-  GtkWidget *label;
   GtkWidget *scrolled_win;
   GtkWidget *list;
-  GtkWidget *button;
-  GtkWidget *separator;
+
   start_sci_gtk(); /* be sure that gtk is started */
 
-  /* do not accept a reenter mode: FIXME */ 
-  if ( window != NULL) return FALSE ; 
+  if ( n_but != 0 )
+    {
+      window = gtk_dialog_new_with_buttons ("Nsp choose",NULL, 0, NULL);
+      gtk_dialog_add_button(GTK_DIALOG(window),but_names[0],GTK_RESPONSE_CANCEL);
+    }
+  else
+    {
+      window = gtk_dialog_new_with_buttons ("Nsp choose",
+					    NULL, 0,
+					    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					    NULL);
+    }
+
+  vbox = GTK_DIALOG(window)->vbox;
+  
+  if ( title[0] != '\0' )
+    {
+      GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
+      gtk_box_pack_start (GTK_BOX (vbox),hbox, FALSE, FALSE, 0);
+      gtk_box_pack_start (GTK_BOX (hbox),
+			  gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION,
+						    GTK_ICON_SIZE_DIALOG),
+			  TRUE, TRUE, 0);  
+      gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new (title), FALSE, FALSE, 0);
+    }
+  
   /* initialize */
-  num_item_selected = -1; 
-  
-  /* the window */
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  destroy_id = gtk_signal_connect (GTK_OBJECT (window), "destroy",
-				   GTK_SIGNAL_FUNC(item_selected),
-				   GINT_TO_POINTER(-3));
-  gtk_window_set_title (GTK_WINDOW (window), "Scilab Choose");
-  gtk_container_set_border_width (GTK_CONTAINER (window),5);
-  
-  /* a vbox */
-  vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (window), vbox);
-
-  /* label */
-
-  cbox = gtk_hbox_new (FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (cbox), 10);
-  gtk_box_pack_start (GTK_BOX (vbox), cbox, FALSE, TRUE, 0);
-
-  label = gtk_label_new (choose_title);
-  gtk_box_pack_start (GTK_BOX (cbox), label, FALSE, FALSE, 0);
-
-  /* the list */
   
   maxl = strlen(Items[0]);
   for (i = 0; i < nItems ; i++) maxl = Max(maxl,strlen(Items[i]));
@@ -88,19 +81,8 @@ int nsp_choose_(char *choose_title,char **Items,int nItems,char **but_names, int
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
 				      GTK_POLICY_AUTOMATIC,
 				      GTK_POLICY_AUTOMATIC);
-      list = gtk_list_new ();
-      gtk_list_set_selection_mode (GTK_LIST (list), GTK_SELECTION_SINGLE);
-      gtk_scrolled_window_add_with_viewport
-	(GTK_SCROLLED_WINDOW (scrolled_win), list);
-      gtk_container_set_focus_vadjustment
-	(GTK_CONTAINER (list),
-	 gtk_scrolled_window_get_vadjustment
-	 (GTK_SCROLLED_WINDOW (scrolled_win)));
-      gtk_container_set_focus_hadjustment
-	(GTK_CONTAINER (list),
-	 gtk_scrolled_window_get_hadjustment
-	 (GTK_SCROLLED_WINDOW (scrolled_win)));
-      gtk_widget_show(scrolled_win);
+      list = nsp_choose_create_tree_view(Items,nItems);
+      gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win), list);
     }
   else 
     { 
@@ -110,52 +92,87 @@ int nsp_choose_(char *choose_title,char **Items,int nItems,char **but_names, int
       gtk_box_pack_start (GTK_BOX (vbox),frame, TRUE, TRUE, 0);
       gtk_container_set_border_width (GTK_CONTAINER (frame),2);
       gtk_widget_show(frame);
-
       gtk_container_set_border_width (GTK_CONTAINER(fvbox),2);
       gtk_container_add (GTK_CONTAINER (frame),fvbox);
       gtk_widget_show(fvbox);
-      list = gtk_list_new ();
+      list = nsp_choose_create_tree_view(Items,nItems);
       gtk_container_add (GTK_CONTAINER (fvbox),list);
       gtk_widget_show(list);
     }
-
-  for (i = 0; i < nItems ; i++)
-    {
-      GtkWidget *item = gtk_list_item_new_with_label(Items[i]);
-      gtk_signal_connect (GTK_OBJECT (item), "select",
-			  GTK_SIGNAL_FUNC(item_selected),
-			  GINT_TO_POINTER(i));
-      gtk_container_add (GTK_CONTAINER (list), item);
-    }
+  *choice = -1;
+  g_object_set_data(G_OBJECT(window),"choose",choice);
+  g_signal_connect (list, "button_press_event", 
+		    G_CALLBACK (button_press_event),window);
   
-  separator = gtk_hseparator_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, TRUE, 0);
-  cbox = gtk_hbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (vbox), cbox, FALSE, TRUE, 0);
-  if ( strcmp(but_names[0],"OK")==0 || strcmp(but_names[0],"Ok")==0) 
-    {
-      button = gtk_button_new_from_stock (GTK_STOCK_OK);
-    }
-  else 
-    button = gtk_button_new_with_label (but_names[0]);
-
-  gtk_container_set_border_width (GTK_CONTAINER (button), 10);
-  gtk_box_pack_start (GTK_BOX (cbox), button, TRUE, TRUE, 0);
-  gtk_signal_connect (GTK_OBJECT (button), "clicked",
-		      GTK_SIGNAL_FUNC(item_selected),
-		      GINT_TO_POINTER(-2));
-  GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
-  gtk_widget_grab_default (button);
   gtk_widget_show_all (window);
-  while ( 1) 
-    {
-      gtk_main();
-      /* want to quit the gtk_main only when this 
-       * list menu is achieved 
-       */
-      if ( num_item_selected != -1 ) break; 
-    }
-  window = NULL;
-  *choice = num_item_selected;
+  result = gtk_dialog_run(GTK_DIALOG(window));
+  gtk_widget_destroy(window);
   return (  *choice >= 0) ? TRUE : FALSE;
 }
+
+static GtkTreeModel*create_list_model (char **Items,int nItems)
+{
+  GtkListStore *store;
+  GtkTreeIter iter;
+  gint i=0;
+  store= gtk_list_store_new (1,G_TYPE_STRING);
+  for ( i = 0 ; i < nItems ; i++)
+    {
+      gtk_list_store_append (store, &iter);
+      gtk_list_store_set (store, &iter, 0,Items[i],-1);
+    }
+  return GTK_TREE_MODEL (store);
+}
+
+static gboolean
+button_press_event (GtkWidget *widget, GdkEventButton *event,GtkWidget *dialog)
+{
+  int *data  = g_object_get_data(G_OBJECT(dialog),"choose");
+  /* Deselect if people click outside any row. */
+  if (event->window == gtk_tree_view_get_bin_window (GTK_TREE_VIEW (widget)))
+    {
+      GtkTreePath *path;
+      int rep =gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget),
+					      event->x, event->y,&path,NULL,
+					      NULL, NULL);
+      if ( rep == TRUE )
+	{
+	  gint*indi= gtk_tree_path_get_indices(path);
+	  *data=*indi;
+	  gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
+	  gtk_tree_path_free(path);
+	}
+    }
+  /* Let the default code run in any case; it won't reselect anything. */
+  return FALSE;
+}
+
+static GtkWidget * nsp_choose_create_tree_view(char **Items,int nItems)
+{
+  GtkWidget *tv;
+  GtkTreeModel *model;
+  GtkTreeViewColumn *col;
+  GtkCellRenderer *rend;
+
+  /* list model */
+  model = create_list_model (Items,nItems);
+  tv = gtk_tree_view_new_with_model (model);
+  /* pour ne pas voir les headers */
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (tv),FALSE);
+  rend = gtk_cell_renderer_text_new ();
+  col = gtk_tree_view_column_new_with_attributes ("Column 1", rend, "text", 0,  NULL);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (tv), col);
+  return tv;
+}
+
+
+
+
+
+
+
+
+
+
+
+
