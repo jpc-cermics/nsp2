@@ -780,7 +780,7 @@ static void * sci_window_initial_menu(void)
   int winid = -1;
   char *file_entries[] = { "File _Operations||$fileops",
 			   "_Kill||$kill",
-			   "_Quit|<control>Q|$quit" } ;
+			   "_Quit|<control>Q|$quit|gtk-quit" } ;
   char *control_entries[] = { "Resume||$resume",
 			      "Abort||$abort",
 			      "Restart||$restart",
@@ -791,13 +791,13 @@ static void * sci_window_initial_menu(void)
 			      "+||$gwplus" ,
 			      "-||$gwminus" } ;
 	
-  char *help_entries[] = { "Scilab Help||$help",
+  char *help_entries[] = { "Nsp Help|F1|$help|gtk-help",
 			   "About||$about"};
   sci_menu_add(&m,winid,"_File",file_entries,3,0,"$file");
   sci_menu_add(&m,winid,"_Control",control_entries,4,0,"$zoom");
   sci_menu_add(&m,winid,"_Demos",NULL,0,0,"$demos");
   sci_menu_add(&m,winid,"Graphic Window 0",graphic_entries,5,0,"$graphic_window");
-  sci_menu_add(&m,winid,"Help",help_entries,2,0,"$help");
+  sci_menu_add(&m,winid,"_Help",help_entries,2,0,"$help");
   return m;
 }
 

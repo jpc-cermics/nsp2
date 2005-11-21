@@ -22,14 +22,16 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
+int nsp_matrix_dialog_(const char *title,char **Labels_v,char **Labels_h,char **Init, int nl,int nc, int *ierr);
+
 int  nsp_matrix_dialog(NspSMatrix *Title,NspSMatrix *Labels_v,NspSMatrix *Labels_h,
-		       NspSMatrix *Init_matrix,int *cancel)
+			   NspSMatrix *Init_matrix,int *cancel)
 {
   int rep,ierr=0;
   char *labels =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
   if ( labels == NULL) return FAIL;
   rep =  nsp_matrix_dialog_(labels,Labels_v->S,Labels_h->S, Init_matrix->S,
-			    Labels_v->mn, Labels_h->mn,&ierr);
+			       Labels_v->mn, Labels_h->mn,&ierr);
   nsp_string_destroy(&labels);
   if ( ierr == 0) 
     {
@@ -138,26 +140,26 @@ int nsp_matrix_dialog_(const char *title,char **Labels_v,char **Labels_h,char **
  */
 
 
-static GtkWidget * nsp_choose_create_tree_view(char **Items,int nItems);
-int nsp_matrix_dialog_new_(char *title,char **Items,int nItems,char **but_names, 
-			   int n_but,int *choice);
+static GtkWidget * nsp_matrix_create_tree_view(NspSMatrix *S); 
+static int nsp_smatrix_from_model(  GtkTreeModel *model);
 
-int nsp_matrix_dialog_new(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,int *nrep)
+int nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatrix *Labels_h,
+			NspSMatrix *Init_matrix);
+
+int  nsp_matrix_dialog_new(NspSMatrix *Title,NspSMatrix *Labels_v,NspSMatrix *Labels_h,
+		       NspSMatrix *Init_matrix,int *cancel)
 {
-  char *button_def[]={"gtk-cancel",NULL};
-  int Rep,choice=0 ;
-  char **but_names; 
+  int Rep;
   nsp_string descr =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
-  but_names = (button == NULL) ?  button_def : button->S  ; 
-  Rep = nsp_matrix_dialog_new_(descr,Items->S,Items->mn,but_names,1,&choice);
-  *nrep= ( Rep == TRUE ) ? (1+ choice) : 0;
+  Rep = nsp_matrix_dialog_i(descr,Labels_v,Labels_h,Init_matrix);
   nsp_string_destroy(&descr);
   return OK;
 }
 
-int nsp_matrix_dialog_new_(char *title,char **Items,int nItems,char **but_names, 
-		int n_but,int *choice)
+int nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatrix *Labels_h,
+			NspSMatrix *M)
 {
+  GtkTreeModel *model;
   int result;
   int i,maxl;
   GtkWidget *window;
@@ -167,18 +169,9 @@ int nsp_matrix_dialog_new_(char *title,char **Items,int nItems,char **but_names,
 
   start_sci_gtk(); /* be sure that gtk is started */
 
-  if ( n_but != 0 )
-    {
-      window = gtk_dialog_new_with_buttons ("Nsp choose",NULL, 0, NULL);
-      gtk_dialog_add_button(GTK_DIALOG(window),but_names[0],GTK_RESPONSE_CANCEL);
-    }
-  else
-    {
-      window = gtk_dialog_new_with_buttons ("Nsp choose",
-					    NULL, 0,
-					    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					    NULL);
-    }
+  window = gtk_dialog_new_with_buttons ("Nsp matrix", NULL, 0,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					NULL);
 
   vbox = GTK_DIALOG(window)->vbox;
   
@@ -186,10 +179,16 @@ int nsp_matrix_dialog_new_(char *title,char **Items,int nItems,char **but_names,
   
   /* initialize */
   
-  maxl = strlen(Items[0]);
-  for (i = 0; i < nItems ; i++) maxl = Max(maxl,strlen(Items[i]));
-  
-  if ( maxl > 50 || nItems > 30) 
+  maxl = 0;
+  for (i = 0; i < M->m ; i++) 
+    {
+      int maxj=0,j;
+      for ( j=0 ; j < M->n ; j++)
+	maxj = Max(maxj,strlen(M->S[i+M->m*j]));
+      maxl = Max(maxl,maxj);
+    }
+
+  if ( maxl > 50 || M->n > 30 || M->m > 20 ) 
     {
       /* here we need a scrolled window */ 
       scrolled_win = gtk_scrolled_window_new (NULL, NULL);
@@ -199,7 +198,7 @@ int nsp_matrix_dialog_new_(char *title,char **Items,int nItems,char **but_names,
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
 				      GTK_POLICY_AUTOMATIC,
 				      GTK_POLICY_AUTOMATIC);
-      list = nsp_choose_create_tree_view(Items,nItems);
+      list = nsp_matrix_create_tree_view(M);
       gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win), list);
     }
   else 
@@ -213,30 +212,39 @@ int nsp_matrix_dialog_new_(char *title,char **Items,int nItems,char **but_names,
       gtk_container_set_border_width (GTK_CONTAINER(fvbox),2);
       gtk_container_add (GTK_CONTAINER (frame),fvbox);
       gtk_widget_show(fvbox);
-      list = nsp_choose_create_tree_view(Items,nItems);
+      list = nsp_matrix_create_tree_view(M);
       gtk_container_add (GTK_CONTAINER (fvbox),list);
       gtk_widget_show(list);
     }
-  *choice = -1;
-  g_object_set_data(G_OBJECT(window),"choose",choice);
   gtk_widget_show_all (window);
   result = gtk_dialog_run(GTK_DIALOG(window));
+  model  = gtk_tree_view_get_model (GTK_TREE_VIEW(list));
+  nsp_smatrix_from_model( model);
   gtk_widget_destroy(window);
-  return (  *choice >= 0) ? TRUE : FALSE;
+  return TRUE;
 }
 
-static GtkTreeModel*create_list_model (char **Items,int nItems)
+static GtkListStore* create_list_model(NspSMatrix *M)
 {
+  GType *types; 
   GtkListStore *store;
   GtkTreeIter iter;
   gint i=0;
-  store= gtk_list_store_new (1,G_TYPE_STRING);
-  for ( i = 0 ; i < nItems ; i++)
+  types = malloc(M->n*sizeof(GType *));
+  if ( types == NULL) return NULL;
+  for ( i= 0 ; i < M->n ; i++) types[i] = G_TYPE_STRING;
+  store = gtk_list_store_newv(M->n,types);
+  FREE(types);
+  for ( i = 0 ; i < M->m ; i++)
     {
+      int j;
       gtk_list_store_append (store, &iter);
-      gtk_list_store_set (store, &iter, 0,Items[i],-1);
+      for ( j = 0 ; j < M->n ; j++)
+	{
+	  gtk_list_store_set (store, &iter,j,M->S[i+M->m*j],-1);
+	}
     }
-  return GTK_TREE_MODEL (store);
+  return store;
 }
 
 static void
@@ -248,37 +256,65 @@ edited (GtkCellRendererText *cell,
   GtkListStore *model = GTK_LIST_STORE (data);
   GtkTreeIter iter;
   GtkTreePath *path = gtk_tree_path_new_from_string (path_string);
+  gint col=0;
   /* get the column with cell */
-  /* col = cell.get_data["column"]; */
-
   gtk_tree_model_get_iter (GTK_TREE_MODEL (model), &iter, path);
-  /* store in column 0 */
-  gtk_list_store_set (GTK_LIST_STORE(model), &iter, 0, new_text, -1);
+  col = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(cell),"column"));
+  /* store in column col */
+  gtk_list_store_set (GTK_LIST_STORE(model), &iter,col, new_text, -1);
   gtk_tree_path_free (path);
 }
 
-static GtkWidget * nsp_choose_create_tree_view(char **Items,int nItems)
+static GtkWidget * nsp_matrix_create_tree_view(NspSMatrix *S)
 {
+  int j;
   GValue value = { 0, };
   GtkWidget *tv;
   GtkTreeModel *model;
   GtkTreeViewColumn *col;
   GtkCellRenderer *rend;
-
+  g_value_init (&value, G_TYPE_BOOLEAN);
+  g_value_set_boolean (&value, 1);
   /* list model */
-  model = create_list_model (Items,nItems);
+  model = GTK_TREE_MODEL(create_list_model (S));
   tv = gtk_tree_view_new_with_model (model);
   /* pour ne pas voir les headers */
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (tv),FALSE);
-  rend = gtk_cell_renderer_text_new ();
-  /* set editable to true and use edited callback */
-  g_value_init (&value, G_TYPE_BOOLEAN);
-  g_value_set_boolean (&value, 1);
-  g_object_set_property (G_OBJECT(rend), "editable", &value);
-  g_signal_connect (rend, "edited", G_CALLBACK (edited), model);
-  col = gtk_tree_view_column_new_with_attributes ("Column 1", rend, "text", 0,  NULL);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (tv), col);
+  for ( j = 0 ; j < S->n ; j++ )
+    {
+      rend = gtk_cell_renderer_text_new ();
+      g_object_set_data(G_OBJECT(rend),"column",GINT_TO_POINTER(j));
+      /* set editable to true and use edited callback */
+      g_object_set_property (G_OBJECT(rend), "editable", &value);
+      g_signal_connect (rend, "edited", G_CALLBACK (edited), model);
+      col = gtk_tree_view_column_new_with_attributes ("Column 1", rend, "text", j,  NULL);
+      gtk_tree_view_append_column (GTK_TREE_VIEW (tv), col);
+    }
+  g_value_unset(&value);
   return tv;
+}
+
+static int nsp_smatrix_from_model(  GtkTreeModel *model)
+{
+  GValue value = { 0, };
+  GtkTreeIter iter;
+  int ncol=gtk_tree_model_get_n_columns (GTK_TREE_MODEL (model));
+  gboolean g = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model),&iter);
+  while ( g == TRUE)
+    {
+      int j;
+      for ( j= 0 ; j < ncol ; j++)
+	{
+	  const gchar *str;
+	  gtk_tree_model_get_value(GTK_TREE_MODEL (model),&iter,j,&value);
+	  str = g_value_get_string(&value);
+	  Sciprintf("(%d)=%s\n",j+1,str);
+	  g_value_unset(&value);
+
+	}
+      g = gtk_tree_model_iter_next(GTK_TREE_MODEL (model),&iter);
+    }
+  return OK;
 }
 
 
