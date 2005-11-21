@@ -16,7 +16,24 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * menu matrix dialog 
+ * a set of utility functions.
+ *
  *--------------------------------------------------------------------------*/
 
 #include "nsp/menus.h"
+
+void nsp_dialogs_insert_title(const char *title,GtkWidget *vbox)
+{
+  if ( title[0] != '\0' )
+    {
+      GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
+      GtkWidget *image= gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION,
+						  GTK_ICON_SIZE_DIALOG);
+      gtk_box_pack_start (GTK_BOX (vbox),hbox, FALSE, FALSE, 5);
+      gtk_box_pack_start (GTK_BOX (hbox),image,FALSE, FALSE, 5);
+      gtk_misc_set_alignment (GTK_MISC(image), 0.5, 0.0);
+      gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new (title), FALSE, FALSE,5);
+    }
+}
+
+

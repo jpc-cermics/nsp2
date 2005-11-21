@@ -100,16 +100,7 @@ static int nsp_dialog_(const char *title,const char *init_value,char **answer)
    */
   vbox = GTK_DIALOG(window)->vbox;
 
-  if ( title[0] != '\0' )
-    {
-      GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
-      gtk_box_pack_start (GTK_BOX (vbox),hbox, FALSE, FALSE, 0);
-      gtk_box_pack_start (GTK_BOX (hbox),
-			  gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION,
-						    GTK_ICON_SIZE_DIALOG),
-			  TRUE, TRUE, 0);  
-      gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new (title), FALSE, FALSE, 0);
-    }
+  nsp_dialogs_insert_title(title,vbox);
 
   /* A scrolled window which will contain the dialog text to be edited */
   scrolled_window = gtk_scrolled_window_new (NULL, NULL);

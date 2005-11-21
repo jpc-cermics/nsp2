@@ -17,109 +17,50 @@
  * Boston, MA 02111-1307, USA.
  *
  * menu message
+ *
+ * XXX: just one button is enough 
+ *      if modeless buttons are useless ? 
+ *      should be able to change the icon 
+ * 
+ * 
  *--------------------------------------------------------------------------*/
 
-#include <gtk/gtk.h>
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-typedef enum { MES_OK, MES_CANCEL,MES_RESET } state;
 
-static void sci_message_ok(GtkWidget *widget,state *answer)
+int nsp_message(NspSMatrix *Message,NspSMatrix *Buttons,int *rep)
 {
-  *answer = MES_OK;
-  gtk_main_quit();
-}
-
-static void sci_message_cancel(GtkWidget *widget,state *answer)
-{
-  *answer = MES_CANCEL;
-  gtk_main_quit();
-}
-
-int nsp_message_gtk1(char *message,char **buttons,int n_buttons)
-{
-  GtkWidget *window = NULL;
-  GtkWidget *box1;
-  GtkWidget *box2;
-  GtkWidget *button;
-  GtkWidget *separator;
-  GtkWidget *scrolled_window;
-  GtkWidget *label;
-  state answer = MES_RESET ;
-
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_widget_set_name (window, "Scilab message");
-  gtk_widget_set_usize (window, 300,300);
-  gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
-  gtk_window_set_policy (GTK_WINDOW(window), TRUE, TRUE, FALSE);
-
-  gtk_signal_connect (GTK_OBJECT (window), "destroy",
-		      GTK_SIGNAL_FUNC(gtk_widget_destroyed),
-		      &window);
-
-  gtk_window_set_title (GTK_WINDOW (window), "Scilab message");
-  gtk_container_set_border_width (GTK_CONTAINER (window), 0);
-
-  box1 = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (window), box1);
-  gtk_widget_show (box1);
-
-  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_box_pack_start (GTK_BOX (box1), scrolled_window, TRUE, TRUE, 0);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-				  GTK_POLICY_AUTOMATIC,
-				  GTK_POLICY_AUTOMATIC);
-  gtk_widget_show (scrolled_window);
-
-  label = gtk_label_new (message);
-  gtk_widget_show (label);
-  gtk_scrolled_window_add_with_viewport( GTK_SCROLLED_WINDOW (scrolled_window), label);
-
-  separator = gtk_hseparator_new ();
-  gtk_box_pack_start (GTK_BOX (box1), separator, FALSE, TRUE, 0);
-  gtk_widget_show (separator);
-
-  box2 = gtk_hbox_new (FALSE, 10);
-  gtk_container_set_border_width (GTK_CONTAINER (box2), 10);
-  gtk_box_pack_start (GTK_BOX (box1), box2, FALSE, TRUE, 0);
-  gtk_widget_show (box2);
-
-
-  if ( strcmp(buttons[0],"OK")==0 || strcmp(buttons[0],"Ok")==0) 
-    button = gtk_button_new_from_stock (GTK_STOCK_OK);
-  else 
-    button = gtk_button_new_with_label (buttons[0]);
-
-  gtk_signal_connect (GTK_OBJECT (button), "clicked",
-		      GTK_SIGNAL_FUNC(sci_message_ok),
-		      &answer);
-
-  gtk_box_pack_start (GTK_BOX (box2), button, TRUE, TRUE, 0);
-  GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
-  gtk_widget_grab_default (button);
-  gtk_widget_show (button);
-
-  if ( n_buttons == 2) 
+  static char* buttons_def[] = { "Ok", NULL };
+  nsp_string message =nsp_smatrix_elts_concat(Message,"\n",1,"\n",1);
+  if ( message == NULL) return FAIL;
+  if ( Buttons == NULLSMAT) 
     {
-      button = gtk_button_new_with_label (buttons[1]);
-      gtk_signal_connect (GTK_OBJECT (button), "clicked",
-			  GTK_SIGNAL_FUNC(sci_message_cancel),
-			  &answer);
-      gtk_box_pack_start (GTK_BOX (box2), button, TRUE, TRUE, 0);
-      gtk_widget_show (button);
+      *rep= nsp_message_(message,buttons_def,1);
     }
-
-  gtk_widget_show (window);
-  gtk_main();
-  gtk_widget_destroy(window);
-  return answer ;
+  else 
+    {
+      *rep= nsp_message_(message,Buttons->S,Buttons->mn);
+    }
+  nsp_string_destroy(&message);
+  return OK;
 }
 
+/*
+ * Interface  for modeless message
+ */
 
+int nsp_message_modeless(NspSMatrix *Message,NspSMatrix *Buttons)
+{
+  nsp_string message =nsp_smatrix_elts_concat(Message,"\n",1,"\n",1);
+  if ( message == NULL) return FAIL;
+  nsp_message_modeless_(message);
+  return OK;
+}
 
 /*  
  * message with just an OK button 
+ * but modeless.
  */  
 
 int nsp_message_modeless_(char *message)
@@ -142,6 +83,8 @@ int nsp_message_modeless_(char *message)
   if ( msg_utf8 != message ) g_free (msg_utf8);
   return 1;
 }
+
+
 
 int nsp_message_(char *message,char **buttons,int n_buttons)
 {

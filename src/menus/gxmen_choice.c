@@ -66,7 +66,7 @@ static GtkWidget * nsp_setup_matrix_entry(char **Ms,int m,int n,int entry_size);
 int nsp_choices_with_combobox(char *title,NspList *L,int use_table)
 {
   GdkGeometry geometry;
-  GtkWidget *window,*mainbox,*table,*hbox;
+  GtkWidget *window,*mainbox,*table;
   int i,  n = nsp_list_length(L);
   int answer, result ;
   Cell *Loc= L->first;
@@ -91,15 +91,7 @@ int nsp_choices_with_combobox(char *title,NspList *L,int use_table)
 
   /* title */
   
-  if ( title[0] != '\0' )
-    {
-      hbox = gtk_hbox_new (FALSE, 0);
-      gtk_box_pack_start (GTK_BOX (mainbox),hbox, FALSE, FALSE, 0);
-      gtk_box_pack_start (GTK_BOX (hbox),gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG),
-			  TRUE, TRUE, 0);  
-      gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new (title), FALSE, FALSE, 0);
-    }
+  nsp_dialogs_insert_title(title,mainbox);
 
   /* set the combo : arranged in frames 
    * or in a table 

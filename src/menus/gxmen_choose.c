@@ -19,14 +19,24 @@
  * menu choose
  *--------------------------------------------------------------------------*/
 
-#include <gtk/gtk.h>
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
 static GtkWidget * nsp_choose_create_tree_view(char **Items,int nItems);
-static gboolean
-button_press_event (GtkWidget *widget, GdkEventButton *event,GtkWidget *dialog);
+static gboolean button_press_event (GtkWidget *widget, GdkEventButton *event,GtkWidget *dialog);
 
+int nsp_choose(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,int *nrep)
+{
+  char *button_def[]={"gtk-cancel",NULL};
+  int Rep,choice=0 ;
+  char **but_names; 
+  nsp_string descr =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
+  but_names = (button == NULL) ?  button_def : button->S  ; 
+  Rep = nsp_choose_(descr,Items->S,Items->mn,but_names,1,&choice);
+  *nrep= ( Rep == TRUE ) ? (1+ choice) : 0;
+  nsp_string_destroy(&descr);
+  return OK;
+}
 
 int nsp_choose_(char *title,char **Items,int nItems,char **but_names, 
 		int n_but,int *choice)
@@ -55,16 +65,7 @@ int nsp_choose_(char *title,char **Items,int nItems,char **but_names,
 
   vbox = GTK_DIALOG(window)->vbox;
   
-  if ( title[0] != '\0' )
-    {
-      GtkWidget *hbox = gtk_hbox_new (FALSE, 0);
-      gtk_box_pack_start (GTK_BOX (vbox),hbox, FALSE, FALSE, 0);
-      gtk_box_pack_start (GTK_BOX (hbox),
-			  gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION,
-						    GTK_ICON_SIZE_DIALOG),
-			  TRUE, TRUE, 0);  
-      gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new (title), FALSE, FALSE, 0);
-    }
+  nsp_dialogs_insert_title(title,vbox);
   
   /* initialize */
   
