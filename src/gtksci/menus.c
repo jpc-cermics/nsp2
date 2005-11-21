@@ -760,13 +760,13 @@ static void sci_factory_add_menu_entry(GtkItemFactory *ifactory,menu_entry *m)
 void * graphic_initial_menu(int winid) 
 {
   menu_entry *m = NULL;
-  char *file_entries[] = { "_Clear||$clear",
+  char *file_entries[] = { "_Clear||$clear|gtk-clear",
 			   "_Select||$select",
-			   "_Print|<control>P|$print",
+			   "_Print|<control>P|$print|gtk-print",
 			   "_Export|<control>E|$export",
-			   "S_ave|<control>S|$save",
-			   "L_oad|<control>L|$load",
-			   "C_lose||$close" };
+			   "S_ave|<control>S|$save|gtk-save",
+			   "L_oad|<control>L|$load|gtk-open",
+			   "C_lose||$close|gtk-close" };
   sci_menu_add(&m,winid,"_File",file_entries,7,0,"$file");
   sci_menu_add(&m,winid,"_Zoom",NULL,0,0,"$zoom");
   sci_menu_add(&m,winid,"_UnZoom",NULL,0,0,"$unzoom");
@@ -792,7 +792,7 @@ static void * sci_window_initial_menu(void)
 			      "-||$gwminus" } ;
 	
   char *help_entries[] = { "Nsp Help|F1|$help|gtk-help",
-			   "About||$about"};
+			   "About||$about|gtk-about"};
   sci_menu_add(&m,winid,"_File",file_entries,3,0,"$file");
   sci_menu_add(&m,winid,"_Control",control_entries,4,0,"$zoom");
   sci_menu_add(&m,winid,"_Demos",NULL,0,0,"$demos");
