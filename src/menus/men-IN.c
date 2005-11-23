@@ -225,7 +225,7 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
   NspObject *O1;
   NspSMatrix *Title,*Labels,*Init_values;
   NspSMatrix *Labels_v, *Labels_h,*Init_matrix;
-  CheckRhs(3,4);
+  CheckStdRhs(3,4);
   CheckLhs(0,1);
   if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
   if ( rhs == 3 ) 
@@ -258,18 +258,41 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
+      int entry=FALSE;
+      int entry_size=20;
+      menu_answer rep;
+      nsp_option opts[] ={{ "entry",s_bool,NULLOBJ,-1},
+			  { "entry_size",s_int,NULLOBJ,-1},
+			  { NULL,t_end,NULLOBJ,-1}};
       if ((Labels_v  = GetSMatUtf8(stack,2)) == NULLSMAT) return RET_BUG;
       if ((Labels_h  = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
       if ((Init_matrix  = GetSMatCopyUtf8(stack,4)) == NULLSMAT) return RET_BUG;
-      if ( nsp_matrix_dialog(Title,Labels_v,Labels_h,Init_matrix,&cancel) == FAIL) return RET_BUG;
-      if ( cancel == 1 ) 
+      if ( get_optional_args(stack,rhs,opt,opts,&entry,&entry_size) == FAIL) return RET_BUG;
+
+      if ( Labels_v->mn != 0 && Labels_v->mn != Init_matrix->m ) 
 	{
+	  Scierror("%s: second and fourth argument have incompatible sizes\n",stack.fname);
+	  return RET_BUG;
+	}
+      if ( Labels_h->mn != 0 &&  Labels_h->mn != Init_matrix->n ) 
+	{
+	  Scierror("%s: third and fourth argument have incompatible sizes\n",stack.fname);
+	  return RET_BUG;
+	}
+      rep = nsp_matrix_dialog(Title,Labels_v->mn != 0 ? Labels_v : NULL,
+			      Labels_h->mn != 0 ? Labels_h : NULL,Init_matrix,entry,entry_size);
+      switch (rep)
+	{
+	case menu_ok :
+	  NSP_OBJECT(Init_matrix)->ret_pos = 1;
+	  break;
+	case menu_cancel :
 	  if ((O1=(NspObject *) nsp_smatrix_create(NVOID,0,0,"v",0))== NULLOBJ) return RET_BUG; 
 	  MoveObj(stack,1,O1);
-	}
-      else 
-	{
-	  NSP_OBJECT(Init_matrix)->ret_pos = 1;
+	  break;
+	case menu_fail: 
+	  Scierror("Error: lack of memory or internal error in %s \n",stack.fname);
+	  return RET_BUG;
 	}
     }
   return 1;
@@ -598,7 +621,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 
       while (Loc != NULL) 
 	{
-	  NspMatrix *active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->O);
+	  NspMatrix *active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->next->O);
 	  M->R[count]= active_field->R[0]+1;
 	  Loc= Loc->next;
 	  count++;
@@ -712,6 +735,7 @@ static int int_print_menu(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,Obj);
   return 1;
 }
+
 
 
 

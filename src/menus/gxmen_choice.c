@@ -40,15 +40,17 @@ static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,
 static void nsp_setup_combo_from_list(nsp_choice_array *ca,GtkWidget *box,NspList *L,int row);
 static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,int Msmn,int active);
 static GtkWidget * nsp_setup_matrix_entry(char **Ms,int m,int n,int entry_size);
+static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S);
 
 /*
   l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
   l2=list('entry','entry title',1,['initial']); // 1 is unused 
-  l3=list('matrix','enter matrix',30,string(rand(6,2)));// l(3) is for entry size
+  l3=list('matrix','enter matrix',10,string(rand(6,2)));// l(3) is for entry size
   l4=list('colors','colors choice 4',29,['']);
   l5=list('save','file save',1,['foo.sav']); // initial value 
   l6=list('open','file open',1,['foo.rep','*.eps','*.pdf']); // answer, filter 
-  rep=x_choices('Toggle Menu',list(l1,l2,l3,l4,l5,l6));
+  L= list(l1,l2,l3,l4,l5,l6);
+  [rep,L]=x_choices('Toggle Menu',L);
 */
 
 /**
@@ -133,12 +135,13 @@ int nsp_choices_with_combobox(char *title,NspList *L,int use_table)
     }
   
   /* gtk_widget_set_size_request (window,500,-1); */
-  geometry.max_width = 300;
-  geometry.max_height = 0;
-  gtk_window_set_geometry_hints (GTK_WINDOW (window),window,
-				 &geometry,
-				 GDK_HINT_MAX_SIZE );
-  
+  /* 
+     geometry.max_width = 300;
+     geometry.max_height = 0;
+     gtk_window_set_geometry_hints (GTK_WINDOW (window),window,
+     &geometry,
+     GDK_HINT_MAX_SIZE );
+  */
   gtk_widget_show_all (window);
 
   result = gtk_dialog_run(GTK_DIALOG(window));
@@ -525,6 +528,7 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
       switch (  array[i].type )
 	{
 	case choice_matrix: 
+	  if ( nsp_matrix_entry_get_values(array[i].widget,Ms)== FAIL) return FAIL;
 	  break;
 	case choice_unknown : 
 	  break;
@@ -626,22 +630,43 @@ static GtkWidget * nsp_setup_matrix_entry(char **Ms,int m,int n,int entry_size)
    */
   g_object_set_data_full(G_OBJECT(table),"entries",data, g_free);
   gtk_container_set_border_width (GTK_CONTAINER (table), 5);
-  /* gtk_widget_set_size_request (table,entry_size*n,-1);
-     gtk_window_set_default_size(GTK_WINDOW(table), entry_size*n,-1);
-  */
+  /*  gtk_widget_set_size_request (table,entry_size*n,-1);
+   *  gtk_window_set_default_size(GTK_WINDOW(table), entry_size*n,-1);
+   */
   gtk_widget_show(table);
   box= gtk_vbox_new (FALSE, 0);
   gtk_container_add (GTK_CONTAINER (box),table);
-  gtk_table_set_homogeneous(GTK_TABLE(table),TRUE);
+  gtk_table_set_homogeneous(GTK_TABLE(table),FALSE);
   for (i= 0 ; i < n ; i++) 
     for ( j = 0 ; j < m ; j++)
       {
 	GtkWidget *entry =  gtk_entry_new() ;
+	gtk_entry_set_max_length(GTK_ENTRY(entry),0);
 	gtk_widget_set_size_request (entry,entry_size,-1);
-	gtk_table_attach (GTK_TABLE (table),entry,i,i+1,j,j+1,0,0,0,0);
+	gtk_table_attach (GTK_TABLE (table),entry,i,i+1,j,j+1,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0);
 	gtk_entry_set_text (GTK_ENTRY(entry),Ms[i+m*j]);
 	/* gtk_entry_set_max_length (GTK_ENTRY(entry),entry_size);*/
       }
   return box;
 }
 
+static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S)
+{
+  int i;
+  GtkWidget **entries=  g_object_get_data(G_OBJECT(table),"entries");
+  if ( entries == NULL) return FAIL;
+  for (i=0; i < S->mn  ; i++) 
+    {
+      char *loc;
+      char * text = gtk_editable_get_chars(GTK_EDITABLE(entries[i]),0,
+					   GTK_ENTRY(entries[i])->text_length);
+      if ( text == NULL ||  (loc =new_nsp_string(text)) == NULLSTRING)
+	{
+	  return FAIL;
+	  break;
+	}
+      nsp_string_destroy(&(S->S[i]));
+      S->S[i]= loc;
+    }
+  return OK;
+}

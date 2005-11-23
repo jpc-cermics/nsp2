@@ -20,6 +20,8 @@
 #define FALSE 0
 #endif
 
+typedef enum { menu_ok , menu_cancel, menu_fail } menu_answer; 
+
 /* choose */
 
 extern int nsp_choose(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,int *nrep);
@@ -57,10 +59,10 @@ extern char * nsp_get_filename_save(const char *title,const char *dirname);
 
 /* madialog */
 
-extern int nsp_matrix_dialog(NspSMatrix *Title,NspSMatrix *Labels_v,NspSMatrix *Labels_h, NspSMatrix *Init_matrix,int *cancel);
+extern menu_answer nsp_matrix_dialog(NspSMatrix *Title,NspSMatrix *Labels_v,NspSMatrix *Labels_h,
+				     NspSMatrix *Init_matrix,int menu_type,int entry_size);
 extern int nsp_multi_dialog(NspSMatrix *Title,NspSMatrix *Labels,NspSMatrix  *Init_values, int *cancel);
 extern int nsp_multi_dialog_(const char *labels,char **pszTitle, char **pszName, int  nv, int  *ierr);
-extern int nsp_matrix_dialog_(const char *title,char **Labels_v,char **Labels_h,char **Init, int nl,int nc, int *ierr);
 
 /* menus */
 

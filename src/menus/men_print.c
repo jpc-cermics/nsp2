@@ -20,10 +20,13 @@
  *--------------------------------------------------------------------------*/
 
 #include "nsp/menus.h"
+#include "nsp/interf.h"
 
 typedef enum { pOK, pCANCEL ,MEMERR } state; 
 
 static char **nsp_printer_list(int *n_printers);
+static int nsp_print_menu_new();
+  static int nsp_export_menu_new();
 
 /* table of export formats */ 
 
@@ -75,6 +78,7 @@ int nsp_print_dialog(int  *flag,char *printer, int  *colored, int  *orientation,
   if ( *flag == 1 ) 
     {
       int answer=1;
+      nsp_print_menu_new(TRUE);
       rep= nsp_menu_print(colored,orientation,printers,n_printers,&answer);
       if ( rep == TRUE ) 
 	{
@@ -85,6 +89,7 @@ int nsp_print_dialog(int  *flag,char *printer, int  *colored, int  *orientation,
     {
       char *filename=NULL;
       int answer=1;
+      nsp_export_menu_new(FALSE);
       rep= nsp_menu_export (colored,orientation,nsp_export_formats,nF,&answer,&filename);
       if ( rep == TRUE ) 
 	{
@@ -130,4 +135,65 @@ static char **nsp_printer_list(int *n_printers)
   printer_list[count]=NULL;
   FREE(buffer);
   return printer_list;
+}
+
+
+static int nsp_print_menu_new()
+{
+  static NspList *L=NULL;
+  char *title="Print dialog";
+  char *format[] = {"Postscript", "Postscript No Preamble",  
+		    "Postscript-Latex","Xfig","Gif","PPM", NULL };
+  char *printer[]={ "lpr ", NULL};
+  char *type[]={ "color", "black and white",NULL};
+  char *orientation[]={"landscape", "portrait", "keep size",NULL };
+  NspSMatrix *S;
+  NspList *L1,*L2,*L3,*L4;
+  int_types Ret[]={ string ,string, s_int ,smatcopy , t_end};
+  int_types Ret1[]={ obj,obj,obj,obj, t_end};
+  /* test the list builder **/
+  if ( L == NULL) 
+    {
+      if (( S = nsp_smatrix_create_from_table(format)) == NULL) return FAIL;
+      if (( L1 = BuildListFromArgs(Ret,"combo","Format",1,S)) == NULL ) return FAIL;
+      if (( S = nsp_smatrix_create_from_table(type)) == NULL) return FAIL;
+      if (( L2 = BuildListFromArgs(Ret,"combo","Type",0,S)) == NULL ) return FAIL;
+      if (( S = nsp_smatrix_create_from_table(orientation)) == NULL) return FAIL;
+      if (( L3 = BuildListFromArgs(Ret,"combo","Orientation",0,S)) == NULL ) return FAIL;
+      if (( S = nsp_smatrix_create_from_table(printer)) == NULL) return FAIL;
+      if (( L4 = BuildListFromArgs(Ret,"entry","print command",0,S)) == NULL ) return FAIL;
+      if (( L = BuildListFromArgs(Ret1,L4,L3,L2,L1))== NULL) return FAIL;
+    }
+  nsp_choices_with_combobox(title,L,TRUE);
+  return 1;
+}
+
+static int nsp_export_menu_new()
+{
+  static NspList *L=NULL;
+  char *title="Export dialog";
+  char *format[] = {"Postscript", "Postscript No Preamble",  
+		    "Postscript-Latex","Xfig","Gif","PPM", NULL };
+  char *type[]={ "color", "black and white",NULL};
+  char *orientation[]={"landscape", "portrait", "keep size",NULL };
+  char *save[]={"Untitled.eps",NULL};
+  NspSMatrix *S;
+  NspList *L1,*L2,*L3,*L4;
+  int_types Ret[]={ string ,string, s_int ,smatcopy , t_end};
+  int_types Ret1[]={ obj,obj,obj,obj, t_end};
+  /* test the list builder **/
+  if ( L == NULL) 
+    {
+      if (( S = nsp_smatrix_create_from_table(format)) == NULL) return FAIL;
+      if (( L1 = BuildListFromArgs(Ret,"combo","Format",1,S)) == NULL ) return FAIL;
+      if (( S = nsp_smatrix_create_from_table(type)) == NULL) return FAIL;
+      if (( L2 = BuildListFromArgs(Ret,"combo","Type",0,S)) == NULL ) return FAIL;
+      if (( S = nsp_smatrix_create_from_table(orientation)) == NULL) return FAIL;
+      if (( L3 = BuildListFromArgs(Ret,"combo","Orientation",0,S)) == NULL ) return FAIL;
+      if (( S = nsp_smatrix_create_from_table(save)) == NULL) return FAIL;
+      if (( L4 = BuildListFromArgs(Ret,"save","file name",0,S)) == NULL ) return FAIL;
+      if (( L = BuildListFromArgs(Ret1,L4,L3,L2,L1))== NULL) return FAIL;
+    }
+  nsp_choices_with_combobox(title,L,TRUE);
+  return 1;
 }
