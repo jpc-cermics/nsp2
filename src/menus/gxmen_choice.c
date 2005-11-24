@@ -39,8 +39,9 @@ static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *tit
 static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,char *title,char **Ms,int Msmn,int active);
 static void nsp_setup_combo_from_list(nsp_choice_array *ca,GtkWidget *box,NspList *L,int row);
 static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,int Msmn,int active);
-static GtkWidget * nsp_setup_matrix_entry(char **Ms,int m,int n,int entry_size);
+static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int entry_size);
 static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S);
+static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size);
 
 /*
   l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
@@ -67,7 +68,7 @@ static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S);
 
 int nsp_choices_with_combobox(char *title,NspList *L,int use_table)
 {
-  GdkGeometry geometry;
+  /* GdkGeometry geometry; */
   GtkWidget *window,*mainbox,*table;
   int i,  n = nsp_list_length(L);
   int answer, result ;
@@ -240,7 +241,11 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
   switch (type) 
     {
     case choice_matrix :
-      return nsp_setup_matrix_entry(Ms,2,Msmn/2,active);/* XXXXXXX */
+      /* with or without scroll vindow Attention au 2 XXXXXX à corriger */
+      if ( 0) 
+	return nsp_setup_matrix_entry(NULL,Ms,2,Msmn/2,active);
+      else
+	return  nsp_setup_matrix_wraper(Ms,2,Msmn/2,active); 
       break;
     case choice_combo: 
       return nsp_setup_combo_box_text(Ms,Msmn, active);
@@ -611,13 +616,17 @@ static int nsp_smatrix_set_first(NspSMatrix *A,const char *str)
  * @Ms: 
  * @active: unused 
  * 
- * returns a table filled with entries one for each component 
- * of Ms 
+ * returns a #GtkWidget used to edit matrix entries. 
+ * This widget is a matrix of #GtkEntry.
+ * If @w is NULL, the returned widget contains a data field named "entries" 
+ * which can be used to get back the edited values through function 
+ * #nsp_matrix_entry_get_values. If @w is non null then the entries 
+ * property is attached to @w.
  * 
  * Return value: 
  **/
 
-static GtkWidget * nsp_setup_matrix_entry(char **Ms,int m,int n,int entry_size)
+static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int entry_size)
 {
   int i,j;
   GtkWidget *table = gtk_table_new (m,n, FALSE);
@@ -628,7 +637,10 @@ static GtkWidget * nsp_setup_matrix_entry(char **Ms,int m,int n,int entry_size)
    * may be useless since the entries are children of table 
    * and we can get them this way 
    */
-  g_object_set_data_full(G_OBJECT(table),"entries",data, g_free);
+  if ( w != NULL) 
+    g_object_set_data_full(G_OBJECT(table),"entries",data, g_free);
+  else 
+    g_object_set_data_full(G_OBJECT(w),"entries",data, g_free);
   gtk_container_set_border_width (GTK_CONTAINER (table), 5);
   /*  gtk_widget_set_size_request (table,entry_size*n,-1);
    *  gtk_window_set_default_size(GTK_WINDOW(table), entry_size*n,-1);
@@ -648,6 +660,52 @@ static GtkWidget * nsp_setup_matrix_entry(char **Ms,int m,int n,int entry_size)
 	/* gtk_entry_set_max_length (GTK_ENTRY(entry),entry_size);*/
       }
   return box;
+}
+
+
+/**
+ * nsp_setup_matrix_wraper:
+ * @w: 
+ * @Ms: 
+ * @m: 
+ * @n: 
+ * @entry_size: 
+ * 
+ * same as #nsp_setup_matrix_entry but the matrix table 
+ * is inserted in a scrolled window if @m or @n are greater than @10.
+ * 
+ * Return value: the widget which contains data acces to matrix edited values.
+ **/
+
+static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size)
+{
+  GtkWidget *res;
+  if ( m > 10 || n > 10 ) 
+    {
+      GtkWidget *scrolled_win,*table;
+      /* here we need a scrolled window */ 
+      res = scrolled_win= gtk_scrolled_window_new (NULL, NULL);
+      gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 1);
+      gtk_widget_set_size_request (scrolled_win,400,300);
+      gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
+				      GTK_POLICY_AUTOMATIC,
+				      GTK_POLICY_AUTOMATIC);
+      table = nsp_setup_matrix_entry(scrolled_win,Ms,m,n,entry_size);
+      gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW (scrolled_win),table);
+    }
+  else 
+    { 
+      /* no need to add a viewport */
+      GtkWidget *frame,*fvbox,*table;
+      res = frame = gtk_frame_new(NULL);
+      fvbox  = gtk_vbox_new (FALSE, 0);
+      gtk_container_set_border_width (GTK_CONTAINER (frame),2);
+      gtk_container_set_border_width (GTK_CONTAINER(fvbox),2);
+      gtk_container_add (GTK_CONTAINER (frame),fvbox);
+      table = nsp_setup_matrix_entry(frame,Ms,m,n,entry_size);
+      gtk_container_add (GTK_CONTAINER (fvbox),table);
+    }
+  return res;
 }
 
 static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S)
