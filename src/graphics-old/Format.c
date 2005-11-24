@@ -691,7 +691,7 @@ static int agrandir(double *xmin,double *xmax,double *xlow,double *xup)
 int gr_compute_ticks(double *xminv,double *xmaxv,double *grads, int *ngrads)
 {
   double d1, d2;  int i1;
-  double xmin, xmax, work[20], xlow, thewidth, xup, scale, scal;
+  double xmin, xmax, work[20], xlow=0, thewidth, xup=0, scale, scal;
   int k, tst0;
   if (*xminv != *xminv) {
     *ngrads=1;grads[0]=*xminv; return 1; 

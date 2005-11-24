@@ -181,7 +181,7 @@ static int nsp_ivect_eq(NspObject *A, NspObject *B)
 
 static int nsp_ivect_neq(NspObject *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_ivect_id) == FALSE) return TRUE;
   rep = IVectFullComp((NspIVect *) A,(NspIVect *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

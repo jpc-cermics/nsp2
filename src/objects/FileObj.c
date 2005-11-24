@@ -187,7 +187,7 @@ static int nsp_file_eq(NspObject *A, NspObject *B)
 
 static int nsp_file_neq(NspObject *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_ivect_id) == FALSE) return TRUE;
   rep =nsp_file_full_comp((NspFile *) A,(NspFile *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

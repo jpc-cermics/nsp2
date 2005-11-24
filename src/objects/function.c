@@ -197,7 +197,7 @@ static int function_eq(NspFunction *A, NspObject *B)
 
 static int function_neq(NspFunction *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_function_id) == FALSE) return TRUE;
   rep = function_full_comp(A,(NspFunction *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

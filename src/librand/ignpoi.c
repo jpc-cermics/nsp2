@@ -70,7 +70,7 @@ rand_ignpoi (double *mu)
   double t, v, x, b1, b2;
   int j, k;
   int kflag;
-  int ret_val, i__1, i__2;
+  int ret_val=0, i__1, i__2;
 
   static double c0, c1, c2, c3;
   static double c__, d__;

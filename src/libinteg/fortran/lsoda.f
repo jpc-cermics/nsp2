@@ -982,7 +982,7 @@ c-----------------------------------------------------------------------
      1   maxord, maxcor, msbp, mxncf, n, nq, nst, nfe, nje, nqu
       integer insufr, insufi, ixpr, iowns2, jtyp, mused, mxordn, mxords
       integer i, i1, i2, iflag, imxer, kgo, lf0,
-     1   leniw, lenrw, lenwm, ml, mord, mu, mxhnl0, mxstp0
+     1     leniw, lenrw, lenwm, ml, mord, mu, mxhnl0, mxstp0
       integer len1, len1c, len1n, len1s, len2, leniwc,
      1   lenrwc, lenrwn, lenrws
       double precision tret, rowns,

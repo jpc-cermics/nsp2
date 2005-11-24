@@ -312,7 +312,7 @@ static void cosini(double *told)
 
 static void idoit(double *told)
 {
-  int flag,  i,jj, ierr1, i2;
+  int flag,  i=0,jj, ierr1, i2;
 
   for (jj = 1; jj <= Scicos->sim.niord; ++jj) 
     {
@@ -1153,7 +1153,7 @@ static void cossimdaskr(double *told)
 
 static void cosend(double *told)
 {
-  int flag, kfune;
+  int flag, kfune=0;
   *ierr = 0;
   Scicos->params.nclock=0;
   for (Scicos->params.curblk = 1; Scicos->params.curblk <= Scicos->sim.nblk; ++Scicos->params.curblk) {

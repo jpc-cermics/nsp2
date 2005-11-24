@@ -180,7 +180,7 @@ static void edited (GtkCellRendererText *cell,gchar *path_string,gchar *new_text
 
 static GtkWidget * nsp_matrix_create_tree_view(NspSMatrix *colnames,NspSMatrix *rownames,NspSMatrix *S)
 {
-  int j,jinit=0;
+  int j=0,jinit=0;
   GValue value = { 0, };
   GtkWidget *tv;
   GtkTreeModel *model;

@@ -164,7 +164,7 @@ static int pangoattribute_full_comp(NspPangoAttribute * A,NspPangoAttribute * B,
 
 static int pangoattribute_eq(NspPangoAttribute *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_pangoattribute_id) == FALSE) return FALSE ;
   rep = pangoattribute_full_comp(A,(NspPangoAttribute *) B,"==",&err);
   if ( err == 1) return FALSE ; 
@@ -177,7 +177,7 @@ static int pangoattribute_eq(NspPangoAttribute *A, NspObject *B)
 
 static int pangoattribute_neq(NspPangoAttribute *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_pangoattribute_id) == FALSE) return TRUE;
   rep = pangoattribute_full_comp(A,(NspPangoAttribute *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

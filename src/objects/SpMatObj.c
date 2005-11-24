@@ -186,7 +186,7 @@ int nsp_spmatrix_eq(NspObject *A, NspObject *B)
 
 int nsp_spmatrix_neq(NspObject *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_spmatrix_id) == FALSE) return TRUE;
   rep = SpMatFullComp((NspSpMatrix *) A,(NspSpMatrix *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

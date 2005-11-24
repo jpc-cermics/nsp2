@@ -197,7 +197,7 @@ static int type_eq(NspType *A, NspObject *B)
 
 static int type_neq(NspType *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_type_id) == FALSE) return TRUE;
   rep = type_full_comp(A,(NspType *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

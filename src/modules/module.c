@@ -186,7 +186,7 @@ static int module_eq(NspModule *A, NspObject *B)
 
 static int module_neq(NspModule *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_module_id) == FALSE) return TRUE;
   rep = module_full_comp(A,(NspModule *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

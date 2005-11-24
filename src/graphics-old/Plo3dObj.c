@@ -494,6 +494,7 @@ static int  build_ticks_segment(Plot3dBox *B, double xmin, double xmax,
   if ( B->ticks_coord == NULL) return FAIL;
   switch(B->inear)
     {
+    default:
     case(0):
       axe_x[0] = ymin; axe_x[1] = zmax; sens_x[0] =-d; sens_x[1] = 0;
       axe_y[0] = xmin; axe_y[1] = zmax; sens_y[0] =-d; sens_y[1] = 0;

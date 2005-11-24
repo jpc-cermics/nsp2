@@ -188,7 +188,7 @@ static int none_eq(NspNone *A, NspObject *B)
 
 static int none_neq(NspNone *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_none_id) == FALSE) return TRUE;
   rep = none_full_comp(A,(NspNone *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

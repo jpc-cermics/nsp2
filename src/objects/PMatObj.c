@@ -200,7 +200,7 @@ int nsp_pmatrix_eq(NspObject *A, NspObject *B)
 
 int nsp_pmatrix_neq(NspObject *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_pmatrix_id) == FALSE) return TRUE;
   rep = PMatFullComp((NspPMatrix *) A,(NspPMatrix *) B,"<>",&err);
   if ( err == 1) return TRUE ; 
@@ -998,7 +998,7 @@ int int_pmatrix_ge(Stack stack, int rhs, int opt, int lhs)
 
 static int int_pmatrix_f_gen(Stack stack, int rhs, int opt, int lhs,char *op)
 {
-  int rep,err;
+  int rep,err=0;
   NspPMatrix *A,*B; NspObject *Res;
   CheckRhs(2,2);
   CheckLhs(1,1);

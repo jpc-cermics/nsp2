@@ -180,7 +180,7 @@ static int modulelt_eq(NspModuleElt *A, NspObject *B)
 
 static int modulelt_neq(NspModuleElt *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_modulelt_id) == FALSE) return TRUE;
   rep = modulelt_full_comp(A,(NspModuleElt *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

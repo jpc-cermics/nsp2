@@ -196,7 +196,7 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
    *   d = splin(x, y [,splin_type, [end_slopes]])
    */
   char *str;
-  NspMatrix *x, *y, *s, *d, *Ad, *Asd, *qdy, *lll;
+  NspMatrix *x, *y, *s=NULL, *d, *Ad, *Asd, *qdy, *lll;
   int n, spline_type;
 
   CheckRhs(2,4);

@@ -190,7 +190,7 @@ static int gpointer_eq(NspGPointer *A, NspObject *B)
 
 static int gpointer_neq(NspGPointer *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_gpointer_id) == FALSE) return TRUE;
   rep = gpointer_full_comp(A,(NspGPointer *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

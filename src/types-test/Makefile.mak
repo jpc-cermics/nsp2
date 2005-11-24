@@ -7,7 +7,8 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.lib 
 
-OBJSC = classa.obj classb.obj classc.obj kiko.obj mpz.obj
+OBJSC = classa.obj classb.obj classc.obj 
+# kiko.obj mpz.obj
 
 OBJSF=
 

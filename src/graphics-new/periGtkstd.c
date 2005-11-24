@@ -294,7 +294,7 @@ static gboolean locator_button_press(GtkWidget *widget,
 				     GdkEventButton *event,
 				     BCG *gc)
 {
-  int id;
+  int id=0;
   switch (event->type) 
     {
     case GDK_BUTTON_PRESS : id= event->button-1 ;break;

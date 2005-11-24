@@ -416,7 +416,7 @@ static void drawarc_1(BCG *Xgc,double arc[])
 
 static void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
 {
-  int *xm,err=0,n2;
+  int *xm=NULL,err=0,n2;
   Myalloc1(&xm,6*n,&err);
   if (err  ==   1) return;
   ellipse2d(Xgc,vects,xm,(n2=6*n,&n2),"f2i");
@@ -430,7 +430,7 @@ static void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
 
 static void drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
 {
-  int *xm,err=0,n2;
+  int *xm=NULL,err=0,n2;
   Myalloc1(&xm,6*n,&err);
   if (err  ==   1) return;
   ellipse2d(Xgc,vects,xm,(n2=6*(n),&n2),"f2i");
@@ -443,7 +443,7 @@ static void drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
 
 static void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
 {
-  int *xm,*ym,err=0;
+  int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
   scale_f2i(Xgc,vx,vy,xm,ym,n);
@@ -457,7 +457,7 @@ static void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
 
 static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int style[], int iflag)
 { 
-  int *xm,*ym,err=0,ias,ias1;
+  int *xm=NULL,*ym=NULL,err=0,ias,ias1;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
   scale_f2i(Xgc,vx,vy,xm,ym,n);
@@ -576,7 +576,7 @@ static void fillrectangle_1(BCG *Xgc,double rect[])
 
 static void drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closeflag)
 {
-  int *xm,*ym,err=0;
+  int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
   scale_f2i(Xgc,vx,vy,xm,ym,n);
@@ -590,7 +590,7 @@ extern void nsp_set_clip_box(int xxleft, int xxright, int yybot, int yytop);
 static void drawpolyline_clip_1(BCG *Xgc, double *vx, double *vy ,int n,double *clip_rect, int closeflag)
 {
   int ix[4],cb[4];
-  int *xm,*ym,err=0;
+  int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
   scale_f2i(Xgc,vx,vy,xm,ym,n);
@@ -613,7 +613,7 @@ static void drawpolyline_clip_1(BCG *Xgc, double *vx, double *vy ,int n,double *
 
 static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
 {
-  int *xm,*ym,err=0,i;
+  int *xm=NULL,*ym=NULL,err=0,i;
   Myalloc(&xm,&ym,n*p,&err);
   if (err  ==   1) return;
   scale_f2i(Xgc,vx,vy,xm,ym,n*p);
@@ -635,7 +635,7 @@ static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int
 
 static void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
 {
-  int *xm,*ym,err=0;
+  int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
   scale_f2i(Xgc,vx,vy,xm,ym,n);
@@ -650,7 +650,7 @@ static void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
 
 static void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha)
 {
-  int *xm,*ym,err=0;
+  int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
   scale_f2i(Xgc,x,y,xm,ym,n);
@@ -665,7 +665,7 @@ static void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,doubl
 
 static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n, int p)
 {
-  int *xm,*ym,err=0;
+  int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,(n)*(p),&err);
   if (err  ==   1) return;
   scale_f2i(Xgc,vx,vy,xm,ym,n*p);
@@ -690,7 +690,7 @@ static void drawrectangle_1(BCG *Xgc,double rect[])
 
 static void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
 {
-  int *xm,err=0;
+  int *xm=NULL,err=0;
   Myalloc1(&xm,4*(n),&err);
   if (err  ==   1) return;
   rect2d_f2i(Xgc,vects,xm,4*(n));
@@ -705,7 +705,7 @@ static void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
 
 static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, int iflag)
 { 
-  int *xm,*ym,err=0;
+  int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
   scale_f2i(Xgc,vx,vy,xm,ym,n);

@@ -252,7 +252,7 @@ NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A,nsp_const_string str, int flag)
 {
   int i;
   NspPMatrix *Loc;
-  doubleC d;
+  doubleC d={0,0};
   if ((Loc =nsp_pmatrix_create(NVOID,A->m,A->n,&Czero,(int)0) ) == NULLPMAT) 
     return(NULLPMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )

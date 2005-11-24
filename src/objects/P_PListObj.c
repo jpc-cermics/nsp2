@@ -179,7 +179,7 @@ int NspPListObjEq(NspObject *A, NspObject *B)
 
 int NspPListObjNeq(NspObject *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_ivect_id) == FALSE) return TRUE;
   rep =  NspPListFullComp((NspPList *) A,(NspPList *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

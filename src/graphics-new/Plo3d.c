@@ -1327,7 +1327,7 @@ static void AxesStrings(BCG *Xgc,int axflag,const nsp_box_3d *box,const char *le
   y= ( box->iy[1] >= box->iy[4] ) ? box->iy[3]-iof :  box->iy[2]-iof ;
   if ( axflag>=4)
     {
-      double fx,fy,fz,lx,ly,lz;
+      double fx,fy,fz=0,lx,ly,lz=0;
       int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
       xnax[0]=5;xnax[1]=2;
       FPoint[0]=box->ix[2];FPoint[1]=box->iy[2];
@@ -1406,7 +1406,7 @@ static void draw_3d_tics(BCG *Xgc,const nsp_box_3d *box,int axflag,int i1,int i2
   int rect[4];
   if ( axflag>=4)
     {
-      double fx,fy,fz,lx,ly,lz;
+      double fx=0,fy=0,fz=0,lx=0,ly=0,lz=0;
       int LPoint[2],FPoint[2],Ticsdir[2],xnax[2];
       xnax[0]=5;xnax[1]=2;
       FPoint[0]=box->ix[i1];FPoint[1]=box->iy[i1];

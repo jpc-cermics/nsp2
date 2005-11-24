@@ -344,7 +344,7 @@ static int cdf_dlamc2 (int *beta, int *t, int *rnd, double *eps,
 
   int ieee;
   double half;
-  int lrnd;
+  int lrnd=0;
   static double leps;
   double zero, a, b, c__;
   int i__;

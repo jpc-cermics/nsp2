@@ -687,7 +687,7 @@ void eval_piecewise_hermite(double *t, double *st, double *dst, double *d2st,
    */
 
   int i, j, i_old=-1;;
-  double tt, c2, c3;
+  double tt, c2=0, c3=0;
   double Nan = (2*DBL_MAX)*0.0;
 
   i = -1;

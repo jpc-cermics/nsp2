@@ -2133,7 +2133,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 int int_xclea(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  double *val;
+  double *val=NULL;
   CheckRhs(1,4);
   if ( get_rect(stack,rhs,opt,lhs,&val) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
@@ -2178,7 +2178,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 int int_xrect(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  double *val;
+  double *val=NULL;
   int cpat=0,cwidth=0,back,color,width;
 
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
@@ -2227,7 +2227,7 @@ int int_xrect(Stack stack, int rhs, int opt, int lhs)
 int int_xfrect(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  double *val;
+  double *val=NULL;
   int cpat,color;
 
   nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},

@@ -181,7 +181,7 @@ static int classb_eq(NspClassB *A, NspObject *B)
 
 static int classb_neq(NspClassB *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_classb_id) == FALSE) return TRUE;
   rep = classb_full_comp(A,(NspClassB *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

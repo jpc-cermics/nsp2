@@ -197,7 +197,7 @@ static int nsp_hobj_eq(NspObject *A, NspObject *B)
 
 static int nsp_hobj_neq(NspObject *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_hobj_id) == FALSE) return TRUE;
   rep = HobjFullComp((NspHobj *) A,(NspHobj *) B,"<>",&err);
   if ( err == 1) return TRUE ; 

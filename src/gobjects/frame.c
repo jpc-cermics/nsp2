@@ -681,7 +681,7 @@ int int_gf_insert(void *self,Stack stack, int rhs, int opt, int lhs)
   NspBlock  *B; 
   NspLink *L;
   NspConnector *C;
-  NspObject *obj;
+  NspObject *obj=NULL;
   int flag = TRUE;
   if ( IsBlockObj(stack,1) )
     { 
@@ -1785,7 +1785,7 @@ static NspGFrame *frame_full_copy( NspGFrame *F)
 
 static NspList * nsp_list_full_copy(NspList *L)
 {
-  NspObject *obj;
+  NspObject *obj=NULL;
   NspList *Loc;
   Cell *cloc,*cloc1=NULLCELL,*cloc2=NULLCELL;
   if ( ( Loc =nsp_list_create(NVOID,L->tname) ) == NULLLIST) return(NULLLIST) ;

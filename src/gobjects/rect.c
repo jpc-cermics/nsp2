@@ -345,7 +345,7 @@ int int_grcreate(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   NspRect *H;
-  double *val;
+  double *val=NULL;
   int back=-1,color=-1,thickness=-1;
 
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},

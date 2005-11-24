@@ -782,7 +782,7 @@ static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int
   const double lock_triangle_yin[]={0,0,-lock_size}; 
   const double lock_square_x[]={-lock_size/2,lock_size/2,lock_size/2,-lock_size/2};
   const double lock_square_y[]={-lock_size,-lock_size,0,0};
-  const double *ly,*lx;
+  const double *ly=NULL,*lx=NULL;
   double cosa,sina;
   double x[4];
   double y[4];
