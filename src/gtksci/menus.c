@@ -837,30 +837,25 @@ static void nspg_menu_delete(int winid)
  * Replot in Postscript style and send to printer 
  *-----------------------------------------------------------------*/
 
-static  char bufname[256];
-static  char printer[128];
-static  char file[256];
-
 static void nspg_menu_print(int winid)
 {
-  char *p1;
-  integer colored,orientation,flag=1,ok;
-
-  nsp_print_dialog(&flag,printer,&colored,&orientation,file,&ok);
-  if (ok==1) 
+  char *printer,*p1;
+  int colored,orientation,type;
+  if ( nsp_print_dialog(&printer,&colored,&orientation,&type)== FAIL) return;
+  if ( ( p1 = getenv("TMPDIR"))  == (char *) 0 )
     {
-      if ( ( p1 = getenv("TMPDIR"))  == (char *) 0 )
-	{
-	  sciprint("Cannot find environment variable TMPDIR\r\n");
-	}
-
-      sprintf(bufname,"%s/scilab-%d",p1,(int)winid);
-      scig_tops(winid,colored,bufname,"Pos",'n');
-      sprintf(bufname,"$SCI/bin/scilab -%s %s/scilab-%d %s",
-	      (orientation == 1) ? "print_l" : "print_p",
-	      p1,(int)winid,printer);
-      system(bufname);
-  }
+      sciprint("Cannot find environment variable TMPDIR\r\n");
+    }
+  Sciprintf("To be done: %s %d %d %d\n",printer,colored,orientation,type);
+  nsp_string_destroy(&printer);
+  /* 
+     sprintf(bufname,"%s/scilab-%d",p1,(int)winid);
+     scig_tops(winid,colored,bufname,"Pos",'n');
+     sprintf(bufname,"$SCI/bin/scilab -%s %s/scilab-%d %s",
+     (orientation == 1) ? "print_l" : "print_p",
+     p1,(int)winid,printer);
+     system(bufname);
+  */
 }
 
 /* for use inside menus */
@@ -876,50 +871,34 @@ void nspg_print(int winid)
 
 static void nspg_menu_saveps(int winid) 
 {
-  integer colored,orientation,flag=2,ok;
-  nsp_print_dialog(&flag,printer,&colored,&orientation,file,&ok);
-  if (ok==1) 
+  char *fname;
+  integer colored,orientation,type;
+  if ( nsp_export_dialog(&fname,&colored,&orientation,&type)== FAIL) return;
+  switch (type ) 
     {
-      if (strncmp(printer,"Postscript",10)==0 ) 
+    case 0 : /* "Postscript" */
+    case 2 : /* "Postscript LaTeX" */
+      switch ( orientation ) 
 	{
-	  /* this is to be changed to add k and d options */
-	  if ( strcmp(printer,"Postscript No Preamble") == 0) 
-	    scig_tops(winid,colored,file,"Pos",'n');
-	  else 
-	    {
-	      switch ( orientation ) 
-		{
-		case 1: scig_tops(winid,colored,file,"Pos",'l');break;
-		case 2: scig_tops(winid,colored,file,"Pos",'p');break;
-		case 3: scig_tops(winid,colored,file,"Pos",'k');break;
-		}
-	    }
-	}
-      else if (strcmp(printer,"Xfig")==0)
-	{
-	  /** Xfig   **/
-	  scig_tops(winid,colored,file,"Fig",'n');
-	}
-      else if (strcmp(printer,"Gif")==0)
-	{
-	  /** Gif file **/
-	  scig_tops(winid,colored,file,"GIF",'n');
-	}
-      else if (strcmp(printer,"PPM")==0)
-	{
-	  /** PPM file **/
-	  scig_tops(winid,colored,file,"PPM",'n');
-	}
-#if 0 
-      /* this is to be changed no */
-      if ( strcmp(printer,"Postscript No Preamble") != 0)
-	{
-	  sprintf(bufname,"$SCI/bin/scilab -%s %s %s",
-		  ( orientation == 1) ? "save_l" : "save_p",file,printer);
-	  system(bufname);
-	}
-#endif 
-  }
+	case 0: scig_tops(winid,colored,fname,"Pos",'l');break;
+	case 1: scig_tops(winid,colored,fname,"Pos",'p');break;
+	case 2: scig_tops(winid,colored,fname,"Pos",'k');break;
+	}    
+      break;
+    case 1 : /* "Postscript No Preamble" */
+      scig_tops(winid,colored,fname,"Pos",'n');
+      break;
+    case 3 : /* Xfig */
+      scig_tops(winid,colored,fname,"Fig",'n');
+      break;
+    case 4 : /* Gif */
+      scig_tops(winid,colored,fname,"GIF",'n');
+      break;
+    case 5 : /* PPM */
+      scig_tops(winid,colored,fname,"PPM",'n');
+      break;
+    }
+  nsp_string_destroy(&fname);
 }
 
 /* for use inside menus */

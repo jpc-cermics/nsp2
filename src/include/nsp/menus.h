@@ -41,9 +41,8 @@ extern int nsp_choices_with_combobox(char *title,NspList *L,int use_table);
 
 /* print */
 
-extern int nsp_print_dialog(int  *flag,char *printer, int  *colored, int  *orientation, char *file, int  *ok);
-extern int nsp_menu_export (int *colored,int *orient,char **choices,int n_choices,int *answer,char **filename);
-extern int nsp_menu_print (int *colored,int *orient,char **choices,int n_choices,int *answer);
+int nsp_print_dialog(char **print_command,int *type,int *orientation,int *format);
+int nsp_export_dialog(char **file,int *type,int *orientation,int *format);
 
 /* dialog */
 

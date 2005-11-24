@@ -76,7 +76,7 @@
 /* #undef WITH_MAXPLUSLIB */
 
 /* Define if use maxplus lib  */
-/* #undef WITH_UMFPACK */
+#define WITH_UMFPACK 1
 
 /* Define if use fftw3 lib  */
 #define WITH_FFTW3 1
