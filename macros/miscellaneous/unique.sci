@@ -82,7 +82,7 @@ function [y,ind,occ] = unique_ce(x)
    if n == 0 then
       y = {}; ind=[]; occ=[];
    else
-      y = {x(1)}; j = 1; ind(1) = 1; occ(1) = 1;
+      y = {x{1}}; j = 1; ind(1) = 1; occ(1) = 1;
       for i=2:n
 	 elem = x{i}
 	 k = 1; found = %f;
