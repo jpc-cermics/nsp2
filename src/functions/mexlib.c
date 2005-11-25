@@ -581,7 +581,7 @@ bool mxIsInf(double x)
 
 bool mxIsFinite(double x)
 {
-  return ~(isinf(x) || ISNAN(x));
+  return finite(x);
 }
 
 bool mxIsNaN(double x)
