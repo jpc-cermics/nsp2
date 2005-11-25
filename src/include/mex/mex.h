@@ -46,6 +46,9 @@ extern mxArray *mxCreateStructMatrix(int m, int n, int nfields, const char **fie
 extern double mxGetInf(void);
 extern double mxGetNaN(void);
 extern double mxGetEps(void);
+extern bool mxIsInf(double x);
+extern bool mxIsFinite(double x);
+extern bool mxIsNaN(double x);
 extern double mxGetScalar(const mxArray *ptr);
 extern mxArray *mxGetField (const mxArray *pa, int i, char *fieldname);
 extern void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value);
@@ -54,6 +57,7 @@ extern bool mxIsCell (const mxArray *ptr);
 extern mxArray *mxGetCell(const mxArray *ptr, int index);
 extern void mxSetCell(mxArray *array_ptr, int index, mxArray *value);
 extern mxArray *mxCreateCellMatrix(int m, int n);
+extern char *mxArrayToString(const mxArray *array_ptr);
 
 #define mexPrintf Sciprintf
 
