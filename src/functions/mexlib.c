@@ -579,12 +579,9 @@ bool mxIsInf(double x)
   return isinf(x);
 }
 
-/* to be checked by configure XXX */
-extern int isfinite(double x);
-
 bool mxIsFinite(double x)
 {
-  return isfinite(x);
+  return ~(isinf(x) || ISNAN(x));
 }
 
 bool mxIsNaN(double x)
