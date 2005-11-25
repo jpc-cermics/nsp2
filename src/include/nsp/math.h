@@ -28,31 +28,34 @@
 #include <ieeefp.h>
 #endif 
 
-#ifdef WIN32 
-#if !(defined __CYGWIN32__) && !(defined __ABSC__)
+#ifndef HAVE_FINITE
+#if defined(WIN32) && !(defined __CYGWIN32__) && !(defined __ABSC__)
 #include <float.h>
 #define finite(x) _finite(x) 
-#endif 
-#else  /* WIN32 */ 
-/* This should only be provided when finite prototype is missing **/
-/* XXX : to be tested **/
-#ifndef __cplusplus
-int finite (double);
+#else 
+/* should do something better here */
+#define finite(x) FINITE_IS_UNDEFINED
 #endif
-#endif /* WIN32 */
-
-#ifdef WIN32 
-#if !(defined __CYGWIN32__) && !(defined __ABSC__)
-#include <float.h>
-#define ISNAN(x) _isnan(x)
-#else 
-#define ISNAN(x) isnan(x)
-#endif /* __CYGWIN32__ */
-#else 
-#define ISNAN(x) isnan(x)
 #endif 
 
+#ifndef HAVE_ISNAN 
+#if defined(WIN32) && !(defined __CYGWIN32__) && !(defined __ABSC__)
+#include <float.h>
+#define isnan(x) _isnan(x)
+#else 
+/* should do something better here */
+#define isnan(x)  ISNAN_IS_UNDEFINED
+#endif 
+#endif 
+
+/* just a synonym */
+
+#define ISNAN(x) isnan(x)
+
+#ifndef Abs 
 #define Abs(x) ( ( (x) >= 0) ? (x) : -( x) )
+#endif
+
 #ifndef Min
 #define Min(x,y)	(((x)<(y))?(x):(y))
 #endif 

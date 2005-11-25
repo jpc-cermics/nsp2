@@ -59,6 +59,15 @@
 /* Define if have usleep: used in graphics/periX11.c */
 #undef HAVE_USLEEP
 
+/* Define if have isinf */
+#undef HAVE_ISINF
+
+/* Define if have isnan */
+#undef HAVE_ISNAN
+
+/* Define if have finite*/
+#undef HAVE_FINITE
+
 /* Define if have and use TCL/TK */
 #undef WITH_TK
 

@@ -60,6 +60,15 @@
 /* Define if have usleep: used in graphics/periX11.c */
 #define HAVE_USLEEP 1
 
+/* Define if have isinf */
+#define HAVE_ISINF 1
+
+/* Define if have isnan */
+#define HAVE_ISNAN 1
+
+/* Define if have finite*/
+#define HAVE_FINITE 1
+
 /* Define if have and use TCL/TK */
 /* #undef WITH_TK */
 
@@ -76,7 +85,7 @@
 /* #undef WITH_MAXPLUSLIB */
 
 /* Define if use maxplus lib  */
-#define WITH_UMFPACK 1
+/* #undef WITH_UMFPACK */
 
 /* Define if use fftw3 lib  */
 #define WITH_FFTW3 1
@@ -88,7 +97,7 @@
 #define WITH_ASOUND 1
 
 /* Define if use gmp lib  */
-/* #undef WITH_GMP */
+#define WITH_GMP 1
 
 /* Define if sizeof(int*)==sizeof(int) */
 #define POINTER_INT 1
