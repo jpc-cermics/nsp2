@@ -45,6 +45,9 @@ AC_ARG_WITH(maxpluslib,
 AC_ARG_WITH(fftw3,
     [  --without-fftw3         do not use fftw3 for fft but fftpack])
 
+AC_ARG_WITH(gmp,
+    [  --without-gmp           do not try to check for gmp])
+
 ###############################
 ## creating Path.incl if needed
 ###############################
@@ -672,10 +675,11 @@ AC_CHECK_FUNCS(getcwd)
 AC_CHECK_FUNCS(sleep)
 AC_CHECK_FUNCS(strerror)
 AC_CHECK_FUNCS(usleep)
-AC_CHECK_FUNCS(finite)
 AC_CHECK_FUNCS(mkstemp)
 AC_CHECK_FUNCS(tgamma)
 AC_CHECK_FUNCS(lgamma)
+
+AC_CHECK_FUNCS(finite isnan isinf)
 
 ########################
 ## test for header files
@@ -1150,7 +1154,8 @@ if test "$with_gmp" != no; then
 	 GMP_LIBS=""
       fi 
    fi
-   if test "$HAVE_GMP" = "no"; then # try to find fftw3 at usual places
+   HAVE_GMP=no
+   if test "$HAVE_GMP" = "no"; then # try to find gmp at usual places
      AC_CHECK_HEADERS(
         [gmp.h],
         AC_CHECK_LIB(
