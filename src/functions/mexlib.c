@@ -30,6 +30,7 @@
 static void nsp_mex_errjump();
 
 #include <string.h>
+#include <math.h>
 #include <stdio.h>
 #include <setjmp.h>
 
@@ -378,6 +379,30 @@ int mxGetString(const mxArray *ptr, char *str, int strl)
   nsp_string_destroy(&message);
   return 0;
 }
+
+
+/* Get all the strings of Matrix SMatrix 
+ * in one buffer, the string is allocated 
+ * and should be freed by the user 
+ * XXXX mxFree does not work 
+ **/
+
+char *mxArrayToString(const mxArray *array_ptr)
+{
+  nsp_string message;
+  int i= NSP_POINTER_TO_INT(array_ptr);
+  NspSMatrix *A;
+  if (( A=GetSMat(stack,i)) == NULLSMAT)   
+    {
+      nsp_mex_errjump();
+    }
+  message =nsp_smatrix_elts_concat(A,"",1,"",1);
+  if ( message == NULL) 
+    {
+      nsp_mex_errjump();
+    }
+  return message;
+}
       
 /* libere le CreateFull **/
 
@@ -547,6 +572,24 @@ double mxGetNaN(void)
 double mxGetEps(void)
 {
   return nsp_dlamch("e");
+}
+
+bool mxIsInf(double x)
+{
+  return isinf(x);
+}
+
+/* to be checked by configure XXX */
+extern int isfinite(double x);
+
+bool mxIsFinite(double x)
+{
+  return isfinite(x);
+}
+
+bool mxIsNaN(double x)
+{
+  return ISNAN(x);
 }
 
 int mxGetNumberOfElements(const mxArray *ptr)

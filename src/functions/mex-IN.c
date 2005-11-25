@@ -118,9 +118,12 @@ typedef  struct  {
   mexfun *fonc;
 } nsp_mex_tab ;
 
+extern void mex_umfpack(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
+
 static nsp_mex_tab mex_func[]={
   {"mexfun",mexFunction},
   {"mexfun1",mexFunction1},
+  {"umfpack",mex_umfpack},
   {(char *) 0, NULL}
 };
 
