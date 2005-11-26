@@ -942,11 +942,15 @@ static void nspg_menu_load(int winid)
 
 static void nsp_menu_fileops(void)
 {
+  menu_answer rep;
   char * file = NULL ;
-  int rep,ierr;
-  rep=nsp_get_file_window("File operations",NULL,1,&file,&ierr);
-  if ( ierr == 0 && rep == TRUE ) 
-    { 
+  rep=nsp_get_file_window("File operations",NULL,1,&file);
+  switch (rep) 
+    {
+    case menu_fail : 
+    case menu_cancel : 
+      return ;
+    case menu_ok: 
       enqueue_nsp_command(file);
       FREE(file); 
     }
