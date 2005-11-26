@@ -25,24 +25,23 @@
 static GtkWidget * nsp_choose_create_tree_view(char **Items,int nItems);
 static gboolean button_press_event (GtkWidget *widget, GdkEventButton *event,GtkWidget *dialog);
 
-int nsp_choose(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,int *nrep)
+menu_answer nsp_choose(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,int *nrep)
 {
-  char *button_def[]={"gtk-cancel",NULL};
-  int Rep,choice=0 ;
-  char **but_names; 
+  char *button_def[]={"gtk-cancel",NULL}, **but_names; 
+  int choice=0 ;
+  menu_answer rep;
   nsp_string descr =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1);
   but_names = (button == NULL) ?  button_def : button->S  ; 
-  Rep = nsp_choose_(descr,Items->S,Items->mn,but_names,1,&choice);
-  *nrep= ( Rep == TRUE ) ? (1+ choice) : 0;
+  rep = nsp_choose_(descr,Items->S,Items->mn,but_names,1,&choice);
+  *nrep= ( rep == menu_ok ) ? (1+ choice) : 0;
   nsp_string_destroy(&descr);
-  return OK;
+  return rep;
 }
 
-int nsp_choose_(char *title,char **Items,int nItems,char **but_names, 
-		int n_but,int *choice)
+menu_answer nsp_choose_(const char *title,char **Items,int nItems,char **but_names, 
+			int n_but,int *choice)
 {
-  int result;
-  int i,maxl;
+  int result, i,maxl;
   GtkWidget *window;
   GtkWidget *vbox;
   GtkWidget *scrolled_win;
@@ -101,6 +100,9 @@ int nsp_choose_(char *title,char **Items,int nItems,char **but_names,
       gtk_widget_show(list);
     }
   *choice = -1;
+  /* choice is set up in button_press_event through the 
+   * "chooose" field of G_OBJECT(window)
+   */
   g_object_set_data(G_OBJECT(window),"choose",choice);
   g_signal_connect (list, "button_press_event", 
 		    G_CALLBACK (button_press_event),window);
@@ -108,7 +110,7 @@ int nsp_choose_(char *title,char **Items,int nItems,char **but_names,
   gtk_widget_show_all (window);
   result = gtk_dialog_run(GTK_DIALOG(window));
   gtk_widget_destroy(window);
-  return (  *choice >= 0) ? TRUE : FALSE;
+  return (  *choice >= 0) ? menu_ok : menu_cancel ;
 }
 
 static GtkTreeModel*create_list_model (char **Items,int nItems)

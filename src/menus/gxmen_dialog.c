@@ -23,7 +23,7 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-static int nsp_dialog_(const char *title,const char *init_value,char **answer);
+static menu_answer nsp_dialog_(const char *title,const char *init_value,char **answer);
 
 /**
  * nsp_dialog:
@@ -31,40 +31,46 @@ static int nsp_dialog_(const char *title,const char *init_value,char **answer);
  * @init: 
  * @answer: 
  * 
- * returns FAIL if the dialog was canceled, OK if the dialog was done.
- * If the dialog is OK the answer is in object Rep (Rep may be NULL 
- * in case of memory failure.
+ * returns %menu_cancel if the dialog was canceled, %menu_fail if an internal 
+ * fail was raised or  %menu_ok if the dialog was done.
+ * If the return value is %menu_ok, the entered string is in object Rep (Rep may be NULL 
+ * in case of memory failure).
  * 
- * Return value: 
+ * Return value: %menu_ok, %menu_cancel, or %menu_fail
  **/
 
-int nsp_dialog(NspSMatrix *title,NspSMatrix *init,NspObject **answer)
+menu_answer nsp_dialog(NspSMatrix *title,NspSMatrix *init,NspObject **answer)
 {
   NspSMatrix *S;
   char *text_answer = NULL;
-  int rep ;
+  int rep =menu_cancel ;
   nsp_string str_title =nsp_smatrix_elts_concat(title,"\n",1,"\n",1);
   nsp_string str_init =nsp_smatrix_elts_concat(init,"\n",1,"\n",1);
   /* answer is allocated and must be freed here  */
   rep = nsp_dialog_(str_title,str_init,&text_answer);
   nsp_string_destroy(&str_init);
   nsp_string_destroy(&str_title);
-  *answer = NULL;
-  if ( rep == FALSE)  return FAIL;
-  /* \n must be converted */
-  S = nsp_smatrix_split(text_answer,"\n",0);
-  FREE(text_answer);
-  if ( S != NULLSMAT ) { S->m = S->n ; S->n=1;} /* column vector */
-  *answer = (NspObject *) S; 
-  return OK;
+  switch (rep ) 
+    {
+    case menu_fail : return rep;
+    case menu_cancel : return rep;
+    case menu_ok: 
+      /* \n must be converted */
+      S = nsp_smatrix_split(text_answer,"\n",0);
+      FREE(text_answer);
+      if ( S != NULLSMAT ) { S->m = S->n ; S->n=1;} /* column vector */
+      *answer = (NspObject *) S; 
+      return rep;
+    }
+  return rep;
 }
 
+/* useless */
 
-int nsp_dialog1(const char *title,const char *init,char **answer)
+menu_answer nsp_dialog1(const char *title,const char *init,char **answer)
 {
   /* answer is allocated and must be freed here  */
-  int rep = nsp_dialog_(title,init,answer);
-  return ( rep == FALSE ) ? FAIL : OK ;
+  return nsp_dialog_(title,init,answer);
 }
 
 
@@ -74,19 +80,19 @@ int nsp_dialog1(const char *title,const char *init,char **answer)
  * @init_value: 
  * @answer: 
  * 
- * reprendre but_names qui est milité a deux ? 
+ * reprendre but_names qui est lilité a deux ? 
  * attention answer est allouée 
  * 
  * Return value: 
  **/
 
-static int nsp_dialog_(const char *title,const char *init_value,char **answer)
+static menu_answer nsp_dialog_(const char *title,const char *init_value,char **answer)
 {
   char *text_answer;
   GtkWidget *window, *vbox, *scrolled_window, *text;
   GtkTextIter iter, start, end;
   GtkTextBuffer *buffer;
-  int result = FALSE;
+  menu_answer result = menu_cancel;
 
   start_sci_gtk(); /* be sure that gtk is started */
 
@@ -131,13 +137,13 @@ static int nsp_dialog_(const char *title,const char *init_value,char **answer)
 	  int ind = strlen(text_answer) - 1 ;
 	  if (  text_answer[ind] == '\n')  text_answer[ind] = '\0' ;
 	  if (( *answer =new_nsp_string(text_answer)) == NULLSTRING)  
-	    result= FALSE;
+	    result= menu_fail;
 	  else 
-	    result = TRUE;	
+	    result = menu_ok;	
 	}
       break;
     default: 
-      result = FALSE;
+      result = menu_cancel;
       break;
     }
   gtk_widget_destroy(window);

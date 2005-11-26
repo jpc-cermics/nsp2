@@ -28,102 +28,70 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-
-int nsp_message(NspSMatrix *Message,NspSMatrix *Buttons,int *rep)
+menu_answer nsp_message(NspSMatrix *Message,NspSMatrix *Buttons,int *rep)
 {
-  static char* buttons_def[] = { "Ok", NULL };
+  menu_answer ans;
+  char* buttons_def[] = { "gtk-close", NULL };
   nsp_string message =nsp_smatrix_elts_concat(Message,"\n",1,"\n",1);
-  if ( message == NULL) return FAIL;
+  if ( message == NULL) return menu_fail;
   if ( Buttons == NULLSMAT) 
-    {
-      *rep= nsp_message_(message,buttons_def,1);
-    }
+    ans = nsp_message_(message, buttons_def,1,rep);
   else 
-    {
-      *rep= nsp_message_(message,Buttons->S,Buttons->mn);
-    }
+    ans = nsp_message_(message,Buttons->S,Buttons->mn,rep);
   nsp_string_destroy(&message);
-  return OK;
+  return ans;
 }
 
 /*
  * Interface  for modeless message
  */
 
-int nsp_message_modeless(NspSMatrix *Message,NspSMatrix *Buttons)
+menu_answer nsp_message_modeless(NspSMatrix *Message,NspSMatrix *Buttons)
 {
+  menu_answer rep;
   nsp_string message =nsp_smatrix_elts_concat(Message,"\n",1,"\n",1);
-  if ( message == NULL) return FAIL;
-  nsp_message_modeless_(message);
-  return OK;
+  if ( message == NULL) return menu_fail;
+  rep=nsp_message_modeless_(message);
+  nsp_string_destroy(&message);
+  return rep;
 }
 
 /*  
- * message with just an OK button 
- * but modeless.
+ * modeless message with just a close button 
  */  
 
-int nsp_message_modeless_(char *message)
+menu_answer nsp_message_modeless_(char *message)
 {
   GtkWidget *dialog, *window=NULL;
-  char *msg_utf8;
 
   start_sci_gtk(); /* be sure that gtk is started */
-  
-  if ((msg_utf8= nsp_string_to_utf8(message)) == NULL) 
-    return -1;
-
   dialog = gtk_message_dialog_new (GTK_WINDOW (window),
 				   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 				   GTK_MESSAGE_INFO,
-				   GTK_BUTTONS_OK,
+				   GTK_BUTTONS_CLOSE,
 				   message);
   g_signal_connect (dialog, "response",  G_CALLBACK (gtk_widget_destroy),  NULL);
   gtk_widget_show (dialog);
-  if ( msg_utf8 != message ) g_free (msg_utf8);
-  return 1;
+  return menu_ok;
 }
 
-
-
-int nsp_message_(char *message,char **buttons,int n_buttons)
+menu_answer nsp_message_(char *message,char **buttons,int n_buttons,int *rep)
 {
+  int i;
   GtkWidget *dialog;
   GtkWidget *hbox;
   GtkWidget *stock;
   GtkWidget *label;
   GtkWidget *window=NULL;
   gint response;
-  char *ok_mess, *cancel_mess, *msg_utf8;
 
   start_sci_gtk(); /* be sure that gtk is started */
-  if ((msg_utf8= nsp_string_to_utf8(message)) == NULL) 
-    return -1;
 
-  ok_mess = buttons[0];
-  if ( strcasecmp(ok_mess,"Ok")==0 ) ok_mess = GTK_STOCK_OK; 
-
-  switch ( n_buttons ) 
-    {
-    case 0: return 1 ; break;
-    case 1 : 
-      dialog = gtk_dialog_new_with_buttons ("Scilab Dialog", GTK_WINDOW (window),
-					    GTK_DIALOG_MODAL| GTK_DIALOG_DESTROY_WITH_PARENT,
-					    ok_mess, GTK_RESPONSE_OK,
-					    NULL);
-      break;
-    case 2:
-    default: 
-      cancel_mess = buttons[1];
-      if ( strcasecmp(cancel_mess,"Cancel")==0 ) cancel_mess = GTK_STOCK_CANCEL; 
-      dialog = gtk_dialog_new_with_buttons ("Scilab Dialog",
-					    GTK_WINDOW (window),
-					    GTK_DIALOG_MODAL| GTK_DIALOG_DESTROY_WITH_PARENT,
-					    ok_mess, GTK_RESPONSE_OK,
-					    cancel_mess,  GTK_RESPONSE_CANCEL,
-					    NULL);
-      break;
-    }
+  dialog = gtk_dialog_new_with_buttons ("Nsp Dialog",GTK_WINDOW (window),
+					GTK_DIALOG_MODAL| GTK_DIALOG_DESTROY_WITH_PARENT,
+					NULL);
+  for ( i= 0 ; i <  n_buttons ; i++) 
+    gtk_dialog_add_button(GTK_DIALOG (dialog),buttons[i],i);
 
   hbox = gtk_hbox_new (FALSE, 8);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
@@ -136,14 +104,19 @@ int nsp_message_(char *message,char **buttons,int n_buttons)
     stock = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG);
   gtk_box_pack_start (GTK_BOX (hbox), stock, FALSE, FALSE, 0);
   gtk_widget_show (stock);
-  label = gtk_label_new (msg_utf8);
+  label = gtk_label_new (message);
   gtk_box_pack_start (GTK_BOX (hbox),label, TRUE, TRUE, 0);
   gtk_widget_show (label);
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   gtk_widget_destroy (dialog);
-  if ( msg_utf8 != message ) g_free (msg_utf8);
-  if (response == GTK_RESPONSE_OK)
-    return 1; 
+  if ( response >= 0) 
+    {
+      *rep = response +1 ;
+      return menu_ok;
+    }
   else 
-    return 2; 
+    {
+      *rep = -1;
+      return menu_cancel;
+    }
 }

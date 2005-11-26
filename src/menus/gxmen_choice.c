@@ -66,12 +66,13 @@ static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size);
  **/
 
 
-int nsp_choices_with_combobox(char *title,NspList *L,int use_table)
+menu_answer nsp_choices_with_combobox(char *title,NspList *L,int use_table)
 {
   /* GdkGeometry geometry; */
   GtkWidget *window,*mainbox,*table;
   int i,  n = nsp_list_length(L);
-  int answer, result ;
+  int result ;
+  menu_answer answer;
   Cell *Loc= L->first;
   nsp_choice_array *combo_entry_array;
 
@@ -88,7 +89,7 @@ int nsp_choices_with_combobox(char *title,NspList *L,int use_table)
    *  gtk_window_set_wmclass  (GTK_WINDOW (window), "choices", "Nsp");
    */
 
-  if ((combo_entry_array = malloc(n*sizeof(nsp_choice_array)))== NULL) return FAIL;
+  if ((combo_entry_array = malloc(n*sizeof(nsp_choice_array)))== NULL) return menu_fail;
 
   mainbox = GTK_DIALOG(window)->vbox;
 
@@ -150,12 +151,12 @@ int nsp_choices_with_combobox(char *title,NspList *L,int use_table)
     {
       case GTK_RESPONSE_ACCEPT:
       case GTK_RESPONSE_OK:
-	answer = OK;	
-	if ( nsp_combo_update_choices(L,combo_entry_array)==FAIL) answer=FAIL;
+	answer = menu_ok;	
+	if ( nsp_combo_update_choices(L,combo_entry_array)==FAIL) answer=menu_fail;
 	FREE(combo_entry_array);
 	break;
       default:
-	answer = FAIL;
+	answer = menu_cancel;
 	break;
     }
   gtk_widget_destroy(window);

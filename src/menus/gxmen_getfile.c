@@ -35,10 +35,11 @@
  * Return value: 
  **/
 
-int nsp_get_file_window(const char *title,const char *dirname,int action,char **file,int *ierr)
+menu_answer nsp_get_file_window(const char *title,const char *dirname,int action,char **file)
 {
   G_CONST_RETURN char *loc;
-  int result, n_actions = 3, rep,action_length=0,active=0;
+  int result, n_actions = 3, action_length=0,active=0;
+  menu_answer rep = menu_fail;
   GtkWidget *combo=NULL,  *window;
   char *actions[]={"exec","load","chdir",NULL };
 
@@ -84,7 +85,7 @@ int nsp_get_file_window(const char *title,const char *dirname,int action,char **
     	/* take care to keep synchronised with "%s('%s');" */
 	if (( *file = new_nsp_string_n(strlen(loc)+6+action_length)) == NULL) 
 	  {
-	    *ierr = 1;
+	    rep = menu_fail;
 	  }
 	else 
 	  { 
@@ -92,12 +93,11 @@ int nsp_get_file_window(const char *title,const char *dirname,int action,char **
 	      sprintf(*file,"%s('%s');",actions[active],loc);
 	    else 
 	      strcpy(*file,loc);
-	    *ierr= 0;
 	  }
-	rep = TRUE;
+	rep = menu_ok;
 	break;
       default:
-	rep = FALSE;
+	rep = menu_fail;
 	break;
     }
   gtk_widget_destroy (window);

@@ -22,20 +22,14 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-
-int  nsp_multi_dialog(NspSMatrix *Title,NspSMatrix *Labels,NspSMatrix *Init_values, int *cancel)
+menu_answer nsp_multi_dialog(NspSMatrix *Title,NspSMatrix *Labels,NspSMatrix *Init_values)
 {
-  int rep,ierr=0;
+  menu_answer rep;
   char *labels  =nsp_smatrix_elts_concat(Title,"\n",1,"\n",1); 
   int nv =  Init_values->mn;
-  rep =  nsp_multi_dialog_(labels,Labels->S,Init_values->S, nv, &ierr);
+  rep =  nsp_multi_dialog_(labels,Labels->S,Init_values->S, nv);
   nsp_string_destroy(&labels); /* works even if labels is null */
-  if ( ierr == 0 )
-    {
-      *cancel = ( rep == FALSE ) ? 1 : 0;
-      return OK;
-    }
-  return FAIL;
+  return rep;
 }
 
 /* XXX : pszName[i] must be freed before replacement 
@@ -43,9 +37,10 @@ int  nsp_multi_dialog(NspSMatrix *Title,NspSMatrix *Labels,NspSMatrix *Init_valu
  *
  */
 
-int nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName, int  nv, int  *ierr)
+menu_answer nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName,int nv)
 {
-  int use_scrolled=0, i, answer = FALSE, result;
+  int use_scrolled=0, i , result;
+  menu_answer answer = FALSE;
   GtkWidget *window = NULL;
   GtkWidget **entries; 
   GtkWidget *table;
@@ -54,7 +49,6 @@ int nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName, int  nv
   GtkWidget *scrolled_win=NULL;
 
   start_sci_gtk(); /* be sure that gtk is started */
-  *ierr=0;
 
   window = gtk_dialog_new_with_buttons ("Nsp mdialog",NULL, 0,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -70,8 +64,7 @@ int nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName, int  nv
 
   if (( entries = MALLOC( nv*sizeof(GtkWidget *))) == NULL)  
     {
-      *ierr=1;
-      return(FALSE);
+      return menu_fail;
     }
 
   /* table widget  of the mdialog */
@@ -127,13 +120,14 @@ int nsp_multi_dialog_(const char *title,char **pszTitle, char **pszName, int  nv
 	  char *loc;
 	  char * text = gtk_editable_get_chars(GTK_EDITABLE(entries[i]),0,
 					       GTK_ENTRY(entries[i])->text_length);
-	  if ( text == NULL) { *ierr=1; return FALSE;}
-	  if ( (loc =new_nsp_string(text)) == NULLSTRING) { *ierr=1; return FALSE;}
+	  if ( text == NULL) { return menu_fail;}
+	  if ( (loc =new_nsp_string(text)) == NULLSTRING) { return menu_fail;}
 	  pszName[i] = loc ;
 	}
+	answer = menu_ok;
 	break;
       default:
-	answer = FAIL;
+	answer = menu_cancel;
 	break;
     }
   FREE(entries);
