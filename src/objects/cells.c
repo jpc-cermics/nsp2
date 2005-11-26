@@ -530,7 +530,10 @@ int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *C
 }
 
 
-/*
+/* Note: this function is for mexlib emulation 
+ *   B is not copied but modified i.e its name is changed
+ *   note that the old value is not destroyed.
+ * 
  */
 
 int nsp_cells_set_element(NspCells *A,int index, NspObject *B)
@@ -540,7 +543,8 @@ int nsp_cells_set_element(NspCells *A,int index, NspObject *B)
       Scierror("Error:\tindex %d is out of range\n",index);
       return FAIL;
     }
-  nsp_object_destroy(&A->objs[index]);
+  if (nsp_object_set_name(B,"ce") == FAIL) return  FAIL;
+  /* nsp_object_destroy(&A->objs[index]);*/
   A->objs[index]=B;
   return(OK);
 }
