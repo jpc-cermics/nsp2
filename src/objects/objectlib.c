@@ -153,7 +153,7 @@ NspObject *nsp_object_copy_and_name(char *name, NspObject *O)
  * Return value: a char pointer
  **/
 
-char *nsp_object_type_as_string(NspObject *O)
+char *nsp_object_type_as_string(const NspObject *O)
 {
   return O->type->s_type();
 }
@@ -171,7 +171,7 @@ char *nsp_object_type_as_string(NspObject *O)
  * Return value: a char pointer 
  **/
 
-char *nsp_object_type_short(NspObject *O)
+char *nsp_object_type_short( NspObject *O)
 {
   return O->type->sh_type(O);
 }
@@ -191,7 +191,7 @@ char *nsp_object_type_short(NspObject *O)
 
 /* FIXME : changer le nom qui est impropre */
 
-int nsp_object_type(NspObject *O,NspTypeId id)
+int nsp_object_type(const NspObject *O,NspTypeId id)
 {
   /* Follow pointer **/
   HOBJ_GET_OBJECT(O,FALSE);

@@ -338,7 +338,7 @@ int IsCellsObj(Stack stack, int i)
  * or a Hobj which points to an object of type Cells
  */
 
-int IsCells(NspObject *O)
+int IsCells(const NspObject *O)
 {
   return nsp_object_type(O , nsp_type_cells_id);
 }

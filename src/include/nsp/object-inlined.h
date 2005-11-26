@@ -5,7 +5,7 @@
  * inline is used or to nothing if no inlining
  */
 
-NSP_OBJECT_INLINED int check_cast(void *obj,NspTypeId id)
+NSP_OBJECT_INLINED int check_cast(const void *obj,NspTypeId id)
 {
   /* down to basetype */
   NspTypeBase *type = ((NspObject *)obj)->basetype;

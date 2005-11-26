@@ -62,7 +62,7 @@ int nsp_cells_xdr_save(XDR *xdrs, NspCells *M);
 
 extern NspCells *nsp_cells_object(NspObject *O); 
 extern int IsCellsObj (Stack stack, int i); 
-extern int IsCells (NspObject *O); 
+extern int IsCells (const NspObject *O); 
 extern NspCells *GetCellsCopy (Stack stack, int i); 
 extern NspCells *GetCells (Stack stack, int i); 
 extern NspCells *nsp_cells_create(const char *name, int m, int n);
