@@ -555,17 +555,48 @@ static int int_nsp_gtkcombobox_colormap_new(Stack stack, int rhs, int opt, int l
 
 static int int_nsp_choose_color(Stack stack, int rhs, int opt, int lhs)
 {
-  int col,init=-1;
+  int col,init=-1,window=-1;
+  NspMatrix *colormap=NULL;
   BCG *Xgc;
   NspObject *O1;
-  CheckRhs(0,1);
-  if ( rhs == 1) 
+  int_types T[] = {new_opts, t_end} ;
+
+  nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
+		      { "colormap",realmat,NULLOBJ,-1},
+		      { "window",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&opts,&init,&colormap,&window) == FAIL) 
+    return RET_BUG;
+  init = Max(init,0);
+  if ( window != -1 )
     {
-      if ( GetScalarInt(stack,1,&init) == FAIL) return RET_BUG;
-      init = Max(init,0);
+      /* we want the colormap of  a specific graphic window 
+       * note that the window is created if it does not exists.
+       */
+      Xgc = window_list_search(window);
+      if ( Xgc == NULL) Xgc= set_graphic_window(Max(window,0)); 
+      col = gtkcombobox_select_color(Xgc,init); 
     }
-  Xgc=check_graphic_window();
-  col = gtkcombobox_select_color(Xgc,init);
+  else
+    {
+      if ( colormap == NULL )
+	{
+	  Xgc=check_graphic_window();
+	  col = gtkcombobox_select_color(Xgc,init); 
+	}
+      else
+	{
+	  if ( colormap->n != 3 ) 
+	    {
+	      Scierror("%s:optional argument colormap should be of size mx3\n",stack.fname);
+	      return RET_BUG;
+	    }
+	  /* No use to open a graphic window we use the 
+	   * provided colormap 
+	   */
+	  col = gtkcombobox_select_color_in_table(colormap,init);
+	}
+    }
   if (( O1 =nsp_create_object_from_double(NVOID,col)) == NULLOBJ ) return RET_BUG;
   MoveObj(stack,1,O1);
   return 1;
