@@ -448,7 +448,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
       while (Loc != NULL) 
 	{
 	  NspMatrix *active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->next->O);
-	  M->R[count]= active_field->R[0]+1;
+	  M->R[count]= active_field->R[0];
 	  Loc= Loc->next;
 	  count++;
 	}
@@ -567,7 +567,7 @@ static int int_nsp_choose_color(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   if ( GetArgs(stack,rhs,opt,T,&opts,&init,&colormap,&window) == FAIL) 
     return RET_BUG;
-  init = Max(init,0);
+  init = Max(init,1);
   if ( window != -1 )
     {
       /* we want the colormap of  a specific graphic window 
@@ -582,7 +582,7 @@ static int int_nsp_choose_color(Stack stack, int rhs, int opt, int lhs)
       if ( colormap == NULL )
 	{
 	  Xgc=check_graphic_window();
-	  col = gtkcombobox_select_color(Xgc,init); 
+	  col = gtkcombobox_select_color(Xgc,init-1); 
 	}
       else
 	{
@@ -594,7 +594,7 @@ static int int_nsp_choose_color(Stack stack, int rhs, int opt, int lhs)
 	  /* No use to open a graphic window we use the 
 	   * provided colormap 
 	   */
-	  col = gtkcombobox_select_color_in_table(colormap,init);
+	  col = gtkcombobox_select_color_in_table(colormap,init-1);
 	}
     }
   if (( O1 =nsp_create_object_from_double(NVOID,col)) == NULLOBJ ) return RET_BUG;

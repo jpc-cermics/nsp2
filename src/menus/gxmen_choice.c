@@ -22,6 +22,8 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
+#define OPEN26
+
 typedef enum { choice_combo,choice_color,choice_chooser_save, 
 	       choice_chooser_open,choice_button_save,choice_button_open,choice_entry,
 	       choice_unknown,choice_matrix} 
@@ -34,11 +36,11 @@ typedef struct _nsp_choice_array
 } nsp_choice_array;
 
 static int  nsp_combo_update_choices(NspList *L,nsp_choice_array *array);
-static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Msmn,int active);
-static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *title,char **Ms,int Msmn,int active);
-static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,char *title,char **Ms,int Msmn,int active);
+static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Mm,int Mn,int active);
+static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *title,char **Ms,int Mm,int Mn,int active);
+static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,char *title,char **Ms,int Mm,int Mn,int active);
 static void nsp_setup_combo_from_list(nsp_choice_array *ca,GtkWidget *box,NspList *L,int row);
-static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,int Msmn,int active);
+static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,int Mm,int Mn,int active);
 static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int entry_size);
 static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S);
 static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size);
@@ -178,13 +180,13 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,int use_table)
  * Return value: 
  **/
 
-static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Msmn,int active)
+static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Mm,int Mn,int active)
 {
   int i;
   GtkWidget *entry_box = gtk_combo_box_new_text ();
-  for (i = 0 ; i < Msmn ; i++) 
+  for (i = 0 ; i < Mm*Mn ; i++) 
     gtk_combo_box_append_text (GTK_COMBO_BOX (entry_box),Ms[i]);
-  gtk_combo_box_set_active (GTK_COMBO_BOX (entry_box),Max(0,Min(Msmn-1,active)) );
+  gtk_combo_box_set_active (GTK_COMBO_BOX (entry_box),Max(0,Min(Mm*Mn-1,active)) );
   return  entry_box;
 }
 
@@ -202,17 +204,17 @@ static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Msmn,int active)
 
 
 #ifdef OPEN26
-static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Msmn);
+static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Mm,int Mn);
 #else 
-static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Msmn);
+static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Mm,int Mn);
 #endif 
 
-static GtkWidget * nsp_file_chooser_button_save(char *title,char **Ms,int Msmn,int active);
+static GtkWidget * nsp_file_chooser_button_save(char *title,char **Ms,int Mm,int Mn,int active);
 
-static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *title,char **Ms,int Msmn,int active)
+static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *title,char **Ms,int Mm,int Mn,int active)
 {
   GtkWidget *tmp,*boom;
-  ca->widget = nsp_setup_choice(ca->type,title,Ms,Msmn,active);
+  ca->widget = nsp_setup_choice(ca->type,title,Ms,Mm,Mn,active);
   tmp = gtk_frame_new (title);
   gtk_box_pack_start (GTK_BOX (box), tmp, FALSE, FALSE, 0);
   boom = gtk_vbox_new (FALSE, 0);
@@ -223,10 +225,10 @@ static void nsp_setup_framed_combo(nsp_choice_array *ca,GtkWidget *box,char *tit
 
 /* the same but we store in a table */
 
-static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,char *title,char **Ms,int Msmn,int active)
+static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,char *title,char **Ms,int Mm,int Mn,int active)
 {
   GtkWidget *tmp;
-  ca->widget = nsp_setup_choice(ca->type,title,Ms,Msmn,active);
+  ca->widget = nsp_setup_choice(ca->type,title,Ms,Mm,Mn,active);
   tmp = gtk_label_new (title);
   gtk_misc_set_alignment (GTK_MISC (tmp), 0.0, 0.5);
   gtk_table_attach_defaults (GTK_TABLE (table), tmp, 0, 1, row,row+1);
@@ -235,7 +237,7 @@ static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,
 
 /* creates a widget according to type  */
 
-static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,int Msmn,int active)
+static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,int Mm,int Mn,int active)
 {
   GtkWidget *w;
   BCG *Xgc;
@@ -243,36 +245,36 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
     {
     case choice_matrix :
       /* with or without scroll vindow Attention au 2 XXXXXX à corriger */
-      if ( 0) 
-	return nsp_setup_matrix_entry(NULL,Ms,2,Msmn/2,active);
+      if ( 0 ) 
+	return nsp_setup_matrix_entry(NULL,Ms,Mm,Mn,active);
       else
-	return  nsp_setup_matrix_wraper(Ms,2,Msmn/2,active); 
+	return  nsp_setup_matrix_wraper(Ms,Mm,Mn,active); 
       break;
     case choice_combo: 
-      return nsp_setup_combo_box_text(Ms,Msmn, active);
+      return nsp_setup_combo_box_text(Ms,Mm,Mn, active-1);
       break;
     case choice_color: 
       Xgc=check_graphic_window();
-      return  nsp_gtkcombobox_colormap_new(Xgc,active+1);
+      return  nsp_gtkcombobox_colormap_new(Xgc,active-1);
       break;
     case choice_chooser_save:
       break;
     case choice_chooser_open:
 #ifdef OPEN26
-      return nsp_file_chooser_button_open_2_6(title,Ms,Msmn);
+      return nsp_file_chooser_button_open_2_6(title,Ms,Mm,Mn);
 #endif 
       break;
     case choice_button_save:
-      return nsp_file_chooser_button_save(title,Ms,Msmn,active);
+      return nsp_file_chooser_button_save(title,Ms,Mm,Mn,active);
       break;
     case choice_button_open: 
 #ifndef OPEN26
-      return nsp_file_chooser_button_open_2_4(title,Ms,Msmn);
+      return nsp_file_chooser_button_open_2_4(title,Ms,Mm,Mn);
 #endif 
       break;
     case choice_entry:
       w = gtk_entry_new() ; 
-      if ( Msmn >= 1 ) gtk_entry_set_text (GTK_ENTRY(w),Ms[0]);
+      if ( Mm*Mn >= 1 ) gtk_entry_set_text (GTK_ENTRY(w),Ms[0]);
       return w;
       break;
     case choice_unknown: 
@@ -317,10 +319,10 @@ static int nsp_get_choice_from_title(char *type)
 static void nsp_button_filename_save(GtkWidget *widget,char *title);
 
 
-static GtkWidget * nsp_file_chooser_button_save(char *title,char **Ms,int Msmn,int active)
+static GtkWidget * nsp_file_chooser_button_save(char *title,char **Ms,int Mm,int Mn,int active)
 {
   GtkWidget *cbox;
-  if ( active == 1 && Msmn >= 1) 
+  if ( active == 1 && Mm*Mn >= 1) 
     {
       cbox = gtk_button_new_with_label(Ms[0]);
       g_object_set_data_full (G_OBJECT(cbox),"filename",g_strdup(Ms[0]), g_free);
@@ -367,15 +369,15 @@ static void nsp_button_filename_save(GtkWidget *widget,char *title)
  * version 2.6 
  */
 
-static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Msmn);
+static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Mm,int Mn)
 {
   GtkWidget *cbox;
   cbox = gtk_file_chooser_button_new (title,GTK_FILE_CHOOSER_ACTION_OPEN);
-  if (  Msmn > 2 ) 
+  if (  Mm*Mn > 2 ) 
     {
       int i;
       GtkFileFilter* filter ;
-      for ( i=1; i < Msmn ; i++) 
+      for ( i=1; i < Mm*Mn ; i++) 
 	{
 	  filter = gtk_file_filter_new();
 	  gtk_file_filter_set_name (GTK_FILE_FILTER(filter),Ms[i]);
@@ -407,7 +409,7 @@ struct _nsp_open_filename_open_data {
 static void nsp_button_filename_open(GtkWidget *widget,void *args);
 
 
-static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Msmn)
+static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Mm,int Mn)
 {
   nsp_button_filename_open_data *data= NULL;
   GtkWidget *cbox;
@@ -415,7 +417,7 @@ static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Ms
   data = malloc( sizeof(nsp_button_filename_open_data));
   if ( data != NULL) 
     {
-      data->Msmn = Msmn;
+      data->Msmn = Mm*Mn;
       data->Ms = Ms;
       data->title= title;
     }
@@ -500,12 +502,12 @@ static void nsp_setup_combo_from_list(nsp_choice_array *ca,GtkWidget *box,NspLis
   if ( use_row == -1 )
     {
       /* here box is a box */
-      nsp_setup_framed_combo(ca,box,title,entries->S,entries->mn,active);
+      nsp_setup_framed_combo(ca,box,title,entries->S,entries->m,entries->n,active);
     }
   else 
     {
       /* here box is a table */
-      nsp_setup_table_combo(ca,box,use_row,title,entries->S,entries->mn,active);
+      nsp_setup_table_combo(ca,box,use_row,title,entries->S,entries->m,entries->n,active);
     }
 }
 
@@ -531,6 +533,7 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
     {
       NspMatrix *active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->next->O);
       NspSMatrix *Ms = ((NspSMatrix *) ((NspList *) Loc->O)->first->next->next->next->O);
+      active_field->R[0] = 0;
       switch (  array[i].type )
 	{
 	case choice_matrix: 
@@ -539,8 +542,8 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 	case choice_unknown : 
 	  break;
 	case  choice_combo :
-	case  choice_color :
-	  active_field->R[0] = gtk_combo_box_get_active(GTK_COMBO_BOX (array[i].widget));
+	case choice_color:
+	  active_field->R[0] = 1+ gtk_combo_box_get_active(GTK_COMBO_BOX (array[i].widget));
 	  break;
 	case choice_chooser_save:
 	case choice_chooser_open:
@@ -631,14 +634,14 @@ static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int
 {
   int i,j;
   GtkWidget *table = gtk_table_new (m,n, FALSE);
-  GtkWidget *box;
-  void *data = malloc(sizeof(GtkWidget *)*m*n);
+  /* GtkWidget *box; */
+  GtkWidget **data = malloc(sizeof(GtkWidget *)*m*n);
   if ( data == NULL) return NULL;
   /* attach data to table 
    * may be useless since the entries are children of table 
    * and we can get them this way 
    */
-  if ( w != NULL) 
+  if ( w == NULL) 
     g_object_set_data_full(G_OBJECT(table),"entries",data, g_free);
   else 
     g_object_set_data_full(G_OBJECT(w),"entries",data, g_free);
@@ -647,20 +650,21 @@ static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int
    *  gtk_window_set_default_size(GTK_WINDOW(table), entry_size*n,-1);
    */
   gtk_widget_show(table);
-  box= gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (box),table);
+  /* box= gtk_vbox_new (FALSE, 0); */
+  /* gtk_container_add (GTK_CONTAINER (box),table); */
   gtk_table_set_homogeneous(GTK_TABLE(table),FALSE);
   for (i= 0 ; i < n ; i++) 
     for ( j = 0 ; j < m ; j++)
       {
 	GtkWidget *entry =  gtk_entry_new() ;
+	data[j+m*i]=entry;
 	gtk_entry_set_max_length(GTK_ENTRY(entry),0);
 	gtk_widget_set_size_request (entry,entry_size,-1);
 	gtk_table_attach (GTK_TABLE (table),entry,i,i+1,j,j+1,GTK_EXPAND | GTK_FILL, GTK_FILL,0,0);
-	gtk_entry_set_text (GTK_ENTRY(entry),Ms[i+m*j]);
+	gtk_entry_set_text (GTK_ENTRY(entry),Ms[j+m*i]);
 	/* gtk_entry_set_max_length (GTK_ENTRY(entry),entry_size);*/
       }
-  return box;
+  return table;
 }
 
 
@@ -687,7 +691,7 @@ static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size)
       /* here we need a scrolled window */ 
       res = scrolled_win= gtk_scrolled_window_new (NULL, NULL);
       gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 1);
-      gtk_widget_set_size_request (scrolled_win,400,300);
+      gtk_widget_set_size_request (scrolled_win,Min(400,40*n),Min(300,30*(m+1)));
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
 				      GTK_POLICY_AUTOMATIC,
 				      GTK_POLICY_AUTOMATIC);

@@ -63,7 +63,7 @@ static GdkPixbuf *create_color_pixbuf (BCG *Xgc,int color_id);
  * If @init_color is equal to -1 then the current color 
  * of @Xgc is used as initial default value. If not then 
  * @init_color is the indice in the colormap of the color to use 
- * as default initial value.
+ * as default initial value (first indice is zero).
  * 
  * Return value: 
  **/
@@ -99,7 +99,7 @@ GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc,int init_color)
   g_object_unref (store);
   if (init_color == -1 ) 
     init_color=  Xgc->graphic_engine->xget_pattern(Xgc);
-  gtk_combo_box_set_active (GTK_COMBO_BOX (combo),Min(Max(init_color-1,0),n_colors-1));
+  gtk_combo_box_set_active (GTK_COMBO_BOX (combo),Min(Max(init_color,0),n_colors-1));
   return combo;
 }
 
@@ -114,7 +114,7 @@ GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc,int init_color)
  * If @init_color is equal to -1 then the current color 
  * of @Xgc is used as initial default value. If not then 
  * @init_color is the indice in the colormap of the color to use 
- * as default initial value.
+ * as default initial value. (first indice is zero).
  * 
  * Return value: 
  **/
@@ -147,7 +147,7 @@ GtkWidget *nsp_gtkcombobox_colormap_new_from_colormap(NspMatrix *table,int init_
 
   g_object_unref (store);
   if (init_color != -1 ) 
-    gtk_combo_box_set_active (GTK_COMBO_BOX (combo),Min(Max(init_color-1,0),table->m-1));
+    gtk_combo_box_set_active (GTK_COMBO_BOX (combo),Min(Max(init_color,0),table->m-1));
   return combo;
 }
 
