@@ -8,7 +8,6 @@
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
-
 #include "nsp/object.h"
 
 /*
@@ -22,23 +21,36 @@ typedef struct _NspTypeSpMatrix {
   /*< public >*/
 } NspTypeSpMatrix;
 
-/* Sparse Matrix */
+/* Sparse matrices 
+ * 
+ * m,n :  size of matrix 
+ * D[i]-> points to the ith line 
+ * D[i]-> size : number of non nul elements in row i 
+ * D[i]->J : array of column of the elements of lin i
+ * D[i]->R : array of real part of the elements of lin i
+ * D[i]->C : array of imaginary part of the elements of lin i
+ */
 
-/*****************************************************************
-  m,n :  size of matrix 
-  D[i]-> points to the ith line 
-  D[i]-> size : number of non nul elements in row i 
-  D[i]->J : array of column of the elements of lin i
-  D[i]->R : array of real part of the elements of lin i
-  D[i]->C : array of imaginary part of the elements of lin i
- ******************************************************************/
+/* used to store a matlab compatible representation */
 
-typedef struct SpRow {
+typedef struct _nsp_sparse_triplet nsp_sparse_triplet; 
+
+struct _nsp_sparse_triplet { /* used in mexlib */
+  int *Ap; /* m+ 1 */
+  int *Ai; /* Aisize */
+  double *Ax; /* Aisize */
+  int m,n,Aisize; 
+};
+
+typedef struct _sprow {
   int size,iw ; /* size of a row, iw : used for working storage*/
   int *J   ; /* pointer to an int array giving the columns or row i 
 		in increasing order */
-  double  *R; /* pointer to Real datas */
-  doubleC *C; /* pointer to complex  datas */
+  union { 
+    double *R;     /* Pointer on real values */
+    doubleC *C;    /* Pointer on complex values */
+    int *I;        /* Pointer on integer values */
+  };
 } SpRow ;
   
 
@@ -47,9 +59,11 @@ struct _NspSpmatrix {
   NspObject father; 
   NspTypeSpMatrix *type; 
   /*< public >*/
-  char rc_type;        /* 'r' or 'i'  : real or complex matrix */
-  int m,n,mn;   
-  struct SpRow **D; /* array of size m giving the Rows datas */
+  char rc_type;        /* 'r' or 'i' : real or complex matrix */
+  int m,n,mn;   /* mn should be removed since m*n can be bigger than int */
+  SpRow **D; /* array of size m giving the Rows datas */
+  char convert; /* 't' : the matrix is stored in triplet , 'n': triplet not used   */
+  nsp_sparse_triplet triplet; 
 } ;
 
 extern int nsp_type_spmatrix_id;
@@ -85,6 +99,7 @@ static int nsp_spmatrix_xdr_save(XDR  *F, NspSpMatrix *M);
 
 extern NspSpMatrix *SpObj (NspObject *O); 
 extern int IsSpMatObj (Stack stack, int i); 
+extern int IsSpMat(NspObject *O);
 extern NspSpMatrix *GetSpCopy (Stack stack, int i); 
 extern NspSpMatrix *GetSp (Stack stack, int i); 
 extern NspSpMatrix *GetRealSp(Stack stack, int i);
@@ -179,12 +194,15 @@ extern NspSpMatrix   *nsp_spmatrix_object(NspObject *O);
  extern NspMatrix *SpCos (NspSpMatrix *A); 
  extern NspMatrix *SpCosh (NspSpMatrix *A); 
  extern NspMatrix *SpExpEl (NspSpMatrix *A); 
- extern int SpLogEl (NspSpMatrix *A); 
- extern void SpSin (NspSpMatrix *A); 
- extern void SpSinh (NspSpMatrix *A); 
- extern int SpSqrtEl (NspSpMatrix *A); 
- extern int SpMinus (NspSpMatrix *A); 
- extern int SpFind (NspSpMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
-
+extern int SpLogEl (NspSpMatrix *A); 
+extern void SpSin (NspSpMatrix *A); 
+extern void SpSinh (NspSpMatrix *A); 
+extern int SpSqrtEl (NspSpMatrix *A); 
+extern int SpMinus (NspSpMatrix *A); 
+extern int SpFind (NspSpMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
+extern int nsp_sparse_update_from_triplet(NspSpMatrix *M);
+extern int nsp_sparse_set_triplet_from_m(NspSpMatrix *M,int flag);
+extern int nsp_sparse_alloc_col_triplet(NspSpMatrix *M,int nzmax);
+extern int nsp_sparse_realloc_col_triplet(NspSpMatrix *M,int nzmax);
 
 #endif 

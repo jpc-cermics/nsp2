@@ -855,7 +855,6 @@ static int int_spmaxi(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
 /*
  * The Interface for basic matrices operation
  */

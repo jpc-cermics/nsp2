@@ -81,6 +81,10 @@ NspSpMatrix *nsp_spmatrix_create(char *name, char type, int m, int n)
   Sp->n=n;
   Sp->mn = Sp->m*Sp->n;
   Sp->rc_type=type;
+  Sp->convert = 'n';
+  Sp->triplet.Ai=NULL;
+  Sp->triplet.Ap=NULL;
+  Sp->triplet.Ax=NULL;
   if ( Sp->mn == 0 ) 
     {
       Sp->D = NULL;
@@ -439,22 +443,14 @@ NspSpMatrix *nsp_spmatrix_copy(NspSpMatrix *A)
 int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n)
 {
   SpRow *Row;
+  int cp = ( Sp->rc_type == 'c') ? 2 : 1;
   Row = Sp->D[i];
   if ( Row->size == 0 ) 
     {
       if ( n <= 0 ) return(OK);
       if ((Row->J =nsp_alloc_int((int) n)) == (int *) 0) return(FAIL);
-      switch ( Sp->rc_type ) 
-	{
-	case 'r' : 
-	  if ( (Row->R =nsp_alloc_doubles((int) n)) == (double *) 0 ) return(FAIL);
-	  Row->C = (doubleC *) 0;
-	  break;
-	case 'c' : 
-	  if ( (Row->C =nsp_alloc_doubleC((int) n)) == (doubleC *) 0 ) return(FAIL);
-	  Row->R = (double *) 0; 
-	  break;
-	}
+      /* note that all data are in a union */
+      if ((Row->R =nsp_alloc_doubles(n*cp)) == (double *) 0 ) return(FAIL);
       Row->size = n;
       return(OK);
     }
@@ -464,29 +460,12 @@ int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n)
     {
       /* empty new size **/
       FREE(Row->J);
-      switch ( Sp->rc_type ) 
-	{
-	case 'r' : 
-	  FREE(Row->R);
-	  break;
-	case 'c' : 
-	  FREE(Row->C);
-	}
+      FREE(Row->R);
       Row->size = 0;
       return(OK);
     }
-  if ((Row->J =nsp_realloc_int(Row->J,(int) n))  == (int *) 0) return(FAIL);
-  switch ( Sp->rc_type ) 
-    {
-    case 'r' : 
-      if (( Row->R =nsp_realloc_doubles(Row->R,(int) n)) == (double *) 0 ) return(FAIL);
-      Row->C = (doubleC *) 0;
-      break;
-    case 'c' : 
-      if (( Row->C =nsp_realloc_doubleC(Row->C, (int) n)) == (doubleC *) 0 ) return(FAIL);
-      Row->R = (double *) 0; 
-      break;
-    }
+  if ((Row->J =nsp_realloc_int(Row->J, n))  == (int *) 0) return(FAIL);
+  if (( Row->R =nsp_realloc_doubles(Row->R, n*cp)) == (double *) 0 ) return(FAIL);
   Row->size = n;
   return(OK);
 }
@@ -501,7 +480,6 @@ void SpRowDestroy(SpRow *Row)
     {
       FREE( Row->J);
       FREE( Row->R);
-      FREE( Row->C);
     }
 }
 
@@ -2067,10 +2045,11 @@ int nsp_spmatrix_complexify(NspSpMatrix *A)
       SpRow *Ai = A->D[i];
       if ( Ai->size != 0) 
 	{ 
-	  Ai->C =nsp_alloc_doubleC((int) Ai->size);
-	  if ( Ai->C == (doubleC *) 0) return(FAIL);
-	  nsp_dzcopy(&Ai->size,Ai->R,&inc,Ai->C,&inc);
+	  doubleC *cp =nsp_alloc_doubleC((int) Ai->size);
+	  if ( cp == (doubleC *) 0) return(FAIL);
+	  nsp_dzcopy(&Ai->size,Ai->R,&inc,cp,&inc);
 	  FREE(Ai->R);
+	  Ai->C = cp;
 	}
     }
   A->rc_type = 'c';
@@ -2665,7 +2644,6 @@ int nsp_spmatrix_mult_scal(NspSpMatrix *A, NspSpMatrix *B)
 	    {
 	      FREE( A->D[i]->J);
 	      FREE( A->D[i]->R);
-	      FREE( A->D[i]->C);
 	    }
 	  A->D[i]->size =0;
 	}
