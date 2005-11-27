@@ -220,7 +220,7 @@ void window_list_remove(int num)
  * Search a graphic context for window #winnum 
  * 
  * 
- * Return value: %NULL or a grapci context 
+ * Return value: %NULL or a graphic context 
  **/
 
 BCG *window_list_search(int winnum)
