@@ -7,12 +7,13 @@
 #include "nsp/sciio.h"
 #include "nsp/interf.h"
 
-typedef int mxArray;
+typedef NspObject mxArray ;
+
 typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 typedef enum { mxREAL, mxCOMPLEX } mxComplexity; 
 
 typedef int bool;
-
+  
 extern int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction);
 extern double *mxGetPr (const mxArray *ptr);
 extern double *mxGetPi (const mxArray *ptr);
@@ -25,15 +26,21 @@ extern int mxIsSparse (const mxArray *ptr);
 extern int mxIsComplex (const mxArray *ptr);
 extern double mxGetScalar (const mxArray *ptr);
 extern void mexErrMsgTxt (char *error_msg);
-extern int *mxCreateFull (int m, int n, int it);
-extern int *mxCreateDoubleMatrix (int m, int n, mxComplexity it);
+
+extern mxArray *mxCreateFull (int m, int n, int it);
+extern mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it);
+
 extern void *mxCalloc (unsigned int n, unsigned int size);
 extern int mxGetString (const mxArray *ptr, char *str, int strl);
 extern void mxFreeMatrix (mxArray *ptr);
 extern void mxFree (void *ptr);
 extern int mexAtExit(void (*ExitFcn)(void));
-extern void mxCreateSparse (mxArray *ptr);
-extern int *mxCreateString (char *string);
+
+extern mxArray *mxCreateSparse(int m, int n, int nzmax, 
+			       mxComplexity ComplexFlag);
+
+extern mxArray *mxCreateString(char *string);
+
 extern int *mxGetJc(const mxArray *ptr);
 extern int *mxGetIr(const mxArray *ptr);
 extern bool mxIsChar(const mxArray *ptr);
@@ -62,8 +69,62 @@ extern char *mxArrayToString(const mxArray *array_ptr);
 #define mexPrintf Sciprintf
 
 #ifndef MEXLIB 
-/* typedef int NspMatrix; */
+  /* typedef int NspMatrix; */
 #endif 
+
+typedef int  mxClassID;
+
+extern mxClassID mxGetClassID(const mxArray *array_ptr) ;
+
+
+
+/* this must be done after the followind id's have 
+ * been initialized 
+ */
+
+#define  mxUNKNOWN_CLASS 0
+#define  mxCELL_CLASS  nsp_type_cells_id
+/* waiting for matlab struct */
+#define  mxSTRUCT_CLASS  nsp_type_hash_id 
+#define  mxCHAR_CLASS  nsp_type_smatrix_id
+#define  mxLOGICAL_CLASS  nsp_type_bmatrix_id
+#define  mxDOUBLE_CLASS  nsp_type_matrix_id
+#define  mxSINGLE_CLASS  -1 
+#define  mxINT8_CLASS  -1
+#define  mxUINT8_CLASS  -1 
+#define  mxINT16_CLASS  -1
+#define  mxUINT16_CLASS  -1
+#define  mxINT32_CLASS  -1
+#define  mxUINT32_CLASS  -1
+#define  mxINT64_CLASS  -1
+#define  mxUINT64_CLASS  -1;
+#define  mxFUNCTION_CLASS  nsp_type_plist_id 
+
+extern void *mxMalloc(size_t n);
+extern void mxDestroyArray(mxArray *array_ptr);
+extern mxArray *mxCreateCellArray(int ndim, const int *dims);
+extern int mxCalcSingleSubscript(const mxArray *array_ptr, int nsubs,const int *subs);extern const char * mxGetName(const mxArray *ptr) ;
+
+extern int mexPutVariable(const char *workspace, const char *var_name, 
+			  const mxArray *array_ptr);
+
+extern mxArray *mxCreateCharMatrixFromStrings(int m, const char **str);
+
+extern int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,const  mxArray *prhs[], const char *command_name);
+#define mexCallNsp mexCallMATLAB
+#define mexCallScilab mexCallMATLAB
+
+
+extern mxArray *mxDuplicateArray(const mxArray *in);
+extern void mxSetName(mxArray *array_ptr,const char *var_name);
+extern int mexPutArray(const mxArray *array_ptr,const char *workspace);
+extern int mexEvalString(const char *command);
+extern int *mxGetDimensions(const mxArray *ptr);
+extern int mxSetNzmax(const mxArray *array_ptr,int n);
+extern int mxGetNzmax(const mxArray *array_ptr);
+
+
+
 
 #endif /* NSP_MEX */
 

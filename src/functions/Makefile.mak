@@ -8,7 +8,7 @@ SCIDIR1=..\..
 LIBRARY = nsp.lib
 
 OBJSC = callfunc.obj FunTab.obj linking.obj addinter.obj Functions-IN.obj \
-	mexlib.obj mex-IN.obj umfpackmex.obj
+	mexlib.obj mex-IN.obj 
 
 OBJSF=
 
@@ -23,12 +23,6 @@ include ../Make.lib.mak
 
 Makefile.mak	: Makefile
 	$(SCIDIR)/scripts/Mak2VCMak Makefile
-
-
-umfpack.obj : umfpack.c 
-	$(CC) $(CFLAGS) -DmexFunction=mex_umfpack -c umfpackmex.c
-
-
 
 #=====================================================
 #dependencies generated with gcc -MMD 

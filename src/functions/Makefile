@@ -21,7 +21,6 @@ all:: Makefile.mak
 Makefile.mak	: Makefile
 	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
-
 #=====================================================
 #dependencies generated with gcc -MMD 
 #=====================================================
