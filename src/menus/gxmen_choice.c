@@ -22,7 +22,7 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-#define OPEN26
+/* #define OPEN26 XXXXXX to be defined for gtk 2.6 */
 
 typedef enum { choice_combo,choice_color,choice_chooser_save, 
 	       choice_chooser_open,choice_button_save,choice_button_open,choice_entry,
