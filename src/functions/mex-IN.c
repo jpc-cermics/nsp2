@@ -118,6 +118,7 @@ typedef  struct  {
   mexfun *fonc;
 } nsp_mex_tab ;
 
+
 static nsp_mex_tab mex_func[]={
   {"mexfun",mexFunction},
   {"mexfun1",mexFunction1},
