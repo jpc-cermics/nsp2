@@ -2,7 +2,7 @@
 all:: manual index manual 
 
 manual::
-	htlatex ../manual xhtml,3
+	htlatex ../manual xhtml,3,section+,next
 	cp ../manual.css manual.css
 
 index: 
