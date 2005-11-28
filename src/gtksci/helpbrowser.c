@@ -714,7 +714,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
     mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
-
+  if ( help_file == NULL) help_file = "generated/manual.html";
   /* ignore g_print in libgtkhtml library */
   old=g_set_print_handler ((GPrintFunc) nsp_void_print_handler);
   if ( window == NULL) 
