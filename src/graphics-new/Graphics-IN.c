@@ -4522,7 +4522,7 @@ static int sci_demo (char *fname,char *code,int flag)
   return 0;
 }
 
-extern int int_dsearch(Stack stack, int rhs, int opt, int lhs);
+extern int int_bsearch(Stack stack, int rhs, int opt, int lhs);
 
 
 /*-----------------------------------------------------------
@@ -4754,7 +4754,7 @@ static OpTab Graphics_func[]={
   {"xs2gif",int_xs2gif},
   {"xs2ppm",int_xs2ppm},
   {"xs2ps",int_xs2ps},
-  {"dsearch", int_dsearch},
+  {"bsearch", int_bsearch},
   {"draw3d_objs", int_draw3dobj},
   {(char *) 0, NULL}
 };

@@ -16,42 +16,47 @@
 #include "nsp/graphics/Graphics.h"
 #include "nsp/gsort-p.h"
 
-void nsp_dsearchc(const double x[], int m,const double val[], int n, 
+#define CLOSED_LEFT 0
+#define CLOSED_RIGHT 1
+
+void nsp_bsearchc(const double x[], int m,const double val[], int n, 
+		  int indx[], int occ[], int *info, int interval_flag);
+
+void nsp_bsearchd(const double x[], int m,const double val[], int n,
 		  int indx[], int occ[], int *info);
 
-void nsp_dsearchd(const double x[], int m,const double val[], int n,
-		  int indx[], int occ[], int *info);
+void nsp_bsearchc_for_strings(char **x, int m, char **val, int n, 
+			      int indx[], int occ[], int *info, int interval_flag);
 
-void nsp_dsearchc_for_strings(char **x, int m, char **val, int n, 
-			      int indx[], int occ[], int *info);
-
-void nsp_dsearchd_for_strings(char **x, int m, char **val, int n,
+void nsp_bsearchd_for_strings(char **x, int m, char **val, int n,
 			      int *indx, int *occ, int *info);
 
 
 /*
- * dsearch interface  
- * jpc 
- *       [ind , occ, info] = dsearch(x, val, [ 'c' | 'd' ])
+ * bsearch interface  
+ * jpc / bp
+ *
+ *       [ind , occ, info] = bsearch(x, val, match= 'i'|'v', interval='[--)'|'(--]')
  *        
- * X and val must be real vectors (says of length m for X and n for val ), 
- * if ch is not present then ch = 'c'  (dsearch on "intervals")
- * ch must be 'd' or 'c'
+ * X and val must be both real or strings vectors (says of length m for X and n for val ), 
  *
  * ind is a vector with the same shape as x 
- * occ is a vector with the same shape as val (but with n-1
- * components in the case ch='c')
+ * occ is a vector with the same shape as val (but with n-1 components in the case match='i')
  * info is a scalar
  */
 
-int int_dsearch(Stack stack, int rhs, int opt, int lhs)
+int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 {
-  char *type;
   int info, m_occ, n_occ, m_x, n_x, mn_val, i, flagstr;
-  char c= 'c';
+  char *interval_type=NULL,*match_type=NULL;
+  int interval_flag = CLOSED_LEFT; 
+  char match_flag='i';
+  nsp_option opts[] ={{ "interval",string,NULLOBJ,-1},
+		      { "match",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   NspMatrix *x=NULLMAT, *val=NULLMAT, *ind=NULLMAT, *occ=NULLMAT;
   NspSMatrix *xstr=NULLSMAT, *valstr=NULLSMAT;
-  CheckRhs(2,3);
+  CheckRhs(2,4);
   CheckLhs(0,3);
 
   if ( IsMatObj(stack,1) ) 
@@ -76,20 +81,39 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  if ( rhs == 3 ) 
+  if ( get_optional_args(stack, rhs, opt, opts, &interval_type, &match_type) == FAIL) 
+    return RET_BUG;
+
+  if ( match_type != NULL )
     {
-      if ((type = GetString(stack,3)) == NULLSTRING ) return RET_BUG;
-      if ( strcmp(type,"c") != 0 && strcmp(type,"d") != 0 ) 
+      if ( strcmp(match_type,"i") == 0 )
+	match_flag = 'i';
+      else if (strcmp(match_type,"v") == 0 )
+	match_flag = 'v';
+      else
 	{
-	  Scierror("Error: wrong third argument in function %s\n",stack.fname);
-	  Scierror("\tonly 'c' or 'd' are allowed\n");
+	  Scierror("Error: bad match value only 'i' or 'v' are allowed in function %s\n",stack.fname);
 	  return RET_BUG;
 	}
-      c = type[0];
+    }
+
+  if ( interval_type != NULL )
+    {
+      if (match_flag == 'v' )
+	Sciprintf("Warning: with match='v' the interval option is not used in function %s\n",stack.fname);
+      if ( strcmp(interval_type,"[--)") == 0 )
+	interval_flag = CLOSED_LEFT;
+      else if ( strcmp(interval_type,"(--]") == 0 )
+	interval_flag = CLOSED_RIGHT;
+      else
+	{
+	  Scierror("Error: bad interval value only '[--)' or '(--]' are allowed in function %s\n",stack.fname);
+	  return RET_BUG;
+	}
     }
 
   if ( (ind=nsp_matrix_create(NVOID,'r',m_x,n_x)) == NULLMAT ) return RET_BUG;
-  if ( c == 'c' )
+  if ( match_flag == 'i' )
     {
       m_occ = Max(m_occ -1, 1); 
       n_occ = Max(n_occ -1, 1);
@@ -104,7 +128,7 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
 	if ( ! ( val->R[i] < val->R[i+1]) )
 	  {
 	    Scierror("Error: second argument in function %s\n",stack.fname);
-	    Scierror("\tis not scrictly increasing \n");
+	    Scierror("\tis not strictly increasing \n");
 	    return RET_BUG;
 	  }
     }
@@ -114,16 +138,16 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
 	if ( strcmp(valstr->S[i],valstr->S[i+1]) >= 0 )
 	  {
 	    Scierror("Error: second argument in function %s\n",stack.fname);
-	    Scierror("\tis not scrictly increasing \n");
+	    Scierror("\tis not strictly increasing \n");
 	    return RET_BUG;
 	  }
     }
 
-  if ( c == 'c' ) 
+  if ( match_flag == 'i' ) 
     {
       if ( mn_val <= 1 ) 
 	{ 
-	  Scierror("%s: second argument should be of size > 1 for 'c' option \n",stack.fname);
+	  Scierror("%s: second argument should be of size > 1 when match='i' \n",stack.fname);
 	  return RET_BUG;
 	}
     }
@@ -131,24 +155,24 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
     {
       if ( mn_val < 1 ) 
 	{ 
-	  Scierror("%s: second argument should be of size >= 1 for 'd' option \n",stack.fname);
+	  Scierror("%s: second argument should be of size >= 1 when match='v' \n",stack.fname);
 	  return RET_BUG;
 	}
     }
 
   if ( flagstr == 0 )
     {
-      if ( c == 'c' ) 
-	nsp_dsearchc(x->R,x->mn,val->R,val->mn-1,ind->I,occ->I,&info);
+      if ( match_flag == 'i' ) 
+	nsp_bsearchc(x->R,x->mn,val->R,val->mn-1,ind->I,occ->I,&info,interval_flag);
       else 
-	nsp_dsearchd(x->R,x->mn,val->R,val->mn,ind->I,occ->I,&info);
+	nsp_bsearchd(x->R,x->mn,val->R,val->mn,ind->I,occ->I,&info);
     }
   else
     {
-      if ( c == 'c' ) 
-	nsp_dsearchc_for_strings(xstr->S,xstr->mn,valstr->S,mn_val-1,ind->I,occ->I,&info);
+      if ( match_flag == 'i' ) 
+	nsp_bsearchc_for_strings(xstr->S,xstr->mn,valstr->S,mn_val-1,ind->I,occ->I,&info,interval_flag);
       else 
-	nsp_dsearchd_for_strings(xstr->S,xstr->mn,valstr->S,mn_val,ind->I,occ->I,&info);
+	nsp_bsearchd_for_strings(xstr->S,xstr->mn,valstr->S,mn_val,ind->I,occ->I,&info);
     }
 
   ind->convert = 'i'; /* occ is filed with integers */
@@ -202,8 +226,8 @@ int int_dsearch(Stack stack, int rhs, int opt, int lhs)
  *        C converted by J.Ph Chancelier (f2c + hand polished ). 
  */
 
-void nsp_dsearchc(const double x[], int m,const double val[], int n, 
-		  int indx[], int occ[], int *info)
+void nsp_bsearchc(const double x[], int m,const double val[], int n, 
+		  int indx[], int occ[], int *info, int interval_flag)
 {
   int  i, j, j1, j2;
  
@@ -215,20 +239,20 @@ void nsp_dsearchc(const double x[], int m,const double val[], int n,
       if (val[0] <= x[i] && x[i] <= val[n]) 
 	{
 	  /* x[i] is in [val(0),val(n)]:  find j such that x[i] is in I(j) */
-	  j1 = 0;
-	  j2 = n;
-	  while(j2 - j1 > 1) 
-	    {
-	      j = (j1 + j2) / 2;
-	      if (x[i] < val[j]) j2 = j; else j1 = j;
-	    }
-	  /* here we have : (i)  j2 = j1+1 
-	   *                (ii) val[j1] <= x[i] < val[j2]  if j2 < n 
-           *                  or val[j1] <= x[i] <= val[j2] if j2 = n
-	   * so j2 is the good interval number in all cases 
-	   */
-	  ++occ[j1]; 
-	  indx[i] = j2 ;
+	  j1 = 0; j2 = n;
+	  if (interval_flag == CLOSED_LEFT )
+	    while(j2 - j1 > 1) 
+	      {
+		j = (j1 + j2) / 2;
+		if (x[i] < val[j]) j2 = j; else j1 = j;
+	      }
+	  else   /* (interval_flag == CLOSED_RIGHT ) */
+	    while(j2 - j1 > 1) 
+	      {
+		j = (j1 + j2) / 2;
+		if (x[i] > val[j]) j1 = j; else j2 = j;
+	      }
+	  ++occ[j1]; indx[i] = j2;
 	} 
       else   /* x[i] is not in [val(0), val(n)] */ 
 	{
@@ -239,7 +263,7 @@ void nsp_dsearchc(const double x[], int m,const double val[], int n,
 }
 
 /**
- * nsp_dsearchd:
+ * nsp_bsearchd:
  * @x: array of double.
  * @m: size of @x
  * @val: a strictly increasing array of double.
@@ -249,7 +273,7 @@ void nsp_dsearchc(const double x[], int m,const double val[], int n,
  * @info: int pointer.
  * 
  * @val being a strictly increasing array of size @n,
- * this routines by the mean of a dichotomic search computes
+ * this routines by the mean of a binary search computes
  * a/ the number of occurences (@occ[j]) of each value @val[j] 
  *    in the array @x i.e @occ[j] = card{ x[i] such that x[i] == val[j] } 
  *
@@ -262,7 +286,7 @@ void nsp_dsearchc(const double x[], int m,const double val[], int n,
  * 
  **/
 
-void nsp_dsearchd(const double *x, int m,const double *val, int n,
+void nsp_bsearchd(const double *x, int m,const double *val, int n,
 		  int *indx, int *occ, int *info)
 {
   int i, j, j1, j2;
@@ -310,8 +334,8 @@ void nsp_dsearchd(const double *x, int m,const double *val, int n,
 } 
 
 
-void nsp_dsearchc_for_strings(char **x, int m, char **val, int n, 
-			      int indx[], int occ[], int *info)
+void nsp_bsearchc_for_strings(char **x, int m, char **val, int n, 
+			      int indx[], int occ[], int *info, int interval_flag)
 {
   int  i, j, j1, j2;
  
@@ -324,18 +348,19 @@ void nsp_dsearchc_for_strings(char **x, int m, char **val, int n,
 	{
 	  /* x[i] is in [val(0),val(n)] :  find j such that x[i] is in I(j) */
 	  j1 = 0; j2 = n;
-	  while(j2 - j1 > 1) 
-	    {
-	      j = (j1 + j2) / 2;
-	      if ( strcmp(x[i],val[j]) < 0 ) j2 = j; else j1 = j;
-	    }
-	  /* here we have : (i)  j2 = j1+1 
-	   *                (ii) val[j1] <= x[i] < val[j2]  if j2 < n 
-           *                  or val[j1] <= x[i] <= val[j2] if j2 = n
-	   * so j2 is the good interval number in all cases 
-	   */
-	  ++occ[j1]; 
-	  indx[i] = j2 ;
+	  if (interval_flag == CLOSED_LEFT )
+	    while(j2 - j1 > 1) 
+	      {
+		j = (j1 + j2) / 2;
+		if ( strcmp(x[i],val[j]) < 0 ) j2 = j; else j1 = j;
+	      }
+	  else   /* (interval_flag == CLOSED_RIGHT ) */
+	    while(j2 - j1 > 1) 
+	      {
+		j = (j1 + j2) / 2;
+		if ( strcmp(x[i],val[j]) > 0 ) j1 = j; else j2 = j;
+	      }
+	  ++occ[j1]; indx[i] = j2 ;
 	} 
       else  /* x[i] is not in [val(0), val(n)] */ 
 	{
@@ -346,7 +371,7 @@ void nsp_dsearchc_for_strings(char **x, int m, char **val, int n,
 }
 
 
-void nsp_dsearchd_for_strings(char **x, int m, char **val, int n,
+void nsp_bsearchd_for_strings(char **x, int m, char **val, int n,
 			      int *indx, int *occ, int *info)
 {
   int i, j, j1, j2;
