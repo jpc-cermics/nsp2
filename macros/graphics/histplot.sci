@@ -5,7 +5,7 @@ function histplot(n,data,normalize=%t,style=[2],strf='171',rect=[],leg="",nax=[2
 // Example : enter histplot()
 // hand rewriten from a previous scilab version (J.P Chancelier)
 // fill option added (J.P Chancelier)
-// dsearch use (Bruno Pinçon) 
+// bsearch use (Bruno Pinçon) 
 // 
   if nargin <= 0, 
     s_mat=['histplot([-6:0.2:6],rand(1,2000,''n''));';
@@ -26,7 +26,7 @@ function histplot(n,data,normalize=%t,style=[2],strf='171',rect=[],leg="",nax=[2
     x=n(:)
   end,
   n=prod(size(x));
-  [ind , y] = dsearch(data, x);
+  [ind , y] = bsearch(data, x);
   if normalize then y=y ./ (p*(x(2:$)-x(1:$-1))),end 
   y(n)=y($);   // add a last point 
   if rect==[] then rect=[min(x),0,max(x),max(y)];end 
