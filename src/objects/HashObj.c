@@ -500,6 +500,13 @@ static NspObject * int_hash_get_keys(void *Hv, char *attr)
 		return NULLOBJ;
 	    }
 	}
+      if ( count != H->filled )
+	{
+	  int i;
+	  Sciprintf("Warning: less objects (%d) in hash table than expected (%d) !\n",count,H->filled);
+	  for ( i = count ; i < H->filled ; i++) Loc->S[i]=NULL;
+	  if ( nsp_smatrix_resize(Loc,count,1) == FAIL) return NULLOBJ;
+	}
     }
   return (NspObject *) Loc;
 }
