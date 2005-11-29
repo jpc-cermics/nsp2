@@ -9,7 +9,7 @@ NSP_OBJECT_INLINED int check_cast(const void *obj,NspTypeId id)
 {
   /* down to basetype */
   NspTypeBase *type = ((NspObject *)obj)->basetype;
-  /* speed up with a do wgile by bruno */
+  /* speed up with a do while by bruno */
   do
     { 
       if ( type->id == id ) return TRUE;
