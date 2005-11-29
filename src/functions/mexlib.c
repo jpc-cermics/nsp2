@@ -44,32 +44,17 @@ static void nsp_mex_errjump();
 #define MEXLIB 
 #include "nsp/mex.h"
 
-/****************************************************
- * C function for C mexfunctions 
- ****************************************************/
-
-/*  A set of constant **/
+/* these two variables are 
+ * to be set up corectly to enable reentry in mex 
+ */
 
 static int onlyone =0;
-static Stack stack;
 static jmp_buf MexEnv;
 
-/*
- * FIXME:
- *   we would like this function to be reentrant 
- *   which has to be improved since it is based on 
- *   static variables ....
- *   Il faudrait faire deux choses 
- *      une librairie degradé non réentrante 
- *      si on a besoin de charger un mex binaire 
- *      provenant de matlab 
- *      une librairie améliorée réentrante pour les 
- *      besoin de nsp
- *   je sais pas si la premiere version est vraiment utile !!
- */
 
 static void nsp_initmex(char *name,int *lfirst,int lhs,mxArray *plhs[], int rhs,const mxArray *prhs[])
 {
+  Stack stack;
   int k=0;
   if ( onlyone != 0) 
     {
@@ -97,7 +82,7 @@ static void nsp_initmex(char *name,int *lfirst,int lhs,mxArray *plhs[], int rhs,
   for (k = 0; k < Max(lhs,1) ; ++k) plhs[k]=NULL;
 } 
 
-static void nsp_endmex(int lhs,mxArray *plhs[],int rhs,const mxArray *prhs[])
+static void nsp_endmex(Stack stack,int lhs,mxArray *plhs[],int rhs,const mxArray *prhs[])
 {
   int i;
   for ( i= 1 ; i <= Max(lhs,1) ; i++) 
@@ -126,9 +111,22 @@ static void nsp_endmex(int lhs,mxArray *plhs[],int rhs,const mxArray *prhs[])
 /*  used when performing a longjmp **/
 
 static void nsp_clearmex(void)
-  {
+{
   onlyone =0;
 }
+
+/**
+ * nsp_mex_wrapper:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * @mexFunction: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 
 int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
 {
@@ -142,7 +140,7 @@ int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
   nsp_initmex(stack.fname,&stack.first,lhs, plhs, rhs, prhs);
   mexFunction(lhs, plhs, rhs, prhs);
   if ( lhs <= 0 && plhs[0] != NULL ) lhs = 1;
-  nsp_endmex(lhs, plhs, rhs, prhs);
+  nsp_endmex(stack,lhs, plhs, rhs, prhs);
   return Max(0,lhs);
 }
 
@@ -155,6 +153,14 @@ static void nsp_mex_errjump()
 }
 
 
+/**
+ * mxGetPr:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /*  Get real part of matrix **/
 
 double *mxGetPr(const mxArray *ptr)
@@ -162,12 +168,8 @@ double *mxGetPr(const mxArray *ptr)
   if ( IsMat(ptr)) 
     {
       NspMatrix *A = (NspMatrix *)  ptr;
-      /* A revoir 
-	 if (( A=GetMtlbMat(stack,i)) == NULLMAT)   
-	   {
-	     nsp_mex_errjump();
-	   }
-      */
+      /* be sure that matrix is matlab converted */
+      A = Mat2mtlb_cplx (A);
       return A->R;
     }
   else if ( IsSpMat(ptr))
@@ -179,11 +181,19 @@ double *mxGetPr(const mxArray *ptr)
 	}
       return A->triplet.Ax;
     }
-  Scierror("Error in %s: mxGetPr failed\n",stack.fname);
+  Scierror("Error in %s: mxGetPr failed\n","mex");
   nsp_mex_errjump();
   return NULL;
 }
 
+/**
+ * mxGetPi:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /* Get imaginary part of matrix */
 
 double *mxGetPi(const mxArray *ptr)
@@ -191,14 +201,12 @@ double *mxGetPi(const mxArray *ptr)
   if ( IsMat(ptr)) 
     {
       NspMatrix *A = (NspMatrix *) ptr ;
-      /* 
-      if ((A=GetMtlbMat(stack,i)) == NULLMAT) 
-      nsp_mex_errjump();
-      */
       if ( A->rc_type == 'r' )
 	{
 	  return NULL;
 	}
+      /* be sure that matrix is matlab converted */
+      A = Mat2mtlb_cplx (A);
       return A->R+ A->mn;
     }
   else if ( IsSpMat(ptr)) 
@@ -212,12 +220,20 @@ double *mxGetPi(const mxArray *ptr)
     }
   else
     {
-      Scierror("Error in %s: mxGetPr failed\n",stack.fname);
+      Scierror("Error in %s: mxGetPr failed\n","mex");
       nsp_mex_errjump();
     }
   return NULL;
 }
 
+/**
+ * mxGetM:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /* Get m dimension of matrix **/
 
 int mxGetM(const mxArray *ptr)
@@ -234,6 +250,14 @@ int mxGetM(const mxArray *ptr)
  *  Jc(n) est le monbre d'elments non nuls de la matrice 
  **/
 
+/**
+ * mxGetJc:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int *mxGetJc(const mxArray *ptr)
 {
   NspSpMatrix *A = (NspSpMatrix *) ptr;
@@ -248,6 +272,14 @@ int *mxGetJc(const mxArray *ptr)
 /* Get Ir tableaux d'entier de meme taille que # des elts non nuls 
  * contient indice de ligne de chaque element */
 
+/**
+ * mxGetIr:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int *mxGetIr(const mxArray *ptr)
 {
   NspSpMatrix *A = (NspSpMatrix *) ptr;
@@ -259,6 +291,14 @@ int *mxGetIr(const mxArray *ptr)
   return A->triplet.Ai;
 }
 
+/**
+ * mxGetN:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /* Get n dimension of matrix **/
 
 int mxGetN(const mxArray *ptr)
@@ -279,6 +319,14 @@ int mxGetN(const mxArray *ptr)
   return nsp_object_get_size(ptr,2);
 }
 
+/**
+ * mxIsString:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /* Check that object is a String **/
 
 int mxIsString(const mxArray *ptr)
@@ -286,6 +334,14 @@ int mxIsString(const mxArray *ptr)
   return (IsSMat(ptr) && ((NspSMatrix *) ptr)->mn == 1);
 } 
 
+/**
+ * mxIsNumeric:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /*  Numeric : i.e sparse or matrix **/
 
 int mxIsNumeric(const mxArray *ptr)
@@ -293,6 +349,14 @@ int mxIsNumeric(const mxArray *ptr)
   return ( IsMat(ptr) ||  IsSpMat(ptr) );
 }
 
+/**
+ * mxIsFull:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /*  Full : NspMatrix **/
 
 int mxIsFull(const mxArray *ptr)
@@ -300,6 +364,14 @@ int mxIsFull(const mxArray *ptr)
   return IsMat(ptr);
 }
 
+/**
+ * mxIsSparse:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /*  Full : NspMatrix **/
 
 int mxIsSparse(const mxArray *ptr)
@@ -310,6 +382,14 @@ int mxIsSparse(const mxArray *ptr)
 /*  Complex : NspMatrix or Sparse  **/
 
 
+/**
+ * mxIsComplex:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int mxIsComplex(const mxArray *ptr)
 {
   if ( IsMat(ptr) )
@@ -324,6 +404,14 @@ int mxIsComplex(const mxArray *ptr)
     return 0;
 }
 
+/**
+ * mxGetScalar:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /*  a Scalar **/
 
 double mxGetScalar(const mxArray *ptr)
@@ -341,16 +429,34 @@ double mxGetScalar(const mxArray *ptr)
   return 0.0;
 }
 
+/**
+ * mexErrMsgTxt:
+ * @error_msg: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /*  Error + Jump  **/
 
 void mexErrMsgTxt(char *error_msg)
 {
-  Scierror("Error in %s: ",stack.fname);
+  Scierror("Error in %s: ","mex");
   Scierror(error_msg);
   Scierror("\n");
   nsp_mex_errjump();
 }
 
+/**
+ * mxCreateDoubleMatrix:
+ * @m: 
+ * @n: 
+ * @it: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /*  New matrix **/
 
 mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it)
@@ -368,6 +474,16 @@ mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it)
   return NSP_OBJECT(A);
 }
 
+/**
+ * mxCreateFull:
+ * @m: 
+ * @n: 
+ * @it: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 mxArray *mxCreateFull(int m, int n, int it)
 {
   NspMatrix *A;
@@ -383,6 +499,15 @@ mxArray *mxCreateFull(int m, int n, int it)
   return NSP_OBJECT(A);
 }
 
+/**
+ * mxCalloc:
+ * @n: 
+ * @size: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 /* Allocation on the stack */
 
 void *mxCalloc(unsigned int n, unsigned int size)
@@ -391,13 +516,17 @@ void *mxCalloc(unsigned int n, unsigned int size)
 }
 
 
-/**************************************************************
+/**
+ * mxGetString:
+ * @ptr: 
+ * @str: 
+ * @strl: 
+ * 
+ * 
  * Return in str at most strl characters from first element of 
  * string NspMatrix pointed by ptr ( ptr is assumed to be a String NspMatrix )
- **************************************************************/
-
-/* Get all the strings of Matrix SMatrix 
- * in one buffer 
+ * 
+ * Return value: 
  **/
 
 int mxGetString(const mxArray *ptr, char *str, int strl)
@@ -415,12 +544,16 @@ int mxGetString(const mxArray *ptr, char *str, int strl)
   return 0;
 }
 
-/* Get all the strings of Matrix SMatrix 
+/**
+ * mxArrayToString:
+ * @ptr: 
+ * 
+ * Get all the strings of Matrix SMatrix 
  * in one buffer, the string is allocated 
  * and should be freed by the user 
- * XXXX mxFree does not work 
+ * 
+ * Return value: 
  **/
-
 char *mxArrayToString(const mxArray *ptr)
 {
   nsp_string message;
@@ -433,23 +566,41 @@ char *mxArrayToString(const mxArray *ptr)
     }
   return message;
 }
-
       
-/* libere le CreateFull **/
+/**
+ * mxFreeMatrix:
+ * @ptr: 
+ * 
+ * XXXX : to be done 
+ * 
+ * Return value: 
+ **/
 
 void mxFreeMatrix (mxArray *ptr)
 {
   return ;
 }
 
-/* libere le Calloc **/
 
+/**
+ * mxFree:
+ * @ptr: 
+ * 
+ * 
+ **/
 void mxFree(void *ptr)
 {
   free(ptr);
 }
 
-/* exit function : mexAtExit : **/
+/**
+ * mexAtExit:
+ * @ExitFcn: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 
 int mexAtExit(void (*ExitFcn)(void))
 {
@@ -457,6 +608,17 @@ int mexAtExit(void (*ExitFcn)(void))
 }
 
 
+/**
+ * mxCreateSparse:
+ * @m: 
+ * @n: 
+ * @nzmax: 
+ * @ComplexFlag: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 mxArray *mxCreateSparse(int m, int n, int nzmax, 
 			mxComplexity ComplexFlag)
 {
@@ -476,10 +638,15 @@ mxArray *mxCreateSparse(int m, int n, int nzmax,
 }
 
 
-/**************************************************************
- * Create on Scilab Stack a 1x1 string matrix filled with string
- **************************************************************/
 
+/**
+ * mxCreateString:
+ * @string: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 mxArray *mxCreateString(char *string)
 {
   NspSMatrix *S;
@@ -487,12 +654,22 @@ mxArray *mxCreateString(char *string)
   return NSP_OBJECT(S);
 }
 
-/* here pas is supposed to be a Hash Table 
+
+
+/**
+ * mxGetField:
+ * @pa: 
+ * @i: 
+ * @fieldname: 
+ * 
+ * here pas is supposed to be a Hash Table 
  * the index is not used i.e we only accept 
  * i==0;
  * fieldname ->  const char *fieldname
- */
-
+ * 
+ * 
+ * Return value: 
+ **/
 
 mxArray *mxGetField (const mxArray *pa, int i, char *fieldname)
 {
@@ -515,10 +692,17 @@ mxArray *mxGetField (const mxArray *pa, int i, char *fieldname)
   return Obj;
 }
 
-/*
- *
- */
-
+/**
+ * mxCreateStructMatrix:
+ * @m: 
+ * @n: 
+ * @nfields: 
+ * @field_names: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 mxArray *mxCreateStructMatrix(int m, int n, int nfields, const char **field_names)
 {
   NspHash *H;
@@ -534,6 +718,16 @@ mxArray *mxCreateStructMatrix(int m, int n, int nfields, const char **field_name
   return NSP_OBJECT(H);
 }
 
+
+/**
+ * mxSetField:
+ * @pa: 
+ * @i: 
+ * @fieldname: 
+ * @value: 
+ * 
+ * 
+ **/
 
 void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value)
 {
@@ -551,12 +745,28 @@ void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value)
     }
 }
 
+/**
+ * mxGetNumberOfDimensions:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int mxGetNumberOfDimensions (const mxArray *ptr)
 {
   return 2;
 }
 
 
+/**
+ * mxGetNumberOfFields:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int mxGetNumberOfFields (const mxArray *ptr)
 {
   if ( ! IsHash(ptr) ) return 0;
@@ -564,20 +774,50 @@ int mxGetNumberOfFields (const mxArray *ptr)
 }
 
 
+/**
+ * mxIsChar:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 bool mxIsChar(const mxArray *ptr)
 {
   return  IsSMat(ptr) ;
 }
 
+/**
+ * mexWarnMsgTxt:
+ * @error_msg: 
+ * 
+ * 
+ **/
 void mexWarnMsgTxt(char *error_msg)
 {
   Sciprintf(error_msg);
 }
 
 
+/**
+ * mxGetInf:
+ * @void: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 double mxGetInf(void)
 {
   double d=0;d=1/d;
+/**
+ * mxGetNaN:
+ * @void: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
   return d;
 }
 double mxGetNaN(void)
@@ -586,26 +826,66 @@ double mxGetNaN(void)
   return d;
 }
 
+/**
+ * mxGetEps:
+ * @void: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 double mxGetEps(void)
 {
   return nsp_dlamch("e");
 }
 
+/**
+ * mxIsInf:
+ * @x: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 bool mxIsInf(double x)
 {
   return isinf(x);
 }
 
+/**
+ * mxIsFinite:
+ * @x: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 bool mxIsFinite(double x)
 {
   return finite(x);
 }
 
+/**
+ * mxIsNaN:
+ * @x: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 bool mxIsNaN(double x)
 {
   return isnan(x);
 }
 
+/**
+ * mxGetNumberOfElements:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int mxGetNumberOfElements(const mxArray *ptr)
 {
   if ( IsSMat(ptr) )
@@ -620,17 +900,42 @@ int mxGetNumberOfElements(const mxArray *ptr)
 }
 
 
+/**
+ * mxIsStruct:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 bool mxIsStruct(const mxArray *ptr)
 {
   return IsHash(ptr);
 }
 
+/**
+ * mxIsCell:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 bool mxIsCell(const mxArray *ptr)
 {
   return IsCells(ptr);
 }
 
 
+/**
+ * mxGetCell:
+ * @ptr: 
+ * @index: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 mxArray *mxGetCell(const mxArray *ptr, int index)
 {
   NspCells *C = (NspCells *) ptr;
@@ -639,6 +944,14 @@ mxArray *mxGetCell(const mxArray *ptr, int index)
   return C->objs[index];
 }
 
+/**
+ * mxSetCell:
+ * @ptr: 
+ * @index: 
+ * @value: 
+ * 
+ * 
+ **/
 void mxSetCell(mxArray *ptr, int index, mxArray *value)
 {
   NspCells *C = (NspCells *) ptr;
@@ -650,6 +963,15 @@ void mxSetCell(mxArray *ptr, int index, mxArray *value)
 }
 
 
+/**
+ * mxCreateCellMatrix:
+ * @m: 
+ * @n: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 mxArray *mxCreateCellMatrix(int m, int n)
 {
   NspCells *A;
@@ -657,9 +979,18 @@ mxArray *mxCreateCellMatrix(int m, int n)
   return NSP_OBJECT(A);
 }
 
+/**
+ * mxCreateCellArray:
+ * @ndim: 
+ * @dims: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 mxArray *mxCreateCellArray(int ndim, const int *dims)
 {
-  NspCells *A;
+  NspCells *A=NULL;
   if ( ndim > 2 )
     {
       Scierror("Error: Nsp cells are restricted to mxn cells\n");
@@ -681,6 +1012,16 @@ mxArray *mxCreateCellArray(int ndim, const int *dims)
 }
 
 
+/**
+ * mxCalcSingleSubscript:
+ * @ptr: 
+ * @nsubs: 
+ * @subs: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int mxCalcSingleSubscript(const mxArray *ptr, int nsubs, const int *subs)
 {
   int k, retval=0, coeff=1;
@@ -698,6 +1039,14 @@ int mxCalcSingleSubscript(const mxArray *ptr, int nsubs, const int *subs)
  *
  */
 
+/**
+ * mxGetDimensions:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int *mxGetDimensions(const mxArray *ptr)
 {
   int  number_of_dimensions = mxGetNumberOfDimensions( ptr );
@@ -708,6 +1057,14 @@ int *mxGetDimensions(const mxArray *ptr)
   return dims;
 }
 
+/**
+ * mxGetClassID:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 mxClassID mxGetClassID(const mxArray *ptr) 
 {
   if ( ptr == NULL )  nsp_mex_errjump();
@@ -715,27 +1072,66 @@ mxClassID mxGetClassID(const mxArray *ptr)
   return ((NspTypeBase *) ptr->basetype)->id;
 }
 
+/**
+ * mxMalloc:
+ * @n: 
+ * 
+ * 
+ **/
 void *mxMalloc(size_t n)
 {
   return malloc(sizeof(char)*n);
 }
 
+/**
+ * mxDestroyArray:
+ * @ptr: 
+ * 
+ * 
+ **/
 void mxDestroyArray(mxArray *ptr)
 {
   nsp_object_destroy(&ptr);
 }
 
+/**
+ * mxGetName:
+ * @ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 const char * mxGetName(const mxArray *ptr) 
 {
   return nsp_object_get_name(ptr);
 }
 
+/**
+ * mexPutVariable:
+ * @workspace: 
+ * @var_name: 
+ * @array_ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int mexPutVariable(const char *workspace, const char *var_name, mxArray *array_ptr)
 {
   if (nsp_object_set_name(array_ptr,var_name) == FAIL) return FAIL;
   return  mexPutArray(array_ptr,workspace);
 }
 
+/**
+ * mxCreateCharMatrixFromStrings:
+ * @m: 
+ * @str: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 mxArray *mxCreateCharMatrixFromStrings(int m, const char **str)
 {
   NspSMatrix *A;
@@ -744,16 +1140,40 @@ mxArray *mxCreateCharMatrixFromStrings(int m, const char **str)
   return NSP_OBJECT(A);
 }
 
+/**
+ * mxDuplicateArray:
+ * @in: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 mxArray *mxDuplicateArray(const mxArray *in)
 {
   return ( in != NULL ) ? nsp_object_copy(in) : NULL;
 }
 
+/**
+ * mxSetName:
+ * @array_ptr: 
+ * @var_name: 
+ * 
+ * 
+ **/
 void mxSetName(mxArray *array_ptr,const char *var_name)
 {
   nsp_object_set_name(array_ptr,var_name);
 }
 
+/**
+ * mexPutArray:
+ * @array_ptr: 
+ * @workspace: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int mexPutArray( mxArray *array_ptr,const char *workspace)
 {
   if ( Ocheckname(array_ptr,NVOID) ) return FAIL;
@@ -778,6 +1198,14 @@ int mexPutArray( mxArray *array_ptr,const char *workspace)
 }
 
 
+/**
+ * mexEvalString:
+ * @command: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int mexEvalString(char *command)
 {
   int display=FALSE,echo =FALSE,errcatch=TRUE,pausecatch=TRUE;
@@ -787,6 +1215,14 @@ int mexEvalString(char *command)
     return 0;
 }
 
+/**
+ * mxGetNzmax:
+ * @array_ptr: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int mxGetNzmax( mxArray *array_ptr)
 {
   NspSpMatrix *A=(NspSpMatrix *) array_ptr;
@@ -804,6 +1240,15 @@ int mxGetNzmax( mxArray *array_ptr)
 }
 
 
+/**
+ * mxSetNzmax:
+ * @array_ptr: 
+ * @n: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 int mxSetNzmax(mxArray *array_ptr,int n)
 {
   NspSpMatrix *A=(NspSpMatrix *) array_ptr;
