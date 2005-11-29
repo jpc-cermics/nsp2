@@ -103,7 +103,7 @@ extern NspMatrix  *matrix_object(NspObject *O);
 extern int nsp_mat_fullcomp();
 extern NspMatrix *matrix_object(NspObject *O); 
 extern int IsMatObj (Stack stack, int i); 
-extern int IsMat (NspObject *O); 
+extern int IsMat (const NspObject *O); 
 
 extern NspMatrix *GetMatCopyInt (Stack stack, int i); 
 extern NspMatrix *GetMatInt (Stack stack, int i); 

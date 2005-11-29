@@ -105,8 +105,7 @@ extern void mxDestroyArray(mxArray *array_ptr);
 extern mxArray *mxCreateCellArray(int ndim, const int *dims);
 extern int mxCalcSingleSubscript(const mxArray *array_ptr, int nsubs,const int *subs);extern const char * mxGetName(const mxArray *ptr) ;
 
-extern int mexPutVariable(const char *workspace, const char *var_name, 
-			  const mxArray *array_ptr);
+extern int mexPutVariable(const char *workspace, const char *var_name,mxArray *array_ptr);
 
 extern mxArray *mxCreateCharMatrixFromStrings(int m, const char **str);
 
@@ -117,11 +116,11 @@ extern int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,const  mxArray *prh
 
 extern mxArray *mxDuplicateArray(const mxArray *in);
 extern void mxSetName(mxArray *array_ptr,const char *var_name);
-extern int mexPutArray(const mxArray *array_ptr,const char *workspace);
-extern int mexEvalString(const char *command);
+extern int mexPutArray( mxArray *array_ptr,const char *workspace);
+extern int mexEvalString( char *command);
 extern int *mxGetDimensions(const mxArray *ptr);
-extern int mxSetNzmax(const mxArray *array_ptr,int n);
-extern int mxGetNzmax(const mxArray *array_ptr);
+extern int mxSetNzmax( mxArray *array_ptr,int n);
+extern int mxGetNzmax( mxArray *array_ptr);
 
 
 

@@ -79,7 +79,7 @@ extern void nsp_hash_print(NspHash *H, int indent);
 
 extern NspHash *nsp_hash_object (NspObject *O); 
 extern int IsHashObj (Stack stack, int i); 
-extern int IsHash(NspObject *O);
+extern int IsHash(const NspObject *O);
 extern NspHash *GetHashCopy (Stack stack, int i); 
 extern NspHash *GetHash (Stack stack, int i); 
 

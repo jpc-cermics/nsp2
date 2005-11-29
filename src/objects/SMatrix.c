@@ -1376,7 +1376,7 @@ NspSMatrix*nsp_smatrix_row_concat(NspSMatrix *A,nsp_const_string str, int flag)
  * Return value: a string or NULL
  **/
 
-nsp_string nsp_smatrix_elts_concat(NspSMatrix *A,nsp_const_string rstr, int rflag,
+nsp_string nsp_smatrix_elts_concat(const NspSMatrix *A,nsp_const_string rstr, int rflag,
 				   nsp_const_string cstr, int cflag)
 {
   int i,j,k,lentot=0, len, lsc=0, lsr=0;

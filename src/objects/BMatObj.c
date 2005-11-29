@@ -292,7 +292,7 @@ int IsBMatObj(Stack stack, int i)
   return nsp_object_type(NthObj(i) , nsp_type_bmatrix_id);
 }
 
-int IsBMat(NspObject *O)
+int IsBMat(const NspObject *O)
 {
   return nsp_object_type(O , nsp_type_bmatrix_id);
 }

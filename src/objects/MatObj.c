@@ -391,7 +391,7 @@ IsMatObj (Stack stack, int i)
  */
 
 int
-IsMat (NspObject * O)
+IsMat (const NspObject * O)
 {
   return nsp_object_type (O, nsp_type_matrix_id);
 }

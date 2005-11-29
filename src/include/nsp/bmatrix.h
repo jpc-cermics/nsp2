@@ -80,7 +80,7 @@ static int bmatrix_is_true(NspBMatrix *M);
 
 extern NspBMatrix *BMatObj (NspObject *O); 
 extern int IsBMatObj (Stack stack, int i); 
-extern int IsBMat(NspObject *O);
+extern int IsBMat(const NspObject *O);
 extern NspBMatrix *GetBMatCopy (Stack stack, int i); 
 extern NspBMatrix *GetBMat (Stack stack, int i); 
 extern int BoolScalar (NspObject *O, Boolean *val); 

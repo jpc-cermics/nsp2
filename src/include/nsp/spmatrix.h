@@ -99,7 +99,7 @@ static int nsp_spmatrix_xdr_save(XDR  *F, NspSpMatrix *M);
 
 extern NspSpMatrix *SpObj (NspObject *O); 
 extern int IsSpMatObj (Stack stack, int i); 
-extern int IsSpMat(NspObject *O);
+extern int IsSpMat(const NspObject *O);
 extern NspSpMatrix *GetSpCopy (Stack stack, int i); 
 extern NspSpMatrix *GetSp (Stack stack, int i); 
 extern NspSpMatrix *GetRealSp(Stack stack, int i);
@@ -107,7 +107,7 @@ extern NspSpMatrix *GetRealSp(Stack stack, int i);
 /* NspSpMatrix.c */
 
 extern void nsp_spmatrix_destroy(NspSpMatrix *Mat); 
-extern int nsp_spmatrix_nnz(NspSpMatrix *HMat);
+extern int nsp_spmatrix_nnz(const NspSpMatrix *HMat);
 extern void nsp_spmatrix_info(NspSpMatrix *Sp, int indent); 
 extern void nsp_spmatrix_print(NspSpMatrix *Sp, int indent); 
 extern NspSpMatrix *nsp_spmatrix_copy(NspSpMatrix *A); 
@@ -151,7 +151,7 @@ extern NspSpMatrix   *nsp_spmatrix_object(NspObject *O);
  extern int CountNonNull (NspMatrix *A); 
  extern NspSpMatrix *nsp_spmatrix_from_mat(NspMatrix *A); 
  extern NspMatrix *nsp_spmatrix_to_mat(NspSpMatrix *Sp); 
- extern NspSpMatrix *nsp_spmatrix_transpose(NspSpMatrix *A); 
+extern NspSpMatrix *nsp_spmatrix_transpose(const NspSpMatrix *A); 
  extern double plus (double x, double y, double xi, double yi, double *ival, char type); 
  extern NspSpMatrix *nsp_spmatrix_add(NspSpMatrix *A, NspSpMatrix *B); 
  extern NspSpMatrix *nsp_spmatrix_sub(NspSpMatrix *A, NspSpMatrix *B); 

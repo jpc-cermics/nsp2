@@ -504,7 +504,7 @@ void nsp_spmatrix_destroy(NspSpMatrix *Mat)
  *  (Number of Non Zero elements) of a  Sparse Matrix
  *  (added by Bruno)
  */
-int nsp_spmatrix_nnz(NspSpMatrix *HMat)
+int nsp_spmatrix_nnz(const NspSpMatrix *HMat)
 {
   int i, nnz=0;
   for ( i = 0 ; i < HMat->m ; i++ )
@@ -2247,7 +2247,7 @@ NspMatrix *nsp_spmatrix_to_mat(NspSpMatrix *Sp)
  */
 
 
-NspSpMatrix *nsp_spmatrix_transpose(NspSpMatrix *A)
+NspSpMatrix *nsp_spmatrix_transpose(const NspSpMatrix *A)
 {
   int k,i,j;
   NspSpMatrix *Loc;

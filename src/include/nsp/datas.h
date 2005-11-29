@@ -11,7 +11,7 @@ extern void nsp_frames_info(void);
 extern void nsp_frame_info(void);
 extern void nsp_frames_print(void);
 extern void nsp_frame_print(void);
-extern int nsp_frame_replace_object(NspObject *A);
+extern int nsp_frame_replace_object( NspObject *A);
 extern int nsp_global_frame_replace_object(NspObject *A);
 extern NspObject *nsp_frames_search_object(char *str);
 extern NspObject *nsp_frame_search_object(nsp_const_string  str);

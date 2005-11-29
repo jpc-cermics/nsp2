@@ -19,15 +19,15 @@
   
 #include "nsp/object.h"
 
-static int nsp_sparse_fill_zi_triplet(NspSpMatrix *M);
-static void nsp_sparse_free_triplet(NspSpMatrix *M);
-static int nsp_sparse_set_triplet_from_m_internal(NspSpMatrix *M,int flag);
-static int nsp_sparse_update_from_triplet_internal(NspSpMatrix *M);
-static int nsp_sparse_alloc_triplet(NspSpMatrix *M,int nzmax);
+static int nsp_sparse_fill_zi_triplet(const NspSpMatrix *M);
+static void nsp_sparse_free_triplet( NspSpMatrix *M);
+static int nsp_sparse_set_triplet_from_m_internal( NspSpMatrix *M,int flag);
+static int nsp_sparse_update_from_triplet_internal( NspSpMatrix *M);
+static int nsp_sparse_alloc_triplet( NspSpMatrix *M,int nzmax);
 
 /* tricky version to get a column triplet */
 
-int nsp_sparse_set_triplet_from_m(NspSpMatrix *M,int flag)
+int nsp_sparse_set_triplet_from_m( NspSpMatrix *M,int flag)
 {
   NspSpMatrix *Mt = nsp_spmatrix_transpose(M);
   if ( Mt == NULL) return FAIL;
@@ -43,7 +43,7 @@ int nsp_sparse_set_triplet_from_m(NspSpMatrix *M,int flag)
 
 /* tricky version to update from  a column triplet */
 
-int nsp_sparse_update_from_triplet(NspSpMatrix *M)
+int nsp_sparse_update_from_triplet( NspSpMatrix *M)
 {
   int i,nn;
   NspSpMatrix *Mt;
@@ -92,7 +92,7 @@ int nsp_sparse_alloc_col_triplet(NspSpMatrix *M,int nzmax)
   return OK;
 }
 
-int nsp_sparse_realloc_col_triplet(NspSpMatrix *M,int nzmax)
+int nsp_sparse_realloc_col_triplet( NspSpMatrix *M,int nzmax)
 {
   int cp = (M->rc_type=='c' ? 2: 1);
   if ( M->convert != 't' ) 
@@ -113,7 +113,7 @@ int nsp_sparse_realloc_col_triplet(NspSpMatrix *M,int nzmax)
 }
 
 
-static int nsp_sparse_set_triplet_from_m_internal(NspSpMatrix *M,int flag)
+static int nsp_sparse_set_triplet_from_m_internal( NspSpMatrix *M,int flag)
 {
   int nnz = nsp_spmatrix_nnz(M);
   if ( M->convert == 't' ) return OK;
@@ -130,7 +130,7 @@ static int nsp_sparse_set_triplet_from_m_internal(NspSpMatrix *M,int flag)
 }
 
 
-static int nsp_sparse_update_from_triplet_internal(NspSpMatrix *M)
+static int nsp_sparse_update_from_triplet_internal( NspSpMatrix *M)
 {
   int i;
   /* use triplet to back change M */
@@ -195,7 +195,7 @@ static int nsp_sparse_update_from_triplet_internal(NspSpMatrix *M)
  * here the triplet has been allocated !
  */
 
-static int nsp_sparse_fill_zi_triplet(NspSpMatrix *M)
+static int nsp_sparse_fill_zi_triplet(const NspSpMatrix *M)
 {
   int i, *loc;
   /* fill the array Ap */

@@ -237,7 +237,7 @@ void nsp_frame_print(void)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_frame_replace_object(NspObject *A)
+int nsp_frame_replace_object( NspObject *A)
 {
   if (  A == NULLOBJ ) return(OK);
   if (  Datas == NULLLIST ) 

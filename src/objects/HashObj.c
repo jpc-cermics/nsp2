@@ -368,7 +368,7 @@ int IsHashObj(Stack stack, int i)
   return nsp_object_type(NthObj(i) , nsp_type_hash_id);
 }
 
-int IsHash(NspObject *O)
+int IsHash(const NspObject *O)
 {
   return nsp_object_type(O,nsp_type_hash_id);
 }

@@ -347,12 +347,12 @@ int IsSMatObj(Stack stack, int i)
  * or a Hobj which points to an object of type SMatrix
  */
 
-int IsSMat(NspObject *O)
+int IsSMat(const NspObject *O)
 {
   return nsp_object_type(O , nsp_type_smatrix_id);
 }
 
-int IsString(NspObject *O)
+int IsString(const NspObject *O)
 {
   /* Follow pointer **/
   HOBJ_GET_OBJECT(O,FALSE);

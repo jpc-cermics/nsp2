@@ -74,7 +74,7 @@ void nsp_void_object_destroy(NspObject **O)
  * Return value: a new #NspObject or %NULLOBJ
  **/
 
-NspObject *nsp_object_copy(NspObject *O)
+NspObject *nsp_object_copy(const NspObject *O)
 {
   return O->type->copy(O);
 }
@@ -91,7 +91,7 @@ NspObject *nsp_object_copy(NspObject *O)
  * Return value: an integer 
  **/
 
-int nsp_object_get_size(NspObject *O, int j)
+int nsp_object_get_size(const NspObject *O, int j)
 {
   return O->type->size(O,j);
 }
@@ -606,7 +606,7 @@ NspObject *nsp_create_boolean_object(char *str,int val)
  * Return value: 
  **/
 
-char *nsp_object_get_name(NspObject *O)
+char *nsp_object_get_name(const NspObject *O)
 {
   return NSP_OBJECT(O)->name ;
 }
@@ -622,7 +622,7 @@ char *nsp_object_get_name(NspObject *O)
  * Return value: 
  **/
 
-int nsp_object_set_name(NspObject *O, char *str)
+int nsp_object_set_name(NspObject *O,const char *str)
 {
   char *loc;
   if ((loc = O->type->set_name(O,str))== NULL) return FAIL;

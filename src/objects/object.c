@@ -34,7 +34,7 @@
 /* FIXME: to be moved in object.h private zone */
 static int object_size(NspObject *self, int flag);
 static char *get_name(NspObject *ob) ;
-static char *set_name(NspObject *ob, char *name);
+static char *set_name(NspObject *ob,const char *name);
 static int object_is_true_def(NspObject *ob);
 static NspObject *object_loop_def(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 static int init_object(NspObject *ob,NspTypeObject *type);
@@ -245,7 +245,7 @@ static char *object_type_short_string(void)
  * Return value: returns a pointer to the name or %NULLSTRING.
  **/
 
-static char *set_name(NspObject *ob, char *name)
+static char *set_name(NspObject *ob,const char *name)
 {
   char *name1 =new_nsp_string(name);
   if ( name1 == NULLSTRING) return NULLSTRING;

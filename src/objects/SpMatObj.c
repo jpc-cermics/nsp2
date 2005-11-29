@@ -269,7 +269,7 @@ int IsSpMatObj(Stack stack, int i)
  * or a Hobj which points to an object of type SpMatrix
  */
 
-int IsSpMat(NspObject *O)
+int IsSpMat(const NspObject *O)
 {
   return nsp_object_type(O , nsp_type_spmatrix_id);
 }

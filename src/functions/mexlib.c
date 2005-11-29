@@ -40,7 +40,7 @@ static void nsp_mex_errjump();
 #include "nsp/parse.h"
 
 /* some nsp function are to be updated for const */
-#define const 
+
 #define MEXLIB 
 #include "nsp/mex.h"
 
@@ -730,8 +730,7 @@ const char * mxGetName(const mxArray *ptr)
   return nsp_object_get_name(ptr);
 }
 
-int mexPutVariable(const char *workspace, const char *var_name, 
-		   const mxArray *array_ptr)
+int mexPutVariable(const char *workspace, const char *var_name, mxArray *array_ptr)
 {
   if (nsp_object_set_name(array_ptr,var_name) == FAIL) return FAIL;
   return  mexPutArray(array_ptr,workspace);
@@ -755,7 +754,7 @@ void mxSetName(mxArray *array_ptr,const char *var_name)
   nsp_object_set_name(array_ptr,var_name);
 }
 
-int mexPutArray(const mxArray *array_ptr,const char *workspace)
+int mexPutArray( mxArray *array_ptr,const char *workspace)
 {
   if ( Ocheckname(array_ptr,NVOID) ) return FAIL;
   if ( strcmp(workspace,"global")==0) 
@@ -779,7 +778,7 @@ int mexPutArray(const mxArray *array_ptr,const char *workspace)
 }
 
 
-int mexEvalString(const char *command)
+int mexEvalString(char *command)
 {
   int display=FALSE,echo =FALSE,errcatch=TRUE,pausecatch=TRUE;
   if ( nsp_parse_eval_from_string(command,display,echo,errcatch,pausecatch) < 0) 
@@ -788,9 +787,9 @@ int mexEvalString(const char *command)
     return 0;
 }
 
-int mxGetNzmax(const mxArray *array_ptr)
+int mxGetNzmax( mxArray *array_ptr)
 {
-  const NspSpMatrix *A=(const NspSpMatrix *) array_ptr;
+  NspSpMatrix *A=(NspSpMatrix *) array_ptr;
   if ( array_ptr == NULL)
     {
       Scierror("Error: mxGetNzmax on a non allocated ptr\n");
@@ -805,9 +804,9 @@ int mxGetNzmax(const mxArray *array_ptr)
 }
 
 
-int mxSetNzmax(const mxArray *array_ptr,int n)
+int mxSetNzmax(mxArray *array_ptr,int n)
 {
-  const NspSpMatrix *A=(const NspSpMatrix *) array_ptr;
+  NspSpMatrix *A=(NspSpMatrix *) array_ptr;
   if ( array_ptr == NULL)
     {
       Scierror("Error: mxGetNzmax on a non allocated ptr\n");
