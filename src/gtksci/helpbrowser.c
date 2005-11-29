@@ -441,7 +441,7 @@ request_url (HtmlDocument *doc,
              eek_png_tag,
              _("Could not locate help documentation"),
              name,
-             _("The requested document could not be found in your GIMP help "
+             _("The requested document could not be found in your Nsp help "
                "path as shown above. This means that the topic has not yet "
                "been written or your installation is not complete. Ensure "
                "that your installation is complete before reporting this "
