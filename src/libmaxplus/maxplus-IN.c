@@ -341,7 +341,7 @@ static int int_maxp_solve2(Stack stack, int rhs, int opt, int lhs)
   if ((B = GetRealMatCopy(stack,2)) == NULLMAT)  return RET_BUG;
   if ((GetScalarDouble(stack,3,&precision)) == FAIL)  return RET_BUG;
 
-  q=solve2(A->R,A->m,A->n,B->R,&S,precision);
+  q=maxp_solve2(A->R,A->m,A->n,B->R,&S,precision);
   if ((Res = nsp_matrix_create(NVOID,'r',A->n,q)) == NULLMAT) return RET_BUG;
   for (i=0; i< Res->mn; i++) Res->R[i]= S[i];
   MoveObj(stack,1,(NspObject *) Res);
@@ -365,7 +365,7 @@ static int int_maxp_solve3(Stack stack, int rhs, int opt, int lhs)
   if ((B = GetRealMatCopy(stack,2)) == NULLMAT)  return RET_BUG;
   if ((GetScalarDouble(stack,3,&precision)) == FAIL)  return RET_BUG;
 
-  q=solve3(A->R,A->m,A->n,B->R,&S,precision);
+  q=maxp_solve3(A->R,A->m,A->n,B->R,&S,precision);
   if ((Res = nsp_matrix_create(NVOID,'r',A->n,q)) == NULLMAT) return RET_BUG;
   for (i=0; i< Res->mn; i++) Res->R[i]= S[i];
   MoveObj(stack,1,(NspObject *) Res);

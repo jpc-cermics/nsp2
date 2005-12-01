@@ -21,8 +21,8 @@ extern void weakbasis2 (double *A,int n,int p, double **B, int *q, double precis
 extern int include_span (double *A,int n, int p, double *B, int q, double precision);
 extern void product (double *A, int n, int p, double *B, int q, double *C);
 extern void rowbasis (double *A,int n,double *B,double **U, int *q, double precision);
-extern int solve2 (double *A, int n, int p, double *B,double **U,double precision);
-extern int solve3 (double *A, int n, int p, double *B,double **U,double precision);
+extern int maxp_solve2 (double *A, int n, int p, double *B,double **U,double precision);
+extern int maxp_solve3 (double *A, int n, int p, double *B,double **U,double precision);
 extern int FordBellman (int *ij, double *A,int nnodes,int narcs,int entry, double *u,int *policy, int *niterations);
 extern void matrix_plus (double *B, int n, double *C);
 extern void matrix_star (double *B, int n, double *C);

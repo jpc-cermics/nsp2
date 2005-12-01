@@ -632,7 +632,7 @@ void product_line(int i, double *A, int n, int p, double *B, int q, double *C)
 
 /* returns the number of solutions */
 /* solve is numerically unstable it should not be used */
-int solve(double *A, int n, int p, double *B, double *C, int r, double **U,double precision)
+int maxp_solve(double *A, int n, int p, double *B, double *C, int r, double **U,double precision)
 { int q,i,j;
  double *a,*b, *aa, *bb,*AA,*BB,*UU;
  double **V,**UUU;
@@ -694,7 +694,7 @@ int solve(double *A, int n, int p, double *B, double *C, int r, double **U,doubl
  printf("calling solve with\n");
  print_matrix(AA,n-1,p);
  print_matrix(BB,n-1,p);
- q=solve(AA,n-1,p,BB,*UUU,q,U,precision);
+ q=maxp_solve(AA,n-1,p,BB,*UUU,q,U,precision);
  free(BB);
  free(AA);
  free(UU);
@@ -702,7 +702,7 @@ int solve(double *A, int n, int p, double *B, double *C, int r, double **U,doubl
  return(q);
 }
 
-int solve2(double *A, int n, int p, double *B, double **SOLUTIONS, double precision)
+int maxp_solve2(double *A, int n, int p, double *B, double **SOLUTIONS, double precision)
 { int q,qnew,i;
  double *a,*b,*UU,*U;
  double **V,**Z;
@@ -758,7 +758,7 @@ double norm(double *U, int n, int p)
   return(abs(m));
 }
 
-int solve3(double *A, int n, int p, double *B, double **SOLUTIONS, double precision)
+int maxp_solve3(double *A, int n, int p, double *B, double **SOLUTIONS, double precision)
 { int q,qnew,i;
  double *a,*b,*U;
  double **Z;
