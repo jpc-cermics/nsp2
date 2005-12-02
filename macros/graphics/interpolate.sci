@@ -10,7 +10,7 @@ function val=interpolate(x,xref,yref)
   end
   if x == [] then, val = [], return, end
 
-  I=dsearch(x,xref);
+  I=bsearch(x,xref);
   if find(I==0)<>[] then 
     error('lin_interpolation: first argument is outside the range of xref');
     return;
