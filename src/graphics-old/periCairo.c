@@ -61,10 +61,26 @@
 #define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
    {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
 
+
+#define GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,str)				\
+  if ((cairo = gtk_cairo_get_cairo(gtkcairo))==NULL)			\
+    {									\
+      fprintf (stderr, "gtk_cairo_get_cairo_failed in %s\n",str);	\
+      return;								\
+    } 
+
+#define GTK_CAIRO_GET_CAIRO_RET(cairo,gtkcairo,str,val)			\
+  if ((cairo = gtk_cairo_get_cairo(gtkcairo))==NULL)			\
+    {									\
+      fprintf (stderr, "gtk_cairo_get_cairo_failed in %s\n",str);	\
+      return val;							\
+    } 
+
+
 /* Global variables to deal with X11 **/
 
 static unsigned long maxcol; /* FIXME XXXXX : à revoir */
-static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
+static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 static void nsp_gtk_invalidate(BCG *Xgc);
 
 /*------------------------------------------------------------------
@@ -77,15 +93,12 @@ static void nsp_gtk_set_color(BCG *Xgc,int col);
 static void LoadFonts(void), LoadSymbFonts(void);
 static void loadfamily_n(char *name, int *j);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
-static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1, int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr);
+static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin,int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr, int change_cursor);
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 static void scig_deconnect_handlers(BCG *winxgc);
 static void DrawMark(BCG *Xgc,int *x, int *y);
 
-static void gdk_draw_text_rot(GdkDrawable *drawable, GdkFont *font,  GdkGC *gc,
-			      int x, int y, int maxx, int maxy, const gchar *text,
-			      gint text_length, double angle);
 
 static void force_affichage(BCG *Xgc);
 
@@ -226,13 +239,18 @@ static void xend(BCG *Xgc)
 
 static void clearwindow(BCG *Xgc)
 {
+  cairo_t *cairo;
+  GtkCairo *gtkcairo;
   /* we use the private->stdgc graphic context */
   DRAW_CHECK;
-  /* XXX
-     gdk_gc_set_foreground(Xgc->private->stdgc, &Xgc->private->gcol_bg);
-     gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->stdgc, TRUE, 0, 0,
-     Xgc->CWindowWidth, Xgc->CWindowHeight);
-  */
+  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_clearwindow");
+  cairo_set_source_rgb(cairo,
+		       Xgc->private->gcol_bg.red/655535.0,
+		       Xgc->private->gcol_bg.green/655535.0,
+		       Xgc->private->gcol_bg.blue/655535.0);
+  cairo_rectangle (cairo,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
+  cairo_fill (cairo);
 }
 
 /* generates a pause, in seconds */
@@ -749,7 +767,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	  Xgc->CWindowHeight = y;
 	  Xgc->private->resize = 1;/* be sure to put this */
 	  /* FIXME: NULL to be changed */
-	  expose_event( Xgc->private->drawing,NULL, Xgc);
+	  cairo_expose_event( Xgc->private->drawing,NULL, Xgc);
 	}
     }
   gdk_flush();
@@ -878,7 +896,7 @@ static void xset_clip(BCG *Xgc,int x[])
   for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
   DRAW_CHECK;
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  cairo = gtk_cairo_get_cairo (gtkcairo);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_clip");
   cairo_new_path (cairo);
   cairo_move_to (cairo, x[0],x[1]);
   cairo_rel_line_to (cairo, x[2],0.0);
@@ -903,7 +921,7 @@ static void xset_unclip(BCG *Xgc)
   Xgc->ClipRegionSet = 0;
   DRAW_CHECK;
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  cairo = gtk_cairo_get_cairo (gtkcairo);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_unclip");
   /* 
    * gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
    */
@@ -1217,7 +1235,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  cairo = gtk_cairo_get_cairo (gtkcairo);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_dashstyle");
 
   if ( value == 0) 
     {
@@ -1743,13 +1761,9 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
 	 x, y - idescent , string, strlen(string));
       */
       gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-      cairo = gtk_cairo_get_cairo (gtkcairo);
-      if (cairo_status (cairo)) {
-	fprintf (stderr, "Cairo is unhappy in displaystring: %s\n",
-		 cairo_status_string (cairo));
-      }
-      cairo_select_font (cairo, "sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-      cairo_scale_font (cairo, 20);
+      GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_displaystring");
+      cairo_select_font_face (cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+      cairo_set_font_size(cairo, 20);
       cairo_move_to (cairo, x,y);
       /* cairo_rotate (cairo, M_PI/4); */
       cairo_show_text (cairo, string);
@@ -1812,11 +1826,11 @@ static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle
 
 static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 { 
-  gint lbearing, rbearing, iascent, idescent, iwidth;
-  gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing, &iwidth, &iascent, &idescent);
+  gint lbearing=0, rbearing=0, iascent=0, idescent=0, iwidth=0;
+  /* XXXXXX  gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing, &iwidth, &iascent, &idescent); */
   rect[0]= x ;
   rect[1]= y - iascent - idescent;
-  rect[2]= gdk_string_width(Xgc->private->font, string);
+  rect[2]= 4; /* XXXXXXXXXXXX  gdk_string_width(Xgc->private->font, string); */
   rect[3]= iascent + idescent;
 }
 
@@ -1831,7 +1845,7 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
   DRAW_CHECK;
   /* gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, x1, yy1, x2, y2);*/
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  cairo = gtk_cairo_get_cairo (gtkcairo);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_drawline");
   cairo_move_to(cairo,x1,yy1);
   cairo_line_to(cairo,x2,y2);
   cairo_stroke(cairo);
@@ -1953,7 +1967,7 @@ static void drawrectangle(BCG *Xgc,const int rect[])
   /* gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,rect[0],rect[1],rect[2],rect[3]); */
   /* the same for the cairo part */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  cairo = gtk_cairo_get_cairo (gtkcairo);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_drawrectangle");
   cairo_rectangle (cairo,rect[0],rect[1],rect[2],rect[3]);
   cairo_stroke (cairo);
 }
@@ -1967,7 +1981,7 @@ static void fillrectangle(BCG *Xgc,const int rect[])
   DRAW_CHECK;
   /* gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]); */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  cairo = gtk_cairo_get_cairo (gtkcairo);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_fillrectangle");
   cairo_rectangle (cairo,rect[0],rect[1],rect[2],rect[3]);
   cairo_fill (cairo);
   
@@ -2170,6 +2184,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 { 
   GtkCairo *gtkcairo;
   cairo_t *cairo;
+  cairo_status_t status;
   int n1,i;
   DRAW_CHECK;
   if (closeflag == 1) n1 =n+1;else n1= n;
@@ -2186,17 +2201,18 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 	 }
       */
       gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-      cairo = gtk_cairo_get_cairo (gtkcairo);
+      GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_drawpolyline");
       cairo_new_path(cairo);
       cairo_move_to(cairo, vx[0],vy[0]);
       for ( i = 1 ; i < n ; i++ ) 
 	cairo_line_to(cairo,vx[i],vy[i]);
       if ( closeflag == 1) cairo_line_to(cairo,vx[0],vy[0]);
       cairo_stroke (cairo);
-      if (cairo_status (cairo)) {
-	fprintf (stderr, "Cairo is unhappy in drawpolyline: %s\n",
-		 cairo_status_string (cairo));
-      }
+      if ((status=cairo_status (cairo)) != CAIRO_STATUS_SUCCESS) 
+	{
+	  fprintf (stderr, "Cairo is unhappy in drawpolyline: %s\n",
+		   cairo_status_to_string(status));
+	}
     }
 }
 
@@ -2207,6 +2223,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 
 static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag) 
 {
+  cairo_status_t status;
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   int n1,i;
@@ -2226,17 +2243,18 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
      }
   */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  cairo = gtk_cairo_get_cairo (gtkcairo);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_fillpolyline");
   cairo_new_path(cairo); 
   cairo_move_to(cairo, vx[0],vy[0]);
   for ( i = 1 ; i < n ; i++ ) 
     cairo_line_to(cairo,vx[i],vy[i]);
   if ( closeflag == 1) cairo_line_to(cairo,vx[0],vy[0]);
   cairo_fill(cairo);
-  if (cairo_status (cairo)) {
-    fprintf (stderr, "Cairo is unhappy in fillpolyline : %s\n",
-	     cairo_status_string (cairo));
-  }
+  if ((status=cairo_status (cairo)) != CAIRO_STATUS_SUCCESS) 
+    {
+      fprintf (stderr, "Cairo is unhappy in fillpolyline : %s\n",
+	       cairo_status_to_string(status));
+    }
 }
 
 /* 
@@ -2351,8 +2369,8 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
   if (Xgc->private->colors  == NULL) return;
 
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  cairo = gtk_cairo_get_cairo (gtkcairo);
-  cairo_set_rgb_color (cairo,Xgc->private->colors[col].red/((double) 0xffff),
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"nsp_gtk_set_color");
+  cairo_set_source_rgb(cairo,Xgc->private->colors[col].red/((double) 0xffff),
 		       Xgc->private->colors[col].green/((double) 0xffff),
 		       Xgc->private->colors[col].blue/((double) 0xffff));
   /* 
@@ -2899,7 +2917,8 @@ static void LoadSymbFonts(void)
      FontsList_[i]->per_char[(char)0xyy-n1]
      
   */
-  /** if symbol font was not found me must stop **/
+  /* if symbol font was not found me must stop 
+   */
   if (strcmp(FontInfoTab_[1].fname,fonttab[1].name) != 0) return;
   for (i =0 ; i < FONTMAXSIZE ; i++)
     {    
@@ -2907,11 +2926,13 @@ static void LoadSymbFonts(void)
 	{
 	  for (j=0 ; j < SYMBOLNUMBER ; j++)
 	    { 
-	      gint lbearing, rbearing, iascent, idescent, iwidth;
+	      gint lbearing=0, rbearing=0, iascent=0, idescent=0, iwidth=0;
 	      gchar tmp[2] = { (gchar) Marks[j],0};
-	      gdk_string_extents(FontsList_[1][i], tmp,
-				 &lbearing, &rbearing,
-				 &iwidth, &iascent, &idescent);
+	      /* XXXXX 
+		 gdk_string_extents(FontsList_[1][i], tmp,
+		 &lbearing, &rbearing,
+		 &iwidth, &iascent, &idescent);
+	      */
 	      (ListOffset_[i].xoffset)[j] = (rbearing+lbearing)/2;/* ou iwidth/2 ? */
 	      (ListOffset_[i].yoffset)[j] = (iascent+idescent)/2;
 	    }
@@ -2946,9 +2967,9 @@ static void DrawMark(BCG *Xgc,int *x, int *y)
      *x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
      */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  cairo = gtk_cairo_get_cairo (gtkcairo);
-  cairo_select_font (cairo, "sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-  cairo_scale_font (cairo, 5);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_DrawMark");
+  cairo_select_font_face (cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+  cairo_set_font_size (cairo, 5);
   cairo_move_to (cairo, *x,*y);
   cairo_show_text (cairo, "X");
 }
@@ -3015,8 +3036,13 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE); 
-  g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-  
+  g_return_val_if_fail(GTK_IS_CAIRO(dd->private->drawing), FALSE);
+  /* we create our own cairo surface 
+   * note that it should change when the window is resized 
+   * we must also remove double buffering when working that way 
+   */
+  gtk_cairo_set_x11_cr(dd->private->drawing,600,400);
+
   /* create gc */
   dd->private->stdgc = gdk_gc_new(dd->private->drawing->window);
   gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
@@ -3026,7 +3052,6 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
   gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
   gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
-
   /* set the cursor */
   dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
   dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
@@ -3055,7 +3080,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
   BCG *dd = (BCG *) data;
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
-  g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
+  g_return_val_if_fail(GTK_IS_CAIRO(dd->private->drawing), FALSE);
 
   /* check for resize */
   if(GTK_WIDGET_REALIZED(dd->private->drawing))
@@ -3081,23 +3106,14 @@ static void nsp_gtk_invalidate(BCG *Xgc)
 			     FALSE);
 }
 
-/* 
- * Using cairo expose and not cairo paint 
- * to be able to detect partial redraw 
- * FIXME: when an expose is generated after a partial cover of the window 
- * there's a translate somewhere ..... 
- * which is not good !!!
- */
-
-extern gint gdkcairo_expose (void *self, GdkEventExpose *event);
-
 
 static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
+  cairo_status_t status;
   BCG *dd = (BCG *) data;
   GtkCairo *gtkcairo;
   cairo_t *cr;
-  gint width , height; /*  box_size, box_overlap; */
+  gint width , height;
 
   g_return_val_if_fail (widget != NULL, FALSE);
   g_return_val_if_fail (GTK_IS_CAIRO (widget), FALSE);
@@ -3106,10 +3122,11 @@ static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointe
   if( ! GTK_WIDGET_REALIZED(dd->private->drawing)) return FALSE;
 
   gtkcairo = GTK_CAIRO (widget);
-  cr = gtk_cairo_get_cairo (gtkcairo);
 
   width = widget->allocation.width;
   height = widget->allocation.height;
+
+  GTK_CAIRO_GET_CAIRO_RET(cr,gtkcairo,"cairo_expose_event",FALSE);
 
   /* configure_event is not activated for cairo */
   if ( dd->CurResizeStatus == 1) 
@@ -3121,28 +3138,24 @@ static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointe
 	  dd->private->resize = 1;
 	}
     }
-  
+  /* I use my own surface created in realize 
+   *  gtk_cairo_set_x11_cr(dd->private->drawing,600,400);
+   */
   /* this is necessary to make cairo works in an expose event */
-  gdkcairo_expose (gtkcairo->gdkcairo, event);
+  /* gdkcairo_expose (gtkcairo->gdkcairo, event); */
   /* gtk_cairo_expose(gtkcairo,event);*/
   /* FIXME: use a pixmap or scig_resize just in case of full redraw */
   dd->private->in_expose= TRUE;
   scig_resize(dd->CurWindow);
   dd->private->in_expose= FALSE;
 
-  cairo_save (cr);
-  cairo_move_to (cr, 10, 10);
-  cairo_rotate (cr, M_PI/4);
-  cairo_show_text (cr, "Hello cairo/Gtk+ world!");
-  cairo_restore(cr);
-  if (cairo_status (cr)) {
-    fprintf (stderr, "Cairo is unhappy: %s\n", cairo_status_string (cr));
-  }
-  return FALSE;
+  GTK_CAIRO_GET_CAIRO_RET(cr,gtkcairo,"cairo_expose_event after draw",FALSE);
+  
+  return TRUE; /* prevent the standard expose for gtkcairo */
 }
 
 
-static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+static gint unused_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
   g_return_val_if_fail(dd != NULL, FALSE);
@@ -3198,7 +3211,7 @@ static void scig_deconnect_handlers(BCG *winxgc)
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
 					  (GtkSignalFunc) configure_event, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) expose_event, (gpointer) winxgc);
+					  (GtkSignalFunc) cairo_expose_event, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
 					  (GtkSignalFunc)  sci_destroy_window, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func (GTK_OBJECT (winxgc->private->window),
@@ -3218,7 +3231,13 @@ static void scig_deconnect_handlers(BCG *winxgc)
  * partial or full creation of a graphic nsp widget 
  * if is_top == FALSE a partial widget (vbox) is created 
  *---------------------------------------------------------------*/
+  
 
+/* rajouté par moi dans gtkcairo (qui est un paquet un peu obsolete)
+ * gint gtk_cairo_set_x11_cr(GtkCairo *gtkcairo,gint width,gint height)
+ * XXXX : il faut appeler cette fonction chaque fois qu'on change la taille 
+ * j'utilise cette fonction car je n'utilise pas la methode paint.
+ */
 
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
@@ -3314,7 +3333,14 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /*
    * drawing is here a cairo_drawing 
    */
+
   dd->private->cairo_drawing = gtk_cairo_new (); 
+  /* XXX removing default Double buffering 
+   * since during expose we draw on our own surface 
+   * which is attached to the graphic window. 
+   */
+  gtk_widget_set_double_buffered (dd->private->cairo_drawing ,FALSE);
+
   dd->private->drawing =   dd->private->cairo_drawing ;
   gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400);
 
@@ -3399,6 +3425,5 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* let other widgets use the default colour settings */
   gtk_widget_pop_visual();
   gtk_widget_pop_colormap();
-  
 }
 
