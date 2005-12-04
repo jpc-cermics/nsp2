@@ -246,9 +246,9 @@ static void clearwindow(BCG *Xgc)
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_clearwindow");
   cairo_set_source_rgb(cairo,
-		       Xgc->private->gcol_bg.red/655535.0,
-		       Xgc->private->gcol_bg.green/655535.0,
-		       Xgc->private->gcol_bg.blue/655535.0);
+		       Xgc->private->gcol_bg.red/65535.0,
+		       Xgc->private->gcol_bg.green/65535.0,
+		       Xgc->private->gcol_bg.blue/65535.0);
   cairo_rectangle (cairo,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
   cairo_fill (cairo);
 }
@@ -620,30 +620,36 @@ static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
 }
   
 
-
-/*******************************************************
+/*
  * clear a rectangle zone 
- *******************************************************/
+ */
 
 static void cleararea(BCG *Xgc, int x, int y, int w, int h)
 {
+  GtkCairo *gtkcairo;
+  cairo_t *cairo;
   int clipflag = 0;
   /* switch to a clear gc */
   int cur_alu = Xgc->CurDrawFunction;
   int clear = 0 ; /* 0 is the Xclear alufunction */;
   DRAW_CHECK;
-
+  /* unset clip and set drawing mode to clear */
   if ( cur_alu != clear ) xset_alufunction1(Xgc,clear);
   if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
     {
       static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
       gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
     }
-  /* XXXX 
-     gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,x,y,w,h);
-  */
-  if ( cur_alu != clear )
-    xset_alufunction1(Xgc,cur_alu);   /* back to current value */ 
+  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_clearwindow");
+  cairo_set_source_rgb(cairo,
+		       Xgc->private->gcol_bg.red/65535.0,
+		       Xgc->private->gcol_bg.green/65535.0,
+		       Xgc->private->gcol_bg.blue/65535.0);
+  cairo_rectangle (cairo,x,y,w,h);
+  cairo_fill (cairo);
+  /* back to current value */ 
+  if ( cur_alu != clear )    xset_alufunction1(Xgc,cur_alu); 
   if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
     {
       /* restore clip */
@@ -892,9 +898,10 @@ static void xset_clip(BCG *Xgc,int x[])
   cairo_t *cairo;
   int i;
   /* clip_rect ={x[0],x[1],x[2],x[3]}= {x,y,w,h} */
+  DRAW_CHECK;
+  /* 
   Xgc->ClipRegionSet = 1;
   for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
-  DRAW_CHECK;
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_clip");
   cairo_new_path (cairo);
@@ -905,6 +912,7 @@ static void xset_clip(BCG *Xgc,int x[])
   cairo_rel_line_to (cairo, 0.0, x[3]);
   cairo_close_path (cairo);
   cairo_clip (cairo);
+  */
   /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
    */
 
@@ -917,16 +925,16 @@ static void xset_unclip(BCG *Xgc)
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   double x[]={0,0,int16max,  int16max};
+  DRAW_CHECK;
   if ( Xgc->ClipRegionSet == 0 ) return;
   Xgc->ClipRegionSet = 0;
-  DRAW_CHECK;
+  return;/* XXXX*/
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_unclip");
   /* 
-   * gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+   * XXXX how to remove a clip region ? FIXME 
+   * cairo_init_clip(cairo);  
    */
-  /* how to remove a clip region ? FIXME */
-  /* cairo_init_clip(cairo);  */
   cairo_move_to (cairo, x[0],x[1]);
   cairo_rel_line_to (cairo, x[2],0.0);
   cairo_rel_line_to (cairo, 0.0, - x[3]);
@@ -1036,6 +1044,7 @@ static void xset_alufunction1(BCG *Xgc,int num)
   GdkColor temp = {0,0,0,0};
   Xgc->CurDrawFunction = Min(15,Max(0,num));
   value = AluStruc_[Xgc->CurDrawFunction].id;
+  /* XXXXXXXXXXXXXXXXXXXXX */ return;
   switch (value) 
     {
     case GDK_CLEAR : 
@@ -1933,8 +1942,8 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
   int i,dash,color;
-  xget_dash_and_color(Xgc,&dash,&color);
   DRAW_CHECK;
+  xget_dash_and_color(Xgc,&dash,&color);
   for (i = 0 ; i < n ; i++)
     {
       if ( fillvect[i] < 0 )
@@ -2344,8 +2353,10 @@ static void delete_window(BCG *dd,int intnum)
   menu_entry_delete(winxgc->private->menu_entries);
   gdk_cursor_unref (winxgc->private->gcursor);
   gdk_cursor_unref (winxgc->private->ccursor);
-  g_object_unref(winxgc->private->stdgc);
-  g_object_unref(winxgc->private->wgc);
+  /* 
+     g_object_unref(winxgc->private->stdgc);
+     g_object_unref(winxgc->private->wgc);
+  */
   g_object_unref(winxgc->private->item_factory);
   FREE(winxgc->private);
   /* remove current window from window list */
@@ -3044,29 +3055,37 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   gtk_cairo_set_x11_cr(dd->private->drawing,600,400);
 
   /* create gc */
-  dd->private->stdgc = gdk_gc_new(dd->private->drawing->window);
-  gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
-  gdk_gc_set_rgb_fg_color(dd->private->stdgc,&white);
+  /* 
+     dd->private->stdgc = gdk_gc_new(dd->private->drawing->window);
+     gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
+     gdk_gc_set_rgb_fg_color(dd->private->stdgc,&white);
+  */
   /* standard gc : for private->pixmap copies */
   /* this gc could be shared by all windows */
-  dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
-  gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
-  gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
+  /* 
+     dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
+     gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
+     gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
+  */
   /* set the cursor */
   dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
   dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
   gdk_window_set_cursor(dd->private->drawing->window, dd->private->ccursor);
   /* set window bg */
-  gdk_window_set_background(dd->private->drawing->window, &dd->private->gcol_bg);
+  dd->private->gcol_bg = white;
+  dd->private->gcol_fg = black;
+  /* gdk_window_set_background(dd->private->drawing->window, &dd->private->gcol_bg); */
 
   if ( dd->private->pixmap == NULL)
     {
-      dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
-					   dd->CWindowWidth, dd->CWindowHeight,
-					   -1);
-      gdk_gc_set_foreground(dd->private->stdgc, &dd->private->gcol_bg);
-      gdk_draw_rectangle(dd->private->pixmap, dd->private->stdgc, TRUE, 0, 0,
-			 dd->CWindowWidth, dd->CWindowHeight);
+      /* XXXXX 
+	 dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
+	 dd->CWindowWidth, dd->CWindowHeight,
+	 -1);
+	 gdk_gc_set_foreground(dd->private->stdgc, &dd->private->gcol_bg);
+	 gdk_draw_rectangle(dd->private->pixmap, dd->private->stdgc, TRUE, 0, 0,
+	 dd->CWindowWidth, dd->CWindowHeight);
+      */
     }
 
   /* default value is to use the background pixmap */
@@ -3126,6 +3145,9 @@ static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointe
   width = widget->allocation.width;
   height = widget->allocation.height;
 
+  /* set a new cairo surface */
+  gtk_cairo_set_x11_cr(dd->private->drawing,width,height);
+
   GTK_CAIRO_GET_CAIRO_RET(cr,gtkcairo,"cairo_expose_event",FALSE);
 
   /* configure_event is not activated for cairo */
@@ -3138,13 +3160,6 @@ static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointe
 	  dd->private->resize = 1;
 	}
     }
-  /* I use my own surface created in realize 
-   *  gtk_cairo_set_x11_cr(dd->private->drawing,600,400);
-   */
-  /* this is necessary to make cairo works in an expose event */
-  /* gdkcairo_expose (gtkcairo->gdkcairo, event); */
-  /* gtk_cairo_expose(gtkcairo,event);*/
-  /* FIXME: use a pixmap or scig_resize just in case of full redraw */
   dd->private->in_expose= TRUE;
   scig_resize(dd->CurWindow);
   dd->private->in_expose= FALSE;
