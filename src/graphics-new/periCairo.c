@@ -1753,99 +1753,69 @@ static void xset_fpf_def(BCG *Xgc)
  * of the string ( we do not separate asc and desc 
  **************************************************/
 
-static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle);
-
 static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
 { 
+  int rect[4];
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   DRAW_CHECK;
+  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_displaystring");
+  cairo_select_font_face (cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+  cairo_set_font_size(cairo, 20);
+
+  if ( flag == 1) boundingbox(Xgc,string, x,y,rect);
+
   if ( Abs(angle) <= 0.1) 
     {
-      /* 
-	 gint lbearing, rbearing, iascent, idescent, iwidth;
-	 gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing,
-	 &iwidth, &iascent, &idescent);
-	 gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-	 x, y - idescent , string, strlen(string));
-      */
-      gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-      GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_displaystring");
-      cairo_select_font_face (cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-      cairo_set_font_size(cairo, 20);
       cairo_move_to (cairo, x,y);
-      /* cairo_rotate (cairo, M_PI/4); */
       cairo_show_text (cairo, string);
-
       if ( flag == 1) 
 	{
-	  /* XXXX 
-	     int rect[] = { x , y- iascent - idescent, 
-	     gdk_string_width(Xgc->private->font, string),
-	     iascent+idescent};
-	     drawrectangle(Xgc,rect);
-
-	  */
+	  cairo_rectangle (cairo,rect[0],rect[1],rect[2],rect[3]);
+	  cairo_stroke (cairo);
 	}
     }
   else 
     {
-      DispStringAngle(Xgc,x,y,string,angle);
-    }
-}
-
-static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle)
-{
-  int i;
-  int x,y, rect[4];
-  double sina ,cosa,l;
-  char str1[2];
-  str1[1]='\0';
-  x= x0;
-  y= yy0;
-  sina= sin(angle * M_PI/180.0);  cosa= cos(angle * M_PI/180.0);
-  for ( i = 0 ; i < (int)strlen(string); i++)
-    { 
-      str1[0]=string[i];
-      /* XDrawString(dpy,Xgc->private->drawable,gc,(int) x,(int) y ,str1,1); */
-      boundingbox(Xgc,str1,x,y,rect);
-      /** drawrectangle(Xgc,string,rect,rect+1,rect+2,rect+3); **/
-      if ( cosa <= 0.0 && i < (int)strlen(string)-1)
-	{ char str2[2];
-	/** si le cosinus est negatif le deplacement est a calculer **/
-	/** sur la boite du caractere suivant **/
-	str2[1]='\0';str2[0]=string[i+1];
-	boundingbox(Xgc,str2,x,y,rect);
-	}
-      if ( Abs(cosa) >= 1.e-8 )
+      double rad_angle = angle * M_PI/180.0;
+      cairo_text_extents_t extents;
+      cairo_save (cairo);
+      cairo_identity_matrix (cairo);
+      cairo_translate (cairo, x,y);
+      cairo_rotate (cairo, rad_angle);
+      cairo_move_to (cairo, 0,0);
+      cairo_show_text (cairo, string);
+      if ( flag == 1) 
 	{
-	  if ( Abs(sina/cosa) <= Abs(((double)rect[3])/((double)rect[2])))
-	    l = Abs(rect[2]/cosa);
-	  else 
-	    l = Abs(rect[3]/sina);
+	  cairo_rectangle (cairo,0,0,rect[2],rect[3]);
+	  cairo_stroke (cairo);
 	}
-      else 
-	l = Abs(rect[3]/sina);
-      x +=  cosa*l*1.1;
-      y +=  sina*l*1.1;
+      cairo_restore (cairo);
     }
 }
 
-/** To get the bounding rectangle of a string **/
+/*
+ * To get the bounding rectangle of a string 
+ */
 
 static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 { 
-  gint lbearing=0, rbearing=0, iascent=0, idescent=0, iwidth=0;
-  /* XXXXXX  gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing, &iwidth, &iascent, &idescent); */
+  cairo_text_extents_t extents;
+  GtkCairo *gtkcairo;
+  cairo_t *cairo;
+  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_displaystring");
+  cairo_text_extents (cairo,string, &extents);
   rect[0]= x ;
-  rect[1]= y - iascent - idescent;
-  rect[2]= 4; /* XXXXXXXXXXXX  gdk_string_width(Xgc->private->font, string); */
-  rect[3]= iascent + idescent;
+  rect[3]= extents.height;
+  rect[1]= y + extents.y_bearing;
+  rect[2]= extents.width +extents.x_bearing ;
 }
 
-/*------------------------------------------------
- * line segments arrows 
- *-------------------------------------------------*/
+/* line 
+ *
+ */ 
 
 static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 {
@@ -1860,10 +1830,11 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
   cairo_stroke(cairo);
 }
 
-/** Draw a set of segments **/
-/** segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) **/
-/** for i=0 step 2 **/
-/** n is the size of vx and vy **/
+/* Draw a set of segments 
+ * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
+ * for i=0 step 2 
+ * n is the size of vx and vy 
+ */
 
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
@@ -1966,29 +1937,26 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
   xset_dash_and_color(Xgc,dash,color);
 }
 
-/** Draw one rectangle with current line style **/
+/* Draw one rectangle with current line style */
 
 static void drawrectangle(BCG *Xgc,const int rect[])
 { 
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   DRAW_CHECK;
-  /* gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,rect[0],rect[1],rect[2],rect[3]); */
-  /* the same for the cairo part */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_drawrectangle");
   cairo_rectangle (cairo,rect[0],rect[1],rect[2],rect[3]);
   cairo_stroke (cairo);
 }
 
-/** fill one rectangle, with current pattern **/
+/* fill one rectangle, with current pattern */
 
 static void fillrectangle(BCG *Xgc,const int rect[])
 { 
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   DRAW_CHECK;
-  /* gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]); */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_fillrectangle");
   cairo_rectangle (cairo,rect[0],rect[1],rect[2],rect[3]);
@@ -2199,16 +2167,6 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   if (closeflag == 1) n1 =n+1;else n1= n;
   if (n1 >= 2) 
     {
-      /* 
-       * analyze_points(*n, vx, vy,*closeflag); 
-       * gdk_flush();
-       */
-      /* 
-	 if ( gtk_store_points(n, vx, vy, closeflag)) 
-	 {
-	 gdk_draw_lines(Xgc->private->drawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
-	 }
-      */
       gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
       GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_drawpolyline");
       cairo_new_path(cairo);
@@ -2238,19 +2196,6 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   int n1,i;
   DRAW_CHECK;
   if (closeflag == 1) n1 = n+1;else n1= n;
-  /* 
-     if (gtk_store_points(*n, vx, vy,*closeflag)){
-     XFillPolygon (dpy, Xgc->private->drawable, gc, get_xpoints(), n1,
-     Complex, Xgc->CurVectorStyle);
-     }
-     gdk_flush();
-  */
-  /* 
-     if ( gtk_store_points(n, vx, vy, closeflag)) 
-     {
-     gdk_draw_polygon(Xgc->private->drawable,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
-     }
-  */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_fillpolyline");
   cairo_new_path(cairo); 
@@ -2885,6 +2830,18 @@ static void queryfamily(char *name, int *j,int *v3)
   *j=FONTNUMBER;
 }
 
+/* 
+   cairo_select_font_face (cr, "Bitstream Vera Sans",
+                            CAIRO_FONT_SLANT_NORMAL,
+                            CAIRO_FONT_WEIGHT_NORMAL);
+
+  CAIRO_FONT_SLANT_NORMAL,
+  CAIRO_FONT_SLANT_ITALIC,
+  CAIRO_FONT_SLANT_OBLIQUE
+  CAIRO_FONT_WEIGHT_NORMAL,
+  CAIRO_FONT_WEIGHT_BOLD
+
+*/
 static void LoadFonts(void)
 {
   int fnum;
@@ -2968,6 +2925,7 @@ static int CurSymbYOffset(BCG *Xgc)
 
 static void DrawMark(BCG *Xgc,int *x, int *y)
 { 
+  cairo_status_t status;
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   DRAW_CHECK;
@@ -2979,10 +2937,17 @@ static void DrawMark(BCG *Xgc,int *x, int *y)
      */
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
   GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_DrawMark");
-  cairo_select_font_face (cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-  cairo_set_font_size (cairo, 5);
+  cairo_select_font_face (cairo, "Sans",
+			  CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+
+  if ((status=cairo_status (cairo)) != CAIRO_STATUS_SUCCESS) 
+    {
+      fprintf (stderr, "Cairo is unhappy in drawpolyline: %s\n",
+	       cairo_status_to_string(status));
+    }
+  cairo_set_font_size (cairo, 10);
   cairo_move_to (cairo, *x,*y);
-  cairo_show_text (cairo, "X");
+  cairo_show_text (cairo, "a");
 }
 
 
