@@ -506,7 +506,7 @@ static void cleararea_1(BCG *Xgc,double x, double y, double w, double h)
   x1 = XDouble2Pixel(x);
   yy1 = YDouble2Pixel(y);
   length_scale_f2i (Xgc,&w,&h,&w1,&h1,1);
-  if (Xgc->record_flag == TRUE) store_cleararea_1(Xgc,x1,yy1,w1,h1);
+  if (Xgc->record_flag == TRUE) store_cleararea_1(Xgc,x,y,w,h);
   Xgc->graphic_engine->cleararea(Xgc,x1,yy1,w1,h1);
 }
 /*-----------------------------------------------------------------------------

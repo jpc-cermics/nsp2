@@ -555,8 +555,7 @@ static void clean_drawaxis_1(void  *theplot) {}
 
 void store_cleararea_1(BCG *Xgc,double x, double y, double w, double h)
 {
-  double vals[4];
-  vals[0]=x;  vals[0]=y;  vals[0]=w;  vals[0]=h;
+  double vals[4]={x,y,w,h};
   store_double4(Xgc,CODEcleararea_1,vals);
 }
 
