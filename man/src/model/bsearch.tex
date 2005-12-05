@@ -1,0 +1,113 @@
+% -*- mode: latex -*-
+
+\mansection{bsearch}
+\begin{mandesc}
+  \short{bsearch}{binary search}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[ind [,occ [,info]]]  = bsearch(X, v ,match=str1, interval=str2)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{X} :  matrix or vector of real numbers or strings.
+    \vname{v} : vector of real numbers or strings in strict
+    increasing order  $v_1 <  v_2 < ... v_n$ with $n \ge 2$ 
+    when  \verb+match="i"+
+    \vname{match=str1} : optional named argument, \verb+match="i"+
+                         (default) for interval matching and
+                         \verb+match="v"+ for exact value matching.
+    \vname{interval=str2} : optional named argument useful only
+                           when  \verb+match="i"+, \verb+interval="[--)"+
+                         (default) or  \verb+interval="(--]"+
+    \vname{ind} : matrix or vector of indices with same dimensions than X.
+    \vname{occ} : vector of same length than v (but with $n-1$ components 
+                  when  \verb+match="i"+)
+    \vname{info} : integer scalar
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function is useful to search in an ordered table and/or to count the number of components
+of a vector or matrix falling in some classes (a class being an interval or a value).
+
+\itemdesc{interval matching case}
+Selected by default or with  \verb+match="i"+, the function searches for each
+X(i) in which of the $n-1$ intervals it falls, the intervals being defined by:
+$$
+   I_1 = [v_1, v_2), \;I_2 = [v_2, v_3),\;...,I_{n-2} = [v_{n-2},
+   v_{n-1}),\; I_{n-1} = [v_{n-1}, v_n] 
+$$
+when \verb+interval="[--)"+ and by :
+$$
+   I_1 = [v_1, v_2], \;I_2 = (v_2, v_3],\;...,I_{n-2} = (v_{n-2},
+   v_{n-1}],\; I_{n-1} = (v_{n-1}, v_n] 
+$$
+when \verb+interval="(--]"+
+\begin{itemize}
+   \item ind(i) is the interval number of X(i) (0 if X(i) is not in [v(1),v(n)])
+   \item occ(k)  is the number of components of X which are in $I_k$
+   \item info is the number of components of X which are not in [v(1),v(n)] 
+\end{itemize}
+
+\itemdesc{exact value matching case}
+Selected with  \verb+match="i"+, in this case, the function searches,
+for each X(i) if it is equal to one v(k) then:
+\begin{itemize}
+   \item ind(i) is equal to the index of the component of v which matches X(i) 
+                   (ind(i) = k if X(i)=v(k)) or 0 if X(i) is not in v.
+   \item occ(k) is the number of components of X equal to v(k)
+   \item info is the number of components of X which are not in the set $\{v_1,...,v_n\}$ 
+\end{itemize}
+
+\end{mandescription}
+
+\begin{examples}
+  
+  example with numbers and interval matching:
+  \begin{program}
+    x=grand(1000,1,"def");
+    v=linspace(0,1,11)';  // 10 intervals 
+    [ind,occ]=bsearch(x,v);
+    xclear()
+    plot2d2(v,[occ;occ(10)],style=2)
+  \end{program}
+  
+  playing with interval type:
+  \begin{program}
+    x = [1, 2, 3, 4]
+    [ind, occ] = bsearch(x,x,interval="[--)")
+    [ind, occ] = bsearch(x,x,interval="(--]")
+  \end{program}
+  
+  an example with strings and exact matching:
+  \begin{program}
+    x = ["toto","est","un","foo"];
+    v = ["ab","baba","bar","foo","toto","un"];
+    [ind, occ,info] = bsearch(x,v,match="v")
+  \end{program}
+  
+  an example with strings and interval matching:
+  \begin{program}
+    m = 5000;
+    x = smat_create(m,1);
+    for i=1:m, x(i) = ascii(grand(1,4,"uin",97,122)); end
+    v = split("a b c d e f g h i j k l m n o p q r s t u v w x y z");
+    [ind, occ,info] = bsearch(x,v,match="i");
+    occ 
+  \end{program}
+  
+\end{examples}
+
+\begin{manseealso}
+  \manlink{unique}{unique}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   Bruno
+\end{authors}
