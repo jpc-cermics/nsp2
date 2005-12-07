@@ -1040,28 +1040,38 @@ static struct alinfo {
 
 static void xset_alufunction1(BCG *Xgc,int num)
 {   
+  GtkCairo *gtkcairo;
+  cairo_t *cairo;
   int value ; 
   GdkColor temp = {0,0,0,0};
   Xgc->CurDrawFunction = Min(15,Max(0,num));
   value = AluStruc_[Xgc->CurDrawFunction].id;
-  /* XXXXXXXXXXXXXXXXXXXXX */ return;
+  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
+  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_dashstyle");
   switch (value) 
     {
     case GDK_CLEAR : 
-      gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,GDK_COPY);
+      /* 
+	 gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_bg);
+	 gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
+	 gdk_gc_set_function(Xgc->private->wgc,GDK_COPY);
+      */
       break;
     case GDK_XOR   : 
-      temp.pixel = Xgc->private->gcol_fg.pixel ^ Xgc->private->gcol_bg.pixel ;
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,GDK_XOR);
+      cairo_set_operator (cairo, CAIRO_OPERATOR_XOR);
+      /* temp.pixel = Xgc->private->gcol_fg.pixel ^ Xgc->private->gcol_bg.pixel ;
+	 gdk_gc_set_foreground(Xgc->private->wgc, &temp);
+	 gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
+	 gdk_gc_set_function(Xgc->private->wgc,GDK_XOR);
+      */
       break;
     default :
-      gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_fg);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,value);
+      cairo_set_operator (cairo, CAIRO_OPERATOR_OVER);
+      /* 
+	 gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_fg);
+	 gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
+	 gdk_gc_set_function(Xgc->private->wgc,value);
+      */
       break;
     }
   if ( value == GDK_XOR  && Xgc->CurColorStatus == 1 )
