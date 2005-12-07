@@ -97,7 +97,7 @@ menu_answer nsp_get_file_window(const char *title,const char *dirname,int action
 	rep = menu_ok;
 	break;
       default:
-	rep = menu_fail;
+	rep = menu_cancel;
 	break;
     }
   gtk_widget_destroy (window);

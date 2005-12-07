@@ -318,7 +318,7 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
  
 int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 {
-  int ierr=0,rep,action=FALSE,save=FALSE,open=FALSE,free_f=0;
+  int action=FALSE,save=FALSE,open=FALSE,free_f=0;
   NspObject *Rep;
   NspSMatrix *Masks=NULL;
   char *dirname = NULL,dir_expanded[FSIZE+1];
@@ -382,12 +382,15 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      rep= nsp_get_file_window(title_utf8,dirname,action,&res);
-      if ( ierr != 0) return RET_BUG; 
-      if ( rep == FALSE )
-	res = def_res;
-      else 
-	free_f=2;
+      menu_answer rep= nsp_get_file_window(title_utf8,dirname,action,&res);
+      switch (rep)
+	{
+	case menu_cancel : res = def_res;break;
+	case menu_ok : 	free_f=2;break;
+	case menu_fail : 
+	  Scierror("Error: lack of memory or internal error in %s \n",stack.fname);
+	  return RET_BUG;
+	}
     }
   if (( Rep =nsp_create_object_from_str(res))==NULLOBJ ) goto ret_bug;
   MoveObj(stack,1,Rep);
