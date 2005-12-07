@@ -179,8 +179,12 @@ static int nsp_sparse_update_from_triplet_internal( NspSpMatrix *M)
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
 	      D->J[j]= M->triplet.Ai[start+j];
-	      D->C[j].r= M->triplet.Ax[2*(start+j)];
-	      D->C[j].i= M->triplet.Ax[2*(start+j)+1];
+	      /* 
+		 D->C[j].r= M->triplet.Ax[2*(start+j)];
+		 D->C[j].i= M->triplet.Ax[2*(start+j)+1];
+	      */
+	      D->C[j].r= M->triplet.Ax[start+j];
+	      D->C[j].i= M->triplet.Ax[start+j+M->triplet.Aisize];
 	    }
 	}
     }
@@ -228,8 +232,12 @@ static int nsp_sparse_fill_zi_triplet(const NspSpMatrix *M)
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
 	      M->triplet.Ai[start+j]=  D->J[j];
-	      M->triplet.Ax[2*(start+j)]= D->C[j].r;
-	      M->triplet.Ax[2*(start+j)+1]= D->C[j].i;
+	      /* 
+		 M->triplet.Ax[2*(start+j)]= D->C[j].r;
+		 M->triplet.Ax[2*(start+j)+1]= D->C[j].i;
+	      */
+	      M->triplet.Ax[start+j]= D->C[j].r;
+	      M->triplet.Ax[start+j+M->triplet.Aisize]= D->C[j].i;
 	    }
 	}
     }
