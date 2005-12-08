@@ -262,7 +262,7 @@ int nsp_hash_find_and_copy(NspHash *H, char *str, NspObject **O)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_hash_find(NspHash *H,char *str, NspObject **O)
+int nsp_hash_find(NspHash *H,const char *str, NspObject **O)
 {
   *O = NULLOBJ;
   return( nsp_hsearch(H,str,O,H_FIND));
@@ -620,12 +620,12 @@ void nsp_hdestroy(NspHash *H)
  * Return value: %OK, %FAIL. 
  **/
 
-int nsp_hsearch(NspHash *H,char *key, NspObject **data, HashOperation action)
+int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation action)
 {
   register unsigned hval;
   register unsigned hval2;
   register unsigned idx;
-  register char *str;
+  register const char *str;
   Hash_Entry *htable = H->htable;
 
   /*
