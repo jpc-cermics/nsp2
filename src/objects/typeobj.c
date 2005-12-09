@@ -552,7 +552,6 @@ int nsp_register_type(void *type)
   if ( type == NULL ) return TRUE ; /* ignore */
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
   if (( nsp_type = (NspObject *) type_create(top->s_type(), type ,NULL)) == NULLOBJ ) return FALSE; 
-  printf("Count = %s %d id=%d\n",top->s_type(),count,((NspType *) nsp_type)->nsp_type->id);count++;
   if (nsp_hash_enter(nsp_types_hash_table,nsp_type) == FAIL) return FALSE; 
   return TRUE;
 }
