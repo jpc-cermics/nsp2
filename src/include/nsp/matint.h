@@ -30,13 +30,12 @@ extern int nsp_type_matint_id;
 extern NspTypeMatint *nsp_type_matint;
 
 NspTypeMatint *new_type_matint(type_mode mode);
-
-#ifdef   Matint_Private 
-/* */
-#endif 
-
 extern NspMethods *matint_get_methods(void);
 
+#endif 
+
+#ifdef   Matint_Private 
+static char *matint_type_as_string (void);
 #endif 
 
 

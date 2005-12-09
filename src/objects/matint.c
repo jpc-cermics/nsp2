@@ -40,6 +40,7 @@ NspTypeMatint *nsp_type_matint=NULL;
 
 NspTypeMatint *new_type_matint(type_mode mode)
 {
+  NspTypeObject *top;
   NspTypeMatint *type = NULL;
   if ( nsp_type_matint != 0 && mode == T_BASE )
     {
@@ -49,8 +50,16 @@ NspTypeMatint *new_type_matint(type_mode mode)
 
   if ((type =  malloc(sizeof(NspTypeMatint)))==NULL) return NULL;
   type->interface = NULL;
-  type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
+  type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
+
+  top = NSP_TYPE_OBJECT (type->surtype);
+  while (top->surtype != NULL)
+    top = NSP_TYPE_OBJECT (top->surtype);
+
+  /* object methods redefined for matint */
+
+  top->s_type = (s_type_func *) matint_type_as_string;
 
   /* specific methods for matint */
       
@@ -80,6 +89,17 @@ NspTypeMatint *new_type_matint(type_mode mode)
       return type;
     }
 }
+
+/* these method is necessary when registering types */
+
+static char matint_type_name[] = "Matint";
+
+static char *matint_type_as_string (void)
+{
+  return (matint_type_name);
+}
+
+
 
 /* 
  * method redim 

@@ -103,6 +103,8 @@ extern int nsp_type_grint_id;
 extern NspTypeGRint *nsp_type_grint;
 
 NspTypeGRint *new_type_grint(type_mode mode);
-
 #endif 
 
+#ifdef   GRint_Private 
+static char *grint_type_as_string (void);
+#endif 
