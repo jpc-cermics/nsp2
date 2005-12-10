@@ -23,14 +23,15 @@ OBJSC = Matrix.o MatOps.o MatObj.o  \
 	Interf.o Interf-IN.o \
 	P_PList.o  P_PListObj.o \
 	Datas.o Datas-IN.o Stack.o \
-	pr-output.o user-prefs.o Cnumeric.o \
+	user-prefs.o Cnumeric.o \
 	Perm.o \
 	File.o FileObj.o \
 	Alloc.o \
 	none.o \
 	matint.o \
 	MaxpObj.o MaxpMatrix.o \
-	cells.o cellsobj.o Sptriplet.o
+	cells.o cellsobj.o Sptriplet.o \
+	pr-output.o
 
 OLD=	gsort.o qsort.o	
 

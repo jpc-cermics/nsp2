@@ -26,21 +26,16 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"    /* for ret_endfor **/
 #include "nsp/cnumeric.h" 
-
-/* extern functions from other scilab sections **/
-
 #include "nsp/blas.h"
 #include "nsp/matutil.h"
+
+/* XXX */
+extern void nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int indent);
+extern void nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int indent);
 
 #define WORK_SIZE 100
 int iwork1[WORK_SIZE];
 int iwork2[WORK_SIZE];
-
-
-/*
- * matrix-Title:
- * This is the title of the matrix section 
- */
 
 /**
  * nsp_matrix_create:
@@ -541,10 +536,12 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,int header )
     }
   if ( Mat->mn != 0) 
     {
+      nsp_num_formats fmt;
+      nsp_init_pr_format (&fmt);
       if ( Mat->rc_type == 'r') 
-	nsp_print_internalM (Mat,indent);
+	nsp_real_matrix_print_internal (&fmt,Mat,indent);
       else 
-	nsp_print_internalCM (Mat,indent);
+	nsp_complex_matrix_print_internal (&fmt,Mat,indent);
     }
 }
 
@@ -1873,8 +1870,6 @@ NspMatrix *nsp_matrix_create_diag(const NspMatrix *Diag, int k)
   return(Loc);
 }
 
-
-
 /**
  * nsp_matrix_transpose: 
  * @A: a #NspMatrix
@@ -1906,6 +1901,273 @@ NspMatrix *nsp_matrix_transpose(const NspMatrix *A)
 
   return Loc;
 }
+
+/* A set of routines used for displaying matrices 
+ */
+
+static char nsp_matrix_iter_init(const void *M,int *work)
+{
+  *work = 0;
+  return ( (NspMatrix *) M)->rc_type;
+}
+
+static int nsp_matrix_iter_next(const void *M, double *r, doubleC *c,int *work)
+{
+  if ( *work  == ((NspMatrix *) M)->mn ) return 0;
+  switch (((NspMatrix *) M)->rc_type) 
+    {
+    case 'r' : *r = ((NspMatrix *) M)->R[(*work)++];break;
+    case 'c' : *c = ((NspMatrix *) M)->C[(*work)++];break;
+    }
+  return 1;
+}
+
+int nsp_matrix_any_element_is_negative (const void *M)
+{
+  return gen_any_element_is_negative(M,nsp_matrix_iter_init,nsp_matrix_iter_next);
+}
+
+int nsp_matrix_any_element_is_inf_or_nan (const void *M)
+{
+  return gen_any_element_is_inf_or_nan(M,nsp_matrix_iter_init,nsp_matrix_iter_next);
+}
+
+int nsp_matrix_all_elements_are_int_or_inf_or_nan (const void *M)
+{
+  return gen_all_elements_are_int_or_inf_or_nan (M,nsp_matrix_iter_init,nsp_matrix_iter_next);
+}
+
+void nsp_matrix_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax)
+{
+  return gen_pr_min_max_internal (M,flag,dmin,dmax,nsp_matrix_iter_init,nsp_matrix_iter_next);
+}
+
+/* Matrix case */
+
+void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M)
+{
+  gen_set_format(fmt,M,nsp_matrix_any_element_is_negative,
+		 nsp_matrix_any_element_is_inf_or_nan,
+		 nsp_matrix_pr_min_max_internal,
+		 nsp_matrix_all_elements_are_int_or_inf_or_nan,
+		 nsp_matrix_iter_init);
+}
+
+/*
+ * Printing Scilab Matrix 
+ *    nsp_print_internalM
+ *    the first function are generic functions
+ *    used for other Scilab types 
+ */
+
+static void nsp_real_matrix_elt_plus_format(const void *m, int i, int j)
+{
+  const NspMatrix *M=m;
+  if (M->R[i+(M->m)*j] == 0.0)
+    Sciprintf(" ");
+  else
+    Sciprintf("+");
+}
+
+typedef  void (*Mijplus) (const void *,int i,int j);
+
+void nsp_matrix_plus_format(const void *m, int nr, int nc, Mijplus F, int indent)
+{
+  int i,j;
+  for ( i = 0; i < nr; i++)
+    {
+      for ( j = 0; j < nc; j++)
+	{
+	  if (j == 0) { nsp_pr_white(indent) ; Sciprintf("| ");}
+	  (*F)(m,i,j);
+	}
+      Sciprintf(" |\n");
+    }
+}
+
+static void Mij_float(const nsp_num_formats *fmt,const void *m, int i, int j)
+{
+  const NspMatrix *M=m;
+  Sciprintf("  ");
+  nsp_pr_float (fmt,M->R[i+(M->m)*j]);
+}
+
+
+void nsp_matrix_general(const nsp_num_formats *fmt,void *m, int nr, int nc, int inc, int total_width, int max_width, int winrows, int indent, Mijfloat F)
+{
+  int i,j;
+  int p_rows=0;
+  int col;
+  for ( col = 0; col < nc; col += inc)
+    {
+      int lim = col + inc < nc ? col + inc : nc;
+      if (total_width > max_width && user_pref.split_long_rows)
+	{
+	  int num_cols;
+	  if (col != 0)  Sciprintf("\n");
+	  nsp_pr_white(indent);
+	  num_cols = lim - col;
+	  if (num_cols == 1)
+	    Sciprintf(" Column %d :\n\n",col+1);
+	  else if (num_cols == 2)
+	    Sciprintf(" Columns %d and %d:\n\n",col+1,lim);
+	  else
+	    Sciprintf(" Columns %d through %d:\n\n",col+1,lim);
+	}
+      for ( i = 0; i < nr; i++)
+	{
+	  int imore;
+	  p_rows++;
+	  if ( p_rows >= winrows ) 
+	    {
+	      scimore(&imore);
+	      if ( imore == 1) return;
+	      p_rows=0;
+	    }
+	  nsp_pr_white(indent);Sciprintf(" |");
+	  for ( j = col; j < lim; j++)
+	    {
+	      (*F)(fmt,m,i,j);
+	    }
+	  Sciprintf(" |\n");
+	}
+    }
+}
+
+void nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int indent)
+{
+  int nr = m->m;
+  int nc = m->n;
+  if ( m->mn == 0) 
+    {
+      nsp_pr_white (indent); Sciprintf("[]\n");
+    }
+  else if (fmt->plus_format && ! user_pref.pr_as_read_syntax )
+    {
+      nsp_matrix_plus_format(m,nr,nc,nsp_real_matrix_elt_plus_format,indent);
+    }
+  else
+    {
+      int inc,column_width,total_width;
+      int max_width ,winrows, offset;
+      sci_get_screen_size(&winrows,&max_width);
+      nsp_matrix_set_format(fmt,m);
+      /* Sciprintf("prec= %d,Format [%s]\n",
+	 user_pref.output_precision,
+	 curr_real_fmt); */
+      Sciprintf("\n");
+      column_width = fmt->curr_real_fw + 2;
+      offset =  indent + 4; /* 4 = " |...| " */
+      total_width = nc * column_width + offset;
+      if (user_pref.pr_as_read_syntax) max_width -= 4;
+      if (fmt->free_format)
+	{
+	  if (user_pref.pr_as_read_syntax)
+	    Sciprintf("[\n");
+	  /* XXXXXX xxxx Sciprintf(m); **/
+	  if (user_pref.pr_as_read_syntax)
+	    Sciprintf("]");
+	  return;
+	}
+      inc = nc;
+      if (total_width > max_width && user_pref.split_long_rows)
+	{
+	  inc = (max_width -offset) / column_width;
+	  if (inc == 0) inc++;
+	}
+      if (user_pref.pr_as_read_syntax)
+	{
+	  nsp_gen_matrix_as_read_syntax(fmt,m,nr,nc,inc,indent,Mij_float);
+	}
+      else
+	{
+	  nsp_matrix_general(fmt,m,nr,nc,inc,total_width,max_width,winrows,
+			     indent,Mij_float);
+	}
+    }
+}
+
+/*
+ * Print any complex Matrix 
+ */
+
+static void nsp_complex_matrix_elt_plus_format(const void *m, int i, int j)
+{
+  const NspMatrix *M=m;
+  if (M->C[i+(M->m)*j].r == 0.0 && M->C[i+(M->m)*j].i == 0)
+    Sciprintf(" ");
+  else
+    Sciprintf("+");
+}
+
+
+static void CMij_float(const nsp_num_formats *fmt,const void *m, int i, int j)
+{
+  const NspMatrix *M=m;
+  Sciprintf("  ");
+  nsp_pr_complex (fmt, M->C[i+(M->m)*j]);
+}
+
+void nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int indent)
+{
+  int nr = cm->m;
+  int nc = cm->n;
+
+  if (cm->mn == 0) 
+    {
+      Sciprintf("[]\n");
+    }
+  else if (fmt->plus_format && ! user_pref.pr_as_read_syntax)
+    {
+      nsp_matrix_plus_format(cm,nr,nc,nsp_complex_matrix_elt_plus_format,indent);
+    }
+  else
+    {
+      int column_width,total_width,inc  ;
+      int max_width ,winrows ;
+      nsp_matrix_set_format(fmt,cm); 
+      Sciprintf("\n");
+      column_width = fmt->curr_real_fw + fmt->curr_imag_fw;
+      column_width += fmt->bank_format ? 2 : 7;
+      total_width = nc * column_width;
+
+      sci_get_screen_size(&winrows,&max_width);
+      if (user_pref.pr_as_read_syntax)
+	max_width -= 4;
+
+      if (fmt->free_format)
+	{
+	  if (user_pref.pr_as_read_syntax)
+	    Sciprintf("[\n");
+	  /* Sciprintf(cm); xxx **/
+	  if (user_pref.pr_as_read_syntax)
+	    Sciprintf("]");
+
+	  return;
+	}
+
+      inc = nc;
+      if (total_width > max_width && user_pref.split_long_rows)
+	{
+	  inc = max_width / column_width;
+	  if (inc == 0)
+	    inc++;
+	}
+      if (user_pref.pr_as_read_syntax)
+	{
+	  nsp_gen_matrix_as_read_syntax(fmt,cm,nr,nc,inc,indent,CMij_float);
+	}
+      else
+	{
+	  nsp_matrix_general(fmt,cm,nr,nc,inc,total_width,max_width,winrows,
+			     indent,CMij_float);
+	}
+    }
+}
+
+
+
+
 
 
 

@@ -537,7 +537,6 @@ NspTypeId  nsp_new_type_id(void) { static int i=1; return i++; }
 
 int nsp_register_type(void *type) 
 {
-  static int count=1;
   NspTypeObject *top = type; 
   NspObject *nsp_type; 
   if ( type == nsp_type_hash && nsp_types_hash_table == NULLHASH ) return TRUE;

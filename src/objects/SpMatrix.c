@@ -29,6 +29,7 @@
 #include "nsp/gsort-p.h" 
 #include "nsp/cnumeric.h" 
 
+static void nsp_spmatrix_print_internal(nsp_num_formats *fmt,NspSpMatrix *m, int indent);
 /* In file Perm.c **/
 
 extern int C2F(dperm) (double A[],int ind[],int *nv);
@@ -547,8 +548,10 @@ void nsp_spmatrix_print(NspSpMatrix *Sp, int indent)
     }
   else
     {
+      nsp_num_formats fmt;
+      nsp_init_pr_format (&fmt);
       Sciprintf("%s\t=\t\t %c (%dx%d) sparse\n",NSP_OBJECT(Sp)->name,Sp->rc_type,Sp->m,Sp->n);
-      nsp_print_internalSpM (Sp,indent);
+      nsp_spmatrix_print_internal(&fmt,Sp,indent);
     }
 
   /* 
@@ -2937,6 +2940,194 @@ static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int
   return count;
 }
 
+
+/* routines for sparse output 
+ */
+
+static char SpInit(const void *M,int *work)
+{
+  work[0]=  -1;
+  work[1]= 0;
+  return ( (NspSpMatrix *) M)->rc_type;
+}
+
+static int SpNext(const void *M, double *r, doubleC *c,int *work)
+{
+  const NspSpMatrix *Sp= M;
+  if ( work[0] == -1 ) 
+    {
+      /* Return first a zero value **/
+      switch (Sp->rc_type) 
+	{
+	case 'r' : *r = 0.00;break;
+	case 'c' : c->r = c->i = 0.00;break;
+	}
+      work[0]++;
+      return 1;
+    }
+  /* Now return the non nul elements **/
+  if ( work[0] == Sp->m) return 0;
+  /* we still have elements on the current line **/
+  if ( work[1] < Sp->D[work[0]]->size )
+    {
+      switch (Sp->rc_type) 
+	{
+	case 'r' : *r = Sp->D[work[0]]->R[work[1]];break;
+	case 'c' : *c = Sp->D[work[0]]->C[work[1]];break;
+	}
+      work[1]++;
+      return 1;
+    }
+  else 
+    {
+      /* find next nonempty row **/
+      while (1) 
+	{
+	  work[0]++;
+	  if ( work[0] >= Sp->m) return (0);
+	  if ( Sp->D[work[0]]->size != 0) break;
+	}
+      /* return first non nul element on the row **/
+      work[1] =0 ;
+      switch (Sp->rc_type) 
+	{
+	case 'r' : *r = Sp->D[work[0]]->R[work[1]];break;
+	case 'c' : *c = Sp->D[work[0]]->C[work[1]];break;
+	}
+      work[1]++;
+      return 1;
+    }
+  return 1;
+}
+
+/* Sparse NspMatrix specific code **/
+
+static int Sp_any_element_is_negative (const void *M)
+{
+  return gen_any_element_is_negative(M,SpInit,SpNext);
+}
+
+/* code for sparse **/
+
+static int Sp_any_element_is_inf_or_nan (const void *M)
+{
+  return gen_any_element_is_inf_or_nan(M,SpInit,SpNext);
+}
+
+/* code for sparse **/
+
+static int Sp_all_elements_are_int_or_inf_or_nan (const void *M)
+{
+  return gen_all_elements_are_int_or_inf_or_nan (M,SpInit,SpNext);
+}
+
+/* code for sparse **/
+
+static void Sp_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax)
+{
+  return gen_pr_min_max_internal (M,flag,dmin,dmax,SpInit,SpNext);
+}
+
+/* Sparse Matrix **/
+
+static void Sp_set_format(nsp_num_formats *fmt,NspSpMatrix *M)
+{
+  gen_set_format(fmt,M,Sp_any_element_is_negative,
+		 Sp_any_element_is_inf_or_nan,
+		 Sp_pr_min_max_internal,
+		 Sp_all_elements_are_int_or_inf_or_nan,
+		 SpInit);
+}
+
+/* Sparse Matrix with + format : both real and complex cases **/
+
+static void SpM_plus_format(NspSpMatrix *Sp, int indent)
+{
+  int i,j;
+  for ( i = 0; i < Sp->m; i++)
+    {
+      int col=0;
+      SpRow *Ri = Sp->D[i];
+      nsp_pr_white(indent) ; Sciprintf("| ");
+      for ( j = 0; j < Ri->size ; j++)
+	{
+	  if ( col < Ri->size && j == Ri->J[col] ) 
+	    {
+	      Sciprintf("+");col++;
+	    }
+	  else 
+	    {
+	      Sciprintf(" ");
+	    }
+	}
+      Sciprintf(" |\n");
+    }
+}
+
+static void SpM_general(nsp_num_formats *fmt,NspSpMatrix *Sp, int indent)
+{
+  int i,j;
+  switch ( Sp->rc_type ) 
+    {
+    case 'r' : 
+      for ( i = 0; i < Sp->m; i++)
+	{
+	  SpRow *Ri = Sp->D[i];
+	  for ( j = 0; j < Ri->size ; j++)
+	    {
+	      nsp_pr_white(indent) ;Sciprintf("(%d,%d) ",i+1,Ri->J[j]+1);
+	      nsp_pr_float(fmt, Ri->R[j]);Sciprintf("\n");
+	    }
+	}
+      break;
+    case 'c' :
+      for ( i = 0; i < Sp->m; i++)
+	{
+	  SpRow *Ri = Sp->D[i];
+	  for ( j = 0; j < Ri->size ; j++)
+	    {
+	      nsp_pr_white(indent) ; Sciprintf("(%d,%d) ",i+1,Ri->J[j]+1);
+	      nsp_pr_complex(fmt, Ri->C[j]);
+	      Sciprintf("\n");
+	    }
+	}
+      break;
+    }
+}
+
+static void nsp_spmatrix_print_internal(nsp_num_formats *fmt,NspSpMatrix *m, int indent)
+{
+  if ( m->mn == 0) 
+    {
+      Sciprintf("[]\n");
+    }
+  else if (fmt->plus_format && ! user_pref.pr_as_read_syntax )
+    {
+      SpM_plus_format(m,indent);
+    }
+  else
+    {
+      Sp_set_format(fmt,m);
+      Sciprintf("\n");
+      if (fmt->free_format)
+	{
+	  if (user_pref.pr_as_read_syntax)
+	    Sciprintf("free format to be done for sparse [\n");
+	  /* XXXXXX xxxx Sciprintf(m); **/
+	  if (user_pref.pr_as_read_syntax)
+	    Sciprintf("]");
+	  return;
+	}
+      if (user_pref.pr_as_read_syntax)
+	{
+	  Sciprintf("No as read for sparse \n");
+	}
+      else
+	{
+	  SpM_general(fmt,m,indent);
+	}
+    }
+}
 
 
   

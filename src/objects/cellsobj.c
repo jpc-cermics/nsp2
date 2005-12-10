@@ -1306,6 +1306,7 @@ static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
 /*
  * set cells elements 
  * C{exps}=(....)
+ * or C{exp,exp,..}=(...)
  *   FIXME: work in progress 
  *   we must expand the size if ind are outside boundaries.
  */

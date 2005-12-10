@@ -25,6 +25,8 @@
 #include "nsp/object.h"
 #include "nsp/pr-output.h"
 
+static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int indent);
+
 /*
  * Copies a polynom which is nothing but a matrix 1xn
  */
@@ -114,7 +116,11 @@ void nsp_pmatrix_print(NspPMatrix *Mat, int indent)
 		(Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 
-    nsp_print_internalPM (Mat,indent);
+    {
+      nsp_num_formats fmt;
+      nsp_init_pr_format (&fmt);
+      nsp_pmatrix_print_internal (&fmt,Mat,indent);
+    }
 }
 
 
@@ -777,3 +783,257 @@ NspPMatrix *nsp_pmatrix_transpose(const NspPMatrix *A)
       }
   return(Loc);
 }
+
+
+/*
+ * routines for output of polynomial matrices 
+ */
+
+/* XXXX */
+int nsp_matrix_any_element_is_negative (const void *M);
+int nsp_matrix_any_element_is_inf_or_nan (const void *M);
+int nsp_matrix_all_elements_are_int_or_inf_or_nan (const void *M);
+void nsp_matrix_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax);
+
+
+static char MpInit(const void *M,int *work)
+{
+  *work  = 0;
+  return ( (NspPMatrix *) M)->rc_type;
+}
+
+/* Polynomial matrix specific code */
+
+static int Mp_any_element_is_negative (const void *M)
+{
+  int sign=0,i;
+  for ( i = 0 ; i < ((NspPMatrix *) M)->mn ; i++ ) 
+    {
+      sign = nsp_matrix_any_element_is_negative(((NspPMatrix *) M)->S[i]);
+      if ( sign==1) break;
+    }
+  return sign;
+}
+
+/* code for polynomial matrix  **/
+
+static int Mp_any_element_is_inf_or_nan (const void *M)
+{
+  int inf_or_nan=0,i;
+  for ( i = 0 ; i < ((NspPMatrix *)M)->mn ; i++ ) 
+    {
+      inf_or_nan = nsp_matrix_any_element_is_inf_or_nan (((NspPMatrix *)M)->S[i]);
+      if ( inf_or_nan ==1 ) break;
+    }
+  return inf_or_nan;
+}
+
+/* code for polynomial matrix **/
+
+static int Mp_all_elements_are_int_or_inf_or_nan (const void *M)
+{
+  int i, int_or_inf_or_nan=0;
+  for ( i = 0 ; i < ((NspPMatrix *)M)->mn ; i++ ) 
+    {
+      int_or_inf_or_nan = nsp_matrix_all_elements_are_int_or_inf_or_nan(((NspPMatrix *)M)->S[i]);
+      if ( int_or_inf_or_nan == 0) break;
+    }
+  return int_or_inf_or_nan;
+}
+
+/* code for polynomial matrix **/
+
+static void Mp_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax)
+{
+  int i;
+  nsp_matrix_pr_min_max_internal (((NspPMatrix*)M)->S[0],'r',dmin,dmax);
+  for ( i = 1 ; i < ((NspPMatrix*)M)->mn ; i++ ) 
+    {
+      double max1,min1;
+      nsp_matrix_pr_min_max_internal (((NspPMatrix*)M)->S[i],'r',&max1,&min1);
+      if ( max1 > *dmax ) *dmax=max1;
+      if ( min1 < *dmin ) *dmin=min1;
+    }
+}
+
+/* Polynomial Matrix **/
+
+static void Mp_set_format(nsp_num_formats *fmt,NspPMatrix *M)
+{
+  gen_set_format(fmt,M,Mp_any_element_is_negative,
+		 Mp_any_element_is_inf_or_nan,
+		 Mp_pr_min_max_internal,
+		 Mp_all_elements_are_int_or_inf_or_nan,
+		 MpInit);
+}
+
+
+/*
+ * Printing Scilab Polynomial Matrices 
+ */
+
+static int  poly_size (int fw, int length);
+static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length);
+static void pr_poly_exp  (NspMatrix *m, int fw, int length);
+
+static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int indent)
+{
+  int *Iloc;
+  int inc,column_width,total_width;
+  int p_rows=0;
+  int col;
+  int max_width ,winrows ;
+  int i,j;
+  int nr = M->m;
+  int nc = M->n;
+  int fw=0;
+  if (nr == 0 || nc == 0) nsp_print_empty_matrix ( nr, nc );
+  sci_get_screen_size(&winrows,&max_width);
+  /* get one format for all polynoms **/ 
+  /* XXXXXX need to write the complex case **/
+  Mp_set_format (fmt,M);
+  fw= fmt->curr_real_fw;
+  /* Sciprintf("prec= %d,Format [%s]\n",  user_pref.output_precision,  curr_real_fmt);*/
+  /* Allocate a table to store the column width **/
+  /* Iloc[j]= degree max of column j **/
+  if ((Iloc =nsp_alloc_int(M->n)) == (int*) 0) return(FAIL);
+  for ( j=0 ; j < M->n ; j++ )
+    {
+      Iloc[j]=M->S[j*M->m]->mn;
+      for ( i = 1 ; i < M->m ; i++) 
+	{
+	  if ( Iloc[j] < M->S[i+j*M->m]->mn ) Iloc[j]= M->S[i+j*M->m]->mn;
+	}
+    }
+  total_width=0;
+  for ( j=0 ; j < M->n ; j++) 
+    {
+      column_width = Iloc[j]*(fw+2) + 2;
+      total_width +=  column_width;
+    }
+  col=0;
+  while ( col < nc )
+    {
+      int lim,num_cols,t_width;
+      inc=0;
+      t_width = 0;
+      for ( j= col ; j < M->n ; j++) 
+	{
+	  t_width +=  poly_size(fw,Iloc[j]);
+	  if ( t_width < max_width) inc++;
+	  else break;
+	}
+      if (inc == 0)	inc++;
+      lim = col + inc < nc ? col + inc : nc;
+      if (total_width > max_width && user_pref.split_long_rows)
+	{
+	  if (col != 0)
+	    Sciprintf("\n");
+	  num_cols = lim - col;
+	  if (num_cols == 1)
+	    Sciprintf(" Column %d :\n\n",col+1);
+	  else if (num_cols == 2)
+	    Sciprintf(" Columns %d and %d:\n\n",col+1,lim);
+	  else
+	    Sciprintf(" Columns %d through %d:\n\n",col+1,lim);
+	}
+      for ( i = 0; i < nr; i++)
+	{
+	  int imore;
+	  p_rows++;
+	  if ( p_rows >= winrows ) 
+	    {
+	      scimore(&imore);
+	      if ( imore == 1) return(OK);
+	      p_rows=0;
+	    }
+	  /*
+	    if (  lim - col == 1 && 	  t_width > max_width ) 
+	    {
+	    Sciprintf("Must try to cut thhe column \n");
+	    }
+	    else 
+	  */
+	  {
+	    for ( j = col; j < lim; j++)
+	      {
+		Sciprintf("  ");
+		pr_poly_exp ( M->S[i+(M->m)*j], fw,Iloc[j]);
+	      }
+	    Sciprintf("\n");
+	    for ( j = col; j < lim; j++)
+	      {
+		Sciprintf("  ");
+		pr_poly (fmt, M->S[i+(M->m)*j], fw,Iloc[j]);
+	      }
+	    Sciprintf("\n");
+	  }
+	}
+      col += inc;
+    }
+  FREE(Iloc);
+  return(OK);
+}
+
+static int  poly_size(int fw, int length)
+{
+  int ps=2 + length*fw,k;
+  for ( k= 1 ; k <= length ; k++) 
+    {
+      if ( k < 10 ) ps += 3;
+      else ps +=4;
+    }
+  return(ps);
+}
+
+static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length)
+{
+  int i ; 
+  for ( i=0 ; i < m->mn ; i++) 
+    {
+      /* xxxxxxxx : */
+      if ( m->rc_type == 'r') 
+	{
+	  if ( i != 0 && m->R[i] >= 0.00 ) Sciprintf("+");
+	  else Sciprintf(" ");
+	  nsp_pr_any_float (fmt->curr_real_fmt, m->R[i], fw);
+	}
+      if ( i > 0 ) Sciprintf("X");
+      if ( i < 10 ) nsp_pr_white(1);
+      else if ( 10 <= i && i  < 99) nsp_pr_white(2); else nsp_pr_white(3);
+
+    }
+  for ( i= m->mn ; i < length ; i++) 
+    {
+      nsp_pr_white(fw);
+      if ( i < 10 ) nsp_pr_white(3);
+      else if ( 10 <= i && i  < 99)  nsp_pr_white(4); else  nsp_pr_white(5);
+    }
+}
+
+
+static void pr_poly_exp (NspMatrix *m, int fw, int length)
+{
+  int i ; 
+  for ( i=0 ; i < m->mn ; i++) 
+    {
+      /* xxxxxxxx : */
+      if ( m->rc_type == 'r') 
+	{
+	   nsp_pr_white(fw+2);
+	}
+      if ( i > 0 ) Sciprintf("%d",i);
+    }
+  for ( i= m->mn ; i < length ; i++) 
+    {
+      nsp_pr_white(fw);
+      if ( i < 10 )  nsp_pr_white(3);
+      else if ( 10 <= i && i  < 99)  nsp_pr_white(4); else  nsp_pr_white(5);
+      
+    }
+}
+
+
+
+
+

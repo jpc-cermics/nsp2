@@ -32,6 +32,12 @@
 #include "nsp/blas.h"
 #include "nsp/matutil.h"
 
+
+/* XXX */
+extern void nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int indent);
+extern void nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int indent);
+
+
 /*
  * Max Plus matrices 
  * It is always possible to cast a NspMaxpMatrix * to a NspMatrix * 
@@ -351,10 +357,12 @@ void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,int header )
     }
   if ( Mat->mn != 0) 
     {
+      nsp_num_formats fmt;
+      nsp_init_pr_format (&fmt);
       if ( Mat->rc_type == 'r') 
-	nsp_print_internalM ((NspMatrix *)Mat,indent);
+	nsp_real_matrix_print_internal(&fmt,(NspMatrix *)Mat,indent);
       else 
-	nsp_print_internalCM ((NspMatrix *)Mat,indent);
+	nsp_complex_matrix_print_internal(&fmt,(NspMatrix *)Mat,indent);
     }
 }
 

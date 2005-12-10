@@ -26,14 +26,15 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	Interf.obj Interf-IN.obj \
 	P_PList.obj  P_PListObj.obj \
 	Datas.obj Datas-IN.obj Stack.obj \
-	pr-output.obj user-prefs.obj Cnumeric.obj \
+	user-prefs.obj Cnumeric.obj \
 	Perm.obj \
 	File.obj FileObj.obj \
 	Alloc.obj \
 	none.obj \
 	matint.obj \
 	MaxpObj.obj MaxpMatrix.obj \
-	cells.obj cellsobj.obj Sptriplet.obj
+	cells.obj cellsobj.obj Sptriplet.obj \
+	pr-output.obj
 
 OLD=	gsort.obj qsort.obj	
 

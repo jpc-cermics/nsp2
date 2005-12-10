@@ -30,6 +30,8 @@
 #include "nsp/gsort-p.h"
 #include "nsp/matint.h"
 
+static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, int indent);
+
 /*
  * Creation of a NspSMatrix all the elements
  *	 are created with "." value or with str value according 
@@ -345,7 +347,11 @@ void nsp_smatrix_print(const NspSMatrix *Mat, int indent)
 		(Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 
-    nsp_print_internalSM (Mat,indent);
+    {
+      nsp_num_formats fmt;
+      nsp_init_pr_format (&fmt);
+      nsp_smatrix_print_internal(&fmt,Mat,indent);
+    }
 }
 
 
@@ -1478,6 +1484,10 @@ NspMatrix *nsp_smatrix_elts_length(NspSMatrix *A)
  *    used for printing which is computed from A 
  */
 
+/* XXXXX */
+extern void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M) ;
+
+
 NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
 {
   char buf[1024],formati[256];
@@ -1494,17 +1504,13 @@ NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
     }
   else 
     {
-      /* 
+      nsp_num_formats fmt;
+      nsp_init_pr_format (&fmt);
+      nsp_matrix_set_format(&fmt,A) ;
       if  ( A->rc_type == 'r') 
-	format = def;
+        format = fmt.curr_real_fmt;
       else 
-	strcpy(formati,defi);
-      */
-      M_set_format(A);
-      if  ( A->rc_type == 'r') 
-        format = get_curr_real_fmt();
-      else 
-	sprintf(formati,"%s + %si",get_curr_real_fmt(),get_curr_imag_fmt());
+	sprintf(formati,"%s + %si",fmt.curr_real_fmt,fmt.curr_imag_fmt);
     }
   if ((Loc =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1)) == NULLSMAT) 
     return(NULLSMAT);
@@ -2089,6 +2095,137 @@ int nsp_smatrix_strip_blanks(NspSMatrix *A)
     }
   return OK;
 }
+
+
+/* set of function used to print string matrices 
+ *
+ */
+
+static void SMij_string_as_read(const nsp_num_formats *fmt,const void *m, int i, int j)
+{
+  const NspSMatrix *M=m;
+  char *c= M->S[i+(M->m)*j];
+  Sciprintf("\"");
+  while ( *c != '\0') 
+    {
+      switch (*c) 
+	{
+	case '\'' :
+	case '\"' : 
+	  Sciprintf("%s","''");break;
+	case '\n' :
+	  Sciprintf("%s","\\n");break;
+	default: 
+	  Sciprintf("%c",*c);
+	}
+      c++;
+    }
+  Sciprintf("\"");
+}
+
+static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, int indent)
+{
+  
+  int *Iloc;
+  int inc,column_width=2,total_width;
+  int p_rows=0,col;
+  int max_width ,winrows,offset;
+  int i,j;
+  int nr = m->m;
+  int nc = m->n;
+  if (nr == 0 || nc == 0) nsp_print_empty_matrix ( nr, nc);
+  sci_get_screen_size(&winrows,&max_width);
+  /* Allocate a table to store each column width **/
+  if ((Iloc =nsp_alloc_int(m->n)) == (int*) 0) return(FAIL);
+  /* set Iloc[j] to the max len of column j **/
+  for ( j=0 ; j < m->n ; j++ )
+    {
+      Iloc[j]=strlen(m->S[j*m->m]);
+      for ( i = 1 ; i < m->m ; i++) 
+	{
+	  if ( Iloc[j] < (int) strlen(m->S[i+j*m->m]) ) Iloc[j]= strlen(m->S[i+j*m->m]);
+	}
+    }
+  Sciprintf("\n");
+  /* compute the necessary width **/
+  total_width=0;
+  for ( j=0 ; j < m->n ; j++) 
+    {
+      column_width = Iloc[j] + 2;
+      total_width +=  column_width;
+    }
+  inc = nc;
+  offset =  indent + 4; /* 4 = " |...| " */
+  if (total_width > max_width && user_pref.split_long_rows)
+    {
+      inc = (max_width -offset) / column_width;
+      if (inc == 0) inc++;
+    }
+
+  if ( user_pref.pr_as_read_syntax )
+    {
+      nsp_gen_matrix_as_read_syntax(fmt,m,nr,nc,inc,indent,SMij_string_as_read);
+      return 0;
+    }
+  col=0;
+  while ( col < nc )
+    {
+      int lim,num_cols,t_width;
+      inc=0;
+      t_width = 0;
+      for ( j= col ; j < m->n ; j++) 
+	{
+	  t_width +=  Iloc[j]+2;
+	  if ( t_width < max_width) inc++;
+	  else break;
+	}
+      if (inc == 0)	inc++;
+      lim = col + inc < nc ? col + inc : nc;
+      if (total_width > max_width && user_pref.split_long_rows)
+	{
+	  if (col != 0)  Sciprintf("\n");
+	  num_cols = lim - col;
+	  if (num_cols == 1)
+	    Sciprintf(" Column %d :\n\n",col+1);
+	  else if (num_cols == 2)
+	    Sciprintf(" Columns %d and %d:\n\n",col+1,lim);
+	  else
+	    Sciprintf(" Columns %d through %d:\n\n",col+1,lim);
+	}
+      for ( i = 0; i < nr; i++)
+	{
+	  int imore;
+	  p_rows++;
+	  if ( p_rows >= winrows ) 
+	    {
+	      scimore(&imore);
+	      if ( imore == 1) return(OK);
+	      p_rows=0;
+	    }
+	  nsp_pr_white(indent);
+	  /*
+	    if (  lim - col == 1 &&  t_width > max_width ) 
+	    {
+	    Sciprintf("Must try to cut the column \n");
+	    }
+	    else 
+	  */
+	  {
+	    for ( j = col; j < lim; j++)
+	      {
+		Sciprintf("  ");
+		Sciprintf("%s",m->S[i+(m->m)*j]);
+		nsp_pr_white(Iloc[j]-strlen(m->S[i+(m->m)*j]));
+	      }
+	    Sciprintf("\n");
+	  }
+	}
+      col += inc;
+    }
+  FREE(Iloc);
+  return(OK);
+}
+
 
 
 

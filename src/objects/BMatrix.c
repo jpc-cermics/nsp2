@@ -17,8 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,6 +26,8 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h" /* for ret_endfor */
 #include <nsp/matutil.h> /* icopy iset */
+
+static void nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int indent);
 
 /**
  * nsp_bmatrix_create:
@@ -220,7 +220,9 @@ void nsp_bmatrix_print(NspBMatrix *BMat, int indent,int header)
     }
   if ( BMat->mn != 0) 
     {
-      nsp_print_internalBM(BMat,indent);
+      nsp_num_formats fmt;
+      nsp_init_pr_format (&fmt);
+      nsp_bmatrix_print_internal (&fmt,BMat,indent);
     }
 }
 
@@ -1351,3 +1353,74 @@ int nsp_bmatrix_full_compare(const NspBMatrix *A,const NspBMatrix *B, char *op,i
     }
   return rep;
 }
+
+
+/*
+ * routines for output of boolean matrices 
+ */
+
+static void BMij_plus_format(const void *m, int i, int j)
+{
+  const NspBMatrix *M=m;
+  if (M->B[i+(M->m)*j] == FALSE ) 
+    Sciprintf(" ");
+  else
+    Sciprintf("+");
+}
+
+static void BMij_as_read(const nsp_num_formats *fmt,const void *m, int i, int j)
+{
+  const NspBMatrix *M=m;
+  Sciprintf(" ");
+  Sciprintf("%%%c",M->B[i+(M->m)*j]==TRUE ? 't' :'f');
+}
+
+static void BMij(const nsp_num_formats *fmt,const void *m, int i, int j)
+{
+  const NspBMatrix *M=m;
+  Sciprintf(" ");
+  Sciprintf("%c",M->B[i+(M->m)*j]==TRUE ? 'T' :'F');
+}
+
+/* XXXX */
+typedef  void (*Mijplus) (const void *,int i,int j);
+extern void nsp_matrix_plus_format(const void *m, int nr, int nc, Mijplus F, int indent);
+extern void nsp_matrix_general(const nsp_num_formats *fmt,void *m, int nr, int nc, int inc, int total_width, int max_width, int winrows, int indent, Mijfloat F);
+
+
+static void nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int indent)
+{
+  int nr = cm->m;
+  int nc = cm->n;
+  if (fmt->plus_format && ! user_pref.pr_as_read_syntax)
+    {
+      nsp_matrix_plus_format(cm,nr,nc,BMij_plus_format,indent);
+    }
+  else
+    {
+      int column_width,total_width,inc  ;
+      int max_width ,winrows ;
+      column_width = 2;
+      total_width = nc * column_width;
+      sci_get_screen_size(&winrows,&max_width);
+      if (user_pref.pr_as_read_syntax)	max_width -= 4;
+      Sciprintf("\n");
+      inc = nc;
+      if (total_width > max_width && user_pref.split_long_rows)
+	{
+	  inc = max_width / column_width;
+	  if (inc == 0)
+	    inc++;
+	}
+      if (user_pref.pr_as_read_syntax)
+	{
+	  nsp_gen_matrix_as_read_syntax(fmt,cm,nr,nc,inc,indent,BMij_as_read);
+	}
+      else
+	{
+	  nsp_matrix_general(fmt,cm,nr,nc,inc,total_width,max_width,winrows,
+			     indent,BMij);
+	}
+    }
+}
+
