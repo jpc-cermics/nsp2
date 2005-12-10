@@ -13,34 +13,34 @@
 #include "nsp/user-prefs.h"
 #include "nsp/tokenizer.h"
 
-typedef int (*IOVFun) (char *fmt, va_list ap);
+typedef int (*IOVFun) (const char *fmt, va_list ap);
 extern IOVFun Scivprintf;
 IOVFun SetScilabIO(IOVFun F);
-int Sciprintf1(int indent,char *fmt,...);
-int Sciprintf(char *fmt,...); 
+int Sciprintf1(int indent,const char *fmt,...);
+int Sciprintf(const char *fmt,...); 
 
 #ifdef  NSP_TYPE_OBJECT 
 NspObject *Sciprint2string_reset();
 #endif 
 
-int  Sciprint2string(char *fmt, va_list ap);
+int  Sciprint2string(const char *fmt, va_list ap);
 FILE * Sciprint_set_diary(FILE *f,int diary_echo);
 extern int Sciprint_diary_on(void) ;
-extern int Sciprint_diary(char *fmt, va_list ap);
-extern int Sciprint_diary_only (char *fmt,...);
+extern int Sciprint_diary(const char *fmt, va_list ap);
+extern int Sciprint_diary_only (const char *fmt,...);
 extern FILE *Sciprint_file(FILE *f); 
-extern int Sciprint2file(char *fmt, va_list ap); 
+extern int Sciprint2file(const char *fmt, va_list ap); 
 
-typedef int iofun (char *fmt,...);
+typedef int iofun (const char *fmt,...);
 typedef iofun *IOFun;
 
-typedef int (*IOFun1) (int indent,char *fmt,...);
+typedef int (*IOFun1) (int indent,const char *fmt,...);
 
 extern iofun Scierror ;
 
 int  ParseError  (char *fmt,...);
 int scidebug(int i,char *fmt,...);
-typedef int (*IOFun2) (FILE *f,char *fmt,...);
+typedef int (*IOFun2) (FILE *f,const char *fmt,...);
 extern IOFun2 Scifprintf ;
 typedef int (*SciGetC) (void);
 extern SciGetC Scigetchar ;
