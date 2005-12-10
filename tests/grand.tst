@@ -212,7 +212,7 @@ if norm(P-PS) > prec then pause,end
 
 N=10000;p=0.5;
 Rdev=grand(1,N,'geom',p);
-[ind,occ,x_info]=dsearch(Rdev,1:20,'d');
+[ind,occ,x_info]=bsearch(Rdev,1:20,match='v');
 if norm(occ/N - p*(1-p).^(0:19)) > prec then pause,end
 
 // test for markov
@@ -220,7 +220,7 @@ if norm(occ/N - p*(1-p).^(0:19)) > prec then pause,end
 N=10000;A=[0.1,0.3,0.6;0.2,0.3,0.5;0.7,0.2,0.1];
 Rdev=grand(N,'markov',A,1);
 for i=1:3
-  [ind,occ,x_info]=dsearch(Rdev(1,:),1:3,'d');
+  [ind,occ,x_info]=bsearch(Rdev(1,:),1:3,match='v');
   if norm(occ/N - A(1,:)) > prec then pause,end
 end 
 

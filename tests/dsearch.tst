@@ -15,14 +15,15 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 // 
-// dsearch 
+// bsearch 
 
 // discrete version 
 // ----------------
+
 N=50;
 A=int(10*rand(1:N));
 B=3:7;
-[a,b,c]=dsearch(A,B,'d');
+[a,b,c]=bsearch(A,B,match='v');
 if and(size(a)<>size(A)) then pause,end
 if and(size(b)<>size(B)) then pause,end
 aa=0*a;bb=0*b;
