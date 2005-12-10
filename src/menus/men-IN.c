@@ -418,7 +418,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
   menu_answer rep;
   Cell *Loc;
   int count=0,m,use_table = FALSE;
-  NspMatrix *M;
+  NspMatrix *M=NULL;
   NspSMatrix *Title;
   NspList *ListItems ; 
   nsp_string title; 
