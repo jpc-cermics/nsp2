@@ -56,10 +56,14 @@ function [y,ind,occ] = unique(x,first_ind=%f)
 	 else
 	    type_sort = "g"
 	 end
-	 [y,ind] = sort(x(:),type_sort,"i")
-	 id = find(y(1:$-1)==y(2:$))
-	 if id ~= [] then, id = id + 1, end
-	 y(id) = []; ind(id) = []
+	 if size(x,'*')== 1 then 
+	   y=x;ind=1;
+	 else
+	   [y,ind] = sort(x(:),type_sort,"i");
+	   id = find(y(1:$-1)==y(2:$))
+	   if id ~= [] then, id = id + 1, end
+	   y(id) = []; ind(id) = []
+	 end
 	 if nargout == 3
 	    occ = (1:n+1)'; occ(id) = []; occ = occ(2:$)-occ(1:$-1)
 	 else
