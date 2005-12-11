@@ -38,6 +38,7 @@ NspTypeGRint *nsp_type_grint=NULL;
 
 NspTypeGRint *new_type_grint(type_mode mode)
 {
+  NspTypeObject *top;
   NspTypeGRint *type = NULL;
   if ( nsp_type_grint != 0 && mode == T_BASE )
     {
@@ -49,6 +50,14 @@ NspTypeGRint *new_type_grint(type_mode mode)
   type->interface = NULL;
   type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
+
+  top = NSP_TYPE_OBJECT (type->surtype);
+  while (top->surtype != NULL)
+    top = NSP_TYPE_OBJECT (top->surtype);
+
+  /* object methods redefined for matint */
+
+  top->s_type = (s_type_func *) grint_type_as_string;
 
   /* specific methods for grint */
       
@@ -79,5 +88,14 @@ NspTypeGRint *new_type_grint(type_mode mode)
     }
 }
 
+
+/* these method is necessary when registering types */
+
+static char grint_type_name[] = "Grint";
+
+static char *grint_type_as_string (void)
+{
+  return (grint_type_name);
+}
 
 
