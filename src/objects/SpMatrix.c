@@ -319,13 +319,21 @@ NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, in
 	    {
 	      Loc->D[iloc]->R[count] = Values->R[id];
 	      Loc->D[iloc]->J[count] = ((int) RC->R[i+RC->m])-1;
-	      if ( count != 0 && ( Loc->D[iloc]->J[count] == Loc->D[iloc]->J[count-1])) 
-		{
-		  Sciprintf("Warning (%d,%d) is duplicated \n",iloc+1,Loc->D[iloc]->J[count]+1);
-		  Loc->D[iloc]->R[count-1]+=  Loc->D[iloc]->R[count];
+	      if ( Loc->D[iloc]->J[count] >= 0 && Loc->D[iloc]->J[count] < Loc->n )
+		{ 
+		  if ( count != 0 && ( Loc->D[iloc]->J[count] == Loc->D[iloc]->J[count-1])) 
+		    {
+		      /* Sciprintf("Warning (%d,%d) is duplicated \n",iloc+1,Loc->D[iloc]->J[count]+1);*/
+		      Loc->D[iloc]->R[count-1]+=  Loc->D[iloc]->R[count];
+		    }
+		  else
+		    Loc->D[iloc]->iw++;
 		}
 	      else
-		Loc->D[iloc]->iw++;
+		{
+		  Scierror("Warning (%d,%d) is out of range, ignored\n",iloc+1,Loc->D[iloc]->J[count]+1);
+		  return NULLSP;
+		}
 	    }
 	  break;
 	case 'c' : 
@@ -333,14 +341,22 @@ NspSpMatrix *nsp_spmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, in
 	    {
 	      Loc->D[iloc]->C[count] = Values->C[id];
 	      Loc->D[iloc]->J[count] =((int) RC->R[i+RC->m])-1;
-	      if ( count != 0 && ( Loc->D[iloc]->J[count] == Loc->D[iloc]->J[count-1])) 
-		{
-		  Sciprintf("Warning (%d,%d) is duplicated \n",iloc+1,Loc->D[iloc]->J[count]+1);
-		  Loc->D[iloc]->C[count-1].r +=  Loc->D[iloc]->C[count].r;
-		  Loc->D[iloc]->C[count-1].i +=  Loc->D[iloc]->C[count].i;
+	      if ( Loc->D[iloc]->J[count] >= 0 && Loc->D[iloc]->J[count] < Loc->n )
+		{ 
+		  if ( count != 0 && ( Loc->D[iloc]->J[count] == Loc->D[iloc]->J[count-1])) 
+		    {
+		      /* Sciprintf("Warning (%d,%d) is duplicated \n",iloc+1,Loc->D[iloc]->J[count]+1);*/
+		      Loc->D[iloc]->C[count-1].r +=  Loc->D[iloc]->C[count].r;
+		      Loc->D[iloc]->C[count-1].i +=  Loc->D[iloc]->C[count].i;
+		    }
+		  else 
+		    Loc->D[iloc]->iw++;
 		}
-	      else 
-		Loc->D[iloc]->iw++;
+	      else
+		{
+		  Scierror("Warning (%d,%d) is out of range, ignored\n",iloc+1,Loc->D[iloc]->J[count]+1);
+		  return NULLSP;
+		}
 	    }
 	  break;
 	}

@@ -394,6 +394,34 @@ static int int_spextractrows(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+/*
+ * diag interface 
+ */
+
+int int_spdiag (Stack stack, int rhs, int opt, int lhs)
+{
+  int k1 = 0;
+  NspSpMatrix *A, *Res;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs == 2)
+    {
+      if (GetScalarInt (stack, 2, &k1) == FAIL)
+	return RET_BUG;
+    }
+  if ((A = GetSp (stack, 1)) == NULLSP)
+    return RET_BUG;
+  if (A->m == 1 || A->n == 1)
+    Res = nsp_spmatrix_diag_create (A, k1);
+  else
+    Res = nsp_spmatrix_diag_extract (A, k1);
+  if (Res == NULLSP)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
 /*
  * Returns the kthe diag of a Matrix 
  */
@@ -629,6 +657,27 @@ static int int_spquote(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,(NspObject *) A);
   return 1;
 }
+
+
+/*
+ * _
+ * A'
+ */
+
+static int int_spdquote (Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpMatrix *A, *B;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+  if ((A = GetSp(stack, 1)) == NULLSP)
+    return RET_BUG;
+  if ((B = nsp_spmatrix_transpose (A)) == NULLSP)
+    return RET_BUG;
+  SpConj(B);
+  MoveObj (stack, 1, (NspObject *) B);
+  return 1;
+}
+
 
 
 /*
@@ -870,6 +919,7 @@ static OpTab SpMatrix_func[]={
   {"minus_sp_sp",int_spsub},
   {"minus_sp",int_spminus},
   {"quote_sp",int_spquote},
+  {"dprim_sp", int_spdquote},
   {"multt_sp_sp",int_spmultt}, 
   {"spredim",int_spredim},
   {"concatd_sp_sp" ,  int_spconcatd },
@@ -885,6 +935,8 @@ static OpTab SpMatrix_func[]={
   {"diagset_sp" ,  int_spdiagset },
   {"diagcre_sp" ,  int_spdiagcre },
   {"diagcre_sp_m" ,  int_spdiagcre },
+  {"diag_sp", int_spdiag},
+  {"diag_sp_m", int_spdiag},
   {"sparse", int_spsparse},
   {"spget", int_spget},
   {"full_sp",int_spsp2m},
