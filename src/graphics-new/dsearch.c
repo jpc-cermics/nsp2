@@ -56,7 +56,8 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   NspMatrix *x=NULLMAT, *val=NULLMAT, *ind=NULLMAT, *occ=NULLMAT;
   NspSMatrix *xstr=NULLSMAT, *valstr=NULLSMAT;
-  CheckRhs(2,4);
+
+  CheckStdRhs(2,2);
   CheckLhs(0,3);
 
   if ( IsMatObj(stack,1) ) 
