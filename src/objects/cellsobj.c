@@ -1307,37 +1307,86 @@ static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
  * set cells elements 
  * C{exps}=(....)
  * or C{exp,exp,..}=(...)
- *   FIXME: work in progress 
- *   we must expand the size if ind are outside boundaries.
+ *   FIXME: work in progress should be changed 
+ *   since functions in cells should be used 
  */
 
 static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 {
-  int i,ind;
+  int i,j,ind=0,nind;
   NspCells *C;
-  NspMatrix *Ind;
+  NspMatrix *Ind1,*Ind2;
   CheckRhs (3, 1000);
-  if ((C = GetCells(stack, 1)) == NULLCELLS) return RET_BUG;
-  if ((Ind = GetMat(stack,2))  == NULLMAT) return RET_BUG;
-  for ( i= 3 ; i <= rhs ; i++) 
+  if ( rhs >= 1 ) 
     {
-      NspObject *Ob = nsp_get_object(stack,i);
-      if ( Ocheckname(Ob,NVOID)==FALSE ) 
+      /* last elt gives us the number of indices cells(ind1,...,indn)=rhs */
+      if ( GetScalarInt(stack,rhs,&nind) == FAIL) return RET_BUG;
+    }
+  if ((C = GetCells(stack, 1)) == NULLCELLS) return RET_BUG;
+  switch (nind ) 
+    {
+    case 1: 
+      if ((Ind1 = GetMat(stack,2))  == NULLMAT) return RET_BUG;
+      if ( Ind1->mn != rhs - 3 )
 	{
-	  if (nsp_object_set_name(Ob,"ce") == FAIL)
-	    return RET_BUG;
+	  Scierror("Error: internal error, less rhs arguments %d than expected %d\n",
+		   rhs- 3, Ind1->mn);
+	  return RET_BUG;
 	}
-      else 
+      for ( i = 0 ; i < Ind1->mn ; i++)
 	{
-	  if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) 
-	    return RET_BUG;
+	  int cij= Ind1->R[i]-1;
+	  NspObject *Ob = nsp_get_object(stack,i+3);
+	  if ( Ocheckname(Ob,NVOID)==FALSE ) 
+	    {
+	      if (nsp_object_set_name(Ob,"ce") == FAIL) return RET_BUG;
+	    }
+	  else 
+	    {
+	      if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) return RET_BUG;
+	    }
+	  if ( cij >= 0 && cij < C->mn )
+	    {
+	      if ( C->objs[cij] != NULLOBJ) nsp_object_destroy(&C->objs[cij]);
+	      C->objs[cij]= Ob;
+	    }
+	  ind++;
 	}
-      ind = Ind->R[i-3]-1;
-      if ( ind >= 0 && ind < C->mn )
+      break;
+    case 2: 
+      if ((Ind1 = GetMat(stack,2))  == NULLMAT) return RET_BUG;
+      if ((Ind2 = GetMat(stack,3))  == NULLMAT) return RET_BUG;
+      if ( Ind1->mn*Ind2->mn != rhs - 4 )
 	{
-	  if ( C->objs[ind] != NULLOBJ) nsp_object_destroy(&C->objs[ind]);
-	  C->objs[ind]= Ob;
+	  Scierror("Error: internal error, less rhs arguments %d than expected %d\n",
+		   rhs- 4, Ind1->mn*Ind2->mn);
+	  return RET_BUG;
 	}
+      ind=4;
+      for ( i = 0 ; i < Ind1->mn ; i++)
+	for ( j = 0 ; j < Ind2->mn ; j++)
+	  {
+	    int cij= Ind1->R[i]-1+C->m*(Ind2->R[j]-1);
+	    NspObject *Ob = nsp_get_object(stack,ind);
+	    if ( Ocheckname(Ob,NVOID)==FALSE ) 
+	      {
+		if (nsp_object_set_name(Ob,"ce") == FAIL) return RET_BUG;
+	      }
+	    else 
+	      {
+		if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) return RET_BUG;
+	      }
+	    if ( cij >= 0 && cij < C->mn )
+	      {
+		if ( C->objs[cij] != NULLOBJ) nsp_object_destroy(&C->objs[cij]);
+		C->objs[cij]= Ob;
+	      }
+	    ind++;
+	  }
+      break;
+    default: 
+      Scierror("Error: cells with more than 2 indices are not yet implemented\n");
+      return RET_BUG;
     }
   NthObj(1)->ret_pos = 1;
   return 1;
