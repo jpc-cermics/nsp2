@@ -102,7 +102,7 @@ void SciDynLoad(nsp_const_string shared_path,char **en_names,char strf, int *ili
   SciLink(iflag,rhs,ilib,shared_path,en_names,strf);
 }
 
-#if defined(netbsd) || defined(freebsd) || defined(sun) || defined(__alpha) || defined(sgi) || (!defined(hppa_old) && defined(hppa))  || defined(__APPLE__)
+#if defined(netbsd) || defined(freebsd) || defined(sun) || defined(__alpha) || defined(sgi) || (!defined(hppa_old) && defined(hppa))  || defined(__APPLE__) || defined(__CYGWIN__) 
 #include "link_SYSV.c"
 #else
 /** no more used on sun */

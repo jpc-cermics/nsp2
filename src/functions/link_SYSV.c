@@ -32,12 +32,12 @@
 #endif
 #endif
 
-#ifdef linux 
+#if  defined(linux) || defined(__CYGWIN__)
 #include <unistd.h>
 #include <sys/wait.h>
 #endif 
 
-#if !defined(linux) && !defined(netbsd)  && !defined(freebsd) && !defined(__APPLE__) && !defined(hppa)
+#if !defined(linux) && !defined(netbsd)  && !defined(freebsd) && !defined(__APPLE__)  && !defined(hppa) && !defined(__CYGWIN__)
 #if (defined(sun) && ! defined(SYSV)) 
 #else 
 #include <sys/mode.h>
