@@ -4179,6 +4179,46 @@ int int_number_properties(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+/*
+ * push the marix  elements on the stack 
+ */
+
+static int int_mx_to_seq (Stack stack, int rhs, int opt, int lhs)
+{
+  int i,j,count=0;
+  NspMatrix *M;
+  CheckRhs (1, 1);
+  if ((M = GetMat(stack, 1)) == NULLMAT ) return RET_BUG;
+  if (M->rc_type == 'r')
+    for ( i=0 ; i < M->mn ; i++)
+      {  
+	NthObj(i+2)= nsp_create_object_from_double(NVOID,M->R[i]);
+	NthObj(i+2)->ret_pos = i+1;
+	if ( NthObj(i+2) == NULLOBJ ) { count= i; goto bug;}
+      }
+  else 
+    for ( i=0 ; i < M->mn ; i++)
+      {  
+	NthObj(i+2)=nsp_create_object_from_complex(NVOID,&M->C[i]);
+	NthObj(i+2)->ret_pos = i+1;
+	if ( NthObj(i+2) == NULLOBJ ) { count= i; goto bug;}
+      }
+  return M->mn ;
+  bug: 
+  for ( j= 2 ; j <= i +1  ; j++) 
+    {
+      M = (NspMatrix *) NthObj(j);
+      nsp_matrix_destroy(M);
+    }
+  return RET_BUG;
+}
+
+
+/* internal tests 
+ * FIXME : to be removed 
+ */
+
 #include "../interp/Eval.h"
 
 int int_harmloop1(Stack stack, int rhs, int opt, int lhs)
@@ -4426,6 +4466,7 @@ static OpTab Matrix_func[] = {
   {"linspace", int_mxlinspace},
   {"logspace", int_mxlogspace},
   {"number_properties",int_number_properties},
+  {"object2seq_m",int_mx_to_seq}, /* A{...} on rhs  */
   {(char *) 0, NULL}
 };
 
