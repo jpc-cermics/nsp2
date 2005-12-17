@@ -439,6 +439,27 @@ NspObject *nsp_complexi_object_(char *str)
   return (NspObject *) A;
 }
 
+/**
+ *nsp_create_object_from_complex:
+ * @str: the object name or %NVOID
+ * @cval:  value to store in the 1x1 matrix 
+ * 
+ * Creates an Object containing a 1x1 complex matrix 
+ * with value @dval and name @str
+ * 
+ * 
+ * Return value: a new #NspObject ( in fact a #NspMatrix)
+ **/
+
+NspObject *nsp_create_object_from_complex(char *str,const doubleC *d)
+{
+  NspMatrix *A;
+  if ((A= nsp_matrix_create(str,'c',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
+  A->C[0].r = d->r;
+  A->C[0].i = d->i;
+  return (NspObject *) A;
+}
+
 /*
  */
 
