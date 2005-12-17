@@ -1363,8 +1363,8 @@ static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       ind=4;
-      for ( i = 0 ; i < Ind1->mn ; i++)
-	for ( j = 0 ; j < Ind2->mn ; j++)
+      for ( j = 0 ; j < Ind2->mn ; j++)
+	for ( i = 0 ; i < Ind1->mn ; i++)
 	  {
 	    int cij= Ind1->R[i]-1+C->m*(Ind2->R[j]-1);
 	    NspObject *Ob = nsp_get_object(stack,ind);
