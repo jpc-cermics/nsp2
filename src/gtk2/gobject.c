@@ -1326,6 +1326,19 @@ nspg_closure_marshal(GClosure *closure,
 }
 
 
+/**
+ * nsp_gtk_eval_function:
+ * @func: 
+ * @args: 
+ * @n_args: 
+ * @ret: 
+ * @nret: 
+ * 
+ * evaluates the macro @func using the gtk stack.
+ * 
+ * Return value: 
+ **/
+
 int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
 {
   int nargs = 0, i, n,rep =FAIL;
@@ -1379,10 +1392,8 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
 }
 
 
-/* -------------- Enum and Flags  ------------------ */
-
 /**
- * pyg_constant_strip_prefix:
+ * nsp_constant_strip_prefix:
  * @name: the constant name.
  * @strip_prefix: the prefix to strip.
  *
@@ -1414,8 +1425,8 @@ nsp_constant_strip_prefix(gchar *name, const gchar *strip_prefix)
 }
 
 /**
- * pyg_enum_add_constants:
- * @module: a Python module
+ * nsp_enum_add_constants:
+ * @table: a hash table 
  * @enum_type: the GType of the enumeration.
  * @strip_prefix: the prefix to strip from the constant names.
  *
@@ -1456,12 +1467,12 @@ nsp_enum_add_constants(NspHash *table, GType enum_type, const gchar *strip_prefi
 }
 
 /**
- * pyg_flags_add_constants:
- * @module: a Python module
+ * nsp_flags_add_constants:
+ * @table: a hash table 
  * @flags_type: the GType of the flags type.
  * @strip_prefix: the prefix to strip from the constant names.
  *
- * Adds constants to the given Python module for each value name of
+ * Adds constants to the given hash table for each value name of
  * the flags set.  A prefix will be stripped from each flag name.
  */
 
@@ -1610,8 +1621,6 @@ nspg_flags_get_value(GType flag_type, NspObject *obj, void *val)
  */
 
 /* -------------- GValue marshaling ------------------ */
-
-
 
 /**
  * nspg_value_from_pyobject:
@@ -1818,7 +1827,7 @@ void register_nsp_type_in_gtype(NspTypeBase *type, GType gtype)
 }
 
 /**
- * nspg_value_as_pyobject:
+ * nspg_value_as_nspobject:
  * @value: the GValue object.
  * @copy_boxed: true if boxed values should be copied.
  *
@@ -1954,24 +1963,15 @@ nsp_gdk_rectangle_from_object(NspObject *object, GdkRectangle *rectangle)
   return FALSE;
 }
 
-/**--------------------------------------------------------
+/**
  * gtype_from_nsp_object:
- * obj: a Nsp object
+ * @obj: an object
  *
  * find a GType corresponding to the given object.
  * Returns: the corresponding GType or 0 
  * 
  * This is usefull for list ans tree where column 
  * types are to be given. 
- * 
- *
- XXXX we could imagine to use g_type_from_name ? 
- if (PyString_Check(obj)) {
-    type = g_type_from_name(PyString_AsString(obj));
-    if (type == 0)
-      PyErr_SetString(PyExc_TypeError, "could not find named typecode");
-    return type;
-  }
  */
 
 GType gtype_from_nsp_object(NspObject *obj)
@@ -2029,7 +2029,6 @@ GType gtype_from_nsp_object(NspObject *obj)
  * Utility function fill a row in a GtkListStore or GtkTreeStore 
  * -----------------------------------------------------------------
  */ 
-
 
 /* 
  * Utility function: returns an array of GType from a Nsp List 
