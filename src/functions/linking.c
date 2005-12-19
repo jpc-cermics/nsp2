@@ -36,7 +36,7 @@
 static void Underscores(int isfor,nsp_const_string ename, char *ename1);
 static int SearchFandS(nsp_const_string op, int ilib);
 static int nsp_find_shared(nsp_const_string shared_path);
-int LinkStatus (void) ;
+static int LinkStatus (void) ;
 
 /* sructure used to store entry points 
  * i.e a function pointer, a name and a shared lib id 
@@ -305,7 +305,6 @@ NspHash *nsp_get_dlsymbols()
  *
  */
 
-
 static int nsp_find_shared(nsp_const_string shared_path)
 {
   int i;
@@ -325,6 +324,8 @@ static int nsp_find_shared(nsp_const_string shared_path)
 
 void nsp_unlink_shared(int ilib)
 {
+  /* be sure that dynamic link tables are initialized */
+  SciLinkInit(); 
   /* delete entry points in shared lib *i */
   Sci_Delsym(ilib);
   /* delete entry points used in addinter in shared lib *i */
