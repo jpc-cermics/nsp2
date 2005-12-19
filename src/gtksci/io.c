@@ -150,6 +150,9 @@ int Xorgetchar(void)
     SELECT_DEBUG(fprintf(stderr,"looping %d\n",counter++);)
     /* always flush writes before waiting */
     gdk_flush();
+#ifdef WITH_TK 
+    flushTKEvents();
+#endif
     fflush(stdout); 
     fflush(stderr);
     /* Update the masks and, unless X events are already in the queue,
