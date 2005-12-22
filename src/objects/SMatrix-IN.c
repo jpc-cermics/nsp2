@@ -1311,6 +1311,23 @@ int int_smxstripblanks(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/*
+ *
+ */
+
+int int_smatrix_utf8_from_unichar(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *loc;
+  NspMatrix *A;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if (( A = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  if (( loc = nsp_smatrix_utf8_from_unichar(A)) == NULLSMAT) return RET_BUG; 
+  MoveObj(stack,1,NSP_OBJECT(loc));
+  return 1;
+}
+
+
 
 /*
  * The Interface for basic matrices operation 
@@ -1381,6 +1398,7 @@ static OpTab SMatrix_func[]={
   {"sort_s", int_smatrix_sort},
   {"gsort_s", int_smatrix_sort},
   {"new_sort", int_smatrix_sort },
+  {"unichar_to_utf8", int_smatrix_utf8_from_unichar},
   {(char *) 0, NULL}
 };
 

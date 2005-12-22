@@ -80,7 +80,7 @@ int nsp_smatrix_to_utf8(NspSMatrix *A)
       char *loc= nsp_string_to_utf8(A->S[i]);
       if ( loc != A->S[i] && loc != NULL) 
 	{
-	nsp_string_destroy(&(A->S[i]));
+	  nsp_string_destroy(&(A->S[i]));
 	  A->S[i]= loc;
 	}
       else if ( loc == NULL) 
@@ -151,3 +151,45 @@ int nsp_smatrix_utf8_validate(NspSMatrix *A)
       return FALSE;
   return TRUE;
 }
+
+
+
+
+
+/**
+ * nsp_smatrix_utf8_from_unichar:
+ * @A: a #NspMatrix with unichar codes 
+ * 
+ * converts the scalar matrix @A to an utf8 string matrix.
+ * Each entry of @A is assumed to be an unichar code (ISO10646).
+ * 
+ * Return value: a new #NspSMatrix or %NULLSMAT
+ **/
+
+NspSMatrix *nsp_smatrix_utf8_from_unichar(NspMatrix *A) 
+{
+  int i,j;
+  char buf[7]; /* 6 bytes long */
+  NspSMatrix *Loc;
+  if ( A->mn == 0) return nsp_smatrix_create(NVOID,0,0,"v",0);
+  if ((Loc =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1))== NULLSMAT)
+    return(NULLSMAT);
+  for ( i = 0 ; i < A->mn ; i++)
+    {
+      int n;
+      n= g_unichar_to_utf8((unsigned int) A->R[i],buf);
+      buf[n]='\0';
+      if ((Loc->S[i] = nsp_string_copy(buf)) == (nsp_string) 0 ) 
+	{
+	  for ( j = i ; j < A->mn ; j++) Loc->S[i]=NULL;
+	  nsp_smatrix_destroy(Loc);
+	  return(NULLSMAT);
+	}
+    }
+  return(Loc);
+}
+
+  
+
+
+
