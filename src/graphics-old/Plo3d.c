@@ -457,7 +457,7 @@ void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double 
 static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
-  int fg1, polysize,npoly,whiteid,cache,i;
+  int fg1, polysize,npoly,whiteid,cache,i,warn=0;
   int *polyx,*polyy,*locindex,fill[4]; /* Modified by polpoth 4/5/2000 fill[4] instead of fill[1] */
   double *polyz;
   double zmin,zmax;
@@ -536,6 +536,8 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
     }
   polysize=(*p)+1; /* jpc : dec 1999 */
   npoly=1; 
+
+
   for ( i = (*q)-1 ; i>= 0 ; i--)
     {
       int j,nok=0;
@@ -603,8 +605,12 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	      /* colors are given by cvect of size (*p) times (*q) */
 	      if ( (*p) != 3 && (*p) !=4 ) 
 		{
-		  Scistring("plot3d1: interpolated shading is only allowed for polygons with 3 or 4 vertices\n");
-		  return;
+		  warn=1;
+		  /* Scistring("plot3d1: interpolated shading is only allowed for polygons with 3 or 4 vertices\n");*/
+		  /* using the first color */
+		  fill[0]= *(cvect+(*p)*locindex[i]);
+		  if ( flag[0] < 0 ) fill[0]=-fill[0];
+		  Xgc->graphic_engine->fillpolylines(Xgc,polyx,polyy,fill,npoly,polysize);
 		} 
 	      else
 		{
@@ -624,7 +630,13 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	    }
 	  /* End of modified code by polpoth 4/5/2000 */
 	}
-    } 
+    }
+
+  if ( warn == 1 ) 
+    {
+      Scistring("plot3d1: interpolated shading is only allowed for polygons with 3 or 4 vertices\n"); 
+    }
+
   if ( flag[2] >=3 )
     {
       int fg;
