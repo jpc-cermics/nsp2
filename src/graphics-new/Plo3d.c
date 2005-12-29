@@ -151,6 +151,7 @@ int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       plot3dg_ogl(Xgc,"plot3d",DPoints_ogl,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+      nsp_ogl_set_2dview(Xgc);
       return 0;
     }
 #endif
@@ -164,6 +165,7 @@ int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, doubl
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       plot3dg_ogl(Xgc,"plot3d1",DPoints1_ogl,x,y,z,p,q,teta,alpha,legend,flag,bbox);
+      nsp_ogl_set_2dview(Xgc);
       return 0;
     }
 #endif 
@@ -178,6 +180,7 @@ int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p,
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       fac3dg_ogl(Xgc,"fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_ogl_set_2dview(Xgc);
       return(0);
     }
 #endif
@@ -191,6 +194,7 @@ int nsp_plot_fac3d_1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       fac3dg_ogl(Xgc,"fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_ogl_set_2dview(Xgc);
       return(0);
     }
 #endif
@@ -204,6 +208,7 @@ int nsp_plot_fac3d_2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       fac3dg_ogl(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_ogl_set_2dview(Xgc);
       return(0);
     }
 #endif 
@@ -217,6 +222,7 @@ int nsp_plot_fac3d_3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       fac3dg_ogl(Xgc,"fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
+      nsp_ogl_set_2dview(Xgc);
       return(0);
     }
 #endif 
@@ -536,8 +542,6 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
     }
   polysize=(*p)+1; /* jpc : dec 1999 */
   npoly=1; 
-
-
   for ( i = (*q)-1 ; i>= 0 ; i--)
     {
       int j,nok=0;
@@ -630,8 +634,8 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
 	    }
 	  /* End of modified code by polpoth 4/5/2000 */
 	}
-    }
-
+    } 
+  
   if ( warn == 1 ) 
     {
       Scistring("plot3d1: interpolated shading is only allowed for polygons with 3 or 4 vertices\n"); 
@@ -751,6 +755,7 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       nsp_param3d_ogl(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
+      nsp_ogl_set_2dview(Xgc);
       return 0;
     }
 #endif
@@ -842,6 +847,7 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       nsp_param3d_1_ogl(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
+      nsp_ogl_set_2dview(Xgc);
       return 1;
     }
 #endif
@@ -1098,7 +1104,7 @@ void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double
   /* transmit info to opengl */
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
-      nsp_ogl_set_view(Xgc);
+      nsp_ogl_set_3dview(Xgc);
     }
 #endif
 
@@ -2118,20 +2124,22 @@ static int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, dou
 
   /* take care here flag[0] is used */
   SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[0]+1)/2);
+  
   /* Calcule l' Enveloppe Convexe de la boite **/
   /* ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,&box,legend,flag[1]);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
+  if (fg1==-1) fg1=0;
   /* Le triedre cache **/
   if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
       /* cache=box.InsideD[0];*/
-      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,&box,'D',fg1);
+      if (flag[1] >=2 ) DrawAxis_ogl(Xgc,&box,'D',fg1);
     }
   else 
     {
       /* cache=box.InsideU[0]-4; */
-      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,&box,'U',fg1);
+      if (flag[1] >=2 ) DrawAxis_ogl(Xgc,&box,'U',fg1);
     }
   init = 0 ; 
   while (1) 
@@ -2147,7 +2155,7 @@ static int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, dou
       init = j+1;
       if ( init >= (*n)) break;
     }
-  if (flag[2] >=3 ) 
+  if (flag[1] >=3 ) 
     {
       int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
@@ -2188,16 +2196,17 @@ static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, i
   /* ainsi que les triedres caches ou non **/
   Convex_Box(Xgc,&box,legend,flag[1]);
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
+  if (fg1==-1) fg1=0;
   /* Le triedre cache **/
   if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
       /* cache=box.InsideD[0];*/
-      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,&box,'D',fg1);
+      if (flag[1] >=2 ) DrawAxis_ogl(Xgc,&box,'D',fg1);
     }
   else 
     {
       /* cache=box.InsideU[0]-4; */
-      if (flag[2] >=2 ) DrawAxis_ogl(Xgc,&box,'U',fg1);
+      if (flag[1] >=2 ) DrawAxis_ogl(Xgc,&box,'U',fg1);
     }
   for ( cur=0 ; cur < *n ; cur++)
     {
@@ -2217,7 +2226,7 @@ static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, i
 	  if ( init >= (*m)) break;
 	}
     }
-  if (flag[2] >=3 ) 
+  if (flag[1] >=3 ) 
     {
       int fg;
       fg = Xgc->graphic_engine->xget_foreground(Xgc);
