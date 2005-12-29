@@ -1,35 +1,23 @@
-/*------------------------------------------------------------------------
- *    Graphic library
- *    Copyright (C) 2001 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- *--------------------------------------------------------------------------*/
-/*--------------------------------------------------------------------------
- *    Open GL Driver 
- * FIXME: pour une élimination correcte des parties cachées il 
- *   faut utiliser glDepthRange 
- *   pour préciser la zone de la scene.
- *   etc.....
+/* Nsp
+ * Copyright (C) 2001-2005 Jean-Philippe Chancelier Enpc/Cermics
  *
- * when a graphic function is activated ex drawrectangle 
- *   the graphic is performed and an expose event is queued 
- *   (using nsp_gtk_invalidate where resize flag is set to 1 to force 
- *    a redraw when the expose is effective)
- *   Proceding this way the graphic is present on the back and front buffer 
- *   and when an expose event is activated without resize a swap_buffers is enough 
- *   to redraw the graphics without replaying the whole stuff.
- *   FIXME: il semble que parfois ça ne marche plus !!!!
- *   et je ne sais pas pourquoi.
- *   
- *   force_affichage(BCG *Xgc) is similar to nsp_gtk_invalidate but the 
- *   expose is done synchronously. 
- *   xset('wshow') when we are not using an extra_pixmap performs 
- *   a force_affichage. 
- *   This can be usefull in 
- *   for i=1:10;xclear();plot3d(x,y,z,angle=i);xset('wshow');end
- *   since if the force_affichage is not used then only the last 
- *   plot3d will be visible. 
- *   
- * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * jpc@cermics.enpc.fr
+ * Open GL Driver 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -37,6 +25,8 @@
 #include <math.h>
 #include <stdarg.h>
 #include <gtk/gtk.h>
+#include <pango/pangoft2.h>
+#include <gtk/gtkgl.h>
 
 #define PERI_PRIVATE 1
 #include "nsp/sciio.h"
@@ -45,10 +35,6 @@
 #include "nsp/version.h"
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
-
-#define FONTNUMBER 7 
-#define FONTMAXSIZE 6
-#define SYMBOLNUMBER 10
 
 /* periGL with the new DRAW_CHECK only works in recoding mode since the drawing actions 
  * are to be done in expose_event.
@@ -65,16 +51,14 @@
 #define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
    {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
 
-static char Marks[] = {
-  /*., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/
-  (char)0x2e,(char)0x2b,(char)0xb4,(char)0xc5,(char)0xa8,
-  (char)0xe0,(char)0x44,(char)0xd1,(char)0xa7,(char)0x4f};
-
 /* Global variables to deal with X11 **/
 
 static unsigned long maxcol; /* XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 static void nsp_gtk_invalidate(BCG *Xgc);
+static void nsp_pango_initialize_layout(BCG *Xgc);
+static void nsp_pango_finalize_layout(BCG *Xgc);
+static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
 
 /* 
  * OpenGL 
@@ -82,24 +66,17 @@ static void nsp_gtk_invalidate(BCG *Xgc);
 
 static void force_affichage(BCG *Xgc);
 void nsp_ogl_set_view(BCG *Xgc);
-static bool LoadTGA(TextureImage *texture, char *filename);
-static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col);
-static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...);
-#if 0
-static void glut_display_string(BCG *Xgc, GLfloat x, GLfloat y, const char *string);
-#endif 
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
 static void unclip_rectangle(GdkRectangle clip_rect);
 
-/*------------------------------------------------------------------
+/*
  * the current graphic data structure 
- *------------------------------------------------------------------*/
+ */
 
 /* functions **/
 
 static void set_c(BCG *Xgc,int col);
-static void LoadFonts(BCG *Xgc);
-static void DrawMark(BCG *Xgc,int *x, int *y);
+static void draw_mark(BCG *Xgc,int *x, int *y);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
 static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin,int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr, int change_cursor);
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
@@ -112,7 +89,6 @@ static void scig_deconnect_handlers(BCG *winxgc);
 void create_graphic_window_menu( BCG *dd);
 void start_sci_gtk();
 
-static void DispStringAngle( BCG *xgc,int x0, int yy0, char *string, double angle);
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 
@@ -221,10 +197,6 @@ void xendgraphic(void)
 
 void xend(BCG *Xgc)
 {
-  /* Must destroy everything  **/
-  /* FIXME: a mettre ailleurs */
-  glDeleteLists(Xgc->private->tab_base[0],95);
-  glDeleteLists(Xgc->private->tab_base[1],95);
 }
 
 /* Clear the current graphic window 
@@ -1629,92 +1601,16 @@ static void xset_fpf_def(BCG *Xgc)
  * Functions for private->drawing 
  *-----------------------------------------------------------*/
 
-/**************************************************
- *  display of a string
- *  at (x,y) position whith slope angle alpha in degree . 
+/*
+ * display of a string
+ * at (x,y) position whith slope angle alpha in degree . 
  * Angle are given clockwise. 
  * If *flag ==1 and angle is z\'ero a framed box is added 
  * around the string}.
- * 
  * (x,y) defines the lower left point of the bounding box 
- * of the string ( we do not separate asc and desc 
- **************************************************/
-
-
-
-static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
-{
-  DRAW_CHECK;
-  /*
-   * Une police de taille 12 = une texture-fonte d'homotethie ECHELLE_CHAR (0.6) !!
-   */
-  if ( Abs(angle) <= 0.1) 
-    {
-#if 0      
-      glut_display_string(Xgc, x,  y, string);
-#endif
-      glPrint2D(Xgc, x,y, ECHELLE_CHAR, angle, false, string);
-      if ( flag == 1) 
-	{
-	  int rect[4];
-	  boundingbox(Xgc,string, x, y, rect);
-	  drawrectangle(Xgc,rect);
-	}
-    }
-  else 
-    {
-      DispStringAngle(Xgc,x,y,string,angle);
-    }
-}
-
-static void DispStringAngle(BCG *Xgc,int x0, int yy0, char *string, double angle)
-{
-#if 0
-  int i;
-  int x,y, rect[4];
-  double sina ,cosa,l;
-  char str1[2];
-  str1[1]='\0';
-  x= x0;
-  y= yy0;
-  sina= sin(angle * M_PI/180.0);  cosa= cos(angle * M_PI/180.0);
-  for ( i = 0 ; i < (int)strlen(string); i++)
-    { 
-      str1[0]=string[i];
-      /* XDrawString(dpy,Xgc->private->drawable,gc,(int) x,(int) y ,str1,1); */
-      boundingbox(Xgc,str1,x,y,rect);
-      /* drawrectangle(Xgc,string,rect,rect+1,rect+2,rect+3); **/
-      if ( cosa <= 0.0 && i < (int)strlen(string)-1)
-	{ char str2[2];
-	/* si le cosinus est negatif le deplacement est a calculer **/
-	/* sur la boite du caractere suivant **/
-	str2[1]='\0';str2[0]=string[i+1];
-	boundingbox(Xgc,str2,x,y,rect);
-	}
-      if ( Abs(cosa) >= 1.e-8 )
-	{
-	  if ( Abs(sina/cosa) <= Abs(((double)rect[3])/((double)rect[2])))
-	    l = Abs(rect[2]/cosa);
-	  else 
-	    l = Abs(rect[3]/sina);
-	}
-      else 
-	l = Abs(rect[3]/sina);
-      x +=  cosa*l*1.1;
-      y +=  sina*l*1.1;
-    }
-#endif
-}
-
-/* To get the bounding rectangle of a string */
-
-static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
-{ 
-  rect[0]= x ;
-  rect[1]= y - TAILLE_CHAR * ECHELLE_CHAR;
-  rect[2]= strlen(string)*TRANSLATE_CHAR * ECHELLE_CHAR;
-  rect[3]= TAILLE_CHAR * ECHELLE_CHAR;
-}
+ * of the string ( we do not separate asc and desc) 
+ */
+ 
 
 /*------------------------------------------------
  * line segments arrows 
@@ -2225,7 +2121,6 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
   gint i;
   if ( n <= 1) return;
   DRAW_CHECK;
-
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) glVertex3d( vx[i], vy[i], vz[i]);
   glEnd();
@@ -2271,7 +2166,7 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
       keepsize= Xgc->fontSize;
       hds= Xgc->CurHardSymbSize;
       xset_font(Xgc,i,hds);
-      for ( i=0; i< n ;i++) DrawMark(Xgc,vx+i,vy+i);
+      for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
       xset_font(Xgc,keepid,keepsize);
     }
 }
@@ -2373,6 +2268,8 @@ static void delete_window(BCG *dd,int intnum)
   if (winxgc->private->stdgc != NULL)g_object_unref(winxgc->private->stdgc);
   if (winxgc->private->wgc != NULL)g_object_unref(winxgc->private->wgc);
   if (winxgc->private->item_factory != NULL) g_object_unref(winxgc->private->item_factory);
+
+  nsp_pango_finalize_layout(winxgc);
 
   FREE(winxgc->private);
   /* remove current window from window list */
@@ -2481,6 +2378,12 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->in_expose= FALSE;
   private->protect= FALSE;
   private->draw= FALSE;
+  private->layout  = NULL;
+  private->mark_layout  = NULL;
+  private->context = NULL;
+  private->ft2_context = NULL;
+  private->desc = NULL;
+  private->mark_desc = NULL;
 
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
@@ -2503,11 +2406,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   if (first == 0)
     {
       maxcol = 1 << 16; /* XXXXX : to be changed */
-      /* 
-      ** NEW !! ATTENTION on ne peut pas appeller LoadFonts() ici parcequ'elle appelle
-      ** des fcts OpenGL et OpenGL n'est pas encore initialise. confere xinit(opengl=%t)
-      */
-      //LoadFonts(); 
       first++;
     }
 
@@ -2561,6 +2459,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
 
+  nsp_pango_initialize_layout(NewXgc);/* initialize a pango_layout */
 
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
   /* Attention ce qui est ici doit pas etre rejoué 
@@ -2700,19 +2599,83 @@ void bitmap(BCG *Xgc,char *string, int w, int h)
 }
 
 
-int fontidscale(BCG *Xgc,int fontsize)
+/*-----------------------------------------------------------------
+ * Text and symbols with pango 
+ *----------------------------------------------------------------*/
+
+#define FONTNUMBER 7 
+#define FONTMAXSIZE 6
+#define SYMBOLNUMBER 12
+
+/* Must be of size FONTMAXSIZE */
+
+static const int pango_size[] = { 8 ,10,12,14,18,24};
+
+static char *pango_fonttab[] ={"Courier", "Standard Symbols L","Sans","Sans","Sans","Sans"};
+
+static void nsp_pango_finalize_layout(BCG *Xgc)
 {
-  printf("fct fontidscale pas encore implementee en OpenGL\n");
-  return 0;
+  if ( Xgc->private->layout != NULL) 
+    {
+      g_object_unref ( Xgc->private->layout);Xgc->private->layout=NULL;
+      g_object_unref ( Xgc->private->mark_layout);Xgc->private->mark_layout=NULL;
+      pango_font_description_free ( Xgc->private->desc); Xgc->private->desc=NULL;
+      pango_font_description_free ( Xgc->private->mark_desc);Xgc->private->mark_desc=NULL;
+      g_object_unref (G_OBJECT (Xgc->private->ft2_context));
+    }
 }
+
+static void nsp_pango_initialize_layout(BCG *Xgc)
+{
+  if ( Xgc->private->layout == NULL) 
+    {
+      Xgc->private->context = gtk_widget_get_pango_context (Xgc->private->drawing);
+      /* a revoir deprecated */
+      Xgc->private->ft2_context = pango_ft2_get_context (72, 72);
+      Xgc->private->layout = pango_layout_new (Xgc->private->ft2_context);
+      Xgc->private->mark_layout = pango_layout_new (Xgc->private->ft2_context);
+      Xgc->private->desc = pango_font_description_new();
+      Xgc->private->mark_desc = pango_font_description_from_string(pango_fonttab[1]);
+    }
+}
+
 
 static void xset_font(BCG *Xgc,int fontid, int fontsize)
 { 
-  Xgc->fontId = fontid;
-  Xgc->fontSize = fontsize;
+  int i,fsiz;
+  i = Min(FONTNUMBER-1,Max(fontid,0));
+  fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
+  if ( Xgc->fontId != i || Xgc->fontSize != fsiz )
+    {
+      Xgc->fontId = i;
+      Xgc->fontSize = fsiz;
+      pango_font_description_set_family(Xgc->private->desc, pango_fonttab[i]);
+      /* pango_font_description_set_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);*/
+      pango_font_description_set_absolute_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);
+
+      pango_layout_set_font_description (Xgc->private->layout, Xgc->private->desc);
+    }
 }
 
-/* To get the  id and size of the current font **/
+
+static void xset_mark(BCG *Xgc,int number, int size)
+{ 
+  int n_size;
+  Xgc->CurHardSymb = Max(Min(SYMBOLNUMBER-1,number),0);
+  n_size  = Max(Min(FONTMAXSIZE-1,size),0);
+  if ( Xgc->CurHardSymbSize != n_size )
+    {
+      Xgc->CurHardSymbSize = n_size;
+      /* pango_font_description_set_size (Xgc->private->mark_desc, pango_size[fsiz] * PANGO_SCALE);*/
+      pango_font_description_set_absolute_size (Xgc->private->mark_desc, 
+						pango_size[Xgc->CurHardSymbSize] * PANGO_SCALE);
+      pango_layout_set_font_description (Xgc->private->mark_layout, Xgc->private->mark_desc);
+    }
+}
+
+
+/* To get the  id and size of the current font 
+ */
 
 static void  xget_font(BCG *Xgc,int *font)
 {
@@ -2720,15 +2683,7 @@ static void  xget_font(BCG *Xgc,int *font)
   font[1] = Xgc->fontSize ;
 }
 
-/* To set the current mark **/
-
-static void xset_mark(BCG *Xgc,int number, int size)
-{ 
-  Xgc->CurHardSymb = Max(Min(SYMBOLNUMBER-1,number),0);
-  Xgc->CurHardSymbSize = Max(Min(FONTMAXSIZE-1,size),0);
-}
-
-/* To get the current mark id **/
+/* To get the current mark id */
 
 static void xget_mark(BCG *Xgc,int *symb)
 {
@@ -2736,72 +2691,223 @@ static void xget_mark(BCG *Xgc,int *symb)
   symb[1] = Xgc->CurHardSymbSize ;
 }
 
-/* Load in X11 a font at size  08 10 12 14 18 24 
- * TimR08 TimR10 TimR12 TimR14 TimR18 TimR24 
- * name is a string if it's a string containing the char % 
- *   it's suposed to be a format for a generic font in X11 string style 
- *   ex :  "-adobe-times-bold-i-normal--%s-*-75-75-p-*-iso8859-1"
- *   and the font is loaded at size 8,10,12,14,18,24
- *   else it's supposed to be an alias for a font name
- *   Ex : TimR and we shall try to load TimR08 TimR10 TimR12 TimR14 TimR18 TimR24 
- *   we first look in an internal table and transmits the string 
- *   to X11 
+/* drawing marks with pango 
  */
 
-static void queryfamily(char *name, int *j,int *v3)
-{ 
-  printf("fct queryfamily  pas encore implementee en OpenGL\n");
+static const int symbols[] = 
+  {
+    0x22C5, /* lozenge */
+    0x002B, /* plus sign */
+    0x00D7, /* multiplication sign */
+    0x2217, /* asterisk operator */
+    0x2666, /* black diamond suit */
+    0x25CA, /* lozenge */
+    0x0394, /* greek capital letter delta */
+    0x2207, /* nabla  */
+    0x2663, /* black club suit */
+    0x2295, /* circled plus */
+    0x2665, /* black heart suit */
+    0x2660, /* black spade suit */
+    0x2297, /* circled times */
+    0x2022, /* bullet */
+    0x00B0  /* degree sign */
+  };
+
+/* drawing marks with pango 
+ * FIXME: some operation could be stored in cache 
+ * i.e utf8 translation and offsets used for drawing 
+ */
+
+static void draw_mark(BCG *Xgc,int *x, int *y)
+{
+  double dx,dy;
+  PangoRectangle ink_rect,logical_rect;
+  int code = symbols[Xgc->CurHardSymb]; 
+  gchar symbol_code[4], *iter = symbol_code;
+  DRAW_CHECK;
+  g_unichar_to_utf8(code, iter);
+  iter = g_utf8_next_char(iter);
+  g_unichar_to_utf8(0x0, iter);
+  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
+  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
+  dx = ( ink_rect.x + ink_rect.width/2.0)/((double) PANGO_SCALE);
+  dy = ( ink_rect.y + ink_rect.height/2.0)/((double) PANGO_SCALE);
+  /* gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout); */
+  glRasterPos2i(*x-dx,*y-dy);
+  gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
 }
 
 static void loadfamily(char *name, int *j)
 { 
-  printf("fct loadfamily pas encore implementee en OpenGL\n");
 }
 
-/*FIXME */
-#define MAX_PATH 1024
-static char font_path[MAX_PATH];
-
-static void ogl_path_font()
-{
-  char *env = getenv("SCI");
-  sprintf(font_path,"%s/src/graphics/Font_mini.tga",(env == NULL) ? "/fixme" : env);
-}
-
-static void LoadFonts(BCG *Xgc)
-{
-  /*
-   * Construction de fontes avec OpenGL
-   */
-  static int first = 0 ;
-  if (first == 0 ) 
-    {
-      ogl_path_font();
-      first++;
-    }
-
-  if (!LoadTGA(&Xgc->private->tab_textures_font[0],font_path) ||
-      !LoadTGA(&Xgc->private->tab_textures_font[1],font_path))
-    {
-      Sciprintf("Texture Font missing or corrupted\n");
-    }
-  Xgc->private->tab_base[0] = BuildFont(Xgc->private->tab_textures_font[0].texID, 95, 16, 8);
-  Xgc->private->tab_base[1] = BuildFont(Xgc->private->tab_textures_font[1].texID, 95, 16, 8);
-  /* base[1] = BuildFont(tab_textures_font[1].texID, 256, 16, 16); */
-  Xgc->private->base_encours  = Xgc->private->tab_base[0];
-  Xgc->private->fonte_encours = Xgc->private->tab_textures_font[0].texID;
-}
-
-
-static void DrawMark(BCG *Xgc,int *x, int *y)
+static void queryfamily(char *name, int *j,int *v3)
 { 
-  char str[2];
-  DRAW_CHECK;
-  str[0]=Marks[Xgc->CurHardSymb];
-  str[1] = '\0';
-  glPrint2D(Xgc, *x,*y, ECHELLE_CHAR, 0, false, str);
 }
 
+
+/* text and rotated text with pango 
+ */
+
+static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
+				       const PangoMatrix *matrix, GdkRectangle *rect);
+
+/* 
+ * FIXME: flag is unused since the rectangle is drawn in Graphics-IN.c 
+ *        to deal with the case when string can be on multiple lines 
+ *        but pango could make this directly. 
+ * maybe we should change the display an consider that (x,y) is the baseline 
+ * of the string not its lower left boundary.
+ * Note that if the string contains \n then the layout will have multiple lines 
+ * 
+ */
+
+static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angle)
+{
+  PangoRectangle ink_rect,logical_rect;
+  int  height,width;
+  DRAW_CHECK;
+  pango_layout_set_text (Xgc->private->layout, str, -1);
+  /*  PangoLayoutLine *line;
+   *  nline = pango_layout_get_line_count(Xgc->private->layout); 
+   *  if ( nline == 1 ) 
+   *    {
+   *   / * we want (x,y) to be at the baseline of the first string position * /
+   *   line = pango_layout_get_line(Xgc->private->layout,0);
+   *   pango_layout_line_get_extents(line, &ink_rect,&logical_rect);
+   *   height = - logical_rect.y/PANGO_SCALE;
+   *   width = logical_rect.width/PANGO_SCALE;
+   */
+  /* used to position the descent of the last line of layout at y */
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
+  if ( Abs(angle) >= 0.1) 
+    {
+      double xt,yt;
+      GdkRectangle rect;
+      PangoMatrix matrix = PANGO_MATRIX_INIT; 
+      pango_matrix_rotate (&matrix, - angle );
+      pango_context_set_matrix (Xgc->private->ft2_context, &matrix);
+      pango_layout_context_changed (Xgc->private->layout);
+      pango_layout_get_extents(Xgc->private->layout,&ink_rect,&logical_rect);
+      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->ft2_context, 
+				 &matrix,&rect);
+      /* we want to change the transformation in order to have the upper left 
+       * point of the enclosing box after rotation at (0,0) since 
+       * gl_pango_ft2_render_layout seams not to work fine if it is not the case 
+       */
+      matrix.x0= -rect.x; matrix.y0=-rect.y;
+      pango_context_set_matrix (Xgc->private->ft2_context, &matrix);
+      pango_layout_context_changed (Xgc->private->layout);
+      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->ft2_context, 
+				 &matrix,&rect);
+      /* the down, left point of the enclosing rectangle is at position (x,y) 
+       * we need to translate since we want the down left corner of the rotated rectangle 
+       * to be at position (x,y)
+       */
+      xt = 0 * matrix.xx + height * matrix.xy + matrix.x0;
+      yt = 0 * matrix.yx + height * matrix.yy + matrix.y0;
+      glRasterPos2i(x-xt,y+rect.height  - yt);
+      gl_pango_ft2_render_layout (Xgc->private->layout,&rect);
+      if (0) 
+	{
+	  /* draw the enclosing rectangle */
+	  int myrect[]={ x-xt,y-yt ,rect.width,rect.height};
+	  drawrectangle(Xgc,myrect);
+	  fprintf(stderr,"rect = %d %d %d %d\n",rect.x,rect.y,rect.width,rect.height);
+	}
+      pango_context_set_matrix (Xgc->private->ft2_context,NULL);
+      pango_layout_context_changed (Xgc->private->layout);
+      if (0) 
+	{
+	  /* draw the rotated enclosing rectangle */
+	  double xx[]={0,width},yy[]={0,height};
+	  int vx[4],vy[4],ik[]={0,1,3,2},i,j,k;
+	  double dx,dy;
+	  for ( i = 0 ; i < 2 ; i++) 
+	    {
+	      for ( j=0; j < 2 ; j++)
+		{
+		  dx =  xx[i]* matrix.xx + yy[j] * matrix.xy + matrix.x0;
+		  dy =  xx[i]* matrix.yx + yy[j] * matrix.yy + matrix.y0;
+		  k = ik[i+2*j];
+		  vx[k]= x-(xt-dx), vy[k]= y-(yt-dy);
+		}
+	    }
+	  drawpolyline(Xgc,vx, vy,4,1);
+	}
+    }
+  else
+    {
+      /* horizontal string */
+      if (0)
+	{
+	  /* draw enclosing rectangle */
+	  int rect[]={ x,y - height,width,height};
+	  drawrectangle(Xgc,rect);
+	}
+      /* gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,x,y - height,Xgc->private->layout); */
+      glRasterPos2i(x,y);
+      gl_pango_ft2_render_layout (Xgc->private->layout,NULL);
+    }
+}
+
+
+/* returns the enclosing rectangle of the pango layout transformed 
+ * by matrix transformation: 
+ */
+
+static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
+				       const PangoMatrix *matrix, GdkRectangle *rect)
+{
+  gdouble x_min = 0, x_max = 0, y_min = 0, y_max = 0;
+  PangoRectangle logical_rect;
+  gint i, j;
+  pango_layout_get_extents (layout, NULL, &logical_rect);
+  for (i = 0; i < 2; i++)
+    {
+      gdouble x = (i == 0) ? logical_rect.x : logical_rect.x + logical_rect.width;
+      for (j = 0; j < 2; j++)
+	{
+	  gdouble y = (j == 0) ? logical_rect.y : logical_rect.y + logical_rect.height;
+	  
+	  gdouble xt = (x * matrix->xx + y * matrix->xy) / PANGO_SCALE + matrix->x0;
+	  gdouble yt = (x * matrix->yx + y * matrix->yy) / PANGO_SCALE + matrix->y0;
+	  
+	  if (i == 0 && j == 0)
+	    {
+	      x_min = x_max = xt;
+	      y_min = y_max = yt;
+	    }
+	  else
+	    {
+	      if (xt < x_min)
+		x_min = xt;
+	      if (yt < y_min)
+		y_min = yt;
+	      if (xt > x_max)
+		x_max = xt;
+	      if (yt > y_max)
+		y_max = yt;
+	    }
+	}
+    }
+  
+  rect->x = floor (x_min);
+  rect->width = ceil (x_max) - rect->x;
+  rect->y = floor (y_min);
+  rect->height = floor (y_max) - rect->y;
+}
+
+/* returns the bounding box for a non rotated string 
+ */
+
+void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
+{
+  int width, height;
+  pango_layout_set_text (Xgc->private->layout, string, -1);
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
+  rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
+}
 
 /*--------------------------------------------------------------------------
  * Create Graphic widget 
@@ -2820,6 +2926,7 @@ static void DrawMark(BCG *Xgc,int *x, int *y)
 /*
  * FIXME : experimental for tests 
  */
+
 #if 0 
 static void init_gl_lights(GLfloat light0_pos[4])
 {
@@ -2900,8 +3007,6 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   glAlphaFunc(GL_GREATER,0.1f);
   glEnable(GL_ALPHA_TEST);
   glShadeModel(GL_SMOOTH);
-  LoadFonts(Xgc);
-  
   gdk_gl_drawable_gl_end (gldrawable);
   return FALSE;
 }
@@ -3400,9 +3505,9 @@ static void force_redraw(BCG *Xgc)
 }
 
 
-/*
-** Commute la vue : mode perspective cavaliere (2D) --- mode perspective)
-*/
+/* select the view mode from 2d view to 
+ * 3d view.
+ */
 
 void nsp_ogl_set_view(BCG *Xgc)
 {
@@ -3502,199 +3607,6 @@ void nsp_ogl_set_3dview(BCG *Xgc)
 
 
 
-
-/*
-** TGA avec transparence
-** goto http://nehe.gamedev.net/    lesson #32
-*/
-static bool LoadTGA(TextureImage *texture, char *filename)
-{    
-  GLubyte		TGAheader[12]={0,0,2,0,0,0,0,0,0,0,0,0};
-  GLubyte		TGAcompare[12];	
-  GLubyte		header[6];
-  GLuint		bytesPerPixel;	
-  GLuint		imageSize;
-  GLuint		temp;
-  GLuint		type=GL_RGBA;
-  GLuint             i;
-  /* printf("XXX je vais charger la texture %s\n", filename);*/
-  FILE *file = fopen(filename, "rb");
-     
-  if ( file==NULL ||
-       fread(TGAcompare,1,sizeof(TGAcompare),file)!=sizeof(TGAcompare) ||
-       memcmp(TGAheader,TGAcompare,sizeof(TGAheader))!=0 ||
-       fread(header,1,sizeof(header),file)!=sizeof(header))
-    {
-      if (file == NULL)
-	{
-	  /* printf("%s chemin inexistant\n", filename);*/
-	  return false;
-	}
-      else
-	{
-	  fclose(file);
-	  return false;
-	}
-    }
-
-  texture->width  = header[1] * 256 + header[0];
-  texture->height = header[3] * 256 + header[2];
-     
-  if (	texture->width	<=0	||
-	texture->height	<=0	||
-	(header[4]!=24 && header[4]!=32))
-    {
-      fclose(file);
-      printf("%s pas une texture 24 ou 32 bits\n", filename);
-      return false;
-    }
-     
-  texture->bpp	= header[4];
-  bytesPerPixel	= texture->bpp/8;
-  imageSize	= texture->width*texture->height*bytesPerPixel;
-
-  texture->imageData=(GLubyte *)malloc(imageSize);
-
-  if(	texture->imageData==NULL ||
-	fread(texture->imageData, 1, imageSize, file)!=imageSize)
-    {
-      if(texture->imageData!=NULL)
-	free(texture->imageData);
-	     
-      fclose(file);
-      return false;
-    }
-	
-  for (i=0; i<(unsigned) imageSize; i+=bytesPerPixel)
-    {
-      temp=texture->imageData[i];
-      texture->imageData[i] = texture->imageData[i + 2];
-      texture->imageData[i + 2] = temp;
-    }
-
-  fclose (file);
-
-  glGenTextures(1, &texture->texID);
-
-  glBindTexture(GL_TEXTURE_2D, texture->texID);	
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-  if (texture->bpp==24)
-    type=GL_RGB;
-
-  glTexImage2D(GL_TEXTURE_2D, 0, type, texture->width, texture->height, 0, type, GL_UNSIGNED_BYTE, texture->imageData);
-
-  return true;
-}
-
-/*
-** Construit les listes d'affichages pour stocker les cararcteres
-** alphanumeriques sous forme de rectangles textures avec
-** transparence.
-**
-** texID : ID de la texture.
-** retourne la liste d'affichage des fontes
-** Ne pas oublier de detruire les listes d'affiches a la fin du prog !!
-*/
-
-static GLuint BuildFont(GLuint texID,int nb_char,int nb_ligne,int nb_col)			
-{
-  int    loop;
-  GLuint base;
-
-  base=glGenLists(nb_char);
-  glBindTexture(GL_TEXTURE_2D, texID);
-  for (loop=0; loop<nb_char; loop++)
-    {
-      float cx = (float) (loop%16) / ((float) nb_ligne);
-      float cy = (float) (loop/16) / ((float) nb_col);
-      float dx = 1.0 / ((float) nb_ligne);
-      float dy = 1.0 / ((float) nb_col);
-      glNewList(base+loop,GL_COMPILE);
-      glBegin(GL_QUADS);
-      glTexCoord2f(cx,    1.0f-cy);    glVertex2i(0,0);
-      glTexCoord2f(cx+dx, 1.0f-cy);    glVertex2i(TAILLE_CHAR,0);
-      glTexCoord2f(cx+dx, 1.0f-cy-dy); glVertex2i(TAILLE_CHAR,TAILLE_CHAR);
-      glTexCoord2f(cx,    1.0f-cy-dy); glVertex2i(0,TAILLE_CHAR);
-      glEnd();
-      glTranslated(TRANSLATE_CHAR,0,0);
-      glEndList();
-    }
-  return base;
-}
-
-
-
-/*
-** Affiche une chaine de caractere dans l'espace 3D
-** les textures sont toujours orientees dans la meme direction
-** meme si on tourne la camera
-** x,y,z la position du premier caractere.
-** scale : echelle du texte
-** rot : angle rotation 
-** set : if you have a look at the bitmap, you'll notice there 
-** are two different character sets. The first character set is
-** normal, and the second character set is italicized. If set is 0,
-** the first character set is selected. If set is 1 or greater the
-** second character set is selected.
-*/
-
-static void glPrint2D(BCG *Xgc, GLfloat x, GLfloat y,  GLfloat scal, GLfloat rot, bool set, const char *string, ...)
-{
-  char		text[256];
-  va_list		ap;
-     
-  if (string == NULL)
-    return;
-	
-  if (set > 1) set = 1;     
-
-  glColor3f(0,0,0);      
-  va_start(ap, string);
-  vsprintf(text, string, ap);
-  va_end(ap);
-     
-  glEnable(GL_TEXTURE_2D);
-  glEnable(GL_BLEND);
-
-  glBindTexture(GL_TEXTURE_2D, Xgc->private->fonte_encours);
-  glPushMatrix();
-  glLoadIdentity();
-  glTranslatef(x-TRANSLATE_CHAR*ECHELLE_CHAR/2, y-TAILLE_CHAR*ECHELLE_CHAR,0);
-  glRotated(rot,1,0,0);
-  glScaled(scal,scal,scal);
-  glListBase(Xgc->private->base_encours-32+(128*set));
-  glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);
-  glPopMatrix();
-  glDisable(GL_BLEND);
-  glDisable(GL_TEXTURE_2D);
-}
-
-
-#if 0
-#include <GL/glut.h>
-
-static void glut_display_string(BCG *Xgc, GLfloat x, GLfloat y, const char *string)
-{
-  int j;
-  double height = 10.0f;
-  // The Mono Roman font supported by GLUT has characters that are
-  // 104.76 units wide, up to 119.05 units high, and descenders can
-  // go as low as 33.33 units.
-  // We scale the text to make its height that desired by the caller.
-  const static float FONT_HEIGHT = 119.05f;
-  glPushMatrix();
-  glTranslatef( x, y, 0 );
-  float s = height / FONT_HEIGHT; // scale factor
-  glScalef( s, s, 1 );
-  for ( j = 0; string[j] != '\0'; ++j )
-    glutStrokeCharacter( GLUT_STROKE_MONO_ROMAN, string[j] );
-  glPopMatrix();
-}
-#endif 
-
-
 /*
  * Comme glPrint3D mais les textures sont toujours orientees vers la camera
  * quelque soit la position de la camera dans l'espace
@@ -3735,4 +3647,125 @@ static void unclip_rectangle(GdkRectangle clip_rect)
 }
 
 
+/*
+ * rendering text with PangoFT2 
+ * from: font-pangoft2.c written by Naofumi Yasufuku  
+ * <naofumi@users.sourceforge.net>
+ */
+
+/* Render a layout in OpenGl
+ * Note that if the layout uses a transformation matrix 
+ * the enclosing rectangle is given by rect
+ */
+
+static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *e_rect)
+{
+  int x,y;
+  PangoRectangle logical_rect;
+  FT_Bitmap bitmap;
+  GLvoid *pixels;
+  guint32 *p;
+  GLfloat color[4];
+  guint32 rgb;
+  GLfloat a;
+  guint8 *row, *row_end;
+  int i;
+
+  pango_layout_get_extents (layout, NULL, &logical_rect);
+  if (logical_rect.width == 0 || logical_rect.height == 0)
+    return;
+
+  if ( e_rect == NULL )
+    {
+      bitmap.rows = PANGO_PIXELS (logical_rect.height);
+      bitmap.width = PANGO_PIXELS (logical_rect.width);
+      bitmap.pitch = bitmap.width;
+      x= PANGO_PIXELS (-logical_rect.x);
+      y= 0;
+    }
+  else
+    {
+      /* rotated string: we use the enclosing rectangle */
+      bitmap.rows = e_rect->height;
+      bitmap.width = e_rect->width;
+      bitmap.pitch = bitmap.width;
+      /* note that displaystring will pass e_rect here is such that x=y=0 */
+      x = - e_rect->x;
+      y = - e_rect->y ;
+    }
+  bitmap.buffer = g_malloc (bitmap.rows * bitmap.width);
+  bitmap.num_grays = 256;
+  bitmap.pixel_mode = ft_pixel_mode_grays;
+
+  memset (bitmap.buffer, 0, bitmap.rows * bitmap.width);
+  
+  pango_ft2_render_layout (&bitmap, layout,x,y);
+
+  pixels = g_malloc (bitmap.rows * bitmap.width * 4);
+  p = (guint32 *) pixels;
+
+  glGetFloatv (GL_CURRENT_COLOR, color);
+#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
+  rgb =  ((guint32) (color[0] * 255.0))        |
+        (((guint32) (color[1] * 255.0)) << 8)  |
+        (((guint32) (color[2] * 255.0)) << 16);
+#else
+  rgb = (((guint32) (color[0] * 255.0)) << 24) |
+        (((guint32) (color[1] * 255.0)) << 16) |
+        (((guint32) (color[2] * 255.0)) << 8);
+#endif
+  a = color[3];
+
+  row = bitmap.buffer + bitmap.rows * bitmap.width; /* past-the-end */
+  row_end = bitmap.buffer;      /* beginning */
+
+  if (a == 1.0)
+    {
+      do
+        {
+          row -= bitmap.width;
+          for (i = 0; i < bitmap.width; i++)
+#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
+            *p++ = rgb | (((guint32) row[i]) << 24);
+#else
+            *p++ = rgb | ((guint32) row[i]);
+#endif
+        }
+      while (row != row_end);
+    }
+  else
+    {
+      do
+        {
+          row -= bitmap.width;
+          for (i = 0; i < bitmap.width; i++)
+#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
+            *p++ = rgb | (((guint32) (a * row[i])) << 24);
+#else
+            *p++ = rgb | ((guint32) (a * row[i]));
+#endif
+        }
+      while (row != row_end);
+    }
+
+  glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
+
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+#if !defined(GL_VERSION_1_2)
+  glDrawPixels (bitmap.width, bitmap.rows,
+                GL_RGBA, GL_UNSIGNED_BYTE,
+                pixels);
+#else
+  glDrawPixels (bitmap.width, bitmap.rows,
+                GL_RGBA, GL_UNSIGNED_INT_8_8_8_8,
+                pixels);
+#endif
+
+  glDisable (GL_BLEND);
+
+  g_free (bitmap.buffer);
+  g_free (pixels);
+}
 
