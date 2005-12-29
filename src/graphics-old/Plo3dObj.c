@@ -260,6 +260,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
       nsp_draw_3d_obj_ogl(Xgc,Lo,theta,alpha,legend,flag,ebox,with_mesh1,with_box,box_color,box_style);
+      nsp_ogl_set_2dview(Xgc);
       return; 
     }
 #endif
