@@ -3772,6 +3772,8 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* create private->drawingarea */
 
   dd->private->drawing = gtk_drawing_area_new();
+  /* we use our own double buffer */
+  gtk_widget_set_double_buffered (dd->private->drawing ,FALSE);
 
   gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
 		     (GtkSignalFunc) locator_button_press, (gpointer) dd);
