@@ -36,11 +36,17 @@
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
 
-/* periGL with the new DRAW_CHECK only works in recoding mode since the drawing actions 
- * are to be done in expose_event.
+extern void nsp_ogl_set_view(BCG *Xgc);
+extern void create_graphic_window_menu( BCG *dd);
+extern void start_sci_gtk();
+
+/* periGL with the new DRAW_CHECK only works in recording mode 
+ * since the drawing actions are to be done in expose_event.
  */ 
 
-#define DRAW_CHECK_XX  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )  {  nsp_gtk_invalidate(Xgc); Xgc->private->draw = TRUE;  return; }
+#define DRAW_CHECK_XX							\
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )	\
+    {  nsp_gtk_invalidate(Xgc); Xgc->private->draw = TRUE;  return; }
 
 /* just a test to perform graphic when we are not in recording 
  * mode: this is not supposed to work since graphics are 
@@ -48,10 +54,11 @@
  * is usefull for acquiring for ex the zoom rectangle 
  */
 
-#define DRAW_CHECK  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 ) \
-   {  nsp_gtk_invalidate(Xgc); if (Xgc->record_flag == TRUE) {  Xgc->private->draw = TRUE;  return;} }
-
-/* Global variables to deal with X11 **/
+#define DRAW_CHECK							\
+  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )	\
+    {  nsp_gtk_invalidate(Xgc);						\
+      if (Xgc->record_flag == TRUE) {Xgc->private->draw = TRUE;return;} \
+    }
 
 static unsigned long maxcol; /* XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
@@ -59,13 +66,7 @@ static void nsp_gtk_invalidate(BCG *Xgc);
 static void nsp_pango_initialize_layout(BCG *Xgc);
 static void nsp_pango_finalize_layout(BCG *Xgc);
 static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
-
-/* 
- * OpenGL 
- */
-
 static void force_affichage(BCG *Xgc);
-void nsp_ogl_set_view(BCG *Xgc);
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
 static void unclip_rectangle(GdkRectangle clip_rect);
 
@@ -73,22 +74,17 @@ static void unclip_rectangle(GdkRectangle clip_rect);
  * the current graphic data structure 
  */
 
-/* functions **/
-
 static void set_c(BCG *Xgc,int col);
 static void draw_mark(BCG *Xgc,int *x, int *y);
-static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
-static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin,int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr, int change_cursor);
-static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
+static void pixmap_clear_rect(BCG *Xgc,int x,int y,int w,int h);
+static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin,
+		     int iflag,int getmotion, int getrelease,int getkey,
+		     char *str, int lstr, int change_cursor);
+static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,
+				   GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 
 static void scig_deconnect_handlers(BCG *winxgc);
-
-/* utility for points allocations */
-
-void create_graphic_window_menu( BCG *dd);
-void start_sci_gtk();
-
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 
@@ -188,9 +184,9 @@ void xselgraphic(BCG *Xgc)
   gdk_window_show(Xgc->private->window->window);
 }
 
-/* End of graphic (do nothing)  **/
+/* End of graphic (do nothing)  */
 
-void xendgraphic(void)
+void xendgraphic(void) 
 {
 } 
 
@@ -584,10 +580,9 @@ static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
 }
   
 
-
-/*******************************************************
+/*
  * clear a rectangle zone 
- *******************************************************/
+ */
 
 typedef void (*r_c) (BCG *Xgc,int x,int y,int w,int h);
 static void RectangleClear   (BCG *Xgc,int x,int y,int w,int h,int clipflag,r_c f );
@@ -595,9 +590,7 @@ static void R_clear  (BCG *Xgc,int x,int y,int w,int h);
 
 static void R_clear(BCG *Xgc,int x, int y, int w, int h)
 {
-  int tab[4];
-
-  tab[0] = x;      tab[1] = y;      tab[2] = w;      tab[3] = h;
+  int tab[]={ x,y,w, h};
   fillrectangle(Xgc, tab);
   /*
     gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,x,y,w,h);
@@ -615,7 +608,7 @@ static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_
   if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
     {
       static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
-      // gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+      /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
       clip_rectangle(Xgc, clip_rect);
     }
   (*F)(Xgc,x,y,w,h);
@@ -628,7 +621,7 @@ static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_
 				 Xgc->CurClipRegion[1],
 				 Xgc->CurClipRegion[2],
 				 Xgc->CurClipRegion[3]};
-      //gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+      /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
       clip_rectangle(Xgc, clip_rect);
     }
 }
@@ -640,10 +633,9 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
 }
 
 
-
-/************************************************************************
+/*
  * graphic context modifications 
- ************************************************************************/
+ */
 
 /* record or not the graphic commands */
 
@@ -696,7 +688,6 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
  * is smaller than the min size scrollbar will be drawn 
  * but if the scrolled window is greater then drawbox will follow 
  */
-
 
 /* fixe la taille min s'un widget 
    gtk_widget_set_size_request     (GtkWidget *widget,
@@ -809,11 +800,11 @@ static void xset_viewport(BCG *Xgc,int x, int y)
     }
 }
 
-/********************************************
+/*
  * select window intnum as the current window 
  * window is created if necessary 
  * return the value of the previous current window 
- ********************************************/
+ */
 
 static int xset_curwin(int intnum,int set_menu)
 {
@@ -872,7 +863,7 @@ static int xget_curwin(void)
   return  ( Xgc == NULL) ? -1 : Xgc->CurWindow;
 }
 
-/* Set a clip zone (rectangle ) **/
+/* Set a clip zone (rectangle ) */
 
 static void xset_clip(BCG *Xgc,int x[])
 {
@@ -880,21 +871,21 @@ static void xset_clip(BCG *Xgc,int x[])
   GdkRectangle clip_rect ={x[0],x[1],x[2],x[3]};
   Xgc->ClipRegionSet = 1;
   for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
-  //gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+  /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
   clip_rectangle(Xgc, clip_rect);
 }
 
-/* unset clip zone **/
+/* unset clip zone */
 
 static void xset_unclip(BCG *Xgc)
 {
   static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
   Xgc->ClipRegionSet = 0;
-  //gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+  /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
   unclip_rectangle(clip_rect);
 }
 
-/* Get the boundaries of the current clip zone **/
+/* Get the boundaries of the current clip zone */
 
 static void xget_clip(BCG *Xgc,int *x)
 {
@@ -916,7 +907,7 @@ static void xget_clip(BCG *Xgc,int *x)
  * Absolute mode if *num==0, relative mode if *num != 0
  */
 
-/* to set absolute or relative mode **/
+/* to set absolute or relative mode */
 
 static void xset_absourel(BCG *Xgc,int flag)
 {
@@ -961,19 +952,6 @@ static struct alinfo {
       {"GXset" , GL_SET," 1 "}
     };
 
-/* 
-   void xset_alufunction(BCG *Xgc,char *string)
-   { 
-   int value;
-   idfromname(string,&value);
-   if ( value != -1)
-   {
-   Xgc->CurDrawFunction = value;
-   glLogicOp(AluStruc_[value].id);
-   }
-   }
-*/
-
 static void xset_alufunction1(BCG *Xgc,int num)
 {   
   GLenum value ; 
@@ -1014,7 +992,7 @@ static void xset_thickness(BCG *Xgc,int value)
   xset_dash(Xgc,Xgc->CurDashStyle + 1);
 }
 
-/* to get the thickness value **/
+/* to get the thickness value */
 
 static int xget_thickness(BCG *Xgc)
 {
@@ -1044,7 +1022,7 @@ static int  xset_pattern(BCG *Xgc,int num)
   return old;
 }
 
-/* To get the id of the current pattern  **/
+/* To get the id of the current pattern  */
 
 static int xget_pattern(BCG *Xgc)
 { 
@@ -1054,7 +1032,7 @@ static int xget_pattern(BCG *Xgc)
     return Xgc->CurPattern + 1;
 }
 
-/* To get the id of the last pattern **/
+/* To get the id of the last pattern */
 
 static int xget_last(BCG *Xgc)
 {
@@ -1090,7 +1068,6 @@ static int  xset_dash(BCG *Xgc,int value)
   Xgc->CurDashStyle = l3;
   return old;
 }
-
 
 static int xget_dash(BCG *Xgc)
 {
@@ -1149,7 +1126,7 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 }
 
 
-/* to get the current dash-style **/
+/* to get the current dash-style */
 
 static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
 {
@@ -1439,7 +1416,6 @@ static void set_colormap_constants(BCG *Xgc,int m)
 
 /* getting the colormap */
 
-
 static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 {
   int m = Xgc->Numcolors;
@@ -1556,12 +1532,12 @@ static int xget_hidden3d(BCG *Xgc)
     }
 }
 
-/*-----------------------------------------------------------------------------
+/*
  * All the following function xxxx_1 
  * can be called using nsp_engine for a direct call 
  * or using C2F(dr1) using a name table 
  * this is usefull for replaying with the Rec driver (See Rec.c) 
- *-----------------------------------------------------------------------------*/
+ */
 
 static void xset_autoclear(BCG *Xgc,int num)
 { 
@@ -1593,24 +1569,6 @@ static void xset_fpf_def(BCG *Xgc)
   Xgc->fp_format[0]='\0';
 }
 
-/*-----------------------------------------------------------
- * general routines accessing the previous  set<> or get<> 
- *-----------------------------------------------------------*/
-
-/*-----------------------------------------------------------
- * Functions for private->drawing 
- *-----------------------------------------------------------*/
-
-/*
- * display of a string
- * at (x,y) position whith slope angle alpha in degree . 
- * Angle are given clockwise. 
- * If *flag ==1 and angle is z\'ero a framed box is added 
- * around the string}.
- * (x,y) defines the lower left point of the bounding box 
- * of the string ( we do not separate asc and desc) 
- */
- 
 
 /*------------------------------------------------
  * line segments arrows 
@@ -1746,13 +1704,13 @@ static void fillrectangle(BCG *Xgc,const int rect[])
   glEnd();
 }
 
-/*----------------------------------------------------------------------------------
+/*
  * draw a set of rectangles, provided here to accelerate GraySquare for X11 device 
  *  x : of size n1 gives the x-values of the grid 
  *  y : of size n2 gives the y-values of the grid 
  *  z : is the value of a function on the grid defined by x,y 
  *  on each rectangle the average value of z is computed 
- *----------------------------------------------------------------------------------*/
+ */
 
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 				  int remap,const int *colminmax,const double *zminmax)
@@ -1761,7 +1719,7 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
   Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
 
-/*----------------------------------------------------------------------------------
+/*
  * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device 
  *  x : of size n1 gives the x-values of the grid 
  *  y : of size n2 gives the y-values of the grid 
@@ -1769,7 +1727,7 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
  *  of each rectangle. 
  *  z[i,j] is the value on the middle of rectangle 
  *        P1= x[i],y[j] x[i+1],y[j+1]
- *----------------------------------------------------------------------------------*/
+ */
 
 static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				  int remap,const int *colminmax,const double *zminmax)
@@ -1778,7 +1736,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
-/*----------------------------------------------------------------------------------
+/*
  * Circles and Ellipsis 
  * Draw or fill a set of ellipsis or part of ellipsis 
  * Each is defined by 6-parameters, 
@@ -1790,7 +1748,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
  * with pattern fillvect[i] 
  * if fillvect[i] is > lastpattern  then only draw the ellipsis i 
  * The private->drawing style is the current private->drawing 
- *----------------------------------------------------------------------------------*/
+ */
 
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
@@ -1877,8 +1835,6 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
   DRAW_CHECK;
   xget_mark(Xgc,symb);
   xget_dash_and_color(Xgc,&dash,&color);
-
-
   for (i=0 ; i< n ; i++)
     {
       if (drawvect[i] <= 0)
@@ -1901,7 +1857,7 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 
 }
 
-/***********************************************************
+/*
  *  fill a set of polygons each of which is defined by 
  * (*p) points (*n) is the number of polygons 
  * the polygon is closed by the routine 
@@ -1910,7 +1866,7 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
  * if fillvect[i] > 0  draw the boundaries with current color 
  *               then fill with pattern fillvect[i]
  * if fillvect[i] < 0  fill with pattern - fillvect[i]
- **************************************************************/
+ */
 
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
@@ -2172,19 +2128,14 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 }
 
 
-
 /*
-** NEW !!
-*/
+ *
+ */
 static void drawpolymark3D(BCG *Xgc,double *vx, double *vy, double *vz, int n)
 {
   DRAW_CHECK;
-  printf("Fuck off : va falloir utiliser le billboarding pour la fct drawpolymark3D !!\n");
+  printf("To be done \n");
 }
-
-/*
-** FIXME: a rajouter ds la table et rendre statique 
-*/
 
 void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p)
 { 
@@ -2212,7 +2163,6 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
   xset_dash_and_color(Xgc,dash,color);
   Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
 }
-
 
 
 /*-------------------------------------------------------------------------
@@ -2277,10 +2227,9 @@ static void delete_window(BCG *dd,int intnum)
 }
 
 
-
-/********************************************
+/*
  * Routines for initialization : string is a display name 
- ********************************************/
+ */
 
 static void set_c(BCG *Xgc,int col)
 {
@@ -3151,16 +3100,16 @@ static void scig_deconnect_handlers(BCG *winxgc)
 
 
 /*
-** NEW !!
-*/
-static void
-print_gl_config_attrib (GdkGLConfig *glconfig,
-                        const gchar *attrib_str,
-                        int          attrib,
-                        gboolean     is_boolean)
+ *
+ */
+
+#if 0 
+static void print_gl_config_attrib (GdkGLConfig *glconfig,
+				    const gchar *attrib_str,
+				    int          attrib,
+				    gboolean     is_boolean)
 {
   int value;
-     
   g_print ("%s = ", attrib_str);
   if (gdk_gl_config_get_attrib (glconfig, attrib, &value))
     {
@@ -3173,8 +3122,7 @@ print_gl_config_attrib (GdkGLConfig *glconfig,
     g_print ("*** Cannot get %s attribute value\n", attrib_str);
 }
 
-static void
-examine_gl_config_attrib (GdkGLConfig *glconfig)
+static void examine_gl_config_attrib (GdkGLConfig *glconfig)
 {
   g_print ("\nOpenGL visual configurations :\n\n");
 
@@ -3212,10 +3160,9 @@ examine_gl_config_attrib (GdkGLConfig *glconfig)
   print_gl_config_attrib (glconfig, "GDK_GL_ACCUM_GREEN_SIZE", GDK_GL_ACCUM_GREEN_SIZE, FALSE);
   print_gl_config_attrib (glconfig, "GDK_GL_ACCUM_BLUE_SIZE",  GDK_GL_ACCUM_BLUE_SIZE,  FALSE);
   print_gl_config_attrib (glconfig, "GDK_GL_ACCUM_ALPHA_SIZE", GDK_GL_ACCUM_ALPHA_SIZE, FALSE);
-     
   g_print ("\n");
 }
-
+#endif 
 
 
 
@@ -3241,7 +3188,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 	}
     }
   /* commenter --- decommenter */
-  examine_gl_config_attrib(glconfig);
+  /* examine_gl_config_attrib(glconfig); */
 
   /* initialise pointers */
   dd->private->drawing = NULL;
@@ -3329,10 +3276,8 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
   /* create private->drawingarea */
   dd->private->drawing = gtk_drawing_area_new();
-
-  /*
-  ** NEW !! 
-  */
+  /* we use our own double buffer */
+  /* gtk_widget_set_double_buffered (dd->private->drawing ,FALSE); */
 
   /* Set OpenGL-capability to the widget */
   gtk_widget_set_gl_capability (dd->private->drawing,
@@ -3413,12 +3358,8 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
 
 /*
-** #############################################################
-**
-**                      ROUTINES POUR OPENGL
-**
-** #############################################################
-*/
+ *
+ */
 
 void afficher_repere(float ox, float oy, float oz)
 {
@@ -3608,9 +3549,7 @@ void nsp_ogl_set_3dview(BCG *Xgc)
 
 
 /*
- * Comme glPrint3D mais les textures sont toujours orientees vers la camera
- * quelque soit la position de la camera dans l'espace
- * goto http://www.lighthouse3d.com/opengl/billboarding/index.php3?billInt
+ *
  */
 
 
@@ -3651,11 +3590,8 @@ static void unclip_rectangle(GdkRectangle clip_rect)
  * rendering text with PangoFT2 
  * from: font-pangoft2.c written by Naofumi Yasufuku  
  * <naofumi@users.sourceforge.net>
- */
-
-/* Render a layout in OpenGl
  * Note that if the layout uses a transformation matrix 
- * the enclosing rectangle is given by rect
+ * the enclosing rectangle is given by e_rect
  */
 
 static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *e_rect)
