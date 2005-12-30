@@ -1238,36 +1238,54 @@ static int xget_usecolor(BCG *Xgc)
 
 static void xset_pixmapOn(BCG *Xgc,int num)
 { 
-  int num1= Min(Max(num,0),1);
+  int num1= Min(Max(num,0),2);
   if ( Xgc->CurPixmapStatus == num1 ) return;
   if ( num1 == 1 )
     {
-      GdkDrawable *temp ;
-      /* create a new pixmap */
-      temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
-					    Xgc->CWindowWidth, Xgc->CWindowHeight,
-					    -1);
-      if ( temp  == NULL ) 
+      /* switch to extra pixmap mode */
+      if ( Xgc->private->extra_pixmap != NULL) 
 	{
-	  xinfo(Xgc, "Not enough space to switch to Animation mode");
+	  Xgc->private->drawable = Xgc->private->extra_pixmap;
+	  Xgc->CurPixmapStatus = 1;
 	}
       else 
 	{
-	  xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
-	  Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
-	  Xgc->CurPixmapStatus = 1;
-	  pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+	  GdkDrawable *temp ;
+	  /* create a new pixmap */
+	  temp = (GdkDrawable *) gdk_pixmap_new(Xgc->private->drawing->window,
+						Xgc->CWindowWidth, Xgc->CWindowHeight,
+						-1);
+	  if ( temp  == NULL ) 
+	    {
+	      xinfo(Xgc,"Not enough space to switch to Animation mode");
+	    }
+	  else 
+	    {
+	      xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
+	      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
+	      Xgc->CurPixmapStatus = 1;
+	      pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+	    }
 	}
     }
-  else 
+  else if ( num1 == 0 ) 
     {
-      /* I remove the extra pixmap to the window */
+      /* deleting and removing the extra pixmap as the default drawable */
       xinfo(Xgc," ");
       gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
       Xgc->private->extra_pixmap = NULL;
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
       Xgc->CurPixmapStatus = 0; 
     }
+  else
+    {
+      /* removing the extra pixmap as the default drawable 
+       * but extra_pixmap is not destroyed 
+       */
+      Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
+      Xgc->CurPixmapStatus = 0; 
+    }
+  
 }
 
 static int xget_pixmapOn(BCG *Xgc)
@@ -2053,11 +2071,18 @@ static void delete_window(BCG *dd,int intnum)
   /* I delete the pixmap and the widget */
   if ( winxgc->CurPixmapStatus == 1 ) 
     {
+      /* switch to non extra pixmap mode */
       gdk_pixmap_unref(winxgc->private->extra_pixmap);
       winxgc->private->extra_pixmap = NULL;
-      winxgc->private->drawable = NULL; /* (GdkDrawable *)winxgc->private->drawing->window;*/
+      winxgc->private->drawable = NULL;
       winxgc->CurPixmapStatus = 0; 
     }
+  if ( winxgc->private->extra_pixmap != NULL) 
+    {
+      /* we can have a non null extra_pixmap */
+      gdk_pixmap_unref(winxgc->private->extra_pixmap);
+    }
+    
   /* deconnect handlers */
   scig_deconnect_handlers(winxgc);
   /* backing store private->pixmap */
