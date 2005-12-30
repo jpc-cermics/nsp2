@@ -35,7 +35,7 @@
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
 
-/* #define WITH_PANGO */
+/* #define WITH_PANGO  */
 
 /*
  * 
@@ -2805,7 +2805,7 @@ static const int symbols[] =
 static void draw_mark(BCG *Xgc,int *x, int *y)
 {
   double dx,dy;
-  PangoRectangle ink_rect,logical_rect;
+  PangoRectangle ink_rect;
   int code = symbols[Xgc->CurHardSymb]; 
   gchar symbol_code[4], *iter = symbol_code;
   DRAW_CHECK;
@@ -2813,10 +2813,19 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   iter = g_utf8_next_char(iter);
   g_unichar_to_utf8(0x0, iter);
   pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
-  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
-  dx = ( ink_rect.x + ink_rect.width/2.0)/((double) PANGO_SCALE);
-  dy = ( ink_rect.y + ink_rect.height/2.0)/((double) PANGO_SCALE);
+  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,NULL);
+  dx = PANGO_PIXELS(( ink_rect.x + ink_rect.width/2.0));
+  dy = PANGO_PIXELS(( ink_rect.y + ink_rect.height/2.0));
   gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout);
+  if (0) 
+    {
+      /* draw the ink_rectangle aroud the mark */
+      int i;
+      double rect[]={ink_rect.x,ink_rect.y,ink_rect.width,ink_rect.height};
+      int myrect[]={*x-dx,*y-dy,0,0};
+      for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
+      drawrectangle(Xgc,myrect);
+    }
 }
 #endif 
 

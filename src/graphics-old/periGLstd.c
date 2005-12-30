@@ -2579,7 +2579,7 @@ static void nsp_pango_initialize_layout(BCG *Xgc)
   if ( Xgc->private->layout == NULL) 
     {
       Xgc->private->context = gtk_widget_get_pango_context (Xgc->private->drawing);
-      /* a revoir deprecated */
+      /* a revoir deprecated XXXX */
       Xgc->private->ft2_context = pango_ft2_get_context (72, 72);
       Xgc->private->layout = pango_layout_new (Xgc->private->ft2_context);
       Xgc->private->mark_layout = pango_layout_new (Xgc->private->ft2_context);
@@ -2679,11 +2679,21 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   g_unichar_to_utf8(0x0, iter);
   pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
   pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
-  dx = ( ink_rect.x + ink_rect.width/2.0)/((double) PANGO_SCALE);
-  dy = ( ink_rect.y + ink_rect.height/2.0)/((double) PANGO_SCALE);
+  dx = ink_rect.x + ink_rect.width/2.0;
+  dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
   /* gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout); */
-  glRasterPos2i(*x-dx,*y-dy);
+  set_c(Xgc,1);
+  glRasterPos2i(*x-PANGO_PIXELS(dx),*y + PANGO_PIXELS(-dy));
   gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
+  if (0) 
+    {
+      /* draw the ink_rectangle around the mark */
+      int i;
+      double rect[]={ink_rect.x -dx ,ink_rect.y -logical_rect.height -dy,ink_rect.width,ink_rect.height};
+      int myrect[]={*x,*y,0,0};
+      for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
+      drawrectangle(Xgc,myrect);
+    }
 }
 
 static void loadfamily(char *name, int *j)
