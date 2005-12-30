@@ -175,7 +175,7 @@ void nsp_frames_info(void)
   if ( Datas == NULLLIST ) 
     Sciprintf("Empty Datas\n");
   else 
-    nsp_list_info(Datas,0) ;
+    nsp_list_info(Datas,0,NULL,LONG_MAX) ;
 }
 
 /**
@@ -190,7 +190,7 @@ void nsp_frame_info(void)
   if ( Datas == NULLLIST ) 
     Sciprintf("Empty Datas\n");
   else 
-    nsp_list_info((NspList *) Datas->first->O,0) ;
+    nsp_list_info((NspList *) Datas->first->O,0,NULL,LONG_MAX) ;
 }
 
 /**
