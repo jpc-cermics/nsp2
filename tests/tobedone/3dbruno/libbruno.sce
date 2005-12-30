@@ -7,7 +7,7 @@ function [zcol, zmin, zmax] = color_scaling(z, n1, n2)
    // a function to associate (linearly) a color number
    // to real values... 
    zmin = min(z); zmax = max(z)
-   zcol = dsearch(z, linspace(zmin,zmax,n2-n1+1)) + (n1-1)
+   zcol = bsearch(z, linspace(zmin,zmax,n2-n1+1)) + (n1-1)
 endfunction
 
 function [W, Pa] = param_vue1(G, phi, theta, d)

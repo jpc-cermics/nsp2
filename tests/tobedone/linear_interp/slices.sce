@@ -24,7 +24,7 @@ end
 
 nb_col = 128;
 vmin = min(VF); vmax = max(VF);
-color = dsearch(VF,linspace(vmin,vmax,nb_col+1));
+color = bsearch(VF,linspace(vmin,vmax,nb_col+1));
 
 xlfont("-adobe-helvetica-medium-r-normal--*-%s0-*-*-p-*-iso8859-1",6)
 xbasc();

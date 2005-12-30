@@ -4,7 +4,7 @@ t = linspace(-16*%pi,16*%pi,4000);
 xx = abs(t/(16*%pi)).*cos(t);
 yy = abs(t/(16*%pi)).*sin(t);
 zz = t/(16*%pi);
-colors = dsearch(0.5*(xx(1:$-1)+xx(2:$)),linspace(-1,1,129));
+colors = bsearch(0.5*(xx(1:$-1)+xx(2:$)),linspace(-1,1,129));
 L = tlist(["polyline" "coord" "color" "mark"], [xx;yy;zz], colors);
 
 Q = sphere_bis([0;0;0],0.6,3);
