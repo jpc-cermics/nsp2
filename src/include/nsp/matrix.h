@@ -90,15 +90,11 @@ extern doubleC *nsp_alloc_work_doubleC(unsigned int n);
 /* from MatObj.c */
 
 extern void nsp_matrix_destroy(NspMatrix *Mat); 
-extern void nsp_matrix_info (const NspMatrix *Mat, int indent); 
+extern void nsp_matrix_info (const NspMatrix *Mat, int indent,char *name, int rec_level); 
 extern NspMatrix *nsp_matrix_copy(const NspMatrix *A); 
-extern void nsp_matrix_print (NspMatrix *Mat, int indent,int header); 
+extern void nsp_matrix_print (NspMatrix *Mat, int indent,char *name, int rec_level); 
 extern unsigned int  nsp_matrix_elt_size(NspMatrix *M);
-extern void matrix_destroy (NspMatrix *Mat); 
-extern void matrix_info (const NspMatrix *Mat, int indent); 
-extern void matrix_print (NspMatrix *Mat, int indent); 
 extern NspObject *matrix_loop_extract (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
-extern NspMatrix *matrix_copy (const NspMatrix *A); 
 extern NspMatrix  *matrix_object(NspObject *O);
 extern int nsp_mat_fullcomp();
 extern NspMatrix *matrix_object(NspObject *O); 

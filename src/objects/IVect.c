@@ -99,7 +99,7 @@ void nsp_ivect_destroy(NspIVect *IV)
  * Displays Info on IV
  **/
 
-void nsp_ivect_info(NspIVect *IV, int indent)
+void nsp_ivect_info(NspIVect *IV, int indent,char *name,int rec_level)
 {
   int i;
   if ( IV == NULLIVECT) 
@@ -120,9 +120,9 @@ void nsp_ivect_info(NspIVect *IV, int indent)
  * writes IVect Objet 
  **/
 
-void nsp_ivect_print(NspIVect *IV, int indent)
+void nsp_ivect_print(NspIVect *IV, int indent,char *name, int rec_level)
 {
-  nsp_ivect_info(IV,indent);
+  nsp_ivect_info(IV,indent,NULL,LONG_MAX);
 }
 
 /**

@@ -83,7 +83,7 @@ NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M)
  * PMatInfo : display Info on NspPMatrix PMat 
  */
 
-void nsp_pmatrix_info(NspPMatrix *Mat, int indent)
+void nsp_pmatrix_info(NspPMatrix *Mat, int indent,char *name,int rec_level)
 {
   int i;
   if ( Mat == NULLPMAT) 
@@ -99,7 +99,7 @@ void nsp_pmatrix_info(NspPMatrix *Mat, int indent)
  * PMatPrint : writes PMat Objet 
  */
 
-void nsp_pmatrix_print(NspPMatrix *Mat, int indent)
+void nsp_pmatrix_print(NspPMatrix *Mat, int indent,char *name, int rec_level)
 {
   int i=0;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");

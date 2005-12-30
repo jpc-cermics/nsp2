@@ -239,7 +239,7 @@ void gdkatom_destroy(NspGdkAtom *H)
  * info 
  */
 
-void gdkatom_info(NspGdkAtom *self, int indent)
+void gdkatom_info(NspGdkAtom *self, int indent,char *name,int rec_level)
 {
   char *a_name;
   int i;
@@ -260,9 +260,9 @@ void gdkatom_info(NspGdkAtom *self, int indent)
  * print 
  */
 
-void gdkatom_print(NspGdkAtom *H, int indent)
+void gdkatom_print(NspGdkAtom *H, int indent,char *name, int rec_level)
 {
-  gdkatom_info(H,indent);
+  gdkatom_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------
@@ -393,7 +393,7 @@ int int_gdkatom_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspGdkAtom *a;
   if (( a= GetGdkAtom(stack,1))== NULLGDKATOM) return RET_BUG;
-  nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0,NULL,LONG_MAX);
   return 0;
 }
 

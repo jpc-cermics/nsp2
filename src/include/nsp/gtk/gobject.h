@@ -72,8 +72,8 @@ NspGObject *gobject_create(char *name,  GObject *obj, NspTypeBase *type);
 NspGObject *gobject_gettype_and_create(char *name,  GObject *obj);
 NspGObject *gobject_copy(NspGObject *H);
 void gobject_destroy(NspGObject *H);
-void gobject_info(NspGObject *H, int indent);
-void gobject_print(NspGObject *H, int indent);
+void gobject_info(NspGObject *H, int indent,char *name, int rec_level);
+void gobject_print(NspGObject *H, int indent,char *name, int rec_level);
 
 /* from NspGObjectObj.c */
 

@@ -256,7 +256,7 @@ void type_destroy(NspType *H)
  * info 
  */
 
-void type_info(NspType *H, int indent)
+void type_info(NspType *H, int indent,char *name,int rec_level)
 {
   NspTypeObject *top;
   int i;
@@ -277,9 +277,9 @@ void type_info(NspType *H, int indent)
  * print 
  */
 
-void type_print(NspType *H, int indent)
+void type_print(NspType *H, int indent,char *name, int rec_level)
 {
-  type_info(H,indent);
+  type_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------
@@ -450,7 +450,7 @@ int int_type_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspType *a;
   if (( a= GetType(stack,1))== NULLTYPE) return RET_BUG;
-  nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0,NULL,LONG_MAX);
   return 0;
 }
 

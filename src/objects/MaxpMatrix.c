@@ -307,7 +307,7 @@ void nsp_mpmatrix_destroy(NspMaxpMatrix *Mat)
  * @indent is the given indentation for printing.
  */
 
-void nsp_mpmatrix_info(const NspMaxpMatrix *Mat, int indent)
+void nsp_mpmatrix_info(const NspMaxpMatrix *Mat, int indent,char *name,int rec_level)
 {
   int i;
   if ( Mat == NULLMAXPMAT) 
@@ -333,7 +333,7 @@ void nsp_mpmatrix_info(const NspMaxpMatrix *Mat, int indent)
  */
 
 
-void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,int header )
+void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,char *name, int rec_level)
 {
   int i;
   Mat = (NspMaxpMatrix *) Mat2double((NspMatrix *)Mat);

@@ -1933,7 +1933,7 @@ int int_mpinfo(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((HMat = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-  nsp_mpmatrix_info(HMat,0);
+  nsp_mpmatrix_info(HMat,0,NULL,LONG_MAX);
   return 0;
 }
 

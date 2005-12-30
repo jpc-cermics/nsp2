@@ -69,8 +69,8 @@ extern NspPort *port_create(char *name,int lock,int port,NspObject* object_id,Ns
 
 extern NspPort *nsp_port_copy(NspPort *H);
 extern void nsp_port_destroy(NspPort *H);
-extern void nsp_port_info(NspPort *H, int indent);
-extern void nsp_port_print(NspPort *H, int indent);
+extern void nsp_port_info(NspPort *H, int indent,char *name, int rec_level);
+extern void nsp_port_print(NspPort *H, int indent,char *name, int rec_level);
 extern NspPort *nsp_port_object (NspObject *O); 
 extern int IsPortObj (Stack stack, int i); 
 extern int IsPort(NspObject *O);

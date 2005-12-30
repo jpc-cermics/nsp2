@@ -63,8 +63,8 @@ static AttrTab rect_attrs[];
 static NspRect *rect_object (NspObject *O); 
 static NspRect *rect_copy (NspRect *H); 
 static void rect_destroy (NspRect *H); 
-static void rect_info (NspRect *H, int indent); 
-static void rect_print (NspRect *H, int indent); 
+static void rect_info (NspRect *H, int indent,char *name, int rec_level); 
+static void rect_print (NspRect *H, int indent,char *name, int rec_level); 
 static NspMethods *rect_get_methods(void);
 #endif /* Rect_Private */
 

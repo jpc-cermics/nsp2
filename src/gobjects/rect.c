@@ -239,7 +239,7 @@ static void rect_destroy(NspRect *H)
  
 
 
-static void rect_info(NspRect *H, int indent)
+static void rect_info(NspRect *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLRECT) 
@@ -256,9 +256,9 @@ static void rect_info(NspRect *H, int indent)
  * print
  */
 
-static void rect_print(NspRect *H, int indent)
+static void rect_print(NspRect *H, int indent,char *name, int rec_level)
 {
-  rect_info(H,indent);
+  rect_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------

@@ -76,8 +76,8 @@ static AttrTab link_attrs[];
 static NspLink *link_object (NspObject *O); 
 static NspLink *link_copy (NspLink *H); 
 static void link_destroy (NspLink *H); 
-static void link_info (NspLink *H, int indent); 
-static void link_print (NspLink *H, int indent); 
+static void link_info (NspLink *H, int indent,char *name, int rec_level); 
+static void link_print (NspLink *H, int indent,char *name, int rec_level); 
 static NspMethods *link_get_methods(void);
 
 static int link_get_hilited (NspLink *B); 

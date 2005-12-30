@@ -63,8 +63,8 @@ static NspObject *type_path_extract(NspType *A, NspObject *O);
 NspType *type_create(char *name,NspTypeBase *type,NspTypeBase *derived_type);
 NspType *type_copy(NspType *H);
 void type_destroy(NspType *H);
-void type_info(NspType *H, int indent);
-void type_print(NspType *H, int indent);
+void type_info(NspType *H, int indent,char *name, int rec_level);
+void type_print(NspType *H, int indent,char *name, int rec_level);
 
 /* from TypeObj.c */
 

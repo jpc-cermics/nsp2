@@ -228,7 +228,7 @@ void nsp_classa_destroy(NspClassA *H)
  * info 
  */
 
-void nsp_classa_info(NspClassA *H, int indent)
+void nsp_classa_info(NspClassA *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLCLA) 
@@ -245,9 +245,9 @@ void nsp_classa_info(NspClassA *H, int indent)
  * print 
  */
 
-void nsp_classa_print(NspClassA *H, int indent)
+void nsp_classa_print(NspClassA *H, int indent,char *name, int rec_level)
 {
-  nsp_classa_info(H,indent);
+  nsp_classa_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------
@@ -438,7 +438,7 @@ int int_cla_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspClassA *a;
   if (( a= GetClassA(stack,1))== NULLCLA) return RET_BUG;
-  nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0,NULL,LONG_MAX);
   return 0;
 }
 

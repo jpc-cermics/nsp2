@@ -64,8 +64,8 @@ static NspMethods *gpointer_get_methods(void);
 NspGPointer *gpointer_create(char *name,GType gtype, gpointer pointer,NspTypeBase *type);
 NspGPointer *gpointer_copy(NspGPointer *H);
 void gpointer_destroy(NspGPointer *H);
-void gpointer_info(NspGPointer *H, int indent);
-void gpointer_print(NspGPointer *H, int indent);
+void gpointer_info(NspGPointer *H, int indent,char *name, int rec_level);
+void gpointer_print(NspGPointer *H, int indent,char *name, int rec_level);
 
 /* from GPointerObj.c */
 

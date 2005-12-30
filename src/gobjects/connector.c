@@ -290,7 +290,7 @@ static void connector_destroy(NspConnector *H)
   FREE(H);
 }
 
-static void connector_info(NspConnector *H, int indent)
+static void connector_info(NspConnector *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLCONNECTOR) 
@@ -303,9 +303,9 @@ static void connector_info(NspConnector *H, int indent)
 	    connector_type_short_string(), H->obj,H->obj->ref_count );
 }
 
-static void connector_print(NspConnector *H, int indent)
+static void connector_print(NspConnector *H, int indent,char *name, int rec_level)
 {
-  connector_info(H,indent);
+  connector_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------

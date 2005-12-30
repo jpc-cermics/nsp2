@@ -63,8 +63,8 @@ static NspObject *none_path_extract(NspNone *A, NspObject *O);
 NspNone *none_create(char *name,NspTypeBase *type);
 NspNone *none_copy(NspNone *H);
 void none_destroy(NspNone *H);
-void none_info(NspNone *H, int indent);
-void none_print(NspNone *H, int indent);
+void none_info(NspNone *H, int indent,char *name, int rec_level);
+void none_print(NspNone *H, int indent,char *name, int rec_level);
 
 /* from NoneObj.c */
 

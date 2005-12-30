@@ -380,7 +380,7 @@ void nsp_hobj_destroy(NspHobj *H)
  * HobjInfo 
  */
 
-void nsp_hobj_info(NspHobj *H, int indent)
+void nsp_hobj_info(NspHobj *H, int indent,char *name,int rec_level)
 {
   NspObject *O;
   int i;
@@ -403,14 +403,14 @@ void nsp_hobj_info(NspHobj *H, int indent)
       O = H->O;
     }
   Sciprintf("[Hobj %s --> %s]\n",NSP_OBJECT(H)->name,nsp_object_get_name(O));
-  nsp_object_info(O,indent+2);
+  nsp_object_info(O,indent+2,NULL,LONG_MAX);
 }
 
 /*
  * HobjPrint 
  */
 
-void nsp_hobj_print(NspHobj *H, int indent)
+void nsp_hobj_print(NspHobj *H, int indent,char *name, int rec_level)
 {
   NspObject *O;
   int i;
@@ -434,7 +434,7 @@ void nsp_hobj_print(NspHobj *H, int indent)
       O = H->O;
     }
   Sciprintf("[Hobj %s --> %s]\n",NSP_OBJECT(H)->name,nsp_object_get_name(O));
-  nsp_object_print(O,indent);
+  nsp_object_print(O,indent,NULL,rec_level);
 }
 
 /*----------------------------------------------------

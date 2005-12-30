@@ -222,7 +222,7 @@ void nsp_port_destroy(NspPort *H)
  * info 
  */
 
-void nsp_port_info(NspPort *M, int indent)
+void nsp_port_info(NspPort *M, int indent,char *name,int rec_level)
 {
   int i;
   if ( M == NULLPORT) 
@@ -242,7 +242,7 @@ void nsp_port_info(NspPort *M, int indent)
  * print 
  */
 
-void nsp_port_print(NspPort *M, int indent)
+void nsp_port_print(NspPort *M, int indent,char *name, int rec_level)
 {
   int i;
   if ( M == NULLPORT) 

@@ -534,7 +534,7 @@ int nsp_spmatrix_nnz(const NspSpMatrix *HMat)
  *nsp_spmatrix_info: display Info on Sparse Matrix
  */
 
-void nsp_spmatrix_info(NspSpMatrix *Sp, int indent)
+void nsp_spmatrix_info(NspSpMatrix *Sp, int indent,char *name,int rec_level)
 { 
   int i;
   if ( Sp == NULLSP) 
@@ -554,7 +554,7 @@ void nsp_spmatrix_info(NspSpMatrix *Sp, int indent)
  *	 Writes Sp, Sp remains unchanged 
  */
 
-void nsp_spmatrix_print(NspSpMatrix *Sp, int indent)
+void nsp_spmatrix_print(NspSpMatrix *Sp, int indent,char *name, int rec_level)
 { 
   int j;
   for ( j=0 ; j < indent ; j++) Sciprintf(" ");

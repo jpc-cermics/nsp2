@@ -234,7 +234,7 @@ static void gframe_destroy(NspGFrame *H)
   FREE(H);
 }
 
-static void gframe_info(NspGFrame *H, int indent)
+static void gframe_info(NspGFrame *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLGFRAME) 
@@ -248,9 +248,9 @@ static void gframe_info(NspGFrame *H, int indent)
 	    H->obj,H->obj->ref_count );
 }
 
-static void gframe_print(NspGFrame *H, int indent)
+static void gframe_print(NspGFrame *H, int indent,char *name, int rec_level)
 {
-  gframe_info(H,indent);
+  gframe_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------

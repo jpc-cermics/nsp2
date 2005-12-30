@@ -57,7 +57,7 @@ NspClassA *nsp_classa_create(char *name,int color,int thickness,NspTypeBase *typ
 NspClassA *nsp_classa_copy(NspClassA *H);
 void nsp_classa_destroy(NspClassA *H);
 void nsp_classa_info(NspClassA *H, int indent);
-void nsp_classa_print(NspClassA *H, int indent);
+void nsp_classa_print(NspClassA *H, int indent,char *name, int rec_level);
 
 /* from ClassAObj.c */
 

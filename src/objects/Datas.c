@@ -206,7 +206,7 @@ void nsp_frames_print(void)
   if ( Datas == NULLLIST ) 
     Sciprintf("Empty Datas\n");
   else 
-    nsp_list_print(Datas,0) ;
+    nsp_list_print(Datas,0,NULL,LONG_MAX);
 }
 
 /**
@@ -222,7 +222,7 @@ void nsp_frame_print(void)
   if ( Datas == NULLLIST ) 
     Sciprintf("Empty Datas\n");
   else 
-    nsp_list_print((NspList *)Datas->first->O,0) ;
+    nsp_list_print((NspList *)Datas->first->O,0,NULL,LONG_MAX);
 }
 
 

@@ -237,7 +237,7 @@ void pangoattribute_destroy(NspPangoAttribute *self)
  * info 
  */
 
-void pangoattribute_info(NspPangoAttribute *H, int indent)
+void pangoattribute_info(NspPangoAttribute *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLPATTR) 
@@ -253,9 +253,9 @@ void pangoattribute_info(NspPangoAttribute *H, int indent)
  * print 
  */
 
-void pangoattribute_print(NspPangoAttribute *H, int indent)
+void pangoattribute_print(NspPangoAttribute *H, int indent,char *name, int rec_level)
 {
-  pangoattribute_info(H,indent);
+  pangoattribute_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------
@@ -400,7 +400,7 @@ int int_pangoattribute_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspPangoAttribute *a;
   if (( a= GetPangoAttribute(stack,1))== NULLPATTR) return RET_BUG;
- nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0,NULL,LONG_MAX);
   return 0;
 }
 

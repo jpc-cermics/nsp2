@@ -244,7 +244,7 @@ void function_destroy(NspFunction *H)
  * info 
  */
 
-void function_info(NspFunction *H, int indent)
+void function_info(NspFunction *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLFUNC) 
@@ -270,9 +270,9 @@ void function_info(NspFunction *H, int indent)
  * print 
  */
 
-void function_print(NspFunction *H, int indent)
+void function_print(NspFunction *H, int indent,char *name, int rec_level)
 {
-  function_info(H,indent);
+  function_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------

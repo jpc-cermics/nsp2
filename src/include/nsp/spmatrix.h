@@ -108,8 +108,8 @@ extern NspSpMatrix *GetRealSp(Stack stack, int i);
 
 extern void nsp_spmatrix_destroy(NspSpMatrix *Mat); 
 extern int nsp_spmatrix_nnz(const NspSpMatrix *HMat);
-extern void nsp_spmatrix_info(NspSpMatrix *Sp, int indent); 
-extern void nsp_spmatrix_print(NspSpMatrix *Sp, int indent); 
+extern void nsp_spmatrix_info(NspSpMatrix *Sp, int indent,char *name, int rec_level); 
+extern void nsp_spmatrix_print(NspSpMatrix *Sp, int indent,char *name, int rec_level); 
 extern NspSpMatrix *nsp_spmatrix_copy(NspSpMatrix *A); 
 extern NspSpMatrix   *nsp_spmatrix_object(NspObject *O);
 

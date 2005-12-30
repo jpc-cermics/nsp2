@@ -211,7 +211,7 @@ void gpointer_destroy(NspGPointer *self)
  * info 
  */
 
-void gpointer_info(NspGPointer *self, int indent)
+void gpointer_info(NspGPointer *self, int indent,char *name,int rec_level)
 {
   int i;
   if ( self == NULLGPOINTER) 
@@ -229,9 +229,9 @@ void gpointer_info(NspGPointer *self, int indent)
  * print 
  */
 
-void gpointer_print(NspGPointer *self, int indent)
+void gpointer_print(NspGPointer *self, int indent,char *name, int rec_level)
 {
-  gpointer_info(self,indent);
+  gpointer_info(self,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------

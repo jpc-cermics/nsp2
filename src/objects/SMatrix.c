@@ -307,7 +307,7 @@ void nsp_smatrix_destroy(NspSMatrix *A)
  *nsp_smatrix_info: display Info on Matrix Mat 
  */
 
-void nsp_smatrix_info(const NspSMatrix *Mat, int indent)
+void nsp_smatrix_info(const NspSMatrix *Mat, int indent,char *name,int rec_level)
 {
   int i;
   if ( Mat == NULLSMAT) 
@@ -326,7 +326,7 @@ void nsp_smatrix_info(const NspSMatrix *Mat, int indent)
  *nsp_smatrix_print: writes Mat Objet 
  */
 
-void nsp_smatrix_print(const NspSMatrix *Mat, int indent)
+void nsp_smatrix_print(const NspSMatrix *Mat, int indent,char *name, int rec_level)
 {
   int i;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");

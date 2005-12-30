@@ -260,7 +260,7 @@ void gobject_destroy(NspGObject *self)
  * info 
  */
 
-void gobject_info(NspGObject *self, int indent)
+void gobject_info(NspGObject *self, int indent,char *name,int rec_level)
 {
   int i;
   if ( self == NULLGOBJECT) 
@@ -281,9 +281,9 @@ void gobject_info(NspGObject *self, int indent)
  * print 
  */
 
-void gobject_print(NspGObject *H, int indent)
+void gobject_print(NspGObject *H, int indent,char *name, int rec_level)
 {
-  gobject_info(H,indent);
+  gobject_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------

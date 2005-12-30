@@ -296,7 +296,8 @@ static void block_destroy(NspBlock *H)
   FREE(H);
 }
 
-static void block_info(NspBlock *H, int indent)
+
+static void block_info(NspBlock *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLBLOCK) 
@@ -309,9 +310,9 @@ static void block_info(NspBlock *H, int indent)
 	    block_type_short_string(), H->obj,H->obj->ref_count );
 }
 
-static void block_print(NspBlock *H, int indent)
+static void block_print(NspBlock *H, int indent,char *name, int rec_level)
 {
-  block_info(H,indent);
+  block_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------

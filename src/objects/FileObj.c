@@ -213,7 +213,7 @@ void nsp_file_destroy(NspFile  *F)
  * info 
  */
 
-void nsp_file_info(NspFile  *F, int indent)
+void nsp_file_info(NspFile  *F, int indent,char *name,int rec_level)
 {
   int i;
   if (F == NULLSCIFILE) 
@@ -233,9 +233,9 @@ void nsp_file_info(NspFile  *F, int indent)
  */
 
 
-void nsp_file_print(NspFile  *F, int indent)
+void nsp_file_print(NspFile  *F, int indent,char *name, int rec_level)
 {
-  nsp_file_info(F,indent);
+  nsp_file_info(F,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------

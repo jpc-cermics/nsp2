@@ -173,7 +173,7 @@ void nsp_bmatrix_destroy(NspBMatrix *BMat)
  */
 
 
-void nsp_bmatrix_info(NspBMatrix *BMat, int indent)
+void nsp_bmatrix_info(NspBMatrix *BMat, int indent,char *name,int rec_level)
 {
   int i;
   if ( BMat == NULLBMAT) 
@@ -192,13 +192,14 @@ void nsp_bmatrix_info(NspBMatrix *BMat, int indent)
  * nsp_bmatrix_print:
  * @BMat: a #NspBMatrix
  * @indent: an int 
- * @header: a flag, if %FALSE then data are preinted but not header information
+ * @name: 
+ * @rec_level:
  *
  * Print the #NspMBatrix @A using the default nsp output function. 
  * @indent is the given indentation for printing.
  */
 
-void nsp_bmatrix_print(NspBMatrix *BMat, int indent,int header)
+void nsp_bmatrix_print(NspBMatrix *BMat, int indent,char *name, int rec_level)
 {
   int i;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");

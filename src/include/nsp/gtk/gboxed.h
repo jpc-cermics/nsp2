@@ -66,8 +66,8 @@ NspGBoxed *gboxed_create(char *name,GType boxed_type, gpointer boxed, gboolean c
 
 NspGBoxed *gboxed_copy(NspGBoxed *H);
 void gboxed_destroy(NspGBoxed *H);
-void gboxed_info(NspGBoxed *H, int indent);
-void gboxed_print(NspGBoxed *H, int indent);
+void gboxed_info(NspGBoxed *H, int indent,char *name, int rec_level);
+void gboxed_print(NspGBoxed *H, int indent,char *name, int rec_level);
 
 /* from GBoxedObj.c */
 

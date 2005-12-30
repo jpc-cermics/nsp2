@@ -53,8 +53,8 @@ NspModule *new_module();
 NspModule *module_create(char *name,const char *path,const char *mname,NspTypeBase *type);
 NspModule *module_copy(NspModule *H);
 void module_destroy(NspModule *H);
-void module_info(NspModule *H, int indent);
-void module_print(NspModule *H, int indent);
+void module_info(NspModule *H, int indent,char *name, int rec_level);
+void module_print(NspModule *H, int indent,char *name, int rec_level);
 
 /* from ModuleObj.c */
 

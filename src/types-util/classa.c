@@ -228,7 +228,7 @@ void nsp_classa_destroy(NspClassA *H)
  * info 
  */
 
-void nsp_classa_info(NspClassA *H, int indent)
+void nsp_classa_info(NspClassA *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLCLA) 
@@ -245,9 +245,9 @@ void nsp_classa_info(NspClassA *H, int indent)
  * print 
  */
 
-void nsp_classa_print(NspClassA *H, int indent)
+void nsp_classa_print(NspClassA *H, int indent,char *name, int rec_level)
 {
-  nsp_classa_info(H,indent);
+  nsp_classa_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------
@@ -259,7 +259,7 @@ void nsp_classa_print(NspClassA *H, int indent)
 NspClassA   *nsp_classa_object(NspObject *O)
 {
   /* Follow pointer */
-  HOBJ_GET_OBJECT(O,NULL);
+  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
   if ( check_cast(O,nsp_type_classa_id) == TRUE) return ((NspClassA *) O);
   else 

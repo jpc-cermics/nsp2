@@ -487,7 +487,7 @@ void nsp_matrix_destroy(NspMatrix *Mat)
  * @indent is the given indentation for printing.
  */
 
-void nsp_matrix_info(const NspMatrix *Mat, int indent)
+void nsp_matrix_info(const NspMatrix *Mat, int indent,char *name,int rec_level)
 {
   int i;
   if ( Mat == NULLMAT) 
@@ -507,16 +507,17 @@ void nsp_matrix_info(const NspMatrix *Mat, int indent)
  * nsp_matrix_print:
  * @Mat: a #NspMatrix
  * @indent: an int 
- * @header: a flag, if %FALSE then data are printed but not header information
+ * @name:
+ * @rec_level:
  *
  * Print the #NspMatrix @A using the default nsp output function. 
  * @indent is the given indentation for printing.
  */
 
-void nsp_matrix_print( NspMatrix *Mat, int indent,int header )
+void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
 {
   int i;
-  Mat = Mat2double(Mat); /* we should write a nsp_print_internal when Mat is int  XXXXX */
+  Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {

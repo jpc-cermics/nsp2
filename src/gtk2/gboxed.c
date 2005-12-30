@@ -222,7 +222,7 @@ void gboxed_destroy(NspGBoxed *self)
  * info 
  */
 
-void gboxed_info(NspGBoxed *self, int indent)
+void gboxed_info(NspGBoxed *self, int indent,char *name,int rec_level)
 {
   int i;
   if ( self == NULLGBOXED) 
@@ -240,9 +240,9 @@ void gboxed_info(NspGBoxed *self, int indent)
  * print 
  */
 
-void gboxed_print(NspGBoxed *self, int indent)
+void gboxed_print(NspGBoxed *self, int indent,char *name, int rec_level)
 {
-  gboxed_info(self,indent);
+  gboxed_info(self,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------

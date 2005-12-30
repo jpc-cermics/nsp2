@@ -49,8 +49,8 @@ NspClassB *new_classb();
 NspClassB *classb_create(char *name,int color,int thickness,NspTypeBase *type);
 NspClassB *classb_copy(NspClassB *H);
 void classb_destroy(NspClassB *H);
-void classb_info(NspClassB *H, int indent);
-void classb_print(NspClassB *H, int indent);
+void classb_info(NspClassB *H, int indent,char *name, int rec_level);
+void classb_print(NspClassB *H, int indent,char *name, int rec_level);
 
 /* from ClassBObj.c */
 

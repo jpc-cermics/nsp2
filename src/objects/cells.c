@@ -230,7 +230,7 @@ void nsp_cells_destroy(NspCells *A)
  *nsp_cells_info: display Info on Matrix Mat 
  */
 
-void nsp_cells_info(const NspCells *Mat, int indent)
+void nsp_cells_info(const NspCells *Mat, int indent,char *name,int rec_level)
 {
   int i;
   if ( Mat == NULLCELLS) 
@@ -246,10 +246,10 @@ void nsp_cells_info(const NspCells *Mat, int indent)
 }
 
 /*
- *nsp_cells_print: writes Mat Objet 
+ * nsp_cells_print
  */
 
-void nsp_cells_print(const NspCells *Mat, int indent)
+void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 {
   int i;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");

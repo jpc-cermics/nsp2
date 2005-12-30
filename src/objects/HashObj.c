@@ -283,7 +283,7 @@ void nsp_hash_destroy(NspHash *H)
  * info 
  */
 
-void nsp_hash_info(NspHash *H, int indent)
+void nsp_hash_info(NspHash *H, int indent,char *name,int rec_level)
 {
   int i;
   unsigned i1;
@@ -299,7 +299,7 @@ void nsp_hash_info(NspHash *H, int indent)
     {
       Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
       if ( loc->used) 
-	nsp_object_info(loc->data,indent+2);
+	nsp_object_info(loc->data,indent+2,NULL,LONG_MAX);
     }
 }
 
@@ -307,7 +307,7 @@ void nsp_hash_info(NspHash *H, int indent)
  * print 
  */
 
-void nsp_hash_print(NspHash *H, int indent)
+void nsp_hash_print(NspHash *H, int indent,char *name, int rec_level)
 {
   int i,count = 0;
   unsigned int i1;
@@ -327,7 +327,7 @@ void nsp_hash_print(NspHash *H, int indent)
 		  for ( i=0 ; i < indent+1 ; i++) Sciprintf(" ");
 		  Sciprintf(",\n");
 		}
-	      nsp_object_print(loc->data,indent+2);
+	      nsp_object_print(loc->data,indent+2,NULL,rec_level-1);
 	      count++;
 	    }
 	}
@@ -341,7 +341,7 @@ void nsp_hash_print(NspHash *H, int indent)
 	{
 	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
 	  if ( loc->used) 
-	    nsp_object_print(loc->data,indent+2);
+	    nsp_object_print(loc->data,indent+2,NULL,rec_level-1);
 	}
     }
 }

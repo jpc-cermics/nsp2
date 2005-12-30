@@ -229,7 +229,7 @@ int nsp_object_implements(NspObject *O,NspTypeId id)
  * 
  **/
 
-void nsp_object_info(NspObject *O, int indent)
+void nsp_object_info(NspObject *O, int indent,char *name,int rec_level)
 {
   O->type->info(O,indent);
 }
@@ -245,7 +245,7 @@ void nsp_object_info(NspObject *O, int indent)
  * 
  **/
 
-void nsp_object_print(NspObject *O, int indent)
+void nsp_object_print(NspObject *O, int indent,char *name, int rec_level)
 {
   O->type->pr(O,indent,TRUE);
 }

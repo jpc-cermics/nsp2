@@ -294,7 +294,7 @@ static void link_destroy(NspLink *H)
  * info 
  */
 
-static void link_info(NspLink *H, int indent)
+static void link_info(NspLink *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLLINK) 
@@ -307,9 +307,9 @@ static void link_info(NspLink *H, int indent)
 	    link_type_short_string(), H->obj,H->obj->ref_count );
 }
 
-static void link_print(NspLink *H, int indent)
+static void link_print(NspLink *H, int indent,char *name, int rec_level)
 {
-  link_info(H,indent);
+  link_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------

@@ -239,7 +239,7 @@ void module_destroy(NspModule *H)
  * info 
  */
 
-void module_info(NspModule *H, int indent)
+void module_info(NspModule *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLMODULE) 
@@ -250,8 +250,8 @@ void module_info(NspModule *H, int indent)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("[Module %s, path=%s mname=%s\n", NSP_OBJECT(H)->name,
 	    H->path,H->mname);
-  if ( H->T != NULL) nsp_hash_info(H->T,indent+2);
-  if ( H->L != NULL)nsp_list_info(H->L,indent+2);
+  if ( H->T != NULL) nsp_hash_info(H->T,indent+2,NULL,LONG_MAX);
+  if ( H->L != NULL)nsp_list_info(H->L,indent+2,NULL,LONG_MAX);
   for ( i=0 ; i < indent ; i++) Sciprintf("]\n");
 }
 
@@ -259,7 +259,7 @@ void module_info(NspModule *H, int indent)
  * print 
  */
 
-void module_print(NspModule *H, int indent)
+void module_print(NspModule *H, int indent,char *name, int rec_level)
 {
   int i;
   if ( H == NULLMODULE) 
@@ -271,8 +271,8 @@ void module_print(NspModule *H, int indent)
   Sciprintf("%s =\tmodule\n",NSP_OBJECT(H)->name); 
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("<Module name=%s path=%s\n",H->mname,H->path);
-  if ( H->T != NULL)  nsp_hash_print(H->T,indent+2);
-  if ( H->L != NULL)  nsp_list_print(H->L,indent+2);
+  if ( H->T != NULL)  nsp_hash_print(H->T,indent+2,NULL,LONG_MAX);
+  if ( H->L != NULL)  nsp_list_print(H->L,indent+2,NULL,LONG_MAX);
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf(">\n");
 
@@ -501,7 +501,7 @@ int int_mo_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspModule *a;
   if (( a= GetModule(stack,1))== NULLMODULE) return RET_BUG;
-  nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0,NULL,LONG_MAX);
   return 0;
 }
 

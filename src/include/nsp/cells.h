@@ -71,8 +71,8 @@ extern NspCells *nsp_cells_create_from_array(const char *name,int n, NspObject *
 extern NspCells *nsp_cells_copy(const NspCells *A); 
 extern int nsp_cells_resize(NspCells *A, int m, int n); 
 extern void nsp_cells_destroy(NspCells *A); 
-extern void nsp_cells_info(const NspCells *Mat, int indent); 
-extern void nsp_cells_print(const NspCells *Mat, int indent); 
+extern void nsp_cells_info(const NspCells *Mat, int indent,char *name, int rec_level); 
+extern void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level); 
 extern int nsp_cells_redim(NspCells *A, int m, int n); 
 extern int nsp_cells_enlarge(NspCells *A, int m, int n); 
 extern int nsp_cells_concat_right(NspCells *A,const NspCells *B); 

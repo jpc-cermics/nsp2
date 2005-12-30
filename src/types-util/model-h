@@ -54,8 +54,8 @@ Nsp@TYPENAME@ *new_@TYPEDOWNCASE@();
 Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeBase *type);
 Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H);
 void nsp_@TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H);
-void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent);
-void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent);
+void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,char *name, int rec_level);
+void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent,char *name, int rec_level);
 
 /* from @TYPENAME@Obj.c */
 

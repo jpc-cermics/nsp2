@@ -247,7 +247,7 @@ void none_destroy(NspNone *H)
  * info 
  */
 
-void none_info(NspNone *H, int indent)
+void none_info(NspNone *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLNONE) 
@@ -263,9 +263,9 @@ void none_info(NspNone *H, int indent)
  * print 
  */
 
-void none_print(NspNone *H, int indent)
+void none_print(NspNone *H, int indent,char *name, int rec_level)
 {
-  none_info(H,indent);
+  none_info(H,indent,NULL,LONG_MAX);
 }
 
 /*-----------------------------------------------------
@@ -380,7 +380,7 @@ int int_none_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspNone *a;
   if (( a= GetNone(stack,1))== NULLNONE) return RET_BUG;
-  nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0,NULL,LONG_MAX);
   return 0;
 }
 

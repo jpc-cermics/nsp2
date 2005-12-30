@@ -603,7 +603,7 @@ int nsp_list_concat(NspList *L1, NspList *L2)
  *
  **/
 
-void nsp_list_info(NspList *L, int indent)
+void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
 {
   Cell *C;
   int i=1,j,len;
@@ -625,7 +625,7 @@ void nsp_list_info(NspList *L, int indent)
       if ( C->O != NULLOBJ )
 	{
 	  /* if ( C->name !=  NULLSTRING) Sciprintf("<%s>",C->name); **/
-	  nsp_object_info(C->O,(i==1)? 0: len);      
+	  nsp_object_info(C->O,(i==1)? 0: len,NULL,LONG_MAX);      
 	}
       else
 	{
@@ -649,7 +649,7 @@ void nsp_list_info(NspList *L, int indent)
  * 
  **/
 
-void nsp_list_print(NspList *L, int indent)
+void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 {
   int j;
   Cell *C;
@@ -664,7 +664,7 @@ void nsp_list_print(NspList *L, int indent)
 	{
 	  if ( C->O != NULLOBJ )
 	    {
-	      nsp_object_print(C->O,indent+1);
+	      nsp_object_print(C->O,indent+1,NULL,rec_level-1);
 	    }
 	  else
 	    {
@@ -690,7 +690,7 @@ void nsp_list_print(NspList *L, int indent)
 	{
 	  if ( C->O != NULLOBJ )
 	    {
-	      nsp_object_print(C->O,indent+1);      
+	      nsp_object_print(C->O,indent+1,NULL,rec_level-1);      
 	    }
 	  else
 	    {

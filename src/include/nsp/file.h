@@ -58,8 +58,8 @@ static NspMethods *nsp_file_get_methods(void);
 NspFile *nsp_file_create(char *name, char *fname, char *str, int flag, FILE *f);
 NspFile *nsp_file_copy(NspFile *H);
 void nsp_file_destroy(NspFile *H);
-void nsp_file_info(NspFile *H, int indent);
-void nsp_file_print(NspFile *H, int indent);
+void nsp_file_info(NspFile *H, int indent,char *name, int rec_level);
+void nsp_file_print(NspFile *H, int indent,char *name, int rec_level);
 
 /* setting file flags  **/
 

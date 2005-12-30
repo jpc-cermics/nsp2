@@ -50,8 +50,8 @@ NspModuleElt *new_modulelt();
 NspModuleElt *modulelt_create(char *name,NspTypeBase *type);
 NspModuleElt *modulelt_copy(NspModuleElt *H);
 void modulelt_destroy(NspModuleElt *H);
-void modulelt_info(NspModuleElt *H, int indent);
-void modulelt_print(NspModuleElt *H, int indent);
+void modulelt_info(NspModuleElt *H, int indent,char *name, int rec_level);
+void modulelt_print(NspModuleElt *H, int indent,char *name, int rec_level);
 
 /* from ModuleEltObj.c */
 

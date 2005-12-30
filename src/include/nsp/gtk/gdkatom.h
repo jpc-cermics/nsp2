@@ -64,8 +64,8 @@ static NspObject *gdkatom_path_extract(NspGdkAtom *A, NspObject *O);
 NspGdkAtom *gdkatom_create(char *name,char *aname,GdkAtom atom,NspTypeBase *type);
 NspGdkAtom *gdkatom_copy(NspGdkAtom *H);
 void gdkatom_destroy(NspGdkAtom *H);
-void gdkatom_info(NspGdkAtom *H, int indent);
-void gdkatom_print(NspGdkAtom *H, int indent);
+void gdkatom_info(NspGdkAtom *H, int indent,char *name, int rec_level);
+void gdkatom_print(NspGdkAtom *H, int indent,char *name, int rec_level);
 
 /* from GdkAtomObj.c */
 
