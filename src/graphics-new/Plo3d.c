@@ -60,16 +60,16 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
 		       double *teta, double *alpha,const  char *legend, int *flag, double *bbox);
 
 static int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
-		       double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
+		       double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg,int backface);
 
 static int DPoints1_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
-			double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg);
+			double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg,int backface);
 
 static void plot3dg_ogl(BCG *Xgc,char *name,
 			int (*func)(BCG *Xgc,double *polyx, double *polyy, double *polyz,int *fill,
 				    int whiteid, double zmin, double zmax, double *x, 
 				    double *y, double *z, int i, int j, int jj1,
-				    int *p, int dc, int fg),
+				    int *p, int dc, int fg,int backface),
 			double *x, double *y, double *z, int *p, int *q, 
 			double *teta, double *alpha,const char *legend, int *flag, double *bbox);
 static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int *iflag, int *colors, 
@@ -1936,6 +1936,7 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
     }
 }
 
+#include "nsp/graphics/periGL.h"
 
 /* 
  * OpenGL version of plot3d 
@@ -1945,18 +1946,19 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 			int (*func)(BCG *Xgc,double *polyx, double *polyy, double *polyz,int *fill,
 				    int whiteid, double zmin, double zmax, double *x, 
 				    double *y, double *z, int i, int j, int jj1,
-				    int *p, int dc, int fg),
+				    int *p, int dc, int fg,int backface),
 			double *x, double *y, double *z, int *p, int *q, 
 			double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
+  int k;
   nsp_box_3d box;
-  static int fg,fg1,dc;
+  int fg,fg1,dc;
   /* solid = color of 3D frame */
   int polysize,npoly,whiteid;
   double *polyx,*polyy,*polyz;
   int *fill;
-  static int cache;
-  static double zmin,zmax;
+  int cache;
+  double zmin,zmax;
   int i,j;
 
   nsp_plot3d_update_bounds(Xgc,name,x,y,z,p,q, teta, alpha,legend,&flag[1],bbox,&zmin,&zmax,plot3d_t);
@@ -2011,18 +2013,29 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
   for ( i =0 ; i < (*q)-1 ; i++)   fill[i]= dc ; 
   polysize=5;
   npoly= (*q)-1; 
-  for ( i =0 ; i < (*p)-1 ; i++)
-    {
-      int npolyok=0;
-      for ( j =0 ; j < (*q)-1 ; j++)
-	{
-	  npolyok += (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
-			     x,y,z,i,j,npolyok,p,dc,fg1);
-	}
-      if ( npolyok != 0) 
-	fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
-    }
 
+  /* two pass drawing for front anb back faces */
+  glEnable(GL_CULL_FACE);
+  for ( k = 0; k < 2 ; k++) 
+    {
+      if ( k == 0) 
+	glFrontFace(GL_CCW);
+      else 
+	glFrontFace(GL_CW);
+      glCullFace(GL_FRONT);
+      for ( i =0 ; i < (*p)-1 ; i++)
+	{
+	  int npolyok=0;
+	  for ( j =0 ; j < (*q)-1 ; j++)
+	    {
+	      npolyok += (*func)(Xgc,polyx,polyy,polyz,fill,whiteid,zmin,zmax,
+				 x,y,z,i,j,npolyok,p,dc,fg1,(k==1) ? TRUE : FALSE );
+	    }
+	  if ( npolyok != 0) 
+	    fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
+	}
+    }
+  glDisable(GL_CULL_FACE);
   /* jpc   if (flag[1] != 0 && flag[2] >=3 ) */
   if ( flag[2] >=3 )
     {
@@ -2042,7 +2055,7 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 
 
 int DPoints1_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
-		 double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg)
+		 double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg,int backface)
 {
   double zmoy;
   register double *px= &polyx[5*jj1], *py = &polyy[5*jj1], *pz = &polyz[5*jj1], *zl = &z[i+(*p)*j];
@@ -2054,15 +2067,22 @@ int DPoints1_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, 
   zmoy += *(pz+3) = *(zl + 1);
   zmoy /= 4.0;
   if (  finite(zmoy)==0) return 0;
-  fill[jj1]=inint((whiteid-1)*(zmoy-zmin)/(zmax-zmin))+1;
-  if ( dc < 0 ) fill[jj1]= -fill[jj1];
+  if ( backface && fg != -1 ) 
+    {
+      fill[jj1]= (dc < 0 ) ? -fg : fg ;
+    }
+  else
+    {
+      fill[jj1]=inint((whiteid-1)*(zmoy-zmin)/(zmax-zmin))+1;
+      if ( dc < 0 ) fill[jj1]= -fill[jj1];
+    }
   return(1);
 }
 
 /* FIXME orientation is not properly calculated here  */
 
 int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, int whiteid, double zmin, double zmax, 
-		double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg)
+		double *x, double *y, double *z, int i, int j, int jj1, int *p, int dc, int fg,int backface)
 {
   double zmoy;
   register double *px= &polyx[  5*jj1], *py = &polyy[  5*jj1],*pz = &polyz[  5*jj1], *zl = &z[i+(*p)*j];
@@ -2073,8 +2093,14 @@ int DPoints_ogl(BCG *Xgc,double *polyx,double *polyy,double *polyz, int *fill, i
   zmoy += *(pz+2) = *(zl + (*p)+1);
   zmoy += *(pz+3) = *(zl + 1);
   zmoy /= 4.0;
-  if (  finite(zmoy)==0) return 0;
-  fill[jj1]= dc;
+  if ( backface ) 
+    {
+      fill[jj1]=  (dc != 0 ) ? ((fg < 0) ? dc : fg)  : dc ;
+    }
+  else
+    {
+      fill[jj1]= dc;
+    }
   return(1);
 }
 
