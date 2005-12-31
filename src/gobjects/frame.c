@@ -250,7 +250,7 @@ static void gframe_info(NspGFrame *H, int indent,char *name,int rec_level)
 
 static void gframe_print(NspGFrame *H, int indent,char *name, int rec_level)
 {
-  gframe_info(H,indent,NULL,LONG_MAX);
+  gframe_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

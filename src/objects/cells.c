@@ -251,6 +251,7 @@ void nsp_cells_info(const NspCells *Mat, int indent,char *name,int rec_level)
 
 void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 {
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int i;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
@@ -262,19 +263,25 @@ void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\tcells (%dx%d)\n",NSP_OBJECT(Mat)->name,
+      Sciprintf("%s\t=%s\t\tcells (%dx%d)\n",pname,
 		(Mat->mn==0 ) ? " {}" : "",Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 
     {
+      char epname[128];
+      int j;
       for ( i=0 ; i < indent+1 ; i++) Sciprintf(" ");
       Sciprintf("{\n");
-      for ( i = 0 ; i < Mat->mn; i++ ) 
-	{
-	  NspObject *object = Mat->objs[i];
-	  if ( object != NULL ) 
-	    object->type->pr(object,indent+2,TRUE);
-	}
+      for ( j = 0 ; j < Mat->n; j++ ) 
+	for ( i = 0 ; i < Mat->m; i++ ) 
+	  {
+	    NspObject *object = Mat->objs[i+Mat->m*j];
+	    if ( object != NULL ) 
+	      {
+		sprintf(epname,"\033[34m(%d,%d)\033[0m",i+1,j+1);
+		object->type->pr(object,indent+2,epname,rec_level+1);
+	      }
+	  }
       for ( i=0 ; i < indent+1 ; i++) Sciprintf(" ");
       Sciprintf("}\n");
     }

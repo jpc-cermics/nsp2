@@ -299,7 +299,7 @@ void nsp_hash_info(NspHash *H, int indent,char *name,int rec_level)
     {
       Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
       if ( loc->used) 
-	nsp_object_info(loc->data,indent+2,NULL,LONG_MAX);
+	nsp_object_info(loc->data,indent+2,NULL,0);
     }
 }
 
@@ -309,6 +309,7 @@ void nsp_hash_info(NspHash *H, int indent,char *name,int rec_level)
 
 void nsp_hash_print(NspHash *H, int indent,char *name, int rec_level)
 {
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
   int i,count = 0;
   unsigned int i1;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
@@ -336,7 +337,7 @@ void nsp_hash_print(NspHash *H, int indent,char *name, int rec_level)
     }
   else 
     {
-      Sciprintf("%s\th, filled=%d, size=%d\n",NSP_OBJECT(H)->name,H->filled,H->hsize);
+      Sciprintf("%s\th, filled=%d, size=%d\n",pname,H->filled,H->hsize);
       for ( i1 =0 ; i1 <= H->hsize ; i1++) 
 	{
 	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;

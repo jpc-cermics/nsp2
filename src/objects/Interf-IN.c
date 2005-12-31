@@ -126,11 +126,11 @@ int int_mxtest5(Stack stack, int rhs, int opt, int lhs)
   int_types T[]={ matcopy, mat,list,obj,obj_check, t_end} ;
   int_types Tc[]={ mat,smat,list_end} ;
   if ( GetArgs(stack,rhs,opt, T,&A,&B,&C,&O1,&nsp_type_matrix,&D) == FAIL) return RET_BUG;
-  nsp_matrix_print(D,0,NULL,LONG_MAX);
+  nsp_matrix_print(D,0,NULL,0);
   if ( GetListArgs(C,3,Tc,&Al,&S) == FAIL) return RET_BUG;
   nsp_mat_mult_el(A,B);
-  nsp_matrix_print(Al,0,NULL,LONG_MAX);
-  nsp_smatrix_print(S,0,NULL,LONG_MAX);
+  nsp_matrix_print(Al,0,NULL,0);
+  nsp_smatrix_print(S,0,NULL,0);
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }  
@@ -151,9 +151,9 @@ int int_mxtest6(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt, T,&A,&B,&L_1,&L_2,&L_31,&L_32,&O1,&nsp_type_matrix,&O2) == FAIL) 
     return RET_BUG;
   nsp_mat_mult_el(A,B);
-  nsp_smatrix_print(L_2,0,NULL,LONG_MAX);
-  nsp_smatrix_print(L_32,0,NULL,LONG_MAX);
-  nsp_object_print(O1,0,NULL,LONG_MAX);
+  nsp_smatrix_print(L_2,0,NULL,0);
+  nsp_smatrix_print(L_32,0,NULL,0);
+  nsp_object_print(O1,0,NULL,0);
   /* test the list builder **/
   if (( O = (NspObject *) BuildListFromArgs(Ret,10,20.67,A,"foo",10,20 ))== NULLOBJ ) 
     return RET_BUG;

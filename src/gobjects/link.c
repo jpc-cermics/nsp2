@@ -309,7 +309,7 @@ static void link_info(NspLink *H, int indent,char *name,int rec_level)
 
 static void link_print(NspLink *H, int indent,char *name, int rec_level)
 {
-  link_info(H,indent,NULL,LONG_MAX);
+  link_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

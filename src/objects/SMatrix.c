@@ -328,6 +328,7 @@ void nsp_smatrix_info(const NspSMatrix *Mat, int indent,char *name,int rec_level
 
 void nsp_smatrix_print(const NspSMatrix *Mat, int indent,char *name, int rec_level)
 {
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int i;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
@@ -343,7 +344,7 @@ void nsp_smatrix_print(const NspSMatrix *Mat, int indent,char *name, int rec_lev
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\ts (%dx%d)\n",NSP_OBJECT(Mat)->name,
+      Sciprintf("%s\t=%s\t\ts (%dx%d)\n",pname,
 		(Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 

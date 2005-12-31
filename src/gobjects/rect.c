@@ -258,7 +258,7 @@ static void rect_info(NspRect *H, int indent,char *name,int rec_level)
 
 static void rect_print(NspRect *H, int indent,char *name, int rec_level)
 {
-  rect_info(H,indent,NULL,LONG_MAX);
+  rect_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

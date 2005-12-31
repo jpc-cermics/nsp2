@@ -231,7 +231,7 @@ void gpointer_info(NspGPointer *self, int indent,char *name,int rec_level)
 
 void gpointer_print(NspGPointer *self, int indent,char *name, int rec_level)
 {
-  gpointer_info(self,indent,NULL,LONG_MAX);
+  gpointer_info(self,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

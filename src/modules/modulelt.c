@@ -244,7 +244,7 @@ void modulelt_info(NspModuleElt *H, int indent,char *name,int rec_level)
 
 void modulelt_print(NspModuleElt *H, int indent,char *name, int rec_level)
 {
-  modulelt_info(H,indent,NULL,LONG_MAX);
+  modulelt_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------
@@ -366,7 +366,7 @@ int int_me_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspModuleElt *a;
   if (( a= GetModuleElt(stack,1))== NULLME) return RET_BUG;
-  nsp_object_print((NspObject *) a,0,NULL,LONG_MAX);
+  nsp_object_print((NspObject *) a,0,NULL,0);
   return 0;
 }
 

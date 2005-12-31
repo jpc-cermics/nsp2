@@ -201,6 +201,7 @@ void nsp_bmatrix_info(NspBMatrix *BMat, int indent,char *name,int rec_level)
 
 void nsp_bmatrix_print(NspBMatrix *BMat, int indent,char *name, int rec_level)
 {
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(BMat)->name;
   int i;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
@@ -216,7 +217,7 @@ void nsp_bmatrix_print(NspBMatrix *BMat, int indent,char *name, int rec_level)
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\t b (%dx%d)\n",NSP_OBJECT(BMat)->name,
+      Sciprintf("%s\t=%s\t\t b (%dx%d)\n",pname,
 		(BMat->mn==0 ) ? " []" : "",BMat->m,BMat->n);
     }
   if ( BMat->mn != 0) 

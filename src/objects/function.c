@@ -272,7 +272,7 @@ void function_info(NspFunction *H, int indent,char *name,int rec_level)
 
 void function_print(NspFunction *H, int indent,char *name, int rec_level)
 {
-  function_info(H,indent,NULL,LONG_MAX);
+  function_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

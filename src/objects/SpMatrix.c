@@ -556,17 +556,18 @@ void nsp_spmatrix_info(NspSpMatrix *Sp, int indent,char *name,int rec_level)
 
 void nsp_spmatrix_print(NspSpMatrix *Sp, int indent,char *name, int rec_level)
 { 
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Sp)->name;
   int j;
   for ( j=0 ; j < indent ; j++) Sciprintf(" ");
   if (Sp->mn==0 ) 
     {
-      Sciprintf("%s\t= []\t\t %c (%dx%d) sparse\n",NSP_OBJECT(Sp)->name,Sp->rc_type,Sp->m,Sp->n);
+      Sciprintf("%s\t= []\t\t %c (%dx%d) sparse\n",pname,Sp->rc_type,Sp->m,Sp->n);
     }
   else
     {
       nsp_num_formats fmt;
       nsp_init_pr_format (&fmt);
-      Sciprintf("%s\t=\t\t %c (%dx%d) sparse\n",NSP_OBJECT(Sp)->name,Sp->rc_type,Sp->m,Sp->n);
+      Sciprintf("%s\t=\t\t %c (%dx%d) sparse\n",pname,Sp->rc_type,Sp->m,Sp->n);
       nsp_spmatrix_print_internal(&fmt,Sp,indent);
     }
 

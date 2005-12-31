@@ -247,7 +247,7 @@ void nsp_classa_info(NspClassA *H, int indent,char *name,int rec_level)
 
 void nsp_classa_print(NspClassA *H, int indent,char *name, int rec_level)
 {
-  nsp_classa_info(H,indent,NULL,LONG_MAX);
+  nsp_classa_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

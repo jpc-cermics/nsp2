@@ -283,7 +283,7 @@ void gobject_info(NspGObject *self, int indent,char *name,int rec_level)
 
 void gobject_print(NspGObject *H, int indent,char *name, int rec_level)
 {
-  gobject_info(H,indent,NULL,LONG_MAX);
+  gobject_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

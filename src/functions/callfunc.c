@@ -205,7 +205,7 @@ void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char 
       O = stack.S + stack.first+rhs; 
       while ( *O != NULL) 
 	{ 
-	  nsp_object_info(*O,1,NULL,LONG_MAX); 
+	  nsp_object_info(*O,1,NULL,0); 
 	  *O = NULL;
 	  O++;
 	}
@@ -226,7 +226,7 @@ void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char 
 	  if ( name != 0) 
 	    fprintf(stderr,"previous call %s\n",name);
 	  fprintf(stderr,"stack.S=<%lx>, first=%d\n",(long) stack.S,stack.first);
-	  nsp_object_info(*O,1,NULL,LONG_MAX);
+	  nsp_object_info(*O,1,NULL,0);
 	  fprintf(stderr,"I change ret_pos and continue \n");
 	  (*O)->ret_pos = -1 ;
 	}

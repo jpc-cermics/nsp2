@@ -312,7 +312,7 @@ static void block_info(NspBlock *H, int indent,char *name,int rec_level)
 
 static void block_print(NspBlock *H, int indent,char *name, int rec_level)
 {
-  block_info(H,indent,NULL,LONG_MAX);
+  block_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

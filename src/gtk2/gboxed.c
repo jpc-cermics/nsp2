@@ -242,7 +242,7 @@ void gboxed_info(NspGBoxed *self, int indent,char *name,int rec_level)
 
 void gboxed_print(NspGBoxed *self, int indent,char *name, int rec_level)
 {
-  gboxed_info(self,indent,NULL,LONG_MAX);
+  gboxed_info(self,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

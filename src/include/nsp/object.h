@@ -18,13 +18,13 @@ typedef struct  _NspMethods NspMethods;
 
 typedef void (*print_fun)(void *); 
 typedef unsigned int NspTypeId ;   
-typedef void  (print_func) (void *,int,int);
+typedef void  (print_func) (void *,int,char *name, int rec_level);
 typedef void  (dealloc_func) (void *);
 typedef void* (copy_func) (const void *);
 typedef int   (size_func) (const void *,int );
 typedef char* (s_type_func) (void);
 typedef char* (sh_type_func) (void *);
-typedef void* (info_func) (void *,int );
+typedef void* (info_func) (void *,int,char *name, int rec_level);
 typedef char* (set_name_func) (void *,const char *);
 typedef char* (get_name_func) (void *);
 typedef int   (is_true_func)  (void *);

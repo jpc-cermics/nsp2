@@ -239,7 +239,7 @@ void nsp_sndfile_info(NspSndFile  *F, int indent,char *name,int rec_level)
 
 void nsp_sndfile_print(NspSndFile  *F, int indent,char *name, int rec_level)
 {
-  nsp_sndfile_info(F,indent,NULL,LONG_MAX);
+  nsp_sndfile_info(F,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

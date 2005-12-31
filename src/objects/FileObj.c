@@ -235,7 +235,7 @@ void nsp_file_info(NspFile  *F, int indent,char *name,int rec_level)
 
 void nsp_file_print(NspFile  *F, int indent,char *name, int rec_level)
 {
-  nsp_file_info(F,indent,NULL,LONG_MAX);
+  nsp_file_info(F,indent,NULL,0);
 }
 
 /*-----------------------------------------------------
@@ -652,12 +652,12 @@ int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
       /* want to use a 'as_read' syntax */
       int kp=user_pref.pr_as_read_syntax;
       user_pref.pr_as_read_syntax= 1;
-      object->type->pr(object,0,TRUE);
+      object->type->pr(object,0,NULL,0);
       user_pref.pr_as_read_syntax= kp;
     }
   else 
     {
-      object->type->pr(object,0,TRUE);
+      object->type->pr(object,0,NULL,0);
     }
   /* back to default values */
   SetScilabIO(def);

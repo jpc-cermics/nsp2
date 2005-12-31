@@ -305,7 +305,7 @@ static void connector_info(NspConnector *H, int indent,char *name,int rec_level)
 
 static void connector_print(NspConnector *H, int indent,char *name, int rec_level)
 {
-  connector_info(H,indent,NULL,LONG_MAX);
+  connector_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------

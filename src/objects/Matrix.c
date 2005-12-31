@@ -516,6 +516,7 @@ void nsp_matrix_info(const NspMatrix *Mat, int indent,char *name,int rec_level)
 
 void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
 {
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int i;
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
@@ -532,7 +533,7 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\t%c (%dx%d)\n",NSP_OBJECT(Mat)->name,
+      Sciprintf("%s\t=%s\t\t%c (%dx%d)\n",pname,
 		(Mat->mn==0 ) ? " []" : "",Mat->rc_type,Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 

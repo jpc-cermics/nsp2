@@ -122,7 +122,7 @@ void nsp_ivect_info(NspIVect *IV, int indent,char *name,int rec_level)
 
 void nsp_ivect_print(NspIVect *IV, int indent,char *name, int rec_level)
 {
-  nsp_ivect_info(IV,indent,NULL,LONG_MAX);
+  nsp_ivect_info(IV,indent,NULL,0);
 }
 
 /**

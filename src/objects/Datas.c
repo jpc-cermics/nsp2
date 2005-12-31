@@ -175,7 +175,7 @@ void nsp_frames_info(void)
   if ( Datas == NULLLIST ) 
     Sciprintf("Empty Datas\n");
   else 
-    nsp_list_info(Datas,0,NULL,LONG_MAX) ;
+    nsp_list_info(Datas,0,NULL,0) ;
 }
 
 /**
@@ -190,7 +190,7 @@ void nsp_frame_info(void)
   if ( Datas == NULLLIST ) 
     Sciprintf("Empty Datas\n");
   else 
-    nsp_list_info((NspList *) Datas->first->O,0,NULL,LONG_MAX) ;
+    nsp_list_info((NspList *) Datas->first->O,0,NULL,0) ;
 }
 
 /**
@@ -206,7 +206,7 @@ void nsp_frames_print(void)
   if ( Datas == NULLLIST ) 
     Sciprintf("Empty Datas\n");
   else 
-    nsp_list_print(Datas,0,NULL,LONG_MAX);
+    nsp_list_print(Datas,0,NULL,0);
 }
 
 /**
@@ -222,7 +222,7 @@ void nsp_frame_print(void)
   if ( Datas == NULLLIST ) 
     Sciprintf("Empty Datas\n");
   else 
-    nsp_list_print((NspList *)Datas->first->O,0,NULL,LONG_MAX);
+    nsp_list_print((NspList *)Datas->first->O,0,NULL,0);
 }
 
 

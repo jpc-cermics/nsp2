@@ -403,7 +403,7 @@ void nsp_hobj_info(NspHobj *H, int indent,char *name,int rec_level)
       O = H->O;
     }
   Sciprintf("[Hobj %s --> %s]\n",NSP_OBJECT(H)->name,nsp_object_get_name(O));
-  nsp_object_info(O,indent+2,NULL,LONG_MAX);
+  nsp_object_info(O,indent+2,NULL,0);
 }
 
 /*

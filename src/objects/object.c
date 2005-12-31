@@ -798,7 +798,7 @@ int int_object_ret(Stack stack, int rhs, int opt, int lhs)
   int i;
   for ( i= 0 ; i < rhs ; i++) 
     {
-      (*Ob)->type->pr(*Ob,0,TRUE);
+      (*Ob)->type->pr(*Ob,0,NULL,0);
       Ob++;
     }
   return 0;
@@ -887,7 +887,7 @@ int int_object_info(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
-  object->type->info(object,0);
+  object->type->info(object,0,NULL,0);
   return 0;
 }
 
@@ -918,12 +918,12 @@ int int_object_print(Stack stack, int rhs, int opt, int lhs)
     {
       int kp=user_pref.pr_as_read_syntax;
       user_pref.pr_as_read_syntax= 1;
-      object->type->pr(object,0,TRUE);
+      object->type->pr(object,0,NULL,0);
       user_pref.pr_as_read_syntax= kp;
     }
   else 
     {
-      object->type->pr(object,0,TRUE);
+      object->type->pr(object,0,NULL,0);
     }
   return 0;
 }
@@ -957,12 +957,12 @@ int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
     {
       int kp=user_pref.pr_as_read_syntax;
       user_pref.pr_as_read_syntax= 1;
-      object->type->pr(object,0,TRUE);
+      object->type->pr(object,0,NULL,0);
       user_pref.pr_as_read_syntax= kp;
     }
   else 
     {
-      object->type->pr(object,0,TRUE);
+      object->type->pr(object,0,NULL,0);
     }
   res = Sciprint2string_reset(); 
   SetScilabIO(def);
@@ -1003,12 +1003,12 @@ int int_object_fprint(Stack stack, int rhs, int opt, int lhs)
     {
       int kp=user_pref.pr_as_read_syntax;
       user_pref.pr_as_read_syntax= 1;
-      object->type->pr(object,0,TRUE);
+      object->type->pr(object,0,NULL,0);
       user_pref.pr_as_read_syntax= kp;
     }
   else 
     {
-      object->type->pr(object,0,TRUE);
+      object->type->pr(object,0,NULL,0);
     }
   SetScilabIO(def);
   SetScilabMore(mf);

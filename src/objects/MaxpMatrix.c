@@ -335,6 +335,7 @@ void nsp_mpmatrix_info(const NspMaxpMatrix *Mat, int indent,char *name,int rec_l
 
 void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,char *name, int rec_level)
 {
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int i;
   Mat = (NspMaxpMatrix *) Mat2double((NspMatrix *)Mat);
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
@@ -352,7 +353,7 @@ void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,char *name, int rec_leve
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\t mp %c(%dx%d) \n",NSP_OBJECT(Mat)->name,
+      Sciprintf("%s\t=%s\t\t mp %c(%dx%d) \n",pname,
 		(Mat->mn==0 ) ? " []" : "",Mat->rc_type,Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 
