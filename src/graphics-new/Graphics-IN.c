@@ -4672,6 +4672,42 @@ int int_feval( Stack stack, int rhs, int opt, int lhs)
 }
 
 
+#include "nsp/gtk/gdkimage.h"
+#include "nsp/gtk/gdkpixbuf.h"
+
+extern GdkImage* nsp_get_image(BCG *Xgc) ;
+extern GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) ;
+
+int int_get_image( Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *ret1,*ret2;
+  GdkImage *img;
+  GdkPixbuf *pix;
+  BCG *Xgc;
+  CheckRhs(0,0);
+  CheckLhs(0,2);
+  Xgc=nsp_check_graphic_context();
+  if ((img =  nsp_get_image(Xgc))== NULL) return RET_BUG;
+  nsp_type_gdkimage = new_type_gdkimage(T_BASE);
+  if ((ret1 = (NspObject *) gobject_create(NVOID,(GObject *)img,(NspTypeBase *) nsp_type_gdkimage))== NULL) 
+    return RET_BUG;
+  MoveObj(stack,1,ret1);
+  if ( lhs == 2 ) 
+    {
+      if ((pix = nsp_get_pixbuf(Xgc))== NULL) return RET_BUG;
+      nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
+      if ((ret2 = (NspObject *) 
+	   gobject_create(NVOID,(GObject *)pix,
+			  (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) 
+	return RET_BUG;
+      MoveObj(stack,2,ret2);
+    }
+  return Max(lhs,1);
+}
+
+
+
+
 /*************************************************************
  * The Interface for graphic functions 
  *************************************************************/
@@ -4756,6 +4792,7 @@ static OpTab Graphics_func[]={
   {"xs2ps",int_xs2ps},
   {"bsearch", int_bsearch},
   {"draw3d_objs", int_draw3dobj},
+  {"get_image",int_get_image},
   {(char *) 0, NULL}
 };
 

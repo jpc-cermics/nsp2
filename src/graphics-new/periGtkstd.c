@@ -3493,3 +3493,21 @@ void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 }
 #endif 
 
+
+/* get drawable as an image 
+ *
+ */
+
+GdkImage* nsp_get_image(BCG *Xgc) 
+{
+  return gdk_drawable_get_image(Xgc->private->drawable,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+}
+
+GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) 
+{
+  return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,
+				      gdk_colormap_get_system(),
+				      0,0,0,0,
+				      Xgc->CWindowWidth,Xgc->CWindowHeight);
+}
+
