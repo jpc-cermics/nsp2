@@ -33,7 +33,7 @@
 #define SELECT  -9
 #define CASE    -10
 #define QUIT    -11
-#define EXIT    -12 
+#define NSP_EXIT -12 
 #define PRETURN -13
 #define HELP    -14
 #define WHAT    -15

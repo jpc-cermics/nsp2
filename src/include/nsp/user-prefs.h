@@ -7,11 +7,12 @@
 
 struct user_preferences
 {
-  int output_max_field_width;
-  int output_precision;
-  int split_long_rows;
-  int print_empty_dimensions;
-  int pr_as_read_syntax;
+  int output_max_field_width;	/* */
+  int output_precision;		/* */
+  int split_long_rows;		/* */
+  int print_empty_dimensions;	/* */
+  int pr_as_read_syntax;	/* print in read syntax */
+  int pr_depth ;        /* stop printing at given depth for recursive objects */
 };
 
 extern struct user_preferences user_pref;
