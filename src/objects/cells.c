@@ -33,14 +33,20 @@
 static int nsp_set_cells(int n, NspObject *s1, NspObject **s2);
 static int nsp_copy_cells(int n, NspObject **s1, NspObject **s2);
 
-/*
+/**
+ * nsp_cells_create:
+ * @name: name of the cell 
+ * @m: number of rows 
+ * @n: number of columns 
+ * 
  * Creation of a NspCells all the elements
- *   are initiated to NULL 
- * HINT : 
+ * are initiated to %NULL (This should be changed 
+ * to follow matlab rules i.e store an empty matrix).
  * The array for storing the objects is of size (m*n)+1 
- * and the last element is set to (char *) 0 
- * This can be used to detect the last element in XXX->S
- */
+ * and the last element is set to %NULL
+ * 
+ * Return value: a new #NspCells or %NULLCELLS
+ **/
 
 NspCells *nsp_cells_create(const char *name, int m, int n)
 {
@@ -73,18 +79,25 @@ NspCells *nsp_cells_create(const char *name, int m, int n)
   return(Loc);
 }
 
-/*
- * Res =nsp_cells_create_from_table(T) 
- * T string table ended with (char *)0.
- */
 
-NspCells*nsp_cells_create_from_table(NspObject **T)
+/**
+ * nsp_cells_create_from_table:
+ * @name: name of the cell 
+ * @T: a %NULL terminated  array of #NspObject
+ * 
+ * creates a new #NspCells object filled from the 
+ * array @T.
+ *
+ * Return value: a new #NspCells or %NULLCELLS
+ **/
+
+NspCells*nsp_cells_create_from_table(const char *name,NspObject **T)
 {
   NspCells *Loc;
   int i=0,count=0;
   while ( T[count] != NULL) count++;
   /* initial mxn matrix with unallocated elements **/
-  if ( ( Loc =nsp_cells_create(NVOID,count,1)) == NULLCELLS) return(NULLCELLS);
+  if ( ( Loc =nsp_cells_create(name,count,1)) == NULLCELLS) return(NULLCELLS);
   /* allocate elements and store copies of elements **/
   for ( i = 0 ; i < count ; i++ )
     {
@@ -97,6 +110,18 @@ NspCells*nsp_cells_create_from_table(NspObject **T)
 /*
  * Res =nsp_cells_create_from_array(n,T) 
  */
+
+/**
+ * nsp_cells_create_from_array:
+ * @name: name of the cell 
+ * @n: size of @T
+ * @T: an array of #NspObject
+ * 
+ * creates a new #NspCells object filled from the 
+ * array @T.
+ *
+ * Return value: a new #NspCells or %NULLCELLS
+ **/
 
 NspCells* nsp_cells_create_from_array(const char *name,int n, NspObject **T)
 {
@@ -113,10 +138,14 @@ NspCells* nsp_cells_create_from_array(const char *name,int n, NspObject **T)
   return(Loc);
 }
 
-/*
- * Res =nsp_cells_copy(A) 
- * Creates a Copy of NspCells A : A is not checked 
- */
+/**
+ * nsp_cells_copy:
+ * @A: a #NspCells object 
+ * 
+ * returns a copy of @A.
+ * 
+ * Return value:  a new #NspCells or %NULLCELLS
+ **/
 
 NspCells*nsp_cells_copy(const NspCells *A)
 {
@@ -139,16 +168,19 @@ NspCells*nsp_cells_copy(const NspCells *A)
   return(Loc);
 }
 
-/*
- *nsp_cells_resize: Changes NspCells dimensions
- * Warning : this routine only enlarges the array 
- * of the NspCells storage so as to contain mxn 
- * elements : the previous datas are not moved and 
- * occupy the first array cells 
- * The NspCells is changed 
- * return FAIL on failure 
- * should also work with A==[] XXXXX 
- */
+/**
+ * nsp_cells_resize:
+ * @A: a #NspCells object 
+ * @m: number of rows 
+ * @n: number of columns 
+ * 
+ * resize object @A to (@m,@n). This function only enlarges 
+ * the storage array of the #NspCells so as to contain @m x @n
+ * elements. Previous stored data occupy the first poistions of the 
+ * #NspCells array. 
+ * 
+ * Return value: %FAIL or %OK
+ **/
 
 int nsp_cells_resize(NspCells *A, int m, int n)
 {
@@ -203,10 +235,12 @@ int nsp_cells_resize(NspCells *A, int m, int n)
   return(OK);
 }
 
-
-/*
- * Delete the NspCells A
- */
+/**
+ * nsp_cells_destroy:
+ * @A: a #NspCells object 
+ * 
+ * deletes object @A.
+ **/
 
 void nsp_cells_destroy(NspCells *A)
 {
@@ -224,11 +258,16 @@ void nsp_cells_destroy(NspCells *A)
   FREE(A);
 }
 
-
-
-/*
- *nsp_cells_info: display Info on Matrix Mat 
- */
+/**
+ * nsp_cells_info:
+ * @Mat:   a #NspCells object 
+ * @indent: an integer giving indentation 
+ * @name: %NULL or a replacement name to be used when displaying info
+ * @rec_level: the depth level of this function call
+ *
+ * displays infos on object @Mat. 
+ * 
+ **/
 
 void nsp_cells_info(const NspCells *Mat, int indent,char *name,int rec_level)
 {
@@ -245,9 +284,16 @@ void nsp_cells_info(const NspCells *Mat, int indent,char *name,int rec_level)
     Sciprintf("Cells %s(%dx%d) \n",NSP_OBJECT(Mat)->name,Mat->m,Mat->n);
 }
 
-/*
- * nsp_cells_print
- */
+/**
+ * nsp_cells_print:
+ * @Mat:   a #NspCells object 
+ * @indent: an integer giving indentation 
+ * @name: %NULL or a replacement name to be used when displaying info
+ * @rec_level: the depth level of this function call
+ * 
+ * print object @Mat. 
+ * 
+ **/
 
 void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 {
@@ -287,13 +333,17 @@ void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
     }
 }
 
-
-/*
- * nsp_cells_redim: Changes matrix dimensions
- * m*n must be unchanged 
- * The NspCells is changed (m,n are changed ) 
- * return 0 on failure 
- */
+/**
+ * nsp_cells_redim:
+ * @A: a #NspCells object 
+ * @m: number of rows 
+ * @n: number of columns 
+ * 
+ * changes the #NspCells dimensions but the product 
+ * @m x @n must be kept constant.
+ * 
+ * Return value: %OK or %FAIL 
+ **/
 
 int nsp_cells_redim(NspCells *A, int m, int n)
 {
@@ -312,14 +362,17 @@ int nsp_cells_redim(NspCells *A, int m, int n)
     }
 }
 
-
-
-/*
- *nsp_cells_enlarge(A,m,n) 
- *  changes A to B= [ A , 0; 0,0 ]  where 0 stands for "." strings
- *  in such a way that B (max(A->m,m)xmax(A->n,n));
- * The result is stored in A 
- */
+/**
+ * nsp_cells_enlarge:
+ * @A: a #NspCells object 
+ * @m: number of rows 
+ * @n: number of columns 
+ * 
+ * changes the dimensions of @A to (max(A->m,@m)xmax(A->n,@n)) 
+ * i.e adds @n- @A->n columns and  @m - @A->m rows to object @A.
+ * 
+ * Return value: %OK or %FAIL 
+ **/
 
 int nsp_cells_enlarge(NspCells *A, int m, int n)
 {
@@ -333,11 +386,16 @@ int nsp_cells_enlarge(NspCells *A, int m, int n)
 
 #define SameDim(SMAT1,SMAT2) ( SMAT1->m == SMAT2->m && SMAT1->n == SMAT2->n  )
 
-/*
- * Right Concatenation 
- * A= [A,B] 
- * return 0 on failure ( incompatible size or No more space )
- */
+
+/**
+ * nsp_cells_concat_right:
+ * @A: a #NspCells object 
+ * @B: a #NspCells object 
+ * 
+ * right concatenation @A is changed to {@A,@B}.
+ * 
+ * Return value: %OK or %FAIL 
+ **/
 
 int nsp_cells_concat_right(NspCells *A,const NspCells *B)
 {
@@ -352,6 +410,19 @@ int nsp_cells_concat_right(NspCells *A,const NspCells *B)
   if ( nsp_copy_cells(B->mn,B->objs,A->objs+Asize) == FAIL) return(FAIL);
   return(OK);
 }
+
+/**
+ * nsp_copy_cells:
+ * @n:   an integer 
+ * @s1:  an array of #NspObject
+ * @s2:  an array of #NspObject
+ * 
+ * fills array @s2 with copies of objects from array @s1. 
+ * Both arrays are of size @n. Previous entries of array 
+ * @s2 are freed.
+ * 
+ * Return value:  %OK or %FAIL 
+ **/
 
 static int nsp_copy_cells(int n, NspObject **s1, NspObject **s2)
 {
@@ -372,29 +443,19 @@ static int nsp_copy_cells(int n, NspObject **s1, NspObject **s2)
   return(OK);
 }
 
-/*
- *nsp_cells_add_columns: add n cols of zero to NspCells A 
- * A= [A,ones(m,n)] 
- * return 0 on failure ( No more space )
- * A is changed 
- */
 
-int nsp_cells_add_columns(NspCells *A, int n)
-{
-  if (n == 0) return OK;
-  else if ( n < 0) 
-    {      
-      Scierror("Error: Negative indice (%d) in MatAddCols\n",n);
-      return FAIL;
-    }
-  if ( nsp_cells_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
-  /*  normalemeny inutile car Resize le fait deja 
-      int Asize;
-      Asize=A->mn;
-      ns= (A->m)*n;
-      if ( nsp_set_cells(ns,".",A->objs+Asize) == FAIL) return(FAIL);**/
-  return(OK);
-}
+/**
+ * nsp_set_cells:
+ * @n:   an integer 
+ * @s1:  a #NspObject
+ * @s2:  an array of #NspObject
+ * 
+ * fills array @s2 with copies of @s1 object. 
+ * Array @s2 is of size @n. Previous entries of array 
+ * @s2 are freed.
+ * 
+ * Return value:  %OK or %FAIL 
+ **/
 
 static int nsp_set_cells(int n, NspObject *s1, NspObject **s2)
 {
@@ -414,12 +475,42 @@ static int nsp_set_cells(int n, NspObject *s1, NspObject **s2)
   return(OK);
 }
 
-/*
- * Down Concatenation 
- * Res = [A;B] 
- * return NULLCELLS on failure ( incompatible size or No more space )
- * A and B are left unchanged 
- */
+
+
+/**
+ * nsp_cells_add_columns:
+ * @A: a #NspCells object 
+ * @n: number of columns to add 
+ * 
+ * add @n empty columns to NspCells @A 
+ * 
+ * Return value: %OK or %FAIL 
+ **/
+
+int nsp_cells_add_columns(NspCells *A, int n)
+{
+  if (n == 0) return OK;
+  else if ( n < 0) 
+    {      
+      Scierror("Error: Negative indice (%d) in MatAddCols\n",n);
+      return FAIL;
+    }
+  if ( nsp_cells_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
+  /*  normalemeny inutile car Resize le fait deja 
+      int Asize;
+      Asize=A->mn;
+      ns= (A->m)*n;
+      if ( nsp_set_cells(ns,".",A->objs+Asize) == FAIL) return(FAIL);**/
+  return(OK);
+}
+
+/**
+ * nsp_cells_concat_down:
+ * @A: a #NspCells object 
+ * @B: a #NspCells object 
+ * 
+ * Return value: %NULLCELLS on failre 
+ **/
 
 NspCells*nsp_cells_concat_down(const NspCells *A,const NspCells *B)
 {
@@ -450,12 +541,15 @@ NspCells*nsp_cells_concat_down(const NspCells *A,const NspCells *B)
  * XXXXXX : A Faire ????
  */
 
-/*
- * Add Rows : Add m rows of zero to a NspCells A 
- * A = [A;ones(m,n)]
- * return NULLCELLS on failure ( incompatible size or No more space )
- * A and B are left unchanged 
- */
+/**
+ * nsp_cells_add_rows:
+ * @A: a #NspCells object 
+ * @m: number of rows to be added 
+ * 
+ * Add @m rows to the #NspCells object @A 
+ * 
+ * Return value: %OK or %FAIL 
+ **/
 
 int nsp_cells_add_rows(NspCells *A, int m)
 {
@@ -482,14 +576,21 @@ int nsp_cells_add_rows(NspCells *A, int m)
   return(OK);
 }
 
-/*
- *  A(Rows,Cols) = B 
- *  A is changed and enlarged if necessary 
- *  Rows and Cols are unchanged 
- *  Size Compatibility is checked 
- */
 
-int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspCells *B)
+/**
+ * nsp_cells_set_submatrix:
+ * @A: a #NspCells object 
+ * @Rows: a #NspMatrix object 
+ * @Cols: a #NspMatrix object 
+ * @B:  a #NspCells object 
+ * 
+ * performs  A(Rows,Cols) = B. @A is changed and enlarged if necessary 
+ * 
+ * Return value: %Ok or %FAIL.
+ **/
+
+int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,
+			    const NspCells *B)
 {
   int rmin,rmax,cmin,cmax,i,j;
   if ( B->mn != 1)
@@ -536,12 +637,19 @@ int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *C
   return(OK);
 }
 
-
-/* Note: this function is for mexlib emulation 
- *   B is not copied but modified i.e its name is changed
- *   note that the old value is not destroyed.
+/**
+ * nsp_cells_set_element:
+ * @A:  a #NspCells object 
+ * @index: an integer 
+ * @B:  a #NspObject 
  * 
- */
+ * stores object @B in cell array @A at poisition @index.
+ * Note that this function is for mexlib emulation. 
+ * @B is not copied and modified i.e its name is changed 
+ * note also that the old value replaced by @B is not destroyed.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_cells_set_element(NspCells *A,int index, NspObject *B)
 {
@@ -557,11 +665,16 @@ int nsp_cells_set_element(NspCells *A,int index, NspObject *B)
 }
 
 
-/*
- *  A(Rows) = B
- *  A is changed and enlarged if necessary
- *  Size Compatibility is checked
- */
+/**
+ * nsp_cells_set_rows:
+ * @A:  a #NspCells object 
+ * @Rows:  a #NspMatrix object 
+ * @B:  a #NspCells object 
+ * 
+ * performs A(Rows) = B
+ * 
+ * Return value: %OK or %FAIL.
+ **/
 
 int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B)
 {
@@ -592,39 +705,64 @@ int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B)
   return(OK);
 }
 
-/*
+/**
+ * nsp_cells_delete_columns:
+ * @A:  a #NspCells object 
+ * @Cols:  a #NspMatrix object 
+ * 
  *  A(:,Cols) = []
- */
+ * 
+ * 
+ * Return value: %OK or %FAIL 
+ **/
 
 int nsp_cells_delete_columns(NspCells *A, NspMatrix *Cols)
 {
   return nsp_smatrix_delete_columns((NspSMatrix *) A,Cols);
 }
 
-/*
+/**
+ * nsp_cells_delete_rows:
+ * @A:  a #NspCells object 
+ * @Rows:  a #NspMatrix object 
+ * @A: 
+ * @Rows: 
+ * 
  *  A(Rows,:) = []
- */
+ * 
+ * Return value: %OK or %FAIL 
+ **/
 
 int nsp_cells_delete_rows(NspCells *A, NspMatrix *Rows)
 {
   return nsp_smatrix_delete_rows((NspSMatrix *) A,Rows);
 }
 
-/*
+/**
+ * nsp_cells_delete_elements:
+ * @A:  a #NspCells object 
+ * @Elts:  a #NspMatrix object 
+ * 
  *  A(elts) = []
- *
- */
+ * 
+ * Return value: %OK or %FAIL 
+ **/
 
 int nsp_cells_delete_elements(NspCells *A, NspMatrix *Elts)
 {
   return nsp_smatrix_delete_elements((NspSMatrix *) A,Elts);
 }
 
-
-/*
- * Res=nsp_cells_extract(A,Rows,Cols)
- * A, Rows and Cols are unchanged 
- */	
+/**
+ * nsp_cells_extract:
+ * @A:  a #NspCells object 
+ * @Rows:  a #NspMatrix object 
+ * @Cols:  a #NspMatrix object 
+ * 
+ * returns A(Rows,Cols)
+ * 
+ * Return value: a new #NspCells or %NULLCELLS.
+ **/
 
 NspCells*nsp_cells_extract(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
 {
@@ -651,11 +789,16 @@ NspCells*nsp_cells_extract(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
 }
 
 
-
-/*
- * Res=nsp_cells_extract_elements(A,Elts)
- * A unchanged, Elts
- */	
+/**
+ * nsp_cells_extract_elements:
+ * @A:  a #NspCells object 
+ * @Elts:  a #NspMatrix object 
+ * @err: an in pointer 
+ * 
+ * returns A(Elts). If @Elts are out of bounds @err is set to 1.
+ * 
+ * Return value:  a new #NspCells or %NULLCELLS.
+ **/
 
 NspCells*nsp_cells_extract_elements(NspCells *A, NspMatrix *Elts, int *err)
 {
@@ -688,10 +831,17 @@ NspCells*nsp_cells_extract_elements(NspCells *A, NspMatrix *Elts, int *err)
   return(Loc);
 }
 
-/*
- * Res=nsp_cells_extract_columns(A,Cols,err)
- * A unchanged
- */
+
+/**
+ * nsp_cells_extract_columns:
+ * @A:  a #NspCells object 
+ * @Cols:  a #NspMatrix object 
+ * @err: an in pointer 
+ * 
+ * returns A(:,Cols). If @Cols are out of bounds @err is set to 1.
+ * 
+ * Return value:  a new #NspCells or %NULLCELLS.
+ **/
 
 NspCells*nsp_cells_extract_columns(NspCells *A, NspMatrix *Cols, int *err)
 {
@@ -717,10 +867,18 @@ NspCells*nsp_cells_extract_columns(NspCells *A, NspMatrix *Cols, int *err)
   return(Loc);
 }
 
-/*
- * A1=CellsLoopCol(A1,M,i,rep)
- * Used in for loops
- */
+/**
+ * CellsLoopCol:
+ * @str: 
+ * @Col: 
+ * @A: 
+ * @icol: 
+ * @rep: 
+ * 
+ * Used in for loops 
+ * 
+ * Return value: 
+ **/
 
 NspCells*CellsLoopCol(char *str, NspCells *Col, NspCells *A, int icol, int *rep)
 {
@@ -742,10 +900,16 @@ NspCells*CellsLoopCol(char *str, NspCells *Col, NspCells *A, int icol, int *rep)
   return(Loc);
 }
 
-/*
- * Res=nsp_cells_extract_rows(A,Rows,err)
- * A unchanged
- */
+/**
+ * nsp_cells_extract_rows:
+ * @A:  a #NspCells object 
+ * @Rows:  a #NspMatrix object 
+ * @err: an in pointer 
+ * 
+ * returns A(Rows,:). If @Rows are out of bounds @err is set to 1.
+ * 
+ * Return value:  a new #NspCells or %NULLCELLS.
+ **/
 
 NspCells*nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err)
 {
@@ -780,8 +944,16 @@ NspCells*nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err)
  * FIXME: to be done with generic equal operator 
  */
 
-static int Eq(NspObject * a, NspObject * b) {  return FALSE;}
-static int NEq(NspObject * a, NspObject * b) {  return FALSE;}
+static int Eq(NspObject * a, NspObject * b) 
+{
+  return ( a->type->eq != NULL) ?  a->type->eq(a,b) : FALSE ;
+}
+
+static int NEq(NspObject * a, NspObject * b)
+{
+  return ( a->type->neq != NULL) ?  a->type->neq(a,b) : TRUE ;
+}
+
 
 typedef int (Cells_CompOp) (NspObject *,NspObject *);
 
@@ -826,15 +998,19 @@ static int CellsSearchComp(char *op, Cells_CompOp (**comp_op))
   return(FAIL);
 }
 
-
-/*
- * Operation on cells leading to Boolean Matrices results 
- * Res = A(i,j) op B(i;j) 
- * with the special case : 
- *      A(i;j)op B(0,0) or A(0,0) op B(i,j) if A or B are of size 1x1
- *      
- * A and B are unchanged : Res is created 
- */
+/**
+ * CellsCompOp:
+ * @A:   a #NspCells object 
+ * @B:  a #NspCells object 
+ * @op: a string coding a comparison operator
+ * 
+ * returns a boolean matrix filled with @A(i,j) op @B(i;j). 
+ * @A and @B must have compatible dimensions with the usual 
+ * scalar (1x1 matrices) promotion. In case of incompatible 
+ * 
+ * Return value: a new #NspBMatrix or NULLBMAT in case of 
+ * memory failure or incompatible dimensions.
+ **/
 
 NspBMatrix  *CellsCompOp(NspCells *A, NspCells *B, char *op)
 {
@@ -901,11 +1077,23 @@ NspBMatrix  *CellsCompOp(NspCells *A, NspCells *B, char *op)
   return(Loc);
 }
 
-/* 
- * Deuxieme chose a faire :  la meme chose mais Globale
- *  Le resultat est un booleen qui vaut True si 
- *  A(i;i) <= B(i,j) pour tout les (i,j) 
- */ 
+/**
+ * CellsFullComp:
+ * @A:   a #NspCells object 
+ * @B:  a #NspCells object 
+ * @op: a string coding a comparison operator
+ * @err: an integer 
+ * 
+ * returns %TRUE if @A(i,i) or @B(i,j) is true for all 
+ * cell array elements or %FALSE if not. The #NspCells object 
+ * must have compatible dimensions (scalar #NspCells are promoted to matrices).
+ * @err is set to 1 if the dimensions do not fit. 
+ * 
+ * FIXME: the scalar promotion should be removed here since 
+ *        CellsFullComp is used to test that two objects are equals
+ *        as in A.equals[B] and two cells with 
+ * Return value: %TRUE or %FALSE 
+ **/
 
 int CellsFullComp(NspCells *A, NspCells *B, char *op,int *err)
 {
@@ -958,11 +1146,14 @@ int CellsFullComp(NspCells *A, NspCells *B, char *op,int *err)
 }
 
 
-
-/*
- * Res =nsp_cells_transpose(A) 
- * Transpose A 
- */
+/**
+ * nsp_cells_transpose:
+ * @A: a #NspCells object 
+ * 
+ * returns a new cells filled with A'.
+ * 
+ * Return value: a #NspCells or %NULLCELLS
+ **/
 
 NspCells*nsp_cells_transpose(const NspCells *A)
 {

@@ -32,6 +32,10 @@
 #include "nsp/cnumeric.h"
 #include "nsp/sciio.h"
 
+
+
+struct user_preferences user_pref={8,3,1,0,0,LONG_MAX};
+
 /*
  * Utility Functions used to get elements 
  * of strutures (NspMatrix SpMatrix ....)
@@ -470,19 +474,6 @@ void nsp_init_pr_format (nsp_num_formats *fmt)
   fmt->print_big_e = 0;
 }
 
-
-/* static void set_output_prec_and_fw (int prec, int fw) */
-/* { */
-/*   user_pref.output_precision= prec; */
-/*   user_pref.output_max_field_width=fw; */
-/* } */
-
-/* void set_format_style (int argc, char **argv) */
-/* { */
-/*   set_output_prec_and_fw (3, 8); */
-/*   set_output_prec_and_fw (15, 24); */
-/*   set_output_prec_and_fw (5, 10); */
-/* } */
 
 
 

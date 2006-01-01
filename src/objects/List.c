@@ -665,29 +665,26 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 	{
 	  if ( C->O != NULLOBJ )
 	    {
-	      nsp_object_print(C->O,indent+1,NULL,rec_level-1);
+	      nsp_object_print(C->O,indent+1,NULL,rec_level+1);
 	    }
 	  else
 	    {
-	      Sciprintf(" []");/* FIXME XXXX */
+	      Sciprintf1(indent+1,"lel= []");/* FIXME XXXX */
 	    }
 	  C = C->next;
 	  if ( C != NULLCELL )
 	    {
-	      for ( j=0 ; j < indent+1; j++) Sciprintf(" ");
-	      Sciprintf(",\n");
+	      Sciprintf1(indent+1,",\n");
 	    }
 	}
-      for ( j=0 ; j < indent ; j++) Sciprintf(" ");
-      Sciprintf( ")\n");
+      Sciprintf1(indent, ")\n");
     }
   else
     {
       int colors[]={ 34,32,31,35,36};
       char epname[128];
       Sciprintf("%s\t=\t\tl\n",(strcmp(pname,NVOID) != 0) ? pname : " ");
-      for ( j=0 ; j < indent ; j++) Sciprintf(" ");
-      Sciprintf("(\n");
+      Sciprintf1(indent+1,"(\n");
       C= L->first;
       while ( C != NULLCELL) 
 	{
@@ -702,7 +699,7 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 	    }
 	  if ( C->O != NULLOBJ )
 	    {
-	      nsp_object_print(C->O,indent+1,epname,rec_level+1);      
+	      nsp_object_print(C->O,indent+2,epname,rec_level+1);      
 	    }
 	  else
 	    {
@@ -711,8 +708,7 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 	  C = C->next ;i++;
 	  if ( C != NULLCELL ) Sciprintf("\n");
 	}
-      for ( j=0 ; j < indent ; j++) Sciprintf(" ");
-      Sciprintf( ")\n");
+      Sciprintf1(indent+1, ")\n");
     } 
 }
 
