@@ -4,7 +4,7 @@ all:: manual
 MANPAGE=../src/model/model.tex
 
 manual::
-	htlatex ../manual xhtml,3 '' '' '\def\manname{$(MANPAGE)}'
+	htlatex ../manual 'xhtml,3,notoc*,sec-filename' '' '' '\def\manname{$(MANPAGE)}'
 	$(RM) -f  manual.css
 	cp ../../html/manual.css manual.css
 

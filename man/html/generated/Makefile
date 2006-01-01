@@ -2,7 +2,7 @@
 all:: manual index manual 
 
 manual::
-	htlatex ../manual xhtml,3,section+,next
+	htlatex ../manual 'xhtml,3,sec-filename,next,notoc*'
 	cp ../manual.css manual.css
 
 index: 
@@ -10,7 +10,7 @@ index:
 	makeindex -o manual.ind manual.4dx 
 
 distclean::
-	@$(RM) manualch*.html manualli*.html manualse*.html
+	@$(RM) manualch*.html manualli*.html manualse*.html 
 	@$(RM) idxmake.dvi
 	@$(RM) idxmake.log
 	@$(RM) manual.4ct
