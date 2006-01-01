@@ -86,12 +86,12 @@ AC_DEFUN([AC_CHECK_UMFPACK],
       AC_CHECK_LIB(amd,amd_postorder,[umfpack_libs="-L${ac_amd_libdir} -lamd"])
      fi
      if test "${ac_umfpack_libdir}" = "/usr/lib"; then 
-      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-lumfpack ${umfpack_libs}"])
+      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-lzzumfpack -lamd ${umfpack_libs}"])
      else 
-      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack ${umfpack_libs}"])
+      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lzz1umfpack -lamd ${umfpack_libs}"])
      fi
     else
-     AC_CHECK_LIB(umfpack,umfpack_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack"])
+     AC_CHECK_LIB(umfpack,umfpack_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lzz2umfpack -lamd "])
     fi
     AC_SUBST(umfpack_libs)
   fi
