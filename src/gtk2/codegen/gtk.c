@@ -47,7 +47,7 @@
   for (tmp = list; tmp != NULL; tmp = tmp->next)  \
     { \
       NspObject *gtk_obj = (NspObject *)sel_code ;\
-      if (gtk_obj == NULL) goto clean ;  \
+      if (gtk_obj == NULL) goto clean ;					\
       if ((cloc1 =nsp_cell_create("lel",gtk_obj))== NULLCELL) goto clean;  \
       cloc1->next = NULLCELL; \
       if ( cloc == NULLCELL)  \
