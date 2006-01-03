@@ -1002,7 +1002,13 @@ static NspMethods *gobject_get_methods(void) { return gobject_methods;};
 /*-------------------------------------------
  * function 
  *-------------------------------------------*/
-/* XXXXX */
+
+/* XXX
+ *
+ */
+extern function int_cellstopixbuf;
+extern function int_pixbuftocells;
+
 static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs);
 static int int_gtk_quit_add(Stack stack,int rhs,int opt,int lhs);
 static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs);
@@ -1019,6 +1025,8 @@ static OpTab NspGObject_func[]={
   {"gtk_timeout_add",int_gtk_timeout_add},
   {"gtk_quit_add",int_gtk_quit_add},
   {"gtk_idle_add",int_gtk_idle_add},
+  {"pixbuftocells",int_pixbuftocells},
+  {"cellstopixbuf",int_cellstopixbuf},
   {(char *) 0, NULL}
 };
 
