@@ -7,7 +7,7 @@ headers
 #include <nsp/gtk/gobject.h>
 
 #define NSP_LIST_FROM_GLIST( sel_code, free_name) \
-  if (( nsp_list =nsp_list_create(NVOID,NULL) ) == NULLLIST) \
+  if (( nsp_list =nsp_list_create(NVOID) ) == NULLLIST) \
     { \
       free_name(list); \
       return RET_BUG; \
@@ -16,17 +16,7 @@ headers
     { \
       NspObject *gtk_obj = (NspObject *)sel_code ;\
       if (gtk_obj == NULL) goto clean ;  \
-      if ((cloc1 =nsp_cell_create("lel",gtk_obj))== NULLCELL) goto clean;  \
-      cloc1->next = NULLCELL; \
-      if ( cloc == NULLCELL)  \
-	{ \
-	  nsp_list->first = cloc1; \
-	} \
-      else  \
-	{ \
-	  cloc1->prev = cloc; cloc->next = cloc1;  \
-	} \
-      cloc= cloc1; \
+      if ( nsp_list_end_insert(nsp_list, gtk_obj) == FAIL ) goto clean; \
     } \
   MoveObj(stack,1,(NspObject *)nsp_list); \
   return 1; \
@@ -38,7 +28,7 @@ headers
     } 
 
 #define NSP_OBJ_LIST_FROM_GLIST( sel_code, free_name) \
-  if (( nsp_list =nsp_list_create(NVOID,NULL) ) == NULLLIST) \
+  if (( nsp_list =nsp_list_create(NVOID) ) == NULLLIST) \
     { \
       free_name(list); \
       return NULLOBJ; \
@@ -47,66 +37,36 @@ headers
     { \
       NspObject *gtk_obj = (NspObject *)sel_code ;\
       if (gtk_obj == NULL) goto clean ;  \
-      if ((cloc1 =nsp_cell_create("lel",gtk_obj))== NULLCELL) goto clean;  \
-      cloc1->next = NULLCELL; \
-      if ( cloc == NULLCELL)  \
-	{ \
-	  nsp_list->first = cloc1; \
-	} \
-      else  \
-	{ \
-	  cloc1->prev = cloc; cloc->next = cloc1;  \
-	} \
-      cloc= cloc1; \
+      if ( nsp_list_end_insert(nsp_list, gtk_obj) == FAIL ) goto clean; \
     } \
   return (NspObject *) nsp_list; \
   clean :  \
     { \
       free_name(list); \
- nsp_list_destroy(nsp_list); \
+      nsp_list_destroy(nsp_list); \
       return NULL; \
     } 
 
 /* Build a NspList */ 
 
-#define NSP_LIST_DEC NspList *nsp_list; Cell * cloc = NULLCELL, *cloc1; 
+#define NSP_LIST_DEC NspList *nsp_list;
 
 #define NSP_LIST(iter_code , sel_code ) \
-  if (( nsp_list =nsp_list_create(NVOID,NULL) ) == NULLLIST)  return RET_BUG; \
+  if ( (nsp_list = nsp_list_create(NVOID)) == NULLLIST )  return RET_BUG; \
   iter_code \
     { NspObject *nsp_node; \
       sel_code ; \
       if ( nsp_node == NULL) goto clean ;  \
-      if ((cloc1 =nsp_cell_create("lel",nsp_node))== NULLCELL) goto clean;  \
-      cloc1->next = NULLCELL; \
-      if ( cloc == NULLCELL)  \
-	{ \
-	  nsp_list->first = cloc1; \
-	} \
-      else  \
-	{ \
-	  cloc1->prev = cloc; cloc->next = cloc1;  \
-	} \
-      cloc= cloc1; \
+      if ( nsp_list_end_insert(nsp_list, nsp_node) == FAIL ) goto clean; \
     } 
 
 #define NSP_OBJ_LIST(iter_code , sel_code ) \
-  if (( nsp_list =nsp_list_create(NVOID,NULL) ) == NULLLIST)  return NULL; \
+  if ( (nsp_list =nsp_list_create(NVOID)) == NULLLIST )  return NULL; \
   iter_code \
     { NspObject *nsp_node; \
       sel_code ; \
       if ( nsp_node == NULL) goto clean ;  \
-      if ((cloc1 =nsp_cell_create("lel",nsp_node))== NULLCELL) goto clean;  \
-      cloc1->next = NULLCELL; \
-      if ( cloc == NULLCELL)  \
-	{ \
-	  nsp_list->first = cloc1; \
-	} \
-      else  \
-	{ \
-	  cloc1->prev = cloc; cloc->next = cloc1;  \
-	} \
-      cloc= cloc1; \
+      if ( nsp_list_end_insert(nsp_list, nsp_node) == FAIL ) goto clean; \
     } 
 
 
@@ -123,7 +83,6 @@ headers
       nsp_list_destroy(nsp_list); \
       return NULL; \
     }
-
 
 GList *glist_from_nsp_list(Stack stack,NspList *L,NspTypeBase *type)
 {
@@ -912,7 +871,6 @@ _wrap_gtk_container_get_children(NspGtkContainer *self,Stack stack,int rhs,int o
 {
   GList *list, *tmp;
   NspList *nsp_list;
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
 
   list = gtk_container_get_children(GTK_CONTAINER(self->obj));
   NSP_LIST_FROM_GLIST( gobject_gettype_and_create("lel",G_OBJECT(tmp->data)), g_list_free);
@@ -957,7 +915,6 @@ _wrap_gtk_container_get_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
 {
   GList *list, *tmp;
   NspList *nsp_list;
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
 
   if (! gtk_container_get_focus_chain(GTK_CONTAINER(self->obj), &list)) return 0;
   
@@ -1125,7 +1082,6 @@ _wrap_gtk_container_child_get(NspGObject *self,Stack stack,int rhs,int opt,int l
   GObjectClass *class;
   int  i;
   NspList *nsp_list; 
-  Cell *cloc= NULLCELL,*cloc1;
 
   CheckRhs(2,2);
   if ((pychild = GetGtkWidget(stack,1)) == NULL) return RET_BUG;
@@ -1142,7 +1098,7 @@ _wrap_gtk_container_child_get(NspGObject *self,Stack stack,int rhs,int opt,int l
     
   class = G_OBJECT_GET_CLASS(self->obj);
 
-  if (( nsp_list =nsp_list_create(NVOID,NULL) ) == NULLLIST) return RET_BUG; 
+  if (( nsp_list =nsp_list_create(NVOID) ) == NULLLIST) return RET_BUG; 
   
   for ( i = 0 ; i < props->mn ; i++) {
     gchar *property_name = props->S[i];
@@ -1161,28 +1117,18 @@ _wrap_gtk_container_child_get(NspGObject *self,Stack stack,int rhs,int opt,int l
 
     item = nspg_value_as_nspobject(&value, TRUE);
 
-    if ((cloc1 =nsp_cell_create("lel",item))== NULLCELL) 
+    if ( nsp_list_end_insert(nsp_list, item) == FAIL )
       {
 	g_value_unset(&value);
 	goto clean;
       }
 
-    cloc1->next = NULLCELL; 
-    if ( cloc == NULLCELL)  
-      { 
-	nsp_list->first = cloc1; 
-      } 
-    else  
-      { 
-	cloc1->prev = cloc; cloc->next = cloc1;  
-      } 
-    cloc= cloc1; 
     g_value_unset(&value);
   }
   return 1;
  clean: 
   {
- nsp_list_destroy(nsp_list);
+    nsp_list_destroy(nsp_list);
     return RET_BUG; 
   }
 
@@ -1403,7 +1349,6 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
 {
   GList *list, *tmp;
   NspList *nsp_list;
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
   CheckRhs(0,0);
   list = gtk_window_list_toplevels();
   NSP_LIST_FROM_GLIST( gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free);
@@ -2774,7 +2719,6 @@ _wrap_gtk_tree_view_column_get_cell_renderers(NspGObject *self,Stack stack,int r
 {
   GList *list, *tmp;
   NspList *nsp_list;
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
   list = gtk_tree_view_column_get_cell_renderers(GTK_TREE_VIEW_COLUMN(self->obj));
   
   NSP_LIST_FROM_GLIST( gobject_gettype_and_create("lel",(GObject *) tmp->data),g_list_free); /* XXXX */
@@ -3155,7 +3099,6 @@ _wrap_gtk_tree_view_get_columns(NspGObject *self,Stack stack,int rhs,int opt,int
 {
   GList *list, *tmp;
   NspList *nsp_list;
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
   list = gtk_tree_view_get_columns(GTK_TREE_VIEW(self->obj));
   NSP_LIST_FROM_GLIST(gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_list_free);
 }
@@ -4396,7 +4339,6 @@ static int
 _wrap_gtk_radio_button_get_group(NspGObject *self,Stack stack,int rhs,int opt,int lhs) {
   NspList *nsp_list;
   GSList *list, *tmp;
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
   list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(self->obj));
   NSP_LIST_FROM_GLIST( gobject_gettype_and_create("lel",G_OBJECT(tmp->data)),g_slist_free);
 }
@@ -5392,7 +5334,6 @@ _wrap_gtk_text_iter_get_marks(NspGBoxed *self)
 {
   GSList *list, *tmp;
   NspList *nsp_list;
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
   list = gtk_text_iter_get_marks(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(nspgobject_new((GObject *)tmp->data),g_slist_free);
 }
@@ -5406,7 +5347,6 @@ _wrap_gtk_text_iter_get_toggled_tags(NspGBoxed *self,Stack stack,int rhs,int opt
   int toggled_on;
   GSList *list, *tmp;
   NspList *nsp_list;
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
 
   if (GetArgs(stack,rhs,opt,T,&toggled_on) == FAIL) return RET_BUG;;
   list = gtk_text_iter_get_toggled_tags(nspg_boxed_get(self, GtkTextIter), toggled_on);
@@ -5420,7 +5360,6 @@ _wrap_gtk_text_iter_get_tags(NspGBoxed *self)
 {
   GSList *list, *tmp;
   NspList *nsp_list;
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
   list = gtk_text_iter_get_tags(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(nspgobject_new((GObject *)tmp->data),g_slist_free);
 }
@@ -5839,7 +5778,6 @@ _wrap_gtk_text_child_anchor_get_widgets(NspGObject *self,Stack stack,int rhs,int
 {
   GList *list, *tmp;
   NspList *nsp_list;
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL; 
   list = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(self->obj));
   NSP_LIST_FROM_GLIST(gobject_gettype_and_create("lel",(GObject *)tmp->data),g_list_free);
 }
@@ -6192,7 +6130,6 @@ _wrap_gtk_stock_list_ids(Stack stack,int rhs,int opt,int lhs)
 {
   GSList *list, *tmp;
   NspList *nsp_list; 
-  Cell *cloc = NULLCELL,*cloc1=NULLCELL;  
   list = gtk_stock_list_ids();
   NSP_LIST_FROM_GLIST(nsp_new_string_obj("lel",tmp->data,-1),g_slist_free);
   /* XXX

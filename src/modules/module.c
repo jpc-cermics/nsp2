@@ -404,7 +404,7 @@ NspModule *module_create(char *name,const char *path,const char *mname,NspTypeBa
        */
       if (module_fill(M) == FAIL) return NULLMODULE;
     }
-  if ((M->L =  nsp_list_create(NVOID,NULL))==NULLLIST) return NULLMODULE;
+  if ((M->L =  nsp_list_create(NVOID))==NULLLIST) return NULLMODULE;
   M->flag=0;
   return(M);
 } 

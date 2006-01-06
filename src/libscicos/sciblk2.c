@@ -102,7 +102,7 @@ NspObject *scicos_vars_to_list(double *inptr[],int nin,int insz[])
 {
   int k;
   NspObject *Ob;
-  if ((Ob = (NspObject *) nsp_list_create("L",NULL) ) == NULL) return NULL;
+  if ((Ob = (NspObject *) nsp_list_create("L") ) == NULL) return NULL;
   for( k=0 ; k < nin ; k++) 
     {
       NspObject *elt;
@@ -140,7 +140,7 @@ void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
   if ((Args[4]= (NspObject *) scicos_vvtosci(z,*nz)) == NULL) goto err;
   if ((Args[5]= (NspObject *) scicos_vvtosci(rpar,*nrpar)) == NULL) goto err; 
   if ((Args[6]= (NspObject *) scicos_itosci(ipar,*nipar,1)) == NULL) goto err;
-  if ((Args[7]= (NspObject *) nsp_list_create("L",NULL) ) == NULL) goto err;
+  if ((Args[7]= (NspObject *) nsp_list_create("L") ) == NULL) goto err;
   if ((Args[8]= scicos_vars_to_list(inptr,*nin,insz))==NULLOBJ) goto err;
 
   if ( scicos_scifunc(Args,mlhs,mrhs) == FAIL) goto err;
@@ -211,7 +211,7 @@ sciblk2i(flag,nevprt,t,residual,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
   if ((Args[5]= (NspObject *) scicos_vvtosci(z,*nz)) == NULL) goto err;
   if ((Args[6]= (NspObject *) scicos_vvtosci(rpar,*nrpar)) == NULL) goto err; 
   if ((Args[7]= (NspObject *) scicos_itosci(ipar,*nipar,1)) == NULL) goto err;
-  if ((Args[8]= (NspObject *) nsp_list_create("L",NULL) ) == NULL) goto err;
+  if ((Args[8]= (NspObject *) nsp_list_create("L") ) == NULL) goto err;
   if ((Args[9]= scicos_vars_to_list(inptr,*nin,insz))==NULLOBJ) goto err;
   if ( scicos_scifunc(Args,mlhs,mrhs) == FAIL) goto err;
   switch (*flag) 

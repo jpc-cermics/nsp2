@@ -1250,27 +1250,16 @@ _wrap_gdk_drag_context__get_targets(NspGObject *self, char *attr)
   NspObject *atom; 
   NspList *ret;
   GList *tmp;
-  Cell *cloc = NULLCELL, *cloc1; 
   
-  if (( ret =nsp_list_create(NVOID,NULL) ) == NULLLIST) return NULL;
+  if (( ret =nsp_list_create(NVOID) ) == NULLLIST) return NULL;
   for (tmp = GDK_DRAG_CONTEXT(self->obj)->targets; tmp; tmp = tmp->next) {
     if ((atom = (NspObject *) gdkatom_create(NVOID,NULL,GDK_POINTER_TO_ATOM(tmp->data),NULL)) == NULL)  goto clean; 
-    if ((cloc1 =nsp_cell_create(NVOID,atom))== NULLCELL) goto clean;
-    cloc1->next = NULLCELL; 
-    if ( cloc == NULLCELL) 
-      { 
-	ret->first = cloc1;
-      } 
-    else
-      { 
-	cloc1->prev = cloc; cloc->next = cloc1; 
-      } 
-    cloc= cloc1;
+    if ( nsp_list_end_insert(ret, atom) == FAIL ) goto clean;
   }
   return (NspObject *) ret; 
   clean : 
     {
- nsp_list_destroy(ret); 
+      nsp_list_destroy(ret); 
       return NULL;
     }
 }
@@ -1877,25 +1866,14 @@ _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int 
 {
   GList *children, *tmp;
   NspList *ret; 
-  Cell *cloc = NULLCELL, *cloc1; 
   
-  if (( ret =nsp_list_create(NVOID,NULL) ) == NULLLIST) return RET_BUG;
+  if (( ret =nsp_list_create(NVOID) ) == NULLLIST) return RET_BUG;
   children = gdk_window_get_children(GDK_WINDOW(self->obj));
 
   for (tmp = children; tmp != NULL; tmp = tmp->next) {
     NspObject *item = (NspObject *) nspgobject_new((GObject *)tmp->data);
     if ( item == NULLOBJ) goto clean;
-    if ((cloc1 =nsp_cell_create(NVOID,item))== NULLCELL) goto clean;
-    cloc1->next = NULLCELL; 
-    if ( cloc == NULLCELL) 
-      { 
-	ret->first = cloc1;
-      } 
-    else
-      { 
-	cloc1->prev = cloc; cloc->next = cloc1; 
-      } 
-    cloc= cloc1;
+    if ( nsp_list_end_insert(ret, item) == FAIL ) goto clean; 
   }
   g_list_free(children);
   MoveObj(stack,1,(NspObject *) ret);
@@ -1903,7 +1881,7 @@ _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int 
   clean : 
     {
       g_list_free(children);
- nsp_list_destroy(ret); 
+      nsp_list_destroy(ret); 
       return RET_BUG;
     }
 }

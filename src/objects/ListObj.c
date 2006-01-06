@@ -1,5 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2006 Bruno Pinçon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -117,7 +118,10 @@ static int init_list(NspList *o,NspTypeList *type)
   NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
   /* specific */
   o->first = NULL;
-  o->tname = NULL;
+  o->last = NULL;
+  o->current = NULL;
+  o->icurrent = 0;
+  o->nel = 0;
   return OK;
 }
 
@@ -130,9 +134,9 @@ NspList *new_list()
   NspList *loc; 
   /* type must exists */
   nsp_type_list = new_type_list(T_BASE);
-  if ( (loc = malloc(sizeof(NspList)))== NULLLIST) return loc;
+  if ( (loc=malloc(sizeof(NspList))) == NULLLIST ) return loc;
   /* initialize object */
-  if ( init_list(loc,nsp_type_list) == FAIL) return NULLLIST;
+  if ( init_list(loc,nsp_type_list) == FAIL ) return NULLLIST;
   return loc;
 }
 
@@ -167,47 +171,39 @@ char *nsp_list_type_short_string(NspList *L)
   return(list_short_type_name);
 }
 
-/* used in for x=list(....) ... 
- * FIXME: this is to be improved since we start 
- * always at first list element when searching a new object in 
- * list loop_extract is to be changed.
- */
 
+/* used in for x=list(....) ... 
+
+ */
 NspObject *list_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep)
 {
-  int count=1;
-  Cell *cell = nsp_list_object(O1)->first;
-  while ( count < i  && cell != NULLCELL ) 
-    { cell = cell->next;count ++;}
-  if ( count != i || cell == NULLCELL) 
+  NspList *L = nsp_list_object(O1);
+  Cell *cell;
+
+  if ( 1 <= i  &&  i <= L->nel )
     {
-      *rep = RET_ENDFOR; 
-      return NULLOBJ;
-    }
-  else 
-    {
+      cell = nsp_list_get_cell_pointer(L, i);
+      L->icurrent = i; L->current = cell;
       if ( cell->O == NULLOBJ ) 
 	return (NspObject *) none_create(str,NULL);
       else
 	return nsp_object_copy_and_name(str,cell->O);
     }
+  else
+    {
+      *rep = RET_ENDFOR; 
+      return NULLOBJ;
+    }
 }
 
-/* used for L(1)(2)....(expn) evaluation */
 
 NspObject *nsp_list_path_extract(NspList *L, NspObject *O)
 {
-  NspSMatrix *M;
   int ival;
   if ( IsMat(O)  ) 
     {
       if ( IntScalar(O,&ival) == FAIL ) return NULLOBJ ;
       return nsp_list_get_element(L,ival);
-    }
-  else if ( IsSMat(O) ) 
-    {
-      if (( M =nsp_smatrix_object(O)) == NULLSMAT || M->mn != 1) return NULLOBJ ;
-      return nsp_list_search(L,M->S[0]);
     }
   return  NULLOBJ;
 }
@@ -251,9 +247,6 @@ int nsp_list_xdr_save(XDR *xdrs, NspList *L)
   int length;
   if (nsp_xdr_save_i(xdrs,L->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(L)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs,L->tname == NULLSTRING ) == FAIL) return FAIL;
-  if ( L->tname != NULLSTRING) 
-    {  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(L)->name) == FAIL) return FAIL;}
   length =nsp_list_length(L);
   if (nsp_xdr_save_i(xdrs,length) == FAIL) return FAIL;
   while ( cell != NULLCELL ) 
@@ -270,34 +263,23 @@ int nsp_list_xdr_save(XDR *xdrs, NspList *L)
 
 NspList*nsp_list_xdr_load(XDR *xdrs)
 {
-  Cell *C;
+  Cell *C, *Loc=NULLCELL;
   NspList *L;
-  int flag,length,count;
+  int length,count;
   static char name[NAME_MAXL];
-  static char tname[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLLIST;
-  if (nsp_xdr_load_i(xdrs,&flag) == FAIL) return NULLLIST;
-  if ( flag ) 
-    {
-      if (( L =nsp_list_create(name,NULLSTRING)) == NULLLIST ) return NULLLIST;
-    }
-  else 
-    {
-      if (nsp_xdr_load_string(xdrs,tname,NAME_MAXL) == FAIL) return NULLLIST;
-      if (( L =nsp_list_create(name,tname)) == NULLLIST ) return NULLLIST;
-    }
+  if (( L =nsp_list_create(name)) == NULLLIST ) return NULLLIST;
   if (nsp_xdr_load_i(xdrs,&length) == FAIL) return NULLLIST;
   C = L->first;
   count = 0;
   while ( count < length ) 
     {
-      Cell *Loc;
       NspObject *O =nsp_object_xdr_load(xdrs); 
       if ( O == NULLOBJ ) return NULLLIST;
-      if (( Loc =nsp_cell_create( NULLSTRING,O))== NULLCELL) return NULLLIST;
+      if (( Loc =nsp_cell_create(O))== NULLCELL) return NULLLIST;
       if ( C == NULLCELL) 
 	{
-	  L->first =C =  Loc; 
+	  L->first = C = Loc; 
 	}
       else 
 	{
@@ -307,6 +289,8 @@ NspList*nsp_list_xdr_load(XDR *xdrs)
 	}
       count++;
     }
+  L->last = Loc;
+  L->nel = length;
   return L;
 }
 
@@ -402,23 +386,239 @@ NspList*GetList(Stack stack, int i)
  * Extract requested elements of the list 
  * an create a New list with copy of them
  */
-
 static int int_list_sublist(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspList *L=self , *Le;
   NspMatrix *Elts;
-  CheckRhs(2,2);
+  CheckRhs(1,1);
   CheckLhs(1,1);
   if ((Elts = GetMat(stack,1)) == NULLMAT) return RET_BUG;
   if ((Le =nsp_list_extract(L,Elts)) == NULLLIST ) return RET_BUG;
-  NthObj(3) = NSP_OBJECT(Le) ;
-  NthObj(3)->ret_pos = 1;
+  NthObj(2) = NSP_OBJECT(Le) ;
+  NthObj(2)->ret_pos = 1;
   return 1;
+}
+
+static int int_list_add_first(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L=self;
+  CheckRhs(1,1);
+  CheckLhs(0,0);
+  if ( MaybeObjCopy(&NthObj(1)) == NULL )  return RET_BUG;
+  if (nsp_object_set_name(NthObj(1),"lel") == FAIL) return RET_BUG;
+  if ( nsp_list_begin_insert(L,NthObj(1)) == FAIL ) return RET_BUG;
+  NthObj(1) = NULLOBJ;
+  return 0;
+}
+
+static int int_list_add_last(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L=self;
+  CheckRhs(1,1);
+  CheckLhs(0,0);
+  if ( MaybeObjCopy(&NthObj(1)) == NULL )  return RET_BUG;
+  if (nsp_object_set_name(NthObj(1),"lel") == FAIL) return RET_BUG;
+  if ( nsp_list_end_insert(L,NthObj(1)) == FAIL ) return RET_BUG;
+  NthObj(1) = NULLOBJ;
+  return 0;
+}
+
+static int int_list_add(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspList *L=self;
+  CheckRhs(2,2);
+  CheckLhs(0,0);
+  if ( MaybeObjCopy(&NthObj(1))== NULL )  return RET_BUG;
+  if (nsp_object_set_name(NthObj(1),"lel") == FAIL) return RET_BUG;
+  if ( GetScalarInt(stack,2,&i) == FAIL) return RET_BUG;
+  if ( nsp_list_store(L,NthObj(1),i) == FAIL ) return RET_BUG;
+  NthObj(1) = NULLOBJ;
+  return 0;
+}
+
+static int int_list_remove_first(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L=self;
+  CheckRhs(0,0);
+  CheckLhs(0,0);
+  nsp_list_remove_first(L);
+  return 0;
+}
+
+static int int_list_remove_last(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L=self;
+  CheckRhs(0,0);
+  CheckLhs(0,0);
+  nsp_list_remove_last(L);
+  return 0;
+}
+
+static int int_list_remove(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspList *L=self;
+  CheckRhs(1,1);
+  CheckLhs(0,0);
+  if ( GetScalarInt(stack,1,&i) == FAIL ) return RET_BUG;
+  if ( nsp_list_delete_elt(L,i) == FAIL ) return RET_BUG;
+  return 0;
+}
+
+
+static int int_list_first(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L=self;
+  NspObject *O;
+  CheckRhs(0,0);
+  CheckLhs(1,1);
+
+  if ( L->nel == 0 )
+    {
+      Scierror("%s: empty list\n",stack.fname);
+      return RET_BUG;
+    }
+
+  if ( (O = L->first->O) == NULLOBJ )
+    {
+      Scierror("Error:\t first list element is undefined\n");
+      return RET_BUG;
+    }
+
+  if ( (O = nsp_object_copy(O)) == NULLOBJ ) 
+    return RET_BUG;
+
+  O->ret_pos = 1;
+  NthObj(1) = O;
+  return 1;
+}
+
+static int int_list_last(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L=self;
+  NspObject *O;
+  CheckRhs(0,0);
+  CheckLhs(1,1);
+
+  if ( L->nel == 0 )
+    {
+      Scierror("%s: empty list\n",stack.fname);
+      return RET_BUG;
+    }
+
+  if ( (O = L->last->O) == NULLOBJ )
+    {
+      Scierror("Error:\t last list element is undefined\n");
+      return RET_BUG;
+    }
+
+  if ( (O = nsp_object_copy(O)) == NULLOBJ ) 
+    return RET_BUG;
+
+  O->ret_pos = 1;
+  NthObj(1) = O;
+  return 1;
+}
+
+static int int_list_item(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspList *L=self;
+  NspObject *O;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+
+  if ( GetScalarInt(stack,1,&i) == FAIL ) return RET_BUG;
+
+  if ( (O = nsp_list_get_element(L,i)) ==  NULLOBJ )
+    return RET_BUG;  /* error message done in nsp_list_get_element */
+
+  if ( (O=nsp_object_copy(O)) == NULLOBJ ) 
+    return RET_BUG;
+ 
+  O->ret_pos = 1;
+  NthObj(1) = O;
+  return 1;
+}
+
+/*
+ * compact the list 
+ */
+static int int_lxcompact(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  char c='c';
+  NspList *L=self;
+  CheckRhs(0,1); 
+  CheckLhs(0,0);
+  if ( rhs == 1 ) 
+    {
+      char *str;
+      if ( (str = GetString(stack,1)) == (char*)0 ) return RET_BUG;
+      if ( strlen(str) > 0 && (str[0]== 'c' || str[0]== 'r')) c=str[0];
+      else 
+	{
+	  Scierror("%s: argument must be 'c' or 'r'\n",stack.fname);
+	  return RET_BUG;
+	}
+    }
+  if ( nsp_list_compact(L,c) == FAIL ) return RET_BUG; 
+  return 0;
+}
+
+/*
+ *  Concatenation of LL onto the current list L
+ */
+static int int_lxconcat(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L=self, *LL;
+  CheckRhs(1,1); 
+  CheckLhs(0,0);
+  if (( LL = GetList(stack,1)) == NULLLIST) return RET_BUG;
+  if (nsp_list_concat(L,LL) < 0 ) return RET_BUG;
+  return 0;
+}
+
+
+/*
+ * reverse the list 
+ */
+static int int_lxreverse(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  Cell *cell, *next;
+  NspList *L=self;
+  CheckRhs(0,0); 
+  CheckLhs(0,0);
+  
+  cell = L->first;
+  L->first = L->last;
+  L->last = cell;
+  L->current = NULLCELL; L->icurrent = 0;
+  while ( cell != NULLCELL )
+    {
+      next = cell->next;
+      cell->next = cell->prev;
+      cell->prev = next;
+      cell = next;
+    }
+  return 0;
 }
 
 
 static NspMethods nsp_list_methods[] = {
   { "sublist", int_list_sublist },
+  { "add_first", int_list_add_first },
+  { "add_last", int_list_add_last },
+  { "add", int_list_add },
+  { "first", int_list_first },
+  { "last", int_list_last },
+  { "item", int_list_item },
+  { "remove_first", int_list_remove_first },
+  { "remove_last", int_list_remove_last },
+  { "remove", int_list_remove },
+  { "compact", int_lxcompact },
+  { "concat", int_lxconcat },
+  { "reverse", int_lxreverse },
   { (char *) 0, NULL}
 };
 
@@ -442,7 +642,7 @@ static int int_lxlist(Stack stack, int rhs, int opt, int lhs)
   int i;
   NspList *L;
   CheckLhs(1,1);
-  if ((L =nsp_list_create(NVOID,NULLSTRING))==NULLLIST) return RET_BUG;
+  if ((L =nsp_list_create(NVOID))==NULLLIST) return RET_BUG;
   for ( i = 1; i <= rhs ; i++ )
     {
       if ( MaybeObjCopy(&NthObj(i)) == NULL)  return RET_BUG;
@@ -469,19 +669,18 @@ static int int_lxsortedlist(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *O1;
   int i;
-  NspList *L;
+  NspList *L=NULLLIST;
   CheckLhs(1,1);
-  if ((L =nsp_list_create(NVOID,NULLSTRING))==NULLLIST) return RET_BUG;
+  if ( (L = nsp_list_create(NVOID)) == NULLLIST ) return RET_BUG;
   for ( i = 1; i <= rhs ; i++ )
     {
-      if ( Ocheckname(NthObj(i),NVOID)) 
+      if ( Ocheckname(NthObj(i),NVOID) ) 
 	{
 	  Scierror("Error: arguments must have name for %s function\n",stack.fname);
-	  /* Netoyer **/
-	  return RET_BUG;
+	  goto err;
 	}
-      if ( (O1 =nsp_object_copy_with_name(NthObj(i))) == NULLOBJ)  return RET_BUG;
-      if (nsp_sorted_list_insert(L,O1) == FAIL ) return RET_BUG;
+      if ( (O1 = nsp_object_copy_with_name(NthObj(i))) == NULLOBJ ) goto err;
+      if ( nsp_sorted_list_insert(L,O1) == FAIL ) goto err; 
       /* If NthObj(i) is not copied it is inserted in the list 
 	 we must set then NthObj(i) to NULLOBJ 
 	 to prevent the cleaning process to clean the object 
@@ -491,30 +690,46 @@ static int int_lxsortedlist(Stack stack, int rhs, int opt, int lhs)
   NthObj(1)=(NspObject *) L;
   NSP_OBJECT(NthObj(1))->ret_pos = 1;
   return 1;
+
+ err:
+  nsp_list_destroy(L);
+  return RET_BUG;
 }
-
-
-/*
- * search a sorted NspList 					  
- */
 
 static int int_lxsortedsearch(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *O;
   NspList *L;
+  NspBMatrix *BMat;
+  NspMatrix *Mat;
   char *str;
   CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((L = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;;
-  O =nsp_sorted_list_search(L,str);
-  if ( O == NULLOBJ ) return 0;
-  else 
+  CheckLhs(1,2);
+  if ( (L = GetList(stack,1)) == NULLLIST ) return RET_BUG;
+  if ( (str = GetString(stack,2)) == (char*)0 ) return RET_BUG;
+
+  O = nsp_sorted_list_search(L,str);
+
+  if ( (BMat = nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(BMat));
+  BMat->B[0] = O != NULLOBJ;
+
+  if ( lhs == 1 )
+    return 1;
+
+  if ( O == NULLOBJ )
     {
-      MoveObj(stack,1,O);
-      return 1;
+      if ( (Mat = nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) return RET_BUG;
+      MoveObj(stack,2,NSP_OBJECT(Mat));
     }
+  else
+    {
+      if ( (O = nsp_object_copy(O)) == NULLOBJ ) return RET_BUG;
+      MoveObj(stack,2,O);
+    }	
+  return 2;
 }
+
 
 /*
  * search a sorted NspList 					  
@@ -537,50 +752,6 @@ static int int_lxsortedsearchandremove(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
 }
-
-/*
- * create a tlist inserting the rhs object 
- * on the stack in the list 
- * if rhs == 0 an empty list is created 
- */
-
-
-static int int_lx_tlist_as_list(Stack stack, int rhs, int opt, int lhs)
-{
-  NspSMatrix *HMat;
-  int i;
-  NspList *L;
-  if ( rhs < 1 ) 
-    {
-      Scierror("Error:\tNeed at least one argument for tlist creation");
-      return RET_BUG;
-    }
-  CheckLhs(1,1);
-  if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ( HMat->mn == 0 )
-    {
-      Scierror("Error:\t%s", ArgPosition(1));
-      ArgName(stack,1);
-      Scierror(" of function %s is an empty string matrix\n",stack.fname);
-      return RET_BUG;
-    }
-  if ((L =nsp_list_create(NVOID,HMat->S[0]))==NULLLIST) return RET_BUG;
-  for ( i = 1; i <= rhs ; i++ )
-    {
-      char *oname = (i-1 < HMat->mn ) ? HMat->S[i-1] : "lel";
-      if ( MaybeObjCopy(&NthObj(i)) == NULL)  return RET_BUG;
-      if (nsp_object_set_name(NthObj(i),oname) == FAIL) return FAIL;
-      if (nsp_list_end_insert(L,NthObj(i)) == FAIL ) return RET_BUG;
-      /* If NthObj(i) is not copied it is inserted in the list 
-	 we must set then NthObj(i) to NULLOBJ 
-	 to prevent the cleaning process to clean the object 
-	 that we have inserted in our list **/
-      NthObj(i) = NULLOBJ ;
-    }
-  MoveObj(stack,1,(NspObject *) L);
-  return 1;
-}
-
 
 /*
  * FIXME temp for scicos 
@@ -656,41 +827,28 @@ static int int_lxnull(Stack stack, int rhs, int opt, int lhs)
 static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Elts;
-  int rmin,rmax,i,l,nret,L_name;
+  int i, nret, L_name;
   NspObject *O;
+  
   NspList *L;
   CheckRhs (2,2);
   if ((L    = GetList(stack,1)) == NULLLIST) return RET_BUG;
   if ((Elts = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  L_name=Ocheckname(L,NVOID);
-  l =nsp_list_length(L);
-  Bounds(Elts,&rmin,&rmax);
-  if ( rmin < 1  || rmax > l) 
-    {
-      Scierror("Error:\tIndices out of bounds\n"); return RET_BUG;
-    }
   nret = Elts->mn;
-  L_name=Ocheckname(L,NVOID);
+  L_name = Ocheckname(L,NVOID);
 
   for ( i = 0 ; i < nret ; i++ )
     {
-      O =nsp_list_get_element(L,((int) Elts->R[i]));
-      if ( O == NULLOBJ ) 
-	{
-	  Scierror("Error:\t%s does not exists\n",
-		   ArgPosition((int) Elts->R[i]));
-	  return RET_BUG;
-	}
+      if ( (O=nsp_list_get_element(L,((int) Elts->R[i]))) ==  NULLOBJ )
+	return RET_BUG;  /* error message done in nsp_list_get_element */
+
       /* If NspList has no name or list element has no name we must copy */
       if ( L_name || Ocheckname(O,NVOID) ) 
-	{
-	  if ((O=nsp_object_copy(O)) == NULLOBJ) return RET_BUG;
-	}
-      NthObj(rhs+i+1)= O;
+	if ( (O=nsp_object_copy(O)) == NULLOBJ ) 
+	  return RET_BUG;
+      NthObj(rhs+i+1) = O;
     }
-  /* 
-   * 
-   */
+
   nsp_void_object_destroy(&NthObj(1));
   nsp_void_object_destroy(&NthObj(2));
   for ( i = 0 ; i < nret ; i++) 
@@ -700,47 +858,6 @@ static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
       NthObj(i+rhs+1)= NULLOBJ;
     }
   return nret;
-}
-
-/*
- * Extract requested elements of the list an store them on the stack 
- * Note that the extracted elements have names and is not copied.
- */
-
-
-static int int_lxextract_s(Stack stack, int rhs, int opt, int lhs)
-{
-  NspSMatrix *Elts;
-  int i,L_name;
-  NspObject *O;
-  NspList *L;
-  if ((L    = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  if ((Elts = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-  L_name=Ocheckname(L,NVOID);
-  for ( i = 0 ; i < Elts->mn ; i++ )
-    {
-      if ((O =nsp_list_search(L,Elts->S[i])) == NULLOBJ ) 
-	{
-	  Scierror("Error:\tindice %s does not exists\n",
-		   Elts->S[i]);
-	  return RET_BUG;
-	}
-      /* If NspList has no name we must copy */
-      if ( L_name ) 
-	{
-	  if ((O=nsp_object_copy(O)) == NULLOBJ) return RET_BUG;
-	}
-      NthObj(rhs+1+i)= O;
-    }
-  nsp_void_object_destroy(&NthObj(1));
-  nsp_void_object_destroy(&NthObj(2));
-  for ( i = 0 ; i < Elts->mn ; i++) 
-    {
-      NthObj(i+1)= NthObj(i+rhs+1);
-      NSP_OBJECT(NthObj(i+1))->ret_pos = i+1;
-      NthObj(i+rhs+1)= NULLOBJ;
-    }
-  return Elts->mn;
 }
 
 /* extract list element with a list argument : L(List(....))  */ 
@@ -753,6 +870,9 @@ static int int_lxextract_s(Stack stack, int rhs, int opt, int lhs)
 /* XXXX : améliorer le netoyage en cas d'erreur 
  * following path for a recursive object with list or hash tables 
  * as sucessive nodes 
+
+  A VOIR
+
  */ 
 
 int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
@@ -775,7 +895,6 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
   O= (NspObject *) L;
   while ( C != NULLCELL) 
     {
-      char *str ; 
       if ( C->O == NULLOBJ )
 	{
 	  Scierror("Error: \t%s of list does not exists\n",ArgPosition(count));
@@ -794,27 +913,9 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 		}
 	      if ( ( O =nsp_list_get_element((NspList *) O,n)) == NULLOBJ) return RET_BUG;
 	    }
-	  else if ((str=nsp_string_object(C->O)) != NULL) 
-	    {
-	      if ( IsList(O) )
-		{
-		  if ((O =nsp_list_search((NspList *)O,str)) == NULLOBJ ) return RET_BUG;		
-		}
-	      else if ( IsHash(O) )
-		{
-		  NspObject *O1;
-		  if (nsp_hash_find((NspHash *) O,str,&O1) == FAIL) return RET_BUG ;
-		  O= O1;
-		}
-	      else
-		{
-		  Scierror("Errro:\t,error in list extraction which does not give a list\n");
-		  return RET_BUG;
-		}
-	    }
 	  else 
 	    {
-	      Scierror("Errro:\t,error in list extraction indice should be an int or a string \n");
+	      Scierror("Errro:\t,error in list extraction index should be an int \n");
 	      return RET_BUG;
 	    }
 	  /* If NspList has no name we must copy */
@@ -868,17 +969,13 @@ static int int_lxextract(Stack stack, int rhs, int opt, int lhs)
     {
       return int_lxextract_m(stack,rhs,opt,lhs);
     }
-  else if ( IsSMatObj(stack,2) ) 
-    {
-      return int_lxextract_s(stack,rhs,opt,lhs);
-    }
   else if ( IsListObj(stack,2) ) 
     {
       return int_lxextract_l(stack,rhs,opt,lhs);
     }
   else 
     {
-      Scierror("Error: Wrong type for argument in list extraction int, string or list required\n");
+      Scierror("Error: Wrong type for argument in list extraction int or list required\n");
       return RET_BUG;
     }
   return 1;
@@ -909,7 +1006,7 @@ static int int_lxextractall(Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       NthObj(count+1)= C->O;
-      if ( delete == TRUE) C->O = NULLOBJ;
+      if ( delete == TRUE ) C->O = NULLOBJ;
       C = C->next ;
       count++;
     }
@@ -969,34 +1066,6 @@ static int int_lxpath(Stack stack, int rhs, int opt, int lhs)
 }
 #endif 
 
-/*
- * compact the list 
- * Attention XXXX en faire une méthode 
- * qui modifie son argument 
- */
-
-static int int_lxcompact(Stack stack, int rhs, int opt, int lhs)
-{
-  char c='c';
-  NspList *L;
-  CheckRhs(1,2); 
-  CheckLhs(1,1);
-  if ((L = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  if ( rhs == 2 ) 
-    {
-      char *str;
-      if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;;
-      if ( strlen(str) > 0 && (str[0]== 'c' || str[0]== 'r')) c=str[0];
-      else 
-	{
-	  Scierror("%s: second argument must be 'c' or 'r'\n",stack.fname);
-	  return RET_BUG;
-	}
-    }
-  if (nsp_list_compact(L,c) == FAIL) return RET_BUG; 
-  NthObj(1)->ret_pos = 1;
-  return 1;
-}
 
 
 /*
@@ -1009,7 +1078,6 @@ static int int_lxcompact(Stack stack, int rhs, int opt, int lhs)
 static int int_lxsetrc(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *M;
-  NspSMatrix *S;
   int i;
   NspList *L;
   if ( rhs < 3 ) 
@@ -1018,7 +1086,7 @@ static int int_lxsetrc(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   CheckLhs(1,1);
-  if ((L = GetList(stack,1)) == NULLLIST) return RET_BUG;
+  if ( (L = GetList(stack,1)) == NULLLIST ) return RET_BUG;
   
   if (IsMatObj(stack,2)  ) 
     {
@@ -1034,51 +1102,20 @@ static int int_lxsetrc(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if (Ocheckname(NthObj(3+i),"%null"))
 	    {
-	      if (nsp_list_delete_elt(L,(int) M->R[i]) == FAIL ) return RET_BUG;
+	      if ( nsp_list_delete_elt(L,(int) M->R[i]) == FAIL ) return RET_BUG;
 	    }
 	  else
 	    {
-	      if ( MaybeObjCopy(&NthObj(3+i)) == NULL)  return RET_BUG;
+	      if (MaybeObjCopy(&NthObj(3+i)) == NULL)  return RET_BUG;
 	      if (nsp_object_set_name(NthObj(3+i),"lel") == FAIL) return RET_BUG;
 	      if (nsp_list_insert(L,NthObj(3+i),(int) M->R[i]) == FAIL ) return RET_BUG;
 	      /* since NthObj(3) has a name it won't be cleaned up **/
 	    }
 	}
     }
-  else if ( IsSMatObj(stack,2)  ) 
-    {
-      if (( S=GetSMat(stack,2)) == NULLSMAT ) return RET_BUG;
-      if ( S->mn != rhs - 2) 
-	{
-	  Scierror("Error:\tNot enought rhs arguments (%d) for list insertion \n",rhs-2);
-	  Scierror("\texpecting %d rhs arguments\n",S->mn);
-	  ArgMessage(stack,1);
-	  return RET_BUG;
-	}
-      for ( i = 0 ; i < S->mn ; i++) 
-	{
-	  if (Ocheckname(NthObj(3+i),"%null"))
-	    {
-	      Scierror("Error: You are not allowed to delete entries in a tlist\n");
-	      return RET_BUG;
-	      /*nsp_list_delete_elt_by_name(L,S->S[i]); **/
-	    }
-	  else
-	    {
-	      if ( MaybeObjCopy(&NthObj(3+i)) == NULL)  return RET_BUG;
-	      if (nsp_object_set_name(NthObj(3+i),S->S[i]) == FAIL) return RET_BUG;
-	      if (nsp_list_search_and_replace(L,NthObj(3+i)) == FAIL ) 
-		{
-		  Scierror("Error: %s not valid as a NspList extraction indice\n",S->S[i]);
-		  return RET_BUG;
-		}
-	      /* since NthObj(3) has a name it won't be cleaned up **/
-	    }
-	}
-    }
   else 
     {
-      Scierror("Error: Wrong type for argument in list extraction int or string\n");
+      Scierror("Error: Wrong type for argument in list insertion (or deletion) int \n");
       Scierror("\trequired\n");
       return RET_BUG;
     }
@@ -1096,95 +1133,9 @@ static int int_lxcreate(Stack stack, int rhs, int opt, int lhs)
   NspList *L;
   CheckRhs(0,0);
   CheckLhs(1,1);
-  if ((L =nsp_list_create(NVOID,NULLSTRING))==NULLLIST) return RET_BUG;
+  if ((L =nsp_list_create(NVOID))==NULLLIST) return RET_BUG;
   NthObj(1)= (NspObject *) L;
   NSP_OBJECT(NthObj(1))->ret_pos = 1;
-  return 1;
-}
-
-/*
- * returns a pointer to the Nth (=nel) NspObject  of a NspList 
- */
-
-static int int_lxnthel(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject *O;
-  NspList *L;
-  int n1;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if (( L = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  if ( GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
-  if ((O =nsp_list_get_element(L,n1)) == NULLOBJ) return RET_BUG;
-  /* XXXX pas clair est-ce que O est une copie */ 
-  nsp_void_object_destroy(&NthObj(1));
-  NthObj(1) = O;
-  NSP_OBJECT(NthObj(1))->ret_pos = 1;
-  return 1;  
-}
-
-/*
- * insert Object A at end of NspList  
- * NspList must exists  
- * A is copied (if necessary)
- */
-
-static int int_lxendi(Stack stack, int rhs, int opt, int lhs)
-{
-  NspList *L;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if (( L = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  if ( MaybeObjCopy(&NthObj(2)) == NULL)  return RET_BUG;
-  if (nsp_list_end_insert(L,NthObj(2)) == FAIL ) return RET_BUG;
-  /* If NthObj(2) is not copied it is inserted in the list 
-     we must set then NthObj(2) to NULLOBJ 
-     to prevent the cleaning process to clean the object 
-     that we have inserted in our list **/
-  NthObj(2) = NULLOBJ ;
-  NSP_OBJECT(L)->ret_pos = 1;
-  return 1;
-}
-
-/*
- *insert Object A in a NspList at position n 
- * a copy of object A is inserted if necessary 
- */
-
-static int int_lxni(Stack stack, int rhs, int opt, int lhs)
-{
-  int n1;
-  NspList *L;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if (( L = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  if ( MaybeObjCopy(&NthObj(2))== NULL )  return RET_BUG;
-  if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if (nsp_list_store(L,NthObj(2),n1) == FAIL ) return RET_BUG;
-  /* If NthObj(2) is not copied it is inserted in the list 
-     we must set then NthObj(2) to NULLOBJ 
-     to prevent the cleaning process to clean the object 
-     that we have inserted in our list **/
-  NthObj(2) = NULLOBJ ;
-  NSP_OBJECT(L)->ret_pos = 1;
-  return 1;
-}
-
-/*
-  supresses the nel th element of an Object of 
-  type NspList ( the nth element is freed
-*/
-
-static int int_lxnthdel(Stack stack, int rhs, int opt, int lhs)
-{
-  int n1;
-  NspList *L;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if (( L = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  if ( GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
-  if (nsp_list_delete_elt(L,n1) == FAIL ) return RET_BUG;
-  NSP_OBJECT(L)->ret_pos = 1;
   return 1;
 }
 
@@ -1209,50 +1160,28 @@ static int int_lxlength(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- *  Concatenation of two Object of type NspList 
- * O2 is unchanged O1 is changed 
- */
-
-static int int_lxconcat(Stack stack, int rhs, int opt, int lhs)
-{
-  NspList *L1,*L2;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if (( L1 = GetList(stack,1)) == NULLLIST) return RET_BUG;
-  if (( L2 = GetList(stack,2)) == NULLLIST) return RET_BUG;
-  if (nsp_list_concat(L1,L2) < 0 ) return RET_BUG;
-  /* est-ce que L2 est copiee ? XXXXX 
-   * 
-   */ 
-  NthObj(2) = NULLOBJ; 
-  NSP_OBJECT(L1)->ret_pos = 1;
-  return 1;
-}
 
 /* lstcat: 
  * scilab lstcat 
  *
  */
-
-
 static int int_lxcat(Stack stack, int rhs, int opt, int lhs)
 {
   int i;
   NspList *L;
   CheckLhs(1,1);
-  if ((L =nsp_list_create(NVOID,NULLSTRING))==NULLLIST) return RET_BUG;
+  if ((L =nsp_list_create(NVOID))==NULLLIST) return RET_BUG;
   for ( i = 1; i <= rhs ; i++ )
     {
       NspObject *Ob=NthObj(i);
       if (IsList(Ob) == TRUE) 
 	{
-	  if ( nsp_list_concat(L,(NspList *) Ob) == FAIL) goto err;
+	  if ( nsp_list_concat(L,(NspList *) Ob) == FAIL ) goto err;
 	}
       else 
 	{
 	  if (MaybeObjCopy(&Ob) == NULL) goto err;  
-	  if (nsp_object_set_name(Ob,"lel") == FAIL) goto err;	  
+	  if (nsp_object_set_name(Ob,"lel") == FAIL) goto err;
 	  if (nsp_list_end_insert(L,NthObj(i)) == FAIL ) goto err;
 	}
       /* If NthObj(i) is not copied it is inserted in the list 
@@ -1315,29 +1244,6 @@ static int int_lxfoldr(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * used for L.xx 
- */
-
-static int int_lxdot(Stack stack, int rhs, int opt, int lhs)
-{
-  char *key;
-  NspList *L;
-  NspObject *O;
-  CheckRhs(2,2);
-  CheckLhs(-1,1);
-  if ((L = GetList(stack,1)) == NULLLIST ) return RET_BUG;
-  if ((key = GetString(stack,2)) == (char*)0) return RET_BUG;  
-  if ((O =nsp_list_search(L,key)) == NULLOBJ ) 
-    {
-      Scierror("Error:\tindice %s does not exists\n",key);
-      ArgMessage(stack,1);
-      return RET_BUG;  
-    }
-  MoveObj(stack,1,O);
-  return 1;      
-}
-
-/*
  * L1 == L2 
  */
 
@@ -1380,29 +1286,21 @@ static OpTab List_func[]={
   {"list",int_lxlist},
   {"tlist",int_lx_tlist_as_hash}, /* FIXME: FIXME: hash tables */
   {"mlist",int_lx_tlist_as_hash}, /* FIXME: hash tables */
-  {"namedlist",int_lx_tlist_as_list}, /* list with names elements ? */
   {"null",int_lxnull},
   {"resize2vect_l",int_lxextractall},
   {"extract_l",int_lxextract},
   {"extractelts_l",int_lxextract}, 
   {"setrowscols_l",int_lxsetrc},
   {"lxcreate",int_lxcreate},
-  {"lxnthel",int_lxnthel},
-  {"lxendi",int_lxendi},
-  {"lxni",int_lxni},
-  {"lxnthdel",int_lxnthdel},
   {"lxlength",int_lxlength},
-  {"lxconcat",int_lxconcat},
   {"list_concat",int_lxcat},
   {"sorted_list", int_lxsortedlist},
   {"sorted_list_search", int_lxsortedsearch},
   {"sorted_list_search_and_remove", int_lxsortedsearchandremove},
-  {"$dot_l",int_lxdot },	          	/* L.a  */
-  {"map",int_lxmap },	          	/* L.a  */
-  {"foldr",int_lxfoldr },	          	/* L.a  */
+  {"map",int_lxmap },	          
+  {"foldr",int_lxfoldr },	  
   {"eq_l_l",int_lxeq},
   {"ne_l_l",int_lxneq},
-  {"compact",int_lxcompact},
   {"size_l",int_lxlength}, /* redefined for list so as to always return just one number */
   {(char *) 0, NULL}
 };

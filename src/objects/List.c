@@ -1,5 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2006 Bruno Pinçon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -31,53 +32,44 @@ extern NspObject *EvalMacro(NspPList *PL, NspObject **O, NspList *args,int *firs
 /*
  *  Doubly linked lists (NspList of Objects )
  *  basic Objects are defined in Obj.c 
+ *
+ *  a quick overview of NspList : (to be continued ...)
+ *     
  */
 
 /**
  *nsp_list_create:
  * @name: 
- * @tname: 
  * 
  * Creates a new empty list with name name 
- * and type tname if we want to define a tlist 
- * 
  * 
  * Return value: 
  **/
 
-NspList*nsp_list_create(char *name, char *tname)
+NspList*nsp_list_create(char *name)
 {
   NspList *Loc = new_list();
 
   if ( Loc == NULLLIST)
     {
-      Scierror("Error:\t running out of memeory\n");
-      return(NULLLIST);
+      Scierror("Error:\t running out of memory\n");
+      return NULLLIST;
     }
   if (name != NULLSTRING) 
     { 
-      if (( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING)
-	return(NULLLIST);
+     if ( (NSP_OBJECT(Loc)->name=new_nsp_string(name)) == NULLSTRING )
+	return NULLLIST;
     }
   else 
     {
       NSP_OBJECT(Loc)->name = NULLSTRING;
-    }
-  if (tname != NULLSTRING) 
-    { 
-      if (( Loc->tname =new_nsp_string(tname)) == NULLSTRING)
-	return(NULLLIST);
-    }
-  else 
-    {
-      Loc->tname =  NULLSTRING;
     }
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
     Loc->otype = LIST;
     Loc->ftype = List_Type;
   */
-  return(Loc);
+  return Loc;
 }
 
 
@@ -92,27 +84,18 @@ NspList*nsp_list_create(char *name, char *tname)
  * Return value: 
  **/
 
-Cell *nsp_cell_create(char *name, NspObject *O)
+Cell *nsp_cell_create(NspObject *O)
 {
   Cell *Loc;
   Loc = ( Cell *) MALLOC(sizeof( Cell));
   if (Loc == NULLCELL)
     {
       Scierror("Error:\tNo more space\n");
-      return(NULLCELL);
-    }
-  if (name !=  NULLSTRING) 
-    { 
-      if (( Loc->name =new_nsp_string(name)) == NULLSTRING)
-	return(NULLCELL);
-    }
-  else 
-    {
-      Loc->name =  NULLSTRING;
+      return NULLCELL;
     }
   Loc->O = O;
   Loc->prev = Loc->next = NULLCELL;
-  return(Loc);
+  return Loc;
 } 
 
 
@@ -128,7 +111,6 @@ void nsp_cell_destroy(Cell **c)
 {
   if ((*c) != NULLCELL)
     {
-      FREE((*c)->name);
       nsp_object_destroy(&(*c)->O);
       FREE((*c));
     }
@@ -176,9 +158,9 @@ NspList*nsp_list_copy(NspList *L)
 {
   NspList *Loc;
   Cell *cloc,*cloc1=NULLCELL,*cloc2=NULLCELL;
-  if ( ( Loc =nsp_list_create(NVOID,L->tname) ) == NULLLIST) return(NULLLIST) ;
+  if ( (Loc=nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
   cloc = L->first ;
-  while ( cloc != NULLCELL) 
+  while ( cloc != NULLCELL ) 
     {
       NspObject *Oloc;
       if ( cloc->O == NULLOBJ ) 
@@ -187,7 +169,7 @@ NspList*nsp_list_copy(NspList *L)
 	{
 	  if ((Oloc =nsp_object_copy_with_name(cloc->O))== NULLOBJ) return NULLLIST;
 	}
-      if ((cloc1 =nsp_cell_create(cloc->name,Oloc))== NULLCELL) return(NULLLIST);
+      if ((cloc1 =nsp_cell_create(Oloc))== NULLCELL) return NULLLIST;
       if ( cloc->prev == NULLCELL) 
 	{
 	  Loc->first = cloc1;
@@ -200,7 +182,10 @@ NspList*nsp_list_copy(NspList *L)
       cloc2= cloc1;
       cloc = cloc->next;
     }
-  return(Loc);
+  Loc->nel = L->nel;
+  Loc->last = cloc1;
+  /* eventuellement copier current et icurrent */
+  return Loc;
 } 
 
 /**
@@ -214,36 +199,164 @@ NspList*nsp_list_copy(NspList *L)
  * 
  * Return value: 
  **/
-
-NspList*nsp_list_extract(NspList *L, NspMatrix *Elts)
+NspList *nsp_list_extract(NspList *L, NspMatrix *Elts)
 {
+  int i;
   NspList *Loc;
-  int rmin,rmax,i,l;
-  Bounds(Elts,&rmin,&rmax);
-  l =nsp_list_length(L);
-  if ( rmin < 1  || rmax > l) 
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(NULLLIST);
-    }
-  if ( ( Loc =nsp_list_create(NVOID,L->tname) ) == NULLLIST) return(NULLLIST) ;
+  NspObject *O;
+
+  if ( (Loc =nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
   for ( i = 0 ; i < Elts->mn ; i++ )
     {
-      /* Pourrait etre ameliore en construisant la liste petit a petit XXXXXX **/
-      NspObject *O;
-      O =nsp_list_get_element(L,((int) Elts->R[i]));
-      if ( O == NULLOBJ ) 
-	{
-	  Scierror("Error:\t%s does not exists\n",
-		   ArgPosition(((int) Elts->R[i])));
-	  return NULLLIST ;
-	}
-      if ( (O=nsp_object_copy(O)) == NULLOBJ ) return NULLLIST;
-      if (nsp_object_set_name(O,"lel") == FAIL) return NULLLIST;
-      if (nsp_list_end_insert(Loc,O) == FAIL) return NULLLIST;
+      /* nsp_list_get_element take care of out range indices and also
+         of NULLOBJ (and send error messages) */
+      if ( (O = nsp_list_get_element(L,(int) Elts->R[i])) == NULLOBJ )
+	goto err;
+      if ( (O =nsp_object_copy(O)) == NULLOBJ ) goto err;
+      if ( nsp_object_set_name(O,"lel") == FAIL ) goto err;
+      if ( nsp_list_end_insert(Loc,O) == FAIL ) goto err;
     }
   return Loc;
+
+ err:
+  nsp_list_destroy(Loc);
+  return NULLLIST;
 } 
+
+/**
+ *nsp_list_get_cell_pointer:
+ * @L: 
+ * @n: 
+ * 
+ * returns a pointer to the nth Cell of a List or NULLCELL 
+ * CAUTION : no test is done on n (1 <= n =< L->nel)
+ * 
+ * Return value:  a pointer to the nth Cell
+ **/
+Cell *nsp_list_get_cell_pointer(NspList *L, int n)
+{
+  int count=1;
+  Cell *cell;
+
+  if ( L->icurrent > 0 )
+    {
+      if ( n + n <= L->icurrent )                /* start from first and move forward */
+	{
+	  cell = L->first;
+	  while ( count < n ) 
+	    { cell = cell->next; count++; }
+	}
+      else if ( n < L->icurrent )                /* start from current  and move backward */
+	{
+	  cell = L->current;
+	  do
+	    { cell = cell->prev; count++; }
+	  while ( count <=  L->icurrent - n );
+	}
+      else if ( n + n <= L->nel + L->icurrent )  /* start from current and move forward */
+	{
+	  cell = L->current;
+	  while ( count < n - L->icurrent + 1 )
+	    { cell = cell->next; count++;}
+	}
+      else                                       /* start from last  and move backward */
+	{
+	  cell = L->last;
+	  while ( count <= L->nel - n )
+	    { cell = cell->prev; count++; }
+	}
+    }
+  else
+    {
+      if ( n + n <= L->nel )
+	{
+	  cell = L->first;
+	  while ( count < n ) 
+	    { cell = cell->next; count++; }
+	}
+      else
+	{
+	  cell = L->last;
+	  while ( count <= L->nel - n )
+	    { cell = cell->prev; count++; }
+	}
+    }
+  return cell;
+} 
+
+/**
+ *nsp_get_cell_in_sorted_list:
+ * @L: 
+ * @str: 
+ * 
+ * Search for a NspList element named str in a Sorted NspList L
+ * 
+ * Return value: NULLCELL or the cell which contains the object named str
+ **/
+
+static Cell *nsp_get_cell_in_sorted_list(NspList *L, nsp_const_string str, Cell **prev)
+{
+  Cell *C;
+  int cmp;
+
+  if ( (C = L->current) != NULLCELL  &&  C->O != NULLOBJ ) /* "accelerated" search */
+    {
+      cmp = strcmp(str, NSP_OBJECT(C->O)->name);
+      if ( cmp == 0 )       /* already found */
+	{
+	  *prev = C->prev; 
+	  return C;
+	} 
+      else if ( cmp < 0 )   /* search backward */
+	{
+	  C = C->prev;
+	  while ( C != NULLCELL ) 
+	    {
+	      if ( C->O != NULLOBJ )
+		{ 
+		  cmp = strcmp(str,NSP_OBJECT(C->O)->name);
+		  if ( cmp == 0 ) { *prev = C->prev; return C;}
+		  if ( cmp >  0 ) { *prev = C; return NULLCELL;}
+		}
+	      C = C->prev;
+	    }
+	  *prev = NULLCELL; 
+	  return NULLCELL;
+	}
+      else   /* cmp > 0 */  /* search forward */
+	{
+	  C = C->next;
+	  while ( C != NULLCELL ) 
+	    {
+	      if ( C->O != NULLOBJ )
+		{ 
+		  cmp = strcmp(str,NSP_OBJECT(C->O)->name);
+		  if ( cmp == 0 ) { *prev = C->prev; return C;}
+		  if ( cmp <  0 ) { *prev = C->prev; return NULLCELL;}
+		}
+	      C = C->next;
+	    }
+	  *prev = L->last;
+	  return NULLCELL;
+	} 
+    }
+  else         /* "usual" search */
+    {
+      C = L->first;
+      while ( C != NULLCELL ) 
+	{
+	  if ( C->O != NULLOBJ )
+	    { 
+	      cmp = strcmp(str,NSP_OBJECT(C->O)->name);
+	      if ( cmp == 0 ) { *prev = C->prev; return C;}
+	      if ( cmp <  0 ) { *prev = C->prev; return NULLCELL;}
+	    }
+	  C = C->next;
+	}
+      *prev = L->last;
+      return NULLCELL;
+    } 
+}
 
 
 /**
@@ -264,87 +377,79 @@ NspList*nsp_list_extract(NspList *L, NspMatrix *Elts)
 
 int nsp_list_insert(NspList *L, NspObject *O, int n)
 {
-  int count = 1;
-  Cell *Loc,*Loc1;
+  int i;
+  Cell *Loc=NULLCELL,*Loc1;
+  NspObject *Ob;
+
   if ( n < 0 ) 
     {
-      Scierror("Error:\tInvalid negative indice for list insertion %d\n",n);
-      return(FAIL);
+      Scierror("Error:\tInvalid negative index for list insertion %d\n",n);
+      return FAIL;
     }
-  if ( n == 0 
-       || ( L->first == NULLCELL && n==1 ))
-    return(nsp_list_store(L,O,1));
-  Loc  = L->first;
-  if ( Loc != NULLCELL ) 
-    while ( count < n && Loc->next != NULLCELL) 
-      { Loc = Loc->next;count ++;}
-  if ( count == n ) 
+
+  if ( n == 0 )
     {
+      return nsp_list_begin_insert(L,O);
+    }
+  else if ( n <= L->nel )
+    {
+      Loc = nsp_list_get_cell_pointer(L, n);
       nsp_object_destroy(&Loc->O);
       Loc->O = O;
-      return(OK) ;
     }
-  while ( count != n ) 
+  else  /* we must add n-L->nel-1 cells with NULLOBJECT then a cell with the object O */
     {
-      if (( Loc1 =nsp_cell_create( NULLSTRING,NULLOBJ))== NULLCELL) return(FAIL);
-      if ( Loc == NULLCELL) 
+      Loc1 = L->last;
+      for ( i = L->nel+1 ; i <= n ; i++ )
 	{
-	  /* L was an empty list we only get here once **/
-	  count--;
-	  L->first = Loc1;
-	  Loc1->prev = NULLCELL;
+	  Ob = i < n ? NULLOBJ : O;
+	  if ( (Loc=nsp_cell_create(Ob)) == NULLCELL ) return FAIL;
+	  Loc->prev = Loc1;
+	  if ( Loc1 == NULLCELL ) 
+	    L->first = Loc;
+	  else
+	    Loc1->next = Loc;
+	  Loc1 = Loc;
 	}
-      else
-	{
-	  /* L was not an empty list **/
-	  Loc->next = Loc1 ;
-	  Loc1->prev = Loc;
-	}
-      Loc = Loc1;
-      count++;
+      L->nel = n;
+      L->last = Loc;
     }
-  Loc->O= O;
-  return(OK);
+  L->icurrent = n;
+  L->current = Loc;
+  
+  return OK;
 } 
 
 
 /**
  *nsp_list_get_element:
  * @L: 
- * @nel: 
+ * @n: 
  * 
- * returns a pointer to the Nth (=nel) NspObject  of a List
+ * returns a pointer to the n th NspObject  of a List
  * or NULLOBJ 
- * 
  * 
  * Return value: 
  **/
 
-NspObject *nsp_list_get_element(NspList *L, int nel)
+NspObject *nsp_list_get_element(NspList *L, int n)
 {
-  int count = 1;
-  Cell *cell = L->first;
-  if ( nel <= 0) 
+  Cell *cell;
+
+  if ( n <= 0 ||  n > L->nel ) 
     {
-      Scierror("Error:\tNul or negative indice %d in list extraction\n",nel);
+      Scierror("Error:\tindex %d is out of range\n",n);
       return NULLOBJ;
     }
-  while ( count < nel && cell != NULLCELL ) 
-    { cell = cell->next;count ++;}
-  if ( count != nel || cell == NULLCELL) 
-    {
-      Scierror( "Error:\tList too short %s not found\n",ArgPosition(nel));
-      return( NULLOBJ );
-    }
-  else 
-    {
-      if ( cell->O == NULLOBJ )
-	{
-	  Scierror("Error:\t%s is Undefined\n",ArgPosition(nel));
-	  return(cell->O);
-	}
-      return(cell->O);
-    }
+
+  cell = nsp_list_get_cell_pointer(L, n);
+
+  if ( cell->O == NULLOBJ )
+    Scierror("Error:\tlist element at index %d is Undefined\n",n);
+    
+  L->icurrent = n;
+  L->current = cell;
+  return cell->O;
 } 
 
 
@@ -356,28 +461,68 @@ NspObject *nsp_list_get_element(NspList *L, int nel)
  * insert Object A at end of NspList   NspList must exists  
  * Object A is not copied 
  * 
- * 
- * Return value: 
+ * Return value: OK or FAIL
  **/
 
 int nsp_list_end_insert(NspList *L, NspObject *A)
 {
-  Cell *Loc,*Loc1;
-  if (( Loc1 =nsp_cell_create( NULLSTRING,A))== NULLCELL) return(FAIL);
-  Loc = L->first ;
-  if ( Loc == NULLCELL) 
-    {
-      L->first = Loc1;
+  Cell *Loc;
+
+  if ( (Loc=nsp_cell_create(A)) == NULLCELL ) return FAIL;
+
+  if ( L->last == NULLCELL )
+    { 
+      L->first = Loc;
+      L->last = Loc;
     }
   else 
     {
-      while ( Loc->next != NULLCELL) Loc = Loc->next ;
-      Loc->next = Loc1;
-      Loc1->prev = Loc;
+      L->last->next = Loc;
+      Loc->prev = L->last;
+      L->last = Loc;
     }
-  return(OK);
+
+  L->nel++;
+  L->icurrent = L->nel;
+  L->current = Loc;
+  return OK;
 }
 
+
+/**
+ *nsp_list_begin_insert:
+ * @L: 
+ * @A: 
+ * 
+ * insert Object A at the beginning of NspList   NspList must exists  
+ * Object A is not copied 
+ * 
+ * Return value: OK or FAIL
+ **/
+
+int nsp_list_begin_insert(NspList *L, NspObject *A)
+{
+  Cell *Loc;
+
+  if ( (Loc=nsp_cell_create(A)) == NULLCELL ) return FAIL;
+
+  if ( L->first == NULLCELL )
+    { 
+      L->first = Loc;
+      L->last = Loc;
+    }
+  else 
+    {
+      L->first->prev = Loc;
+      Loc->next = L->first;
+      L->first = Loc;
+    }
+
+  L->nel++;
+  L->icurrent = 1;
+  L->current = Loc;
+  return OK;
+}
 
 /**
  *nsp_list_store:
@@ -394,50 +539,82 @@ int nsp_list_end_insert(NspList *L, NspObject *A)
 
 int nsp_list_store(NspList *L, NspObject *A, int n)
 { 
-  int count = 1;
-  Cell *Loc = L->first, *Loc1;
-  /* searching element n-1 */
-  if ( Loc == NULLCELL) 
+  Cell *Loc, *Loc1;
+
+  if ( n <= 0 || n > L->nel+1 ) 
     {
-      if ( n != 1) 
-	{
-	  int i = n;
-	  Scierror( "List too short  element %d not found\n",i);
-	  return(FAIL);
-	}
-      else 
-	{
-	  if (( Loc1 =nsp_cell_create(NULLSTRING,A))== NULLCELL) return(FAIL);
-	  L->first = Loc1;
-	}
+      Scierror("Error:\tInvalid index for list store %d\n",n);
+      return FAIL;
     }
-  else 
+
+  if ( (Loc1 = nsp_cell_create(A)) == NULLCELL ) return FAIL;
+
+  if ( n == 1 )
     {
-      while ( count < n  && Loc->next != NULLCELL)
-	{ Loc = Loc->next;count ++;}
-      if ( count != n ) 
-	{
-	  int i = n;
-	  Scierror( "List too short  element %d not found\n",i);
-	  return( FAIL);
-	}
-      /* we want to insert Loc1 before Loc **/
-      if (( Loc1 =nsp_cell_create( NULLSTRING,A))== NULLCELL) return(FAIL);
-      Loc1->next= Loc ;
-      Loc1->prev= Loc->prev;
-      if ( Loc->prev == NULLCELL) 
-	{
-	  L->first = Loc1;
-	}
-      else 
-	{
-	  Loc->prev->next = Loc1;
-	}
-      Loc->prev = Loc1;
+      Loc1->next = L->first;
+      if ( L->last == NULLCELL ) 
+	L->last = Loc1;
+      else
+	L->first->prev = Loc1;
+      L->first = Loc1;
     }
-  return(OK);
+  else  /* here we know that n > 1 and that the list has at least n-1 elements */
+    {
+      Loc = nsp_list_get_cell_pointer(L,n-1);
+      if ( L->last == Loc ) 
+	L->last = Loc1;
+      else
+	Loc->next->prev = Loc1;
+      Loc1->prev = Loc;
+      Loc1->next = Loc->next;
+      Loc->next = Loc1;
+    }
+
+  L->icurrent = n;
+  L->current = Loc1;
+  L->nel++;
+  return OK;
 }
 
+
+/**
+ * remove_cell_from_list
+ * @L: 
+ * @Loc: 
+ * 
+ * supresses the cell Loc (without destroyed it) from the list L
+ * for internal use : Loc must be a valid cell of list L
+ * L->first, L->last and L->nel are updated but not L->icurrent
+ * and L->current 
+ * 
+ **/
+
+static void remove_cell_from_list(NspList *L, Cell *Loc)
+{
+  if ( L->nel == 1 )   /* list with one cell => become an empty list */
+    {
+      L->first = NULLCELL; L->last = NULLCELL;
+    }
+  else  /* list with at least 2 cells (=> first != last and it will stay at least one cell) */
+    {
+      if ( L->first == Loc )
+	{
+	  L->first = Loc->next; 
+	  Loc->next->prev = NULLCELL;
+	}
+      else if ( L->last == Loc )
+	{
+	  L->last = Loc->prev; 
+	  Loc->prev->next = NULLCELL;
+	}
+      else
+	{
+	  Loc->prev->next = Loc->next; 
+	  Loc->next->prev = Loc->prev;
+	}
+    }
+  L->nel--;
+}
 
 /**
  *nsp_list_delete_elt_by_name:
@@ -447,28 +624,18 @@ int nsp_list_store(NspList *L, NspObject *A, int n)
  * supresses the element of a NspList with name str
  * 
  **/
-
 void nsp_list_delete_elt_by_name(NspList *L, char *str)
 {
   Cell *Loc = L->first;
-  while ( Loc != NULLCELL) 
+  while ( Loc != NULLCELL ) 
     {
-      if ( Loc->O != NULLOBJ && Ocheckname(Loc->O,str)) 
-	{
-	  if ( Loc->prev  == NULLCELL )
-	    {
-	      L->first = Loc->next ;
-	      if ( L->first != NULLCELL) L->first->prev = NULLCELL;
-	      nsp_cell_destroy(&Loc);
-	      return;
-	    }
-	  else 
-	    {
-	      Loc->prev->next = Loc->next ;
-	      if ( Loc->next != NULLCELL) Loc->next->prev = Loc->prev;
-	      nsp_cell_destroy(&Loc);
-	      return;
-	    }
+      if ( Loc->O != NULLOBJ  &&  Ocheckname(Loc->O,str) ) 
+	{ 
+	  remove_cell_from_list(L, Loc);
+	  L->icurrent = 0;
+	  L->current = NULLCELL;
+	  nsp_cell_destroy(&Loc);
+	  return;
 	}
       Loc = Loc->next;
     }
@@ -477,33 +644,21 @@ void nsp_list_delete_elt_by_name(NspList *L, char *str)
 
 typedef void (*destr)( Cell **c);
 
-static int DeleteNth_g(NspList *L, int nel, destr F)
+static int DeleteNth_g(NspList *L, int n, destr F)
 {
-  int count = 1;
-  Cell *Loc = L->first;
-  if ( Loc == NULLCELL ) return(OK);
-  while ( count < nel && Loc->next != NULLCELL) 
-    { Loc = Loc->next;count ++;}
-  if ( count != nel ) 
+  Cell *Loc;
+
+  if ( n <= 0  ||  n > L->nel ) 
     {
-      int i = nel;
-      Scierror("List too short  element %d not found\n",i) ;
-      return(FAIL);
+      Scierror("Error:\tindex %d out of range for list deletion\n",n);
+      return FAIL;
     }
-  /* want to delete Loc **/
-  if ( Loc->prev  == NULLCELL )
-    {
-      L->first = Loc->next ;
-      if ( Loc->next != NULLCELL) L->first->prev = NULLCELL;
-      F(&Loc);
-    }
-  else 
-    {
-      (Loc->prev)->next = Loc->next ;
-      if ( Loc->next != NULLCELL) (Loc->next)->prev = Loc->prev;
-      F(&Loc);
-    }
-  return(OK) ;
+  Loc = nsp_list_get_cell_pointer(L, n);
+  remove_cell_from_list(L, Loc);
+  L->icurrent = n-1;
+  L->current = Loc->prev;
+  F(&Loc);
+  return OK;
 }
 
 
@@ -524,6 +679,7 @@ int nsp_list_delete_elt(NspList *L, int nel)
   return DeleteNth_g(L, nel,nsp_cell_destroy);
 }
 
+
 /**
  *nsp_list_delete_cell:
  * @L: 
@@ -540,6 +696,39 @@ int nsp_list_delete_cell(NspList *L, int nel)
 }
 
 
+void  nsp_list_remove_first(NspList *L)
+{
+  Cell *Loc;
+  Loc = L->first;
+  if ( L->nel == 1 )   /* list with one cell => become an empty list */
+    {
+      L->first = NULLCELL; L->last = NULLCELL;
+    }
+  else  /* list with at least 2 cells */
+    {
+      L->first = Loc->next; 
+      Loc->next->prev = NULLCELL;
+    }
+  nsp_cell_destroy(&Loc);
+  L->nel--;
+}
+
+void  nsp_list_remove_last(NspList *L)
+{
+  Cell *Loc;
+  Loc = L->last;
+  if ( L->nel == 1 )   /* list with one cell => become an empty list */
+    {
+      L->first = NULLCELL; L->last = NULLCELL;
+    }
+  else  /* list with at least 2 cells */
+    {
+      L->last = Loc->prev; 
+      Loc->prev->next = NULLCELL;
+    }
+  nsp_cell_destroy(&Loc);
+  L->nel--;
+}
 
 /**
  *nsp_list_length:
@@ -551,10 +740,7 @@ int nsp_list_delete_cell(NspList *L, int nel)
  **/
 int nsp_list_length(NspList *L)
 {
-  int count = 0;
-  Cell *Loc = L->first;
-  while ( Loc != NULLCELL) { Loc = Loc->next;count ++;}
-  return(count);
+  return L->nel;
 }
 
 
@@ -572,22 +758,25 @@ int nsp_list_concat(NspList *L1, NspList *L2)
 {
   Cell *Loc;
   NspList *L2copy;
-  if ( L2->first == NULLCELL) return(OK);
-  if ((L2copy=nsp_list_copy(L2)) == NULLLIST) return(FAIL);
-  Loc = L1->first;
-  if ( Loc == NULLCELL) 
+
+  if ( L2->first == NULLCELL ) return OK;
+  if ( (L2copy = nsp_list_copy(L2)) == NULLLIST ) return FAIL;
+
+  Loc = L1->last;
+  if ( Loc == NULLCELL ) 
     {
       L1->first = L2copy->first;
     }
   else 
     {
-      while ( Loc->next != NULLCELL) { Loc = Loc->next; }
       Loc->next = L2copy->first;
-      L2copy->first->prev=Loc;
+      L2copy->first->prev = Loc;
     }
-  L2copy->first= NULLCELL;
+  L1->last = L2copy->last;  /* L2 is not an empty list */
+  L1->nel += L2copy->nel;
+  L2copy->first= NULLCELL; L2copy->nel = 0; L2copy->last = NULLCELL;
   nsp_list_destroy(L2copy);
-  return(OK);
+  return OK;
 }
 
 /*
@@ -618,7 +807,7 @@ void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
       Sciprintf("List = (");
       len = indent+2+8;
     }
-  if ( L->tname != NULLSTRING) Sciprintf(L->tname); 
+
   C= L->first;
   while ( C != NULLCELL) 
     {
@@ -683,7 +872,7 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
     {
       int colors[]={ 34,32,31,35,36};
       char epname[128];
-      Sciprintf("%s\t=\t\tl\n",(strcmp(pname,NVOID) != 0) ? pname : " ");
+      Sciprintf("%s\t=\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
       Sciprintf1(indent+1,"(\n");
       C= L->first;
       while ( C != NULLCELL) 
@@ -713,116 +902,6 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 }
 
 
-/*
- */
-
-NspObject *ListSearch_Old(NspList *L, nsp_const_string str)
-{
-  Cell *C;
-  C= L->first;
-  while ( C != NULLCELL) 
-    {
-      if ( C->O != NULLOBJ &&  Ocheckname(C->O,str) ) 
-	return(C->O);
-      C = C->next ;
-    }
-  return NULLOBJ;
-} 
-
-/**
- *nsp_list_search:
- * @L: 
- * @str: 
- * 
- * Search for a NspList element named str in NspList L
- * XXX we are only supposed to search elts in tlist *
- * 
- * 
- * Return value: 
- **/
-
-
-NspObject *nsp_list_search(NspList *L, nsp_const_string str)
-{
-  int i;
-  Cell *C =  L->first;
-  if ( L->tname == NULL ) return NULLOBJ;
-  if ( C == NULLCELL ) return NULLOBJ;
-  i = is_string_in_array(str,((NspSMatrix*) C->O)->S,1);
-  if ( i <0  )  return NULLOBJ;
-  return nsp_list_get_element(L,i+1);
-} 
-
-
-/**
- *nsp_list_search_and_remove:
- * @L: 
- * @str: 
- * 
- * Search for a NspList element named str in NspList L
- * returns this element and remove the 
- * element from the list (without destroying 
- * the returned object )
- * 
- * Return value: 
- **/
-
-NspObject *nsp_list_search_and_remove(NspList *L, char *str)
-{
-  Cell *Loc = L->first;
-  NspObject *Ret;
-  while ( Loc != NULLCELL) 
-    {
-      if (Loc->O != NULLOBJ && Ocheckname(Loc->O,str)) 
-	{
-	  Ret = Loc->O;
-	  if ( Loc->prev  == NULLCELL )
-	    {
-	      L->first = Loc->next ;
-	      if ( L->first != NULLCELL) L->first->prev = NULLCELL;
-	      nsp_cell_only_destroy(&Loc);
-	      return Ret;
-	    }
-	  else 
-	    {
-	      Loc->prev->next = Loc->next ;
-	      if ( Loc->next != NULLCELL) Loc->next->prev = Loc->prev;
-	      nsp_cell_only_destroy(&Loc);
-	      return Ret;
-	    }
-	}
-      Loc = Loc->next;
-    }
-  return NULLOBJ;
-}
-
-
-
-/**
- *nsp_list_search_and_replace:
- * @L: 
- * @O: 
- * 
- * Search for a NspList element with the same name 
- * as O and replace this element with new Object O
- * returning true or false 
- * 
- * 
- * Return value: 
- **/
-
-int nsp_list_search_and_replace(NspList *L, NspObject *O)
-{
-  int i;
-  Cell *C = L->first;
-  if ( L->tname == NULL ) return FAIL;
-  if ( C == NULLCELL ) return FAIL;
-  i = is_string_in_array(NSP_OBJECT(O)->name ,((NspSMatrix*) C->O)->S,1);
-  if ( i <0  )  return FAIL;
-  return nsp_list_insert(L,O,i+1);
-}
-	
-
 /**
  *nsp_cell_only_destroy:
  * @c: 
@@ -835,7 +914,6 @@ void nsp_cell_only_destroy(Cell **c)
 {
   if ((*c) != NULLCELL)
     {
-      FREE((*c)->name);
       FREE((*c));
     }
 } 
@@ -856,20 +934,15 @@ void nsp_cell_only_destroy(Cell **c)
 
 NspObject *nsp_sorted_list_search(NspList *L, nsp_const_string str)
 {
-  Cell *C;
-  C= L->first;
-  while ( C != NULLCELL) 
+  Cell *C, *prev=NULLCELL;   
+  if ( (C = nsp_get_cell_in_sorted_list(L, str, &prev)) != NULLCELL )
     {
-      if ( C->O != NULLOBJ )
-	{ 
-	  int cmp = strcmp(str,NSP_OBJECT(C->O)->name);
-	  if ( cmp == 0) return(C->O);
-	  if ( cmp <  0) return NULLOBJ ;
-	}
-      C = C->next ;
+      L->current = C;
+      return C->O;
     }
-  return NULLOBJ;
-} 
+  else
+    return NULLOBJ;
+}
 
 
 /**
@@ -887,36 +960,19 @@ NspObject *nsp_sorted_list_search(NspList *L, nsp_const_string str)
 
 NspObject *nsp_sorted_list_search_and_remove(NspList *L, nsp_const_string str)
 {
-  Cell *Loc = L->first;
+  Cell *Loc, *prev;
   NspObject *Ret;
-  while ( Loc != NULLCELL) 
+
+  if ( (Loc = nsp_get_cell_in_sorted_list(L, str, &prev)) != NULLCELL )
     {
-      if (Loc->O != NULLOBJ) 
-	{
-	  int cmp = strcmp(str, NSP_OBJECT(Loc->O)->name);
-	  if ( cmp ==  0) 
-	    {
-	      Ret = Loc->O;
-	      if ( Loc->prev  == NULLCELL )
-		{
-		  L->first = Loc->next ;
-		  if ( L->first != NULLCELL) L->first->prev = NULLCELL;
-		  nsp_cell_only_destroy(&Loc);
-		  return Ret;
-		}
-	      else 
-		{
-		  Loc->prev->next = Loc->next ;
-		  if ( Loc->next != NULLCELL) Loc->next->prev = Loc->prev;
-		  nsp_cell_only_destroy(&Loc);
-		  return Ret;
-		}
-	    }
-	  if ( cmp < 0 ) return NULLOBJ;
-	}
-      Loc = Loc->next;
+      Ret = Loc->O;
+      remove_cell_from_list(L, Loc);
+      L->current = Loc->prev;
+      nsp_cell_only_destroy(&Loc);
+      return Ret;
     }
-  return NULLOBJ;
+  else
+    return NULLOBJ;
 }
 
 
@@ -935,41 +991,54 @@ NspObject *nsp_sorted_list_search_and_remove(NspList *L, nsp_const_string str)
 int nsp_sorted_list_insert(NspList *L, NspObject *O)
 {
   Cell *Loc,*Loc1,*Loc2;
-  Loc= Loc1 = L->first;
-  if ( Loc == NULLCELL ) return nsp_list_store(L,O,1);
-  while ( Loc != NULLCELL) 
-    { 
-      int cmp =  strcmp(NSP_OBJECT(O)->name,NSP_OBJECT(Loc->O)->name) ;
-      if ( cmp == 0 )   
-	{
-	  /* we replace Object by the new one **/ 
-	  nsp_object_destroy(&Loc->O);
-	  Loc->O = O;
-	  return(OK) ;	
-	}
-      if ( cmp < 0 ) 
-	{
-	  /* NspObject must be inserted before Loc **/
-	  if (( Loc2 =nsp_cell_create( NULLSTRING,NULLOBJ))== NULLCELL) return(FAIL);
-	  Loc2->O = O ; 
-	  Loc2->next = Loc;
-	  Loc2->prev = Loc->prev ; 
-	  if ( Loc->prev == NULLCELL)
-	    L->first = Loc2  ; 
-	  else
-	    Loc->prev->next = Loc2;
-	  Loc->prev = Loc2;
-	  return OK;
-	}
-      Loc1 = Loc;
-      Loc = Loc->next;
+
+  if ( L->first == NULLCELL )
+    {
+      if ( (Loc2 = nsp_cell_create(O)) == NULLCELL ) return FAIL;
+      L->first = Loc2;
+      L->last = Loc2;
+      L->current = Loc2;
+      L->nel = 1;
+      return OK;
     }
-  /* Here we must insert NspObject after Loc1 and Loc1 is not the first cell **/
-  if (( Loc2 =nsp_cell_create( NULLSTRING,NULLOBJ))== NULLCELL) return(FAIL);
-  Loc1->next = Loc2 ;
-  Loc2->prev = Loc1;
-  Loc2->O = O;
-  return(OK);
+
+  /* here we know that L has at least one element */
+  Loc = nsp_get_cell_in_sorted_list(L, NSP_OBJECT(O)->name, &Loc1);
+
+  if ( Loc != NULLCELL )   /* we replace Object by the new one **/ 
+    {
+      nsp_object_destroy(&Loc->O);
+      Loc->O = O;
+      L->current = Loc;
+      return OK;	
+    }
+  else   /* the Object O must be inserted after cell Loc1  */
+    {
+      if ( (Loc2 = nsp_cell_create(NULLOBJ)) == NULLCELL ) return FAIL;
+      Loc2->O = O; 
+      if ( Loc1 == NULLCELL )      /* insert in head  */
+	{
+	  Loc2->next = L->first;
+	  L->first->prev = Loc2;
+	  L->first = Loc2;
+	}
+      else if ( Loc1 == L->last )  /* insert in queue  */
+	{
+	  Loc2->prev = L->last;
+	  L->last->next = Loc2;
+	  L->last = Loc2;
+	}
+      else
+	{
+	  Loc2->prev = Loc1;
+	  Loc2->next = Loc1->next;
+	  Loc1->next->prev = Loc2;
+	  Loc1->next = Loc2;
+	}
+      L->current = Loc2;
+      L->nel++;
+      return OK;
+    }
 } 
 
 
@@ -988,13 +1057,13 @@ int nsp_sorted_list_insert(NspList *L, NspObject *O)
  * Return value: 
  **/
 
-NspList*nsp_list_map(NspList *L, NspPList *PL, NspList *args)  
+NspList *nsp_list_map(NspList *L, NspPList *PL, NspList *args)  
 {
   NspObject *O[2];
   int first = -1;
   NspList *L_map;
   Cell *L_cell,*cell1=NULLCELL,*cell2=NULLCELL;
-  if ( ( L_map =nsp_list_create(NVOID,L->tname) ) == NULLLIST) return(NULLLIST) ;
+  if ( (L_map =nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
   L_cell = L->first ;
   O[1]=NULLOBJ;
   while ( L_cell != NULLCELL) 
@@ -1007,11 +1076,11 @@ NspList*nsp_list_map(NspList *L, NspPList *PL, NspList *args)
 	   * for next calls in first 
 	   */
 	  if ((O[0] = EvalMacro(PL,O,args,&first))== NULLOBJ) return NULLLIST;
-	  if ((cell1 =nsp_cell_create(L_cell->name,O[0]))== NULLCELL) return(NULLLIST);
+	  if ((cell1 =nsp_cell_create(O[0]))== NULLCELL) return NULLLIST;
 	}
       else 
 	{
-	  if ((cell1 =nsp_cell_create(L_cell->name,O[0]))== NULLCELL) return(NULLLIST);
+	  if ((cell1 =nsp_cell_create(O[0]))== NULLCELL) return NULLLIST;
 	}
       if ( L_cell->prev == NULLCELL) 
 	{
@@ -1024,7 +1093,10 @@ NspList*nsp_list_map(NspList *L, NspPList *PL, NspList *args)
 	}
       cell2= cell1;
       L_cell = L_cell->next;
+      L_map->nel++;
     }
+  L_map->last = cell1;
+
   return L_map;
 } 
 
@@ -1246,7 +1318,7 @@ int nsp_list_full_not_equal(NspList *L1, NspList *L2)
  * @L1: 
  * @flag: 
  * 
- *  Compact list by column or row appendind elemnt of compatible size and 
+ *  Compact list by column or row appending element of compatible size and 
  *  type 
  * 
  * 
@@ -1321,7 +1393,7 @@ int nsp_list_compact(NspList *L1, char flag )
 		    }
 		  else if ( type->id == nsp_type_bmatrix_id ) 
 		    {
-		      /* 2 consecutive arguments are scalar matrices */
+		      /* 2 consecutive arguments are boolean matrices */
 		      if ( flag == 'c' ) 
 			{
 			  if (nsp_object_get_size(cell->O,1) ==nsp_object_get_size(next->O,1))
@@ -1361,12 +1433,15 @@ int nsp_list_compact(NspList *L1, char flag )
 	}
       cell = cell->next ;
     }
+
+  /* update length, last, icurrent and current */
+  L1->icurrent = 0; L1->current = NULLCELL;
+  cell = L1->first; L1->nel = 0;
+  while ( cell != NULLCELL) 
+    { 
+      L1->nel++; L1->last = cell; 
+      cell = cell->next; 
+    }
+
   return OK;
 }
-
-
-
-
-
-
-

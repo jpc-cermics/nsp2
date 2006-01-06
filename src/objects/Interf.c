@@ -520,7 +520,7 @@ static NspList *BuildListFromArgs_1(int_types *T,va_list *ap)
   int bval;
   NspList *L,*L1;
   NspObject *O;
-  if (( L=nsp_list_create(NVOID,NULL)) == NULLLIST ) return NULLLIST;
+  if (( L=nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
   while ( 1 )
     {
       switch ( *T  ) 

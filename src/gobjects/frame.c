@@ -326,7 +326,7 @@ NspGFrame *gframe_create(char *name,BCG *Xgc,int init_objs,const double *scale,
   if ( scale != NULL) for ( i=0; i < 4 ; i++) H->obj->scale[i]=scale[i];
   if ( init_objs ) 
     {
-      if ( ( H->obj->objs =nsp_list_create("objs",NULL))== NULLLIST) return NULLGFRAME;
+      if ( ( H->obj->objs =nsp_list_create("objs"))== NULLLIST) return NULLGFRAME;
     }
   else 
     {
@@ -1783,36 +1783,30 @@ static NspGFrame *frame_full_copy( NspGFrame *F)
   return M;
 }
 
+
 static NspList * nsp_list_full_copy(NspList *L)
 {
   NspObject *obj=NULL;
   NspList *Loc;
-  Cell *cloc,*cloc1=NULLCELL,*cloc2=NULLCELL;
-  if ( ( Loc =nsp_list_create(NVOID,L->tname) ) == NULLLIST) return(NULLLIST) ;
+  Cell *cloc;
+  if ( (Loc = nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
   cloc = L->first ;
-  while ( cloc != NULLCELL) 
+  while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
 	{
-	  NspTypeGRint *bf=  GR_INT(cloc->O->basetype->interface);
-	  if ((obj = bf->full_copy(cloc->O))== NULLOBJ)  return NULLLIST;
-	  if (nsp_object_set_name(obj,nsp_object_get_name(cloc->O)) == FAIL) return NULLLIST;
+	  NspTypeGRint *bf= GR_INT(cloc->O->basetype->interface);
+	  if ( (obj = bf->full_copy(cloc->O)) == NULLOBJ )  goto err;
+	  if ( nsp_object_set_name(obj,nsp_object_get_name(cloc->O)) == FAIL ) goto err;
 	}
-      if ((cloc1 =nsp_cell_create(cloc->name,obj))== NULLCELL) return(NULLLIST);
-      if ( cloc->prev == NULLCELL) 
-	{
-	  Loc->first = cloc1;
-	}
-      else 
-	{
-	  cloc1->prev = cloc2;
-	  cloc2->next = cloc1;
-	}
-      cloc2= cloc1;
+      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
       cloc = cloc->next;
     }
-  return(Loc);
-} 
+  return Loc;
 
+ err:
+  nsp_list_destroy(Loc);
+  return NULLLIST;
+} 
 
 

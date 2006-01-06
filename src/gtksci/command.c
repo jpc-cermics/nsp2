@@ -75,11 +75,11 @@ int enqueue_nsp_command(char *command)
    */
   if ( initialized == FALSE ) 
     {
-      if ((L =nsp_list_create(NVOID,NULLSTRING))==NULLLIST) return FAIL;
+      if ((L =nsp_list_create(NVOID))==NULLLIST) return FAIL;
       initialized = TRUE;
     }
   if (( O =nsp_create_object_from_str(command))==NULLOBJ ) return FAIL;
-  if (nsp_list_end_insert(L,O) == FAIL ) return FAIL;
+  if ( nsp_list_end_insert(L,O) == FAIL ) return FAIL;
   return OK;
 }
 

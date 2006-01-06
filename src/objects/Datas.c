@@ -64,8 +64,8 @@ int nsp_init_frames(int argc, char **argv)
   NspObject *O;
 #ifdef FRAME_AS_LIST
   NspList *frame = NULLLIST ;
-  if ((Datas =nsp_list_create("datas",NULLSTRING)) ==NULLLIST ) return(FAIL);
-  if ((frame =nsp_list_create("global",NULLSTRING)) == NULLLIST) return(FAIL);
+  if ((Datas =nsp_list_create("datas")) ==NULLLIST ) return(FAIL);
+  if ((frame =nsp_list_create("global")) == NULLLIST) return(FAIL);
 #else 
   NspHash *frame = NULLHASH ;
   if ((Datas =nsp_list_create("datas",NULLSTRING)) ==NULLLIST ) return(FAIL);
@@ -139,7 +139,7 @@ int nsp_new_frame(void)
   NspObject *frame;
   if ( Datas == NULLLIST ) return FAIL;
 #ifdef FRAME_AS_LIST
-  if ((frame =(NspObject *) nsp_list_create("datas",NULLSTRING)) == NULLOBJ) return(FAIL);
+  if ((frame =(NspObject *) nsp_list_create("datas")) == NULLOBJ) return(FAIL);
 #else 
   if(( frame =(NspObject *) nsp_hash_create("datas",11)) == NULLOBJ) return FAIL;
 #endif
@@ -256,7 +256,6 @@ int nsp_frame_replace_object( NspObject *A)
        *		    nsp_object_get_name(A));
        * }
        */
-
 #ifdef FRAME_AS_LIST
       return nsp_sorted_list_insert((NspList *) Datas->first->O, A);
 #else 
