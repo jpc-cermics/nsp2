@@ -8,7 +8,8 @@ function ilib_build(ilib_name,table,files,libs,...
   ilib_gen_loader(ilib_name,table,libs);
   // generate a Makefile
   if verbose then printf('   generate a Makefile: %s\n',makename);end
-  ilib_gen_Make(ilib_name,table,files,libs,makename,%t,ldflags,cflags,fflags);
+  if table == [] then with_gateway=%f ; else with_gateway=%t ;end 
+  ilib_gen_Make(ilib_name,table,files,libs,makename,with_gateway,ldflags,cflags,fflags);
   // we call make
   if verbose then printf('   running the makefile\n');end
   ilib_compile(ilib_name,makename,files);
@@ -27,7 +28,9 @@ function ilib_gen_gateway(name,tables)
   sufix=file('extension',name);
   name=strsubst(name,sufix,"");
   path=file('dirname',arg_name);
+  
   if type(tables,'short')<>'l' then 
+    if tables==[] then return;end 
     tables= list(tables)
   end
   
@@ -152,7 +155,7 @@ function ilib_gen_loader(name,tables,libs)
 
   for it=1:L 
     [mt,nt]=size(tables(it));
-    if nt<>3 & nt<>2 then error('second argument has wrong size ');end 
+    if nt<>0 & nt<>3 & nt<>2 then error('second argument has wrong size ');end 
   end
   
   lib_suf= %shext ;
@@ -201,7 +204,7 @@ function Makename=ilib_gen_Make(name,tables,files,libs,makename,with_gateway,ldf
     table = tables(it);
     [mt,nt]=size(table);
     if nt==2 then col= "csci"; table = [table, col(ones(mt,1))];nt=3; end 
-    if nt<>3 then error('second argument has wrong size ');end 
+    if nt<>0 & nt<>3 then error('second argument has wrong size ');end 
     tables(it)=table;
   end
       
