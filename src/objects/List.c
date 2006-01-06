@@ -41,7 +41,7 @@ extern NspObject *EvalMacro(NspPList *PL, NspObject **O, NspList *args,int *firs
  *nsp_list_create:
  * @name: 
  * 
- * Creates a new empty list with name name 
+ * Creates a new empty list with name @name 
  * 
  * Return value: 
  **/
@@ -75,13 +75,13 @@ NspList*nsp_list_create(char *name)
 
 /**
  *nsp_cell_create:
- * @name: 
- * @O: 
+ * @name: a string 
+ * @O:  #NspObject to be inserted 
  * 
- * creates a new cell in which O is stored 
- * O can be a NULLOBJ
+ * creates a new #Cell in which object @O is stored.
+ * Note that @O can be a %NULLOBJ
  * 
- * Return value: 
+ * Return value: a new #Cell or %NULLOBJ
  **/
 
 Cell *nsp_cell_create(NspObject *O)
@@ -101,9 +101,9 @@ Cell *nsp_cell_create(NspObject *O)
 
 /**
  *nsp_cell_destroy:
- * @c: 
+ * @c: a pointer to a #Cell pointer 
  * 
- * Delete the Cell and the object stored in it
+ * deletes the #Cell @c and the object stored in it
  * 
  **/
 
@@ -119,9 +119,9 @@ void nsp_cell_destroy(Cell **c)
 
 /**
  *nsp_list_destroy:
- * @l: 
+ * @l: a spList 
  * 
- * Delete the NspList and all its elements 
+ * deletes the #NspList and all its elements.
  * 
  **/
 
@@ -147,11 +147,11 @@ void nsp_list_destroy(NspList *l)
  *nsp_list_copy:
  * @L: 
  * 
- * returns a copy of the NspList L 
- * elements inside the list are copied too
+ * returns a full copy of the #NspList @L.
+ * Elements inside the list are copied too
  * 
  * 
- * Return value: 
+ * Return value: a new #NspList or %NULLLIST 
  **/
 
 NspList*nsp_list_copy(NspList *L)
@@ -190,14 +190,15 @@ NspList*nsp_list_copy(NspList *L)
 
 /**
  *nsp_list_extract:
- * @L: 
- * @Elts: 
+ * @L: a #NspList 
+ * @Elts: indices of elements to extract given in a #NspMatrix.
  * 
- * Extract the Elements of a list  specified by Elts 
- * and store a copy of them in a new list 
+ * extracts the Elements of a list @L. The elements 
+ * to be extracted are givent by their indices in the list 
+ * through the #NspMatrix @Elts. The extracted elements are 
+ * copied and returned in a new List.
  * 
- * 
- * Return value: 
+ * Return value:  a new #NspList or %NULLLIST 
  **/
 NspList *nsp_list_extract(NspList *L, NspMatrix *Elts)
 {
@@ -225,14 +226,15 @@ NspList *nsp_list_extract(NspList *L, NspMatrix *Elts)
 
 /**
  *nsp_list_get_cell_pointer:
- * @L: 
- * @n: 
+ * @L: a #NspList
+ * @n: an integer 
  * 
- * returns a pointer to the nth Cell of a List or NULLCELL 
- * CAUTION : no test is done on n (1 <= n =< L->nel)
+ * returns a pointer to the @n-th Cell of a List. 
+ * CAUTION : no test is done on @n (1 <= @n =< @L->nel)
  * 
- * Return value:  a pointer to the nth Cell
+ * Return value:  a #Cell or %NULLCELL 
  **/
+
 Cell *nsp_list_get_cell_pointer(NspList *L, int n)
 {
   int count=1;
@@ -286,12 +288,12 @@ Cell *nsp_list_get_cell_pointer(NspList *L, int n)
 
 /**
  *nsp_get_cell_in_sorted_list:
- * @L: 
- * @str: 
+ * @L: a #NspList 
+ * @str: a string 
  * 
- * Search for a NspList element named str in a Sorted NspList L
+ * search for an object with name @str in a sorted #NspList @L.
  * 
- * Return value: NULLCELL or the cell which contains the object named str
+ * Return value: %NULLCELL or the adress of the #Cell which contains the object named @str.
  **/
 
 static Cell *nsp_get_cell_in_sorted_list(NspList *L, nsp_const_string str, Cell **prev)
@@ -361,18 +363,18 @@ static Cell *nsp_get_cell_in_sorted_list(NspList *L, nsp_const_string str, Cell 
 
 /**
  *nsp_list_insert:
- * @L: 
- * @O: 
- * @n: 
+ * @L: a #NspList L
+ * @O: a #NspObject to be inserted 
+ * @n: insertion position. 
  * 
- * Insert Object O at position n 
- * If position n is 0 insert at the begining 
- * If position n exists in L the corresponding object 
+ * inserts object @O at position @n in the list @L.
+ * If position @n is 0 insertion is performed at the begining 
+ * If position @n exists in @L the corresponding object 
  * is replaced 
- * If position n > Lenght(L) the list length is increased 
+ * If position @n > Lenght(@L) the list length is increased 
  * 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_list_insert(NspList *L, NspObject *O, int n)
@@ -423,13 +425,12 @@ int nsp_list_insert(NspList *L, NspObject *O, int n)
 
 /**
  *nsp_list_get_element:
- * @L: 
- * @n: 
+ * @L: a #NspList 
+ * @n: an integer giving the position of the object to be returned
  * 
- * returns a pointer to the n th NspObject  of a List
- * or NULLOBJ 
+ * returns a pointer to the @n-th #NspObject of list @L.
  * 
- * Return value: 
+ * Return value: a #NspObject or %NULLOBJECT 
  **/
 
 NspObject *nsp_list_get_element(NspList *L, int n)
@@ -455,13 +456,14 @@ NspObject *nsp_list_get_element(NspList *L, int n)
 
 /**
  *nsp_list_end_insert:
- * @L: 
- * @A: 
+ * @L: a #NspList 
+ * @A: a #NspObject
  * 
- * insert Object A at end of NspList   NspList must exists  
- * Object A is not copied 
+ * inserts object @A at the end of the list @L. 
+ * The object @A is not copied and the list must exists 
+ * i.e @L should not be %NULL. 
  * 
- * Return value: OK or FAIL
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_list_end_insert(NspList *L, NspObject *A)
@@ -491,13 +493,14 @@ int nsp_list_end_insert(NspList *L, NspObject *A)
 
 /**
  *nsp_list_begin_insert:
- * @L: 
- * @A: 
+ * @L: a #NspList 
+ * @A: a #NspObject
  * 
- * insert Object A at the beginning of NspList   NspList must exists  
- * Object A is not copied 
+ * inserts object @A at the beginning of list @L. 
+ * The object @A is not copied and the list must exists 
+ * i.e @L should not be %NULL. 
  * 
- * Return value: OK or FAIL
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_list_begin_insert(NspList *L, NspObject *A)
@@ -526,15 +529,15 @@ int nsp_list_begin_insert(NspList *L, NspObject *A)
 
 /**
  *nsp_list_store:
- * @L: 
- * @A: 
- * @n: 
+ * @L: a #NspList 
+ * @A: a #NspObject
+ * @n: an integer 
  * 
- * insert Object A in a NspList at position n 
- * the previous object which was at position n is moved to n+1
- * The Object A is not copied
+ * inserts object @A in the list @L at position @n. 
+ * The object which was at position @n is moved to @n+1
+ * The object @A is not copied.
  *
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_list_store(NspList *L, NspObject *A, int n)
@@ -579,13 +582,13 @@ int nsp_list_store(NspList *L, NspObject *A, int n)
 
 /**
  * remove_cell_from_list
- * @L: 
- * @Loc: 
+ * @L: a #NspList 
+ * @Loc: a #Cell 
  * 
- * supresses the cell Loc (without destroyed it) from the list L
- * for internal use : Loc must be a valid cell of list L
- * L->first, L->last and L->nel are updated but not L->icurrent
- * and L->current 
+ * supresses the #Cell @Loc (without destroying it) from the list @L.
+ * Note that @Loc must be a valid #Cell of list @L
+ * @L->first, @L->last and @L->nel are updated but not @L->icurrent
+ * and @L->current 
  * 
  **/
 
@@ -618,12 +621,13 @@ static void remove_cell_from_list(NspList *L, Cell *Loc)
 
 /**
  *nsp_list_delete_elt_by_name:
- * @L: 
- * @str: 
+ * @L: a #NspList 
+ * @str: s atring 
  * 
- * supresses the element of a NspList with name str
+ * supresses if found the first object named @str from the list @L.
  * 
  **/
+
 void nsp_list_delete_elt_by_name(NspList *L, char *str)
 {
   Cell *Loc = L->first;
@@ -664,14 +668,14 @@ static int DeleteNth_g(NspList *L, int n, destr F)
 
 /**
  *nsp_list_delete_elt:
- * @L: 
- * @nel: 
+ * @L: a #NspList 
+ * @nel: an integer 
  * 
  *
- * supresses the nth element of a NspList 
- * the nth element is destroyed 
+ * supresses the @nel-th element from the list @L.
+ * The @nel-th element is destroyed.
  * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_list_delete_elt(NspList *L, int nel)
@@ -682,12 +686,14 @@ int nsp_list_delete_elt(NspList *L, int nel)
 
 /**
  *nsp_list_delete_cell:
- * @L: 
- * @nel: 
+ * @L: a #NspList 
+ * @nel: an integer 
  * 
+ * supresses the @nel-th cell from the list @L.
+ * Note that the object stored in the @nel-th cell is not 
+ * destroyed 
  * 
- * 
- * Return value: 
+ * Return value:  %OK or %FAIL
  **/
 
 int nsp_list_delete_cell(NspList *L, int nel)
@@ -695,6 +701,14 @@ int nsp_list_delete_cell(NspList *L, int nel)
   return DeleteNth_g(L, nel,nsp_cell_only_destroy);
 }
 
+
+/**
+ * nsp_list_remove_first:
+ * @L: a #NspList 
+ * 
+ * removes first element from list @L.
+ * 
+ **/
 
 void  nsp_list_remove_first(NspList *L)
 {
@@ -712,6 +726,13 @@ void  nsp_list_remove_first(NspList *L)
   nsp_cell_destroy(&Loc);
   L->nel--;
 }
+
+/**
+ * nsp_list_remove_last:
+ * @L: a #NspList 
+ * 
+ * removes last element from list @L.
+ **/
 
 void  nsp_list_remove_last(NspList *L)
 {
@@ -732,12 +753,13 @@ void  nsp_list_remove_last(NspList *L)
 
 /**
  *nsp_list_length:
- * @L: 
+ * @L: a #NspList 
  * 
- *  length of list l
+ * returns the length of list @L.
  *
- * Return value: 
+ * Return value: the length of list @L as an int
  **/
+
 int nsp_list_length(NspList *L)
 {
   return L->nel;
@@ -746,12 +768,12 @@ int nsp_list_length(NspList *L)
 
 /**
  *nsp_list_concat:
- * @L1: 
- * @L2: 
+ * @L1:  a #NspList 
+ * @L2:  a #NspList 
  * 
- *  Concatenation of two NspList  L1 = Concat(L1,Copy of L2); 
+ * Concatenation of two lists @L1 = Concat(@L1,Copy of @L2); 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_list_concat(NspList *L1, NspList *L2)
@@ -779,16 +801,13 @@ int nsp_list_concat(NspList *L1, NspList *L2)
   return OK;
 }
 
-/*
- *Scilab 
- */
 
 /**
  *nsp_list_info:
- * @L: 
- * @indent: 
+ * @L: a #NspList 
+ * @indent: an integer. 
  * 
- * Display of an Object of type NspList 
+ * Display of infos an Object of type #NspList 
  *
  **/
 
@@ -828,14 +847,14 @@ void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
   Sciprintf(")\n");
 } 
 
-
 /**
- *nsp_list_print:
- * @L: 
- * @indent: 
+ * nsp_list_print:
+ * @L: a #NspList 
+ * @indent: integer 
+ * @name: a string 
+ * @rec_level: an integer
  * 
- *  Scilab Display of an Object of type NspList 
- * 
+ * display of a list 
  **/
 
 void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
@@ -904,9 +923,9 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 
 /**
  *nsp_cell_only_destroy:
- * @c: 
+ * @c: a #Cell
  * 
- * Delete the Cell but not the stored NspObject 
+ * Delete the Cell @c but not the stored #NspObject 
  * 
  **/
 
@@ -918,18 +937,14 @@ void nsp_cell_only_destroy(Cell **c)
     }
 } 
 
-/*
- */
-
 /**
  *nsp_sorted_list_search:
  * @L: 
  * @str: 
  * 
- * Search for a NspList element named str in a Sorted NspList L
+ * Searches for a list element named @str in a Sorted list @L.
  * 
- * 
- * Return value: 
+ * Return value: a new #NspObject or %NULLOBJ
  **/
 
 NspObject *nsp_sorted_list_search(NspList *L, nsp_const_string str)
@@ -950,10 +965,9 @@ NspObject *nsp_sorted_list_search(NspList *L, nsp_const_string str)
  * @L: 
  * @str: 
  * 
- * Search for a NspList element named @str in #NspList @L
- * returns this element and remove the 
- * element from the list (without destroying 
- * the returned object )
+ * Searches for a list element named @str in #NspList @L.
+ * Returns this element and remove the 
+ * element from the list (without destroying the returned object).
  * 
  * Return value: a #NspObject or %NULLOBJ
  **/
@@ -981,11 +995,11 @@ NspObject *nsp_sorted_list_search_and_remove(NspList *L, nsp_const_string str)
  * @L: 
  * @O: 
  * 
- *nsp_sorted_list_insert(L,O)
- * Insert Object O using lexicographic order 
- * If an Object with same name exists in the list O will replace it 
  * 
- * Return value: 
+ * Inserts object @O using lexicographic order. 
+ * If an object with same name exists in the list @O will replace it.
+ * 
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_sorted_list_insert(NspList *L, NspObject *O)
@@ -1044,17 +1058,14 @@ int nsp_sorted_list_insert(NspList *L, NspObject *O)
 
 /**
  *nsp_list_map:
- * @L: 
- * @PL: 
- * @args: 
+ * @L: a #NspList 
+ * @PL: a #NspPList
+ * @args: a #NspList 
  * 
- * Map 
- * Map(L,function,args) 
- * function can be a primitive a macro a string 
- * ==> XXXX
+ * maps function @PL to each element of list @L passing extra 
+ * arguments to the function through @args.
  * 
- * 
- * Return value: 
+ * Return value: the new #NspList obtained after mapping or %NULLLIST
  **/
 
 NspList *nsp_list_map(NspList *L, NspPList *PL, NspList *args)  
@@ -1107,17 +1118,15 @@ static NspObject *cell_fold_right(Cell *C, NspPList *PL, NspList *args,int *firs
 
 /**
  *nsp_list_fold_right:
- * @L: 
- * @PL: 
- * @args: 
+ * @L: a #NspList 
+ * @PL: a #NspPList
+ * @args: a #NspList 
  * 
- * FoldRight  
- * FoldRight(L,f,args) 
+ * folds function @PL to list @L passing extra 
+ * arguments to the function through @args.
  * returns f(L(1),f(L(2),....),args(1),..,args(n))
- * function can be a primitive a macro a string 
- * ==> XXXX
  * 
- * Return value: 
+ * Return value: a new #NspList or %NULLLIST
  **/
 
 NspObject *nsp_list_fold_right(NspList *L, NspPList *PL, NspList *args)
@@ -1157,16 +1166,13 @@ static NspObject *cell_fold_right(Cell *C, NspPList *PL, NspList *args,int *firs
 
 /**
  *nsp_list_equal:
- * @L1: 
- * @L2: 
+ * @L1: a #NspList
+ * @L2: a #NspList
  * 
- *nsp_list_equal(L1,L2)
- * if the two list do not have the same length returns %f 
- * else returns a Boolean vector B such that B(i)= L1(i)== L2(i) 
- * XXXX quand l'op de comparaison n'existe pas il faudrait metre un mes d'erreur 
+ * if the two lists do not have the same length returns the %f  #NspBMatrix 
+ * else returns a #NspBMatrix @B such that @B(i)= @L1(i)== @L2(i) 
  * 
- * 
- * Return value: 
+ * Return value: a new #NspBMatrix or NULLBMAT.
  **/
 
 NspBMatrix  *nsp_list_equal(NspList *L1, NspList *L2)
@@ -1200,12 +1206,12 @@ NspBMatrix  *nsp_list_equal(NspList *L1, NspList *L2)
 
 /**
  *nsp_list_not_equal:
- * @L1: 
- * @L2: 
+ * @L1: a #NspList
+ * @L2: a #NspList
+ * if the two lists do not have the same length returns the %t  #NspBMatrix 
+ * else returns a #NspBMatrix @B such that @B(i)= and(@L1(i) <> @L2(i))
  * 
- * 
- * 
- * Return value: 
+ * Return value: a new #NspBMatrix or NULLBMAT.
  **/
 
 NspBMatrix  *nsp_list_not_equal(NspList *L1, NspList *L2)
@@ -1240,15 +1246,15 @@ NspBMatrix  *nsp_list_not_equal(NspList *L1, NspList *L2)
 
 /**
  *nsp_list_full_equal:
- * @L1: 
- * @L2: 
+ * @L1: a #NspList
+ * @L2: a #NspList
  * 
- *nsp_list_equal(L1,L2)
- * if the two list do not have the same length returns FALSE 
- * else returns and(L1(i)== L2(i)) 
+ * if the two list do not have the same length returns %FALSE
+ * else returns %TRUE if all the elments @L1(i) equals  @L2(i) and 
+ * %FALSE elsewhere.
  * 
  * 
- * Return value: 
+ * Return value: %TRUE or %FALSE
  **/
 
 int nsp_list_full_equal(NspList *L1, NspList *L2)
@@ -1278,12 +1284,14 @@ int nsp_list_full_equal(NspList *L1, NspList *L2)
 
 /**
  *nsp_list_full_not_equal:
- * @L1: 
- * @L2: 
+ * @L1: a #NspList
+ * @L2: a #NspList
  * 
+ * if the two list do not have the same length returns %TRUE 
+ * else returns %FALSE if all the elements @L1(i) equals  @L2(i) and 
+ * %TRUE elsewhere.
  * 
- * 
- * Return value: 
+ * Return value: %TRUE or %FALSE
  **/
 
 int nsp_list_full_not_equal(NspList *L1, NspList *L2)
@@ -1315,14 +1323,14 @@ int nsp_list_full_not_equal(NspList *L1, NspList *L2)
 
 /**
  *nsp_list_compact:
- * @L1: 
- * @flag: 
+ * @L1: a#NspList 
+ * @flag: a character.
  * 
- *  Compact list by column or row appending element of compatible size and 
- *  type 
+ * compacts list by column or row appending element of compatible size and 
+ * type. 
  * 
  * 
- * Return value: 
+ * Return value: %Ok or %FAIL.
  **/
 
 int nsp_list_compact(NspList *L1, char flag )
