@@ -1595,7 +1595,7 @@ static int int_object_log_gen(Stack stack, int rhs, int opt, int lhs,char *mes)
     {
       /* should never get there */
       Scierror("Error: a specialized function %s_%s_%s is missing\n",mes,
-	       NSP_OBJECT(O1)->type->sh_type(),NSP_OBJECT(O1)->type->sh_type());
+	       NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O2)->type->sh_type(O2));
       return RET_BUG;
     }
   nsp_move_boolean(stack,1,FALSE); 
