@@ -276,6 +276,15 @@ static NspBMatrix  *bmatrix_xdr_load(XDR *xdrs)
  * Note that some of these functions could become MACROS XXXXX 
  *-----------------------------------------------------*/
 
+/**
+ * BMatObj:
+ * @O: a #NspObject 
+ * 
+ * checks if @O can be casted to a #BMatObj. 
+ * 
+ * Return value: %NULL or a #BMatObj.
+ **/
+
 NspBMatrix   *BMatObj(NspObject *O)
 {
   /* Follow pointer **/
@@ -287,21 +296,62 @@ NspBMatrix   *BMatObj(NspObject *O)
   return(NULL);
 }
 
+/**
+ * IsBMatObj:
+ * @stack: a #Stack
+ * @i: an integer 
+ * 
+ * checks if #NspObject at position @i on the stack can be casted to a #BMatObj.
+ * 
+ * Return value: %TRUE or %FALSE
+ **/
+
 int IsBMatObj(Stack stack, int i)
 {
   return nsp_object_type(NthObj(i) , nsp_type_bmatrix_id);
 }
+
+/**
+ * IsBMat:
+ * @O: a #NspObject 
+ * 
+ * checks if object @O can be casted to a #BMatObj.
+ * 
+ * Return value:  %TRUE or %FALSE
+ **/
 
 int IsBMat(const NspObject *O)
 {
   return nsp_object_type(O , nsp_type_bmatrix_id);
 }
 
+/**
+ * GetBMatCopy:
+ * @stack: a #Stack
+ * @i: an integer 
+ * 
+ * checks if #NspObject at position @i on the stack can be casted to a #BMatObj and
+ * if true returns a copy of that boolean matrix.
+ * 
+ * Return value: %NULL or a #NspBMatrix
+ **/
+
 NspBMatrix  *GetBMatCopy(Stack stack, int i)
 {
   if (  GetBMat(stack,i) == NULL ) return NULL;
   return MaybeObjCopy(&NthObj(i));
 }
+
+/**
+ * GetBMat:
+ * @stack: a #Stack
+ * @i: an integer 
+ * 
+ * checks if #NspObject at position @i on the stack can be casted to a #BMatObj and
+ * if true returns the boolean matrix.
+ * 
+ * Return value:  %NULL or a #NspBMatrix
+ **/
 
 NspBMatrix  *GetBMat(Stack stack, int i)
 {
@@ -310,6 +360,17 @@ NspBMatrix  *GetBMat(Stack stack, int i)
     ArgMessage(stack,i);
   return M;
 }
+
+/**
+ * BoolScalar:
+ * @O: a #NspObject 
+ * @val: a pointer to #Boolean
+ * 
+ * checks if object @O is a boolean scalar and if true returns 
+ * the boolean value in @val.
+ * 
+ * Return value: %OK or %FAIL 
+ **/
 
 int BoolScalar(NspObject *O, Boolean *val)
 {
@@ -322,6 +383,17 @@ int BoolScalar(NspObject *O, Boolean *val)
   return(OK);
 }
 
+/**
+ * GetScalarBool:
+ * @stack: a #Stack
+ * @i: an integer 
+ * @val: an int pointer 
+ * 
+ * checks if #NspObject at position @i on the stack can be casted to a
+ * boolean scalar and returns that boolean value in @val.
+ * 
+ * Return value:  %OK or %FAIL 
+ **/
 int GetScalarBool(Stack stack, int i, int *val)
 {
   NspBMatrix *M;

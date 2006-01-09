@@ -35,7 +35,7 @@ static void nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int
  * @m: number of rows 
  * @n: number of columns 
  * 
- * Creates a new boolean matrix filled with #TRUE values, returns %NULLMAT on failure. 
+ * Creates a new boolean matrix filled with %TRUE values, returns %NULLMAT on failure. 
  * Returns a #NspMatrix or %NULLMAT.
  */
   

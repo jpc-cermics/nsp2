@@ -99,7 +99,7 @@ int *nsp_alloc_int(unsigned int  n)
  * @dp: %NULL or a pointer to a former allocated zone?
  * @n: number of int to allocate 
  *
- * malloc an array of @n int.
+ * realloc or malloc (if @dp is %NULL) an array of @n integers.
  *
  * Return value: a pointer to the allocated zone. 
  */
@@ -129,7 +129,6 @@ int *nsp_realloc_int(int *dp, unsigned int n)
  * malloc an array of @n complex (#doubleC).
  *
  * Return value: a pointer to the allocated zone. 
- *
  */
 
 doubleC *nsp_alloc_doubleC( unsigned int n)
@@ -145,10 +144,9 @@ doubleC *nsp_alloc_doubleC( unsigned int n)
  * @dp: %NULL or a pointer to a former allocated zone?
  * @n: number of complex to allocate 
  *
- * malloc an array of @n complex (#doubleC).
+ * realloc or malloc (if @dp is %NULL) an array of @n #doubleC.
  *
  * Return value: a pointer to the allocated zone. 
- *
  */
 
 doubleC *nsp_realloc_doubleC(doubleC *dp, unsigned int  n)
@@ -167,22 +165,19 @@ doubleC *nsp_realloc_doubleC(doubleC *dp, unsigned int  n)
     }
 }
 
-
-
 /**
  * nsp_alloc_work_doubles:
  * @n: nb of elements of the double work array 
  * 
- * The near the same than nsp_alloc_doubles but this one 
- * sends an error message in case of alloc failure.
+ * similar to #nsp_alloc_doubles but sends an error 
+ * message in case of allocation failure.
  * 
- * Return value: the work array or NULL
+ * Return value: the work array or %NULL
  **/
+
 double *nsp_alloc_work_doubles(unsigned int n)
 {
-  double *p;
-
-  p = MALLOC(n*sizeof(double));
+  double *p = MALLOC(n*sizeof(double));
   if ( p == NULL ) Scierror("Error:\tRunning out of memory\n");
   return p;
 }
@@ -191,16 +186,15 @@ double *nsp_alloc_work_doubles(unsigned int n)
  * nsp_alloc_work_doubleC:
  * @n:  nb of elements of the doubleC work array
  * 
- * The near the same than nsp_alloc_doubleC but this one 
- * sends an error message in case of alloc failure.
+ * similar to #nsp_alloc_doubleC but sends
+ * an error message in case of alloction failure.
  * 
- * Return value: the work array or NULL
+ * Return value: the work array or %NULL
  **/
+
 doubleC *nsp_alloc_work_doubleC(unsigned int n)
 {
-  doubleC *p;
-
-  p = MALLOC(n*sizeof(doubleC));
+  doubleC *p= MALLOC(n*sizeof(doubleC));
   if ( p == NULL ) Scierror("Error:\tRunning out of memory\n");
   return p;
 }
@@ -209,16 +203,15 @@ doubleC *nsp_alloc_work_doubleC(unsigned int n)
  * nsp_alloc_work_int:
  * @n:  nb of elements of the int work array
  * 
- * The near the same than nsp_alloc_doubleC but this one 
- * sends an error message in case of alloc failure.
+ * similar to #nsp_alloc_doubleC but sends 
+ * an error message in case of alloc failure.
  * 
- * Return value: the work array or NULL
+ * Return value: the work array or %NULL
  **/
+
 int *nsp_alloc_work_int(unsigned int n)
 {
-  int *p;
-
-  p = MALLOC(n*sizeof(int));
+  int *p = MALLOC(n*sizeof(int));
   if ( p == NULL ) Scierror("Error:\tRunning out of memory\n");
   return p;
 }
