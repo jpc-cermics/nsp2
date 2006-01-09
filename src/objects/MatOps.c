@@ -1788,7 +1788,7 @@ int nsp_get_urandtype(void)
  * @A: a #NspMatrix
  * @B: a #NspMatrix with only one element (that is a scalar !) 
  * 
- * This routine computes A^B where B must be a scalar (this must
+ * This routine computes @A^@B where @B must be a scalar (this must
  * be verified by the calling routine (*)). The matrix @A is modified 
  * and hold the final result (if OK is returned).  @A must be
  * square (if not FAIL is returned). When @A is not a scalar
@@ -1802,8 +1802,9 @@ int nsp_get_urandtype(void)
  *        2/ nsp_mat_pow_matmat(A,B), if neither A and B are scalar
  *        3/ nsp_mat_pow_scalarmat(B,A), if A is a scalar
  *
- * Return value: OK or FAIL
+ * Return value: %OK or %FAIL
  **/
+
 int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B) 
 {
   int p, i, oddflag=0;
@@ -1953,7 +1954,6 @@ int nsp_mat_pow_matmat(NspMatrix *A, NspMatrix *B)
 
 /**
  * nsp_mat_pow_scalarmat:
- *
  * @B: a #NspMatrix which must be square 
  * @A: a #NspMatrix which must be a scalar 
  *  
