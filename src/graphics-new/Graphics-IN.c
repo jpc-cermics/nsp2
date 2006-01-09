@@ -4687,6 +4687,11 @@ int int_get_image( Stack stack, int rhs, int opt, int lhs)
   CheckRhs(0,0);
   CheckLhs(0,2);
   Xgc=nsp_check_graphic_context();
+  if ( Xgc->private == NULL) 
+    {
+      Scierror("Error: %s Current graphic driver is not attached to a drawable\n",stack.fname);
+      return RET_BUG;
+    }
   if ((img =  nsp_get_image(Xgc))== NULL) return RET_BUG;
   nsp_type_gdkimage = new_type_gdkimage(T_BASE);
   if ((ret1 = (NspObject *) gobject_create(NVOID,(GObject *)img,(NspTypeBase *) nsp_type_gdkimage))== NULL) 
