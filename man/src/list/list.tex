@@ -1,0 +1,153 @@
+% -*- mode: latex -*-
+
+\mansection{list}
+\begin{mandesc}
+  \short{list}{list data type and list creation}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+L = list()
+L = list(O1, O2, O3, ...)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{O1, O2, 03, ...} :  any nsp objects (matrix of numbers, of
+    strings, of booleans, of cells, list, ... 
+    \vname{L} : list formed with the objects (an empty list in the
+    first case)
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+The \emph{list data type} is useful to collect objects of different
+types. Internally nsp lists are implemented as doubled linked lists
+and operations (extraction, insertion, deletion) on head and queue
+are efficient. The \emph{list function} can be used to create small
+lists.  
+\end{mandescription}
+
+\paragraph{Operations on lists}
+\itemdesc{methods}
+\begin{itemize}
+   \item \verb+L.first[]+ returns the first element of \verb+L+
+   \item \verb+L.last[]+ returns the last element of \verb+L+
+   \item \verb+L.item[i]+ returns the i th element of \verb+L+
+   \item \verb+L.add_first[e]+ appends the object \verb+e+ in head of
+   \verb+L+
+   \item \verb+L.add_last[e]+ appends the object \verb+e+ in queue of \verb+L+
+   \item \verb+L.add[e,i]+ inserts the object \verb+e+ in position i of
+   \verb+L+ (elements previously at positions i,i+1,... 
+             are shifted by one on the right)
+   \item \verb+L.remove_first[]+ removes the element in head of \verb+L+
+   \item \verb+L.remove_last[]+ removes the element in queue of \verb+L+
+   \item \verb+L.remove[i]+ removes the i-th element of \verb+L+
+      (elements previously at positions i+1,i+2... are shifted on the left)
+   \item \verb+L.concat[LL]+ appends the list \verb+LL+ to \verb+L+
+   \item \verb+L.sublist[ind]+ returns a new list (\verb+L+ is not
+     modified) with the elements of \verb+L+ at positions \verb+ind+ 
+   (a vector of valid indices).
+   \item \verb+L.reverse[]+ reverses the elements positions of the
+   list  \verb+L+
+   \item \verb+L.compact[[dir]]+ compacts the list\verb+L+ by trying to concatenate
+   (if possible) successive elements of same type ; the optional argument \verb+dir+
+   is a string : \verb+"row"+, or \verb+"r"+, to concatenate by row
+   and \verb+"col"+, or \verb+"c"+, to concatenate by
+   column (which is the default). %(see the \manlink{compact}{compact} help page).  
+\end{itemize}
+
+\itemdesc{extraction, insertion, deletion}
+\begin{itemize}
+   \item \verb+L(i)+ returns the i-th element of \verb+L+
+   \item if \verb+ind+ is a vector of indices \verb+L(ind)+ 
+         puts the respective elements of \verb+L+ on the
+         stack, so that you can assign them to several variables
+         with \verb+[a,b,c,...]=L(ind)+. Another usage is for
+         calling sequence of functions : if \verb+L=list([1,2],%f,"c")+
+         then  \verb+f(L([1,3])+ is equivalent to  \verb+f([1,2],"c")+
+   \item \verb+L(:)+ puts all the elements of \verb+L+ on the stack
+   (with the previous list  \verb+f(L(:))+ is be equivalent to \verb+f([1,2],%f,"c")+)
+   \item \verb+L(i)=e+ replaces the i-th element of \verb+L+ by
+   the object \verb+e+. If $i > n$ where $n=length(L)$ then $i-n-1$ undefined
+   elements are added at the end of the list and finally \verb+e+
+   is added (and becomes the last element of \verb+L+). 
+   So \verb-L(n+1)=e- (or \verb-L($+1) = e-) is a way to append an new element 
+   in queue  and in fact \verb+L(0)=e+ can be used to append \verb+e+ 
+   in head (note that this element is at index 1 of the list after the operation).
+   \item \verb+L(i)=null()+ deletes the i-th element of the list.
+\end{itemize}
+
+Note that some of these features are useful for scilab compatibility
+but we recommend to use methods when possible (this must be a little
+faster). In particular use \verb+L.remove[i]+ in place of
+\verb+L(i)=null()+ (and use \verb+L.remove_first[]+ and
+\verb+L.remove_last[]+ to delete head and queue elements),
+ use \verb+L.add_first[e]+ in place of
+\verb+L(0)=e+, and finally \verb+L.add_last[e]+ in place of \verb-L($+1) = e-.
+
+
+\itemdesc{for loop control using a list}
+With a list \verb+L+:\begin{verbatim}
+     for e=L
+       ....
+     end
+\end{verbatim} 
+is a loop with $length(L)$ iterations, the loop 
+variable  \verb+e+ being equal to \verb+L(i+) at the i-th iteration.
+
+\itemdesc{some functions}
+\begin{itemize}
+   \item \verb+length(L)+ or \verb+size(L)+ return the length of \verb+L+
+   \item \verb+L=list_concat(L1,..,Lk)+ catenate all the lists
+         L1,...,Lk (L1,...,Lk can be in fact any nsp objects).
+   \item \verb+map+
+   \item \verb+unique+ (\manlink{unique}{unique}) 
+\end{itemize}
+
+
+\begin{examples}
+  
+  \begin{program}
+    L = list(1,2,"c",%f, %t, rand(2,1))
+    n = length(L)
+
+    // add 0 in head
+    L.add_first[0]; L
+    n = length(L)
+
+    // add pi in queue
+    L.add_last[%pi]; L
+
+    // delete last element
+    L.remove_last[]; L
+
+    // 2 ways to extract the third element
+    L.item[3]
+    L(3)
+
+    // extract 5-th and 6-th elements
+    [b1,b2] = L([4,5])
+
+    // reverse the list
+    L.reverse[]; L
+
+    // compact the list
+    L.compact[]; L
+
+    // build a sublist with the first and third elements
+    LL = L.sublist[[1,3]]
+   \end{program}
+  
+ \end{examples}
+
+\begin{manseealso}
+  \manlink{unique}{unique}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   jpc, bp
+\end{authors}
