@@ -481,7 +481,9 @@ void nsp_matrix_destroy(NspMatrix *Mat)
 /**
  * nsp_matrix_info:
  * @Mat: a #NspMatrix
- * @indent: an int 
+ * @indent: an int
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
  * 
  * Display info on the #NspMatrix @A using the default Sciprintf() function. 
  * @indent is the given indentation for printing.
@@ -507,8 +509,8 @@ void nsp_matrix_info(const NspMatrix *Mat, int indent,char *name,int rec_level)
  * nsp_matrix_print:
  * @Mat: a #NspMatrix
  * @indent: an int 
- * @name:
- * @rec_level:
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
  *
  * Print the #NspMatrix @A using the default nsp output function. 
  * @indent is the given indentation for printing.

@@ -166,8 +166,10 @@ void nsp_bmatrix_destroy(NspBMatrix *BMat)
 /**
  * nsp_bmatrix_info:
  * @BMat: a #NspBMatrix
- * @indent: an int 
- * 
+ * @indent: an int
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
+ *
  * Display info on the #NspBMatrix @A using the default Sciprintf() function. 
  * @indent is the given indentation for printing.
  */

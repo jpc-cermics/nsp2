@@ -725,8 +725,6 @@ int nsp_cells_delete_columns(NspCells *A, NspMatrix *Cols)
  * nsp_cells_delete_rows:
  * @A:  a #NspCells object 
  * @Rows:  a #NspMatrix object 
- * @A: 
- * @Rows: 
  * 
  *  A(Rows,:) = []
  * 

@@ -75,7 +75,7 @@ extern void nsp_list_destroy(NspList *l);
 extern NspList *nsp_list_copy(NspList *L); 
 extern NspList *nsp_list_extract(NspList *L, NspMatrix *Elts); 
 extern int nsp_list_insert(NspList *L, NspObject *O, int n); 
-extern NspObject *nsp_list_get_element(NspList *L, int nel); 
+extern NspObject *nsp_list_get_element(NspList *L, int n);
 extern int nsp_list_begin_insert(NspList *L, NspObject *A);
 extern int nsp_list_end_insert(NspList *L, NspObject *A); 
 extern void  nsp_list_remove_first(NspList *L);

@@ -302,9 +302,11 @@ void nsp_mpmatrix_destroy(NspMaxpMatrix *Mat)
  * nsp_mpmatrix_info:
  * @Mat: a #NspMaxpMatrix
  * @indent: an int 
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
  * 
- * Display info on the #NspMaxpMatrix @A using the default Sciprintf() function. 
- * @indent is the given indentation for printing.
+ * Display info on the #NspMaxpMatrix @A 
+ *
  */
 
 void nsp_mpmatrix_info(const NspMaxpMatrix *Mat, int indent,char *name,int rec_level)
@@ -325,8 +327,9 @@ void nsp_mpmatrix_info(const NspMaxpMatrix *Mat, int indent,char *name,int rec_l
 /**
  * nsp_mpmatrix_print:
  * @Mat: a #NspMaxpMatrix
- * @indent: an int 
- * @header: a flag, if %FALSE then data are preinted but not header information
+ * @indent: an int
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
  *
  * Print the #NspMaxpMatrix @A using the default nsp output function. 
  * @indent is the given indentation for printing.

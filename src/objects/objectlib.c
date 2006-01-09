@@ -221,8 +221,10 @@ int nsp_object_implements(NspObject *O,NspTypeId id)
 
 /**
  *nsp_object_info:
- * @O: 
- * @indent: 
+ * @O: an object 
+ * @indent: an int
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
  * 
  * Prints information on object @O by calling its specialized 
  * info function.
@@ -237,8 +239,10 @@ void nsp_object_info(NspObject *O, int indent,char *name,int rec_level)
 
 /**
  *nsp_object_print:
- * @O: 
- * @indent: 
+ * @O: #NspObject to be printed
+ * @indent: an int
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
  * 
  * Prints object @O by calling its specialized 
  * info function.

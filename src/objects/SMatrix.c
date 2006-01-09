@@ -1595,12 +1595,16 @@ NspMatrix *nsp_smatrix_strstr(NspSMatrix *A,nsp_const_string Str)
   return Loc;
 }
 
-/*
- * Res=nsp_smatrix_strindex(Str, Motif)
- * Returns in Res  the indices of Motif in Str
- * or[] if Motif is not in Str.
- * Contributed by Bruno (to get 
- */
+/**
+ * nsp_smatrix_strindex:
+ * @Str: a string 
+ * @Motif: a string used as pattern 
+ * 
+ * returns the position of pattern @Motif in string @Str 
+ * or an empty matrix [] if @Motif is not in @Str.
+ * 
+ * Return value: %NULLMAT or a new #NspMatrix
+ **/
 
 NspMatrix *nsp_smatrix_strindex(nsp_const_string Str,nsp_const_string Motif)
 {
@@ -1643,10 +1647,16 @@ NspMatrix *nsp_smatrix_strindex(nsp_const_string Str,nsp_const_string Motif)
   return Loc;
 }
 
-/*
- * Ascii2SMat : Create a string with 
- *    entries of A which are considered as ascii codes 
- */
+
+/**
+ * nsp_ascii_to_smatrix:
+ * @A: a #NspMatrix
+ * 
+ * creates a string using entries of matrix @A 
+ * which are considered as ascii codes. 
+ * 
+ * Return value: %NULLSMAT or a new #NspSMatrix
+ **/
 
 NspSMatrix*nsp_ascii_to_smatrix(NspMatrix *A)
 {
@@ -1659,11 +1669,15 @@ NspSMatrix*nsp_ascii_to_smatrix(NspMatrix *A)
   return Loc;
 }
 
-/*
- * SMat2Ascii : Create a Row vector with ascii 
- *    Codes of string A 
- *    A is supposed to be a string check is not done 
- */
+
+/**
+ * nsp_string_to_ascii:
+ * @S: a string 
+ * 
+ * creates a row vector with ascii codes of characters from string @A 
+ * 
+ * Return value: %NULLMAT or a new #NspMatrix
+ **/
 
 NspMatrix *nsp_string_to_ascii(nsp_const_string S)
 {
@@ -1680,11 +1694,13 @@ NspMatrix *nsp_string_to_ascii(nsp_const_string S)
  * nsp_smatrix_split:
  * @string: the string to be splitted in words
  * @splitChars: a string with the split characters
- * 
- * modified by bruno to get 2 differents behavior
+ * @msep: an int 
  * 
  * Return value: a #NspSMatrix of size 1 x nb_words with the words resulting from the splitting
  **/
+
+/* modified by bruno to get 2 differents behavior*/
+
 
 NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars, int msep)
 {

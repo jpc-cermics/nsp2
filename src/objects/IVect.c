@@ -94,7 +94,9 @@ void nsp_ivect_destroy(NspIVect *IV)
 /**
  * nsp_ivect_info:
  * @IV: 
- * @indent: 
+ * @indent: an int
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
  * 
  * Displays Info on IV
  **/
@@ -115,7 +117,9 @@ void nsp_ivect_info(NspIVect *IV, int indent,char *name,int rec_level)
 /**
  * nsp_ivect_print:
  * @IV: 
- * @indent: 
+ * @indent: an int
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
  * 
  * writes IVect Objet 
  **/

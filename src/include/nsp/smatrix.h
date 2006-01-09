@@ -124,7 +124,8 @@ extern void nsp_smatrix_tolower(NspSMatrix *A);
 extern void nsp_smatrix_toupper(NspSMatrix *A); 
 extern void nsp_smatrix_capitalize(NspSMatrix *A); 
 extern NspMatrix *nsp_smatrix_strstr(NspSMatrix *A, nsp_const_string Str); 
-extern NspMatrix *nsp_smatrix_strindex(nsp_const_string Str1, nsp_const_string Str2); 
+extern NspMatrix *nsp_smatrix_strindex(nsp_const_string Str,nsp_const_string Motif);
+
 extern NspSMatrix *nsp_ascii_to_smatrix(NspMatrix *A); 
 extern NspMatrix *nsp_string_to_ascii(nsp_const_string S); 
 extern NspMatrix *nsp_smatrix_sort_old(NspSMatrix *A,int flag,nsp_const_string  str1,nsp_const_string str2); 

@@ -75,7 +75,6 @@ NspList*nsp_list_create(char *name)
 
 /**
  *nsp_cell_create:
- * @name: a string 
  * @O:  #NspObject to be inserted 
  * 
  * creates a new #Cell in which object @O is stored.
@@ -806,6 +805,8 @@ int nsp_list_concat(NspList *L1, NspList *L2)
  *nsp_list_info:
  * @L: a #NspList 
  * @indent: an integer. 
+ * @name: a string 
+ * @rec_level: an integer
  * 
  * Display of infos an Object of type #NspList 
  *

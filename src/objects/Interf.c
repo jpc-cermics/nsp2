@@ -1267,12 +1267,14 @@ void ObjConvert(NspObject *O)
  * @O: 
  * 
  * 
- * Makes a copy of O is O has name != void 
- * this copy is returned in O
+ * Makes a copy of @O if @O has a non empty name. 
+ * The object is returned in @0. 
  * the element stored in O is returned as a (void *)
  * if O is an Hobj object : the object it points to 
  * is copied here 
  *
+ * Return value: the copy of object @O as a void *.
+ * 
  **/
 
 void *MaybeObjCopy(NspObject **O)
