@@ -1361,12 +1361,11 @@ NspList *nsp_list_unique(NspList *L, NspMatrix **Ind, NspMatrix **Occ)
 	  cell_LL = LL->first; j = 0;
 	  while ( cell_LL != NULLCELL  &&  !found )
 	    {
-	      if ( cell_LL->O->basetype->id == cell_L->O->basetype->id )
-		if ( cell_L->O->type->eq(cell_LL->O, cell_L->O) )
-		  {
-		    found = TRUE;
-		    if ( Occ != NULL ) occ->R[j]++;
-		  }
+	      if ( cell_L->O->type->eq(cell_L->O, cell_LL->O) )
+		{
+		  found = TRUE;
+		  if ( Occ != NULL ) occ->R[j]++;
+		}
 	      j++;
 	      cell_LL = cell_LL->next;
 	    }
