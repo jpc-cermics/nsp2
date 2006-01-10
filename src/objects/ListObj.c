@@ -1219,7 +1219,7 @@ static int int_lxunique(Stack stack, int rhs, int opt, int lhs)
     MoveObj(stack,2,NSP_OBJECT(ind));
   if ( lhs == 3 )
     MoveObj(stack,3,NSP_OBJECT(occ));
-  return lhs;
+  return Max(lhs,1);
 }
 
 

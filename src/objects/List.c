@@ -1371,7 +1371,6 @@ NspList *nsp_list_unique(NspList *L, NspMatrix **Ind, NspMatrix **Occ)
 	    }
 	  if ( !found )
 	    {
-	      /* faire un MayBeObjCopy plutôt ? */
 	      if ( (O = nsp_object_copy_with_name(cell_L->O)) == NULLOBJ ) goto err;
 	      if ( nsp_list_end_insert(LL,O) == FAIL ) { nsp_object_destroy(&O); goto err;}
 	      if ( Ind != NULL )
