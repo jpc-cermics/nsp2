@@ -1199,6 +1199,29 @@ static int int_lxcat(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
+/* unique for list
+ *
+ */
+static int int_lxunique(Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L, *LL;
+  NspMatrix *ind=NULLMAT, *occ=NULLMAT, **hind=NULL, **hocc=NULL;
+  CheckRhs(1,1);
+  CheckLhs(1,3);
+
+  if ( (L = GetList(stack,1)) == NULLLIST ) return RET_BUG;
+  if ( lhs >= 2 ) hind = &ind;
+  if ( lhs == 3 ) hocc = &occ;
+      
+  if ( (LL = nsp_list_unique(L, hind, hocc)) == NULLLIST ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(LL));
+  if ( lhs >= 2 )
+    MoveObj(stack,2,NSP_OBJECT(ind));
+  if ( lhs == 3 )
+    MoveObj(stack,3,NSP_OBJECT(occ));
+  return lhs;
+}
+
 
 /*
  * map function 
@@ -1291,6 +1314,7 @@ static OpTab List_func[]={
   {"extract_l",int_lxextract},
   {"extractelts_l",int_lxextract}, 
   {"setrowscols_l",int_lxsetrc},
+  {"unique_l",int_lxunique},
   {"lxcreate",int_lxcreate},
   {"lxlength",int_lxlength},
   {"list_concat",int_lxcat},

@@ -1321,6 +1321,89 @@ int nsp_list_full_not_equal(NspList *L1, NspList *L2)
   return rep;
 } 
 
+/**
+ *nsp_list_unique:
+ * @L: a NspList 
+ * 
+ *  build a new list LL with unique elements of L
+ *  if Ind != NULL , Ind->R[k] give an index i such that LL(k) = L(i)
+ *  if Ind != NUL then Occ may be != NULL (else Occ = NULL) and
+ *  if Occ != NULL Occ->R[k] is the number of occurences in L of LL(k).
+ *
+ * Return value: a NspList
+ **/
+
+NspList *nsp_list_unique(NspList *L, NspMatrix **Ind, NspMatrix **Occ)
+{
+  NspList *LL;
+  int i, j, k;
+  Boolean found;
+  Cell *cell_L, *cell_LL;
+  NspMatrix *ind=NULLMAT, *occ=NULLMAT;
+  NspObject *O=NULLOBJ;
+
+  if ( (LL = nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
+
+  if (Ind != NULL )
+    {
+      if ( (ind = nsp_matrix_create(NVOID,'r',1,L->nel)) == NULLMAT ) goto err;
+      if (Occ != NULL )
+	if ( (occ = nsp_matrix_create(NVOID,'r',1,L->nel)) == NULLMAT ) goto err;
+    }
+
+  cell_L = L->first; i = 0; k = 0;
+  while ( cell_L != NULLCELL )
+    {
+      i++;
+      if ( cell_L->O != NULLOBJ )
+	{
+	  found = FALSE;
+	  cell_LL = LL->first; j = 0;
+	  while ( cell_LL != NULLCELL  &&  !found )
+	    {
+	      if ( cell_LL->O->basetype->id == cell_L->O->basetype->id )
+		if ( cell_L->O->type->eq(cell_LL->O, cell_L->O) )
+		  {
+		    found = TRUE;
+		    if ( Occ != NULL ) occ->R[j]++;
+		  }
+	      j++;
+	      cell_LL = cell_LL->next;
+	    }
+	  if ( !found )
+	    {
+	      /* faire un MayBeObjCopy plutôt ? */
+	      if ( (O = nsp_object_copy_with_name(cell_L->O)) == NULLOBJ ) goto err;
+	      if ( nsp_list_end_insert(LL,O) == FAIL ) { nsp_object_destroy(&O); goto err;}
+	      if ( Ind != NULL )
+		{
+		  ind->R[k] = (double) i;
+		  if ( Occ != NULL ) occ->R[k] = 1;
+		}
+	      k++;
+	    }
+	  cell_L = cell_L->next;
+	}
+    }
+
+  if ( Ind != NULL )
+    {
+      nsp_matrix_resize(ind,1,k);
+      *Ind = ind; 
+      if ( Occ != NULL ) 
+	{
+	  nsp_matrix_resize(occ,1,k);
+	  *Occ = occ;
+	}
+    }
+  return LL;
+
+ err:
+  nsp_list_destroy(LL);
+  nsp_matrix_destroy(ind);
+  nsp_matrix_destroy(occ);
+  return NULLLIST;
+}
 
 /**
  *nsp_list_compact:

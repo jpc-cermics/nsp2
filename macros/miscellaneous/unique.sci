@@ -86,7 +86,7 @@ function [y,ind,occ] = unique_ce(x)
    if n == 0 then
       y = {}; ind=[]; occ=[];
    else
-      y = {x{1}}; j = 1; ind(1) = 1; occ(1) = 1;
+      y = {x{1}}; j = 1; ind = 1; occ = 1;
       for i=2:n
 	 elem = x{i}
 	 k = 1; found = %f;
@@ -101,26 +101,26 @@ function [y,ind,occ] = unique_ce(x)
    end
 endfunction
 
-function [y,ind,occ] = unique_l(x)
-   
-// the slow method
-   n = size(x)
-   if n == 0 then
-      y = list(); ind=[]; occ=[]; return
-   else
-      y = list(x(1)); j = 1; ind(1) = 1; occ(1) = 1;
-      for i=2:n
-	 elem = x(i)
-	 k = 1; found = %f;
-	 for k = 1:j
-	    if  elem == y(k) then, occ(k) = occ(k)+1, found = %t, break, end
-	 end
-	 if ~found then
-	    j=j+1; ind(j) = i; occ(j) = 1; y(j) = elem
-	 end   
-      end
-      occ = occ'; ind = ind';
-   end
-endfunction
+// $$$ function [y,ind,occ] = unique_l(x)
+// $$$    
+// $$$ // the slow method
+// $$$    n = size(x)
+// $$$    if n == 0 then
+// $$$       y = list(); ind=[]; occ=[]; return
+// $$$    else
+// $$$       y = list(x(1)); j = 1; ind = 1; occ = 1;
+// $$$       for i=2:n
+// $$$ 	 elem = x(i)
+// $$$ 	 k = 1; found = %f;
+// $$$ 	 for k = 1:j
+// $$$ 	    if  elem == y(k) then, occ(k) = occ(k)+1, found = %t, break, end
+// $$$ 	 end
+// $$$ 	 if ~found then
+// $$$ 	    j=j+1; ind(j) = i; occ(j) = 1; y(j) = elem
+// $$$ 	 end   
+// $$$       end
+// $$$       occ = occ'; ind = ind';
+// $$$    end
+// $$$ endfunction
 
 
