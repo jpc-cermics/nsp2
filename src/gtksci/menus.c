@@ -876,8 +876,8 @@ static void nspg_menu_saveps(int winid)
   if ( nsp_export_dialog(&fname,&colored,&orientation,&type)== FAIL) return;
   switch (type ) 
     {
-    case 0 : /* "Postscript" */
-    case 2 : /* "Postscript LaTeX" */
+    case 1 : /* "Postscript" */
+    case 3 : /* "Postscript LaTeX" */
       switch ( orientation ) 
 	{
 	case 0: scig_tops(winid,colored,fname,"Pos",'l');break;
@@ -885,16 +885,16 @@ static void nspg_menu_saveps(int winid)
 	case 2: scig_tops(winid,colored,fname,"Pos",'k');break;
 	}    
       break;
-    case 1 : /* "Postscript No Preamble" */
+    case 2 : /* "Postscript No Preamble" */
       scig_tops(winid,colored,fname,"Pos",'n');
       break;
-    case 3 : /* Xfig */
+    case 4 : /* Xfig */
       scig_tops(winid,colored,fname,"Fig",'n');
       break;
-    case 4 : /* Gif */
+    case 5 : /* Gif */
       scig_tops(winid,colored,fname,"GIF",'n');
       break;
-    case 5 : /* PPM */
+    case 6 : /* PPM */
       scig_tops(winid,colored,fname,"PPM",'n');
       break;
     }
