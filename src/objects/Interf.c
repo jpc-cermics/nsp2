@@ -273,7 +273,7 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
  * Elements of Objs can be NULLOBJ and in that case 
  * the associated element is left unchanged 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 int  GetFromTable(NspObject **Objs,int_types *T,...) 
@@ -500,7 +500,6 @@ static int  GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap)
  * @Varargs: 
  * 
  * Builds a #NspList from a set of arguments
- * Reste un probleme a regler : le nom des elements de la liste XXXXXXXXX
  * should be changed to remove the EndInsert using cells ...
  * 
  * Return value: a #NspList or %NULL
@@ -666,7 +665,7 @@ static NspList *BuildListFromArgs_1(int_types *T,va_list *ap)
  * @T: an array describing types 
  * @Varargs: list of arguments to return
  * 
- * Returns arguments on the Stack 
+ * Returns arguments on the calling stack
  *
  * Return value: %RET_BUG or an int
  **/
@@ -842,7 +841,7 @@ void MoveObj(Stack stack, int j, NspObject *O)
  * @nv: 
  * @ind: 
  * 
- * Warning : deprecated ? 
+ * Warning : deprecated 
  * 
  * Permutation of Stack Objects 
  * Note that permutation is given by a function [1,nv]-->[1,nv] 
@@ -996,7 +995,7 @@ static int OptCheck1(Stack stack,int rhs, int nopt, named_opts *Opts)
  * 
  * Utility function to deal with Optional parameters 
  * 
- * Return value: 
+ * Return value: %OK or %FAIL
  **/
 
 int  get_optional_args(Stack stack,int rhs,int opt,nsp_option opts[],...)
@@ -1250,10 +1249,10 @@ static int value_get_from_hash(Stack stack,NspHash *H,nsp_option Opts[])
 
 /**
  * ObjConvert:
- * @O: 
+ * @O: a #NspObject 
  * 
- * Utility function : Check if object need 
- * a type conversion --> double 
+ * Utility function : Check if object is a #NspMatrix and needs
+ * a type conversion to double.
  * 
  **/
 
@@ -1264,7 +1263,7 @@ void ObjConvert(NspObject *O)
 
 /**
  * MaybeObjCopy:
- * @O: 
+ * @O: a #NspObject 
  * 
  * 
  * Makes a copy of @O if @O has a non empty name. 
@@ -1294,9 +1293,8 @@ static char third[]="Third argument";
  * ArgPosition:
  * @i: position of a parameter 
  * 
- * Returns an argument position as a string 
- * (utility for error message)
- * 
+ * Returns an argument position as a string which can be used 
+ * in error message.
  * 
  * Return value: a char * describing a position
  **/
@@ -1322,8 +1320,7 @@ char *ArgPosition(int i)
  * @stack: calling stack 
  * @i: position on the stack 
  * 
- * Gets an argument name 
- * (utility for error message)
+ * prints with #Scierror an argument name.
  * 
  **/
 
@@ -1420,10 +1417,6 @@ int method_search(char *key, NspMethods *Table)
  * utility function for interfaces 
  *----------------------------------------------------------------------*/
 
-/*
- *----------------------------------------------------------------------
- */
-
 /**
  * nsp_move_string:
  * @stack: 
@@ -1458,9 +1451,11 @@ int nsp_move_string(Stack stack,int n,const char *bytes,int length)
  * @bytes: 
  * @length: 
  * 
+ * return a new 1x1 #NspSMatrix filled with a bytes from @bytes. 
+ * If @length is < 0 @bytes must be nul terminated, If @length is 
+ * positive then @length characters from @length are used.
  * 
- * 
- * Return value: 
+ * Return value: a new #NspObject or %NULLOBJ.
  **/
 
 NspObject *nsp_new_string_obj(char *name,const char *bytes,int length)
@@ -1482,12 +1477,12 @@ NspObject *nsp_new_string_obj(char *name,const char *bytes,int length)
 
 /**
  * nsp_move_double:
- * @stack: 
- * @n: 
- * @d: 
+ * @stack: calling stack
+ * @n: stack position 
+ * @d: value to be stored on the stack
  * 
- *      Replace object at position n on the stack by a new matrix object 
- *      filled with a double. 
+ * replaces object at position @n on the stack by a new matrix object 
+ * filled with a double. 
  * 
  * Return value: 1 or %RET_BUG 
  **/
@@ -1503,11 +1498,11 @@ int nsp_move_double(Stack stack,int n,double d)
 
 /**
  * nsp_new_double_obj:
- * @d: 
+ * @d: a double value 
  * 
+ * creates a new 1x1 real #NspMatrix filled with @d
  * 
- * 
- * Return value: 
+ * Return value:  a new #NspObject or %NULLOBJ.
  **/
 
 NspObject *nsp_new_double_obj(double d)
@@ -1527,8 +1522,9 @@ NspObject *nsp_new_double_obj(double d)
  * @n: number of columns 
  * @Varargs: optional @mx@n double 
  * 
- *  Replace object at position n on the stack by a new matrix object 
- *  filled with a set of doubles. 
+ *  replaces object at position @pos on the stack by a new matrix object of size
+ *  @mx@n filled with given values. @mx@n double arguments must follow the fourth 
+ *  argument @n.
  * 
  * Return value: 1 or %RET_BUG 
  **/
@@ -1549,12 +1545,12 @@ int nsp_move_doubles(Stack stack,int pos,int m,int n,...)
 
 /**
  * nsp_move_boolean:
- * @stack: 
- * @n: 
- * @ival: 
+ * @stack: calling stack 
+ * @n: stack position 
+ * @ival: an int value
  * 
- *      Replace object at position n on the stack by a new boolean matrix object 
- *      filled with a boolean value
+ * replaces object at position @n on the stack by a new boolean matrix object 
+ * filled with a boolean value @ival.
  * Return value: 1 or %RET_BUG 
  **/
 
@@ -1571,9 +1567,9 @@ int nsp_move_boolean(Stack stack,int n,int ival)
  * nsp_new_boolean_obj:
  * @ival: 
  * 
+ * creates a new boolean 1x1 matrix filled with @ival 
  * 
- * 
- * Return value: 
+ * Return value:  a new #NspObject or %NULLOBJ.
  **/
 
 NspObject *nsp_new_boolean_obj(int ival)
