@@ -270,13 +270,16 @@ void nsp_hash_destroy(NspHash *H)
 {
   unsigned int i;
   /* last entry is at M->hsize ! */
-  for ( i =0 ; i <= H->hsize ; i++) 
+  if ( H != NULLHASH )
     {
-      Hash_Entry *loc = ((Hash_Entry *) H->htable) + i;
-      if ( loc->used) 
-	nsp_object_destroy( &loc->data);
+      for ( i =0 ; i <= H->hsize ; i++) 
+	{
+	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i;
+	  if ( loc->used) 
+	    nsp_object_destroy( &loc->data);
+	}
+      nsp_hdestroy(H);
     }
-  nsp_hdestroy(H);
 }
 
 /*

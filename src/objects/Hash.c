@@ -586,13 +586,15 @@ NspHash *nsp_hcreate(char *name, unsigned int nel)
  * directly but through nsp_hash_destroy() call.
  * 
  **/
-
 void nsp_hdestroy(NspHash *H)
 {
   /* free used memory */
-  FREE(H->htable);
-  FREE(NSP_OBJECT(H)->name);
-  FREE(H);
+  if ( H != NULLHASH )
+    {
+      FREE(H->htable);
+      FREE(NSP_OBJECT(H)->name);
+      FREE(H);
+    }
 }
 
 /**
