@@ -877,6 +877,7 @@ static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
 
 int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 {
+  char *str;
   int count=1,n,L_name;
   NspObject *O = NULLOBJ, *L=NULLOBJ;
   Cell *C;
@@ -912,6 +913,20 @@ int ListFollowExtract(Stack stack, int rhs, int opt, int lhs)
 		  return RET_BUG;
 		}
 	      if ( ( O =nsp_list_get_element((NspList *) O,n)) == NULLOBJ) return RET_BUG;
+	    }
+	  else if ((str=nsp_string_object(C->O)) != NULL) 
+	    {
+	      if ( IsHash(O) )
+		{
+		  NspObject *O1;
+		  if (nsp_hash_find((NspHash *) O,str,&O1) == FAIL) return RET_BUG ;
+		  O= O1;
+		}
+	      else
+		{
+		  Scierror("Errro:\t,error in list extraction argument %s is not applied to a hash table\n",str);
+		  return RET_BUG;
+		}
 	    }
 	  else 
 	    {
