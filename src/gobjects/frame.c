@@ -808,15 +808,15 @@ static OpTab GFrame_func[]={
   {(char *) 0, NULL}
 };
 
-/** call ith function in the GFrame interface **/
+/* call ith function in the GFrame interface */
 
 int GFrame_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(GFrame_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void GFrame_Interf_Info(int i, char **fname, function (**f))
 {
@@ -899,8 +899,8 @@ void gframe_tops(NspGFrame *R,char *fname)
  * gframe_select_obj:
  * @R: a graphic frame  
  * @pt: point coordinates.
- * @O: an array of objects
- * @exclude: an object.
+ * @Objs: an array of objects.
+ * @exclude: an object to be excluded from search.
  * 
  * selects the first object of @R which contains the point @pt and returns 
  * the result in @Objs. @exclude can be used to exclude an object from the search.
@@ -937,11 +937,11 @@ int gframe_select_obj(NspGFrame *R,const double pt[2], NspObject **Objs, NspObje
  * @F: a graphic frame  
  * @pt: point coordinates.
  * @O: an object 
- * @lp: lock point id 
+ * @cp: lock point id 
  * @lock_c: is lock connectable.
  *
  * If @pt is close enough to an object lock point, then the object is 
- * returned in @O, the lock point id in @lp and the connectable status in @lock_c.
+ * returned in @O, the lock point id in @cp and the connectable status in @lock_c.
  *  
  * return value: a non null integer in case of success
  **/

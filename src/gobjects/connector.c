@@ -616,15 +616,15 @@ static OpTab Connector_func[]={
   {(char *) 0, NULL}
 };
 
-/** call ith function in the Connector interface **/
+/* call ith function in the Connector interface */
 
 int Connector_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(Connector_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void Connector_Interf_Info(int i, char **fname, function (**f))
 {

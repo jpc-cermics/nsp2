@@ -595,15 +595,15 @@ static OpTab Link_func[]={
   {(char *) 0, NULL}
 };
 
-/** call ith function in the Link interface **/
+/* call ith function in the Link interface */
 
 int Link_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(Link_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+    (for adding or removing functions) */
 
 void Link_Interf_Info(int i, char **fname, function (**f))
 {
@@ -1032,12 +1032,19 @@ void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,doub
   
 }
 
-/** 
- * link_split: 
+/**
+ * link_split:
+ * @F: a #NspGFrame 
+ * @L: a link 
+ * @L1: a pointer to a link 
+ * @pt: a point.
  * 
- * XXXX 
+ * splits the graphic link @L, the new link is returned in @L1 and 
+ * inserted in the graphic frame @F. The split point is the polyline 
+ * point nearest to @pt. 
  * 
- */
+ * Return value: %OK or %FAIL
+ **/
 
 int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
 {
@@ -1124,19 +1131,24 @@ int link_remove_control(NspLink *L,const double pt[2])
   return rep;
 }
 
-/** 
- * link_check: 
+
+/**
+ * link_check:
+ * @F: a graphic frame 
+ * @L: a graphic link 
  * 
- * Checks lock points 
+ * Checks if the lock points of @L are not over an other object 
+ * of the graphic frame @F. 
+ * and lock is not set. If true the lock points are moved. 
  * 
- */
+ **/
 
 void link_check(NspGFrame *F,NspLink *L)
 {
   NspObject *obj;
   double pt[2];
   int i,cp,lock_c;
-  /* checks if the lock point are not over an other object lock point 
+  /* checks if the lock points are not over an other object lock point 
    * and lock is not set 
    */
   for ( i=0; i < 2 ; i++) 
