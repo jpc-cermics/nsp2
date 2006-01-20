@@ -91,7 +91,7 @@ static int GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap);
  * NspObject *O1;
  * int_types T[]={ matcopy, mat,list,obj,obj_check, t_end} ;
  * int_types Tc[]={ mat,smat,list_end} ;
- * if ( GetArgs(stack,rhs,opt, T,&A,&B,&C,&O1,&nsp_type_matrix,&D) == FAIL) return RET_BUG;
+ * if ( GetArgs(stack,rhs,opt, T,&percnt;A,&percnt;B,&percnt;C,&percnt;O1,&percnt;nsp_type_matrix,&percnt;D) == FAIL) return RET_BUG;
  * </programlisting>
  * 
  * 
@@ -496,7 +496,7 @@ static int  extract_one_argument(NspObject *Ob,int_types **T,va_list *ap,char Ty
  * int_types Tc[]={ mat,smat,list_end} ;
  * ...
  * f(L);
- * if ( GetListArgs(L,3,Tc,&A,&S) == FAIL) ...
+ * if ( GetListArgs(L,3,Tc,&percnt;A,&percnt;S) == FAIL) ...
  * </programlisting>
  * 
  * Return value: %OK or %FAIL
