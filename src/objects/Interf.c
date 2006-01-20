@@ -556,7 +556,7 @@ static int  GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap)
  * <programlisting>
  * NspList *L;
  * int_types Ret[]={ s_int,s_double,matcopy,string,list_begin,s_int,s_int,list_end, t_end};
- * /* L= list(10,10.67,copy of A,"foo",list(10,20)); */ 
+ * /<!-- -->* L= list(10,10.67,copy of A,"foo",list(10,20)); *<!-- -->/ 
  * L=  BuildListFromArgs(Ret,10,20.67,A,"foo",10,20 );
  * </programlisting>
  * 
