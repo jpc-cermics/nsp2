@@ -73,9 +73,30 @@ static int GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap);
  * @T: 
  * @Varargs: 
  * 
- * Collects arguments checking their types using the @T array.
+ * Collects arguments checking their types using the @T array. 
+ * In the next example GetArgs() is used to check that an interfaced function 
+ * is called with the following arguments present on the calling stack 
+ * (Mat,Mat,List,Obj,Mat); If GetArgs() succeed, pointers to the collected 
+ * arguments are returned. For example <literal>B</literal> points to 
+ * the second arguments which is a #NspMatrix and <literal>A</literal> points
+ * to the first argument which will be a copy of the first calling argument. 
+ * When copy is used, a by copy object is replaced by its copy in the calling stack. 
+ * Note that the copy is only performed if really needed, for example in a function 
+ * call like <literal>f(1:10)</literal>, a copy of <literal>1:10</literal> is not 
+ * usefull since this matrix won't be referenced after calling <literal>f</literal>
  * 
- * Return value: %OK or %FAIL
+ * <programlisting>
+ * NspMatrix *A,*B;
+ * NspList *C;
+ * NspObject *O1;
+ * int_types T[]={ matcopy, mat,list,obj,obj_check, t_end} ;
+ * int_types Tc[]={ mat,smat,list_end} ;
+ * if ( GetArgs(stack,rhs,opt, T,&A,&B,&C,&O1,&nsp_type_matrix,&D) == FAIL) return RET_BUG;
+ * </programlisting>
+ * 
+ * 
+ * Return value: Returns %FAIL if the collected arguments do no match their expected types 
+ *     or returns %OK
  **/
 
 int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...) 
@@ -267,11 +288,29 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
  * @T: array of type description
  * @Varargs: Object to parse 
  * 
- * Decode the objects stored in Objs according to type stored in T : 
- * T must be terminated with the end tag (t_end) and 
- * the size of Objs must fit the number of arguments given in T 
- * Elements of Objs can be NULLOBJ and in that case 
- * the associated element is left unchanged 
+ * Decode the objects stored in @Objs according to types given in @T : 
+ * @T must be terminated with the end tag (t_end) and 
+ * the size of @Objs must fit the number of arguments given in @T 
+ * Elements of @Objs can be %NULLOBJ and in that case 
+ * the associated element is left unchanged. This function is 
+ * similar to @GetArgs but is used for objects given in an array 
+ * rather than in the function calling stack.
+ * 
+ * <programlisting>
+ * int *x, int *y, gboolean *b;
+ * NspObject *objs[3];
+ * int n=3;
+ * f(...,n,objs);
+ * if (.....)
+ *  {
+ *     int_types T[]={ s_int,s_int,s_bool,t_end};
+ *     if ( GetFromTable(nsp_ret,T,x,y,b) == FAIL) 
+ *	{
+ *	  Scierror("returned values are incorect \n"); 
+ *	  ...
+ *	}
+ *   }
+ * </programlisting>
  * 
  * Return value: %OK or %FAIL
  **/
@@ -282,6 +321,8 @@ int  GetFromTable(NspObject **Objs,int_types *T,...)
   va_start(ap,T);
   return GetFromTable_1(Objs,T,&ap,"\twhile extracting argument (%d) from table\n");
 }
+
+/* internal: used by GetFromTable */
 
 static int  GetFromTable_1(NspObject **Objs,int_types *T,va_list *ap,char *format)
 {
@@ -441,12 +482,22 @@ static int  extract_one_argument(NspObject *Ob,int_types **T,va_list *ap,char Ty
 /**
  * GetListArgs:
  * @L: a #NspList 
- * @pos: position in the calling stack 
+ * @pos: position in the calling stack, if @L is a calling stack argument.
  * @T: an array giving expected types 
  * @Varargs: object to parse from the list 
  * 
- * Decodes list elements using types given in @T 
+ * Decodes list elements of @L using types given in @T. 
+ * Note that if the @List is an argument transmited in 
+ * the calling stack the list arguments can be decoded 
+ * directly with GetArgs().
  * 
+ * <programlisting>
+ * NspList *L;
+ * int_types Tc[]={ mat,smat,list_end} ;
+ * ...
+ * f(L);
+ * if ( GetListArgs(L,3,Tc,&A,&S) == FAIL) ...
+ * </programlisting>
  * 
  * Return value: %OK or %FAIL
  **/
@@ -499,10 +550,17 @@ static int  GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap)
  * @T: 
  * @Varargs: 
  * 
- * Builds a #NspList from a set of arguments
- * should be changed to remove the EndInsert using cells ...
+ * Builds a #NspList from a set of arguments. It is a quick 
+ * way of building #NspList from a given set of #NspObjects.
  * 
- * Return value: a #NspList or %NULL
+ * <programlisting>
+ * NspList *L;
+ * int_types Ret[]={ s_int,s_double,matcopy,string,list_begin,s_int,s_int,list_end, t_end};
+ * /* L= list(10,10.67,copy of A,"foo",list(10,20)); */ 
+ * L=  BuildListFromArgs(Ret,10,20.67,A,"foo",10,20 );
+ * </programlisting>
+ * 
+ * Return value: a newly created #NspList or %NULL.
  **/
 
 static NspList *BuildListFromArgs_1(int_types *T,va_list *ap);
@@ -665,7 +723,22 @@ static NspList *BuildListFromArgs_1(int_types *T,va_list *ap)
  * @T: an array describing types 
  * @Varargs: list of arguments to return
  * 
- * Returns arguments on the calling stack
+ * Returns arguments on the calling stack 
+ * If the next example is use to interface a nsp function called <literal>f</literal> then, 
+ * calling <literal>f</literal> will return on the stack: 
+ * <literal>67,78.9,%t,list(789,"string2"),[1.0,7.8;8.9,45.6],["one","two"]</literal>. 
+ * <programlisting>
+ * int int_mxtest11(Stack stack, int rhs, int opt, int lhs)
+ * {
+ *  int_types T[]={string,s_int, s_double, s_bool, list_begin,s_int,string,list_end,mat,smat,t_end} ;
+ *  char *St[] ={ "one","two",NULL};
+ *  CheckRhs(0,0);
+ *  CheckLhs(1,7);
+ *  return  RetArgs(stack,lhs,T,"string",67,78.9,1,789,"string2",
+ *		    nsp_matrix_create_from_doubles(NVOID,2,2, 1.0,8.9,7.8,45.6), 
+ *		    nsp_smatrix_create_from_table(St));
+ * }
+ * </programlisting>
  *
  * Return value: %RET_BUG or an int
  **/
@@ -811,8 +884,14 @@ void SwapObjs(Stack stack, int i, int j)
  * @j: position on the stack 
  * @O: Object which is to be placed at position @j
  * 
- * Move an object to an other position, cleaning the position first
- * the moved position is assumed to be a return position 
+ * Placed the object @O at position @j on the calling stack assuming that 
+ * object @O is to be returned by the interface at position @j. 
+ * If an object was already present at position @j, this object is destroyed 
+ * and should not be used after the call to MoveObj().
+ * 
+ * Note that the name of the function is misleading since object @O should not 
+ * be present on the stack before calling this function. This function is 
+ * used to place objects on the stack at a specific return position.
  * 
  **/
 
