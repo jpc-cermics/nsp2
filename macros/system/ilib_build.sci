@@ -483,6 +483,7 @@ function libn=ilib_compile(lib_name,makename,files)
   printf('   building shared library (be patient)\n');
   system(make_command+makename + ' '+ lib_name); 
   // a revoir 
+  if path=="." then path = "./";end 
   libn=path+lib_name_make ; 
   chdir(oldpath)
 endfunction

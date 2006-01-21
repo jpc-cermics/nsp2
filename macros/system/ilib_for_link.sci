@@ -22,7 +22,7 @@ function libn=ilib_for_link(names,files,libs,flag,makename='Makelib',...
   libn=ilib_compile('lib'+libname,makename,files);
 endfunction
 
-function ilib_link_gen_loader(names,flag,loadername=loader.sce,libs=[],libname="")
+function ilib_link_gen_loader(names,flag,loadername='loader.sce',libs=[],libname="")
 //------------------------------------
 // suffix to be used for dll
   lib_suf = %shext;
