@@ -377,11 +377,18 @@ static int int_file_get( void *self,Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   if ( GetArgs(stack,rhs,opt,T,&opts,&n,&type) == FAIL) return RET_BUG;
   if ( type == NULL) type = "l";
-  n=Max(n,1);
-  if (( M = nsp_matrix_create(NVOID,'r',1,n))== NULLMAT) return RET_BUG;
-  if ( nsp_mget(self,M->R,M->mn,type,&items) == FAIL) return RET_BUG; 
-  if ( items != M->mn) nsp_matrix_resize(M,1,items);
-  nsp_convert_type_to_double(M->R,M->mn,type);
+  if ( n < 0 || n==0 ) 
+    {
+      if (( M = nsp_matrix_create(NVOID,'r',0,0))== NULLMAT) return RET_BUG;
+    }
+  else
+    {
+      n=Max(n,1);
+      if (( M = nsp_matrix_create(NVOID,'r',1,n))== NULLMAT) return RET_BUG;
+      if ( nsp_mget(self,M->R,M->mn,type,&items) == FAIL) return RET_BUG; 
+      if ( items != M->mn) nsp_matrix_resize(M,1,items);
+      nsp_convert_type_to_double(M->R,M->mn,type);
+    }
   MoveObj(stack,1,(NspObject *) M);
   return 1;
 }
