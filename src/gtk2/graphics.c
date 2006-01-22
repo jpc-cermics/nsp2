@@ -28,6 +28,7 @@
 #include "nsp/gtk/gdkpixbuf.h"
 #include "nsp/interf.h"
 
+static void nsp_pixbuf_to_ps(FILE *psout,GdkPixbuf *pixbuf,gint xdest, gint ydest);
 static NspCells *GetImageCells(Stack stack,int pos) ;
 
 /**
@@ -137,6 +138,14 @@ int int_pixbuftocells(Stack stack, int rhs, int opt, int lhs)
 	  ((NspMatrix *) C->objs[ch])->R[row+height*col] = (double) *(p+ch);
 	}
   MoveObj(stack,1,NSP_OBJECT(C));
+
+  {
+    FILE *file;
+    file= fopen("poo.ps","w");
+    nsp_pixbuf_to_ps(file,pix,0,0);
+    fclose(file);
+  }
+
   return 1;
 }  
 
@@ -182,8 +191,43 @@ static NspCells *GetImageCells(Stack stack,int pos)
     }
   return C;
 }
-  
 
 
+static void nsp_pixbuf_to_ps(FILE *psout,GdkPixbuf *pixbuf,gint xdest, gint ydest)
+{
+  int row,col,ch;
+  gdouble scale_x=1, scale_y=1;
+  guchar *pixels, *p;
+  int nChannels = gdk_pixbuf_get_n_channels(pixbuf);
+  int width = gdk_pixbuf_get_width(pixbuf);
+  int height = gdk_pixbuf_get_height(pixbuf);
+  int rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+  pixels = gdk_pixbuf_get_pixels (pixbuf);
 
+  fprintf(psout, "gsave\n");
+  fprintf(psout, "%d %g translate\n", xdest, ydest + height * scale_y);
+  fprintf(psout, "%g %g scale\n",width * scale_x, height * scale_y);
+  fprintf(psout, "%d %d 8 [%d 0 0 %d 0 %d]\n",width, height, width, height, height);
+  fprintf(psout, "/scanline %d 3 mul string def\n", width);
+  fprintf(psout, "{ currentfile scanline readhexstring pop } false 3\n");
+  fprintf(psout, "colorimage\n");
 
+  for(row = height-1 ; row >= 0 ; row-- )
+    {
+      for(col =0; col < width; col++)
+	{
+	  p =  pixels + row * rowstride + col * nChannels;
+	  for ( ch = 0 ; ch < 3 ; ch++)
+	    {
+	      guchar n= *(p+ch),n1,n2;
+	      n1 = n & 0x0f; 
+	      n2 = (n & 0xf0 ) >> 4;
+	      fprintf(psout,"%c",(n1 < 10) ?  '0' + n1 : 'A' + n1 - 10);
+	      fprintf(psout,"%c",(n2 < 10) ?  '0' + n2 : 'A' + n2 - 10);
+	    }
+	  if(fmod(col + 1, 13) == 0) fprintf(psout, "\n");
+	}
+      fprintf(psout,"\n");
+    }
+  fprintf(psout, "grestore\n");
+}
