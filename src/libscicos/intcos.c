@@ -312,24 +312,17 @@ int scicos_Message(char* code)
   return 0;
 }
 
-int int_var2vec(Stack stack, int rhs, int opt, int lhs) 
-{
-  Scierror("var2vec !!!!! \n");
-  return RET_BUG;
-}
+/* should only be called when Scicos 
+ * is initialized i.e Scicos != NULL
+ *
+ */
 
-int int_vec2var(Stack stack, int rhs, int opt, int lhs) 
-{
-  Scierror("vec2var !!!!\n");
-  return RET_BUG;
-}
-
-int int_curblock(Stack stack, int rhs, int opt, int lhs) 
+static int int_curblock(Stack stack, int rhs, int opt, int lhs) 
 {
   NspMatrix *M;
   CheckRhs(-1,0) ;
   if ((M=nsp_matrix_create(NVOID,'r',1,1))==NULLMAT) return RET_BUG;
-  M->R[0]= Scicos->params.curblk ;
+  M->R[0]= (Scicos == NULL) ? 0 : Scicos->params.curblk ;
   NSP_OBJECT(M)->ret_pos = 1;
   StackStore(stack,(NspObject *)M,1);
   return 1;
@@ -388,8 +381,12 @@ int int_setscicosvars(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/* should only be called when Scicos 
+ * is initialized i.e Scicos != NULL
+ *
+ */
 
-int int_getblocklabel(Stack stack, int rhs, int opt, int lhs) 
+static int int_getblocklabel(Stack stack, int rhs, int opt, int lhs) 
 {
   int kf;
   char *label=NULL;
@@ -403,6 +400,11 @@ int int_getblocklabel(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
+      if ( Scicos == NULL) 
+	{
+	  Scierror("Error: scicosim is not running\n");
+	  return RET_BUG;
+ 	}
       kf = Scicos->params.curblk ;
     }
   if ( scicos_getscilabel(kf,&label)== FAIL) 
@@ -551,8 +553,8 @@ int Scicos_Interf(int i, Stack stack, int rhs, int opt, int lhs)
   return (*(Scicos_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+ * (for adding or removing functions) */
 
 void Scicos_Interf_Info(int i, char **fname, function (**f))
 {
