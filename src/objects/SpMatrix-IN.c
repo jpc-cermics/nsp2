@@ -763,7 +763,7 @@ static int int_spsub(Stack stack, int rhs, int opt, int lhs)
 	  stack.first += 1;
 	  int_spminus(stack,1,opt,1);
 	  stack.first -= 1;
-	  SwapObjs(stack,1,2);
+	  NSP_OBJECT(B)->ret_pos = 1;
 	  return 1; 	  /* A was [] or [0] **/
 	}
       else
@@ -917,6 +917,8 @@ static OpTab SpMatrix_func[]={
   {"mult_sp_m",int_spmultm},
   {"plus_sp_sp",int_spplus},
   {"minus_sp_sp",int_spsub},
+  {"minus_sp_m",int_spsub},
+  {"minus_m_sp",int_spsub},
   {"minus_sp",int_spminus},
   {"quote_sp",int_spquote},
   {"dprim_sp", int_spdquote},

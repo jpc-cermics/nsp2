@@ -208,9 +208,9 @@ void nsp_bmatrix_print(NspBMatrix *BMat, int indent,char *name, int rec_level)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {
-      if ( strcmp(NSP_OBJECT(BMat)->name,NVOID) != 0) 
+      if ( strcmp(pname,NVOID) != 0) 
 	{
-	  Sciprintf("%s=%s",NSP_OBJECT(BMat)->name,(BMat->mn==0 ) ? " m2b([])\n" : "" );
+	  Sciprintf("%s=%s",pname,(BMat->mn==0 ) ? " m2b([])\n" : "" );
 	}
       else 
 	{

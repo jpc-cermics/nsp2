@@ -860,6 +860,8 @@ void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
 
 void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 {
+  const int name_len=128;
+  char epname[name_len],epname1[name_len];
   const char *pname = (name != NULL) ? name : NSP_OBJECT(L)->name;
   int j;
   Cell *C;
@@ -867,31 +869,32 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
   for ( j=0 ; j < indent ; j++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {
-      if ( strcmp(NSP_OBJECT(L)->name,NVOID) != 0) Sciprintf("%s=",NSP_OBJECT(L)->name);
-      Sciprintf("list(\n");
+      int count=1;
+      sprintf(epname,"L__%d",rec_level);
+      Sciprintf("%s=list();\n",epname);
       C= L->first;
       while ( C != NULLCELL) 
 	{
 	  if ( C->O != NULLOBJ )
 	    {
-	      nsp_object_print(C->O,indent+1,NULL,rec_level+1);
-	    }
-	  else
-	    {
-	      Sciprintf1(indent+1,"lel= []");/* FIXME XXXX */
+	      sprintf(epname1,"%s(%d)",epname,count);
+	      nsp_object_print(C->O,indent+1,epname1,rec_level+1);
 	    }
 	  C = C->next;
+	  count++;
 	  if ( C != NULLCELL )
 	    {
-	      Sciprintf1(indent+1,",\n");
+	      Sciprintf1(indent+1,"\n");
 	    }
 	}
-      Sciprintf1(indent, ")\n");
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent+1,"%s=%s;\n",pname,epname);
+	}
     }
   else
     {
       int colors[]={ 34,32,31,35,36};
-      char epname[128];
       Sciprintf("%s\t=\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
       Sciprintf1(indent+1,"(\n");
       C= L->first;

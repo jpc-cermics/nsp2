@@ -318,25 +318,24 @@ void nsp_hash_print(NspHash *H, int indent,char *name, int rec_level)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {
-      if ( strcmp(NSP_OBJECT(H)->name,NVOID) != 0) Sciprintf("%s=",NSP_OBJECT(H)->name);
-      Sciprintf("hcreate(\n");
+      const int name_len=128;
+      char epname[name_len];
+      char epname1[name_len];
+      sprintf(epname,"H__%d",rec_level);
+      Sciprintf("%s=hcreate(%d);\n",epname,H->hsize);
       /* last entry is at M->hsize ! */
       for ( i1 =0 ; i1 <= H->hsize ; i1++) 
 	{
 	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
 	  if ( loc->used) 
 	    {
-	      if ( count != 0) 
-		{
-		  for ( i=0 ; i < indent+1 ; i++) Sciprintf(" ");
-		  Sciprintf(",\n");
-		}
-	      nsp_object_print(loc->data,indent+2,NULL,rec_level-1);
+	      sprintf(epname1,"%s('%s')",epname,nsp_object_get_name(loc->data));
+	      nsp_object_print(loc->data,indent+2,epname1,rec_level+1);
 	      count++;
 	    }
 	}
-      for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-      Sciprintf( ")\n");
+      if ( strcmp(pname,NVOID) != 0) Sciprintf1(indent+1,"%s=%s;\n",pname,epname);
+
     }
   else 
     {
@@ -345,7 +344,7 @@ void nsp_hash_print(NspHash *H, int indent,char *name, int rec_level)
 	{
 	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
 	  if ( loc->used) 
-	    nsp_object_print(loc->data,indent+2,NULL,rec_level-1);
+	    nsp_object_print(loc->data,indent+2,NULL,rec_level+1);
 	}
     }
 }

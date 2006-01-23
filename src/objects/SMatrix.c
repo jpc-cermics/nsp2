@@ -333,9 +333,9 @@ void nsp_smatrix_print(const NspSMatrix *Mat, int indent,char *name, int rec_lev
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {
-      if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
+      if ( strcmp(pname,NVOID) != 0) 
 	{
-	  Sciprintf("%s=%s",NSP_OBJECT(Mat)->name,(Mat->mn==0 ) ? " m2s([])\n" : "" );
+	  Sciprintf("%s=%s",pname,(Mat->mn==0 ) ? " m2s([])\n" : "" );
 	}
       else 
 	{
