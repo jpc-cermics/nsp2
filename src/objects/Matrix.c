@@ -32,6 +32,7 @@
 /* XXX */
 extern void nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int indent);
 extern void nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int indent);
+extern void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M);
 
 #define WORK_SIZE 100
 int iwork1[WORK_SIZE];
@@ -516,14 +517,22 @@ void nsp_matrix_info(const NspMatrix *Mat, int indent,char *name,int rec_level)
  * @indent is the given indentation for printing.
  */
 
+static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,char *name, int rec_level,
+						 int slice);
+
 void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
-  int i;
+  int i,slice=1000;
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {
+      if ( Mat->mn > slice ) 
+	{
+	  nsp_matrix_print_as_read_with_slice(Mat,indent,name,rec_level,slice);
+	  return;
+	}
       if ( strcmp(pname,NVOID) != 0) 
 	{
 	  Sciprintf("%s=%s",pname,(Mat->mn==0 ) ? " []\n" : "" );
@@ -538,6 +547,7 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
       Sciprintf("%s\t=%s\t\t%c (%dx%d)\n",pname,
 		(Mat->mn==0 ) ? " []" : "",Mat->rc_type,Mat->m,Mat->n);
     }
+
   if ( Mat->mn != 0) 
     {
       nsp_num_formats fmt;
@@ -546,6 +556,46 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
 	nsp_real_matrix_print_internal (&fmt,Mat,indent);
       else 
 	nsp_complex_matrix_print_internal (&fmt,Mat,indent);
+    }
+}
+
+/* used when matrix is large */
+
+static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,char *name, int rec_level,
+						 int slice)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  int i,init=0;
+  nsp_num_formats fmt;
+  nsp_init_pr_format (&fmt);
+  nsp_matrix_set_format(&fmt,Mat);
+  Sciprintf1(indent+1,"x___=[];\n");
+  while (1)
+    {
+      int last = Min(init+slice,Mat->mn );
+      Sciprintf1(indent+1,"x___=[x___;\n");
+      
+      if ( Mat->rc_type == 'r') 
+	for ( i=init; i < last ; i++) 
+	  {
+	    Sciprintf1(indent+1,"");
+	    nsp_pr_float(&fmt,Mat->R[i]);
+	    if ( i != last-1) Sciprintf(";\n");
+	  }
+      else
+	for ( i=init; i < last; i++) 
+	  {
+	    Sciprintf1(indent+1,"");
+	    nsp_pr_complex (&fmt,Mat->C[i]);
+	    if ( i != last-1) Sciprintf(";\n");
+	  }
+      Sciprintf1(indent+1,"];\n");
+      init = init+slice;
+      if ( init >= Mat->mn) break;
+    }
+  if ( strcmp(pname,NVOID) != 0) 
+    {
+      Sciprintf1(indent+1,"%s=matrix(x___,%d,%d);\n",pname,Mat->m,Mat->n);
     }
 }
 
