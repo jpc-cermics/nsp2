@@ -370,7 +370,7 @@ static int scifunc_hcreate(unsigned int nel)
  * After using the hash table it has to be destroyed. The used memory can
  * be freed and the local static variable can be marked as not used.
  */
-/** Unused : cleaned at scilab exit 
+/* Unused : cleaned at scilab exit 
 
 static void
 scifunc_hdestroy()

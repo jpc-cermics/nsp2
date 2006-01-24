@@ -62,9 +62,9 @@ extern void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *valu
 extern void mexWarnMsgTxt(char *error_msg);
 extern bool mxIsCell (const mxArray *ptr);
 extern mxArray *mxGetCell(const mxArray *ptr, int index);
-extern void mxSetCell(mxArray *array_ptr, int index, mxArray *value);
+extern void mxSetCell(mxArray *ptr, int index, mxArray *value);
 extern mxArray *mxCreateCellMatrix(int m, int n);
-extern char *mxArrayToString(const mxArray *array_ptr);
+extern char *mxArrayToString(const mxArray *ptr);
 
 #define mexPrintf Sciprintf
 
@@ -74,7 +74,7 @@ extern char *mxArrayToString(const mxArray *array_ptr);
 
 typedef int  mxClassID;
 
-extern mxClassID mxGetClassID(const mxArray *array_ptr) ;
+extern mxClassID mxGetClassID(const mxArray *ptr) ;
 
 
 
@@ -101,9 +101,9 @@ extern mxClassID mxGetClassID(const mxArray *array_ptr) ;
 #define  mxFUNCTION_CLASS  nsp_type_plist_id 
 
 extern void *mxMalloc(size_t n);
-extern void mxDestroyArray(mxArray *array_ptr);
+extern void mxDestroyArray(mxArray *ptr);
 extern mxArray *mxCreateCellArray(int ndim, const int *dims);
-extern int mxCalcSingleSubscript(const mxArray *array_ptr, int nsubs,const int *subs);extern const char * mxGetName(const mxArray *ptr) ;
+extern int mxCalcSingleSubscript(const mxArray *ptr, int nsubs,const int *subs);extern const char * mxGetName(const mxArray *ptr) ;
 
 extern int mexPutVariable(const char *workspace, const char *var_name,mxArray *array_ptr);
 

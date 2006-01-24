@@ -42,7 +42,7 @@ void SciLink(iflag,rhs,ilib,files,en_names,strf)
       *ilib=-4;/* aout link : en_names must be of size 1 */
       return;
     }
-  /** 
+  /*
   if ( files[1] != (char *) 0 )
     {
       *ilib=-5; / *aout link : files must be of size 1 * /

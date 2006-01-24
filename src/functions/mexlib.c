@@ -431,13 +431,12 @@ double mxGetScalar(const mxArray *ptr)
 
 /**
  * mexErrMsgTxt:
- * @error_msg: 
+ * @error_msg: a string to be used as error message 
  * 
+ * uses Scierror() to display @error_message, the mex evaluation 
+ * is stopped and control returns at the interpreter level with error mechanism.
  * 
- * 
- * Return value: 
  **/
-/*  Error + Jump  **/
 
 void mexErrMsgTxt(char *error_msg)
 {
@@ -552,8 +551,9 @@ int mxGetString(const mxArray *ptr, char *str, int strl)
  * in one buffer, the string is allocated 
  * and should be freed by the user 
  * 
- * Return value: 
+ * Return value: a newly allocated array of chars.
  **/
+
 char *mxArrayToString(const mxArray *ptr)
 {
   nsp_string message;
@@ -573,7 +573,6 @@ char *mxArrayToString(const mxArray *ptr)
  * 
  * XXXX : to be done 
  * 
- * Return value: 
  **/
 
 void mxFreeMatrix (mxArray *ptr)
@@ -801,22 +800,18 @@ void mexWarnMsgTxt(char *error_msg)
 
 /**
  * mxGetInf:
- * @void: 
  * 
- * 
- * 
- * Return value: 
+ * Return value: ieee Infinity as a double
  **/
+
 double mxGetInf(void)
 {
   double d=0;d=1/d;
+
 /**
  * mxGetNaN:
- * @void: 
  * 
- * 
- * 
- * Return value: 
+ * Return value: ieee Nan as a double 
  **/
   return d;
 }
@@ -828,11 +823,8 @@ double mxGetNaN(void)
 
 /**
  * mxGetEps:
- * @void: 
  * 
- * 
- * 
- * Return value: 
+ * Return value: returns <literal>nsp_dlamch("e")</literal>
  **/
 double mxGetEps(void)
 {
@@ -932,10 +924,9 @@ bool mxIsCell(const mxArray *ptr)
  * @ptr: 
  * @index: 
  * 
- * 
- * 
  * Return value: 
  **/
+
 mxArray *mxGetCell(const mxArray *ptr, int index)
 {
   NspCells *C = (NspCells *) ptr;
@@ -952,6 +943,7 @@ mxArray *mxGetCell(const mxArray *ptr, int index)
  * 
  * 
  **/
+
 void mxSetCell(mxArray *ptr, int index, mxArray *value)
 {
   NspCells *C = (NspCells *) ptr;
@@ -1074,9 +1066,9 @@ mxClassID mxGetClassID(const mxArray *ptr)
 
 /**
  * mxMalloc:
- * @n: 
+ * @n: size of array to allocate 
  * 
- * 
+ * Return value: a newly allocated array of char
  **/
 void *mxMalloc(size_t n)
 {
