@@ -573,7 +573,7 @@ static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,char
   while (1)
     {
       int last = Min(init+slice,Mat->mn );
-      Sciprintf1(indent+1,"x___=[x___;\n");
+      Sciprintf1(indent+1,"xx___=[");
       
       if ( Mat->rc_type == 'r') 
 	for ( i=init; i < last ; i++) 
@@ -590,6 +590,7 @@ static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,char
 	    if ( i != last-1) Sciprintf(";\n");
 	  }
       Sciprintf1(indent+1,"];\n");
+      Sciprintf1(indent+1,"x___=[x___;xx___];\n");
       init = init+slice;
       if ( init >= Mat->mn) break;
     }
