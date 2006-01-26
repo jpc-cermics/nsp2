@@ -9,7 +9,7 @@
 #include "nsp/machine.h"
 #include "nsp/object.h"
 
-#include "scicos.h"
+#include "scicos/scicos.h"
 
 int scicos_scifunc(  NspObject **Args,int mlhs,int mrhs ) 
 {

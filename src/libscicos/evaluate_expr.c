@@ -1,5 +1,5 @@
 #include <math.h>
-#include "scicos.h"
+#include "scicos/scicos.h"
 
 #if WIN32
 /*

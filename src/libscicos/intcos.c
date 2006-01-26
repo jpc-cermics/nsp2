@@ -27,7 +27,7 @@
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
 
-#include "scicos.h"
+#include "scicos/scicos.h"
 
 /* 
  * [state,t]=scicosim(state,tcur,tf,sim,'start' ,tol) 
@@ -386,7 +386,7 @@ int int_setscicosvars(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-static int int_getblocklabel(Stack stack, int rhs, int opt, int lhs) 
+int int_getblocklabel(Stack stack, int rhs, int opt, int lhs) 
 {
   int kf;
   char *label=NULL;

@@ -3,7 +3,7 @@
 #include "nsp/machine.h"
 #include "nsp/object.h"
 
-#include "scicos.h"
+#include "scicos/scicos.h"
 
 /* 
  * data structure selection 

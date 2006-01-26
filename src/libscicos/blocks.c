@@ -9,8 +9,8 @@
 #include "../librand/grand.h" /* rand_ranf() */
 #include "../system/files.h" /*  FSIZE */
 
-#include "scicos.h"
-#include "blocks.h"
+#include "scicos/scicos.h"
+#include "scicos/blocks.h"
 
 
 /* 

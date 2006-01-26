@@ -26,8 +26,8 @@
 #include "nsp/machine.h"
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
-#include "scicos.h"
-#include "simul.h"
+#include "scicos/scicos.h"
+#include "scicos/simul.h"
 
 static void scicos_clear_state(scicos_state *scst);
 static void scicos_clear_sim(scicos_sim *scsim);
@@ -183,7 +183,7 @@ static int scicos_fill_sim(NspHash *Sim,scicos_sim *scsim)
 	    }
 	  if ( IsString(cloc->O)) 
 	    {
-	      void *fptr = get_function(((NspSMatrix *) cloc->O)->S[0]);
+	      void *fptr = scicos_get_function(((NspSMatrix *) cloc->O)->S[0]);
 	      if ( fptr != NULL) 
 		{
 		  /* a hard code function given by its adress */

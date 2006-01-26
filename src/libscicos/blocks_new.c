@@ -5,8 +5,8 @@
 #include "nsp/blas.h" 
 #include "nsp/matutil.h" 
 
-#include "scicos.h"
-#include "blocks.h"
+#include "scicos/scicos.h"
+#include "scicos/blocks.h"
 
 /* to be moved elsewhere XXXX  */
 

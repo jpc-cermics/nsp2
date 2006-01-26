@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "nsp/machine.h"
-#include "../system/link.h"
+#include "../functions/link.h"
 #include "nsp/graphics/Graphics.h" 
 #include "nsp/object.h" 
 #include "nsp/blas.h" 
@@ -10,9 +10,9 @@
 #include "nsp/system.h" 
 
 
-#include "scicos.h"
+#include "scicos/scicos.h"
 #define TABSIM /* to force include of tabsim definition */
-#include "blocks.h"
+#include "scicos/blocks.h"
 
 
 /* to be moved elsewhere */
@@ -2249,21 +2249,19 @@ void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, dou
 
 /*
  * get a function in blocks functions from its name 
- * FIXME: dynamic linking part is to be implemented 
  */
 
-
-void *get_function(char * fname)
+void *scicos_get_function(char * fname)
 {
+  int (*loc)();
   int i=0;
   while ( tabsim[i].name != (char *) NULL) {
     if ( strcmp(fname,tabsim[i].name) == 0 ) 
       return tabsim[i].fonc;
     i++;
   }
-  /* FIXME : check for dynamic linking  
-   *  C2F(iislink)(fname,&loc);C2F(iislink)(fname,&loc);
-  */
+  if ( SearchInDynLinks(fname,&loc) != -1 ) 
+    return loc ;
   return NULL;
 }
 
