@@ -307,8 +307,9 @@ static void *scicos_fill_blocks(scicos_sim *scsim,scicos_state *scst)
 
   for ( kf = 0; kf < scsim->nblk; ++kf) 
     {
-      /* C2F(curblk).kfun = kf+1; */
-      Blocks[kf].type= scsim->funtyp[kf];
+      int b_type = scsim->funtyp[kf];
+      Blocks[kf].type = (b_type < 10000) ? ( b_type % 1000) : b_type % 1000 + 10000;
+
       if ( scsim->funflag[kf] == fun_pointer ) 
 	{
 	  Blocks[kf].scsptr= NULL;
