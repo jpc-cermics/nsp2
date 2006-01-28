@@ -89,17 +89,18 @@ c-----------------------------------------------------------------------
       integer i, imxold, nxlast,istuck,iunstuck
       double precision t2, tmax, zero
       logical zroot, sgnchg, xroot
-      data zero/0.0d0/
+      data zero/0.0d0/, tenth/0.1d0/, half/0.5d0/, five/5.0d0/
+
 c
       if (jflag .eq. 1) go to 200
 c jflag .ne. 1.  check for change in sign of g or zero at x1. ----------
       imax = 0
-      ISTUCK=0
-      IUNSTUCK=0
+      istuck=0
+      iunstuck=0
       tmax = zero
       zroot = .false.
       do 120 i = 1,ng
-         if ((jroot(i) .eq. 1).AND.((abs(g1(i)) .gt. zero))) iunstuck=i
+         if ((jroot(i) .eq. 1).and.((abs(g1(i)) .gt. zero))) iunstuck=i
          if (abs(g1(i)) .gt. zero) go to 110
          if (jroot(i) .eq. 1) goto 120
          istuck=i
@@ -140,12 +141,31 @@ c repeat until the first root in the interval is found.  loop point. ---
       else
          x2 = x1 - (x1-x0)*g1(imax)/(g1(imax) - alpha*g0(imax))
       endif
-      if ((dabs(x2-x0) .lt. hmin) .and.
-     1     (dabs(x1-x0) .gt. 10.0d0*hmin)) x2 = x0 + 0.1d0*(x1-x0)
+      if (abs(x2 - x0) .lt. half*hmin) then
+        fracint = abs(x1 - x0)/hmin
+        if (fracint .gt. five) then
+          fracsub = tenth
+        else
+          fracsub = half/fracint
+        endif
+        x2 = x0 + fracsub*(x1 - x0)
+      endif
+
+      if (abs(x1 - x2) .lt. half*hmin) then
+        fracint = abs(x1 - x0)/hmin
+        if (fracint .gt. five) then
+          fracsub = tenth
+        else
+          fracsub = half/fracint
+        endif
+        x2 = x1 - fracsub*(x1 - x0)
+      endif
+c     ----------------------- hindmarsh ----------------
       jflag = 1
-      x = x2
-c return to the calling routine to get a value of gx = g(x). -----------
+      x = x2 
+c     return to the calling routine to get a value of gx = g(x). -----------
       return
+
 c check to see in which interval g changes sign. -----------------------
  200  imxold = imax
       imax = 0
@@ -193,29 +213,10 @@ c no sign change between x0 and x2.  replace x0 with x2. ---------------
       go to 150
 c
 c return with x1 as the root.  set jroot.  set x = x1 and gx = g1. -----
-
  300  jflag = 2
+c     exit with root findings
       x = x1
       call dcopy (ng, g1, 1, gx, 1)
-      do 320 i = 1,ng
-         if(jroot(i).eq.1) then
-            if(dabs(g1(i)).ne. zero) then
-               jroot(i)=sign(2.0d0,g1(i))
-            else
-               jroot(i)=0
-            endif
-         else
-            if (abs(g1(i)) .eq. zero) then
-               jroot(i) = -sign(1.0d0,g0(i))
-            else
-               if (sign(1.0d0,g0(i)) .ne. sign(1.0d0,g1(i))) then
-                  jroot(i) = sign(1.0d0,g1(i) - g0(i))
-               else
-                  jroot(i)=0
-               endif
-            endif
-         endif
- 320  continue
       return
 c no sign changes in this interval.  set x = x1, return jflag = 4. -----
  420  call dcopy (ng, g1, 1, gx, 1)

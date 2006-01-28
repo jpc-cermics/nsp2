@@ -193,8 +193,7 @@ c return with x1 as the root.  set jroot.  set x = x1 and gx = g1. -----
  320  continue
       return
 c     
-c     no sign change in the interval.  check for 
-c     zero at right endpoint. ---
+c     no sign change in the interval.  check for zero at right endpoint. ---
  400  if (.not. zroot) go to 420
 c
 c zero value at x1 and no sign change in (x0,x1).  return jflag = 3. ---
