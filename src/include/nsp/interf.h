@@ -81,17 +81,6 @@ typedef enum {
   t_end         /* end of type table  */ 
 } int_types;
 
-/* structure used for optional arguments */
-
-typedef struct { 
-  int n;         /* number of optional arguments */
-  char **names;  /* options names */
-  int_types *types; /* types associated to each optional name */
-  NspObject **objs;    /* array to store pointers to selected optional arguments 
-		  * (set to NULL) if optional argument is not found */
-  int *posi;     /* stack position of arguments */
-} named_opts;
-
 /*  structure used for optional arguments */
 
 typedef struct { 
