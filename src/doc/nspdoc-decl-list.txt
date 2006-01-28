@@ -1831,7 +1831,6 @@ CheckLhs
 CheckStdRhs
 CheckOptRhs
 int_types
-named_opts
 nsp_option
 RetArgs
 GetArgs

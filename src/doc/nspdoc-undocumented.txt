@@ -1,13 +1,12 @@
 16% symbol docs coverage.
-328 symbols documented.
-1697 not documented.
+330 symbols documented.
+1681 not documented.
 
 
 ABORT
 APROPOS
 ARGS
 Abs
-AllInterf
 ArgPrettyPrint
 ArgPrint
 Array_Type
@@ -118,18 +117,12 @@ GetLink
 GetLinkCopy
 GetList
 GetListCopy
-GetLmo
-GetLmoCopy
 GetMat
 GetMatCopy
 GetMatCopyFloat
 GetMatCopyInt
 GetMatFloat
 GetMatInt
-GetMe
-GetMeCopy
-GetMod
-GetModCopy
 GetModule
 GetModuleCopy
 GetModuleElt
@@ -148,18 +141,14 @@ GetRealMat
 GetRealMatCopy
 GetRealMatCopyFloat
 GetRealMatCopyInt
-GetRealMatCopy_G
 GetRealMatFloat
 GetRealMatInt
-GetRealMat_G
 GetRealMpMat
 GetRealMpMatCopy
 GetRealMpMatCopyFloat
 GetRealMpMatCopyInt
-GetRealMpMatCopy_G
 GetRealMpMatFloat
 GetRealMpMatInt
-GetRealMpMat_G
 GetRealSp
 GetRect
 GetRectCopy
@@ -325,7 +314,6 @@ ModInfo
 ModLoopExtract
 ModMerge
 ModNextObj
-ModObj
 ModObjEq
 ModObjNeq
 ModPrint
@@ -610,11 +598,8 @@ aint
 anint
 asinh
 atanh
-attr_search
-attrs_to_stack
 block_create
 block_object
-call_interf
 checkqueue_nsp_command
 classb_copy
 classb_create
@@ -969,7 +954,6 @@ mxUINT64_CLASS
 mxUINT8_CLASS
 mxUNKNOWN_CLASS
 myzabs
-named_opts
 new_block
 new_bmatrix
 new_cells

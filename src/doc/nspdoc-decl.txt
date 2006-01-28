@@ -5551,7 +5551,7 @@ const mxArray *ptr, int index
 <FUNCTION>
 <NAME>mxSetCell</NAME>
 <RETURNS>void  </RETURNS>
-mxArray *array_ptr, int index, mxArray *value
+mxArray *ptr, int index, mxArray *value
 </FUNCTION>
 <FUNCTION>
 <NAME>mxCreateCellMatrix</NAME>
@@ -5561,7 +5561,7 @@ int m, int n
 <FUNCTION>
 <NAME>mxArrayToString</NAME>
 <RETURNS>char  *</RETURNS>
-const mxArray *array_ptr
+const mxArray *ptr
 </FUNCTION>
 <MACRO>
 <NAME>mexPrintf</NAME>
@@ -5574,7 +5574,7 @@ typedef int  mxClassID;
 <FUNCTION>
 <NAME>mxGetClassID</NAME>
 <RETURNS>mxClassID  </RETURNS>
-const mxArray *array_ptr
+const mxArray *ptr
 </FUNCTION>
 <MACRO>
 <NAME>mxUNKNOWN_CLASS</NAME>
@@ -5648,7 +5648,7 @@ size_t n
 <FUNCTION>
 <NAME>mxDestroyArray</NAME>
 <RETURNS>void  </RETURNS>
-mxArray *array_ptr
+mxArray *ptr
 </FUNCTION>
 <FUNCTION>
 <NAME>mxCreateCellArray</NAME>
@@ -5658,7 +5658,7 @@ int ndim, const int *dims
 <FUNCTION>
 <NAME>mxCalcSingleSubscript</NAME>
 <RETURNS>int  </RETURNS>
-const mxArray *array_ptr, int nsubs,const int *subs
+const mxArray *ptr, int nsubs,const int *subs
 </FUNCTION>
 <FUNCTION>
 <NAME>mexPutVariable</NAME>
@@ -8529,18 +8529,6 @@ typedef enum {
   t_end         /* end of type table  */ 
 } int_types;
 </ENUM>
-<STRUCT>
-<NAME>named_opts</NAME>
-struct named_opts
-{ 
-  int n;         /* number of optional arguments */
-  char **names;  /* options names */
-  int_types *types; /* types associated to each optional name */
-  NspObject **objs;    /* array to store pointers to selected optional arguments 
-		  * (set to NULL) if optional argument is not found */
-  int *posi;     /* stack position of arguments */
-};
-</STRUCT>
 <STRUCT>
 <NAME>nsp_option</NAME>
 struct nsp_option
