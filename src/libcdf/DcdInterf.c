@@ -763,7 +763,7 @@ static int CdfBase(Stack stack,int rhs, int opt, int lhs,
   double bound;
   if ( rhs != inarg+1 ) 
     {
-      Scierror("%s: Rhs must be %d for '%s' option'\n",stack.fname,inarg+1,option);
+      Scierror("%s: Rhs must be %d for '%s' option'\n",NspFname(stack),inarg+1,option);
       return RET_BUG;
     }
 
@@ -773,7 +773,7 @@ static int CdfBase(Stack stack,int rhs, int opt, int lhs,
     {
       /* just in case, but this is checked elsewhere */
       Scierror("%s: lhs must be smaller or equal to %d for '%s' option'\n",
-	       stack.fname,oarg,option);
+	       NspFname(stack),oarg,option);
       return RET_BUG;
     }
   for ( i = 0 ; i < inarg ; i++ )
@@ -783,7 +783,7 @@ static int CdfBase(Stack stack,int rhs, int opt, int lhs,
   for ( i = 1 ; i < inarg ; i++) 
     if ( M[i]->m != M[i-1]->m || M[i]->n != M[i-1]->n) 
       {
-	Scierror("%s %s must have same size\n",stack.fname,errnames);
+	Scierror("%s %s must have same size\n",NspFname(stack),errnames);
 	return RET_BUG;
       } 
   for ( i = 0 ; i < oarg ; i++) 

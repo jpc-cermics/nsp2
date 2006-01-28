@@ -197,7 +197,7 @@ void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char 
   if ( stack.S[stack.first + rhs] != NULL )
     {
       /* check that stack is null terminated */ 
-      fprintf(stderr,"%s %s \n",message, stack.fname);
+      fprintf(stderr,"%s %s \n",message, NspFname(stack));
       fprintf(stderr,"Non null objects found after rhs(=%d) !\n",rhs);
       if ( name != 0) 
 	fprintf(stderr,"previous call %s\n",name);
@@ -220,7 +220,7 @@ void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char 
       count++;
       if ( (*O)->ret_pos != -1 ) 
 	{
-	  fprintf(stderr,"%s %s \n",message,  stack.fname);
+	  fprintf(stderr,"%s %s \n",message,  NspFname(stack));
 	  fprintf(stderr,"Stack is corrupted ret_pos(=%d) !=-1 for object at position %d ! but I go on ",
 		  (*O)->ret_pos,count);
 	  if ( name != 0) 
@@ -244,7 +244,7 @@ int nsp_interfaces(int i, int num, Stack stack, int rhs, int opt, int lhs)
   static char buf[128];
   nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
   first=1; 
-  strcpy(buf,stack.fname);
+  strcpy(buf,NspFname(stack));
   
   if ( i >= DYN_INTERF_START ) 
     {
@@ -297,7 +297,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
   static char buf[128];
   nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf);
   first=1; 
-  strcpy(buf,stack.fname);
+  strcpy(buf,NspFname(stack));
   
   /** Standard interfaces **/
   ret = (*f)(stack,rhs,opt,lhs);
@@ -337,9 +337,9 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /*   int count = 1,j; */
  
 /*   /\* DEBUG XXXX *\/ */
-/*   if ( stack.fname == NULL) */
+/*   if ( NspFname(stack) == NULL) */
 /*     { */
-/*       stack.fname = ""; */
+/*       NspFname(stack) = ""; */
 /*     } */
  
 /*   /\* reordering and cleaning the stack *\/ */
@@ -352,7 +352,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /*        * which are authorized to return a Hobj. Maybe not a good idea to */
 /*        * keep special cases here. */
 /*        *\/ */
-/*       if ( IsHobj(O) && strcmp(stack.fname,"handler") != 0 && strcmp(stack.fname,"resize2vect_h") != 0) */
+/*       if ( IsHobj(O) && strcmp(NspFname(stack),"handler") != 0 && strcmp(NspFname(stack),"resize2vect_h") != 0) */
 /* 	{ */
 /* 	  int k; */
 /* 	  /\* O is of type pointer *\/ */
@@ -362,7 +362,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /* 	      if ( O->ret_pos != -1 ) */
 /* 		{ */
 /* 		  /\* XXXX should not get there *\/ */
-/* 		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", stack.fname); */
+/* 		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", NspFname(stack)); */
 /* 		  exit(1); */
 /* 		} */
 /* 	      /\* O is an optional argument,O2 is the value *\/ */
@@ -376,7 +376,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /* 	      if ( O->ret_pos != -1 ) */
 /* 		{ */
 /* 		  /\* XXXX should not get there *\/ */
-/* 		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", stack.fname); */
+/* 		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", NspFname(stack)); */
 /* 		  exit(1); */
 /* 		} */
 /* 	      /\* O points to O2 *\/ */
@@ -414,7 +414,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /*   O1 = stack.S + stack.first; */
 /*   for ( j = 1 ; j <= ret ; j++) */
 /*     if ( (*O1++)->ret_pos != j ) { */
-/*       fprintf(stderr,"Something wrong at end of %s \n",  stack.fname); */
+/*       fprintf(stderr,"Something wrong at end of %s \n",  NspFname(stack)); */
 /*       fprintf(stderr,"returned arguments are not in correct order \n"); */
 /*       show_returned_positions(stack,1); */
 /*       exit(1); */
@@ -454,7 +454,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /*     { */
 /*       if ( (*O1)->ret_pos != -1 ) */
 /* 	{ */
-/* 	  fprintf(stderr,"Something wrong before entering interface for %s \n",  stack.fname); */
+/* 	  fprintf(stderr,"Something wrong before entering interface for %s \n",  NspFname(stack)); */
 /* 	  fprintf(stderr,"Stack is corrupted ret_pos !=-1 ! but I go on "); */
 /* 	  break; */
 /* 	} */
@@ -476,7 +476,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /*       if (obj1 == NULLOBJ) */
 /* 	{ */
 /* 	  fprintf(stderr,"Error Something wrong in interface %s you have a hole in returned values\n", */
-/* 		  stack.fname); */
+/* 		  NspFname(stack)); */
 /* 	  exit(1); */
 /* 	} */
 	
@@ -486,7 +486,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /*       if ( obj2->ret_pos == obj1->ret_pos ) */
 /* 	{ */
 /* 	  fprintf(stderr,"Error Something wrong in interface %s return value %d is used twice\n", */
-/* 		  stack.fname,obj2->ret_pos); */
+/* 		  NspFname(stack),obj2->ret_pos); */
 /* 	  exit(1); */
 /* 	} */
 /*       /\* perform the swap *\/ */
@@ -503,9 +503,9 @@ int  reorder_stack(Stack stack, int ret)
   int count=0, k, kn, ret_pos, must_be_reordered=0;
  
   /* DEBUG XXXX */
-  if ( stack.fname == NULL)
+  if ( NspFname(stack) == NULL)
     {
-      stack.fname = "";
+      NspFname(stack) = "";
     }
  
   /* reordering and cleaning the stack */
@@ -518,7 +518,7 @@ int  reorder_stack(Stack stack, int ret)
        * which are authorized to return a Hobj. Maybe not a good idea to
        * keep special cases here.
        */
-      if ( IsHobj(O) && strcmp(stack.fname,"handler") != 0 && strcmp(stack.fname,"resize2vect_h") != 0)
+      if ( IsHobj(O) && strcmp(NspFname(stack),"handler") != 0 && strcmp(NspFname(stack),"resize2vect_h") != 0)
 	{
 	  /* O is of type pointer */
 	  O2= ((NspHobj *) O)->O;
@@ -527,7 +527,7 @@ int  reorder_stack(Stack stack, int ret)
 	      if ( O->ret_pos != -1 )
 		{
 		  /* XXXX should not get there */
-		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", stack.fname);
+		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", NspFname(stack));
 		  exit(1);
 		}
 	      /* O is an optional argument,O2 is the value */
@@ -541,7 +541,7 @@ int  reorder_stack(Stack stack, int ret)
 	      if ( O->ret_pos != -1 )
 		{
 		  /* XXXX should not get there */
-		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", stack.fname);
+		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", NspFname(stack));
 		  exit(1);
 		}
 	      /* O points to O2 */
@@ -592,7 +592,7 @@ int  reorder_stack(Stack stack, int ret)
 		{
 		  if ( kn <= k || kn > count || (knn = obj[kn]->ret_pos)==-1 )
 		    {
-		      fprintf(stderr,"Something wrong at end of %s \n",  stack.fname);
+		      fprintf(stderr,"Something wrong at end of %s \n",  NspFname(stack));
 		      fprintf(stderr,"duplication or hole in returned arguments numbering\n");
 		      show_returned_positions(stack,1);
 		      exit(1);

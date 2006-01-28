@@ -4226,7 +4226,7 @@ _wrap_pango_layout_set_markup_with_accel(NspGObject *self, Stack stack,int rhs,i
   pychr = (Nsp_UNICODE)accel_char;
   return NspUnicode_FromUnicode(&pychr, 1);
   */
-  Scierror("%s: To be done \n",stack.fname); 
+  Scierror("%s: To be done \n",NspFname(stack)); 
   return RET_BUG; 
 }
 #line 4233 "pango.c"
@@ -4958,7 +4958,7 @@ _wrap_pango_parse_markup( Stack stack,int rhs,int opt,int lhs)
   g_free(text);
   return py_ret;
   */
-  Scierror("%s: To be done \n",stack.fname); 
+  Scierror("%s: To be done \n",NspFname(stack)); 
   return RET_BUG; 
 }
 #line 4965 "pango.c"

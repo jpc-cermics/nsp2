@@ -67,7 +67,7 @@ static void nsp_initmex(char *name,int *lfirst,int lhs,mxArray *plhs[], int rhs,
     }
   stack = SciStack;
   stack.first = *lfirst;
-  stack.fname = name;
+  NspFname(stack) = name;
   for (k = 1; k <= rhs ; ++k) 
     {
       NspObject *Obj;
@@ -137,7 +137,7 @@ int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
     {
       return RET_BUG;
     }
-  nsp_initmex(stack.fname,&stack.first,lhs, plhs, rhs, prhs);
+  nsp_initmex(NspFname(stack),&stack.first,lhs, plhs, rhs, prhs);
   mexFunction(lhs, plhs, rhs, prhs);
   if ( lhs <= 0 && plhs[0] != NULL ) lhs = 1;
   nsp_endmex(stack,lhs, plhs, rhs, prhs);

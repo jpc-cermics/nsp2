@@ -121,14 +121,14 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
   if ( index == FILE_VOLUMES) {
     if ( rhs != 1 ) {
       Scierror("Error: function %s, wrong number of arguments for volume option\n",
-	       stack.fname);
+	       NspFname(stack));
       return RET_BUG;
     }
     return TclpListVolumes(stack,1);
   }
     
   if ( rhs < 2 ) {
-    Scierror("Error: function %s, Not enough arguments \n",stack.fname);
+    Scierror("Error: function %s, Not enough arguments \n",NspFname(stack));
     return RET_BUG;
   }
     
@@ -604,7 +604,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 
  not3Args:
   Scierror("Error: function %s, wrong number of argument for option (%s)\n",
-	   stack.fname,errorString);
+	   NspFname(stack),errorString);
   result = RET_BUG;
   goto done;
 }

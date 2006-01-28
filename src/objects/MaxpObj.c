@@ -422,7 +422,7 @@ NspMaxpMatrix *GetRealMpMatCopy_G(Stack stack, int i)
     {
       Scierror("\t%s", ArgPosition(i));
       ArgName(stack,i);
-      Scierror(" of function %s should not be complex\n",stack.fname);
+      Scierror(" of function %s should not be complex\n",NspFname(stack));
       return NULLMAXPMAT;
     }
   return M;
@@ -442,7 +442,7 @@ NspMaxpMatrix *GetRealMpMat_G(Stack stack, int i)
     {
       Scierror("\t%s", ArgPosition(i));
       ArgName(stack,i);
-      Scierror(" of function %s should not be complex\n",stack.fname);
+      Scierror(" of function %s should not be complex\n",NspFname(stack));
       return NULLMAXPMAT;
     }
   return M;
@@ -874,7 +874,7 @@ static int int_mp_maxi(Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F
   NspMatrix *M1,*Imax;
   if ( rhs < 1) 
     { 
-      Scierror("Error:\t Rhs must be >= 1 for function %s\n",stack.fname);
+      Scierror("Error:\t Rhs must be >= 1 for function %s\n",NspFname(stack));
       return RET_BUG;
     }
   CheckLhs(1,2);
@@ -1277,7 +1277,7 @@ int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
       if ((B = GetRealMpMat(stack,2))== NULLMAXPMAT) return RET_BUG;
       if ( B->mn != 2) 
 	{
-	  Scierror("Error:\t second argument of function %s\n",stack.fname);
+	  Scierror("Error:\t second argument of function %s\n",NspFname(stack));
 	  Scierror("\texpecting a vector of size 2\n");
 	  return RET_BUG;
 	}
@@ -1361,7 +1361,7 @@ int int_mpconcatr(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      Scierror("Error:\t second argument of function %s\n",stack.fname);
+      Scierror("Error:\t second argument of function %s\n",NspFname(stack));
       Scierror("\tshould be of type Mat or MaxpMat\n");
       return RET_BUG;
     }
@@ -1462,7 +1462,7 @@ static int int_mp_concat_m(Stack stack, int rhs, int opt, int lhs, Fconcat F)
     }
   else 
     {
-      Scierror("Error:\t first argument of function %s\n",stack.fname);
+      Scierror("Error:\t first argument of function %s\n",NspFname(stack));
       Scierror("\tshould be of type Mat or MaxpMat\n");
       return RET_BUG;
     }
@@ -1476,7 +1476,7 @@ static int int_mp_concat_m(Stack stack, int rhs, int opt, int lhs, Fconcat F)
     }
   else 
     {
-      Scierror("Error:\t second argument of function %s\n",stack.fname);
+      Scierror("Error:\t second argument of function %s\n",NspFname(stack));
       Scierror("\tshould be of type Mat or MaxpMat\n");
       return RET_BUG;
     }
@@ -1989,7 +1989,7 @@ int int_mpatan2(Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT(A)->ret_pos = 1;
   if ( A->mn == 0) return 1;
   if ((B=GetRealMpMat(stack,2))== NULLMAXPMAT) return RET_BUG;
-  CheckSameDims(stack.fname,1,2,A,B);
+  CheckSameDims(NspFname(stack),1,2,A,B);
   if (nsp_mat_atan2((NspMatrix *) A,(NspMatrix *)B) == FAIL ) return RET_BUG;
   return 1;
 }
@@ -2014,7 +2014,7 @@ int int_mppolar(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      Scierror("Error: %s Mat1 & Mat2 don't have same size \n",stack.fname);
+      Scierror("Error: %s Mat1 & Mat2 don't have same size \n",NspFname(stack));
       return RET_BUG;
     }
   return 1;
@@ -2041,7 +2041,7 @@ int int_mpiand(Stack stack, int rhs, int opt, int lhs)
 	}
       else 
 	{
-	  Scierror("Error: %s Mat1 & Mat2 don't have same size \n",stack.fname);
+	  Scierror("Error: %s Mat1 & Mat2 don't have same size \n",NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -2076,7 +2076,7 @@ int int_mpior(Stack stack, int rhs, int opt, int lhs)
 	}
       else 
 	{
-	  Scierror("Error: %s Mat1 & Mat2 don't have same size \n",stack.fname);
+	  Scierror("Error: %s Mat1 & Mat2 don't have same size \n",NspFname(stack));
 	  return RET_BUG;
 	}
     }

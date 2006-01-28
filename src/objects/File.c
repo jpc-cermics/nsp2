@@ -1775,7 +1775,7 @@ static int P_GetScalarDouble(Stack stack,int first_arg,int n_args,int col,int li
   if (obj_col == -1)
     {
       Scierror("%s: not enough arguments expecting at least %d columns\n",
-	       stack.fname,col+1);
+	       NspFname(stack),col+1);
       return FAIL;
     }
   /* we must check that object at position i is a Scalar Matrix 
@@ -1793,7 +1793,7 @@ static int P_GetScalarDouble(Stack stack,int first_arg,int n_args,int col,int li
     }
   else 
     {
-      Scierror("%s: item %d should be a scalar or boolean matrix\n",stack.fname,i);
+      Scierror("%s: item %d should be a scalar or boolean matrix\n",NspFname(stack),i);
       return FAIL;
     }
   return OK;
@@ -1818,7 +1818,7 @@ static int P_GetScalarInt(Stack stack,int first_arg,int n_args,int col,int line,
   if (obj_col == -1)
     {
       Scierror("%s: not enough arguments expecting at least %d columns\n",
-	       stack.fname,col+1);
+	       NspFname(stack),col+1);
       return FAIL;
     }
   /* we must check that object at position i is a Scalar Matrix 
@@ -1849,7 +1849,7 @@ static char * P_GetString(Stack stack,int first_arg,int n_args,int col,int line)
   if (obj_col == -1)
     {
       Scierror("%s: not enough arguments expecting at least %d columns\n",
-	       stack.fname,col+1);
+	       NspFname(stack),col+1);
       return NULL;
     }
   /* we must check that object at position i is a Scalar Matrix 

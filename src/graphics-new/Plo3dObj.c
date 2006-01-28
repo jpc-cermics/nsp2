@@ -160,7 +160,7 @@ void **obj3d_from_list(Stack stack,NspList *L,int alloc_objs,int *err,int *nf,in
       Obj = malloc( nbObj*sizeof(Obj3d) );
       if (! Obj)
 	{ 
-	  Scierror("%s: malloc failure \n",stack.fname);
+	  Scierror("%s: malloc failure \n",NspFname(stack));
 	  return NULL;
 	}
       init_Obj3d((Obj3d *) Obj, nbObj);
@@ -243,7 +243,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
 			     int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
 {
   NspList *Lobj = Lo;
-  Stack stack; /* just used for messages i.e stack.fname */
+  Stack stack; /* just used for messages i.e NspFname(stack) */
   nsp_box_3d box;
   double x[2],y[2],zz[2],zzmin,zzmax;
   int two=2;
@@ -265,7 +265,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
     }
 #endif
 
-  stack.fname ="drawobj";
+  NspFname(stack) ="drawobj";
   flagx = Xgc->graphic_engine->xget_last(Xgc);
   foreground_color = flagx+1;
   background_color = flagx+2;
@@ -353,7 +353,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
 				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
 {
   NspList *Lobj = Lo;
-  Stack stack; /* just used for messages i.e stack.fname */
+  Stack stack; /* just used for messages i.e NspFname(stack) */
   nsp_box_3d box;
   double x[2],y[2],zz[2],zzmin,zzmax;
   double Box[6]={ebox[0],ebox[2],ebox[4],ebox[1],ebox[3],ebox[5]};
@@ -361,7 +361,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
   int k, flagx, nf=0,err=0,nbObj, two=2;
   double lim[3];
   Plot3dBox *B;
-  stack.fname ="drawobj";
+  NspFname(stack) ="drawobj";
   flagx = Xgc->graphic_engine->xget_last(Xgc);
   foreground_color = flagx+1;
   background_color = flagx+2;

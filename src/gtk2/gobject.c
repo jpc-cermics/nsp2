@@ -390,17 +390,17 @@ int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
 
   if (!object_type)
     {
-      Scierror("%s: first argument is not a GType \n", stack.fname);
+      Scierror("%s: first argument is not a GType \n", NspFname(stack));
       return RET_BUG; 
     }
   if (G_TYPE_IS_ABSTRACT(object_type)) {
     Scierror("%s: cannot create instance of abstract (non-instantiable) type `%s'\n",
-	     stack.fname,
+	     NspFname(stack),
 	     g_type_name(object_type));
     return RET_BUG; 
   }
   if ((class = g_type_class_ref (object_type)) == NULL) {
-    Scierror("%s: could not get a reference to type class\n",stack.fname);
+    Scierror("%s: could not get a reference to type class\n",NspFname(stack));
     return RET_BUG;
   }
 
@@ -677,7 +677,7 @@ static int nspgobject_set_data(NspGObject *self, Stack stack,int rhs,int opt,int
   int i;
   if ( rhs - opt != 0 ) 
     {
-      Scierror("%s: arguments must be given as name=val\n",stack.fname);
+      Scierror("%s: arguments must be given as name=val\n",NspFname(stack));
       return RET_BUG;
     }
   for ( i = 1 ; i <= rhs ; i++) 

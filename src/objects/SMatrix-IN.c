@@ -976,7 +976,7 @@ static int int_smxascii2smat(Stack stack, int rhs, int opt, int lhs)
     {
       Scierror("\t%s", ArgPosition(1));
       ArgName(stack,1);
-      Scierror(" of function %s should not be complex\n",stack.fname);
+      Scierror(" of function %s should not be complex\n",NspFname(stack));
       return RET_BUG;
     }
   if (( B =nsp_ascii_to_smatrix(A)) == NULLSMAT ) return RET_BUG;

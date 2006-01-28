@@ -60,7 +60,7 @@ int int_cellstopixbuf(Stack stack, int rhs, int opt, int lhs)
   if ((C= GetImageCells(stack,1)) == NULL) return RET_BUG;
   if ( C->mn != 3 && C->mn != 4) 
     {
-      Scierror( "Error: %s cells must contains 3 (RGB) or 4 (RGBA) matrices \n", stack.fname);
+      Scierror( "Error: %s cells must contains 3 (RGB) or 4 (RGBA) matrices \n", NspFname(stack));
       return RET_BUG;
     }
   width = ((NspMatrix *) C->objs[0])->n;
@@ -68,7 +68,7 @@ int int_cellstopixbuf(Stack stack, int rhs, int opt, int lhs)
   pixbuf_mode =  GDK_COLORSPACE_RGB;
   if ((pix = gdk_pixbuf_new(pixbuf_mode,FALSE, 8, width,height)) == NULL) 
     {
-      Scierror("Error: %f error in pixbuf new\n",stack.fname);
+      Scierror("Error: %f error in pixbuf new\n",NspFname(stack));
       return RET_BUG;
     }
   rowstride = gdk_pixbuf_get_rowstride (pix);

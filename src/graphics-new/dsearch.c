@@ -64,7 +64,7 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
     {
       if ( (x=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
       if ( (val=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-      CheckVector(stack.fname,2,val);
+      CheckVector(NspFname(stack),2,val);
       flagstr = 0; m_x = x->m; n_x = x->n;
       m_occ = val->m;  n_occ = val->n; mn_val = val->mn;
     }
@@ -72,13 +72,13 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
     {
       if ( (xstr=GetSMat(stack,1)) == NULLSMAT ) return RET_BUG;
       if ( (valstr=GetSMat(stack,2)) == NULLSMAT ) return RET_BUG;
-      CheckVector(stack.fname,2,valstr);
+      CheckVector(NspFname(stack),2,valstr);
       flagstr = 1; m_x = xstr->m; n_x = xstr->n;
       m_occ = valstr->m; n_occ = valstr->n; mn_val = valstr->mn;
     }
   else
     {
-      Scierror("Error: first argument must be of type real or string in function %s\n",stack.fname);
+      Scierror("Error: first argument must be of type real or string in function %s\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -93,7 +93,7 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 	match_flag = 'v';
       else
 	{
-	  Scierror("Error: bad match value only 'i' or 'v' are allowed in function %s\n",stack.fname);
+	  Scierror("Error: bad match value only 'i' or 'v' are allowed in function %s\n",NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -101,14 +101,14 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
   if ( interval_type != NULL )
     {
       if (match_flag == 'v' )
-	Sciprintf("Warning: with match='v' the interval option is not used in function %s\n",stack.fname);
+	Sciprintf("Warning: with match='v' the interval option is not used in function %s\n",NspFname(stack));
       if ( strcmp(interval_type,"[--)") == 0 )
 	interval_flag = CLOSED_LEFT;
       else if ( strcmp(interval_type,"(--]") == 0 )
 	interval_flag = CLOSED_RIGHT;
       else
 	{
-	  Scierror("Error: bad interval value only '[--)' or '(--]' are allowed in function %s\n",stack.fname);
+	  Scierror("Error: bad interval value only '[--)' or '(--]' are allowed in function %s\n",NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -128,7 +128,7 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
       for ( i = 0 ; i < mn_val-1 ; i++ ) 
 	if ( ! ( val->R[i] < val->R[i+1]) )
 	  {
-	    Scierror("Error: second argument in function %s\n",stack.fname);
+	    Scierror("Error: second argument in function %s\n",NspFname(stack));
 	    Scierror("\tis not strictly increasing \n");
 	    return RET_BUG;
 	  }
@@ -138,7 +138,7 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
       for ( i = 0 ; i < mn_val-1 ; i++ ) 
 	if ( strcmp(valstr->S[i],valstr->S[i+1]) >= 0 )
 	  {
-	    Scierror("Error: second argument in function %s\n",stack.fname);
+	    Scierror("Error: second argument in function %s\n",NspFname(stack));
 	    Scierror("\tis not strictly increasing \n");
 	    return RET_BUG;
 	  }
@@ -148,7 +148,7 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
     {
       if ( mn_val <= 1 ) 
 	{ 
-	  Scierror("%s: second argument should be of size > 1 when match='i' \n",stack.fname);
+	  Scierror("%s: second argument should be of size > 1 when match='i' \n",NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -156,7 +156,7 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
     {
       if ( mn_val < 1 ) 
 	{ 
-	  Scierror("%s: second argument should be of size >= 1 when match='v' \n",stack.fname);
+	  Scierror("%s: second argument should be of size >= 1 when match='v' \n",NspFname(stack));
 	  return RET_BUG;
 	}
     }

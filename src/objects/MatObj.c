@@ -505,7 +505,7 @@ GetRealMatCopy_G (Stack stack, int i)
     {
       Scierror ("\t%s", ArgPosition (i));
       ArgName (stack, i);
-      Scierror (" of function %s should not be complex\n", stack.fname);
+      Scierror (" of function %s should not be complex\n", NspFname(stack));
       return NULLMAT;
     }
   return M;
@@ -527,7 +527,7 @@ GetRealMat_G (Stack stack, int i)
     {
       Scierror ("\t%s", ArgPosition (i));
       ArgName (stack, i);
-      Scierror (" of function %s should not be complex\n", stack.fname);
+      Scierror (" of function %s should not be complex\n", NspFname(stack));
       return NULLMAT;
     }
   return M;
@@ -608,7 +608,7 @@ GetScalarInt (Stack stack, int i, int * val)
     {
       Scierror ("Error:\t%s", ArgPosition (i));
       ArgName (stack, i);
-      Scierror (" of function %s should be an integer\n", stack.fname);
+      Scierror (" of function %s should be an integer\n", NspFname(stack));
       return FAIL;
     }
   *val = (int) aint (M->R[0]);
@@ -651,7 +651,7 @@ GetScalarDouble (Stack stack, int i, double *val)
     {
       Scierror ("Error:\t%s", ArgPosition (i));
       ArgName (stack, i);
-      Scierror (" of function %s should be a double\n", stack.fname);
+      Scierror (" of function %s should be a double\n", NspFname(stack));
       return FAIL;
     }
   *val = M->R[0];
@@ -1123,7 +1123,7 @@ int_mxlinspace (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ((last = GetRealMat (stack, 2)) == NULLMAT)
     return RET_BUG;
-  CheckSameDims (stack.fname, 1, 2, first, last);
+  CheckSameDims (NspFname(stack), 1, 2, first, last);
   if (GetScalarInt (stack, 3, &n) == FAIL)
     return RET_BUG;
   if ((M =
@@ -1150,7 +1150,7 @@ int_mxlogspace (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ((last = GetRealMat (stack, 2)) == NULLMAT)
     return RET_BUG;
-  CheckSameDims (stack.fname, 1, 2, first, last);
+  CheckSameDims (NspFname(stack), 1, 2, first, last);
   if (GetScalarInt (stack, 3, &n) == FAIL)
     return RET_BUG;
   if ((M =
@@ -1447,7 +1447,7 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
   NspMatrix *A, *M, *Imax, *B;
   if (rhs < 1)
     {
-      Scierror ("Error:\t Rhs must be >= 1 for function %s\n", stack.fname);
+      Scierror ("Error:\t Rhs must be >= 1 for function %s\n", NspFname(stack));
       return RET_BUG;
     }
   CheckLhs (1, 2);
@@ -1539,7 +1539,7 @@ int_mxminmax(Stack stack, int rhs, int opt, int lhs)
 
   if ( rhs < 1  ||  rhs > 2 )
     {
-      Scierror ("Error:\t Rhs must be 1 or 2 for function %s\n", stack.fname);
+      Scierror ("Error:\t Rhs must be 1 or 2 for function %s\n", NspFname(stack));
       return RET_BUG;
     }
   CheckLhs (2, 4);
@@ -1738,7 +1738,7 @@ int_mxrand (Stack stack, int rhs, int opt, int lhs)
 	{
 	  Scierror
 	    ("Error\t: function %s, First argument must be a Matrix or a String\n",
-	     stack.fname);
+	     NspFname(stack));
 	  return RET_BUG;
 	}
       break;
@@ -2106,7 +2106,7 @@ int_mxmatrix (Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
       if (B->mn != 2)
 	{
-	  Scierror ("Error:\t second argument of function %s\n", stack.fname);
+	  Scierror ("Error:\t second argument of function %s\n", NspFname(stack));
 	  Scierror ("\texpecting a vector of size 2\n");
 	  return RET_BUG;
 	}
@@ -3197,7 +3197,7 @@ int_mxatan2 (Stack stack, int rhs, int opt, int lhs)
     }
   if ((B = GetRealMat (stack, 2)) == NULLMAT)
     return RET_BUG;
-  CheckSameDims (stack.fname, 1, 2, A, B);
+  CheckSameDims (NspFname(stack), 1, 2, A, B);
   if (nsp_mat_atan2 (A, B) == FAIL)
     return RET_BUG;
   return 1;
@@ -3336,7 +3336,7 @@ int_mxpolar (Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      Scierror ("Error: %s Mat1 & Mat2 don't have same size \n", stack.fname);
+      Scierror ("Error: %s Mat1 & Mat2 don't have same size \n", NspFname(stack));
       return RET_BUG;
     }
   return 1;
@@ -3372,7 +3372,7 @@ int_mxiand (Stack stack, int rhs, int opt, int lhs)
       else
 	{
 	  Scierror ("Error: %s Mat1 & Mat2 don't have same size \n",
-		    stack.fname);
+		    NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -3418,7 +3418,7 @@ int_mxior (Stack stack, int rhs, int opt, int lhs)
       else
 	{
 	  Scierror ("Error: %s Mat1 & Mat2 don't have same size \n",
-		    stack.fname);
+		    NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -3949,7 +3949,7 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
 
   if ( HMat1->m != HMat2->m )  /* FIXME : the scalar case must be treated one day */
     {
-      Scierror("Error:\tIncompatible dimensions (in %s)\n", stack.fname);
+      Scierror("Error:\tIncompatible dimensions (in %s)\n", NspFname(stack));
       return RET_BUG;
     }
 
@@ -4031,7 +4031,7 @@ int_mxdiv (Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      Scierror ("%s: / not implemented for non 1x1 matrices\n", stack.fname);
+      Scierror ("%s: / not implemented for non 1x1 matrices\n", NspFname(stack));
       return RET_BUG;
     }
   return 1;

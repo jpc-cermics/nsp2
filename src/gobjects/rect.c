@@ -375,7 +375,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
     {
     case 2 :
       if ((M1=GetRealMat(stack,2)) == NULLMAT ) return FAIL;
-      CheckLength(stack.fname,1,M1,4);
+      CheckLength(NspFname(stack),1,M1,4);
       *val = M1->R;
       break;
     case 5 :
@@ -386,7 +386,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
       *val = l;
       break;
     default :
-      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\r\n",stack.fname,rhs);
+      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\r\n",NspFname(stack),rhs);
       return FAIL;
     }
   return OK;
@@ -463,7 +463,7 @@ int int_grect_translate(void  *self,Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(0,1);
   if ((M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,2,M,2);
+  CheckLength(NspFname(stack),2,M,2);
   RectTranslate((NspRect *) self,M->R);
   NSP_OBJECT(self)->ret_pos = 1;
   return 1;
@@ -477,7 +477,7 @@ int int_grect_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(-1,1);
   if ((M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,2,M,2);
+  CheckLength(NspFname(stack),2,M,2);
   RectResize((NspRect *) self,M->R);
   NSP_OBJECT(self)->ret_pos = 1;
   return 1;

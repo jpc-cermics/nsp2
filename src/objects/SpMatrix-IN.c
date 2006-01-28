@@ -68,14 +68,14 @@ static int int_spsparse(Stack stack, int rhs, int opt, int lhs)
   if (RC->mn != 0 &&  RC->n != 2)
     {
       Scierror("Error: first argument of function %s must have 2 columns\n\n",
-	       stack.fname);
+	       NspFname(stack));
       return RET_BUG;
     }
   if ((Values = GetMat(stack,2)) == NULLMAT) return RET_BUG;
   if ( RC->m != Values->mn  ) 
     {
       Scierror("Error: first and second arguments of function %s have incompatible sizes\n",
-	       stack.fname);
+	       NspFname(stack));
       return RET_BUG;
     }
   if ( rhs == 3 )
@@ -865,7 +865,7 @@ static int int_sp_maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax F)
   NspMatrix *Imax;
   if ( rhs < 1) 
     { 
-      Scierror("Error:\t Rhs must be >= 1 for function %s\n",stack.fname);
+      Scierror("Error:\t Rhs must be >= 1 for function %s\n",NspFname(stack));
       return RET_BUG;
     }
   CheckLhs(1,2);

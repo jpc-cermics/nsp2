@@ -414,14 +414,14 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&fx,&fy,&opts,&arfact,&rect,&strf) == FAIL) return RET_BUG;
 
-  CheckSameDims(stack.fname,3,4,fx,fy);
-  CheckDimProp(stack.fname,2,3, y->mn != fx->n);
-  CheckDimProp(stack.fname,1,3, x->mn != fx->m);
+  CheckSameDims(NspFname(stack),3,4,fx,fy);
+  CheckDimProp(NspFname(stack),2,3, y->mn != fx->n);
+  CheckDimProp(NspFname(stack),1,3, x->mn != fx->m);
 
   if ( fx->mn == 0) { return 0;} 
 
-  if (( R = check_rect(stack,stack.fname,"rect",rect)) == NULL)  return RET_BUG;
-  if (( strf = check_strf(stack,stack.fname,"strf",strf))==NULL) return RET_BUG;
+  if (( R = check_rect(stack,NspFname(stack),"rect",rect)) == NULL)  return RET_BUG;
+  if (( strf = check_strf(stack,NspFname(stack),"strf",strf))==NULL) return RET_BUG;
   if ( R == rect_def ) strf[1]='5';
 
   Xgc=nsp_check_graphic_context();
@@ -433,13 +433,13 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,
 
 int int_champ( Stack stack, int rhs, int opt, int lhs)
 {
-  if (rhs <= 0) return sci_demo(stack.fname,"champ(1:10,1:10,rand(10,10),rand(10,10));",1);
+  if (rhs <= 0) return sci_demo(NspFname(stack),"champ(1:10,1:10,rand(10,10),rand(10,10));",1);
   return int_champ_G( stack, rhs,opt,lhs, nsp_champ);
 }
 
 int int_champ1( Stack stack, int rhs, int opt, int lhs)
 {
-  if (rhs <= 0) return sci_demo(stack.fname,"champ1(1:10,1:10,rand(10,10),rand(10,10));",1);
+  if (rhs <= 0) return sci_demo(NspFname(stack),"champ1(1:10,1:10,rand(10,10),rand(10,10));",1);
   return int_champ_G( stack, rhs, opt, lhs,nsp_champ1);
 }
 
@@ -466,13 +466,13 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
 		      { "zlevel",s_double,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   
-  if (rhs <= 0) { return sci_demo(stack.fname,"contour(1:5,1:10,rand(5,10),5);",1); }
+  if (rhs <= 0) { return sci_demo(NspFname(stack),"contour(1:5,1:10,rand(5,10),5);",1); }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&nz,&opts,&alpha,&Mebox,&Mflag,&leg,&theta,&zlev) == FAIL) return RET_BUG;
   
 
-  CheckVector(stack.fname,1,x);
-  CheckVector(stack.fname,2,y);
+  CheckVector(NspFname(stack),1,x);
+  CheckVector(NspFname(stack),2,y);
 
   if ( IsNspPList(fobj) )
     {
@@ -491,18 +491,18 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
   else
     {
       /* here we could accept list(z,colors) to emulate scilab code */
-      Scierror("%s: third argument should be a real matrix or a function\n",stack.fname);
+      Scierror("%s: third argument should be a real matrix or a function\n",NspFname(stack));
       return RET_BUG;
     }
 
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
-    Scierror("%s: third argument is a vector, expecting a matrix \r\n",stack.fname);
+    Scierror("%s: third argument is a vector, expecting a matrix \r\n",NspFname(stack));
     return RET_BUG;
   }
 
-  CheckDimProp(stack.fname,1,3, x->mn != z->m); 
-  CheckDimProp(stack.fname,2,3, y->mn != z->n); 
+  CheckDimProp(NspFname(stack),1,3, x->mn != z->m); 
+  CheckDimProp(NspFname(stack),2,3, y->mn != z->n); 
 
   if ( nz->mn == 0 ) return 0;
   if ( nz->mn == 1 ) {
@@ -513,8 +513,8 @@ int int_contour( Stack stack, int rhs, int opt, int lhs)
 
   if ( leg == NULL) leg = "";
 
-  if (( iflag=check_iflag(stack,stack.fname,"flag",Mflag,3)) == NULL) return RET_BUG;
-  if (( ebox=check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
+  if (( iflag=check_iflag(stack,NspFname(stack),"flag",Mflag,3)) == NULL) return RET_BUG;
+  if (( ebox=check_ebox(stack,NspFname(stack),"ebox",Mebox)) == NULL) return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
@@ -549,22 +549,22 @@ int int_check2d(Stack stack,NspMatrix *Mstyle,int **istyle,int ns,
 		int frameflag,int axesflag,char **logflags)
 {
   char *leg1;
-  if (( *istyle = check_style(stack,stack.fname,"style",Mstyle,ns))== NULL) return RET_BUG;
-  if (( *strf = check_strf(stack,stack.fname,"strf",*strf))==NULL) return RET_BUG;
-  if (( leg1 = check_legend(stack,stack.fname,"leg",*leg))==NULL) return RET_BUG;
-  if (( *leg_pos_i = check_legend_pos(stack,stack.fname,"leg",*leg_pos))== -1 ) return RET_BUG;
-  if (( *rect = check_rect(stack,stack.fname,"rect",Mrect))==NULL) return RET_BUG;
-  if (( *nax = check_nax(stack,stack.fname,"nax",Mnax))==NULL) return RET_BUG;
-  if (( *logflags= check_logflags(stack,stack.fname,"logflag",*logflags))==NULL) return RET_BUG;
+  if (( *istyle = check_style(stack,NspFname(stack),"style",Mstyle,ns))== NULL) return RET_BUG;
+  if (( *strf = check_strf(stack,NspFname(stack),"strf",*strf))==NULL) return RET_BUG;
+  if (( leg1 = check_legend(stack,NspFname(stack),"leg",*leg))==NULL) return RET_BUG;
+  if (( *leg_pos_i = check_legend_pos(stack,NspFname(stack),"leg",*leg_pos))== -1 ) return RET_BUG;
+  if (( *rect = check_rect(stack,NspFname(stack),"rect",Mrect))==NULL) return RET_BUG;
+  if (( *nax = check_nax(stack,NspFname(stack),"nax",Mnax))==NULL) return RET_BUG;
+  if (( *logflags= check_logflags(stack,NspFname(stack),"logflag",*logflags))==NULL) return RET_BUG;
 
   if ( frameflag < -1 || frameflag > 8 ) 
     {
-      Scierror("%s: frame must be in the range [0,8]\r\n",stack.fname);
+      Scierror("%s: frame must be in the range [0,8]\r\n",NspFname(stack));
       return RET_BUG;
     }   
   if ( axesflag < -1 || axesflag > 5 ) 
     {
-      Scierror("%s: axes must be in the range [0,5]\r\n",stack.fname);
+      Scierror("%s: axes must be in the range [0,5]\r\n",NspFname(stack));
       return RET_BUG;
     }   
 
@@ -611,20 +611,20 @@ int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
   int leg_posi;
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
 
-  if (rhs <= 0) {return  sci_demo(stack.fname,"contour2d(1:5,1:10,rand(5,10),5);",1); }
+  if (rhs <= 0) {return  sci_demo(NspFname(stack),"contour2d(1:5,1:10,rand(5,10),5);",1); }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&nz,&opts_2d,&axes,&frame,&leg,&leg_pos,&logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
 
-  CheckVector(stack.fname,1,x);
-  CheckVector(stack.fname,2,y);
+  CheckVector(NspFname(stack),1,x);
+  CheckVector(NspFname(stack),2,y);
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
-    Scierror("%s: third argument is a vector, expecting a matrix \r\n",stack.fname);
+    Scierror("%s: third argument is a vector, expecting a matrix \r\n",NspFname(stack));
     return RET_BUG;
   }
 
-  CheckDimProp(stack.fname,1,3, x->mn != z->m); 
-  CheckDimProp(stack.fname,2,3, y->mn != z->n); 
+  CheckDimProp(NspFname(stack),1,3, x->mn != z->m); 
+  CheckDimProp(NspFname(stack),2,3, y->mn != z->n); 
 
   /* XXX could be among the optional args */ 
 
@@ -667,16 +667,16 @@ int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
   if ((y = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
   if ((z = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
 
-  CheckVector(stack.fname,1,x);
-  CheckVector(stack.fname,2,y);
+  CheckVector(NspFname(stack),1,x);
+  CheckVector(NspFname(stack),2,y);
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
-    Scierror("%s: third argument is a vector, expecting a matrix \r\n",stack.fname);
+    Scierror("%s: third argument is a vector, expecting a matrix \r\n",NspFname(stack));
     return RET_BUG;
   }
 
-  CheckDimProp(stack.fname,1,3, x->mn != z->m); 
-  CheckDimProp(stack.fname,2,3, y->mn != z->n); 
+  CheckDimProp(NspFname(stack),1,3, x->mn != z->m); 
+  CheckDimProp(NspFname(stack),2,3, y->mn != z->n); 
 
   /*     number of level curves */
   if ( rhs == 4 ) 
@@ -741,24 +741,24 @@ int int_param3d( Stack stack, int rhs, int opt, int lhs)
 		      { "theta",s_double,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( rhs <= 0) {return  sci_demo(stack.fname,"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1); }
+  if ( rhs <= 0) {return  sci_demo(NspFname(stack),"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1); }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts,&alpha,&Mebox,&flag,&leg,&Mstyle,&theta) == FAIL) return RET_BUG;
 
   if ( x->mn == 0 ) return 0;
 
-  CheckSameDims(stack.fname,1,2,x,y);
-  CheckSameDims(stack.fname,1,3,x,z);
+  CheckSameDims(NspFname(stack),1,2,x,y);
+  CheckSameDims(NspFname(stack),1,3,x,z);
 
-  if (( iflag = check_param_iflag(stack,stack.fname,"flag",flag,2))==NULL) return RET_BUG;
-  if (( ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
-  if (( leg1 = check_legend_3d(stack,stack.fname,"leg",leg)) == NULL) return RET_BUG;
+  if (( iflag = check_param_iflag(stack,NspFname(stack),"flag",flag,2))==NULL) return RET_BUG;
+  if (( ebox = check_ebox(stack,NspFname(stack),"ebox",Mebox)) == NULL) return RET_BUG;
+  if (( leg1 = check_legend_3d(stack,NspFname(stack),"leg",leg)) == NULL) return RET_BUG;
 
   if ( Mstyle != NULLMAT ) 
     { 
       if ( Mstyle->mn != z->n) 
 	{
-	  Scierror("%s: style argument is too small (%d), %d values expected \n",stack.fname,Mstyle->mn, z->n);
+	  Scierror("%s: style argument is too small (%d), %d values expected \n",NspFname(stack),Mstyle->mn, z->n);
 	  return RET_BUG;
 	}
     }
@@ -834,7 +834,7 @@ int int_geom3d( Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   NspMatrix *x1,*y1,*z1;
 
-  if (rhs <= 0) { return sci_demo(stack.fname, "t=0:0.1:5*%pi,[x,y]=geom3d(sin(t),cos(t),t/10);",1);}
+  if (rhs <= 0) { return sci_demo(NspFname(stack), "t=0:0.1:5*%pi,[x,y]=geom3d(sin(t),cos(t),t/10);",1);}
 
   CheckRhs(3,3);
   CheckLhs(2,3);
@@ -843,8 +843,8 @@ int int_geom3d( Stack stack, int rhs, int opt, int lhs)
   if ((y1 = GetRealMatCopy(stack,2)) == NULLMAT) return RET_BUG;
   if ((z1 = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
 
-  CheckSameDims(stack.fname,1,2,x1,y1);
-  CheckSameDims(stack.fname,2,3,y1,z1);
+  CheckSameDims(NspFname(stack),1,2,x1,y1);
+  CheckSameDims(NspFname(stack),2,3,y1,z1);
 
   if ( x1->mn  == 0)  {  return 0;}
   Xgc=nsp_check_graphic_context();
@@ -906,7 +906,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   else
     {
       /* here we could accept list(z,colors) to emulate scilab code */
-      Scierror("%s: third argument should be a real matrix or a function\n",stack.fname);
+      Scierror("%s: third argument should be a real matrix or a function\n",NspFname(stack));
       ret= RET_BUG;
       goto end;
     }
@@ -919,7 +919,7 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
     {
       izcol = 1;
       zcol  = (int *) Mcolors->R;
-      CheckDimProp(stack.fname,3,opts[2].position, Mcolors->mn != z->mn  && Mcolors->mn != z->n );
+      CheckDimProp(NspFname(stack),3,opts[2].position, Mcolors->mn != z->mn  && Mcolors->mn != z->n );
       /* 
        *   Added by E Segre 4/5/4000. In the case where zcol is a 
        *   matrix of the same size as z, we set izcol to 2. This
@@ -930,16 +930,16 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
       if ( Mcolors->mn == z->mn ) izcol=2  ;
     }
 
-  if (( iflag = check_iflag(stack,stack.fname,"flag",Mflag,3))==NULL) 
+  if (( iflag = check_iflag(stack,NspFname(stack),"flag",Mflag,3))==NULL) 
     {
       ret= RET_BUG; goto end;
     }
-  if (( ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) 
+  if (( ebox = check_ebox(stack,NspFname(stack),"ebox",Mebox)) == NULL) 
     {
       ret= RET_BUG; goto end;
     }
 
-  if (( leg1 = check_legend_3d(stack,stack.fname,"leg",leg)) == NULL) 
+  if (( leg1 = check_legend_3d(stack,NspFname(stack),"leg",leg)) == NULL) 
     {
       ret= RET_BUG; goto end;
     }
@@ -948,17 +948,17 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
   if ( x->mn == z->mn && x->mn == z->mn && x->mn != 1) 
     {
       if (! ( x->m == y->m && y->m == z->m && x->n == y->n && y->n == z->n)) {
-	Scierror("%s: The three first arguments have incompatible length\n",stack.fname);
+	Scierror("%s: The three first arguments have incompatible length\n",NspFname(stack));
 	ret= RET_BUG; goto end;
       }
     } 
   else 
     {
-      CheckDimProp(stack.fname,1,3, x->mn != z->m); 
-      CheckDimProp(stack.fname,2,3, y->mn != z->n); 
+      CheckDimProp(NspFname(stack),1,3, x->mn != z->m); 
+      CheckDimProp(NspFname(stack),2,3, y->mn != z->n); 
       if ( x->mn  <= 1 || y->mn <= 1 ) 
 	{
-	  Scierror("%s: first and second arguments should be of size >= 2\n",stack.fname);
+	  Scierror("%s: first and second arguments should be of size >= 2\n",NspFname(stack));
 	  ret= RET_BUG; goto end;
 	}
     }
@@ -1062,7 +1062,7 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
 	else 
 	  {
 	    if ( nret == 1) nsp_object_destroy(&nsp_ret);
-	    Scierror("%s: evaluation failed for z(%d,%d)\n",stack.fname,i+1,j+1);
+	    Scierror("%s: evaluation failed for z(%d,%d)\n",NspFname(stack),i+1,j+1);
 	    goto end; 
 	  }
       }
@@ -1081,13 +1081,13 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
 
 int int_plot3d( Stack stack, int rhs, int opt, int lhs)
 {
-  if ( rhs <= 0) return sci_demo(stack.fname,"t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t))",1);
+  if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t))",1);
   return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d,nsp_plot_fac3d,nsp_plot_fac3d_2,nsp_plot_fac3d_3);
 }
 
 int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
 {
-  if ( rhs <= 0) return sci_demo(stack.fname,"t=-%pi:0.3:%pi;plot3d1(t,t,sin(t)'*cos(t));",1);
+  if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d1(t,t,sin(t)'*cos(t));",1);
   return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d_1,nsp_plot_fac3d_1,nsp_plot_fac3d_2,nsp_plot_fac3d_3);
 }
 
@@ -1137,13 +1137,13 @@ int int_draw3dobj(Stack stack, int rhs, int opt, int lhs)
 
   if (err == TRUE) 
     {
-      Scierror("%s: list of Object is wrong\n",stack.fname);
+      Scierror("%s: list of Object is wrong\n",NspFname(stack));
       return RET_BUG;
     }
 
-  if (( iflag = check_iflag(stack,stack.fname,"flag",Mflag,3))==NULL) return RET_BUG;
-  if (( ebox = check_ebox(stack,stack.fname,"ebox",Mebox)) == NULL) return RET_BUG;
-  if (( leg1 = check_legend_3d(stack,stack.fname,"leg",leg)) == NULL) return RET_BUG;
+  if (( iflag = check_iflag(stack,NspFname(stack),"flag",Mflag,3))==NULL) return RET_BUG;
+  if (( ebox = check_ebox(stack,NspFname(stack),"ebox",Mebox)) == NULL) return RET_BUG;
+  if (( leg1 = check_legend_3d(stack,NspFname(stack),"leg",leg)) == NULL) return RET_BUG;
 
   /* 7 and 8 are the mode for superposed graphics */
   iflag[1]=Max(Min(iflag[1],8),0);
@@ -1214,7 +1214,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
   else
     {
       /* here we could accept list(z,colors) to emulate scilab code */
-      Scierror("%s: second argument should be a real matrix or a function\n",stack.fname);
+      Scierror("%s: second argument should be a real matrix or a function\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -1242,7 +1242,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
 	  /* x= 1xn and y = 1xn */ 
 	  if ( x->n != y->n ) 
 	    {
-	      Scierror("%s: x and y have incompatible length\n",stack.fname);
+	      Scierror("%s: x and y have incompatible length\n",NspFname(stack));
 	      return RET_BUG;
 	    }
 	  else
@@ -1257,7 +1257,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
 	  /* x= 1xn and y = nx1 */ 
 	  if ( x->n != y->m ) 
 	    {
-	      Scierror("%s: x and y have incompatible length\n",stack.fname);
+	      Scierror("%s: x and y have incompatible length\n",NspFname(stack));
 	      return RET_BUG;
 	    }
 	  else
@@ -1272,7 +1272,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
 	  /* x= 1xn and y = pxn */ 
 	  if ( x->n != y->m ) 
 	    {
-	      Scierror("%s: x and y have incompatible length\n",stack.fname);
+	      Scierror("%s: x and y have incompatible length\n",NspFname(stack));
 	      return RET_BUG;
 	    }
 	  else 
@@ -1291,7 +1291,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
 	  /* x= nx1 and y = 1xn */ 
 	  if ( x->m != y->n ) 
 	    {
-	      Scierror("%s: x and y have incompatible length\n",stack.fname);
+	      Scierror("%s: x and y have incompatible length\n",NspFname(stack));
 	      return RET_BUG;
 	    }
 	  else
@@ -1306,7 +1306,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
 	  /* x= nx1 and y = nx1 */ 
 	  if ( x->m != y->m ) 
 	    {
-	      Scierror("%s: x and y have incompatible length\n",stack.fname);
+	      Scierror("%s: x and y have incompatible length\n",NspFname(stack));
 	      return RET_BUG;
 	    }
 	  else
@@ -1321,7 +1321,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
 	  /* x= nx1 and y = nxq */ 
 	  if ( x->m != y->m ) 
 	    {
-	      Scierror("%s: x and y have incompatible length\n",stack.fname);
+	      Scierror("%s: x and y have incompatible length\n",NspFname(stack));
 	      return RET_BUG;
 	    }
 	  else 
@@ -1337,7 +1337,7 @@ int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,func_2d fun
     {
       if ( x->m != y->m ||  x->n != y->n) 
 	{
-	  Scierror("%s: x and y have incompatible length\n",stack.fname);
+	  Scierror("%s: x and y have incompatible length\n",NspFname(stack));
 	  return RET_BUG;
 	}
       else 
@@ -1425,7 +1425,7 @@ static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, Ns
 	}
       else 
 	{
-	  Scierror("%s: evaluation failed for y(%d)\n",stack.fname,i+1);
+	  Scierror("%s: evaluation failed for y(%d)\n",NspFname(stack),i+1);
 	  goto end; 
 	}
     }
@@ -1443,35 +1443,35 @@ static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, Ns
 static int int_plot2d( Stack stack, int rhs, int opt, int lhs)
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
-  if (rhs == 0) {  return sci_demo(stack.fname,str,1); }
+  if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,0,nsp_plot2d_1);
 }
 
 static int int_plot2d1_1( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
-  if (rhs == 0) {  return sci_demo(stack.fname,str,1); }
+  if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,nsp_plot2d_1);
 }
 
 static int int_plot2d1_2( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d2([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
-  if (rhs == 0) {  return sci_demo(stack.fname,str,1); }
+  if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,nsp_plot2d_2);
 }
 
 static int int_plot2d1_3( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d3([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
-  if (rhs == 0) {  return sci_demo(stack.fname,str,1); }
+  if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,nsp_plot2d_3);
 }
 
 static int int_plot2d1_4( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d4([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
-  if (rhs == 0) {  return sci_demo(stack.fname,str,1); }
+  if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,nsp_plot2d_4);
 }
 
@@ -1509,13 +1509,13 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   NspMatrix *x,*y,*z; 
 
-  if ( rhs <= 0) {return sci_demo(stack.fname, "t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);",1);}
+  if ( rhs <= 0) {return sci_demo(NspFname(stack), "t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);",1);}
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&opts_mp,&axes,&Mcolminmax,&Mcolout,&frame,&leg,&leg_pos,
 	       &logflags,&Mnax,&Mrect,&remap,&shade,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
 
-  CheckVector(stack.fname,1,x);
-  CheckVector(stack.fname,2,y);
+  CheckVector(NspFname(stack),1,x);
+  CheckVector(NspFname(stack),2,y);
 
   if ( IsNspPList(fobj) )
     {
@@ -1534,25 +1534,25 @@ int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   else
     {
       /* here we could accept list(z,colors) to emulate scilab code */
-      Scierror("%s: third argument should be a real matrix or a function\n",stack.fname);
+      Scierror("%s: third argument should be a real matrix or a function\n",NspFname(stack));
       return RET_BUG;
     }
 
   if ( z->mn == 0) return 0;
   if ( z->m == 1 || z->n == 1) {
-    Scierror("%s: third argument is a vector, expecting a matrix \r\n",stack.fname);
+    Scierror("%s: third argument is a vector, expecting a matrix \r\n",NspFname(stack));
     return RET_BUG;
   }
 
-  CheckDimProp(stack.fname,1,3, x->mn != z->m); 
-  CheckDimProp(stack.fname,2,3, y->mn != z->n); 
+  CheckDimProp(NspFname(stack),1,3, x->mn != z->m); 
+  CheckDimProp(NspFname(stack),2,3, y->mn != z->n); 
 
   if ( int_check2d(stack,Mstyle,&istyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
 
-  if ( check_zminmax(stack,stack.fname,"zminmax",Mzminmax)== FAIL ) return RET_BUG;
-  if ( check_colminmax(stack,stack.fname,"colminmax",Mcolminmax)== FAIL) return RET_BUG;
-  if ( check_colout(stack,stack.fname,"colout",Mcolout)== FAIL) return RET_BUG;
+  if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) return RET_BUG;
+  if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
+  if ( check_colout(stack,NspFname(stack),"colout",Mcolout)== FAIL) return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
@@ -1595,7 +1595,7 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
   int leg_posi;
   int_types T[] = {realmat,new_opts, t_end} ;
 
-  if ( rhs <= 0) {return   sci_demo(stack.fname,"m=[1,2;3,4];Matplot(m);",1);}
+  if ( rhs <= 0) {return   sci_demo(NspFname(stack),"m=[1,2;3,4];Matplot(m);",1);}
 
   if ( GetArgs(stack,rhs,opt,T,&z,&opts_mp,&axes,&Mcolminmax,&frame,&leg,&leg_pos,
 	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
@@ -1607,18 +1607,18 @@ int int_matplot(Stack stack, int rhs, int opt, int lhs)
 
   if (Mzminmax != NULL &&  Mzminmax->mn != 2 ) 
     {
-      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"zminmax");
+      Scierror("%s:optional argument %s should be of size 2\n",NspFname(stack),"zminmax");
       return RET_BUG;
     }
 
   if (Mcolminmax != NULL &&  Mcolminmax->mn != 2 ) 
     {
-      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"zminmax");
+      Scierror("%s:optional argument %s should be of size 2\n",NspFname(stack),"zminmax");
       return RET_BUG;
     }
 
-  if ( check_zminmax(stack,stack.fname,"zminmax",Mzminmax)== FAIL ) return RET_BUG;
-  if ( check_colminmax(stack,stack.fname,"colminmax",Mcolminmax)== FAIL) return RET_BUG;
+  if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) return RET_BUG;
+  if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
@@ -1659,7 +1659,7 @@ int int_matplot1(Stack stack, int rhs, int opt, int lhs)
 
   int_types T[] = {realmat, realmat, new_opts, t_end} ;
 
-  if ( rhs <= 0) return sci_demo(stack.fname,"plot2d([0,10],[0,10],style=0);a=ones(50,50);a= 3*tril(a)+2*a;Matplot1(a,[4,4,9,9]);",1);
+  if ( rhs <= 0) return sci_demo(NspFname(stack),"plot2d([0,10],[0,10],style=0);a=ones(50,50);a= 3*tril(a)+2*a;Matplot1(a,[4,4,9,9]);",1);
 
   if ( GetArgs(stack,rhs,opt,T,&M,&Rect,&opts_mp,&axes,&Mcolminmax,&frame,&leg,&leg_pos,
 	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
@@ -1668,7 +1668,7 @@ int int_matplot1(Stack stack, int rhs, int opt, int lhs)
 
   if ( Rect->mn != 4) 
     {
-      Scierror("%s: second argument should be of length 4\n",stack.fname);
+      Scierror("%s: second argument should be of length 4\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -1676,8 +1676,8 @@ int int_matplot1(Stack stack, int rhs, int opt, int lhs)
 		   Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
 
-  if ( check_zminmax(stack,stack.fname,"zminmax",Mzminmax)== FAIL ) return RET_BUG;
-  if ( check_colminmax(stack,stack.fname,"colminmax",Mcolminmax)== FAIL) return RET_BUG;
+  if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) return RET_BUG;
+  if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
   nsp_draw_matrix_2(Xgc,M->R, M->m,M->n,Rect->R,remap,
@@ -1726,7 +1726,7 @@ int int_driver(Stack stack, int rhs, int opt, int lhs)
       if ( drivers_id[rep] == Rec_driver ) 
 	{
 	  Scierror("%s: Rec driver does not exists, use xset('recording',1|0) to set or unset recording mode\n",
-		   stack.fname);
+		   NspFname(stack));
 	}
       nsp_current_driver = rep;
       switch ( rep ) 
@@ -1748,7 +1748,7 @@ int int_driver(Stack stack, int rhs, int opt, int lhs)
 	}
       return 0;
     default: 
-      Scierror("%s: expecting zero or one argument\n",stack.fname);
+      Scierror("%s: expecting zero or one argument\n",NspFname(stack));
       return RET_BUG;
     }
 }
@@ -1805,7 +1805,7 @@ static int int_xarc_G(Stack stack, int rhs, int opt, int lhs,char *name, void (*
     {
     case 1 :
       if ((M1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-      CheckLength(stack.fname,1,M1,6);
+      CheckLength(NspFname(stack),1,M1,6);
       val = M1->R;
       break;
     case 6 :
@@ -1816,7 +1816,7 @@ static int int_xarc_G(Stack stack, int rhs, int opt, int lhs,char *name, void (*
       val = arc;
       break;
     default :
-      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 6\r\n",stack.fname,rhs);
+      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 6\r\n",NspFname(stack),rhs);
       return RET_BUG;
     }
   Xgc=nsp_check_graphic_context();
@@ -1851,14 +1851,14 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int row,int flag,char *na
   NspMatrix *arcs,*styles;
   CheckRhs(1,2);
   if ((arcs = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
-  CheckRows(stack.fname,1,arcs,row) ;
+  CheckRows(NspFname(stack),1,arcs,row) ;
 
   if (rhs == 2) 
     {
       if ((styles= GetRealMatInt(stack,2))  == NULLMAT) return RET_BUG;
       CheckVector(stack,2,styles);
       if ( styles->mn != arcs->n ) {
-	Scierror("%s: first and second arguments have incompatible length\r\n",stack.fname);
+	Scierror("%s: first and second arguments have incompatible length\r\n",NspFname(stack));
 	return RET_BUG;
       }
     }
@@ -1931,7 +1931,7 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
 
   if ( GetArgs(stack,rhs,opt,T,&nx,&ny,&opts,&arsize,&Mstyle) == FAIL) return RET_BUG;
 
-  CheckSameDims(stack.fname,1,2,nx,ny);
+  CheckSameDims(NspFname(stack),1,2,nx,ny);
   if ( nx->mn == 0) { return 0;} 
 
   Xgc=nsp_check_graphic_context();
@@ -1946,7 +1946,7 @@ int int_xarrows(Stack stack, int rhs, int opt, int lhs)
       else 
 	{
 	  if ( Mstyle->mn != nx->mn/2 ) {
-	    Scierror("%s: style has a wrong size (%d), expecting (%d)\r\n",stack.fname,Mstyle->mn, nx->mn/2  );
+	    Scierror("%s: style has a wrong size (%d), expecting (%d)\r\n",NspFname(stack),Mstyle->mn, nx->mn/2  );
 	    return RET_BUG;
 	  }
 	  Xgc->graphic_engine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,(int*) Mstyle->R,1);
@@ -1974,7 +1974,7 @@ int int_xsegs(Stack stack, int rhs, int opt, int lhs)
 
   if ( GetArgs(stack,rhs,opt,T,&nx,&ny,&opts,&Mstyle) == FAIL) return RET_BUG;
 
-  CheckSameDims(stack.fname,1,2,nx,ny);
+  CheckSameDims(NspFname(stack),1,2,nx,ny);
   if ( nx->mn == 0) { return 0;} 
 
   Xgc=nsp_check_graphic_context();
@@ -1989,7 +1989,7 @@ int int_xsegs(Stack stack, int rhs, int opt, int lhs)
       else 
 	{
 	  if ( Mstyle->mn != nx->mn/2 ) {
-	    Scierror("%s: style has a wrong size (%d), expecting (%d)\r\n",stack.fname,Mstyle->mn, nx->mn/2  );
+	    Scierror("%s: style has a wrong size (%d), expecting (%d)\r\n",NspFname(stack),Mstyle->mn, nx->mn/2  );
 	    return RET_BUG;
 	  }
 	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,(int*) Mstyle->R,1);
@@ -2014,11 +2014,11 @@ int int_xaxis(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(4,4);
   if (GetScalarDouble(stack,1,&l1) == FAIL) return RET_BUG;
   if ((l2=GetRealMatInt(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,2,l2,2);
+  CheckLength(NspFname(stack),2,l2,2);
   if ((l3=GetRealMat(stack,3)) ==  NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,3,l3,3);
+  CheckLength(NspFname(stack),3,l3,3);
   if ((l4=GetRealMat(stack,4)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,4,l4,2);
+  CheckLength(NspFname(stack),4,l4,2);
 
   Xgc=nsp_check_graphic_context();
   Xgc->graphic_engine->scale->drawaxis(Xgc,&l1,(int *)l2->R,l3->R,l4->R);
@@ -2047,7 +2047,7 @@ int int_xchange(Stack stack, int rhs, int opt, int lhs)
     {
       if ((l1=GetRealMatInt(stack,1)) == NULLMAT ) return RET_BUG;
       if ((l2=GetRealMatInt(stack,2)) == NULLMAT ) return RET_BUG;
-      CheckSameDims(stack.fname,1,2,l1,l2);
+      CheckSameDims(NspFname(stack),1,2,l1,l2);
       if ((l3 = nsp_matrix_create(NVOID,'r',l1->m,l1->n))== NULLMAT ) return RET_BUG;
       if ((l4 = nsp_matrix_create(NVOID,'r',l1->m,l1->n))== NULLMAT ) return RET_BUG;
       scale_i2f(Xgc,l3->R,l4->R,(int *) l1->R,(int *) l2->R,l1->m*l1->n);
@@ -2056,7 +2056,7 @@ int int_xchange(Stack stack, int rhs, int opt, int lhs)
     {
       if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
       if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-      CheckSameDims(stack.fname,1,2,l1,l2);
+      CheckSameDims(NspFname(stack),1,2,l1,l2);
       if ((l3 = nsp_matrix_create(NVOID,'r',l1->m,l1->n)) == NULLMAT ) return RET_BUG;
       if ((l4 = nsp_matrix_create(NVOID,'r',l1->m,l1->n)) == NULLMAT ) return RET_BUG;
       l3->convert='i';
@@ -2067,14 +2067,14 @@ int int_xchange(Stack stack, int rhs, int opt, int lhs)
     {
       /* XXXX temporarire */
       if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-      CheckLength(stack.fname,1,l1,4);
+      CheckLength(NspFname(stack),1,l1,4);
       if ((l3 = nsp_matrix_create(NVOID,'r',l1->m,l1->n)) == NULLMAT ) return RET_BUG;
       if ((l4 =nsp_mat_zeros(l1->m,l1->n)) == NULLMAT ) return RET_BUG;
       scale_f2wrect(Xgc,l1->R,l3->R);
     }
   else
     {
-      Scierror("%s: dir=%s is wrong \r\n",stack.fname,dir);
+      Scierror("%s: dir=%s is wrong \r\n",NspFname(stack),dir);
       return RET_BUG;
     }
   
@@ -2141,7 +2141,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
     {
     case 1 :
       if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
-      CheckLength(stack.fname,1,M1,4);
+      CheckLength(NspFname(stack),1,M1,4);
       *val = M1->R;
       break;
     case 4 :
@@ -2152,7 +2152,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
       *val = l;
       break;
     default :
-      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\r\n",stack.fname,rhs);
+      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\r\n",NspFname(stack),rhs);
       return FAIL;
     }
   return OK;
@@ -2333,7 +2333,7 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
       Xgc = window_list_search(win);
       if ( Xgc == NULL ) 
 	{
-	  Scierror("%s:window %d does not exists\n",stack.fname,win);
+	  Scierror("%s:window %d does not exists\n",NspFname(stack),win);
 	  return RET_BUG;
 	}
     }
@@ -2342,7 +2342,7 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
       Xgc = window_list_get_first();
       if ( Xgc == NULL ) 
 	{
-	  Scierror("%s: No graphic window \n",stack.fname,win);
+	  Scierror("%s: No graphic window \n",NspFname(stack),win);
 	  return RET_BUG;
 	}
       win = Xgc->CurWindow;
@@ -2445,7 +2445,7 @@ int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
 
   if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckSameDims(stack.fname,1,2,l1,l2);
+  CheckSameDims(NspFname(stack),1,2,l1,l2);
 
   if (rhs == 3) {
     if (GetScalarInt(stack,3,&close) == FAIL) return RET_BUG;
@@ -2471,25 +2471,25 @@ int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
 
   if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckSameDims(stack.fname,1,2,l1,l2);
+  CheckSameDims(NspFname(stack),1,2,l1,l2);
 
   if (rhs == 3) 
     {
       if ((l3=GetRealMatInt(stack,3)) == NULLMAT ) return RET_BUG;
       if ( l3->mn == l1->mn ) 
 	{ 
-	  CheckSameDims(stack.fname,1,3,l1,l3);
+	  CheckSameDims(NspFname(stack),1,3,l1,l3);
 	  v1=2; /* interpolated shading */
 	  if ( l3->m != 3 && l3->m != 4 ) 
 	    {
-	      Scierror("%s: interpolated shading only works for polygons of size 3 or 4\r\n",stack.fname);
+	      Scierror("%s: interpolated shading only works for polygons of size 3 or 4\r\n",NspFname(stack));
 	      return RET_BUG;
 	    }
 	} 
       else
 	{
-	  CheckVector(stack.fname,3,l3);
-	  CheckDimProp(stack.fname,2,3, l3->mn != l2->n);
+	  CheckVector(NspFname(stack),3,l3);
+	  CheckDimProp(NspFname(stack),2,3, l3->mn != l2->n);
 	  v1=1; /* flat shading */
 	}
     }
@@ -2535,7 +2535,7 @@ int int_xget(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M;
   int rep, flagx=0,x1[10], val,i, cl[5],m3,vals[2];
 
-  if ( rhs <= 0) { return sci_demo(stack.fname,"xsetm();",0);}
+  if ( rhs <= 0) { return sci_demo(NspFname(stack),"xsetm();",0);}
 
   CheckRhs(1,2);
   CheckLhs(0,1);
@@ -2788,24 +2788,24 @@ int int_xinit(Stack stack, int rhs, int opt, int lhs)
 
   if (wdim != NULL && wdim->mn != 2 ) 
     {
-      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"dim");
+      Scierror("%s:optional argument %s should be of size 2\n",NspFname(stack),"dim");
       return RET_BUG;
     }
   if (wpdim != NULL &&  wpdim->mn != 2 ) 
     {
-      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"popup_dim");
+      Scierror("%s:optional argument %s should be of size 2\n",NspFname(stack),"popup_dim");
       return RET_BUG;
     }
 
   if (viewport != NULL && viewport->mn != 2 ) 
     {
-      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"viewport_pos");
+      Scierror("%s:optional argument %s should be of size 2\n",NspFname(stack),"viewport_pos");
       return RET_BUG;
     }
 
   if (wpos != NULL && wpos->mn != 2 ) 
     {
-      Scierror("%s:optional argument %s should be of size 2\n",stack.fname,"popup_pos");
+      Scierror("%s:optional argument %s should be of size 2\n",NspFname(stack),"popup_pos");
       return RET_BUG;
     }
 
@@ -2868,7 +2868,7 @@ int int_xlfont(Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   if (rhs  <= 0) 
     {
-      Scierror("%s: xlfont to be done  \r\n",stack.fname);
+      Scierror("%s: xlfont to be done  \r\n",NspFname(stack));
       return RET_BUG;
       /* XXXXX 
 	 char **S;
@@ -2924,8 +2924,8 @@ int int_xnumb(Stack stack, int rhs, int opt, int lhs)
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   if ((l3=GetRealMat(stack,3)) == NULLMAT ) return RET_BUG;
 
-  CheckSameDims(stack.fname,1,2,l1,l2);
-  CheckSameDims(stack.fname,2,3,l2,l3);
+  CheckSameDims(NspFname(stack),1,2,l1,l2);
+  CheckSameDims(NspFname(stack),2,3,l2,l3);
   
   if ( l3->mn == 0) { return 0;}
 
@@ -2933,7 +2933,7 @@ int int_xnumb(Stack stack, int rhs, int opt, int lhs)
   if (rhs >= 5) 
     {   
       if ((l5=GetRealMat(stack,5)) == NULLMAT ) return RET_BUG;
-      CheckSameDims(stack.fname,1,5,l1,l5);
+      CheckSameDims(NspFname(stack),1,5,l1,l5);
     }
   else 
     {
@@ -2992,7 +2992,7 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(2,2);
   if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckSameDims(stack.fname,1,2,l1,l2);
+  CheckSameDims(NspFname(stack),1,2,l1,l2);
   if ( l1->mn == 0 ) return 0;
 
   if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thick,&type) == FAIL) return RET_BUG;
@@ -3023,12 +3023,12 @@ int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 	  if ( strncmp(type,"lines",5) == 0) dtype = xlines;
 	  else if (strncmp(type,"marks",5) == 0) dtype = xmarks;
 	  else {
-	    Scierror("%s: type must be \"lines\" or \"marks\"\r\n",stack.fname);
+	    Scierror("%s: type must be \"lines\" or \"marks\"\r\n",NspFname(stack));
 	    return RET_BUG;
 	  }
 	  if ( opts[2].obj != NULLOBJ && strncmp(type,"lines",5) == 0 )
 	    {
-	      Sciprintf("type is set to \"marks\" since mark is set \r\n",stack.fname);
+	      Sciprintf("type is set to \"marks\" since mark is set \r\n",NspFname(stack));
 	      dtype = xmarks;
 	    }
 	}
@@ -3076,9 +3076,9 @@ int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
   if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   if ((l3=GetRealMat(stack,3)) == NULLMAT ) return RET_BUG;
-  CheckSameDims(stack.fname,1,2,l1,l2);
+  CheckSameDims(NspFname(stack),1,2,l1,l2);
 
-  CheckLength(stack.fname,3,l3,4);
+  CheckLength(NspFname(stack),3,l3,4);
   if ( l1->mn == 0 ) return 0;
   if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thick,&type) == FAIL) return RET_BUG;
 
@@ -3124,13 +3124,13 @@ int int_xpolys(Stack stack, int rhs, int opt, int lhs)
 
   if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckSameDims(stack.fname,1,2,l1,l2);
+  CheckSameDims(NspFname(stack),1,2,l1,l2);
 
   if (rhs == 3) 
     {
       if ((l3=GetRealMatInt(stack,3)) == NULLMAT ) return RET_BUG;
-      CheckVector(stack.fname,3,l3); 
-      CheckDimProp(stack.fname,1,3, l3->mn < l1->n);
+      CheckVector(NspFname(stack),3,l3); 
+      CheckDimProp(NspFname(stack),1,3, l3->mn < l1->n);
     }
   else
     {
@@ -3217,7 +3217,7 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
   double cl[4];
   NspMatrix *M;
 
-  if (rhs <= 0) {return sci_demo(stack.fname,"xsetm();",0);}
+  if (rhs <= 0) {return sci_demo(NspFname(stack),"xsetm();",0);}
 
   CheckRhs(1,6);
   CheckLhs(0,1);
@@ -3247,7 +3247,7 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
       if ( rhs == 2 ) 
 	{
 	  if (( M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-	  CheckLength(stack.fname,2,M,4);
+	  CheckLength(NspFname(stack),2,M,4);
 	  Xgc=nsp_check_graphic_context();
 	  Xgc->graphic_engine->scale->xset_clip(Xgc,M->R);
 	}
@@ -3271,7 +3271,7 @@ int int_xset(Stack stack, int rhs, int opt, int lhs)
     case xset_colormap:
       CheckRhs(2,2);
       if ( (M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG; 
-      CheckCols(stack.fname,2,M,3);
+      CheckCols(NspFname(stack),2,M,3);
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_colormap(Xgc,M->m,M->R);
       break;
@@ -3540,7 +3540,7 @@ int int_xtitle(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *S;
   int narg;
 
-  if ( rhs <= 0) {  return sci_demo(stack.fname,"x=(1:10)';plot2d(x,x);xtitle(['Titre';'Principal'],'x legend ','y legend');",1);  }
+  if ( rhs <= 0) {  return sci_demo(NspFname(stack),"x=(1:10)';plot2d(x,x);xtitle(['Titre';'Principal'],'x legend ','y legend');",1);  }
 
   CheckRhs(1,3);
   Xgc=nsp_check_graphic_context();
@@ -3585,7 +3585,7 @@ int int_xstringb(Stack stack, int rhs, int opt, int lhs)
       fill =1;
     else 
       {
-	Scierror("%s: optional argument has a wrong value 'fill' expected\r\n",stack.fname);
+	Scierror("%s: optional argument has a wrong value 'fill' expected\r\n",NspFname(stack));
 	return RET_BUG;
       }
   }
@@ -3625,7 +3625,7 @@ int int_xstringc(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,7);
 
   if (( M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,M,4);
+  CheckLength(NspFname(stack),1,M,4);
   if ((S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) return 0; 
   if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return RET_BUG;
@@ -3772,12 +3772,12 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
       /*     s'il n'y a que trois argument le 3ieme est rect[4] */
       iscflag[0]=1; iscflag[1]=iscflag[2]=0;
       if ((M= GetRealMat(stack,3))  == NULLMAT) return RET_BUG;
-      CheckLength(stack.fname,3,M,4); rect =  M->R;
+      CheckLength(NspFname(stack),3,M,4); rect =  M->R;
       if ( rhs >= 4 ) 
 	{
 	  iscflag[1]=1;
 	  if ((M= GetRealMatInt(stack,4))  == NULLMAT) return RET_BUG;
-	  CheckLength(stack.fname,4,M,4); aint = (int*) M->R;
+	  CheckLength(NspFname(stack),4,M,4); aint = (int*) M->R;
 	}
       Xgc->graphic_engine->tape_replay_new_scale(Xgc,num,iscflag,aint,rect);
       break;
@@ -3788,15 +3788,15 @@ int int_xtape(Stack stack, int rhs, int opt, int lhs)
       if ( rhs >= 4 ) { if (GetScalarDouble(stack,4,&alpha) == FAIL) return RET_BUG;}
       if ( rhs >= 5 ) { 
 	if ((M= GetRealMatInt(stack,5))  == NULLMAT) return RET_BUG;
-	CheckLength(stack.fname,5,M,4); iflag = (int*) M->R;
+	CheckLength(NspFname(stack),5,M,4); iflag = (int*) M->R;
       }
       if ( rhs >= 6 ) { 
 	if ((M= GetRealMatInt(stack,6))  == NULLMAT) return RET_BUG;
-	CheckLength(stack.fname,6,M,3); flagx = (int*) M->R;
+	CheckLength(NspFname(stack),6,M,3); flagx = (int*) M->R;
       }
       if ( rhs >= 7 ) { 
 	if ((M= GetRealMat(stack,6))  == NULLMAT) return RET_BUG;
-	CheckLength(stack.fname,7,M,6); ebox =  M->R;
+	CheckLength(NspFname(stack),7,M,6); ebox =  M->R;
       }
       Xgc->graphic_engine->tape_replay_new_angles(Xgc,num,iflag,flagx,&theta,&alpha,ebox); /*  */
       break;
@@ -3855,18 +3855,18 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
       if ( rhs <= 0) { show_scales(Xgc); return 0;	}
 
       if ((M= GetRealMat(stack,1))  == NULLMAT) return RET_BUG;
-      CheckLength(stack.fname,1,M,4);
+      CheckLength(NspFname(stack),1,M,4);
       wrect = M->R;
 
       if (rhs >= 2) {
 	if ((M= GetRealMat(stack,2))  == NULLMAT) return RET_BUG;
-	CheckLength(stack.fname,2,M,4);
+	CheckLength(NspFname(stack),2,M,4);
 	frect = M->R;
       }
       if (rhs >= 3) { 
 	if ((logflag = GetString(stack,3)) == (char*)0) return RET_BUG;
 	if ( strlen(logflag) != 2 ) {
-	  Scierror("%s: third argument has a wrong length %d expecting (%d)\r\n",stack.fname,strlen(logflag),2 );
+	  Scierror("%s: third argument has a wrong length %d expecting (%d)\r\n",NspFname(stack),strlen(logflag),2 );
 	  return RET_BUG;
 	}
       }
@@ -3885,20 +3885,20 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
       if ( GetArgs(stack,rhs,opt,T,&opts,&Marect,&Mfrect,&logflag,&Mwrect) == FAIL) return RET_BUG;
 
       if ( Marect != NULL) {
-	arect = Marect->R;CheckLength(stack.fname,opts[0].position,Marect,4);
+	arect = Marect->R;CheckLength(NspFname(stack),opts[0].position,Marect,4);
       }
 
       if ( Mfrect != NULL) {
-	frect = Mfrect->R;CheckLength(stack.fname,opts[1].position,Mfrect,4);
+	frect = Mfrect->R;CheckLength(NspFname(stack),opts[1].position,Mfrect,4);
       }
 
       if ( Mwrect != NULL) {
-	wrect = Mwrect->R;CheckLength(stack.fname,opts[3].position,Mwrect,4);
+	wrect = Mwrect->R;CheckLength(NspFname(stack),opts[3].position,Mwrect,4);
       }
       
       if ( logflag != logflag_def ) {
 	if ( strlen(logflag) != 2 ) {
-	  Scierror("%s: logflag argument has a wrong length %d expecting (%d)\r\n",stack.fname,strlen(logflag),2 );
+	  Scierror("%s: logflag argument has a wrong length %d expecting (%d)\r\n",NspFname(stack),strlen(logflag),2 );
 	  return RET_BUG;
 	} 
       }
@@ -3975,16 +3975,16 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
   /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
 
-  if ( rhs <= 0) { return sci_demo (stack.fname," exec(\"SCI/demos/fec/fec.ex1\");",1);}
+  if ( rhs <= 0) { return sci_demo (NspFname(stack)," exec(\"SCI/demos/fec/fec.ex1\");",1);}
   
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
 	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
 
-  CheckSameDims(stack.fname,1,2,x,y);
-  CheckSameDims(stack.fname,1,4,x,F);
+  CheckSameDims(NspFname(stack),1,2,x,y);
+  CheckSameDims(NspFname(stack),1,4,x,F);
 
   if ( Tr->n != 5) {
-    Scierror("%s: triangles have %d columns,expecting 5\r\n",stack.fname,Tr->n);
+    Scierror("%s: triangles have %d columns,expecting 5\r\n",NspFname(stack),Tr->n);
     return RET_BUG;
   }
 
@@ -3993,9 +3993,9 @@ int int_fec(Stack stack, int rhs, int opt, int lhs)
   if ( int_check2d(stack,Mstyle,&istyle,nnz,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
 
-  if ( check_zminmax(stack,stack.fname,"zminmax",Mzminmax)== FAIL ) return RET_BUG;
-  if ( check_colminmax(stack,stack.fname,"colminmax",Mcolminmax)== FAIL) return RET_BUG;
-  if ( check_colout(stack,stack.fname,"colout",Mcolout)== FAIL) return RET_BUG;
+  if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) return RET_BUG;
+  if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
+  if ( check_colout(stack,NspFname(stack),"colout",Mcolout)== FAIL) return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
@@ -4313,7 +4313,7 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
   if ( sdir != NULL  ) 
     { 
       if ( strlen(sdir) != 1 ) {
-	Scierror("%s: optional string dir must contain one character\n",stack.fname);
+	Scierror("%s: optional string dir must contain one character\n",NspFname(stack));
 	return RET_BUG;
       }
       dir = sdir[0];
@@ -4322,7 +4322,7 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
   if ( stics != NULL ) 
     { 
       if ( strlen(stics) != 1 ) {
-	Scierror("%s: optional string tics must contain one character\n",stack.fname);
+	Scierror("%s: optional string tics must contain one character\n",NspFname(stack));
 	return RET_BUG;
       }
       tics = stics[0];
@@ -4364,27 +4364,27 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
   switch (tics ) 
     {
     case 'r' :
-      if ( check_xy(stack.fname,dir,3,opts[9].position,Mx, opts[10].position,My,&ntics)==0) 
+      if ( check_xy(NspFname(stack),dir,3,opts[9].position,Mx, opts[10].position,My,&ntics)==0) 
 	return 0;
       break;
     case 'i' :
-      if ( check_xy(stack.fname,dir,4,opts[9].position,Mx, opts[10].position,My,&ntics)==0) 
+      if ( check_xy(NspFname(stack),dir,4,opts[9].position,Mx, opts[10].position,My,&ntics)==0) 
 	return 0;
       break;
     case 'v' :
-      if ( check_xy(stack.fname,dir,-1,opts[9].position,Mx, opts[10].position,My,&ntics)==0) 
+      if ( check_xy(NspFname(stack),dir,-1,opts[9].position,Mx, opts[10].position,My,&ntics)==0) 
 	return 0;
       break;
     default :
       Scierror("%s: tics has a wrong value \"%c\" should be one of \"r\",\"v\" and \"i\" \r\n", 
-	       stack.fname,dir);
+	       NspFname(stack),dir);
       return RET_BUG;
     }
 
   if ( val != 0) 
     {
       /** sciprint("nombre de tics %d\r\n",ntics); **/
-      CheckLength(stack.fname, opts[8].position, S,ntics);
+      CheckLength(NspFname(stack), opts[8].position, S,ntics);
     }
 
   sci_axis(Xgc,dir,tics,x,&nx,y,&ny,val,sub_int,format,fontsize,textcolor,ticscolor,'n',seg_flag);
@@ -4622,13 +4622,13 @@ int int_feval( Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      Scierror("%s: expecting 2 or 3 non optional arguments found %d\n",stack.fname,rhs-opt );
+      Scierror("%s: expecting 2 or 3 non optional arguments found %d\n",NspFname(stack),rhs-opt );
       return RET_BUG; 
     }
 
   if ( IsNspPList(f) == FALSE  )
     {
-      Scierror("%s: fourth argument should be a function\n",stack.fname);
+      Scierror("%s: fourth argument should be a function\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -4676,7 +4676,7 @@ int int_get_image( Stack stack, int rhs, int opt, int lhs)
   Xgc=nsp_check_graphic_context();
   if ( Xgc->private == NULL) 
     {
-      Scierror("Error: %s Current graphic driver is not attached to a drawable\n",stack.fname);
+      Scierror("Error: %s Current graphic driver is not attached to a drawable\n",NspFname(stack));
       return RET_BUG;
     }
   if ((img =  nsp_get_image(Xgc))== NULL) return RET_BUG;

@@ -52,7 +52,7 @@ static int int_dataresume(Stack stack, int rhs, int opt, int lhs)
       if ( Ocheckname(NthObj(i),NVOID) ) 
 	{
 	  Scierror("Error: Cannot resume an unnamed value\n");
-	  Scierror("\t%s of function %s\n",ArgPosition(rhs),stack.fname);
+	  Scierror("\t%s of function %s\n",ArgPosition(rhs),NspFname(stack));
 	  return RET_BUG;
 	}
       /* A copy of object moved in the calling frame 

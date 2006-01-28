@@ -375,7 +375,7 @@ int int_mxtest12(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&H) == FAIL) return RET_BUG;
   if ( get_args_from_hash(stack,H,opts,&data.M,&data.x,&data.z,&data.N)==FAIL) 
     {
-      Scierror("%s: wrong first argument %s\n",stack.fname,nsp_object_get_name(NSP_OBJECT(H)));
+      Scierror("%s: wrong first argument %s\n",NspFname(stack),nsp_object_get_name(NSP_OBJECT(H)));
       return RET_BUG;
     }
   return 0;

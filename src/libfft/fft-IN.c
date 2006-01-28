@@ -75,7 +75,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
 
   if ( s != -1  &&  s != 1 )
     {
-      Scierror("%s: second arg must be -1 (forward transform) or 1 (backward transform)\n",stack.fname);
+      Scierror("%s: second arg must be -1 (forward transform) or 1 (backward transform)\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -147,7 +147,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
 	}
       else
 	{
-	  Scierror("%s: bad third arg\n",stack.fname);
+	  Scierror("%s: bad third arg\n",NspFname(stack));
 	  return RET_BUG;
 	}
       fftw_execute(multi_plan);
@@ -183,7 +183,7 @@ int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
 
   if ( s != -1  &&  s != 1 )
     {
-      Scierror("%s: second arg must be -1 (forward transform) or 1 (backward transform)",stack.fname);
+      Scierror("%s: second arg must be -1 (forward transform) or 1 (backward transform)",NspFname(stack));
       return RET_BUG;
     }
 
@@ -241,7 +241,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
 
   if ( s != -1  &&  s != 1 )
     {
-      Scierror("%s: second arg must be -1 (forward transform) or 1 (backward transform)\n",stack.fname);
+      Scierror("%s: second arg must be -1 (forward transform) or 1 (backward transform)\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -284,7 +284,7 @@ int int_nsp_fft( Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
-      Scierror("%s: bad third arg\n",stack.fname);
+      Scierror("%s: bad third arg\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -360,7 +360,7 @@ int int_nsp_fft2( Stack stack, int rhs, int opt, int lhs)
 
   if ( s != -1  &&  s != 1 )
     {
-      Scierror("%s: second arg must be -1 (forward transform) or 1 (backward transform)\n",stack.fname);
+      Scierror("%s: second arg must be -1 (forward transform) or 1 (backward transform)\n",NspFname(stack));
       return RET_BUG;
     }
 

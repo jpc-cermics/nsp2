@@ -427,7 +427,7 @@ static int int_link_create(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,7);
 
   if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
-  CheckCols(stack.fname,1,M1,2);
+  CheckCols(NspFname(stack),1,M1,2);
   if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
   if(( H = link_create(NVOID,M1,color,thickness,NULL)) == NULLLINK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
@@ -520,7 +520,7 @@ int int_gltranslate(void  *self,Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,M,2);
+  CheckLength(NspFname(stack),1,M,2);
   link_translate(self,M->R);
   MoveObj(stack,1,self);
   return 1;
@@ -533,7 +533,7 @@ int int_glset_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,M,2);
+  CheckLength(NspFname(stack),1,M,2);
   link_set_pos(self,M->R);
   MoveObj(stack,1,self);
   return 1;
@@ -547,7 +547,7 @@ int int_glresize(void  *self, Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(-1,1);
   if ((M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,2,M,2);
+  CheckLength(NspFname(stack),2,M,2);
   link_resize(self,M->R);
   MoveObj(stack,1,self);
   return 1;

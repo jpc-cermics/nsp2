@@ -403,7 +403,7 @@ char *GetString(Stack stack, int i)
     {
       Scierror("Error:\t%s", ArgPosition(i));
       ArgName(stack,i);
-      Scierror(" of function %s should be a string\n",stack.fname);
+      Scierror(" of function %s should be a string\n",NspFname(stack));
       return (char *) 0;
     }
   return M->S[0];
@@ -428,7 +428,7 @@ int GetStringInArray(Stack stack, int ith, char **Table, int flag)
     {
       Scierror("Error:\t%s", ArgPosition(ith));
       ArgName(stack,ith);
-      Scierror(" of function %s is %s\n",stack.fname,
+      Scierror(" of function %s is %s\n",NspFname(stack),
 	       ( rep == -2 ) ? "ambiguous " : "bad ") ;
       Scierror("\tmust be '%s'", *Table);
       for (entry = Table+1 ; *entry != NULL; entry++) {
@@ -458,7 +458,7 @@ int GetStringInStruct(Stack stack, int ith,void *T,unsigned int size, int flag)
     {
       Scierror("Error:\t%s", ArgPosition(ith));
       ArgName(stack,ith);
-      Scierror(" of function %s is %s\n",stack.fname,
+      Scierror(" of function %s is %s\n",NspFname(stack),
 	       ( rep == -2 ) ? "ambiguous " : "bad ") ;
       Scierror("\tmust be '%s'", *Table);
       for (entry = ((char **) (((char *) Table)+ size)) ; *entry != NULL ;
@@ -542,7 +542,7 @@ int is_string_in_array(const char *key, char **Table, int flag)
 void string_not_in_array(Stack stack,const char *key, char **Table,char *message)
 {
   char **entry;
-  Scierror("Error:\t%s of function %s has a wrong value %s\n",message,stack.fname,key);
+  Scierror("Error:\t%s of function %s has a wrong value %s\n",message,NspFname(stack),key);
   Scierror("\texpected values are '%s'", *Table);
   for (entry = Table+1 ; *entry != NULL; entry++) {
     if (entry[1] == NULL) {

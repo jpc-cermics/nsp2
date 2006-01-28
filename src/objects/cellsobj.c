@@ -489,8 +489,8 @@ int int_row_cells_create(Stack stack, int rhs, int opt, int lhs)
       if ( i==1) cols = Ci->n;
       else 
 	{
-	  CheckCols(stack.fname,i,Ci,cols);
-	  CheckRows(stack.fname,i,Ci,1);
+	  CheckCols(NspFname(stack),i,Ci,cols);
+	  CheckRows(NspFname(stack),i,Ci,1);
 	};
     }
   if ( (C =nsp_cells_create(NVOID,rhs,cols)) == NULLCELLS ) return RET_BUG;
@@ -527,7 +527,7 @@ int int_diag_cells_create(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      Scierror("%s: is to be done !\n",stack.fname);
+      Scierror("%s: is to be done !\n",NspFname(stack));
       return RET_BUG;
     }
 }

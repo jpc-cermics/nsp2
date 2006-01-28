@@ -366,9 +366,9 @@ static int int_gframe_create(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   if ((scale =GetRealMat(stack,1)) == NULLMAT ) return FAIL;
-  CheckLength(stack.fname,1,scale,4);
+  CheckLength(NspFname(stack),1,scale,4);
   if ((r =GetRealMat(stack,2)) == NULLMAT ) return FAIL;
-  CheckLength(stack.fname,2,r,4);
+  CheckLength(NspFname(stack),2,r,4);
   if ( GetScalarInt(stack,3,&winid) == FAIL) return RET_BUG;
   if (winid != -1) 
     {
@@ -502,7 +502,7 @@ int int_gf_select_and_move(void *self,Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(-1,0);
   if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,pt,2);
+  CheckLength(NspFname(stack),1,pt,2);
   gframe_select_and_move(((NspGFrame *) self),pt->R);
   return 0;
 }
@@ -516,7 +516,7 @@ int int_gf_select_and_hilite(void *self,Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(-1,1);
   if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,pt,2);
+  CheckLength(NspFname(stack),1,pt,2);
   rep= gframe_select_and_hilite(((NspGFrame *) self),pt->R);
   if ((bool = nsp_create_boolean_object(NVOID,(rep == OK) ? TRUE : FALSE))
       == NULLOBJ) return RET_BUG;
@@ -532,7 +532,7 @@ int int_gf_select_and_split(void *self,Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(-1,0);
   if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,pt,2);
+  CheckLength(NspFname(stack),1,pt,2);
   gframe_select_and_split(((NspGFrame *) self),pt->R);
   return 0;
 }
@@ -545,7 +545,7 @@ int int_gf_select_link_and_add_control(void *self,Stack stack, int rhs, int opt,
   CheckRhs(1,1);
   CheckLhs(-1,0);
   if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,pt,2);
+  CheckLength(NspFname(stack),1,pt,2);
   gframe_select_link_and_add_control(((NspGFrame *) self),pt->R);
   return 0;
 }
@@ -558,7 +558,7 @@ int int_gf_select_link_and_remove_control(void *self,Stack stack, int rhs, int o
   CheckRhs(1,1);
   CheckLhs(-1,0);
   if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,pt,2);
+  CheckLength(NspFname(stack),1,pt,2);
   gframe_select_link_and_remove_control(((NspGFrame *) self),pt->R);
   return 0;
 }
@@ -570,7 +570,7 @@ int int_gf_hilite_near_pt(void *self,Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(-1,1);
   if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,pt,2);
+  CheckLength(NspFname(stack),1,pt,2);
   gframe_hilite_near_pt(((NspGFrame *) self),pt->R);
   return 0;
 }

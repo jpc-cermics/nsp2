@@ -197,7 +197,7 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
 	  {
 	    Scierror("\t%s", ArgPosition(count));
 	    ArgName(stack,count);
-	    Scierror(" of function %s\n",stack.fname);
+	    Scierror(" of function %s\n",NspFname(stack));
 	    va_end(ap);
 	    return FAIL;
 	  }
@@ -205,13 +205,13 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
       case list_end :
 	/* list end will be decoded by GetListArgs */
 	/* if we get here : it's certainly an error */
-	Scierror("Error: found a list_end in %s while decoding arguments\n", stack.fname);
+	Scierror("Error: found a list_end in %s while decoding arguments\n", NspFname(stack));
 	Scierror("\twith no matching list_begin\n");
 	va_end(ap);
 	return FAIL;
 	break;
       case t_end : 
-	Scierror("Error: function %s, too many arguments (%d) given (%d requested)\n", stack.fname,rhs-opt,count-1);
+	Scierror("Error: function %s, too many arguments (%d) given (%d requested)\n", NspFname(stack),rhs-opt,count-1);
 	va_end(ap);
 	return FAIL;
 	break;
@@ -219,7 +219,7 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
       case new_opts:
 	Scierror("\t%s", ArgPosition(count));
 	ArgName(stack,count);
-	Scierror(" of function %s should be given as name=val\n",stack.fname);
+	Scierror(" of function %s should be given as name=val\n",NspFname(stack));
 	va_end(ap);
 	return FAIL;
 	break;
@@ -235,7 +235,7 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
     }
   if ( *T != opts && *T != new_opts ) 
     {
-      Scierror("Error: Not enough arguments (%d) given to function %s\n",rhs,stack.fname);
+      Scierror("Error: Not enough arguments (%d) given to function %s\n",rhs,NspFname(stack));
       va_end(ap);
       return FAIL;
     }
@@ -249,7 +249,7 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
 
   if ( *T == opts ) 
     {
-      Scierror("Error: opts is deprecated, use new_opts instead\n",stack.fname);
+      Scierror("Error: opts is deprecated, use new_opts instead\n",NspFname(stack));
 
       /* named_opts *Opts;
 	 Opts = va_arg(ap, named_opts *);
@@ -259,7 +259,7 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
       }
       rep = GetFromTable_1(Opts->objs,Opts->types,&ap,"\twhile extracting optional argument number %d ");
       if ( rep == FAIL)
-	Scierror(" of function %s\n",stack.fname);
+	Scierror(" of function %s\n",NspFname(stack));
       */
       va_end(ap);
     }
@@ -275,7 +275,7 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
       /* optional argument extraction **/ 
       rep = get_from_options(opts,&ap,"\twhile extracting optional argument %s");
       if ( rep == FAIL)
-	Scierror(" of function %s\n",stack.fname);
+	Scierror(" of function %s\n",NspFname(stack));
       va_end(ap);
     }
   return rep;
@@ -1047,7 +1047,7 @@ static int OptCheck1(Stack stack,int rhs, int nopt, named_opts *Opts)
 	  char **entry;
 	  Scierror("Error:\t%s", ArgPosition(rhs-nopt+j+1));
 	  Scierror(" of function %s has a wrong option name ",
-		   stack.fname);
+		   NspFname(stack));
 	  ArgName(stack,rhs-nopt+j+1);
 	  Scierror(".\n\tIt should be '%s'", *Opts->names);
 	  for (entry = Opts->names+1 ; *entry != NULL; entry++) {
@@ -1114,7 +1114,7 @@ int  get_optional_args(Stack stack,int rhs,int opt,nsp_option opts[],...)
   /* optional argument extraction **/ 
   rep = get_from_options(opts,&ap,"\twhile extracting optional argument %s");
   if ( rep == FAIL)
-    Scierror(" of function %s\n",stack.fname);
+    Scierror(" of function %s\n",NspFname(stack));
   va_end(ap);
   return rep;
 }
@@ -1137,7 +1137,7 @@ static int options_check(Stack stack,int rhs, int opt,nsp_option Opts[])
       else 
 	{
 	  Scierror("Error:\t%s", ArgPosition(rhs-opt+j+1));
-	  Scierror(" of function %s has a wrong option name ",stack.fname);
+	  Scierror(" of function %s has a wrong option name ",NspFname(stack));
 	  ArgName(stack,rhs-opt+j+1);
 	  Scierror(".\n\tIt should be '%s'", Opts[0].name);
 	  for (option = Opts+1 ; option->name != NULL; option++) {
@@ -1272,7 +1272,7 @@ int  get_optional_args_from_hash(Stack stack,NspHash *H,nsp_option opts[],...)
   /* optional argument extraction **/ 
   rep = get_from_options(opts,&ap,"\twhile extracting optional argument %s");
   if ( rep == FAIL)
-    Scierror(" of function %s\n",stack.fname);
+    Scierror(" of function %s\n",NspFname(stack));
   va_end(ap);
   return rep;
 }
@@ -1328,7 +1328,7 @@ static int options_check_from_hash(Stack stack,NspHash *H,nsp_option Opts[])
  *   if ( GetArgs(stack,rhs,opt,T,&percnt;H) == FAIL) return RET_BUG;
  *   if ( get_args_from_hash(stack,H,opts,&percnt;data.M,&percnt;data.x,&percnt;data.z,&percnt;data.N)==FAIL) 
  *     {
- *       Scierror("%s: wrong first argument %s\n",stack.fname,nsp_object_get_name(NSP_OBJECT(H)));
+ *       Scierror("%s: wrong first argument %s\n",NspFname(stack),nsp_object_get_name(NSP_OBJECT(H)));
  *       return RET_BUG;
  *     }
  *   return 0;
@@ -1354,7 +1354,7 @@ int  get_args_from_hash(Stack stack,NspHash *H,nsp_option opts[],...)
   /* optional argument extraction **/ 
   rep = get_from_options(opts,&ap,"\twhile extracting optional argument %s");
   if ( rep == FAIL)
-    Scierror(" of function %s\n",stack.fname);
+    Scierror(" of function %s\n",NspFname(stack));
   va_end(ap);
   return rep;
 }
@@ -1374,7 +1374,7 @@ static int value_get_from_hash(Stack stack,NspHash *H,nsp_option Opts[])
       else
 	{
 	  char *name = nsp_object_get_name(NSP_OBJECT(H));
-	  Scierror("%s: value for %s entry missing in hash table %s\n",stack.fname,
+	  Scierror("%s: value for %s entry missing in hash table %s\n",NspFname(stack),
 		   option->name, name);
 	  option->obj = NULLOBJ;
 	  option->position=-1; 
@@ -1483,7 +1483,7 @@ void ArgMessage(Stack stack, int i)
 {
   Scierror("\t%s", ArgPosition(i));
   ArgName(stack,i);
-  Scierror(" of function %s\n",stack.fname);
+  Scierror(" of function %s\n",NspFname(stack));
 }
 
 /**

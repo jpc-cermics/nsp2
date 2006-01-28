@@ -290,7 +290,7 @@ int int_ode( Stack stack, int rhs, int opt, int lhs)
 
   if ( IsNspPList(f) == FALSE  )
     {
-      Scierror("%s: fourth argument should be a function\n",stack.fname);
+      Scierror("%s: fourth argument should be a function\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -308,7 +308,7 @@ int int_ode( Stack stack, int rhs, int opt, int lhs)
     case discrete:
       return int_ode_discrete(stack,f,args,y0,t0,time);
     case roots:
-      Scierror("%s: methode is to be implemented \n",stack.fname);
+      Scierror("%s: methode is to be implemented \n",NspFname(stack));
       return RET_BUG;
     }
   return 0;
@@ -358,7 +358,7 @@ static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspLis
 	}
       else 
 	{
-	  Scierror("%s: size of atol should be equal to state size %d\n",stack.fname,y0->mn);
+	  Scierror("%s: size of atol should be equal to state size %d\n",NspFname(stack),y0->mn);
 	  return RET_BUG;
 	}
     }
@@ -406,7 +406,7 @@ static int int_ode_default(Stack stack,NspObject *f,int jt,NspObject *jac,NspLis
       t0 = tout;
       if ( istate < 0 ) 
 	{
-	  Scierror("Error: istate=%d in %s\n",istate,stack.fname);
+	  Scierror("Error: istate=%d in %s\n",istate,NspFname(stack));
 	  return RET_BUG;
 	}
       if ( C2F(ierode).iero == 1 ) 

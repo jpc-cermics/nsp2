@@ -95,7 +95,7 @@ GList *glist_from_nsp_list(Stack stack,NspList *L,NspTypeBase *type)
 	{
 	  if (! nspgobject_check(cloc->O, type)) 
 	    {
-	      Scierror("%s:list item is not a %s",stack.fname,type_get_name(type));
+	      Scierror("%s:list item is not a %s",NspFname(stack),type_get_name(type));
 	      g_list_free(items);
 	      return NULL;
 	    }
@@ -946,7 +946,7 @@ _wrap_gtk_container_child_get_property(NspGObject *self,Stack stack,int rhs,int 
 
   children = gtk_container_get_children(container);
   if (g_list_find(children, child) == NULL) {
-    Scierror("%s: first argument must be a child",stack.fname);
+    Scierror("%s: first argument must be a child",NspFname(stack));
     return RET_BUG;
   }
   
@@ -993,7 +993,7 @@ _wrap_gtk_container_child_set_property(NspGObject *self,Stack stack,int rhs,int 
 
   children = gtk_container_get_children(container);
   if (g_list_find(children, child) == NULL) {
-    Scierror("%s: first argument must be a child",stack.fname);
+    Scierror("%s: first argument must be a child",NspFname(stack));
     return RET_BUG;
   }
 
@@ -1050,7 +1050,7 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
       if ( Ocheckname(NthObj(i),NVOID) ) 
 	{
 	  Scierror("Error: properties mus have names \n");
-	  Scierror("\t%s of function %s\n",ArgPosition(rhs),stack.fname);
+	  Scierror("\t%s of function %s\n",ArgPosition(rhs),NspFname(stack));
 	  return RET_BUG;
 	}
       /** A copy of object is entered as an object property **/
@@ -1164,7 +1164,7 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
       if ( Ocheckname(NthObj(i),NVOID) ) 
 	{
 	  Scierror("Error: properties must have names \n");
-	  Scierror("\t%s of function %s\n",ArgPosition(rhs),stack.fname);
+	  Scierror("\t%s of function %s\n",ArgPosition(rhs),NspFname(stack));
 	  return RET_BUG;
 	}
       /** A copy of object is entered as an object property **/
@@ -1896,7 +1896,7 @@ _wrap_gtkliststore_new(Stack stack,int rhs,int opt,int lhs)
     }
   else 
     {
-      Scierror("%s: firts argument has a wrong type \n",stack.fname);
+      Scierror("%s: firts argument has a wrong type \n",NspFname(stack));
       return RET_BUG;
     }
   if (( ret = (NspObject *) gobject_create(NVOID,gobj,(NspTypeBase *) nsp_type_gtkliststore))== NULL) 
@@ -2134,7 +2134,7 @@ _wrap_gtktreestore_new(Stack stack,int rhs,int opt,int lhs)
     }
   else 
     {
-      Scierror("%s: firts argument has a wrong type \n",stack.fname);
+      Scierror("%s: firts argument has a wrong type \n",NspFname(stack));
       return RET_BUG;
     }
   if (( ret = (NspObject *) gobject_create(NVOID,gobj,(NspTypeBase *) nsp_type_gtktreestore))== NULL) 
@@ -2682,7 +2682,7 @@ _wrap_gtktreeviewcolumn_new(Stack stack,int rhs,int opt,int lhs)
 						   ((NspMatrix *) loc->data)->R[0]);
 	      else 
 		{
-		  Scierror("%s: attribute %s should be a real scalar\n",stack.fname,nsp_object_get_name(loc->data));
+		  Scierror("%s: attribute %s should be a real scalar\n",NspFname(stack),nsp_object_get_name(loc->data));
 		  return RET_BUG;
 		}
 	    }
@@ -2871,7 +2871,7 @@ _wrap_gtk_tree_view_column_set_attributes(NspGObject *self,Stack stack,int rhs,i
 					       ((NspMatrix *) loc->data)->R[0]);
 	  else 
 	    {
-	      Scierror("%s: attribute %s should be a real scalar\n",stack.fname,nsp_object_get_name(loc->data));
+	      Scierror("%s: attribute %s should be a real scalar\n",NspFname(stack),nsp_object_get_name(loc->data));
 	      return RET_BUG;
 	    }
 	}
@@ -2904,7 +2904,7 @@ _wrap_gtk_tree_view_get_path_at_pos(NspGObject *self,Stack stack,int rhs,int opt
       if ((nsp_column =(NspObject *) nspgobject_new((GObject *)column)) == NULL) return RET_BUG; 
       return RetArgs(stack,lhs,ret_T, nsp_path,nsp_column,cell_x,cell_y);
     }
-  Scierror("%s: failed to get path\n",stack.fname);
+  Scierror("%s: failed to get path\n",NspFname(stack));
   return RET_BUG ;
 }
 %%
@@ -2956,7 +2956,7 @@ _wrap_gtk_tree_view_insert_column_with_attributes(NspGObject *self,Stack stack,i
 						   ((NspMatrix *) loc->data)->R[0]);
 	      else 
 		{
-		  Scierror("%s: attribute %s should be a real scalar\n",stack.fname,nsp_object_get_name(loc->data));
+		  Scierror("%s: attribute %s should be a real scalar\n",NspFname(stack),nsp_object_get_name(loc->data));
 		  return RET_BUG;
 		}
 	    }
@@ -3294,10 +3294,10 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &window, &nsp_type_gtkwidget, &vbox,  
 	       opts,  &wdim,&open_gl, &wpdim, &wpos, &viewport,&winnum) == FAIL) return RET_BUG;
-  if (wdim != NULL) { CheckDims(stack.fname,3,wdim,1,2);}
-  if (wpdim != NULL){ CheckDims(stack.fname,3,wpdim,1,2);}
-  if (viewport != NULL) {CheckDims(stack.fname,3,viewport,1,2);}
-  if (wpos != NULL) {CheckDims(stack.fname,3,wpos,1,2);}
+  if (wdim != NULL) { CheckDims(NspFname(stack),3,wdim,1,2);}
+  if (wpdim != NULL){ CheckDims(NspFname(stack),3,wpdim,1,2);}
+  if (viewport != NULL) {CheckDims(NspFname(stack),3,viewport,1,2);}
+  if (wpos != NULL) {CheckDims(NspFname(stack),3,wpos,1,2);}
 #ifdef WITH_GTKGLEXT
   if ( open_gl == TRUE )
     win_id= nsp_graphic_new_gl(GTK_WIDGET(window->obj), GTK_WIDGET(vbox->obj), winnum,
@@ -3711,7 +3711,7 @@ _wrap_gtkitemfactory_new(Stack stack, int rhs, int opt, int lhs)
     container_type = GTK_TYPE_OPTION_MENU; 
   else 
     {
-      Scierror("%s: first argument should be \"menu_bar\", \"menu\" or \"optio_menu\"\n",stack.fname); 
+      Scierror("%s: first argument should be \"menu_bar\", \"menu\" or \"optio_menu\"\n",NspFname(stack)); 
       return RET_BUG;
     }
   if ( nsp_accel_group != NULL ) accel_group = GTK_ACCEL_GROUP(nsp_accel_group->obj);
@@ -3819,7 +3819,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
 	  int_types kT[]={ string,string,obj,s_int,string,obj,list_end};
 	  if ( !IsList(cloc->O) ) 
 	    {
-	      Scierror("%s: list element %d has wrong type\n",stack.fname,i);
+	      Scierror("%s: list element %d has wrong type\n",NspFname(stack),i);
 	      return RET_BUG;
 	    }
 
@@ -3827,7 +3827,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
 			   &cb, &(ent.callback_action), &(ent.item_type),
 			   &extra_data) == FAIL ) 
 	    {
-	      Scierror("%s: list element %d should be a list\n",stack.fname,i);
+	      Scierror("%s: list element %d should be a list\n",NspFname(stack),i);
 	      return RET_BUG;
 	    }
 	  if ( IsNone(cb )) 
@@ -3851,7 +3851,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
 	    }
 	  else 
 	    {
-	      Scierror("%s: list element %d callback can be None or a function\n",stack.fname,i);
+	      Scierror("%s: list element %d callback can be None or a function\n",NspFname(stack),i);
 	      return RET_BUG;
 	    }
 	  if ( IsSMat(extra_data) && ((NspSMatrix *) extra_data)->mn == 1)
@@ -3869,7 +3869,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
 	  else 
 	    {
 	      Scierror("%s: list element %d last argument must be a GdkPixBuf or a string\n",
-		       stack.fname,i);
+		       NspFname(stack),i);
 	      return RET_BUG;
 	    }
 	  if (cunote != NULL) {
@@ -3963,14 +3963,14 @@ _wrap_gtk_pixmap_get(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   gtk_pixmap_get(GTK_PIXMAP(self->obj), &pixmap, &mask);
   if (pixmap == NULL ) 
     {
-      Scierror("%s: can't get pixmap\n",stack.fname);
+      Scierror("%s: can't get pixmap\n",NspFname(stack));
       return RET_BUG; 
     }
   if ( lhs == 2) 
     {
       if ( mask == NULL ) 
 	{
-	  Scierror("%s: can't get mask \n",stack.fname);
+	  Scierror("%s: can't get mask \n",NspFname(stack));
 	  return RET_BUG; 
 	}
       nsp_pixmap = (NspObject *) nspgobject_new((GObject *) pixmap);
@@ -4187,7 +4187,7 @@ _wrap_gtkbutton_new(Stack stack,int rhs,int opt,int lhs)
   else 
     gobj = (GObject *)gtk_button_new();
   if (gobj == NULL ) {
-    Scierror( "%s: could not create GtkButton object",stack.fname);
+    Scierror( "%s: could not create GtkButton object",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gtkbutton = new_type_gtkbutton(T_BASE);
@@ -4244,7 +4244,7 @@ _wrap_gtktogglebutton_new(Stack stack,int rhs,int opt,int lhs)
   else 
     gobj = (GObject *)gtk_button_new();
   if (gobj == NULL ) {
-    Scierror( "%s: could not create GtkToggleButton object",stack.fname);
+    Scierror( "%s: could not create GtkToggleButton object",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gtktogglebutton = new_type_gtktogglebutton(T_BASE);
@@ -4277,7 +4277,7 @@ _wrap_gtkcheckbutton_new(Stack stack,int rhs,int opt,int lhs)
   else 
     gobj = (GObject *)gtk_button_new();
   if (gobj == NULL ) {
-    Scierror( "%s: could not create GtkToggleButton object",stack.fname);
+    Scierror( "%s: could not create GtkToggleButton object",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gtkcheckbutton = new_type_gtkcheckbutton(T_BASE);
@@ -4606,7 +4606,7 @@ nsp_gtk_toolbar_item_add_callback_and_return(Stack stack,int flag,GtkWidget *ret
   GClosure *closure;
   if ( ret == NULL) 
     {
-      Scierror("%s: cannot create iem\n",stack.fname);
+      Scierror("%s: cannot create iem\n",NspFname(stack));
       return RET_BUG;
     }
   if ( callback != NULL && flag ) 
@@ -5006,7 +5006,7 @@ static GtkTargetEntry * nsp_gtk_target_entry_from_list(Stack stack,NspList *list
 	{
 	  if (! IsList(cloc->O) )
 	    {
-	      Scierror("%s: list item %d is not a list \n",stack.fname,i+1);
+	      Scierror("%s: list item %d is not a list \n",NspFname(stack),i+1);
 	      g_free(targets);
 	      return NULL;
 	    }
@@ -6103,14 +6103,14 @@ _wrap_gtk_stock_add(Stack stack,int rhs,int opt,int lhs)
 	  int_types kT[]={ string,string,s_int,s_int,string,list_end};
 	  if ( !IsList(cloc->O) ) 
 	    {
-	      Scierror("%s: list element %d has wrong type\n",stack.fname,i);
+	      Scierror("%s: list element %d has wrong type\n",NspFname(stack),i);
 	      goto error;
 	    }
 	  if ( GetListArgs(item,1,kT,&items[i].stock_id, &items[i].label,
 			   &items[i].modifier, &items[i].keyval,
 			   &items[i].translation_domain) == FAIL ) 
 	    {
-	      Scierror("%s: list element %d is incorrect (stock_id, label, modifiers,keyval,domain) expected\n",stack.fname,i);
+	      Scierror("%s: list element %d is incorrect (stock_id, label, modifiers,keyval,domain) expected\n",NspFname(stack),i);
 	      goto error;
 	    }
 	}
@@ -6271,7 +6271,7 @@ _wrap_gtk_im_context_get_surrounding(NspGObject *self,Stack stack,int rhs,int op
   int rep;
   if ( !gtk_im_context_get_surrounding(GTK_IM_CONTEXT(self->obj), &text, &cursor_index)) 
     {
-      Scierror("%s: cannot get text\n",stack.fname);
+      Scierror("%s: cannot get text\n",NspFname(stack));
       return RET_BUG; 
     }
   rep = RetArgs(stack,lhs,T, text, cursor_index);

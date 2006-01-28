@@ -476,7 +476,7 @@ static int int_list_first(void *self,Stack stack, int rhs, int opt, int lhs)
 
   if ( L->nel == 0 )
     {
-      Scierror("%s: empty list\n",stack.fname);
+      Scierror("%s: empty list\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -503,7 +503,7 @@ static int int_list_last(void *self,Stack stack, int rhs, int opt, int lhs)
 
   if ( L->nel == 0 )
     {
-      Scierror("%s: empty list\n",stack.fname);
+      Scierror("%s: empty list\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -558,7 +558,7 @@ static int int_lxcompact(void *self, Stack stack, int rhs, int opt, int lhs)
       if ( strlen(str) > 0 && (str[0]== 'c' || str[0]== 'r')) c=str[0];
       else 
 	{
-	  Scierror("%s: argument must be 'c' or 'r'\n",stack.fname);
+	  Scierror("%s: argument must be 'c' or 'r'\n",NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -676,7 +676,7 @@ static int int_lxsortedlist(Stack stack, int rhs, int opt, int lhs)
     {
       if ( Ocheckname(NthObj(i),NVOID) ) 
 	{
-	  Scierror("Error: arguments must have name for %s function\n",stack.fname);
+	  Scierror("Error: arguments must have name for %s function\n",NspFname(stack));
 	  goto err;
 	}
       if ( (O1 = nsp_object_copy_with_name(NthObj(i))) == NULLOBJ ) goto err;
@@ -776,7 +776,7 @@ static int int_lx_tlist_as_hash(Stack stack, int rhs, int opt, int lhs)
     {
       Scierror("Error:\t%s", ArgPosition(1));
       ArgName(stack,1);
-      Scierror(" of function %s is an empty string matrix\n",stack.fname);
+      Scierror(" of function %s is an empty string matrix\n",NspFname(stack));
       return RET_BUG;
     }
   if(( H = nsp_hash_create(NVOID,rhs)) == NULLHASH) return RET_BUG;

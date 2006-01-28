@@ -96,7 +96,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
 
   if ( n < 1 )
     { 
-      Scierror("%s: too few arg\n", stack.fname);
+      Scierror("%s: too few arg\n", NspFname(stack));
       return RET_BUG;
     }
   m = 1; for ( i = 1 ; i <= n ; i++) m = 2*m;
@@ -111,7 +111,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
   k = malloc(n*sizeof(int));
   if ( ! (xp && x && ndim && u && v && ad && k) )
     {
-      Scierror("%s: not enough memory\n", stack.fname);
+      Scierror("%s: not enough memory\n", NspFname(stack));
       goto err;
     } 
 
@@ -124,7 +124,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
       if ((B = GetMat(stack,i)) == NULLMAT) goto err;
       if ( mxp != B->m || nxp != B->n )
 	{ 
-	  Scierror("%s: bad inputs for xp1, xp2, ...., \n", stack.fname);
+	  Scierror("%s: bad inputs for xp1, xp2, ...., \n", NspFname(stack));
 	  goto err;
 	}
       xp[i-1] = B->R;
@@ -133,15 +133,15 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
   for ( i = 1 ; i <= n ; i++ )
     {
       if ((B = GetMat(stack,i+n)) == NULLMAT) goto err;
-      CheckVector(stack.fname,i+n,B);
+      CheckVector(NspFname(stack),i+n,B);
       if (B->mn < 2)
 	{ 
-	  Scierror("%s: bad arg number %d \n", stack.fname, n+i);
+	  Scierror("%s: bad arg number %d \n", NspFname(stack), n+i);
 	  goto err;
 	}
       if ( !good_order(B->R, B->mn) )
 	{
-	  Scierror("%s: grid abscissae of dim %d not in strict increasing order \n", stack.fname, n+i);
+	  Scierror("%s: grid abscissae of dim %d not in strict increasing order \n", NspFname(stack), n+i);
 	  goto err;
 	}
       ndim[i-1] = B->mn;
@@ -153,7 +153,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
   if ((B = GetMat(stack,2*n+1)) == NULLMAT) goto err;
   if ( B->mn != ndim_prod )
     {
-      Scierror("%s: bad dimension for the grid values \n", stack.fname);
+      Scierror("%s: bad dimension for the grid values \n", NspFname(stack));
       goto err;
     }
   val = B->R;
@@ -165,7 +165,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
       outmode = get_outmode(str);
       if (outmode == UNDEFINED || outmode == LINEAR)
 	{
-	  Scierror("%s: %s is an unknown or unsupported outmode \n",stack.fname, str);
+	  Scierror("%s: %s is an unknown or unsupported outmode \n",NspFname(stack), str);
 	  goto err;
 	}
     }
@@ -205,18 +205,18 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
   if ((x = GetMat(stack,1)) == NULLMAT) return RET_BUG;
   if ((y = GetMat(stack,2)) == NULLMAT) return RET_BUG;
 
-  CheckSameDims(stack.fname,1,2,x,y);
-  CheckVector(stack.fname,1,x);
+  CheckSameDims(NspFname(stack),1,2,x,y);
+  CheckVector(NspFname(stack),1,x);
   n = x->mn;    /* number of interpolation points */
   if ( n < 2 ) 
     { 
-      Scierror("%s: the number of interpolation points must be >= 2\n", stack.fname);
+      Scierror("%s: the number of interpolation points must be >= 2\n", NspFname(stack));
       return RET_BUG;
     }
 
   if (! good_order(x->R, n))  /* verify strict increasing abscissae */
     {
-      Scierror("%s: elts of arg 1 not (strictly) increasing or +-inf detected\n",  stack.fname);
+      Scierror("%s: elts of arg 1 not (strictly) increasing or +-inf detected\n",  NspFname(stack));
       return RET_BUG;
     }
 
@@ -226,7 +226,7 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
       spline_type = get_spline_type(str);
       if ( spline_type == UNDEFINED )
 	{
-	  Scierror("%s: %s is an unknown or unsupported spline type\n",stack.fname, str);
+	  Scierror("%s: %s is an unknown or unsupported spline type\n",NspFname(stack), str);
 	  return RET_BUG;
 	}
     }
@@ -237,22 +237,22 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
     {
       if ( rhs != 4 )
 	{
-	  Scierror("%s: for a clamped spline you must give the endpoint slopes\n",stack.fname);
+	  Scierror("%s: for a clamped spline you must give the endpoint slopes\n",NspFname(stack));
 	  return RET_BUG;
 	}
       if ((s = GetMat(stack,4)) == NULLMAT) return RET_BUG;
-      CheckLength(stack.fname,4,s,2);
+      CheckLength(NspFname(stack),4,s,2);
     }
   else if ( rhs == 4 )
     {
-      Scierror("%s: 4 args are required only for a clamped spline\n",stack.fname);
+      Scierror("%s: 4 args are required only for a clamped spline\n",NspFname(stack));
       return RET_BUG;
     }
     
   /*  verify y[0] = y[n-1] for periodic splines */
   if ( (spline_type == PERIODIC || spline_type == FAST_PERIODIC)  &&  y->R[0] != y->R[n-1] )
     {
-      Scierror("%s: for a periodic spline y(1) must be equal to y(n)\n",stack.fname);
+      Scierror("%s: for a periodic spline y(1) must be equal to y(n)\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -307,16 +307,16 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
   if ((y = GetMat(stack,3)) == NULLMAT) return RET_BUG;
   if ((d = GetMat(stack,4)) == NULLMAT) return RET_BUG;
 
-  CheckSameDims(stack.fname,2,3,x,y);
-  CheckSameDims(stack.fname,2,4,x,d);
-  CheckVector(stack.fname,2,x);
+  CheckSameDims(NspFname(stack),2,3,x,y);
+  CheckSameDims(NspFname(stack),2,4,x,d);
+  CheckVector(NspFname(stack),2,x);
 
   /* must we verify also strict increasing abscissae (x) ? */
   m = t->mn;
   n = x->mn;
   if ( x->mn < 2 )
     { 
-      Scierror("%s: length of x must be >= 2  \n", stack.fname);
+      Scierror("%s: length of x must be >= 2  \n", NspFname(stack));
       return 0;
     }
 
@@ -326,7 +326,7 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
       outmode = get_outmode(str);
       if ( outmode == UNDEFINED )
 	{
-	  Scierror("%s: %s is an unknown or unsupported outmode \n",stack.fname, str);
+	  Scierror("%s: %s is an unknown or unsupported outmode \n",NspFname(stack), str);
 	  return RET_BUG;
 	}
     }

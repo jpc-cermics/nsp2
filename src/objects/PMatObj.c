@@ -320,7 +320,7 @@ nsp_polynom GetPolynom(Stack stack, int i)
     {
       Scierror("Error:\t%s", ArgPosition(i));
       ArgName(stack,i);
-      Scierror(" of function %s should be a string\n",stack.fname);
+      Scierror(" of function %s should be a string\n",NspFname(stack));
       return NULLPOLY ;
     }
   return M->S[0];

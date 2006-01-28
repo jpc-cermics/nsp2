@@ -49,7 +49,7 @@ static char *nsp_pvm_geterror(int n)
 static int pvm_error = 0; 
 
 #define NSP_PVM_ERROR(err) \
-   if ( pvm_error == 1 && err < 0 ) { Scierror("Error: %s %s\n",stack.fname, nsp_pvm_geterror(err)); \
+   if ( pvm_error == 1 && err < 0 ) { Scierror("Error: %s %s\n",NspFname(stack), nsp_pvm_geterror(err)); \
        return RET_BUG;}
 
 /*
@@ -112,7 +112,7 @@ int int_pvm_spawn( Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&opts,&task,&nowindow,&ntask,&where) == FAIL) return RET_BUG;
   if ( ntask <= 0) 
     {
-      Scierror("%s: number of tasks is negativs\n",stack.fname);
+      Scierror("%s: number of tasks is negativs\n",NspFname(stack));
       return RET_BUG;
     }
   if ((M=nsp_matrix_create(NVOID,'r',1,ntask))==NULLMAT) return RET_BUG;
@@ -160,7 +160,7 @@ int int_pvm_spawn_independent( Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ( ntask <= 0) 
     {
-      Scierror("%s: number of tasks is negativs\n",stack.fname);
+      Scierror("%s: number of tasks is negativs\n",NspFname(stack));
       return RET_BUG;
     }
   if ((M=nsp_matrix_create(NVOID,'r',1,ntask))==NULLMAT) return RET_BUG;
@@ -248,7 +248,7 @@ int int_pvm_error_mode( Stack stack, int rhs, int opt, int lhs)
       else if ( strcmp(str,"continue") == 0)
 	pvm_error = 0; 
       else {
-	Scierror("%s: first argument should be \"stop\" or \"continue\"\n",stack.fname);
+	Scierror("%s: first argument should be \"stop\" or \"continue\"\n",NspFname(stack));
 	return RET_BUG;
       }
     }

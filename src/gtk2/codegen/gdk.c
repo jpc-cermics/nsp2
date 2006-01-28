@@ -1916,7 +1916,7 @@ _wrap_gdkrectangle_new(Stack stack,int rhs,int opt,int lhs)
     }
   else 
     {
-      Scierror("%s: rhs should be 1 or 4 \n",stack.fname);
+      Scierror("%s: rhs should be 1 or 4 \n",NspFname(stack));
       return RET_BUG;
     }
   if(( H = gboxed_create(NVOID,GDK_TYPE_RECTANGLE, &re, TRUE, TRUE,
@@ -2249,7 +2249,7 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
       int_types T[] = { realmat , new_opts, t_end};
       if (GetArgs(stack,rhs,opt,T, &colours, &opts, &writeable, &best_match) == FAIL ) 
 	return RET_BUG;
-      CheckCols(stack.fname,1,colours,3);
+      CheckCols(NspFname(stack),1,colours,3);
       for ( i= 0 ; i < colours->m ; i++)
 	{
 	  colour.red = colours->R[i];
@@ -2258,7 +2258,7 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
 	  if (!gdk_colormap_alloc_color(GDK_COLORMAP(self->obj),
 					&colour, writeable, best_match))
 	    {
-	      Scierror("%s: couldn't allocate colour number %d",stack.fname,i);
+	      Scierror("%s: couldn't allocate colour number %d",NspFname(stack),i);
 	      return RET_BUG;
 	    }
 	}
@@ -2273,19 +2273,19 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
 	{
 	  if (!gdk_color_parse( colours->S[i], &colour))
 	    {
-	      Scierror("%s: unable to parse colour specification %s\n",stack.fname,colours->S[i]);
+	      Scierror("%s: unable to parse colour specification %s\n",NspFname(stack),colours->S[i]);
 	      return RET_BUG;
 	    }
 	  if (!gdk_colormap_alloc_color(GDK_COLORMAP(self->obj),
 					&colour, writeable, best_match))
 	    {
-	      Scierror("%s: couldn't allocate colour %s\n",stack.fname,colours->S[i]);
+	      Scierror("%s: couldn't allocate colour %s\n",NspFname(stack),colours->S[i]);
 	      return RET_BUG;
 	    }
 	}
     }
   else {
-    Scierror("%s: first arhument must be a String or scalar matrix \n", stack.fname);
+    Scierror("%s: first arhument must be a String or scalar matrix \n", NspFname(stack));
     return RET_BUG;
   }
   return 0;
@@ -3692,7 +3692,7 @@ _wrap_gdk_draw_polygon(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
   if (GetArgs(stack,rhs,opt,T, &nsp_type_gdkgc, &gc, &filled, &nsp_points) == FAIL) 
     return RET_BUG;
-  CheckCols(stack.fname,3,nsp_points,2);
+  CheckCols(NspFname(stack),3,nsp_points,2);
 
   npoints = nsp_points->m;
   points = g_new(GdkPoint, npoints);
@@ -3788,7 +3788,7 @@ _wrap_gdk_draw_points(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 	      &nsp_type_gdkgc, &gc, &nsp_points) == FAIL )
     return RET_BUG;
 
-  CheckCols(stack.fname,2,nsp_points,2);
+  CheckCols(NspFname(stack),2,nsp_points,2);
 
   npoints = nsp_points->m;
   points = g_new(GdkPoint, npoints);
@@ -3816,9 +3816,9 @@ _wrap_gdk_draw_segments(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   int_types T[] = {obj_check, realmat , realmat , t_end};
   if (GetArgs(stack,rhs,opt,T, &nsp_type_gdkgc, &gc, &nsp_xsegs,&nsp_ysegs) == FAIL )
     return RET_BUG;
-  CheckSameDims(stack.fname,2,3,nsp_xsegs,nsp_ysegs);
-  CheckCols(stack.fname,2,nsp_xsegs,2);
-  CheckCols(stack.fname,3,nsp_ysegs,2);
+  CheckSameDims(NspFname(stack),2,3,nsp_xsegs,nsp_ysegs);
+  CheckCols(NspFname(stack),2,nsp_xsegs,2);
+  CheckCols(NspFname(stack),3,nsp_ysegs,2);
 
   nsegs = nsp_xsegs->mn/2; 
   segs = g_new(GdkSegment, nsegs);
@@ -3847,7 +3847,7 @@ _wrap_gdk_draw_lines(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   int_types T[] = {obj_check, realmat ,t_end};
   if (GetArgs(stack,rhs,opt,T, &nsp_type_gdkgc, &gc, &nsp_points) == FAIL )
     return RET_BUG;
-  CheckCols(stack.fname,2,nsp_points,2);
+  CheckCols(NspFname(stack),2,nsp_points,2);
   npoints = nsp_points->m;
   points = g_new(GdkPoint, npoints);
   for (i = 0; i < npoints ; i++) {
@@ -3914,7 +3914,7 @@ static int _wrap_gdk_image_get(NspGdkDrawable *self,Stack stack,int rhs,int opt,
   GdkImage *ret;
 
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &width, &height) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GdkDrawable.get_image",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GdkDrawable.get_image",NspFname(stack)); return RET_BUG;
   ret = gdk_image_get(GDK_DRAWABLE(self->obj), x, y, width, height);
   nsp_type_gdkimage = new_type_gdkimage(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkimage))== NULL) return RET_BUG;
@@ -7256,13 +7256,13 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
       gdk_pixbuf_render_pixmap_and_mask(GDK_PIXBUF(self->obj), &pixmap, &mask, alpha_threshold);
       if (pixmap == NULL ) 
 	{
-	  Scierror("%s: can't get pixmap from pixbuf\n",stack.fname);
+	  Scierror("%s: can't get pixmap from pixbuf\n",NspFname(stack));
 	  return RET_BUG; 
 	}
 
 	if ( mask == NULL ) 
 	{
-	  Scierror("%s: can't get mask from pixbuf\n",stack.fname);
+	  Scierror("%s: can't get mask from pixbuf\n",NspFname(stack));
 	  return RET_BUG; 
 	}
       nsp_pixmap = (NspObject *) nspgobject_new((GObject *) pixmap);
@@ -7493,7 +7493,7 @@ _wrap_gdk_pixbuf_save(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   if (nspg_error_check(&error)) return RET_BUG;
   */
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",stack.fname);
+    Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
   g_free(option_keys);
@@ -7923,7 +7923,7 @@ _wrap_gdkpixbufanimation_new(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_animation_new_from_file(filename, &error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",stack.fname);
+    Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
 
@@ -8431,7 +8431,7 @@ _wrap_gdkpixbufloader_new(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&image_type) == FAIL) return RET_BUG;
   if ((ret = (GObject *)gdk_pixbuf_loader_new_with_type(image_type, &error))== NULL) return RET_BUG;
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",stack.fname);
+    Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
 
@@ -8452,7 +8452,7 @@ static int _wrap_gdk_pixbuf_loader_write(NspGdkPixbufLoader *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&buf, &count) == FAIL) return RET_BUG;
   ret = gdk_pixbuf_loader_write(GDK_PIXBUF_LOADER(self->obj), buf, count, &error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",stack.fname);
+    Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -8490,7 +8490,7 @@ static int _wrap_gdk_pixbuf_loader_close(NspGdkPixbufLoader *self,Stack stack,in
 
   ret = gdk_pixbuf_loader_close(GDK_PIXBUF_LOADER(self->obj), &error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",stack.fname);
+    Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -10358,20 +10358,20 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
     }
   else 
     {
-      Scierror("%s: first argument must be a drawable or a colormap\n",stack.fname);
+      Scierror("%s: first argument must be a drawable or a colormap\n",NspFname(stack));
       return RET_BUG; 
     }
 
   if (nspg_boxed_check(nsp_trans_color, GDK_TYPE_COLOR))
     trans_color = nspg_boxed_get(nsp_trans_color, GdkColor);
   else if ( !IsNone(nsp_trans_color)) {
-    Scierror("%s: transparent_color must be a colour or None\n",stack.fname);
+    Scierror("%s: transparent_color must be a colour or None\n",NspFname(stack));
     return RET_BUG;
   }
   
   if (data->mn == 0) 
     {
-      Scierror("%s: third argument must be of size > 0 \n",stack.fname);
+      Scierror("%s: third argument must be of size > 0 \n",NspFname(stack));
       return RET_BUG;
     }
   if ( drawable != NULL ) 
@@ -10725,7 +10725,7 @@ int _wrap_gdk_pixbuf_new_from_file(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
     ret = gdk_pixbuf_new_from_file(filename, &error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",stack.fname);
+    Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
@@ -10747,7 +10747,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   if (( data = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if (( pixbuf = gdk_pixbuf_new_from_xpm_data((const char**)data->S)) == NULL)
     {
-      Scierror("%s:can't load pixbuf",stack.fname);
+      Scierror("%s:can't load pixbuf",NspFname(stack));
       return RET_BUG;
     }
   
@@ -10772,7 +10772,7 @@ int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&data_length, &data, &copy_pixels) == FAIL) return RET_BUG;
     ret = gdk_pixbuf_new_from_inline(data_length, data, copy_pixels, &error);
   if ( error != NULL ) {
-    Scierror("%s: gtk error\n",stack.fname);
+    Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);

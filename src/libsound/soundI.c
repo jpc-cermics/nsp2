@@ -24,7 +24,7 @@ static int int_savewave(Stack stack, int rhs, int opt, int lhs)
   nsp_path_expand(fname,buf,FSIZE);
   C2F(savewave)(buf,A->R,&rate,&A->mn,&err);
   if (err >  0) {
-    Scierror("%s: internal error \n",stack.fname);
+    Scierror("%s: internal error \n",NspFname(stack));
     return RET_BUG;
   };
   return 0;
@@ -43,7 +43,7 @@ static int int_loadwave(Stack stack, int rhs, int opt, int lhs)
   nsp_path_expand(fname,buf,FSIZE);
   C2F(loadwave)(buf,(double *) 0,&n2,0,&Wi,&err);
   if (err >  0) {
-    Scierror("%s: internal error \n",stack.fname);
+    Scierror("%s: internal error \n",NspFname(stack));
     return RET_BUG;
   };
   if ((M=nsp_matrix_create(NVOID,'r',1,n2))==NULLMAT) return RET_BUG;
@@ -65,7 +65,7 @@ static int int_loadwave(Stack stack, int rhs, int opt, int lhs)
   
   C2F(loadwave)(buf,M->R,&M->mn,1,&Wi,&err);
   if (err >  0) {
-    Scierror("%s: internal error \n",stack.fname);
+    Scierror("%s: internal error \n",NspFname(stack));
     return RET_BUG;
   };
   MoveObj(stack,1,NSP_OBJECT(M));
@@ -121,7 +121,7 @@ static int int_playsound(Stack stack, int rhs, int opt, int lhs)
     }
   if ( rep == -1 ) 
     {
-      Scierror("%s: internal error\n",stack.fname);
+      Scierror("%s: internal error\n",NspFname(stack));
       return RET_BUG;
     }
   return 0;

@@ -779,7 +779,7 @@ class GTypeArg(ArgType):
 
 class GErrorArg(ArgType):
     handleerror = ('  if ( %(name)s != NULL ) {\n'
-                   '    Scierror("%%s: gtk error\\n",stack.fname);\n'
+                   '    Scierror("%%s: gtk error\\n",NspFname(stack));\n'
                    '    return RET_BUG;\n  }\n')
     def write_param(self, ptype, pname, pdflt, pnull, psize,info, pos): 
         info.varlist.add('GError', '*' + pname + ' = NULL') 

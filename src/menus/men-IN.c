@@ -53,7 +53,7 @@ static NspSMatrix *GetSMatUtf8(Stack stack,int pos)
       if ((Sm = GetSMatCopy(stack,pos)) == NULLSMAT) return NULLSMAT;
       if ( nsp_smatrix_to_utf8(Sm) == FAIL) 
 	{
-	  Scierror("%s: failed to convert %s to utf8\n",stack.fname,ArgPosition(pos));
+	  Scierror("%s: failed to convert %s to utf8\n",NspFname(stack),ArgPosition(pos));
 	  return NULLSMAT;
 	}
     }
@@ -71,7 +71,7 @@ static char *GetStringUtf8(Stack stack,int pos)
   if ((Sm = GetSMatUtf8(stack,pos)) == NULLSMAT) return NULL;
   if ( Sm->mn != 1 ) 
     {
-      Scierror("%s: %s should be a string\n",stack.fname,ArgPosition(pos));
+      Scierror("%s: %s should be a string\n",NspFname(stack),ArgPosition(pos));
       return NULL;
     }
   return Sm->S[0];
@@ -88,7 +88,7 @@ static NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos)
     {
       if ( nsp_smatrix_to_utf8(Sm) == FAIL) 
 	{
-	  Scierror("%s: failed to convert %s to utf8\n",stack.fname,ArgPosition(pos));
+	  Scierror("%s: failed to convert %s to utf8\n",NspFname(stack),ArgPosition(pos));
 	  return NULLSMAT;
 	}
     }
@@ -117,7 +117,7 @@ int int_x_message(Stack stack, int rhs, int opt, int lhs)
   switch (rep) 
     {
     case menu_fail :
-      Scierror("Error: lack of memory or internal error in %s \n",stack.fname);
+      Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
       return RET_BUG;
     case menu_cancel: 
       nrep=0;
@@ -172,7 +172,7 @@ int int_x_choose(Stack stack, int rhs, int opt, int lhs)
   switch (rep) 
     {
     case menu_fail :
-      Scierror("Error: lack of memory or internal error in %s \n",stack.fname);
+      Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
       return RET_BUG;
     case menu_cancel: 
       nrep=0;
@@ -202,7 +202,7 @@ int int_x_dialog(Stack stack, int rhs, int opt, int lhs)
   switch (rep) 
     {
     case menu_fail :
-      Scierror("Error: lack of memory or internal error in %s \n",stack.fname);
+      Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
       return RET_BUG;
     case menu_cancel: 
       if ((Obj = (NspObject *) nsp_smatrix_create(NVOID,0,0,NULL,0))== NULLOBJ ) return RET_BUG;
@@ -236,13 +236,13 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
       Init_values->n =  1;
       if ( Labels->mn != Init_values->mn ) 
 	{
-	  Scierror("%s: second and third argument should be of equal size\n",stack.fname);
+	  Scierror("%s: second and third argument should be of equal size\n",NspFname(stack));
 	  return RET_BUG;
 	}
       if ( Labels->mn == 0 ) 
 	{
 	  /* return empty string */
-	  Scierror("%s: second and third argument are of size 0\n",stack.fname);
+	  Scierror("%s: second and third argument are of size 0\n",NspFname(stack));
 	  return RET_BUG;
 	}
       rep = nsp_multi_dialog(Title,Labels,Init_values);
@@ -256,7 +256,7 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
 	  MoveObj(stack,1,O1);
 	  break;
 	case menu_fail: 
-	  Scierror("Error: lack of memory or internal error in %s \n",stack.fname);
+	  Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -274,12 +274,12 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
 
       if ( Labels_v->mn != 0 && Labels_v->mn != Init_matrix->m ) 
 	{
-	  Scierror("%s: second and fourth argument have incompatible sizes\n",stack.fname);
+	  Scierror("%s: second and fourth argument have incompatible sizes\n",NspFname(stack));
 	  return RET_BUG;
 	}
       if ( Labels_h->mn != 0 &&  Labels_h->mn != Init_matrix->n ) 
 	{
-	  Scierror("%s: third and fourth argument have incompatible sizes\n",stack.fname);
+	  Scierror("%s: third and fourth argument have incompatible sizes\n",NspFname(stack));
 	  return RET_BUG;
 	}
       rep = nsp_matrix_dialog(Title,Labels_v->mn != 0 ? Labels_v : NULL,
@@ -294,7 +294,7 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
 	  MoveObj(stack,1,O1);
 	  break;
 	case menu_fail: 
-	  Scierror("Error: lack of memory or internal error in %s \n",stack.fname);
+	  Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -388,7 +388,7 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 	case menu_cancel : res = def_res;break;
 	case menu_ok : 	free_f=2;break;
 	case menu_fail : 
-	  Scierror("Error: lack of memory or internal error in %s \n",stack.fname);
+	  Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -460,7 +460,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
       if ((M= nsp_matrix_create(NVOID,'r',0,0))== NULLMAT) return RET_BUG; 
       break;
     case menu_fail: 
-      Scierror("Error: lack of memory or internal error in %s \n",stack.fname);
+      Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
       return RET_BUG;
     }
   MoveObj(stack,1,(NspObject *) M);
@@ -485,7 +485,7 @@ static int nsp_check_choice(Stack stack,NspList *L)
 	|| nsp_smatrix_to_utf8(MS2) == FAIL
 	|| nsp_smatrix_to_utf8(MS3) == FAIL )
     {
-      Scierror("Error: in %s conversion to utf8 failed\n",stack.fname);
+      Scierror("Error: in %s conversion to utf8 failed\n",NspFname(stack));
       return FAIL;
     }
   return OK;
@@ -505,11 +505,11 @@ static int nsp_check_choice_list(Stack stack,NspList *L)
 	      if (  strcmp(arg ,NVOID) != 0)
 		{
 		  Scierror("Error: second argument of function %s has a wrong element %s(%d) \n",
-			   stack.fname,arg,count);
+			   NspFname(stack),arg,count);
 		}
 	      else 
 		{
-		  Scierror("Error: element %d of second argument of function %s is wrong\n",count,stack.fname);
+		  Scierror("Error: element %d of second argument of function %s is wrong\n",count,NspFname(stack));
 		}
 	      return FAIL;
 	    }
@@ -519,10 +519,10 @@ static int nsp_check_choice_list(Stack stack,NspList *L)
 	  char *arg =nsp_object_get_name((NthObj(2)));
 	  if (  strcmp(arg ,NVOID) != 0)
 	    Scierror("Error: second argument of function %s, %s(%d) is not a list\n",
-		     stack.fname,arg,count);
+		     NspFname(stack),arg,count);
 	  else 
 	    Scierror("Error: element %d of second argument of function %s is not a list\n",
-		     count,stack.fname);
+		     count,NspFname(stack));
 	  return FAIL;
 	}
       Loc= Loc->next;
@@ -591,7 +591,7 @@ static int int_nsp_choose_color(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if ( colormap->n != 3 ) 
 	    {
-	      Scierror("%s:optional argument colormap should be of size mx3\n",stack.fname);
+	      Scierror("%s:optional argument colormap should be of size mx3\n",NspFname(stack));
 	      return RET_BUG;
 	    }
 	  /* No use to open a graphic window we use the 
@@ -642,7 +642,7 @@ int int_set_unset_menu(Stack stack, int rhs, int opt, int lhs, men_f *F)
   (*F)(gwin,button,nsub);
   if ( ierr != 0 ) 
     {
-      Scierror("%s: Error\n",stack.fname);
+      Scierror("%s: Error\n",NspFname(stack));
       return RET_BUG;
     }
   return 0;
@@ -679,7 +679,7 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
       if ((L = GetList(stack,rhs)) == NULLLIST) return RET_BUG;
       if (nsp_list_length(L) != 2 ) 
 	{
-	  Scierror("%s: last argument should be a list of length 2\n",stack.fname);
+	  Scierror("%s: last argument should be a list of length 2\n",NspFname(stack));
 	  return RET_BUG;
 	}
       if ((O1 =nsp_list_get_element(L, 1))== NULLOBJ) return RET_BUG;
@@ -689,7 +689,7 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
 	}
       else 
 	{
-	  Scierror("%s: last argument should be a list of length 2 = (scalar,string) \n",stack.fname);
+	  Scierror("%s: last argument should be a list of length 2 = (scalar,string) \n",NspFname(stack));
 	  return RET_BUG;
 	}
       if ((O1 =nsp_list_get_element(L,2))== NULLOBJ) return RET_BUG;
@@ -699,7 +699,7 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
 	}
       else 
 	{
-	  Scierror("%s: last argument should be a list of length 2 = (scalar,string) \n",stack.fname);
+	  Scierror("%s: last argument should be a list of length 2 = (scalar,string) \n",NspFname(stack));
 	  return RET_BUG;
 	}
     }
@@ -748,7 +748,7 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
 
   if (ierr == FAIL ) 
     {
-      Scierror("%s: error \n",stack.fname);
+      Scierror("%s: error \n",NspFname(stack));
       return RET_BUG;
     }
   return(0);

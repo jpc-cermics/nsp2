@@ -470,7 +470,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
     {
     case 1 :
       if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
-      CheckLength(stack.fname,1,M1,4);
+      CheckLength(NspFname(stack),1,M1,4);
       *val = M1->R;
       break;
     case 4 :
@@ -481,7 +481,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
       *val = l;
       break;
     default :
-      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\r\n",stack.fname,rhs-opt);
+      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\r\n",NspFname(stack),rhs-opt);
       return FAIL;
     }
   return OK;
@@ -589,7 +589,7 @@ static int int_gblock_translate(void  *self,Stack stack, int rhs, int opt, int l
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,M,2);
+  CheckLength(NspFname(stack),1,M,2);
   block_translate(self,M->R);
   MoveObj(stack,1,self);
   return 1;
@@ -603,7 +603,7 @@ static int int_gblock_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,M,2);
+  CheckLength(NspFname(stack),1,M,2);
   block_set_pos(self,M->R);
   MoveObj(stack,1,self);
   return 1;
@@ -617,7 +617,7 @@ static int int_gblock_resize(void  *self, Stack stack, int rhs, int opt, int lhs
   CheckRhs(1,1);
   CheckLhs(-1,1);
   if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,M,2);
+  CheckLength(NspFname(stack),1,M,2);
   block_resize(self,M->R);
   MoveObj(stack,1,self);
   return 1;
@@ -635,7 +635,7 @@ static int int_gblock_set_lock_pos(void  *self, Stack stack, int rhs, int opt, i
   CheckLhs(-1,1);
   if ( GetScalarInt(stack,1,&lock) == FAIL) return RET_BUG;
   if ((M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckLength(stack.fname,1,M,2);
+  CheckLength(NspFname(stack),1,M,2);
   block_set_lock_pos_rel(self,lock,M->R);
   MoveObj(stack,1,self);
   return 1;

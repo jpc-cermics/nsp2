@@ -96,7 +96,7 @@ GList *glist_from_nsp_list(Stack stack,NspList *L,NspTypeBase *type)
 	{
 	  if (! nspgobject_check(cloc->O, type)) 
 	    {
-	      Scierror("%s:list item is not a %s",stack.fname,type_get_name(type));
+	      Scierror("%s:list item is not a %s",NspFname(stack),type_get_name(type));
 	      g_list_free(items);
 	      return NULL;
 	    }
@@ -7901,7 +7901,7 @@ _wrap_gtkitemfactory_new(Stack stack, int rhs, int opt, int lhs)
     container_type = GTK_TYPE_OPTION_MENU; 
   else 
     {
-      Scierror("%s: first argument should be \"menu_bar\", \"menu\" or \"optio_menu\"\n",stack.fname); 
+      Scierror("%s: first argument should be \"menu_bar\", \"menu\" or \"optio_menu\"\n",NspFname(stack)); 
       return RET_BUG;
     }
   if ( nsp_accel_group != NULL ) accel_group = GTK_ACCEL_GROUP(nsp_accel_group->obj);
@@ -8060,7 +8060,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
 	  int_types kT[]={ string,string,obj,s_int,string,obj,list_end};
 	  if ( !IsList(cloc->O) ) 
 	    {
-	      Scierror("%s: list element %d has wrong type\n",stack.fname,i);
+	      Scierror("%s: list element %d has wrong type\n",NspFname(stack),i);
 	      return RET_BUG;
 	    }
 
@@ -8068,7 +8068,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
 			   &cb, &(ent.callback_action), &(ent.item_type),
 			   &extra_data) == FAIL ) 
 	    {
-	      Scierror("%s: list element %d should be a list\n",stack.fname,i);
+	      Scierror("%s: list element %d should be a list\n",NspFname(stack),i);
 	      return RET_BUG;
 	    }
 	  if ( IsNone(cb )) 
@@ -8092,7 +8092,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
 	    }
 	  else 
 	    {
-	      Scierror("%s: list element %d callback can be None or a function\n",stack.fname,i);
+	      Scierror("%s: list element %d callback can be None or a function\n",NspFname(stack),i);
 	      return RET_BUG;
 	    }
 	  if ( IsSMat(extra_data) && ((NspSMatrix *) extra_data)->mn == 1)
@@ -8110,7 +8110,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
 	  else 
 	    {
 	      Scierror("%s: list element %d last argument must be a GdkPixBuf or a string\n",
-		       stack.fname,i);
+		       NspFname(stack),i);
 	      return RET_BUG;
 	    }
 	  if (cunote != NULL) {
@@ -8486,7 +8486,7 @@ _wrap_gtk_im_context_get_surrounding(NspGObject *self,Stack stack,int rhs,int op
   int rep;
   if ( !gtk_im_context_get_surrounding(GTK_IM_CONTEXT(self->obj), &text, &cursor_index)) 
     {
-      Scierror("%s: cannot get text\n",stack.fname);
+      Scierror("%s: cannot get text\n",NspFname(stack));
       return RET_BUG; 
     }
   rep = RetArgs(stack,lhs,T, text, cursor_index);
@@ -10662,7 +10662,7 @@ static int _wrap_gtk_rc_add_widget_name_style(NspGtkRcStyle *self,Stack stack,in
   char *pattern;
 
   if ( GetArgs(stack,rhs,opt,T,&pattern) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_rc_add_widget_name_style(GTK_RC_STYLE(self->obj), pattern);
   return 0;
 }
@@ -10673,7 +10673,7 @@ static int _wrap_gtk_rc_add_widget_class_style(NspGtkRcStyle *self,Stack stack,i
   char *pattern;
 
   if ( GetArgs(stack,rhs,opt,T,&pattern) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_rc_add_widget_class_style(GTK_RC_STYLE(self->obj), pattern);
   return 0;
 }
@@ -10684,7 +10684,7 @@ static int _wrap_gtk_rc_add_class_style(NspGtkRcStyle *self,Stack stack,int rhs,
   char *pattern;
 
   if ( GetArgs(stack,rhs,opt,T,&pattern) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_rc_add_class_style(GTK_RC_STYLE(self->obj), pattern);
   return 0;
 }
@@ -11738,7 +11738,7 @@ static int _wrap_gtk_style_get_font(NspGtkStyle *self,Stack stack,int rhs,int op
   GdkFont *ret;
   NspObject *nsp_ret;
 
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   ret = gtk_style_get_font(GTK_STYLE(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_FONT, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gdkfont))== NULL)
@@ -11754,7 +11754,7 @@ static int _wrap_gtk_style_set_font(NspGtkStyle *self,Stack stack,int rhs,int op
   NspObject *nsp_font;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_font) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   if (nspg_boxed_check(nsp_font, GDK_TYPE_FONT))
       font = nspg_boxed_get(nsp_font, GdkFont);
   else {
@@ -12539,7 +12539,7 @@ static int _wrap_gtk_style_apply_default_pixmap(NspGtkStyle *self,Stack stack,in
   NspObject *nsp_area;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &set_bg, &nsp_area, &x, &y, &width, &height) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkStyle.apply_default_background",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkStyle.apply_default_background",NspFname(stack)); return RET_BUG;
   if (!nsp_gdk_rectangle_from_object(nsp_area, &area))
       return RET_BUG;
   gtk_style_apply_default_pixmap(GTK_STYLE(self->obj), GDK_WINDOW(window->obj), set_bg, &area, x, y, width, height);
@@ -12558,7 +12558,7 @@ static int _wrap_gtk_paint_string(NspGtkStyle *self,Stack stack,int rhs,int opt,
   GtkStateType state_type;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkwindow, &window, &nsp_state_type, &nsp_area, &nsp_widget, &detail, &x, &y, &string) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_STATE_TYPE, nsp_state_type, &state_type)== FAIL)
       return RET_BUG;
   if (nsp_area == NULL)
@@ -15416,7 +15416,7 @@ static int _wrap_gtk_tooltips_set_delay(NspGtkTooltips *self,Stack stack,int rhs
   int delay;
 
   if ( GetArgs(stack,rhs,opt,T,&delay) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_tooltips_set_delay(GTK_TOOLTIPS(self->obj), delay);
   return 0;
 }
@@ -15815,7 +15815,7 @@ _wrap_gtkliststore_new(Stack stack,int rhs,int opt,int lhs)
     }
   else 
     {
-      Scierror("%s: firts argument has a wrong type \n",stack.fname);
+      Scierror("%s: firts argument has a wrong type \n",NspFname(stack));
       return RET_BUG;
     }
   if (( ret = (NspObject *) gobject_create(NVOID,gobj,(NspTypeBase *) nsp_type_gtkliststore))== NULL) 
@@ -17215,7 +17215,7 @@ _wrap_gtktreestore_new(Stack stack,int rhs,int opt,int lhs)
     }
   else 
     {
-      Scierror("%s: firts argument has a wrong type \n",stack.fname);
+      Scierror("%s: firts argument has a wrong type \n",NspFname(stack));
       return RET_BUG;
     }
   if (( ret = (NspObject *) gobject_create(NVOID,gobj,(NspTypeBase *) nsp_type_gtktreestore))== NULL) 
@@ -17804,7 +17804,7 @@ _wrap_gtktreeviewcolumn_new(Stack stack,int rhs,int opt,int lhs)
 						   ((NspMatrix *) loc->data)->R[0]);
 	      else 
 		{
-		  Scierror("%s: attribute %s should be a real scalar\n",stack.fname,nsp_object_get_name(loc->data));
+		  Scierror("%s: attribute %s should be a real scalar\n",NspFname(stack),nsp_object_get_name(loc->data));
 		  return RET_BUG;
 		}
 	    }
@@ -17900,7 +17900,7 @@ _wrap_gtk_tree_view_column_set_attributes(NspGObject *self,Stack stack,int rhs,i
 					       ((NspMatrix *) loc->data)->R[0]);
 	  else 
 	    {
-	      Scierror("%s: attribute %s should be a real scalar\n",stack.fname,nsp_object_get_name(loc->data));
+	      Scierror("%s: attribute %s should be a real scalar\n",NspFname(stack),nsp_object_get_name(loc->data));
 	      return RET_BUG;
 	    }
 	}
@@ -18685,7 +18685,7 @@ static GtkTargetEntry * nsp_gtk_target_entry_from_list(Stack stack,NspList *list
 	{
 	  if (! IsList(cloc->O) )
 	    {
-	      Scierror("%s: list item %d is not a list \n",stack.fname,i+1);
+	      Scierror("%s: list item %d is not a list \n",NspFname(stack),i+1);
 	      g_free(targets);
 	      return NULL;
 	    }
@@ -19143,7 +19143,7 @@ static int _wrap_gtk_widget_queue_draw_area(NspGtkWidget *self,Stack stack,int r
 
 static int _wrap_gtk_widget_queue_clear(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
 {
-  Scierror("%s: deprecated use GtkWidget.queue_draw",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkWidget.queue_draw",NspFname(stack)); return RET_BUG;
   gtk_widget_queue_clear(GTK_WIDGET(self->obj));
   return 0;
 }
@@ -19154,7 +19154,7 @@ static int _wrap_gtk_widget_queue_clear_area(NspGtkWidget *self,Stack stack,int 
   int x, y, width, height;
 
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &width, &height) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkWidget.queue_draw_area",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkWidget.queue_draw_area",NspFname(stack)); return RET_BUG;
   gtk_widget_queue_clear_area(GTK_WIDGET(self->obj), x, y, width, height);
   return 0;
 }
@@ -19172,7 +19172,7 @@ static int _wrap_gtk_widget_draw(NspGtkWidget *self,Stack stack,int rhs,int opt,
   NspObject *nsp_area;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_area) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkWidget.queue_draw_area",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkWidget.queue_draw_area",NspFname(stack)); return RET_BUG;
   if (!nsp_gdk_rectangle_from_object(nsp_area, &area))
       return RET_BUG;
   gtk_widget_draw(GTK_WIDGET(self->obj), &area);
@@ -19645,7 +19645,7 @@ static int _wrap_gtk_widget_set_uposition(NspGtkWidget *self,Stack stack,int rhs
   int x, y;
 
   if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_widget_set_uposition(GTK_WIDGET(self->obj), x, y);
   return 0;
 }
@@ -19656,7 +19656,7 @@ static int _wrap_gtk_widget_set_usize(NspGtkWidget *self,Stack stack,int rhs,int
   int width, height;
 
   if ( GetArgs(stack,rhs,opt,T,&width, &height) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkWidget.set_size_request",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkWidget.set_size_request",NspFname(stack)); return RET_BUG;
   gtk_widget_set_usize(GTK_WIDGET(self->obj), width, height);
   return 0;
 }
@@ -24194,7 +24194,7 @@ _wrap_gtkpreview_new(Stack stack, int rhs, int opt, int lhs)
 
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkDrawingArea",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkDrawingArea",NspFname(stack)); return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_PREVIEW_TYPE, nsp_type, &type)== FAIL)
       return RET_BUG;
   if ((ret = (GObject *)gtk_preview_new(type))== NULL) return RET_BUG;
@@ -24255,7 +24255,7 @@ static int _wrap_gtk_preview_set_dither(NspGtkPreview *self,Stack stack,int rhs,
   NspObject *nsp_dither = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_dither) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkPixbuf",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkPixbuf",NspFname(stack)); return RET_BUG;
   if (nspg_enum_get_value(GDK_TYPE_RGB_DITHER, nsp_dither, &dither)== FAIL)
       return RET_BUG;
   gtk_preview_set_dither(GTK_PREVIEW(self->obj), dither);
@@ -25520,7 +25520,7 @@ static int _wrap_gtk_image_set(NspGtkImage *self,Stack stack,int rhs,int opt,int
   NspGObject *val, *mask;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkimage, &val, &nsp_type_gdkbitmap, &mask) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_image_set(GTK_IMAGE(self->obj), GDK_IMAGE(val->obj), GDK_DRAWABLE(mask->obj));
   return 0;
 }
@@ -26072,7 +26072,7 @@ static int _wrap_gtk_label_set(NspGtkLabel *self,Stack stack,int rhs,int opt,int
   char *str;
 
   if ( GetArgs(stack,rhs,opt,T,&str) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkLabel.set_text",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkLabel.set_text",NspFname(stack)); return RET_BUG;
   gtk_label_set(GTK_LABEL(self->obj), str);
   return 0;
 }
@@ -26102,7 +26102,7 @@ static int _wrap_gtk_label_parse_uline(NspGtkLabel *self,Stack stack,int rhs,int
   int ret;
 
   if ( GetArgs(stack,rhs,opt,T,&string) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   ret = gtk_label_parse_uline(GTK_LABEL(self->obj), string);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -26364,7 +26364,7 @@ static int _wrap_gtk_accel_label_accelerator_width(NspGtkAccelLabel *self,Stack 
 {
   int ret;
 
-  Scierror("%s: deprecated use GtkAccelLabel.get_accel_width",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkAccelLabel.get_accel_width",NspFname(stack)); return RET_BUG;
   ret = gtk_accel_label_accelerator_width(GTK_ACCEL_LABEL(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -27025,7 +27025,7 @@ static int _wrap_gtk_entry_append_text(NspGtkEntry *self,Stack stack,int rhs,int
   char *text;
 
   if ( GetArgs(stack,rhs,opt,T,&text) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkEditable.insert_text",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkEditable.insert_text",NspFname(stack)); return RET_BUG;
   gtk_entry_append_text(GTK_ENTRY(self->obj), text);
   return 0;
 }
@@ -27036,7 +27036,7 @@ static int _wrap_gtk_entry_prepend_text(NspGtkEntry *self,Stack stack,int rhs,in
   char *text;
 
   if ( GetArgs(stack,rhs,opt,T,&text) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkEditable.insert_text",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkEditable.insert_text",NspFname(stack)); return RET_BUG;
   gtk_entry_prepend_text(GTK_ENTRY(self->obj), text);
   return 0;
 }
@@ -27782,7 +27782,7 @@ static int _wrap_gtk_drawing_area_size(NspGtkDrawingArea *self,Stack stack,int r
   int width, height;
 
   if ( GetArgs(stack,rhs,opt,T,&width, &height) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkWidget.set_size_request",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkWidget.set_size_request",NspFname(stack)); return RET_BUG;
   gtk_drawing_area_size(GTK_DRAWING_AREA(self->obj), width, height);
   return 0;
 }
@@ -28636,7 +28636,7 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
       if ( Ocheckname(NthObj(i),NVOID) ) 
 	{
 	  Scierror("Error: properties must have names \n");
-	  Scierror("\t%s of function %s\n",ArgPosition(rhs),stack.fname);
+	  Scierror("\t%s of function %s\n",ArgPosition(rhs),NspFname(stack));
 	  return RET_BUG;
 	}
       /** A copy of object is entered as an object property **/
@@ -28694,7 +28694,7 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
       if ( Ocheckname(NthObj(i),NVOID) ) 
 	{
 	  Scierror("Error: properties mus have names \n");
-	  Scierror("\t%s of function %s\n",ArgPosition(rhs),stack.fname);
+	  Scierror("\t%s of function %s\n",ArgPosition(rhs),NspFname(stack));
 	  return RET_BUG;
 	}
       /** A copy of object is entered as an object property **/
@@ -28806,7 +28806,7 @@ _wrap_gtk_container_child_set_property(NspGObject *self,Stack stack,int rhs,int 
 
   children = gtk_container_get_children(container);
   if (g_list_find(children, child) == NULL) {
-    Scierror("%s: first argument must be a child",stack.fname);
+    Scierror("%s: first argument must be a child",NspFname(stack));
     return RET_BUG;
   }
 
@@ -28854,7 +28854,7 @@ _wrap_gtk_container_child_get_property(NspGObject *self,Stack stack,int rhs,int 
 
   children = gtk_container_get_children(container);
   if (g_list_find(children, child) == NULL) {
-    Scierror("%s: first argument must be a child",stack.fname);
+    Scierror("%s: first argument must be a child",NspFname(stack));
     return RET_BUG;
   }
   
@@ -29438,7 +29438,7 @@ _wrap_gtk_tree_view_insert_column_with_attributes(NspGObject *self,Stack stack,i
 						   ((NspMatrix *) loc->data)->R[0]);
 	      else 
 		{
-		  Scierror("%s: attribute %s should be a real scalar\n",stack.fname,nsp_object_get_name(loc->data));
+		  Scierror("%s: attribute %s should be a real scalar\n",NspFname(stack),nsp_object_get_name(loc->data));
 		  return RET_BUG;
 		}
 	    }
@@ -29810,7 +29810,7 @@ _wrap_gtk_tree_view_get_path_at_pos(NspGObject *self,Stack stack,int rhs,int opt
       if ((nsp_column =(NspObject *) nspgobject_new((GObject *)column)) == NULL) return RET_BUG; 
       return RetArgs(stack,lhs,ret_T, nsp_path,nsp_column,cell_x,cell_y);
     }
-  Scierror("%s: failed to get path\n",stack.fname);
+  Scierror("%s: failed to get path\n",NspFname(stack));
   return RET_BUG ;
 }
 #line 29817 "gtk24.c"
@@ -30301,7 +30301,7 @@ nsp_gtk_toolbar_item_add_callback_and_return(Stack stack,int flag,GtkWidget *ret
   GClosure *closure;
   if ( ret == NULL) 
     {
-      Scierror("%s: cannot create iem\n",stack.fname);
+      Scierror("%s: cannot create iem\n",NspFname(stack));
       return RET_BUG;
     }
   if ( callback != NULL && flag ) 
@@ -32338,7 +32338,7 @@ static int _wrap_gtk_socket_steal(NspGtkSocket *self,Stack stack,int rhs,int opt
   gulong wid;
 
   if ( GetArgs(stack,rhs,opt,T,&wid) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_socket_steal(GTK_SOCKET(self->obj), wid);
   return 0;
 }
@@ -33529,7 +33529,7 @@ static int _wrap_gtk_notebook_set_homogeneous_tabs(NspGtkNotebook *self,Stack st
   int homogeneous;
 
   if ( GetArgs(stack,rhs,opt,T,&homogeneous) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_notebook_set_homogeneous_tabs(GTK_NOTEBOOK(self->obj), homogeneous);
   return 0;
 }
@@ -33540,7 +33540,7 @@ static int _wrap_gtk_notebook_set_tab_border(NspGtkNotebook *self,Stack stack,in
   int border_width;
 
   if ( GetArgs(stack,rhs,opt,T,&border_width) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_notebook_set_tab_border(GTK_NOTEBOOK(self->obj), border_width);
   return 0;
 }
@@ -33551,7 +33551,7 @@ static int _wrap_gtk_notebook_set_tab_hborder(NspGtkNotebook *self,Stack stack,i
   int tab_hborder;
 
   if ( GetArgs(stack,rhs,opt,T,&tab_hborder) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_notebook_set_tab_hborder(GTK_NOTEBOOK(self->obj), tab_hborder);
   return 0;
 }
@@ -33562,7 +33562,7 @@ static int _wrap_gtk_notebook_set_tab_vborder(NspGtkNotebook *self,Stack stack,i
   int tab_vborder;
 
   if ( GetArgs(stack,rhs,opt,T,&tab_vborder) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_notebook_set_tab_vborder(GTK_NOTEBOOK(self->obj), tab_vborder);
   return 0;
 }
@@ -33744,7 +33744,7 @@ static int _wrap_gtk_notebook_current_page(NspGtkNotebook *self,Stack stack,int 
 {
   int ret;
 
-  Scierror("%s: deprecated use GtkNotebook.get_current_page",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkNotebook.get_current_page",NspFname(stack)); return RET_BUG;
   ret = gtk_notebook_current_page(GTK_NOTEBOOK(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -33756,7 +33756,7 @@ static int _wrap_gtk_notebook_set_page(NspGtkNotebook *self,Stack stack,int rhs,
   int page_num;
 
   if ( GetArgs(stack,rhs,opt,T,&page_num) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkNotebook.set_current_page",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkNotebook.set_current_page",NspFname(stack)); return RET_BUG;
   gtk_notebook_set_page(GTK_NOTEBOOK(self->obj), page_num);
   return 0;
 }
@@ -35158,14 +35158,14 @@ static int _wrap_gtk_layout_set_vadjustment(NspGtkLayout *self,Stack stack,int r
 
 static int _wrap_gtk_layout_freeze(NspGtkLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_layout_freeze(GTK_LAYOUT(self->obj));
   return 0;
 }
 
 static int _wrap_gtk_layout_thaw(NspGtkLayout *self,Stack stack,int rhs,int opt,int lhs)
 {
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   gtk_layout_thaw(GTK_LAYOUT(self->obj));
   return 0;
 }
@@ -36940,7 +36940,7 @@ static int _wrap_gtk_menu_item_set_accel_path(NspGtkMenuItem *self,Stack stack,i
 
 static int _wrap_gtk_menu_item_right_justify(NspGtkMenuItem *self,Stack stack,int rhs,int opt,int lhs)
 {
-  Scierror("%s: deprecated use GtkMenuItem.set_right_justified",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkMenuItem.set_right_justified",NspFname(stack)); return RET_BUG;
   gtk_menu_item_right_justify(GTK_MENU_ITEM(self->obj));
   return 0;
 }
@@ -37670,7 +37670,7 @@ static int _wrap_gtk_check_menu_item_set_show_toggle(NspGtkCheckMenuItem *self,S
   int always;
 
   if ( GetArgs(stack,rhs,opt,T,&always) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated don't use this method",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated don't use this method",NspFname(stack)); return RET_BUG;
   gtk_check_menu_item_set_show_toggle(GTK_CHECK_MENU_ITEM(self->obj), always);
   return 0;
 }
@@ -37681,7 +37681,7 @@ static int _wrap_gtk_check_menu_item_set_state(NspGtkCheckMenuItem *self,Stack s
   int is_active;
 
   if ( GetArgs(stack,rhs,opt,T,&is_active) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkCheckMenuItem.set_active",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkCheckMenuItem.set_active",NspFname(stack)); return RET_BUG;
   gtk_check_menu_item_set_state(GTK_CHECK_MENU_ITEM(self->obj), is_active);
   return 0;
 }
@@ -39775,7 +39775,7 @@ _wrap_gtkbutton_new(Stack stack,int rhs,int opt,int lhs)
   else 
     gobj = (GObject *)gtk_button_new();
   if (gobj == NULL ) {
-    Scierror( "%s: could not create GtkButton object",stack.fname);
+    Scierror( "%s: could not create GtkButton object",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gtkbutton = new_type_gtkbutton(T_BASE);
@@ -40136,7 +40136,7 @@ _wrap_gtktogglebutton_new(Stack stack,int rhs,int opt,int lhs)
   else 
     gobj = (GObject *)gtk_button_new();
   if (gobj == NULL ) {
-    Scierror( "%s: could not create GtkToggleButton object",stack.fname);
+    Scierror( "%s: could not create GtkToggleButton object",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gtktogglebutton = new_type_gtktogglebutton(T_BASE);
@@ -40216,7 +40216,7 @@ static int _wrap_gtk_toggle_button_set_state(NspGtkToggleButton *self,Stack stac
   int is_active;
 
   if ( GetArgs(stack,rhs,opt,T,&is_active) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkToggleButton.set_active",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkToggleButton.set_active",NspFname(stack)); return RET_BUG;
   gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(self->obj), is_active);
   return 0;
 }
@@ -40470,7 +40470,7 @@ _wrap_gtkcheckbutton_new(Stack stack,int rhs,int opt,int lhs)
   else 
     gobj = (GObject *)gtk_button_new();
   if (gobj == NULL ) {
-    Scierror( "%s: could not create GtkToggleButton object",stack.fname);
+    Scierror( "%s: could not create GtkToggleButton object",NspFname(stack));
     return RET_BUG;
   }
   nsp_type_gtkcheckbutton = new_type_gtkcheckbutton(T_BASE);
@@ -42004,7 +42004,7 @@ static int _wrap_gtk_color_selection_set_update_policy(NspGtkColorSelection *sel
   GtkUpdateType policy;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_policy) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_UPDATE_TYPE, nsp_policy, &policy)== FAIL)
       return RET_BUG;
   gtk_color_selection_set_update_policy(GTK_COLOR_SELECTION(self->obj), policy);
@@ -42259,7 +42259,7 @@ static int _wrap_gtk_font_selection_get_font(NspGtkFontSelection *self,Stack sta
   GdkFont *ret;
   NspObject *nsp_ret;
 
-  Scierror("%s: deprecated use GtkFontSelection.get_font_name",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkFontSelection.get_font_name",NspFname(stack)); return RET_BUG;
   ret = gtk_font_selection_get_font(GTK_FONT_SELECTION(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_FONT, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gdkfont))== NULL)
@@ -44356,7 +44356,7 @@ static int _wrap_gtk_button_box_set_child_size(NspGtkButtonBox *self,Stack stack
   int min_width, min_height;
 
   if ( GetArgs(stack,rhs,opt,T,&min_width, &min_height) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated don't use this",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated don't use this",NspFname(stack)); return RET_BUG;
   gtk_button_box_set_child_size(GTK_BUTTON_BOX(self->obj), min_width, min_height);
   return 0;
 }
@@ -44367,7 +44367,7 @@ static int _wrap_gtk_button_box_set_child_ipadding(NspGtkButtonBox *self,Stack s
   int ipad_x, ipad_y;
 
   if ( GetArgs(stack,rhs,opt,T,&ipad_x, &ipad_y) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated don't use this",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated don't use this",NspFname(stack)); return RET_BUG;
   gtk_button_box_set_child_ipadding(GTK_BUTTON_BOX(self->obj), ipad_x, ipad_y);
   return 0;
 }
@@ -45855,7 +45855,7 @@ static int _wrap_gtk_window_set_icon_from_file(NspGtkWindow *self,Stack stack,in
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
   ret = gtk_window_set_icon_from_file(GTK_WINDOW(self->obj), filename, &err);
   if ( err != NULL ) {
-    Scierror("%s: gtk error\n",stack.fname);
+    Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -46038,7 +46038,7 @@ static int _wrap_gtk_window_set_policy(NspGtkWindow *self,Stack stack,int rhs,in
   int allow_shrink, allow_grow, auto_shrink;
 
   if ( GetArgs(stack,rhs,opt,T,&allow_shrink, &allow_grow, &auto_shrink) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkWindow.set_resizable",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkWindow.set_resizable",NspFname(stack)); return RET_BUG;
   gtk_window_set_policy(GTK_WINDOW(self->obj), allow_shrink, allow_grow, auto_shrink);
   return 0;
 }
@@ -47873,7 +47873,7 @@ static int _wrap_gtk_font_selection_dialog_get_font(NspGtkFontSelectionDialog *s
   GdkFont *ret;
   NspObject *nsp_ret;
 
-  Scierror("%s: deprecated use GtkFontSelectionDialog.get_font_name",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkFontSelectionDialog.get_font_name",NspFname(stack)); return RET_BUG;
   ret = gtk_font_selection_dialog_get_font(GTK_FONT_SELECTION_DIALOG(self->obj));
   if ((nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_FONT, ret, TRUE, TRUE,
                                              (NspTypeBase *) nsp_type_gdkfont))== NULL)
@@ -49012,10 +49012,10 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gtkwidget, &window, &nsp_type_gtkwidget, &vbox,  
 	       opts,  &wdim,&open_gl, &wpdim, &wpos, &viewport,&winnum) == FAIL) return RET_BUG;
-  if (wdim != NULL) { CheckDims(stack.fname,3,wdim,1,2);}
-  if (wpdim != NULL){ CheckDims(stack.fname,3,wpdim,1,2);}
-  if (viewport != NULL) {CheckDims(stack.fname,3,viewport,1,2);}
-  if (wpos != NULL) {CheckDims(stack.fname,3,wpos,1,2);}
+  if (wdim != NULL) { CheckDims(NspFname(stack),3,wdim,1,2);}
+  if (wpdim != NULL){ CheckDims(NspFname(stack),3,wpdim,1,2);}
+  if (viewport != NULL) {CheckDims(NspFname(stack),3,viewport,1,2);}
+  if (wpos != NULL) {CheckDims(NspFname(stack),3,wpos,1,2);}
 #ifdef WITH_GTKGLEXT
   if ( open_gl == TRUE )
     win_id= nsp_graphic_new_gl(GTK_WIDGET(window->obj), GTK_WIDGET(vbox->obj), winnum,
@@ -49345,7 +49345,7 @@ int _wrap_gtk_drag_set_default_icon(Stack stack, int rhs, int opt, int lhs)
   NspGObject *colormap, *pixmap, *mask;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkcolormap, &colormap, &nsp_type_gdkpixmap, &pixmap, &nsp_type_gdkbitmap, &mask, &hot_x, &hot_y) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated change the stock pixbuf for GTK_STOCK_DND",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated change the stock pixbuf for GTK_STOCK_DND",NspFname(stack)); return RET_BUG;
     gtk_drag_set_default_icon(GDK_COLORMAP(colormap->obj), GDK_PIXMAP(pixmap->obj), GDK_DRAWABLE(mask->obj), hot_x, hot_y);
   return 0;
 }
@@ -49354,7 +49354,7 @@ int _wrap_gtk_hbutton_box_get_spacing_default(Stack stack, int rhs, int opt, int
 {
   int ret;
 
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
     ret = gtk_hbutton_box_get_spacing_default();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -49364,7 +49364,7 @@ int _wrap_gtk_hbutton_box_get_layout_default(Stack stack, int rhs, int opt, int 
 {
   gint ret;
 
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
     ret = gtk_hbutton_box_get_layout_default();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -49376,7 +49376,7 @@ int _wrap_gtk_hbutton_box_set_spacing_default(Stack stack, int rhs, int opt, int
   int spacing;
 
   if ( GetArgs(stack,rhs,opt,T,&spacing) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
     gtk_hbutton_box_set_spacing_default(spacing);
   return 0;
 }
@@ -49388,7 +49388,7 @@ int _wrap_gtk_hbutton_box_set_layout_default(Stack stack, int rhs, int opt, int 
   NspObject *nsp_layout = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_layout) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_BUTTON_BOX_STYLE, nsp_layout, &layout)== FAIL)
       return RET_BUG;
     gtk_hbutton_box_set_layout_default(layout);
@@ -49549,7 +49549,7 @@ int _wrap_gtk_item_factory_from_path(Stack stack, int rhs, int opt, int lhs)
   GtkItemFactory *ret;
 
   if ( GetArgs(stack,rhs,opt,T,&path) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
     ret = gtk_item_factory_from_path(path);
   nsp_type_gtkitemfactory = new_type_gtkitemfactory(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkitemfactory))== NULL) return RET_BUG;
@@ -49563,7 +49563,7 @@ int _wrap_gtk_item_factories_path_delete(Stack stack, int rhs, int opt, int lhs)
   char *ifactory_path, *path;
 
   if ( GetArgs(stack,rhs,opt,T,&ifactory_path, &path) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
     gtk_item_factories_path_delete(ifactory_path, path);
   return 0;
 }
@@ -49741,7 +49741,7 @@ int _wrap_gtk_preview_set_gamma(Stack stack, int rhs, int opt, int lhs)
   double gamma;
 
   if ( GetArgs(stack,rhs,opt,T,&gamma) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkPixbuf",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkPixbuf",NspFname(stack)); return RET_BUG;
     gtk_preview_set_gamma(gamma);
   return 0;
 }
@@ -49752,7 +49752,7 @@ int _wrap_gtk_preview_set_color_cube(Stack stack, int rhs, int opt, int lhs)
   int nred_shades, ngreen_shades, nblue_shades, ngray_shades;
 
   if ( GetArgs(stack,rhs,opt,T,&nred_shades, &ngreen_shades, &nblue_shades, &ngray_shades) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkPixbuf",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkPixbuf",NspFname(stack)); return RET_BUG;
     gtk_preview_set_color_cube(nred_shades, ngreen_shades, nblue_shades, ngray_shades);
   return 0;
 }
@@ -49763,7 +49763,7 @@ int _wrap_gtk_preview_set_install_cmap(Stack stack, int rhs, int opt, int lhs)
   int install_cmap;
 
   if ( GetArgs(stack,rhs,opt,T,&install_cmap) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkPixbuf",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkPixbuf",NspFname(stack)); return RET_BUG;
     gtk_preview_set_install_cmap(install_cmap);
   return 0;
 }
@@ -49774,7 +49774,7 @@ int _wrap_gtk_preview_set_reserved(Stack stack, int rhs, int opt, int lhs)
   int nreserved;
 
   if ( GetArgs(stack,rhs,opt,T,&nreserved) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated use GtkPixbuf",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkPixbuf",NspFname(stack)); return RET_BUG;
     gtk_preview_set_reserved(nreserved);
   return 0;
 }
@@ -49784,7 +49784,7 @@ int _wrap_gtk_preview_get_visual(Stack stack, int rhs, int opt, int lhs)
   NspObject *nsp_ret;
   GdkVisual *ret;
 
-  Scierror("%s: deprecated use GtkPixbuf",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkPixbuf",NspFname(stack)); return RET_BUG;
     ret = gtk_preview_get_visual();
   nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkvisual))== NULL) return RET_BUG;
@@ -49797,7 +49797,7 @@ int _wrap_gtk_preview_get_cmap(Stack stack, int rhs, int opt, int lhs)
   NspObject *nsp_ret;
   GdkColormap *ret;
 
-  Scierror("%s: deprecated use GtkPixbuf",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkPixbuf",NspFname(stack)); return RET_BUG;
     ret = gtk_preview_get_cmap();
   nsp_type_gdkcolormap = new_type_gdkcolormap(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gdkcolormap))== NULL) return RET_BUG;
@@ -49807,7 +49807,7 @@ int _wrap_gtk_preview_get_cmap(Stack stack, int rhs, int opt, int lhs)
 
 int _wrap_gtk_preview_reset(Stack stack, int rhs, int opt, int lhs)
 {
-  Scierror("%s: deprecated use GtkPixbuf",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated use GtkPixbuf",NspFname(stack)); return RET_BUG;
     gtk_preview_reset();
   return 0;
 }
@@ -50001,14 +50001,14 @@ _wrap_gtk_stock_add(Stack stack,int rhs,int opt,int lhs)
 	  int_types kT[]={ string,string,s_int,s_int,string,list_end};
 	  if ( !IsList(cloc->O) ) 
 	    {
-	      Scierror("%s: list element %d has wrong type\n",stack.fname,i);
+	      Scierror("%s: list element %d has wrong type\n",NspFname(stack),i);
 	      goto error;
 	    }
 	  if ( GetListArgs(item,1,kT,&items[i].stock_id, &items[i].label,
 			   &items[i].modifier, &items[i].keyval,
 			   &items[i].translation_domain) == FAIL ) 
 	    {
-	      Scierror("%s: list element %d is incorrect (stock_id, label, modifiers,keyval,domain) expected\n",stack.fname,i);
+	      Scierror("%s: list element %d is incorrect (stock_id, label, modifiers,keyval,domain) expected\n",NspFname(stack),i);
 	      goto error;
 	    }
 	}
@@ -50127,7 +50127,7 @@ int _wrap_gtk_vbutton_box_get_spacing_default(Stack stack, int rhs, int opt, int
 {
   int ret;
 
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
     ret = gtk_vbutton_box_get_spacing_default();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -50139,7 +50139,7 @@ int _wrap_gtk_vbutton_box_set_spacing_default(Stack stack, int rhs, int opt, int
   int spacing;
 
   if ( GetArgs(stack,rhs,opt,T,&spacing) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
     gtk_vbutton_box_set_spacing_default(spacing);
   return 0;
 }
@@ -50148,7 +50148,7 @@ int _wrap_gtk_vbutton_box_get_layout_default(Stack stack, int rhs, int opt, int 
 {
   gint ret;
 
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
     ret = gtk_vbutton_box_get_layout_default();
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -50161,7 +50161,7 @@ int _wrap_gtk_vbutton_box_set_layout_default(Stack stack, int rhs, int opt, int 
   NspObject *nsp_layout = NULL;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_layout) == FAIL) return RET_BUG;
-  Scierror("%s: deprecated ",stack.fname); return RET_BUG;
+  Scierror("%s: deprecated ",NspFname(stack)); return RET_BUG;
   if (nspg_enum_get_value(GTK_TYPE_BUTTON_BOX_STYLE, nsp_layout, &layout)== FAIL)
       return RET_BUG;
     gtk_vbutton_box_set_layout_default(layout);
@@ -50274,7 +50274,7 @@ int _wrap_gtk_window_set_default_icon_from_file(Stack stack, int rhs, int opt, i
   if ( GetArgs(stack,rhs,opt,T,&filename) == FAIL) return RET_BUG;
     ret = gtk_window_set_default_icon_from_file(filename, &err);
   if ( err != NULL ) {
-    Scierror("%s: gtk error\n",stack.fname);
+    Scierror("%s: gtk error\n",NspFname(stack));
     return RET_BUG;
   }
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;

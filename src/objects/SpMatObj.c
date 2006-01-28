@@ -314,7 +314,7 @@ NspSpMatrix *GetRealSp(Stack stack, int i)
     {
       Scierror ("\t%s", ArgPosition (i));
       ArgName (stack, i);
-      Scierror (" of function %s should not be complex\n", stack.fname);
+      Scierror (" of function %s should not be complex\n", NspFname(stack));
       return NULLSP;
     }
   return M;

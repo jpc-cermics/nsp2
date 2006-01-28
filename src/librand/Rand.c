@@ -125,7 +125,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
        {
 	 if ( rhs != 1) 
 	   {
-	     Scierror("%s: only one argument expected for grand('getsd')\n",stack.fname);
+	     Scierror("%s: only one argument expected for grand('getsd')\n",NspFname(stack));
 	     return RET_BUG;
 	   }
 	 switch(current_gen)
@@ -206,7 +206,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 		{
 		case 2 : 
 		  if ((M=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-		  CheckLength(stack.fname,2,M,4);
+		  CheckLength(NspFname(stack),2,M,4);
 		  x1 = M->R[0];		  
 		  x2 = M->R[1];
 		  x3 = M->R[2];
@@ -232,7 +232,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 		{
 		case 2: 
 		  if ((M=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-		  CheckLength(stack.fname,2,M,2);
+		  CheckLength(NspFname(stack),2,M,2);
 		  x1 = M->R[0];		  
 		  x2 = M->R[1];
 		  break;
@@ -252,7 +252,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 		case 2: 
 		  /* init via a "complete" state */
 		  if ((M=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-		  CheckLength(stack.fname,2,M,dim_state_fsultra );
+		  CheckLength(NspFname(stack),2,M,dim_state_fsultra );
 		  if ( set_state_fsultra(M->R) == FAIL ) return RET_BUG;
 		  break;
 		case 3: 
@@ -416,7 +416,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	}
       else 
 	{
-	  Scierror("Error: %s Wrong first argument %s\n",stack.fname,str);
+	  Scierror("Error: %s Wrong first argument %s\n",NspFname(stack),str);
 	  return RET_BUG;
 	}      
     }
@@ -430,7 +430,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       if (GetScalarInt(stack,2,&ResC) == FAIL) return RET_BUG;
       if (rhs <= 2 ) 
 	{
-	  Scierror("Error: expecting more than two numbers as arguments \n",stack.fname);
+	  Scierror("Error: expecting more than two numbers as arguments \n",NspFname(stack));
 	  return RET_BUG;
 	}
       if ((law = GetString(stack,3)) == (char*)0) return RET_BUG;
@@ -442,7 +442,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       ResL=M->m; ResC=M->n;
       if (rhs <= 1 ) 
 	{
-	  Scierror("Error: expecting more than one number as arguments \n",stack.fname);
+	  Scierror("Error: expecting more than one number as arguments \n",NspFname(stack));
 	  return RET_BUG;
 	}
       if ((law = GetString(stack,2)) == (char*)0) return RET_BUG;
@@ -929,7 +929,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      Scierror("%s Wrong argument %s\n",stack.fname,law);
+      Scierror("%s Wrong argument %s\n",NspFname(stack),law);
       return RET_BUG;
     }      
 }

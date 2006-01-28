@@ -37,6 +37,7 @@ struct _OpWrapTab  {
 extern NspSMatrix *SMatCreateFromAttrsTable (AttrTab *T); 
 
 #define NthObj(x) (stack.S[stack.first+x-1])
+#define NspFname(x) (x).fname
 
 #define CheckRhs(x,y) if ( rhs < x || rhs > y ) \
   { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 

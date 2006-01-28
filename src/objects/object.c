@@ -503,7 +503,7 @@ int int_set_attributes(Stack stack, int rhs, int opt, int lhs)
   if ((ob =nsp_get_object(stack,1)) == NULLOBJ ) return RET_BUG;
   if ( rhs - opt > 1 ) 
     {
-      Scierror("%s only accept optional arguments \n",stack.fname);
+      Scierror("%s only accept optional arguments \n",NspFname(stack));
       return RET_BUG;
     }
   CheckLhs(1,1); 
@@ -526,7 +526,7 @@ int int_set_attributes1(void *ob,Stack stack, int rhs, int opt, int lhs)
   int i;
   if ( rhs - opt > 0 ) 
     {
-      Scierror("%s only accept optional arguments \n",stack.fname);
+      Scierror("%s only accept optional arguments \n",NspFname(stack));
       return RET_BUG;
     }
   CheckLhs(1,1); 
@@ -549,7 +549,7 @@ int int_create_with_attributes(NspObject *ob,Stack stack, int rhs, int opt, int 
   int i;
   if ( rhs - opt > 1 ) 
     {
-      Scierror("%s only accept optional arguments \n",stack.fname);
+      Scierror("%s only accept optional arguments \n",NspFname(stack));
       return RET_BUG;
     }
   CheckLhs(1,1); 
@@ -1277,7 +1277,7 @@ int int_object_scanf(Stack stack, int rhs, int opt, int lhs)
   else if ( iter < 0 ) 
     {
       /* we must evaluate the number of lines */
-      Scierror("%s: iter < 0 is invalid \n",stack.fname);
+      Scierror("%s: iter < 0 is invalid \n",NspFname(stack));
       return RET_BUG;
     }
   return rep;
@@ -1459,7 +1459,7 @@ int int_object_size(Stack stack, int rhs, int opt, int lhs)
     {
       if ( lhs > 1 ) 
 	{
-	  Scierror("Error: too many lhs (%d) for function %s with two rhs \n",lhs,stack.fname);
+	  Scierror("Error: too many lhs (%d) for function %s with two rhs \n",lhs,NspFname(stack));
 	  return RET_BUG;	 
 	} 
       if ( IsSMatObj(stack,2)  ) 

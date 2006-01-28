@@ -280,7 +280,7 @@ static int int_maxp_include_span(Stack stack, int rhs, int opt, int lhs)
   if ((A = GetRealMatCopy(stack,1)) == NULLMAT)  return RET_BUG;
   if ((B = GetRealMatCopy(stack,2)) == NULLMAT)  return RET_BUG;
   if ((GetScalarDouble(stack,3,&precision)) == FAIL)  return RET_BUG;
-  CheckDimProp(stack.fname,1,2, A->m != B->m );
+  CheckDimProp(NspFname(stack),1,2, A->m != B->m );
   is =include_span(A->R,A->m,A->n,B->R,B->n,precision);
   if ( nsp_move_double(stack,1,(double)is) == FAIL) return RET_BUG;
   return 1;
@@ -294,7 +294,7 @@ static int int_maxp_product(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetRealMatCopy(stack,1)) == NULLMAT)  return RET_BUG;
   if ((B = GetRealMatCopy(stack,2)) == NULLMAT)  return RET_BUG;
-  CheckDimProp(stack.fname,1,2, A->n != B->m );
+  CheckDimProp(NspFname(stack),1,2, A->n != B->m );
   if ((Res = nsp_matrix_create(NVOID,'r',A->m,B->n)) == NULLMAT) return RET_BUG;
   product(A->R,A->m,A->n,B->R,B->n,Res->R);
   MoveObj(stack,1,(NspObject *) Res);
@@ -381,7 +381,7 @@ static int int_maxp_star(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A = GetRealMatCopy(stack,1)) == NULLMAT)  return RET_BUG;
-  CheckSquare(stack.fname,1,A);
+  CheckSquare(NspFname(stack),1,A);
   if ((Res = nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT) return RET_BUG;
   matrix_star(A->R,A->m,Res->R);
   MoveObj(stack,1,(NspObject *) Res);
@@ -395,7 +395,7 @@ static int int_maxp_plus(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((A = GetRealMatCopy(stack,1)) == NULLMAT)  return RET_BUG;
-  CheckSquare(stack.fname,1,A);
+  CheckSquare(NspFname(stack),1,A);
   if ((Res = nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT) return RET_BUG;
   matrix_plus(A->R,A->m,Res->R);
   MoveObj(stack,1,(NspObject *) Res);

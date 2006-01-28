@@ -373,7 +373,7 @@ int int_setscicosvars(Stack stack, int rhs, int opt, int lhs)
       Scierror("scicosim is not running\n");
       return RET_BUG;
     }
-  CheckLength(stack.fname,1,x1,nv) ;
+  CheckLength(NspFname(stack),1,x1,nv) ;
   if( type == 0 )
     for ( i = 0 ; i < nv ; i++) ((int *) ptr)[i]= (int) x1->R[i];
   else 
@@ -470,7 +470,7 @@ static int int_duplicate(Stack stack, int rhs, int opt, int lhs)
       MoveObj(stack,1,NSP_OBJECT(Res));
       return 1;
     }
-  CheckSameDims (stack.fname, 1, 2, A, B);
+  CheckSameDims (NspFname(stack), 1, 2, A, B);
   nres = comp_size(B->R,A->mn);
   if (( Res =nsp_matrix_create(NVOID,'r',nres,1)) == NULLMAT) return  RET_BUG;
   nres= duplicata(A->mn,A->R,B->R,Res->R);

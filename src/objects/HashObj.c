@@ -460,7 +460,7 @@ int int_htcreate(Stack stack, int rhs, int opt, int lhs)
       if ( Ocheckname(NthObj(i),NVOID) ) 
 	{
 	  Scierror("Error: Cannot add unamed variable in hash table\n");
-	  Scierror("\t%s of function %s\n",ArgPosition(rhs),stack.fname);
+	  Scierror("\t%s of function %s\n",ArgPosition(rhs),NspFname(stack));
 	  return RET_BUG;
 	}
       /* A copy of object is added in the hash table **/
@@ -612,7 +612,7 @@ static int int_htenter(void *self, Stack stack, int rhs, int opt, int lhs)
       if ( Ocheckname(NthObj(i),NVOID) ) 
 	{
 	  Scierror("Error: Cannot add unamed variable in hash table\n");
-	  Scierror("\t%s of function %s\n",ArgPosition(rhs),stack.fname);
+	  Scierror("\t%s of function %s\n",ArgPosition(rhs),NspFname(stack));
 	  return RET_BUG;
 	}
       /* A copy of object is added in the hash table **/
@@ -683,7 +683,7 @@ static int int_meth_htfind(void *self,Stack stack, int rhs, int opt, int lhs)
 	{
 	  if (nsp_hash_find_and_copy(H,S->S[i],&O) == FAIL)   
 	    {
-	      Scierror("%s: key %s not found in hash table \n",stack.fname);
+	      Scierror("%s: key %s not found in hash table \n",NspFname(stack));
 	      nsp_void_object_destroy(&O);
 	      return RET_BUG  ;
 	    }
@@ -771,7 +771,7 @@ static int int_htfind(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if (nsp_hash_find_and_copy(H,S->S[i],&O) == FAIL)   
 	    {
-	      Scierror("%s: key %s not found in hash table \n",stack.fname,S->S[i]);
+	      Scierror("%s: key %s not found in hash table \n",NspFname(stack),S->S[i]);
 	      nsp_void_object_destroy(&O);
 	      return RET_BUG  ;
 	    }

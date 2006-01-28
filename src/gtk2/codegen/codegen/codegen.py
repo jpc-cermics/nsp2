@@ -324,7 +324,7 @@ class Wrapper:
         '  if ( GetArgs(stack,rhs,opt,T,%(parselist)s) == FAIL) return RET_BUG;\n'
     
     deprecated_tmpl = \
-        '  Scierror("%%s: deprecated %(deprecationmsg)s",stack.fname); return RET_BUG;\n'
+        '  Scierror("%%s: deprecated %(deprecationmsg)s",NspFname(stack)); return RET_BUG;\n'
     
     methdef_tmpl = '  {"%(name)s",(nsp_method *) %(cname)s},\n'
     funcdef_tmpl = '  {"%(name)s", %(cname)s},\n'
