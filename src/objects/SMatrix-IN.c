@@ -650,14 +650,14 @@ int int_smxconcat(Stack stack, int rhs, int opt, int lhs)
   NspObject *rep ;
   NspSMatrix *A;
   char *col=NULL,*row=NULL,*sep=NULL;
-  int_types T[] = {smat,opts, t_end} ;
-  char *Names[]={"col","row","sep",NULL};
-  int_types Topt[]={ string,string,string, t_end} ;
-  NspObject *Tab[3]; 
-  int posi[3];
-  named_opts N = { 3, Names, Topt,Tab, posi};
+  int_types T[] = {smat,new_opts, t_end} ;
 
-  if ( GetArgs(stack,rhs,opt,T,&A,&N,&col,&row,&sep) == FAIL) return RET_BUG;
+  nsp_option opts[] ={{ "col",string,NULLOBJ,-1},
+		      { "row",string,NULLOBJ,-1},
+		      { "sep",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&A,&opts,&col,&row,&sep) == FAIL) return RET_BUG;
   if ( col  != NULL ) 
     {
       if ( row != NULL) 

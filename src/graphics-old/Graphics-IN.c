@@ -1968,20 +1968,11 @@ int int_xsegs(Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   int dstyle = -1;
   NspMatrix *nx,*ny,*Mstyle=NULL;
+  int_types T[] = {realmat,realmat,new_opts, t_end} ;
+  nsp_option opts[] ={{ "style",mat_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
 
-  int_types T[] = {realmat,realmat,opts, t_end} ;
-  /* names of optional arguments: must be NULL terminated*/
-  char *Names[]={"style",NULL};
-  /* types of optional arguments */
-  int_types Topt[]={mat_int, t_end} ;
-  /* table to store optional arguments */ 
-  NspObject *Tab[1]; 
-  /* table to store optional arguments position */ 
-  int posi[1];
-  /* structure for optional arguments */
-  named_opts N = { 1 , Names, Topt,Tab, posi};
-  /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
-  if ( GetArgs(stack,rhs,opt,T,&nx,&ny,&N,&Mstyle) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&nx,&ny,&opts,&Mstyle) == FAIL) return RET_BUG;
 
   CheckSameDims(stack.fname,1,2,nx,ny);
   if ( nx->mn == 0) { return 0;} 
@@ -3883,31 +3874,26 @@ int int_xsetech(Stack stack, int rhs, int opt, int lhs)
   else 
     {
       NspMatrix *Marect=NULL,*Mwrect=NULL,*Mfrect=NULL;
-      int_types T[] = {opts, t_end} ;
-      /* 4 named optional arguments */
-      /* names of optional arguments: must be NULL terminated*/
-      char *Names[]={"arect","frect","logflag","wrect",NULL};
-      /* types of optional arguments */
-      int_types Topt[]={ realmat,realmat,string,realmat, t_end} ;
-      /* table to store optional arguments */ 
-      NspObject *Tab[4]; 
-      /* table to store optional arguments position */ 
-      int posi[4];
-      /* structure for optional arguments */
-      named_opts N = { 4, Names, Topt,Tab, posi};
-      /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
-      if ( GetArgs(stack,rhs,opt,T,&N,&Marect,&Mfrect,&logflag,&Mwrect) == FAIL) return RET_BUG;
+      int_types T[] = {new_opts, t_end} ;
+
+      nsp_option opts[]={{"arect",realmat,NULLOBJ,-1},
+			 {"frect",realmat,NULLOBJ,-1},
+			 {"logflag",string,NULLOBJ,-1},
+			 {"wrect",realmat,NULLOBJ,-1},
+			 {NULL,t_end,NULLOBJ,-1},};
+
+      if ( GetArgs(stack,rhs,opt,T,&opts,&Marect,&Mfrect,&logflag,&Mwrect) == FAIL) return RET_BUG;
 
       if ( Marect != NULL) {
-	arect = Marect->R;CheckLength(stack.fname,posi[0],Marect,4);
+	arect = Marect->R;CheckLength(stack.fname,opts[0].position,Marect,4);
       }
 
       if ( Mfrect != NULL) {
-	frect = Mfrect->R;CheckLength(stack.fname,posi[1],Mfrect,4);
+	frect = Mfrect->R;CheckLength(stack.fname,opts[1].position,Mfrect,4);
       }
 
       if ( Mwrect != NULL) {
-	wrect = Mwrect->R;CheckLength(stack.fname,posi[3],Mwrect,4);
+	wrect = Mwrect->R;CheckLength(stack.fname,opts[3].position,Mwrect,4);
       }
       
       if ( logflag != logflag_def ) {
@@ -4305,20 +4291,21 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *S;
   NspMatrix *Mx=NULLMAT,*My= NULLMAT;
   char *sdir=NULL,*stics=NULL;
-  int_types T[] = {realmat,realmat,realmat,realmat,opts, t_end} ;
-  /* names of optional arguments: must be NULL terminated*/
-  char *Names[]={"dir","fontsize","format_n","seg","sub_int","textcolor","tics","ticscolor","val","x","y",NULL};
-  /* types of optional arguments */
-  int_types Topt[]={string,s_int,string,s_int,s_int,s_int,string,s_int,smat,realmat,realmat,
-		    t_end} ;
-  /* table to store optional arguments */ 
-  NspObject *Tab[11]; 
-  /* table to store optional arguments position */ 
-  int posi[11];
-  /* structure for optional arguments */
-  named_opts N = { 11, Names, Topt,Tab, posi};
-  /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
-  if ( GetArgs(stack,rhs,opt,T,&N,&sdir,&fontsize,&format,&seg_flag,
+  int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
+  nsp_option opts[]={{"dir",string,NULLOBJ,-1},
+		     {"fontsize",s_int,NULLOBJ,-1},
+		     {"format_n",string,NULLOBJ,-1},
+		     {"seg",s_int,NULLOBJ,-1},
+		     {"sub_int",s_int,NULLOBJ,-1},
+		     {"textcolor",s_int,NULLOBJ,-1},
+		     {"tics",string,NULLOBJ,-1},
+		     {"ticscolor",s_int,NULLOBJ,-1},
+		     {"val",smat,NULLOBJ,-1},
+		     {"x",realmat,NULLOBJ,-1},
+		     {"y",realmat,NULLOBJ,-1},
+		     {NULL,t_end,NULLOBJ,-1}};
+
+  if ( GetArgs(stack,rhs,opt,T,&opts,&sdir,&fontsize,&format,&seg_flag,
 	       &sub_int,&textcolor,&stics,&ticscolor,&S,&Mx,&My) == FAIL) return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
@@ -4377,15 +4364,15 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
   switch (tics ) 
     {
     case 'r' :
-      if ( check_xy(stack.fname,dir,3,posi[9],Mx, posi[10],My,&ntics)==0) 
+      if ( check_xy(stack.fname,dir,3,opts[9].position,Mx, opts[10].position,My,&ntics)==0) 
 	return 0;
       break;
     case 'i' :
-      if ( check_xy(stack.fname,dir,4,posi[9],Mx, posi[10],My,&ntics)==0) 
+      if ( check_xy(stack.fname,dir,4,opts[9].position,Mx, opts[10].position,My,&ntics)==0) 
 	return 0;
       break;
     case 'v' :
-      if ( check_xy(stack.fname,dir,-1,posi[9],Mx, posi[10],My,&ntics)==0) 
+      if ( check_xy(stack.fname,dir,-1,opts[9].position,Mx, opts[10].position,My,&ntics)==0) 
 	return 0;
       break;
     default :
@@ -4397,7 +4384,7 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
   if ( val != 0) 
     {
       /** sciprint("nombre de tics %d\r\n",ntics); **/
-      CheckLength(stack.fname, posi[8], S,ntics);
+      CheckLength(stack.fname, opts[8].position, S,ntics);
     }
 
   sci_axis(Xgc,dir,tics,x,&nx,y,&ny,val,sub_int,format,fontsize,textcolor,ticscolor,'n',seg_flag);

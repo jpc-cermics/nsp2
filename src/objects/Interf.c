@@ -57,7 +57,6 @@
 #include "nsp/object.h" 
 #include "nsp/matutil.h"
 
-static int OptCheck1(Stack stack,int rhs, int nopt, named_opts *Opts);
 static int GetFromTable_1(NspObject **Objs,int_types *T,va_list *ap,char *format);
 static int extract_one_argument(NspObject *Ob,int_types **T,va_list *ap,char Type,int pos, char *arg_message,char *list_end_message);
 
@@ -102,7 +101,6 @@ static int GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap);
 int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...) 
 {
   int rep;
-  named_opts *Opts;
   NspList *L;
   int count = 0;
   void **Foo;
@@ -251,16 +249,18 @@ int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...)
 
   if ( *T == opts ) 
     {
-      Opts = va_arg(ap, named_opts *);
-      /* reorder optional arguments in Opts->objs */
+      Scierror("Error: opts is deprecated, use new_opts instead\n",stack.fname);
+
+      /* named_opts *Opts;
+	 Opts = va_arg(ap, named_opts *);
       if ( OptCheck1(stack,rhs,opt,Opts)== FAIL) {
 	va_end(ap);
 	return FAIL;
       }
-      /* optional argument extraction **/ 
       rep = GetFromTable_1(Opts->objs,Opts->types,&ap,"\twhile extracting optional argument number %d ");
       if ( rep == FAIL)
 	Scierror(" of function %s\n",stack.fname);
+      */
       va_end(ap);
     }
   else
@@ -1027,7 +1027,7 @@ void OptCheck(NspObject **Os, NspObject **DefO, char **Names, int n, Stack stack
 }
 
 /* utility function used in GetArgs */
-
+/* 
 static int OptCheck1(Stack stack,int rhs, int nopt, named_opts *Opts)
 {
   int j,i;
@@ -1063,7 +1063,7 @@ static int OptCheck1(Stack stack,int rhs, int nopt, named_opts *Opts)
     }
   return OK ;
 }
-
+*/
 /**
  * get_optional_args:
  * @stack: calling stack 
@@ -1072,8 +1072,31 @@ static int OptCheck1(Stack stack,int rhs, int nopt, named_opts *Opts)
  * @opts: array describing the optional arguments
  * @Varargs: the object to be parsed according to @opts
  * 
- * Utility function to deal with Optional parameters 
- * 
+ * Collects named optional arguments checking their types using the @opts array. 
+ * The @opts array must be terminated by the sequence <literal>{ NULL,t_end,NULLOBJ,-1}</literal>.
+ * The values of the optional arguments are returned in the arguments which are 
+ * passed to get_optional_args() as pointer. They can also be found after calling 
+ * get_optional_args() in the @opts #nsp_option structure along with their position in the 
+ * calling sequence of the interfaced function (see #nsp_option). If an optional argument 
+ * is not given in the calling list the the corresponding argument in the get_optional_args() 
+ * will not be changed, thus default values can be given to arguments using this property. 
+ * In the next example, the optional parameter  <literal>window</literal> is set by default to 
+ * zero.
+ *
+ * <programlisting>
+ * int int_scigraph( Stack stack, int rhs, int opt, int lhs)
+ * {
+ *   int window=0;
+ *   char *gmode = NULL;
+ *   nsp_option opts[] ={{"gmode",string,NULLOBJ,-1},
+ * 		         { "window",s_int,NULLOBJ,-1},
+ * 		         { NULL,t_end,NULLOBJ,-1}};
+ *   ...
+ *   if ( get_optional_args(stack,rhs,opt,opts,&percnt;gmode,&percnt;window) == FAIL) 
+ *     return RET_BUG;
+ *   if ( gmode != NULL) ...
+ * </programlisting>
+ *
  * Return value: %OK or %FAIL
  **/
 
@@ -1132,9 +1155,9 @@ static int options_check(Stack stack,int rhs, int opt,nsp_option Opts[])
 }
 
 /* Table : Array of strings to compare against str
- * last entry must be NULL
- * and there must not be duplicate entries. */
-/* 0 or 1, 1 for exact match */
+ * last entry must be NULL and there must not be duplicate entries.
+ * flag = 0 or 1, 1 for exact match 
+ */
 
 static int is_string_in_options(char *key, nsp_option Opts[], int flag)
 {
@@ -1212,12 +1235,25 @@ static int get_from_options(nsp_option Opts[],va_list *ap,char *format)
  * @opts: array describing the optional arguments
  * @Varargs: the object to be parsed according to @opts
  * 
- * Utility function to deal with Optional parameters which are 
- * to be extracted from a hash table @H. Note that we only try 
- * to extract options from hash table. If hash table contains 
- * extra entry they are ignored (Is it to be change ? FIXME)
- * 
- * Return value: 
+ * very similar to get_optional_args() but arguments are extracted from a given
+ * hash table. Thus, this function collects values from a hash table @H, 
+ * checking their types using the @opts array. 
+ * If hash table contains extra entries not present in @opts they are ignored.
+ *
+ * <programlisting>
+ *   double h0=1.e-6, hmax=1.0;
+ *   nsp_option opts[] ={
+ *     { "h0",s_double , NULLOBJ,-1},
+ *     { "hmax",s_double,  NULLOBJ,-1},
+ *      ......
+ *     { NULL,t_end,NULLOBJ,-1}
+ *   };
+ *   if ( get_optional_args_from_hash(stack,odeoptions,opts,&percnt;op_h0,&percnt;op_hmax) == FAIL) 
+ * 	return RET_BUG;
+ *   .... 
+ * </programlisting>
+ *
+ * Return value: %OK or %FAIL
  **/
 
 static int options_check_from_hash(Stack stack,NspHash *H,nsp_option Opts[]);
@@ -1270,12 +1306,35 @@ static int options_check_from_hash(Stack stack,NspHash *H,nsp_option Opts[])
  * @opts: array describing the optional arguments
  * @Varargs: the object to be parsed according to @opts
  * 
- * This function is used to extract arguments from a hash table 
+ * This function is used to extract arguments from a hash table .
  * arguments to be extracted are described by a nsp_option 
- * table. All the specified names present in opts are to be found 
- * else it returns an error (If specified values from opts can 
- * be missing in hash then get_optional_args_from_hash should be used instead).
+ * table @Opts. All the specified names present in @opts are to be found in 
+ * the hash table else it returns an error. If specified values from @opts can 
+ * be missing in hash then get_optional_args_from_hash() should be used instead). 
+ * Note that as in get_optional_args_from_hash() extra arguments present in hash 
+ * table are ignored.
  * 
+ * <programlisting>
+ * int int_mxtest12(Stack stack, int rhs, int opt, int lhs)
+ * {
+ *   test12_data data;
+ *   NspHash *H;
+ *   int_types T[]={hash,t_end} ;
+ *   nsp_option opts[] ={{ "x1",mat,NULLOBJ,-1},
+ * 		      { "x2",s_int,NULLOBJ,-1},
+ * 		      { "x3",s_double,NULLOBJ,-1},
+ * 		      { "x4",matcopy,NULLOBJ,-1},
+ * 		      { NULL,t_end,NULLOBJ,-1}};
+ *   if ( GetArgs(stack,rhs,opt,T,&percnt;H) == FAIL) return RET_BUG;
+ *   if ( get_args_from_hash(stack,H,opts,&percnt;data.M,&percnt;data.x,&percnt;data.z,&percnt;data.N)==FAIL) 
+ *     {
+ *       Scierror("%s: wrong first argument %s\n",stack.fname,nsp_object_get_name(NSP_OBJECT(H)));
+ *       return RET_BUG;
+ *     }
+ *   return 0;
+ * }
+ * </programlisting>
+ *
  * Return value:  %OK or %FAIL.
  **/
 
@@ -1330,7 +1389,7 @@ static int value_get_from_hash(Stack stack,NspHash *H,nsp_option Opts[])
  * ObjConvert:
  * @O: a #NspObject 
  * 
- * Utility function : Check if object is a #NspMatrix and needs
+ * Utility function : Check if object @0 is a #NspMatrix and needs
  * a type conversion to double.
  * 
  **/
@@ -1347,9 +1406,9 @@ void ObjConvert(NspObject *O)
  * 
  * Makes a copy of @O if @O has a non empty name. 
  * The object is returned in @0. 
- * the element stored in O is returned as a (void *)
- * if O is an Hobj object : the object it points to 
- * is copied here 
+ * the element stored in @O is returned as a (void *)
+ * if @O is an Hobj object : the object it points to 
+ * is copied here. 
  *
  * Return value: the copy of object @O as a void *.
  * 
@@ -1431,8 +1490,11 @@ void ArgMessage(Stack stack, int i)
  * attr_search:
  * @key: key to be searched 
  * @Table: table 
+ *
+ * utility function used to search in attribute tables. 
  * 
- * Return value: 
+ * 
+ * Return value: the @key position in @Table or -1 
  **/
 
 int attr_search(char *key, AttrTab *Table)
@@ -1455,8 +1517,10 @@ int attr_search(char *key, AttrTab *Table)
  * @stack: 
  * @pos: 
  * 
+ * utility function used to store on stack attribute table names as 
+ * a string matrix 
  * 
- * Return value: 
+ * Return value: 1 or %RET_BUG
  **/
 
 int attrs_to_stack(char *key, AttrTab *attrs, Stack stack, int pos)
@@ -1498,20 +1562,19 @@ int method_search(char *key, NspMethods *Table)
 
 /**
  * nsp_move_string:
- * @stack: 
- * @n: 
+ * @stack: calling stack
+ * @n: stack position 
  * @bytes:  Points to the first of the length bytes used to initialize the object.
  * @length: The number of bytes to copy from "bytes" when initializing the object. If  
  *          negative, use bytes up to the first  NULL byte.
  * 
  * 
- * Replace object at position n on the stack by a new string matrix object 
- * filled with bytes 
- *	The object's string representation will be set to a copy of
- *	the "length" bytes starting at "bytes". If "length" is negative, use
- *	bytes up to the first NULL byte; i.e., assume "bytes" points to a
- *	C-style NULL-terminated string. The object's old string and internal
- *	representations are freed and the object's type is set NULL.
+ * Replaces object at position @n on the stack by a new string matrix object 
+ * filled with bytes. The object's string representation will be set to a copy of
+ * the @length bytes starting at @bytes. If @length is negative, use
+ * @bytes up to the first NULL byte; i.e., assume @bytes points to a
+ * C-style NULL-terminated string. 
+ * Note that the object previously stored at position @n is destroyed.
  * 
  * Return value: 1 or %RET_BUG 
  **/
@@ -1526,12 +1589,12 @@ int nsp_move_string(Stack stack,int n,const char *bytes,int length)
 
 /**
  * nsp_new_string_obj:
- * @name: 
- * @bytes: 
- * @length: 
+ * @name: name of object.
+ * @bytes: string to be copied.
+ * @length: -1 or the number of bytes to use for copy.
  * 
- * return a new 1x1 #NspSMatrix filled with a bytes from @bytes. 
- * If @length is < 0 @bytes must be nul terminated, If @length is 
+ * return a new 1x1 #NspSMatrix filled with bytes from @bytes. 
+ * If @length is < 0 @bytes must be null terminated, If @length is 
  * positive then @length characters from @length are used.
  * 
  * Return value: a new #NspObject or %NULLOBJ.
@@ -1561,8 +1624,9 @@ NspObject *nsp_new_string_obj(char *name,const char *bytes,int length)
  * @d: value to be stored on the stack
  * 
  * replaces object at position @n on the stack by a new matrix object 
- * filled with a double. 
- * 
+ * filled with a double.  
+ * Note that the object previously stored at position @n is destroyed. * 
+ *
  * Return value: 1 or %RET_BUG 
  **/
 
@@ -1604,6 +1668,7 @@ NspObject *nsp_new_double_obj(double d)
  *  replaces object at position @pos on the stack by a new matrix object of size
  *  @mx@n filled with given values. @mx@n double arguments must follow the fourth 
  *  argument @n.
+ * Note that the object previously stored at position @n is destroyed.
  * 
  * Return value: 1 or %RET_BUG 
  **/
@@ -1630,6 +1695,8 @@ int nsp_move_doubles(Stack stack,int pos,int m,int n,...)
  * 
  * replaces object at position @n on the stack by a new boolean matrix object 
  * filled with a boolean value @ival.
+ * Note that the object previously stored at position @n is destroyed.
+ *
  * Return value: 1 or %RET_BUG 
  **/
 
