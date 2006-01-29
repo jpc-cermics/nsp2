@@ -54,7 +54,7 @@ h.a=[10,20]
 // cette operation est interne car elle se fait avec 
 // passage par reference 
 
-h.a(1,1)=100 
+h.a(1,1)=100 ;
 // rajout d'une <<methode>>
 function H=$meth_h(H,x)
  $enter_h(H,a=x)
@@ -66,7 +66,20 @@ function x=$dot_h(H,poo)
    info(H)
 endfunction 
 
+// test of collisions 
 
+h=hcreate(abcd=1,abdc=2,adbc=3);
+h.delete['abcd'];
+if h.iskey['adbc']== %f then pause;end 
+if length(h)<>2 then pause;end 
+h.abcd = 1;
+if length(h)<>3 then pause;end 
+h.delete['abdc'];
+if length(h)<>2 then pause;end 
+h.abdc=2;
+if length(h)<>3 then pause;end 
+if h.abdc <> 2 then pause;end 
+if h.adbc <> 3  then pause;end 
 
 
 

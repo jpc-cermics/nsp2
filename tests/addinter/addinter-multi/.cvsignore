@@ -3,3 +3,6 @@
 Makelib
 *.lo
 *.la
+libmulti2.c
+libmulti1.c
+builder.dia
