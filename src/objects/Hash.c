@@ -92,7 +92,7 @@ int nsp_hash_resize(NspHash *H, unsigned int new_size)
   for ( i =0 ; i <= H->hsize ; i++) 
     {
       Hash_Entry *loc = ((Hash_Entry *)H->htable) + i;
-      if ( loc->used )
+      if ( loc->used && loc->data != NULL)
 	{
 	  if ( nsp_hsearch(Loc,nsp_object_get_name(loc->data),&loc->data,H_ENTER) == FAIL) 
 	    return FAIL;
@@ -132,7 +132,7 @@ int nsp_hash_merge(NspHash *H1,NspHash *H2)
   for ( i =0 ; i <= H2->hsize ; i++) 
     {
       Hash_Entry *loc = ((Hash_Entry *)H2->htable) + i;
-      if ( loc->used )
+      if ( loc->used && loc->data != NULL )
 	{
 	  if ( nsp_hsearch(H1,nsp_object_get_name(loc->data),&loc->data,H_ENTER_COPY) 
 	       == FAIL) 
@@ -160,7 +160,7 @@ int nsp_hash_merge(NspHash *H1,NspHash *H2)
 int nsp_hash_get_next_object(NspHash *H, int *i, NspObject **O)
 {
   Hash_Entry *loc = ((Hash_Entry *) H->htable) + *i;  
-  if ( loc->used ) 
+  if ( loc->used && loc->data != NULL) 
     *O = loc->data ;
   else
     *O = NULLOBJ ;
@@ -622,6 +622,71 @@ void nsp_hdestroy(NspHash *H)
  * Return value: %OK, %FAIL. 
  **/
 
+#define ACTION1					\
+  switch (action)				\
+    {						\
+      NspObject *Obj;				\
+    case H_REMOVE :							\
+      break;								\
+    case H_ENTER_COPY :							\
+      Obj =nsp_object_copy_with_name(*data);				\
+      if ( Obj == NULLOBJ)						\
+	{								\
+	  Sciprintf("No more memory\n");				\
+	  return FAIL;							\
+	}								\
+      htable[idx].data = Obj;						\
+      (H->filled)++;							\
+      return OK;							\
+    case H_ENTER :							\
+      htable[idx].data = *data;						\
+      (H->filled)++;							\
+      return OK;							\
+    case H_FIND:							\
+    case H_FIND_COPY:							\
+      break;								\
+    }
+
+#define ACTION2					\
+  switch (action)				\
+    {						\
+      NspObject *Obj;							\
+    case H_REMOVE :							\
+      /* since other objects can be present with second			\
+       * level keys with same hash value we must keep the cell in use	\
+       */								\
+      /* htable[idx].used = 0; */					\
+      nsp_object_destroy(&htable[idx].data);				\
+      htable[idx].data = NULLOBJ;					\
+      (H->filled)--;							\
+      return OK ;							\
+      break;								\
+    case H_ENTER_COPY :							\
+      nsp_object_destroy(&htable[idx].data);				\
+      Obj  =nsp_object_copy_with_name(*data);				\
+      if ( Obj == NULLOBJ)						\
+	{								\
+	  Sciprintf("Error: No more memory\n");				\
+	  return FAIL;							\
+	}								\
+      htable[idx].data=Obj;						\
+      (H->filled)++;							\
+      return OK;							\
+    case H_ENTER:							\
+      nsp_object_destroy(&htable[idx].data);				\
+      htable[idx].data = *data;						\
+      (H->filled)++;							\
+      return OK;							\
+    case H_FIND_COPY :							\
+      *data=nsp_object_copy(htable[idx].data);				\
+      return OK;							\
+    case H_FIND :							\
+      *data= htable[idx].data;						\
+      return OK;							\
+    }									
+
+
+
 int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation action)
 {
   register unsigned hval;
@@ -659,44 +724,16 @@ int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation acti
       /* Sciprintf("First  hash Testing idx=%d\n",idx); */
       if (htable[idx].used == hval )
 	{
-	  if ( Ocheckname(htable[idx].data,key) ) 
+	  if (htable[idx].data==NULLOBJ) 
 	    {
-	      switch (action) 
-		{
-		case H_REMOVE :
-		  htable[idx].used = 0;
-		  nsp_object_destroy(&htable[idx].data);
-		  htable[idx].data = NULLOBJ;
-		  (H->filled)--;
-		  return OK ;
-		  break;
-		case H_ENTER_COPY :
-		  if (htable[idx].data != NULLOBJ) 
-		    nsp_object_destroy(&htable[idx].data);
-		  htable[idx].data =nsp_object_copy_with_name(*data);
-		  if (htable[idx].data == NULLOBJ) 
-		    {
-		      Sciprintf("Error: No more memory\n");
-		      htable[idx].used = 0;
-		      (H->filled)--;
-		      return FAIL;
-		    }
-		  return OK;
-		case H_ENTER: 
-		  if (htable[idx].data != NULLOBJ) 
-		    nsp_object_destroy(&htable[idx].data);
-		  htable[idx].data = *data;
-		  return OK;
-		case H_FIND_COPY :
-		  *data=nsp_object_copy(htable[idx].data);
-		  return OK;
-		case H_FIND :
-		  *data= htable[idx].data;
-		  return OK;
-		}
+	      ACTION1;
+	    }
+	  else if ( Ocheckname(htable[idx].data,key) ) 
+	    {
+	      ACTION2;
 	    }
 	}
-	
+      
       /* Second hash function, as suggested in [Knuth] */
 
       hval2 = 1 + hval % (H->hsize-2);
@@ -715,41 +752,13 @@ int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation acti
 	/* If entry is found use it. */
 	if (htable[idx].used == hval ) 
 	  {
-	    if ( Ocheckname(htable[idx].data,key)) 
+	    if (htable[idx].data==NULLOBJ )
 	      {
-		switch (action) 
-		  {
-		  case H_REMOVE :
-		    htable[idx].used = 0;
-		    nsp_object_destroy(&htable[idx].data);
-		    htable[idx].data = NULLOBJ;
-		    (H->filled)--;
-		    return OK;
-		    break;
-		  case H_ENTER_COPY :
-		    if (htable[idx].data != NULLOBJ) 
-		      nsp_object_destroy(&htable[idx].data);
-		    htable[idx].data =nsp_object_copy_with_name(*data);
-		    if (htable[idx].data == NULLOBJ) 
-		      {
-			Sciprintf("No more memory\n");
-			htable[idx].used =0;
-			(H->filled)--;
-			return FAIL;
-		      }
-		    return OK;
-		  case H_ENTER :
-		    if (htable[idx].data != NULLOBJ) 
-		      nsp_object_destroy(&htable[idx].data);
-		    htable[idx].data = *data;
-		    return OK;
-		  case H_FIND_COPY :
-		    *data=nsp_object_copy(htable[idx].data);
-		    return OK;
-		  case H_FIND :
-		    *data= htable[idx].data;
-		    return OK;
-		  }
+		ACTION1;
+	      }
+	    else if ( Ocheckname(htable[idx].data,key) )
+	      {
+		ACTION2;
 	      }
 	  }
       } while (htable[idx].used);
@@ -782,11 +791,5 @@ int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation acti
   else 
     return FAIL;
 }
-
-
-
-
-
-
 
 

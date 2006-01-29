@@ -228,7 +228,7 @@ static int hash_xdr_save(XDR *xdrs, NspHash *M)
   for ( i =0 ; i <= M->hsize ; i++) 
     {
       Hash_Entry *loc = ((Hash_Entry *)M->htable) + i;
-      if ( loc->used )
+      if ( loc->used && loc->data != NULLOBJ )
 	{
 	  if (nsp_object_xdr_save(xdrs, loc->data ) == FAIL) return FAIL;
 	}
@@ -275,7 +275,7 @@ void nsp_hash_destroy(NspHash *H)
       for ( i =0 ; i <= H->hsize ; i++) 
 	{
 	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i;
-	  if ( loc->used) 
+	  if ( loc->used && loc->data != NULLOBJ ) 
 	    nsp_object_destroy( &loc->data);
 	}
       nsp_hdestroy(H);
@@ -301,7 +301,7 @@ void nsp_hash_info(NspHash *H, int indent,char *name,int rec_level)
   for ( i1 =0 ; i1 <= H->hsize  ; i1++) 
     {
       Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
-      if ( loc->used) 
+      if ( loc->used && loc->data != NULLOBJ) 
 	nsp_object_info(loc->data,indent+2,NULL,0);
     }
 }
@@ -327,7 +327,7 @@ void nsp_hash_print(NspHash *H, int indent,char *name, int rec_level)
       for ( i1 =0 ; i1 <= H->hsize ; i1++) 
 	{
 	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
-	  if ( loc->used) 
+	  if ( loc->used && loc->data != NULLOBJ) 
 	    {
 	      sprintf(epname1,"%s('%s')",epname,nsp_object_get_name(loc->data));
 	      nsp_object_print(loc->data,indent+2,epname1,rec_level+1);
@@ -343,7 +343,7 @@ void nsp_hash_print(NspHash *H, int indent,char *name, int rec_level)
       for ( i1 =0 ; i1 <= H->hsize ; i1++) 
 	{
 	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
-	  if ( loc->used) 
+	  if ( loc->used && loc->data != NULLOBJ) 
 	    nsp_object_print(loc->data,indent+2,NULL,rec_level+1);
 	}
     }
@@ -413,7 +413,7 @@ NspHash *nsp_hash_copy(NspHash *H)
   for ( i =0 ; i <= H->hsize ; i++) 
     {
       Hash_Entry *loc = ((Hash_Entry *)H->htable) + i;
-      if ( loc->used )
+      if ( loc->used && loc->data != NULLOBJ )
 	{
 	  if ( nsp_hsearch(Loc,nsp_object_get_name(loc->data),&loc->data,H_ENTER_COPY) == FAIL) 
 	    return NULLHASH;
@@ -875,7 +875,7 @@ int int_hcreate_from_list(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Extract all the elements of the list 
+ * Extract all the elements of the hash table 
  * an store them on the stack as hopts 
  * this is usefull for passing optionnal arguments 
  * H=hcreate(opt1=,...)
