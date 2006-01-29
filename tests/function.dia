@@ -1,0 +1,15 @@
+-nsp->
+-nsp->H=hcreate(A=1,B=2,C=3);
+-nsp->function y=f(x,varargopt);y=varargopt;endfunction;
+-nsp->function y=g(x,varargopt);y=f(x,varargopt(:));endfunction;
+-nsp->y=g(5,H(:));
+-nsp->if y<>H then pause;end
+-nsp->
+-nsp->function [y,z]=f(x,varargin,varargopt);y=varargopt;z=varargin;endfunction;
+-nsp->
+-nsp->[y,z]=f(6,1,2,3,H(:));
+-nsp->if y<>H then pause;end 
+-nsp->if z<>list(1,2,3) then pause;end 
+-nsp->
+-nsp->
+-nsp->
