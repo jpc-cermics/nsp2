@@ -1,0 +1,5 @@
+.libs
+.nsp_history
+Makelib
+*.lo
+*.la
