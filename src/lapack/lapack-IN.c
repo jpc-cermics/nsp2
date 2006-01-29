@@ -51,7 +51,7 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
   cmode = ( opts[1].obj == NULLOBJ) ? 'x' : mode[0]; 
   if ( cmode != 'x' && cmode != 'e' ) 
     {
-      Scierror("%s: mode should be 'x' or 'e' \n",stack.fname);
+      Scierror("%s: mode should be 'x' or 'e' \n",NspFname(stack));
       return RET_BUG;
     }
   CheckLhs(1,5);
@@ -113,7 +113,7 @@ static int int_svd( Stack stack, int rhs, int opt, int lhs)
   cmode = ( opts[1].obj == NULLOBJ) ? '\0' : mode[0]; 
   if ( cmode != '\0' && cmode != 'e' ) 
     {
-      Scierror("%s: mode should be '' or  'e' \n",stack.fname);
+      Scierror("%s: mode should be '' or  'e' \n",NspFname(stack));
       return RET_BUG;
     }
   CheckLhs(1,4);
@@ -162,7 +162,7 @@ static int int_det( Stack stack, int rhs, int opt, int lhs)
   cmode = ( opts[0].obj == NULLOBJ) ? 'd' : mode[0]; 
   if ( cmode != '\0' && cmode != 'd' ) 
     {
-      Scierror("%s: mode should be '' or  'd' \n",stack.fname);
+      Scierror("%s: mode should be '' or  'd' \n",NspFname(stack));
       return RET_BUG;
     }
   if (( res = nsp_det(A,cmode))== NULLMAT) return RET_BUG;
@@ -338,7 +338,7 @@ static int int_norm( Stack stack, int rhs, int opt, int lhs)
 	    {
 	      if ( !(p >= 1.0) )   /* to detect also nan */ 
 		{ 
-		  Scierror("%s: second argument must be >= 1 and also not %%nan\n",stack.fname);
+		  Scierror("%s: second argument must be >= 1 and also not %%nan\n",NspFname(stack));
 		  return RET_BUG;
 		}
 	    }
@@ -346,7 +346,7 @@ static int int_norm( Stack stack, int rhs, int opt, int lhs)
 	    {
 	      if ( !(p==1.0 || p==2.0 || isinf(p)) )
 		{ 
-		  Scierror("%s: second argument must be 1, 2 or %%inf \n",stack.fname);
+		  Scierror("%s: second argument must be 1, 2 or %%inf \n",NspFname(stack));
 		  return RET_BUG;
 		}
 	      if ( isinf(p) ) id = 2; else id = floor(p)-1;
@@ -364,7 +364,7 @@ static int int_norm( Stack stack, int rhs, int opt, int lhs)
       else
 	{
 	  Scierror("%s: second argument must be 1,2,%%inf or '1','2','inf','fro','Inf','Fro','M' \n      (or any real >= 1 for a vector)\n",
-		   stack.fname);
+		   NspFname(stack));
 	  return RET_BUG;
 	}
     }
