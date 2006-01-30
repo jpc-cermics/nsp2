@@ -714,44 +714,6 @@ int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
  *  A is changed.
  */
 
-int nsp_smatrix_delete_rows_old(NspSMatrix *A, NspMatrix *Rows)
-{
-  int i, j, k, ij, *flag, new_A_m, count;
-
-  if ( Rows->mn == 0) return OK;
-
-  if ( (flag = nsp_complement_for_deletions(A->m, Rows, &count)) == NULL )
-    return FAIL;
-
-  new_A_m = A->m - count;
-
-  k = 0;
-  ij = 0;
-  for ( j = 0 ; j < A->n  ; j++)
-    for ( i = 0 ; i < A->m ; i++ )
-      {
-	if ( flag[i] )
-	  {
-	    if ( k < ij )
-	      {
-		A->S[k] = A->S[ij];
-		A->S[ij] = NULLSTRING;
-	      }
-	    k++; 
-	  }
-	else
-	  nsp_string_destroy(&A->S[ij]);
-	ij++;
-      }
-
-  FREE(flag);
-
-  if ( nsp_smatrix_resize(A, new_A_m, A->n) == FAIL ) 
-    return FAIL;
-
-  return OK;
-}
-
 int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
 {
   char *Val = (char *) A->S;

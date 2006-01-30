@@ -110,7 +110,7 @@ static char *matint_type_as_string (void)
  *   implemented in the matint interface. 
  */
 
-static int int_matint_redim(NspMatrix *self,Stack stack,int rhs,int opt,int lhs)
+static int int_matint_redim(NspMatrix *self,Stack stack,int rhs,int opt,int lhs) 
 {
   NspTypeBase *type;
   int m1, n1;
@@ -143,4 +143,288 @@ static NspMethods matint_methods[] = {
 
 
 NspMethods *matint_get_methods(void) { return matint_methods;};
+
+
+/**
+ * nsp_matint_delete_columns:
+ * @Obj: a #NspObject which implements #matint
+ * @Cols: a #NspMatrix giving column indices to be deleted.
+ * 
+ * delete the columns of object @Obj which must implements the #matint interface 
+ * A(Rows,:) = []
+ * 
+ * Return value: %OK or %FAIL.
+ **/
+
+int nsp_matint_delete_columns(NspObject  *Obj, NspMatrix *Cols)
+{
+  /* all objects which implements matint can be casted 
+   * to NspSMatrix for accessing common fields.
+   */
+  NspSMatrix *A = (NspSMatrix *) Obj;
+  char *Val = (char *) A->S;
+  unsigned int elt_size; /* size in number of bytes */
+  NspTypeBase *type; 
+  int i,j,*ind,k1,k2,nn,ncol,ioff=0;
+
+  if ( Cols->mn == 0) return OK;
+
+  if ( (ind = nsp_indices_for_deletions(A->n, Cols, &ncol)) == NULL ) 
+    return FAIL;
+
+  if (( type = check_implements(A,nsp_type_matint_id)) == NULL ) 
+    { 
+      Scierror("Object do not implements matint interface\n"); 
+      return FAIL; 
+    } 
+
+  elt_size = MAT_INT(type)->elt_size(A); 
+  if ( MAT_INT(type)->free_elt != NULL)  
+    for ( j = 0 ; j < ncol ; j++ )  
+      {
+	int k=ind[j]*A->m;
+	for ( i = 0 ; i < A->m ; i++ )  
+	  MAT_INT(type)->free_elt((void **) &(A->S[i+k])); 
+      }
+
+  for ( i = 0 ; i < ncol ; i++)
+    {
+      k1 = ind[i];
+      k2 = (i < ncol-1 ) ? ind[i+1] : A->n;
+      nn = (k2-k1-1)*A->m;
+      /* nb of elts to move = nb of elts strictly between columns k1 and k2 */
+      if ( nn != 0) 
+	{
+	  memmove(Val +(k1-ioff)*A->m*elt_size,Val + (k1+1)*A->m*elt_size, nn*elt_size);
+	}
+      ioff++;
+    }
+  FREE(ind);
+  if ( MAT_INT(type)->free_elt != NULL) 
+    for ( i = A->mn - ncol*A->m ; i < A->mn ; i++ ) A->S[i]= NULL;
+  if ( MAT_INT(type)->resize(A,A->m,A->n-ncol) == FAIL) return FAIL;
+  return OK;
+}
+
+/**
+ * nsp_matint_delete_rows:
+ * @Obj: a #NspObject which implements #matint
+ * @Rows: a #NspMatrix giving rows indices to be deleted.
+ * 
+ * delete the rows of object @Obj which must implements the #matint interface 
+ * A(Rows,:) = []
+ * 
+ * Return value: %OK or %FAIL.
+ **/
+
+int nsp_matint_delete_rows(NspObject *Obj, NspMatrix *Rows)
+{
+  /* all objects which implements matint can be casted 
+   * to NspSMatrix for accessing common fields.
+   */
+  NspSMatrix *A = (NspSMatrix *) Obj;
+  char *Val = (char *) A->S;
+  unsigned int elt_size; /* size in number of bytes */
+  NspTypeBase *type; 
+  int i,j,*ind,k1,k2,nn,nrow,stride=0,ioff=0;
+
+  if ( Rows->mn == 0) return OK;
+
+  if ( (ind = nsp_indices_for_deletions(A->m, Rows, &nrow)) == NULL ) 
+    return FAIL;
+
+  if (( type = check_implements(A,nsp_type_matint_id)) == NULL ) 
+    { 
+      Scierror("Object do not implements matint interface\n"); 
+      return FAIL; 
+    } 
+  elt_size = MAT_INT(type)->elt_size(A); 
+  if ( MAT_INT(type)->free_elt != NULL)  
+    for ( i = 0 ; i < nrow ; i++ ) 
+      {
+	int k=ind[i];
+	for ( j = 0 ; j < A->n ; j++ ) 
+	  MAT_INT(type)->free_elt((void **) &(A->S[k+A->m*j])); 
+      }
+  for ( j = 0 ; j < A->n  ; j++)
+    {
+      k1 = ind[0] + stride;
+      for ( i = 0 ; i < nrow ; i++)
+	{
+	  if ( i < nrow-1 ) 
+	    k2 =  ind[i+1] + stride;
+	  else 
+	    k2 = ( j < A->n-1) ? ind[0] + stride + A->m : A->mn;
+	  nn = k2-k1-1;
+	  if ( nn != 0) 
+	    {
+	      memmove(Val + (k1-ioff)*elt_size, Val + (k1+1)*elt_size, nn*elt_size);
+	    }
+	  ioff++;
+	  k1 = k2;
+	}
+      stride += A->m;
+    }
+  FREE(ind);
+  if ( MAT_INT(type)->free_elt != NULL) 
+    for ( i = A->mn- nrow*A->n ; i < A->mn ; i++ ) A->S[i]= NULL;
+  if ( MAT_INT(type)->resize(A,A->m-nrow,A->n) == FAIL) return FAIL;
+  return OK;
+}
+
+
+/**
+ * nsp_matint_delete_elements:
+ * @Obj: a #NspObject which implements #matint
+ * @Elts: a #NspMatrix giving element indices to be deleted.
+ * 
+ * delete the elements of object @Obj which must implements the #matint interface 
+ * A(elts) = []
+ * 
+ * Return value: %OK or %FAIL.
+ **/
+
+int nsp_matint_delete_elements(NspObject *Obj, NspMatrix *Elts)
+{
+  /*  modified by Bruno (same modifs than in nsp_matrix_delete_elements).
+   *  The algorithm uses now the function nsp_complement_for_deletions). 
+   *  Indices from Elts do not need to be in increasing order.
+   */
+  /* all objects which implements matint can be casted 
+   * to NspSMatrix for accessing common fields.
+   */
+  NspSMatrix *A = (NspSMatrix *) Obj;
+  char *Val = (char *) A->S;
+  unsigned int elt_size; /* size in number of bytes */
+  int i,*ind,k1,k2,nn,ne,ioff=0; 
+  NspTypeBase *type; 
+
+  if ( Elts->mn == 0) return OK;
+
+  if ( (ind = nsp_indices_for_deletions(A->mn, Elts, &ne)) == NULL )  
+    return FAIL; 
+
+  if (( type = check_implements(A,nsp_type_matint_id)) == NULL ) 
+    { 
+      Scierror("Object do not implements matint interface\n"); 
+      return FAIL; 
+    } 
+  elt_size = MAT_INT(type)->elt_size(A); 
+  if ( MAT_INT(type)->free_elt != NULL)  
+    for ( i = 0 ; i < ne ; i++ )  MAT_INT(type)->free_elt((void **) &(A->S[ind[i]])); 
+
+  k1 = ind[0];
+  for ( i = 0 ; i < ne ; i++)
+    {
+      k2 = ( i < ne-1 ) ? ind[i+1] : A->mn;
+      nn = k2-k1-1;
+      if ( nn != 0) 
+	{
+	  memmove(Val + (k1-ioff)*elt_size, Val + (k1+1)*elt_size, nn*elt_size);
+	}
+      ioff++;
+      k1 = k2;
+    }
+  FREE(ind);
+
+  if ( MAT_INT(type)->free_elt != NULL) 
+    for ( i = A->mn-ne ; i < A->mn ; i++ ) A->S[i]= NULL;
+
+  if ( A->m == 1)
+    {
+      if ( MAT_INT(type)->resize(A,1,A->mn-ne) == FAIL) return FAIL;
+    }
+  else
+    {
+      if ( MAT_INT(type)->resize(A,A->mn-ne,1) == FAIL) return FAIL;
+    }
+  return OK;
+}
+
+/**
+ * nsp_matint_delete_elements2:
+ * @Obj: a #NspObject which implements #matint
+ * @EltsR: a #NspMatrix giving rows indices to be deleted.
+ * @EltsC: a #NspMatrix giving column indices to be deleted.
+ * 
+ * delete elements of object @Obj which must implements the #matint interface 
+ * A(R,C) = []
+ * 
+ * Return value: %OK or %FAIL.
+ **/
+
+int nsp_matint_delete_elements2(NspObject *Obj, NspMatrix *EltsR, NspMatrix *EltsC)
+{
+  /* all objects which implements matint can be casted 
+   * to NspSMatrix for accessing common fields.
+   */
+  NspSMatrix *A = (NspSMatrix *) Obj;
+  char *Val = (char *) A->S;
+  unsigned int elt_size; /* size in number of bytes */
+  int i,j,ne,*indrow,*indcol,k1,k2,nn,nrow,ncol,ioff=0; 
+  NspTypeBase *type; 
+
+  if ( EltsR->mn == 0 || EltsC->mn == 0 ) return OK;
+
+  if ( (indrow = nsp_indices_for_deletions(A->m, EltsR, &nrow)) == NULL )  
+    return FAIL; 
+  if ( (indcol = nsp_indices_for_deletions(A->n, EltsC, &ncol)) == NULL )  
+    return FAIL; 
+
+  if (( type = check_implements(A,nsp_type_matint_id)) == NULL ) 
+    { 
+      Scierror("Object do not implements matint interface\n"); 
+      return FAIL; 
+    } 
+
+  elt_size = MAT_INT(type)->elt_size(A); 
+  if ( MAT_INT(type)->free_elt != NULL)  
+    for ( i = 0 ; i < nrow ; i++ ) 
+      for ( j = 0 ; j < ncol ; j++ ) 
+	MAT_INT(type)->free_elt((void **) &(A->S[indrow[i]+A->m*indcol[j]])); 
+
+  k1 = indrow[0]+A->m*indcol[0];
+  for ( j = 0 ; j < ncol ; j++ ) 
+    {
+      int offset = A->m*indcol[j];
+      for ( i = 0 ; i < nrow ; i++)
+	{
+	  /* compute in k2 the point to delete after the current 
+	   * one or return A->mn at the end 
+	   */
+	  if ( i < nrow-1 )
+	    {
+	      k2 = indrow[i+1] + offset;
+	    }
+	  else 
+	    {
+	      if ( j == ncol-1 ) 
+		k2 = A->mn;
+	      else 
+		k2 = indrow[0] + A->m*indcol[j+1];
+	    }
+	  nn = k2-k1-1;
+	  if ( nn != 0) 
+	    {
+	      memmove(Val + (k1-ioff)*elt_size, Val + (k1+1)*elt_size, nn*elt_size);
+	    }
+	  ioff++;
+	  k1 = k2;
+	}
+    }
+  FREE(indrow);
+  FREE(indcol);
+  ne = nrow*ncol;
+  if ( MAT_INT(type)->free_elt != NULL) 
+    for ( i = A->mn-ne ; i < A->mn ; i++ ) A->S[i]= NULL;
+  if ( A->m == 1)
+    {
+      if ( MAT_INT(type)->resize(A,1,A->mn-ne) == FAIL) return FAIL;
+    }
+  else
+    {
+      if ( MAT_INT(type)->resize(A,A->mn-ne,1) == FAIL) return FAIL;
+    }
+  return OK;
+}
 
