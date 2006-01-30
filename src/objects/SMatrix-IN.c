@@ -1278,6 +1278,35 @@ int int_smxtranspose(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+/*
+ * 
+ */
+
+static int int_smatrix_2latexmat(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *HMat;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  nsp_smatrix_latex_print(HMat);
+  return 0;
+}
+
+/*
+ *  BMat2LaTeXTab: writes BMat Objet on fd in TeX language
+ */
+
+static int int_smatrix_2latextab(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *HMat;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((HMat = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;    
+  nsp_smatrix_latex_tab_print(HMat);
+  return 0;
+}
+
 /*
  * Res =  subst(A,str,rep) 
  */
@@ -1335,6 +1364,8 @@ int int_smatrix_utf8_from_unichar(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab SMatrix_func[]={
   {"resize2vect_s", int_smxmat2vect},	
+  {"latexmat_s",int_smatrix_2latexmat},
+  {"latextab_s",int_smatrix_2latextab},
   {"extractcols_s",int_smxextractcols},	
   {"extractrows_s",int_smxextractrows},
   {"extractelts_s",int_smxextractelts},

@@ -48,19 +48,6 @@ NspSMatrix *new_smatrix();
  * Object methods redefined for smatrix 
  */
 
-#ifdef SMatrix_Private 
-static int init_smatrix(NspSMatrix *ob,NspTypeSMatrix *type);
-static int nsp_smatrix_size(NspSMatrix *Mat, int flag);
-char *nsp_smatrix_type_as_string(void);
-char *nsp_smatrix_type_short_string(void);
-NspObject *nsp_smatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-int nsp_smatrix_eq(NspObject *A,NspObject *B);
-int nsp_smatrix_neq(NspObject *A,NspObject *B);
-int nsp_smatrix_is_true(NspSMatrix *M);
-NspSMatrix *nsp_smatrix_xdr_load(XDR  *F);
-int nsp_smatrix_xdr_save(XDR  *F, NspSMatrix *M);
-#endif 
-
 #define NULLSTRING (nsp_string) 0
 #define NULLSMAT   (NspSMatrix *) 0
 
@@ -146,6 +133,21 @@ extern NspSMatrix* nsp_smatrix_convert(const char *name,NspSMatrix *A,const char
 extern int nsp_smatrix_to_utf8(NspSMatrix *A);
 extern int nsp_smatrix_utf8_validate(NspSMatrix *A);
 extern NspSMatrix *nsp_smatrix_utf8_from_unichar(NspMatrix *A) ;
+extern void nsp_smatrix_latex_print(NspSMatrix *SMat);
+extern void nsp_smatrix_latex_tab_print(NspSMatrix *SMat);
 
 #endif 
 
+
+#ifdef SMatrix_Private 
+static int init_smatrix(NspSMatrix *ob,NspTypeSMatrix *type);
+static int nsp_smatrix_size(NspSMatrix *Mat, int flag);
+char *nsp_smatrix_type_as_string(void);
+char *nsp_smatrix_type_short_string(void);
+NspObject *nsp_smatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
+int nsp_smatrix_eq(NspObject *A,NspObject *B);
+int nsp_smatrix_neq(NspObject *A,NspObject *B);
+int nsp_smatrix_is_true(NspSMatrix *M);
+NspSMatrix *nsp_smatrix_xdr_load(XDR  *F);
+int nsp_smatrix_xdr_save(XDR  *F, NspSMatrix *M);
+#endif 

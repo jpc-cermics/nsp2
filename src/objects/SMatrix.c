@@ -355,6 +355,64 @@ void nsp_smatrix_print(const NspSMatrix *Mat, int indent,char *name, int rec_lev
     }
 }
 
+/**
+ * nsp_smatrix_latex_print:
+ * @SMat: a #NspSMatrix
+ * 
+ * print the #NspSMatrix @SMat using the default Sciprintf() function and LaTeX 
+ * syntax. 
+ */
+
+void nsp_smatrix_latex_print(NspSMatrix *SMat)
+{
+  int i,j;
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  Sciprintf("{%s = \\left(\\begin{array}{",NSP_OBJECT(SMat)->name );
+  for (i=0; i <  SMat->n;i++) Sciprintf("c");
+  Sciprintf("}\n");
+  for (j=0;j < SMat->m;j++)
+    {
+      for (i=0;i < SMat->n - 1;i++)
+	{ 
+	  Sciprintf("{\\texttt \"%s\"}\t& ",SMat->S[i+j*SMat->m]);
+	}
+      Sciprintf("{\\texttt \"%s\"}\t\\\\\n",SMat->S[SMat->m-1+j*SMat->m]);
+    }
+  Sciprintf("\\end{array}\\right)}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+}
+
+/**
+ * nsp_smatrix_latex_tab_print:
+ * @SMat: a #NspSMatrix
+ * 
+ * print the #NspSMatrix @A using the default Sciprintf() function and LaTeX tabular
+ * syntax. 
+ */
+
+void nsp_smatrix_latex_tab_print(NspSMatrix *SMat)
+{
+  int i,j;
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  Sciprintf("\\begin{tabular}{|l|");
+  for (i=0; i < SMat->n ;i++) Sciprintf("c|");
+  Sciprintf("}\\hline\n %s &\t",NSP_OBJECT(SMat)->name);
+  for (i=1; i < SMat->n ;i++) Sciprintf("$C_{%d}$\t&",i);
+  Sciprintf("$C_{%d}$\\\\ \\hline\n",SMat->n);
+  for (j=0;j < SMat->m ;j++)
+    {
+      Sciprintf("$L_{%d}$\t&",j+1);
+      for (i=0;i < SMat->n-1 ;i++)
+	{
+	  Sciprintf("{\\texttt \"%s\"}\t& ",SMat->S[i+j*SMat->m]);
+	}
+      Sciprintf("{\\texttt \"%s\"}\t\\\\ \\hline\n",SMat->S[SMat->m-1+j*SMat->m]);
+    }
+  Sciprintf("\\end{tabular}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+}
+
+
 
 /*
  *nsp_smatrix_redim: Changes matrix dimensions
