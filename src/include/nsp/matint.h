@@ -32,12 +32,14 @@ extern NspTypeMatint *nsp_type_matint;
 NspTypeMatint *new_type_matint(type_mode mode);
 extern NspMethods *matint_get_methods(void);
 
+extern int nsp_matint_delete_columns(NspObject  *Obj, NspMatrix *Cols);
+extern int nsp_matint_delete_rows(NspObject *Obj, NspMatrix *Rows);
+extern int nsp_matint_delete_elements(NspObject *Obj, NspMatrix *Elts);
+extern int nsp_matint_delete_elements2(NspObject *Obj, NspMatrix *EltsR, NspMatrix *EltsC);
+
 #endif 
 
 #ifdef   Matint_Private 
 static char *matint_type_as_string (void);
 #endif 
-
-
-
 
