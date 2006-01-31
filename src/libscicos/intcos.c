@@ -45,8 +45,8 @@
 
 static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs) 
 {
-  scicos_run Scicos;
-
+  scicos_run r_scicos;
+  int curblk=0;
   double tcur,tf;
   int i,rep,flag,ierr=0;
   static char *action_name[]={ "finish","linear", "run", "start", NULL };
@@ -54,7 +54,7 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *Msimpar;
   double simpar[7];
   CheckRhs(6,6);
-  CheckLhs(1,2);
+  CheckLhs(1,3);
   /* first variable : the state */
   if ((State = GetHashCopy(stack,1)) == NULLHASH) return RET_BUG;
   /* next variables */
@@ -74,16 +74,17 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
   for ( i=Min(Msimpar->mn,7) ; i < 7 ; i++) simpar[i]= 0.0;
   for ( i=0 ; i < Min(Msimpar->mn,7) ; i++ ) simpar[i]= Msimpar->R[i];
 
-  if ( scicos_fill_run(&Scicos,Sim,State)== FAIL) return RET_BUG;
+  if ( scicos_fill_run(&r_scicos,Sim,State)== FAIL) return RET_BUG;
 
-  scicos_main(&Scicos,&tcur,&tf,simpar,&flag,&ierr);
-
+  scicos_main(&r_scicos,&tcur,&tf,simpar,&flag,&ierr);
 
   /* back convert variables and free allocated variables */
-  scicos_clear_run(&Scicos);
+  scicos_clear_run(&r_scicos);
+
 
   if (ierr > 0 )
     {
+      curblk= Scicos->params.curblk;
       switch (ierr) 
 	{
 	case 1 :
@@ -136,10 +137,16 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
+
+  Scicos = NULL;
   NthObj(1)->ret_pos = 1;
   if ( lhs == 2 ) 
     {
       if ( nsp_move_double(stack,2,tcur) == FAIL) return RET_BUG;
+    }
+  if ( lhs == 3 ) 
+    {
+      if ( nsp_move_double(stack,3,curblk) == FAIL) return RET_BUG;
     }
   return Max(lhs,1);
 }

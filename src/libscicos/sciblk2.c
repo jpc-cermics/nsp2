@@ -14,9 +14,8 @@
 int scicos_scifunc(  NspObject **Args,int mlhs,int mrhs ) 
 {
   /* here we must call the macro scsptr ? */
-  Scierror("To be done scicos_scifunc_n");
+  Scierror("To be done scicos_scifunc_n\n");
   return  FAIL;
-
 }
 
 NspMatrix *scicos_itosci(const int x[],int mx,int nx) 
