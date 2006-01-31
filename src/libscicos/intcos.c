@@ -43,10 +43,13 @@
  *               x,z,iz,tevts,evtspt,pointi,outtb)
  */
 
+static int curblk=0; /* kept static to be given to curblock in case of 
+		      * error 
+		      */
+
 static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs) 
 {
   scicos_run r_scicos;
-  int curblk=0;
   double tcur,tf;
   int i,rep,flag,ierr=0;
   static char *action_name[]={ "finish","linear", "run", "start", NULL };
@@ -140,11 +143,11 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
 
   Scicos = NULL;
   NthObj(1)->ret_pos = 1;
-  if ( lhs == 2 ) 
+  if ( lhs >= 2 ) 
     {
       if ( nsp_move_double(stack,2,tcur) == FAIL) return RET_BUG;
     }
-  if ( lhs == 3 ) 
+  if ( lhs >= 3 ) 
     {
       if ( nsp_move_double(stack,3,curblk) == FAIL) return RET_BUG;
     }
@@ -329,7 +332,7 @@ static int int_curblock(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M;
   CheckRhs(-1,0) ;
   if ((M=nsp_matrix_create(NVOID,'r',1,1))==NULLMAT) return RET_BUG;
-  M->R[0]= (Scicos == NULL) ? 0 : Scicos->params.curblk ;
+  M->R[0]= (Scicos == NULL) ? curblk : Scicos->params.curblk ;
   NSP_OBJECT(M)->ret_pos = 1;
   StackStore(stack,(NspObject *)M,1);
   return 1;
