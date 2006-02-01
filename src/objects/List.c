@@ -92,6 +92,12 @@ Cell *nsp_cell_create(NspObject *O)
       Scierror("Error:\tNo more space\n");
       return NULLCELL;
     }
+  /* 
+  if (O != NULLOBJ &&  strcmp(nsp_object_get_name(O),NVOID) == 0) 
+    {
+      Sciprintf("Error:\ta cell unnamed, something wrong in List.c\n");
+    }
+  */
   Loc->O = O;
   Loc->prev = Loc->next = NULLCELL;
   return Loc;
@@ -1091,6 +1097,7 @@ NspList *nsp_list_map(NspList *L, NspPList *PL, NspList *args)
 	   * for next calls in first 
 	   */
 	  if ((O[0] = EvalMacro(PL,O,args,&first))== NULLOBJ) return NULLLIST;
+	  if ( nsp_object_set_name(O[0],"lel") == FAIL ) return NULLLIST;
 	  if ((cell1 =nsp_cell_create(O[0]))== NULLCELL) return NULLLIST;
 	}
       else 
