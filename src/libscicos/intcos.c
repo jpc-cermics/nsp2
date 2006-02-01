@@ -80,14 +80,16 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
   if ( scicos_fill_run(&r_scicos,Sim,State)== FAIL) return RET_BUG;
 
   scicos_main(&r_scicos,&tcur,&tf,simpar,&flag,&ierr);
-
+  
+  /* keep track of last block */
+  curblk= Scicos->params.curblk;
   /* back convert variables and free allocated variables */
   scicos_clear_run(&r_scicos);
 
+  Scicos = NULL;
 
   if (ierr > 0 )
     {
-      curblk= Scicos->params.curblk;
       switch (ierr) 
 	{
 	case 1 :
@@ -141,7 +143,6 @@ static int int_scicos_sim(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  Scicos = NULL;
   NthObj(1)->ret_pos = 1;
   if ( lhs >= 2 ) 
     {
