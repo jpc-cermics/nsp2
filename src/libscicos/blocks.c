@@ -3589,6 +3589,118 @@ scicos_mux_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 
 /*
+ * Write in ascii mode with format 
+ */
+
+void scicos_writef_block(scicos_args_F0);
+
+void 
+scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, 
+		    double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, 
+		    int *ipar, int *nipar, double *u, int *nu, double *y, int *ny ) 
+{
+  /* ipar code model.ipar=[length(fname);length(format);unused;N;str2code(fname);str2code(fmt)] */
+  typedef struct _writec_ipar writec_ipar ;
+  struct _writec_ipar { int len,lfmt,unu,n,fname,fmt;};
+  writec_ipar *wi =  (writec_ipar*) ipar;
+
+  FILE *F;
+  int k, i;
+  double *buffer,*record;
+
+  --z;
+  F=(FILE *)(long)z[2];
+  buffer = (z+3);
+  k = (int) z[1];
+  /*
+   * k    : record counter within the buffer
+   */
+
+  if ( *flag==2 && *nevprt>0) 
+    { 
+      /* add a new record to the buffer */
+      /* copy current record to output */
+      record=buffer+(k-1)*(*nu);
+      for ( i=0 ; i < *nu ; i++) record[i] = *(u+i);
+      if ( k < wi->n ) 
+	{
+	  z[1] = z[1]+1.0;
+	}
+      else 
+	{
+	  char fmt[128];
+	  int i;
+	  /* get the type from its ascii code  */
+	  for ( i=0; i < wi->lfmt ; i++) 
+	    {
+	      fmt[i]= *(&wi->fmt+wi->len-1+i);
+	    }
+	  fmt[wi->lfmt]='\0';
+	  sciprint("format [%s]\n",fmt);
+	  /* buffer is full write it to the file */
+	  for ( i=0; i < wi->n*(*nu) ; i++) 
+	    fprintf(F,fmt,buffer[i]);
+	  /* XXXXX : a finir 
+	  if ( nsp_mput(F,buffer,wi->n*(*nu),type) == FAIL) 
+	    {
+	      *flag = -3;
+	      return;
+	    }
+	  */
+	  z[1] = 1.0;
+	}
+    }
+  else if (*flag==4) 
+    {
+      char str[FSIZE];
+      int i;
+      /* get the file name from its ascii code  */
+      for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
+      str[wi->len]='\0';
+      sciprint("Trying to open [%s]\n",str);
+      if (( F= fopen(str,"w")) == NULL) 
+	{
+	  Scierror("Error: in scicos_writef_block, could not open the file %s !\n",str);
+	  *flag = -3;
+	  return;
+	}
+      z[2]=(long)F;
+      z[1] = 1.0;
+    }
+  else if (*flag==5) 
+    {
+      if(z[2]==0) return;
+      k    =(int) z[1];
+      if ( k >= 1 ) 
+	{
+	  /* flush rest of buffer */
+	  char fmt[128];
+	  int i;
+	  for ( i=0; i < wi->lfmt ; i++) fmt[i]= *(&wi->fmt+wi->len-1+i);
+	  fmt[wi->lfmt]='\0';
+	  for ( i=0; i < (k-1)*(*nu) ; i++) 
+	    fprintf(F,fmt,buffer[i]);
+	  /* XXXXX : a finir 
+	  if ( nsp_mput(F,buffer,(k-1)*(*nu),type) == FAIL) 
+	    {
+	      *flag = -3;
+	      return;
+	    }
+	  */
+	}
+      if (( fclose(F)) == FAIL) 
+	{
+	  *flag = -3;
+	  return;
+	}
+      z[2] = 0.0;
+    }
+  return;
+}
+
+
+
+/*
  * Write in binary mode 
  */
 
@@ -3597,9 +3709,9 @@ void scicos_writec_block(scicos_args_F2);
 
 void 
 scicos_writec_block(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, 
-       double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, 
-       int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, 
-       int *outsz, int *nout)
+		    double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, 
+		    int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, 
+		    int *outsz, int *nout)
 {
   /* ipar code model.ipar=[length(fname);str2code(frmt);N;swap;str2code(fname)] */
   typedef struct _writec_ipar writec_ipar ;
@@ -3689,6 +3801,8 @@ scicos_writec_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
     }
   return;
 }
+
+
 
 
 static int worldsize(char type[4])
