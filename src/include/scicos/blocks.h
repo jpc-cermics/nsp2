@@ -151,6 +151,7 @@ extern void scicos_sum_block(scicos_args_F2);
 extern void scicos_switchn_block(scicos_args_F2);
 extern void scicos_writeau_block(scicos_args_F2);
 extern void scicos_writec_block(scicos_args_F2);
+extern void scicos_writef_block(scicos_args_F0);
 extern void scicos_zcross2_block(scicos_args_F0);
 
 extern void scicos_absolute_value_block(scicos_block *block,int flag); 
@@ -327,7 +328,7 @@ scicos_block_table  tabsim[] ={
   {"variable_delay",(ScicosF) scicos_variable_delay_block},
   {"writeau",(ScicosF) scicos_writeau_block},
   {"writec",(ScicosF) scicos_writec_block},
-  /* {"writef",(ScicosF) scicos_writef_block}, */
+  {"writef",(ScicosF) scicos_writef_block},
   {"zcross2",(ScicosF) scicos_zcross2_block},  
   {"zcross",(ScicosF) scicos_zcross_block} ,
   {NULL , (ScicosF) 0}
