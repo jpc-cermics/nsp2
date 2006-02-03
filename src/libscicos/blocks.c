@@ -3636,7 +3636,7 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
 	      fmt[i]= *(&wi->fmt+wi->len-1+i);
 	    }
 	  fmt[wi->lfmt]='\0';
-	  sciprint("format [%s]\n",fmt);
+	  /* sciprint("format [%s]\n",fmt); */
 	  /* buffer is full write it to the file */
 	  for ( i=0; i < wi->n*(*nu) ; i++) 
 	    fprintf(F,fmt,buffer[i]);
@@ -3657,7 +3657,7 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
       /* get the file name from its ascii code  */
       for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
       str[wi->len]='\0';
-      sciprint("Trying to open [%s]\n",str);
+      sciprint("Trying to open [%s] in writef\n",str);
       if (( F= fopen(str,"w")) == NULL) 
 	{
 	  Scierror("Error: in scicos_writef_block, could not open the file %s !\n",str);
@@ -3763,7 +3763,7 @@ scicos_writec_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
       /* get the file name from its ascii code  */
       for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
       str[wi->len]='\0';
-      sciprint("Trying to open [%s]\n",str);
+      sciprint("Trying to open [%s] in writec\n",str);
       if (( F= nsp_file_open(str,"wb",FALSE,wi->swap)) == NULL) 
 	{
 	  Scierror("Error: in scicos_writec_block, could not open the file %s !\n",str);
@@ -3920,9 +3920,10 @@ void scicos_readc_block(int *flag, int *nevprt, double *t, double *xd, double *x
       /* get the file name from its ascii code  */
       for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
       str[wi->len]='\0';
+      sciprint("Trying to open [%s] in readc\n",str);
       if (( F= nsp_file_open(str,"rb",FALSE,wi->swap)) == NULL) 
 	{
-	  Scierror("Error: in scicos_writec_block, could not open the file %s !\n",str);
+	  Scierror("Error: in scicos_readc_block, could not open the file %s !\n",str);
 	  *flag = -3;
 	  return;
 	}

@@ -5,14 +5,17 @@ nsp_link
 GetPMatCopy
 WITH_SNDFILE
 isnan
+nsp_matint_delete_elements
 GetMtlbMatCopy
 link_remove_control
 OpTab
 NthObj
 nsp_vector_norm
 GetMod
+nsp_matint_delete_elements2
 nsp_block
 nsp_realtime
+NspFname
 nsp_bmatrix_elt_size
 nsp_double2complex
 GetRealMpMat_G
@@ -20,6 +23,7 @@ nsp_stimer
 it_gen_f
 nsp_pcopy_polynom
 nsp_it_next
+nsp_matint_delete_rows
 nsp_alloc_work_doubleC
 HAVE_ISNAN
 NSP_OBJECT_INLINED
@@ -71,6 +75,7 @@ nsp_init_pr_format
 d_nint
 nsp_gen_matrix_as_read_syntax
 SHREXT_NAME
+nsp_matint_delete_columns
 nsp_gframe
 nsp_get_filename_save
 WITH_GMP
