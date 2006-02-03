@@ -181,14 +181,17 @@ NspFile *nsp_file_open_xdr_r(char *fname)
   XDR_ON(F->flag);
   OPEN_ON(F->flag);
   xdrstdio_create(F->xdrs,F->file, XDR_DECODE) ;
+
   if (nsp_xdr_load_string(F->xdrs,SciF_version,SCIF_V) == FAIL ) 
     {
-      Scierror("Error: Wrong xdr header in file : %s\n",fname);
+      /* clear the xdr message */
+      nsp_error_message_clear();
+      Scierror("Error: Wrong xdr header in file: %s expecting %s\n",fname,"NspXdr_1.0");
       return NULLSCIFILE;
     }
   if  (strcmp(SciF_version,"NspXdr_1.0") != 0 && strcmp(SciF_version,"SciXdr1.0") != 0 )
     {
-      Sciprintf("Error: File %s with Wrong header %s, expecting  %s or %s.\n",
+      Scierror("Error: File %s with Wrong header %s, expecting  %s or %s.\n",
 		fname,SciF_version,"NspXdr_1.0","SciXdr1.0");
       return NULLSCIFILE;
     }
@@ -534,6 +537,8 @@ int nsp_xdr_load_string(XDR *xdrs, char *buf, int buf_len)
   assertR( xdr_opaque(xdrs, buf ,szof));
   return OK;
 }
+
+
 
 /*-------------------------------------------------------
  * A set of functions for reading and writing binary 
