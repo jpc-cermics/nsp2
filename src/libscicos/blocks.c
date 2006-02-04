@@ -565,7 +565,7 @@ int scicos_intpol_block(scicos_args_F0)
   --x;
   --xd;
   np = ipar[1];
-  sciprint("scicos_intp to be done \n");
+  sciprint("scicos_intpol_block to be done \n");
   /* scicos_intp (&u[1], &rpar[1], &rpar[np + 1], ny, &np, &y[1]); */
   return 0;
 }			
@@ -2792,9 +2792,9 @@ void scicos_readau_block(int *flag, int *nevprt, double *t, double *xd, double *
    *       unused, nchannels, swap, first : first record to read, 
    *       ipar[10:9+lfil] character codes for file name]
    */
-  typedef struct _writec_ipar writec_ipar ;
-  struct _writec_ipar { int len, fmt[3],ievt,n,maxvoie,swap,first,fname;};
-  writec_ipar *wi =  (writec_ipar*) ipar;
+  typedef struct _readau_ipar readau_ipar ;
+  struct _readau_ipar { int len, fmt[3],ievt,n,maxvoie,swap,first,fname;};
+  readau_ipar *wi =  (readau_ipar*) ipar;
   NspFile *F;
   int n, k, kmax, nread, m, i,mu;
   double *buffer;
@@ -3599,7 +3599,8 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
 		    double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, 
 		    int *ipar, int *nipar, double *u, int *nu, double *y, int *ny ) 
 {
-  /* ipar code model.ipar=[length(fname);length(format);unused;N;str2code(fname);str2code(fmt)] */
+  /* ipar code model.ipar=[length(fname);length(format);unused;
+     N;str2code(fname);str2code(fmt)] */
   typedef struct _writec_ipar writec_ipar ;
   struct _writec_ipar { int len,lfmt,unu,n,fname,fmt;};
   writec_ipar *wi =  (writec_ipar*) ipar;
@@ -3611,17 +3612,19 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
   --z;
   F=(FILE *)(long)z[2];
   buffer = (z+3);
+  /* k    : record counter within the buffer */  
   k = (int) z[1];
-  /*
-   * k    : record counter within the buffer
-   */
 
   if ( *flag==2 && *nevprt>0) 
     { 
-      /* add a new record to the buffer */
-      /* copy current record to output */
-      record=buffer+(k-1)*(*nu);
-      for ( i=0 ; i < *nu ; i++) record[i] = *(u+i);
+      /* on first entry k == 1 
+       * write t at position z[2+k]=t
+       * and u[i] at position z[2+k+ N*(i+1)]=u[i]
+       * stop if wi->n records are writen 
+       */
+      record=buffer+(k-1);
+      record[0] = *t;
+      for ( i=0 ; i < *nu ; i++) record[wi->n*(i+1)] = *(u+i);
       if ( k < wi->n ) 
 	{
 	  z[1] = z[1]+1.0;
@@ -3629,24 +3632,31 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
       else 
 	{
 	  char fmt[128];
-	  int i;
-	  /* get the type from its ascii code  */
-	  for ( i=0; i < wi->lfmt ; i++) 
+	  int i,j;
+	  /* converts the format from ascii to str */
+	  if ( wi->lfmt > 0) 
 	    {
-	      fmt[i]= *(&wi->fmt+wi->len-1+i);
+	      for ( i=0; i < wi->lfmt ; i++) 
+		fmt[i]= *(&wi->fmt+wi->len-1+i);
+	      fmt[wi->lfmt]='\0';
 	    }
-	  fmt[wi->lfmt]='\0';
-	  /* sciprint("format [%s]\n",fmt); */
-	  /* buffer is full write it to the file */
-	  for ( i=0; i < wi->n*(*nu) ; i++) 
-	    fprintf(F,fmt,buffer[i]);
-	  /* XXXXX : a finir 
-	  if ( nsp_mput(F,buffer,wi->n*(*nu),type) == FAIL) 
+	  else 
 	    {
-	      *flag = -3;
-	      return;
+	      strcpy(fmt,"%10.3f");
 	    }
-	  */
+	  /* write K sequence of (t,u1,....unu) */
+	  for ( j=0; j < k ;j ++) 
+	    {
+	      /* we reexplore the format */
+	      fprintf(F,fmt,buffer[j]);/* t */
+	      for ( i=0; i < *nu ; i++) 
+		{
+		  fprintf(F,fmt,buffer[j+wi->n*(i+1)]);
+		  fprintf(F," ");
+		}
+	      fprintf(F,"\n");
+	    }
+	  /* in case of error *flag = -3;return */
 	  z[1] = 1.0;
 	}
     }
@@ -3673,20 +3683,31 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
       k    =(int) z[1];
       if ( k >= 1 ) 
 	{
-	  /* flush rest of buffer */
 	  char fmt[128];
-	  int i;
-	  for ( i=0; i < wi->lfmt ; i++) fmt[i]= *(&wi->fmt+wi->len-1+i);
-	  fmt[wi->lfmt]='\0';
-	  for ( i=0; i < (k-1)*(*nu) ; i++) 
-	    fprintf(F,fmt,buffer[i]);
-	  /* XXXXX : a finir 
-	  if ( nsp_mput(F,buffer,(k-1)*(*nu),type) == FAIL) 
+	  int i,j;
+	  /* converts the format from ascii to str */
+	  if ( wi->lfmt > 0) 
 	    {
-	      *flag = -3;
-	      return;
+	      for ( i=0; i < wi->lfmt ; i++) 
+		fmt[i]= *(&wi->fmt+wi->len-1+i);
+	      fmt[wi->lfmt]='\0';
 	    }
-	  */
+	  else 
+	    {
+	      strcpy(fmt,"%10.3f");
+	    }
+	  /* write K sequence of (t,u1,....unu) */
+	  for ( j=0; j < k-1 ;j ++) 
+	    {
+	      /* we reexplore the format */
+	      fprintf(F,fmt,buffer[j]);/* t */
+	      for ( i=0; i < *nu ; i++) 
+		{
+		  fprintf(F,fmt,buffer[j+wi->n*(i+1)]);
+		  fprintf(F," ");
+		}
+	      fprintf(F,"\n");
+	    }
 	}
       if (( fclose(F)) == FAIL) 
 	{
@@ -3697,8 +3718,6 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
     }
   return;
 }
-
-
 
 /*
  * Write in binary mode 
@@ -3835,9 +3854,9 @@ void scicos_readc_block(int *flag, int *nevprt, double *t, double *xd, double *x
    * ipar[10:9+lfil] = character codes for file name
    * ipar[10+lfil:9+lfil++ny+ievt] = reading mask
    */
-  typedef struct _writec_ipar writec_ipar ;
-  struct _writec_ipar { int len, fmt[3],ievt,n,maxvoie,swap,first,fname;};
-  writec_ipar *wi =  (writec_ipar*) ipar;
+  typedef struct _readc_ipar readc_ipar ;
+  struct _readc_ipar { int len, fmt[3],ievt,n,maxvoie,swap,first,fname;};
+  readc_ipar *wi =  (readc_ipar*) ipar;
   NspFile *F;
   double *buffer,*record;
   int k, kmax, m, *mask, nread;
@@ -3978,6 +3997,174 @@ void scicos_readc_block(int *flag, int *nevprt, double *t, double *xd, double *x
   return;
 }
 
+
+
+
+
+
+/*     Copyright INRIA 
+ *     Scicos block simulator 
+ *     read from a file with format 
+ *     ipar(1) = lfil : file name length 
+ *     ipar(2) = lfmt : format length (0) if binary file 
+ *     ipar(3) = ievt  : 1 if each data have a an associated time 
+ *     ipar(4) = N : buffer length 
+ *     ipar(5:4+lfil) = character codes for file name 
+ *     ipar(5+lfil:4+lfil+lfmt) = character codes for format if any 
+ *     ipar(5+lfil+lfmt:5+lfil+lfmt+ny+ievt) = reading mask 
+ */
+
+
+typedef struct _readf_ipar readf_ipar ;
+struct _readf_ipar { int lfil, lfmt,ievt,n,fname;};
+
+static int bfrdr(NspFile *F,readf_ipar *rf, int *ipar, double *z, int *no, int *kmax);
+
+void scicos_readf_block(scicos_args_F0);
+
+
+void 
+scicos_readf_block(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, 
+		    double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, 
+		    int *ipar, int *nipar, double *u, int *nu, double *y, int *ny ) 
+{
+  /* ipar[1]   = lfil : file name length
+   * ipar[2]   = lfmt  : format length (0 if binary file).
+   * ipar[3]   = ievt : 1 if each data have a an associated time
+   * ipar[4]   = n : buffer length in number of records
+   * ipar[5:4+lfil]   = character codes for file name
+   * ipar[5+lfil:4+lfil+lfmt]   =  character codes for format if any
+   * ipar[5+lfil+lfmt:5+lfil+lfmt+ny+ievt]   = reading mask;
+   */
+  readf_ipar *rf =  (readf_ipar*) ipar;
+  NspFile *F;
+  int un = 1, kmax,  k,  no;
+  /* Parameter adjustments */
+  --y;
+  --u;
+  --z;
+  --x;
+
+  F=(NspFile *)(long)z[3];
+
+  if (*flag == 1) 
+    {
+      /*     discrete state */
+      k = (int) z[1];
+      kmax = (int) z[2];
+      if (k + 1 > kmax && kmax == rf->n)
+	{
+	  /*     output */
+	  C2F(dcopy)(ny, &z[rf->n * rf->ievt + 3 + k], &rf->n, &y[1], &un);
+	  /*     .     read a new buffer */
+	  no = (*nz - 3) / rf->n;
+	  if ( bfrdr(F,rf, ipar, &z[4], &no, &kmax)==FAIL)
+	    {
+	      Scierror("Error: read error in scicos_readf !\n");
+	      *flag = -1;
+	      nsp_file_close(F);
+	      nsp_file_destroy(F);
+	      return;
+	    }
+	  z[1] = 1.;
+	  z[2] = (double) kmax;
+	} 
+      else if (k < kmax) 
+	{
+	  /*     output */
+	  C2F(dcopy)(ny, &z[rf->n * rf->ievt + 3 + k], &rf->n, &y[1], &un);
+	  z[1] += 1.;
+	}
+    } 
+  else if (*flag == 3) 
+    {
+      k = (int) z[1];
+      kmax = (int) z[2];
+      if (k > kmax && kmax < rf->n) {
+	tvec[0] = *t - 1.;
+      } else {
+	tvec[0] = z[k + 3];
+      }
+    } 
+  else if (*flag == 4) 
+    {
+      char str[FSIZE];
+      int i;
+      /* get the file name from its ascii code  */
+      for ( i=0; i < rf->lfil ; i++) str[i]= *(&rf->fname + i);
+      str[rf->lfil]='\0';
+      sciprint("Trying to open [%s] in readc\n",str);
+      if (( F= nsp_file_open(str,"r",FALSE,FALSE)) == NULL) 
+	{
+	  Scierror("Error: in scicos_readf_block, could not open the file %s !\n",str);
+	  *flag = -3;
+	  return;
+	}
+      z[3]=(long)F;
+      /*     buffer initialisation */
+      no = (*nz - 3) / rf->n;
+      if ( bfrdr(F,rf, ipar, &z[4], &no, &kmax) == FAIL) 
+	{
+	  Scierror("Error: read error in %s !\n",str);
+	  *flag = -1;
+	  nsp_file_close(F);
+	  nsp_file_destroy(F);
+	  return;
+	}
+      z[1] = 1.;
+      z[2] = (double) kmax;
+    } 
+  else if (*flag == 5) 
+    {
+      if(z[3]==0) return;
+      nsp_file_close(F);
+      nsp_file_destroy(F);
+      z[3] = 0.0;
+    }
+} 
+
+int bfrdr(NspFile *F,readf_ipar *rf, int *ipar, double *z, int *no, int *kmax) 
+{
+  char fmt[128];
+  int i, j, n, imask, mm;
+  double tmp[100];
+
+  /*      no=(nz-3)/N */
+  /*     maximum number of value to read */
+  imask = rf->lfil + 5 + rf->lfmt -1;
+  if (rf->ievt == 0) ++imask;
+  mm = 0;
+  for (i= 0; i <= *no - 1; ++i) 
+    {
+      mm=Max(mm,ipar[imask + i]);
+    }
+  *kmax = 0;
+  if (rf->lfmt == 0) 
+    {
+      strcpy(fmt,"%f");
+    }
+  else
+    {
+      for ( i=0; i < rf->lfmt ; i++) 
+	fmt[i]= *(&rf->fname+rf->lfil+i);
+      fmt[rf->lfmt]='\0';
+    }
+
+  for (i = 1; i <= n; ++i) 
+    {
+      for (j = 1; j <= mm; ++j) 
+	{
+	  int ns= fscanf(F->file,fmt,&tmp[j - 1]);
+	  if (ns  != 1)  return FAIL;
+	}
+      for (j = 0; j <= *no - 1; ++j) 
+	{
+	  z[j * n + i-1] = tmp[ipar[imask + j] - 1];
+	}
+      ++(*kmax);
+    }
+  return OK;
+} 
 
 /* XXX    output a vector of constants out(i)=rpar(i) 
  */

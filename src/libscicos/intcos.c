@@ -541,8 +541,25 @@ static int int_setblockerror(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+extern int scicos_evaluate_expr(const int *ipar,int nipar,const double *rpar,double *res);
+
+static int int_evaluate_expression(Stack stack, int rhs, int opt, int lhs) 
+{
+  double res;
+  NspMatrix *Rpar,*Ipar;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((Ipar = GetMatInt(stack,1)) == NULLMAT) return RET_BUG;
+  if ((Rpar = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ( scicos_evaluate_expr(Ipar->I,Ipar->mn,Rpar->R,&res)==FAIL) 
+    return RET_BUG;
+  if ( nsp_move_double(stack,1,res) == FAIL) return RET_BUG;
+  return 1;
+}
+ 
 
 static OpTab Scicos_func[]={
+  {"eval_exp",int_evaluate_expression},
   {"sci_tree4",int_scicos_ftree4},
   {"sci_sctree",int_sctree},
   {"sci_tree2",int_tree2},

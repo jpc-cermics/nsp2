@@ -40,6 +40,13 @@ double atanh(double x)
 }
 #endif
 
+
+#if WIN32
+#define CHECK_VALUE(x) !_finite(x) || _isnan(x)
+#else
+#define CHECK_VALUE(x) isinf(x) || isnan(x)
+#endif
+
 void scicos_evaluate_expr_block(scicos_block *block,int flag)
 {
   static double stack [1000];
@@ -279,7 +286,6 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
 	case 108:
 	  stack[bottom]=tanh(stack[bottom]);
 	  break;
-
 	case 109:
 	  if(block->ng>0) nzcr=nzcr+1;
 	  if (flag==9) {
@@ -308,13 +314,6 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
 	    stack[bottom]=(double) block->mode[nzcr];
 	  }
 	  break;
-	  /*
-	    if (stack[bottom]>0) {
-	    stack[bottom]=floor(stack[bottom]);
-	    }else{
-	    stack[bottom]=ceil(stack[bottom]);
-	    }*/
-	  break;
 	case 110:
 	  if(block->ng>0) nzcr=nzcr+1;
 	  if (flag==9) {
@@ -337,11 +336,6 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
 	    stack[bottom]=(double) block->mode[nzcr];
 	  }
 	  break;
-	  /*  if (stack[bottom]>0) {
-	      stack[bottom]=floor(stack[bottom]+.5);
-	      }else{
-	      stack[bottom]=ceil(stack[bottom]-.5);
-	      }*/
 	case 111:
 	  if(block->ng>0) nzcr=nzcr+1;
 	  if (flag==9) {
@@ -372,49 +366,29 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
 	  break;
 	case 113:
 	  if(block->ng>0) nzcr=nzcr+1;
-	  if (flag==9) {
-	    if (stack[bottom]>0) {
-	      i=1;
-	    }else if (stack[bottom]<0){
-	      i=-1;
-	    }else{
-	      i=0;
+	  if (flag==9) 
+	    {
+	      i = (stack[bottom]>0) ? 1 : ( (stack[bottom]<0) ? -1 :0);
+	      block->g[nzcr]=stack[bottom];
+	      if(phase==1) block->mode[nzcr]=i;
 	    }
-	    block->g[nzcr]=stack[bottom];
-	    if(phase==1) block->mode[nzcr]=i;
-	  }
-	  if(phase==1||block->ng==0){
-	    if (stack[bottom]>0) {
-	      stack[bottom]=1.0;
-	    }else if(stack[bottom]<0){
-	      stack[bottom]=-1.0;
-	    }else{
-	      stack[bottom]=0.0;
+	  if(phase==1||block->ng==0)
+	    {
+	      stack[bottom] = (stack[bottom]>0) ? 1.0 : ( (stack[bottom]<0) ? -1 :0);
 	    }
-	  }else{
-	    stack[bottom]=(double) block->mode[nzcr];
-	  }
+	  else
+	    {
+	      stack[bottom]=(double) block->mode[nzcr];
+	    }
 	  break;
-	  /* if (stack[bottom]>0) {
-	     stack[bottom]=1.0;
-	     }else if(stack[bottom]<0){
-	     stack[bottom]=-1.0;
-	     }else{
-	     stack[bottom]=0.0;
-	     }*/
 	case 114:  /* abs */
 	  if(block->ng>0) nzcr=nzcr+1;
-	  if (flag==9) {
-	    if (stack[bottom]>0) {
-	      i=1;
-	    }else if (stack[bottom]<0){
-	      i=-1;
-	    }else{
-	      i=0;
+	  if (flag==9) 
+	    {
+	      i = (stack[bottom]>0) ? 1 : ( (stack[bottom]<0) ? -1 :0);
+	      block->g[nzcr]=stack[bottom];
+	      if(phase==1) block->mode[nzcr]=i;
 	    }
-	    block->g[nzcr]=stack[bottom];
-	    if(phase==1) block->mode[nzcr]=i;
-	  }
 	  if(phase==1||block->ng==0){
 	    if (stack[bottom]>0) {
 	      stack[bottom]=stack[bottom];
@@ -495,15 +469,114 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
 	}
       }
     }
-#if WIN32
-    if(!_finite(stack[bottom])||_isnan(stack[bottom])){
-#else
-      if(isinf(stack[bottom])||isnan(stack[bottom])){
-#endif
+    if ( CHECK_VALUE(stack[bottom])) 
+      {
 	set_block_error(-2);
 	return;
-      }else{
+      } 
+    else
+      {
 	block->outptr[0][0]=stack[bottom];
       }
-    }
   }
+}
+
+
+#define EVAL(OP) stack[bottom-1]=stack[bottom-1] OP stack[bottom];bottom=bottom-1
+#define UEVAL(OP) stack[bottom]=OP/**/(stack[bottom-1]);
+
+int scicos_evaluate_expr(const int *ipar,int nipar,const double *rpar,double *res)
+{
+  double stack [1000];
+  int count,bottom;
+  bottom=-1; /* position in stack */
+  count=-1;  /* position of arguments in ipar */
+  /* loop on ipar which contains bycode to be executed */
+  while ( count < nipar) 
+    {
+      count=count+1;
+      switch (ipar[count]) 
+	{
+	case 6:
+	  /* [6,xx] : push rpar[ipar[xx]-1] on the stack */
+	  count=count+1;
+	  bottom=bottom+1;
+	  if( bottom > 999 ) {
+	    Scierror("Error: stack overflow in evaluate_expr\n");
+	    return FAIL;
+	  }
+	  stack[bottom]=rpar[ipar[count]-1];
+	  break;
+	case 5:
+	  /* [5,op] : execute op */
+	  count=count+1;
+	  switch (ipar[count]) 
+	    {
+	    case 1: /* + */  EVAL(+);break;
+	    case 2: /* - */  EVAL(-);break;
+	    case 3: /* mult */ EVAL(*);break;
+	    case 7: /* div */ EVAL(/);break;
+	    case 15: /* ^ */ 
+	      stack[bottom-1]=pow(stack[bottom-1],stack[bottom]);
+	      bottom=bottom-1;
+	      break;
+	    case 16: /* == */ EVAL(==);break;
+	    case 17: /* < */  EVAL(<);break;
+	    case 18: /* > */  EVAL(>);break;
+	    case 19: /* <= */ EVAL(<=);break;
+	    case 20: /* >= */ EVAL(>=);break;
+	    case 21: /* != */ EVAL(!=);break;
+	    case 28: /* || */ EVAL(||);break;
+	    case 29: /* && */ EVAL(&&);break;
+	    case 30: /* == 0.0 */
+	      stack[bottom]= (stack[bottom]==0.0) ? 0.0 : 1.0;
+	      break;
+	    case 99: /* -x */
+	      stack[bottom]=-stack[bottom];
+	      break;
+	    case 101: /* sin */ UEVAL(sin);break;
+	    case 102: /* cos */ UEVAL(cos);break;
+	    case 103: /* tan */ UEVAL(tan);break;
+	    case 104: /* exp */ UEVAL(exp);break;
+	    case 105: /* log */ UEVAL(log);break;
+	    case 106: /* sinh */UEVAL(sinh);break;
+	    case 107: /* cosh */UEVAL(cosh);break;
+	    case 108: /* tanh */UEVAL(tanh);break;
+	    case 109: /* round toward 0 */
+	      stack[bottom]=(stack[bottom]>0) ? floor(stack[bottom]) : ceil(stack[bottom]);
+		break;
+	    case 110: /* ? */
+	      stack[bottom]=(stack[bottom]>0) ? floor(stack[bottom]+.5)
+		: ceil(stack[bottom]-.5);
+		break;
+	    case 111: /* ceil */ UEVAL(ceil);break;
+	    case 112: /* floor */ UEVAL(floor);break;
+	    case 113: /* sign */ 
+	      stack[bottom]= (stack[bottom]>0) ? 1.0 : ((stack[bottom]<0) ? -1.0 : 0.0);
+	      break;
+	    case 114:  /* abs */ 
+	      stack[bottom]= Abs(stack[bottom]);
+	      break;
+	    case 115: /* Max */
+	      stack[bottom-1]=Max(stack[bottom-1],stack[bottom]);
+	      break;
+	    case 116: /* Min */
+	      stack[bottom-1]=Min(stack[bottom-1],stack[bottom]);
+	      break;
+	    case 117: /* asin */ UEVAL(asin);break;
+	    case 118: /* acos */ UEVAL(acos);break;
+	    case 119: /* */ UEVAL(atan);break;
+	    case 120: /* */ UEVAL(asinh);break;
+	    case 121: /* */ UEVAL(acosh);break;
+	    case 122: /* */ UEVAL(atanh);break;
+	    case 123: /* */ stack[bottom-1]=atan2(stack[bottom-1],stack[bottom]);
+	      bottom=bottom-1;
+	      break;
+	    case 124: stack[bottom]=log10(stack[bottom]); break;
+	    }
+	}
+    }
+  *res = stack[bottom];
+  return OK;
+}
+

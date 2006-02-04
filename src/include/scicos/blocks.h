@@ -143,6 +143,7 @@ extern void scicos_plus_block(scicos_args_F2);
 extern void scicos_prod_block(scicos_args_F2);
 extern void scicos_readau_block(scicos_args_F2);
 extern void scicos_readc_block(scicos_args_F2);
+extern void scicos_readf_block(scicos_args_F0);
 extern void scicos_relay_block(scicos_args_F2);
 extern void scicos_plusblk(scicos_args_F2);
 extern void scicos_selector_block(scicos_args_F2);
@@ -291,7 +292,7 @@ scicos_block_table  tabsim[] ={
   {"ratelimiter",(ScicosF) scicos_ratelimiter_block},
   {"readau",(ScicosF) scicos_readau_block},
   {"readc",(ScicosF) scicos_readc_block},
-  /* {"readf",(ScicosF) scicos_readf_block}, */
+  {"readf",(ScicosF) scicos_readf_block},
   {"relationalop",(ScicosF) scicos_relationalop_block},
   {"relay",(ScicosF) scicos_relay_block},
   {"rndblk",(ScicosF) scicos_rnd_block},
