@@ -496,12 +496,13 @@ static NspObject * int_hash_get_keys(void *Hv, char *attr)
       /* allocate elements and store keys **/
       while (1) 
 	{
-	  if (nsp_hash_get_next_object(H,&i,&O) == FAIL ) break;
+	  int rep = nsp_hash_get_next_object(H,&i,&O);
 	  if ( O != NULLOBJ )
 	    { 
 	      if (( Loc->S[count++] =nsp_string_copy(NSP_OBJECT(O)->name)) == (nsp_string) 0)
 		return NULLOBJ;
 	    }
+	  if (rep == FAIL) break;
 	}
       if ( count != H->filled )
 	{
@@ -896,7 +897,7 @@ static int int_hash_as_options(Stack stack, int rhs, int opt, int lhs)
     }
   while (1) 
     {
-      if (nsp_hash_get_next_object(H,&i,&O) == FAIL ) break;
+      int rep = nsp_hash_get_next_object(H,&i,&O);
       if ( O != NULLOBJ )
 	{ 
 	  NspHobj *Opt = HoptCreate(nsp_object_get_name(O),O);
@@ -904,6 +905,7 @@ static int int_hash_as_options(Stack stack, int rhs, int opt, int lhs)
 	  NthObj(count+1)= NSP_OBJECT(Opt);
 	  count++;
 	}
+      if ( rep == FAIL) break;
     }
   for ( i = 1 ; i <= count ; i++) 
     {

@@ -150,9 +150,11 @@ int nsp_hash_merge(NspHash *H1,NspHash *H2)
  * 
  * Used to walk through all the elements of the hash table 
  * return %FAIL when the end of the hash table is reached
+ * and nsp_hash_get_next_object() is not to be called again 
  * The values present in the Hash table are returned 
  * in sequence (note that the key value is stored in the object) 
- * i is incremented at each call
+ * @i is incremented at each call. 
+ * 
  * 
  * Return value: %OK or %FAIL
  **/
@@ -294,7 +296,7 @@ NspBMatrix  *nsp_hash_equal(NspHash *L1, NspHash *L2)
       if (( B = nsp_bmatrix_create(NVOID,1,L1->filled))== NULLBMAT) return NULLBMAT;
       while (1) 
 	{
-	  if (nsp_hash_get_next_object(L1,&i,&O1) == FAIL ) break;
+	  int rep =nsp_hash_get_next_object(L1,&i,&O1);
 	  if ( O1 != NULLOBJ )
 	    { 
 	      if ( nsp_hash_find(L2,NSP_OBJECT(O1)->name,&O2) == FAIL)
@@ -310,6 +312,7 @@ NspBMatrix  *nsp_hash_equal(NspHash *L1, NspHash *L2)
 		}
 	      count++;
 	    }
+	  if ( rep == FAIL) break;
 	}
     }
   return  B;
@@ -343,7 +346,7 @@ NspBMatrix  *nsp_hash_not_equal(NspHash *L1, NspHash *L2)
       if (( B = nsp_bmatrix_create(NVOID,1,L1->filled))== NULLBMAT) return NULLBMAT;
       while (1) 
 	{
-	  if (nsp_hash_get_next_object(L1,&i,&O1) == FAIL ) break;
+	  int rep =nsp_hash_get_next_object(L1,&i,&O1);
 	  if ( O1 != NULLOBJ )
 	    { 
 	      if ( nsp_hash_find(L2,NSP_OBJECT(O1)->name,&O2) == FAIL)
@@ -359,6 +362,7 @@ NspBMatrix  *nsp_hash_not_equal(NspHash *L1, NspHash *L2)
 		}
 	      count++;
 	    }
+	  if ( rep == FAIL) break;
 	}
     }
   return B;
@@ -385,7 +389,7 @@ int nsp_hash_full_equal(NspHash *L1, NspHash *L2)
   if ( L1->filled != L2->filled ) return FALSE;
   while (1) 
     {
-      if (nsp_hash_get_next_object(L1,&i,&O1) == FAIL ) break;
+      int rep1 = nsp_hash_get_next_object(L1,&i,&O1);
       if ( O1 != NULLOBJ )
 	{ 
 	  if ( nsp_hash_find(L2,NSP_OBJECT(O1)->name,&O2) == FAIL)
@@ -401,6 +405,7 @@ int nsp_hash_full_equal(NspHash *L1, NspHash *L2)
 	      if ( rep == FALSE) return rep;
 	    }
 	}
+      if ( rep1 == FAIL) break;
     }
   return rep;
 } 
@@ -422,7 +427,7 @@ int nsp_hash_full_not_equal(NspHash *L1, NspHash *L2)
   if ( L1->filled != L2->filled ) return TRUE;
   while (1) 
     {
-      if (nsp_hash_get_next_object(L1,&i,&O1) == FAIL ) break;
+      int rep1 = nsp_hash_get_next_object(L1,&i,&O1);
       if ( O1 != NULLOBJ )
 	{ 
 	  if ( nsp_hash_find(L2,NSP_OBJECT(O1)->name,&O2) == FAIL)
@@ -438,6 +443,7 @@ int nsp_hash_full_not_equal(NspHash *L1, NspHash *L2)
 	      if ( rep == TRUE) return rep;
 	    }
 	}
+      if (rep1 == FAIL) break;
     }
   return rep;
 } 
@@ -670,12 +676,12 @@ void nsp_hdestroy(NspHash *H)
 	  return FAIL;							\
 	}								\
       htable[idx].data=Obj;						\
-      (H->filled)++;							\
+      /* we are just replacing an existing object (H->filled)++;*/	\
       return OK;							\
     case H_ENTER:							\
       nsp_object_destroy(&htable[idx].data);				\
       htable[idx].data = *data;						\
-      (H->filled)++;							\
+      /* we are just replacing an existing object (H->filled)++;*/	\
       return OK;							\
     case H_FIND_COPY :							\
       *data=nsp_object_copy(htable[idx].data);				\
@@ -697,9 +703,9 @@ int nsp_hsearch(NspHash *H,const char *key, NspObject **data, HashOperation acti
 
   /*
    * If table is full and another entry should be entered return with 
-   * error.
+   * error. We keep one free position to let the H_FIND, H_REMOVE work.
    */
-  if (action == H_ENTER && H->filled == H->hsize ) 
+  if (action == H_ENTER && H->filled == H->hsize -1 ) 
     {
       Scierror("Hash Table %s is full\n",NSP_OBJECT(H)->name);
       return FAIL_FULL;
