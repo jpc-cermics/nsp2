@@ -3590,6 +3590,10 @@ scicos_mux_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 /*
  * Write in ascii mode with format 
+ * Note that the name is writef but the format 
+ * should be a C-style format with just one directive 
+ * the format is re-explored for each data 
+ * default value "%lf" 
  */
 
 void scicos_writef_block(scicos_args_F0);
@@ -3600,7 +3604,8 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
 		    int *ipar, int *nipar, double *u, int *nu, double *y, int *ny ) 
 {
   /* ipar code model.ipar=[length(fname);length(format);unused;
-     N;str2code(fname);str2code(fmt)] */
+   *                       N;str2code(fname);str2code(fmt)] 
+   */
   typedef struct _writec_ipar writec_ipar ;
   struct _writec_ipar { int len,lfmt,unu,n,fname,fmt;};
   writec_ipar *wi =  (writec_ipar*) ipar;
@@ -3649,6 +3654,7 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
 	    {
 	      /* we reexplore the format */
 	      fprintf(F,fmt,buffer[j]);/* t */
+	      fprintf(F," ");
 	      for ( i=0; i < *nu ; i++) 
 		{
 		  fprintf(F,fmt,buffer[j+wi->n*(i+1)]);
@@ -3701,6 +3707,7 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
 	    {
 	      /* we reexplore the format */
 	      fprintf(F,fmt,buffer[j]);/* t */
+	      fprintf(F," ");
 	      for ( i=0; i < *nu ; i++) 
 		{
 		  fprintf(F,fmt,buffer[j+wi->n*(i+1)]);
@@ -3807,12 +3814,17 @@ scicos_writec_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
 	  if ( nsp_mput(F,buffer,(k-1)*insz[0],type) == FAIL) 
 	    {
 	      *flag = -3;
+	      nsp_file_close(F);
+	      nsp_file_destroy(F);
+	      z[2] = 0.0;
 	      return;
 	    }
 	}
       if (( nsp_file_close(F)) == FAIL) 
 	{
 	  *flag = -3;
+	  nsp_file_destroy(F);
+	  z[2] = 0.0;
 	  return;
 	}
       nsp_file_destroy(F);
@@ -3962,6 +3974,7 @@ void scicos_readc_block(int *flag, int *nevprt, double *t, double *xd, double *x
 	      *flag = -1;
 	      nsp_file_close(F);
 	      nsp_file_destroy(F);
+	      z[3] = 0.0;
 	      return;
 	    }
 	}
@@ -4064,6 +4077,7 @@ scicos_readf_block(int *flag, int *nevprt, double *t, double *xd, double *x, int
 	      *flag = -1;
 	      nsp_file_close(F);
 	      nsp_file_destroy(F);
+	      z[3] = 0.0;
 	      return;
 	    }
 	  z[1] = 1.;
@@ -4093,11 +4107,12 @@ scicos_readf_block(int *flag, int *nevprt, double *t, double *xd, double *x, int
       /* get the file name from its ascii code  */
       for ( i=0; i < rf->lfil ; i++) str[i]= *(&rf->fname + i);
       str[rf->lfil]='\0';
-      sciprint("Trying to open [%s] in readc\n",str);
+      /* sciprint("Trying to open [%s] in readf\n",str); */
       if (( F= nsp_file_open(str,"r",FALSE,FALSE)) == NULL) 
 	{
 	  Scierror("Error: in scicos_readf_block, could not open the file %s !\n",str);
 	  *flag = -3;
+	  z[3] = 0.0;
 	  return;
 	}
       z[3]=(long)F;
@@ -4109,6 +4124,7 @@ scicos_readf_block(int *flag, int *nevprt, double *t, double *xd, double *x, int
 	  *flag = -1;
 	  nsp_file_close(F);
 	  nsp_file_destroy(F);
+	  z[3] = 0.0;
 	  return;
 	}
       z[1] = 1.;
@@ -4126,7 +4142,7 @@ scicos_readf_block(int *flag, int *nevprt, double *t, double *xd, double *x, int
 int bfrdr(NspFile *F,readf_ipar *rf, int *ipar, double *z, int *no, int *kmax) 
 {
   char fmt[128];
-  int i, j, n, imask, mm;
+  int i, j, imask, mm;
   double tmp[100];
 
   /*      no=(nz-3)/N */
@@ -4141,7 +4157,7 @@ int bfrdr(NspFile *F,readf_ipar *rf, int *ipar, double *z, int *no, int *kmax)
   *kmax = 0;
   if (rf->lfmt == 0) 
     {
-      strcpy(fmt,"%f");
+      strcpy(fmt,"%lf");
     }
   else
     {
@@ -4150,16 +4166,23 @@ int bfrdr(NspFile *F,readf_ipar *rf, int *ipar, double *z, int *no, int *kmax)
       fmt[rf->lfmt]='\0';
     }
 
-  for (i = 1; i <= n; ++i) 
+  for (i = 1; i <= rf->n; ++i) 
     {
       for (j = 1; j <= mm; ++j) 
 	{
 	  int ns= fscanf(F->file,fmt,&tmp[j - 1]);
-	  if (ns  != 1)  return FAIL;
+	  /* printf("read = %s %lf\n",fmt,tmp[j - 1]); */
+	  /* Here we should be able to return to 
+	   * scicos a stop to tell that we have 
+	   * reached the end of file. 
+	   * or have a special event port for that.
+	   */
+	  if ( ns == EOF ) tmp[j - 1]=0.0;
+	  else if (ns  != 1)  return FAIL;
 	}
       for (j = 0; j <= *no - 1; ++j) 
 	{
-	  z[j * n + i-1] = tmp[ipar[imask + j] - 1];
+	  z[j * rf->n + i-1] = tmp[ipar[imask + j] - 1];
 	}
       ++(*kmax);
     }
