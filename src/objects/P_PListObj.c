@@ -472,6 +472,23 @@ static int int_print_internal(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+extern NspList *nsp_plist_to_list(PList L);
+
+static int int_plist_to_list(Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L;
+  NspPList *PL;
+  CheckRhs(1,1);
+  if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
+  if ((L= nsp_plist_to_list(PL->D))== NULLLIST ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(L));
+  return 1;
+}
+
+
+
+
+
 
 /*
  * The Interface for parsed lists
@@ -479,6 +496,7 @@ static int int_print_internal(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab NspPList_func[]={
   {"pl2s", int_pl2s},
+  {"pl2l", int_plist_to_list},
   {"inout", int_inout},
   {"print_internal", int_print_internal},
   {(char *) 0, NULL}
