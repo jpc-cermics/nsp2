@@ -145,7 +145,11 @@ function L=sci_load_list(F1,type)
       L(i)=xval;
     end
   end
-  if type == 16 || type == 17 then L=tlist(L(1),L(2:$));end
+  if type == 16 then 
+    L=tlist(L(1),L(2:$));
+  elseif type == 17 then 
+    L=mlist(L(1),L(2:$));
+  end
 endfunction
 
 
@@ -199,7 +203,7 @@ function sci_save(fname,varargopt)
 // Save in scilab binary mode the 
 // arguments which are given as name=val
 // Copyright (C) 2006 Jean-Philippe Chancelier
-  S=varagopt.__keys;
+  S=varargopt.__keys;
   if size(S,'*')==0 then 
     error("You must specify the names of arguments to be saved as name=value");
     return;
@@ -336,16 +340,32 @@ function sci_save_hash(F1,val);
 // utility for sci_save
 // Copyright (C) 2006 Jean-Philippe Chancelier
   if val.iskey['type'] then 
-    keys=val.__keys;I=find(keys=='type');keys(I)=[];
-    nn=[val('type'),keys'];
+    // is key type is present 
+    sci_type = val('type');
+    strs=val.__keys';
+    I=find(strs=='type');strs(I)=[];
+    tmlist = 17;
+    if val.iskey['mlist'] then     
+      I=find(strs=='mlist');strs(I)=[];
+      tmlist=17;
+    end
+    if val.iskey['tlist'] then 
+      I=find(strs=='tlist');strs(I)=[];
+      tmlist=16;
+    end
+    // backward compatibility for scicos
+    if sci_type== 'cpr' then tmlist=16;end
+    nn=[sci_type,strs];
     L=list(nn);
     for s=2:size(nn,'*'); L(s)= val(nn(s));end 
+    sci_save_list(F1,L,tmlist);
   else
+    // save a hash table as a scilab struct
     nn=['st';'dims';val.__keys]';
     L=list(nn,[1,1]);
     for s=3:size(nn,'*'); L(s)= val(nn(s));end 
+    sci_save_list(F1,L,17);
   end
-  sci_save_list(F1,L,17);
 endfunction
 
 function y=sci_save_count_mat(val)
@@ -403,14 +423,32 @@ function  y=sci_save_count_hash(val);
 // utility for sci_save
 // Copyright (C) 2006 Jean-Philippe Chancelier
   if val.iskey['type'] then 
-    keys=val.__keys;I=find(keys=='type');keys(I)=[];
-    nn=[val('type'),keys'];
+    // is key type is present 
+    sci_type = val('type');
+    strs=val.__keys';
+    I=find(strs=='type');strs(I)=[];
+    tmlist = 17;
+    if val.iskey['mlist'] then     
+      I=find(strs=='mlist');strs(I)=[];
+      tmlist=17;
+    end
+    if val.iskey['tlist'] then 
+      I=find(strs=='tlist');strs(I)=[];
+      tmlist=16;
+    end
+    // backward compatibility
+    if sci_type== 'cpr' then tmlist=16;end
+    nn=[sci_type,strs];
     L=list(nn);
     for s=2:size(nn,'*'); L(s)= val(nn(s));end 
   else
+    // save a hash table as a scilab struct
     nn=['st';'dims';val.__keys]';
     L=list(nn,[1,1]);
     for s=3:size(nn,'*'); L(s)= val(nn(s));end 
   end
   y=sci_save_count_list(L);
 endfunction
+
+
+
