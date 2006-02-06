@@ -758,8 +758,9 @@ static int int_lxsortedsearchandremove(Stack stack, int rhs, int opt, int lhs)
  * here tlist is a hash table 
  */
 
-static int int_lx_tlist_as_hash(Stack stack, int rhs, int opt, int lhs)
+static int int_lx_mtlist_as_hash(Stack stack, int rhs, int opt, int lhs,int flag)
 {
+  NspObject *MT;
   NspSMatrix *HMat;
   int i;
   NspHash *H;
@@ -780,8 +781,12 @@ static int int_lx_tlist_as_hash(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   if(( H = nsp_hash_create(NVOID,rhs)) == NULLHASH) return RET_BUG;
-  if ( ( Tname = nsp_smatrix_create("type",1,1,HMat->S[0],1))== NULLSMAT) return RET_BUG;
+  if ((Tname = nsp_smatrix_create("type",1,1,HMat->S[0],1))== NULLSMAT) return RET_BUG;
   if (nsp_hash_enter(H,NSP_OBJECT(Tname)) == FAIL) return RET_BUG;
+
+  if ((MT = nsp_create_boolean_object((flag) ? "tlist":"mlist",TRUE)) == NULLOBJ)
+    return RET_BUG;
+  if (nsp_hash_enter(H,MT) == FAIL) return RET_BUG;
   for ( i = 2; i <= rhs ; i++ )
     {
       char *oname = (i-1 < HMat->mn ) ? HMat->S[i-1] : "lel";
@@ -799,6 +804,15 @@ static int int_lx_tlist_as_hash(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_lx_tlist_as_hash(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_lx_mtlist_as_hash(stack,rhs,opt,lhs,TRUE);
+}
+
+static int int_lx_mlist_as_hash(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_lx_mtlist_as_hash(stack,rhs,opt,lhs,FALSE);
+}
 
 /*
  * return %null on the stack
@@ -1322,8 +1336,8 @@ static int int_lxneq(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab List_func[]={
   {"list",int_lxlist},
-  {"tlist",int_lx_tlist_as_hash}, /* FIXME: FIXME: hash tables */
-  {"mlist",int_lx_tlist_as_hash}, /* FIXME: hash tables */
+  {"tlist",int_lx_tlist_as_hash},
+  {"mlist",int_lx_mlist_as_hash},
   {"null",int_lxnull},
   {"resize2vect_l",int_lxextractall},
   {"extract_l",int_lxextract},
