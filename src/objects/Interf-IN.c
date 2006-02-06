@@ -135,7 +135,9 @@ int int_mxtest5(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }  
 
-/* test6(10,20,list(10,'foo',list(30,'foo')),[10,20],[45,67]); */
+/* test6(10,20,list(10,'foo',list(30,'foo')),[10,20],[45,67]);
+ * 
+ */
 
 int int_mxtest6(Stack stack, int rhs, int opt, int lhs)
 {
@@ -173,18 +175,15 @@ int int_mxtest6_simp(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }  
 
-
-
 int int_mxtest8(Stack stack, int rhs, int opt, int lhs)
 {
-  NspObject *O;
+  NspObject *Obj;
   int_types Ret[]={ s_int,s_double,string,list_begin,s_int,s_int,list_end, t_end};
   /* test the list builder **/
-  if (( O = (NspObject *)BuildListFromArgs(Ret, 10,20.67,"foo",10,20 ))== NULLOBJ ) return RET_BUG;
-  NthObj(1)=O;
+  if (( Obj = (NspObject *)BuildListFromArgs(Ret, 10,20.67,"foo",10,20 ))== NULLOBJ ) return RET_BUG;
+  MoveObj(stack,1,Obj);
   return 1;
 }  
-
 
 /* apres cet appel A et B sont devenus des matrices entieres 
  * 
