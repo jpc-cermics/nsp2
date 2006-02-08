@@ -484,6 +484,7 @@ function libn=ilib_compile(lib_name,makename,files)
   system(make_command+makename + ' '+ lib_name); 
   // a revoir 
   if path=="." then path = "./";end 
+  if part(path,length(path))<>"/" then path=path+"/";end
   libn=path+lib_name_make ; 
   chdir(oldpath)
 endfunction
