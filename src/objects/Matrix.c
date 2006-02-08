@@ -525,6 +525,7 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int i,slice=1000;
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
+
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {
@@ -756,12 +757,12 @@ int nsp_matrix_concat_right(NspMatrix *A,const NspMatrix *B)
   int inc = 1;
   int Asize;
   Asize=A->mn;
-  if ( A->m != B->m ) 
+  if ( A->m != B->m && A->mn !=0 ) 
     {
       Scierror("Error:\tIncompatible dimensions\n");
       return(FAIL);
     }
-  if ( nsp_matrix_resize(A,A->m,A->n+B->n) == FAIL) return(FAIL);
+  if ( nsp_matrix_resize(A,B->m,A->n+B->n) == FAIL) return(FAIL);
   if ( A->rc_type == 'r' ) 
     {
       if ( B->rc_type == 'r' )
