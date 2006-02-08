@@ -919,21 +919,64 @@ int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * Res = strindex(str1,str2)
+ * [index,pos) = strindex(str1,str2)
  * strindex(A,str)
+ * str2 can be a string matrix.
+ * same as in Scilab
+ * 
  */
 
 int int_smxstrindex(Stack stack, int rhs, int opt, int lhs)
 {
-  char *Str1, *Str2;
-  NspMatrix *ind;
+  int i;
+  char *Str1;
+  NspMatrix *ind=NULLMAT,*pos = NULLMAT;
+  NspSMatrix *S;
   CheckRhs(2,2);
-  CheckLhs(1,1);
+  CheckLhs(1,2);
   if ((Str1 = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if ((Str2 = GetString(stack,2)) == (char*)0) return RET_BUG;
-  if (( ind = nsp_smatrix_strindex(Str1,Str2)) == NULLMAT ) return RET_BUG;
+  if ((S=GetSMat(stack,2))== NULLSMAT) return RET_BUG;
+  for ( i = 0 ; i < S->mn ; i++) 
+    {
+      NspMatrix *ind1;
+      if (( ind1 = nsp_smatrix_strindex(Str1,S->S[i])) == NULLMAT ) goto bug;
+      if ( ind == NULLMAT )
+	{
+	  /* first call */
+	  ind = ind1 ;
+	  if ( lhs == 2 )
+	    {
+	      if ((pos = nsp_matrix_create(NVOID,'r',1,ind1->mn)) == NULLMAT) goto bug;
+	      nsp_mat_set_rval(pos,(double) 1.00);
+	    }
+	}
+      else 
+	{
+	  /* add ind1 */
+	  int n = ind1->mn,xof=ind->mn,j;
+	  if ( n !=0 ) 
+	    {
+	      if ( nsp_matrix_concat_right(ind,ind1) == FAIL) 
+		{
+		  nsp_matrix_destroy(ind1);
+		  goto bug;
+		}
+	      if ( lhs == 2) 
+		{
+		  if ( nsp_matrix_resize(pos,1,xof+n) == FAIL) goto bug;
+		  for ( j=0; j < n ; j++) pos->R[j+xof]=(double)i+1;
+		}
+	    }
+	  nsp_matrix_destroy(ind1);
+	}
+    }
   MoveObj(stack,1,(NspObject *) ind);
-  return 1;
+  if ( lhs == 2 )  MoveObj(stack,2,(NspObject *) pos);
+  return Max(lhs,1);
+ bug: 
+  if ( ind != NULLMAT) nsp_matrix_destroy(ind);
+  if ( pos != NULLMAT) nsp_matrix_destroy(pos);
+  return RET_BUG;
 }
 
 
