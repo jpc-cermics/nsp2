@@ -2963,6 +2963,20 @@ int int_xpause(Stack stack, int rhs, int opt, int lhs)
 } 
 
 /*-----------------------------------------------------------
+ *  xflush(); flush gtk-event 
+ *-----------------------------------------------------------*/
+
+/* FIXME */
+extern void nsp_check_gtk_events(void);
+
+int int_xflush(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  nsp_check_gtk_events();
+  return 0;
+}
+
+/*-----------------------------------------------------------
  *  xpoly(xv,yv, close = %t|%f , color= , thickness= , mark= , 
  *        type = "lines" | "marks") 
  *    if mark is set then type is set to xmarks 
@@ -4785,6 +4799,7 @@ static OpTab Graphics_func[]={
   {"bsearch", int_bsearch},
   {"draw3d_objs", int_draw3dobj},
   {"get_image",int_get_image},
+  {"xflush",int_xflush},
   {(char *) 0, NULL}
 };
 
