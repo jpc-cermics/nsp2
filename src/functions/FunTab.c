@@ -55,7 +55,7 @@
  * expected entries for good efficiency of the hash code 
  ********************************************/
 
-#define MAXTAB 2048
+#define MAXTAB 4096
 
 typedef enum {
   FIND, ENTER,REMOVE
