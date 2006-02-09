@@ -1225,7 +1225,7 @@ nspg_closure_new(NspPList *callback, NspList *extra_args, NspObject *swap_data)
  * execute the closure 
  */
 
-static Stack Marshal_stack={NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,0,0,NULL} ;
+static Stack Marshal_stack={0,NULL};
 static NspObject *Marshal_stack_S[STACK_SIZE];
 static int  stack_count=0; /* should be added in the stack */
 
@@ -1247,14 +1247,14 @@ nspg_closure_marshal(GClosure *closure,
       goto end;
     }
   nsp_init_stack(&Marshal_stack,Marshal_stack_S);
-  Marshal_stack.fname = "pipo"; 
-  /* fprintf(stderr,"FuncEval(%d) avec le Marshal_stack %s stack.S=<%lx>, first=%d\n",
-   *   stack_count, "pipo" ,(long) Marshal_stack.S,Marshal_stack.first); 
+  Marshal_stack.val->fname = "pipo"; 
+  /* fprintf(stderr,"FuncEval(%d) avec le Marshal_stack %s stack.val->S=<%lx>, first=%d\n",
+   *   stack_count, "pipo" ,(long) Marshal_stack.val->S,Marshal_stack.first); 
    */
   if ( stack_count != 1 ) 
     {
       /* XXX trying to preserve the already stored objects */ 
-      NspObject **O= Marshal_stack.S;
+      NspObject **O= Marshal_stack.val->S;
       int args =0;
       while ( *O != NULLOBJ) { args++; O++;}
       Marshal_stack.first = args ;
@@ -1269,7 +1269,7 @@ nspg_closure_marshal(GClosure *closure,
 	if (pc->swap_data == NULL) {
 	  goto end; 
 	}
-	Marshal_stack.S[Marshal_stack.first + nargs]= pc->swap_data; 
+	Marshal_stack.val->S[Marshal_stack.first + nargs]= pc->swap_data; 
 	nargs++;
       } else {
 	NspObject *item; 
@@ -1278,7 +1278,7 @@ nspg_closure_marshal(GClosure *closure,
 	  {
 	    goto end; 
 	  }
-	Marshal_stack.S[Marshal_stack.first + nargs]= item; 
+	Marshal_stack.val->S[Marshal_stack.first + nargs]= item; 
 	nargs++;
       }
     }
@@ -1293,19 +1293,19 @@ nspg_closure_marshal(GClosure *closure,
 	 {
 	 if ( C->O != NULLOBJ )       
 	 {
-	 Marshal_stack.S[Marshal_stack.first + nargs]= C->O; 
+	 Marshal_stack.val->S[Marshal_stack.first + nargs]= C->O; 
 	 nargs++;
 	 }
 	 C = C->next ;
 	 }
       */
-      Marshal_stack.S[Marshal_stack.first + nargs]= (NspObject *) pc->extra_args ; 
+      Marshal_stack.val->S[Marshal_stack.first + nargs]= (NspObject *) pc->extra_args ; 
       nargs++;
     }
 
   /* Calling a macro func is a macro coded in P_PList **/
   
-  if ((n=nsp_eval_func((NspObject *)pc->callback,Marshal_stack.fname,Marshal_stack,Marshal_stack.first,nargs,0,-1)) < 0 )
+  if ((n=nsp_eval_func((NspObject *)pc->callback,Marshal_stack.val->fname,Marshal_stack,Marshal_stack.first,nargs,0,-1)) < 0 )
     {
       nsp_error_message_show();
       goto end; 
@@ -1316,13 +1316,13 @@ nspg_closure_marshal(GClosure *closure,
   
   /* FuncEval fait-il le menage tout seul ? XXXXX **/
   if ( n >= 1) {
-    if (return_value) nspg_value_from_nspobject(return_value,Marshal_stack.S[Marshal_stack.first] );
+    if (return_value) nspg_value_from_nspobject(return_value,Marshal_stack.val->S[Marshal_stack.first] );
   }
   /* clean the stack */
   for (i = 0 ; i < n ; i++) 
     {
-      nsp_void_object_destroy(&Marshal_stack.S[Marshal_stack.first+i]);
-      Marshal_stack.S[Marshal_stack.first+i]= NULLOBJ;
+      nsp_void_object_destroy(&Marshal_stack.val->S[Marshal_stack.first+i]);
+      Marshal_stack.val->S[Marshal_stack.first+i]= NULLOBJ;
     }
   goto end; 
   end : 
@@ -1357,11 +1357,11 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
       goto end;
     }
   nsp_init_stack(&Marshal_stack,Marshal_stack_S);
-  Marshal_stack.fname = "pipo"; /* pc->callback->name; XXXX */
+  Marshal_stack.val->fname = "pipo"; /* pc->callback->name; XXXX */
   if ( stack_count != 1 ) 
     {
       /* XXX trying to preserve the already stored objects */ 
-      NspObject **O= Marshal_stack.S;
+      NspObject **O= Marshal_stack.val->S;
       int args =0;
       while ( *O != NULLOBJ) { args++; O++;}
       Marshal_stack.first = args ;
@@ -1369,9 +1369,9 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
     }
   /*We put the params on the stack **/
   for (i = 0; i < n_args ; i++) 
-    Marshal_stack.S[Marshal_stack.first + nargs++]= args[i];
+    Marshal_stack.val->S[Marshal_stack.first + nargs++]= args[i];
   /*Calling func is a macro coded in P_PList **/
-  if ((n=nsp_eval_func((NspObject *) func,Marshal_stack.fname,Marshal_stack,Marshal_stack.first,nargs,*nret,-1)) < 0 )
+  if ((n=nsp_eval_func((NspObject *) func,Marshal_stack.val->fname,Marshal_stack,Marshal_stack.first,nargs,*nret,-1)) < 0 )
     {
       nsp_error_message_show();
       goto end; 
@@ -1379,15 +1379,15 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
   /*FuncEval fait-il le menage tout seul ? XXXXX **/
   for ( i = 0 ; i < Min(n,*nret) ; i++) 
     {
-      ret[i]= Marshal_stack.S[Marshal_stack.first+i];
-      Marshal_stack.S[Marshal_stack.first+i]= NULLOBJ;
+      ret[i]= Marshal_stack.val->S[Marshal_stack.first+i];
+      Marshal_stack.val->S[Marshal_stack.first+i]= NULLOBJ;
     }
   *nret =Min(n,*nret);
   /* clean the stack */
   for ( i = *nret ; i < n  ; i++) 
     {
-      nsp_void_object_destroy(&Marshal_stack.S[Marshal_stack.first+i]);
-      Marshal_stack.S[Marshal_stack.first+i]= NULLOBJ;
+      nsp_void_object_destroy(&Marshal_stack.val->S[Marshal_stack.first+i]);
+      Marshal_stack.val->S[Marshal_stack.first+i]= NULLOBJ;
     }
   rep = OK;
   goto end; 

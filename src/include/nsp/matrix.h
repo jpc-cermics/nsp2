@@ -297,14 +297,14 @@ extern NspMatrix *GetMat (Stack stack, int i);
 #else 
 static inline NspMatrix *GetMatCopy(Stack stack, int i)
 {
-  NspMatrix *M= Mat2double(matrix_object(stack.S[stack.first+i-1]));
+  NspMatrix *M= Mat2double(matrix_object(stack.val->S[stack.first+i-1]));
   if ( M== NULLMAT) { ArgMessage (stack, i);return M;}
-  return MaybeObjCopy (&stack.S[stack.first+i-1]);
+  return MaybeObjCopy (&stack.val->S[stack.first+i-1]);
 }
 
 static inline NspMatrix *GetMat(Stack stack, int i)
 {
-  NspMatrix *M= Mat2double(matrix_object(stack.S[stack.first+i-1]));
+  NspMatrix *M= Mat2double(matrix_object(stack.val->S[stack.first+i-1]));
   if ( M== NULLMAT) ArgMessage (stack, i);
   return M;
 }

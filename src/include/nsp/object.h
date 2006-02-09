@@ -181,13 +181,13 @@ extern int  nsp_object_save_def(void * F, NspObject * M);
  *-----------------------------------------------------------*/
 
 typedef struct _Stack Stack;
+typedef struct _Stack_ref Stack_ref;
 
 typedef void stack_error(Stack *S,char *fmt,...);
 
-struct _Stack {
+struct _Stack_ref {
   char *fname; /* function currently evaluated **/
   char *file_name ; /* current evaluated file **/
-  int first;   /* position of first argument to be used **/
   NspObject **D;     /* D is dynamically changed so that D[1] is the first Objet used XXX **/
   NspObject **L;     /* Last position **/
   NspObject **S;     /* points to the whole stack **/
@@ -196,6 +196,11 @@ struct _Stack {
   int errcatch; 
   int pause; 
   NspObject *symbols; /* table of symbols of functions */
+} ;
+
+struct _Stack {
+  int first;   /* position of first argument to be used **/
+  Stack_ref *val;
 } ;
 
 #define STACK_SIZE 50000

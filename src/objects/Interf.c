@@ -1016,9 +1016,9 @@ void OptCheck(NspObject **Os, NspObject **DefO, char **Names, int n, Stack stack
       int ok=0;
       for ( j = 0 ; j < nopt ; j++) 
 	{
-	  if ( Ocheckname(stack.S[stack.first+j],Names[i]))
+	  if ( Ocheckname(stack.val->S[stack.first+j],Names[i]))
 	    {
-	      Os[i] = stack.S[stack.first+j];
+	      Os[i] = stack.val->S[stack.first+j];
 	      ok = 1;break;
 	    }
 	}
@@ -1035,11 +1035,11 @@ static int OptCheck1(Stack stack,int rhs, int nopt, named_opts *Opts)
     { Opts->objs[i] = NULLOBJ; Opts->posi[i]=-1; };
   for ( j = 0 ; j < nopt ; j++) 
     {
-      int rep=is_string_in_array(nsp_object_get_name(stack.S[stack.first+rhs-nopt+j]),
+      int rep=is_string_in_array(nsp_object_get_name(stack.val->S[stack.first+rhs-nopt+j]),
 				 Opts->names,1);
       if ( rep >= 0) 
 	{
-	  Opts->objs[rep] = stack.S[stack.first+rhs-nopt+j];
+	  Opts->objs[rep] = stack.val->S[stack.first+rhs-nopt+j];
 	  Opts->posi[rep] = rhs-nopt+j+1;
 	}
       else 
@@ -1128,10 +1128,10 @@ static int options_check(Stack stack,int rhs, int opt,nsp_option Opts[])
   while ( option->name != NULL) { option->obj = NULLOBJ; option->position=-1; option++ ;};
   for ( j = 0 ; j < opt ; j++) 
     {
-      int rep=is_string_in_options(nsp_object_get_name(stack.S[stack.first+rhs-opt+j]),Opts,1);
+      int rep=is_string_in_options(nsp_object_get_name(stack.val->S[stack.first+rhs-opt+j]),Opts,1);
       if ( rep >= 0) 
 	{
-	  Opts[rep].obj = stack.S[stack.first+rhs-opt+j];
+	  Opts[rep].obj = stack.val->S[stack.first+rhs-opt+j];
 	  Opts[rep].position = rhs-opt+j+1;
 	}
       else 

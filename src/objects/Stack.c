@@ -41,20 +41,22 @@ void InitStack()
 
 void nsp_init_stack(Stack *stack,NspObject **S)
 {
-  stack->fname = NULL;
-  stack->file_name = NULL;
   stack->first = 0;
-  stack->S = S ;
-  stack->L = S + STACK_SIZE;
-  if ( stack->error_msg == NULL) 
-    stack->error_msg = (NspObject *) nsp_smatrix_create(NVOID,0,0,NULL,0);
-  stack->error = error;
-  stack->errcatch = FALSE;
-  stack->pause = TRUE;
-  stack->symbols = NULL;
+  /* XXX : should check here that stack->val != NULL */
+  stack->val = calloc(1,sizeof(Stack_ref));
+  stack->val->fname = NULL;
+  stack->val->file_name = NULL;
+  stack->val->S = S ;
+  stack->val->L = S + STACK_SIZE;
+  if ( stack->val->error_msg == NULL) 
+    stack->val->error_msg = (NspObject *) nsp_smatrix_create(NVOID,0,0,NULL,0);
+  stack->val->error = error;
+  stack->val->errcatch = FALSE;
+  stack->val->pause = TRUE;
+  stack->val->symbols = NULL;
 }
 
-Stack SciStack={NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,0,0,NULL} ;
+Stack SciStack={0,NULL};
 
 /* store object o at position pos (relative from first ) */ 
 
@@ -73,7 +75,7 @@ static void error(Stack *stack,char *fmt,...)
   n=  vsnprintf(buf,size, fmt, ap );
   if ( n > -1 ) 
     {
-      nsp_row_smatrix_append_string((NspSMatrix *) stack->error_msg,buf);
+      nsp_row_smatrix_append_string((NspSMatrix *) stack->val->error_msg,buf);
       va_end(ap);
     }
 }

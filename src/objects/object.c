@@ -794,7 +794,7 @@ NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type)
 
 int int_object_ret(Stack stack, int rhs, int opt, int lhs)
 {
-  NspObject **Ob = stack.S + stack.first;
+  NspObject **Ob = stack.val->S + stack.first;
   int i;
   for ( i= 0 ; i < rhs ; i++) 
     {

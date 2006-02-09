@@ -187,22 +187,22 @@ void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char 
       /* check that objects at the begining of the stack are non nul */
       for ( i=0 ; i < stack.first ; i++ ) 
 	{
-	  if ( stack.S[i] == NULL) 
+	  if ( stack.val->S[i] == NULL) 
 	    {
 	      fprintf(stderr,"Null object (%d) before stack.first=%d \n",i,stack.first);
 	      break;
 	    }
 	}
     }
-  if ( stack.S[stack.first + rhs] != NULL )
+  if ( stack.val->S[stack.first + rhs] != NULL )
     {
       /* check that stack is null terminated */ 
       fprintf(stderr,"%s %s \n",message, NspFname(stack));
       fprintf(stderr,"Non null objects found after rhs(=%d) !\n",rhs);
       if ( name != 0) 
 	fprintf(stderr,"previous call %s\n",name);
-      fprintf(stderr,"stack.S=<%lx>, first=%d\n",(long) stack.S,stack.first);
-      O = stack.S + stack.first+rhs; 
+      fprintf(stderr,"stack.val->S=<%lx>, first=%d\n",(long) stack.val->S,stack.first);
+      O = stack.val->S + stack.first+rhs; 
       while ( *O != NULL) 
 	{ 
 	  nsp_object_info(*O,1,NULL,0); 
@@ -214,7 +214,7 @@ void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char 
   
   /* check that object on the stack have correct ret_pos initialization */ 
 
-  O = stack.S + stack.first; 
+  O = stack.val->S + stack.first; 
   while ( *O != NULL ) 
     {
       count++;
@@ -225,7 +225,7 @@ void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char 
 		  (*O)->ret_pos,count);
 	  if ( name != 0) 
 	    fprintf(stderr,"previous call %s\n",name);
-	  fprintf(stderr,"stack.S=<%lx>, first=%d\n",(long) stack.S,stack.first);
+	  fprintf(stderr,"stack.val->S=<%lx>, first=%d\n",(long) stack.val->S,stack.first);
 	  nsp_object_info(*O,1,NULL,0);
 	  fprintf(stderr,"I change ret_pos and continue \n");
 	  (*O)->ret_pos = -1 ;
@@ -263,7 +263,7 @@ int nsp_interfaces(int i, int num, Stack stack, int rhs, int opt, int lhs)
   if ( ret == RET_BUG || ret == RET_ERROR_RAISED ) 
     {
       /* clean the stack before returning */
-      NspObject**O = stack.S + stack.first; 
+      NspObject**O = stack.val->S + stack.first; 
       while ( *O != NULL) 
 	{ 
 	  (*O)->ret_pos= -1;
@@ -305,7 +305,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
   if ( ret == RET_BUG ) 
     {
       /* clean the stack before returning */
-      NspObject**O = stack.S + stack.first; 
+      NspObject**O = stack.val->S + stack.first; 
       while ( *O != NULL) 
 	{ 
 	  (*O)->ret_pos= -1;
@@ -332,7 +332,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 
 /* int  reorder_stack(Stack stack, int ret) */
 /* { */
-/*   NspObject**O1 = stack.S+stack.first; */
+/*   NspObject**O1 = stack.val->S+stack.first; */
 /*   NspObject*O,*O2; */
 /*   int count = 1,j; */
  
@@ -397,7 +397,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 
 /*   /\* second pass to move objects at their correct positions *\/ */
   
-/*   O1 = stack.S+stack.first; */
+/*   O1 = stack.val->S+stack.first; */
 /*   while ( *O1 != NULL) */
 /*     { */
 /*       O=*O1; */
@@ -411,7 +411,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /*    * Debug only */
 /*    *\/ */
 
-/*   O1 = stack.S + stack.first; */
+/*   O1 = stack.val->S + stack.first; */
 /*   for ( j = 1 ; j <= ret ; j++) */
 /*     if ( (*O1++)->ret_pos != j ) { */
 /*       fprintf(stderr,"Something wrong at end of %s \n",  NspFname(stack)); */
@@ -424,7 +424,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /*    * clean extra returned arguments */
 /*    *\/ */
   
-/*   O1 = stack.S + stack.first + ret ; */
+/*   O1 = stack.val->S + stack.first + ret ; */
 /*   while ( *O1 != NULL) */
 /*     { */
 /*       (*O1++)->ret_pos=-1; */
@@ -433,7 +433,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 
 /*   /\* clean the stack : the pointers cases have already been done*\/ */
   
-/*   O1 = stack.S+stack.first; */
+/*   O1 = stack.val->S+stack.first; */
 /*   while ( *O1 != NULL) { */
 /*     if ( (*O1)->ret_pos == -1 ) { */
 /*       nsp_void_object_destroy(O1); */
@@ -449,7 +449,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 /*   } */
 
 /*   /\*  Only relevant in DEBUG Mode *\/ */
-/*   O1 = stack.S + stack.first; */
+/*   O1 = stack.val->S + stack.first; */
 /*   while ( *O1 != NULL ) */
 /*     { */
 /*       if ( (*O1)->ret_pos != -1 ) */
@@ -467,7 +467,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 
 /* static int  reorder_follow_cycle(Stack stack,int pos) */
 /* { */
-/*   NspObject **obj = stack.S+stack.first; */
+/*   NspObject **obj = stack.val->S+stack.first; */
 /*   NspObject *obj1,*obj2; */
 /*   /\* reordering and cleaning the stack *\/ */
 /*   obj1 = obj[pos-1]; */
@@ -498,7 +498,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 
 int  reorder_stack(Stack stack, int ret)
 {
-  NspObject **O1=stack.S+stack.first, **obj=stack.S+stack.first-1;
+  NspObject **O1=stack.val->S+stack.first, **obj=stack.val->S+stack.first-1;
   NspObject*O,*O2;
   int count=0, k, kn, ret_pos, must_be_reordered=0;
  
@@ -622,7 +622,7 @@ int  reorder_stack(Stack stack, int ret)
 
 static int show_returned_positions(Stack stack,int pos)
 {
-  NspObject **obj = stack.S+stack.first+pos-1;
+  NspObject **obj = stack.val->S+stack.first+pos-1;
   fprintf(stderr,"from pos=%d ->[",pos);
   while (*obj != NULL) 
     {
