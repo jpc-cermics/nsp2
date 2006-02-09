@@ -22,11 +22,13 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-/* #define OPEN26 XXXXXX to be defined for gtk 2.6 */
+#if GTK_MAJOR_VERSION==2 &&  GTK_MINOR_VERSION>=4
+#define OPEN26
+#endif 
 
 typedef enum { choice_combo,choice_color,choice_chooser_save, 
-	       choice_chooser_open,choice_button_save,choice_button_open,choice_entry,
-	       choice_unknown,choice_matrix} 
+	       choice_chooser_open_file,choice_button_save,choice_button_open_file,choice_entry,
+	       choice_unknown,choice_matrix,choice_chooser_open_folder,choice_button_open_folder} 
   nsp_choice_value;
 
 typedef struct _nsp_choice_array 
@@ -52,7 +54,8 @@ static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size);
   l4=list('colors','colors choice 4',29,['']);
   l5=list('save','file save',1,['foo.sav']); // initial value 
   l6=list('open','file open',1,['foo.rep','*.eps','*.pdf']); // answer, filter 
-  L= list(l1,l2,l3,l4,l5,l6);
+  l7=list('folder','choose a folder',1,[""]); // answer, filter 
+  L= list(l1,l2,l3,l4,l5,l6,l7);
   [rep,L]=x_choices('Toggle Menu',L);
 */
 
@@ -204,9 +207,9 @@ static GtkWidget * nsp_setup_combo_box_text(char **Ms,int Mm,int Mn,int active)
 
 
 #ifdef OPEN26
-static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Mm,int Mn);
+static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Mm,int Mn,int folder);
 #else 
-static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Mm,int Mn);
+static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Mm,int Mn,int folder);
 #endif 
 
 static GtkWidget * nsp_file_chooser_button_save(char *title,char **Ms,int Mm,int Mn,int active);
@@ -259,17 +262,26 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
       break;
     case choice_chooser_save:
       break;
-    case choice_chooser_open:
+    case choice_chooser_open_file:
 #ifdef OPEN26
-      return nsp_file_chooser_button_open_2_6(title,Ms,Mm,Mn);
+      return nsp_file_chooser_button_open_2_6(title,Ms,Mm,Mn,FALSE);
+#endif 
+      break;
+    case choice_chooser_open_folder:
+#ifdef OPEN26
+      return nsp_file_chooser_button_open_2_6(title,Ms,Mm,Mn,TRUE);
 #endif 
       break;
     case choice_button_save:
       return nsp_file_chooser_button_save(title,Ms,Mm,Mn,active);
       break;
-    case choice_button_open: 
+    case choice_button_open_file: 
 #ifndef OPEN26
-      return nsp_file_chooser_button_open_2_4(title,Ms,Mm,Mn);
+      return nsp_file_chooser_button_open_2_4(title,Ms,Mm,Mn,FALSE);
+#endif 
+    case choice_button_open_folder: 
+#ifndef OPEN26
+      return nsp_file_chooser_button_open_2_4(title,Ms,Mm,Mn,TRUE);
 #endif 
       break;
     case choice_entry:
@@ -287,7 +299,7 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
 
 static int nsp_get_choice_from_title(char *type)
 {
-  char *table[]= {"combo","entry","colors","save","open","matrix",NULL};
+  char *table[]= {"combo","entry","colors","save","open","matrix","folder",NULL};
   int rep = is_string_in_array(type,table,1);
   if ( rep < 0 ) return choice_unknown;
   switch (rep) 
@@ -298,12 +310,18 @@ static int nsp_get_choice_from_title(char *type)
     case 3:  return choice_button_save;break;
     case 4:     
 #ifdef OPEN26
-      return choice_chooser_open;
+      return choice_chooser_open_file;
 #else 
-      return choice_button_open;
+      return choice_button_open_file;
 #endif
       break;
     case 5:  return choice_matrix;break;
+    case 6:
+#ifdef OPEN26
+      return choice_chooser_open_folder;
+#else 
+      return choice_button_open_folder;
+#endif
       break;
     }
   return choice_unknown;
@@ -369,25 +387,33 @@ static void nsp_button_filename_save(GtkWidget *widget,char *title)
  * version 2.6 
  */
 
-static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Mm,int Mn)
+static GtkWidget * nsp_file_chooser_button_open_2_6(char *title,char **Ms,int Mm,int Mn,int folder)
 {
   GtkWidget *cbox;
-  cbox = gtk_file_chooser_button_new (title,GTK_FILE_CHOOSER_ACTION_OPEN);
-  if (  Mm*Mn > 2 ) 
+  if ( folder ) 
     {
-      int i;
-      GtkFileFilter* filter ;
-      for ( i=1; i < Mm*Mn ; i++) 
+      /* choose a folder */
+      cbox = gtk_file_chooser_button_new (title,GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    }
+  else 
+    {
+      cbox = gtk_file_chooser_button_new (title,GTK_FILE_CHOOSER_ACTION_OPEN);
+      if (  Mm*Mn > 2 ) 
 	{
+	  int i;
+	  GtkFileFilter* filter ;
+	  for ( i=1; i < Mm*Mn ; i++) 
+	    {
+	      filter = gtk_file_filter_new();
+	      gtk_file_filter_set_name (GTK_FILE_FILTER(filter),Ms[i]);
+	      gtk_file_filter_add_pattern(filter,Ms[i]);
+	      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(cbox),filter);
+	    }
 	  filter = gtk_file_filter_new();
-	  gtk_file_filter_set_name (GTK_FILE_FILTER(filter),Ms[i]);
-	  gtk_file_filter_add_pattern(filter,Ms[i]);
+	  gtk_file_filter_set_name (GTK_FILE_FILTER(filter),"all files");
+	  gtk_file_filter_add_pattern(filter,"*");
 	  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(cbox),filter);
 	}
-      filter = gtk_file_filter_new();
-      gtk_file_filter_set_name (GTK_FILE_FILTER(filter),"all files");
-      gtk_file_filter_add_pattern(filter,"*");
-      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(cbox),filter);
     }
   return cbox;
 }
@@ -404,12 +430,13 @@ struct _nsp_open_filename_open_data {
   int Msmn;
   char **Ms;
   char *title;
+  int folder;
 };
 
 static void nsp_button_filename_open(GtkWidget *widget,void *args);
 
 
-static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Mm,int Mn)
+static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Mm,int Mn,int folder)
 {
   nsp_button_filename_open_data *data= NULL;
   GtkWidget *cbox;
@@ -420,6 +447,7 @@ static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Mm
       data->Msmn = Mm*Mn;
       data->Ms = Ms;
       data->title= title;
+      data->folder = folder;
     }
   /* attach data to cbox */
   g_object_set_data_full (G_OBJECT(cbox),"button_open",data, g_free);
@@ -437,16 +465,21 @@ static GtkWidget * nsp_file_chooser_button_open_2_4(char *title,char **Ms,int Mm
 
 static void nsp_button_filename_open(GtkWidget *widget,void *args)
 {
+  GtkFileChooserAction action;
   nsp_button_filename_open_data *data;
   GtkWidget *dialog;
   data  = g_object_get_data(G_OBJECT(widget),"button_open");
 
+  action = ( data->folder == TRUE ) ? GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER :
+    GTK_FILE_CHOOSER_ACTION_OPEN;
+  
   dialog = gtk_file_chooser_dialog_new (data->title,
 					NULL,
-					GTK_FILE_CHOOSER_ACTION_OPEN,
+					action,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 					NULL);
+
   if (  data->Msmn > 2 ) 
     {
       int i;
@@ -546,7 +579,8 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 	  active_field->R[0] = 1+ gtk_combo_box_get_active(GTK_COMBO_BOX (array[i].widget));
 	  break;
 	case choice_chooser_save:
-	case choice_chooser_open:
+	case choice_chooser_open_file:
+	case choice_chooser_open_folder:
 	  /* fname is to be freed Free with g_free().*/
 	  fname = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(array[i].widget));
 	  if ( fname != NULL) 
@@ -562,7 +596,8 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 	    }
 	  break;
 	case choice_button_save:
-	case choice_button_open:
+	case choice_button_open_file:
+	case choice_button_open_folder:
 	  fname1 = g_object_get_data (G_OBJECT(array[i].widget),"filename");
 	  /* fname1 = gtk_button_get_label(GTK_BUTTON(array[i].widget)); */
 	  if ( fname1 != NULL) 
