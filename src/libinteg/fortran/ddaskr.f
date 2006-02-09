@@ -1749,7 +1749,7 @@ C     Set the initial step size, the error weight vector, and PHI.
 C     Compute unknown initial components of Y and YPRIME, if requested.
 C-----------------------------------------------------------------------
 C
-300   CONTINUE
+C300   CONTINUE
       TN=T
       IDID=1
 C
@@ -2497,9 +2497,9 @@ C
 713   MSG = 'DASKR--  SOME ELEMENT OF WT IS .LE. 0.0'
       CALL XERRWD(MSG,39,13,0,0,0,0,0,0.0D0,0.0D0)
       GO TO 750
-714   MSG='DASKR-- TOUT (=R1) TOO CLOSE TO T (=R2) TO START INTEGRATION'
-      CALL XERRWD(MSG,60,14,0,0,0,0,2,TOUT,T)
-      GO TO 750
+C 714  MSG='DASKR-- TOUT (=R1) TOO CLOSE TO T (=R2) TO START INTEGRATION'
+C      CALL XERRWD(MSG,60,14,0,0,0,0,2,TOUT,T)
+C      GO TO 750
 715   MSG = 'DASKR--  INFO(4)=1 AND TSTOP (=R1) BEHIND T (=R2)'
       CALL XERRWD(MSG,49,15,0,0,0,0,2,TSTOP,T)
       GO TO 750
@@ -2550,7 +2550,8 @@ C
       RETURN
 760   MSG = 'DASKR--  REPEATED OCCURRENCES OF ILLEGAL INPUT'
       CALL XERRWD(MSG,46,701,0,0,0,0,0,0.0D0,0.0D0)
-770   MSG = 'DASKR--  RUN TERMINATED. APPARENT INFINITE LOOP'
+C     770 CONTINUE 
+      MSG = 'DASKR--  RUN TERMINATED. APPARENT INFINITE LOOP'
       CALL XERRWD(MSG,47,702,1,0,0,0,0,0.0D0,0.0D0)
       RETURN
 C
@@ -2676,7 +2677,8 @@ C     If a root was found on the previous step, evaluate R0 = R(T0). -------
           ENDIF
  210   CONTINUE
 C     R0 has no zero components.  Proceed to check relevant interval. ------
- 260   IF (TN .EQ. RWORK(LTLAST)) RETURN
+C     260 CONTINUE
+       IF (TN .EQ. RWORK(LTLAST)) RETURN
 C     =====================================================    
  300   CONTINUE
 C     Set T1 to TN or TOUT, whichever comes first, and get R at T1. --------
@@ -5719,7 +5721,8 @@ C     solution is required, set the solution nonnegative, if the
 C     perturbation to do it is small enough.  If the change is too
 C     large, then consider the corrector iteration to have failed.
 C
-375   IF(NONNEG .EQ. 0) GO TO 390
+C375  CONTINUE
+      IF(NONNEG .EQ. 0) GO TO 390
       DO 377 I = 1,NEQ
 377      DELTA(I) = MIN(Y(I),0.0D0)
       DELNRM = DDWNRM(NEQ,DELTA,WT,RPAR,IPAR)

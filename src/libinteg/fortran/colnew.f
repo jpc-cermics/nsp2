@@ -1633,7 +1633,7 @@ C
       DO 310 I = 1, NFXP1
            IF ( I .EQ. NFXP1 )                      GO TO 250
            DO 230 J = LOLD, NOLDP1
-             LNEW = J
+              LNEW = J
              IF ( FIXPNT(I) .LE. XIOLD(J) )         GO TO 240
   230      CONTINUE
   240      CONTINUE
@@ -2094,7 +2094,8 @@ C
            GO TO 110
   106      CALL APPROX (I, XII, ZVAL, AT, DUMMY, XI, N, Z, DMZ,
      1                  K, NCOMP, MMAX, M, MSTAR, 1, DUMMY, 0)
-  108      IF ( MODE .EQ. 3 )                       GO TO 120
+C     108  continue
+           IF ( MODE .EQ. 3 )                       GO TO 120
 C
 C...       find  rhs  boundary value.
 C
@@ -2205,7 +2206,8 @@ C
            GO TO 250
   246      CALL APPROX (N+1, ARIGHT, ZVAL, AT, COEF, XI, N,
      1          Z, DMZ, K, NCOMP, MMAX, M, MSTAR, 1, DUMMY, 0)
-  248      IF ( MODE .EQ. 3 )                       GO TO 260
+C     248  continue
+           IF ( MODE .EQ. 3 )                       GO TO 260
 C
 C...       find  rhs  boundary value.
 C
@@ -2745,7 +2747,8 @@ C
 C
 C...  evaluate  z( u(x) ).
 C
-  100 IR = 1
+C 100 continue
+      IR = 1
       IZ = (I-1) * MSTAR + 1
       IDMZ = (I-1) * K * NCOMP
       DO 140 JCOMP = 1, NCOMP
@@ -3253,17 +3256,19 @@ C
       IF ( NROW .EQ. 1 )                            RETURN
       LSTEP = MIN0( NROW-1 , LAST )
       DO 20 K = 1, LSTEP
-           KP1 = K + 1
-           IP = IPIVOT(K)
-           T = X(IP)
-           X(IP) = X(K)
-           X(K) = T
-           IF ( T .EQ. 0.D0 )                       GO TO 20
-           DO 10 I = KP1, NROW
-   10         X(I) = X(I) + W(I,K) * T
-   20 CONTINUE
-   30 RETURN
+         KP1 = K + 1
+         IP = IPIVOT(K)
+         T = X(IP)
+         X(IP) = X(K)
+         X(K) = T
+         IF ( T .EQ. 0.D0 )                       GO TO 20
+         DO 10 I = KP1, NROW
+            X(I) = X(I) + W(I,K) * T
+ 10      CONTINUE
+ 20   CONTINUE
+      RETURN
       END
+
       SUBROUTINE SUBBAK ( W, NROW, NCOL, LAST, X )
 C
 C*********************************************************************

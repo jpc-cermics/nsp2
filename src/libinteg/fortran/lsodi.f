@@ -1327,27 +1327,37 @@ c compute initial dy/dt, if necessary, and load it and initial y into yh
       lp = lwm + 1
       if (istate .eq. 1) go to 120
 c lsodi must compute initial dy/dt (lyd0 points to yh(*,2)). -----------
-         call ainvg( res, adda, neq, t, y, rwork(lyd0), miter,
-     1               ml, mu, rwork(lp), iwork(21), ier )
-         nre = nre + 1
-         if (ier)  560,110,565
- 110     continue
-         if(iero.gt.0) return
-         do 115  i = 1, n
- 115        rwork(i+lyh-1) = y(i)
-         go to 130
-c initial dy/dt has been supplied. -------------------------------------
- 120     do 125  i = 1, n
-            rwork(i+lyh-1) = y(i)
- 125        rwork(i+lyd0-1) = ydoti(i)
-c load and invert the ewt array.  (h is temporarily set to 1.0.) -------
+      call ainvg( res, adda, neq, t, y, rwork(lyd0), miter,
+     1     ml, mu, rwork(lp), iwork(21), ier )
+      nre = nre + 1
+C      if (ier)  560,110,565
+      if (ier.lt.0) then 
+         goto 560
+      else if (ier.eq.0) then 
+         goto 110
+      else 
+         goto 565
+      endif
+
+ 110  continue
+      if(iero.gt.0) return
+      do 115  i = 1, n
+         rwork(i+lyh-1) = y(i)
+ 115  continue
+      go to 130
+c     initial dy/dt has been supplied. -------------------------------------
+ 120  do 125  i = 1, n
+         rwork(i+lyh-1) = y(i)
+         rwork(i+lyd0-1) = ydoti(i)
+ 125  continue
+c     load and invert the ewt array.  (h is temporarily set to 1.0.) -------
  130  continue
       nq = 1
       h = 1.0d+0
       call ewset (n, itol, rtol, atol, rwork(lyh), rwork(lewt))
       do 135 i = 1,n
-        if (rwork(i+lewt-1) .le. 0.0d+0) go to 621
- 135    rwork(i+lewt-1) = 1.0d+0/rwork(i+lewt-1)
+         if (rwork(i+lewt-1) .le. 0.0d+0) go to 621
+ 135     rwork(i+lewt-1) = 1.0d+0/rwork(i+lewt-1)
 c-----------------------------------------------------------------------
 c the coding below computes the step size, h0, to be attempted on the
 c first step, unless the user has supplied a value for this.

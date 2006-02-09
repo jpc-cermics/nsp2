@@ -13,7 +13,7 @@ clll. optimize
       double precision rownd, rowns,
      1   ccmax, el0, h, hmin, hmxi, hu, rc, tn, uround
       double precision rownr3, t0, tlast, toutc
-      double precision hming, t1, temp1, temp2, x
+      double precision hming, t1,  x
       logical zroot, Mroot
       common /ls0001/ rownd, rowns(209),
      2   ccmax, el0, h, hmin, hmxi, hu, rc, tn, uround,
@@ -118,7 +118,8 @@ c     if a root was found on the previous step, evaluate r0 = r(t0). -------
           endif
  210   continue
 c     r0 has no zero components.  proceed to check relevant interval. ------
- 260   if (tn .eq. tlast) return
+c     260  continue 
+       if (tn .eq. tlast) return
 c
 c     -------------- try in manor-time-steps -----
  300  continue
