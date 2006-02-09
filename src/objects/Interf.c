@@ -100,7 +100,7 @@ static int GetListArgs_1(NspList *L,int pos,int_types **T,va_list *ap);
 
 int  GetArgs(Stack stack,int rhs,int opt,int_types *T,...) 
 {
-  int rep;
+  int rep=OK;
   NspList *L;
   int count = 0;
   void **Foo;
