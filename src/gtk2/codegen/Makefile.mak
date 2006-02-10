@@ -32,7 +32,7 @@ Makefile.mak	: Makefile
 # on peut rajouter --prefix py$* 
 
 PYTHON=python 
-ALL=  gdk.c gtk.c pango.c atk.c gtk24.c 
+ALL=  gdk.c gtk.c pango.c atk.c gtk24.c gtk22.c
 
 all:: $(ALL)
 
@@ -61,10 +61,21 @@ gtk24.c : gtk24.defs
 	&& cp gen-$*.c $*.c \
 	&& rm -f gen-$*.c
 
+gtk22.c : gtk24.defs 
+	($(PYTHON) codegen/codegen.py \
+	    --override $*.objverride \
+	    --register ./pango-types.defs \
+	    --register ./atk-types.defs \
+	    --register ./gdk-types.defs \
+	    --register ./gtk-types.defs \
+	    --prefix gtk $*.defs) > gen-$*.c \
+	&& cp gen-$*.c $*.c \
+	&& rm -f gen-$*.c
 
 gdk.c : gdk.defs  gdk.objverride gdk-types.defs 
 gtk.c : gtk.defs  gtk.objverride gtk-types.defs gtk-extrafuncs.defs
 gtk24.c : gtk24.defs  gtk24.objverride gtk24-types.defs gtk-extrafuncs.defs
+gtk22.c : gtk22.defs  gtk22.objverride gtk22-types.defs gtk-extrafuncs.defs
 gtkgl.c : gtkgl.defs  gtkgl.objverride 
 libglade.c : libglade.defs  libglade.objverride 
 atk.c : atk.defs  atk.objverride atk-types.defs 
