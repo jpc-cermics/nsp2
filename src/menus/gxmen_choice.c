@@ -22,7 +22,7 @@
 #include "nsp/menus.h"
 #include "nsp/gtksci.h"
 
-#if GTK_MAJOR_VERSION==2 &&  GTK_MINOR_VERSION>=4
+#if GTK_MAJOR_VERSION==2 &&  GTK_MINOR_VERSION>=6
 #define OPEN26
 #endif 
 
