@@ -38,6 +38,9 @@ int nsp_type_smatrix_id=0;
 NspTypeSMatrix *nsp_type_smatrix=NULL;
 int nsp_type_smatrix_init();
 
+static NspMethods *smatrix_get_methods(void);
+
+
 NspTypeSMatrix *new_type_smatrix(type_mode mode)
 {
   NspTypeMatint *mati;/* interface */
@@ -55,7 +58,7 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
   type->attrs = NULL; /* smatrix_attrs ; */
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods = NULL ; /* smatrix_get_methods; */
+  type->methods =  smatrix_get_methods; 
   type->new = (new_func *) new_smatrix;
 
   top = NSP_TYPE_OBJECT(type->surtype);
@@ -597,4 +600,38 @@ int is_string_in_struct(const char *key,void **Table,unsigned int size, int flag
   return index;
 }
 
+
+
+/* 
+ * concat down 
+ */
+
+static int int_smatrix_concat_down(NspSMatrix *self,Stack stack,int rhs,int opt,int lhs) 
+{
+  NspSMatrix *A=self,*B;
+  int j,m=A->m;
+  CheckRhs (1,1);
+  CheckLhs (0,0);
+  if ((B = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ( A->n != B->n ) 
+    {
+      Scierror("Error: [.;.] incompatible dimensions\n");
+      return RET_BUG;
+    }
+  if ( nsp_smatrix_resize(A,A->m+B->m,A->n) == FAIL) return RET_BUG;
+  for ( j = 0 ; j < A->n ; j++ ) 
+    {
+      if ( Scopy(B->m,B->S+j*B->m,A->S+j*(A->m)+m) == FAIL)
+	return RET_BUG;
+    }
+  return 0;
+}
+
+static NspMethods smatrix_methods[] = {
+  {"down",(nsp_method *) int_smatrix_concat_down},
+  { NULL, NULL}
+};
+
+
+NspMethods *smatrix_get_methods(void) { return smatrix_methods;};
 

@@ -116,10 +116,16 @@ NspSMatrix*nsp_smatrix_create_with_length(nsp_const_string name, int m, int n, i
       return(NULLSMAT);
     }
   if ( strl >= 0) 
-    for ( i = 0 ; i < Loc->mn ; i++ ) 
-      {
-	if ((Loc->S[i] =new_nsp_string_n(strl)) == (nsp_string) 0 )  return(NULLSMAT);
-      }
+    {
+      for ( i = 0 ; i < Loc->mn ; i++ ) 
+	{
+	  if ((Loc->S[i] =new_nsp_string_n(strl)) == (nsp_string) 0 )  return(NULLSMAT);
+	}
+    }
+  else
+    {
+      for ( i = 0 ; i < Loc->mn ; i++ ) Loc->S[i] = (nsp_string) 0;
+    }
   /* Last element set to Null pointer **/
   Loc->S[Loc->mn]=(nsp_string) 0;
   return(Loc);
@@ -541,7 +547,7 @@ NspSMatrix*nsp_smatrix_concat_down(const NspSMatrix *A,const NspSMatrix *B)
       Scierror("Error: [.;.] incompatible dimensions\n");
       return(NULLSMAT);
     }
-  if ((Loc =nsp_smatrix_create(NVOID,A->m+B->m,A->n,"v",(int) 0)) == NULLSMAT) 
+  if ((Loc = nsp_smatrix_create_with_length(NVOID,A->m+B->m,A->n,-1)) == NULLSMAT) 
     return(NULLSMAT);
   for ( j = 0 ; j < A->n ; j++ ) 
     {
