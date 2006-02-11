@@ -603,7 +603,10 @@ int is_string_in_struct(const char *key,void **Table,unsigned int size, int flag
 
 
 /* 
- * concat down 
+ * concat down: just a test 
+ * should add a flag to nsp_smatrix_resize 
+ * to decide if new strings are to be allocated or not
+ * here they should not since Scopy will do the job
  */
 
 static int int_smatrix_concat_down(NspSMatrix *self,Stack stack,int rhs,int opt,int lhs) 
@@ -616,6 +619,11 @@ static int int_smatrix_concat_down(NspSMatrix *self,Stack stack,int rhs,int opt,
   if ( A->n != B->n ) 
     {
       Scierror("Error: [.;.] incompatible dimensions\n");
+      return RET_BUG;
+    }
+  if ( A->m != 1 ) 
+    {
+      Scierror("Error: down only works for column vectors\n");
       return RET_BUG;
     }
   if ( nsp_smatrix_resize(A,A->m+B->m,A->n) == FAIL) return RET_BUG;
