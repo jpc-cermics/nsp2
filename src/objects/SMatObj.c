@@ -621,7 +621,7 @@ static int int_smatrix_concat_down(NspSMatrix *self,Stack stack,int rhs,int opt,
       Scierror("Error: [.;.] incompatible dimensions\n");
       return RET_BUG;
     }
-  if ( A->m != 1 ) 
+  if ( A->n != 1 ) 
     {
       Scierror("Error: down only works for column vectors\n");
       return RET_BUG;
