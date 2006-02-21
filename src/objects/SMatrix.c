@@ -560,6 +560,100 @@ NspSMatrix*nsp_smatrix_concat_down(const NspSMatrix *A,const NspSMatrix *B)
 }
 
 /*
+ * Down Concatenation 
+ * A = [A;B] 
+ * return NULLSMAT on failure ( incompatible size or No more space )
+ * A and B are left unchanged 
+ */
+
+static int Smove(int n, nsp_string *s1, nsp_string *s2);
+static int Scopy1(int n, nsp_string *s1, nsp_string *s2);
+
+/* take care that A != B 
+ * if flag is true, then strings from matrix B can be used 
+ * without copy and B matrix is destroyed.
+ */
+
+int nsp_smatrix_concat_down1(NspSMatrix *A,NspSMatrix *B,int flag)
+{
+  int j,m=A->m,n= A->n;
+  if ( A->n != B->n && A->mn != 0 ) 
+    {
+      Scierror("Error: [.;.] incompatible dimensions\n");
+      return FAIL;
+    }
+  if ( A == B )
+    {
+      Scierror("Error: first and second arguments points to the same matrix\n");
+      return FAIL;
+    }
+  if ( A->mn == 0)
+    {
+      A->S = (nsp_string *)  MALLOC ((B->mn+1)* sizeof(nsp_string));
+      A->n = B->n;
+      A->m = B->m;
+      A->mn = A->m*A->n;
+    }
+  else
+    {
+      A->S = (nsp_string *)  REALLOC (A->S, ((A->m+B->m)*A->n+1)* sizeof(nsp_string));
+      A->m += B->m;
+      A->mn = A->m*A->n;
+    }
+  if ( A->S == (nsp_string *) 0) 
+    {
+      Scierror("Error: allocation failure\n");
+      return FAIL;
+    }
+  for ( j = n -1 ; j >0  ; j-- ) 
+    {
+      if ( Smove(m,A->S+j*m,A->S+j*(A->m)) == FAIL) 
+	return FAIL;
+    }
+  if ( flag == TRUE )
+    {
+      for ( j = B->n -1 ; j >=0  ; j-- ) 
+	{
+	  if ( Smove(B->m,B->S+j*B->m,A->S+j*(A->m)+m) == FAIL)
+	    return FAIL;
+	}
+      for ( j = 0 ; j < B->mn  ; j++) B->S[j]= NULL;
+      nsp_smatrix_destroy(B);
+    }
+  else 
+    {
+      for ( j = B->n -1 ; j >=0  ; j-- ) 
+	{
+	  if ( Scopy1(B->m,B->S+j*B->m,A->S+j*(A->m)+m) == FAIL)
+	    return FAIL;
+	}
+    }
+  A->S[A->mn]=(nsp_string) 0;
+  return OK;
+}
+
+static int Smove(int n, nsp_string *s1, nsp_string *s2)
+{
+  int i;
+  for ( i = n-1 ; i >= 0 ; i--) 
+    {
+      s2[i]=s1[i];
+    }
+  return(OK);
+}
+
+static int Scopy1(int n, nsp_string *s1, nsp_string *s2)
+{
+  int i;
+  for ( i = n-1 ; i >= 0 ; i--) 
+    {
+      if ((s2[ i] =nsp_string_copy(s1[i])) == (nsp_string) 0)  return(FAIL);
+    }
+  return(OK);
+}
+
+
+/*
  * Diag Concatenation
  * Res = [A,0;0,B]
  * return NULLBMAT on failure ( No more space )

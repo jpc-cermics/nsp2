@@ -609,34 +609,44 @@ int is_string_in_struct(const char *key,void **Table,unsigned int size, int flag
  * here they should not since Scopy will do the job
  */
 
+extern int nsp_smatrix_concat_down1(NspSMatrix *A,NspSMatrix *B,int flag);
+
 static int int_smatrix_concat_down(NspSMatrix *self,Stack stack,int rhs,int opt,int lhs) 
 {
+  int flag = FALSE;
   NspSMatrix *A=self,*B;
-  int j,m=A->m;
   CheckRhs (1,1);
   CheckLhs (0,0);
   if ((B = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ( A->n != B->n ) 
+  if ( A->n != B->n && A->mn != 0 ) 
     {
       Scierror("Error: [.;.] incompatible dimensions\n");
       return RET_BUG;
     }
-  if ( A->n != 1 ) 
+  if ( B->mn == 0 ) 
     {
-      Scierror("Error: down only works for column vectors\n");
-      return RET_BUG;
+      NSP_OBJECT(A)->ret_pos =1;
+      return 1;
     }
-  if ( nsp_smatrix_resize(A,A->m+B->m,A->n) == FAIL) return RET_BUG;
-  for ( j = 0 ; j < A->n ; j++ ) 
+  if ( A == B ) 
     {
-      if ( Scopy(B->m,B->S+j*B->m,A->S+j*(A->m)+m) == FAIL)
-	return RET_BUG;
+      if ((B = GetSMatCopy(stack,1)) == NULLSMAT) return RET_BUG;
     }
-  return 0;
+  if (strcmp(nsp_object_get_name(NSP_OBJECT(B)),NVOID) == 0) 
+    {
+      flag = TRUE;
+      NthObj(1)= NULLOBJ; /* B will be used and destroyed in nsp_smatrix_concat_down1 */
+    }
+  if ( nsp_smatrix_concat_down1(A,B,flag)== FAIL) return RET_BUG;
+  /* if B was destroyed by nsp_smatrix_concat_down1 we must remove it from the 
+   * calling stack 
+   */
+  MoveObj(stack,1,NSP_OBJECT(A));
+  return 1;
 }
 
 static NspMethods smatrix_methods[] = {
-  {"down",(nsp_method *) int_smatrix_concat_down},
+  {"concatd",(nsp_method *) int_smatrix_concat_down},
   { NULL, NULL}
 };
 

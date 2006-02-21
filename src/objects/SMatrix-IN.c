@@ -166,26 +166,42 @@ typedef NspSMatrix * (*FSconcat) (const NspSMatrix *,const NspSMatrix *);
 
 int int_smx_concat(Stack stack, int rhs, int opt, int lhs, FSconcat F)
 {
-  NspSMatrix *HMat1,*HMat2;
+  NspSMatrix *A,*B,*C;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((HMat1 = GetSMat(stack,1))  == NULLSMAT) return RET_BUG;
-  if ( HMat1->mn == 0)
+  if ((A = GetSMat(stack,1))  == NULLSMAT) return RET_BUG;
+  if ( A->mn == 0)
     {
       NSP_OBJECT(NthObj(2))->ret_pos = 1;
       return 1;
     }
-  if ((HMat2 = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-  if ( HMat2->mn == 0)
+  if ((B = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
+  if ( B->mn == 0)
     {
-      NSP_OBJECT(HMat1)->ret_pos = 1;
+      NSP_OBJECT(A)->ret_pos = 1;
       return 1;
+    }
+  if (strcmp(nsp_object_get_name(NSP_OBJECT(A)),NVOID) == 0)
+    {
+      /* we can use A directly */
+      int flag=FALSE;
+      if ( A == B ) 
+	{
+	  if ((B = GetSMatCopy(stack,1)) == NULLSMAT) return RET_BUG;
+	}
+      if (strcmp(nsp_object_get_name(NSP_OBJECT(B)),NVOID) == 0) 
+	{
+	  /* B can be used in nsp_smatrix_concat_down1 and be destroyed */
+	  flag = TRUE;
+	  NthObj(2)= NULLOBJ;
+	}
+      if ( nsp_smatrix_concat_down1(A,B,flag)== FAIL) return RET_BUG;
+      NSP_OBJECT(A)->ret_pos =1;
     }
   else
     {
-      NspSMatrix *HMat3;
-      if (( HMat3 = (*F)(HMat1,HMat2)) == NULLSMAT)  return RET_BUG;
-      MoveObj(stack,1,(NspObject *) HMat3);
+      if (( C = (*F)(A,B)) == NULLSMAT)  return RET_BUG;
+      MoveObj(stack,1,NSP_OBJECT(C));
     }
   return 1;
 }
