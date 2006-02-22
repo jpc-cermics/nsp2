@@ -16,7 +16,9 @@ TESTS= \
 	addinter.dia \
 	dsearch.dia \
 	qr.dia \
-	function.dia
+	function.dia \
+	smat_concat_down.dia \
+	smat_concat_right.dia
 
 AFINIR= \
 	matelm-nsp.dia \

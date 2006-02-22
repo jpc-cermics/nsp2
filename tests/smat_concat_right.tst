@@ -1,0 +1,44 @@
+// -*- Mode: scilab -*- 
+N=500;
+timer();
+Code="";
+for i=1:N
+  Code = [Code,'pipo','pipo','pipo','pipo',...
+	  'pipo','pipo', 'pipo', 'pipo', 'pipo'];
+end
+t1=timer();
+
+if size(Code)<>[1,9*N+1] then pause,end
+if ~and(find(Code=='pipo')==(2:(9*N+1))) then pause,end
+
+timer();
+Code="";
+for i=1:N
+  Code1 = ['pipo','pipo','pipo','pipo',...
+	   'pipo','pipo', 'pipo', 'pipo', 'pipo'];
+  Code=[Code, Code1];
+end
+t2=timer();
+timer();
+
+if size(Code)<>[1,9*N+1] then pause,end
+if ~and(find(Code=='pipo')==(2:(9*N+1))) then pause,end
+
+Code="";
+for i=1:N
+  Code1 = ['pipo','pipo','pipo','pipo',...
+	   'pipo','pipo', 'pipo', 'pipo', 'pipo'];
+  Code(:,$+1:$+9)=Code1;
+end
+
+t3=timer();
+	
+T=[t1,t2,t3];
+
+if size(Code)<>[1,9*N+1] then pause,end
+if ~and(find(Code=='pipo')==(2:(9*N+1))) then pause,end
+
+
+
+
+	
