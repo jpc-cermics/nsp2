@@ -1,7 +1,7 @@
-/* 
- *----------------------------------------------------------------------
- * Nsp interface for a subset of tcl commands 
- *----------------------------------------------------------------------
+/* Nsp
+ * Copyright (C) 2006 Jean-Philippe Chancelier Enpc/Cermics
+ * Nsp interface for a subset of tcl system commands 
+ *
  */
 
 #include "tclInt.h"
@@ -860,7 +860,6 @@ int int_pwd(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-
 /*
  *----------------------------------------------------------------------
  *
@@ -980,15 +979,18 @@ int int_regexp(Stack stack,int rhs,int opt,int lhs)
  */
 
 
+static int do_one_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resultDString,
+			 int *nmatch,int all);
+
 int int_regsub(Stack stack,int rhs,int opt,int lhs) 
 {
-  NspSMatrix *S;
+  int nmatch,i,code=RET_BUG;
+  NspSMatrix *S,*Res=NULLSMAT;
+  NspMatrix *M=NULLMAT;
   int noCase = FALSE, all = TRUE;
-  int result, match, code, numMatches,i;
+  char *pattern, *subSpec, *p;
+
   Tcl_RegExp regExpr;
-  char *string,*stringI, *pattern, *subSpec, *p, *firstChar;
-  char *start, *end, *subStart, *subEnd;
-  register char *src, c;
   Tcl_DString  resultDString;
   CheckRhs(3,5);
   CheckLhs(1,2);
@@ -997,14 +999,14 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
     { "all",s_bool,NULLOBJ,-1},
     { "nocase",s_bool,NULLOBJ,-1},
     { NULL,t_end,NULLOBJ,-1}
-  };
+  }; 
   CheckStdRhs(3,3);
   CheckLhs(1,2);
 
   if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if ((pattern = GetString(stack,2)) == (char*)0) return RET_BUG;
   if ((subSpec  = GetString(stack,3)) == (char*)0) return RET_BUG;
-  if ( get_optional_args(stack,rhs,opt,opts,&noCase,&all) == FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&all,&noCase) == FAIL) return RET_BUG;
 
   /*
    * Convert the string and pattern to lower case, if desired, and
@@ -1013,12 +1015,12 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
 
   if ( noCase == TRUE)
     {
-      if ((S = nsp_smatrix_copy(S)) == NULLSMAT) return  RET_BUG;
-      if ((pattern =nsp_string_copy(pattern)) == NULLSTRING)  return  RET_BUG;
-      /*
-       * Convert the string and pattern to lower case, if desired, and
-       * perform the matching operation.
+      /* Copy S and pattern: 
+       * Convert the strings and pattern to lower case before 
+       * performing the matching operation.
        */
+      if ((S = nsp_smatrix_copy(S)) == NULLSMAT) goto done;
+      if ((pattern =nsp_string_copy(pattern)) == NULLSTRING) goto done;
       for (p = pattern; *p != 0; p++) {
 	if (isupper(UCHAR(*p))) {
 	  *p = (char)tolower(UCHAR(*p));
@@ -1031,23 +1033,58 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
 	  }
 	}
     }
+  /* prepare regexp */
+  if (( regExpr = Tcl_RegExpCompile( pattern)) == NULL) goto done;
 
-  if ( S->mn != 1 ) 
+  if (( Res =nsp_smatrix_create_with_length(NVOID,S->m,S->n,-1)) == NULLSMAT )
+    goto done;
+  if ( lhs == 2) 
     {
-      Scierror("A finir pour S->mn != 1 \n");
-      return RET_BUG;
+      if (( M =nsp_matrix_create(NVOID,'r',S->m,S->n)) == NULLMAT )
+	goto done;
     }
-  else 
+  
+  for ( i = 0 ; i < S->mn ; i++) 
     {
-      string = stringI= S->S[0];
+      if ((do_one_regsub(S->S[i],regExpr,subSpec,&resultDString,&nmatch,all))==FAIL)
+	goto done;
+      if (( Res->S[i] = nsp_string_copy(Tcl_DStringValue(&resultDString))) == (nsp_string) 0)
+	{
+	  Tcl_DStringFree(&resultDString);	  
+	  goto done;
+	}
+      if ( lhs == 2) M->R[i] = (double) nmatch;
     }
 
-  Tcl_DStringInit(&resultDString);
-  if (( regExpr = Tcl_RegExpCompile( pattern)) == NULL) 
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  if ( lhs == 2 )   MoveObj(stack,2,NSP_OBJECT(M));
+  code = Max(lhs,1);
+ done:
+  if ( noCase == TRUE)
     {
-      code = RET_BUG;
-      goto done;
+      /* copies were done we have to free */
+      nsp_smatrix_destroy(S);
+      nsp_string_destroy(&pattern);
     }
+  return code;
+}
+
+/*
+ * performs a regexp subsitution on string @str
+ * Question: l'expression réguliere n'est pas libérée (free) ? 
+ */
+
+static int do_one_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resultDString,
+			 int *nmatch,int all)
+{
+  int match, code=FAIL, numMatches;
+  char *string,*stringI, *p, *firstChar;
+  char *start, *end, *subStart, *subEnd;
+  register char *src, c;
+
+  string = stringI= str;
+  
+  Tcl_DStringInit(resultDString);
   
   /*
    * The following loop is to handle multiple matches within the
@@ -1060,7 +1097,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
   for (p = string; *p != 0; ) {
     match = Tcl_RegExpExec( regExpr, p, string);
     if (match < 0) {
-      code = RET_BUG;
+      code = FAIL;
       goto done;
     }
     if (!match) {
@@ -1074,7 +1111,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
      */
     
     Tcl_RegExpRange(regExpr, 0, &start, &end);
-    Tcl_DStringAppend(&resultDString,stringI +( p -string) , start - p);
+    Tcl_DStringAppend(resultDString,stringI +( p -string) , start - p);
     
     /*
      * Append the subSpec argument to the variable, making appropriate
@@ -1095,7 +1132,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
 	} else if ((c == '\\') || (c == '&')) {
 	  *src = c;
 	  src[1] = 0;
-	  Tcl_DStringAppend(&resultDString, firstChar, -1);
+	  Tcl_DStringAppend(resultDString, firstChar, -1);
 	  *src = '\\';
 	  src[1] = c;
 	  firstChar = src+2;
@@ -1110,7 +1147,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
       if (firstChar != src) {
 	c = *src;
 	*src = 0;
-	Tcl_DStringAppend(&resultDString, firstChar, -1);
+	Tcl_DStringAppend(resultDString, firstChar, -1);
 	*src = c;
       }
       Tcl_RegExpRange(regExpr, index, &subStart, &subEnd);
@@ -1121,7 +1158,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
 	last =  stringI + (subEnd - string);
 	saved = *last;
 	*last = 0;
-	Tcl_DStringAppend(&resultDString, first, -1);
+	Tcl_DStringAppend(resultDString, first, -1);
 	*last = saved;
       }
       if (*src == '\\') {
@@ -1130,7 +1167,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
       firstChar = src+1;
     }
     if (firstChar != src) {
-      Tcl_DStringAppend(&resultDString, firstChar, -1);
+      Tcl_DStringAppend(resultDString, firstChar, -1);
     }
     if (end == p) {
 
@@ -1139,7 +1176,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
        * in order to prevent infinite loops.
        */
 
-      Tcl_DStringAppend(&resultDString, stringI + (p - string), 1);
+      Tcl_DStringAppend(resultDString, stringI + (p - string), 1);
       p = end + 1;
     } else {
       p = end;
@@ -1155,27 +1192,17 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
    */
 
   if ((*p != 0) || (numMatches == 0)) {
-    Tcl_DStringAppend(&resultDString, stringI + (p - string), -1);
+    Tcl_DStringAppend(resultDString, stringI + (p - string), -1);
   }
-
-  result = Tcl_SetStringObj(stack,1, Tcl_DStringValue(&resultDString),
-			    resultDString.length); 
-  code = result;
   
-  if ( lhs == 2) 
-    {
-      if ( Tcl_SetDoubleObj(stack,2, (double) numMatches) == RET_BUG )
-	{
-	  code = RET_BUG;
-	  goto done;
-	}
-      else 
-	{
-	  code = 2;
-	}
-    }
+  /* 
+   *
+   */
+  *nmatch =  numMatches;
+  code = OK ;
+  return code ;
  done:
-  Tcl_DStringFree(&resultDString);
+  Tcl_DStringFree(resultDString);
   return code;
 }
 

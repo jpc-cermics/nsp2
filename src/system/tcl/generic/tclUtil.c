@@ -215,48 +215,50 @@ Tcl_AppendResult TCL_VARARGS_DEF(char *,arg1)
  *	hold information for string, if such information isn't already
  *	present in the cache.
  *
+ * string: String for which to produce
+ * a compiled regular expression. 
+ *
+ * FIXME: add a routine which frees the cache when quitting nsp 
+ *
  *----------------------------------------------------------------------
  */
 
+#define NUM_REGEXPS 10
+
+typedef struct _regexp_cache regexp_cache; 
+
+struct _regexp_cache {
+  unsigned int patLength;
+  char *pattern;
+  Tcl_RegExp regexp;
+};
+
+static regexp_cache Regexp_cache[NUM_REGEXPS]={{0,NULL,NULL}};
+
 Tcl_RegExp
 Tcl_RegExpCompile(char * string)
-     /* char *string;			 String for which to produce
-      *                                  compiled regular expression. 
-      */
 {
-  int length;
+  int i;
+  int length = strlen(string);
   regexp *result;
-
-  length = strlen(string);
-
-  /*** Remettre un cache en place FIXME 
-       for (i = 0; i < NUM_REGEXPS; i++) {
-       if ((length == iPtr->patLengths[i])
-       && (strcmp(string, iPtr->patterns[i]) == 0)) {
-       / *
-       * Move the matched pattern to the first slot in the
-       * cache and shift the other patterns down one position.
-       * /
-
-       if (i != 0) {
-       int j;
-       char *cachedString;
-	
-       Cachedstring = iPtr->patterns[i];
-       result = iPtr->regexps[i];
-       for (j = i-1; j >= 0; j--) {
-       iPtr->patterns[j+1] = iPtr->patterns[j];
-       iPtr->patLengths[j+1] = iPtr->patLengths[j];
-       iPtr->regexps[j+1] = iPtr->regexps[j];
-       }
-       iPtr->patterns[0] = cachedString;
-       iPtr->patLengths[0] = length;
-       iPtr->regexps[0] = result;
-       }
-       return (Tcl_RegExp) iPtr->regexps[0];
-       }
-       }
-  ***/
+  for (i = 0; i < NUM_REGEXPS; i++) 
+    {
+      regexp_cache R = Regexp_cache[i];
+      if ( (length == R.patLength)
+	   && (strcmp(string, R.pattern) == 0))
+	{
+	  /*
+	   * Move the matched pattern to the first slot in the
+	   * cache and shift the other patterns down one position.
+	   */
+	  if (i != 0) {
+	    int j;
+	    for (j = i-1; j >= 0; j--) Regexp_cache[j+1] = Regexp_cache[j];
+	    Regexp_cache[0] = R;
+	  }
+	  return (Tcl_RegExp) Regexp_cache[0].regexp;
+	}
+    }
   /*
    * No match in the cache.  Compile the string and add it to the
    * cache.
@@ -265,30 +267,23 @@ Tcl_RegExpCompile(char * string)
   TclRegError((char *) NULL);
   result = TclRegComp(string);
   if (TclGetRegError() != NULL) {
-    Tcl_AppendResult(
-		     "couldn't compile regular expression pattern: ",
+    Tcl_AppendResult("couldn't compile regular expression pattern: ",
 		     TclGetRegError(), (char *) NULL);
     return NULL;
   }
 
-  /** Idem XXXX
-      if (iPtr->patterns[NUM_REGEXPS-1] != NULL) {
-      ckfree(iPtr->patterns[NUM_REGEXPS-1]);
-      ckfree((char *) iPtr->regexps[NUM_REGEXPS-1]);
-      }
-      for (i = NUM_REGEXPS - 2; i >= 0; i--) {
-      iPtr->patterns[i+1] = iPtr->patterns[i];
-      iPtr->patLengths[i+1] = iPtr->patLengths[i];
-      iPtr->regexps[i+1] = iPtr->regexps[i];
-      }
-      iPtr->patterns[0] = (char *) ckalloc((unsigned) (length+1));
-      strcpy(iPtr->patterns[0], string);
-      iPtr->patLengths[0] = length;
-      iPtr->regexps[0] = result;
-  **/ 
+  if (Regexp_cache[NUM_REGEXPS-1].pattern != NULL) 
+    {
+      ckfree(Regexp_cache[NUM_REGEXPS-1].pattern);
+      ckfree((char *) Regexp_cache[NUM_REGEXPS-1].regexp);
+    }
+  for (i = NUM_REGEXPS - 2; i >= 0; i--) Regexp_cache[i+1] = Regexp_cache[i];
+  Regexp_cache[0].pattern = (char *) ckalloc((unsigned) (length+1));
+  strcpy(Regexp_cache[0].pattern, string);
+  Regexp_cache[0].patLength= length;
+  Regexp_cache[0].regexp =(Tcl_RegExp) result;
   return (Tcl_RegExp) result;
 }
-
 
 /*
  *----------------------------------------------------------------------
