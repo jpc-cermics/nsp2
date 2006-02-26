@@ -8,20 +8,25 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-B=string(A)
-B=m2s(A [, format])
+S=string(Obj)
+S=m2s(A [, format])
 \end{verbatim}
 \end{calling_sequence}
 
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A,B} : two string matrices
+    \vname{S} : a string matrix
     \vname{format} : a string 
+    \vname{Obj} : an object 
+    \vname{A} : a numerical matrix
   \end{varlist}
 \end{parameters}
-
 \begin{mandescription}
+\verb+m2s+ is a conversion function from numerical matrices to string. 
+It uses a default format for conversion which is similar to the default 
+format used for displaying \verb+A+.
+\verb+string+ emulates the Scilab \verb+string+ function.
 \end{mandescription}
 % -- see also
 

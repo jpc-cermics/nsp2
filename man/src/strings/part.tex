@@ -2,27 +2,30 @@
 
 \mansection{part}
 \begin{mandesc}
-  \short{part}{substring extraction}
+  \short{part}{substring extraction from indices}
 \end{mandesc}
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
- B=part(A,v)  
+ S2=part(S1,Ind)  
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A,B} : string matrices
-    \vname{v} : integer vector.
+    \vname{S1,S2} : string matrices.
+    \vname{Ind} : a numerical matrix used as int vector (\verb+int(Ind(:))+).
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  Let \verb!s[k]! stands for the string made of the \verb!k!-th 
-  character of string \verb!s! (if \verb!k! $>$ \verb+length(s)+) then 
-  \verb+s[k]+ is a string made of a white space character). 
-  \verb!part! returns a string matrix, say \verb+B+, such that 
-  \verb!B(i,j)= s[v(1)]+...+s[v(n)]!
+  \verb!S2=part(S1,Ind)! returns a string matrix of same size as \verb+S1+. 
+  The entry \verb!S2(i,j)! is built from the entry \verb!S1(i,j)! as follows~:
+\begin{verbatim}
+  S2(i,j) = S1(i,j)[Ind(1)] + ... + S1(i,j)[Ind(size(Ind,'*'))] 
+\end{verbatim}
+  where \verb!s[k]! stands for the one-character string made of the \verb!k!-th 
+  character of \verb!s! or mode of a white space character if \verb!k! is outside the range 
+  of string \verb+s+.
 \end{mandescription}
 % --example 
 \begin{examples}

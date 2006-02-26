@@ -15,12 +15,23 @@ B=split(str [, msep=bool , sep= string])
 \begin{parameters}
   \begin{varlist}
     \vname{str} : a string.
-    \vname{B} : a string matrix.
+    \vname{B} : a string row vector.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-\ldots 
+splits the given string using string as a set of one char separator 
+(default value is \verb+' \t\n'+). If \verb+msep=%t+ then consecutive char
+separator are accepted as one valid separator. 
 \end{mandescription}
+
+\begin{examples}
+  \begin{program}
+    split('la terre est bleue');
+    split('la terre est   bleue',msep=%t);
+    split('la terre,est; bleue',msep=%t,sep=',; ');
+  \end{program}
+\end{examples}
+
 % -- see also
 

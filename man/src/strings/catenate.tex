@@ -20,14 +20,15 @@ B=concat(A,[row='sep',col='sep',sep='sep'])
 \end{parameters}
 
 \begin{mandescription} 
-  if \verb+col+ or \verb+row+ are omited then \verb+catenate+
-  returns a string with the concatenation of all the 
-  elements of \verb+A+. and if \verb+sep+ is given, its value 
-  is used as a separator in concatenation. 
+  if \verb+col+ or \verb+row+ are omitted then \verb+catenate+
+  returns a string built from the concatenation of all the 
+  elements of \verb+A+. \\
+  if \verb+sep+ is given, its value 
+  is used as a separator in concatenation. \\
   When \verb+col+ or \verb+row+  are given, the value of \verb+sep+
   is ignored. A column (resp. row) concatenation is 
   performed if \verb+col+ (resp. \verb+row+) is given using the optional
-  argument value as separatot. If both \verb+col+ and \verb+row+ 
+  argument value as separator. If both \verb+col+ and \verb+row+ 
   are given a column and row concatenation is performed. 
 \end{mandescription}
   

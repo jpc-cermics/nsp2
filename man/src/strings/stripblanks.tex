@@ -2,7 +2,7 @@
 
 \mansection{stripblanks}
 \begin{mandesc}
-  \short{stripblanks}{...}
+  \short{stripblanks}{removes leading and trailing white-space characters}
 \end{mandesc}
 % -- Calling sequence section
 \begin{calling_sequence}
@@ -19,7 +19,8 @@ B=stripblanks(A)
 \end{parameters}
 
 \begin{mandescription}
-\ldots 
+removes leading and trailing white-space characters, i.e characters for which 
+\verb+isspace+ returns \verb+%t+.
 \end{mandescription}
 % -- see also
 

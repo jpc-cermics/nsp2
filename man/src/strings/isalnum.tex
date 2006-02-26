@@ -2,17 +2,17 @@
 
 \mansection{isalnum}
 \begin{mandesc}
-\short{isalnum}{...}\\
-\short{isalpha}{...}\\
-\short{isascii}{...}\\
-\short{isdigit}{...}\\
-\short{isgraph}{...}\\
-\short{islower}{...}\\
-\short{isprint}{...}\\
-\short{ispunct}{...}\\
-\short{isspace}{...}\\
-\short{isupper}{...}\\
-\short{isxdigit}{...}
+\short{isalnum}{checks for an alphanumeric character}\\
+\short{isalpha}{checks for an alphabetic character}\\
+\short{isascii}{checks for 7-bit unsigned char value that fits into the ASCII character set}\\
+\short{isdigit}{checks for a digit (0 through 9)}\\
+\short{isgraph}{checks for any printable character except space}\\
+\short{islower}{checks for a lower-case character}\\
+\short{isprint}{checks for any printable character including space}\\
+\short{ispunct}{checks for any printable character which is not a space or an alphanumeric character}\\
+\short{isspace}{checks for white-space characters}\\
+\short{isupper}{checks for an uppercase letter}\\
+\short{isxdigit}{checks for a hexadecimal digits}
 \end{mandesc}
 % -- Calling sequence section
 \begin{calling_sequence}
@@ -30,8 +30,10 @@ A=isxxx(str)
 \end{parameters}
 
 \begin{mandescription}
-returns in a boolean vector the result of the coresponding test 
+returns in a boolean row vector \verb+A+ the result of the coresponding test 
 for each character of string \verb+str+.
+Each test function checks whether each character of \verb+str+,
+falls into a  certain character class according to the current locale.
 \end{mandescription}
 % -- see also
 
