@@ -84,6 +84,7 @@ extern int Scopy (int n, nsp_string *s1, nsp_string *s2);
 extern int nsp_smatrix_add_columns(NspSMatrix *A, int n); 
 extern int Sset (int n, nsp_string s1, nsp_string *s2); 
 extern NspSMatrix *nsp_smatrix_concat_down(const NspSMatrix *A,const NspSMatrix *B); 
+extern int nsp_smatrix_concat_down1(NspSMatrix *A,NspSMatrix *B,int flag);
 extern int nsp_smatrix_add_rows(NspSMatrix *A, int m); 
 extern int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B); 
 extern int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B); 
