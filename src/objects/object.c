@@ -904,27 +904,42 @@ int int_object_info(Stack stack, int rhs, int opt, int lhs)
 
 int int_object_print(Stack stack, int rhs, int opt, int lhs)
 {
-  int rep=-1;
-  char *Table[] = {"as_read", NULL};
+  int dp=user_pref.pr_depth;
+  int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0;
+  char *name = NULL;
+  nsp_option opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
+		      { "depth", s_int,NULLOBJ,-1},
+		      { "indent",s_int,NULLOBJ,-1},
+		      { "latex",s_bool,NULLOBJ,-1},
+		      { "name",string,NULLOBJ,-1},
+		      { "table",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
   NspObject *object;
-  CheckRhs(1,2);
+  CheckStdRhs(1,1);
   CheckLhs(0,1);
   if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
-  if ( rhs == 2 ) 
-    {
-      if ((rep= GetStringInArray(stack,2,Table,1)) == -1) return RET_BUG;
-    }
-  if ( rep == 0 ) 
+  if ( get_optional_args(stack, rhs, opt, opts,&as_read,&depth,
+			 &indent,&latex,&name,&table) == FAIL) 
+    return RET_BUG;
+  user_pref.pr_depth= depth;
+  if ( as_read == TRUE ) 
     {
       int kp=user_pref.pr_as_read_syntax;
       user_pref.pr_as_read_syntax= 1;
-      object->type->pr(object,0,NULL,0);
+      if ( latex == TRUE ) 
+	{
+	  Sciprintf("Warning: you cannot select both as_read and latex, latex ignored\n");
+	}
+      object->type->pr(object,indent,name,0);
       user_pref.pr_as_read_syntax= kp;
+      user_pref.pr_depth= dp;
     }
   else 
     {
-      object->type->pr(object,0,NULL,0);
+      object->type->pr(object,indent,name,0);
     }
+  user_pref.pr_depth= dp;
   return 0;
 }
 
