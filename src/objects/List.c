@@ -873,6 +873,7 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
   Cell *C;
   int i=1;
   for ( j=0 ; j < indent ; j++) Sciprintf(" ");
+
   if (user_pref.pr_as_read_syntax)
     {
       int count=1;
@@ -901,35 +902,81 @@ void nsp_list_print(NspList *L, int indent,char *name, int rec_level)
   else
     {
       int colors[]={ 34,32,31,35,36};
-      Sciprintf("%s\t=\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
-      Sciprintf1(indent+1,"(\n");
-      C= L->first;
-      while ( C != NULLCELL) 
+
+      if ( rec_level <= user_pref.pr_depth ) 
 	{
-	  if ( rec_level >= 0 && rec_level <= 4) 
+	  /* recursively call print on elements */
+	  Sciprintf("%s\t=\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
+	  Sciprintf1(indent+1,"(\n");
+	  C= L->first;
+	  while ( C != NULLCELL) 
 	    {
-	      int col=colors[rec_level];
-	      sprintf(epname,"\033[%dm(%d)\033[0m",col,i);
+	      if ( rec_level >= 0 && rec_level <= 4) 
+		{
+		  int col=colors[rec_level];
+		  sprintf(epname,"\033[%dm(%d)\033[0m",col,i);
+		}
+	      else 
+		{
+		  sprintf(epname,"(%d)",i);
+		}
+	      if ( C->O != NULLOBJ )
+		{
+		  nsp_object_print(C->O,indent+2,epname,rec_level+1);      
+		}
+	      else
+		{
+		  Sciprintf(" %d Undefined\n",i);
+		}
+	      C = C->next ;i++;
+	      /* if ( C != NULLCELL ) Sciprintf("\n"); */
 	    }
-	  else 
-	    {
-	      sprintf(epname,"(%d)",i);
-	    }
-	  if ( C->O != NULLOBJ )
-	    {
-	      nsp_object_print(C->O,indent+2,epname,rec_level+1);      
-	    }
-	  else
-	    {
-	      Sciprintf(" %d Undefined\n",i);
-	    }
-	  C = C->next ;i++;
-	  if ( C != NULLCELL ) Sciprintf("\n");
+	  Sciprintf1(indent+1, ")\n");
 	}
-      Sciprintf1(indent+1, ")\n");
-    } 
+      else
+	{
+	  Sciprintf("%s\t= ...\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
+	}
+    }
 }
 
+
+/**
+ * nsp_list_latex_print:
+ * @L: a #NspList 
+ * 
+ * print the #NspList @L using the default Sciprintf() function and LaTeX 
+ * syntax. 
+ */
+
+void nsp_list_latex_print(NspList *L)
+{
+  Cell *C;
+  int i=1;
+  const char *pname = NSP_OBJECT(L)->name;
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  if (strcmp(pname,NVOID) != 0) Sciprintf("%s\n", pname);
+  Sciprintf1(1,"\\begin{itemize}\n");
+  C= L->first;
+  while ( C != NULLCELL) 
+    {
+      Sciprintf("\\item[(%d)]",i);
+      if ( C->O != NULLOBJ )
+	{
+	  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+	  nsp_object_print(C->O,2,NULL,1);    
+	  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+	}
+      else
+	{
+	  Sciprintf("Undefined\n");
+	}
+      C = C->next ;i++;
+      if ( C != NULLCELL ) Sciprintf("\n");
+    }
+  Sciprintf1(1, "\\end{itemize}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+}
 
 /**
  *nsp_cell_only_destroy:

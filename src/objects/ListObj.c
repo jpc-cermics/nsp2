@@ -1330,11 +1330,29 @@ static int int_lxneq(Stack stack, int rhs, int opt, int lhs)
   return 1;      
 }
 
+
+/*
+ */
+extern void nsp_list_latex_print(NspList *L);
+
+static int int_list_2latexmat(Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *HMat;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((HMat = GetList(stack,1)) == NULLLIST) return RET_BUG;
+  nsp_list_latex_print(HMat);
+  return 0;
+}
+
+
+
 /*
  * The Interface for basic lists operations 
  */
 
 static OpTab List_func[]={
+  {"latex",int_list_2latexmat},
   {"list",int_lxlist},
   {"tlist",int_lx_tlist_as_hash},
   {"mlist",int_lx_mlist_as_hash},
