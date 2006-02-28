@@ -853,7 +853,7 @@ int int_cells_deletecols(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
   if ((Cols = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ( nsp_cells_delete_columns( A, Cols) < 0) return RET_BUG;
+  if ( nsp_cells_delete_columns( A, Cols) == FAIL) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -874,7 +874,7 @@ int int_cells_deleterows(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
   if ((Rows = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ( nsp_cells_delete_rows( A, Rows) < 0) return RET_BUG;
+  if ( nsp_cells_delete_rows( A, Rows) == FAIL) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -893,7 +893,7 @@ int int_cells_deleteelts(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
   if ((Elts = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ( nsp_cells_delete_elements( A, Elts) < 0) return RET_BUG;
+  if ( nsp_cells_delete_elements( A, Elts) == FAIL) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
