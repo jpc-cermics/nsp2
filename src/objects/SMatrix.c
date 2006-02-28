@@ -313,19 +313,22 @@ void nsp_smatrix_destroy(NspSMatrix *A)
  *nsp_smatrix_info: display Info on Matrix Mat 
  */
 
-void nsp_smatrix_info(const NspSMatrix *Mat, int indent,char *name,int rec_level)
+void nsp_smatrix_info(const NspSMatrix *Mat, int indent, char *name, int rec_level)
 {
-  int i;
-  if ( Mat == NULLSMAT) 
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+
+  switch ( Mat->mn )
     {
-      Sciprintf("Null Pointer NspSMatrix \n");
-      return;
+    case 0: 
+      Sciprintf1(indent,"%s\t= []\t\ts (%dx%d)\n",pname,Mat->m,Mat->n);
+      break;
+    case 1 :
+      Sciprintf1(indent,"%s\t= [%s]\t\ts (%dx%d)\n",pname,Mat->S[0],Mat->m,Mat->n);
+      break;
+    default :
+      Sciprintf1(indent,"%s\t= [...]\t\ts (%dx%d)\n",pname,Mat->m,Mat->n);
+      break;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) == 0) 
-    Sciprintf("SMatrix (%dx%d) \n",Mat->m,Mat->n);
-  else
-    Sciprintf("SMatrix %s(%dx%d) \n",NSP_OBJECT(Mat)->name,Mat->m,Mat->n);
 }
 
 /*
@@ -334,24 +337,27 @@ void nsp_smatrix_info(const NspSMatrix *Mat, int indent,char *name,int rec_level
 
 void nsp_smatrix_print(const NspSMatrix *Mat, int indent,char *name, int rec_level)
 {
-  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
-  int i;
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
+  char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   if (user_pref.pr_as_read_syntax)
     {
       if ( strcmp(pname,NVOID) != 0) 
 	{
-	  Sciprintf("%s=%s",pname,(Mat->mn==0 ) ? " m2s([])\n" : "" );
+	  Sciprintf1(indent,"%s=%s",pname,(Mat->mn==0 ) ? " m2s([])\n" : "" );
 	}
       else 
 	{
-	  Sciprintf("%s",(Mat->mn==0 ) ? " m2s([])\n" : "" );
+	  Sciprintf1(indent,"%s",(Mat->mn==0 ) ? " m2s([])\n" : "" );
 	}
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\ts (%dx%d)\n",pname,
-		(Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
+	{
+	  nsp_smatrix_info(Mat,indent,pname,rec_level);
+	  return;
+	}
+      Sciprintf1(indent,"%s\t=%s\t\ts (%dx%d)\n",pname,
+		 (Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 
     {

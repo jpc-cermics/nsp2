@@ -530,7 +530,7 @@ static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,char
 
 void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
 {
-  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int slice=10000;
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
 
@@ -555,7 +555,7 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
     {
       if ( user_pref.pr_depth  <= rec_level -1 ) 
 	{
-	  nsp_matrix_info(Mat,indent,name,rec_level);
+	  nsp_matrix_info(Mat,indent,pname,rec_level);
 	  return;
 	}
       Sciprintf1(indent,"%s\t=%s\t\t%c (%dx%d)\n",pname,
