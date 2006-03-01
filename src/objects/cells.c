@@ -299,21 +299,27 @@ void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int i;
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {
       if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
 	{
-	  Sciprintf("%s=%s",NSP_OBJECT(Mat)->name,(Mat->mn==0 ) ? " {}\n" : "" );
+	  Sciprintf1(indent,"%s=%s",NSP_OBJECT(Mat)->name,(Mat->mn==0 ) ? " {}\n" : "" );
 	}
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\tcells (%dx%d)\n",pname,
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
+	{
+	  Sciprintf1(indent,"%s\t= {%s}\t\tcells (%dx%d)\n",pname,
+		     (Mat->mn==0 ) ? "" : "...",Mat->m,Mat->n);
+	  return;
+	}
+      Sciprintf1(indent,"%s\t=%s\t\tcells (%dx%d)\n",pname,
 		(Mat->mn==0 ) ? " {}" : "",Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 
     {
+      int colors[]={ 34,32,31,35,36};
       char epname[128];
       int j;
       for ( i=0 ; i < indent+1 ; i++) Sciprintf(" ");
@@ -324,7 +330,15 @@ void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 	    NspObject *object = Mat->objs[i+Mat->m*j];
 	    if ( object != NULL ) 
 	      {
-		sprintf(epname,"\033[34m(%d,%d)\033[0m",i+1,j+1);
+		if ( rec_level >= 0 && rec_level <= 4) 
+		  {
+		    int col=colors[rec_level];
+		    sprintf(epname,"\033[%dm(%d,%d)\033[0m",col,i+1,j+1);
+		  }
+		else 
+		  {
+		    sprintf(epname,"(%d,%d)",i+1,j+1);
+		  }
 		object->type->pr(object,indent+2,epname,rec_level+1);
 	      }
 	  }
