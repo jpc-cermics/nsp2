@@ -246,24 +246,17 @@ void function_destroy(NspFunction *H)
 
 void function_info(NspFunction *H, int indent,char *name,int rec_level)
 {
-  int i;
-  if ( H == NULLFUNC) 
+  const char *pname;
+  if (H == NULLFUNC) 
     {
-      Sciprintf("Null Pointer Function \n");
+      Sciprintf1(indent,"Null Pointer SciFile \n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  if (user_pref.pr_as_read_syntax)
-    {
-      if ( strcmp(NSP_OBJECT(H)->name,NVOID) != 0) 
-	{
-	  Sciprintf("%s= %s;",NSP_OBJECT(H)->name,H->fname);
-	}
-    }
-  else 
-    {
-      Sciprintf("%s\t=%s\t\t function\n",NSP_OBJECT(H)->name,H->fname);
-    }
+  pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
+  Sciprintf1(indent,"%s\t= %s\t\t%s\n",
+	     (pname==NULL) ? "" : pname,
+	     (H->fname==NULL) ? "" : H->fname,
+	     function_type_short_string());
 }
 
 /*
@@ -272,7 +265,23 @@ void function_info(NspFunction *H, int indent,char *name,int rec_level)
 
 void function_print(NspFunction *H, int indent,char *name, int rec_level)
 {
-  function_info(H,indent,NULL,0);
+  char *pname;
+  if ( H == NULLFUNC) 
+    {
+      Sciprintf1(indent,"Null Pointer Function \n");
+      return;
+    }
+  pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
+  if (user_pref.pr_as_read_syntax)
+    {
+      Sciprintf1(indent,"%s\t= %s;\n",
+		 (pname==NULL) ? "" : pname,
+		 (H->fname==NULL) ? "" : H->fname);
+    }
+  else 
+    {
+      function_info(H,indent,name,rec_level);
+    }
 }
 
 /*-----------------------------------------------------

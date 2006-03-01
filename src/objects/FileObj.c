@@ -215,18 +215,18 @@ void nsp_file_destroy(NspFile  *F)
 
 void nsp_file_info(NspFile  *F, int indent,char *name,int rec_level)
 {
-  int i;
+  const char *pname;
   if (F == NULLSCIFILE) 
     {
       Sciprintf("Null Pointer SciFile \n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  if ( strcmp(NSP_OBJECT(F)->name,NVOID) == 0) 
-    Sciprintf("SciFile fname=%s %s Flag=%d \n",F->fname,F->openf,F->flag);
-  else
-    Sciprintf("%s =\tSciFile fname=%s %s Flag=%d \n",NSP_OBJECT(F)->name,F->fname,F->openf,F->flag);
+  pname = (name != NULL) ? name : NSP_OBJECT(F)->name;
+  Sciprintf1(indent,"%s\t= \t\tSciFile (fname=\"%s\",%s,Flag=%d)\n",
+	     (pname==NULL) ? "" : pname,
+	     F->fname,F->openf,F->flag);
 }
+
 
 /*
  * print 
@@ -235,7 +235,7 @@ void nsp_file_info(NspFile  *F, int indent,char *name,int rec_level)
 
 void nsp_file_print(NspFile  *F, int indent,char *name, int rec_level)
 {
-  nsp_file_info(F,indent,NULL,0);
+  nsp_file_info(F,indent,name,rec_level);
 }
 
 /*-----------------------------------------------------

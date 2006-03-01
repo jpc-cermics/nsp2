@@ -271,17 +271,16 @@ void nsp_cells_destroy(NspCells *A)
 
 void nsp_cells_info(const NspCells *Mat, int indent,char *name,int rec_level)
 {
-  int i;
+  const char *pname;
   if ( Mat == NULLCELLS) 
     {
       Sciprintf("Null Pointer NspCells \n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) == 0) 
-    Sciprintf("Cells (%dx%d) \n",Mat->m,Mat->n);
-  else
-    Sciprintf("Cells %s(%dx%d) \n",NSP_OBJECT(Mat)->name,Mat->m,Mat->n);
+  pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  Sciprintf1(indent,"%s\t= {%s}\t\tcells (%dx%d)\n",
+	     (pname==NULL) ? "" : pname,
+	     (Mat->mn==0 ) ? "" : "...",Mat->m,Mat->n);
 }
 
 /**
