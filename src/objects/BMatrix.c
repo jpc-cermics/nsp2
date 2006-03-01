@@ -174,21 +174,23 @@ void nsp_bmatrix_destroy(NspBMatrix *BMat)
  * @indent is the given indentation for printing.
  */
 
-
-void nsp_bmatrix_info(NspBMatrix *BMat, int indent,char *name,int rec_level)
+void nsp_bmatrix_info(NspBMatrix *BMat, int indent,char *name, int rec_level)
 {
-  int i;
-  if ( BMat == NULLBMAT) 
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(BMat)->name;
+  if ( BMat->m >=1 &&  BMat->mn >= 2 ) 
     {
-      Sciprintf("Null Pointer BMatrix \n");
-      return;
+      Sciprintf1(indent,"%s\t= [...]\t\tb (%dx%d)\n",pname,BMat->m,BMat->n);
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  if ( strcmp(NSP_OBJECT(BMat)->name,NVOID) == 0) 
-    Sciprintf("BMatrix (%d,%d) type b\n",BMat->m,BMat->n);
   else
-    Sciprintf("BMatrix %s(%d,%d) type b\n",NSP_OBJECT(BMat)->name,BMat->m,BMat->n);
+    {
+      nsp_num_formats fmt;
+      nsp_init_pr_format (&fmt);
+      Sciprintf1(indent,"%s\t= [ %s]\t\tb (%dx%d)\n",pname,
+		 (BMat->mn != 0) ? ((BMat->B[0]==TRUE) ? "T " : "F " ) : "",
+		 BMat->m,BMat->n);
+    }
 }
+
 
 /**
  * nsp_bmatrix_print:
@@ -203,23 +205,27 @@ void nsp_bmatrix_info(NspBMatrix *BMat, int indent,char *name,int rec_level)
 
 void nsp_bmatrix_print(NspBMatrix *BMat, int indent,char *name, int rec_level)
 {
-  const char *pname = (name != NULL) ? name : NSP_OBJECT(BMat)->name;
-  int i;
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
+  char *pname = (name != NULL) ? name : NSP_OBJECT(BMat)->name;
+
   if (user_pref.pr_as_read_syntax)
     {
       if ( strcmp(pname,NVOID) != 0) 
 	{
-	  Sciprintf("%s=%s",pname,(BMat->mn==0 ) ? " m2b([])\n" : "" );
+	  Sciprintf1(indent,"%s=%s",pname,(BMat->mn==0 ) ? " m2b([])\n" : "" );
 	}
       else 
 	{
-	  Sciprintf("%s",(BMat->mn==0 ) ? " m2b([])\n" : "" );
+	  Sciprintf1(indent,"%s",(BMat->mn==0 ) ? " m2b([])\n" : "" );
 	}
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\t b (%dx%d)\n",pname,
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
+	{
+	  nsp_bmatrix_info(BMat,indent,pname,rec_level);
+	  return;
+	}
+      Sciprintf1(indent,"%s\t=%s\t\t b (%dx%d)\n",pname,
 		(BMat->mn==0 ) ? " []" : "",BMat->m,BMat->n);
     }
   if ( BMat->mn != 0) 
@@ -229,6 +235,7 @@ void nsp_bmatrix_print(NspBMatrix *BMat, int indent,char *name, int rec_level)
       nsp_bmatrix_print_internal (&fmt,BMat,indent);
     }
 }
+
 
 /**
  * nsp_bmatrix_latex_print:
