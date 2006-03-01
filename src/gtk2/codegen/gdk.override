@@ -2317,7 +2317,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
   ret = gdk_display_open(display_name);
   if ( ret == NULL) 
     {
-      if (( nsp_ret = (NspObject *) none_create(NVOID,NULL))== NULL) return RET_BUG; 
+      if (( nsp_ret = (NspObject *) nsp_none_create(NVOID,NULL))== NULL) return RET_BUG; 
     }
   else 
     {

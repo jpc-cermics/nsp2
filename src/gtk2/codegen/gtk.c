@@ -2055,8 +2055,8 @@ _wrap_gtk_tree_get_row_drag_data(NspObject *self,Stack stack,int rhs,int opt,int
     } 
   else 
     {
-      nsp_model= (NspObject *) none_create(NVOID,NULL);
-      nsp_path= (NspObject *) none_create(NVOID,NULL); 
+      nsp_model= (NspObject *) nsp_none_create(NVOID,NULL);
+      nsp_path= (NspObject *) nsp_none_create(NVOID,NULL); 
     }
   return RetArgs(stack,lhs,T,nsp_model,nsp_path);  
 }
@@ -16716,11 +16716,11 @@ _wrap_gtk_tree_selection_get_selected(NspGObject *self,Stack stack,int rhs,int o
     }
   else 
     {
-      if ((nsp_ret1 = (NspObject *)none_create(NVOID,NULL)) == NULL) 
+      if ((nsp_ret1 = (NspObject *)nsp_none_create(NVOID,NULL)) == NULL) 
 	return RET_BUG;
       if ( lhs == 2) 
 	{
-	  if ((nsp_ret2 = (NspObject *) none_create(NVOID,NULL)) == NULL) 
+	  if ((nsp_ret2 = (NspObject *) nsp_none_create(NVOID,NULL)) == NULL) 
 	    return RET_BUG; 
 	}
     }
@@ -29762,13 +29762,13 @@ _wrap_gtk_tree_view_get_cursor(NspGObject *self,Stack stack,int rhs,int opt,int 
   if (path != NULL) { 
     nsp_path = (NspObject *)nsp_gtk_tree_path_to_nspobject(path);
   } else {
-    nsp_path = (NspObject *)none_create(NVOID,NULL);
+    nsp_path = (NspObject *)nsp_none_create(NVOID,NULL);
   }
 
   if (column != NULL) {
     nsp_column =(NspObject *) nspgobject_new((GObject*)column);
   } else {
-    nsp_path =(NspObject *) none_create(NVOID,NULL);
+    nsp_path =(NspObject *) nsp_none_create(NVOID,NULL);
   }
   
   return RetArgs(stack,lhs,T,nsp_path,nsp_column);
@@ -29808,7 +29808,7 @@ _wrap_gtk_tree_view_get_path_at_pos(NspGObject *self,Stack stack,int rhs,int opt
 	nsp_path = (NspObject *) gboxed_create(NVOID,GTK_TYPE_TREE_PATH,path,TRUE,TRUE,
 					       (NspTypeBase *) nsp_type_gtktreepath );
       else 
-	nsp_path =(NspObject *) none_create(NVOID,NULL);
+	nsp_path =(NspObject *) nsp_none_create(NVOID,NULL);
       if ( nsp_path == NULL) return RET_BUG; 
       if ((nsp_column =(NspObject *) nspgobject_new((GObject *)column)) == NULL) return RET_BUG; 
       return RetArgs(stack,lhs,ret_T, nsp_path,nsp_column,cell_x,cell_y);

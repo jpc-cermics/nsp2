@@ -308,7 +308,7 @@ NspGBoxed *gboxed_create(char *name,GType boxed_type, gpointer boxed, gboolean c
   NspTypeBase *type = (NspTypeBase *) tp;
   NspGBoxed *self; 
 
-  if ( boxed == NULL) return (NspGBoxed *) none_create(NVOID,NULL);
+  if ( boxed == NULL) return (NspGBoxed *) nsp_none_create(NVOID,NULL);
     
   self =  (type == NULL) ? new_gboxed() : type->new();
   
