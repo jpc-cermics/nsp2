@@ -556,50 +556,45 @@ void nsp_spmatrix_info(NspSpMatrix *Sp, int indent,char *name,int rec_level)
 
 void nsp_spmatrix_print(NspSpMatrix *Sp, int indent,char *name, int rec_level)
 { 
-  const char *pname = (name != NULL) ? name : NSP_OBJECT(Sp)->name;
-  int j;
-  for ( j=0 ; j < indent ; j++) Sciprintf(" ");
-  if (Sp->mn==0 ) 
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Sp)->name; 
+  if (user_pref.pr_as_read_syntax)
     {
-      Sciprintf("%s\t= []\t\t %c (%dx%d) sparse\n",pname,Sp->rc_type,Sp->m,Sp->n);
+      const int name_len=128;
+      char epname[name_len];
+      NspMatrix *RC,*Values;
+      if ( nsp_spmatrix_get(Sp,&RC,&Values)== FAIL)
+	{
+	  Sciprintf("Error: failed to print sparse matrix as_read\n");
+	  return;
+	}
+      sprintf(epname,"%s__rc",pname);
+      nsp_matrix_print(RC,indent,epname,rec_level);
+      sprintf(epname,"%s__val",pname);
+      nsp_matrix_print(Values,indent,epname,rec_level);
+      nsp_matrix_destroy(RC);
+      nsp_matrix_destroy(Values);
+      Sciprintf1(indent,"%s=sparse(%s__rc,%s__val,[%d,%d]);\n",pname,pname,pname,Sp->m,Sp->n);
+      Sciprintf1(indent,"clear('%s__rc','%s__val')\n",pname,pname);
     }
   else
     {
-      nsp_num_formats fmt;
-      nsp_init_pr_format (&fmt);
-      Sciprintf("%s\t=\t\t %c (%dx%d) sparse\n",pname,Sp->rc_type,Sp->m,Sp->n);
-      nsp_spmatrix_print_internal(&fmt,Sp,indent);
+      if (Sp->mn==0 ) 
+	{
+	  Sciprintf1(indent,"%s\t= []\t\tsp %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
+	}
+      else
+	{
+	  nsp_num_formats fmt;
+	  if ( user_pref.pr_depth  <= rec_level -1 ) 
+	    {
+	      Sciprintf1(indent,"%s\t= [...]\t\tsp %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
+	      return;
+	    }
+	  nsp_init_pr_format (&fmt);
+	  Sciprintf1(indent,"%s\t=\t\tsp %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
+	  nsp_spmatrix_print_internal(&fmt,Sp,indent+1);
+	}
     }
-
-  /* 
-     int i,k;
-     static char formatr[] = "(%d,%d) %f\n";
-     static char formati[] = "(%d,%d) %f + %f i\n";
-     switch ( Sp->rc_type ) 
-     {
-     case 'r' :
-     for ( i = 0 ; i < Sp->m ; i++ ) 
-     {
-     SpRow *Ri = Sp->D[i];
-     for  ( k = 0 ;  k < Ri->size ; k++)
-     { 
-     Sciprintf(formatr ,i+1,Ri->J[k]+1,Ri->R[k]);
-     }
-     }
-     break;
-     case 'c' :
-     for ( i = 0 ; i < Sp->m ; i++ ) 
-     {
-     SpRow *Ri = Sp->D[i];
-     for  ( k = 0 ;  k < Ri->size ; k++)
-     { 
-     Sciprintf(formati ,i+1,Ri->J[k]+1,Ri->C[k].r,Ri->C[k].i);
-     }
-     }
-     break;
-     }
-  **/
-
 }
 
 /*

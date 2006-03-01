@@ -53,7 +53,7 @@ NspTypeNone *new_type_none(type_mode mode)
   type->attrs =  NULL; /*none_attrs ; */
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods = none_get_methods; 
+  type->methods = nsp_none_get_methods; 
   type->new = (new_func *) new_none;
 
   top = NSP_TYPE_OBJECT(type->surtype);
@@ -61,25 +61,25 @@ NspTypeNone *new_type_none(type_mode mode)
   
   /* object methods redefined for none */ 
   
-  top->pr = (print_func *) none_print;                    
-  top->dealloc = (dealloc_func *) none_destroy;
-  top->copy  =  (copy_func *) none_copy;                   
-  top->size  = (size_func *) none_size;                  
-  top->s_type =  (s_type_func *) none_type_as_string;    
-  top->sh_type = (sh_type_func *) none_type_short_string;
-  top->info = (info_func *) none_info ;                    
+  top->pr = (print_func *) nsp_none_print;                    
+  top->dealloc = (dealloc_func *) nsp_none_destroy;
+  top->copy  =  (copy_func *) nsp_none_copy;                   
+  top->size  = (size_func *) nsp_none_size;                  
+  top->s_type =  (s_type_func *) nsp_none_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_none_type_short_string;
+  top->info = (info_func *) nsp_none_info ;                    
   /* top->is_true = (is_true_func  *) NoneIsTrue; */
   /* top->loop =(loop_func *) none_loop;*/
-  top->path_extract = (path_func *) none_path_extract ; 
-  top->get_from_obj = (get_from_obj_func *) none_object;
-  top->eq  = (eq_func *) none_eq;
-  top->neq  = (eq_func *) none_neq;
-  top->save  = (save_func *) none_xdr_save;
-  top->load  = (load_func *) none_xdr_load;
+  top->path_extract = (path_func *) nsp_none_path_extract ; 
+  top->get_from_obj = (get_from_obj_func *) nsp_none_object;
+  top->eq  = (eq_func *) nsp_none_eq;
+  top->neq  = (eq_func *) nsp_none_neq;
+  top->save  = (save_func *) nsp_none_xdr_save;
+  top->load  = (load_func *) nsp_none_xdr_load;
 
   /* specific methods for none */
       
-  type->init = (init_func *) init_none;
+  type->init = (init_func *) nsp_init_none;
       
   /* 
    * None interfaces can be added here 
@@ -108,7 +108,7 @@ NspTypeNone *new_type_none(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_none(NspNone *o,NspTypeNone *type)
+static int nsp_init_none(NspNone *o,NspTypeNone *type)
 {
   /* to be done always */ 
   if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
@@ -129,7 +129,7 @@ NspNone *new_none()
   nsp_type_none = new_type_none(T_BASE);
   if ( (loc = malloc(sizeof(NspNone)))== NULLNONE) return loc;
   /* initialize object */
-  if ( init_none(loc,nsp_type_none) == FAIL) return NULLNONE;
+  if ( nsp_init_none(loc,nsp_type_none) == FAIL) return NULLNONE;
   return loc;
 }
 
@@ -141,7 +141,7 @@ NspNone *new_none()
  * size 
  */
 
-static int none_size(NspNone *Mat, int flag)
+static int nsp_none_size(NspNone *Mat, int flag)
 {
   return 0;
 }
@@ -153,12 +153,12 @@ static int none_size(NspNone *Mat, int flag)
 static char none_type_name[]="None";
 static char none_short_type_name[]="none";
 
-static char *none_type_as_string(void)
+static char *nsp_none_type_as_string(void)
 {
   return(none_type_name);
 }
 
-static char *none_type_short_string(void)
+static char *nsp_none_type_short_string(void)
 {
   return(none_short_type_name);
 }
@@ -173,7 +173,7 @@ static int none_full_comp(NspNone * A,NspNone * B,char *op,int *err)
  * A == B 
  */
 
-static int none_eq(NspNone *A, NspObject *B)
+static int nsp_none_eq(NspNone *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_none_id) == FALSE) return FALSE ;
@@ -186,7 +186,7 @@ static int none_eq(NspNone *A, NspObject *B)
  * A != B 
  */
 
-static int none_neq(NspNone *A, NspObject *B)
+static int nsp_none_neq(NspNone *A, NspObject *B)
 {
   int err=0,rep;
   if ( check_cast(B,nsp_type_none_id) == FALSE) return TRUE;
@@ -201,7 +201,7 @@ static int none_neq(NspNone *A, NspObject *B)
  *       iterate on the result 
  */
 
-static NspObject *none_path_extract(NspNone *a, NspObject *ob)
+static NspObject *nsp_none_path_extract(NspNone *a, NspObject *ob)
 {
   char *str;
   if ((str=nsp_string_object(ob)) == NULL ) return NULLOBJ;
@@ -212,7 +212,7 @@ static NspObject *none_path_extract(NspNone *a, NspObject *ob)
  * save 
  */
 
-static int none_xdr_save(XDR *xdrs, NspNone *M)
+static int nsp_none_xdr_save(XDR *xdrs, NspNone *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -224,7 +224,7 @@ static int none_xdr_save(XDR *xdrs, NspNone *M)
  * load 
  */
 
-static NspNone  *none_xdr_load(XDR *xdrs)
+static NspNone  *nsp_none_xdr_load(XDR *xdrs)
 {
   NspNone *M = NULL;
   static char name[NAME_MAXL];
@@ -237,7 +237,7 @@ static NspNone  *none_xdr_load(XDR *xdrs)
  * delete 
  */
 
-void none_destroy(NspNone *H)
+void nsp_none_destroy(NspNone *H)
 {
   FREE(NSP_OBJECT(H)->name);
   FREE(H);
@@ -247,26 +247,31 @@ void none_destroy(NspNone *H)
  * info 
  */
 
-void none_info(NspNone *H, int indent,char *name,int rec_level)
+void nsp_none_info(NspNone *H, int indent,char *name,int rec_level)
 {
-  int i;
-  if ( H == NULLNONE) 
+  const char *pname;
+  if (H == NULLNONE) 
     {
-      Sciprintf("Null Pointer None \n");
+      Sciprintf1(indent,"Null Pointer None\n");
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("[None %s]\n", NSP_OBJECT(H)->name);
+  pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
+  Sciprintf1(indent,"%s\t= \t\t%s\n",
+	     (pname==NULL) ? "" : pname,
+	     nsp_none_type_short_string());
 }
+
 
 /*
  * print 
  */
 
-void none_print(NspNone *H, int indent,char *name, int rec_level)
+
+void nsp_none_print(NspNone *H, int indent,char *name, int rec_level)
 {
-  none_info(H,indent,NULL,0);
+  nsp_none_info(H,indent,name,rec_level);
 }
+
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -274,7 +279,7 @@ void none_print(NspNone *H, int indent,char *name, int rec_level)
  * Note that some of these functions could become MACROS XXXXX 
  *-----------------------------------------------------*/
 
-NspNone   *none_object(NspObject *O)
+NspNone   *nsp_none_object(NspObject *O)
 {
   /* Follow pointer **/
   HOBJ_GET_OBJECT(O,NULL);
@@ -305,7 +310,7 @@ NspNone  *GetNoneCopy(Stack stack, int i)
 NspNone  *GetNone(Stack stack, int i)
 {
   NspNone *M;
-  if (( M = none_object(NthObj(i))) == NULLNONE)
+  if (( M =nsp_none_object(NthObj(i))) == NULLNONE)
     ArgMessage(stack,i);
   return M;
 }
@@ -316,7 +321,7 @@ NspNone  *GetNone(Stack stack, int i)
  * create a NspClassA instance 
  *-----------------------------------------------------*/
 
-NspNone *none_create(char *name,NspTypeBase *type)
+NspNone *nsp_none_create(char *name,NspTypeBase *type)
 {
   NspNone *H  = (type == NULL) ? new_none() : type->new();
   if ( H ==  NULLNONE)
@@ -333,9 +338,9 @@ NspNone *none_create(char *name,NspTypeBase *type)
  * copy 
  */
 
-NspNone *none_copy(NspNone *H)
+NspNone *nsp_none_copy(NspNone *H)
 {
-  return none_create(NVOID,NULL);
+  return nsp_none_create(NVOID,NULL);
 }
 
 /*-------------------------------------------------------------------
@@ -354,7 +359,7 @@ int int_none_create(Stack stack, int rhs, int opt, int lhs)
 
   CheckRhs(0,2);
   if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = none_create(NVOID,NULL)) == NULLNONE) return RET_BUG;
+  if(( H =nsp_none_create(NVOID,NULL)) == NULLNONE) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -367,7 +372,7 @@ int int_none_create(Stack stack, int rhs, int opt, int lhs)
  * methods 
  *------------------------------------------------------*/
 
-static NspMethods *none_get_methods(void) { return NULL;};
+static NspMethods *nsp_none_get_methods(void) { return NULL;};
 
 /*-------------------------------------------
  * function 

@@ -356,7 +356,7 @@ static int int_pmatrix_create(Stack stack, int rhs, int opt, int lhs)
   int m1,n1;
   doubleC def ={0,0} ;
   NspPMatrix *P; 
-  CheckRhs(1,3);
+  CheckRhs(2,3);
   CheckLhs(1,1);
   if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
   if (GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;

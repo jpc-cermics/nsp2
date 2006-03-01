@@ -45,30 +45,30 @@ NspNone *new_none();
  */
 
 #ifdef None_Private 
-static int init_none(NspNone *o,NspTypeNone *type);
-static int none_size(NspNone *Mat, int flag);
-static char *none_type_as_string(void);
-static char *none_type_short_string(void);
-static int none_eq(NspNone *A, NspObject *B);
-static int none_neq(NspNone *A, NspObject *B);
-static int none_xdr_save(XDR  *F, NspNone *M);
-static NspNone  *none_xdr_load(XDR  *F);
+static int nsp_init_none(NspNone *o,NspTypeNone *type);
+static int nsp_none_size(NspNone *Mat, int flag);
+static char *nsp_none_type_as_string(void);
+static char *nsp_none_type_short_string(void);
+static int nsp_none_eq(NspNone *A, NspObject *B);
+static int nsp_none_neq(NspNone *A, NspObject *B);
+static int nsp_none_xdr_save(XDR  *F, NspNone *M);
+static NspNone  *nsp_none_xdr_load(XDR  *F);
 static AttrTab none_attrs[];
-static NspMethods *none_get_methods(void); 
-static NspObject *none_path_extract(NspNone *A, NspObject *O);
+static NspMethods *nsp_none_get_methods(void); 
+static NspObject *nsp_none_path_extract(NspNone *A, NspObject *O);
 #endif /* None_Private */
 
 #define NULLNONE (NspNone*) 0
 
-NspNone *none_create(char *name,NspTypeBase *type);
-NspNone *none_copy(NspNone *H);
-void none_destroy(NspNone *H);
-void none_info(NspNone *H, int indent,char *name, int rec_level);
-void none_print(NspNone *H, int indent,char *name, int rec_level);
+NspNone *nsp_none_create(char *name,NspTypeBase *type);
+NspNone *nsp_none_copy(NspNone *H);
+void nsp_none_destroy(NspNone *H);
+void nsp_none_info(NspNone *H, int indent,char *name, int rec_level);
+void nsp_none_print(NspNone *H, int indent,char *name, int rec_level);
 
 /* from NoneObj.c */
 
-extern NspNone *none_object (NspObject *O); 
+extern NspNone *nsp_none_object (NspObject *O); 
 extern int IsNoneObj (Stack stack, int i); 
 extern int IsNone(NspObject *O);
 extern NspNone *GetNoneCopy (Stack stack, int i); 

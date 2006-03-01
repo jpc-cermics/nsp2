@@ -85,14 +85,9 @@ NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M)
 
 void nsp_pmatrix_info(NspPMatrix *Mat, int indent,char *name,int rec_level)
 {
-  int i;
-  if ( Mat == NULLPMAT) 
-    {
-      Sciprintf("Null Pointer Poly Matrix \n");
-      return;
-    }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("PMatrix %s(%d,%d)\n",NSP_OBJECT(Mat)->name,Mat->m,Mat->n);
+  char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  Sciprintf1(indent,"%s\t= [%s]\t\tp %c (%dx%d)\n",pname,(Mat->mn == 0) ? "": "...",
+	     Mat->rc_type,Mat->m,Mat->n);
 }
 
 /*
@@ -101,19 +96,28 @@ void nsp_pmatrix_info(NspPMatrix *Mat, int indent,char *name,int rec_level)
 
 void nsp_pmatrix_print(NspPMatrix *Mat, int indent,char *name, int rec_level)
 {
-  int i=0;
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
+  char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   if (user_pref.pr_as_read_syntax)
     {
       if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 
 	{
-	  Sciprintf("%s=%s",NSP_OBJECT(Mat)->name,(Mat->mn==0 ) ? " m2p([])\n" : "" );
+	  Sciprintf1(indent,"%s=%s",pname,(Mat->mn==0 ) ? " m2p([])\n" : "" );
+	}
+
+      else 
+	{
+	  Sciprintf1(indent,"%s",(Mat->mn==0 ) ? " m2p([])\n" : "" );
 	}
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\tp (%dx%d)\n",NSP_OBJECT(Mat)->name,
-		(Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
+	{
+	  nsp_pmatrix_info(Mat,indent,pname,rec_level);
+	  return;
+	}
+      Sciprintf1(indent,"%s\t=%s\t\tp (%dx%d)\n",pname,
+		 (Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 
     {

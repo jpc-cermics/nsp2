@@ -185,7 +185,7 @@ NspObject *list_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int 
       cell = nsp_list_get_cell_pointer(L, i);
       L->icurrent = i; L->current = cell;
       if ( cell->O == NULLOBJ ) 
-	return (NspObject *) none_create(str,NULL);
+	return (NspObject *) nsp_none_create(str,NULL);
       else
 	return nsp_object_copy_and_name(str,cell->O);
     }

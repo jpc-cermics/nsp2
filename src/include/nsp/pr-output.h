@@ -51,6 +51,7 @@ extern void nsp_pr_white(int fw);
 extern void nsp_print_empty_matrix (int nr, int nc);
 extern void nsp_pr_any_float (const char *fmt, double d, int fw);
 extern void nsp_init_pr_format (nsp_num_formats *fmt);
+extern void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M);
 
 #endif 
 

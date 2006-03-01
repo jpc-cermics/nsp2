@@ -309,20 +309,30 @@ void nsp_mpmatrix_destroy(NspMaxpMatrix *Mat)
  *
  */
 
-void nsp_mpmatrix_info(const NspMaxpMatrix *Mat, int indent,char *name,int rec_level)
+void nsp_mpmatrix_info(NspMaxpMatrix *Mat, int indent,char *name, int rec_level)
 {
   int i;
-  if ( Mat == NULLMAXPMAT) 
-    {
-      Sciprintf("Null Pointer Matrix \n");
-      return;
-    }
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  Mat = (NspMaxpMatrix *) Mat2double((NspMatrix *)Mat);
+
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) == 0) 
-    Sciprintf("MaxpMatrix (%d,%d) type %c\n",Mat->m,Mat->n,Mat->rc_type);
-  else
-    Sciprintf("MaxpMatrix %s(%d,%d) type %c\n",NSP_OBJECT(Mat)->name,Mat->m,Mat->n,Mat->rc_type);
+  if ( Mat->m >=1 &&  Mat->mn >= 2 ) 
+    {
+      Sciprintf("%s\t= [...]\t\tmp %c (%dx%d)\n",pname,Mat->rc_type,Mat->m,Mat->n);
+    }
+  else 
+    {
+      /* for scalar we directly give the value */
+      nsp_num_formats fmt;
+      Sciprintf("%s\t= [ ",pname);
+      nsp_init_pr_format (&fmt);
+      nsp_matrix_set_format(&fmt,(NspMatrix *)Mat);
+      if ( Mat->mn != 0 )
+	( Mat->rc_type == 'r') ? nsp_pr_float (&fmt,Mat->R[0]) : nsp_pr_complex (&fmt, Mat->C[0]);
+      Sciprintf(" ]\t\tmp %c (%dx%d)\n",Mat->rc_type,Mat->m,Mat->n);
+    }
 }
+
 
 /**
  * nsp_mpmatrix_print:
@@ -335,27 +345,29 @@ void nsp_mpmatrix_info(const NspMaxpMatrix *Mat, int indent,char *name,int rec_l
  * @indent is the given indentation for printing.
  */
 
-
 void nsp_mpmatrix_print( NspMaxpMatrix *Mat, int indent,char *name, int rec_level)
 {
-  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
-  int i;
+  char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   Mat = (NspMaxpMatrix *) Mat2double((NspMatrix *)Mat);
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   if (user_pref.pr_as_read_syntax)
     {
       if ( strcmp(pname,NVOID) != 0) 
 	{
-	  Sciprintf("%s=%s",pname,(Mat->mn==0 ) ? " m2mp([])\n" : "" );
+	  Sciprintf1(indent,"%s=%s",pname,(Mat->mn==0 ) ? " m2mp([])\n" : "" );
 	}
       else 
 	{
-	  Sciprintf("%s",(Mat->mn==0 ) ? " m2mp([])\n" : "" );
+	  Sciprintf1(indent,"%s",(Mat->mn==0 ) ? " m2mp([])\n" : "" );
 	}
     }
   else 
     {
-      Sciprintf("%s\t=%s\t\t mp %c(%dx%d) \n",pname,
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
+	{
+	  nsp_mpmatrix_info(Mat,indent,pname,rec_level);
+	  return;
+	}
+      Sciprintf1(indent,"%s\t=%s\t\tmp %c(%dx%d) \n",pname,
 		(Mat->mn==0 ) ? " []" : "",Mat->rc_type,Mat->m,Mat->n);
     }
   if ( Mat->mn != 0) 

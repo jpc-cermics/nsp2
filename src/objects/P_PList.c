@@ -102,35 +102,38 @@ void NspPListPrInt(NspPList *P_L)
  * NspPListInfo : display Info on NspPList P_L 
  */
 
-void NspPListInfo(NspPList *P_L, int indent)
+void NspPListInfo(NspPList *P_L, int indent,char *name, int rec_level)
 {
-  int j;
-  if ( P_L == NULLP_PLIST) 
-    {
-      Sciprintf("Null Pointer NspPList \n");
-      return;
-    }
-  for ( j=0 ; j < indent ; j++) Sciprintf(" ");
-  Sciprintf("NspPList %s\n",NSP_OBJECT(P_L)->name);
-  PListInfo(P_L->D,indent);
+  char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
+  if ( P_L->file_name != NULL) 
+    Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,P_L->file_name);
+  else 
+    Sciprintf1(indent,"%s\t=\t\tpl\n",pname);
 }
 
 /*
  * NspPListPrint : writes P_L Objet 
  */
 
-void NspPListPrint(NspPList *P_L, int indent)
+void NspPListPrint(NspPList *P_L, int indent,char *name, int rec_level)
 {
-  int j;
-  for ( j=0 ; j < indent ; j++) Sciprintf(" ");
-  Sciprintf("%s",NSP_OBJECT(P_L)->name);
-  if ( P_L->file_name != NULL) 
-    Sciprintf("\t=\t\tpl (file='%s')\n",P_L->file_name);
-  else 
-    Sciprintf("\t=\t\tpl\n");
-  PListPrettyPrint(P_L->D,indent);
+  char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
+  if (user_pref.pr_as_read_syntax)
+    {
+      PListPrettyPrint(P_L->D,indent+2);
+    }
+  else
+    {
+      if ( P_L->file_name != NULL) 
+	Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,P_L->file_name);
+      else 
+	Sciprintf1(indent,"%s\t=\t\tpl\n",pname);
+      if ( user_pref.pr_depth  <= rec_level -1 ) return;
+    }
+  PListPrettyPrint(P_L->D,indent+2);
   Sciprintf("\n");
 }
+
 
 /*
  * NspPList2SMatrix 

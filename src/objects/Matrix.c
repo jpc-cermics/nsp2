@@ -534,12 +534,11 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
   int slice=10000;
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
 
-
   if (user_pref.pr_as_read_syntax)
     {
       if ( Mat->mn > slice ) 
 	{
-	  nsp_matrix_print_as_read_with_slice(Mat,indent,name,rec_level,slice);
+	  nsp_matrix_print_as_read_with_slice(Mat,indent,pname,rec_level,slice);
 	  return;
 	}
       if ( strcmp(pname,NVOID) != 0) 
@@ -2135,7 +2134,7 @@ void nsp_real_matrix_print_internal(nsp_num_formats *fmt,NspMatrix *m, int inden
 	    Sciprintf("[\n");
 	  /* XXXXXX xxxx Sciprintf(m); **/
 	  if (user_pref.pr_as_read_syntax)
-	    Sciprintf("]");
+	    Sciprintf("];");
 	  return;
 	}
       inc = nc;
@@ -2210,7 +2209,7 @@ void nsp_complex_matrix_print_internal (nsp_num_formats *fmt,NspMatrix *cm, int 
 	    Sciprintf("[\n");
 	  /* Sciprintf(cm); xxx **/
 	  if (user_pref.pr_as_read_syntax)
-	    Sciprintf("]");
+	    Sciprintf("];");
 
 	  return;
 	}
