@@ -820,38 +820,87 @@ int nsp_list_concat(NspList *L1, NspList *L2)
 
 void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
 {
+  int colors[]={ 34,32,31,35,36};
+  const int name_len=128;
+  char epname[name_len];
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(L)->name;
   Cell *C;
-  int i=1,j,len;
-  for ( j=0 ; j < indent ; j++) Sciprintf(" ");
-  if ( NSP_OBJECT(L)->name !=  NULLSTRING)
-    {
-      Sciprintf("List %s = (",NSP_OBJECT(L)->name);
-      len=indent+strlen(NSP_OBJECT(L)->name)+9; 
-    }
-  else 
-    {
-      Sciprintf("List = (");
-      len = indent+2+8;
-    }
+  int i=1;
 
-  C= L->first;
-  while ( C != NULLCELL) 
+  if ( rec_level <= user_pref.pr_depth ) 
     {
-      if ( C->O != NULLOBJ )
+      /* recursively call print on elements */
+      Sciprintf1(indent,"%s\t=\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
+      Sciprintf1(indent+1,"(\n");
+      C= L->first;
+      while ( C != NULLCELL) 
 	{
-	  /* if ( C->name !=  NULLSTRING) Sciprintf("<%s>",C->name); **/
-	  nsp_object_info(C->O,(i==1)? 0: len,NULL,0);      
+	  if ( rec_level >= 0 && rec_level <= 4) 
+	    {
+	      int col=colors[rec_level];
+	      sprintf(epname,"\033[%dm(%d)\033[0m",col,i);
+	    }
+	  else 
+	    {
+	      sprintf(epname,"(%d)",i);
+	    }
+	  if ( C->O != NULLOBJ )
+	    {
+	      nsp_object_info(C->O,indent+2,epname,rec_level+1);      
+	    }
+	  else
+	    {
+	      Sciprintf(" %d Undefined\n",i);
+	    }
+	  C = C->next ;i++;
+	  /* if ( C != NULLCELL ) Sciprintf("\n"); */
 	}
-      else
-	{
-	  for ( j=0 ; j < (i==1)? 0: len ; j++) Sciprintf(" ");
-	  Sciprintf("%d Undefined",i);
-	}
-      C = C->next ;
-      i++;
+      Sciprintf1(indent+1, ")\n");
     }
-  for ( j=0 ; j < len-1 ; j++) Sciprintf(" ");
-  Sciprintf(")\n");
+  else
+    {
+      Sciprintf1(indent,"%s\t= ...\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
+    }
+} 
+
+void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
+{
+  const int name_len=128;
+  char epname[name_len];
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(L)->name;
+  Cell *C;
+  int i=1;
+
+  if ( rec_level <= user_pref.pr_depth ) 
+    {
+      /* recursively call print on elements */
+      Sciprintf1(indent,"%s.\n",(strcmp(pname,NVOID) != 0) ? pname : "");
+      C= L->first;
+      while ( C != NULLCELL) 
+	{
+	  int j;
+	  sprintf(epname,"%s",pname);
+	  for ( j = 0 ; j < strlen(epname);j++) if (epname[j]=='-' || epname[j] == '`' ) epname[j]=' ';
+	  if ( C->next == NULLCELL) 
+	    strcat(epname,"`-");
+	  else 
+	    strcat(epname,"|-");
+	  if ( C->O != NULLOBJ )
+	    {
+	      nsp_object_info(C->O,indent,epname,rec_level+1);      
+	    }
+	  else
+	    {
+	      Sciprintf(" %d Undefined\n",i);
+	    }
+	  C = C->next ;i++;
+	  /* if ( C != NULLCELL ) Sciprintf("\n"); */
+	}
+    }
+  else
+    {
+      Sciprintf1(indent,"%s--= ...\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
+    }
 } 
 
 /**
