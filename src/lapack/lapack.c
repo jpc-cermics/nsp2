@@ -1973,7 +1973,7 @@ static int intdgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
   }
 
   /* if rcond is not provided */
-  eps = C2F(dlamch)("eps", 3L);  
+  eps = nsp_dlamch("eps");
   Rcond = (rcond  == NULL) ? sqrt(eps) : *rcond; 
 
   /* if n > m then we add empty rows to B */ 
@@ -2078,7 +2078,7 @@ static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
   }
 
   /* if rcond is not provided */
-  eps = C2F(dlamch)("eps", 3L);  
+  eps = nsp_dlamch("eps");
   Rcond = (rcond  == NULL) ? sqrt(eps) : *rcond; 
 
   /* if n > m then we add empty rows to B */ 
