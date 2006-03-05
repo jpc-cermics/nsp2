@@ -276,8 +276,8 @@ _wrap_pango_attr_shape_new( Stack stack,int rhs,int opt,int lhs)
   NspObject *ret; 
   NspMatrix *r1,*r2; 
   if (GetArgs(stack,rhs,opt,T,&r1,&r2) == FAIL) return RET_BUG; 
-  CheckLength(stack,1,r1,4);
-  CheckLength(stack,2,r2,4);
+  CheckLength(NspFname(stack),1,r1,4);
+  CheckLength(NspFname(stack),2,r2,4);
   ink_rect.x=r1->R[0] ; ink_rect.y=r1->R[1] ;  ink_rect.width= r1->R[2]; ink_rect.height = r1->R[3]; 
   logical_rect.x= r2->R[0];logical_rect.y= r2->R[1];  logical_rect.width= r2->R[2];logical_rect.height= r2->R[3];
   if ((ret = (NspObject *)pangoattribute_create(NVOID,pango_attr_shape_new(&ink_rect, &logical_rect),NULL))==  NULL) return RET_BUG;

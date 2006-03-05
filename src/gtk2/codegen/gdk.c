@@ -1896,7 +1896,7 @@ _wrap_gdkrectangle_new(Stack stack,int rhs,int opt,int lhs)
     {
       NspMatrix *r; 
       if (( r = GetRealMat(stack,1))== NULLMAT) return RET_BUG; 
-      CheckLength(stack,1,r,4);
+      CheckLength(NspFname(stack),1,r,4);
       re.x = r->R[0];
       re.y = r->R[1];
       re.width = r->R[2];
@@ -2721,7 +2721,7 @@ _wrap_gdk_device_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 
   if (GetArgs(stack,rhs,opt,T, &nsp_axes, &use) == FAIL ) return RET_BUG;
 
-  CheckLength(stack,1,nsp_axes, device->num_axes); 
+  CheckLength(NspFname(stack),1,nsp_axes, device->num_axes); 
 
   ret = gdk_device_get_axis(device, axes, use, &value);
   if (ret)
