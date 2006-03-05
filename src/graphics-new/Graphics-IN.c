@@ -1856,7 +1856,7 @@ int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int row,int flag,char *na
   if (rhs == 2) 
     {
       if ((styles= GetRealMatInt(stack,2))  == NULLMAT) return RET_BUG;
-      CheckVector(stack,2,styles);
+      CheckVector(NspFname(stack),2,styles);
       if ( styles->mn != arcs->n ) {
 	Scierror("%s: first and second arguments have incompatible length\r\n",NspFname(stack));
 	return RET_BUG;
