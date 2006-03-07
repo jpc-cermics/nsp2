@@ -818,6 +818,8 @@ int nsp_list_concat(NspList *L1, NspList *L2)
  *
  **/
 
+static void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level);
+
 void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
 {
   int colors[]={ 34,32,31,35,36};
@@ -826,6 +828,12 @@ void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(L)->name;
   Cell *C;
   int i=1;
+
+  if ( user_pref.list_as_tree == TRUE ) 
+    {
+      nsp_list_info_tree(L,indent,name,rec_level);
+      return;
+    }
 
   if ( rec_level <= user_pref.pr_depth ) 
     {
@@ -863,7 +871,7 @@ void nsp_list_info(NspList *L, int indent,char *name,int rec_level)
     }
 } 
 
-void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
+static void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
 {
   const int name_len=128;
   char epname[name_len];
@@ -880,6 +888,11 @@ void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
 	{
 	  int j;
 	  sprintf(epname,"%s",pname);
+	  for ( j = 0 ; j < strlen(epname);j++) 
+	    {
+	      if (epname[j] !='-' && epname[j] != '`' && epname[j] != ' ') epname[j]=' ';
+	      else break;
+	    }
 	  for ( j = 0 ; j < strlen(epname);j++) if (epname[j]=='-' || epname[j] == '`' ) epname[j]=' ';
 	  if ( C->next == NULLCELL) 
 	    strcat(epname,"`-");
@@ -899,7 +912,7 @@ void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
     }
   else
     {
-      Sciprintf1(indent,"%s--= ...\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
+      Sciprintf1(indent,"%s\t= ...\t\tl (%d)\n",(strcmp(pname,NVOID) != 0) ? pname : " ",L->nel);
     }
 } 
 

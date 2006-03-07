@@ -34,7 +34,7 @@
 
 
 
-struct user_preferences user_pref={8,3,1,0,0,LONG_MAX};
+struct user_preferences user_pref={8,3,1,0,0,LONG_MAX,FALSE};
 
 /*
  * Utility Functions used to get elements 

@@ -13,6 +13,7 @@ struct user_preferences
   int print_empty_dimensions;	/* */
   int pr_as_read_syntax;	/* print in read syntax */
   int pr_depth ;        /* stop printing at given depth for recursive objects */
+  int list_as_tree;     /* flag for list display */
 };
 
 extern struct user_preferences user_pref;

@@ -883,22 +883,26 @@ int int_object_is(Stack stack, int rhs, int opt, int lhs)
 int int_object_info(Stack stack, int rhs, int opt, int lhs)
 {
   int dp=user_pref.pr_depth;
-  int depth=LONG_MAX,indent=0;
+  int at=user_pref.list_as_tree;
+  int depth=LONG_MAX,indent=0,tree=FALSE;
   char *name = NULL;
   nsp_option opts[] ={{ "depth", s_int,NULLOBJ,-1},
 		      { "indent",s_int,NULLOBJ,-1},
 		      { "name",string,NULLOBJ,-1},
+		      { "tree",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspObject *object;
   CheckStdRhs(1,1);
   CheckLhs(0,1);
   if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
   if ( get_optional_args(stack, rhs, opt, opts,&depth,
-			 &indent,&name) == FAIL) 
+			 &indent,&name,&tree) == FAIL) 
     return RET_BUG;
   user_pref.pr_depth= depth;
+  user_pref.list_as_tree= tree;
   object->type->info(object,indent,name,0);
   user_pref.pr_depth= dp;
+  user_pref.list_as_tree= at;
   return 0;
 
 
