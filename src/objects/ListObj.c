@@ -1197,30 +1197,31 @@ static int int_lxlength(Stack stack, int rhs, int opt, int lhs)
 static int int_lxcat(Stack stack, int rhs, int opt, int lhs)
 {
   int i;
-  NspList *L;
+  NspList *L, *LL;
   CheckLhs(1,1);
-  if ((L =nsp_list_create(NVOID))==NULLLIST) return RET_BUG;
+  if ( (L =nsp_list_create(NVOID)) == NULLLIST ) return RET_BUG;
   for ( i = 1; i <= rhs ; i++ )
     {
       NspObject *Ob=NthObj(i);
-      if (IsList(Ob) == TRUE) 
+      if ( IsList(Ob) == TRUE ) 
 	{
-	  if ( nsp_list_concat(L,(NspList *) Ob) == FAIL ) goto err;
+	  if ( (LL =GetList(stack,i)) == NULLLIST ) goto err;
+	  if ( nsp_list_concat(L, LL) == FAIL ) goto err;
 	}
       else 
-	{
-	  if (MaybeObjCopy(&Ob) == NULL) goto err;  
-	  if (nsp_object_set_name(Ob,"lel") == FAIL) goto err;
-	  if (nsp_list_end_insert(L,NthObj(i)) == FAIL ) goto err;
+	{	      
+	  if ( MaybeObjCopy(&Ob) == NULL ) goto err;
+	  if ( nsp_object_set_name(Ob,"lel") == FAIL ) goto err;
+	  if ( nsp_list_end_insert(L,Ob) == FAIL ) goto err;
 	}
       /* If NthObj(i) is not copied it is inserted in the list 
        *     we must set then NthObj(i) to NULLOBJ 
        *     to prevent the cleaning process to clean the object 
        * that we have inserted in our list 
        */
-      NthObj(i) = NULLOBJ ;
+      NthObj(i) = NULLOBJ;
     }
-  NthObj(1)=(NspObject *) L;
+  NthObj(1) = (NspObject *) L;
   NSP_OBJECT(NthObj(1))->ret_pos = 1;
   return 1;
  err: 
