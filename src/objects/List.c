@@ -890,8 +890,7 @@ static void nsp_list_info_tree(NspList *L, int indent,char *name,int rec_level)
 	  sprintf(epname,"%s",pname);
 	  for ( j = 0 ; j < strlen(epname);j++) 
 	    {
-	      if (epname[j] !='-' && epname[j] != '`' && epname[j] != ' ') epname[j]=' ';
-	      else break;
+	      if (epname[j] !='-' && epname[j] != '`' && epname[j] != ' ' && epname[j] != '|') epname[j]=' ';
 	    }
 	  for ( j = 0 ; j < strlen(epname);j++) if (epname[j]=='-' || epname[j] == '`' ) epname[j]=' ';
 	  if ( C->next == NULLCELL) 

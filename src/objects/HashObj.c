@@ -286,25 +286,90 @@ void nsp_hash_destroy(NspHash *H)
  * info 
  */
 
+static void nsp_hash_info_tree(NspHash *H, int indent,char *name,int rec_level);
+
 void nsp_hash_info(NspHash *H, int indent,char *name,int rec_level)
 {
-  int i;
-  unsigned i1;
-  if ( H == NULLHASH) 
+  int colors[]={ 34,32,31,35,36};
+  const int name_len=128;
+  char epname[name_len];
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
+
+  if ( user_pref.list_as_tree == TRUE ) 
     {
-      Sciprintf("Null Pointer NspHash \n");
+      nsp_hash_info_tree(H,indent,name,rec_level);
       return;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("Hash %s, (size=%d,filled=%d)\n",NSP_OBJECT(H)->name,H->filled,H->hsize);
-  /* last entry is at M->hsize ! */
-  for ( i1 =0 ; i1 <= H->hsize  ; i1++) 
+
+  if ( rec_level <= user_pref.pr_depth ) 
     {
-      Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
-      if ( loc->used && loc->data != NULLOBJ) 
-	nsp_object_info(loc->data,indent+2,NULL,0);
+      int i1;
+      /* recursively call info on elements */
+      Sciprintf1(indent,"%s\t=\t\th (%d/%d)\n",(strcmp(pname,NVOID) != 0) ? pname : "",H->filled,H->hsize);
+      for ( i1 =0 ; i1 <= H->hsize  ; i1++) 
+	{
+	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
+	  if ( loc->used && loc->data != NULLOBJ) 
+	    {
+	      if ( rec_level >= 0 && rec_level <= 4) 
+		{
+		  int col=colors[rec_level];
+		  sprintf(epname,"\033[%dm%s\033[0m",col,loc->data->name);
+		  nsp_object_info(loc->data,indent+2,epname,rec_level+1);
+		}
+	      else 
+		{
+		  nsp_object_info(loc->data,indent+2,NULL,rec_level+1);
+		}
+	    }
+	}
+    }
+  else
+    {
+      Sciprintf1(indent,"%s\t= ...\t\th (%d/%d)\n",(strcmp(pname,NVOID) != 0) ? pname : "",H->filled,H->hsize);
+    }
+} 
+
+static void nsp_hash_info_tree(NspHash *H, int indent,char *name,int rec_level)
+{
+  const int name_len=128;
+  char epname[name_len];
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
+
+  if ( rec_level <= user_pref.pr_depth ) 
+    {
+      int i1,count=0;
+      /* recursively call print on elements */
+      Sciprintf1(indent,"%s+\n",(strcmp(pname,NVOID) != 0) ? pname : "");
+      
+      for ( i1 =0 ; i1 <= H->hsize  ; i1++) 
+	{
+	  Hash_Entry *loc = ((Hash_Entry *) H->htable) + i1;
+	  if ( loc->used && loc->data != NULLOBJ) 
+	    {
+	      int j;
+	      count++;
+	      sprintf(epname,"%s",pname);
+	      for ( j = 0 ; j < strlen(epname);j++) 
+		{
+		  if (epname[j] !='-' && epname[j] != '`' && epname[j] != ' ' && epname[j] != '|') epname[j]=' ';
+		}
+	      for ( j = 0 ; j < strlen(epname);j++) if (epname[j]=='-' || epname[j] == '`' ) epname[j]=' ';
+	      if ( count == H->filled ) 
+		strcat(epname,"`-");
+	      else 
+		strcat(epname,"|-");
+	      strcat(epname,loc->data->name);
+	      nsp_object_info(loc->data,indent,epname,rec_level+1);      
+	    }
+	}
+    }
+  else
+    {
+      Sciprintf1(indent,"%s\t= ...\t\th (%d/%d)\n",(strcmp(pname,NVOID) != 0) ? pname : "",H->filled,H->hsize);
     }
 }
+
 
 /*
  * print 
