@@ -570,11 +570,9 @@ sed \"s/^\\/\\*>>>'\\(.*\\)'<<<\\*\\/\\$/cat >'\\1' <<'\\/*<<<\\1>>>*\\/'/\" | /
   if (gflag)
     nice_printf (c_output, "#line 1 \"%s\"\n", file_name);
   if (!skipversion) {
-    nice_printf (c_output, "/* %s -- translated by f2c ", file_name);
-    nice_printf (c_output, "(version %s).\n", F2C_version);
-    nice_printf (c_output,
-		 "   You must link the resulting object file with the libraries:\n\
-	%s   (in that order)\n*/\n\n", link_msg);
+    nice_printf (c_output, "/* %s -- translated by f2c (version %s).\n", file_name, F2C_version);
+    nice_printf (c_output, " *   You must link the resulting object file with the libraries:\n");
+    nice_printf (c_output, " *   %s (in that order)\n */\n\n", link_msg);
   }
   if (Ansi == 2)
     nice_printf(c_output,

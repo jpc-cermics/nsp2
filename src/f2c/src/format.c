@@ -46,7 +46,7 @@ static void do_p1_2while Argdcl((FILEP, FILEP));
 static tagptr do_p1_addr Argdcl((FILEP, FILEP));
 static void do_p1_asgoto Argdcl((FILEP, FILEP));
 static tagptr do_p1_charp Argdcl((FILEP));
-static void do_p1_comment Argdcl((FILEP, FILEP));
+static void do_p1_comment Argdcl((FILEP, FILEP,int));
 static void do_p1_comp_goto Argdcl((FILEP, FILEP));
 static tagptr do_p1_const Argdcl((FILEP));
 static void do_p1_elif Argdcl((FILEP, FILEP));
@@ -182,14 +182,21 @@ put_semi(FILE *outfile)
 static expptr
 do_format(FILE *infile, FILE *outfile)
 {
+  static int was_comment=0;
   int token_type, was_c_token;
   expptr retval = ENULL;
 
   token_type = get_p1_token (infile);
   was_c_token = 1;
+  if ( token_type != P1_COMMENT && was_comment==1) 
+    {
+      was_comment=0; 
+      margin_printf(outfile, " */\n");
+    }
   switch (token_type) {
   case P1_COMMENT:
-    do_p1_comment (infile, outfile);
+    do_p1_comment (infile, outfile,was_comment );
+    was_comment = 1;
     was_c_token = 0;
     break;
   case P1_SET_LINE:
@@ -309,10 +316,11 @@ do_format(FILE *infile, FILE *outfile)
 
 
 static void
-do_p1_comment(FILE *infile, FILE *outfile)
+do_p1_comment(FILE *infile, FILE *outfile,int was_comment)
 {
   extern int c_output_line_length, in_comment;
-
+  char comment_start[]="/*";
+  char comment_cont[]=" *";
   char storage[COMMENT_BUFFER_SIZE + 1];
   int length;
 
@@ -324,9 +332,9 @@ do_p1_comment(FILE *infile, FILE *outfile)
   gflag1 = sharp_line = 0;
   in_comment = 1;
   if (length > c_output_line_length - 6)
-    margin_printf(outfile, "/*%s*/\n", storage);
+    margin_printf(outfile, "%s%s \n",(was_comment==1) ? comment_cont:comment_start, storage);
   else
-    margin_printf(outfile, length ? "/* %s */\n" : "\n", storage);
+    margin_printf(outfile, "%s%s \n" ,(was_comment==1) ? comment_cont:comment_start, storage);
   in_comment = 0;
   gflag1 = sharp_line = gflag;
 } /* do_p1_comment */
