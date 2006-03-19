@@ -3846,7 +3846,7 @@ int_mxmultel (Stack stack, int rhs, int opt, int lhs)
  * very similar to mopscal but MatMult returns a new matrix 
  */
 
-static int
+int
 int_mxmult (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat1, *HMat2, *HMat3;
@@ -3909,7 +3909,7 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
  * contributed by Bruno Pincon.
  */
 
-static int
+int
 int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat1, *HMat2, *A;
@@ -4013,7 +4013,7 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
  * result stored in A 
  */
 
-static int
+int
 int_mxdiv (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat1, *HMat2;
