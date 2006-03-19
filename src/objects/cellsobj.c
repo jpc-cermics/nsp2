@@ -28,6 +28,7 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
+#include "nsp/matint.h"
 
 static NspObject *nsp_cells_path_extract(NspCells *C, NspObject *O);
 
@@ -41,6 +42,7 @@ int nsp_type_cells_init();
 
 NspTypeCells *new_type_cells(type_mode mode)
 {
+  NspTypeMatint *mati;/* interface */
   NspTypeCells *type = NULL;
   NspTypeObject *top;
 
@@ -90,6 +92,20 @@ NspTypeCells *new_type_cells(type_mode mode)
    * ....
    */
   
+  /*
+   * Matrix implements Matint the matrix interface 
+   * which is common to object that behaves like matrices.
+   */
+
+  mati = new_type_matint(T_DERIVED);
+  mati->methods = matint_get_methods; 
+  mati->redim = (matint_redim *) nsp_cells_redim; 
+  mati->resize = (matint_resize  *) nsp_cells_resize; 
+  mati->free_elt = (matint_free_elt *) nsp_object_destroy;
+  mati->elt_size = (matint_elt_size *) nsp_cells_elt_size ;
+
+  type->interface = (NspTypeBase *) mati;
+
   if ( nsp_type_cells_id == 0 ) 
     {
       /* 
