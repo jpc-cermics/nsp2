@@ -168,6 +168,21 @@ NspCells*nsp_cells_copy(const NspCells *A)
   return(Loc);
 }
 
+
+/**
+ * nsp_cells_elt_size:
+ * @M: a #NspCells object 
+ * 
+ * size of cells elements.
+ * 
+ * Return value: size of @M elements.
+ **/
+
+unsigned int  nsp_cells_elt_size(NspCells *A)
+{
+  return sizeof(void *);
+}
+
 /**
  * nsp_cells_resize:
  * @A: a #NspCells object 
