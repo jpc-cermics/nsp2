@@ -36,6 +36,7 @@ extern  sci_interface  Matrix_Interf ;extern  interface_info  Matrix_Interf_Info
 extern  sci_interface  SMatrix_Interf  ;extern  interface_info  SMatrix_Interf_Info  ;
 extern  sci_interface  PMatrix_Interf  ;extern  interface_info  PMatrix_Interf_Info  ;
 extern  sci_interface  BMatrix_Interf  ;extern  interface_info  BMatrix_Interf_Info  ;
+extern  sci_interface  B2mMatrix_Interf  ;extern  interface_info  B2mMatrix_Interf_Info  ;
 extern  sci_interface  Hash_Interf  ;extern  interface_info  Hash_Interf_Info  ;
 extern  sci_interface  NspPList_Interf  ;extern  interface_info  NspPList_Interf_Info  ;
 extern  sci_interface  System_Interf  ;extern  interface_info  System_Interf_Info  ;
@@ -104,6 +105,7 @@ InterfTab Interfaces[]={
   {IVect_Interf,IVect_Interf_Info},
   {Obj_Interf,Obj_Interf_Info},
   {BMatrix_Interf,BMatrix_Interf_Info},
+  {B2mMatrix_Interf,B2mMatrix_Interf_Info},
   {List_Interf,List_Interf_Info},
   {SMatrix_Interf,SMatrix_Interf_Info},
   {File_Interf,File_Interf_Info},
