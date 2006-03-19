@@ -473,8 +473,7 @@ int nsp_matrix_scalar_to_mn(NspMatrix *A, int m, int n)
 void nsp_matrix_destroy(NspMatrix *Mat)
 {
   if ( Mat == NULLMAT ) return ; 
-  FREE(Mat->C) ;
-  FREE(Mat->R);
+  FREE(Mat->C) ; /* C,R,I are stored in an union */
   FREE(NSP_OBJECT(Mat)->name);
   FREE(Mat) ;
 }
