@@ -88,6 +88,12 @@ extern  sci_interface  ClassD_Interf ;extern  interface_info  ClassD_Interf_Info
 extern  sci_interface  Gtk_Interf ;extern  interface_info  Gtk_Interf_Info ;
 #endif 
 
+#define BHASH 1
+
+#ifdef BHASH
+extern  sci_interface  BHash_Interf  ;extern  interface_info  BHash_Interf_Info  ;
+#endif 
+
 extern  sci_interface  Cells_Interf ;extern  interface_info  Cells_Interf_Info ;
 extern  sci_interface  Sound_Interf ;extern  interface_info  Sound_Interf_Info ;
 extern  sci_interface  Pvm_Interf ;extern  interface_info  Pvm_Interf_Info ;
@@ -164,6 +170,9 @@ InterfTab Interfaces[]={
   */
 #ifdef WITH_SNDFILE
   {SndFile_Interf , SndFile_Interf_Info},
+#endif
+#ifdef BHASH
+  {BHash_Interf , BHash_Interf_Info},
 #endif
   {NULL,NULL}
 }; 
