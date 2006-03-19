@@ -1400,3 +1400,84 @@ void BMatrix_Interf_Info(int i, char **fname, function (**f))
   *fname = BMatrix_func[i].name;
   *f = BMatrix_func[i].fonc;
 }
+
+
+/* wrapper for functions  B=f(A)
+ * call the matrix interface after a cast 
+ */
+
+static int int_bm_wrap(Stack stack, int rhs, int opt, int lhs,function *f)
+{
+  NspBMatrix *BM;
+  NspMatrix *M;
+  CheckRhs(1,2);
+  if ( IsBMatObj(stack,1) ) 
+    {
+      if ((BM = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
+      if ((M =nsp_bmatrix_to_matrix(BM)) == NULLMAT ) return RET_BUG;
+      MoveObj(stack,1,(NspObject *) M);
+    }
+  if (rhs == 2 &&  IsBMatObj(stack,2) )
+    {
+      if ((BM = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
+      if ((M =nsp_bmatrix_to_matrix(BM)) == NULLMAT ) return RET_BUG;
+      MoveObj(stack,2,(NspObject *) M);
+    }
+  /* call same interface for matrix */
+  return (*f)(stack,rhs,opt,lhs);
+}
+
+/*
+ * Interface for Boolean/Matrix Operations 
+ * which involves a conversion b2m + use of the matrix interface.
+ */
+
+#include "nsp/matrix-in.h"
+
+static OpWrapTab B2mMatrix_func[]={
+  {"dst_m_b", int_mxmultel, int_bm_wrap},
+  {"dst_b_m", int_mxmultel, int_bm_wrap},
+  {"dst_b_b", int_mxmultel, int_bm_wrap},
+  {"dadd_b_b" ,   int_mxdadd , int_bm_wrap},
+  {"dadd_b_m" ,   int_mxdadd , int_bm_wrap},
+  {"dadd_m_b" ,   int_mxdadd , int_bm_wrap},
+  {"div_b_b" ,  int_mxdiv, int_bm_wrap},
+  {"div_b_m" ,  int_mxdiv, int_bm_wrap},
+  {"div_m_b" ,  int_mxdiv, int_bm_wrap},
+  {"dstd_b_b" ,  int_mxkron , int_bm_wrap}, /* operator:  .*. */
+  {"dstd_b_m" ,  int_mxkron , int_bm_wrap}, /* operator:  .*. */
+  {"dstd_m_b" ,  int_mxkron , int_bm_wrap}, /* operator:  .*. */
+  {"minus_b",int_mxminus,int_bm_wrap},
+  {"minus_b_b",   int_mxdsub, int_bm_wrap},
+  {"minus_b_m",   int_mxdsub, int_bm_wrap},
+  {"minus_m_b",   int_mxdsub, int_bm_wrap},
+  {"mult_b_b" ,  int_mxmult, int_bm_wrap},
+  {"mult_b_m" ,  int_mxmult, int_bm_wrap},
+  {"mult_m_b" ,  int_mxmult, int_bm_wrap},
+  {"plus_b_b",   int_mxdadd, int_bm_wrap},
+  {"plus_b_m",   int_mxdadd, int_bm_wrap},
+  {"plus_m_b",   int_mxdadd, int_bm_wrap},
+  {"prod_b" ,  int_mxprod , int_bm_wrap},
+  {"prod_b_s" ,  int_mxprod , int_bm_wrap},
+  {"sum_b" ,  int_mxsum , int_bm_wrap},
+  {"sum_b_s" ,  int_mxsum , int_bm_wrap},
+  {(char *) 0, NULL,NULL},
+};
+
+
+int B2mMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+{
+  return (*(B2mMatrix_func[i].wrapper))(stack,rhs,opt,lhs,B2mMatrix_func[i].fonc);
+}
+
+/* used to walk through the interface table 
+   (for adding or removing functions) **/
+
+void B2mMatrix_Interf_Info(int i, char **fname, function (**f))
+{
+  *fname = B2mMatrix_func[i].name;
+  *f = B2mMatrix_func[i].fonc;
+}
+
+
+
