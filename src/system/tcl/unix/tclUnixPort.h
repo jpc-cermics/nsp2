@@ -451,7 +451,7 @@ extern char **environ;
  * up being too many conflicts with slightly-different prototypes.
  */
 
-extern double strtod();
+extern double strtod(const char *, char **);
 
 /*
  * The following macros define time related functions in terms of
@@ -468,7 +468,6 @@ extern double strtod();
  * The following routine is only exported for testing purposes.
  */
 
-EXTERN int	TclUnixWaitForFile _ANSI_ARGS_((int fd, int mask,
-		    int timeout));
+extern int TclUnixWaitForFile(int fd, int mask, int timeout);
 
 #endif /* _TCLUNIXPORT */

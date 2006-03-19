@@ -1,4 +1,384 @@
 /*
+ * extracted from tcl
+ * 
+ * Copyright (c) 1996-1997 Sun Microsystems, Inc.
+ *
+ * See the file "license.terms" for information on usage and redistribution
+ * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+ *
+ * See also in the file
+ * TclRegComp and TclRegExec -- TclRegSub is elsewhere
+ *
+ *	Copyright (c) 1986 by University of Toronto.
+ *	Written by Henry Spencer.  Not derived from licensed software.
+ */
+
+#include "nsp/object.h" 
+#include "tclRegexp.h"
+
+
+/*
+ *
+ *
+ * nsp_tcl_regsub: 
+ *
+ * performs a regexp subsitution on string @str
+ * 
+ */
+
+int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resultDString,
+		   int *nmatch,int all)
+{
+  int match, code=FAIL, numMatches;
+  char *string,*stringI, *p, *firstChar;
+  char *start, *end, *subStart, *subEnd;
+  register char *src, c;
+
+  string = stringI= str;
+  
+  Tcl_DStringInit(resultDString);
+  
+  /*
+   * The following loop is to handle multiple matches within the
+   * same source string;  each iteration handles one match and its
+   * corresponding substitution.  If "-all" hasn't been specified
+   * then the loop body only gets executed once.
+   */
+
+  numMatches = 0;
+  for (p = string; *p != 0; ) {
+    match = Tcl_RegExpExec( regExpr, p, string);
+    if (match < 0) {
+      code = FAIL;
+      goto done;
+    }
+    if (!match) {
+      break;
+    }
+    numMatches += 1;
+
+    /*
+     * Copy the portion of the source string before the match to the
+     * result variable.
+     */
+    
+    Tcl_RegExpRange(regExpr, 0, &start, &end);
+    Tcl_DStringAppend(resultDString,stringI +( p -string) , start - p);
+    
+    /*
+     * Append the subSpec argument to the variable, making appropriate
+     * substitutions.  This code is a bit hairy because of the backslash
+     * conventions and because the code saves up ranges of characters in
+     * subSpec to reduce the number of calls to Tcl_SetVar.
+     */
+    
+    for (src = firstChar = subSpec, c = *src; c != 0; src++, c = *src) {
+      int index;
+      
+      if (c == '&') {
+	index = 0;
+      } else if (c == '\\') {
+	c = src[1];
+	if ((c >= '0') && (c <= '9')) {
+	  index = c - '0';
+	} else if ((c == '\\') || (c == '&')) {
+	  *src = c;
+	  src[1] = 0;
+	  Tcl_DStringAppend(resultDString, firstChar, -1);
+	  *src = '\\';
+	  src[1] = c;
+	  firstChar = src+2;
+	  src++;
+	  continue;
+	} else {
+	  continue;
+	}
+      } else {
+	continue;
+      }
+      if (firstChar != src) {
+	c = *src;
+	*src = 0;
+	Tcl_DStringAppend(resultDString, firstChar, -1);
+	*src = c;
+      }
+      Tcl_RegExpRange(regExpr, index, &subStart, &subEnd);
+      if ((subStart != NULL) && (subEnd != NULL)) {
+	char *first, *last, saved;
+	
+	first = stringI + (subStart - string);
+	last =  stringI + (subEnd - string);
+	saved = *last;
+	*last = 0;
+	Tcl_DStringAppend(resultDString, first, -1);
+	*last = saved;
+      }
+      if (*src == '\\') {
+	src++;
+      }
+      firstChar = src+1;
+    }
+    if (firstChar != src) {
+      Tcl_DStringAppend(resultDString, firstChar, -1);
+    }
+    if (end == p) {
+
+      /*
+       * Always consume at least one character of the input string
+       * in order to prevent infinite loops.
+       */
+
+      Tcl_DStringAppend(resultDString, stringI + (p - string), 1);
+      p = end + 1;
+    } else {
+      p = end;
+    }
+    if (!all) {
+      break;
+    }
+  }
+
+  /*
+   * Copy the portion of the source string after the last match to the
+   * result variable.
+   */
+
+  if ((*p != 0) || (numMatches == 0)) {
+    Tcl_DStringAppend(resultDString, stringI + (p - string), -1);
+  }
+  
+  /* 
+   *
+   */
+  *nmatch =  numMatches;
+  code = OK ;
+  return code ;
+ done:
+  Tcl_DStringFree(resultDString);
+  return code;
+}
+
+
+
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * Tcl_RegExpCompile --
+ *
+ *	Compile a regular expression into a form suitable for fast
+ *	matching.  This procedure retains a small cache of pre-compiled
+ *	regular expressions in the interpreter, in order to avoid
+ *	compilation costs as much as possible.
+ *
+ * Results:
+ *	The return value is a pointer to the compiled form of string,
+ *	suitable for passing to Tcl_RegExpExec.  This compiled form
+ *	is only valid up until the next call to this procedure, so
+ *	don't keep these around for a long time!  If an error occurred
+ *	while compiling the pattern, then NULL is returned and an error
+ *	message is left in interp->result.
+ *
+ * Side effects:
+ *	The cache of compiled regexp's in interp will be modified to
+ *	hold information for string, if such information isn't already
+ *	present in the cache.
+ *
+ * string: String for which to produce
+ * a compiled regular expression. 
+ *
+ * FIXME: add a routine which frees the cache when quitting nsp 
+ *
+ *----------------------------------------------------------------------
+ */
+
+#define NUM_REGEXPS 10
+
+typedef struct _regexp_cache regexp_cache; 
+
+struct _regexp_cache {
+  unsigned int patLength;
+  char *pattern;
+  Tcl_RegExp regexp;
+};
+
+static regexp_cache Regexp_cache[NUM_REGEXPS]={{0,NULL,NULL}};
+
+Tcl_RegExp
+Tcl_RegExpCompile(char * string)
+{
+  int i;
+  int length = strlen(string);
+  regexp *result;
+  for (i = 0; i < NUM_REGEXPS; i++) 
+    {
+      regexp_cache R = Regexp_cache[i];
+      if ( (length == R.patLength)
+	   && (strcmp(string, R.pattern) == 0))
+	{
+	  /*
+	   * Move the matched pattern to the first slot in the
+	   * cache and shift the other patterns down one position.
+	   */
+	  if (i != 0) {
+	    int j;
+	    for (j = i-1; j >= 0; j--) Regexp_cache[j+1] = Regexp_cache[j];
+	    Regexp_cache[0] = R;
+	  }
+	  return (Tcl_RegExp) Regexp_cache[0].regexp;
+	}
+    }
+  /*
+   * No match in the cache.  Compile the string and add it to the
+   * cache.
+   */
+
+  TclRegError((char *) NULL);
+  result = TclRegComp(string);
+  if (TclGetRegError() != NULL) {
+    Scierror("couldn't compile regular expression pattern: %s\n",
+	     TclGetRegError());
+    return NULL;
+  }
+
+  if (Regexp_cache[NUM_REGEXPS-1].pattern != NULL) 
+    {
+      ckfree(Regexp_cache[NUM_REGEXPS-1].pattern);
+      ckfree((char *) Regexp_cache[NUM_REGEXPS-1].regexp);
+    }
+  for (i = NUM_REGEXPS - 2; i >= 0; i--) Regexp_cache[i+1] = Regexp_cache[i];
+  Regexp_cache[0].pattern = (char *) ckalloc((unsigned) (length+1));
+  strcpy(Regexp_cache[0].pattern, string);
+  Regexp_cache[0].patLength= length;
+  Regexp_cache[0].regexp =(Tcl_RegExp) result;
+  return (Tcl_RegExp) result;
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * Tcl_RegExpExec --
+ *
+ *	Execute the regular expression matcher using a compiled form
+ *	of a regular expression and save information about any match
+ *	that is found.
+ *
+ * Results:
+ *	If an error occurs during the matching operation then -1
+ *	is returned and interp->result contains an error message.
+ *	Otherwise the return value is 1 if a matching range is
+ *	found and 0 if there is no matching range.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+int
+Tcl_RegExpExec(Tcl_RegExp  re,char * string,char * start)
+     /*     Tcl_RegExp re;		/\* Compiled regular expression;  must have 
+      * 				 * been returned by previous call to 
+      * 				 * Tcl_RegExpCompile. *\/ 
+      *     char *string;		/\* String against which to match re. *\/ 
+      *     char *start;		/\* If string is part of a larger string, 
+      * 				 * this identifies beginning of larger 
+      * 				 * string, so that "^" won't match. *\/ 
+      */
+{
+  int match;
+
+  regexp *regexpPtr = (regexp *) re;
+  TclRegError((char *) NULL);
+  match = TclRegExec(regexpPtr, string, start);
+  if (TclGetRegError() != NULL) {
+    Scierror("error while matching regular expression: %s\n", TclGetRegError());
+    return -1;
+  }
+  return match;
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * Tcl_RegExpRange --
+ *
+ *	Returns pointers describing the range of a regular expression match,
+ *	or one of the subranges within the match.
+ *
+ * Results:
+ *	The variables at *startPtr and *endPtr are modified to hold the
+ *	addresses of the endpoints of the range given by index.  If the
+ *	specified range doesn't exist then NULLs are returned.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+void
+Tcl_RegExpRange(Tcl_RegExp re,int index,char ** startPtr,char ** endPtr)
+     /*     Tcl_RegExp re;		* Compiled regular expression that has 
+      * 				 * been passed to Tcl_RegExpExec. *\/ 
+      *     int index;			/\* 0 means give the range of the entire 
+      * 				 * match, > 0 means give the range of 
+      * 				 * a matching subrange.  Must be no greater 
+      * 				 * than NSUBEXP. *\/ 
+      *     char **startPtr;		/\* Store address of first character in 
+      * 				 * (sub-) range here. *\/ 
+      *     char **endPtr;		/\* Store address of character just after last 
+      * 				 * in (sub-) range here. *\/ 
+      */
+{
+  regexp *regexpPtr = (regexp *) re;
+
+  if (index >= NSUBEXP) {
+    *startPtr = *endPtr = NULL;
+  } else {
+    *startPtr = regexpPtr->startp[index];
+    *endPtr = regexpPtr->endp[index];
+  }
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * Tcl_RegExpMatch --
+ *
+ *	See if a string matches a regular expression.
+ *
+ * Results:
+ *	If an error occurs during the matching operation then -1
+ *	is returned and interp->result contains an error message.
+ *	Otherwise the return value is 1 if "string" matches "pattern"
+ *	and 0 otherwise.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+int
+Tcl_RegExpMatch(char * string,char * pattern)
+     /* char *string;		 String. */
+     /* char *pattern;		 Regular expression to match against
+      *                          string. */
+{
+  Tcl_RegExp re;
+
+  re = Tcl_RegExpCompile( pattern);
+  if (re == NULL) {
+    return -1;
+  }
+  return Tcl_RegExpExec( re, string, string);
+}
+
+
+
+
+/*
  * TclRegComp and TclRegExec -- TclRegSub is elsewhere
  *
  *	Copyright (c) 1986 by University of Toronto.
@@ -41,11 +421,7 @@
  * *** 2. This in addition to changes to TclRegError makes the   ***
  * ***    code multi-thread safe.                                ***
  *
- * SCCS: @(#) regexp.c 1.13 97/04/29 17:49:17
  */
-
-#include "tclInt.h"
-#include "tclPort.h"
 
 /*
  * The variable below is set to NULL before invoking regexp functions
@@ -200,26 +576,19 @@ static char regdummy;
  * Forward declarations for TclRegComp()'s friends.
  */
 
-static char *		reg _ANSI_ARGS_((int paren, int *flagp,
-					 struct regcomp_state *rcstate));
-static char *		regatom _ANSI_ARGS_((int *flagp,
-					     struct regcomp_state *rcstate));
-static char *		regbranch _ANSI_ARGS_((int *flagp,
-					       struct regcomp_state *rcstate));
-static void		regc _ANSI_ARGS_((int b,
-					  struct regcomp_state *rcstate));
-static void		reginsert _ANSI_ARGS_((int op, char *opnd,
-					       struct regcomp_state *rcstate));
-static char *		regnext _ANSI_ARGS_((char *p));
-static char *		regnode _ANSI_ARGS_((int op,
-					     struct regcomp_state *rcstate));
-static void 		regoptail _ANSI_ARGS_((char *p, char *val));
-static char *		regpiece _ANSI_ARGS_((int *flagp,
-					      struct regcomp_state *rcstate));
-static void 		regtail _ANSI_ARGS_((char *p, char *val));
+static char *reg(int paren, int *flagp,struct regcomp_state *rcstate);
+static char *regatom(int *flagp,struct regcomp_state *rcstate);
+static char *regbranch(int *flagp, struct regcomp_state *rcstate);
+static void  regc(int b, struct regcomp_state *rcstate);
+static void  reginsert(int op, char *opnd, struct regcomp_state *rcstate);
+static char *regnext(char *p);
+static char *regnode(int op,struct regcomp_state *rcstate);
+static void  regoptail(char *p, char *val);
+static char *regpiece(int *flagp, struct regcomp_state *rcstate);
+static void  regtail (char *p, char *val);
 
 #ifdef STRCSPN
-static int strcspn _ANSI_ARGS_((char *s1, char *s2));
+static int strcspn (char *s1, char *s2);
 #endif
 
 /*
@@ -237,9 +606,8 @@ static int strcspn _ANSI_ARGS_((char *s1, char *s2));
  * Beware that the optimization-preparation code in here knows about some
  * of the structure of the compiled regexp.
  */
-regexp *
-TclRegComp(exp)
-     char *exp;
+
+regexp *TclRegComp(char *exp)
 {
   register regexp *r;
   register char *scan;
@@ -326,11 +694,8 @@ TclRegComp(exp)
  * is a trifle forced, but the need to tie the tails of the branches to what
  * follows makes it hard to avoid.
  */
-static char *
-reg(paren, flagp, rcstate)
-     int paren;			/* Parenthesized? */
-     int *flagp;
-     struct regcomp_state *rcstate;
+
+static char *reg(int  paren,int * flagp,struct regcomp_state * rcstate)
 {
   register char *ret;
   register char *br;
@@ -400,9 +765,7 @@ reg(paren, flagp, rcstate)
  * Implements the concatenation operator.
  */
 static char *
-regbranch(flagp, rcstate)
-     int *flagp;
-     struct regcomp_state *rcstate;
+regbranch(int *flagp,struct regcomp_state * rcstate)
 {
   register char *ret;
   register char *chain;
@@ -440,10 +803,7 @@ regbranch(flagp, rcstate)
  * It might seem that this node could be dispensed with entirely, but the
  * endmarker role is not redundant.
  */
-static char *
-regpiece(flagp, rcstate)
-     int *flagp;
-     struct regcomp_state *rcstate;
+static char *regpiece(int *flagp, struct regcomp_state *rcstate)
 {
   register char *ret;
   register char op;
@@ -505,10 +865,7 @@ regpiece(flagp, rcstate)
  * faster to run.  Backslashed characters are exceptions, each becoming a
  * separate node; the code is simpler that way and it's not worth fixing.
  */
-static char *
-regatom(flagp, rcstate)
-     int *flagp;
-     struct regcomp_state *rcstate;
+static char *regatom( int *flagp, struct regcomp_state *rcstate)
 {
   register char *ret;
   int flags;
@@ -615,10 +972,7 @@ regatom(flagp, rcstate)
 /*
  - regnode - emit a node
  */
-static char *			/* Location. */
-regnode(op, rcstate)
-     int op;
-     struct regcomp_state *rcstate;
+static char *regnode(int op, struct regcomp_state *rcstate)
 {
   register char *ret;
   register char *ptr;
@@ -641,10 +995,7 @@ regnode(op, rcstate)
 /*
  - regc - emit (if appropriate) a byte of code
  */
-static void
-regc(b, rcstate)
-     int b;
-     struct regcomp_state *rcstate;
+static void regc( int b, struct regcomp_state *rcstate)
 {
   if (rcstate->regcode != &regdummy)
     *rcstate->regcode++ = (char)b;
@@ -657,11 +1008,7 @@ regc(b, rcstate)
  *
  * Means relocating the operand.
  */
-static void
-reginsert(op, opnd, rcstate)
-     int op;
-     char *opnd;
-     struct regcomp_state *rcstate;
+static void reginsert(int op,char * opnd,struct regcomp_state * rcstate)
 {
   register char *src;
   register char *dst;
@@ -687,10 +1034,8 @@ reginsert(op, opnd, rcstate)
 /*
  - regtail - set the next-pointer at the end of a node chain
  */
-static void
-regtail(p, val)
-     char *p;
-     char *val;
+
+static void regtail( char *p, char *val)
 {
   register char *scan;
   register char *temp;
@@ -719,10 +1064,8 @@ regtail(p, val)
 /*
  - regoptail - regtail on operand of first argument; nop if operandless
  */
-static void
-regoptail(p, val)
-     char *p;
-     char *val;
+
+static void regoptail( char *p, char *val)
 {
   /* "Operandless" and "op != BRANCH" are synonymous in practice. */
   if (p == NULL || p == &regdummy || OP(p) != BRANCH)
@@ -747,27 +1090,26 @@ struct regexec_state  {
 /*
  * Forwards.
  */
-static int 		regtry _ANSI_ARGS_((regexp *prog, char *string,
-					    struct regexec_state *restate));
-static int 		regmatch _ANSI_ARGS_((char *prog,
-					      struct regexec_state *restate));
-static int 		regrepeat _ANSI_ARGS_((char *p,
-					       struct regexec_state *restate));
+static int 		regtry(regexp *prog, char *string,
+					    struct regexec_state *restate);
+static int 		regmatch(char *prog,
+					      struct regexec_state *restate);
+static int 		regrepeat(char *p,
+					       struct regexec_state *restate);
 
 #ifdef DEBUG
 int regnarrate = 0;
-void regdump _ANSI_ARGS_((regexp *r));
-static char *regprop _ANSI_ARGS_((char *op));
+void regdump(regexp *r);
+static char *regprop(char *op);
 #endif
 
 /*
  - TclRegExec - match a regexp against a string
  */
-int
-TclRegExec(prog, string, start)
-     register regexp *prog;
-     register char *string;
-     char *start;
+
+int TclRegExec( register regexp *prog,
+		register char *string,
+		char *start)
 {
   register char *s;
   struct regexec_state state;
@@ -829,10 +1171,7 @@ TclRegExec(prog, string, start)
  - regtry - try match at specific point
  */
 static int			/* 0 failure, 1 success */
-regtry(prog, string, restate)
-     regexp *prog;
-     char *string;
-     struct regexec_state *restate;
+regtry( regexp *prog, char *string, struct regexec_state *restate)
 {
   register int i;
   register char **sp;
@@ -866,10 +1205,9 @@ regtry(prog, string, restate)
  * need to know whether the rest of the match failed) by a loop instead of
  * by recursion.
  */
+
 static int			/* 0 failure, 1 success */
-regmatch(prog, restate)
-     char *prog;
-     struct regexec_state *restate;
+regmatch( char *prog, struct regexec_state *restate)
 {
   register char *scan;	/* Current node. */
   char *next;		/* Next node. */
@@ -1068,9 +1406,7 @@ regmatch(prog, restate)
  - regrepeat - repeatedly match something simple, report how many
  */
 static int
-regrepeat(p, restate)
-     char *p;
-     struct regexec_state *restate;
+regrepeat(   char *p,  struct regexec_state *restate)
 {
   register int count = 0;
   register char *scan;
@@ -1114,9 +1450,7 @@ regrepeat(p, restate)
 /*
  - regnext - dig the "next" pointer out of a node
  */
-static char *
-regnext(p)
-     register char *p;
+static char *regnext( register char *p)
 {
   register int offset;
 
@@ -1135,14 +1469,12 @@ regnext(p)
 
 #ifdef DEBUG
 
-static char *regprop();
+static char *regprop(char *);
 
 /*
  - regdump - dump a regexp onto stdout in vaguely comprehensible form
  */
-void
-regdump(r)
-     regexp *r;
+void regdump(regexp *r)
 {
   register char *s;
   register char op = EXACTLY;	/* Arbitrary non-END op. */
@@ -1183,9 +1515,8 @@ regdump(r)
 /*
  - regprop - printable representation of opcode
  */
-static char *
-regprop(op)
-     char *op;
+
+static char *regprop( char *op)
 {
   register char *p;
   static char buf[50];
@@ -1284,10 +1615,7 @@ regprop(op)
  * of characters not from s2
  */
 
-static int
-strcspn(s1, s2)
-     char *s1;
-     char *s2;
+static int strcspn(char *s1, char *s2)
 {
   register char *scan1;
   register char *scan2;
@@ -1303,7 +1631,8 @@ strcspn(s1, s2)
   return(count);
 }
 #endif
-
+
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1322,15 +1651,12 @@ strcspn(s1, s2)
  *----------------------------------------------------------------------
  */
 
-void
-TclRegError(string)
-     char *string;			/* Error message. */
+void TclRegError(char *string)
 {
   errMsg = string;
 }
 
-char *
-TclGetRegError()
+char *TclGetRegError(void)
 {
   return errMsg;
 }

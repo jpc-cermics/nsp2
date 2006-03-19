@@ -35,12 +35,9 @@
 
 #include <stdio.h>
 
-#ifndef _TCL
 #include "tcl.h"
-#endif
-#ifndef _REGEXP
 #include "tclRegexp.h"
-#endif
+#include "dstring.h"
 
 #include <ctype.h>
 #ifdef NO_LIMITS_H
@@ -83,12 +80,10 @@ typedef enum {
  * see TclFileAttrsCmd in tclFCmd.c.
  */
 
-typedef int (TclGetFileAttrProc) _ANSI_ARGS_((
-	int objIndex, char *fileName, 
-	NspObject **attrObjPtrPtr));
-typedef int (TclSetFileAttrProc) _ANSI_ARGS_((
-	int objIndex, char *fileName, 
-	NspObject *val ));
+typedef int (TclGetFileAttrProc) (int objIndex, char *fileName, 
+				  NspObject **attrObjPtrPtr);
+typedef int (TclSetFileAttrProc) (int objIndex, char *fileName,
+				  NspObject *val );
 
 typedef struct TclFileAttrProcs {
     TclGetFileAttrProc *getProc; 	/* The procedure for getting attrs. */
@@ -106,7 +101,6 @@ extern TclPlatformType		tclPlatform;
 extern char *			tclpFileAttrStrings[];
 extern CONST TclFileAttrProcs   tclpFileAttrProcs[];
 
-
 /*
  *----------------------------------------------------------------
  * Procedures shared among Tcl modules but not used by the outside
@@ -114,54 +108,42 @@ extern CONST TclFileAttrProcs   tclpFileAttrProcs[];
  *----------------------------------------------------------------
  */
 
-EXTERN int		TclChdir _ANSI_ARGS_((char *dirName));
-EXTERN int		TclDoGlob _ANSI_ARGS_((
-			    char *separators, Tcl_DString *headPtr,
-			    char *tail,NspSMatrix *S));
+extern int		TclChdir (char *dirName);
+extern int		TclDoGlob (char *separators, Tcl_DString *headPtr,
+				   char *tail,NspSMatrix *S);
 
-EXTERN int		TclFileCopyCmd _ANSI_ARGS_((
-			    int argc, char **argv,int force )) ;
-EXTERN int 		TclFileDeleteCmd _ANSI_ARGS_((
-			    int argc, char **argv,int force ));
-EXTERN int		TclFileMakeDirsCmd _ANSI_ARGS_((
-			    int argc, char **argv)) ;
-EXTERN int		TclFileRenameCmd _ANSI_ARGS_((
-			    int argc, char **argv,int force)) ;
-EXTERN void		TclFinalizeEnvironment _ANSI_ARGS_((void));
+extern int		TclFileCopyCmd (int argc, char **argv,int force ) ;
+extern int 		TclFileDeleteCmd (int argc, char **argv,int force );
+extern int		TclFileMakeDirsCmd ( int argc, char **argv) ;
+extern int		TclFileRenameCmd ( int argc, char **argv,int force) ;
+extern void		TclFinalizeEnvironment (void);
 
-EXTERN char *		TclGetCwd _ANSI_ARGS_((void));
-EXTERN char *		TclGetEnv _ANSI_ARGS_((CONST char *name));
-EXTERN char *		TclGetExtension _ANSI_ARGS_((char *name));
+extern char *		TclGetCwd (void);
+extern char *		TclGetEnv (CONST char *name);
+extern char *		TclGetExtension (char *name);
 
-EXTERN char *		TclGetUserHome _ANSI_ARGS_((char *name,
-			    Tcl_DString *bufferPtr));
+extern char *		TclGetUserHome (char *name, Tcl_DString *bufferPtr);
 
-EXTERN int		TclpCopyFile _ANSI_ARGS_((char *source, char *dest));
-EXTERN int              TclpCopyDirectory _ANSI_ARGS_((char *source,
-			    char *dest, Tcl_DString *errorPtr));
-EXTERN int              TclpCreateDirectory _ANSI_ARGS_((char *path));
-EXTERN int              TclpDeleteFile _ANSI_ARGS_((char *path));
-EXTERN unsigned long	TclpGetClicks _ANSI_ARGS_((void));
-EXTERN unsigned long	TclpGetSeconds _ANSI_ARGS_((void));
-EXTERN int		TclpGetTimeZone _ANSI_ARGS_((unsigned long time));
-EXTERN char *		TclpGetTZName _ANSI_ARGS_((void));
-EXTERN int		TclpListVolumes _ANSI_ARGS_((Stack stack,int n));
-EXTERN int              TclpRemoveDirectory _ANSI_ARGS_((char *path,
-			    int recursive, Tcl_DString *errorPtr));
-EXTERN int              TclpRenameFile _ANSI_ARGS_((char *source, char *dest));
-EXTERN char *		TclpSetEnv _ANSI_ARGS_((CONST char *name,
-			    CONST char *value));
+extern int		TclpCopyFile (char *source, char *dest);
+extern int              TclpCopyDirectory (char *source,char *dest, Tcl_DString *errorPtr);
+extern int              TclpCreateDirectory (char *path);
+extern int              TclpDeleteFile (char *path);
+extern unsigned long	TclpGetClicks (void);
+extern unsigned long	TclpGetSeconds (void);
+extern int		TclpGetTimeZone (unsigned long time);
+extern char *		TclpGetTZName (void);
+extern int		TclpListVolumes (Stack stack,int n);
+extern int              TclpRemoveDirectory (char *path, int recursive, Tcl_DString *errorPtr);
+extern int              TclpRenameFile (char *source, char *dest);
+extern char *		TclpSetEnv (CONST char *name, CONST char *value);
 
-EXTERN void		TclPlatformExit _ANSI_ARGS_((int status));
-EXTERN void		TclPlatformInit _ANSI_ARGS_(());
-EXTERN char *		TclWordEnd _ANSI_ARGS_((char *start, char *lastChar,
-			    int nested, int *semiPtr));
+extern void		TclPlatformExit (int status);
+extern void		TclPlatformInit (void);
+extern char *		TclWordEnd (char *start, char *lastChar, int nested, int *semiPtr);
 
-EXTERN void             Tcl_CreateExitHandler();
+extern void             Tcl_CreateExitHandler();
 
-EXTERN int              TclMatchFiles(char *separators,  Tcl_DString *dirPtr, char *pattern, char *tail, NspSMatrix *S);
-
-
+extern int              TclMatchFiles(char *separators,  Tcl_DString *dirPtr, char *pattern, char *tail, NspSMatrix *S);
 
 /*
  * The macro below is used to modify a "char" value (e.g. by casting

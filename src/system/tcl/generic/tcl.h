@@ -17,6 +17,7 @@
 #ifndef _TCL
 #define _TCL
 
+#include "dstring.h"
 /*
  * When version numbers change here, must also go into the following files
  * and update the version numbers:
@@ -142,9 +143,9 @@
 #endif
 
 #ifdef __cplusplus
-#   define EXTERN extern "C"
+#   define extern extern "C"
 #else
-#   define EXTERN extern
+#   define extern extern
 #endif
 
 /*
@@ -192,7 +193,6 @@ typedef long LONG;
 
 typedef struct Tcl_AsyncHandler_ *Tcl_AsyncHandler;
 typedef struct Tcl_Pid_ *Tcl_Pid;
-typedef struct Tcl_RegExp_ *Tcl_RegExp;
 
 /*
  * When a TCL command returns, the interpreter contains a result from the
@@ -225,30 +225,7 @@ typedef struct Tcl_RegExp_ *Tcl_RegExp;
  * Procedure types defined by Tcl:
  */
 
-typedef void (Tcl_FreeProc) _ANSI_ARGS_((char *blockPtr));
-
-/*
- * The structure defined below is used to hold dynamic strings.  The only
- * field that clients should use is the string field, and they should
- * never modify it.
- */
-
-#define TCL_DSTRING_STATIC_SIZE 200
-typedef struct Tcl_DString {
-    char *string;		/* Points to beginning of string:  either
-				 * staticSpace below or a malloced array. */
-    int length;			/* Number of non-NULL characters in the
-				 * string. */
-    int spaceAvl;		/* Total number of bytes available for the
-				 * string and its terminating NULL char. */
-    char staticSpace[TCL_DSTRING_STATIC_SIZE];
-				/* Space to use in common case where string
-				 * is small. */
-} Tcl_DString;
-
-#define Tcl_DStringLength(dsPtr) ((dsPtr)->length)
-#define Tcl_DStringValue(dsPtr) ((dsPtr)->string)
-#define Tcl_DStringTrunc Tcl_DStringSetLength
+typedef void (Tcl_FreeProc) (char *blockPtr);
 
 /*
  * The following declarations either map ckalloc and ckfree to
@@ -256,10 +233,9 @@ typedef struct Tcl_DString {
  * of debugging hooks defined in tclCkalloc.c.
  */
 
-EXTERN char *		Tcl_Alloc _ANSI_ARGS_((unsigned int size));
-EXTERN void		Tcl_Free _ANSI_ARGS_((char *ptr));
-EXTERN char *		Tcl_Realloc _ANSI_ARGS_((char *ptr,
-			    unsigned int size));
+extern char *		Tcl_Alloc (unsigned int size);
+extern void		Tcl_Free (char *ptr);
+extern char *		Tcl_Realloc (char *ptr, unsigned int size);
 #define ckalloc(x) malloc(x)
 #define ckfree(x)  free(x)
 #define ckrealloc(x,y) realloc(x,y)
@@ -278,101 +254,64 @@ typedef enum Tcl_PathType {
  * Exported Tcl procedures:
  */
 
-EXTERN void		Tcl_AppendElement _ANSI_ARGS_((
-			    char *string));
-EXTERN void		Tcl_AppendResult _ANSI_ARGS_(
-			    TCL_VARARGS(char *,arg1));
-EXTERN char		Tcl_Backslash _ANSI_ARGS_((CONST char *src,
-			    int *readPtr));
+extern void		Tcl_AppendElement ( char *string);
+extern void		Tcl_AppendResult  TCL_VARARGS(char *,arg1);
+extern char		Tcl_Backslash (CONST char *src, int *readPtr);
 
-EXTERN int		Tcl_CommandComplete _ANSI_ARGS_((char *cmd));
+extern int		Tcl_CommandComplete (char *cmd);
 
-EXTERN int		Tcl_ConvertCountedElement _ANSI_ARGS_((CONST char *src,
-			    int length, char *dst, int flags));
-EXTERN int		Tcl_ConvertElement _ANSI_ARGS_((CONST char *src,
-			    char *dst, int flags));
-EXTERN char *		Tcl_DbCkalloc _ANSI_ARGS_((unsigned int size,
-			    char *file, int line));
-EXTERN int		Tcl_DbCkfree _ANSI_ARGS_((char *ptr,
-			    char *file, int line));
-EXTERN char *		Tcl_DbCkrealloc _ANSI_ARGS_((char *ptr,
-			    unsigned int size, char *file, int line));
-EXTERN void		Tcl_DeleteFileHandler _ANSI_ARGS_((int fd));
-EXTERN void		Tcl_DetachPids _ANSI_ARGS_((int numPids, Tcl_Pid *pidPtr));
-EXTERN char *		Tcl_DStringAppend _ANSI_ARGS_((Tcl_DString *dsPtr,
-			    CONST char *string, int length));
-EXTERN char *		Tcl_DStringAppendElement _ANSI_ARGS_((
-			    Tcl_DString *dsPtr, CONST char *string));
-EXTERN void		Tcl_DStringEndSublist _ANSI_ARGS_((Tcl_DString *dsPtr));
-EXTERN void		Tcl_DStringFree _ANSI_ARGS_((Tcl_DString *dsPtr));
-EXTERN void		Tcl_DStringInit _ANSI_ARGS_((Tcl_DString *dsPtr));
-EXTERN void		Tcl_DStringSetLength _ANSI_ARGS_((Tcl_DString *dsPtr,
-			    int length));
-EXTERN void		Tcl_DStringStartSublist _ANSI_ARGS_((
-			    Tcl_DString *dsPtr));
-EXTERN char *		Tcl_ErrnoId _ANSI_ARGS_((void));
-EXTERN char *		Tcl_ErrnoMsg _ANSI_ARGS_((int err));
-EXTERN void		Tcl_Exit _ANSI_ARGS_((int status));
-EXTERN void		Tcl_Finalize _ANSI_ARGS_((void));
-EXTERN void		Tcl_FindExecutable _ANSI_ARGS_((char *argv0));
+extern int		Tcl_ConvertCountedElement (CONST char *src, int length, char *dst, int flags);
+extern int		Tcl_ConvertElement (CONST char *src, char *dst, int flags);
+extern char *		Tcl_DbCkalloc (unsigned int size, char *file, int line);
+extern int		Tcl_DbCkfree (char *ptr,  char *file, int line);
+extern char *		Tcl_DbCkrealloc (char *ptr,  unsigned int size, char *file, int line);
+extern void		Tcl_DeleteFileHandler (int fd);
+extern void		Tcl_DetachPids (int numPids, Tcl_Pid *pidPtr);
+extern char *		Tcl_ErrnoId (void);
+extern char *		Tcl_ErrnoMsg (int err);
+extern void		Tcl_Exit (int status);
+extern void		Tcl_Finalize (void);
+extern void		Tcl_FindExecutable (char *argv0);
 
-EXTERN char *		Tcl_GetCwd _ANSI_ARGS_((char *buf, int len));
-EXTERN int		Tcl_GetErrno _ANSI_ARGS_((void));
-EXTERN char *		Tcl_GetHostName _ANSI_ARGS_((void));
-EXTERN Tcl_PathType	Tcl_GetPathType _ANSI_ARGS_((char *path));
-EXTERN int		Tcl_GetServiceMode _ANSI_ARGS_((void));
-EXTERN char *		Tcl_JoinPath _ANSI_ARGS_((int argc, char **argv,
-			    Tcl_DString *resultPtr));
-EXTERN char *		Tcl_PosixError _ANSI_ARGS_(());
-EXTERN void		Tcl_Preserve _ANSI_ARGS_((ClientData data));
-EXTERN int		Tcl_PutEnv _ANSI_ARGS_((CONST char *string));
-EXTERN void		Tcl_ReapDetachedProcs _ANSI_ARGS_((void));
-EXTERN Tcl_RegExp	Tcl_RegExpCompile _ANSI_ARGS_((
-			    char *string));
-EXTERN int		Tcl_RegExpExec _ANSI_ARGS_((
-			    Tcl_RegExp regexp, char *string, char *start));
-EXTERN int		Tcl_RegExpMatch _ANSI_ARGS_((
-			    char *string, char *pattern));
-EXTERN void		Tcl_RegExpRange _ANSI_ARGS_((Tcl_RegExp regexp,
-			    int index, char **startPtr, char **endPtr));
-EXTERN void		Tcl_Release _ANSI_ARGS_((ClientData clientData));
-EXTERN void		Tcl_RestartIdleTimer _ANSI_ARGS_((void));
+extern char *		Tcl_GetCwd (char *buf, int len);
+extern int		Tcl_GetErrno (void);
+extern char *		Tcl_GetHostName (void);
+extern Tcl_PathType	Tcl_GetPathType (char *path);
+extern int		Tcl_GetServiceMode (void);
+extern char *		Tcl_JoinPath (int argc, char **argv, Tcl_DString *resultPtr);
+extern char *		Tcl_PosixError ();
+extern void		Tcl_Preserve (ClientData data);
+extern int		Tcl_PutEnv (CONST char *string);
+extern void		Tcl_ReapDetachedProcs (void);
+
+extern void		Tcl_Release (ClientData clientData);
+extern void		Tcl_RestartIdleTimer (void);
 
 #define Tcl_Return Tcl_SetResult
-EXTERN int		Tcl_ScanCountedElement _ANSI_ARGS_((CONST char *string,
-			    int length, int *flagPtr));
-EXTERN int		Tcl_ScanElement _ANSI_ARGS_((CONST char *string,
-			    int *flagPtr));
+extern int		Tcl_ScanCountedElement (CONST char *string, int length, int *flagPtr);
+extern int		Tcl_ScanElement (CONST char *string, int *flagPtr);
 
-EXTERN int		Tcl_ServiceAll _ANSI_ARGS_((void));
-EXTERN int		Tcl_ServiceEvent _ANSI_ARGS_((int flags));
-EXTERN int		Tcl_SetBooleanObj _ANSI_ARGS_((Stack stack,int n,int ival));
-EXTERN int		Tcl_SetDoubleObj _ANSI_ARGS_((Stack stack , int i,
-			    double doubleValue));
-EXTERN void		Tcl_SetErrno _ANSI_ARGS_((int err));
-EXTERN void		Tcl_SetPanicProc _ANSI_ARGS_((void (*proc)
-			    _ANSI_ARGS_(TCL_VARARGS(char *, format))));
-EXTERN void		Tcl_SetResult _ANSI_ARGS_((
-			    char *string, Tcl_FreeProc *freeProc));
-EXTERN int		Tcl_SetServiceMode _ANSI_ARGS_((int mode));
-EXTERN int 		Tcl_SetStringObj _ANSI_ARGS_((Stack stack , int i,
-			    char *bytes, int length));
-EXTERN char *		Tcl_SignalId _ANSI_ARGS_((int sig));
-EXTERN char *		Tcl_SignalMsg _ANSI_ARGS_((int sig));
-EXTERN void		Tcl_Sleep _ANSI_ARGS_((int ms));
-EXTERN void		Tcl_SplitPath _ANSI_ARGS_((char *path,
-			    int *argcPtr, char ***argvPtr));
-EXTERN int		Tcl_StringMatch _ANSI_ARGS_((char *string,
-			    char *pattern));
+extern int		Tcl_ServiceAll (void);
+extern int		Tcl_ServiceEvent (int flags);
+extern int		Tcl_SetBooleanObj (Stack stack,int n,int ival);
+extern int		Tcl_SetDoubleObj (Stack stack , int i, double doubleValue);
+extern void		Tcl_SetErrno (int err);
+extern void		Tcl_SetPanicProc (void (*proc)  TCL_VARARGS(char *, format));
+extern void		Tcl_SetResult (char *string, Tcl_FreeProc *freeProc);
+extern int		Tcl_SetServiceMode (int mode);
+extern int 		Tcl_SetStringObj (Stack stack , int i,  char *bytes, int length);
+extern char *		Tcl_SignalId (int sig);
+extern char *		Tcl_SignalMsg (int sig);
+extern void		Tcl_Sleep (int ms);
+extern void		Tcl_SplitPath (char *path, int *argcPtr, char ***argvPtr);
+extern int		Tcl_StringMatch (char *string, char *pattern);
 #define Tcl_TildeSubst Tcl_TranslateFileName
 
-EXTERN char *		Tcl_TranslateFileName _ANSI_ARGS_((
-			    char *name, Tcl_DString *bufferPtr));
+extern char *		Tcl_TranslateFileName ( char *name, Tcl_DString *bufferPtr);
 
-EXTERN Tcl_Pid		Tcl_WaitPid _ANSI_ARGS_((Tcl_Pid pid, int *statPtr, 
-			    int options));
+extern Tcl_Pid		Tcl_WaitPid (Tcl_Pid pid, int *statPtr,  int options);
 
-EXTERN NspObject* Tcl_NewStringObj _ANSI_ARGS_((char *bytes, int length)); 
+extern NspObject* Tcl_NewStringObj (char *bytes, int length); 
 
 #endif /* RESOURCE_INCLUDED */
 #endif /* _TCL */

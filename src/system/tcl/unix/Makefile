@@ -38,7 +38,7 @@ panic.o: $(GENERIC_DIR)/panic.c
 
 regexp.o: $(GENERIC_DIR)/regexp.c
 	@echo "compiling $(GENERIC_DIR)/regexp.c"
-	$(CC) -c $(CFLAGS) $(GENERIC_DIR)/regexp.c
+	@$(CC) -c $(CFLAGS) $(GENERIC_DIR)/regexp.c
 
 tclAppInit.o: tclAppInit.c
 	@echo "compiling tclAppInit.c"

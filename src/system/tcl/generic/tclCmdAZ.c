@@ -1,8 +1,28 @@
-/* Nsp
- * Copyright (C) 2006 Jean-Philippe Chancelier Enpc/Cermics
- * Nsp interface for a subset of tcl system commands 
+/* 
+ * Nsp
+ * Copyright (C) 2004-2006 Jean-Philippe Chancelier Enpc/Cermics
  *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * A set of interfaces which use Tcl functions 
+ * Some of the following functions should be replaced by glib ones 
+ *
+ *--------------------------------------------------------------------------
  */
+
 
 #include "tclInt.h"
 #include "tclPort.h"
@@ -64,14 +84,8 @@ int int_syscd(Stack stack,int rhs,int opt,int lhs)
  *
  * int_sysfile
  *
- *	This procedure is invoked to process the "file" Scilab command.
+ *	This procedure is invoked to process the "file"  command.
  *	See the user documentation for details on what it does.
- *
- * Results:
- *	A standard Scilab result.
- *
- * Side effects:
- *	See the user documentation.
  *
  *----------------------------------------------------------------------
  */
@@ -978,10 +992,6 @@ int int_regexp(Stack stack,int rhs,int opt,int lhs)
  *----------------------------------------------------------------------
  */
 
-
-static int do_one_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resultDString,
-			 int *nmatch,int all);
-
 int int_regsub(Stack stack,int rhs,int opt,int lhs) 
 {
   int nmatch,i,code=RET_BUG;
@@ -1046,7 +1056,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
   
   for ( i = 0 ; i < S->mn ; i++) 
     {
-      if ((do_one_regsub(S->S[i],regExpr,subSpec,&resultDString,&nmatch,all))==FAIL)
+      if ((nsp_tcl_regsub(S->S[i],regExpr,subSpec,&resultDString,&nmatch,all))==FAIL)
 	goto done;
       if (( Res->S[i] = nsp_string_copy(Tcl_DStringValue(&resultDString))) == (nsp_string) 0)
 	{
@@ -1068,143 +1078,4 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
     }
   return code;
 }
-
-/*
- * performs a regexp subsitution on string @str
- * Question: l'expression réguliere n'est pas libérée (free) ? 
- */
-
-static int do_one_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resultDString,
-			 int *nmatch,int all)
-{
-  int match, code=FAIL, numMatches;
-  char *string,*stringI, *p, *firstChar;
-  char *start, *end, *subStart, *subEnd;
-  register char *src, c;
-
-  string = stringI= str;
-  
-  Tcl_DStringInit(resultDString);
-  
-  /*
-   * The following loop is to handle multiple matches within the
-   * same source string;  each iteration handles one match and its
-   * corresponding substitution.  If "-all" hasn't been specified
-   * then the loop body only gets executed once.
-   */
-
-  numMatches = 0;
-  for (p = string; *p != 0; ) {
-    match = Tcl_RegExpExec( regExpr, p, string);
-    if (match < 0) {
-      code = FAIL;
-      goto done;
-    }
-    if (!match) {
-      break;
-    }
-    numMatches += 1;
-
-    /*
-     * Copy the portion of the source string before the match to the
-     * result variable.
-     */
-    
-    Tcl_RegExpRange(regExpr, 0, &start, &end);
-    Tcl_DStringAppend(resultDString,stringI +( p -string) , start - p);
-    
-    /*
-     * Append the subSpec argument to the variable, making appropriate
-     * substitutions.  This code is a bit hairy because of the backslash
-     * conventions and because the code saves up ranges of characters in
-     * subSpec to reduce the number of calls to Tcl_SetVar.
-     */
-    
-    for (src = firstChar = subSpec, c = *src; c != 0; src++, c = *src) {
-      int index;
-      
-      if (c == '&') {
-	index = 0;
-      } else if (c == '\\') {
-	c = src[1];
-	if ((c >= '0') && (c <= '9')) {
-	  index = c - '0';
-	} else if ((c == '\\') || (c == '&')) {
-	  *src = c;
-	  src[1] = 0;
-	  Tcl_DStringAppend(resultDString, firstChar, -1);
-	  *src = '\\';
-	  src[1] = c;
-	  firstChar = src+2;
-	  src++;
-	  continue;
-	} else {
-	  continue;
-	}
-      } else {
-	continue;
-      }
-      if (firstChar != src) {
-	c = *src;
-	*src = 0;
-	Tcl_DStringAppend(resultDString, firstChar, -1);
-	*src = c;
-      }
-      Tcl_RegExpRange(regExpr, index, &subStart, &subEnd);
-      if ((subStart != NULL) && (subEnd != NULL)) {
-	char *first, *last, saved;
-	
-	first = stringI + (subStart - string);
-	last =  stringI + (subEnd - string);
-	saved = *last;
-	*last = 0;
-	Tcl_DStringAppend(resultDString, first, -1);
-	*last = saved;
-      }
-      if (*src == '\\') {
-	src++;
-      }
-      firstChar = src+1;
-    }
-    if (firstChar != src) {
-      Tcl_DStringAppend(resultDString, firstChar, -1);
-    }
-    if (end == p) {
-
-      /*
-       * Always consume at least one character of the input string
-       * in order to prevent infinite loops.
-       */
-
-      Tcl_DStringAppend(resultDString, stringI + (p - string), 1);
-      p = end + 1;
-    } else {
-      p = end;
-    }
-    if (!all) {
-      break;
-    }
-  }
-
-  /*
-   * Copy the portion of the source string after the last match to the
-   * result variable.
-   */
-
-  if ((*p != 0) || (numMatches == 0)) {
-    Tcl_DStringAppend(resultDString, stringI + (p - string), -1);
-  }
-  
-  /* 
-   *
-   */
-  *nmatch =  numMatches;
-  code = OK ;
-  return code ;
- done:
-  Tcl_DStringFree(resultDString);
-  return code;
-}
-
-
 

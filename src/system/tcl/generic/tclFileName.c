@@ -58,19 +58,13 @@ TclPlatformType tclPlatform = TCL_PLATFORM_UNIX;
  * Prototypes for local procedures defined in this file:
  */
 
-static char *		DoTildeSubst _ANSI_ARGS_((
-						  char *user, Tcl_DString *resultPtr));
-static char *		ExtractWinRoot _ANSI_ARGS_((char *path,
-						    Tcl_DString *resultPtr, int offset));
-static void		FileNameCleanup _ANSI_ARGS_((ClientData clientData));
-static int		SkipToChar _ANSI_ARGS_((char **stringPtr,
-						char *match));
-static char *		SplitMacPath _ANSI_ARGS_((char *path,
-						  Tcl_DString *bufPtr));
-static char *		SplitWinPath _ANSI_ARGS_((char *path,
-						  Tcl_DString *bufPtr));
-static char *		SplitUnixPath _ANSI_ARGS_((char *path,
-						   Tcl_DString *bufPtr));
+static char *		DoTildeSubst ( char *user, Tcl_DString *resultPtr);
+static char *		ExtractWinRoot (char *path,  Tcl_DString *resultPtr, int offset);
+static void		FileNameCleanup (ClientData clientData);
+static int		SkipToChar (char **stringPtr,char *match);
+static char *		SplitMacPath (char *path, Tcl_DString *bufPtr);
+static char *		SplitWinPath (char *path, Tcl_DString *bufPtr);
+static char *		SplitUnixPath (char *path, Tcl_DString *bufPtr);
 
 /*
  *----------------------------------------------------------------------
@@ -194,8 +188,7 @@ ExtractWinRoot(path, resultPtr, offset)
  */
 
 Tcl_PathType
-Tcl_GetPathType(path)
-     char *path;
+Tcl_GetPathType( char *path)
 {
   Tcl_PathType type = TCL_PATH_ABSOLUTE;
 
@@ -290,13 +283,12 @@ Tcl_GetPathType(path)
  *----------------------------------------------------------------------
  */
 
-void
-Tcl_SplitPath(path, argcPtr, argvPtr)
-     char *path;			/* Pointer to string containing a path. */
-     int *argcPtr;		/* Pointer to location to fill in with
+void Tcl_SplitPath(
+		   char *path,			/* Pointer to string containing a path. */
+		   int *argcPtr,		/* Pointer to location to fill in with
 				 * the number of elements in the path. */
-     char ***argvPtr;		/* Pointer to place to store pointer to array
-				 * of pointers to path elements. */
+		   char ***argvPtr		/* Pointer to place to store pointer to array
+						 * of pointers to path elements. */)
 {
   int i, size;
   char *p;
@@ -383,10 +375,9 @@ Tcl_SplitPath(path, argcPtr, argvPtr)
  *----------------------------------------------------------------------
  */
 
-static char *
-SplitUnixPath(path, bufPtr)
-     char *path;			/* Pointer to string containing a path. */
-     Tcl_DString *bufPtr;	/* Pointer to DString to use for the result. */
+static char *SplitUnixPath(
+			   char *path,			/* Pointer to string containing a path. */
+			   Tcl_DString *bufPtr	/* Pointer to DString to use for the result. */)
 {
   int length;
   char *p, *elementStart;
@@ -446,9 +437,9 @@ SplitUnixPath(path, bufPtr)
  */
 
 static char *
-SplitWinPath(path, bufPtr)
-     char *path;			/* Pointer to string containing a path. */
-     Tcl_DString *bufPtr;	/* Pointer to DString to use for the result. */
+SplitWinPath(
+	     char *path,			/* Pointer to string containing a path. */
+	     Tcl_DString *bufPtr	/* Pointer to DString to use for the result. */)
 {
   int length;
   char *p, *elementStart;
@@ -503,10 +494,9 @@ SplitWinPath(path, bufPtr)
  *----------------------------------------------------------------------
  */
 
-static char *
-SplitMacPath(path, bufPtr)
-     char *path;			/* Pointer to string containing a path. */
-     Tcl_DString *bufPtr;	/* Pointer to DString to use for the result. */
+static char *SplitMacPath(
+			  char *path,			/* Pointer to string containing a path. */
+			  Tcl_DString *bufPtr	/* Pointer to DString to use for the result. */)
 {
   int isMac = 0;		/* 1 if is Mac-style, 0 if Unix-style path. */
   int i, length;
@@ -682,11 +672,9 @@ SplitMacPath(path, bufPtr)
  *----------------------------------------------------------------------
  */
 
-char *
-Tcl_JoinPath(argc, argv, resultPtr)
-     int argc;
-     char **argv;
-     Tcl_DString *resultPtr;	/* Pointer to previously initialized DString. */
+char *Tcl_JoinPath( int argc,
+		    char **argv,
+		    Tcl_DString *resultPtr /* Pointer to previously initialized DString. */)
 {
   int oldLength, length, i, needsSep;
   Tcl_DString buffer;
@@ -908,14 +896,14 @@ Tcl_JoinPath(argc, argv, resultPtr)
  */
 
 char *
-Tcl_TranslateFileName( name, bufferPtr)
-     char *name;			/* File name, which may begin with "~"
-				 * (to indicate current user's home directory)
-				 * or "~<user>" (to indicate any user's
-				 * home directory). */
-     Tcl_DString *bufferPtr;	/* May be used to hold result.  Must not hold
-				 * anything at the time of the call, and need
-				 * not even be initialized. */
+Tcl_TranslateFileName(
+		      char *name,			/* File name, which may begin with "~"
+							 * (to indicate current user's home directory)
+							 * or "~<user>" (to indicate any user's
+							 * home directory). */
+		      Tcl_DString *bufferPtr	/* May be used to hold result.  Must not hold
+						 * anything at the time of the call, and need
+						 * not even be initialized. */)
 {
   register char *p;
 
@@ -989,9 +977,7 @@ Tcl_TranslateFileName( name, bufferPtr)
  *----------------------------------------------------------------------
  */
 
-char *
-TclGetExtension(name)
-     char *name;			/* File name to parse. */
+char *TclGetExtension(char *name			/* File name to parse. */)
 {
   char *p, *lastSep;
 
@@ -1062,13 +1048,12 @@ TclGetExtension(name)
  *----------------------------------------------------------------------
  */
 
-static char *
-DoTildeSubst( user, resultPtr)
-     char *user;			/* Name of user whose home directory should be
+static char *DoTildeSubst(
+			  char *user,			/* Name of user whose home directory should be
 				 * substituted, or "" for current user. */
-     Tcl_DString *resultPtr;	/* May be used to hold result.  Must not hold
-				 * anything at the time of the call, and need
-				 * not even be initialized. */
+			  Tcl_DString *resultPtr	/* May be used to hold result.  Must not hold
+							 * anything at the time of the call, and need
+							 * not even be initialized. */)
 {
   char *dir;
 
@@ -1109,8 +1094,7 @@ DoTildeSubst( user, resultPtr)
  *----------------------------------------------------------------------
  */
 
-int int_glob (stack,rhs,opt,lhs) 
-     Stack stack;int rhs,opt,lhs;
+int int_glob (Stack stack,int rhs,int opt,int lhs)
 {
   NspSMatrix *S;
   int i, noComplain=0;
@@ -1241,10 +1225,8 @@ int int_glob (stack,rhs,opt,lhs)
  *----------------------------------------------------------------------
  */
 
-static int
-SkipToChar(stringPtr, match)
-     char **stringPtr;			/* Pointer string to check. */
-     char *match;			/* Pointer to character to find. */
+static int SkipToChar( char **stringPtr,			/* Pointer string to check. */
+		       char *match			/* Pointer to character to find. */)
 {
   int quoted, level;
   register char *p;
@@ -1296,16 +1278,15 @@ SkipToChar(stringPtr, match)
  *----------------------------------------------------------------------
  */
 
-int
-TclDoGlob( separators, headPtr, tail, S)
-     char *separators;		/* String containing separator characters
-				 * that should be used to identify globbing
-				 * boundaries. */
-     Tcl_DString *headPtr;	/* Completely expanded prefix. */
-     char *tail;		/* The unexpanded remainder of the path. */
-     NspSMatrix *S;                /* String Matrix for appending results 
-				   the Matrix can be an empty Matrix 
-				*/
+int TclDoGlob(
+	      char *separators,		/* String containing separator characters
+					 * that should be used to identify globbing
+					 * boundaries. */
+	      Tcl_DString *headPtr,	/* Completely expanded prefix. */
+	      char *tail,		/* The unexpanded remainder of the path. */
+	      NspSMatrix *S                /* String Matrix for appending results 
+					      the Matrix can be an empty Matrix 
+					   */)
 {
   int baseLength, quoted, count;
   int result = TCL_OK;

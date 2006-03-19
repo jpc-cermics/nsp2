@@ -9,7 +9,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) tclFCmd.c 1.17 97/05/14 13:23:13
  */
 
 #include "tclInt.h"
@@ -19,15 +18,10 @@
  * Declarations for local procedures defined in this file:
  */
 
-static int		CopyRenameOneFile _ANSI_ARGS_((
-			    char *source, char *dest, int copyFlag,
-			    int force));
-static char *		FileBasename _ANSI_ARGS_((
-			    char *path, Tcl_DString *bufferPtr));
-static int		FileCopyRename _ANSI_ARGS_((
-			    int argc, char **argv, int copyFlag,int forceFlag));
+static int CopyRenameOneFile( char *source, char *dest, int copyFlag,int force);
+static char *FileBasename( char *path, Tcl_DString *bufferPtr);
+static int   FileCopyRename( int argc, char **argv, int copyFlag,int forceFlag);
 
-
 /*
  *---------------------------------------------------------------------------
  *
@@ -44,14 +38,15 @@ static int		FileCopyRename _ANSI_ARGS_((
  * Side effects:
  *	See the user documentation.
  *
+ *   int argc;			 Number of arguments. 
+ *   char **argv;		 Argument strings for rename Command 
+ *   int force ;                 force option 
+*
  *---------------------------------------------------------------------------
  */
 
 int
-TclFileRenameCmd( argc, argv,force)
-    int argc;			/* Number of arguments. */
-    char **argv;		/* Argument strings for rename Command */
-    int force ;                 /* force option */
+TclFileRenameCmd(int  argc,char ** argv,int force)
 {
     return FileCopyRename( argc, argv, 0,force);
 }
@@ -75,11 +70,9 @@ TclFileRenameCmd( argc, argv,force)
  *---------------------------------------------------------------------------
  */
 
-int
-TclFileCopyCmd( argc, argv,force)
-    int argc;			/* Number of arguments. */
-    char **argv;		/* Argument strings passed to Tcl_FileCmd. */
-    int force;
+int TclFileCopyCmd(int argc,			/* Number of arguments. */
+		   char **argv,		/* Argument strings passed to Tcl_FileCmd. */
+		   int force)
 {
     return FileCopyRename( argc, argv, 1,force);
 }
@@ -102,12 +95,12 @@ TclFileCopyCmd( argc, argv,force)
  */
 
 static int
-FileCopyRename( argc, argv, copyFlag, forceFlag)
-     int argc;			/* Number of arguments. */
-     char **argv;		/* Argument strings passed to Tcl_FileCmd. */
-     int copyFlag;		/* If non-zero, copy source(s).  Otherwise,
+FileCopyRename(
+	       int argc,			/* Number of arguments. */
+	       char **argv,		/* Argument strings passed to Tcl_FileCmd. */
+	       int copyFlag,		/* If non-zero, copy source(s).  Otherwise,
 				 * rename them. */
-     int forceFlag;              /* force flag for copy or rename */
+	       int forceFlag              /* force flag for copy or rename */)
 {
     int i, result;
     struct stat statBuf; 
@@ -205,10 +198,9 @@ FileCopyRename( argc, argv, copyFlag, forceFlag)
  *
  *----------------------------------------------------------------------
  */
-int
-TclFileMakeDirsCmd( argc, argv)
-    int argc;			/* Number of arguments */
-    char **argv;		/* Argument strings giving the dirs to create  */
+int TclFileMakeDirsCmd(
+		       int argc,			/* Number of arguments */
+		       char **argv		/* Argument strings giving the dirs to create  */)
 {
     Tcl_DString nameBuffer, targetBuffer;
     char *errfile;
@@ -294,10 +286,9 @@ TclFileMakeDirsCmd( argc, argv)
  */
 
 int
-TclFileDeleteCmd( argc, argv,forceFlag)
-    int argc;			/* Number of arguments */
-    char **argv;		/* Argument strings passed to Tcl_FileCmd. */
-    int forceFlag;              /* force Argument */
+TclFileDeleteCmd(int argc,			/* Number of arguments */
+		 char **argv,		/* Argument strings passed to Tcl_FileCmd. */
+		 int forceFlag              /* force Argument */)
 {
     Tcl_DString nameBuffer, errorBuffer;
     int i, force=0, result;
@@ -390,16 +381,16 @@ TclFileDeleteCmd( argc, argv,forceFlag)
  */
 
 static int
-CopyRenameOneFile( source, target, copyFlag, force) 
-    char *source;		/* Pathname of file to copy.  May need to
+CopyRenameOneFile(
+		  char *source,		/* Pathname of file to copy.  May need to
 				 * be translated. */
-    char *target;		/* Pathname of file to create/overwrite.
+		  char *target,		/* Pathname of file to create/overwrite.
 				 * May need to be translated. */
-    int copyFlag;		/* If non-zero, copy files.  Otherwise,
+		  int copyFlag,		/* If non-zero, copy files.  Otherwise,
 				 * rename them. */
-    int force;			/* If non-zero, overwrite target file if it
+		  int force			/* If non-zero, overwrite target file if it
 				 * exists.  Otherwise, error if target already
-				 * exists. */
+				 * exists. */)
 {
     int result;
     Tcl_DString sourcePath, targetPath, errorBuffer;
@@ -590,11 +581,10 @@ CopyRenameOneFile( source, target, copyFlag, force)
  *---------------------------------------------------------------------------
  */
 
-static char *
-FileBasename( path, bufferPtr)
-    char *path;			/* Path whose basename to extract. */
-    Tcl_DString *bufferPtr;	/* Initialized DString that receives
-				 * basename. */
+static char *FileBasename(
+			  char *path,			/* Path whose basename to extract. */
+			  Tcl_DString *bufferPtr	/* Initialized DString that receives
+							 * basename. */)
 {
     int argc;
     char **argv;

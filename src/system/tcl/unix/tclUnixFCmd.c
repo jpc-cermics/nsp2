@@ -928,7 +928,7 @@ GetGroupAttribute(objIndex, fileName, attributePtrPtr)
     struct group *groupPtr;
 
     if (stat(fileName, &statBuf) != 0) {
-      Scierror("Error: could not stat file \"%s\": %s\n",Tcl_PosixError());
+      Scierror("Error: could not stat file \"%s\": %s\n",fileName,Tcl_PosixError());
       return TCL_ERROR;
     }
 
@@ -1017,8 +1017,7 @@ GetPermissionsAttribute( objIndex, fileName, attributePtrPtr)
     char returnString[6];
 
     if (stat(fileName, &statBuf) != 0) {
-      Scierror("Error: could not stat file \"%s\": %s\n", fileName,   
-	       Tcl_PosixError());
+      Scierror("Error: could not stat file \"%s\": %s\n", fileName,Tcl_PosixError());
       return TCL_ERROR;
     }
 
