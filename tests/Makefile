@@ -18,7 +18,8 @@ TESTS= \
 	qr.dia \
 	function.dia \
 	smat_concat_down.dia \
-	smat_concat_right.dia
+	smat_concat_right.dia \
+	regexp.dia
 
 AFINIR= \
 	matelm-nsp.dia \
