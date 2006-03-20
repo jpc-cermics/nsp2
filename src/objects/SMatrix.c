@@ -959,7 +959,25 @@ NspSMatrix*nsp_smatrix_extract_rows(NspSMatrix *A, NspMatrix *Rows, int *err)
       }
   return(Loc);
 }
- 
+
+/**
+ * nsp_new_string:
+ * @bytes: string to be copied.
+ * @length: -1 or the number of bytes to use for copy.
+ * 
+ * return a new string filled with bytes from @bytes. 
+ * If @length is < 0 @bytes must be null terminated, If @length is 
+ * positive then @length characters from @length are used.
+ * 
+ * Return value: a #nsp_string or NULL
+ **/
+
+nsp_string nsp_new_string(nsp_const_string bytes,int length)
+{
+  return  ( length >= 0) ? new_nsp_string_n(length) 
+    : new_nsp_string(bytes);
+}
+
 /*
  * Res=new_nsp_string(str) 
  * Creates a copy of str in Res or (char*)0 if no more memory 
