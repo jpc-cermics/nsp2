@@ -12,7 +12,7 @@ manual.tmp
 manual.xref
 manualch*.html
 manualli*.html
-./nsp_history
+.nsp_history
 idxmake.dvi
 idxmake.log
 manual.4dx

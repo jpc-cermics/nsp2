@@ -1,7 +1,9 @@
 
 all::	
+	export TEXINPUTS=::`pwd`/..// ; \
 	latex -interaction=batchmode manual 
 	makeindex -s index.isty manual.idx
+	export TEXINPUTS=::`pwd`/..// ; \
 	latex -interaction=batchmode manual
 	dvips -Ppdf manual
 	ps2pdf manual.ps
@@ -14,14 +16,8 @@ all-debug:
 	ps2pdf manual.ps
 
 distclean::
-	@$(RM) 
-	@$(RM) manual.aux
-	@$(RM) manual.dvi
-	@$(RM) manual.idx
-	@$(RM) manual.ilg
-	@$(RM) manual.ind
-	@$(RM) manual.log
-	@$(RM) manual.out
-	@$(RM) manual.pdf
-	@$(RM) manual.ps
-	@$(RM) manual.toc
+	@$(RM) manual.aux  manual.dvi manual.ps manual.pdf 
+	@$(RM) manual.ilg manual.out manual.ind
+	@$(RM) manual.idx  manual.log manual.toc *.aux
+
+

@@ -43,19 +43,21 @@
 
 %% verbatim with a background color 
 
-\def\program{%
+\def\program{\noindent%
   \def\verbatim@processline{%
     {\setbox0=\hbox{\the\verbatim@line}%
     \hsize=\linewidth \the\verbatim@line\par}}%
   \@minipagetrue%%%DPC%%%
   \@tempswatrue%%%DPC%%%
-  \setbox0=\vbox\bgroup \verbatim
+  \setbox0=\vbox\bgroup \verbatim%
 }
+
 \def\endprogram{%
-  \endverbatim
+  \endverbatim%
   \unskip\setbox0=\lastbox %%%DPC%%%
-  \egroup
+  \egroup%
   \colorbox[rgb]{0.85,0.85,0.90}{\box0}% <<<=== change here for centering,...
+  \newline\noindent
 }
 
 %% alltt with a background color 

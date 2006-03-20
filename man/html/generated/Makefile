@@ -1,8 +1,16 @@
 
+SHELL = /bin/sh
+
+# voir http://john.regehr.org/latex/
+
+
 all:: manual index manual 
 
+# tlatex ../manual 'xhtml,3,sec-filename,next,notoc*'
+
 manual::
-	htlatex ../manual 'xhtml,3,sec-filename,next,notoc*'
+	export TEXINPUTS=`pwd`/../../src//:: ; \
+	htlatex ../manual 'xhtml,3,section+,next,notoc*'
 	cp ../manual.css manual.css
 
 index: 
@@ -29,3 +37,5 @@ distclean::
 	@$(RM) manual.log
 	@$(RM) manual.tmp
 	@$(RM) manual.xref
+	@$(RM) *.aux
+	@$(RM) manual*.png

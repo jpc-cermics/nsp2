@@ -23,7 +23,7 @@ y = unique(x)
                   such that y(i)=x(ind(i)).
     \vname{occ} : vector of same length than y, occ(i) is the number
                   of occurrences of y(i) in the x.
-    \vname{first_ind} : optional boolean scalar, useful only when x is a vector
+    \vname{first\_ind} : optional boolean scalar, useful only when x is a vector
     of numbers or strings. In this case using \verb!first_ind=%t! ind(i) is
     the smaller index such that y(i) = x(ind(i)).
   \end{varlist}
@@ -37,33 +37,37 @@ y = unique(x)
 \end{mandescription}
 
 \begin{examples}
-  
 
-  A first example with a vector of numbers:
+\noindent A first example with a vector of numbers:
+  
   \begin{program}
     x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];
     [y, ind, occ] = unique(x)
   \end{program}
 
-  a second example with a vector of strings:
+\noindent   a second example with a vector of strings:
+  
   \begin{program}
     x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
     [y, ind, occ] = unique(x)
   \end{program}
 
-  a third one with a vector of cells:
+\noindent   a third one with a vector of cells:
+  
   \begin{program}
     x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}
     [y, ind, occ] = unique(x)
   \end{program}
 
-  a fourth one with a list:
+\noindent   a fourth one with a list:
+  
   \begin{program}
     x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")
     [y, ind, occ] = unique(x)
   \end{program}
 
-  another example:
+\noindent another example:
+  
   \begin{program}
     // generate a big sample of the binomial distribution B(6,0.4)
     m = 1e5;
