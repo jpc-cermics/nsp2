@@ -12,10 +12,11 @@ manual.tmp
 manual.xref
 manualch*.html
 manualli*.html
-./nsp_history
-idxmake.dvi
-idxmake.log
 manual.4dx
 manual.4ix
 manual.ilg
 manual.ind
+manual0x.png
+.nsp_history
+idxmake.dvi
+idxmake.log

@@ -1,10 +1,11 @@
 
 all:: manual 
 
-MANPAGE=../src/model/model.tex
+MANPAGE=model/model.tex
 
 manual::
-	htlatex ../manual 'xhtml,3,notoc*,sec-filename' '' '' '\def\manname{$(MANPAGE)}'
+	export TEXINPUTS=`pwd`/../../src//:: ; \
+	htlatex ../manual 'xhtml,3,section+,next,notoc*' '' '' '\def\manname{$(MANPAGE)}'
 	$(RM) -f  manual.css
 	cp ../../html/manual.css manual.css
 
@@ -13,7 +14,7 @@ index:
 	makeindex -o manual.ind manual.4dx 
 
 distclean::
-	@$(RM) manualch*.html manualli*.html manualse*.html
+	@$(RM) manualch*.html manualli*.html manualse*.html 
 	@$(RM) idxmake.dvi
 	@$(RM) idxmake.log
 	@$(RM) manual.4ct
@@ -32,3 +33,5 @@ distclean::
 	@$(RM) manual.log
 	@$(RM) manual.tmp
 	@$(RM) manual.xref
+	@$(RM) *.aux
+	@$(RM) manual*.png
