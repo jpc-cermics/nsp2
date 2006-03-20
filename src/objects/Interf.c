@@ -1576,7 +1576,7 @@ int method_search(char *key, NspMethods *Table)
  * C-style NULL-terminated string. 
  * Note that the object previously stored at position @n is destroyed.
  * 
- * Return value: 1 or %RET_BUG 
+ * Return value: %OK or %FAIL.
  **/
 
 int nsp_move_string(Stack stack,int n,const char *bytes,int length)
@@ -1611,7 +1611,7 @@ NspObject *nsp_new_string_obj(char *name,const char *bytes,int length)
     {
       if (( S =nsp_smatrix_create_with_length(name,1,1,length) ) == NULLSMAT ) return NULLOBJ;
       strncpy(S->S[0],bytes,length);
-      S->S[length] ='\0';
+      S->S[0][length] ='\0';
     }
   return (NspObject *) S;
 }
