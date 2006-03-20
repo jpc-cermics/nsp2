@@ -1627,7 +1627,7 @@ NspObject *nsp_new_string_obj(char *name,const char *bytes,int length)
  * filled with a double.  
  * Note that the object previously stored at position @n is destroyed. * 
  *
- * Return value: 1 or %RET_BUG 
+ * Return value: %OK or  %FAIL
  **/
 
 int nsp_move_double(Stack stack,int n,double d)
@@ -1697,7 +1697,7 @@ int nsp_move_doubles(Stack stack,int pos,int m,int n,...)
  * filled with a boolean value @ival.
  * Note that the object previously stored at position @n is destroyed.
  *
- * Return value: 1 or %RET_BUG 
+ * Return value: %OK or %FAIL
  **/
 
 int nsp_move_boolean(Stack stack,int n,int ival)
