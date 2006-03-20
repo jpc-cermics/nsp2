@@ -278,7 +278,7 @@ extern int		Tcl_GetErrno (void);
 extern char *		Tcl_GetHostName (void);
 extern Tcl_PathType	Tcl_GetPathType (char *path);
 extern int		Tcl_GetServiceMode (void);
-extern char *		Tcl_JoinPath (int argc, char **argv, Tcl_DString *resultPtr);
+extern char *		Tcl_JoinPath (int argc, char **argv, nsp_tcldstring *resultPtr);
 extern char *		Tcl_PosixError ();
 extern void		Tcl_Preserve (ClientData data);
 extern int		Tcl_PutEnv (CONST char *string);
@@ -307,7 +307,7 @@ extern void		Tcl_SplitPath (char *path, int *argcPtr, char ***argvPtr);
 extern int		Tcl_StringMatch (char *string, char *pattern);
 #define Tcl_TildeSubst Tcl_TranslateFileName
 
-extern char *		Tcl_TranslateFileName ( char *name, Tcl_DString *bufferPtr);
+extern char *		Tcl_TranslateFileName ( char *name, nsp_tcldstring *bufferPtr);
 
 extern Tcl_Pid		Tcl_WaitPid (Tcl_Pid pid, int *statPtr,  int options);
 

@@ -19,7 +19,7 @@
  */
 
 static int CopyRenameOneFile( char *source, char *dest, int copyFlag,int force);
-static char *FileBasename( char *path, Tcl_DString *bufferPtr);
+static char *FileBasename( char *path, nsp_tcldstring *bufferPtr);
 static int   FileCopyRename( int argc, char **argv, int copyFlag,int forceFlag);
 
 /*
@@ -104,7 +104,7 @@ FileCopyRename(
 {
     int i, result;
     struct stat statBuf; 
-    Tcl_DString targetBuffer;
+    nsp_tcldstring targetBuffer;
     char *target;
 
     /*
@@ -144,7 +144,7 @@ FileCopyRename(
 	result = CopyRenameOneFile( argv[0], argv[1], copyFlag,
 				   forceFlag);
       }
-      Tcl_DStringFree(&targetBuffer);
+      nsp_tcldstring_free(&targetBuffer);
       return result;
     }
     
@@ -156,7 +156,7 @@ FileCopyRename(
     for (i=0 ; i < argc - 1; i++) {
 	char *jargv[2];
 	char *source, *newFileName;
-	Tcl_DString sourceBuffer, newFileNameBuffer;
+	nsp_tcldstring sourceBuffer, newFileNameBuffer;
 
 	source = FileBasename( argv[i], &sourceBuffer);
 	if (source == NULL) {
@@ -165,18 +165,18 @@ FileCopyRename(
 	}
 	jargv[0] = argv[argc - 1];
 	jargv[1] = source;
-	Tcl_DStringInit(&newFileNameBuffer);
+	nsp_tcldstring_init(&newFileNameBuffer);
 	newFileName = Tcl_JoinPath(2, jargv, &newFileNameBuffer);
 	result = CopyRenameOneFile( argv[i], newFileName, copyFlag,
 		forceFlag);
-	Tcl_DStringFree(&sourceBuffer);
-	Tcl_DStringFree(&newFileNameBuffer);
+	nsp_tcldstring_free(&sourceBuffer);
+	nsp_tcldstring_free(&newFileNameBuffer);
 
 	if (result == TCL_ERROR) {
 	    break;
 	}
     }
-    Tcl_DStringFree(&targetBuffer);
+    nsp_tcldstring_free(&targetBuffer);
     return result;
 }
 
@@ -202,7 +202,7 @@ int TclFileMakeDirsCmd(
 		       int argc,			/* Number of arguments */
 		       char **argv		/* Argument strings giving the dirs to create  */)
 {
-    Tcl_DString nameBuffer, targetBuffer;
+    nsp_tcldstring nameBuffer, targetBuffer;
     char *errfile;
     int result, i, j, pargc;
     char **pargv;
@@ -210,8 +210,8 @@ int TclFileMakeDirsCmd(
 
     pargv = NULL;
     errfile = NULL;
-    Tcl_DStringInit(&nameBuffer);
-    Tcl_DStringInit(&targetBuffer);
+    nsp_tcldstring_init(&nameBuffer);
+    nsp_tcldstring_init(&targetBuffer);
 
     result = TCL_OK;
     for (i = 0; i < argc; i++) {
@@ -246,11 +246,11 @@ int TclFileMakeDirsCmd(
 		errfile = target;
 		goto done;
 	    }
-	    Tcl_DStringFree(&targetBuffer);
+	    nsp_tcldstring_free(&targetBuffer);
 	}
 	ckfree((char *) pargv);
 	pargv = NULL;
-	Tcl_DStringFree(&nameBuffer);
+	nsp_tcldstring_free(&nameBuffer);
     }
 	
     done:
@@ -260,8 +260,8 @@ int TclFileMakeDirsCmd(
 	result = TCL_ERROR;
     }
 
-    Tcl_DStringFree(&nameBuffer);
-    Tcl_DStringFree(&targetBuffer);
+    nsp_tcldstring_free(&nameBuffer);
+    nsp_tcldstring_free(&targetBuffer);
     if (pargv != NULL) {
 	ckfree((char *) pargv);
     }
@@ -290,21 +290,21 @@ TclFileDeleteCmd(int argc,			/* Number of arguments */
 		 char **argv,		/* Argument strings passed to Tcl_FileCmd. */
 		 int forceFlag              /* force Argument */)
 {
-    Tcl_DString nameBuffer, errorBuffer;
+    nsp_tcldstring nameBuffer, errorBuffer;
     int i, force=0, result;
     char *errfile;
 
     errfile = NULL;
     result = TCL_OK;
-    Tcl_DStringInit(&errorBuffer);
-    Tcl_DStringInit(&nameBuffer);
+    nsp_tcldstring_init(&errorBuffer);
+    nsp_tcldstring_init(&nameBuffer);
 
     for (i=0 ; i < argc; i++) {
 	struct stat statBuf;
 	char *name;
 
 	errfile = argv[i];
-	Tcl_DStringSetLength(&nameBuffer, 0);
+	nsp_tcldstring_set_length(&nameBuffer, 0);
 	name = Tcl_TranslateFileName( argv[i], &nameBuffer);
 	if (name == NULL) {
 	    result = TCL_ERROR;
@@ -338,7 +338,7 @@ TclFileDeleteCmd(int argc,			/* Number of arguments */
 		 * If possible, use the untranslated name for the file.
 		 */
 		 
-		errfile = Tcl_DStringValue(&errorBuffer);
+		errfile = nsp_tcldstring_value(&errorBuffer);
 		if (strcmp(name, errfile) == 0) {
 		    errfile = argv[i];
 		}
@@ -356,8 +356,8 @@ TclFileDeleteCmd(int argc,			/* Number of arguments */
 		"\": ", Tcl_PosixError(), (char *) NULL);
     } 
     done:
-    Tcl_DStringFree(&errorBuffer);
-    Tcl_DStringFree(&nameBuffer);
+    nsp_tcldstring_free(&errorBuffer);
+    nsp_tcldstring_free(&nameBuffer);
     return result;
 }
 
@@ -393,7 +393,7 @@ CopyRenameOneFile(
 				 * exists. */)
 {
     int result;
-    Tcl_DString sourcePath, targetPath, errorBuffer;
+    nsp_tcldstring sourcePath, targetPath, errorBuffer;
     char *targetName, *sourceName, *errfile;
     struct stat sourceStatBuf, targetStatBuf;
 	
@@ -403,13 +403,13 @@ CopyRenameOneFile(
     }
     targetName = Tcl_TranslateFileName( target, &targetPath);
     if (targetName == NULL) {
-	Tcl_DStringFree(&sourcePath);
+	nsp_tcldstring_free(&sourcePath);
 	return TCL_ERROR;
     }
     
     errfile = NULL;
     result = TCL_ERROR;
-    Tcl_DStringInit(&errorBuffer);
+    nsp_tcldstring_init(&errorBuffer);
     
     /*
      * We want to copy/rename links and not the files they point to, so we
@@ -499,7 +499,7 @@ CopyRenameOneFile(
     if (S_ISDIR(sourceStatBuf.st_mode)) {
 	result = TclpCopyDirectory(sourceName, targetName, &errorBuffer);
 	if (result != TCL_OK) {
-	    errfile = Tcl_DStringValue(&errorBuffer);
+	    errfile = nsp_tcldstring_value(&errorBuffer);
 	    if (strcmp(errfile, sourceName) == 0) {
 		errfile = source;
 	    } else if (strcmp(errfile, targetName) == 0) {
@@ -521,7 +521,7 @@ CopyRenameOneFile(
 	if (S_ISDIR(sourceStatBuf.st_mode)) {
 	    result = TclpRemoveDirectory(sourceName, 1, &errorBuffer);
 	    if (result != TCL_OK) {
-		errfile = Tcl_DStringValue(&errorBuffer);
+		errfile = nsp_tcldstring_value(&errorBuffer);
 		if (strcmp(errfile, sourceName) == 0) {
 		    errfile = source;
 		}
@@ -553,9 +553,9 @@ CopyRenameOneFile(
 	Tcl_AppendResult( "\": ", Tcl_PosixError(),
 		(char *) NULL);
     }
-    Tcl_DStringFree(&errorBuffer);
-    Tcl_DStringFree(&sourcePath);
-    Tcl_DStringFree(&targetPath);
+    nsp_tcldstring_free(&errorBuffer);
+    nsp_tcldstring_free(&sourcePath);
+    nsp_tcldstring_free(&targetPath);
     return result;
 }
 
@@ -573,7 +573,7 @@ CopyRenameOneFile(
  *	Appends the string that represents the basename to the end of
  *	the specified initialized DString, returning a pointer to the
  *	resulting string.  If there is an error, an error message is left
- *	in interp, NULL is returned, and the Tcl_DString is unmodified.
+ *	in interp, NULL is returned, and the nsp_tcldstring is unmodified.
  *
  * Side effects:
  *	None.
@@ -583,7 +583,7 @@ CopyRenameOneFile(
 
 static char *FileBasename(
 			  char *path,			/* Path whose basename to extract. */
-			  Tcl_DString *bufferPtr	/* Initialized DString that receives
+			  nsp_tcldstring *bufferPtr	/* Initialized DString that receives
 							 * basename. */)
 {
     int argc;
@@ -591,10 +591,10 @@ static char *FileBasename(
     
     Tcl_SplitPath(path, &argc, &argv);
     if (argc == 0) {
-	Tcl_DStringInit(bufferPtr);
+	nsp_tcldstring_init(bufferPtr);
     } else {
 	if ((argc == 1) && (*path == '~')) {
-	    Tcl_DString buffer;
+	    nsp_tcldstring buffer;
 	    
 	    ckfree((char *) argv);
 	    path = Tcl_TranslateFileName( path, &buffer);
@@ -602,9 +602,9 @@ static char *FileBasename(
 		return NULL;
 	    }
 	    Tcl_SplitPath(path, &argc, &argv);
-	    Tcl_DStringFree(&buffer);
+	    nsp_tcldstring_free(&buffer);
 	}
-	Tcl_DStringInit(bufferPtr);
+	nsp_tcldstring_init(bufferPtr);
 
 	/*
 	 * Return the last component, unless it is the only component, and it
@@ -614,10 +614,10 @@ static char *FileBasename(
 	if (argc > 0) {
 	    if ((argc > 1)
 		    || (Tcl_GetPathType(argv[0]) == TCL_PATH_RELATIVE)) {
-		Tcl_DStringAppend(bufferPtr, argv[argc - 1], -1);
+		nsp_tcldstring_append(bufferPtr, argv[argc - 1], -1);
 	    }
 	}
     }
     ckfree((char *) argv);
-    return Tcl_DStringValue(bufferPtr);
+    return nsp_tcldstring_value(bufferPtr);
 }

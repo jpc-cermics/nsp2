@@ -173,7 +173,7 @@ static int		TcpCloseProc _ANSI_ARGS_((ClientData instanceData,
 	            	    Tcl_Interp *interp));
 static int		TcpGetOptionProc _ANSI_ARGS_((ClientData instanceData,
 		            Tcl_Interp *interp, char *optionName,
-			    Tcl_DString *optionValue));
+			    nsp_tcldstring *optionValue));
 static int		TcpInputProc _ANSI_ARGS_((ClientData instanceData,
 	            	    char *buf, int toRead, int *errorCode));
 static int		TcpOutputProc _ANSI_ARGS_((ClientData instanceData,
@@ -1688,7 +1688,7 @@ TcpGetOptionProc(instanceData, interp, optionName, dsPtr)
                                          * retrieve the value for, or
                                          * NULL to get all options and
                                          * their values. */
-    Tcl_DString *dsPtr;			/* Where to store the computed
+    nsp_tcldstring *dsPtr;			/* Where to store the computed
                                          * value; initialized by caller. */
 {
     SocketInfo *infoPtr;
@@ -1726,22 +1726,22 @@ TcpGetOptionProc(instanceData, interp, optionName, dsPtr)
         if ((*winSock.getpeername)(sock, (struct sockaddr *) &peername, &size)
                 == 0) {
             if (len == 0) {
-                Tcl_DStringAppendElement(dsPtr, "-peername");
+                nsp_tcldstring_appendElement(dsPtr, "-peername");
                 Tcl_DStringStartSublist(dsPtr);
             }
-            Tcl_DStringAppendElement(dsPtr,
+            nsp_tcldstring_appendElement(dsPtr,
                     (*winSock.inet_ntoa)(peername.sin_addr));
             hostEntPtr = (*winSock.gethostbyaddr)(
                 (char *) &(peername.sin_addr), sizeof(peername.sin_addr),
                 AF_INET);
             if (hostEntPtr != (struct hostent *) NULL) {
-                Tcl_DStringAppendElement(dsPtr, hostEntPtr->h_name);
+                nsp_tcldstring_appendElement(dsPtr, hostEntPtr->h_name);
             } else {
-                Tcl_DStringAppendElement(dsPtr,
+                nsp_tcldstring_appendElement(dsPtr,
                         (*winSock.inet_ntoa)(peername.sin_addr));
             }
             sprintf(buf, "%d", (*winSock.ntohs)(peername.sin_port));
-            Tcl_DStringAppendElement(dsPtr, buf);
+            nsp_tcldstring_appendElement(dsPtr, buf);
             if (len == 0) {
                 Tcl_DStringEndSublist(dsPtr);
             } else {
@@ -1772,22 +1772,22 @@ TcpGetOptionProc(instanceData, interp, optionName, dsPtr)
         if ((*winSock.getsockname)(sock, (struct sockaddr *) &sockname, &size)
                 == 0) {
             if (len == 0) {
-                Tcl_DStringAppendElement(dsPtr, "-sockname");
+                nsp_tcldstring_appendElement(dsPtr, "-sockname");
                 Tcl_DStringStartSublist(dsPtr);
             }
-            Tcl_DStringAppendElement(dsPtr,
+            nsp_tcldstring_appendElement(dsPtr,
                     (*winSock.inet_ntoa)(sockname.sin_addr));
             hostEntPtr = (*winSock.gethostbyaddr)(
                 (char *) &(sockname.sin_addr), sizeof(peername.sin_addr),
                 AF_INET);
             if (hostEntPtr != (struct hostent *) NULL) {
-                Tcl_DStringAppendElement(dsPtr, hostEntPtr->h_name);
+                nsp_tcldstring_appendElement(dsPtr, hostEntPtr->h_name);
             } else {
-                Tcl_DStringAppendElement(dsPtr,
+                nsp_tcldstring_appendElement(dsPtr,
                         (*winSock.inet_ntoa)(sockname.sin_addr));
             }
             sprintf(buf, "%d", (*winSock.ntohs)(sockname.sin_port));
-            Tcl_DStringAppendElement(dsPtr, buf);
+            nsp_tcldstring_appendElement(dsPtr, buf);
             if (len == 0) {
                 Tcl_DStringEndSublist(dsPtr);
             } else {

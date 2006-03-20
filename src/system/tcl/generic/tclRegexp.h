@@ -45,7 +45,7 @@ extern void TclRegError (char *msg);
 extern char *TclGetRegError (void);
 
 #include "dstring.h"
-extern int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resultDString,
+extern int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,nsp_tcldstring *resultDString,
 			  int *nmatch,int all);
 
 #endif /* REGEXP */

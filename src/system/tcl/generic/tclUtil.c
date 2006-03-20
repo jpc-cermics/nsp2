@@ -196,10 +196,10 @@ Tcl_AppendResult TCL_VARARGS_DEF(char *,arg1)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_DStringInit --
+ * nsp_tcldstring_init --
  *
  *	Initializes a dynamic string, discarding any previous contents
- *	of the string (Tcl_DStringFree should have been called already
+ *	of the string (nsp_tcldstring_free should have been called already
  *	if the dynamic string was previously in use).
  *
  * Results:
@@ -212,8 +212,8 @@ Tcl_AppendResult TCL_VARARGS_DEF(char *,arg1)
  */
 
 void
-Tcl_DStringInit(Tcl_DString *dsPtr)
-     /* Tcl_DString *dsPtr;		 Pointer to structure for dynamic string. */
+nsp_tcldstring_init(nsp_tcldstring *dsPtr)
+     /* nsp_tcldstring *dsPtr;		 Pointer to structure for dynamic string. */
 {
   dsPtr->string = dsPtr->staticSpace;
   dsPtr->length = 0;
@@ -224,7 +224,7 @@ Tcl_DStringInit(Tcl_DString *dsPtr)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_DStringAppend --
+ * nsp_tcldstring_append --
  *
  *	Append more characters to the current value of a dynamic string.
  *
@@ -240,8 +240,8 @@ Tcl_DStringInit(Tcl_DString *dsPtr)
  */
 
 char *
-Tcl_DStringAppend(Tcl_DString *dsPtr,CONST char * string,int  length)
-     /* Tcl_DString *dsPtr;		Structure describing dynamic string. */
+nsp_tcldstring_append(nsp_tcldstring *dsPtr,CONST char * string,int  length)
+     /* nsp_tcldstring *dsPtr;		Structure describing dynamic string. */
      /* CONST char *string;	        String to append.  If length is -1 then
       *                                 this must be null-terminated. */
      /* int length;			Number of characters from string to
@@ -291,7 +291,7 @@ Tcl_DStringAppend(Tcl_DString *dsPtr,CONST char * string,int  length)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_DStringSetLength --
+ * nsp_tcldstring_set_length --
  *
  *	Change the length of a dynamic string.  This can cause the
  *	string to either grow or shrink, depending on the value of
@@ -309,9 +309,9 @@ Tcl_DStringAppend(Tcl_DString *dsPtr,CONST char * string,int  length)
  */
 
 void
-Tcl_DStringSetLength(Tcl_DString *dsPtr, int  length)
+nsp_tcldstring_set_length(nsp_tcldstring *dsPtr, int  length)
 {
-  /* Tcl_DString *dsPtr;		 Structure describing dynamic string. */
+  /* nsp_tcldstring *dsPtr;		 Structure describing dynamic string. */
   /* int length;			 New length for dynamic string. */
   if (length < 0) {
     length = 0;
@@ -343,7 +343,7 @@ Tcl_DStringSetLength(Tcl_DString *dsPtr, int  length)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_DStringFree --
+ * nsp_tcldstring_free --
  *
  *	Frees up any memory allocated for the dynamic string and
  *	reinitializes the string to an empty state.
@@ -359,7 +359,7 @@ Tcl_DStringSetLength(Tcl_DString *dsPtr, int  length)
  */
 
 void
-Tcl_DStringFree(Tcl_DString *dsPtr /* Structure describing dynamic string. */)
+nsp_tcldstring_free(nsp_tcldstring *dsPtr /* Structure describing dynamic string. */)
 {
   if (dsPtr->string != dsPtr->staticSpace) {
     ckfree(dsPtr->string);

@@ -75,7 +75,7 @@ CONST TclFileAttrProcs tclpFileAttrProcs[] = {
  */
 
 typedef int (TraversalProc)(char *src, char *dst, DWORD attr, int type, 
-	Tcl_DString *errorPtr);
+	nsp_tcldstring *errorPtr);
 
 /*
  * Declarations for local procedures defined in this file:
@@ -87,12 +87,12 @@ static int		ConvertFileNameFormat _ANSI_ARGS_((
 			    int objIndex, char *fileName, int longShort,
 			    NspObject **attributePtrPtr));
 static int		TraversalCopy(char *src, char *dst, DWORD attr, 
-				int type, Tcl_DString *errorPtr);
+				int type, nsp_tcldstring *errorPtr);
 static int		TraversalDelete(char *src, char *dst, DWORD attr,
-				int type, Tcl_DString *errorPtr);
+				int type, nsp_tcldstring *errorPtr);
 static int		TraverseWinTree(TraversalProc *traverseProc,
-			    Tcl_DString *sourcePtr, Tcl_DString *destPtr,
-			    Tcl_DString *errorPtr);
+			    nsp_tcldstring *sourcePtr, nsp_tcldstring *destPtr,
+			    nsp_tcldstring *errorPtr);
 
 
 /*
@@ -590,21 +590,21 @@ int
 TclpCopyDirectory(
     char *src,			/* Pathname of directory to be copied. */
     char *dst,			/* Pathname of target directory. */
-    Tcl_DString *errorPtr)	/* If non-NULL, initialized DString for
+    nsp_tcldstring *errorPtr)	/* If non-NULL, initialized DString for
 				 * error reporting. */
 {
     int result;
-    Tcl_DString srcBuffer;
-    Tcl_DString dstBuffer;
+    nsp_tcldstring srcBuffer;
+    nsp_tcldstring dstBuffer;
 
-    Tcl_DStringInit(&srcBuffer);
-    Tcl_DStringInit(&dstBuffer);
-    Tcl_DStringAppend(&srcBuffer, src, -1);
-    Tcl_DStringAppend(&dstBuffer, dst, -1);
+    nsp_tcldstring_init(&srcBuffer);
+    nsp_tcldstring_init(&dstBuffer);
+    nsp_tcldstring_append(&srcBuffer, src, -1);
+    nsp_tcldstring_append(&dstBuffer, dst, -1);
     result = TraverseWinTree(TraversalCopy, &srcBuffer, &dstBuffer, 
 	    errorPtr);
-    Tcl_DStringFree(&srcBuffer);
-    Tcl_DStringFree(&dstBuffer);
+    nsp_tcldstring_free(&srcBuffer);
+    nsp_tcldstring_free(&dstBuffer);
     return result;
 }
 
@@ -643,11 +643,11 @@ TclpRemoveDirectory(
     int recursive,		/* If non-zero, removes directories that
 				 * are nonempty.  Otherwise, will only remove
 				 * empty directories. */
-    Tcl_DString *errorPtr)	/* If non-NULL, initialized DString for
+    nsp_tcldstring *errorPtr)	/* If non-NULL, initialized DString for
 				 * error reporting. */
 {
     int result;
-    Tcl_DString buffer;
+    nsp_tcldstring buffer;
     DWORD attr;
 
     if (RemoveDirectory(path) != FALSE) {
@@ -696,17 +696,17 @@ TclpRemoveDirectory(
 	    if (TclWinGetPlatformId() != VER_PLATFORM_WIN32_NT) {
 		HANDLE handle;
 		WIN32_FIND_DATA data;
-		Tcl_DString buffer;
+		nsp_tcldstring buffer;
 		char *find;
 		int len;
 
-		Tcl_DStringInit(&buffer);
-		find = Tcl_DStringAppend(&buffer, path, -1);
-		len = Tcl_DStringLength(&buffer);
+		nsp_tcldstring_init(&buffer);
+		find = nsp_tcldstring_append(&buffer, path, -1);
+		len = nsp_tcldstring_length(&buffer);
 		if ((len > 0) && (find[len - 1] != '\\')) {
-		    Tcl_DStringAppend(&buffer, "\\", 1);
+		    nsp_tcldstring_append(&buffer, "\\", 1);
 		}
-		find = Tcl_DStringAppend(&buffer, "*.*", 3);
+		find = nsp_tcldstring_append(&buffer, "*.*", 3);
 		handle = FindFirstFile(find, &data);
 		if (handle != INVALID_HANDLE_VALUE) {
 		    while (1) {
@@ -725,7 +725,7 @@ TclpRemoveDirectory(
 		    }
 		    FindClose(handle);
 		}
-		Tcl_DStringFree(&buffer);
+		nsp_tcldstring_free(&buffer);
 	    }
 	}
     }
@@ -743,16 +743,16 @@ TclpRemoveDirectory(
 	 * specified, so we recursively remove all the files in the directory.
 	 */
 
-	Tcl_DStringInit(&buffer);
-	Tcl_DStringAppend(&buffer, path, -1);
+	nsp_tcldstring_init(&buffer);
+	nsp_tcldstring_append(&buffer, path, -1);
 	result = TraverseWinTree(TraversalDelete, &buffer, NULL, errorPtr);
-	Tcl_DStringFree(&buffer);
+	nsp_tcldstring_free(&buffer);
 	return result;
     }
 
     end:
     if (errorPtr != NULL) {
-        Tcl_DStringAppend(errorPtr, path, -1);
+        nsp_tcldstring_append(errorPtr, path, -1);
     }
     return TCL_ERROR;
 }
@@ -783,11 +783,11 @@ static int
 TraverseWinTree(
     TraversalProc *traverseProc,/* Function to call for every file and
 				 * directory in source hierarchy. */
-    Tcl_DString *sourcePtr,	/* Pathname of source directory to be
+    nsp_tcldstring *sourcePtr,	/* Pathname of source directory to be
 				 * traversed. */
-    Tcl_DString *targetPtr,	/* Pathname of directory to traverse in
+    nsp_tcldstring *targetPtr,	/* Pathname of directory to traverse in
 				 * parallel with source directory. */
-    Tcl_DString *errorPtr)	/* If non-NULL, an initialized DString for
+    nsp_tcldstring *errorPtr)	/* If non-NULL, an initialized DString for
 				 * error reporting. */
 {
     DWORD sourceAttr;
@@ -797,11 +797,11 @@ TraverseWinTree(
     WIN32_FIND_DATA data;
 
     result = TCL_OK;
-    source = Tcl_DStringValue(sourcePtr);
-    sourceLenOriginal = Tcl_DStringLength(sourcePtr);
+    source = nsp_tcldstring_value(sourcePtr);
+    sourceLenOriginal = nsp_tcldstring_length(sourcePtr);
     if (targetPtr != NULL) {
-	target = Tcl_DStringValue(targetPtr);
-	targetLenOriginal = Tcl_DStringLength(targetPtr);
+	target = nsp_tcldstring_value(targetPtr);
+	targetLenOriginal = nsp_tcldstring_length(targetPtr);
     } else {
 	target = NULL;
 	targetLenOriginal = 0;
@@ -830,12 +830,12 @@ TraverseWinTree(
 
     sourceLen = sourceLenOriginal;
     if ((sourceLen > 0) && (source[sourceLen - 1] != '\\')) {
-	Tcl_DStringAppend(sourcePtr, "\\", 1);
+	nsp_tcldstring_append(sourcePtr, "\\", 1);
 	sourceLen++;
     }
-    source = Tcl_DStringAppend(sourcePtr, "*.*", 3); 
+    source = nsp_tcldstring_append(sourcePtr, "*.*", 3); 
     handle = FindFirstFile(source, &data);
-    Tcl_DStringSetLength(sourcePtr, sourceLen);
+    nsp_tcldstring_set_length(sourcePtr, sourceLen);
     if (handle == INVALID_HANDLE_VALUE) {
 	/* 
 	 * Can't read directory
@@ -855,7 +855,7 @@ TraverseWinTree(
     if (targetPtr != NULL) {
 	targetLen = targetLenOriginal;
 	if ((targetLen > 0) && (target[targetLen - 1] != '\\')) {
-	    target = Tcl_DStringAppend(targetPtr, "\\", 1);
+	    target = nsp_tcldstring_append(targetPtr, "\\", 1);
 	    targetLen++;
 	}
     }
@@ -867,9 +867,9 @@ TraverseWinTree(
 	     * Append name after slash, and recurse on the file. 
 	     */
 
-	    Tcl_DStringAppend(sourcePtr, data.cFileName, -1);
+	    nsp_tcldstring_append(sourcePtr, data.cFileName, -1);
 	    if (targetPtr != NULL) {
-		Tcl_DStringAppend(targetPtr, data.cFileName, -1);
+		nsp_tcldstring_append(targetPtr, data.cFileName, -1);
 	    }
 	    result = TraverseWinTree(traverseProc, sourcePtr, targetPtr, 
 		    errorPtr);
@@ -881,9 +881,9 @@ TraverseWinTree(
 	     * Remove name after slash.
 	     */
 
-	    Tcl_DStringSetLength(sourcePtr, sourceLen);
+	    nsp_tcldstring_set_length(sourcePtr, sourceLen);
 	    if (targetPtr != NULL) {
-		Tcl_DStringSetLength(targetPtr, targetLen);
+		nsp_tcldstring_set_length(targetPtr, targetLen);
 	    }
 	}
 	if (FindNextFile(handle, &data) == FALSE) {
@@ -896,11 +896,11 @@ TraverseWinTree(
      * Strip off the trailing slash we added
      */
 
-    Tcl_DStringSetLength(sourcePtr, sourceLenOriginal);
-    source = Tcl_DStringValue(sourcePtr);
+    nsp_tcldstring_set_length(sourcePtr, sourceLenOriginal);
+    source = nsp_tcldstring_value(sourcePtr);
     if (targetPtr != NULL) {
-	Tcl_DStringSetLength(targetPtr, targetLenOriginal);
-	target = Tcl_DStringValue(targetPtr);
+	nsp_tcldstring_set_length(targetPtr, targetLenOriginal);
+	target = nsp_tcldstring_value(targetPtr);
     }
 
     if (result == TCL_OK) {
@@ -916,7 +916,7 @@ TraverseWinTree(
     if (errfile != NULL) {
 	TclWinConvertError(GetLastError());
 	if (errorPtr != NULL) {
-	    Tcl_DStringAppend(errorPtr, errfile, -1);
+	    nsp_tcldstring_append(errorPtr, errfile, -1);
 	}
 	result = TCL_ERROR;
     }
@@ -947,7 +947,7 @@ TraversalCopy(
     char *dst,			/* Destination pathname of copy. */
     DWORD srcAttr,		/* File attributes for src. */
     int type,			/* Reason for call - see TraverseWinTree() */
-    Tcl_DString *errorPtr)	/* If non-NULL, initialized DString for
+    nsp_tcldstring *errorPtr)	/* If non-NULL, initialized DString for
 				 * error return. */
 {
     switch (type) {
@@ -977,7 +977,7 @@ TraversalCopy(
      */
 
     if (errorPtr != NULL) {
-	Tcl_DStringAppend(errorPtr, dst, -1);
+	nsp_tcldstring_append(errorPtr, dst, -1);
     }
     return TCL_ERROR;
 }
@@ -1009,7 +1009,7 @@ TraversalDelete(
     char *ignore,		/* Destination pathname (not used). */
     DWORD srcAttr,		/* File attributes for src (not used). */
     int type,			/* Reason for call - see TraverseWinTree(). */
-    Tcl_DString *errorPtr)	/* If non-NULL, initialized DString for
+    nsp_tcldstring *errorPtr)	/* If non-NULL, initialized DString for
 				 * error return. */
 {
     switch (type) {
@@ -1031,7 +1031,7 @@ TraversalDelete(
     }
 
     if (errorPtr != NULL) {
-	Tcl_DStringAppend(errorPtr, src, -1);
+	nsp_tcldstring_append(errorPtr, src, -1);
     }
     return TCL_ERROR;
 }
@@ -1137,7 +1137,7 @@ ConvertFileNameFormat(
   int pathArgc, i;
   char **pathArgv, **newPathArgv;
   char *currentElement, *resultStr;
-  Tcl_DString resultDString;
+  nsp_tcldstring resultDString;
   int result = TCL_OK;
   
   Tcl_SplitPath(fileName, &pathArgc, &pathArgv);
@@ -1161,14 +1161,14 @@ ConvertFileNameFormat(
     } else {
       int useLong;
 
-      Tcl_DStringInit(&resultDString);
+      nsp_tcldstring_init(&resultDString);
       resultStr = Tcl_JoinPath(i + 1, pathArgv, &resultDString);
       findHandle = FindFirstFile(resultStr, &findData);
       if (findHandle == INVALID_HANDLE_VALUE) {
 	pathArgc = i - 1;
 	AttributesPosixError( objIndex, fileName, 0);
 	result = TCL_ERROR;
-	Tcl_DStringFree(&resultDString);
+	nsp_tcldstring_free(&resultDString);
 	goto cleanup;
       }
       if (longShort) {
@@ -1192,16 +1192,16 @@ ConvertFileNameFormat(
 				 + 1);
 	strcpy(currentElement, findData.cAlternateFileName);
       }
-      Tcl_DStringFree(&resultDString);
+      nsp_tcldstring_free(&resultDString);
       FindClose(findHandle);
     }
     newPathArgv[i] = currentElement;
   }
 
-  Tcl_DStringInit(&resultDString);
+  nsp_tcldstring_init(&resultDString);
   resultStr = Tcl_JoinPath(pathArgc, newPathArgv, &resultDString);
-  *attributePtrPtr = Tcl_NewStringObj(resultStr, Tcl_DStringLength(&resultDString));
-  Tcl_DStringFree(&resultDString);
+  *attributePtrPtr = nsp_new_string_obj(NVOID,resultStr, nsp_tcldstring_length(&resultDString));
+  nsp_tcldstring_free(&resultDString);
 
  cleanup:
   for (i = 0; i < pathArgc; i++) {

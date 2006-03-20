@@ -163,7 +163,7 @@ TclPlatformInit()
 {
     char *ptr;
     char buffer[13];
-    Tcl_DString ds;
+    nsp_tcldstring ds;
     OSVERSIONINFO osInfo;
     SYSTEM_INFO sysInfo;
     int isWin32s;		/* True if we are running under Win32s. */
@@ -173,7 +173,7 @@ TclPlatformInit()
 
     tclPlatform = TCL_PLATFORM_WINDOWS;
 
-    Tcl_DStringInit(&ds);
+    nsp_tcldstring_init(&ds);
 
     /*
      * Find out what kind of system we are running on.
@@ -206,9 +206,9 @@ TclPlatformInit()
 		== ERROR_SUCCESS)
 		&& (RegQueryValueEx(key, "Root", NULL, NULL, NULL, &size)
 		    == ERROR_SUCCESS)) {
-	    Tcl_DStringSetLength(&ds, size);
+	    nsp_tcldstring_set_length(&ds, size);
 	    RegQueryValueEx(key, "Root", NULL, NULL,
-		    (LPBYTE)Tcl_DStringValue(&ds), &size);
+		    (LPBYTE)nsp_tcldstring_value(&ds), &size);
 	}
     } else {
 	if ((RegOpenKeyEx(HKEY_CLASSES_ROOT,
@@ -216,23 +216,23 @@ TclPlatformInit()
 		== ERROR_SUCCESS)
 		&& (RegQueryValueEx(key, "", NULL, NULL, NULL, &size)
 		    == ERROR_SUCCESS)) {
-	    Tcl_DStringSetLength(&ds, size);
+	    nsp_tcldstring_set_length(&ds, size);
 	    RegQueryValueEx(key, "", NULL, NULL,
-		    (LPBYTE) Tcl_DStringValue(&ds), &size);
+		    (LPBYTE) nsp_tcldstring_value(&ds), &size);
 	}
     }
 
-    Tcl_SetVar(interp, "tcl_library", Tcl_DStringValue(&ds), TCL_GLOBAL_ONLY);
-    if (Tcl_DStringLength(&ds) > 0) {
+    Tcl_SetVar(interp, "tcl_library", nsp_tcldstring_value(&ds), TCL_GLOBAL_ONLY);
+    if (nsp_tcldstring_length(&ds) > 0) {
 	char *argv[3];
 	argv[0] = Tcl_GetVar(interp, "tcl_library", TCL_GLOBAL_ONLY);
 	argv[1] = "lib";
 	argv[2] = NULL;
-	Tcl_DStringSetLength(&ds, 0);
+	nsp_tcldstring_set_length(&ds, 0);
 	Tcl_SetVar(interp, "tcl_pkgPath", Tcl_JoinPath(2, argv, &ds),
 		TCL_GLOBAL_ONLY|TCL_LIST_ELEMENT);
 	argv[1] = "lib/tcl" TCL_VERSION;
-	Tcl_DStringSetLength(&ds, 0);
+	nsp_tcldstring_set_length(&ds, 0);
 	Tcl_SetVar(interp, "tcl_library", Tcl_JoinPath(2, argv, &ds), 
 		TCL_GLOBAL_ONLY);
     }
@@ -264,24 +264,24 @@ TclPlatformInit()
     /*** 
     ptr = Tcl_GetVar2(interp, "env", "HOME", TCL_GLOBAL_ONLY);
     if (ptr == NULL) {
-	Tcl_DStringSetLength(&ds, 0);
+	nsp_tcldstring_set_length(&ds, 0);
 	ptr = Tcl_GetVar2(interp, "env", "HOMEDRIVE", TCL_GLOBAL_ONLY);
 	if (ptr != NULL) {
-	    Tcl_DStringAppend(&ds, ptr, -1);
+	    nsp_tcldstring_append(&ds, ptr, -1);
 	}
 	ptr = Tcl_GetVar2(interp, "env", "HOMEPATH", TCL_GLOBAL_ONLY);
 	if (ptr != NULL) {
-	    Tcl_DStringAppend(&ds, ptr, -1);
+	    nsp_tcldstring_append(&ds, ptr, -1);
 	}
-	if (Tcl_DStringLength(&ds) > 0) {
-	    Tcl_SetVar2(interp, "env", "HOME", Tcl_DStringValue(&ds),
+	if (nsp_tcldstring_length(&ds) > 0) {
+	    Tcl_SetVar2(interp, "env", "HOME", nsp_tcldstring_value(&ds),
 		    TCL_GLOBAL_ONLY);
 	} else {
 	    Tcl_SetVar2(interp, "env", "HOME", "c:\\", TCL_GLOBAL_ONLY);
 	}
     }
     **/
-    Tcl_DStringFree(&ds);
+    nsp_tcldstring_free(&ds);
 }
 
 /*

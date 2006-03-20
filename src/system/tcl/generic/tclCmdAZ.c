@@ -63,16 +63,16 @@ char *tclExecutableName = NULL;
 int int_syscd(Stack stack,int rhs,int opt,int lhs) 
 {
   int result ;
-  Tcl_DString buffer;
+  nsp_tcldstring buffer;
   char *dirName,*str;
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
-  Tcl_DStringInit(&buffer);
+  nsp_tcldstring_init(&buffer);
   dirName = Tcl_TranslateFileName( str, &buffer);
   if (dirName == NULL)  return RET_BUG ;
   result = TclChdir(dirName);
-  Tcl_DStringFree(&buffer);
+  nsp_tcldstring_free(&buffer);
   if (result ==  TCL_ERROR) 
     return RET_BUG;
   else 
@@ -97,7 +97,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
   int length=0;
   int mode = 0;		/* Init. to avoid compiler warning. */
   struct stat statBuf;
-  Tcl_DString buffer;
+  nsp_tcldstring buffer;
   int index, result=0;
   NspSMatrix *S;
   
@@ -146,7 +146,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
     return RET_BUG;
   }
     
-  Tcl_DStringInit(&buffer);
+  nsp_tcldstring_init(&buffer);
     
   /*
    * Handle operations on the file name.
@@ -183,7 +183,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	    goto done;
 	  }
 	  Tcl_SplitPath(fileName, &pargc, &pargv);
-	  Tcl_DStringSetLength(&buffer, 0);
+	  nsp_tcldstring_set_length(&buffer, 0);
 	}
 	  
 	/*
@@ -194,13 +194,16 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  
 	if (pargc > 1) {
 	  Tcl_JoinPath(pargc-1, pargv, &buffer);
-	  result = Tcl_SetStringObj(stack,1, Tcl_DStringValue(&buffer),buffer.length);
+	  result = nsp_move_string(stack,1, nsp_tcldstring_value(&buffer),buffer.length);
+	  result = ( result == FAIL) ? RET_BUG: 1;
 	} else if ((pargc == 0)
 		   || (Tcl_GetPathType(pargv[0]) == TCL_PATH_RELATIVE)) {
-	  result = Tcl_SetStringObj(stack,1, (tclPlatform == TCL_PLATFORM_MAC)
+	  result = nsp_move_string(stack,1, (tclPlatform == TCL_PLATFORM_MAC)
 				    ? ":" : ".", 1);
+	  result = ( result == FAIL) ? RET_BUG: 1;
 	} else {
-	  result = Tcl_SetStringObj(stack,1, pargv[0], -1);	    
+	  result = nsp_move_string(stack,1, pargv[0], -1);	    
+	  result = ( result == FAIL) ? RET_BUG: 1;
 	}
 	ckfree((char *)pargv);
 	goto done;
@@ -230,7 +233,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  goto done;
 	}
 	Tcl_SplitPath(fileName, &pargc, &pargv);
-	Tcl_DStringSetLength(&buffer, 0);
+	nsp_tcldstring_set_length(&buffer, 0);
       }
 	  
       /*
@@ -241,7 +244,8 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
       if (pargc > 0) {
 	if ((pargc > 1)
 	    || (Tcl_GetPathType(pargv[0]) == TCL_PATH_RELATIVE)) {
-	  result = Tcl_SetStringObj(stack,1, pargv[pargc - 1], -1);
+	  result = nsp_move_string(stack,1, pargv[pargc - 1], -1);
+	  result = ( result == FAIL) ? RET_BUG: 1;
 	}
       }
       ckfree((char *)pargv);
@@ -260,7 +264,8 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	NthObj(2)->ret_pos = 1;
 	result = 1;
       } else {
-	result = Tcl_SetStringObj(stack,1, fileName, (int) (length - strlen(extension)));
+	result = nsp_move_string(stack,1, fileName, (int) (length - strlen(extension)));
+	result = ( result == FAIL) ? RET_BUG: 1;
       }
       goto done;
     }
@@ -272,7 +277,8 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
       if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
 	
       extension = TclGetExtension(fileName);
-      result = Tcl_SetStringObj(stack,1,(extension != NULL)? extension:"", -1);	
+      result = nsp_move_string(stack,1,(extension != NULL)? extension:"", -1);	
+      result = ( result == FAIL) ? RET_BUG: 1;
       goto done;
     case FILE_PATHTYPE:  /* OK */
       if (rhs != 2) {
@@ -283,13 +289,16 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
       switch (Tcl_GetPathType(fileName)) 
 	{
 	case TCL_PATH_ABSOLUTE:
-	  result = Tcl_SetStringObj(stack,1, "absolute", -1);
+	  result = nsp_move_string(stack,1, "absolute", -1);
+	  result = ( result == FAIL) ? RET_BUG: 1;
 	  break;
 	case TCL_PATH_RELATIVE:
-	  result =  Tcl_SetStringObj(stack,1, "relative", -1);
+	  result =  nsp_move_string(stack,1, "relative", -1);
+	  result = ( result == FAIL) ? RET_BUG: 1;
 	  break;
 	case TCL_PATH_VOLUME_RELATIVE:
-	  result = Tcl_SetStringObj(stack,1, "volumerelative", -1);
+	  result = nsp_move_string(stack,1, "volumerelative", -1);
+	  result = ( result == FAIL) ? RET_BUG: 1;
 	  break;
 	}
       goto done;
@@ -321,7 +330,8 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	}
 	if (( S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
 	Tcl_JoinPath(S->mn,S->S, &buffer);
-	result = Tcl_SetStringObj(stack,1, Tcl_DStringValue(&buffer),  buffer.length);
+	result = nsp_move_string(stack,1, nsp_tcldstring_value(&buffer),  buffer.length);
+	result = ( result == FAIL) ? RET_BUG: 1;
 	goto done;
       }
     case FILE_RENAME: /* OK */
@@ -389,7 +399,8 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	if (fileName == NULL) {
 	  result = RET_BUG ;
 	} else {
-	  result = Tcl_SetStringObj(stack,1 ,fileName, -1);
+	  result = nsp_move_string(stack,1 ,fileName, -1);
+	  result = ( result == FAIL) ? RET_BUG: 1;
 	}
 	goto done;
       }
@@ -415,11 +426,16 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
      * (like no such user "blah" for file exists ~blah)
      * but we don't want to flag an error in that case.
      */
-    if (fileName == NULL) {
-      result = Tcl_SetBooleanObj(stack,1,0);
-    } else {
-      result = Tcl_SetBooleanObj(stack,1, (access(fileName, mode) != -1));
-    }
+    if (fileName == NULL) 
+      {
+	result = nsp_move_boolean(stack,1,0);
+	result = (result == FAIL) ? RET_BUG: 1;
+      } 
+    else 
+      {
+	result = nsp_move_boolean(stack,1, (access(fileName, mode) != -1));
+	result = (result == FAIL) ? RET_BUG: 1;
+      }
     goto done;
   case FILE_WRITABLE: /* OK */
     if (rhs != 2) {
@@ -465,7 +481,10 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
       if (stat(fileName, &statBuf) == -1) {
 	goto badStat;
       }
-      result = Tcl_SetDoubleObj(stack,1, (double) statBuf.st_atime);
+      if (nsp_move_double(stack,1, (double) statBuf.st_atime) == FAIL) 
+	result = RET_BUG;
+      else 
+	result= 1;
       goto done;
     case FILE_ISDIRECTORY:/* OK */
       if (rhs != 2) {
@@ -506,7 +525,10 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
       if (stat(fileName, &statBuf) == -1) {
 	goto badStat;
       }
-      result = Tcl_SetDoubleObj(stack,1, (double) statBuf.st_mtime);
+      if ( nsp_move_double(stack,1, (double) statBuf.st_mtime)==FAIL)
+	result=RET_BUG;
+      else 
+	result=1;
       goto done;
     case FILE_OWNED: /* OK */
       if (rhs != 2) {
@@ -544,7 +566,8 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  goto done;
 	}
 	linkValue[linkLength] = 0;
-	result = Tcl_SetStringObj(stack,1, linkValue, linkLength);
+	result = nsp_move_string(stack,1, linkValue, linkLength);
+	  result = ( result == FAIL) ? RET_BUG: 1;
 	goto done;
       }
     case FILE_SIZE: /* OK */
@@ -555,7 +578,10 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
       if (stat(fileName, &statBuf) == -1) {
 	goto badStat;
       }
-      result = Tcl_SetDoubleObj(stack,1, (double) statBuf.st_size);
+      if (nsp_move_double(stack,1, (double) statBuf.st_size)==FAIL) 
+	result = RET_BUG;
+      else
+	result =1;
       goto done;
     case FILE_STAT:/* OK */
       if (rhs != 2) {
@@ -583,12 +609,14 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	goto badStat;
       }
       errorString = GetTypeFromMode((int) statBuf.st_mode);
-      result = Tcl_SetStringObj(stack,1, errorString, -1);
+      result = nsp_move_string(stack,1, errorString, -1);
+      result = ( result == FAIL) ? RET_BUG: 1;
       goto done;
     }
 
   if (stat(fileName, &statBuf) == -1) {
-    result = Tcl_SetBooleanObj(stack,1, 0);
+    result = nsp_move_boolean(stack,1, 0);
+    result = (result == FAIL) ? RET_BUG: 1;
     goto done;
   }
   switch (statOp) {
@@ -611,9 +639,10 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
     mode = S_ISDIR(statBuf.st_mode);
     break;
   }
-  result = Tcl_SetBooleanObj(stack,1, mode);
+  result = nsp_move_boolean(stack,1, mode);
+  result = (result == FAIL) ? RET_BUG: 1;
  done:
-  Tcl_DStringFree(&buffer);
+  nsp_tcldstring_free(&buffer);
   return result;
 
  not3Args:
@@ -741,7 +770,7 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
   char *fileName;
   int  index;
   NspObject *elementObjPtr;
-  Tcl_DString buffer;
+  nsp_tcldstring buffer;
   if ((rhs > 3 ) && ((rhs % 2) !=  0)) {
     Scierror("Error: wrong # args: must be file(attributes,name,[option,value,option,value])\n");
     return TCL_ERROR;
@@ -753,7 +782,7 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
       return TCL_ERROR;
     }
   if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
-  Tcl_DStringInit(&buffer);
+  nsp_tcldstring_init(&buffer);
   if (Tcl_TranslateFileName( fileName, &buffer) == NULL) 
     {
       goto done;
@@ -809,7 +838,7 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
       result = 0;
     }
   done :
-    Tcl_DStringFree(&buffer);
+    nsp_tcldstring_free(&buffer);
   return result ;
 }
 
@@ -838,9 +867,9 @@ int int_sys_hostname(Stack stack,int rhs,int opt,int lhs)
   CheckRhs(0,0);
   CheckLhs(0,1);
   /**  A revoir XXXXXX
-       return Tcl_SetStringObj(stack,1, Tcl_GetHostName(), -1);
+       return nsp_move_string(stack,1, Tcl_GetHostName(), -1);
   */
-  return Tcl_SetStringObj(stack,1, "foomachine", -1);
+  return nsp_move_string(stack,1, "foomachine", -1) == FAIL ? RET_BUG : 1;
 }
 
 /*
@@ -931,7 +960,7 @@ int int_regexp(Stack stack,int rhs,int opt,int lhs)
   if ((match = Tcl_RegExpExec(regExpr, string, string)) < 0) 
     return RET_BUG;
   
-  if ( Tcl_SetBooleanObj(stack,1,match) == RET_BUG) return RET_BUG;
+  if ( nsp_move_boolean(stack,1,match) == FAIL ) return RET_BUG;
   
   if (lhs == 2)
     {
@@ -1001,7 +1030,7 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
   char *pattern, *subSpec, *p;
 
   Tcl_RegExp regExpr;
-  Tcl_DString  resultDString;
+  nsp_tcldstring  resultDString;
   CheckRhs(3,5);
   CheckLhs(1,2);
 
@@ -1058,9 +1087,9 @@ int int_regsub(Stack stack,int rhs,int opt,int lhs)
     {
       if ((nsp_tcl_regsub(S->S[i],regExpr,subSpec,&resultDString,&nmatch,all))==FAIL)
 	goto done;
-      if (( Res->S[i] = nsp_string_copy(Tcl_DStringValue(&resultDString))) == (nsp_string) 0)
+      if (( Res->S[i] = nsp_string_copy(nsp_tcldstring_value(&resultDString))) == (nsp_string) 0)
 	{
-	  Tcl_DStringFree(&resultDString);	  
+	  nsp_tcldstring_free(&resultDString);	  
 	  goto done;
 	}
       if ( lhs == 2) M->R[i] = (double) nmatch;

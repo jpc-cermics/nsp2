@@ -216,13 +216,13 @@ Tcl_FindExecutable(argv0)
     char *argv0;		/* The value of the application's argv[0]. */
 {
     char *name, *p, *cwd;
-    Tcl_DString buffer;
+    nsp_tcldstring buffer;
     int length;
     struct stat statBuf;
 
     fprintf(stderr,"Executable : argv %s \n",argv0); /* XXXXX */
 
-    Tcl_DStringInit(&buffer);
+    nsp_tcldstring_init(&buffer);
     if (tclExecutableName != NULL) {
 	ckfree(tclExecutableName);
 	tclExecutableName = NULL;
@@ -264,18 +264,18 @@ Tcl_FindExecutable(argv0)
 	while ((*p != ':') && (*p != 0)) {
 	    p++;
 	}
-	Tcl_DStringSetLength(&buffer, 0);
+	nsp_tcldstring_set_length(&buffer, 0);
 	if (p != name) {
-	    Tcl_DStringAppend(&buffer, name, p-name);
+	    nsp_tcldstring_append(&buffer, name, p-name);
 	    if (p[-1] != '/') {
-		Tcl_DStringAppend(&buffer, "/", 1);
+		nsp_tcldstring_append(&buffer, "/", 1);
 	    }
 	}
-	Tcl_DStringAppend(&buffer, argv0, -1);
-	if ((access(Tcl_DStringValue(&buffer), X_OK) == 0)
-		&& (stat(Tcl_DStringValue(&buffer), &statBuf) == 0)
+	nsp_tcldstring_append(&buffer, argv0, -1);
+	if ((access(nsp_tcldstring_value(&buffer), X_OK) == 0)
+		&& (stat(nsp_tcldstring_value(&buffer), &statBuf) == 0)
 		&& S_ISREG(statBuf.st_mode)) {
-	    name = Tcl_DStringValue(&buffer);
+	    name = nsp_tcldstring_value(&buffer);
 	    goto gotName;
 	}
 	if (*p == 0) {
@@ -318,7 +318,7 @@ Tcl_FindExecutable(argv0)
     strcpy(tclExecutableName + length + 1, name);
 
     done:
-    Tcl_DStringFree(&buffer);
+    nsp_tcldstring_free(&buffer);
     fprintf(stderr,"Executable : %s \n",tclExecutableName); /* XXXXX */
     if (!executableNameExitHandlerSet) {
         executableNameExitHandlerSet = 1;
@@ -339,7 +339,7 @@ Tcl_FindExecutable(argv0)
  *	the new name.  If there was an error in processing the
  *	user name then the return value is NULL.  Otherwise the
  *	result is stored in bufferPtr, and the caller must call
- *	Tcl_DStringFree(bufferPtr) to free the result.
+ *	nsp_tcldstring_free(bufferPtr) to free the result.
  *
  * Side effects:
  *	Information may be left in bufferPtr.
@@ -350,7 +350,7 @@ Tcl_FindExecutable(argv0)
 char *
 TclGetUserHome(name, bufferPtr)
     char *name;			/* User name to use to find home directory. */
-    Tcl_DString *bufferPtr;	/* May be used to hold result.  Must not hold
+    nsp_tcldstring *bufferPtr;	/* May be used to hold result.  Must not hold
 				 * anything at the time of the call, and need
 				 * not even be initialized. */
 {
@@ -361,8 +361,8 @@ TclGetUserHome(name, bufferPtr)
 	endpwent();
 	return NULL;
     }
-    Tcl_DStringInit(bufferPtr);
-    Tcl_DStringAppend(bufferPtr, pwPtr->pw_dir, -1);
+    nsp_tcldstring_init(bufferPtr);
+    nsp_tcldstring_append(bufferPtr, pwPtr->pw_dir, -1);
     endpwent();
     return bufferPtr->string;
 }
@@ -393,7 +393,7 @@ TclGetUserHome(name, bufferPtr)
 int
 TclMatchFiles( separators, dirPtr, pattern, tail,S)
     char *separators;		/* Path separators to pass to TclDoGlob. */
-    Tcl_DString *dirPtr;	/* Contains path to directory to search. */
+    nsp_tcldstring *dirPtr;	/* Contains path to directory to search. */
     char *pattern;		/* Pattern to match against. */
     char *tail;			/* Pointer to end of pattern. */
     NspSMatrix *S;
@@ -406,7 +406,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
     struct dirent *entryPtr;
     int matchHidden;
     int result = TCL_OK;
-    int baseLength = Tcl_DStringLength(dirPtr);
+    int baseLength = nsp_tcldstring_length(dirPtr);
 
     /*
      * Make sure that the directory part of the name really is a
@@ -503,14 +503,14 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 	 */
 
 	if (Tcl_StringMatch(entryPtr->d_name, pattern)) {
-	  Tcl_DStringSetLength(dirPtr, baseLength);
-	  Tcl_DStringAppend(dirPtr, entryPtr->d_name, -1);
+	  nsp_tcldstring_set_length(dirPtr, baseLength);
+	  nsp_tcldstring_append(dirPtr, entryPtr->d_name, -1);
 	  if (tail == NULL) {
 	    if (nsp_row_smatrix_append_string(S, dirPtr->string)== FAIL) 
 	      return FAIL;
 	  } else if ((stat(dirPtr->string, &statBuf) == 0)
 		     && S_ISDIR(statBuf.st_mode)) {
-	    Tcl_DStringAppend(dirPtr, "/", 1);
+	    nsp_tcldstring_append(dirPtr, "/", 1);
 	    result = TclDoGlob( separators, dirPtr, tail,S);
 	    if (result != TCL_OK) {
 	      break;

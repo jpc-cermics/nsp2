@@ -109,7 +109,7 @@ extern CONST TclFileAttrProcs   tclpFileAttrProcs[];
  */
 
 extern int		TclChdir (char *dirName);
-extern int		TclDoGlob (char *separators, Tcl_DString *headPtr,
+extern int		TclDoGlob (char *separators, nsp_tcldstring *headPtr,
 				   char *tail,NspSMatrix *S);
 
 extern int		TclFileCopyCmd (int argc, char **argv,int force ) ;
@@ -122,10 +122,10 @@ extern char *		TclGetCwd (void);
 extern char *		TclGetEnv (CONST char *name);
 extern char *		TclGetExtension (char *name);
 
-extern char *		TclGetUserHome (char *name, Tcl_DString *bufferPtr);
+extern char *		TclGetUserHome (char *name, nsp_tcldstring *bufferPtr);
 
 extern int		TclpCopyFile (char *source, char *dest);
-extern int              TclpCopyDirectory (char *source,char *dest, Tcl_DString *errorPtr);
+extern int              TclpCopyDirectory (char *source,char *dest, nsp_tcldstring *errorPtr);
 extern int              TclpCreateDirectory (char *path);
 extern int              TclpDeleteFile (char *path);
 extern unsigned long	TclpGetClicks (void);
@@ -133,7 +133,7 @@ extern unsigned long	TclpGetSeconds (void);
 extern int		TclpGetTimeZone (unsigned long time);
 extern char *		TclpGetTZName (void);
 extern int		TclpListVolumes (Stack stack,int n);
-extern int              TclpRemoveDirectory (char *path, int recursive, Tcl_DString *errorPtr);
+extern int              TclpRemoveDirectory (char *path, int recursive, nsp_tcldstring *errorPtr);
 extern int              TclpRenameFile (char *source, char *dest);
 extern char *		TclpSetEnv (CONST char *name, CONST char *value);
 
@@ -143,7 +143,7 @@ extern char *		TclWordEnd (char *start, char *lastChar, int nested, int *semiPtr
 
 extern void             Tcl_CreateExitHandler();
 
-extern int              TclMatchFiles(char *separators,  Tcl_DString *dirPtr, char *pattern, char *tail, NspSMatrix *S);
+extern int              TclMatchFiles(char *separators,  nsp_tcldstring *dirPtr, char *pattern, char *tail, NspSMatrix *S);
 
 /*
  * The macro below is used to modify a "char" value (e.g. by casting

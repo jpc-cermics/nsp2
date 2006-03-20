@@ -134,7 +134,7 @@ int TestchmodCmd(dummy, argc, argv)
     }
 
     for (i = 2; i < argc; i++) {
-        Tcl_DString buffer;
+        nsp_tcldstring buffer;
         
         argv[i] = Tcl_TranslateFileName( argv[i], &buffer);
         if (argv[i] == NULL) {
@@ -145,7 +145,7 @@ int TestchmodCmd(dummy, argc, argv)
 		    (char *) NULL);
 	    return TCL_ERROR;
 	}
-        Tcl_DStringFree(&buffer);
+        nsp_tcldstring_free(&buffer);
     }
     return TCL_OK;
 }
@@ -156,7 +156,7 @@ int TestfileCmd(dummy, argc, argv)
     char **argv;			/* Argument strings. */
 {
     int force, i, j, result;
-    Tcl_DString error, name[2];
+    nsp_tcldstring error, name[2];
     
     if (argc < 3) {
 	return TCL_ERROR;
@@ -169,9 +169,9 @@ int TestfileCmd(dummy, argc, argv)
 	i = 3;
     }
 
-    Tcl_DStringInit(&name[0]);
-    Tcl_DStringInit(&name[1]);
-    Tcl_DStringInit(&error);
+    nsp_tcldstring_init(&name[0]);
+    nsp_tcldstring_init(&name[1]);
+    nsp_tcldstring_init(&error);
 
     if (argc - i > 2) {
 	return TCL_ERROR;
@@ -202,16 +202,16 @@ int TestfileCmd(dummy, argc, argv)
     }
 	
     if (result != TCL_OK) {
-	if (Tcl_DStringValue(&error)[0] != '\0') {
-	    Tcl_AppendResult( Tcl_DStringValue(&error), " ", NULL);
+	if (nsp_tcldstring_value(&error)[0] != '\0') {
+	    Tcl_AppendResult( nsp_tcldstring_value(&error), " ", NULL);
 	}
 	Tcl_AppendResult( Tcl_ErrnoId(), (char *) NULL);
     }
 
     end:
-    Tcl_DStringFree(&error);
-    Tcl_DStringFree(&name[0]);
-    Tcl_DStringFree(&name[1]);
+    nsp_tcldstring_free(&error);
+    nsp_tcldstring_free(&name[0]);
+    nsp_tcldstring_free(&name[1]);
 
     return result;
 }

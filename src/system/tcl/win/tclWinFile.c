@@ -50,10 +50,10 @@ void
 Tcl_FindExecutable(argv0)
     char *argv0;		/* The value of the application's argv[0]. */
 {
-    Tcl_DString buffer;
+    nsp_tcldstring buffer;
     int length;
 
-    Tcl_DStringInit(&buffer);
+    nsp_tcldstring_init(&buffer);
 
     if (tclExecutableName != NULL) {
 	ckfree(tclExecutableName);
@@ -65,13 +65,13 @@ Tcl_FindExecutable(argv0)
      * create this process.
      */
 
-    Tcl_DStringSetLength(&buffer, MAX_PATH+1);
-    length = GetModuleFileName(NULL, Tcl_DStringValue(&buffer), MAX_PATH+1);
+    nsp_tcldstring_set_length(&buffer, MAX_PATH+1);
+    length = GetModuleFileName(NULL, nsp_tcldstring_value(&buffer), MAX_PATH+1);
     if (length > 0) {
 	tclExecutableName = (char *) ckalloc((unsigned) (length + 1));
-	strcpy(tclExecutableName, Tcl_DStringValue(&buffer));
+	strcpy(tclExecutableName, nsp_tcldstring_value(&buffer));
     }
-    Tcl_DStringFree(&buffer);
+    nsp_tcldstring_free(&buffer);
 }
 
 /*
@@ -97,7 +97,7 @@ Tcl_FindExecutable(argv0)
 int
 TclMatchFiles( separators, dirPtr, pattern, tail,S)
     char *separators;		/* Directory separators to pass to TclDoGlob. */
-    Tcl_DString *dirPtr;	/* Contains path to directory to search. */
+    nsp_tcldstring *dirPtr;	/* Contains path to directory to search. */
     char *pattern;		/* Pattern to match against. */
     char *tail;			/* Pointer to end of pattern.  Tail must
 				 * point to a location in pattern. */
@@ -107,8 +107,8 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
     char *newPattern, *p, *dir, *root, c;
     int length, matchDotFiles;
     int result = TCL_OK;
-    int baseLength = Tcl_DStringLength(dirPtr);
-    Tcl_DString buffer;
+    int baseLength = nsp_tcldstring_length(dirPtr);
+    nsp_tcldstring buffer;
     DWORD atts, volFlags;
     HANDLE handle;
     WIN32_FIND_DATA data;
@@ -120,23 +120,23 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
      * separator character.
      */
 
-    Tcl_DStringInit(&buffer);
+    nsp_tcldstring_init(&buffer);
     if (baseLength == 0) {
-	Tcl_DStringAppend(&buffer, ".", 1);
+	nsp_tcldstring_append(&buffer, ".", 1);
     } else {
-	Tcl_DStringAppend(&buffer, Tcl_DStringValue(dirPtr),
-		Tcl_DStringLength(dirPtr));
+	nsp_tcldstring_append(&buffer, nsp_tcldstring_value(dirPtr),
+		nsp_tcldstring_length(dirPtr));
     }
-    for (p = Tcl_DStringValue(&buffer); *p != '\0'; p++) {
+    for (p = nsp_tcldstring_value(&buffer); *p != '\0'; p++) {
 	if (*p == '/') {
 	    *p = '\\';
 	}
     }
     p--;
     if (*p != '\\' && *p != ':') {
-	Tcl_DStringAppend(&buffer, "\\", 1);
+	nsp_tcldstring_append(&buffer, "\\", 1);
     }
-    dir = Tcl_DStringValue(&buffer);
+    dir = nsp_tcldstring_value(&buffer);
     
     /*
      * First verify that the specified path is actually a directory.
@@ -144,7 +144,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 
     atts = GetFileAttributes(dir);
     if ((atts == 0xFFFFFFFF) || ((atts & FILE_ATTRIBUTE_DIRECTORY) == 0)) {
-	Tcl_DStringFree(&buffer);
+	nsp_tcldstring_free(&buffer);
 	return TCL_OK;
     }
 
@@ -190,7 +190,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
     }
 
     if (!found) {
-	Tcl_DStringFree(&buffer);
+	nsp_tcldstring_free(&buffer);
 	TclWinConvertError(GetLastError());
 	Scierror("couldn't read volume information for \"%s\": %s\n",
 		 dirPtr->string, Tcl_PosixError());
@@ -221,14 +221,14 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
      */
 
 
-    dir = Tcl_DStringAppend(&buffer, "*.*", 3);
+    dir = nsp_tcldstring_append(&buffer, "*.*", 3);
 
     /*
      * Now open the directory for reading and iterate over the contents.
      */
 
     handle = FindFirstFile(dir, &data);
-    Tcl_DStringFree(&buffer);
+    nsp_tcldstring_free(&buffer);
 
     if (handle == INVALID_HANDLE_VALUE) {
 	TclWinConvertError(GetLastError());
@@ -267,7 +267,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
      * Now iterate over all of the files in the directory.
      */
 
-    Tcl_DStringInit(&buffer);
+    nsp_tcldstring_init(&buffer);
     for (found = 1; found; found = FindNextFile(handle, &data)) {
 	char *matchResult;
 
@@ -288,8 +288,8 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 
 	matchResult = NULL;
 	if (!(volFlags & FS_CASE_SENSITIVE)) {
-	    Tcl_DStringSetLength(&buffer, 0);
-	    Tcl_DStringAppend(&buffer, data.cFileName, -1);
+	    nsp_tcldstring_set_length(&buffer, 0);
+	    nsp_tcldstring_append(&buffer, data.cFileName, -1);
 	    for (p = buffer.string; *p != '\0'; p++) {
 		*p = (char) tolower(*p);
 	    }
@@ -317,15 +317,15 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 	 * file to the result.
 	 */
 
-	Tcl_DStringSetLength(dirPtr, baseLength);
-	Tcl_DStringAppend(dirPtr, matchResult, -1);
+	nsp_tcldstring_set_length(dirPtr, baseLength);
+	nsp_tcldstring_append(dirPtr, matchResult, -1);
 	if (tail == NULL) {
 	    if (nsp_row_smatrix_append_string(S, dirPtr->string)== FAIL) 
 	      return FAIL;
 	} else {
 	    atts = GetFileAttributes(dirPtr->string);
 	    if (atts & FILE_ATTRIBUTE_DIRECTORY) {
-		Tcl_DStringAppend(dirPtr, "/", 1);
+		nsp_tcldstring_append(dirPtr, "/", 1);
 		result = TclDoGlob(separators, dirPtr, tail,S);
 		if (result != TCL_OK) {
 		    break;
@@ -334,7 +334,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 	}
     }
 
-    Tcl_DStringFree(&buffer);
+    nsp_tcldstring_free(&buffer);
     FindClose(handle);
     ckfree(newPattern);
     return result;
@@ -462,7 +462,7 @@ TclGetCwd()
 
 int
 TclWinResolveShortcut(bufferPtr)
-    Tcl_DString *bufferPtr;	/* Holds name of file to resolve.  On 
+    nsp_tcldstring *bufferPtr;	/* Holds name of file to resolve.  On 
 				 * return, holds resolved file name. */
 {
     HRESULT hres; 
@@ -478,14 +478,14 @@ TclWinResolveShortcut(bufferPtr)
      * shortcuts like UNIX automatically will with symbolic links.
      */
 
-    path = Tcl_DStringValue(bufferPtr);
+    path = nsp_tcldstring_value(bufferPtr);
     ext = strrchr(path, '.');
     if ((ext == NULL) || (stricmp(ext, ".lnk") != 0)) {
 	return 0;
     }
 
     CoInitialize(NULL);
-    path = Tcl_DStringValue(bufferPtr);
+    path = nsp_tcldstring_value(bufferPtr);
     realFileName[0] = '\0';
     hres = CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, 
 	    &IID_IShellLink, &psl); 
@@ -509,8 +509,8 @@ TclWinResolveShortcut(bufferPtr)
     CoUninitialize();
 
     if (realFileName[0] != '\0') {
-	Tcl_DStringSetLength(bufferPtr, 0);
-	Tcl_DStringAppend(bufferPtr, realFileName, -1);
+	nsp_tcldstring_set_length(bufferPtr, 0);
+	nsp_tcldstring_append(bufferPtr, realFileName, -1);
 	return 1;
     }
     return 0;

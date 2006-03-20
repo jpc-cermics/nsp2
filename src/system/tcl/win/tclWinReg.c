@@ -472,7 +472,7 @@ GetKeyNames(
 	    continue;
 	}
 	result = Tcl_ListObjAppendElement(interp, resultPtr,
-		Tcl_NewStringObj(buffer, -1));
+		nsp_new_string_obj(NVOID,buffer, -1));
 	if (result != TCL_OK) {
 	    break;
 	}
@@ -545,7 +545,7 @@ GetType(
     if (type > lastType) {
 	Tcl_SetIntObj(resultPtr, type);
     } else {
-	Tcl_SetStringObj(resultPtr, typeNames[type], -1);
+	nsp_move_string(resultPtr, typeNames[type], -1);
     }
     return TCL_OK;
 }
@@ -578,7 +578,7 @@ GetValue(
     char *valueName;
     DWORD result, length, type;
     Tcl_Obj *resultPtr;
-    Tcl_DString data;
+    nsp_tcldstring data;
 
     /*
      * Attempt to open the key for reading.
@@ -594,15 +594,15 @@ GetValue(
      * the data in the buffer.
      */
 
-    Tcl_DStringInit(&data);
+    nsp_tcldstring_init(&data);
     resultPtr = Tcl_GetObjResult(interp);
 
     valueName = Tcl_GetStringFromObj(valueNameObj, (int*) &length);
     result = RegQueryValueEx(key, valueName, NULL, &type, NULL, &length);
     if (result == ERROR_SUCCESS) {
-	Tcl_DStringSetLength(&data, length);
+	nsp_tcldstring_set_length(&data, length);
 	result = RegQueryValueEx(key, valueName, NULL, &type,
-		(LPBYTE) Tcl_DStringValue(&data), &length);
+		(LPBYTE) nsp_tcldstring_value(&data), &length);
     }
     RegCloseKey(key);
     if (result != ERROR_SUCCESS) {
@@ -610,7 +610,7 @@ GetValue(
 		Tcl_GetStringFromObj(valueNameObj, NULL), "\" from key \"",
 		Tcl_GetStringFromObj(keyNameObj, NULL), "\": ", NULL);
 	AppendSystemError(interp, result);
-	Tcl_DStringFree(&data);
+	nsp_tcldstring_free(&data);
 	return TCL_ERROR;
     }
 
@@ -623,10 +623,10 @@ GetValue(
 
     if (type == REG_DWORD || type == REG_DWORD_BIG_ENDIAN) {
 	Tcl_SetIntObj(resultPtr, ConvertDWORD(type,
-		*((DWORD*) Tcl_DStringValue(&data))));
+		*((DWORD*) nsp_tcldstring_value(&data))));
     } else if (type == REG_MULTI_SZ) {
-	char *p = Tcl_DStringValue(&data);
-	char *lastChar = Tcl_DStringValue(&data) + Tcl_DStringLength(&data);
+	char *p = nsp_tcldstring_value(&data);
+	char *lastChar = nsp_tcldstring_value(&data) + nsp_tcldstring_length(&data);
 
 	/*
 	 * Multistrings are stored as an array of null-terminated strings,
@@ -636,15 +636,15 @@ GetValue(
 
 	while (p < lastChar && *p != '\0') {
 	    Tcl_ListObjAppendElement(interp, resultPtr,
-		    Tcl_NewStringObj(p, -1));
+		    nsp_new_string_obj(NVOID,p, -1));
 	    while (*p++ != '\0') {}
 	}
     } else if ((type == REG_SZ) || (type == REG_EXPAND_SZ)) {
-	Tcl_SetStringObj(resultPtr, Tcl_DStringValue(&data), -1);
+	nsp_move_string(resultPtr, nsp_tcldstring_value(&data), -1);
     } else {
-	Tcl_SetStringObj(resultPtr, Tcl_DStringValue(&data), length);
+	nsp_move_string(resultPtr, nsp_tcldstring_value(&data), length);
     }
-    Tcl_DStringFree(&data);
+    nsp_tcldstring_free(&data);
     return result;
 }
 
@@ -676,7 +676,7 @@ GetValueNames(
     HKEY key;
     Tcl_Obj *resultPtr;
     DWORD index, size, result;
-    Tcl_DString buffer;
+    nsp_tcldstring buffer;
     char *pattern;
 
     /*
@@ -708,8 +708,8 @@ GetValueNames(
     size++;
 
 
-    Tcl_DStringInit(&buffer);
-    Tcl_DStringSetLength(&buffer, size);
+    nsp_tcldstring_init(&buffer);
+    nsp_tcldstring_set_length(&buffer, size);
     index = 0;
     result = TCL_OK;
 
@@ -725,19 +725,19 @@ GetValueNames(
      * after each iteration because RegEnumValue smashes the old value.
      */
 
-    while (RegEnumValue(key, index, Tcl_DStringValue(&buffer), &size, NULL,
+    while (RegEnumValue(key, index, nsp_tcldstring_value(&buffer), &size, NULL,
 	    NULL, NULL, NULL) == ERROR_SUCCESS) {
-	if (!pattern || Tcl_StringMatch(Tcl_DStringValue(&buffer), pattern)) {
+	if (!pattern || Tcl_StringMatch(nsp_tcldstring_value(&buffer), pattern)) {
 	    result = Tcl_ListObjAppendElement(interp, resultPtr,
-		    Tcl_NewStringObj(Tcl_DStringValue(&buffer), size));
+		    nsp_new_string_obj(NVOID,nsp_tcldstring_value(&buffer), size));
 	    if (result != TCL_OK) {
 		break;
 	    }
 	}
 	index++;
-	size = Tcl_DStringLength(&buffer);
+	size = nsp_tcldstring_length(&buffer);
     }
-    Tcl_DStringFree(&buffer);
+    nsp_tcldstring_free(&buffer);
 
     done:
     RegCloseKey(key);
@@ -932,7 +932,7 @@ ParseKeyName(
      * Look for a matching root name.
      */
 
-    rootObj = Tcl_NewStringObj(rootName, -1);
+    rootObj = nsp_new_string_obj(NVOID,rootName, -1);
     result = Tcl_GetIndexFromObj(interp, rootObj, rootKeyNames, "root name",
 	    TCL_EXACT, &index);
     Tcl_DecrRefCount(rootObj);
@@ -967,7 +967,7 @@ RecursiveDeleteKey(
     char *keyName)		/* Name of key to be deleted. */
 {
     DWORD result, subKeyLength;
-    Tcl_DString subkey;
+    nsp_tcldstring subkey;
     HKEY hKey;
 
     /*
@@ -990,25 +990,25 @@ RecursiveDeleteKey(
 	return result;
     }
 
-    Tcl_DStringInit(&subkey);
-    Tcl_DStringSetLength(&subkey, subKeyLength);
+    nsp_tcldstring_init(&subkey);
+    nsp_tcldstring_set_length(&subkey, subKeyLength);
 
     while (result == ERROR_SUCCESS) {
 	/*
 	 * Always get index 0 because key deletion changes ordering.
 	 */
 
-	subKeyLength = Tcl_DStringLength(&subkey);
-	result=RegEnumKeyEx(hKey, 0, Tcl_DStringValue(&subkey), &subKeyLength,
+	subKeyLength = nsp_tcldstring_length(&subkey);
+	result=RegEnumKeyEx(hKey, 0, nsp_tcldstring_value(&subkey), &subKeyLength,
 		NULL, NULL, NULL, NULL);
 	if (result == ERROR_NO_MORE_ITEMS) {
 	    result = RegDeleteKey(startKey, keyName);
 	    break;
 	} else if (result == ERROR_SUCCESS) {
-	    result = RecursiveDeleteKey(hKey, Tcl_DStringValue(&subkey));
+	    result = RecursiveDeleteKey(hKey, nsp_tcldstring_value(&subkey));
 	}
     }
-    Tcl_DStringFree(&subkey);
+    nsp_tcldstring_free(&subkey);
     RegCloseKey(hKey);
     return result;
 }
@@ -1072,7 +1072,7 @@ SetValue(
 	result = RegSetValueEx(key, valueName, 0, type, (BYTE*) &value,
 		sizeof(DWORD));
     } else if (type == REG_MULTI_SZ) {
-	Tcl_DString data;
+	nsp_tcldstring data;
 	int objc, i;
 	Tcl_Obj **objv;
 	char *element;
@@ -1088,16 +1088,16 @@ SetValue(
 	 * embedded nulls, which aren't allowed in REG_MULTI_SZ values.
 	 */
 
-	Tcl_DStringInit(&data);
+	nsp_tcldstring_init(&data);
 	for (i = 0; i < objc; i++) {
 	    element = Tcl_GetStringFromObj(objv[i], NULL);
-	    Tcl_DStringAppend(&data, element, -1);
-	    Tcl_DStringSetLength(&data, Tcl_DStringLength(&data)+1);
+	    nsp_tcldstring_append(&data, element, -1);
+	    nsp_tcldstring_set_length(&data, nsp_tcldstring_length(&data)+1);
 	}
 	result = RegSetValueEx(key, valueName, 0, type,
-		(LPBYTE) Tcl_DStringValue(&data),
-		(DWORD) (Tcl_DStringLength(&data)+1));
-	Tcl_DStringFree(&data);
+		(LPBYTE) nsp_tcldstring_value(&data),
+		(DWORD) (nsp_tcldstring_length(&data)+1));
+	nsp_tcldstring_free(&data);
     } else {
 	char *data = Tcl_GetStringFromObj(dataObj, &length);
 

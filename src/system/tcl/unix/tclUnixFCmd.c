@@ -89,7 +89,7 @@ static int		SetPermissionsAttribute _ANSI_ARGS_((
  */
 
 typedef int (TraversalProc) _ANSI_ARGS_((char *src, char *dst, 
-        struct stat *sb, int type, Tcl_DString *errorPtr));
+        struct stat *sb, int type, nsp_tcldstring *errorPtr));
 
 /*
  * Constants and variables necessary for file attributes subcommand.
@@ -118,14 +118,14 @@ static int		CopyFileAtts _ANSI_ARGS_((char *src, char *dst,
 			    struct stat *srcStatBufPtr));
 static int		TraversalCopy _ANSI_ARGS_((char *src, char *dst, 
 			    struct stat *sbPtr, int type,
-			    Tcl_DString *errorPtr));
+			    nsp_tcldstring *errorPtr));
 static int		TraversalDelete _ANSI_ARGS_((char *src, char *dst, 
 			    struct stat *sbPtr, int type,
-			    Tcl_DString *errorPtr));
+			    nsp_tcldstring *errorPtr));
 static int		TraverseUnixTree _ANSI_ARGS_((
 			    TraversalProc *traversalProc,
-			    Tcl_DString *sourcePath, Tcl_DString *destPath,
-			    Tcl_DString *errorPtr));
+			    nsp_tcldstring *sourcePath, nsp_tcldstring *destPath,
+			    nsp_tcldstring *errorPtr));
 
 /*
  *---------------------------------------------------------------------------
@@ -504,21 +504,21 @@ int
 TclpCopyDirectory(src, dst, errorPtr)
     char *src;			/* Pathname of directory to be copied.  */
     char *dst;			/* Pathname of target directory. */
-    Tcl_DString *errorPtr;	/* If non-NULL, initialized DString for
+    nsp_tcldstring *errorPtr;	/* If non-NULL, initialized DString for
 				 * error reporting. */
 {
     int result;
-    Tcl_DString srcBuffer;
-    Tcl_DString dstBuffer;
+    nsp_tcldstring srcBuffer;
+    nsp_tcldstring dstBuffer;
 
-    Tcl_DStringInit(&srcBuffer);
-    Tcl_DStringInit(&dstBuffer);
-    Tcl_DStringAppend(&srcBuffer, src, -1);
-    Tcl_DStringAppend(&dstBuffer, dst, -1);
+    nsp_tcldstring_init(&srcBuffer);
+    nsp_tcldstring_init(&dstBuffer);
+    nsp_tcldstring_append(&srcBuffer, src, -1);
+    nsp_tcldstring_append(&dstBuffer, dst, -1);
     result = TraverseUnixTree(TraversalCopy, &srcBuffer, &dstBuffer,
 	    errorPtr);
-    Tcl_DStringFree(&srcBuffer);
-    Tcl_DStringFree(&dstBuffer);
+    nsp_tcldstring_free(&srcBuffer);
+    nsp_tcldstring_free(&dstBuffer);
     return result;
 }
 
@@ -554,11 +554,11 @@ TclpRemoveDirectory(path, recursive, errorPtr)
     int recursive;		/* If non-zero, removes directories that
 				 * are nonempty.  Otherwise, will only remove
 				 * empty directories. */
-    Tcl_DString *errorPtr;	/* If non-NULL, initialized DString for
+    nsp_tcldstring *errorPtr;	/* If non-NULL, initialized DString for
 				 * error reporting. */
 {
     int result;
-    Tcl_DString buffer;
+    nsp_tcldstring buffer;
 
     if (rmdir(path) == 0) {
 	return TCL_OK;
@@ -568,7 +568,7 @@ TclpRemoveDirectory(path, recursive, errorPtr)
     }
     if ((errno != EEXIST) || (recursive == 0)) {
 	if (errorPtr != NULL) {
-	    Tcl_DStringAppend(errorPtr, path, -1);
+	    nsp_tcldstring_append(errorPtr, path, -1);
 	}
 	return TCL_ERROR;
     }
@@ -578,10 +578,10 @@ TclpRemoveDirectory(path, recursive, errorPtr)
      * specified, so we recursively remove all the files in the directory.
      */
 
-    Tcl_DStringInit(&buffer);
-    Tcl_DStringAppend(&buffer, path, -1);
+    nsp_tcldstring_init(&buffer);
+    nsp_tcldstring_append(&buffer, path, -1);
     result = TraverseUnixTree(TraversalDelete, &buffer, NULL, errorPtr);
-    Tcl_DStringFree(&buffer);
+    nsp_tcldstring_free(&buffer);
     return result;
 }
 	
@@ -611,11 +611,11 @@ static int
 TraverseUnixTree(traverseProc, sourcePtr, targetPtr, errorPtr)
     TraversalProc *traverseProc;/* Function to call for every file and
 				 * directory in source hierarchy. */
-    Tcl_DString *sourcePtr;	/* Pathname of source directory to be
+    nsp_tcldstring *sourcePtr;	/* Pathname of source directory to be
 				 * traversed. */
-    Tcl_DString *targetPtr;	/* Pathname of directory to traverse in
+    nsp_tcldstring *targetPtr;	/* Pathname of directory to traverse in
 				 * parallel with source directory. */
-    Tcl_DString *errorPtr;	/* If non-NULL, an initialized DString for
+    nsp_tcldstring *errorPtr;	/* If non-NULL, an initialized DString for
 				 * error reporting. */
 {
     struct stat statbuf;
@@ -627,9 +627,9 @@ TraverseUnixTree(traverseProc, sourcePtr, targetPtr, errorPtr)
     DIR *dp;
 
     result = TCL_OK;
-    source = Tcl_DStringValue(sourcePtr);
+    source = nsp_tcldstring_value(sourcePtr);
     if (targetPtr != NULL) {
-	target = Tcl_DStringValue(targetPtr);
+	target = nsp_tcldstring_value(targetPtr);
     } else {
 	target = NULL;
     }
@@ -662,14 +662,14 @@ TraverseUnixTree(traverseProc, sourcePtr, targetPtr, errorPtr)
 	return result;
     }
     
-    Tcl_DStringAppend(sourcePtr, "/", 1);
-    source = Tcl_DStringValue(sourcePtr);
-    sourceLen = Tcl_DStringLength(sourcePtr);	
+    nsp_tcldstring_append(sourcePtr, "/", 1);
+    source = nsp_tcldstring_value(sourcePtr);
+    sourceLen = nsp_tcldstring_length(sourcePtr);	
 
     if (targetPtr != NULL) {
-	Tcl_DStringAppend(targetPtr, "/", 1);
-	target = Tcl_DStringValue(targetPtr);
-	targetLen = Tcl_DStringLength(targetPtr);
+	nsp_tcldstring_append(targetPtr, "/", 1);
+	target = nsp_tcldstring_value(targetPtr);
+	targetLen = nsp_tcldstring_length(targetPtr);
     }
 				  
     while ((dirp = readdir(dp)) != NULL) {
@@ -682,9 +682,9 @@ TraverseUnixTree(traverseProc, sourcePtr, targetPtr, errorPtr)
 	 * Append name after slash, and recurse on the file.
 	 */
 
-	Tcl_DStringAppend(sourcePtr, dirp->d_name, -1);
+	nsp_tcldstring_append(sourcePtr, dirp->d_name, -1);
 	if (targetPtr != NULL) {
-	    Tcl_DStringAppend(targetPtr, dirp->d_name, -1);
+	    nsp_tcldstring_append(targetPtr, dirp->d_name, -1);
 	}
 	result = TraverseUnixTree(traverseProc, sourcePtr, targetPtr,
 		errorPtr);
@@ -696,9 +696,9 @@ TraverseUnixTree(traverseProc, sourcePtr, targetPtr, errorPtr)
 	 * Remove name after slash.
 	 */
 
-	Tcl_DStringSetLength(sourcePtr, sourceLen);
+	nsp_tcldstring_set_length(sourcePtr, sourceLen);
 	if (targetPtr != NULL) {
-	    Tcl_DStringSetLength(targetPtr, targetLen);
+	    nsp_tcldstring_set_length(targetPtr, targetLen);
 	}
     }
     closedir(dp);
@@ -707,11 +707,11 @@ TraverseUnixTree(traverseProc, sourcePtr, targetPtr, errorPtr)
      * Strip off the trailing slash we added
      */
 
-    Tcl_DStringSetLength(sourcePtr, sourceLen - 1);
-    source = Tcl_DStringValue(sourcePtr);
+    nsp_tcldstring_set_length(sourcePtr, sourceLen - 1);
+    source = nsp_tcldstring_value(sourcePtr);
     if (targetPtr != NULL) {
-	Tcl_DStringSetLength(targetPtr, targetLen - 1);
-	target = Tcl_DStringValue(targetPtr);
+	nsp_tcldstring_set_length(targetPtr, targetLen - 1);
+	target = nsp_tcldstring_value(targetPtr);
     }
 
     if (result == TCL_OK) {
@@ -726,7 +726,7 @@ TraverseUnixTree(traverseProc, sourcePtr, targetPtr, errorPtr)
     end:
     if (errfile != NULL) {
 	if (errorPtr != NULL) {
-	    Tcl_DStringAppend(errorPtr, errfile, -1);
+	    nsp_tcldstring_append(errorPtr, errfile, -1);
 	}
 	result = TCL_ERROR;
     }
@@ -758,7 +758,7 @@ TraversalCopy(src, dst, sbPtr, type, errorPtr)
     char *dst;                  /* Destination pathname of copy. */
     struct stat *sbPtr;		/* Stat info for file specified by src. */
     int type;                   /* Reason for call - see TraverseUnixTree(). */
-    Tcl_DString *errorPtr;	/* If non-NULL, initialized DString for
+    nsp_tcldstring *errorPtr;	/* If non-NULL, initialized DString for
 				 * error return. */
 {
     switch (type) {
@@ -788,7 +788,7 @@ TraversalCopy(src, dst, sbPtr, type, errorPtr)
      */
 
     if (errorPtr != NULL) {
-	Tcl_DStringAppend(errorPtr, dst, -1);
+	nsp_tcldstring_append(errorPtr, dst, -1);
     }
     return TCL_ERROR;
 }
@@ -818,7 +818,7 @@ TraversalDelete(src, ignore, sbPtr, type, errorPtr)
     char *ignore;		/* Destination pathname (not used). */
     struct stat *sbPtr;		/* Stat info for file specified by src. */
     int type;                   /* Reason for call - see TraverseUnixTree(). */
-    Tcl_DString *errorPtr;	/* If non-NULL, initialized DString for
+    nsp_tcldstring *errorPtr;	/* If non-NULL, initialized DString for
 				 * error return. */
 {
     switch (type) {
@@ -840,7 +840,7 @@ TraversalDelete(src, ignore, sbPtr, type, errorPtr)
     }
 
     if (errorPtr != NULL) {
-	Tcl_DStringAppend(errorPtr, src, -1);
+	nsp_tcldstring_append(errorPtr, src, -1);
     }
     return TCL_ERROR;
 }
@@ -939,7 +939,7 @@ GetGroupAttribute(objIndex, fileName, attributePtrPtr)
 		 Tcl_PosixError());
 	return TCL_ERROR;
     }
-    *attributePtrPtr = Tcl_NewStringObj(groupPtr->gr_name, -1);
+    *attributePtrPtr = nsp_new_string_obj(NVOID,groupPtr->gr_name, -1);
     endgrent();
     
     return TCL_OK;
@@ -984,7 +984,7 @@ GetOwnerAttribute( objIndex, fileName, attributePtrPtr)
 	return TCL_ERROR;
     }
 
-    *attributePtrPtr = Tcl_NewStringObj(pwPtr->pw_name, -1);
+    *attributePtrPtr = nsp_new_string_obj(NVOID,pwPtr->pw_name, -1);
     endpwent();
     
     return TCL_OK;
@@ -1023,7 +1023,7 @@ GetPermissionsAttribute( objIndex, fileName, attributePtrPtr)
 
     sprintf(returnString, "%0#5lo", (long unsigned int )(statBuf.st_mode & 0x00007FFF));
     
-    *attributePtrPtr = Tcl_NewStringObj(returnString, -1);
+    *attributePtrPtr = nsp_new_string_obj(NVOID,returnString, -1);
     
     return TCL_OK;
 }
@@ -1214,10 +1214,8 @@ SetPermissionsAttribute( objIndex, fileName, attributePtr)
  *---------------------------------------------------------------------------
  */
 
-int TclpListVolumes(stack,n)
-     int n ; 
-     Stack stack;
+int TclpListVolumes(Stack stack,int n)
 {
-  return Tcl_SetStringObj(stack,n,"/", 1);
+  return nsp_move_string(stack,n,"/", 1) == FAIL ? RET_BUG : 1;
 }
 

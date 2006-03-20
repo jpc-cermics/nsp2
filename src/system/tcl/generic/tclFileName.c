@@ -58,13 +58,13 @@ TclPlatformType tclPlatform = TCL_PLATFORM_UNIX;
  * Prototypes for local procedures defined in this file:
  */
 
-static char *		DoTildeSubst ( char *user, Tcl_DString *resultPtr);
-static char *		ExtractWinRoot (char *path,  Tcl_DString *resultPtr, int offset);
+static char *		DoTildeSubst ( char *user, nsp_tcldstring *resultPtr);
+static char *		ExtractWinRoot (char *path,  nsp_tcldstring *resultPtr, int offset);
 static void		FileNameCleanup (ClientData clientData);
 static int		SkipToChar (char **stringPtr,char *match);
-static char *		SplitMacPath (char *path, Tcl_DString *bufPtr);
-static char *		SplitWinPath (char *path, Tcl_DString *bufPtr);
-static char *		SplitUnixPath (char *path, Tcl_DString *bufPtr);
+static char *		SplitMacPath (char *path, nsp_tcldstring *bufPtr);
+static char *		SplitWinPath (char *path, nsp_tcldstring *bufPtr);
+static char *		SplitUnixPath (char *path, nsp_tcldstring *bufPtr);
 
 /*
  *----------------------------------------------------------------------
@@ -104,7 +104,7 @@ FileNameCleanup(clientData)
  * ExtractWinRoot --
  *
  *	Matches the root portion of a Windows path and appends it
- *	to the specified Tcl_DString.
+ *	to the specified nsp_tcldstring.
  *	
  * Results:
  *	Returns the position in the path immediately after the root
@@ -113,7 +113,7 @@ FileNameCleanup(clientData)
  *	at the specified offest.
  *
  * Side effects:
- *	Modifies the specified Tcl_DString.
+ *	Modifies the specified nsp_tcldstring.
  *
  *----------------------------------------------------------------------
  */
@@ -121,7 +121,7 @@ FileNameCleanup(clientData)
 static char *
 ExtractWinRoot(path, resultPtr, offset)
      char *path;			/* Path to parse. */
-     Tcl_DString *resultPtr;	/* Buffer to hold result. */
+     nsp_tcldstring *resultPtr;	/* Buffer to hold result. */
      int offset;			/* Offset in buffer where result should be
 				 * stored. */
 {
@@ -147,24 +147,24 @@ ExtractWinRoot(path, resultPtr, offset)
     return path;
   }
 
-  Tcl_DStringSetLength(resultPtr, offset);
+  nsp_tcldstring_set_length(resultPtr, offset);
 
   if (winRootPatternPtr->startp[2] != NULL) {
-    Tcl_DStringAppend(resultPtr, winRootPatternPtr->startp[2], 2);
+    nsp_tcldstring_append(resultPtr, winRootPatternPtr->startp[2], 2);
     if (winRootPatternPtr->startp[6] != NULL) {
-      Tcl_DStringAppend(resultPtr, "/", 1);
+      nsp_tcldstring_append(resultPtr, "/", 1);
     }
   } else if (winRootPatternPtr->startp[4] != NULL) {
-    Tcl_DStringAppend(resultPtr, "//", 2);
+    nsp_tcldstring_append(resultPtr, "//", 2);
     length = winRootPatternPtr->endp[3]
       - winRootPatternPtr->startp[3];
-    Tcl_DStringAppend(resultPtr, winRootPatternPtr->startp[3], length);
-    Tcl_DStringAppend(resultPtr, "/", 1);
+    nsp_tcldstring_append(resultPtr, winRootPatternPtr->startp[3], length);
+    nsp_tcldstring_append(resultPtr, "/", 1);
     length = winRootPatternPtr->endp[4]
       - winRootPatternPtr->startp[4];
-    Tcl_DStringAppend(resultPtr, winRootPatternPtr->startp[4], length);
+    nsp_tcldstring_append(resultPtr, winRootPatternPtr->startp[4], length);
   } else {
-    Tcl_DStringAppend(resultPtr, "/", 1);
+    nsp_tcldstring_append(resultPtr, "/", 1);
   }
   return winRootPatternPtr->endp[0];
 }
@@ -292,8 +292,8 @@ void Tcl_SplitPath(
 {
   int i, size;
   char *p;
-  Tcl_DString buffer;
-  Tcl_DStringInit(&buffer);
+  nsp_tcldstring buffer;
+  nsp_tcldstring_init(&buffer);
 
   /*
    * Perform platform specific splitting.  These routines will leave the
@@ -320,7 +320,7 @@ void Tcl_SplitPath(
    * Compute the number of elements in the result.
    */
 
-  size = Tcl_DStringLength(&buffer);
+  size = nsp_tcldstring_length(&buffer);
   *argcPtr = 0;
   for (i = 0; i < size; i++) {
     if (p[i] == '\0') {
@@ -342,7 +342,7 @@ void Tcl_SplitPath(
    */
 
   p = (char *) &(*argvPtr)[(*argcPtr) + 1];
-  memcpy((VOID *) p, (VOID *) Tcl_DStringValue(&buffer), (size_t) size);
+  memcpy((VOID *) p, (VOID *) nsp_tcldstring_value(&buffer), (size_t) size);
 
   /*
    * Now set up the argv pointers.
@@ -354,7 +354,7 @@ void Tcl_SplitPath(
   }
   (*argvPtr)[i] = NULL;
 
-  Tcl_DStringFree(&buffer);
+  nsp_tcldstring_free(&buffer);
 }
 
 /*
@@ -367,7 +367,7 @@ void Tcl_SplitPath(
  *
  * Results:
  *	Stores a null separated array of strings in the specified
- *	Tcl_DString.
+ *	nsp_tcldstring.
  *
  * Side effects:
  *	None.
@@ -377,7 +377,7 @@ void Tcl_SplitPath(
 
 static char *SplitUnixPath(
 			   char *path,			/* Pointer to string containing a path. */
-			   Tcl_DString *bufPtr	/* Pointer to DString to use for the result. */)
+			   nsp_tcldstring *bufPtr	/* Pointer to DString to use for the result. */)
 {
   int length;
   char *p, *elementStart;
@@ -387,7 +387,7 @@ static char *SplitUnixPath(
    */
 
   if (path[0] == '/') {
-    Tcl_DStringAppend(bufPtr, "/", 2);
+    nsp_tcldstring_append(bufPtr, "/", 2);
     p = path+1;
   } else {
     p = path;
@@ -406,16 +406,16 @@ static char *SplitUnixPath(
     length = p - elementStart;
     if (length > 0) {
       if ((elementStart[0] == '~') && (elementStart != path)) {
-	Tcl_DStringAppend(bufPtr, "./", 2);
+	nsp_tcldstring_append(bufPtr, "./", 2);
       }
-      Tcl_DStringAppend(bufPtr, elementStart, length);
-      Tcl_DStringAppend(bufPtr, "", 1);
+      nsp_tcldstring_append(bufPtr, elementStart, length);
+      nsp_tcldstring_append(bufPtr, "", 1);
     }
     if (*p++ == '\0') {
       break;
     }
   }
-  return Tcl_DStringValue(bufPtr);
+  return nsp_tcldstring_value(bufPtr);
 }
 
 /*
@@ -428,7 +428,7 @@ static char *SplitUnixPath(
  *
  * Results:
  *	Stores a null separated array of strings in the specified
- *	Tcl_DString.
+ *	nsp_tcldstring.
  *
  * Side effects:
  *	None.
@@ -439,7 +439,7 @@ static char *SplitUnixPath(
 static char *
 SplitWinPath(
 	     char *path,			/* Pointer to string containing a path. */
-	     Tcl_DString *bufPtr	/* Pointer to DString to use for the result. */)
+	     nsp_tcldstring *bufPtr	/* Pointer to DString to use for the result. */)
 {
   int length;
   char *p, *elementStart;
@@ -451,7 +451,7 @@ SplitWinPath(
    */
 
   if (p != path) {
-    Tcl_DStringAppend(bufPtr, "", 1);
+    nsp_tcldstring_append(bufPtr, "", 1);
   }
 
   /*
@@ -467,14 +467,14 @@ SplitWinPath(
     length = p - elementStart;
     if (length > 0) {
       if ((elementStart[0] == '~') && (elementStart != path)) {
-	Tcl_DStringAppend(bufPtr, "./", 2);
+	nsp_tcldstring_append(bufPtr, "./", 2);
       }
-      Tcl_DStringAppend(bufPtr, elementStart, length);
-      Tcl_DStringAppend(bufPtr, "", 1);
+      nsp_tcldstring_append(bufPtr, elementStart, length);
+      nsp_tcldstring_append(bufPtr, "", 1);
     }
   } while (*p++ != '\0');
 
-  return Tcl_DStringValue(bufPtr);
+  return nsp_tcldstring_value(bufPtr);
 }
 
 /*
@@ -496,7 +496,7 @@ SplitWinPath(
 
 static char *SplitMacPath(
 			  char *path,			/* Pointer to string containing a path. */
-			  Tcl_DString *bufPtr	/* Pointer to DString to use for the result. */)
+			  nsp_tcldstring *bufPtr	/* Pointer to DString to use for the result. */)
 {
   int isMac = 0;		/* 1 if is Mac-style, 0 if Unix-style path. */
   int i, length;
@@ -526,10 +526,10 @@ static char *SplitMacPath(
      */
 
     if (macRootPatternPtr->startp[2] != NULL) {
-      Tcl_DStringAppend(bufPtr, ":", 1);
-      Tcl_DStringAppend(bufPtr, path, macRootPatternPtr->endp[0]
+      nsp_tcldstring_append(bufPtr, ":", 1);
+      nsp_tcldstring_append(bufPtr, path, macRootPatternPtr->endp[0]
 			- macRootPatternPtr->startp[0] + 1);
-      return Tcl_DStringValue(bufPtr);
+      return nsp_tcldstring_value(bufPtr);
     }
 
     if (macRootPatternPtr->startp[5] != NULL) {
@@ -574,8 +574,8 @@ static char *SplitMacPath(
      * we are forcing the DString to contain an extra null at the end.
      */
 
-    Tcl_DStringAppend(bufPtr, macRootPatternPtr->startp[i], length);
-    Tcl_DStringAppend(bufPtr, ":", 2);
+    nsp_tcldstring_append(bufPtr, macRootPatternPtr->startp[i], length);
+    nsp_tcldstring_append(bufPtr, ":", 2);
     p = macRootPatternPtr->endp[i];
   } else {
     isMac = (strchr(path, ':') != NULL);
@@ -594,7 +594,7 @@ static char *SplitMacPath(
       length = p - elementStart;
       if (length == 1) {
 	while (*p == ':') {
-	  Tcl_DStringAppend(bufPtr, "::", 3);
+	  nsp_tcldstring_append(bufPtr, "::", 3);
 	  elementStart = p++;
 	}
       } else {
@@ -607,8 +607,8 @@ static char *SplitMacPath(
 	  elementStart++;
 	  length--;
 	}
-	Tcl_DStringAppend(bufPtr, elementStart, length);
-	Tcl_DStringAppend(bufPtr, "", 1);
+	nsp_tcldstring_append(bufPtr, elementStart, length);
+	nsp_tcldstring_append(bufPtr, "", 1);
 	elementStart = p++;
       }
     }
@@ -617,8 +617,8 @@ static char *SplitMacPath(
 	  && (strchr(elementStart+1, '/') == NULL)) {
 	elementStart++;
       }
-      Tcl_DStringAppend(bufPtr, elementStart, -1);
-      Tcl_DStringAppend(bufPtr, "", 1);
+      nsp_tcldstring_append(bufPtr, elementStart, -1);
+      nsp_tcldstring_append(bufPtr, "", 1);
     }
   } else {
 
@@ -634,16 +634,16 @@ static char *SplitMacPath(
       length = p - elementStart;
       if (length > 0) {
 	if ((length == 1) && (elementStart[0] == '.')) {
-	  Tcl_DStringAppend(bufPtr, ":", 2);
+	  nsp_tcldstring_append(bufPtr, ":", 2);
 	} else if ((length == 2) && (elementStart[0] == '.')
 		   && (elementStart[1] == '.')) {
-	  Tcl_DStringAppend(bufPtr, "::", 3);
+	  nsp_tcldstring_append(bufPtr, "::", 3);
 	} else {
 	  if (*elementStart == '~') {
-	    Tcl_DStringAppend(bufPtr, ":", 1);
+	    nsp_tcldstring_append(bufPtr, ":", 1);
 	  }
-	  Tcl_DStringAppend(bufPtr, elementStart, length);
-	  Tcl_DStringAppend(bufPtr, "", 1);
+	  nsp_tcldstring_append(bufPtr, elementStart, length);
+	  nsp_tcldstring_append(bufPtr, "", 1);
 	}
       }
       if (*p++ == '\0') {
@@ -651,7 +651,7 @@ static char *SplitMacPath(
       }
     }
   }
-  return Tcl_DStringValue(bufPtr);
+  return nsp_tcldstring_value(bufPtr);
 }
 
 /*
@@ -664,24 +664,24 @@ static char *SplitMacPath(
  * Results:
  *	Appends the joined path to the end of the specified
  *	returning a pointer to the resulting string.  Note that
- *	the Tcl_DString must already be initialized.
+ *	the nsp_tcldstring must already be initialized.
  *
  * Side effects:
- *	Modifies the Tcl_DString.
+ *	Modifies the nsp_tcldstring.
  *
  *----------------------------------------------------------------------
  */
 
 char *Tcl_JoinPath( int argc,
 		    char **argv,
-		    Tcl_DString *resultPtr /* Pointer to previously initialized DString. */)
+		    nsp_tcldstring *resultPtr /* Pointer to previously initialized DString. */)
 {
   int oldLength, length, i, needsSep;
-  Tcl_DString buffer;
+  nsp_tcldstring buffer;
   char *p, c, *dest;
 
-  Tcl_DStringInit(&buffer);
-  oldLength = Tcl_DStringLength(resultPtr);
+  nsp_tcldstring_init(&buffer);
+  oldLength = nsp_tcldstring_length(resultPtr);
 
   switch (tclPlatform) {
   case TCL_PLATFORM_UNIX:
@@ -695,14 +695,14 @@ char *Tcl_JoinPath( int argc,
        */
 
       if (*p == '/') {
-	Tcl_DStringSetLength(resultPtr, oldLength);
-	Tcl_DStringAppend(resultPtr, "/", 1);
+	nsp_tcldstring_set_length(resultPtr, oldLength);
+	nsp_tcldstring_append(resultPtr, "/", 1);
 	while (*p == '/') {
 	  p++;
 	}
       } else if (*p == '~') {
-	Tcl_DStringSetLength(resultPtr, oldLength);
-      } else if ((Tcl_DStringLength(resultPtr) != oldLength)
+	nsp_tcldstring_set_length(resultPtr, oldLength);
+      } else if ((nsp_tcldstring_length(resultPtr) != oldLength)
 		 && (p[0] == '.') && (p[1] == '/')
 		 && (p[2] == '~')) {
 	p += 2;
@@ -716,10 +716,10 @@ char *Tcl_JoinPath( int argc,
        * Append a separator if needed.
        */
 
-      length = Tcl_DStringLength(resultPtr);
+      length = nsp_tcldstring_length(resultPtr);
       if ((length != oldLength)
-	  && (Tcl_DStringValue(resultPtr)[length-1] != '/')) {
-	Tcl_DStringAppend(resultPtr, "/", 1);
+	  && (nsp_tcldstring_value(resultPtr)[length-1] != '/')) {
+	nsp_tcldstring_append(resultPtr, "/", 1);
 	length++;
       }
 
@@ -728,8 +728,8 @@ char *Tcl_JoinPath( int argc,
        * slashes.
        */
 
-      Tcl_DStringSetLength(resultPtr, (int) (length + strlen(p)));
-      dest = Tcl_DStringValue(resultPtr) + length;
+      nsp_tcldstring_set_length(resultPtr, (int) (length + strlen(p)));
+      dest = nsp_tcldstring_value(resultPtr) + length;
       for (; *p != '\0'; p++) {
 	if (*p == '/') {
 	  while (p[1] == '/') {
@@ -742,8 +742,8 @@ char *Tcl_JoinPath( int argc,
 	  *dest++ = *p;
 	}
       }
-      length = dest - Tcl_DStringValue(resultPtr);
-      Tcl_DStringSetLength(resultPtr, length);
+      length = dest - nsp_tcldstring_value(resultPtr);
+      nsp_tcldstring_set_length(resultPtr, length);
     }
     break;
 
@@ -756,7 +756,7 @@ char *Tcl_JoinPath( int argc,
 
     for (i = 0; i < argc; i++) {
       p = ExtractWinRoot(argv[i], resultPtr, oldLength);
-      length = Tcl_DStringLength(resultPtr);
+      length = nsp_tcldstring_length(resultPtr);
 		
       /*
        * If the pointer didn't move, then this is a relative path
@@ -775,7 +775,7 @@ char *Tcl_JoinPath( int argc,
 	    && (p[2] == '~')) {
 	  p += 2;
 	} else if (*p == '~') {
-	  Tcl_DStringSetLength(resultPtr, oldLength);
+	  nsp_tcldstring_set_length(resultPtr, oldLength);
 	  length = oldLength;
 	}
       }
@@ -787,9 +787,9 @@ char *Tcl_JoinPath( int argc,
 
 		    
 	if (length != oldLength) {
-	  c = Tcl_DStringValue(resultPtr)[length-1];
+	  c = nsp_tcldstring_value(resultPtr)[length-1];
 	  if ((c != '/') && (c != ':')) {
-	    Tcl_DStringAppend(resultPtr, "/", 1);
+	    nsp_tcldstring_append(resultPtr, "/", 1);
 	  }
 	}
 
@@ -798,9 +798,9 @@ char *Tcl_JoinPath( int argc,
 	 * trailing slashes.
 	 */
 
-	length = Tcl_DStringLength(resultPtr);
-	Tcl_DStringSetLength(resultPtr, (int) (length + strlen(p)));
-	dest = Tcl_DStringValue(resultPtr) + length;
+	length = nsp_tcldstring_length(resultPtr);
+	nsp_tcldstring_set_length(resultPtr, (int) (length + strlen(p)));
+	dest = nsp_tcldstring_value(resultPtr) + length;
 	for (; *p != '\0'; p++) {
 	  if ((*p == '/') || (*p == '\\')) {
 	    while ((p[1] == '/') || (p[1] == '\\')) {
@@ -813,8 +813,8 @@ char *Tcl_JoinPath( int argc,
 	    *dest++ = *p;
 	  }
 	}
-	length = dest - Tcl_DStringValue(resultPtr);
-	Tcl_DStringSetLength(resultPtr, length);
+	length = dest - nsp_tcldstring_value(resultPtr);
+	nsp_tcldstring_set_length(resultPtr, length);
       }
     }
     break;
@@ -822,13 +822,13 @@ char *Tcl_JoinPath( int argc,
   case TCL_PLATFORM_MAC:
     needsSep = 1;
     for (i = 0; i < argc; i++) {
-      Tcl_DStringSetLength(&buffer, 0);
+      nsp_tcldstring_set_length(&buffer, 0);
       p = SplitMacPath(argv[i], &buffer);
       if ((*p != ':') && (*p != '\0')
 	  && (strchr(p, ':') != NULL)) {
-	Tcl_DStringSetLength(resultPtr, oldLength);
+	nsp_tcldstring_set_length(resultPtr, oldLength);
 	length = strlen(p);
-	Tcl_DStringAppend(resultPtr, p, length);
+	nsp_tcldstring_append(resultPtr, p, length);
 	needsSep = 0;
 	p += length+1;
       }
@@ -842,7 +842,7 @@ char *Tcl_JoinPath( int argc,
 
       for (; *p != '\0'; p += length+1) {
 	if (p[0] == ':' && p[1] == '\0') {
-	  if (Tcl_DStringLength(resultPtr) != oldLength) {
+	  if (nsp_tcldstring_length(resultPtr) != oldLength) {
 	    p++;
 	  } else {
 	    needsSep = 0;
@@ -855,20 +855,20 @@ char *Tcl_JoinPath( int argc,
 	    }
 	  } else {
 	    if (needsSep) {
-	      Tcl_DStringAppend(resultPtr, ":", 1);
+	      nsp_tcldstring_append(resultPtr, ":", 1);
 	    }
 	  }
 	  needsSep = (c == ':') ? 0 : 1;
 	}
 	length = strlen(p);
-	Tcl_DStringAppend(resultPtr, p, length);
+	nsp_tcldstring_append(resultPtr, p, length);
       }
     }
     break;
 			       
   }
-  Tcl_DStringFree(&buffer);
-  return Tcl_DStringValue(resultPtr);
+  nsp_tcldstring_free(&buffer);
+  return nsp_tcldstring_value(resultPtr);
 }
 
 /*
@@ -886,7 +886,7 @@ char *Tcl_JoinPath( int argc,
  *	the new name.  If there was an error in processing the
  *	name, then an error message is left in interp->result
  *	and the return value is NULL.  The result will be stored
- *	in bufferPtr; the caller must call Tcl_DStringFree(bufferPtr)
+ *	in bufferPtr; the caller must call nsp_tcldstring_free(bufferPtr)
  *	to free the name if the return value was not NULL.
  *
  * Side effects:
@@ -901,7 +901,7 @@ Tcl_TranslateFileName(
 							 * (to indicate current user's home directory)
 							 * or "~<user>" (to indicate any user's
 							 * home directory). */
-		      Tcl_DString *bufferPtr	/* May be used to hold result.  Must not hold
+		      nsp_tcldstring *bufferPtr	/* May be used to hold result.  Must not hold
 						 * anything at the time of the call, and need
 						 * not even be initialized. */)
 {
@@ -914,7 +914,7 @@ Tcl_TranslateFileName(
   if (name[0] == '~') {
     int argc, length;
     char **argv;
-    Tcl_DString temp;
+    nsp_tcldstring temp;
 
     Tcl_SplitPath(name, &argc, &argv);
 	
@@ -928,19 +928,19 @@ Tcl_TranslateFileName(
       argv[0][length-1] = '\0';
     }
 	
-    Tcl_DStringInit(&temp);
+    nsp_tcldstring_init(&temp);
     argv[0] = DoTildeSubst( argv[0]+1, &temp);
     if (argv[0] == NULL) {
-      Tcl_DStringFree(&temp);
+      nsp_tcldstring_free(&temp);
       ckfree((char *)argv);
       return NULL;
     }
-    Tcl_DStringInit(bufferPtr);
+    nsp_tcldstring_init(bufferPtr);
     Tcl_JoinPath(argc, argv, bufferPtr);
-    Tcl_DStringFree(&temp);
+    nsp_tcldstring_free(&temp);
     ckfree((char*)argv);
   } else {
-    Tcl_DStringInit(bufferPtr);
+    nsp_tcldstring_init(bufferPtr);
     Tcl_JoinPath(1, &name, bufferPtr);
   }
 
@@ -950,13 +950,13 @@ Tcl_TranslateFileName(
    */
 
   if (tclPlatform == TCL_PLATFORM_WINDOWS) {
-    for (p = Tcl_DStringValue(bufferPtr); *p != '\0'; p++) {
+    for (p = nsp_tcldstring_value(bufferPtr); *p != '\0'; p++) {
       if (*p == '/') {
 	*p = '\\';
       }
     }
   }
-  return Tcl_DStringValue(bufferPtr);
+  return nsp_tcldstring_value(bufferPtr);
 }
 
 /*
@@ -1051,7 +1051,7 @@ char *TclGetExtension(char *name			/* File name to parse. */)
 static char *DoTildeSubst(
 			  char *user,			/* Name of user whose home directory should be
 				 * substituted, or "" for current user. */
-			  Tcl_DString *resultPtr	/* May be used to hold result.  Must not hold
+			  nsp_tcldstring *resultPtr	/* May be used to hold result.  Must not hold
 							 * anything at the time of the call, and need
 							 * not even be initialized. */)
 {
@@ -1100,10 +1100,10 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
   int i, noComplain=0;
   char c;
   int result = TCL_OK;
-  Tcl_DString buffer;
+  nsp_tcldstring buffer;
   char *separators, *head, *tail,*str;
     
-  Tcl_DStringInit(&buffer);
+  nsp_tcldstring_init(&buffer);
   separators = NULL;		/* Needed only to prevent gcc warnings. */
 
   if ((S=nsp_smatrix_create("",0,0,".",0))== NULLSMAT) 
@@ -1124,7 +1124,7 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
 	break;
       }
       
-    Tcl_DStringSetLength(&buffer, 0);
+    nsp_tcldstring_set_length(&buffer, 0);
 
     /*
      * Perform tilde substitution, if needed.
@@ -1173,8 +1173,8 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
 	    goto done;
 	  }
 	}
-	if (head != Tcl_DStringValue(&buffer)) {
-	  Tcl_DStringAppend(&buffer, head, -1);
+	if (head != nsp_tcldstring_value(&buffer)) {
+	  nsp_tcldstring_append(&buffer, head, -1);
 	}
       } else {
 	tail = str;
@@ -1189,7 +1189,7 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
     }
   }
  done:
-  Tcl_DStringFree(&buffer);
+  nsp_tcldstring_free(&buffer);
   if ( result == TCL_OK ) 
     {
       if ( rhs >= 1) 
@@ -1282,7 +1282,7 @@ int TclDoGlob(
 	      char *separators,		/* String containing separator characters
 					 * that should be used to identify globbing
 					 * boundaries. */
-	      Tcl_DString *headPtr,	/* Completely expanded prefix. */
+	      nsp_tcldstring *headPtr,	/* Completely expanded prefix. */
 	      char *tail,		/* The unexpanded remainder of the path. */
 	      NspSMatrix *S                /* String Matrix for appending results 
 					      the Matrix can be an empty Matrix 
@@ -1292,10 +1292,10 @@ int TclDoGlob(
   int result = TCL_OK;
   char *p, *openBrace, *closeBrace, *name, *firstSpecialChar, savedChar;
   char lastChar = 0;
-  int length = Tcl_DStringLength(headPtr);
+  int length = nsp_tcldstring_length(headPtr);
   
   if (length > 0) {
-    lastChar = Tcl_DStringValue(headPtr)[length-1];
+    lastChar = nsp_tcldstring_value(headPtr)[length-1];
   }
 
   /*
@@ -1325,19 +1325,19 @@ int TclDoGlob(
     if (*separators == '/') {
       if (((length == 0) && (count == 0))
 	  || ((length > 0) && (lastChar != ':'))) {
-	Tcl_DStringAppend(headPtr, ":", 1);
+	nsp_tcldstring_append(headPtr, ":", 1);
       }
     } else {
       if (count == 0) {
 	if ((length > 0) && (lastChar != ':')) {
-	  Tcl_DStringAppend(headPtr, ":", 1);
+	  nsp_tcldstring_append(headPtr, ":", 1);
 	}
       } else {
 	if (lastChar == ':') {
 	  count--;
 	}
 	while (count-- > 0) {
-	  Tcl_DStringAppend(headPtr, ":", 1);
+	  nsp_tcldstring_append(headPtr, ":", 1);
 	}
       }
     }
@@ -1351,17 +1351,17 @@ int TclDoGlob(
      */
 
     if (*name == ':') {
-      Tcl_DStringAppend(headPtr, ":", 1);
+      nsp_tcldstring_append(headPtr, ":", 1);
       if (count > 1) {
-	Tcl_DStringAppend(headPtr, "/", 1);
+	nsp_tcldstring_append(headPtr, "/", 1);
       }
     } else if ((*tail != '\0')
 	       && (((length > 0)
 		    && (strchr(separators, lastChar) == NULL))
 		   || ((length == 0) && (count > 0)))) {
-      Tcl_DStringAppend(headPtr, "/", 1);
+      nsp_tcldstring_append(headPtr, "/", 1);
       if ((length == 0) && (count > 1)) {
-	Tcl_DStringAppend(headPtr, "/", 1);
+	nsp_tcldstring_append(headPtr, "/", 1);
       }
     }
 	    
@@ -1376,7 +1376,7 @@ int TclDoGlob(
 	&& (((length > 0)
 	     && (strchr(separators, lastChar) == NULL))
 	    || ((length == 0) && (count > 0)))) {
-      Tcl_DStringAppend(headPtr, "/", 1);
+      nsp_tcldstring_append(headPtr, "/", 1);
     }
     break;
   }
@@ -1419,8 +1419,8 @@ int TclDoGlob(
 
   if (openBrace != NULL) {
     char *element;
-    Tcl_DString newName;
-    Tcl_DStringInit(&newName);
+    nsp_tcldstring newName;
+    nsp_tcldstring_init(&newName);
 
     /*
      * For each element within in the outermost pair of braces,
@@ -1428,26 +1428,26 @@ int TclDoGlob(
      * before the first brace and recursively call TclDoGlob.
      */
 
-    Tcl_DStringAppend(&newName, tail, openBrace-tail);
-    baseLength = Tcl_DStringLength(&newName);
-    length = Tcl_DStringLength(headPtr);
+    nsp_tcldstring_append(&newName, tail, openBrace-tail);
+    baseLength = nsp_tcldstring_length(&newName);
+    length = nsp_tcldstring_length(headPtr);
     *closeBrace = '\0';
     for (p = openBrace; p != closeBrace; ) {
       p++;
       element = p;
       SkipToChar(&p, ",");
-      Tcl_DStringSetLength(headPtr, length);
-      Tcl_DStringSetLength(&newName, baseLength);
-      Tcl_DStringAppend(&newName, element, p-element);
-      Tcl_DStringAppend(&newName, closeBrace+1, -1);
+      nsp_tcldstring_set_length(headPtr, length);
+      nsp_tcldstring_set_length(&newName, baseLength);
+      nsp_tcldstring_append(&newName, element, p-element);
+      nsp_tcldstring_append(&newName, closeBrace+1, -1);
       result = TclDoGlob( separators,
-			 headPtr, Tcl_DStringValue(&newName),S);
+			 headPtr, nsp_tcldstring_value(&newName),S);
       if (result != TCL_OK) {
 	break;
       }
     }
     *closeBrace = '}';
-    Tcl_DStringFree(&newName);
+    nsp_tcldstring_free(&newName);
     return result;
   }
 
@@ -1479,7 +1479,7 @@ int TclDoGlob(
 
     return TclMatchFiles( separators, headPtr, tail, p,S);
   }
-  Tcl_DStringAppend(headPtr, tail, p-tail);
+  nsp_tcldstring_append(headPtr, tail, p-tail);
   if (*p != '\0') {
     return TclDoGlob( separators, headPtr, p,S);
   }
@@ -1492,10 +1492,10 @@ int TclDoGlob(
 
   switch (tclPlatform) {
   case TCL_PLATFORM_MAC:
-    if (strchr(Tcl_DStringValue(headPtr), ':') == NULL) {
-      Tcl_DStringAppend(headPtr, ":", 1);
+    if (strchr(nsp_tcldstring_value(headPtr), ':') == NULL) {
+      nsp_tcldstring_append(headPtr, ":", 1);
     }
-    name = Tcl_DStringValue(headPtr);
+    name = nsp_tcldstring_value(headPtr);
     if (access(name, F_OK) == 0) {
       if ((name[1] != '\0') && (strchr(name+1, ':') == NULL)) {
       if (nsp_row_smatrix_append_string(S,name+1 )== FAIL) 
@@ -1514,21 +1514,21 @@ int TclDoGlob(
      * to convert the slashes back.
      */
 
-    if (Tcl_DStringLength(headPtr) == 0) {
+    if (nsp_tcldstring_length(headPtr) == 0) {
       if (((*name == '\\') && (name[1] == '/' || name[1] == '\\'))
 	  || (*name == '/')) {
-	Tcl_DStringAppend(headPtr, "\\", 1);
+	nsp_tcldstring_append(headPtr, "\\", 1);
       } else {
-	Tcl_DStringAppend(headPtr, ".", 1);
+	nsp_tcldstring_append(headPtr, ".", 1);
       }
     } else {
-      for (p = Tcl_DStringValue(headPtr); *p != '\0'; p++) {
+      for (p = nsp_tcldstring_value(headPtr); *p != '\0'; p++) {
 	if (*p == '/') {
 	  *p = '\\';
 	}
       }
     }
-    name = Tcl_DStringValue(headPtr);
+    name = nsp_tcldstring_value(headPtr);
     exists = (access(name, F_OK) == 0);
     for (p = name; *p != '\0'; p++) {
       if (*p == '\\') {
@@ -1542,14 +1542,14 @@ int TclDoGlob(
     break;
   }
   case TCL_PLATFORM_UNIX:
-    if (Tcl_DStringLength(headPtr) == 0) {
+    if (nsp_tcldstring_length(headPtr) == 0) {
       if ((*name == '\\' && name[1] == '/') || (*name == '/')) {
-	Tcl_DStringAppend(headPtr, "/", 1);
+	nsp_tcldstring_append(headPtr, "/", 1);
       } else {
-	Tcl_DStringAppend(headPtr, ".", 1);
+	nsp_tcldstring_append(headPtr, ".", 1);
       }
     }
-    name = Tcl_DStringValue(headPtr);
+    name = nsp_tcldstring_value(headPtr);
     if (access(name, F_OK) == 0) {
       if (nsp_row_smatrix_append_string(S,name )== FAIL) 
 	return FAIL;

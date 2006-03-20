@@ -26,7 +26,7 @@
  * 
  */
 
-int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resultDString,
+int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,nsp_tcldstring *resultDString,
 		   int *nmatch,int all)
 {
   int match, code=FAIL, numMatches;
@@ -36,7 +36,7 @@ int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resul
 
   string = stringI= str;
   
-  Tcl_DStringInit(resultDString);
+  nsp_tcldstring_init(resultDString);
   
   /*
    * The following loop is to handle multiple matches within the
@@ -63,7 +63,7 @@ int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resul
      */
     
     Tcl_RegExpRange(regExpr, 0, &start, &end);
-    Tcl_DStringAppend(resultDString,stringI +( p -string) , start - p);
+    nsp_tcldstring_append(resultDString,stringI +( p -string) , start - p);
     
     /*
      * Append the subSpec argument to the variable, making appropriate
@@ -84,7 +84,7 @@ int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resul
 	} else if ((c == '\\') || (c == '&')) {
 	  *src = c;
 	  src[1] = 0;
-	  Tcl_DStringAppend(resultDString, firstChar, -1);
+	  nsp_tcldstring_append(resultDString, firstChar, -1);
 	  *src = '\\';
 	  src[1] = c;
 	  firstChar = src+2;
@@ -99,7 +99,7 @@ int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resul
       if (firstChar != src) {
 	c = *src;
 	*src = 0;
-	Tcl_DStringAppend(resultDString, firstChar, -1);
+	nsp_tcldstring_append(resultDString, firstChar, -1);
 	*src = c;
       }
       Tcl_RegExpRange(regExpr, index, &subStart, &subEnd);
@@ -110,7 +110,7 @@ int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resul
 	last =  stringI + (subEnd - string);
 	saved = *last;
 	*last = 0;
-	Tcl_DStringAppend(resultDString, first, -1);
+	nsp_tcldstring_append(resultDString, first, -1);
 	*last = saved;
       }
       if (*src == '\\') {
@@ -119,7 +119,7 @@ int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resul
       firstChar = src+1;
     }
     if (firstChar != src) {
-      Tcl_DStringAppend(resultDString, firstChar, -1);
+      nsp_tcldstring_append(resultDString, firstChar, -1);
     }
     if (end == p) {
 
@@ -128,7 +128,7 @@ int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resul
        * in order to prevent infinite loops.
        */
 
-      Tcl_DStringAppend(resultDString, stringI + (p - string), 1);
+      nsp_tcldstring_append(resultDString, stringI + (p - string), 1);
       p = end + 1;
     } else {
       p = end;
@@ -144,7 +144,7 @@ int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resul
    */
 
   if ((*p != 0) || (numMatches == 0)) {
-    Tcl_DStringAppend(resultDString, stringI + (p - string), -1);
+    nsp_tcldstring_append(resultDString, stringI + (p - string), -1);
   }
   
   /* 
@@ -154,7 +154,7 @@ int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,Tcl_DString *resul
   code = OK ;
   return code ;
  done:
-  Tcl_DStringFree(resultDString);
+  nsp_tcldstring_free(resultDString);
   return code;
 }
 

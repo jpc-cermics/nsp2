@@ -152,11 +152,11 @@ typedef struct PipeEvent {
 
 static int	ApplicationType(Tcl_Interp *interp, const char *fileName,
 		    char *fullName);
-static void	BuildCommandLine(int argc, char **argv, Tcl_DString *linePtr);
+static void	BuildCommandLine(int argc, char **argv, nsp_tcldstring *linePtr);
 static void	CopyChannel(HANDLE dst, HANDLE src);
 static BOOL	HasConsole(void);
 static TclFile	MakeFile(HANDLE handle);
-static char *	MakeTempFile(Tcl_DString *namePtr);
+static char *	MakeTempFile(nsp_tcldstring *namePtr);
 static int	PipeBlockModeProc(ClientData instanceData, int mode);
 static void	PipeCheckProc _ANSI_ARGS_((ClientData clientData,
 		    int flags));
@@ -411,7 +411,7 @@ TclpMakeFile(channel, direction)
 TclFile
 TclpCreateTempFile(contents, namePtr)
     char *contents;		/* String to write into temp file, or NULL. */
-    Tcl_DString *namePtr;	/* If non-NULL, pointer to initialized 
+    nsp_tcldstring *namePtr;	/* If non-NULL, pointer to initialized 
 				 * DString that is filled with the name of 
 				 * the temp file that was created. */
 {
@@ -465,7 +465,7 @@ TclpCreateTempFile(contents, namePtr)
     }
 
     if (namePtr != NULL) {
-        Tcl_DStringAppend(namePtr, name, -1);
+        nsp_tcldstring_append(namePtr, name, -1);
     }
 
     /*
@@ -830,7 +830,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 				 * process. */
 {
     int result, applType, createFlags;
-    Tcl_DString cmdLine;
+    nsp_tcldstring cmdLine;
     STARTUPINFO startInfo;
     PROCESS_INFORMATION procInfo;
     SECURITY_ATTRIBUTES secAtts;
@@ -847,7 +847,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
     argv[0] = execPath;
 
     result = TCL_ERROR;
-    Tcl_DStringInit(&cmdLine);
+    nsp_tcldstring_init(&cmdLine);
 
     if (TclWinGetPlatformId() == VER_PLATFORM_WIN32s) {
 	/*
@@ -862,15 +862,15 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 	DWORD args[4];
 	void *trans[5];
 	char *inputFileName, *outputFileName;
-	Tcl_DString inputTempFile, outputTempFile;
+	nsp_tcldstring inputTempFile, outputTempFile;
 
 	BuildCommandLine(argc, argv, &cmdLine);
 
 	ZeroMemory(&startInfo, sizeof(startInfo));
 	startInfo.cb = sizeof(startInfo);
 
-	Tcl_DStringInit(&inputTempFile);
-	Tcl_DStringInit(&outputTempFile);
+	nsp_tcldstring_init(&inputTempFile);
+	nsp_tcldstring_init(&outputTempFile);
 	outputHandle = INVALID_HANDLE_VALUE;
 
 	inputFileName = NULL;
@@ -923,7 +923,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 	}
 
 	if (applType == APPL_DOS) {
-	    args[0] = (DWORD) Tcl_DStringValue(&cmdLine);
+	    args[0] = (DWORD) nsp_tcldstring_value(&cmdLine);
 	    args[1] = (DWORD) inputFileName;
 	    args[2] = (DWORD) outputFileName;
 	    trans[0] = &args[0];
@@ -934,14 +934,14 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 		result = TCL_OK;
 	    }
 	} else if (applType == APPL_WIN3X) {
-	    args[0] = (DWORD) Tcl_DStringValue(&cmdLine);
+	    args[0] = (DWORD) nsp_tcldstring_value(&cmdLine);
 	    trans[0] = &args[0];
 	    trans[1] = NULL;
 	    if (TclWinSynchSpawn(args, 1, trans, pidPtr) != 0) {
 		result = TCL_OK;
 	    }
 	} else {
-	    if (CreateProcess(NULL, Tcl_DStringValue(&cmdLine), NULL, NULL, 
+	    if (CreateProcess(NULL, nsp_tcldstring_value(&cmdLine), NULL, NULL, 
 		    FALSE, DETACHED_PROCESS, NULL, NULL, &startInfo, 
 		    &procInfo) != 0) {
 		CloseHandle(procInfo.hThread);
@@ -990,17 +990,17 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 	    CloseHandle(h);
 	}
 
-	if (inputFileName == Tcl_DStringValue(&inputTempFile)) {
+	if (inputFileName == nsp_tcldstring_value(&inputTempFile)) {
 	    DeleteFile(inputFileName);
 	}
 	
-	if (outputFileName == Tcl_DStringValue(&outputTempFile)) {
+	if (outputFileName == nsp_tcldstring_value(&outputTempFile)) {
 	    DeleteFile(outputFileName);
 	}
 
-	Tcl_DStringFree(&inputTempFile);
-	Tcl_DStringFree(&outputTempFile);
-        Tcl_DStringFree(&cmdLine);
+	nsp_tcldstring_free(&inputTempFile);
+	nsp_tcldstring_free(&outputTempFile);
+        nsp_tcldstring_free(&cmdLine);
 	return result;
     }
     hProcess = GetCurrentProcess();
@@ -1167,7 +1167,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 	    startInfo.wShowWindow = SW_HIDE;
 	    startInfo.dwFlags |= STARTF_USESHOWWINDOW;
 	    createFlags = CREATE_NEW_CONSOLE;
-	    Tcl_DStringAppend(&cmdLine, "cmd.exe /c ", -1);
+	    nsp_tcldstring_append(&cmdLine, "cmd.exe /c ", -1);
 	} else {
 	    createFlags = DETACHED_PROCESS;
 	} 
@@ -1212,7 +1212,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 		startInfo.dwFlags |= STARTF_USESHOWWINDOW;
 		createFlags = CREATE_NEW_CONSOLE;
 	    }
-	    Tcl_DStringAppend(&cmdLine, "tclpip" STRINGIFY(TCL_MAJOR_VERSION) 
+	    nsp_tcldstring_append(&cmdLine, "tclpip" STRINGIFY(TCL_MAJOR_VERSION) 
 		    STRINGIFY(TCL_MINOR_VERSION) ".dll ", -1);
 	}
     }
@@ -1238,7 +1238,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 
     BuildCommandLine(argc, argv, &cmdLine);
 
-    if (!CreateProcess(NULL, Tcl_DStringValue(&cmdLine), NULL, NULL, TRUE, 
+    if (!CreateProcess(NULL, nsp_tcldstring_value(&cmdLine), NULL, NULL, TRUE, 
 	    createFlags, NULL, NULL, &startInfo, &procInfo)) {
 	TclWinConvertError(GetLastError());
 	Tcl_AppendResult(interp, "couldn't execute \"", originalName,
@@ -1273,7 +1273,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
     result = TCL_OK;
 
     end:
-    Tcl_DStringFree(&cmdLine);
+    nsp_tcldstring_free(&cmdLine);
     if (startInfo.hStdInput != INVALID_HANDLE_VALUE) {
         CloseHandle(startInfo.hStdInput);
     }
@@ -1504,7 +1504,7 @@ static void
 BuildCommandLine(argc, argv, linePtr)
     int argc;			/* Number of arguments. */
     char **argv;		/* Argument strings. */
-    Tcl_DString *linePtr;	/* Initialized Tcl_DString that receives the
+    nsp_tcldstring *linePtr;	/* Initialized nsp_tcldstring that receives the
 				 * command line. */
 {
     char *start, *special;
@@ -1512,14 +1512,14 @@ BuildCommandLine(argc, argv, linePtr)
 
     for (i = 0; i < argc; i++) {
 	if (i > 0) {
-	    Tcl_DStringAppend(linePtr, " ", 1);	
+	    nsp_tcldstring_append(linePtr, " ", 1);	
 	}
 
 	quote = 0;
 	for (start = argv[i]; *start != '\0'; start++) {
 	    if (isspace(*start)) {
 		quote = 1;
-		Tcl_DStringAppend(linePtr, "\"", 1);
+		nsp_tcldstring_append(linePtr, "\"", 1);
     		break;
 	    }
 	}
@@ -1528,7 +1528,7 @@ BuildCommandLine(argc, argv, linePtr)
 	for (special = argv[i]; ; ) {
 	    if ((*special == '\\') && 
 		    (special[1] == '\\' || special[1] == '"')) {
-		Tcl_DStringAppend(linePtr, start, special - start);
+		nsp_tcldstring_append(linePtr, start, special - start);
 		start = special;
 		while (1) {
 		    special++;
@@ -1538,19 +1538,19 @@ BuildCommandLine(argc, argv, linePtr)
 			 * N * 2 + 1 backslashes then a quote.
 			 */
 
-			Tcl_DStringAppend(linePtr, start, special - start);
+			nsp_tcldstring_append(linePtr, start, special - start);
 			break;
 		    }
 		    if (*special != '\\') {
 			break;
 		    }
 		}
-		Tcl_DStringAppend(linePtr, start, special - start);
+		nsp_tcldstring_append(linePtr, start, special - start);
 		start = special;
 	    }
 	    if (*special == '"') {
-		Tcl_DStringAppend(linePtr, start, special - start);
-		Tcl_DStringAppend(linePtr, "\\\"", 2);
+		nsp_tcldstring_append(linePtr, start, special - start);
+		nsp_tcldstring_append(linePtr, "\\\"", 2);
 		start = special + 1;
 	    }
 	    if (*special == '\0') {
@@ -1558,9 +1558,9 @@ BuildCommandLine(argc, argv, linePtr)
 	    }
 	    special++;
 	}
-	Tcl_DStringAppend(linePtr, start, special - start);
+	nsp_tcldstring_append(linePtr, start, special - start);
 	if (quote) {
-	    Tcl_DStringAppend(linePtr, "\"", 1);
+	    nsp_tcldstring_append(linePtr, "\"", 1);
 	}
     }
 }
@@ -1587,7 +1587,7 @@ BuildCommandLine(argc, argv, linePtr)
 
 static char *
 MakeTempFile(namePtr)
-    Tcl_DString *namePtr;	/* Initialized Tcl_DString that is filled 
+    nsp_tcldstring *namePtr;	/* Initialized nsp_tcldstring that is filled 
 				 * with the name of the temporary file that 
 				 * was created. */
 {
@@ -1598,8 +1598,8 @@ MakeTempFile(namePtr)
 	return NULL;
     }
 
-    Tcl_DStringAppend(namePtr, name, -1);
-    return Tcl_DStringValue(namePtr);
+    nsp_tcldstring_append(namePtr, name, -1);
+    return nsp_tcldstring_value(namePtr);
 }
 
 /*
@@ -2380,7 +2380,7 @@ Tcl_PidObjCmd(dummy, interp, objc, objv)
     if (objc == 1) {
 	resultPtr = Tcl_GetObjResult(interp);
 	sprintf(buf, "%lu", (unsigned long) getpid());
-	Tcl_SetStringObj(resultPtr, buf, -1);
+	nsp_move_string(resultPtr, buf, -1);
     } else {
         chan = Tcl_GetChannel(interp, Tcl_GetStringFromObj(objv[1], NULL),
 		NULL);
@@ -2397,7 +2397,7 @@ Tcl_PidObjCmd(dummy, interp, objc, objv)
         for (i = 0; i < pipePtr->numPids; i++) {
 	    sprintf(buf, "%lu", TclpGetPid(pipePtr->pidPtr[i]));
 	    Tcl_ListObjAppendElement(/*interp*/ NULL, resultPtr,
-		    Tcl_NewStringObj(buf, -1));
+		    nsp_new_string_obj(NVOID,buf, -1));
 	}
     }
     return TCL_OK;

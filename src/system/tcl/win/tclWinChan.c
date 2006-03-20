@@ -79,7 +79,7 @@ typedef struct FileEvent {
 
 static int		ComGetOptionProc _ANSI_ARGS_((ClientData instanceData, 
 			    Tcl_Interp *interp, char *optionName,
-			    Tcl_DString *dsPtr));
+			    nsp_tcldstring *dsPtr));
 static int		ComInputProc _ANSI_ARGS_((ClientData instanceData,
 	            	    char *buf, int toRead, int *errorCode));
 static int		ComSetOptionProc _ANSI_ARGS_((ClientData instanceData,
@@ -779,7 +779,7 @@ ComGetOptionProc(instanceData, interp, optionName, dsPtr)
     ClientData instanceData;	/* File state. */
     Tcl_Interp *interp;          /* For error reporting - can be NULL. */
     char *optionName;		/* Option to get. */
-    Tcl_DString *dsPtr;		/* Where to store value(s). */
+    nsp_tcldstring *dsPtr;		/* Where to store value(s). */
 {
     FileInfo *infoPtr;
     DCB dcb;
@@ -788,7 +788,7 @@ ComGetOptionProc(instanceData, interp, optionName, dsPtr)
     infoPtr = (FileInfo *) instanceData;
 
     if (optionName == NULL) {
-	Tcl_DStringAppendElement(dsPtr, "-mode");
+	nsp_tcldstring_appendElement(dsPtr, "-mode");
 	len = 0;
     } else {
 	len = strlen(optionName);
@@ -799,7 +799,7 @@ ComGetOptionProc(instanceData, interp, optionName, dsPtr)
 	    /*
 	     * shouldn't we flag an error instead ? 
 	     */
-	    Tcl_DStringAppendElement(dsPtr, "");
+	    nsp_tcldstring_appendElement(dsPtr, "");
 	} else {
 	    char parity;
 	    char *stop;
@@ -815,7 +815,7 @@ ComGetOptionProc(instanceData, interp, optionName, dsPtr)
 
 	    wsprintf(buf, "%d,%c,%d,%s", dcb.BaudRate, parity, dcb.ByteSize,
 		    stop);
-	    Tcl_DStringAppendElement(dsPtr, buf);
+	    nsp_tcldstring_appendElement(dsPtr, buf);
 	}
 	return TCL_OK;
     } else {
@@ -856,7 +856,7 @@ Tcl_OpenFileChannel(interp, fileName, modeString, permissions)
     int seekFlag, mode, channelPermissions;
     DWORD accessMode, createMode, shareMode, flags;
     char *nativeName;
-    Tcl_DString buffer;
+    nsp_tcldstring buffer;
     DCB dcb;
     Tcl_ChannelType *channelTypePtr;
     HANDLE handle;
@@ -961,7 +961,7 @@ Tcl_OpenFileChannel(interp, fileName, modeString, permissions)
             Tcl_AppendResult(interp, "couldn't open \"", fileName, "\": ",
                     Tcl_PosixError(interp), (char *) NULL);
         }
-        Tcl_DStringFree(&buffer);
+        nsp_tcldstring_free(&buffer);
         return NULL;
     }
 
@@ -1001,7 +1001,7 @@ Tcl_OpenFileChannel(interp, fileName, modeString, permissions)
     } else {
 	channelTypePtr = &fileChannelType;
     }
-    Tcl_DStringFree(&buffer);
+    nsp_tcldstring_free(&buffer);
 
     infoPtr = (FileInfo *) ckalloc((unsigned) sizeof(FileInfo));
     infoPtr->nextPtr = firstFilePtr;
