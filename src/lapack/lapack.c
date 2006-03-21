@@ -184,7 +184,7 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
  * tol can be given or computed if null is transmited 
  */
 int nsp_qr(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E, NspMatrix **Rank, 
-	   NspMatrix **Sval, double *tol,char mode)
+	   NspMatrix **Sval, double *tol, char mode)
 {
   /* A == [] return empty matrices*/ 
   if ( A->mn == 0 )  {
@@ -1783,16 +1783,21 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
 
 /*
  * Lsq computation  using dgelsy or zgelsy 
- * FIXME : the interface must be modified to pass rcond and to retrieve rank
- *         also an option to solve with svd could be interesting
+ * FIXME :  an option to solve with svd could be interesting
  */
 static int intdgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank);
 static int intzgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank);
+/* static int intdgelsd(NspMatrix *A, NspMatrix *B, double rcond, int *rank); */
+/* static int intzgelsd(NspMatrix *A, NspMatrix *B, double rcond, int *rank); */
 
-int nsp_lsq(NspMatrix *A,NspMatrix *B)
+int nsp_lsq(NspMatrix *A, NspMatrix *B, double *Rcond, int *Rank)
 {
-  double rcond = DBL_EPSILON;
-  int rank, stat;
+  double rcond;
+
+  if (Rcond == NULL ) 
+    rcond = Max(A->m,A->n)*nsp_dlamch("eps");
+  else 
+    rcond = *Rcond;
 
   if ( A->rc_type == 'c' ) 
     {
@@ -1810,11 +1815,9 @@ int nsp_lsq(NspMatrix *A,NspMatrix *B)
     }
 
   if ( A->rc_type == 'r')
-    stat = intdgelsy(A, B, rcond, &rank);
+    return intdgelsy(A, B, rcond, Rank);
   else
-    stat = intzgelsy(A, B, rcond, &rank);
-
-  return stat;
+    return intzgelsy(A, B, rcond, Rank);
 }
 
 static int intdgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank)
@@ -3246,11 +3249,10 @@ int nsp_expm(NspMatrix *A)
  *   when A is square but badly conditionned or singular)
  */
 
-int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B)
+int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B, double tol_rcond)
 {  
-  /* A->m must be equal to B->m but this is verified at the upper level */
+  /* Note : A->m must be equal to B->m but this is verified at the upper level */
   int mA = A->m, nA = A->n, stat, rank;
-  double rcond = DBL_EPSILON;  /* FIXME : to be choosen more correctly ? */
 
   if ( A->rc_type == 'c' ) 
     {
@@ -3268,9 +3270,9 @@ int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B)
     }
 
   if ( A->rc_type == 'r')
-    stat = intdgelsy(A, B, rcond, &rank);
+    stat = intdgelsy(A, B, tol_rcond, &rank);
   else
-    stat = intzgelsy(A, B, rcond, &rank);
+    stat = intzgelsy(A, B, tol_rcond, &rank);
 
   if ( stat == OK )
     if ( rank < Min(mA,nA) )
@@ -3282,7 +3284,7 @@ int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B)
 /*
  *   nsp_mat_bdiv_square implements A\B when A is square
  */
-int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond)
+int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond)
 {  
   int n=A->m, nrhs=B->n;  /* mA must be equal to nA */
   int *ipiv=NULL, *iwork=NULL, info;
@@ -3319,7 +3321,7 @@ int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond)
       if ( (rwork = nsp_alloc_work_doubles(4*n)) == NULL ) goto err;      
 
       C2F(dgecon) ("1", &n, A->R, &n, &anorm, rcond, rwork, iwork, &info, 1);
-      if ( *rcond <=  DBL_EPSILON ) /* matrix is too badly conditionned */
+      if ( *rcond <=  tol_rcond ) /* matrix is too badly conditionned */
 	{
 	  FREE(rwork); FREE(iwork); FREE(ipiv); return OK;
 	}
@@ -3338,7 +3340,7 @@ int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond)
       if ( (cwork = nsp_alloc_work_doubleC(2*n)) == NULL ) goto err;
 
       C2F(zgecon) ("1", &n, A->C, &n, &anorm, rcond, cwork, rwork, &info, 1);
-      if ( *rcond <=  DBL_EPSILON )  /* matrix is too badly conditionned */
+      if ( *rcond <= tol_rcond )  /* matrix is too badly conditionned */
 	{
 	  FREE(cwork); FREE(rwork); FREE(ipiv); return OK;
 	}
@@ -3367,10 +3369,6 @@ int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info
   int m = A->m, mn, i;
   double *temp;
 
-  if ( A->rc_type == 'c' ) 
-    if ( B->rc_type == 'r' ) 
-      if (nsp_mat_set_ival(B,0.00) == FAIL ) return FAIL;
-
   if ( A->rc_type == 'r' )
     {
       if ( B->rc_type == 'r' )
@@ -3389,8 +3387,67 @@ int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info
 	}
     }
   else
-    C2F(ztrtrs) (&tri_type, "N", "N", &m, &(B->n), A->C, &m, B->C, &m, info, 1,1,1);
-
+    {
+      if ( B->rc_type == 'r' ) 
+	if (nsp_mat_set_ival(B,0.00) == FAIL ) return FAIL;
+      C2F(ztrtrs) (&tri_type, "N", "N", &m, &(B->n), A->C, &m, B->C, &m, info, 1,1,1);
+    }
   return OK;
 }
+
+
+/**
+ * nsp_mat_bdiv_diagonal:
+ * @A: a #NspMatrix (not modified)
+ * @B: a #NspMatrix (modified)
+ * @info: an int 0 if all is OK else a zero pivot have been met.
+ * 
+ * solve a linear diagonal system A X = B, B is overwritten by the solution X
+ *
+ * Return value: OK or FAIL (due to  malloc failure)
+ **/
+int nsp_mat_bdiv_diagonal(NspMatrix *A, NspMatrix *B, int *info)
+{  
+  int m = A->m, i, j, kA, kB;
+  doubleC res;
+
+  *info = 0;
+  if ( A->rc_type == 'r' )
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0, kA = 0 ; i < m ; i++, kA+=m+1 )
+	  {
+	    if ( A->R[kA] == 0.0 ) { *info = i+1; return FAIL;}
+	    for ( j = 0, kB = i; j < B->n; j++, kB+=m )
+	      B->R[kB] /= A->R[kA];
+	  }
+      else
+	for ( i = 0, kA = 0 ; i < m ; i++, kA+=m+1 )
+	  {
+	    if ( A->R[kA] == 0.0 ) { *info = i+1; return FAIL;}
+	    for ( j = 0, kB = i; j < B->n; j++, kB+=m )
+	      {
+		B->C[kB].r /= A->R[kA];
+		B->C[kB].i /= A->R[kA];
+	      }
+	  }
+    }
+  else
+    {
+      if ( B->rc_type == 'r' ) 
+	if (nsp_mat_set_ival(B,0.00) == FAIL ) return FAIL;
+      for ( i = 0, kA = 0 ; i < m ; i++, kA+=m+1 )
+	{
+	  if ( A->C[kA].r == 0.0 && A->C[kA].i == 0.0 ) { *info = i+1; return FAIL;}
+	  for ( j = 0, kB = i; j < B->n; j++, kB+=m )
+	    {
+	      nsp_div_cc(&(B->C[kB]),&(A->C[kA]),&res);
+	      B->C[kB] = res;
+	    }
+	}
+    }
+  return OK;
+}
+
+
 

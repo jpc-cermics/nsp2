@@ -70,19 +70,40 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * interface for lsq : prévoir le passage de rcond (+ verif)
- * ainsi que le choix de la méthode (qr ou svd)
+ * interface for lsq : prévoir le choix de la méthode (qr ou svd) ?
  */
 static int int_lsq( Stack stack, int rhs, int opt, int lhs)
 { 
-  NspMatrix *A,*B;
-  int_types T[] = {matcopy,matcopy,t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&A,&B) == FAIL) return RET_BUG;
-  CheckLhs(1,1);
-  if ( nsp_lsq(A,B) == FAIL ) return RET_BUG;
+  NspMatrix *A, *B, *Rank;
+  int rank;
+  double tol, *Tol=NULL;
+  int_types T[] = {matcopy,matcopy,new_opts,t_end} ;
+  nsp_option opts[] ={{ "tol",s_double,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&A,&B,&opts,&tol) == FAIL ) return RET_BUG;
+  if ( opts[0].obj != NULLOBJ )
+    {
+      if ( tol < 0.0 || tol > 1.0 ) 
+	{
+	  Scierror("%s: tol should be in [0,1] \n",NspFname(stack));
+	  return RET_BUG;
+	}
+      Tol = &tol;
+    }
 
+  CheckLhs(1,2);
+  if ( nsp_lsq(A,B,Tol,&rank) == FAIL ) return RET_BUG;
   NSP_OBJECT(B)->ret_pos = 1;  
-  return 1;
+  if ( lhs >= 2 )
+    {
+      if ( (Rank =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return RET_BUG;
+      Rank->R[0] = (double) rank; 
+      MoveObj(stack,1, NSP_OBJECT(Rank));
+      NSP_OBJECT(Rank)->ret_pos = 2;  
+    }
+
+  return Max(lhs,1);
+
 }
 
 /*
