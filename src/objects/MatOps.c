@@ -177,15 +177,24 @@ static int MatOpScalar(NspMatrix *Mat1, NspMatrix *Mat2, AdSu F1, AdSuZ F2)
 }
 
 
-/*
- * Res=nsp_mat_mult(A,B) matrix product 
+/**
+ * nsp_mat_mul:
+ * @A: a #NspMatrix 
+ * @B: a #NspMatrix
+ * 
+ * multiplies 2 #NspMatrix @A and @B and returns the product.
+ * @A and @B are not modified by this function.
+ *
+ * Returns a #NspMatrix or %NULLMAT.
  */
-
+ 
 NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
 {  
   doubleC zalpha={1.00,0.00},zbeta={0.00,0.00};
   double alpha=1.00,beta=0.00;
   NspMatrix *Loc;
+  int A_is_copied = 0, B_is_copied = 0;
+
   if ( A->n != B->m ) 
     {
       Scierror("Error:\tIncompatible dimensions\n");
@@ -195,17 +204,21 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
     {
       if ( B->rc_type == 'r' ) 
 	{
-	  if (nsp_mat_set_ival(B,0.00) == FAIL ) return NULLMAT;
+	  if ( (B =nsp_mat_copy_and_complexify(B)) == NULLMAT ) return NULLMAT; 
+	  B_is_copied = 1;
 	}
     }
   else 
     { 
       if ( B->rc_type == 'c' ) 
 	{
-	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return NULLMAT;
+	  if ( (A =nsp_mat_copy_and_complexify(A)) == NULLMAT ) return NULLMAT; 
+	  A_is_copied = 1;
 	}
     }
-  if ((Loc = nsp_matrix_create(NVOID,A->rc_type,A->m,B->n)) ==  NULLMAT) return NULLMAT;
+
+  if ( (Loc =nsp_matrix_create(NVOID,A->rc_type,A->m,B->n)) == NULLMAT ) goto err;
+
   if ( Loc->rc_type == 'c' ) 
     C2F(zgemm)("N","N",&A->m,&B->n,&A->n,&zalpha,A->C,&A->m,B->C,&B->m,
 	       &zbeta,Loc->C,&A->m,1,1);
@@ -213,7 +226,14 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
     C2F(dgemm)("N","N",&A->m,&B->n,&A->n,&alpha,A->R,&A->m,B->R,&B->m,
 	       &beta,Loc->R,&A->m,1,1); 
 
+  if ( A_is_copied ) nsp_matrix_destroy(A);
+  if ( B_is_copied ) nsp_matrix_destroy(B);
   return Loc;
+
+ err:
+  if ( A_is_copied ) nsp_matrix_destroy(A);
+  if ( B_is_copied ) nsp_matrix_destroy(B);
+  return NULLMAT;
 }
 
 /*
@@ -834,6 +854,36 @@ int nsp_mat_complexify(NspMatrix *Mat, double d)
   C2F(dcopy)(&(Mat->mn),R,&incx,(double *) Mat->C,&incy);
   FREE(R);
   return OK;
+}
+
+/**
+ * nsp_mat_copy_and_complexify:
+ * @A: a #NspMatrix 
+ *
+ * copies a real #NspMatrix @A and returns the complexified copy (with
+ * zeros as imaginary part) or %NULLMAT.
+ *
+ * %NULLMAT is returned in case of malloc problem or if @A is a complex matrix 
+ *
+ * Returns a #NspMatrix or %NULLMAT.
+ */
+NspMatrix *nsp_mat_copy_and_complexify(const NspMatrix *A)
+{
+  NspMatrix *Mat;
+  int i;
+
+  if ( A->rc_type == 'c' )
+    return NULLMAT;
+
+  if ( (Mat =nsp_matrix_create(NVOID,'c',A->m,A->n)) == NULLMAT) return NULLMAT;
+
+  for ( i = 0 ; i < A->mn ; i++ )
+    {
+      Mat->C[i].r = A->R[i];
+      Mat->C[i].i = 0.0;
+    }
+  Mat->convert = A->convert; 
+  return Mat;
 }
 
 /*
@@ -1501,9 +1551,12 @@ NspMatrix *nsp_mat_mini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 
 
 /* compute at the same time the min and max of a vector 
- * (routine introduced by bruno)
+ * (routine introduced by bruno). Note that it is difficult
+ * to use the minmax algorithm (which compares first A[i] and A[i+1]
+ * before comparing one to the current minimum and the other to the
+ * current maximum) because of eventual Nan components.
  */
-static void VMiniMaxi(int n, double *A, int incr, double *amin, double *amax, 
+static void VMiniMaxi(int n, double *A, int incr, double *amin, double *amax,
 		      int *imin, int *imax)
 {
   int i,i1;
@@ -1520,11 +1573,11 @@ static void VMiniMaxi(int n, double *A, int incr, double *amin, double *amax,
       *amin = *amax = A[i]; *imin = *imax = i1;
       for (  ; i < n ; i += incr, i1++ )
 	{
-	  if ( A[i] < *amin ) 
-	    { 
+	  if ( A[i] < *amin )
+	    {
 	      *amin = A[i]; *imin = i1;
 	    }
-	  else if ( A[i] > *amax ) 
+	  else if ( A[i] > *amax )
 	    {
 	      *amax = A[i];
 	      *imax = i1;
@@ -1533,6 +1586,7 @@ static void VMiniMaxi(int n, double *A, int incr, double *amin, double *amax,
     }
   return;
 }
+
 
 /*
  * int nsp_mat_minmax: 
