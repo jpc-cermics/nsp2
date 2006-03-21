@@ -24,6 +24,7 @@ extern int C2F(dgelq2) (int *m, int *n, double *a, int *lda, double *tau, double
 extern int C2F(dgelqf) (int *m, int *n, double *a, int *lda, double *tau, double *work, int *lwork, int *info);
 extern int C2F(dgels) (char *trans, int *m, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, double *work, int *lwork, int *info, int trans_len);
 extern int C2F(dgelss) (int *m, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, double *s, double *rcond, int *rank, double *work, int *lwork, int *info);
+extern int C2F(dgelsd) (int *m, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, double *s, double *rcond, int *rank, double *work, int *lwork, int *iwork, int *info);
 extern int C2F(dgelsx) (int *m, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *jpvt, double *rcond, int *rank, double *work, int *info);
 extern int C2F(dgelsy) (int *m, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *jpvt, double *rcond, int *rank, double *work, int *lwork, int *info);
 extern int C2F(dgeqlf) (int *m, int *n, double *a, int *lda, double *tau, double *work, int *lwork, int *info);
@@ -204,6 +205,7 @@ extern int C2F(zgehd2) (int *n, int *ilo, int *ihi, doubleC *a, int *lda, double
 extern int C2F(zgehrd) (int *n, int *ilo, int *ihi, doubleC *a, int *lda, doubleC *tau, doubleC *work, int *lwork, int *info);
 extern int C2F(zgelq2) (int *m, int *n, doubleC *a, int *lda, doubleC *tau, doubleC *work, int *info);
 extern int C2F(zgelqf) (int *m, int *n, doubleC *a, int *lda, doubleC *tau, doubleC *work, int *lwork, int *info);
+extern int C2F(zgelsd) (int *m, int *n, int *nrhs, doubleC *a, int *lda, doubleC *b, int *ldb, double *s, double *rcond, int *rank, doubleC *work, int *lwork, double *rwork, int *iwork, int *info);
 extern int C2F(zgelsy) (int *m, int *n, int *nrhs, doubleC *a, int *lda, doubleC *b, int *ldb, int *jpvt, double *rcond, int *rank, doubleC *work, int *lwork, double *rwork, int *info);
 extern int C2F(zgeqp3) (int *m, int *n, doubleC *a, int *lda, int *jpvt, doubleC *tau, doubleC *work, int *lwork, double *rwork, int *info);
 extern int C2F(zgeqpf) (int *m, int *n, doubleC *a, int *lda, int *jpvt, doubleC *tau, doubleC *work, double *rwork, int *info);

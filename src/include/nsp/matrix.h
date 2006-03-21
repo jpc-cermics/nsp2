@@ -154,6 +154,8 @@ extern NspMatrix *nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B);
 extern int nsp_matrix_add_rows(NspMatrix *A, int m); 
 extern int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B); 
 extern int GenericMatSeRo (void *A, int Am, int An, int Amn, NspMatrix *Rows, void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal); 
+extern int GenericMatSeRoBis(void *A, int Am, int An, int Amn, int nb_ind, int rmin, int rmax,
+		      void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal);
 extern int nsp_matrix_set_rows(NspMatrix *A, NspMatrix *Rows, NspMatrix *B); 
 extern int mat_is_increasing (const NspMatrix *A); 
 extern int nsp_matrix_delete_columns(NspMatrix *A, NspMatrix *Cols); 
@@ -172,6 +174,7 @@ extern NspMatrix *nsp_matrix_transpose(const NspMatrix *A);
 /* from MatOps.c */
 
 extern void nsp_mat_set_rval(NspMatrix *A, double dval); 
+extern NspMatrix *nsp_mat_copy_and_complexify(const NspMatrix *A);
 extern int nsp_mat_set_ival(NspMatrix *A, double dval); 
 extern NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B); 
 extern int nsp_mat_add(NspMatrix *A, NspMatrix *B); 
