@@ -1,14 +1,23 @@
-/*------------------------------------------------------------------
- * Copyright ENPC 2003 
- * Jean-Philippe Chancelier Enpc/Cermics
- * jpc@cermics.enpc.fr 
+/* Nsp
+ * Copyright (C) 2003-2005 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * system utilities.
  *------------------------------------------------------------------*/
-
-/*-------------------------------------------------------------------
- * dealing with files and directories 
- * XXXXX : SCI -> NSP 
- *-------------------------------------------------------------------*/
-
 
 #include "files.h" 
 #include "Sun.h"
@@ -37,10 +46,14 @@ char *get_sci_data_strings(int n)
 }
 
 
-/*----------------------------------------------
- *  create a tmp directory and record its name
- *  in TMPDIR and in tmp_dir  
- *----------------------------------------------*/
+/**
+ * set_nsp_tmpdir:
+ * @void: 
+ * 
+ *  creates a tmp directory and record its name
+ *  in %TMPDIR and in tmp_dir  
+ * 
+ **/
 
 void set_nsp_tmpdir(void)
 {
@@ -65,9 +78,15 @@ void set_nsp_tmpdir(void)
     }
 }
 
-/*----------------------------------------------
- * get tmp_dir path 
- *----------------------------------------------*/
+
+/**
+ * get_nsp_tmpdir:
+ * @void: 
+ * 
+ * returns the filename of temporary directory
+ * 
+ * Return value: a pointer to the tmp_dir value 
+ **/
 
 char *get_nsp_tmpdir(void)
 {
@@ -102,9 +121,14 @@ void clean_tmpdir(void)
 }
 
 
-/*------------------------------------------------
- * Changes scilab current directory 
- *------------------------------*/
+/**
+ * nsp_change_curdir:
+ * @path: 
+ * 
+ * change the value of current directory
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_change_curdir(char *path)
 {
@@ -132,7 +156,16 @@ int nsp_change_curdir(char *path)
  *        pointer ERANGE should be checked
  *------------------------------*/
 
-char * nsp_get_curdir()
+/**
+ * nsp_get_curdir:
+ * @void: 
+ * 
+ * returns a pointer to the value of current directory.
+ * 
+ * Return value: a pointer to the current directory or %NULL.
+ **/
+
+char * nsp_get_curdir(void)
 {
 #ifndef __ABSC__
   if (GETCWD(cur_dir, FSIZE) == (char*) 0)
@@ -161,7 +194,18 @@ static char *HOME_a[] = {  "HOME/", "home/", "~/" , "HOME\\", "home\\", "~\\" ,"
 static char *TMP_a[] = {  "TMPDIR/", "tmpdir/","TMPDIR\\", "tmpdir\\", "$TMPDIR", (char *) 0};
 
 static int expand_aliases(char *env, char **alias,const char *in_name, char *out_name,int out_size);
+
 static int get_env(char *var,char *buf,int buflen,int iflag);
+
+
+/**
+ * nsp_path_expand:
+ * @in_name: 
+ * @out_name: 
+ * @out_size: 
+ * 
+ * expand @in_name in @out_name.
+ **/
 
 void nsp_path_expand(const char *in_name, char *out_name, int out_size)
 {
@@ -195,13 +239,13 @@ void nsp_path_expand(const char *in_name, char *out_name, int out_size)
 #endif
 }
 
-/*---------------------------------------------
+/*
  * expand in_name to produce out_name 
  *     try to find alias[i] at the begining of in_name 
  *     and replaces it by env in out_name 
  *     out_name must be large enough to get the result 
  *              else result is truncated 
- *---------------------------------------------*/
+ */
 
 static int expand_aliases(char *env, char **alias,const char *in_name, char *out_name,int out_size)
 {
@@ -224,9 +268,9 @@ static int expand_aliases(char *env, char **alias,const char *in_name, char *out
 }
 
 
-/*---------------------------------------------
+/*
  * get_env 
- *---------------------------------------------*/
+ */
 
 static int get_env(char *var,char *buf,int buflen,int iflag)
 {
