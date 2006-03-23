@@ -20,7 +20,7 @@
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_ErrnoId --
+ * nsp_errno_id --
  *
  *	Return a textual identifier for the current errno value.
  *
@@ -40,7 +40,7 @@
 #endif 
 
 char *
-Tcl_ErrnoId()
+nsp_errno_id()
 {
     switch (errno) {
 #ifdef E2BIG
@@ -466,7 +466,7 @@ Tcl_ErrnoId()
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_ErrnoMsg --
+ * nsp_error_msg --
  *
  *	Return a human-readable message corresponding to a given
  *	errno value.
@@ -487,7 +487,7 @@ Tcl_ErrnoId()
  */
 
 char *
-Tcl_ErrnoMsg(err)
+nsp_error_msg(err)
     int err;			/* Error number (such as in errno variable). */
 {
     switch (err) {
@@ -920,7 +920,7 @@ Tcl_ErrnoMsg(err)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_SignalId --
+ * nsp_signal_id --
  *
  *	Return a textual identifier for a signal number.
  *
@@ -936,7 +936,7 @@ Tcl_ErrnoMsg(err)
  */
 
 char *
-Tcl_SignalId(sig)
+nsp_signal_id(sig)
     int sig;			/* Number of signal. */
 {
     switch (sig) {
@@ -1052,7 +1052,7 @@ Tcl_SignalId(sig)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_SignalMsg --
+ * nsp_signal_msg --
  *
  *	Return a human-readable message describing a signal.
  *
@@ -1068,7 +1068,7 @@ Tcl_SignalId(sig)
  */
 
 char *
-Tcl_SignalMsg(sig)
+nsp_signal_msg(sig)
     int sig;			/* Number of signal. */
 {
     switch (sig) {

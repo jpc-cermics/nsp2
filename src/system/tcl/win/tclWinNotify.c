@@ -85,7 +85,7 @@ InitNotifier(void)
     }
     notifier.hwnd = CreateWindow("TclNotifier", "TclNotifier", WS_TILED,
 	    0, 0, 0, 0, NULL, NULL, TclWinGetTclInstance(), NULL);
-    Tcl_CreateExitHandler(NotifierExitHandler, NULL);
+    nsp_create_exit_handler(NotifierExitHandler, NULL);
 }
 
 /*

@@ -200,15 +200,15 @@
 #endif
 
 /*
- * Provide a stub definition for TclGetUserHome().
+ * Provide a stub definition for nsp_get_user_home().
  */
 
-#define TclGetUserHome(name,bufferPtr) (NULL)
+#define nsp_get_user_home(name,bufferPtr) (NULL)
 
 /*
  * Visual C++ has some odd names for common functions, so we need to
  * define a few macros to handle them.  Also, it defines EDEADLOCK and
- * EDEADLK as the same value, which confuses Tcl_ErrnoId().
+ * EDEADLK as the same value, which confuses nsp_errno_id().
  */
 
 #ifdef _MSC_VER
@@ -220,7 +220,7 @@
 
 /*
  * The following defines redefine the Windows Socket errors as
- * BSD errors so Tcl_PosixError can do the right thing.
+ * BSD errors so nsp_posix_error can do the right thing.
  */
 
 #ifndef EWOULDBLOCK

@@ -359,9 +359,9 @@ TclWinConvertError(errCode)
     DWORD errCode;		/* Win32 error code. */
 {
     if (errCode >= tableLen) {
-	Tcl_SetErrno(EINVAL);
+	nsp_set_errno(EINVAL);
     } else {
-	Tcl_SetErrno(errorTable[errCode]);
+	nsp_set_errno(errorTable[errCode]);
     }
 }
 
@@ -386,8 +386,8 @@ TclWinConvertWSAError(errCode)
     DWORD errCode;		/* Win32 error code. */
 {
     if ((errCode >= WSAEWOULDBLOCK) && (errCode <= WSAEREMOTE)) {
-	Tcl_SetErrno(wsaErrorTable[errCode - WSAEWOULDBLOCK]);
+	nsp_set_errno(wsaErrorTable[errCode - WSAEWOULDBLOCK]);
     } else {
-	Tcl_SetErrno(EINVAL);
+	nsp_set_errno(EINVAL);
     }
 }

@@ -237,7 +237,7 @@ InitSockets()
     WNDCLASS class;
 
     initialized = 1;
-    Tcl_CreateExitHandler(SocketExitHandler, (ClientData) NULL);
+    nsp_create_exit_handler(SocketExitHandler, (ClientData) NULL);
 
     /*
      * Find out if we're running on Win32s.
@@ -780,7 +780,7 @@ TcpCloseProc(instanceData, interp)
     
         if ((*winSock.closesocket)(infoPtr->socket) == SOCKET_ERROR) {
             TclWinConvertWSAError((*winSock.WSAGetLastError)());
-            errorCode = Tcl_GetErrno();
+            errorCode = nsp_get_errno();
         }
     }
 
@@ -972,7 +972,7 @@ CreateSocket(interp, port, host, server, myaddr, myport, async)
 	if ((*winSock.connect)(sock, (struct sockaddr *) &sockaddr,
 		sizeof(sockaddr)) == SOCKET_ERROR) {
             TclWinConvertWSAError((*winSock.WSAGetLastError)());
-	    if (Tcl_GetErrno() != EWOULDBLOCK) {
+	    if (nsp_get_errno() != EWOULDBLOCK) {
 		goto error;
 	    }
 
@@ -1015,7 +1015,7 @@ error:
     TclWinConvertWSAError((*winSock.WSAGetLastError)());
     if (interp != NULL) {
 	Tcl_AppendResult(interp, "couldn't open socket: ",
-		Tcl_PosixError(interp), (char *) NULL);
+		nsp_posix_error(interp), (char *) NULL);
     }
     if (sock != INVALID_SOCKET) {
 	(*winSock.closesocket)(sock);
@@ -1057,7 +1057,7 @@ CreateSocketAddress(sockaddrPtr, host, port)
      */
 
     if (winSock.hInstance == NULL) {
-        Tcl_SetErrno(EFAULT);
+        nsp_set_errno(EFAULT);
         return 0;
     }
     
@@ -1076,10 +1076,10 @@ CreateSocketAddress(sockaddrPtr, host, port)
                         (size_t) hostent->h_length);
             } else {
 #ifdef	EHOSTUNREACH
-                Tcl_SetErrno(EHOSTUNREACH);
+                nsp_set_errno(EHOSTUNREACH);
 #else
 #ifdef ENXIO
-                Tcl_SetErrno(ENXIO);
+                nsp_set_errno(ENXIO);
 #endif
 #endif
 		return 0;	/* Error. */
@@ -1149,7 +1149,7 @@ WaitForSocketEvent(infoPtr, events, errorCodePtr)
 		    SOCKET_MESSAGE);
 	    if (result == -1) {
 		TclWinConvertError(GetLastError());
-		*errorCodePtr = Tcl_GetErrno();
+		*errorCodePtr = nsp_get_errno();
 		result = 0;
 		break;
 	    }
@@ -1539,7 +1539,7 @@ TcpInputProc(instanceData, buf, toRead, errorCodePtr)
 	    error = (*winSock.WSAGetLastError)();
 	    if ((infoPtr->flags & SOCKET_ASYNC) || (error != WSAEWOULDBLOCK)) {
 		TclWinConvertWSAError(error);
-		*errorCodePtr = Tcl_GetErrno();
+		*errorCodePtr = nsp_get_errno();
 		return -1;
 	    }
 
@@ -1642,7 +1642,7 @@ TcpOutputProc(instanceData, buf, toWrite, errorCodePtr)
 	    } 
 	} else {
 	    TclWinConvertWSAError(error);
-	    *errorCodePtr = Tcl_GetErrno();
+	    *errorCodePtr = nsp_get_errno();
 	    return -1;
 	}
 
@@ -1758,7 +1758,7 @@ TcpGetOptionProc(instanceData, interp, optionName, dsPtr)
 		TclWinConvertWSAError((*winSock.WSAGetLastError)());
                 if (interp) {
                     Tcl_AppendResult(interp, "can't get peername: ",
-                                     Tcl_PosixError(interp),
+                                     nsp_posix_error(interp),
                                      (char *) NULL);
                 }
                 return TCL_ERROR;
@@ -1797,7 +1797,7 @@ TcpGetOptionProc(instanceData, interp, optionName, dsPtr)
 	    if (interp) {
 		TclWinConvertWSAError((*winSock.WSAGetLastError)());
 		Tcl_AppendResult(interp, "can't get sockname: ",
-				 Tcl_PosixError(interp),
+				 nsp_posix_error(interp),
 				 (char *) NULL);
 	    }
 	    return TCL_ERROR;
@@ -1957,7 +1957,7 @@ SocketProc(hwnd, message, wParam, lParam)
 
 		if (error != ERROR_SUCCESS) {
 		    TclWinConvertWSAError(error);
-		    infoPtr->lastError = Tcl_GetErrno();
+		    infoPtr->lastError = nsp_get_errno();
 		}
 
 	    } 

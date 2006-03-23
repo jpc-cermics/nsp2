@@ -47,7 +47,7 @@ static regexp *winRootPatternPtr = NULL;
 static regexp *macRootPatternPtr = NULL;
 
 /*
- * The following variable is set in the TclPlatformInit call to one
+ * The following variable is set in the nsp_tclplatform_init call to one
  * of: TCL_PLATFORM_UNIX, TCL_PLATFORM_MAC, or TCL_PLATFORM_WINDOWS.
  */
 
@@ -119,7 +119,7 @@ ExtractWinRoot(char *path,nsp_tcldstring * resultPtr,int  offset)
   if (winRootPatternPtr == NULL) {
     winRootPatternPtr = tcl_reg_comp(WIN_ROOT_PATTERN);
     if (!initialized) {
-      Tcl_CreateExitHandler(FileNameCleanup, NULL);
+      nsp_create_exit_handler(FileNameCleanup, NULL);
       initialized = 1;
     }
   }
@@ -157,7 +157,7 @@ ExtractWinRoot(char *path,nsp_tcldstring * resultPtr,int  offset)
 
 
 /**
- * Tcl_GetPathType:
+ * nsp_get_path_type:
  * @path: 
  * 
  *	Determines whether a given path is relative to the current
@@ -167,7 +167,7 @@ ExtractWinRoot(char *path,nsp_tcldstring * resultPtr,int  offset)
  * TCL_PATH_VOLUME_RELATIVE.
  **/
 
-Tcl_PathType Tcl_GetPathType( char *path)
+Tcl_PathType nsp_get_path_type( char *path)
 {
   Tcl_PathType type = TCL_PATH_ABSOLUTE;
 
@@ -195,7 +195,7 @@ Tcl_PathType Tcl_GetPathType( char *path)
       if (!macRootPatternPtr) {
 	macRootPatternPtr = tcl_reg_comp(MAC_ROOT_PATTERN);
 	if (!initialized) {
-	  Tcl_CreateExitHandler(FileNameCleanup, NULL);
+	  nsp_create_exit_handler(FileNameCleanup, NULL);
 	  initialized = 1;
 	}
       }
@@ -217,7 +217,7 @@ Tcl_PathType Tcl_GetPathType( char *path)
       if (!winRootPatternPtr) {
 	winRootPatternPtr = tcl_reg_comp(WIN_ROOT_PATTERN);
 	if (!initialized) {
-	  Tcl_CreateExitHandler(FileNameCleanup, NULL);
+	  nsp_create_exit_handler(FileNameCleanup, NULL);
 	  initialized = 1;
 	}
       }
@@ -239,7 +239,7 @@ Tcl_PathType Tcl_GetPathType( char *path)
 
 
 /**
- * Tcl_SplitPath:
+ * nsp_split_path:
  * @path: Pointer to string containing a path.
  * @argcPtr: Pointer to location to fill in with the number of elements in the path.
  * @argvPtr: Pointer to place to store pointer to array of pointers to path elements.
@@ -258,7 +258,7 @@ Tcl_PathType Tcl_GetPathType( char *path)
  *
  **/
 
-void Tcl_SplitPath(char *path,int *argcPtr, char ***argvPtr)
+void nsp_split_path(char *path,int *argcPtr, char ***argvPtr)
 {
   int i, size;
   char *p;
@@ -332,7 +332,7 @@ void Tcl_SplitPath(char *path,int *argcPtr, char ***argvPtr)
  * @path: Pointer to string containing a path.
  * @bufPtr: Pointer to DString to use for the result.
  * 
- * used by Tcl_SplitPath to handle splitting
+ * used by nsp_split_path to handle splitting
  * unix paths. Stores a null separated array of strings in the specified
  * nsp_tcldstring.
  * 
@@ -387,7 +387,7 @@ static char *SplitUnixPath(char *path, nsp_tcldstring *bufPtr)
  * @path: Pointer to string containing a path.
  * @bufPtr:  Pointer to DString to use for the result.
  * 
- *	This routine is used by Tcl_SplitPath to handle splitting
+ *	This routine is used by nsp_split_path to handle splitting
  *	Windows paths.
  *	Stores a null separated array of strings in the specified
  *	nsp_tcldstring.
@@ -439,7 +439,7 @@ static char *SplitWinPath(char *path, nsp_tcldstring *bufPtr)
  * @path: Pointer to string containing a path.
  * @bufPtr: Pointer to DString to use for the result.
  *
- *	This routine is used by Tcl_SplitPath to handle splitting
+ *	This routine is used by nsp_split_path to handle splitting
  *	Macintosh paths.
  *	Returns a newly allocated argv array.
  * 
@@ -459,7 +459,7 @@ static char *SplitMacPath( char *path, nsp_tcldstring *bufPtr)
   if (macRootPatternPtr == NULL) {
     macRootPatternPtr = tcl_reg_comp(MAC_ROOT_PATTERN);
     if (!initialized) {
-      Tcl_CreateExitHandler(FileNameCleanup, NULL);
+      nsp_create_exit_handler(FileNameCleanup, NULL);
       initialized = 1;
     }
   }
@@ -606,7 +606,7 @@ static char *SplitMacPath( char *path, nsp_tcldstring *bufPtr)
 
 
 /**
- * Tcl_JoinPath:
+ * nsp_join_path:
  * @argc: 
  * @argv: 
  * @resultPtr:  Pointer to previously initialized DString.
@@ -618,7 +618,7 @@ static char *SplitMacPath( char *path, nsp_tcldstring *bufPtr)
  *	the nsp_tcldstring must already be initialized.
  **/
 
-char *Tcl_JoinPath( int argc, char **argv,  nsp_tcldstring *resultPtr)
+char *nsp_join_path( int argc, char **argv,  nsp_tcldstring *resultPtr)
 {
   int oldLength, length, i, needsSep;
   nsp_tcldstring buffer;
@@ -817,7 +817,7 @@ char *Tcl_JoinPath( int argc, char **argv,  nsp_tcldstring *resultPtr)
 
 
 /**
- * Tcl_TranslateFileName:
+ * nsp_translate_file_name:
  * @name: File name, which may begin with tilde or tilde user
  * @bufferPtr: May be used to hold result. Must not hold anything 
  *   at the time of the call, and need not even be initialized.
@@ -836,7 +836,7 @@ char *Tcl_JoinPath( int argc, char **argv,  nsp_tcldstring *resultPtr)
  *	to free the name if the return value was not %NULL.
  **/
 
-char *Tcl_TranslateFileName(char *name,nsp_tcldstring *bufferPtr)
+char *nsp_translate_file_name(char *name,nsp_tcldstring *bufferPtr)
 {
   register char *p;
 
@@ -849,7 +849,7 @@ char *Tcl_TranslateFileName(char *name,nsp_tcldstring *bufferPtr)
     char **argv;
     nsp_tcldstring temp;
 
-    Tcl_SplitPath(name, &argc, &argv);
+    nsp_split_path(name, &argc, &argv);
 	
     /*
      * Strip the trailing ':' off of a Mac path
@@ -869,12 +869,12 @@ char *Tcl_TranslateFileName(char *name,nsp_tcldstring *bufferPtr)
       return NULL;
     }
     nsp_tcldstring_init(bufferPtr);
-    Tcl_JoinPath(argc, argv, bufferPtr);
+    nsp_join_path(argc, argv, bufferPtr);
     nsp_tcldstring_free(&temp);
     ckfree((char*)argv);
   } else {
     nsp_tcldstring_init(bufferPtr);
-    Tcl_JoinPath(1, &name, bufferPtr);
+    nsp_join_path(1, &name, bufferPtr);
   }
 
   /*
@@ -893,7 +893,7 @@ char *Tcl_TranslateFileName(char *name,nsp_tcldstring *bufferPtr)
 }
 
 /**
- * TclGetExtension:
+ * nsp_get_extension:
  * @name: File name to parse. 
  * 
  *	This function returns a pointer to the beginning of the
@@ -903,7 +903,7 @@ char *Tcl_TranslateFileName(char *name,nsp_tcldstring *bufferPtr)
  * starts.  If there is no extension, returns %NULL.
  **/
 
-char *TclGetExtension(char *name)
+char *nsp_get_extension(char *name)
 {
   char *p, *lastSep;
 
@@ -975,17 +975,17 @@ static char *DoTildeSubst(char *user, nsp_tcldstring *resultPtr)
   char *dir;
 
   if (*user == '\0') {
-    dir = TclGetEnv("HOME");
+    dir = nsp_getenv("HOME");
     if (dir == NULL) {
       Tcl_AppendResult("couldn't find HOME environment ",
 		       "variable to expand path", (char *) NULL);
       return NULL;
     }
-    Tcl_JoinPath(1, &dir, resultPtr);
+    nsp_join_path(1, &dir, resultPtr);
   } else {
 	
     /* lint, TclGetuserHome() always NULL under windows. */
-    if (TclGetUserHome(user, resultPtr) == NULL) {	
+    if (nsp_get_user_home(user, resultPtr) == NULL) {	
       Tcl_AppendResult( "user \"", user, "\" doesn't exist",
 			(char *) NULL);
       return NULL;
@@ -1085,7 +1085,7 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
       } else {
 	tail = str;
       }
-    result = TclDoGlob( separators, &buffer, tail,S);
+    result = nsp_do_glob( separators, &buffer, tail,S);
     if (result != TCL_OK) {
       if (noComplain) {
 	continue;
@@ -1157,7 +1157,7 @@ static int SkipToChar( char **stringPtr,char *match)
 
 
 /**
- * TclDoGlob:
+ * nsp_do_glob:
  * @separators: String containing separator characters that should be used to identify globbing 
  *  boundaries.
  * @headPtr: Completely expanded prefix.
@@ -1173,7 +1173,7 @@ static int SkipToChar( char **stringPtr,char *match)
  *	an error occurred in globbing.
  **/
 
-int TclDoGlob(char *separators, nsp_tcldstring *headPtr, char *tail, NspSMatrix *S)
+int nsp_do_glob(char *separators, nsp_tcldstring *headPtr, char *tail, NspSMatrix *S)
 {
   int baseLength, quoted, count;
   int result = TCL_OK;
@@ -1312,7 +1312,7 @@ int TclDoGlob(char *separators, nsp_tcldstring *headPtr, char *tail, NspSMatrix 
     /*
      * For each element within in the outermost pair of braces,
      * append the element and the remainder to the fixed portion
-     * before the first brace and recursively call TclDoGlob.
+     * before the first brace and recursively call nsp_do_glob.
      */
 
     nsp_tcldstring_append(&newName, tail, openBrace-tail);
@@ -1327,7 +1327,7 @@ int TclDoGlob(char *separators, nsp_tcldstring *headPtr, char *tail, NspSMatrix 
       nsp_tcldstring_set_length(&newName, baseLength);
       nsp_tcldstring_append(&newName, element, p-element);
       nsp_tcldstring_append(&newName, closeBrace+1, -1);
-      result = TclDoGlob( separators,
+      result = nsp_do_glob( separators,
 			 headPtr, nsp_tcldstring_value(&newName),S);
       if (result != TCL_OK) {
 	break;
@@ -1359,16 +1359,16 @@ int TclDoGlob(char *separators, nsp_tcldstring *headPtr, char *tail, NspSMatrix 
     /*
      * Look for matching files in the current directory.  The
      * implementation of this function is platform specific, but may
-     * recursively call TclDoGlob.  For each file that matches, it will
-     * add the match onto the interp->result, or call TclDoGlob if there
+     * recursively call nsp_do_glob.  For each file that matches, it will
+     * add the match onto the interp->result, or call nsp_do_glob if there
      * are more characters to be processed.
      */
 
-    return TclMatchFiles( separators, headPtr, tail, p,S);
+    return nsp_match_files( separators, headPtr, tail, p,S);
   }
   nsp_tcldstring_append(headPtr, tail, p-tail);
   if (*p != '\0') {
-    return TclDoGlob( separators, headPtr, p,S);
+    return nsp_do_glob( separators, headPtr, p,S);
   }
 
   /*

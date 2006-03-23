@@ -26,7 +26,7 @@
 /*
  *----------------------------------------------------------------------
  *
- * TclPlatformInit --
+ * nsp_tclplatform_init --
  *
  *	Performs Unix-specific interpreter initialization related to the
  *      tcl_library and tcl_platform variables, and other platform-
@@ -41,7 +41,7 @@
  *----------------------------------------------------------------------
  */
 
-void TclPlatformInit()
+void nsp_tclplatform_init()
 {
 #ifndef NO_UNAME
     struct utsname name;

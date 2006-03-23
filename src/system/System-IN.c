@@ -35,10 +35,10 @@
 /* defined in the tcl subdir 
  */
 
-extern char *TclGetEnv (char *name);
-extern void TclSetEnv (const char *name,const char *value);
-extern void TclUnsetEnv (const char *name);
-extern void TclPlatformInit();
+extern char *nsp_getenv (char *name);
+extern void nsp_setenv (const char *name,const char *value);
+extern void nsp_unsetenv (const char *name);
+extern void nsp_tclplatform_init();
 
 extern function int_syscd;
 extern function int_sysfile;
@@ -91,7 +91,7 @@ static int int_getenv(Stack stack,int rhs,int opt,int lhs)
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
   if ( rhs == 2 ) 
     if ((def = GetString(stack,2)) == (char*)0) return RET_BUG;
-  env = TclGetEnv(envname);
+  env = nsp_getenv(envname);
   if ( env != NULL ) 
     {
       if ((S=nsp_smatrix_create(NVOID,1,1,env,(integer)1)) == NULLSMAT ) 
@@ -125,8 +125,8 @@ static int int_setenv(Stack stack,int rhs,int opt,int lhs)
   CheckLhs(0,1);
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
   if ((val = GetString(stack,2)) == (char*)0) return RET_BUG;
-  TclSetEnv(envname, val);
-  TclPlatformInit() ; /* XXXXXXXX : temporaire pour tester */
+  nsp_setenv(envname, val);
+  nsp_tclplatform_init() ; /* XXXXXXXX : temporaire pour tester */
   /* XXXXXX setenv does not exists on all Ops 
   if ( setenv(envname,val,1) == -1 ) 
     {
@@ -147,7 +147,7 @@ static int int_unsetenv(Stack stack,int rhs,int opt,int lhs)
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
-  TclUnsetEnv(envname);
+  nsp_unsetenv(envname);
   /* XXXXXX setenv does not exists on all Ops 
   unsetenv(envname);
   */

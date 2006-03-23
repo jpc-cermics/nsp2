@@ -130,7 +130,7 @@ static int		TraverseUnixTree _ANSI_ARGS_((
 /*
  *---------------------------------------------------------------------------
  *
- * TclpRenameFile --
+ * nsp_rename_file --
  *
  *      Changes the name of an existing file or directory, from src to dst.
  *	If src and dst refer to the same file or directory, does nothing
@@ -163,7 +163,7 @@ static int		TraverseUnixTree _ANSI_ARGS_((
  */
 
 int
-TclpRenameFile(src, dst)
+nsp_rename_file(src, dst)
     char *src;			/* Pathname of file or dir to be renamed. */
     char *dst;			/* New pathname of file or directory. */
 {
@@ -230,7 +230,7 @@ TclpRenameFile(src, dst)
 /*
  *---------------------------------------------------------------------------
  *
- * TclpCopyFile --
+ * nsp_copy_file --
  *
  *      Copy a single file (not a directory).  If dst already exists and
  *	is not a directory, it is removed.
@@ -255,7 +255,7 @@ TclpRenameFile(src, dst)
  */
 
 int 
-TclpCopyFile(src, dst)
+nsp_copy_file(src, dst)
     char *src;			/* Pathname of file to be copied. */
     char *dst;			/* Pathname of file to copy to. */
 {
@@ -329,7 +329,7 @@ TclpCopyFile(src, dst)
  *
  * CopyFile - 
  *
- *      Helper function for TclpCopyFile.  Copies one regular file,
+ *      Helper function for nsp_copy_file.  Copies one regular file,
  *	using read() and write().
  *
  * Results:
@@ -398,7 +398,7 @@ CopyFile(src, dst, srcStatBufPtr)
 /*
  *---------------------------------------------------------------------------
  *
- * TclpDeleteFile --
+ * nsp_delete_file --
  *
  *      Removes a single file (not a directory).
  *
@@ -418,7 +418,7 @@ CopyFile(src, dst, srcStatBufPtr)
  */
 
 int
-TclpDeleteFile(path) 
+nsp_delete_file(path) 
     char *path;			/* Pathname of file to be removed. */
 {
     if (unlink(path) != 0) {
@@ -430,7 +430,7 @@ TclpDeleteFile(path)
 /*
  *---------------------------------------------------------------------------
  *
- * TclpCreateDirectory --
+ * nsp_create_directory --
  *
  *      Creates the specified directory.  All parent directories of the
  *	specified directory must already exist.  The directory is
@@ -454,7 +454,7 @@ TclpDeleteFile(path)
  */
 
 int
-TclpCreateDirectory(path)
+nsp_create_directory(path)
     char *path;			/* Pathname of directory to create. */
 {
     mode_t mode;
@@ -477,7 +477,7 @@ TclpCreateDirectory(path)
 /*
  *---------------------------------------------------------------------------
  *
- * TclpCopyDirectory --
+ * nsp_copy_directory --
  *
  *      Recursively copies a directory.  The target directory dst must
  *	not already exist.  Note that this function does not merge two
@@ -488,7 +488,7 @@ TclpCreateDirectory(path)
  *	If the directory was successfully copied, returns TCL_OK.
  *	Otherwise the return value is TCL_ERROR, errno is set to indicate
  *	the error, and the pathname of the file that caused the error
- *	is stored in errorPtr.  See TclpCreateDirectory and TclpCopyFile
+ *	is stored in errorPtr.  See nsp_create_directory and nsp_copy_file
  *	for a description of possible values for errno.
  *
  * Side effects:
@@ -501,7 +501,7 @@ TclpCreateDirectory(path)
  */
 
 int
-TclpCopyDirectory(src, dst, errorPtr)
+nsp_copy_directory(src, dst, errorPtr)
     char *src;			/* Pathname of directory to be copied.  */
     char *dst;			/* Pathname of target directory. */
     nsp_tcldstring *errorPtr;	/* If non-NULL, initialized DString for
@@ -525,7 +525,7 @@ TclpCopyDirectory(src, dst, errorPtr)
 /*
  *---------------------------------------------------------------------------
  *
- * TclpRemoveDirectory --
+ * nsp_remove_directory --
  *
  *	Removes directory (and its contents, if the recursive flag is set).
  *
@@ -549,7 +549,7 @@ TclpCopyDirectory(src, dst, errorPtr)
  */
  
 int
-TclpRemoveDirectory(path, recursive, errorPtr) 
+nsp_remove_directory(path, recursive, errorPtr) 
     char *path;			/* Pathname of directory to be removed. */
     int recursive;		/* If non-zero, removes directories that
 				 * are nonempty.  Otherwise, will only remove
@@ -763,13 +763,13 @@ TraversalCopy(src, dst, sbPtr, type, errorPtr)
 {
     switch (type) {
 	case DOTREE_F:
-	    if (TclpCopyFile(src, dst) == TCL_OK) {
+	    if (nsp_copy_file(src, dst) == TCL_OK) {
 		return TCL_OK;
 	    }
 	    break;
 
 	case DOTREE_PRED:
-	    if (TclpCreateDirectory(dst) == TCL_OK) {
+	    if (nsp_create_directory(dst) == TCL_OK) {
 		return TCL_OK;
 	    }
 	    break;
@@ -928,7 +928,7 @@ GetGroupAttribute(objIndex, fileName, attributePtrPtr)
     struct group *groupPtr;
 
     if (stat(fileName, &statBuf) != 0) {
-      Scierror("Error: could not stat file \"%s\": %s\n",fileName,Tcl_PosixError());
+      Scierror("Error: could not stat file \"%s\": %s\n",fileName,nsp_posix_error());
       return TCL_ERROR;
     }
 
@@ -936,7 +936,7 @@ GetGroupAttribute(objIndex, fileName, attributePtrPtr)
     if (groupPtr == NULL) {
 	endgrent();
 	Scierror("Error: could not get group for file \"%s\": %s\n",fileName, 
-		 Tcl_PosixError());
+		 nsp_posix_error());
 	return TCL_ERROR;
     }
     *attributePtrPtr = nsp_new_string_obj(NVOID,groupPtr->gr_name, -1);
@@ -972,7 +972,7 @@ GetOwnerAttribute( objIndex, fileName, attributePtrPtr)
     struct passwd *pwPtr;
 
     if (stat(fileName, &statBuf) != 0) {
-      Scierror("Error: could not stat file \"%s\": %s\n",fileName,Tcl_PosixError());
+      Scierror("Error: could not stat file \"%s\": %s\n",fileName,nsp_posix_error());
       return TCL_ERROR;
     }
 
@@ -980,7 +980,7 @@ GetOwnerAttribute( objIndex, fileName, attributePtrPtr)
     if (pwPtr == NULL) {
 	endpwent();
 	Scierror("Error: could not get owner for file \"%s\": %s\n",fileName,
-		 Tcl_PosixError());
+		 nsp_posix_error());
 	return TCL_ERROR;
     }
 
@@ -1017,7 +1017,7 @@ GetPermissionsAttribute( objIndex, fileName, attributePtrPtr)
     char returnString[6];
 
     if (stat(fileName, &statBuf) != 0) {
-      Scierror("Error: could not stat file \"%s\": %s\n", fileName,Tcl_PosixError());
+      Scierror("Error: could not stat file \"%s\": %s\n", fileName,nsp_posix_error());
       return TCL_ERROR;
     }
 
@@ -1081,7 +1081,7 @@ static int SetGroupAttribute( objIndex, fileName, attributePtr)
   if (chown(fileName, -1, groupNumber) != 0) {
     endgrent();
     Scierror("Error: could not set group for file \"%s\": %s\n", fileName,
-	     Tcl_PosixError());
+	     nsp_posix_error());
     return TCL_ERROR;
   }    
   endgrent();
@@ -1140,7 +1140,7 @@ SetOwnerAttribute( objIndex, fileName, attributePtr)
     }      
   if (chown(fileName, userNumber, -1) != 0) {
     Scierror("Error: could not set owner for file \"%s\": %s\n", fileName,
-	     Tcl_PosixError());
+	     nsp_posix_error());
     return TCL_ERROR;
   }    
   
@@ -1191,7 +1191,7 @@ SetPermissionsAttribute( objIndex, fileName, attributePtr)
     }      
   if (chmod(fileName, newMode) != 0) {
     Scierror("Error: could not set permissions for file \"%s\": %s\n", fileName, 
-	     Tcl_PosixError());
+	     nsp_posix_error());
     return TCL_ERROR;
   }
   return TCL_OK;
@@ -1201,7 +1201,7 @@ SetPermissionsAttribute( objIndex, fileName, attributePtr)
 /*
  *---------------------------------------------------------------------------
  *
- * TclpListVolumes --
+ * nsp_list_volumes --
  *     return at position n on the stack a String 
  *     describing the currently mounted volumes, which on UNIX is just /. 
  *
@@ -1214,7 +1214,7 @@ SetPermissionsAttribute( objIndex, fileName, attributePtr)
  *---------------------------------------------------------------------------
  */
 
-int TclpListVolumes(Stack stack,int n)
+int nsp_list_volumes(Stack stack,int n)
 {
   return nsp_move_string(stack,n,"/", 1) == FAIL ? RET_BUG : 1;
 }

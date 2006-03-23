@@ -98,7 +98,7 @@ static int		TraverseWinTree(TraversalProc *traverseProc,
 /*
  *---------------------------------------------------------------------------
  *
- * TclpRenameFile --
+ * nsp_rename_file --
  *
  *      Changes the name of an existing file or directory, from src to dst.
  *	If src and dst refer to the same file or directory, does nothing
@@ -137,7 +137,7 @@ static int		TraverseWinTree(TraversalProc *traverseProc,
  */
 
 int
-TclpRenameFile(
+nsp_rename_file(
     char *src,			/* Pathname of file or dir to be renamed. */ 
     char *dst)			/* New pathname for file or directory. */
 {
@@ -207,8 +207,8 @@ TclpRenameFile(
 		errno = EINVAL;
 		return TCL_ERROR;
 	    }
-	    Tcl_SplitPath(srcPath, &srcArgc, &srcArgv);
-	    Tcl_SplitPath(dstPath, &dstArgc, &dstArgv);
+	    nsp_split_path(srcPath, &srcArgc, &srcArgv);
+	    nsp_split_path(dstPath, &dstArgc, &dstArgv);
 	    if (srcArgc == 1) {
 		/*
 		 * They are trying to move a root directory.  Whether
@@ -257,7 +257,7 @@ TclpRenameFile(
 		 * fails, it's because it wasn't empty.
 		 */
 
-		if (TclpRemoveDirectory(dst, 0, NULL) == TCL_OK) {
+		if (nsp_remove_directory(dst, 0, NULL) == TCL_OK) {
 		    /*
 		     * Now that that empty directory is gone, we can try
 		     * renaming again.  If that fails, we'll put this empty
@@ -354,7 +354,7 @@ TclpRenameFile(
 /*
  *---------------------------------------------------------------------------
  *
- * TclpCopyFile --
+ * nsp_copy_file --
  *
  *      Copy a single file (not a directory).  If dst already exists and
  *	is not a directory, it is removed.
@@ -379,7 +379,7 @@ TclpRenameFile(
  */
 
 int 
-TclpCopyFile(
+nsp_copy_file(
     char *src,			/* Pathname of file to be copied. */
     char *dst)			/* Pathname of file to copy to. */
 {
@@ -433,7 +433,7 @@ TclpCopyFile(
 /*
  *---------------------------------------------------------------------------
  *
- * TclpDeleteFile --
+ * nsp_delete_file --
  *
  *      Removes a single file (not a directory).
  *
@@ -456,7 +456,7 @@ TclpCopyFile(
  */
 
 int
-TclpDeleteFile(
+nsp_delete_file(
     char *path)			/* Pathname of file to be removed. */
 {
     DWORD attr;
@@ -518,7 +518,7 @@ TclpDeleteFile(
 /*
  *---------------------------------------------------------------------------
  *
- * TclpCreateDirectory --
+ * nsp_create_directory --
  *
  *      Creates the specified directory.  All parent directories of the
  *	specified directory must already exist.  The directory is
@@ -541,7 +541,7 @@ TclpDeleteFile(
  */
 
 int
-TclpCreateDirectory(
+nsp_create_directory(
     char *path)			/* Pathname of directory to create */
 {
     int error;
@@ -563,7 +563,7 @@ TclpCreateDirectory(
 /*
  *---------------------------------------------------------------------------
  *
- * TclpCopyDirectory --
+ * nsp_copy_directory --
  *
  *      Recursively copies a directory.  The target directory dst must
  *	not already exist.  Note that this function does not merge two
@@ -574,7 +574,7 @@ TclpCreateDirectory(
  *	If the directory was successfully copied, returns TCL_OK.
  *	Otherwise the return value is TCL_ERROR, errno is set to indicate
  *	the error, and the pathname of the file that caused the error
- *	is stored in errorPtr.  See TclpCreateDirectory and TclpCopyFile
+ *	is stored in errorPtr.  See nsp_create_directory and nsp_copy_file
  *	for a description of possible values for errno.
  *
  * Side effects:
@@ -587,7 +587,7 @@ TclpCreateDirectory(
  */
 
 int
-TclpCopyDirectory(
+nsp_copy_directory(
     char *src,			/* Pathname of directory to be copied. */
     char *dst,			/* Pathname of target directory. */
     nsp_tcldstring *errorPtr)	/* If non-NULL, initialized DString for
@@ -611,7 +611,7 @@ TclpCopyDirectory(
 /*
  *----------------------------------------------------------------------
  *
- * TclpRemoveDirectory -- 
+ * nsp_remove_directory -- 
  *
  *	Removes directory (and its contents, if the recursive flag is set).
  *
@@ -638,7 +638,7 @@ TclpCopyDirectory(
  */
 
 int
-TclpRemoveDirectory(
+nsp_remove_directory(
     char *path,			/* Pathname of directory to be removed. */
     int recursive,		/* If non-zero, removes directories that
 				 * are nonempty.  Otherwise, will only remove
@@ -952,13 +952,13 @@ TraversalCopy(
 {
     switch (type) {
 	case DOTREE_F:
-	    if (TclpCopyFile(src, dst) == TCL_OK) {
+	    if (nsp_copy_file(src, dst) == TCL_OK) {
 		return TCL_OK;
 	    }
 	    break;
 
 	case DOTREE_PRED:
-	    if (TclpCreateDirectory(dst) == TCL_OK) {
+	    if (nsp_create_directory(dst) == TCL_OK) {
 		if (SetFileAttributes(dst, srcAttr) != FALSE) {
 		    return TCL_OK;
 		}
@@ -1014,7 +1014,7 @@ TraversalDelete(
 {
     switch (type) {
 	case DOTREE_F:
-	    if (TclpDeleteFile(src) == TCL_OK) {
+	    if (nsp_delete_file(src) == TCL_OK) {
 		return TCL_OK;
 	    }
 	    break;
@@ -1023,7 +1023,7 @@ TraversalDelete(
 	    return TCL_OK;
 
 	case DOTREE_POSTD:
-	    if (TclpRemoveDirectory(src, 0, NULL) == TCL_OK) {
+	    if (nsp_remove_directory(src, 0, NULL) == TCL_OK) {
 		return TCL_OK;
 	    }
 	    break;
@@ -1063,7 +1063,7 @@ AttributesPosixError(
     TclWinConvertError(GetLastError());
     Scierror("cannot %s attribute \"%s\" for file \"%s\": %s\n ",
 	     getOrSet ? "set" : "get", tclpFileAttrStrings[objIndex],
-	     fileName, Tcl_PosixError());
+	     fileName, nsp_posix_error());
 }
 
 /*
@@ -1140,7 +1140,7 @@ ConvertFileNameFormat(
   nsp_tcldstring resultDString;
   int result = TCL_OK;
   
-  Tcl_SplitPath(fileName, &pathArgc, &pathArgv);
+  nsp_split_path(fileName, &pathArgc, &pathArgv);
   newPathArgv = (char **) ckalloc(pathArgc * sizeof(char *));
 
   for (i = 0; i < pathArgc; i++) {
@@ -1162,7 +1162,7 @@ ConvertFileNameFormat(
       int useLong;
 
       nsp_tcldstring_init(&resultDString);
-      resultStr = Tcl_JoinPath(i + 1, pathArgv, &resultDString);
+      resultStr = nsp_join_path(i + 1, pathArgv, &resultDString);
       findHandle = FindFirstFile(resultStr, &findData);
       if (findHandle == INVALID_HANDLE_VALUE) {
 	pathArgc = i - 1;
@@ -1199,7 +1199,7 @@ ConvertFileNameFormat(
   }
 
   nsp_tcldstring_init(&resultDString);
-  resultStr = Tcl_JoinPath(pathArgc, newPathArgv, &resultDString);
+  resultStr = nsp_join_path(pathArgc, newPathArgv, &resultDString);
   *attributePtrPtr = nsp_new_string_obj(NVOID,resultStr, nsp_tcldstring_length(&resultDString));
   nsp_tcldstring_free(&resultDString);
 
@@ -1347,7 +1347,7 @@ CannotSetAttribute(objIndex, fileName, attributePtr)
 /*
  *---------------------------------------------------------------------------
  *
- * TclpListVolumes --
+ * nsp_list_volumes --
  *
  *	Lists the currently mounted volumes
  *
@@ -1363,7 +1363,7 @@ CannotSetAttribute(objIndex, fileName, attributePtr)
  */
 
 int 
-TclpListVolumes( stack,n)
+nsp_list_volumes( stack,n)
      int n ; 
      Stack stack;
 {

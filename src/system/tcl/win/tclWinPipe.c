@@ -215,7 +215,7 @@ PipeInit()
     firstPipePtr = NULL;
     procList = NULL;
     Tcl_CreateEventSource(PipeSetupProc, PipeCheckProc, NULL);
-    Tcl_CreateExitHandler(PipeExitHandler, NULL);
+    nsp_create_exit_handler(PipeExitHandler, NULL);
 }
 
 /*
@@ -809,7 +809,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
     char **argv;		/* Array of argument strings.  argv[0]
 				 * contains the name of the executable
 				 * converted to native format (using the
-				 * Tcl_TranslateFileName call).  Additional
+				 * nsp_translate_file_name call).  Additional
 				 * arguments have not been converted. */
     TclFile inputFile;		/* If non-NULL, gives the file to use as
 				 * input for the child process.  If inputFile
@@ -888,7 +888,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 		    }
 		    if (h == INVALID_HANDLE_VALUE) {
 			Tcl_AppendResult(interp, "couldn't duplicate input handle: ", 
-				Tcl_PosixError(interp), (char *) NULL);
+				nsp_posix_error(interp), (char *) NULL);
 			goto end32s;
 		    }
 		    CopyChannel(h, filePtr->handle);
@@ -910,7 +910,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 		outputFileName = MakeTempFile(&outputTempFile);
 		if (outputFileName == NULL) {
 		    Tcl_AppendResult(interp, "couldn't duplicate output handle: ",
-			    Tcl_PosixError(interp), (char *) NULL);
+			    nsp_posix_error(interp), (char *) NULL);
 		    goto end32s;
 		}
 		outputHandle = filePtr->handle;
@@ -971,7 +971,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 	if (result != TCL_OK) {
 	    TclWinConvertError(GetLastError());
 	    Tcl_AppendResult(interp, "couldn't execute \"", originalName,
-		    "\": ", Tcl_PosixError(interp), (char *) NULL);
+		    "\": ", nsp_posix_error(interp), (char *) NULL);
 	}
 
 	end32s:
@@ -1079,7 +1079,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
     if (startInfo.hStdInput == INVALID_HANDLE_VALUE) {
 	TclWinConvertError(GetLastError());
 	Tcl_AppendResult(interp, "couldn't duplicate input handle: ",
-		Tcl_PosixError(interp), (char *) NULL);
+		nsp_posix_error(interp), (char *) NULL);
 	goto end;
     }
 
@@ -1115,7 +1115,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
     if (startInfo.hStdOutput == INVALID_HANDLE_VALUE) {
 	TclWinConvertError(GetLastError());
 	Tcl_AppendResult(interp, "couldn't duplicate output handle: ",
-		Tcl_PosixError(interp), (char *) NULL);
+		nsp_posix_error(interp), (char *) NULL);
 	goto end;
     }
 
@@ -1134,7 +1134,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
     if (startInfo.hStdError == INVALID_HANDLE_VALUE) {
 	TclWinConvertError(GetLastError());
 	Tcl_AppendResult(interp, "couldn't duplicate error handle: ",
-		Tcl_PosixError(interp), (char *) NULL);
+		nsp_posix_error(interp), (char *) NULL);
 	goto end;
     }
     /* 
@@ -1242,7 +1242,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile,
 	    createFlags, NULL, NULL, &startInfo, &procInfo)) {
 	TclWinConvertError(GetLastError());
 	Tcl_AppendResult(interp, "couldn't execute \"", originalName,
-		"\": ", Tcl_PosixError(interp), (char *) NULL);
+		"\": ", nsp_posix_error(interp), (char *) NULL);
 	goto end;
     }
 
@@ -1464,7 +1464,7 @@ ApplicationType(interp, originalName, fullPath)
     if (applType == APPL_NONE) {
 	TclWinConvertError(GetLastError());
 	Tcl_AppendResult(interp, "couldn't execute \"", originalName,
-		"\": ", Tcl_PosixError(interp), (char *) NULL);
+		"\": ", nsp_posix_error(interp), (char *) NULL);
 	return APPL_NONE;
     }
 

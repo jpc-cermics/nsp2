@@ -468,7 +468,7 @@ GetKeyNames(
     resultPtr = Tcl_GetObjResult(interp);
     for (index = 0; RegEnumKey(key, index, buffer, MAX_PATH+1)
 	     == ERROR_SUCCESS; index++) {
-	if (pattern && !Tcl_StringMatch(buffer, pattern)) {
+	if (pattern && !nsp_string_match(buffer, pattern)) {
 	    continue;
 	}
 	result = Tcl_ListObjAppendElement(interp, resultPtr,
@@ -727,7 +727,7 @@ GetValueNames(
 
     while (RegEnumValue(key, index, nsp_tcldstring_value(&buffer), &size, NULL,
 	    NULL, NULL, NULL) == ERROR_SUCCESS) {
-	if (!pattern || Tcl_StringMatch(nsp_tcldstring_value(&buffer), pattern)) {
+	if (!pattern || nsp_string_match(nsp_tcldstring_value(&buffer), pattern)) {
 	    result = Tcl_ListObjAppendElement(interp, resultPtr,
 		    nsp_new_string_obj(NVOID,nsp_tcldstring_value(&buffer), size));
 	    if (result != TCL_OK) {

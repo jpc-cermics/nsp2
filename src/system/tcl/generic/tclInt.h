@@ -97,42 +97,42 @@ extern CONST TclFileAttrProcs   tclpFileAttrProcs[];
  *----------------------------------------------------------------
  */
 
-extern int		TclChdir (char *dirName);
-extern int		TclDoGlob (char *separators, nsp_tcldstring *headPtr,
+extern int		nsp_chdir (char *dirName);
+extern int		nsp_do_glob (char *separators, nsp_tcldstring *headPtr,
 				   char *tail,NspSMatrix *S);
 
-extern int		TclFileCopyCmd (int argc, char **argv,int force ) ;
-extern int 		TclFileDeleteCmd (int argc, char **argv,int force );
-extern int		TclFileMakeDirsCmd ( int argc, char **argv) ;
-extern int		TclFileRenameCmd ( int argc, char **argv,int force) ;
-extern void		TclFinalizeEnvironment (void);
+extern int		nsp_file_copy_cmd (int argc, char **argv,int force ) ;
+extern int 		nsp_file_delete_cmd (int argc, char **argv,int force );
+extern int		nsp_file_make_dirs_cmd ( int argc, char **argv) ;
+extern int		nsp_file_rename_cmd ( int argc, char **argv,int force) ;
+extern void		nsp_finalize_environment (void);
 
-extern char *		TclGetCwd (void);
-extern char *		TclGetEnv (CONST char *name);
-extern char *		TclGetExtension (char *name);
+extern char *		nsp_get_cwd (void);
+extern char *		nsp_getenv (CONST char *name);
+extern char *		nsp_get_extension (char *name);
 
-extern char *		TclGetUserHome (char *name, nsp_tcldstring *bufferPtr);
+extern char *		nsp_get_user_home (char *name, nsp_tcldstring *bufferPtr);
 
-extern int		TclpCopyFile (char *source, char *dest);
-extern int              TclpCopyDirectory (char *source,char *dest, nsp_tcldstring *errorPtr);
-extern int              TclpCreateDirectory (char *path);
-extern int              TclpDeleteFile (char *path);
+extern int		nsp_copy_file (char *source, char *dest);
+extern int              nsp_copy_directory (char *source,char *dest, nsp_tcldstring *errorPtr);
+extern int              nsp_create_directory (char *path);
+extern int              nsp_delete_file (char *path);
 extern unsigned long	TclpGetClicks (void);
 extern unsigned long	TclpGetSeconds (void);
 extern int		TclpGetTimeZone (unsigned long time);
 extern char *		TclpGetTZName (void);
-extern int		TclpListVolumes (Stack stack,int n);
-extern int              TclpRemoveDirectory (char *path, int recursive, nsp_tcldstring *errorPtr);
-extern int              TclpRenameFile (char *source, char *dest);
+extern int		nsp_list_volumes (Stack stack,int n);
+extern int              nsp_remove_directory (char *path, int recursive, nsp_tcldstring *errorPtr);
+extern int              nsp_rename_file (char *source, char *dest);
 extern char *		TclpSetEnv (CONST char *name, CONST char *value);
 
 extern void		TclPlatformExit (int status);
-extern void		TclPlatformInit (void);
+extern void		nsp_tclplatform_init (void);
 extern char *		TclWordEnd (char *start, char *lastChar, int nested, int *semiPtr);
 
-extern void             Tcl_CreateExitHandler();
+extern void             nsp_create_exit_handler();
 
-extern int              TclMatchFiles(char *separators,  nsp_tcldstring *dirPtr, char *pattern, char *tail, NspSMatrix *S);
+extern int              nsp_match_files(char *separators,  nsp_tcldstring *dirPtr, char *pattern, char *tail, NspSMatrix *S);
 
 /*
  * The macro below is used to modify a "char" value (e.g. by casting

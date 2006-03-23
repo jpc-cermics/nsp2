@@ -30,7 +30,7 @@ static char *currentDir =  NULL;
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_FindExecutable --
+ * nsp_find_executable --
  *
  *	This procedure computes the absolute path name of the current
  *	application, given its argv[0] value.
@@ -41,13 +41,13 @@ static char *currentDir =  NULL;
  * Side effects:
  *	The variable tclExecutableName gets filled in with the file
  *	name for the application, if we figured it out.  If we couldn't
- *	figure it out, Tcl_FindExecutable is set to NULL.
+ *	figure it out, nsp_find_executable is set to NULL.
  *
  *----------------------------------------------------------------------
  */
 
 void
-Tcl_FindExecutable(argv0)
+nsp_find_executable(argv0)
     char *argv0;		/* The value of the application's argv[0]. */
 {
     nsp_tcldstring buffer;
@@ -77,14 +77,14 @@ Tcl_FindExecutable(argv0)
 /*
  *----------------------------------------------------------------------
  *
- * TclMatchFiles --
+ * nsp_match_files --
  *
  *	This routine is used by the globbing code to search a
  *	directory for all files which match a given pattern.
  *
  * Results: 
  *	If the tail argument is NULL, then the matching files are
- *	added to the interp->result.  Otherwise, TclDoGlob is called
+ *	added to the interp->result.  Otherwise, nsp_do_glob is called
  *	recursively for each matching subdirectory.  The return value
  *	is a standard Tcl result indicating whether an error occurred
  *	in globbing.
@@ -95,8 +95,8 @@ Tcl_FindExecutable(argv0)
  *---------------------------------------------------------------------- */
 
 int
-TclMatchFiles( separators, dirPtr, pattern, tail,S)
-    char *separators;		/* Directory separators to pass to TclDoGlob. */
+nsp_match_files( separators, dirPtr, pattern, tail,S)
+    char *separators;		/* Directory separators to pass to nsp_do_glob. */
     nsp_tcldstring *dirPtr;	/* Contains path to directory to search. */
     char *pattern;		/* Pattern to match against. */
     char *tail;			/* Pointer to end of pattern.  Tail must
@@ -155,7 +155,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
      * specifier, we use the root directory of the given drive.
      */
 
-    switch (Tcl_GetPathType(dir)) {
+    switch (nsp_get_path_type(dir)) {
 	case TCL_PATH_RELATIVE:
 	    found = GetVolumeInformation(NULL, NULL, 0, NULL,
 		    NULL, &volFlags, NULL, 0);
@@ -193,7 +193,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 	nsp_tcldstring_free(&buffer);
 	TclWinConvertError(GetLastError());
 	Scierror("couldn't read volume information for \"%s\": %s\n",
-		 dirPtr->string, Tcl_PosixError());
+		 dirPtr->string, nsp_posix_error());
 	return TCL_ERROR;
     }
     
@@ -233,7 +233,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
     if (handle == INVALID_HANDLE_VALUE) {
 	TclWinConvertError(GetLastError());
 	Scierror("couldn't read directory \"%s\": %s\n",
-		dirPtr->string, Tcl_PosixError());
+		dirPtr->string, nsp_posix_error());
 	ckfree(newPattern);
 	return TCL_ERROR;
     }
@@ -293,7 +293,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 	    for (p = buffer.string; *p != '\0'; p++) {
 		*p = (char) tolower(*p);
 	    }
-	    if (Tcl_StringMatch(buffer.string, newPattern)) {
+	    if (nsp_string_match(buffer.string, newPattern)) {
 		if (volFlags & FS_CASE_IS_PRESERVED) {
 		    matchResult = data.cFileName;
 		} else {
@@ -301,7 +301,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 		}	
 	    }
 	} else {
-	    if (Tcl_StringMatch(data.cFileName, newPattern)) {
+	    if (nsp_string_match(data.cFileName, newPattern)) {
 		matchResult = data.cFileName;
 	    }
 	}
@@ -313,7 +313,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 	/*
 	 * If the file matches, then we need to process the remainder of the
 	 * path.  If there are more characters to process, then ensure matching
-	 * files are directories and call TclDoGlob. Otherwise, just add the
+	 * files are directories and call nsp_do_glob. Otherwise, just add the
 	 * file to the result.
 	 */
 
@@ -326,7 +326,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 	    atts = GetFileAttributes(dirPtr->string);
 	    if (atts & FILE_ATTRIBUTE_DIRECTORY) {
 		nsp_tcldstring_append(dirPtr, "/", 1);
-		result = TclDoGlob(separators, dirPtr, tail,S);
+		result = nsp_do_glob(separators, dirPtr, tail,S);
 		if (result != TCL_OK) {
 		    break;
 		}
@@ -343,7 +343,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 /*
  *----------------------------------------------------------------------
  *
- * TclChdir --
+ * nsp_chdir --
  *
  *	Change the current working directory.
  *
@@ -353,14 +353,14 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
  *
  * Side effects:
  *	The working directory for this application is changed.  Also
- *	the cache maintained used by TclGetCwd is deallocated and
+ *	the cache maintained used by nsp_get_cwd is deallocated and
  *	set to NULL.
  *
  *----------------------------------------------------------------------
  */
 
 int
-TclChdir( dirName)
+nsp_chdir( dirName)
     char *dirName;     		/* Path to new working directory. */
 {
     if (currentDir != NULL) {
@@ -370,7 +370,7 @@ TclChdir( dirName)
     if (!SetCurrentDirectory(dirName)) {
 	TclWinConvertError(GetLastError());
 	Tcl_AppendResult("couldn't change working directory to \"",
-			 dirName, "\": ", Tcl_PosixError(), (char *) NULL);
+			 dirName, "\": ", nsp_posix_error(), (char *) NULL);
 	return TCL_ERROR;
     }
     return TCL_OK;
@@ -379,7 +379,7 @@ TclChdir( dirName)
 /*
  *----------------------------------------------------------------------
  *
- * TclGetCwd --
+ * nsp_get_cwd --
  *
  *	Return the path name of the current working directory.
  *
@@ -398,7 +398,7 @@ TclChdir( dirName)
  */
 
 char *
-TclGetCwd()
+nsp_get_cwd()
 {
     static char buffer[MAXPATHLEN+1];
     char *bufPtr, *p;
@@ -410,7 +410,7 @@ TclGetCwd()
 	      Scierror("working directory name is too long\n");
 	    } else {
 	      Tcl_AppendResult("error getting working directory name: ",
-			       Tcl_PosixError(), (char *) NULL);
+			       nsp_posix_error(), (char *) NULL);
 	    }
 	    return NULL;
 	}

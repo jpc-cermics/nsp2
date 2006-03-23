@@ -36,12 +36,12 @@ static int environSize = 0;	/* Non-zero means that the environ array was
 
 static int		FindVariable (CONST char *name,  int *lengthPtr);
 static void		ReplaceString (CONST char *oldStr,  char *newStr);
-void			TclSetEnv (CONST char *name, CONST char *value);
-void			TclUnsetEnv (CONST char *name);
+void			nsp_setenv (CONST char *name, CONST char *value);
+void			nsp_unsetenv (CONST char *name);
 
 
 /**
- * TclSetEnv:
+ * nsp_setenv:
  * @name: Name of variable whose value is to be set.
  * @value:  New value for variable.
  * 
@@ -52,7 +52,7 @@ void			TclUnsetEnv (CONST char *name);
  *	using that procedure will interface properly.  
  **/
 
-void TclSetEnv(const char *name,const char *value)
+void nsp_setenv(const char *name,const char *value)
 {
     int index, length, nameLength;
     char *p, *oldValue;
@@ -132,7 +132,7 @@ void TclSetEnv(const char *name,const char *value)
 }
 
 /**
- * Tcl_PutEnv:
+ * nsp_putenv:
  * @string: Info about environment variable in the form NAME=value.
  * 
  *
@@ -145,7 +145,7 @@ void TclSetEnv(const char *name,const char *value)
  * Return value: unused.
  **/
 
-int Tcl_PutEnv(const char *string)
+int nsp_putenv(const char *string)
 {
     int nameLength;
     char *name, *value;
@@ -156,7 +156,7 @@ int Tcl_PutEnv(const char *string)
 
     /*
      * Separate the string into name and value parts, then call
-     * TclSetEnv to do all of the real work.
+     * nsp_setenv to do all of the real work.
      */
 
     value = strchr(string, '=');
@@ -170,20 +170,20 @@ int Tcl_PutEnv(const char *string)
     name = (char *) ckalloc((unsigned) nameLength+1);
     memcpy((VOID *) name, (VOID *) string, (size_t) nameLength);
     name[nameLength] = 0;
-    TclSetEnv(name, value+1);
+    nsp_setenv(name, value+1);
     ckfree(name);
     return 0;
 }
 
 /**
- * TclUnsetEnv:
+ * nsp_unsetenv:
  * @name: Name of variable to remove.
  * 
  *	Remove an environment variable, updating the "env" arrays
  *	This function is intended to replace the UNIX "unsetenv" function.
  **/
 
-void TclUnsetEnv(const char *name)
+void nsp_unsetenv(const char *name)
 	
 {
   char *oldValue;
@@ -247,7 +247,7 @@ void TclUnsetEnv(const char *name)
 
 
 /**
- * TclGetEnv:
+ * nsp_getenv:
  * @name:  Name of variable to find.
  *
  *	Retrieve the value of an environment variable.
@@ -256,7 +256,7 @@ void TclUnsetEnv(const char *name)
  *	or NULL if the value was not found.
  **/
 
-char * TclGetEnv(const char *name)
+char * nsp_getenv(const char *name)
 {
     int length, index;
 
@@ -388,7 +388,7 @@ static int FindVariable(const char *name,int * lengthPtr)
 }
 
 /**
- * TclFinalizeEnvironment:
+ * nsp_finalize_environment:
  * @void: 
  * 
  *	This function releases any storage allocated by this module
@@ -397,7 +397,7 @@ static int FindVariable(const char *name,int * lengthPtr)
  * 
  **/
 
-void TclFinalizeEnvironment(void)
+void nsp_finalize_environment(void)
 {
   /*
    * For now we just deallocate the cache array and none of the environment

@@ -75,7 +75,7 @@ Tcl_Main(argc, argv, appInitProc)
     int exitCode = 0;
     Tcl_Channel inChannel, outChannel, errChannel;
 
-    Tcl_FindExecutable(argv[0]);
+    nsp_find_executable(argv[0]);
 
     /*
      * Make command-line arguments available in the Tcl variables "argc"
@@ -88,7 +88,7 @@ Tcl_Main(argc, argv, appInitProc)
      * that we need to fetch the standard channels again after every
      * eval, since they may have been changed.
      */
-    TclFileRenameCmd( argc, argv,0);
+    nsp_file_rename_cmd( argc, argv,0);
     TestchmodCmd(0, argc, argv);
     TestfileCmd(0,  argc, argv);
     Tcl_GlobCmd(0,  argc, argv);
@@ -136,12 +136,12 @@ int TestchmodCmd(dummy, argc, argv)
     for (i = 2; i < argc; i++) {
         nsp_tcldstring buffer;
         
-        argv[i] = Tcl_TranslateFileName( argv[i], &buffer);
+        argv[i] = nsp_translate_file_name( argv[i], &buffer);
         if (argv[i] == NULL) {
             return TCL_ERROR;
         }
 	if (chmod(argv[i], (unsigned) mode) != 0) {
-	    Tcl_AppendResult( argv[i], ": ", Tcl_PosixError(),
+	    Tcl_AppendResult( argv[i], ": ", nsp_posix_error(),
 		    (char *) NULL);
 	    return TCL_ERROR;
 	}
@@ -178,24 +178,24 @@ int TestfileCmd(dummy, argc, argv)
     }
 
     for (j = i; j < argc; j++) {
-        argv[j] = Tcl_TranslateFileName( argv[j], &name[j - i]);
+        argv[j] = nsp_translate_file_name( argv[j], &name[j - i]);
 	if (argv[j] == NULL) {
 	    return TCL_ERROR;
 	}
     }
 
     if (strcmp(argv[1], "mv") == 0) {
-	result = TclpRenameFile(argv[i], argv[i + 1]);
+	result = nsp_rename_file(argv[i], argv[i + 1]);
     } else if (strcmp(argv[1], "cp") == 0) {
-        result = TclpCopyFile(argv[i], argv[i + 1]);
+        result = nsp_copy_file(argv[i], argv[i + 1]);
     } else if (strcmp(argv[1], "rm") == 0) {
-        result = TclpDeleteFile(argv[i]);
+        result = nsp_delete_file(argv[i]);
     } else if (strcmp(argv[1], "mkdir") == 0) {
-        result = TclpCreateDirectory(argv[i]);
+        result = nsp_create_directory(argv[i]);
     } else if (strcmp(argv[1], "cpdir") == 0) {
-        result = TclpCopyDirectory(argv[i], argv[i + 1], &error);
+        result = nsp_copy_directory(argv[i], argv[i + 1], &error);
     } else if (strcmp(argv[1], "rmdir") == 0) {
-        result = TclpRemoveDirectory(argv[i], force, &error);
+        result = nsp_remove_directory(argv[i], force, &error);
     } else {
         result = TCL_ERROR;
 	goto end;
@@ -205,7 +205,7 @@ int TestfileCmd(dummy, argc, argv)
 	if (nsp_tcldstring_value(&error)[0] != '\0') {
 	    Tcl_AppendResult( nsp_tcldstring_value(&error), " ", NULL);
 	}
-	Tcl_AppendResult( Tcl_ErrnoId(), (char *) NULL);
+	Tcl_AppendResult( nsp_errno_id(), (char *) NULL);
     }
 
     end:

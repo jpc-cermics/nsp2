@@ -25,7 +25,7 @@ static int   FileCopyRename( int argc, char **argv, int copyFlag,int forceFlag);
 /*
  *---------------------------------------------------------------------------
  *
- * TclFileRenameCmd
+ * nsp_file_rename_cmd
  *
  *	This procedure implements the "rename" subcommand of the "file"
  *      command.  Filename arguments need to be translated to native
@@ -46,7 +46,7 @@ static int   FileCopyRename( int argc, char **argv, int copyFlag,int forceFlag);
  */
 
 int
-TclFileRenameCmd(int  argc,char ** argv,int force)
+nsp_file_rename_cmd(int  argc,char ** argv,int force)
 {
     return FileCopyRename( argc, argv, 0,force);
 }
@@ -54,7 +54,7 @@ TclFileRenameCmd(int  argc,char ** argv,int force)
 /*
  *---------------------------------------------------------------------------
  *
- * TclFileCopyCmd
+ * nsp_file_copy_cmd
  *
  *	This procedure implements the "copy" subcommand of the "file"
  *	command.  Filename arguments need to be translated to native
@@ -70,7 +70,7 @@ TclFileRenameCmd(int  argc,char ** argv,int force)
  *---------------------------------------------------------------------------
  */
 
-int TclFileCopyCmd(int argc,			/* Number of arguments. */
+int nsp_file_copy_cmd(int argc,			/* Number of arguments. */
 		   char **argv,		/* Argument strings passed to Tcl_FileCmd. */
 		   int force)
 {
@@ -82,7 +82,7 @@ int TclFileCopyCmd(int argc,			/* Number of arguments. */
  *
  * FileCopyRename --
  *
- *	Performs the work of TclFileRenameCmd and TclFileCopyCmd.
+ *	Performs the work of nsp_file_rename_cmd and nsp_file_copy_cmd.
  *	See comments for those procedures.
  *
  * Results:
@@ -113,7 +113,7 @@ FileCopyRename(
      * directory.
      */
 
-    target = Tcl_TranslateFileName(argv[argc - 1], &targetBuffer);
+    target = nsp_translate_file_name(argv[argc - 1], &targetBuffer);
     if (target == NULL) {
 	return TCL_ERROR;
     }
@@ -129,7 +129,7 @@ FileCopyRename(
     if ((stat(target, &statBuf) != 0) || !S_ISDIR(statBuf.st_mode)) {
       if ( argc > 2) {
 	errno = ENOTDIR;
-	Tcl_PosixError();
+	nsp_posix_error();
 	Tcl_AppendResult( "error ",
 			 ((copyFlag) ? "copying" : "renaming"), ": target \"",
 			 argv[argc - 1], "\" is not a directory", (char *) NULL);
@@ -166,7 +166,7 @@ FileCopyRename(
 	jargv[0] = argv[argc - 1];
 	jargv[1] = source;
 	nsp_tcldstring_init(&newFileNameBuffer);
-	newFileName = Tcl_JoinPath(2, jargv, &newFileNameBuffer);
+	newFileName = nsp_join_path(2, jargv, &newFileNameBuffer);
 	result = CopyRenameOneFile( argv[i], newFileName, copyFlag,
 		forceFlag);
 	nsp_tcldstring_free(&sourceBuffer);
@@ -183,7 +183,7 @@ FileCopyRename(
 /*
  *---------------------------------------------------------------------------
  *
- * TclFileMakeDirsCmd
+ * nsp_file_make_dirs_cmd
  *
  *	This procedure implements the "mkdir" subcommand of the "file"
  *      command.  Filename arguments need to be translated to native
@@ -198,7 +198,7 @@ FileCopyRename(
  *
  *----------------------------------------------------------------------
  */
-int TclFileMakeDirsCmd(
+int nsp_file_make_dirs_cmd(
 		       int argc,			/* Number of arguments */
 		       char **argv		/* Argument strings giving the dirs to create  */)
 {
@@ -215,20 +215,20 @@ int TclFileMakeDirsCmd(
 
     result = TCL_OK;
     for (i = 0; i < argc; i++) {
-	char *name = Tcl_TranslateFileName(argv[i], &nameBuffer);
+	char *name = nsp_translate_file_name(argv[i], &nameBuffer);
 	if (name == NULL) {
 	    result = TCL_ERROR;
 	    break;
 	}
 
-	Tcl_SplitPath(name, &pargc, &pargv);
+	nsp_split_path(name, &pargc, &pargv);
 	if (pargc == 0) {
 	    errno = ENOENT;
 	    errfile = argv[i];
 	    break;
 	}
 	for (j = 0; j < pargc; j++) {
-	    char *target = Tcl_JoinPath(j + 1, pargv, &targetBuffer);
+	    char *target = nsp_join_path(j + 1, pargv, &targetBuffer);
 
 	    /*
 	     * Call stat() so that if target is a symlink that points to a
@@ -242,7 +242,7 @@ int TclFileMakeDirsCmd(
 		    goto done;
 		}
 	    } else if ((errno != ENOENT)
-		    || (TclpCreateDirectory(target) != TCL_OK)) {
+		    || (nsp_create_directory(target) != TCL_OK)) {
 		errfile = target;
 		goto done;
 	    }
@@ -256,7 +256,7 @@ int TclFileMakeDirsCmd(
     done:
     if (errfile != NULL) {
 	Tcl_AppendResult( "can't create directory \"",
-		errfile, "\": ", Tcl_PosixError(), (char *) NULL);
+		errfile, "\": ", nsp_posix_error(), (char *) NULL);
 	result = TCL_ERROR;
     }
 
@@ -271,7 +271,7 @@ int TclFileMakeDirsCmd(
 /*
  *----------------------------------------------------------------------
  *
- * TclFileDeleteCmd
+ * nsp_file_delete_cmd
  *
  *	This procedure implements the "delete" subcommand of the "file"
  *      command.
@@ -286,7 +286,7 @@ int TclFileMakeDirsCmd(
  */
 
 int
-TclFileDeleteCmd(int argc,			/* Number of arguments */
+nsp_file_delete_cmd(int argc,			/* Number of arguments */
 		 char **argv,		/* Argument strings passed to Tcl_FileCmd. */
 		 int forceFlag              /* force Argument */)
 {
@@ -305,7 +305,7 @@ TclFileDeleteCmd(int argc,			/* Number of arguments */
 
 	errfile = argv[i];
 	nsp_tcldstring_set_length(&nameBuffer, 0);
-	name = Tcl_TranslateFileName( argv[i], &nameBuffer);
+	name = nsp_translate_file_name( argv[i], &nameBuffer);
 	if (name == NULL) {
 	    result = TCL_ERROR;
 	    goto done;
@@ -325,12 +325,12 @@ TclFileDeleteCmd(int argc,			/* Number of arguments */
 		result = TCL_ERROR;
 	    }
 	} else if (S_ISDIR(statBuf.st_mode)) {
-	    result = TclpRemoveDirectory(name, force, &errorBuffer);
+	    result = nsp_remove_directory(name, force, &errorBuffer);
 	    if (result != TCL_OK) {
 		if ((force == 0) && (errno == EEXIST)) {
 		    Tcl_AppendResult( "error deleting \"", argv[i],
 			    "\": directory not empty", (char *) NULL);
-		    Tcl_PosixError();
+		    nsp_posix_error();
 		    goto done;
 		}
 
@@ -344,7 +344,7 @@ TclFileDeleteCmd(int argc,			/* Number of arguments */
 		}
 	    }
 	} else {
-	    result = TclpDeleteFile(name);
+	    result = nsp_delete_file(name);
 	}
 	
 	if (result == TCL_ERROR) {
@@ -353,7 +353,7 @@ TclFileDeleteCmd(int argc,			/* Number of arguments */
     }
     if (result != TCL_OK) {
 	Tcl_AppendResult("error deleting \"", errfile,
-		"\": ", Tcl_PosixError(), (char *) NULL);
+		"\": ", nsp_posix_error(), (char *) NULL);
     } 
     done:
     nsp_tcldstring_free(&errorBuffer);
@@ -397,11 +397,11 @@ CopyRenameOneFile(
     char *targetName, *sourceName, *errfile;
     struct stat sourceStatBuf, targetStatBuf;
 	
-    sourceName = Tcl_TranslateFileName( source, &sourcePath);
+    sourceName = nsp_translate_file_name( source, &sourcePath);
     if (sourceName == NULL) {
 	return TCL_ERROR;
     }
-    targetName = Tcl_TranslateFileName( target, &targetPath);
+    targetName = nsp_translate_file_name( target, &targetPath);
     if (targetName == NULL) {
 	nsp_tcldstring_free(&sourcePath);
 	return TCL_ERROR;
@@ -473,7 +473,7 @@ CopyRenameOneFile(
     }
 
     if (copyFlag == 0) {
-	result = TclpRenameFile(sourceName, targetName);
+	result = nsp_rename_file(sourceName, targetName);
 	if (result == TCL_OK) {
 	    goto done;
 	}
@@ -491,13 +491,13 @@ CopyRenameOneFile(
 	/*
 	 * The rename failed because the move was across file systems.
 	 * Fall through to copy file and then remove original.  Note that
-	 * the low-level TclpRenameFile is allowed to implement
+	 * the low-level nsp_rename_file is allowed to implement
 	 * cross-filesystem moves itself.
 	 */
     }
 
     if (S_ISDIR(sourceStatBuf.st_mode)) {
-	result = TclpCopyDirectory(sourceName, targetName, &errorBuffer);
+	result = nsp_copy_directory(sourceName, targetName, &errorBuffer);
 	if (result != TCL_OK) {
 	    errfile = nsp_tcldstring_value(&errorBuffer);
 	    if (strcmp(errfile, sourceName) == 0) {
@@ -507,7 +507,7 @@ CopyRenameOneFile(
 	    }
 	}
     } else {
-	result = TclpCopyFile(sourceName, targetName);
+	result = nsp_copy_file(sourceName, targetName);
 	if (result != TCL_OK) {
 	    /*
 	     * Well, there really shouldn't be a problem with source,
@@ -519,7 +519,7 @@ CopyRenameOneFile(
     }
     if ((copyFlag == 0) && (result == TCL_OK)) {
 	if (S_ISDIR(sourceStatBuf.st_mode)) {
-	    result = TclpRemoveDirectory(sourceName, 1, &errorBuffer);
+	    result = nsp_remove_directory(sourceName, 1, &errorBuffer);
 	    if (result != TCL_OK) {
 		errfile = nsp_tcldstring_value(&errorBuffer);
 		if (strcmp(errfile, sourceName) == 0) {
@@ -527,14 +527,14 @@ CopyRenameOneFile(
 		}
 	    }
 	} else {
-	    result = TclpDeleteFile(sourceName);
+	    result = nsp_delete_file(sourceName);
 	    if (result != TCL_OK) {
 		errfile = source;
 	    }
 	}
 	if (result != TCL_OK) {
 	    Tcl_AppendResult( "can't unlink \"", errfile, "\": ",
-		    Tcl_PosixError(), (char *) NULL);
+		    nsp_posix_error(), (char *) NULL);
 	    errfile = NULL;
 	}
     }
@@ -550,7 +550,7 @@ CopyRenameOneFile(
 		Tcl_AppendResult("\": \"", errfile, (char *) NULL);
 	    }
 	}
-	Tcl_AppendResult( "\": ", Tcl_PosixError(),
+	Tcl_AppendResult( "\": ", nsp_posix_error(),
 		(char *) NULL);
     }
     nsp_tcldstring_free(&errorBuffer);
@@ -589,7 +589,7 @@ static char *FileBasename(
   int argc;
   char **argv;
     
-  Tcl_SplitPath(path, &argc, &argv);
+  nsp_split_path(path, &argc, &argv);
   if (argc == 0) 
     {
       nsp_tcldstring_init(bufferPtr);
@@ -601,11 +601,11 @@ static char *FileBasename(
 	  nsp_tcldstring buffer;
 	  
 	  ckfree((char *) argv);
-	  path = Tcl_TranslateFileName( path, &buffer);
+	  path = nsp_translate_file_name( path, &buffer);
 	  if (path == NULL) {
 	    return NULL;
 	  }
-	  Tcl_SplitPath(path, &argc, &argv);
+	  nsp_split_path(path, &argc, &argv);
 	  nsp_tcldstring_free(&buffer);
 	}
       nsp_tcldstring_init(bufferPtr);
@@ -617,7 +617,7 @@ static char *FileBasename(
       
       if (argc > 0) {
 	if ((argc > 1)
-	    || (Tcl_GetPathType(argv[0]) == TCL_PATH_RELATIVE)) {
+	    || (nsp_get_path_type(argv[0]) == TCL_PATH_RELATIVE)) {
 	  nsp_tcldstring_append(bufferPtr, argv[argc - 1], -1);
 	}
       }

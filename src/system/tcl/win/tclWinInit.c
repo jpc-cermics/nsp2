@@ -143,7 +143,7 @@ init\n";
 /*
  *----------------------------------------------------------------------
  *
- * TclPlatformInit --
+ * nsp_tclplatform_init --
  *
  *	Performs Windows-specific interpreter initialization related to the
  *	tcl_library variable.  Also sets up the HOME environment variable
@@ -159,7 +159,7 @@ init\n";
  */
 
 void
-TclPlatformInit()
+nsp_tclplatform_init()
 {
     char *ptr;
     char buffer[13];
@@ -229,11 +229,11 @@ TclPlatformInit()
 	argv[1] = "lib";
 	argv[2] = NULL;
 	nsp_tcldstring_set_length(&ds, 0);
-	Tcl_SetVar(interp, "tcl_pkgPath", Tcl_JoinPath(2, argv, &ds),
+	Tcl_SetVar(interp, "tcl_pkgPath", nsp_join_path(2, argv, &ds),
 		TCL_GLOBAL_ONLY|TCL_LIST_ELEMENT);
 	argv[1] = "lib/tcl" TCL_VERSION;
 	nsp_tcldstring_set_length(&ds, 0);
-	Tcl_SetVar(interp, "tcl_library", Tcl_JoinPath(2, argv, &ds), 
+	Tcl_SetVar(interp, "tcl_library", nsp_join_path(2, argv, &ds), 
 		TCL_GLOBAL_ONLY);
     }
     **/

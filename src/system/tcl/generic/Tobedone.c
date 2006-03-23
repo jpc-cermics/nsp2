@@ -2,7 +2,7 @@
  * Interface Scilab 
  */
 
-void Tcl_CreateExitHandler() {} 
+void nsp_create_exit_handler() {} 
 
 
 

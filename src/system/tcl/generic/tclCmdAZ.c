@@ -39,7 +39,7 @@ static int              TclFileAttrsCmd(Stack stack,int,int,int);
  * The following variable holds the full path name of the binary
  * from which this application was executed, or NULL if it isn't
  * know.  The value of the variable is set by the procedure
- * Tcl_FindExecutable.  The storage space is dynamically allocated.
+ * nsp_find_executable.  The storage space is dynamically allocated.
  */
 
 char *tclExecutableName = NULL;
@@ -58,9 +58,9 @@ int int_syscd(Stack stack,int rhs,int opt,int lhs)
   CheckLhs(0,1);
   if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
   nsp_tcldstring_init(&buffer);
-  dirName = Tcl_TranslateFileName( str, &buffer);
+  dirName = nsp_translate_file_name( str, &buffer);
   if (dirName == NULL)  return RET_BUG ;
-  result = TclChdir(dirName);
+  result = nsp_chdir(dirName);
   nsp_tcldstring_free(&buffer);
   if (result ==  TCL_ERROR) 
     return RET_BUG;
@@ -81,7 +81,7 @@ static nsp_string nsp_dirname (char *fileName)
   int pargc;
   char **pargv = NULL;
   nsp_tcldstring_init (&buffer);
-  Tcl_SplitPath (fileName, &pargc, &pargv);
+  nsp_split_path (fileName, &pargc, &pargv);
   if ((pargc == 1) && (*fileName == '~'))
     {
       /*
@@ -89,12 +89,12 @@ static nsp_string nsp_dirname (char *fileName)
        * perform tilde substitution and resplit the path.
        */
       ckfree ((char *) pargv);pargv=NULL;
-      fileName = Tcl_TranslateFileName (fileName, &buffer);
+      fileName = nsp_translate_file_name (fileName, &buffer);
       if (fileName == NULL)
 	{
 	  goto done;
 	}
-      Tcl_SplitPath (fileName, &pargc, &pargv);
+      nsp_split_path (fileName, &pargc, &pargv);
       nsp_tcldstring_set_length (&buffer, 0);
     }
   /*
@@ -104,10 +104,10 @@ static nsp_string nsp_dirname (char *fileName)
    */
   if (pargc > 1)
     {
-      Tcl_JoinPath (pargc - 1, pargv, &buffer);
+      nsp_join_path (pargc - 1, pargv, &buffer);
       result = nsp_new_string(nsp_tcldstring_value (&buffer), buffer.length);
     }
-  else if ((pargc == 0) || (Tcl_GetPathType (pargv[0]) == TCL_PATH_RELATIVE))
+  else if ((pargc == 0) || (nsp_get_path_type (pargv[0]) == TCL_PATH_RELATIVE))
     {
       result = nsp_new_string((tclPlatform == TCL_PLATFORM_MAC) ? ":" : ".", 1);
     }
@@ -133,16 +133,16 @@ static nsp_string nsp_tail(char *fileName)
    * perform tilde substitution and resplit the path.
    */
 
-  Tcl_SplitPath(fileName, &pargc, &pargv);
+  nsp_split_path(fileName, &pargc, &pargv);
   if ((pargc == 1) && (*fileName == '~')) 
     {
       ckfree((char*) pargv);pargv=NULL;
-      fileName = Tcl_TranslateFileName( fileName, &buffer);
+      fileName = nsp_translate_file_name( fileName, &buffer);
       if (fileName == NULL) 
 	{
 	  goto done;
 	}
-    Tcl_SplitPath(fileName, &pargc, &pargv);
+    nsp_split_path(fileName, &pargc, &pargv);
     nsp_tcldstring_set_length(&buffer, 0);
     }
   /*
@@ -152,7 +152,7 @@ static nsp_string nsp_tail(char *fileName)
   if (pargc > 0) 
     {
       if ((pargc > 1)
-	  || (Tcl_GetPathType(pargv[0]) == TCL_PATH_RELATIVE)) 
+	  || (nsp_get_path_type(pargv[0]) == TCL_PATH_RELATIVE)) 
 	{
 	  result = nsp_new_string(pargv[pargc - 1], -1);
 	}
@@ -209,7 +209,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	       NspFname(stack));
       return RET_BUG;
     }
-    return TclpListVolumes(stack,1);
+    return nsp_list_volumes(stack,1);
   }
     
   if ( rhs < 2 ) {
@@ -280,7 +280,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  goto not3Args;
 	}
 	if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
-	extension = TclGetExtension(fileName);
+	extension = nsp_get_extension(fileName);
 	if (extension == NULL) {
 	  NthObj(2)->ret_pos = 1;
 	  result = 1;
@@ -297,7 +297,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
       }
       if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
 	
-      extension = TclGetExtension(fileName);
+      extension = nsp_get_extension(fileName);
       result = nsp_move_string(stack,1,(extension != NULL)? extension:"", -1);	
       result = ( result == FAIL) ? RET_BUG: 1;
       goto done;
@@ -307,7 +307,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	goto not3Args;
       }
       if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
-      switch (Tcl_GetPathType(fileName)) 
+      switch (nsp_get_path_type(fileName)) 
 	{
 	case TCL_PATH_ABSOLUTE:
 	  result = nsp_move_string(stack,1, "absolute", -1);
@@ -335,7 +335,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  
 	if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
 		
-	Tcl_SplitPath(fileName, &pargc, &pargvList);
+	nsp_split_path(fileName, &pargc, &pargvList);
 	
 	if ((S =nsp_smatrix_create_from_array(NVOID,pargc,(const char **)pargvList)) == NULLSMAT ) return RET_BUG;
 	MoveObj(stack,1,(NspObject*) S);
@@ -350,7 +350,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  goto not3Args;
 	}
 	if (( S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-	Tcl_JoinPath(S->mn,S->S, &buffer);
+	nsp_join_path(S->mn,S->S, &buffer);
 	result = nsp_move_string(stack,1, nsp_tcldstring_value(&buffer),  buffer.length);
 	result = ( result == FAIL) ? RET_BUG: 1;
 	goto done;
@@ -364,7 +364,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  goto not3Args;
 	}
 	if (( S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-	result = TclFileRenameCmd(S->mn,S->S,force);
+	result = nsp_file_rename_cmd(S->mn,S->S,force);
 	if ( result == TCL_ERROR) result = RET_BUG;
 	goto done;
       }
@@ -376,7 +376,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  goto not3Args;
 	}
 	if (( S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-	result = TclFileMakeDirsCmd(S->mn,S->S);
+	result = nsp_file_make_dirs_cmd(S->mn,S->S);
 	if ( result == TCL_ERROR) result = RET_BUG;
 	goto done;
       }
@@ -390,7 +390,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  goto not3Args;
 	}
 	if (( S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-	result = TclFileDeleteCmd( S->mn,S->S,force);
+	result = nsp_file_delete_cmd( S->mn,S->S,force);
 	if ( result == TCL_ERROR) result = RET_BUG;
 	goto done;
       }
@@ -404,7 +404,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  goto not3Args;
 	}
 	if (( S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-	result = TclFileCopyCmd( S->mn,S->S,force);
+	result = nsp_file_copy_cmd( S->mn,S->S,force);
 	if ( result == TCL_ERROR) result = RET_BUG;
 	goto done;
       }
@@ -416,7 +416,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  goto not3Args;
 	}
 	if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;	
-	fileName = Tcl_TranslateFileName(fileName,&buffer);
+	fileName = nsp_translate_file_name(fileName,&buffer);
 	if (fileName == NULL) {
 	  result = RET_BUG ;
 	} else {
@@ -443,7 +443,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
     mode = R_OK;
   checkAccess:
     /*
-     * The result might have been set within Tcl_TranslateFileName
+     * The result might have been set within nsp_translate_file_name
      * (like no such user "blah" for file exists ~blah)
      * but we don't want to flag an error in that case.
      */
@@ -532,7 +532,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
     	    
       if (lstat(fileName, &statBuf) == -1) {
 	Scierror("Error: couldn't lstat \"%s\": %s\n",fileName,
-		 Tcl_PosixError());
+		 nsp_posix_error());
 	result = RET_BUG;
 	goto done;
       }
@@ -585,7 +585,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	linkLength = readlink(fileName, linkValue, sizeof(linkValue) - 1);
 #endif /* S_IFLNK */
 	if (linkLength == -1) {
-	  Scierror("Error: couldn't readlink \"%s\": %s\n",fileName,Tcl_PosixError());
+	  Scierror("Error: couldn't readlink \"%s\": %s\n",fileName,nsp_posix_error());
 	  result = RET_BUG;
 	  goto done;
 	}
@@ -616,7 +616,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 
       if (stat(fileName, &statBuf) == -1) {
       badStat:
-	Scierror("Error: couldn't stat \"%s\": %s\n",fileName,Tcl_PosixError());
+	Scierror("Error: couldn't stat \"%s\": %s\n",fileName,nsp_posix_error());
 	result = RET_BUG;
 	goto done;
       }
@@ -801,7 +801,7 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
     }
   if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
   nsp_tcldstring_init(&buffer);
-  if (Tcl_TranslateFileName( fileName, &buffer) == NULL) 
+  if (nsp_translate_file_name( fileName, &buffer) == NULL) 
     {
       goto done;
     }
@@ -889,7 +889,7 @@ int int_pwd(Stack stack,int rhs,int opt,int lhs)
   char *dirName;
   CheckRhs(0,0)
     CheckLhs(1,1);
-  if ((dirName = TclGetCwd() ) == NULL) return RET_BUG;
+  if ((dirName = nsp_get_cwd() ) == NULL) return RET_BUG;
   if (( S =nsp_smatrix_create(NVOID,1,1,dirName,1) ) == NULLSMAT ) 
     return RET_BUG;
   NthObj(1)= (NspObject*) S;

@@ -103,7 +103,7 @@ FreeExecutableName(clientData)
 /*
  *----------------------------------------------------------------------
  *
- * TclChdir --
+ * nsp_chdir --
  *
  *	Change the current working directory.
  *
@@ -113,14 +113,14 @@ FreeExecutableName(clientData)
  *
  * Side effects:
  *	The working directory for this application is changed.  Also
- *	the cache maintained used by TclGetCwd is deallocated and
+ *	the cache maintained used by nsp_get_cwd is deallocated and
  *	set to NULL.
  *
  *----------------------------------------------------------------------
  */
 
 int
-TclChdir(dirName)
+nsp_chdir(dirName)
      char *dirName;     		/* Path to new working directory. */
 {
   if (currentDir != NULL) {
@@ -129,7 +129,7 @@ TclChdir(dirName)
   }
   if (chdir(dirName) != 0) {
     Tcl_AppendResult("couldn't change working directory to \"",
-		     dirName, "\": ", Tcl_PosixError(), (char *) NULL);
+		     dirName, "\": ", nsp_posix_error(), (char *) NULL);
     return TCL_ERROR;
   }
   return TCL_OK;
@@ -138,14 +138,14 @@ TclChdir(dirName)
 /*
  *----------------------------------------------------------------------
  *
- * TclGetCwd --
+ * nsp_get_cwd --
  *
  *	Return the path name of the current working directory.
  *
  * Results:
  *	The result is the full path name of the current working
  *	directory, or NULL if an error occurred while figuring it out.
- *	The returned string is owned by the TclGetCwd routine and must
+ *	The returned string is owned by the nsp_get_cwd routine and must
  *	not be freed by the caller.  If an error occurs and interp
  *	isn't NULL, an error message is left in interp->result.
  *
@@ -158,13 +158,13 @@ TclChdir(dirName)
  */
 
 char *
-TclGetCwd()
+nsp_get_cwd()
 {
     char buffer[MAXPATHLEN+1];
     if (currentDir == NULL) {
       if (!currentDirExitHandlerSet) {
 	currentDirExitHandlerSet = 1;
-	Tcl_CreateExitHandler(FreeCurrentDir, (ClientData) NULL);
+	nsp_create_exit_handler(FreeCurrentDir, (ClientData) NULL);
       }
 #ifdef USEGETWD
       if ((int)getwd(buffer) == (int)NULL) {
@@ -181,7 +181,7 @@ TclGetCwd()
 	  } else {
 	    Tcl_AppendResult(
 			     "error getting working directory name: ",
-			     Tcl_PosixError(), (char *) NULL);
+			     nsp_posix_error(), (char *) NULL);
 	  }
 	  return NULL;
 	}
@@ -195,7 +195,7 @@ TclGetCwd()
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_FindExecutable --
+ * nsp_find_executable --
  *
  *	This procedure computes the absolute path name of the current
  *	application, given its argv[0] value.
@@ -206,13 +206,13 @@ TclGetCwd()
  * Side effects:
  *	The variable tclExecutableName gets filled in with the file
  *	name for the application, if we figured it out.  If we couldn't
- *	figure it out, Tcl_FindExecutable is set to NULL.
+ *	figure it out, nsp_find_executable is set to NULL.
  *
  *----------------------------------------------------------------------
  */
 
 void
-Tcl_FindExecutable(argv0)
+nsp_find_executable(argv0)
     char *argv0;		/* The value of the application's argv[0]. */
 {
     char *name, *p, *cwd;
@@ -305,7 +305,7 @@ Tcl_FindExecutable(argv0)
     if ((name[0] == '.') && (name[1] == '/')) {
 	name += 2;
     }
-    cwd = TclGetCwd();
+    cwd = nsp_get_cwd();
     if (cwd == NULL) {
 	tclExecutableName = NULL;
 	goto done;
@@ -322,14 +322,14 @@ Tcl_FindExecutable(argv0)
     fprintf(stderr,"Executable : %s \n",tclExecutableName); /* XXXXX */
     if (!executableNameExitHandlerSet) {
         executableNameExitHandlerSet = 1;
-        Tcl_CreateExitHandler(FreeExecutableName, (ClientData) NULL);
+        nsp_create_exit_handler(FreeExecutableName, (ClientData) NULL);
     }
 }
 
 /*
  *----------------------------------------------------------------------
  *
- * TclGetUserHome --
+ * nsp_get_user_home --
  *
  *	This function takes the passed in user name and finds the
  *	corresponding home directory specified in the password file.
@@ -348,7 +348,7 @@ Tcl_FindExecutable(argv0)
  */
 
 char *
-TclGetUserHome(name, bufferPtr)
+nsp_get_user_home(name, bufferPtr)
     char *name;			/* User name to use to find home directory. */
     nsp_tcldstring *bufferPtr;	/* May be used to hold result.  Must not hold
 				 * anything at the time of the call, and need
@@ -372,14 +372,14 @@ TclGetUserHome(name, bufferPtr)
 /*
  *----------------------------------------------------------------------
  *
- * TclMatchFiles --
+ * nsp_match_files --
  *
  *	This routine is used by the globbing code to search a
  *	directory for all files which match a given pattern.
  *
  * Results: 
  *	If the tail argument is NULL, then the matching files are
- *	added to the interp->result.  Otherwise, TclDoGlob is called
+ *	added to the interp->result.  Otherwise, nsp_do_glob is called
  *	recursively for each matching subdirectory.  The return value
  *	is a standard Tcl result indicating whether an error occurred
  *	in globbing.
@@ -391,8 +391,8 @@ TclGetUserHome(name, bufferPtr)
  */
 
 int
-TclMatchFiles( separators, dirPtr, pattern, tail,S)
-    char *separators;		/* Path separators to pass to TclDoGlob. */
+nsp_match_files( separators, dirPtr, pattern, tail,S)
+    char *separators;		/* Path separators to pass to nsp_do_glob. */
     nsp_tcldstring *dirPtr;	/* Contains path to directory to search. */
     char *pattern;		/* Pattern to match against. */
     char *tail;			/* Pointer to end of pattern. */
@@ -455,7 +455,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 	}
 	
 	Tcl_AppendResult( "couldn't read directory \"",
-		dirPtr->string, "\": ", Tcl_PosixError(), (char *) NULL);
+		dirPtr->string, "\": ", nsp_posix_error(), (char *) NULL);
 	if (baseLength > 0) {
 	    dirPtr->string[baseLength-1] = savedChar;
 	}
@@ -498,11 +498,11 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 	/*
 	 * Now check to see if the file matches.  If there are more
 	 * characters to be processed, then ensure matching files are
-	 * directories before calling TclDoGlob. Otherwise, just add
+	 * directories before calling nsp_do_glob. Otherwise, just add
 	 * the file to the result.
 	 */
 
-	if (Tcl_StringMatch(entryPtr->d_name, pattern)) {
+	if (nsp_string_match(entryPtr->d_name, pattern)) {
 	  nsp_tcldstring_set_length(dirPtr, baseLength);
 	  nsp_tcldstring_append(dirPtr, entryPtr->d_name, -1);
 	  if (tail == NULL) {
@@ -511,7 +511,7 @@ TclMatchFiles( separators, dirPtr, pattern, tail,S)
 	  } else if ((stat(dirPtr->string, &statBuf) == 0)
 		     && S_ISDIR(statBuf.st_mode)) {
 	    nsp_tcldstring_append(dirPtr, "/", 1);
-	    result = TclDoGlob( separators, dirPtr, tail,S);
+	    result = nsp_do_glob( separators, dirPtr, tail,S);
 	    if (result != TCL_OK) {
 	      break;
 	    }

@@ -21,7 +21,7 @@
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_GetErrno --
+ * nsp_get_errno --
  *
  *	Gets the current value of the Tcl error code variable. This is
  *	currently the global variable "errno" but could in the future
@@ -32,13 +32,13 @@
  *
  * Side effects:
  *	None. Note that the value of the Tcl error code variable is
- *	UNDEFINED if a call to Tcl_SetErrno did not precede this call.
+ *	UNDEFINED if a call to nsp_set_errno did not precede this call.
  *
  *----------------------------------------------------------------------
  */
 
 int
-Tcl_GetErrno()
+nsp_get_errno()
 {
     return errno;
 }
@@ -46,7 +46,7 @@ Tcl_GetErrno()
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_SetErrno --
+ * nsp_set_errno --
  *
  *	Sets the Tcl error code variable to the supplied value.
  *
@@ -60,7 +60,7 @@ Tcl_GetErrno()
  */
 
 void
-Tcl_SetErrno(err)
+nsp_set_errno(err)
     int err;			/* The new value. */
 {
     errno = err;
@@ -69,7 +69,7 @@ Tcl_SetErrno(err)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_PosixError --
+ * nsp_posix_error --
  *
  *	This procedure is typically called after UNIX kernel calls
  *	return errors.  It stores machine-readable information about
@@ -86,11 +86,11 @@ Tcl_SetErrno(err)
  *----------------------------------------------------------------------
  */
 
-char *Tcl_PosixError(void)
+char *nsp_posix_error(void)
 {
   char *id, *msg;
-  msg = Tcl_ErrnoMsg(errno);
-  id = Tcl_ErrnoId();
+  msg = nsp_error_msg(errno);
+  id = nsp_errno_id();
   /* XXXX Tcl_SetErrorCode( "POSIX", id, msg, (char *) NULL); **/
   return msg;
 }

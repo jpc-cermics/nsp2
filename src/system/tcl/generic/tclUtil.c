@@ -19,7 +19,7 @@
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_StringMatch --
+ * nsp_string_match --
  *
  *	See if a particular string matches a particular pattern.
  *
@@ -36,7 +36,7 @@
  */
 
 int
-Tcl_StringMatch(char *string,char * pattern)
+nsp_string_match(char *string,char * pattern)
      /*     char *string;		/\* String. *\/ 
       *     char *pattern;		/\* Pattern, which may contain special 
       * 				 * characters. *\/ 
@@ -73,7 +73,7 @@ Tcl_StringMatch(char *string,char * pattern)
 	return 1;
       }
       while (1) {
-	if (Tcl_StringMatch(string, pattern)) {
+	if (nsp_string_match(string, pattern)) {
 	  return 1;
 	}
 	if (*string == 0) {

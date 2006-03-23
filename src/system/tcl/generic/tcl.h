@@ -267,21 +267,21 @@ extern int		Tcl_DbCkfree (char *ptr,  char *file, int line);
 extern char *		Tcl_DbCkrealloc (char *ptr,  unsigned int size, char *file, int line);
 extern void		Tcl_DeleteFileHandler (int fd);
 extern void		Tcl_DetachPids (int numPids, Tcl_Pid *pidPtr);
-extern char *		Tcl_ErrnoId (void);
-extern char *		Tcl_ErrnoMsg (int err);
+extern char *		nsp_errno_id (void);
+extern char *		nsp_error_msg (int err);
 extern void		Tcl_Exit (int status);
 extern void		Tcl_Finalize (void);
-extern void		Tcl_FindExecutable (char *argv0);
+extern void		nsp_find_executable (char *argv0);
 
 extern char *		Tcl_GetCwd (char *buf, int len);
-extern int		Tcl_GetErrno (void);
+extern int		nsp_get_errno (void);
 extern char *		Tcl_GetHostName (void);
-extern Tcl_PathType	Tcl_GetPathType (char *path);
+extern Tcl_PathType	nsp_get_path_type (char *path);
 extern int		Tcl_GetServiceMode (void);
-extern char *		Tcl_JoinPath (int argc, char **argv, nsp_tcldstring *resultPtr);
-extern char *		Tcl_PosixError ();
+extern char *		nsp_join_path (int argc, char **argv, nsp_tcldstring *resultPtr);
+extern char *		nsp_posix_error ();
 extern void		Tcl_Preserve (ClientData data);
-extern int		Tcl_PutEnv (CONST char *string);
+extern int		nsp_putenv (CONST char *string);
 extern void		Tcl_ReapDetachedProcs (void);
 
 extern void		Tcl_Release (ClientData clientData);
@@ -295,19 +295,19 @@ extern int		Tcl_ServiceAll (void);
 extern int		Tcl_ServiceEvent (int flags);
 extern int		Tcl_SetBooleanObj (Stack stack,int n,int ival);
 extern int		Tcl_SetDoubleObj (Stack stack , int i, double doubleValue);
-extern void		Tcl_SetErrno (int err);
+extern void		nsp_set_errno (int err);
 extern void		Tcl_SetPanicProc (void (*proc)  TCL_VARARGS(char *, format));
 extern void		Tcl_SetResult (char *string, Tcl_FreeProc *freeProc);
 extern int		Tcl_SetServiceMode (int mode);
 extern int 		Tcl_SetStringObj (Stack stack , int i,  char *bytes, int length);
-extern char *		Tcl_SignalId (int sig);
-extern char *		Tcl_SignalMsg (int sig);
+extern char *		nsp_signal_id (int sig);
+extern char *		nsp_signal_msg (int sig);
 extern void		Tcl_Sleep (int ms);
-extern void		Tcl_SplitPath (char *path, int *argcPtr, char ***argvPtr);
-extern int		Tcl_StringMatch (char *string, char *pattern);
-#define Tcl_TildeSubst Tcl_TranslateFileName
+extern void		nsp_split_path (char *path, int *argcPtr, char ***argvPtr);
+extern int		nsp_string_match (char *string, char *pattern);
+#define Tcl_TildeSubst nsp_translate_file_name
 
-extern char *		Tcl_TranslateFileName ( char *name, nsp_tcldstring *bufferPtr);
+extern char *		nsp_translate_file_name ( char *name, nsp_tcldstring *bufferPtr);
 
 extern Tcl_Pid		Tcl_WaitPid (Tcl_Pid pid, int *statPtr,  int options);
 

@@ -77,7 +77,7 @@ ConvertFileNameFormat(
   nsp_tcldstring resultDString;
   int result = TCL_OK;
   
-  Tcl_SplitPath(fileName, &pathArgc, &pathArgv);
+  nsp_split_path(fileName, &pathArgc, &pathArgv);
   newPathArgv = (char **) ckalloc(pathArgc * sizeof(char *));
 
   for (i = 0; i < pathArgc; i++) {
@@ -99,7 +99,7 @@ ConvertFileNameFormat(
       int useLong;
 
       nsp_tcldstring_init(&resultDString);
-      resultStr = Tcl_JoinPath(i + 1, pathArgv, &resultDString);
+      resultStr = nsp_join_path(i + 1, pathArgv, &resultDString);
       findHandle = FindFirstFile(resultStr, &findData);
       if (findHandle == INVALID_HANDLE_VALUE) {
 	pathArgc = i - 1;
@@ -136,7 +136,7 @@ ConvertFileNameFormat(
   }
 
   nsp_tcldstring_init(&resultDString);
-  resultStr = Tcl_JoinPath(pathArgc, newPathArgv, &resultDString);
+  resultStr = nsp_join_path(pathArgc, newPathArgv, &resultDString);
   *attributePtrPtr = nsp_new_string_obj(NVOID,resultStr, nsp_tcldstring_length(&resultDString));
   nsp_tcldstring_free(&resultDString);
 
@@ -208,7 +208,7 @@ GetWinFileShortName(objIndex, fileName, attributePtrPtr)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_SplitPath --
+ * nsp_split_path --
  *
  *	Split a path into a list of path components.  The first element
  *	of the list will have the same path type as the original path.
@@ -232,7 +232,7 @@ GetWinFileShortName(objIndex, fileName, attributePtrPtr)
  */
 
 void
-Tcl_SplitPath(path, argcPtr, argvPtr)
+nsp_split_path(path, argcPtr, argvPtr)
      char *path;			/* Pointer to string containing a path. */
      int *argcPtr;		/* Pointer to location to fill in with
 				 * the number of elements in the path. */
@@ -311,7 +311,7 @@ Tcl_SplitPath(path, argcPtr, argvPtr)
  *
  * SplitUnixPath --
  *
- *	This routine is used by Tcl_SplitPath to handle splitting
+ *	This routine is used by nsp_split_path to handle splitting
  *	Unix paths.
  *
  * Results:
@@ -373,7 +373,7 @@ SplitUnixPath(path, bufPtr)
  *
  * SplitWinPath --
  *
- *	This routine is used by Tcl_SplitPath to handle splitting
+ *	This routine is used by nsp_split_path to handle splitting
  *	Windows paths.
  *
  * Results:
@@ -430,7 +430,7 @@ SplitWinPath(path, bufPtr)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_JoinPath --
+ * nsp_join_path --
  *
  *	Combine a list of paths in a platform specific manner.
  *
@@ -446,7 +446,7 @@ SplitWinPath(path, bufPtr)
  */
 
 char *
-Tcl_JoinPath(argc, argv, resultPtr)
+nsp_join_path(argc, argv, resultPtr)
      int argc;
      char **argv;
      nsp_tcldstring *resultPtr;	/* Pointer to previously initialized DString. */
@@ -649,7 +649,7 @@ Tcl_JoinPath(argc, argv, resultPtr)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_TranslateFileName --
+ * nsp_translate_file_name --
  *
  *	Converts a file name into a form usable by the native system
  *	interfaces.  If the name starts with a tilde, it will produce
@@ -671,7 +671,7 @@ Tcl_JoinPath(argc, argv, resultPtr)
  */
 
 char *
-Tcl_TranslateFileName( name, bufferPtr)
+nsp_translate_file_name( name, bufferPtr)
      char *name;			/* File name, which may begin with "~"
 				 * (to indicate current user's home directory)
 				 * or "~<user>" (to indicate any user's
@@ -691,7 +691,7 @@ Tcl_TranslateFileName( name, bufferPtr)
     char **argv;
     nsp_tcldstring temp;
 
-    Tcl_SplitPath(name, &argc, &argv);
+    nsp_split_path(name, &argc, &argv);
 	
     /*
      * Strip the trailing ':' off of a Mac path
@@ -711,12 +711,12 @@ Tcl_TranslateFileName( name, bufferPtr)
       return NULL;
     }
     nsp_tcldstring_init(bufferPtr);
-    Tcl_JoinPath(argc, argv, bufferPtr);
+    nsp_join_path(argc, argv, bufferPtr);
     nsp_tcldstring_free(&temp);
     ckfree((char*)argv);
   } else {
     nsp_tcldstring_init(bufferPtr);
-    Tcl_JoinPath(1, &name, bufferPtr);
+    nsp_join_path(1, &name, bufferPtr);
   }
 
   /*
@@ -737,7 +737,7 @@ Tcl_TranslateFileName( name, bufferPtr)
 /*
  *----------------------------------------------------------------------
  *
- * TclGetExtension --
+ * nsp_get_extension --
  *
  *	This function returns a pointer to the beginning of the
  *	extension part of a file name.
@@ -753,7 +753,7 @@ Tcl_TranslateFileName( name, bufferPtr)
  */
 
 char *
-TclGetExtension(name)
+nsp_get_extension(name)
      char *name;			/* File name to parse. */
 {
   char *p, *lastSep;
@@ -836,17 +836,17 @@ DoTildeSubst( user, resultPtr)
   char *dir;
 
   if (*user == '\0') {
-    dir = TclGetEnv("HOME");
+    dir = nsp_getenv("HOME");
     if (dir == NULL) {
       Tcl_AppendResult("couldn't find HOME environment ",
 		       "variable to expand path", (char *) NULL);
       return NULL;
     }
-    Tcl_JoinPath(1, &dir, resultPtr);
+    nsp_join_path(1, &dir, resultPtr);
   } else {
 	
     /* lint, TclGetuserHome() always NULL under windows. */
-    if (TclGetUserHome(user, resultPtr) == NULL) {	
+    if (nsp_get_user_home(user, resultPtr) == NULL) {	
       Tcl_AppendResult( "user \"", user, "\" doesn't exist",
 			(char *) NULL);
       return NULL;
@@ -959,7 +959,7 @@ int int_glob (stack,rhs,opt,lhs)
       } else {
 	tail = str;
       }
-    result = TclDoGlob( separators, &buffer, tail,S);
+    result = nsp_do_glob( separators, &buffer, tail,S);
     if (result != TCL_OK) {
       if (noComplain) {
 	continue;
@@ -1040,7 +1040,7 @@ SkipToChar(stringPtr, match)
 /*
  *----------------------------------------------------------------------
  *
- * TclDoGlob --
+ * nsp_do_glob --
  *
  *	This recursive procedure forms the heart of the globbing
  *	code.  It performs a depth-first traversal of the tree
@@ -1061,7 +1061,7 @@ SkipToChar(stringPtr, match)
  */
 
 int
-TclDoGlob( separators, headPtr, tail, S)
+nsp_do_glob( separators, headPtr, tail, S)
      char *separators;		/* String containing separator characters
 				 * that should be used to identify globbing
 				 * boundaries. */
@@ -1208,7 +1208,7 @@ TclDoGlob( separators, headPtr, tail, S)
     /*
      * For each element within in the outermost pair of braces,
      * append the element and the remainder to the fixed portion
-     * before the first brace and recursively call TclDoGlob.
+     * before the first brace and recursively call nsp_do_glob.
      */
 
     nsp_tcldstring_append(&newName, tail, openBrace-tail);
@@ -1223,7 +1223,7 @@ TclDoGlob( separators, headPtr, tail, S)
       nsp_tcldstring_set_length(&newName, baseLength);
       nsp_tcldstring_append(&newName, element, p-element);
       nsp_tcldstring_append(&newName, closeBrace+1, -1);
-      result = TclDoGlob( separators,
+      result = nsp_do_glob( separators,
 			 headPtr, nsp_tcldstring_value(&newName),S);
       if (result != TCL_OK) {
 	break;
@@ -1255,16 +1255,16 @@ TclDoGlob( separators, headPtr, tail, S)
     /*
      * Look for matching files in the current directory.  The
      * implementation of this function is platform specific, but may
-     * recursively call TclDoGlob.  For each file that matches, it will
-     * add the match onto the interp->result, or call TclDoGlob if there
+     * recursively call nsp_do_glob.  For each file that matches, it will
+     * add the match onto the interp->result, or call nsp_do_glob if there
      * are more characters to be processed.
      */
 
-    return TclMatchFiles( separators, headPtr, tail, p,S);
+    return nsp_match_files( separators, headPtr, tail, p,S);
   }
   nsp_tcldstring_append(headPtr, tail, p-tail);
   if (*p != '\0') {
-    return TclDoGlob( separators, headPtr, p,S);
+    return nsp_do_glob( separators, headPtr, p,S);
   }
 
   /*

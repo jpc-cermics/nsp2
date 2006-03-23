@@ -53,7 +53,7 @@ TclLoadFile(interp, fileName, sym1, sym2, proc1Ptr, proc2Ptr)
     handle = TclWinLoadLibrary(fileName);
     if (handle == NULL) {
 	Tcl_AppendResult(interp, "couldn't load file \"", fileName,
-		"\": ", Tcl_PosixError(interp), (char *) NULL);
+		"\": ", nsp_posix_error(interp), (char *) NULL);
 	return TCL_ERROR;
     }
 

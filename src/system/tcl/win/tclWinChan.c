@@ -162,7 +162,7 @@ FileInit()
     initialized = 1;
     firstFilePtr = NULL;
     Tcl_CreateEventSource(FileSetupProc, FileCheckProc, NULL);
-    Tcl_CreateExitHandler(FileChannelExitHandler, NULL);
+    nsp_create_exit_handler(FileChannelExitHandler, NULL);
 }
 
 /*
@@ -870,7 +870,7 @@ Tcl_OpenFileChannel(interp, fileName, modeString, permissions)
         return NULL;
     }
 
-    nativeName = Tcl_TranslateFileName(interp, fileName, &buffer);
+    nativeName = nsp_translate_file_name(interp, fileName, &buffer);
     if (nativeName == NULL) {
 	return NULL;
     }
@@ -959,7 +959,7 @@ Tcl_OpenFileChannel(interp, fileName, modeString, permissions)
         TclWinConvertError(err);
 	if (interp != (Tcl_Interp *) NULL) {
             Tcl_AppendResult(interp, "couldn't open \"", fileName, "\": ",
-                    Tcl_PosixError(interp), (char *) NULL);
+                    nsp_posix_error(interp), (char *) NULL);
         }
         nsp_tcldstring_free(&buffer);
         return NULL;
@@ -1020,7 +1020,7 @@ Tcl_OpenFileChannel(interp, fileName, modeString, permissions)
         if (Tcl_Seek(infoPtr->channel, 0, SEEK_END) < 0) {
             if (interp != (Tcl_Interp *) NULL) {
                 Tcl_AppendResult(interp, "could not seek to end of file on \"",
-                        channelName, "\": ", Tcl_PosixError(interp),
+                        channelName, "\": ", nsp_posix_error(interp),
                         (char *) NULL);
             }
             Tcl_Close(NULL, infoPtr->channel);
