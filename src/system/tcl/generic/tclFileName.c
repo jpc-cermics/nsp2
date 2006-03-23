@@ -14,7 +14,6 @@
 
 #include "tclInt.h"
 #include "tclPort.h"
-#include "tclRegexp.h"
 
 /*
  * This variable indicates whether the cleanup procedure has been
@@ -132,7 +131,7 @@ ExtractWinRoot(path, resultPtr, offset)
    */
 
   if (winRootPatternPtr == NULL) {
-    winRootPatternPtr = TclRegComp(WIN_ROOT_PATTERN);
+    winRootPatternPtr = tcl_reg_comp(WIN_ROOT_PATTERN);
     if (!initialized) {
       Tcl_CreateExitHandler(FileNameCleanup, NULL);
       initialized = 1;
@@ -143,7 +142,7 @@ ExtractWinRoot(path, resultPtr, offset)
    * Match the root portion of a Windows path name.
    */
 
-  if (!TclRegExec(winRootPatternPtr, path, path)) {
+  if (!tcl_reg_exec(winRootPatternPtr, path, path)) {
     return path;
   }
 
@@ -214,13 +213,13 @@ Tcl_GetPathType( char *path)
        */
 
       if (!macRootPatternPtr) {
-	macRootPatternPtr = TclRegComp(MAC_ROOT_PATTERN);
+	macRootPatternPtr = tcl_reg_comp(MAC_ROOT_PATTERN);
 	if (!initialized) {
 	  Tcl_CreateExitHandler(FileNameCleanup, NULL);
 	  initialized = 1;
 	}
       }
-      if (!TclRegExec(macRootPatternPtr, path, path)
+      if (!tcl_reg_exec(macRootPatternPtr, path, path)
 	  || (macRootPatternPtr->startp[2] != NULL)) {
 	type = TCL_PATH_RELATIVE;
       }
@@ -236,13 +235,13 @@ Tcl_GetPathType( char *path)
        */
 
       if (!winRootPatternPtr) {
-	winRootPatternPtr = TclRegComp(WIN_ROOT_PATTERN);
+	winRootPatternPtr = tcl_reg_comp(WIN_ROOT_PATTERN);
 	if (!initialized) {
 	  Tcl_CreateExitHandler(FileNameCleanup, NULL);
 	  initialized = 1;
 	}
       }
-      if (TclRegExec(winRootPatternPtr, path, path)) {
+      if (tcl_reg_exec(winRootPatternPtr, path, path)) {
 	if (winRootPatternPtr->startp[5]
 	    || (winRootPatternPtr->startp[2]
 		&& !(winRootPatternPtr->startp[6]))) {
@@ -507,7 +506,7 @@ static char *SplitMacPath(
    */
 
   if (macRootPatternPtr == NULL) {
-    macRootPatternPtr = TclRegComp(MAC_ROOT_PATTERN);
+    macRootPatternPtr = tcl_reg_comp(MAC_ROOT_PATTERN);
     if (!initialized) {
       Tcl_CreateExitHandler(FileNameCleanup, NULL);
       initialized = 1;
@@ -519,7 +518,7 @@ static char *SplitMacPath(
    */
 
   i = 0;			/* Needed only to prevent gcc warnings. */
-  if (TclRegExec(macRootPatternPtr, path, path) == 1) {
+  if (tcl_reg_exec(macRootPatternPtr, path, path) == 1) {
     /*
      * Treat degenerate absolute paths like / and /../.. as
      * Mac relative file names for lack of anything else to do.

@@ -36,25 +36,14 @@
 #include <stdio.h>
 
 #include "tcl.h"
-#include "tclRegexp.h"
-#include "dstring.h"
+#include "../../regexp.h"
+#include "../../dstring.h"
 
-#include <ctype.h>
-#ifdef NO_LIMITS_H
-#   include "../compat/limits.h"
-#else
-#   include <limits.h>
-#endif
-#ifdef NO_STDLIB_H
-#   include "../compat/stdlib.h"
-#else
-#   include <stdlib.h>
-#endif
-#ifdef NO_STRING_H
-#include "../compat/string.h"
-#else
 #include <string.h>
-#endif
+#include <ctype.h>
+#include <limits.h>
+#include <stdlib.h>
+
 #if defined(__STDC__) || defined(HAS_STDARG)
 #   include <stdarg.h>
 #else

@@ -14,10 +14,9 @@ CFLAGS =${CFLAGS_I} -I../generic
 
 UNIX_OBJS = tclUnixFCmd.o tclUnixFile.o 	tclUnixInit.o
 
-GENERIC_OBJS =  regexp.o tclCmdAZ.o \
+GENERIC_OBJS =  tclCmdAZ.o \
 	tclFCmd.o tclFileName.o  tclIOUtil.o tclPosixStr.o \
-	tclUtil.o Tobedone.o tclEnv.o  tcl2interf.o dstring.o
-
+	tclUtil.o Tobedone.o tclEnv.o  tcl2interf.o
 
 OBJS = ${GENERIC_OBJS} ${UNIX_OBJS} 
 

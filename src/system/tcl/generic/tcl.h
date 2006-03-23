@@ -17,7 +17,7 @@
 #ifndef _TCL
 #define _TCL
 
-#include "dstring.h"
+#include "../../dstring.h"
 /*
  * When version numbers change here, must also go into the following files
  * and update the version numbers:
