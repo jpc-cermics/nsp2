@@ -5,8 +5,8 @@ SCIDIR1=..\..
 LIBRARY = nsp.a
 
 OBJSC =  System-IN.o timer.o files.o realtime.o \
+	regexp.o dstring.o \
 	tcl/unix/tclCmdAZ.o \
-	tcl/unix/regexp.o \
 	tcl/unix/tclEnv.o \
 	tcl/unix/tclFCmd.o \
 	tcl/unix/tclFileName.o \
@@ -17,8 +17,7 @@ OBJSC =  System-IN.o timer.o files.o realtime.o \
 	tcl/unix/tclUnixInit.o \
 	tcl/unix/Tobedone.o \
 	tcl/unix/tcl2interf.o \
-	tcl/unix/tclUtil.o \
-	tcl/unix/dstring.o \
+	tcl/unix/tclUtil.o 
 
 OBJSF =
 
