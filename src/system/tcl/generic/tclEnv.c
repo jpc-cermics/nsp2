@@ -12,12 +12,10 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) tclEnv.c 1.49 97/08/11 20:22:40
  */
 
 #include "tclInt.h"
 #include "tclPort.h"
-
 
 static int cacheSize = 0;	/* Number of env strings in environCache. */
 static char **environCache = NULL;
@@ -41,37 +39,23 @@ static void		ReplaceString (CONST char *oldStr,  char *newStr);
 void			TclSetEnv (CONST char *name, CONST char *value);
 void			TclUnsetEnv (CONST char *name);
 
-/*
- *----------------------------------------------------------------------
- *
- * TclSetEnv --
- *
+
+/**
+ * TclSetEnv:
+ * @name: Name of variable whose value is to be set.
+ * @value:  New value for variable.
+ * 
  *	Set an environment variable, replacing an existing value
  *	or creating a new variable if there doesn't exist a variable
- *	by the given name.  This procedure is intended to be a
+ *	by the given @name.  This procedure is intended to be a
  *	stand-in for the  UNIX "setenv" procedure so that applications
- *	using that procedure will interface properly to Tcl.  To make
- *	it a stand-in, the Makefile must define "TclSetEnv" to "setenv".
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	The environ array gets updated, as do all of the interpreters
- *	that we manage.
- *
- *----------------------------------------------------------------------
- */
+ *	using that procedure will interface properly.  
+ **/
 
-void
-TclSetEnv(name, value)
-    CONST char *name;		/* Name of variable whose value is to be
-				 * set. */
-    CONST char *value;		/* New value for variable. */
+void TclSetEnv(const char *name,const char *value)
 {
     int index, length, nameLength;
     char *p, *oldValue;
-
 #ifdef MAC_TCL
     if (environ == NULL) {
 	environSize = TclMacCreateEnv();
@@ -146,34 +130,22 @@ TclSetEnv(name, value)
 
     ReplaceString(oldValue, p);
 }
-
-/*
- *----------------------------------------------------------------------
+
+/**
+ * Tcl_PutEnv:
+ * @string: Info about environment variable in the form NAME=value.
+ * 
  *
- * Tcl_PutEnv --
- *
- *	Set an environment variable.  Similar to setenv except that
+ *	Sets an environment variable.  Similar to setenv except that
  *	the information is passed in a single string of the form
  *	NAME=value, rather than as separate name strings.  This procedure
- *	is intended to be a stand-in for the  UNIX "putenv" procedure
- *	so that applications using that procedure will interface
- *	properly to Tcl.  To make it a stand-in, the Makefile will
- *	define "Tcl_PutEnv" to "putenv".
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	The environ array gets updated, as do all of the interpreters
- *	that we manage.
- *
- *----------------------------------------------------------------------
- */
+ *	is intended to be a stand-in for the  UNIX "putenv" procedure.
+ *	The environ array gets updated, 
+ * 
+ * Return value: unused.
+ **/
 
-int
-Tcl_PutEnv(string)
-    CONST char *string;		/* Info about environment variable in the
-				 * form NAME=value. */
+int Tcl_PutEnv(const char *string)
 {
     int nameLength;
     char *name, *value;
@@ -202,33 +174,20 @@ Tcl_PutEnv(string)
     ckfree(name);
     return 0;
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * TclUnsetEnv --
- *
- *	Remove an environment variable, updating the "env" arrays
- *	in all interpreters managed by us.  This function is intended
- *	to replace the UNIX "unsetenv" function (but to do this the
- *	Makefile must be modified to redefine "TclUnsetEnv" to
- *	"unsetenv".
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	Interpreters are updated, as is environ.
- *
- *----------------------------------------------------------------------
- */
 
-void
-TclUnsetEnv(name)
-    CONST char *name;			/* Name of variable to remove. */
+/**
+ * TclUnsetEnv:
+ * @name: Name of variable to remove.
+ * 
+ *	Remove an environment variable, updating the "env" arrays
+ *	This function is intended to replace the UNIX "unsetenv" function.
+ **/
+
+void TclUnsetEnv(const char *name)
+	
 {
-    char *oldValue;
-    int length, index;
+  char *oldValue;
+  int length, index;
 #ifdef USE_PUTENV
     char *string;
 #else
@@ -285,27 +244,19 @@ TclUnsetEnv(name)
     ReplaceString(oldValue, NULL);
 
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * TclGetEnv --
+
+
+/**
+ * TclGetEnv:
+ * @name:  Name of variable to find.
  *
  *	Retrieve the value of an environment variable.
  *
- * Results:
- *	Returns a pointer to a static string in the environment,
+ * Return value: a pointer to a static string in the environment,
  *	or NULL if the value was not found.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
+ **/
 
-char *
-TclGetEnv(name)
-    CONST char *name;		/* Name of variable to find. */
+char * TclGetEnv(const char *name)
 {
     int length, index;
 
@@ -323,28 +274,20 @@ TclGetEnv(name)
     }
 }
 
-/*
- *----------------------------------------------------------------------
- *
- * ReplaceString --
- *
+
+/**
+ * ReplaceString:
+ * @oldStr:  Old environment string
+ * @newStr: New environment string
+ * 
  *	Replace one string with another in the environment variable
  *	cache.  The cache keeps track of all of the environment
- *	variables that Tcl has modified so they can be freed later.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	May free the old string.
- *
- *----------------------------------------------------------------------
- */
+ *	variables which were modified so they can be freed later.
+ *      May free the old string.
+ * 
+ **/
 
-static void
-ReplaceString(oldStr, newStr)
-    CONST char *oldStr;		/* Old environment string. */
-    char *newStr;		/* New environment string. */
+static void ReplaceString(const char *oldStr, char *newStr)
 {
     int i;
     char **newCache;
@@ -395,20 +338,12 @@ ReplaceString(oldStr, newStr)
 	cacheSize += 5;
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
  * FindVariable --
  *
- *	Locate the entry in environ for a given name.
- *
- * Results:
- *	The return value is the index in environ of an entry with the
- *	name "name", or -1 if there is no such entry.   The integer at
- *	*lengthPtr is filled in with the length of name (if a matching
- *	entry is found) or the length of the environ array (if no matching
- *	entry is found).
  *
  * Side effects:
  *	None.
@@ -416,16 +351,28 @@ ReplaceString(oldStr, newStr)
  *----------------------------------------------------------------------
  */
 
-static int
-FindVariable(name, lengthPtr)
-    CONST char *name;		/* Name of desired environment variable. */
-    int *lengthPtr;		/* Used to return length of name (for
-				 * successful searches) or number of non-NULL
-				 * entries in environ (for unsuccessful
-				 * searches). */
+
+/**
+ * FindVariable:
+ * @name: Name of desired environment variable.
+ * @searches:  Used to return length of name (for
+ * successful searches) or number of non-NULL
+ * entries in environ (for unsuccessful
+ * 
+ * Locate the entry in environ for a given name.
+ *
+ * Return value: The return value is the index in environ of an entry with the
+ *	name "name", or -1 if there is no such entry.   The integer at
+ *	*lengthPtr is filled in with the length of name (if a matching
+ *	entry is found) or the length of the environ array (if no matching
+ *	entry is found).
+ * 
+ **/
+
+static int FindVariable(const char *name,int * lengthPtr)
 {
     int i;
-    register CONST char *p1, *p2;
+    register const char *p1, *p2;
 
     for (i = 0, p1 = environ[i]; p1 != NULL; i++, p1 = environ[i]) {
 	for (p2 = name; *p2 == *p1; p1++, p2++) {
@@ -439,28 +386,18 @@ FindVariable(name, lengthPtr)
     *lengthPtr = i;
     return -1;
 }
-
 
-/*
- *----------------------------------------------------------------------
- *
- * TclFinalizeEnvironment --
- *
+/**
+ * TclFinalizeEnvironment:
+ * @void: 
+ * 
  *	This function releases any storage allocated by this module
  *	that isn't still in use by the global environment.  Any
  *	strings that are still in the environment will be leaked.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	May deallocate storage.
- *
- *----------------------------------------------------------------------
- */
+ * 
+ **/
 
-void
-TclFinalizeEnvironment()
+void TclFinalizeEnvironment(void)
 {
   /*
    * For now we just deallocate the cache array and none of the environment

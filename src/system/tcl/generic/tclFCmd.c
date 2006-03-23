@@ -586,38 +586,42 @@ static char *FileBasename(
 			  nsp_tcldstring *bufferPtr	/* Initialized DString that receives
 							 * basename. */)
 {
-    int argc;
-    char **argv;
+  int argc;
+  char **argv;
     
-    Tcl_SplitPath(path, &argc, &argv);
-    if (argc == 0) {
-	nsp_tcldstring_init(bufferPtr);
-    } else {
-	if ((argc == 1) && (*path == '~')) {
-	    nsp_tcldstring buffer;
-	    
-	    ckfree((char *) argv);
-	    path = Tcl_TranslateFileName( path, &buffer);
-	    if (path == NULL) {
-		return NULL;
-	    }
-	    Tcl_SplitPath(path, &argc, &argv);
-	    nsp_tcldstring_free(&buffer);
+  Tcl_SplitPath(path, &argc, &argv);
+  if (argc == 0) 
+    {
+      nsp_tcldstring_init(bufferPtr);
+    } 
+  else 
+    {
+      if ((argc == 1) && (*path == '~')) 
+	{
+	  nsp_tcldstring buffer;
+	  
+	  ckfree((char *) argv);
+	  path = Tcl_TranslateFileName( path, &buffer);
+	  if (path == NULL) {
+	    return NULL;
+	  }
+	  Tcl_SplitPath(path, &argc, &argv);
+	  nsp_tcldstring_free(&buffer);
 	}
-	nsp_tcldstring_init(bufferPtr);
+      nsp_tcldstring_init(bufferPtr);
 
-	/*
-	 * Return the last component, unless it is the only component, and it
-	 * is the root of an absolute path.
-	 */
-
-	if (argc > 0) {
-	    if ((argc > 1)
-		    || (Tcl_GetPathType(argv[0]) == TCL_PATH_RELATIVE)) {
-		nsp_tcldstring_append(bufferPtr, argv[argc - 1], -1);
-	    }
+      /*
+       * Return the last component, unless it is the only component, and it
+       * is the root of an absolute path.
+       */
+      
+      if (argc > 0) {
+	if ((argc > 1)
+	    || (Tcl_GetPathType(argv[0]) == TCL_PATH_RELATIVE)) {
+	  nsp_tcldstring_append(bufferPtr, argv[argc - 1], -1);
 	}
+      }
     }
-    ckfree((char *) argv);
-    return nsp_tcldstring_value(bufferPtr);
+  ckfree((char *) argv);
+  return nsp_tcldstring_value(bufferPtr);
 }

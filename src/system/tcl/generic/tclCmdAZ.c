@@ -45,18 +45,8 @@ static int              TclFileAttrsCmd(Stack stack,int,int,int);
 char *tclExecutableName = NULL;
 
 /*
- *----------------------------------------------------------------------
- *
  * int_syscd 
- *	This procedure is invoked to process the "cd" Scilab command.
- *	See the user documentation for details on what it does.
- *
- * Results:
- *      None 
- * Side effects:
- *	See the user documentation.
- *
- *----------------------------------------------------------------------
+ *	This procedure is invoked to process the "cd" command.
  */
 
 int int_syscd(Stack stack,int rhs,int opt,int lhs) 
@@ -79,14 +69,9 @@ int int_syscd(Stack stack,int rhs,int opt,int lhs)
 }
 
 /*
- *----------------------------------------------------------------------
  *
  * int_sysfile
- *
  *	This procedure is invoked to process the "file"  command.
- *	See the user documentation for details on what it does.
- *
- *----------------------------------------------------------------------
  */
 
 static nsp_string nsp_dirname (char *fileName)
@@ -151,7 +136,7 @@ static nsp_string nsp_tail(char *fileName)
   Tcl_SplitPath(fileName, &pargc, &pargv);
   if ((pargc == 1) && (*fileName == '~')) 
     {
-      ckfree((char*) pargv);
+      ckfree((char*) pargv);pargv=NULL;
       fileName = Tcl_TranslateFileName( fileName, &buffer);
       if (fileName == NULL) 
 	{
@@ -181,7 +166,6 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 {
   char *fileName, *extension, *errorString;
   int statOp = 0;		/* Init. to avoid compiler warning. */
-  int length=0;
   int mode = 0;		/* Init. to avoid compiler warning. */
   struct stat statBuf;
   nsp_tcldstring buffer;
@@ -301,10 +285,10 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  NthObj(2)->ret_pos = 1;
 	  result = 1;
 	} else {
-	  result = nsp_move_string(stack,1, fileName, (int) (length - strlen(extension)));
+	  result = nsp_move_string(stack,1, fileName, (int) (strlen(fileName) - strlen(extension)));
 	  result = ( result == FAIL) ? RET_BUG: 1;
 	}
-	goto done;
+	goto done; 
       }
     case FILE_EXTENSION: /* OK */
       if (rhs != 2) {
@@ -695,7 +679,6 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 
 
 /*
- *----------------------------------------------------------------------
  *
  * StoreStatData --
  *
@@ -706,7 +689,6 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
  * Results:
  *	Returns a string Matrix 
  *
- *----------------------------------------------------------------------
  */
 
 static NspSMatrix *StoreStatData(struct stat *statPtr) 
@@ -753,9 +735,8 @@ static int StoreStat( NspSMatrix *S, int i, char *str1,char *str2)
   return OK;
 }
 
-
+
 /*
- *----------------------------------------------------------------------
  *
  * GetTypeFromMode --
  *
@@ -768,7 +749,6 @@ static int StoreStat( NspSMatrix *S, int i, char *str1,char *str2)
  * Side effects:
  *	None.
  *
- *----------------------------------------------------------------------
  */
 
 static char *GetTypeFromMode(int mode)
@@ -796,12 +776,10 @@ static char *GetTypeFromMode(int mode)
 }
 
 /*
- *----------------------------------------------------------------------
  * TclFileAttrsCmd --
  *
  * Called by the previous interface when first argument if attributes
  * file('attributes',<name>,....)
- *----------------------------------------------------------------------
  */
 
 static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs) 
@@ -883,23 +861,11 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
 }
 
 
-/*----------------------------------------------------------------------
- *
+/*
  * InfoHostnameCmd --
  *
- *      Called to implement the "info hostname" command that returns the
- *      host name. Handles the following syntax:
- *
- *          info hostname
- *
- * Results:
- *      Returns TCL_OK is successful and TCL_ERROR is there is an error.
- *
- * Side effects:
- *      Returns a result in the ""reter's result object. If there is
- *	an error, the result is an error message.
- *
- *----------------------------------------------------------------------
+ *      Called to implement the "hostname" command that returns the
+ *      host name. 
  */
 
 int int_sys_hostname(Stack stack,int rhs,int opt,int lhs) 
@@ -913,20 +879,8 @@ int int_sys_hostname(Stack stack,int rhs,int opt,int lhs)
 }
 
 /*
- *----------------------------------------------------------------------
- *
  * int_pwd 
- *
- *	This procedure is invoked to process the "pwd" Tcl command.
- *	See the user documentation for details on what it does.
- *
- * Results:
- *	A standard Tcl result.
- *
- * Side effects:
- *	See the user documentation.
- *
- *----------------------------------------------------------------------
+ *	This procedure is invoked to process the "pwd" command.
  */
 
 int int_pwd(Stack stack,int rhs,int opt,int lhs) 
