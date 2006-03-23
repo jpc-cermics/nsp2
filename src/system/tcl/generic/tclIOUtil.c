@@ -13,7 +13,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) tclIOUtil.c 1.132 97/04/23 16:21:42
  */
 
 #include "tclInt.h"
@@ -43,7 +42,7 @@ Tcl_GetErrno()
 {
     return errno;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -66,7 +65,7 @@ Tcl_SetErrno(err)
 {
     errno = err;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -87,12 +86,11 @@ Tcl_SetErrno(err)
  *----------------------------------------------------------------------
  */
 
-char *
-Tcl_PosixError()
+char *Tcl_PosixError(void)
 {
-    char *id, *msg;
-    msg = Tcl_ErrnoMsg(errno);
-    id = Tcl_ErrnoId();
-    /* XXXX Tcl_SetErrorCode( "POSIX", id, msg, (char *) NULL); **/
-    return msg;
+  char *id, *msg;
+  msg = Tcl_ErrnoMsg(errno);
+  id = Tcl_ErrnoId();
+  /* XXXX Tcl_SetErrorCode( "POSIX", id, msg, (char *) NULL); **/
+  return msg;
 }

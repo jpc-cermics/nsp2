@@ -64,27 +64,19 @@ static int		SkipToChar (char **stringPtr,char *match);
 static char *		SplitMacPath (char *path, nsp_tcldstring *bufPtr);
 static char *		SplitWinPath (char *path, nsp_tcldstring *bufPtr);
 static char *		SplitUnixPath (char *path, nsp_tcldstring *bufPtr);
-
-/*
- *----------------------------------------------------------------------
- *
- * FileNameCleanup --
- *
+
+
+/**
+ * FileNameCleanup:
+ * @clientData: unused
+ * 
  *	This procedure is a Tcl_ExitProc used to clean up the static
  *	data structures used in this file.
- *
- * Results:
- *	None.
- *
- * Side effects:
  *	Deallocates storage used by the procedures in this file.
- *
- *----------------------------------------------------------------------
- */
+ * 
+ **/
 
-static void
-FileNameCleanup(clientData)
-     ClientData clientData;	/* Not used. */
+static void FileNameCleanup(ClientData clientData)
 {
   if (winRootPatternPtr != NULL) {
     ckfree((char *)winRootPatternPtr);
@@ -96,33 +88,27 @@ FileNameCleanup(clientData)
   }
   initialized = 0;
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * ExtractWinRoot --
- *
+
+
+/**
+ * ExtractWinRoot:
+ * @path: Path to parse.
+ * @resultPtr: Buffer to hold result.
+ * @offset: Offset in buffer where result should be stored.
+ * 
  *	Matches the root portion of a Windows path and appends it
  *	to the specified nsp_tcldstring.
- *	
- * Results:
- *	Returns the position in the path immediately after the root
- *	including any trailing slashes.
- *	Appends a cleaned up version of the root to the Tcl_DString
- *	at the specified offest.
- *
- * Side effects:
  *	Modifies the specified nsp_tcldstring.
+ * 
+ * Return value: the position in the path immediately after the root
+ *   including any trailing slashes. Appends a cleaned up version of 
+ *   the root to the nsp_tcldstring at the specified offest.
  *
- *----------------------------------------------------------------------
- */
+ **/
 
 static char *
-ExtractWinRoot(path, resultPtr, offset)
-     char *path;			/* Path to parse. */
-     nsp_tcldstring *resultPtr;	/* Buffer to hold result. */
-     int offset;			/* Offset in buffer where result should be
-				 * stored. */
+ExtractWinRoot(char *path,nsp_tcldstring * resultPtr,int  offset)
+
 {
   int length;
 
@@ -167,27 +153,21 @@ ExtractWinRoot(path, resultPtr, offset)
   }
   return winRootPatternPtr->endp[0];
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * Tcl_GetPathType --
- *
+
+
+
+/**
+ * Tcl_GetPathType:
+ * @path: 
+ * 
  *	Determines whether a given path is relative to the current
  *	directory, relative to the current volume, or absolute.
- *
- * Results:
- *	Returns one of TCL_PATH_ABSOLUTE, TCL_PATH_RELATIVE, or
- *	TCL_PATH_VOLUME_RELATIVE.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
+ * 
+ * Return value: Returns one of TCL_PATH_ABSOLUTE, TCL_PATH_RELATIVE, or
+ * TCL_PATH_VOLUME_RELATIVE.
+ **/
 
-Tcl_PathType
-Tcl_GetPathType( char *path)
+Tcl_PathType Tcl_GetPathType( char *path)
 {
   Tcl_PathType type = TCL_PATH_ABSOLUTE;
 
@@ -255,18 +235,18 @@ Tcl_GetPathType( char *path)
   }
   return type;
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * Tcl_SplitPath --
- *
+
+
+
+/**
+ * Tcl_SplitPath:
+ * @path: Pointer to string containing a path.
+ * @argcPtr: Pointer to location to fill in with the number of elements in the path.
+ * @argvPtr: Pointer to place to store pointer to array of pointers to path elements.
+ * 
  *	Split a path into a list of path components.  The first element
  *	of the list will have the same path type as the original path.
  *
- * Results:
- *	Returns a standard Tcl result.  The interpreter result contains
- *	a list of path components.
  *	*argvPtr will be filled in with the address of an array
  *	whose elements point to the elements of path, in order.
  *	*argcPtr will get filled in with the number of valid elements
@@ -276,18 +256,9 @@ Tcl_GetPathType( char *path)
  *	on *argvPtr.  Note:  *argvPtr and *argcPtr are only modified
  *	if the procedure returns normally.
  *
- * Side effects:
- *	Allocates memory.
- *
- *----------------------------------------------------------------------
- */
+ **/
 
-void Tcl_SplitPath(
-		   char *path,			/* Pointer to string containing a path. */
-		   int *argcPtr,		/* Pointer to location to fill in with
-				 * the number of elements in the path. */
-		   char ***argvPtr		/* Pointer to place to store pointer to array
-						 * of pointers to path elements. */)
+void Tcl_SplitPath(char *path,int *argcPtr, char ***argvPtr)
 {
   int i, size;
   char *p;
@@ -355,28 +326,21 @@ void Tcl_SplitPath(
 
   nsp_tcldstring_free(&buffer);
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * SplitUnixPath --
- *
- *	This routine is used by Tcl_SplitPath to handle splitting
- *	Unix paths.
- *
- * Results:
- *	Stores a null separated array of strings in the specified
- *	nsp_tcldstring.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
 
-static char *SplitUnixPath(
-			   char *path,			/* Pointer to string containing a path. */
-			   nsp_tcldstring *bufPtr	/* Pointer to DString to use for the result. */)
+/**
+ * SplitUnixPath:
+ * @path: Pointer to string containing a path.
+ * @bufPtr: Pointer to DString to use for the result.
+ * 
+ * used by Tcl_SplitPath to handle splitting
+ * unix paths. Stores a null separated array of strings in the specified
+ * nsp_tcldstring.
+ * 
+ * Return value: Stores a null separated array of strings in the specified 
+ *  nsp_tcldstring which value is returned.
+ **/
+
+static char *SplitUnixPath(char *path, nsp_tcldstring *bufPtr)
 {
   int length;
   char *p, *elementStart;
@@ -416,29 +380,22 @@ static char *SplitUnixPath(
   }
   return nsp_tcldstring_value(bufPtr);
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * SplitWinPath --
- *
+
+
+/**
+ * SplitWinPath:
+ * @path: Pointer to string containing a path.
+ * @bufPtr:  Pointer to DString to use for the result.
+ * 
  *	This routine is used by Tcl_SplitPath to handle splitting
  *	Windows paths.
- *
- * Results:
  *	Stores a null separated array of strings in the specified
  *	nsp_tcldstring.
  *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
+ * Return value: the value of @bufPtr
+ **/
 
-static char *
-SplitWinPath(
-	     char *path,			/* Pointer to string containing a path. */
-	     nsp_tcldstring *bufPtr	/* Pointer to DString to use for the result. */)
+static char *SplitWinPath(char *path, nsp_tcldstring *bufPtr)
 {
   int length;
   char *p, *elementStart;
@@ -475,27 +432,21 @@ SplitWinPath(
 
   return nsp_tcldstring_value(bufPtr);
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * SplitMacPath --
+
+
+/**
+ * SplitMacPath:
+ * @path: Pointer to string containing a path.
+ * @bufPtr: Pointer to DString to use for the result.
  *
  *	This routine is used by Tcl_SplitPath to handle splitting
  *	Macintosh paths.
- *
- * Results:
  *	Returns a newly allocated argv array.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
+ * 
+ * Return value: the value of @bufPtr
+ **/
 
-static char *SplitMacPath(
-			  char *path,			/* Pointer to string containing a path. */
-			  nsp_tcldstring *bufPtr	/* Pointer to DString to use for the result. */)
+static char *SplitMacPath( char *path, nsp_tcldstring *bufPtr)
 {
   int isMac = 0;		/* 1 if is Mac-style, 0 if Unix-style path. */
   int i, length;
@@ -652,28 +603,22 @@ static char *SplitMacPath(
   }
   return nsp_tcldstring_value(bufPtr);
 }
-
-/*
- *----------------------------------------------------------------------
+
+
+/**
+ * Tcl_JoinPath:
+ * @argc: 
+ * @argv: 
+ * @resultPtr:  Pointer to previously initialized DString.
  *
- * Tcl_JoinPath --
+ * Combines a list of paths in a platform specific manner.
  *
- *	Combine a list of paths in a platform specific manner.
- *
- * Results:
- *	Appends the joined path to the end of the specified
+ * Return value: Appends the joined path to the end of the specified
  *	returning a pointer to the resulting string.  Note that
  *	the nsp_tcldstring must already be initialized.
- *
- * Side effects:
- *	Modifies the nsp_tcldstring.
- *
- *----------------------------------------------------------------------
- */
+ **/
 
-char *Tcl_JoinPath( int argc,
-		    char **argv,
-		    nsp_tcldstring *resultPtr /* Pointer to previously initialized DString. */)
+char *Tcl_JoinPath( int argc, char **argv,  nsp_tcldstring *resultPtr)
 {
   int oldLength, length, i, needsSep;
   nsp_tcldstring buffer;
@@ -869,40 +814,29 @@ char *Tcl_JoinPath( int argc,
   nsp_tcldstring_free(&buffer);
   return nsp_tcldstring_value(resultPtr);
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * Tcl_TranslateFileName --
- *
+
+
+/**
+ * Tcl_TranslateFileName:
+ * @name: File name, which may begin with tilde or tilde user
+ * @bufferPtr: May be used to hold result. Must not hold anything 
+ *   at the time of the call, and need not even be initialized.
+ * 
  *	Converts a file name into a form usable by the native system
  *	interfaces.  If the name starts with a tilde, it will produce
  *	a name where the tilde and following characters have been
  *	replaced by the home directory location for the named user.
- *
- * Results:
- *	The result is a pointer to a static string containing
+ * 
+ * 
+ * Return value:  The result is a pointer to a static string containing
  *	the new name.  If there was an error in processing the
- *	name, then an error message is left in interp->result
- *	and the return value is NULL.  The result will be stored
+ *	name, then an error message is left
+ *	and the return value is %NULL.  The result will be stored
  *	in bufferPtr; the caller must call nsp_tcldstring_free(bufferPtr)
- *	to free the name if the return value was not NULL.
- *
- * Side effects:
- *	Information may be left in bufferPtr.
- *
- *----------------------------------------------------------------------
- */
+ *	to free the name if the return value was not %NULL.
+ **/
 
-char *
-Tcl_TranslateFileName(
-		      char *name,			/* File name, which may begin with "~"
-							 * (to indicate current user's home directory)
-							 * or "~<user>" (to indicate any user's
-							 * home directory). */
-		      nsp_tcldstring *bufferPtr	/* May be used to hold result.  Must not hold
-						 * anything at the time of the call, and need
-						 * not even be initialized. */)
+char *Tcl_TranslateFileName(char *name,nsp_tcldstring *bufferPtr)
 {
   register char *p;
 
@@ -957,26 +891,19 @@ Tcl_TranslateFileName(
   }
   return nsp_tcldstring_value(bufferPtr);
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * TclGetExtension --
- *
+
+/**
+ * TclGetExtension:
+ * @name: File name to parse. 
+ * 
  *	This function returns a pointer to the beginning of the
  *	extension part of a file name.
- *
- * Results:
- *	Returns a pointer into name which indicates where the extension
- *	starts.  If there is no extension, returns NULL.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
+ * 
+ * Return value: 	Returns a pointer into name which indicates where the extension
+ * starts.  If there is no extension, returns %NULL.
+ **/
 
-char *TclGetExtension(char *name			/* File name to parse. */)
+char *TclGetExtension(char *name)
 {
   char *p, *lastSep;
 
@@ -1025,34 +952,25 @@ char *TclGetExtension(char *name			/* File name to parse. */)
   }
   return p;
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * DoTildeSubst --
+
+
+/**
+ * DoTildeSubst:
+ * @user: Name of user whose home directory should be substituted.
+ * @resultPtr: May be used to hold result. Must not hold anything 
+ *      at the time of the call, and need not even be initialized.
  *
  *	Given a string following a tilde, this routine returns the
  *	corresponding home directory.
  *
- * Results:
- *	The result is a pointer to a static string containing the home
+ * Return value: The result is a pointer to a static string containing the home
  *	directory in native format.  If there was an error in processing
- *	the substitution, then an error message is left in interp->result
- *	and the return value is NULL.  On success, the results are appended
+ *	the substitution, then an error message is left
+ *	and the return value is %NULL. On success, the results are appended
  * 	to resultPtr, and the contents of resultPtr are returned.
- *
- * Side effects:
- *	Information may be left in resultPtr.
- *
- *----------------------------------------------------------------------
- */
+ **/
 
-static char *DoTildeSubst(
-			  char *user,			/* Name of user whose home directory should be
-				 * substituted, or "" for current user. */
-			  nsp_tcldstring *resultPtr	/* May be used to hold result.  Must not hold
-							 * anything at the time of the call, and need
-							 * not even be initialized. */)
+static char *DoTildeSubst(char *user, nsp_tcldstring *resultPtr)
 {
   char *dir;
 
@@ -1075,22 +993,11 @@ static char *DoTildeSubst(
   }
   return resultPtr->string;
 }
-
+
+
 /*
- *----------------------------------------------------------------------
+ * int_glob:
  *
- * Tcl_GlobCmd --
- *
- *	This procedure is invoked to process the "glob" Tcl command.
- *	See the user documentation for details on what it does.
- *
- * Results:
- *	A standard Tcl result.
- *
- * Side effects:
- *	See the user documentation.
- *
- *----------------------------------------------------------------------
  */
 
 int int_glob (Stack stack,int rhs,int opt,int lhs)
@@ -1203,29 +1110,23 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
     }
 }
 
-
-/*
- *----------------------------------------------------------------------
- *
- * SkipToChar --
- *
+
+
+/**
+ * SkipToChar:
+ * @stringPtr:  Pointer string to check.
+ * @match: Pointer to character to find.
+ * 
  *	This function traverses a glob pattern looking for the next
  *	unquoted occurance of the specified character at the same braces
  *	nesting level.
  *
- * Results:
- *	Updates stringPtr to point to the matching character, or to
+ * Return value: Updates @stringPtr to point to the matching character, or to
  *	the end of the string if nothing matched.  The return value
  *	is 1 if a match was found at the top level, otherwise it is 0.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
+ **/
 
-static int SkipToChar( char **stringPtr,			/* Pointer string to check. */
-		       char *match			/* Pointer to character to find. */)
+static int SkipToChar( char **stringPtr,char *match)
 {
   int quoted, level;
   register char *p;
@@ -1253,39 +1154,26 @@ static int SkipToChar( char **stringPtr,			/* Pointer string to check. */
   *stringPtr = p;
   return 0;
 }
-
-/*
- *----------------------------------------------------------------------
- *
- * TclDoGlob --
- *
- *	This recursive procedure forms the heart of the globbing
- *	code.  It performs a depth-first traversal of the tree
- *	given by the path name to be globbed.  The directory and
- *	remainder are assumed to be native format paths.
- *
- * Results:
- *	The return value is a standard Tcl result indicating whether
- *	an error occurred in globbing.  After a normal return the
- *	result in interp will be set to hold all of the file names
- *	given by the dir and rem arguments.  After an error the
- *	result in interp will hold an error message.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
 
-int TclDoGlob(
-	      char *separators,		/* String containing separator characters
-					 * that should be used to identify globbing
-					 * boundaries. */
-	      nsp_tcldstring *headPtr,	/* Completely expanded prefix. */
-	      char *tail,		/* The unexpanded remainder of the path. */
-	      NspSMatrix *S                /* String Matrix for appending results 
-					      the Matrix can be an empty Matrix 
-					   */)
+
+/**
+ * TclDoGlob:
+ * @separators: String containing separator characters that should be used to identify globbing 
+ *  boundaries.
+ * @headPtr: Completely expanded prefix.
+ * @tail: The unexpanded remainder of the path.
+ * @S:  String Matrix for appending results. the Matrix can be an empty Matrix.
+ *
+ * This recursive procedure forms the heart of the globbing
+ * code.  It performs a depth-first traversal of the tree
+ * given by the path name to be globbed.  The directory and
+ * remainder are assumed to be native format paths.
+ *
+ * Return value: The return value is a standard Tcl result indicating whether
+ *	an error occurred in globbing.
+ **/
+
+int TclDoGlob(char *separators, nsp_tcldstring *headPtr, char *tail, NspSMatrix *S)
 {
   int baseLength, quoted, count;
   int result = TCL_OK;
