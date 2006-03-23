@@ -17,7 +17,8 @@ OBJSC =  System-IN.o timer.o files.o realtime.o \
 	tcl/unix/tclUnixInit.o \
 	tcl/unix/Tobedone.o \
 	tcl/unix/tcl2interf.o \
-	tcl/unix/tclUtil.o
+	tcl/unix/tclUtil.o \
+	tcl/unix/dstring.o \
 
 OBJSF =
 
