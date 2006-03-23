@@ -16,7 +16,8 @@ UNIX_OBJS = tclUnixFCmd.o tclUnixFile.o 	tclUnixInit.o
 
 GENERIC_OBJS =  regexp.o tclCmdAZ.o \
 	tclFCmd.o tclFileName.o  tclIOUtil.o tclPosixStr.o \
-	tclUtil.o Tobedone.o tclEnv.o  tcl2interf.o 
+	tclUtil.o Tobedone.o tclEnv.o  tcl2interf.o dstring.o
+
 
 OBJS = ${GENERIC_OBJS} ${UNIX_OBJS} 
 
@@ -207,6 +208,10 @@ tclStringObj.o: $(GENERIC_DIR)/tclStringObj.c
 tclUtil.o: $(GENERIC_DIR)/tclUtil.c
 	@echo "compiling $(GENERIC_DIR)/tclUtil.c"
 	@$(CC) -c $(CFLAGS) $(GENERIC_DIR)/tclUtil.c
+
+dstring.o: $(GENERIC_DIR)/dstring.c
+	@echo "compiling $(GENERIC_DIR)/dstring.c"
+	@$(CC) -c $(CFLAGS) $(GENERIC_DIR)/dstring.c
 
 tclVar.o: $(GENERIC_DIR)/tclVar.c
 	@echo "compiling $(GENERIC_DIR)/tclVar.c"
