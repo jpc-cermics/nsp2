@@ -1,6 +1,9 @@
 #ifndef TCL_DSTRING 
 #define TCL_DSTRING 
 
+#include <string.h>
+#include <stdlib.h>
+
 /*
  * The structure defined below is used to hold dynamic strings.  The only
  * field that clients should use is the string field, and they should

@@ -484,7 +484,10 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
       if (nsp_move_double(stack,1, (double) statBuf.st_atime) == FAIL) 
 	result = RET_BUG;
       else 
-	result= 1;
+	{
+	  result= 1 ;
+	}
+      
       goto done;
     case FILE_ISDIRECTORY:/* OK */
       if (rhs != 2) {
