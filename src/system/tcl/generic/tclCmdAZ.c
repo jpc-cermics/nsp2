@@ -23,7 +23,6 @@
  *--------------------------------------------------------------------------
  */
 
-
 #include "tclInt.h"
 #include "tclPort.h"
 
@@ -89,6 +88,94 @@ int int_syscd(Stack stack,int rhs,int opt,int lhs)
  *
  *----------------------------------------------------------------------
  */
+
+static nsp_string nsp_dirname (char *fileName)
+{
+  nsp_string result = NULL;
+  nsp_tcldstring buffer;
+  int pargc;
+  char **pargv = NULL;
+  nsp_tcldstring_init (&buffer);
+  Tcl_SplitPath (fileName, &pargc, &pargv);
+  if ((pargc == 1) && (*fileName == '~'))
+    {
+      /*
+       * If there is only one element, and it starts with a tilde,
+       * perform tilde substitution and resplit the path.
+       */
+      ckfree ((char *) pargv);pargv=NULL;
+      fileName = Tcl_TranslateFileName (fileName, &buffer);
+      if (fileName == NULL)
+	{
+	  goto done;
+	}
+      Tcl_SplitPath (fileName, &pargc, &pargv);
+      nsp_tcldstring_set_length (&buffer, 0);
+    }
+  /*
+   * Return all but the last component.  If there is only one
+   * component, return it if the path was non-relative, otherwise
+   * return the current directory.
+   */
+  if (pargc > 1)
+    {
+      Tcl_JoinPath (pargc - 1, pargv, &buffer);
+      result = nsp_new_string(nsp_tcldstring_value (&buffer), buffer.length);
+    }
+  else if ((pargc == 0) || (Tcl_GetPathType (pargv[0]) == TCL_PATH_RELATIVE))
+    {
+      result = nsp_new_string((tclPlatform == TCL_PLATFORM_MAC) ? ":" : ".", 1);
+    }
+  else
+    {
+      result = nsp_new_string(pargv[0], -1);
+    }
+done:
+  if (pargv != NULL) ckfree ((char *) pargv);
+  nsp_tcldstring_free (&buffer);
+  return result;
+}
+
+
+static nsp_string nsp_tail(char *fileName)
+{
+  nsp_tcldstring buffer;
+  nsp_string result = NULL;
+  int pargc;
+  char **pargv;
+  /*
+   * If there is only one element, and it starts with a tilde,
+   * perform tilde substitution and resplit the path.
+   */
+
+  Tcl_SplitPath(fileName, &pargc, &pargv);
+  if ((pargc == 1) && (*fileName == '~')) 
+    {
+      ckfree((char*) pargv);
+      fileName = Tcl_TranslateFileName( fileName, &buffer);
+      if (fileName == NULL) 
+	{
+	  goto done;
+	}
+    Tcl_SplitPath(fileName, &pargc, &pargv);
+    nsp_tcldstring_set_length(&buffer, 0);
+    }
+  /*
+   * Return the last component, unless it is the only component,
+   * and it is the root of an absolute path.
+   */
+  if (pargc > 0) 
+    {
+      if ((pargc > 1)
+	  || (Tcl_GetPathType(pargv[0]) == TCL_PATH_RELATIVE)) 
+	{
+	  result = nsp_new_string(pargv[pargc - 1], -1);
+	}
+    }
+ done :
+  if (pargv != NULL) ckfree ((char *) pargv);
+  return result;
+}
 
 int int_sysfile(Stack stack,int rhs,int opt,int lhs) 
 {
@@ -159,116 +246,66 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
       goto done;
     case FILE_DIRNAME:	/* OK */
       {
-	int pargc;
-	char **pargv;
-	  
-	if (rhs != 2) {
-	  errorString = "dirname name";
+	nsp_string dirname;
+	if (rhs != 2) 
+	  {
+	    errorString = "dirname name";
+	    goto not3Args;
+	  }
+	if ((fileName = GetString(stack,2)) == (char*)0) 
+	  {
+	    result = RET_BUG;
+	    goto done;
+	  }
+	if ((dirname = nsp_dirname (fileName))== NULL)
+	  {
+	    result = RET_BUG;
+	    goto done;
+	  }
+	result = nsp_move_string(stack,1, dirname, -1);
+	nsp_string_destroy(&dirname);
+	result = ( result == FAIL) ? RET_BUG: 1;
+	goto done;
+      }
+    case FILE_TAIL: /* OK */ 
+      {
+	nsp_string tail;
+	if (rhs != 2 ) {
+	  errorString = "tail name";
 	  goto not3Args;
 	}
 
 	if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
 	
-	/*
-	 * If there is only one element, and it starts with a tilde,
-	 * perform tilde substitution and resplit the path.
-	 */
-	  
-	Tcl_SplitPath(fileName, &pargc, &pargv);
-	if ((pargc == 1) && (*fileName == '~')) {
-	  ckfree((char*) pargv);
-	  fileName = Tcl_TranslateFileName( fileName, &buffer);
-	  if (fileName == NULL) {
+	if ((tail = nsp_tail(fileName))==NULL)
+	  {
 	    result = RET_BUG;
 	    goto done;
 	  }
-	  Tcl_SplitPath(fileName, &pargc, &pargv);
-	  nsp_tcldstring_set_length(&buffer, 0);
-	}
-	  
-	/*
-	 * Return all but the last component.  If there is only one
-	 * component, return it if the path was non-relative, otherwise
-	 * return the current directory.
-	 */
-	  
-	if (pargc > 1) {
-	  Tcl_JoinPath(pargc-1, pargv, &buffer);
-	  result = nsp_move_string(stack,1, nsp_tcldstring_value(&buffer),buffer.length);
-	  result = ( result == FAIL) ? RET_BUG: 1;
-	} else if ((pargc == 0)
-		   || (Tcl_GetPathType(pargv[0]) == TCL_PATH_RELATIVE)) {
-	  result = nsp_move_string(stack,1, (tclPlatform == TCL_PLATFORM_MAC)
-				    ? ":" : ".", 1);
-	  result = ( result == FAIL) ? RET_BUG: 1;
-	} else {
-	  result = nsp_move_string(stack,1, pargv[0], -1);	    
-	  result = ( result == FAIL) ? RET_BUG: 1;
-	}
-	ckfree((char *)pargv);
+	result = nsp_move_string(stack,1,tail, -1);
+	nsp_string_destroy(&tail);
+	result = ( result == FAIL) ? RET_BUG: 1;
 	goto done;
       }
-    case FILE_TAIL: /* OK */ {
-      int pargc;
-      char **pargv;
-	  
-      if (rhs != 2 ) {
-	errorString = "tail name";
-	goto not3Args;
-      }
-
-      if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
-
-      /*
-       * If there is only one element, and it starts with a tilde,
-       * perform tilde substitution and resplit the path.
-       */
-
-      Tcl_SplitPath(fileName, &pargc, &pargv);
-      if ((pargc == 1) && (*fileName == '~')) {
-	ckfree((char*) pargv);
-	fileName = Tcl_TranslateFileName( fileName, &buffer);
-	if (fileName == NULL) {
-	  result = RET_BUG;
-	  goto done;
+    case FILE_ROOTNAME:  /* OK */
+      {
+	char *fileName;
+	
+	if (rhs != 2) {
+	  errorString = "rootname name";
+	  goto not3Args;
 	}
-	Tcl_SplitPath(fileName, &pargc, &pargv);
-	nsp_tcldstring_set_length(&buffer, 0);
-      }
-	  
-      /*
-       * Return the last component, unless it is the only component,
-       * and it is the root of an absolute path.
-       */
-
-      if (pargc > 0) {
-	if ((pargc > 1)
-	    || (Tcl_GetPathType(pargv[0]) == TCL_PATH_RELATIVE)) {
-	  result = nsp_move_string(stack,1, pargv[pargc - 1], -1);
+	if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
+	extension = TclGetExtension(fileName);
+	if (extension == NULL) {
+	  NthObj(2)->ret_pos = 1;
+	  result = 1;
+	} else {
+	  result = nsp_move_string(stack,1, fileName, (int) (length - strlen(extension)));
 	  result = ( result == FAIL) ? RET_BUG: 1;
 	}
+	goto done;
       }
-      ckfree((char *)pargv);
-      goto done;
-    }
-    case FILE_ROOTNAME: { /* OK */
-      char *fileName;
-	
-      if (rhs != 2) {
-	errorString = "rootname name";
-	goto not3Args;
-      }
-      if ((fileName = GetString(stack,2)) == (char*)0) return RET_BUG;
-      extension = TclGetExtension(fileName);
-      if (extension == NULL) {
-	NthObj(2)->ret_pos = 1;
-	result = 1;
-      } else {
-	result = nsp_move_string(stack,1, fileName, (int) (length - strlen(extension)));
-	result = ( result == FAIL) ? RET_BUG: 1;
-      }
-      goto done;
-    }
     case FILE_EXTENSION: /* OK */
       if (rhs != 2) {
 	errorString = "extension name";
