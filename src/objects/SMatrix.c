@@ -974,8 +974,17 @@ NspSMatrix*nsp_smatrix_extract_rows(NspSMatrix *A, NspMatrix *Rows, int *err)
 
 nsp_string nsp_new_string(nsp_const_string bytes,int length)
 {
-  return  ( length >= 0) ? new_nsp_string_n(length) 
-    : new_nsp_string(bytes);
+  if ( length >= 0) 
+    {
+      nsp_string str = new_nsp_string_n(length) ;
+      memcpy(str,bytes, length*sizeof(char));
+      str[length]='\0';
+      return str;
+    }
+  else
+    {
+      return new_nsp_string(bytes);
+    }
 }
 
 /*
