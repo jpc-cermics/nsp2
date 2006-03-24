@@ -131,6 +131,7 @@ extern int              nsp_match_files(char *separators,  nsp_tcldstring *dirPt
 
 extern nsp_string nsp_tail(char *fileName);
 extern nsp_string nsp_dirname (char *fileName);
+extern void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
 
 /*
  * The macro below is used to modify a "char" value (e.g. by casting

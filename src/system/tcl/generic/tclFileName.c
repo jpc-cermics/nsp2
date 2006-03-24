@@ -9,7 +9,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) tclFileName.c 1.31 97/08/05 15:23:04
  */
 
 #include "tclInt.h"
@@ -65,6 +64,57 @@ static char *		SplitMacPath (char *path, nsp_tcldstring *bufPtr);
 static char *		SplitWinPath (char *path, nsp_tcldstring *bufPtr);
 static char *		SplitUnixPath (const char *path, nsp_tcldstring *bufPtr);
 
+
+/**
+ * update_exec_dir:
+ * @filename: a file name 
+ * @exec_dir: the current value of exec directory 
+ * @filename_exec: 
+ * @length:  length of @exec_dir and @filename_exec
+ * 
+ * 
+ * This function is used to update the @exec_dir value during the 
+ * execution of script file @filename. 
+ * 
+ **/
+
+void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length)
+{
+  nsp_string dirname = nsp_dirname (filename);
+  if ( dirname == NULL) return ;
+  if ( exec_dir == NULL || exec_dir[0] == '\0' || nsp_get_path_type(filename)== TCL_PATH_ABSOLUTE)
+    {
+      if ( strcmp(dirname,".") != 0) 
+	{
+	  strncpy(exec_dir,dirname,length);
+	}
+      nsp_string_destroy(&dirname);
+      return;
+    }
+  else
+    {
+      /* set exec_dir = exec_dir/dirname */
+      nsp_string tail ;
+      nsp_tcldstring buffer;
+      int pargc=2;
+      char *pargv[] ={ exec_dir, dirname};
+      nsp_tcldstring_init (&buffer);
+      if ( strcmp(dirname,".") != 0)
+	{
+	  nsp_join_path (pargc, pargv, &buffer);
+	  strncpy(exec_dir,nsp_tcldstring_value (&buffer),Min(buffer.length,length));
+	  nsp_tcldstring_set_length (&buffer, 0);
+	}
+      /* also update filename exec_dir/dirname/tail */
+      tail = nsp_tail(filename);
+      pargv[1]= tail;
+      nsp_join_path (pargc, pargv, &buffer);
+      strncpy(filename_exec,nsp_tcldstring_value (&buffer),Min(buffer.length,length));
+      nsp_tcldstring_free (&buffer);
+      nsp_string_destroy(&dirname);
+      nsp_string_destroy(&tail);
+    }
+}
 
 /**
  * nsp_dirname:
