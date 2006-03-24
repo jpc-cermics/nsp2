@@ -11,7 +11,6 @@ OBJSC =  System-IN.o timer.o files.o realtime.o \
 	tcl/unix/tclFCmd.o \
 	tcl/unix/tclFileName.o \
 	tcl/unix/tclIOUtil.o \
-	tcl/unix/tclPosixStr.o \
 	tcl/unix/tclUnixFCmd.o \
 	tcl/unix/tclUnixFile.o \
 	tcl/unix/tclUnixInit.o \

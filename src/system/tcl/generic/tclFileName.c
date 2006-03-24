@@ -63,8 +63,114 @@ static void		FileNameCleanup (ClientData clientData);
 static int		SkipToChar (char **stringPtr,char *match);
 static char *		SplitMacPath (char *path, nsp_tcldstring *bufPtr);
 static char *		SplitWinPath (char *path, nsp_tcldstring *bufPtr);
-static char *		SplitUnixPath (char *path, nsp_tcldstring *bufPtr);
+static char *		SplitUnixPath (const char *path, nsp_tcldstring *bufPtr);
 
+
+/**
+ * nsp_dirname:
+ * @fileName: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+nsp_string nsp_dirname (char *fileName)
+{
+  nsp_string result = NULL;
+  nsp_tcldstring buffer;
+  int pargc;
+  char **pargv = NULL;
+  nsp_tcldstring_init (&buffer);
+  nsp_split_path (fileName, &pargc, &pargv);
+  if ((pargc == 1) && (*fileName == '~'))
+    {
+      /*
+       * If there is only one element, and it starts with a tilde,
+       * perform tilde substitution and resplit the path.
+       */
+      ckfree ((char *) pargv);pargv=NULL;
+      fileName = nsp_translate_file_name (fileName, &buffer);
+      if (fileName == NULL)
+	{
+	  goto done;
+	}
+      nsp_split_path (fileName, &pargc, &pargv);
+      nsp_tcldstring_set_length (&buffer, 0);
+    }
+  /*
+   * Return all but the last component.  If there is only one
+   * component, return it if the path was non-relative, otherwise
+   * return the current directory.
+   */
+  if (pargc > 1)
+    {
+      nsp_join_path (pargc - 1, pargv, &buffer);
+      result = nsp_new_string(nsp_tcldstring_value (&buffer), buffer.length);
+    }
+  else if ((pargc == 0) || (nsp_get_path_type (pargv[0]) == TCL_PATH_RELATIVE))
+    {
+      result = nsp_new_string((tclPlatform == TCL_PLATFORM_MAC) ? ":" : ".", 1);
+    }
+  else
+    {
+      result = nsp_new_string(pargv[0], -1);
+    }
+done:
+  if (pargv != NULL) ckfree ((char *) pargv);
+  nsp_tcldstring_free (&buffer);
+  return result;
+}
+
+
+/**
+ * nsp_tail:
+ * @fileName: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+nsp_string nsp_tail(char *fileName)
+{
+  nsp_tcldstring buffer;
+  nsp_string result = NULL;
+  int pargc;
+  char **pargv;
+  /*
+   * If there is only one element, and it starts with a tilde,
+   * perform tilde substitution and resplit the path.
+   */
+
+  nsp_split_path(fileName, &pargc, &pargv);
+  if ((pargc == 1) && (*fileName == '~')) 
+    {
+      ckfree((char*) pargv);pargv=NULL;
+      fileName = nsp_translate_file_name( fileName, &buffer);
+      if (fileName == NULL) 
+	{
+	  goto done;
+	}
+    nsp_split_path(fileName, &pargc, &pargv);
+    nsp_tcldstring_set_length(&buffer, 0);
+    }
+  /*
+   * Return the last component, unless it is the only component,
+   * and it is the root of an absolute path.
+   */
+  if (pargc > 0) 
+    {
+      if ((pargc > 1)
+	  || (nsp_get_path_type(pargv[0]) == TCL_PATH_RELATIVE)) 
+	{
+	  result = nsp_new_string(pargv[pargc - 1], -1);
+	}
+    }
+ done :
+  if (pargv != NULL) ckfree ((char *) pargv);
+  return result;
+}
 
 /**
  * FileNameCleanup:
@@ -107,7 +213,7 @@ static void FileNameCleanup(ClientData clientData)
  **/
 
 static char *
-ExtractWinRoot(char *path,nsp_tcldstring * resultPtr,int  offset)
+ExtractWinRoot( char *path,nsp_tcldstring * resultPtr,int  offset)
 
 {
   int length;
@@ -340,10 +446,11 @@ void nsp_split_path(char *path,int *argcPtr, char ***argvPtr)
  *  nsp_tcldstring which value is returned.
  **/
 
-static char *SplitUnixPath(char *path, nsp_tcldstring *bufPtr)
+static char *SplitUnixPath(const char *path, nsp_tcldstring *bufPtr)
 {
   int length;
-  char *p, *elementStart;
+  const char *p;
+  const char *elementStart;
 
   /*
    * Deal with the root directory as a special case.
@@ -395,7 +502,7 @@ static char *SplitUnixPath(char *path, nsp_tcldstring *bufPtr)
  * Return value: the value of @bufPtr
  **/
 
-static char *SplitWinPath(char *path, nsp_tcldstring *bufPtr)
+static char *SplitWinPath( char *path, nsp_tcldstring *bufPtr)
 {
   int length;
   char *p, *elementStart;
@@ -450,7 +557,7 @@ static char *SplitMacPath( char *path, nsp_tcldstring *bufPtr)
 {
   int isMac = 0;		/* 1 if is Mac-style, 0 if Unix-style path. */
   int i, length;
-  char *p, *elementStart;
+  const char *p, *elementStart;
 
   /*
    * Initialize the path name parser for Macintosh path names.
