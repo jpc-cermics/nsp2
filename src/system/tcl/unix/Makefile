@@ -16,7 +16,7 @@ UNIX_OBJS = tclUnixFCmd.o tclUnixFile.o 	tclUnixInit.o
 
 GENERIC_OBJS =  tclCmdAZ.o \
 	tclFCmd.o tclFileName.o  tclIOUtil.o \
-	tclUtil.o Tobedone.o tclEnv.o  tcl2interf.o
+	tclUtil.o Tobedone.o tclEnv.o 
 
 OBJS = ${GENERIC_OBJS} ${UNIX_OBJS} 
 
@@ -95,10 +95,6 @@ tclEnv.o: $(GENERIC_DIR)/tclEnv.c
 Tobedone.o: $(GENERIC_DIR)/Tobedone.c
 	@echo "compiling $(GENERIC_DIR)/Tobedone.c"
 	@$(CC) -c $(CFLAGS) $(GENERIC_DIR)/Tobedone.c
-
-tcl2interf.o: $(GENERIC_DIR)/tcl2interf.c
-	@echo "compiling $(GENERIC_DIR)/tcl2interf.c"
-	@$(CC) -c $(CFLAGS) $(GENERIC_DIR)/tcl2interf.c
 
 tclEvent.o: $(GENERIC_DIR)/tclEvent.c
 	@echo "compiling $(GENERIC_DIR)/tclEvent.c"
