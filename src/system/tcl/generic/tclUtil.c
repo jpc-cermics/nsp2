@@ -1,8 +1,5 @@
 /* 
- * tclUtil.c --
- *
- *	This file contains utility procedures that are used by many Tcl
- *	commands.
+ * from tclUtil.c 
  *
  * Copyright (c) 1987-1993 The Regents of the University of California.
  * Copyright (c) 1994-1997 Sun Microsystems, Inc.
@@ -10,37 +7,25 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) tclUtil.c 1.161 97/08/12 17:07:18
  */
 
 #include "tclInt.h"
 #include "tclPort.h"
 
-/*
- *----------------------------------------------------------------------
+/**
+ * nsp_string_match:
+ * @string: String.
+ * @pattern: Pattern, which may contain special characters.
+ * 
+ * See if a particular string matches a particular pattern.
+ * The matching operation permits the following
+ * special characters in the pattern: *?\[]
  *
- * nsp_string_match --
- *
- *	See if a particular string matches a particular pattern.
- *
- * Results:
- *	The return value is 1 if string matches pattern, and
- *	0 otherwise.  The matching operation permits the following
- *	special characters in the pattern: *?\[] (see the manual
- *	entry for details on what these mean).
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
+ * 
+ * Return value: 1 if string matches pattern or 0 otherwise.
+ **/
 
-int
-nsp_string_match(char *string,char * pattern)
-     /*     char *string;		/\* String. *\/ 
-      *     char *pattern;		/\* Pattern, which may contain special 
-      * 				 * characters. *\/ 
-      */
+int nsp_string_match(char *string,char * pattern)
 {
   char c2;
 
