@@ -100,9 +100,9 @@ static int FileCopyRename(int argc, char **argv, int copyFlag,int forceFlag)
       if ( argc > 2) {
 	errno = ENOTDIR;
 	nsp_posix_error();
-	Tcl_AppendResult( "error ",
-			 ((copyFlag) ? "copying" : "renaming"), ": target \"",
-			 argv[argc - 1], "\" is not a directory", (char *) NULL);
+	Scierror("Error: %s, target \"%s\" is not a directory\n",
+		 ((copyFlag) ? "copying" : "renaming"),
+		  argv[argc - 1]);
 	result = TCL_ERROR;
       } else {
 	/* target is not a directory but we only have two arguments 
@@ -218,11 +218,12 @@ int nsp_file_make_dirs_cmd(int argc, char **argv)
     }
 	
     done:
-    if (errfile != NULL) {
-	Tcl_AppendResult( "can't create directory \"",
-		errfile, "\": ", nsp_posix_error(), (char *) NULL);
+    if (errfile != NULL) 
+      {
+	nsp_posix_error();
+	Scierror("Error: can't create directory \"%s\"\n",errfile);
 	result = TCL_ERROR;
-    }
+      }
 
     nsp_tcldstring_free(&nameBuffer);
     nsp_tcldstring_free(&targetBuffer);
@@ -284,10 +285,10 @@ int nsp_file_delete_cmd(int argc,char **argv,int forceFlag)
 	} else if (S_ISDIR(statBuf.st_mode)) {
 	    result = nsp_remove_directory(name, force, &errorBuffer);
 	    if (result != TCL_OK) {
-		if ((force == 0) && (errno == EEXIST)) {
-		    Tcl_AppendResult( "error deleting \"", argv[i],
-			    "\": directory not empty", (char *) NULL);
+		if ((force == 0) && (errno == EEXIST)) 
+		  {
 		    nsp_posix_error();
+		    Scierror("Error: \"%s\" directory is not empty\n", argv[i]);
 		    goto done;
 		}
 
@@ -308,9 +309,10 @@ int nsp_file_delete_cmd(int argc,char **argv,int forceFlag)
 	    break;
 	}
     }
-    if (result != TCL_OK) {
-	Tcl_AppendResult("error deleting \"", errfile,
-		"\": ", nsp_posix_error(), (char *) NULL);
+    if (result != TCL_OK) 
+      {
+	nsp_posix_error();
+	Scierror("Error while deleting \"%s\"\n", errfile);
     } 
     done:
     nsp_tcldstring_free(&errorBuffer);
@@ -405,15 +407,13 @@ CopyRenameOneFile( char *source, char *target, int copyFlag, int force)
 	if (S_ISDIR(sourceStatBuf.st_mode)
                 && !S_ISDIR(targetStatBuf.st_mode)) {
 	    errno = EISDIR;
-	    Tcl_AppendResult( "can't overwrite file \"", target,
-		    "\" with directory \"", source, "\"", (char *) NULL);
+	    Scierror("Error: can't overwrite file \"%s\" with directory \"%s\"\n", target,source);
 	    goto done;
 	}
 	if (!S_ISDIR(sourceStatBuf.st_mode)
 	        && S_ISDIR(targetStatBuf.st_mode)) {
 	    errno = EISDIR;
-	    Tcl_AppendResult( "can't overwrite directory \"", target, 
-	            "\" with file \"", source, "\"", (char *) NULL);
+	    Scierror("Error: can't overwrite directory \"%s\" with file \"%s\"\n", target,source);
 	    goto done;
 	}
     }
@@ -424,14 +424,15 @@ CopyRenameOneFile( char *source, char *target, int copyFlag, int force)
 	    goto done;
 	}
 	    
-	if (errno == EINVAL) {
-	    Tcl_AppendResult( "error renaming \"", source, "\" to \"",
-		    target, "\": trying to rename a volume or ",
-		    "move a directory into itself", (char *) NULL);
+	if (errno == EINVAL) 
+	  {
+	    Scierror("Error: renaming \"%s\" to \"%s\" trying to rename a volume or move a directory into itself\n",
+		     source,target);
 	    goto done;
-	} else if (errno != EXDEV) {
-	    errfile = target;
-	    goto done;
+	  } 
+	else if (errno != EXDEV) {
+	  errfile = target;
+	  goto done;
 	}
 	
 	/*
@@ -478,27 +479,28 @@ CopyRenameOneFile( char *source, char *target, int copyFlag, int force)
 		errfile = source;
 	    }
 	}
-	if (result != TCL_OK) {
-	    Tcl_AppendResult( "can't unlink \"", errfile, "\": ",
-		    nsp_posix_error(), (char *) NULL);
+	if (result != TCL_OK) 
+	  {
+	    nsp_posix_error();
+	    Scierror("Error: can't unlink \"%s\"\n",errfile);
 	    errfile = NULL;
 	}
     }
     
     done:
-    if (errfile != NULL) {
-	Tcl_AppendResult(
-		((copyFlag) ? "error copying \"" : "error renaming \""),
-		source, (char *) NULL);
-	if (errfile != source) {
-	    Tcl_AppendResult( "\" to \"", target, (char *) NULL);
-	    if (errfile != target) {
-		Tcl_AppendResult("\": \"", errfile, (char *) NULL);
-	    }
-	}
-	Tcl_AppendResult( "\": ", nsp_posix_error(),
-		(char *) NULL);
-    }
+    if (errfile != NULL) 
+      {
+	nsp_posix_error();
+	Scierror("Error: %s \"%s\"",((copyFlag) ? "copying" : "renaming"),source);
+	if (errfile != source) 
+	  {
+	    Scierror(" to \"%s\"", target);
+	    if (errfile != target) 
+	      {
+		Scierror(": \"%s\"\n", errfile);
+	      }
+	  }
+      }
     nsp_tcldstring_free(&errorBuffer);
     nsp_tcldstring_free(&sourcePath);
     nsp_tcldstring_free(&targetPath);
@@ -1685,8 +1687,7 @@ static char *DoTildeSubst(char *user, nsp_tcldstring *resultPtr)
   if (*user == '\0') {
     dir = nsp_getenv("HOME");
     if (dir == NULL) {
-      Tcl_AppendResult("couldn't find HOME environment ",
-		       "variable to expand path", (char *) NULL);
+      Scierror("Error: couldn't find HOME environment variable to expand path\n");
       return NULL;
     }
     nsp_join_path(1, &dir, resultPtr);
@@ -1694,8 +1695,7 @@ static char *DoTildeSubst(char *user, nsp_tcldstring *resultPtr)
 	
     /* lint, TclGetuserHome() always NULL under windows. */
     if (nsp_get_user_home(user, resultPtr) == NULL) {	
-      Tcl_AppendResult( "user \"", user, "\" doesn't exist",
-			(char *) NULL);
+      Scierror("Error: user \"%s\" doesn't exist\n",user);
       return NULL;
     }
   }
@@ -1772,10 +1772,10 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
 	if (p == NULL) {
 	  head = DoTildeSubst( str+1, &buffer);
 	} else {
-	  if (!noComplain) {
-	    Tcl_AppendResult("globbing characters not ",
-			     "supported in user names", (char *) NULL);
-	  }
+	  if (!noComplain) 
+	    {
+	      Scierror("Error: globbing characters not supported in user names\n");
+	    }
 	  head = NULL;
 	}
 	*tail = c;

@@ -121,8 +121,9 @@ int TestchmodCmd(dummy, argc, argv)
     int i, mode;
     char *rest;
 
-    if (argc < 2) {
-	usage:
+    if (argc < 2) 
+      {
+      usage:
 	Tcl_AppendResult( "wrong # args: should be \"", argv[0],
 		" mode file ?file ...?", (char *) NULL);
 	return TCL_ERROR;

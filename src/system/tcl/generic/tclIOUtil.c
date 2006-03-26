@@ -88,14 +88,10 @@ nsp_set_errno(err)
 
 char *nsp_posix_error(void)
 {
-  char *id, *msg;
-  msg = nsp_error_msg(errno);
-  id = nsp_errno_id();
-  /* XXXX Tcl_SetErrorCode( "POSIX", id, msg, (char *) NULL); **/
+  char *msg = nsp_error_msg(errno);
+  Scierror("Error: POSIX %s, %s\n",nsp_errno_id(),msg);
   return msg;
 }
-
-
 
 /*
  *----------------------------------------------------------------------

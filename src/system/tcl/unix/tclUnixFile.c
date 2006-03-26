@@ -128,8 +128,8 @@ nsp_chdir(dirName)
     currentDir = NULL;
   }
   if (chdir(dirName) != 0) {
-    Tcl_AppendResult("couldn't change working directory to \"",
-		     dirName, "\": ", nsp_posix_error(), (char *) NULL);
+    nsp_posix_error();
+    Scierror("Error: couldn't change working directory to \"%s\"\n",  dirName);
     return TCL_ERROR;
   }
   return TCL_OK;
@@ -168,9 +168,7 @@ nsp_get_cwd()
       }
 #ifdef USEGETWD
       if ((int)getwd(buffer) == (int)NULL) {
-	Tcl_AppendResult(
-			 "error getting working directory name: ",
-			 buffer, (char *)NULL);
+	Scierror("Error: getting working directory name: %s\n", buffer);
 	return NULL;
       }
 #else
@@ -179,9 +177,8 @@ nsp_get_cwd()
 	  if (errno == ERANGE) {
 	    Scierror("working directory name is too long");
 	  } else {
-	    Tcl_AppendResult(
-			     "error getting working directory name: ",
-			     nsp_posix_error(), (char *) NULL);
+	    nsp_posix_error();
+	    Scierror("Error: getting working directory name\n");
 	  }
 	  return NULL;
 	}
@@ -453,9 +450,8 @@ nsp_match_files( separators, dirPtr, pattern, tail,S)
 		dirPtr->string[baseLength-1] = '\0';
 	    }
 	}
-	
-	Tcl_AppendResult( "couldn't read directory \"",
-		dirPtr->string, "\": ", nsp_posix_error(), (char *) NULL);
+	nsp_posix_error();
+	Scierror("Error: couldn't read directory \"%s\"\n",dirPtr->string);
 	if (baseLength > 0) {
 	    dirPtr->string[baseLength-1] = savedChar;
 	}
