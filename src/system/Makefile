@@ -8,14 +8,12 @@ OBJSC =  System-IN.o timer.o files.o realtime.o \
 	regexp.o dstring.o \
 	tcl/unix/tclCmdAZ.o \
 	tcl/unix/tclEnv.o \
-	tcl/unix/tclFCmd.o \
-	tcl/unix/tclFileName.o \
+	tcl/unix/tclfiles.o \
 	tcl/unix/tclIOUtil.o \
 	tcl/unix/tclUnixFCmd.o \
 	tcl/unix/tclUnixFile.o \
 	tcl/unix/tclUnixInit.o \
 	tcl/unix/Tobedone.o \
-	tcl/unix/tcl2interf.o \
 	tcl/unix/tclUtil.o 
 
 OBJSF =
