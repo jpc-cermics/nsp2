@@ -233,6 +233,39 @@ static int int_spec( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/*
+ * interface for nsp_gspec: to merge with spec 
+ */
+
+static int int_gspec( Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A, *B, *alpha, *beta, *Vl, *Vr;
+  NspMatrix **hl=NULL, **hr=NULL;
+  int_types T[] = {mat,mat,t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&A,&B) == FAIL) return RET_BUG;
+  CheckLhs(0,4);
+
+  if ( lhs >= 3) 
+    {
+      hl = &Vl;
+      if ( lhs >= 4 ) hr = &Vr;
+    }
+
+  if ( nsp_gspec(A, B, hl, hr, &alpha, &beta) == FAIL ) return RET_BUG;
+
+  MoveObj(stack,1,NSP_OBJECT(alpha));
+  MoveObj(stack,2,NSP_OBJECT(beta));
+
+  if ( lhs >= 3 )
+    {
+      MoveObj(stack,3,NSP_OBJECT(Vl));
+      if ( lhs == 4 )
+	MoveObj(stack,4,NSP_OBJECT(Vr));
+    }
+
+  return Max(lhs,1);
+}
+
 
 /*
  * interface for nsp_inv: 
@@ -508,6 +541,7 @@ static OpTab Lapack_func[] = {
   {"svd",int_svd},
   {"det",int_det},
   {"spec",int_spec},
+  {"gspec",int_gspec},
   {"inv",int_inv},
   {"chol",int_cholesky},
   {"rcond",int_rcond},

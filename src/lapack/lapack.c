@@ -2718,270 +2718,355 @@ static int intzgehrd(NspMatrix *A, NspMatrix **U)
 } 
 
 
-/* FIXME 
- * [al,be,Q,Z] = gspec(A,B) returns in addition the matrix Q and Z
- * of generalized left and right eigenvectors of the pencil.
- * Vl = Q , Vr = Z
- */
-
 static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta);
 static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta);
 
-int idl_gspec(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta)
+/**
+ * nsp_gspec:
+ * @A:  a #NspMatrix
+ * @B:  a #NspMatrix
+ * @Vl: a pointer onto a #NspMatrix  
+ * @Vr: a pointer onto a #NspMatrix
+ * @alpha: a pointer onto a #NspMatrix
+ * @beta: a pointer onto a #NspMatrix
+ * 
+ * computes the eigenvalues lambda = alpha/beta and (eventually)
+ * the left (Vl) and right (Vr) eigenvectors of the generalized 
+ * eigenproblem :
+ *           A Vr = lambda B Vr
+ *          Vl' A = lambda Vl' B
+ *
+ * right eigenvectors are computed if Vr is not NULL   
+ * left eigenvectors are computed if Vl is not NULL   
+ *
+ * @A and @B are not modified
+ *
+ * Return value: OK or FAIL
+ **/
+int nsp_gspec(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr,
+	      NspMatrix **alpha, NspMatrix **beta)
 {
-  if (( B =nsp_matrix_copy(B) )== NULLMAT) return FAIL;
-  if (( A =nsp_matrix_copy(A) )== NULLMAT) return FAIL;
-  if ( A->rc_type == 'r' ) 
+  NspMatrix *AA = NULLMAT, *BB = NULLMAT;
+
+  if (A->m != A->n) 
+    { 
+      Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
+	       A->m, A->n);
+      return FAIL;
+    }
+
+  if (B->m != B->n) 
+    { 
+      Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
+	       B->m, B->n);
+      return FAIL;
+    }
+
+  if ( A->m != B->m ) 
     {
-      if ( B->rc_type == 'r') 
+      Scierror("spec: first and second arguments must have equal size\n");
+      return FAIL;
+    }
+
+  /* A = [] return empty matrices */ 
+  if ( A->mn == 0 ) 
+    {
+      if ( Vl != NULL)
 	{
-	  /* A real, b real */
-	  if ( intdggev(A,B,Vl,Vr,alpha,beta) == FAIL) return FAIL; 
+	  if ( (*Vl =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
 	}
-      else 
+      if ( Vr != NULL)
 	{
-	  /* A real, b complex */
-	  if (nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
-	  if ( intzggev(A,B,Vl,Vr,alpha,beta) == FAIL) return FAIL; 
-	}
-    } 
+	  if ( (*Vr =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+	} 
+      if ( (*alpha =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+      if ( (*beta =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+      return OK ; 
+    }
+
+  if ( nsp_mat_have_nan_or_inf(A) ||  nsp_mat_have_nan_or_inf(B) )
+    {
+      Scierror("Error: nan or inf in spec first argument\n"); 
+      return FAIL;
+    }
+
+  if ( A->rc_type == B->rc_type )
+    {
+      if ( (AA =nsp_matrix_copy(A)) == NULLMAT ) return FAIL;
+      if ( (BB =nsp_matrix_copy(B)) == NULLMAT ) goto err; 
+    }
+  else if ( A->rc_type == 'r' )
+    {
+      if ( (AA =nsp_mat_copy_and_complexify(A)) == NULLMAT ) return FAIL;
+      if ( (BB =nsp_matrix_copy(B)) == NULLMAT ) goto err; 
+    }
   else
     {
-      if ( B->rc_type == 'r') 
-	{
-	  /* A complex, B real */
-	  if (nsp_mat_complexify(B,0.0) == FAIL ) return FAIL;
-	  if ( intzggev(A,B,Vl,Vr,alpha,beta) == FAIL) return FAIL; 
-	}
-      else 
-	{
-	  /* A complex, b complex */
-	  if ( intzggev(A,B,Vl,Vr,alpha,beta) == FAIL) return FAIL; 
-	}
+      if ( (AA =nsp_matrix_copy(A)) == NULLMAT ) return FAIL;
+      if ( (BB =nsp_mat_copy_and_complexify(B)) == NULLMAT ) goto err; 
     }
+
+  if ( AA->rc_type == 'r' ) 
+    {
+      if ( intdggev(AA,BB,Vl,Vr,alpha,beta) == FAIL ) goto err;
+    }
+  else 
+    {
+      if ( intzggev(AA,BB,Vl,Vr,alpha,beta) == FAIL ) goto err;
+    }
+  
+  nsp_matrix_destroy(AA);
+  nsp_matrix_destroy(BB);
   return OK;
+
+ err:
+  nsp_matrix_destroy(AA);
+  nsp_matrix_destroy(BB);
+  return FAIL;
 }
 
 
-
-static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta)
+static int intdggev(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr, 
+		    NspMatrix **Alpha, NspMatrix **Beta)
 {
-  double *VrR=NULL,*VlR=NULL; 
-  char *jobVl ="N", *jobVr = "N",type = 'r';
-  NspMatrix *alphar,*alphai,*dwork; 
-  int info,lworkMin,i,j;  
+  double *dwork=NULL, qwork[1], *vlr=NULL, *vrr=NULL; 
+  char *jobVl ="N", *jobVr = "N", type = 'r';
+  NspMatrix *alpha=NULLMAT, *alphar=NULLMAT, *alphai=NULLMAT, *beta=NULLMAT, *vl=NULLMAT, *vr=NULLMAT; 
+  int info, lwork, i, j;  
 
-  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
+  int n = A->n;
 
-  /* A = [] return empty matrices */ 
+  if ( (beta =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
+  if ( (alphar =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) goto err;
+  if ( (alphai =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) goto err;
 
-  if ( A->mn == 0 ) {
-    if ( Vl != NULL)
-      {
-	if (( *Vl =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    if ( Vr != NULL)
-      {
-	if (( *Vr =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    if (( *alpha =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if (( *beta =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  if ( Vl != NULL ) 
+    {
+      if ( (vl =nsp_matrix_create(NVOID,'r',n,n)) == NULLMAT ) goto err;
+      jobVl = "V"; vlr = vl->R;
+    }
 
-  if (mb != nb) { 
-    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
-	     mb,nb);
-    return FAIL;
-  }
+  if ( Vr != NULL ) 
+    {
+      if ( (vr =nsp_matrix_create(NVOID,'r',n,n)) == NULLMAT ) goto err;
+      jobVr = "V"; vrr = vr->R;
+    }
 
-  if (m != mb || n != nb ) {
-    Scierror("spec: first and second arguments must have equal size\n");
-    return FAIL;
-  }
+  lwork = -1; 
+  /* call to query work size */
+  C2F(dggev)(jobVl,jobVr, &n, A->R, &n, B->R, &n, alphar->R, alphai->R, beta->R, 
+	     vlr, &n, vrr, &n, qwork, &lwork, &info, 1L, 1L); 
+  lwork = (int) qwork[0];
+  if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
 
-  /* XXX Check that A and B are finite matrices */ 
-  
-  if (( *beta =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+  C2F(dggev)(jobVl,jobVr, &n, A->R, &n, B->R, &n, alphar->R, alphai->R, beta->R,
+	     vlr, &n, vrr, &n, dwork, &lwork, &info, 1L, 1L);
 
-  if (( alphar =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( alphai =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-
-  if ( Vl != NULL ) {
-    if (( *Vl =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
-    VlR = (*Vl)->R; jobVl = "V";
-  }
-  if ( Vr != NULL ) {
-    if (( *Vr =nsp_matrix_create(NVOID,'r',m,n)) == NULLMAT) return FAIL;
-    VrR = (*Vr)->R; jobVr = "V";
-  }
-
-  lworkMin = Max(1,8*n);
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;
-
-  C2F(dggev)(jobVl,jobVr,&n,A->R, &n,B->R, &n, alphar->R, alphai->R,(*beta)->R,
-	     VlR,&n,VrR, &n,dwork->R,&lworkMin, &info, 1L, 1L);
-
-  if (info != 0) {
-    if (info <= n && info > 0 ) 
-      Scierror("Error: spec, the QZ iteration failed.  No eigenvectors have been calculated\n");
-    else if (info == n + 1) 
-      Scierror("Error: spec, other than QZ iteration failed in dhgeqz\n");
-    else if (info == n + 2) 
-      Scierror("Error: spec, error return from DTGEVC\n");
-    else 
-      Scierror("Error: spec, wrong argument (%d) in dggev call\n",-info);
-    return FAIL;
-  }
+  if (info < 0 || info >= n) 
+    {
+      if (info == n) 
+	Scierror("Error: gspec, the QZ iteration completly failed\n");
+      else if (info == n + 1) 
+	Scierror("Error: gspec, other than QZ iteration failed in dhgeqz\n");
+      else if (info == n + 2) 
+	Scierror("Error: gspec, error return from dtgevc\n");
+      else
+	Scierror("Error: gspec, wrong argument (%d) in dggev call\n",-info);
+      goto err;
+    }
 
   /* return (alphar + %i*alphai) and beta */
   /* result is real ? or complex */ 
-  
   for (i = 0 ; i < n ; ++i) { if (alphai->R[i] != 0.0) { type = 'c'; break;}}
 
-  /* alpha = (alphar,alphai) */ 
+  if ( type == 'c' )   /* alpha = (alphar,alphai) */ 
+    {
+      if ( (alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) goto err;
+      for (i = 0 ; i < n ; ++i) 
+	{ 
+	  alpha->C[i].r = alphar->R[i]; 
+	  alpha->C[i].i = alphai->R[i]; 
+	}
+    }
 
+  if ( info > 0 ) /* special case of partial convergence */
+    {
+      Sciprintf("\n Warning: gspec, the QZ iteration failed. No eigenvectors have been calculated");
+      Sciprintf("\n          return only alpha(i) and beta(i) which should be correct\n");
+      /* reduce size of the alpha and beta vectors */
+      memmove(&(beta->R[0]), &(beta->R[info]), (n-info)*sizeof(double));
+      nsp_matrix_resize(beta, n-info, 1);
+      if ( type == 'c' )
+	{
+	  memmove(&(alpha->C[0]), &(alpha->C[info]), (n-info)*sizeof(doubleC));
+	  nsp_matrix_resize(alpha, n-info, 1);
+	}
+      else
+	{
+	  memmove(&(alphar->R[0]), &(alphar->R[info]), (n-info)*sizeof(double));
+	  nsp_matrix_resize(alphar, n-info, 1);
+	}
+      if ( Vl != NULL )
+	if ( (*Vl=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
+      if ( Vr != NULL )
+	if ( (*Vr=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
+      nsp_matrix_destroy(vl); 
+      nsp_matrix_destroy(vr);
+    }
+  else
+    {
+      if ( Vr != NULL && type == 'c' ) /* fill Vr if requested */ 
+	{
+	  if (nsp_mat_complexify(vr,0.0) == FAIL ) goto err;
+	  j = 0;
+	  while (j < n) 
+	    {
+	      if( alphai->R[j] != 0.0 ) 
+		{
+		  for ( i = 0;  i < n ; ++i) 
+		    { 
+		      int k = i+j*n ;
+		      vr->C[k].i = vr->C[k+n].r; 
+		      vr->C[k+n].r = vr->C[k].r;
+		      vr->C[k+n].i = - vr->C[k].i;
+		    }
+		  j++;
+		}
+	      j++;
+	    }
+	}
+      if ( Vl != NULL && type == 'c' ) /* fill Vl if requested */ 
+	{
+	  if (nsp_mat_complexify(vl,0.0) == FAIL ) goto err;
+	  j = 0;
+	  while (j < n) 
+	    {
+	      if( alphai->R[j] != 0.0 ) 
+		{
+		  for ( i = 0;  i < n ; ++i) 
+		    { 
+		      int k = i+j*n ;
+		      vl->C[k].i = vl->C[k+n].r; 
+		      vl->C[k+n].r = vl->C[k].r;
+		      vl->C[k+n].i = - vl->C[k].i;
+		    }
+		  j++;
+		}
+	      j++;
+	    }
+	}
+      if ( Vr != NULL ) *Vr = vr;
+      if ( Vl != NULL ) *Vl = vl;
+    }
   if ( type == 'r' ) 
-    { *alpha = alphar; }
+    *Alpha = alphar; 
   else 
-    { 
-      if (( *alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
-      for (i = 0 ; i < n ; ++i) { (*alpha)->C[i].r = alphar->R[i]; (*alpha)->C[i].i = alphai->R[i]; }
+    {
+      *Alpha = alpha; nsp_matrix_destroy(alphar);
     }
+  *Beta = beta;
+  nsp_matrix_destroy(alphai); 
+  FREE(dwork);
+  return OK;
 
-  /* fill Vr if requested */ 
-
-  if ( Vr != NULL && type == 'c' ) {
-    if (nsp_mat_complexify(*Vr,0.0) == FAIL ) return FAIL;
-    j = -1;
-    while (1) {
-      j ++ ; 
-      if( alphai->R[j] != 0.0 ) {
-	for ( i = 0;  i < n ; ++i) 
-	  { 
-	    int k = i+j*n ;
-	    (*Vr)->C[k].i = (*Vr)->C[k+n].r; 
-	    (*Vr)->C[k+n].r = (*Vr)->C[k].r ;
-	    (*Vr)->C[k+n].i = - (*Vr)->C[k].i;
-	  }
-	j++; 
-      }
-      if (j >= n) break; 
-    }
-  }
-  
-  /* fill Vl if requested */ 
-
-  if ( Vl != NULL && type == 'c' ) {
-    if (nsp_mat_complexify(*Vl,0.0) == FAIL ) return FAIL;
-    j = -1;
-    while (1) {
-      j ++ ; 
-      if( alphai->R[j] != 0.0 ) {
-	for ( i = 0;  i < n ; ++i) 
-	  { 
-	    int k = i+j*n ;
-	    (*Vl)->C[k].i = (*Vl)->C[k+n].r; 
-	    (*Vl)->C[k+n].r = (*Vl)->C[k].r ;
-	    (*Vl)->C[k+n].i = - (*Vl)->C[k].i;
-	  }
-	j++; 
-      }
-      if (j >= n) break; 
-    }
-  }
-
-  /* un peu de ménage XXXXX */ 
-
-  return OK ; 
+ err:
+  FREE(dwork);
+  nsp_matrix_destroy(alpha);
+  nsp_matrix_destroy(alphar);
+  nsp_matrix_destroy(alphai);
+  nsp_matrix_destroy(beta);
+  nsp_matrix_destroy(vl);
+  nsp_matrix_destroy(vr);
+  return FAIL;
 } 
 
-
-static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta)
+static int intzggev(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr, 
+		    NspMatrix **Alpha, NspMatrix **Beta)
 {
-  doubleC *VrI=NULL,*VlI=NULL; 
+  double *dwork=NULL;
+  doubleC qwork[1], *work=NULL, *vlc=NULL, *vrc=NULL; 
   char *jobVl ="N", *jobVr = "N";
-  NspMatrix *rwork,*dwork; 
-  int info,lworkMin;  
+  NspMatrix *alpha=NULLMAT, *beta=NULLMAT, *vl=NULLMAT, *vr=NULLMAT; 
+  int info, lwork;  
 
-  int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
+  int n = A->n;
 
-  /* A = [] return empty matrices */ 
+  if ( (dwork =nsp_alloc_work_doubles(8*n)) == NULL ) return FAIL;
+  if ( (beta =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) goto err;
+  if ( (alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) goto err;
 
-  if ( A->mn == 0 ) {
-    if ( Vl != NULL)
-      {
-	if (( *Vl =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    if ( Vr != NULL)
-      {
-	if (( *Vr =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      }
-    if (( *alpha =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    if (( *beta =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-    return OK ; 
-  }
-  
-  if (m != n) { 
-    Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
-	     m,n);
-    return FAIL;
-  }
+  if ( Vl != NULL ) 
+    {
+      if ( (vl =nsp_matrix_create(NVOID,'c',n,n)) == NULLMAT ) goto err;
+      jobVl = "V"; vlc = vl->C;
+    }
 
-  if (mb != nb) { 
-    Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
-	     mb,nb);
-    return FAIL;
-  }
+  if ( Vr != NULL ) 
+    {
+      if ( (vr =nsp_matrix_create(NVOID,'c',n,n)) == NULLMAT ) goto err;
+      jobVr = "V"; vrc = vr->C;
+    }
 
-  if (m != mb || n != nb ) {
-    Scierror("Error: spec, first and second arguments must have equal size\n");
-    return FAIL;
-  }
+  lwork = -1; 
+  /* first call to query work size */
+  C2F(zggev)(jobVl,jobVr, &n, A->C, &n, B->C, &n, alpha->C, beta->C, 
+	     vlc, &n, vrc, &n, qwork, &lwork, dwork, &info, 1L, 1L); 
+  lwork = (int) qwork[0].r;
+  if ( (work=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
 
-  /* XXX Check that A and B are finite matrices */ 
+  C2F(zggev)(jobVl,jobVr, &n, A->C, &n, B->C, &n, alpha->C, beta->C, 
+	     vlc, &n, vrc, &n, work, &lwork, dwork, &info, 1L, 1L); 
 
+  if (info < 0 || info >= n) 
+    {
+      if (info == n) 
+	Scierror("Error: gspec, the QZ iteration completly failed\n");
+      else if (info == n + 1) 
+	Scierror("Error: gspec, other than QZ iteration failed in zhgeqz\n");
+      else if (info == n + 2) 
+	Scierror("Error: gspec, error return from ztgevc\n");
+      else
+	Scierror("Error: gspec, wrong argument (%d) in zggev call\n",-info);
+      goto err;
+    }
 
-  if (( *alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;  
-  if (( *beta =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
+  if ( info > 0 ) /* special case of partial convergence */
+    {
+      Sciprintf("\n Warning: gspec, the QZ iteration failed. No eigenvectors have been calculated");
+      Sciprintf("\n          return only alpha(i) and beta(i) which should be correct\n");
+      /* reduce size of the alpha and beta vectors */
+      memmove(&(beta->C[0]), &(beta->C[info]), (n-info)*sizeof(doubleC));
+      nsp_matrix_resize(beta, n-info, 1);
+      memmove(&(alpha->C[0]), &(alpha->C[info]), (n-info)*sizeof(doubleC));
+      nsp_matrix_resize(alpha, n-info, 1);
 
-  if ( Vl != NULL ) {
-    if (( *Vl =nsp_matrix_create(NVOID,'c',m,n)) == NULLMAT) return FAIL;
-    VlI = (*Vl)->C; jobVl = "V";
-  }
-  if ( Vr != NULL ) {
-    if (( *Vr =nsp_matrix_create(NVOID,'c',m,n)) == NULLMAT) return FAIL;
-    VrI = (*Vr)->C; jobVr = "V";
-  }
+      if ( Vl != NULL )
+	if ( (*Vl=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
+      if ( Vr != NULL )
+	if ( (*Vr=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
+      nsp_matrix_destroy(vl); 
+      nsp_matrix_destroy(vr);
+    }
+  else
+    {
+      if ( Vr != NULL ) *Vr = vr;
+      if ( Vl != NULL ) *Vl = vl;
+    }
 
-  if (( rwork =nsp_matrix_create(NVOID,'r',1,8*n)) == NULLMAT) return FAIL;
-  lworkMin = Max(1,8*n);
-  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;
+  *Alpha = alpha;
+  *Beta = beta;
+  FREE(work);
+  FREE(dwork);
+  return OK;
 
-  C2F(zggev)(jobVl,jobVr,&n,A->C, &n,B->C, &n,(*alpha)->C,(*beta)->C,
-	     VlI,&n,VrI, &n,dwork->C,&lworkMin,rwork->R,&info, 1L, 1L);
-
-  if (info != 0) {
-    if (info <= n && info > 0 ) 
-      Scierror("Error: spec, The QZ iteration failed.  No eigenvectors have been calculated\n");
-    else if (info == n + 1) 
-      Scierror("Error: spec, other than QZ iteration failed in dhgeqz\n");
-    else if (info == n + 2) 
-      Scierror("Error: spec, error return from DTGEVC\n");
-    else 
-      Scierror("Error: spec, wrong argument (%d) in dggev call\n",-info);
-    return FAIL;
-  }
-
-  /* un peu de ménage XXXXX */ 
-
-  return OK ; 
+ err:
+  FREE(dwork);
+  FREE(work);
+  nsp_matrix_destroy(alpha);
+  nsp_matrix_destroy(beta);
+  nsp_matrix_destroy(vl);
+  nsp_matrix_destroy(vr);
+  return FAIL;
 } 
 
 
@@ -3169,7 +3254,7 @@ static double intznorm(NspMatrix *A,char flag)
  * @A: a #NspMatrix 
  * 
  * computes the exponential of the matrix @A.
- * caution @A is overwritten with the result.
+ * @A is overwritten with the result.
  * 
  * Return value: FAIl or OK
  **/
