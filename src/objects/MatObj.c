@@ -3916,6 +3916,7 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
   char tri_type;
   int info, stat;
   double rcond;
+  double tol = sqrt(nsp_dlamch("eps"));
   CheckRhs (2, 2);
   CheckLhs (1, 1);
 
@@ -3981,7 +3982,7 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
 	  /* here we must be sure to use a real copy of HMat1 (because if the matrix */
 	  /* is badly conditionned we must switch to the lsq solution) */
 	  if ( (A = nsp_matrix_copy(HMat1)) == NULLMAT ) return RET_BUG;
-	  stat = nsp_mat_bdiv_square(A, HMat2, &rcond);
+	  stat = nsp_mat_bdiv_square(A, HMat2, &rcond,tol);
 	  nsp_matrix_destroy(A);
 	  if ( stat == FAIL )
 	    return RET_BUG;
@@ -3998,7 +3999,7 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
   if ( (HMat1 = GetMatCopy(stack, 1)) == NULLMAT )
     return RET_BUG;
 
-  if ( nsp_mat_bdiv_lsq(HMat1, HMat2) == FAIL )
+  if ( nsp_mat_bdiv_lsq(HMat1, HMat2,tol) == FAIL )
     return RET_BUG;
 
   NSP_OBJECT (HMat2)->ret_pos = 1; 
