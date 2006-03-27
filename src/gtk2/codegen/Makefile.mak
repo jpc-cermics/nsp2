@@ -32,7 +32,7 @@ Makefile.mak	: Makefile
 # on peut rajouter --prefix py$* 
 
 PYTHON=python 
-ALL=  gdk.c gtk.c pango.c atk.c gtk24.c gtk22.c
+ALL=  gdk.c gtk.c pango.c atk.c gtk24.c 
 
 all:: $(ALL)
 

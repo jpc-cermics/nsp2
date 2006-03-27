@@ -1371,7 +1371,7 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
   for (i = 0; i < n_args ; i++) 
     Marshal_stack.val->S[Marshal_stack.first + nargs++]= args[i];
   /*Calling func is a macro coded in P_PList **/
-  if ((n=nsp_eval_func((NspObject *) func,Marshal_stack.val->fname,Marshal_stack,Marshal_stack.first,nargs,*nret,-1)) < 0 )
+  if ((n=nsp_eval_func((NspObject *) func,Marshal_stack.val->fname,Marshal_stack,Marshal_stack.first,nargs,0,*nret)) < 0 )
     {
       nsp_error_message_show();
       goto end; 
