@@ -10,7 +10,10 @@ CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
 OBJSC = lapack.o lapack-IN.o
-OBJSF = dspadm.o dgpadm.o zhpadm.o zgpadm.o
+
+# dhgeqz.f : patched version 
+
+OBJSF = dspadm.o dgpadm.o zhpadm.o zgpadm.o dhgeqz.o
 
 include ../Make.lib
 
