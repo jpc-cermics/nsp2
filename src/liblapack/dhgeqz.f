@@ -625,13 +625,18 @@
 *           Exceptional shift.  Chosen for no particularly good reason.
 *           (Single shift only.)
 *
-            IF( ( DBLE( MAXIT )*SAFMIN )*ABS( A( ILAST-1, ILAST ) ).LT.
-     $          ABS( B( ILAST-1, ILAST-1 ) ) ) THEN
-               ESHIFT = ESHIFT + A( ILAST-1, ILAST ) /
-     $                  B( ILAST-1, ILAST-1 )
-            ELSE
-               ESHIFT = ESHIFT + ONE / ( SAFMIN*DBLE( MAXIT ) )
-            END IF
+**          IF( ( DBLE( MAXIT )*SAFMIN )*ABS( A( ILAST-1, ILAST ) ).LT.
+**   $          ABS( B( ILAST-1, ILAST-1 ) ) ) THEN
+**             ESHIFT = ESHIFT + A( ILAST-1, ILAST ) /
+**   $                  B( ILAST-1, ILAST-1 )
+**          ELSE
+**             ESHIFT = ESHIFT + ONE / ( SAFMIN*DBLE( MAXIT ) )
+**          END IF
+             WR = ABS(A(ILAST-1,ILAST-2)/B(ILAST-1,ILAST-1)) +
+     &       ABS(A(ILAST,ILAST-1)/B(ILAST-2,ILAST-2))
+             ESHIFT = ABS(A(ILAST-1,ILAST-2)/B(ILAST-2,ILAST-2)) +
+     &       ABS(A(ILAST,ILAST-1)/B(ILAST-1,ILAST-1))
+             ESHIFT = MIN(ESHIFT, WR)
             S1 = ONE
             WR = ESHIFT
 *
