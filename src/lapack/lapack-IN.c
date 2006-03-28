@@ -253,19 +253,26 @@ static int int_gspec( Stack stack, int rhs, int opt, int lhs)
 
   if ( nsp_gspec(A, B, hl, hr, &alpha, &beta) == FAIL ) return RET_BUG;
 
-  MoveObj(stack,1,NSP_OBJECT(alpha));
-  MoveObj(stack,2,NSP_OBJECT(beta));
-
-  if ( lhs >= 3 )
+  if ( lhs <= 1 )
     {
-      MoveObj(stack,3,NSP_OBJECT(Vl));
-      if ( lhs == 4 )
-	MoveObj(stack,4,NSP_OBJECT(Vr));
+      nsp_mat_div_el(alpha, beta);
+      MoveObj(stack,1,NSP_OBJECT(alpha));
+      nsp_matrix_destroy(beta);
+    }
+  else
+    {
+      MoveObj(stack,1,NSP_OBJECT(alpha));
+      MoveObj(stack,2,NSP_OBJECT(beta));
+      if ( lhs >= 3 )
+	{
+	  MoveObj(stack,3,NSP_OBJECT(Vl));
+	  if ( lhs == 4 )
+	    MoveObj(stack,4,NSP_OBJECT(Vr));
+	}
     }
 
   return Max(lhs,1);
 }
-
 
 /*
  * interface for nsp_inv: 
