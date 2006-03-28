@@ -1,9 +1,26 @@
-/*------------------------------------------------------------------------
- *    Copyright (C) 1998-2004 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
+/* Nsp
+ * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
  *
- *    stuff to deal with several generators added 
- *    by Bruno Pincon (12/11/2001) 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Interface for grand
+ * jpc@cermics.enpc.fr 
+ *
+ * stuff to deal with several generators added 
+ * by Bruno Pincon (12/11/2001) 
  *
  *--------------------------------------------------------------------------*/
 
@@ -71,31 +88,31 @@ double ignlgi(void)
   return ( (double) gen[current_gen]() );
 }
 
+/*  random deviate from Ui[a,b] 
+ *  it is assumed that : (i)  a and b are integers (stored in double) 
+ *                       (ii) b-a+1 <= RngMaxInt[current_gen]
+ *  (these verif are done at the calling level)
+ *
+ *  We use the classic method with a minor difference : to choose
+ *  uniformly an integer in [a,b] (ie d=b-a+1 numbers) with a generator
+ *  which provides uniformly integers in [0,RngMaxInt] (ie m=RngMaxInt+1
+ *  numbers) we do the Euclidian division :
+ *                                           m = q d + r,   r in [0,d-1]
+ * 
+ *  and accept only numbers l in [0, qd-1], then the output is k = a + (l mod d)
+ *  (ie numbers falling in [qd , RngMaxInt] are rejected).
+ *  The problem is that RngMaxInt is 2^32-1 for mt and kiss so that RngMaxInt+1 = 0
+ *  with the 32 bits unsigned integer arithmetic. So in place of rejected r
+ *  numbers we reject r+1 by using RngMaxInt in place of m. The constraint is
+ *  then that (b-a+1) <= RngMaxInt and if we doesn't want to deal we each generator
+ *  we take (b-a+1) <= Min RngMaxInt =  2147483561 (clcg2)
+ */                 
+
 double rand_ignuin(double *a, double *b)
 {
-  /*  random deviate from Ui[a,b] 
-   *  it is assumed that : (i)  a and b are integers (stored in double) 
-   *                       (ii) b-a+1 <= RngMaxInt[current_gen]
-   *  (these verif are done at the calling level)
-   *
-   *  We use the classic method with a minor difference : to choose
-   *  uniformly an integer in [a,b] (ie d=b-a+1 numbers) with a generator
-   *  which provides uniformly integers in [0,RngMaxInt] (ie m=RngMaxInt+1
-   *  numbers) we do the Euclidian division :
-   *                                           m = q d + r,   r in [0,d-1]
-   * 
-   *  and accept only numbers l in [0, qd-1], then the output is k = a + (l mod d)
-   *  (ie numbers falling in [qd , RngMaxInt] are rejected).
-   *  The problem is that RngMaxInt is 2^32-1 for mt and kiss so that RngMaxInt+1 = 0
-   *  with the 32 bits unsigned integer arithmetic. So in place of rejected r
-   *  numbers we reject r+1 by using RngMaxInt in place of m. The constraint is
-   *  then that (b-a+1) <= RngMaxInt and if we doesn't want to deal we each generator
-   *  we take (b-a+1) <= Min RngMaxInt =  2147483561 (clcg2)
-   */                 
   unsigned long k, d = (unsigned long)((*b-*a)+1), qd;
   
-  if ( d == 1)
-    return (*a);
+  if ( d == 1 || (*b < *a) ) return (*a);
 
   qd = RngMaxInt[current_gen] - RngMaxInt[current_gen] % d;
   do 
@@ -165,7 +182,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	    Scierror("Error: the setall option affect only the clcg4 generator !\n");
 	  if ( rhs != 5 ) 
 	    {
-	      Scierror("rhs should be 5 for 'setall'  option\n");
+	      Scierror("Error: rhs should be 5 for 'setall'  option\n");
 	      return RET_BUG;
 	    }
 	  if (GetScalarDouble(stack,2,&x1) == FAIL) return RET_BUG;
@@ -183,7 +200,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	    case(MT) :
 	      if ( rhs != 2 ) 
 		{
-		  Scierror("rhs should be 2 for 'setsd' option with the mt generator\n");
+		  Scierror("Error: rhs should be 2 for 'setsd' option with the mt generator\n");
 		  return RET_BUG;
 		}
 	      if ((M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
@@ -219,7 +236,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 		  if (GetScalarDouble(stack,5,&x4) == FAIL) return RET_BUG;
 		  break;
 		default :
-		  Scierror("rhs should be 2 or 5 for 'setsd' option with the kiss or clcg4 generator\n");
+		  Scierror("Error: rhs should be 2 or 5 for 'setsd' option with the kiss or clcg4 generator\n");
 		  return RET_BUG;
 		}
 	      if (current_gen == KISS) 
@@ -241,7 +258,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 		  if (GetScalarDouble(stack,3,&x2) == FAIL) return RET_BUG;
 		  break;
 		default : 
-		  Scierror("rhs should be 2 or 3 for 'setsd' option with clcg2 generator\n");
+		  Scierror("Error: rhs should be 2 or 3 for 'setsd' option with clcg2 generator\n");
 		  return RET_BUG;
 		}
 	      if ( set_state_clcg2(x1,x2) == FAIL) return RET_BUG; 
@@ -261,14 +278,14 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 		  if ( set_state_fsultra_simple(x1,x2) == FAIL) return RET_BUG;
 		  break;
 		default : 
-		  Scierror("rhs should be 2 or 3 for 'setsd' option with fsultra generator\n");
+		  Scierror("Error: rhs should be 2 or 3 for 'setsd' option with fsultra generator\n");
 		  return RET_BUG;
 		}
 	      break;
 	    case(URAND) :
 	      if ( rhs != 2 ) 
 		{
-		  Scierror("rhs should be 2 for 'setsd' option with the urand generator\n");
+		  Scierror("Error: rhs should be 2 for 'setsd' option with the urand generator\n");
 		  return RET_BUG;
 		}
 	      if (GetScalarDouble(stack,2,&x1) == FAIL) return RET_BUG;
@@ -282,7 +299,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  int i1,i2;
 	  if ( rhs != 2) 
 	    {
-	      Scierror("rhs should be 2 for 'phr2sd' option\n");
+	      Scierror("Error: rhs should be 2 for 'phr2sd' option\n");
 	      return RET_BUG;
 	    }
 	  if ((str1 = GetString(stack,2)) == (char*)0) return RET_BUG;
@@ -299,18 +316,18 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  SeedType Where;
 	  if ( current_gen != CLCG4 )
 	    {
-	      Scierror("initgn option affects only the clcg4 generator\n");
+	      Scierror("Error: initgn option affects only the clcg4 generator\n");
 	      return RET_BUG;
 	    }
 	  if ( rhs != 2) 
 	    {
-	      Scierror("rhs should be 2 for 'initgn' option\n");
+	      Scierror("Error: rhs should be 2 for 'initgn' option\n");
 	      return RET_BUG;
 	    }
 	  if (GetScalarInt(stack,2,&i1) == FAIL) return RET_BUG;
 	  if ( i1 != 0 && i1 != -1 && i1 != 1)
 	    {
-	      Scierror("for initgn option argument must be -1,0 or 1\n");
+	      Scierror("Error: for initgn option argument must be -1,0 or 1\n");
 	      return RET_BUG;
 	    }
 	  Where = (SeedType) (i1 + 1);
@@ -322,18 +339,18 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  int i1;
 	  if ( current_gen != CLCG4 )
 	    {
-	      Scierror("the 'setcgn' option affect only the clcg4 generator\n");
+	      Scierror("Error: the 'setcgn' option affect only the clcg4 generator\n");
 	      return RET_BUG;
 	    }
 	  if ( rhs != 2) 
 	    {
-	      Scierror("rhs should be 2 for 'setcgn' option\n");
+	      Scierror("Error: rhs should be 2 for 'setcgn' option\n");
 	      return RET_BUG;
 	    }
 	  if (GetScalarInt(stack,2,&i1) == FAIL) return RET_BUG;
 	  if ( i1 < 0 || i1 > Maxgen )
 	    {
-	      Scierror("bad virtual number generator %d (must be in [0,%d])\n",i1,Maxgen);
+	      Scierror("Error: bad virtual number generator %d (must be in [0,%d])\n",i1,Maxgen);
 	      return RET_BUG;
 	    }
 	  current_clcg4 = i1;
@@ -344,18 +361,18 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  int i1;
 	  if ( current_gen != CLCG4 )
 	    {
-	      Scierror("the 'advnst' option affect only the clcg4 generator !\n");
+	      Scierror("Error: the 'advnst' option affect only the clcg4 generator !\n");
 	      return RET_BUG;
 	    }
 	  if ( rhs != 2) 
 	    {
-	      Scierror("rhs should be 2 for 'advnst' option\n");
+	      Scierror("Error: rhs should be 2 for 'advnst' option\n");
 	      return RET_BUG;
 	    }
 	  if (GetScalarInt(stack,2,&i1) == FAIL) return RET_BUG;
 	  if ( i1 < 1 )
 	    {
-	      Scierror("parameter K must be > 0 for 'advnst' option\n");
+	      Scierror("Error: parameter K must be > 0 for 'advnst' option\n");
 	      return RET_BUG;
 	    }
 	  advance_state_clcg4(current_clcg4,i1);
@@ -365,12 +382,12 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	{
 	  if ( rhs != 1) 
 	    {
-	      Scierror("rhs should be 1 for 'getcgn' option\n");
+	      Scierror("Error: rhs should be 1 for 'getcgn' option\n");
 	      return RET_BUG;
 	    }
 	  if ( current_gen != CLCG4 )
 	    {
-	      Scierror("this information concerns only the clcg4 generator\n");
+	      Scierror("Error: this information concerns only the clcg4 generator\n");
 	      return RET_BUG;
 	    }
 	  if ( nsp_move_double(stack,1,(double)current_clcg4 )== FAIL) return RET_BUG;
@@ -381,7 +398,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	  char *str1;
 	  if ( rhs != 2) 
 	    {
-	      Scierror("rhs should be 2 for 'setgen' option\n");
+	      Scierror("Error: rhs should be 2 for 'setgen' option\n");
 	      return RET_BUG;
 	    }
 	  if ((str1 = GetString(stack,2)) == (char*)0) return RET_BUG;
@@ -399,7 +416,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	    current_gen = FSULTRA;
 	  else
 	    {
-	      Scierror("unknown generator (choose among : mt kiss clcg4 clcg2 urand fsultra) \n");
+	      Scierror("Error: unknown generator (choose among : mt kiss clcg4 clcg2 urand fsultra) \n");
 	      return RET_BUG;
 	    }
 	  return 0;
@@ -408,7 +425,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	{
 	  if ( rhs != 1) 
 	    {
-	      Scierror("rhs should be 1 for 'getgen' option\n");
+	      Scierror("Error: rhs should be 1 for 'getgen' option\n");
 	      return RET_BUG;
 	    }
 	  if ( nsp_move_string(stack,1,names_gen[current_gen],-1)== FAIL) return RET_BUG;
@@ -460,12 +477,12 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     {
       double A,B,minlog=1.e-37;
       if ( rhs != suite + 1) 
-	{ Scierror("Missing A and B for beta law\n");return RET_BUG;}
+	{ Scierror("Error: Missing A and B for beta law\n");return RET_BUG;}
       if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
       if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
       if ( A < minlog || B < minlog)
 	{
-	  Scierror("Rand(...,'bet',..): A or B < %f \b",minlog);
+	  Scierror("Error:  grand(...,'bet',..): A or B < %f \n",minlog);
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
@@ -477,13 +494,13 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     {
       double A,B;
       if ( rhs != suite + 1) 
-	{ Scierror("Missing Dfn and Dfd for F law\n");return RET_BUG;}
+	{ Scierror("Error: Missing Dfn and Dfd for F law\n");return RET_BUG;}
       if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
       if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
 
       if ( A <= 0.0 || B <= 0.0)
 	{
-	  Scierror("non positive freedom degrees !\n");
+	  Scierror("Error: non positive freedom degrees !\n");
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
@@ -498,9 +515,9 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       int i,nn,ncat;
       double ptot;
       if ( suite != 3 || M->mn != 1)
-	{ Scierror("First argument for 'mul' option must be the number of random deviate \n"); return RET_BUG;	}
+	{ Scierror("Error: First argument for 'mul' option must be the number of random deviate \n"); return RET_BUG;	}
       nn= M->R[0] ;
-      if ( rhs != suite + 1) { Scierror("Missing N and P for MULtinomial law\n");return RET_BUG;}
+      if ( rhs != suite + 1) { Scierror("Error: Missing N and P for MULtinomial law\n");return RET_BUG;}
 
       if (GetScalarInt(stack,suite,&N) == FAIL) return RET_BUG;      
       if ((P = GetMat(stack,suite+1)) == NULLMAT) return RET_BUG;
@@ -508,12 +525,12 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       if ((B = nsp_matrix_create(NVOID,'r',ncat,nn))== NULLMAT) return RET_BUG;
       if ( N < 0 ) 
 	{
-	  Scierror("N < 0 \n");
+	  Scierror("Error: N < 0 \n");
 	  return RET_BUG;
 	}
       if ( ncat <= 1) 
 	{
-	  Scierror("Ncat <= 1 \n");
+	  Scierror("Error: Ncat <= 1 \n");
 	  return RET_BUG;
 	}
       ptot = 0.0;
@@ -528,7 +545,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	}
       if ( ptot > 0.9999) 
 	{
-	  Scierror("Sum of P(i) > 1 \n");
+	  Scierror("Error: Sum of P(i) > 1 \n");
 	  return RET_BUG;
 	}
       I = (int *)  B->R;
@@ -545,12 +562,12 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	/*  ETRE PLUS CONSISTANT ICI : choisir entre shape , scale ou
 	 * bien A et R (idem pour le man)
 	 */
-	{ Scierror("Missing shape and scale for Gamma law\n");return RET_BUG;}
+	{ Scierror("Error: Missing shape and scale for Gamma law\n");return RET_BUG;}
       if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
       if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
       if ( (A) <= 0.0 ||  (B) <= 0.0 )
 	{
-	  Scierror("grand(..'gam',A,R) : A <= 0.0 or R <= 0.0 \n"); return RET_BUG;
+	  Scierror("Error: grand(..'gam',A,R) : A <= 0.0 or R <= 0.0 \n"); return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
       for ( i=0 ; i < M->mn ; i++) 
@@ -569,11 +586,11 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     {
       double A,B;
       if ( rhs != suite + 1) 
-	{ Scierror("Missing Av and Sd for Normal law\n");return RET_BUG;}
+	{ Scierror("Error: Missing Av and Sd for Normal law\n");return RET_BUG;}
       if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
       if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
       if ( B < 0 ) 
-	{  Scierror("SD < 0.0 \n");return RET_BUG;}
+	{  Scierror("Error: SD < 0.0 \n");return RET_BUG;}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
       for ( i=0 ; i < M->mn ; i++) { M->R[i]= rand_gennor(&A,&B); }
       MoveObj(stack,1,(NspObject *) M);
@@ -583,12 +600,12 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     {
       double low, high;
       if ( rhs != suite + 1) 
-	{ Scierror("Missing Low and High for Uniform Real law\n");return RET_BUG;}
+	{ Scierror("Error: Missing Low and High for Uniform Real law\n");return RET_BUG;}
       if (GetScalarDouble(stack,suite,&low) == FAIL) return RET_BUG;      
       if (GetScalarDouble(stack,suite+1,&high) == FAIL) return RET_BUG;      
       if ( low > high ) 
 	{
-	  Scierror("Low > High \n"); return RET_BUG;
+	  Scierror("Error: Low > High \n"); return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
       for ( i=0 ; i < M->mn ; i++) M->R[i]= low + (high - low)* rand_ranf();
@@ -599,12 +616,12 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     {
       double a, b;
       if ( rhs != suite + 1) 
-	{ Scierror("Missing Low and High for Uniform integer law\n");return RET_BUG;}
+	{ Scierror("Error: Missing Low and High for Uniform integer law\n");return RET_BUG;}
       if (GetScalarDouble(stack,suite,&a) == FAIL) return RET_BUG;      
       if (GetScalarDouble(stack,suite+1,&b) == FAIL) return RET_BUG;      
-      if ( a != floor(a) || b != floor(b) || (b-a+1) > 2147483561 )
+      if ( a != floor(a) || b != floor(b) || (b-a+1) > 2147483561 || b < a )
 	{
-	  Scierror(" a and b must integers with (b-a+1) <= 2147483561");
+	  Scierror("Error: a and b must integers with (b-a+1) <= 2147483561 and b >= a\n");
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
@@ -617,7 +634,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     {
       if ( rhs != suite -1 ) 
 	{ 
-	  Scierror("Only %d arguments required for 'lgi' option",suite-1);
+	  Scierror("Error: only %d arguments required for 'lgi' option\n",suite-1);
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
@@ -631,13 +648,13 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       int nn,j;
       if ( suite != 3 || M->mn != 1)
 	{ 
-	  Scierror("First argument for 'prm' option must be the number of random simulation \n");
+	  Scierror("Error: First argument for 'prm' option must be the number of random simulation \n");
 	  return RET_BUG;
 	}
       nn= M->R[0];
-      if ( rhs != suite) {  Scierror("Missing vect for random permutation\n");  return RET_BUG;}
+      if ( rhs != suite) {  Scierror("Error: Missing vect for random permutation\n");  return RET_BUG;}
       if ((prm = GetMat(stack,suite)) == NULLMAT) return RET_BUG;
-      if ( prm->n != 1)	{ Scierror("vect must be column vector\n");  return RET_BUG;}
+      if ( prm->n != 1)	{ Scierror("Error: vect must be column vector\n");  return RET_BUG;}
 
       if ((M = nsp_matrix_create(NVOID,'r',prm->m,nn))== NULLMAT) return RET_BUG;
       for ( i=0 ; i < M->n ; i++) 
@@ -653,17 +670,17 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       int iA;
       double B;
       if ( rhs != suite + 1) 
-	{ Scierror("Missing N and P for Negative Binomial law\n");return RET_BUG;}
+	{ Scierror("Error: Missing N and P for Negative Binomial law\n");return RET_BUG;}
       if (GetScalarInt(stack,suite,&iA) == FAIL) return RET_BUG;      
       if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
       if ( B < 0.0 || B > 1.0 ) 
 	{
-	  Scierror("P is not in [0,1] \n");
+	  Scierror("Error: P is not in [0,1] \n");
 	  return RET_BUG;
 	}
       if ( iA < 0 ) 
 	{
-	  Scierror("N < 0 \n");
+	  Scierror("Error: N < 0 \n");
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
@@ -676,17 +693,17 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       int iA;
       double B;
       if ( rhs != suite + 1) 
-	{ Scierror("Missing N and P for Binomial law\n");return RET_BUG;}
+	{ Scierror("Error: Missing N and P for Binomial law\n");return RET_BUG;}
       if (GetScalarInt(stack,suite,&iA) == FAIL) return RET_BUG;      
       if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
       if ( B < 0.0 || B > 1.0 ) 
 	{
-	  Scierror("P is not in [0,1] \n");
+	  Scierror("Error: P is not in [0,1] \n");
 	  return RET_BUG;
 	}
       if ( iA < 0 ) 
 	{
-	  Scierror("N < 0 \n");  return RET_BUG;
+	  Scierror("Error: N < 0 \n");  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
       for ( i=0 ; i < M->mn ; i++)  M->R[i]= (double) rand_ignbin(&iA,&B);
@@ -698,20 +715,20 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       NspMatrix *Mean,*Cov,*Work,*Parm,*Res;
       int nn,ierr,mp;
       if ( suite != 3 || M->mn != 1)
-	{ Scierror("First argument for 'mn' option must be the number of random simulation \n");return RET_BUG;
+	{ Scierror("Error: First argument for 'mn' option must be the number of random simulation \n");return RET_BUG;
 	}
       nn= M->R[0];
       if ( rhs != suite + 1) 
-	{ Scierror("Missing Mean and Cov for Multivariate Normal law\n");return RET_BUG;}
+	{ Scierror("Error: Missing Mean and Cov for Multivariate Normal law\n");return RET_BUG;}
       if ((Mean = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
-      if ( Mean->n != 1) { Scierror("Mean must be column vector\n");return RET_BUG;}
+      if ( Mean->n != 1) { Scierror("Error: Mean must be column vector\n");return RET_BUG;}
       if ((Cov = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
-      if ( Cov->m != Cov->n ) { Scierror("Cov must be a square matrix\n");return RET_BUG;}
-      if ( Cov->m != Mean->m ) { Scierror("Mean and Cov have incompatible dimensions\n");return RET_BUG;}
+      if ( Cov->m != Cov->n ) { Scierror("Error: Cov must be a square matrix\n");return RET_BUG;}
+      if ( Cov->m != Mean->m ) { Scierror("Error: Mean and Cov have incompatible dimensions\n");return RET_BUG;}
 
       if ( Cov->m <= 0 ) 
 	{
-	  Scierror("Mean and Cov are of null size\n");
+	  Scierror("Error: Mean and Cov are of null size\n");
 	  return RET_BUG;
 	}
 
@@ -738,14 +755,14 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       int nn,j,icur,jj;
       if ( suite != 3 || M->mn != 1)
 	{ 
-	  Scierror("First argument for 'markov' option must be the number of random simulation \n");return RET_BUG;
+	  Scierror("Error: First argument for 'markov' option must be the number of random simulation \n");return RET_BUG;
 	}
       nn= M->R[0];
-      if ( rhs != suite +1 ) { Scierror("Missing P matrix and X0 for Markov chain\n");return RET_BUG;}
+      if ( rhs != suite +1 ) { Scierror("Error: Missing P matrix and X0 for Markov chain\n");return RET_BUG;}
       if ((P = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
       if ( P->m != P->n  && P->m != 1 ) 
 	{ 
-	  Scierror("P must be a square matrix or a row vector\n");return RET_BUG;
+	  Scierror("Error: P must be a square matrix or a row vector\n");return RET_BUG;
 	}
       /* Check that P is a Markov Matrix */
       for ( i= 0 ; i < P->m ; i++ )
@@ -755,14 +772,14 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
 	    {
 	      if ( P->R[i+P->m*j] < 0 || P->R[i+P->m*j] > 1 )
 		{
-		  Scierror("P(%d,%d)=%f is not in the range [0,1]\n",P->R[i+P->m*j],i+1,j+1);
+		  Scierror("Error: P(%d,%d)=%f is not in the range [0,1]\n",P->R[i+P->m*j],i+1,j+1);
 		  return RET_BUG;
 		}
 	      ptot += P->R[i+P->m*j];
 	    }
 	  if ( ptot -1.0 > 1.e-6 ) 
 	    {
-	      Scierror("Sum of P(%d,1:%d)=%f > 1 \n",i+1,P->n,ptot);
+	      Scierror("Error: Sum of P(%d,1:%d)=%f > 1 \n",i+1,P->n,ptot);
 	      return RET_BUG;
 	    }
 	}
@@ -771,7 +788,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       for ( i = 0 ; i < X0->mn ; i++)
 	if ( X0->R[i] -1 < 0 ||X0->R[i] -1 >= P->n ) 
 	  {
-	    Scierror("X0(%d) must be in the range [1,%d]\n",i,P->n);
+	    Scierror("Error: X0(%d) must be in the range [1,%d]\n",i,P->n);
 	    return RET_BUG;
 	  }
 
@@ -813,7 +830,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
   else if ( strcmp(law,"def")==0) 
     {
       if ( rhs != suite -1 ) 
-	{ Scierror("no argument required for 'def' option\n");return RET_BUG;}
+	{ Scierror("Error: no argument required for 'def' option\n");return RET_BUG;}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
       for ( i=0 ; i < M->mn ; i++)   M->R[i]= rand_ranf();
       MoveObj(stack,1,(NspObject *) M);
@@ -824,12 +841,12 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     {
       double A,B;
       if ( rhs != suite + 1) 
-	{  Scierror("Missing Df and Xnonc for non-central chi-square law\n");return RET_BUG;}
+	{  Scierror("Error: Missing Df and Xnonc for non-central chi-square law\n");return RET_BUG;}
       if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
       if (GetScalarDouble(stack,suite+1,&B) == FAIL) return RET_BUG;      
       if ( A < 1.0 || B < 0.0 )
 	{
-	  Scierror("DF < 1 or XNONC < 0 \n");
+	  Scierror("Error: DF < 1 or XNONC < 0 \n");
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
@@ -842,7 +859,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       double A,B,C;
       if ( rhs != suite + 2) 
 	{ 
-	  Scierror("Missing Dfn, Dfd and Xnonc for non-central F law\n");
+	  Scierror("Error: Missing Dfn, Dfd and Xnonc for non-central F law\n");
 	  return RET_BUG;
 	}
       if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
@@ -850,7 +867,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       if (GetScalarDouble(stack,suite+2,&C) == FAIL) return RET_BUG;      
       if ( A < 1.0 || B < 0.0 || C < 0.0 ) 
 	{
-	  Scierror("DF < 1.0 or DF <= 0.0 or Xnonc < 0.0 \n");
+	  Scierror("Error: DF < 1.0 or DF <= 0.0 or Xnonc < 0.0 \n");
 	  return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
@@ -863,13 +880,13 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     {
       double A;
       if ( rhs != suite ) 
-	{ Scierror("Missing Df for chi-square law\n");
+	{ Scierror("Error: Missing Df for chi-square law\n");
 	return RET_BUG;
 	}
       if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
       if  ( A <= 0.0)
 	{
-	  Scierror("Rand: DF <= 0 \n");return RET_BUG;
+	  Scierror("Error: Rand: DF <= 0 \n");return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
       for ( i=0 ; i < M->mn ; i++)   M->R[i]= rand_genchi(&A);
@@ -881,12 +898,12 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       double A;
       if ( rhs != suite ) 
 	{ 
-	  Scierror("Missing Av for Poisson law\n"); return RET_BUG; 
+	  Scierror("Error: Missing Av for Poisson law\n"); return RET_BUG; 
 	}
       if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
       if ( A < 0.0 )
 	{
-	  Scierror("Av < 0 \n"); return RET_BUG;
+	  Scierror("Error: Av < 0 \n"); return RET_BUG;
 	}
       if ((M = nsp_matrix_create(NVOID,'r',ResL,ResC))== NULLMAT) return RET_BUG;
       for ( i=0 ; i < M->mn ; i++)  M->R[i]= (double) rand_ignpoi(&A);
@@ -898,7 +915,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       double p;
       if ( rhs != suite ) 
 	{ 
-	  Scierror("Missing p for Geometric law\n");  return RET_BUG;
+	  Scierror("Error: Missing p for Geometric law\n");  return RET_BUG;
 	}
       if (GetScalarDouble(stack,suite,&p) == FAIL) return RET_BUG;      
       if ( p < 1.3e-307 || p > 1 ) { Scierror("p must be in [pmin,1]\n");return RET_BUG;}
@@ -913,7 +930,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
       double A;
       if ( rhs != suite ) 
 	{ 
-	  Scierror("Missing Av for exponential law\n");
+	  Scierror("Error: Missing Av for exponential law\n");
 	  return RET_BUG;
 	}
       if (GetScalarDouble(stack,suite,&A) == FAIL) return RET_BUG;      
@@ -929,7 +946,7 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      Scierror("%s Wrong argument %s\n",NspFname(stack),law);
+      Scierror("Error: %s wrong argument %s\n",NspFname(stack),law);
       return RET_BUG;
     }      
 }
