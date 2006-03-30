@@ -212,6 +212,7 @@ nsp_matrix_concat_diag
 nsp_matrix_add_rows
 nsp_matrix_set_submatrix
 GenericMatSeRo
+GenericMatSeRoBis
 nsp_matrix_set_rows
 mat_is_increasing
 nsp_matrix_delete_columns
@@ -227,6 +228,7 @@ nsp_matrix_set_diag
 nsp_matrix_create_diag
 nsp_matrix_transpose
 nsp_mat_set_rval
+nsp_mat_copy_and_complexify
 nsp_mat_set_ival
 nsp_mat_mult
 nsp_mat_add
@@ -530,14 +532,6 @@ nsp_type_smatrix_id
 nsp_type_smatrix
 new_type_smatrix
 new_smatrix
-nsp_smatrix_type_as_string
-nsp_smatrix_type_short_string
-nsp_smatrix_loop_extract
-nsp_smatrix_eq
-nsp_smatrix_neq
-nsp_smatrix_is_true
-nsp_smatrix_xdr_load
-nsp_smatrix_xdr_save
 NULLSTRING
 NULLSMAT
 nsp_smatrix_object
@@ -571,6 +565,7 @@ Scopy
 nsp_smatrix_add_columns
 Sset
 nsp_smatrix_concat_down
+nsp_smatrix_concat_down1
 nsp_smatrix_add_rows
 nsp_smatrix_set_submatrix
 nsp_smatrix_set_rows
@@ -615,6 +610,16 @@ nsp_smatrix_convert
 nsp_smatrix_to_utf8
 nsp_smatrix_utf8_validate
 nsp_smatrix_utf8_from_unichar
+nsp_smatrix_latex_print
+nsp_smatrix_latex_tab_print
+nsp_smatrix_type_as_string
+nsp_smatrix_type_short_string
+nsp_smatrix_loop_extract
+nsp_smatrix_eq
+nsp_smatrix_neq
+nsp_smatrix_is_true
+nsp_smatrix_xdr_load
+nsp_smatrix_xdr_save
 </SECTION>
 
 <SECTION>
@@ -910,6 +915,7 @@ check_implements
 nsp_object_load_def
 nsp_object_save_def
 Stack
+Stack_ref
 STACK_SIZE
 SciStack
 StackInfo
@@ -1038,12 +1044,12 @@ nsp_type_none
 new_type_none
 new_none
 NULLNONE
-none_create
-none_copy
-none_destroy
-none_info
-none_print
-none_object
+nsp_none_create
+nsp_none_copy
+nsp_none_destroy
+nsp_none_info
+nsp_none_print
+nsp_none_object
 IsNoneObj
 IsNone
 GetNoneCopy
@@ -1412,6 +1418,7 @@ nsp_cells_create_from_table
 nsp_cells_create_from_array
 nsp_cells_copy
 nsp_cells_resize
+nsp_cells_elt_size
 nsp_cells_destroy
 nsp_cells_info
 nsp_cells_print
@@ -1448,6 +1455,7 @@ nsp_string_destroy
 new_nsp_string_n
 nsp_string_resize
 nsp_string_to_utf8
+nsp_new_string
 </SECTION>
 
 <SECTION>
@@ -1471,6 +1479,7 @@ nsp_pr_white
 nsp_print_empty_matrix
 nsp_pr_any_float
 nsp_init_pr_format
+nsp_matrix_set_format
 </SECTION>
 
 <SECTION>
@@ -1480,6 +1489,7 @@ nsp_lsq
 nsp_det
 nsp_spec
 nsp_spec_sym
+nsp_gspec
 nsp_rcond
 nsp_cholesky
 nsp_lu
@@ -1498,6 +1508,47 @@ nsp_expm
 nsp_mat_bdiv_lsq
 nsp_mat_bdiv_square
 nsp_mat_bdiv_triangular
+nsp_mat_bdiv_diagonal
+</SECTION>
+
+<SECTION>
+<FILE>bhash</FILE>
+BHash_Entry
+NspTypeBHash
+NspBHash
+nsp_type_bhash_id
+nsp_type_bhash
+nsp_type_bhash_init
+new_type_bhash
+new_bhash
+NULLBHASH
+nsp_bhash_create
+nsp_bhash_copy
+nsp_bhash_destroy
+nsp_bhash_info
+nsp_bhash_print
+nsp_bhash_object
+IsBHashObj
+IsBHash
+GetBHashCopy
+GetBHash
+nsp_bhash_resize
+nsp_bhash_merge
+nsp_bhash_get_next_object
+nsp_bhash_enter_copy
+nsp_bhash_enter
+nsp_bhash_remove
+nsp_bhash_find_and_copy
+nsp_bhash_find
+nsp_bhash_equal
+nsp_bhash_not_equal
+nsp_bhash_full_equal
+nsp_bhash_full_not_equal
+BHashOperation
+nsp_bhsearch
+nsp_bhcreate_from_list
+nsp_bhcreate
+nsp_bhdestroy
 </SECTION>
 
 <SECTION>
@@ -1799,6 +1850,7 @@ int_mxmini
 int_mxminus
 int_mxmodulo
 int_mxmultel
+int_mxmult
 int_mxneq
 int_mxones
 int_mxpolar
@@ -1840,6 +1892,8 @@ int_mxtestmatrix
 int_mxtril
 int_mxtriu
 int_mxzeros
+int_mxdiv
+int_mxbdiv
 </SECTION>
 
 <SECTION>

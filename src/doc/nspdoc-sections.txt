@@ -48,6 +48,7 @@ nsp_balanc
 nsp_cholesky
 nsp_det
 nsp_gbalanc
+nsp_gspec
 nsp_hess
 nsp_inv
 nsp_lsq

@@ -1,6 +1,6 @@
-16% symbol docs coverage.
-330 symbols documented.
-1681 not documented.
+17% symbol docs coverage.
+337 symbols documented.
+1669 not documented.
 
 
 ABORT
@@ -1013,12 +1013,6 @@ new_type_smatrix
 new_type_spmatrix
 new_type_type
 nlinear_interp
-none_copy
-none_create
-none_destroy
-none_info
-none_object
-none_print
 nsp_activate_gtk_events_check
 nsp_aint_c
 nsp_arg_c
@@ -1166,7 +1160,6 @@ nsp_mat_bdiv_el
 nsp_mat_bdiv_lsq
 nsp_mat_bdiv_scalar
 nsp_mat_bdiv_square
-nsp_mat_bdiv_triangular
 nsp_mat_bdiv_tt
 nsp_mat_ceil
 nsp_mat_clean
@@ -1195,16 +1188,12 @@ nsp_mat_franck
 nsp_mat_fullcomp
 nsp_mat_get_imag
 nsp_mat_get_real
-nsp_mat_have_nan_or_inf
 nsp_mat_hilbert
 nsp_mat_iand
 nsp_mat_idiv
 nsp_mat_int
 nsp_mat_inv_el
 nsp_mat_ior
-nsp_mat_is_lower_triangular
-nsp_mat_is_symmetric
-nsp_mat_is_upper_triangular
 nsp_mat_ishift
 nsp_mat_isinf
 nsp_mat_isnan
@@ -1258,7 +1247,6 @@ nsp_mat_triu
 nsp_mat_zeros
 nsp_matrix_boundster
 nsp_matrix_dialog
-nsp_matrix_norm
 nsp_matrix_to_pmatrix
 nsp_matrix_to_polynom
 nsp_matrix_to_smatrix

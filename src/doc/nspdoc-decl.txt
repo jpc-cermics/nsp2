@@ -699,7 +699,7 @@ NspMatrix *Mat
 <FUNCTION>
 <NAME>nsp_matrix_info</NAME>
 <RETURNS>void  </RETURNS>
-const NspMatrix *Mat, int indent,char *name, int rec_level
+ NspMatrix *Mat, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matrix_copy</NAME>
@@ -992,6 +992,11 @@ NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B
 void *A, int Am, int An, int Amn, NspMatrix *Rows, void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal
 </FUNCTION>
 <FUNCTION>
+<NAME>GenericMatSeRoBis</NAME>
+<RETURNS>int  </RETURNS>
+void *A, int Am, int An, int Amn, int nb_ind, int rmin, int rmax,void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_matrix_set_rows</NAME>
 <RETURNS>int  </RETURNS>
 NspMatrix *A, NspMatrix *Rows, NspMatrix *B
@@ -1065,6 +1070,11 @@ const NspMatrix *A
 <NAME>nsp_mat_set_rval</NAME>
 <RETURNS>void  </RETURNS>
 NspMatrix *A, double dval
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_mat_copy_and_complexify</NAME>
+<RETURNS>NspMatrix  *</RETURNS>
+const NspMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_set_ival</NAME>
@@ -1629,7 +1639,7 @@ Stack stack, int i
 <FUNCTION>
 <NAME>MaybeObjCopy</NAME>
 <RETURNS>return  </RETURNS>
-&stack.S[stack.first+i-1]
+&stack.val->S[stack.first+i-1]
 </FUNCTION>
 <MACRO>
 <NAME>VERSION</NAME>
@@ -1966,12 +1976,12 @@ NspPList *P_L
 <FUNCTION>
 <NAME>NspPListInfo</NAME>
 <RETURNS>void  </RETURNS>
-NspPList *P_L, int indent
+NspPList *P_L, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>NspPListPrint</NAME>
 <RETURNS>void  </RETURNS>
-NspPList *P_L, int indent
+NspPList *P_L, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>NspPListSave</NAME>
@@ -2424,46 +2434,6 @@ type_mode mode
 <RETURNS>NspSMatrix  *</RETURNS>
 
 </FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_type_as_string</NAME>
-<RETURNS>char  *</RETURNS>
-void
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_type_short_string</NAME>
-<RETURNS>char  *</RETURNS>
-void
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_loop_extract</NAME>
-<RETURNS>NspObject  *</RETURNS>
-char *str, NspObject *O, NspObject *O1, int i, int *rep
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_eq</NAME>
-<RETURNS>int  </RETURNS>
-NspObject *A,NspObject *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_neq</NAME>
-<RETURNS>int  </RETURNS>
-NspObject *A,NspObject *B
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_is_true</NAME>
-<RETURNS>int  </RETURNS>
-NspSMatrix *M
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_xdr_load</NAME>
-<RETURNS>NspSMatrix  *</RETURNS>
-XDR  *F
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_xdr_save</NAME>
-<RETURNS>int  </RETURNS>
-XDR  *F, NspSMatrix *M
-</FUNCTION>
 <MACRO>
 <NAME>NULLSTRING</NAME>
 #define NULLSTRING (nsp_string) 0
@@ -2626,6 +2596,11 @@ int n, nsp_string s1, nsp_string *s2
 <NAME>nsp_smatrix_concat_down</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 const NspSMatrix *A,const NspSMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_concat_down1</NAME>
+<RETURNS>int  </RETURNS>
+NspSMatrix *A,NspSMatrix *B,int flag
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_smatrix_add_rows</NAME>
@@ -2846,6 +2821,56 @@ NspSMatrix *A
 <NAME>nsp_smatrix_utf8_from_unichar</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 NspMatrix *A
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_latex_print</NAME>
+<RETURNS>void  </RETURNS>
+NspSMatrix *SMat
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_latex_tab_print</NAME>
+<RETURNS>void  </RETURNS>
+NspSMatrix *SMat
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_type_as_string</NAME>
+<RETURNS>char  *</RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_type_short_string</NAME>
+<RETURNS>char  *</RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_loop_extract</NAME>
+<RETURNS>NspObject  *</RETURNS>
+char *str, NspObject *O, NspObject *O1, int i, int *rep
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_eq</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *A,NspObject *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_neq</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *A,NspObject *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_is_true</NAME>
+<RETURNS>int  </RETURNS>
+NspSMatrix *M
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_xdr_load</NAME>
+<RETURNS>NspSMatrix  *</RETURNS>
+XDR  *F
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_xdr_save</NAME>
+<RETURNS>int  </RETURNS>
+XDR  *F, NspSMatrix *M
 </FUNCTION>
 <STRUCT>
 <NAME>NspTypePMatrix</NAME>
@@ -3159,31 +3184,31 @@ AttrTab *T
 </FUNCTION>
 <MACRO>
 <NAME>NthObj</NAME>
-#define NthObj(x) (stack.S[stack.first+x-1])
+#define NthObj(x) (stack.val->S[stack.first+x-1])
 </MACRO>
 <MACRO>
 <NAME>NspFname</NAME>
-#define NspFname(x) (x).fname
+#define NspFname(x) (x).val->fname
 </MACRO>
 <MACRO>
 <NAME>CheckRhs</NAME>
 #define CheckRhs(x,y) if ( rhs < x || rhs > y ) \
-  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
+  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.val->fname);return RET_BUG;} 
 </MACRO>
 <MACRO>
 <NAME>CheckLhs</NAME>
 #define CheckLhs(x,y) if ( lhs != -1 && ( lhs < x || lhs > y )) \
-  { Scierror("Error %d returned values is incorrect for function %s\n",lhs,stack.fname);return RET_BUG;}
+  { Scierror("Error %d returned values is incorrect for function %s\n",lhs,stack.val->fname);return RET_BUG;}
 </MACRO>
 <MACRO>
 <NAME>CheckStdRhs</NAME>
 #define CheckStdRhs(x,y) if ( rhs -opt < x || rhs -opt > y ) \
-  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs-opt,stack.fname);return RET_BUG;} 
+  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs-opt,stack.val->fname);return RET_BUG;} 
 </MACRO>
 <MACRO>
 <NAME>CheckOptRhs</NAME>
 #define CheckOptRhs(x,y) if ( opt < x || opt > y ) \
-  { Scierror("Error: %d optional arguments is incorrect for function %s\n",opt,stack.fname);return RET_BUG;} 
+  { Scierror("Error: %d optional arguments is incorrect for function %s\n",opt,stack.val->fname);return RET_BUG;} 
 </MACRO>
 <ENUM>
 <NAME>int_types</NAME>
@@ -4251,11 +4276,13 @@ void * F, NspObject * M
 <NAME>Stack</NAME>
 </STRUCT>
 <STRUCT>
-<NAME>Stack</NAME>
-struct Stack {
+<NAME>Stack_ref</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>Stack_ref</NAME>
+struct Stack_ref {
   char *fname; /* function currently evaluated **/
   char *file_name ; /* current evaluated file **/
-  int first;   /* position of first argument to be used **/
   NspObject **D;     /* D is dynamically changed so that D[1] is the first Objet used XXX **/
   NspObject **L;     /* Last position **/
   NspObject **S;     /* points to the whole stack **/
@@ -4264,6 +4291,13 @@ struct Stack {
   int errcatch; 
   int pause; 
   NspObject *symbols; /* table of symbols of functions */
+} ;
+</STRUCT>
+<STRUCT>
+<NAME>Stack</NAME>
+struct Stack {
+  int first;   /* position of first argument to be used **/
+  Stack_ref *val;
 } ;
 </STRUCT>
 <MACRO>
@@ -4863,32 +4897,32 @@ type_mode mode
 #define NULLNONE (NspNone*) 0
 </MACRO>
 <FUNCTION>
-<NAME>none_create</NAME>
+<NAME>nsp_none_create</NAME>
 <RETURNS>NspNone  *</RETURNS>
 char *name,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
-<NAME>none_copy</NAME>
+<NAME>nsp_none_copy</NAME>
 <RETURNS>NspNone  *</RETURNS>
 NspNone *H
 </FUNCTION>
 <FUNCTION>
-<NAME>none_destroy</NAME>
+<NAME>nsp_none_destroy</NAME>
 <RETURNS>void  </RETURNS>
 NspNone *H
 </FUNCTION>
 <FUNCTION>
-<NAME>none_info</NAME>
+<NAME>nsp_none_info</NAME>
 <RETURNS>void  </RETURNS>
 NspNone *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
-<NAME>none_print</NAME>
+<NAME>nsp_none_print</NAME>
 <RETURNS>void  </RETURNS>
 NspNone *H, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
-<NAME>none_object</NAME>
+<NAME>nsp_none_object</NAME>
 <RETURNS>NspNone  *</RETURNS>
 NspObject *O
 </FUNCTION>
@@ -5021,7 +5055,7 @@ NspMaxpMatrix *Mat
 <FUNCTION>
 <NAME>nsp_mpmatrix_info</NAME>
 <RETURNS>void  </RETURNS>
-const NspMaxpMatrix *Mat, int indent,char *name, int rec_level
+ NspMaxpMatrix *Mat, int indent,char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mpmatrix_copy</NAME>
@@ -6638,6 +6672,11 @@ const NspCells *A
 NspCells *A, int m, int n
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_cells_elt_size</NAME>
+<RETURNS>unsigned int  </RETURNS>
+NspCells *A
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_cells_destroy</NAME>
 <RETURNS>void  </RETURNS>
 NspCells *A
@@ -6796,6 +6835,11 @@ nsp_string *hstr, unsigned int n
 <RETURNS>nsp_string  </RETURNS>
 nsp_string str
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_new_string</NAME>
+<RETURNS>nsp_string  </RETURNS>
+nsp_const_string bytes,int length
+</FUNCTION>
 <STRUCT>
 <NAME>nsp_num_formats</NAME>
 </STRUCT>
@@ -6906,6 +6950,11 @@ const char *fmt, double d, int fw
 nsp_num_formats *fmt
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_matrix_set_format</NAME>
+<RETURNS>void  </RETURNS>
+nsp_num_formats *fmt,NspMatrix *M
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_qr</NAME>
 <RETURNS>int  </RETURNS>
 NspMatrix *A,NspMatrix **q,NspMatrix **r,NspMatrix **E,NspMatrix **Rank,NspMatrix **Sval,double *tol,char mode
@@ -6913,7 +6962,7 @@ NspMatrix *A,NspMatrix **q,NspMatrix **r,NspMatrix **E,NspMatrix **Rank,NspMatri
 <FUNCTION>
 <NAME>nsp_lsq</NAME>
 <RETURNS>int  </RETURNS>
-NspMatrix *A,NspMatrix *B
+NspMatrix *A, NspMatrix *B, double *Rcond, int *Rank
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_det</NAME>
@@ -6929,6 +6978,11 @@ NspMatrix *A, NspMatrix **d,NspMatrix **v
 <NAME>nsp_spec_sym</NAME>
 <RETURNS>int  </RETURNS>
 NspMatrix *A,NspMatrix **d,char flag
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_gspec</NAME>
+<RETURNS>int  </RETURNS>
+NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr,NspMatrix **alpha, NspMatrix **beta
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_rcond</NAME>
@@ -7008,17 +7062,223 @@ NspMatrix *A
 <FUNCTION>
 <NAME>nsp_mat_bdiv_lsq</NAME>
 <RETURNS>int  </RETURNS>
-NspMatrix *A, NspMatrix *B
+NspMatrix *A, NspMatrix *B, double tol_rcond
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_bdiv_square</NAME>
 <RETURNS>int  </RETURNS>
-NspMatrix *A, NspMatrix *B, double *rcond
+NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_bdiv_triangular</NAME>
 <RETURNS>int  </RETURNS>
 NspMatrix *A, NspMatrix *B, char tri_type, int *info
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_mat_bdiv_diagonal</NAME>
+<RETURNS>int  </RETURNS>
+NspMatrix *A, NspMatrix *B, int *info
+</FUNCTION>
+<STRUCT>
+<NAME>BHash_Entry</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>BHash_Entry</NAME>
+struct BHash_Entry { 
+  unsigned int used; /* used to detect if data is present */
+  char *key;
+  int val;
+};
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeBHash</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeBHash</NAME>
+struct NspTypeBHash { 
+  /*< private >*/
+  NSP_TYPE_OBJECT__ 
+  /*< public >*/
+};
+</STRUCT>
+<STRUCT>
+<NAME>NspBHash</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspBHash</NAME>
+struct NspBHash {
+  /*< private >*/
+  NspObject father; 
+  NspTypeBHash *type; 
+  /*< public >*/
+  unsigned int hsize,filled; /* size of bhash table and number of present entries */
+  BHash_Entry *htable; /* an array of size hsize+1 */
+};
+</STRUCT>
+<VARIABLE>
+<NAME>nsp_type_bhash_id</NAME>
+extern int nsp_type_bhash_id;
+</VARIABLE>
+<VARIABLE>
+<NAME>nsp_type_bhash</NAME>
+extern NspTypeBHash *nsp_type_bhash;
+</VARIABLE>
+<FUNCTION>
+<NAME>nsp_type_bhash_init</NAME>
+<RETURNS>int  </RETURNS>
+
+</FUNCTION>
+<FUNCTION>
+<NAME>new_type_bhash</NAME>
+<RETURNS>NspTypeBHash  *</RETURNS>
+type_mode mode
+</FUNCTION>
+<FUNCTION>
+<NAME>new_bhash</NAME>
+<RETURNS>NspBHash  *</RETURNS>
+
+</FUNCTION>
+<MACRO>
+<NAME>NULLBHASH</NAME>
+#define NULLBHASH (NspBHash*) 0
+</MACRO>
+<FUNCTION>
+<NAME>nsp_bhash_create</NAME>
+<RETURNS>NspBHash  *</RETURNS>
+char *name, unsigned int size
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_copy</NAME>
+<RETURNS>NspBHash  *</RETURNS>
+NspBHash *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_destroy</NAME>
+<RETURNS>void  </RETURNS>
+NspBHash *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_info</NAME>
+<RETURNS>void  </RETURNS>
+NspBHash *H, int indent,char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_print</NAME>
+<RETURNS>void  </RETURNS>
+NspBHash *H, int indent,char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_object</NAME>
+<RETURNS>NspBHash  *</RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>IsBHashObj</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>IsBHash</NAME>
+<RETURNS>int  </RETURNS>
+const NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>GetBHashCopy</NAME>
+<RETURNS>NspBHash  *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>GetBHash</NAME>
+<RETURNS>NspBHash  *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_resize</NAME>
+<RETURNS>int  </RETURNS>
+NspBHash *H, unsigned int new_size
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_merge</NAME>
+<RETURNS>int  </RETURNS>
+NspBHash *H1, NspBHash *H2
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_get_next_object</NAME>
+<RETURNS>int  </RETURNS>
+NspBHash *H,int *i,char **str,int *val
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_enter_copy</NAME>
+<RETURNS>int  </RETURNS>
+NspBHash *H, NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_enter</NAME>
+<RETURNS>int  </RETURNS>
+NspBHash *H,const char *str,int val
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_remove</NAME>
+<RETURNS>void  </RETURNS>
+NspBHash *H, char *str
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_find_and_copy</NAME>
+<RETURNS>int  </RETURNS>
+NspBHash *H, char *str, NspObject **O
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_find</NAME>
+<RETURNS>int  </RETURNS>
+NspBHash *H,char *str,int *val
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_equal</NAME>
+<RETURNS>NspBMatrix   *</RETURNS>
+NspBHash *L1, NspBHash *L2
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_not_equal</NAME>
+<RETURNS>NspBMatrix   *</RETURNS>
+NspBHash *L1, NspBHash *L2
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_full_equal</NAME>
+<RETURNS>int  </RETURNS>
+NspBHash *L1, NspBHash *L2
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhash_full_not_equal</NAME>
+<RETURNS>int  </RETURNS>
+NspBHash *L1, NspBHash *L2
+</FUNCTION>
+<ENUM>
+<NAME>BHashOperation</NAME>
+typedef enum {
+  BH_FIND,
+  BH_ENTER,
+  BH_REMOVE 
+} BHashOperation;
+</ENUM>
+<FUNCTION>
+<NAME>nsp_bhsearch</NAME>
+<RETURNS>int  </RETURNS>
+NspBHash *H, char *key,int *val,BHashOperation action
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhcreate_from_list</NAME>
+<RETURNS>NspBHash  *</RETURNS>
+char *name,unsigned int nel, NspList *L
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhcreate</NAME>
+<RETURNS>NspBHash  *</RETURNS>
+char *name, unsigned int nel
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bhdestroy</NAME>
+<RETURNS>void  </RETURNS>
+NspBHash *H
 </FUNCTION>
 <STRUCT>
 <NAME>Hash_Entry</NAME>
@@ -7963,20 +8223,8 @@ extern function int_mxabs;
 extern function int_mxacos;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxacos</NAME>
-extern function int_mxacos;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxacosh</NAME>
 extern function int_mxacosh;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxacosh</NAME>
-extern function int_mxacosh;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxaddcols</NAME>
-extern function int_mxaddcols;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxaddcols</NAME>
@@ -7987,20 +8235,8 @@ extern function int_mxaddcols;
 extern function int_mxaddrows;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxaddrows</NAME>
-extern function int_mxaddrows;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxarg</NAME>
 extern function int_mxarg;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxarg</NAME>
-extern function int_mxarg;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxasin</NAME>
-extern function int_mxasin;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxasin</NAME>
@@ -8011,20 +8247,8 @@ extern function int_mxasin;
 extern function int_mxasinh;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxasinh</NAME>
-extern function int_mxasinh;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxatan2</NAME>
 extern function int_mxatan2;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxatan2</NAME>
-extern function int_mxatan2;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxatan</NAME>
-extern function int_mxatan;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxatan</NAME>
@@ -8035,20 +8259,8 @@ extern function int_mxatan;
 extern function int_mxatanh;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxatanh</NAME>
-extern function int_mxatanh;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxbackdivel</NAME>
 extern function int_mxbackdivel;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxbackdivel</NAME>
-extern function int_mxbackdivel;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxceil</NAME>
-extern function int_mxceil;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxceil</NAME>
@@ -8059,20 +8271,8 @@ extern function int_mxceil;
 extern function int_mxclean;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxclean</NAME>
-extern function int_mxclean;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxcomplexify</NAME>
 extern function int_mxcomplexify;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxcomplexify</NAME>
-extern function int_mxcomplexify;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxconcatd</NAME>
-extern function int_mxconcatd;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxconcatd</NAME>
@@ -8083,20 +8283,8 @@ extern function int_mxconcatd;
 extern function int_mxconcatdiag;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxconcatdiag</NAME>
-extern function int_mxconcatdiag;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxconcatr</NAME>
 extern function int_mxconcatr;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxconcatr</NAME>
-extern function int_mxconcatr;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxconcatr_mb</NAME>
-extern function int_mxconcatr_mb;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxconcatr_mb</NAME>
@@ -8107,20 +8295,8 @@ extern function int_mxconcatr_mb;
 extern function int_mxconj;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxconj</NAME>
-extern function int_mxconj;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxcopy</NAME>
 extern function int_mxcopy;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxcopy</NAME>
-extern function int_mxcopy;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxcos</NAME>
-extern function int_mxcos;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxcos</NAME>
@@ -8131,20 +8307,8 @@ extern function int_mxcos;
 extern function int_mxcosh;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxcosh</NAME>
-extern function int_mxcosh;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxcreate</NAME>
 extern function int_mxcreate;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxcreate</NAME>
-extern function int_mxcreate;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxcuprod</NAME>
-extern function int_mxcuprod;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxcuprod</NAME>
@@ -8155,20 +8319,8 @@ extern function int_mxcuprod;
 extern function int_mxcusum;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxcusum</NAME>
-extern function int_mxcusum;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxdadd</NAME>
 extern function int_mxdadd;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxdadd</NAME>
-extern function int_mxdadd;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxdeletecols</NAME>
-extern function int_mxdeletecols;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxdeletecols</NAME>
@@ -8179,20 +8331,8 @@ extern function int_mxdeletecols;
 extern function int_mxdeleteelts;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxdeleteelts</NAME>
-extern function int_mxdeleteelts;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxdeleterows</NAME>
 extern function int_mxdeleterows;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxdeleterows</NAME>
-extern function int_mxdeleterows;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxdestroy</NAME>
-extern function int_mxdestroy;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxdestroy</NAME>
@@ -8203,20 +8343,8 @@ extern function int_mxdestroy;
 extern function int_mxdiag;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxdiag</NAME>
-extern function int_mxdiag;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxdiagcre</NAME>
 extern function int_mxdiagcre;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxdiagcre</NAME>
-extern function int_mxdiagcre;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxdiage</NAME>
-extern function int_mxdiage;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxdiage</NAME>
@@ -8227,20 +8355,8 @@ extern function int_mxdiage;
 extern function int_mxdiagset;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxdiagset</NAME>
-extern function int_mxdiagset;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxdivel</NAME>
 extern function int_mxdivel;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxdivel</NAME>
-extern function int_mxdivel;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxdquote</NAME>
-extern function int_mxdquote;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxdquote</NAME>
@@ -8251,20 +8367,8 @@ extern function int_mxdquote;
 extern function int_mxdsub;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxdsub</NAME>
-extern function int_mxdsub;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxeq</NAME>
 extern function int_mxeq;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxeq</NAME>
-extern function int_mxeq;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxerf</NAME>
-extern function int_mxerf;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxerf</NAME>
@@ -8275,20 +8379,8 @@ extern function int_mxerf;
 extern function int_mxerfc;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxerfc</NAME>
-extern function int_mxerfc;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxexpel</NAME>
 extern function int_mxexpel;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxexpel</NAME>
-extern function int_mxexpel;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxextract</NAME>
-extern function int_mxextract;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxextract</NAME>
@@ -8299,20 +8391,8 @@ extern function int_mxextract;
 extern function int_mxextractcols;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxextractcols</NAME>
-extern function int_mxextractcols;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxextractelts</NAME>
 extern function int_mxextractelts;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxextractelts</NAME>
-extern function int_mxextractelts;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxextractrows</NAME>
-extern function int_mxextractrows;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxextractrows</NAME>
@@ -8323,20 +8403,8 @@ extern function int_mxextractrows;
 extern function int_mxeye;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxeye</NAME>
-extern function int_mxeye;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxfeq</NAME>
 extern function int_mxfeq;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxfeq</NAME>
-extern function int_mxfeq;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxfge</NAME>
-extern function int_mxfge;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxfge</NAME>
@@ -8347,20 +8415,8 @@ extern function int_mxfge;
 extern function int_mxfgt;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxfgt</NAME>
-extern function int_mxfgt;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxfind</NAME>
 extern function int_mxfind;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxfind</NAME>
-extern function int_mxfind;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxfle</NAME>
-extern function int_mxfle;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxfle</NAME>
@@ -8371,20 +8427,8 @@ extern function int_mxfle;
 extern function int_mxfloor;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxfloor</NAME>
-extern function int_mxfloor;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxflt</NAME>
 extern function int_mxflt;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxflt</NAME>
-extern function int_mxflt;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxfneq</NAME>
-extern function int_mxfneq;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxfneq</NAME>
@@ -8395,20 +8439,8 @@ extern function int_mxfneq;
 extern function int_mxge;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxge</NAME>
-extern function int_mxge;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxgt</NAME>
 extern function int_mxgt;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxgt</NAME>
-extern function int_mxgt;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxiand</NAME>
-extern function int_mxiand;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxiand</NAME>
@@ -8419,20 +8451,8 @@ extern function int_mxiand;
 extern function int_mxidiv;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxidiv</NAME>
-extern function int_mxidiv;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mximagpart</NAME>
 extern function int_mximagpart;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mximagpart</NAME>
-extern function int_mximagpart;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mximpl</NAME>
-extern function int_mximpl;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mximpl</NAME>
@@ -8443,20 +8463,8 @@ extern function int_mximpl;
 extern function int_mxinfo;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxinfo</NAME>
-extern function int_mxinfo;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxint</NAME>
 extern function int_mxint;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxint</NAME>
-extern function int_mxint;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxior</NAME>
-extern function int_mxior;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxior</NAME>
@@ -8467,20 +8475,8 @@ extern function int_mxior;
 extern function int_mxkron;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxkron</NAME>
-extern function int_mxkron;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxle</NAME>
 extern function int_mxle;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxle</NAME>
-extern function int_mxle;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxlogel</NAME>
-extern function int_mxlogel;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxlogel</NAME>
@@ -8491,20 +8487,8 @@ extern function int_mxlogel;
 extern function int_mxlt;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxlt</NAME>
-extern function int_mxlt;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxmat2vect</NAME>
 extern function int_mxmat2vect;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxmat2vect</NAME>
-extern function int_mxmat2vect;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxmatrix</NAME>
-extern function int_mxmatrix;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxmatrix</NAME>
@@ -8515,20 +8499,8 @@ extern function int_mxmatrix;
 extern function int_mxmaxi;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxmaxi</NAME>
-extern function int_mxmaxi;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxmini</NAME>
 extern function int_mxmini;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxmini</NAME>
-extern function int_mxmini;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxminus</NAME>
-extern function int_mxminus;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxminus</NAME>
@@ -8539,20 +8511,12 @@ extern function int_mxminus;
 extern function int_mxmodulo;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxmodulo</NAME>
-extern function int_mxmodulo;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxmultel</NAME>
 extern function int_mxmultel;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxmultel</NAME>
-extern function int_mxmultel;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxneq</NAME>
-extern function int_mxneq;
+<NAME>int_mxmult</NAME>
+extern function int_mxmult;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxneq</NAME>
@@ -8563,20 +8527,8 @@ extern function int_mxneq;
 extern function int_mxones;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxones</NAME>
-extern function int_mxones;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxpolar</NAME>
 extern function int_mxpolar;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxpolar</NAME>
-extern function int_mxpolar;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxpowel</NAME>
-extern function int_mxpowel;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxpowel</NAME>
@@ -8591,20 +8543,8 @@ extern function int_mxprint_xxx;
 extern function int_mxprod;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxprod</NAME>
-extern function int_mxprod;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxquote</NAME>
 extern function int_mxquote;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxquote</NAME>
-extern function int_mxquote;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxrand</NAME>
-extern function int_mxrand;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxrand</NAME>
@@ -8615,20 +8555,8 @@ extern function int_mxrand;
 extern function int_mxrealpart;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxrealpart</NAME>
-extern function int_mxrealpart;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxredim</NAME>
 extern function int_mxredim;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxredim</NAME>
-extern function int_mxredim;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxresize</NAME>
-extern function int_mxresize;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxresize</NAME>
@@ -8639,20 +8567,8 @@ extern function int_mxresize;
 extern function int_mxround;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxround</NAME>
-extern function int_mxround;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxseti</NAME>
 extern function int_mxseti;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxseti</NAME>
-extern function int_mxseti;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxsetr</NAME>
-extern function int_mxsetr;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxsetr</NAME>
@@ -8663,20 +8579,8 @@ extern function int_mxsetr;
 extern function int_mxsetrc;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxsetrc</NAME>
-extern function int_mxsetrc;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxsign</NAME>
 extern function int_mxsign;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxsign</NAME>
-extern function int_mxsign;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxsin</NAME>
-extern function int_mxsin;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxsin</NAME>
@@ -8687,20 +8591,8 @@ extern function int_mxsin;
 extern function int_mxsinh;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxsinh</NAME>
-extern function int_mxsinh;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxsort</NAME>
 extern function int_mxsort;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxsort</NAME>
-extern function int_mxsort;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxsqrtel</NAME>
-extern function int_mxsqrtel;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxsqrtel</NAME>
@@ -8711,20 +8603,8 @@ extern function int_mxsqrtel;
 extern function int_mxsum;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxsum</NAME>
-extern function int_mxsum;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxtan</NAME>
 extern function int_mxtan;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxtan</NAME>
-extern function int_mxtan;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxtanh</NAME>
-extern function int_mxtanh;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxtanh</NAME>
@@ -8791,20 +8671,8 @@ extern function int_mxtest;
 extern function int_mxtestmatrix;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxtestmatrix</NAME>
-extern function int_mxtestmatrix;
-</VARIABLE>
-<VARIABLE>
 <NAME>int_mxtril</NAME>
 extern function int_mxtril;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxtril</NAME>
-extern function int_mxtril;
-</VARIABLE>
-<VARIABLE>
-<NAME>int_mxtriu</NAME>
-extern function int_mxtriu;
 </VARIABLE>
 <VARIABLE>
 <NAME>int_mxtriu</NAME>
@@ -8815,8 +8683,12 @@ extern function int_mxtriu;
 extern function int_mxzeros;
 </VARIABLE>
 <VARIABLE>
-<NAME>int_mxzeros</NAME>
-extern function int_mxzeros;
+<NAME>int_mxdiv</NAME>
+extern function int_mxdiv; 
+</VARIABLE>
+<VARIABLE>
+<NAME>int_mxbdiv</NAME>
+extern function int_mxbdiv; 
 </VARIABLE>
 <VARIABLE>
 <NAME>int_bmatrix_b2m</NAME>
