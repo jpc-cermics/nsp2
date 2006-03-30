@@ -2730,19 +2730,20 @@ static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
  * @alpha: a pointer onto a #NspMatrix
  * @beta: a pointer onto a #NspMatrix
  * 
- * computes the eigenvalues lambda = alpha/beta and (eventually)
+ * computes the eigenvalues lambda = @alpha/@beta and (eventually)
  * the left (Vl) and right (Vr) eigenvectors of the generalized 
  * eigenproblem :
- *           A Vr = lambda B Vr
- *          Vl' A = lambda Vl' B
+ *           @A @Vr = @lambda @B @Vr
+ *          @Vl' @A = @lambda @Vl' @B
  *
- * right eigenvectors are computed if Vr is not NULL   
- * left eigenvectors are computed if Vl is not NULL   
+ * right eigenvectors are computed if @Vr is not %NULL   
+ * left eigenvectors are computed if @Vl is not %NULL   
  *
  * @A and @B are not modified
  *
- * Return value: OK or FAIL
+ * Return value: %OK or %FAIL
  **/
+
 int nsp_gspec(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr,
 	      NspMatrix **alpha, NspMatrix **beta)
 {
