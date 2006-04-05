@@ -212,8 +212,9 @@ static int int_spec( Stack stack, int rhs, int opt, int lhs)
 	}
       else 
 	{
-	  NSP_OBJECT(A)->ret_pos = 1;
+	  NSP_OBJECT(A)->ret_pos = 2;
 	  MoveObj(stack,2,NSP_OBJECT(d));
+	  NSP_OBJECT(d)->ret_pos = 1;
 	}
     }
   else
@@ -226,8 +227,8 @@ static int int_spec( Stack stack, int rhs, int opt, int lhs)
 	}
       else 
 	{
-	  MoveObj(stack,1,NSP_OBJECT(v));
-	  MoveObj(stack,2,NSP_OBJECT(d));
+	  MoveObj(stack,1,NSP_OBJECT(d));
+	  MoveObj(stack,2,NSP_OBJECT(v));
 	}
     }
   return Max(lhs,1);

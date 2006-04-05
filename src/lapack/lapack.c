@@ -35,11 +35,11 @@
 
 /**
  * nsp_mat_is_symmetric:
- * @A: a #NspMatrix
+ * @A: a real or complex matrix
  * 
  * test if the matrix @A is symetric (real case) or hermitian (complex case)
  * 
- * Return value: TRUE or FALSE
+ * Return value: %TRUE or %FALSE
  **/
 int nsp_mat_is_symmetric(NspMatrix *A)
 {
@@ -71,7 +71,7 @@ int nsp_mat_is_symmetric(NspMatrix *A)
 
 /**
  * nsp_mat_is_lower_triangular:
- * @A: a #NspMatrix 
+ * @A: a real or complex matrix
  * 
  * test if the matrix @A is lower triangular
  * 
@@ -80,18 +80,17 @@ int nsp_mat_is_symmetric(NspMatrix *A)
 int nsp_mat_is_lower_triangular(NspMatrix *A)
 {
   int i,j;
-  if ( A->m != A->n ) return FALSE;
   if ( A->rc_type == 'r') 
     {
-      for ( j=0 ; j < A->m ; j++)
-	for ( i=0 ; i < j ; i++)
+      for ( j=1 ; j < A->n ; j++)
+	for ( i=0 ; i < Min(j,A->m) ; i++)
 	  if ( A->R[i+j*A->m] != 0.0 ) 
 	    return FALSE;
     }
   else 
     {
-      for ( j=0 ; j < A->m ; j++)
-	for ( i=0 ; i < j ; i++)
+      for ( j=1 ; j < A->n ; j++)
+	for ( i=0 ; i < Min(j,A->m) ; i++)
 	  if ( A->C[i+j*A->m].r != 0.0  ||  A->C[i+j*A->m].i != 0.0 ) 
 	    return FALSE;
     }
@@ -100,7 +99,7 @@ int nsp_mat_is_lower_triangular(NspMatrix *A)
 
 /**
  * nsp_mat_is_upper_triangular:
- * @A: a #NspMatrix 
+ * @A: a real or complex matrix
  * 
  * test if the matrix @A is upper triangular
  * 
@@ -109,17 +108,16 @@ int nsp_mat_is_lower_triangular(NspMatrix *A)
 int nsp_mat_is_upper_triangular(NspMatrix *A)
 {
   int i,j;
-  if ( A->m != A->n ) return FALSE;
   if ( A->rc_type == 'r') 
     {
-      for ( j=0 ; j < A->m ; j++)
+      for ( j=0 ; j < Min(A->m,A->n) ; j++)
 	for ( i=j+1 ; i < A->m ; i++)
 	  if ( A->R[i+j*A->m] != 0.0 ) 
 	    return FALSE;
     }
   else 
     {
-      for ( j=0 ; j < A->m ; j++)
+      for ( j=0 ; j < Min(A->m,A->n) ; j++)
 	for ( i=j+1 ; i < A->m ; i++)
 	  if ( A->C[i+j*A->m].r != 0.0  ||  A->C[i+j*A->m].i != 0.0 ) 
 	    return FALSE;
@@ -129,7 +127,7 @@ int nsp_mat_is_upper_triangular(NspMatrix *A)
 
 /**
  * nsp_mat_have_nan_or_inf:
- * @A: a #NspMatrix 
+ * @A: a real or complex matrix
  * 
  * test if the matrix @A contains Nan or +-Inf
  * 
@@ -177,12 +175,36 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 		      NspMatrix **Rank, NspMatrix **Sval, double *tol,char flag);
 
-/* OK 
- * QR decomposition  
- * mode can be 'x' or 'e' (economic) 
- * rank and E are computed if non null arguments are transmited 
- * tol can be given or computed if null is transmited 
- */
+/**
+ * nsp_qr:
+ * @A: (input) a real or complex matrix of size m x n
+ * @Q: (output) a real orthogonal or complex unitary matrix of 
+ *              size m x m (usual factorization) or m x n (economic factorization)
+ * @R: (output) a real or complex upper triangular matrix of size m x n (usual factorization)
+ *              or n x n (economic factorization)
+ * @E: (output if @E is not NULL on entry) a permutation vector (m x 1 ) 
+ *     stored as a real vector
+ * @Rank: (output if @Rank is not NULL on entry) integer scalar (1 x 1) stored as 
+ *        a real, the estimated rank of @A
+ * @Sval: (output if @Rank != NULL and @Sval != NULL on entry) a real vector (3 x 1), 
+ *        approximation of some singular values of @A
+ * @tol:  (input) the tolerance for the rank estimation, if @tol is NULL on entry
+ *        Max(m,n)*eps is used 
+ * @mode: (input) char flag which can be 'x' (usual factorization) or 'e' (economic factorization)
+ * 
+ * Compute a QR factorization of the matrix @A :
+ *
+ *      @A P = @Q @R   if @E is not NULL
+ *
+ *      @A = @Q @R   if @E is NULL
+ * 
+ *      if P is the permutation matrix associated to the permutation sigma
+ *      then @E is the permutation vector associated to the inverse permutation
+ *      ( E(sigma(i)) = i) 
+ *
+ *
+ * Return value:  %OK or %FAIL
+ **/
 int nsp_qr(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E, NspMatrix **Rank, 
 	   NspMatrix **Sval, double *tol, char mode)
 {
@@ -435,24 +457,31 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 }
 
 
-/*  
- * Lu factorization 
- * A is changed by nsp_lu. Modified by Bruno (June 21 2005) so
- * as to lowering the memory requirement :
- *      - use A to store L
- *      - the permutation E is returned as a permutation and not
- *        as a permutation matrix (precisely E is the inverse 
- *        permutation of the one associated to permutation matrix
- *        P in PA = LU). This brings some speedup in solving
- *        linear systems with:
- *
- *          x = U\(L\b(E,:))
- * 
- *        In place of using:  x = U\(L\(P*b))
- */
 int intdgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
 int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
 
+/**
+ * nsp_lu:
+ * @A: (input/output) a real or complex matrix of size m x n on input
+ *                    and a real or complex upper triangular matrix of size Min(m,n) x n on output
+ * @L: (output) a real or complex lower triangular matrix of size m x Min(m,n). If @E is NULL
+ *              on entry then @L stores inv(P) L and is no more lower triangular.
+ * @E: (output if @E is not NULL on entry) a permutation vector (m x 1 ) 
+ *             stored as a real vector
+ * 
+ * Compute a LU factorization of the matrix @A :
+ *
+ *     P A = L U
+ *
+ *  @A is changed and stores the U factor on output.
+ *
+ *  the permutation @E is returned as a permutation and not
+ *  as a permutation matrix (precisely E is the inverse 
+ *  permutation of the one associated to permutation matrix
+ *  P in PA = LU).
+ * 
+ * Return value:  OK or FAIL
+ **/
 int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **E)
 {
   /* A == [] return empty matrices*/ 
@@ -609,20 +638,33 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E)
 }
 
 
-/* OK 
- * svd: 
- *    A is modified 
- *    S is always computed 
- *    if U != NULL then 
- *       U and V are computed. 
- *       if flag is set to "S" then Min(m,n) columns 
- *       are computed for U and V (rows of Vt) else 
- *      U and V are fully computed 
- *    rank is computed if non null (using tol if tol != NULL)
- */
 static int intdgesdd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
 static int intzgesdd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
 
+/**
+ * nsp_svd:
+ * @A: (input) a real or complex matrix of size m x n (@A is modified).
+ * @S: (output) a real vector of size Min(m,n) x 1, the singular values of the matrix @A
+ *     in decreasing order.
+ * @U: (output if @U is not NULL on entry) a real orthogonal or complex unitary matrix of 
+ *     size  m x m (usual factorization) or m x Min(m,n) (economic factorization)  
+ * @V: (output if @U is not NULL on entry) a real orthogonal or complex unitary matrix of 
+ *     size  n x n (usual factorization) or n x Min(m,n) (economic factorization)  
+ * @flag: (input) char flag which can be 'x' (usual factorization) or 'e' (economic factorization)
+ * @Rank: (output if @Rank is not NULL on entry) integer scalar (1 x 1) stored as 
+ *        a real, the estimated rank of @A
+ * @tol:  (input) the tolerance for the rank estimation, if @tol is NULL on entry
+ *        Max(m,n)*eps is used 
+ *
+ * Compute a singular value factorization of the matrix @A :
+ *
+ *      A = U S V'
+ *
+ * For rank estimation, the cutting is done for singular values less than tol S_max
+ * where S_max is the biggest singular value. 
+ *
+ * Return value: OK or FAIL
+ **/
 int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol)
 {
   /*  A = [] return empty matrices */ 
@@ -993,7 +1035,9 @@ static int intzgeev(NspMatrix *A,NspMatrix **D,NspMatrix **V)
  * if flag == 'V',  V is returned in A 
  */
 static int intdsyev(NspMatrix *A,NspMatrix **d,char flag);
+static int intdsyevr(NspMatrix *A,NspMatrix **d,char flag);
 static int intzheev(NspMatrix *A,NspMatrix **d,char flag);
+static int intzheevr(NspMatrix *A,NspMatrix **d, char flag);
 
 int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag)
 {
@@ -1019,9 +1063,9 @@ int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag)
     }
   
   if ( A->rc_type == 'r' ) 
-    return  intdsyev(A,d,flag); 
+    return  intdsyevr(A,d,flag); 
   else 
-    return  intzheev(A,d,flag); 
+    return  intzheevr(A,d,flag); 
 }
 
 static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
@@ -1052,6 +1096,57 @@ static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
   *d = wr ; 
   FREE(dwork);
   return OK;
+}
+
+static int intdsyevr(NspMatrix *A,NspMatrix **d, char flag)
+{
+  int n=A->n, il=1, iu=n;
+  int info, lwork, m, liwork, qiwork[1], *iwork=NULL, *isuppz=NULL;
+  NspMatrix *wr;
+  double *dwork=NULL, abstol=0.0, qwork[1], *Z=NULL, vl, vu;
+
+
+  if ( (wr=nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
+  if ( (isuppz =nsp_alloc_work_int(2*n)) == NULL ) goto err;
+  if ( flag == 'V' )
+    if ( (Z =nsp_alloc_work_doubles(n*n)) == NULL ) goto err;
+
+  lwork = -1; liwork = -1;
+  C2F(dsyevr)((flag == 'V' ) ? "V" : "N","A", "U" , &n,A->R, &n,&vl,&vu,
+	     &il,&iu,&abstol, &m, wr->R, Z, &n, isuppz, qwork, &lwork,
+	     qiwork, &liwork, &info, 1L, 1L, 1L);
+
+  lwork = (int) qwork[0];
+  liwork = qiwork[0];
+  if ( (dwork =nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+  if ( (iwork =nsp_alloc_work_int(liwork)) == NULL ) goto err;
+  
+
+  C2F(dsyevr)((flag == 'V' ) ? "V" : "N","A", "U" , &n,A->R, &n,&vl,&vu,
+	     &il, &iu,&abstol, &m, wr->R, Z, &n, isuppz, dwork, &lwork,
+	     iwork, &liwork, &info, 1L, 1L, 1L);
+
+  if (info != 0) 
+    {
+      Scierror("Error: convergence problem in dsyevr\n"); 
+      goto err;
+    }
+
+  *d = wr ; 
+  FREE(dwork); FREE(iwork); FREE(isuppz);
+  if ( flag == 'V' )
+    {
+      FREE(A->R); A->R = Z;
+    }
+  return OK;
+
+ err:
+  nsp_matrix_destroy(wr);
+  FREE(dwork);
+  FREE(iwork);
+  FREE(isuppz);
+  FREE(Z);
+  return FAIL;
 }
 
 static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
@@ -1088,6 +1183,60 @@ static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
   nsp_matrix_destroy(wr); 
   FREE(rwork);
   FREE(cwork);
+  return FAIL;
+}
+
+static int intzheevr(NspMatrix *A,NspMatrix **d, char flag)
+{
+  int n=A->n, il=1, iu=n;
+  int info, lwork, lrwork, m, liwork, qiwork[1], *iwork=NULL, *isuppz=NULL;
+  NspMatrix *wr;
+  double *rwork=NULL, abstol=0.0, qrwork[1], vl, vu;
+  doubleC *Z=NULL, *work=NULL, qwork[1];
+
+  if ( (wr=nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
+  if ( (isuppz =nsp_alloc_work_int(2*n)) == NULL ) goto err;
+  if ( flag == 'V' )
+    if ( (Z =nsp_alloc_work_doubleC(n*n)) == NULL ) goto err;
+
+  lwork = -1; lrwork = -1; liwork = -1;
+  C2F(zheevr)((flag == 'V' ) ? "V" : "N","A", "U" , &n,A->C, &n,&vl,&vu,
+	     &il,&iu,&abstol, &m, wr->R, Z, &n, isuppz, qwork, &lwork,
+	     qrwork, &lrwork, qiwork, &liwork, &info, 1L, 1L, 1L);
+
+  lwork = (int) qwork[0].r;
+  lrwork = (int) qrwork[0];
+  liwork = qiwork[0];
+  if ( (work =nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
+  if ( (rwork =nsp_alloc_work_doubles(lrwork)) == NULL ) goto err;
+  if ( (iwork =nsp_alloc_work_int(liwork)) == NULL ) goto err;
+  
+
+  C2F(zheevr)((flag == 'V' ) ? "V" : "N","A", "U" , &n,A->C, &n,&vl,&vu,
+	     &il, &iu,&abstol, &m, wr->R, Z, &n, isuppz, work, &lwork,
+	     rwork, &lrwork, iwork, &liwork, &info, 1L, 1L, 1L);
+
+  if (info != 0) 
+    {
+      Scierror("Error: convergence problem in zheevr\n"); 
+      goto err;
+    }
+
+  *d = wr ; 
+  FREE(work); FREE(rwork); FREE(iwork); FREE(isuppz);
+  if ( flag == 'V' )
+    {
+      FREE(A->C); A->C = Z;
+    }
+  return OK;
+
+ err:
+  nsp_matrix_destroy(wr);
+  FREE(work);
+  FREE(rwork);
+  FREE(iwork);
+  FREE(isuppz);
+  FREE(Z);
   return FAIL;
 }
 
@@ -2725,19 +2874,22 @@ static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspM
  * nsp_gspec:
  * @A:  a #NspMatrix
  * @B:  a #NspMatrix
- * @Vl: a pointer onto a #NspMatrix  
- * @Vr: a pointer onto a #NspMatrix
- * @alpha: a pointer onto a #NspMatrix
- * @beta: a pointer onto a #NspMatrix
+ * @Vl: a #NspMatrix handle  
+ * @Vr: a #NspMatrix handle
+ * @alpha: a #NspMatrix handle
+ * @beta: a #NspMatrix handle
  * 
- * computes the eigenvalues lambda = @alpha/@beta and (eventually)
- * the left (Vl) and right (Vr) eigenvectors of the generalized 
+ * Computes the eigenvalues lambda = alpha/beta and (eventually)
+ * the left (@Vl) and right (@Vr) eigenvectors of the generalized 
  * eigenproblem :
- *           @A @Vr = @lambda @B @Vr
- *          @Vl' @A = @lambda @Vl' @B
  *
- * right eigenvectors are computed if @Vr is not %NULL   
- * left eigenvectors are computed if @Vl is not %NULL   
+ *           @A @Vr = lambda @B @Vr
+ *
+ *          @Vl' @A = lambda @Vl' @B
+ *
+ * right eigenvectors are computed if @Vr is not NULL   
+ *
+ * left eigenvectors are computed if @Vl is not NULL   
  *
  * @A and @B are not modified
  *
