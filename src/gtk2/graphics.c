@@ -162,7 +162,7 @@ int int_pixbuftocells(Stack stack, int rhs, int opt, int lhs)
 
 static NspCells *GetImageCells(Stack stack,int pos) 
 {
-  int i,nRow,nCol;
+  int i,nRow=0,nCol=0;
   NspCells *C; 
   if ((C = GetCells(stack,pos)) == NULL) return NULL;
   /* first checks that all the matrices in the cell are of same dimension */
