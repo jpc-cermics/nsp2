@@ -27,4 +27,5 @@ extern int nsp_mat_bdiv_lsq(NspMatrix *A, NspMatrix *B, double tol_rcond);
 extern int nsp_mat_bdiv_square(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond);
 extern int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info);
 extern int nsp_mat_bdiv_diagonal(NspMatrix *A, NspMatrix *B, int *info);
+extern int nsp_solve_banded(NspMatrix *A, NspMatrix *B, NspMatrix **X);
 #endif 

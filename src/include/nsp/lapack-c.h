@@ -7,6 +7,8 @@ typedef long int logical;
 typedef logical (*L_fp) (); /* A revoir au cas par cas XXXX */ 
 typedef float E_f ;
 
+extern int C2F(dgbsv)(int *n, int *kl, int *ku, int *nrhs, double *ab, int *ldab, int *ipiv, double *b, int *ldb, int *info);
+extern int C2F(zgbsv)(int *n, int *kl, int *ku, int *nrhs, doubleC *ab, int *ldab, int *ipiv, doubleC *b, int *ldb, int *info);
 extern int C2F(dbdsqr) (char *uplo, int *n, int *ncvt, int *nru, int *ncc, double *d, double *e, double *vt, int *ldvt, double *u, int *ldu, double *c, int *ldc, double *work, int *info, int uplo_len);
 extern int C2F(dgebak) (char *job, char *side, int *n, int *ilo, int *ihi, double *scale, int *m, double *v, int *ldv, int *info, int job_len, int side_len);
 extern int C2F(dgebal) (char *job, int *n, double *a, int *lda, int *ilo, int *ihi, double *scale, int *info, int job_len);
