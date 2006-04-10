@@ -157,8 +157,7 @@ nsp_chdir(dirName)
  *----------------------------------------------------------------------
  */
 
-char *
-nsp_get_cwd()
+char *nsp_get_cwd()
 {
     char buffer[MAXPATHLEN+1];
     if (currentDir == NULL) {
