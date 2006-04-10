@@ -1,6 +1,6 @@
 /* Nsp
  * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2005 Bruno Pincon Esial/Iecn
+ * Copyright (C) 2005-2006 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -19,7 +19,6 @@
  *
  * a set of linear algebra functions with lapack 
  *
- *   FIXME : use dsyevr / zheevr for spec_sym ?
  */
 
 #include <string.h>
@@ -75,7 +74,7 @@ int nsp_mat_is_symmetric(NspMatrix *A)
  * 
  * test if the matrix @A is lower triangular
  * 
- * Return value: TRUE or FALSE 
+ * Return value: %TRUE or %FALSE 
  **/
 int nsp_mat_is_lower_triangular(NspMatrix *A)
 {
@@ -103,7 +102,7 @@ int nsp_mat_is_lower_triangular(NspMatrix *A)
  * 
  * test if the matrix @A is upper triangular
  * 
- * Return value: TRUE or FALSE 
+ * Return value: %TRUE or %FALSE 
  **/
 int nsp_mat_is_upper_triangular(NspMatrix *A)
 {
@@ -131,7 +130,7 @@ int nsp_mat_is_upper_triangular(NspMatrix *A)
  * 
  * test if the matrix @A contains Nan or +-Inf
  * 
- * Return value: TRUE (if at least one element is Nan or +-Inf) or FALSE 
+ * Return value: %TRUE (if at least one element is Nan or +-Inf) or %FALSE 
  **/
 int nsp_mat_have_nan_or_inf(NspMatrix *A)
 {
@@ -153,10 +152,14 @@ int nsp_mat_have_nan_or_inf(NspMatrix *A)
   return FALSE;
 }
 
-/*
- * xerbla_:
+/**
+ * C2F(xerbla)
+ * @srname: name of the (lapack) routine which has detected an error
+ * @info: 
+ * 
  * switch lapack message to nsp message
- * Return value: 
+ * 
+ * Return value: 0
  **/
 int C2F(xerbla)(char *srname,int * info,int srname_len)
 {
@@ -177,7 +180,7 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
 
 /**
  * nsp_qr:
- * @A: (input) a real or complex matrix of size m x n
+ * @A: (input) a real or complex matrix of size m x n. @A is not modified.
  * @Q: (output) a real orthogonal or complex unitary matrix of 
  *              size m x m (usual factorization) or m x n (economic factorization)
  * @R: (output) a real or complex upper triangular matrix of size m x n (usual factorization)
@@ -201,7 +204,6 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
  *      if P is the permutation matrix associated to the permutation sigma
  *      then @E is the permutation vector associated to the inverse permutation
  *      ( E(sigma(i)) = i) 
- *
  *
  * Return value:  %OK or %FAIL
  **/
@@ -475,12 +477,11 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
  *
  *  @A is changed and stores the U factor on output.
  *
- *  the permutation @E is returned as a permutation and not
- *  as a permutation matrix (precisely E is the inverse 
- *  permutation of the one associated to permutation matrix
- *  P in PA = LU).
+ *  the permutation @E is returned as a permutation vector
+ *  (precisely E is the inverse permutation of the one 
+ *   associated to permutation matrix P in PA = LU).
  * 
- * Return value:  OK or FAIL
+ * Return value:  %OK or %FAIL
  **/
 int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **E)
 {
@@ -663,7 +664,7 @@ static int intzgesdd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char
  * For rank estimation, the cutting is done for singular values less than tol S_max
  * where S_max is the biggest singular value. 
  *
- * Return value: OK or FAIL
+ * Return value: %OK or %FAIL
  **/
 int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol)
 {
@@ -842,15 +843,22 @@ static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
 
 
 
-/* OK
- * nsp_spec 
- * spec(A) for nonsymmetric matrices using dgeev or zgeev 
- * A is changed, if v != NULL v is computed 
- */
-
 static int intdgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v); 
 static int intzgeev(NspMatrix *A,NspMatrix **d,NspMatrix **v);
-
+/**
+ * nsp_spec:
+ * @A: (input) a square real or complex matrix : caution @A is modified.
+ * @d: (output) a vector with the eigenvalues of the matrix @A
+ * @v: (output if not NULL on entry) a square matrix with the
+ *     associated eigenvectors : the i th column of @v is the eigenvector
+ *     associated to the i th eigenvalues in @d
+ * 
+ * Computes eigenvalues and (if @v is not NULL on entry) the eigenvectors
+ * of the square matrix @A. For symetric real or complex hermitian matrices
+ * it is better to use nsp_spec_sym.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 int nsp_spec(NspMatrix *A, NspMatrix **d,NspMatrix **v) 
 {
   /*  A = [] return empty matrices */ 
@@ -1029,16 +1037,22 @@ static int intzgeev(NspMatrix *A,NspMatrix **D,NspMatrix **V)
 }
 
 
-/* OK
- * nsp_spec_sym 
- * spec(A) for symmetric matrices dgeev 
- * if flag == 'V',  V is returned in A 
- */
 static int intdsyev(NspMatrix *A,NspMatrix **d,char flag);
 static int intdsyevr(NspMatrix *A,NspMatrix **d,char flag);
 static int intzheev(NspMatrix *A,NspMatrix **d,char flag);
 static int intzheevr(NspMatrix *A,NspMatrix **d, char flag);
 
+/**
+ * nsp_spec_sym:
+ * @A: (input/output) a square real symetric or complex hermitian matrix  
+ * @d: (output) a real vector : the eigenvalues of the matrix @A
+ * @flag: if flag == 'V',  the eigenvectors are returned in @A
+ * 
+ * Computes eigenvalues and (if flag == 'V') the eigenvectors of the matrix @A
+ * (in this case eigenvectors are returned in @A).
+ * 
+ * Return value: %OK or %FAIL
+ **/
 int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag)
 {
   int m=A->m, n=A->m;
@@ -1240,12 +1254,373 @@ static int intzheevr(NspMatrix *A,NspMatrix **d, char flag)
   return FAIL;
 }
 
-/* OK 
- * nsp_inv (triangular case added)
- */
+static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta);
+static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta);
+
+/**
+ * nsp_gspec:
+ * @A:  (input) a square real or complex matrix (@A is not modified)
+ * @B:  (input) a square real or complex matrix (@B is not modified)
+ * @Vl: (output if Vl is not NULL on entry) a real or complex matrix
+ * @Vr: (output if Vl is not NULL on entry) a real or complex matrix
+ * @alpha: (output) a real or complex vector
+ * @beta:  (output) a real or complex vector
+ * 
+ * Computes the generalized eigenvalues lambda = alpha/beta and (eventually)
+ * the left (@Vl) and right (@Vr) eigenvectors of the generalized 
+ * eigenproblem :
+ *
+ *           @A @Vr = lambda @B @Vr
+ *
+ *          @Vl' @A = lambda @Vl' @B
+ *
+ * right eigenvectors are computed if @Vr is not NULL   
+ *
+ * left eigenvectors are computed if @Vl is not NULL   
+ *
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_gspec(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr,
+	      NspMatrix **alpha, NspMatrix **beta)
+{
+  NspMatrix *AA = NULLMAT, *BB = NULLMAT;
+
+  if (A->m != A->n) 
+    { 
+      Scierror("Error: first argument of gspec should be square and it is (%dx%d)\n", 
+	       A->m, A->n);
+      return FAIL;
+    }
+
+  if (B->m != B->n) 
+    { 
+      Scierror("Error: second argument of gspec should be square and it is (%dx%d)\n", 
+	       B->m, B->n);
+      return FAIL;
+    }
+
+  if ( A->m != B->m ) 
+    {
+      Scierror("gspec: first and second arguments must have equal size\n");
+      return FAIL;
+    }
+
+  /* A = [] return empty matrices */ 
+  if ( A->mn == 0 ) 
+    {
+      if ( Vl != NULL)
+	{
+	  if ( (*Vl =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+	}
+      if ( Vr != NULL)
+	{
+	  if ( (*Vr =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+	} 
+      if ( (*alpha =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+      if ( (*beta =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+      return OK ; 
+    }
+
+  if ( nsp_mat_have_nan_or_inf(A) ||  nsp_mat_have_nan_or_inf(B) )
+    {
+      Scierror("Error: nan or inf in gspec first argument\n"); 
+      return FAIL;
+    }
+
+  if ( A->rc_type == B->rc_type )
+    {
+      if ( (AA =nsp_matrix_copy(A)) == NULLMAT ) return FAIL;
+      if ( (BB =nsp_matrix_copy(B)) == NULLMAT ) goto err; 
+    }
+  else if ( A->rc_type == 'r' )
+    {
+      if ( (AA =nsp_mat_copy_and_complexify(A)) == NULLMAT ) return FAIL;
+      if ( (BB =nsp_matrix_copy(B)) == NULLMAT ) goto err; 
+    }
+  else
+    {
+      if ( (AA =nsp_matrix_copy(A)) == NULLMAT ) return FAIL;
+      if ( (BB =nsp_mat_copy_and_complexify(B)) == NULLMAT ) goto err; 
+    }
+
+  if ( AA->rc_type == 'r' ) 
+    {
+      if ( intdggev(AA,BB,Vl,Vr,alpha,beta) == FAIL ) goto err;
+    }
+  else 
+    {
+      if ( intzggev(AA,BB,Vl,Vr,alpha,beta) == FAIL ) goto err;
+    }
+  
+  nsp_matrix_destroy(AA);
+  nsp_matrix_destroy(BB);
+  return OK;
+
+ err:
+  nsp_matrix_destroy(AA);
+  nsp_matrix_destroy(BB);
+  return FAIL;
+}
+
+
+static int intdggev(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr, 
+		    NspMatrix **Alpha, NspMatrix **Beta)
+{
+  double *dwork=NULL, qwork[1], *vlr=NULL, *vrr=NULL; 
+  char *jobVl ="N", *jobVr = "N", type = 'r';
+  NspMatrix *alpha=NULLMAT, *alphar=NULLMAT, *alphai=NULLMAT, *beta=NULLMAT, *vl=NULLMAT, *vr=NULLMAT; 
+  int info, lwork, i, j;  
+
+  int n = A->n;
+
+  if ( (beta =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
+  if ( (alphar =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) goto err;
+  if ( (alphai =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) goto err;
+
+  if ( Vl != NULL ) 
+    {
+      if ( (vl =nsp_matrix_create(NVOID,'r',n,n)) == NULLMAT ) goto err;
+      jobVl = "V"; vlr = vl->R;
+    }
+
+  if ( Vr != NULL ) 
+    {
+      if ( (vr =nsp_matrix_create(NVOID,'r',n,n)) == NULLMAT ) goto err;
+      jobVr = "V"; vrr = vr->R;
+    }
+
+  lwork = -1; 
+  /* call to query work size */
+  C2F(dggev)(jobVl,jobVr, &n, A->R, &n, B->R, &n, alphar->R, alphai->R, beta->R, 
+	     vlr, &n, vrr, &n, qwork, &lwork, &info, 1L, 1L); 
+  lwork = (int) qwork[0];
+  if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+
+  C2F(dggev)(jobVl,jobVr, &n, A->R, &n, B->R, &n, alphar->R, alphai->R, beta->R,
+	     vlr, &n, vrr, &n, dwork, &lwork, &info, 1L, 1L);
+
+  if (info < 0 || info >= n) 
+    {
+      if (info == n) 
+	Scierror("Error: gspec, the QZ iteration completly failed\n");
+      else if (info == n + 1) 
+	Scierror("Error: gspec, other than QZ iteration failed in dhgeqz\n");
+      else if (info == n + 2) 
+	Scierror("Error: gspec, error return from dtgevc\n");
+      else
+	Scierror("Error: gspec, wrong argument (%d) in dggev call\n",-info);
+      goto err;
+    }
+
+  /* return (alphar + %i*alphai) and beta */
+  /* result is real ? or complex */ 
+  for (i = 0 ; i < n ; ++i) { if (alphai->R[i] != 0.0) { type = 'c'; break;}}
+
+  if ( type == 'c' )   /* alpha = (alphar,alphai) */ 
+    {
+      if ( (alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) goto err;
+      for (i = 0 ; i < n ; ++i) 
+	{ 
+	  alpha->C[i].r = alphar->R[i]; 
+	  alpha->C[i].i = alphai->R[i]; 
+	}
+    }
+
+  if ( info > 0 ) /* special case of partial convergence */
+    {
+      Sciprintf("\n Warning: gspec, the QZ iteration failed. No eigenvectors have been calculated");
+      Sciprintf("\n          return only alpha(i) and beta(i) which should be correct\n");
+      /* reduce size of the alpha and beta vectors */
+      memmove(&(beta->R[0]), &(beta->R[info]), (n-info)*sizeof(double));
+      nsp_matrix_resize(beta, n-info, 1);
+      if ( type == 'c' )
+	{
+	  memmove(&(alpha->C[0]), &(alpha->C[info]), (n-info)*sizeof(doubleC));
+	  nsp_matrix_resize(alpha, n-info, 1);
+	}
+      else
+	{
+	  memmove(&(alphar->R[0]), &(alphar->R[info]), (n-info)*sizeof(double));
+	  nsp_matrix_resize(alphar, n-info, 1);
+	}
+      if ( Vl != NULL )
+	if ( (*Vl=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
+      if ( Vr != NULL )
+	if ( (*Vr=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
+      nsp_matrix_destroy(vl); 
+      nsp_matrix_destroy(vr);
+    }
+  else
+    {
+      if ( Vr != NULL && type == 'c' ) /* fill Vr if requested */ 
+	{
+	  if (nsp_mat_complexify(vr,0.0) == FAIL ) goto err;
+	  j = 0;
+	  while (j < n) 
+	    {
+	      if( alphai->R[j] != 0.0 ) 
+		{
+		  for ( i = 0;  i < n ; ++i) 
+		    { 
+		      int k = i+j*n ;
+		      vr->C[k].i = vr->C[k+n].r; 
+		      vr->C[k+n].r = vr->C[k].r;
+		      vr->C[k+n].i = - vr->C[k].i;
+		    }
+		  j++;
+		}
+	      j++;
+	    }
+	}
+      if ( Vl != NULL && type == 'c' ) /* fill Vl if requested */ 
+	{
+	  if (nsp_mat_complexify(vl,0.0) == FAIL ) goto err;
+	  j = 0;
+	  while (j < n) 
+	    {
+	      if( alphai->R[j] != 0.0 ) 
+		{
+		  for ( i = 0;  i < n ; ++i) 
+		    { 
+		      int k = i+j*n ;
+		      vl->C[k].i = vl->C[k+n].r; 
+		      vl->C[k+n].r = vl->C[k].r;
+		      vl->C[k+n].i = - vl->C[k].i;
+		    }
+		  j++;
+		}
+	      j++;
+	    }
+	}
+      if ( Vr != NULL ) *Vr = vr;
+      if ( Vl != NULL ) *Vl = vl;
+    }
+  if ( type == 'r' ) 
+    *Alpha = alphar; 
+  else 
+    {
+      *Alpha = alpha; nsp_matrix_destroy(alphar);
+    }
+  *Beta = beta;
+  nsp_matrix_destroy(alphai); 
+  FREE(dwork);
+  return OK;
+
+ err:
+  FREE(dwork);
+  nsp_matrix_destroy(alpha);
+  nsp_matrix_destroy(alphar);
+  nsp_matrix_destroy(alphai);
+  nsp_matrix_destroy(beta);
+  nsp_matrix_destroy(vl);
+  nsp_matrix_destroy(vr);
+  return FAIL;
+} 
+
+static int intzggev(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr, 
+		    NspMatrix **Alpha, NspMatrix **Beta)
+{
+  double *dwork=NULL;
+  doubleC qwork[1], *work=NULL, *vlc=NULL, *vrc=NULL; 
+  char *jobVl ="N", *jobVr = "N";
+  NspMatrix *alpha=NULLMAT, *beta=NULLMAT, *vl=NULLMAT, *vr=NULLMAT; 
+  int info, lwork;  
+
+  int n = A->n;
+
+  if ( (dwork =nsp_alloc_work_doubles(8*n)) == NULL ) return FAIL;
+  if ( (beta =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) goto err;
+  if ( (alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) goto err;
+
+  if ( Vl != NULL ) 
+    {
+      if ( (vl =nsp_matrix_create(NVOID,'c',n,n)) == NULLMAT ) goto err;
+      jobVl = "V"; vlc = vl->C;
+    }
+
+  if ( Vr != NULL ) 
+    {
+      if ( (vr =nsp_matrix_create(NVOID,'c',n,n)) == NULLMAT ) goto err;
+      jobVr = "V"; vrc = vr->C;
+    }
+
+  lwork = -1; 
+  /* first call to query work size */
+  C2F(zggev)(jobVl,jobVr, &n, A->C, &n, B->C, &n, alpha->C, beta->C, 
+	     vlc, &n, vrc, &n, qwork, &lwork, dwork, &info, 1L, 1L); 
+  lwork = (int) qwork[0].r;
+  if ( (work=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
+
+  C2F(zggev)(jobVl,jobVr, &n, A->C, &n, B->C, &n, alpha->C, beta->C, 
+	     vlc, &n, vrc, &n, work, &lwork, dwork, &info, 1L, 1L); 
+
+  if (info < 0 || info >= n) 
+    {
+      if (info == n) 
+	Scierror("Error: gspec, the QZ iteration completly failed\n");
+      else if (info == n + 1) 
+	Scierror("Error: gspec, other than QZ iteration failed in zhgeqz\n");
+      else if (info == n + 2) 
+	Scierror("Error: gspec, error return from ztgevc\n");
+      else
+	Scierror("Error: gspec, wrong argument (%d) in zggev call\n",-info);
+      goto err;
+    }
+
+  if ( info > 0 ) /* special case of partial convergence */
+    {
+      Sciprintf("\n Warning: gspec, the QZ iteration failed. No eigenvectors have been calculated");
+      Sciprintf("\n          return only alpha(i) and beta(i) which should be correct\n");
+      /* reduce size of the alpha and beta vectors */
+      memmove(&(beta->C[0]), &(beta->C[info]), (n-info)*sizeof(doubleC));
+      nsp_matrix_resize(beta, n-info, 1);
+      memmove(&(alpha->C[0]), &(alpha->C[info]), (n-info)*sizeof(doubleC));
+      nsp_matrix_resize(alpha, n-info, 1);
+
+      if ( Vl != NULL )
+	if ( (*Vl=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
+      if ( Vr != NULL )
+	if ( (*Vr=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
+      nsp_matrix_destroy(vl); 
+      nsp_matrix_destroy(vr);
+    }
+  else
+    {
+      if ( Vr != NULL ) *Vr = vr;
+      if ( Vl != NULL ) *Vl = vl;
+    }
+
+  *Alpha = alpha;
+  *Beta = beta;
+  FREE(work);
+  FREE(dwork);
+  return OK;
+
+ err:
+  FREE(dwork);
+  FREE(work);
+  nsp_matrix_destroy(alpha);
+  nsp_matrix_destroy(beta);
+  nsp_matrix_destroy(vl);
+  nsp_matrix_destroy(vr);
+  return FAIL;
+} 
+
+
 static int intdgetri(NspMatrix *A);
 static int intzgetri(NspMatrix *A);
 
+/**
+ * nsp_inv:
+ * @A: (input/output) a square real or complex matrix 
+ * 
+ * Computes the inverse matrix of the matrix @A. nsp_inv tests if
+ * @A is lower or upper triangular (to speed up the computation in theses
+ * cases). @A is modified and stores its inverse matrix on output.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 int nsp_inv(NspMatrix *A) 
 {
   char tflag;  /* N : non triangular, U : upper triangular, L : lower triangular */
@@ -1350,14 +1725,24 @@ static int intzgetri(NspMatrix *A)
 } 
 
 
-/* OK
- * nsp_rcond(A)
- */
-
 static int intdgecon(NspMatrix *A,double *rcond);
 static int intzgecon(NspMatrix *A,double *rcond);
 static int inttrcon(NspMatrix *A, char tri_type, double *rcond);
-
+/**
+ * nsp_rcond:
+ * @A: (input) a real or complex square matrix (A is modified)
+ * @rcond: (output) an estimate of the reciprocal condition number of the matrix @A
+ * 
+ * Computes an estimate of the reciprocal condition number of the matrix @A
+ * using 1-norm, that is an estimate of :
+ *                     
+ *    1 / ( ||A||_1 ||inv(A)||_1 )  
+ * 
+ * nsp_rcond tests if @A is lower or upper triangular to speed up the computation in theses
+ * cases.
+ *
+ * Return value: %OK or %FAIL
+ **/
 int nsp_rcond(NspMatrix *A,double *rcond)
 {
   NspMatrix *Ac;
@@ -1480,12 +1865,20 @@ static int inttrcon(NspMatrix *A, char tri_type, double *rcond1)
   return FAIL;
 }
 
-
-/* OK 
- * nsp_cholesky
- * A is changed 
- */
-
+/**
+ * nsp_cholesky:
+ * @A: (input/output) a symetric real or complex hermitian matrix (the upper
+ *     triangle of @A is used) which must be positive definite.
+ * 
+ * Computes the Cholesky factorization of the matrix @A (@A must be positive
+ * definite) :
+ *
+ *     A = C' C  (C an upper triangular matrix with positive diagonal elements)
+ *
+ * The matrix C is returned in @A.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 int nsp_cholesky(NspMatrix *A) 
 {
   int info, m = A->m, n = A->n ;
@@ -1512,16 +1905,19 @@ int nsp_cholesky(NspMatrix *A)
   return OK;
 } 
 
-/* OK 
- * det = det(A) 
- * returns d=det or [e,m] with det = m*10^e
- * according to mode 
- * A is changed 
- */
 
 static NspMatrix * intzdet(NspMatrix *A,char mode);
 static NspMatrix * intddet(NspMatrix *A,char mode);
-
+/**
+ * nsp_det:
+ * @A: (input) a square real or complex matrix. @A is modified.
+ * @mode: 
+ * 
+ * returns d=det or [e,m] with det = m*10^e
+ * according to mode 
+ * 
+ * Return value: 
+ **/
 NspMatrix * nsp_det(NspMatrix *A,char mode)
 {
   /*  A = [] return empty matrices */ 
@@ -1930,15 +2326,32 @@ static int intzggbal(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y)
   return FAIL;
 } 
 
-/*
- * Lsq computation  using dgelsy or zgelsy 
- * FIXME :  an option to solve with svd could be interesting
- */
 static int intdgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank);
 static int intzgelsy(NspMatrix *A, NspMatrix *B, double rcond, int *rank);
 /* static int intdgelsd(NspMatrix *A, NspMatrix *B, double rcond, int *rank); */
 /* static int intzgelsd(NspMatrix *A, NspMatrix *B, double rcond, int *rank); */
 
+/**
+ * nsp_lsq:
+ * @A: (input) a real or complex matrix (of the least square problem). @A is modified.
+ * @B: (input/output) a real or complex vector or matrix (the rhs of the least square problem).
+ *     On output @B holds the solution.
+ * @Rcond: (input) if not NULL the tolerance for rank estimation. If NULL the tolerance is Max(m,n)eps
+ * @Rank: (output) estimated rank 
+ * 
+ *  Solves a least square problem :
+ *
+ *
+ *   Min || Ax - B ||^2
+ *      
+ *
+ * When the matrix @A is not detected as full rank (which can depend an the tolerance @Rcond)
+ * the minimum norm solution is computed.
+ * 
+ * FIXME :  an option to solve with svd could be interesting
+ * 
+ * Return value: %OK or %FAIL
+ **/
 int nsp_lsq(NspMatrix *A, NspMatrix *B, double *Rcond, int *Rank)
 {
   double rcond;
@@ -2771,7 +3184,7 @@ static int intdgehrd(NspMatrix *A, NspMatrix **U)
 {
   double *tau=NULL, *work=NULL, qwork[1];
   NspMatrix *u=NULLMAT;
-  int lwork, info, n=A->n, un=1, sym_flag;
+  int lwork, info, n=A->n, un=1, sym_flag, i, k, kn;
 
   sym_flag = nsp_mat_is_symmetric(A);
 
@@ -2805,8 +3218,18 @@ static int intdgehrd(NspMatrix *A, NspMatrix **U)
 
   /* extract H */ 
   nsp_mat_triu(A,-1);  
-  if ( sym_flag ) nsp_mat_tril(A,1); /* FIXME : il faudrait peut être aussi forcer la symétrie */
-
+  if ( sym_flag )
+    {
+      nsp_mat_tril(A,1);
+      /* force symetry */
+      k = 1;
+      for ( i = 0 ; i < n-1 ; i++ )
+	{
+	  kn = k + n-1;
+	  A->R[k] = A->R[kn] = 0.5*(A->R[k] + A->R[kn]);
+	  k = kn + 2;
+	} 
+    }
   FREE(tau); FREE(work);
   return OK;
 
@@ -2867,370 +3290,19 @@ static int intzgehrd(NspMatrix *A, NspMatrix **U)
 } 
 
 
-static int intdggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta);
-static int intzggev(NspMatrix *A,NspMatrix *B,NspMatrix **Vl,NspMatrix **Vr,NspMatrix **alpha,NspMatrix **beta);
-
-/**
- * nsp_gspec:
- * @A:  a #NspMatrix
- * @B:  a #NspMatrix
- * @Vl: a #NspMatrix handle  
- * @Vr: a #NspMatrix handle
- * @alpha: a #NspMatrix handle
- * @beta: a #NspMatrix handle
- * 
- * Computes the eigenvalues lambda = alpha/beta and (eventually)
- * the left (@Vl) and right (@Vr) eigenvectors of the generalized 
- * eigenproblem :
- *
- *           @A @Vr = lambda @B @Vr
- *
- *          @Vl' @A = lambda @Vl' @B
- *
- * right eigenvectors are computed if @Vr is not NULL   
- *
- * left eigenvectors are computed if @Vl is not NULL   
- *
- * @A and @B are not modified
- *
- * Return value: %OK or %FAIL
- **/
-
-int nsp_gspec(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr,
-	      NspMatrix **alpha, NspMatrix **beta)
-{
-  NspMatrix *AA = NULLMAT, *BB = NULLMAT;
-
-  if (A->m != A->n) 
-    { 
-      Scierror("Error: first argument of spec should be square and it is (%dx%d)\n", 
-	       A->m, A->n);
-      return FAIL;
-    }
-
-  if (B->m != B->n) 
-    { 
-      Scierror("Error: second argument of spec should be square and it is (%dx%d)\n", 
-	       B->m, B->n);
-      return FAIL;
-    }
-
-  if ( A->m != B->m ) 
-    {
-      Scierror("spec: first and second arguments must have equal size\n");
-      return FAIL;
-    }
-
-  /* A = [] return empty matrices */ 
-  if ( A->mn == 0 ) 
-    {
-      if ( Vl != NULL)
-	{
-	  if ( (*Vl =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
-	}
-      if ( Vr != NULL)
-	{
-	  if ( (*Vr =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
-	} 
-      if ( (*alpha =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
-      if ( (*beta =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
-      return OK ; 
-    }
-
-  if ( nsp_mat_have_nan_or_inf(A) ||  nsp_mat_have_nan_or_inf(B) )
-    {
-      Scierror("Error: nan or inf in spec first argument\n"); 
-      return FAIL;
-    }
-
-  if ( A->rc_type == B->rc_type )
-    {
-      if ( (AA =nsp_matrix_copy(A)) == NULLMAT ) return FAIL;
-      if ( (BB =nsp_matrix_copy(B)) == NULLMAT ) goto err; 
-    }
-  else if ( A->rc_type == 'r' )
-    {
-      if ( (AA =nsp_mat_copy_and_complexify(A)) == NULLMAT ) return FAIL;
-      if ( (BB =nsp_matrix_copy(B)) == NULLMAT ) goto err; 
-    }
-  else
-    {
-      if ( (AA =nsp_matrix_copy(A)) == NULLMAT ) return FAIL;
-      if ( (BB =nsp_mat_copy_and_complexify(B)) == NULLMAT ) goto err; 
-    }
-
-  if ( AA->rc_type == 'r' ) 
-    {
-      if ( intdggev(AA,BB,Vl,Vr,alpha,beta) == FAIL ) goto err;
-    }
-  else 
-    {
-      if ( intzggev(AA,BB,Vl,Vr,alpha,beta) == FAIL ) goto err;
-    }
-  
-  nsp_matrix_destroy(AA);
-  nsp_matrix_destroy(BB);
-  return OK;
-
- err:
-  nsp_matrix_destroy(AA);
-  nsp_matrix_destroy(BB);
-  return FAIL;
-}
-
-
-static int intdggev(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr, 
-		    NspMatrix **Alpha, NspMatrix **Beta)
-{
-  double *dwork=NULL, qwork[1], *vlr=NULL, *vrr=NULL; 
-  char *jobVl ="N", *jobVr = "N", type = 'r';
-  NspMatrix *alpha=NULLMAT, *alphar=NULLMAT, *alphai=NULLMAT, *beta=NULLMAT, *vl=NULLMAT, *vr=NULLMAT; 
-  int info, lwork, i, j;  
-
-  int n = A->n;
-
-  if ( (beta =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
-  if ( (alphar =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) goto err;
-  if ( (alphai =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) goto err;
-
-  if ( Vl != NULL ) 
-    {
-      if ( (vl =nsp_matrix_create(NVOID,'r',n,n)) == NULLMAT ) goto err;
-      jobVl = "V"; vlr = vl->R;
-    }
-
-  if ( Vr != NULL ) 
-    {
-      if ( (vr =nsp_matrix_create(NVOID,'r',n,n)) == NULLMAT ) goto err;
-      jobVr = "V"; vrr = vr->R;
-    }
-
-  lwork = -1; 
-  /* call to query work size */
-  C2F(dggev)(jobVl,jobVr, &n, A->R, &n, B->R, &n, alphar->R, alphai->R, beta->R, 
-	     vlr, &n, vrr, &n, qwork, &lwork, &info, 1L, 1L); 
-  lwork = (int) qwork[0];
-  if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
-
-  C2F(dggev)(jobVl,jobVr, &n, A->R, &n, B->R, &n, alphar->R, alphai->R, beta->R,
-	     vlr, &n, vrr, &n, dwork, &lwork, &info, 1L, 1L);
-
-  if (info < 0 || info >= n) 
-    {
-      if (info == n) 
-	Scierror("Error: gspec, the QZ iteration completly failed\n");
-      else if (info == n + 1) 
-	Scierror("Error: gspec, other than QZ iteration failed in dhgeqz\n");
-      else if (info == n + 2) 
-	Scierror("Error: gspec, error return from dtgevc\n");
-      else
-	Scierror("Error: gspec, wrong argument (%d) in dggev call\n",-info);
-      goto err;
-    }
-
-  /* return (alphar + %i*alphai) and beta */
-  /* result is real ? or complex */ 
-  for (i = 0 ; i < n ; ++i) { if (alphai->R[i] != 0.0) { type = 'c'; break;}}
-
-  if ( type == 'c' )   /* alpha = (alphar,alphai) */ 
-    {
-      if ( (alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) goto err;
-      for (i = 0 ; i < n ; ++i) 
-	{ 
-	  alpha->C[i].r = alphar->R[i]; 
-	  alpha->C[i].i = alphai->R[i]; 
-	}
-    }
-
-  if ( info > 0 ) /* special case of partial convergence */
-    {
-      Sciprintf("\n Warning: gspec, the QZ iteration failed. No eigenvectors have been calculated");
-      Sciprintf("\n          return only alpha(i) and beta(i) which should be correct\n");
-      /* reduce size of the alpha and beta vectors */
-      memmove(&(beta->R[0]), &(beta->R[info]), (n-info)*sizeof(double));
-      nsp_matrix_resize(beta, n-info, 1);
-      if ( type == 'c' )
-	{
-	  memmove(&(alpha->C[0]), &(alpha->C[info]), (n-info)*sizeof(doubleC));
-	  nsp_matrix_resize(alpha, n-info, 1);
-	}
-      else
-	{
-	  memmove(&(alphar->R[0]), &(alphar->R[info]), (n-info)*sizeof(double));
-	  nsp_matrix_resize(alphar, n-info, 1);
-	}
-      if ( Vl != NULL )
-	if ( (*Vl=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
-      if ( Vr != NULL )
-	if ( (*Vr=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
-      nsp_matrix_destroy(vl); 
-      nsp_matrix_destroy(vr);
-    }
-  else
-    {
-      if ( Vr != NULL && type == 'c' ) /* fill Vr if requested */ 
-	{
-	  if (nsp_mat_complexify(vr,0.0) == FAIL ) goto err;
-	  j = 0;
-	  while (j < n) 
-	    {
-	      if( alphai->R[j] != 0.0 ) 
-		{
-		  for ( i = 0;  i < n ; ++i) 
-		    { 
-		      int k = i+j*n ;
-		      vr->C[k].i = vr->C[k+n].r; 
-		      vr->C[k+n].r = vr->C[k].r;
-		      vr->C[k+n].i = - vr->C[k].i;
-		    }
-		  j++;
-		}
-	      j++;
-	    }
-	}
-      if ( Vl != NULL && type == 'c' ) /* fill Vl if requested */ 
-	{
-	  if (nsp_mat_complexify(vl,0.0) == FAIL ) goto err;
-	  j = 0;
-	  while (j < n) 
-	    {
-	      if( alphai->R[j] != 0.0 ) 
-		{
-		  for ( i = 0;  i < n ; ++i) 
-		    { 
-		      int k = i+j*n ;
-		      vl->C[k].i = vl->C[k+n].r; 
-		      vl->C[k+n].r = vl->C[k].r;
-		      vl->C[k+n].i = - vl->C[k].i;
-		    }
-		  j++;
-		}
-	      j++;
-	    }
-	}
-      if ( Vr != NULL ) *Vr = vr;
-      if ( Vl != NULL ) *Vl = vl;
-    }
-  if ( type == 'r' ) 
-    *Alpha = alphar; 
-  else 
-    {
-      *Alpha = alpha; nsp_matrix_destroy(alphar);
-    }
-  *Beta = beta;
-  nsp_matrix_destroy(alphai); 
-  FREE(dwork);
-  return OK;
-
- err:
-  FREE(dwork);
-  nsp_matrix_destroy(alpha);
-  nsp_matrix_destroy(alphar);
-  nsp_matrix_destroy(alphai);
-  nsp_matrix_destroy(beta);
-  nsp_matrix_destroy(vl);
-  nsp_matrix_destroy(vr);
-  return FAIL;
-} 
-
-static int intzggev(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr, 
-		    NspMatrix **Alpha, NspMatrix **Beta)
-{
-  double *dwork=NULL;
-  doubleC qwork[1], *work=NULL, *vlc=NULL, *vrc=NULL; 
-  char *jobVl ="N", *jobVr = "N";
-  NspMatrix *alpha=NULLMAT, *beta=NULLMAT, *vl=NULLMAT, *vr=NULLMAT; 
-  int info, lwork;  
-
-  int n = A->n;
-
-  if ( (dwork =nsp_alloc_work_doubles(8*n)) == NULL ) return FAIL;
-  if ( (beta =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) goto err;
-  if ( (alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT ) goto err;
-
-  if ( Vl != NULL ) 
-    {
-      if ( (vl =nsp_matrix_create(NVOID,'c',n,n)) == NULLMAT ) goto err;
-      jobVl = "V"; vlc = vl->C;
-    }
-
-  if ( Vr != NULL ) 
-    {
-      if ( (vr =nsp_matrix_create(NVOID,'c',n,n)) == NULLMAT ) goto err;
-      jobVr = "V"; vrc = vr->C;
-    }
-
-  lwork = -1; 
-  /* first call to query work size */
-  C2F(zggev)(jobVl,jobVr, &n, A->C, &n, B->C, &n, alpha->C, beta->C, 
-	     vlc, &n, vrc, &n, qwork, &lwork, dwork, &info, 1L, 1L); 
-  lwork = (int) qwork[0].r;
-  if ( (work=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
-
-  C2F(zggev)(jobVl,jobVr, &n, A->C, &n, B->C, &n, alpha->C, beta->C, 
-	     vlc, &n, vrc, &n, work, &lwork, dwork, &info, 1L, 1L); 
-
-  if (info < 0 || info >= n) 
-    {
-      if (info == n) 
-	Scierror("Error: gspec, the QZ iteration completly failed\n");
-      else if (info == n + 1) 
-	Scierror("Error: gspec, other than QZ iteration failed in zhgeqz\n");
-      else if (info == n + 2) 
-	Scierror("Error: gspec, error return from ztgevc\n");
-      else
-	Scierror("Error: gspec, wrong argument (%d) in zggev call\n",-info);
-      goto err;
-    }
-
-  if ( info > 0 ) /* special case of partial convergence */
-    {
-      Sciprintf("\n Warning: gspec, the QZ iteration failed. No eigenvectors have been calculated");
-      Sciprintf("\n          return only alpha(i) and beta(i) which should be correct\n");
-      /* reduce size of the alpha and beta vectors */
-      memmove(&(beta->C[0]), &(beta->C[info]), (n-info)*sizeof(doubleC));
-      nsp_matrix_resize(beta, n-info, 1);
-      memmove(&(alpha->C[0]), &(alpha->C[info]), (n-info)*sizeof(doubleC));
-      nsp_matrix_resize(alpha, n-info, 1);
-
-      if ( Vl != NULL )
-	if ( (*Vl=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
-      if ( Vr != NULL )
-	if ( (*Vr=nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) goto err;
-      nsp_matrix_destroy(vl); 
-      nsp_matrix_destroy(vr);
-    }
-  else
-    {
-      if ( Vr != NULL ) *Vr = vr;
-      if ( Vl != NULL ) *Vl = vl;
-    }
-
-  *Alpha = alpha;
-  *Beta = beta;
-  FREE(work);
-  FREE(dwork);
-  return OK;
-
- err:
-  FREE(dwork);
-  FREE(work);
-  nsp_matrix_destroy(alpha);
-  nsp_matrix_destroy(beta);
-  nsp_matrix_destroy(vl);
-  nsp_matrix_destroy(vr);
-  return FAIL;
-} 
 
 
 static double intzvnorm(NspMatrix *A, double p);
 static double intdvnorm(NspMatrix *A, double p);
 /**
  * nsp_vector_norm:
- * @A: a #NspMatrix (which must be a vector)
+ * @A: a real or complex vector
  * @p: a #double which must be >= 1 
  * 
- * Computes the p-norm of the vector @A : ( sum_k |A_k|^p )^(1/p) 
+ * Computes the p-norm of the vector @A : 
+ *
+ *     ( sum_k |A_k|^p )^(1/p)
+ * 
  * @p must be +Inf to compute the infinite norm ( max_k |A_k| )
  * @A is not modified
  * 
@@ -3332,12 +3404,17 @@ static double intznorm(NspMatrix *A,char flag);
 static double intdnorm(NspMatrix *A,char flag);
 /**
  * nsp_matrix_norm:
- * @A: an #NspMatrix
+ * @A: a real or complex matrix
  * @flag: character defining the kind of matrix norm to compute:
+ *
  *        @flag='1' for 1-norm ||A||_1 = max of ||Ax||_1 for all x such that ||x||_1 = 1
+ *
  *        @flag='2' for 2-norm ||A||_2 = max of ||Ax||_2 for all x such that ||x||_2 = 1
+ *
  *        @flag='I' for Inf-norm ||A||_I = max of ||Ax||_inf for all x such that ||x||_inf = 1
+ *
  *        @flag='F' for Frobenius norm ||A||_F = sqrt( sum_{i,j} A(i,j)^2 )
+ *
  *        @flag='M' for  ||A||_F = max_{i,j} |A(i,j)|  (which is not exactly a matrix-norm)
  *
  * @A is not modified.
@@ -3404,12 +3481,12 @@ static double intznorm(NspMatrix *A,char flag)
 
 /**
  * nsp_expm:
- * @A: a #NspMatrix 
+ * @A: a real or complex square matrix
  * 
  * computes the exponential of the matrix @A.
  * @A is overwritten with the result.
  * 
- * Return value: FAIl or OK
+ * Return value: %FAIl or %OK
  **/
 int nsp_expm(NspMatrix *A)
 {
@@ -3687,5 +3764,111 @@ int nsp_mat_bdiv_diagonal(NspMatrix *A, NspMatrix *B, int *info)
   return OK;
 }
 
+static NspMatrix *nsp_increase_banded_mat(NspMatrix *A, char flag)
+{
+  NspMatrix *AA;
+  int bl = A->m/2, i, j, kA, kAA;
+  if ( A->rc_type == 'r' )
+    {
+      if ( flag == 'r' )
+	{
+	  AA = nsp_matrix_create(NVOID, 'r', A->m+bl, A->n);
+	  if ( AA )
+	    for ( j = 0; j < A->n; j++ )
+	      memcpy(&(AA->R[j*AA->m+bl]),&(A->R[j*A->m]),A->m*sizeof(double));
+	}
+      else /* flag = 'c' */
+	{
+	  AA = nsp_matrix_create(NVOID, 'c', A->m+bl, A->n);
+	  if ( AA )
+	    {
+	      kA = 0; kAA = 0;
+	      for ( j = 0; j < A->n; j++ )
+		{
+		  kAA += bl;
+		  for ( i = 0; i < A->m; i++ )
+		    {
+		      AA->C[kAA].r = A->R[kA++];
+		      AA->C[kAA++].i = 0.0;
+		    }
+		}
+	    }
+	}
+    }
+  else
+    {
+      AA = nsp_matrix_create(NVOID, 'c', A->m+bl, A->n);
+      if ( AA )
+	for ( j = 0; j < A->n; j++ )
+	  memcpy(&(AA->C[j*AA->m+bl]),&(A->C[j*A->m]),A->m*sizeof(doubleC));
+    }
+  return AA;
+}
 
+/**
+ * nsp_solve_banded:
+ * @A: (input) a real or complex banded matrix (the lapack storage is used). @A is not modified.  
+ * @B: (input) a real or complex vector or matrix. @B is not modified. 
+ * @X: (output) a real or complex vector or matrix (of same dim than @B).
+ * 
+ * Solves a linear system A X = B, with @A a banded matrix. (No estimation of rcond is done)
+ * 
+ * Return value: %OK or %FAIL;
+ **/
+int nsp_solve_banded(NspMatrix *A, NspMatrix *B, NspMatrix **X)
+{
+  NspMatrix *AA=NULLMAT;
+  NspMatrix *XX=NULLMAT;
+  int bl=A->m/2, *ipiv=NULL, info;
 
+  if (A->m >= A->n || A->m % 2 != 1 ) 
+    { 
+      Scierror("Error: first argument of solve_banded doesn't look like a banded matrix\n");
+      return FAIL;
+    }
+
+  if (B->m != A->n) 
+    { 
+      Scierror("Error: second argument of solve_banded is incompatible with the matrix order\n");
+      return FAIL;
+    }
+
+  if ( A->rc_type == B->rc_type )
+    {
+      if ( (AA =nsp_increase_banded_mat(A, A->rc_type)) == NULLMAT ) return FAIL;
+      if ( (XX =nsp_matrix_copy(B)) == NULLMAT ) goto err; 
+    }
+  else if ( A->rc_type == 'r' )
+    {
+      if ( (AA =nsp_increase_banded_mat(A, 'c')) == NULLMAT ) return FAIL;
+      if ( (XX =nsp_matrix_copy(B)) == NULLMAT ) goto err; 
+    }
+  else
+    {
+      if ( (AA =nsp_increase_banded_mat(A, 'c')) == NULLMAT ) return FAIL;
+      if ( (XX =nsp_mat_copy_and_complexify(B)) == NULLMAT ) goto err; 
+    }
+
+  if ( (ipiv =nsp_alloc_work_int(A->n)) == NULL ) goto err;
+
+  if ( AA->rc_type == 'r' ) 
+    C2F(dgbsv)(&(AA->n), &bl, &bl, &(XX->n), AA->R, &(AA->m), ipiv, XX->R, &(XX->m), &info);
+  else 
+    C2F(zgbsv)(&(AA->n), &bl, &bl, &(XX->n), AA->C, &(AA->m), ipiv, XX->C, &(XX->m), &info);
+
+  if ( info != 0 )
+    {
+      Scierror("Error: in solve_banded pivot %d is exactly zero \n", info);
+      goto err;
+    }
+
+  *X = XX;
+  FREE(ipiv);
+  return OK;
+
+ err:
+  FREE(ipiv);
+  nsp_matrix_destroy(AA);
+  nsp_matrix_destroy(XX);
+  return FAIL;
+}

@@ -540,6 +540,20 @@ static int int_expm( Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * interface for nsp_solve_banded: 
+ */
+static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A, *B, *X;
+  int_types T[] = {mat, mat,t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&A,&B) == FAIL ) return RET_BUG;
+  CheckLhs(0,1);
+  if ( nsp_solve_banded(A, B, &X)== FAIL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(X));
+  return Max(lhs,1);
+}
+
+/*
  * The Interface for basic matrices operation 
  */
 
@@ -558,6 +572,7 @@ static OpTab Lapack_func[] = {
   {"balanc",int_balanc},
   {"hess",int_hess},
   {"expm",int_expm},
+  {"solve_banded",int_solve_banded},
   {(char *) 0, NULL}
 };
 
