@@ -20,21 +20,10 @@ include ../Make.lib
 
 gtksci.o : gtksci-generated.c 
 
-atk.c : 
-	@ln -s codegen/atk.c .
-
-gdk.c : 
-	@ln -s codegen/gdk.c .	
-
-# gtk.c is not a link 
-
-pango.c : 
-	@ln -s codegen/pango.c .	
-
-clean :: 
-	$(RM) atk.c gdk.c  pango.c
-
-
-gtk.o : codegen/gtk.c codegen/gtk24.c
+atk.o : atk.c  codegen/atk.c 
+gtk.o : gtk.c  codegen/gtk.c 
+gdk.o : gdk.c  codegen/gdk.c 
+pango.o : pango.c codegen/pango.c
+gtk.o : gtk.c codegen/gtk.c codegen/gtk24.c
 
 
