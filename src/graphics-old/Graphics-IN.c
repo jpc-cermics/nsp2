@@ -4791,7 +4791,7 @@ static OpTab Graphics_func[]={
   {"xname",int_xname},
   {"xaxis",int_xaxis},
   {"seteventhandler",int_seteventhandler},
-  {"help_html",int_gtkhelp},
+  {"help",int_gtkhelp},
   {"xs2gif",int_xs2gif},
   {"xs2ppm",int_xs2ppm},
   {"xs2ps",int_xs2ps},
