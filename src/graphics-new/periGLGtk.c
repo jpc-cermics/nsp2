@@ -111,7 +111,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin,int ifla
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 static void scig_deconnect_handlers(BCG *winxgc);
-static void DrawMark(BCG *Xgc,int *x, int *y);
+static void draw_mark(BCG *Xgc,int *x, int *y);
 
 static void gdk_draw_text_rot(GdkDrawable *drawable, GdkFont *font,  GdkGC *gc,
 			      int x, int y, int maxx, int maxy, const gchar *text,
@@ -2589,7 +2589,7 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
       keepsize= Xgc->fontSize;
       hds= Xgc->CurHardSymbSize;
       xset_font(Xgc,i,hds);
-      for ( i=0; i< n ;i++) DrawMark(Xgc,vx+i,vy+i);
+      for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
       xset_font(Xgc,keepid,keepsize);
     }
 }
@@ -2615,7 +2615,7 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
       keepsize= Xgc->fontSize;
       hds= Xgc->CurHardSymbSize;
       xset_font(Xgc,i,hds);
-      for ( i=0; i< n ;i++) DrawMark(Xgc,vx+i,vy+i);
+      for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
       xset_font(Xgc,keepid,keepsize);
     }
 }
@@ -3390,13 +3390,73 @@ static int CurSymbYOffset(BCG *Xgc)
   return((ListOffset_[Xgc->CurHardSymbSize].yoffset)[Xgc->CurHardSymb]);
 }
 
-static void DrawMark(BCG *Xgc,int *x, int *y)
+#ifdef PERIGTK 
+static void draw_mark(BCG *Xgc,int *x, int *y)
 { 
   char str[1];
   str[0]=Marks[Xgc->CurHardSymb];
   gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
 		*x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
 }
+
+
+#else 
+/* drawing marks with pango 
+ * FIXME: some operation could be stored in cache 
+ * i.e utf8 translation and offsets used for drawing 
+ */
+
+/* drawing marks with pango 
+ */
+
+static const int symbols[] = 
+  {
+    0x22C5, /* lozenge */
+    0x002B, /* plus sign */
+    0x00D7, /* multiplication sign */
+    0x2217, /* asterisk operator */
+    0x2666, /* black diamond suit */
+    0x25CA, /* lozenge */
+    0x0394, /* greek capital letter delta */
+    0x2207, /* nabla  */
+    0x2663, /* black club suit */
+    0x2295, /* circled plus */
+    0x2665, /* black heart suit */
+    0x2660, /* black spade suit */
+    0x2297, /* circled times */
+    0x2022, /* bullet */
+    0x00B0  /* degree sign */
+  };
+
+static void draw_mark(BCG *Xgc,int *x, int *y)
+{
+  double dx,dy;
+  PangoRectangle ink_rect,logical_rect;
+  int code = symbols[Xgc->CurHardSymb]; 
+  gchar symbol_code[4], *iter = symbol_code;
+  DRAW_CHECK;
+  g_unichar_to_utf8(code, iter);
+  iter = g_utf8_next_char(iter);
+  g_unichar_to_utf8(0x0, iter);
+  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
+  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
+  dx = ink_rect.x + ink_rect.width/2.0;
+  dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
+  /* gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout); */
+  set_c(Xgc,1);
+  glRasterPos2i(*x-PANGO_PIXELS(dx),*y + PANGO_PIXELS(-dy));
+  gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
+  if (0) 
+    {
+      /* draw the ink_rectangle around the mark */
+      int i;
+      double rect[]={ink_rect.x -dx ,ink_rect.y -logical_rect.height -dy,ink_rect.width,ink_rect.height};
+      int myrect[]={*x,*y,0,0};
+      for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
+      drawrectangle(Xgc,myrect);
+    }
+}
+#endif
 
 /*
  * Allocation and storing function for vectors of GtkPoints 
@@ -4228,5 +4288,126 @@ static void unclip_rectangle(GdkRectangle clip_rect)
   glEnd();
 #endif
 }
+
+/*
+ * rendering text with PangoFT2 
+ * from: font-pangoft2.c written by Naofumi Yasufuku  
+ * <naofumi@users.sourceforge.net>
+ * Note that if the layout uses a transformation matrix 
+ * the enclosing rectangle is given by e_rect
+ */
+
+static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *e_rect)
+{
+  int x,y;
+  PangoRectangle logical_rect;
+  FT_Bitmap bitmap;
+  GLvoid *pixels;
+  guint32 *p;
+  GLfloat color[4];
+  guint32 rgb;
+  GLfloat a;
+  guint8 *row, *row_end;
+  int i;
+
+  pango_layout_get_extents (layout, NULL, &logical_rect);
+  if (logical_rect.width == 0 || logical_rect.height == 0)
+    return;
+
+  if ( e_rect == NULL )
+    {
+      bitmap.rows = PANGO_PIXELS (logical_rect.height);
+      bitmap.width = PANGO_PIXELS (logical_rect.width);
+      bitmap.pitch = bitmap.width;
+      x= PANGO_PIXELS (-logical_rect.x);
+      y= 0;
+    }
+  else
+    {
+      /* rotated string: we use the enclosing rectangle */
+      bitmap.rows = e_rect->height;
+      bitmap.width = e_rect->width;
+      bitmap.pitch = bitmap.width;
+      /* note that displaystring will pass e_rect here is such that x=y=0 */
+      x = - e_rect->x;
+      y = - e_rect->y ;
+    }
+  bitmap.buffer = g_malloc (bitmap.rows * bitmap.width);
+  bitmap.num_grays = 256;
+  bitmap.pixel_mode = ft_pixel_mode_grays;
+
+  memset (bitmap.buffer, 0, bitmap.rows * bitmap.width);
+  
+  pango_ft2_render_layout (&bitmap, layout,x,y);
+
+  pixels = g_malloc (bitmap.rows * bitmap.width * 4);
+  p = (guint32 *) pixels;
+
+  glGetFloatv (GL_CURRENT_COLOR, color);
+#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
+  rgb =  ((guint32) (color[0] * 255.0))        |
+        (((guint32) (color[1] * 255.0)) << 8)  |
+        (((guint32) (color[2] * 255.0)) << 16);
+#else
+  rgb = (((guint32) (color[0] * 255.0)) << 24) |
+        (((guint32) (color[1] * 255.0)) << 16) |
+        (((guint32) (color[2] * 255.0)) << 8);
+#endif
+  a = color[3];
+
+  row = bitmap.buffer + bitmap.rows * bitmap.width; /* past-the-end */
+  row_end = bitmap.buffer;      /* beginning */
+
+  if (a == 1.0)
+    {
+      do
+        {
+          row -= bitmap.width;
+          for (i = 0; i < bitmap.width; i++)
+#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
+            *p++ = rgb | (((guint32) row[i]) << 24);
+#else
+            *p++ = rgb | ((guint32) row[i]);
+#endif
+        }
+      while (row != row_end);
+    }
+  else
+    {
+      do
+        {
+          row -= bitmap.width;
+          for (i = 0; i < bitmap.width; i++)
+#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
+            *p++ = rgb | (((guint32) (a * row[i])) << 24);
+#else
+            *p++ = rgb | ((guint32) (a * row[i]));
+#endif
+        }
+      while (row != row_end);
+    }
+
+  glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
+
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+#if !defined(GL_VERSION_1_2)
+  glDrawPixels (bitmap.width, bitmap.rows,
+                GL_RGBA, GL_UNSIGNED_BYTE,
+                pixels);
+#else
+  glDrawPixels (bitmap.width, bitmap.rows,
+                GL_RGBA, GL_UNSIGNED_INT_8_8_8_8,
+                pixels);
+#endif
+
+  glDisable (GL_BLEND);
+
+  g_free (bitmap.buffer);
+  g_free (pixels);
+}
+
+
 
 #endif /* PERIGL */
