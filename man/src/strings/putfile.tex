@@ -1,0 +1,33 @@
+% -*- mode: latex -*-
+
+\mansection{putfile}
+\begin{mandesc}
+\short{putfile}{write a string matrix in a file in column order mode}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+putfile(fname,S)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{fname} : the file name to create given as a string.
+    \vname{A} : a string matrix.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+writes in file \verb+fname+ the contents of \verb+A+ in column order (i.e like \verb+A(:)+)
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}
+    A = string([1,2;3,4]);
+    putfile('A.txt',A);
+  \end{program}
+\end{examples}
+
+% -- see also
+
