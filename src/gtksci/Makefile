@@ -15,7 +15,7 @@ OBJSHELP=helpbrowser.o uri.o
 
 OBJSC =	click.o command.o  io.o \
 	menus.o  x_main.o \
-	about.o queue.o $(OBJSHELP) term.o
+	about.o queue.o $(OBJSHELP) 
 
 
 OBJSF  = 
