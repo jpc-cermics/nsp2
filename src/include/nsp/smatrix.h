@@ -137,6 +137,12 @@ extern NspSMatrix *nsp_smatrix_utf8_from_unichar(NspMatrix *A) ;
 extern void nsp_smatrix_latex_print(NspSMatrix *SMat);
 extern void nsp_smatrix_latex_tab_print(NspSMatrix *SMat);
 
+extern int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix **S);
+extern int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines);
+extern int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S);
+
+
+
 #endif 
 
 
@@ -151,4 +157,5 @@ int nsp_smatrix_neq(NspObject *A,NspObject *B);
 int nsp_smatrix_is_true(NspSMatrix *M);
 NspSMatrix *nsp_smatrix_xdr_load(XDR  *F);
 int nsp_smatrix_xdr_save(XDR  *F, NspSMatrix *M);
+
 #endif 
