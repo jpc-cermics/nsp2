@@ -985,7 +985,6 @@ int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-
   if ( x->mn == y->mn && x->mn == z->mn && x->mn != 1) 
     { 
       /*  Here we are in the case where x,y and z specify some polygons */
@@ -4792,7 +4791,7 @@ static OpTab Graphics_func[]={
   {"xname",int_xname},
   {"xaxis",int_xaxis},
   {"seteventhandler",int_seteventhandler},
-  {"help",int_gtkhelp},
+  {"help_html",int_gtkhelp},
   {"xs2gif",int_xs2gif},
   {"xs2ppm",int_xs2ppm},
   {"xs2ps",int_xs2ps},
