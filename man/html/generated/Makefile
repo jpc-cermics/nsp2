@@ -4,13 +4,13 @@ SHELL = /bin/sh
 # voir http://john.regehr.org/latex/
 
 
-all:: manual index manual 
+all:: manual index manual manualindex 
 
 # tlatex ../manual 'xhtml,3,sec-filename,next,notoc*'
 
 manual::
 	export TEXINPUTS=`pwd`/../../src//:: ; \
-	htlatex ../manual 'xhtml,3,section+,next,notoc*'
+	htlatex ../manual 'xhtml,uni-html4,3,section+,next,notoc*' "-cunihtf -utf8"
 	cp ../manual.css manual.css
 
 index: 
@@ -39,3 +39,11 @@ distclean::
 	@$(RM) manual.xref
 	@$(RM) *.aux
 	@$(RM) manual*.png
+
+clean	::
+
+# a link for the index.
+
+manualindex	::
+	$(RM)  manualindex.html
+	ln -f -s `grep  -l '<title>Index</title>' *.html` manualindex.html
