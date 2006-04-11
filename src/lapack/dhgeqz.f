@@ -249,6 +249,11 @@
 *
 *     Decode JOB, COMPQ, COMPZ
 *
+*     to avoid warning:: may be used uninitialized
+      ILSCHR=.true.
+      ILQ = .true.
+      ILZ=.true.
+      
       IF( LSAME( JOB, 'E' ) ) THEN
          ILSCHR = .FALSE.
          ISCHUR = 1
