@@ -44,6 +44,6 @@ clean	::
 
 # a link for the index.
 
-manualindex	::
+manualindex:
 	$(RM)  manualindex.html
 	ln -f -s `grep  -l '<title>Index</title>' *.html` manualindex.html
