@@ -46,6 +46,10 @@
 #include "nsp/gtksci.h"
 #include "queue.h"
 #include "uri.h"
+#include "../system/files.h"
+#include "../system/regexp.h"
+#include "nsp/object.h"
+#include "nsp/interf.h"
 
 /*  defines  */
 
@@ -707,26 +711,115 @@ open_browser_dialog (const gchar *help_path,
  * returns 0 on success and 1 if index.html not found 
  *------------------------------------------------------*/
 
+int nsp_help_topic(const char *topic,char *buf);
+
 int Sci_Help(char *mandir,char *locale,char *help_file) 
 {
+  char buf[FSIZE+1];
   GPrintFunc old;
   char *sci = getenv("SCI");
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
     mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
-  if ( help_file == NULL) help_file = "generated/manual.html";
   /* ignore g_print in libgtkhtml library */
   old=g_set_print_handler ((GPrintFunc) nsp_void_print_handler);
-  if ( window == NULL) 
+  /* expand topic -> filename in buf */
+  if ( help_file == NULL )
     {
-      open_browser_dialog (mandir,l,help_file);
+      sprintf(buf,"%s/generated/manual.html",mandir);
+      if ( window == NULL) 
+	open_browser_dialog (mandir,l,buf);
     }
-  else if ( help_file != NULL)
+  else  
     {
-      load_page ( help_file, TRUE);
+      if ( nsp_help_topic(help_file,buf)== FAIL ) return FAIL; 
+      if ( buf[0]== '\0') return OK; 
+      if ( window == NULL) 
+	open_browser_dialog (mandir,l,buf);
+      else 
+	load_page (buf, TRUE); 
     }
-  /* g_set_print_handler (old); */
-  return 0;
+  return 0; 
+}
+
+static NspHash *nsp_help_table = NULLHASH;
+
+static int nsp_help_fill_help_table()
+{
+  nsp_tcldstring name,filename;
+  int all=TRUE;
+  char buf[FSIZE+1];
+  NspSMatrix *S = NULL;
+  int xdr= FALSE,swap = TRUE,i;
+  NspFile *F;
+  char *mode = "r";
+  nsp_path_expand("NSP/man/html/generated/manual.4dx",buf,FSIZE);
+  if ((F=nsp_file_open(buf,mode,xdr,swap)) == NULLSCIFILE)
+    {
+      Scierror("Error %f not found\n",buf);
+      return FAIL;
+    }
+  if ( nsp_fscanf_smatrix(F,&S) == FAIL) 
+    {
+      nsp_file_close(F);
+      return FAIL;
+    }
+  if (nsp_file_close(F) == FAIL  ) return FAIL;
+  /* initialize hash table for help */
+  if ( ( nsp_help_table = nsp_hash_create("%help",S->mn) ) == NULLHASH) 
+    return  FAIL;
+  for ( i = 0 ; i < S->mn ; i++)
+    {
+      NspObject *Obj;
+      int nmatch;
+      char patterns[]={ "^[^{]*{([^{]*)\\|LNK{([^{]*)}{[^$]*}"};
+      Tcl_RegExp regExpr;
+      nsp_tcldstring_init(&name);
+      if (( regExpr = nsp_tclregexp_compile(patterns)) == NULL) goto bug;
+      if ((nsp_tcl_regsub(S->S[i],regExpr,"\\1",&name,&nmatch,all))==FAIL)  goto bug;
+
+      nsp_tcldstring_init(&filename);
+      if ((nsp_tcl_regsub(S->S[i],regExpr,"\\2",&filename,&nmatch,all))==FAIL)  goto bug;
+      if (( Obj = nsp_new_string_obj(nsp_tcldstring_value(&name),nsp_tcldstring_value(&filename),-1))
+	  == NULLOBJ)
+	goto bug;
+      nsp_tcldstring_free(&name);	 
+      nsp_tcldstring_free(&filename);	
+      if (nsp_hash_enter(nsp_help_table,Obj) == FAIL) goto bug;
+    }
+  return OK;
+ bug:
+  nsp_tcldstring_free(&name);	 
+  nsp_tcldstring_free(&filename);	
+  return FAIL;
+}
+
+
+int nsp_help_topic(const char *topic, char *buf)
+{
+  NspObject *Obj;
+  if ( nsp_help_table == NULLHASH)
+    {
+      if ( nsp_help_fill_help_table() == FAIL 
+	   || nsp_help_table == NULLHASH)
+	{
+	  Scierror("Error: cannot build help table \n");
+	  return FAIL;
+	}
+    }
+  if ( nsp_hash_find(nsp_help_table,topic,&Obj)== FAIL) 
+    {
+      Sciprintf("No man for %s\n",topic);
+      strcpy(buf,"");
+      return OK;
+    }
+  else
+    {
+      /* Sciprintf("%s --> %s\n",topic,((NspSMatrix *) Obj)->S[0]); */
+      nsp_path_expand("NSP/man/html/generated/",buf,FSIZE);
+      strcat(buf,((NspSMatrix *) Obj)->S[0]);
+    }
+  return OK;
 }
 
 /*

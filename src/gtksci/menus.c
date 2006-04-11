@@ -1045,7 +1045,11 @@ static void nsp_menu_scicos_stop (void)
 
 static void nsp_menu_help(void)
 {
-  enqueue_nsp_command("help();");
+#ifdef WITH_GTKHTML
+  Sci_Help(NULL,NULL,NULL);
+#else 
+  Sciprint("help is not available\n");
+#endif 
 }
 
 /*-----------------------------------------------------------------
