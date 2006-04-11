@@ -1036,10 +1036,12 @@ static int intzgeev(NspMatrix *A,NspMatrix **D,NspMatrix **V)
   return FAIL;
 }
 
-
+#if 0 
 static int intdsyev(NspMatrix *A,NspMatrix **d,char flag);
-static int intdsyevr(NspMatrix *A,NspMatrix **d,char flag);
 static int intzheev(NspMatrix *A,NspMatrix **d,char flag);
+#endif 
+
+static int intdsyevr(NspMatrix *A,NspMatrix **d,char flag);
 static int intzheevr(NspMatrix *A,NspMatrix **d, char flag);
 
 /**
@@ -1082,6 +1084,8 @@ int nsp_spec_sym(NspMatrix *A,NspMatrix **d,char flag)
     return  intzheevr(A,d,flag); 
 }
 
+#if 0
+/* unsued */
 static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
 {
   int n=A->n;
@@ -1111,6 +1115,7 @@ static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
   FREE(dwork);
   return OK;
 }
+#endif 
 
 static int intdsyevr(NspMatrix *A,NspMatrix **d, char flag)
 {
@@ -1163,6 +1168,8 @@ static int intdsyevr(NspMatrix *A,NspMatrix **d, char flag)
   return FAIL;
 }
 
+#if 0 
+/* unused */
 static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
 {
   int n=A->n;
@@ -1199,6 +1206,7 @@ static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
   FREE(cwork);
   return FAIL;
 }
+#endif 
 
 static int intzheevr(NspMatrix *A,NspMatrix **d, char flag)
 {
