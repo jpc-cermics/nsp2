@@ -167,11 +167,11 @@ button_callback (GtkWidget *widget,
   switch (GPOINTER_TO_INT (data))
     {
     case BUTTON_HOME:
-      load_page ("contents.html", TRUE);
+      load_page ("manual.html", TRUE);
       break;
 
     case BUTTON_INDEX:
-      load_page ("index.html", TRUE);
+      load_page ("manualindex.html", TRUE);
       break;
 
     case BUTTON_BACK:
@@ -729,7 +729,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
   return 0;
 }
 
-/* 
+/*
 static void write_scilab_example(char *example)
 {
   char *pos = example, *tmpdir;

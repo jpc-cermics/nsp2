@@ -282,3 +282,95 @@ void sci_winch_signal(int n)
 #endif 
 }
 
+
+
+
+/* 
+ * Xorgetchar
+ * this function is used to get next char and manage X11 events during 
+ * the wait for next char. Note that Xorgetchar is transmited to 
+ * readline. This version should be much more portable than the 
+ * previous one which uses select. It should be checked on windows.
+ * must protect the gtk_main of a Ctrl-C 
+ * 
+ */
+
+static void nsp_create_stdin_channel(int fd,int *val);
+
+int Xorgetchar_channel(void)
+{
+  static int fd_in,first=0;
+  int val;
+  SELECT_DEBUG(static int counter=0) ;
+  SELECT_DEBUG(fprintf(stderr,"New Xorgetchar %d\n",counter++););
+  if ( nsp_check_events_activated()== FALSE) return(getchar());
+
+  if ( first == 0) 
+    {
+      first++;
+      fd_in  = fileno(stdin) ;
+      nsp_create_stdin_channel(fd_in,&val);
+    }
+  gtk_main();
+  return val;
+}
+
+
+static gboolean stdin_read( GIOChannel *source, GIOCondition condition, gpointer data );
+
+static void nsp_create_stdin_channel(int fd,int *val)
+{
+  static GIOChannel *channel;
+  guint stdout_tag;
+  channel = g_io_channel_unix_new( fd );
+  g_io_channel_set_encoding( channel, NULL, NULL );
+  g_io_channel_set_flags(channel,G_IO_FLAG_NONBLOCK,NULL);
+  stdout_tag = g_io_add_watch( channel,
+			       ( G_IO_IN | G_IO_HUP | G_IO_ERR ),
+			       stdin_read,
+			       val );
+}
+
+/* Note that bytes_read can be longer that 1 here 
+ * if buf is larger than 1 and a set of characters are pasted
+ * This could be used to detect that we have more than 
+ * one char typed i.e that we are in a cut-and-paste operation 
+ * when the user is interactive chars are accepted one by one.
+ *
+ */
+
+static gboolean stdin_read( GIOChannel *source, GIOCondition condition, gpointer data )
+{
+  const int buf_size=1;
+  char buf[1];
+  GIOStatus status;
+  gsize bytes_read;
+  status = g_io_channel_read_chars( source, buf,buf_size,&bytes_read,NULL);
+  if ( status != G_IO_STATUS_NORMAL )
+    {
+      g_print( "STDIN: %s\n"," stdin finished !!!!");
+    }
+  else 
+    {
+      int *val = data;
+      buf[bytes_read]='\0';
+      /* Sciprintf("just seen: [%s]\n",buf); */
+      *val = buf[0];
+      gtk_main_quit();
+    }
+  return TRUE;
+}
+
+
+/* 
+ * Xorgetchar
+ *  simple version for threaded gtk
+ */
+
+int Xorgetchar_thread(void)
+{
+  return getchar();
+}
+
+
+
