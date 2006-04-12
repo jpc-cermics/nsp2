@@ -108,112 +108,8 @@ void reset_scig_click_handler(void)
 }
 
 /*---------------------------------------------------------
- * The queue ....
+ * a queue for click/motion events.
  *---------------------------------------------------------*/
-
-typedef struct but {
-  int win,x,y,ibutton,motion,release;
-} But;
-
-#define MaxCB 50
-static But ClickBuf[MaxCB];
-static int lastc = 0;
-
-int PushClickQueue(int win,int x,int y,int ibut,
-		   int motion,int release) 
-{
-  /* first let a click_handler do the job  */
-  if ( scig_click_handler(win,x,y,ibut,motion,release)== 1) return 0;
-  /* do not record motion events and release button 
-   * this is left for a futur release 
-   */
-  if ( motion == 1 || release == 1 ) return 0;
-
-  /* {static int  count=0;fprintf(stderr,"In push %d\n",count++);} */
-  /* store click event in a queue */
-  if ( lastc == MaxCB ) 
-    {
-      int i;
-      for ( i= 1 ; i < MaxCB ; i ++ ) 
-	{
-	  ClickBuf[i-1]=ClickBuf[i];
-	}
-      ClickBuf[lastc-1].win = win;
-      ClickBuf[lastc-1].x = x;
-      ClickBuf[lastc-1].y = y;
-      ClickBuf[lastc-1].ibutton = ibut;
-      ClickBuf[lastc-1].motion = motion;
-      ClickBuf[lastc-1].release = release;
-    }
-  else 
-    {
-      ClickBuf[lastc].win = win;
-      ClickBuf[lastc].x = x;
-      ClickBuf[lastc].y = y;
-      ClickBuf[lastc].ibutton = ibut;
-      ClickBuf[lastc].motion = motion;
-      ClickBuf[lastc].release = release;
-      lastc++;
-    }
-  return(0);
-}
-
-int CheckClickQueue(int *win,int *x,int *y,int *ibut)
-{
-  int i;
-  for ( i = 0 ; i < lastc ; i++ )
-    {
-      int j ;
-      if ( ClickBuf[i].win == *win || *win == -1 ) 
-	{
-	  *win = ClickBuf[i].win;
-	  *x= ClickBuf[i].x ;
-	  *y= ClickBuf[i].y ;
-	  *ibut= ClickBuf[i].ibutton; 
-	  for ( j = i+1 ; j < lastc ; j++ ) 
-	    {
-	      ClickBuf[j-1].win = ClickBuf[j].win ;
-	      ClickBuf[j-1].x   = ClickBuf[j].x ;
-	      ClickBuf[j-1].y =  ClickBuf[j].y ;
-	      ClickBuf[j-1].ibutton = ClickBuf[j].ibutton ;
-	      ClickBuf[j-1].motion =  ClickBuf[j].motion ;
-	      ClickBuf[j-1].release = ClickBuf[j].release ;
-	    }
-	  lastc--;
-	  return(1);
-	}
-    }
-  return(0);
-}
-
-int ClearClickQueue(int win)
-{
-  int i;
-  if ( win == -1 ) 
-    {
-      lastc = 0;
-      return 0;
-    }
-  for ( i = 0 ; i < lastc ; i++ )
-    {
-      int j ;
-      if ( ClickBuf[i].win == win  ) 
-	{
-	  for ( j = i+1 ; j < lastc ; j++ ) 
-	    {
-	      ClickBuf[j-1].win = ClickBuf[j].win ;
-	      ClickBuf[j-1].x   = ClickBuf[j].x ;
-	      ClickBuf[j-1].y =  ClickBuf[j].y ;
-	      ClickBuf[j-1].ibutton = ClickBuf[j].ibutton ;
-	      ClickBuf[j-1].motion =  ClickBuf[j].motion ;
-	      ClickBuf[j-1].release = ClickBuf[j].release ;
-	    }
-	  lastc--;
-	}
-    }
-  lastc=0;
-  return(0);
-}
 
 /* 
  * Replacement for previous code 
@@ -221,44 +117,63 @@ int ClearClickQueue(int win)
  * this is to be moved in the XGC of each window 
  */
 
-static nsp_event_queue q= { 0,0 , MaxCB };
-
-int nsp_enqueue(nsp_gwin_event *ev)
+int nsp_enqueue(nsp_event_queue *q, nsp_gwin_event *ev)
 {
   /* first let a click_handler do the job  */
   if ( scig_click_handler(ev->win,ev->x,ev->y,ev->ibutton,ev->motion,ev->release)== 1) return 0;
-  /* do not record motion events and release button 
-   * this is left for a futur release 
+  
+
+  /* XXX: do not record motion events and release button 
+   *      this is left for a futur release 
+   *      gives a pb in scicos to be solved 
    */
-  if ( ev->motion == 1 || ev->release == 1 ) return 0;
-  if ( q.in == q.out -1 ) 
+  if ( ev->motion == 1 || ev->release == 1 ) return 0; 
+
+  if ( q->in == q->out -1 )  
     {
       /* the queue is full */
-      Sciprintf("queue is full event will get lost\n");
+      /* Sciprintf("queue is full event will get lost\n"); */
       return 0;
     }
-  q.elems[q.in++] = *ev;
-  if (q.in == q.size) q.in = 0;
+  /* Sciprintf("status in=%d out=%d size=%d\n",q->in,q->out,q->size);*/
+  q->elems[q->in++] = *ev;
+  if (q->in == q->size) 
+    {
+      if ( q->out == 0) 
+	{
+	  /* Sciprintf("queue is full event will get lost\n");*/
+	  q->in--;
+	}
+      else 
+	q->in=0;
+    }
   return 0;
 }
 
 /* to be used when queue is not empty */
 
-nsp_gwin_event nsp_dequeue()
+nsp_gwin_event nsp_dequeue(nsp_event_queue *q)
 {
-  nsp_gwin_event ev = q.elems[q.out++];
-  if (q.out == q.size) q.out = 0;
+  nsp_gwin_event ev = q->elems[q->out++];
+  if (q->out == q->size) q->out = 0;
   return ev;
 }
 
-int nsp_queue_empty()
+/* to be used when queue is not empty */
+
+nsp_gwin_event nsp_peekqueue(nsp_event_queue *q)
 {
-  return (q.in == q.out ) ? TRUE : FALSE ;
+  return  q->elems[q->out];
 }
 
-void nsp_clear_queue()
+int nsp_queue_empty(nsp_event_queue *q)
 {
-  q.in = q.out = 0;
+  return (q->in == q->out ) ? TRUE : FALSE ;
+}
+
+void nsp_clear_queue(nsp_event_queue *q)
+{
+  q->in = q->out = 0;
 }
 
 

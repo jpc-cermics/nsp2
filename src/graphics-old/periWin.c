@@ -696,6 +696,7 @@ int check_pointer_win(int *x1,int *yy1,int *win)
   return 0;
 }
 
+
 void C2F(xclick_any_old)(char *str,int *ibutton,int* x1,int * yy1,
 			 int *iwin,int *iflag,int *istr,
 			 double * dv1, double *dv2,double * dv3,double * dv4)

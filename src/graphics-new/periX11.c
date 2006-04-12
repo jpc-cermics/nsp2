@@ -584,8 +584,10 @@ void SciClick(int *ibutton, int *x1, int *yy1, int *iflag, int getmouse, int get
       *ibutton = -100;     return;
     }
   win = ScilabXgc->CurWindow;
-  if ( *iflag ==1 && CheckClickQueue(&win,x1,yy1,ibutton) == 1) 
+  if ( *iflag ==1 && nsp_queue_empty(&ScilabXgc->queue) == FALSE)
     {
+      nsp_gwin_event ev = nsp_dequeue(&ScilabXgc->queue);
+      x1= ev.x; yy1= ev.y; ibutton = ev.ibutton;
       return;
     }
   if ( *iflag ==0 )  ClearClickQueue(ScilabXgc->CurWindow);

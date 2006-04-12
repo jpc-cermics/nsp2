@@ -317,7 +317,8 @@ static gboolean locator_button_press(GtkWidget *widget,
 
   if ( info.sci_click_activated == FALSE ) 
     {
-      PushClickQueue( gc->CurWindow,event->x, event->y,id,0,0);
+      nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,id,0,0};
+      nsp_enqueue(&gc->queue,&ev);
     }
   else 
     {
@@ -335,7 +336,8 @@ static gboolean locator_button_release(GtkWidget *widget,
 {
   if ( info.sci_click_activated == FALSE || info.getrelease == 0 ) 
     {
-      PushClickQueue( gc->CurWindow,event->x, event->y,event->button-6 ,0,1);
+      nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,event->button-6 ,0,1};
+      nsp_enqueue(&gc->queue,&ev);
     }
   else 
     {
@@ -362,7 +364,17 @@ static gboolean locator_button_motion(GtkWidget *widget,
     }
   if ( info.sci_click_activated == FALSE || info.getmotion == 0 ) 
     {
-      PushClickQueue( gc->CurWindow,x, y,-1 ,1,0);
+      nsp_gwin_event ev={ gc->CurWindow,x, y,-1 ,1,0},evlast;
+      if ( nsp_queue_empty(&gc->queue)== FALSE ) 
+	{
+	  /* to not keep multi motion events */
+	  evlast = nsp_peekqueue(&gc->queue);
+	  if (evlast.motion == TRUE )
+	    {
+	      evlast = nsp_dequeue(&gc->queue);
+	    }
+	}
+      nsp_enqueue(&gc->queue,&ev);
     }
   else 
     {
@@ -393,7 +405,8 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
     }
   else {
     gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
-    PushClickQueue( gc->CurWindow,x, y,event->keyval ,0,1);
+    nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,0,1};
+    nsp_enqueue(&gc->queue,&ev);
   }
 
   return FALSE; /* also want other handlers to be activated */
@@ -538,11 +551,17 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
     }
   win1= win; /* CheckClickQueue change its first argument if -1 */
   /* check for already stored event */
-  if ( iflag == TRUE && CheckClickQueue(&win1,x1,yy1,ibutton) == 1) 
+  if ( iflag == TRUE )
     { 
-      *iwin = win1 ; return;
+      nsp_gwin_event ev;
+      if ( window_list_check_queue((win == -1 ) ? NULL: Xgc,&ev) == OK) 
+	{
+	  *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; *ibutton= ev.ibutton;
+	  return;
+	}
     }
-  if ( iflag == FALSE )  ClearClickQueue(win);
+
+  if ( iflag == FALSE ) window_list_clear_queue((win == -1 ) ? NULL: Xgc);
 
   if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,1);
   

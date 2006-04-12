@@ -141,6 +141,9 @@ BCG *window_list_new(void *private)
       loc->winxgc.CurWindow = 0;
       loc->winxgc.CmapFlag  = 1;
       loc->winxgc.EventHandler[0] = '\0';
+      loc->winxgc.queue.in=0;
+      loc->winxgc.queue.out=0;
+      loc->winxgc.queue.size=MaxCB;
       loc->next = The_List ;
       if ( The_List != NULL) The_List->prev = loc;
       loc->prev = NULL;
@@ -1036,8 +1039,54 @@ void frame_clip_off(BCG *Xgc)
   Xgc->graphic_engine->xset_unclip(Xgc);
 }
 
+/* checks if there's an already stored event in a 
+ * graphic window queue.
+ * if Xgc is NULL all the windows are searched 
+ * else only Xgc is searched 
+ */
 
+int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev)
+{
+  WindowList *L1= The_List ;
+  if ( Xgc == NULL )
+    {
+      /* search the whole list */
+      while ( L1 != (WindowList *) NULL)
+	{
+	  if ( nsp_queue_empty(&L1->winxgc.queue) == FALSE )
+	    {
+	      *ev= nsp_dequeue(&L1->winxgc.queue);
+	      return OK;
+	    }
+	  L1 = (WindowList *) L1->next;
+	}
+    }
+  else
+    {
+      if ( nsp_queue_empty(&Xgc->queue) == FALSE ) 
+	{
+	  *ev= nsp_dequeue(&Xgc->queue);
+	  return OK;
+	}
+    }
+  return FAIL;
+}
 
-
-
-
+int window_list_clear_queue(BCG *Xgc)
+{
+  WindowList *L1= The_List ;
+  if ( Xgc == NULL )
+    {
+      /* clear all queues */
+      while ( L1 != (WindowList *) NULL)
+	{
+	  nsp_clear_queue(&L1->winxgc.queue);
+	  L1 = (WindowList *) L1->next;
+	}
+    }
+  else
+    {
+      nsp_clear_queue(&Xgc->queue);
+    }
+  return FAIL;
+}
