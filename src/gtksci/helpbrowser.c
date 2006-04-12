@@ -562,8 +562,11 @@ open_browser_dialog (const gchar *help_path,
   GtkWidget *drag_source;
   GtkWidget *image;
   gchar     *eek_png_path;
-
+  GdkColor color;
+  
   start_sci_gtk(); /* in case gtk was not initialized */
+
+  gdk_color_parse("white", &color);
 
   if ( window != NULL) 
     {
@@ -579,6 +582,7 @@ open_browser_dialog (const gchar *help_path,
 
   /*  the dialog window  */
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+
   g_signal_connect (window, "destroy",
                     G_CALLBACK (close_callback),
                     NULL);
@@ -669,8 +673,9 @@ open_browser_dialog (const gchar *help_path,
   html  = html_view_new ();
   queue = queue_new ();
 
-  gtk_widget_set_size_request (GTK_WIDGET (html), -1, 240);
-
+  gtk_widget_set_size_request (GTK_WIDGET (html), 600, 600);
+  gtk_widget_modify_bg(GTK_WIDGET (html), GTK_STATE_NORMAL,  &color );
+  
   scroll = 
     gtk_scrolled_window_new (gtk_layout_get_hadjustment (GTK_LAYOUT (html)),
                              gtk_layout_get_vadjustment (GTK_LAYOUT (html)));
