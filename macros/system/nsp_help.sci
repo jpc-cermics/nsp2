@@ -1,4 +1,6 @@
 function nsp_help(topic)
+// moved in the help C-source 
+// can be used to find the html file for the manual of topic.
   function h=man_hash_table()
     idx=getenv('NSP')+'/man/html/generated/manual.4dx";
     F=fopen(idx,mode="r");
@@ -6,13 +8,11 @@ function nsp_help(topic)
     F.close[];
     h=hcreate(size(Str,'*'));
     // remove \indexentry{
-    for i=1:size(Str,'*')
-      Str(i)=regsub(Str(i),'^[^{]*{','h.');
-      // remove enclosing \LNK{xx} -> xx 
-      Str(i)=regsub(Str(i),'\|LNK{([^{]*)}','=""\\1""');
-      // remove trailing 
-      Str(i)=regsub(Str(i),'{[^$]*}','');
-    end
+    Str=regsub(Str,'^[^{]*{','h.');
+    // remove enclosing \LNK{xx} -> xx 
+    Str=regsub(Str,'\|LNK{([^{]*)}','=""\\1""');
+    // remove trailing 
+    Str=regsub(Str,'{[^$]*}','');
     execstr(Str);
   endfunction
   
@@ -21,7 +21,7 @@ function nsp_help(topic)
     %help_table = man_hash_table()
   end
   if %help_table.iskey[topic] then 
-    help(getenv('NSP')+'/man/html/generated/'+%help_table(topic));
+    printf("%s\n",getenv('NSP')+'/man/html/generated/'+%help_table(topic));
   else
     printf('No man for %s\n",topic);
   end
