@@ -74,7 +74,16 @@ extern Gengine Gtk_gengine ; /* XXXXX */
 BCG *check_graphic_window(void)
 {
   BCG *loc =  window_list_get_first();
-  if ( loc == NULL ) Gtk_gengine.xset_curwin(0,TRUE);
+  if ( loc == NULL ) 
+    {
+#ifdef THREAD_VERSION
+      gdk_threads_enter();
+#endif
+      Gtk_gengine.xset_curwin(0,TRUE);
+#ifdef THREAD_VERSION
+      gdk_threads_leave();
+#endif
+    }
   return  window_list_get_first();
 } 
 
