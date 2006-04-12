@@ -1,6 +1,23 @@
-/*------------------------------------------------------------------------
- *    Copyright (C) 2001-2003 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
+/* Nsp
+ * Copyright (C) 2001-2006 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * mouse events 
+ * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>			/* For the Syntax message */
@@ -12,23 +29,45 @@
 #include "nsp/gtksci.h"
 #include "nsp/graphics/Graphics.h" 
 
-/*---------------------------------------------------------
- * Mouse events: Note that this code is not specific to Gtk 
- *               XXXX could be moved in graphics
+/**
+ * scig_click_handler_none:
+ * @win: 
+ * @x: 
+ * @y: 
+ * @ibut: 
+ * @motion: 
+ * @release: 
  * 
- * when not inside the xclick function 
- * the default behaviour is to store mouse event in a (short) queue. 
- * An event handler can be set through the use of the 
- * set_scig_click_handler to change this default behaviour: 
- * the handler returns 1 if he takes care of the click and returns 0 if not 
- * (then the queue is used). 
- * the event queue is used when entering the xclick function. 
- *---------------------------------------------------------*/
+ * empty event recorder.
+ * 
+ * Return value: 0
+ **/
 
 int scig_click_handler_none (int win,int x,int y,int ibut,
 			     int motion,int release) 
 {return 0;}
 
+
+/**
+ * scig_click_handler_sci:
+ * @win: 
+ * @x: 
+ * @y: 
+ * @ibut: 
+ * @motion: 
+ * @release: 
+ * 
+ * when not inside the xclick() function 
+ * the default behaviour is to store mouse event in a queue. 
+ * An event handler can be set through the use of
+ * set_scig_click_handler() to change this default behaviour: 
+ * the handler returns 1 if he takes care of the click and returns 0 if not 
+ * (then the queue is used). 
+ * The event queue is used when entering the xclick function. 
+ * 
+ * 
+ * Return value: 0 or 1 
+ **/
 
 int scig_click_handler_sci (int win,int x,int y,int ibut,int motion,int release)
 {
@@ -42,6 +81,15 @@ int scig_click_handler_sci (int win,int x,int y,int ibut,int motion,int release)
   else
     return 0;
 }
+
+/**
+ * set_scig_click_handler:
+ * @f: 
+ * 
+ * changes the default xclick handler
+ * 
+ * Return value: the previous xclick handler
+ **/
 
 static Scig_click_handler scig_click_handler = scig_click_handler_sci;
 
@@ -183,11 +231,18 @@ int nsp_enqueue(nsp_gwin_event *ev)
    * this is left for a futur release 
    */
   if ( ev->motion == 1 || ev->release == 1 ) return 0;
-  
+  if ( q.in == q.out -1 ) 
+    {
+      /* the queue is full */
+      Sciprintf("queue is full event will get lost\n");
+      return 0;
+    }
   q.elems[q.in++] = *ev;
   if (q.in == q.size) q.in = 0;
   return 0;
 }
+
+/* to be used when queue is not empty */
 
 nsp_gwin_event nsp_dequeue()
 {
@@ -198,12 +253,12 @@ nsp_gwin_event nsp_dequeue()
 
 int nsp_queue_empty()
 {
-  return (q.in == 0) ? TRUE : FALSE ;
+  return (q.in == q.out ) ? TRUE : FALSE ;
 }
 
 void nsp_clear_queue()
 {
-  q.in =0;
+  q.in = q.out = 0;
 }
 
 
