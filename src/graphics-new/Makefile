@@ -17,7 +17,7 @@ OBJSF =
 
 include ../../Makefile.incl
 
-CFLAGS = $(CC_OPTIONS) $(XFLAGS) -MMD
+CFLAGS = $(CC_OPTIONS) $(XFLAGS) 
 
 FFLAGS = $(FC_OPTIONS)
 
