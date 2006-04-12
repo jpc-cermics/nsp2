@@ -18,13 +18,19 @@ manual2-silent manual-silent:
 manual:
 	@echo "running htlatex"
 	@export TEXINPUTS=`pwd`/../../src//:: ; \
-	htlatex ../manual 'xhtml,uni-html4,3,section+,next,notoc*' "-cunihtf -utf8" >& /dev/null
+	htlatex ../manual 'xhtml,uni-html4,3,section+,next,notoc*' "-cunihtf -utf8" 
 	@cp ../manual.css manual.css
 
 index-silent: 
 	@echo "make index"
 	@tex '\def\filename{{manual}{idx}{4dx}{ind}} \input  idxmake.4ht' >& /dev/null
 	@makeindex -o manual.ind manual.4dx >& /dev/null
+
+index:
+	@echo "make index"
+	@tex '\def\filename{{manual}{idx}{4dx}{ind}} \input  idxmake.4ht' 
+	@makeindex -o manual.ind manual.4dx >& /dev/null
+
 
 
 distclean::
