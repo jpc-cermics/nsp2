@@ -200,6 +200,16 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
       Scierror("Error:\tIncompatible dimensions\n");
       return NULLMAT;
     }
+
+#ifdef MTLB_MODE
+  if ( A->n == 0 )
+    {
+      if ( (Loc =nsp_matrix_create(NVOID,'r',A->m,B->n)) == NULLMAT ) goto err;
+      nsp_mat_set_rval(Loc, 0.0); 
+      return Loc;
+    }
+#endif
+
   if ( A->rc_type == 'c' ) 
     {
       if ( B->rc_type == 'r' ) 
@@ -218,6 +228,7 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B)
     }
 
   if ( (Loc =nsp_matrix_create(NVOID,A->rc_type,A->m,B->n)) == NULLMAT ) goto err;
+
 
   if ( Loc->rc_type == 'c' ) 
     C2F(zgemm)("N","N",&A->m,&B->n,&A->n,&zalpha,A->C,&A->m,B->C,&B->m,
@@ -258,8 +269,6 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
 	  if ( Mat2->rc_type == 'r') 
 	    {
 	      nsp_dadd(&(Mat1->mn),Mat2->R,&inc,Mat1->R,&inc);
-/* 	      double alpha=1.0; */
-/* 	      C2F(daxpy)(&(Mat1->mn),&alpha,Mat2->R,&inc,Mat1->R,&inc); */
 	    }
 	  else 
 	    {
@@ -296,6 +305,7 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
       return(FAIL);
     }
 }
+
 
 
 
@@ -839,7 +849,7 @@ void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc)
 int nsp_mat_complexify(NspMatrix *Mat, double d)
 {
   double *R;
-  int incx=1,incy=2;
+  int incx=1,incy=2, i;
   if ( Mat->rc_type == 'c' ) return(OK);
   /* take care that R and C are at the same memory location */
   R = Mat->R;
@@ -850,8 +860,10 @@ int nsp_mat_complexify(NspMatrix *Mat, double d)
       return FAIL;
     }
   Mat->rc_type = 'c';
-  nsp_ciset(&(Mat->mn),&d,Mat->C,&incx);  
-  C2F(dcopy)(&(Mat->mn),R,&incx,(double *) Mat->C,&incy);
+/*   nsp_ciset(&(Mat->mn),&d,Mat->C,&incx);   */
+/*   C2F(dcopy)(&(Mat->mn),R,&incx,(double *) Mat->C,&incy); */
+  for ( i = 0 ; i < Mat->mn ; i++ )
+    { Mat->C[i].r = R[i]; Mat->C[i].i = d; }
   FREE(R);
   return OK;
 }
@@ -2220,7 +2232,7 @@ int nsp_mat_div_el(NspMatrix *A, NspMatrix *B)
 	    }
 	  else 
 	    {
-	      if (nsp_mat_set_ival(A,0.00) == FAIL ) return(FAIL);
+	      if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
 	      for ( i = 0 ; i < A->mn ; i++ )nsp_div_dc(A->C[i].r,&B->C[i],&A->C[i]);
 	    }
 	}
@@ -2400,7 +2412,7 @@ int nsp_mat_mult_el(NspMatrix *A, NspMatrix *B)
 	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] *= B->R[i];
 	  else 
 	    {
-	      if (nsp_mat_set_ival(A,0.00) == FAIL ) return(FAIL);
+	      if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
 	      for ( i = 0 ; i < A->mn ; i++ )  
 		{
 		  A->C[i].i = A->C[i].r * B->C[i].i ;
@@ -2438,7 +2450,7 @@ int nsp_mat_mult_el(NspMatrix *A, NspMatrix *B)
 	    }
 	  else 
 	    {
-	      if (nsp_mat_set_ival(A,0.00) == FAIL ) {nsp_matrix_destroy(coef); return FAIL;}
+	      if (nsp_mat_complexify(A,0.00) == FAIL ) {nsp_matrix_destroy(coef); return FAIL;}
 	      for ( j = 0 ; j < A->n ; j++)
 		for ( i = 0 ; i < A->m ; i++, k++ ) 
 		  {
@@ -2479,7 +2491,7 @@ int nsp_mat_mult_el(NspMatrix *A, NspMatrix *B)
 	    }
 	  else 
 	    {
-	      if (nsp_mat_set_ival(A,0.00) == FAIL ) return FAIL;
+	      if (nsp_mat_complexify(A,0.00) == FAIL ) return FAIL;
 	      for ( j = 0 ; j < A->n ; j++)
 		for ( i = 0 ; i < A->m ; i++, k++ ) 
 		  {
@@ -4179,4 +4191,202 @@ NspMatrix *nsp_mat_minplus_mult(NspMatrix *A, NspMatrix *B)
 int nsp_mat_maxplus_add(NspMatrix *A, NspMatrix *B) 
 {
   return  nsp_mat_mult_tt(A,B);
+}
+
+
+
+/* a set of functions adapted for the MTLB_MODE */
+int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B) 
+{
+  int i;
+  if ( A->mn == 0 )
+    return OK;
+
+  if ( A->rc_type == 'r' )
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  A->R[i] += B->R[0];
+      else
+	{
+	  if ( nsp_mat_complexify(A, B->C[0].i) == FAIL ) return FAIL;
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    A->C[i].r += B->C[0].r;
+	}
+    }
+  else
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  A->C[i].r += B->R[0];
+      else
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  { A->C[i].r += B->C[0].r;  A->C[i].i += B->C[0].i; }
+    }
+  return OK;
+}
+
+int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B)
+{
+  int i;
+  if (SameDim(A,B))
+    {
+      if ( A->rc_type == 'r' ) 
+	{
+	  if ( B->rc_type == 'r') 
+	    for ( i = 0 ; i < A->mn ; i++ ) 
+	      A->R[i] += B->R[i];
+	  else 
+	    {
+	      if ( nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
+	      for ( i = 0 ; i < A->mn ; i++ ) 
+		{ A->C[i].r += B->C[i].r;  A->C[i].i = B->C[i].i; }
+	    }
+	}
+      else 
+	{
+	  if ( B->rc_type == 'r') 
+	    for ( i = 0 ; i < A->mn ; i++ ) 
+	      A->C[i].r += B->C[i].r;
+	  else 
+	    for ( i = 0 ; i < A->mn ; i++ ) 
+	      { A->C[i].r += B->C[i].r;  A->C[i].i += B->C[i].i; }
+	}
+      return OK;
+    }
+  else 
+    {
+      Scierror("Error:\tArguments must have the same size\n");
+      return FAIL;
+    }
+}
+
+/* A is a matrix, B is a scalar A - B */
+int nsp_mat_sub_scalar_bis(NspMatrix *A, NspMatrix *B) 
+{
+  int i;
+  if ( A->mn == 0 )
+    return OK;
+
+  if ( A->rc_type == 'r' )
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  A->R[i] -= B->R[0];
+      else
+	{
+	  if ( nsp_mat_complexify(A, -B->C[0].i) == FAIL ) return FAIL;
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    A->C[i].r -= B->C[0].r;
+	}
+    }
+  else
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  A->C[i].r -= B->R[0];
+      else
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  { A->C[i].r -= B->C[0].r;  A->C[i].i -= B->C[0].i; }
+    }
+  return OK;
+}
+
+/* A is a matrix, B is a scalar A <- B - A */
+int nsp_scalar_sub_mat_bis(NspMatrix *A, NspMatrix *B) 
+{
+  int i;
+  if ( A->mn == 0 )
+    return OK;
+
+  if ( A->rc_type == 'r' )
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  A->R[i] =  B->R[0] - A->R[i];
+      else
+	{
+	  if ( nsp_mat_complexify(A, B->C[0].i) == FAIL ) return FAIL;
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    A->C[i].r = B->C[0].r - A->C[i].r;
+	}
+    }
+  else
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  { A->C[i].r = B->R[0] - A->C[i].r; A->C[i].i = -A->C[i].i; }  
+      else
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  { A->C[i].r = B->C[0].r - A->C[i].r;  A->C[i].i = B->C[0].i - A->C[i].i; }
+    }
+  return OK;
+}
+
+/* deals with the case dim A == dim B **/
+
+int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B)
+{
+  int i;
+  if (SameDim(A,B))
+    {
+      if ( A->rc_type == 'r' ) 
+	{
+	  if ( B->rc_type == 'r') 
+	    for ( i = 0 ; i < A->mn ; i++ ) 
+	      A->R[i] -= B->R[i];
+	  else 
+	    {
+	      if ( nsp_mat_complexify(A,0.0) == FAIL ) return FAIL;
+	      for ( i = 0 ; i < A->mn ; i++ ) 
+		{ A->C[i].r -= B->C[i].r;  A->C[i].i = -B->C[i].i; }
+	    }
+	}
+      else 
+	{
+	  if ( B->rc_type == 'r') 
+	    for ( i = 0 ; i < A->mn ; i++ ) 
+	      A->C[i].r -= B->C[i].r;
+	  else 
+	    for ( i = 0 ; i < A->mn ; i++ ) 
+	      { A->C[i].r -= B->C[i].r;  A->C[i].i -= B->C[i].i; }
+	}
+      return OK;
+    }
+  else 
+    {
+      Scierror("Error:\tArguments must have the same size\n");
+      return FAIL;
+    }
+}
+
+int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B) 
+{
+  int i;
+
+/*   if ( A->mn == 0 ) */
+/*     return OK; */
+
+  if ( A->rc_type == 'r' )
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  A->R[i] *= B->R[0];
+      else
+	{
+	  if ( nsp_mat_complexify(A, 0.0) == FAIL ) return FAIL;
+	  for ( i = 0 ; i < A->mn ; i++ ) 
+	    { A->C[i].i = A->C[i].r * B->C[0].i; A->C[i].r *= B->C[0].r; }
+	}
+    }
+  else
+    {
+      if ( B->rc_type == 'r' )
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  { A->C[i].r *= B->R[0]; A->C[i].i *= B->R[0]; }
+      else
+	for ( i = 0 ; i < A->mn ; i++ ) 
+	  nsp_prod_c(&A->C[i],&B->C[i]);
+    }
+  return OK;
 }

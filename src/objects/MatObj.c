@@ -1,5 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2006 Bruno Pinçon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -715,8 +716,6 @@ Bounds (const NspMatrix * A, int * imin, int * imax)
  * of the min and max of the indices. It may be used in place 
  * of Bounds in some cases (for instance to avoid multiple cast 
  * to int).
- * Routine introduced by Bruno Pincon (mai 2005) to speed up
- * A(i,j)=B insertion and extraction A(i,j). 
  * 
  * returns  an int array or %NULL
  *
@@ -785,8 +784,6 @@ nsp_matrix_boundster(const NspMatrix *A, int *ind, int *imin, int *imax)
  * Else an allocated int array is returned. A zero entry is 
  * set in the returned array for each entry to be deleted.
  *
- * Routine introduced by Bruno Pincon (mai 2005)
- * 
  * returns  an int array or %NULL
  */
 
@@ -833,7 +830,6 @@ int *nsp_complement_for_deletions(int mn, const NspMatrix *Elts, int *Count)
  *   3/  verification of bounds constraints on indices
  *   4/  in case of duplicated indices it compress the array
  *  CAUTION : on output indices are 0-based (while they are 1-based in @Elts).
- * Routine introduced by Bruno Pincon (mai 2005).
  * 
  *  returns  the (int) array of indices @ind[0..@Count-1]  being in strict increasing order.
  *           or %NULL in case of alloc pb or if indices don't respect bound constraints
@@ -1266,7 +1262,7 @@ int_mximagpart (Stack stack, int rhs, int opt, int lhs)
   if ((HMat = GetMatCopy (stack, 1)) == NULLMAT)
     return RET_BUG;
   if (nsp_mat_get_imag (HMat) != OK)
-    return RET_BUG;;
+    return RET_BUG;
   NSP_OBJECT (HMat)->ret_pos = 1;
   return 1;
 }
@@ -3638,6 +3634,53 @@ int_mx_mopscal (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
   return 1;
 }
 
+/* same than before but used for a more Matlab compliant behavior :
+ *
+ *  A op scalar --->  F1(A,scalar)  result is of same dim than A
+ *  A op B      --->  F2(A,B)       for A and B with same dims
+ *  scalar op A --->  F3(A,scalar)  result is of same dim than A
+ */
+static int
+int_mx_mopscal_mtlb (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3)
+{
+  NspMatrix *HMat1, *HMat2;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ( (HMat1 =GetMat(stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  if ( HMat1->mn == 1 )     /* HMat1 is a scalar => HMat2 will store the result */
+    {
+      if ( (HMat2 =GetMatCopy(stack, 2)) == NULLMAT )
+	return RET_BUG;
+      if ( (*F3)(HMat2, HMat1) == FAIL )
+	return RET_BUG;
+      NSP_OBJECT (HMat2)->ret_pos = 1;
+    }
+  else    /* HMat1 is not a scalar and will store the result */
+    {
+      if ( (HMat1 =GetMatCopy(stack, 1)) == NULLMAT )
+	return RET_BUG;
+      
+      if ( (HMat2 =GetMat(stack, 2)) == NULLMAT )
+	return RET_BUG;
+      if ( HMat2->mn == 1 ) /* HMat2 is a scalar */
+	{
+	  if ( (*F1)(HMat1, HMat2) == FAIL )
+	    return RET_BUG;
+	}
+      else   /* HMat1 and HMat2 must have both the same dimensions : this is tested by F2 */
+	{
+	  if  ( (*F2)(HMat1, HMat2) == FAIL )
+	    return RET_BUG;
+	}
+      NSP_OBJECT (HMat1)->ret_pos = 1;
+    }
+  return 1;
+}
+
+
 /*
  * term to term addition 
  * with special cases Mat + [] and Mat + scalar
@@ -3646,9 +3689,16 @@ int_mx_mopscal (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
 int
 int_mxdadd (Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef MTLB_MODE
+  return int_mx_mopscal_mtlb(stack, rhs, opt, lhs,
+			     nsp_mat_add_scalar_bis, nsp_mat_add_mat, 
+			     nsp_mat_add_scalar_bis);
+
+#else
   return int_mx_mopscal (stack, rhs, opt, lhs,
 			 nsp_mat_add_scalar, nsp_mat_dadd, nsp_mat_add_scalar,
 			 MatNoOp, 0);
+#endif
 }
 
 /* FIXME: 
@@ -3767,16 +3817,20 @@ int_mxdadd1(Stack stack, int rhs, int opt, int lhs)
 int
 int_mxdsub (Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef MTLB_MODE
+  return int_mx_mopscal_mtlb(stack, rhs, opt, lhs,
+			     nsp_mat_sub_scalar_bis, nsp_mat_sub_mat, 
+			     nsp_scalar_sub_mat_bis);
+
+#else
   return int_mx_mopscal (stack, rhs, opt, lhs,
 			 nsp_mat_sub_scalar, nsp_mat_dsub,
 			 nsp_mat_subs_calarm, nsp_mat_minus, 0);
+#endif
 }
 
 /*
  * A=nsp_mat_pow(A,B), A^ B 
- * with special cases Mat^[]  and Mat^scalar
- *                    []^Mat ans scalar^Mat
- * added by Bruno
  */
 
 int
@@ -3789,16 +3843,20 @@ int_mxpow (Stack stack, int rhs, int opt, int lhs)
 
 /*
  * A=nsp_mat_pow_el(A,B), A.^ B 
- * with special cases Mat.^[]  and Mat.^scalar
- *                    [].^Mat ans scalar.^Mat
  */
 
 int
 int_mxpowel (Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef MTLB_MODE
+  return int_mx_mopscal_mtlb (stack, rhs, opt, lhs,
+			      nsp_mat_pow_scalar, nsp_mat_pow_el,
+			      nsp_mat_pow_scalarm);
+#else
   return int_mx_mopscal (stack, rhs, opt, lhs,
 			 nsp_mat_pow_scalar, nsp_mat_pow_el,
 			 nsp_mat_pow_scalarm, MatNoOp, 1);
+#endif
 }
 
 /*
@@ -3808,9 +3866,15 @@ int_mxpowel (Stack stack, int rhs, int opt, int lhs)
 int
 int_mxdivel (Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef MTLB_MODE
+  return int_mx_mopscal_mtlb (stack, rhs, opt, lhs,
+			      nsp_mat_div_scalar, nsp_mat_div_el,
+			      nsp_mat_bdiv_scalar);
+#else
   return int_mx_mopscal (stack, rhs, opt, lhs,
 			 nsp_mat_div_scalar, nsp_mat_div_el,
 			 nsp_mat_bdiv_scalar, MatNoOp, 1);
+#endif
 }
 
 
@@ -3821,9 +3885,15 @@ int_mxdivel (Stack stack, int rhs, int opt, int lhs)
 int
 int_mxbackdivel (Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef MTLB_MODE
+  return int_mx_mopscal_mtlb (stack, rhs, opt, lhs,
+			 nsp_mat_bdiv_scalar, nsp_mat_bdiv_el,
+			 nsp_mat_div_scalar);
+#else
   return int_mx_mopscal (stack, rhs, opt, lhs,
 			 nsp_mat_bdiv_scalar, nsp_mat_bdiv_el,
 			 nsp_mat_div_scalar, MatNoOp, 1);
+#endif
 }
 
 
@@ -3834,18 +3904,60 @@ int_mxbackdivel (Stack stack, int rhs, int opt, int lhs)
 int
 int_mxmultel (Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef MTLB_MODE
+  return int_mx_mopscal_mtlb(stack, rhs, opt, lhs,
+			     nsp_mat_mult_scalar_bis, nsp_mat_mult_el, 
+			     nsp_mat_mult_scalar_bis);
+#else
   return int_mx_mopscal (stack, rhs, opt, lhs,
 			 nsp_mat_mult_scalar, nsp_mat_mult_el,
 			 nsp_mat_mult_scalar, MatNoOp, 1);
+#endif
 }
 
 
 /*
  * NspMatrix multiplication  Res= A*B  
- * with special cases Mat * [] and Mat * scalar
  * very similar to mopscal but MatMult returns a new matrix 
  */
+#ifdef MTLB_MODE
+int
+int_mxmult (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *HMat1, *HMat2, *HMat3;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
 
+  if ( (HMat1 =GetMat(stack, 1)) == NULLMAT )
+    return RET_BUG;
+  if ( (HMat2 = GetMat(stack, 2)) == NULLMAT )
+    return RET_BUG;
+
+  if ( HMat1->mn == 1 )  
+    {
+      if ( (HMat2 = GetMatCopy(stack, 2)) == NULLMAT )
+	return RET_BUG;
+      if ( nsp_mat_mult_scalar_bis(HMat2, HMat1) == FAIL )
+	return RET_BUG;
+      NSP_OBJECT(HMat2)->ret_pos = 1;
+    }
+  else if ( HMat2->mn == 1 )
+    {
+      if ( (HMat1 = GetMatCopy(stack, 1)) == NULLMAT )
+	return RET_BUG;
+      if ( nsp_mat_mult_scalar_bis(HMat1, HMat2) == FAIL )
+	return RET_BUG;	   
+      NSP_OBJECT(HMat1)->ret_pos = 1;
+    }
+  else
+    {
+      if ( (HMat3 = nsp_mat_mult(HMat1, HMat2)) == NULLMAT )
+	return RET_BUG;
+      MoveObj(stack, 1, (NspObject *) HMat3);
+    }
+  return 1;
+}
+#else
 int
 int_mxmult (Stack stack, int rhs, int opt, int lhs)
 {
@@ -3856,6 +3968,7 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
     return RET_BUG;
+
   if (HMat1->mn == 0)
     {
       if ( HMat1 == HMat2 ) NthObj(2) = NULLOBJ;
@@ -3902,13 +4015,107 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
     }
   return 1;
 }
+#endif
 
 /*
  * NspMatrix back division  Res= A\B  
- * with special cases Mat * [] and Mat * scalar
- * contributed by Bruno Pincon.
  */
 
+#ifdef MTLB_MODE
+int
+int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *HMat1, *HMat2, *x, *A;
+  char tri_type;
+  int info, stat;
+  double rcond, tol_rcond;
+
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ((HMat1 = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+  if ((HMat2 = GetMat (stack, 2)) == NULLMAT)
+    return RET_BUG;
+
+  if ( HMat1->m != HMat2->m )  /* FIXME : must we treat the scalar case ? */
+                               /* A\scalar => x = inv(A)*scalar or pinv(A)*scalar */
+    {
+      Scierror("Error:\tIncompatible dimensions (in %s)\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( HMat1->mn == 0 || HMat2->mn == 0 )  /* the special case */ 
+    {
+      if ( (x =nsp_matrix_create(NVOID, 'r', HMat1->n, HMat2->n)) == NULLMAT )
+	return RET_BUG;
+      nsp_mat_set_rval(x,0.0);
+      MoveObj (stack, 1, (NspObject *) x);
+      return 1;
+    }
+
+  if ((HMat2 = GetMatCopy (stack, 2)) == NULLMAT) return RET_BUG;
+
+  tol_rcond = Max(HMat1->m,HMat1->n)*nsp_dlamch("eps");
+
+  if ( HMat1->m == HMat1->n )  /* HMat1 is square */
+    {
+      /* test if HMat1 is triangular */
+      if ( nsp_mat_is_upper_triangular(HMat1) ) 
+	tri_type = 'u';
+      else if ( nsp_mat_is_lower_triangular(HMat1) ) 
+	tri_type = 'l';
+      else 
+	tri_type = 'n';
+
+      if ( tri_type != 'n' )
+	{
+	  if ( nsp_mat_bdiv_triangular(HMat1, HMat2, tri_type, &info) == FAIL ) 
+	    return RET_BUG;
+
+	  if ( info != 0 )   
+	    /* important note: in this case the rhs HMat2 have not been modified */
+	    Sciprintf("\n Warning: matrix is singular => computes a lsq solution");
+	  else
+	    {
+	      NSP_OBJECT (HMat2)->ret_pos = 1; 
+	      return 1;
+	    }
+	}
+      else
+	{
+	  /* use a LU factorization */
+	  /* here we must be sure to use a real copy of HMat1 (because if the matrix */
+	  /* is badly conditionned we must switch to the lsq solution) */
+	  if ( (A = nsp_matrix_copy(HMat1)) == NULLMAT ) return RET_BUG;
+	  stat = nsp_mat_bdiv_square(A, HMat2, &rcond, tol_rcond);
+	  nsp_matrix_destroy(A);
+	  if ( stat == FAIL )
+	    return RET_BUG;
+	  else if ( rcond <= tol_rcond )
+	    {
+	      Sciprintf("\n Warning: matrix is badly conditionned (rcond = %g)",rcond);
+	      Sciprintf("\n          => computes a lsq solution\n",rcond);
+	    }
+	  else
+	    {
+	      NSP_OBJECT (HMat2)->ret_pos = 1; 
+	      return 1;
+	    }
+	}
+    }
+  
+  if ( (HMat1 = GetMatCopy(stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  if ( nsp_mat_bdiv_lsq(HMat1, HMat2, tol_rcond) == FAIL )
+    return RET_BUG;
+
+  NSP_OBJECT (HMat2)->ret_pos = 1; 
+
+  return 1;
+}
+#else
 int
 int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
 {
@@ -4003,7 +4210,10 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
 	  if ( stat == FAIL )
 	    return RET_BUG;
 	  else if ( rcond <= tol_rcond )
-	    Sciprintf("\n Warning: matrix is badly conditionned (rcond = %g)\n          => computes a lsq solution",rcond);
+	    {
+	      Sciprintf("\n Warning: matrix is badly conditionned (rcond = %g)",rcond);
+	      Sciprintf("\n          => computes a lsq solution\n",rcond);
+	    }
 	  else
 	    {
 	      NSP_OBJECT (HMat2)->ret_pos = 1; 
@@ -4022,7 +4232,7 @@ int_mxbdiv (Stack stack, int rhs, int opt, int lhs)
 
   return 1;
 }
-
+#endif
 
 /*
  * A / B 

@@ -172,7 +172,12 @@ extern NspMatrix *nsp_matrix_create_diag(const NspMatrix *Diag, int k);
 extern NspMatrix *nsp_matrix_transpose(const NspMatrix *A); 
 
 /* from MatOps.c */
-
+extern int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B);
+extern int nsp_mat_add_scalar_bis(NspMatrix *A, NspMatrix *B);
+extern int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B);
+extern int nsp_mat_sub_scalar_bis(NspMatrix *A, NspMatrix *B);
+extern int nsp_scalar_sub_mat_bis(NspMatrix *A, NspMatrix *B);
+extern int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B);
 extern void nsp_mat_set_rval(NspMatrix *A, double dval); 
 extern NspMatrix *nsp_mat_copy_and_complexify(const NspMatrix *A);
 extern int nsp_mat_set_ival(NspMatrix *A, double dval); 
