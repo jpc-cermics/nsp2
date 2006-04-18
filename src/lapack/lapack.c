@@ -182,9 +182,9 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
  * nsp_qr:
  * @A: (input) a real or complex matrix of size m x n. @A is not modified.
  * @Q: (output) a real orthogonal or complex unitary matrix of 
- *              size m x m (usual factorization) or m x n (economic factorization)
+ *              size m x m (usual factorization) or m x Min(n,m) (economic factorization)
  * @R: (output) a real or complex upper triangular matrix of size m x n (usual factorization)
- *              or n x n (economic factorization)
+ *              or Min(m,n) x n (economic factorization)
  * @E: (output if @E is not NULL on entry) a permutation vector (m x 1 ) 
  *     stored as a real vector
  * @Rank: (output if @Rank is not NULL on entry) integer scalar (1 x 1) stored as 
@@ -212,19 +212,19 @@ int nsp_qr(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E, NspMatrix **R
 {
   /* A == [] return empty matrices*/ 
   if ( A->mn == 0 )  {
-    if ( (*Q =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
-    if ( (*R =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+    if ( (*Q =nsp_matrix_create(NVOID,A->rc_type,A->m,0)) == NULLMAT ) return FAIL;
+    if ( (*R =nsp_matrix_create(NVOID,A->rc_type,0,A->n)) == NULLMAT ) return FAIL;
     if ( E != NULL)
       {
-	if ( (*E =nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) return FAIL;
+	if ( (*E =nsp_matrix_create(NVOID,'r',A->n,1)) == NULLMAT ) return FAIL; /* a voir */
       }
     if (Rank != NULL ) 
     {
-      if ( (*Rank =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT ) return FAIL;
+      if ( (*Rank =nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) return FAIL;
     }
     if (Sval != NULL ) 
     {
-      if ( (*Sval =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT ) return FAIL;
+      if ( (*Sval =nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT ) return FAIL;
     }
     return OK ; 
   }
@@ -485,12 +485,15 @@ int intzgetrf(NspMatrix *A,NspMatrix **L,NspMatrix **E);
  **/
 int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **E)
 {
-  /* A == [] return empty matrices*/ 
+  /* A == [] return empty matrices*/
+  int i;
   if ( A->mn == 0 )  
     {
-      if ( (*L=nsp_matrix_create(NVOID,A->rc_type,0,0)) == NULLMAT ) return FAIL;
+      if ( (*L=nsp_matrix_create(NVOID,A->rc_type,A->m,0)) == NULLMAT ) return FAIL;
       if ( E != NULL )
-	if ( (*E=nsp_matrix_create(NVOID,A->rc_type,0,0)) == NULLMAT ) return FAIL;
+	if ( (*E=nsp_matrix_create(NVOID,'r',A->m,1)) == NULLMAT ) return FAIL;
+      for ( i = 0; i < A->m ; i++ ) (*E)->R[i] = i+1;
+      A->m = 0;  /* because A store U... */
       return OK ; 
     }
 
@@ -3717,7 +3720,6 @@ int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, int *info
     }
   return OK;
 }
-
 
 /**
  * nsp_mat_bdiv_diagonal:
