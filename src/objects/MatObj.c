@@ -3640,6 +3640,8 @@ int_mx_mopscal (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
  *  A op B      --->  F2(A,B)       for A and B with same dims
  *  scalar op A --->  F3(A,scalar)  result is of same dim than A
  */
+#ifdef MTLB_MODE
+
 static int
 int_mx_mopscal_mtlb (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3)
 {
@@ -3679,6 +3681,7 @@ int_mx_mopscal_mtlb (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM
     }
   return 1;
 }
+#endif 
 
 
 /*
@@ -4570,7 +4573,6 @@ int int_alignement(Stack stack, int rhs, int opt, int lhs)
  * The Interface for basic matrices operation 
  */
 
-
 static OpTab Matrix_func[] = {
   {"alignement_m",int_alignement},
   {"harmloop1_i",int_harmloop1},
@@ -4590,7 +4592,7 @@ static OpTab Matrix_func[] = {
   {"deleteelts_m_b", int_mxdeleteelts},
   {"setrowscols_m", int_mxsetrc},
   {"impl", int_mximpl},
-/*   {"impl_m", int_mximpl}, */
+  /*   {"impl_m", int_mximpl}, */
   {"impl_m_m", int_mximpl},
   {"addcols_m_m", int_mxaddcols},
   {"addrows_m_m", int_mxaddrows},

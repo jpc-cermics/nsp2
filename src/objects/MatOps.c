@@ -849,7 +849,8 @@ void nsp_csetd(const int *n,const double *z,doubleC *tab,const int *inc)
 int nsp_mat_complexify(NspMatrix *Mat, double d)
 {
   double *R;
-  int incx=1,incy=2, i;
+  /* int incx=1,incy=2 */
+  int i;
   if ( Mat->rc_type == 'c' ) return(OK);
   /* take care that R and C are at the same memory location */
   R = Mat->R;
@@ -860,8 +861,8 @@ int nsp_mat_complexify(NspMatrix *Mat, double d)
       return FAIL;
     }
   Mat->rc_type = 'c';
-/*   nsp_ciset(&(Mat->mn),&d,Mat->C,&incx);   */
-/*   C2F(dcopy)(&(Mat->mn),R,&incx,(double *) Mat->C,&incy); */
+  /*   nsp_ciset(&(Mat->mn),&d,Mat->C,&incx);   */
+  /*   C2F(dcopy)(&(Mat->mn),R,&incx,(double *) Mat->C,&incy); */
   for ( i = 0 ; i < Mat->mn ; i++ )
     { Mat->C[i].r = R[i]; Mat->C[i].i = d; }
   FREE(R);
@@ -879,6 +880,7 @@ int nsp_mat_complexify(NspMatrix *Mat, double d)
  *
  * Returns a #NspMatrix or %NULLMAT.
  */
+
 NspMatrix *nsp_mat_copy_and_complexify(const NspMatrix *A)
 {
   NspMatrix *Mat;
@@ -956,7 +958,7 @@ int nsp_mat_get_imag(NspMatrix *A)
 }
 
 /*
- *nsp_mat_inv_el: a(i,j)=1/a(i,j) A est changee
+ * nsp_mat_inv_el: a(i,j)=1/a(i,j) A est changee
  */
 
 int nsp_mat_inv_el(NspMatrix *A)
