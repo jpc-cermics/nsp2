@@ -2393,70 +2393,40 @@ static void xset_default(BCG *Xgc)
 }
 
 
-/*------------------------------------------------------
-  Draw an axis whith a slope of alpha degree (clockwise)
-  . Along the axis marks are set in the direction ( alpha + pi/2), in the 
-  following way :
-  \begin{itemize}
-  \item   $n=<n1,n2>$,
-  \begin{verbatim}
-  |            |           |
-  |----|---|---|---|---|---|
-  <-----n1---->                 
-  <-------------n2-------->
-  \end{verbatim}
-  $n1$and $n2$ are int numbers for interval numbers.
-  \item $size=<dl,r,coeff>$. $dl$ distance in points between 
-  two marks, $r$ size in points of small mark, $r*coeff$ 
-  size in points of big marks. (they are doubleing points numbers)
-  \item $init$. Initial point $<x,y>$. 
-  \end{itemize}
-  -------------------------------------------------------------*/
+/*
+ *   Draw an axis whith a slope of alpha degree (clockwise) 
+ *   . Along the axis marks are set in the direction ( alpha + pi/2), in the  
+ *   following way : 
+ *   \item   $n=<n1,n2>$, 
+ *   \begin{verbatim} 
+ *   |            |           | 
+ *   |----|---|---|---|---|---| 
+ *   <-----n1---->                  
+ *   <-------------n2--------> 
+ *   \end{verbatim} 
+ *   $n1$and $n2$ are int numbers for interval numbers. 
+ *   \item $size=<dl,r,coeff>$. $dl$ distance in points between  
+ *   two marks, $r$ size in points of small mark, $r*coeff$  
+ *   size in points of big marks. (they are doubleing points numbers) 
+ *   \item $init$. Initial point $<x,y>$.  
+ */
 
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
 {
-  int i;
-  double xi,yi,xf,yf;
-  double cosal,sinal;
   DRAW_CHECK;
-  cosal= cos( (double)M_PI * (alpha)/180.0);
-  sinal= sin( (double)M_PI * (alpha)/180.0);
-  for (i=0; i <= nsteps[0]*nsteps[1]; i++)
-    {
-      if (( i % nsteps[0]) != 0)
-	{
-	  xi = initpoint[0]+i*size[0]*cosal;
-	  yi = initpoint[1]+i*size[0]*sinal;
-	  xf = xi - ( size[1]*sinal);
-	  yf = yi + ( size[1]*cosal);
-	  drawline(Xgc,xi,yi,xf,yf);
-	}
-    }
-  for (i=0; i <= nsteps[1]; i++)
-    { 
-      xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
-      yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
-      xf = xi - ( size[1]*size[2]*sinal);
-      yf = yi + ( size[1]*size[2]*cosal);
-      drawline(Xgc,xi,yi,xf,yf);
-    }
+  Xgc->graphic_engine->generic->drawaxis(Xgc,alpha,nsteps,initpoint,size);
 }
 
-/*-----------------------------------------------------
+/*
  * Display numbers z[i] at location (x[i],y[i])
  *   with a slope alpha[i] (see displaystring), if flag==1
  *   add a box around the string, only if slope =0}
- *-----------------------------------------------------*/
+ */
 
 static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
 {
-  int i ;
-  static char buf[56];
-  for (i=0 ; i< n ; i++)
-    { 
-      sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
-      displaystring(Xgc,buf,x[i],y[i],flag,alpha[i]);
-    }
+  DRAW_CHECK;
+  Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
 /*-----------------------------------------------------

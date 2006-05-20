@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2004-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2004-2006 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -17,10 +17,11 @@
  * Boston, MA 02111-1307, USA.
  *
  * Graphic library
- * A set of generic routines which can be used by all the drivers 
- * if the do not implement an accelerated function
- * jpc@cermics.enpc.fr 
  * 
+ * A set of generic routines which can be used by all the drivers 
+ * if they do not wish to implement an accelerated version.
+ * 
+ * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -48,6 +49,8 @@ static driver_drawarcs drawarcs_gen;
 static driver_fillarcs fillarcs_gen;
 static driver_drawpolylines drawpolylines_gen;
 static driver_fillpolylines fillpolylines_gen;
+static driver_displaynumbers displaynumbers_gen;
+static driver_drawaxis drawaxis_gen; 
 
 nsp_gengine_generic nsp_peri_generic = {
   fill_grid_rectangles_gen,
@@ -59,6 +62,8 @@ nsp_gengine_generic nsp_peri_generic = {
   fillarcs_gen,
   drawpolylines_gen,
   fillpolylines_gen,
+  displaynumbers_gen,
+  drawaxis_gen
 };
 
 /**
@@ -458,4 +463,68 @@ static void fillarcs_gen(BCG *Xgc,int *vects, int *fillvect, int n)
 	}
     }
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+}
+
+
+/*
+ *   Draw an axis whith a slope of alpha degree (clockwise) 
+ *   . Along the axis marks are set in the direction ( alpha + pi/2), in the  
+ *   following way : 
+ *   \item   $n=<n1,n2>$, 
+ *   \begin{verbatim} 
+ *   |            |           | 
+ *   |----|---|---|---|---|---| 
+ *   <-----n1---->                  
+ *   <-------------n2--------> 
+ *   \end{verbatim} 
+ *   $n1$and $n2$ are int numbers for interval numbers. 
+ *   \item $size=<dl,r,coeff>$. $dl$ distance in points between  
+ *   two marks, $r$ size in points of small mark, $r*coeff$  
+ *   size in points of big marks. (they are doubleing points numbers) 
+ *   \item $init$. Initial point $<x,y>$.  
+ */
+
+static void drawaxis_gen(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
+{
+  int i;
+  double xi,yi,xf,yf;
+  double cosal,sinal;
+  cosal= cos( (double)M_PI * (alpha)/180.0);
+  sinal= sin( (double)M_PI * (alpha)/180.0);
+  for (i=0; i <= nsteps[0]*nsteps[1]; i++)
+    {
+      if (( i % nsteps[0]) != 0)
+	{
+	  xi = initpoint[0]+i*size[0]*cosal;
+	  yi = initpoint[1]+i*size[0]*sinal;
+	  xf = xi - ( size[1]*sinal);
+	  yf = yi + ( size[1]*cosal);
+	  Xgc->graphic_engine->drawline(Xgc, xi,yi,xf,yf) ;
+	}
+    }
+  for (i=0; i <= nsteps[1]; i++)
+    { 
+      xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
+      yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
+      xf = xi - ( size[1]*size[2]*sinal);
+      yf = yi + ( size[1]*size[2]*cosal);
+      Xgc->graphic_engine->drawline(Xgc, xi,yi,xf,yf) ;
+    }
+}
+
+/*
+ * Display numbers z[i] at location (x[i],y[i])
+ *   with a slope alpha[i] (see displaystring), if flag==1
+ *   add a box around the string, only if slope =0}
+ */
+
+static void displaynumbers_gen(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
+{
+  int i ;
+  static char buf[56];
+  for (i=0 ; i< n ; i++)
+    { 
+      sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
+      Xgc->graphic_engine->displaystring(Xgc,buf,x[i],y[i],flag,alpha[i]);
+    }
 }

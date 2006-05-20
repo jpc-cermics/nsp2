@@ -1489,20 +1489,15 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *s
 }
 
 
-/*-----------------------------------------------------
-  \encadre{Display numbers z[i] at location (x[i],y[i])
-  with a slope alpha[i] (see displaystring_), if flag==1
-  add a box around the string.
-  -----------------------------------------------------*/
+/*
+ * Display numbers z[i] at location (x[i],y[i])
+ *   with a slope alpha[i] (see displaystring), if flag==1
+ *   add a box around the string, only if slope =0}
+ */
 
 static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, double *alpha)
-{ int i ;
- char buf[20];
- for (i=0 ; i < n ; i++)
-   { 
-     sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
-     displaystring(Xgc,buf,x[i],y[i],flag,(alpha[i]));
-   }
+{
+  Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
 /*-------------------------------------------------------

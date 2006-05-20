@@ -1,13 +1,25 @@
-/*------------------------------------------------------------------------
- *    Graphic library
- *    Copyright (C) 1998-2001 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- --------------------------------------------------------------------------*/
-
-/*----------------------BEGIN----------------------
-  \def\encadre#1{\paragraph{}\fbox{\begin{minipage}[t]{15cm}#1 \end{minipage}}}
-  \section{A Fig Driver}
-  ---------------------------------------------------*/
+/* Nsp
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Graphic library
+ * jpc@cermics.enpc.fr
+ * Xfig driver 
+ *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
 #include <math.h>
@@ -1122,7 +1134,6 @@ static void fillarcs(BCG *Xgc, int *vects, int *fillvect, int n)
 
 /* Old definition no more used because it allows only full ellipse */
 
-
 static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
   int dash,color, i;
@@ -1510,13 +1521,8 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint, double *s
 
 
 static void displaynumbers(BCG *Xgc,int *x, int *y, int n, int flag, double *z, double *alpha)
-{ int i ;
- char buf[20];
- for (i=0 ; i< n ; i++)
-   { 
-     sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
-     displaystring(Xgc,buf,x[i],y[i],flag,alpha[i]);
-   }
+{ 
+  Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha); 
 }
 
 

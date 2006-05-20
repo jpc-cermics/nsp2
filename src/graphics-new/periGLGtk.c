@@ -2954,71 +2954,11 @@ static void xset_default(BCG *Xgc)
  *   \end{itemize} 
  */
 
-#ifdef PERIGTK 
-/* must be turned into a generic function 
- */
-
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
 {
-  int i;
-  double xi,yi,xf,yf;
-  double cosal,sinal;
   DRAW_CHECK;
-  cosal= cos( (double)M_PI * (alpha)/180.0);
-  sinal= sin( (double)M_PI * (alpha)/180.0);
-  for (i=0; i <= nsteps[0]*nsteps[1]; i++)
-    {
-      if (( i % nsteps[0]) != 0)
-	{
-	  xi = initpoint[0]+i*size[0]*cosal;
-	  yi = initpoint[1]+i*size[0]*sinal;
-	  xf = xi - ( size[1]*sinal);
-	  yf = yi + ( size[1]*cosal);
-	  gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, xi,yi,xf,yf) ;
-	}
-    }
-  for (i=0; i <= nsteps[1]; i++)
-    { 
-      xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
-      yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
-      xf = xi - ( size[1]*size[2]*sinal);
-      yf = yi + ( size[1]*size[2]*cosal);
-      gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, xi,yi,xf,yf) ;
-    }
+  Xgc->graphic_engine->generic->drawaxis(Xgc,alpha,nsteps,initpoint,size);
 }
-
-#else 
-
-static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
-{
-  int i;
-  double xi,yi,xf,yf;
-  double cosal,sinal;
-  DRAW_CHECK;
-  cosal= cos( (double)M_PI * (alpha)/180.0);
-  sinal= sin( (double)M_PI * (alpha)/180.0);
-  for (i=0; i <= nsteps[0]*nsteps[1]; i++)
-    {
-      if (( i % nsteps[0]) != 0)
-	{
-	  xi = initpoint[0]+i*size[0]*cosal;
-	  yi = initpoint[1]+i*size[0]*sinal;
-	  xf = xi - ( size[1]*sinal);
-	  yf = yi + ( size[1]*cosal);
-	  drawline(Xgc,xi,yi,xf,yf);
-	}
-    }
-  for (i=0; i <= nsteps[1]; i++)
-    { 
-      xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
-      yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
-      xf = xi - ( size[1]*size[2]*sinal);
-      yf = yi + ( size[1]*size[2]*cosal);
-      drawline(Xgc,xi,yi,xf,yf);
-    }
-}
-#endif
-
 
 /*
  * Display numbers z[i] at location (x[i],y[i])
@@ -3028,13 +2968,8 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
 
 static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
 {
-  int i ;
-  static char buf[56];
-  for (i=0 ; i< n ; i++)
-    { 
-      sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
-      displaystring(Xgc,buf,x[i],y[i],flag,alpha[i]);
-    }
+  DRAW_CHECK;
+  Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
 /*
