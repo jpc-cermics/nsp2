@@ -41,6 +41,7 @@
 #include "nsp/graphics/periGtk.h"
 #else 
 #include "nsp/graphics/periGL.h"
+#include <pango/pangoft2.h>
 #endif 
 #include "nsp/version.h"
 #include "nsp/graphics/color.h"
@@ -61,6 +62,7 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 static void realize_event_ogl();
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
 static void unclip_rectangle(GdkRectangle clip_rect);
+static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
 #endif 
 
 /*
@@ -582,7 +584,8 @@ void xgetmouse(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int usequeue
 
 static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag );
 
-static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int iflag, int getmotion, int getrelease,int getkey, char *str, int lstr,int change_cursor)
+static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int iflag, int getmotion,
+		     int getrelease,int getkey, char *str, int lstr,int change_cursor)
 {
 #ifdef WITH_TK
   guint timer_tk;
@@ -605,11 +608,9 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
     }
   win1= win; /* CheckClickQueue change its first argument if -1 */
   /* check for already stored event */
-
-  /* check for already stored event */
-  if ( iflag == TRUE ) 
+  if ( iflag == TRUE )
     { 
-      nsp_event_queue ev;
+      nsp_gwin_event ev;
       if ( window_list_check_queue((win == -1 ) ? NULL: Xgc,&ev) == OK) 
 	{
 	  *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; *ibutton= ev.ibutton;
@@ -671,7 +672,6 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
 
   if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,0);
 }
-
 
 static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
 {
@@ -3332,6 +3332,8 @@ static void LoadSymbFonts(void)
  * symbol at point (x,y) 
  */
 
+#ifdef PERIGTK 
+
 static int CurSymbXOffset(BCG *Xgc)
 {
   return(-(ListOffset_[Xgc->CurHardSymbSize].xoffset)[Xgc->CurHardSymb]);
@@ -3342,7 +3344,6 @@ static int CurSymbYOffset(BCG *Xgc)
   return((ListOffset_[Xgc->CurHardSymbSize].yoffset)[Xgc->CurHardSymb]);
 }
 
-#ifdef PERIGTK 
 static void draw_mark(BCG *Xgc,int *x, int *y)
 { 
   char str[1];
@@ -3395,7 +3396,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   dx = ink_rect.x + ink_rect.width/2.0;
   dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
   /* gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout); */
-  set_c(Xgc,1);
+  nsp_gtk_set_color(Xgc,1);
   glRasterPos2i(*x-PANGO_PIXELS(dx),*y + PANGO_PIXELS(-dy));
   gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
   if (0) 

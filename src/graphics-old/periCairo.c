@@ -522,10 +522,11 @@ void xgetmouse(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int usequeue
  * A finir pour tenir compte des control C de l'utilisateur  
  */
 
-
 static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag );
 
-static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int iflag, int getmotion, int getrelease,int getkey, char *str, int lstr,int change_cursor)
+
+static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int iflag, int getmotion,
+		     int getrelease,int getkey, char *str, int lstr,int change_cursor)
 {
 #ifdef WITH_TK
   guint timer_tk;
@@ -547,17 +548,17 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
       win = Xgc->CurWindow;
     }
   win1= win; /* CheckClickQueue change its first argument if -1 */
-
   /* check for already stored event */
-  if ( iflag == TRUE ) 
+  if ( iflag == TRUE )
     { 
-      nsp_event_queue ev;
+      nsp_gwin_event ev;
       if ( window_list_check_queue((win == -1 ) ? NULL: Xgc,&ev) == OK) 
 	{
 	  *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; *ibutton= ev.ibutton;
 	  return;
 	}
     }
+
   if ( iflag == FALSE ) window_list_clear_queue((win == -1 ) ? NULL: Xgc);
 
   if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,1);
@@ -612,6 +613,7 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
 
   if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,0);
 }
+
 
 
 static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
@@ -3345,5 +3347,23 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   /* let other widgets use the default colour settings */
   gtk_widget_pop_visual();
   gtk_widget_pop_colormap();
+}
+
+
+/* get drawable as an image 
+ *
+ */
+
+GdkImage* nsp_get_image(BCG *Xgc) 
+{
+  return gdk_drawable_get_image(Xgc->private->drawable,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+}
+
+GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) 
+{
+  return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,
+				      gdk_colormap_get_system(),
+				      0,0,0,0,
+				      Xgc->CWindowWidth,Xgc->CWindowHeight);
 }
 

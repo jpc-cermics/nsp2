@@ -6,7 +6,7 @@ LIBRARY = graphics.a
 
 # periGif.o 
 
-OBJSC = Graphics-IN.o periGtk.o periGL.o periPos.o periFig.o \
+OBJSC = Graphics-IN.o periCairo.o periGL.o periPos.o periFig.o \
 	perigen.o Contour.o Plo3d.o Math.o Axes.o Champ.o Plo2d.o \
 	Plo2d1.o Plo2d2.o Plo2d3.o Plo2d4.o Plo2dEch.o Rec.o Gray.o \
 	Alloc.o RecLoad.o RecSave.o Tests.o Actions.o \
