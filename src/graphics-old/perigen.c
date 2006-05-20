@@ -43,14 +43,22 @@ static driver_fill_grid_rectangles fill_grid_rectangles_gen;
 static driver_fill_grid_rectangles1 fill_grid_rectangles1_gen ;
 static driver_drawarrows drawarrows_gen;
 static driver_drawsegments drawsegments_gen;
-
-
+static driver_drawrectangles drawrectangles_gen;
+static driver_drawarcs drawarcs_gen;
+static driver_fillarcs fillarcs_gen;
+static driver_drawpolylines drawpolylines_gen;
+static driver_fillpolylines fillpolylines_gen;
 
 nsp_gengine_generic nsp_peri_generic = {
   fill_grid_rectangles_gen,
   fill_grid_rectangles1_gen,
   drawarrows_gen,
-  drawsegments_gen
+  drawsegments_gen,
+  drawrectangles_gen,
+  drawarcs_gen,
+  fillarcs_gen,
+  drawpolylines_gen,
+  fillpolylines_gen,
 };
 
 /**
@@ -267,4 +275,187 @@ static void drawarrows_gen(BCG *Xgc, int *vx, int *vy, int n, int as, int *style
     }
   Xgc->graphic_engine->xset_dash(Xgc,dash);
   Xgc->graphic_engine->xset_pattern(Xgc,color);
+}
+
+
+/*
+ * Rectangles
+ * Draw or fill a set of rectangle 
+ * rectangle i is specified by (vect[i],vect[i+1],vect[i+2],vect[i+3]) 
+ * for x,y,width,height 
+ * for i=0 step 4 
+ * (*n) : number of rectangles 
+ * fillvect[*n] : specify the action  
+ * if fillvect[i] is > 0 then fill the rectangle i 
+ * if fillvect[i] is == 0  then only draw the rectangle i 
+ *                         with the current private->drawing style 
+ * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i] 
+ */
+
+static void drawrectangles_gen(BCG *Xgc,const int *vects,const int *fillvect, int n)
+{
+  int i,dash,color;
+  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  for (i = 0 ; i < n ; i++)
+    {
+      if ( fillvect[i] < 0 )
+	{
+	  Xgc->graphic_engine->xset_line_style(Xgc,- fillvect[i]);
+	  Xgc->graphic_engine->drawrectangle(Xgc,vects+4*i);
+	}
+      else if ( fillvect[i] == 0 ) 
+	{
+	  Xgc->graphic_engine->drawrectangle(Xgc,vects+4*i);
+	}
+      else
+	{
+	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
+	  Xgc->graphic_engine->fillrectangle(Xgc,vects+4*i);
+	}
+    }
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
+}
+
+
+
+/* 
+ * Draw a set of (*n) polylines (each of which have (*p) points) 
+ * with lines or marks 
+ * drawvect[i] <= 0 use a mark for polyline i
+ * drawvect[i] >  0 use a line style for polyline i 
+ */
+
+static void drawpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
+{ 
+  const int close =0;
+  int symb[2],dash,color,i;
+  /* store the current values */
+  Xgc->graphic_engine->xget_mark(Xgc,symb);
+  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  for (i=0 ; i< n ; i++)
+    {
+      if (drawvect[i] <= 0)
+	{ 
+	  /* we use the markid : drawvect[i] : with current dash */
+	  Xgc->graphic_engine->xset_mark(Xgc,- drawvect[i],symb[1]);
+	  Xgc->graphic_engine->xset_dash(Xgc,dash);
+	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->drawpolymark(Xgc,vectsx+(p)*i,vectsy+(p)*i,p);
+	}
+      else
+	{
+	  /* we use the line-style number abs(drawvect[i])  */
+	  Xgc->graphic_engine->xset_line_style(Xgc, *(drawvect+i));
+	  Xgc->graphic_engine->drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,close);
+	}
+    }
+  /* back to default values */
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
+}
+
+/*
+ *  fill a set of polygons each of which is defined by 
+ * (*p) points (*n) is the number of polygons 
+ * the polygon is closed by the routine 
+ * fillvect[*n] :         
+ * if fillvect[i] == 0 draw the boundaries with current color 
+ * if fillvect[i] > 0  draw the boundaries with current color 
+ *               then fill with pattern fillvect[i]
+ * if fillvect[i] < 0  fill with pattern - fillvect[i]
+ *
+ */
+
+static void fillpolylines_gen(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
+{
+  int dash,color,i;
+  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  for (i = 0 ; i< n ; i++)
+    {
+      if (fillvect[i] > 0 )
+	{ 
+	  /** fill + boundaries **/
+	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
+	  Xgc->graphic_engine->fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
+	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
+	}
+      else  if (fillvect[i] == 0 )
+	{
+	  Xgc->graphic_engine->xset_dash(Xgc,dash);
+	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	  Xgc->graphic_engine->drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
+	}
+      else 
+	{
+	  Xgc->graphic_engine->xset_pattern(Xgc,-fillvect[i]);
+	  Xgc->graphic_engine->fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
+	  Xgc->graphic_engine->xset_pattern(Xgc,color);
+	}
+    }
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
+}
+
+/*
+ * Draw a set of ellipsis or part of ellipsis 
+ * Each is defined by 6-parameters, 
+ * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
+ * <x,y,width,height> is the bounding box 
+ * angle1,angle2 specifies the portion of the ellipsis 
+ * caution : angle=degreangle*64          
+ */
+
+static void drawarcs_gen(BCG *Xgc, int *vects, int *style, int n)
+{
+  int dash,color,i;
+  /* store the current values */
+  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
+  for (i=0 ; i< n ; i++)
+    {
+      Xgc->graphic_engine->xset_line_style(Xgc,style[i]);
+      Xgc->graphic_engine->drawarc(Xgc,vects+6*i);
+    }
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
+}
+
+/*
+ * Circles and Ellipsis 
+ * Draw or fill a set of ellipsis or part of ellipsis 
+ * Each is defined by 6-parameters, 
+ * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
+ * <x,y,width,height> is the bounding box 
+ * angle1,angle2 specifies the portion of the ellipsis 
+ * caution : angle=degreangle*64          
+ * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i 
+ * with pattern fillvect[i] 
+ * if fillvect[i] is > lastpattern  then only draw the ellipsis i 
+ * The private->drawing style is the current private->drawing 
+ */
+
+static void fillarcs_gen(BCG *Xgc,int *vects, int *fillvect, int n) 
+{
+  int i,cpat;
+  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  for (i=0 ; i< n ; i++)
+    {
+      if (fillvect[i] > Xgc->IDLastPattern + 1)
+	{
+	  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+	  Xgc->graphic_engine->drawarc(Xgc,vects+6*i);
+	}
+      else
+	{
+	  Xgc->graphic_engine->xset_pattern(Xgc,fillvect[i]);
+	  Xgc->graphic_engine->fillarc(Xgc,vects+6*i);
+	}
+    }
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
 }

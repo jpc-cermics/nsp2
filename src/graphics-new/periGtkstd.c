@@ -1152,13 +1152,6 @@ static int xget_dash(BCG *Xgc)
   return  Xgc->CurDashStyle + 1;
 }
 
-/* old version of xset_dash retained for compatibility */
-
-static void xset_dash_and_color(BCG *Xgc,int dash,int color)
-{
-  xset_dash(Xgc,dash);
-  xset_pattern(Xgc,color);
-}
 
 static void xset_line_style(BCG *Xgc,int value)
 {
@@ -1197,15 +1190,6 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
     }
 }
 
-/* to get the current dash-style 
- * old version of xget_dash retained for compatibility 
- */
-
-static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
-{
-  *dash = xget_dash(Xgc);
-  *color = xget_pattern(Xgc);
-}
 
 /* used to switch from color to b&w and reverse */
 
@@ -1768,29 +1752,8 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
 
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
-  int i,dash,color;
   DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
-  for (i = 0 ; i < n ; i++)
-    {
-      if ( fillvect[i] < 0 )
-	{
-	  int dash = - fillvect[i];
-	  xset_line_style(Xgc,dash);
-	  drawrectangle(Xgc,vects+4*i);
-	}
-      else if ( fillvect[i] == 0 ) 
-	{
-	  /* xset_line_style(cd,PI0,PI0,PI0);*/
-	  drawrectangle(Xgc,vects+4*i);
-	}
-      else
-	{
-	  xset_pattern(Xgc,fillvect[i]);
-	  fillrectangle(Xgc,vects+4*i);
-	}
-    }
-  xset_dash_and_color(Xgc,dash,color);
+  Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
 
 /* Draw one rectangle with current line style */
@@ -1810,13 +1773,13 @@ static void fillrectangle(BCG *Xgc,const int rect[])
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]);
 }
 
-/*----------------------------------------------------------------------------------
+/*
  * draw a set of rectangles, provided here to accelerate GraySquare for X11 device 
  *  x : of size n1 gives the x-values of the grid 
  *  y : of size n2 gives the y-values of the grid 
  *  z : is the value of a function on the grid defined by x,y 
  *  on each rectangle the average value of z is computed 
- *----------------------------------------------------------------------------------*/
+ */
 
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 				  int remap,const int *colminmax,const double *zminmax)
@@ -1825,7 +1788,7 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
   Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
 }
 
-/*----------------------------------------------------------------------------------
+/*
  * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device 
  *  x : of size n1 gives the x-values of the grid 
  *  y : of size n2 gives the y-values of the grid 
@@ -1833,7 +1796,7 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
  *  of each rectangle. 
  *  z[i,j] is the value on the middle of rectangle 
  *        P1= x[i],y[j] x[i+1],y[j+1]
- *----------------------------------------------------------------------------------*/
+ */
 
 static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				  int remap,const int *colminmax,const double *zminmax)
@@ -1842,8 +1805,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
-
-/*----------------------------------------------------------------------------------
+/*
  * Circles and Ellipsis 
  * Draw or fill a set of ellipsis or part of ellipsis 
  * Each is defined by 6-parameters, 
@@ -1855,28 +1817,12 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
  * with pattern fillvect[i] 
  * if fillvect[i] is > lastpattern  then only draw the ellipsis i 
  * The private->drawing style is the current private->drawing 
- *----------------------------------------------------------------------------------*/
+ */
 
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
-  int i,cpat,verb;
   DRAW_CHECK;
-  verb=0;
-  cpat = xget_pattern(Xgc);
-  for (i=0 ; i< n ; i++)
-    {
-      if (fillvect[i] > Xgc->IDLastPattern + 1)
-	{
-	  xset_pattern(Xgc,cpat);
-	  drawarc(Xgc,vects+6*i);
-	}
-      else
-	{
-	  xset_pattern(Xgc,fillvect[i]);
-	  fillarc(Xgc,vects+6*i);
-	}
-    }
-  xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
 
 /*
@@ -1888,22 +1834,13 @@ static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
  * caution : angle=degreangle*64          
  */
 
-
 static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
-  int dash,color,i;
   DRAW_CHECK;
-  /* store the current values */
-  xget_dash_and_color(Xgc,&dash,&color);
-  for (i=0 ; i< n ; i++)
-    {
-      xset_line_style(Xgc,style[i]);
-      drawarc(Xgc,vects+6*i);
-    }
-  xset_dash_and_color(Xgc,dash,color);
+  Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
 }
 
-/** Draw a single ellipsis or part of it **/
+/* Draw a single ellipsis or part of it */
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
@@ -1912,7 +1849,7 @@ static void drawarc(BCG *Xgc,int arc[])
 	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
 }
 
-/** Fill a single elipsis or part of it with current pattern **/
+/* Fill a single elipsis or part of it with current pattern */
 
 static void fillarc(BCG *Xgc,int arc[])
 { 
@@ -1934,34 +1871,11 @@ static void fillarc(BCG *Xgc,int arc[])
 
 static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
 { 
-  int symb[2],dash,color,i,close;
   DRAW_CHECK;
-  /* store the current values */
-  xget_mark(Xgc,symb);
-  xget_dash_and_color(Xgc,&dash,&color);
-  for (i=0 ; i< n ; i++)
-    {
-      if (drawvect[i] <= 0)
-	{ 
-	  /* we use the markid : drawvect[i] : with current dash */
-	  xset_mark(Xgc,- drawvect[i],symb[1]);
-	  xset_dash_and_color(Xgc,dash,color);
-	  drawpolymark(Xgc,vectsx+(p)*i,vectsy+(p)*i,p);
-	}
-      else
-	{
-	  /* we use the line-style number abs(drawvect[i])  */
-	  xset_line_style(Xgc,*(drawvect+i));
-	  close = 0;
-	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,close);
-	}
-    }
-  /* back to default values */
-  xset_dash_and_color(Xgc,dash,color);
-  xset_mark(Xgc,symb[0],symb[1]);
+  Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
 
-/***********************************************************
+/*
  *  fill a set of polygons each of which is defined by 
  * (*p) points (*n) is the number of polygons 
  * the polygon is closed by the routine 
@@ -1970,36 +1884,13 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
  * if fillvect[i] > 0  draw the boundaries with current color 
  *               then fill with pattern fillvect[i]
  * if fillvect[i] < 0  fill with pattern - fillvect[i]
- **************************************************************/
+ *
+ */
 
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
-  int dash,color,i;
   DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
-  for (i = 0 ; i< n ; i++)
-    {
-      if (fillvect[i] > 0 )
-	{ 
-	  /** fill + boundaries **/
-	  xset_pattern(Xgc,fillvect[i]);
-	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	  xset_dash_and_color(Xgc,dash,color);
-	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	}
-      else  if (fillvect[i] == 0 )
-	{
-	  xset_dash_and_color(Xgc,dash,color);
-	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	}
-      else 
-	{
-	  xset_pattern(Xgc,-fillvect[i]);
-	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	  xset_pattern(Xgc,color);
-	}
-    }
-  xset_dash_and_color(Xgc,dash,color);
+  Xgc->graphic_engine->generic->fillpolylines(Xgc,vectsx,vectsy,fillvect,n,p);
 }
 
 /* 
