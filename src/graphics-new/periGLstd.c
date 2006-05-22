@@ -25,8 +25,12 @@
 #include <math.h>
 #include <stdarg.h>
 #include <gtk/gtk.h>
-#include <pango/pangoft2.h>
 #include <gtk/gtkgl.h>
+
+#ifdef HAVE_FREETYPE
+#undef PANGO_DISABLE_DEPRECATED 
+#include <pango/pangoft2.h> 
+#endif 
 
 #define PERI_PRIVATE 1
 #include "nsp/sciio.h"
@@ -1538,9 +1542,14 @@ static void nsp_pango_initialize_layout(BCG *Xgc)
     {
       Xgc->private->context = gtk_widget_get_pango_context (Xgc->private->drawing);
       /* a revoir deprecated XXXX */
+#ifndef HAVE_FREETYPE
       Xgc->private->ft2_context = pango_ft2_get_context (72, 72);
       Xgc->private->layout = pango_layout_new (Xgc->private->ft2_context);
       Xgc->private->mark_layout = pango_layout_new (Xgc->private->ft2_context);
+#else 
+      Xgc->private->layout = NULL;
+      Xgc->private->mark_layout = NULL;
+#endif 
       Xgc->private->desc = pango_font_description_new();
       Xgc->private->mark_desc = pango_font_description_from_string(pango_fonttab[1]);
     }
@@ -2151,6 +2160,15 @@ static void unclip_rectangle(GdkRectangle clip_rect)
  * the enclosing rectangle is given by e_rect
  */
 
+#ifndef HAVE_FREETYPE
+
+static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *e_rect)
+{
+  Sciprintf("Cannot render string in OpenGL missing pangoft2\n");
+}
+
+#else 
+
 static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *e_rect)
 {
   int x,y;
@@ -2263,11 +2281,11 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
 }
 
 
+#endif 
+
 /*
  * include the OpenGl basic graphic routines 
  */
 
 #include "perigtk/peridraw_gl.c"
-
-
 
