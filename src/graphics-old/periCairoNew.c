@@ -241,7 +241,7 @@ static void clearwindow(BCG *Xgc)
   cairo_fill (cr);
 }
 
-#include "travaux/events.c"  
+#include "perigtk/events.c"  
 
 
 
@@ -1364,7 +1364,7 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
 static gint realize_event(GtkWidget *widget, gpointer data);
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 
-#include "travaux/init.c" 
+#include "perigtk/init.c" 
 
 /*
  * Initialisation of the graphic context. Used also 
@@ -2154,6 +2154,6 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
  * include the gdk basic graphic routines 
  */
 
-#include "travaux/peridraw_cairo_new.c"
+#include "perigtk/peridraw_cairo_new.c"
 
 

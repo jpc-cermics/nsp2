@@ -63,6 +63,8 @@ static void realize_event_ogl();
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
 static void unclip_rectangle(GdkRectangle clip_rect);
 static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
+static void nsp_pango_initialize_layout(BCG *Xgc);
+static void nsp_pango_finalize_layout(BCG *Xgc);
 #endif 
 
 /*
@@ -114,15 +116,13 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 static void scig_deconnect_handlers(BCG *winxgc);
 static void draw_mark(BCG *Xgc,int *x, int *y);
-
-static void gdk_draw_text_rot(GdkDrawable *drawable, GdkFont *font,  GdkGC *gc,
-			      int x, int y, int maxx, int maxy, const gchar *text,
-			      gint text_length, double angle);
-
 static void force_affichage(BCG *Xgc);
 
 /* utility for points allocations */
 #ifdef PERIGTK 
+static void gdk_draw_text_rot(GdkDrawable *drawable, GdkFont *font,  GdkGC *gc,
+			      int x, int y, int maxx, int maxy, const gchar *text,
+			      gint text_length, double angle);
 static GdkPoint *gtk_get_xpoints(void);
 static int GtkReallocVector (int n);
 static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
@@ -282,514 +282,8 @@ static void clearwindow(BCG *Xgc)
 #endif 
 }
 
-/* generates a pause, 
- * sleep some number of microseconds 
- * FIXME: this function should be recorded 
- * and usleep should be masked in machine.h
- */
 
-#if defined(__STDC__) || defined(_IBMR2)
-/** for usleep **/
-#include <unistd.h> 
-#endif 
-
-static void xpause(int sec_time)
-{ 
-  unsigned useconds = (unsigned) sec_time;
-  if (useconds != 0)  
-#ifdef HAVE_USLEEP
-    { usleep(useconds); }
-#else
-#ifdef HAVE_SLEEP
-  {  sleep(useconds/1000000); }
-#else
-  return;
-#endif
-#endif
-}
-
-
-/*
- * Changes the graphic window popupname 
- */
-
-/*FIXME: this should be in a .h */
-extern char * nsp_string_to_utf8( char *str);
-
-/*
- * FIXME: do we really need two names !!
- */
-
-static void Setpopupname(BCG *Xgc,char *string)
-{ 
-  char *string_utf8=  nsp_string_to_utf8(string);
-  gtk_window_set_title(GTK_WINDOW(Xgc->private->window),string_utf8);
-  if ( string_utf8 != string ) g_free(string_utf8);
-}
-
-/* appelle ds Xcall.c */
-
-static void setpopupname(BCG *Xgc,char *name)
-{
-  Setpopupname(Xgc,name);
-}
-
-/*
- * Wait for mouse events in graphic window 
- *   send back mouse location  (x1,y1)  and button number  {0,1,2}
- *   and the window number 
- */
-
-
-typedef struct _GTK_locator_info GTK_locator_info;
-
-struct _GTK_locator_info {
-  guint win, x,y, ok;
-  int getrelease,getmotion,getmen,getkey, button;
-  int sci_click_activated; /* TRUE when we are in a xclick or xclick_any function */
-  guint timer;
-  char *str;
-  int  lstr;
-};
-
-static GTK_locator_info info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
-
-static gboolean locator_button_press(GtkWidget *widget,
-				     GdkEventButton *event,
-				     BCG *gc)
-{
-  int id;
-  switch (event->type) 
-    {
-    case GDK_BUTTON_PRESS : id= event->button-1 ;break;
-    case GDK_2BUTTON_PRESS : id= event->button-1 +3;break;
-    case GDK_3BUTTON_PRESS : id= event->button-1 +6;break;
-    default: 
-      break;
-    }
-
-  if ( info.sci_click_activated == FALSE ) 
-    {
-      nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,id,0,0};
-      nsp_enqueue(&gc->queue,&ev);
-    }
-  else 
-    {
-      info.ok = 1; info.win=  gc->CurWindow; info.x = event->x; info.y = event->y; 
-      info.button = id;
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-
-
-static gboolean locator_button_release(GtkWidget *widget,
-				       GdkEventButton *event,
-				       BCG *gc)
-{
-  /* fprintf(stderr,"release event %d\n",event->type);*/
-  if ( info.sci_click_activated == FALSE || info.getrelease == 0 ) 
-    {
-      nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,event->button-6 ,0,1};
-      nsp_enqueue(&gc->queue,&ev);
-    }
-  else 
-    {
-      info.ok =1 ; info.win=  gc->CurWindow; info.x = event->x;  info.y = event->y;
-      info.button = event->button -6;
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-
-static gboolean locator_button_motion(GtkWidget *widget,
-				      GdkEventMotion *event,
-				      BCG *gc)
-{
-  gint x,y; 
-  GdkModifierType state;
-  if (event->is_hint)
-    { 
-      gdk_window_get_pointer (event->window, &x, &y, &state);
-    }
-  else 
-    {
-      x= event->x; y = event->y;
-    }
-  if ( info.sci_click_activated == FALSE || info.getmotion == 0 ) 
-    {
-      nsp_gwin_event ev={ gc->CurWindow,x, y,-1 ,1,0},evlast;
-      if ( nsp_queue_empty(&gc->queue)== FALSE ) 
-	{
-	  /* to not keep multi motion events */
-	  evlast = nsp_peekqueue(&gc->queue);
-	  if (evlast.motion == TRUE )
-	    {
-	      evlast = nsp_dequeue(&gc->queue);
-	    }
-	}
-      nsp_enqueue(&gc->queue,&ev);
-
-    }
-  else 
-    {
-      info.ok =1 ;  info.win=  gc->CurWindow; info.x = x;  info.y = y;
-      info.button = -1;
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-
-
-static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
-{
-  /* modified 30/10/02 to get cursor location and register  key_press_event in queue' SS */
-  gint x,y; 
-  GdkModifierType state;
-  if (info.getkey == TRUE && (event->keyval >= 0x20) && (event->keyval <= 0xFF))
-    {
-      /* since Alt-keys and Ctrl-keys are stored in menus I want to ignore them here */
-      if ( event->state != GDK_CONTROL_MASK && event->state != GDK_MOD1_MASK ) 
-	{
-	  gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
-	  info.x=x ; info.y=y;
-	  info.ok =1 ;  info.win=  gc->CurWindow; 
-	  info.button = event->keyval;
-	  gtk_main_quit();
-	}
-    }
-  else {
-    gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
-    nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,0,1};
-    nsp_enqueue(&gc->queue,&ev);
-  }
-
-  return FALSE; /* also want other handlers to be activated */
-}
-
-static void xset_win_protect( BCG *gc, int val) { gc->private->protect=val;}
-
-/* ici normalement on peut pas arreter la destruction */
-
-static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
-{
-  if ( gc->private->protect == TRUE ) 
-    {
-      xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
-    }
-  if ( info.sci_click_activated == TRUE ) 
-    {
-      info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
-      info.button = -100;
-      delete_window(gc,gc->CurWindow);
-      gtk_main_quit();
-    }
-  else 
-    delete_window(gc,gc->CurWindow);
-}
-
-/* ici avec la valeur renvoyée on peut décider de detruire ou pas */
-
-static gboolean sci_delete_window (GtkWidget *widget, GdkEventKey *event,  BCG *gc)
-{
-  if ( gc->private->protect == TRUE ) 
-    {
-      xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
-      return TRUE;
-    }
-  if ( info.sci_click_activated == TRUE ) 
-    {
-      info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
-      info.button = -100;
-      delete_window(gc,gc->CurWindow);
-      gtk_main_quit();
-    }
-  else 
-    delete_window(gc,gc->CurWindow);
-  return FALSE;
-}
-
-/*
- * A time out to check for menu activation 
- *   for menus added with addmenu etc....
- * XXX : info.win is not correct this is to be done 
- */
-
-static gint timeout_test (BCG *gc)
-{
-  if ( dequeue_nsp_command(info.str,info.lstr) == OK)
-    {
-      info.ok = 1 ; info.x = 0 ; info.y =0 ; info.button =  -2;
-      info.win = (gc == NULL) ? 0 : gc->CurWindow;
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-
-/*
- * A timeout to flush TK Events while in xclick 
- * Note that WITH_TK is not supposed to be used in nsp.
- */
-
-  
-#ifdef WITH_TK
-extern int flushTKEvents();
-
-static gint timeout_tk (void *v)
-{
-  flushTKEvents();
-  return TRUE;
-}
-#endif
-
-void xclick_any(BCG *Xgc,char *str, int *ibutton, int *x1,int *yy1, int *iwin, int iflag,int getmotion,int getrelease,int getkey,int lstr)
-{
-  int change_cursor = TRUE;
-  SciClick(Xgc,ibutton,x1,yy1,iwin,iflag,getmotion,getrelease,getkey,str,lstr,change_cursor);
-}
-
-void xclick(BCG * Xgc,char *str, int *ibutton, int *x1,int *yy1,int iflag,int motion,int release,int key, int istr)
-{
-  int change_cursor = TRUE;
-  int win = ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) ? 0 : Xgc->CurWindow;
-  SciClick(Xgc,ibutton,x1, yy1,&win,iflag,motion,release,key,str,istr,change_cursor);
-}
-
-void xgetmouse(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int usequeue, int motion,int release,int key)
-{
-  int change_cursor = TRUE;
-  int win = ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) ? 0 : Xgc->CurWindow;
-  SciClick(Xgc,ibutton,x1, yy1,&win,usequeue,motion,release,key,(char *) 0,0,change_cursor);
-}
-
-/*------------------------------------------------------------------------------
- * wait for events: mouse motion and mouse press and release 
- *                  and dynamic menu activation through a timeout 
- * 
- * if iflag = 0 : clear previous mouse click 
- * if iflag = 1 : don't 
- * if getmotion = 1 : check also mouse move 
- * if getrelease=1 : check also mouse release 
- * if dyn_men = 1 ; check also dynamic menus (returns the menu code in str )
- * return value : 0,1,2 if button pressed 
- *                -5,-4,-3: if button release
- *                -100 : error or window destroyed 
- *                -2   : menu activated 
- *------------------------------------------------------------------------------*/
-
-/* 
- * A finir pour tenir compte des control C de l'utilisateur  
- */
-
-
-static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag );
-
-static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int iflag, int getmotion,
-		     int getrelease,int getkey, char *str, int lstr,int change_cursor)
-{
-#ifdef WITH_TK
-  guint timer_tk;
-#endif 
-  GTK_locator_info rec_info ; 
-  int win=*iwin,wincount=0,win1;
-  if ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) {
-    *ibutton = -100;     return;
-  }
-
-  if ( win == -1 ) 
-    {
-      /* we will check all the graphic windows */
-      wincount = window_list_get_max_id()+1;
-    }
-  else 
-    {
-      /* just work on current win */
-      win = Xgc->CurWindow;
-    }
-  win1= win; /* CheckClickQueue change its first argument if -1 */
-  /* check for already stored event */
-  if ( iflag == TRUE )
-    { 
-      nsp_gwin_event ev;
-      if ( window_list_check_queue((win == -1 ) ? NULL: Xgc,&ev) == OK) 
-	{
-	  *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; *ibutton= ev.ibutton;
-	  return;
-	}
-    }
-
-  if ( iflag == FALSE ) window_list_clear_queue((win == -1 ) ? NULL: Xgc);
-
-  if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,1);
-  
-  /* save info in local variable  */
-  rec_info = info;
-  /* set info */ 
-  info.ok = 0 ; 
-  info.getrelease = getrelease ; 
-  info.getmotion   = getmotion ;
-  info.getmen     = (lstr == 0) ? FALSE : TRUE; 
-  info.getkey     = getkey;
-  info.sci_click_activated = TRUE ;
-
-  if ( info.getmen == TRUE ) 
-    {
-      /*  Check soft menu activation during xclick */ 
-      info.timer = gtk_timeout_add(100, (GtkFunction) timeout_test, Xgc);
-      info.str   = str;
-      info.lstr  = lstr; /* on entry it gives the size of str buffer */
-    }
-  
-#ifdef WITH_TK
-  timer_tk=  gtk_timeout_add(100,  (GtkFunction) timeout_tk , NULL);
-#endif
-  
-  while (1) 
-    {
-      gtk_main();
-      /* be sure that gtk_main_quit was activated by proper event */
-      if ( info.ok == 1 ) 
-	{
-	  if ( win == -1 ) break;
-	  if ( info.win == win  ) break;
-	}
-    }
-
-#ifdef WITH_TK
-  gtk_timeout_remove(timer_tk);
-#endif
-
-  *x1 = info.x;
-  *yy1 = info.y;
-  *ibutton = info.button;
-  *iwin = info.win;
-  
-  /* remove timer if it was set by us */ 
-  if ( info.getmen == TRUE )  gtk_timeout_remove (info.timer);
-
-  /* take care of recursive calls i.e restore info  */
-  info = rec_info ; 
-
-  if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,0);
-}
-
-static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
-{
-  GdkCursor *cursor;
-  if ( win == -1 ) 
-    {
-      int i;
-      for (i=0; i < wincount ; i++ ) 
-	{
-	  BCG *bcg =  window_list_search(i);
-	  if ( bcg  != NULL)
-	    {
-	      cursor =  ( flag == 0 ) ? bcg->private->ccursor : bcg->private->gcursor;
-	      gdk_window_set_cursor(bcg->private->drawing->window,cursor);
-	    }
-	}
-    }
-  else
-    {
-      if ( Xgc != (BCG *) 0 && Xgc->private != NULL &&  Xgc->private->drawing != NULL ) {
-	cursor =  ( flag == 0 ) ? Xgc->private->ccursor : Xgc->private->gcursor;
-	gdk_window_set_cursor (Xgc->private->drawing->window,cursor);
-      }
-    }
-}
-  
-
-
-/*
- * clear a rectangle zone 
- */
-
-#ifdef PERIGTK 
-static void cleararea(BCG *Xgc, int x, int y, int w, int h)
-{
-  int clipflag = 0;
-  /* switch to a clear gc */
-  int cur_alu = Xgc->CurDrawFunction;
-  int clear = 0 ; /* 0 is the Xclear alufunction */;
-  DRAW_CHECK;
-
-  if ( cur_alu != clear ) xset_alufunction1(Xgc,clear);
-  if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
-    {
-      static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
-      gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
-    }
-  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,x,y,w,h);
-  if ( cur_alu != clear )
-    xset_alufunction1(Xgc,cur_alu);   /* back to current value */ 
-  if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
-    {
-      /* restore clip */
-      GdkRectangle clip_rect = { Xgc->CurClipRegion[0],
-				 Xgc->CurClipRegion[1],
-				 Xgc->CurClipRegion[2],
-				 Xgc->CurClipRegion[3]};
-      gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
-    }
-}
-
-#else 
-
-/*
- * could be merged with previous one !!
- */
-
-typedef void (*r_c) (BCG *Xgc,int x,int y,int w,int h);
-static void RectangleClear   (BCG *Xgc,int x,int y,int w,int h,int clipflag,r_c f );
-static void R_clear  (BCG *Xgc,int x,int y,int w,int h);
-
-static void R_clear(BCG *Xgc,int x, int y, int w, int h)
-{
-  int tab[4];
-
-  tab[0] = x;      tab[1] = y;      tab[2] = w;      tab[3] = h;
-  fillrectangle(Xgc, tab);
-  /*
-    gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,x,y,w,h);
-    if ( Xgc->private->drawable == Xgc->private->drawing->window) 
-    gdk_draw_rectangle(Xgc->private->pixmap, Xgc->private->wgc, TRUE,x,y,w,h);
-  */
-}
-
-static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_c F)
-{
-  /* switch to a clear gc */
-  int cur_alu = Xgc->CurDrawFunction;
-  int clear = 0 ; /* 0 is the Xclear alufunction */;
-  if ( cur_alu != clear ) xset_alufunction1(Xgc,clear);
-  if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
-    {
-      static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
-      /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
-      clip_rectangle(Xgc, clip_rect);
-    }
-  (*F)(Xgc,x,y,w,h);
-  if ( cur_alu != clear )
-    xset_alufunction1(Xgc,cur_alu);   /* back to current value */ 
-  if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
-    {
-      /* restore clip */
-      GdkRectangle clip_rect = { Xgc->CurClipRegion[0],
-				 Xgc->CurClipRegion[1],
-				 Xgc->CurClipRegion[2],
-				 Xgc->CurClipRegion[3]};
-      /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
-      clip_rectangle(Xgc, clip_rect);
-    }
-}
-
-static void cleararea(BCG *Xgc, int x, int y, int w, int h)
-{
-  DRAW_CHECK;
-  RectangleClear(Xgc,x,y,w,h,0,R_clear);
-}
-#endif 
-
+#include "perigtk/events.c"  
 
 /*
  * graphic context modifications 
@@ -1356,14 +850,6 @@ static int xget_dash(BCG *Xgc)
   return  Xgc->CurDashStyle + 1;
 }
 
-/* old version of xset_dash retained for compatibility */
-
-static void xset_dash_and_color(BCG *Xgc,int dash,int color)
-{
-  xset_dash(Xgc,dash);
-  xset_pattern(Xgc,color);
-}
-
 static void xset_line_style(BCG *Xgc,int value)
 {
   if (Xgc->CurColorStatus == 0) 
@@ -1447,15 +933,6 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
    }
 */
 
-/* to get the current dash-style 
- * old version of xget_dash retained for compatibility 
- */
-
-static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
-{
-  *dash = xget_dash(Xgc);
-  *color = xget_pattern(Xgc);
-}
 
 /* used to switch from color to b&w and reverse */
 
@@ -1927,75 +1404,6 @@ static void xset_fpf_def(BCG *Xgc)
 }
 
 
-/*-----------------------------------------------------------
- * Functions for private->drawing 
- *-----------------------------------------------------------*/
-
-/*
- *  display of a string
- *  at (x,y) position whith slope angle alpha in degree . 
- * Angle are given clockwise. 
- * If *flag ==1 and angle is z\'ero a framed box is added 
- * around the string}.
- * 
- * (x,y) defines the lower left point of the bounding box 
- * of the string ( we do not separate asc and desc 
- */
-
-static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
-{ 
-  gint lbearing, rbearing, iascent, idescent, iwidth;
-  DRAW_CHECK_GDK;
-  gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing,
-		     &iwidth, &iascent, &idescent);
-  if ( Abs(angle) <= 0.1) 
-    {
-      gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-		    x, y - idescent , string, strlen(string));
-      if ( flag == 1) 
-	{
-	  int rect[] = { x , y- iascent - idescent, 
-			 gdk_string_width(Xgc->private->font, string),
-			 iascent+idescent};
-	  drawrectangle(Xgc,rect);
-	}
-    }
-  else 
-    {
-      gdk_draw_text_rot(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-			x, y - idescent ,0,0, string, strlen(string),-angle * M_PI/180.0);
-    }
-}
-
-/* To get the string extents of a string */
-
-static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
-{ 
-  gint lbearing, rbearing, iascent, idescent, iwidth;
-  gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing, &iwidth, &iascent, &idescent);
-  rect[0]= x ;
-  rect[1]= y - iascent - idescent;
-  rect[2]= gdk_string_width(Xgc->private->font, string);
-  rect[3]= iascent + idescent;
-}
-
-/*------------------------------------------------
- * line segments arrows 
- *-------------------------------------------------*/
-
-static void drawline(BCG *Xgc,int x1, int y1, int x2, int y2)
-{
-  DRAW_CHECK;
-#ifdef PERIGTK 
-  gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, x1, y1, x2, y2);
-#else 
-  glBegin(GL_LINES);
-  glVertex2i(x1, y1);
-  glVertex2i(x2, y2);
-  glEnd();
-#endif
-}
-
 #ifdef PERIGL
 static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double y2, double z2)
 {
@@ -2007,25 +1415,13 @@ static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double
 }
 #endif 
 
-
-/* Draw a set of segments 
- * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
- * n is the size of vx and vy 
- */
-
-static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
-}
-
 #ifdef PERIGL 
 void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag)
 {
   int dash,color,i;
   DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
+  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
   if ( iflag == 1) { /* one style per segment */
     for (i=0 ; i < n/2 ; i++) {
       xset_line_style(Xgc,style[i]);
@@ -2038,347 +1434,11 @@ void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, i
     for (i=0 ; i < n/2 ; i++) 
       drawline3D(Xgc,x[2*i],y[2*i],z[2*i],x[2*i+1],y[2*i+1],z[2*i+1]);
   }
-  xset_dash_and_color(Xgc,dash,color);
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 #endif 
 
-
-
-/* Draw a set of arrows 
- * arrows are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
- * n is the size of vx and vy 
- * as is 10*arsize (arsize) the size of the arrow head in pixels 
- */
-
-static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
-{ 
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
-}
-
-/*
- * Rectangles
- * Draw or fill a set of rectangle 
- * rectangle i is specified by (vect[i],vect[i+1],vect[i+2],vect[i+3]) 
- * for x,y,width,height 
- * for i=0 step 4 
- * (*n) : number of rectangles 
- * fillvect[*n] : specify the action  
- * if fillvect[i] is > 0 then fill the rectangle i 
- * if fillvect[i] is == 0  then only draw the rectangle i 
- *                         with the current private->drawing style 
- * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i] 
- */
-
-static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
-{
-  int i,dash,color;
-  DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
-  for (i = 0 ; i < n ; i++)
-    {
-      if ( fillvect[i] < 0 )
-	{
-	  int dash = - fillvect[i];
-	  xset_line_style(Xgc,dash);
-	  drawrectangle(Xgc,vects+4*i);
-	}
-      else if ( fillvect[i] == 0 ) 
-	{
-	  /* xset_line_style(cd,PI0,PI0,PI0);*/
-	  drawrectangle(Xgc,vects+4*i);
-	}
-      else
-	{
-	  xset_pattern(Xgc,fillvect[i]);
-	  fillrectangle(Xgc,vects+4*i);
-	}
-    }
-  xset_dash_and_color(Xgc,dash,color);
-}
-
-/* Draw one rectangle with current line style 
- */
-
-
-static void drawrectangle(BCG *Xgc,const int rect[])
-{ 
-  DRAW_CHECK
-#ifdef PERIGTK 
-    gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,
-		       rect[0],rect[1],rect[2],rect[3]);
-#else 
-  glBegin(GL_LINE_LOOP);
-  glVertex2i(rect[0]        ,rect[1]);
-  glVertex2i(rect[0]+rect[2],rect[1]);
-  glVertex2i(rect[0]+rect[2],rect[1]+rect[3]);
-  glVertex2i(rect[0]        ,rect[1]+rect[3]);
-  glEnd();
-#endif
-}
-
-/* fill one rectangle, with current pattern */
-
-
-static void fillrectangle(BCG *Xgc,const int rect[])
-{ 
-  DRAW_CHECK;
-#ifdef PERIGTK 
-  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]);
-#else 
-  glBegin(GL_QUADS);
-  glVertex2i(rect[0]        ,rect[1]);
-  glVertex2i(rect[0]+rect[2],rect[1]);
-  glVertex2i(rect[0]+rect[2],rect[1]+rect[3]);
-  glVertex2i(rect[0]        ,rect[1]+rect[3]);
-  glEnd();
-#endif 
-}
-
-/*
- * draw a set of rectangles, provided here to accelerate GraySquare for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : is the value of a function on the grid defined by x,y 
- *  on each rectangle the average value of z is computed 
- */
-
-static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
-				  int remap,const int *colminmax,const double *zminmax)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
-}
-
-/*
- * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle 
- *  of each rectangle. 
- *  z[i,j] is the value on the middle of rectangle 
- *        P1= x[i],y[j] x[i+1],y[j+1]
- */
-
-static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
-				  int remap,const int *colminmax,const double *zminmax)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
-}
-
-
-/*
- * Circles and Ellipsis 
- * Draw or fill a set of ellipsis or part of ellipsis 
- * Each is defined by 6-parameters, 
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
- * <x,y,width,height> is the bounding box 
- * angle1,angle2 specifies the portion of the ellipsis 
- * caution : angle=degreangle*64          
- * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i 
- * with pattern fillvect[i] 
- * if fillvect[i] is > lastpattern  then only draw the ellipsis i 
- * The private->drawing style is the current private->drawing 
- */
-
-static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
-}
-
-/*
- * Draw a set of ellipsis or part of ellipsis 
- * Each is defined by 6-parameters, 
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
- * <x,y,width,height> is the bounding box 
- * angle1,angle2 specifies the portion of the ellipsis 
- * caution : angle=degreangle*64          
- */
-
-static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
-}
-
-/* Draw a single ellipsis or part of it 
- */
-
-static void drawarc(BCG *Xgc,int arc[])
-{ 
-  DRAW_CHECK;
-  /* FIXME : to be done for OpenGl */
-  gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,FALSE,
-	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-}
-
-/** Fill a single elipsis or part of it with current pattern **/
-
-static void fillarc(BCG *Xgc,int arc[])
-{ 
-  DRAW_CHECK;
-  /* FIXME : to be done for OpenGl */
-  gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,TRUE,
-	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
-}
-
-/*
- * Filling or Drawing Polylines and Polygons
- */
-
-/* 
- * Draw a set of (*n) polylines (each of which have (*p) points) 
- * with lines or marks 
- * drawvect[i] <= 0 use a mark for polyline i
- * drawvect[i] >  0 use a line style for polyline i 
- */
-
-static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
-{ 
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
-}
-
-/*
- *  fill a set of polygons each of which is defined by 
- * (*p) points (*n) is the number of polygons 
- * the polygon is closed by the routine 
- * fillvect[*n] :         
- * if fillvect[i] == 0 draw the boundaries with current color 
- * if fillvect[i] > 0  draw the boundaries with current color 
- *               then fill with pattern fillvect[i]
- * if fillvect[i] < 0  fill with pattern - fillvect[i]
- */
-
-#ifdef PERIGTK
-
-static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->fillpolylines(Xgc,vectsx,vectsy,fillvect,n,p);
-}
-
-#else 
-
-/* specific version for OpenGl to add a glEnable(GL_POLYGON_OFFSET_FILL);
- */
-
-static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
-{
-  int dash,color,i;
-  DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
-  for (i = 0 ; i< n ; i++)
-    {
-      if (fillvect[i] > 0 )
-	{ 
-	  /* fill + boundaries **/
-	  xset_pattern(Xgc,fillvect[i]);
-	  glEnable(GL_POLYGON_OFFSET_FILL);
-	  glPolygonOffset(1.0,1.0);
-	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	  glEnable(GL_POLYGON_OFFSET_FILL);
-	  xset_dash_and_color(Xgc,dash,color);
-	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	}
-      else  if (fillvect[i] == 0 )
-	{
-	  xset_dash_and_color(Xgc,dash,color);
-	  drawpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	}
-      else 
-	{
-	  xset_pattern(Xgc,-fillvect[i]);
-	  fillpolyline(Xgc,vectsx+(p)*i,vectsy+(p)*i,p,1);
-	  xset_pattern(Xgc,color);
-	}
-    }
-  xset_dash_and_color(Xgc,dash,color);
-}
-
-#endif 
-
-/* 
- * Only draw one polygon  with current line style 
- * according to *closeflag : it's a polyline or a polygon
- * n is the number of points of the polyline 
- */
-
-#ifdef PERIGTK 
-
-static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
-{ 
-  int n1;
-  DRAW_CHECK;
-  if (closeflag == 1) n1 =n+1;else n1= n;
-  if (n1 >= 2) 
-    {
-      if ( gtk_store_points(n, vx, vy, closeflag)) 
-	{
-	  gdk_draw_lines(Xgc->private->drawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
-	}
-    }
-}
-
-#else 
-
-static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
-{ 
-  gint i;
-  if ( n <= 1) return;
-  DRAW_CHECK;
-  glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-  if ( closeflag == 1 ) 
-    glBegin(GL_LINE_LOOP);
-  else
-    glBegin(GL_LINE_STRIP);
-  for (i=0; i < n ; i++) glVertex2i(vx[i], vy[i]);
-  glEnd();
-  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-}
-
-#endif 
-
-/* 
- * Fill the polygon or polyline 
- * according to *closeflag : the given vector is a polyline or a polygon 
- */
-
-#ifdef PERIGTK 
-
-static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag) 
-{
-  int n1;
-  DRAW_CHECK;
-  if (closeflag == 1) n1 = n+1;else n1= n;
-  if ( gtk_store_points(n, vx, vy, closeflag)) 
-    {
-      gdk_draw_polygon(Xgc->private->drawable,Xgc->private->wgc,TRUE,gtk_get_xpoints(), n1);
-    }
-}
-
-#else 
-
-/* 
- * FIXME: Attention ça ne marche que pour un polygone convexe !!!!!!
- * sinon il faut le trianguler 
- */
-
-static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag) 
-{
-  gint i;
-  if ( n <= 1) return;
-  DRAW_CHECK;
-  glBegin(GL_POLYGON);
-  for ( i=0 ;  i< n ; i++) glVertex2i( vx[i], vy[i]);
-  glEnd();
-  
-}
-
-#endif
 
 #ifdef PERIGL
 void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag)
@@ -2405,7 +1465,8 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 {
   int dash,color,i;
   DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
+  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
   for (i = 0 ; i< n ; i++)
     {
       /* for each polyline we only take a decision according to the first color */
@@ -2416,12 +1477,14 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 	  glPolygonOffset(1.0,1.0);
 	  fillpolyline3D_shade(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,fillvect+(p)*i,p,1);
 	  glDisable(GL_POLYGON_OFFSET_FILL);
-	  xset_dash_and_color(Xgc,dash,color);
+	  Xgc->graphic_engine->xset_dash(Xgc,dash);
+	  Xgc->graphic_engine->xset_pattern(Xgc,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
       else  if (fillvect[i] == 0 )
 	{
-	  xset_dash_and_color(Xgc,dash,color);
+	  Xgc->graphic_engine->xset_dash(Xgc,dash);
+	  Xgc->graphic_engine->xset_pattern(Xgc,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
       else 
@@ -2430,7 +1493,8 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 	  Xgc->graphic_engine->xset_pattern(Xgc,color);
 	}
     }
-  xset_dash_and_color(Xgc,dash,color);
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 
 
@@ -2458,7 +1522,8 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 {
   int dash,color,i;
   DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
+  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
   for (i = 0 ; i< n ; i++)
     {
       if (fillvect[i] > 0 )
@@ -2469,12 +1534,14 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 	  glPolygonOffset(1.0,1.0);
 	  fillpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	  glDisable(GL_POLYGON_OFFSET_FILL);
-	  xset_dash_and_color(Xgc,dash,color);
+	  Xgc->graphic_engine->xset_dash(Xgc,dash);
+	  Xgc->graphic_engine->xset_pattern(Xgc,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
       else  if (fillvect[i] == 0 )
 	{
-	  xset_dash_and_color(Xgc,dash,color);
+	  Xgc->graphic_engine->xset_dash(Xgc,dash);
+	  Xgc->graphic_engine->xset_pattern(Xgc,color);
 	  drawpolyline3D(Xgc,vectsx+(p)*i,vectsy+(p)*i,vectsz+(p)*i,p,1);
 	}
       else 
@@ -2484,7 +1551,8 @@ void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 	  Xgc->graphic_engine->xset_pattern(Xgc,color);
 	}
     }
-  xset_dash_and_color(Xgc,dash,color);
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag) 
@@ -2515,64 +1583,6 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 #endif 
 
 
-/* 
- * Draw the current mark centred at points defined
- * by vx and vy (vx[i],vy[i]) 
- */
-
-#ifdef PERIGTK 
-
-static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
-{
-  DRAW_CHECK;
-  if ( Xgc->CurHardSymb == 0 )
-    {
-      if (gtk_store_points(n, vx, vy,(int)0L))
-	{
-	  gdk_draw_points(Xgc->private->drawable,
-			  Xgc->private->wgc,gtk_get_xpoints(), n);
-	}
-    }
-  else 
-    { 
-      int i,keepid,keepsize,hds;
-      i=1;
-      keepid =  Xgc->fontId;
-      keepsize= Xgc->fontSize;
-      hds= Xgc->CurHardSymbSize;
-      xset_font(Xgc,i,hds);
-      for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
-      xset_font(Xgc,keepid,keepsize);
-    }
-}
-
-#else 
-
-static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
-{
-  DRAW_CHECK_GDK;
-
-  if ( Xgc->CurHardSymb == 0 )
-    {
-      gint i;
-      glBegin(GL_POINTS);
-      for (i=0; i< n ; i++) glVertex2i( vx[i], vy[i]);
-      glEnd();
-    }
-  else 
-    { 
-      int i,keepid,keepsize,hds;
-      i=1;
-      keepid =  Xgc->fontId;
-      keepsize= Xgc->fontSize;
-      hds= Xgc->CurHardSymbSize;
-      xset_font(Xgc,i,hds);
-      for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
-      xset_font(Xgc,keepid,keepsize);
-    }
-}
-
-#endif
 
 #ifdef PERIGL 
 static void drawpolymark3D(BCG *Xgc,double *vx, double *vy, double *vz, int n)
@@ -2593,7 +1603,8 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
   /* store the current values */
   DRAW_CHECK;
   Xgc->graphic_engine->xget_mark(Xgc,symb);
-  xget_dash_and_color(Xgc,&dash,&color);
+  dash = Xgc->graphic_engine->xget_dash(Xgc);
+  color = Xgc->graphic_engine->xget_pattern(Xgc);
 
   for (i=0 ; i< n ; i++)
     {
@@ -2610,7 +1621,8 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 	}
     }
   /* back to default values **/
-  xset_dash_and_color(Xgc,dash,color);
+  Xgc->graphic_engine->xset_dash(Xgc,dash);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
   Xgc->graphic_engine->xset_mark(Xgc,symb[0],symb[1]);
 }
 #endif 
@@ -2674,6 +1686,9 @@ static void delete_window(BCG *dd,int intnum)
   g_object_unref(winxgc->private->stdgc);
   g_object_unref(winxgc->private->wgc);
   g_object_unref(winxgc->private->item_factory);
+
+  nsp_pango_finalize_layout(winxgc);
+
   FREE(winxgc->private);
   /* remove current window from window list */
   window_list_remove(intnum);
@@ -2812,6 +1827,13 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->protect= FALSE;
   private->draw= FALSE;
 
+  private->layout  = NULL;
+  private->mark_layout  = NULL;
+  private->context = NULL;
+  private->ft2_context = NULL;
+  private->desc = NULL;
+  private->mark_desc = NULL;
+
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
       Sciprintf("initgraphics: unable to alloc\n");
@@ -2885,6 +1907,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
 
+  nsp_pango_initialize_layout(NewXgc);/* initialize a pango_layout */
+
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
   /* Attention ce qui est ici doit pas etre rejoué 
    * on l'enleve donc de initialize_gc
@@ -2899,29 +1923,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
 
 
 
-/*---------------------------------------------------------------------------
- * writes a message in the info widget associated to the current scilab window 
- *----------------------------------------------------------------------------*/
-
-#define MAXPRINTF 512
-
-static void xinfo(BCG *Xgc,char *format,...) 
-{
-  /* Extended call for C calling */
-  /* Arg args[1];*/
-  va_list ap;
-  char buf[MAXPRINTF];
-  va_start(ap,format);
-  (void ) vsprintf(buf, format, ap );
-  va_end(ap);
-  if ( Xgc != (BCG *) 0 && Xgc->private->CinfoW != NULL)
-    {
-      gtk_statusbar_pop ((GtkStatusbar *) Xgc->private->CinfoW, 1);
-      gtk_statusbar_push ((GtkStatusbar *) Xgc->private->CinfoW, 1,buf);
-    }
-}
-
-
 /*--------------------------------------------------------
  * Initialisation of the graphic context. Used also 
  *  to come back to the default graphic state}
@@ -2934,43 +1935,6 @@ static void xset_default(BCG *Xgc)
   nsp_initialize_gc(Xgc);
 }
 
-/*
- *   Draw an axis whith a slope of alpha degree (clockwise) 
- *   . Along the axis marks are set in the direction ( alpha + pi/2), in the  
- *   following way : 
- *   \begin{itemize} 
- *   \item   $n=<n1,n2>$, 
- *   \begin{verbatim} 
- *   |            |           | 
- *   |----|---|---|---|---|---| 
- *   <-----n1---->                  
- *   <-------------n2--------> 
- *   \end{verbatim} 
- *   $n1$and $n2$ are int numbers for interval numbers. 
- *   \item $size=<dl,r,coeff>$. $dl$ distance in points between  
- *   two marks, $r$ size in points of small mark, $r*coeff$  
- *   size in points of big marks. (they are doubleing points numbers) 
- *   \item $init$. Initial point $<x,y>$.  
- *   \end{itemize} 
- */
-
-static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->drawaxis(Xgc,alpha,nsteps,initpoint,size);
-}
-
-/*
- * Display numbers z[i] at location (x[i],y[i])
- *   with a slope alpha[i] (see displaystring), if flag==1
- *   add a box around the string, only if slope =0}
- */
-
-static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
-}
 
 /*
  * Using gtk  Fonts
@@ -3268,6 +2232,7 @@ static void LoadSymbFonts(void)
  */
 
 #ifdef PERIGTK 
+#ifndef WITH_PANGO
 
 static int CurSymbXOffset(BCG *Xgc)
 {
@@ -3279,72 +2244,39 @@ static int CurSymbYOffset(BCG *Xgc)
   return((ListOffset_[Xgc->CurHardSymbSize].yoffset)[Xgc->CurHardSymb]);
 }
 
-static void draw_mark(BCG *Xgc,int *x, int *y)
-{ 
-  char str[1];
-  str[0]=Marks[Xgc->CurHardSymb];
-  gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-		*x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
-}
+#endif 
+#endif 
 
 
-#else 
-/* drawing marks with pango 
- * FIXME: some operation could be stored in cache 
- * i.e utf8 translation and offsets used for drawing 
- */
+static const int pango_size[] = { 8 ,10,12,14,18,24};
+static char *pango_fonttab[] ={"Courier", "Standard Symbols L","Sans","Sans","Sans","Sans"};
 
-/* drawing marks with pango 
- */
-
-static const int symbols[] = 
-  {
-    0x22C5, /* lozenge */
-    0x002B, /* plus sign */
-    0x00D7, /* multiplication sign */
-    0x2217, /* asterisk operator */
-    0x2666, /* black diamond suit */
-    0x25CA, /* lozenge */
-    0x0394, /* greek capital letter delta */
-    0x2207, /* nabla  */
-    0x2663, /* black club suit */
-    0x2295, /* circled plus */
-    0x2665, /* black heart suit */
-    0x2660, /* black spade suit */
-    0x2297, /* circled times */
-    0x2022, /* bullet */
-    0x00B0  /* degree sign */
-  };
-
-static void draw_mark(BCG *Xgc,int *x, int *y)
+static void nsp_pango_finalize_layout(BCG *Xgc)
 {
-  double dx,dy;
-  PangoRectangle ink_rect,logical_rect;
-  int code = symbols[Xgc->CurHardSymb]; 
-  gchar symbol_code[4], *iter = symbol_code;
-  DRAW_CHECK;
-  g_unichar_to_utf8(code, iter);
-  iter = g_utf8_next_char(iter);
-  g_unichar_to_utf8(0x0, iter);
-  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
-  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
-  dx = ink_rect.x + ink_rect.width/2.0;
-  dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
-  /* gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout); */
-  nsp_gtk_set_color(Xgc,1);
-  glRasterPos2i(*x-PANGO_PIXELS(dx),*y + PANGO_PIXELS(-dy));
-  gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
-  if (0) 
+  if ( Xgc->private->layout != NULL) 
     {
-      /* draw the ink_rectangle around the mark */
-      int i;
-      double rect[]={ink_rect.x -dx ,ink_rect.y -logical_rect.height -dy,ink_rect.width,ink_rect.height};
-      int myrect[]={*x,*y,0,0};
-      for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
-      drawrectangle(Xgc,myrect);
+      g_object_unref ( Xgc->private->layout);Xgc->private->layout=NULL;
+      g_object_unref ( Xgc->private->mark_layout);Xgc->private->mark_layout=NULL;
+      pango_font_description_free ( Xgc->private->desc); Xgc->private->desc=NULL;
+      pango_font_description_free ( Xgc->private->mark_desc);Xgc->private->mark_desc=NULL;
+      g_object_unref (G_OBJECT (Xgc->private->ft2_context));
     }
 }
-#endif
+
+static void nsp_pango_initialize_layout(BCG *Xgc)
+{
+  if ( Xgc->private->layout == NULL) 
+    {
+      Xgc->private->context = gtk_widget_get_pango_context (Xgc->private->drawing);
+      /* a revoir deprecated XXXX */
+      Xgc->private->ft2_context = pango_ft2_get_context (72, 72);
+      Xgc->private->layout = pango_layout_new (Xgc->private->ft2_context);
+      Xgc->private->mark_layout = pango_layout_new (Xgc->private->ft2_context);
+      Xgc->private->desc = pango_font_description_new();
+      Xgc->private->mark_desc = pango_font_description_from_string(pango_fonttab[1]);
+    }
+}
+
 
 /*
  * Allocation and storing function for vectors of GtkPoints 
@@ -3818,14 +2750,15 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-void gdk_draw_text_rot(GdkDrawable *drawable,
-		       GdkFont *font,
-		       GdkGC *gc,
-		       int x, int y,
-		       int maxx, int maxy,
-		       const gchar *text,
-		       gint text_length,
-		       double angle)
+#ifdef PERIGTK 
+static void gdk_draw_text_rot(GdkDrawable *drawable,
+			      GdkFont *font,
+			      GdkGC *gc,
+			      int x, int y,
+			      int maxx, int maxy,
+			      const gchar *text,
+			      gint text_length,
+			      double angle)
 {
   GdkColor black, white;
   GdkPixmap *pixmap;
@@ -3924,7 +2857,7 @@ void gdk_draw_text_rot(GdkDrawable *drawable,
     gdk_gc_unref(rotgc);
   }
 }
-
+#endif 
 
 /*
  * added for opengl capabilities 
@@ -4299,3 +3232,36 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
 
 
 #endif /* PERIGL */
+
+#ifdef PERIGTK
+/* get drawable as an image 
+ *
+ */
+
+GdkImage* nsp_get_image(BCG *Xgc) 
+{
+  return gdk_drawable_get_image(Xgc->private->drawable,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+}
+
+GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) 
+{
+  return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,
+				      gdk_colormap_get_system(),
+				      0,0,0,0,
+				      Xgc->CWindowWidth,Xgc->CWindowHeight);
+}
+
+#endif 
+
+/*
+ * include basic operations 
+ */
+
+#ifdef PERIGL 
+#include "perigtk/peridraw_gl.c"
+#endif 
+
+#ifdef PERIGTK 
+#include "perigtk/peridraw_gdk.c"
+#endif 
+

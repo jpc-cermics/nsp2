@@ -51,6 +51,8 @@ static driver_drawpolylines drawpolylines_gen;
 static driver_fillpolylines fillpolylines_gen;
 static driver_displaynumbers displaynumbers_gen;
 static driver_drawaxis drawaxis_gen; 
+static driver_drawarc drawarc_gen; 
+static driver_fillarc fillarc_gen; 
 
 nsp_gengine_generic nsp_peri_generic = {
   fill_grid_rectangles_gen,
@@ -63,7 +65,9 @@ nsp_gengine_generic nsp_peri_generic = {
   drawpolylines_gen,
   fillpolylines_gen,
   displaynumbers_gen,
-  drawaxis_gen
+  drawaxis_gen,
+  drawarc_gen,
+  fillarc_gen,
 };
 
 /**
@@ -528,3 +532,55 @@ static void displaynumbers_gen(BCG *Xgc, int *x, int *y, int n, int flag, double
       Xgc->graphic_engine->displaystring(Xgc,buf,x[i],y[i],flag,alpha[i]);
     }
 }
+
+
+
+static void drawarc_gen(BCG *Xgc,int arc[])
+{ 
+  int vx[365],vy[365],k,n;
+  double alpha,fact=0.01745329251994330,w,h;
+  int close = 0;
+  w = arc[2]/2.0;
+  h = arc[3]/2.0;
+  n = Min((arc[5]/64),360);
+  for (k = 0; k < n; ++k) {
+    alpha=(( arc[4]/64)+k)*fact;
+    vx[k] = arc[0] + w*(cos(alpha)+1.0);
+    vy[k] = arc[1] + h*(-sin(alpha)+1.0);
+  }
+  Xgc->graphic_engine->drawpolyline(Xgc,vx, vy,n, close);
+}
+
+static void fillarc_gen( BCG *Xgc,int arc[])
+{ 
+  int vx[365],vy[365],k,k0,kmax,n;
+  double alpha,fact=0.01745329251994330,w,h;
+  int close = 1;
+  w = arc[2]/2.0;
+  h = arc[3]/2.0;
+  n = Min((arc[5]/64),360);
+
+  k0 = 0;
+  kmax = n-1;
+
+  if (n != 360) 
+    {
+      vx[0] = arc[0] + w;
+      vy[0] = arc[1] + h;
+      k0 = 1;
+      kmax = n;
+    }
+  for (k = k0; k <= kmax; ++k) {
+    alpha=(( arc[4]/64)+k)*fact;
+    vx[k] = arc[0] + w*(cos(alpha)+1.0);
+    vy[k] = arc[1] * h*(-sin(alpha)+1.0);}
+  if (n != 360) 
+    {
+      n++;
+      vx[n] = arc[0] + w;
+      vy[n] = arc[1] + h;
+      n++;
+    }
+  Xgc->graphic_engine->fillpolyline(Xgc,vx, vy,n,close);
+}
+

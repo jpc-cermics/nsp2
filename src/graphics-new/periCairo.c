@@ -28,6 +28,7 @@
 #include <gtk/gtk.h>
 #include <gtkcairo.h>
 
+#define PERICAIRO
 #define PERI_PRIVATE 1
 #define PERI_PRIVATE_CAIRO 1
 #include "nsp/sciio.h"
@@ -80,7 +81,7 @@
 /* Global variables to deal with X11 **/
 
 static unsigned long maxcol; /* FIXME XXXXX : à revoir */
-static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
+static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 static void nsp_gtk_invalidate(BCG *Xgc);
 
 /*------------------------------------------------------------------
@@ -97,16 +98,10 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin,int ifla
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
 				   int *wdim,int *wpdim,double *viewport_pos,int *wpos);
 static void scig_deconnect_handlers(BCG *winxgc);
-static void DrawMark(BCG *Xgc,int *x, int *y);
-
+static void draw_mark(BCG *Xgc,int *x, int *y);
 
 static void force_affichage(BCG *Xgc);
 
-/* utility for points allocations */
-
-static GdkPoint *gtk_get_xpoints(void);
-static int GtkReallocVector (int n);
-static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
 
 void create_graphic_window_menu( BCG *dd);
 extern void start_sci_gtk();
@@ -228,14 +223,15 @@ static void xselgraphic(BCG *Xgc)
   gdk_flush();
 }
 
-/** End of graphic (do nothing)  **/
+/* End of graphic (do nothing)  */
 
 static void xend(BCG *Xgc)
 {
   /** Must destroy everything  **/
 }
 
-/** Clear the current graphic window     **/
+
+/* Clear the current graphic window     */
 
 static void clearwindow(BCG *Xgc)
 {
@@ -253,437 +249,8 @@ static void clearwindow(BCG *Xgc)
   cairo_fill (cairo);
 }
 
-/* generates a pause, in seconds */
 
-#if defined(__STDC__) || defined(_IBMR2)
-/** for usleep **/
-#include <unistd.h> 
-#endif 
-
-static void xpause(int sec_time)
-{ 
-  unsigned useconds = (unsigned) sec_time;
-  if (useconds != 0)  
-#ifdef HAVE_USLEEP
-    { usleep(useconds); }
-#else
-#ifdef HAVE_SLEEP
-  {  sleep(useconds/1000000); }
-#else
-  return;
-#endif
-#endif
-}
-
-/*-----------------------------------------------------------------
- * Changes the graphic window popupname 
- *-----------------------------------------------------------------*/
-
-static void Setpopupname(BCG *Xgc,char *string)
-{ 
-  gtk_window_set_title(GTK_WINDOW(Xgc->private->window),string);
-}
-
-/* appelle ds Xcall.c */
-
-static void setpopupname(BCG *Xgc,char *name)
-{
-  Setpopupname(Xgc,name);
-}
-
-/*-----------------------------------------------------------------
- * Wait for mouse click in graphic window 
- *   send back mouse location  (x1,y1)  and button number  {0,1,2}
- *   and the window number 
- *-----------------------------------------------------------------*/
-
-typedef struct _GTK_locator_info GTK_locator_info;
-
-struct _GTK_locator_info {
-  guint win, x,y, ok;
-  int getrelease,getmotion,getmen,getkey, button;
-  int sci_click_activated; /* TRUE when we are in a xclick or xclick_any function */
-  guint timer;
-  char *str;
-  int  lstr;
-};
-
-static GTK_locator_info info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
-
-
-static gboolean locator_button_press(GtkWidget *widget,
-				     GdkEventButton *event,
-				     BCG *gc)
-{
-  if ( info.sci_click_activated == FALSE ) 
-    {
-      nsp_gwin_event ev={gc->CurWindow,event->x, event->y,event->button-1 ,0,0};
-      nsp_enqueue(&gc->queue,&ev);
-    }
-  else 
-    {
-      info.ok = 1; info.win=  gc->CurWindow; info.x = event->x; info.y = event->y; 
-      info.button = event->button -1;
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-
-static gboolean locator_button_release(GtkWidget *widget,
-				       GdkEventButton *event,
-				       BCG *gc)
-{
-  if ( info.sci_click_activated == FALSE || info.getrelease == 0 ) 
-    {
-
-      nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,event->button-6 ,0,1};
-      nsp_enqueue(&gc->queue,&ev);
-    }
-  else 
-    {
-      info.ok =1 ; info.win=  gc->CurWindow; info.x = event->x;  info.y = event->y;
-      info.button = event->button -6;
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-
-static gboolean locator_button_motion(GtkWidget *widget,
-				      GdkEventMotion *event,
-				      BCG *gc)
-{
-  gint x,y; 
-  GdkModifierType state;
-  if (event->is_hint)
-    { 
-      gdk_window_get_pointer (event->window, &x, &y, &state);
-    }
-  else 
-    {
-      x= event->x; y = event->y;
-    }
-  if ( info.sci_click_activated == FALSE || info.getmotion == 0 ) 
-    {
-      nsp_gwin_event ev={ gc->CurWindow,x, y,-1 ,1,0},evlast;
-      if ( nsp_queue_empty(&gc->queue)== FALSE ) 
-	{
-	  /* to not keep multi motion events */
-	  evlast = nsp_peekqueue(&gc->queue);
-	  if (evlast.motion == TRUE )
-	    {
-	      evlast = nsp_dequeue(&gc->queue);
-	    }
-	}
-      nsp_enqueue(&gc->queue,&ev);
-    }
-  else 
-    {
-      info.ok =1 ;  info.win=  gc->CurWindow; info.x = x;  info.y = y;
-      info.button = -1;
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-
-
-static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
-{
-  /* modified 30/10/02 to get cursor location and register  key_press_event in queue' SS */
-  gint x,y; 
-  GdkModifierType state;
-  if (info.getkey == TRUE && (event->keyval >= 0x20) && (event->keyval <= 0xFF))
-    {
-      /* since Alt-keys and Ctrl-keys are stored in menus I want to ignore them here */
-      if ( event->state != GDK_CONTROL_MASK && event->state != GDK_MOD1_MASK ) 
-	{
-	  gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
-	  info.x=x ; info.y=y;
-	  info.ok =1 ;  info.win=  gc->CurWindow; 
-	  info.button = event->keyval;
-	  gtk_main_quit();
-	}
-    }
-  else {
-    gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
-    nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,0,1};
-    nsp_enqueue(&gc->queue,&ev);
-  }
-
-  return TRUE;
-}
-
-static void xset_win_protect( BCG *gc, int val) { gc->private->protect=val;}
-
-/* ici normalement on peut pas arreter la destruction */
-
-static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
-{
-  if ( gc->private->protect == TRUE ) 
-    {
-      xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
-    }
-  if ( info.sci_click_activated == TRUE ) 
-    {
-      info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
-      info.button = -100;
-      delete_window(gc,gc->CurWindow);
-      gtk_main_quit();
-    }
-  else 
-    delete_window(gc,gc->CurWindow);
-}
-
-/* ici avec la valeur renvoyée on peut décider de detruire ou pas */
-
-static gboolean sci_delete_window (GtkWidget *widget, GdkEventKey *event,  BCG *gc)
-{
-  if ( gc->private->protect == TRUE ) 
-    {
-      xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
-      return TRUE;
-    }
-  if ( info.sci_click_activated == TRUE ) 
-    {
-      info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
-      info.button = -100;
-      delete_window(gc,gc->CurWindow);
-      gtk_main_quit();
-    }
-  else 
-    delete_window(gc,gc->CurWindow);
-  return FALSE;
-}
-
-/*
- * a time out to check for menu activation 
- * XXX : info.win is not correct this is to be done 
- */
-
-static gint timeout_test (BCG *gc)
-{
-  if ( dequeue_nsp_command(info.str,info.lstr) == OK)
-    {
-      info.ok = 1 ; info.x = 0 ; info.y =0 ; info.button =  -2;
-      info.win = (gc == NULL) ? 0 : gc->CurWindow;
-      gtk_main_quit();
-    }
-  return TRUE;
-}
-  
-#ifdef WITH_TK
-
-extern int flushTKEvents();
-
-static gint timeout_tk (void *v)
-{
-  flushTKEvents();
-  return TRUE;
-}
-
-#endif
-
-
-void xclick_any(BCG *Xgc,char *str, int *ibutton, int *x1,int *yy1, int *iwin, int iflag,int getmotion,int getrelease,int getkey,int lstr)
-{
-  int change_cursor = TRUE;
-  SciClick(Xgc,ibutton,x1,yy1,iwin,iflag,getmotion,getrelease,getkey,str,lstr,change_cursor);
-}
-
-void xclick(BCG * Xgc,char *str, int *ibutton, int *x1,int *yy1,int iflag,int motion,int release,int key, int istr)
-{
-  int change_cursor = TRUE;
-  int win = ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) ? 0 : Xgc->CurWindow;
-  SciClick(Xgc,ibutton,x1, yy1,&win,iflag,motion,release,key,str,istr,change_cursor);
-}
-
-void xgetmouse(BCG *Xgc,char *str, int *ibutton, int *x1, int *yy1, int usequeue, int motion,int release,int key)
-{
-  int change_cursor = TRUE;
-  int win = ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) ? 0 : Xgc->CurWindow;
-  SciClick(Xgc,ibutton,x1, yy1,&win,usequeue,motion,release,key,(char *) 0,0,change_cursor);
-}
-
-/*------------------------------------------------------------------------------
- * wait for events: mouse motion and mouse press and release 
- *                  and dynamic menu activation through a timeout 
- * 
- * if iflag = 0 : clear previous mouse click 
- * if iflag = 1 : don't 
- * if getmotion = 1 : check also mouse move 
- * if getrelease=1 : check also mouse release 
- * if dyn_men = 1 ; check also dynamic menus (returns the menu code in str )
- * return value : 0,1,2 if button pressed 
- *                -5,-4,-3: if button release
- *                -100 : error or window destroyed 
- *                -2   : menu activated 
- *------------------------------------------------------------------------------*/
-
-/* 
- * A finir pour tenir compte des control C de l'utilisateur  
- */
-
-static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag );
-
-
-static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int iflag, int getmotion,
-		     int getrelease,int getkey, char *str, int lstr,int change_cursor)
-{
-#ifdef WITH_TK
-  guint timer_tk;
-#endif 
-  GTK_locator_info rec_info ; 
-  int win=*iwin,wincount=0,win1;
-  if ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) {
-    *ibutton = -100;     return;
-  }
-
-  if ( win == -1 ) 
-    {
-      /* we will check all the graphic windows */
-      wincount = window_list_get_max_id()+1;
-    }
-  else 
-    {
-      /* just work on current win */
-      win = Xgc->CurWindow;
-    }
-  win1= win; /* CheckClickQueue change its first argument if -1 */
-  /* check for already stored event */
-  if ( iflag == TRUE )
-    { 
-      nsp_gwin_event ev;
-      if ( window_list_check_queue((win == -1 ) ? NULL: Xgc,&ev) == OK) 
-	{
-	  *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; *ibutton= ev.ibutton;
-	  return;
-	}
-    }
-
-  if ( iflag == FALSE ) window_list_clear_queue((win == -1 ) ? NULL: Xgc);
-
-  if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,1);
-  
-  /* save info in local variable  */
-  rec_info = info;
-  /* set info */ 
-  info.ok = 0 ; 
-  info.getrelease = getrelease ; 
-  info.getmotion   = getmotion ;
-  info.getmen     = (lstr == 0) ? FALSE : TRUE; 
-  info.getkey     = getkey;
-  info.sci_click_activated = TRUE ;
-
-  if ( info.getmen == TRUE ) 
-    {
-      /*  Check soft menu activation during xclick */ 
-      info.timer = gtk_timeout_add(100, (GtkFunction) timeout_test, Xgc);
-      info.str   = str;
-      info.lstr  = lstr; /* on entry it gives the size of str buffer */
-    }
-  
-#ifdef WITH_TK
-  timer_tk=  gtk_timeout_add(100,  (GtkFunction) timeout_tk , NULL);
-#endif
-  
-  while (1) 
-    {
-      gtk_main();
-      /* be sure that gtk_main_quit was activated by proper event */
-      if ( info.ok == 1 ) 
-	{
-	  if ( win == -1 ) break;
-	  if ( info.win == win  ) break;
-	}
-    }
-
-#ifdef WITH_TK
-  gtk_timeout_remove(timer_tk);
-#endif
-
-  *x1 = info.x;
-  *yy1 = info.y;
-  *ibutton = info.button;
-  *iwin = info.win;
-  
-  /* remove timer if it was set by us */ 
-  if ( info.getmen == TRUE )  gtk_timeout_remove (info.timer);
-
-  /* take care of recursive calls i.e restore info  */
-  info = rec_info ; 
-
-  if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,0);
-}
-
-
-
-static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
-{
-  GdkCursor *cursor;
-  if ( win == -1 ) 
-    {
-      int i;
-      for (i=0; i < wincount ; i++ ) 
-	{
-	  BCG *bcg =  window_list_search(i);
-	  if ( bcg  != NULL)
-	    {
-	      cursor =  ( flag == 0 ) ? bcg->private->ccursor : bcg->private->gcursor;
-	      gdk_window_set_cursor(bcg->private->drawing->window,cursor);
-	    }
-	}
-    }
-  else
-    {
-      if ( Xgc != (BCG *) 0 && Xgc->private != NULL &&  Xgc->private->drawing != NULL ) {
-	cursor =  ( flag == 0 ) ? Xgc->private->ccursor : Xgc->private->gcursor;
-	gdk_window_set_cursor (Xgc->private->drawing->window,cursor);
-      }
-    }
-}
-  
-
-/*
- * clear a rectangle zone 
- */
-
-static void cleararea(BCG *Xgc, int x, int y, int w, int h)
-{
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-  int clipflag = 0;
-  /* switch to a clear gc */
-  int cur_alu = Xgc->CurDrawFunction;
-  int clear = 0 ; /* 0 is the Xclear alufunction */;
-  DRAW_CHECK;
-  /* unset clip and set drawing mode to clear */
-  if ( cur_alu != clear ) xset_alufunction1(Xgc,clear);
-  if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
-    {
-      static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
-      gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
-    }
-  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_clearwindow");
-  cairo_set_source_rgb(cairo,
-		       Xgc->private->gcol_bg.red/65535.0,
-		       Xgc->private->gcol_bg.green/65535.0,
-		       Xgc->private->gcol_bg.blue/65535.0);
-  cairo_rectangle (cairo,x,y,w,h);
-  cairo_fill (cairo);
-  /* back to current value */ 
-  if ( cur_alu != clear )    xset_alufunction1(Xgc,cur_alu); 
-  if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
-    {
-      /* restore clip */
-      GdkRectangle clip_rect = { Xgc->CurClipRegion[0],
-				 Xgc->CurClipRegion[1],
-				 Xgc->CurClipRegion[2],
-				 Xgc->CurClipRegion[3]};
-      gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
-    }
-}
-
-
+#include "perigtk/events.c"  
 
 
 
@@ -795,7 +362,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	  Xgc->CWindowHeight = y;
 	  Xgc->private->resize = 1;/* be sure to put this */
 	  /* FIXME: NULL to be changed */
-	  cairo_expose_event( Xgc->private->drawing,NULL, Xgc);
+	  expose_event( Xgc->private->drawing,NULL, Xgc);
 	}
     }
   gdk_flush();
@@ -916,9 +483,10 @@ static int xget_curwin(void)
 
 static void xset_clip(BCG *Xgc,int x[])
 {
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-  int i;
+  /* 
+     GtkCairo *gtkcairo;
+     cairo_t *cairo;
+     int i;*/
   /* clip_rect ={x[0],x[1],x[2],x[3]}= {x,y,w,h} */
   DRAW_CHECK;
   /* 
@@ -1065,7 +633,7 @@ static void xset_alufunction1(BCG *Xgc,int num)
   GtkCairo *gtkcairo;
   cairo_t *cairo;
   int value ; 
-  GdkColor temp = {0,0,0,0};
+  /* GdkColor temp = {0,0,0,0}; */
   Xgc->CurDrawFunction = Min(15,Max(0,num));
   value = AluStruc_[Xgc->CurDrawFunction].id;
   gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
@@ -1248,12 +816,6 @@ static int xget_dash(BCG *Xgc)
 
 /* old version of xset_dash retained for compatibility */
 
-static void xset_dash_and_color(BCG *Xgc,int dash,int color)
-{
-  xset_dash(Xgc,dash);
-  xset_pattern(Xgc,color);
-}
-
 static void xset_line_style(BCG *Xgc,int value)
 {
   if (Xgc->CurColorStatus == 0) 
@@ -1324,16 +886,6 @@ static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
   }
 */
 
-/* to get the current dash-style 
- * old version of xget_dash retained for compatibility 
- */
-
-static void xget_dash_and_color(BCG *Xgc,int *dash,int *color)
-{
-  *dash = xget_dash(Xgc);
-  *color = xget_pattern(Xgc);
-
-}
 
 /* used to switch from color to b&w and reverse */
 
@@ -1766,423 +1318,6 @@ static void xset_fpf_def(BCG *Xgc)
   Xgc->fp_format[0]='\0';
 }
 
-/*-----------------------------------------------------------
- * general routines accessing the previous  set<> or get<> 
- *-----------------------------------------------------------*/
-
-/*-----------------------------------------------------------
- * Functions for private->drawing 
- *-----------------------------------------------------------*/
-
-/**************************************************
- *  display of a string
- *  at (x,y) position whith slope angle alpha in degree . 
- * Angle are given clockwise. 
- * If *flag ==1 and angle is z\'ero a framed box is added 
- * around the string}.
- * 
- * (x,y) defines the lower left point of the bounding box 
- * of the string ( we do not separate asc and desc 
- **************************************************/
-
-static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
-{ 
-  int rect[4];
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-  DRAW_CHECK;
-  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_displaystring");
-  cairo_select_font_face (cairo, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-  cairo_set_font_size(cairo, 20);
-
-  if ( flag == 1) boundingbox(Xgc,string, x,y,rect);
-
-  if ( Abs(angle) <= 0.1) 
-    {
-      cairo_move_to (cairo, x,y);
-      cairo_show_text (cairo, string);
-      if ( flag == 1) 
-	{
-	  cairo_rectangle (cairo,rect[0],rect[1],rect[2],rect[3]);
-	  cairo_stroke (cairo);
-	}
-    }
-  else 
-    {
-      double rad_angle = angle * M_PI/180.0;
-      cairo_text_extents_t extents;
-      cairo_save (cairo);
-      cairo_identity_matrix (cairo);
-      cairo_translate (cairo, x,y);
-      cairo_rotate (cairo, rad_angle);
-      cairo_move_to (cairo, 0,0);
-      cairo_show_text (cairo, string);
-      if ( flag == 1) 
-	{
-	  cairo_rectangle (cairo,0,0,rect[2],rect[3]);
-	  cairo_stroke (cairo);
-	}
-      cairo_restore (cairo);
-    }
-}
-
-/*
- * To get the bounding rectangle of a string 
- */
-
-static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
-{ 
-  cairo_text_extents_t extents;
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_displaystring");
-  cairo_text_extents (cairo,string, &extents);
-  rect[0]= x ;
-  rect[3]= extents.height;
-  rect[1]= y + extents.y_bearing;
-  rect[2]= extents.width +extents.x_bearing ;
-}
-
-/* line 
- *
- */ 
-
-static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
-{
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-  DRAW_CHECK;
-  /* gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, x1, yy1, x2, y2);*/
-  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_drawline");
-  cairo_move_to(cairo,x1,yy1);
-  cairo_line_to(cairo,x2,y2);
-  cairo_stroke(cairo);
-}
-
-/* Draw a set of segments 
- * segments are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
- * n is the size of vx and vy 
- */
-
-static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
-{
-  int dash,color,i;
-  DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
-  if ( iflag == 1) { /* one style per segment */
-    for (i=0 ; i < n/2 ; i++) {
-      xset_line_style(Xgc,style[i]);
-      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-    }
-  }
-  else {
-    if (*style >= 1) xset_line_style(Xgc,*style);
-    for (i=0 ; i < n/2 ; i++) {
-      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-    }
-  }
-  xset_dash_and_color(Xgc,dash,color);
-}
-
-/* Draw a set of arrows 
- * arrows are defined by (vx[i],vy[i])->(vx[i+1],vy[i+1]) 
- * for i=0 step 2 
- * n is the size of vx and vy 
- * as is 10*arsize (arsize) the size of the arrow head in pixels 
- */
-
-static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
-{ 
-  int dash,color,i,lstyle;
-  double cos20=cos(20.0*M_PI/180.0);
-  double sin20=sin(20.0*M_PI/180.0);
-  int polyx[4],polyy[4];
-  DRAW_CHECK;
-  xget_dash_and_color(Xgc,&dash,&color);
-  for (i=0 ; i < n/2 ; i++)
-    { 
-      double dx,dy,norm;
-      lstyle = (iflag == 1) ? style[i] : ( *style < 1 ) ? color : *style; 
-      xset_line_style(Xgc,lstyle);
-      drawline(Xgc,vx[2*i],vy[2*i],vx[2*i+1],vy[2*i+1]);
-      dx=( vx[2*i+1]-vx[2*i]);
-      dy=( vy[2*i+1]-vy[2*i]);
-      norm = sqrt(dx*dx+dy*dy);
-      if ( Abs(norm) >  SMDOUBLE ) 
-	{
-	  int nn=1,p=3;
-	  dx=(as/10.0)*dx/norm;dy=(as/10.0)*dy/norm;
-	  polyx[0]= polyx[3]=vx[2*i+1]; /* +dx*cos20;*/
-	  polyx[1]= inint(polyx[0]  - cos20*dx -sin20*dy );
-	  polyx[2]= inint(polyx[0]  - cos20*dx + sin20*dy);
-	  polyy[0]= polyy[3]=vy[2*i+1]; /* +dy*cos20;*/
-	  polyy[1]= inint(polyy[0] + sin20*dx -cos20*dy) ;
-	  polyy[2]= inint(polyy[0] - sin20*dx - cos20*dy) ;
-	  fillpolylines(Xgc,polyx,polyy,&lstyle,nn,p);
-	}
-    }
-  xset_dash_and_color(Xgc,dash,color);
-}
-
-/*
- * Rectangles
- * Draw or fill a set of rectangle 
- * rectangle i is specified by (vect[i],vect[i+1],vect[i+2],vect[i+3]) 
- * for x,y,width,height 
- * for i=0 step 4 
- * (*n) : number of rectangles 
- * fillvect[*n] : specify the action  
- * if fillvect[i] is > 0 then fill the rectangle i 
- * if fillvect[i] is == 0  then only draw the rectangle i 
- *                         with the current private->drawing style 
- * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i] 
- */
-
-
-static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
-}
-
-/* Draw one rectangle with current line style */
-
-static void drawrectangle(BCG *Xgc,const int rect[])
-{ 
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-  DRAW_CHECK;
-  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_drawrectangle");
-  cairo_rectangle (cairo,rect[0],rect[1],rect[2],rect[3]);
-  cairo_stroke (cairo);
-}
-
-/* fill one rectangle, with current pattern */
-
-static void fillrectangle(BCG *Xgc,const int rect[])
-{ 
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-  DRAW_CHECK;
-  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_fillrectangle");
-  cairo_rectangle (cairo,rect[0],rect[1],rect[2],rect[3]);
-  cairo_fill (cairo);
-  
-}
-
-/*----------------------------------------------------------------------------------
- * draw a set of rectangles, provided here to accelerate GraySquare for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : is the value of a function on the grid defined by x,y 
- *  on each rectangle the average value of z is computed 
- *----------------------------------------------------------------------------------*/
-
-static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
-				  int remap,const int *colminmax,const double *zminmax)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax);
-}
-
-/*----------------------------------------------------------------------------------
- * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device 
- *  x : of size n1 gives the x-values of the grid 
- *  y : of size n2 gives the y-values of the grid 
- *  z : of size (n1-1)*(n2-1)  gives the f-values on the middle 
- *  of each rectangle. 
- *  z[i,j] is the value on the middle of rectangle 
- *        P1= x[i],y[j] x[i+1],y[j+1]
- *----------------------------------------------------------------------------------*/
-
-static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
-				  int remap,const int *colminmax,const double *zminmax)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
-}
-
-/*----------------------------------------------------------------------------------
- * Circles and Ellipsis 
- * Draw or fill a set of ellipsis or part of ellipsis 
- * Each is defined by 6-parameters, 
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
- * <x,y,width,height> is the bounding box 
- * angle1,angle2 specifies the portion of the ellipsis 
- * caution : angle=degreangle*64          
- * if fillvect[i] is in [1,lastpattern] then  fill the ellipsis i 
- * with pattern fillvect[i] 
- * if fillvect[i] is > lastpattern  then only draw the ellipsis i 
- * The private->drawing style is the current private->drawing 
- *----------------------------------------------------------------------------------*/
-
-static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
-}
-
-/*
- * Draw a set of ellipsis or part of ellipsis 
- * Each is defined by 6-parameters, 
- * ellipsis i is specified by $vect[6*i+k]_{k=0,5}= x,y,width,height,angle1,angle2$ 
- * <x,y,width,height> is the bounding box 
- * angle1,angle2 specifies the portion of the ellipsis 
- * caution : angle=degreangle*64          
- */
-
-static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
-}
-
-/** Draw a single ellipsis or part of it **/
-
-static void drawarc(BCG *Xgc,int arc[])
-{ 
-  DRAW_CHECK;
-  /* gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,FALSE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]); */
-}
-
-/** Fill a single elipsis or part of it with current pattern **/
-
-static void fillarc(BCG *Xgc,int arc[])
-{ 
-  DRAW_CHECK;
-  /* gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,TRUE,arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);*/
-}
-
-/*
- * Filling or Drawing Polylines and Polygons
- */
-
-/* 
- * Draw a set of (*n) polylines (each of which have (*p) points) 
- * with lines or marks 
- * drawvect[i] <= 0 use a mark for polyline i
- * drawvect[i] >  0 use a line style for polyline i 
- */
-
-static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
-{ 
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
-}
-
-/***********************************************************
- *  fill a set of polygons each of which is defined by 
- * (*p) points (*n) is the number of polygons 
- * the polygon is closed by the routine 
- * fillvect[*n] :         
- * if fillvect[i] == 0 draw the boundaries with current color 
- * if fillvect[i] > 0  draw the boundaries with current color 
- *               then fill with pattern fillvect[i]
- * if fillvect[i] < 0  fill with pattern - fillvect[i]
- **************************************************************/
-
-static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
-{
-  DRAW_CHECK;
-  Xgc->graphic_engine->generic->fillpolylines(Xgc,vectsx,vectsy,fillvect,n,p);
-}
-
-/* 
- * Only draw one polygon  with current line style 
- * according to *closeflag : it's a polyline or a polygon
- * n is the number of points of the polyline 
- */
-
-static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
-{ 
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-  cairo_status_t status;
-  int n1,i;
-  DRAW_CHECK;
-  if (closeflag == 1) n1 =n+1;else n1= n;
-  if (n1 >= 2) 
-    {
-      gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-      GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_drawpolyline");
-      cairo_new_path(cairo);
-      cairo_move_to(cairo, vx[0],vy[0]);
-      for ( i = 1 ; i < n ; i++ ) 
-	cairo_line_to(cairo,vx[i],vy[i]);
-      if ( closeflag == 1) cairo_line_to(cairo,vx[0],vy[0]);
-      cairo_stroke (cairo);
-      if ((status=cairo_status (cairo)) != CAIRO_STATUS_SUCCESS) 
-	{
-	  fprintf (stderr, "Cairo is unhappy in drawpolyline: %s\n",
-		   cairo_status_to_string(status));
-	}
-    }
-}
-
-/* 
- * Fill the polygon or polyline 
- * according to *closeflag : the given vector is a polyline or a polygon 
- */
-
-static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag) 
-{
-  cairo_status_t status;
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-  int n1,i;
-  DRAW_CHECK;
-  if (closeflag == 1) n1 = n+1;else n1= n;
-  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_fillpolyline");
-  cairo_new_path(cairo); 
-  cairo_move_to(cairo, vx[0],vy[0]);
-  for ( i = 1 ; i < n ; i++ ) 
-    cairo_line_to(cairo,vx[i],vy[i]);
-  if ( closeflag == 1) cairo_line_to(cairo,vx[0],vy[0]);
-  cairo_fill(cairo);
-  if ((status=cairo_status (cairo)) != CAIRO_STATUS_SUCCESS) 
-    {
-      fprintf (stderr, "Cairo is unhappy in fillpolyline : %s\n",
-	       cairo_status_to_string(status));
-    }
-}
-
-/* 
- * Draw the current mark centred at points defined
- * by vx and vy (vx[i],vy[i]) 
- */
-
-static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
-{
-  DRAW_CHECK;
-  if ( Xgc->CurHardSymb == 0 )
-    {
-      /* XXXX 
-	 if (gtk_store_points(n, vx, vy,(int)0L))
-	 {
-	 gdk_draw_points(Xgc->private->drawable,
-	 Xgc->private->wgc,gtk_get_xpoints(), n);
-	 }
-      */
-    }
-  else 
-    { 
-      int i,keepid,keepsize,hds;
-      i=1;
-      keepid =  Xgc->fontId;
-      keepsize= Xgc->fontSize;
-      hds= Xgc->CurHardSymbSize;
-      xset_font(Xgc,i,hds);
-      for ( i=0; i< n ;i++) DrawMark(Xgc,vx+i,vy+i);
-      xset_font(Xgc,keepid,keepsize);
-    }
-}
 
 /*-------------------------------------------------------------------------
  * window_list management 
@@ -2289,181 +1424,13 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
 }
 
 /*
- * initgraphic : initialize graphic window
- * If v2 is not a nul pointer *v2 is the window number to create 
- * EntryCounter is used to check for first Entry + to know the next 
- * available window number 
+ * initgraphic : create initialize graphic windows
  */
 
-static int EntryCounter = 0;
-static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
-			    int *wdim,int *wpdim,double *viewport_pos,int *wpos);
+static gint realize_event(GtkWidget *widget, gpointer data);
+static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 
-
-static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
-{ 
-  nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos);
-}
-
-/* used when a graphic window is to be inserted in a more complex 
- * widget hierarchy 
- */
-
-int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
-{ 
-  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
-  return  nsp_get_win_counter()-1;
-}
-
-
-int nsp_get_win_counter() { return EntryCounter;};
-void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
-
-
-static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
-			    int *wdim,int *wpdim,double *viewport_pos,int *wpos)
-{
-  static int first = 0;
-  BCG *NewXgc ;
-  /* Attention ici on peut faire deux fenetre de meme numéro à régler ? XXXXX 
-   */
-  int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 : nsp_get_win_counter();
-  gui_private *private ; 
-  if ( ( private = MALLOC(sizeof(gui_private)))== NULL) 
-    {
-      Sciprintf("initgraphics: running out of memory \n");
-      return;
-    }
-  /* default values  */
-  private->colors=NULL;
-  private->colormap=NULL;
-  private->window=NULL;		
-  private->drawing=NULL;           
-  private->scrolled=NULL;          
-  private->CinfoW =NULL;           
-  private->vbox=NULL;              
-  private->menubar=NULL;
-  private->item_factory=NULL;
-  private->menu_entries=NULL;
-  private->pixmap=NULL;       
-  private->extra_pixmap=NULL;       
-  private->drawable=NULL;  
-  private->wgc=NULL;
-  private->stdgc=NULL;
-  private->gcursor=NULL;      
-  private->ccursor=NULL;      
-  private->font=NULL;
-  private->resize = 0; /* do not remove !! */
-  private->in_expose= FALSE;
-  private->protect= FALSE;
-  private->draw= FALSE;
-  /* private->cairo_pixmap = NULL; */
-
-  if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
-    {
-      Sciprintf("initgraphics: unable to alloc\n");
-      return ;
-    }
-
-  NewXgc->CurWindow = WinNum;
-  NewXgc->record_flag = TRUE; /* default mode is to record plots */
-  NewXgc->plots = NULL;
-  NewXgc->incr_plots = NULL;
-  NewXgc->graphic_engine = &Gtk_gengine ; /* the graphic engine associated to this graphic window */
-  start_sci_gtk(); /* be sure that gtk is started */
-
-  if (first == 0)
-    {
-      maxcol = 1 << 16; /* FIXME XXXXX : to be changed */
-      LoadFonts();
-      first++;
-    }
-
-  if ( win != NULL )
-    {
-      gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
-    }
-  else 
-    {
-      gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",NULL,NULL,wdim,wpdim,viewport_pos,wpos);
-    }
-
-  /* recheck with valgrind 
-   * valgrind detecte des variables non initialisees dans 
-   * initialize a cause d'initialisation croisées 
-   * d'ou des valeurs par defaut ...
-   * A tester sans pour faire les choses dans l'ordre 
-   * dans initialize 
-   */
-  NewXgc->fontId=0 ;
-  NewXgc->fontSize=0 ;
-  NewXgc->CurHardSymb=0;
-  NewXgc->CurHardSymbSize=0;
-  NewXgc->CurLineWidth=0;
-  NewXgc->CurPattern=0;
-  NewXgc->CurColor=0;
-  NewXgc->CurPixmapStatus=0;
-  NewXgc->CurVectorStyle=0;
-  NewXgc->CurDrawFunction=0;
-  NewXgc->ClipRegionSet=0;
-  NewXgc->CurDashStyle=0;
-  NewXgc->IDLastPattern=0;
-  NewXgc->Numcolors=0; 
-  NewXgc->NumBackground=0;
-  NewXgc->NumForeground=0;
-  NewXgc->NumHidden3d=0; 
-  NewXgc->Autoclear=0;
-
-  /* next values are to be set since initialize_gc 
-   * action depend on the current state defined by these 
-   * variables. For pixmap, resizestatus and colorstatus 
-   * initialize performs a switch from old value to new value 
-   */
-
-  NewXgc->CurPixmapStatus = 0; 
-  /* default colormap not instaled */
-  NewXgc->CmapFlag = -1; 
-  /* default resize not yet defined */
-  NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
-  NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
-
-  NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
-  /* Attention ce qui est ici doit pas etre rejoué 
-   * on l'enleve donc de initialize_gc
-   */
-  NewXgc->graphic_engine->xset_pixmapOn(NewXgc,0);
-  NewXgc->graphic_engine->xset_wresize(NewXgc,1);
-  /* now initialize the scale list */
-  NewXgc->scales = NULL;
-  xgc_add_default_scale(NewXgc);
-  nsp_set_win_counter(WinNum);
-  gdk_flush();
-}
-
-
-
-/*---------------------------------------------------------------------------
- * writes a message in the info widget associated to the current scilab window 
- *----------------------------------------------------------------------------*/
-
-#define MAXPRINTF 512
-
-static void xinfo(BCG *Xgc,char *format,...) 
-{
-  /* Extended call for C calling */
-  /* Arg args[1];*/
-  va_list ap;
-  char buf[MAXPRINTF];
-  va_start(ap,format);
-  (void ) vsprintf(buf, format, ap );
-  va_end(ap);
-  if ( Xgc != (BCG *) 0 && Xgc->private->CinfoW != NULL)
-    {
-      gtk_statusbar_pop ((GtkStatusbar *) Xgc->private->CinfoW, 1);
-      gtk_statusbar_push ((GtkStatusbar *) Xgc->private->CinfoW, 1,buf);
-    }
-}
-
+#include "perigtk/init.c" 
 
 /*--------------------------------------------------------
  * Initialisation of the graphic context. Used also 
@@ -2476,73 +1443,6 @@ extern void nsp_initialize_gc( BCG *Xgc ) ;
 static void xset_default(BCG *Xgc)
 {
   nsp_initialize_gc(Xgc);
-}
-
-
-/*------------------------------------------------------
-  Draw an axis whith a slope of alpha degree (clockwise)
-  . Along the axis marks are set in the direction ( alpha + pi/2), in the 
-  following way :
-  \begin{itemize}
-  \item   $n=<n1,n2>$,
-  \begin{verbatim}
-  |            |           |
-  |----|---|---|---|---|---|
-  <-----n1---->                 
-  <-------------n2-------->
-  \end{verbatim}
-  $n1$and $n2$ are int numbers for interval numbers.
-  \item $size=<dl,r,coeff>$. $dl$ distance in points between 
-  two marks, $r$ size in points of small mark, $r*coeff$ 
-  size in points of big marks. (they are doubleing points numbers)
-  \item $init$. Initial point $<x,y>$. 
-  \end{itemize}
-  -------------------------------------------------------------*/
-
-static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
-{
-  int i;
-  double xi,yi,xf,yf;
-  double cosal,sinal;
-  cosal= cos( (double)M_PI * (alpha)/180.0);
-  sinal= sin( (double)M_PI * (alpha)/180.0);
-  DRAW_CHECK;
-  for (i=0; i <= nsteps[0]*nsteps[1]; i++)
-    {
-      if (( i % nsteps[0]) != 0)
-	{
-	  xi = initpoint[0]+i*size[0]*cosal;
-	  yi = initpoint[1]+i*size[0]*sinal;
-	  xf = xi - ( size[1]*sinal);
-	  yf = yi + ( size[1]*cosal);
-	  drawline(Xgc,xi,yi,xf,yf);
-	}
-    }
-  for (i=0; i <= nsteps[1]; i++)
-    { 
-      xi = initpoint[0]+i*nsteps[0]*size[0]*cosal;
-      yi = initpoint[1]+i*nsteps[0]*size[0]*sinal;
-      xf = xi - ( size[1]*size[2]*sinal);
-      yf = yi + ( size[1]*size[2]*cosal);
-      drawline(Xgc,xi,yi,xf,yf);
-    }
-}
-
-/*-----------------------------------------------------
- * Display numbers z[i] at location (x[i],y[i])
- *   with a slope alpha[i] (see displaystring), if flag==1
- *   add a box around the string, only if slope =0}
- *-----------------------------------------------------*/
-
-static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
-{
-  int i ;
-  static char buf[56];
-  for (i=0 ; i< n ; i++)
-    { 
-      sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
-      displaystring(Xgc,buf,x[i],y[i],flag,alpha[i]);
-    }
 }
 
 /*---------------------------------------------------------------------
@@ -2836,8 +1736,8 @@ static void LoadSymbFonts(void)
 	{
 	  for (j=0 ; j < SYMBOLNUMBER ; j++)
 	    { 
-	      gint lbearing=0, rbearing=0, iascent=0, idescent=0, iwidth=0;
-	      gchar tmp[2] = { (gchar) Marks[j],0};
+	      gint lbearing=0, rbearing=0, iascent=0, idescent=0; /* , iwidth=0; */
+	      /* gchar tmp[2] = { (gchar) Marks[j],0}; */
 	      /* XXXXX 
 		 gdk_string_extents(FontsList_[1][i], tmp,
 		 &lbearing, &rbearing,
@@ -2850,85 +1750,6 @@ static void LoadSymbFonts(void)
     }
 }
 
-/*
- * The two next functions send the x and y offsets to center the current
- * symbol at point (x,y) 
- */
-
-static int CurSymbXOffset(BCG *Xgc)
-{
-  return(-(ListOffset_[Xgc->CurHardSymbSize].xoffset)[Xgc->CurHardSymb]);
-}
-
-static int CurSymbYOffset(BCG *Xgc)
-{
-  return((ListOffset_[Xgc->CurHardSymbSize].yoffset)[Xgc->CurHardSymb]);
-}
-
-static void DrawMark(BCG *Xgc,int *x, int *y)
-{ 
-  cairo_status_t status;
-  GtkCairo *gtkcairo;
-  cairo_t *cairo;
-  DRAW_CHECK;
-  char str[1];
-  str[0]=Marks[Xgc->CurHardSymb];
-  /* XXX
-     gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-     *x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
-     */
-  gtkcairo = GTK_CAIRO (Xgc->private->cairo_drawing);
-  GTK_CAIRO_GET_CAIRO(cairo,gtkcairo,"xset_DrawMark");
-  cairo_select_font_face (cairo, "Sans",
-			  CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-
-  if ((status=cairo_status (cairo)) != CAIRO_STATUS_SUCCESS) 
-    {
-      fprintf (stderr, "Cairo is unhappy in drawpolyline: %s\n",
-	       cairo_status_to_string(status));
-    }
-  cairo_set_font_size (cairo, 10);
-  cairo_move_to (cairo, *x,*y);
-  cairo_show_text (cairo, "a");
-}
-
-
-/*-------------------------------------------------------------------
- * Allocation and storing function for vectors of GtkPoints 
- *------------------------------------------------------------------------*/
-
-static GdkPoint *gtk_points = NULL;
-
-static GdkPoint *gtk_get_xpoints(void) { return(gtk_points); }
-
-static int gtk_store_points(int n, int *vx, int *vy, int onemore)
-{ 
-  int i,n1 = ( onemore == 1) ? n+1 : n;
-  if (GtkReallocVector(n1) == 1)
-    {
-      for (i = 0; i < n; i++){
-	gtk_points[i].x =(gint16) Min(Max(0,vx[i]),int16max);
-	gtk_points[i].y =(gint16) Min(Max(0,vy[i]),int16max);
-      }
-      if (onemore == 1) {
-	gtk_points[n].x=(gint16) gtk_points[0].x;
-	gtk_points[n].y=(gint16) gtk_points[0].y;
-      }
-      return(1);
-    }
-  else return(0);
-}
-
-#define MESSAGE5 "Can't re-allocate point vector" 
-
-static int GtkReallocVector(int n)
-{
-  if (( gtk_points = graphic_alloc(8,n,sizeof(GdkPoint))) == 0) 
-    { 
-      Sciprintf(MESSAGE5); return 0;
-    }
-  return 1;
-}
 
 /*--------------------------------------------------------------------------
  * Create Graphic widget 
@@ -2959,7 +1780,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
    * note that it should change when the window is resized 
    * we must also remove double buffering when working that way 
    */
-  gtk_cairo_set_x11_cr(dd->private->drawing,600,400);
+  gtk_cairo_set_x11_cr((GtkCairo *)dd->private->drawing,600,400);
 
   /* create gc */
   /* 
@@ -3033,9 +1854,9 @@ static void nsp_gtk_invalidate(BCG *Xgc)
 }
 
 
-static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-  cairo_status_t status;
+  /* cairo_status_t status; */
   BCG *dd = (BCG *) data;
   GtkCairo *gtkcairo;
   cairo_t *cr;
@@ -3053,7 +1874,7 @@ static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointe
   height = widget->allocation.height;
 
   /* set a new cairo surface */
-  gtk_cairo_set_x11_cr(dd->private->drawing,width,height);
+  gtk_cairo_set_x11_cr((GtkCairo *)dd->private->drawing,width,height);
 
   GTK_CAIRO_GET_CAIRO_RET(cr,gtkcairo,"cairo_expose_event",FALSE);
 
@@ -3076,7 +1897,7 @@ static gint cairo_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointe
   return TRUE; /* prevent the standard expose for gtkcairo */
 }
 
-
+#if 0
 static gint unused_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
@@ -3125,6 +1946,7 @@ static gint unused_expose_event(GtkWidget *widget, GdkEventExpose *event, gpoint
   gdk_flush();
   return FALSE;
 }
+#endif 
 
 
 static void scig_deconnect_handlers(BCG *winxgc)
@@ -3133,7 +1955,7 @@ static void scig_deconnect_handlers(BCG *winxgc)
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
 					  (GtkSignalFunc) configure_event, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) cairo_expose_event, (gpointer) winxgc);
+					  (GtkSignalFunc) expose_event, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
 					  (GtkSignalFunc)  sci_destroy_window, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func (GTK_OBJECT (winxgc->private->window),
@@ -3147,206 +1969,6 @@ static void scig_deconnect_handlers(BCG *winxgc)
 					  (GtkSignalFunc) locator_button_motion, (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
 					  (GtkSignalFunc) realize_event, (gpointer) winxgc);
-}
-
-/*---------------------------------------------------------------
- * partial or full creation of a graphic nsp widget 
- * if is_top == FALSE a partial widget (vbox) is created 
- *---------------------------------------------------------------*/
-  
-
-/* rajouté par moi dans gtkcairo (qui est un paquet un peu obsolete)
- * gint gtk_cairo_set_x11_cr(GtkCairo *gtkcairo,gint width,gint height)
- * XXXX : il faut appeler cette fonction chaque fois qu'on change la taille 
- * j'utilise cette fonction car je n'utilise pas la methode paint.
- */
-
-static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
-				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
-{
-  static char gwin_name[100];
-  gint iw, ih;
-  GtkWidget *scrolled_window;
-  GtkWidget *vbox;
-  /* initialise pointers */
-  dd->private->drawing = NULL;
-  dd->private->wgc = NULL;
-  dd->private->gcursor = NULL;
-  dd->private->ccursor = NULL;
-  gdk_rgb_init();
-  gtk_widget_push_visual(gdk_rgb_get_visual());
-  gtk_widget_push_colormap(gdk_rgb_get_cmap());
-
-  /* create window etc */
-  if ( wdim != NULL ) 
-    {
-      dd->CWindowWidth = iw = wdim[0] ; /*  / pixelWidth(); */
-      dd->CWindowHeight = ih = wdim[1]; /*  pixelHeight(); */
-    }
-  else 
-    {
-      dd->CWindowWidth = iw = 600 ; /*  / pixelWidth(); */
-      dd->CWindowHeight = ih = 400; /*  pixelHeight(); */
-    }
-
-  if ( is_top == TRUE ) 
-    {
-      dd->private->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-      sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
-      gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
-      gtk_widget_realize(dd->private->window);
-      vbox = gtk_vbox_new (FALSE, 0);
-      gtk_container_add (GTK_CONTAINER (dd->private->window), vbox);
-    }
-  else 
-    {
-      dd->private->window = win ;
-      sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
-      gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
-      /* gtk_widget_realize(dd->private->window);*/
-      vbox = gtk_vbox_new (FALSE, 0);
-      gtk_container_add (GTK_CONTAINER(box) , vbox);
-    }
-
-  /* gtk_widget_show (vbox); */
-
-  dd->private->vbox =  gtk_vbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (vbox), dd->private->vbox, FALSE, TRUE, 0);
-
-  dd->private->menu_entries = graphic_initial_menu(dd->CurWindow );
-  dd->private->menubar = NULL;
-  create_graphic_window_menu(dd);
-
-  dd->private->CinfoW = gtk_statusbar_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), dd->private->CinfoW, FALSE, TRUE, 0);
-
-  /* create a new scrolled window. */
-  dd->private->scrolled = scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_container_set_border_width (GTK_CONTAINER (scrolled_window),0);
-
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-				  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-  /* fix min size of the scrolled window */
-  if ( wpdim != NULL) 
-    gtk_widget_set_size_request (scrolled_window,wpdim[0],wpdim[1]);
-  else
-    gtk_widget_set_size_request (scrolled_window,iw+10,ih+10);
-
-  /* place and realize the scrolled window  */
-
-  gtk_box_pack_start (GTK_BOX (vbox), scrolled_window, TRUE, TRUE, 0);
-
-  if ( is_top == TRUE ) 
-    gtk_widget_realize(scrolled_window);
-  else
-    gtk_widget_show(scrolled_window);
-
-  if ( viewport_pos != NULL )
-    {
-      gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
-				(gfloat) viewport_pos[0]);
-      gtk_adjustment_set_value( gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
-				(gfloat) viewport_pos[1]);      
-    }
-
-  /*
-   * drawing is here a cairo_drawing 
-   */
-
-  dd->private->cairo_drawing = gtk_cairo_new (); 
-  /* XXX removing default Double buffering 
-   * since during expose we draw on our own surface 
-   * which is attached to the graphic window. 
-   */
-  gtk_widget_set_double_buffered (dd->private->cairo_drawing ,FALSE);
-
-  dd->private->drawing =   dd->private->cairo_drawing ;
-  gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400);
-
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
-		     (GtkSignalFunc) locator_button_press, (gpointer) dd);
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
-		     (GtkSignalFunc) locator_button_release, (gpointer) dd);
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
-		     (GtkSignalFunc) locator_button_motion, (gpointer) dd);
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "realize",
-		     (GtkSignalFunc) realize_event, (gpointer) dd);
-
-  gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
-			| GDK_BUTTON_PRESS_MASK 
-			| GDK_BUTTON_RELEASE_MASK
-			| GDK_POINTER_MOTION_MASK
-			| GDK_POINTER_MOTION_HINT_MASK
-			| GDK_LEAVE_NOTIFY_MASK );
-
-  /* private->drawingarea properties */
-  /* min size of the graphic window */
-  gtk_widget_set_size_request(GTK_WIDGET (dd->private->drawing), iw, ih);
-
-  /* place and realize the private->drawing area */
-  gtk_scrolled_window_add_with_viewport ( GTK_SCROLLED_WINDOW (scrolled_window),
-					  GTK_WIDGET (dd->private->drawing));
-
-  if ( is_top == TRUE ) 
-    { 
-      gtk_widget_realize(dd->private->drawing);
-    }
-  else
-    {
-      gtk_widget_show(dd->private->drawing);
-    }
-
-  /* connect to signal handlers, etc */
-
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "configure_event",
-		     (GtkSignalFunc) configure_event, (gpointer) dd);
-
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
-		     (GtkSignalFunc) cairo_expose_event, (gpointer) dd);
-
-  /* 
-     g_signal_connect (G_OBJECT (dd->private->cairo_drawing), "paint", 
-     G_CALLBACK (cairo_paint),(gpointer) dd );
-  */
-		  
-  gtk_signal_connect(GTK_OBJECT(dd->private->window), "destroy",
-		     (GtkSignalFunc) sci_destroy_window, (gpointer) dd);
-
-  gtk_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
-		     (GtkSignalFunc) sci_delete_window, (gpointer) dd);
-
-  gtk_signal_connect (GTK_OBJECT (dd->private->window), "key_press_event",
-		      (GtkSignalFunc) key_press_event, (gpointer) dd);
-
-  /* show everything */
-
-  if ( is_top == TRUE ) 
-    {
-      /* create offscreen drawable : Already done in the realize_event 
-       */
-      if ( wpos != NULL ) 
-	gtk_window_move (GTK_WINDOW(dd->private->window),wpos[0],wpos[1]);
-      gtk_widget_realize(dd->private->window);
-      gtk_widget_show_all(dd->private->window);
-    }
-  else 
-    {
-      /* we need here to realize the dd->private->drawing 
-       * this will create offscreen drawable : in realize_event
-       * and the initialize_gc 
-       */
-      /* 
-	 gtk_widget_realize(dd->private->drawing);
-      */
-      gtk_widget_realize(dd->private->drawing);
-    }
-
-  /* let other widgets use the default colour settings */
-  gtk_widget_pop_visual();
-  gtk_widget_pop_colormap();
 }
 
 
@@ -3367,3 +1989,9 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 				      Xgc->CWindowWidth,Xgc->CWindowHeight);
 }
 
+
+/*
+ * include the cairo basic graphic routines 
+ */
+
+#include "perigtk/peridraw_cairo.c"
