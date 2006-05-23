@@ -250,11 +250,72 @@ void axis2d(BCG *Xgc,double *alpha, double *initpoint, double *size, int *initpo
   initpoint1[1]= YScale(initpoint[1]);
 }
 
-/** Changement interactif d'echelle **/
+/* Changement interactif d'echelle */
 
 extern int EchCheckSCPlots();
 
-/** get a rectangle interactively **/ 
+/* get a rectangle interactively */ 
+
+
+/* A version for drivers who do not have Xor mode 
+ * we have to redraw while acquiring the zoom rectangle 
+ * we could also try to keep the graphiv in a backing store 
+ * pixmap. 
+ */
+
+void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
+{
+  /* Using the mouse to get the new rectangle to fix boundaries */
+  int th,pixmode,alumode,color,style,fg;
+  int ibutton,iwait=FALSE,istr=0;
+  double x0,y0,x,y,xl,yl;
+  if ( Xgc == NULL ) return; 
+  if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
+    {
+      Xgc->graphic_engine->xinfo(Xgc,"3d rotation is not possible when recording is not on" );
+      return;
+    }
+  Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
+  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
+  th = Xgc->graphic_engine->xget_thickness(Xgc);
+  color= Xgc->graphic_engine->xget_pattern(Xgc);
+  style = Xgc->graphic_engine->xget_dash(Xgc);
+  fg    = Xgc->graphic_engine->xget_foreground(Xgc);
+  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+  Xgc->graphic_engine->xset_thickness(Xgc,1);
+  Xgc->graphic_engine->xset_dash(Xgc,1);
+  Xgc->graphic_engine->xset_pattern(Xgc,fg);
+  Xgc->graphic_engine->scale->xclick(Xgc,"one",&ibutton,&x0,&y0,iwait,FALSE,FALSE,FALSE,istr);
+  x=x0;y=y0;
+  ibutton=-1;
+  while ( ibutton == -1 ) 
+    {
+      /* */
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+      Xgc->graphic_engine->force_redraw(Xgc);
+      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+      zoom_rect(Xgc,x0,y0,x,y);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,iwait,TRUE,FALSE,FALSE);
+      x=xl;y=yl;
+    }
+  /* Back to the default driver which must be Rec and redraw the recorded
+   * graphics with the new scales 
+   */
+  bbox[0]=Min(x0,x);
+  bbox[1]=Min(y0,y);
+  bbox[2]=Max(x0,x);
+  bbox[3]=Max(y0,y);
+  Xgc->graphic_engine->xset_thickness(Xgc,th);
+  Xgc->graphic_engine->xset_dash(Xgc,style);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
+  Xgc->graphic_engine->xinfo(Xgc," ");
+  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+  Xgc->graphic_engine->force_redraw(Xgc);
+}
+
+/* using the Xor mode facility */
 
 void zoom_get_rectangle(BCG *Xgc,double *bbox)
 {
@@ -323,8 +384,7 @@ void zoom_get_rectangle(BCG *Xgc,double *bbox)
 
 void zoom(BCG *Xgc)
 {
-  int aaint[4],flag[3]; /* ansi : ={1,0};*/
-  flag[0] =1 ; flag[1]=flag[2]=0;
+  int aaint[]={2,10,2,10},flag[]={1,0,0} ;
   if ( Xgc == NULL) return ;
   if ( Xgc->record_flag != TRUE )
     {
@@ -495,16 +555,3 @@ void Gr_Rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax,
 }
 
     
-
-
-
-
-
-
-
-
-
-
-
-
-
