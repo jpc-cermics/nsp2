@@ -69,8 +69,8 @@ extern void start_sci_gtk();
 static unsigned long maxcol; /* XXXXX : à revoir */
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 static void nsp_gtk_invalidate(BCG *Xgc);
-static void nsp_pango_initialize_layout(BCG *Xgc);
-static void nsp_pango_finalize_layout(BCG *Xgc);
+static void nsp_fonts_initialize(BCG *Xgc);
+static void nsp_fonts_finalize(BCG *Xgc);
 static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
 static void force_affichage(BCG *Xgc);
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
@@ -1434,7 +1434,7 @@ static void delete_window(BCG *dd,int intnum)
   if (winxgc->private->wgc != NULL)g_object_unref(winxgc->private->wgc);
   if (winxgc->private->item_factory != NULL) g_object_unref(winxgc->private->item_factory);
 
-  nsp_pango_finalize_layout(winxgc);
+  nsp_fonts_finalize(winxgc);
 
   FREE(winxgc->private);
   /* remove current window from window list */
@@ -1526,7 +1526,7 @@ static const int pango_size[] = { 8 ,10,12,14,18,24};
 
 static char *pango_fonttab[] ={"Courier", "Standard Symbols L","Sans","Sans","Sans","Sans"};
 
-static void nsp_pango_finalize_layout(BCG *Xgc)
+static void nsp_fonts_finalize(BCG *Xgc)
 {
   if ( Xgc->private->layout != NULL) 
     {
@@ -1538,7 +1538,7 @@ static void nsp_pango_finalize_layout(BCG *Xgc)
     }
 }
 
-static void nsp_pango_initialize_layout(BCG *Xgc)
+static void nsp_fonts_initialize(BCG *Xgc)
 {
   if ( Xgc->private->layout == NULL) 
     {
@@ -1575,7 +1575,6 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize)
       pango_font_description_set_family(Xgc->private->desc, pango_fonttab[i]);
       /* pango_font_description_set_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);*/
       pango_font_description_set_absolute_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);
-
       pango_layout_set_font_description (Xgc->private->layout, Xgc->private->desc);
     }
 }

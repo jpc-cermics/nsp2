@@ -137,7 +137,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
     {
       maxcol = 1 << 16; /* FIXME XXXXX : to be changed */
 #ifndef PERIGL 
-      LoadFonts();
+      /* LoadFonts(); */
 #endif
       first++;
     }
@@ -192,7 +192,7 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
 
-  nsp_pango_initialize_layout(NewXgc);/* initialize a pango_layout */
+  nsp_fonts_initialize(NewXgc);/* initialize a pango_layout */
 
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
   /* Attention ce qui est ici doit pas etre rejoué 
