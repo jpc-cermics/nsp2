@@ -224,15 +224,15 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 {
   static char gwin_name[100];
   gint iw, ih;
-#ifdef PERIGL 
+#ifdef PERIGL
   guint mode = GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH | GDK_GL_MODE_STENCIL;
   GdkGLConfig *glconfig;
 #endif 
   GtkWidget *scrolled_window;
   GtkWidget *vbox;
 
-#ifdef PERIGL   
-  glconfig = gdk_gl_config_new_by_mode (mode | GDK_GL_MODE_DOUBLE) ;
+#ifdef PERIGL
+  glconfig = gdk_gl_config_new_by_mode (mode); /*  | GDK_GL_MODE_DOUBLE) ; */
   if (glconfig == NULL)
     {
       glconfig = gdk_gl_config_new_by_mode (mode);
@@ -343,17 +343,16 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 #else 
   /* create private->drawingarea */
   dd->private->drawing = gtk_drawing_area_new();
-#ifdef PERIGL 
+#ifdef PERIGL
   /* Set OpenGL-capability to the widget */
   gtk_widget_set_gl_capability (dd->private->drawing,
 				glconfig,
 				NULL,
 				TRUE,
 				GDK_GL_RGBA_TYPE);
-#else 
+#endif /* PERIGL */
   /* we use our own double buffer */
   gtk_widget_set_double_buffered (dd->private->drawing ,FALSE);
-#endif /* PERIGL */
 #endif /* PERICAIRO */
 
   /* gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400); */
