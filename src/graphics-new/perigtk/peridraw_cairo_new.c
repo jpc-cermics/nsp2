@@ -383,27 +383,26 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
 { 
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
-  DRAW_CHECK;
-  char str[1];
-  str[0]=Marks[Xgc->CurHardSymb];
-  /* XXX
-     gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-     *x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
-     */
-  cairo_select_font_face (cr, "Sans",
-			  CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+  int code = symbols[Xgc->CurHardSymb]; 
+  gchar symbol_code[4], *iter = symbol_code;
 
+  DRAW_CHECK;
+  g_unichar_to_utf8(code, iter);
+  iter = g_utf8_next_char(iter);
+  g_unichar_to_utf8(0x0, iter);
+
+  cairo_select_font_face (cr, "Standard Symbols L ",
+			  CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
   if ((status=cairo_status (cr)) != CAIRO_STATUS_SUCCESS) 
     {
-      fprintf (stderr, "Cairo is unhappy in drawpolyline: %s\n",
+      fprintf (stderr, "Cairo is unhappy in draw_mark : %s\n",
 	       cairo_status_to_string(status));
     }
+  /* we need here to center the symbol XXXX */
   cairo_set_font_size (cr, 10);
   cairo_move_to (cr, *x,*y);
-  cairo_show_text (cr, "a");
+  cairo_show_text (cr,symbol_code);
 }
-
-
 
 /*
  *  display of a string
