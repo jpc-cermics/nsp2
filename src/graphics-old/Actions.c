@@ -117,7 +117,7 @@ void scig_replay(int win_num)
   if ( (Xgc= window_list_search(win_num)) == NULL) return;
   if ( Xgc->record_flag != TRUE ) return ;
   scig_buzy =1;
-  Xgc->graphic_engine->clearwindow(Xgc);    
+  Xgc->graphic_engine->clearwindow(Xgc);
   Xgc->graphic_engine->tape_replay(Xgc,win_num);
   scig_buzy=0;
 }
@@ -279,12 +279,14 @@ void scig_export(char *fname, int iwin, int color, char *driver,char option)
  * zoom the graphics of graphic window @win_num.
  */ 
 
+static int scig_buzy_zoom = 0;
+
 void scig_2dzoom(int win_num)
 {
   BCG *Xgc;
-  if ( scig_buzy  == 1 ) return ;
+  if ( scig_buzy_zoom == 1 ) return ;
   if ( (Xgc=window_list_search(win_num)) == NULL) return;
-  scig_buzy =1;
+  scig_buzy_zoom =1;
   if ( Xgc->record_flag != TRUE ) 
     {
       Xgc->graphic_engine->xinfo(Xgc,"Zoom works only with the Rec driver");
@@ -293,7 +295,7 @@ void scig_2dzoom(int win_num)
     {
       zoom(Xgc);
     }
-  scig_buzy = 0;
+  scig_buzy_zoom = 0;
 }
 
 /**
