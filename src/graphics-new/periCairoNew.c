@@ -90,8 +90,8 @@ static void gdk_draw_text_rot(GdkDrawable *drawable, GdkFont *font,  GdkGC *gc,
 #endif 
 
 static void force_affichage(BCG *Xgc);
-static void nsp_pango_initialize_layout(BCG *Xgc);
-static void nsp_pango_finalize_layout(BCG *Xgc);
+static void nsp_fonts_initialize(BCG *Xgc);
+static void nsp_fonts_finalize(BCG *Xgc);
 
 
 void create_graphic_window_menu( BCG *dd);
@@ -1330,7 +1330,7 @@ static void delete_window(BCG *dd,int intnum)
   g_object_unref(winxgc->private->stdgc);
   g_object_unref(winxgc->private->wgc);
   g_object_unref(winxgc->private->item_factory);
-  nsp_pango_finalize_layout(winxgc);
+  nsp_fonts_finalize(winxgc);
   FREE(winxgc->private);
   /* remove current window from window list */
   window_list_remove(intnum);
@@ -1685,7 +1685,7 @@ static const int pango_size[] = { 8 ,10,12,14,18,24};
 
 static char *pango_fonttab[] ={"Courier", "Standard Symbols L","Sans","Sans","Sans","Sans"};
 
-static void nsp_pango_finalize_layout(BCG *Xgc)
+static void nsp_fonts_finalize(BCG *Xgc)
 {
   if ( Xgc->private->layout != NULL) 
     {
@@ -1697,7 +1697,7 @@ static void nsp_pango_finalize_layout(BCG *Xgc)
     }
 }
 
-static void nsp_pango_initialize_layout(BCG *Xgc)
+static void nsp_fonts_initialize(BCG *Xgc)
 {
   if ( Xgc->private->layout == NULL) 
     {
@@ -1908,13 +1908,17 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     {
       if ( dd->private->draw == TRUE ) 
 	{
+	  /* {static int count = 0; printf("Expose event with draw %d\n",count++);} */
 	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
 	  scig_replay(dd->CurWindow);
 	  dd->private->in_expose= FALSE;
 	}
-
+      else 
+	{
+	  /* static int count = 0; printf("Expose event without draw %d\n",count++); */
+	} 
       if (event  != NULL) 
 	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
