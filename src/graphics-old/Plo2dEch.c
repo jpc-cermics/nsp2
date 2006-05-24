@@ -292,10 +292,11 @@ void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox)
   while ( ibutton == -1 ) 
     {
       /* */
+      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+      Xgc->graphic_engine->clearwindow(Xgc);    
+      zoom_rect(Xgc,x0,y0,x,y);
       Xgc->graphic_engine->xset_recording(Xgc,TRUE);
       Xgc->graphic_engine->force_redraw(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-      zoom_rect(Xgc,x0,y0,x,y);
       Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&xl, &yl,iwait,TRUE,FALSE,FALSE);
       x=xl;y=yl;
     }
