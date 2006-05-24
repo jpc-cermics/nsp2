@@ -214,7 +214,7 @@ static void clearwindow(BCG *Xgc)
 }
 
 
-#include "perigtk/events.c"  
+
 
 /*
  * graphic context modifications 
@@ -1384,64 +1384,6 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
  * window_list management 
  *-------------------------------------------------------------------------*/
 
-static void delete_window(BCG *dd,int intnum)
-{ 
-  BCG *winxgc= dd; 
-  int top_count;
-  if ( dd == NULL) 
-    {
-      if ((winxgc = window_list_search(intnum)) == NULL) return;
-    }
-  /* be sure to clear the recorded graphics */
-  scig_erase(intnum);
-
-  /* I delete the pixmap and the widget */
-  /*
-    if ( winxgc->CurPixmapStatus == 1 ) 
-    {
-    gdk_pixmap_unref(winxgc->private->drawable);
-    winxgc->private->drawable = (GdkDrawable *)winxgc->private->drawing->window;
-    winxgc->CurPixmapStatus = 0; 
-    }
-  */
-  /* deconnect handlers */
-  scig_deconnect_handlers(winxgc);
-  /* backing store private->pixmap */
-  if ( winxgc->private->pixmap != NULL)  gdk_pixmap_unref(winxgc->private->pixmap);
-  /* destroy top level window if it is not shared by other graphics  */
-  top_count = window_list_search_toplevel(winxgc->private->window); 
-  if ( top_count <= 1) 
-    {
-      gtk_widget_destroy(winxgc->private->window);
-    }
-  else 
-    {
-      GtkWidget *father; 
-      gtk_widget_hide(GTK_WIDGET(winxgc->private->drawing)); 
-      gtk_widget_hide(GTK_WIDGET(winxgc->private->scrolled)); 
-      gtk_widget_hide(GTK_WIDGET(winxgc->private->CinfoW)); 
-      gtk_widget_hide(GTK_WIDGET(winxgc->private->vbox));      
-      father = gtk_widget_get_parent(GTK_WIDGET(winxgc->private->vbox));
-      gtk_container_remove(GTK_CONTAINER(father),GTK_WIDGET(winxgc->private->vbox));
-    }
-  /* free gui private area */
-  FREE(winxgc->private->colors);
-  /* free data associated to menus */
-  menu_entry_delete(winxgc->private->menu_entries);
-  if (winxgc->private->gcursor != NULL) gdk_cursor_unref (winxgc->private->gcursor);
-  if (winxgc->private->ccursor != NULL)gdk_cursor_unref (winxgc->private->ccursor);
-  if (winxgc->private->stdgc != NULL)g_object_unref(winxgc->private->stdgc);
-  if (winxgc->private->wgc != NULL)g_object_unref(winxgc->private->wgc);
-  if (winxgc->private->item_factory != NULL) g_object_unref(winxgc->private->item_factory);
-
-  nsp_fonts_finalize(winxgc);
-
-  FREE(winxgc->private);
-  /* remove current window from window list */
-  window_list_remove(intnum);
-}
-
-
 /*
  * Routines for initialization : string is a display name 
  */
@@ -1475,9 +1417,15 @@ static void  nsp_gtk_set_color(BCG *Xgc,int col)
 #endif
 }
 
+
+/*
+ * initgraphic : create initialize graphic windows
+ */
+
 static gint realize_event(GtkWidget *widget, gpointer data);
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 
+#include "perigtk/events.c"  
 #include "perigtk/init.c" 
 
 /*--------------------------------------------------------
@@ -1721,28 +1669,6 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   return FALSE;
 }
 
-
-static void scig_deconnect_handlers(BCG *winxgc)
-{
-  int n=0;
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) configure_event, (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) expose_event, (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
-					  (GtkSignalFunc)  sci_destroy_window, (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func (GTK_OBJECT (winxgc->private->window),
-					   (GtkSignalFunc) key_press_event, (gpointer) winxgc);
-
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) locator_button_press, (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) locator_button_release, (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) locator_button_motion, (gpointer) winxgc);
-  n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  (GtkSignalFunc) realize_event, (gpointer) winxgc);
-}
 
 /*---------------------------------------------------------------
  * partial or full creation of a graphic nsp widget 
@@ -2019,9 +1945,9 @@ static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)
   int bg = Xgc->NumBackground;
   glStencilFunc(GL_ALWAYS, 0x1, 0x1);
   glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-  glColor3f(Xgc->private->colors[bg].r/65535.0,
-	    Xgc->private->colors[bg].g/65535.0,
-	    Xgc->private->colors[bg].b/65535.0);
+  glColor3f(Xgc->private->colors[bg].red/65535.0,
+	    Xgc->private->colors[bg].green/65535.0,
+	    Xgc->private->colors[bg].blue/65535.0);
   glBegin(GL_QUADS);
   glVertex2i(clip_rect.x, clip_rect.y);
   glVertex2i(clip_rect.x+clip_rect.width, clip_rect.y);

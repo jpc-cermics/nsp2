@@ -484,13 +484,8 @@ static void draw_text (cairo_t *cr)
   PangoLayout *layout;
   PangoFontDescription *desc;
   int i;
-  /* Center coordinates on the middle of the region we are drawing
-   */
   cairo_translate (cr, RADIUS, RADIUS);
-
-  /* Create a PangoLayout, set the font and text */
   layout = pango_cairo_create_layout (cr);
-  
   pango_layout_set_text (layout, "Text", -1);
   desc = pango_font_description_from_string (FONT);
   pango_layout_set_font_description (layout, desc);
@@ -511,9 +506,7 @@ static void draw_text (cairo_t *cr)
       pango_cairo_show_layout (cr, layout);
       cairo_restore (cr);
     }
-
-  /* free the layout object */
-  g_object_unref (layout);
+    g_object_unref (layout);
 }
 
 */
