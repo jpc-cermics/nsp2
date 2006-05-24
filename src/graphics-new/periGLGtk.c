@@ -39,10 +39,16 @@
 #include "nsp/math.h"
 #ifdef PERIGTK
 #include "nsp/graphics/periGtk.h"
-#else 
-#include "nsp/graphics/periGL.h"
-#include <pango/pangoft2.h>
 #endif 
+
+#ifdef PERIGL 
+#define HAVE_FREETYPE
+#ifdef HAVE_FREETYPE
+#include <pango/pangoft2.h> 
+#endif 
+#include "nsp/graphics/periGL.h"
+#endif 
+
 #include "nsp/version.h"
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
@@ -63,8 +69,8 @@ static void realize_event_ogl();
 static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
 static void unclip_rectangle(GdkRectangle clip_rect);
 static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
-static void nsp_pango_initialize_layout(BCG *Xgc);
-static void nsp_pango_finalize_layout(BCG *Xgc);
+static void nsp_fonts_initialize(BCG *Xgc);
+static void nsp_fonts_finalize(BCG *Xgc);
 #endif 
 
 /*
@@ -108,8 +114,6 @@ static void nsp_gtk_invalidate(BCG *Xgc);
 /* functions **/
 
 static void nsp_gtk_set_color(BCG *Xgc,int col);
-static void LoadFonts(void), LoadSymbFonts(void);
-static void loadfamily_n(char *name, int *j);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
 static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin,int iflag,int getmotion, int getrelease,int getkey,char *str, int lstr, int change_cursor);
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
@@ -1687,7 +1691,7 @@ static void delete_window(BCG *dd,int intnum)
   g_object_unref(winxgc->private->wgc);
   g_object_unref(winxgc->private->item_factory);
 
-  nsp_pango_finalize_layout(winxgc);
+  nsp_fonts_finalize(winxgc);
 
   FREE(winxgc->private);
   /* remove current window from window list */
@@ -1745,183 +1749,13 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
 #endif 
 
 /*
- * initgraphic : initialize graphic window
- * If v2 is not a nul pointer *v2 is the window number to create 
- * EntryCounter is used to check for first Entry + to know the next 
- * available window number 
+ * initgraphic : create initialize graphic windows
  */
 
+static gint realize_event(GtkWidget *widget, gpointer data);
+static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 
-static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
-			    int *wdim,int *wpdim,double *viewport_pos,int *wpos);
-
-
-static void initgraphic(char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode)
-{ 
-  nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos);
-}
-
-/* used when a graphic window is to be inserted in a more complex 
- * widget hierarchy 
- */
-
-#ifdef PERIGTK
-static int EntryCounter = 0;
-
-int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
-{ 
-  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
-  return  nsp_get_win_counter()-1;
-}
-
-int nsp_get_win_counter() { return EntryCounter;};
-void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
-
-#else 
-
-int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
-{ 
-  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos);
-  return  nsp_get_win_counter()-1;
-}
-
-#endif 
-
-static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
-			    int *wdim,int *wpdim,double *viewport_pos,int *wpos)
-{
-  static int first = 0;
-  BCG *NewXgc ;
-  int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 : nsp_get_win_counter();
-  gui_private *private ; 
-  if ( ( private = MALLOC(sizeof(gui_private)))== NULL) 
-    {
-      Sciprintf("initgraphics: running out of memory \n");
-      return;
-    }
-  /* default values  */
-  private->colors=NULL;
-  private->colormap=NULL;
-  private->window=NULL;		
-  private->drawing=NULL;           
-  private->scrolled=NULL;          
-  private->CinfoW =NULL;           
-  private->vbox=NULL;              
-  private->menubar=NULL;
-  private->item_factory=NULL;
-  private->menu_entries=NULL;
-  private->pixmap=NULL;       
-  private->extra_pixmap=NULL;       
-  private->drawable=NULL;  
-  private->wgc=NULL;
-  private->stdgc=NULL;
-  private->gcursor=NULL;      
-  private->ccursor=NULL;      
-  private->font=NULL;
-  private->resize = 0; /* do not remove !! */
-  private->in_expose= FALSE;
-#ifdef PERIGL
-  private->gdk_only= FALSE;
-  private->gl_only= FALSE;
-#endif 
-  private->protect= FALSE;
-  private->draw= FALSE;
-
-  private->layout  = NULL;
-  private->mark_layout  = NULL;
-  private->context = NULL;
-  private->ft2_context = NULL;
-  private->desc = NULL;
-  private->mark_desc = NULL;
-
-  if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
-    {
-      Sciprintf("initgraphics: unable to alloc\n");
-      return ;
-    }
-
-  NewXgc->CurWindow = WinNum;
-  NewXgc->record_flag = TRUE; /* default mode is to record plots */
-  NewXgc->plots = NULL;
-  NewXgc->incr_plots = NULL;
-#ifdef PERIGTK 
-  NewXgc->graphic_engine = &Gtk_gengine ; /* the graphic engine associated to this graphic window */
-#else  
-  NewXgc->graphic_engine = &GL_gengine ; /* the graphic engine associated to this graphic window */
-#endif 
-  start_sci_gtk(); /* be sure that gtk is started */
-
-  if (first == 0)
-    {
-      maxcol = 1 << 16; /* FIXME XXXXX : to be changed */
-      LoadFonts();
-      first++;
-    }
-
-  if ( win != NULL )
-    {
-      gtk_nsp_graphic_window(FALSE,NewXgc,"unix:0",win,box,wdim,wpdim,viewport_pos,wpos);
-    }
-  else 
-    {
-      gtk_nsp_graphic_window(TRUE,NewXgc,"unix:0",NULL,NULL,wdim,wpdim,viewport_pos,wpos);
-    }
-
-  /* recheck with valgrind 
-   * valgrind detecte des variables non initialisees dans 
-   * initialize a cause d'initialisation croisées 
-   * d'ou des valeurs par defaut ...
-   * A tester sans pour faire les choses dans l'ordre 
-   * dans initialize 
-   */
-
-  NewXgc->fontId=0 ;
-  NewXgc->fontSize=0 ;
-  NewXgc->CurHardSymb=0;
-  NewXgc->CurHardSymbSize=0;
-  NewXgc->CurLineWidth=0;
-  NewXgc->CurPattern=0;
-  NewXgc->CurColor=0;
-  NewXgc->CurPixmapStatus=0;
-  NewXgc->CurVectorStyle=0;
-  NewXgc->CurDrawFunction=0;
-  NewXgc->ClipRegionSet=0;
-  NewXgc->CurDashStyle=0;
-  NewXgc->IDLastPattern=0;
-  NewXgc->Numcolors=0; 
-  NewXgc->NumBackground=0;
-  NewXgc->NumForeground=0;
-  NewXgc->NumHidden3d=0; 
-  NewXgc->Autoclear=0;
-
-  /* next values are to be set since initialize_gc 
-   * action depend on the current state defined by these 
-   * variables. For pixmap, resizestatus and colorstatus 
-   * initialize performs a switch from old value to new value 
-   */
-
-  NewXgc->CurPixmapStatus = 0; 
-  /* default colormap not instaled */
-  NewXgc->CmapFlag = -1; 
-  /* default resize not yet defined */
-  NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
-  NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
-
-  nsp_pango_initialize_layout(NewXgc);/* initialize a pango_layout */
-
-  NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
-  /* Attention ce qui est ici doit pas etre rejoué 
-   * on l'enleve donc de initialize_gc
-   */
-  NewXgc->graphic_engine->xset_pixmapOn(NewXgc,0);
-  NewXgc->graphic_engine->xset_wresize(NewXgc,1);
-  /* now initialize the scale list : already performed in window_list_new */
-  /* NewXgc->scales = NULL; xgc_add_default_scale(NewXgc);*/
-  nsp_set_win_counter(WinNum);
-  gdk_flush();
-}
-
-
+#include "perigtk/init_gtkgl.c" 
 
 /*--------------------------------------------------------
  * Initialisation of the graphic context. Used also 
@@ -1934,10 +1768,6 @@ static void xset_default(BCG *Xgc)
 {
   nsp_initialize_gc(Xgc);
 }
-
-
-
-
 
 /*--------------------------------------------------------------------------
  * Create Graphic widget 
@@ -2174,181 +2004,6 @@ static void scig_deconnect_handlers(BCG *winxgc)
 					  (GtkSignalFunc) realize_event, (gpointer) winxgc);
 }
 
-/*---------------------------------------------------------------
- * partial or full creation of a graphic nsp widget 
- * if is_top == FALSE a partial widget (vbox) is created 
- *---------------------------------------------------------------*/
-
-static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,
-				   int *wdim,int *wpdim,double *viewport_pos,int *wpos)
-{
-  char gwin_name[100];
-  gint iw, ih;
-  GtkWidget *scrolled_window;
-  GtkWidget *vbox;
-  /* initialise pointers */
-  dd->private->drawing = NULL;
-  dd->private->wgc = NULL;
-  dd->private->gcursor = NULL;
-  dd->private->ccursor = NULL;
-  gdk_rgb_init();
-  gtk_widget_push_visual(gdk_rgb_get_visual());
-  gtk_widget_push_colormap(gdk_rgb_get_cmap());
-
-  /* create window etc */
-  if ( wdim != NULL ) 
-    {
-      dd->CWindowWidth = iw = wdim[0] ; /*  / pixelWidth(); */
-      dd->CWindowHeight = ih = wdim[1]; /*  pixelHeight(); */
-    }
-  else 
-    {
-      dd->CWindowWidth = iw = 600 ; /*  / pixelWidth(); */
-      dd->CWindowHeight = ih = 400; /*  pixelHeight(); */
-    }
-
-  if ( is_top == TRUE ) 
-    {
-      dd->private->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-      sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
-      gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
-      gtk_widget_realize(dd->private->window);
-      vbox = gtk_vbox_new (FALSE, 0);
-      gtk_container_add (GTK_CONTAINER (dd->private->window), vbox);
-    }
-  else 
-    {
-      dd->private->window = win ;
-      sprintf( gwin_name, "Graphic Window %d", dd->CurWindow );
-      gtk_window_set_title (GTK_WINDOW (dd->private->window),  gwin_name);
-      gtk_window_set_policy(GTK_WINDOW(dd->private->window), TRUE, TRUE, FALSE);
-      /* gtk_widget_realize(dd->private->window);*/
-      vbox = gtk_vbox_new (FALSE, 0);
-      gtk_container_add (GTK_CONTAINER(box) , vbox);
-    }
-
-  /* gtk_widget_show (vbox); */
-
-  dd->private->vbox =  gtk_vbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (vbox), dd->private->vbox, FALSE, TRUE, 0);
-
-  dd->private->menu_entries = graphic_initial_menu(dd->CurWindow );
-  dd->private->menubar = NULL;
-  create_graphic_window_menu(dd);
-
-  dd->private->CinfoW = gtk_statusbar_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), dd->private->CinfoW, FALSE, TRUE, 0);
-
-  /* create a new scrolled window. */
-  dd->private->scrolled = scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_container_set_border_width (GTK_CONTAINER (scrolled_window),0);
-
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
-				  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-  /* fix min size of the scrolled window */
-  if ( wpdim != NULL) 
-    gtk_widget_set_size_request (scrolled_window,wpdim[0],wpdim[1]);
-  else
-    gtk_widget_set_size_request (scrolled_window,iw+10,ih+10);
-
-  /* place and realize the scrolled window  */
-
-  gtk_box_pack_start (GTK_BOX (vbox), scrolled_window, TRUE, TRUE, 0);
-
-  if ( is_top == TRUE ) 
-    gtk_widget_realize(scrolled_window);
-  else
-    gtk_widget_show(scrolled_window);
-
-  if ( viewport_pos != NULL )
-    {
-      gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
-				(gfloat) viewport_pos[0]);
-      gtk_adjustment_set_value( gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
-				(gfloat) viewport_pos[1]);      
-    }
-
-  /* create private->drawingarea */
-
-  dd->private->drawing = gtk_drawing_area_new();
-  /* we use our own double buffer */
-  gtk_widget_set_double_buffered (dd->private->drawing ,FALSE);
-
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
-		     (GtkSignalFunc) locator_button_press, (gpointer) dd);
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
-		     (GtkSignalFunc) locator_button_release, (gpointer) dd);
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
-		     (GtkSignalFunc) locator_button_motion, (gpointer) dd);
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "realize",
-		     (GtkSignalFunc) realize_event, (gpointer) dd);
-
-  gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
-			| GDK_BUTTON_PRESS_MASK 
-			| GDK_BUTTON_RELEASE_MASK
-			| GDK_POINTER_MOTION_MASK
-			| GDK_POINTER_MOTION_HINT_MASK
-			| GDK_LEAVE_NOTIFY_MASK );
-
-  /* private->drawingarea properties */
-  /* min size of the graphic window */
-  gtk_widget_set_size_request(dd->private->drawing, iw, ih);
-
-  /* place and realize the private->drawing area */
-  gtk_scrolled_window_add_with_viewport ( GTK_SCROLLED_WINDOW (scrolled_window),dd->private->drawing);
-
-  if ( is_top == TRUE )  
-    gtk_widget_realize(dd->private->drawing);
-  else
-    gtk_widget_show(dd->private->drawing);
-
-  /* connect to signal handlers, etc */
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "configure_event",
-		     (GtkSignalFunc) configure_event, (gpointer) dd);
-
-  gtk_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
-		     (GtkSignalFunc) expose_event, (gpointer) dd);
-  
-  gtk_signal_connect(GTK_OBJECT(dd->private->window), "destroy",
-		     (GtkSignalFunc) sci_destroy_window, (gpointer) dd);
-
-  
-  gtk_signal_connect(GTK_OBJECT(dd->private->window), "delete_event",
-		     (GtkSignalFunc) sci_delete_window, (gpointer) dd);
-
-  gtk_signal_connect (GTK_OBJECT (dd->private->window), "key_press_event",
-		      (GtkSignalFunc) key_press_event, (gpointer) dd);
-
-  /* show everything */
-
-  if ( is_top == TRUE ) 
-    {
-      /* create offscreen drawable : Already done in the realize_event 
-       */
-      if ( wpos != NULL ) 
-	gtk_window_move (GTK_WINDOW(dd->private->window),wpos[0],wpos[1]);
-      gtk_widget_realize(dd->private->window);
-      gtk_widget_show_all(dd->private->window);
-    }
-  else 
-    {
-      /* we need here to realize the dd->private->drawing 
-       * this will create offscreen drawable : in realize_event
-       * and the initialize_gc 
-       */
-      gtk_widget_realize(dd->private->drawing);
-    }
-
-  /* let other widgets use the default colour settings */
-  gtk_widget_pop_visual();
-  gtk_widget_pop_colormap();
-  
-}
-
-
- 
 /*
  *  Next routine is comming from R 
  *  ------------------------------------------------------------------
@@ -2731,127 +2386,6 @@ static void unclip_rectangle(GdkRectangle clip_rect)
 #endif
 }
 
-/*
- * rendering text with PangoFT2 
- * from: font-pangoft2.c written by Naofumi Yasufuku  
- * <naofumi@users.sourceforge.net>
- * Note that if the layout uses a transformation matrix 
- * the enclosing rectangle is given by e_rect
- */
-
-static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *e_rect)
-{
-  int x,y;
-  PangoRectangle logical_rect;
-  FT_Bitmap bitmap;
-  GLvoid *pixels;
-  guint32 *p;
-  GLfloat color[4];
-  guint32 rgb;
-  GLfloat a;
-  guint8 *row, *row_end;
-  int i;
-
-  pango_layout_get_extents (layout, NULL, &logical_rect);
-  if (logical_rect.width == 0 || logical_rect.height == 0)
-    return;
-
-  if ( e_rect == NULL )
-    {
-      bitmap.rows = PANGO_PIXELS (logical_rect.height);
-      bitmap.width = PANGO_PIXELS (logical_rect.width);
-      bitmap.pitch = bitmap.width;
-      x= PANGO_PIXELS (-logical_rect.x);
-      y= 0;
-    }
-  else
-    {
-      /* rotated string: we use the enclosing rectangle */
-      bitmap.rows = e_rect->height;
-      bitmap.width = e_rect->width;
-      bitmap.pitch = bitmap.width;
-      /* note that displaystring will pass e_rect here is such that x=y=0 */
-      x = - e_rect->x;
-      y = - e_rect->y ;
-    }
-  bitmap.buffer = g_malloc (bitmap.rows * bitmap.width);
-  bitmap.num_grays = 256;
-  bitmap.pixel_mode = ft_pixel_mode_grays;
-
-  memset (bitmap.buffer, 0, bitmap.rows * bitmap.width);
-  
-  pango_ft2_render_layout (&bitmap, layout,x,y);
-
-  pixels = g_malloc (bitmap.rows * bitmap.width * 4);
-  p = (guint32 *) pixels;
-
-  glGetFloatv (GL_CURRENT_COLOR, color);
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-  rgb =  ((guint32) (color[0] * 255.0))        |
-        (((guint32) (color[1] * 255.0)) << 8)  |
-        (((guint32) (color[2] * 255.0)) << 16);
-#else
-  rgb = (((guint32) (color[0] * 255.0)) << 24) |
-        (((guint32) (color[1] * 255.0)) << 16) |
-        (((guint32) (color[2] * 255.0)) << 8);
-#endif
-  a = color[3];
-
-  row = bitmap.buffer + bitmap.rows * bitmap.width; /* past-the-end */
-  row_end = bitmap.buffer;      /* beginning */
-
-  if (a == 1.0)
-    {
-      do
-        {
-          row -= bitmap.width;
-          for (i = 0; i < bitmap.width; i++)
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-            *p++ = rgb | (((guint32) row[i]) << 24);
-#else
-            *p++ = rgb | ((guint32) row[i]);
-#endif
-        }
-      while (row != row_end);
-    }
-  else
-    {
-      do
-        {
-          row -= bitmap.width;
-          for (i = 0; i < bitmap.width; i++)
-#if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
-            *p++ = rgb | (((guint32) (a * row[i])) << 24);
-#else
-            *p++ = rgb | ((guint32) (a * row[i]));
-#endif
-        }
-      while (row != row_end);
-    }
-
-  glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
-
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-#if !defined(GL_VERSION_1_2)
-  glDrawPixels (bitmap.width, bitmap.rows,
-                GL_RGBA, GL_UNSIGNED_BYTE,
-                pixels);
-#else
-  glDrawPixels (bitmap.width, bitmap.rows,
-                GL_RGBA, GL_UNSIGNED_INT_8_8_8_8,
-                pixels);
-#endif
-
-  glDisable (GL_BLEND);
-
-  g_free (bitmap.buffer);
-  g_free (pixels);
-}
-
-
-
 #endif /* PERIGL */
 
 #ifdef PERIGTK
@@ -2880,6 +2414,7 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 
 
 #ifdef PERIGL 
+#include "perigtk/fonts_pango_ft2_gl.c"
 #include "perigtk/peridraw_gl.c"
 #endif 
 

@@ -109,6 +109,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->mark_desc = NULL;
 #ifdef PERIGL 
   private->ft2_context = NULL;
+  private->gdk_only= FALSE;
+  private->gl_only= FALSE;
 #endif 
 #ifdef PERICAIRO 
   private->cairo_cr = NULL;
@@ -136,9 +138,6 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   if (first == 0)
     {
       maxcol = 1 << 16; /* FIXME XXXXX : to be changed */
-#ifndef PERIGL 
-      /* LoadFonts(); */
-#endif
       first++;
     }
 
