@@ -1301,17 +1301,22 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
   gdk_window_set_cursor(dd->private->drawing->window, dd->private->ccursor);
   /* set window bg */
-  gdk_window_set_background(dd->private->drawing->window, &dd->private->gcol_bg);
-
+  /* note that dd->private->gcol_bg does not exists at that point */
+  /* 
+     dd->private->gcol_bg = white;
+     gdk_draw_rectangle(dd->private->drawing->window, dd->private->stdgc, TRUE, 0, 0, 
+     dd->CWindowWidth, dd->CWindowHeight);
+  */
+  /* gdk_window_set_background(dd->private->drawing->window, &dd->private->gcol_bg); */
 
   if ( dd->private->pixmap == NULL)
     {
       dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
-      gdk_gc_set_foreground(dd->private->stdgc, &dd->private->gcol_bg);
-      gdk_draw_rectangle(dd->private->pixmap, dd->private->stdgc, TRUE, 0, 0,
-			 dd->CWindowWidth, dd->CWindowHeight);
+      /* gdk_draw_rectangle(dd->private->pixmap, dd->private->stdgc, TRUE, 0, 0,
+	 dd->CWindowWidth, dd->CWindowHeight);
+      */
     }
 
   /* default value is to use the background pixmap */
