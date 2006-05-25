@@ -190,10 +190,16 @@ static void xset_show(BCG *Xgc)
       /* we copy the extra_pixmap to the window and to the backing store pixmap */
       /* gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg); */
       /* drawing to the window and to the backing store pixmap */
+      if ( Xgc->private->gldrawable != NULL 
+	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
+	gdk_gl_drawable_wait_gl(Xgc->private->gldrawable);
       gdk_draw_pixmap(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
       gdk_draw_pixmap(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
+      if ( Xgc->private->gldrawable != NULL 
+	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
+	gdk_gl_drawable_wait_gdk(Xgc->private->gldrawable);
     }
   else
     {
@@ -1853,15 +1859,12 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       gdk_draw_rectangle(dd->private->pixmap,dd->private->stdgc, TRUE,0,0,
 			 dd->CWindowWidth, dd->CWindowHeight);
       */
-      /* we resize and draw */ 
-      /* here we have a problem  if we are using an extra_pixmap 
-       * because we are using glClear and nsp_ogl_set_view with a wrong gldrawable 
-       * since the correct gldrawable will be created in scig_resize.
+      /* we resize and draw  
+       * Note that the gldrawable will be changed in scig_resize if we are 
+       * using the extra_pixmap.
        */
       gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
       gdk_gl_drawable_gl_begin(dd->private->gldrawable, dd->private->glcontext);  
-      glClear(GL_DEPTH_BUFFER_BIT);
-      nsp_ogl_set_view(dd);
       dd->private->in_expose= TRUE;
       dd->private->gl_only = TRUE;
       scig_resize(dd->CurWindow);
@@ -1872,6 +1875,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       /* synchronize pixmap */
       gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 		      dd->CWindowWidth, dd->CWindowHeight);
+      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
   else 
     {
@@ -1895,6 +1899,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       else 
 	gdk_draw_pixmap(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
+      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
   gdk_flush();
   return FALSE;
@@ -2074,7 +2079,9 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
     }
   gdk_gl_drawable_make_current(Xgc->private->gldrawable,Xgc->private->glcontext);
   gdk_gl_drawable_gl_begin(Xgc->private->gldrawable,Xgc->private->glcontext);
-  g_print ("The OpenGL rendering context is created\n");
+  glClear(GL_DEPTH_BUFFER_BIT);
+  nsp_ogl_set_view(Xgc);
+  /* g_print ("The OpenGL rendering context is created\n"); */
 #endif
   return TRUE;
 }
