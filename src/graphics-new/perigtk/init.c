@@ -111,6 +111,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->ft2_context = NULL;
   private->gdk_only= FALSE;
   private->gl_only= FALSE;
+  private->gldrawable= NULL;
+  private->glcontext = NULL;
 #endif 
 #ifdef PERICAIRO 
   private->cairo_cr = NULL;
@@ -232,7 +234,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   GtkWidget *vbox;
 
 #ifdef PERIGL
-  glconfig = gdk_gl_config_new_by_mode (mode); /*  | GDK_GL_MODE_DOUBLE) ; */
+  glconfig = gdk_gl_config_new_by_mode (mode  | GDK_GL_MODE_DOUBLE) ;
   if (glconfig == NULL)
     {
       glconfig = gdk_gl_config_new_by_mode (mode);
@@ -350,9 +352,10 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 				NULL,
 				TRUE,
 				GDK_GL_RGBA_TYPE);
-#endif /* PERIGL */
+#else
   /* we use our own double buffer */
   gtk_widget_set_double_buffered (dd->private->drawing ,FALSE);
+#endif /* PERIGL */
 #endif /* PERICAIRO */
 
   /* gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400); */

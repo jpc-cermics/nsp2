@@ -111,6 +111,8 @@ static void nsp_initgraphic(char *string,GtkWidget *win,GtkWidget *box,int *v2,
   private->ft2_context = NULL;
   private->gdk_only= FALSE;
   private->gl_only= FALSE;
+  private->gldrawable= NULL;
+  private->glcontext = NULL;
 #endif 
 #ifdef PERICAIRO 
   private->cairo_cr = NULL;

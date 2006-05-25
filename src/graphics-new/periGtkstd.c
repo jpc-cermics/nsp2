@@ -1360,6 +1360,13 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   /* {static int count = 0; xinfo(dd,"Expose event %d",count++);} */
   if(dd->private->resize != 0) 
     { 
+      /* here we execute an expose and it works also when CurPixmapStatus == 1.
+       * when CurPixmapStatus == 1 the extra pixmap is resized in scig_resize
+       * and the drawing are redirected to the extra_pixmap. If a wshow is 
+       * recorded then it will copy the extra_pixmap to both window and pixmap.
+       * the last gdk_draw_pixmap found here is not usefull in that case. 
+       */
+
       dd->private->resize = 0;
       if ( dd->private->pixmap)   gdk_pixmap_unref(dd->private->pixmap);
       dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
