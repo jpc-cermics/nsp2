@@ -1,7 +1,22 @@
-/*------------------------------------------------------------------------
- *    Copyright (C) 2001-2003 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- *    
+/* Nsp
+ * Copyright (C) 2003-2006 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -10,7 +25,7 @@
 #include <nsp/object.h>
 #include <nsp/command.h>
 
-/*---------------------------------------------------------------------
+/*
  *  This function is used to store Scilab command in a queue 
  *  (implemented with a NspList XXXX)
  *  The queue is filled by dynamic buttons and menus handlers. 
@@ -27,7 +42,7 @@
  *           (the use of the previous function is recommended )
  *  int enqueue_nsp_command( char *command)
  *  NspObject *dequeue_nsp_command() 
- *---------------------------------------------------------------------*/
+ */
 
 int scig_command_handler_none (char *command) {return 0;}
 
@@ -45,10 +60,10 @@ void reset_scig_command_handler(void)
   scig_command_handler = scig_command_handler_none;
 }
 
-/*---------------------------------------------------------------
+/*
  * try to execute a command or add it to the end of command queue 
  * XXXX global variable 
- *----------------------------------------------------------------*/
+ */
 
 static int locked = FALSE;
 static int initialized = FALSE;
@@ -61,12 +76,12 @@ int enqueue_nsp_command(char *command)
   if ( scig_command_handler(command) == 1) return 0;
   /*
    *  if scilab is at the prompt level 
-   *  using write_scilab will entre command at the prompt level 
+   *  using nsp_input_feed will entre command at the prompt level 
    *  as if user has entered it 
    */
   /* if (get_is_reading()) 
     { 
-      write_scilab(command);
+      nsp_input_feed(command);
       return 0;
     }
   */
@@ -83,9 +98,9 @@ int enqueue_nsp_command(char *command)
   return OK;
 }
 
-/*---------------------------------------------------------------------------
+/*
  * check queue 
- *---------------------------------------------------------------------------*/
+ */
 
 int checkqueue_nsp_command(void)
 {
@@ -95,9 +110,9 @@ int checkqueue_nsp_command(void)
   return (nsp_list_get_element(L,1) != NULLOBJ);
 }
 
-/*---------------------------------------------------------------------------
+/*
  * lock the queue (checkqueue_nsp_command() will return FALSE)
- *---------------------------------------------------------------------------*/
+ */
 
 void lockqueue_nsp_command(void)
 {
@@ -109,9 +124,9 @@ void unlockqueue_nsp_command(void)
   locked = FALSE;
 }
 
-/*---------------------------------------------------------------------------
+/*
  * returns a command or NULLOBJ if queue is empty 
- *---------------------------------------------------------------------------*/
+ */
 
 static NspObject *dequeue_nsp_command_obj(void)
 {
@@ -123,9 +138,9 @@ static NspObject *dequeue_nsp_command_obj(void)
   return O;
 }
 
-/*---------------------------------------------------------------------------
+/*
  * returns a command or NULLOBJ if queue is empty 
- *---------------------------------------------------------------------------*/
+ */
 
 int dequeue_nsp_command(char *buf,int buf_len)
 {

@@ -412,7 +412,7 @@ set_entry_callback (GtkWidget *entry,  gpointer   data)
   gtk_main_quit();
 }
 
-int Xorgetchar_entry(void)
+int Xorgetchar(void)
 {
   if ( nsp_check_events_activated()== FALSE) return(getchar());
   if ( text != NULL ) 

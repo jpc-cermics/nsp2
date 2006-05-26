@@ -1025,7 +1025,7 @@ static void nsp_menu_stop (void)
   /* int j = SIGINT; */ 
   Sciprintf("sci_menu_stop: to be done \n");
   /* XXXXX C2F(sigbas)(&j);*/
-  /* if (get_is_reading()) write_scilab(""); */
+  /* if (get_is_reading()) nsp_input_feed(""); */
 }
 
 /*-----------------------------------------------------------------

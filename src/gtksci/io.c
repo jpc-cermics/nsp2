@@ -1,6 +1,23 @@
-/*------------------------------------------------------------------------
- *    Copyright (C) 2001 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
+/* Nsp
+ * Copyright (C) 2001-2006 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * input from user 
+ * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
 #include <string.h> 
@@ -28,11 +45,14 @@
 #include "nsp/gtksci.h"
 #include "nsp/sciio.h"
 
+
+/* #define NSP_ENTRY_INPUT_TEST  */
+
+#define WITH_GTK_MAIN 1
+
 /* WITH_TK is eventually defined in nsp/machine.h 
  * include by nsp/Math.h 
  */ 
-
-#define WITH_GTK_MAIN 1
 
 #ifdef WITH_TK
 #include "../tksci/tksci.h"
@@ -88,21 +108,21 @@ int nsp_check_events_activated(void)
 
 
 #define IBSIZE 1024
-char sci_input_char_buffer[IBSIZE];
-int  sci_input_char_buffer_count = 0;
+char nsp_input_char_buffer[IBSIZE];
+int  nsp_input_char_buffer_count = 0;
 
 #define SELECT_DEBUG(x) 
 
 /* send string s as if it was typed in scilab window */ 
 
-void write_scilab(char *s)
+void nsp_input_feed(char *s)
 {
-  while ( *s != '\0' && sci_input_char_buffer_count < IBSIZE) 
+  while ( *s != '\0' && nsp_input_char_buffer_count < IBSIZE) 
     {
-      sci_input_char_buffer[sci_input_char_buffer_count++]= *s;
+      nsp_input_char_buffer[nsp_input_char_buffer_count++]= *s;
       s++;
     }
-  sci_input_char_buffer[sci_input_char_buffer_count++]='\n';
+  nsp_input_char_buffer[nsp_input_char_buffer_count++]='\n';
 }
 
 /* 
@@ -116,6 +136,8 @@ void write_scilab(char *s)
  *      (in the following code  the key function is select )
  * wait for a character and check for pending events 
  */
+
+#ifndef NSP_ENTRY_INPUT_TEST 
 
 int Xorgetchar(void)
 {
@@ -190,10 +212,10 @@ int Xorgetchar(void)
       }
 #endif
     /* maybe a new string to execute */
-    if ( sci_input_char_buffer_count > 0) 
+    if ( nsp_input_char_buffer_count > 0) 
       {
-	sci_input_char_buffer_count--;
-	return sci_input_char_buffer[++c_count];
+	nsp_input_char_buffer_count--;
+	return nsp_input_char_buffer[++c_count];
       }
     else
       {
@@ -249,6 +271,8 @@ int Xorgetchar(void)
     }
   }
 }
+
+#endif /* NSP_ENTRY_INPUT_TEST  */
 
 /*
  * This routine can be called to checks for all events 
@@ -374,3 +398,10 @@ int Xorgetchar_thread(void)
 
 
 
+/* test version with vte as output and an entry as input 
+ * for windows native port.
+ */
+
+#ifdef NSP_ENTRY_INPUT_TEST 
+#include "term.c"
+#endif

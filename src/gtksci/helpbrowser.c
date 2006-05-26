@@ -832,7 +832,7 @@ int nsp_help_topic(const char *topic, char *buf)
 }
 
 /*
-static void write_scilab_example(char *example)
+static void nsp_input_feed_example(char *example)
 {
   char *pos = example, *tmpdir;
   FILE *fd;
@@ -887,7 +887,7 @@ static void write_scilab_example(char *example)
   fclose(fd);
   
   instr = g_strconcat("exec('",fname,"',7);",NULL);
-  write_scilab(instr);
+  nsp_input_feed(instr);
   g_free(instr);
   g_free(fname);
 
