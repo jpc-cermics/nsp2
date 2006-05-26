@@ -31,6 +31,8 @@
 #include "nsp/interf.h"
 #include "Plo3dObj.h"
 
+extern Stack SciStack; 
+
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
@@ -243,7 +245,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
 			     int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
 {
   NspList *Lobj = Lo;
-  Stack stack; /* just used for messages i.e NspFname(stack) */
+  /* Stack stack;*/ /* just used for messages i.e NspFname(stack) */
   nsp_box_3d box;
   double x[2],y[2],zz[2],zzmin,zzmax;
   int two=2;
@@ -265,7 +267,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
     }
 #endif
 
-  NspFname(stack) ="drawobj";
+  /* NspFname(stack) ="drawobj"; */
   flagx = Xgc->graphic_engine->xget_last(Xgc);
   foreground_color = flagx+1;
   background_color = flagx+2;
@@ -275,7 +277,7 @@ extern void nsp_draw_3d_obj( BCG *Xgc,void *Lo,double *theta,double *alpha,const
    * The unchanged values are kept in Lobj
    */
 
-  Obj = (Obj3d *)obj3d_from_list(stack,Lobj,TRUE,&err,&nf,&nbObj) ;
+  Obj = (Obj3d *)obj3d_from_list(SciStack,Lobj,TRUE,&err,&nf,&nbObj) ;
 
   if ( Obj == NULL ) return;
 
@@ -353,7 +355,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
 				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
 {
   NspList *Lobj = Lo;
-  Stack stack; /* just used for messages i.e NspFname(stack) */
+  /* Stack stack;*/ /* just used for messages i.e NspFname(stack) */
   nsp_box_3d box;
   double x[2],y[2],zz[2],zzmin,zzmax;
   double Box[6]={ebox[0],ebox[2],ebox[4],ebox[1],ebox[3],ebox[5]};
@@ -361,7 +363,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
   int k, flagx, nf=0,err=0,nbObj, two=2;
   double lim[3];
   Plot3dBox *B;
-  NspFname(stack) ="drawobj";
+  /* NspFname(stack) ="drawobj"; */
   flagx = Xgc->graphic_engine->xget_last(Xgc);
   foreground_color = flagx+1;
   background_color = flagx+2;
@@ -371,7 +373,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
    * The unchanged values are kept in Lobj
    */
 
-  Obj = (Obj3d *)obj3d_from_list(stack,Lobj,TRUE,&err,&nf,&nbObj) ;
+  Obj = (Obj3d *)obj3d_from_list(SciStack,Lobj,TRUE,&err,&nf,&nbObj) ;
 
   if ( Obj == NULL ) return;
 
