@@ -164,12 +164,13 @@ static void xset_show(BCG *Xgc)
 
 static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 {
-  if ( Xgc->CurPixmapStatus == 1) 
-    {
-      gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg);
-      gdk_draw_rectangle(Xgc->private->extra_pixmap,Xgc->private->stdgc, TRUE,
-			 0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
-    }
+  cairo_t *cr =  Xgc->private->cairo_cr;
+  cairo_set_source_rgb(cr,
+		       Xgc->private->gcol_bg.red/65535.0,
+		       Xgc->private->gcol_bg.green/65535.0,
+		       Xgc->private->gcol_bg.blue/65535.0);
+  cairo_rectangle (cr,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
+  cairo_fill (cr);
 }
 
 /* 
@@ -192,6 +193,8 @@ static void pixmap_resize(BCG *Xgc)
 	}
       gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
       Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
+      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
+      Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->extra_pixmap);
       pixmap_clear_rect(Xgc,0,0,x,y);
     }
 } 
@@ -868,6 +871,8 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       if ( Xgc->private->extra_pixmap != NULL) 
 	{
 	  Xgc->private->drawable = Xgc->private->extra_pixmap;
+	  if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
+	  Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->extra_pixmap);
 	  Xgc->CurPixmapStatus = 1;
 	}
       else 
@@ -885,8 +890,10 @@ static void xset_pixmapOn(BCG *Xgc,int num)
 	    {
 	      xinfo(Xgc,"Animation mode is on,( xset('pixmap',0) to leave)");
 	      Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
-	      Xgc->CurPixmapStatus = 1;
+	      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
+	      Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->extra_pixmap);
 	      pixmap_clear_rect(Xgc,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
+	      Xgc->CurPixmapStatus = 1;
 	    }
 	}
     }
@@ -897,6 +904,8 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
       Xgc->private->extra_pixmap = NULL;
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
+      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
+      Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->pixmap);
       Xgc->CurPixmapStatus = 0; 
     }
   else
@@ -905,6 +914,8 @@ static void xset_pixmapOn(BCG *Xgc,int num)
        * but extra_pixmap is not destroyed 
        */
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
+      if ( Xgc->private->cairo_cr != NULL) cairo_destroy (Xgc->private->cairo_cr);
+      Xgc->private->cairo_cr = gdk_cairo_create (Xgc->private->pixmap);
       Xgc->CurPixmapStatus = 0; 
     }
   
@@ -1423,8 +1434,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       /* update drawable */
       if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
       /* fill private background with background */
-      gdk_gc_set_background(dd->private->stdgc, &dd->private->gcol_bg);
-      gdk_draw_rectangle(dd->private->pixmap,dd->private->stdgc, TRUE,0,0,dd->CWindowWidth, dd->CWindowHeight);
+      pixmap_clear_rect(dd,0,0,dd->CWindowWidth, dd->CWindowHeight);
       /* On lance l'action standard de resize + redessin  */
       dd->private->in_expose= TRUE;
 #ifdef PERICAIRO
@@ -1628,7 +1638,8 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
  * include the cairo basic graphic routines 
  */
 
-#include "perigtk/fonts_pango_gdk.c"
+/* #include "perigtk/fonts_pango_gdk.c" */
+#include "perigtk/fonts_pango_cairo.c"
 #include "perigtk/peridraw_cairo_new.c"
 
 
