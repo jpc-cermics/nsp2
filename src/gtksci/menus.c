@@ -1048,7 +1048,7 @@ static void nsp_menu_help(void)
 #ifdef WITH_GTKHTML
   Sci_Help(NULL,NULL,NULL);
 #else 
-  Sciprint("help is not available\n");
+  Sciprintf("help is not available\n");
 #endif 
 }
 

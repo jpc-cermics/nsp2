@@ -20,15 +20,15 @@
  * Xorgetchar de io.c pour utiliser cette version. 
  */
 
-#include <sys/ioctl.h>
+/* #include <sys/ioctl.h> */
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
 #include <gtk/gtk.h>
-#include <gdk/gdkx.h>
+/* #include <gdk/gdkx.h> */
 #include <glib-object.h>
-#include <vte/vte.h>
+#include "vte/vte.h"
 
 static void
 window_title_changed(GtkWidget *widget, gpointer win)
@@ -415,7 +415,7 @@ set_entry_callback (GtkWidget *entry,  gpointer   data)
     {
       char prompt[64];
       int col=34;
-      sprintf(prompt,"\033[1;34m-nsp->\033[0m",col);
+      sprintf(prompt,"\033[1;34m-nsp->\033[0m");
       vte_terminal_feed(VTE_TERMINAL(widget),prompt,strlen(prompt));
       vte_terminal_feed(VTE_TERMINAL(widget),text,strlen(text));
       vte_terminal_feed(VTE_TERMINAL(widget),"\r\n",2);
