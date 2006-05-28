@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  * test file: to test a vte for just output of nsp.
+ * Il faut decommenter une ligne dans lsci.c et commenter 
+ * Xorgetchar de io.c pour utiliser cette version. 
  */
 
 #include <sys/ioctl.h>
@@ -406,9 +408,16 @@ static int count=0;
 static void
 set_entry_callback (GtkWidget *entry,  gpointer   data)
 {
+  GtkWidget *widget =   (GtkWidget *) data;
   text = gtk_editable_get_chars (GTK_EDITABLE (entry), 0, -1);
   g_print ("text entered '%s'\n", text);
-  gtk_entry_set_text(GTK_ENTRY(entry),"");
+  if ( strlen(text) != 0) 
+    {
+      vte_terminal_feed(VTE_TERMINAL(widget),"-nsp->",6);
+      vte_terminal_feed(VTE_TERMINAL(widget),text,strlen(text));
+      vte_terminal_feed(VTE_TERMINAL(widget),"\r\n",2);
+      gtk_entry_set_text(GTK_ENTRY(entry),"");
+    }
   gtk_main_quit();
 }
 
@@ -618,11 +627,11 @@ int term_output(int argc, char **argv)
   gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
   
   entry = gtk_entry_new();
-  gtk_box_pack_start(GTK_BOX(vbox), entry, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE,FALSE,0); /* TRUE, TRUE, 0); */
 
   /* g_signal_connect (entry, "changed", G_CALLBACK (set_entry_callback),NULL);*/
   /* set_entry_callback is called when return is activated */
-  g_signal_connect (entry, "activate", G_CALLBACK (set_entry_callback),NULL);
+  g_signal_connect (entry, "activate", G_CALLBACK (set_entry_callback),widget);
   gtk_entry_set_activates_default (GTK_ENTRY(entry), TRUE);
 
   gtk_widget_grab_focus (entry);
@@ -712,6 +721,7 @@ int term_output(int argc, char **argv)
   vte_terminal_set_emulation(VTE_TERMINAL(widget), "xterm");
   
   /* Set the default font. */
+  /* 
   if (font != NULL) 
     {
       vte_terminal_set_font_from_string(VTE_TERMINAL(widget), font);
@@ -720,6 +730,8 @@ int term_output(int argc, char **argv)
     {
       vte_terminal_set_font_from_string(VTE_TERMINAL(widget), "monospace 10");
     }
+  */
+  vte_terminal_set_font_from_string(VTE_TERMINAL(widget), "Sans 10");
 
   /* Go for it! */
   g_object_add_weak_pointer(G_OBJECT(widget), (gpointer*)&widget);
