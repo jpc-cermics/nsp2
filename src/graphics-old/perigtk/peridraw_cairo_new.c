@@ -377,9 +377,9 @@ static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z,
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
+/* cairo */
 
-
-static void draw_mark(BCG *Xgc,int *x, int *y)
+static void draw_mark_cairo(BCG *Xgc,int *x, int *y)
 { 
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
@@ -404,6 +404,30 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   cairo_show_text (cr,symbol_code);
 }
 
+/* pango layout and cairo 
+ *
+ */ 
+
+static void draw_mark(BCG *Xgc,int *x, int *y)
+{ 
+  double dx,dy;
+  PangoRectangle ink_rect;
+  cairo_t *cr =  Xgc->private->cairo_cr;
+  int code = symbols[Xgc->CurHardSymb]; 
+  gchar symbol_code[4], *iter = symbol_code;
+  DRAW_CHECK;
+  g_unichar_to_utf8(code, iter);
+  iter = g_utf8_next_char(iter);
+  g_unichar_to_utf8(0x0, iter);
+  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
+  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,NULL);
+  dx = PANGO_PIXELS(( ink_rect.x + ink_rect.width/2.0));
+  dy = PANGO_PIXELS(( ink_rect.y + ink_rect.height/2.0));
+  cairo_move_to (cr, *x-dx,*y-dy);
+  pango_cairo_update_layout (cr,Xgc->private->mark_layout);
+  cairo_show_text (cr,symbol_code);
+}
+
 /*
  *  display of a string
  *  at (x,y) position whith slope angle alpha in degree . 
@@ -415,7 +439,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
  * of the string ( we do not separate asc and desc 
  */
 
-static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
+static void displaystring_cairo(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
 { 
   int rect[4];
   cairo_t *cr =  Xgc->private->cairo_cr;
@@ -454,11 +478,12 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
     }
 }
 
+
 /*
  * To get the bounding rectangle of a string 
  */
 
-static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
+static void boundingbox_cairo(BCG *Xgc,char *string, int x, int y, int *rect)
 { 
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_text_extents_t extents;
@@ -469,6 +494,64 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
   rect[1]= y + extents.y_bearing;
   rect[2]= extents.width +extents.x_bearing ;
 }
+
+
+/* pango layout + cairo */
+
+static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
+{ 
+  int rect[4],width,height;
+  cairo_t *cr =  Xgc->private->cairo_cr;
+  DRAW_CHECK;
+  pango_layout_set_text (Xgc->private->layout, string, -1);
+  /* used to position the descent of the last line of layout at y */
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
+  if ( Abs(angle) <= 0.1) 
+    {
+      cairo_move_to (cr, x,y-height);
+      pango_cairo_update_layout (cr,Xgc->private->layout);
+      pango_cairo_show_layout (cr,Xgc->private->layout);
+      /* horizontal string */
+      if (flag == 1) /*  flag == 1)  */
+	{
+	  cairo_rectangle (cr,x,y-height,width,height);
+	  cairo_stroke (cr);
+	}
+    }
+  else 
+    {
+      double rad_angle = angle * M_PI/180.0;
+      /* cairo_text_extents_t extents; */
+      cairo_save (cr);
+      cairo_identity_matrix (cr);
+      cairo_translate (cr, x,y);
+      cairo_rotate (cr, rad_angle);
+      cairo_move_to (cr, 0,-height);
+      pango_layout_set_text (Xgc->private->layout,string, -1);
+      pango_cairo_update_layout (cr,Xgc->private->layout);
+      pango_cairo_show_layout (cr,Xgc->private->layout);
+      if (1) /*  flag == 1)  */
+	{
+	  cairo_rectangle (cr,0,-height,rect[2],rect[3]);
+	  cairo_stroke (cr);
+	}
+      cairo_restore (cr);
+    }
+}
+
+
+static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
+{
+  int width, height;
+  DRAW_CHECK;
+  pango_layout_set_text (Xgc->private->layout, string, -1);
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
+  rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
+}
+
+
+
+
 
 
 /*
