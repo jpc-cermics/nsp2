@@ -413,7 +413,10 @@ set_entry_callback (GtkWidget *entry,  gpointer   data)
   g_print ("text entered '%s'\n", text);
   if ( strlen(text) != 0) 
     {
-      vte_terminal_feed(VTE_TERMINAL(widget),"-nsp->",6);
+      char prompt[64];
+      int col=34;
+      sprintf(prompt,"\033[1;34m-nsp->\033[0m",col);
+      vte_terminal_feed(VTE_TERMINAL(widget),prompt,strlen(prompt));
       vte_terminal_feed(VTE_TERMINAL(widget),text,strlen(text));
       vte_terminal_feed(VTE_TERMINAL(widget),"\r\n",2);
       gtk_entry_set_text(GTK_ENTRY(entry),"");
