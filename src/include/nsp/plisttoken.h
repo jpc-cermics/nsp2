@@ -73,6 +73,8 @@
 #define DOTSLASH  ((((int) '/') << 7) + (int) '.' )
 #define DOTBSLASH ((((int) '\\') << 7) + (int) '.' )
 
+#define DOTPLUS   ((((int) '+') << 7) + (int) '.' )
+
 #define STARDOT   ((((int) '.') << 7) + (int) '*' )
 #define SLASHDOT  ((((int) '.') << 7) + (int) '/' )
 #define BSLASHDOT ((((int) '.') << 7) + (int) '\\' )
@@ -106,6 +108,7 @@
 
 #define SEQAND   ((((int) '&') << 7) + (int) '&' )
 #define SEQOR    ((((int) '|') << 7) + (int) '|' )
+
 
 /******************************************
  *  SPECIAL code used in internal list coding
