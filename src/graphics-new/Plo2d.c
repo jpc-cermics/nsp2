@@ -364,8 +364,8 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
       hx=xmax-xmin;
       hy=ymax-ymin;
       getscale2d(Xgc,WRect,FRect1,logscale,ARect);
-      wdim[0]=linint((double)wdim[0] * (WRect[2]-ARect[0]-ARect[1]));  /* add corrections from margins */
-      wdim[1]=linint((double)wdim[1] * (WRect[3]-ARect[2]-ARect[3]));  /* add corrections from margins */
+      wdim[0]=linint((double)wdim[0] * (WRect[2]*(1.0-ARect[0]-ARect[1])));  /* add corrections for margins */
+      wdim[1]=linint((double)wdim[1] * (WRect[3]*(1.0-ARect[2]-ARect[3])));  /* add corrections for margins */
       if ( hx/(double)wdim[0]  <hy/(double) wdim[1] ) 
 	{
 	  hx1=wdim[0]*hy/wdim[1];
