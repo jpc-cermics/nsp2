@@ -313,13 +313,13 @@ case "$host" in
     MAKEFILE_TARGET=Makefile.aix
     ;;
 # Linux sparc
-  sparc-*-linux-gnu)
+  sparc*-*-linux-gnu)
     CC_OPTIONS="${CC_OPTIONS} -Dlinux "
     FC_LDFLAGS="${FC_LDFLAGS} -ldl -rdynamic"
     MAKEFILE_TARGET=Makefile.linux
    ;;
 # SUN OS (NO LONGER SUPPORTED)
-  sparc-*-sunos*)
+  sparc*-*-sunos*)
     # standard compilers
     CC_PICFLAGS=-PIC
     FC_PICFLAGS=-PIC
@@ -959,10 +959,25 @@ if test "$with_gtkglext" != no; then
           # path, then we don't want to generate a full path 
           # for gtk-config or to directly generate the 
           # result of `gtk-config --cflags`. Idem for gnome
-          GTK_PKGS="$GTK_PKGS gtkglext-1.0"
-          GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
-          GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
-          WITH_GL="yes"
+          #GTK_PKGS="$GTK_PKGS gtkglext-1.0"
+          #GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
+          #GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+          #WITH_GL="yes"
+	  AC_MSG_CHECKING([if freetype2 exists])
+	  if pkg-config --exists freetype2; then
+		 AC_MSG_RESULT([yes])
+		 AC_MSG_CHECKING([if pangoft2 exists])
+		 if pkg-config --exists pangoft2; then
+			AC_MSG_RESULT([yes])
+			GTK_PKGS="$GTK_PKGS gtkglext-1.0 pangoft2"
+			GTKCFLAGS="\`pkg-config $GTK_PKGS --cflags\`"
+			GTKLIBS="\`pkg-config $GTK_PKGS --libs\`"
+			WITH_GL="yes"
+		 else
+			AC_MSG_WARN([pangoft2 is missing.]) 
+			AC_MSG_WARN([WARNING OpenGL driver will not be build.])
+		 fi
+	  fi
        else 
     	  AC_MSG_WARN([Could not find the gtkglext-1.0 package version $gtkglext_version or later .],)
     	  AC_MSG_WARN([WARNING OpenGL driver will not be build .],)
@@ -1080,7 +1095,7 @@ fi
 ## prepared for future use 
 #################
 
-if test "xx" = yes; then 
+if test "yes" = yes; then 
  builtin(include,config/ac_find_file.m4)
  builtin(include,config/ac_check_umfpack.m4)
  AC_CHECK_UMFPACK
