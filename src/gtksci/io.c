@@ -137,7 +137,7 @@ void nsp_input_feed(char *s)
  * wait for a character and check for pending events 
  */
 
-#ifndef NSP_ENTRY_INPUT_TEST 
+#if ! defined(NSP_ENTRY_INPUT_TEST) && ! defined(USE_TEXT_VIEW)
 
 int Xorgetchar(void)
 {
