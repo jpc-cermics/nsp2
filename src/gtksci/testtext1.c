@@ -50,9 +50,11 @@ struct _Buffer
   GtkTextTag *indent_tag;
   GtkTextTag *margin_tag;
   GtkTextTag *custom_tabs_tag;
+  GtkTextMark *mark;
   GSList *color_tags;
   guint color_cycle_timeout;
   gdouble start_hue;
+
 };
 
 struct _View
@@ -542,10 +544,12 @@ create_buffer (void)
                                                         "tabs", tabs,
                                                         "foreground", "green", NULL);
 
+  buffer->mark = NULL;
+
   pango_tab_array_free (tabs);
   
   buffers = g_slist_prepend (buffers, buffer);
-  
+
   return buffer;
 }
 
@@ -1188,64 +1192,238 @@ line_numbers_expose (GtkWidget      *widget,
 }
 
 
+typedef struct _view_history view_history;
 
+struct _view_history {
+  GList *history, *history_tail, *history_cur;
+  int history_size, dir ; /* dir = 0,1,-1 */
+};
+
+#define MAX_HISTORY_SIZE 1000
+
+static void nsp_append_history(char *text,view_history *data)
+{
+  if ( data == NULL) return ;
+  if (data->history_tail == NULL) 
+    {
+      data->history = g_list_append (NULL, g_strdup (text));
+      data->history_tail =data->history_cur= data->history;
+      data->dir = 0;
+    } 
+  else if (text[0] != '\0' && strcmp (text, data->history_tail->data) != 0) 
+    {
+      /* do not insert repetitions */
+      g_list_append (data->history_tail, g_strdup (text));
+      data->history_tail =data->history_cur= data->history_tail->next;
+      data->dir = 0;
+    }
+  else 
+    {
+      data->history_cur=data->history_tail;
+      data->dir = 0;
+    }
+  if (data->history_size == MAX_HISTORY_SIZE) 
+    {
+      g_free (data->history->data);
+      data->history = g_list_delete_link (data->history, data->history);
+      data->history_tail =data->history_cur= data->history;
+      data->dir = 0;
+    } 
+  else 
+    {
+      data->history_size++;
+    }
+}
+
+char *nsp_xhistory_up(view_history *data)
+{
+  if ( data == NULL) return NULL;
+  if (data->dir != 0 && data->history_cur->prev != NULL) {
+    data->history_cur = data->history_cur->prev;
+  }
+  data->dir = 1;
+  return data->history_cur->data;
+}
+
+char *nsp_xhistory_down(view_history *data)
+{
+  if ( data == NULL) return NULL;
+  if ( data->dir == 0 ) return NULL;
+  if ( data->history_cur->next != NULL) {
+    data->history_cur = data->history_cur->next;
+  }
+  data->dir = -1;
+  return data->history_cur->data;
+}
+
+
+
+/* dealing with keypressed in text view 
+ *
+ *
+ */
+
+static gchar *nsp_expr=NULL;
+static int count=0;
 
 static gboolean
-key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer data)
+key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 {
-  static GtkTextMark *mark=NULL;
-  View *view= data;
-  fprintf(stderr,"key pressed \n");
-  if (event->keyval == GDK_Return)
+  GtkTextIter start, end,iter;
+  static view_history *data  = NULL;
+  GtkTextMark *cursor_mark;
+  View *view= xdata;
+  char *str; 
+  if ( data == NULL) 
     {
-      gchar *search_string;
-      GtkTextBuffer *buffer;
-      GtkTextIter start, end,iter;
-      buffer = view->buffer->buffer;
-      gtk_text_buffer_get_bounds (buffer, &start, &end);
-      if ( mark != NULL )
-	{
-	  gtk_text_buffer_get_iter_at_mark (buffer, &iter,mark);
-	  search_string = gtk_text_iter_get_text (&iter, &end);
-	}
-      else 
-	{
-	  search_string = gtk_text_iter_get_text (&start, &end);
-	}
-      fprintf(stderr,"<%s>/n",search_string);
-      gtk_text_buffer_insert (buffer, &end,
-			      "\n-->",-1);
-      gtk_text_buffer_get_bounds (buffer, &start, &end);
-      if ( mark == NULL) 
-	mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
-      else 
-	gtk_text_buffer_move_mark (buffer, mark, &end);
+      data =malloc (sizeof(view_history));
+      data->history = data->history_tail = NULL;
+      data->history_cur = NULL;
+      data->history_size = 0;     
+      /* XXXXX A finir */
+      g_object_set_data_full (G_OBJECT(widget),"myhistory",data,NULL);
+    }
 
-      gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), mark,
-				    0, TRUE, 0.0, 1.0);
-      gtk_text_buffer_apply_tag (view->buffer->buffer,
-				 view->buffer->not_editable_tag,
-				 &start, &end);
-      /* ZZZ */
-      fprintf(stderr,"return pressed \n");
-      if ( strcmp(search_string,"cut")==0)
-	{
-	  gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
-	  gtk_text_buffer_move_mark (buffer, mark, &end);
-	}
-      else if  ( strcmp(search_string,"top")==0)
-	{
-	  fprintf(stderr,"scroll to top\n");
-	  gtk_text_buffer_get_iter_at_mark (buffer, &iter,mark);
-	  gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view),&iter,
-				       0.0,TRUE,
-				       0.0,0.0);
-
-	}
+  fprintf(stderr,"key pressed \n");
+  switch ( event->keyval ) 
+    {
+    case GDK_Return:
+      {
+	gchar *search_string;
+	GtkTextBuffer *buffer;
+	buffer = view->buffer->buffer;
+	gtk_text_buffer_get_bounds (buffer, &start, &end);
+	if ( view->buffer->mark != NULL )
+	  {
+	    gtk_text_buffer_get_iter_at_mark (buffer, &iter,view->buffer->mark);
+	    search_string = gtk_text_iter_get_text (&iter, &end);
+	  }
+	else 
+	  {
+	    search_string = gtk_text_iter_get_text (&start, &end);
+	  }
+	fprintf(stderr,"<%s>/n",search_string);
+	nsp_append_history(search_string,data);
+	gtk_text_buffer_insert (buffer, &end,
+				"\n",-1);
+	gtk_text_buffer_get_bounds (buffer, &start, &end);
+	if ( view->buffer->mark == NULL) 
+	  view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
+	else 
+	  gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
+	
+	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+				      view->buffer->mark,
+				      0, TRUE, 0.0, 1.0);
+	gtk_text_buffer_apply_tag (view->buffer->buffer,
+				   view->buffer->not_editable_tag,
+				   &start, &end);
+	/* ZZZ */
+	fprintf(stderr,"return pressed \n");
+	if ( strcmp(search_string,"cut")==0)
+	  {
+	    gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
+	    gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
+	  }
+	else if  ( strcmp(search_string,"top")==0)
+	  {
+	    fprintf(stderr,"scroll to top\n");
+	    gtk_text_buffer_get_iter_at_mark (buffer, &iter,view->buffer->mark);
+	    gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view),&iter,
+					 0.0,TRUE,
+					 0.0,0.0);
+	  }
+	g_signal_stop_emission_by_name (widget, "key_press_event");
+	nsp_expr= search_string;
+	gtk_main_quit();
+      }
       return TRUE;
+    case GDK_Up:
+      str = nsp_xhistory_up(data);
+      fprintf(stdout,"up pressed\n");
+      if ( str != NULL) 
+	{
+	  fprintf(stdout,"insert text\n");
+	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+	  if ( view->buffer->mark != NULL) 
+	    {
+	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+	      gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
+	    }
+	  gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
+	}
+      g_signal_stop_emission_by_name (widget, "key_press_event");
+      return TRUE;
+      break;
+    case GDK_Down:
+      str = nsp_xhistory_down(data);
+      fprintf(stdout,"down pressed\n");
+      if ( str != NULL) 
+	{
+	  fprintf(stdout,"insert text\n");
+	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+	  if ( view->buffer->mark != NULL) 
+	    {
+	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+	      gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
+	    }
+	  gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
+	}
+      g_signal_stop_emission_by_name (widget, "key_press_event");
+      return TRUE;
+      break;
+    default:
+      fprintf(stdout,"move cursor ?\n");
+      cursor_mark = gtk_text_buffer_get_mark (view->buffer->buffer,"insert");
+      gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+      gtk_text_buffer_move_mark (view->buffer->buffer, cursor_mark, &end);      
+      break;
     }
   return FALSE;
 }
+
+
+
+int Xorgetchar(void)
+{
+  if ( nsp_check_events_activated()== FALSE) return(getchar());
+  if ( nsp_expr != NULL ) 
+    {
+      int val1 = nsp_expr[count];
+      if (count <= strlen(nsp_expr))
+	{
+	  g_print ("char returned '%c'\n",val1);
+	  val1 = nsp_expr[count];
+	  count++;
+	}
+      else
+	{
+	  g_print ("char returned <return>\n");
+	  val1 = '\n';
+	  /* g_free(nsp_expr);*/ nsp_expr=NULL;count=0;
+	}
+      return val1;
+    }
+  gtk_main();
+  count=1;
+  g_print ("char returned '%c'\n",nsp_expr[0]);
+  return nsp_expr[0];
+}
+
+
+/* DefSciReadLine will enter here 
+ *
+ */
+
+char *readline(const char *prompt)
+{
+  nsp_insert_prompt();
+  fprintf(stderr,"in my readline\n");
+  gtk_main();
+  g_print ("string returned '%s'\n",nsp_expr);
+  return g_strdup(nsp_expr);
+}
+
 
 
 static View *
@@ -1255,6 +1433,7 @@ create_view (Buffer *buffer)
   
   GtkWidget *sw;
   GtkWidget *vbox;
+  GtkWidget *menu;
   
   view = g_new0 (View, 1);
   views = g_slist_prepend (views, view);
@@ -1267,26 +1446,34 @@ create_view (Buffer *buffer)
   
   g_signal_connect (view->window, "delete_event",
 		    G_CALLBACK (delete_event_cb), NULL);
-
+  /* 
   view->accel_group = gtk_accel_group_new ();
+  gtk_window_add_accel_group (GTK_WINDOW (view->window), view->accel_group);
+  */
+
+  /* 
   view->item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", view->accel_group);
   g_object_set_data (G_OBJECT (view->item_factory), "view", view);
-  
   gtk_item_factory_create_items (view->item_factory, G_N_ELEMENTS (menu_items), menu_items, view);
-
-  gtk_window_add_accel_group (GTK_WINDOW (view->window), view->accel_group);
-
+  */
+  
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add (GTK_CONTAINER (view->window), vbox);
-
+  /* 
   gtk_box_pack_start (GTK_BOX (vbox),
 		      gtk_item_factory_get_widget (view->item_factory, "<main>"),
 		      FALSE, FALSE, 0);
+  */
+
+  /* XXXX accel group to share with menu */
+
+  menu = create_main_menu(view->window);  
+  gtk_box_pack_start(GTK_BOX(vbox),menu,FALSE,FALSE,0);
   
   sw = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-                                 GTK_POLICY_AUTOMATIC,
-                                 GTK_POLICY_AUTOMATIC);
+				  GTK_POLICY_AUTOMATIC,
+				  GTK_POLICY_AUTOMATIC);
 
   view->text_view = gtk_text_view_new_with_buffer (buffer->buffer);
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view->text_view),
@@ -1350,28 +1537,61 @@ create_view (Buffer *buffer)
   return view;
 }
 
+static  View *view;
+static char buf[1025];
 
-/* 
-int
-main (int argc, char** argv)
+int  Sciprint2textview(const char *fmt, va_list ap)
+{
+  GtkTextBuffer *buffer;
+  GtkTextIter start, end;
+  int n;
+  n= vsnprintf(buf,1024 , fmt, ap );
+  buffer = view->buffer->buffer;
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  gtk_text_buffer_insert (buffer, &end,buf,-1);
+  if ( view->buffer->mark == NULL) 
+    view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
+  else 
+    gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  gtk_text_buffer_apply_tag (view->buffer->buffer,
+			     view->buffer->not_editable_tag,
+			     &start, &end);
+  /* ZZZ */
+  return n;
+}
+
+nsp_insert_prompt()
+{
+  char *prompt= Prompt();
+  GtkTextBuffer *buffer;
+  GtkTextIter start, end;
+  int n;
+  buffer = view->buffer->buffer;
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  gtk_text_buffer_insert (buffer, &end,prompt,-1);
+  if ( view->buffer->mark == NULL) 
+    view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
+  else 
+    gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  gtk_text_buffer_apply_tag (view->buffer->buffer,
+			     view->buffer->not_editable_tag,
+			     &start, &end);
+  /* scroll if needed */
+  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+				view->buffer->mark,
+				0, TRUE, 0.0, 1.0);
+}
+
+
+void nsp_create_main_text_view()
 {
   Buffer *buffer;
-  View *view;
-  gtk_init (&argc, &argv);
   buffer = create_buffer ();
   view = create_view (buffer);
   buffer_unref (buffer);
-  gtk_main ();
-  return 0;
+  SetScilabIO(Sciprint2textview);
 }
-*/
 
-nsp_create_main_text_view()
-{
-  Buffer *buffer;
-  View *view;
-  buffer = create_buffer ();
-  view = create_view (buffer);
-  buffer_unref (buffer);
-}
 

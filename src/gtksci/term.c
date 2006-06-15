@@ -29,6 +29,7 @@
 /* #include <gdk/gdkx.h> */
 #include <glib-object.h>
 #include "vte/vte.h"
+#include "gdk/gdkkeysyms.h"
 
 static void
 window_title_changed(GtkWidget *widget, gpointer win)
@@ -424,7 +425,145 @@ set_entry_callback (GtkWidget *entry,  gpointer   data)
   gtk_main_quit();
 }
 
-int Xorgetchar(void)
+
+typedef struct _entry_history entry_history;
+
+struct _entry_history {
+  GList *history, *history_tail, *history_cur;
+  gboolean editing;
+  int history_size;
+};
+
+#define MAX_HISTORY_SIZE 1000
+
+void nsp_entry_append_history(GtkWidget *entry,entry_history *data)
+{
+  if ( data == NULL) return NULL;
+  text = gtk_entry_get_text (GTK_ENTRY (entry));
+  if (data->history_tail == NULL) 
+    {
+      data->history = g_list_append (NULL, g_strdup (text));
+      data->history_tail =data->history_cur= data->history;
+    } 
+  else if (text[0] != '\0' && strcmp (text, data->history_tail->data) != 0) 
+    {
+      g_list_append (data->history_tail, g_strdup (text));
+      data->history_tail =data->history_cur= data->history_tail->next;
+    }
+  if (data->history_size == MAX_HISTORY_SIZE) 
+    {
+      g_free (data->history->data);
+      data->history = g_list_delete_link (data->history, data->history);
+    } 
+  else 
+    {
+      data->history_size++;
+    }
+}
+
+char *nsp_entry_history_up(GtkWidget *entry,entry_history *data)
+{
+  if ( data == NULL) return NULL;
+  if (data->history_cur->prev != NULL) {
+    data->history_cur = data->history_cur->prev;
+    gtk_entry_set_text (GTK_ENTRY(entry), data->history_cur->data);
+    gtk_editable_set_position(GTK_EDITABLE(entry),strlen (data->history_cur->data));
+    data->editing = FALSE;
+  }
+  return NULL;
+}
+
+char *nsp_entry_history_down(GtkWidget *entry,entry_history *data)
+{
+  if ( data == NULL) return NULL;
+  if (data->history_cur->next != NULL) {
+    data->history_cur = data->history_cur->next;
+    gtk_entry_set_text (GTK_ENTRY (entry), data->history_cur->data);
+    gtk_editable_set_position (GTK_EDITABLE (entry), strlen (data->history_cur->data));
+  }
+  return NULL;
+}
+
+
+static gint
+key_press_entry_callback(GtkWidget *entry, GdkEventKey *event, gpointer user_data)
+{
+  GtkWidget *widget =   (GtkWidget *) user_data;
+  static entry_history *data  = NULL;
+  if ( data == NULL) 
+    {
+      data =malloc (sizeof(entry_history));
+      data->history = data->history_tail = NULL;
+      data->history_cur = NULL;
+      data->editing = TRUE;
+      data->history_size = 0;     
+      /* XXXXX A finir */
+      g_object_set_data_full (G_OBJECT(entry),"entry_history",data,NULL);
+    }
+  switch (event->keyval) 
+    {
+    case GDK_Return: 
+      fprintf(stdout,"return pressed\n");
+      nsp_entry_append_history(entry,data);
+      return FALSE;
+      break;
+    case GDK_Up:
+      nsp_entry_history_up(entry,data);
+      fprintf(stdout,"up pressed\n");
+      break;
+    case GDK_Down:
+      nsp_entry_history_down(entry,data);
+      fprintf(stdout,"down pressed\n");
+      break;
+    default:
+      return FALSE;
+  }
+  g_signal_stop_emission_by_name (entry, "key_press_event");
+  return TRUE;
+}
+
+/* accellerators 
+ *
+ */
+
+
+void accel_button_new(GtkWidget *entry,GtkAccelGroup *accel_group,
+			     const gchar   *accel)
+{
+  guint keyval;
+  GdkModifierType modifiers;
+  gtk_accelerator_parse (accel, &keyval, &modifiers);
+  gtk_widget_add_accelerator (entry, "activate", accel_group,
+			      keyval, modifiers, GTK_ACCEL_VISIBLE | GTK_ACCEL_LOCKED);
+}
+
+
+static void
+set_entry_accellerators (GtkWidget *entry,  gpointer   data)
+{
+  GtkAccelGroup *accel_group = gtk_accel_group_new ();
+  gtk_window_add_accel_group (GTK_WINDOW (entry), accel_group);
+  gtk_widget_add_accelerator (entry,
+			      "activate",
+			      accel_group,
+			      GDK_F1,
+			      0,
+			      GTK_ACCEL_VISIBLE);
+  gtk_widget_add_accelerator (entry,
+			      "activate",
+			      accel_group,
+			      "a",
+			      0,
+			      GTK_ACCEL_VISIBLE);
+
+  accel_button_new(entry,accel_group,"<Alt>d");
+  accel_button_new(entry,accel_group,"<Ctrl>p");
+
+}
+
+
+
+int XorgetcharXX(void)
 {
   if ( nsp_check_events_activated()== FALSE) return(getchar());
   if ( text != NULL ) 
@@ -612,7 +751,7 @@ int term_output(int argc, char **argv)
   gtk_widget_show (vbox);
 
   /* menu */
-  menu = create_main_menu(widget);  
+  menu = create_main_menu(window);  
   gtk_box_pack_start(GTK_BOX(vbox),menu,FALSE,FALSE,0);
   
   /* create hbox */
@@ -635,7 +774,16 @@ int term_output(int argc, char **argv)
   /* g_signal_connect (entry, "changed", G_CALLBACK (set_entry_callback),NULL);*/
   /* set_entry_callback is called when return is activated */
   g_signal_connect (entry, "activate", G_CALLBACK (set_entry_callback),widget);
+
+  g_signal_connect (entry, "key_press_event", G_CALLBACK (key_press_entry_callback),widget);
+
+  /* g_signal_connect (entry, "changed", G_CALLBACK (set_entry_callback),widget);*/
+
+
   gtk_entry_set_activates_default (GTK_ENTRY(entry), TRUE);
+
+
+  set_entry_accellerators(entry,NULL);
 
   gtk_widget_grab_focus (entry);
 
@@ -752,5 +900,6 @@ int term_output(int argc, char **argv)
   vte_terminal_feed(VTE_TERMINAL(widget),"test\n", -1);
   return 0;
 }
+
 
 
