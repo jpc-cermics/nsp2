@@ -1415,8 +1415,9 @@ int Xorgetchar(void)
  *
  */
 
-char *readline(const char *prompt)
+char *readline_base(const char *prompt)
 {
+  if ( nsp_check_events_activated()== FALSE) return readline(prompt);
   nsp_insert_prompt();
   fprintf(stderr,"in my readline\n");
   gtk_main();
