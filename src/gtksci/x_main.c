@@ -87,6 +87,12 @@ void nsp_gtk_init(int argc, char **argv,int no_window)
 	   */
 	  create_plugged_main_menu() ;
 	}
+      /* interaction with a textview 
+       *
+       */
+#ifdef USE_TEXT_VIEW
+      nsp_create_main_text_view();
+#endif
       /* create a status bar 
        * FIXME: unsused up to now 
        * 
@@ -274,7 +280,6 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   *xid = GDK_WINDOW_XWINDOW(socket_button->window); 
   *shm = '*' ; /* just to tell that there's something to read */
 } 
-
 
 
 
