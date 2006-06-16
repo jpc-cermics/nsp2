@@ -144,7 +144,6 @@ int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
   return Max(0,lhs);
 }
 
-static  jmp_buf MexEnv;
 
 static void nsp_mex_errjump()
 {
