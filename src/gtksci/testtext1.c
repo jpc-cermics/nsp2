@@ -42,7 +42,6 @@ struct _Buffer
   GtkTextBuffer *buffer;
   char *filename;
   gint untitled_serial;
-  GtkTextTag *invisible_tag;
   GtkTextTag *not_editable_tag;
   GtkTextTag *found_text_tag;
   GtkTextTag *rise_tag;
@@ -96,246 +95,26 @@ setup_tag (GtkTextTag *tag)
 
 }
 
-static const char  *book_closed_xpm[] = {
-"16 16 6 1",
-"       c None s None",
-".      c black",
-"X      c red",
-"o      c yellow",
-"O      c #808080",
-"#      c white",
-"                ",
-"       ..       ",
-"     ..XX.      ",
-"   ..XXXXX.     ",
-" ..XXXXXXXX.    ",
-".ooXXXXXXXXX.   ",
-"..ooXXXXXXXXX.  ",
-".X.ooXXXXXXXXX. ",
-".XX.ooXXXXXX..  ",
-" .XX.ooXXX..#O  ",
-"  .XX.oo..##OO. ",
-"   .XX..##OO..  ",
-"    .X.#OO..    ",
-"     ..O..      ",
-"      ..        ",
-"                "};
+/*
+ *
+ */
 
-void
-fill_example_buffer (GtkTextBuffer *buffer)
+#include "nsp-logo.xpm" 
+
+void fill_buffer_with_logo (View *view)
 {
-  GtkTextIter iter, iter2;
-  GtkTextTag *tag;
-  GtkTextChildAnchor *anchor;
-  GdkColor color;
-  GdkColor color2;
+  GtkTextIter iter,start,end;
   GdkPixbuf *pixbuf;
-  int i;
-  char *str;
-  
-  /* FIXME this is broken if called twice on a buffer, since
-   * we try to create tags a second time.
-   */
-  
-  tag = gtk_text_buffer_create_tag (buffer, "fg_blue", NULL);
-
-#ifdef DO_BLINK
-  gtk_timeout_add (1000, blink_timeout, tag);
-#endif     
- 
-  setup_tag (tag);
-  
-  color.red = color.green = 0;
-  color.blue = 0xffff;
-  color2.red = 0xfff;
-  color2.blue = 0x0;
-  color2.green = 0;
-  g_object_set (tag,
-                "foreground_gdk", &color,
-                "background_gdk", &color2,
-                "size_points", 24.0,
-                NULL);
-
-  tag = gtk_text_buffer_create_tag (buffer, "fg_red", NULL);
-
-  setup_tag (tag);
-      
-  color.blue = color.green = 0;
-  color.red = 0xffff;
-  g_object_set (tag,
-                "rise", -4 * PANGO_SCALE,
-                "foreground_gdk", &color,
-                NULL);
-
-  tag = gtk_text_buffer_create_tag (buffer, "bg_green", NULL);
-
-  setup_tag (tag);
-      
-  color.blue = color.red = 0;
-  color.green = 0xffff;
-  g_object_set (tag,
-                "background_gdk", &color,
-                "size_points", 10.0,
-                NULL);
-
-  tag = gtk_text_buffer_create_tag (buffer, "strikethrough", NULL);
-
-  setup_tag (tag);
-      
-  g_object_set (tag,
-                "strikethrough", TRUE,
-                NULL);
-
-
-  tag = gtk_text_buffer_create_tag (buffer, "underline", NULL);
-
-  setup_tag (tag);
-      
-  g_object_set (tag,
-                "underline", PANGO_UNDERLINE_SINGLE,
-                NULL);
-
-  tag = gtk_text_buffer_create_tag (buffer, "underline_error", NULL);
-
-  setup_tag (tag);
-      
-  g_object_set (tag,
-                "underline", PANGO_UNDERLINE_ERROR,
-                NULL);
-
-  tag = gtk_text_buffer_create_tag (buffer, "centered", NULL);
-      
-  g_object_set (tag,
-                "justification", GTK_JUSTIFY_CENTER,
-                NULL);
-
-  tag = gtk_text_buffer_create_tag (buffer, "rtl_quote", NULL);
-      
-  g_object_set (tag,
-                "wrap_mode", GTK_WRAP_WORD,
-                "direction", GTK_TEXT_DIR_RTL,
-                "indent", 30,
-                "left_margin", 20,
-                "right_margin", 20,
-                NULL);
-
-
-  tag = gtk_text_buffer_create_tag (buffer, "negative_indent", NULL);
-      
-  g_object_set (tag,
-                "indent", -25,
-                NULL);
-  
-  gtk_text_buffer_get_iter_at_offset (buffer, &iter, 0);
-
-  anchor = gtk_text_buffer_create_child_anchor (buffer, &iter);
-
-  g_object_ref (anchor);
-  
-  g_object_set_data_full (G_OBJECT (buffer), "anchor", anchor,
-                          (GDestroyNotify) g_object_unref);
-  
-  pixbuf = gdk_pixbuf_new_from_xpm_data (book_closed_xpm);
-  
-  i = 0;
-  while (i < 100)
-    {
-      GtkTextMark * temp_mark;
-      
-      gtk_text_buffer_get_iter_at_offset (buffer, &iter, 0);
-          
-      gtk_text_buffer_insert_pixbuf (buffer, &iter, pixbuf);
-          
-      str = g_strdup_printf ("%d Hello World! blah blah blah blah blah blah blah blah blah blah blah blah\nwoo woo woo woo woo woo woo woo woo woo woo woo woo woo woo\n",
-			    i);
-      
-      gtk_text_buffer_insert (buffer, &iter, str, -1);
-
-      g_free (str);
-      
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter, 0, 5);
-          
-      gtk_text_buffer_insert (buffer, &iter,
-			     "(Hello World!)\nfoo foo Hello this is some text we are using to text word wrap. It has punctuation! gee; blah - hmm, great.\nnew line with a significant quantity of text on it. This line really does contain some text. More text! More text! More text!\n"
-			     /* This is UTF8 stuff, Emacs doesn't
-				really know how to display it */
-			     "German (Deutsch S\303\274d) Gr\303\274\303\237 Gott Greek (\316\225\316\273\316\273\316\267\316\275\316\271\316\272\316\254) \316\223\316\265\316\271\316\254 \317\203\316\261\317\202 Hebrew(\327\251\327\234\327\225\327\235) Hebrew punctuation(\xd6\xbf\327\251\xd6\xbb\xd6\xbc\xd6\xbb\xd6\xbf\327\234\xd6\xbc\327\225\xd6\xbc\xd6\xbb\xd6\xbb\xd6\xbf\327\235\xd6\xbc\xd6\xbb\xd6\xbf) Japanese (\346\227\245\346\234\254\350\252\236) Thai (\340\270\252\340\270\247\340\270\261\340\270\252\340\270\224\340\270\265\340\270\204\340\270\243\340\270\261\340\270\232) Thai wrong spelling (\340\270\204\340\270\263\340\270\225\340\271\210\340\270\255\340\271\204\340\270\233\340\270\231\340\270\267\340\271\210\340\270\252\340\270\260\340\270\201\340\270\224\340\270\234\340\270\264\340\270\224 \340\270\236\340\270\261\340\270\261\340\271\211\340\270\261\340\270\261\340\271\210\340\270\207\340\271\202\340\270\201\340\270\260)\n", -1);
-
-      temp_mark =
-        gtk_text_buffer_create_mark (buffer, "tmp_mark", &iter, TRUE);
-
-#if 1
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter, 0, 6);
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter2, 0, 13);
-
-      gtk_text_buffer_apply_tag_by_name (buffer, "fg_blue", &iter, &iter2);
-
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter, 1, 10);
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter2, 1, 16);
-
-      gtk_text_buffer_apply_tag_by_name (buffer, "underline", &iter, &iter2);
-
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter, 1, 4);
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter2, 1, 7);
-
-      gtk_text_buffer_apply_tag_by_name (buffer, "underline_error", &iter, &iter2);
-
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter, 1, 14);
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter2, 1, 24);
-
-      gtk_text_buffer_apply_tag_by_name (buffer, "strikethrough", &iter, &iter2);
-          
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter, 0, 9);
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter2, 0, 16);
-
-      gtk_text_buffer_apply_tag_by_name (buffer, "bg_green", &iter, &iter2);
-  
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter, 4, 2);
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter2, 4, 10);
-
-      gtk_text_buffer_apply_tag_by_name (buffer, "bg_green", &iter, &iter2);
-
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter, 4, 8);
-      gtk_text_buffer_get_iter_at_line_offset (buffer, &iter2, 4, 15);
-
-      gtk_text_buffer_apply_tag_by_name (buffer, "fg_red", &iter, &iter2);
-#endif
-
-      gtk_text_buffer_get_iter_at_mark (buffer, &iter, temp_mark);
-      gtk_text_buffer_insert (buffer, &iter, "Centered text!\n", -1);
-	  
-      gtk_text_buffer_get_iter_at_mark (buffer, &iter2, temp_mark);
-      gtk_text_buffer_apply_tag_by_name (buffer, "centered", &iter2, &iter);
-
-      gtk_text_buffer_move_mark (buffer, temp_mark, &iter);
-      gtk_text_buffer_insert (buffer, &iter, "Word wrapped, Right-to-left Quote\n", -1);
-      gtk_text_buffer_insert (buffer, &iter, "\331\210\331\202\330\257 \330\250\330\257\330\243 \330\253\331\204\330\247\330\253 \331\205\331\206 \330\243\331\203\330\253\330\261 \330\247\331\204\331\205\330\244\330\263\330\263\330\247\330\252 \330\252\331\202\330\257\331\205\330\247 \331\201\331\212 \330\264\330\250\331\203\330\251 \330\247\331\203\330\263\331\212\331\210\331\206 \330\250\330\261\330\247\331\205\330\254\331\207\330\247 \331\203\331\205\331\206\330\270\331\205\330\247\330\252 \331\204\330\247 \330\252\330\263\330\271\331\211 \331\204\331\204\330\261\330\250\330\255\330\214 \330\253\331\205 \330\252\330\255\331\210\331\204\330\252 \331\201\331\212 \330\247\331\204\330\263\331\206\331\210\330\247\330\252 \330\247\331\204\330\256\331\205\330\263 \330\247\331\204\331\205\330\247\330\266\331\212\330\251 \330\245\331\204\331\211 \331\205\330\244\330\263\330\263\330\247\330\252 \331\205\330\247\331\204\331\212\330\251 \331\205\331\206\330\270\331\205\330\251\330\214 \331\210\330\250\330\247\330\252\330\252 \330\254\330\262\330\241\330\247 \331\205\331\206 \330\247\331\204\331\206\330\270\330\247\331\205 \330\247\331\204\331\205\330\247\331\204\331\212 \331\201\331\212 \330\250\331\204\330\257\330\247\331\206\331\207\330\247\330\214 \331\210\331\204\331\203\331\206\331\207\330\247 \330\252\330\252\330\256\330\265\330\265 \331\201\331\212 \330\256\330\257\331\205\330\251 \331\202\330\267\330\247\330\271 \330\247\331\204\331\205\330\264\330\261\331\210\330\271\330\247\330\252 \330\247\331\204\330\265\330\272\331\212\330\261\330\251. \331\210\330\243\330\255\330\257 \330\243\331\203\330\253\330\261 \331\207\330\260\331\207 \330\247\331\204\331\205\330\244\330\263\330\263\330\247\330\252 \331\206\330\254\330\247\330\255\330\247 \331\207\331\210 \302\273\330\250\330\247\331\206\331\203\331\210\330\263\331\210\331\204\302\253 \331\201\331\212 \330\250\331\210\331\204\331\212\331\201\331\212\330\247.\n", -1);
-      gtk_text_buffer_get_iter_at_mark (buffer, &iter2, temp_mark);
-      gtk_text_buffer_apply_tag_by_name (buffer, "rtl_quote", &iter2, &iter);
-
-      gtk_text_buffer_insert_with_tags (buffer, &iter,
-                                        "Paragraph with negative indentation. blah blah blah blah blah. The quick brown fox jumped over the lazy dog.\n",
-                                        -1,
-                                        gtk_text_tag_table_lookup (gtk_text_buffer_get_tag_table (buffer),
-                                                                   "negative_indent"),
-                                        NULL);
-      
-      ++i;
-    }
-
+  pixbuf = gdk_pixbuf_new_from_xpm_data (nsp_logo_xpm);
+  gtk_text_buffer_get_iter_at_offset (view->buffer->buffer, &iter, 0);
+  gtk_text_buffer_insert_pixbuf (view->buffer->buffer, &iter, pixbuf);
+  gtk_text_buffer_insert (view->buffer->buffer, &iter, "\n",-1);
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_buffer_apply_tag (view->buffer->buffer,
+			     view->buffer->not_editable_tag,
+			     &start, &end);
   g_object_unref (pixbuf);
-  
-  printf ("%d lines %d chars\n",
-          gtk_text_buffer_get_line_count (buffer),
-          gtk_text_buffer_get_char_count (buffer));
-
-  /* Move cursor to start */
-  gtk_text_buffer_get_iter_at_offset (buffer, &iter, 0);
-  gtk_text_buffer_place_cursor (buffer, &iter);
-  
-  gtk_text_buffer_set_modified (buffer, FALSE);
 }
-
 
 static gint
 delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
@@ -348,7 +127,6 @@ delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
 /*
  * Menu callbacks
  */
-
 
 static View *
 view_from_widget (GtkWidget *widget)
@@ -364,7 +142,6 @@ view_from_widget (GtkWidget *widget)
       return g_object_get_data (G_OBJECT (app), "view");
     }
 }
-
 
 enum
 {
@@ -508,11 +285,6 @@ create_buffer (void)
       ++i;
     }
 
-#if 1  
-  buffer->invisible_tag = gtk_text_buffer_create_tag (buffer->buffer, NULL,
-                                                      "invisible", TRUE, NULL);
-#endif  
-  
   buffer->not_editable_tag =
     gtk_text_buffer_create_tag (buffer->buffer, NULL,
                                 "editable", FALSE,
@@ -893,303 +665,18 @@ cursor_set_callback (GtkTextBuffer     *buffer,
                      gpointer           user_data)
 {
   GtkTextView *text_view;
-
   /* Redraw tab windows if the cursor moves
    * on the mapped widget (windows may not exist before realization...
    */
-  
   text_view = GTK_TEXT_VIEW (user_data);
   
   if (GTK_WIDGET_MAPPED (text_view) &&
       mark == gtk_text_buffer_get_insert (buffer))
     {
-      GdkWindow *tab_window;
 
-      tab_window = gtk_text_view_get_window (text_view,
-                                             GTK_TEXT_WINDOW_TOP);
-
-      gdk_window_invalidate_rect (tab_window, NULL, FALSE);
-      
-      tab_window = gtk_text_view_get_window (text_view,
-                                             GTK_TEXT_WINDOW_BOTTOM);
-
-      gdk_window_invalidate_rect (tab_window, NULL, FALSE);
     }
 }
 
-static gint
-tab_stops_expose (GtkWidget      *widget,
-                  GdkEventExpose *event,
-                  gpointer        user_data)
-{
-  gint first_x;
-  gint last_x;
-  gint i;
-  GdkWindow *top_win;
-  GdkWindow *bottom_win;
-  GtkTextView *text_view;
-  GtkTextWindowType type;
-  GdkDrawable *target;
-  gint *positions = NULL;
-  gint size;
-  GtkTextAttributes *attrs;
-  GtkTextIter insert;
-  GtkTextBuffer *buffer;
-  gboolean in_pixels;
-  
-  text_view = GTK_TEXT_VIEW (widget);
-  
-  /* See if this expose is on the tab stop window */
-  top_win = gtk_text_view_get_window (text_view,
-                                      GTK_TEXT_WINDOW_TOP);
-
-  bottom_win = gtk_text_view_get_window (text_view,
-                                         GTK_TEXT_WINDOW_BOTTOM);
-
-  if (event->window == top_win)
-    {
-      type = GTK_TEXT_WINDOW_TOP;
-      target = top_win;
-    }
-  else if (event->window == bottom_win)
-    {
-      type = GTK_TEXT_WINDOW_BOTTOM;
-      target = bottom_win;
-    }
-  else
-    return FALSE;
-  
-  first_x = event->area.x;
-  last_x = first_x + event->area.width;
-
-  gtk_text_view_window_to_buffer_coords (text_view,
-                                         type,
-                                         first_x,
-                                         0,
-                                         &first_x,
-                                         NULL);
-
-  gtk_text_view_window_to_buffer_coords (text_view,
-                                         type,
-                                         last_x,
-                                         0,
-                                         &last_x,
-                                         NULL);
-
-  buffer = gtk_text_view_get_buffer (text_view);
-
-  gtk_text_buffer_get_iter_at_mark (buffer,
-                                    &insert,
-                                    gtk_text_buffer_get_mark (buffer,
-                                                              "insert"));
-  
-  attrs = gtk_text_attributes_new ();
-
-  gtk_text_iter_get_attributes (&insert, attrs);
-
-  if (attrs->tabs)
-    {
-      size = pango_tab_array_get_size (attrs->tabs);
-      
-      pango_tab_array_get_tabs (attrs->tabs,
-                                NULL,
-                                &positions);
-
-      in_pixels = pango_tab_array_get_positions_in_pixels (attrs->tabs);
-    }
-  else
-    {
-      size = 0;
-      in_pixels = FALSE;
-    }
-      
-  gtk_text_attributes_unref (attrs);
-  
-  i = 0;
-  while (i < size)
-    {
-      gint pos;
-
-      if (!in_pixels)
-        positions[i] = PANGO_PIXELS (positions[i]);
-      
-      gtk_text_view_buffer_to_window_coords (text_view,
-                                             type,
-                                             positions[i],
-                                             0,
-                                             &pos,
-                                             NULL);
-      
-      gdk_draw_line (target, 
-                     widget->style->fg_gc [widget->state],
-                     pos, 0,
-                     pos, 15); 
-      
-      ++i;
-    }
-
-  g_free (positions);
-
-  return TRUE;
-}
-
-static void
-get_lines (GtkTextView  *text_view,
-           gint          first_y,
-           gint          last_y,
-           GArray       *buffer_coords,
-           GArray       *numbers,
-           gint         *countp)
-{
-  GtkTextIter iter;
-  gint count;
-  gint size;  
-
-  g_array_set_size (buffer_coords, 0);
-  g_array_set_size (numbers, 0);
-  
-  /* Get iter at first y */
-  gtk_text_view_get_line_at_y (text_view, &iter, first_y, NULL);
-
-  /* For each iter, get its location and add it to the arrays.
-   * Stop when we pass last_y
-   */
-  count = 0;
-  size = 0;
-
-  while (!gtk_text_iter_is_end (&iter))
-    {
-      gint y, height;
-      gint line_num;
-      
-      gtk_text_view_get_line_yrange (text_view, &iter, &y, &height);
-
-      g_array_append_val (buffer_coords, y);
-      line_num = gtk_text_iter_get_line (&iter);
-      g_array_append_val (numbers, line_num);
-      
-      ++count;
-
-      if ((y + height) >= last_y)
-        break;
-      
-      gtk_text_iter_forward_line (&iter);
-    }
-
-  *countp = count;
-}
-
-static gint
-line_numbers_expose (GtkWidget      *widget,
-                     GdkEventExpose *event,
-                     gpointer        user_data)
-{
-  gint count;
-  GArray *numbers;
-  GArray *pixels;
-  gint first_y;
-  gint last_y;
-  gint i;
-  GdkWindow *left_win;
-  GdkWindow *right_win;
-  PangoLayout *layout;
-  GtkTextView *text_view;
-  GtkTextWindowType type;
-  GdkDrawable *target;
-  
-  text_view = GTK_TEXT_VIEW (widget);
-  
-  /* See if this expose is on the line numbers window */
-  left_win = gtk_text_view_get_window (text_view,
-                                       GTK_TEXT_WINDOW_LEFT);
-
-  right_win = gtk_text_view_get_window (text_view,
-                                        GTK_TEXT_WINDOW_RIGHT);
-
-  if (event->window == left_win)
-    {
-      type = GTK_TEXT_WINDOW_LEFT;
-      target = left_win;
-    }
-  else if (event->window == right_win)
-    {
-      type = GTK_TEXT_WINDOW_RIGHT;
-      target = right_win;
-    }
-  else
-    return FALSE;
-  
-  first_y = event->area.y;
-  last_y = first_y + event->area.height;
-
-  gtk_text_view_window_to_buffer_coords (text_view,
-                                         type,
-                                         0,
-                                         first_y,
-                                         NULL,
-                                         &first_y);
-
-  gtk_text_view_window_to_buffer_coords (text_view,
-                                         type,
-                                         0,
-                                         last_y,
-                                         NULL,
-                                         &last_y);
-
-  numbers = g_array_new (FALSE, FALSE, sizeof (gint));
-  pixels = g_array_new (FALSE, FALSE, sizeof (gint));
-  
-  get_lines (text_view,
-             first_y,
-             last_y,
-             pixels,
-             numbers,
-             &count);
-  
-  /* Draw fully internationalized numbers! */
-  
-  layout = gtk_widget_create_pango_layout (widget, "");
-  
-  i = 0;
-  while (i < count)
-    {
-      gint pos;
-      gchar *str;
-      
-      gtk_text_view_buffer_to_window_coords (text_view,
-                                             type,
-                                             0,
-                                             g_array_index (pixels, gint, i),
-                                             NULL,
-                                             &pos);
-
-      str = g_strdup_printf ("%d", g_array_index (numbers, gint, i));
-
-      pango_layout_set_text (layout, str, -1);
-
-      gtk_paint_layout (widget->style,
-                        target,
-                        GTK_WIDGET_STATE (widget),
-                        FALSE,
-                        NULL,
-                        widget,
-                        NULL,
-                        2, pos + 2,
-                        layout);
-
-      g_free (str);
-      
-      ++i;
-    }
-
-  g_array_free (pixels, TRUE);
-  g_array_free (numbers, TRUE);
-  
-  g_object_unref (layout);
-
-  /* don't stop emission, need to draw children */
-  return FALSE;
-}
 
 
 typedef struct _view_history view_history;
@@ -1383,9 +870,23 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 }
 
 
+static gint timeout_command (void *v)
+{
+  if ( checkqueue_nsp_command() == TRUE) 
+    {
+      gtk_main_quit();
+    }
+  return TRUE;
+}
+
+/* enter a gtk_main waiting for char and 
+ * dealing with events.
+ */
+
 
 int Xorgetchar(void)
 {
+  guint timer;
   if ( nsp_check_events_activated()== FALSE) return(getchar());
   if ( nsp_expr != NULL ) 
     {
@@ -1404,7 +905,9 @@ int Xorgetchar(void)
 	}
       return val1;
     }
+  timer=  gtk_timeout_add(100,  (GtkFunction) timeout_command , NULL);
   gtk_main();
+  gtk_timeout_remove(timeout_command);
   count=1;
   g_print ("char returned '%c'\n",nsp_expr[0]);
   return nsp_expr[0];
@@ -1417,12 +920,28 @@ int Xorgetchar(void)
 
 char *readline_base(const char *prompt)
 {
+  static use_prompt=1;
+  guint timer;
   if ( nsp_check_events_activated()== FALSE) return readline(prompt);
-  nsp_insert_prompt();
+  if ( use_prompt == 1) nsp_insert_prompt();
   fprintf(stderr,"in my readline\n");
+  timer=  gtk_timeout_add(100,  (GtkFunction) timeout_command , NULL);
   gtk_main();
-  g_print ("string returned '%s'\n",nsp_expr);
-  return g_strdup(nsp_expr);
+  gtk_timeout_remove(timeout_command);
+  if ( checkqueue_nsp_command() == TRUE) 
+    {
+      char buf[256];
+      dequeue_nsp_command(buf,255);
+      use_prompt=0;
+      return g_strdup(buf);
+    }
+  else 
+    {
+      use_prompt=1;
+      g_print ("string returned '%s'\n",nsp_expr);
+      return g_strdup(nsp_expr);
+    }
+  return NULL;
 }
 
 
@@ -1447,6 +966,7 @@ create_view (Buffer *buffer)
   
   g_signal_connect (view->window, "delete_event",
 		    G_CALLBACK (delete_event_cb), NULL);
+
   /* 
   view->accel_group = gtk_accel_group_new ();
   gtk_window_add_accel_group (GTK_WINDOW (view->window), view->accel_group);
@@ -1460,11 +980,6 @@ create_view (Buffer *buffer)
   
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add (GTK_CONTAINER (view->window), vbox);
-  /* 
-  gtk_box_pack_start (GTK_BOX (vbox),
-		      gtk_item_factory_get_widget (view->item_factory, "<main>"),
-		      FALSE, FALSE, 0);
-  */
 
   /* XXXX accel group to share with menu */
 
@@ -1480,24 +995,8 @@ create_view (Buffer *buffer)
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view->text_view),
                                GTK_WRAP_WORD);
 
-  /* Make sure border width works, no real reason to do this other than testing */
   gtk_container_set_border_width (GTK_CONTAINER (view->text_view),
-                                  10);
-  
-  /* Draw tab stops in the top and bottom windows. */
-  
-  gtk_text_view_set_border_window_size (GTK_TEXT_VIEW (view->text_view),
-                                        GTK_TEXT_WINDOW_TOP,
-                                        15);
-
-  gtk_text_view_set_border_window_size (GTK_TEXT_VIEW (view->text_view),
-                                        GTK_TEXT_WINDOW_BOTTOM,
-                                        15);
-
-  g_signal_connect (view->text_view,
-                    "expose_event",
-                    G_CALLBACK (tab_stops_expose),
-                    NULL);  
+                                  5);
 
   g_signal_connect (view->text_view,
                     "key_press_event",
@@ -1508,33 +1007,20 @@ create_view (Buffer *buffer)
 		    "mark_set",
 		    G_CALLBACK (cursor_set_callback),
 		    view->text_view);
-
-  /* Draw line numbers in the side windows; we should really be
-   * more scientific about what width we set them to.
-   */
-  gtk_text_view_set_border_window_size (GTK_TEXT_VIEW (view->text_view),
-                                        GTK_TEXT_WINDOW_RIGHT,
-                                        30);
-  
-  gtk_text_view_set_border_window_size (GTK_TEXT_VIEW (view->text_view),
-                                        GTK_TEXT_WINDOW_LEFT,
-                                        30);
-  
-  g_signal_connect (view->text_view,
-                    "expose_event",
-                    G_CALLBACK (line_numbers_expose),
-                    NULL);
   
   gtk_box_pack_start (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
   gtk_container_add (GTK_CONTAINER (sw), view->text_view);
 
-  gtk_window_set_default_size (GTK_WINDOW (view->window), 500, 500);
+  gtk_widget_set_size_request (GTK_WINDOW (view->window),600,400);
+  /*   gtk_window_set_default_size (GTK_WINDOW (view->window), 600, 400); */
 
   gtk_widget_grab_focus (view->text_view);
-
   view_set_title (view);
   
   gtk_widget_show_all (view->window);
+
+  fill_buffer_with_logo (view);
+
   return view;
 }
 
@@ -1562,7 +1048,7 @@ int  Sciprint2textview(const char *fmt, va_list ap)
   return n;
 }
 
-nsp_insert_prompt()
+void nsp_insert_prompt()
 {
   char *prompt= Prompt();
   GtkTextBuffer *buffer;

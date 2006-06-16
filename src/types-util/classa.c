@@ -228,7 +228,7 @@ void nsp_classa_destroy(NspClassA *H)
  * info 
  */
 
-void nsp_classa_info(NspClassA *H, int indent,char *name,int rec_level)
+void nsp_classa_info(NspClassA *H, int indent,char *name, int rec_level)
 {
   int i;
   if ( H == NULLCLA) 
@@ -247,7 +247,7 @@ void nsp_classa_info(NspClassA *H, int indent,char *name,int rec_level)
 
 void nsp_classa_print(NspClassA *H, int indent,char *name, int rec_level)
 {
-  nsp_classa_info(H,indent,NULL,0);
+  nsp_classa_info(H,indent);
 }
 
 /*-----------------------------------------------------

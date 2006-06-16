@@ -40,6 +40,12 @@ job_classa:
 		PARENT=Object FIELDS="int classa_color;\n  int classa_thickness;\n  NspMatrix *classa_val;"\
 		PARENTDOWNCASE=object PARENTINC=nsp/object.h
 
+job_classebruno: 
+	make job  TNAME=Bruno TDOWNCASE=bruno TSHORT=bru \
+		TASSTRING=Bruno NULL=NULLBRUNO \
+		PARENT=Object FIELDS="int color;\n NspMatrix *val;"\
+		PARENTDOWNCASE=object PARENTINC=nsp/object.h
+
 job_classnone: 
 	make job  TNAME=None TDOWNCASE=none TSHORT=none \
 		TASSTRING=None NULL=NULLNONE \
