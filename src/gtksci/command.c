@@ -147,7 +147,7 @@ int dequeue_nsp_command(char *buf,int buf_len)
   NspObject *O = dequeue_nsp_command_obj() ;
   if ( O == NULLOBJ) return FAIL;
   strncpy(buf,((NspSMatrix *) O)->S[0],buf_len);
- nsp_object_destroy(&O);
+  nsp_object_destroy(&O);
   return OK;
 }
 
