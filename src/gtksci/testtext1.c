@@ -604,6 +604,8 @@ static void nsp_insert_prompt(const char *prompt)
 }
 
 
+extern int nsp_edit(void);
+
 void nsp_create_main_text_view()
 {
   Buffer *buffer;
@@ -611,6 +613,7 @@ void nsp_create_main_text_view()
   view = create_view (buffer);
   buffer_unref (buffer);
   SetScilabIO(Sciprint2textview);
+  nsp_edit();
 }
 
 
