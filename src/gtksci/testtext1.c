@@ -32,27 +32,14 @@
 typedef struct _Buffer Buffer;
 typedef struct _View View;
 
-static gint untitled_serial = 1;
-
-GSList *active_window_stack = NULL;
 
 struct _Buffer
 {
   gint refcount;
   GtkTextBuffer *buffer;
-  char *filename;
-  gint untitled_serial;
   GtkTextTag *not_editable_tag;
-  GtkTextTag *found_text_tag;
-  GtkTextTag *rise_tag;
-  GtkTextTag *large_tag;
-  GtkTextTag *indent_tag;
-  GtkTextTag *margin_tag;
   GtkTextTag *custom_tabs_tag;
   GtkTextMark *mark;
-  GSList *color_tags;
-  guint color_cycle_timeout;
-  gdouble start_hue;
 
 };
 
@@ -61,39 +48,17 @@ struct _View
   GtkWidget *window;
   GtkWidget *text_view;
   GtkAccelGroup *accel_group;
-  GtkItemFactory *item_factory;
   Buffer *buffer;
 };
 
 static Buffer * create_buffer      (void);
-static char *   buffer_pretty_name (Buffer *buffer);
-static void     buffer_search_forward (Buffer *buffer,
-                                       const char *str,
-                                       View *view);
-static void     buffer_search_backward (Buffer *buffer,
-                                       const char *str,
-                                       View *view);
-static void     buffer_set_colors      (Buffer  *buffer,
-                                        gboolean enabled);
-static void     buffer_cycle_colors    (Buffer  *buffer);
-
 static View *view_from_widget (GtkWidget *widget);
-
 static View *create_view      (Buffer *buffer);
 static void  check_close_view (View   *view);
 static void  close_view       (View   *view);
-static void  view_set_title   (View   *view);
+static void nsp_insert_prompt(const char *prompt);
 
 
-GSList *buffers = NULL;
-GSList *views = NULL;
-
-
-static void
-setup_tag (GtkTextTag *tag)
-{
-
-}
 
 /*
  *
@@ -149,107 +114,6 @@ enum
   RESPONSE_BACKWARD
 };
 
-static void
-dialog_response_callback (GtkWidget *dialog, gint response_id, gpointer data)
-{
-  GtkTextBuffer *buffer;
-  View *view = data;
-  GtkTextIter start, end;
-  gchar *search_string;
-
-  if (response_id != RESPONSE_FORWARD &&
-      response_id != RESPONSE_BACKWARD)
-    {
-      gtk_widget_destroy (dialog);
-      return;
-    }
-  
-  buffer = g_object_get_data (G_OBJECT (dialog), "buffer");
-
-  gtk_text_buffer_get_bounds (buffer, &start, &end);
-  
-  search_string = gtk_text_iter_get_text (&start, &end);
-
-  g_print ("Searching for `%s'\n", search_string);
-
-  if (response_id == RESPONSE_FORWARD)
-    buffer_search_forward (view->buffer, search_string, view);
-  else if (response_id == RESPONSE_BACKWARD)
-    buffer_search_backward (view->buffer, search_string, view);
-    
-  g_free (search_string);
-  
-  gtk_widget_destroy (dialog);
-}
-
-static void
-do_search (gpointer callback_data,
-           guint callback_action,
-           GtkWidget *widget)
-{
-  View *view = view_from_widget (widget);
-  GtkWidget *dialog;
-  GtkWidget *search_text;
-  GtkTextBuffer *buffer;
-
-  dialog = gtk_dialog_new_with_buttons ("Search",
-                                        GTK_WINDOW (view->window),
-                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        "Forward", RESPONSE_FORWARD,
-                                        "Backward", RESPONSE_BACKWARD,
-                                        GTK_STOCK_CANCEL,
-                                        GTK_RESPONSE_NONE, NULL);
-
-
-  buffer = gtk_text_buffer_new (NULL);
-
-  search_text = gtk_text_view_new_with_buffer (buffer);
-
-  g_object_unref (buffer);
-  
-  gtk_box_pack_end (GTK_BOX (GTK_DIALOG (dialog)->vbox),
-                    search_text,
-                    TRUE, TRUE, 0);
-
-  g_object_set_data (G_OBJECT (dialog), "buffer", buffer);
-  
-  g_signal_connect (dialog,
-                    "response",
-                    G_CALLBACK (dialog_response_callback),
-                    view);
-
-  gtk_widget_show (search_text);
-
-  gtk_widget_grab_focus (search_text);
-  
-  gtk_widget_show_all (dialog);
-}
-
-static void
-do_select_all (gpointer callback_data,
-               guint callback_action,
-               GtkWidget *widget)
-{
-  View *view = view_from_widget (widget);
-  GtkTextBuffer *buffer;
-  GtkTextIter start, end;
-
-  buffer = view->buffer->buffer;
-
-  gtk_text_buffer_get_bounds (buffer, &start, &end);
-  gtk_text_buffer_select_range (buffer, &start, &end);
-}
-
-
-
-static GtkItemFactoryEntry menu_items[] =
-{
-  { "/_File",            NULL,         NULL,        0, "<Branch>" },
-  { "/File/sep1",        NULL,         NULL,        0, "<Separator>" },
-  { "/_Edit", NULL, 0, 0, "<Branch>" },
-  { "/Edit/Find...", NULL, do_search, 0, NULL },
-  { "/Edit/Select All", NULL , do_select_all, 0, NULL }, 
-};
 
 
 #define N_COLORS 16
@@ -259,51 +123,17 @@ create_buffer (void)
 {
   Buffer *buffer;
   PangoTabArray *tabs;
-  gint i;
   
   buffer = g_new (Buffer, 1);
 
   buffer->buffer = gtk_text_buffer_new (NULL);
   
   buffer->refcount = 1;
-  buffer->filename = NULL;
-  buffer->untitled_serial = -1;
-
-  buffer->color_tags = NULL;
-  buffer->color_cycle_timeout = 0;
-  buffer->start_hue = 0.0;
-  
-  i = 0;
-  while (i < N_COLORS)
-    {
-      GtkTextTag *tag;
-
-      tag = gtk_text_buffer_create_tag (buffer->buffer, NULL, NULL);
-      
-      buffer->color_tags = g_slist_prepend (buffer->color_tags, tag);
-      
-      ++i;
-    }
 
   buffer->not_editable_tag =
     gtk_text_buffer_create_tag (buffer->buffer, NULL,
                                 "editable", FALSE,
                                 "foreground", "purple", NULL);
-
-  buffer->found_text_tag = gtk_text_buffer_create_tag (buffer->buffer, NULL,
-                                                       "foreground", "red", NULL);
-
-  buffer->rise_tag = gtk_text_buffer_create_tag (buffer->buffer, NULL,
-						 "rise", 10 * PANGO_SCALE, NULL);
-
-  buffer->large_tag = gtk_text_buffer_create_tag (buffer->buffer, NULL,
-						 "scale", PANGO_SCALE_X_LARGE, NULL);
-
-  buffer->indent_tag = gtk_text_buffer_create_tag (buffer->buffer, NULL,
-						   "indent", 20, NULL);
-
-  buffer->margin_tag = gtk_text_buffer_create_tag (buffer->buffer, NULL,
-						   "left_margin", 20, "right_margin", 20, NULL);
 
   tabs = pango_tab_array_new_with_positions (4,
                                              TRUE,
@@ -319,122 +149,12 @@ create_buffer (void)
   buffer->mark = NULL;
 
   pango_tab_array_free (tabs);
-  
-  buffers = g_slist_prepend (buffers, buffer);
 
   return buffer;
 }
 
-static char *
-buffer_pretty_name (Buffer *buffer)
-{
-  if (buffer->filename)
-    {
-      char *p;
-      char *result = g_path_get_basename (buffer->filename);
-      p = strchr (result, '/');
-      if (p)
-	*p = '\0';
-
-      return result;
-    }
-  else
-    {
-      if (buffer->untitled_serial == -1)
-	buffer->untitled_serial = untitled_serial++;
-
-      if (buffer->untitled_serial == 1)
-	return g_strdup ("Untitled");
-      else
-	return g_strdup_printf ("Untitled #%d", buffer->untitled_serial);
-    }
-}
 
 
-static void
-buffer_search (Buffer     *buffer,
-               const char *str,
-               View       *view,
-               gboolean forward)
-{
-  GtkTextIter iter;
-  GtkTextIter start, end;
-  GtkWidget *dialog;
-  int i;
-  
-  /* remove tag from whole buffer */
-  gtk_text_buffer_get_bounds (buffer->buffer, &start, &end);
-  gtk_text_buffer_remove_tag (buffer->buffer,  buffer->found_text_tag,
-                              &start, &end );
-  
-  gtk_text_buffer_get_iter_at_mark (buffer->buffer, &iter,
-                                    gtk_text_buffer_get_mark (buffer->buffer,
-                                                              "insert"));
-
-  i = 0;
-  if (*str != '\0')
-    {
-      GtkTextIter match_start, match_end;
-
-      if (forward)
-        {
-          while (gtk_text_iter_forward_search (&iter, str,
-                                               GTK_TEXT_SEARCH_VISIBLE_ONLY |
-                                               GTK_TEXT_SEARCH_TEXT_ONLY,
-                                               &match_start, &match_end,
-                                               NULL))
-            {
-              ++i;
-              gtk_text_buffer_apply_tag (buffer->buffer, buffer->found_text_tag,
-                                         &match_start, &match_end);
-              
-              iter = match_end;
-            }
-        }
-      else
-        {
-          while (gtk_text_iter_backward_search (&iter, str,
-                                                GTK_TEXT_SEARCH_VISIBLE_ONLY |
-                                                GTK_TEXT_SEARCH_TEXT_ONLY,
-                                                &match_start, &match_end,
-                                                NULL))
-            {
-              ++i;
-              gtk_text_buffer_apply_tag (buffer->buffer, buffer->found_text_tag,
-                                         &match_start, &match_end);
-              
-              iter = match_start;
-            }
-        }
-    }
-
-  dialog = gtk_message_dialog_new (GTK_WINDOW (view->window),
-				   GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_INFO,
-                                   GTK_BUTTONS_OK,
-                                   "%d strings found and marked in red",
-                                   i);
-
-  g_signal_connect_swapped (dialog,
-                            "response",
-                            G_CALLBACK (gtk_widget_destroy), dialog);
-  
-  gtk_widget_show (dialog);
-}
-
-static void
-buffer_search_forward (Buffer *buffer, const char *str,
-                       View *view)
-{
-  buffer_search (buffer, str, view, TRUE);
-}
-
-static void
-buffer_search_backward (Buffer *buffer, const char *str,
-                        View *view)
-{
-  buffer_search (buffer, str, view, FALSE);
-}
 
 static void
 buffer_ref (Buffer *buffer)
@@ -448,196 +168,19 @@ buffer_unref (Buffer *buffer)
   buffer->refcount--;
   if (buffer->refcount == 0)
     {
-      buffer_set_colors (buffer, FALSE);
-      buffers = g_slist_remove (buffers, buffer);
       g_object_unref (buffer->buffer);
-      g_free (buffer->filename);
       g_free (buffer);
     }
 }
 
-static void
-hsv_to_rgb (gdouble *h,
-	    gdouble *s,
-	    gdouble *v)
-{
-  gdouble hue, saturation, value;
-  gdouble f, p, q, t;
 
-  if (*s == 0.0)
-    {
-      *h = *v;
-      *s = *v;
-      *v = *v; /* heh */
-    }
-  else
-    {
-      hue = *h * 6.0;
-      saturation = *s;
-      value = *v;
-      
-      if (hue >= 6.0)
-	hue = 0.0;
-      
-      f = hue - (int) hue;
-      p = value * (1.0 - saturation);
-      q = value * (1.0 - saturation * f);
-      t = value * (1.0 - saturation * (1.0 - f));
-      
-      switch ((int) hue)
-	{
-	case 0:
-	  *h = value;
-	  *s = t;
-	  *v = p;
-	  break;
-	  
-	case 1:
-	  *h = q;
-	  *s = value;
-	  *v = p;
-	  break;
-	  
-	case 2:
-	  *h = p;
-	  *s = value;
-	  *v = t;
-	  break;
-	  
-	case 3:
-	  *h = p;
-	  *s = q;
-	  *v = value;
-	  break;
-	  
-	case 4:
-	  *h = t;
-	  *s = p;
-	  *v = value;
-	  break;
-	  
-	case 5:
-	  *h = value;
-	  *s = p;
-	  *v = q;
-	  break;
-	  
-	default:
-	  g_assert_not_reached ();
-	}
-    }
-}
-
-static void
-hue_to_color (gdouble   hue,
-              GdkColor *color)
-{
-  gdouble h, s, v;
-
-  h = hue;
-  s = 1.0;
-  v = 1.0;
-
-  g_return_if_fail (hue <= 1.0);
-  
-  hsv_to_rgb (&h, &s, &v);
-
-  color->red = h * 65535;
-  color->green = s * 65535;
-  color->blue = v * 65535;
-}
-
-
-static gint
-color_cycle_timeout (gpointer data)
-{
-  Buffer *buffer = data;
-
-  buffer_cycle_colors (buffer);
-
-  return TRUE;
-}
-
-static void
-buffer_set_colors (Buffer  *buffer,
-                   gboolean enabled)
-{
-  GSList *tmp;
-  gdouble hue = 0.0;
-
-  if (enabled && buffer->color_cycle_timeout == 0)
-    buffer->color_cycle_timeout = g_timeout_add (200, color_cycle_timeout, buffer);
-  else if (!enabled && buffer->color_cycle_timeout != 0)
-    {
-      g_source_remove (buffer->color_cycle_timeout);
-      buffer->color_cycle_timeout = 0;
-    }
-    
-  tmp = buffer->color_tags;
-  while (tmp != NULL)
-    {
-      if (enabled)
-        {
-          GdkColor color;
-          
-          hue_to_color (hue, &color);
-
-          g_object_set (tmp->data,
-                        "foreground_gdk", &color,
-                        NULL);
-        }
-      else
-        g_object_set (tmp->data,
-                      "foreground_set", FALSE,
-                      NULL);
-
-      hue += 1.0 / N_COLORS;
-      
-      tmp = g_slist_next (tmp);
-    }
-}
-
-static void
-buffer_cycle_colors (Buffer *buffer)
-{
-  GSList *tmp;
-  gdouble hue = buffer->start_hue;
-  
-  tmp = buffer->color_tags;
-  while (tmp != NULL)
-    {
-      GdkColor color;
-      
-      hue_to_color (hue, &color);
-      
-      g_object_set (tmp->data,
-                    "foreground_gdk", &color,
-                    NULL);
-
-      hue += 1.0 / N_COLORS;
-      if (hue > 1.0)
-        hue = 0.0;
-      
-      tmp = g_slist_next (tmp);
-    }
-
-  buffer->start_hue += 1.0 / N_COLORS;
-  if (buffer->start_hue > 1.0)
-    buffer->start_hue = 0.0;
-}
 
 static void
 close_view (View *view)
 {
-  views = g_slist_remove (views, view);
   buffer_unref (view->buffer);
   gtk_widget_destroy (view->window);
-  g_object_unref (view->item_factory);
-  
   g_free (view);
-  
-  if (!views)
-    gtk_main_quit ();
 }
 
 static void
@@ -646,17 +189,6 @@ check_close_view (View *view)
   close_view (view);
 }
 
-static void
-view_set_title (View *view)
-{
-  char *pretty_name = buffer_pretty_name (view->buffer);
-  char *title = g_strconcat ("testtext - ", pretty_name, NULL);
-
-  gtk_window_set_title (GTK_WINDOW (view->window), title);
-
-  g_free (pretty_name);
-  g_free (title);
-}
 
 static void
 cursor_set_callback (GtkTextBuffer     *buffer,
@@ -860,10 +392,19 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
       return TRUE;
       break;
     default:
-      fprintf(stdout,"move cursor ?\n");
-      cursor_mark = gtk_text_buffer_get_mark (view->buffer->buffer,"insert");
-      gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-      gtk_text_buffer_move_mark (view->buffer->buffer, cursor_mark, &end);      
+      /* if we are at a position when insertion is not possible 
+       * we jump to end of text view where we are allowed 
+       * to enter text 
+       */
+
+      cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
+      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
+      if ( ! gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable) )
+	{
+	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+	  gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
+	}
+
       break;
     }
   return FALSE;
@@ -907,7 +448,7 @@ int Xorgetchar(void)
     }
   timer=  gtk_timeout_add(100,  (GtkFunction) timeout_command , NULL);
   gtk_main();
-  gtk_timeout_remove(timeout_command);
+  gtk_timeout_remove(timer);
   count=1;
   g_print ("char returned '%c'\n",nsp_expr[0]);
   return nsp_expr[0];
@@ -920,14 +461,17 @@ int Xorgetchar(void)
 
 char *readline_base(const char *prompt)
 {
-  static use_prompt=1;
+  static int use_prompt=1;
   guint timer;
   if ( nsp_check_events_activated()== FALSE) return readline(prompt);
-  if ( use_prompt == 1) nsp_insert_prompt();
+  if ( use_prompt == 1) 
+    {
+      nsp_insert_prompt(prompt);
+    }
   fprintf(stderr,"in my readline\n");
   timer=  gtk_timeout_add(100,  (GtkFunction) timeout_command , NULL);
   gtk_main();
-  gtk_timeout_remove(timeout_command);
+  gtk_timeout_remove(timer);
   if ( checkqueue_nsp_command() == TRUE) 
     {
       char buf[256];
@@ -956,7 +500,6 @@ create_view (Buffer *buffer)
   GtkWidget *menu;
   
   view = g_new0 (View, 1);
-  views = g_slist_prepend (views, view);
 
   view->buffer = buffer;
   buffer_ref (buffer);
@@ -970,19 +513,11 @@ create_view (Buffer *buffer)
   /* 
   view->accel_group = gtk_accel_group_new ();
   gtk_window_add_accel_group (GTK_WINDOW (view->window), view->accel_group);
-  */
-
-  /* 
-  view->item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", view->accel_group);
-  g_object_set_data (G_OBJECT (view->item_factory), "view", view);
-  gtk_item_factory_create_items (view->item_factory, G_N_ELEMENTS (menu_items), menu_items, view);
+   XXXX accel group to share with menu
   */
   
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add (GTK_CONTAINER (view->window), vbox);
-
-  /* XXXX accel group to share with menu */
-
   menu = create_main_menu(view->window);  
   gtk_box_pack_start(GTK_BOX(vbox),menu,FALSE,FALSE,0);
   
@@ -1011,11 +546,10 @@ create_view (Buffer *buffer)
   gtk_box_pack_start (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
   gtk_container_add (GTK_CONTAINER (sw), view->text_view);
 
-  gtk_widget_set_size_request (GTK_WINDOW (view->window),600,400);
+  gtk_widget_set_size_request (GTK_WIDGET (view->window),600,400);
   /*   gtk_window_set_default_size (GTK_WINDOW (view->window), 600, 400); */
 
   gtk_widget_grab_focus (view->text_view);
-  view_set_title (view);
   
   gtk_widget_show_all (view->window);
 
@@ -1048,12 +582,10 @@ int  Sciprint2textview(const char *fmt, va_list ap)
   return n;
 }
 
-void nsp_insert_prompt()
+static void nsp_insert_prompt(const char *prompt)
 {
-  char *prompt= Prompt();
   GtkTextBuffer *buffer;
   GtkTextIter start, end;
-  int n;
   buffer = view->buffer->buffer;
   gtk_text_buffer_get_bounds (buffer, &start, &end);
   gtk_text_buffer_insert (buffer, &end,prompt,-1);
