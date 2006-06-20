@@ -1303,11 +1303,7 @@ close_view (View *view)
   buffer_unref (view->buffer);
   gtk_widget_destroy (view->window);
   g_object_unref (view->item_factory);
-  
   g_free (view);
-  
-  if (!views)
-    gtk_main_quit ();
 }
 
 static void
@@ -1633,16 +1629,13 @@ int nsp_edit(void)
   Buffer *buffer;
   View *view;
   int i;
-
   /* gtk_init (&argc, &argv); */
-  
   buffer = create_buffer ();
   view = create_view (buffer);
   buffer_unref (buffer);
-  
   push_active_window (GTK_WINDOW (view->window));
   pop_active_window ();
-  gtk_main ();
+  /* gtk_main (); */
   return 0;
 }
 #endif

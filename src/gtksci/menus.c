@@ -779,8 +779,10 @@ static void * sci_window_initial_menu(void)
   menu_entry *m = NULL;
   int winid = -1;
   char *file_entries[] = { "File _Operations||$fileops",
+			   "_Edit||$editor",
 			   "_Kill||$kill",
-			   "_Quit|<control>Q|$quit|gtk-quit" } ;
+			   "_Quit|<control>Q|$quit|gtk-quit" };
+
   char *control_entries[] = { "Resume||$resume",
 			      "Abort||$abort",
 			      "Restart||$restart",
@@ -793,7 +795,7 @@ static void * sci_window_initial_menu(void)
 	
   char *help_entries[] = { "Nsp Help|F1|$help|gtk-help",
 			   "About||$about|gtk-about"};
-  sci_menu_add(&m,winid,"_File",file_entries,3,0,"$file");
+  sci_menu_add(&m,winid,"_File",file_entries,4,0,"$file");
   sci_menu_add(&m,winid,"_Control",control_entries,4,0,"$zoom");
   sci_menu_add(&m,winid,"_Demos",NULL,0,0,"$demos");
   sci_menu_add(&m,winid,"Graphic Window 0",graphic_entries,5,0,"$graphic_window");
@@ -1052,6 +1054,22 @@ static void nsp_menu_help(void)
 #endif 
 }
 
+/* start text_view 
+ *
+ */
+
+extern void nsp_edit(void);
+
+static void nsp_menu_start_editor(void)
+{
+#ifdef USE_TEXT_VIEW
+  nsp_edit();
+#else 
+  /* we could start emacs here */
+  Sciprintf("no editor\n");
+#endif 
+}
+
 /*-----------------------------------------------------------------
  * run the demos 
  *-----------------------------------------------------------------*/
@@ -1091,6 +1109,8 @@ static void nsp_menu_gwdelete(void)
 }
 
 
+
+
 /*-----------------------------------------------------------------
  * Execute predefined callbacks 
  *-----------------------------------------------------------------*/
@@ -1124,6 +1144,7 @@ static int call_predefined_callbacks(char *name, int winid)
   else if (strcmp(name,"$restart")== 0) enqueue_nsp_command("exec SCI/scilab.star;");
   else if (strcmp(name,"$quit")== 0) enqueue_nsp_command("quit;");
   else if (strcmp(name,"$scicos_stop")== 0) nsp_menu_scicos_stop ();
+  else if (strcmp(name,"$editor")== 0) nsp_menu_start_editor();
   else return 0;
   return 1;
 }
