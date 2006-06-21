@@ -32,6 +32,7 @@ function row_activated_cb (tree_view,path,data)
   iter = model.get_iter[path];
   func=model.get_value[iter,FUNC_COLUMN];
   italic= model.get_value[iter,ITALIC_COLUMN];
+  winid = tree_view.get_data['winid'];
   if length(func)<>0 then 
     model.set[iter,ITALIC_COLUMN,~italic]; 
     str=sprintf("Execute string\n %s\n",func);
@@ -39,9 +40,12 @@ function row_activated_cb (tree_view,path,data)
     // here we execute some drawings 
     // FIXME: we need here to know the graphic Id 
     // window to be sure to draw in the good window 
+    wincur=xget('window');
+    xset('window',winid);
     xclear()
     xset('default');
-    execstr(func+"();");
+    execstr(func+"();",errcatch=%t);
+    xset('window',wincur);
     model.set[iter,ITALIC_COLUMN,italic]; 
   end
 endfunction 
@@ -177,7 +181,12 @@ function graphics_demo_in_gtk(demo_list,ogl)
   notebook.append_page[hb, gtklabel_new(mnemonic="_Graphics")]; 
   notebook.append_page[sw, gtklabel_new(mnemonic="_Source")]; 
   // 
-  nsp_graphic_new(window,hb,opengl=ogl);
+  winid=nsp_graphic_new(window,hb,opengl=ogl);
+  // we must keep track of the winid somewhere 
+  // just in case other graphics windows are also activated.
+  // this is used in row_activated_cb
+  tree.set_data[winid=winid];
+  
   hb = gtkhbox_new();
   
   selection = tree.get_selection[];
