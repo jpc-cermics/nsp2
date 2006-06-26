@@ -3119,6 +3119,7 @@ int store_record(BCG *Xgc,int code ,void *plot)
 	  list->next->theplot=plot;
 	  list->next->previous=list;
 	  list->next->next=NULL;
+	  Xgc->last_plot = list->next;
 	}
       else 
 	{
