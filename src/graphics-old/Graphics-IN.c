@@ -4722,6 +4722,21 @@ int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+#ifdef USE_TEXT_VIEW
+
+extern int nsp_insert_pixbuf_from_file(char *filename);
+
+int int_show_pixbuf( Stack stack, int rhs, int opt, int lhs)
+{
+  char *filename;
+  CheckRhs(1,1);
+  CheckLhs(0,0);
+  if ((filename = GetString(stack,1)) == (char*)0) return RET_BUG;
+  nsp_insert_pixbuf_from_file(filename);
+  return 0;
+}
+
+#endif 
 
 /*
 int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
@@ -4859,6 +4874,7 @@ static OpTab Graphics_func[]={
   {"xget_pixbuf",int_get_pixbuf},
   {"xdraw_pixbuf",int_draw_pixbuf},
   {"xflush",int_xflush},
+  {"show_pixbuf",int_show_pixbuf}, 
   {(char *) 0, NULL}
 };
 
