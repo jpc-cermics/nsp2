@@ -13,8 +13,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <gdk/gdk.h>
 #include "nsp/math.h"
 #include "nsp/sciio.h"
+#include "nsp/object.h"
+#include "nsp/gtk/gobject.h"
 #include "nsp/graphics/Graphics.h" 
 
 extern Gengine *nsp_gengine ; /* XXXXX */
@@ -84,6 +87,7 @@ static  driver_s_xset_fpf_def xset_fpf_def_1;
 static  driver_s_xset_show xset_show_1;
 static  driver_s_xset_pixmapclear xset_pixmapclear_1;
 static  driver_s_initialize_gc initialize_gc_1;
+static  driver_s_draw_pixbuf draw_pixbuf_1;
 
 
 Gengine1 nsp_gengine1={
@@ -145,7 +149,7 @@ Gengine1 nsp_gengine1={
   xset_show_1,
   xset_pixmapclear_1,
   initialize_gc_1,
-
+  draw_pixbuf_1
 };
 
 
@@ -570,6 +574,7 @@ static void fillrectangle_1(BCG *Xgc,double rect[])
   Xgc->graphic_engine->fillrectangle(Xgc,irect);
 }
 
+
 /*-----------------------------------------------------------------------------
  *  drawpolyline
  *-----------------------------------------------------------------------------*/
@@ -934,6 +939,22 @@ static void GSciString(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, i
     }
   *w = wc ;
   *h = y - yi;
+}
+
+/*-----------------------------------------------------------------------------
+ * pixbuf 
+ *-----------------------------------------------------------------------------*/
+
+static void draw_pixbuf_1(BCG *Xgc,void *pix,int src_x,int src_y,double dest_x,
+			  double dest_y,int w,int h)
+{ 
+  GdkPixbuf *pixbuf=GDK_PIXBUF(((NspGObject *) pix)->obj);
+  int idest_x,idest_y;
+  scale_f2i(Xgc,&dest_x,&dest_y,&idest_x,&idest_y,1);
+  if (Xgc->record_flag == TRUE)
+    store_pixbuf(Xgc,pix,  src_x, src_y,dest_x,dest_y, w, h);
+  Xgc->graphic_engine->draw_pixbuf(Xgc,pixbuf, src_x, src_y,idest_x,idest_y, w, h);
+  
 }
 
 /*-----------------------------------------------------------------------------

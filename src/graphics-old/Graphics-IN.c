@@ -4680,12 +4680,11 @@ extern GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) ;
 
 int int_get_image( Stack stack, int rhs, int opt, int lhs)
 {
-  NspObject *ret1,*ret2;
+  NspObject *ret1;
   GdkImage *img;
-  GdkPixbuf *pix;
   BCG *Xgc;
   CheckRhs(0,0);
-  CheckLhs(0,2);
+  CheckLhs(0,1);
   Xgc=nsp_check_graphic_context();
   if ( Xgc->private == NULL) 
     {
@@ -4697,19 +4696,78 @@ int int_get_image( Stack stack, int rhs, int opt, int lhs)
   if ((ret1 = (NspObject *) gobject_create(NVOID,(GObject *)img,(NspTypeBase *) nsp_type_gdkimage))== NULL) 
     return RET_BUG;
   MoveObj(stack,1,ret1);
-  if ( lhs == 2 ) 
-    {
-      if ((pix = nsp_get_pixbuf(Xgc))== NULL) return RET_BUG;
-      nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
-      if ((ret2 = (NspObject *) 
-	   gobject_create(NVOID,(GObject *)pix,
-			  (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) 
-	return RET_BUG;
-      MoveObj(stack,2,ret2);
-    }
   return Max(lhs,1);
 }
 
+int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *ret1;
+  GdkPixbuf *pix;
+  BCG *Xgc;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  Xgc=nsp_check_graphic_context();
+  if ( Xgc->private == NULL) 
+    {
+      Scierror("Error: %s Current graphic driver is not attached to a drawable\n",NspFname(stack));
+      return RET_BUG;
+    }
+  if ((pix = nsp_get_pixbuf(Xgc))== NULL) return RET_BUG;
+  nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
+  if ((ret1 = (NspObject *) 
+       gobject_create(NVOID,(GObject *)pix,
+		      (NspTypeBase *) nsp_type_gdkpixbuf))== NULL) 
+    return RET_BUG;
+  MoveObj(stack,1,ret1);
+  return Max(lhs,1);
+}
+
+
+/*
+int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
+{
+  NspGObject *pixbuf = NULL;
+  BCG *Xgc;
+  CheckRhs(0,1);
+  CheckLhs(0,0); 
+  if ((pixbuf = GetGObject(stack,1)) == NULL) return RET_BUG; 
+  if ( !nspgobject_check(pixbuf,(NspTypeBase *) nsp_type_gdkpixbuf)) 
+    { 
+      Scierror("first argument should be a GdkPixbuf");
+      return RET_BUG;
+    }
+  Xgc=nsp_check_graphic_context();
+  if ( Xgc->private == NULL) 
+    {
+      Scierror("Error: %s Current graphic driver is not attached to a drawable\n",NspFname(stack));
+      return RET_BUG;
+    }
+  Xgc->graphic_engine->scale->draw_pixbuf(Xgc,pixbuf,0,0,0,0,0,0);
+  return 0;
+}
+*/
+
+int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
+{
+  BCG *Xgc;
+  /* window , pix,  src_x,src_y, dest_x,dest_y,  width,height */
+  int_types T[] = {s_int, obj_check, s_int, s_int, s_double, s_double, s_int, s_int,t_end};
+  int src_x, src_y, width, height, win;
+  double  dest_x, dest_y;
+  NspGObject *pixbuf;
+  Xgc=nsp_check_graphic_context();  
+  if ( GetArgs(stack,rhs,opt,T,&win,&nsp_type_gdkpixbuf, &pixbuf, &src_x, &src_y, 
+	       &dest_x, &dest_y, &width, &height) == FAIL) return RET_BUG;
+  if ( Xgc->private == NULL) 
+    {
+      Scierror("Error: %s Current graphic driver is not attached to a drawable\n",NspFname(stack));
+      return RET_BUG;
+    }
+  Xgc->graphic_engine->scale->draw_pixbuf(Xgc,pixbuf,
+					  src_x, src_y, dest_x, dest_y, 
+					  width, height);
+  return 0;
+}
 
 
 
@@ -4797,7 +4855,9 @@ static OpTab Graphics_func[]={
   {"xs2ps",int_xs2ps},
   {"bsearch", int_bsearch},
   {"draw3d_objs", int_draw3dobj},
-  {"get_image",int_get_image},
+  {"xget_image",int_get_image},
+  {"xget_pixbuf",int_get_pixbuf},
+  {"xdraw_pixbuf",int_draw_pixbuf},
   {"xflush",int_xflush},
   {(char *) 0, NULL}
 };

@@ -1922,3 +1922,51 @@ static void read_one_line(char **buff,int *stop,FILE *fd,int *buflen)
   if ( c == EOF) {*stop = 1;}
 }
 
+#include <gdk/gdk.h>
+
+static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
+{
+  /* Xgc->graphic_engine->generic->draw_pixbuf(Xgc,pix,src_x,src_y,dest_x,dest_y,width,height);*/
+  GdkPixbuf *pixbuf = pix;
+  int row,col,ch;
+  gdouble scale_x=10, scale_y=10;
+  guchar *pixels, *p;
+  int nChannels = gdk_pixbuf_get_n_channels(pixbuf);
+  int pwidth = gdk_pixbuf_get_width(pixbuf);
+  int pheight = gdk_pixbuf_get_height(pixbuf);
+  int rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+  pixels = gdk_pixbuf_get_pixels (pixbuf);
+
+  width = (width == -1 ) ? pwidth : Min(pwidth,width);
+  height = (height == -1 ) ? pheight : Min(pheight,height);
+  /* must change to use src_x, src_y */
+
+  FPRINTF((file, "\ngsave\n"));
+  FPRINTF((file, "%d %g translate\n", dest_x, dest_y + height * scale_y));
+  FPRINTF((file, "%g %g scale\n",width * scale_x, height * scale_y));
+  FPRINTF((file, "%d %d 8 [%d 0 0 %d 0 %d]\n",width, height, width, height, height));
+  FPRINTF((file, "/scanline %d 3 mul string def\n", width));
+  FPRINTF((file, "{ currentfile scanline readhexstring pop } false 3\n"));
+  FPRINTF((file, "colorimage\n"));
+
+  /*for(row = height-1 ; row >= 0 ; row-- )*/
+  for(row = 0 ; row  < height ; row++ )
+    {
+      for(col =0; col < width; col++)
+	{
+	  p =  pixels + row * rowstride + col * nChannels;
+	  for ( ch = 0 ; ch < 3 ; ch++)
+	    {
+	      guchar n= *(p+ch),n1,n2;
+	      n1 = n & 0x0f; 
+	      n2 = (n & 0xf0 ) >> 4;
+	      FPRINTF((file,"%c",(n2 < 10) ?  '0' + n2 : 'A' + n2 - 10));
+	      FPRINTF((file,"%c",(n1 < 10) ?  '0' + n1 : 'A' + n1 - 10));
+	    }
+	  if(fmod(col + 1, 13) == 0) FPRINTF((file, "\n")); 
+	}
+      FPRINTF((file,"\n"));
+    }
+  FPRINTF((file, "grestore\n"));
+}
+

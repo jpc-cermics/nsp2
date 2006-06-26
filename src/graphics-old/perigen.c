@@ -53,6 +53,7 @@ static driver_displaynumbers displaynumbers_gen;
 static driver_drawaxis drawaxis_gen; 
 static driver_drawarc drawarc_gen; 
 static driver_fillarc fillarc_gen; 
+static driver_draw_pixbuf draw_pixbuf_gen; 
 
 nsp_gengine_generic nsp_peri_generic = {
   fill_grid_rectangles_gen,
@@ -68,6 +69,7 @@ nsp_gengine_generic nsp_peri_generic = {
   drawaxis_gen,
   drawarc_gen,
   fillarc_gen,
+  draw_pixbuf_gen
 };
 
 /**
@@ -584,3 +586,11 @@ static void fillarc_gen( BCG *Xgc,int arc[])
   Xgc->graphic_engine->fillpolyline(Xgc,vx, vy,n,close);
 }
 
+/*
+ *
+ */
+
+static void   draw_pixbuf_gen(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
+{
+  Sciprintf("draw_pixbuf not implemented in this driver\n");
+}

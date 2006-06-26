@@ -1536,6 +1536,50 @@ static void clean_3dobj(void *plot)
 {
   struct rec_3dobj *theplot = plot;
   FREE(theplot->legend);FREE(theplot->flag); FREE(theplot->bbox);
+  nsp_list_destroy(theplot->L);
+
+}
+
+/*---------------------------------------------------------------------
+ * pixbuf 
+ *---------------------------------------------------------------------------*/
+
+void store_pixbuf(BCG *Xgc,void *pix,double x, double y,double w,double h,int src_x,int src_y)
+{
+  NspObject *nsp_pix=pix;
+  struct rec_pixbuf *lplot;
+  lplot= ((struct rec_pixbuf *) MALLOC(sizeof(struct rec_pixbuf)));
+  if (lplot != NULL)
+    {
+      lplot->x=x;
+      lplot->y=y;
+      lplot->w=w;
+      lplot->h=h;
+      lplot->src_x=src_x;
+      lplot->src_y=src_y;
+      lplot->nsp_pixbuf = nsp_object_copy(nsp_pix);
+      if ( lplot->nsp_pixbuf  != NULL)
+	{
+	  store_record(Xgc,CODEpixbuf, lplot);
+	  return;
+	}
+    }
+  Scistring("\n store_ Plot (storeplot3d): No more place \n");
+}
+
+static void replay_pixbuf(BCG *Xgc,void *theplot)
+{
+  struct rec_pixbuf *plot = (struct rec_pixbuf *) theplot;
+  Xgc->graphic_engine->scale->draw_pixbuf(Xgc,
+					  plot->nsp_pixbuf, plot->x, plot->y,
+					  plot->w, plot->h,plot->src_x,plot->src_y);
+}
+
+
+static void clean_pixbuf(void *plot)
+{
+  struct rec_pixbuf *theplot = plot;
+  nsp_object_destroy(&theplot->nsp_pixbuf);
 }
 
 

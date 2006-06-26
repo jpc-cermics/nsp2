@@ -624,3 +624,15 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
   rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
 }
+
+
+
+/* pixbuf 
+ *
+ */
+
+static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
+{
+  DRAW_CHECK;
+  Xgc->graphic_engine->generic->draw_pixbuf(Xgc,pix,src_x,src_y,dest_x,dest_y,width,height);
+}

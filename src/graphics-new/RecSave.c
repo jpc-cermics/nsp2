@@ -879,6 +879,25 @@ static int save_Champ(BCG *Xgc,void *plot)
   return(1);
 }
 
+
+/* unimplemented
+ *
+ */
+
+static int save_3dobj(BCG *Xgc,void *the_plot)
+{
+  Sciprintf("save unimplemented for 3dobj\n");
+  return 1;
+}
+
+static int save_pixbuf(BCG *Xgc,void *the_plot)
+{
+  Sciprintf("save unimplemented for pixbuf\n");
+  return 1;
+}
+
+
+
 /*---------------------------------------------------------------------
  * Saving  
  *---------------------------------------------------------------------------*/
@@ -964,7 +983,9 @@ static Save_Table save_table [] ={
   {CODEfpf   	             ,"fpf",              save_fpf},
   {CODEinitialize_gc         ,"init",             save_init},
   {CODEColormap		     ,"Colormap",	  save_colormap },
-  {CODEdefault_colormap	     ,"default_colormap", save_default_colormap }
+  {CODEdefault_colormap	     ,"default_colormap", save_default_colormap },
+  {CODE3dobj	             ,"default_colormap", save_3dobj },
+  {CODEpixbuf		     ,"pixbuf",           save_pixbuf }
 };     	
 
 

@@ -497,3 +497,10 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
   rect[1]= y + extents.y_bearing;
   rect[2]= extents.width +extents.x_bearing ;
 }
+
+
+static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
+{
+  DRAW_CHECK;
+  Xgc->graphic_engine->generic->draw_pixbuf(Xgc,pix,src_x,src_y,dest_x,dest_y,width,height);
+}
