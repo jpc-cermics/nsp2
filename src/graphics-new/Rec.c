@@ -2210,38 +2210,6 @@ void tape_clean_plots(BCG *Xgc,int winnumber)
   xgc_reset_scales_to_default(Xgc);
 }
 
-/**
- * tape_clean_incr_plots:
- * @Xgc: 
- * @winnumber: 
- * 
- * clean incremental plots 
- **/
-
-void tape_clean_incr_plots(BCG *Xgc,int winnumber)
-{
-  int flag = FAIL;
-  list_plot *list = Xgc->incr_plots,* list1 ;
-  if ( Xgc->record_flag == FALSE ) return ;
-  while (list)
-    {
-      if (list->theplot != NULL) 
-	{
-	  int code = ((plot_code *) list->theplot)->code ;
-	  if ( record_table[code].clean != NULL) record_table[code].clean(list->theplot);
-	  FREE(list->theplot);
-	  flag = OK;
-	}
-      list1=list;
-      list =list->next;
-      FREE(list1);
-    }
-  Xgc->incr_plots = NULL;
-  /* nothing to do if window was not present */
-  if ( flag == FAIL ) return ;
-  /* reset scales to default */ 
-  xgc_reset_scales_to_default(Xgc);
-}
 
 /*-------------------------------------------------------------------------
  * Change les angles alpha theta dans tous les plot3d stockes 
@@ -3132,6 +3100,7 @@ int store_record(BCG *Xgc,int code ,void *plot)
 	  list->next=NULL;
 	  list->previous=NULL;
 	  Xgc->plots= list;
+	  Xgc->last_plot= list;
 	}
       else
 	{
@@ -3141,7 +3110,8 @@ int store_record(BCG *Xgc,int code ,void *plot)
     }
   else 
     {
-      while (list->next != NULL) list=list->next;
+      list = Xgc->last_plot;
+      /*       while (list->next != NULL) list=list->next; */
       list->next=MALLOC(sizeof(list_plot));
       if (list->next != NULL)
 	{
