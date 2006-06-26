@@ -355,35 +355,6 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
 
 #endif 
 
-#ifdef WITH_PANGO
-
-static void draw_mark(BCG *Xgc,int *x, int *y)
-{
-  double dx,dy;
-  PangoRectangle ink_rect;
-  int code = symbols[Xgc->CurHardSymb]; 
-  gchar symbol_code[4], *iter = symbol_code;
-  DRAW_CHECK;
-  g_unichar_to_utf8(code, iter);
-  iter = g_utf8_next_char(iter);
-  g_unichar_to_utf8(0x0, iter);
-  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
-  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,NULL);
-  dx = PANGO_PIXELS(( ink_rect.x + ink_rect.width/2.0));
-  dy = PANGO_PIXELS(( ink_rect.y + ink_rect.height/2.0));
-  gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout);
-  if (0) 
-    {
-      /* draw the ink_rectangle aroud the mark */
-      int i;
-      double rect[]={ink_rect.x,ink_rect.y,ink_rect.width,ink_rect.height};
-      int myrect[]={*x-dx,*y-dy,0,0};
-      for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
-      drawrectangle(Xgc,myrect);
-    }
-}
-
-#endif 
 
 
 
@@ -440,107 +411,21 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 }
 #endif 
 
-
-#ifdef WITH_PANGO 
-
-/* 
- * FIXME: flag is unused since the rectangle is drawn in Graphics-IN.c 
- *        to deal with the case when string can be on multiple lines 
- *        but pango could make this directly. 
- * maybe we should change the display an consider that (x,y) is the baseline 
- * of the string not its lower left boundary.
- * Note that if the string contains \n then the layout will have multiple lines 
- * 
+/* pixbuf 
+ *
  */
 
-static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angle)
+static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
 {
-  PangoRectangle ink_rect,logical_rect;
-  int  height,width;
+  GdkPixbuf *pixbuf = pix;
+  /* we could here limit the drawing to the visible part */
   DRAW_CHECK;
-  pango_layout_set_text (Xgc->private->layout, str, -1);
-  /*  PangoLayoutLine *line;
-   *  nline = pango_layout_get_line_count(Xgc->private->layout); 
-   *  if ( nline == 1 ) 
-   *    {
-   *   / * we want (x,y) to be at the baseline of the first string position * /
-   *   line = pango_layout_get_line(Xgc->private->layout,0);
-   *   pango_layout_line_get_extents(line, &ink_rect,&logical_rect);
-   *   height = - logical_rect.y/PANGO_SCALE;
-   *   width = logical_rect.width/PANGO_SCALE;
-   */
-  /* used to position the descent of the last line of layout at y */
-  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
-  if ( Abs(angle) >= 0.1) 
-    {
-      double xt,yt;
-      GdkRectangle rect;
-      PangoMatrix matrix = PANGO_MATRIX_INIT; 
-      pango_matrix_rotate (&matrix, - angle );
-      pango_context_set_matrix (Xgc->private->context, &matrix);
-      pango_layout_context_changed (Xgc->private->layout);
-      pango_layout_get_extents(Xgc->private->layout,&ink_rect,&logical_rect);
-      /* 
-       * in gdk_draw_layout x and y specify the position of the top left corner 
-       * of the bounding box (in device space) of the transformed layout. 
-       * Here when alpha = 0, (x,y) is the lower left point of the bounding box 
-       * of the string we want the string to rotate around this point. 
-       * thus we cannot call gdk_draw_layout with (x,y) directly.
-       */
-      xt = 0 * matrix.xx + -height * matrix.xy + matrix.x0;
-      yt = 0 * matrix.yx + -height * matrix.yy + matrix.y0;
-      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->context, 
-				 &matrix,&rect);
-      gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,
-		       x+rect.x+xt,y+rect.y+yt,Xgc->private->layout);
-      if (0) 
-	{
-	  /* just to test : also draw the enclosing rectangle */
-	  int myrect[]={ x,y ,rect.width,rect.height};
-	  drawrectangle(Xgc,myrect);
-	  fprintf(stderr,"rect = %d %d %d %d\n",rect.x,rect.y,rect.width,rect.height);
-	  gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,
-			   x,y,Xgc->private->layout);
-
-	}
-      pango_context_set_matrix (Xgc->private->context,NULL);
-      pango_layout_context_changed (Xgc->private->layout);
-      if (0) 
-	{
-	  /* draw the bounding box */
-	  int vx[]={x,x,x,x},vy[]={y,y,y,y};
-	  double dx,dy;
-	  dx =  0 * matrix.xx + -height * matrix.xy + matrix.x0;
-	  dy =  0 * matrix.yx + -height * matrix.yy + matrix.x0;
-	  vx[1] += dx; vy[1] += dy;
-	  dx =  width * matrix.xx + -height * matrix.xy + matrix.x0;
-	  dy =  width * matrix.yx + -height * matrix.yy + matrix.x0;
-	  vx[2] += dx; vy[2] += dy;
-	  dx =  width * matrix.xx + 0 * matrix.xy + matrix.x0;
-	  dy =  width * matrix.yx + 0 * matrix.yy + matrix.x0;
-	  vx[3] += dx; vy[3] += dy;
-	  drawpolyline(Xgc,vx, vy,4,1);
-	}
-    }
-  else
-    {
-      /* horizontal string */
-      if (0)
-	gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,x,y - height,width,height);
-      gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,x,y - height,Xgc->private->layout);
-    }
+  gdk_draw_pixbuf(Xgc->private->drawable,
+		  Xgc->private->wgc,
+		  pixbuf,
+		  src_x,src_y,
+		  dest_x,dest_y,
+		  width,height,
+		  GDK_RGB_DITHER_NONE,
+		  0,0);
 }
-#endif 
-
-#ifdef WITH_PANGO 
-
-static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
-{
-  int width, height;
-  pango_layout_set_text (Xgc->private->layout, string, -1);
-  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
-  rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
-}
-
-#endif 
-
