@@ -35,6 +35,7 @@
 #include "nsp/graphics/color.h"
 #include "nsp/command.h"
 
+
 /* #define WITH_PANGO */
 
 /*
@@ -1428,12 +1429,13 @@ GdkImage* nsp_get_image(BCG *Xgc)
 GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) 
 {
   return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,
-				      gdk_colormap_get_system(),
+				      gdk_drawable_get_colormap(Xgc->private->drawable),
 				      0,0,0,0,
 				      Xgc->CWindowWidth,Xgc->CWindowHeight);
 }
 
-/*
+
+/*  
  * include the gdk basic graphic routines 
  */
 
@@ -1442,6 +1444,7 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 #else 
 #include "perigtk/fonts_gdk.c" 
 #endif 
+
 #include "perigtk/peridraw_gdk.c"
 
 
