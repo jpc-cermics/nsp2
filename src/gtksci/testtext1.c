@@ -38,7 +38,7 @@ struct _Buffer
   gint refcount;
   GtkTextBuffer *buffer;
   GtkTextTag *not_editable_tag;
-  GtkTextTag *custom_tabs_tag;
+  GtkTextTag *center_tag;
   GtkTextMark *mark;
 
 };
@@ -122,7 +122,6 @@ static Buffer *
 create_buffer (void)
 {
   Buffer *buffer;
-  PangoTabArray *tabs;
   
   buffer = g_new (Buffer, 1);
 
@@ -135,20 +134,11 @@ create_buffer (void)
                                 "editable", FALSE,
                                 "foreground", "purple", NULL);
 
-  tabs = pango_tab_array_new_with_positions (4,
-                                             TRUE,
-                                             PANGO_TAB_LEFT, 10,
-                                             PANGO_TAB_LEFT, 30,
-                                             PANGO_TAB_LEFT, 60,
-                                             PANGO_TAB_LEFT, 120);
-  
-  buffer->custom_tabs_tag = gtk_text_buffer_create_tag (buffer->buffer, NULL,
-                                                        "tabs", tabs,
-                                                        "foreground", "green", NULL);
-
+  buffer->center_tag = 
+    gtk_text_buffer_create_tag (buffer->buffer,NULL,
+				"justification", GTK_JUSTIFY_CENTER,NULL,
+				"editable",FALSE,"foreground", "purple", NULL);
   buffer->mark = NULL;
-
-  pango_tab_array_free (tabs);
 
   return buffer;
 }
@@ -558,7 +548,7 @@ create_view (Buffer *buffer)
   return view;
 }
 
-static  View *view;
+static  View *view=NULL;
 static char buf[1025];
 
 int  Sciprint2textview(const char *fmt, va_list ap)
@@ -578,7 +568,6 @@ int  Sciprint2textview(const char *fmt, va_list ap)
   gtk_text_buffer_apply_tag (view->buffer->buffer,
 			     view->buffer->not_editable_tag,
 			     &start, &end);
-  /* ZZZ */
   return n;
 }
 
@@ -613,4 +602,33 @@ void nsp_create_main_text_view()
   SetScilabIO(Sciprint2textview);
 }
 
+/* insert a graphic file in the textview 
+ *
+ *
+ */
+
+int nsp_insert_pixbuf_from_file(char *filename)
+{
+  GtkTextIter iter,start,end;
+  GdkPixbuf*pixbuf;
+  GtkTextMark *mark;
+  if ( view != NULL) 
+    {
+      pixbuf =  gdk_pixbuf_new_from_file(filename,NULL);
+      gtk_text_buffer_get_end_iter(view->buffer->buffer,&start);
+      gtk_text_buffer_get_end_iter(view->buffer->buffer,&end);
+      gtk_text_buffer_insert_pixbuf (view->buffer->buffer, &end, pixbuf);
+      gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
+      if ( mark != NULL) 
+	gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &start,view->buffer->mark);
+      else 
+	gtk_text_buffer_get_end_iter(view->buffer->buffer,&start);
+
+      gtk_text_buffer_apply_tag (view->buffer->buffer,
+				 view->buffer->center_tag,
+				 &start, &end);
+      g_object_unref (pixbuf);
+    }
+  return 0;
+}
 
