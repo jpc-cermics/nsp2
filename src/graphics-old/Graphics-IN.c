@@ -4873,9 +4873,7 @@ static OpTab Graphics_func[]={
   {"xget_pixbuf",int_get_pixbuf},
   {"xdraw_pixbuf",int_draw_pixbuf},
   {"xflush",int_xflush},
-#ifdef USE_TEXT_VIEW
   {"show_pixbuf",int_show_pixbuf}, 
-#endif
   {(char *) 0, NULL}
 };
 
