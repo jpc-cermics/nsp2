@@ -40,6 +40,7 @@
 #include "nsp/gtksci.h"
 
 extern GtkWidget *create_main_menu( GtkWidget  *window);
+extern void nsp_create_main_text_view(void);
 
 /* #define STATUS_BAR 1  */
 
@@ -60,7 +61,7 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[]);
  * Initialize gtk 
  **/
 
-void nsp_gtk_init(int argc, char **argv,int no_window)
+void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 {
   if ( no_window == FALSE ) 
     {
@@ -90,9 +91,9 @@ void nsp_gtk_init(int argc, char **argv,int no_window)
       /* interaction with a textview 
        *
        */
-#ifdef USE_TEXT_VIEW
-      nsp_create_main_text_view();
-#endif
+      if ( use_textview == TRUE) 
+	nsp_create_main_text_view();
+
       /* create a status bar 
        * FIXME: unsused up to now 
        * 

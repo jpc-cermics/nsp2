@@ -1,5 +1,6 @@
 /* XPM */
-static char * nsp_logo_xpm[] = {
+
+const char * nsp_logo_xpm[] = {
 "246 174 2707 2",
 "  	c None",
 ". 	c #FFFFFF",

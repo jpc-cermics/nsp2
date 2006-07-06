@@ -26,13 +26,15 @@ extern int nsp_is_gtk_window (void);
 extern void nsp_activate_gtk_events_check (void); 
 extern int nsp_check_events_activated (void); 
 extern void write_scilab (char *s); 
-extern int Xorgetchar (void); 
 extern void nsp_check_gtk_events (void); 
 extern void sci_winch_signal (int n); 
 
+typedef int (*Get_char) (void);
+extern Get_char Xorgetchar;
+
 /* x_main.c */ 
 
-void nsp_gtk_init(int argc, char **argv,int no_window);
+void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview);
 extern void start_sci_gtk (void); 
 extern void sci_clear_and_exit (int n); 
 extern void sci_usr1_signal (int n); 

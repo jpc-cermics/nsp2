@@ -89,7 +89,6 @@ static View *create_view      (Buffer *buffer);
 static void  check_close_view (View   *view);
 static void  close_view       (View   *view);
 static void  view_set_title   (View   *view);
-static void  view_add_example_widgets (View *view);
 
 GSList *buffers = NULL;
 GSList *views = NULL;
@@ -353,103 +352,6 @@ blink_timeout (gpointer data)
   return TRUE;
 }
 #endif
-
-static gint
-tag_event_handler (GtkTextTag *tag, GtkWidget *widget, GdkEvent *event,
-                  const GtkTextIter *iter, gpointer user_data)
-{
-  gint char_index;
-
-  char_index = gtk_text_iter_get_offset (iter);
-  
-  switch (event->type)
-    {
-    case GDK_MOTION_NOTIFY:
-      printf ("Motion event at char %d tag `%s'\n",
-             char_index, tag->name);
-      break;
-        
-    case GDK_BUTTON_PRESS:
-      printf ("Button press at char %d tag `%s'\n",
-             char_index, tag->name);
-      break;
-        
-    case GDK_2BUTTON_PRESS:
-      printf ("Double click at char %d tag `%s'\n",
-             char_index, tag->name);
-      break;
-        
-    case GDK_3BUTTON_PRESS:
-      printf ("Triple click at char %d tag `%s'\n",
-             char_index, tag->name);
-      break;
-        
-    case GDK_BUTTON_RELEASE:
-      printf ("Button release at char %d tag `%s'\n",
-             char_index, tag->name);
-      break;
-        
-    case GDK_KEY_PRESS:
-    case GDK_KEY_RELEASE:
-      printf ("Key event at char %d tag `%s'\n",
-              char_index, tag->name);
-      break;
-      
-    case GDK_ENTER_NOTIFY:
-    case GDK_LEAVE_NOTIFY:
-    case GDK_PROPERTY_NOTIFY:
-    case GDK_SELECTION_CLEAR:
-    case GDK_SELECTION_REQUEST:
-    case GDK_SELECTION_NOTIFY:
-    case GDK_PROXIMITY_IN:
-    case GDK_PROXIMITY_OUT:
-    case GDK_DRAG_ENTER:
-    case GDK_DRAG_LEAVE:
-    case GDK_DRAG_MOTION:
-    case GDK_DRAG_STATUS:
-    case GDK_DROP_START:
-    case GDK_DROP_FINISHED:
-    default:
-      break;
-    }
-
-  return FALSE;
-}
-
-static void
-setup_tag (GtkTextTag *tag)
-{
-  g_signal_connect (tag,
-		    "event",
-		    G_CALLBACK (tag_event_handler),
-		    NULL);
-}
-
-static const char  *book_closed_xpm[] = {
-"16 16 6 1",
-"       c None s None",
-".      c black",
-"X      c red",
-"o      c yellow",
-"O      c #808080",
-"#      c white",
-"                ",
-"       ..       ",
-"     ..XX.      ",
-"   ..XXXXX.     ",
-" ..XXXXXXXX.    ",
-".ooXXXXXXXXX.   ",
-"..ooXXXXXXXXX.  ",
-".X.ooXXXXXXXXX. ",
-".XX.ooXXXXXX..  ",
-" .XX.ooXXX..#O  ",
-"  .XX.oo..##OO. ",
-"   .XX..##OO..  ",
-"    .X.#OO..    ",
-"     ..O..      ",
-"      ..        ",
-"                "};
-
 
 
 gboolean
@@ -1628,7 +1530,6 @@ int nsp_edit(void)
 {
   Buffer *buffer;
   View *view;
-  int i;
   /* gtk_init (&argc, &argv); */
   buffer = create_buffer ();
   view = create_view (buffer);

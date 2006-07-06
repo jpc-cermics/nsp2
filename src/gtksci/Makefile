@@ -15,7 +15,7 @@ OBJSHELP=helpbrowser.o uri.o
 
 OBJSC =	click.o command.o  io.o \
 	menus.o  x_main.o \
-	about.o queue.o $(OBJSHELP) 
+	about.o queue.o $(OBJSHELP) testtext1.o testtext.o
 
 
 OBJSF  = 
@@ -40,6 +40,8 @@ clean::
 distclean::
 	$(RM) $(OBJTEST) test
 
+
+io.o : term.c
 
 # generated with gcc -MMD 
 #--------------------------

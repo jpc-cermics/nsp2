@@ -1058,11 +1058,13 @@ static void nsp_menu_help(void)
  *
  */
 
+#define USE_TEXT_VIEW_EDITOR
+
 extern void nsp_edit(void);
 
 static void nsp_menu_start_editor(void)
 {
-#ifdef USE_TEXT_VIEW
+#ifdef USE_TEXT_VIEW_EDITOR
   nsp_edit();
 #else 
   /* we could start emacs here */

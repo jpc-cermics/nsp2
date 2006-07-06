@@ -16,6 +16,12 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ *
+ * Adapted from the testtext.c file in gtk+/tests 
+ * to be used as a terminal for Nsp.
+ * jpc (2006).
+ *
  */
 
 #include <stdio.h>
@@ -23,15 +29,32 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <setjmp.h>
+#include <signal.h>
+#include <unistd.h> /* for isatty */
+#include <readline/readline.h>
+#include <readline/history.h>
 
-#undef GTK_DISABLE_DEPRECATED
+#include "nsp/machine.h"
+#include "nsp/math.h"
+#include "nsp/tokenizer.h" 
+#include "nsp/gtksci.h" 
+#include "nsp/command.h" 
+#include "nsp/sciio.h" 
+
+/* #undef GTK_DISABLE_DEPRECATED */
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
+/* XXXX */
+extern GtkWidget *create_main_menu( GtkWidget  *window);
+extern Get_char nsp_set_getchar_fun(Get_char F);
+extern SciReadFunction nsp_set_readline_fun(SciReadFunction F);
+
+
 typedef struct _Buffer Buffer;
 typedef struct _View View;
-
 
 struct _Buffer
 {
@@ -40,7 +63,6 @@ struct _Buffer
   GtkTextTag *not_editable_tag;
   GtkTextTag *center_tag;
   GtkTextMark *mark;
-
 };
 
 struct _View
@@ -58,13 +80,11 @@ static void  check_close_view (View   *view);
 static void  close_view       (View   *view);
 static void nsp_insert_prompt(const char *prompt);
 
-
-
-/*
+/* insert the logo in textview at first position.
  *
  */
 
-#include "nsp-logo.xpm" 
+extern const char * nsp_logo_xpm[];
 
 void fill_buffer_with_logo (View *view)
 {
@@ -114,37 +134,26 @@ enum
   RESPONSE_BACKWARD
 };
 
-
-
 #define N_COLORS 16
 
 static Buffer *
 create_buffer (void)
 {
   Buffer *buffer;
-  
   buffer = g_new (Buffer, 1);
-
   buffer->buffer = gtk_text_buffer_new (NULL);
-  
   buffer->refcount = 1;
-
   buffer->not_editable_tag =
     gtk_text_buffer_create_tag (buffer->buffer, NULL,
                                 "editable", FALSE,
                                 "foreground", "purple", NULL);
-
   buffer->center_tag = 
     gtk_text_buffer_create_tag (buffer->buffer,NULL,
 				"justification", GTK_JUSTIFY_CENTER,NULL,
 				"editable",FALSE,"foreground", "purple", NULL);
   buffer->mark = NULL;
-
   return buffer;
 }
-
-
-
 
 static void
 buffer_ref (Buffer *buffer)
@@ -162,8 +171,6 @@ buffer_unref (Buffer *buffer)
       g_free (buffer);
     }
 }
-
-
 
 static void
 close_view (View *view)
@@ -198,8 +205,6 @@ cursor_set_callback (GtkTextBuffer     *buffer,
 
     }
 }
-
-
 
 typedef struct _view_history view_history;
 
@@ -293,7 +298,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
       g_object_set_data_full (G_OBJECT(widget),"myhistory",data,NULL);
     }
 
-  fprintf(stderr,"key pressed \n");
+  /* fprintf(stderr,"key pressed \n"); */
   switch ( event->keyval ) 
     {
     case GDK_Return:
@@ -311,7 +316,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	  {
 	    search_string = gtk_text_iter_get_text (&start, &end);
 	  }
-	fprintf(stderr,"<%s>/n",search_string);
+	/* fprintf(stderr,"<%s>/n",search_string); */
 	nsp_append_history(search_string,data);
 	gtk_text_buffer_insert (buffer, &end,
 				"\n",-1);
@@ -328,7 +333,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 				   view->buffer->not_editable_tag,
 				   &start, &end);
 	/* ZZZ */
-	fprintf(stderr,"return pressed \n");
+	/* fprintf(stderr,"return pressed \n"); */
 	if ( strcmp(search_string,"cut")==0)
 	  {
 	    gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
@@ -336,7 +341,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	  }
 	else if  ( strcmp(search_string,"top")==0)
 	  {
-	    fprintf(stderr,"scroll to top\n");
+	    /* fprintf(stderr,"scroll to top\n"); */
 	    gtk_text_buffer_get_iter_at_mark (buffer, &iter,view->buffer->mark);
 	    gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view),&iter,
 					 0.0,TRUE,
@@ -349,10 +354,10 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
       return TRUE;
     case GDK_Up:
       str = nsp_xhistory_up(data);
-      fprintf(stdout,"up pressed\n");
+      /* fprintf(stdout,"up pressed\n"); */
       if ( str != NULL) 
 	{
-	  fprintf(stdout,"insert text\n");
+	  /* fprintf(stdout,"insert text\n"); */
 	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
 	  if ( view->buffer->mark != NULL) 
 	    {
@@ -366,10 +371,10 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
       break;
     case GDK_Down:
       str = nsp_xhistory_down(data);
-      fprintf(stdout,"down pressed\n");
+      /* fprintf(stdout,"down pressed\n"); */
       if ( str != NULL) 
 	{
-	  fprintf(stdout,"insert text\n");
+	  /* fprintf(stdout,"insert text\n"); */
 	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
 	  if ( view->buffer->mark != NULL) 
 	    {
@@ -415,7 +420,7 @@ static gint timeout_command (void *v)
  */
 
 
-int Xorgetchar(void)
+int Xorgetchar_textview(void)
 {
   guint timer;
   if ( nsp_check_events_activated()== FALSE) return(getchar());
@@ -449,7 +454,7 @@ int Xorgetchar(void)
  *
  */
 
-char *readline_base(const char *prompt)
+char *readline_textview(const char *prompt)
 {
   static int use_prompt=1;
   guint timer;
@@ -458,7 +463,7 @@ char *readline_base(const char *prompt)
     {
       nsp_insert_prompt(prompt);
     }
-  fprintf(stderr,"in my readline\n");
+  /* fprintf(stderr,"in my readline\n"); */
   timer=  gtk_timeout_add(100,  (GtkFunction) timeout_command , NULL);
   gtk_main();
   gtk_timeout_remove(timer);
@@ -593,13 +598,17 @@ static void nsp_insert_prompt(const char *prompt)
 }
 
 
-void nsp_create_main_text_view()
+void nsp_create_main_text_view(void)
 {
   Buffer *buffer;
   buffer = create_buffer ();
   view = create_view (buffer);
   buffer_unref (buffer);
   SetScilabIO(Sciprint2textview);
+  nsp_set_getchar_fun(Xorgetchar_textview);
+  nsp_set_readline_fun(DefSciReadLine_textview);
+
+
 }
 
 /* insert a graphic file in the textview 
@@ -609,9 +618,8 @@ void nsp_create_main_text_view()
 
 int nsp_insert_pixbuf_from_file(char *filename)
 {
-  GtkTextIter iter,start,end;
+  GtkTextIter start,end;
   GdkPixbuf*pixbuf;
-  GtkTextMark *mark;
   if ( view != NULL) 
     {
       pixbuf =  gdk_pixbuf_new_from_file(filename,NULL);
@@ -619,7 +627,7 @@ int nsp_insert_pixbuf_from_file(char *filename)
       gtk_text_buffer_get_end_iter(view->buffer->buffer,&end);
       gtk_text_buffer_insert_pixbuf (view->buffer->buffer, &end, pixbuf);
       gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
-      if ( mark != NULL) 
+      if ( view->buffer->mark != NULL) 
 	gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &start,view->buffer->mark);
       else 
 	gtk_text_buffer_get_end_iter(view->buffer->buffer,&start);
@@ -630,5 +638,135 @@ int nsp_insert_pixbuf_from_file(char *filename)
       g_object_unref (pixbuf);
     }
   return 0;
+}
+
+#ifdef WIN32
+/* XXXXXX */
+#define sigsetjmp(x,y) setjmp(x)
+#define siglongjmp(x,y) longjmp(x,y)
+#endif 
+
+static jmp_buf my_env;
+
+extern void controlC_handler (int sig);
+extern void controlC_handler_void (int sig);
+
+static int fd=0;              /* file number for standard in */
+static int use_prompt=1;
+static int hist = 1; /* flag to add to history */
+
+void DefSciReadLine_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
+{
+  static int tty =0, init_flag = TRUE, enter=0;
+  char * line=NULL ; 
+  if(init_flag) {
+    /* the next line is useful for cut and paste 
+     * ehrlich juin 2001 
+     */
+    setvbuf(stdin, NULL, _IONBF, 0); 
+    fd=fileno(stdin);
+    tty = isatty(fileno(stdin));
+    init_flag = FALSE;
+#ifdef __MINGW32__
+    tty=1;
+#endif
+  }
+  
+  set_is_reading(TRUE);
+  
+  if( !tty) 
+    { 
+      static int first = 0;
+      /* if not an interactive terminal use fgets 
+       * should be changed for gtk events FIXME
+       */ 
+      if ( nsp_from_texmacs() == TRUE )
+	{
+	  if ( first == 0 ) 
+	    {
+	      fputs("\002verbatim:",stdout);
+	      first++;
+	    }
+	  /* FIXME: prompt should take care of pause */
+	  fputs("\002channel:prompt\005-nsp->\005",stdout);
+	  fflush (stdout);
+	}
+      else 
+	{
+	  fputs("-nsp->",stdout);
+	  fflush (stdout);
+	}
+      *eof = (fgets(buffer, *buf_size, stdin) == NULL);
+      *len_line = strlen(buffer);
+      /* remove newline character if there */
+      if(*len_line >= 2)
+	{
+	  if ( buffer[*len_line - 2] == '\r' && buffer[*len_line - 1] == '\n' )
+	    *len_line -= 2;
+	  else if ( buffer[*len_line - 1] == '\n') (*len_line)--;
+	}
+      else if( *len_line >= 1) 
+	{
+	  if ( buffer[*len_line - 1] == '\n') (*len_line)--;
+	}
+      if ( nsp_from_texmacs() == TRUE )  fputs("\002verbatim: ",stdout);
+      return;
+    }
+  /* reentrant counter */
+  enter++;
+  
+  if ( sigsetjmp(my_env,1)) 
+    {
+      /* return from longjmp: we get here if there's a menu command 
+       * to be executed by nsp 
+       */
+      if ( dequeue_nsp_command(buffer,*buf_size) == FAIL) 
+	{
+	  *eof = -1;
+	  use_prompt=0;
+	  *len_line=0;
+	  goto end;
+	}
+      else
+	{
+	  *eof = FALSE;
+	  use_prompt=0;
+	  *len_line = strlen(buffer);
+	  goto end;
+	}
+    } 
+  else 
+    {
+      signal (SIGINT, controlC_handler_void);
+      line = readline_textview((use_prompt) ? prompt : "" );
+      use_prompt=1;
+      signal (SIGINT, controlC_handler);
+    }
+  if (hist && line && *line != '\0') 
+    add_history (line);
+  
+  if ( line == NULL) 
+    {
+      *len_line= 1;
+      strncpy(buffer,"\n",1);
+      *eof = FALSE;
+    }
+  else 
+    {
+      *len_line= strlen(line);
+      strncpy(buffer,line,*buf_size);
+      /* Do not free line on reentrant calls  */
+      if ( enter == 1 ) 
+	{
+	  free(line);
+	  line = NULL;
+	}
+      *eof = FALSE;
+    }
+  if(get_echo_mode()==0)  set_echo_mode(TRUE);
+  set_is_reading(FALSE);
+ end: 
+  enter--;
+  return;
 }
 

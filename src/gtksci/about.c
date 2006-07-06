@@ -43,7 +43,7 @@ void create_nsp_about(void)
   gtk_widget_realize(window);
   box1 = GTK_DIALOG(window)->vbox;
   pixmap = gdk_pixmap_create_from_xpm_d (window->window, &mask, NULL,
-					 nsp_logo_xpm);
+					 (gchar **) nsp_logo_xpm);
   pixmapwid = gtk_pixmap_new (pixmap, mask);
   gdk_pixmap_unref (pixmap);
   gdk_pixmap_unref (mask);

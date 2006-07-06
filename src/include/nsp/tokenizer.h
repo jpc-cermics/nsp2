@@ -67,7 +67,9 @@ typedef char *token_code2name(Tokenizer *T,int key);
 
 typedef void (SciReadFunc)(Tokenizer *T, char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
 typedef SciReadFunc *SciReadFunction;
-extern SciReadFunc DefSciReadLine;
+extern SciReadFunc DefSciReadLine_rl;
+extern SciReadFunc DefSciReadLine_textview;
+extern SciReadFunction DefSciReadLine;
 
 typedef struct _smat_tokenizer smat_tokenizer ;
 

@@ -137,9 +137,8 @@ void nsp_input_feed(char *s)
  * wait for a character and check for pending events 
  */
 
-#if ! defined(NSP_ENTRY_INPUT_TEST) && ! defined(USE_TEXT_VIEW)
 
-int Xorgetchar(void)
+int Xorgetchar_select(void)
 {
   int i;
   static int c_count = -1;
@@ -272,7 +271,6 @@ int Xorgetchar(void)
   }
 }
 
-#endif /* NSP_ENTRY_INPUT_TEST  */
 
 /*
  * This routine can be called to checks for all events 
@@ -395,6 +393,34 @@ int Xorgetchar_thread(void)
 {
   return getchar();
 }
+
+/*  used to switch the default interactive getchar 
+ *
+ */
+
+Get_char Xorgetchar = Xorgetchar_select ;
+
+Get_char nsp_set_getchar_fun(Get_char F)
+{
+  Get_char g = Xorgetchar;
+  Xorgetchar = F;
+  return g;
+}
+
+/* used to switch the default interactive readline function 
+ *
+ */
+
+
+SciReadFunction DefSciReadLine = DefSciReadLine_rl;
+
+SciReadFunction nsp_set_readline_fun(SciReadFunction F)
+{
+  SciReadFunction g = DefSciReadLine;
+  DefSciReadLine = F;
+  return g;
+}
+
 
 
 
