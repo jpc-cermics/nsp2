@@ -140,6 +140,10 @@ if test "$rest" = "yes"; then
           now="-nw"
 	      sci_args="$sci_args"
           ;;
+      -tv) 
+	  now="-nw"
+          sci_args="$sci_args -tv"
+	  ;;
       -display|-d)
           prevarg="display"
           ;;
