@@ -4722,7 +4722,6 @@ int int_get_pixbuf( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#ifdef USE_TEXT_VIEW
 
 extern int nsp_insert_pixbuf_from_file(char *filename);
 
@@ -4736,7 +4735,7 @@ int int_show_pixbuf( Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#endif 
+
 
 /*
 int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
