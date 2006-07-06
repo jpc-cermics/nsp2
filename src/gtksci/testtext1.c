@@ -477,7 +477,7 @@ char *readline_textview(const char *prompt)
   else 
     {
       use_prompt=1;
-      g_print ("string returned '%s'\n",nsp_expr);
+      /* g_print ("string returned '%s'\n",nsp_expr); */
       return g_strdup(nsp_expr);
     }
   return NULL;
