@@ -108,7 +108,8 @@ fd.close[];
 
 // reread with exec ! 
 a1=a;
-rep= exec('TMPDIR/Mat',errcatch=%t)
+rep= exec('TMPDIR/Mat',errcatch=%t,display=%f,echo=%f);
+
 if ~rep then pause;end 
 if max(a1-a) > 1.e-1 then pause,end 
 
@@ -158,11 +159,11 @@ fd=fopen('test.data',mode='r');
 A=fd.get_smatrix[];
 fd.close[];
 
-A=split(A,msep=%t,sep=' ')
+A=split(A,msep=%t,sep=' ');
 
-S=A(:,[1,2,$])
+S=A(:,[1,2,$]);
 D = strtod(A); 
-D = D(:,3:$-1)
+D = D(:,3:$-1);
 
 if or(S<>[col1,col2,coln]) then pause;end 
 if max(abs(D-Ar)) >= 1.e-4 then pause;end 
