@@ -136,6 +136,38 @@ fd.close[];
 if max(a1-a) > 1.e-1 then pause,end 
 
 
+// demo: read a matrix with mixed colmuns of strings and numbers 
+// -------------------------------
+
+Ar=rand(5,4);
+
+B=m2s(Ar);
+col1='foo' + m2s([1:5]');
+col2='poo' + m2s([1:5]');
+coln='koo' + m2s([1:5]');
+B=[col1,col2,B,coln];
+B=catenate(B,col=' ');
+
+fd=fopen('test.data',mode='w');
+fd.put_smatrix[B];
+fd.close[];
+
+// reading back 
+
+fd=fopen('test.data',mode='r');
+A=fd.get_smatrix[];
+fd.close[];
+
+A=split(A,msep=%t,sep=' ')
+
+S=A(:,[1,2,$])
+D = strtod(A); 
+D = D(:,3:$-1)
+
+if or(S<>[col1,col2,coln]) then pause;end 
+if max(abs(D-Ar)) >= 1.e-4 then pause;end 
+
+
 
 
 

@@ -1605,7 +1605,7 @@ NspMatrix *nsp_string_to_ascii(nsp_const_string S)
 /* modified by bruno to get 2 differents behavior*/
 
 
-NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars, int msep)
+NspSMatrix*nsp_smatrix_split_string(nsp_const_string string,nsp_const_string splitChars, int msep)
 {
   register nsp_const_string p;
   nsp_const_string elementStart;
@@ -1695,6 +1695,30 @@ NspSMatrix*nsp_smatrix_split(nsp_const_string string,nsp_const_string splitChars
   return NULLSMAT;
 }
 
+
+NspSMatrix* nsp_smatrix_split(NspSMatrix *Src,nsp_const_string splitChars, int msep)
+{
+  NspSMatrix *M=NULLSMAT,*loc;
+  int i;
+  if ((M=nsp_smatrix_split_string(Src->S[0],splitChars,msep))==NULLSMAT) return NULLSMAT;
+
+  for ( i= 1 ; i < Src->mn ; i++) 
+    {
+      if ((loc=nsp_smatrix_split_string(Src->S[i],splitChars,msep))==NULLSMAT) goto err;
+      if ( loc->n != M->n )
+	{
+	  Scierror("Error: string %d contains too many tokens %d (expecting %d)\n",
+		   i,loc->n,M->n);
+	  goto err;
+	}
+      /* we use loc without copy */
+      if ( nsp_smatrix_concat_down1(M,loc,TRUE)== FAIL) goto err;
+    }
+  return M;
+ err:
+  nsp_smatrix_destroy(M);
+  return NULLSMAT;
+}
 
 /*
  * Add string str at the end of column string vector A 
@@ -2146,6 +2170,25 @@ static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, 
   return(OK);
 }
 
+/* SMatrix to Matrix 
+ * with strtod
+ */
 
+NspMatrix *nsp_smatrix_strtod(const NspSMatrix *S)
+{
+  NspMatrix *M;
+  char *next = NULL;
+  int i; 
+  if ((M = nsp_matrix_create(NVOID,'r',S->m,S->n)) == NULLMAT)  return NULLMAT;
+  for ( i= 0 ; i < S->mn ; i++)
+    {
+      M->R[i]= strtod(S->S[i],&next);
+      /* 
+      if ( next == S->S[i])
+	Sciprintf("Warning the string %s cannot be converted to double\n",S->S[i]);
+      */
+    }
+  return M;
+}
 
 

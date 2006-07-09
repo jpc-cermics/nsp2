@@ -1153,20 +1153,21 @@ int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
 int int_smxsplit(Stack stack, int rhs, int opt, int lhs)
 {
   char *defsplit = " \n\t\r";
-  char *str=NULL,*sep=NULL;
+  char *sep=NULL;
   Boolean msep=FALSE;
   NspSMatrix *A;
-  int_types T[] = {string, new_opts, t_end};
+  NspSMatrix *Src;
+  int_types T[] = {smat, new_opts, t_end};
   nsp_option opts[] ={{ "msep",s_bool,NULLOBJ,-1},
 		      { "sep",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&str,&opts,&msep,&sep) == FAIL) 
+  if ( GetArgs(stack,rhs,opt,T,&Src,&opts,&msep,&sep) == FAIL) 
     return RET_BUG;
   if ( sep  == NULL )
     sep = defsplit;
 
-  if ( (A=nsp_smatrix_split(str,sep,msep)) == NULLSMAT ) 
+  if ( (A=nsp_smatrix_split(Src,sep,msep)) == NULLSMAT ) 
     return RET_BUG;
   MoveObj(stack,1,(NspObject *)A);
   return 1;
@@ -1416,6 +1417,23 @@ int int_smatrix_utf8_from_unichar(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+/*
+ *
+ */
+
+int int_smatrix_strtod(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *loc;
+  NspMatrix *A;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if (( loc = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if (( A = nsp_smatrix_strtod(loc))== NULLMAT) return RET_BUG; 
+  MoveObj(stack,1,NSP_OBJECT(A));
+  return 1;
+}
+
+
 
 /*
  * The Interface for basic matrices operation 
@@ -1489,6 +1507,7 @@ static OpTab SMatrix_func[]={
   {"gsort_s", int_smatrix_sort},
   {"new_sort", int_smatrix_sort },
   {"unichar_to_utf8", int_smatrix_utf8_from_unichar},
+  {"strtod",int_smatrix_strtod},
   {(char *) 0, NULL}
 };
 
