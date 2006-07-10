@@ -828,7 +828,7 @@ void GFrame_Interf_Info(int i, char **fname, function (**f))
  * GFrame Object in Scilab : a graphic GFrameangle 
  *********************************************************************/
 
-static int pixmap = TRUE ; /* XXXXX */
+static int pixmap = FALSE ; /* XXXXX */
 
 /**
  * gframe_draw:
@@ -1064,6 +1064,7 @@ static void gframe_locks_set_show(NspGFrame *F,NspObject *O,int val)
 
 int gframe_select_and_move(NspGFrame *R,const double pt[2])
 {
+  BCG *Xgc;
   int k1, cp;
   NspTypeGRint *bf;
   NspObject *O;
@@ -1077,8 +1078,24 @@ int gframe_select_and_move(NspGFrame *R,const double pt[2])
   if ( IsBlock(O)|| IsConnector(O) )  gframe_locks_set_show(R,O,FALSE);
   gframe_unhilite_objs(R,FALSE);
   bf->set_hilited(O,TRUE);
-  /* global draw to hide current object */
-  gframe_draw(R);
+  if (0) 
+    {
+      /* global draw of all but the moving object 
+       * we record the state to redraw faster. 
+       * Pb this will reset scales to default and we do not want this XXX
+       */
+      Xgc = R->obj->Xgc;
+      Xgc->graphic_engine->clearwindow(Xgc);
+      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+      Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
+      gframe_draw(R);
+      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+    }
+  else
+    {
+      gframe_draw(R);
+    }
+  /* */
   bf->set_show(O,TRUE);
   if ( IsBlock(O) || IsConnector(O) )  gframe_locks_set_show(R,O,TRUE);
   if ( k1 == FALSE ) 
@@ -1376,18 +1393,16 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
 {
   int record,rep;
   BCG *Xgc = F->obj->Xgc;
-  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0, ibutton, iwait=FALSE;
+  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
+  int wstop = 0, ibutton, iwait=FALSE;
   double mpt[2],pt1[2]= {pt[0],pt[1]},ptwork[2];
-
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
 
   record = Xgc->graphic_engine->xget_recording(Xgc);
   Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-  Xgc->graphic_engine->xset_alufunction1(Xgc,6);
-
+  
   if ( action == MOVE_CONTROL) 
     {
-      
       bf->move_control_init(O,cp,ptwork);
     }
   /*
@@ -1397,8 +1412,22 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
 
   while ( wstop==0 ) 
     {
-      bf->draw(O);
-      if ( IsBlock(O)  || IsConnector(O))  gframe_locks_draw(F,O);
+      if (0)
+	{
+	  /* draw the rest of the world : using recorded state */
+	  Xgc->graphic_engine->clearwindow(Xgc);
+	  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+	  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow);
+	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+	  /* draw the moving block */
+	  bf->draw(O);
+	  if ( IsBlock(O)  || IsConnector(O))  gframe_locks_draw(F,O);
+	}
+      else 
+	{
+	  /* full redraw for fast graphics */
+	  gframe_draw(F);
+	}
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
       Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
@@ -1411,8 +1440,6 @@ int gframe_move_obj(NspGFrame *F,NspObject *O,const double pt[2],int stop,int cp
       if ( ibutton == stop ) wstop= 1;
       Xgc->graphic_engine->xinfo(Xgc,"ibutton=%d",ibutton);
       /* clear block shape using redraw */
-      bf->draw(O);
-      if ( IsBlock(O)|| IsConnector(O) ) gframe_locks_draw(F,O);
       /* if ( pixmap ) Xgc->graphic_engine->xset_show(); */
       /* move object */
       switch ( action ) 
@@ -1642,7 +1669,7 @@ NspObject * gframe_create_new_link(NspGFrame *F)
 
   record = Xgc->graphic_engine->xget_recording(Xgc);
   Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-  Xgc->graphic_engine->xset_alufunction1(Xgc,6);
+  
   /* prepare a link with 1 points */
   L= link_create_n("fe",1,color,thickness);
   L->obj->frame = F->obj;
@@ -1655,6 +1682,7 @@ NspObject * gframe_create_new_link(NspGFrame *F)
   L->obj->poly->R[1]=mpt[0];
   while ( wstop==0 ) 
     {
+      gframe_draw(F);
       /* draw the link */
       bf->draw(L);
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
@@ -1681,7 +1709,7 @@ NspObject * gframe_create_new_link(NspGFrame *F)
 	    }              
 	}
       /* clear link shape using redraw */
-      bf->draw(L);
+      /* bf->draw(L); */
       
       if ( ibutton == stop ) 
 	{
