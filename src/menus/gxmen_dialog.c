@@ -56,7 +56,7 @@ menu_answer nsp_dialog(NspSMatrix *title,NspSMatrix *init,NspObject **answer)
     case menu_cancel : return rep;
     case menu_ok: 
       /* \n must be converted */
-      S = nsp_smatrix_split(text_answer,"\n",0);
+      S = nsp_smatrix_split_string(text_answer,"\n",0);
       FREE(text_answer);
       if ( S != NULLSMAT ) { S->m = S->n ; S->n=1;} /* column vector */
       *answer = (NspObject *) S; 
