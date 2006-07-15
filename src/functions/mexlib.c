@@ -38,6 +38,7 @@ static void nsp_mex_errjump();
 #include "nsp/smatrix-in.h"
 #include "nsp/datas.h"
 #include "nsp/parse.h"
+#include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 
 /* some nsp function are to be updated for const */
 
@@ -455,7 +456,6 @@ void mexErrMsgTxt(char *error_msg)
  * 
  * Return value: 
  **/
-/*  New matrix **/
 
 mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it)
 {
@@ -469,6 +469,24 @@ mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it)
       if ((A = nsp_matrix_create(NVOID,'c',m,n) ) == NULLMAT) nsp_mex_errjump();
       A->convert = 'c'; /* matab complex style */
     }
+  return NSP_OBJECT(A);
+}
+
+
+/**
+ * mxCreateScalarDouble:
+ * @d: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+mxArray *mxCreateScalarDouble(double d)
+{
+  NspMatrix *A;
+  if ((A = nsp_matrix_create_from_array(NVOID,1,1,&d,NULL))  == NULLMAT) 
+    nsp_mex_errjump();
   return NSP_OBJECT(A);
 }
 
@@ -1253,4 +1271,212 @@ int mxSetNzmax(mxArray *array_ptr,int n)
       if ( nsp_sparse_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
     }
   return  nsp_sparse_realloc_col_triplet(A,n);
+}
+
+
+/**
+ * mexCallMATLAB:
+ * @nlhs: Number of desired output arguments.
+ * @plhs: Pointer to an array of mxArray (NspObject).
+ * @nrhs: Number of input arguments.
+ * @prhs: Pointer to an array of input arguments.
+ * @command_name: string containing the name of the function to be executed.
+ *  
+ *
+ * Call mexCallMATLAB evaluate a function call the function name given by its name.
+ * In case of failure a longjump returns control to Nsp.
+ *
+ * Note: In Matlab, command_name can contain an operator name this is to be done here (XXX).
+ * Note: the returned arguments in plhs can be safely destroyed if necessary, Note that 
+ *       they are not automatically destroyed by Nsp if they are not stored in the mex 
+ *       plhs array.
+ *
+ * Return value: 0 if successful, and a nonzero value if unsuccessful.
+ **/
+
+int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,
+		  mxArray *prhs[],char *command_name)
+{
+  int i;
+  for ( i= 0 ; i < nrhs ; i++) 
+    {
+      /* be sure that rhs arguments have names to protect them */
+      if ( Ocheckname(prhs[i],NVOID) )
+	{
+	  nsp_object_set_name(prhs[i],"@mex");
+	}
+    }
+  if ( nsp_gtk_eval_function_by_name(command_name,prhs,nrhs,plhs,&nlhs)== FAIL) 
+    {
+      /* this could be traped if requested by user */
+      nsp_mex_errjump();
+      return 1;
+    }
+  return 0;
+}
+
+
+
+/**
+ * mxIsEmpty:
+ * @array_ptr: 
+ * 
+ * Return value: Logical 1 (true) if the mxArray is empty, 
+ * and logical 0 (false) otherwise.
+ **/
+
+bool mxIsEmpty(const mxArray *array_ptr)
+{
+  if (array_ptr == NULL
+      || nsp_object_get_size(array_ptr,1) == 0 
+      || nsp_object_get_size(array_ptr,2) == 0 )
+    return TRUE;
+  else 
+    return FALSE;
+}
+
+
+
+/* mexMakeArrayPersistent:
+ * 
+ * Make mxArray persist after MEX-file completes
+ *
+ * array_ptr
+ *  Pointer to an mxArray created by an mxCreate* routine.
+ * 
+ * By default, mxArrays allocated by mxCreate* routines are not persistent 
+ * in MATLAB. The MATLAB memory management facility automatically frees 
+ * nonpersistent mxArrays when the MEX-function finishes. 
+ * If you want the mxArray to persist through multiple invocations of the 
+ * MEX-function, you must call mexMakeArrayPersistent.
+ * 
+ * Note If you create a persistent mxArray, you are responsible for 
+ * destroying it when the MEX-file is cleared. If you do not destroy a 
+ * persistent mxArray, MATLAB will leak memory. See mexAtExit to see how 
+ * to register a function that gets called when the MEX-file is cleared. 
+ * See mexLock to see how to lock your MEX-file so that it is never cleared. 
+ * 
+ * In Nsp the array created by mxCreate* are not automatically 
+ * freed when quiting a mex invocation. Nsp take in charge frees 
+ * and copies just for variables stored in plhr and prhs.
+ *
+ */
+
+/**
+ * mexMakeArrayPersistent:
+ * @array_ptr: 
+ * 
+ * 
+ **/
+
+void mexMakeArrayPersistent(mxArray *array_ptr)
+{
+  /* just add a name to be sure that the array is really 
+   * persistent i.e not freed if transmited to 
+   * mexCallMATLAB
+   */
+  if ( Ocheckname(array_ptr,NVOID) )
+    {
+      nsp_object_set_name(array_ptr,"@mex");
+    }
+}
+
+
+
+/**
+ * mxCreateLogicalScalar:
+ * @value: 
+ * 
+ * Create scalar NspBMat
+ * value
+ *  The desired logical value, logical 1 (true) or logical 0 (false), 
+ *  to which you want to initialize the array.
+ * 
+ * 
+ * Return value: a newly allocated  NspBMat 
+ **/
+
+mxArray *mxCreateLogicalScalar(mxLogical value)
+{
+  NspBMatrix *A;
+  if ((A=nsp_bmatrix_create(NVOID,1,1))==NULLBMAT) 
+    nsp_mex_errjump();
+  A->B[0]=value;
+  return NSP_OBJECT(A);
+}
+
+/**
+ * mxIsLogicalScalarTrue:
+ * @array_ptr: 
+ *
+ * Determine whether scalar mxArray of class mxLogical is true
+ * 
+ * Return value:  Logical 1 (true) if the value of the mxArray's logical,
+ *  scalar element is true, and logical 0 (false) otherwise.
+ **/
+
+bool mxIsLogicalScalarTrue(const mxArray *array_ptr)
+{
+  if ( IsBMat(array_ptr) && ((NspBMatrix *) array_ptr)->mn == 1
+       && ((NspBMatrix *) array_ptr)->B[0] == TRUE)
+    {
+      return TRUE;
+    }
+  else if ( IsMat(array_ptr) && ((NspMatrix *) array_ptr)->mn == 1 
+	 && ((NspMatrix *) array_ptr)->rc_type == 'r' 
+	 && ((NspMatrix *) array_ptr)->R[0] != 0 )
+    {
+      return TRUE;
+    }
+  return FALSE;
+}
+
+
+/**
+ * mxIsLogicalScalar:
+ * @array_ptr: 
+ * 
+ * Determine whether scalar mxArray is of class mxLogical
+ * 
+ * Return value:  Logical 1 (true) if the mxArray is of class mxLogical 
+ * and has 1-by-1 dimensions, 
+ * and logical 0 (false) otherwise.
+ **/
+
+bool mxIsLogicalScalar(const mxArray *array_ptr)
+{
+  if ( IsBMat(array_ptr) && ((NspBMatrix *) array_ptr)->mn == 1 ) 
+    {
+      return TRUE;
+    }
+  else if ( IsMat(array_ptr) && ((NspMatrix *) array_ptr)->mn == 1 
+	    && ((NspMatrix *) array_ptr)->rc_type == 'r' )
+    {
+      return TRUE;
+    }
+  return FALSE;
+}
+
+/* mxIsLogical: 
+ * bool mxIsLogical(const mxArray *array_ptr);
+ * array_ptr: Pointer to an mxArray.
+ * Description
+
+ */
+
+/**
+ * mxIsLogical:
+ * @array_ptr: 
+ * 
+ * Use mxIsLogical to determine whether data is  treated as Boolean (logical).
+ * In Nsp it is true if array_ptr is a BMat 
+ * 
+ * Return value: 
+ * Logical 1 (true) if array_ptr points to a logical mxArray, and 
+ * logical 0 (false) otherwise.
+ **/
+
+bool mxIsLogical(const mxArray *array_ptr)
+{
+  return IsBMat(array_ptr);
 }

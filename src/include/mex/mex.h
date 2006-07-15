@@ -8,6 +8,7 @@
 #include "nsp/interf.h"
 
 typedef NspObject mxArray ;
+typedef int mxLogical;
 
 typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 typedef enum { mxREAL, mxCOMPLEX } mxComplexity; 
@@ -109,10 +110,9 @@ extern int mexPutVariable(const char *workspace, const char *var_name,mxArray *a
 
 extern mxArray *mxCreateCharMatrixFromStrings(int m, const char **str);
 
-extern int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,const  mxArray *prhs[], const char *command_name);
+extern int mexCallMATLAB(int nlhs, mxArray *plhs[], int nrhs,mxArray *prhs[],char *command_name);
 #define mexCallNsp mexCallMATLAB
 #define mexCallScilab mexCallMATLAB
-
 
 extern mxArray *mxDuplicateArray(const mxArray *in);
 extern void mxSetName(mxArray *array_ptr,const char *var_name);
@@ -123,6 +123,17 @@ extern int mxSetNzmax( mxArray *array_ptr,int n);
 extern int mxGetNzmax( mxArray *array_ptr);
 
 
+extern mxArray *mxCreateScalarDouble(double value);
+extern bool mxIsEmpty(const mxArray *array_ptr);
+extern void mexMakeArrayPersistent(mxArray *array_ptr);
+extern mxArray *mxCreateLogicalScalar(mxLogical value);
+extern void mexMakeMemoryPersistent(void *ptr);
+extern bool mxIsLogicalScalarTrue(const mxArray *array_ptr);
+extern void mexLock(void); 
+extern void mexUnlock(void); 
+extern bool mexIsLocked(void);
+extern bool mxIsLogicalScalar(const mxArray *array_ptr);
+extern bool mxIsLogical(const mxArray *array_ptr);
 
 
 #endif /* NSP_MEX */
