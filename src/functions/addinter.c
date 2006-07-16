@@ -61,13 +61,17 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
 {
   const char interf[]="_Interf";
   const char interf_info[]="_Interf_Info";
-  int n=strlen(interface),k;
+  int n=strlen(interface),k,ret=FAIL;
   int i,rhs=2,inum,ninterf;
   char *names[3];
   int (*info)();
   
   if ((names[0] =new_nsp_string_n(n+strlen(interf))) == (nsp_string) 0) return FAIL;
-  if ((names[1] =new_nsp_string_n(n+strlen(interf_info))) == (nsp_string) 0) return FAIL;
+  if ((names[1] =new_nsp_string_n(n+strlen(interf_info))) == (nsp_string) 0) 
+    {
+      nsp_string_destroy(&names[0]);
+      return FAIL;
+    }
   sprintf(names[0],"%s%s",interface,interf);
   sprintf(names[1],"%s%s",interface,interf_info);
   names[2]= NULL;
@@ -89,7 +93,8 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
     {
       Scierror("Error: Maximum number of dynamic interfaces %d\n",MAXINTERF);
       Scierror("has been reached\n");
-      return 1;
+      ret= 1;
+      goto err;
     }
   
   /* using shared lib with id ilib if shared_lib is null 
@@ -99,7 +104,11 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
   
   SciDynLoad(shared_lib,names,'c',&ilib,( shared_lib == NULL) ? 1 : 0,&rhs);
 
-  if ( ilib < 0 ) return ilib;
+  if ( ilib < 0 )
+    {
+      ret = ilib;
+      goto err;
+    }
 
   /* store the linked function in the interface function table DynInterf */
   DynInterf[inum].Nshared = ilib;
@@ -107,12 +116,14 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
   if ( SearchInDynLinks(names[0],&DynInterf[inum].func) < 0 ) 
     {
       Scierror("Error: addinter failed, %s not  found!\n",names[0]);
-      return -5;
+      ret =  -5;
+      goto err;
     }
   if ( SearchInDynLinks(names[1],&DynInterf[inum].func_info) < 0 ) 
     {
       Scierror("Error: addinter failed, %s not  found!\n",names[1]);
-      return -5;
+      ret =  -5;
+      goto err;
     }
   strncpy(DynInterf[inum].name,names[0],NAME_MAXL);
   DynInterf[inum].ok = 1;
@@ -142,6 +153,10 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
   /* 
    * ShowInterf();
    */
+  ret = inum;
+ err:
+  nsp_string_destroy(&names[0]);
+  nsp_string_destroy(&names[1]);
   return inum;
 }
 
