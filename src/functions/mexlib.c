@@ -741,6 +741,8 @@ mxArray *mxCreateStructMatrix(int m, int n, int nfields, const char **field_name
  * @i: 
  * @fieldname: 
  * @value: 
+ *
+ * the @value object is inserted in @pa without copy.
  * 
  * 
  **/
@@ -755,7 +757,7 @@ void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value)
     }
   if ( ! IsHash(pa) ) nsp_mex_errjump();
   if (nsp_object_set_name(value,fieldname) == FAIL) return ;
-  if (  nsp_hash_enter_copy(H,value)==FAIL)
+  if (nsp_hash_enter(H,value)==FAIL)
     {
       nsp_mex_errjump();
     }
@@ -1375,6 +1377,7 @@ void mexMakeArrayPersistent(mxArray *array_ptr)
    * persistent i.e not freed if transmited to 
    * mexCallMATLAB
    */
+  if ( array_ptr == NULL ) return;
   if ( Ocheckname(array_ptr,NVOID) )
     {
       nsp_object_set_name(array_ptr,"@mex");
