@@ -1229,6 +1229,12 @@ static Stack Marshal_stack={0,NULL};
 static NspObject *Marshal_stack_S[STACK_SIZE];
 static int  stack_count=0; /* should be added in the stack */
 
+void nsp_init_gtk_stack(void)
+{
+  nsp_init_stack(&Marshal_stack,Marshal_stack_S);
+}
+
+
 void
 nspg_closure_marshal(GClosure *closure,
 		     GValue *return_value,
@@ -1246,7 +1252,7 @@ nspg_closure_marshal(GClosure *closure,
     {
       goto end;
     }
-  nsp_init_stack(&Marshal_stack,Marshal_stack_S);
+  /* nsp_init_stack(&Marshal_stack,Marshal_stack_S); */
   Marshal_stack.val->fname = "pipo"; 
   /* fprintf(stderr,"FuncEval(%d) avec le Marshal_stack %s stack.val->S=<%lx>, first=%d\n",
    *   stack_count, "pipo" ,(long) Marshal_stack.val->S,Marshal_stack.first); 
@@ -1347,17 +1353,25 @@ nspg_closure_marshal(GClosure *closure,
  * Return value: 
  **/
 
+static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
+
 int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
+{
+  /* XXX replace "gtk_eval" by the f name */
+  return _nsp_gtk_eval_function(func,"gtk_eval",args,n_args,ret,nret);
+}
+
+static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
 {
   int nargs = 0, i, n,rep =FAIL;
   stack_count++;
   nspg_block_threads();
-  if ( func  == NULLP_PLIST) 
+  if ( func  == NULLP_PLIST && fname == NULL) 
     {
       goto end;
     }
-  nsp_init_stack(&Marshal_stack,Marshal_stack_S);
-  Marshal_stack.val->fname = "pipo"; /* pc->callback->name; XXXX */
+  /* nsp_init_stack(&Marshal_stack,Marshal_stack_S); */
+  Marshal_stack.val->fname = fname;
   if ( stack_count != 1 ) 
     {
       /* XXX trying to preserve the already stored objects */ 
@@ -1397,6 +1411,25 @@ int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject 
       nspg_unblock_threads();
       return rep;
     }
+}
+
+/**
+ * nsp_gtk_eval_function_by_name:
+ * @func: 
+ * @args: 
+ * @n_args: 
+ * @ret: 
+ * @nret: 
+ * 
+ * evaluates the macro @func using the gtk stack.
+ * 
+ * Return value: 
+ **/
+
+
+int nsp_gtk_eval_function_by_name(char *name,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
+{
+  return  _nsp_gtk_eval_function(NULL,name,args,n_args,ret,nret);
 }
 
 
