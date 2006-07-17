@@ -5,7 +5,7 @@ include $(TOP)/Makefile.incl
 
 CFLAGS = $(CC_OPTIONS) 
 
-SUBDIRS = blocks graphics miscellaneous scicos system
+SUBDIRS = blocks graphics miscellaneous scicos_no_xor system
 
 all:: 
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
