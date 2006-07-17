@@ -53,7 +53,8 @@ static int onlyone =0;
 static jmp_buf MexEnv;
 
 
-static void nsp_initmex(char *name,int *lfirst,int lhs,mxArray *plhs[], int rhs,const mxArray *prhs[])
+static void nsp_initmex(char *name,int *lfirst,int lhs,mxArray *plhs[], 
+			int rhs, mxArray *prhs[])
 {
   Stack stack;
   int k=0;
@@ -83,24 +84,59 @@ static void nsp_initmex(char *name,int *lfirst,int lhs,mxArray *plhs[], int rhs,
   for (k = 0; k < Max(lhs,1) ; ++k) plhs[k]=NULL;
 } 
 
-static void nsp_endmex(Stack stack,int lhs,mxArray *plhs[],int rhs,const mxArray *prhs[])
+static void nsp_endmex(Stack stack,int lhs,mxArray *plhs[],int rhs,mxArray *prhs[])
 {
   int i;
+  /* first pass to set the return position */
   for ( i= 1 ; i <= Max(lhs,1) ; i++) 
     {
       NspObject *Obj = plhs[i-1];
       if ( Obj != NULL ) 
 	{
-	  NthObj(i) = Obj;
-	  NthObj(i)->ret_pos = i;
+	  Obj->ret_pos = i;
 	  /* back convert sparses */
-	  if (IsSpMat(NthObj(i)))
+	  if (IsSpMat(Obj))
 	    {
-	      NspSpMatrix *Sp =(NspSpMatrix *) NthObj(i);
+	      NspSpMatrix *Sp =(NspSpMatrix *) Obj;
 	      if ( nsp_sparse_update_from_triplet(Sp)==FAIL) 
 		goto bug;
 	    }
 	}
+    }
+  /* clean the input array for non-returned arguments */
+  for ( i= 1 ; i <= rhs ; i++) 
+    {
+      NspObject *obj = prhs[i-1];
+      if ( obj != NULLOBJ ) 
+	{
+	  if  (IsHobj(obj) ) 
+	    {
+	      /* Hopt was created when entering the interface 
+	       * other pointers are not to be destroyed.
+	       */
+	      if ( IsHopt(obj) )
+		{
+		  /* O is of type pointer */
+		  NspObject *obj1= ((NspHobj *) obj)->O;
+		  nsp_object_destroy(&obj);
+		  /* if Hopt was pointing to a non named object and is not 
+		   * a return value 
+		   */
+		  if ( obj1->ret_pos == -1 )
+		    nsp_void_object_destroy(&obj1);
+		}
+	    }
+	  else if ( obj->ret_pos == -1 ) 
+	    {
+	      nsp_void_object_destroy(&obj);
+	    }
+	}
+      NthObj(i)=NULLOBJ;
+    }
+  /* put lhs on stack */
+  for ( i= 1 ; i <= Max(lhs,1) ; i++) 
+    {
+      NthObj(i) =  plhs[i-1];
     }
   onlyone =0;
   return;
@@ -132,7 +168,7 @@ static void nsp_clearmex(void)
 int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
 {
   mxArray  *plhs[INTERSIZ];
-  const mxArray *prhs[INTERSIZ];
+  mxArray *prhs[INTERSIZ];
   int rfl;
   if (( rfl = sigsetjmp(MexEnv,1)) != 0 )
     {
