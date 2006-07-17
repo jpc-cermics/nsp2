@@ -1242,6 +1242,9 @@ static gint realize_event(GtkWidget *widget, gpointer data);
 static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 
 #include "perigtk/events.c"  
+/* shared by all the drivers */
+GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
+
 #include "perigtk/init.c" 
 
 

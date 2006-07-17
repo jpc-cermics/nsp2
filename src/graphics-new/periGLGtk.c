@@ -245,7 +245,9 @@ static void pixmap_resize(BCG *Xgc)
 	  xinfo(Xgc,"No more space to create Pixmaps");
 	  return;
 	}
-      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
+      gdk_pixmap_unset_gl_capability (Xgc->private->extra_pixmap);
+      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
+      /*  gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);*/
       Xgc->private->drawable = Xgc->private->extra_pixmap = temp;
       nsp_set_gldrawable(Xgc, Xgc->private->extra_pixmap);
       pixmap_clear_rect(Xgc,0,0,x,y);
@@ -1027,7 +1029,9 @@ static void xset_pixmapOn(BCG *Xgc,int num)
       xinfo(Xgc," ");
       if ( Xgc->private->gldrawable != NULL) 
 	gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
-      gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap);
+      gdk_pixmap_unset_gl_capability (Xgc->private->extra_pixmap);
+      g_object_unref (G_OBJECT (Xgc->private->extra_pixmap));
+      /* gdk_pixmap_unref((GdkPixmap *) Xgc->private->extra_pixmap); */
       Xgc->private->extra_pixmap = NULL;
       Xgc->private->drawable = (GdkDrawable *)Xgc->private->pixmap;
       Xgc->CurPixmapStatus = 0; 
@@ -1842,7 +1846,9 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       if ( dd->private->pixmap ) 
 	{
 	  /* free old pixmap */
-	  gdk_pixmap_unref(dd->private->pixmap);
+	  gdk_pixmap_unset_gl_capability (dd->private->pixmap);
+	  g_object_unref (G_OBJECT (dd->private->pixmap));
+	  /* gdk_pixmap_unref(dd->private->pixmap); */
 	  if ( dd->CurPixmapStatus == 0 ) dd->private->gldrawable=NULL;
 	}
       /* allocate a new pixmap and set its open Gl capabilities */
@@ -2068,10 +2074,11 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
   /*
    * Create OpenGL rendering context (not direct).
    */
-  Xgc->private->glcontext = gdk_gl_context_new (Xgc->private->gldrawable,
-						NULL,
-						FALSE,
-						GDK_GL_RGBA_TYPE);
+  if (Xgc->private->glcontext == NULL)
+    Xgc->private->glcontext = gdk_gl_context_new (Xgc->private->gldrawable,
+						  NULL,
+						  FALSE,
+						  GDK_GL_RGBA_TYPE);
   if (Xgc->private->glcontext == NULL)
     {
       g_print ("Connot create the OpenGL rendering context\n");
