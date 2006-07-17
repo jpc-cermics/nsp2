@@ -88,6 +88,7 @@ extern int nsp_list_length(NspList *L);
 extern int nsp_list_concat(NspList *L1, NspList *L2); 
 extern void nsp_list_info(NspList *L, int indent,char *name, int rec_level); 
 extern void nsp_list_print(NspList *L, int indent,char *name, int rec_level); 
+extern void nsp_list_latex_print(NspList *L);
 extern void nsp_cell_only_destroy(Cell **c); 
 extern NspObject *nsp_sorted_list_search(NspList *L, nsp_const_string str); 
 extern NspObject *nsp_sorted_list_search_and_remove(NspList *L,nsp_const_string str); 

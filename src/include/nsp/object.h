@@ -16,7 +16,7 @@ typedef struct  _NspObject  NspObject;
 typedef struct  _AttrTab AttrTab;
 typedef struct  _NspMethods NspMethods;
 
-typedef void (*print_fun)(void *); 
+/* typedef void (*print_fun)(void *);  */
 typedef unsigned int NspTypeId ;   
 typedef void  (print_func) (void *,int,char *name, int rec_level);
 typedef void  (dealloc_func) (void *);
@@ -82,6 +82,7 @@ struct _NspTypeObject {
   save_func *save;                    /* file save */
   load_func *load;                    /* file load */
   create_func *create;	      	      /* creates a new object  */ 
+  print_func *latex;                  /* print in latex syntax */
 };
 
 
@@ -361,6 +362,7 @@ extern int nsp_object_type(const NspObject *O, NspTypeId id);
 extern int nsp_object_implements(NspObject *O, NspTypeId id); 
 extern void nsp_object_info(NspObject *O, int indent,char *name, int rec_level); 
 extern void nsp_object_print(NspObject *O, int indent,char *name, int rec_level); 
+extern void nsp_object_latex(NspObject *O, int indent,char *name, int rec_level); 
 extern int nsp_object_is_true(NspObject *O); 
 extern NspObject *nsp_object_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep); 
 extern NspObject *def_loop (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
