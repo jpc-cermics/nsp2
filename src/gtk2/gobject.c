@@ -1254,6 +1254,8 @@ nspg_closure_marshal(GClosure *closure,
     }
   /* nsp_init_stack(&Marshal_stack,Marshal_stack_S); */
   Marshal_stack.val->fname = "pipo"; 
+  Marshal_stack.first =0;
+
   /* fprintf(stderr,"FuncEval(%d) avec le Marshal_stack %s stack.val->S=<%lx>, first=%d\n",
    *   stack_count, "pipo" ,(long) Marshal_stack.val->S,Marshal_stack.first); 
    */
@@ -1372,6 +1374,7 @@ static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],i
     }
   /* nsp_init_stack(&Marshal_stack,Marshal_stack_S); */
   Marshal_stack.val->fname = fname;
+  Marshal_stack.first =0;
   if ( stack_count != 1 ) 
     {
       /* XXX trying to preserve the already stored objects */ 
