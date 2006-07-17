@@ -900,11 +900,17 @@ void MoveObj(Stack stack, int j, NspObject *O)
   NspObject *obj = NthObj(j);
   if ( obj != NULLOBJ && IsHobj(obj) ) 
     {
-      /* Hopt was created when entering the interface */
-      if ( IsHopt(obj) ) nsp_object_destroy(&obj);
-      /* the object Hopt points to is not to be destroyed since 
-       * it is always named 
+      /* Hopt was created when entering the interface 
+       * other pointers are not to be destroyed.
        */
+      if ( IsHopt(obj) )
+	{
+	  /* O is of type pointer */
+	  NspObject *obj1= ((NspHobj *) obj)->O;
+	  nsp_object_destroy(&obj);
+	  /* if Hopt was pointing to a non named object */
+	  nsp_void_object_destroy(&obj1);
+	}
     }
   else 
     {
