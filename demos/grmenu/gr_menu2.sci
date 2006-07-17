@@ -276,13 +276,23 @@ function draw_vanne(rect)
 // test function for block drawing 
   orig=[rect(1),rect(2)-rect(4)];
   sz=[rect(3),rect(4)];
-  xfpolys(orig(1)+[0;5;7;3;5;10;10;0;0]*sz(1)/10,...
-	  orig(2)+[4;2;7;7;2;0;4;0;4]*sz(2)/10,15);
+  // take car that for Opengl 
+  // polygone are to be convex when filled 
+  //xfpolys(orig(1)+[0;5;7;3;5;10;10;0;0]*sz(1)/10,...
+  //      orig(2)+[4;2;7;7;2;0;4;0;4]*sz(2)/10,15);
+  // thus we draw 3 polygons.
+  xfpolys(orig(1)+[5,5,5;10,7,0;10,3,0]*sz(1)/10,...
+	  orig(2)+[2,2,2;4,7,0;0,7,4]*sz(2)/10,[15,15,15]);
+  
   xfarcs([orig(1)+3*sz(1)/10;orig(2)+sz(2);4*sz(1)/10;6*sz(2)/10;0;180*64],...
 	 15)
   xarcs([orig(1)+3*sz(1)/10;orig(2)+sz(2);4*sz(1)/10;6*sz(2)/10;0;180*64],...
 	1);
+  xset('font',2,6);
+  xstringb(orig(1),orig(2),'String',sz(1),sz(2));
 endfunction;
+
+
 
 function draw_plot2d(rect)
 // test function for block drawing 
@@ -293,9 +303,10 @@ function draw_plot2d(rect)
   ww= rect(3)/(frect(3)-frect(1));
   wh= rect(4)/(frect(4)-frect(2));
   xsetech(wrect=[wx,wy,ww,wh],arect=ones(1,4)/8);
-  plot2d();
+  plot3d();
   xsetech(wrect=wrect,frect=frect,arect=arect);
 endfunction;
+
 
 function draw_scope(rect)
 // test function for block drawing 
@@ -344,7 +355,7 @@ xsetech(arect=[0,0,0,0]);
 
 seteventhandler('my_eventhandler');
 
-xinit(name='My second diagram',dim=[1000,1000],popup_dim=[600,400])
+xinit(name='My second diagram opengl=%t',opengl=%t,dim=[1000,1000],popup_dim=[600,400])
 xset('recording',0)
 xsetech(arect=[0,0,0,0]);
 seteventhandler('my_eventhandler');
