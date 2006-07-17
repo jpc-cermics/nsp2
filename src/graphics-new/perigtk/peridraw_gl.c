@@ -130,7 +130,7 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 
 static void drawrectangle(BCG *Xgc,const int rect[])
 { 
-  DRAW_CHECK
+  DRAW_CHECK;
   glBegin(GL_LINE_LOOP);
   glVertex2i(rect[0]        ,rect[1]);
   glVertex2i(rect[0]+rect[2],rect[1]);
