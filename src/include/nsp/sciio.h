@@ -2,7 +2,7 @@
 #define NSP_INC_IO_H 
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2006) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
