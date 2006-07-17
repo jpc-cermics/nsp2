@@ -558,6 +558,11 @@ static void fillarc_gen( BCG *Xgc,int arc[])
   int vx[365],vy[365],k,k0,kmax,n;
   double alpha,fact=0.01745329251994330,w,h;
   int close = 1;
+  
+  /* A revoir XXXX fillarc_gen est faux */
+  drawarc_gen(Xgc,arc);
+  return;
+
   w = arc[2]/2.0;
   h = arc[3]/2.0;
   n = Min((arc[5]/64),360);
