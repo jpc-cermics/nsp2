@@ -78,6 +78,7 @@ NspTypeList *new_type_list(type_mode mode)
 
   top->save  = (save_func *)nsp_list_xdr_save;
   top->load  = (load_func *)nsp_list_xdr_load;
+  top->latex = (print_func *) nsp_list_latex_print;
 
   /* specific methods for list */
   type->init = (init_func *) init_list;

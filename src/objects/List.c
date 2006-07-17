@@ -1025,7 +1025,7 @@ void nsp_list_latex_print(NspList *L)
       if ( C->O != NULLOBJ )
 	{
 	  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
-	  nsp_object_print(C->O,2,NULL,1);    
+	  nsp_object_latex(C->O,2,NULL,1);    
 	  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
 	}
       else

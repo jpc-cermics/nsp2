@@ -97,6 +97,7 @@ new_type_matrix (type_mode mode)
   top->neq = (eq_func *) matrix_neq;
   top->save = (save_func *) matrix_xdr_save;
   top->load = (load_func *) matrix_xdr_load;
+  top->latex = (print_func *) nsp_matrix_latex_print;
 
   /* specific methods for matrix */
 

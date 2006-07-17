@@ -255,6 +255,23 @@ void nsp_object_print(NspObject *O, int indent,char *name, int rec_level)
 }
 
 /**
+ *nsp_object_latex:
+ * @O: #NspObject to be printed
+ * @indent: an int
+ * @name: %NULL or name to be used. 
+ * @rec_level: deph level of the print.
+ * 
+ * Prints object @O by calling its specialized 
+ * info function.
+ * 
+ **/
+
+void nsp_object_latex(NspObject *O, int indent,char *name, int rec_level)
+{
+  O->type->latex(O,indent,name,rec_level);
+}
+
+/**
  *nsp_object_is_true:
  * @O: 
  * 

@@ -42,6 +42,7 @@ static char *object_type_as_string(void);
 static char *object_type_short_string(void);
 static NspMethods *object_get_methods(void);
 static int int_object_create(Stack stack, int rhs, int opt, int lhs);
+static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_level);
 
 /*
  * base object : NspObject 
@@ -91,6 +92,7 @@ NspTypeObject *new_type_object(type_mode mode)
   type->create = (create_func*) int_object_create;
   type->save = (save_func *) nsp_object_save_def;
   type->load = (load_func *) nsp_object_load_def;
+  type->latex = (print_func *) nsp_object_latex_def;
 
   if ( nsp_type_object_id == 0 ) 
     {
@@ -329,6 +331,21 @@ NspObject *nsp_object_load_def(void  * F)
 {
   Scierror("Error: should not get there, trying to load an object without a load method\n");
   return NULL;
+}
+
+/* print in Latex syntax 
+ *
+ */
+
+static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : M->name;
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[\n");
+  if ( strcmp(pname,NVOID) != 0) 
+    Sciprintf("%s : \\mbox{latex print not implemented for %s}\n",pname,M->type->s_type());
+  else 
+    Sciprintf("\\mbox{latex print not implemented for %s}\n",M->type->s_type());
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
 }
 
 /*------------------------------------------------------
@@ -921,6 +938,7 @@ int int_object_info(Stack stack, int rhs, int opt, int lhs)
 
 int int_object_print(Stack stack, int rhs, int opt, int lhs)
 {
+  print_func *pr;
   int dp=user_pref.pr_depth;
   int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0;
   char *name = NULL;
@@ -940,6 +958,7 @@ int int_object_print(Stack stack, int rhs, int opt, int lhs)
 			 &indent,&latex,&name,&table) == FAIL) 
     return RET_BUG;
   user_pref.pr_depth= depth;
+  pr = ( latex == TRUE) ?  object->type->latex :  object->type->pr ;
   if ( as_read == TRUE ) 
     {
       int kp=user_pref.pr_as_read_syntax;
@@ -948,13 +967,13 @@ int int_object_print(Stack stack, int rhs, int opt, int lhs)
 	{
 	  Sciprintf("Warning: you cannot select both as_read and latex, latex ignored\n");
 	}
-      object->type->pr(object,indent,name,0);
+      pr(object,indent,name,0);
       user_pref.pr_as_read_syntax= kp;
       user_pref.pr_depth= dp;
     }
   else 
     {
-      object->type->pr(object,indent,name,0);
+      pr(object,indent,name,0);
     }
   user_pref.pr_depth= dp;
   return 0;
