@@ -22,7 +22,7 @@
  *
  *--------------------------------------------------------------------------*/
 
-#define FONTNUMBER 7 
+#define FONTNUMBER 6
 #define FONTMAXSIZE 6
 #define SYMBOLNUMBER 12
 
@@ -149,15 +149,15 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
 {
   int x,y;
   PangoRectangle logical_rect;
-  FT_Bitmap bitmap;
-  GLvoid *pixels;
+  static FT_Bitmap bitmap;
+  static GLvoid *pixels=NULL;
   guint32 *p;
   GLfloat color[4];
   guint32 rgb;
   GLfloat a;
   guint8 *row, *row_end;
   int i;
-
+  static int size = 0;
   pango_layout_get_extents (layout, NULL, &logical_rect);
   if (logical_rect.width == 0 || logical_rect.height == 0)
     return;
@@ -180,7 +180,16 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
       x = - e_rect->x;
       y = - e_rect->y ;
     }
-  bitmap.buffer = g_malloc (bitmap.rows * bitmap.width);
+  /* if pixels != NULL then bitmap.buffer and pixels have already been initializes */
+  if ( pixels != NULL )
+    {
+      if ( bitmap.rows * bitmap.width > size )
+	bitmap.buffer = g_realloc (bitmap.buffer, bitmap.rows * bitmap.width);
+    }
+  else 
+    {
+      bitmap.buffer = g_malloc (bitmap.rows * bitmap.width);
+    }
   bitmap.num_grays = 256;
   bitmap.pixel_mode = ft_pixel_mode_grays;
 
@@ -188,7 +197,16 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
   
   pango_ft2_render_layout (&bitmap, layout,x,y);
 
-  pixels = g_malloc (bitmap.rows * bitmap.width * 4);
+  if ( pixels != NULL) 
+    {
+      if ( bitmap.rows * bitmap.width > size )
+	pixels = g_realloc (pixels, bitmap.rows * bitmap.width*4);
+    }
+  else 
+    {
+      pixels = g_malloc (bitmap.rows * bitmap.width * 4);
+    }
+  size = bitmap.rows * bitmap.width;
   p = (guint32 *) pixels;
 
   glGetFloatv (GL_CURRENT_COLOR, color);
@@ -251,9 +269,10 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
 #endif
 
   glDisable (GL_BLEND);
-
+  /* 
   g_free (bitmap.buffer);
   g_free (pixels);
+  */
 }
 
 #endif 
