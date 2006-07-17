@@ -25,7 +25,7 @@
  * Text and symbols with pango 
  */
 
-#define FONTNUMBER 7 
+#define FONTNUMBER 6
 #define FONTMAXSIZE 6
 #define SYMBOLNUMBER 12
 
