@@ -10,7 +10,9 @@
 typedef NspObject mxArray ;
 typedef int mxLogical;
 
-typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
+/*typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);*/
+typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs,mxArray *prhs[]);
+
 typedef enum { mxREAL, mxCOMPLEX } mxComplexity; 
 
 typedef int bool;
