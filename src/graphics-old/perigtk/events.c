@@ -55,7 +55,7 @@ struct _GTK_locator_info {
   int  lstr;
 };
 
-static GTK_locator_info info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
+extern GTK_locator_info nsp_event_info;
 
 /* event handler for mouse pressed 
  */
@@ -79,15 +79,15 @@ static gboolean locator_button_press(GtkWidget *widget,
       Sciprintf("A Shift-press\n");
     }
 
-  if ( info.sci_click_activated == FALSE ) 
+  if ( nsp_event_info.sci_click_activated == FALSE ) 
     {
       nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,id,0,0};
       nsp_enqueue(&gc->queue,&ev);
     }
   else 
     {
-      info.ok = 1; info.win=  gc->CurWindow; info.x = event->x; info.y = event->y; 
-      info.button = id;
+      nsp_event_info.ok = 1; nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = event->x; nsp_event_info.y = event->y; 
+      nsp_event_info.button = id;
       gtk_main_quit();
     }
   return TRUE;
@@ -100,15 +100,15 @@ static gboolean locator_button_release(GtkWidget *widget,
 				       GdkEventButton *event,
 				       BCG *gc)
 {
-  if ( info.sci_click_activated == FALSE || info.getrelease == 0 ) 
+  if ( nsp_event_info.sci_click_activated == FALSE || nsp_event_info.getrelease == 0 ) 
     {
       nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,event->button-6 ,0,1};
       nsp_enqueue(&gc->queue,&ev);
     }
   else 
     {
-      info.ok =1 ; info.win=  gc->CurWindow; info.x = event->x;  info.y = event->y;
-      info.button = event->button -6;
+      nsp_event_info.ok =1 ; nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = event->x;  nsp_event_info.y = event->y;
+      nsp_event_info.button = event->button -6;
       gtk_main_quit();
     }
   return TRUE;
@@ -131,7 +131,7 @@ static gboolean locator_button_motion(GtkWidget *widget,
     {
       x= event->x; y = event->y;
     }
-  if ( info.sci_click_activated == FALSE || info.getmotion == 0 ) 
+  if ( nsp_event_info.sci_click_activated == FALSE || nsp_event_info.getmotion == 0 ) 
     {
       nsp_gwin_event ev={ gc->CurWindow,x, y,-1 ,1,0},evlast;
       if ( nsp_queue_empty(&gc->queue)== FALSE ) 
@@ -147,8 +147,8 @@ static gboolean locator_button_motion(GtkWidget *widget,
     }
   else 
     {
-      info.ok =1 ;  info.win=  gc->CurWindow; info.x = x;  info.y = y;
-      info.button = -1;
+      nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = x;  nsp_event_info.y = y;
+      nsp_event_info.button = -1;
       gtk_main_quit();
     }
   return TRUE;
@@ -160,15 +160,15 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 {
   gint x,y; 
   GdkModifierType state;
-  if (info.getkey == TRUE && (event->keyval >= 0x20) && (event->keyval <= 0xFF))
+  if (nsp_event_info.getkey == TRUE && (event->keyval >= 0x20) && (event->keyval <= 0xFF))
     {
       /* since Alt-keys and Ctrl-keys are stored in menus I want to ignore them here */
       if ( event->state != GDK_CONTROL_MASK && event->state != GDK_MOD1_MASK ) 
 	{
 	  gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
-	  info.x=x ; info.y=y;
-	  info.ok =1 ;  info.win=  gc->CurWindow; 
-	  info.button = event->keyval;
+	  nsp_event_info.x=x ; nsp_event_info.y=y;
+	  nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; 
+	  nsp_event_info.button = event->keyval;
 	  gtk_main_quit();
 	}
     }
@@ -188,10 +188,10 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 
 static gint timeout_test (BCG *gc)
 {
-  if ( dequeue_nsp_command(info.str,info.lstr) == OK)
+  if ( dequeue_nsp_command(nsp_event_info.str,nsp_event_info.lstr) == OK)
     {
-      info.ok = 1 ; info.x = 0 ; info.y =0 ; info.button =  -2;
-      info.win = (gc == NULL) ? 0 : gc->CurWindow;
+      nsp_event_info.ok = 1 ; nsp_event_info.x = 0 ; nsp_event_info.y =0 ; nsp_event_info.button =  -2;
+      nsp_event_info.win = (gc == NULL) ? 0 : gc->CurWindow;
       gtk_main_quit();
     }
   return TRUE;
@@ -317,21 +317,21 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
   if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,1);
   
   /* save info in local variable  */
-  rec_info = info;
+  rec_info = nsp_event_info;
   /* set info */ 
-  info.ok = 0 ; 
-  info.getrelease = getrelease ; 
-  info.getmotion   = getmotion ;
-  info.getmen     = (lstr == 0) ? FALSE : TRUE; 
-  info.getkey     = getkey;
-  info.sci_click_activated = TRUE ;
+  nsp_event_info.ok = 0 ; 
+  nsp_event_info.getrelease = getrelease ; 
+  nsp_event_info.getmotion   = getmotion ;
+  nsp_event_info.getmen     = (lstr == 0) ? FALSE : TRUE; 
+  nsp_event_info.getkey     = getkey;
+  nsp_event_info.sci_click_activated = TRUE ;
 
-  if ( info.getmen == TRUE ) 
+  if ( nsp_event_info.getmen == TRUE ) 
     {
       /*  Check soft menu activation during xclick */ 
-      info.timer = gtk_timeout_add(100, (GtkFunction) timeout_test, Xgc);
-      info.str   = str;
-      info.lstr  = lstr; /* on entry it gives the size of str buffer */
+      nsp_event_info.timer = gtk_timeout_add(100, (GtkFunction) timeout_test, Xgc);
+      nsp_event_info.str   = str;
+      nsp_event_info.lstr  = lstr; /* on entry it gives the size of str buffer */
     }
   
 #ifdef WITH_TK
@@ -342,10 +342,10 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
     {
       gtk_main();
       /* be sure that gtk_main_quit was activated by proper event */
-      if ( info.ok == 1 ) 
+      if ( nsp_event_info.ok == 1 ) 
 	{
 	  if ( win == -1 ) break;
-	  if ( info.win == win  ) break;
+	  if ( nsp_event_info.win == win  ) break;
 	}
     }
 
@@ -353,16 +353,16 @@ static void SciClick(BCG *Xgc,int *ibutton, int *x1, int *yy1,int *iwin, int ifl
   gtk_timeout_remove(timer_tk);
 #endif
 
-  *x1 = info.x;
-  *yy1 = info.y;
-  *ibutton = info.button;
-  *iwin = info.win;
+  *x1 = nsp_event_info.x;
+  *yy1 = nsp_event_info.y;
+  *ibutton = nsp_event_info.button;
+  *iwin = nsp_event_info.win;
   
   /* remove timer if it was set by us */ 
-  if ( info.getmen == TRUE )  gtk_timeout_remove (info.timer);
+  if ( nsp_event_info.getmen == TRUE )  gtk_timeout_remove (nsp_event_info.timer);
 
   /* take care of recursive calls i.e restore info  */
-  info = rec_info ; 
+  nsp_event_info = rec_info ; 
 
   if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,0);
 }
@@ -403,10 +403,10 @@ static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
     {
       xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
     }
-  if ( info.sci_click_activated == TRUE ) 
+  if ( nsp_event_info.sci_click_activated == TRUE ) 
     {
-      info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
-      info.button = -100;
+      nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = 0 ;  nsp_event_info.y = 0;
+      nsp_event_info.button = -100;
       delete_window(gc,gc->CurWindow);
       gtk_main_quit();
     }
@@ -425,10 +425,10 @@ static gboolean sci_delete_window (GtkWidget *widget, GdkEventKey *event,  BCG *
       xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
       return TRUE;
     }
-  if ( info.sci_click_activated == TRUE ) 
+  if ( nsp_event_info.sci_click_activated == TRUE ) 
     {
-      info.ok =1 ;  info.win=  gc->CurWindow; info.x = 0 ;  info.y = 0;
-      info.button = -100;
+      nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = 0 ;  nsp_event_info.y = 0;
+      nsp_event_info.button = -100;
       delete_window(gc,gc->CurWindow);
       gtk_main_quit();
     }
