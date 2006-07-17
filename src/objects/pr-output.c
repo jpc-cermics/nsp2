@@ -32,9 +32,17 @@
 #include "nsp/cnumeric.h"
 #include "nsp/sciio.h"
 
-
-
-struct user_preferences user_pref={8,3,1,0,0,LONG_MAX,FALSE};
+user_preferences user_pref= {
+  8 ,/* output_max_field_width;	*/
+  3 ,/* output_precision;	*/
+  1 ,/* split_long_rows;		*/
+  0 ,/* print empty dimensions   */
+  0 ,/* pr_as_read_syntax;	*/
+  LONG_MAX ,/* stop printing at given depth for recursive objects */
+  FALSE ,/* flag for list display */
+  print_std  ,/* std, latex or latex tables */
+  TRUE /* only print if active is true */
+};
 
 /*
  * Utility Functions used to get elements 
