@@ -82,6 +82,7 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
 
   top->save  = (save_func *)nsp_smatrix_xdr_save;
   top->load  = (load_func *)nsp_smatrix_xdr_load;
+  top->latex = (print_func *) nsp_smatrix_latex_print;
 
   /* specific methods for smatrix */
   type->init = (init_func *) init_smatrix;

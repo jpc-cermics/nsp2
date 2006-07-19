@@ -78,6 +78,7 @@ NspTypeBMatrix *new_type_bmatrix(type_mode mode)
   top->neq  = (eq_func *) bmatrix_neq;
   top->save  = (save_func *) bmatrix_xdr_save;
   top->load  = (load_func *) bmatrix_xdr_load;
+  top->latex = (print_func *) nsp_bmatrix_latex_print;
   /* specific methods for bmatrix */
 
   type->init = (init_func *) init_bmatrix;

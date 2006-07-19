@@ -1354,7 +1354,7 @@ static int int_list_2latexmat(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab List_func[]={
-  {"latex",int_list_2latexmat},
+  {"latex_l",int_list_2latexmat},
   {"list",int_lxlist},
   {"tlist",int_lx_tlist_as_hash},
   {"mlist",int_lx_mlist_as_hash},
