@@ -9,13 +9,21 @@
 
 typedef NspObject mxArray ;
 typedef int mxLogical;
+typedef char mxChar;
 
 /*typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);*/
 typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs,mxArray *prhs[]);
 
 typedef enum { mxREAL, mxCOMPLEX } mxComplexity; 
-
 typedef int bool;
+
+#ifndef true 
+#define true TRUE 
+#endif 
+#ifndef false 
+#define false FALSE
+#endif 
+
   
 extern int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction);
 extern double *mxGetPr (const mxArray *ptr);
@@ -62,7 +70,7 @@ extern bool mxIsNaN(double x);
 extern double mxGetScalar(const mxArray *ptr);
 extern mxArray *mxGetField (const mxArray *pa, int i, char *fieldname);
 extern void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value);
-extern void mexWarnMsgTxt(char *error_msg);
+extern void mexWarnMsgTxt(const char *error_msg);
 extern bool mxIsCell (const mxArray *ptr);
 extern mxArray *mxGetCell(const mxArray *ptr, int index);
 extern void mxSetCell(mxArray *ptr, int index, mxArray *value);
@@ -92,15 +100,18 @@ extern mxClassID mxGetClassID(const mxArray *ptr) ;
 #define  mxCHAR_CLASS  nsp_type_smatrix_id
 #define  mxLOGICAL_CLASS  nsp_type_bmatrix_id
 #define  mxDOUBLE_CLASS  nsp_type_matrix_id
+#define  mxOBJECT_CLASS  nsp_type_object_id
+#define  mxSPARSE_CLASS  nsp_type_spmatrix_id
 #define  mxSINGLE_CLASS  -1 
-#define  mxINT8_CLASS  -1
-#define  mxUINT8_CLASS  -1 
-#define  mxINT16_CLASS  -1
-#define  mxUINT16_CLASS  -1
-#define  mxINT32_CLASS  -1
-#define  mxUINT32_CLASS  -1
-#define  mxINT64_CLASS  -1
-#define  mxUINT64_CLASS  -1;
+#define  mxINT8_CLASS  -2
+#define  mxUINT8_CLASS  -3
+#define  mxINT16_CLASS  -4
+#define  mxUINT16_CLASS  -5
+#define  mxINT32_CLASS  -6
+#define  mxUINT32_CLASS  -7
+#define  mxINT64_CLASS  -8
+#define  mxUINT64_CLASS  -9
+#define  mxOPAQUE_CLASS  -10
 #define  mxFUNCTION_CLASS  nsp_type_plist_id 
 
 extern void *mxMalloc(size_t n);
@@ -122,7 +133,7 @@ extern int mexPutArray( mxArray *array_ptr,const char *workspace);
 extern int mexEvalString( char *command);
 extern int *mxGetDimensions(const mxArray *ptr);
 extern int mxSetNzmax( mxArray *array_ptr,int n);
-extern int mxGetNzmax( mxArray *array_ptr);
+extern int mxGetNzmax(const mxArray *array_ptr);
 
 
 extern mxArray *mxCreateScalarDouble(double value);
@@ -136,6 +147,29 @@ extern void mexUnlock(void);
 extern bool mexIsLocked(void);
 extern bool mxIsLogicalScalar(const mxArray *array_ptr);
 extern bool mxIsLogical(const mxArray *array_ptr);
+
+extern const char *mxGetFieldNameByNumber(const mxArray *array_ptr, 
+					  int field_number);
+
+extern void *mxGetData(const mxArray *array_ptr);
+
+extern mxArray *mxCreateCharArray(int ndim, const int *dims);
+
+extern mxArray *mxGetFieldByNumber(const mxArray *array_ptr, int index, 
+				   int field_number);
+
+extern int mxGetElementSize(const mxArray *array_ptr);
+extern mxChar *mxGetChars(const mxArray *array_ptr);
+
+extern mxLogical *mxGetLogicals(const mxArray *array_ptr);
+
+extern const char *mxGetClassName(const mxArray *array_ptr);
+
+  
+extern bool mxIsSharedArray(const mxArray *array_ptr);
+extern void mxUnshareArray(mxArray *array_ptr);
+
+
 
 
 #endif /* NSP_MEX */
