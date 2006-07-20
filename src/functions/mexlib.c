@@ -847,7 +847,7 @@ bool mxIsChar(const mxArray *ptr)
  * 
  * 
  **/
-void mexWarnMsgTxt(char *error_msg)
+void mexWarnMsgTxt(const char *error_msg)
 {
   Sciprintf(error_msg);
 }
@@ -1270,7 +1270,7 @@ int mexEvalString(char *command)
  * 
  * Return value: 
  **/
-int mxGetNzmax( mxArray *array_ptr)
+int mxGetNzmax(const mxArray *array_ptr)
 {
   NspSpMatrix *A=(NspSpMatrix *) array_ptr;
   if ( array_ptr == NULL)
@@ -1519,3 +1519,187 @@ bool mxIsLogical(const mxArray *array_ptr)
 {
   return IsBMat(array_ptr);
 }
+
+
+/* mexMakeMemoryPersistent:
+ * 
+ * Make allocated memory MATLAB persist after MEX-function completes
+ * void mexMakeMemoryPersistent(void *ptr);
+ * ptr
+ *  Pointer to the beginning of memory allocated by one of the MATLAB memory allocation routines.
+ * Description
+ * 
+ * By default, memory allocated by MATLAB is nonpersistent, so it is freed automatically when 
+ * the MEX-file finishes. If you want the memory to persist, you must call mexMakeMemoryPersistent.
+ * Note    If you create persistent memory, you are responsible for freeing it when the MEX-function 
+ * is cleared. If you do not free the memory, MATLAB will leak memory. To free memory, use mxFree. 
+ * See mexAtExit to see how to register a function that gets called when the MEX-function is cleared. 
+ * See mexLock to see how to lock your MEX-function so that it is never cleared. 
+ * 
+ */
+
+void mexMakeMemoryPersistent(void *ptr)
+{
+}
+
+
+/* mexLock:
+ * Prevent MEX-file from being cleared from memory
+ * By default, MEX-files are unlocked, meaning that a user can clear them at any time. 
+ * Call mexLock to prohibit a MEX-file from being cleared.
+ *
+ * To unlock a MEX-file, call mexUnlock.
+ *
+ * mexLock increments a lock count. If you call mexLock n times, you must call mexUnlock n times to unlock your MEX-file.
+ */
+
+void mexLock(void)
+{
+}
+
+/*mexUnlock:
+ *
+ * Allow MEX-file to be cleared from memory
+ * Description
+ * By default, MEX-files are unlocked, meaning that a user can clear them at any time. 
+ * Calling mexLock locks a MEX-file so that it cannot be cleared. Calling mexUnlock removes 
+ * the lock so that the MEX-file can be cleared.
+ * 
+ * mexLock increments a lock count. If you called mexLock n times, you must call mexUnlock n times to unlock your MEX-file.
+ */
+
+void mexUnlock(void)
+{
+}
+
+/* mexIsLocked:
+ * Determine if MEX-file is locked
+ * bool mexIsLocked(void);
+ * Returns Logical 1 (true) if the MEX-file is locked; logical 0 (false) if 
+ * the file is unlocked.
+ * 
+ * Call mexIsLocked to determine if the MEX-file is locked. By default, 
+ * MEX-files are unlocked, meaning that users can clear the MEX-file at any time.
+ * 
+ */
+
+bool mexIsLocked(void)
+{
+  return FALSE;
+}
+
+
+void *mxGetData(const mxArray *array_ptr)
+{
+  return mxGetPr(array_ptr);
+}
+
+bool mxIsSharedArray(const mxArray *array_ptr)
+{
+  return false;
+}
+
+extern void mxUnshareArray(mxArray *array_ptr)
+{
+  
+}
+
+mxArray *mxCreateSparseLogicalMatrix(int m, int n, int nzmax)
+{
+  mexWarnMsgTxt("Warning: mxCreateSparseLogicalMatrix only creates a sparse_n");
+  return mxCreateSparse(m,n,nzmax,mxREAL);
+}
+
+
+
+mxArray *mxGetFieldByNumber(const mxArray *array_ptr, int index, 
+			    int field_number)
+{
+  Scierror("Error: mxGetFieldByNumber not implemented\n");
+  nsp_mex_errjump();      
+  return NULL;
+}
+
+mxChar *mxGetChars(const mxArray *array_ptr)
+{
+  Scierror("Error: mxGetChars not implemented\n");
+  nsp_mex_errjump();      
+  return NULL;
+}
+
+
+int mxGetElementSize(const mxArray *array_ptr)
+{
+  Scierror("Error: mxGetElementSize is to be done\n");
+  nsp_mex_errjump();      
+  return 0;
+}
+
+
+mxArray *mxCreateNumericArray(int ndim, const int *dims, 
+			      mxClassID class, mxComplexity ComplexFlag)
+{
+  if ( ndim != 2 && class != mxDOUBLE_CLASS )
+    {
+      Scierror("Error: mxCreateNumericArray only works for doubles and 2dims\n");
+      nsp_mex_errjump();      
+    }
+  return mxCreateDoubleMatrix(dims[0],dims[1],ComplexFlag);
+}
+
+mxLogical *mxGetLogicals(const mxArray *array_ptr)
+{
+  if ( IsBMat(array_ptr) && ((NspBMatrix *) array_ptr)->mn != 0 )
+    return ((NspBMatrix *) array_ptr)->B;
+  else 
+    return NULL;
+}
+
+
+mxArray *mxCreateCharArray(int ndim, const int *dims)
+{
+  if ( ndim != 2 )
+    {
+      Scierror("Error: mxCreateCharArray only works for dims==2\n");
+      nsp_mex_errjump();      
+    }
+  Scierror("Error: mxCreateCharArray is to be done\n");
+  nsp_mex_errjump();      
+  return NULL;
+}
+
+mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
+         const char **field_names)
+{
+  if ( ndim != 2 )
+    {
+      Scierror("Error: mxCreateCharArray only works for dims==2\n");
+      nsp_mex_errjump();      
+    }
+  return mxCreateStructMatrix(dims[0],dims[1],nfields,field_names);
+}
+
+const char *mxGetClassName(const mxArray *array_ptr)
+{
+  return array_ptr->type->s_type();
+}
+
+void mxSetFieldByNumber(mxArray *array_ptr, int index,  
+			int field_number, mxArray *value)
+{
+  Scierror("Error: mxSetFieldByNumber is not implemented\n");
+  nsp_mex_errjump();      
+}
+
+
+
+const char *mxGetFieldNameByNumber(const mxArray *array_ptr, 
+				   int field_number)
+{
+  Scierror("Error: mxGetFieldNameByNumber is not implemented\n");
+  nsp_mex_errjump();      
+  return NULL;
+}
+
+
+
