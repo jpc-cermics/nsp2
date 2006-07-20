@@ -165,6 +165,8 @@ static void nsp_clearmex(void)
  * Return value: 
  **/
 
+typedef const mxArray **c_prhs;
+
 int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
 {
   mxArray  *plhs[INTERSIZ];
@@ -175,9 +177,9 @@ int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
       return RET_BUG;
     }
   nsp_initmex(NspFname(stack),&stack.first,lhs, plhs, rhs, prhs);
-  mexFunction(lhs, plhs, rhs, prhs);
+  mexFunction(lhs, plhs, rhs,(c_prhs)  prhs);
   if ( lhs <= 0 && plhs[0] != NULL ) lhs = 1;
-  nsp_endmex(stack,lhs, plhs, rhs, prhs);
+  nsp_endmex(stack,lhs, plhs, rhs,prhs);
   return Max(0,lhs);
 }
 
@@ -1599,7 +1601,7 @@ bool mxIsSharedArray(const mxArray *array_ptr)
   return false;
 }
 
-extern void mxUnshareArray(mxArray *array_ptr)
+extern void mxUnshareArray(const mxArray *array_ptr)
 {
   
 }

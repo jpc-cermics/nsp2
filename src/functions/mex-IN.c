@@ -107,6 +107,7 @@ static void abcopy(const double a[], double b[], int mn)
   for ( i=0 ; i < mn ; i++)  b[i] = 3.0 +a[i];
 }
 
+
 /*
  * FIXME: need to define a structure for storing 
  * interface which can be accessed from different wrappers 
@@ -120,8 +121,8 @@ typedef  struct  {
 
 
 static nsp_mex_tab mex_func[]={
-  {"mexfun",mexFunction},
-  {"mexfun1",mexFunction1},
+  {"mexfun", mexFunction},
+  {"mexfun1", mexFunction1},
   {(char *) 0, NULL}
 };
 
