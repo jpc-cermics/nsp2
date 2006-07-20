@@ -11,8 +11,8 @@ typedef NspObject mxArray ;
 typedef int mxLogical;
 typedef char mxChar;
 
-/*typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);*/
-typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs,mxArray *prhs[]);
+typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
+/* typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs,mxArray *prhs[]); */
 
 typedef enum { mxREAL, mxCOMPLEX } mxComplexity; 
 typedef int bool;
@@ -167,7 +167,7 @@ extern const char *mxGetClassName(const mxArray *array_ptr);
 
   
 extern bool mxIsSharedArray(const mxArray *array_ptr);
-extern void mxUnshareArray(mxArray *array_ptr);
+extern void mxUnshareArray(const mxArray *array_ptr);
 
 
 
