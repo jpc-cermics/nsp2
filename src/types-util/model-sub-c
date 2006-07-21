@@ -133,9 +133,9 @@ static char *@TYPEDOWNCASE@_type_short_string(void)
 
 Nsp@TYPENAME@   *@TYPEDOWNCASE@_object(NspObject *O)
 {
-  /** Follow pointer **/
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
-  /** Check type **/
+  /* Follow pointer */
+  HOBJ_GET_OBJECT(O,NULL);
+  /* Check type */
   if ( check_cast(O,nsp_type_@TYPEDOWNCASE@_id) == TRUE) return ((Nsp@TYPENAME@ *) O);
   else 
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_@TYPEDOWNCASE@));
@@ -172,7 +172,7 @@ Nsp@TYPENAME@  *Get@TYPENAME@(Stack stack, int i)
 
 Nsp@TYPENAME@ *@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H)
 {
-  return @PARENTDOWNCASE@_create(NVOID,H->@PARENTDOWNCASE@_color,H->@PARENTDOWNCASE@_thickness,(NspTypeBase *) nsp_type_@TYPEDOWNCASE@);
+  return nsp_@PARENTDOWNCASE@_create(NVOID,H->@PARENTDOWNCASE@_color,H->@PARENTDOWNCASE@_thickness,(NspTypeBase *) nsp_type_@TYPEDOWNCASE@);
 }
 
 /*-------------------------------------------------------------------
@@ -193,7 +193,7 @@ int int_@TYPESHORT@_create(Stack stack, int rhs, int opt, int lhs)
   if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
   /* want to be sure that type @TYPEDOWNCASE@ is initialized */
   nsp_type_@TYPEDOWNCASE@ = new_type_@TYPEDOWNCASE@(T_BASE);
-  if(( H = @PARENTDOWNCASE@_create(NVOID,color,thickness,(NspTypeBase *) nsp_type_@TYPEDOWNCASE@)) == @NULL@) return RET_BUG;
+  if(( H = nsp_@PARENTDOWNCASE@_create(NVOID,color,thickness,(NspTypeBase *) nsp_type_@TYPEDOWNCASE@)) == @NULL@) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 

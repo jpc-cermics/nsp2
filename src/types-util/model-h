@@ -18,7 +18,7 @@
 typedef struct _Nsp@TYPENAME@ Nsp@TYPENAME@;
 typedef struct _NspType@TYPENAME@ NspType@TYPENAME@;
 
-typedef int (*@TYPEDOWNCASE@_save) (NspFile  *F, Nsp@TYPENAME@ *M);
+typedef int (*@TYPEDOWNCASE@_save) (XDR  *xdrs, Nsp@TYPENAME@ *M);
 
 struct _NspType@TYPENAME@ { 
   /*< private >*/
@@ -54,8 +54,8 @@ Nsp@TYPENAME@ *new_@TYPEDOWNCASE@();
 Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspTypeBase *type);
 Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_copy(Nsp@TYPENAME@ *H);
 void nsp_@TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H);
-void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,char *name, int rec_level);
-void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent,char *name, int rec_level);
+void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level);
+void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level);
 
 /* from @TYPENAME@Obj.c */
 
@@ -76,8 +76,8 @@ static char *nsp_@TYPEDOWNCASE@_type_as_string(void);
 static char *nsp_@TYPEDOWNCASE@_type_short_string(void);
 static int nsp_@TYPEDOWNCASE@_eq(Nsp@TYPENAME@ *A, NspObject *B);
 static int nsp_@TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B);
-static int nsp_@TYPEDOWNCASE@_xdr_save(NspFile  *F, Nsp@TYPENAME@ *M);
-static Nsp@TYPENAME@  *nsp_@TYPEDOWNCASE@_xdr_load(NspFile  *F);
+static int nsp_@TYPEDOWNCASE@_xdr_save(XDR *xdrs, Nsp@TYPENAME@ *M);
+static Nsp@TYPENAME@  *nsp_@TYPEDOWNCASE@_xdr_load(XDR *xdrs);
 static AttrTab @TYPEDOWNCASE@_attrs[];
 static NspMethods *@TYPEDOWNCASE@_get_methods(void); 
 static int int_@TYPESHORT@_create(Stack stack, int rhs, int opt, int lhs);

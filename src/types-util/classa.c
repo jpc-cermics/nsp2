@@ -182,7 +182,7 @@ static int nsp_classa_eq(NspClassA *A, NspObject *B)
 
 static int nsp_classa_neq(NspClassA *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_classa_id) == FALSE) return TRUE;
   rep = nsp_classa_full_comp(A,(NspClassA *) B,"<>",&err);
   if ( err == 1) return TRUE ; 
@@ -228,7 +228,7 @@ void nsp_classa_destroy(NspClassA *H)
  * info 
  */
 
-void nsp_classa_info(NspClassA *H, int indent,char *name, int rec_level)
+void nsp_classa_info(NspClassA *H, int indent,const char *name, int rec_level)
 {
   int i;
   if ( H == NULLCLA) 
@@ -245,9 +245,9 @@ void nsp_classa_info(NspClassA *H, int indent,char *name, int rec_level)
  * print 
  */
 
-void nsp_classa_print(NspClassA *H, int indent,char *name, int rec_level)
+void nsp_classa_print(NspClassA *H, int indent,const char *name, int rec_level)
 {
-  nsp_classa_info(H,indent);
+  nsp_classa_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------
@@ -259,7 +259,7 @@ void nsp_classa_print(NspClassA *H, int indent,char *name, int rec_level)
 NspClassA   *nsp_classa_object(NspObject *O)
 {
   /* Follow pointer */
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type */
   if ( check_cast(O,nsp_type_classa_id) == TRUE) return ((NspClassA *) O);
   else 
@@ -349,7 +349,7 @@ static NspObject * int_cla_get_color(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((NspClassA *) Hv)->classa_color);
 }
 
-static int int_cla_set_color(void *Hv, char *attr, NspObject *O)
+static int int_cla_set_color(void *Hv,const char *attr, NspObject *O)
 {
   int color; 
   if (  IntScalar(O,&color) == FAIL) return FAIL;
@@ -362,7 +362,7 @@ static NspObject * int_cla_get_thickness(void *Hv, char *attr)
   return nsp_create_object_from_double(NVOID,((NspClassA *) Hv)->classa_thickness);
 }
 
-static int int_cla_set_thickness(void *Hv, char *attr, NspObject *O)
+static int int_cla_set_thickness(void *Hv,const char *attr, NspObject *O)
 {
   int thickness; 
   if (  IntScalar(O,&thickness) == FAIL) return FAIL;
@@ -380,7 +380,7 @@ static NspObject *int_cla_get_object_val(void *Hv,char *str)
   return (NspObject *)  ((NspClassA *)Hv)->classa_val;
 }
 
-static int int_cla_set_val(void *Hv, char *attr, NspObject *O)
+static int int_cla_set_val(void *Hv,const char *attr, NspObject *O)
 {
   NspMatrix *m;
   if ((m = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return RET_BUG;
@@ -438,7 +438,7 @@ int int_cla_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   NspClassA *a;
   if (( a= GetClassA(stack,1))== NULLCLA) return RET_BUG;
-  nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0,NULL,0);
   return 0;
 }
 

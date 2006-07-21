@@ -133,9 +133,9 @@ static char *classc_type_short_string(void)
 
 NspClassC   *classc_object(NspObject *O)
 {
-  /** Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
-  /** Check type **/
+  /* Check type */
   if ( check_cast(O,nsp_type_classc_id) == TRUE) return ((NspClassC *) O);
   else 
     Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_classc));

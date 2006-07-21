@@ -182,7 +182,7 @@ static int nsp_@TYPEDOWNCASE@_eq(Nsp@TYPENAME@ *A, NspObject *B)
 
 static int nsp_@TYPEDOWNCASE@_neq(Nsp@TYPENAME@ *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_@TYPEDOWNCASE@_id) == FALSE) return TRUE;
   rep = nsp_@TYPEDOWNCASE@_full_comp(A,(Nsp@TYPENAME@ *) B,"<>",&err);
   if ( err == 1) return TRUE ; 
@@ -228,7 +228,7 @@ void nsp_@TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H)
  * info 
  */
 
-void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,char *name, int rec_level)
+void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level)
 {
   int i;
   if ( H == @NULL@) 
@@ -245,9 +245,9 @@ void nsp_@TYPEDOWNCASE@_info(Nsp@TYPENAME@ *H, int indent,char *name, int rec_le
  * print 
  */
 
-void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent,char *name, int rec_level)
+void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent,const char *name, int rec_level)
 {
-  nsp_@TYPEDOWNCASE@_info(H,indent);
+  nsp_@TYPEDOWNCASE@_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------
@@ -259,7 +259,7 @@ void nsp_@TYPEDOWNCASE@_print(Nsp@TYPENAME@ *H, int indent,char *name, int rec_l
 Nsp@TYPENAME@   *nsp_@TYPEDOWNCASE@_object(NspObject *O)
 {
   /* Follow pointer */
-  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  HOBJ_GET_OBJECT(O,NULL);
   /* Check type */
   if ( check_cast(O,nsp_type_@TYPEDOWNCASE@_id) == TRUE) return ((Nsp@TYPENAME@ *) O);
   else 
@@ -349,7 +349,7 @@ static NspObject * int_@TYPESHORT@_get_color(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((Nsp@TYPENAME@ *) Hv)->@TYPEDOWNCASE@_color);
 }
 
-static int int_@TYPESHORT@_set_color(void *Hv, char *attr, NspObject *O)
+static int int_@TYPESHORT@_set_color(void *Hv,const char *attr, NspObject *O)
 {
   int color; 
   if (  IntScalar(O,&color) == FAIL) return FAIL;
@@ -362,7 +362,7 @@ static NspObject * int_@TYPESHORT@_get_thickness(void *Hv, char *attr)
   return nsp_create_object_from_double(NVOID,((Nsp@TYPENAME@ *) Hv)->@TYPEDOWNCASE@_thickness);
 }
 
-static int int_@TYPESHORT@_set_thickness(void *Hv, char *attr, NspObject *O)
+static int int_@TYPESHORT@_set_thickness(void *Hv,const char *attr, NspObject *O)
 {
   int thickness; 
   if (  IntScalar(O,&thickness) == FAIL) return FAIL;
@@ -380,7 +380,7 @@ static NspObject *int_@TYPESHORT@_get_object_val(void *Hv,char *str)
   return (NspObject *)  ((Nsp@TYPENAME@ *)Hv)->@TYPEDOWNCASE@_val;
 }
 
-static int int_@TYPESHORT@_set_val(void *Hv, char *attr, NspObject *O)
+static int int_@TYPESHORT@_set_val(void *Hv,const char *attr, NspObject *O)
 {
   NspMatrix *m;
   if ((m = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return RET_BUG;
@@ -438,7 +438,7 @@ int int_@TYPESHORT@_test(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   Nsp@TYPENAME@ *a;
   if (( a= Get@TYPENAME@(stack,1))== @NULL@) return RET_BUG;
-  nsp_object_print((NspObject *) a,0);
+  nsp_object_print((NspObject *) a,0,NULL,0);
   return 0;
 }
 

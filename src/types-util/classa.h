@@ -18,7 +18,7 @@
 typedef struct _NspClassA NspClassA;
 typedef struct _NspTypeClassA NspTypeClassA;
 
-typedef int (*classa_save) (NspFile  *F, NspClassA *M);
+typedef int (*classa_save) (XDR  *xdrs, NspClassA *M);
 
 struct _NspTypeClassA { 
   /*< private >*/
@@ -56,8 +56,8 @@ NspClassA *new_classa();
 NspClassA *nsp_classa_create(char *name,int color,int thickness,NspTypeBase *type);
 NspClassA *nsp_classa_copy(NspClassA *H);
 void nsp_classa_destroy(NspClassA *H);
-void nsp_classa_info(NspClassA *H, int indent,char *name, int rec_level);
-void nsp_classa_print(NspClassA *H, int indent,char *name, int rec_level);
+void nsp_classa_info(NspClassA *H, int indent,const char *name, int rec_level);
+void nsp_classa_print(NspClassA *H, int indent,const char *name, int rec_level);
 
 /* from ClassAObj.c */
 
@@ -78,8 +78,8 @@ static char *nsp_classa_type_as_string(void);
 static char *nsp_classa_type_short_string(void);
 static int nsp_classa_eq(NspClassA *A, NspObject *B);
 static int nsp_classa_neq(NspClassA *A, NspObject *B);
-static int nsp_classa_xdr_save(NspFile  *F, NspClassA *M);
-static NspClassA  *nsp_classa_xdr_load(NspFile  *F);
+static int nsp_classa_xdr_save(XDR *xdrs, NspClassA *M);
+static NspClassA  *nsp_classa_xdr_load(XDR *xdrs);
 static AttrTab classa_attrs[];
 static NspMethods *classa_get_methods(void); 
 static int int_cla_create(Stack stack, int rhs, int opt, int lhs);

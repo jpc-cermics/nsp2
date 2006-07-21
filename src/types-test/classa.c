@@ -205,7 +205,7 @@ static int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M)
  * load 
  */
 
-static NspClassA  *nsp_classa_xdr_load(XDR  *xdrs)
+static NspClassA  *nsp_classa_xdr_load(XDR *xdrs)
 {
   NspClassA *M = NULL;
   static char name[NAME_MAXL];
@@ -228,7 +228,7 @@ void nsp_classa_destroy(NspClassA *H)
  * info 
  */
 
-void nsp_classa_info(NspClassA *H, int indent,char *name,int rec_level)
+void nsp_classa_info(NspClassA *H, int indent,const char *name, int rec_level)
 {
   int i;
   if ( H == NULLCLA) 
@@ -245,7 +245,7 @@ void nsp_classa_info(NspClassA *H, int indent,char *name,int rec_level)
  * print 
  */
 
-void nsp_classa_print(NspClassA *H, int indent,char *name, int rec_level)
+void nsp_classa_print(NspClassA *H, int indent,const char *name, int rec_level)
 {
   nsp_classa_info(H,indent,NULL,0);
 }
@@ -349,7 +349,7 @@ static NspObject * int_cla_get_color(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((NspClassA *) Hv)->classa_color);
 }
 
-static int int_cla_set_color(void *Hv,const   char *attr, NspObject *O)
+static int int_cla_set_color(void *Hv,const char *attr, NspObject *O)
 {
   int color; 
   if (  IntScalar(O,&color) == FAIL) return FAIL;
@@ -362,7 +362,7 @@ static NspObject * int_cla_get_thickness(void *Hv, char *attr)
   return nsp_create_object_from_double(NVOID,((NspClassA *) Hv)->classa_thickness);
 }
 
-static int int_cla_set_thickness(void *Hv,const  char *attr, NspObject *O)
+static int int_cla_set_thickness(void *Hv,const char *attr, NspObject *O)
 {
   int thickness; 
   if (  IntScalar(O,&thickness) == FAIL) return FAIL;
@@ -380,7 +380,7 @@ static NspObject *int_cla_get_object_val(void *Hv,char *str)
   return (NspObject *)  ((NspClassA *)Hv)->classa_val;
 }
 
-static int int_cla_set_val(void *Hv,const   char *attr, NspObject *O)
+static int int_cla_set_val(void *Hv,const char *attr, NspObject *O)
 {
   NspMatrix *m;
   if ((m = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return RET_BUG;

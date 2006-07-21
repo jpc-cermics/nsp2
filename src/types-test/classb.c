@@ -4,8 +4,9 @@
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
-#define  ClassB_Private 
 #include "nsp/object.h"
+#define  ClassB_Private 
+#include "nsp/classb.h"
 #include "nsp/interf.h"
 
 /* 
@@ -48,21 +49,21 @@ NspTypeClassB *new_type_classb(type_mode mode)
   
   /* object methods redefined for classb */ 
   
-  top->pr = (print_func *) classb_print;                    
-  top->dealloc = (dealloc_func *) classb_destroy;
-  top->copy  =  (copy_func *) classb_copy;                   
-  top->size  = (size_func *) classb_size;                  
-  top->s_type =  (s_type_func *) classb_type_as_string;    
-  top->sh_type = (sh_type_func *) classb_type_short_string;
-  top->info = (info_func *) classb_info ;                    
+  top->pr = (print_func *) nsp_classb_print;                    
+  top->dealloc = (dealloc_func *) nsp_classb_destroy;
+  top->copy  =  (copy_func *) nsp_classb_copy;                   
+  top->size  = (size_func *) nsp_classb_size;                  
+  top->s_type =  (s_type_func *) nsp_classb_type_as_string;    
+  top->sh_type = (sh_type_func *) nsp_classb_type_short_string;
+  top->info = (info_func *) nsp_classb_info ;                    
   /* top->is_true = (is_true_func  *) ClassBIsTrue; */
   /* top->loop =(loop_func *) classb_loop;*/
   top->path_extract = (path_func *)  object_path_extract ; 
-  top->get_from_obj = (get_from_obj_func *) classb_object;
-  top->eq  = (eq_func *) classb_eq;
-  top->neq  = (eq_func *) classb_neq;
-  top->save  = (save_func *) classb_xdr_save;
-  top->load  = (load_func *) classb_xdr_load;
+  top->get_from_obj = (get_from_obj_func *) nsp_classb_object;
+  top->eq  = (eq_func *) nsp_classb_eq;
+  top->neq  = (eq_func *) nsp_classb_neq;
+  top->save  = (save_func *) nsp_classb_xdr_save;
+  top->load  = (load_func *) nsp_classb_xdr_load;
   top->create = (create_func*) int_clb_create;
 
   /* specific methods for classb */
@@ -134,7 +135,7 @@ NspClassB *new_classb()
  * size 
  */
 
-static int classb_size(NspClassB *Mat, int flag)
+static int nsp_classb_size(NspClassB *Mat, int flag)
 {
   return 0;
 }
@@ -146,17 +147,17 @@ static int classb_size(NspClassB *Mat, int flag)
 static char classb_type_name[]="ClassB";
 static char classb_short_type_name[]="clb";
 
-static char *classb_type_as_string(void)
+static char *nsp_classb_type_as_string(void)
 {
   return(classb_type_name);
 }
 
-static char *classb_type_short_string(void)
+static char *nsp_classb_type_short_string(void)
 {
   return(classb_short_type_name);
 }
 
-static int classb_full_comp(NspClassB * A,NspClassB * B,char *op,int *err)
+static int nsp_classb_full_comp(NspClassB * A,NspClassB * B,char *op,int *err)
 {
   Scierror("classb_full_comp: to be implemented \n");
   return FALSE;
@@ -166,11 +167,11 @@ static int classb_full_comp(NspClassB * A,NspClassB * B,char *op,int *err)
  * A == B 
  */
 
-static int classb_eq(NspClassB *A, NspObject *B)
+static int nsp_classb_eq(NspClassB *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_classb_id) == FALSE) return FALSE ;
-  rep = classb_full_comp(A,(NspClassB *) B,"==",&err);
+  rep = nsp_classb_full_comp(A,(NspClassB *) B,"==",&err);
   if ( err == 1) return FALSE ; 
   return rep;
 }
@@ -179,11 +180,11 @@ static int classb_eq(NspClassB *A, NspObject *B)
  * A != B 
  */
 
-static int classb_neq(NspClassB *A, NspObject *B)
+static int nsp_classb_neq(NspClassB *A, NspObject *B)
 {
   int err=0,rep;
   if ( check_cast(B,nsp_type_classb_id) == FALSE) return TRUE;
-  rep = classb_full_comp(A,(NspClassB *) B,"<>",&err);
+  rep = nsp_classb_full_comp(A,(NspClassB *) B,"<>",&err);
   if ( err == 1) return TRUE ; 
   return rep;
 }
@@ -192,7 +193,7 @@ static int classb_neq(NspClassB *A, NspObject *B)
  * save 
  */
 
-static int classb_xdr_save(XDR  *xdrs, NspClassB *M)
+static int nsp_classb_xdr_save(XDR  *xdrs, NspClassB *M)
 {
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
@@ -204,7 +205,7 @@ static int classb_xdr_save(XDR  *xdrs, NspClassB *M)
  * load 
  */
 
-static NspClassB  *classb_xdr_load(XDR  *xdrs)
+static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 {
   NspClassB *M = NULL;
   static char name[NAME_MAXL];
@@ -217,7 +218,7 @@ static NspClassB  *classb_xdr_load(XDR  *xdrs)
  * delete 
  */
 
-void classb_destroy(NspClassB *H)
+void nsp_classb_destroy(NspClassB *H)
 {
   FREE(NSP_OBJECT(H)->name);
   FREE(H);
@@ -227,7 +228,7 @@ void classb_destroy(NspClassB *H)
  * info 
  */
 
-void classb_info(NspClassB *H, int indent,char *name,int rec_level)
+void nsp_classb_info(NspClassB *H, int indent,const char *name, int rec_level)
 {
   int i;
   if ( H == NULLCLB) 
@@ -244,9 +245,9 @@ void classb_info(NspClassB *H, int indent,char *name,int rec_level)
  * print 
  */
 
-void classb_print(NspClassB *H, int indent,char *name, int rec_level)
+void nsp_classb_print(NspClassB *H, int indent,const char *name, int rec_level)
 {
-  classb_info(H,indent,NULL,0);
+  nsp_classb_info(H,indent,NULL,0);
 }
 
 /*-----------------------------------------------------
@@ -255,7 +256,7 @@ void classb_print(NspClassB *H, int indent,char *name, int rec_level)
  * Note that some of these functions could become MACROS XXXXX 
  *-----------------------------------------------------*/
 
-NspClassB   *classb_object(NspObject *O)
+NspClassB   *nsp_classb_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -285,7 +286,7 @@ NspClassB  *GetClassBCopy(Stack stack, int i)
 NspClassB  *GetClassB(Stack stack, int i)
 {
   NspClassB *M;
-  if (( M = classb_object(NthObj(i))) == NULLCLB)
+  if (( M = nsp_classb_object(NthObj(i))) == NULLCLB)
      ArgMessage(stack,i);
   return M;
 }
@@ -296,7 +297,7 @@ NspClassB  *GetClassB(Stack stack, int i)
  * create a NspClassB instance 
  *-----------------------------------------------------*/
 
-NspClassB *classb_create(char *name,int color,int thickness,NspTypeBase *type)
+NspClassB *nsp_classb_create(char *name,int color,int thickness,NspTypeBase *type)
 {
   NspClassB *H  = (type == NULL) ? new_classb() : type->new();
   if ( H ==  NULLCLB)
@@ -315,9 +316,9 @@ NspClassB *classb_create(char *name,int color,int thickness,NspTypeBase *type)
  * copy 
  */
 
-NspClassB *classb_copy(NspClassB *H)
+NspClassB *nsp_classb_copy(NspClassB *H)
 {
-  return classb_create(NVOID,H->classb_color,H->classb_thickness,NULL);
+  return nsp_classb_create(NVOID,H->classb_color,H->classb_thickness,NULL);
 }
 
 /*-------------------------------------------------------------------
@@ -332,7 +333,7 @@ static int int_clb_create(Stack stack, int rhs, int opt, int lhs)
   /* first argument is a unused its a NspType */
   CheckRhs(1,100);
   /* we first create a default object */
-  if(( H = classb_create(NVOID,color,thickness,NULL)) == NULLCLB) return RET_BUG;
+  if(( H = nsp_classb_create(NVOID,color,thickness,NULL)) == NULLCLB) return RET_BUG;
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
@@ -348,7 +349,7 @@ static NspObject * int_clb_get_color(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((NspClassB *) Hv)->classb_color);
 }
 
-static int int_clb_set_color(void *Hv,const   char *attr, NspObject *O)
+static int int_clb_set_color(void *Hv,const char *attr, NspObject *O)
 {
   int color; 
   if (  IntScalar(O,&color) == FAIL) return FAIL;
@@ -361,7 +362,7 @@ static NspObject * int_clb_get_thickness(void *Hv, char *attr)
   return nsp_create_object_from_double(NVOID,((NspClassB *) Hv)->classb_thickness);
 }
 
-static int int_clb_set_thickness(void *Hv,const   char *attr, NspObject *O)
+static int int_clb_set_thickness(void *Hv,const char *attr, NspObject *O)
 {
   int thickness; 
   if (  IntScalar(O,&thickness) == FAIL) return FAIL;
@@ -379,10 +380,10 @@ static NspObject *int_clb_get_object_val(void *Hv,char *str)
   return (NspObject *)  ((NspClassB *)Hv)->classb_val;
 }
 
-static int int_clb_set_val(void *Hv,const   char *attr, NspObject *O)
+static int int_clb_set_val(void *Hv,const char *attr, NspObject *O)
 {
   NspMatrix *m;
-  if ((m = (NspMatrix *) nsp_object_copy(O)) == NULLMAT) return RET_BUG;
+  if ((m = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return RET_BUG;
   ((NspClassB *)Hv)->classb_val = m;
   return OK ;
 }
