@@ -458,7 +458,7 @@ static NspObject *int_gframe_get_scale(void *self,char *attr)
   return (NspObject *) nsp_matrix_create_from_array(NVOID,1,4,((NspGFrame *)self)->obj->r,NULL);
 }
 
-static int int_gframe_set_scale(void *self, char *attr, NspObject *O)
+static int int_gframe_set_scale(void *self,const  char *attr, NspObject *O)
 {
   int i;
   NspMatrix *A; 

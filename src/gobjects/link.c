@@ -443,7 +443,7 @@ static NspObject * int_glink_get_color(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((NspLink *) Hv)->obj->color);
 }
 
-static int int_glink_set_color(void *Hv, char *attr, NspObject *O)
+static int int_glink_set_color(void *Hv,const  char *attr, NspObject *O)
 {
   int color;
   if (  IntScalar(O,&color) == FAIL) return FAIL;
@@ -456,7 +456,7 @@ static NspObject * int_glink_get_thickness(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((NspLink *) Hv)->obj->thickness);
 }
                                                                                                       
-static int int_glink_set_thickness(void *Hv, char *attr, NspObject *O)
+static int int_glink_set_thickness(void *Hv,const  char *attr, NspObject *O)
 {
   int thickness;
   if (  IntScalar(O,&thickness) == FAIL) return FAIL;
@@ -469,7 +469,7 @@ static NspObject * int_glink_get_hilited(void *Hv,char *attr)
   return nsp_new_boolean_obj(((NspLink *) Hv)->obj->hilited);
 }
                                                                                                       
-static int int_glink_set_hilited(void *Hv, char *attr, NspObject *O)
+static int int_glink_set_hilited(void *Hv,const  char *attr, NspObject *O)
 {
   int hilited;
   if (  BoolScalar(O,&hilited) == FAIL) return FAIL;
@@ -482,7 +482,7 @@ static NspObject * int_glink_get_show(void *Hv,char *attr)
   return nsp_new_boolean_obj(((NspLink *) Hv)->obj->show);
 }
                                                                                                       
-static int int_glink_set_show(void *Hv, char *attr, NspObject *O)
+static int int_glink_set_show(void *Hv,const  char *attr, NspObject *O)
 {
   int show;
   if (  BoolScalar(O,&show) == FAIL) return FAIL;

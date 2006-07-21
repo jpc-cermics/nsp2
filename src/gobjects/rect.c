@@ -401,7 +401,7 @@ static NspObject * int_grect_get_color(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((NspRect *) Hv)->color);
 }
                                                                                                       
-static int int_grect_set_color(void *Hv, char *attr, NspObject *O)
+static int int_grect_set_color(void *Hv,const  char *attr, NspObject *O)
 {
   int color;
   if (  IntScalar(O,&color) == FAIL) return FAIL;
@@ -414,7 +414,7 @@ static NspObject * int_grect_get_thickness(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((NspRect *) Hv)->thickness);
 }
                                                                                                       
-static int int_grect_set_thickness(void *Hv, char *attr, NspObject *O)
+static int int_grect_set_thickness(void *Hv,const char *attr, NspObject *O)
 {
   int thickness;
   if (  IntScalar(O,&thickness) == FAIL) return FAIL;
@@ -427,7 +427,7 @@ static NspObject * int_grect_get_background(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((NspRect *) Hv)->background);
 }
                                                                                                       
-static int int_grect_set_background(void *Hv, char *attr, NspObject *O)
+static int int_grect_set_background(void *Hv,const  char *attr, NspObject *O)
 {
   int background;
   if (  IntScalar(O,&background) == FAIL) return FAIL;
