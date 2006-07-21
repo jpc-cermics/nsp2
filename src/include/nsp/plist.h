@@ -103,8 +103,8 @@ extern NspPList *NspPListCreate (char *name, PList L, char *filename);
 extern NspPList *NspPListCopy (NspPList *A); 
 extern void NspPListDestroy (NspPList *P_L); 
 extern void NspPListPrInt (NspPList *P_L); 
-extern void NspPListInfo (NspPList *P_L, int indent,char *name, int rec_level); 
-extern void NspPListPrint (NspPList *P_L, int indent,char *name, int rec_level); 
+extern void NspPListInfo (NspPList *P_L, int indent,const char *name, int rec_level); 
+extern void NspPListPrint (NspPList *P_L, int indent,const char *name, int rec_level); 
 extern int NspPListSave (NspPList *P_L); 
 extern NspSMatrix * NspPList2SMatrix (NspPList *P_L, int indent); 
 

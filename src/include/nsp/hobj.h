@@ -44,9 +44,9 @@ NspHobj *new_hobj();
 #define NULLHOBJ (NspHobj *) 0
 #define NULLHOPT (NspHobj *) 0
 
-NspHobj *HobjCreate  (char *name,NspObject *O);
-NspHobj *HoptCreate  (char *name,NspObject *O);
-NspHobj *GobjCreate  (char *name,NspObject *O);
+NspHobj *HobjCreate  (const char *name,NspObject *O);
+NspHobj *HoptCreate  (const char *name,NspObject *O);
+NspHobj *GobjCreate  (const char *name,NspObject *O);
 NspHobj *nsp_hobj_copy(NspHobj *H);
 void nsp_hobj_destroy(NspHobj *H);
 void nsp_hobj_info(NspHobj *H,int indent,char *name, int rec_level);

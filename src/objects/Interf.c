@@ -1125,7 +1125,7 @@ int  get_optional_args(Stack stack,int rhs,int opt,nsp_option opts[],...)
   return rep;
 }
 
-static int is_string_in_options(char *key, nsp_option Opts[], int flag);
+static int is_string_in_options(const char *key, nsp_option Opts[], int flag);
 
 static int options_check(Stack stack,int rhs, int opt,nsp_option Opts[])
 {
@@ -1165,10 +1165,10 @@ static int options_check(Stack stack,int rhs, int opt,nsp_option Opts[])
  * flag = 0 or 1, 1 for exact match 
  */
 
-static int is_string_in_options(char *key, nsp_option Opts[], int flag)
+static int is_string_in_options(const char *key, nsp_option Opts[], int flag)
 {
   int index = -1, numAbbrev=0, i;
-  char *p1, *p2;
+  const char *p1, *p2;
   nsp_option *entry;
   /*
    * Lookup the value of the object in the table.  Accept unique
@@ -1379,7 +1379,7 @@ static int value_get_from_hash(Stack stack,NspHash *H,nsp_option Opts[])
 	}
       else
 	{
-	  char *name = nsp_object_get_name(NSP_OBJECT(H));
+	  const char *name = nsp_object_get_name(NSP_OBJECT(H));
 	  Scierror("%s: value for %s entry missing in hash table %s\n",NspFname(stack),
 		   option->name, name);
 	  option->obj = NULLOBJ;
@@ -1470,7 +1470,7 @@ char *ArgPosition(int i)
 
 void ArgName(Stack stack, int i)
 {
-  char *arg =nsp_object_get_name((NthObj(i)));
+  const char *arg =nsp_object_get_name((NthObj(i)));
   if ( strcmp(arg ,NVOID) != 0 ) Scierror(" (%s)",arg);
 }
 
@@ -1503,10 +1503,10 @@ void ArgMessage(Stack stack, int i)
  * Return value: the @key position in @Table or -1 
  **/
 
-int attr_search(char *key, AttrTab *Table)
+int attr_search(const char *key, AttrTab *Table)
 {
   int i;
-  char *p1, *p2;
+  const char *p1, *p2;
   AttrTab *entry;
   for (entry = Table, i = 0; entry->name != NULL; entry++, i++) {
     for (p1 = key, p2 = entry->name; *p1 == *p2; p1++, p2++) {

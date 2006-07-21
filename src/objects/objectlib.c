@@ -131,7 +131,7 @@ NspObject *nsp_object_copy_with_name(NspObject *O)
  * Return value:  a new #NspObject or %NULLOBJ
  **/
 
-NspObject *nsp_object_copy_and_name(char *name, NspObject *O)
+NspObject *nsp_object_copy_and_name(const char *name, NspObject *O)
 {
   NspObject *l;
   if ( ( l =nsp_object_copy(O)) == NULLOBJ ) return NULLOBJ;
@@ -648,7 +648,7 @@ NspObject *nsp_create_boolean_object(char *str,int val)
  * Return value: 
  **/
 
-char *nsp_object_get_name(const NspObject *O)
+const char *nsp_object_get_name(const NspObject *O)
 {
   return NSP_OBJECT(O)->name ;
 }

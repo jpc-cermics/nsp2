@@ -174,7 +174,7 @@ void nsp_bmatrix_destroy(NspBMatrix *BMat)
  * @indent is the given indentation for printing.
  */
 
-void nsp_bmatrix_info(NspBMatrix *BMat, int indent,char *name, int rec_level)
+void nsp_bmatrix_info(NspBMatrix *BMat, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(BMat)->name;
   if ( BMat->m >=1 &&  BMat->mn >= 2 ) 
@@ -203,9 +203,9 @@ void nsp_bmatrix_info(NspBMatrix *BMat, int indent,char *name, int rec_level)
  * @indent is the given indentation for printing.
  */
 
-void nsp_bmatrix_print(NspBMatrix *BMat, int indent,char *name, int rec_level)
+void nsp_bmatrix_print(NspBMatrix *BMat, int indent,const char *name, int rec_level)
 {
-  char *pname = (name != NULL) ? name : NSP_OBJECT(BMat)->name;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(BMat)->name;
 
   if (user_pref.pr_as_read_syntax)
     {

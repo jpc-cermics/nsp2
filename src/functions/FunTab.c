@@ -68,8 +68,8 @@ typedef struct fdata {
 
 static int   scifunc_hcreate (unsigned int);
 /* static void	 scifunc_hdestroy(); */
-static int   scifunc_hsearch (char *str,Fdata *d,ACTION);
-static int   Eqid (char *x,char *y);
+static int   scifunc_hsearch (const char *str,Fdata *d,ACTION);
+static int   Eqid (const char *x,const char *y);
 void  InitFunctionTable  (void);
 
 #ifdef TEST /********************* test part ***/
@@ -170,7 +170,7 @@ void DeleteFunction(char *str)
  * Search function in Hast table given key str
  ***************************************/
 
-int FindFunction(char *str, int *Int, int *Num)
+int FindFunction(const char *str, int *Int, int *Num)
 {
   int r;
   Fdata data;
@@ -447,13 +447,13 @@ void DeleteFunctionS(int Int)
  ******************************************************************************/
 
 
-static int scifunc_hsearch(char *key, Fdata *data, ACTION action)
+static int scifunc_hsearch(const char *key, Fdata *data, ACTION action)
 {
   register unsigned hval;
   register unsigned hval2;
   register unsigned len = NAME_MAXL;
   register unsigned idx;
-  register char *str;
+  register const char *str;
 
     /*
      * If table is full and another entry should be entered return with 
@@ -565,7 +565,7 @@ static int scifunc_hsearch(char *key, Fdata *data, ACTION action)
 }
 
 
-static int Eqid(char *x, char *y)
+static int Eqid(const char *x,const char *y)
 {
   return strncmp(x,y,NAME_MAXL);
 }

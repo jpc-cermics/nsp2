@@ -52,8 +52,8 @@ NspFunction *new_function();
 NspFunction *function_create(char *name,char *fname,int iface,int pos,int status,NspTypeBase *type);
 NspFunction *function_copy(NspFunction *H);
 void function_destroy(NspFunction *H);
-void function_info(NspFunction *H, int indent,char *name, int rec_level);
-void function_print(NspFunction *H, int indent,char *name, int rec_level);
+void function_info(NspFunction *H, int indent,const char *name, int rec_level);
+void function_print(NspFunction *H, int indent,const char *name, int rec_level);
 
 /* from FunctionObj.c */
 

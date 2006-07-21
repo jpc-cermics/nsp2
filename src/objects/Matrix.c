@@ -489,7 +489,7 @@ void nsp_matrix_destroy(NspMatrix *Mat)
  * @indent is the given indentation for printing.
  */
 
-void nsp_matrix_info(NspMatrix *Mat, int indent,char *name, int rec_level)
+void nsp_matrix_info(NspMatrix *Mat, int indent,const char *name, int rec_level)
 {
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
@@ -524,12 +524,12 @@ void nsp_matrix_info(NspMatrix *Mat, int indent,char *name, int rec_level)
  * @indent is the given indentation for printing.
  */
 
-static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,char *name, int rec_level,
+static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,const char *name, int rec_level,
 						 int slice);
 
-void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
+void nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_level)
 {
-  char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int slice=10000;
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
 
@@ -573,7 +573,7 @@ void nsp_matrix_print( NspMatrix *Mat, int indent,char *name, int rec_level)
 
 /* used when matrix is large */
 
-static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,char *name, int rec_level,
+static void nsp_matrix_print_as_read_with_slice( NspMatrix *Mat, int indent,const char *name, int rec_level,
 						 int slice)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;

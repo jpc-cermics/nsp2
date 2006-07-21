@@ -45,16 +45,6 @@ NspFile *nsp_new_file();
  * Object methods redefined for file 
  */
 
-#ifdef SciFile_Private 
-static int nsp_init_file(NspFile *ob,NspTypeSciFile *type);
-static int nsp_file_size(NspFile *Mat, int flag);
-static char *nsp_file_type_as_string(void);
-static char *nsp_file_type_short_string(void);
-static int nsp_file_eq(NspObject *A, NspObject *B);
-static int nsp_file_neq(NspObject *A, NspObject *B);
-static NspMethods *nsp_file_get_methods(void);
-#endif 
-
 NspFile *nsp_file_create(char *name, char *fname, char *str, int flag, FILE *f);
 NspFile *nsp_file_copy(NspFile *H);
 void nsp_file_destroy(NspFile *H);
@@ -62,7 +52,6 @@ void nsp_file_info(NspFile *H, int indent,char *name, int rec_level);
 void nsp_file_print(NspFile *H, int indent,char *name, int rec_level);
 
 /* setting file flags  **/
-
 
 #define OPEN_MASK 0x000f 
 #define XDR_MASK 0x00f0 
@@ -105,7 +94,6 @@ extern int nsp_xdr_save_array_i(XDR *xdrs, int *nx, int l);
 extern int nsp_xdr_load_array_i(XDR *xdrs, int *nx, int l);
 extern int nsp_xdr_save_array_d(XDR *xdrs, double *nx, int l);
 extern int nsp_xdr_load_array_d(XDR *xdrs, double *nx, int mn);
-extern int nsp_xdr_save_string(XDR *xdrs, char *str);
 extern int nsp_xdr_load_string(XDR *xdrs, char *buf, int buf_len);
 
 extern int is_little_endian(void);
@@ -127,7 +115,24 @@ extern int do_scanf (char *command,FILE *fp,
 		     char *format,Stack stack,int iline, int *nargs, 
 		     char *strv,int *retval);
 
-
-
-
 #endif 
+
+#ifdef SciFile_Private 
+static int nsp_init_file(NspFile *ob,NspTypeSciFile *type);
+static int nsp_file_size(NspFile *Mat, int flag);
+static char *nsp_file_type_as_string(void);
+static char *nsp_file_type_short_string(void);
+static int nsp_file_eq(NspObject *A, NspObject *B);
+static int nsp_file_neq(NspObject *A, NspObject *B);
+static NspMethods *nsp_file_get_methods(void);
+#endif 
+
+#ifdef SciFile_xdr_save_string
+/* just pretend its not a const in SciFile_Private to avoid 
+ * a warning with xdr_opaque */
+extern int nsp_xdr_save_string(XDR *xdrs,char *str);
+#else 
+extern int nsp_xdr_save_string(XDR *xdrs,const char *str);
+#endif 
+
+

@@ -79,9 +79,9 @@ static int mpmatrix_is_true(NspMaxpMatrix *M);
 /* from MatObj.c */
 
 extern void nsp_mpmatrix_destroy(NspMaxpMatrix *Mat); 
-extern void nsp_mpmatrix_info ( NspMaxpMatrix *Mat, int indent,char *name, int rec_level); 
+extern void nsp_mpmatrix_info ( NspMaxpMatrix *Mat, int indent,const char *name, int rec_level); 
 extern NspMaxpMatrix *nsp_mpmatrix_copy(const NspMaxpMatrix *A); 
-extern void nsp_mpmatrix_print (NspMaxpMatrix *Mat, int indent,char *name, int rec_level); 
+extern void nsp_mpmatrix_print (NspMaxpMatrix *Mat, int indent,const char *name, int rec_level); 
 
 extern NspObject * mpmatrix_loop_extract (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
 extern NspMaxpMatrix *mpmatrix_copy (const NspMaxpMatrix *A); 

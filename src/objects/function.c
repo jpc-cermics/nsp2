@@ -244,7 +244,7 @@ void function_destroy(NspFunction *H)
  * info 
  */
 
-void function_info(NspFunction *H, int indent,char *name,int rec_level)
+void function_info(NspFunction *H, int indent,const char *name,int rec_level)
 {
   const char *pname;
   if (H == NULLFUNC) 
@@ -263,9 +263,9 @@ void function_info(NspFunction *H, int indent,char *name,int rec_level)
  * print 
  */
 
-void function_print(NspFunction *H, int indent,char *name, int rec_level)
+void function_print(NspFunction *H, int indent,const char *name, int rec_level)
 {
-  char *pname;
+  const char *pname;
   if ( H == NULLFUNC) 
     {
       Sciprintf1(indent,"Null Pointer Function \n");

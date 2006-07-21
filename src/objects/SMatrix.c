@@ -313,7 +313,7 @@ void nsp_smatrix_destroy(NspSMatrix *A)
  *nsp_smatrix_info: display Info on Matrix Mat 
  */
 
-void nsp_smatrix_info(const NspSMatrix *Mat, int indent, char *name, int rec_level)
+void nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
 
@@ -335,9 +335,9 @@ void nsp_smatrix_info(const NspSMatrix *Mat, int indent, char *name, int rec_lev
  *nsp_smatrix_print: writes Mat Objet 
  */
 
-void nsp_smatrix_print(const NspSMatrix *Mat, int indent,char *name, int rec_level)
+void nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
 {
-  char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   if (user_pref.pr_as_read_syntax)
     {
       if ( strcmp(pname,NVOID) != 0) 

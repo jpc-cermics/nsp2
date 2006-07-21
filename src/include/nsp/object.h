@@ -11,6 +11,7 @@
  */
 
 #include "nsp/math.h" 
+#include "nsp/string.h" 
 
 typedef struct  _NspObject  NspObject; 
 typedef struct  _AttrTab AttrTab;
@@ -121,7 +122,7 @@ typedef enum { T_BASE, T_DERIVED } type_mode;
 /* typedef struct  _nsp_object  NspObject; */
 
 struct  _NspObject {
-  char *name;			/* object name: must be first */
+  nsp_const_string name;	/* object name: must be first */
   NspTypeObject *type;
   NspTypeBase *basetype;        /* type of base child  */
   int  ret_pos ;                /* used to store return position from an interface */ 
@@ -187,7 +188,7 @@ typedef struct _Stack_ref Stack_ref;
 typedef void stack_error(Stack *S,char *fmt,...);
 
 struct _Stack_ref {
-  char *fname; /* function currently evaluated **/
+  const char *fname; /* function currently evaluated **/
   char *file_name ; /* current evaluated file **/
   NspObject **D;     /* D is dynamically changed so that D[1] is the first Objet used XXX **/
   NspObject **L;     /* Last position **/
@@ -218,7 +219,7 @@ extern void nsp_init_stack(Stack *stack,NspObject **S);
 
 typedef NspObject * (attr_get_function) (void *o, char *attr);
 typedef NspObject * (attr_get_object_function) (void *o,char *str);
-typedef int (attr_set_function) (void *Hv,char *attr, NspObject *val);
+typedef int (attr_set_function) (void *Hv,const char *attr, NspObject *val);
 
 extern NspObject * int_get_failed(NspObject *self, char *attr);
 extern NspObject * int_get_object_failed(NspObject *self, char *attr);
@@ -233,7 +234,7 @@ struct _AttrTab {
 
 /* utility function for attributes */
 
-extern int attr_search (char *key,AttrTab Table[]);
+extern int attr_search (const char *key,AttrTab Table[]);
 extern int int_check_attr (char *key,AttrTab attrs[],Stack stack,int rhs,int opt,int lhs);
 extern int attrs_to_stack (char *key,AttrTab attrs[],Stack stack,int pos);
 
@@ -242,7 +243,7 @@ extern int int_set_attribute(Stack stack, int rhs, int opt, int lhs);
 extern int int_set_attributes(Stack stack, int rhs, int opt, int lhs);
 extern int int_set_attributes1(void *Ob,Stack stack, int rhs, int opt, int lhs);
 extern int int_create_with_attributes(NspObject *ob,Stack stack, int rhs, int opt, int lhs);
-extern int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type, char *attr,NspObject *val);
+extern int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type,const char *attr,NspObject *val);
 extern int int_get_attribute(Stack stack, int rhs, int opt, int lhs);
 extern NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,char *attr) ;
 extern NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type, char *attr) ;
@@ -346,8 +347,6 @@ void nsp_void_object_destroy(NspObject **O);
 
 NspObject *nsp_create_empty_matrix_object(char *str);
 NspObject *nsp_create_object_from_doubles( int m,int n,int it,double *rtab,double *itab,char *name);
-NspObject *nsp_object_copy_and_name(char *name,NspObject *O);
-
 int nsp_object_xdr_save(XDR *F, NspObject *O);
 NspObject *nsp_object_xdr_load(XDR *F); 
 extern void nsp_object_destroy(NspObject **O); 
@@ -355,7 +354,7 @@ extern void nsp_void_object_destroy(NspObject **O);
 extern NspObject *nsp_object_copy(const NspObject *O); 
 extern int nsp_object_get_size(const NspObject *O, int j); 
 extern NspObject *nsp_object_copy_with_name(NspObject *O); 
-extern NspObject *nsp_object_copy_and_name(char *name, NspObject *O); 
+extern NspObject *nsp_object_copy_and_name(const char *name, NspObject *O); 
 extern char *nsp_object_type_as_string(const NspObject *O); 
 extern char *nsp_object_type_short( NspObject *O); 
 extern int nsp_object_type(const NspObject *O, NspTypeId id); 
@@ -379,7 +378,7 @@ extern NspObject *nsp_create_empty_matrix_object(char *str);
 extern NspObject *nsp_create_true_object(char *str); 
 extern NspObject *nsp_create_boolean_object(char *str,int val);
 extern NspObject *nsp_create_false_object(char *str); 
-extern char *nsp_object_get_name(const NspObject *O); 
+extern const char *nsp_object_get_name(const NspObject *O); 
 extern int nsp_object_set_name(NspObject *O,const char *str); 
 extern int print_count_rows(Stack stack,int first_arg,int last_arg);
 

@@ -9,7 +9,7 @@
 int EnterFunction (char *str,int Int,int Num);
 void DeleteFunction (char *str);
 void DeleteFunctionS(int);
-int FindFunction (char *str,int *Int,int *Num);
+int FindFunction (const char *str,int *Int,int *Num);
 void InitFunctionTable (void) ;
 int  FindFunctionB (char *key,int Int,int Num);
 void  InitFunctionTable  (void);

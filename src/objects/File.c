@@ -53,6 +53,8 @@
 #include <string.h> 
 #include <string.h>
 #include <ctype.h>  /* isdigit */
+
+#define SciFile_xdr_save_string /* locally change the header */
 #include "nsp/object.h"
 #include "nsp/interf.h"
 #include "../system/files.h" /* FSIZE */

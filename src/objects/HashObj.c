@@ -586,7 +586,7 @@ static NspObject * int_hash_get_keys(void *Hv, char *attr)
   return (NspObject *) Loc;
 }
 
-static int int_hash_set_keys(void *Hv, char *attr, NspObject *O)
+static int int_hash_set_keys(void *Hv,const char *attr, NspObject *O)
 {
   Scierror("attribute __keys of hash instances cannot be set !\n");
   return FAIL;

@@ -301,7 +301,7 @@ int IsGlobal(NspObject *O)
  * A set of functions 
  *----------------------------------------------------*/
 
-static NspHobj  *hobj_create_gen(char *name, NspObject *Obj,char htype)
+static NspHobj  *hobj_create_gen(const char *name, NspObject *Obj,char htype)
 {
   NspHobj *H = new_hobj();
   if ( H == NULLHOBJ)
@@ -327,7 +327,7 @@ static NspHobj  *hobj_create_gen(char *name, NspObject *Obj,char htype)
  */
 
 
-NspHobj  *HobjCreate(char *name, NspObject *O)
+NspHobj  *HobjCreate(const char *name, NspObject *O)
 {
   return hobj_create_gen(name, O, 'h');
 }
@@ -336,7 +336,7 @@ NspHobj  *HobjCreate(char *name, NspObject *O)
  * Create a Hopt ( used for optional arguments transmited as x = val )
  */
 
-NspHobj  *HoptCreate(char *name, NspObject *O)
+NspHobj  *HoptCreate(const char *name, NspObject *O)
 {
   return hobj_create_gen(name, O, 'o');
 }
@@ -346,7 +346,7 @@ NspHobj  *HoptCreate(char *name, NspObject *O)
  * Create a Gobj ( used for global variables ) 
  */
 
-NspHobj  *GobjCreate(char *name, NspObject *O)
+NspHobj  *GobjCreate(const char *name, NspObject *O)
 {
   return hobj_create_gen(name, O, 'g');
 }

@@ -307,7 +307,7 @@ int nsp_global_frame_replace_object(NspObject *A)
  * Return value:  the #NspObject or #NULLOBJ.
  **/
 
-NspObject *nsp_frames_search_object(char *str)
+NspObject *nsp_frames_search_object(const char *str)
 {
   NspObject *O;
   Cell *C;

@@ -33,8 +33,8 @@
 
 /* FIXME: to be moved in object.h private zone */
 static int object_size(NspObject *self, int flag);
-static char *get_name(NspObject *ob) ;
-static char *set_name(NspObject *ob,const char *name);
+static const char *get_name(NspObject *ob) ;
+static const char *set_name(NspObject *ob,const char *name);
 static int object_is_true_def(NspObject *ob);
 static NspObject *object_loop_def(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 static int init_object(NspObject *ob,NspTypeObject *type);
@@ -247,9 +247,9 @@ static char *object_type_short_string(void)
  * Return value: returns a pointer to the name or %NULLSTRING.
  **/
 
-static char *set_name(NspObject *ob,const char *name)
+static const char *set_name(NspObject *ob,const char *name)
 {
-  char *name1 =new_nsp_string(name);
+  const char *name1 =new_nsp_string(name);
   if ( name1 == NULLSTRING) return NULLSTRING;
   FREE(ob->name) ;
   return ob->name = name1;
@@ -263,7 +263,7 @@ static char *set_name(NspObject *ob,const char *name)
  * 
  * Return value: a string. 
  **/
-static char *get_name(NspObject *ob) 
+static const char *get_name(NspObject *ob) 
 {
   return ob->name;
 }
@@ -578,7 +578,7 @@ int int_create_with_attributes(NspObject *ob,Stack stack, int rhs, int opt, int 
   return 1;
 }
 
-int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type, char *attr,NspObject *val)
+int nsp_set_attribute_util(NspObject *ob, NspTypeBase *type,const char *attr,NspObject *val)
 {
   AttrTab *attrs;
   int item,ok=0;

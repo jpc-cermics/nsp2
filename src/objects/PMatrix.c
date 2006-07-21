@@ -83,9 +83,9 @@ NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M)
  * PMatInfo : display Info on NspPMatrix PMat 
  */
 
-void nsp_pmatrix_info(NspPMatrix *Mat, int indent,char *name,int rec_level)
+void nsp_pmatrix_info(NspPMatrix *Mat, int indent,const char *name,int rec_level)
 {
-  char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   Sciprintf1(indent,"%s\t= [%s]\t\tp %c (%dx%d)\n",pname,(Mat->mn == 0) ? "": "...",
 	     Mat->rc_type,Mat->m,Mat->n);
 }
@@ -94,9 +94,9 @@ void nsp_pmatrix_info(NspPMatrix *Mat, int indent,char *name,int rec_level)
  * PMatPrint : writes PMat Objet 
  */
 
-void nsp_pmatrix_print(NspPMatrix *Mat, int indent,char *name, int rec_level)
+void nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_level)
 {
-  char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   if (user_pref.pr_as_read_syntax)
     {
       if ( strcmp(NSP_OBJECT(Mat)->name,NVOID) != 0) 

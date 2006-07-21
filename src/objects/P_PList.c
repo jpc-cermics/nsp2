@@ -102,9 +102,9 @@ void NspPListPrInt(NspPList *P_L)
  * NspPListInfo : display Info on NspPList P_L 
  */
 
-void NspPListInfo(NspPList *P_L, int indent,char *name, int rec_level)
+void NspPListInfo(NspPList *P_L, int indent,const char *name, int rec_level)
 {
-  char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
   if ( P_L->file_name != NULL) 
     Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,P_L->file_name);
   else 
@@ -115,9 +115,9 @@ void NspPListInfo(NspPList *P_L, int indent,char *name, int rec_level)
  * NspPListPrint : writes P_L Objet 
  */
 
-void NspPListPrint(NspPList *P_L, int indent,char *name, int rec_level)
+void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
 {
-  char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
   if (user_pref.pr_as_read_syntax)
     {
       PListPrettyPrint(P_L->D,indent+2);

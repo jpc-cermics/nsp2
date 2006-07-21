@@ -27,3 +27,5 @@ Makefile.mak	: Makefile
 #=====================================================
 #dependencies generated with gcc -MMD 
 #=====================================================
+
+mexlib.c : ../include/nsp/mex.h 

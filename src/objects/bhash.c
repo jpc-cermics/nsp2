@@ -592,7 +592,7 @@ static NspObject * int_bhash_get_keys(void *Hv, char *attr)
   return (NspObject *) Loc;
 }
 
-static int int_bhash_set_keys(void *Hv, char *attr, NspObject *O)
+static int int_bhash_set_keys(void *Hv,const char *attr, NspObject *O)
 {
   Scierror("attribute __keys of bhash instances cannot be set !\n");
   return FAIL;
