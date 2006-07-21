@@ -673,3 +673,136 @@ int nsp_object_set_name(NspObject *O,const char *str)
 
 
 
+/**
+ * nsp_object_serialize:
+ * 
+ **/
+
+#define LAST_FRAG ((u_long)(1 << 31))
+#define _writeproc_buf_size 24
+
+typedef struct _writeproc_buf writeproc_buf ;
+
+struct _writeproc_buf {
+  int pos,status;
+  NspList *L;
+  char *current;
+};
+
+static int writeproc_increase_buf(writeproc_buf *buf);
+
+/* returns the actual number of bytes transferred 
+ * -1 is an error */ 
+
+static int writeproc(char *iohandle,char* c_buf,int len) 
+{
+  writeproc_buf *buf =(writeproc_buf *) iohandle;
+  u_long *header = (u_long *) c_buf ;
+  int last_frag = ((ntohl(*header) & LAST_FRAG) == 0) ? FALSE : TRUE;
+  int nbytes = ntohl(*header) & (~LAST_FRAG);
+  int ok;
+  printf("last fragment = %d, nbytes=%d len=%d\n",last_frag,nbytes,len);
+
+  while ( nbytes > 0 ) 
+    {
+      ok = Min(nbytes,_writeproc_buf_size-buf->pos);
+      /* printf("print %d out of  %d\n",ok,nbytes); */
+      nbytes -= ok;
+      memcpy(buf->current + buf->pos,c_buf+4,ok);
+      buf->pos +=ok;
+      c_buf += ok;
+      if ( buf->pos == _writeproc_buf_size )
+	{
+	  if ( writeproc_increase_buf(buf) == FAIL) 
+	    return -1;
+	}
+    }
+  return len;
+}
+
+static int writeproc_increase_buf(writeproc_buf *buf)
+{
+  NspSMatrix *next;
+  if ((next= nsp_smatrix_create_with_length(NVOID,1,1,_writeproc_buf_size+1))== NULL) 
+    {
+      buf->status = FAIL;
+      return FAIL;
+    }
+  if ( nsp_list_end_insert(buf->L, NSP_OBJECT(next))== FAIL) 
+    {
+      buf->status = FAIL;
+      return FAIL;
+    }
+  buf->current = next->S[0];
+  buf->pos = 0;
+  return OK;
+}
+
+static int readproc(char *iohandle,char* buf,int len) 
+{
+  return 0;
+}
+
+
+static NspSMatrix * writeproc_string(writeproc_buf *buf,int *ntot)
+{
+  int i;
+  char *str;
+  NspSMatrix *A;
+  int n = nsp_list_length(buf->L);
+  *ntot= (n-1)*_writeproc_buf_size + buf->pos;
+  if ((A=nsp_smatrix_create_with_length(NVOID,1,1,*ntot+1)) ==NULLSMAT) 
+    return(NULLSMAT);
+  str = A->S[0];
+  for ( i = 1 ; i <= n ; i++)
+    {
+      NspSMatrix *Obj=(NspSMatrix *)nsp_list_get_element(buf->L, i);
+      if ( i != n )
+	{
+	  memcpy(str,Obj->S[0],_writeproc_buf_size);
+	  str+=_writeproc_buf_size;
+	}
+      else 
+	memcpy(str,Obj->S[0],buf->pos);
+    }
+  return A;
+}
+
+
+NspObject *nsp_object_serialize(NspObject *O)
+{
+  NspObject *Obj;
+  NspSMatrix *Res;
+  writeproc_buf buf={0,OK, NULL,NULL};
+  int rep,n;
+  XDR xdrs;
+  xdrs.x_op = XDR_ENCODE;
+
+  if ( O  == NULLOBJ) return NULLOBJ;
+
+  if ((buf.L=nsp_list_create(NVOID)) == NULLLIST ) return NULLOBJ;
+  
+  if ( writeproc_increase_buf(&buf)==FAIL) 
+    {
+      nsp_list_destroy(buf.L);
+      return NULLOBJ;
+    }
+  xdrrec_create(&xdrs,0,0,(char *) &buf,readproc,writeproc);
+  rep= O->type->save(&xdrs,O);
+  if ( rep != FAIL) 
+    {
+      xdrrec_endofrecord(&xdrs,1);
+    }
+  Res = writeproc_string(&buf,&n);
+  printf("number of bytes %d\n",n);
+  xdr_destroy(&xdrs);
+  /* nsp_list_info(buf.L,0,NULL,1024);*/
+  
+  xdrmem_create(&xdrs,Res->S[0],n,XDR_DECODE);
+  Obj= nsp_object_xdr_load(&xdrs);
+  return Obj;
+}
+
+
+
+

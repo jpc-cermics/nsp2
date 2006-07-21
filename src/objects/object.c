@@ -1730,6 +1730,24 @@ static int int_object_length(Stack stack, int rhs, int opt, int lhs)
   return 1; 
 } 
 
+/* object serialization test 
+ * 
+ */
+
+/* XXXX */ extern NspObject * nsp_object_serialize(NspObject *O);
+
+static int int_object_serialize(Stack stack, int rhs, int opt, int lhs) 
+{
+  NspObject *Obj;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  Obj = nsp_object_serialize(NthObj(1));
+  if ( Obj == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,Obj);
+  return 1;
+}
+
+
 /*
  * FIXME: just here to test the matrix interface 
  * the redim function can be factorized here 
@@ -1810,6 +1828,7 @@ static OpTab Obj_func[]={
   {"fprint",int_object_fprint},
   {"diary",int_object_diary},
   {"length",int_object_length},
+  {"serialize",int_object_serialize},
   {"REDIM",int_object_testredim}, /* FIXME: testing */
   {"REDIM1",int_matrix_testredim}, /* FIXME: testing */
   {(char *) 0, NULL}
