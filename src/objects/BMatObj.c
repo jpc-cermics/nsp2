@@ -1417,12 +1417,16 @@ static int int_bm_wrap(Stack stack, int rhs, int opt, int lhs,function *f)
       if ((BM = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
       if ((M =nsp_bmatrix_to_matrix(BM)) == NULLMAT ) return RET_BUG;
       MoveObj(stack,1,(NspObject *) M);
+      /* we don't want M ret_pos to be set */
+      NSP_OBJECT(M)->ret_pos = -1;
     }
   if (rhs == 2 &&  IsBMatObj(stack,2) )
     {
       if ((BM = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
       if ((M =nsp_bmatrix_to_matrix(BM)) == NULLMAT ) return RET_BUG;
       MoveObj(stack,2,(NspObject *) M);
+      /* we don't want M ret_pos to be set */
+      NSP_OBJECT(M)->ret_pos = -1;
     }
   /* call same interface for matrix */
   return (*f)(stack,rhs,opt,lhs);
