@@ -53,7 +53,7 @@ static int onlyone =0;
 static jmp_buf MexEnv;
 
 
-static void nsp_initmex(char *name,int *lfirst,int lhs,mxArray *plhs[], 
+static void nsp_initmex(const char *name,int *lfirst,int lhs,mxArray *plhs[], 
 			int rhs, mxArray *prhs[])
 {
   Stack stack;
@@ -945,6 +945,11 @@ int mxGetNumberOfElements(const mxArray *ptr)
 	n += strlen(((NspSMatrix*) ptr)->S[i]);
       return n;
     }
+  else if ( IsHash(ptr) )
+    {
+      /* hash table are seen as 1x1 struct */
+      return 1;
+    }
   return nsp_object_get_size(ptr,0);
 }
 
@@ -1593,7 +1598,35 @@ bool mexIsLocked(void)
 
 void *mxGetData(const mxArray *array_ptr)
 {
-  return mxGetPr(array_ptr);
+  if ( IsMat(array_ptr)) 
+    {
+      NspMatrix *A = (NspMatrix *)  array_ptr;
+      /* be sure that matrix is matlab converted */
+      A = Mat2mtlb_cplx (A);
+      return A->R;
+    }
+  if ( IsBMat(array_ptr)) 
+    {
+      /* be sure that matrix is matlab converted */
+      return ((NspBMatrix *)  array_ptr)->B;
+    }
+  else if (IsString(array_ptr))
+    {
+      return ((NspSMatrix *) array_ptr)->S[0];
+    }
+	    
+  else if ( IsSpMat(array_ptr))
+    {
+      NspSpMatrix *A = (NspSpMatrix *)  array_ptr;
+      if (A->convert != 't' ) 
+	{
+	  if ( nsp_sparse_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	}
+      return A->triplet.Ax;
+    }
+  Scierror("Error in %s: mxGetPr failed\n","mex");
+  nsp_mex_errjump();
+  return NULL;
 }
 
 bool mxIsSharedArray(const mxArray *array_ptr)
@@ -1630,11 +1663,31 @@ mxChar *mxGetChars(const mxArray *array_ptr)
 }
 
 
+/**
+ * mxGetElementSize:
+ * @array_ptr: 
+ * 
+ * computes the number of bytes required to store one element of 
+ * the specified mxArray, if successful. Returns 0 on failure. 
+ * The primary reason for failure is that array_ptr points to an m
+ * xArray having an unrecognized class. If array_ptr points to a a 
+ * matrix of pointers (SMat, BMat, cells, etc...)
+ * then mxGetElementSize returns the size of a pointer
+ * 
+ * Return value: the number of bytes or 0 on failure.
+ **/
+
+
 int mxGetElementSize(const mxArray *array_ptr)
 {
-  Scierror("Error: mxGetElementSize is to be done\n");
-  nsp_mex_errjump();      
-  return 0;
+  unsigned int elt_size; /* size in number of bytes */
+  NspTypeBase *type;
+  if (( type = check_implements(array_ptr,nsp_type_matint_id)) == NULL )
+    {
+      return 0;
+    }
+  elt_size = MAT_INT(type)->elt_size(array_ptr); 
+  return elt_size;
 }
 
 
@@ -1664,6 +1717,15 @@ mxArray *mxCreateCharArray(int ndim, const int *dims)
     {
       Scierror("Error: mxCreateCharArray only works for dims==2\n");
       nsp_mex_errjump();      
+    }
+  if ( dims[0] == 1 ) 
+    {
+      NspSMatrix* S; 
+      if ((S = nsp_smatrix_create_with_length(NVOID,1,1,dims[1]+1))== NULLSMAT)
+	{
+	  nsp_mex_errjump();
+	}
+      return NSP_OBJECT(S);
     }
   Scierror("Error: mxCreateCharArray is to be done\n");
   nsp_mex_errjump();      
