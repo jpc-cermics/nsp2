@@ -414,7 +414,7 @@ int int_gobj_create(Stack stack,int rhs,int opt,int lhs)
 	  if ( loc->used )
 	    {
 	      GParamSpec *pspec;
-	      char *key =nsp_object_get_name(loc->data);
+	      const char *key =nsp_object_get_name(loc->data);
 	      pspec = g_object_class_find_property (class, key);
 	      if (!pspec) {
 		Scierror("gobject `%s' doesn't support property `%s'\n",
@@ -682,7 +682,7 @@ static int nspgobject_set_data(NspGObject *self, Stack stack,int rhs,int opt,int
     }
   for ( i = 1 ; i <= rhs ; i++) 
     {
-      char *key;
+      const char *key;
       /*get a copy of object (GetObj takes care of Hobj pointers) **/
       if (( O =nsp_object_copy(nsp_get_object(stack,i))) == NULLOBJ ) return RET_BUG;
       key =nsp_object_get_name(NthObj(i));

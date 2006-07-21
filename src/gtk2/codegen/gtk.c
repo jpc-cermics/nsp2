@@ -13819,7 +13819,7 @@ _wrap_gtk_text_buffer_create_tag(NspGObject *self,Stack stack,int rhs,int opt,in
       NspObject *prop = NthObj(i) ;
       GParamSpec *pspec;
       GValue value = { 0, };
-      gchar *prop_str =nsp_object_get_name(NthObj(i)); 
+      const gchar *prop_str =nsp_object_get_name(NthObj(i)); 
       
       pspec = g_object_class_find_property (G_OBJECT_GET_CLASS(tag),  prop_str);
       if (!pspec) {
@@ -28632,7 +28632,7 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
 
   for ( i = 2 ; i <= rhs ; i++) 
     {
-      gchar *property_name;
+      const gchar *property_name;
       NspObject *nsp_value;
       GParamSpec *pspec;
       GValue value = { 0 };
@@ -28690,7 +28690,7 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
 
   for ( i = 2 ; i <= rhs ; i++) 
     {
-      gchar *property_name;
+      const gchar *property_name;
       NspObject *nsp_value;
       GParamSpec *pspec;
       GValue value = { 0 };

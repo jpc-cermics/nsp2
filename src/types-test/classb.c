@@ -348,7 +348,7 @@ static NspObject * int_clb_get_color(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((NspClassB *) Hv)->classb_color);
 }
 
-static int int_clb_set_color(void *Hv, char *attr, NspObject *O)
+static int int_clb_set_color(void *Hv,const   char *attr, NspObject *O)
 {
   int color; 
   if (  IntScalar(O,&color) == FAIL) return FAIL;
@@ -361,7 +361,7 @@ static NspObject * int_clb_get_thickness(void *Hv, char *attr)
   return nsp_create_object_from_double(NVOID,((NspClassB *) Hv)->classb_thickness);
 }
 
-static int int_clb_set_thickness(void *Hv, char *attr, NspObject *O)
+static int int_clb_set_thickness(void *Hv,const   char *attr, NspObject *O)
 {
   int thickness; 
   if (  IntScalar(O,&thickness) == FAIL) return FAIL;
@@ -379,7 +379,7 @@ static NspObject *int_clb_get_object_val(void *Hv,char *str)
   return (NspObject *)  ((NspClassB *)Hv)->classb_val;
 }
 
-static int int_clb_set_val(void *Hv, char *attr, NspObject *O)
+static int int_clb_set_val(void *Hv,const   char *attr, NspObject *O)
 {
   NspMatrix *m;
   if ((m = (NspMatrix *) nsp_object_copy(O)) == NULLMAT) return RET_BUG;

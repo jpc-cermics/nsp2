@@ -365,7 +365,7 @@ static NspObject * int_sndfile_get_seekable(void *Hv,char *attr)
 }
 
 
-static int int_sndfile_set_void(void *Hv, char *attr, NspObject *O)
+static int int_sndfile_set_void(void *Hv,const   char *attr, NspObject *O)
 {
   Scierror("Error: attribute of sndfile objects cannot be changed after creation\n");
   return FAIL;

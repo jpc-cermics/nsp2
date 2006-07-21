@@ -349,7 +349,7 @@ static NspObject * int_cla_get_color(void *Hv,char *attr)
   return nsp_create_object_from_double(NVOID,((NspClassA *) Hv)->classa_color);
 }
 
-static int int_cla_set_color(void *Hv, char *attr, NspObject *O)
+static int int_cla_set_color(void *Hv,const   char *attr, NspObject *O)
 {
   int color; 
   if (  IntScalar(O,&color) == FAIL) return FAIL;
@@ -362,7 +362,7 @@ static NspObject * int_cla_get_thickness(void *Hv, char *attr)
   return nsp_create_object_from_double(NVOID,((NspClassA *) Hv)->classa_thickness);
 }
 
-static int int_cla_set_thickness(void *Hv, char *attr, NspObject *O)
+static int int_cla_set_thickness(void *Hv,const  char *attr, NspObject *O)
 {
   int thickness; 
   if (  IntScalar(O,&thickness) == FAIL) return FAIL;
@@ -380,7 +380,7 @@ static NspObject *int_cla_get_object_val(void *Hv,char *str)
   return (NspObject *)  ((NspClassA *)Hv)->classa_val;
 }
 
-static int int_cla_set_val(void *Hv, char *attr, NspObject *O)
+static int int_cla_set_val(void *Hv,const   char *attr, NspObject *O)
 {
   NspMatrix *m;
   if ((m = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return RET_BUG;

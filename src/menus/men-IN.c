@@ -501,7 +501,7 @@ static int nsp_check_choice_list(Stack stack,NspList *L)
 	{
 	  if ( nsp_check_choice(stack,(NspList *) Loc->O)==FAIL)
 	    {
-	      char *arg =nsp_object_get_name((NthObj(2)));
+	      const char *arg =nsp_object_get_name((NthObj(2)));
 	      if (  strcmp(arg ,NVOID) != 0)
 		{
 		  Scierror("Error: second argument of function %s has a wrong element %s(%d) \n",
@@ -516,7 +516,7 @@ static int nsp_check_choice_list(Stack stack,NspList *L)
 	}
       else
 	{
-	  char *arg =nsp_object_get_name((NthObj(2)));
+	  const char *arg =nsp_object_get_name((NthObj(2)));
 	  if (  strcmp(arg ,NVOID) != 0)
 	    Scierror("Error: second argument of function %s, %s(%d) is not a list\n",
 		     NspFname(stack),arg,count);

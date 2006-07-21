@@ -33,7 +33,7 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-static int sci_demo (char *fname,char *code,int flag) ;
+static int sci_demo (const char *fname,char *code,int flag) ;
 static void  nsp_gwin_clear(BCG *Xgc);
 static BCG *nsp_check_graphic_context(void);
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
@@ -43,7 +43,7 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
  * XXXXXX pb de ménage pas fait 
  *-----------------------------------------------------------*/
 
-static int * check_style(Stack stack,char *fname,char *varname,NspMatrix *var,int size) 
+static int * check_style(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) 
 {
   NspMatrix *loc_var;
   int i,*ival;
@@ -85,7 +85,7 @@ static int * check_style(Stack stack,char *fname,char *varname,NspMatrix *var,in
 static const int iflag_def[]={2,8,4};
 static int iflag_loc[] = {2,8,4};
 
-static int * check_iflag(Stack stack,char *fname,char *varname,NspMatrix *var,int size) 
+static int * check_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) 
 {
   int i;
   /* provide a default value by copying since the returned array is 
@@ -115,7 +115,7 @@ static int * check_iflag(Stack stack,char *fname,char *varname,NspMatrix *var,in
 static const int param_iflag_def[]={8,4};
 static int param_iflag_loc[] = {8,4};
 
-static int * check_param_iflag(Stack stack,char *fname,char *varname,NspMatrix *var,int size) 
+static int * check_param_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) 
 {
   int i;
   /* provide a default value by copying since the returned array is 
@@ -145,7 +145,7 @@ static int * check_param_iflag(Stack stack,char *fname,char *varname,NspMatrix *
 static const double  ebox_def[]= { 0,1,0,1,0,1};
 static double ebox_loc[]=  { 0,1,0,1,0,1};
 
-static double * check_ebox(Stack stack,char *fname,char *varname,NspMatrix *var)
+static double * check_ebox(Stack stack,const char *fname,char *varname,NspMatrix *var)
 {
   int i;
   if ( var == NULLMAT) 
@@ -177,7 +177,7 @@ static double * check_ebox(Stack stack,char *fname,char *varname,NspMatrix *var)
 static const double  rect_def[]= {0.,0.,10.0,10.0}; 
 static double rect_loc[]=  {0.,0.,10.0,10.0}; 
 
-static double * check_rect(Stack stack,char *fname,char *varname,NspMatrix *var)
+static double * check_rect(Stack stack,const char *fname,char *varname,NspMatrix *var)
 {
   int i;
   if ( var == NULLMAT) 
@@ -207,7 +207,7 @@ static double * check_rect(Stack stack,char *fname,char *varname,NspMatrix *var)
 #define DEFSTRF "081" 
 static char strf_loc[] = DEFSTRF;
 
-static char * check_strf(Stack stack,char *fname,char *varname,char *strf)
+static char * check_strf(Stack stack,const char *fname,char *varname,char *strf)
 {
 
   if ( strf == NULL ) 
@@ -236,14 +236,14 @@ static char * check_strf(Stack stack,char *fname,char *varname,char *strf)
 
 static char legend_loc[]  = "";
 
-static char * check_legend(Stack stack,char *fname,char *varname, char *legend)
+static char * check_legend(Stack stack,const char *fname,char *varname, char *legend)
 {
   return ( legend == NULL ) ? legend_loc: legend; 
 }
 
 static const char legend_3d_loc[]  = "X@Y@Z";
 
-static const char * check_legend_3d(Stack stack,char *fname,char *varname,const char *legend)
+static const char * check_legend_3d(Stack stack,const char *fname,char *varname,const char *legend)
 {
   return ( legend == NULL ) ? legend_3d_loc: legend; 
 }
@@ -289,7 +289,7 @@ static int check_legend_pos(Stack stack,const char *fname,const char *varnam,con
 static const int nax_def[]={2,10,2,10};
 static int nax_loc[]={2,10,2,10};
 
-static int * check_nax(Stack stack,char *fname,char *varname,NspMatrix *var)
+static int * check_nax(Stack stack,const char *fname,char *varname,NspMatrix *var)
 {
   int i;
   if ( var == NULLMAT) 
@@ -318,7 +318,7 @@ static int * check_nax(Stack stack,char *fname,char *varname,NspMatrix *var)
  * Check optional argument zminmax
  *-----------------------------------------------------------*/
 
-static int check_zminmax (Stack stack,char *fname,char *varname,NspMatrix *var)
+static int check_zminmax (Stack stack,const char *fname,char *varname,NspMatrix *var)
 {
   if ( var != NULLMAT &&  var->mn != 2 ) 
     {
@@ -332,7 +332,7 @@ static int check_zminmax (Stack stack,char *fname,char *varname,NspMatrix *var)
  * Check optional argument colminmax
  *-----------------------------------------------------------*/
 
-static int check_colminmax (Stack stack,char *fname,char *varname,NspMatrix *var)
+static int check_colminmax (Stack stack,const char *fname,char *varname,NspMatrix *var)
 {
   if ( var != NULLMAT && var->mn != 2 ) 
     {
@@ -346,7 +346,7 @@ static int check_colminmax (Stack stack,char *fname,char *varname,NspMatrix *var
  * Check optional argument colout
  *-----------------------------------------------------------*/
 
-static int check_colout (Stack stack,char *fname,char *varname,NspMatrix *var)
+static int check_colout (Stack stack,const char *fname,char *varname,NspMatrix *var)
 {
   if ( var != NULLMAT &&  var->mn != 2 ) 
     {
@@ -365,7 +365,7 @@ static int check_colout (Stack stack,char *fname,char *varname,NspMatrix *var)
 #define DEFLOGFLAGS "gnn" 
 static char logflags_loc[]  = DEFLOGFLAGS;
 
-static char * check_logflags(Stack stack,char *fname,char *varname,char *logflags)
+static char * check_logflags(Stack stack,const char *fname,char *varname,char *logflags)
 {
   if ( logflags == NULL ) 
     {
@@ -4291,7 +4291,7 @@ int int_xname(Stack stack, int rhs, int opt, int lhs)
  *-------------------------------------------------------------*/
 
 
-static int check_xy(char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int ypos,NspMatrix *My,int *ntics);
+static int check_xy(const char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int ypos,NspMatrix *My,int *ntics);
 
 int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
 {
@@ -4404,7 +4404,7 @@ int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-static int check_xy(char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int ypos,NspMatrix *My,int *ntics)
+static int check_xy(const char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int ypos,NspMatrix *My,int *ntics)
 {
   switch ( dir ) 
     {
@@ -4505,7 +4505,7 @@ int int_seteventhandler(Stack stack, int rhs, int opt, int lhs)
  * XXXX
  *-----------------------------------------------------------*/
 
-static int sci_demo (char *fname,char *code,int flag) 
+static int sci_demo (const char *fname,char *code,int flag) 
 {
   int rep;
   if ( flag == 1) 
