@@ -171,7 +171,7 @@ extern int check_cast(void *obj,NspTypeId id);
 
 /* instance o implements interface with id as type */
 
-NspTypeBase *check_implements(void *obj,NspTypeId id); 
+NspTypeBase *check_implements(const void *obj,NspTypeId id); 
 
 extern NspObject *nsp_object_load_def(void * F);
 extern int  nsp_object_save_def(void * F, NspObject * M);

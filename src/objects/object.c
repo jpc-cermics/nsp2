@@ -178,9 +178,9 @@ NspObject *new_object(void)
  * interface instance for object @obj or %NULL.
  **/
 
-NspTypeBase *check_implements(void *obj,NspTypeId id)
+NspTypeBase *check_implements(const void *obj,NspTypeId id)
 {
-  NspObject *ob=obj;
+  const NspObject *ob=obj;
   /* down to basetype */
   NspTypeBase *type = ob->basetype;
   /* now walk up and search interfaces */
