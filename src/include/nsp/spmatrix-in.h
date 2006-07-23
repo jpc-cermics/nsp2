@@ -8,17 +8,17 @@
 
 #include "nsp/interf.h"
 
-static function int_spcreate;
-static function int_spm2sp;
-static function int_spsp2m;
-static function int_spmult;
-static function int_spquote;
-static function int_spplus;
-static function int_spsub;
-static function int_spmultt;
-static function int_spsum;
+static function int_spmatrix_create;
+static function int_spmatrix_m2sp;
+static function int_spmatrix_sp2m;
+static function int_spmatrix_mult;
+static function int_spmatrix_quote;
+static function int_spmatrix_plus;
+static function int_spmatrix_sub;
+static function int_spmatrix_multt;
+static function int_spmatrix_sum;
 
-extern function int_spminus;
+extern function int_spmatrix_minus;
 
 #endif
 

@@ -491,7 +491,7 @@ int nsp_spmatrix_resize_row(NspSpMatrix *Sp, int i, int n)
  * Destroy a Sp Matrix 
  */
 
-void SpRowDestroy(SpRow *Row)
+void nsp_spmatrix_row_destroy(SpRow *Row)
 {
   if ( Row->size != 0 ) 
     {
@@ -508,7 +508,7 @@ void nsp_spmatrix_destroy(NspSpMatrix *Mat)
       FREE(NSP_OBJECT(Mat)->name);
       for ( i = 0  ; i < Mat->m ; i++) 
 	{
-	  SpRowDestroy(Mat->D[i]);
+	nsp_spmatrix_row_destroy(Mat->D[i]);
 	  FREE(Mat->D[i]);
 	}
       FREE(Mat->D);
@@ -2138,7 +2138,7 @@ int nsp_spmatrix_seti(NspSpMatrix *A, double d)
  * A and val are unchanged 
  */
 
-int  RowCountNonNull(NspMatrix *A, int i)
+static int  RowCountNonNull(NspMatrix *A, int i)
 { 
   int count=0,j;
   switch ( A->rc_type ) 
@@ -2153,12 +2153,14 @@ int  RowCountNonNull(NspMatrix *A, int i)
   return(count);
 }
 
-int  CountNonNull(NspMatrix *A)
+#if 0 
+static int countnonnull(NspMatrix *A)
 { 
   int count=0,i;
   for ( i = 0 ; i < A->m ; i++ ) count +=  RowCountNonNull(A,(int)i);
   return(count);
 }
+#endif 
 
 /*
  * Converts a full Matrix to a Sparse one 
@@ -2322,12 +2324,13 @@ NspSpMatrix *nsp_spmatrix_transpose(const NspSpMatrix *A)
 /*
  * Utilities for term to term operations 
  */
-
+#if 0
 double  plus (double x, double y, double xi, double yi, double *ival, char type)
 { 
   if ( type == 'c' ) *ival = xi + yi ;
   return( x+y ) ;
 }
+#endif 
 
 /*
  * PLus operator A Plus B 

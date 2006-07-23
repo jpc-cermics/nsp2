@@ -42,7 +42,7 @@
  * A is changed, 
  */
 
-int SpClean(NspSpMatrix *A, int rhs, double epsa, double epsr)
+int nsp_spmatrix_clean(NspSpMatrix *A, int rhs, double epsa, double epsr)
 {
   int j,i,n;
   double d_epsr=DBL_EPSILON;
@@ -97,7 +97,7 @@ int SpClean(NspSpMatrix *A, int rhs, double epsa, double epsr)
 
 /*  minmaxflag = 1 for max -1 for min  */
 
-NspMatrix *SpMaxiMinitt_G (NspSpMatrix *A, NspSpMatrix *B, int flag, int minmaxflag, int *err)
+NspMatrix *nsp_spmatrix_maximinitt_g(NspSpMatrix *A, NspSpMatrix *B, int flag, int minmaxflag, int *err)
 {
   /* Same philosophy as in BinaryOp **/
   int i,count,k1,k2,k;
@@ -226,9 +226,9 @@ NspMatrix *SpMaxiMinitt_G (NspSpMatrix *A, NspSpMatrix *B, int flag, int minmaxf
 }
 
 
-NspMatrix *SpMaxitt(NspSpMatrix *A, NspSpMatrix *B, int flag, int *err)
+NspMatrix *nsp_spmatrix_maxitt(NspSpMatrix *A, NspSpMatrix *B, int flag, int *err)
 {
-  return SpMaxiMinitt_G (A,B,flag,1,err);
+  return nsp_spmatrix_maximinitt_g(A,B,flag,1,err);
 }
 
 /*
@@ -246,9 +246,9 @@ NspMatrix *SpMaxitt(NspSpMatrix *A, NspSpMatrix *B, int flag, int *err)
  *  Res Created if flag == 1
  */
 
-NspMatrix *SpMinitt(NspSpMatrix *A, NspSpMatrix *B, int flag, int *err)
+NspMatrix *nsp_spmatrix_minitt(NspSpMatrix *A, NspSpMatrix *B, int flag, int *err)
 {
-  return SpMaxiMinitt_G (A,B,flag,-1,err);
+  return nsp_spmatrix_maximinitt_g(A,B,flag,-1,err);
 }
 
 
@@ -265,7 +265,7 @@ NspMatrix *SpMinitt(NspSpMatrix *A, NspSpMatrix *B, int flag, int *err)
  * A = real(A) 
  */
 
-int SpRealPart(NspSpMatrix *A)
+int nsp_spmatrix_realpart(NspSpMatrix *A)
 {
   int i,k;
   if ( A->rc_type == 'r' )  return(OK);
@@ -304,7 +304,7 @@ int SpRealPart(NspSpMatrix *A)
  * A is changed  
  */
 
-int SpImagPart(NspSpMatrix *A)
+int nsp_spmatrix_imagpart(NspSpMatrix *A)
 {
   int i,k;
   if ( A->rc_type == 'r')
@@ -379,7 +379,7 @@ int SpImagPart(NspSpMatrix *A)
  * if B= 'f' the full sum is computed 
  */
 
-NspSpMatrix *SpSum(NspSpMatrix *A, char *flag)
+NspSpMatrix *nsp_spmatrix_sum(NspSpMatrix *A, char *flag)
 {
   double S;
   doubleC SC,C;
@@ -734,7 +734,7 @@ static int SpMaxi3(NspSpMatrix *A, int j, NspSpMatrix *M)
 }
 
 
-NspSpMatrix *SpMaxi(NspSpMatrix *A, char *flag, NspMatrix **Imax, int lhs)
+NspSpMatrix *nsp_spmatrix_maxi(NspSpMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 {
   return SpMaxiMini(A,flag,Imax,lhs,SpMaxi1,SpMaxi2,SpMaxi3);
 }
@@ -766,7 +766,7 @@ NspSpMatrix *SpMaxi(NspSpMatrix *A, char *flag, NspMatrix **Imax, int lhs)
  *nsp_mat_eye: A=Eye(m,n)
  */
 
-NspSpMatrix *SpEye(int m, int n)
+NspSpMatrix *nsp_spmatrix_eye(int m, int n)
 {
   NspSpMatrix *Loc;
   int i;
@@ -785,7 +785,7 @@ NspSpMatrix *SpEye(int m, int n)
  * A is changed  
  */
 
-NspSpMatrix *SpOnes(int m, int n)
+NspSpMatrix *nsp_spmatrix_ones(int m, int n)
 {
   NspSpMatrix *Loc;
   int i,k;
@@ -807,7 +807,7 @@ NspSpMatrix *SpOnes(int m, int n)
  * A is changed  
  */
 
-NspSpMatrix *SpZeros(int m, int n)
+NspSpMatrix *nsp_spmatrix_zeros(int m, int n)
 {
   NspSpMatrix *Loc;
   if (( Loc=nsp_spmatrix_create(NVOID,'r',m,n)) == NULLSP) return(NULLSP);
@@ -908,7 +908,7 @@ static NspMatrix* SpUnary2Full(NspSpMatrix *A, Func1 F1, Func2 F2)
   return Loc;
 }
 
-NspMatrix *SpAcos(NspSpMatrix *A)
+NspMatrix *nsp_spmatrix_acos(NspSpMatrix *A)
 {
   return SpUnary2Full(A,acosh,nsp_acosh_c);
 }
@@ -918,7 +918,7 @@ NspMatrix *SpAcos(NspSpMatrix *A)
  * A is changed 
  */
 
-NspMatrix *SpAcosh(NspSpMatrix *A)
+NspMatrix *nsp_spmatrix_acosh(NspSpMatrix *A)
 {
   return SpUnary2Full(A,acos,nsp_acos_c);
 }
@@ -982,7 +982,7 @@ static void  SpUnary(NspSpMatrix *A, Func1 F1, Func2 F2)
  */
 
 
-void SpAsin(NspSpMatrix *A)
+void nsp_spmatrix_asin(NspSpMatrix *A)
 {
   SpUnary(A,asin,nsp_asin_c);
 }
@@ -992,7 +992,7 @@ void SpAsin(NspSpMatrix *A)
  * A is changed 
  */
 
-void SpAsinh(NspSpMatrix *A)
+void nsp_spmatrix_asinh(NspSpMatrix *A)
 {
   SpUnary(A,asinh,nsp_asinh_c);
 }
@@ -1001,7 +1001,7 @@ void SpAsinh(NspSpMatrix *A)
  * A=Atan(A),  * A is changed 
  */
 
-void SpAtan(NspSpMatrix *A)
+void nsp_spmatrix_atan(NspSpMatrix *A)
 {
   SpUnary(A,atan,nsp_atan_c);
 }
@@ -1011,7 +1011,7 @@ void SpAtan(NspSpMatrix *A)
  * A is changed 
  */
 
-void SpAtanh(NspSpMatrix *A)
+void nsp_spmatrix_atanh(NspSpMatrix *A)
 {
   SpUnary(A,atanh,nsp_atanh_c);
 }
@@ -1022,7 +1022,7 @@ void SpAtanh(NspSpMatrix *A)
  * A is changed  
  */
 
-void SpCeil(NspSpMatrix *A)
+void nsp_spmatrix_ceil(NspSpMatrix *A)
 {
   SpUnary(A,ceil,nsp_ceil_c);
 }
@@ -1032,9 +1032,9 @@ void SpCeil(NspSpMatrix *A)
  * A is changed  
  */
 
-double R_aint(double x) { return aint(x);} 
+static double R_aint(double x) { return aint(x);} 
 
-void SpInt(NspSpMatrix *A)
+void nsp_spmatrix_int(NspSpMatrix *A)
 {
   SpUnary(A,R_aint,nsp_aint_c);
 }
@@ -1044,7 +1044,7 @@ void SpInt(NspSpMatrix *A)
  * A is changed  
  */
 
-void SpFloor(NspSpMatrix *A)
+void nsp_spmatrix_floor(NspSpMatrix *A)
 {
   SpUnary(A,floor,nsp_floor_c);
 }
@@ -1054,9 +1054,9 @@ void SpFloor(NspSpMatrix *A)
  * A is changed  
  */
 
-double R_anint(double x) { return anint(x);} 
+static double R_anint(double x) { return anint(x);} 
 
-void SpRound(NspSpMatrix *A)
+void nsp_spmatrix_round(NspSpMatrix *A)
 {
   SpUnary(A,R_anint,nsp_round_c);
 }
@@ -1067,7 +1067,7 @@ void SpRound(NspSpMatrix *A)
  * return 0 if error 
  */
 
-int SpSign(NspSpMatrix *A)
+int nsp_spmatrix_sign(NspSpMatrix *A)
 {
   int i,k ;
   if ( A->rc_type == 'r') 
@@ -1095,7 +1095,7 @@ int SpSign(NspSpMatrix *A)
  * A is changed 
  */
 
-void SpTan(NspSpMatrix *A)
+void nsp_spmatrix_tan(NspSpMatrix *A)
 {
   SpUnary(A,tan,nsp_tan_c);
 }
@@ -1105,7 +1105,7 @@ void SpTan(NspSpMatrix *A)
  * A is changed 
  */
 
-void SpTanh(NspSpMatrix *A)
+void nsp_spmatrix_tanh(NspSpMatrix *A)
 {
   SpUnary(A,tanh,nsp_tanh_c);
 }
@@ -1115,7 +1115,7 @@ void SpTanh(NspSpMatrix *A)
  * A is changed 
  */
 
-int SpAbs(NspSpMatrix *A)
+int nsp_spmatrix_abs(NspSpMatrix *A)
 {
   int i,k ;
   if ( A->rc_type == 'r') 
@@ -1129,7 +1129,7 @@ int SpAbs(NspSpMatrix *A)
       for ( i = 0 ; i < A->m ; i++)
 	for ( k=0; k < A->D[i]->size ; k++ ) 
 	  A->D[i]->C[k].r =nsp_abs_c(&A->D[i]->C[k]);
-      if ( SpRealPart(A) == FAIL) return FAIL;
+      if (nsp_spmatrix_realpart(A) == FAIL) return FAIL;
     }
   return(OK);
 }
@@ -1138,7 +1138,7 @@ int SpAbs(NspSpMatrix *A)
  * A=Erf(A), Erf function 
  */
 
-int SpErf(NspSpMatrix *A)
+int nsp_spmatrix_erf(NspSpMatrix *A)
 {
   int i,k ;
   if ( A->rc_type == 'r') 
@@ -1182,7 +1182,7 @@ int SpErf(NspSpMatrix *A)
  * Argument or Phase 
  */
 
-int SpArg(NspSpMatrix *A)
+int nsp_spmatrix_arg(NspSpMatrix *A)
 {
   int i,k ;
   if ( A->rc_type == 'r') 
@@ -1204,7 +1204,7 @@ int SpArg(NspSpMatrix *A)
       for ( i = 0 ; i < A->m ; i++)
 	for ( k=0; k < A->D[i]->size ; k++ ) 
 	  A->D[i]->C[k].r =nsp_arg_c(&A->D[i]->C[k]);
-      if ( SpRealPart(A) == FAIL) return FAIL;
+      if (nsp_spmatrix_realpart(A) == FAIL) return FAIL;
     }
   return(OK);
 }
@@ -1219,7 +1219,7 @@ int SpArg(NspSpMatrix *A)
  * A is changed  only if imaginary 
  */
 
-void SpConj(NspSpMatrix *A)
+void nsp_spmatrix_conj(NspSpMatrix *A)
 {
   int i,k;
   switch ( A->rc_type ) 
@@ -1242,7 +1242,7 @@ void SpConj(NspSpMatrix *A)
  */
 
 
-NspMatrix *SpCos(NspSpMatrix *A)
+NspMatrix *nsp_spmatrix_cos(NspSpMatrix *A)
 {
   return SpUnary2Full(A,cos,nsp_cos_c);
 }
@@ -1253,7 +1253,7 @@ NspMatrix *SpCos(NspSpMatrix *A)
  * return 0 if error 
  */
 
-NspMatrix *SpCosh(NspSpMatrix *A)
+NspMatrix *nsp_spmatrix_cosh(NspSpMatrix *A)
 {
   return SpUnary2Full(A,cosh,nsp_cosh_c);
 }
@@ -1263,7 +1263,7 @@ NspMatrix *SpCosh(NspSpMatrix *A)
  * A is changed 
  */
 
-NspMatrix *SpExpEl(NspSpMatrix *A)
+NspMatrix *nsp_spmatrix_expel(NspSpMatrix *A)
 {
   return SpUnary2Full(A,exp,nsp_exp_c);
 }
@@ -1274,7 +1274,7 @@ NspMatrix *SpExpEl(NspSpMatrix *A)
  * The real case is special since the result can be complex
  */
 
-int SpLogEl(NspSpMatrix *A)
+int nsp_spmatrix_logel(NspSpMatrix *A)
 {
   int i,k;
   if ( A->rc_type == 'r')
@@ -1312,7 +1312,7 @@ int SpLogEl(NspSpMatrix *A)
  * return 0 if error 
  */
 
-void SpSin(NspSpMatrix *A)
+void nsp_spmatrix_sin(NspSpMatrix *A)
 {
   SpUnary(A,sin,nsp_sin_c);
 }
@@ -1324,7 +1324,7 @@ void SpSin(NspSpMatrix *A)
  * return 0 if error 
  */
 
-void SpSinh(NspSpMatrix *A)
+void nsp_spmatrix_sinh(NspSpMatrix *A)
 {
   SpUnary(A,sinh,nsp_sinh_c);
 }
@@ -1336,7 +1336,7 @@ void SpSinh(NspSpMatrix *A)
  * The real case is special since the result can be complex
  */
 
-int SpSqrtEl(NspSpMatrix *A)
+int nsp_spmatrix_sqrtel(NspSpMatrix *A)
 {
   int i,k;
   if ( A->rc_type == 'r')
@@ -1373,7 +1373,7 @@ int SpSqrtEl(NspSpMatrix *A)
  * A is changed 
  */
 
-int SpMinus(NspSpMatrix *A)
+int nsp_spmatrix_minus(NspSpMatrix *A)
 {
   int i,k ;
   if ( A->rc_type  == 'r') 
@@ -1438,7 +1438,7 @@ int SpMinus(NspSpMatrix *A)
  * according to lhs one or two arguments are returned 
  */
 
-int SpFind(NspSpMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
+int nsp_spmatrix_find(NspSpMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 {
   int k,i,count=0;
   /* first pass for counting **/

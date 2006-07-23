@@ -50,7 +50,7 @@ int nsp_sparse_update_from_triplet( NspSpMatrix *M)
   /* partial free */
   for ( i = 0  ; i < M->m ; i++) 
     {
-      SpRowDestroy(M->D[i]);
+ nsp_spmatrix_row_destroy(M->D[i]);
       FREE(M->D[i]);
     }
   FREE(M->D);
@@ -144,7 +144,7 @@ static int nsp_sparse_update_from_triplet_internal( NspSpMatrix *M)
       /* delete extra lines */
       for ( i = M->triplet.m ; i < M->m ; i++)
 	{
-	  SpRowDestroy(M->D[i]);
+	nsp_spmatrix_row_destroy(M->D[i]);
 	  FREE(M->D[i]);
 	  M->D[i]= NULL;
 	}
