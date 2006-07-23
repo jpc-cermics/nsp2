@@ -84,6 +84,19 @@ static void nsp_initmex(const char *name,int *lfirst,int lhs,mxArray *plhs[],
   for (k = 0; k < Max(lhs,1) ; ++k) plhs[k]=NULL;
 } 
 
+static int nsp_endmex_backconvert(NspObject *Obj)
+{
+  if (IsSpMat(Obj))
+    {
+      /* back convert sparses */
+      NspSpMatrix *Sp =(NspSpMatrix *) Obj;
+      if ( nsp_sparse_update_from_triplet(Sp)==FAIL) 
+	return FAIL;
+    }
+  return OK;
+}
+
+
 static void nsp_endmex(Stack stack,int lhs,mxArray *plhs[],int rhs,mxArray *prhs[])
 {
   int i;
@@ -94,13 +107,7 @@ static void nsp_endmex(Stack stack,int lhs,mxArray *plhs[],int rhs,mxArray *prhs
       if ( Obj != NULL ) 
 	{
 	  Obj->ret_pos = i;
-	  /* back convert sparses */
-	  if (IsSpMat(Obj))
-	    {
-	      NspSpMatrix *Sp =(NspSpMatrix *) Obj;
-	      if ( nsp_sparse_update_from_triplet(Sp)==FAIL) 
-		goto bug;
-	    }
+	  if ( nsp_endmex_backconvert(Obj)== FAIL) goto bug;
 	}
     }
   /* clean the input array for non-returned arguments */
@@ -218,6 +225,11 @@ double *mxGetPr(const mxArray *ptr)
 	  if ( nsp_sparse_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
       return A->triplet.Ax;
+    }
+  else if ( IsBMat(ptr) )
+    {
+      Sciprintf("Warning: mxGetPr should be replaced by mxGetData for booleans\n");
+      return (double *) ((NspBMatrix *) ptr)->B;
     }
   Scierror("Error in %s: mxGetPr failed\n","mex");
   nsp_mex_errjump();
@@ -725,7 +737,7 @@ mxArray *mxCreateString(char *string)
  * Return value: 
  **/
 
-mxArray *mxGetField (const mxArray *pa, int i, char *fieldname)
+mxArray *mxGetField (const mxArray *pa, int i,const char *fieldname)
 {
   NspObject *Obj;
   NspHash *H = (NspHash *) pa;
@@ -1174,6 +1186,7 @@ const char * mxGetName(const mxArray *ptr)
 int mexPutVariable(const char *workspace, const char *var_name, mxArray *array_ptr)
 {
   if (nsp_object_set_name(array_ptr,var_name) == FAIL) return FAIL;
+  if ( nsp_endmex_backconvert(array_ptr)== FAIL) return FAIL;
   return  mexPutArray(array_ptr,workspace);
 }
 
@@ -1607,7 +1620,7 @@ void *mxGetData(const mxArray *array_ptr)
     }
   if ( IsBMat(array_ptr)) 
     {
-      /* be sure that matrix is matlab converted */
+      /* must be used with mxLogical */
       return ((NspBMatrix *)  array_ptr)->B;
     }
   else if (IsString(array_ptr))
@@ -1657,8 +1670,16 @@ mxArray *mxGetFieldByNumber(const mxArray *array_ptr, int index,
 
 mxChar *mxGetChars(const mxArray *array_ptr)
 {
-  Scierror("Error: mxGetChars not implemented\n");
-  nsp_mex_errjump();      
+  if ( ! IsSMat(array_ptr) ) nsp_mex_errjump();
+  if ( ((NspSMatrix *) array_ptr)->mn == 1)  
+    {
+      return ((NspSMatrix *) array_ptr)->S[0];
+    }
+  else 
+    {
+      Scierror("Error: mxGetChars not implemented for string arrays\n");
+      nsp_mex_errjump();      
+    }
   return NULL;
 }
 
@@ -1682,7 +1703,11 @@ int mxGetElementSize(const mxArray *array_ptr)
 {
   unsigned int elt_size; /* size in number of bytes */
   NspTypeBase *type;
-  if (( type = check_implements(array_ptr,nsp_type_matint_id)) == NULL )
+  if ( IsSMat(array_ptr)) 
+    {
+      return sizeof(mxChar);
+    }
+  else if (( type = check_implements(array_ptr,nsp_type_matint_id)) == NULL )
     {
       return 0;
     }
@@ -1711,26 +1736,61 @@ mxLogical *mxGetLogicals(const mxArray *array_ptr)
 }
 
 
+/**
+ * mxCreateCharArray:
+ * @ndim: number of dimensions (Note that the string counts for one dimension)
+ * @dims: dimensions (the last one gives the length to be reserved for strings)
+ * 
+ * Only works for @ndim==2 and creates a #NspSMatrix of size @dims[0]x1 
+ * filled with strings of lenght @dims[1].
+ * Note that some functions will then only work if dims[0]==1 (for example 
+ * mxgetPr() ) since the Matlab and Nsp coding of string matrices differ.
+ * 
+ * Note also that  mxGetNumberOfElements() only returns correct answer
+ * if the string array if filled with non zero values since string length 
+ * are computed with strlen
+ * 
+ * Return value: #NULLOBJ or the newly created #NspSMatrix
+ **/
+
 mxArray *mxCreateCharArray(int ndim, const int *dims)
 {
+  NspSMatrix *A;
   if ( ndim != 2 )
     {
-      Scierror("Error: mxCreateCharArray only works for dims==2\n");
+      Scierror("Error: mxCreateCharArray only works for ndim==2 char arrays\n");
       nsp_mex_errjump();      
     }
-  if ( dims[0] == 1 ) 
+  if (( A= nsp_smatrix_create_with_length(NVOID,dims[0],1,dims[1]+1))==NULLSMAT) 
     {
-      NspSMatrix* S; 
-      if ((S = nsp_smatrix_create_with_length(NVOID,1,1,dims[1]+1))== NULLSMAT)
-	{
-	  nsp_mex_errjump();
-	}
-      return NSP_OBJECT(S);
+      nsp_mex_errjump();       
     }
-  Scierror("Error: mxCreateCharArray is to be done\n");
-  nsp_mex_errjump();      
-  return NULL;
+  else 
+    {
+      int i,n=dims[1];
+      for ( i= 0; i < A->mn ; i++)
+	{
+	  memset(A->S[i],' ',n);A->S[i][n]='\0';
+	}
+    }
+  if ( dims[0] != 1 ) 
+    {
+      Sciprintf("Warning: mxCreateCharArray with dims[0] != 1, some functions will not work\n");
+    }
+  return NSP_OBJECT(A);
 }
+
+/**
+ * mxCreateStructArray:
+ * @ndim: 
+ * @dims: 
+ * @nfields: 
+ * @field_names: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 
 mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
          const char **field_names)
@@ -1765,5 +1825,36 @@ const char *mxGetFieldNameByNumber(const mxArray *array_ptr,
   return NULL;
 }
 
+/* mxCreateLogicalArray to create an N-dimensional mxArray of logical 1 (true) and logical 0 (false) 
+ * elements. After creating the mxArray, mxCreateLogicalArray initializes all its elements to 
+ * logical 0. mxCreateLogicalArray differs from mxCreateLogicalMatrix in that the latter 
+ * can create two-dimensional arrays only.
+ */
+
+mxArray *mxCreateLogicalMatrix(int m, int n)
+{
+  int i;
+  NspBMatrix *A;
+  if ((A = nsp_bmatrix_create(NVOID,m,n)) == NULLBMAT) nsp_mex_errjump();
+  for (i=0; i < A->mn ; i++) A->B[i]= 0;
+  return NSP_OBJECT(A);
+}
+
+mxArray *mxCreateLogicalArray(int ndim, const int *dims)
+{
+  switch (ndim) 
+    {
+    case 0 :
+      return mxCreateLogicalMatrix(0,0);
+    case 1 :  
+      return mxCreateLogicalMatrix(1,dims[0]);
+    case 2: 
+      return mxCreateLogicalMatrix(dims[0],dims[1]);
+    default: 
+      Scierror("Error: mxCreateLogicalArray only works for ndim <= 2\n");
+      nsp_mex_errjump();
+    }
+  return NULL;
+}
 
 

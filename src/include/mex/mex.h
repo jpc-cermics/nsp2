@@ -8,7 +8,7 @@
 #include "nsp/interf.h"
 
 typedef NspObject mxArray ;
-typedef int mxLogical;
+typedef int mxLogical; /* should be int on Nsp */
 typedef char mxChar;
 
 typedef void mexfun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
@@ -68,7 +68,7 @@ extern bool mxIsInf(double x);
 extern bool mxIsFinite(double x);
 extern bool mxIsNaN(double x);
 extern double mxGetScalar(const mxArray *ptr);
-extern mxArray *mxGetField (const mxArray *pa, int i, char *fieldname);
+extern mxArray *mxGetField (const mxArray *pa, int i,const char *fieldname);
 extern void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value);
 extern void mexWarnMsgTxt(const char *error_msg);
 extern bool mxIsCell (const mxArray *ptr);
@@ -169,6 +169,8 @@ extern const char *mxGetClassName(const mxArray *array_ptr);
 extern bool mxIsSharedArray(const mxArray *array_ptr);
 extern void mxUnshareArray(const mxArray *array_ptr);
 
+extern mxArray *mxCreateLogicalArray(int ndim, const int *dims);
+extern mxArray *mxCreateLogicalMatrix(int m, int n);
 
 
 
