@@ -844,9 +844,9 @@ static void nspg_menu_print(int winid)
   char *printer,*p1;
   int colored,orientation,type;
   if ( nsp_print_dialog(&printer,&colored,&orientation,&type)== FAIL) return;
-  if ( ( p1 = getenv("TMPDIR"))  == (char *) 0 )
+  if ( ( p1 = getenv("NSP_TMPDIR"))  == (char *) 0 )
     {
-      sciprint("Cannot find environment variable TMPDIR\r\n");
+      sciprint("Cannot find environment variable NSP_TMPDIR\r\n");
     }
   Sciprintf("To be done: %s %d %d %d\n",printer,colored,orientation,type);
   nsp_string_destroy(&printer);

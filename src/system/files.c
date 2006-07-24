@@ -73,7 +73,7 @@ void set_nsp_tmpdir(void)
       sprintf(buf,"umask 000;if test ! -d %s; then mkdir %s; fi ",tmp_dir,tmp_dir);
       system(buf);
 #endif 
-      sprintf(buf,"TMPDIR=%s",tmp_dir);
+      sprintf(buf,"NSP_TMPDIR=%s",tmp_dir);
       putenv(buf);
     }
 }
@@ -191,7 +191,8 @@ char * nsp_get_curdir(void)
 static char *SCI_a[] = {  "SCI/", "sci/", "$SCI", "SCI\\", "sci\\",
 			  "NSP/", "nsp/", "$NSP", "NSP\\", "nsp\\", (char *) 0 };
 static char *HOME_a[] = {  "HOME/", "home/", "~/" , "HOME\\", "home\\", "~\\" ,"$HOME", (char *) 0};
-static char *TMP_a[] = {  "TMPDIR/", "tmpdir/","TMPDIR\\", "tmpdir\\", "$TMPDIR", (char *) 0};
+static char *TMP_a[] = {  "TMPDIR/","NSP_TMPDIR/", "tmpdir/","TMPDIR\\","NSP_TMPDIR\\",
+			  "tmpdir\\", "$TMPDIR","$NSP_TMPDIR", (char *) 0};
 
 static int expand_aliases(char *env, char **alias,const char *in_name, char *out_name,int out_size);
 
@@ -217,7 +218,7 @@ void nsp_path_expand(const char *in_name, char *out_name, int out_size)
       get_env("SCI",SCI,nc,1);
       get_env("HOME",HOME,nc,1);
       set_nsp_tmpdir();
-      if ( get_env("TMPDIR",TMP,nc,0) == FAIL) 
+      if ( get_env("NSP_TMPDIR",TMP,nc,0) == FAIL) 
 	{
 	  strcpy(TMP,"/tmp");
 	}

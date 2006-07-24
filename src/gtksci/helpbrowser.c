@@ -848,9 +848,9 @@ static void nsp_input_feed_example(char *example)
   FILE *fd;
   gchar *fname,*instr; 
 
-  if (( tmpdir=getenv("TMPDIR")) == NULL) 
+  if (( tmpdir=getenv("NSP_TMPDIR")) == NULL) 
     {
-      Sciprintf("TMPDIR not set \r\n");
+      Sciprintf("NSP_TMPDIR not set \r\n");
       return;
     }
   
