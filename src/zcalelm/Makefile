@@ -28,8 +28,10 @@ matnum.o: matnum.c
 
 #dependencies 
 
-qsort1.c : qsort1-gen.c
-qsort2.c : qsort2-gen.c
-qsort.c : qsort-gen.c
-qsort-stable.c: qsort-stable-gen.c
+qsort1.o :  qsort1-gen.c
+qsort2.o : qsort2-gen.c
+qsort.o : qsort-gen.c
+qsort-stable.o:  qsort-stable-gen.c
+
+
 
