@@ -22,7 +22,7 @@ LDFLAGS = @LDFLAGS@ $(EXTRA_LDFLAGS)
 LIBS = @LIBS@
 FLIBS = @FLIBS@
 #******************************************************************* 
-INCLUDES=  $(XFLAGS) $(TK_INC_PATH) $(TCL_INC_PATH) -I$(SCIDIR)/src/include 
+INCLUDES=  $(XFLAGS) $(TK_INC_PATH) $(TCL_INC_PATH) -I$(SCIDIR)/src/include -I$(SCIDIR)/src/include/mex
 
 # we do not set CFLAGS and FFLAGS here 
 #CFLAGS = $(CC_OPTIONS) 
