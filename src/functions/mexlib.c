@@ -43,7 +43,7 @@ static void nsp_mex_errjump();
 /* some nsp function are to be updated for const */
 
 #define MEXLIB 
-#include "nsp/mex.h"
+#include "mex/mex.h"
 
 /* these two variables are 
  * to be set up corectly to enable reentry in mex 

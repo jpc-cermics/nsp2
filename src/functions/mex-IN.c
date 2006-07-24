@@ -30,7 +30,7 @@
 #include "nsp/interf.h"
 #include "nsp/datas.h"
 #define MEXLIB
-#include "nsp/mex.h"
+#include "mex/mex.h"
 
 static void abcopy (const double a[],double b[],int mn);
 
