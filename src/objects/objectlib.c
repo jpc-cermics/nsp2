@@ -698,10 +698,12 @@ static int writeproc(char *iohandle,char* c_buf,int len)
 {
   writeproc_buf *buf =(writeproc_buf *) iohandle;
   u_long *header = (u_long *) c_buf ;
-  int last_frag = ((ntohl(*header) & LAST_FRAG) == 0) ? FALSE : TRUE;
   int nbytes = ntohl(*header) & (~LAST_FRAG);
   int ok;
-  printf("last fragment = %d, nbytes=%d len=%d\n",last_frag,nbytes,len);
+  /* 
+   * int last_frag = ((ntohl(*header) & LAST_FRAG) == 0) ? FALSE : TRUE;
+   * printf("last fragment = %d, nbytes=%d len=%d\n",last_frag,nbytes,len); 
+   */
 
   while ( nbytes > 0 ) 
     {
@@ -743,6 +745,9 @@ static int readproc(char *iohandle,char* buf,int len)
   return 0;
 }
 
+/* returns a 1x1 string matrix filled with the 
+ * list of strings stored in buf;
+ */
 
 static NspSMatrix * writeproc_string(writeproc_buf *buf,int *ntot)
 {
@@ -751,7 +756,7 @@ static NspSMatrix * writeproc_string(writeproc_buf *buf,int *ntot)
   NspSMatrix *A;
   int n = nsp_list_length(buf->L);
   *ntot= (n-1)*_writeproc_buf_size + buf->pos;
-  if ((A=nsp_smatrix_create_with_length(NVOID,1,1,*ntot+1)) ==NULLSMAT) 
+  if ((A=nsp_smatrix_create_with_length("XX",1,1,*ntot+1)) ==NULLSMAT) 
     return(NULLSMAT);
   str = A->S[0];
   for ( i = 1 ; i <= n ; i++)
@@ -769,10 +774,11 @@ static NspSMatrix * writeproc_string(writeproc_buf *buf,int *ntot)
 }
 
 
+
 NspObject *nsp_object_serialize(NspObject *O)
 {
-  NspObject *Obj;
-  NspSMatrix *Res;
+  NspObject *Obj=NULLOBJ;
+  NspSMatrix *Res=NULLSMAT;
   writeproc_buf buf={0,OK, NULL,NULL};
   int rep,n;
   XDR xdrs;
@@ -793,16 +799,37 @@ NspObject *nsp_object_serialize(NspObject *O)
     {
       xdrrec_endofrecord(&xdrs,1);
     }
-  Res = writeproc_string(&buf,&n);
-  printf("number of bytes %d\n",n);
+  /* XXXX here we could allocate first the serial 
+   * object and then fill it with buf 
+   * without using an intermediate SMatrix 
+   *
+   */
+  if ((Res = writeproc_string(&buf,&n))== NULLSMAT) 
+    {
+      xdr_destroy(&xdrs);
+      nsp_list_destroy(buf.L);
+      return NULLOBJ;
+    }
   xdr_destroy(&xdrs);
-  /* nsp_list_info(buf.L,0,NULL,1024);*/
-  
-  xdrmem_create(&xdrs,Res->S[0],n,XDR_DECODE);
-  Obj= nsp_object_xdr_load(&xdrs);
+  Obj =(NspObject *) nsp_serial_create(NVOID,Res->S[0],n);
+  nsp_list_destroy(buf.L);
+  nsp_smatrix_destroy(Res);
   return Obj;
 }
 
 
-
-
+NspObject *nsp_object_unserialize(NspSerial *S)
+{
+  NspObject *Obj;
+  int hs= strlen(nsp_serial_header);
+  XDR xdrs;
+  if ( S->nbytes < hs 
+       || strncmp(S->val,nsp_serial_header,hs) != 0)
+    {
+      Scierror("Error: serial object does not contain a serialized Nsp object\n");
+      return NULLOBJ;
+    }
+  xdrmem_create(&xdrs,S->val+hs,S->nbytes-hs,XDR_DECODE);
+  Obj= nsp_object_xdr_load(&xdrs); 
+  return Obj;
+}

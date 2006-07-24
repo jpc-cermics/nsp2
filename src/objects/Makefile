@@ -30,7 +30,8 @@ OBJSC = Matrix.o MatOps.o MatObj.o  \
 	matint.o \
 	MaxpObj.o MaxpMatrix.o \
 	cells.o cellsobj.o Sptriplet.o \
-	pr-output.o bhash.o 
+	pr-output.o bhash.o \
+	serial.o
 
 OLD=	gsort.o qsort.o	
 

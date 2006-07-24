@@ -522,6 +522,7 @@ void primitive_types_register() {
 #ifdef MAXPLUS 
   new_type_mpmatrix(T_BASE);
 #endif 
+  new_type_serial(T_BASE);
 }
 
 /*

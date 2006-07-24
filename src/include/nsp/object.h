@@ -336,6 +336,7 @@ extern NspObject *nsp_global_frame_search_object(nsp_const_string str);
 #include "nsp/classb.h"
 #include "nsp/cells.h"
 #include "nsp/matint.h"
+#include "nsp/serial.h"
 
 /*----------------------------------------------------------
  * A set of prototypes 

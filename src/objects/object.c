@@ -1734,7 +1734,6 @@ static int int_object_length(Stack stack, int rhs, int opt, int lhs)
  * 
  */
 
-/* XXXX */ extern NspObject * nsp_object_serialize(NspObject *O);
 
 static int int_object_serialize(Stack stack, int rhs, int opt, int lhs) 
 {
@@ -1747,6 +1746,19 @@ static int int_object_serialize(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+static int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  NspSerial *a;
+  if (( a= GetSerial(stack,1))== NULLSERIAL ) return RET_BUG;
+  if ((Obj = nsp_object_unserialize(a))==NULLOBJ)
+    return RET_BUG;
+  MoveObj(stack,1,Obj);
+  return 1;
+}
 
 /*
  * FIXME: just here to test the matrix interface 
@@ -1829,6 +1841,7 @@ static OpTab Obj_func[]={
   {"diary",int_object_diary},
   {"length",int_object_length},
   {"serialize",int_object_serialize},
+  {"unserialize",int_serial_unserialize},
   {"REDIM",int_object_testredim}, /* FIXME: testing */
   {"REDIM1",int_matrix_testredim}, /* FIXME: testing */
   {(char *) 0, NULL}
