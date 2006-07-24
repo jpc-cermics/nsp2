@@ -359,9 +359,14 @@ static int scifunc_hcreate(unsigned int nel)
     /* printf(" Size of hTable %d\n",nel); */
     /* allocate memory and zero out */
     /* note that htable has hsize +1 entries */
+#if 0  
     if ((htable = (_ENTRY *)calloc(hsize+1, sizeof(_ENTRY))) == NULL)
-	return 0;
-
+      return 0;
+#else 
+    if ((htable = (_ENTRY *) malloc((hsize+1)*sizeof(_ENTRY))) == NULL)
+      return 0;
+    memset(htable,0,(hsize+1)*sizeof(_ENTRY));
+#endif 
     /* everything went alright */
     return 1;
 }
