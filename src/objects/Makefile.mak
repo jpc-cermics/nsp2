@@ -14,8 +14,7 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	BMatrix.obj BMatObj.obj \
 	SMatrix.obj SMatrix-IN.obj SMatObj.obj \
 	PMatrix.obj PMatObj.obj \
-	SpMatrix.obj SpMatrix-IN.obj SpMatObj.obj \
-	SpMatOps.obj SpMatOps-IN.obj \
+	SpMatrix.obj SpMatObj.obj SpMatOps.obj \
 	List.obj ListObj.obj \
 	Hash.obj HashObj.obj \
 	object.obj objectlib.obj \
@@ -34,7 +33,8 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	matint.obj \
 	MaxpObj.obj MaxpMatrix.obj \
 	cells.obj cellsobj.obj Sptriplet.obj \
-	pr-output.obj bhash.obj 
+	pr-output.obj bhash.obj \
+	serial.obj
 
 OLD=	gsort.obj qsort.obj	
 

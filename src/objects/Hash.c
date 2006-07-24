@@ -574,11 +574,20 @@ NspHash *nsp_hcreate(char *name, unsigned int nel)
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   H->hsize  = nel;
   H->filled = 0;
+#if 0  
   if (( htable = (Hash_Entry *)calloc(H->hsize+1, sizeof(Hash_Entry))) == NULL)
     {
       Sciprintf("No more memory\n");
       return NULLHASH;
     }
+#else 
+  if (( htable = (Hash_Entry *) malloc((H->hsize+1)*sizeof(Hash_Entry))) == NULL)
+    {
+      Sciprintf("No more memory\n");
+      return NULLHASH;
+    }
+  memset(htable,0,(H->hsize+1)*sizeof(Hash_Entry));
+#endif 
   H->htable = htable ;
   return H;
 }
