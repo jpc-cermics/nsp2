@@ -186,7 +186,7 @@ void nsp_bmatrix_info(NspBMatrix *BMat, int indent,const char *name, int rec_lev
       nsp_num_formats fmt;
       nsp_init_pr_format (&fmt);
       Sciprintf1(indent,"%s\t= [ %s]\t\tb (%dx%d)\n",pname,
-		 (BMat->mn != 0) ? ((BMat->B[0]==TRUE) ? "T " : "F " ) : "",
+		 (BMat->mn != 0) ? ((BMat->B[0]==FALSE) ? "F " : "T " ) : "",
 		 BMat->m,BMat->n);
     }
 }
@@ -1109,14 +1109,14 @@ NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
   /* first pass for counting **/
   for ( i=0 ; i < A->mn ; i++) 
     {
-      if ( A->B[i]== TRUE ) count++;
+      if ( A->B[i] != FALSE ) count++;
     }
   Res = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
   if ( Res == NULLMAT) return NULLMAT;
   count=0;
   for ( i = 0 ; i < A->mn ; i++ )
     {
-      if ( A->B[i]== TRUE ) Res->R[count++] = i+1;
+      if ( A->B[i] != FALSE ) Res->R[count++] = i+1;
     }
   return Res;
 }
@@ -1143,7 +1143,7 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
   /* first pass for counting **/
   for ( i=0 ; i < A->mn ; i++) 
     {
-      if ( A->B[i]== TRUE ) count++;
+      if ( A->B[i] != FALSE ) count++;
     }
   if ( lhs == 1) 
     {
@@ -1152,7 +1152,7 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
       count=0;
       for ( i = 0 ; i < A->mn ; i++ )
 	{
-	  if ( A->B[i]== TRUE ) (*Res1)->R[count++] = i+1;
+	  if ( A->B[i] != FALSE ) (*Res1)->R[count++] = i+1;
 	}
     }
   else 
@@ -1387,14 +1387,14 @@ static void BMij_as_read(const nsp_num_formats *fmt,const void *m, int i, int j)
 {
   const NspBMatrix *M=m;
   Sciprintf(" ");
-  Sciprintf("%%%c",M->B[i+(M->m)*j]==TRUE ? 't' :'f');
+  Sciprintf("%%%c",M->B[i+(M->m)*j]==FALSE ? 'f' :'t');
 }
 
 static void BMij(const nsp_num_formats *fmt,const void *m, int i, int j)
 {
   const NspBMatrix *M=m;
   Sciprintf(" ");
-  Sciprintf("%c",M->B[i+(M->m)*j]==TRUE ? 'T' :'F');
+  Sciprintf("%c",M->B[i+(M->m)*j]==FALSE ? 'F' :'T');
 }
 
 /* XXXX */

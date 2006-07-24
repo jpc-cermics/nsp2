@@ -601,7 +601,7 @@ static int int_bmatrix_or1(Stack stack, int rhs, int opt, int lhs)
 	{
 	  HMat->B[i] = FALSE; 
 	  for ( j = 0 ; j < HMat1->n ; j++) 
-	    if ( HMat1->B[i+HMat1->m*j] == TRUE ){ HMat->B[i] = TRUE; break;}
+	    if ( HMat1->B[i+HMat1->m*j] != FALSE ){ HMat->B[i] = TRUE; break;}
 	}
       break;
     case 1:   /* row */
@@ -610,7 +610,7 @@ static int int_bmatrix_or1(Stack stack, int rhs, int opt, int lhs)
 	{
 	  HMat->B[j] = FALSE; 
 	  for ( i = 0 ; i < HMat1->m ; i++) 
-	    if ( HMat1->B[i+HMat1->m*j]== TRUE ) {HMat->B[j] = TRUE; break;}
+	    if ( HMat1->B[i+HMat1->m*j]!= FALSE ) {HMat->B[j] = TRUE; break;}
 	}
       break;
     case 2 : 
@@ -618,7 +618,7 @@ static int int_bmatrix_or1(Stack stack, int rhs, int opt, int lhs)
       HMat->B[0] = FALSE;
       for ( i=0; i < HMat1->mn ; i++ ) 
 	{
-	  if ( HMat1->B[i] == TRUE ) {  HMat->B[0] = TRUE;   break;  }
+	  if ( HMat1->B[i] != FALSE ) {  HMat->B[0] = TRUE;   break;  }
 	}
       break;
     }
