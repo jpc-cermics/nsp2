@@ -27,7 +27,7 @@
 #include <string.h>
 #include "nsp/interf.h"
 
-static void f99(NspMatrix *M);
+extern void f99(NspMatrix *M);
 
 int int_first(Stack stack, int rhs, int opt, int lhs)
 {
@@ -38,15 +38,6 @@ int int_first(Stack stack, int rhs, int opt, int lhs)
   f99(A);
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
-}
-
-static void f99(NspMatrix *M)
-{
-  int i;
-  if ( M->rc_type == 'r' ) 
-    for ( i= 0 ; i < M->mn ; i++) M->R[i] *= 2.0;
-  else 
-    for ( i= 0 ; i < M->mn ; i++) { M->C[i].r *= 2.0;M->C[i].i *= 3.0;}
 }
 
 static void not(NspBMatrix *B) ;

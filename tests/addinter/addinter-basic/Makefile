@@ -8,7 +8,7 @@
 
 SCIDIR=../../../
 LIBRARY=tutorial
-SOURCES=interf.c 
+SOURCES=interf.c
 OBJS=$(SOURCES:.c=.o)
 
 include $(SCIDIR)/Makefile.incl

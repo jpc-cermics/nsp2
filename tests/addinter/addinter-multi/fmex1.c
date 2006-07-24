@@ -1,4 +1,4 @@
-#include "nsp/mex.h"
+#include "mex/mex.h"
 #include "lib/pipo.h"
 
 
