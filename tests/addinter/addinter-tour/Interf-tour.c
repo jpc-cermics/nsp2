@@ -66,7 +66,7 @@ int int_ex1c(Stack stack, int rhs, int opt, int lhs)
   
   if (ierr > 0) 
     {
-      Scierror("%s: Internal error \r\n",stack.fname);
+      Scierror("%s: Internal error \r\n",NspFname(stack));
       return RET_BUG;
     }
   /*   
@@ -231,7 +231,7 @@ int int_ex_4c_1(Stack stack, int rhs, int opt, int lhs)
   l1 = double_array(&m1,&n1); 
   if ( l1 == NULL ) 
     { 
-      Scierror("%s: Unable to allocate doubles\n",stack.fname);
+      Scierror("%s: Unable to allocate doubles\n",NspFname(stack));
       return RET_BUG;  
     }
   /* first example : l1 was allocated inside  double_array */ 
@@ -257,7 +257,7 @@ int int_ex_4c_2(Stack stack, int rhs, int opt, int lhs)
   l1 = int_array(&m1,&n1); 
   if ( l1 == NULL ) 
     { 
-      Scierror("%s: Unable to allocate int\n",stack.fname);
+      Scierror("%s: Unable to allocate int\n",NspFname(stack));
       return RET_BUG;  
     }
   /* first example : l1 was allocated inside  double_array */ 
@@ -283,7 +283,7 @@ int int_ex_4c_3(Stack stack, int rhs, int opt, int lhs)
   str = new_string();
   if ( str == NULL ) 
     { 
-      Scierror("%s: Unable to allocate\n",stack.fname);
+      Scierror("%s: Unable to allocate\n",NspFname(stack));
       return RET_BUG;  
     }
   if ((A = nsp_smatrix_create(NVOID,1,1,str,-1)) == NULLSMAT) 
@@ -308,7 +308,7 @@ int int_ex_4c_4(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,3);
   if ((str = new_string()) == NULL )
     { 
-      Scierror("%s: Unable to allocate\n",stack.fname);
+      Scierror("%s: Unable to allocate\n",NspFname(stack));
       return RET_BUG;  
     }
   if ((S = nsp_smatrix_create(NVOID,1,1,str,-1)) == NULLSMAT) 
@@ -321,7 +321,7 @@ int int_ex_4c_4(Stack stack, int rhs, int opt, int lhs)
       int *l1,i;
       if ((l1 = int_array(&m1,&n1))== NULL ) 
 	{ 
-	  Scierror("%s: Unable to allocate int\n",stack.fname);
+	  Scierror("%s: Unable to allocate int\n",NspFname(stack));
 	  return RET_BUG;  
 	}
       if ((A = nsp_matrix_create(NVOID,'r',m1,n1)) == NULLMAT) 
@@ -336,7 +336,7 @@ int int_ex_4c_4(Stack stack, int rhs, int opt, int lhs)
       double *l1;
       if ((l1 = double_array(&m1,&n1))== NULL ) 
 	{ 
-	  Scierror("%s: Unable to allocate doubles\n",stack.fname);
+	  Scierror("%s: Unable to allocate doubles\n",NspFname(stack));
 	  return RET_BUG;  
 	}
       /* first example : l1 was allocated inside  double_array */ 
@@ -511,7 +511,7 @@ int int_ex_7c_1(Stack stack, int rhs, int opt, int lhs)
     }
   else 
     {
-      Scierror("Error: %s firts argument shoulf be a scalar matrix\n",stack.fname);
+      Scierror("Error: %s firts argument shoulf be a scalar matrix\n",NspFname(stack));
       return RET_BUG;
     }
   NSP_OBJECT(L)->ret_pos = 1;
@@ -537,7 +537,7 @@ int int_ex_18c_1( Stack stack, int rhs, int opt, int lhs)
 
   if ( IsNspPList(f) == FALSE  )
     {
-      Scierror("%s: fourth argument should be a function\n",stack.fname);
+      Scierror("%s: fourth argument should be a function\n",NspFname(stack));
       return RET_BUG;
     }
   /* call f(x) and returns the result */
