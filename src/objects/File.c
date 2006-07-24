@@ -426,6 +426,7 @@ int nsp_xdr_load_c(XDR *xdrs, char *c)
  *
  * Return value: %OK or %FAIL
  **/
+
 int nsp_xdr_save_array_i(XDR *xdrs, int *nx, int l)
 { 
   szof = sizeof(int) ;
@@ -452,6 +453,46 @@ int nsp_xdr_load_array_i(XDR *xdrs, int *nx, int l)
 		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
   if ( count != (u_int) l ) return(FAIL);
   assertR( xdr_vector(xdrs, (char *)nx, count, szof,(xdrproc_t) xdr_int)) ;
+  return OK;
+}
+
+/**
+ *nsp_xdr_save_array_c:
+ * @xdrs: a  #XDR structure
+ * @nx: 
+ * @l: 
+ * 
+ * Saves an int array in a file with xdr coding. 
+ *
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_xdr_save_array_c(XDR *xdrs,char *nx, int l)
+{ 
+  szof = sizeof(char) ;
+  count = (int) l;
+  assertW( xdr_vector(xdrs,(char *) &count,(u_int)1,
+		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+  assertW( xdr_vector(xdrs, (char *)nx, count, szof,(xdrproc_t) xdr_char)) ;
+  return OK;
+}
+
+/**
+ *nsp_xdr_load_array_c:
+ * @xdrs: a  #XDR structure
+ * @nx: 
+ * @l: 
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_xdr_load_array_c(XDR *xdrs,char *nx, int l)
+{ 
+  szof = sizeof(char) ;
+  assertR( xdr_vector(xdrs,(char *) &count,(u_int)1,
+		      (u_int) sizeof(u_int),(xdrproc_t) xdr_u_int)) ;
+  if ( count != (u_int) l ) return(FAIL);
+  assertR( xdr_vector(xdrs, (char *)nx, count, szof,(xdrproc_t) xdr_char)) ;
   return OK;
 }
 

@@ -92,6 +92,8 @@ extern int nsp_xdr_save_c(XDR *xdrs, char c);
 extern int nsp_xdr_load_c(XDR *xdrs, char *c);
 extern int nsp_xdr_save_array_i(XDR *xdrs, int *nx, int l);
 extern int nsp_xdr_load_array_i(XDR *xdrs, int *nx, int l);
+extern int nsp_xdr_save_array_c(XDR *xdrs,char *nx, int l);
+extern int nsp_xdr_load_array_c(XDR *xdrs,char *nx, int l);
 extern int nsp_xdr_save_array_d(XDR *xdrs, double *nx, int l);
 extern int nsp_xdr_load_array_d(XDR *xdrs, double *nx, int mn);
 extern int nsp_xdr_load_string(XDR *xdrs, char *buf, int buf_len);
