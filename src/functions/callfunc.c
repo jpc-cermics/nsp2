@@ -116,7 +116,7 @@ InterfTab Interfaces[]={
   {SMatrix_Interf,SMatrix_Interf_Info},
   {File_Interf,File_Interf_Info},
   {SpMatrix_Interf,SpMatrix_Interf_Info},
-  /*  {SpColMatrix_Interf,SpColMatrix_Interf_Info}, */
+  {SpColMatrix_Interf,SpColMatrix_Interf_Info}, 
   {Parse_Interf,Parse_Interf_Info},
   {Functions_Interf,Functions_Interf_Info},
   {Function_Interf,Function_Interf_Info},
