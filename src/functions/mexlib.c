@@ -86,11 +86,11 @@ static void nsp_initmex(const char *name,int *lfirst,int lhs,mxArray *plhs[],
 
 static int nsp_endmex_backconvert(NspObject *Obj)
 {
-  if (IsSpMat(Obj))
+  if (IsSpColMat(Obj))
     {
       /* back convert sparses */
-      NspSpMatrix *Sp =(NspSpMatrix *) Obj;
-      if ( nsp_sparse_update_from_triplet(Sp)==FAIL) 
+      NspSpColMatrix *Sp =(NspSpColMatrix *) Obj;
+      if ( nsp_spcol_update_from_triplet(Sp)==FAIL) 
 	return FAIL;
     }
   return OK;
@@ -225,12 +225,12 @@ double *mxGetPr(const mxArray *ptr)
       A = Mat2mtlb_cplx (A);
       return A->R;
     }
-  else if ( IsSpMat(ptr))
+  else if ( IsSpColMat(ptr))
     {
-      NspSpMatrix *A = (NspSpMatrix *)  ptr;
+      NspSpColMatrix *A = (NspSpColMatrix *)  ptr;
       if (A->convert != 't' ) 
 	{
-	  if ( nsp_sparse_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
       return A->triplet.Ax;
     }
@@ -267,12 +267,12 @@ double *mxGetPi(const mxArray *ptr)
       A = Mat2mtlb_cplx (A);
       return A->R+ A->mn;
     }
-  else if ( IsSpMat(ptr)) 
+  else if ( IsSpColMat(ptr)) 
     {
-      NspSpMatrix *A = (NspSpMatrix *) ptr ;
+      NspSpColMatrix *A = (NspSpColMatrix *) ptr ;
       if (A->convert != 't' ) 
 	{
-	  if ( nsp_sparse_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
       return A->triplet.Ax + A->triplet.Aisize;
     }
@@ -318,11 +318,11 @@ int mxGetM(const mxArray *ptr)
 
 int *mxGetJc(const mxArray *ptr)
 {
-  NspSpMatrix *A = (NspSpMatrix *) ptr;
-  if ( ! IsSpMat(ptr)) nsp_mex_errjump();
+  NspSpColMatrix *A = (NspSpColMatrix *) ptr;
+  if ( ! IsSpColMat(ptr)) nsp_mex_errjump();
   if (A->convert != 't' ) 
     {
-      if ( nsp_sparse_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+      if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
     }
   return A->triplet.Ap;
 }
@@ -339,11 +339,11 @@ int *mxGetJc(const mxArray *ptr)
 
 int *mxGetIr(const mxArray *ptr)
 {
-  NspSpMatrix *A = (NspSpMatrix *) ptr;
-  if ( ! IsSpMat(ptr)) nsp_mex_errjump();
+  NspSpColMatrix *A = (NspSpColMatrix *) ptr;
+  if ( ! IsSpColMat(ptr)) nsp_mex_errjump();
   if (A->convert != 't' ) 
     {
-      if ( nsp_sparse_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+      if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
     }
   return A->triplet.Ai;
 }
@@ -397,7 +397,7 @@ int mxIsString(const mxArray *ptr)
 
 int mxIsNumeric(const mxArray *ptr)
 {
-  return ( IsMat(ptr) ||  IsSpMat(ptr) );
+  return ( IsMat(ptr) ||  IsSpColMat(ptr) );
 }
 
 /**
@@ -421,7 +421,7 @@ int mxIsFull(const mxArray *ptr)
 
 int mxIsSparse(const mxArray *ptr)
 {
-  return IsSpMat(ptr) ;
+  return IsSpColMat(ptr) ;
 }
 
 /**
@@ -437,9 +437,9 @@ int mxIsComplex(const mxArray *ptr)
     {
       return ((NspMatrix *) ptr)->rc_type == 'c' ;
     }
-  else if ( IsSpMat(ptr) )
+  else if ( IsSpColMat(ptr) )
     {
-      return ((NspSpMatrix *) ptr)->rc_type == 'c';
+      return ((NspSpColMatrix *) ptr)->rc_type == 'c';
     }
   else
     return 0;
@@ -682,18 +682,18 @@ int mexAtExit(void (*ExitFcn)(void))
 mxArray *mxCreateSparse(int m, int n, int nzmax, 
 			mxComplexity ComplexFlag)
 {
-  NspSpMatrix *A;
+  NspSpColMatrix *A;
   if ( ComplexFlag == mxREAL ) 
     {
-      if ((A = nsp_spmatrix_create(NVOID,'r',m,n) ) == NULLSP) nsp_mex_errjump();
+      if ((A = nsp_spcolmatrix_create(NVOID,'r',m,n) ) == NULLSPCOL) nsp_mex_errjump();
     }
   else
     {
-      if ((A = nsp_spmatrix_create(NVOID,'c',m,n) ) == NULLSP) nsp_mex_errjump();
+      if ((A = nsp_spcolmatrix_create(NVOID,'c',m,n) ) == NULLSPCOL) nsp_mex_errjump();
       A->convert = 'c'; /* matab complex style */
     }
   /* just allocate triplet */
-  if ( nsp_sparse_alloc_col_triplet(A,nzmax) == FAIL)  nsp_mex_errjump();
+  if ( nsp_spcol_alloc_col_triplet(A,nzmax) == FAIL)  nsp_mex_errjump();
   return NSP_OBJECT(A);
 }
 
@@ -1295,7 +1295,7 @@ int mexEvalString(char *command)
  **/
 int mxGetNzmax(const mxArray *array_ptr)
 {
-  NspSpMatrix *A=(NspSpMatrix *) array_ptr;
+  NspSpColMatrix *A=(NspSpColMatrix *) array_ptr;
   if ( array_ptr == NULL)
     {
       Scierror("Error: mxGetNzmax on a non allocated ptr\n");
@@ -1303,7 +1303,7 @@ int mxGetNzmax(const mxArray *array_ptr)
     }
   if ( A->convert != 't' ) 
     {
-      if ( nsp_sparse_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+      if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
     }
   /* get nnz on the triplet */
   return A->triplet.Aisize;
@@ -1321,7 +1321,7 @@ int mxGetNzmax(const mxArray *array_ptr)
  **/
 int mxSetNzmax(mxArray *array_ptr,int n)
 {
-  NspSpMatrix *A=(NspSpMatrix *) array_ptr;
+  NspSpColMatrix *A=(NspSpColMatrix *) array_ptr;
   if ( array_ptr == NULL)
     {
       Scierror("Error: mxGetNzmax on a non allocated ptr\n");
@@ -1329,9 +1329,9 @@ int mxSetNzmax(mxArray *array_ptr,int n)
     }
   if (A->convert != 't' ) 
     {
-      if ( nsp_sparse_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+      if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
     }
-  return  nsp_sparse_realloc_col_triplet(A,n);
+  return  nsp_spcol_realloc_col_triplet(A,n);
 }
 
 
@@ -1631,12 +1631,12 @@ void *mxGetData(const mxArray *array_ptr)
       return ((NspSMatrix *) array_ptr)->S[0];
     }
 	    
-  else if ( IsSpMat(array_ptr))
+  else if ( IsSpColMat(array_ptr))
     {
-      NspSpMatrix *A = (NspSpMatrix *)  array_ptr;
+      NspSpColMatrix *A = (NspSpColMatrix *)  array_ptr;
       if (A->convert != 't' ) 
 	{
-	  if ( nsp_sparse_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
       return A->triplet.Ax;
     }
