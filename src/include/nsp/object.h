@@ -312,7 +312,7 @@ extern NspObject *nsp_global_frame_search_object(nsp_const_string str);
 #include "nsp/file.h"
 #include "nsp/matrix.h"
 #include "nsp/smatrix.h"
-#include "nsp/spmatrix.h"
+#include "nsp/sprowmatrix.h"
 #include "nsp/spcolmatrix.h"
 #include "nsp/pmatrix.h"
 #include "nsp/bmatrix.h"

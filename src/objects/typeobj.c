@@ -504,7 +504,7 @@ void primitive_types_register() {
   new_type_pmatrix(T_BASE);
   new_type_file(T_BASE);
   new_type_smatrix(T_BASE);
-  new_type_spmatrix(T_BASE);
+  new_type_sprowmatrix(T_BASE);
   new_type_none(T_BASE);
   new_type_type(T_BASE);
   new_type_classa(T_BASE);
@@ -523,6 +523,7 @@ void primitive_types_register() {
   new_type_mpmatrix(T_BASE);
 #endif 
   new_type_serial(T_BASE);
+  new_type_spcolmatrix(T_BASE);
 }
 
 /*

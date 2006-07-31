@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SpMatrix_Private 
+#define SpRowMatrix_Private 
 #include "nsp/object.h"
 
 #include "nsp/pr-output.h" 
@@ -36,20 +36,20 @@
  * NspSpMatrix inherits from NspObject 
  */
 
-int nsp_type_spmatrix_id=0;
-NspTypeSpMatrix *nsp_type_spmatrix=NULL;
-int nsp_type_spmatrix_init();
+int nsp_type_sprowmatrix_id=0;
+NspTypeSpRowMatrix *nsp_type_sprowmatrix=NULL;
+int nsp_type_sprowmatrix_init();
 
-NspTypeSpMatrix *new_type_spmatrix(type_mode mode)
+NspTypeSpRowMatrix *new_type_sprowmatrix(type_mode mode)
 {
-  NspTypeSpMatrix *type = NULL;
+  NspTypeSpRowMatrix *type = NULL;
   NspTypeObject *top;
-  if ( nsp_type_spmatrix != 0 && mode == T_BASE )
+  if ( nsp_type_sprowmatrix != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
-      return nsp_type_spmatrix;
+      return nsp_type_sprowmatrix;
     }
-  if ((type =  malloc(sizeof(NspTypeSpMatrix))) == NULL) return NULL;
+  if ((type =  malloc(sizeof(NspTypeSpRowMatrix))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
@@ -57,32 +57,32 @@ NspTypeSpMatrix *new_type_spmatrix(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods = NULL; /*spmatrix_get_methods; */
-  type->new = (new_func *) new_spmatrix;
+  type->new = (new_func *) new_sprowmatrix;
 
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
 
   /* object methods redefined for spmatrix */ 
 
-  top->pr = (print_func *)nsp_spmatrix_print;                  /* printing*/   
-  top->dealloc = (dealloc_func *)nsp_spmatrix_destroy;              /* dealloc */  
-  top->copy  =  (copy_func *)nsp_spmatrix_copy;                   /* copy object */  
-  top->size  = (size_func *)nsp_spmatrix_size;                   /* m,n or m*n  */  
-  top->s_type =  (s_type_func *)nsp_spmatrix_type_as_string;                /* type as a String */  
-  top->sh_type = (sh_type_func *)nsp_spmatrix_type_short_string;              /* type as a short string */  
-  top->info = (info_func *)nsp_spmatrix_info;                    /* info */  
+  top->pr = (print_func *)nsp_sprowmatrix_print;                  /* printing*/   
+  top->dealloc = (dealloc_func *)nsp_sprowmatrix_destroy;              /* dealloc */  
+  top->copy  =  (copy_func *)nsp_sprowmatrix_copy;                   /* copy object */  
+  top->size  = (size_func *)nsp_sprowmatrix_size;                   /* m,n or m*n  */  
+  top->s_type =  (s_type_func *)nsp_sprowmatrix_type_as_string;                /* type as a String */  
+  top->sh_type = (sh_type_func *)nsp_sprowmatrix_type_short_string;              /* type as a short string */  
+  top->info = (info_func *)nsp_sprowmatrix_info;                    /* info */  
   /* top->is_true = (is_true_func  *) SpMatIsTrue;*/      /* check if object can be considered as true */  
   /*top->loop =(loop_func *) SpLoopExtract ; */               /* for loops */  
   top->path_extract =  NULL;        /* used for x(1)(2)(...) */  
-  top->get_from_obj = (get_from_obj_func *)nsp_spmatrix_object;    /* get object stored in SciObj */  
-  top->eq  = (eq_func *)nsp_spmatrix_eq;                       /* equality check */  
-  top->neq  = (eq_func *)nsp_spmatrix_neq;                      /* non-equality check */
+  top->get_from_obj = (get_from_obj_func *)nsp_sprowmatrix_object;    /* get object stored in SciObj */  
+  top->eq  = (eq_func *)nsp_sprowmatrix_eq;                       /* equality check */  
+  top->neq  = (eq_func *)nsp_sprowmatrix_neq;                      /* non-equality check */
 
-  top->save  = (save_func *)nsp_spmatrix_xdr_save;
-  top->load  = (load_func *)nsp_spmatrix_xdr_load;
+  top->save  = (save_func *)nsp_sprowmatrix_xdr_save;
+  top->load  = (load_func *)nsp_sprowmatrix_xdr_load;
 
   /* specific methods for spmatrix */
-  type->init = (init_func *) init_spmatrix;
+  type->init = (init_func *) init_sprowmatrix;
   /* 
    * interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -90,20 +90,20 @@ NspTypeSpMatrix *new_type_spmatrix(type_mode mode)
    * ....
    */
   
-  if ( nsp_type_spmatrix_id == 0 ) 
+  if ( nsp_type_sprowmatrix_id == 0 ) 
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeMatrix called nsp_type_spmatrix
+       * an instance of NspTypeMatrix called nsp_type_sprowmatrix
        */
-      type->id =  nsp_type_spmatrix_id = nsp_new_type_id();
-      nsp_type_spmatrix = type;
-      if ( nsp_register_type(nsp_type_spmatrix) == FALSE) return NULL;
-      return ( mode == T_BASE ) ? type : new_type_spmatrix(mode); 
+      type->id =  nsp_type_sprowmatrix_id = nsp_new_type_id();
+      nsp_type_sprowmatrix = type;
+      if ( nsp_register_type(nsp_type_sprowmatrix) == FALSE) return NULL;
+      return ( mode == T_BASE ) ? type : new_type_sprowmatrix(mode); 
     }
   else 
     {
-      type->id = nsp_type_spmatrix_id;
+      type->id = nsp_type_sprowmatrix_id;
       return type;
     }
 }
@@ -112,7 +112,7 @@ NspTypeSpMatrix *new_type_spmatrix(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_spmatrix(NspSpMatrix *o,NspTypeSpMatrix *type)
+static int init_sprowmatrix(NspSpRowMatrix *o,NspTypeSpRowMatrix *type)
 {
   /* to be done always */ 
   if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
@@ -126,23 +126,23 @@ static int init_spmatrix(NspSpMatrix *o,NspTypeSpMatrix *type)
  * new instance of Spmatrix 
  */
 
-NspSpMatrix *new_spmatrix() 
+NspSpRowMatrix *new_sprowmatrix() 
 {
-  NspSpMatrix *loc; 
+  NspSpRowMatrix *loc; 
   /* type must exists */
-  nsp_type_spmatrix = new_type_spmatrix(T_BASE);
-  if ( (loc = malloc(sizeof(NspSpMatrix)))== NULLSP) return loc;
+  nsp_type_sprowmatrix = new_type_sprowmatrix(T_BASE);
+  if ( (loc = malloc(sizeof(NspSpRowMatrix)))== NULLSPROW) return loc;
   /* initialize object */
-  if ( init_spmatrix(loc,nsp_type_spmatrix) == FAIL) return NULLSP;
+  if ( init_sprowmatrix(loc,nsp_type_sprowmatrix) == FAIL) return NULLSPROW;
   return loc;
 }
 
 
 /*
- *nsp_spmatrix_size: returns filled,hsize,or hsize 
+ *nsp_sprowmatrix_size: returns filled,hsize,or hsize 
  */
 
-int nsp_spmatrix_size(NspSpMatrix *H, int flag)
+int nsp_sprowmatrix_size(NspSpRowMatrix *H, int flag)
 {
   switch (flag) 
     {
@@ -160,38 +160,38 @@ int nsp_spmatrix_size(NspSpMatrix *H, int flag)
 static char sp_type_name[]="SpMat";
 static char sp_short_type_name[]="sp";
 
-char *nsp_spmatrix_type_as_string(void)
+char *nsp_sprowmatrix_type_as_string(void)
 {
   return(sp_type_name);
 }
 
-char *nsp_spmatrix_type_short_string(void)
+char *nsp_sprowmatrix_type_short_string(void)
 {
   return(sp_short_type_name);
 }
 
 
-int nsp_spmatrix_fullcomp(NspSpMatrix * A,NspSpMatrix * B,char *op,int *err)
+int nsp_sprowmatrix_fullcomp(NspSpRowMatrix * A,NspSpRowMatrix * B,char *op,int *err)
 {
   Scierror("SpMatFullComp: to be implemented \n");
   return FALSE;
 }
 
 
-int nsp_spmatrix_eq(NspObject *A, NspObject *B)
+int nsp_sprowmatrix_eq(NspObject *A, NspObject *B)
 {
   int err,rep;
-  if ( check_cast(B,nsp_type_spmatrix_id) == FALSE) return FALSE ;
-  rep =nsp_spmatrix_fullcomp((NspSpMatrix *) A,(NspSpMatrix *) B,"==",&err);
+  if ( check_cast(B,nsp_type_sprowmatrix_id) == FALSE) return FALSE ;
+  rep =nsp_sprowmatrix_fullcomp((NspSpRowMatrix *) A,(NspSpRowMatrix *) B,"==",&err);
   if ( err == 1) return FALSE ; 
   return rep;
 }
 
-int nsp_spmatrix_neq(NspObject *A, NspObject *B)
+int nsp_sprowmatrix_neq(NspObject *A, NspObject *B)
 {
   int err=0,rep;
-  if ( check_cast(B,nsp_type_spmatrix_id) == FALSE) return TRUE;
-  rep =nsp_spmatrix_fullcomp((NspSpMatrix *) A,(NspSpMatrix *) B,"<>",&err);
+  if ( check_cast(B,nsp_type_sprowmatrix_id) == FALSE) return TRUE;
+  rep =nsp_sprowmatrix_fullcomp((NspSpRowMatrix *) A,(NspSpRowMatrix *) B,"<>",&err);
   if ( err == 1) return TRUE ; 
   return rep;
 }
@@ -202,10 +202,10 @@ int nsp_spmatrix_neq(NspObject *A, NspObject *B)
  * Save a Matrix in a file stream 
  */
 
-static int nsp_spmatrix_xdr_save(XDR *xdrs, NspSpMatrix *M)
+static int nsp_sprowmatrix_xdr_save(XDR *xdrs, NspSpRowMatrix *M)
 {
   NspMatrix *RC, *Values;
-  if ( nsp_spmatrix_get(M,&RC,&Values) == FAIL) return FAIL;
+  if ( nsp_sprowmatrix_get(M,&RC,&Values) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->m) == FAIL) return FAIL;
@@ -219,37 +219,37 @@ static int nsp_spmatrix_xdr_save(XDR *xdrs, NspSpMatrix *M)
  * Load a Matrix from a file stream 
  **/
 
-static NspSpMatrix *nsp_spmatrix_xdr_load(XDR *xdrs)
+static NspSpRowMatrix *nsp_sprowmatrix_xdr_load(XDR *xdrs)
 {
   int m,n;
   NspObject *RC, *Values;
-  NspSpMatrix *Loc;
+  NspSpRowMatrix *Loc;
   static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSP;
-  if (nsp_xdr_load_i(xdrs, &m) == FAIL)  return NULLSP;
-  if (nsp_xdr_load_i(xdrs, &n) == FAIL)  return NULLSP;
-  if ( (RC= nsp_object_xdr_load(xdrs) ) == NULL) return NULLSP;
-  if ( (Values= nsp_object_xdr_load(xdrs) ) == NULL) return NULLSP;
-  if ((Loc = nsp_spmatrix_sparse(name,(NspMatrix *)RC,(NspMatrix *)Values,m,n)) == NULLSP) return NULLSP;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSPROW;
+  if (nsp_xdr_load_i(xdrs, &m) == FAIL)  return NULLSPROW;
+  if (nsp_xdr_load_i(xdrs, &n) == FAIL)  return NULLSPROW;
+  if ( (RC= nsp_object_xdr_load(xdrs) ) == NULL) return NULLSPROW;
+  if ( (Values= nsp_object_xdr_load(xdrs) ) == NULL) return NULLSPROW;
+  if ((Loc = nsp_sprowmatrix_sparse(name,(NspMatrix *)RC,(NspMatrix *)Values,m,n)) == NULLSPROW) return NULLSPROW;
   return Loc;
 }
 
 
 /*
- * A =nsp_spmatrix_object(O);
- * checks that O is an object of NspSpMatrix type. 
- * or a Hobj which points to an object of type SpMatrix
- * if so, returns a pointer to that NspSpMatrix and else returns NULL
+ * A =nsp_sprowmatrix_object(O);
+ * checks that O is an object of NspSpRowMatrix type. 
+ * or a Hobj which points to an object of type SpRowMatrix
+ * if so, returns a pointer to that NspSpRowMatrix and else returns NULL
  */
 
-NspSpMatrix   *nsp_spmatrix_object(NspObject *O)
+NspSpRowMatrix   *nsp_sprowmatrix_object(NspObject *O)
 {
   /* Follow pointer **/
   HOBJ_GET_OBJECT(O,NULL);
   /* Check type **/
-  if ( check_cast(O,nsp_type_spmatrix_id) == TRUE) return ((NspSpMatrix *) O);
+  if ( check_cast(O,nsp_type_sprowmatrix_id) == TRUE) return ((NspSpRowMatrix *) O);
   else 
-    Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_spmatrix));
+    Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_sprowmatrix));
   return(NULL);
 }
 
@@ -257,24 +257,24 @@ NspSpMatrix   *nsp_spmatrix_object(NspObject *O)
 /*
  * IsSpMatObj(stack,i)
  * only checks that object at position 
- * first + i -1  is an object of type  SpMatrix 
- * or a Hobj which points to an object of type SpMatrix
+ * first + i -1  is an object of type  SpRowMatrix 
+ * or a Hobj which points to an object of type SpRowMatrix
  */
 
 int IsSpMatObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_spmatrix_id);
+  return nsp_object_type(NthObj(i) , nsp_type_sprowmatrix_id);
 }
 
 /*
  * IsSpMat(O)
- * only checks that object is an object of type  SpMatrix 
- * or a Hobj which points to an object of type SpMatrix
+ * only checks that object is an object of type  SpRowMatrix 
+ * or a Hobj which points to an object of type SpRowMatrix
  */
 
 int IsSpMat(const NspObject *O)
 {
-  return nsp_object_type(O , nsp_type_spmatrix_id);
+  return nsp_object_type(O , nsp_type_sprowmatrix_id);
 }
 
 /*
@@ -284,41 +284,41 @@ int IsSpMat(const NspObject *O)
  * is != NVOID 
  */
 
-NspSpMatrix *GetSpCopy(Stack stack, int i)
+NspSpRowMatrix *GetSpRowCopy(Stack stack, int i)
 {
-  if (  GetSp(stack,i) == NULL ) return NULL;
+  if (  GetSpRow(stack,i) == NULL ) return NULL;
   return MaybeObjCopy(&NthObj(i));
 }
 
 /*
  * Checks that first+i object on the stack 
- * is a SpMatrix and returns that SpMatrix  
+ * is a SpRowMatrix and returns that SpRowMatrix  
  */
 
-NspSpMatrix *GetSp(Stack stack, int i)
+NspSpRowMatrix *GetSpRow(Stack stack, int i)
 {
-  NspSpMatrix *M;
-  if (( M =nsp_spmatrix_object(NthObj(i))) == NULLSP )
+  NspSpRowMatrix *M;
+  if (( M =nsp_sprowmatrix_object(NthObj(i))) == NULLSPROW )
     ArgMessage(stack,i);
   return M;
 }
 
 /*
  * Checks that first+i object on the stack 
- * is a SpMatrix and returns that SpMatrix  
+ * is a SpRowMatrix and returns that SpRowMatrix  
  */
 
-NspSpMatrix *GetRealSp(Stack stack, int i)
+NspSpRowMatrix *GetRealSpRow(Stack stack, int i)
 {
-  NspSpMatrix *M;
-  if (( M =nsp_spmatrix_object(NthObj(i))) == NULLSP )
+  NspSpRowMatrix *M;
+  if (( M =nsp_sprowmatrix_object(NthObj(i))) == NULLSPROW )
     ArgMessage(stack,i);
   if (M->rc_type == 'c')
     {
       Scierror ("\t%s", ArgPosition (i));
       ArgName (stack, i);
       Scierror (" of function %s should not be complex\n", NspFname(stack));
-      return NULLSP;
+      return NULLSPROW;
     }
   return M;
 }
@@ -328,39 +328,39 @@ NspSpMatrix *GetRealSp(Stack stack, int i)
  * Now the interfaced function for basic sparse operations
  */
 
-typedef int (*SpC) (NspSpMatrix *A,NspSpMatrix *B);
+typedef int (*SpC) (NspSpRowMatrix *A,NspSpRowMatrix *B);
 
 /*
  * Creation of a Sparse Matrix 
- * returns NULLSP on failure 
+ * returns NULLSPROW on failure 
  * The matrix is created with no initial value 
  */
 
-static int int_spmatrix_create(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_create(Stack stack, int rhs, int opt, int lhs)
 {  
   int m1,n1;
-  NspSpMatrix *HMat;
+  NspSpRowMatrix *HMat;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
   if (GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
-  if ((HMat =nsp_spmatrix_create(NVOID,'r',m1,n1) ) == NULLSP) return RET_BUG;
+  if ((HMat =nsp_sprowmatrix_create(NVOID,'r',m1,n1) ) == NULLSPROW) return RET_BUG;
   MoveObj(stack,1, (NspObject *) HMat);
   return 1;
 }
 
 /*
  * Creation of a Sparse Matrix 
- * returns NULLSP on failure 
+ * returns NULLSPROW on failure 
  * sparse(rc,values [, [m,n]])
  */
 
-static int int_spmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
 {  
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   NspMatrix *RC,*Values,*MN;
   if ( rhs == 1) 
-    return  int_spmatrix_m2sp(stack,rhs,opt,lhs);
+    return  int_sprowmatrix_m2sp(stack,rhs,opt,lhs);
   CheckRhs(2,3);
   CheckLhs(1,1);
   if ((RC = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG;
@@ -380,12 +380,12 @@ static int int_spmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
   if ( rhs == 3 )
     {
       if ((MN = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
-      if (( A =nsp_spmatrix_sparse(NVOID,RC,Values,(int) MN->R[0],(int) MN->R[1])) == NULLSP ) 
+      if (( A =nsp_sprowmatrix_sparse(NVOID,RC,Values,(int) MN->R[0],(int) MN->R[1])) == NULLSPROW ) 
 	return RET_BUG;
     }
   else
     {
-      if (( A =nsp_spmatrix_sparse(NVOID,RC,Values,-1,-1)) == NULLSP ) 
+      if (( A =nsp_sprowmatrix_sparse(NVOID,RC,Values,-1,-1)) == NULLSPROW ) 
 	return RET_BUG;
     }
   MoveObj(stack,1,(NspObject *) A);
@@ -395,18 +395,18 @@ static int int_spmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * Creation of a Sparse Matrix 
- * returns NULLSP on failure 
+ * returns NULLSPROW on failure 
  * sparse(rc,values [, [m,n]])
  */
 
-static int int_spmatrix_get(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_get(Stack stack, int rhs, int opt, int lhs)
 {  
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   NspMatrix *RC,*Values,*MN=NULL;
   CheckRhs(1,1);
   CheckLhs(1,3);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
-  if ( nsp_spmatrix_get(A,&RC,&Values) == FAIL) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
+  if ( nsp_sprowmatrix_get(A,&RC,&Values) == FAIL) return RET_BUG;
   if ( lhs == 3) 
     {
       if (( MN = nsp_matrix_create(NVOID,'r',1,2)) == NULLMAT) return RET_BUG;
@@ -432,16 +432,16 @@ static int int_spmatrix_get(Stack stack, int rhs, int opt, int lhs)
  * but keeps m*n constant
  */
 
-static int int_spmatrix_redim(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_redim(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
-  NspSpMatrix  *A;
+  NspSpRowMatrix  *A;
   CheckRhs(3,3);
   CheckLhs(1,1);
-  if ( (A=GetSp(stack,1))== NULLSP) return RET_BUG;
+  if ( (A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
   if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
   if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if (( A =nsp_spmatrix_redim(A,m1,n1)) == NULLSP ) return RET_BUG;
+  if (( A =nsp_sprowmatrix_redim(A,m1,n1)) == NULLSPROW ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) A);
   return 1;
 }
@@ -453,19 +453,19 @@ static int int_spmatrix_redim(Stack stack, int rhs, int opt, int lhs)
  */
 
 
-static int int_spmatrix_concat_gen(Stack stack, int rhs, int opt, int lhs, SpC F)
+static int int_sprowmatrix_concat_gen(Stack stack, int rhs, int opt, int lhs, SpC F)
 {
-  NspSpMatrix *HMat1,*HMat2;
+  NspSpRowMatrix *HMat1,*HMat2;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((HMat1 = GetSp(stack,1))  == NULLSP) return RET_BUG;
+  if ((HMat1 = GetSpRow(stack,1))  == NULLSPROW) return RET_BUG;
   if ( HMat1->mn == 0) 
     {
       /* return 2 */
       NSP_OBJECT(NthObj(2))->ret_pos = 1;
       return 1;
     }
-  if ((HMat2 = GetSp(stack,2)) == NULLSP) return RET_BUG;
+  if ((HMat2 = GetSpRow(stack,2)) == NULLSPROW) return RET_BUG;
   if ( HMat2->mn == 0) 
     {
       NSP_OBJECT(HMat1)->ret_pos = 1;
@@ -473,7 +473,7 @@ static int int_spmatrix_concat_gen(Stack stack, int rhs, int opt, int lhs, SpC F
     }
   else
     {
-      if ((HMat1 = GetSpCopy(stack,1))  == NULLSP) return RET_BUG;
+      if ((HMat1 = GetSpRowCopy(stack,1))  == NULLSPROW) return RET_BUG;
       if ( (*F)(HMat1,HMat2)!= OK) return RET_BUG;
       NSP_OBJECT(HMat1)->ret_pos = 1;
     }
@@ -481,33 +481,33 @@ static int int_spmatrix_concat_gen(Stack stack, int rhs, int opt, int lhs, SpC F
 }
 
 
-static int int_spmatrix_concatr(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_concatr(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix_concat_gen(stack,rhs,opt,lhs,nsp_spmatrix_concatr);
+  return int_sprowmatrix_concat_gen(stack,rhs,opt,lhs,nsp_sprowmatrix_concatr);
 }
 
 /*
  * Down Concatenation 
  * Res = [A;B] 
- * return NULLSP on failure ( incompatible size or No more space )
+ * return NULLSPROW on failure ( incompatible size or No more space )
  * A and B are left unchanged 
  */
 
-static int int_spmatrix_concatd(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_concatd(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix_concat_gen(stack,rhs,opt,lhs,nsp_spmatrix_concatd);
+  return int_sprowmatrix_concat_gen(stack,rhs,opt,lhs,nsp_sprowmatrix_concatd);
 }
 
 /*
  * Down Concatenation 
  * Res = [A;B] 
- * return NULLSP on failure ( incompatible size or No more space )
+ * return NULLSPROW on failure ( incompatible size or No more space )
  * A and B are left unchanged 
  */
 
-static int int_spmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix_concat_gen(stack,rhs,opt,lhs,nsp_spmatrix_concatdiag);
+  return int_sprowmatrix_concat_gen(stack,rhs,opt,lhs,nsp_sprowmatrix_concatdiag);
 }
 
 
@@ -519,13 +519,13 @@ static int int_spmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs)
  *  =======
  */
 
-static int int_spmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A,*B;
+  NspSpRowMatrix *A,*B;
   NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT;
   CheckRhs(3,4);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) goto ret_bug;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) goto ret_bug;
   if ( IsBMatObj(stack,2)  ) 
     {
       /* Rows is boolean : use find(Rows) **/
@@ -551,13 +551,13 @@ static int int_spmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
 	}
     }
-  if ((B = GetSp(stack,rhs)) == NULLSP ) goto ret_bug;
+  if ((B = GetSpRow(stack,rhs)) == NULLSPROW ) goto ret_bug;
   if ( B == A ) 
-    { if ((B = GetSpCopy(stack,rhs)) == NULLSP ) goto ret_bug;}
+    { if ((B = GetSpRowCopy(stack,rhs)) == NULLSPROW ) goto ret_bug;}
   if ( rhs == 3 ) 
-    { if (nsp_spmatrix_set_row( A, Rows,B) == FAIL) goto ret_bug; }
+    { if (nsp_sprowmatrix_set_row( A, Rows,B) == FAIL) goto ret_bug; }
   else 
-    { if (nsp_spmatrix_set_rowcol( A, Rows,Cols,B) == FAIL )  goto ret_bug;} 
+    { if (nsp_sprowmatrix_set_rowcol( A, Rows,Cols,B) == FAIL )  goto ret_bug;} 
   NSP_OBJECT(A)->ret_pos = 1;
   nsp_matrix_destroy(Rows1);
   nsp_matrix_destroy(Cols1);
@@ -577,16 +577,16 @@ static int int_spmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
  * =======
  */	
 
-static int int_spmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   NspMatrix *Cols;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   /* A and Cols can't point to the same object **/
   if ((Cols = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  if (nsp_spmatrix_delete_cols( A, Cols) < 0) return RET_BUG;
+  if (nsp_sprowmatrix_delete_cols( A, Cols) < 0) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -597,36 +597,36 @@ static int int_spmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
  * =======
  */	
 
-static int int_spmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   NspMatrix *Rows;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   /* A and Cols can't point to the same object **/
   if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  if (nsp_spmatrix_delete_rows( A, Rows) < 0) return RET_BUG;
+  if (nsp_sprowmatrix_delete_rows( A, Rows) < 0) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
 
 /*
- * Res=nsp_spmatrix_extract(Rows,Cols,A)
+ * Res=nsp_sprowmatrix_extract(Rows,Cols,A)
  * A unchanged, Rows and Cols are unchanged 
  */	
 
-static int int_spmatrix_extract(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_extract(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A,*Res;
+  NspSpRowMatrix *A,*Res;
   NspMatrix *Rows,*Cols;
   CheckRhs(3,3);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
   if ((Cols = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
-  Res =nsp_spmatrix_extract( A, Rows,Cols);
-  if ( Res == NULLSP) return RET_BUG;
+  Res =nsp_sprowmatrix_extract( A, Rows,Cols);
+  if ( Res == NULLSPROW) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
@@ -638,15 +638,15 @@ static int int_spmatrix_extract(Stack stack, int rhs, int opt, int lhs)
  * WARNING note that on the stack we have Elts,A 
  */	
 
-static int int_spmatrix_extractelts(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_extractelts(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A,*Res;
+  NspSpRowMatrix *A,*Res;
   NspMatrix *Elts;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ((Elts = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ((Res =nsp_spmatrix_extract_elts( A, Elts)) == NULLSP) return RET_BUG;
+  if ((Res =nsp_sprowmatrix_extract_elts( A, Elts)) == NULLSPROW) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
@@ -655,19 +655,19 @@ static int int_spmatrix_extractelts(Stack stack, int rhs, int opt, int lhs)
  * columns extraction  Cols A --> A(Cols)				  * 
  */	
 
-static int int_spmatrix_extractcols(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_extractcols(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A,*Res;
+  NspSpRowMatrix *A,*Res;
   NspMatrix *Cols;
   int err=0;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ((Cols = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  Res =nsp_spmatrix_extract_cols( A,Cols,&err);
+  Res =nsp_sprowmatrix_extract_cols( A,Cols,&err);
   /* XXXXX Attention ici il faut un message d''erreur **/
   if ( err == 1) return RET_ENDFOR; 
-  if ( Res == NULLSP) return RET_BUG;
+  if ( Res == NULLSPROW) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
@@ -677,18 +677,18 @@ static int int_spmatrix_extractcols(Stack stack, int rhs, int opt, int lhs)
  * Rows , A -> A(Rows,:)
  */	
 
-static int int_spmatrix_extractrows(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_extractrows(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A,*Res;
+  NspSpRowMatrix *A,*Res;
   NspMatrix *Rows;
   int err=0;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  Res =nsp_spmatrix_extract_rows( A,Rows,&err);
+  Res =nsp_sprowmatrix_extract_rows( A,Rows,&err);
   if ( err == 1) return RET_ENDFOR;
-  if ( Res == NULLSP) return RET_BUG;
+  if ( Res == NULLSPROW) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Res);
   return 1;
 }
@@ -698,10 +698,10 @@ static int int_spmatrix_extractrows(Stack stack, int rhs, int opt, int lhs)
  * diag interface 
  */
 
-int int_spmatrix_diag (Stack stack, int rhs, int opt, int lhs)
+int int_sprowmatrix_diag (Stack stack, int rhs, int opt, int lhs)
 {
   int k1 = 0;
-  NspSpMatrix *A, *Res;
+  NspSpRowMatrix *A, *Res;
   CheckRhs (1, 2);
   CheckLhs (1, 1);
   if (rhs == 2)
@@ -709,13 +709,13 @@ int int_spmatrix_diag (Stack stack, int rhs, int opt, int lhs)
       if (GetScalarInt (stack, 2, &k1) == FAIL)
 	return RET_BUG;
     }
-  if ((A = GetSp (stack, 1)) == NULLSP)
+  if ((A = GetSpRow (stack, 1)) == NULLSPROW)
     return RET_BUG;
   if (A->m == 1 || A->n == 1)
-    Res = nsp_spmatrix_diag_create (A, k1);
+    Res = nsp_sprowmatrix_diag_create (A, k1);
   else
-    Res = nsp_spmatrix_diag_extract (A, k1);
-  if (Res == NULLSP)
+    Res = nsp_sprowmatrix_diag_extract (A, k1);
+  if (Res == NULLSPROW)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) Res);
   return 1;
@@ -725,17 +725,17 @@ int int_spmatrix_diag (Stack stack, int rhs, int opt, int lhs)
  * Returns the kthe diag of a Matrix 
  */
 
-static int int_spmatrix_diage(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_diage(Stack stack, int rhs, int opt, int lhs)
 {
   int k1=0;
-  NspSpMatrix *A,*Res;
+  NspSpRowMatrix *A,*Res;
   CheckRhs(1,2);
   CheckLhs(1,1);
   if ( rhs == 2) 
     { if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;}
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
-  Res =nsp_spmatrix_diag_extract( A,k1);
-  if ( Res == NULLSP)  return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
+  Res =nsp_sprowmatrix_diag_extract( A,k1);
+  if ( Res == NULLSPROW)  return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
@@ -747,16 +747,16 @@ static int int_spmatrix_diage(Stack stack, int rhs, int opt, int lhs)
  * WARNING : A is not copied we want this routine to change A
  */
 
-static int int_spmatrix_diagset(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_diagset(Stack stack, int rhs, int opt, int lhs)
 {
   int k1;
-  NspSpMatrix *A,*Diag;
+  NspSpRowMatrix *A,*Diag;
   CheckRhs(3,3);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
-  if ((Diag = GetSp(stack,2)) == NULLSP) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
+  if ((Diag = GetSpRow(stack,2)) == NULLSPROW) return RET_BUG;
   if ( GetScalarInt(stack,3,&k1) == FAIL) return RET_BUG;
-  if (nsp_spmatrix_diag_set( A, Diag,k1) != OK) return RET_BUG;
+  if (nsp_sprowmatrix_diag_set( A, Diag,k1) != OK) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -765,18 +765,18 @@ static int int_spmatrix_diagset(Stack stack, int rhs, int opt, int lhs)
  *  Creates a Matrix with kth diag set to Diag 
  */
 
-static int int_spmatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
 {
   int k1=0;
-  NspSpMatrix *Diag,*Res;
+  NspSpRowMatrix *Diag,*Res;
   CheckRhs(1,2);
   CheckLhs(1,1);
-  if ((Diag = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((Diag = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ( rhs == 2 ) 
     {
       if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
     }
-  if ( (Res =nsp_spmatrix_diag_create(Diag,k1)) == NULLSP ) return RET_BUG ;
+  if ( (Res =nsp_sprowmatrix_diag_create(Diag,k1)) == NULLSPROW ) return RET_BUG ;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
@@ -786,14 +786,14 @@ static int int_spmatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
  * A is not changed 
  */
 
-static int int_spmatrix_m2sp(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_m2sp(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *Res;
+  NspSpRowMatrix *Res;
   NspMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
   if (( A = GetMat(stack,1)) == NULLMAT)  return RET_BUG;
-  if (( Res=nsp_spmatrix_from_mat(A)) == NULLSP) return RET_BUG;
+  if (( Res=nsp_sprowmatrix_from_mat(A)) == NULLSPROW) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Res);
   return 1;
 }
@@ -803,14 +803,14 @@ static int int_spmatrix_m2sp(Stack stack, int rhs, int opt, int lhs)
  * A is not changed 
  */
 
-static int int_spmatrix_sp2m(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_sp2m(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   NspMatrix *Res;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if (( A = GetSp(stack,1)) == NULLSP)  return RET_BUG;
-  if (( Res=nsp_spmatrix_to_mat(A)) == NULLMAT) return RET_BUG;
+  if (( A = GetSpRow(stack,1)) == NULLSPROW)  return RET_BUG;
+  if (( Res=nsp_sprowmatrix_to_mat(A)) == NULLMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
@@ -820,7 +820,7 @@ static int int_spmatrix_sp2m(Stack stack, int rhs, int opt, int lhs)
  * do nothing 
  */
 
-static int int_spmatrix_m2m(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_m2m(Stack stack, int rhs, int opt, int lhs)
 {
   /* full(x) when x is already full **/
   NthObj(1)->ret_pos = 1;
@@ -830,25 +830,25 @@ static int int_spmatrix_m2m(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * Res= A*B 
- * return NULLSP on failure ( incompatible size or No more space )
+ * return NULLSPROW on failure ( incompatible size or No more space )
  * A and B are left unchanged 
  */
 
 /* Generic function for * or .* **/
-typedef NspSpMatrix * (*Sp21) (NspSpMatrix *A,NspSpMatrix *B);
+typedef NspSpRowMatrix * (*Sp21) (NspSpRowMatrix *A,NspSpRowMatrix *B);
 
-static int int_spmatrix_mult_gen(Stack stack, int rhs, int opt, int lhs, Sp21 F)
+static int int_sprowmatrix_mult_gen(Stack stack, int rhs, int opt, int lhs, Sp21 F)
 {
-  NspSpMatrix *HMat1,*HMat2,*HMat3;
+  NspSpRowMatrix *HMat1,*HMat2,*HMat3;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((HMat1 = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((HMat1 = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ( HMat1->mn == 0)  
     {
       NSP_OBJECT(HMat1)->ret_pos = 1;
       return 1;
     }
-  if ((HMat2 = GetSp(stack,2)) == NULLSP) return RET_BUG;
+  if ((HMat2 = GetSpRow(stack,2)) == NULLSPROW) return RET_BUG;
   if ( HMat2->mn == 0 )
     {
       /* flag == 1 ==> A op [] returns [] **/
@@ -860,15 +860,15 @@ static int int_spmatrix_mult_gen(Stack stack, int rhs, int opt, int lhs, Sp21 F)
       if ( HMat2->D[0]->size == 0) 
 	{
 	  /* HMat2 == 0 ==> XXXX res is a null Matrix **/
-	  if ((HMat3 =nsp_spmatrix_create(NVOID,'r',HMat1->m,HMat1->n)) == NULLSP) 
+	  if ((HMat3 =nsp_sprowmatrix_create(NVOID,'r',HMat1->m,HMat1->n)) == NULLSPROW) 
 	    return RET_BUG;
 	  MoveObj(stack,1,(NspObject *) HMat3);
 	}
       else 
 	{
 	  /* A * <non-nul-scalar> **/
-	  if ((HMat1 = GetSpCopy(stack,1)) == NULLSP) return RET_BUG;
-	  if (nsp_spmatrix_mult_scal(HMat1,HMat2) != OK) return RET_BUG;
+	  if ((HMat1 = GetSpRowCopy(stack,1)) == NULLSPROW) return RET_BUG;
+	  if (nsp_sprowmatrix_mult_scal(HMat1,HMat2) != OK) return RET_BUG;
 	  NSP_OBJECT(HMat1)->ret_pos = 1;
 	}
     }
@@ -877,7 +877,7 @@ static int int_spmatrix_mult_gen(Stack stack, int rhs, int opt, int lhs, Sp21 F)
       if ( HMat1->D[0]->size == 0) 
 	{
 	  /* HMat1 == 0 ==> XXXX res is a null Matrix **/
-	  if ((HMat3 =nsp_spmatrix_create(NVOID,'r',HMat2->m,HMat2->n)) == NULLSP) 
+	  if ((HMat3 =nsp_sprowmatrix_create(NVOID,'r',HMat2->m,HMat2->n)) == NULLSPROW) 
 	    return RET_BUG;
 	  MoveObj(stack,1,(NspObject *) HMat3);
 	}
@@ -885,22 +885,22 @@ static int int_spmatrix_mult_gen(Stack stack, int rhs, int opt, int lhs, Sp21 F)
 	{
 	  /* since Mat1 is scalar we store the result in Mat2 so we 
 	     must copy it **/
-	  if ((HMat2 = GetSpCopy(stack,2)) == NULLSP) return RET_BUG;
-	  if (nsp_spmatrix_mult_scal(HMat2,HMat1) != OK) return RET_BUG;
+	  if ((HMat2 = GetSpRowCopy(stack,2)) == NULLSPROW) return RET_BUG;
+	  if (nsp_sprowmatrix_mult_scal(HMat2,HMat1) != OK) return RET_BUG;
 	  NSP_OBJECT(HMat2)->ret_pos = 1;
 	}
     }
   else 
     {
-      if ((HMat3=(*F)(HMat1,HMat2)) == NULLSP) return RET_BUG;
+      if ((HMat3=(*F)(HMat1,HMat2)) == NULLSPROW) return RET_BUG;
       MoveObj(stack,1,(NspObject *) HMat3);
     }
   return 1;
 }
 
-static int int_spmatrix_mult(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_mult(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix_mult_gen(stack,rhs,opt,lhs,nsp_spmatrix_mult);
+  return int_sprowmatrix_mult_gen(stack,rhs,opt,lhs,nsp_sprowmatrix_mult);
 }
 
 /*
@@ -908,14 +908,14 @@ static int int_spmatrix_mult(Stack stack, int rhs, int opt, int lhs)
  *   A and X are left unchanged
  *   added by Bruno
  */
-static int int_spmatrix_multm(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_multm(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *HMat1;
+  NspSpRowMatrix *HMat1;
   NspMatrix *HMat2, *HMat3;
   CheckRhs(2,2);
   CheckLhs(1,1);
 
-  if ((HMat1 = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((HMat1 = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ((HMat2 = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
 
   if ( HMat1->mn == 0)  
@@ -935,24 +935,24 @@ static int int_spmatrix_multm(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  if ( (HMat3 = nsp_spmatrix_mult_matrix(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
+  if ( (HMat3 = nsp_sprowmatrix_mult_matrix(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat3);
   return 1;
 }
 
 /*
  * Res= A'
- * return NULLSP on failure 
+ * return NULLSPROW on failure 
  * A is left unchanged 
  */
 
-static int int_spmatrix_quote(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_quote(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
-  if ((A =nsp_spmatrix_transpose(A)) == NULLSP )  return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
+  if ((A =nsp_sprowmatrix_transpose(A)) == NULLSPROW )  return RET_BUG;
   MoveObj(stack,1,(NspObject *) A);
   return 1;
 }
@@ -963,16 +963,16 @@ static int int_spmatrix_quote(Stack stack, int rhs, int opt, int lhs)
  * A'
  */
 
-static int int_spmatrix_dquote (Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_dquote (Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A, *B;
+  NspSpRowMatrix *A, *B;
   CheckRhs (1, 1);
   CheckLhs (1, 1);
-  if ((A = GetSp(stack, 1)) == NULLSP)
+  if ((A = GetSpRow(stack, 1)) == NULLSPROW)
     return RET_BUG;
-  if ((B = nsp_spmatrix_transpose (A)) == NULLSP)
+  if ((B = nsp_sprowmatrix_transpose (A)) == NULLSPROW)
     return RET_BUG;
- nsp_spmatrix_conj(B);
+ nsp_sprowmatrix_conj(B);
   MoveObj (stack, 1, (NspObject *) B);
   return 1;
 }
@@ -985,23 +985,23 @@ static int int_spmatrix_dquote (Stack stack, int rhs, int opt, int lhs)
 
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
-static int int_spmatrix_plus(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_plus(Stack stack, int rhs, int opt, int lhs)
 {
   int flag ; 
-  NspSpMatrix *A,*B;
+  NspSpRowMatrix *A,*B;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
-  if ((B = GetSp(stack,2)) == NULLSP) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
+  if ((B = GetSpRow(stack,2)) == NULLSPROW) return RET_BUG;
   if ( SameDim(A,B) ) 
     {
-      NspSpMatrix *Res =nsp_spmatrix_add(A,B);
+      NspSpRowMatrix *Res =nsp_sprowmatrix_add(A,B);
       MoveObj(stack,1,(NspObject *) Res);
       return 1;
     }
   if ( A->mn <= 1) 
     {
-      NspMatrix *C=nsp_spmatrix_op_scal(B,A,&flag,'+');
+      NspMatrix *C=nsp_sprowmatrix_op_scal(B,A,&flag,'+');
       if ( flag == 1) 
 	{
 	  NSP_OBJECT(B)->ret_pos = 1;
@@ -1016,7 +1016,7 @@ static int int_spmatrix_plus(Stack stack, int rhs, int opt, int lhs)
     }
   if ( B->mn <= 1) 
     {
-      NspMatrix *C=nsp_spmatrix_op_scal(A,B,&flag,'+');
+      NspMatrix *C=nsp_sprowmatrix_op_scal(A,B,&flag,'+');
       if ( flag == 1) 
 	{
 	  NSP_OBJECT(A)->ret_pos = 1;
@@ -1036,31 +1036,31 @@ static int int_spmatrix_plus(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * OHMat3 = OHMat1-OHMat2 
- * return NULLSP on failure 
+ * return NULLSPROW on failure 
  */
 
-static int int_spmatrix_sub(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_sub(Stack stack, int rhs, int opt, int lhs)
 {
   int flag ; 
-  NspSpMatrix *A,*B;
+  NspSpRowMatrix *A,*B;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
-  if ((B = GetSp(stack,2)) == NULLSP) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
+  if ((B = GetSpRow(stack,2)) == NULLSPROW) return RET_BUG;
   if ( SameDim(A,B) ) 
     {
-      NspSpMatrix *Res =nsp_spmatrix_sub(A,B);
+      NspSpRowMatrix *Res =nsp_sprowmatrix_sub(A,B);
       MoveObj(stack,1,(NspObject *) Res);
       return 1;
     }
   if ( A->mn <= 1) 
     {
-      NspMatrix *C=nsp_spmatrix_op_scal(B,A,&flag,'#'); /* -B + scalar **/
+      NspMatrix *C=nsp_sprowmatrix_op_scal(B,A,&flag,'#'); /* -B + scalar **/
       if ( flag == 1) 
 	{
 	  /* B -> -B **/
 	  stack.first += 1;
-	  int_spmatrix_minus(stack,1,opt,1);
+	  int_sprowmatrix_minus(stack,1,opt,1);
 	  stack.first -= 1;
 	  NSP_OBJECT(B)->ret_pos = 1;
 	  return 1; 	  /* A was [] or [0] **/
@@ -1074,7 +1074,7 @@ static int int_spmatrix_sub(Stack stack, int rhs, int opt, int lhs)
     }
   if ( B->mn <= 1) 
     {
-      NspMatrix *C=nsp_spmatrix_op_scal(A,B,&flag,'-');
+      NspMatrix *C=nsp_sprowmatrix_op_scal(A,B,&flag,'-');
       if ( flag == 1) 
 	{
 	  NSP_OBJECT(A)->ret_pos = 1;
@@ -1092,12 +1092,12 @@ static int int_spmatrix_sub(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * OHMat3 = OHMat1 .* OHMat2 
- * return NULLSP on failure 
+ * return NULLSPROW on failure 
  */
 
-static int int_spmatrix_multt(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_multt(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix_mult_gen(stack,rhs,opt,lhs,nsp_spmatrix_multtt);
+  return int_sprowmatrix_mult_gen(stack,rhs,opt,lhs,nsp_sprowmatrix_multtt);
 }
 
 /*
@@ -1105,47 +1105,47 @@ static int int_spmatrix_multt(Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
-typedef NspSpMatrix *(*SuPro) (NspSpMatrix *A,char *);
+typedef NspSpRowMatrix *(*SuPro) (NspSpRowMatrix *A,char *);
 
-static int int_spmatrix__sum(Stack stack, int rhs, int opt, int lhs, SuPro F)
+static int int_sprowmatrix__sum(Stack stack, int rhs, int opt, int lhs, SuPro F)
 {
   char *str;
-  NspSpMatrix *Res,*HMat; 
+  NspSpRowMatrix *Res,*HMat; 
   CheckRhs(1,2);
   CheckLhs(1,1);
-  if ((HMat = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((HMat = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ( rhs == 2) 
     {
       if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
     }
   else 
     { str = "F"; }
-  if ((Res= (*F)(HMat,str)) == NULLSP ) return RET_BUG;
+  if ((Res= (*F)(HMat,str)) == NULLSPROW ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
 
 /* added by Bruno : return the number of non zero elements */
-static int int_spmatrix_nnz(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_nnz(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *HMat; 
+  NspSpRowMatrix *HMat; 
   NspMatrix *Res;
   int  nnz;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((HMat = GetSp(stack,1)) == NULLSP) return RET_BUG;
+  if ((HMat = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
   if ((Res = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) return FAIL;
 
-  nnz = nsp_spmatrix_nnz(HMat);
+  nnz = nsp_sprowmatrix_nnz(HMat);
   Res->R[0] = (double) nnz;
   
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
 
-static int int_spmatrix_sum(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_sum(Stack stack, int rhs, int opt, int lhs)
 {
-  return ( int_spmatrix__sum(stack,rhs,opt,lhs,nsp_spmatrix_sum) );
+  return ( int_sprowmatrix__sum(stack,rhs,opt,lhs,nsp_sprowmatrix_sum) );
 }
 
 
@@ -1155,12 +1155,12 @@ static int int_spmatrix_sum(Stack stack, int rhs, int opt, int lhs)
  * XXXXXX : pas fini 
  */
 
-typedef NspSpMatrix *(*SpMiMax) (NspSpMatrix *A,char *,NspMatrix **Imax,int lhs);
+typedef NspSpRowMatrix *(*SpMiMax) (NspSpRowMatrix *A,char *,NspMatrix **Imax,int lhs);
 
-static int int_spmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax F)
+static int int_sprowmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax F)
 {
   char *str;
-  NspSpMatrix *A,*M;
+  NspSpRowMatrix *A,*M;
   NspMatrix *Imax;
   if ( rhs < 1) 
     { 
@@ -1174,14 +1174,14 @@ static int int_spmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax F)
        * idem for mini 
        * XXXXXX : Attention pas fini ici il faut un getrealsp 
        */
-      if ((A = GetSp(stack,1)) == NULLSP) return RET_BUG;
+      if ((A = GetSpRow(stack,1)) == NULLSPROW) return RET_BUG;
       if ( rhs == 2) 
 	{
 	  if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
 	}
       else 
 	{ str = "F"; }
-      if (( M= (*F)(A,str,&Imax,lhs)) == NULLSP ) return RET_BUG;
+      if (( M= (*F)(A,str,&Imax,lhs)) == NULLSPROW ) return RET_BUG;
       if ( lhs == 2)
 	{
 	  if ( rhs == 2) MoveObj(stack,2,(NspObject *)Imax);
@@ -1197,9 +1197,9 @@ static int int_spmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax F)
 }
 
 
-static int int_spmatrix_maxi(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_maxi(Stack stack, int rhs, int opt, int lhs)
 {
-  return ( int_spmatrix__maxi(stack,rhs,opt,lhs,nsp_spmatrix_maxi));
+  return ( int_sprowmatrix__maxi(stack,rhs,opt,lhs,nsp_sprowmatrix_maxi));
 }
 
 /* Interface for numeric ops 
@@ -1211,54 +1211,54 @@ static int int_spmatrix_maxi(Stack stack, int rhs, int opt, int lhs)
  *  A=op(A) 
  */
 
-typedef int (*M11) (NspSpMatrix *A);
-typedef void (*VM11) (NspSpMatrix *A);
+typedef int (*M11) (NspSpRowMatrix *A);
+typedef void (*VM11) (NspSpRowMatrix *A);
 
 /* generic function for ones,rand,eyes **/
  
-static int int_spmatrix__gen11(Stack stack, int rhs, int opt, int lhs, M11 F)
+static int int_sprowmatrix__gen11(Stack stack, int rhs, int opt, int lhs, M11 F)
 {
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((A=GetSp(stack,1))== NULLSP) return RET_BUG;
+  if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
   if ( A->mn == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
     }
-  if ((A=GetSpCopy(stack,1))== NULLSP) return RET_BUG;
+  if ((A=GetSpRowCopy(stack,1))== NULLSPROW) return RET_BUG;
   (*F)(A);
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
 
-static int int_spmatrix__genv11(Stack stack, int rhs, int opt, int lhs, VM11 F)
+static int int_sprowmatrix__genv11(Stack stack, int rhs, int opt, int lhs, VM11 F)
 {
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((A=GetSp(stack,1))== NULLSP) return RET_BUG;
+  if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
   if ( A->mn == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
     }
-  if ((A=GetSpCopy(stack,1))== NULLSP) return RET_BUG;
+  if ((A=GetSpRowCopy(stack,1))== NULLSPROW) return RET_BUG;
   (*F)(A);
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
 
 /*
- *nsp_spmatrix_minus: A=-(A)
+ *nsp_sprowmatrix_minus: A=-(A)
  * A is changed  
  * return 0 if error 
  */
 
-int int_spmatrix_minus(Stack stack, int rhs, int opt, int lhs)
+int int_sprowmatrix_minus(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__gen11(stack,rhs,opt,lhs,nsp_spmatrix_minus);
+  return int_sprowmatrix__gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_minus);
 }
 
 
@@ -1266,9 +1266,9 @@ int int_spmatrix_minus(Stack stack, int rhs, int opt, int lhs)
  * A=Abs(A), absolue value or module of each element 
  */
 
-static int int_spmatrix_abs(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_abs(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__gen11(stack,rhs,opt,lhs,nsp_spmatrix_abs);
+  return int_sprowmatrix__gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_abs);
 }
 
 /*
@@ -1283,44 +1283,44 @@ static int int_spmatrix_abs(Stack stack, int rhs, int opt, int lhs)
  * A=Arg(A),  * A is changed 
  */
 
-static int int_spmatrix_arg(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_arg(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__gen11(stack,rhs,opt,lhs,nsp_spmatrix_arg);
+  return int_sprowmatrix__gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_arg);
 }
 
 /*
- *nsp_spmatrix_cos: A=Cos(A)
+ *nsp_sprowmatrix_cos: A=Cos(A)
  * A is changed  
  * return 0 if error 
  */
 
-typedef NspMatrix* (*SpM) (NspSpMatrix *A);
+typedef NspMatrix* (*SpM) (NspSpRowMatrix *A);
 
-static int int_spmatrix__m_gen11(Stack stack, int rhs, int opt, int lhs, SpM F)
+static int int_sprowmatrix__m_gen11(Stack stack, int rhs, int opt, int lhs, SpM F)
 {
   NspMatrix *Loc;
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((A=GetSp(stack,1))== NULLSP) return RET_BUG;
+  if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
   if ((Loc = (*F)(A)) == NULLMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Loc);
   return 1;
 }
 
-static int int_spmatrix_cos(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_cos(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__m_gen11(stack,rhs,opt,lhs,nsp_spmatrix_cos);
+  return int_sprowmatrix__m_gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_cos);
 }
 
 /*
- *nsp_spmatrix_cosh: A=Cosh(A)
+ *nsp_sprowmatrix_cosh: A=Cosh(A)
  * A is changed  
  * return 0 if error 
  */
-static int int_spmatrix_cosh(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_cosh(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__m_gen11(stack,rhs,opt,lhs,nsp_spmatrix_cosh);
+  return int_sprowmatrix__m_gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_cosh);
 }
 
 /*
@@ -1328,122 +1328,122 @@ static int int_spmatrix_cosh(Stack stack, int rhs, int opt, int lhs)
  * A is changed 
  */
 
-static int int_spmatrix_expel(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_expel(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__m_gen11(stack,rhs,opt,lhs,nsp_spmatrix_expel);
+  return int_sprowmatrix__m_gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_expel);
 }
 
 /*
  * SpLog : A=LogEl(A) 
  */
 
-static int int_spmatrix_logel(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_logel(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((A=GetSp(stack,1))== NULLSP) return RET_BUG;
+  if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
   if ( A->mn == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
     }
-  if ((A=GetSpCopy(stack,1))== NULLSP) return RET_BUG;
-  if (nsp_spmatrix_logel(A) == FAIL ) return RET_BUG;
+  if ((A=GetSpRowCopy(stack,1))== NULLSPROW) return RET_BUG;
+  if (nsp_sprowmatrix_logel(A) == FAIL ) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
 
 
 /*
- *nsp_spmatrix_sin: A=Sin(A)
+ *nsp_sprowmatrix_sin: A=Sin(A)
  * A is changed  
  * return 0 if error 
  */
 
-static int int_spmatrix_sin(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_sin(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_sin);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_sin);
 }
 
 /*
- *nsp_spmatrix_sinh: A=Sinh(A)
+ *nsp_sprowmatrix_sinh: A=Sinh(A)
  * A is changed  
  * return 0 if error 
  */
 
-static int int_spmatrix_sinh(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_sinh(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_sinh);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_sinh);
 }
 
 /*
- *nsp_spmatrix_sqrtel: A=SqrtEl(A)  term to term square root
+ *nsp_sprowmatrix_sqrtel: A=SqrtEl(A)  term to term square root
  * A is changed  
  * return 0 if error 
  */
 
-static int int_spmatrix_sqrtel(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_sqrtel(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((A=GetSp(stack,1))== NULLSP) return RET_BUG;
+  if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
   if ( A->mn == 0) 
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
     }
-  if ((A=GetSpCopy(stack,1))== NULLSP) return RET_BUG;
-  if (nsp_spmatrix_sqrtel(A) == FAIL ) return RET_BUG;
+  if ((A=GetSpRowCopy(stack,1))== NULLSPROW) return RET_BUG;
+  if (nsp_sprowmatrix_sqrtel(A) == FAIL ) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
 
 
 /*
- *nsp_spmatrix_acos: A=Acos(A)
+ *nsp_sprowmatrix_acos: A=Acos(A)
  * A is changed  
  * return 0 if error 
  */
 
-static int int_spmatrix_acos(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_acos(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__m_gen11(stack,rhs,opt,lhs,nsp_spmatrix_acos);
+  return int_sprowmatrix__m_gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_acos);
 }
 
 /*
- *nsp_spmatrix_acosh: A=Acosh(A)
+ *nsp_sprowmatrix_acosh: A=Acosh(A)
  * A is changed  
  * return 0 if error 
  */
 
-static int int_spmatrix_acosh(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_acosh(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__m_gen11(stack,rhs,opt,lhs,nsp_spmatrix_acosh);
+  return int_sprowmatrix__m_gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_acosh);
 }
 
 /*
- *nsp_spmatrix_asin: A=Asin(A)
+ *nsp_sprowmatrix_asin: A=Asin(A)
  * A is changed  
  * return 0 if error 
  */
 
-static int int_spmatrix_asin(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_asin(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_asin);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_asin);
 }
 
 /*
- *nsp_spmatrix_asinh: A=Asinh(A)
+ *nsp_sprowmatrix_asinh: A=Asinh(A)
  * A is changed  
  * return 0 if error 
  */
 
 
-static int int_spmatrix_asinh(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_asinh(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_asinh);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_asinh);
 }
 
 /*
@@ -1452,9 +1452,9 @@ static int int_spmatrix_asinh(Stack stack, int rhs, int opt, int lhs)
  * returns 0 on failure 
  */
 
-static int int_spmatrix_atan(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_atan(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_atan);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_atan);
 }
 
 /*
@@ -1463,82 +1463,82 @@ static int int_spmatrix_atan(Stack stack, int rhs, int opt, int lhs)
  * returns 0 on failure 
  */
 
-static int int_spmatrix_atanh(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_atanh(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_atanh);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_atanh);
 }
 
 /*
- *nsp_spmatrix_ceil: A=Ceil(A)
+ *nsp_sprowmatrix_ceil: A=Ceil(A)
  * A is changed  
  */
 
-static int int_spmatrix_ceil(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_ceil(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_ceil);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_ceil);
 }
 
 /*
- *nsp_spmatrix_int: A=Int(A)
+ *nsp_sprowmatrix_int: A=Int(A)
  * A is changed  
  */
 
-static int int_spmatrix_int(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_int(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_int);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_int);
 }
 
 /*
- *nsp_spmatrix_floor: A=Floor(A)
- * A is changed  
- */
- 
-static int int_spmatrix_floor(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_floor);
-}
-
-/*
- *nsp_spmatrix_round: A=Round(A)
+ *nsp_sprowmatrix_floor: A=Floor(A)
  * A is changed  
  */
  
-static int int_spmatrix_round(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_floor(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_round);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_floor);
 }
 
 /*
- *nsp_spmatrix_sign: A=Sign(A)
+ *nsp_sprowmatrix_round: A=Round(A)
+ * A is changed  
+ */
+ 
+static int int_sprowmatrix_round(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_round);
+}
+
+/*
+ *nsp_sprowmatrix_sign: A=Sign(A)
  * A is changed  
  * return 0 if error 
  */
  
-static int int_spmatrix_sign(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_sign(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__gen11(stack,rhs,opt,lhs,nsp_spmatrix_sign);
+  return int_sprowmatrix__gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_sign);
 }
 
 /*
- *nsp_spmatrix_tan: A=Tan(A)
+ *nsp_sprowmatrix_tan: A=Tan(A)
  * A is changed  
  * return 0 if error 
  */
  
-static int int_spmatrix_tan(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_tan(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_tan);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_tan);
 }
 
 /*
- *nsp_spmatrix_tanh: A=Tanh(A)
+ *nsp_sprowmatrix_tanh: A=Tanh(A)
  * A is changed  
  * return 0 if error 
  */
  
-static int int_spmatrix_tanh(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_tanh(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_spmatrix__genv11(stack,rhs,opt,lhs,nsp_spmatrix_tanh);
+  return int_sprowmatrix__genv11(stack,rhs,opt,lhs,nsp_sprowmatrix_tanh);
 }
 
 /*
@@ -1546,23 +1546,23 @@ static int int_spmatrix_tanh(Stack stack, int rhs, int opt, int lhs)
  */
 
 /*
- *nsp_spmatrix_conj: A=real(A)-i*Imag(A)
+ *nsp_sprowmatrix_conj: A=real(A)-i*Imag(A)
  * A is changed  if imaginary not changed if real 
  */
 
-static int int_spmatrix_conj(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_conj(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((A=GetSp(stack,1))== NULLSP) return RET_BUG;
+  if ((A=GetSpRow(stack,1))== NULLSPROW) return RET_BUG;
   if ( A->mn == 0 || A->rc_type == 'r' )
     {
       NSP_OBJECT(A)->ret_pos = 1;
       return 1;
     }
-  if ((A=GetSpCopy(stack,1))== NULLSP) return RET_BUG;
- nsp_spmatrix_conj(A);
+  if ((A=GetSpRowCopy(stack,1))== NULLSPROW) return RET_BUG;
+ nsp_sprowmatrix_conj(A);
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -1592,14 +1592,14 @@ static int int_spmatrix_conj(Stack stack, int rhs, int opt, int lhs)
  * returns in a Matrix the indices for which the Matrix is true 
  */
 
-static int int_spmatrix_find(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_find(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   NspMatrix *Rc,*Rr;
   CheckRhs(1,1);
   CheckLhs(1,2);
-  if ((A = GetSp(stack,1)) == NULLSP)  return RET_BUG;
-  if (nsp_spmatrix_find(A,Max(lhs,1),&Rr,&Rc) == FAIL) return RET_BUG;
+  if ((A = GetSpRow(stack,1)) == NULLSPROW)  return RET_BUG;
+  if (nsp_sprowmatrix_find(A,Max(lhs,1),&Rr,&Rc) == FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject *) Rr);
   if ( lhs == 2 )
     {
@@ -1616,89 +1616,89 @@ static int int_spmatrix_find(Stack stack, int rhs, int opt, int lhs)
  * The Interface for sparse ops
  */
 
-static OpTab SpMatrix_func[]={
-  {"create_sp",int_spmatrix_create},
-  {"m2sp",int_spmatrix_m2sp},
-  {"sp2m",int_spmatrix_sp2m},
-  {"dst_sp_sp",int_spmatrix_multt},
-  {"mult_sp_sp",int_spmatrix_mult},
-  {"mult_sp_m",int_spmatrix_multm},
-  {"plus_sp_sp",int_spmatrix_plus},
-  {"minus_sp_sp",int_spmatrix_sub},
-  {"minus_sp_m",int_spmatrix_sub},
-  {"minus_m_sp",int_spmatrix_sub},
-  {"minus_sp",int_spmatrix_minus},
-  {"quote_sp",int_spmatrix_quote},
-  {"dprim_sp", int_spmatrix_dquote},
-  {"multt_sp_sp",int_spmatrix_multt}, 
-  {"spredim",int_spmatrix_redim},
-  {"concatd_sp_sp" ,  int_spmatrix_concatd },
-  {"concatr_sp_sp" ,  int_spmatrix_concatr },
-  {"concatdiag_sp_sp" ,  int_spmatrix_concatdiag },
-  {"deletecols_sp_m", int_spmatrix_deletecols},
-  {"deleterows_sp_m", int_spmatrix_deleterows},
-  {"extract_sp",int_spmatrix_extract},
-  {"extractrows_sp",int_spmatrix_extractrows},
-  {"extractcols_sp",int_spmatrix_extractcols},
-  {"diage_sp" ,  int_spmatrix_diage },
-  {"diage_sp_m" ,  int_spmatrix_diage },
-  {"diagset_sp" ,  int_spmatrix_diagset },
-  {"diagcre_sp" ,  int_spmatrix_diagcre },
-  {"diagcre_sp_m" ,  int_spmatrix_diagcre },
-  {"diag_sp", int_spmatrix_diag},
-  {"diag_sp_m", int_spmatrix_diag},
-  {"sparse", int_spmatrix_sparse},
-  {"spget", int_spmatrix_get},
-  {"full_sp",int_spmatrix_sp2m},
-  {"full_m",int_spmatrix_m2m},
-  {"sum_sp_s" ,  int_spmatrix_sum },
-  {"sum_sp" ,  int_spmatrix_sum },
-  {"setrowscols_sp",int_spmatrix_setrc},
-  {"maxi_sp" ,  int_spmatrix_maxi },
-  {"maxi_sp_s" ,  int_spmatrix_maxi },
-  {"extractelts_sp",int_spmatrix_extractelts},
-  {"nnz_sp",int_spmatrix_nnz},
+static OpTab SpRowMatrix_func[]={
+  {"create_sp",int_sprowmatrix_create},
+  {"m2sp",int_sprowmatrix_m2sp},
+  {"sp2m",int_sprowmatrix_sp2m},
+  {"dst_sp_sp",int_sprowmatrix_multt},
+  {"mult_sp_sp",int_sprowmatrix_mult},
+  {"mult_sp_m",int_sprowmatrix_multm},
+  {"plus_sp_sp",int_sprowmatrix_plus},
+  {"minus_sp_sp",int_sprowmatrix_sub},
+  {"minus_sp_m",int_sprowmatrix_sub},
+  {"minus_m_sp",int_sprowmatrix_sub},
+  {"minus_sp",int_sprowmatrix_minus},
+  {"quote_sp",int_sprowmatrix_quote},
+  {"dprim_sp", int_sprowmatrix_dquote},
+  {"multt_sp_sp",int_sprowmatrix_multt}, 
+  {"spredim",int_sprowmatrix_redim},
+  {"concatd_sp_sp" ,  int_sprowmatrix_concatd },
+  {"concatr_sp_sp" ,  int_sprowmatrix_concatr },
+  {"concatdiag_sp_sp" ,  int_sprowmatrix_concatdiag },
+  {"deletecols_sp_m", int_sprowmatrix_deletecols},
+  {"deleterows_sp_m", int_sprowmatrix_deleterows},
+  {"extract_sp",int_sprowmatrix_extract},
+  {"extractrows_sp",int_sprowmatrix_extractrows},
+  {"extractcols_sp",int_sprowmatrix_extractcols},
+  {"diage_sp" ,  int_sprowmatrix_diage },
+  {"diage_sp_m" ,  int_sprowmatrix_diage },
+  {"diagset_sp" ,  int_sprowmatrix_diagset },
+  {"diagcre_sp" ,  int_sprowmatrix_diagcre },
+  {"diagcre_sp_m" ,  int_sprowmatrix_diagcre },
+  {"diag_sp", int_sprowmatrix_diag},
+  {"diag_sp_m", int_sprowmatrix_diag},
+  {"sparse", int_sprowmatrix_sparse},
+  {"spget", int_sprowmatrix_get},
+  {"full_sp",int_sprowmatrix_sp2m},
+  {"full_m",int_sprowmatrix_m2m},
+  {"sum_sp_s" ,  int_sprowmatrix_sum },
+  {"sum_sp" ,  int_sprowmatrix_sum },
+  {"setrowscols_sp",int_sprowmatrix_setrc},
+  {"maxi_sp" ,  int_sprowmatrix_maxi },
+  {"maxi_sp_s" ,  int_sprowmatrix_maxi },
+  {"extractelts_sp",int_sprowmatrix_extractelts},
+  {"nnz_sp",int_sprowmatrix_nnz},
   /* ops */
-  {"abs_sp",int_spmatrix_abs},
-  {"arg_sp",int_spmatrix_arg},
-  {"sin_sp",int_spmatrix_sin},
-  {"sinh_sp",int_spmatrix_sinh},
-  {"asin_sp",int_spmatrix_asin},
-  {"asinh_sp",int_spmatrix_asinh},
-  {"cos_sp",int_spmatrix_cos},
-  {"cosh_sp",int_spmatrix_cosh},
-  {"acos_sp",int_spmatrix_acos},
-  {"acosh_sp",int_spmatrix_acosh},
-  {"atan_sp",int_spmatrix_atan},
-  {"atanh_sp",int_spmatrix_atanh},
-  {"ceil_sp",int_spmatrix_ceil},
-  {"int_sp",int_spmatrix_int},
-  {"floor_sp",int_spmatrix_floor},
-  {"round_sp",int_spmatrix_round},
-  {"sign_sp",int_spmatrix_sign},
-  {"tan_sp",int_spmatrix_tan},
-  {"tanh_sp",int_spmatrix_tanh},
-  {"conj_sp",int_spmatrix_conj},
-  {"find_sp", int_spmatrix_find},
-  {"sqrt_sp",int_spmatrix_sqrtel},
-  {"log_sp",int_spmatrix_logel},
-  {"exp_sp",int_spmatrix_expel},
+  {"abs_sp",int_sprowmatrix_abs},
+  {"arg_sp",int_sprowmatrix_arg},
+  {"sin_sp",int_sprowmatrix_sin},
+  {"sinh_sp",int_sprowmatrix_sinh},
+  {"asin_sp",int_sprowmatrix_asin},
+  {"asinh_sp",int_sprowmatrix_asinh},
+  {"cos_sp",int_sprowmatrix_cos},
+  {"cosh_sp",int_sprowmatrix_cosh},
+  {"acos_sp",int_sprowmatrix_acos},
+  {"acosh_sp",int_sprowmatrix_acosh},
+  {"atan_sp",int_sprowmatrix_atan},
+  {"atanh_sp",int_sprowmatrix_atanh},
+  {"ceil_sp",int_sprowmatrix_ceil},
+  {"int_sp",int_sprowmatrix_int},
+  {"floor_sp",int_sprowmatrix_floor},
+  {"round_sp",int_sprowmatrix_round},
+  {"sign_sp",int_sprowmatrix_sign},
+  {"tan_sp",int_sprowmatrix_tan},
+  {"tanh_sp",int_sprowmatrix_tanh},
+  {"conj_sp",int_sprowmatrix_conj},
+  {"find_sp", int_sprowmatrix_find},
+  {"sqrt_sp",int_sprowmatrix_sqrtel},
+  {"log_sp",int_sprowmatrix_logel},
+  {"exp_sp",int_sprowmatrix_expel},
   {(char *) 0, NULL}
 };
 
-int SpMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+int SpRowMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(SpMatrix_func[i].fonc))(stack,rhs,opt,lhs);
+  return (*(SpRowMatrix_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 
 /* used to walk through the interface table 
    (for adding or removing functions) **/
 
-void SpMatrix_Interf_Info(int i, char **fname, function (**f))
+void SpRowMatrix_Interf_Info(int i, char **fname, function (**f))
 {
-  *fname = SpMatrix_func[i].name;
-  *f = SpMatrix_func[i].fonc;
+  *fname = SpRowMatrix_func[i].name;
+  *f = SpRowMatrix_func[i].fonc;
 }
 
 

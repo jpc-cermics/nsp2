@@ -9,6 +9,7 @@
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
+#include "nsp/triplet.h"
 
 /*
  * NspSpColMatrix inherits from NspObject 
@@ -123,7 +124,7 @@ extern NspSpColMatrix   *nsp_spcolmatrix_object(NspObject *O);
  extern int nsp_spcolmatrix_resize_col(NspSpColMatrix *Sp, int i, int n); 
 extern void SpColRowDestroy (SpCol *Row); 
  extern NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n); 
- extern int nsp_spcolmatrix_enlarge_rows(NspSpColMatrix *Sp, int m); 
+ extern int nsp_spcolmatrix_enlarge_cols(NspSpColMatrix *Sp, int m); 
  extern int nsp_spcolmatrix_enlarge(NspSpColMatrix *A, int m, int n); 
  extern int nsp_spcolmatrix_concatr(NspSpColMatrix *A, NspSpColMatrix *B); 
  extern int nsp_spcolmatrix_concatd(NspSpColMatrix *A, NspSpColMatrix *B); 
@@ -206,9 +207,10 @@ extern void nsp_spcolmatrix_sinh(NspSpColMatrix *A);
 extern int nsp_spcolmatrix_sqrtel(NspSpColMatrix *A); 
 extern int nsp_spcolmatrix_minus(NspSpColMatrix *A); 
 extern int nsp_spcolmatrix_find(NspSpColMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
-/* extern int nsp_sparse_update_from_triplet(NspSpColMatrix *M); */
-/* extern int nsp_sparse_set_triplet_from_m(NspSpColMatrix *M,int flag); */
-/* extern int nsp_sparse_alloc_col_triplet(NspSpColMatrix *M,int nzmax); */
-/* extern int nsp_sparse_realloc_col_triplet(NspSpColMatrix *M,int nzmax); */
+
+extern int nsp_spcol_update_from_triplet(NspSpColMatrix *M);
+extern int nsp_spcol_set_triplet_from_m(NspSpColMatrix *M,int flag);
+extern int nsp_spcol_alloc_col_triplet(NspSpColMatrix *M,int nzmax);
+extern int nsp_spcol_realloc_col_triplet(NspSpColMatrix *M,int nzmax);
 
 #endif 
