@@ -2,6 +2,7 @@
 
 // faire tourner avec des matrices + ou - creuses 
 // et carrees ou rect 
+// + le cas complexe 
 
 A=int(rand(12,12)*30);A(A>=5)=0;
 Asizes=[144,1;1,144;6,24;24,6];
@@ -54,6 +55,8 @@ end
 
 // nsp_spcolmatrix_enlarge_cols
 // nsp_spcolmatrix_enlarge
+// XXX pas interfacée : devrait etre des méthodes 
+
 // nsp_spcolmatrix_concatr
 
 Sp1=[Sp,Sp];
@@ -176,8 +179,8 @@ if or(A1<>A2) then pause;end
 //
 // A(elts) = []
 // A is changed. 
-// elts must be increasing XXXXXXXXXXX
-// A Changer et ecrire
+// elts must be increasing 
+// XXXXXXXXXXX pas ecrite
 
 
 // Res=nsp_matrix_extract(A,Rows,Cols)
@@ -303,24 +306,41 @@ A1=spcol2m(Sp1);
 A2=A*A';
 if or(A1<>A2) then pause;end
 
-
 // nsp_spcolmatrix_mult_matrix
+// XX Attention car Sp*scal fait tomber la dessus.
+// et dim pas compatibles.
 
-//ATESTER 
+Sp1= Sp*(A');
+A1=Sp1;
+A2=A*A';
+if or(A1<>A2) then pause;end
+
+// nsp_spcolmatrix_mult_m_sp 
+
+// XXX interfacer et ATESTER 
 
 // nsp_spcolmatrix_mult_scal 
+
+Sp1= Sp*m2spcol(7);
+A1=spcol2m(Sp1);
+A2=A*7;
+if or(A1<>A2) then pause;end
+
+Sp1= m2spcol(7)*Sp;
+A1=spcol2m(Sp1);
+A2=7*A;
+if or(A1<>A2) then pause;end
 
 //ATESTER 
 
 // nsp_spcolmatrix_complexify 
 
-//ATESTER 
+// ATESTER 
+
 // nsp_spcolmatrix_setr 
-
-//ATESTER 
+// XXXX pas interfacé : ATESTER 
 // nsp_spcolmatrix_seti
-
-//ATESTER 
+// XXXX pas interfacé : ATESTER 
 
 // nsp_spcolmatrix_from_mat : m2spcol 
 // nsp_spcolmatrix_to_mat: spcol2m
@@ -389,9 +409,9 @@ if or(Sp1<>-A+4) then pause;end
 //  *  B unchanged A,B are changed 
 //  */
 
- // nsp_spcolmatrix_realpart: 
+// nsp_spcolmatrix_realpart: 
  
- // nsp_spcolmatrix_imagpart: 
+// nsp_spcolmatrix_imagpart: 
   
 // /*
 //  *nsp_mat_inv_el: a(i,j)=1/a(i,j) A est changee
@@ -465,34 +485,63 @@ end
 //  * R=func(i,j) or R=func(i,j,&Imag) 
 //  */
 
-// /*
-//  *nsp_mat_triu: A=Triu(A)
-//  * A is changed  
-//  */
 
-// /*
-//  *nsp_mat_tril: A=Tril(A)
-//  * A is changed  
-//  */
+// nsp_mat_triu 
 
-// /*
-//  *nsp_mat_eye: A=Eye(m,n)
-//  */
+for k=-3:3
+  Sp1=triu(Sp,k);
+  A1=spcol2m(Sp1);
+  A2=triu(A,k);
+  if or(A1<>A2) then pause;end
+end
+
+// nsp_mat_tril 
+
+for k=-3:3
+  Sp1=tril(Sp,k);
+  A1=spcol2m(Sp1);
+  A2=tril(A,k);
+  if or(A1<>A2) then pause;end
+end
 
 // NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n)
 
+Sp1=spcol_eye(4,7);
+A1=spcol2m(Sp1);
+A2=eye(4,7);
+if or(A1<>A2) then pause;end
+
 // NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n)
+
+Sp1=spcol_ones(4,7);
+A1=spcol2m(Sp1);
+A2=ones(4,7);
+if or(A1<>A2) then pause;end
 
 // NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n)
 
-// /*
-//  *nsp_mat_rand: A=rand(m,n)
-//  * A is changed  a 'ecrire ? 
-//  */
+Sp1=spcol_zeros(4,7);
+A1=spcol2m(Sp1);
+A2=zeros(4,7);
+if or(A1<>A2) then pause;end
 
-// /*
+
+// nsp_mat_rand: A=rand(m,n,percent)
+// Faire une fonction + efficace  tester 
+
+function A=sprand(m,n,percent)
+  nv=m*percent;
+  RC=[];V=[];
+  for i=1:n 
+    RC=[RC;[grand(nv,1,'uin',1,m),ones(nv,1)*i]];
+    V =[V;rand(nv,1)];
+  end
+  A=sparsecol(RC,V,[m,n]);
+endfunction
+
+
+
 //   A Set of term to term function on Matrices (complex or real)
-// */
 
 // /*
 //  *nsp_mat_pow_el(A,B) a(i,i)**b(i,i) 
@@ -534,67 +583,19 @@ end
 //  * A is changed 
 //  */
 
-// /*
-//  * A=Acos(A), 
-//  * A is changed 
-//  */
+// A=Acos(A), 
 
-// typedef double (*Func1) (double);
-// typedef void   (*Func2) (const doubleC *, doubleC *);
+A1=A/max(A);
+Sp1=m2spcol(A1);
+A2=acos(Sp1);
+if norm(acos(A1)-A2) > 1.e-8  then pause;end 
 
+// A=Acosh(A), 
 
-// static NspMatrix* SpColUnary2Full(NspSpColMatrix *A, Func1 F1, Func2 F2)
-// {
-//   double val ;
-//   doubleC Cval,Czero={0.0,0.0};
-//   int i,j,k;
-//   NspMatrix *Loc;
-//   if ((Loc = nsp_matrix_create(NVOID,A->rc_type,A->m,A->n))== NULLMAT) return(NULLMAT);
-//   switch ( A->rc_type )
-//     {
-//     case 'r' : val = (*F1)(0.00); nsp_mat_set_rval(Loc,val); break;
-//     case 'c' : (*F2)(&Czero,&Cval);
-//       nsp_mat_set_rval(Loc,Cval.r);
-//       nsp_mat_set_ival(Loc,Cval.i);
-//       break;
-//     }
-//   if ( A->rc_type == 'r' )
-//     {
-//       for ( i = 0 ; i < A->m ; i++ ) 
-// 	for ( k = 0 ; k < A->D[i]->size ; k++) 
-// 	  {
-// 	    j= A->D[i]->J[k];
-// 	    Loc->R[i+Loc->m*j] = (*F1)( A->D[i]->R[k]);
-// 	  }
-//     }
-//   else
-//     {
-//       for ( i = 0 ; i < A->m ; i++ ) 
-// 	for ( k = 0 ; k < A->D[i]->size ; k++) 
-// 	  {
-// 	    j= A->D[i]->J[k];
-// 	    (*F2)(&A->D[i]->C[k],&Loc->C[i+Loc->m*j]);
-// 	  }
-//     }
-//   return Loc;
-// }
-
-// NspMatrix *nsp_spcolmatrix_acos(NspSpColMatrix *A)
-// {
-//   return SpColUnary2Full(A,acosh,nsp_acosh_c);
-// }
-
-
-// /*
-//  * A=Acosh(A), 
-//  * A is changed 
-//  */
-
-// NspMatrix *nsp_spcolmatrix_acosh(NspSpColMatrix *A)
-// {
-//   return SpColUnary2Full(A,acos,nsp_acos_c);
-// }
-
+A1=abs(A)+1;
+Sp1=m2spcol(A1);
+A2=acosh(Sp1);
+if norm(acosh(A1)-A2) > 1.e-8  then pause;end 
 
 // SpColUnary
 // A=Asin(A), 
@@ -689,9 +690,7 @@ if norm(abs(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end
 // Sp1=erf(Sp1);
 // if norm(erf(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
 
-// /*
-//  * A=Erfc(A), Erf function 
-//  */
+// XXXXX A=Erfc(A), Erf function 
 
 // arg 
 
@@ -700,10 +699,8 @@ Sp1=m2spcol(A1);
 Sp1=arg(Sp1);
 if norm(arg(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
 
-// /*
-//  * A=Polar(A,B),
-//  * A=A(cos(B)+%i*sin(B);
-//  */
+// A=Polar(A,B),
+// XXXX A=A(cos(B)+%i*sin(B);
 
 // conj 
  
@@ -712,32 +709,22 @@ Sp1=m2spcol(A1);
 Sp1=conj(Sp1);
 if norm(conj(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
  
-// /*
+
 //  *nsp_mat_cos: A=Cos(A)
-//  * A is changed  
-//  * return 0 if error 
-//  */
-
-// NspMatrix *nsp_spcolmatrix_cos(NspSpColMatrix *A)
-// {
-//   return SpColUnary2Full(A,cos,nsp_cos_c);
-// }
-
-// /*
 //  *nsp_mat_cosh: A=Cosh(A)
-//  * A is changed  
-//  * return 0 if error 
-//  */
 
-// NspMatrix *nsp_spcolmatrix_cosh(NspSpColMatrix *A)
-// {
-//   return SpColUnary2Full(A,cosh,nsp_cosh_c);
-// }
+A1=A;
+Sp1=m2spcol(A1);
+A2=cos(Sp1);
+if norm(cos(A1)-A2) > 1.e-8  then pause;end 
 
-// /*
-//  * MatExpl : Exponentiation term to term 
-//  * A is changed 
-//  */
+A1=abs(A)+1;
+Sp1=m2spcol(A1);
+A2=cosh(Sp1);
+if norm(cosh(A1)-A2) > 1.e-8  then pause;end 
+
+// MatExpl : Exponentiation term to term 
+
 
 // NspMatrix *nsp_spcolmatrix_expel(NspSpColMatrix *A)
 // {

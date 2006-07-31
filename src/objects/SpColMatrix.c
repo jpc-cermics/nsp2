@@ -1983,8 +1983,10 @@ NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
 NspMatrix *nsp_spcolmatrix_mult_matrix(NspSpColMatrix *A, NspMatrix *B)
 {
   NspMatrix *C = NULLMAT;
-  int i, j, k, jp, kp, neli;
+  int i, j, k, jp, kp, neli,size;
+  const int inc=1;
   char type = 'r';
+  double zero=0.0;
   if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
   if ( A->n != B->m ) 
     {
@@ -1993,7 +1995,9 @@ NspMatrix *nsp_spcolmatrix_mult_matrix(NspSpColMatrix *A, NspMatrix *B)
     }
 
   if ( (C =nsp_matrix_create(NVOID,type,A->m,B->n)) == NULLMAT ) return NULLMAT;
-
+  /* initialize to 0.0 */
+  size=(type == 'c') ? 2*C->mn : C->mn;
+  nsp_dset(&size,&zero,C->R,&inc);
   /* process the columns of B */
   for (i = 0 ; i < B->n ; i++) 
     {
@@ -4041,14 +4045,66 @@ NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **
  */
 
 /*
- *nsp_mat_triu: A=Triu(A)
- * A is changed  
+ * nsp_mat_triu: A=Triu(A)
+ * A is changed 
  */
+
+int nsp_spcolmatrix_triu(NspSpColMatrix *A,int k)
+{
+  int i,j;
+  for ( i = 0 ; i < A->n ; i++)
+    {
+      int resize=FALSE;
+      /* maximum row indice to keep for column i */
+      int maxrow= i-k;
+      for ( j=0; j < A->D[i]->size ; j++ ) 
+	{
+	  if ( A->D[i]->J[j] > maxrow )
+	    { 
+	      resize=TRUE;break;
+	    }
+	}
+      if ( resize == TRUE )
+	{
+	  if (nsp_spcolmatrix_resize_col(A,i,j) == FAIL) return FAIL;
+	}
+    }
+  return OK;
+}
+
 
 /*
  *nsp_mat_tril: A=Tril(A)
  * A is changed  
  */
+
+int nsp_spcolmatrix_tril(NspSpColMatrix *A,int k)
+{
+  int ndel;
+  int i,j;
+  for ( i = 0 ; i < A->n ; i++)
+    {
+      int resize=FALSE;
+      /* maximum row indice to keep for column i */
+      int minrow= i-k;
+      for ( j=0; j < A->D[i]->size ; j++ ) 
+	{
+	  if ( A->D[i]->J[j] >= minrow )
+	    { 
+	      resize=TRUE;break;
+	    }
+	  else 
+	    {
+	      A->D[i]->J[j] = -1;
+	    }
+	}
+      ndel =nsp_spcolmatrix_compress_col_simple(A,i);
+      if (nsp_spcolmatrix_resize_col(A,i, A->D[i]->size-ndel ) == FAIL) return(FAIL) ;
+    }
+  return OK;
+}
+
+
 
 /*
  *nsp_mat_eye: A=Eye(m,n)
@@ -4078,10 +4134,10 @@ NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n)
   NspSpColMatrix *Loc;
   int i,k;
   if (( Loc=nsp_spcolmatrix_create(NVOID,'r',m,n)) == NULLSPCOL) return(NULLSPCOL);
-  for ( i = 0 ; i < Loc->m ; i++ ) 
+  for ( i = 0 ; i < Loc->n ; i++ ) 
     {
-      if (nsp_spcolmatrix_resize_col(Loc,i,Loc->n)== FAIL) return NULLSPCOL;
-      for ( k = 0 ; k < Loc->n ; k++) 
+      if (nsp_spcolmatrix_resize_col(Loc,i,Loc->m)== FAIL) return NULLSPCOL;
+      for ( k = 0 ; k < Loc->m ; k++) 
 	{
 	  Loc->D[i]->J[k]= k;
 	  Loc->D[i]->R[k]= 1.0;
@@ -4159,7 +4215,6 @@ NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n)
 typedef double (*Func1) (double);
 typedef void   (*Func2) (const doubleC *, doubleC *);
 
-
 static NspMatrix* SpColUnary2Full(NspSpColMatrix *A, Func1 F1, Func2 F2)
 {
   double val ;
@@ -4177,11 +4232,11 @@ static NspMatrix* SpColUnary2Full(NspSpColMatrix *A, Func1 F1, Func2 F2)
     }
   if ( A->rc_type == 'r' )
     {
-      for ( i = 0 ; i < A->m ; i++ ) 
+      for ( i = 0 ; i < A->n ; i++ ) 
 	for ( k = 0 ; k < A->D[i]->size ; k++) 
 	  {
 	    j= A->D[i]->J[k];
-	    Loc->R[i+Loc->m*j] = (*F1)( A->D[i]->R[k]);
+	    Loc->R[j+i*Loc->m] = (*F1)( A->D[i]->R[k]);
 	  }
     }
   else
@@ -4190,7 +4245,7 @@ static NspMatrix* SpColUnary2Full(NspSpColMatrix *A, Func1 F1, Func2 F2)
 	for ( k = 0 ; k < A->D[i]->size ; k++) 
 	  {
 	    j= A->D[i]->J[k];
-	    (*F2)(&A->D[i]->C[k],&Loc->C[i+Loc->m*j]);
+	    (*F2)(&A->D[i]->C[k],&Loc->C[j+i*Loc->m]);
 	  }
     }
   return Loc;
@@ -4198,7 +4253,7 @@ static NspMatrix* SpColUnary2Full(NspSpColMatrix *A, Func1 F1, Func2 F2)
 
 NspMatrix *nsp_spcolmatrix_acos(NspSpColMatrix *A)
 {
-  return SpColUnary2Full(A,acosh,nsp_acosh_c);
+  return SpColUnary2Full(A,acos,nsp_acos_c);
 }
 
 /*
@@ -4208,9 +4263,8 @@ NspMatrix *nsp_spcolmatrix_acos(NspSpColMatrix *A)
 
 NspMatrix *nsp_spcolmatrix_acosh(NspSpColMatrix *A)
 {
-  return SpColUnary2Full(A,acos,nsp_acos_c);
+  return SpColUnary2Full(A,acosh,nsp_acosh_c);
 }
-
 
 /*
  * Generic Function for Sparse unary operators 

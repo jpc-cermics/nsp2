@@ -34,7 +34,8 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	MaxpObj.obj MaxpMatrix.obj \
 	cells.obj cellsobj.obj Sptriplet.obj \
 	pr-output.obj bhash.obj \
-	serial.obj
+	serial.obj \
+	SpColMatrix.obj SpColMatObj.obj
 
 OLD=	gsort.obj qsort.obj	
 

@@ -1227,6 +1227,97 @@ static int int_spcolmatrix_maxi(Stack stack, int rhs, int opt, int lhs)
   return ( int_spcolmatrix__maxi(stack,rhs,opt,lhs,nsp_spcolmatrix_maxi));
 }
 
+/* interface for triu 
+ *
+ */
+
+static int int_spcolmatrix_triu(Stack stack, int rhs, int opt, int lhs)
+{
+  int k=0;
+  NspSpColMatrix *A;
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
+  if ( A->mn == 0) 
+    {
+      NSP_OBJECT(A)->ret_pos = 1;
+      return 1;
+    }
+  if ( rhs == 2) 
+    {
+      if (GetScalarInt(stack,2,&k) == FAIL) return RET_BUG;
+    }
+  if ((A=GetSpColCopy(stack,1))== NULLSPCOL) return RET_BUG;
+  if ( nsp_spcolmatrix_triu(A,k)==FAIL) return RET_BUG;
+  NSP_OBJECT(A)->ret_pos = 1;
+  return 1;
+
+}
+
+/* interface for tril
+ *
+ */
+
+static int int_spcolmatrix_tril(Stack stack, int rhs, int opt, int lhs)
+{
+  int k=0;
+  NspSpColMatrix *A;
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
+  if ( A->mn == 0) 
+    {
+      NSP_OBJECT(A)->ret_pos = 1;
+      return 1;
+    }
+  if ( rhs == 2) 
+    {
+      if (GetScalarInt(stack,2,&k) == FAIL) return RET_BUG;
+    }
+  if ((A=GetSpColCopy(stack,1))== NULLSPCOL) return RET_BUG;
+  if ( nsp_spcolmatrix_tril(A,k)==FAIL) return RET_BUG;
+  NSP_OBJECT(A)->ret_pos = 1;
+  return 1;
+
+}
+
+/* interface for eye,ones,zeros
+ *
+ */
+
+typedef NspSpColMatrix *(Feoz)(int m,int n);
+
+static int int_spcolmatrix_eoz(Stack stack, int rhs, int opt, int lhs,Feoz *F)
+{
+  int m,n;
+  NspSpColMatrix *A;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
+  if (GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
+  if ((A= (*F)(m,n))== NULLSPCOL) return RET_BUG;
+  MoveObj(stack,1, NSP_OBJECT(A));
+  return 1;
+}
+
+static int int_spcolmatrix_ones(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix_eoz(stack,rhs,opt,lhs,nsp_spcolmatrix_ones);
+}
+
+static int int_spcolmatrix_eye(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix_eoz(stack,rhs,opt,lhs,nsp_spcolmatrix_eye);
+}
+
+static int int_spcolmatrix_zeros(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix_eoz(stack,rhs,opt,lhs,nsp_spcolmatrix_zeros);
+}
+
+
+
+
 
 
 /*
@@ -1271,6 +1362,9 @@ static int int_spcolmatrix__genv11(Stack stack, int rhs, int opt, int lhs, VM11 
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
+
+
+
 
 /*
  *nsp_spmatrix_minus: A=-(A)
@@ -1678,6 +1772,13 @@ static OpTab SpColMatrix_func[]={
   {"maxi_spcol_s" ,  int_spcolmatrix_maxi },
   {"extractelts_spcol",int_spcolmatrix_extractelts},
   {"nnz_spcol",int_spcolmatrix_nnz},
+  {"triu_spcol", int_spcolmatrix_triu},
+  {"tril_spcol", int_spcolmatrix_tril},
+  {"spcol_eye", int_spcolmatrix_eye},
+  {"spcol_ones", int_spcolmatrix_ones},
+  {"spcol_zeros", int_spcolmatrix_zeros},
+  {"tril_spcol", int_spcolmatrix_tril},
+
   /* now operations */
   {"abs_spcol",int_spcolmatrix_abs},
   {"arg_spcol",int_spcolmatrix_arg},
