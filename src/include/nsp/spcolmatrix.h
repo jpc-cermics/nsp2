@@ -136,6 +136,7 @@ extern void SpColRowDestroy (SpCol *Row);
  extern int nsp_spcolmatrix_set_row(NspSpColMatrix *A, NspMatrix *Inds, NspSpColMatrix *B); 
  extern int nsp_spcolmatrix_delete_cols(NspSpColMatrix *A, NspMatrix *Cols); 
  extern int nsp_spcolmatrix_compress_col(NspSpColMatrix *A, int i); 
+extern int nsp_spcolmatrix_compress_col_simple(NspSpColMatrix *A, int i);
  extern int nsp_spcolmatrix_delete_rows(NspSpColMatrix *A, NspMatrix *Rows); 
  extern NspSpColMatrix *nsp_spcolmatrix_extract(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
  extern NspSpColMatrix *nsp_spcolmatrix_extract_elts(NspSpColMatrix *A, NspMatrix *Elts); 
@@ -165,6 +166,13 @@ extern NspSpColMatrix *nsp_spcolmatrix_transpose(const NspSpColMatrix *A);
  extern NspMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int minmaxflag, int *err); 
  extern NspMatrix *nsp_spcolmatrix_maxitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err); 
  extern NspMatrix *nsp_spcolmatrix_minitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err); 
+
+extern int nsp_spcolmatrix_triu(NspSpColMatrix *A,int k);
+extern int nsp_spcolmatrix_tril(NspSpColMatrix *A,int k);
+extern NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n);
+extern NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n);
+extern NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n);
+
  extern int nsp_spcolmatrix_realpart(NspSpColMatrix *A); 
  extern int nsp_spcolmatrix_imagpart(NspSpColMatrix *A); 
  extern NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag); 
