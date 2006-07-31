@@ -1469,7 +1469,7 @@ int nsp_spmatrix_find(NspSpMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res
 	  for ( k = 0 ; k < A->D[i]->size ; k++) 
 	    {
 	      (*Res1)->R[count]   = i + 1;
-	      (*Res1)->R[count++] = A->D[i]->J[k] + 1;
+	      (*Res2)->R[count++] = A->D[i]->J[k] + 1;
 	    }
 	}
     }

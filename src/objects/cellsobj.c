@@ -1316,6 +1316,11 @@ static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
    * has been set to NULLOBJ
    */
   nsp_cells_destroy(C); 
+  if ( count == 0 )
+    {
+      /* remove C from stack */
+      NthObj(1)=NULLOBJ;
+    }
   return count;
 }
 
