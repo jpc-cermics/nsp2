@@ -317,13 +317,13 @@ static int PListXdrLoad(XDR *xdrs, PList *plist)
 	  break;
 	case 'M': 
 	  nsp_xdr_load_i(xdrs,&oline);
-	  if ( ParseAdd(plist,EMPTYMAT,0,oline) == FAIL) return(FAIL);
+	  if ( ParseAddLast(plist,EMPTYMAT,0,oline) == FAIL) return(FAIL);
 	  break;
 	case 'O':
 	  nsp_xdr_load_i(xdrs,&opar);
 	  nsp_xdr_load_i(xdrs,&op);
 	  nsp_xdr_load_i(xdrs,&oline);
-	  if ( ParseAdd(plist,op,opar,oline) == FAIL) return(FAIL);
+	  if ( ParseAddLast(plist,op,opar,oline) == FAIL) return(FAIL);
 	  break;
 	case 'E':
 	  return(OK);
