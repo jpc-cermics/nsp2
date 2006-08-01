@@ -274,7 +274,6 @@ static int nsp_spcol_fill_zi_triplet(const NspSpColMatrix *M);
 static void nsp_spcol_free_triplet( NspSpColMatrix *M);
 static int nsp_spcol_set_triplet_from_m_internal( NspSpColMatrix *M,int flag);
 static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M);
-static int nsp_spcol_alloc_triplet( NspSpColMatrix *M,int nzmax);
 
 /* associate a column triplet to internal representation of M */
 
@@ -344,7 +343,7 @@ static int nsp_spcol_set_triplet_from_m_internal( NspSpColMatrix *M,int flag)
 {
   int nnz = nsp_spcolmatrix_nnz(M);
   if ( M->convert == 't' ) return OK;
-  if ( nsp_spcol_alloc_triplet(M,nnz) == FAIL) return FAIL;
+  if ( nsp_spcol_alloc_col_triplet(M,nnz) == FAIL) return FAIL;
   if ( flag == TRUE )
     {
       if ( nsp_spcol_fill_zi_triplet(M)== FAIL) 
@@ -466,19 +465,5 @@ static void nsp_spcol_free_triplet(NspSpColMatrix *M)
   FREE(M->triplet.Ap);
   FREE(M->triplet.Ai);
   FREE(M->triplet.Ax);
-}
-
-static int nsp_spcol_alloc_triplet(NspSpColMatrix *M,int nzmax)
-{
-  if ( M->convert == 't' ) return OK;
-  if ((M->triplet.Ap = malloc(sizeof(int)*(M->n+1)))== NULL) return FAIL;
-  if ((M->triplet.Ai = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
-  if ((M->triplet.Ax = malloc(sizeof(double)*(nzmax)*(M->rc_type=='c' ? 2: 1))) == NULL)
-      return FAIL;
-  M->triplet.Aisize = nzmax;
-  M->triplet.m= M->m;
-  M->triplet.n= M->n;
-  M->convert = 't';
-  return OK;
 }
 
