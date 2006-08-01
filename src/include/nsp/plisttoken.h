@@ -2,7 +2,7 @@
 #define NSP_INC_PLIST_TOKEN
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2006) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
@@ -10,16 +10,18 @@
  * BASIC TYPES
  *****************************/
 
-#define NUMBER -1
-#define NAME   -2
-#define PLIST   -3
-#define STRING   -4
-#define EMPTYMAT -5
-#define COMMENT  -6 
-#define EMPTYCELL  -38
-#define OPNAME -30
-#define OBJECT -39  
-
+typedef enum _nsp_basic_types nsp_basic_types;
+enum _nsp_basic_types { 
+  NUMBER =-1,
+  NAME =   -2,
+  PLIST =   -3,
+  STRING =   -4,
+  EMPTYMAT = -5,
+  COMMENT =  -6 ,
+  EMPTYCELL =  -38,
+  OPNAME = -30,
+  OBJECT = -39 
+};
 
 /* Names are of max size */ 
 #define NAME_MAXL 52
@@ -28,114 +30,120 @@
  * KEYWORDS
  ****************************/
 
-#define WHILE   -7
-#define END     -8
-#define SELECT  -9
-#define CASE    -10
-#define QUIT    -11
-#define NSP_EXIT -12 
-#define PRETURN -13
-#define HELP    -14
-#define WHAT    -15
-#define WHO     -16
-#define PAUSE   -17
-#define CLEAR   -18
-#define IF      -19
-#define THEN    -20
-#define DO      -21
-#define APROPOS -22
-#define ABORT   -23
-#define BREAK   -24
-#define ELSEIF  -25
-#define ELSE    -26
-#define FOR     -27
-#define FUNCTION -28
-#define ENDFUNCTION -29
-/* -30 is used */
-#define EXEC -31
-#define GLOBAL -32
-#define CLEARGLOBAL   -33
-#define TRYCATCH    -34
-#define CATCH  -35 
-#define FINALLY  -36 
-#define CONTINUE  -37
-/* -38 is used */
-/* -39 is used */
-#define NOTKEY  -40
-
+typedef enum _nsp_keywords nsp_keywords;
+enum _nsp_keywords { 
+  WHILE =   -7, /* WHILE must be the first */
+  END =     -8,
+  SELECT =  -9,
+  CASE =    -10,
+  QUIT =    -11,
+  NSP_EXIT =-12,
+  PRETURN = -13,
+  HELP =    -14,
+  WHAT =    -15,
+  WHO =     -16,
+  PAUSE =   -17,
+  CLEAR =   -18,
+  IF =      -19,
+  THEN =    -20,
+  DO =      -21,
+  APROPOS = -22,
+  ABORT =   -23,
+  BREAK =   -24,
+  ELSEIF =  -25,
+  ELSE =    -26,
+  FOR =     -27,
+  FUNCTION = -28,
+  ENDFUNCTION = -29,
+  /* -30 is used */
+  EXEC = -31,
+  GLOBAL = -32,
+  CLEARGLOBAL =   -33,
+  TRYCATCH =    -34,
+  CATCH =  -35 ,
+  FINALLY =  -36 ,
+  CONTINUE =  -37,
+  /* -38 is used */
+  /* -39 is used */
+  NOTKEY =  -40 /* should be the last */
+};
 
 /*****************************
  * OPERATORS
  * with name longer than one char 
  *****************************/
 
-#define DOTSTAR   ((((int) '*') << 7) + (int) '.' )
-#define DOTSLASH  ((((int) '/') << 7) + (int) '.' )
-#define DOTBSLASH ((((int) '\\') << 7) + (int) '.' )
+typedef enum _nsp_ops nsp_ops; 
+enum _nsp_ops { 
+  DOTSTAR   =((((int) '*') << 7) + (int) '.' ),
+  DOTSLASH  =((((int) '/') << 7) + (int) '.' ),
+  DOTBSLASH =((((int) '\\') << 7) + (int) '.' ),
 
-#define DOTPLUS   ((((int) '+') << 7) + (int) '.' )
+  DOTPLUS   =((((int) '+') << 7) + (int) '.' ),
 
-#define STARDOT   ((((int) '.') << 7) + (int) '*' )
-#define SLASHDOT  ((((int) '.') << 7) + (int) '/' )
-#define BSLASHDOT ((((int) '.') << 7) + (int) '\\' )
+  STARDOT   =((((int) '.') << 7) + (int) '*' ),
+  SLASHDOT  =((((int) '.') << 7) + (int) '/' ),
+  BSLASHDOT =((((int) '.') << 7) + (int) '\\' ),
 
-#define DOTSTARDOT  (((int) '.') <<14 ) + (((int) '*') << 7) + (int) '.' 
-#define DOTSLASHDOT  (((int) '.') <<14 )+(((int) '/') << 7) + (int) '.' 
-#define DOTBSLASHDOT (((int) '.') <<14 )+ (((int) '\\') << 7) + (int) '.'
+  DOTSTARDOT  =(((int) '.') <<14 ) + (((int) '*') << 7) + (int) '.' ,
+  DOTSLASHDOT  =(((int) '.') <<14 )+(((int) '/') << 7) + (int) '.' ,
+  DOTBSLASHDOT =(((int) '.') <<14 )+ (((int) '\\') << 7) + (int) '.',
 
-#define DOTHAT ((((int) '^') << 7) + (int) '.' )
+  DOTHAT =((((int) '^') << 7) + (int) '.' ),
 
-#define EQ     ((((int) '=') << 7) + (int) '=' )
-#define LEQ    ((((int) '<') << 7) + (int) '=' )
-#define GEQ    ((((int) '>') << 7) + (int) '=' )
-#define NEQ    ((((int) '<') << 7) + (int) '>' )
+  EQ     =((((int) '=') << 7) + (int) '=' ),
+  LEQ    =((((int) '<') << 7) + (int) '=' ),
+  GEQ    =((((int) '>') << 7) + (int) '=' ),
+  NEQ    =((((int) '<') << 7) + (int) '>' ),
 
-#define DOTEQ     ((((int) '=') << 14) + (((int) '=') << 7)  + (int) '.' )
-#define DOTLEQ    ((((int) '<') << 14) + (((int) '=') << 7)  + (int) '.' )
-#define DOTLT    ((((int) '<') << 7) +  (int) '.' )
-#define DOTGEQ    ((((int) '>') << 14) + (((int) '=') << 7)  + (int) '.' )
-#define DOTGT    ((((int) '>') << 7) +  (int) '.' )
-#define DOTNEQ    ((((int) '<') << 14) + (((int) '>') << 7)  + (int) '.' )
+  DOTEQ     =((((int) '=') << 14) + (((int) '=') << 7)  + (int) '.' ),
+  DOTLEQ    =((((int) '<') << 14) + (((int) '=') << 7)  + (int) '.' ),
+  DOTLT    =((((int) '<') << 7) +  (int) '.' ),
+  DOTGEQ    =((((int) '>') << 14) + (((int) '=') << 7)  + (int) '.' ),
+  DOTGT    =((((int) '>') << 7) +  (int) '.' ),
+  DOTNEQ    =((((int) '<') << 14) + (((int) '>') << 7)  + (int) '.' ),
 
-#define DOTPRIM ((((int) '.') << 7) + (int) '\'' )
+  DOTPRIM =((((int) '.') << 7) + (int) '\'' ),
 
-/* Unary minus */
+  /* Unary minus */
 
-#define MOINS   ((((int) '-') << 7) + (int) '-' )
-#define NOTCODE 0
+  MOINS   =((((int) '-') << 7) + (int) '-' ), 
+  NOTCODE =0,
 
-/* and or sequential version */
+  /* and or sequential version */
 
-#define SEQAND   ((((int) '&') << 7) + (int) '&' )
-#define SEQOR    ((((int) '|') << 7) + (int) '|' )
-
+  SEQAND   =((((int) '&') << 7) + (int) '&' ),  
+  SEQOR    =((((int) '|') << 7) + (int) '|' ) 
+};
 
 /******************************************
  *  SPECIAL code used in internal list coding
  ******************************************/
 
-#define FEVAL -100
-#define ROWCONCAT -101
-#define COLCONCAT -102
-#define LASTCASE  -103
-#define MLHS      -104
-#define P_MATRIX  -105
-#define STATEMENTS -106
-#define STATEMENTS1 -107
-#define OPT        -108
-#define DIAGCONCAT -109
-#define LISTEVAL   -110
-#define ARGS       -111
-#define PARENTH    -112
-#define DOTARGS    -113
-#define METARGS    -114
-#define CELLROWCONCAT -115
-#define CELLCOLCONCAT -116
-#define CELLDIAGCONCAT -117
-#define P_CELL  -118
-#define CELLARGS    -119
-#define CALLEVAL  -120
-
+typedef enum _nsp_codes nsp_codes ;
+enum _nsp_codes {
+  FEVAL = -100,
+  ROWCONCAT = -101,
+  COLCONCAT = -102,
+  LASTCASE =  -103,
+  MLHS =      -104,
+  P_MATRIX=  -105,
+  STATEMENTS = -106,
+  STATEMENTS1 = -107,
+  OPT =        -108,
+  DIAGCONCAT = -109,
+  LISTEVAL =   -110,
+  ARGS =       -111,
+  PARENTH =    -112,
+  DOTARGS =    -113,
+  METARGS =    -114,
+  CELLROWCONCAT = -115,
+  CELLCOLCONCAT = -116,
+  CELLDIAGCONCAT = -117,
+  P_CELL=  -118,
+  CELLARGS =    -119,
+  CALLEVAL =  -120
+};
 
 #endif 
 
