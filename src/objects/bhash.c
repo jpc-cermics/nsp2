@@ -1123,13 +1123,6 @@ int nsp_bhash_get_next_object(NspBHash *H, int *i,char **str,int *val)
 #define FAIL_FULL -2
 
 /**
- *nsp_bhash_enter:
- * @H: 
- * @O: 
- * 
- **/
-
-/**
  * nsp_bhash_enter:
  * @H: 
  * @str: a string 
