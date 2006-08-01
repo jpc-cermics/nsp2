@@ -1,5 +1,6 @@
-// test spcol operations 
-
+// test sp operations 
+// sp -> spcol
+// 
 // faire tourner avec des matrices + ou - creuses 
 // et carrees ou rect 
 // + le cas complexe 
@@ -11,43 +12,45 @@ Asizes=[144,1;1,144;6,24;24,6];
 
 // convert m2sp and sp2m 
 
-Sp=m2spcol(A);
-A1=spcol2m(Sp);
+Sp=m2sp(A);
+A1=sp2m(Sp);
 if or(A1<>A) then pause;end
 
 // create 
+// same as zeros 
 
-Sp1=create_spcol(7,8);
-A1=spcol2m(Sp1);
+Sp1=create_sp(7,8);
+A1=sp2m(Sp1);
 if or(A1<>zeros(7,8)) then pause;end
 
 // nsp_spcolmatrix_sparse
 // nsp_spcolmatrix_get
 
-[RC,V,mn]=spcolget(Sp);
-Sp1=sparsecol(RC,V,mn);
-A1=spcol2m(Sp);
+[RC,V,mn]=spget(Sp);
+Sp1=sparse(RC,V,mn);
+A1=sp2m(Sp);
 if or(A1<>A) then pause;end
 
 // nsp_spcolmatrix_copy
 
 Sp1=Sp;
-A1=spcol2m(Sp);
+A1=sp2m(Sp);
 if or(A1<>A) then pause;end
 
 //  nsp_spcolmatrix_nnz 
+//  XXX should be a method 
 
-n=nnz_spcol(Sp);
+n=nnz(Sp);
 n1=size(find(A<>0),'*');
 if n1<>n then pause;end 
 
 // nsp_spcolmatrix_redim
-
+// this should be a method 
 //Asizes=[144,1;1,144;6,24;24,6];
 
 for i=1:size(Asizes,'r');
-  Sp1=spcolredim(Sp,Asizes(i,1),Asizes(i,2));
-  A1=spcol2m(Sp1);
+  Sp1=spredim(Sp,Asizes(i,1),Asizes(i,2));
+  A1=sp2m(Sp1);
   A2=A;
   redim(A2,Asizes(i,1),Asizes(i,2));
   if or(A1<>A2) then pause;end
@@ -60,19 +63,19 @@ end
 // nsp_spcolmatrix_concatr
 
 Sp1=[Sp,Sp];
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 if or(A1<>[A,A]) then pause;end
 
 // nsp_spcolmatrix_concatd 
 
 Sp1=[Sp;Sp];
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 if or(A1<>[A;A]) then pause;end
 
 // nsp_spcolmatrix_concatdiag 
 
 Sp1=[Sp # Sp];
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 if or(A1<>[A # A]) then pause;end
 
 // nsp_spcolmatrix_insert_elt(A,i,j,B,rb,cb)
@@ -81,8 +84,8 @@ if or(A1<>[A # A]) then pause;end
 // nsp_spcolmatrix_store(A,r,c,col,B,r1,c1)
 
 Sp1=Sp;
-Sp1(1:2,3)=m2spcol([7;8]);
-A1=spcol2m(Sp1);
+Sp1(1:2,3)=m2sp([7;8]);
+A1=sp2m(Sp1);
 A2=A;
 A2(1:2,3)=[7;8];
 if or(A1<>A2) then pause;end
@@ -90,8 +93,8 @@ if or(A1<>A2) then pause;end
 //
 
 Sp1=Sp;
-Sp1(3,5:7)=m2spcol([7,8,9]);
-A1=spcol2m(Sp1);
+Sp1(3,5:7)=m2sp([7,8,9]);
+A1=sp2m(Sp1);
 A2=A;
 A2(3,5:7)=[7,8,9];
 if or(A1<>A2) then pause;end
@@ -99,8 +102,8 @@ if or(A1<>A2) then pause;end
 // 
 
 Sp1=Sp;
-Sp1(3,5)=m2spcol([7]);
-A1=spcol2m(Sp1);
+Sp1(3,5)=m2sp([7]);
+A1=sp2m(Sp1);
 A2=A;
 A2(3,5)=[7];
 if or(A1<>A2) then pause;end
@@ -108,8 +111,8 @@ if or(A1<>A2) then pause;end
 //
 
 Sp1=Sp;
-Sp1([1,10],[5,11])=m2spcol([1,2;3,4]);
-A1=spcol2m(Sp1);
+Sp1([1,10],[5,11])=m2sp([1,2;3,4]);
+A1=sp2m(Sp1);
 A2=A;
 A2([1,10],[5,11])=[1,2;3,4];
 if or(A1<>A2) then pause;end
@@ -117,15 +120,15 @@ if or(A1<>A2) then pause;end
 // nsp_spcolmatrix_set_row 
 
 Sp1=Sp;
-Sp1([1,4,7])=m2spcol(0);
-A1=spcol2m(Sp1);
+Sp1([1,4,7])=m2sp(0);
+A1=sp2m(Sp1);
 A2=A;
 A2([1,4,7])=0;
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
-Sp1([1,4,7])=m2spcol([8,9,10]);
-A1=spcol2m(Sp1);
+Sp1([1,4,7])=m2sp([8,9,10]);
+A1=sp2m(Sp1);
 A2=A;
 A2([1,4,7])=[8,9,10];
 if or(A1<>A2) then pause;end
@@ -134,21 +137,21 @@ if or(A1<>A2) then pause;end
 
 Sp1=Sp;
 Sp1(:,[1,4,6])=[];
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A;
 A2(:,[1,4,6])=[];
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
 Sp1(:,[6,4,1])=[];
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A;
 A2(:,[1,4,6])=[];
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
 Sp1(:,[6,4,1,4,6])=[];
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A;
 A2(:,[1,4,6])=[];
 if or(A1<>A2) then pause;end
@@ -157,21 +160,21 @@ if or(A1<>A2) then pause;end
 
 Sp1=Sp;
 Sp1([1,4,6],:)=[];
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A;
 A2([1,4,6],:)=[];
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
 Sp1([6,4,1],:)=[]
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A;
 A2([1,4,6],:)=[];
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
 Sp1([6,4,1,4,6],:)=[]
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A;
 A2([1,4,6],:)=[];
 if or(A1<>A2) then pause;end
@@ -187,17 +190,17 @@ if or(A1<>A2) then pause;end
 // nsp_spcolmatrix_extract
 
 Sp1=Sp([1,4],[2,4,5]);
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A([1,4],[2,4,5]);
 if or(A1<>A2) then pause;end
 
 Sp1=Sp([4,1],[2,4,5]);
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A([4,1],[2,4,5]);
 if or(A1<>A2) then pause;end
 
 Sp1=Sp(1,[1,4,5]);
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A([1],[1,4,5]);
 if or(A1<>A2) then pause;end
 
@@ -205,37 +208,37 @@ if or(A1<>A2) then pause;end
 // nsp_spcolmatrix_extract_elts 
 
 Sp1=Sp([1,4,2,4,5]);
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A([1,4,2,4,5]);
 if or(A1<>A2) then pause;end
 
 Sp1=Sp([1,4,2,4,5]+6);
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A([1,4,2,4,5]+6);
 if or(A1<>A2) then pause;end
 
 // nsp_spcolmatrix_extract_cols
 
 Sp1=Sp(:,[2,4,5]);
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A(:,[2,4,5]);
 if or(A1<>A2) then pause;end
 
 
 Sp1=Sp(:,[2,4,5,5,3]);
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A(:,[2,4,5,5,3]);
 if or(A1<>A2) then pause;end
 
 // Res=nsp_matrix_extract_rows(A,Rows,err)
 
 Sp1=Sp([2,4,5],:);
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A([2,4,5],:);
 if or(A1<>A2) then pause;end
 
 Sp1=Sp([2,4,5,5,3],:);
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A([2,4,5,5,3],:);
 if or(A1<>A2) then pause;end
 
@@ -244,7 +247,7 @@ if or(A1<>A2) then pause;end
 
 for k =[-7:7]
   Sp1=diag(Sp,k);
-  A1=spcol2m(Sp1);
+  A1=sp2m(Sp1);
   A2=diag(A,k);
   if or(A1<>A2) then pause;end
 end 
@@ -254,8 +257,8 @@ end
 
 Sp1=Sp;
 nd=size(diag(Sp1,0),'*');
-diagset(Sp1,m2spcol(1:nd),0);
-A1=spcol2m(Sp1);
+diagset(Sp1,m2sp(1:nd),0);
+A1=sp2m(Sp1);
 [ma,na]=size(A);
 B=[diag(diag(A))-diag(1:nd)];
 [mb,nb]=size(B);
@@ -269,8 +272,8 @@ for i=-3:3
   Sp1=Sp;
   nd=size(diag(Sp1,i),'*');
   dd1=dd(1:nd);
-  diagset(Sp1,m2spcol(dd1),i);
-  A1=spcol2m(Sp1);
+  diagset(Sp1,m2sp(dd1),i);
+  A1=sp2m(Sp1);
   [ma,na]=size(A);
   B=[diag(diag(A,i),i)-diag(dd1,i)];
   [mb,nb]=size(B);
@@ -289,12 +292,12 @@ end
 // ou pas ? 
 
 for i=-3:3
-  Sp1=diagcre(m2spcol([1,3,0,0,4,5]),i);
-  A1=spcol2m(Sp1);
+  Sp1=diagcre(m2sp([1,3,0,0,4,5]),i);
+  A1=sp2m(Sp1);
   A2=diag([1,3,0,0,4,5],i);
   if or(A1<>A2) then pause;end
-  Sp1=diagcre(m2spcol([1,3,0,0,4,5]'),i);
-  A1=spcol2m(Sp1);
+  Sp1=diagcre(m2sp([1,3,0,0,4,5]'),i);
+  A1=sp2m(Sp1);
   A2=diag([1,3,0,0,4,5],i);
   if or(A1<>A2) then pause;end
 end
@@ -302,7 +305,7 @@ end
 // nsp_spcolmatrix_mult 
 
 Sp1= Sp*Sp';
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 A2=A*A';
 if or(A1<>A2) then pause;end
 
@@ -321,13 +324,13 @@ if or(A1<>A2) then pause;end
 
 // nsp_spcolmatrix_mult_scal 
 
-Sp1= Sp*m2spcol(7);
-A1=spcol2m(Sp1);
+Sp1= Sp*m2sp(7);
+A1=sp2m(Sp1);
 A2=A*7;
 if or(A1<>A2) then pause;end
 
-Sp1= m2spcol(7)*Sp;
-A1=spcol2m(Sp1);
+Sp1= m2sp(7)*Sp;
+A1=sp2m(Sp1);
 A2=7*A;
 if or(A1<>A2) then pause;end
 
@@ -342,18 +345,18 @@ if or(A1<>A2) then pause;end
 // nsp_spcolmatrix_seti
 // XXXX pas interfacé : ATESTER 
 
-// nsp_spcolmatrix_from_mat : m2spcol 
-// nsp_spcolmatrix_to_mat: spcol2m
+// nsp_spcolmatrix_from_mat : m2sp 
+// nsp_spcolmatrix_to_mat: sp2m
 // already tested 
 
 // nsp_spcolmatrix_transpose 
 
 Sp1=Sp';
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 if or(A1<>A') then pause;end
 
 Sp1=Sp.';
-A1=spcol2m(Sp1);
+A1=sp2m(Sp1);
 if or(A1<>A.') then pause;end
 
 // NspSpColMatrix *nsp_spcolmatrix_add(NspSpColMatrix *A, NspSpColMatrix *B)
@@ -361,24 +364,24 @@ if or(A1<>A.') then pause;end
 // NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
 // nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B)
 
-Sp1=Sp*m2spcol(4);
-A1=spcol2m(Sp1);
+Sp1=Sp*m2sp(4);
+A1=sp2m(Sp1);
 if or(A1<>A*4) then pause;end
 
-Sp1=Sp*m2spcol([]);
-A1=spcol2m(Sp1);
+Sp1=Sp*m2sp([]);
+A1=sp2m(Sp1);
 if or(A1<>A.*[]) then pause;end
 
 // op can be '+'(A+B) ,'-' (A-B), '#' (-A+B)
 // NspMatrix *nsp_spcolmatrix_op_scal
 
-Sp1=Sp + m2spcol(4);
+Sp1=Sp + m2sp(4);
 if or(Sp1<>A+4) then pause;end
 
-Sp1=Sp - m2spcol(4);
+Sp1=Sp - m2sp(4);
 if or(Sp1<>A-4) then pause;end
 
-Sp1= - Sp + m2spcol(4);
+Sp1= - Sp + m2sp(4);
 if or(Sp1<>-A+4) then pause;end
 
 // nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
@@ -435,7 +438,7 @@ if or(Sp1<>-A+4) then pause;end
 
 for c=['f','c','r'] 
   Sp1=sum(Sp);
-  A1=spcol2m(Sp1);
+  A1=sp2m(Sp1);
   if or(A1<>sum(A)) then pause;end
 end
  
@@ -490,7 +493,7 @@ end
 
 for k=-3:3
   Sp1=triu(Sp,k);
-  A1=spcol2m(Sp1);
+  A1=sp2m(Sp1);
   A2=triu(A,k);
   if or(A1<>A2) then pause;end
 end
@@ -499,32 +502,31 @@ end
 
 for k=-3:3
   Sp1=tril(Sp,k);
-  A1=spcol2m(Sp1);
+  A1=sp2m(Sp1);
   A2=tril(A,k);
   if or(A1<>A2) then pause;end
 end
 
 // NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n)
 
-Sp1=spcol_eye(4,7);
-A1=spcol2m(Sp1);
+Sp1=sp_eye(4,7);
+A1=sp2m(Sp1);
 A2=eye(4,7);
 if or(A1<>A2) then pause;end
 
 // NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n)
 
-Sp1=spcol_ones(4,7);
-A1=spcol2m(Sp1);
+Sp1=sp_ones(4,7);
+A1=sp2m(Sp1);
 A2=ones(4,7);
 if or(A1<>A2) then pause;end
 
 // NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n)
 
-Sp1=spcol_zeros(4,7);
-A1=spcol2m(Sp1);
+Sp1=sp_zeros(4,7);
+A1=sp2m(Sp1);
 A2=zeros(4,7);
 if or(A1<>A2) then pause;end
-
 
 // nsp_mat_rand: A=rand(m,n,percent)
 // Faire une fonction + efficace  tester 
@@ -586,14 +588,14 @@ endfunction
 // A=Acos(A), 
 
 A1=A/max(A);
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 A2=acos(Sp1);
 if norm(acos(A1)-A2) > 1.e-8  then pause;end 
 
 // A=Acosh(A), 
 
 A1=abs(A)+1;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 A2=acosh(Sp1);
 if norm(acosh(A1)-A2) > 1.e-8  then pause;end 
 
@@ -601,103 +603,103 @@ if norm(acosh(A1)-A2) > 1.e-8  then pause;end
 // A=Asin(A), 
  
 A1=A/max(A);
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=asin(Sp1);
-if norm(asin(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(asin(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // asinh 
 
 A1=A;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=asinh(Sp1);
-if norm(asinh(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(asinh(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // atan 
 
 A1=A/max(A);
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=atan(Sp1);
-if norm(atan(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(atan(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // atanh 
 
 A1=A/(2*max(A));
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=atanh(Sp1);
-if norm(atanh(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(atanh(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // ceil
 
 A1=A*1.23;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=ceil(Sp1);
-if norm(ceil(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(ceil(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // int 
 
 A1=A*1.23;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=int(Sp1);
-if norm(int(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(int(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // floor 
 
 A1=A*1.23;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=floor(Sp1);
-if norm(floor(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(floor(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // round 
 
 A1=A*1.23;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=round(Sp1);
-if norm(round(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(round(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // sign 
 
 A1=A*1.23;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=sign(Sp1);
-if norm(sign(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(sign(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // tan 
 
 A1=A;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=tan(Sp1);
-if norm(tan(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(tan(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // tanh 
 
 A1=A;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=tanh(Sp1);
-if norm(tanh(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(tanh(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // abs 
 
 A1=A - 20;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=abs(Sp1);
-if norm(abs(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(abs(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // erf 
 // XXXXX interface mising 
 
 // A1=A - 20;
-// Sp1=m2spcol(A1);
+// Sp1=m2sp(A1);
 // Sp1=erf(Sp1);
-// if norm(erf(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+// if norm(erf(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // XXXXX A=Erfc(A), Erf function 
 
 // arg 
 
 A1=A - 20;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=arg(Sp1);
-if norm(arg(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(arg(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // A=Polar(A,B),
 // XXXX A=A(cos(B)+%i*sin(B);
@@ -705,21 +707,21 @@ if norm(arg(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end
 // conj 
  
 A1=A - 20;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 Sp1=conj(Sp1);
-if norm(conj(A1)-spcol2m(Sp1)) > 1.e-8  then pause;end 
+if norm(conj(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
  
 
 //  *nsp_mat_cos: A=Cos(A)
 //  *nsp_mat_cosh: A=Cosh(A)
 
 A1=A;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 A2=cos(Sp1);
 if norm(cos(A1)-A2) > 1.e-8  then pause;end 
 
 A1=abs(A)+1;
-Sp1=m2spcol(A1);
+Sp1=m2sp(A1);
 A2=cosh(Sp1);
 if norm(cosh(A1)-A2) > 1.e-8  then pause;end 
 
@@ -897,7 +899,7 @@ if norm(cosh(A1)-A2) > 1.e-8  then pause;end
 // find 
 
 A=testmatrix('magic',6);A(A<=15)=0;
-Sp=m2spcol(A);
+Sp=m2sp(A);
 I=find(A);
 Is=find(Sp);
 if or(I<>Is) then pause;end
