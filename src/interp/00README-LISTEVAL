@@ -1,0 +1,36 @@
+Description de l'evaluation de ( f <ARGS> .... <ARGS> LISTEVAL) 
+sous la forme { exp, stack } 
+fait appel a deux fonctions extract et pathextract qui peuvent 
+renvoyer N-arguments sur la pile 
+extract et pathextract utilisent le type de l'object pour s'evaluer 
+
+==> eventuellement il faut voir si on ne peut pas mettre 
+    les interfaces associces ds la structure  des objects 
+
+{ ( f <ARGS> .... <ARGS> LISTEVAL) , [] } 
+
+{ ( f <ARGS> LISTEVAL) , [] } 
+	--> {  , extract( ev(f),ev(<ARGS>)) } 
+
+{ ( f <ARGS1> .... <ARGSN> LISTEVAL ) , [] } 
+	--> { ( <ARGS1>,....,<ARGSN> LISTEVAL ) , [ O=ev(f)] } 
+
+{ ( <ARGS1>,....,<ARGSN> LISTEVAL ) , [ O1,...,OK] } 
+
+	{ ( < ARGS1> LISTEVAL ) , [ O1,....,OK] } 
+		--> {  , extract( O1,....,OK, ev(<ARGS1>) } 
+
+	{ ( < ARGS1>... <ARGSN> LISTEVAL ) , [ O1,...,OK ] } 
+		--> Erreur 
+
+	{ ( < ARGS1>... <ARGSN> LISTEVAL ) , [ O1] } 
+		--> 	{ ( < ARGS2>... <ARGSN> LISTEVAL ) , pathextract( O1, ev(<ARGS1>)  } 
+
+Exemples :
+
+	win.set_title('foo') --> extract_win(win,'set_title','foo') 
+	win.title	     --> extract_win('title') ( en fait extractelts ) 
+	win(title,10)	     --> extract_win 
+	win.x.y 	     --> pathextract 
+	..........
+

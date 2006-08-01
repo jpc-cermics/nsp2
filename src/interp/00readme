@@ -1,0 +1,68 @@
+FIXME 
+	sur Linux faire un reset en sortant 
+FIXME 
+	attention  "pipo ...
+suite 
+	n'est pas parse correctement sur nsp 
+
+FIXME   Attention au if then elseif etc... 
+	Il faut adapter l'evaluateur 
+
+FIXME 
+	Si la completion est active alors un coupé collé de fonction 
+	qui insère des <tab> va poser un problème...
+FIXME 
+	Regrader le parse des fonction 
+
+function y=
+f(x,y) 
+
+	marche pas 
+	
+FIXME 
+	Regrader le parse des nombres avec . ca marche pas bien 
+
+FIXME 
+-nsp->a=[
+a=[
+   ^
+Parse Error : Unexpected token `     <------- \n serait mieux 
+' found
+
+FIXME 
+	..\n synonyme de ...\n : Bof....
+
+FIXME 
+	who ne doit plus etre considere comme un mot clef 
+
+FIXME 
+	[a;b;] est un BUG ds lsci et est autorise dans Scilab 
+	a corriger ds Scilab 
+
+FIXME 
+	Il y a un probleme si on appelle une fonction 
+	un interface avec plusieurs arguments qui 
+	sont en fait un pointeur vers le meme 
+	exemple Extract(A,Row,Cols) 
+	===> ca veut surtout dire que la ou on utilise Rows et Cols 
+	il faut malheureusement faire une copie ? 
+	ou vraiment v'erifier de pres 
+FIXME 
+	Corriger les MatElnlarge pour les autres 
+
+FIXME 
+	Attention au tranpose 
+	a' est accept'e et a ' aussi ce qui n'est pas bien 
+	corrige aussi a.' qui s'ecrit .'a 
+
+FIXME 
+	corriger a.fooo [] a.fooo() 
+	interdire les blancs 
+	interdire a[10,20] il faut une methode avant a.foo[10,20]
+
+
+
+
+
+
+
