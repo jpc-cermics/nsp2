@@ -1735,7 +1735,7 @@ static int int_spcolmatrix_find(Stack stack, int rhs, int opt, int lhs)
 static OpTab SpColMatrix_func[]={
   {"create_sp",int_spcolmatrix_create},
   {"m2sp",int_spcolmatrix_m2sp},
-  {"sp2m",int_spmatrix_sp2m},
+  {"sp2m",int_spcolmatrix_sp2m},
   {"dst_sp_sp",int_spcolmatrix_multt},
   {"mult_sp_sp",int_spcolmatrix_mult},
   {"mult_sp_m",int_spcolmatrix_multm},

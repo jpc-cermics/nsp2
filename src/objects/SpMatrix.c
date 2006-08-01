@@ -573,25 +573,25 @@ void nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_le
       nsp_matrix_print(Values,indent,epname,rec_level);
       nsp_matrix_destroy(RC);
       nsp_matrix_destroy(Values);
-      Sciprintf1(indent,"%s=sparse(%s__rc,%s__val,[%d,%d]);\n",pname,pname,pname,Sp->m,Sp->n);
+      Sciprintf1(indent,"%s=sprow_sparse(%s__rc,%s__val,[%d,%d]);\n",pname,pname,pname,Sp->m,Sp->n);
       Sciprintf1(indent,"clear('%s__rc','%s__val')\n",pname,pname);
     }
   else
     {
       if (Sp->mn==0 ) 
 	{
-	  Sciprintf1(indent,"%s\t= []\t\tsp %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
+	  Sciprintf1(indent,"%s\t= []\t\tsprow %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
 	}
       else
 	{
 	  nsp_num_formats fmt;
 	  if ( user_pref.pr_depth  <= rec_level -1 ) 
 	    {
-	      Sciprintf1(indent,"%s\t= [...]\t\tsp %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
+	      Sciprintf1(indent,"%s\t= [...]\t\tsprow %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
 	      return;
 	    }
 	  nsp_init_pr_format (&fmt);
-	  Sciprintf1(indent,"%s\t=\t\tsp %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
+	  Sciprintf1(indent,"%s\t=\t\tsprow %c (%dx%d)\n",pname,Sp->rc_type,Sp->m,Sp->n);
 	  nsp_sprowmatrix_print_internal(&fmt,Sp,indent+1);
 	}
     }
