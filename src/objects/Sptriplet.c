@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -276,54 +276,30 @@ static int nsp_spcol_set_triplet_from_m_internal( NspSpColMatrix *M,int flag);
 static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M);
 static int nsp_spcol_alloc_triplet( NspSpColMatrix *M,int nzmax);
 
-/* tricky version to get a column triplet */
+/* associate a column triplet to internal representation of M */
 
 int nsp_spcol_set_triplet_from_m( NspSpColMatrix *M,int flag)
 {
-  NspSpColMatrix *Mt = nsp_spcolmatrix_transpose(M);
-  if ( Mt == NULL) return FAIL;
-  if ( nsp_spcol_set_triplet_from_m_internal(Mt,flag) == OK) 
-    {
-      M->convert = 't';
-      M->triplet = Mt->triplet;
-      Mt->convert = 'v';
-    }
-  nsp_spcolmatrix_destroy(Mt);
+  if ( nsp_spcol_set_triplet_from_m_internal(M,flag) == FAIL) 
+    return FAIL;
+  M->convert = 't';
   return OK;
 }
 
-/* tricky version to update from  a column triplet */
+/* update M data from its triplet internal representation  */
 
 int nsp_spcol_update_from_triplet( NspSpColMatrix *M)
 {
-  int i,nn;
-  NspSpColMatrix *Mt;
+  int i;
   /* partial free */
-  for ( i = 0  ; i < M->m ; i++) 
+  for ( i = 0  ; i < M->n ; i++) 
     {
       nsp_spcolmatrix_col_destroy(M->D[i]);
       FREE(M->D[i]);
     }
   FREE(M->D);
   M->m= M->n = 0;
-  /* switch triplet */
-  nn =   M->triplet.m ;
-  M->triplet.m = M->triplet.n;
-  M->triplet.n = nn;
   if ( nsp_spcol_update_from_triplet_internal(M) == FAIL) return FAIL;
-  /* now M is filled with its traspose */
-  Mt = nsp_spcolmatrix_transpose(M);
-  /* fill with Mt */
-  M->m=Mt->m;
-  M->n=Mt->n;
-  M->mn = M->m*M->n;
-  M->rc_type= Mt->rc_type;
-  M->convert = Mt->convert;
-  M->triplet = Mt->triplet;
-  M->D = Mt->D ;
-  /* free Mt */
-  Mt->D= NULL; Mt->m = Mt->n = Mt->mn = 0;
-  nsp_spcolmatrix_destroy(Mt);
   return OK;
 }
 
@@ -386,14 +362,14 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
   int i;
   /* use triplet to back change M */
   if ( M->convert != 't' ) return OK;
-  if ( M->m < M->triplet.m ) 
+  if ( M->n < M->triplet.n ) 
     {
-      if ( nsp_spcolmatrix_enlarge_cols(M,M->triplet.m-M->m)== FAIL) return FAIL;
+      if ( nsp_spcolmatrix_enlarge_cols(M,M->triplet.n-M->n)== FAIL) return FAIL;
     }
-  else if ( M->triplet.m < M->m ) 
+  else if ( M->triplet.n < M->n ) 
     {
-      /* delete extra lines */
-      for ( i = M->triplet.m ; i < M->m ; i++)
+      /* delete extra columns */
+      for ( i = M->triplet.n ; i < M->n ; i++)
 	{
 	  nsp_spcolmatrix_col_destroy(M->D[i]);
 	  FREE(M->D[i]);
@@ -402,15 +378,15 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
     }
   M->m = M->triplet.m;
   M->n = M->triplet.n;
-  /* resize each row */
-  for ( i = 0 ; i < M->m ; i++) 
+  /* resize each column */
+  for ( i = 0 ; i < M->n ; i++) 
     {
-      int row_size = M->triplet.Ap[i+1]-M->triplet.Ap[i];
-      if (nsp_spcolmatrix_resize_col(M,i,row_size) == FAIL) return FAIL;
+      int col_size = M->triplet.Ap[i+1]-M->triplet.Ap[i];
+      if (nsp_spcolmatrix_resize_col(M,i,col_size) == FAIL) return FAIL;
     }
   if ( M->rc_type == 'r')
     {
-      for ( i = 0 ; i < M->m ; i++)
+      for ( i = 0 ; i < M->n ; i++)
 	{
 	  int start = M->triplet.Ap[i],j;
 	  SpCol *D = M->D[i];
@@ -423,17 +399,13 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
     }
   else 
     {
-      for ( i = 0 ; i < M->m ; i++)
+      for ( i = 0 ; i < M->n ; i++)
 	{
 	  int start = M->triplet.Ap[i],j;
 	  SpCol *D = M->D[i];
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
 	      D->J[j]= M->triplet.Ai[start+j];
-	      /* 
-		 D->C[j].r= M->triplet.Ax[2*(start+j)];
-		 D->C[j].i= M->triplet.Ax[2*(start+j)+1];
-	      */
 	      D->C[j].r= M->triplet.Ax[start+j];
 	      D->C[j].i= M->triplet.Ax[start+j+M->triplet.Aisize];
 	    }
@@ -443,10 +415,7 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
   return OK;
 }
 
-
 /* from internal coding to the Ap,Ai,Az coding using int and double.
- * Note that the matrix M is row coded and thus the triplet is also 
- * row coded 
  * here the triplet has been allocated !
  */
 
@@ -456,14 +425,14 @@ static int nsp_spcol_fill_zi_triplet(const NspSpColMatrix *M)
   /* fill the array Ap */
   if ( M->convert != 't' ) return FAIL;
   loc = M->triplet.Ap; loc[0]=0;
-  for ( i = 1 ; i <= M->m ; i++)
+  for ( i = 1 ; i <= M->n ; i++)
     {
       loc[i]= loc[i-1] + M->D[i-1]->size;
     }
   /* fills the array Ai and Ax */
   if ( M->rc_type == 'r')
     {
-      for ( i = 0 ; i < M->m ; i++)
+      for ( i = 0 ; i < M->n ; i++)
 	{
 	  int start = M->triplet.Ap[i],j;
 	  SpCol *D = M->D[i];
@@ -476,18 +445,14 @@ static int nsp_spcol_fill_zi_triplet(const NspSpColMatrix *M)
     }
   else 
     {
-      for ( i = 0 ; i < M->m ; i++)
+      for ( i = 0 ; i < M->n ; i++)
 	{
 	  int start = M->triplet.Ap[i],j;
 	  SpCol *D = M->D[i];
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
 	      M->triplet.Ai[start+j]=  D->J[j];
-	      /* 
-		 M->triplet.Ax[2*(start+j)]= D->C[j].r;
-		 M->triplet.Ax[2*(start+j)+1]= D->C[j].i;
-	      */
-	      M->triplet.Ax[start+j]= D->C[j].r;
+	      M->triplet.Ax[start+j]=  D->C[j].r;
 	      M->triplet.Ax[start+j+M->triplet.Aisize]= D->C[j].i;
 	    }
 	}
@@ -506,7 +471,7 @@ static void nsp_spcol_free_triplet(NspSpColMatrix *M)
 static int nsp_spcol_alloc_triplet(NspSpColMatrix *M,int nzmax)
 {
   if ( M->convert == 't' ) return OK;
-  if ((M->triplet.Ap = malloc(sizeof(int)*(M->m+1)))== NULL) return FAIL;
+  if ((M->triplet.Ap = malloc(sizeof(int)*(M->n+1)))== NULL) return FAIL;
   if ((M->triplet.Ai = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
   if ((M->triplet.Ax = malloc(sizeof(double)*(nzmax)*(M->rc_type=='c' ? 2: 1))) == NULL)
       return FAIL;
