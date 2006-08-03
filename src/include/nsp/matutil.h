@@ -15,12 +15,12 @@ extern int nsp_float2double (int *n, float *rdx, int *incx, double *dy, int *inc
 extern int nsp_convert_double_to_type (double *x, int n, const char *type); 
 extern int nsp_convert_type_to_double (double *x, int n, const char *type); 
 extern int nsp_dset (const int *n, const double *dx, double *dy, const int *incy); 
-extern int nsp_dadd (const int *n, const double *dx,const int *incx, double *dy,const int *incy); 
-extern int nsp_dsub(const int *n,const  double *dx,const int *incx, double *dy,const  int *incy);
-extern int nsp_dadd_maxplus(const int *n, const double *dx, const  int *incx, double *dy, const  int *incy);
-extern int nsp_dsub_maxplus(const int *n,const double *dx,const int *incx, double *dy,const int *incy);
+extern int nsp_dadd (const int n, const double *dx,const int incx, double *dy,const int incy); 
+extern int nsp_dsub(const int n,const  double *dx,const int incx, double *dy,const  int incy);
+extern int nsp_dadd_maxplus(const int n, const double *dx, const  int incx, double *dy, const  int incy);
+extern int nsp_dsub_maxplus(const int n,const double *dx,const int incx, double *dy,const int incy);
 extern double nsp_dsum (int *n, double *dx, int *incx); 
-extern int nsp_dvmul(const int *n,const  double *dx,const  int *incx, double *dy,const  int *incy);
+extern int nsp_dvmul(const int n,const  double *dx,const  int incx, double *dy,const  int incy);
 extern int nsp_icopy (const int *n, const int *idx, const int *incx, int *idy, const int *incy); 
 extern int nsp_iset (int *n, int *idx, int *idy, int *incy); 
 extern int nsp_iadd (int *n, int *ival, int *idy, int *incy); 

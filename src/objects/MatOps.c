@@ -34,7 +34,7 @@
 
 
 static void Kronecker (NspMatrix *A,NspMatrix *B,NspMatrix *PK);
-typedef int (*AdSu) (const int*,const double *,const int*,double *,const int*);
+typedef int (*AdSu) (const int,const double *,const int,double *,const int);
 typedef int (*AdSuZ) (int*,doubleC *,int*,doubleC *,int*);
 static int MatOpScalar (NspMatrix *Mat1,NspMatrix *Mat2,AdSu F1,AdSuZ F2);
 
@@ -151,7 +151,7 @@ static int MatOpScalar(NspMatrix *Mat1, NspMatrix *Mat2, AdSu F1, AdSuZ F2)
     {
       if ( Mat2->rc_type == 'r') 
 	{
-	  (*F1)(&(Mat1->mn),Mat2->R,&incs,Mat1->R,&inc);
+	  (*F1)((Mat1->mn),Mat2->R,incs,Mat1->R,inc);
 	}
       else 
 	{
@@ -268,7 +268,7 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
 	{
 	  if ( Mat2->rc_type == 'r') 
 	    {
-	      nsp_dadd(&(Mat1->mn),Mat2->R,&inc,Mat1->R,&inc);
+	      nsp_dadd(Mat1->mn,Mat2->R,inc,Mat1->R,inc);
 	    }
 	  else 
 	    {
@@ -277,7 +277,7 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
 	      if (nsp_mat_complexify(Mat1,0.00)== FAIL ) return(FAIL);
 	      D1= (double *) Mat1->C;
 	      D2= (double *) Mat2->C;
-	      nsp_dadd(&(Mat1->mn),D2,&inc,D1,&inc);
+	      nsp_dadd((Mat1->mn),D2,inc,D1,inc);
 	      C2F(dcopy)(&(Mat1->mn),D2+1,&inc,D1+1,&inc);
 	    }
 	}
@@ -288,7 +288,7 @@ int nsp_mat_dadd(NspMatrix *Mat1, NspMatrix *Mat2)
 	      double *D1;
 	      int inc2=2;
 	      D1= (double *) Mat1->C;
-	      nsp_dadd(&(Mat1->mn),Mat2->R,&inc,D1,&inc2);
+	      nsp_dadd((Mat1->mn),Mat2->R,inc,D1,inc2);
 	    }
 	  else 
 	    {
@@ -332,7 +332,7 @@ int nsp_mat_dadd_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
 	{
 	  if ( Mat2->rc_type == 'r') 
 	    {
-	      nsp_dadd_maxplus(&(Mat1->mn),Mat2->R,&inc,Mat1->R,&inc);
+	      nsp_dadd_maxplus((Mat1->mn),Mat2->R,inc,Mat1->R,inc);
 	    }
 	  else 
 	    {
@@ -341,7 +341,7 @@ int nsp_mat_dadd_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
 	      if (nsp_mat_complexify(Mat1,0.00)== FAIL ) return(FAIL);
 	      D1= (double *) Mat1->C;
 	      D2= (double *) Mat2->C;
-	      nsp_dadd_maxplus(&(Mat1->mn),D2,&inc,D1,&inc);
+	      nsp_dadd_maxplus((Mat1->mn),D2,inc,D1,inc);
 	      C2F(dcopy)(&(Mat1->mn),D2+1,&inc,D1+1,&inc);
 	    }
 	}
@@ -352,7 +352,7 @@ int nsp_mat_dadd_maxplus(NspMatrix *Mat1, NspMatrix *Mat2)
 	      double *D1;
 	      int inc2=2;
 	      D1= (double *) Mat1->C;
-	      nsp_dadd_maxplus(&(Mat1->mn),Mat2->R,&inc,D1,&inc2);
+	      nsp_dadd_maxplus((Mat1->mn),Mat2->R,inc,D1,inc2);
 	    }
 	  else 
 	    {
@@ -392,9 +392,9 @@ int nsp_mat_dsub(NspMatrix *Mat1, NspMatrix *Mat2)
 	{
 	  if ( Mat2->rc_type == 'r') 
 	    {
-/* 	      double alpha=-1.0; */
-/* 	      C2F(daxpy)(&(Mat1->mn),&alpha,Mat2->R,&inc,Mat1->R,&inc); */
-	      nsp_dsub(&(Mat1->mn),Mat2->R,&inc,Mat1->R,&inc);
+	      /* 	      double alpha=-1.0; */
+	      /* 	      C2F(daxpy)(&(Mat1->mn),&alpha,Mat2->R,&inc,Mat1->R,&inc); */
+	      nsp_dsub((Mat1->mn),Mat2->R,inc,Mat1->R,inc);
 	    }
 	  else 
 	    {
@@ -404,7 +404,7 @@ int nsp_mat_dsub(NspMatrix *Mat1, NspMatrix *Mat2)
 	      if (nsp_mat_complexify(Mat1,0.00)== FAIL ) return(FAIL);
 	      D1= (double *) Mat1->C;
 	      D2= (double *) Mat2->C;
-	      nsp_dsub(&(Mat1->mn),D2,&inc,D1,&inc);
+	      nsp_dsub((Mat1->mn),D2,inc,D1,inc);
 	      for ( i = 0 ; i < Mat1->mn ; i++) Mat1->C[i].i = - Mat2->C[i].i;
 	    }
 	}
@@ -415,7 +415,7 @@ int nsp_mat_dsub(NspMatrix *Mat1, NspMatrix *Mat2)
 	      double *D1;
 	      int inc2=2;
 	      D1= (double *) Mat1->C;
-	      nsp_dsub(&(Mat1->mn),Mat2->R,&inc,D1,&inc2);
+	      nsp_dsub((Mat1->mn),Mat2->R,inc,D1,inc2);
 	    }
 	  else 
 	    {
@@ -1162,7 +1162,7 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, char *flag)
 	{
 	case 'r' : 
 	  Prod->R[0] =1.00;
-	  nsp_dvmul(&A->mn,A->R,&inc,Prod->R,&zero); ;break ;
+	  nsp_dvmul(A->mn,A->R,inc,Prod->R,zero); ;break ;
 	case 'c' :  
 	  Prod->C[0].r =1.00 ; Prod->C[0].i = 0.00;
 	  nsp_zvmul(&A->mn,A->C,&inc,Prod->C,&zero); break;
@@ -1178,7 +1178,7 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, char *flag)
 	  for ( j= 0 ; j < A->n ; j++) 
 	    {
 	      Prod->R[j] =1.00;
-	      nsp_dvmul(&A->m,A->R+(A->m)*j,&inc,Prod->R+j,&zero); 
+	      nsp_dvmul(A->m,A->R+(A->m)*j,inc,Prod->R+j,zero); 
 	    }
 	  break ;
 	case 'c' :  
@@ -1202,7 +1202,7 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, char *flag)
 	  for ( j= 0 ; j < A->m ; j++) 
 	    {
 	      Prod->R[j] =1.00;
-	      nsp_dvmul(&A->n,A->R+j,&inc,Prod->R+j,&zero); 
+	      nsp_dvmul(A->n,A->R+j,inc,Prod->R+j,zero); 
 	    }
 	  break ;
 	case 'c' :  
