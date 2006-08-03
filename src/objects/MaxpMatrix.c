@@ -92,7 +92,7 @@ NspMaxpMatrix * nsp_mp_matrix_from_m(const char *name,NspMatrix *M)
       return(NULLMAXPMAT);
     }
   /* shared by all objects */
-  if ((NSP_OBJECT(Mat)->name =new_nsp_string(name))== NULLSTRING) 
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Mat),name) == NULL)
     {
       Scierror("Error:\tRunning out of memory\n");
       return(NULLMAXPMAT);
@@ -294,7 +294,7 @@ void nsp_mpmatrix_destroy(NspMaxpMatrix *Mat)
   if ( Mat == NULLMAXPMAT ) return ; 
   FREE(Mat->C) ;
   FREE(Mat->R);
-  FREE(NSP_OBJECT(Mat)->name);
+  nsp_object_destroy_name(NSP_OBJECT(Mat));
   FREE(Mat) ;
 }
 

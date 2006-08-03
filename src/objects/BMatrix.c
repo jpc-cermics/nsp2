@@ -49,7 +49,8 @@ NspBMatrix  *nsp_bmatrix_create(char *name, int m, int n)
       Scierror("BMatCreate : Error no more space ");
       return(NULLBMAT);
     }
-  if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING) return(NULLBMAT);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
+    return(NULLBMAT);
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
 
   Loc->m =m;
@@ -159,7 +160,7 @@ void nsp_bmatrix_destroy(NspBMatrix *BMat)
   if ( BMat != NULLBMAT)
     {
       FREE(BMat->B);
-      FREE(NSP_OBJECT(BMat)->name);
+      nsp_object_destroy_name(NSP_OBJECT(BMat));
       FREE(BMat) ;
     };
 }

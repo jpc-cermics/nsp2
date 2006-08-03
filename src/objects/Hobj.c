@@ -309,7 +309,9 @@ static NspHobj  *hobj_create_gen(const char *name, NspObject *Obj,char htype)
       Sciprintf("No more memory\n");
       return NULLHOBJ;
     }
-  if ((NSP_OBJECT(H)->name =new_nsp_string(name))== NULLSTRING) return NULLHOBJ;
+  NSP_OBJECT(H)->name = NULL;
+  if ( NSP_OBJECT(H)->type->set_name(NSP_OBJECT(H),name) == NULL)
+    return(NULLHOBJ);
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   H->htype = htype; 
 
@@ -372,7 +374,7 @@ NspHobj  *nsp_hobj_copy(NspHobj *H)
 
 void nsp_hobj_destroy(NspHobj *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  NSP_OBJECT(H)->type->set_name(NSP_OBJECT(H),NVOID);
   FREE(H) ;
 }
 

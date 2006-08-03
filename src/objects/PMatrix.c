@@ -149,7 +149,8 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag
       Scierror("PMatCreate : Error no more space ");
       return(NULLPMAT);
     }
-  if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == (char *) 0) return(NULLPMAT);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
+    return(NULLPMAT);
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
     Loc->otype = PMATRIX;
@@ -197,7 +198,7 @@ void nsp_pmatrix_destroy(NspPMatrix *A)
 {
   int i;
   if ( A == NULLPMAT) return;
-  FREE( NSP_OBJECT(A)->name);
+  nsp_object_destroy_name(NSP_OBJECT(A));
   if (  A-> mn != 0 ) 
     {
       for ( i = 0 ; i < A->mn ; i++ ) 

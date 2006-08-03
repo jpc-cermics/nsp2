@@ -239,7 +239,7 @@ static NspNone  *nsp_none_xdr_load(XDR *xdrs)
 
 void nsp_none_destroy(NspNone *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   FREE(H);
 }
 
@@ -329,7 +329,8 @@ NspNone *nsp_none_create(char *name,NspTypeBase *type)
       Sciprintf("No more memory\n");
       return NULLNONE;
     }
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLNONE);
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+   return(NULLNONE);
   NSP_OBJECT(H)->ret_pos = -1 ;
   return H;
 }

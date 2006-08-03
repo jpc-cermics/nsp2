@@ -41,7 +41,8 @@ NspPList *NspPListCreate(char *name, PList L,char *filename)
       Scierror("No more space\n");
       return(NULLP_PLIST);
     }
-  if (( NSP_OBJECT(P_L)->name =new_nsp_string(name))== NULLSTRING) return NULLP_PLIST;
+  if ( nsp_object_set_initial_name(NSP_OBJECT(P_L),name) == NULL)
+    return NULLP_PLIST;
   if ( filename != NULL)
     {
       if ((P_L->file_name =new_nsp_string(filename))== NULLSTRING) return NULLP_PLIST;
@@ -76,7 +77,7 @@ void NspPListDestroy(NspPList *P_L)
 {
   if ( P_L!= NULLP_PLIST) 
     {
-      FREE(NSP_OBJECT(P_L)->name) ;
+      nsp_object_destroy_name(NSP_OBJECT(P_L));
       FREE(P_L->file_name) ;
       PListDestroy(&P_L->D);
       FREE(P_L) ;

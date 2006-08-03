@@ -214,7 +214,7 @@ void gboxed_destroy(NspGBoxed *self)
     self->boxed = NULL;
     nspg_block_threads();
   }
-  FREE(NSP_OBJECT(self)->name);
+  nsp_object_destroy_name(NSP_OBJECT(self));
   FREE(self);
 }
 
@@ -318,7 +318,8 @@ NspGBoxed *gboxed_create(char *name,GType boxed_type, gpointer boxed, gboolean c
       return NULLGBOXED;
     }
   
-  if ( ( NSP_OBJECT(self)->name =new_nsp_string(name)) == NULLSTRING) return(NULLGBOXED);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(self),name) == NULL)
+    return(NULLGBOXED);
   NSP_OBJECT(self)->ret_pos = -1 ;
   
   g_return_val_if_fail(boxed_type != 0, NULL);

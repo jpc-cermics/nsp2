@@ -57,7 +57,8 @@ NspCells *nsp_cells_create(const char *name, int m, int n)
       Scierror("Error:\tRunning out of memory\n");
       return(NULLCELLS);
     }
-  if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING) return(NULLCELLS);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
+    return(NULLCELLS);
   NSP_OBJECT(Loc)->ret_pos = -1 ;
   Loc->m =m;
   Loc->n = n;
@@ -261,7 +262,7 @@ void nsp_cells_destroy(NspCells *A)
 {
   int i;
   if ( A == NULLCELLS) return;
-  FREE(NSP_OBJECT(A)->name);
+  nsp_object_destroy_name(NSP_OBJECT(A));
   if ( A-> mn != 0 ) 
     {
       for ( i = 0 ; i < A->mn ; i++ ) 

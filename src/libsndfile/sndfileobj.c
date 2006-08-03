@@ -302,8 +302,8 @@ NspSndFile *nsp_sndfile_create(char *name, char *fname)
       Scierror("Error:\tRunning out of memory\n");
       return NULLSNDFILE;
     }
-    
-  if ((NSP_OBJECT(F)->name =new_nsp_string(name)) == NULLSTRING) return NULLSNDFILE;
+  if ( nsp_object_set_initial_name(NSP_OBJECT(F),name) == NULL)
+    return NULLSNDFILE;
   NSP_OBJECT(F)->ret_pos = -1 ; 
   if ((F->snd->fname = new_nsp_string(fname)) == NULLSTRING) return NULLSNDFILE;
   F->snd->refcount = 1;

@@ -223,7 +223,7 @@ static NspSerial  *nsp_serial_xdr_load(XDR *xdrs)
 
 void nsp_serial_destroy(NspSerial *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   FREE(H->val);
   FREE(H);
 }
@@ -314,7 +314,8 @@ static NspSerial *_nsp_serial_create(const char *name,const char *buf,int nbytes
   /* should be unsigned */
   nbytes=Max(0,nbytes);
   H->nbytes = nbytes + strlen(nsp_serial_header);
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLSERIAL);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return(NULLSERIAL);
   NSP_OBJECT(H)->ret_pos = -1 ;
   if ((H->val = malloc((H->nbytes)*sizeof(char)))== NULL) 
     {

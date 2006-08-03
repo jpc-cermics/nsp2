@@ -72,7 +72,8 @@ NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
     {
       Scierror("No more space\n");      return(NULLSPCOL);
     }
-  if ( ( NSP_OBJECT(Sp)->name =new_nsp_string(name)) == NULLSTRING) return(NULLSPCOL);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Sp),name) == NULL)
+    return(NULLSPCOL);
   NSP_OBJECT(Sp)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
     Sp->type = SPMATRIX;
@@ -403,7 +404,7 @@ void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat)
   int i;
   if ( Mat != NULLSPCOL )
     {
-      FREE(NSP_OBJECT(Mat)->name);
+      nsp_object_destroy_name(NSP_OBJECT(Mat));
       for ( i = 0  ; i < Mat->n ; i++) 
 	{
 	nsp_spcolmatrix_col_destroy(Mat->D[i]);

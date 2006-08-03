@@ -224,7 +224,7 @@ static NspModule  *module_xdr_load(XDR  *xdrs)
 
 void module_destroy(NspModule *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   FREE(H->path);
   FREE(H->mname);
   if ( H->flag  == 0) 
@@ -378,7 +378,8 @@ NspModule *module_create(char *name,const char *path,const char *mname,NspTypeBa
       Sciprintf("No more memory\n");
       return NULLMODULE;
     }
-  if ( ( NSP_OBJECT(M)->name =new_nsp_string(name)) == NULLSTRING) return(NULLMODULE);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(M),name) == NULL)
+    return(NULLMODULE);
   NSP_OBJECT(M)->ret_pos = -1 ;
   /* specific for Module */
   if ((M->path =new_nsp_string(path))== NULLSTRING)
@@ -431,7 +432,8 @@ NspModule *module_copy_ref(NspModule *Mod)
       Sciprintf("No more memory\n");
       return NULLMODULE;
     }
-  if ( ( NSP_OBJECT(M)->name =new_nsp_string(NSP_OBJECT(Mod)->name)) == NULLSTRING) return(NULLMODULE);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(M),NSP_OBJECT(Mod)->name) == NULL)
+    return(NULLMODULE);
   NSP_OBJECT(M)->ret_pos = -1 ;
   /* specific for Module */
   if ((M->path =new_nsp_string(Mod->path))== NULLSTRING)

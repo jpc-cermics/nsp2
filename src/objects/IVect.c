@@ -47,7 +47,8 @@ NspIVect *nsp_ivect_create(char *name, double first, double step, double last, i
       Scierror("No more space\n");
       return(NULLIVECT);
     }
-  if ((NSP_OBJECT(IV)->name =new_nsp_string(name))== NULLSTRING) return NULLIVECT;
+  if ( nsp_object_set_initial_name(NSP_OBJECT(IV),name) == NULL)
+    return NULLIVECT;
   NSP_OBJECT(IV)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
     IV->otype = IVECT;
@@ -86,7 +87,7 @@ void nsp_ivect_destroy(NspIVect *IV)
 {
   if ( IV != NULLIVECT)
     {
-      FREE(NSP_OBJECT(IV)->name);
+      nsp_object_destroy_name(NSP_OBJECT(IV));
       FREE(IV) ;
     };
 }

@@ -31,8 +31,10 @@ matnum.obj: matnum.c
 
 #dependencies 
 
-qsort1.c : qsort1-gen.c
-qsort2.c : qsort2-gen.c
-qsort.c : qsort-gen.c
-qsort-stable.c: qsort-stable-gen.c
+qsort1.obj :  qsort1-gen.c
+qsort2.obj : qsort2-gen.c
+qsort.obj : qsort-gen.c
+qsort-stable.obj:  qsort-stable-gen.c
+
+
 

@@ -220,7 +220,7 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 
 void nsp_classb_destroy(NspClassB *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   FREE(H);
 }
 
@@ -305,7 +305,8 @@ NspClassB *nsp_classb_create(char *name,int color,int thickness,NspTypeBase *typ
       Sciprintf("No more memory\n");
       return NULLCLB;
     }
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLCLB);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return(NULLCLB);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->classb_color = color;
   H->classb_thickness = thickness;

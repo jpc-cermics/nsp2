@@ -203,7 +203,7 @@ static int gpointer_neq(NspGPointer *A, NspObject *B)
 
 void gpointer_destroy(NspGPointer *self)
 {
-  FREE(NSP_OBJECT(self)->name);
+  nsp_object_destroy_name(NSP_OBJECT(self));
   FREE(self);
 }
 
@@ -288,8 +288,8 @@ NspGPointer *gpointer_create(char *name,GType gtype, gpointer pointer,NspTypeBas
       Sciprintf("No more memory\n");
       return NULLGPOINTER;
     }
-  
-  if ( ( NSP_OBJECT(self)->name =new_nsp_string(name)) == NULLSTRING) return(NULLGPOINTER);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(self),name) == NULL)
+    return(NULLGPOINTER);
   NSP_OBJECT(self)->ret_pos = -1 ;
   
   g_return_val_if_fail(gtype != 0, NULL);

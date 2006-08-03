@@ -224,7 +224,7 @@ static NspGFrame  *gframe_xdr_load(XDR  *xdrs)
 
 static void gframe_destroy(NspGFrame *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
@@ -308,7 +308,8 @@ static NspGFrame *gframe_create_void(char *name,NspTypeBase *type)
       Sciprintf("No more memory\n");
       return NULLGFRAME;
     }
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return NULLGFRAME;
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return NULLGFRAME;
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->obj = NULL;
   return H;

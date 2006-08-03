@@ -220,7 +220,7 @@ static Nsp@TYPENAME@  *nsp_@TYPEDOWNCASE@_xdr_load(XDR *xdrs)
 
 void nsp_@TYPEDOWNCASE@_destroy(Nsp@TYPENAME@ *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   FREE(H);
 }
 
@@ -305,7 +305,7 @@ Nsp@TYPENAME@ *nsp_@TYPEDOWNCASE@_create(char *name,int color,int thickness,NspT
       Sciprintf("No more memory\n");
       return @NULL@;
     }
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(@NULL@);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return(@NULL@);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->@TYPEDOWNCASE@_color = color;
   H->@TYPEDOWNCASE@_thickness = thickness;

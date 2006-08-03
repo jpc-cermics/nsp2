@@ -218,7 +218,7 @@ static NspModuleElt  *modulelt_xdr_load(XDR  *xdrs)
 
 void modulelt_destroy(NspModuleElt *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   FREE(H);
 }
 
@@ -302,7 +302,8 @@ NspModuleElt *modulelt_create(char *name,NspTypeBase *type)
       Sciprintf("No more memory\n");
       return NULLME;
     }
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLME);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return(NULLME);
   NSP_OBJECT(H)->ret_pos = -1 ;
   return H;
 }

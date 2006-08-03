@@ -281,7 +281,7 @@ static NspBlock  *block_xdr_load(XDR  *xdrs)
 
 static void block_destroy(NspBlock *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
@@ -370,7 +370,8 @@ static NspBlock *block_create_void(char *name,NspTypeBase *type)
    Sciprintf("No more memory\n");
    return NULLBLOCK;
   }
- if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return NULLBLOCK;
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+   return NULLBLOCK;
  NSP_OBJECT(H)->ret_pos = -1 ;
  H->obj = NULL;
  return H;

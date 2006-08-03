@@ -275,7 +275,7 @@ static NspLink  *link_xdr_load(XDR  *xdrs)
 
 static void link_destroy(NspLink *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
@@ -368,7 +368,8 @@ static NspLink *link_create_void(char *name,NspTypeBase *type)
    Sciprintf("No more memory\n");
    return NULLLINK;
   }
- if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return NULLLINK;
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+   return NULLLINK;
  NSP_OBJECT(H)->ret_pos = -1 ;
  H->obj = NULL;
  return H;

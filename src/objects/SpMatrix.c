@@ -72,7 +72,8 @@ NspSpRowMatrix *nsp_sprowmatrix_create(char *name, char type, int m, int n)
     {
       Scierror("No more space\n");      return(NULLSPROW);
     }
-  if ( ( NSP_OBJECT(Sp)->name =new_nsp_string(name)) == NULLSTRING) return(NULLSPROW);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Sp),name) == NULL)
+    return(NULLSPROW);
   NSP_OBJECT(Sp)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /*
     Sp->type = SPMATRIX;
@@ -505,7 +506,7 @@ void nsp_sprowmatrix_destroy(NspSpRowMatrix *Mat)
   int i;
   if ( Mat != NULLSPROW )
     {
-      FREE(NSP_OBJECT(Mat)->name);
+      nsp_object_destroy_name(NSP_OBJECT(Mat));
       for ( i = 0  ; i < Mat->m ; i++) 
 	{
 	nsp_sprowmatrix_row_destroy(Mat->D[i]);

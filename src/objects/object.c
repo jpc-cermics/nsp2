@@ -242,17 +242,61 @@ static char *object_type_short_string(void)
  * @ob: a #NspObject 
  * @name: a string 
  * 
- * sets the name ob object #NspObject. 
+ * sets the name ob object #NspObject. Previous name 
+ * is destroyed if it was not NVOID.
  * 
  * Return value: returns a pointer to the name or %NULLSTRING.
  **/
 
+static const char named_void[]="";
+
 static const char *set_name(NspObject *ob,const char *name)
 {
-  const char *name1 =new_nsp_string(name);
-  if ( name1 == NULLSTRING) return NULLSTRING;
-  FREE(ob->name) ;
+  const char *name1 = named_void;
+  if ( name[0] !='\0' ) 
+    {
+      if (( name1 =new_nsp_string(name)) == NULLSTRING)
+	return NULLSTRING;
+    }
+  if (ob->name != NULL && ob->name != named_void) FREE(ob->name) ;
   return ob->name = name1;
+}
+
+/**
+ * nsp_object_set_initial_name:
+ * @ob: a #NspObject 
+ * @name: a string 
+ * 
+ * sets the name of object #NspObject. This function is to be called
+ * the first time the name of object is set. 
+ * If the name is NVOID then the string is not allocated but a pointer 
+ * to a shared value is returned.
+ * 
+ * Return value: returns a pointer to the name or %NULLSTRING.
+ **/
+
+const char *nsp_object_set_initial_name(NspObject *ob,const char *name)
+{
+  const char *name1 = named_void;
+  if ( name[0] !='\0' ) 
+    {
+      if (( name1 =new_nsp_string(name)) == NULLSTRING)
+	return NULLSTRING;
+    }
+  return ob->name = name1;
+}
+
+/**
+ * nsp_object_destroy_name:
+ * @ob: a #NspObject 
+ * @name: a string 
+ * 
+ * free the memory used by object name.
+ **/
+
+void nsp_object_destroy_name(NspObject *ob)
+{
+  if ( ob->name[0] !='\0' )  FREE(ob->name);
 }
 
 /**

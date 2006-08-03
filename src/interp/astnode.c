@@ -221,7 +221,7 @@ static NspAstNode  *nsp_astnode_xdr_load(XDR *xdrs)
 
 void nsp_astnode_destroy(NspAstNode *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
@@ -326,7 +326,8 @@ static NspAstNode *astnode_create_void(char *name,NspTypeBase *type)
    Sciprintf("No more memory\n");
    return NULLASTNODE;
   }
- if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return NULLASTNODE;
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+   return NULLASTNODE;
  NSP_OBJECT(H)->ret_pos = -1 ;
   H->obj = NULL;
  return H;

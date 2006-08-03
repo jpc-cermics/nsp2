@@ -248,7 +248,7 @@ static NspType  *type_xdr_load(XDR *xdrs)
 
 void type_destroy(NspType *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   FREE(H);
 }
 
@@ -335,7 +335,8 @@ NspType *type_create(char *name,NspTypeBase *nsp_type ,NspTypeBase *type)
       Sciprintf("No more memory\n");
       return NULLTYPE;
     }
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLTYPE);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return(NULLTYPE);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->nsp_type = nsp_type;
   return H;

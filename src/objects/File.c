@@ -1021,6 +1021,7 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
       return FAIL;
     }
 
+
   if ( Info == NULL && (Info =new_nsp_string_n(INFOSIZE)) == NULLSTRING) return FAIL;
   Info_size = INFOSIZE;
 

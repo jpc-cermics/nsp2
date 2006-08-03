@@ -203,7 +203,7 @@ void nsp_file_destroy(NspFile  *F)
   if ( F != NULLSCIFILE )
     {
       /* XXXXXX : we must close file ? before destroying everything **/
-      FREE(NSP_OBJECT(F)->name) ;
+      nsp_object_destroy_name(NSP_OBJECT(F));
       FREE(F->fname);
       FREE(F) ;
     };
@@ -292,7 +292,8 @@ NspFile *nsp_file_create(char *name, char *fname, char *str,int flag,FILE *f)
       Scierror("Error:\tRunning out of memory\n");
       return NULLSCIFILE;
     }
-  if ((NSP_OBJECT(F)->name =new_nsp_string(name)) == NULLSTRING) return NULLSCIFILE;
+  if ( nsp_object_set_initial_name(NSP_OBJECT(F),name) == NULL)
+    return NULLSCIFILE;
   NSP_OBJECT(F)->ret_pos = -1 ; 
   if ((F->fname =new_nsp_string(fname)) == NULLSTRING) return NULLSCIFILE;
   strncpy(F->openf,str,4);

@@ -209,7 +209,7 @@ static NspPort  *nsp_port_xdr_load(XDR *xdrs)
 
 void nsp_port_destroy(NspPort *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
     {
@@ -312,7 +312,8 @@ static NspPort *port_create_void(char *name,NspTypeBase *type)
    Sciprintf("No more memory\n");
    return NULLPORT;
   }
- if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return NULLPORT;
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+   return NULLPORT;
  NSP_OBJECT(H)->ret_pos = -1 ;
  H->obj = NULL;
  return H;

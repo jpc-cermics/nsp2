@@ -229,7 +229,7 @@ static NspPangoAttribute  *pangoattribute_xdr_load(XDR  *xdrs)
 void pangoattribute_destroy(NspPangoAttribute *self)
 {
   pango_attribute_destroy(self->attr);
-  FREE(NSP_OBJECT(self)->name);
+  nsp_object_destroy_name(NSP_OBJECT(self));
   FREE(self);
 }
 
@@ -313,7 +313,8 @@ NspPangoAttribute *pangoattribute_create(char *name,  PangoAttribute *attr, NspT
       Sciprintf("No more memory\n");
       return NULLPATTR;
     }
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLPATTR);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return(NULLPATTR);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->attr = attr;
   return H;

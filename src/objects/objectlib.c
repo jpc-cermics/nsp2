@@ -650,7 +650,7 @@ NspObject *nsp_create_boolean_object(char *str,int val)
 
 const char *nsp_object_get_name(const NspObject *O)
 {
-  return NSP_OBJECT(O)->name ;
+  return O->name ;
 }
 
 /**
@@ -666,12 +666,8 @@ const char *nsp_object_get_name(const NspObject *O)
 
 int nsp_object_set_name(NspObject *O,const char *str)
 {
-  char *loc;
-  if ((loc = O->type->set_name(O,str))== NULL) return FAIL;
-  return OK;
+  return (O->type->set_name(O,str)== NULL) ? FAIL : OK;
 }
-
-
 
 /**
  * nsp_object_serialize:

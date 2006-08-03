@@ -236,7 +236,7 @@ static NspFunction  *function_xdr_load(XDR *xdrs)
 
 void function_destroy(NspFunction *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   FREE(H);
 }
 
@@ -339,7 +339,8 @@ NspFunction *function_create(char *name,char *fname,int iface,int pos,int status
       Sciprintf("No more memory\n");
       return NULLFUNC;
     }
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLFUNC);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return(NULLFUNC);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->iface = iface;
   H->pos = pos;

@@ -383,7 +383,8 @@ extern NspObject *nsp_create_false_object(char *str);
 extern const char *nsp_object_get_name(const NspObject *O); 
 extern int nsp_object_set_name(NspObject *O,const char *str); 
 extern int print_count_rows(Stack stack,int first_arg,int last_arg);
-
+extern const char *nsp_object_set_initial_name(NspObject *ob,const char *name);
+extern void nsp_object_destroy_name(NspObject *ob);
 
 
 #endif /*  NSP_TYPE_OBJECT  */

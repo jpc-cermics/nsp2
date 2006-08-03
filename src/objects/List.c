@@ -57,7 +57,7 @@ NspList*nsp_list_create(char *name)
     }
   if (name != NULLSTRING) 
     { 
-     if ( (NSP_OBJECT(Loc)->name=new_nsp_string(name)) == NULLSTRING )
+      if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
 	return NULLLIST;
     }
   else 
@@ -135,7 +135,7 @@ void nsp_list_destroy(NspList *l)
   if (l != NULLLIST)
     {
       Cell *loc,*loc1;
-      FREE(NSP_OBJECT(l)->name);
+      nsp_object_destroy_name(NSP_OBJECT(l));
       loc = l->first;
       while ( loc != NULLCELL) 
 	{

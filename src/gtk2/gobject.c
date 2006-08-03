@@ -252,7 +252,7 @@ void gobject_destroy(NspGObject *self)
       g_object_unref(self->obj);
       nspg_unblock_threads();
     }
-  FREE(NSP_OBJECT(self)->name);
+  nsp_object_destroy_name(NSP_OBJECT(self));
   FREE(self);
 }
 
@@ -340,7 +340,8 @@ NspGObject *gobject_create(char *name,  GObject *obj, NspTypeBase *type)
       return NULLGOBJECT;
     }
   g_object_ref(obj);
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLGOBJECT);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return(NULLGOBJECT);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->obj = obj ; 
   return H;

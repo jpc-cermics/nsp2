@@ -1045,7 +1045,7 @@ int nsp_bhash_resize(NspBHash *H, unsigned int new_size)
   H->htable = Loc->htable;
   H->hsize  = Loc->hsize;
   H->filled = Loc->filled;
-  FREE(NSP_OBJECT(Loc)->name);
+  nsp_object_destroy_name(NSP_OBJECT(Loc));
   FREE(Loc);
   return OK;
 }
@@ -1479,7 +1479,8 @@ NspBHash *nsp_bhcreate(char *name, unsigned int nel)
       Sciprintf("No more memory\n");
       return NULLBHASH;
     }
-  if ((NSP_OBJECT(H)->name =new_nsp_string(name))== NULLSTRING) return NULLBHASH;
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return NULLBHASH;
   NSP_OBJECT(H)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   H->hsize  = nel;
   H->filled = 0;
@@ -1508,7 +1509,7 @@ void nsp_bhdestroy(NspBHash *H)
   if ( H != NULLBHASH )
     {
       FREE(H->htable);
-      FREE(NSP_OBJECT(H)->name);
+      nsp_object_destroy_name(NSP_OBJECT(H));
       FREE(H);
     }
 }

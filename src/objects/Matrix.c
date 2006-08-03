@@ -59,11 +59,9 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
       return(NULLMAT);
     }
   /* shared by all objects */
-  if ((NSP_OBJECT(Mat)->name =new_nsp_string(name))== NULLSTRING) 
-    {
-      Scierror("Error:\tRunning out of memory\n");
-      return(NULLMAT);
-    }
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Mat),name) == NULL)
+    return(NULLMAT);
+  
   NSP_OBJECT(Mat)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /* specific for Matrix */
   Mat->m=m;
@@ -129,14 +127,14 @@ NspMatrix *nsp_matrix_create_impl(double first, double step, double last)
   /* counting **/
   if ( step > 0 ) 
     {
-/*       while ( vals <= last ) { vals += step ; count++;} */
+      /*       while ( vals <= last ) { vals += step ; count++;} */
       count = 1 + (int) floor((last-first)/step);
       vals = first + count*step;
       if ( vals -last <  Max(Abs(first),Abs(last))*DBL_EPSILON*10) count++;
     }
   else if ( step < 0) 
     {
-/*       while ( vals >= last ) { vals += step ; count++;} */
+      /*       while ( vals >= last ) { vals += step ; count++;} */
       count = 1 + (int) floor((last-first)/step);
       vals = first + count*step;
       if ( last - vals <  Max(Abs(first),Abs(last))*DBL_EPSILON*10) count++;
@@ -474,8 +472,10 @@ void nsp_matrix_destroy(NspMatrix *Mat)
 {
   if ( Mat == NULLMAT ) return ; 
   FREE(Mat->C) ; /* C,R,I are stored in an union */
-  FREE(NSP_OBJECT(Mat)->name);
+  /* free name */
+  nsp_object_destroy_name(NSP_OBJECT(Mat));
   FREE(Mat) ;
+
 }
 
 /**

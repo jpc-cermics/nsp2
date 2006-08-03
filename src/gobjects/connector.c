@@ -279,7 +279,7 @@ static NspConnector  *connector_xdr_load(XDR  *xdrs)
 
 static void connector_destroy(NspConnector *H)
 {
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
@@ -363,7 +363,8 @@ static NspConnector *connector_create_void(char *name,NspTypeBase *type)
    Sciprintf("No more memory\n");
    return NULLCONNECTOR;
   }
- if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return NULLCONNECTOR;
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+   return NULLCONNECTOR;
  NSP_OBJECT(H)->ret_pos = -1 ;
  H->obj = NULL;
  return H;

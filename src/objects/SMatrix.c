@@ -53,7 +53,9 @@ NspSMatrix* nsp_smatrix_create(nsp_const_string name, int m, int n,nsp_const_str
       Scierror("Error:\tRunning out of memory\n");
       return(NULLSMAT);
     }
-  if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING) return(NULLSMAT);
+  NSP_OBJECT(Loc)->name = NULL;
+  if ( NSP_OBJECT(Loc)->type->set_name(NSP_OBJECT(Loc),name) == NULL)
+    return(NULLSMAT);
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /* Loc->otype = SMATRIX;
      Loc->ftype = SMatrix_Type;
@@ -98,7 +100,9 @@ NspSMatrix*nsp_smatrix_create_with_length(nsp_const_string name, int m, int n, i
       Scierror("Error:\tRunning out of memory\n");
       return(NULLSMAT);
     }
-  if ( ( NSP_OBJECT(Loc)->name =new_nsp_string(name)) == NULLSTRING) return(NULLSMAT);
+  NSP_OBJECT(Loc)->name = NULL;
+  if ( NSP_OBJECT(Loc)->type->set_name(NSP_OBJECT(Loc),name) == NULL)
+    return(NULLSMAT);
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   Loc->m = Max(m,0);
   Loc->n = Max(n,0);
@@ -295,7 +299,7 @@ void nsp_smatrix_destroy(NspSMatrix *A)
 {
   int i;
   if ( A == NULLSMAT) return;
-  FREE(NSP_OBJECT(A)->name);
+  NSP_OBJECT(A)->type->set_name(NSP_OBJECT(A),NVOID);
   if ( A-> mn != 0 ) 
     {
       for ( i = 0 ; i < A->mn ; i++ ) 

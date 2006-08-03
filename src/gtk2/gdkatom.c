@@ -231,7 +231,7 @@ static NspGdkAtom  *gdkatom_xdr_load(XDR  *xdrs)
 void gdkatom_destroy(NspGdkAtom *H)
 {
   if ( H->name) g_free(H->name);
-  FREE(NSP_OBJECT(H)->name);
+  nsp_object_destroy_name(NSP_OBJECT(H));
   FREE(H);
 }
 
@@ -320,7 +320,8 @@ NspGdkAtom *gdkatom_create(char *name,char *aname,GdkAtom atom,NspTypeBase *type
       Sciprintf("No more memory\n");
       return NULLGDKATOM;
     }
-  if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return(NULLGDKATOM);
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return(NULLGDKATOM);
   NSP_OBJECT(H)->ret_pos = -1 ;
   H->name = aname;
   H->atom = atom; 
