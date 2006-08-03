@@ -100,6 +100,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
   L1= L->next ; /* first arg */
   if ( L->type > 0 && L->type  != '=' ) 
     {
+      const char *opcode ;
       /*Evaluation of operators **/
       switch ( L->arity ) 
 	{
@@ -115,7 +116,8 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  stack.val->S[first] = (NspObject *) IV;
 	  return 1;
 	case 1:
-	  O1=nsp_frames_search_op_object(OpCode2NickN(L->type));
+	  opcode = OpCode2NickN(L->type);
+	  O1=nsp_frames_search_op_object(opcode);
 	  if ( L->type == '\n' || L->type == ';' || L->type == ',' )
 	    {
 	      if (( nargs =nsp_eval_arg(L1,stack,first,1,-1,display)) < 0) return nargs;
@@ -133,7 +135,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		}
 	      if ( display == 1 )
 		{
-		  if ((n=nsp_eval_func(O1,OpCode2NickN(L->type),stack,first,nargs,0,lhs))<0) return n;
+		  if ((n=nsp_eval_func(O1,opcode,stack,first,nargs,0,lhs))<0) return n;
 		}
 	      /* clean the stack : XXXX maybe useless now */
 	      nsp_void_seq_object_destroy(stack,first,first+nargs);
@@ -141,23 +143,38 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    }
 	  else
 	    {
-	      if (( nargs  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0) SHOWBUG(stack,nargs,L1);
-	      if ((n=nsp_eval_func(O1,OpCode2NickN(L->type),stack,first,nargs,0,lhs))<0) SHOWBUG(stack,n,L1);
+	      if (( nargs  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0) 
+		SHOWBUG(stack,nargs,L1);
+	      if ( nargs != 1) 
+		{
+		  /* too many arguments returned */
+		  /* ex:A=1:5; -(A{1:3})*/
+		  Scierror("Error: too many values (%d) returned as a first argument of unary operator %s\n",
+			   nargs,OpCode2Str(L->type));
+		  /* clean the stack */
+		  nsp_void_seq_object_destroy(stack,first,first+nargs);
+		  SHOWBUG(stack,RET_BUG,L1);
+		  return RET_BUG;
+		}
+	      if ((n=nsp_eval_func(O1,opcode,stack,first,nargs,0,lhs))<0) 
+		SHOWBUG(stack,n,L1);
 	      return n;
 	    }
 	  break;
 	case 2:
-	  /*checking eye and ones **/
+	  opcode = OpCode2NickN(L->type);
+	  /*checking eye and ones */
 	  if ( L->type == SEQAND || L->type == SEQOR ) 
 	    {
-	      O1=nsp_frames_search_op_object(OpCode2NickN(L->type));
+	      O1=nsp_frames_search_op_object(opcode);
 	      if (( n  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0 ) SHOWBUG(stack,n,L1);
 	      nargs = n;
 	      if ( nargs != 1 ) 
 		{
-		  /* to many argument returned */
+		  /* too many arguments returned */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
-		  Scierror("Error: too many values (%d) returned as a first argument of binary operator\n",nargs);
+		  /* ex: A=1:5;A{1:3} && 9 */
+		  Scierror("Error: too many values (%d) returned as a first argument of binary operator %s\n",nargs,OpCode2Str(L->type));
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
@@ -180,15 +197,15 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		}
 	      if ( n != 1 ) 
 		{
-		  /* to many argument returned */
+		  /* to many argument returned ex:  A=1:5; 9 && A{1:3} */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs+n);
-		  Scierror("Error: too many values (%d) returned as second argument of binary operator\n",n);
+		  Scierror("Error: too many values (%d) returned as second argument of binary operator %s\n",n,OpCode2Str(L->type));
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
 	      nargs +=n;
 	      /*XXXXX Pas forcement astucieux pour un operateur ? **/
-	      if ((n=nsp_eval_func(O1,OpCode2NickN(L->type),stack,first,nargs,0,lhs))<0) 
+	      if ((n=nsp_eval_func(O1,opcode,stack,first,nargs,0,lhs))<0) 
 		SHOWBUG(stack,n,L1);
 	      return n;
 	    }
@@ -211,24 +228,26 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  else 
 	    {
 	      /* standard 2 ary operators */
-	      O1=nsp_frames_search_op_object(OpCode2NickN(L->type));
-	      if (( n  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0 ) SHOWBUG(stack,n,L1);
+	      O1=nsp_frames_search_op_object(opcode);
+	      if (( n  =nsp_eval_arg(L1,stack,first,1,1,display)) < 0 ) 
+		SHOWBUG(stack,n,L1);
 	      nargs = n;
 	      if (( n  =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0) 
 		{
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
-		  SHOWBUG(stack,n,L1);
+		  SHOWBUG(stack,n,L1->next);
 		}
 	      nargs +=n;
-	      /*XXXXX Pas forcement astucieux pour un operateur ? **/
-	      if ((n=nsp_eval_func(O1,OpCode2NickN(L->type),stack,first,nargs,0,lhs))<0) 
+	      /* Pas forcement astucieux pour un operateur ? **/
+	      if ((n=nsp_eval_func(O1,opcode,stack,first,nargs,0,lhs))<0) 
 		SHOWBUG(stack,n,L1);
 	      return n;
 	    }
 	  break;
 	default :
+	  opcode = OpCode2NickN(L->type);
 	  loc = L1;
-	  O1=nsp_frames_search_op_object(OpCode2NickN(L->type));
+	  O1=nsp_frames_search_op_object(opcode);
 	  nargs=0;
 	  for ( j = L->arity ; j > 0  ; j--)
 	    {
@@ -241,7 +260,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      nargs += n;
 	      loc = loc->next ;
 	    }
-	  if ((n=nsp_eval_func(O1,OpCode2NickN(L->type),stack,first,nargs,0,lhs))<0) SHOWBUG(stack,n,L1);
+	  if ((n=nsp_eval_func(O1,opcode,stack,first,nargs,0,lhs))<0) SHOWBUG(stack,n,L1);
 	  return n;
 	  break;
 	}
@@ -308,7 +327,8 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	case PLIST :
 	  if (L->next == NULLPLIST )
 	    {
-	      if ((nargs=nsp_eval_arg(L,stack,first,1,1,display)) < 0) SHOWBUG(stack,nargs,L1);
+	      if ((nargs=nsp_eval_arg(L,stack,first,1,1,display)) < 0) 
+		SHOWBUG(stack,nargs,L1);
 	      return nargs;
 	    }
 	  return 0;

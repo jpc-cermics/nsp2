@@ -1497,7 +1497,7 @@ static void PListPrint_I(PList List, int indent)
 	      ArgPrint(List,indent);
 	      List = List->next;
 	    }
-	  Sciprintf(":");Sciprintf1(indent,"\n");
+	  Sciprintf(")");
 	  break;
 	case CASE :
 	  Sciprintf("case ") ;
