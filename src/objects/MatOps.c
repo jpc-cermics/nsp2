@@ -34,7 +34,7 @@
 
 
 static void Kronecker (NspMatrix *A,NspMatrix *B,NspMatrix *PK);
-typedef int (*AdSu) (int*,double *,int*,double *,int*);
+typedef int (*AdSu) (const int*,const double *,const int*,double *,const int*);
 typedef int (*AdSuZ) (int*,doubleC *,int*,doubleC *,int*);
 static int MatOpScalar (NspMatrix *Mat1,NspMatrix *Mat2,AdSu F1,AdSuZ F2);
 

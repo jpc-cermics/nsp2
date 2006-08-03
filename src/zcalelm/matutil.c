@@ -348,7 +348,7 @@ int nsp_dset(const int *n,const double * dx,double * dy,const int * incy)
  * Return value: unused 
  **/
 
-int nsp_dadd(int *n, double *dx, int *incx, double *dy, int *incy)
+int nsp_dadd(const int *n,const double *dx,const  int *incx, double *dy,const  int *incy)
 {
   static int i, ix, iy;
   if (*n <= 0) { return 0;  }
@@ -388,7 +388,7 @@ int nsp_dadd(int *n, double *dx, int *incx, double *dy, int *incy)
  * Return value: unused 
  **/
 
-int nsp_dadd_maxplus(int *n, double *dx, int *incx, double *dy, int *incy)
+int nsp_dadd_maxplus(const int *n, const double *dx, const  int *incx, double *dy, const  int *incy)
 {
   static int i, ix, iy;
   if (*n <= 0) { return 0;  }
@@ -409,7 +409,8 @@ int nsp_dadd_maxplus(int *n, double *dx, int *incx, double *dy, int *incy)
     }
   else 
     {
-      register double *y,*x;
+      register double *y;
+      register const double *x;
       /* code for unequal increments or equal increments */
       /* not equal to 1 */
       ix = iy = 0;
@@ -448,7 +449,7 @@ int nsp_dadd_maxplus(int *n, double *dx, int *incx, double *dy, int *incy)
  * Return value: 
  **/
 
-int nsp_dsub(int *n, double *dx, int *incx, double *dy, int *incy)
+int nsp_dsub(const int *n,const  double *dx,const int *incx, double *dy,const  int *incy)
 {
   static int i, ix, iy;
   if (*n <= 0) { return 0;  }
@@ -489,7 +490,7 @@ int nsp_dsub(int *n, double *dx, int *incx, double *dy, int *incy)
  * Return value: 
  **/
 
-int nsp_dsub_maxplus(int *n, double *dx, int *incx, double *dy, int *incy)
+int nsp_dsub_maxplus(const int *n,const double *dx,const int *incx, double *dy,const int *incy)
 {
   static int i, ix, iy;
   if (*n <= 0) { return 0;  }
@@ -570,7 +571,7 @@ double nsp_dsum(int *n, double *dx, int *incx)
  * Return value: 
  **/
 
-int nsp_dvmul(int *n, double *dx, int *incx, double *dy, int *incy)
+int nsp_dvmul(const int *n,const  double *dx,const  int *incx, double *dy,const  int *incy)
 {
   static int i, ix, iy;
   if (*n <= 0) { return 0;  }

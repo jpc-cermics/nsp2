@@ -22,6 +22,10 @@ ATLAS=
 
 LOCAL= dgesv.obj dgetrf.obj dgetrs.obj dpotrs.obj dpotrf.obj  zgetrf.obj zgetrs.obj zpotrf.obj
 
+# the UNUSED are redefined for nsp elsewhere 
+
+UNUSED= dlamch.obj xerbla.obj dhgeqz.obj
+
 OBJSF = dbdsdc.obj dbdsqr.obj ddisna.obj dgbbrd.obj dgbcon.obj dgbequ.obj dgbrfs.obj dgbsv.obj \
 	 dgbsvx.obj dgbtf2.obj dgbtrf.obj dgbtrs.obj dgebak.obj dgebal.obj dgebd2.obj dgebrd.obj \
 	dgecon.obj dgeequ.obj dgees.obj dgeesx.obj dgeev.obj dgeevx.obj dgegs.obj dgegv.obj dgehd2.obj \
@@ -30,11 +34,11 @@ OBJSF = dbdsdc.obj dbdsqr.obj ddisna.obj dgbbrd.obj dgbcon.obj dgbequ.obj dgbrfs
 	dgesdd.obj dgesvd.obj dgesv.obj dgesvx.obj dgetc2.obj dgetf2.obj dgetrf.obj dgetri.obj dgetrs.obj \
 	dggbak.obj dggbal.obj dgges.obj dggesx.obj dggev.obj dggevx.obj dggglm.obj dgghrd.obj dgglse.obj \
 	dggqrf.obj dggrqf.obj dggsvd.obj dggsvp.obj dgtcon.obj dgtrfs.obj dgtsv.obj dgtsvx.obj dgttrf.obj \
-	dgttrs.obj dgtts2.obj dhgeqz.obj dhsein.obj dhseqr.obj dlabad.obj dlabrd.obj dlacon.obj dlacpy.obj \
+	dgttrs.obj dgtts2.obj dhsein.obj dhseqr.obj dlabad.obj dlabrd.obj dlacon.obj dlacpy.obj \
 	dladiv.obj dlae2.obj dlaebz.obj dlaed0.obj dlaed1.obj dlaed2.obj dlaed3.obj dlaed4.obj dlaed5.obj \
 	dlaed6.obj dlaed7.obj dlaed8.obj dlaed9.obj dlaeda.obj dlaein.obj dlaev2.obj dlaexc.obj dlag2.obj \
 	dlags2.obj dlagtf.obj dlagtm.obj dlagts.obj dlagv2.obj dlahqr.obj dlahrd.obj dlaic1.obj dlaln2.obj \
-	dlals0.obj dlalsa.obj dlalsd.obj dlamch.obj dlamrg.obj dlangb.obj dlange.obj dlangt.obj dlanhs.obj \
+	dlals0.obj dlalsa.obj dlalsd.obj dlamrg.obj dlangb.obj dlange.obj dlangt.obj dlanhs.obj \
 	dlansb.obj dlansp.obj dlanst.obj dlansy.obj dlantb.obj dlantp.obj dlantr.obj dlanv2.obj dlapll.obj \
 	dlapmt.obj dlapy2.obj dlapy3.obj dlaqgb.obj dlaqge.obj dlaqp2.obj dlaqps.obj dlaqsb.obj dlaqsp.obj \
 	dlaqsy.obj dlaqtr.obj dlar1v.obj dlar2v.obj dlarfb.obj dlarf.obj dlarfg.obj dlarft.obj dlarfx.obj \
@@ -59,7 +63,7 @@ OBJSF = dbdsdc.obj dbdsqr.obj ddisna.obj dgbbrd.obj dgbcon.obj dgbequ.obj dgbrfs
 	dtgexc.obj dtgsen.obj dtgsja.obj dtgsna.obj dtgsy2.obj dtgsyl.obj dtpcon.obj dtprfs.obj dtptri.obj dtptrs.obj \
 	dtrcon.obj dtrevc.obj dtrexc.obj dtrrfs.obj dtrsen.obj dtrsna.obj dtrsyl.obj dtrti2.obj dtrtri.obj dtrtrs.obj \
 	dtzrqf.obj dtzrzf.obj dzsum1.obj icmax1.obj ieeeck.obj ilaenv.obj izmax1.obj lsame.obj lsamen.obj slamch.obj \
-	xerbla.obj zbdsqr.obj zdrot.obj zdrscl.obj zgbbrd.obj zgbcon.obj zgbequ.obj zgbrfs.obj zgbsv.obj zgbsvx.obj \
+	zbdsqr.obj zdrot.obj zdrscl.obj zgbbrd.obj zgbcon.obj zgbequ.obj zgbrfs.obj zgbsv.obj zgbsvx.obj \
 	zgbtf2.obj zgbtrf.obj zgbtrs.obj zgebak.obj zgebal.obj zgebd2.obj zgebrd.obj zgecon.obj zgeequ.obj zgees.obj \
 	zgeesx.obj zgeev.obj zgeevx.obj zgegs.obj zgegv.obj zgehd2.obj zgehrd.obj zgelq2.obj zgelqf.obj zgelsd.obj \
 	zgels.obj zgelss.obj zgelsx.obj zgelsy.obj zgeql2.obj zgeqlf.obj zgeqp3.obj zgeqpf.obj zgeqr2.obj zgeqrf.obj \
