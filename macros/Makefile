@@ -6,6 +6,7 @@ include $(TOP)/Makefile.incl
 CFLAGS = $(CC_OPTIONS) 
 
 SUBDIRS = blocks graphics miscellaneous scicos_no_xor system
+SUBDIRS_CLEAN = blocks graphics miscellaneous scicos_no_xor scicos system
 
 all:: 
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
@@ -17,7 +18,7 @@ all::
 
 distclean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
+	for i in $(SUBDIRS_CLEAN) ;\
 	do \
 		(cd $$i ; echo "making distclean in macros/$$i..."; \
 		$(MAKE) $(MFLAGS)  distclean); \
@@ -25,7 +26,7 @@ distclean::
 
 clean::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
+	for i in $(SUBDIRS_CLEAN) ;\
 	do \
 		(cd $$i ; echo "making clean in macros/$$i..."; \
 		$(MAKE) $(MFLAGS) clean); \
