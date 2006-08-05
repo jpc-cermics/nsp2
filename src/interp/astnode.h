@@ -27,8 +27,11 @@ struct _NspTypeAstNode {
 typedef struct _nsp_astnode nsp_astnode;
 struct _nsp_astnode {
   int op;
-  int arity;
-  int line;
+  int arity; /* arity for operators or tag for names etc.. */
+  void *obj; /* used to store a string pointer, 
+	      * an object pointer a parse_double
+	      * an int. Maybe an union could help.
+	      */
   int ref_count;
 };
 

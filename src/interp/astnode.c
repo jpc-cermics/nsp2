@@ -171,7 +171,7 @@ static int nsp_astnode_eq(NspAstNode *A, NspObject *B)
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->op != loc->obj->op) return FALSE;
   if ( A->obj->arity != loc->obj->arity) return FALSE;
-  if ( A->obj->line != loc->obj->line) return FALSE;
+  if ( A->obj->obj != loc->obj->obj) return FALSE;
   return TRUE;
 }
 
@@ -194,7 +194,7 @@ static int nsp_astnode_xdr_save(XDR *xdrs, NspAstNode *M)
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->op) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->arity) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->line) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, NSP_POINTER_TO_INT(M->obj->obj)) == FAIL) return FAIL;
   return OK;
 }
 
@@ -204,6 +204,7 @@ static int nsp_astnode_xdr_save(XDR *xdrs, NspAstNode *M)
 
 static NspAstNode  *nsp_astnode_xdr_load(XDR *xdrs)
 {
+  int line;
   NspAstNode *M = NULL;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLASTNODE;
@@ -211,8 +212,9 @@ static NspAstNode  *nsp_astnode_xdr_load(XDR *xdrs)
   if ((M->obj = malloc(sizeof(nsp_astnode))) == NULL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->op) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->arity) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->line) == FAIL) return NULL;
- return M;
+  if (nsp_xdr_load_i(xdrs, &line) == FAIL) return NULL;
+  M->obj->obj = NSP_INT_TO_POINTER(line);
+  return M;
 }
 
 /*
@@ -241,7 +243,8 @@ void nsp_astnode_info(NspAstNode *M, int indent,const char *name, int rec_level)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t= [op:%d,arity:%d,line:%d]\t\t%s ()\n",
 	    pname,
-	    M->obj->op, M->obj->arity, M->obj->line,
+	    M->obj->op, M->obj->arity,
+	    NSP_POINTER_TO_INT(M->obj->obj),
 	    nsp_astnode_type_short_string());
 }
 
@@ -257,12 +260,12 @@ void nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level
       if ( strcmp(pname,NVOID) != 0) 
 	{
 	  Sciprintf1(indent,"%s=astnode_create(op=%d,arity=%d,line=%d);",pname,
-		     M->obj->op, M->obj->arity, M->obj->line);
+		     M->obj->op, M->obj->arity, M->obj->obj);
 	}
       else 
 	{
 	  Sciprintf1(indent,"astnode_create(op=%d,arity=%d,line=%d);",
-		     M->obj->op, M->obj->arity, M->obj->line);
+		     M->obj->op, M->obj->arity, M->obj->obj);
 	}
     }
   else 
@@ -341,7 +344,7 @@ NspAstNode *astnode_create(char *name,int op,int arity,int line,NspTypeBase *typ
   H->obj->ref_count=1;
   H->obj->op=op;
   H->obj->arity=arity;
-  H->obj->line=line;
+  H->obj->obj=(void *) NSP_INT_TO_POINTER(line);
  return H;
 }
 
@@ -411,7 +414,6 @@ static NspObject *_wrap_astnode_get_arity(void *self,char *attr)
 static int _wrap_astnode_set_arity(void *self, char *attr, NspObject *O)
 {
   int arity;
-
   if ( IntScalar(O,&arity) == FAIL) return FAIL;
   ((NspAstNode *) self)->obj->arity = arity;
   return OK;
@@ -419,18 +421,15 @@ static int _wrap_astnode_set_arity(void *self, char *attr, NspObject *O)
 
 static NspObject *_wrap_astnode_get_line(void *self,char *attr)
 {
-  int ret;
-
-  ret = ((int) ((NspAstNode *) self)->obj->line);
+  int ret= NSP_POINTER_TO_INT(((NspAstNode *) self)->obj->obj);
   return nsp_new_double_obj((double) ret);
 }
 
 static int _wrap_astnode_set_line(void *self, char *attr, NspObject *O)
 {
   int line;
-
   if ( IntScalar(O,&line) == FAIL) return FAIL;
-  ((NspAstNode *) self)->obj->line = line;
+  ((NspAstNode *) self)->obj->obj =(void *) NSP_INT_TO_POINTER(line);
   return OK;
 }
 
