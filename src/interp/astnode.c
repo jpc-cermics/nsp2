@@ -241,8 +241,9 @@ void nsp_astnode_info(NspAstNode *M, int indent,const char *name, int rec_level)
   int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("%s\t= [op:%d,arity:%d,line:%d]\t\t%s ()\n",
+  Sciprintf("%s\t= [op:%s,%d,arity:%d,data:%d]\t\t%s ()\n",
 	    pname,
+	    nsp_astcode_to_string(M->obj->op),
 	    M->obj->op, M->obj->arity,
 	    NSP_POINTER_TO_INT(M->obj->obj),
 	    nsp_astnode_type_short_string());
@@ -270,9 +271,48 @@ void nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level
     }
   else 
     {
-      nsp_astnode_info(M,indent,pname,rec_level);
+      char *s;
+      Sciprintf1(indent,"%s\t={",pname);
+      switch ( M->obj->op ) 
+	{
+	case STRING:
+	  Sciprintf("\"%s\"", M->obj->obj);
+	  break;
+	case COMMENT:
+	  Sciprintf1(indent,"//%s", M->obj->obj);
+	  break;
+	case NUMBER:
+	  Sciprintf("%s",M->obj->obj);
+	  break;
+	case NAME :
+	  Sciprintf("%s", M->obj->obj);
+	  break;
+	case OPNAME :
+	  Sciprintf("'%s'", M->obj->obj);
+	  break;
+	case OBJECT : 
+	  Sciprintf("obj:0x%x",M->obj->obj);
+	  break;
+	default:
+	  if (  IsCodeKeyword( M->obj->op)== OK) 
+	    s= Keycode2str( M->obj->op);
+	  else s= OpCode2Str( M->obj->op);
+	  if ( s != (char *) 0 )
+	    {
+	      if ( s[0]=='\n')
+		Sciprintf("\\n",s);
+	      else
+		Sciprintf("%s",s);
+	    }
+	  else 
+	    Sciprintf("UNKNOWN->%d", M->obj->op);
+	}
+      Sciprintf("}\t\t%s\n",nsp_astnode_type_short_string());
     }
 }
+
+
+
 
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
@@ -336,7 +376,7 @@ static NspAstNode *astnode_create_void(char *name,NspTypeBase *type)
  return H;
 }
 
-NspAstNode *astnode_create(char *name,int op,int arity,int line,NspTypeBase *type)
+NspAstNode *astnode_create(char *name,int op,int arity,void *data,NspTypeBase *type)
 {
  NspAstNode *H  = astnode_create_void(name,type);
  if ( H ==  NULLASTNODE) return NULLASTNODE;
@@ -344,7 +384,7 @@ NspAstNode *astnode_create(char *name,int op,int arity,int line,NspTypeBase *typ
   H->obj->ref_count=1;
   H->obj->op=op;
   H->obj->arity=arity;
-  H->obj->obj=(void *) NSP_INT_TO_POINTER(line);
+  H->obj->obj= data;
  return H;
 }
 

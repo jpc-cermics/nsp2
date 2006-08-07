@@ -61,7 +61,7 @@ NspAstNode *new_astnode();
 
 #define NULLASTNODE (NspAstNode*) 0
 
-extern NspAstNode *astnode_create(char *name,int op,int arity,int line,NspTypeBase *type);
+extern NspAstNode *astnode_create(char *name,int op,int arity,void *data,NspTypeBase *type);
 
 /* from AstNodeObj.c */
 

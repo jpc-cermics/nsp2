@@ -278,6 +278,62 @@ int PrintOPname(int code)
 }
 
 
-
-		   
-
+char * nsp_astcode_to_string(int type)
+{
+  if ( type > 0 && type  != '=' ) 
+    {
+      return OpCode2Str(type);
+    }
+  else
+    {
+      switch ( type ) 
+	{
+	case OPT : return "OPT";
+	case '=': return "=";
+	case MLHS  : return "MLHS";
+	case FEVAL : return "FEVAL";
+	case ARGS : return "ARGS";
+	case METARGS : return "METARGS";
+	case DOTARGS : return "DOTARGS";
+	case CELLARGS : return "CELLARGS";
+	case CALLEVAL : return "CALLEVAL";
+	case LISTEVAL : return "LISTEVAL";
+	case PLIST : return "PLIST";
+	case COMMENT : return "COMMENT";
+	case NAME : return "NAME";
+	case OPNAME : return "OPNAME";
+	case NUMBER: return "NUMBER";
+	case STRING: return "STRING";
+	case EMPTYMAT: return "EMPTYMAT";
+	case EMPTYCELL: return "EMPTYCELL";
+	case P_MATRIX : return "P_MATRIX";
+	case P_CELL : return "P_CELL";
+	case CELLDIAGCONCAT: return "CELLDIAGCONCAT";
+	case CELLROWCONCAT: return "CELLROWCONCAT";
+	case CELLCOLCONCAT: return "CELLCOLCONCAT";
+	case ROWCONCAT: return "ROWCONCAT";
+	case COLCONCAT: return "COLCONCAT";
+	case DIAGCONCAT: return "DIAGCONCAT";
+	case WHILE: return "WHILE";
+	case FUNCTION: return "FUNCTION";
+	case FOR: return "FOR";
+	case IF : return "IF";
+	case TRYCATCH : return "TRYCATCH";
+	case SELECT : return "SELECT";
+	case STATEMENTS : return "STATEMENTS";
+	case STATEMENTS1 : return "STATEMENTS1";
+	case PARENTH : return "PARENTH";
+	case CASE : return "CASE";
+	case LASTCASE : return "LASTCASE";
+	case PAUSE:  return "PAUSE";
+	case CLEAR:  return "CLEAR";
+	case CLEARGLOBAL:  return "CLEARGLOBAL";
+	case HELP  : return "HELP";
+	case GLOBAL: return "GLOBAL";
+	case EXEC: return "EXEC";
+	case APROPOS: return "APROPOS";
+	default :
+	  return NULL;
+	}
+    }
+}

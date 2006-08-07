@@ -406,37 +406,17 @@ PList PListCopy(PList L)
 
 
 /* converts a PList L to a list 
- * 
+ *------------------------------*/
+
+/* creates a new astnode and insert it in a NspList 
  */
 
-static char * nsp_get_type_as_string(int type);
-
-/* insert a language keywork 
- * add list(op,arity,line) at end of list 
- * or returns list(op,arity,line) if list is NULL.
- * should be renamed nsp_list_add_keyword 
- */
-
-static int nsp_list_add(NspList **list, int op, int arity, int line)
+static int _nsp_list_add(NspList **list, int op, int arity,void *data)
 {
-#if 0 
-  int_types T[]={string,s_int,s_int, t_end} ;
-  NspObject *obj;
-  char *sop= nsp_get_type_as_string(op);
-  if ( sop == NULL) return FAIL;
-  if (( obj = (NspObject *) BuildListFromArgs(T,sop,arity,line)) == NULLOBJ ) 
-    return FAIL;
-  if ( *list == NULL )
-    {
-      *list = (NspList *) obj;
-      return OK;
-    }
-  return nsp_list_end_insert(*list,obj);
-#else 
-  int_types T[]={list_begin,obj,list_end, t_end} ;
+  int_types T[]={obj,t_end} ;
   NspAstNode *astn;
   NspObject *Obj;
-  if((astn=astnode_create("L", op, arity,line,NULL)) == NULLASTNODE ) 
+  if((astn=astnode_create("L", op, arity,data,NULL)) == NULLASTNODE ) 
     return FAIL;
   if ( *list == NULL )
     {
@@ -446,76 +426,6 @@ static int nsp_list_add(NspList **list, int op, int arity, int line)
       return OK;
     }
   return nsp_list_end_insert(*list,NSP_OBJECT(astn));
-#endif 
-}
-
-static int nsp_list_add_name_(NspList **list, char *str,char * tag,int arity)
-{
-  int_types T[]={list_begin,string,s_int,string,list_end, t_end} ;
-  NspObject *obj;
-  if (( obj = (NspObject *) BuildListFromArgs(T,tag,arity,str)) == NULLOBJ ) 
-    return FAIL;
-  if ( *list == NULL )
-    {
-      *list = (NspList *) obj;
-      return OK;
-    }
-  return nsp_list_end_insert(*list,obj);
-}
-
-static int nsp_list_add_opname(NspList **list, char *str)
-{
-  return nsp_list_add_name_(list,str,"OPNAME",-1);
-}
-
-
-
-/*
- * Add a double at end of list 
- */
-
-static int nsp_list_add_double(NspList **list, char *str)
-{
-  int_types T[]={list_begin,string,string,s_double,list_end, t_end} ;
-  NspObject *obj;
-  if (( obj = (NspObject *) BuildListFromArgs(T,"NUMBER",str,atof(str))) == NULLOBJ ) 
-    return FAIL;
-  if ( *list == NULL )
-    {
-      *list = (NspList *) obj;
-      return OK;
-    }
-  return nsp_list_end_insert(*list,obj);
-}
-
-/* 
- * Add an nsp object 
- * This is mainly used for functions 
- * to store the symbol table associated to the function. 
- */
-
-static int nsp_list_add_object(NspList **list, NspObject *object )
-{
-  int_types T[]={string,obj, t_end} ;
-  NspObject *L;
-  if ((L = (NspObject *) BuildListFromArgs(T,"OBJECT",object)) == NULLOBJ ) 
-    return FAIL;
-  if ( *list == NULL )
-    {
-      *list = (NspList *) L;
-      return OK;
-    }
-  return nsp_list_end_insert(*list,L);
-}
-
-static int nsp_list_add_string(NspList **list, char *str)
-{
-  return  nsp_list_add_name_(list, str,"STRING",-1);
-}
-
-static int nsp_list_add_comments(NspList **list, char *str)
-{
-  return  nsp_list_add_name_(list, str,"COMMENT",-1);
 }
 
 /*
@@ -523,7 +433,7 @@ static int nsp_list_add_comments(NspList **list, char *str)
  * plist=(a b c) l=(1 2 3) --> (a b c (1 2 3))
  */
 
-static int nsp_list_add_list(NspList **list,NspList *L)
+static int _nsp_list_add_list(NspList **list,NspList *L)
 {
   if ( *list == NULL )
     {
@@ -537,71 +447,12 @@ static int nsp_list_add_list(NspList **list,NspList *L)
  * return plist = (l)    
  */
 
-static int nsp_list_add_list1(NspList **list,NspList *L)
+static int _nsp_list_add_list1(NspList **list,NspList *L)
 {
   if ((*list = nsp_list_create(NVOID))==NULL) return FAIL;
   return nsp_list_end_insert(*list,NSP_OBJECT(L));
 }
 
-static char * nsp_get_type_as_string(int type)
-{
-  if ( type > 0 && type  != '=' ) 
-    {
-      return OpCode2Str(type);
-    }
-  else
-    {
-      switch ( type ) 
-	{
-	case OPT : return "OPT";
-	case '=': return "=";
-	case MLHS  : return "MLHS";
-	case FEVAL : return "FEVAL";
-	case ARGS : return "ARGS";
-	case METARGS : return "METARGS";
-	case DOTARGS : return "DOTARGS";
-	case CELLARGS : return "CELLARGS";
-	case CALLEVAL : return "CALLEVAL";
-	case LISTEVAL : return "LISTEVAL";
-	case PLIST : return "PLIST";
-	case COMMENT : return "COMMENT";
-	case NAME : return "NAME";
-	case OPNAME : return "OPNAME";
-	case NUMBER: return "NUMBER";
-	case STRING: return "STRING";
-	case EMPTYMAT: return "EMPTYMAT";
-	case EMPTYCELL: return "EMPTYCELL";
-	case P_MATRIX : return "P_MATRIX";
-	case P_CELL : return "P_CELL";
-	case CELLDIAGCONCAT: return "CELLDIAGCONCAT";
-	case CELLROWCONCAT: return "CELLROWCONCAT";
-	case CELLCOLCONCAT: return "CELLCOLCONCAT";
-	case ROWCONCAT: return "ROWCONCAT";
-	case COLCONCAT: return "COLCONCAT";
-	case DIAGCONCAT: return "DIAGCONCAT";
-	case WHILE: return "WHILE";
-	case FUNCTION: return "FUNCTION";
-	case FOR: return "FOR";
-	case IF : return "IF";
-	case TRYCATCH : return "TRYCATCH";
-	case SELECT : return "SELECT";
-	case STATEMENTS : return "STATEMENTS";
-	case STATEMENTS1 : return "STATEMENTS1";
-	case PARENTH : return "PARENTH";
-	case CASE : return "CASE";
-	case LASTCASE : return "LASTCASE";
-	case PAUSE:  return "PAUSE";
-	case CLEAR:  return "CLEAR";
-	case CLEARGLOBAL:  return "CLEARGLOBAL";
-	case HELP  : return "HELP";
-	case GLOBAL: return "GLOBAL";
-	case EXEC: return "EXEC";
-	case APROPOS: return "APROPOS";
-	default :
-	  return NULL;
-	}
-    }
-}
 
 NspList *nsp_plist_to_list(PList L)
 {
@@ -611,33 +462,21 @@ NspList *nsp_plist_to_list(PList L)
     {
       switch ( L->type) 
 	{
-	case NAME :
-	  if ( nsp_list_add_name_(&Res,(char*) L->O,"NAME",L->arity)==FAIL) return(NULLLIST);
-	  break;
-	case OPNAME :
-	  if ( nsp_list_add_opname(&Res,(char*) L->O)==FAIL) return(NULLLIST);
-	  break;
 	case OBJECT :
 	  if ((obj=nsp_object_copy(L->O)) == NULLOBJ) return(NULLLIST); 
-	  if ( nsp_list_add_object(&Res,obj)==FAIL) return(NULLLIST);
-	  break;
-	case STRING :
-	  if ( nsp_list_add_string(&Res,(char*) L->O)==FAIL) return(NULLLIST);
-	  break;
-	case COMMENT :
-	  if ( nsp_list_add_comments(&Res,(char*) L->O)==FAIL) return(NULLLIST);
+	  if ( _nsp_list_add(&Res,L->type,L->arity,obj)==FAIL) return(NULLLIST);
 	  break;
 	case NUMBER :
-	  if ( nsp_list_add_double(&Res,((parse_double *) L->O)->str)==FAIL) return(NULLLIST);
+	  if ( _nsp_list_add(&Res,L->type,L->arity,((parse_double *) L->O)->str)==FAIL) 
+	    return(NULLLIST);
 	  break;
 	case PLIST: 
 	  if ((loc= nsp_plist_to_list((PList) L->O)) == NULLLIST) return(NULLLIST);
-	  if ( nsp_list_add_list1(&loc1,loc) == FAIL) return (NULLLIST);
-	  if ( nsp_list_add_list(&Res,loc1)== FAIL) return(NULLLIST);
+	  /* if ( _nsp_list_add_list1(&loc1,loc) == FAIL) return (NULLLIST); */
+	  if ( _nsp_list_add_list(&Res,loc)== FAIL) return(NULLLIST);
 	  break;
 	default: 
-	  if ( nsp_list_add(&Res,L->type,L->arity,NSP_POINTER_TO_INT( L->O)) == FAIL) 
-	    return(NULLLIST);
+	  if ( _nsp_list_add(&Res,L->type,L->arity,L->O)==FAIL) return(NULLLIST);
 	}
       L= L->next;
     }
