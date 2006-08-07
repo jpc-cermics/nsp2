@@ -106,7 +106,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	{
 	case 0:
 	  /*supposed to be only : **/
-	  if ( L->type != ':' ) 
+	  if ( L->type != COLON_OP ) 
 	    {
 	      Scierror("Error: unknown 0-ary operator\n");
 	      return RET_BUG;
@@ -118,7 +118,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	case 1:
 	  opcode = OpCode2NickN(L->type);
 	  O1=nsp_frames_search_op_object(opcode);
-	  if ( L->type == '\n' || L->type == ';' || L->type == ',' )
+	  if ( L->type == RETURN_OP || L->type == SEMICOLON_OP || L->type == COMMA_OP )
 	    {
 	      if (( nargs =nsp_eval_arg(L1,stack,first,1,-1,display)) < 0) return nargs;
 	      if ( nargs == 0 ) return 0;

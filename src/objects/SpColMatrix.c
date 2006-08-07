@@ -3376,41 +3376,37 @@ int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
   return OK;
 }
 
-/*
- *  Res = Maxi(A,B) 
- *  term to term max  A(i;j) = Max(A(i,j),B(i,j)
- *  Res(i,j) = 1 or 2  
- *  A changed, B unchanged, 
- *  Res Created if flag == 1
- *  XXXXXXXX OK but untested to be added in table of functions 
- */
+/* utility */
 
-/*  minmaxflag = 1 for max -1 for min  */
-
-NspMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int minmaxflag, int *err)
+static NspSpColMatrix *
+nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int minmaxflag, int *err)
 {
   /* Same philosophy as in BinaryOp **/
-  int i,count,k1,k2,k;
-  NspSpColMatrix *Loc;
-  NspMatrix *Indi=NULL;
+  int i,count,icount,k1,k2,k;
+  NspSpColMatrix *Loc,*ILoc;
+  NspSpColMatrix *Indi=NULL;
   char type = 'r';
+  *err=FALSE;
   if ( SameDim(A,B) ) 
     {
       if ( A->rc_type == 'c' || B->rc_type == 'c' ) 
 	{
 	  Scierror("Error: Arguments must be real matrices\n");
-	  return NULLMAT;
+	  goto err;
 	}
       /* storing indices **/
       if ( flag == 1) 
 	{
-	  if (( Indi = nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT ) 
-	    return NULLMAT;
-	  nsp_mat_set_rval(Indi,1.0);
+	  if (( Indi = nsp_spcolmatrix_create(NVOID,'r',A->m,A->n)) == NULLSPCOL ) 
+	    goto err;
 	}
-      /* Buffer **/
-      if ((Loc =nsp_spcolmatrix_create(NVOID,type,1,A->n)) == NULLSPCOL ) return(NULLMAT);
-      if (nsp_spcolmatrix_resize_col(Loc,1,A->n ) == FAIL) return(NULLMAT) ;
+      /* Buffer */
+      if ((Loc =nsp_spcolmatrix_create(NVOID,type,A->m,1)) == NULLSPCOL ) goto err;
+      if (nsp_spcolmatrix_resize_col(Loc,0,A->m ) == FAIL) goto err;
+      /* Buffer for indices */
+      if ((ILoc =nsp_spcolmatrix_create(NVOID,type,A->m,1)) == NULLSPCOL ) goto err;
+      if (nsp_spcolmatrix_resize_col(ILoc,0,A->m ) == FAIL) goto err;
+      
       for ( i = 0 ; i < A->n ; i++ ) 
 	{
 	  SpCol *Ai = A->D[i];
@@ -3422,7 +3418,8 @@ NspMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, in
 	   *  This is very near to a merge sort of two sorted arrays 
 	   */ 
 	  k1 = 0 ; k2 = 0 ; 
-	  count = 0 ; 
+	  count = 0 ;
+	  icount= 0;
 	  /* merge part **/
 	  while ( k1 < Ai->size && k2 <  Bi->size) 
 	    { 
@@ -3437,10 +3434,21 @@ NspMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, in
 		      Loc->D[0]->J[count] = j1;
 		      Loc->D[0]->R[count] = Ai->R[k1];
 		      count++;
+		      if ( flag == 1) 
+			{
+			  ILoc->D[0]->J[icount] = j1;
+			  ILoc->D[0]->R[icount] = 1;
+			  icount++;
+			}
 		    }
 		  else 
 		    {
-		      if ( flag == 1) Indi->R[i+Indi->m*j1]=2;
+		      if ( flag == 1) 
+			{
+			  ILoc->D[0]->J[icount] = j1;
+			  ILoc->D[0]->R[icount] = 2;
+			  icount++;
+			}
 		    }
 		  k1++; 
 		}
@@ -3451,15 +3459,24 @@ NspMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, in
 		  if (  minmaxflag*Ai->R[k1] >   minmaxflag*Bi->R[k2] )
 		    {
 		      Loc->D[0]->R[count]=  Ai->R[k1];
+		      if ( flag == 1) 
+			{
+			  ILoc->D[0]->J[icount] = j1;
+			  ILoc->D[0]->R[icount] = 1;
+			}
 		    }
 		  else
 		    {
 		      Loc->D[0]->R[count]=  Bi->R[k2];
-		      if ( flag == 1) Indi->R[i+Indi->m*j1]=2;
+		      if ( flag == 1) 
+			{
+			  ILoc->D[0]->J[icount] = j1;
+			  ILoc->D[0]->R[icount] = 2;
+			}
 		    }
 		  count++;
+		  icount++;
 		  k1++; k2 ++; 
-
 		}
 	      else 
 		{ 
@@ -3468,8 +3485,22 @@ NspMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, in
 		    {
 		      Loc->D[0]->J[count] = j2;
 		      Loc->D[0]->R[count] = Bi->R[k2];
-		      if ( flag == 1) Indi->R[i+Indi->m*j2]=2;
 		      count++;
+		      if ( flag == 1) 
+			{
+			  ILoc->D[0]->J[icount] = j2;
+			  ILoc->D[0]->R[icount] = 2;
+			  icount++;
+			}
+		    }
+		  else
+		    {
+		      if ( flag == 1) 
+			{
+			  ILoc->D[0]->J[icount] = j2;
+			  ILoc->D[0]->R[icount] = 1;
+			  icount++;
+			}
 		    }
 		  k2++;
 		}
@@ -3482,6 +3513,13 @@ NspMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, in
 		  Loc->D[0]->J[count] = Ai->J[k];
 		  Loc->D[0]->R[count] = Ai->R[k];
 		  count++;
+		  if ( flag == 1) 
+		    {
+		      ILoc->D[0]->J[icount] = Ai->J[k];
+		      ILoc->D[0]->R[icount] = 1;
+		      icount++;
+		    }
+		  
 		}
 	    }
 	  /* Keep inserting remaining arguments for B **/
@@ -3491,62 +3529,83 @@ NspMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, in
 		{
 		  Loc->D[0]->J[count] = Bi->J[k];
 		  Loc->D[0]->R[count] = Bi->R[k];
-		  if ( flag == 1) Indi->R[i+Indi->m*k]=2;
 		  count++;
+		  if ( flag == 1) 
+		    {
+		      ILoc->D[0]->J[icount] = Bi->J[k];
+		      ILoc->D[0]->R[icount] = 2;
+		      icount++;
+		    }
 		}
 	    }
-	  /* count is not set to the proper ith row dimension  **/
+	  /* count is not set to the proper ith row dimension  */
 	  /* we resize A(i,:) and store Loc  **/
-	  if (nsp_spcolmatrix_resize_col(A,i,count)  == FAIL) return(NULLMAT) ;
-	  /* use icopy and dcopy XXXX **/
+	  if (nsp_spcolmatrix_resize_col(A,i,count)  == FAIL)
+	    goto err;
+	  /* use icopy and dcopy XXXX */
 	  for ( k =0 ; k < A->D[i]->size ; k++) 
 	    {
 	      A->D[i]->J[k] = Loc->D[0]->J[k];
 	      A->D[i]->R[k] = Loc->D[0]->R[k];
 	    }
-						  
+	  /* idem for max */
+	  if ( flag == 1) 
+	    {
+	      if (nsp_spcolmatrix_resize_col(Indi,i,icount)  == FAIL) goto err;
+	      /* use icopy and dcopy XXXX */
+	      for ( k =0 ; k < Indi->D[i]->size ; k++) 
+		{
+		  Indi->D[i]->J[k] = ILoc->D[0]->J[k];
+		  Indi->D[i]->R[k] = ILoc->D[0]->R[k];
+		}
+	    }
 	}
+      nsp_spcolmatrix_destroy(Loc);
+      nsp_spcolmatrix_destroy(ILoc);
       return(Indi);
     }
   else 
     {
       Scierror("Mat1 & Mat2 don't have same size \n");
-      return(NULLMAT);
+      goto err;
     }
+ err:
+  *err=TRUE;
+  return NULLSPCOL;
 }
 
 
-NspMatrix *nsp_spcolmatrix_maxitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err)
+/*  
+ *  term to term max A(i;j) = Max(A(i,j),B(i,j) 
+ *  Res(i,j) = 1 or 2 or 0 
+ *   1 if Max(A(i,j),B(i,j)==A(i,j)
+ *   2 if Max(A(i,j),B(i,j)==B(i,j)
+ *   0 if A(i,j)=B(i,j)=0
+ *  A changed, B unchanged, 
+ *  Res Created if flag == 1
+ *  XXXXXXXX OK but untested to be added in table of functions 
+ */
+
+NspSpColMatrix *nsp_spcolmatrix_maxitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err)
 {
   return nsp_spcolmatrix_maximinitt_g(A,B,flag,1,err);
 }
 
-/*
- *  A(i,j) = Maxi(A(i,j),B(i,j)) 
- *  Ind(i,j) set to j if B(i,j) realize the max and flag ==1 
- *  B unchanged A,B are changed 
- */
-
-
-/*
- *  Res = Mini(A,B) 
- *  term to term max  A(i;j) = Max(A(i,j),B(i,j)
- *  Res(i,j) = 1 or 2  
+/*  
+ *  term to term min A(i;j) = Min(A(i,j),B(i,j) 
+ *  Res(i,j) = 1 or 2 or 0 
+ *   1 if Min(A(i,j),B(i,j)==A(i,j)
+ *   2 if Min(A(i,j),B(i,j)==B(i,j)
+ *   0 if A(i,j)=B(i,j)=0
  *  A changed, B unchanged, 
  *  Res Created if flag == 1
+ *  XXXXXXXX OK but untested to be added in table of functions 
  */
 
-NspMatrix *nsp_spcolmatrix_minitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err)
+NspSpColMatrix *nsp_spcolmatrix_minitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err)
 {
   return nsp_spcolmatrix_maximinitt_g(A,B,flag,-1,err);
 }
-
-
-/*
- *  A(i,j) = Mini(A(i,j),B(i,j)) 
- *  Ind(i,j) set to j if B(i,j) realize the max and flag ==1 
- *  B unchanged A,B are changed 
- */
 
 /*
  * Return the Real part of Matrix A 
@@ -3924,20 +3983,22 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
   return M;
 }
 
-/*M(1) = Maxi(A) **/
+/* M(1) = Maxi(A) max of all the elements 
+ * XXXXXXXX OK
+ */
 
 static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
 {
   int imax = 0,i,k;
   double amax=0.0; imax=1;
-  /* find a first value **/
-  for ( i = 0 ; i < A->m ; i++ ) 
+  /* find a first value */
+  for ( i = 0 ; i < A->n ; i++ ) 
     {
       if ( A->D[i]->size !=0 ) 
 	{ amax = A->D[i]->R[0];imax = A->D[i]->J[0]+1; break;}
     }
-  /* find the max  **/
-  for ( i = 0 ; i < A->m ; i++ ) 
+  /* find the max  */
+  for ( i = 0 ; i < A->n ; i++ ) 
     {
       for ( k = 0 ; k < A->D[i]->size ; k++) 
 	{
@@ -3957,7 +4018,7 @@ static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
   return imax;
 }
 
-/*M(j)=Max A(:,j) **/
+/* M(j)=Max A(:,j) : returns a row sparse matrix */
 
 static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
 {

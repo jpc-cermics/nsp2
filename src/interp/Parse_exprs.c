@@ -118,7 +118,7 @@ int parse_top(Tokenizer *T,NspHash *symb_table,PList *plist)
 	{
 	  return(OK);
 	}
-      if ( T->token.id == ',' || T->token.id == ';' ) 
+      if ( T->token.id == COMMA_OP || T->token.id == SEMICOLON_OP ) 
 	{
 	  int op= T->token.id;
 	  /* XXX maybe there's a comment after , ; NextToken will swallow it **/
@@ -137,9 +137,9 @@ int parse_top(Tokenizer *T,NspHash *symb_table,PList *plist)
 	      T->NextToken(T);
 	    }
 	}
-      else if ( T->token.id == '\n' || T->token.id == COMMENT )
+      else if ( T->token.id == RETURN_OP || T->token.id == COMMENT )
 	{
-	  if ( ParseAdd(&plist1,'\n',1,T->token.Line) == FAIL) return(FAIL);
+	  if ( ParseAdd(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
 	  if ( ParseAddList1(&plist1,&plist1)==FAIL) return(FAIL);
 	  if ( ParseAddList(plist,&plist1)==FAIL) return(FAIL);
 	  if ( T->token.id == COMMENT) 
@@ -153,7 +153,7 @@ int parse_top(Tokenizer *T,NspHash *symb_table,PList *plist)
       else if ( T->token.id == 0) 
 	{
 	  /* Reached end of file : appears when parsing a function terminated with eof **/
-	  if ( ParseAdd(&plist1,'\n',1,T->token.Line) == FAIL) return(FAIL);
+	  if ( ParseAdd(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
 	  if ( ParseAddList1(&plist1,&plist1)==FAIL) return(FAIL);
 	  if ( ParseAddList(plist,&plist1)==FAIL) return(FAIL);
 	  if ( ParseAdd(plist,STATEMENTS1,count,T->token.Line)==FAIL) return(FAIL);
@@ -208,8 +208,8 @@ static int parse_exprs(Tokenizer *T,NspHash *symb_table,PList *plist, int funcfl
 	    }
 	  else 
 	    {
-	      if (T->token.id == ',' || T->token.id == ';' ||
-		  T->token.id == '\n' )
+	      if (T->token.id == COMMA_OP || T->token.id == SEMICOLON_OP ||
+		  T->token.id == RETURN_OP )
 		{
 		  if ( T->NextToken(T) == FAIL) return(FAIL);
 		}
@@ -222,11 +222,11 @@ static int parse_exprs(Tokenizer *T,NspHash *symb_table,PList *plist, int funcfl
       if ( funcflag == 1 &&  T->token.id == 0 ) break;
       plist1= NULLPLIST;
       if (parse_stmt(T,symb_table,&plist1) == FAIL ) return(FAIL);
-      if (T->token.id != ',' && T->token.id != ';' && T->token.id != '\n' && T->token.id != COMMENT &&  ~(*F)(T,T->token.id) ) 
+      if (T->token.id != COMMA_OP && T->token.id != SEMICOLON_OP && T->token.id != RETURN_OP && T->token.id != COMMENT &&  ~(*F)(T,T->token.id) ) 
         {
 	  if ( plist1 != NULLPLIST) 
 	    {
-	      if ( ParseAdd(&plist1,',',1,T->token.Line) == FAIL) return(FAIL);
+	      if ( ParseAdd(&plist1,COMMA_OP,1,T->token.Line) == FAIL) return(FAIL);
 	      if ( ParseAddList1(&plist1,&plist1)== FAIL) return(FAIL);
 	      if ( ParseAddList(&plist2,&plist1)== FAIL) return(FAIL);
 	      count++;
@@ -248,16 +248,16 @@ static int parse_exprs(Tokenizer *T,NspHash *symb_table,PList *plist, int funcfl
 	      switch ( T->token.id ) 
 		{
 		case COMMENT :
-		  if ( ParseAdd(&plist1,'\n',1,T->token.Line) == FAIL) return(FAIL);
+		  if ( ParseAdd(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
 		  break;
-		case ',' : 
-		  if ( ParseAdd(&plist1,',',1,T->token.Line) == FAIL) return(FAIL);
+		case COMMA_OP : 
+		  if ( ParseAdd(&plist1,COMMA_OP,1,T->token.Line) == FAIL) return(FAIL);
 		  break;
-		case '\n':
-		  if ( ParseAdd(&plist1,'\n',1,T->token.Line) == FAIL) return(FAIL);
+		case RETURN_OP:
+		  if ( ParseAdd(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
 		  break;
-		case ';' : 
-		  if ( ParseAdd(&plist1,';',1,T->token.Line) == FAIL) return(FAIL);
+		case SEMICOLON_OP : 
+		  if ( ParseAdd(&plist1,SEMICOLON_OP,1,T->token.Line) == FAIL) return(FAIL);
 		  break;
 		} 
 	      if ( ParseAddList1(&plist1,&plist1)== FAIL) return(FAIL);
@@ -569,7 +569,7 @@ static int parse_functionleft(Tokenizer *T,NspHash *symb_table,PList *plist)
       if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
       switch ( T->token.id ) 
 	{
-	case ',' : ++excnt;       
+	case COMMA_OP : ++excnt;       
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
 	  parse_nblines(T);
 	  break;
@@ -656,7 +656,7 @@ static int parse_bkey(Tokenizer *T,int key1, int key2, char *str, PList *plist)
 {
   int k;
   k=T->token.id;
-  if (k != key1 && k != key2  && k != ',' && k != ';' && k != '\n' && k != COMMENT )
+  if (k != key1 && k != key2  && k != COMMA_OP && k != SEMICOLON_OP && k != RETURN_OP  && k != COMMENT )
     {
       /* FIXME a am'eliorer avec plist1 qui montre ou on s'est arret'e XXX 
        * plus le message d'erreur T->token.id qui est pas bon
@@ -711,7 +711,7 @@ static int parse_nblines(Tokenizer *T)
 	}
       else 
 	{
-	  if ( T->token.id == '\n' ) 
+	  if ( T->token.id == RETURN_OP ) 
 	    { if ( T->NextToken(T) == FAIL) return(FAIL);}
 	  else 
 	    break;
@@ -967,7 +967,6 @@ static int parse_for(Tokenizer *T,NspHash *symb_table,PList *plist)
 {
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
-  PList plist3 = NULLPLIST ;
 
   /* Name of the loop var : for x=... **/
  
@@ -1003,17 +1002,20 @@ static int parse_for(Tokenizer *T,NspHash *symb_table,PList *plist)
   plist1=NULLPLIST;
   if ( T->token.id == COMMENT) 
     {
-      /* a revoir pour que les commentaites 
-       * restent ds le code XXX
-       */
       plist1=NULLPLIST;
       if ( ParseAddComment(&plist1,T->token.buf)==FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
+      /* XXX the comment just after for x=expr // comment 
+       * is lost here. We can keep it whith the next line 
+       * but we have then to accept that for can have arity 3 or 4 
+       * and this is to be changed in eval/print etc...
+       * if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL); 
+       */
+      plist1=NULLPLIST;
     }
   /* Tokens for introducing the do Part **/
-  plist3=NULLPLIST;
-  if (parse_bkey(T,DO,DO,"for loop",&plist3) == FAIL) return(FAIL);
-  /* plist1=NULLPLIST; */
+  if (parse_bkey(T,DO,DO,"for loop",&plist1) == FAIL) return(FAIL);
+  plist1=NULLPLIST;
   if (parse_exprs(T,symb_table,&plist1,0,parse_endstop ) == FAIL) return(FAIL);
   if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL);
   /* XXX : a revoir **/
@@ -1145,12 +1147,12 @@ static int parse_expr(Tokenizer *T,NspHash *symb_table,PList *plist)
   int kount=1;
   if (debug) scidebug(debugI++,"[expr>");
 
-  if (T->token.id == ':') 
+  if (T->token.id == COLON_OP) 
     {
       /* if ( ParseAddDoubleI(&plist1,"1")== FAIL) return(FAIL);
 	 if ( ParseAddName(&plist1,"$")== FAIL) return(FAIL);
       **/
-      if ( ParseAdd(&plist2,':',0,T->token.Line) == FAIL) return(FAIL);
+      if ( ParseAdd(&plist2,COLON_OP,0,T->token.Line) == FAIL) return(FAIL);
       if ( ParseAddList1(&plist1,&plist2) == FAIL) return(FAIL);
       if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
       if (debug) scidebug(--debugI,"<expr]");
@@ -1162,11 +1164,11 @@ static int parse_expr(Tokenizer *T,NspHash *symb_table,PList *plist)
       PList plist2 = NULLPLIST ;
       if (parse_lexpr(T,symb_table,&plist2) == FAIL) return(FAIL);
       if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
-      if ( T->token.id == ':' ) 
+      if ( T->token.id == COLON_OP ) 
 	{
 	  /* we have parsed `:' and search for more **/
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
-	  while ( T->token.id == '\n') if ( T->NextToken(T) == FAIL) return(FAIL);
+	  while ( T->token.id == RETURN_OP) if ( T->NextToken(T) == FAIL) return(FAIL);
 	  ++kount;
 	}
       else 
@@ -1180,7 +1182,7 @@ static int parse_expr(Tokenizer *T,NspHash *symb_table,PList *plist)
   else if (kount > 1) 
     {
       if (debug) Sciprintf("{:arity%d}",kount);
-      if ( ParseAdd(&plist1,':',kount,T->token.Line) == FAIL) return(FAIL);
+      if ( ParseAdd(&plist1,COLON_OP,kount,T->token.Line) == FAIL) return(FAIL);
       if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
     }
   else if (kount ==1 ) 
@@ -1202,7 +1204,7 @@ static int parse_lterm(Tokenizer *T,NspHash *symb_table,PList *plist);
 
 int IsOrOp(Tokenizer *T,int *op)
 {
-  if  ( T->token.id == '|' || T->token.id == SEQOR )
+  if  ( T->token.id == OR_OP || T->token.id == SEQOR )
     {
       *op =T->token.id ;   if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);
     }
@@ -1225,7 +1227,7 @@ static int parse_lexpr(Tokenizer *T,NspHash *symb_table,PList *plist)
 
 static int IsAndOp(Tokenizer *T,int *op)
 {
-  if  (T->token.id == '&'|| T->token.id == SEQAND )
+  if  (T->token.id == AND_OP || T->token.id == SEQAND )
     {
       *op = T->token.id ;   if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);
     }
@@ -1303,8 +1305,8 @@ static int IstermsOp(Tokenizer *T,int *op)
 {
   switch ( T->token.id ) 
     {
-    case '+':
-    case '-': 
+    case PLUS_OP:
+    case MINUS_OP: 
     case DOTPLUS: 
       *op = T->token.id ;if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);
       break;
@@ -1330,14 +1332,15 @@ static int parse_terme1(Tokenizer *T,NspHash *symb_table,PList *plist)
   PList plist1 = NULLPLIST ;
   int op= 0;
   if (debug) scidebug(debugI++,"[terme1>");
-  if (T->token.id == '+' || T->token.id == '-'  || ( T->token.id == '~'  && T->token.NextC != '='))
+  if (T->token.id == PLUS_OP 
+      || T->token.id == MINUS_OP  || ( T->token.id == TILDE_OP  && T->token.NextC != '='))
     {
       op = T->token.id;
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      while ( T->token.id == '\n') if ( T->NextToken(T) == FAIL) return(FAIL);
+      while ( T->token.id == RETURN_OP) if ( T->NextToken(T) == FAIL) return(FAIL);
     }
   if (parse_terme(T,symb_table,&plist1) == FAIL ) return(FAIL);
-  if (op == '-' || op == '~' )
+  if (op == MINUS_OP || op == TILDE_OP )
     { 
       if (debug) Sciprintf("{%c}",op);
       if ( ParseAdd(&plist1,op,1,T->token.Line) == FAIL) return(FAIL);
@@ -1367,7 +1370,7 @@ static int parse_terme1(Tokenizer *T,NspHash *symb_table,PList *plist)
 static int IstermOp(Tokenizer *T,int *op1)
 {
   int op =  T->token.id;
-  if (op  == '*' || op == '\\' || op == '/' || op == DOTSTARDOT
+  if (op  == STAR_OP || op == BACKSLASH_OP || op == SLASH_OP || op == DOTSTARDOT
       || op == DOTSTAR || op == DOTSLASHDOT || op == DOTSLASH 
       || op == DOTBSLASHDOT || op ==  DOTBSLASH || op == BSLASHDOT || op == SLASHDOT) 
     {
@@ -1519,7 +1522,7 @@ static int parse_nary_flat_opt(Tokenizer *T,NspHash *symb_table,PList *plist,
 static int IsFact(Tokenizer *T,int *op1)
 {
   int op = T->token.id ;
-  if ( op == '^' || op == DOTHAT )
+  if ( op == HAT_OP || op == DOTHAT )
     {
       if ( T->NextToken(T) == FAIL) return(FAIL);
       *op1 = op;
@@ -1542,7 +1545,7 @@ static int parse_fact2(Tokenizer *T,NspHash *symb_table,PList *plist)
   if (parse_fact3(T,symb_table,&plist1) == FAIL ) return(FAIL);
   if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
   /*   check for quote (transpose) */
-  if ( ( op=T->IsTranspose(T)) == '\'' || op == DOTPRIM )
+  if ( ( op=T->IsTranspose(T)) == QUOTE_OP || op == DOTPRIM )
     {
       if (debug) Sciprintf("{%d}",op);
       if ( ParseAdd(plist,op,1,T->token.Line) == FAIL) return(FAIL);
@@ -1606,7 +1609,7 @@ static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
 	  if (debug) scidebug(--debugI,"<fact]");
 	  return(FAIL);
 	}
-    case '\'' :
+    case QUOTE_OP:  /* case '\'' : */
     case '"'  :
       /*  *************     get a string */
       T->ParseString(T);
@@ -1758,7 +1761,7 @@ static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
 
 static int IsComa(Tokenizer *T,int *op)
 {
-  if  (T->token.id == ',') {
+  if  (T->token.id == COMMA_OP ) {
     *op = PARENTH ;   if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);
   }
   else 
@@ -1848,8 +1851,8 @@ static int IsColMatOp(Tokenizer *T,int *op,char opt)
       *op = rowconcat;
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return OK;
-    case '\n':
-    case ';' : *op = rowconcat;
+    case RETURN_OP:
+    case SEMICOLON_OP : *op = rowconcat;
       if ( T->NextToken(T) == FAIL) return(FAIL);
       if ( T->token.id == COMMENT) 
 	{
@@ -1867,7 +1870,7 @@ static int IsRowMatOp(Tokenizer *T,int *op,char opt)
   switch ( T->token.id) 
     {
     case ' ' :
-    case ',' : *op = colconcat; 
+    case COMMA_OP : *op = colconcat; 
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return(OK);
     default: *op= colconcat; return(FAIL);
@@ -1908,7 +1911,7 @@ static int parse_rowmatrix(Tokenizer *T,NspHash *symb_table,PList *plist,char st
       if ( ParseAdd(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
       Sciprintf("Warning : ;] should not be used \n");
     }
-  else if ( T->token.id == ';' )
+  else if ( T->token.id == SEMICOLON_OP )
     {
       if ( ParseAdd(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
       Sciprintf("Warning : ;; should not be used \n");
@@ -1918,7 +1921,7 @@ static int parse_rowmatrix(Tokenizer *T,NspHash *symb_table,PList *plist,char st
       if (parse_nary_opt(T,symb_table,&plist1,parse_expr_opt,IsRowMatOp,"matrix",stop)== FAIL) 
 	return(FAIL);
     }
-  while (T->token.id != '\n' && T->token.id != ';' && T->token.id != stop && T->token.id != '#' &&
+  while (T->token.id != RETURN_OP && T->token.id != SEMICOLON_OP && T->token.id != stop && T->token.id != '#' &&
 	 T->token.id != COMMENT )
     {
       PList plist2=NULLPLIST;
@@ -1994,7 +1997,7 @@ static int parse_rowcells(Tokenizer *T,NspHash *symb_table,PList *plist,char sto
       if ( ParseAdd(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
       Sciprintf("Warning : ;] should not be used \n");
     }
-  else if ( T->token.id == ';' )
+  else if ( T->token.id == SEMICOLON_OP )
     {
       if ( ParseAdd(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
       Sciprintf("Warning : ;; should not be used \n");
@@ -2004,7 +2007,7 @@ static int parse_rowcells(Tokenizer *T,NspHash *symb_table,PList *plist,char sto
       if (parse_nary_flat_opt(T,symb_table,&plist1,parse_expr_opt,IsRowMatOp,"matrix",stop)== FAIL) 
 	return(FAIL);
     }
-  while (T->token.id != '\n' && T->token.id != ';' && T->token.id != stop && T->token.id != '#' &&
+  while (T->token.id != RETURN_OP && T->token.id != SEMICOLON_OP && T->token.id != stop && T->token.id != '#' &&
 	 T->token.id != COMMENT )
     {
       PList plist2=NULLPLIST;
@@ -2082,7 +2085,7 @@ static int func_or_matrix_with_arg(Tokenizer *T,NspHash *symb_table,PList *plist
       if ( fblank == 1)parse_nblines(T);
       switch ( T->token.id ) 
 	{
-	case ',' : ++(*excnt);       
+	case COMMA_OP : ++(*excnt);       
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
 	  parse_nblines(T);
 	  break;

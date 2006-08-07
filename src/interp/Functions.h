@@ -18,7 +18,7 @@ extern int IsJustName ();
 extern int IsMatOp (int *op);
 extern int IsOrOp (Tokenizer *T,int *op);
 extern int IsSciKeyWord (char *id);
-extern char * nsp_astcode_to_string(int type)
+extern char * nsp_astcode_to_string(int type);
 extern int NextToken (void);
 extern int PrintOPname (int code);
 

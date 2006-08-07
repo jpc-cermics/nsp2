@@ -169,6 +169,7 @@ static int next_token(Tokenizer *T)
   if ( T->token.id == '\n' ) 
     {
       T->GetChar(T);
+      T->token.id= RETURN_OP;
       return(OK);
     }
   T->GetChar(T);
@@ -222,7 +223,7 @@ static int next_token(Tokenizer *T)
 } 
 
 /*
- * Parses Scilab operators 
+ * Parses nsp operators 
  */
 
 static void  parse_operators(Tokenizer *T)
@@ -261,7 +262,7 @@ static void  parse_operators(Tokenizer *T)
     case '*' :
       if (T->token.NextC == '*' ) 
 	{
-	  T->token.id = '^' ;  T->GetChar(T);  break;
+	  T->token.id = HAT_OP ;  T->GetChar(T);  break;
 	}
       break;
     case '.' :
@@ -274,7 +275,7 @@ static void  parse_operators(Tokenizer *T)
 	      char c;
 	      c=T->GetChar(T);
 	      while (c != '\n') c=T->GetChar(T);
-	      T->token.id = '\n';
+	      T->token.id = RETURN_OP;
 	      break;
 	    }
 	  else 
@@ -418,6 +419,28 @@ static void  parse_operators(Tokenizer *T)
 	  T->GetChar(T); 
 	  T->token.id = SEQOR;
 	}
+      break;
+    }
+  /* basic operators are coded here with their ascii code 
+   * set them to internal code 
+   */
+  switch ( T->token.id ) 
+    {
+    case '\'': T->token.id =  QUOTE_OP ;break;
+    case '*': T->token.id =  STAR_OP ;break;
+    case '+': T->token.id =  PLUS_OP ;break;
+    case '^': T->token.id =  HAT_OP ;break;
+    case ':': T->token.id =  COLON_OP ;break;
+    case '|': T->token.id =  OR_OP ;break;
+    case '&': T->token.id =  AND_OP ;break;
+    case '~': T->token.id =  TILDE_OP ;break;
+    case '\n': T->token.id =  RETURN_OP ;break;
+    case ',': T->token.id =  COMMA_OP ;break;
+    case ';': T->token.id =  SEMICOLON_OP ;break;
+    case '-': T->token.id =  MINUS_OP ;break;
+    case '/': T->token.id =  SLASH_OP ;break;
+    case '\\': T->token.id =  BACKSLASH_OP ;break;
+    default:
       break;
     }
 }
@@ -910,7 +933,7 @@ static int is_dot_dot(Tokenizer *T)
 
 static int is_dot_star_star(Tokenizer *T)
 {
-  if ( T->token.NextC == '*' && T->curline.buf[T->curline.lpt3] == '*') 
+  if ( T->token.NextC == '*' && T->curline.buf[T->curline.lpt3] == '*' ) 
     return(OK);
   else
     return(FAIL);
@@ -940,8 +963,8 @@ static int is_dot_alpha(Tokenizer *T)
 
 static int is_transpose(Tokenizer *T)
 {
-  if ( T->token.id == '\'' && T->curline.lpt2 -2 >= 0 &&  T->curline.buf[T->curline.lpt2-2] != ' ' ) 
-    return('\'');
+  if ( T->token.id == QUOTE_OP && T->curline.lpt2 -2 >= 0 &&  T->curline.buf[T->curline.lpt2-2] != ' ' ) 
+    return QUOTE_OP;
   else if ( T->token.id == '.' && T->token.NextC == '\'' ) 
     {
       T->token.id = DOTPRIM ;  T->GetChar(T);

@@ -164,9 +164,9 @@ extern NspSpColMatrix *nsp_spcolmatrix_transpose(const NspSpColMatrix *A);
 /* SpColMatOps.c */
 
  extern int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr); 
- extern NspMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int minmaxflag, int *err); 
- extern NspMatrix *nsp_spcolmatrix_maxitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err); 
- extern NspMatrix *nsp_spcolmatrix_minitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err); 
+extern NspSpColMatrix *nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int minmaxflag, int *err); 
+extern NspSpColMatrix *nsp_spcolmatrix_maxitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err); 
+extern NspSpColMatrix *nsp_spcolmatrix_minitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err); 
 
 extern int nsp_spcolmatrix_triu(NspSpColMatrix *A,int k);
 extern int nsp_spcolmatrix_tril(NspSpColMatrix *A,int k);

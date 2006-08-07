@@ -1182,7 +1182,7 @@ static int int_spcolmatrix_sum(Stack stack, int rhs, int opt, int lhs)
 
 typedef NspSpColMatrix *(*SpMiMax) (NspSpColMatrix *A,char *,NspMatrix **Imax,int lhs);
 
-static int int_spcolmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax F)
+static int int_spcolmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax F,int minmax)
 {
   char *str;
   NspSpColMatrix *A,*M;
@@ -1215,8 +1215,17 @@ static int int_spcolmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax
     }
   else
     {
-      Scierror("Error: XXXXXX a ecrire\n");
-      return RET_BUG;
+      int index= (lhs == 2 ) ? 1 : 0, err;
+      NspSpColMatrix *Index=NULL;
+      if ((A = GetSpColCopy(stack,1))  == NULLSPCOL) return RET_BUG;
+      if ((M = GetSpColCopy(stack,2))  == NULLSPCOL) return RET_BUG;
+      Index = nsp_spcolmatrix_maximinitt_g(A,M,index,minmax,&err);
+      if (err == TRUE ) return RET_BUG;
+      NSP_OBJECT(A)->ret_pos = 1;
+      if ( lhs == 2 ) 
+	{
+	  MoveObj(stack,2,NSP_OBJECT(Index));
+	}
     }
   return Max(lhs,1);
 }
@@ -1224,7 +1233,12 @@ static int int_spcolmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax
 
 static int int_spcolmatrix_maxi(Stack stack, int rhs, int opt, int lhs)
 {
-  return ( int_spcolmatrix__maxi(stack,rhs,opt,lhs,nsp_spcolmatrix_maxi));
+  return ( int_spcolmatrix__maxi(stack,rhs,opt,lhs,nsp_spcolmatrix_maxi,1));
+}
+
+static int int_spcolmatrix_mini(Stack stack, int rhs, int opt, int lhs)
+{
+  return ( int_spcolmatrix__maxi(stack,rhs,opt,lhs,nsp_spcolmatrix_mini,-1));
 }
 
 /* interface for triu 

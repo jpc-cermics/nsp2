@@ -147,23 +147,24 @@ struct _operator {
 };
 
 static OpWordTab Ops[]={
-  {"'","quote",  (int) '\''},
-  {"*","mult",  (int) '*'},
-  {"+","plus",   (int) '+'},
+  {"'","quote",  QUOTE_OP}, /* QUOTE_OP */
+  {"*","mult",   STAR_OP },   /* STAR_OP */
+  {"+","plus",   PLUS_OP },  /* PLUS_OP */
+  {"^","hat",   HAT_OP},   /* HAT_OP */
+  {":","impl",   COLON_OP},  /* COLON_OP */
+  {"|","or",   OR_OP},    /* OR_OP */
+  {"&","and",   AND_OP},   /* AND_OP */
+  {"~","not",   TILDE_OP},   /* TILDE_OP */
+  {"\\n","ret", RETURN_OP},  /* RETURN_OP */
+  {",","virg", COMMA_OP},    /* COMMA_OP */
+  {";","pvirg", SEMICOLON_OP},   /* SEMICOLON_OP */
+  {"-","minus", MINUS_OP},   /* MINUS_OP */
+  {"/","div", SLASH_OP},     /* SLASH_OP */
+  {"\\","bdiv", BACKSLASH_OP},  /* BACKSLASH_OP */
+  /* composed */
   {".+","dplus",   DOTPLUS},
-  {"^","hat",   (int) '^'},
-  {":","impl",   (int) ':'},
-  {"|","or",   (int) '|'},
   {"||","seq_or", SEQOR},
-  {"&","and",   (int) '&'},
   {"&&","seq_and",  SEQAND},
-  {"~","not",   (int) '~'},
-  {"\\n","ret", (int) '\n'},
-  {",","virg", (int) ','},
-  {";","pvirg", (int) ';'},
-  {"-","minus", (int) '-'},
-  {"/","div", (int) '/'},
-  {"\\","bdiv", (int) '\\'},
   {".^","dh", DOTHAT},
   {".'","dprim", DOTPRIM},
   {".*","dst", DOTSTAR},

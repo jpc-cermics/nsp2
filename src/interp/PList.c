@@ -443,21 +443,10 @@ static int _nsp_list_add_list(NspList **list,NspList *L)
   return nsp_list_end_insert(*list,NSP_OBJECT(L));
 }
 
-/*
- * return plist = (l)    
- */
-
-static int _nsp_list_add_list1(NspList **list,NspList *L)
-{
-  if ((*list = nsp_list_create(NVOID))==NULL) return FAIL;
-  return nsp_list_end_insert(*list,NSP_OBJECT(L));
-}
-
-
 NspList *nsp_plist_to_list(PList L)
 {
   NspObject *obj;
-  NspList *Res = NULL,*loc=NULL,*loc1=NULL;
+  NspList *Res = NULL,*loc=NULL;
   while ( L  != NULLPLIST ) 
     {
       switch ( L->type) 
@@ -619,25 +608,25 @@ static int PListPrettyPrint_I(PList List, int indent, int pos, int posret)
 	case 1:
 	  switch ( L->type ) 
 	    {
-	    case  ',' : 
-	    case  ';'  :
+	    case  COMMA_OP : 
+	    case  SEMICOLON_OP  :
 	      newpos = ArgPrettyPrint(List,indent,pos,posret);
 	      newpos = PrettyPrintOPname(L->type,0,newpos);
 	      Sciprintf("\n");
 	      return 0;
 	      break;
-	    case '\'' : 
+	    case QUOTE_OP : 
 	    case DOTPRIM:
 	      newpos = ArgPrettyPrint(List,indent,pos,posret);
 	      newpos = PrettyPrintOPname(L->type,0,newpos);
 	      return  newpos;
 	      break;
-	    case '\n' : 
+	    case RETURN_OP : 
 	      ArgPrettyPrint(List,indent,pos,posret);
 	      Sciprintf("\n");
 	      return 0;
 	      break;
-	    case '~' : 
+	    case TILDE_OP : 
 	    default:
 	      newpos = PrettyPrintOPname(L->type,indent,pos);
 	      newpos = ArgPrettyPrint(List,0,newpos,posret);
@@ -1096,22 +1085,22 @@ static void PListPrint_I(PList List, int indent)
 	case 1:
 	  switch ( L->type ) 
 	    {
-	    case  ',' : 
-	    case  ';'  :
+	    case  COMMA_OP : 
+	    case  SEMICOLON_OP  :
 	      ArgPrint(List,indent);
 	      PrintOPname(L->type);
 	      break;
-	    case '\'' : 
+	    case QUOTE_OP : 
 	      ArgPrint(List,indent);
 	      PrintOPname(L->type);
 	      break;
-	    case '~' : 
+	    case TILDE_OP : 
 	      PrintOPname(L->type);
 	      Sciprintf("("); 
 	      ArgPrint(List,indent);
 	      Sciprintf(")");
 	      break;
-	    case '\n' : 
+	    case RETURN_OP : 
 	      ArgPrint(List,indent);
 	      Sciprintf("\n");
 	      break;
@@ -1715,17 +1704,17 @@ void plist_name_to_local_id(PList List,NspHash *H)
 	case 1:
 	  switch ( L->type ) 
 	    {
-	    case  ',' : 
-	    case  ';'  :
+	    case  COMMA_OP : 
+	    case  SEMICOLON_OP  :
 	      Arg_name_to_local_name(List,H);
 	      break;
-	    case '\'' : 
+	    case QUOTE_OP : 
 	      Arg_name_to_local_name(List,H);
 	      break;
-	    case '~' : 
+	    case TILDE_OP : 
 	      Arg_name_to_local_name(List,H);
 	      break;
-	    case '\n' : 
+	    case RETURN_OP : 
 	      Arg_name_to_local_name(List,H);
 	      break;
 	    default:

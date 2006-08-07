@@ -585,7 +585,7 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
 
 int Parse(Tokenizer *T,NspHash *symb_table,PList *plist)
 {
-  T->token.id = '\n';
+  T->token.id = RETURN_OP;
   T->token.FlagEqu = 0;
   if ( T->Getlin(T,Prompt()) == TRUE ) 
     {
@@ -594,7 +594,7 @@ int Parse(Tokenizer *T,NspHash *symb_table,PList *plist)
     }
   /* Instruction Scilab */
   if ( T->NextToken(T) == FAIL) return RET_BUG;
-  if ( T->token.id != '\n' && T->token.id != ',' && T->token.id != ';' )
+  if ( T->token.id != RETURN_OP && T->token.id != COMMA_OP && T->token.id != SEMICOLON_OP )
     {
       if (parse_top(T,symb_table,plist) == FAIL) return RET_BUG;
     }

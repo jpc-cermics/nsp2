@@ -75,6 +75,38 @@ enum _nsp_keywords {
 
 typedef enum _nsp_ops nsp_ops; 
 enum _nsp_ops { 
+#if 0 
+  QUOTE_OP =  5670,/*  ((int) '\''),*/
+  STAR_OP = 5671 ,/*   ((int) '*'),*/
+  PLUS_OP = 5672 ,/*   ((int) '+'),*/
+  HAT_OP = 5673 ,/*   ((int) '^'),*/
+  COLON_OP = 5674 ,/*   ((int) ':'),*/
+  OR_OP = 5675 ,/*   ((int) '|'),*/
+  AND_OP = 5676 ,/*   ((int) '&'),*/
+  TILDE_OP = 5677 ,/*   ((int) '~'),*/
+  RETURN_OP =  ((int) '\n'), 
+  COMMA_OP =   5679 ,/*  ((int) ','),*/
+  SEMICOLON_OP = 5680 ,/*   ((int) ';'),*/
+  MINUS_OP = 5681 ,/*   ((int) '-'),*/
+  SLASH_OP = 5682 ,/*   ((int) '/'),*/
+  BACKSLASH_OP = 5683,/*   ((int) '\\'),*/
+#else 
+  QUOTE_OP =    ((int) '\''),
+  STAR_OP =    ((int) '*'),
+  PLUS_OP =    ((int) '+'),
+  HAT_OP =    ((int) '^'),
+  COLON_OP =    ((int) ':'),
+  OR_OP =    ((int) '|'),
+  AND_OP =    ((int) '&'),
+  TILDE_OP =    ((int) '~'),
+  RETURN_OP =  ((int) '\n'), 
+  COMMA_OP =     ((int) ','),
+  SEMICOLON_OP =    ((int) ';'),
+  MINUS_OP =    ((int) '-'),
+  SLASH_OP =    ((int) '/'),
+  BACKSLASH_OP =    ((int) '\\'),
+#endif 
+
   DOTSTAR   =((((int) '*') << 7) + (int) '.' ),
   DOTSLASH  =((((int) '/') << 7) + (int) '.' ),
   DOTBSLASH =((((int) '\\') << 7) + (int) '.' ),
@@ -115,6 +147,7 @@ enum _nsp_ops {
   SEQAND   =((((int) '&') << 7) + (int) '&' ),  
   SEQOR    =((((int) '|') << 7) + (int) '|' ) 
 };
+
 
 /******************************************
  *  SPECIAL code used in internal list coding

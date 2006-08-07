@@ -1,12 +1,4 @@
 /* -*- Mode: C -*- */
-
-/* generated file */
-
-#line 4 "astnode.override"
-
-#line 8 "astnode.c"
-
-
 #include <nsp/object.h>
 #include <gtk/gtk.h>
 
