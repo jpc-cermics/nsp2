@@ -68,29 +68,15 @@ enum _nsp_keywords {
   NOTKEY =  -40 /* should be the last */
 };
 
-/*****************************
+/*
  * OPERATORS
- * with name longer than one char 
- *****************************/
+ * the code for operators are positives 
+ */
 
+
+#if 0 
 typedef enum _nsp_ops nsp_ops; 
 enum _nsp_ops { 
-#if 0 
-  QUOTE_OP =  5670,/*  ((int) '\''),*/
-  STAR_OP = 5671 ,/*   ((int) '*'),*/
-  PLUS_OP = 5672 ,/*   ((int) '+'),*/
-  HAT_OP = 5673 ,/*   ((int) '^'),*/
-  COLON_OP = 5674 ,/*   ((int) ':'),*/
-  OR_OP = 5675 ,/*   ((int) '|'),*/
-  AND_OP = 5676 ,/*   ((int) '&'),*/
-  TILDE_OP = 5677 ,/*   ((int) '~'),*/
-  RETURN_OP =  ((int) '\n'), 
-  COMMA_OP =   5679 ,/*  ((int) ','),*/
-  SEMICOLON_OP = 5680 ,/*   ((int) ';'),*/
-  MINUS_OP = 5681 ,/*   ((int) '-'),*/
-  SLASH_OP = 5682 ,/*   ((int) '/'),*/
-  BACKSLASH_OP = 5683,/*   ((int) '\\'),*/
-#else 
   QUOTE_OP =    ((int) '\''),
   STAR_OP =    ((int) '*'),
   PLUS_OP =    ((int) '+'),
@@ -105,7 +91,6 @@ enum _nsp_ops {
   MINUS_OP =    ((int) '-'),
   SLASH_OP =    ((int) '/'),
   BACKSLASH_OP =    ((int) '\\'),
-#endif 
 
   DOTSTAR   =((((int) '*') << 7) + (int) '.' ),
   DOTSLASH  =((((int) '/') << 7) + (int) '.' ),
@@ -148,14 +133,64 @@ enum _nsp_ops {
   SEQOR    =((((int) '|') << 7) + (int) '|' ) 
 };
 
+#else
 
-/******************************************
+typedef enum _nsp_ops nsp_ops; 
+enum _nsp_ops { 
+  NOTCODE_OP =129,			      
+  QUOTE_OP ,			      
+  STAR_OP ,			      
+  PLUS_OP ,			      
+  HAT_OP ,			      
+  COLON_OP ,			      
+  OR_OP ,			      
+  AND_OP ,			      
+  TILDE_OP ,			      
+  RETURN_OP ,			      
+  COMMA_OP ,			      
+  SEMICOLON_OP ,		      
+  MINUS_OP ,			      
+  SLASH_OP ,			      
+  BACKSLASH_OP ,		      
+  DOTSTAR   ,			      
+  DOTSLASH  ,			      
+  DOTBSLASH ,			      
+  DOTPLUS   ,			      
+  STARDOT   ,			      
+  SLASHDOT  ,			      
+  BSLASHDOT ,			      
+  DOTSTARDOT  ,			      
+  DOTSLASHDOT  ,		      
+  DOTBSLASHDOT ,		      
+  DOTHAT ,			      
+  EQ     ,			      
+  LEQ    ,			      
+  GEQ    ,			      
+  NEQ    ,			      
+  DOTEQ     ,			      
+  DOTLEQ    ,			      
+  DOTLT    ,			      
+  DOTGEQ    ,			      
+  DOTGT    ,			      
+  DOTNEQ    ,			      
+  DOTPRIM ,			      
+  MOINS   ,   /* unary minus */	      
+  SEQAND   ,   /* sequential and */   
+  SEQOR ,   /* sequential or */	      
+  LT_OP,
+  GT_OP,
+  LASTCODE_OP                         
+};
+
+#endif 
+
+/*
  *  SPECIAL code used in internal list coding
- ******************************************/
+ */
 
 typedef enum _nsp_codes nsp_codes ;
 enum _nsp_codes {
-  FEVAL = -100,
+  FEVAL = -100, /* must be the first */
   ROWCONCAT = -101,
   COLCONCAT = -102,
   LASTCASE =  -103,
@@ -169,13 +204,14 @@ enum _nsp_codes {
   ARGS =       -111,
   PARENTH =    -112,
   DOTARGS =    -113,
-  METARGS =    -114,
+  METARGS =    -114, 
   CELLROWCONCAT = -115,
-  CELLCOLCONCAT = -116,
-  CELLDIAGCONCAT = -117,
-  P_CELL=  -118,
-  CELLARGS =    -119,
-  CALLEVAL =  -120
+  CELLCOLCONCAT = -116, 
+  CELLDIAGCONCAT = -117, 
+  P_CELL=  -118, 
+  CELLARGS =    -119, 
+  CALLEVAL =  -120, 
+  LASTCODE_NEG_OP = -121
 };
 
 #endif 
