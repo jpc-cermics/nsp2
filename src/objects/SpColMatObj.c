@@ -1238,7 +1238,8 @@ static int int_spcolmatrix_maxi(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spcolmatrix_mini(Stack stack, int rhs, int opt, int lhs)
 {
-  return ( int_spcolmatrix__maxi(stack,rhs,opt,lhs,nsp_spcolmatrix_mini,-1));
+  /* return ( int_spcolmatrix__maxi(stack,rhs,opt,lhs,nsp_spcolmatrix_mini,-1)); */
+  return RET_BUG;
 }
 
 /* interface for triu 

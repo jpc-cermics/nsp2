@@ -3378,7 +3378,7 @@ int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
 
 /* utility */
 
-static NspSpColMatrix *
+NspSpColMatrix *
 nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int minmaxflag, int *err)
 {
   /* Same philosophy as in BinaryOp **/
@@ -3901,12 +3901,12 @@ NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag)
  *       and a Row vector is returned.
  * if B= 'f' the maximum 
  * Imax is created if lhs == 2 
- *    Note that Imax is a full matrix;
+ * Note that Imax is a full matrix XXX not a good idea ? 
  */
 
 typedef int (*SpMaMi1) (NspSpColMatrix *A,NspSpColMatrix *M);
-typedef int (*SpMaMi2) (NspSpColMatrix *A,int j,NspSpColMatrix *M,int *count);
-typedef int (*SpMaMi3) (NspSpColMatrix *A,int j,NspSpColMatrix *M);
+typedef int (*SpMaMi2) (NspSpColMatrix *A,int j,NspSpColMatrix *M);
+typedef int (*SpMaMi3) (NspSpColMatrix *A,int j,NspSpColMatrix *M,int *count);
 
 static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs, SpMaMi1 F1, SpMaMi2 F2, SpMaMi3 F3)
 {
@@ -3938,28 +3938,27 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
     case 'R':
       if ((M =nsp_spcolmatrix_create(NVOID,A->rc_type,1,A->n)) == NULLSPCOL)
 	return NULLSPCOL;
-      if (nsp_spcolmatrix_resize_col(M,0,A->n) == FAIL) return NULLSPCOL;
-      count =0;
       if ( lhs == 2) 
 	{
 	  if ((*Imax = nsp_matrix_create(NVOID,'r',1,A->n)) == NULLMAT) 
 	    return NULLSPCOL;
 	  for ( j= 0 ; j < A->n ; j++) 
 	    {
-	      (*Imax)->R[j]=(*F2)(A,j,M,&count); 
+	      (*Imax)->R[j]=(*F2)(A,j,M);
 	    }
 	}
       else 
 	for ( j= 0 ; j < A->n ; j++) 
 	  {
-	    (*F2)(A,j,M,&count); 
+	    (*F2)(A,j,M);
 	  }
-      if (nsp_spcolmatrix_resize_col(M,0,count) == FAIL) return NULLSPCOL;
       break ;
     case 'c':
     case 'C':
       if ((M =nsp_spcolmatrix_create(NVOID,A->rc_type,A->m,1)) == NULLSPCOL) 
 	return NULLSPCOL;
+      if (nsp_spcolmatrix_resize_col(M,0,A->m) == FAIL) return NULLSPCOL;
+      count =0;
       inc = A->m;
       if ( lhs == 2) 
 	{
@@ -3967,17 +3966,16 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
 	    return NULLSPCOL; 
 	  for ( j= 0 ; j < A->m ; j++) 
 	    {
-	      int imax =  (*F3)(A,j,M);
-	      if ( imax == 0) return NULLSPCOL;
+	      int imax =  (*F3)(A,j,M,&count);
 	      (*Imax)->R[j] = imax;
 	    }
 	}
       else
 	for ( j= 0 ; j < A->m ; j++) 
 	  {
-	    int imax =  (*F3)(A,j,M);
-	    if ( imax == 0) return NULLSPCOL;
+	    (*F3)(A,j,M,&count);
 	  }
+      if (nsp_spcolmatrix_resize_col(M,0,count) == FAIL) return NULLSPCOL;
       break;
     }
   return M;
@@ -4018,14 +4016,16 @@ static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
   return imax;
 }
 
-/* M(j)=Max A(:,j) : returns a row sparse matrix */
+/* utility : M(j)=Max A(j,:) : max of row j  
+ * XXXXXXXX OK
+ */
 
-static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
+static int SpColMaxi3(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
 {
-  int imax = 0,i,k;
-  double amax=0.0; imax=1;
-  /* find a first value **/
-  for ( i = 0 ; i < A->m ; i++ ) 
+  int imax = 1,i,k;
+  double amax=0.0; 
+  /* find a first value */
+  for ( i = 0 ; i < A->n ; i++ ) 
     {
       for ( k = 0 ; k < A->D[i]->size ; k++) 
 	{
@@ -4035,8 +4035,8 @@ static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
 	}
       if ( amax != 0.0 ) break;
     }
-  /* find the max **/
-  for ( i = 0 ; i < A->m ; i++ ) 
+  /* find the max */
+  for ( i = 0 ; i < A->n ; i++ ) 
     {
       int ok=-1;
       for ( k = 0 ; k < A->D[i]->size ; k++) 
@@ -4061,15 +4061,17 @@ static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
   return imax;
 }
 
-/*M(j)=Max A(j,:) **/
+/* utility: M(j)=Max A(:,j) find the max of column j 
+ * XXXXXXXX OK
+ */
 
-static int SpColMaxi3(NspSpColMatrix *A, int j, NspSpColMatrix *M)
+static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
 {
   int imax = 0,k;
   double amax=0.0; imax=1;
-  /* find a first value **/
+  /* find a first value */
   if ( A->D[j]->size != 0 ) { amax = A->D[j]->R[0] ; imax = A->D[j]->J[0]+1;}
-  /* find the max **/
+  /* find the max */
   for ( k = 0 ; k < A->D[j]->size ; k++) 
     {
       if ( A->D[j]->R[k]> amax ) 
@@ -4088,11 +4090,22 @@ static int SpColMaxi3(NspSpColMatrix *A, int j, NspSpColMatrix *M)
 }
 
 
+/**
+ * nsp_spcolmatrix_maxi:
+ * @A: 
+ * @flag: 
+ * @Imax: 
+ * @lhs: 
+ * 
+ * [max,imax]=max(A,'c'|'r'|'g')
+ * 
+ * Return value: 
+ **/
+
 NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 {
   return SpColMaxiMini(A,flag,Imax,lhs,SpColMaxi1,SpColMaxi2,SpColMaxi3);
 }
-
 
 /*
  *nsp_mat_mini: Mini(A)
