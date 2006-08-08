@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // test sp operations 
 // sp -> spcol
 // 
@@ -387,30 +388,6 @@ if or(Sp1<>-A+4) then pause;end
 // nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
 // XXXXX : interface to be added 
 
-// nsp_spcolmatrix_maxitt 
-// XXXXXXXXXX 
-
-// /*
-//  *  A(i,j) = Maxi(A(i,j),B(i,j)) 
-//  *  Ind(i,j) set to j if B(i,j) realize the max and flag ==1 
-//  *  B unchanged A,B are changed 
-//  */
-
-// /*
-//  *  Res = Mini(A,B) 
-//  *  term to term max  A(i;j) = Max(A(i,j),B(i,j)
-//  *  Res(i,j) = 1 or 2  
-//  *  A changed, B unchanged, 
-//  *  Res Created if flag == 1
-//  */
-
- // nsp_spcolmatrix_minitt 
- 
-// /*
-//  *  A(i,j) = Mini(A(i,j),B(i,j)) 
-//  *  Ind(i,j) set to j if B(i,j) realize the max and flag ==1 
-//  *  B unchanged A,B are changed 
-//  */
 
 // nsp_spcolmatrix_realpart: 
  
@@ -463,24 +440,63 @@ end
 //  * A is unchanged 
 //  */
 
-// /*
-//  * Max =nsp_mat_maxi(A,B,Imax,lhs)
-//  *     A is unchanged 
-//  * if B= 'c' the max for the column indices is computed 
-//  *       and a column vector is returned. 
-//  * if B= 'r' the max for the row indices is computed 
-//  *       and a Row vector is returned.
-//  * if B= 'f' the maximum 
-//  * Imax is created if lhs == 2 
-//  *    Note that Imax is a full matrix;
-//  */
+
+// nsp_spcolmatrix_maxitt 
+// XXXX n-ary version to be implemented 
+
+A1=int(rand(12,12)*30);A1(A1>=5)=0;
+Sp1=m2sp(A1);
+Sp2=max(Sp,Sp1);
+A2=max(A,A1);
+if or(A2<>sp2m(Sp2)) then pause;end
+
+[Sp2,SpImax2]=max(Sp,Sp1);
+[A2,AImax2]=max(A,A1);
+if or(A2<>sp2m(Sp2)) then pause;end
+I=find(A==0 && A1==0);
+AImax2(I)=0;
+if or(sp2m(SpImax2)<>AImax2) then pause;end
+
+// nsp_spcolmatrix_minitt 
+// XXXX to be done 
+
+// Max =nsp_mat_maxi(A,B,Imax,lhs)
+// nsp_mat_mini: Mini(A)
+
+[Sp1]=max(Sp);
+A1=sp2m(Sp1);
+A2=max(A);
+if or(A1<>A2) then pause;end
+
+[Sp1,Imax]=max(Sp);
+A1=sp2m(Sp1);
+[A2,Imax2]=max(A);
+if or(A1<>A2) then pause;end
+if or(Imax<>Imax2) then pause;end
+
+[Sp1]=max(Sp,'c');
+A1=sp2m(Sp1);
+A2=max(A,'c');
+if or(A1<>A2) then pause;end
+
+[Sp1,Imax]=max(Sp,'c');
+A1=sp2m(Sp1);
+[A2,Imax1]=max(A,'c');
+if or(A1<>A2) then pause;end
+if or(Imax<>Imax1) then pause;end
+
+[Sp1]=max(Sp,'r');
+A1=sp2m(Sp1);
+A2=max(A,'r');
+if or(A1<>A2) then pause;end
+
+[Sp1,Imax]=max(Sp,'r');
+A1=sp2m(Sp1);
+[A2,Imax1]=max(A,'r');
+if or(A1<>A2) then pause;end
+if or(Imax<>Imax1) then pause;end
 
 
-// /*
-//  *nsp_mat_mini: Mini(A)
-//  * A is unchanged 
-//  * rs and ri are set to the result 
-//  */
 
 // /*
 //  * Creates a Matrix and initialize it with the 

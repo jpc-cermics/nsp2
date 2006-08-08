@@ -143,6 +143,10 @@ struct _operator {
   int code; 
 };
 
+/* the order in this table must follow 
+ * the order of plisttoken.h 
+ */
+
 static OpWordTab Ops[]={
   {"@","noop",   NOTCODE_OP},
   {"'","quote",  QUOTE_OP},  
@@ -260,62 +264,44 @@ int PrintOPname(int code)
 }
 
 
-char * nsp_astcode_to_string(int type)
+char * nsp_astcode_to_string(int code)
 {
-  if ( type > 0 && type  != '=' ) 
+  if ( code > NOTCODE_OP && code < LASTCODE_OP ) 
     {
-      return OpCode2Str(type);
+      return Ops[code-NOTCODE_OP].name;
     }
-  else
+  if ( code > LASTCODE_NEG_OP && code <= FEVAL )
     {
-      switch ( type ) 
-	{
-	case OPT : return "OPT";
-	case '=': return "=";
-	case MLHS  : return "MLHS";
-	case FEVAL : return "FEVAL";
-	case ARGS : return "ARGS";
-	case METARGS : return "METARGS";
-	case DOTARGS : return "DOTARGS";
-	case CELLARGS : return "CELLARGS";
-	case CALLEVAL : return "CALLEVAL";
-	case LISTEVAL : return "LISTEVAL";
-	case PLIST : return "PLIST";
-	case COMMENT : return "COMMENT";
-	case NAME : return "NAME";
-	case OPNAME : return "OPNAME";
-	case NUMBER: return "NUMBER";
-	case STRING: return "STRING";
-	case EMPTYMAT: return "EMPTYMAT";
-	case EMPTYCELL: return "EMPTYCELL";
-	case P_MATRIX : return "P_MATRIX";
-	case P_CELL : return "P_CELL";
-	case CELLDIAGCONCAT: return "CELLDIAGCONCAT";
-	case CELLROWCONCAT: return "CELLROWCONCAT";
-	case CELLCOLCONCAT: return "CELLCOLCONCAT";
-	case ROWCONCAT: return "ROWCONCAT";
-	case COLCONCAT: return "COLCONCAT";
-	case DIAGCONCAT: return "DIAGCONCAT";
-	case WHILE: return "WHILE";
-	case FUNCTION: return "FUNCTION";
-	case FOR: return "FOR";
-	case IF : return "IF";
-	case TRYCATCH : return "TRYCATCH";
-	case SELECT : return "SELECT";
-	case STATEMENTS : return "STATEMENTS";
-	case STATEMENTS1 : return "STATEMENTS1";
-	case PARENTH : return "PARENTH";
-	case CASE : return "CASE";
-	case LASTCASE : return "LASTCASE";
-	case PAUSE:  return "PAUSE";
-	case CLEAR:  return "CLEAR";
-	case CLEARGLOBAL:  return "CLEARGLOBAL";
-	case HELP  : return "HELP";
-	case GLOBAL: return "GLOBAL";
-	case EXEC: return "EXEC";
-	case APROPOS: return "APROPOS";
-	default :
-	  return NULL;
-	}
+      int i=(FEVAL-code)+LASTCODE_OP+1-NOTCODE_OP;
+      return Ops[i].name;
+    }
+  /* remaining keys */
+  switch ( code )
+    {
+    case '=': return "=";
+    case PLIST : return "PLIST";
+    case COMMENT : return "COMMENT";
+    case NAME : return "NAME";
+    case OPNAME : return "OPNAME";
+    case NUMBER: return "NUMBER";
+    case STRING: return "STRING";
+    case EMPTYMAT: return "EMPTYMAT";
+    case EMPTYCELL: return "EMPTYCELL";
+    case WHILE: return "WHILE";
+    case FUNCTION: return "FUNCTION";
+    case FOR: return "FOR";
+    case IF : return "IF";
+    case TRYCATCH : return "TRYCATCH";
+    case SELECT : return "SELECT";
+    case CASE : return "CASE";
+    case PAUSE:  return "PAUSE";
+    case CLEAR:  return "CLEAR";
+    case CLEARGLOBAL:  return "CLEARGLOBAL";
+    case HELP  : return "HELP";
+    case GLOBAL: return "GLOBAL";
+    case EXEC: return "EXEC";
+    case APROPOS: return "APROPOS";
+    default :
+      return NULL;
     }
 }

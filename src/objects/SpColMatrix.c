@@ -3456,7 +3456,7 @@ nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int
 		{ 
 		  /* A != 0 and B != 0 **/
 		  Loc->D[0]->J[count] = j1;
-		  if (  minmaxflag*Ai->R[k1] >   minmaxflag*Bi->R[k2] )
+		  if (  minmaxflag*Ai->R[k1] >=   minmaxflag*Bi->R[k2] )
 		    {
 		      Loc->D[0]->R[count]=  Ai->R[k1];
 		      if ( flag == 1) 
@@ -4003,7 +4003,7 @@ static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
 	  if ( A->D[i]->R[k] > amax ) 
 	    {
 	      amax = A->D[i]->R[k];
-	      imax =  A->D[i]->J[k]+1;
+	      imax = (A->D[i]->J[k]+1)+A->m*i;
 	    }
 	}
     }

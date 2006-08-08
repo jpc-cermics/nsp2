@@ -6,9 +6,9 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-/****************************
+/*
  * BASIC TYPES
- *****************************/
+ */
 
 typedef enum _nsp_basic_types nsp_basic_types;
 enum _nsp_basic_types { 
@@ -26,9 +26,9 @@ enum _nsp_basic_types {
 /* Names are of max size */ 
 #define NAME_MAXL 52
 
-/****************************
+/*
  * KEYWORDS
- ****************************/
+ */
 
 typedef enum _nsp_keywords nsp_keywords;
 enum _nsp_keywords { 
@@ -137,7 +137,7 @@ enum _nsp_ops {
 
 typedef enum _nsp_ops nsp_ops; 
 enum _nsp_ops { 
-  NOTCODE_OP =129,			      
+  NOTCODE_OP =129, /* start after standard ascii codes */			    
   QUOTE_OP ,			      
   STAR_OP ,			      
   PLUS_OP ,			      
@@ -211,7 +211,8 @@ enum _nsp_codes {
   P_CELL=  -118, 
   CELLARGS =    -119, 
   CALLEVAL =  -120, 
-  LASTCODE_NEG_OP = -121
+  EQUAL = -121,
+  LASTCODE_NEG_OP = -122
 };
 
 #endif 

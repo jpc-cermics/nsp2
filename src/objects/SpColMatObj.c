@@ -1207,11 +1207,11 @@ static int int_spcolmatrix__maxi(Stack stack, int rhs, int opt, int lhs, SpMiMax
       else 
 	{ str = "F"; }
       if (( M= (*F)(A,str,&Imax,lhs)) == NULLSPCOL) return RET_BUG;
+      MoveObj(stack,1,NSP_OBJECT(M));
       if ( lhs == 2)
 	{
-	  if ( rhs == 2) MoveObj(stack,2,(NspObject *)Imax);
+	  MoveObj(stack,2,NSP_OBJECT(Imax));
 	}
-      MoveObj(stack,1,(NspObject *) M);
     }
   else
     {
@@ -1784,8 +1784,8 @@ static OpTab SpColMatrix_func[]={
   {"sum_sp_s" ,  int_spcolmatrix_sum },
   {"sum_sp" ,  int_spcolmatrix_sum },
   {"setrowscols_sp",int_spcolmatrix_setrc},
-  {"maxi_sp" ,  int_spcolmatrix_maxi },
-  {"maxi_sp_s" ,  int_spcolmatrix_maxi },
+  {"max_sp" ,  int_spcolmatrix_maxi },
+  {"max_sp_s" ,  int_spcolmatrix_maxi },
   {"extractelts_sp",int_spcolmatrix_extractelts},
   {"nnz_sp",int_spcolmatrix_nnz},
   {"triu_sp", int_spcolmatrix_triu},
