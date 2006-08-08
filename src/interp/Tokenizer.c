@@ -440,6 +440,8 @@ static void  parse_operators(Tokenizer *T)
     case '-': T->token.id =  MINUS_OP ;break;
     case '/': T->token.id =  SLASH_OP ;break;
     case '\\': T->token.id =  BACKSLASH_OP ;break;
+    case '>': T->token.id =  GT_OP ;break;
+    case '<': T->token.id =  LT_OP ;break;
     default:
       break;
     }

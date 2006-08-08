@@ -1278,7 +1278,7 @@ static int parse_lprim(Tokenizer *T,NspHash *symb_table,PList *plist)
 static int IsLprim1Op(Tokenizer *T,int *op)
 {
   int lop = T->token.id;
-  if ( lop == '<' || lop == '>' || lop ==  GEQ || lop == LEQ 
+  if ( lop == LT_OP || lop == GT_OP || lop ==  GEQ || lop == LEQ 
        ||  lop == DOTLT || lop == DOTGT || lop ==  DOTGEQ || lop == DOTLEQ)
     {
       *op = T->token.id ;if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);

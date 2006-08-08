@@ -132,10 +132,7 @@ char *Keycode2str(int keyc)
 }
 
 /*
- * structure for storing Scilab operator 
- * which are coded with more than one char,
- * or which have special meaning ( ex , can be column matrix 
- * separator or just expr separator )
+ * structure for storing Nsp operators 
  */
 
 typedef  struct _operator  OpWordTab;
@@ -147,69 +144,73 @@ struct _operator {
 };
 
 static OpWordTab Ops[]={
-  {"'","quote",  QUOTE_OP}, /* QUOTE_OP */
-  {"*","mult",   STAR_OP },   /* STAR_OP */
-  {"+","plus",   PLUS_OP },  /* PLUS_OP */
-  {"^","hat",   HAT_OP},   /* HAT_OP */
-  {":","impl",   COLON_OP},  /* COLON_OP */
-  {"|","or",   OR_OP},    /* OR_OP */
-  {"&","and",   AND_OP},   /* AND_OP */
-  {"~","not",   TILDE_OP},   /* TILDE_OP */
-  {"\\n","ret", RETURN_OP},  /* RETURN_OP */
-  {",","virg", COMMA_OP},    /* COMMA_OP */
-  {";","pvirg", SEMICOLON_OP},   /* SEMICOLON_OP */
-  {"-","minus", MINUS_OP},   /* MINUS_OP */
-  {"/","div", SLASH_OP},     /* SLASH_OP */
-  {"\\","bdiv", BACKSLASH_OP},  /* BACKSLASH_OP */
+  {"@","noop",   NOTCODE_OP},
+  {"'","quote",  QUOTE_OP},  
+  {"*","mult",   STAR_OP }, 	
+  {"+","plus",   PLUS_OP },  
+  {"^","hat",   HAT_OP},   
+  {":","impl",   COLON_OP},
+  {"|","or",   OR_OP},    
+  {"&","and",   AND_OP},  
+  {"~","not",   TILDE_OP},
+  {"\\n","ret", RETURN_OP},
+  {",","virg", COMMA_OP}, 
+  {";","pvirg", SEMICOLON_OP},
+  {"-","minus", MINUS_OP},   
+  {"/","div", SLASH_OP},     
+  {"\\","bdiv", BACKSLASH_OP},
   /* composed */
-  {".+","dplus",   DOTPLUS},
-  {"||","seq_or", SEQOR},
-  {"&&","seq_and",  SEQAND},
-  {".^","dh", DOTHAT},
-  {".'","dprim", DOTPRIM},
-  {".*","dst", DOTSTAR},
-  {"./","dsl",DOTSLASH},
-  {".\\","dbs",DOTBSLASH},
-  {"*.", "std", STARDOT},
-  {"/.", "sld",SLASHDOT},
-  {"\\.", "bsd",BSLASHDOT},
-  {".*.", "dstd",DOTSTARDOT},
-  {"./.", "dsld",DOTSLASHDOT},
-  {".\\.", "dbsd",DOTBSLASHDOT},
-  {"==", "eq",EQ },
-  {"<=", "le", LEQ},
-  {">=", "ge",GEQ},
-  {"<>", "ne",NEQ} ,
-  {"<","lt",(int) '<'},
-  {">","gt",(int) '>'},
-  {".==", "deq",DOTEQ },
-  {".<=", "dle", DOTLEQ},
-  {".>=", "dge",DOTGEQ},
-  {".<>", "dne",DOTNEQ} ,
-  {".<","dlt", DOTLT},
-  {".>","dgt", DOTGT},
+  {".*","dst", DOTSTAR},			          
+  {"./","dsl",DOTSLASH},			          
+  {".\\","dbs",DOTBSLASH},			        
+  {".+","dplus",   DOTPLUS},			          
+  {"*.", "std", STARDOT},			        
+  {"/.", "sld",SLASHDOT},			          
+  {"\\.", "bsd",BSLASHDOT},			          
+  {".*.", "dstd",DOTSTARDOT},			          
+  {"./.", "dsld",DOTSLASHDOT},			          
+  {".\\.", "dbsd",DOTBSLASHDOT},		          
+  {".^","dh", DOTHAT},				          
+  {"==", "eq",EQ },				          
+  {"<=", "le", LEQ},				          
+  {">=", "ge",GEQ},				          
+  {"<>", "ne",NEQ} ,				          
+  {".==", "deq",DOTEQ },			          
+  {".<=", "dle", DOTLEQ},			          
+  {".<","dlt", DOTLT},				        
+  {".>=", "dge",DOTGEQ},			        
+  {".>","dgt", DOTGT},					
+  {".<>", "dne",DOTNEQ} ,			          
+  {".'","dprim", DOTPRIM},			          
   {"-",  "m",MOINS}, 
+  {"&&","seq_and",  SEQAND},			          
+  {"||","seq_or", SEQOR},			          
+  {"<","lt",(int) LT_OP},				          
+  {">","gt",(int) GT_OP},				          
+  {"@","noop", LASTCODE_OP},
+  /* negative code from FEVAL to LASTCODE_NEG_OP */
+  {"FEVAL","fe",FEVAL},
+  {";",  "rc", ROWCONCAT},
   {",",  "cc", COLCONCAT},
-  {";",  "rc",ROWCONCAT},
-  {"#",  "dc",DIAGCONCAT},
-  {",",  "cce", CELLCOLCONCAT},
-  {";",  "rce", CELLROWCONCAT},
-  {"#",  "dce", CELLDIAGCONCAT},
-  {"STATEMENTS","stm",STATEMENTS},
-  {"STATEMENTS1","stm1",STATEMENTS1},
   {"LASTCASE","lc",LASTCASE},
   {"MLHS","mlhs",MLHS},
-  {"OPT","opt",OPT},
   {"MATRIX","mat",P_MATRIX},
-  {"FEVAL","fe",FEVAL},
-  {"ARGS","args",ARGS},
-  {"METARGS","metargs",METARGS},
-  {"CELLARGS","cellargs",CELLARGS},
-  {"DOTARGS","dotargs",DOTARGS},
+  {"STATEMENTS","stm",STATEMENTS},
+  {"STATEMENTS1","stm1",STATEMENTS1},
+  {"OPT","opt",OPT},
+  {"#",  "dc", DIAGCONCAT},
   {"LISTEVAL","listev",LISTEVAL},
-  {"CALLEVAL","callev",CALLEVAL},
-  {"OPT","op",OPT},
+  {"ARGS","args",ARGS},
   {"PARENTH","par",PARENTH},
+  {"DOTARGS","dotargs",DOTARGS},
+  {"METARGS","metargs",METARGS},
+  {";",  "rce",CELLROWCONCAT},
+  {",",  "cce",CELLCOLCONCAT},
+  {"#",  "dce",CELLDIAGCONCAT},
+  {"CELL","cells",P_CELL},
+  {"CELLARGS","cellargs",CELLARGS},
+  {"CALLEVAL","callev",CALLEVAL},
+  {"@","noop", LASTCODE_NEG_OP},
   {(char *) 0,(char *)0, 0}
 };
 
@@ -220,12 +221,11 @@ static OpWordTab Ops[]={
 
 char *OpCode2NickN(int keyc)
 {
-  int i =0;
-  while ( Ops[i].name != (char *) 0) 
+  if ( keyc > NOTCODE_OP && keyc < LASTCODE_OP ) 
+    return Ops[keyc-NOTCODE_OP].nickname;
+  if ( keyc > LASTCODE_NEG_OP && keyc <= FEVAL )
     {
-      if ( Ops[i].code == keyc) 
-	return (Ops[i].nickname);
-      i++;
+      return Ops[(FEVAL-keyc)+LASTCODE_OP+1-NOTCODE_OP].nickname;
     }
   return("unknown");
 }
@@ -237,33 +237,14 @@ char *OpCode2NickN(int keyc)
 
 char *OpCode2Str(int code)
 {
-  static char op[3];
-  if ( 0 < code && code < 128) 
+  if ( code > NOTCODE_OP && code < LASTCODE_OP ) 
+    return Ops[code-NOTCODE_OP].name;
+  if ( code > LASTCODE_NEG_OP && code <= FEVAL )
     {
-      op[0] = code ;
-      op[1] = '\0';
-      return(op);
+      int i=(FEVAL-code)+LASTCODE_OP+1-NOTCODE_OP;
+      return Ops[i].name;
     }
-  else if ( 0 <  code && code < 256 ) 
-    {
-      op[0] = (char) (code / 128);
-      op[1] = (char) (code % 128) ;
-      op[2] = '\0';
-      return(op);
-    }
-  else 
-    {
-      int i=0;
-      while ( Ops[i].code != NOTCODE )
-	{
-	  if ( Ops[i].code == code ) 
-	    return(Ops[i].name);
-	  i++ ;
-	}
-      op[0] = ' ';
-      op[1] = '\0';
-      return((char *) 0);
-    }
+  return("unknown");
 }
 
 /*
