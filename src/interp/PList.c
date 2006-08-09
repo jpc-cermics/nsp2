@@ -1184,8 +1184,7 @@ static void PListPrint_I(PList List, int indent)
 	    }
 	  break;
 	case DOTARGS :
-	  Sciprintf(".");
-	  ArgPrint(L->prev,indent);
+	  Sciprintf(".%s",(char *) List->O);
 	  break;
 	case CALLEVAL:
 	case LISTEVAL :
@@ -1754,7 +1753,7 @@ void plist_name_to_local_id(PList List,NspHash *H)
 	    }
 	  break;
 	case DOTARGS :
-	  Arg_name_to_local_name(L->prev,H);
+	  Arg_name_to_local_name(List,H);
 	  break;
 	case CALLEVAL:
 	case LISTEVAL :
