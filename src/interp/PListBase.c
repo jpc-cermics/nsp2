@@ -227,9 +227,9 @@ char *OpCode2NickN(int keyc)
 {
   if ( keyc > NOTCODE_OP && keyc < LASTCODE_OP ) 
     return Ops[keyc-NOTCODE_OP].nickname;
-  if ( keyc > LASTCODE_NEG_OP && keyc <= FEVAL )
+  if ( keyc < LASTCODE_NEG_OP && keyc >= FEVAL )
     {
-      return Ops[(FEVAL-keyc)+LASTCODE_OP+1-NOTCODE_OP].nickname;
+      return Ops[(keyc-FEVAL)+LASTCODE_OP+1-NOTCODE_OP].nickname;
     }
   return("unknown");
 }
@@ -243,10 +243,9 @@ char *OpCode2Str(int code)
 {
   if ( code > NOTCODE_OP && code < LASTCODE_OP ) 
     return Ops[code-NOTCODE_OP].name;
-  if ( code > LASTCODE_NEG_OP && code <= FEVAL )
+  if ( code < LASTCODE_NEG_OP && code >= FEVAL )
     {
-      int i=(FEVAL-code)+LASTCODE_OP+1-NOTCODE_OP;
-      return Ops[i].name;
+      return Ops[(code-FEVAL)+LASTCODE_OP+1-NOTCODE_OP].name;
     }
   return("unknown");
 }

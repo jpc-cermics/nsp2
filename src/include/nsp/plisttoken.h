@@ -190,29 +190,29 @@ enum _nsp_ops {
 
 typedef enum _nsp_codes nsp_codes ;
 enum _nsp_codes {
-  FEVAL = -100, /* must be the first */
-  ROWCONCAT = -101,
-  COLCONCAT = -102,
-  LASTCASE =  -103,
-  MLHS =      -104,
-  P_MATRIX=  -105,
-  STATEMENTS = -106,
-  STATEMENTS1 = -107,
-  OPT =        -108,
-  DIAGCONCAT = -109,
-  LISTEVAL =   -110,
-  ARGS =       -111,
-  PARENTH =    -112,
-  DOTARGS =    -113,
-  METARGS =    -114, 
-  CELLROWCONCAT = -115,
-  CELLCOLCONCAT = -116, 
-  CELLDIAGCONCAT = -117, 
-  P_CELL=  -118, 
-  CELLARGS =    -119, 
-  CALLEVAL =  -120, 
-  EQUAL = -121,
-  LASTCODE_NEG_OP = -122
+  FEVAL = -100, /* must be the fisrt and such that LASTCODE_NEG_OP is negative */
+  ROWCONCAT ,
+  COLCONCAT ,
+  LASTCASE ,
+  MLHS ,
+  P_MATRIX,
+  STATEMENTS ,
+  STATEMENTS1 ,
+  OPT ,
+  DIAGCONCAT ,
+  LISTEVAL ,
+  ARGS ,
+  PARENTH ,
+  DOTARGS ,
+  METARGS ,
+  CELLROWCONCAT ,
+  CELLCOLCONCAT ,
+  CELLDIAGCONCAT ,
+  P_CELL,
+  CELLARGS ,
+  CALLEVAL ,
+  EQUAL_OP ,
+  LASTCODE_NEG_OP 
 };
 
 #endif 
