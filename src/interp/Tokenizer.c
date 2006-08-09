@@ -501,20 +501,31 @@ static int parse_number(Tokenizer *T)
     }
   if ( c == '.' ) 
     {
-      T->token.buf[count++]=c;
-      c=T->GetChar(T);
-      deno=0.00;
-      count1=0;
-      if ( isdigit(c) ) 
+      /* if the dot introduce an operator we leave the dot to the 
+       * operator 
+       */
+      char c1 = T->curline.buf[T->curline.lpt3];
+      if ( c1 == '*' || c1 == '/' || c1 == '\\' || c1 == '^' 
+	   || c1 == '=' || c1 == '<' || c1 == '>' ||  c1 == '\''  )
 	{
-	  while ( isdigit(c) )
+	}
+      else
+	{
+	  T->token.buf[count++]=c;
+	  c=T->GetChar(T);
+	  deno=0.00;
+	  count1=0;
+	  if ( isdigit(c) ) 
 	    {
-	      T->token.buf[count++]=c;
-	      deno = 10.00*deno + cdigit2num(c) ;
-	      c=T->GetChar(T);
-	      count1++;
+	      while ( isdigit(c) )
+		{
+		  T->token.buf[count++]=c;
+		  deno = 10.00*deno + cdigit2num(c) ;
+		  c=T->GetChar(T);
+		  count1++;
+		}
+	      /* T->token.syv += (deno/pow(10.00,(double)count1)); */
 	    }
-	  /* T->token.syv += (deno/pow(10.00,(double)count1)); */
 	}
     }
   if ( c == 'e' || c == 'E' || c == 'd' || c == 'D') 
@@ -961,7 +972,6 @@ static int is_dot_alpha(Tokenizer *T)
   else
     return(FAIL);
 }
-
 
 static int is_transpose(Tokenizer *T)
 {
