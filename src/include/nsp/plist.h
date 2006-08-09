@@ -110,33 +110,33 @@ extern NspSMatrix * NspPList2SMatrix (NspPList *P_L, int indent);
 
 /* PList.c */
 
- extern int ParseAdd (PList *plist, int op, int arity, int line);
- extern int ParseAddLast (PList *plist, int op, int arity, int line);
- extern int ParseAddName (PList *plist, char *str);
- extern int ParseAddString (PList *plist, char *str);
- extern int ParseAddComment (PList *plist, char *str);
- extern int ParseAddList (PList *plist, PList *l);
- extern int ParseAppend (PList *plist, PList *l);
- extern int ParseAddList1 (PList *plist, PList *l);
- extern int ParseAddDoubleI (PList *plist, char *str);
+ extern int nsp_parse_add(PList *plist, int op, int arity, int line);
+ extern int nsp_parse_add_last(PList *plist, int op, int arity, int line);
+ extern int nsp_parse_add_name(PList *plist, char *str);
+ extern int nsp_parse_add_string(PList *plist, char *str);
+ extern int nsp_parse_add_comment(PList *plist, char *str);
+ extern int nsp_parse_add_list(PList *plist, PList *l);
+ extern int nsp_parse_append(PList *plist, PList *l);
+ extern int nsp_parse_add_list1(PList *plist, PList *l);
+ extern int nsp_parse_add_doublei(PList *plist, char *str);
  extern int ParseAddDouble (PList *plist);
- extern PList EPListCreate (void);
- extern void PListDestroy (PList *List);
- extern PList PListCopy (PList L);
- extern PList Last (PList plist);
- extern void PListPrInt_I (PList L, int indent);
- extern void PListPrInt (PList L);
- extern PList FirstEl (PList L);
- extern int PrettyPrintOPname (int type, int indent, int pos);
- extern void PListPrettyPrint (PList L, int indent);
- extern int ArgPrettyPrint (PList L, int i, int pos, int posret);
- extern void PListPrint (PList L, int indent);
- extern void ArgPrint (PList L, int i);
- extern void PListInfo (PList L, int indent);
+ extern PList nsp_eplist_create(void);
+ extern void nsp_plist_destroy(PList *List);
+ extern PList nsp_plist_copy(PList L);
+ extern PList nsp_last(PList plist);
+ extern void nsp_plist_print_internal(PList L, int indent);
+ extern void nsp_plist_print_int(PList L);
+ extern PList nsp_firstel(PList L);
+ extern int nsp_pretty_print_opname(int type, int indent, int pos);
+ extern void nsp_plist_pretty_print(PList L, int indent);
+ extern int nsp_arg_pretty_print(PList L, int i, int pos, int posret);
+ extern void nsp_plist_print(PList L, int indent);
+ extern void nsp_arg_print(PList L, int i);
+ extern void nsp_plist_info(PList L, int indent);
  extern void ShowLine (PList L);
- extern int PListSave (PList L);
-extern int PListLoad (PList *L);
-extern NspSMatrix *PList2SMatrix(PList L, int indent) ;
+ extern int nsp_plist_save(PList L);
+extern int nsp_plist_load(PList *L);
+extern NspSMatrix *nsp_plist2smatrix(PList L, int indent) ;
 extern void plist_get_nargs(PList List,int *lhs , int *rhsp1);
 
 #endif /*  PLIST_H  */

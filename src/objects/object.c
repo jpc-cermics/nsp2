@@ -1047,7 +1047,7 @@ int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
     }
   /* changes io in order to write in a string matrix */
   def = SetScilabIO(Sciprint2string);
-  mf =  SetScilabMore(scimore_void);
+  mf =nsp_set_nsp_more(scimore_void);
   if ( rep == 0 ) 
     {
       int kp=user_pref.pr_as_read_syntax;
@@ -1061,7 +1061,7 @@ int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
     }
   res = Sciprint2string_reset(); 
   SetScilabIO(def);
-  SetScilabMore(mf);
+ nsp_set_nsp_more(mf);
   if ( res == NULL) return RET_BUG; 
   MoveObj(stack,1, res);
   return 1;
@@ -1093,7 +1093,7 @@ int int_object_fprint(Stack stack, int rhs, int opt, int lhs)
     }
   f=Sciprint_file(F->file); 
   def = SetScilabIO(Sciprint2file);
-  mf =  SetScilabMore(scimore_void);
+  mf =nsp_set_nsp_more(scimore_void);
   if ( rep == 0 ) 
     {
       int kp=user_pref.pr_as_read_syntax;
@@ -1106,7 +1106,7 @@ int int_object_fprint(Stack stack, int rhs, int opt, int lhs)
       object->type->pr(object,0,NULL,0);
     }
   SetScilabIO(def);
-  SetScilabMore(mf);
+ nsp_set_nsp_more(mf);
   Sciprint_file(f); 
   return 0;
 }

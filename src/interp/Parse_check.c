@@ -51,7 +51,7 @@ static int IsFeval (PList plist, PList *plist1, int *kount);
  * non vide : il faut alors le netoyer .
  *************************************************************/
 
-int IsMlhs(PList plist, PList *plist1, int *kount)
+int is_mlhs(PList plist, PList *plist1, int *kount)
 {
   PList loc;
   if (Isname(plist,plist1,kount)==OK) return(OK);
@@ -110,7 +110,7 @@ static int Isname(PList plist, PList *plist1, int *kount)
 {
   if ( plist != NULLPLIST && plist->type == NAME )
     {
-      if (ParseAddName(plist1,(char *) plist->O)  == FAIL) return(FAIL);
+      if (nsp_parse_add_name(plist1,(char *) plist->O)  == FAIL) return(FAIL);
       (*kount)++;
       return(OK);
     }
@@ -138,8 +138,8 @@ static int IsFeval(PList plist, PList *plist1, int *kount)
 	{
 	  /* (((,,,,)) MATRIX) **/
 	  /* we must perform a copy since plist will be destroyed */
-	  if ((loc2 = PListCopy(loc1)) == NULLPLIST) return(FAIL);
-	  if (ParseAddList(plist1,&loc2) == FAIL) return(FAIL);
+	  if ((loc2 =nsp_plist_copy(loc1)) == NULLPLIST) return(FAIL);
+	  if (nsp_parse_add_list(plist1,&loc2) == FAIL) return(FAIL);
 	  (*kount)++;
 	  return(OK);
 	}

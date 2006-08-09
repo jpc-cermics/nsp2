@@ -250,7 +250,7 @@ int nsp_frame_replace_object( NspObject *A)
       /* 
        * int Int,Num;
        * if ( FindFunction(nsp_object_get_name(A),&Int,&Num) == OK 
-       *	   || FindMacro(nsp_object_get_name(A)) != NULLOBJ)
+       *	   || nsp_find_macro(nsp_object_get_name(A)) != NULLOBJ)
        *	{
        *	  Sciprintf("Warning: variable %s will hide a primitive name\n",
        *		    nsp_object_get_name(A));
@@ -285,7 +285,7 @@ int nsp_global_frame_replace_object(NspObject *A)
   if (  A == NULLOBJ ) return(OK);
   if (  GlobalFrame == NULL ) return(FAIL);
   if ( FindFunction(nsp_object_get_name(A),&Int,&Num) == OK 
-       || FindMacro(nsp_object_get_name(A)) != NULLOBJ)
+       || nsp_find_macro(nsp_object_get_name(A)) != NULLOBJ)
     {
       Sciprintf("Warning: variable %s will hide a function name\n",
 		nsp_object_get_name(A));

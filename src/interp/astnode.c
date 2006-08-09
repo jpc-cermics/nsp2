@@ -286,9 +286,9 @@ void nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level
 	  Sciprintf("obj:0x%x",M->obj->obj);
 	  break;
 	default:
-	  if (  IsCodeKeyword( M->obj->op)== OK) 
-	    s= Keycode2str( M->obj->op);
-	  else s= OpCode2Str( M->obj->op);
+	  if (nsp_is_code_keyword( M->obj->op)== OK) 
+	    s=nsp_keycode2str( M->obj->op);
+	  else s=nsp_opcode2str( M->obj->op);
 	  if ( s != (char *) 0 )
 	    {
 	      if ( s[0]=='\n')

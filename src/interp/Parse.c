@@ -528,28 +528,28 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
       while (1) 
 	{
 	  /** clean previous parsed expression **/
-	  PListDestroy(&plist);
-	  if ((err= Parse(T,NULLHASH,&plist)) < 0 ) 
+	nsp_plist_destroy(&plist);
+	  if ((err=nsp_parse(T,NULLHASH,&plist)) < 0 ) 
 	    {
 	      /* parse error */
 	      count--;
 	      if ( errcatch == FALSE ) nsp_error_message_show();
-	      PListDestroy(&plist);
+	nsp_plist_destroy(&plist);
 	      return err;
 	    }
 	  if (plist != NULLPLIST ) 
 	    {
-	      /* PListPrInt(plist); */ /* lisp syntax */
-	      /* PListPrettyPrint(plist,0); */ /* pretty print */
-	      /* PListPrint(plist,0);*/ /* fully parenthesized */
-	      if (debug) PListPrettyPrint(plist,0);
+	      /*nsp_plist_print_int(plist); */ /* lisp syntax */
+	      /*nsp_plist_pretty_print(plist,0); */ /* pretty print */
+	      /*nsp_plist_print(plist,0);*/ /* fully parenthesized */
+	      if (debug)nsp_plist_pretty_print(plist,0);
 	      if (debug) Sciprintf("====Eval===\n");
 	      if ((err =nsp_eval(plist,SciStack,first,0,0,display)) < 0) 
 		{
 		  /* evaluation error or quit ? */
 		  count--;
 		  if ( errcatch == FALSE ) nsp_error_message_show();
-		  PListDestroy(&plist);
+		nsp_plist_destroy(&plist);
 		  return err;
 		}
 	    }
@@ -583,11 +583,11 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
  * err is set to 1 2 3 if an error is detected 
  ***************************************************/
 
-int Parse(Tokenizer *T,NspHash *symb_table,PList *plist)
+int nsp_parse(Tokenizer *T,NspHash *symb_table,PList *plist)
 {
   T->token.id = RETURN_OP;
   T->token.FlagEqu = 0;
-  if ( T->Getlin(T,Prompt()) == TRUE ) 
+  if ( T->Getlin(T,nsp_prompt()) == TRUE ) 
     {
       /** Sciprintf("Eof : Quitting ...\n"); **/
       return RET_EOF;
@@ -611,7 +611,7 @@ int Parse(Tokenizer *T,NspHash *symb_table,PList *plist)
  * 
  ***************************************************/
 
-NspObject *EvalMacro(NspPList *PL,NspObject **O,NspList *args,int *first) 
+NspObject *nsp_eval_macro_code(NspPList *PL,NspObject **O,NspList *args,int *first) 
 {
   int rhs = 0,lhs = 1,opt = 0,rep;
   NspObject **Ob,*Rep;

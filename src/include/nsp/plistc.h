@@ -33,12 +33,12 @@ typedef struct token
 extern Token_Obj Token ;
 
 
-extern int IsSciKeyWord (char *id);
-extern int IsCodeKeyword  (    int keyc);
-extern char *Keycode2str (int keyc);
-extern char *OpCode2Str (int code);
-extern char *OpCode2NickN (int code);
-extern int PrintOPname (int code);
+extern int nsp_is_nsp_keyword(char *id);
+extern int nsp_is_code_keyword(    int keyc);
+extern char *nsp_keycode2str(int keyc);
+extern char *nsp_opcode2str(int code);
+extern char *nsp_opcode2nickname(int code);
+extern int nsp_print_opname(int code);
 extern char *TokenCode2Name (int key);
 extern char *SciGetLine (char *prompt);
 

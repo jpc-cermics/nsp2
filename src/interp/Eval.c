@@ -116,7 +116,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  stack.val->S[first] = (NspObject *) IV;
 	  return 1;
 	case 1:
-	  opcode = OpCode2NickN(L->type);
+	  opcode =nsp_opcode2nickname(L->type);
 	  O1=nsp_frames_search_op_object(opcode);
 	  if ( L->type == RETURN_OP || L->type == SEMICOLON_OP || L->type == COMMA_OP )
 	    {
@@ -150,7 +150,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  /* too many arguments returned */
 		  /* ex:A=1:5; -(A{1:3})*/
 		  Scierror("Error: too many values (%d) returned as a first argument of unary operator %s\n",
-			   nargs,OpCode2Str(L->type));
+			   nargs,nsp_opcode2str(L->type));
 		  /* clean the stack */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,RET_BUG,L1);
@@ -162,7 +162,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    }
 	  break;
 	case 2:
-	  opcode = OpCode2NickN(L->type);
+	  opcode =nsp_opcode2nickname(L->type);
 	  /*checking eye and ones */
 	  if ( L->type == SEQAND || L->type == SEQOR ) 
 	    {
@@ -174,7 +174,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  /* too many arguments returned */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  /* ex: A=1:5;A{1:3} && 9 */
-		  Scierror("Error: too many values (%d) returned as a first argument of binary operator %s\n",nargs,OpCode2Str(L->type));
+		  Scierror("Error: too many values (%d) returned as a first argument of binary operator %s\n",nargs,nsp_opcode2str(L->type));
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
@@ -199,7 +199,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		{
 		  /* to many argument returned ex:  A=1:5; 9 && A{1:3} */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs+n);
-		  Scierror("Error: too many values (%d) returned as second argument of binary operator %s\n",n,OpCode2Str(L->type));
+		  Scierror("Error: too many values (%d) returned as second argument of binary operator %s\n",n,nsp_opcode2str(L->type));
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
@@ -245,7 +245,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    }
 	  break;
 	default :
-	  opcode = OpCode2NickN(L->type);
+	  opcode =nsp_opcode2nickname(L->type);
 	  loc = L1;
 	  O1=nsp_frames_search_op_object(opcode);
 	  nargs=0;
@@ -448,9 +448,9 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	case FUNCTION:
 	  /*we store the parsed function on the stack **/
 	  /*L1 is copied since it is destroyed after evaluation */
-	  if ((FC= PListCopy(L)) == NULLPLIST ) return RET_BUG;
+	  if ((FC=nsp_plist_copy(L)) == NULLPLIST ) return RET_BUG;
 	  /*Remplacer void par le nom de la fonction **/
-	  if (( F = NspPListCreate(FunctionName(FC),FC,stack.val->file_name)) == NULLP_PLIST) 
+	  if (( F = NspPListCreate(nsp_function_name(FC),FC,stack.val->file_name)) == NULLP_PLIST) 
 	    return RET_BUG;
 	  O = (NspObject *) F;
 	  stack.val->S[first] = O;
@@ -789,7 +789,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  break;
 	default:
 	  Sciprintf("Oooops  in nsp_eval: Please send a bug report\n");
-	  s=Keycode2str(L->type);
+	  s=nsp_keycode2str(L->type);
 	  if ( s != (char *) 0) Sciprintf(" %s ",s);
 	  return RET_BUG;
 	}
@@ -852,7 +852,7 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	   */
 	  stack.val->S[first] = OM;
 	  /* Extra warning  */
-	  /* 	  if ( FindFunction((char *) L->O,&Int,&Num) == OK || FindMacro((char *) L->O) != NULLOBJ) */
+	  /* 	  if ( FindFunction((char *) L->O,&Int,&Num) == OK || nsp_find_macro((char *) L->O) != NULLOBJ) */
 	  /* 	   { */
 	  /* 	    Sciprintf("Warning: frame variable %s is hiding a function\n",(char *) L->O ); */
 	  /* 	  } */
@@ -866,7 +866,7 @@ int nsp_eval_arg(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	  stack.val->S[first] = OM;
 	  return 1;
 	}
-      else if ( (OM= FindMacro((char *) L->O)) != NULLOBJ) 
+      else if ( (OM=nsp_find_macro((char *) L->O)) != NULLOBJ) 
 	{
 	  /* check for a macro */
 	  stack.val->S[first] = OM;
@@ -2643,11 +2643,11 @@ static int show_eval_bug(Stack stack,int n, PList L)
       Scierror("\t==>");
       /* changes io in order to write in a string matrix */
       def = SetScilabIO(Sciprint2string);
-      mf =  SetScilabMore(scimore_void);
-      PListPrint(L,0);
+      mf =nsp_set_nsp_more(scimore_void);
+ nsp_plist_print(L,0);
       res = (NspSMatrix *) Sciprint2string_reset(); 
       SetScilabIO(def);
-      SetScilabMore(mf);
+ nsp_set_nsp_more(mf);
       if ( res != NULL) 
 	{
 	  int i;

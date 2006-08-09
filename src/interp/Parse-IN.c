@@ -197,7 +197,7 @@ static int int_add_lib(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(0,1);
   if ((dirname = GetString(stack,1)) == (char*)0) return RET_BUG;
   /* macros expansions is performed in EnterMacros */
-  if ( EnterMacros(dirname,recursive,compile) == FAIL ) return RET_BUG;
+  if (nsp_enter_macros(dirname,recursive,compile) == FAIL ) return RET_BUG;
   return 0;
 }
 
@@ -212,7 +212,7 @@ static int int_remove_lib(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((Dir = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if (DeleteMacros(Dir) == FAIL ) return RET_BUG;
+  if (nsp_delete_macros(Dir) == FAIL ) return RET_BUG;
   return 0;
 }
 
@@ -228,7 +228,7 @@ static int int_find_macro(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((Name = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if ((O=FindMacro(Name)) == NULLOBJ )
+  if ((O=nsp_find_macro(Name)) == NULLOBJ )
     xrep =0;
   else 
     xrep= 1;

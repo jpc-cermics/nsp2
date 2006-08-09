@@ -58,14 +58,14 @@ static int   myhcreate (unsigned int);
 /* static void	 myhdestroy(); */
 static int   myhsearch (char *str,Mdata *d,ACTION);
 static int   Eqid (const char *x,const char *y);
-void  InitMacroTable  (void);
+void nsp_init_macro_table(void);
 
 static NspSMatrix *LibDirs = NULLSMAT;
 static NspHash* macros_cache = NULLHASH;
 
 
 /**
- * EnterMacros:
+ *nsp_enter_macros:
  * @dirname: a string giving an absolute dire name
  * @recursive: a flag %TRUE or %FALSE 
  * @compile: a flag %TRUE or %FALSE 
@@ -80,7 +80,7 @@ static NspHash* macros_cache = NULLHASH;
  * Return value: %OK or %FAIL
  **/
 
-int EnterMacros(const char *dir_name,int recursive,int compile)
+int nsp_enter_macros(const char *dir_name,int recursive,int compile)
 {
   char dirname[FSIZE+1];
   Mdata data;
@@ -134,7 +134,7 @@ int EnterMacros(const char *dir_name,int recursive,int compile)
 	  if ( recursive == TRUE ) 
 	    {
 	      /* Sciprintf("%s visited\n",filename); */
-	      EnterMacros(filename,recursive,compile);
+	nsp_enter_macros(filename,recursive,compile);
 	    }
 	}
       else 
@@ -165,7 +165,7 @@ int EnterMacros(const char *dir_name,int recursive,int compile)
  * the macro hash table 
  *************************************************/ 
 
-int DeleteMacros(const char *Dir)
+int nsp_delete_macros(const char *Dir)
 {
   char F[FSIZE+1];
   FILE *f;
@@ -210,7 +210,7 @@ int DeleteMacros(const char *Dir)
  * If found the macros is stored in a cache and returned.
  */
 
-NspObject *FindMacro(char *str)
+NspObject *nsp_find_macro(char *str)
 {
   NspObject *Ob;
   Mdata data;
@@ -268,7 +268,7 @@ NspObject *FindMacro(char *str)
  * Initialization 
  */
 
-void InitMacroTable(void)
+void nsp_init_macro_table(void)
 {
   static int firstentry = 0;
   if ( firstentry != 0 ) return;

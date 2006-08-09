@@ -38,7 +38,7 @@ static SciReadFunc SciStringReadLine;
 static SciReadFunc SciSMatReadLine;
 
 /* FIXME : */
-extern char *ForcePrompt(void);
+extern char *nsp_force_prompt(void);
 
 /**
  * nsp_init_tokenizer:
@@ -160,7 +160,7 @@ static int next_token(Tokenizer *T)
       T->token.id = NAME;
       if ( T->ParseSymb(T,T->token.syn,&chcnt) == FAIL) return(FAIL);
       T->IgnoreWSpaces(T);
-      key = IsSciKeyWord(T->token.syn);
+      key =nsp_is_nsp_keyword(T->token.syn);
       if ( key != LASTCODE_NEG_OP ) 
 	T->token.id = key;
       return(OK);
@@ -876,7 +876,7 @@ static int force_next_char(Tokenizer *T)
     }
   else 
     {
-      if (T->Getlin(T,ForcePrompt()) == TRUE ) 
+      if (T->Getlin(T,nsp_force_prompt()) == TRUE ) 
 	{
 	  T->ParseError(T,"Parse Error: Eof reached\n");
 	  return(FAIL);
@@ -899,7 +899,7 @@ static int func_force_next_char(Tokenizer *T)
     }
   else 
     {
-      if (T->Getlin(T,ForcePrompt()) == TRUE ) 
+      if (T->Getlin(T,nsp_force_prompt()) == TRUE ) 
 	return(FAIL);
     }
   return(OK);
@@ -1096,9 +1096,9 @@ static int parse_error (Tokenizer *T,char *fmt,...)
 static char *code2name(Tokenizer *T,int key)
 {
   static char *s;
-  if (  IsCodeKeyword(key)== OK) 
-    return(Keycode2str(key));
-  else if ( (s= OpCode2Str(key)) != (char*)0)
+  if (nsp_is_code_keyword(key)== OK) 
+    return(nsp_keycode2str(key));
+  else if ( (s=nsp_opcode2str(key)) != (char*)0)
     {
       return(s);
     }
@@ -1265,7 +1265,7 @@ void scimore_void(int *n)
 
 MoreFun scimore = Defscimore;
 
-MoreFun SetScilabMore(MoreFun F)
+MoreFun nsp_set_nsp_more(MoreFun F)
 {
   MoreFun g = scimore;
   scimore = F;
@@ -1285,7 +1285,7 @@ extern int Xorgetchar(void);
 
 SciGetC Scigetchar = Xorgetchar;
 
-SciGetC SetScilabgetchar(SciGetC F)
+SciGetC nsp_set_nsp_getchar(SciGetC F)
 {
   SciGetC g =  Scigetchar;
   Scigetchar = F;
@@ -1303,7 +1303,7 @@ static char SciForcePrompt[]="==>";
 static char SciPausePrompt[] = "-nsp-XXX->";
 static int nsp_pause = 0;
 
-char *Prompt(void)
+char *nsp_prompt(void)
 {
   if ( nsp_pause ) 
     return  SciPausePrompt;
@@ -1311,7 +1311,7 @@ char *Prompt(void)
     return  SciPrompt;
 }
 
-char *ForcePrompt(void)
+char *nsp_force_prompt(void)
 {
   return  SciForcePrompt;
 } 

@@ -67,7 +67,7 @@ typedef char *token_code2name(Tokenizer *T,int key);
 
 typedef void (SciReadFunc)(Tokenizer *T, char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
 typedef SciReadFunc *SciReadFunction;
-extern SciReadFunc DefSciReadLine_rl;
+extern SciReadFunc nsp_defscireadline_rl;
 extern SciReadFunc DefSciReadLine_textview;
 extern SciReadFunction DefSciReadLine;
 
@@ -131,7 +131,7 @@ extern void nsp_tokeniser_strings(Tokenizer *T,char **S);
 typedef void (*MoreFun) (int *n);
 extern MoreFun scimore ;
 extern void scimore_void(int *n);
-MoreFun SetScilabMore(MoreFun F);
+MoreFun nsp_set_nsp_more(MoreFun F);
 
 #endif /*  NSP_TOKENIZER  */
 

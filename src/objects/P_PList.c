@@ -64,7 +64,7 @@ NspPList *NspPListCopy(NspPList *A)
 {
   NspPList *P_L;
   P_L = NspPListCreate(NVOID,NULLPLIST,A->file_name);
-  if (( P_L->D = PListCopy(A->D)) == NULLPLIST ) 
+  if (( P_L->D =nsp_plist_copy(A->D)) == NULLPLIST ) 
     return (NULLP_PLIST);
   return(P_L);
 }
@@ -79,7 +79,7 @@ void NspPListDestroy(NspPList *P_L)
     {
       nsp_object_destroy_name(NSP_OBJECT(P_L));
       FREE(P_L->file_name) ;
-      PListDestroy(&P_L->D);
+ nsp_plist_destroy(&P_L->D);
       FREE(P_L) ;
     };
 }
@@ -96,7 +96,7 @@ void NspPListPrInt(NspPList *P_L)
       return;
     }
   Sciprintf("NspPList %s\n",NSP_OBJECT(P_L)->name);
-  PListPrInt(P_L->D);
+ nsp_plist_print_int(P_L->D);
 }
 
 /*
@@ -121,7 +121,7 @@ void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
   const char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
   if (user_pref.pr_as_read_syntax)
     {
-      PListPrettyPrint(P_L->D,indent+2);
+ nsp_plist_pretty_print(P_L->D,indent+2);
     }
   else
     {
@@ -131,7 +131,7 @@ void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
 	Sciprintf1(indent,"%s\t=\t\tpl\n",pname);
       if ( user_pref.pr_depth  <= rec_level -1 ) return;
     }
-  PListPrettyPrint(P_L->D,indent+2);
+ nsp_plist_pretty_print(P_L->D,indent+2);
   Sciprintf("\n");
 }
 
@@ -142,7 +142,7 @@ void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
 
 NspSMatrix * NspPList2SMatrix(NspPList *P_L, int indent)
 {
-  return PList2SMatrix(P_L->D,indent);
+  return nsp_plist2smatrix(P_L->D,indent);
 }
 
 /*
@@ -152,7 +152,7 @@ NspSMatrix * NspPList2SMatrix(NspPList *P_L, int indent)
 int NspPListSave(NspPList *P_L)
 {
   Sciprintf("[%s ]\n",NSP_OBJECT(P_L)->name);
-  return(PListSave(P_L->D));
+  return(nsp_plist_save(P_L->D));
 }
 
 

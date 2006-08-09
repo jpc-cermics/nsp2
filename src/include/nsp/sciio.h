@@ -44,7 +44,7 @@ typedef int (*IOFun2) (FILE *f,const char *fmt,...);
 extern IOFun2 Scifprintf ;
 typedef int (*SciGetC) (void);
 extern SciGetC Scigetchar ;
-extern SciGetC SetScilabgetchar (SciGetC F);
+extern SciGetC nsp_set_nsp_getchar(SciGetC F);
 
 extern void SciReadClean (void);
 extern void nsp_readline_clear_line(void);

@@ -105,7 +105,7 @@ int main(int argc, char **argv)
   /* initialize primitive table */
   InitFunctionTable();
   /* Initialize macro hash table **/
-  InitMacroTable();
+ nsp_init_macro_table();
   /* Initialize data frame **/  
   if ( nsp_init_frames(argc,argv) == FAIL ) return 1;
   /* reload history */
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
   nsp_gtk_init(argc,argv,no_window);
 
   /* Load initial macros */
-  if ( use_stdlib == TRUE )  EnterMacros("SCI/macros",TRUE,FALSE);
+  if ( use_stdlib == TRUE )nsp_enter_macros("SCI/macros",TRUE,FALSE);
 
   /* locale for LC_NUMERIC must be english type */
   setlocale(LC_NUMERIC,"C");

@@ -124,12 +124,12 @@ int parse_top(Tokenizer *T,NspHash *symb_table,PList *plist)
 	  /* XXX maybe there's a comment after , ; NextToken will swallow it **/
 	  /* if ( T->token.NextC == '/'  ) T->NextToken(T,); **/
 	  if ( T->token.NextC == '\n' ) T->NextToken(T);
-	  if ( ParseAdd(&plist1,op,1,T->token.Line) == FAIL) return(FAIL);
-	  if ( ParseAddList1(&plist1,&plist1)==FAIL) return(FAIL);
-	  if ( ParseAddList(plist,&plist1)==FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist1,op,1,T->token.Line) == FAIL) return(FAIL);
+	  if (nsp_parse_add_list1(&plist1,&plist1)==FAIL) return(FAIL);
+	  if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
 	  if ( T->token.NextC == '\0') 
 	    {
-	      if ( ParseAdd(plist,STATEMENTS1,count,T->token.Line)==FAIL) return(FAIL);
+	      if (nsp_parse_add(plist,STATEMENTS1,count,T->token.Line)==FAIL) return(FAIL);
 	      break;
 	    }
 	  else 
@@ -139,24 +139,24 @@ int parse_top(Tokenizer *T,NspHash *symb_table,PList *plist)
 	}
       else if ( T->token.id == RETURN_OP || T->token.id == COMMENT )
 	{
-	  if ( ParseAdd(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
-	  if ( ParseAddList1(&plist1,&plist1)==FAIL) return(FAIL);
-	  if ( ParseAddList(plist,&plist1)==FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
+	  if (nsp_parse_add_list1(&plist1,&plist1)==FAIL) return(FAIL);
+	  if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
 	  if ( T->token.id == COMMENT) 
 	    {
-	      if ( ParseAddComment(plist,T->token.buf)==FAIL) return(FAIL); count++;
+	      if (nsp_parse_add_comment(plist,T->token.buf)==FAIL) return(FAIL); count++;
 	    }
-	  if ( ParseAdd(plist,STATEMENTS1,count,T->token.Line)==FAIL) return(FAIL);
+	  if (nsp_parse_add(plist,STATEMENTS1,count,T->token.Line)==FAIL) return(FAIL);
 
 	  break;
 	}
       else if ( T->token.id == 0) 
 	{
 	  /* Reached end of file : appears when parsing a function terminated with eof **/
-	  if ( ParseAdd(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
-	  if ( ParseAddList1(&plist1,&plist1)==FAIL) return(FAIL);
-	  if ( ParseAddList(plist,&plist1)==FAIL) return(FAIL);
-	  if ( ParseAdd(plist,STATEMENTS1,count,T->token.Line)==FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
+	  if (nsp_parse_add_list1(&plist1,&plist1)==FAIL) return(FAIL);
+	  if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
+	  if (nsp_parse_add(plist,STATEMENTS1,count,T->token.Line)==FAIL) return(FAIL);
 	  return(OK);
 	}
       else 
@@ -226,9 +226,9 @@ static int parse_exprs(Tokenizer *T,NspHash *symb_table,PList *plist, int funcfl
         {
 	  if ( plist1 != NULLPLIST) 
 	    {
-	      if ( ParseAdd(&plist1,COMMA_OP,1,T->token.Line) == FAIL) return(FAIL);
-	      if ( ParseAddList1(&plist1,&plist1)== FAIL) return(FAIL);
-	      if ( ParseAddList(&plist2,&plist1)== FAIL) return(FAIL);
+	      if (nsp_parse_add(&plist1,COMMA_OP,1,T->token.Line) == FAIL) return(FAIL);
+	      if (nsp_parse_add_list1(&plist1,&plist1)== FAIL) return(FAIL);
+	      if (nsp_parse_add_list(&plist2,&plist1)== FAIL) return(FAIL);
 	      count++;
 	    }
           break ;
@@ -248,24 +248,24 @@ static int parse_exprs(Tokenizer *T,NspHash *symb_table,PList *plist, int funcfl
 	      switch ( T->token.id ) 
 		{
 		case COMMENT :
-		  if ( ParseAdd(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
+		  if (nsp_parse_add(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
 		  break;
 		case COMMA_OP : 
-		  if ( ParseAdd(&plist1,COMMA_OP,1,T->token.Line) == FAIL) return(FAIL);
+		  if (nsp_parse_add(&plist1,COMMA_OP,1,T->token.Line) == FAIL) return(FAIL);
 		  break;
 		case RETURN_OP:
-		  if ( ParseAdd(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
+		  if (nsp_parse_add(&plist1,RETURN_OP,1,T->token.Line) == FAIL) return(FAIL);
 		  break;
 		case SEMICOLON_OP : 
-		  if ( ParseAdd(&plist1,SEMICOLON_OP,1,T->token.Line) == FAIL) return(FAIL);
+		  if (nsp_parse_add(&plist1,SEMICOLON_OP,1,T->token.Line) == FAIL) return(FAIL);
 		  break;
 		} 
-	      if ( ParseAddList1(&plist1,&plist1)== FAIL) return(FAIL);
-	      if ( ParseAddList(&plist2,&plist1)== FAIL) return(FAIL);
+	      if (nsp_parse_add_list1(&plist1,&plist1)== FAIL) return(FAIL);
+	      if (nsp_parse_add_list(&plist2,&plist1)== FAIL) return(FAIL);
 	      count++; 
 	      if ( T->token.id == COMMENT )
 		{
-		  if ( ParseAddComment(&plist2,T->token.buf) == FAIL) return(FAIL); count++;
+		  if (nsp_parse_add_comment(&plist2,T->token.buf) == FAIL) return(FAIL); count++;
 		}
 	    }
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
@@ -274,14 +274,14 @@ static int parse_exprs(Tokenizer *T,NspHash *symb_table,PList *plist, int funcfl
   if ( count == 0) 
     {
       plist2=NULLPLIST;
-      if ( ParseAdd(&plist2,STATEMENTS,count,T->token.Line)==FAIL) return(FAIL);
-      if ( ParseAddList1(&plist2,&plist2)== FAIL) return(FAIL);
+      if (nsp_parse_add(&plist2,STATEMENTS,count,T->token.Line)==FAIL) return(FAIL);
+      if (nsp_parse_add_list1(&plist2,&plist2)== FAIL) return(FAIL);
     }
   else 
     {
-      if ( ParseAdd(&plist2,STATEMENTS,count,T->token.Line)==FAIL) return(FAIL);
+      if (nsp_parse_add(&plist2,STATEMENTS,count,T->token.Line)==FAIL) return(FAIL);
     }
-  if ( ParseAddList(plist,&plist2)==FAIL)  return(FAIL);
+  if (nsp_parse_add_list(plist,&plist2)==FAIL)  return(FAIL);
   if (debug) scidebug(--debugI,"<exprs]");
   return(OK);
 }
@@ -320,8 +320,8 @@ static int parse_stmt(Tokenizer *T,NspHash *symb_table,PList *plist)
     case WHAT :  
     case WHO :   
     case PRETURN: 
-      if ( ParseAdd(&plist1,T->token.id,0,T->token.Line) == FAIL) return(FAIL);
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,T->token.id,0,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return(OK);
 
@@ -338,15 +338,15 @@ static int parse_stmt(Tokenizer *T,NspHash *symb_table,PList *plist)
       if ( T->ParseCommandArg(T) == FAIL) return(FAIL);
       if ( T->token.buf[0] != '\0') 
 	{
-	  if ( ParseAddString(&plist1,T->token.buf) == FAIL) return(FAIL);
-	  if ( ParseAdd(&plist1,id,1,line) == FAIL) return(FAIL);
+	  if (nsp_parse_add_string(&plist1,T->token.buf) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist1,id,1,line) == FAIL) return(FAIL);
 	}
       else 
 	{
 	  T->ParseError(T,"Parse Error: %s must have one argument \n",T->code2name(T,T->token.id));
 	  return(FAIL);
 	}
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL); 
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL); 
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return(OK);
     case CLEAR:  /* a set of commands with zero or one argument  */
@@ -363,14 +363,14 @@ static int parse_stmt(Tokenizer *T,NspHash *symb_table,PList *plist)
       if ( T->ParseCommandArg(T) == FAIL) return(FAIL);
       if ( T->token.buf[0] != '\0') 
 	{
-	  if ( ParseAddString(&plist1,T->token.buf) == FAIL) return(FAIL);
-	  if ( ParseAdd(&plist1,id,1,line) == FAIL) return(FAIL);
+	  if (nsp_parse_add_string(&plist1,T->token.buf) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist1,id,1,line) == FAIL) return(FAIL);
 	}
       else 
 	{
-	  if ( ParseAdd(&plist1,id,0,line) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist1,id,0,line) == FAIL) return(FAIL);
 	}
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL); 
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL); 
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return(OK);
     case '/':
@@ -442,13 +442,13 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
 	  goto fail;
 	}
       if ( T->NextToken(T) == FAIL) goto fail;
-      if ( ParseAddName(&plist1,id) == FAIL) goto fail;
-      if ( ParseAdd(&plist1,MLHS,1,T->token.Line) == FAIL) goto fail;
+      if (nsp_parse_add_name(&plist1,id) == FAIL) goto fail;
+      if (nsp_parse_add(&plist1,MLHS,1,T->token.Line) == FAIL) goto fail;
     }
   else if ( T->token.id == NAME && T->token.NextC == '(' )
     {
       /* no arguments on the left  */
-      if ( ParseAdd(&plist1,MLHS,0,T->token.Line) == FAIL) goto fail;
+      if (nsp_parse_add(&plist1,MLHS,0,T->token.Line) == FAIL) goto fail;
     }
   else 
     {
@@ -456,21 +456,21 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
       return FAIL;
     }
   T->token.FlagEqu = 0;
-  if ( ParseAddList1(&plist1,&plist1) == FAIL) goto fail;
+  if (nsp_parse_add_list1(&plist1,&plist1) == FAIL) goto fail;
 
   /* right hand side of function definition **/
   
   if (parse_functionright(T,symbols,&plist2) == FAIL) goto fail;
-  if ( ParseAddList(&plist1,&plist2) == FAIL) goto fail;
-  if ( ParseAdd(&plist1,EQUAL_OP,2,T->token.Line) == FAIL) goto fail;
+  if (nsp_parse_add_list(&plist1,&plist2) == FAIL) goto fail;
+  if (nsp_parse_add(&plist1,EQUAL_OP,2,T->token.Line) == FAIL) goto fail;
 
-  if ( ParseAddList1(&plist1,&plist1) == FAIL) goto fail;
+  if (nsp_parse_add_list1(&plist1,&plist1) == FAIL) goto fail;
   if (debug) scidebug(debugI++,"[func>"); 
 
   parse_nblines(T);
   plist2=NULLPLIST;
   if ( parse_exprs(T,symbols,&plist2,1,parse_funcstop) == FAIL) goto fail;
-  if ( ParseAddList(&plist1,&plist2) == FAIL) goto fail;
+  if (nsp_parse_add_list(&plist1,&plist2) == FAIL) goto fail;
   /* For backward compatibility : we accepts that a function 
    * ends with end of file 
    */
@@ -486,14 +486,14 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
       nsymb=nsp_parse_symbols_table_set_id(symbols);
       /* nsp_hash_print(symbols,0); */
       if ((cell= (NspObject *)nsp_cells_create(NVOID,nsymb,1)) == NULLOBJ) goto fail;
-      if ( ParseAddObject(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
-      if ( ParseAdd(&plist1,FUNCTION,3,T->token.Line) == FAIL) goto fail;
+      if (nsp_parse_add_object(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
+      if (nsp_parse_add(&plist1,FUNCTION,3,T->token.Line) == FAIL) goto fail;
       /* use symbol table to walk in plist and convert names to local id*/
       plist_name_to_local_id(plist1,symbols); 
 #else 
-      if ( ParseAdd(&plist1,FUNCTION,2,T->token.Line) == FAIL) goto fail;
+      if (nsp_parse_add(&plist1,FUNCTION,2,T->token.Line) == FAIL) goto fail;
 #endif 
-      if ( ParseAddList(plist,&plist1) == FAIL) goto fail;
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) goto fail;
       if (debug) scidebug(--debugI,"<endfunc]"); 
       /* now we can forget symbols */
       if (symbols != NULLHASH)  nsp_hash_destroy(symbols);
@@ -518,7 +518,7 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
  * WARNING : no check is done this is Ugly
  *********************************************************/
 
-char *FunctionName(PList plist)
+char *nsp_function_name(PList plist)
 {
   return ((PList) (((PList) plist->next->O)->next->next->O))->next->O;
 }
@@ -538,17 +538,17 @@ static int parse_functionright(Tokenizer *T,NspHash *symb_table,PList *plist)
   if (T->token.id == '(') 
     {
       int excnt = 1;
-      if ( ParseAddName(&plist1,id) == FAIL) return(FAIL);
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+      if (nsp_parse_add_name(&plist1,id) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       if ( func_or_matrix_with_arg(T,symb_table,plist,id,&excnt,0,')')== FAIL) return(FAIL);
-      if ( ParseAdd(plist,FEVAL,excnt,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(plist,FEVAL,excnt,T->token.Line) == FAIL) return(FAIL);
       if ( Check_Func_Def(T,*plist) == FAIL) return(FAIL);
     }
   else 
     {
-      if ( ParseAddName(&plist1,id) == FAIL) return(FAIL);
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
-      if ( ParseAdd(plist,FEVAL,1,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_name(&plist1,id) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
+      if (nsp_parse_add(plist,FEVAL,1,T->token.Line) == FAIL) return(FAIL);
     }
   return(OK);
 }
@@ -566,7 +566,7 @@ static int parse_functionleft(Tokenizer *T,NspHash *symb_table,PList *plist)
     {
       plist1=NULLPLIST;
       if (parse_equal(T,symb_table,&plist1,0) == FAIL ) return (FAIL);
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       switch ( T->token.id ) 
 	{
 	case COMMA_OP : ++excnt;       
@@ -583,7 +583,7 @@ static int parse_functionleft(Tokenizer *T,NspHash *symb_table,PList *plist)
   if ( T->NextToken(T) == FAIL) return(FAIL);
   if (debug) Sciprintf("[mlhs:%d)",excnt-1);
   /* excnt counts the arguments + the function name f(a,b)==> excnt=3**/
-  if ( ParseAdd(plist,MLHS,excnt-1,T->token.Line) == FAIL) return(FAIL);
+  if (nsp_parse_add(plist,MLHS,excnt-1,T->token.Line) == FAIL) return(FAIL);
   /* add left returns to symbol_table */
   if ( nsp_parse_add_to_symbol_table(symb_table,*plist) == FAIL) return FAIL;
   return(OK);
@@ -621,7 +621,7 @@ static int parse_while(Tokenizer *T,NspHash *symb_table,PList *plist)
       return(FAIL);
     }
   T->token.FlagEqu = 0;
-  /* if ( ParseAddList1(&plist1,&plist1) == FAIL) return(FAIL);*/
+  /* if (nsp_parse_add_list1(&plist1,&plist1) == FAIL) return(FAIL);*/
   if (debug) scidebug(debugI++,"[do>"); 
 
   /* Tokens for introducing the do Part **/
@@ -629,14 +629,14 @@ static int parse_while(Tokenizer *T,NspHash *symb_table,PList *plist)
   if (parse_bkey(T,THEN,DO,"while",&plist2) == FAIL) return(FAIL);
   plist2=NULLPLIST;
   if (parse_exprs(T,symb_table,&plist2,0,parse_endstop ) == FAIL) return(FAIL);
-  if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
   /* xxx : a revoir */
   parse_nblines(T);
   if ( T->token.id == END ) 
     {
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if ( ParseAdd(&plist1,WHILE,2,T->token.Line) == FAIL) return(FAIL);
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,WHILE,2,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       if (debug) scidebug(--debugI,"<enddo]"); 
       return (OK) ;
     }
@@ -754,7 +754,7 @@ static int parse_if(Tokenizer *T,NspHash *symb_table,PList *plist)
 	  return(FAIL);
 	}
       T->token.FlagEqu = 0;
-      if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
       count++;
       plist2= NULLPLIST;
       if (debug) scidebug(debugI++,"[then>"); 
@@ -762,7 +762,7 @@ static int parse_if(Tokenizer *T,NspHash *symb_table,PList *plist)
       if (parse_bkey(T,THEN,THEN,"if condition",&plist2) == FAIL) return(FAIL);
       plist2= NULLPLIST;
       if (parse_exprs(T,symb_table,&plist2,0,parse_stopif ) == FAIL) return(FAIL);
-      if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
       count++;
       parse_nblines(T);
       switch ( T->token.id )
@@ -780,7 +780,7 @@ static int parse_if(Tokenizer *T,NspHash *symb_table,PList *plist)
 	  parse_nblines(T);
 	  plist2= NULLPLIST;
 	  if (parse_exprs(T,symb_table,&plist2,0,parse_endstop ) == FAIL) return(FAIL);
-	  if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
+	  if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
 	  count++;
 	  parse_nblines(T);
 	  if ( T->token.id == END ) 
@@ -800,8 +800,8 @@ static int parse_if(Tokenizer *T,NspHash *symb_table,PList *plist)
 	  return(FAIL);
 	}
     }
-  if ( ParseAdd(&plist1,IF,count,T->token.Line) == FAIL) return(FAIL);
-  if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add(&plist1,IF,count,T->token.Line) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
   if (debug) scidebug(--debugI,"<endif]");
   return (OK) ;
 }
@@ -825,7 +825,7 @@ static int parse_select(Tokenizer *T,NspHash *symb_table,PList *plist)
   /* select <expr> **/
   if ( T->NextToken(T) == FAIL) return(FAIL);
   if (parse_expr(T,symb_table,&plist1) == FAIL ) return(FAIL);
-  if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
  CaseLoop:
   plist1 = NULLPLIST ;
   if (parse_bkey(T,CASE,CASE,"select",&plist1) == FAIL) return(FAIL);
@@ -833,7 +833,7 @@ static int parse_select(Tokenizer *T,NspHash *symb_table,PList *plist)
   if (debug) scidebug(debugI++,"[case_exp >"); 
   plist1=NULLPLIST;
   if (parse_expr(T,symb_table,&plist1) == FAIL ) return(FAIL);
-  if ( ParseAddList(&plist3,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist3,&plist1) == FAIL) return(FAIL);
   /* then part **/
   plist1=NULLPLIST;
   if (parse_bkey(T,THEN,THEN,"select/case",&plist1) == FAIL) return(FAIL);
@@ -843,16 +843,16 @@ static int parse_select(Tokenizer *T,NspHash *symb_table,PList *plist)
   
   plist1=NULLPLIST;
   if (parse_exprs(T,symb_table,&plist1,0,parse_stopselect ) == FAIL) return(FAIL);
-  if ( ParseAddList(&plist3,&plist1) == FAIL) return(FAIL);
-  if ( ParseAdd(&plist3,CASE,2,T->token.Line) == FAIL) return(FAIL);
-  if ( ParseAddList(&plist2,&plist3) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist3,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add(&plist3,CASE,2,T->token.Line) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist2,&plist3) == FAIL) return(FAIL);
   kount++;
   switch ( T->token.id ) 
     {
     case END : 
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if ( ParseAdd(&plist2,SELECT,kount,T->token.Line) == FAIL) return(FAIL);
-      if ( ParseAddList(plist,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist2,SELECT,kount,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist2) == FAIL) return(FAIL);
       if (debug) scidebug(--debugI,"<endselect]"); 
       return (OK) ;
     case CASE : 
@@ -865,13 +865,13 @@ static int parse_select(Tokenizer *T,NspHash *symb_table,PList *plist)
       if ( T->token.id == END )
 	{
 	  plist3=NULLPLIST;
-	  if ( ParseAddList(&plist3,&plist1) == FAIL) return(FAIL);
-	  if ( ParseAdd(&plist3,LASTCASE,1,T->token.Line) == FAIL) return(FAIL);
+	  if (nsp_parse_add_list(&plist3,&plist1) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist3,LASTCASE,1,T->token.Line) == FAIL) return(FAIL);
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
-	  if ( ParseAddList(&plist2,&plist3) == FAIL) return(FAIL);
+	  if (nsp_parse_add_list(&plist2,&plist3) == FAIL) return(FAIL);
 	  kount++;
-	  if ( ParseAdd(&plist2,SELECT,kount,T->token.Line) == FAIL) return(FAIL);
-	  if ( ParseAddList(plist,&plist2) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist2,SELECT,kount,T->token.Line) == FAIL) return(FAIL);
+	  if (nsp_parse_add_list(plist,&plist2) == FAIL) return(FAIL);
 	  if (debug) scidebug(--debugI,"<endselect]"); 
 	  return (OK) ;
 	}
@@ -911,21 +911,21 @@ static int parse_try_catch(Tokenizer *T,NspHash *symb_table,PList *plist)
   /* try <expr> **/
   if ( T->NextToken(T) == FAIL) return(FAIL);
   if ( parse_exprs(T,symb_table,&plist1,0,parse_stop_try ) == FAIL) return(FAIL);
-  if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
   plist1 = NULLPLIST ;
   if ( T->NextToken(T) == FAIL) return(FAIL);
   /* catch <expr> **/
   if (debug) scidebug(debugI++,"[catch_exp >"); 
   plist1=NULLPLIST;
   if ( parse_exprs(T,symb_table,&plist1,0,parse_stop_catch ) == FAIL) return(FAIL);
-  if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
   if (debug) scidebug(--debugI,"<catch_exp]"); 
   switch ( T->token.id ) 
     {
     case END : 
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if ( ParseAdd(&plist2,TRYCATCH,2,T->token.Line) == FAIL) return(FAIL);
-      if ( ParseAddList(plist,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist2,TRYCATCH,2,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist2) == FAIL) return(FAIL);
       if (debug) scidebug(--debugI,"<endselect]"); 
       return (OK) ;
     case  FINALLY :
@@ -934,10 +934,10 @@ static int parse_try_catch(Tokenizer *T,NspHash *symb_table,PList *plist)
       if (parse_exprs(T,symb_table,&plist1,0,parse_endstop ) == FAIL) return(FAIL);
       if ( T->token.id == END )
 	{
-	  if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL);
+	  if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
-	  if ( ParseAdd(&plist2,TRYCATCH,3,T->token.Line) == FAIL) return(FAIL);
-	  if ( ParseAddList(plist,&plist2) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist2,TRYCATCH,3,T->token.Line) == FAIL) return(FAIL);
+	  if (nsp_parse_add_list(plist,&plist2) == FAIL) return(FAIL);
 	  if (debug) scidebug(--debugI,"<endselect]"); 
 	  return (OK) ;
 	}
@@ -980,9 +980,9 @@ static int parse_for(Tokenizer *T,NspHash *symb_table,PList *plist)
       Scierror("\tExpecting a symbol\n");
       return(FAIL);
     }
-  if ( ParseAddName(&plist1,T->token.syn) == FAIL) return(FAIL);
+  if (nsp_parse_add_name(&plist1,T->token.syn) == FAIL) return(FAIL);
   if ( nsp_parse_add_to_symbol_table(symb_table,plist1) == FAIL) return FAIL;
-  if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
   if ( T->NextToken(T) == FAIL) return(FAIL);
 
   if (T->token.id != EQUAL_OP) 
@@ -997,19 +997,19 @@ static int parse_for(Tokenizer *T,NspHash *symb_table,PList *plist)
   if ( T->NextToken(T) == FAIL) return(FAIL);
   plist1=NULLPLIST;
   if (parse_expr(T,symb_table,&plist1) == FAIL ) return(FAIL);
-  if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
   if (debug) scidebug(debugI++,"[do>"); 
   plist1=NULLPLIST;
   if ( T->token.id == COMMENT) 
     {
       plist1=NULLPLIST;
-      if ( ParseAddComment(&plist1,T->token.buf)==FAIL) return(FAIL);
+      if (nsp_parse_add_comment(&plist1,T->token.buf)==FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
       /* XXX the comment just after for x=expr // comment 
        * is lost here. We can keep it whith the next line 
        * but we have then to accept that for can have arity 3 or 4 
        * and this is to be changed in eval/print etc...
-       * if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL); 
+       * if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL); 
        */
       plist1=NULLPLIST;
     }
@@ -1017,14 +1017,14 @@ static int parse_for(Tokenizer *T,NspHash *symb_table,PList *plist)
   if (parse_bkey(T,DO,DO,"for loop",&plist1) == FAIL) return(FAIL);
   plist1=NULLPLIST;
   if (parse_exprs(T,symb_table,&plist1,0,parse_endstop ) == FAIL) return(FAIL);
-  if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist2,&plist1) == FAIL) return(FAIL);
   /* XXX : a revoir **/
   parse_nblines(T);
   if ( T->token.id == END ) 
     {
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if ( ParseAdd(&plist2,FOR,3,T->token.Line) == FAIL) return(FAIL);
-      if ( ParseAddList(plist,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist2,FOR,3,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist2) == FAIL) return(FAIL);
       if (debug) scidebug(--debugI,"<enddo]"); 
       return (OK) ;
     }
@@ -1057,7 +1057,7 @@ static int parse_equal(Tokenizer *T,NspHash *symb_table,PList *plist, int flag)
   if (parse_expr(T,symb_table,&plist1) == FAIL ) return(FAIL);
   if (T->token.id != EQUAL_OP) 
     {
-      if ( ParseAddList(plist,&plist1) == FAIL ) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1) == FAIL ) return(FAIL);
       if (debug) scidebug(--debugI,"<equal]");
       return(OK);
     }
@@ -1077,25 +1077,25 @@ static int parse_equal(Tokenizer *T,NspHash *symb_table,PList *plist, int flag)
       
       if ( !(plist1->type == NAME || plist1->type == OPNAME) || plist1->next != NULLPLIST)
 	{
-	  PListPrint(plist1,0);
+	nsp_plist_print(plist1,0);
 	  T->ParseError(T,": is not a correct expression for naming optional argument\n");
 	  return FAIL;
 	}
     }
   else 
     {
-      if ( IsMlhs(plist1,&plist3,&kount)== OK) 
+      if (is_mlhs(plist1,&plist3,&kount)== OK) 
 	{
 	  /* we change expr1 into a mlhs **/
-	  if ( ParseAdd(&plist3,MLHS,kount,T->token.Line) == FAIL) return(FAIL);
+	  if (nsp_parse_add(&plist3,MLHS,kount,T->token.Line) == FAIL) return(FAIL);
 	  if ( nsp_parse_add_to_symbol_table(symb_table,plist3) == FAIL) return FAIL;
 	  if ( nsp_check_simple_mlhs(plist3) == OK) 
 	    {
 	      /* Sciprintf("A simple mlhs \n"); */
 	    }
-	  PListDestroy(&plist1);
+	nsp_plist_destroy(&plist1);
 	  plist1=NULLPLIST;
-	  if ( ParseAddList1(&plist1,&plist3) == FAIL) return(FAIL);
+	  if (nsp_parse_add_list1(&plist1,&plist3) == FAIL) return(FAIL);
 	}
       else 
 	{
@@ -1104,18 +1104,18 @@ static int parse_equal(Tokenizer *T,NspHash *symb_table,PList *plist, int flag)
 	  op = EQ;
 	}
     }
-  if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
   if ( debug) Sciprintf("{%s:arity2}",(op==EQ) ? "==" : "=");
   if ( flag == 0 )
     {
-      if ( ParseAdd(&plist1,op,2,T->token.Line) == FAIL) return(FAIL); 
+      if (nsp_parse_add(&plist1,op,2,T->token.Line) == FAIL) return(FAIL); 
     }
   else 
     { 
       
-      if ( ParseAdd(&plist1,OPT,2,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,OPT,2,T->token.Line) == FAIL) return(FAIL);
     }
-  if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
   if (debug) scidebug(--debugI,"<equal]");
   return(OK);
 }
@@ -1149,12 +1149,12 @@ static int parse_expr(Tokenizer *T,NspHash *symb_table,PList *plist)
 
   if (T->token.id == COLON_OP) 
     {
-      /* if ( ParseAddDoubleI(&plist1,"1")== FAIL) return(FAIL);
-	 if ( ParseAddName(&plist1,"$")== FAIL) return(FAIL);
+      /* if (nsp_parse_add_doublei(&plist1,"1")== FAIL) return(FAIL);
+	 if (nsp_parse_add_name(&plist1,"$")== FAIL) return(FAIL);
       **/
-      if ( ParseAdd(&plist2,COLON_OP,0,T->token.Line) == FAIL) return(FAIL);
-      if ( ParseAddList1(&plist1,&plist2) == FAIL) return(FAIL);
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist2,COLON_OP,0,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       if (debug) scidebug(--debugI,"<expr]");
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return(OK);
@@ -1163,7 +1163,7 @@ static int parse_expr(Tokenizer *T,NspHash *symb_table,PList *plist)
     {
       PList plist2 = NULLPLIST ;
       if (parse_lexpr(T,symb_table,&plist2) == FAIL) return(FAIL);
-      if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
       if ( T->token.id == COLON_OP ) 
 	{
 	  /* we have parsed `:' and search for more **/
@@ -1182,12 +1182,12 @@ static int parse_expr(Tokenizer *T,NspHash *symb_table,PList *plist)
   else if (kount > 1) 
     {
       if (debug) Sciprintf("{:arity%d}",kount);
-      if ( ParseAdd(&plist1,COLON_OP,kount,T->token.Line) == FAIL) return(FAIL);
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,COLON_OP,kount,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
     }
   else if (kount ==1 ) 
     {
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
     }
   if (debug) scidebug(--debugI,"<expr]");
   return(OK);
@@ -1202,7 +1202,7 @@ static int parse_expr(Tokenizer *T,NspHash *symb_table,PList *plist)
 
 static int parse_lterm(Tokenizer *T,NspHash *symb_table,PList *plist);
 
-int IsOrOp(Tokenizer *T,int *op)
+int nsp_is_or_op(Tokenizer *T,int *op)
 {
   if  ( T->token.id == OR_OP || T->token.id == SEQOR )
     {
@@ -1216,7 +1216,7 @@ int IsOrOp(Tokenizer *T,int *op)
 
 static int parse_lexpr(Tokenizer *T,NspHash *symb_table,PList *plist)
 {
-  return(parse_nary(T,symb_table,plist,parse_lterm,IsOrOp,"lexpr"));
+  return(parse_nary(T,symb_table,plist,parse_lterm,nsp_is_or_op,"lexpr"));
 }
 
 /***************************************************************
@@ -1343,9 +1343,9 @@ static int parse_terme1(Tokenizer *T,NspHash *symb_table,PList *plist)
   if (op == MINUS_OP || op == TILDE_OP )
     { 
       if (debug) Sciprintf("{%c}",op);
-      if ( ParseAdd(&plist1,op,1,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,op,1,T->token.Line) == FAIL) return(FAIL);
     }
-  if (ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
   if (debug) scidebug(--debugI,"<terme1]");
   return(OK);
 }
@@ -1421,13 +1421,13 @@ static int parse_nary(Tokenizer *T,NspHash *symb_table,PList *plist,
       parse_nblines(T);
       plist2=NULLPLIST;
       if ( (*parsef)(T,symb_table,&plist2) == FAIL ) return(FAIL);
-      if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
-      if ( ParseAdd(&plist1,op,2,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,op,2,T->token.Line) == FAIL) return(FAIL);
       plist2=plist1;
-      if ( ParseAddList1(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
     }
   if (debug) Sciprintf("{t_op:%d}",op);
-  if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
   if (debug) scidebug(--debugI,"<%s]",info);
   return(OK);
 } 
@@ -1451,13 +1451,13 @@ static int parse_nary_opt(Tokenizer *T,NspHash *symb_table,PList *plist,
       parse_nblines(T);
       plist2=NULLPLIST;
       if ( (*parsef)(T,symb_table,&plist2,opt) == FAIL ) return(FAIL);
-      if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
-      if ( ParseAdd(&plist1,op,2,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,op,2,T->token.Line) == FAIL) return(FAIL);
       plist2=plist1;
-      if ( ParseAddList1(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
     }
   if (debug) Sciprintf("{t_op:%d}",op);
-  if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
   if (debug) scidebug(--debugI,"<%s]",info);
   return(OK);
 } 
@@ -1487,15 +1487,15 @@ static int parse_nary_flat_opt(Tokenizer *T,NspHash *symb_table,PList *plist,
       parse_nblines(T);
       plist2=NULLPLIST;
       if ( (*parsef)(T,symb_table,&plist2,opt) == FAIL ) return(FAIL);
-      if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
       count++;
     }
   if (debug) Sciprintf("{t_op:%d}",op);
   if ( count >= 1 ) 
     {
-      if ( ParseAdd(&plist1,op,count,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,op,count,T->token.Line) == FAIL) return(FAIL);
     }
-  if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
   if (debug) scidebug(--debugI,"<%s]",info);
   return(OK);
 } 
@@ -1543,12 +1543,12 @@ static int parse_fact2(Tokenizer *T,NspHash *symb_table,PList *plist)
   PList plist1 = NULLPLIST ;
   if (debug) scidebug(debugI++,"[fact2>");
   if (parse_fact3(T,symb_table,&plist1) == FAIL ) return(FAIL);
-  if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
   /*   check for quote (transpose) */
   if ( ( op=T->IsTranspose(T)) == QUOTE_OP || op == DOTPRIM )
     {
       if (debug) Sciprintf("{%d}",op);
-      if ( ParseAdd(plist,op,1,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(plist,op,1,T->token.Line) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
     }
   if (debug) scidebug(debugI++,"[fact2>");
@@ -1613,13 +1613,13 @@ static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
     case '"'  :
       /*  *************     get a string */
       T->ParseString(T);
-      if ( ParseAddString(plist,T->token.buf) == FAIL) return(FAIL);
+      if (nsp_parse_add_string(plist,T->token.buf) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
       break;
     case NUMBER  :
       /*  ************     get single number */
       if ( debug)  Sciprintf("[N:%f]",atof(T->token.buf));
-      if ( ParseAddDoubleI(plist,T->token.buf) == FAIL) return(FAIL);
+      if (nsp_parse_add_doublei(plist,T->token.buf) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
       break;
     case EXEC : /* command turned to function call */
@@ -1644,7 +1644,7 @@ static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
        *          LISTEVAL) 
        */
       strncpy(id,T->token.syn,NAME_MAXL);
-      if ( ParseAddName(plist,id) == FAIL) return(FAIL);
+      if (nsp_parse_add_name(plist,id) == FAIL) return(FAIL);
       flag=1;
       if ( T->NextToken(T) == FAIL) return(FAIL);
       /* just name **/
@@ -1687,9 +1687,9 @@ static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
 		return FAIL;
 	      }
 	    if ( T->NextToken(T) == FAIL) return FAIL;
-	    if ( ParseAddString(&plist1,T->token.syn) == FAIL) return(FAIL);
-	    if ( ParseAdd(&plist1,DOTARGS,1,T->token.Line)== FAIL) return FAIL;
-	    if ( ParseAddList(plist,&plist1)==FAIL) return(FAIL);
+	    if (nsp_parse_add_string(&plist1,T->token.syn) == FAIL) return(FAIL);
+	    if (nsp_parse_add(&plist1,DOTARGS,1,T->token.Line)== FAIL) return FAIL;
+	    if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
 	    if ( T->NextToken(T) == FAIL) return(FAIL);
 	    count++;
 	    break; 
@@ -1699,17 +1699,17 @@ static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
 	  }
 	}
       /* a listeval L()()()..() **/
-      if ( ParseAdd(plist,LISTEVAL,count,T->token.Line)== FAIL) return(FAIL);
+      if (nsp_parse_add(plist,LISTEVAL,count,T->token.Line)== FAIL) return(FAIL);
       /* check if this is a simple call or extract f(...) 
        * if yes LISTEVAL is changed to CALLEVAL to simplify evaluation 
        */
       if ( check_simple_listeval(*plist) == OK ) 
 	{
 	  /* Sciprintf("This is a simple one\n");
-	   * PListPrInt(*plist);
+	   *nsp_plist_print_int(*plist);
 	   */
 	}
-      if (debug) PListPrInt(*plist);
+      if (debug)nsp_plist_print_int(*plist);
       break;
     case  '(' : 
       /*  ************   ( expr,expr,expr ) */
@@ -1726,7 +1726,7 @@ static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
 	  break;
 	}
     case COMMENT :
-      if ( ParseAddComment(plist,T->token.buf) == FAIL) return(FAIL);
+      if (nsp_parse_add_comment(plist,T->token.buf) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
       break;
       /* in order to accept function in f(....) etc.... 
@@ -1736,7 +1736,7 @@ static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
       */ 
     default :
       /* XXXX : Any  keyword here is an error */
-      if ( 0 &&  IsCodeKeyword(T->token.id) == OK )
+      if ( 0 && nsp_is_code_keyword(T->token.id) == OK )
 	{
 	  if (debug) scidebug(--debugI,"<fact]");
 	  return(OK);
@@ -1787,24 +1787,24 @@ static int parse_exprset(Tokenizer *T,NspHash *symb_table,PList *plist)
       parse_nblines(T);
       plist2=NULLPLIST;
       if (parse_expr(T,symb_table,&plist2) == FAIL ) return(FAIL);
-      if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
-      if ( ParseAdd(&plist1,op,2,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,op,2,T->token.Line) == FAIL) return(FAIL);
       plist2=plist1;
-      if ( ParseAddList1(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
     }
   if ( count == 0 ) 
     {
       /* special case : (<expr>)  no op found **/
-      if ( ParseAdd(&plist1,PARENTH,1,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,PARENTH,1,T->token.Line) == FAIL) return(FAIL);
     }
   if (debug) Sciprintf("{t_op:%d}",op);
-  if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+  if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
   if (debug) scidebug(--debugI,"<parenth]");
   return(OK);
 } 
 
 /********************************************************
- * Parse (arg1,....,argn) <token> 
+ *nsp_parse(arg1,....,argn) <token> 
  * or    .<name>  <token> 
  * 
  * suppose plist=(a b c )
@@ -1819,10 +1819,10 @@ static int parse_extsymb(Tokenizer *T,NspHash *symb_table,PList *plist, char *id
   if (func_or_matrix_with_arg(T,symb_table,&plist1,id,&excnt,1,end_char)== FAIL) 
     return(FAIL);
   /* first list element extraction **/
-  if ( ParseAdd(&plist1,build,excnt,T->token.Line) == FAIL) return(FAIL);
+  if (nsp_parse_add(&plist1,build,excnt,T->token.Line) == FAIL) return(FAIL);
   if ( Check_Func_Call(T,plist1,build) == FAIL) return(FAIL);
-  if ( ParseAddList1(&plist1,&plist1)==FAIL) return(FAIL);
-  if ( ParseAddList(plist,&plist1)==FAIL) return(FAIL);
+  if (nsp_parse_add_list1(&plist1,&plist1)==FAIL) return(FAIL);
+  if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
   (*count)++;
   return OK;
 }
@@ -1908,12 +1908,12 @@ static int parse_rowmatrix(Tokenizer *T,NspHash *symb_table,PList *plist,char st
   PList plist1 = NULLPLIST ;
   if ( T->token.id == stop ) 
     {
-      if ( ParseAdd(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
       Sciprintf("Warning : ;] should not be used \n");
     }
   else if ( T->token.id == SEMICOLON_OP )
     {
-      if ( ParseAdd(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
       Sciprintf("Warning : ;; should not be used \n");
     }
   else
@@ -1927,12 +1927,12 @@ static int parse_rowmatrix(Tokenizer *T,NspHash *symb_table,PList *plist,char st
       PList plist2=NULLPLIST;
       if (parse_nary_opt(T,symb_table,&plist2,parse_expr_opt,IsRowMatOp,"matrix",stop)== FAIL) 
 	return(FAIL);
-      if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
-      if ( ParseAdd(&plist1,colconcat,2,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,colconcat,2,T->token.Line) == FAIL) return(FAIL);
       plist2=plist1;
-      if ( ParseAddList1(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
     }
-  ParseAddList(plist,&plist1);
+ nsp_parse_add_list(plist,&plist1);
   return(OK);
 }
 
@@ -1951,7 +1951,7 @@ static int parse_matrix(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
       /* empty matrix **/
       if ( T->NextToken(T) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if ( ParseAdd(plist,emptymat,0,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(plist,emptymat,0,T->token.Line) == FAIL) return(FAIL);
       return(OK);
     }
   if (T->token.NextC == '\n') 
@@ -1970,7 +1970,7 @@ static int parse_matrix(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
       T->ParseError(T,"Parse Error while parsing a matrix: expecting a `%c'  \n",stop);
       return(FAIL);
     }
-  if ( ParseAdd(plist,type,1,T->token.Line) == FAIL) return(FAIL);
+  if (nsp_parse_add(plist,type,1,T->token.Line) == FAIL) return(FAIL);
   if ( T->NextToken(T) == FAIL) return(FAIL);
   return(OK);
 }
@@ -1994,12 +1994,12 @@ static int parse_rowcells(Tokenizer *T,NspHash *symb_table,PList *plist,char sto
   PList plist1 = NULLPLIST ;
   if ( T->token.id == stop ) 
     {
-      if ( ParseAdd(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
       Sciprintf("Warning : ;] should not be used \n");
     }
   else if ( T->token.id == SEMICOLON_OP )
     {
-      if ( ParseAdd(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,emptymat,0,T->token.Line) == FAIL) return(FAIL);
       Sciprintf("Warning : ;; should not be used \n");
     }
   else
@@ -2013,12 +2013,12 @@ static int parse_rowcells(Tokenizer *T,NspHash *symb_table,PList *plist,char sto
       PList plist2=NULLPLIST;
       if (parse_nary_flat_opt(T,symb_table,&plist2,parse_expr_opt,IsRowMatOp,"matrix",stop)== FAIL) 
 	return(FAIL);
-      if ( ParseAddList(&plist1,&plist2) == FAIL) return(FAIL);
-      if ( ParseAdd(&plist1,colconcat,2,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add(&plist1,colconcat,2,T->token.Line) == FAIL) return(FAIL);
       plist2=plist1;
-      if ( ParseAddList1(&plist1,&plist2) == FAIL) return(FAIL);
+      if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
     }
-  ParseAddList(plist,&plist1);
+ nsp_parse_add_list(plist,&plist1);
   return(OK);
 }
 
@@ -2037,7 +2037,7 @@ static int parse_cells(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
       /* empty matrix **/
       if ( T->NextToken(T) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if ( ParseAdd(plist,emptymat,0,T->token.Line) == FAIL) return(FAIL);
+      if (nsp_parse_add(plist,emptymat,0,T->token.Line) == FAIL) return(FAIL);
       return(OK);
     }
   if (T->token.NextC == '\n') 
@@ -2056,7 +2056,7 @@ static int parse_cells(Tokenizer *T,NspHash *symb_table,PList *plist,char stop)
       T->ParseError(T,"Parse Error while parsing a matrix: expecting a `%c'  \n",stop);
       return(FAIL);
     }
-  if ( ParseAdd(plist,type,1,T->token.Line) == FAIL) return(FAIL);
+  if (nsp_parse_add(plist,type,1,T->token.Line) == FAIL) return(FAIL);
   if ( T->NextToken(T) == FAIL) return(FAIL);
   return(OK);
 }
@@ -2081,7 +2081,7 @@ static int func_or_matrix_with_arg(Tokenizer *T,NspHash *symb_table,PList *plist
     {
       plist1= NULLPLIST;
       if (parse_equal(T,symb_table,&plist1,1) == FAIL ) return (FAIL);
-      if ( ParseAddList(plist,&plist1) == FAIL) return(FAIL);
+      if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       if ( fblank == 1)parse_nblines(T);
       switch ( T->token.id ) 
 	{
@@ -2234,7 +2234,7 @@ static int nsp_parse_add_to_symbol_table(NspHash *symb_table,PList L)
 	}
       L = L->next ;
     }
-  /* PListPrInt(L);*/
+  /*nsp_plist_print_int(L);*/
   return OK;
 }
 

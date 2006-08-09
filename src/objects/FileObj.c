@@ -654,7 +654,7 @@ int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
     }
   f = Sciprint_file(F->file); 
   def = SetScilabIO(Sciprint2file);
-  mf =  SetScilabMore(scimore_void);
+  mf =nsp_set_nsp_more(scimore_void);
   if ( rep == 0 ) 
     {
       /* want to use a 'as_read' syntax */
@@ -669,7 +669,7 @@ int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
     }
   /* back to default values */
   SetScilabIO(def);
-  SetScilabMore(mf);
+ nsp_set_nsp_more(mf);
   Sciprint_file(f); 
   return 0;
 }

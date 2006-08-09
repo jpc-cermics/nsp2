@@ -2,12 +2,12 @@ SHELL = /bin/sh
 
 include ../Makefile.incl
 
-SCIDIRS = zcalelm objects interp functions gtk2 \
+SCIDIRS = zcalelm objects interp-no-last functions gtk2 \
 	system graphics menus gtksci gzvt2 modules gobjects types-test \
 	librand libcdf  libfft libinteg libapprox lapack \
 	libscicos    libsndfile
 
-ALLSCIDIRS = zcalelm objects interp functions gtk2 \
+ALLSCIDIRS = zcalelm objects interp interp-no-last functions gtk2 \
 	system graphics menus gtksci gzvt2 modules gobjects types-test \
 	librand libcdf libmaxplus libfft libinteg libapprox lapack \
 	libblas liblapack libscicos libxdr libsndfile

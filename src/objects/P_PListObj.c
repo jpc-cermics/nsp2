@@ -219,7 +219,7 @@ NspPList *NspPListXdrLoad(XDR *xdrs)
   if ( L->type != PLIST ) return NULLP_PLIST;
   L1= L->O;
   L->O = NULLPLIST;
-  PListDestroy(&L);
+ nsp_plist_destroy(&L);
   return(  NspPListCreate(name,L1,file_name[0]== '\0' ? NULL : file_name));
 }
 
@@ -295,35 +295,35 @@ static int PListXdrLoad(XDR *xdrs, PList *plist)
 	{
 	case 'S' : 
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if ( ParseAddString(plist,buf) == FAIL) return (FAIL);
+	  if (nsp_parse_add_string(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'C' : 
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if ( ParseAddComment(plist,buf) == FAIL) return (FAIL);
+	  if (nsp_parse_add_comment(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'D':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if ( ParseAddDoubleI(plist,buf) == FAIL) return (FAIL);
+	  if (nsp_parse_add_doublei(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'N':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
-	  if ( ParseAddName(plist,buf) == FAIL) return (FAIL);
+	  if (nsp_parse_add_name(plist,buf) == FAIL) return (FAIL);
 	  break;
 	case 'L':
 	  loc1 = loc = NULLPLIST;
 	  if (PListXdrLoad(xdrs,&loc) == FAIL) return (FAIL);
-	  if (ParseAddList1(&loc1,&loc) == FAIL) return (FAIL);
-	  if (ParseAddList(plist,&loc1)== FAIL)  return (FAIL);
+	  if (nsp_parse_add_list1(&loc1,&loc) == FAIL) return (FAIL);
+	  if (nsp_parse_add_list(plist,&loc1)== FAIL)  return (FAIL);
 	  break;
 	case 'M': 
 	  nsp_xdr_load_i(xdrs,&oline);
-	  if ( ParseAddLast(plist,EMPTYMAT,0,oline) == FAIL) return(FAIL);
+	  if (nsp_parse_add_last(plist,EMPTYMAT,0,oline) == FAIL) return(FAIL);
 	  break;
 	case 'O':
 	  nsp_xdr_load_i(xdrs,&opar);
 	  nsp_xdr_load_i(xdrs,&op);
 	  nsp_xdr_load_i(xdrs,&oline);
-	  if ( ParseAddLast(plist,op,opar,oline) == FAIL) return(FAIL);
+	  if (nsp_parse_add_last(plist,op,opar,oline) == FAIL) return(FAIL);
 	  break;
 	case 'E':
 	  return(OK);
@@ -468,7 +468,7 @@ static int int_print_internal(Stack stack, int rhs, int opt, int lhs)
   NspPList *PL;
   CheckRhs(1,1);
   if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
-  PListPrInt(PL->D);
+ nsp_plist_print_int(PL->D);
   return 0;
 }
 

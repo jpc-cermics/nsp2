@@ -82,7 +82,7 @@ extern void controlC_handler (int sig);
 extern void controlC_handler_void (int sig);
 
 
-void DefSciReadLine_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
+void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
 {
   static int tty =0, init_flag = TRUE, enter=0;
   char * line=NULL ; 

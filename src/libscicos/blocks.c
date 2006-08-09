@@ -3315,7 +3315,7 @@ int scicos_getgeom (double *g)
   NspObject *func;
   int i;
   g[0]=-1;
-  if ( (func = FindMacro("getgeom")) == NULLOBJ) 
+  if ( (func =nsp_find_macro("getgeom")) == NULLOBJ) 
     return FAIL;
   /* FIXME : a changer pour metre une fonction eval standard */
   if ( nsp_gtk_eval_function((NspPList *)func ,targs,nargs,&nsp_ret,&nret)== FAIL) 

@@ -27,7 +27,7 @@
 #include "nsp/interf.h" 
 
 /* FIXME */
-extern NspObject *EvalMacro(NspPList *PL, NspObject **O, NspList *args,int *first) ; 
+extern NspObject *nsp_eval_macro_code(NspPList *PL, NspObject **O, NspList *args,int *first) ; 
 
 /*
  *  Doubly linked lists (NspList of Objects )
@@ -1204,7 +1204,7 @@ NspList *nsp_list_map(NspList *L, NspPList *PL, NspList *args)
 	  /* stack position to use is computed on the first call and set 
 	   * for next calls in first 
 	   */
-	  if ((O[0] = EvalMacro(PL,O,args,&first))== NULLOBJ) return NULLLIST;
+	  if ((O[0] =nsp_eval_macro_code(PL,O,args,&first))== NULLOBJ) return NULLLIST;
 	  if ( nsp_object_set_name(O[0],"lel") == FAIL ) return NULLLIST;
 	  if ((cell1 =nsp_cell_create(O[0]))== NULLCELL) return NULLLIST;
 	}
@@ -1271,13 +1271,13 @@ static NspObject *cell_fold_right(Cell *C, NspPList *PL, NspList *args,int *firs
   if ( C->next->next == NULLCELL) 
     {
       O[2]= NULLOBJ;
-      return EvalMacro(PL,O,args,first);
+      return nsp_eval_macro_code(PL,O,args,first);
     }
   else 
     {
       O[1]= cell_fold_right(C->next, PL,args,first);
       if ( O[1] == NULLOBJ ) return NULLOBJ; 
-      return EvalMacro(PL,O,args,first);
+      return nsp_eval_macro_code(PL,O,args,first);
     }
   return NULLOBJ;
 } 

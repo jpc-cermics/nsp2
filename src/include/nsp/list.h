@@ -67,7 +67,7 @@ extern int IsList (NspObject *O);
 extern NspList *GetListCopy (Stack stack, int i); 
 extern NspList *GetList (Stack stack, int i); 
 extern int ListFollowExtract(Stack stack, int rhs, int opt, int lhs);
-extern NspObject *EvalMacro (NspPList *, NspObject **, NspList *, int *);
+extern NspObject *nsp_eval_macro_code(NspPList *, NspObject **, NspList *, int *);
 extern NspList *nsp_list_create(char *name); 
 extern Cell *nsp_cell_create(NspObject *O); 
 extern void nsp_cell_destroy(Cell **c); 

@@ -78,7 +78,7 @@ static KeyWordTab cmd[]={
  * id is not a keyword 
  */
 
-int IsSciKeyWord(char *id)
+int nsp_is_nsp_keyword(char *id)
 {
   int i=0;
   while ( cmd[i].name != (char *) 0)
@@ -105,7 +105,7 @@ int IsSciKeyWord(char *id)
  * Checks if keyc is the code of a Scilab keyword
  */
 
-int IsCodeKeyword(int keyc)
+int nsp_is_code_keyword(int keyc)
 {
   return ( keyc < LASTCODE_NEG_OP && keyc >= WHILE ) ? OK : FAIL;
 }
@@ -233,11 +233,11 @@ static OpWordTab Ops[]={
 };
 
 /*
- * OpCode2NickN() : from internal code to character string
+ *nsp_opcode2nickname() : from internal code to character string
  * for operators 
  */
 
-char *OpCode2NickN(int code)
+char *nsp_opcode2nickname(int code)
 {
   if ( code > NOTCODE_OP && code < LASTCODE_OP ) 
     return Ops[code-NOTCODE_OP].nickname;
@@ -249,11 +249,11 @@ char *OpCode2NickN(int code)
 }
 
 /*
- * OpCode2Str() : from internal code to character string
+ *nsp_opcode2str() : from internal code to character string
  * for operators 
  */
 
-char *OpCode2Str(int code)
+char *nsp_opcode2str(int code)
 {
   if ( code > NOTCODE_OP && code < LASTCODE_OP ) 
     return Ops[code-NOTCODE_OP].name;
@@ -268,7 +268,7 @@ char *OpCode2Str(int code)
  * returns the command name from its code
  */
 
-char *Keycode2str(int code)
+char *nsp_keycode2str(int code)
 {
   if ( code < LASTCODE_NEG_OP && code >= WHILE )
     {
@@ -283,10 +283,10 @@ char *Keycode2str(int code)
  * Prints the name of an operator from its internal code 
  */
 
-int PrintOPname(int code)
+int nsp_print_opname(int code)
 {
   char *s;
-  if ((s= OpCode2Str(code)) != (char*)0) 
+  if ((s=nsp_opcode2str(code)) != (char*)0) 
     return Sciprintf(s);
   return 0;
 }

@@ -412,7 +412,7 @@ Get_char nsp_set_getchar_fun(Get_char F)
  */
 
 
-SciReadFunction DefSciReadLine = DefSciReadLine_rl;
+SciReadFunction DefSciReadLine = nsp_defscireadline_rl;
 
 SciReadFunction nsp_set_readline_fun(SciReadFunction F)
 {

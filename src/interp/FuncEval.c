@@ -35,7 +35,7 @@
 
 /* FIXME */
 extern int nsp_eval_macro(NspObject *OF,Stack,int first,int rhs,int opt,int lhs);
-extern NspObject *FindMacro(const char *str);
+extern NspObject *nsp_find_macro(const char *str);
 
 static void FuncEvalErrorMess(const char *str, int rhs,int opt, char *name,char *name1);
 static int SearchInOPt(char *str, Stack stack, int first, int nargs,int *wrong_pos);
@@ -123,7 +123,7 @@ int nsp_eval_func(NspObject *O,const char *str, Stack stack, int first, int rhs,
 	      NspFname(stack) = str+1;
 	      return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
 	    }
-	  if ( (M= FindMacro(str+1)) != NULLOBJ) 
+	  if ( (M=nsp_find_macro(str+1)) != NULLOBJ) 
 	    {
 	      return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
 	    }
@@ -145,7 +145,7 @@ int nsp_eval_func(NspObject *O,const char *str, Stack stack, int first, int rhs,
 	      NspFname(stack) = name ;
 	      return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
 	    }
-	  if ( (M= FindMacro(name)) != NULLOBJ) 
+	  if ( (M=nsp_find_macro(name)) != NULLOBJ) 
 	    {
 	      return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
 	    }
@@ -160,7 +160,7 @@ int nsp_eval_func(NspObject *O,const char *str, Stack stack, int first, int rhs,
 		  NspFname(stack) = name1 ;
 		  return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
 		}
-	      if ( (M= FindMacro(name1)) != NULLOBJ) 
+	      if ( (M=nsp_find_macro(name1)) != NULLOBJ) 
 		{
 		  return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
 		}
@@ -174,7 +174,7 @@ int nsp_eval_func(NspObject *O,const char *str, Stack stack, int first, int rhs,
 		  NspFname(stack) = str ;
 		  return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
 		}
-	      if ( (M= FindMacro(str)) != NULLOBJ) 
+	      if ( (M=nsp_find_macro(str)) != NULLOBJ) 
 		{
 		  return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
 		}
@@ -227,7 +227,7 @@ int nsp_eval_dotplus(Stack stack, int first, int rhs, int opt, int lhs)
     }
   else
     {
-      char *name = OpCode2NickN(DOTPLUS);
+      char *name =nsp_opcode2nickname(DOTPLUS);
       /* should use the macro in Eval.c 
        * nsp_frames_search_op_object
        */
@@ -508,7 +508,7 @@ void nsp_build_funcnameij(const char *str, Stack stack, int first, int i, int j,
 
 
 /**
- * FuncEvalBuildNamei:
+ *nsp_build_funcname_i:
  * @str: 
  * @stack: 
  * @first: 
@@ -519,7 +519,7 @@ void nsp_build_funcnameij(const char *str, Stack stack, int first, int i, int j,
  * 
  **/
 
-void FuncEvalBuildNamei(char *str, Stack stack, int first, int i, char *name)
+void nsp_build_funcname_i(char *str, Stack stack, int first, int i, char *name)
 {
   char *s1;
   /*Build a name which depends on argument type **/
@@ -634,11 +634,11 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
   if (debug) 
     {
       Sciprintf("Lhs \n");
-      PListPrInt(Lhs);
+ nsp_plist_print_int(Lhs);
       Sciprintf("Feval \n");
-      PListPrInt(Feval);
+ nsp_plist_print_int(Feval);
       Sciprintf("Body\n");
-      PListPrInt(Body) ;
+ nsp_plist_print_int(Body) ;
     }
   /*Exploring Feval to insert arguments in the new frame **/
   Loc = Feval;
