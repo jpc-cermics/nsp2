@@ -278,7 +278,7 @@ char * nsp_astcode_to_string(int code)
   /* remaining keys */
   switch ( code )
     {
-    case '=': return "=";
+    case EQUAL_OP: return "=";
     case PLIST : return "PLIST";
     case COMMENT : return "COMMENT";
     case NAME : return "NAME";

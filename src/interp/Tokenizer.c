@@ -442,6 +442,7 @@ static void  parse_operators(Tokenizer *T)
     case '\\': T->token.id =  BACKSLASH_OP ;break;
     case '>': T->token.id =  GT_OP ;break;
     case '<': T->token.id =  LT_OP ;break;
+    case '=': T->token.id =  EQUAL_OP ;break;
     default:
       break;
     }

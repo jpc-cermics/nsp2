@@ -596,7 +596,7 @@ static int PListPrettyPrint_I(PList List, int indent, int pos, int posret)
   /* just in case L is not the first */
   while ( L->prev != NULL) L= L->prev;
   List = L->next;
-  if ( L->type > 0 && L->type  != '=' ) 
+  if ( L->type > 0 ) 
     {
       /* operators **/
       switch ( L->arity ) 
@@ -670,7 +670,7 @@ static int PListPrettyPrint_I(PList List, int indent, int pos, int posret)
 	  newpos = ArgPrettyPrint(List->next,0,newpos,posret);
 	  return newpos;
 	  break;
-	case '=':
+	case EQUAL_OP:
 	  newpos = ArgPrettyPrint(List,indent,pos,posret);
 	  newpos += Sciprintf("=");
 	  newpos = ArgPrettyPrint(List->next,0,newpos,newpos);
@@ -1073,7 +1073,7 @@ static void PListPrint_I(PList List, int indent)
   /* just in case L is not at the begining */
   while ( L->prev != NULL) L= L->prev;
   List = L->next;
-  if ( L->type > 0 && L->type  != '=' ) 
+  if ( L->type > 0 )
     {
       /* operators **/
       switch ( L->arity ) 
@@ -1136,7 +1136,7 @@ static void PListPrint_I(PList List, int indent)
     {
       switch ( L->type ) 
 	{
-	case '=':
+	case EQUAL_OP:
 	case OPT:
 	  /* PListPrInt(L); **/
 	  ArgPrint(List,indent);
@@ -1634,7 +1634,7 @@ static void plist_arg_get_nargs(PList L,int *lhs , int *rhsp1);
 
 void plist_get_nargs(PList List,int *lhs , int *rhsp1)
 {
-  if ( List->type > 0 && List->type  != '=' ) 
+  if ( List->type > 0 )
     {
       /* ignore */
     }
@@ -1642,7 +1642,7 @@ void plist_get_nargs(PList List,int *lhs , int *rhsp1)
     {
       switch ( List->type ) 
 	{
-	case '=':
+	case EQUAL_OP:
 	case OPT:
 	  plist_arg_get_nargs(List->next,lhs,rhsp1);
 	  plist_arg_get_nargs(List->next->next,lhs,rhsp1);
@@ -1694,7 +1694,7 @@ void plist_name_to_local_id(PList List,NspHash *H)
   char *s;
   int j;
   List = List->next;
-  if ( L->type > 0 && L->type  != '=' ) 
+  if ( L->type > 0 )
     {
       /* operators **/
       switch ( L->arity ) 
@@ -1738,7 +1738,7 @@ void plist_name_to_local_id(PList List,NspHash *H)
     {
       switch ( L->type ) 
 	{
-	case '=':
+	case EQUAL_OP:
 	case OPT:
 	  Arg_name_to_local_name(List,H);
 	  Arg_name_to_local_name(List->next,H);

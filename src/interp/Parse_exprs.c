@@ -423,7 +423,7 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
       if ( T->NextToken(T) == FAIL) goto fail;
       if (parse_functionleft(T,symbols,&plist1) == FAIL) 
 	goto fail;
-      if ( T->token.id != '=' ) 
+      if ( T->token.id != EQUAL_OP ) 
 	{
 	  T->ParseError(T,"Parse Error: expecting a `=' in a function first line\n");
 	  goto fail;
@@ -436,7 +436,7 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
       char id[NAME_MAXL];
       strncpy(id,T->token.syn,NAME_MAXL);
       if ( T->NextToken(T) == FAIL) goto fail;
-      if ( T->token.id != '=' ) 
+      if ( T->token.id != EQUAL_OP ) 
 	{
 	  T->ParseError(T,"Parse Error: expecting a `=' in a function first line\n");
 	  goto fail;
@@ -462,7 +462,7 @@ static int parse_function(Tokenizer *T,NspHash *symb_table,PList *plist)
   
   if (parse_functionright(T,symbols,&plist2) == FAIL) goto fail;
   if ( ParseAddList(&plist1,&plist2) == FAIL) goto fail;
-  if ( ParseAdd(&plist1,'=',2,T->token.Line) == FAIL) goto fail;
+  if ( ParseAdd(&plist1,EQUAL_OP,2,T->token.Line) == FAIL) goto fail;
 
   if ( ParseAddList1(&plist1,&plist1) == FAIL) goto fail;
   if (debug) scidebug(debugI++,"[func>"); 
@@ -985,7 +985,7 @@ static int parse_for(Tokenizer *T,NspHash *symb_table,PList *plist)
   if ( ParseAddList(&plist2,&plist1) == FAIL) return(FAIL);
   if ( T->NextToken(T) == FAIL) return(FAIL);
 
-  if (T->token.id != '=') 
+  if (T->token.id != EQUAL_OP) 
     {
       T->ParseError(T,"Parse Error: Unexpected token %s\n",T->code2name(T,T->token.id));
       Scierror("\tExpecting an `=' sign\n");
@@ -1051,11 +1051,11 @@ static int parse_for(Tokenizer *T,NspHash *symb_table,PList *plist)
 
 static int parse_equal(Tokenizer *T,NspHash *symb_table,PList *plist, int flag)
 {
-  int kount =0,op = '=';
+  int kount =0,op = EQUAL_OP;
   PList plist1 = NULLPLIST, plist2=NULLPLIST,plist3=NULLPLIST;
   if (debug) scidebug(debugI++,"[equal>");
   if (parse_expr(T,symb_table,&plist1) == FAIL ) return(FAIL);
-  if (T->token.id != '=') 
+  if (T->token.id != EQUAL_OP) 
     {
       if ( ParseAddList(plist,&plist1) == FAIL ) return(FAIL);
       if (debug) scidebug(--debugI,"<equal]");
@@ -1254,7 +1254,7 @@ static int IsLprimOp(Tokenizer *T,int *op)
 {
   int lop = T->token.id;
   if ( lop == NEQ || lop == EQ || lop == DOTNEQ || lop == DOTEQ 
-       || ( lop == '=' && T->token.FlagEqu == 1  ))
+       || ( lop == EQUAL_OP && T->token.FlagEqu == 1  ))
     {
       *op = T->token.id ;if ( T->NextToken(T) == FAIL) return(FAIL); return(OK);
     }

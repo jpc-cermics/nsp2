@@ -98,7 +98,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
   /* nsp_check_stack(stack,rhs,0,lhs,"Something wrong with Eval",NULL); */
   L = L1; /* operator */
   L1= L->next ; /* first arg */
-  if ( L->type > 0 && L->type  != '=' ) 
+  if ( L->type > 0  ) 
     {
       const char *opcode ;
       /*Evaluation of operators **/
@@ -273,7 +273,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  if (( n = EvalOpt(L1,stack,first)) < 0) SHOWBUG(stack,n,L1);
 	  return n;
 	  break;
-	case '=':
+	case EQUAL_OP:
 	  if (( n = EvalEqual(L1,stack,first)) < 0) SHOWBUG(stack,n,L1);
 	  return n;
 	  break;
