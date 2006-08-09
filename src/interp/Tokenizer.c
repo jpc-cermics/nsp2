@@ -161,7 +161,7 @@ static int next_token(Tokenizer *T)
       if ( T->ParseSymb(T,T->token.syn,&chcnt) == FAIL) return(FAIL);
       T->IgnoreWSpaces(T);
       key = IsSciKeyWord(T->token.syn);
-      if ( key != NOTKEY ) 
+      if ( key != LASTCODE_NEG_OP ) 
 	T->token.id = key;
       return(OK);
     }

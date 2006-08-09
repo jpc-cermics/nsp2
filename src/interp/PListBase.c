@@ -62,7 +62,6 @@ static KeyWordTab cmd[]={
   {"if",       IF},     
   {"pause",	PAUSE},  
   {"quit",	QUIT },  
-  /*    {"resume",	RESUME}: changed resume is a function   **/
   {"return",	PRETURN}, 
   {"select",	SELECT}, 
   {"then" ,	THEN},  
@@ -70,7 +69,7 @@ static KeyWordTab cmd[]={
   {"what",	WHAT },  
   {"while",	WHILE},  
   {"who",	WHO },   
-  {(char *) 0,NOTKEY}
+  {(char *) 0,   LASTCODE_NEG_OP },
 };
 
 /*
@@ -94,42 +93,23 @@ int IsSciKeyWord(char *id)
 	{ 
 	  if ( j <= 0)
 	    {
-	      return NOTKEY;
+	      return LASTCODE_NEG_OP;
 	    } 
 	  else i++;
 	}
     }
-  return  NOTKEY;
+  return LASTCODE_NEG_OP;
 }
 
 /*
  * Checks if keyc is the code of a Scilab keyword
- * (see token.h ) 
  */
 
 int IsCodeKeyword(int keyc)
 {
-  if ( keyc <= WHILE && keyc > NOTKEY  ) return(OK) ;
-  else return(FAIL);
+  return ( keyc < LASTCODE_NEG_OP && keyc >= WHILE ) ? OK : FAIL;
 }
 
-
-/*
- * returns the command name from its code
- * or 0 if keyc is not a keyword code 
- */
-
-char *Keycode2str(int keyc)
-{
-  int i=0;
-  while ( 1) 
-    {
-      if (cmd[i].code == keyc ) return(cmd[i].name);
-      if (cmd[i].code == NOTKEY ) return NULL;
-      i++;
-    }
-  return((char *) 0);
-}
 
 /*
  * structure for storing Nsp operators 
@@ -147,8 +127,10 @@ struct _operator {
  * the order of plisttoken.h 
  */
 
+
 static OpWordTab Ops[]={
   {"@","noop",   NOTCODE_OP},
+  /* operators */
   {"'","quote",  QUOTE_OP},  
   {"*","mult",   STAR_OP }, 	
   {"+","plus",   PLUS_OP },  
@@ -163,7 +145,7 @@ static OpWordTab Ops[]={
   {"-","minus", MINUS_OP},   
   {"/","div", SLASH_OP},     
   {"\\","bdiv", BACKSLASH_OP},
-  /* composed */
+  /* composed operators */
   {".*","dst", DOTSTAR},			          
   {"./","dsl",DOTSLASH},			          
   {".\\","dbs",DOTBSLASH},			        
@@ -214,6 +196,38 @@ static OpWordTab Ops[]={
   {"CELL","cells",P_CELL},
   {"CELLARGS","cellargs",CELLARGS},
   {"CALLEVAL","callev",CALLEVAL},
+  {"=", "equal",EQUAL_OP},
+  /* negative keys for keywords the table is just used to get their names */
+  {"while","noop",	WHILE},  
+  {"end","noop",	END},    
+  {"select","noop",	SELECT}, 
+  {"case","noop",	CASE },  
+  {"quit","noop",	QUIT },  
+  {"exit","noop",      NSP_EXIT},
+  {"return","noop",    PRETURN},
+  {"help","noop",	HELP  }, 
+  {"what","noop",	WHAT },  
+  {"who","noop",	WHO },   
+  {"pause","noop",	PAUSE},  
+  {"clear","noop",	CLEAR},  
+  {"if","noop",       IF},     
+  {"then","noop",     THEN},
+  {"do" ,"noop",	DO  },   
+  {"apropos","noop",	APROPOS},
+  {"abort","noop",	ABORT },   
+  {"break","noop",	BREAK }, 
+  {"elseif","noop",	ELSEIF}, 
+  {"else","noop",	ELSE},   
+  {"for","noop",	FOR},    
+  {"function","noop",  FUNCTION},
+  {"endfunction","noop",  ENDFUNCTION},
+  {"exec","noop",    EXEC},
+  {"global","noop",  GLOBAL},
+  {"clearglobal","noop",CLEARGLOBAL},  
+  {"try","noop",     TRYCATCH},
+  {"catch","noop",	CATCH },  
+  {"finally","noop", FINALLY},
+  {"continue","noop",CONTINUE},  
   {"@","noop", LASTCODE_NEG_OP},
   {(char *) 0,(char *)0, 0}
 };
@@ -223,13 +237,13 @@ static OpWordTab Ops[]={
  * for operators 
  */
 
-char *OpCode2NickN(int keyc)
+char *OpCode2NickN(int code)
 {
-  if ( keyc > NOTCODE_OP && keyc < LASTCODE_OP ) 
-    return Ops[keyc-NOTCODE_OP].nickname;
-  if ( keyc < LASTCODE_NEG_OP && keyc >= FEVAL )
+  if ( code > NOTCODE_OP && code < LASTCODE_OP ) 
+    return Ops[code-NOTCODE_OP].nickname;
+  if ( code < LASTCODE_NEG_OP && code >= FEVAL )
     {
-      return Ops[(keyc-FEVAL)+LASTCODE_OP+1-NOTCODE_OP].nickname;
+      return Ops[(code-FEVAL)+LASTCODE_OP+1-NOTCODE_OP].nickname;
     }
   return("unknown");
 }
@@ -251,6 +265,21 @@ char *OpCode2Str(int code)
 }
 
 /*
+ * returns the command name from its code
+ */
+
+char *Keycode2str(int code)
+{
+  if ( code < LASTCODE_NEG_OP && code >= WHILE )
+    {
+      return Ops[(code-FEVAL)+LASTCODE_OP+1-NOTCODE_OP].name;
+    }
+  return NULL;
+}
+
+
+
+/*
  * Prints the name of an operator from its internal code 
  */
 
@@ -269,38 +298,9 @@ char * nsp_astcode_to_string(int code)
     {
       return Ops[code-NOTCODE_OP].name;
     }
-  if ( code > LASTCODE_NEG_OP && code <= FEVAL )
+  if ( code < LASTCODE_NEG_OP && code >= FEVAL )
     {
-      int i=(FEVAL-code)+LASTCODE_OP+1-NOTCODE_OP;
-      return Ops[i].name;
+      return Ops[(code-FEVAL)+LASTCODE_OP+1-NOTCODE_OP].name;
     }
-  /* remaining keys */
-  switch ( code )
-    {
-    case EQUAL_OP: return "=";
-    case PLIST : return "PLIST";
-    case COMMENT : return "COMMENT";
-    case NAME : return "NAME";
-    case OPNAME : return "OPNAME";
-    case NUMBER: return "NUMBER";
-    case STRING: return "STRING";
-    case EMPTYMAT: return "EMPTYMAT";
-    case EMPTYCELL: return "EMPTYCELL";
-    case WHILE: return "WHILE";
-    case FUNCTION: return "FUNCTION";
-    case FOR: return "FOR";
-    case IF : return "IF";
-    case TRYCATCH : return "TRYCATCH";
-    case SELECT : return "SELECT";
-    case CASE : return "CASE";
-    case PAUSE:  return "PAUSE";
-    case CLEAR:  return "CLEAR";
-    case CLEARGLOBAL:  return "CLEARGLOBAL";
-    case HELP  : return "HELP";
-    case GLOBAL: return "GLOBAL";
-    case EXEC: return "EXEC";
-    case APROPOS: return "APROPOS";
-    default :
-      return NULL;
-    }
+  return("unknown");
 }

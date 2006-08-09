@@ -7,7 +7,8 @@
  */
 
 /*
- * BASIC TYPES
+ * BASIC TYPES (negative codes) 
+ * they are treated in eval_arg;
  */
 
 typedef enum _nsp_basic_types nsp_basic_types;
@@ -18,122 +19,18 @@ enum _nsp_basic_types {
   STRING =   -4,
   EMPTYMAT = -5,
   COMMENT =  -6 ,
-  EMPTYCELL =  -38,
-  OPNAME = -30,
-  OBJECT = -39 
+  EMPTYCELL = -7,
+  OPNAME = -8,
+  OBJECT = -9 
 };
 
 /* Names are of max size */ 
 #define NAME_MAXL 52
 
 /*
- * KEYWORDS
- */
-
-typedef enum _nsp_keywords nsp_keywords;
-enum _nsp_keywords { 
-  WHILE =   -7, /* WHILE must be the first */
-  END =     -8,
-  SELECT =  -9,
-  CASE =    -10,
-  QUIT =    -11,
-  NSP_EXIT =-12,
-  PRETURN = -13,
-  HELP =    -14,
-  WHAT =    -15,
-  WHO =     -16,
-  PAUSE =   -17,
-  CLEAR =   -18,
-  IF =      -19,
-  THEN =    -20,
-  DO =      -21,
-  APROPOS = -22,
-  ABORT =   -23,
-  BREAK =   -24,
-  ELSEIF =  -25,
-  ELSE =    -26,
-  FOR =     -27,
-  FUNCTION = -28,
-  ENDFUNCTION = -29,
-  /* -30 is used */
-  EXEC = -31,
-  GLOBAL = -32,
-  CLEARGLOBAL =   -33,
-  TRYCATCH =    -34,
-  CATCH =  -35 ,
-  FINALLY =  -36 ,
-  CONTINUE =  -37,
-  /* -38 is used */
-  /* -39 is used */
-  NOTKEY =  -40 /* should be the last */
-};
-
-/*
  * OPERATORS
  * the code for operators are positives 
  */
-
-
-#if 0 
-typedef enum _nsp_ops nsp_ops; 
-enum _nsp_ops { 
-  QUOTE_OP =    ((int) '\''),
-  STAR_OP =    ((int) '*'),
-  PLUS_OP =    ((int) '+'),
-  HAT_OP =    ((int) '^'),
-  COLON_OP =    ((int) ':'),
-  OR_OP =    ((int) '|'),
-  AND_OP =    ((int) '&'),
-  TILDE_OP =    ((int) '~'),
-  RETURN_OP =  ((int) '\n'), 
-  COMMA_OP =     ((int) ','),
-  SEMICOLON_OP =    ((int) ';'),
-  MINUS_OP =    ((int) '-'),
-  SLASH_OP =    ((int) '/'),
-  BACKSLASH_OP =    ((int) '\\'),
-
-  DOTSTAR   =((((int) '*') << 7) + (int) '.' ),
-  DOTSLASH  =((((int) '/') << 7) + (int) '.' ),
-  DOTBSLASH =((((int) '\\') << 7) + (int) '.' ),
-
-  DOTPLUS   =((((int) '+') << 7) + (int) '.' ),
-
-  STARDOT   =((((int) '.') << 7) + (int) '*' ),
-  SLASHDOT  =((((int) '.') << 7) + (int) '/' ),
-  BSLASHDOT =((((int) '.') << 7) + (int) '\\' ),
-
-  DOTSTARDOT  =(((int) '.') <<14 ) + (((int) '*') << 7) + (int) '.' ,
-  DOTSLASHDOT  =(((int) '.') <<14 )+(((int) '/') << 7) + (int) '.' ,
-  DOTBSLASHDOT =(((int) '.') <<14 )+ (((int) '\\') << 7) + (int) '.',
-
-  DOTHAT =((((int) '^') << 7) + (int) '.' ),
-
-  EQ     =((((int) '=') << 7) + (int) '=' ),
-  LEQ    =((((int) '<') << 7) + (int) '=' ),
-  GEQ    =((((int) '>') << 7) + (int) '=' ),
-  NEQ    =((((int) '<') << 7) + (int) '>' ),
-
-  DOTEQ     =((((int) '=') << 14) + (((int) '=') << 7)  + (int) '.' ),
-  DOTLEQ    =((((int) '<') << 14) + (((int) '=') << 7)  + (int) '.' ),
-  DOTLT    =((((int) '<') << 7) +  (int) '.' ),
-  DOTGEQ    =((((int) '>') << 14) + (((int) '=') << 7)  + (int) '.' ),
-  DOTGT    =((((int) '>') << 7) +  (int) '.' ),
-  DOTNEQ    =((((int) '<') << 14) + (((int) '>') << 7)  + (int) '.' ),
-
-  DOTPRIM =((((int) '.') << 7) + (int) '\'' ),
-
-  /* Unary minus */
-
-  MOINS   =((((int) '-') << 7) + (int) '-' ), 
-  NOTCODE =0,
-
-  /* and or sequential version */
-
-  SEQAND   =((((int) '&') << 7) + (int) '&' ),  
-  SEQOR    =((((int) '|') << 7) + (int) '|' ) 
-};
-
-#else
 
 typedef enum _nsp_ops nsp_ops; 
 enum _nsp_ops { 
@@ -182,7 +79,6 @@ enum _nsp_ops {
   LASTCODE_OP                         
 };
 
-#endif 
 
 /*
  *  SPECIAL code used in internal list coding
@@ -190,7 +86,7 @@ enum _nsp_ops {
 
 typedef enum _nsp_codes nsp_codes ;
 enum _nsp_codes {
-  FEVAL = -100, /* must be the fisrt and such that LASTCODE_NEG_OP is negative */
+  FEVAL = -200, /* must be the fisrt and such that LASTCODE_NEG_OP is negative <= nsp_basic */
   ROWCONCAT ,
   COLCONCAT ,
   LASTCASE ,
@@ -212,6 +108,36 @@ enum _nsp_codes {
   CELLARGS ,
   CALLEVAL ,
   EQUAL_OP ,
+  WHILE , /* language keywords the first must be WHILE */
+  END ,
+  SELECT ,
+  CASE ,
+  QUIT ,
+  NSP_EXIT ,
+  PRETURN ,
+  HELP ,
+  WHAT ,
+  WHO ,
+  PAUSE ,
+  CLEAR ,
+  IF ,
+  THEN ,
+  DO ,
+  APROPOS ,
+  ABORT ,
+  BREAK ,
+  ELSEIF ,
+  ELSE ,
+  FOR ,
+  FUNCTION ,
+  ENDFUNCTION ,
+  EXEC ,
+  GLOBAL ,
+  CLEARGLOBAL ,
+  TRYCATCH ,
+  CATCH ,
+  FINALLY ,
+  CONTINUE ,
   LASTCODE_NEG_OP 
 };
 
