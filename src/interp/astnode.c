@@ -8,6 +8,7 @@
 #include "nsp/object.h"
 #include "astnode.h"
 #include "nsp/interf.h"
+#include "nsp/plistc.h"
 
 /* 
  * NspAstNode inherits from NspObject 
@@ -88,8 +89,8 @@ NspTypeAstNode *new_type_astnode(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_astnode_id;
-       return type;
+      type->id = nsp_type_astnode_id;
+      return type;
     }
 }
 
@@ -218,9 +219,9 @@ void nsp_astnode_destroy(NspAstNode *H)
   nsp_object_destroy_name(NSP_OBJECT(H));
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
-   {
-    FREE(H->obj);
-   }
+    {
+      FREE(H->obj);
+    }
   FREE(H);
 }
 
@@ -235,7 +236,7 @@ void nsp_astnode_info(NspAstNode *M, int indent,const char *name, int rec_level)
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t= [op:%s,%d,arity:%d,data:%d]\t\t%s ()\n",
 	    pname,
-	    nsp_astcode_to_string(M->obj->op),
+	    nsp_astcode_to_name(M->obj->op),
 	    M->obj->op, M->obj->arity,
 	    NSP_POINTER_TO_INT(M->obj->obj),
 	    nsp_astnode_type_short_string());
@@ -263,7 +264,7 @@ void nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level
     }
   else 
     {
-      char *s;
+      const char *s;
       Sciprintf1(indent,"%s\t={",pname);
       switch ( M->obj->op ) 
 	{
@@ -286,16 +287,9 @@ void nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level
 	  Sciprintf("obj:0x%x",M->obj->obj);
 	  break;
 	default:
-	  if (nsp_is_code_keyword( M->obj->op)== OK) 
-	    s=nsp_keycode2str( M->obj->op);
-	  else s=nsp_opcode2str( M->obj->op);
+	  s=nsp_astcode_to_name( M->obj->op);
 	  if ( s != (char *) 0 )
-	    {
-	      if ( s[0]=='\n')
-		Sciprintf("\\n",s);
-	      else
-		Sciprintf("%s",s);
-	    }
+	    Sciprintf("%s",s);
 	  else 
 	    Sciprintf("UNKNOWN->%d", M->obj->op);
 	}
@@ -343,41 +337,41 @@ NspAstNode  *GetAstNode(Stack stack, int i)
 {
   NspAstNode *M;
   if (( M = nsp_astnode_object(NthObj(i))) == NULLASTNODE)
-     ArgMessage(stack,i);
+    ArgMessage(stack,i);
   return M;
 }
 
 /*-----------------------------------------------------
-  * constructor 
+ * constructor 
  * if type is non NULL it is a subtype which can be used to 
  * create a NspClassB instance 
  *-----------------------------------------------------*/
 
 static NspAstNode *astnode_create_void(char *name,NspTypeBase *type)
 {
- NspAstNode *H  = (type == NULL) ? new_astnode() : type->new();
- if ( H ==  NULLASTNODE)
-  {
-   Sciprintf("No more memory\n");
-   return NULLASTNODE;
-  }
- if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
-   return NULLASTNODE;
- NSP_OBJECT(H)->ret_pos = -1 ;
+  NspAstNode *H  = (type == NULL) ? new_astnode() : type->new();
+  if ( H ==  NULLASTNODE)
+    {
+      Sciprintf("No more memory\n");
+      return NULLASTNODE;
+    }
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    return NULLASTNODE;
+  NSP_OBJECT(H)->ret_pos = -1 ;
   H->obj = NULL;
- return H;
+  return H;
 }
 
 NspAstNode *astnode_create(char *name,int op,int arity,void *data,NspTypeBase *type)
 {
- NspAstNode *H  = astnode_create_void(name,type);
- if ( H ==  NULLASTNODE) return NULLASTNODE;
+  NspAstNode *H  = astnode_create_void(name,type);
+  if ( H ==  NULLASTNODE) return NULLASTNODE;
   if ((H->obj = malloc(sizeof(nsp_astnode))) == NULL) return NULL;
   H->obj->ref_count=1;
   H->obj->op=op;
   H->obj->arity=arity;
   H->obj->obj= data;
- return H;
+  return H;
 }
 
 /*
@@ -390,7 +384,7 @@ NspAstNode *nsp_astnode_copy(NspAstNode *self)
   if ( H ==  NULLASTNODE) return NULLASTNODE;
   H->obj = self->obj;
   self->obj->ref_count++;
- return H;
+  return H;
 }
 
 /*-------------------------------------------------------------------
@@ -494,7 +488,7 @@ int astnode_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 }
 
 /* used to walk through the interface table 
-    (for adding or removing functions) */
+   (for adding or removing functions) */
 
 void astnode_Interf_Info(int i, char **fname, function (**f))
 {

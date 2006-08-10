@@ -105,7 +105,7 @@ int main(int argc, char **argv)
   /* initialize primitive table */
   InitFunctionTable();
   /* Initialize macro hash table **/
- nsp_init_macro_table();
+  nsp_init_macro_table();
   /* Initialize data frame **/  
   if ( nsp_init_frames(argc,argv) == FAIL ) return 1;
   /* reload history */

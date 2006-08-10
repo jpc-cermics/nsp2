@@ -345,7 +345,7 @@ void nsp_plist_destroy(PList *List)
 	  break;
 	case PLIST: 
 	  loc1= (PList) loc->O;
-	nsp_plist_destroy(&loc1);
+	  nsp_plist_destroy(&loc1);
 	  break;
 	}
       loc1= loc->next ;
@@ -497,7 +497,7 @@ PList nsp_last(PList plist)
 
 void nsp_plist_print_internal(PList L, int indent)
 {
-  char *s;
+  const char *s;
   int i=0;
   Sciprintf("(");
   while ( L != NULLPLIST ) 
@@ -523,7 +523,7 @@ void nsp_plist_print_internal(PList L, int indent)
 	  Sciprintf("obj",(char *) L->O);
 	  break;
 	case PLIST:
-	nsp_plist_print_internal((PList) L->O,indent+1);
+	  nsp_plist_print_internal((PList) L->O,indent+1);
 	  break;
 	case EMPTYMAT:
 	  Sciprintf("\"[]\"");break;
@@ -534,9 +534,7 @@ void nsp_plist_print_internal(PList L, int indent)
 	    {
 	      Sciprintf("[a:%d, args:%d]",L->arity,i);
 	    }
-	  if (nsp_is_code_keyword(L->type)== OK) 
-	    s=nsp_keycode2str(L->type);
-	  else s=nsp_opcode2str(L->type);
+	  s=nsp_astcode_to_name(L->type);
 	  if ( s != (char *) 0 )
 	    Sciprintf("\"%d#%s[line %d]",L->arity,s,NSP_POINTER_TO_INT(L->O));
 	  else 
@@ -553,7 +551,7 @@ void nsp_plist_print_internal(PList L, int indent)
 
 void nsp_plist_print_int(PList L)
 {
- nsp_plist_print_internal(L,4);
+  nsp_plist_print_internal(L,4);
 }
 
 
@@ -584,14 +582,14 @@ PList nsp_firstel(PList L)
   return First;
 }
 
-#define PRINTTAG(tag)  if (pos != posret ) {			 \
-    Sciprintf("\n");newpos = Sciprintf1(posret,tag) ;}		 \
-  else { newpos = pos+ Sciprintf(tag) ; }			 \
+#define PRINTTAG(tag)  if (pos != posret ) {				\
+    Sciprintf("\n");newpos = Sciprintf1(posret,tag) ;}			\
+  else { newpos = pos+ Sciprintf(tag) ; }
 
 static int PListPrettyPrint_I(PList List, int indent, int pos, int posret)
 {
   PList L=List;
-  char *s;
+  const char *s;
   int j,newpos=0;
   /* just in case L is not the first */
   while ( L->prev != NULL) L= L->prev;
@@ -622,7 +620,7 @@ static int PListPrettyPrint_I(PList List, int indent, int pos, int posret)
 	      return  newpos;
 	      break;
 	    case RETURN_OP : 
-	nsp_arg_pretty_print(List,indent,pos,posret);
+	      nsp_arg_pretty_print(List,indent,pos,posret);
 	      Sciprintf("\n");
 	      return 0;
 	      break;
@@ -652,7 +650,7 @@ static int PListPrettyPrint_I(PList List, int indent, int pos, int posret)
 	  for ( j = 0 ; j <  L->arity ; j++ )
 	    {
 	      newpos =nsp_arg_pretty_print(List,(j == 0) ? indent : 1,
-				      newpos,posret);
+					   newpos,posret);
 	      if ( j != L->arity -1 ) 
 		newpos =nsp_pretty_print_opname(L->type,1,newpos);
 	      List = List->next;
@@ -805,7 +803,7 @@ static int PListPrettyPrint_I(PList List, int indent, int pos, int posret)
 	  break;
 	case FUNCTION:
 	  PRINTTAG("function");
-	nsp_arg_pretty_print(List,1,pos,newpos+1);
+	  nsp_arg_pretty_print(List,1,pos,newpos+1);
 	  Sciprintf("\n");
 	  newpos =nsp_arg_pretty_print(List->next,posret+2,pos,posret+2);
 	  if ( newpos != 0)  Sciprintf("\n");
@@ -884,7 +882,7 @@ static int PListPrettyPrint_I(PList List, int indent, int pos, int posret)
 	    {
 	      if ( j==0) 
 		{
-		nsp_arg_pretty_print(List,1,newpos,posret);
+		  nsp_arg_pretty_print(List,1,newpos,posret);
 		  Sciprintf("\n");
 		  newpos = 0;
 		}
@@ -936,7 +934,7 @@ static int PListPrettyPrint_I(PList List, int indent, int pos, int posret)
 	  break;
 	default:
 	  Sciprintf("Warning in PlistPrettyPrint :");
-	  s=nsp_keycode2str(L->type);
+	  s=nsp_astcode_to_name(L->type);
 	  if ( s != (char *) 0) Sciprintf(" %s ",s);
 	}
     }
@@ -1068,7 +1066,7 @@ static void PListPrint_I(PList List, int indent)
 {
   PList L=List;/* operator */
   PList ListInit = List ; 
-  char *s;
+  const char *s;
   int j;
   /* just in case L is not at the begining */
   while ( L->prev != NULL) L= L->prev;
@@ -1080,49 +1078,49 @@ static void PListPrint_I(PList List, int indent)
 	{
 	case 0:
 	  /* : can be a 0 arity operator **/
-	nsp_print_opname(L->type);
+	  nsp_print_opname(L->type);
 	  break;
 	case 1:
 	  switch ( L->type ) 
 	    {
 	    case  COMMA_OP : 
 	    case  SEMICOLON_OP  :
-	nsp_arg_print(List,indent);
-	nsp_print_opname(L->type);
+	      nsp_arg_print(List,indent);
+	      nsp_print_opname(L->type);
 	      break;
 	    case QUOTE_OP : 
-	nsp_arg_print(List,indent);
-	nsp_print_opname(L->type);
+	      nsp_arg_print(List,indent);
+	      nsp_print_opname(L->type);
 	      break;
 	    case TILDE_OP : 
-	nsp_print_opname(L->type);
+	      nsp_print_opname(L->type);
 	      Sciprintf("("); 
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      Sciprintf(")");
 	      break;
 	    case RETURN_OP : 
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      Sciprintf("\n");
 	      break;
 	    default:
 	      Sciprintf("("); 
-	nsp_print_opname(L->type);
-	nsp_arg_print(List,indent);
+	      nsp_print_opname(L->type);
+	      nsp_arg_print(List,indent);
 	      Sciprintf(")");
 	    }
 	  break;
 	case 2:
 	  Sciprintf("(");
-	nsp_arg_print(List,indent);
-	nsp_print_opname(L->type);
-	nsp_arg_print(List->next,indent);
+	  nsp_arg_print(List,indent);
+	  nsp_print_opname(L->type);
+	  nsp_arg_print(List->next,indent);
 	  Sciprintf(")");
 	  break;
 	default :
 	  Sciprintf("(");
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      if ( j < L->arity -1 ) 
 		nsp_print_opname(L->type);
 	      else 
@@ -1141,14 +1139,14 @@ static void PListPrint_I(PList List, int indent)
 	  /*nsp_plist_print_int(L); **/
 	  nsp_arg_print(List,indent);
 	  Sciprintf("=");
-	nsp_arg_print(List->next,indent);
+	  nsp_arg_print(List->next,indent);
 	  break;
 	case MLHS  :
 	  Sciprintf("[");
 	  if ( L->arity == 0) Sciprintf("]");
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      Sciprintf((j == L->arity -1 ) ? "]" : ",");
 	      List = List->next;
 	    }
@@ -1158,7 +1156,7 @@ static void PListPrint_I(PList List, int indent)
 	  if ( L->arity == 0) Sciprintf(")");
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      Sciprintf((j == L->arity -1 ) ? ")" : ",");
 	      List = List->next;
 	    }
@@ -1168,7 +1166,7 @@ static void PListPrint_I(PList List, int indent)
 	  if ( L->arity == 0) Sciprintf("}");
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      Sciprintf((j == L->arity -1 ) ? "}" : ",");
 	      List = List->next;
 	    }
@@ -1178,7 +1176,7 @@ static void PListPrint_I(PList List, int indent)
 	  if ( L->arity == 0) Sciprintf("]");
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      Sciprintf((j == L->arity -1 ) ? "]" : ",");
 	      List = List->next;
 	    }
@@ -1191,28 +1189,28 @@ static void PListPrint_I(PList List, int indent)
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
 	      if ( List == ListInit ) Sciprintf("-?->");
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      List = List->next;
 	    }
 	  break;
 	case FEVAL :
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      if ( 1== L->arity) Sciprintf("(");
 	      Sciprintf(( j < L->arity ) ? ((j==0) ? "(" : ",") : ")");
 	    }
 	  break;
 	case PLIST :
 	  if (L->next == NULLPLIST )
-	nsp_arg_print(L,indent);/* XXXXXXX */
+	    nsp_arg_print(L,indent);/* XXXXXXX */
 	  break;
 	case COMMENT :
 	case NAME :
 	case OPNAME :
 	case NUMBER:
 	case STRING:
-	nsp_arg_print(L,indent);
+	  nsp_arg_print(L,indent);
 	  break;
 	case OBJECT :
 	  break;
@@ -1223,7 +1221,7 @@ static void PListPrint_I(PList List, int indent)
 	case P_MATRIX :
 	case P_CELL :
 	  Sciprintf("[");
-	nsp_arg_print(List,indent);
+	  nsp_arg_print(List,indent);
 	  Sciprintf("]");
 	  break;
 	case ROWCONCAT:
@@ -1233,56 +1231,56 @@ static void PListPrint_I(PList List, int indent)
 	case CELLCOLCONCAT:
 	case CELLDIAGCONCAT:
 	  Sciprintf("[");
-	nsp_arg_print(List,indent);
-	nsp_print_opname(L->type);
-	nsp_arg_print(List->next,indent);
+	  nsp_arg_print(List,indent);
+	  nsp_print_opname(L->type);
+	  nsp_arg_print(List->next,indent);
 	  Sciprintf("]");
 	  break;
 	case WHILE:
 	  Sciprintf("while ") ;
-	nsp_arg_print(List,indent);
+	  nsp_arg_print(List,indent);
 	  Sciprintf("do");
 	  Sciprintf1(indent+2,"\n");
-	nsp_arg_print(List->next,indent);
+	  nsp_arg_print(List->next,indent);
 	  Sciprintf1(indent,"\n");
 	  Sciprintf("end");
 	  break;
 	case FUNCTION:
 	  Sciprintf("function ") ;
-	nsp_arg_print(List,indent);
+	  nsp_arg_print(List,indent);
 	  Sciprintf1(indent+2,"\n");
-	nsp_arg_print(List->next,indent);
+	  nsp_arg_print(List->next,indent);
 	  Sciprintf1(indent,"\n");
 	  Sciprintf("endfunction");
 	  break;
 	case FOR:
 	  Sciprintf("for ") ;
-	nsp_arg_print(List,indent);
+	  nsp_arg_print(List,indent);
 	  Sciprintf("= ") ;
-	nsp_arg_print(List->next,indent);
+	  nsp_arg_print(List->next,indent);
 	  Sciprintf("do");
 	  Sciprintf1(indent+2,"\n");
-	nsp_arg_print(List->next->next,indent);
+	  nsp_arg_print(List->next->next,indent);
 	  Sciprintf("end");
 	  break;
 	case IF :
 	  Sciprintf("if ") ;
-	nsp_arg_print(List,indent);
+	  nsp_arg_print(List,indent);
 	  Sciprintf("then");Sciprintf1(indent+2,"\n");
-	nsp_arg_print(List->next,indent);
+	  nsp_arg_print(List->next,indent);
 	  Sciprintf("else");Sciprintf1(indent+2,"\n");
-	nsp_arg_print(List->next->next,indent);
+	  nsp_arg_print(List->next->next,indent);
 	  Sciprintf("end");
 	  break;
 	case TRYCATCH :
 	  Sciprintf("try");Sciprintf1(indent+2,"\n");
-	nsp_arg_print(List,indent);
+	  nsp_arg_print(List,indent);
 	  Sciprintf("catch");Sciprintf1(indent+2,"\n");
-	nsp_arg_print(List->next,indent);
+	  nsp_arg_print(List->next,indent);
 	  if ( L->arity == 3 ) 
 	    {
 	      Sciprintf("finally");Sciprintf1(indent+2,"\n");
-	nsp_arg_print(List->next->next,indent);
+	      nsp_arg_print(List->next->next,indent);
 	    }
 	  Sciprintf("end");
 	  break;
@@ -1293,7 +1291,7 @@ static void PListPrint_I(PList List, int indent)
 	  Sciprintf("select ") ;
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	nsp_arg_print(List,indent+2);
+	      nsp_arg_print(List,indent+2);
 	      List = List->next;
 	    }
 	  Sciprintf("end");
@@ -1302,7 +1300,7 @@ static void PListPrint_I(PList List, int indent)
 	  Sciprintf("{") ;
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      List = List->next;
 	    }
 	  Sciprintf("}");
@@ -1312,7 +1310,7 @@ static void PListPrint_I(PList List, int indent)
 	  Sciprintf("$") ;
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      List = List->next;
 	    }
 	  Sciprintf("$");Sciprintf1(indent,"\n");
@@ -1321,24 +1319,24 @@ static void PListPrint_I(PList List, int indent)
 	  Sciprintf("(") ;
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
-	nsp_arg_print(List,indent);
+	      nsp_arg_print(List,indent);
 	      List = List->next;
 	    }
 	  Sciprintf(")");
 	  break;
 	case CASE :
 	  Sciprintf("case ") ;
-	nsp_arg_print(List,indent);
+	  nsp_arg_print(List,indent);
 	  Sciprintf("then ") ;
-	nsp_arg_print(List->next,indent);
+	  nsp_arg_print(List->next,indent);
 	  break;
 	case LASTCASE :
 	  Sciprintf("else ") ;
-	nsp_arg_print(List,indent);
+	  nsp_arg_print(List,indent);
 	  break;
 	default:
 	  Sciprintf("Warning in PlistPrint :");
-	  s=nsp_keycode2str(L->type);
+	  s=nsp_astcode_to_name(L->type);
 	  if ( s != (char *) 0) Sciprintf(" %s ",s);
 	}
     }
@@ -1420,7 +1418,7 @@ static void PListInfo_I(PList List, int indent)
   if ( List->type == FUNCTION)
     {
       Sciprintf("function ") ;
- nsp_arg_print(List,indent);
+      nsp_arg_print(List,indent);
       Sciprintf1(indent,"\n");
     }
   else 
@@ -1619,7 +1617,7 @@ NspSMatrix *nsp_plist2smatrix(PList L, int indent)
 {
   NspSMatrix *res; 
   IOVFun def = SetScilabIO(Sciprint2string);
- nsp_plist_pretty_print(L,0);
+  nsp_plist_pretty_print(L,0);
   res = (NspSMatrix *) Sciprint2string_reset(); 
   SetScilabIO(def);
   return res;
@@ -1690,7 +1688,7 @@ static void Arg_name_to_local_name(PList L,NspHash *H);
 void plist_name_to_local_id(PList List,NspHash *H)
 {
   PList L=List;
-  char *s;
+  const char *s;
   int j;
   List = List->next;
   if ( L->type > 0 )
@@ -1838,7 +1836,7 @@ void plist_name_to_local_id(PList List,NspHash *H)
 	  Arg_name_to_local_name(List,H);
 	  break;
 	default:
-	  s=nsp_keycode2str(L->type);
+	  s=nsp_astcode_to_name(L->type);
 	}
     }
 }

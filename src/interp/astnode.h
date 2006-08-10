@@ -55,8 +55,8 @@ NspTypeAstNode *new_type_astnode(type_mode mode);
 NspAstNode *new_astnode();
 
 /*
-* Object methods redefined for astnode 
-*/
+ * Object methods redefined for astnode 
+ */
 
 
 #define NULLASTNODE (NspAstNode*) 0

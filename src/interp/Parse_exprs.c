@@ -325,13 +325,14 @@ static int parse_stmt(Tokenizer *T,NspHash *symb_table,PList *plist)
       if ( T->NextToken(T) == FAIL) return(FAIL);
       return(OK);
 
-    case EXEC :/* a set of commands with one string argument  */
+    case EXEC :
     case GLOBAL:
     case APROPOS:
+      /* a set of commands with one string argument or function call */
       if ( T->token.NextC == '(') 
 	{
-	  /* switch to function call */
-	  T->token.id = -2;
+	  /* switch to function call mode */
+	  T->token.id = NAME;
 	  return(parse_equal(T,symb_table,plist,0));
 	}
       id = T->token.id; line = T->token.Line; 
@@ -356,7 +357,7 @@ static int parse_stmt(Tokenizer *T,NspHash *symb_table,PList *plist)
       if ( T->token.NextC == '(') 
 	{
 	  /* switch to function call */
-	  T->token.id = -2;
+	  T->token.id = NAME;
 	  return(parse_equal(T,symb_table,plist,0));
 	}
       id = T->token.id; line = T->token.Line; 
@@ -1077,7 +1078,7 @@ static int parse_equal(Tokenizer *T,NspHash *symb_table,PList *plist, int flag)
       
       if ( !(plist1->type == NAME || plist1->type == OPNAME) || plist1->next != NULLPLIST)
 	{
-	nsp_plist_print(plist1,0);
+	  nsp_plist_print(plist1,0);
 	  T->ParseError(T,": is not a correct expression for naming optional argument\n");
 	  return FAIL;
 	}
@@ -1093,7 +1094,7 @@ static int parse_equal(Tokenizer *T,NspHash *symb_table,PList *plist, int flag)
 	    {
 	      /* Sciprintf("A simple mlhs \n"); */
 	    }
-	nsp_plist_destroy(&plist1);
+	  nsp_plist_destroy(&plist1);
 	  plist1=NULLPLIST;
 	  if (nsp_parse_add_list1(&plist1,&plist3) == FAIL) return(FAIL);
 	}
@@ -1736,7 +1737,7 @@ static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
       */ 
     default :
       /* XXXX : Any  keyword here is an error */
-      if ( 0 && nsp_is_code_keyword(T->token.id) == OK )
+      if ( 0 && nsp_is_code_keyword(T->token.id) == TRUE )
 	{
 	  if (debug) scidebug(--debugI,"<fact]");
 	  return(OK);
@@ -1932,7 +1933,7 @@ static int parse_rowmatrix(Tokenizer *T,NspHash *symb_table,PList *plist,char st
       plist2=plist1;
       if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
     }
- nsp_parse_add_list(plist,&plist1);
+  nsp_parse_add_list(plist,&plist1);
   return(OK);
 }
 
@@ -2018,7 +2019,7 @@ static int parse_rowcells(Tokenizer *T,NspHash *symb_table,PList *plist,char sto
       plist2=plist1;
       if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
     }
- nsp_parse_add_list(plist,&plist1);
+  nsp_parse_add_list(plist,&plist1);
   return(OK);
 }
 

@@ -227,9 +227,9 @@ int nsp_eval_dotplus(Stack stack, int first, int rhs, int opt, int lhs)
     }
   else
     {
-      char *name =nsp_opcode2nickname(DOTPLUS);
+      const char *name =nsp_astcode_to_nickname(DOTPLUS);
       /* should use the macro in Eval.c 
-       * nsp_frames_search_op_object
+       * Nsp_frames_search_op_object
        */
       o1 =nsp_frames_search_object(name);
       return nsp_eval_func(o1,name,stack,first,rhs,opt,lhs);
@@ -634,11 +634,11 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
   if (debug) 
     {
       Sciprintf("Lhs \n");
- nsp_plist_print_int(Lhs);
+      nsp_plist_print_int(Lhs);
       Sciprintf("Feval \n");
- nsp_plist_print_int(Feval);
+      nsp_plist_print_int(Feval);
       Sciprintf("Body\n");
- nsp_plist_print_int(Body) ;
+      nsp_plist_print_int(Body) ;
     }
   /*Exploring Feval to insert arguments in the new frame **/
   Loc = Feval;

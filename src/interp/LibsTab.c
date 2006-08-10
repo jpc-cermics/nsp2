@@ -134,7 +134,7 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
 	  if ( recursive == TRUE ) 
 	    {
 	      /* Sciprintf("%s visited\n",filename); */
-	nsp_enter_macros(filename,recursive,compile);
+	      nsp_enter_macros(filename,recursive,compile);
 	    }
 	}
       else 
@@ -477,10 +477,10 @@ static int myhsearch(char *key, Mdata *data, ACTION action)
 
   HSEARCH_DEBUG(printf("In hsearch with hsize =%d key = %s filled = %d\n",hsize,key,filled);)
 
-  /* Compute a value for the given string. Perhaps use a better method. */
-  /* modifs (bruno) : avoid the call to strlen and put the modulo outside the loop */
-  /*                  then compute hval % hsize efficiently */
-  hval  = len;
+    /* Compute a value for the given string. Perhaps use a better method. */
+    /* modifs (bruno) : avoid the call to strlen and put the modulo outside the loop */
+    /*                  then compute hval % hsize efficiently */
+    hval  = len;
   str = key;
   while (*str != '\0') { hval += *str ; str++; }
   /* compute hval %= hsize efficiently */
@@ -500,45 +500,45 @@ static int myhsearch(char *key, Mdata *data, ACTION action)
 
       HSEARCH_DEBUG(printf("idx %d is used \n",idx);)
 
-      /* Further action might be required according to the action value. */
+	/* Further action might be required according to the action value. */
 	
-      if (htable[idx].used == hval )
-	{
-	  if ( htable[idx].entry.data.Int == -1 )
-	    {
-	      HSEARCH_DEBUG(printf("idx %d is not really used \n",idx);)
-	      /* not used */
-	      switch (action) 
-		{
-		case ENTER :
-		  strncpy(htable[idx].entry.key,key,NAME_MAXL);
-		  htable[idx].entry.data.Int = data->Int; 
-		  filled++;
-		  return OK;
-		default : break;
-		}
-	    }
-	  else if ( Eqid(key, htable[idx].entry.key) == 0) 
-	    {
-	      HSEARCH_DEBUG(printf("idx %d is really used \n",idx);)
-	      switch (action) 
-		{
-		case REMOVE :
-		  /* because of the second hash we cannot remove */
-		  /* htable[idx].used = 0;*/
-		  htable[idx].entry.data.Int = -1;
-		  filled--;
-		  return OK ;
-		  break;
-		case ENTER :
-		  htable[idx].entry.data.Int = data->Int; 
-		  return OK;
-		case FIND :
-		  data->Int = htable[idx].entry.data.Int;
-		  return OK;
-		}
-	    }
-	}
+	if (htable[idx].used == hval )
+	  {
+	    if ( htable[idx].entry.data.Int == -1 )
+	      {
+		HSEARCH_DEBUG(printf("idx %d is not really used \n",idx);)
+		  /* not used */
+		  switch (action) 
+		    {
+		    case ENTER :
+		      strncpy(htable[idx].entry.key,key,NAME_MAXL);
+		      htable[idx].entry.data.Int = data->Int; 
+		      filled++;
+		      return OK;
+		    default : break;
+		    }
+	      }
+	    else if ( Eqid(key, htable[idx].entry.key) == 0) 
+	      {
+		HSEARCH_DEBUG(printf("idx %d is really used \n",idx);)
+		  switch (action) 
+		    {
+		    case REMOVE :
+		      /* because of the second hash we cannot remove */
+		      /* htable[idx].used = 0;*/
+		      htable[idx].entry.data.Int = -1;
+		      filled--;
+		      return OK ;
+		      break;
+		    case ENTER :
+		      htable[idx].entry.data.Int = data->Int; 
+		      return OK;
+		    case FIND :
+		      data->Int = htable[idx].entry.data.Int;
+		      return OK;
+		    }
+	      }
+	  }
 	
       /* Second hash function, as suggested in [Knuth] */
 
@@ -555,63 +555,63 @@ static int myhsearch(char *key, Mdata *data, ACTION action)
 	  idx -= hval2;
 
 	HSEARCH_DEBUG(printf("chaining to idx %d \n",idx);)
-	/* If entry is found use it. */
-	if (htable[idx].used == hval ) 
-	  {
+	  /* If entry is found use it. */
+	  if (htable[idx].used == hval ) 
+	    {
 
-	    HSEARCH_DEBUG(printf("idx %d is  used \n",idx);)
-	    if ( htable[idx].entry.data.Int == -1 )
-	      {
-		HSEARCH_DEBUG(printf("idx %d is not really used \n",idx);)
-		/* not used */
-		switch (action) 
+	      HSEARCH_DEBUG(printf("idx %d is  used \n",idx);)
+		if ( htable[idx].entry.data.Int == -1 )
 		  {
-		  case ENTER :
-		    strncpy(htable[idx].entry.key,key,NAME_MAXL);
-		    htable[idx].entry.data.Int = data->Int; 
-		    filled++;
-		    return OK;
-		  default : break;
+		    HSEARCH_DEBUG(printf("idx %d is not really used \n",idx);)
+		      /* not used */
+		      switch (action) 
+			{
+			case ENTER :
+			  strncpy(htable[idx].entry.key,key,NAME_MAXL);
+			  htable[idx].entry.data.Int = data->Int; 
+			  filled++;
+			  return OK;
+			default : break;
+			}
 		  }
-	      }
-	    else if ( Eqid(key, htable[idx].entry.key) == 0) 
-	      {
-		HSEARCH_DEBUG(printf("idx %d is really used \n",idx);)
-		switch (action) 
+		else if ( Eqid(key, htable[idx].entry.key) == 0) 
 		  {
-		  case REMOVE :
-		    /* because of the second hash we cannot remove */
-		    /* htable[idx].used = 0;*/
-		    htable[idx].entry.data.Int = -1;
-		    filled--;
-		    return OK;
-		    break;
-		  case ENTER :
-		    /* replace */
-		    htable[idx].entry.data.Int = data->Int; 
-		    return OK;
-		  case FIND :
-		    data->Int = htable[idx].entry.data.Int;
-		    return OK;
+		    HSEARCH_DEBUG(printf("idx %d is really used \n",idx);)
+		      switch (action) 
+			{
+			case REMOVE :
+			  /* because of the second hash we cannot remove */
+			  /* htable[idx].used = 0;*/
+			  htable[idx].entry.data.Int = -1;
+			  filled--;
+			  return OK;
+			  break;
+			case ENTER :
+			  /* replace */
+			  htable[idx].entry.data.Int = data->Int; 
+			  return OK;
+			case FIND :
+			  data->Int = htable[idx].entry.data.Int;
+			  return OK;
+			}
 		  }
-	      }
-	  }
+	    }
       } while (htable[idx].used);
     }
     
   /* An empty bucket has been found. */
 
   HSEARCH_DEBUG(printf("found a free idx %d \n",idx);)
-  if (action == ENTER) 
-    {
-      htable[idx].used  = hval;
-      strncpy(htable[idx].entry.key,key,NAME_MAXL);
-      htable[idx].entry.data.Int = data->Int; 
-      filled++;
-      return OK ;
-    }
-  else
-    return FAIL;
+    if (action == ENTER) 
+      {
+	htable[idx].used  = hval;
+	strncpy(htable[idx].entry.key,key,NAME_MAXL);
+	htable[idx].entry.data.Int = data->Int; 
+	filled++;
+	return OK ;
+      }
+    else
+      return FAIL;
 }
 
 

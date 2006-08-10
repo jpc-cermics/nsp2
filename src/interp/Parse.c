@@ -528,13 +528,13 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
       while (1) 
 	{
 	  /** clean previous parsed expression **/
-	nsp_plist_destroy(&plist);
+	  nsp_plist_destroy(&plist);
 	  if ((err=nsp_parse(T,NULLHASH,&plist)) < 0 ) 
 	    {
 	      /* parse error */
 	      count--;
 	      if ( errcatch == FALSE ) nsp_error_message_show();
-	nsp_plist_destroy(&plist);
+	      nsp_plist_destroy(&plist);
 	      return err;
 	    }
 	  if (plist != NULLPLIST ) 
@@ -549,7 +549,7 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
 		  /* evaluation error or quit ? */
 		  count--;
 		  if ( errcatch == FALSE ) nsp_error_message_show();
-		nsp_plist_destroy(&plist);
+		  nsp_plist_destroy(&plist);
 		  return err;
 		}
 	    }

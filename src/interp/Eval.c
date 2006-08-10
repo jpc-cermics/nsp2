@@ -90,7 +90,8 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
   PList FC;
   NspPList *F;
   NspIVect *IV;
-  char *s, *fname ; 
+  const char *s;
+  char *fname ; 
   int j,rep;
   stack.first = first;
   
@@ -116,7 +117,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  stack.val->S[first] = (NspObject *) IV;
 	  return 1;
 	case 1:
-	  opcode =nsp_opcode2nickname(L->type);
+	  opcode =nsp_astcode_to_nickname(L->type);
 	  O1=nsp_frames_search_op_object(opcode);
 	  if ( L->type == RETURN_OP || L->type == SEMICOLON_OP || L->type == COMMA_OP )
 	    {
@@ -150,7 +151,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  /* too many arguments returned */
 		  /* ex:A=1:5; -(A{1:3})*/
 		  Scierror("Error: too many values (%d) returned as a first argument of unary operator %s\n",
-			   nargs,nsp_opcode2str(L->type));
+			   nargs,nsp_astcode_to_name(L->type));
 		  /* clean the stack */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  SHOWBUG(stack,RET_BUG,L1);
@@ -162,7 +163,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    }
 	  break;
 	case 2:
-	  opcode =nsp_opcode2nickname(L->type);
+	  opcode =nsp_astcode_to_nickname(L->type);
 	  /*checking eye and ones */
 	  if ( L->type == SEQAND || L->type == SEQOR ) 
 	    {
@@ -174,7 +175,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  /* too many arguments returned */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs);
 		  /* ex: A=1:5;A{1:3} && 9 */
-		  Scierror("Error: too many values (%d) returned as a first argument of binary operator %s\n",nargs,nsp_opcode2str(L->type));
+		  Scierror("Error: too many values (%d) returned as a first argument of binary operator %s\n",nargs,nsp_astcode_to_name(L->type));
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
@@ -199,7 +200,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		{
 		  /* to many argument returned ex:  A=1:5; 9 && A{1:3} */
 		  nsp_void_seq_object_destroy(stack,first,first+nargs+n);
-		  Scierror("Error: too many values (%d) returned as second argument of binary operator %s\n",n,nsp_opcode2str(L->type));
+		  Scierror("Error: too many values (%d) returned as second argument of binary operator %s\n",n,nsp_astcode_to_name(L->type));
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
@@ -245,7 +246,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    }
 	  break;
 	default :
-	  opcode =nsp_opcode2nickname(L->type);
+	  opcode =nsp_astcode_to_nickname(L->type);
 	  loc = L1;
 	  O1=nsp_frames_search_op_object(opcode);
 	  nargs=0;
@@ -789,7 +790,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  break;
 	default:
 	  Sciprintf("Oooops  in nsp_eval: Please send a bug report\n");
-	  s=nsp_keycode2str(L->type);
+	  s=nsp_astcode_to_name(L->type);
 	  if ( s != (char *) 0) Sciprintf(" %s ",s);
 	  return RET_BUG;
 	}
@@ -2644,10 +2645,10 @@ static int show_eval_bug(Stack stack,int n, PList L)
       /* changes io in order to write in a string matrix */
       def = SetScilabIO(Sciprint2string);
       mf =nsp_set_nsp_more(scimore_void);
- nsp_plist_print(L,0);
+      nsp_plist_print(L,0);
       res = (NspSMatrix *) Sciprint2string_reset(); 
       SetScilabIO(def);
- nsp_set_nsp_more(mf);
+      nsp_set_nsp_more(mf);
       if ( res != NULL) 
 	{
 	  int i;

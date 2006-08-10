@@ -96,7 +96,7 @@ int main(int argc, char **argv)
   /* initialize primitive table */
   InitFunctionTable();
   /* Initialize macro hash table **/
- nsp_init_macro_table();
+  nsp_init_macro_table();
   /* MPI */
   /* MPI_Init(&argc,&argv); */
   /* MPI_Init(NULL,NULL); */

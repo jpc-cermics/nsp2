@@ -63,7 +63,7 @@ typedef int token_ParseNumber(Tokenizer *T);
 typedef int token_ParseSymb(Tokenizer *T,char *str, int *l);
 typedef int token_ParseComment(Tokenizer *T);
 typedef int token_ParseError(Tokenizer *T,char *fmt,...);
-typedef char *token_code2name(Tokenizer *T,int key);
+typedef const char *token_code2name(Tokenizer *T,int key);
 
 typedef void (SciReadFunc)(Tokenizer *T, char *prompt,char *buffer, int *buf_size,int *len_line,int *eof);
 typedef SciReadFunc *SciReadFunction;

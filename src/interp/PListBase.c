@@ -29,108 +29,27 @@
  * Scilab keywords an operators
  */
 
-typedef  struct _keyword KeyWordTab;
-
-struct _keyword {
-  char *name;
-  int code; 
-};
-
-/* XXX a enlver **/
-
-static KeyWordTab cmd[]={
-  {"abort",	ABORT }, 
-  {"apropos",	APROPOS},
-  {"break",	BREAK }, 
-  {"case",	CASE },  
-  {"catch",	CATCH },  
-  {"clear",	CLEAR},  
-  {"clearglobal",CLEARGLOBAL},  
-  {"continue",CONTINUE},  
-  {"do" ,	DO  },   
-  {"else",	ELSE},   
-  {"elseif",	ELSEIF}, 
-  {"end",	END},    
-  {"endfunction",  ENDFUNCTION},
-  {"exec",    EXEC},
-  {"exit",	NSP_EXIT },  
-  {"finally", FINALLY},
-  {"for",	FOR},    
-  {"function",  FUNCTION},
-  {"global",  GLOBAL},
-  {"help",	HELP  }, 
-  {"if",       IF},     
-  {"pause",	PAUSE},  
-  {"quit",	QUIT },  
-  {"return",	PRETURN}, 
-  {"select",	SELECT}, 
-  {"then" ,	THEN},  
-  {"try",     TRYCATCH},
-  {"what",	WHAT },  
-  {"while",	WHILE},  
-  {"who",	WHO },   
-  {(char *) 0,   LASTCODE_NEG_OP },
-};
 
 /*
- * Checks if id is a Nsp keyword (i.e a word in the table cmd )
- * Returns the code for the keyword or NOTKEY value if 
- * id is not a keyword 
- */
-
-int nsp_is_nsp_keyword(char *id)
-{
-  int i=0;
-  while ( cmd[i].name != (char *) 0)
-    {
-      int j;
-      j = strncmp(id,cmd[i].name,NAME_MAXL);
-      if ( j == 0 ) 
-	{
-	  return(cmd[i].code);
-	}
-      else 
-	{ 
-	  if ( j <= 0)
-	    {
-	      return LASTCODE_NEG_OP;
-	    } 
-	  else i++;
-	}
-    }
-  return LASTCODE_NEG_OP;
-}
-
-/*
- * Checks if keyc is the code of a Scilab keyword
- */
-
-int nsp_is_code_keyword(int keyc)
-{
-  return ( keyc < LASTCODE_NEG_OP && keyc >= WHILE ) ? OK : FAIL;
-}
-
-
-/*
- * structure for storing Nsp operators 
+ * structure for storing Nsp operators and keywords.
+ * we have here all the possible values of node 
+ * that we can find in an AST except the values of 
+ * nsp_basic_types.
+ * WARNING: The order in this table must follow the order of plisttoken.h 
  */
 
 typedef  struct _operator  OpWordTab;
 
 struct _operator {
-  char *name;
-  char *nickname;
-  int code; 
+  const char *name;
+  const char *nickname;
+  const int code; 
 };
-
-/* the order in this table must follow 
- * the order of plisttoken.h 
- */
-
 
 static OpWordTab Ops[]={
   {"@","noop",   NOTCODE_OP},
-  /* operators */
+  /* operators 
+   *--------------------------------------*/
   {"'","quote",  QUOTE_OP},  
   {"*","mult",   STAR_OP }, 	
   {"+","plus",   PLUS_OP },  
@@ -145,7 +64,6 @@ static OpWordTab Ops[]={
   {"-","minus", MINUS_OP},   
   {"/","div", SLASH_OP},     
   {"\\","bdiv", BACKSLASH_OP},
-  /* composed operators */
   {".*","dst", DOTSTAR},			          
   {"./","dsl",DOTSLASH},			          
   {".\\","dbs",DOTBSLASH},			        
@@ -174,7 +92,8 @@ static OpWordTab Ops[]={
   {"<","lt",(int) LT_OP},				          
   {">","gt",(int) GT_OP},				          
   {"@","noop", LASTCODE_OP},
-  /* negative code from FEVAL to LASTCODE_NEG_OP */
+  /* negative code from FEVAL to LASTCODE_NEG_OP 
+   *--------------------------------------------*/
   {"FEVAL","fe",FEVAL},
   {";",  "rc", ROWCONCAT},
   {",",  "cc", COLCONCAT},
@@ -197,47 +116,64 @@ static OpWordTab Ops[]={
   {"CELLARGS","cellargs",CELLARGS},
   {"CALLEVAL","callev",CALLEVAL},
   {"=", "equal",EQUAL_OP},
-  /* negative keys for keywords the table is just used to get their names */
-  {"while","noop",	WHILE},  
-  {"end","noop",	END},    
-  {"select","noop",	SELECT}, 
-  {"case","noop",	CASE },  
-  {"quit","noop",	QUIT },  
-  {"exit","noop",      NSP_EXIT},
-  {"return","noop",    PRETURN},
-  {"help","noop",	HELP  }, 
-  {"what","noop",	WHAT },  
-  {"who","noop",	WHO },   
-  {"pause","noop",	PAUSE},  
-  {"clear","noop",	CLEAR},  
-  {"if","noop",       IF},     
-  {"then","noop",     THEN},
-  {"do" ,"noop",	DO  },   
-  {"apropos","noop",	APROPOS},
+  {"{}","ecell",EMPTYCELL},
+  {"[]","emath",EMPTYMAT},
+  {"PLIST","plist",  PLIST},
+  /* negative keys for keywords the table is just used to get their names 
+   * Warning: take care that the nex lines are to be sorted alphabetically 
+   * using first name and the keywords appearing in the last column are to 
+   * be in the same order as in plisttoken.h. 
+   * Note that ABORT is the first one and this is used in PListBase.c
+   * ------------------------------------------
+   */
   {"abort","noop",	ABORT },   
+  {"apropos","noop",	APROPOS},
   {"break","noop",	BREAK }, 
-  {"elseif","noop",	ELSEIF}, 
+  {"case","noop",	CASE },  
+  {"catch","noop",	CATCH },  
+  {"clear","noop",	CLEAR},  
+  {"clearglobal","noop",CLEARGLOBAL},  
+  {"continue","noop",CONTINUE},  
+  {"do" ,"noop",	DO  },   
   {"else","noop",	ELSE},   
-  {"for","noop",	FOR},    
-  {"function","noop",  FUNCTION},
+  {"elseif","noop",	ELSEIF}, 
+  {"end","noop",	END},    
   {"endfunction","noop",  ENDFUNCTION},
   {"exec","noop",    EXEC},
-  {"global","noop",  GLOBAL},
-  {"clearglobal","noop",CLEARGLOBAL},  
-  {"try","noop",     TRYCATCH},
-  {"catch","noop",	CATCH },  
+  {"exit","noop",      NSP_EXIT},
   {"finally","noop", FINALLY},
-  {"continue","noop",CONTINUE},  
+  {"for","noop",	FOR},    
+  {"function","noop",  FUNCTION},
+  {"global","noop",  GLOBAL},
+  {"help","noop",	HELP  }, 
+  {"if","noop",       IF},     
+  {"pause","noop",	PAUSE},  
+  {"quit","noop",	QUIT },  
+  {"return","noop",    PRETURN},
+  {"select","noop",	SELECT}, 
+  {"then","noop",     THEN},
+  {"try","noop",     TRYCATCH},
+  {"what","noop",	WHAT },  
+  {"while","noop",	WHILE},  
+  {"who","noop",	WHO },   
   {"@","noop", LASTCODE_NEG_OP},
   {(char *) 0,(char *)0, 0}
 };
 
-/*
- *nsp_opcode2nickname() : from internal code to character string
- * for operators 
- */
 
-char *nsp_opcode2nickname(int code)
+
+/**
+ * nsp_astcode_to_nickname:
+ * @code: 
+ * 
+ * returns the nickname of operators or keywords from their id code. 
+ * 
+ * 
+ * Return value: a char pointer to the requested name or a pointer to "unknown";
+ * 
+ **/
+
+const char *nsp_astcode_to_nickname(int code)
 {
   if ( code > NOTCODE_OP && code < LASTCODE_OP ) 
     return Ops[code-NOTCODE_OP].nickname;
@@ -248,12 +184,16 @@ char *nsp_opcode2nickname(int code)
   return("unknown");
 }
 
-/*
- *nsp_opcode2str() : from internal code to character string
- * for operators 
- */
+/**
+ * nsp_astcode_to_name:
+ * @code: 
+ * 
+ * returns the name of operators or keywords from their id code. 
+ * 
+ * Return value: a char pointer to the requested name or a pointer to NULL;
+ **/
 
-char *nsp_opcode2str(int code)
+const char *nsp_astcode_to_name(int code)
 {
   if ( code > NOTCODE_OP && code < LASTCODE_OP ) 
     return Ops[code-NOTCODE_OP].name;
@@ -261,46 +201,64 @@ char *nsp_opcode2str(int code)
     {
       return Ops[(code-FEVAL)+LASTCODE_OP+1-NOTCODE_OP].name;
     }
-  return("unknown");
-}
-
-/*
- * returns the command name from its code
- */
-
-char *nsp_keycode2str(int code)
-{
-  if ( code < LASTCODE_NEG_OP && code >= WHILE )
-    {
-      return Ops[(code-FEVAL)+LASTCODE_OP+1-NOTCODE_OP].name;
-    }
   return NULL;
 }
 
+/**
+ * nsp_is_nsp_keyword:
+ * @id: 
+ * 
+ * checks if the given string is an Nsp keyword and returns its id code.
+ * 
+ * Return value: an id code as an integer or %LASTCODE_NEG_OP.
+ **/
 
+int nsp_is_nsp_keyword(const char *id)
+{
+  int code,i,j;
+  for ( code = ABORT ; code < LASTCODE_NEG_OP ; code++) 
+    {
+      /* search in keywords (with are sorted) */
+      i =(code-FEVAL)+LASTCODE_OP+1-NOTCODE_OP;
+      j = strncmp(id,Ops[i].name,NAME_MAXL);
+      if ( j == 0 ) 
+	{
+	  return(Ops[i].code);
+	}
+      else if ( j < 0)
+	{
+	  return LASTCODE_NEG_OP;
+	} 
+    }
+  return LASTCODE_NEG_OP;
+}
 
-/*
- * Prints the name of an operator from its internal code 
- */
+/**
+ * nsp_is_code_keyword:
+ * @keyc: 
+ * 
+ * checks if the given integer is a keyword id code.
+ * 
+ * Return value: %TRUE or %FALSE
+ **/
+
+int nsp_is_code_keyword(int keyc)
+{
+  return ( keyc < LASTCODE_NEG_OP && keyc >= ABORT ) ? TRUE  : FALSE;
+}
+
+/**
+ * nsp_print_opname:
+ * @code: 
+ * 
+ *
+ * 
+ * Return value: 
+ **/
 
 int nsp_print_opname(int code)
 {
-  char *s;
-  if ((s=nsp_opcode2str(code)) != (char*)0) 
-    return Sciprintf(s);
-  return 0;
+  const char *s = nsp_astcode_to_name(code);
+  return (s != NULL) ?  Sciprintf(s): 0;
 }
 
-
-char * nsp_astcode_to_string(int code)
-{
-  if ( code > NOTCODE_OP && code < LASTCODE_OP ) 
-    {
-      return Ops[code-NOTCODE_OP].name;
-    }
-  if ( code < LASTCODE_NEG_OP && code >= FEVAL )
-    {
-      return Ops[(code-FEVAL)+LASTCODE_OP+1-NOTCODE_OP].name;
-    }
-  return("unknown");
-}

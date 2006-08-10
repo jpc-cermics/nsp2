@@ -3,11 +3,13 @@
 
 #include "nsp/tokenizer.h"
 
-extern char *nsp_keycode2str();
-extern char *nsp_keycode2str(int keyc);
-extern char *nsp_opcode2str(int code);
-extern char *nsp_opcode2nickname(int code);
-extern char *TokenCode2Name (int key);
+
+extern const char *nsp_astcode_to_nickname(int code);
+extern const char *nsp_astcode_to_name(int code);
+extern int nsp_is_nsp_keyword(const char *id);
+extern int nsp_is_code_keyword(int keyc);
+extern int nsp_print_opname(int code);
+
 extern char *getenv ();
 extern char *tgetstr ();
 
@@ -17,7 +19,7 @@ extern int nsp_is_code_keyword(int keyc);
 extern int IsJustName ();
 extern int IsMatOp (int *op);
 extern int nsp_is_or_op(Tokenizer *T,int *op);
-extern int nsp_is_nsp_keyword(char *id);
+extern int nsp_is_nsp_keyword(const char *id);
 extern char * nsp_astcode_to_string(int type);
 extern int NextToken (void);
 extern int nsp_print_opname(int code);

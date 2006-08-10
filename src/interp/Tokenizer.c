@@ -1093,32 +1093,20 @@ static int parse_error (Tokenizer *T,char *fmt,...)
  * code to str for parsed tokens 
  */
 
-static char *code2name(Tokenizer *T,int key)
+static const char *code2name(Tokenizer *T,int key)
 {
-  static char *s;
-  if (nsp_is_code_keyword(key)== OK) 
-    return(nsp_keycode2str(key));
-  else if ( (s=nsp_opcode2str(key)) != (char*)0)
+  const char *s = nsp_astcode_to_name(key);
+  if (s != NULL) return s;
+  switch (key) 
     {
-      return(s);
-    }
-  else 
-    {
-      switch (key) 
-	{
-	case COMMENT : return(T->token.buf);
-	case NUMBER : return(T->token.buf);
-	case NAME   : return(T->token.syn);
-	case OPNAME : return(T->token.buf);
-	case STRING : return(T->token.buf);
-	case EMPTYMAT : return("[]");
-	case EMPTYCELL : return("[]");
-	default: return(" ");
-	}
+    case COMMENT : return(T->token.buf);
+    case NUMBER : return(T->token.buf);
+    case NAME   : return(T->token.syn);
+    case OPNAME : return(T->token.buf);
+    case STRING : return(T->token.buf);
+    default: return(" ");
     }
 }
-
-
 
 /*
  * Used when Scilab input is from a file 
