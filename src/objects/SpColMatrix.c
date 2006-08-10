@@ -60,10 +60,18 @@ static int nsp_dichotomic_search(int x,const int val[],int imin,int imax);
 static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const int val[],int imin,int imax,
 				    NspMatrix *Work,NspMatrix *Index,int count);
 
-/* XXXXXXXXXXXXXXX OK 
- * Creates a Sp Matrix of size mxn with no stored date
- * Attention on peut creer une nx0 matrice XXXXX
- */
+
+/**
+ * nsp_spcolmatrix_create:
+ * @name: 
+ * @type: 
+ * @m: 
+ * @n: 
+ * 
+ * Creates a #NspSColMatrix of size @mx@n with no stored data
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
 {
@@ -113,14 +121,22 @@ NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
 }
 
 
-/*
- * Creation of a Sparse Matrix with specified data
- * Scilab function sparse(rowcols,vals,[m,n])
- * if m and n  have -1 value, sizes are to be computed from 
- * rowscols (RC)
- * Take care that RC is changed 
- * XXXXXXXXXXXXXXX OK
- */
+/**
+ * nsp_spcolmatrix_sparse:
+ * @name: 
+ * @RC: 
+ * @Values: 
+ * @m: 
+ * @n: 
+ * 
+ * Creates a #NspSColMatrix of size @mx@n filed with values specified 
+ * in @RC ((i,j) values stored in a two column matrix) and @Values 
+ * ( A(@RC(k,1),@RC(k,2))= Values(k)).
+ * XXXX should be changed in order to cumulate values when specific
+ * indices are repeated as in Matlab.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, int m, int n)
 {
@@ -264,32 +280,21 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
 	}
     }
   /* no need to sort here */
-  /*   if ( (xb =nsp_alloc_int(Loc->n)) == (int*) 0) return(NULLSPCOL); */
-  /*   for (i = 0 ; i < Loc->m ; ++i)  */
-  /*     { */
-  /*       if (Loc->D[i]->size > 1)  */
-  /* 	{ */
-  /* 	  int c__1 =1; */
-  /*      nsp_qsort_int(Loc->D[i]->J,xb,TRUE,Loc->D[i]->size,'i');*/
-  /* 	  C2F(gsort)(Loc->D[i]->J,NULL,xb,&c__1,&c__1,&Loc->D[i]->size,"i","i"); */
-  /* 	  if ( Loc->rc_type == 'r' )  */
-  /* 	    C2F(dperm)(Loc->D[i]->R,&Loc->D[i]->size,xb); */
-  /* 	  else  */
-  /* 	    C2F(zperm)(Loc->D[i]->C,&Loc->D[i]->size,xb); */
-  /* 	} */
-  /*     } */
-  /*   FREE(xb); */
   nsp_matrix_destroy(Index);
   return Loc;
 }
 
 
-/*
- * Scilab function [rc,vals,mn]= spget(sp)
- * XXXXXXXXXXX: OK updated 
- *
- */
-
+/**
+ * nsp_spcolmatrix_get:
+ * @A: 
+ * @RC: 
+ * @Values: 
+ * 
+ * get a @RC,@Values description of the sparse matrix @A
+ * 
+ * Return value: %OK or %FAIL
+ **/
 int nsp_spcolmatrix_get(NspSpColMatrix *A, NspMatrix **RC, NspMatrix **Values)
 {
   int count=0,i,j,iw;
@@ -319,11 +324,14 @@ int nsp_spcolmatrix_get(NspSpColMatrix *A, NspMatrix **RC, NspMatrix **Values)
   return OK;
 }
 
-/*
- * Res =nsp_spcolmatrix_copy(A) 
- * Copy a sparse matrix in Res : res is created 
- * XXXXXXXXXXX: OK updated 
- */
+/**
+ * nsp_spcolmatrix_copy:
+ * @A: 
+ * 
+ * returns a copy of sparse matrix @A.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_copy(NspSpColMatrix *A)
 {
@@ -344,15 +352,22 @@ NspSpColMatrix *nsp_spcolmatrix_copy(NspSpColMatrix *A)
   return(Sp);
 }
 
-/* XXXXXXXXXXX: OK updated : Note that name is wrong since it resize a col
- * Resize the ith Row 
- * if Row->size = 0 the Row is created with n potential elements 
- * if Row->size != 0 the Row is resized ( enlarged or reduced ) 
- * according to n.
- * i : number of the Row which is to be resized 
- * WARNING : i must be in [0,Sp->m[ and this is not checked here
- * WARNING : Sp->n is not changed this is to be done elsewhere.
- */
+
+/**
+ * nsp_spcolmatrix_resize_col:
+ * @Sp: 
+ * @i: column to be resized 
+ * @n: number of non null elements of the column.
+ * 
+ * reallocates or allocates the #SpCol structure associated to column @i 
+ * in such a way that it can contain @n non null elements. In case of 
+ * reallocation the stored data is preserved.
+ * 
+ * WARNING : @i must be in the range [0,Sp->m[ and this is not checked here
+ * WARNING : Sp->m is not changed this is to be done elsewhere.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_resize_col(NspSpColMatrix *Sp, int i, int n)
 {
@@ -384,10 +399,13 @@ int nsp_spcolmatrix_resize_col(NspSpColMatrix *Sp, int i, int n)
   return(OK);
 }
 
-/*
- * Destroy a Sp Matrix 
- * XXXXXXXXXXX: OK updated 
- */
+/**
+ * nsp_spcolmatrix_col_destroy:
+ * @Row: 
+ * 
+ * internal: destroys a #SpCol structure.
+ * 
+ **/
 
 void nsp_spcolmatrix_col_destroy(SpCol *Row)
 {
@@ -398,7 +416,13 @@ void nsp_spcolmatrix_col_destroy(SpCol *Row)
     }
 }
 
-/* XXXXXXXXXXX: OK updated  */
+/**
+ * nsp_spcolmatrix_destroy:
+ * @Mat: 
+ * 
+ * destroys a #NspSpColMatrix.
+ * 
+ **/
 
 void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat)
 {
@@ -416,12 +440,16 @@ void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat)
     }
 }
 
-/*
- *  nsp_spcolmatrix_nnz: computes the number of non nul elements
- *  (Number of Non Zero elements) of a  Sparse Matrix
- *  (added by Bruno)
- * XXXXXXXXXXX: OK updated 
- */
+/**
+ * nsp_spcolmatrix_nnz:
+ * @HMat: 
+ * 
+ * computes the number of non nul elements stored in 
+ * a sparse Matrix. 
+ * 
+ * Return value: the number of non nul elements.
+ **/
+/*  (added by Bruno) */
 
 int nsp_spcolmatrix_nnz(const NspSpColMatrix *HMat)
 {
@@ -431,9 +459,16 @@ int nsp_spcolmatrix_nnz(const NspSpColMatrix *HMat)
   return nnz;
 }
 
-/*
- *nsp_spcolmatrix_info: display Info on Sparse Matrix
- */
+
+/**
+ * nsp_spcolmatrix_info:
+ * @Sp: 
+ * @indent: 
+ * @name: 
+ * @rec_level: 
+ * 
+ * displays info on Sparse Matrix @Sp.
+ **/
 
 void nsp_spcolmatrix_info(NspSpColMatrix *Sp, int indent,char *name,int rec_level)
 { 
@@ -451,9 +486,15 @@ void nsp_spcolmatrix_info(NspSpColMatrix *Sp, int indent,char *name,int rec_leve
 }
 
 
-/*
- *	 Writes Sp, Sp remains unchanged 
- */
+/**
+ * nsp_spcolmatrix_print:
+ * @Sp: 
+ * @indent: 
+ * @name: 
+ * @rec_level: 
+ * 
+ * displays a sparse Matrix.
+ **/
 
 void nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_level)
 { 
@@ -498,15 +539,21 @@ void nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_le
     }
 }
 
-/*
- *nsp_spcolmatrix_redim: Changes matrix dimensions to mxn 
- *   the product m*n must be unchanged and 
- *   the stored data is kept considering that data are stored 
- *   columnwise. 
- *   a New Matrix is returned or NULLSPCOL on failure
- * XXXXXXXXXXXX ok 
+/**
+ * nsp_spcolmatrix_redim:
+ * @A: 
+ * @m: 
+ * @n: 
  * 
- */
+ * If the product @mx@n is equal to @A->mw@A->n, 
+ * returns a new sparse matrix of size @mx@n. The new 
+ * matrix is filled with the values of @A assuming 
+ * columnwize order. This operation can be done 
+ * without copy on full matrices by here we have to create 
+ * a new sparse.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n)
 {
@@ -583,10 +630,17 @@ NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n)
 }
 
 /*
- * Add m empty Cols ( Row->size = 0) to a Sparse matrix 
- * if n < Sp->n then Sp is unchanged. 
- * XXXXXXXXXXX: OK updated Note that it enlarges the cols 
  */
+
+/**
+ * nsp_spcolmatrix_enlarge_cols:
+ * @Sp: 
+ * @n: 
+ * 
+ * changes the number of columns of Sp to Min(Sp->n,n);
+ *
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_enlarge_cols(NspSpColMatrix *Sp, int n)
 {
@@ -613,15 +667,17 @@ int nsp_spcolmatrix_enlarge_cols(NspSpColMatrix *Sp, int n)
 }
 
 
-/*
- *nsp_spcolmatrix_enlarge(A,m,n)
- * changes A to B= [ A , 0; 0,0 ]  
- * in such a way that B (max(A->m,m)xmax(A->n,n));
- * The result is stored in A
- * if m and n are smaller than A->m and A->n Matrix 
- * associated dimensions are not changed 
- * XXXXXXXXXXX: OK updated 
- */
+/**
+ * nsp_spcolmatrix_enlarge:
+ * @A: 
+ * @m: 
+ * @n: 
+ * 
+ * changes @A to [@A,0;0,0]  
+ * in such a way that the new size of @A is (max(A->m,m) x max(A->n,n));
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_enlarge(NspSpColMatrix *A, int m, int n)
 {
@@ -632,11 +688,18 @@ int nsp_spcolmatrix_enlarge(NspSpColMatrix *A, int m, int n)
   return OK;
 }
 
-/*
+
+/**
+ * nsp_spcolmatrix_concatr:
+ * @A: 
+ * @B: 
+ * 
  * A = [A, B] 
  * Right concatenation on A, A is changed 
- * XXXXXXX Ok;
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_concatr(NspSpColMatrix *A, NspSpColMatrix *B)
 { 
@@ -675,11 +738,17 @@ int nsp_spcolmatrix_concatr(NspSpColMatrix *A, NspSpColMatrix *B)
   return(OK);
 }
 
-/*
- *  A=[A; B ] 
- *   Down concatenation on A 
- *  XXXXX OK
- */
+
+/**
+ * nsp_spcolmatrix_concatd:
+ * @A: 
+ * @B: 
+ * 
+ *  A=[A; B ]  Down concatenation on A 
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_concatd(NspSpColMatrix *A, NspSpColMatrix *B)
 {
@@ -727,12 +796,15 @@ int nsp_spcolmatrix_concatd(NspSpColMatrix *A, NspSpColMatrix *B)
 }
 
 
-/*
- * Diag Concatenation 
- * A = [A,0;0,B] 
- * A is changed  B is left unchanged 
- * XXXXXXXX OK 
- */
+/**
+ * nsp_spcolmatrix_concatdiag:
+ * @A: 
+ * @B: 
+ * 
+ * Diag Concatenation A = [A,0;0,B] 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_concatdiag(NspSpColMatrix *A, NspSpColMatrix *B)
 {
@@ -756,17 +828,24 @@ int nsp_spcolmatrix_concatdiag(NspSpColMatrix *A, NspSpColMatrix *B)
   return(OK);
 }
 
-
-/*
- * Utility functions 
- * nsp_spcolmatrix_insert_elt(A,i,j,B,rb,cb)
- * nsp_spcolmatrix_delete_elt(A,row,col,amin,amax)
- * nsp_spcolmatrix_get_elt(B,i,j)
- * nsp_spcolmatrix_store(A,r,c,col,B,r1,c1)
- * XXXXXXXXXX OK
- * Attention toutefois aux notations trompeuses 
- * r et c sont a lire col et row !!!
+/* 
+ * WARNING: take care of the fact that r and c refers to 
+ * column and row in next functions !!
  */
+
+/**
+ * nsp_spcolmatrix_store:
+ * @A: 
+ * @r: 
+ * @c: 
+ * @col: 
+ * @B: 
+ * @r1: 
+ * @c1: 
+ * 
+ * 
+ * utility 
+ **/
 
 void  nsp_spcolmatrix_store(NspSpColMatrix *A, int r, int c, int col, NspSpColMatrix *B, int r1, int c1)
 {
@@ -791,7 +870,18 @@ void  nsp_spcolmatrix_store(NspSpColMatrix *A, int r, int c, int col, NspSpColMa
     }
 }
 
-/* Insert or change A(i,j) to B(rb,cb) **/
+/**
+ * A:
+ * @i: 
+ * @j: 
+ * 
+ * Insert or change A(i,j) to B(rb,cb)
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+
+
 
 int nsp_spcolmatrix_insert_elt(NspSpColMatrix *A, int i, int j, NspSpColMatrix *B, int rb, int cb)
 {
@@ -834,7 +924,14 @@ int nsp_spcolmatrix_insert_elt(NspSpColMatrix *A, int i, int j, NspSpColMatrix *
   return OK;
 }
 
-/* 
+/**
+ * nsp_spcolmatrix_delete_elt:
+ * @A: 
+ * @row: 
+ * @col: 
+ * @amin: 
+ * @amax: 
+ * 
  *  Remove element A(i,j) but the associated row is not resized 
  *  returns -1 if A(i,j) was zero before the call (i.e no change )
  *  return  k  if A(i,j) is removed and was the k-th non null element 
@@ -842,7 +939,11 @@ int nsp_spcolmatrix_insert_elt(NspSpColMatrix *A, int i, int j, NspSpColMatrix *
  *  A(i,j) is searched in the i-th row of A but only in the range 
  *  amin,amax 
  *  row = i, col=j 
- */
+ * 
+ * 
+ * Return value: the row indice of the deleted element or -1 if the element was already a 
+ * null value.
+ **/
 
 int nsp_spcolmatrix_delete_elt(NspSpColMatrix *A, int row, int col, int amin, int amax)
 {
@@ -873,7 +974,19 @@ int nsp_spcolmatrix_delete_elt(NspSpColMatrix *A, int row, int col, int amin, in
     }
 }
 
-/* return k such that B->D[i]->J[k] = j or -1 if such k does not exists **/
+/**
+ * nsp_spcolmatrix_get_elt:
+ * @B: 
+ * @i: 
+ * @j: 
+ * 
+ * return k such that B->D[i]->J[k] = j or -1 if such k does not exists 
+ * 
+ * 
+ * Return value: the row indice in the B->D[i]->J array of the searched element 
+ * or -1 if (i,j) is not stored in B->D[i]->J.
+ **/
+
 
 int nsp_spcolmatrix_get_elt(NspSpColMatrix *B, int i, int j)
 {
@@ -888,14 +1001,21 @@ int nsp_spcolmatrix_get_elt(NspSpColMatrix *B, int i, int j)
 }
 
 
-/*
+
+/**
+ * nsp_spcolmatrix_set_rowcol:
+ * @A: 
+ * @Rows: 
+ * @Cols: 
+ * @B: 
+ * 
  *  A(Rows,Cols) = B 
  *  A is changed and enlarged if necessary 
  *  Size Compatibility is checked between 
  *  A and B 
- *  XXXXX : Rows doit-il etre croissant ?
- *  XXXXXXXXXXX  OK
- */
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspSpColMatrix *B)
 {
@@ -1017,7 +1137,12 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Co
   return(OK);
 }
 
-/*
+/**
+ * nsp_spcolmatrix_set_row:
+ * @A: 
+ * @Inds: 
+ * @B: 
+ * 
  *  A(Inds) = B 
  *  A is changed and enlarged if necessary 
  *  Inds is unchanged 
@@ -1031,8 +1156,10 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Co
  *      A column vector B must be column 
  *      Inds must be in the range of A indices unless A is row or column or []
  *      Inds and B must have the same size or B must be scalar 
- * XXXXXXXXXXXX OK
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_set_row(NspSpColMatrix *A, NspMatrix *Inds, NspSpColMatrix *B)
 {
@@ -1111,10 +1238,17 @@ int nsp_spcolmatrix_set_row(NspSpColMatrix *A, NspMatrix *Inds, NspSpColMatrix *
   return(OK);
 }
 
-/*
+
+/**
+ * nsp_spcolmatrix_delete_rows:
+ * @A: 
+ * @Rows: 
+ * 
  *  A(Rows,:) = [],  A is changed. 
- *  XXXXXXXXXXXXX OK.
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_delete_rows(NspSpColMatrix *A, NspMatrix *Rows)
 {
@@ -1191,11 +1325,22 @@ int nsp_spcolmatrix_delete_rows(NspSpColMatrix *A, NspMatrix *Rows)
   return(OK);
 }
 
-/* compress ith col of sparse Matrix A 
- * [1,2,-1,4,5,6,-1,11]--> [1,2,4,5,6,11] 
- * return the number of deleted elements 
- * XXXXXXXXXXXXX OK
- */
+
+/**
+ * nsp_spcolmatrix_compress_col:
+ * @A: 
+ * @i: 
+ * 
+ * compress the #SpCol structure of the @i-th column of sparse Matrix @A 
+ * by moving elements (eliminating the -1 values). the row indices 
+ * stored in A->D[i]->J are also changed during the compression assuming 
+ * that each -1 implies that the row indice is decreased by 1.
+ * [1,2,-1,4,5,6,-1,11]--> [1,2,3,4,5,9].
+ * The #SpCol structure is not reallocated
+ * 
+ * 
+ * Return value: the number of deleted elements in the column @i.
+ **/
 
 int nsp_spcolmatrix_compress_col(NspSpColMatrix *A, int i)
 {
@@ -1234,7 +1379,20 @@ int nsp_spcolmatrix_compress_col(NspSpColMatrix *A, int i)
   return ioff;
 }
 
-/* do not changes values just move values in arrays */
+/**
+ * nsp_spcolmatrix_compress_col_simple:
+ * @A: 
+ * @i: 
+ * 
+ * 
+ * compress the #SpCol structure of the @i-th column of sparse Matrix @A 
+ * by moving elements (eliminating the -1 values). the row indices 
+ * stored in A->D[i]->J are not changed here. 
+ * [1,2,-1,4,5,6,-1,11]--> [1,2,4,5,6,11].
+ * The #SpCol structure is not reallocated
+ * 
+ * Return value: the number of deleted elements in the column @i.
+ **/
 
 int nsp_spcolmatrix_compress_col_simple(NspSpColMatrix *A, int i)
 {
@@ -1269,12 +1427,15 @@ int nsp_spcolmatrix_compress_col_simple(NspSpColMatrix *A, int i)
 }
 
 
-/*
+/**
+ * nsp_spcolmatrix_delete_cols:
+ * @A: 
+ * @Cols: 
+ * 
  *  A(:,Cols) = []
- *  A is changed. 
- *  Cols is not supposed to be increasing
- *  XXXXXXXX OK 
- */
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_delete_cols(NspSpColMatrix *A, NspMatrix *Cols)
 {
@@ -1333,20 +1494,27 @@ int nsp_spcolmatrix_delete_cols(NspSpColMatrix *A, NspMatrix *Cols)
   return OK;
 }
 
-/*
- *  A(elts) = []
- *  A is changed. 
- *  elts must be increasing XXXXXXXXXXX
- *  A Changer et ecrire 
+
+/* 
+ * A(elts) = []: XXXXX To be done 
+ * 
  */
 
-/*
- * Res=nsp_matrix_extract(A,Rows,Cols)
- * A unchanged, Rows and Cols are unchanged 
- * flag == 0 when cols is NULL XXX to be changed with a NULL check 
- * XXXXXXXXXX OK 
- * XXXXXXXX Pourquoi Rows doit il etre trié ? 
- */	
+
+/**
+ * SpExtract_G:
+ * @A: 
+ * @Rows: 
+ * @Cols: 
+ * @flag: 
+ * @err: 
+ * 
+ * Extract elements A(Row,Cols). 
+ * Warning: Rows is changed (sorted).
+ * Cols can be NULL if flag == 0 (this should be changed with a NULL check on Cols XXXXX
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Cols, int flag, int *err)
 {
@@ -1412,6 +1580,17 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
 }
 
 
+/**
+ * nsp_spcolmatrix_extract:
+ * @A: 
+ * @Rows: 
+ * @Cols: 
+ * 
+ * returns A(Row,Cols) but @Rows is changed in the process.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
 NspSpColMatrix *nsp_spcolmatrix_extract(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   NspSpColMatrix *Sp;
@@ -1421,11 +1600,16 @@ NspSpColMatrix *nsp_spcolmatrix_extract(NspSpColMatrix *A, NspMatrix *Rows, NspM
   return Sp;
 }
 
-/*
- * Res=nsp_spcolmatrix_extract_elements(A,Elts)
- * A unchanged, Elts
- * XXXXXXXXXX OK 
- */
+
+/**
+ * nsp_spcolmatrix_extract_elts:
+ * @A: 
+ * @Elts: 
+ * 
+ * return A(Elts)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_extract_elts(NspSpColMatrix *A, NspMatrix *Elts)
 {
@@ -1483,12 +1667,17 @@ NspSpColMatrix *nsp_spcolmatrix_extract_elts(NspSpColMatrix *A, NspMatrix *Elts)
     }
 }
 
-/*
- * Res=nsp_matrix_extract_columns(A,Cols,err)
- * A unchanged
+/**
+ * nsp_spcolmatrix_extract_rows:
+ * @A: 
+ * @Rows: 
+ * @err: 
+ * 
+ * returns A(Rows,:) but @Rows is changed 
  * err is used inside for-loops 
- * XXXXXXXXXXX OK
- */	
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_extract_rows(NspSpColMatrix *A, NspMatrix *Rows, int *err)
 {
@@ -1497,15 +1686,19 @@ NspSpColMatrix *nsp_spcolmatrix_extract_rows(NspSpColMatrix *A, NspMatrix *Rows,
 
 /*
  * A1=MatLoopCol(A1,M,i,rep)
- * Used in for loops 
+ * Used in for loops XXXX to be done 
  */	
 
-
-/*
- * Res=nsp_matrix_extract_cols(A,Cols,err)
- * A unchanged
- * XXXXXXXXX OK
- */	
+/**
+ * nsp_spcolmatrix_extract_cols:
+ * @A: 
+ * @Cols: 
+ * @err: 
+ * 
+ * A(:,Cols)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_extract_cols(NspSpColMatrix *A, NspMatrix *Cols, int *err)
 {
@@ -1541,11 +1734,17 @@ NspSpColMatrix *nsp_spcolmatrix_extract_cols(NspSpColMatrix *A, NspMatrix *Cols,
   return(Loc);
 }
 
-/*
- * Returns the kthe diag of a Sparse NspMatrix as a Sparse 
- * Column 
- * XXXXXXXXXXXX OK 
- */
+
+/**
+ * nsp_spcolmatrix_diag_extract:
+ * @A: 
+ * @k: 
+ * 
+ * 
+ * Returns the kthe diag of a Sparse NspMatrix as a Sparse  Column.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_diag_extract(NspSpColMatrix *A, int k)
 {
@@ -1595,14 +1794,20 @@ NspSpColMatrix *nsp_spcolmatrix_diag_extract(NspSpColMatrix *A, int k)
   return Loc;
 }
 
-/*
- * Set the kth Diag of A to Diag 
- * A is enlarged & comlexified if necessary 
- * int nsp_spcolmatrix_diag_create(A,Diag,k)
- * Diag is a sparse nxm matrix 
- */
 
 static int  GetDiagVal (NspSpColMatrix *Diag,int i,double *val,doubleC *cval);
+
+/**
+ * nsp_spcolmatrix_diag_set:
+ * @A: 
+ * @Diag: 
+ * @k: 
+ * 
+ * sets the kth diagonal of A to Diag 
+ * A is enlarged and complexified if necessary 
+ * 
+ * Return value: 
+ **/
 
 int nsp_spcolmatrix_diag_set(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
 {
@@ -1728,11 +1933,20 @@ int nsp_spcolmatrix_diag_set(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
   return(OK);
 }
 
-/*
+
+/**
+ * GetDiagVal:
+ * @Diag: 
+ * @i: 
+ * @val: 
+ * @cval: 
+ * 
  * return the ith element of Diag in val or cval + an OK value 
  * if this element is non nul. 
- * XXXXXXXXXXXX OK 
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 static int  GetDiagVal(NspSpColMatrix *Diag, int i, double *val, doubleC *cval)
 {
@@ -1755,9 +1969,16 @@ static int  GetDiagVal(NspSpColMatrix *Diag, int i, double *val, doubleC *cval)
   return FAIL;
 }
 
-/*
+/**
+ * nsp_spcolmatrix_diag_create:
+ * @Diag: 
+ * @k: 
+ * 
  *  Creates a Matrix with kth diag set to Diag 
- */
+ * 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_diag_create(NspSpColMatrix *Diag, int k)
 {
@@ -1815,14 +2036,18 @@ NspSpColMatrix *nsp_spcolmatrix_diag_create(NspSpColMatrix *Diag, int k)
 }
 
 
-/*
- * Multiplication of Two Sparse Matrices 
- * ------------------------
- *  multiply sparse matrices by the method of gustafson,acm t.o.m.s. 
- *  vol 4 (1978) p250. 
- *  C coded version : Chancelier 1996
- *  some modifs by Bruno Pincon 2005 to improve efficiency
- */
+/**
+ * nsp_spcolmatrix_mult:
+ * @A: 
+ * @B: 
+ * 
+ * returns @Ax@B  by the method of gustafson,acm t.o.m.s. 
+ * vol 4 (1978) p250. 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+/*  some modifs by Bruno Pincon 2005 to improve efficiency */
 
 NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
 {
@@ -1977,10 +2202,16 @@ NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
   return NULLSPCOL;
 }
 
-/* m= sp*m multiplication 
- * XXX change the name 
+
+/**
+ * nsp_spcolmatrix_mult_matrix:
+ * @A: 
+ * @B: 
  * 
- */
+ * @Ax@B when @B is a full matrix and returns the result as a full matrix.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspMatrix *nsp_spcolmatrix_mult_matrix(NspSpColMatrix *A, NspMatrix *B)
 {
@@ -2053,12 +2284,17 @@ NspMatrix *nsp_spcolmatrix_mult_matrix(NspSpColMatrix *A, NspMatrix *B)
   return C;
 }
 
-/*
- * nsp_spcolmatrix_mult_matrix(X,A) when A is sparse and X full
- * result B is a full matrix. Special cases have been checked
- * in the interface. (added by Bruno)
- *
- */
+/**
+ * nsp_spcolmatrix_mult_m_sp:
+ * @X: 
+ * @A: 
+ * 
+ * @Xx@A when @X is full 
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
+
+/* (added by Bruno) */
 
 NspMatrix *nsp_spcolmatrix_mult_m_sp(NspMatrix *X,NspSpColMatrix *A)
 {
@@ -2154,11 +2390,19 @@ NspMatrix *nsp_spcolmatrix_mult_m_sp(NspMatrix *X,NspSpColMatrix *A)
   return B;
 }
 
-/*
+
+/**
+ * nsp_spcolmatrix_mult_scal_old:
+ * @A: 
+ * @B: 
+ * 
  * nsp_spcolmatrix_mult_scal(A,B) when B is a scalar sparse 
  * A is changed 
  * the fact that B is scalar is not checked 
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_mult_scal_old(NspSpColMatrix *A, NspSpColMatrix *B)
 {
@@ -2184,12 +2428,16 @@ int nsp_spcolmatrix_mult_scal_old(NspSpColMatrix *A, NspSpColMatrix *B)
 
 
 
-
-/*
+/**
+ * nsp_spcolmatrix_complexify:
+ * @A: 
+ * 
  * Changes A to complex type and 
  * provide storage allocation 
- * XXXXXXXXXX OK 
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_complexify(NspSpColMatrix *A)
 {
@@ -2212,10 +2460,16 @@ int nsp_spcolmatrix_complexify(NspSpColMatrix *A)
   return(OK);
 }
 
-/*
+/**
+ * nsp_spcolmatrix_setr:
+ * @A: 
+ * @d: 
+ * 
  * Set real part of all non nul elements of A to d 
- * XXXXXXX OK
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_setr(NspSpColMatrix *A, double d)
 {
@@ -2247,11 +2501,17 @@ int nsp_spcolmatrix_setr(NspSpColMatrix *A, double d)
 }
 
 
-/*
+/**
+ * nsp_spcolmatrix_seti:
+ * @A: 
+ * @d: 
+ * 
  * Set imag part of all non nul elements of A to d 
  * if A is real A is changed to complex 
- * XXXXXXXXXXXXX OK
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_seti(NspSpColMatrix *A, double d)
 {
@@ -2273,13 +2533,14 @@ int nsp_spcolmatrix_seti(NspSpColMatrix *A, double d)
 }
 
 
-
-/*
- * Count the number of elements of A which are 
- * non zero 
- * A and val are unchanged 
- * XXXXXXXXXXXX OK
- */
+/**
+ * RowCountNonNull:
+ * @A: 
+ * @i: 
+ * 
+ * 
+ * Return value: the number of non null elements of @i-th row of matrix @A.
+ **/
 
 static int  RowCountNonNull(NspMatrix *A, int i)
 { 
@@ -2295,6 +2556,16 @@ static int  RowCountNonNull(NspMatrix *A, int i)
     }
   return(count);
 }
+
+/**
+ * ColCountNonNull:
+ * @A: 
+ * @j: 
+ * 
+ * 
+ * 
+ * Return value: the number of non null elements of @i-th column of matrix @A.
+ **/
 
 static int  ColCountNonNull(NspMatrix *A, int j)
 { 
@@ -2312,6 +2583,15 @@ static int  ColCountNonNull(NspMatrix *A, int j)
 }
 
 #if 1 
+/**
+ * countnonnull:
+ * @A: 
+ * 
+ * 
+ * 
+ * Return value: the number of non null elements of matrix @A.
+ **/
+
 int countnonnull(NspMatrix *A)
 { 
   int count=0,i;
@@ -2320,16 +2600,15 @@ int countnonnull(NspMatrix *A)
 }
 #endif 
 
-/*
- * Converts a full Matrix to a Sparse one 
- * used for test on sparse matrix 
- * we have two solutions 
- *  [1] use CountNonNull 
- *  [2] SpCreates with 256 elements 
- *        and SpIncrease to increase Storage 
- *        Fix storage at end 
- * XXXXXXX OK
- */
+
+/**
+ * nsp_spcolmatrix_from_mat:
+ * @A: 
+ * 
+ * from full to sparse.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_from_mat(NspMatrix *A)
 { 
@@ -2381,11 +2660,16 @@ NspSpColMatrix *nsp_spcolmatrix_from_mat(NspMatrix *A)
 }
 
 
-/*
- * Sparse to Full conversion 
- * mainly used for testing sparse 
- * XXXXXXX OK
- */
+
+/**
+ * nsp_spcolmatrix_to_mat:
+ * @Sp: 
+ * 
+ * from sparse to full.
+ * 
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
 
 NspMatrix *nsp_spcolmatrix_to_mat(NspSpColMatrix *Sp)
 { 	
@@ -2427,13 +2711,16 @@ NspMatrix *nsp_spcolmatrix_to_mat(NspSpColMatrix *Sp)
   return(A);
 }
 
-/*
- * Transpose a sparse Matrix, A is unchanged 
- * A new matrix is created 
- * We could add a routine for vectors with a transposition without copy 
+/**
+ * nsp_spcolmatrix_transpose:
+ * @A: 
+ * 
+ * Transpose a sparse Matrix, A is unchanged and a new matrix is created and 
+ * returned. 
  * Warning : For Complex matrices transpose is a' = transp+ conj
- * XXXXXXXXXX OK 
- */
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_transpose(const NspSpColMatrix *A)
 {
@@ -2508,7 +2795,7 @@ static double plus(double x, double y, double xi, double yi, double *ival, char 
  *   XXXBoth   is used when A(i,j) !=    and B(i,j) != 0
  */
 
-void PlusLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
+static void PlusLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
 {
   if ( Ltype == 'r') 
     Li->R[*count] = Ai->R[k1];
@@ -2528,7 +2815,7 @@ void PlusLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
   (*count)++;
 }
 
-void PlusBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1, SpCol *Bi, char Btype, int k2)
+static void PlusBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1, SpCol *Bi, char Btype, int k2)
 {
   if ( Ltype == 'r') 
     {
@@ -2560,7 +2847,7 @@ void PlusBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1, 
 }
 
 
-void PlusRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
+static void PlusRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
 {
   if ( Ltype == 'r') 
     Li->R[*count] = Bi->R[k1];
@@ -2584,7 +2871,7 @@ void PlusRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
  * Minus operator 
  */
 
-void MinusLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
+static void MinusLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
 {
   if ( Ltype == 'r') 
     Li->R[*count] = Ai->R[k1];
@@ -2604,7 +2891,7 @@ void MinusLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
   (*count)++;
 }
 
-void MinusBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1, SpCol *Bi, char Btype, int k2)
+static void MinusBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1, SpCol *Bi, char Btype, int k2)
 {
   if ( Ltype == 'r') 
     {
@@ -2636,7 +2923,7 @@ void MinusBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1,
 }
 
 
-void MinusRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
+static void MinusRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
 {
   if ( Ltype == 'r') 
     Li->R[*count] = - Bi->R[k1];
@@ -2661,11 +2948,11 @@ void MinusRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1
  * Multtt ( term to term multiplication ) 
  */
 
-void MultttLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
+static void MultttLeft(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1)
 {
 }
 
-void MultttBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1, SpCol *Bi, char Btype, int k2)
+static void MultttBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1, SpCol *Bi, char Btype, int k2)
 {
   if ( Ltype == 'r') 
     {
@@ -2696,25 +2983,49 @@ void MultttBoth(SpCol *Li, char Ltype, int *count, SpCol *Ai, char Atype, int k1
     }
 }
 
-void MultttRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
+static void MultttRight(SpCol *Li, char Ltype, int *count, SpCol *Bi, char Btype, int k1)
 {
 }
 
-/*
- *nsp_spcolmatrix_add,nsp_spcolmatrix_sub, SpMulttt
- * A+B A-B A.*B
- */
+
+/**
+ * nsp_spcolmatrix_add:
+ * @A: 
+ * @B: 
+ * 
+ * A+B
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_add(NspSpColMatrix *A, NspSpColMatrix *B)
 {
   return(BinaryOp(A,B,PlusLeft,PlusBoth,PlusRight));
 }
 
+/**
+ * nsp_spcolmatrix_sub:
+ * @A: 
+ * @B: 
+ * 
+ * A-B
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B)
 {
   return(BinaryOp(A,B,MinusLeft,MinusBoth,MinusRight));
 }
 
+/**
+ * nsp_spcolmatrix_multtt:
+ * @A: 
+ * @B: 
+ * 
+ * A.*B
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
 {
   return(BinaryOp(A,B,MultttLeft,MultttBoth,MultttRight));
@@ -2722,7 +3033,14 @@ NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
 
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
-/*
+/**
+ * BinaryOp:
+ * @A: 
+ * @B: 
+ * @BinLeft: 
+ * @BinBoth: 
+ * @BinRight: 
+ * 
  * A generic function for performing Res(i,j) = A(i,j) op B(i,j)
  * assuming that 0 op 0 --> 0  (WARNING)
  * For performing a specific operation the function is called 
@@ -2736,8 +3054,10 @@ NspSpColMatrix *nsp_spcolmatrix_multtt(NspSpColMatrix *A, NspSpColMatrix *B)
  * each Bopxxx functions performs the operation, stores 
  *    the result (if #0) in the sparse matrix Loc 
  *    and increment a counter for counting #0 elements 
- * XXXXXXXXXXXXX OK
- */
+ * 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 static NspSpColMatrix *BinaryOp(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft BinLeft, BopBoth BinBoth, BopRight BinRight)
 { 
@@ -2815,10 +3135,15 @@ static NspSpColMatrix *BinaryOp(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft Bi
     }
 }
 
-/*
+/**
+ * nsp_spcolmatrix_mult_scal:
+ * @A: 
+ * @B: 
+ * 
  * A = A.*B where B is a scalar sparse ( [] or scalar )
- * XXXXXXXX OK
- */
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B)
 { 
@@ -2877,7 +3202,13 @@ int nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B)
   return OK;
 }
 
-/*
+/**
+ * nsp_spcolmatrix_op_scal:
+ * @A: 
+ * @B: 
+ * @flag: 
+ * @op: 
+ * 
  * A = A op B where B is a scalar sparse ( [] or scalar )
  * op can be + or - 
  * if B==[] or B==[0] 
@@ -2885,8 +3216,10 @@ int nsp_spcolmatrix_mult_scal(NspSpColMatrix *A, NspSpColMatrix *B)
  * else a full matrix is returned and *flag == 0 
  * 
  * op can be '+'(A+B) ,'-' (A-B), '#' (-A+B)
- * XXXXXXXXXXXXXX OK 
- */
+ * 
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
 
 NspMatrix *nsp_spcolmatrix_op_scal(NspSpColMatrix *A, NspSpColMatrix *B, int *flag, char op)
 { 
@@ -3040,6 +3373,22 @@ static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int
 					NspMatrix *Work,NspMatrix *Index,int count);
 
 
+/**
+ * nsp_bi_dichotomic_search:
+ * @: 
+ * @xpmin: 
+ * @xpmax: 
+ * @: 
+ * @imin: 
+ * @imax: 
+ * @Work: 
+ * @Index: 
+ * @count: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const int val[],int imin,int imax,
 				    NspMatrix *Work,NspMatrix *Index,int count)
 {
@@ -3057,7 +3406,21 @@ static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const i
   return count;
 }
 
-/*
+
+/**
+ * nsp_bi_dichotomic_search_int:
+ * @: 
+ * @xpmin: 
+ * @xpmax: 
+ * @xmin: 
+ * @xmax: 
+ * @: 
+ * @imin: 
+ * @imax: 
+ * @Work: 
+ * @Index: 
+ * @count: 
+ * 
  * search x[xpmin,xpmax]-1 in val[imin:imax] 
  * and store information in Work as processing 
  * Th enumber of stored values is returned in count 
@@ -3066,8 +3429,10 @@ static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const i
  * xmin == -2 x[xpmin]-1 is > val[xmax] 
  * same rules for for xmax and x[xpmax] 
  * x and val are increasing 
- */
-
+ * 
+ * 
+ * Return value: 
+ **/
 static int nsp_bi_dichotomic_search_int(const double x[],int xpmin,int xpmax,int xmin,int xmax,
 					const int val[],int imin,int imax,
 					NspMatrix *Work,NspMatrix *Index,int count)
@@ -3137,8 +3502,6 @@ static char SpInit(const void *M,int *work)
   work[1]= 0;
   return ( (NspSpColMatrix *) M)->rc_type;
 }
-
-/* XXXXXXXXXXX OK */
 
 static int SpNext(const void *M, double *r, doubleC *c,int *work)
 {
@@ -3324,13 +3687,21 @@ static void nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *
 
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
-/*
+/**
+ * nsp_spcolmatrix_clean:
+ * @A: 
+ * @rhs: 
+ * @epsa: 
+ * @epsr: 
+ * 
  * A = Matclean(a) clean A according to epsa and epsr 
  * epsa is used if rhs >= 1 
  * epsr is used if rhs >= 2
  * A is changed, 
- * XXXXXXXXXX OK 
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
 {
@@ -3377,7 +3748,19 @@ int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
   return OK;
 }
 
-/* utility */
+
+/**
+ * nsp_spcolmatrix_maximinitt_g:
+ * @A: 
+ * @B: 
+ * @flag: 
+ * @minmaxflag: 
+ * @err: 
+ * 
+ * max or min (A,B)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *
 nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int minmaxflag, int *err)
@@ -3576,7 +3959,13 @@ nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int
 }
 
 
-/*  
+/**
+ * nsp_spcolmatrix_maxitt:
+ * @A: 
+ * @B: 
+ * @flag: 
+ * @err: 
+ * 
  *  term to term max A(i;j) = Max(A(i,j),B(i,j) 
  *  Res(i,j) = 1 or 2 or 0 
  *   1 if Max(A(i,j),B(i,j)==A(i,j)
@@ -3584,15 +3973,24 @@ nsp_spcolmatrix_maximinitt_g(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int
  *   0 if A(i,j)=B(i,j)=0
  *  A changed, B unchanged, 
  *  Res Created if flag == 1
- *  XXXXXXXX OK but untested to be added in table of functions 
- */
+ * 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_maxitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err)
 {
   return nsp_spcolmatrix_maximinitt_g(A,B,flag,1,err);
 }
 
-/*  
+
+/**
+ * nsp_spcolmatrix_minitt:
+ * @A: 
+ * @B: 
+ * @flag: 
+ * @err: 
+ * 
  *  term to term min A(i;j) = Min(A(i,j),B(i,j) 
  *  Res(i,j) = 1 or 2 or 0 
  *   1 if Min(A(i,j),B(i,j)==A(i,j)
@@ -3600,21 +3998,25 @@ NspSpColMatrix *nsp_spcolmatrix_maxitt(NspSpColMatrix *A, NspSpColMatrix *B, int
  *   0 if A(i,j)=B(i,j)=0
  *  A changed, B unchanged, 
  *  Res Created if flag == 1
- *  XXXXXXXX OK but untested to be added in table of functions 
- */
+ * 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_minitt(NspSpColMatrix *A, NspSpColMatrix *B, int flag, int *err)
 {
   return nsp_spcolmatrix_maximinitt_g(A,B,flag,-1,err);
 }
 
-/*
- * Return the Real part of Matrix A 
- * In a Real Matrix A
- * A is changed if a is not real 
- * A = real(A) 
- * XXXXXXXXX OK 
- */
+
+/**
+ * nsp_spcolmatrix_realpart:
+ * @A: 
+ * 
+ * Return the Real part of Matrix A in A.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_realpart(NspSpColMatrix *A)
 {
@@ -3649,12 +4051,15 @@ int nsp_spcolmatrix_realpart(NspSpColMatrix *A)
   return(OK);
 }
 
-/*
- * Return the Imaginary part of Matrix A 
- * In a Real Matrix A. A= Imag(A) 
- * A is changed  
- * XXXXXXXXXX Ok 
- */
+/**
+ * nsp_spcolmatrix_imagpart:
+ * @A: 
+ * 
+ * Return the Imaginary part of Matrix A in A.
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_imagpart(NspSpColMatrix *A)
 {
@@ -3721,7 +4126,11 @@ int nsp_spcolmatrix_imagpart(NspSpColMatrix *A)
  * ======
  */
 
-/*
+/**
+ * nsp_spcolmatrix_sum:
+ * @A: 
+ * @flag: 
+ * 
  * Sum =nsp_mat_sum(A ,B])
  *     A is unchanged 
  * if B= 'c' the sum for the column indices is computed 
@@ -3729,8 +4138,10 @@ int nsp_spcolmatrix_imagpart(NspSpColMatrix *A)
  * if B= 'r' the sum for the row indices is computed 
  *       and a Row vector is returned.
  * if B= 'f' the full sum is computed 
- * XXXXXXXXXXXXXXXX OK 
- */
+ * 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag)
 {
@@ -3873,8 +4284,7 @@ NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag)
   return Sum;
 }
 
-/*
- * Prod =nsp_mat_prod(A ,B])
+/* * Prod =nsp_mat_prod(A ,B])
  *     A is unchanged 
  * if B= 'c' the prod for the column indices is computed 
  *       and a column vector is returned. 
@@ -3893,21 +4303,13 @@ NspSpColMatrix *nsp_spcolmatrix_sum(NspSpColMatrix *A, char *flag)
  * A is unchanged 
  */
 
-/*
- * Max =nsp_mat_maxi(A,B,Imax,lhs)
- *     A is unchanged 
- * if B= 'c' the max for the column indices is computed 
- *       and a column vector is returned. 
- * if B= 'r' the max for the row indices is computed 
- *       and a Row vector is returned.
- * if B= 'f' the maximum 
- * Imax is created if lhs == 2 
- * Note that Imax is a full matrix XXX not a good idea ? 
- */
-
 typedef int (*SpMaMi1) (NspSpColMatrix *A,NspSpColMatrix *M);
 typedef int (*SpMaMi2) (NspSpColMatrix *A,int j,NspSpColMatrix *M);
 typedef int (*SpMaMi3) (NspSpColMatrix *A,int j,NspSpColMatrix *M,int *count);
+
+/**
+ * utility 
+ **/
 
 static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs, SpMaMi1 F1, SpMaMi2 F2, SpMaMi3 F3)
 {
@@ -3982,9 +4384,18 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, char *flag, NspMatrix **
   return M;
 }
 
-/* M(1) = Maxi(A) max of all the elements 
- * XXXXXXXX OK
- */
+
+/**
+ * SpColMaxi1:
+ * @A: 
+ * @M: 
+ * 
+ * M(1) = Maxi(A) max of all the elements 
+ * 
+ * 
+ * Return value: the indice of the element of Matrix @A which realize the maximum 
+ * (the indice is given as a global indice of a mxn Matrix).
+ **/
 
 static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
 {
@@ -4017,9 +4428,17 @@ static int SpColMaxi1(NspSpColMatrix *A, NspSpColMatrix *M)
   return imax;
 }
 
-/* utility : M(j)=Max A(j,:) : max of row j  
- * XXXXXXXX OK
- */
+/**
+ * SpColMaxi3:
+ * @A: 
+ * @j: 
+ * @M: 
+ * @count: 
+ * 
+ * utility : M(j)=Max A(j,:) : max of row j  
+ *
+ * Return value: the column indice which realize the max of row @j.
+ **/
 
 static int SpColMaxi3(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
 {
@@ -4062,9 +4481,18 @@ static int SpColMaxi3(NspSpColMatrix *A, int j, NspSpColMatrix *M, int *count)
   return imax;
 }
 
-/* utility: M(j)=Max A(:,j) find the max of column j 
- * XXXXXXXX OK
- */
+
+/**
+ * SpColMaxi2:
+ * @A: 
+ * @j: 
+ * @M: 
+ *
+ * utility: M(j)=Max A(:,j) find the max of column j 
+ * 
+ * 
+ * Return value: the row indice which realize the max of column @j.
+ **/
 
 static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
 {
@@ -4099,8 +4527,17 @@ static int SpColMaxi2(NspSpColMatrix *A, int j, NspSpColMatrix *M)
  * @lhs: 
  * 
  * [max,imax]=max(A,'c'|'r'|'g')
+ * Max =nsp_mat_maxi(A,B,Imax,lhs)
+ *     A is unchanged 
+ * if B= 'c' the max for the column indices is computed 
+ *       and a column vector is returned. 
+ * if B= 'r' the max for the row indices is computed 
+ *       and a Row vector is returned.
+ * if B= 'f' the maximum 
+ * Imax is created if lhs == 2 
+ * Note that Imax is a full matrix XXX not a good idea ? 
  * 
- * Return value: 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
 NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **Imax, int lhs)
@@ -4120,10 +4557,17 @@ NspSpColMatrix *nsp_spcolmatrix_maxi(NspSpColMatrix *A, char *flag, NspMatrix **
  * R=func(i,j) or R=func(i,j,&Imag) 
  */
 
-/*
- * nsp_mat_triu: A=Triu(A)
- * A is changed 
- */
+
+
+/**
+ * nsp_spcolmatrix_triu:
+ * @A: 
+ * @k: 
+ * 
+ * A=Triu(A)
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_triu(NspSpColMatrix *A,int k)
 {
@@ -4149,10 +4593,15 @@ int nsp_spcolmatrix_triu(NspSpColMatrix *A,int k)
 }
 
 
-/*
- *nsp_mat_tril: A=Tril(A)
- * A is changed  
- */
+/**
+ * nsp_spcolmatrix_tril:
+ * @A: 
+ * @k: 
+ * 
+ * A=Tril(A)
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_tril(NspSpColMatrix *A,int k)
 {
@@ -4182,9 +4631,15 @@ int nsp_spcolmatrix_tril(NspSpColMatrix *A,int k)
 
 
 
-/*
- *nsp_mat_eye: A=Eye(m,n)
- */
+/**
+ * nsp_spcolmatrix_eye:
+ * @m: 
+ * @n: 
+ * 
+ * A=Eye(m,n)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n)
 {
@@ -4200,10 +4655,16 @@ NspSpColMatrix *nsp_spcolmatrix_eye(int m, int n)
   return(Loc);
 }
 
-/*
- *nsp_mat_ones: A=ones(m,n)
- * A is changed  
- */
+
+/**
+ * nsp_spcolmatrix_ones:
+ * @m: 
+ * @n: 
+ * 
+ * A=ones(m,n)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n)
 {
@@ -4222,10 +4683,16 @@ NspSpColMatrix *nsp_spcolmatrix_ones(int m, int n)
   return(Loc);
 }
 
-/*
- *nsp_mat_ones: A=zeros(m,n)
- * A is changed  
- */
+
+/**
+ * nsp_spcolmatrix_zeros:
+ * @m: 
+ * @n: 
+ * 
+ * A=zeros(m,n)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n)
 {
@@ -4233,11 +4700,6 @@ NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n)
   if (( Loc=nsp_spcolmatrix_create(NVOID,'r',m,n)) == NULLSPCOL) return(NULLSPCOL);
   return(Loc);
 }
-
-/*
- *nsp_mat_rand: A=rand(m,n)
- * A is changed  a 'ecrire ? 
- */
 
 /*
   A Set of term to term function on Matrices (complex or real)
@@ -4283,10 +4745,6 @@ NspSpColMatrix *nsp_spcolmatrix_zeros(int m, int n)
  * A is changed 
  */
 
-/*
- * A=Acos(A), 
- * A is changed 
- */
 
 typedef double (*Func1) (double);
 typedef void   (*Func2) (const doubleC *, doubleC *);
@@ -4327,15 +4785,29 @@ static NspMatrix* SpColUnary2Full(NspSpColMatrix *A, Func1 F1, Func2 F2)
   return Loc;
 }
 
+/**
+ * nsp_spcolmatrix_acos:
+ * @A: 
+ * 
+ * returns cos(A) as a full matrix.
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
+
 NspMatrix *nsp_spcolmatrix_acos(NspSpColMatrix *A)
 {
   return SpColUnary2Full(A,acos,nsp_acos_c);
 }
 
-/*
- * A=Acosh(A), 
- * A is changed 
- */
+
+/**
+ * nsp_spcolmatrix_acosh:
+ * @A: 
+ * 
+ * returns cosh(A) as a full matrix.
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
 
 NspMatrix *nsp_spcolmatrix_acosh(NspSpColMatrix *A)
 {
@@ -4345,7 +4817,6 @@ NspMatrix *nsp_spcolmatrix_acosh(NspSpColMatrix *A)
 /*
  * Generic Function for Sparse unary operators 
  * computes A=f1(A) or A=f2(A) assuming fi(0)=0
- * XXXXXXXXXXXXX OK 
  */
 
 static void  SpColUnary(NspSpColMatrix *A, Func1 F1, Func2 F2)
@@ -4395,97 +4866,119 @@ static void  SpColUnary(NspSpColMatrix *A, Func1 F1, Func2 F2)
 }
 
 
-/*
- * A=Asin(A), 
- * A is changed 
- */
-
+/**
+ * nsp_spcolmatrix_asin:
+ * @A: 
+ * A=asin(A)
+ * 
+ **/
 
 void nsp_spcolmatrix_asin(NspSpColMatrix *A)
 {
   SpColUnary(A,asin,nsp_asin_c);
 }
 
-/*
+
+
+/**
+ * nsp_spcolmatrix_asinh:
+ * @A: 
+ * 
  * A=Asinh(A),
- * A is changed 
- */
+ **/
 
 void nsp_spcolmatrix_asinh(NspSpColMatrix *A)
 {
   SpColUnary(A,asinh,nsp_asinh_c);
 }
 
-/*
- * A=Atan(A),  * A is changed 
- */
 
+/**
+ * nsp_spcolmatrix_atan:
+ * @A: 
+ * 
+ * A=Atan(A),
+ **/
 void nsp_spcolmatrix_atan(NspSpColMatrix *A)
 {
   SpColUnary(A,atan,nsp_atan_c);
 }
 
-/*
- * A=Atanh(A),
- * A is changed 
- */
 
+/**
+ * nsp_spcolmatrix_atanh:
+ * @A: 
+ * 
+ * A=Atanh(A)
+ **/
 void nsp_spcolmatrix_atanh(NspSpColMatrix *A)
 {
   SpColUnary(A,atanh,nsp_atanh_c);
 }
 
-
-/*
- *nsp_mat_ceil: A=Ceil(A)
- * A is changed  
- */
+/**
+ * nsp_spcolmatrix_ceil:
+ * @A: 
+ * 
+ * A=Ceil(A)
+ **/
 
 void nsp_spcolmatrix_ceil(NspSpColMatrix *A)
 {
   SpColUnary(A,ceil,nsp_ceil_c);
 }
 
-/*
- *nsp_mat_int: A=Int(A)
- * A is changed  
- */
-
 static double R_aint(double x) { return aint(x);} 
+
+/** 
+ * nsp_spcolmatrix_int:
+ * @A: 
+ * 
+ * 
+ * A=Int(A)
+ **/
 
 void nsp_spcolmatrix_int(NspSpColMatrix *A)
 {
   SpColUnary(A,R_aint,nsp_aint_c);
 }
 
-/*
- *nsp_mat_floor: A=Floor(A)
- * A is changed  
- */
+
+/**
+ * nsp_spcolmatrix_floor:
+ * @A: 
+ * 
+ * A=Floor(A) 
+ **/
 
 void nsp_spcolmatrix_floor(NspSpColMatrix *A)
 {
   SpColUnary(A,floor,nsp_floor_c);
 }
 
-/*
- *nsp_mat_round: A=Round(A)
- * A is changed  
- */
-
 static double R_anint(double x) { return anint(x);} 
+
+/**
+ *nsp_mat_round: 
+ * @A: 
+ * 
+ * A=Round(A)
+ **/
 
 void nsp_spcolmatrix_round(NspSpColMatrix *A)
 {
   SpColUnary(A,R_anint,nsp_round_c);
 }
 
-/*
- *nsp_mat_sign: A=Sign(A)
- * A is changed  
- * return 0 if error 
- * XXXXXXXXXXXX OK 
- */
+
+/**
+ * nsp_spcolmatrix_sign:
+ * @A: 
+ * 
+ * 
+ * A=Sign(A)
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_sign(NspSpColMatrix *A)
 {
@@ -4510,31 +5003,40 @@ int nsp_spcolmatrix_sign(NspSpColMatrix *A)
   return(OK);
 }
 
-/*
- * A=Tan(A), absolue value or module of each element 
- * A is changed 
- */
+
+/**
+ * nsp_spcolmatrix_tan:
+ * @A: 
+ * 
+ * A=Tan(A) 
+ **/
 
 void nsp_spcolmatrix_tan(NspSpColMatrix *A)
 {
   SpColUnary(A,tan,nsp_tan_c);
 }
 
-/*
- * A=Tanh(A), absolue value or module of each element 
- * A is changed 
- */
+/**
+ * nsp_spcolmatrix_tanh:
+ * @A: 
+ * 
+ * A=Tanh(A)
+ **/
 
 void nsp_spcolmatrix_tanh(NspSpColMatrix *A)
 {
   SpColUnary(A,tanh,nsp_tanh_c);
 }
 
-/*
+
+/**
+ * nsp_spcolmatrix_abs:
+ * @A: 
+ * 
+ * 
  * A=Abs(A), absolue value or module of each element 
- * A is changed 
- * XXXXXXXXXXXX OK 
- */
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_abs(NspSpColMatrix *A)
 {
@@ -4555,10 +5057,15 @@ int nsp_spcolmatrix_abs(NspSpColMatrix *A)
   return(OK);
 }
 
-/*
+
+/**
+ * nsp_spcolmatrix_erf:
+ * @A: 
+ * 
+ * 
  * A=Erf(A), Erf function 
- * XXXXXXXXXXXX OK 
- */
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_erf(NspSpColMatrix *A)
 {
@@ -4599,11 +5106,15 @@ int nsp_spcolmatrix_erf(NspSpColMatrix *A)
   }
 **/
 
-/*
+
+/**
+ * nsp_spcolmatrix_arg:
+ * @A: 
+ * 
+ * 
  * A=Arg(A),
- * Argument or Phase 
- * XXXXXXXXXXXX OK 
- */
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_arg(NspSpColMatrix *A)
 {
@@ -4637,11 +5148,12 @@ int nsp_spcolmatrix_arg(NspSpColMatrix *A)
  * A=A(cos(B)+%i*sin(B);
  */
 
-/*
- *nsp_mat_conj: A=real(A)-i*Imag(A)
- * A is changed  only if imaginary 
- * XXXXXXXXXXXX OK 
- */
+/**
+ * nsp_spcolmatrix_conj:
+ * @A: 
+ * 
+ * A=real(A)-i*Imag(A) A is changed  only if imaginary 
+ **/
 
 void nsp_spcolmatrix_conj(NspSpColMatrix *A)
 {
@@ -4659,44 +5171,56 @@ void nsp_spcolmatrix_conj(NspSpColMatrix *A)
     }
 }
 
-/*
- *nsp_mat_cos: A=Cos(A)
- * A is changed  
- * return 0 if error 
- */
-
-
+/**
+ * nsp_spcolmatrix_cos:
+ * @A: 
+ * 
+ * 
+ * Cos(A)
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
 NspMatrix *nsp_spcolmatrix_cos(NspSpColMatrix *A)
 {
   return SpColUnary2Full(A,cos,nsp_cos_c);
 }
 
-/*
- *nsp_mat_cosh: A=Cosh(A)
- * A is changed  
- * return 0 if error 
- */
+
+/**
+ * nsp_spcolmatrix_cosh:
+ * @A: 
+ * 
+ * 
+ * Cosh(A)
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
 
 NspMatrix *nsp_spcolmatrix_cosh(NspSpColMatrix *A)
 {
   return SpColUnary2Full(A,cosh,nsp_cosh_c);
 }
 
-/*
- * MatExpl : Exponentiation term to term 
- * A is changed 
- */
+/**
+ * nsp_spcolmatrix_expel:
+ * @A: 
+ * 
+ * exp(A)
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
 
 NspMatrix *nsp_spcolmatrix_expel(NspSpColMatrix *A)
 {
   return SpColUnary2Full(A,exp,nsp_exp_c);
 }
 
-/*
- *nsp_mat_logel: A=LogEl(A)  log term to term 
- * A is changed  
+/**
+ * nsp_spcolmatrix_logel:
+ * @A: 
+ * 
+ * 
+ * log(A)
  * The real case is special since the result can be complex
- */
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_logel(NspSpColMatrix *A)
 {
@@ -4730,11 +5254,12 @@ int nsp_spcolmatrix_logel(NspSpColMatrix *A)
   return OK;
 }
 
-/*
- *nsp_mat_sin: A=Sin(A)
- * A is changed  
- * return 0 if error 
- */
+/**
+ * nsp_spcolmatrix_sin:
+ * @A: 
+ * 
+ * A=sin(A)
+ **/
 
 void nsp_spcolmatrix_sin(NspSpColMatrix *A)
 {
@@ -4742,23 +5267,29 @@ void nsp_spcolmatrix_sin(NspSpColMatrix *A)
 }
 
 
-/*
- *nsp_mat_sinh: A=Sinh(A)
- * A is changed  
- * return 0 if error 
- */
+
+/**
+ * nsp_spcolmatrix_sinh:
+ * @A: 
+ * 
+ * A=Sinh(A)
+ **/
 
 void nsp_spcolmatrix_sinh(NspSpColMatrix *A)
 {
   SpColUnary(A,sinh,nsp_sinh_c);
 }
 
-/*
- *nsp_mat_sqrtel: A=SqrtEl(A)  term to term square root
- * A is changed  
- * return 0 if error 
+
+/**
+ * nsp_spcolmatrix_sqrtel:
+ * @A: 
+ * 
+ * 
+ *  A=SqrtEl(A)  term to term square root
  * The real case is special since the result can be complex
- */
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_sqrtel(NspSpColMatrix *A)
 {
@@ -4792,10 +5323,14 @@ int nsp_spcolmatrix_sqrtel(NspSpColMatrix *A)
   return OK;
 }
 
-/*
- *nsp_mat_minus(A),  A= -A 
- * A is changed 
- */
+/**
+ * nsp_spcolmatrix_minus:
+ * @A: 
+ * 
+ * 
+ * A= -A 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_minus(NspSpColMatrix *A)
 {
@@ -4855,13 +5390,20 @@ int nsp_spcolmatrix_minus(NspSpColMatrix *A)
  * A and B are unchanged : Res is created 
  */
 
-/*
+/**
+ * nsp_spcolmatrix_find:
+ * @A: 
+ * @lhs: 
+ * @Res1: 
+ * @Res2: 
+ * 
  * returns in a Matrix the indices for which the 
  * Matrix A has non zero entries 
  * A is left unchanged
  * according to lhs one or two arguments are returned 
- * XXXXXXXXXXX OK 
- */
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_spcolmatrix_find(NspSpColMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 {
@@ -4908,9 +5450,10 @@ int nsp_spcolmatrix_find(NspSpColMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
  * @sparsity: 
  * @crand: 
  * 
+ * returns a new #NspSpColMatrix filled with random values ('n' or 'u') 
+ * the percent of non null elements is given by @sparsity.
  * 
- * 
- * Return value: 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
 NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
