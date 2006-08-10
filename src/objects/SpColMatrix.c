@@ -28,6 +28,7 @@
 #include "nsp/matutil.h" 
 #include "nsp/gsort-p.h" 
 #include "nsp/cnumeric.h" 
+#include "../librand/grand.h"
 
 static void nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent);
 /* In file Perm.c **/
@@ -4901,3 +4902,55 @@ int nsp_spcolmatrix_find(NspSpColMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
 }
 
 
+/**
+ * nsp_spcolmatrix_rand:
+ * @A: 
+ * @sparsity: 
+ * @crand: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
+{
+  double moy=0.0,std=1.0, mcol=m*sparsity;
+  int mres;
+  NspMatrix *icol=NULL;
+  NspSpColMatrix *A=NULL;
+  int k,i,count=0;
+  if ((A =nsp_spcolmatrix_create(NVOID,'r',m,n))== NULLSPCOL ) 
+    return NULLSPCOL;
+  if ((icol=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT)
+    {
+      nsp_spcolmatrix_destroy(A);
+      return NULLSPCOL;
+    }
+  for (i=0; i < icol->m ; i++) icol->R[i]=i;
+  for ( i=0 ; i < A->n ; i++) 
+    {
+      double u=rand_ranf();
+      mres =(int) ( (u >=0.5) ? ceil(mcol) : floor(mcol));
+      /* XXX should use integers here */
+      /* permute the icol vector */
+      rand_genprm(icol->R,&icol->m);
+      /* sort the mres first elements */
+      nsp_qsort_double(icol->R,NULL,FALSE,mres,'i');
+      /* resize column i */
+      nsp_spcolmatrix_resize_col(A,i,mres);
+      count=0;
+      for ( k = 0 ; k < A->D[i]->size ; k++) 
+	{
+	  A->D[i]->J[k] = icol->R[count];
+	}
+      if ( crand == 'n' ) 
+	for (k = 0 ; k < A->D[i]->size ; k++)
+	  A->D[i]->R[k]= rand_gennor(&moy,&std);
+      else 
+	for (k = 0 ; k < A->D[i]->size ; k++)
+	  A->D[i]->R[k]= rand_ranf();
+    }
+  nsp_matrix_destroy(icol);
+  return A;
+}

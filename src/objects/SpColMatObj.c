@@ -1330,10 +1330,28 @@ static int int_spcolmatrix_zeros(Stack stack, int rhs, int opt, int lhs)
   return int_spcolmatrix_eoz(stack,rhs,opt,lhs,nsp_spcolmatrix_zeros);
 }
 
-
-
-
-
+static int int_spcolmatrix_sprand(Stack stack, int rhs, int opt, int lhs)
+{
+  char *str;
+  char crand='u';
+  double sparsity=0.1;
+  int m,n;
+  NspSpColMatrix *A;
+  CheckRhs(2,4);
+  CheckLhs(1,1);
+  if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
+  if (GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
+  if ( rhs >= 3 )
+    if (GetScalarDouble(stack,3,&sparsity) == FAIL) return RET_BUG;
+  if ( rhs >= 4 )
+    {
+      if ((str=GetString(stack,4)) == NULL) return RET_BUG;
+      if ( strlen(str) >= 1 ) crand=str[0];
+    }
+  if ((A= nsp_spcolmatrix_rand(m,n,sparsity,crand))== NULLSPCOL) return RET_BUG;
+  MoveObj(stack,1, NSP_OBJECT(A));
+  return 1;
+}
 
 /*
  *  A=op(A) 
@@ -1341,8 +1359,6 @@ static int int_spcolmatrix_zeros(Stack stack, int rhs, int opt, int lhs)
 
 typedef int (*M11) (NspSpColMatrix *A);
 typedef void (*VM11) (NspSpColMatrix *A);
-
-/* generic function for ones,rand,eyes **/
  
 static int int_spcolmatrix__gen11(Stack stack, int rhs, int opt, int lhs, M11 F)
 {
@@ -1818,6 +1834,7 @@ static OpTab SpColMatrix_func[]={
   {"sqrt_sp",int_spcolmatrix_sqrtel},
   {"log_sp",int_spcolmatrix_logel},
   {"exp_sp",int_spcolmatrix_expel},
+  {"sprand",int_spcolmatrix_sprand},  
   {(char *) 0, NULL}
 };
 
