@@ -60,6 +60,7 @@ nsp_sprowmatrix_mult
 nsp_sprowmatrix_erf
 int_mxdiv
 nsp_matint_delete_elements2
+nsp_astcode_to_nickname
 nsp_spcolmatrix_eye
 nsp_object_serialize
 nsp_firstel
@@ -132,7 +133,6 @@ nsp_basic_types
 nsp_alloc_work_doubleC
 nsp_sprowmatrix_sparse
 nsp_object_latex
-nsp_opcode2str
 nsp_mat_copy_and_complexify
 nsp_sprowmatrix_tril
 user_preferences
@@ -256,7 +256,6 @@ nsp_parse_add_doublei
 nsp_none_object
 nsp_spcolmatrix_sqrtel
 OpWrapTab
-nsp_keycode2str
 nsp_spcolmatrix_sub
 nsp_mat_add_scalar_bis
 nsp_it_init
@@ -448,10 +447,10 @@ NspTypePMatrix
 nsp_spmatrix_sign
 new_type_spcolmatrix
 nsp_object_set_initial_name
+nsp_astcode_to_name
 nsp_plist_pretty_print
 nsp_spcolmatrix_add
 nsp_bhash_merge
-nsp_opcode2nickname
 nsp_arg_print
 nsp_spcolmatrix_col_destroy
 nsp_sprowmatrix_sub

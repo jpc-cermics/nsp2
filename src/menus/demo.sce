@@ -1,4 +1,3 @@
-
 function demo_xchoices(flag)
   l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
   l2=list('entry','entry title',1,['initial']); // 1 is unused 
@@ -46,5 +45,6 @@ endfunction;
 
 function demo_message()
   x_message('foo')
+  x_message('foo',"gtk-close");
 endfunction
 

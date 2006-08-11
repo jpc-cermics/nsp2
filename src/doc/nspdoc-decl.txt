@@ -5647,6 +5647,16 @@ extern int debugI;
 extern Token_Obj Token ;
 </VARIABLE>
 <FUNCTION>
+<NAME>nsp_astcode_to_nickname</NAME>
+<RETURNS>const char  *</RETURNS>
+int code
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_astcode_to_name</NAME>
+<RETURNS>const char  *</RETURNS>
+int code
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_is_nsp_keyword</NAME>
 <RETURNS>int  </RETURNS>
 const char *id
@@ -5654,37 +5664,12 @@ const char *id
 <FUNCTION>
 <NAME>nsp_is_code_keyword</NAME>
 <RETURNS>int  </RETURNS>
-    int keyc
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_keycode2str</NAME>
-<RETURNS>char  *</RETURNS>
 int keyc
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_opcode2str</NAME>
-<RETURNS>char  *</RETURNS>
-int code
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_opcode2nickname</NAME>
-<RETURNS>char  *</RETURNS>
-int code
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_print_opname</NAME>
 <RETURNS>int  </RETURNS>
 int code
-</FUNCTION>
-<FUNCTION>
-<NAME>TokenCode2Name</NAME>
-<RETURNS>char  *</RETURNS>
-int key
-</FUNCTION>
-<FUNCTION>
-<NAME>SciGetLine</NAME>
-<RETURNS>char  *</RETURNS>
-char *prompt
 </FUNCTION>
 <STRUCT>
 <NAME>NspMpmatrix</NAME>
@@ -8293,15 +8278,12 @@ NspHash *H
 <ENUM>
 <NAME>nsp_basic_types</NAME>
 enum nsp_basic_types { 
-  NUMBER =-1,
-  NAME =   -2,
-  PLIST =   -3,
-  STRING =   -4,
-  EMPTYMAT = -5,
-  COMMENT =  -6 ,
-  EMPTYCELL = -7,
-  OPNAME = -8,
-  OBJECT = -9 
+  NUMBER =-10,
+  NAME, 
+  STRING, 
+  COMMENT,
+  OPNAME ,
+  OBJECT ,
 };
 </ENUM>
 <MACRO>
@@ -8381,6 +8363,9 @@ enum nsp_codes {
   CELLARGS ,
   CALLEVAL ,
   EQUAL_OP ,
+  EMPTYCELL,
+  EMPTYMAT,
+  PLIST, 
   /* language keywords the first must be ABORT */
   ABORT ,   
   APROPOS,

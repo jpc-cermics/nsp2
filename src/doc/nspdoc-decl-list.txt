@@ -1198,14 +1198,11 @@ debug
 debugI
 TBUF
 Token
+nsp_astcode_to_nickname
+nsp_astcode_to_name
 nsp_is_nsp_keyword
 nsp_is_code_keyword
-nsp_keycode2str
-nsp_opcode2str
-nsp_opcode2nickname
 nsp_print_opname
-TokenCode2Name
-SciGetLine
 </SECTION>
 
 <SECTION>

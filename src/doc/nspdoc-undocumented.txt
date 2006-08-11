@@ -1,6 +1,6 @@
 20% symbol docs coverage.
 349 symbols documented.
-1409 not documented.
+1407 not documented.
 
 
 Abs
@@ -382,7 +382,6 @@ SWAP_OFF
 SWAP_ON
 SciFile_Type
 SciGetC
-SciGetLine
 SciGtkReadLine
 SciReadClean
 SciStack
@@ -416,7 +415,6 @@ StackInfo
 StackStore
 TBUF
 Token
-TokenCode2Name
 TokenLineSet
 USE_SHARP_SIGN
 USE_SWAP
