@@ -172,6 +172,8 @@ extern void mxUnshareArray(const mxArray *array_ptr);
 extern mxArray *mxCreateLogicalArray(int ndim, const int *dims);
 extern mxArray *mxCreateLogicalMatrix(int m, int n);
 
+extern bool mxIsDouble(const mxArray *array_ptr);
+
 
 
 #endif /* NSP_MEX */

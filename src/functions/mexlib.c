@@ -1861,3 +1861,16 @@ mxArray *mxCreateLogicalArray(int ndim, const int *dims)
 }
 
 
+/**
+ * mxIsDouble:
+ * @array_ptr: 
+ * 
+ * Logical 1 (true) if the mxArray stores its data as double-precision, 
+ * floating-point numbers, and logical 0 (false) otherwise.
+ * 
+ * Return value: true or flase;
+ **/
+bool mxIsDouble(const mxArray *array_ptr)
+{
+  return  IsMat(array_ptr) ? true: false;
+}
