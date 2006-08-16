@@ -973,11 +973,19 @@ NspCells*nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err)
 
 static int Eq(NspObject * a, NspObject * b) 
 {
+  if ( a == NULLOBJ || b == NULLOBJ ) 
+    {
+      return ( a==b ) ? TRUE: FALSE;
+    }
   return ( a->type->eq != NULL) ?  a->type->eq(a,b) : FALSE ;
 }
 
 static int NEq(NspObject * a, NspObject * b)
 {
+  if ( a == NULLOBJ || b == NULLOBJ ) 
+    {
+      return ( a==b ) ? FALSE: TRUE;
+    }
   return ( a->type->neq != NULL) ?  a->type->neq(a,b) : TRUE ;
 }
 
