@@ -96,7 +96,7 @@ void NspPListPrInt(NspPList *P_L)
       return;
     }
   Sciprintf("NspPList %s\n",NSP_OBJECT(P_L)->name);
- nsp_plist_print_int(P_L->D);
+  nsp_plist_print_internal(P_L->D);
 }
 
 /*
@@ -144,17 +144,6 @@ NspSMatrix * NspPList2SMatrix(NspPList *P_L, int indent)
 {
   return nsp_plist2smatrix(P_L->D,indent);
 }
-
-/*
- * NspPListSave : Saves P_L Objet 
- */
-
-int NspPListSave(NspPList *P_L)
-{
-  Sciprintf("[%s ]\n",NSP_OBJECT(P_L)->name);
-  return(nsp_plist_save(P_L->D));
-}
-
 
 
 

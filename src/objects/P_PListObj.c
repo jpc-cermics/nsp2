@@ -468,7 +468,7 @@ static int int_print_internal(Stack stack, int rhs, int opt, int lhs)
   NspPList *PL;
   CheckRhs(1,1);
   if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
- nsp_plist_print_int(PL->D);
+  nsp_plist_print_internal(PL->D);
   return 0;
 }
 

@@ -72,19 +72,6 @@ int int_pl2s(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * NspPListSave : writes parsed expression in save mode
- */
-
-int int_plsave(Stack stack, int rhs, int opt, int lhs)
-{
-  NspPList *PL;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG ;
-  if ( NspPListSave(PL) == FAIL ) return RET_BUG;
-  return 0;
-}
 
 /*
  * The Interface for parsed lists
@@ -93,7 +80,6 @@ int int_plsave(Stack stack, int rhs, int opt, int lhs)
 static OpTab NspPList_func[]={
   {"print_pl", int_plprint},
   {"info_pl", int_plinfo },
-  {"save_pl", int_plsave },
   {"pl2s", int_pl2s},
   {(char *) 0, NULL}
 };
