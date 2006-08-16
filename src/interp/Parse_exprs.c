@@ -1707,10 +1707,10 @@ static int parse_fact3(Tokenizer *T,NspHash *symb_table,PList *plist)
       if ( check_simple_listeval(*plist) == OK ) 
 	{
 	  /* Sciprintf("This is a simple one\n");
-	   *nsp_plist_print_int(*plist);
+	   *nsp_plist_print_internal(*plist);
 	   */
 	}
-      if (debug)nsp_plist_print_int(*plist);
+      if (debug)nsp_plist_print_internal(*plist);
       break;
     case  '(' : 
       /*  ************   ( expr,expr,expr ) */
@@ -2235,7 +2235,6 @@ static int nsp_parse_add_to_symbol_table(NspHash *symb_table,PList L)
 	}
       L = L->next ;
     }
-  /*nsp_plist_print_int(L);*/
   return OK;
 }
 

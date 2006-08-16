@@ -634,11 +634,11 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
   if (debug) 
     {
       Sciprintf("Lhs \n");
-      nsp_plist_print_int(Lhs);
+      nsp_plist_print_internal(Lhs);
       Sciprintf("Feval \n");
-      nsp_plist_print_int(Feval);
+      nsp_plist_print_internal(Feval);
       Sciprintf("Body\n");
-      nsp_plist_print_int(Body) ;
+      nsp_plist_print_internal(Body) ;
     }
   /*Exploring Feval to insert arguments in the new frame **/
   Loc = Feval;
