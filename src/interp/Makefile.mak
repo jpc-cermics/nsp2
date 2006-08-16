@@ -9,7 +9,7 @@ LIBRARY = nsp.lib
 
 OBJSC = Parse_exprs.obj Parse.obj Parse_check.obj \
 	Tokenizer.obj Eval.obj FuncEval.obj Parse-IN.obj \
-	LibsTab.obj PList.obj PListBase.obj reader_rl.obj nsp_io.obj astnode.obj
+	LibsTab.obj PList.obj PListBase.obj reader_rl.obj nsp_io.obj
 
 OBJSF=
 

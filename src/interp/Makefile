@@ -6,7 +6,7 @@ LIBRARY = nsp.a
 
 OBJSC = Parse_exprs.o Parse.o Parse_check.o \
 	Tokenizer.o Eval.o FuncEval.o Parse-IN.o \
-	LibsTab.o PList.o PListBase.o reader_rl.o nsp_io.o astnode.o
+	LibsTab.o PList.o PListBase.o reader_rl.o nsp_io.o
 
 OBJSF=
 
