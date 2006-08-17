@@ -784,13 +784,14 @@ mxArray *mxCreateStructMatrix(int m, int n, int nfields, const char **field_name
  * @fieldname: 
  * @value: 
  *
- * the @value object is inserted in @pa without copy.
+ * A copy of object @value is inserted in @pa.
  * 
  * 
  **/
 
 void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value)
 {
+  NspObject *Obj;
   NspHash *H = (NspHash *) pa;
   if ( i != 0 )
     {
@@ -798,11 +799,10 @@ void mxSetField (mxArray *pa, int i, const char *fieldname, mxArray *value)
       nsp_mex_errjump();
     }
   if ( ! IsHash(pa) ) nsp_mex_errjump();
-  if (nsp_object_set_name(value,fieldname) == FAIL) return ;
-  if (nsp_hash_enter(H,value)==FAIL)
-    {
-      nsp_mex_errjump();
-    }
+  if ((Obj =nsp_object_copy_and_name(fieldname,value))== NULLOBJ)
+    nsp_mex_errjump();
+  if (nsp_hash_enter(H,Obj)==FAIL)
+    nsp_mex_errjump();
 }
 
 /**
@@ -1873,4 +1873,60 @@ mxArray *mxCreateLogicalArray(int ndim, const int *dims)
 bool mxIsDouble(const mxArray *array_ptr)
 {
   return  IsMat(array_ptr) ? true: false;
+}
+
+
+
+
+
+/**
+ * mexGetVariable:
+ * @workspace: "base","caller" or "global"
+ * @var_name: 
+ * 
+ * get a variable in a workspace. A copy of the variable 
+ * is returned on success. 
+ * 
+ * Return value: 
+ **/
+
+mxArray *mexGetVariable(const char *workspace, const char *var_name)
+{
+  mxArray *Obj;
+  if (strcmp(workspace,"caller")==0) 
+    {
+      Obj = nsp_frame_search_object(var_name);
+    }
+  else if ( strcmp(workspace,"global")==0) 
+    {
+      Obj = nsp_global_frame_search_object(var_name);
+    }
+  else if ( strcmp(workspace,"base")== 0)
+    {
+      /* this should be changed */
+      Obj = nsp_global_frame_search_object(var_name);
+    }
+  else
+    {
+      Scierror("Error: mexGetVariable workspace %s is not known\n",workspace);
+      nsp_mex_errjump();
+    }
+  if ( Obj != NULL ) Obj=nsp_object_copy(Obj);
+  return Obj;
+}
+
+
+/**
+ * mexGetArray:
+ * @name: 
+ * @workspace: 
+ * 
+ * deprecated, use mexGetVariable instead. 
+ * 
+ * Return value: 
+ **/
+
+mxArray *mexGetArray(const char *name, const char *workspace)
+{
+  return mexGetVariable(workspace,name);
 }
