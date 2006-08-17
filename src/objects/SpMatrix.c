@@ -517,121 +517,7 @@ int nsp_sprowmatrix_get_elt(NspSpRowMatrix *B, int i, int j)
 
 int nsp_sprowmatrix_set_rowcol(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspSpRowMatrix *B)
 {
-  int Bnonnul = FALSE;
-  char type ='r';
-  int rmin,rmax,cmin,cmax,i,k,l,acol;
-  /* Check compatibility : B is a scalar or B must have compatible 
-     size with Rows and Cols : Note that B=[] is treated elsewhere **/
-  if ( B->mn != 1)
-    {
-      if ( Rows->mn != B->m ||  Cols->mn != B->n )
-	{
-	  Scierror("Error:\tIncompatible dimensions\n");
-	  return(FAIL);
-	}
-    }
-  else
-    {
-      /* B is a scalar check if it is a null scalar **/
-      if ( B->D[0]->size !=0) Bnonnul = TRUE;
-    }
-  Bounds(Rows,&rmin,&rmax);
-  Bounds(Cols,&cmin,&cmax);
-  if ( rmin < 1 || cmin < 1 ) 
-    {
-      Scierror("Error:\tNegative indices are not allowed\n");
-      return(FAIL);
-    }
-  /* Enlarge A if necessary **/
-  if ( rmax > A->m ||  cmax > A->n ) 
-    if (nsp_sprowmatrix_enlarge(A,rmax,cmax) == FAIL) return(FAIL);
-  /* Id result complex ? **/
-  if ( B->rc_type == 'c' &&   A->rc_type == 'r' )
-    { 
-      type = 'c';
-      if (nsp_sprowmatrix_seti(A,0.00) == FAIL ) return(FAIL);
-    }
-  /* fill A **/
-  for ( i = 0 ; i < Rows->mn ; i++ ) 
-    {
-      /* The row of A to be changed **/
-      int row = ((int) Rows->R[i])-1;
-      int Ais = A->D[row]->size ;
-      int amin = 0 ;
-      int amax = Ais;
-      int ib,nel ;
-      if ( B->mn == 1)
-	{
-	  ib = 0;
-	  nel = Cols->mn;
-	}
-      else
-	{
-	  ib =i;
-	  nel = B->D[i]->size ;
-	}
-      /* The new row will have at most nel + A->D[row]->size non nul elements **/
-      if (nsp_sprowmatrix_resize_row(A,row ,nel+Ais) == FAIL) return FAIL;
-      for ( k =0 ; k < Cols->mn ; k++ )
-	{
-	  int ok = -1;
-	  int col = ( (int) Cols->R[k])-1;
-	  int ok1,col1,k1,kb;
-	  kb = ( B->mn == 1) ? 0 : k; /* if B is scalar **/
-	  /* search if the kth element of B->D[ib] is non null **/
-	  for ( l = 0 ; l < B->D[ib]->size ; l++) 
-	    {
-	      if ( kb == B->D[ib]->J[l] ) { ok=l ; break;}
-	      if ( kb < B->D[ib]->J[l] ) { break;}
-	    }
-	  if ( ok != -1 ) 
-	    {
-	      ok1=0;
-	      /* we must set the [row,col] element of A to B(ib,ok) **/
-	      /* search where to insert **/
-	      for ( acol = amin ; acol < amax ; acol++) 
-		{
-		  if ( col == A->D[row]->J[acol] ) { ok1 = 1; col1 = acol;break;}
-		  if ( col < A->D[row]->J[acol] )  { ok1 = 2; col1 = acol; break;}
-		}
-	      /* perform insertion **/
-	      switch ( ok1 ) 
-		{
-		case 1: /* replace A(row,col) **/  
-		  nsp_sprowmatrix_store(A,row,acol, col, B,ib,ok);
-		  /*Cols is not supposed to be increasing  amin = acol ;  **/
-		  break;
-		case 2: /* insert before acol **/
-		  /* move right one step **/
-		  for ( k1 = amax -1 ; k1 >= acol ; k1--) 
-		    {
-		      nsp_sprowmatrix_store(A,row,k1+1,A->D[row]->J[k1],A,row,k1);
-		    }
-		  nsp_sprowmatrix_store(A,row,acol,col,B,ib,ok);
-		  /*Cols is not supposed to be increasing amin = acol ; **/
-		  amax++ ; break ;
-		default : 
-		  /* insert at end **/
-		  nsp_sprowmatrix_store(A,row,amax,col,B,ib,ok);
-		  /* Cols is not supposed to be increasing  amin = amax ; **/
-		  amax++;
-		}
-	    }
-	  else 
-	    {
-	      /* we must set the [row,col] element of A to 0.0 **/
-	      ok1 =nsp_sprowmatrix_delete_elt(A,row,col,amin,amax);
-	      if ( ok1 != -1 ) 
-		{
-		  /* Cols is not supposed to be increasing  amin = ok1; **/
-		  amax--;
-		}
-	    }
-	}
-      /* we resize A(row,:) to its correct size **/
-      if (nsp_sprowmatrix_resize_row(A,row ,amax) == FAIL) return FAIL;
-    }
-  return(OK);
+  return nsp_spcolmatrix_set_rowcol((NspSpColMatrix *) A,Cols,Rows,(NspSpColMatrix *) B);
 }
 
 /*
@@ -736,82 +622,7 @@ int nsp_sprowmatrix_set_row(NspSpRowMatrix *A, NspMatrix *Inds, NspSpRowMatrix *
 
 int nsp_sprowmatrix_delete_cols(NspSpRowMatrix *A, NspMatrix *Cols)
 {
-  int cmin,cmax,i,j,k;
-  if ( Cols->mn == 0) return(OK);
-  Bounds(Cols,&cmin,&cmax);
-  if ( cmin < 1 || cmax > A->n ) 
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  for ( i = 0 ; i < A->m ; i++) 
-    {
-      int ndel;
-      SpRow *Ai = A->D[i];
-      Ai->iw=0;
-      for ( j = 0 ; j < Cols->mn ; j++)
-	{
-	  int col = ((int) Cols->R[j]) -1;
-	  /* test if col is non nul in row i **/
-	  /* we use the fact that Cols->R is increasing and Ai->J too 
-	     to limit the search at each step. 
-	     The elements which are to be deleted are marked with -1 
-	  **/
-	  for ( k = Ai->iw ; k < Ai->size ; k++) 
-	    {
-	      if (Ai->J[k] == col) { Ai->J[k]=-1; Ai->iw = k+1 ; break;}
-	      if (col < Ai->J[k]) break;
-	    }
-	}
-      ndel =nsp_sprowmatrix_compress_row(A,i);
-      if (nsp_sprowmatrix_resize_row(A,i, Ai->size-ndel ) == FAIL) return(FAIL) ;
-    }
-  A->n -= Cols->mn ;
-  /* XXXX : Attention ici si A->n devient egal a zero 
-     Il faut detruire les ligne pour renvoyer une matrice vide **/
-
-  return(OK);
-}
-
-/* compress ith row of sparse Matrix A **/
-/* [1,2,-1,4,5,6,-1,11]--> [1,2,4,5,6,11] **/
-/* return the number of deleted elements **/
-
-int nsp_sprowmatrix_compress_row(NspSpRowMatrix *A, int i)
-{
-  int first = -1,next=-1,ioff=1,j,k;
-  SpRow *R = A->D[i];
-  for ( j = 0 ; j < R->size ; j++ )
-    {
-      if ( R->J[j] == -1 ) 
-	{ first = j ; break;}
-    }
-  if (first == -1 ) return 0;
-  while (1) 
-    {
-      /* find next -1 **/
-      for ( j = first + 1; j < R->size ; j++ ) 
-	{
-	  if ( R->J[j] == -1 ) { next = j ; break;}
-	}
-      if ( next == -1 ) { next = R->size ;} 
-      /* move left  **/
-      for ( k = first + 1 ; k < next ; k++) 
-	{
-	  R->J[k-ioff]=R->J[k]-ioff;
-	  switch ( A->rc_type ) 
-	    {
-	    case 'r' : R->R[k-ioff] = R->R[k];break;
-	    case 'c' : R->C[k-ioff] = R->C[k];break;
-	    }
-	}
-      if ( next == R->size ) return ioff;
-      /* update **/
-      first = next;
-      next = -1;
-      ioff++;
-    }
-  return ioff;
+  return nsp_spcolmatrix_delete_rows((NspSpColMatrix *) A,Cols);
 }
 
 
@@ -824,44 +635,8 @@ int nsp_sprowmatrix_compress_row(NspSpRowMatrix *A, int i)
 
 int nsp_sprowmatrix_delete_rows(NspSpRowMatrix *A, NspMatrix *Rows)
 {
-  int rmin,rmax,i,k,ind,next,ioff=1;
-  Bounds(Rows,&rmin,&rmax);
-  if ( Rows->mn == 0) return(OK);
-  if ( rmin < 1 || rmax > A->m ) 
-    {
-      Scierror("Error:\tIndices out of bounds\n");
-      return(FAIL);
-    }
-  /* free the rows **/
-  for ( i = 0 ; i < Rows->mn  ; i++)
-    {
-      ind =  ((int) Rows->R[i])-1; /* row to be deleted **/
-      if (nsp_sprowmatrix_resize_row(A,ind,0) == FAIL) return FAIL; /* free the associated row **/
-      FREE(A->D[ind]);
-    }
-  /* Move block data left in A->D  **/
-  for ( i = 0 ; i < Rows->mn -1 ; i++)
-    {
-      ind =  ((int) Rows->R[i])-1; /* row to be deleted **/
-      next = ((int) Rows->R[i+1])-1; /* next row to be deleted **/
-      for ( k = ind+1; k < next ; k++ ) 
-	A->D[k-ioff] = A->D[k];
-      ioff++;
-    }
-  /* Move last block data left **/
-  for ( k = ((int) Rows->R[Rows->mn-1]); k < A->m ; k++) 
-    A->D[k-ioff] = A->D[k];
-  /* free unused memory **/
-  A->m = A->m - Rows->mn;
-  A->D = REALLOC(A->D, A->m*sizeof( SpRow *));
-  if ( A->D == NULL) 
-    {
-      Scierror("No More Space\n");
-      return FAIL;
-    }
-  return OK;
+  return nsp_spcolmatrix_delete_cols((NspSpColMatrix *) A,Rows);
 }
-
 
 /*
  *  A(elts) = []
@@ -939,16 +714,14 @@ static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix
 }
 
 
-
-
 NspSpRowMatrix *nsp_sprowmatrix_extract(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
-  NspSpRowMatrix *Sp;
-  int err;
-  Sp=SpExtract_G(A,Rows,Cols,1,&err);
-  if (err==1 ) Scierror("Error:\tIndices out of bound\n");
-  return Sp;
+  NspSpColMatrix *loc;
+  if ((loc=nsp_spcolmatrix_extract((NspSpColMatrix *) A,Cols,Rows))==NULL)
+    return NULLSPROW;
+  return nsp_spcolmatrix_cast_to_sprow(loc);
 }
+
 /*
  * Res=nsp_matrix_extract_elements(A,Elts)
  * A unchanged, Elts
@@ -1016,14 +789,16 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspMatrix *Elts)
 
 NspSpRowMatrix *nsp_sprowmatrix_extract_cols(NspSpRowMatrix *A, NspMatrix *Cols, int *err)
 {
-  return SpExtract_G(A,NULLMAT,Cols,0,err);
+  NspSpColMatrix *loc;
+  if ((loc=nsp_spcolmatrix_extract_rows((NspSpColMatrix *) A,Cols,err))==NULL)
+    return NULLSPROW;
+  return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
 /*
  * A1=MatLoopCol(A1,M,i,rep)
  * Used in for loops 
  */	
-
 
 /*
  * Res=nsp_matrix_extract_rows(A,Rows,err)
@@ -1032,35 +807,10 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_cols(NspSpRowMatrix *A, NspMatrix *Cols,
 
 NspSpRowMatrix *nsp_sprowmatrix_extract_rows(NspSpRowMatrix *A, NspMatrix *Rows, int *err)
 {
-  NspSpRowMatrix *Loc;
-  int rmin,rmax,i,j;
-  if ( A->mn == 0) return nsp_sprowmatrix_create(NVOID,A->rc_type,0,0);
-  Bounds(Rows,&rmin,&rmax);
-  *err=0;
-  if ( rmin < 1 ||  rmax > A->m  ) 
-    {
-      Scierror("Error:\tIndices out of bound\n");
-      return(NULLSPROW);
-    }
-  if ( (Loc =nsp_sprowmatrix_create(NVOID,A->rc_type,Rows->mn,A->n))== NULLSPROW) 
-    return(NULLSPROW);
-  for ( i = 0 ; i < Loc->m ; i++)
-    {
-      int row =((int) Rows->R[i])-1; 
-      SpRow *Ai= A->D[row];
-      SpRow *Li= Loc->D[i];
-      if (nsp_sprowmatrix_resize_row(Loc,i,Ai->size)==FAIL) return NULLSPROW;  
-      for ( j = 0 ; j < Ai->size ; j++ )
-	{	
-	  Li->J[j]= Ai->J[j];
-	  switch ( A->rc_type ) 
-	    {
-	    case 'r' : Li->R[j]= Ai->R[j];break;
-	    case 'c' : Li->C[j]= Ai->C[j];break;
-	    }
-	}
-    }
-  return(Loc);
+  NspSpColMatrix *loc;
+  if ((loc=nsp_spcolmatrix_extract_cols((NspSpColMatrix *) A,Rows,err))==NULL)
+    return NULLSPROW;
+  return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
 /*
@@ -1297,147 +1047,10 @@ NspSpRowMatrix *nsp_sprowmatrix_diag_create(NspSpRowMatrix *Diag, int k)
 
 NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B)
 {
-  NspSpRowMatrix *C = NULLSPROW;
-  NspMatrix *x = NULLMAT;
-  int *xb = NULL, *pxb = NULL;
-  int i, j, k, v, ip, jp, kp, neli, final_neli;
-  char type = 'r';
-  if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
-  if ( A->n != B->m ) 
-    {
-      Scierror("SpMult : incompatible arguments\n");
-      return(NULLSPROW);
-    }
-
-  if ( (C =nsp_sprowmatrix_create(NVOID,type, A->m,B->n)) == NULLSPROW ) return NULLSPROW; 
-
-  /*  x          a one-dimensional array of size ge number of cols of c, 
-   *                to contain elements of current row of c, 
-   *                in full,i.e. non-sparse form.  */
-  if ( (x = nsp_matrix_create(NVOID,type,(int) 1, C->n)) == NULLMAT ) goto err;
-
-  /*  xb         an array of same size as x. xb(j)=i if element in row i, 
-   *                column j of c is non-zero. */
-  if ( (xb =nsp_alloc_int(C->n)) == (int*) 0) goto err;
-  /*  pxb        to store the effective non nul indices of row i...
-   *              (act as a pointer to x at the end) */
-  if ( (pxb =nsp_alloc_int(C->n)) == (int*) 0) goto err;
-
-  /* initialize the non-zero -element indicator for row i of c. */
-  for (v = 0 ; v < B->n ; v++ )  xb[v] = -1;
-  /* process the rows of a. */
-  for (i = 0 ; i < A->m ; i++) 
-    {
-      neli = 0;  /* to count the number of a priori non nul elements of row i */
-      SpRow *Ai = A->D[i];
-      SpRow *Ci = C->D[i];
-      /*  process row i of a.  */
-      for (jp = 0  ; jp <  Ai->size  ; jp++) 
-	{
-	  SpRow *Bj;
-	  /* j is the current col-index for a */
-	  j = Ai->J[jp] ;
-	  Bj = B->D[j];
-	  /*  We process the row j of  b. For efficiency we separate the real case 
-           *  from the 3 complex cases (which are nevertheless treated together)
-	   */
-	  if ( C->rc_type == 'r' )
-	    for (kp = 0 ; kp < Bj->size ; kp++) 
-	      {
-		/* getting non nul b(j,k) */
-		k = Bj->J[kp]; 
-		/* check if contribution already exixts to c(i,k) */
-		if ( xb[k] != i )
-		  { 
-		    xb[k] = i; pxb[neli] = k; neli++; x->R[k]=0.00;
-		  }
-		x->R[k] += Ai->R[jp] * Bj->R[kp];
-	      }
-	  else 
-	    for (kp = 0 ; kp < Bj->size ; kp++) 
-	      {
-		/* getting non nul b(j,k) */
-		k = Bj->J[kp];
-		/* check if contribution already exixts to c(i,k) */
-		if ( xb[k] != i )
-		  { 
-		    xb[k] = i; pxb[neli] = k; neli++; x->C[k].r = 0.00; x->C[k].i = 0.00;
-		  }
-		if ( A->rc_type == 'r') 
-		  {
-		    x->C[k].i += Ai->R[jp] * Bj->C[kp].i;
-		    x->C[k].r += Ai->R[jp] * Bj->C[kp].r;
-		  }
-		else if ( B->rc_type == 'r' ) 
-		  {
-		    x->C[k].i += Ai->C[jp].i * Bj->R[kp];
-		    x->C[k].r += Ai->C[jp].r * Bj->R[kp];
-		  }
-		else 
-		  {
-		    x->C[k].r += Ai->C[jp].r * Bj->C[kp].r -  Ai->C[jp].i* Bj->C[kp].i;
-		    x->C[k].i += Ai->C[jp].i * Bj->C[kp].r +  Ai->C[jp].r* Bj->C[kp].i;
-		  }
-	      }
-	}
-      /* we have now computed c(i,.) in expanded form and stored it in x,xb */
-      /* pxb[0..neli-1] contains all the non nul column indices (so point to */
-      /* values to retrieve from x) but their are not in order (and so the sort) */
-      /* we store them in C and exclude number which have cancelled during computation */
-      
-      nsp_qsort_int(pxb,NULL,FALSE,neli,'i');      
-      /*  zero=0,c__1=1;
-	  C2F(gsort)(pxb,NULL,NULL,&zero,&c__1,&neli,"i","i"); */
-
-      /* but as cancellation is unlikely to occur we allocate first the row */
-      /* with the a priori non null element number neli */
-      if ( nsp_sprowmatrix_resize_row(C,i,neli) == FAIL ) goto err;
-      final_neli = neli;
-      ip = 0;
-      if ( C->rc_type == 'r' )  /* real case */
-	{
-	  for (k = 0 ; k < neli ; k++)  
-	    { 
-	      v = pxb[k];
-	      if ( x->R[v] != 0.00 )  /* take care of cancellation */
-		{
-		  Ci->J[ip] = v; 
-		  Ci->R[ip] = x->R[v];
-		  ip++;
-		}
-	      else
-		final_neli--;  /* cancellation occurs => final resize */
-	    }
-	}
-      else   /* complex case */
-	{
-          for (k = 0 ; k < neli ; k++)
-            {
-	      v = pxb[k];
-	      if ( x->C[v].r != 0.00  || x->C[v].i != 0.00 ) /* take care of cancellation */
-		{
-		  Ci->J[ip] = v;
-		  Ci->C[ip].r = x->C[v].r; Ci->C[ip].i = x->C[v].i;
-		  ip++;
-		}
-	      else
-		final_neli--; /* cancellation occurs => final resize */
-            }
-        }
-      if ( final_neli < neli )
-	if ( nsp_sprowmatrix_resize_row(C,i,final_neli) == FAIL ) goto err;
-    }
-  FREE(pxb);
-  FREE(xb);
-  nsp_matrix_destroy(x);
-  return C;
-
- err:
-  FREE(pxb);
-  FREE(xb);
-  nsp_matrix_destroy(x);
-  nsp_sprowmatrix_destroy(C);
-  return NULLSPROW;
+  NspSpColMatrix *loc;
+  if ((loc=nsp_spcolmatrix_mult((NspSpColMatrix *) B,(NspSpColMatrix *) A))==NULL)
+    return NULLSPROW;
+  return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
 /*
@@ -1445,6 +1058,7 @@ NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B)
  * result B is a full matrix. Special cases have been checked
  * in the interface. (added by Bruno)
  */
+
 NspMatrix *nsp_sprowmatrix_mult_matrix(NspSpRowMatrix *A, NspMatrix *X)
 {
   int i, j, k, ij, m = A->m, n = X->n, p = X->m;
@@ -1577,25 +1191,8 @@ int nsp_sprowmatrix_mult_scal_old(NspSpRowMatrix *A, NspSpRowMatrix *B)
 
 int nsp_sprowmatrix_complexify(NspSpRowMatrix *A)
 {
-  int inc = 1;
-  int i;
-  if ( A->rc_type == 'c' ) return(OK);
-  for ( i = 0 ; i < A->m ; i++) 
-    {
-      SpRow *Ai = A->D[i];
-      if ( Ai->size != 0) 
-	{ 
-	  doubleC *cp =nsp_alloc_doubleC((int) Ai->size);
-	  if ( cp == (doubleC *) 0) return(FAIL);
-	  nsp_dzcopy(&Ai->size,Ai->R,&inc,cp,&inc);
-	  FREE(Ai->R);
-	  Ai->C = cp;
-	}
-    }
-  A->rc_type = 'c';
-  return(OK);
+  return nsp_spcolmatrix_complexify((NspSpColMatrix *) A);
 }
-
 
 /*
  * Set real part of all non nul elements of A to d 
@@ -1603,31 +1200,7 @@ int nsp_sprowmatrix_complexify(NspSpRowMatrix *A)
 
 int nsp_sprowmatrix_setr(NspSpRowMatrix *A, double d)
 {
-  int i,c1=1;
-  switch ( A->rc_type ) 
-    {
-    case 'r' :
-      for ( i = 0 ; i < A->m ; i++) 
-	{
-	  SpRow *Ai = A->D[i];
-	  if ( Ai->size != 0) 
-	    { 
-	      nsp_dset(&Ai->size,&d,Ai->R, &c1);
-	    }
-	}
-      break;
-    case 'c' :
-      for ( i = 0 ; i < A->m ; i++) 
-	{
-	  SpRow *Ai = A->D[i];
-	  if ( Ai->size != 0) 
-	    { 
-	      c1=2;
-	      nsp_dset(&Ai->size,&d,(double *) Ai->C, &c1);
-	    }
-	}
-    }
-  return(OK);
+  return nsp_spcolmatrix_setr((NspSpColMatrix *) A,d);
 }
 
 
@@ -1638,21 +1211,7 @@ int nsp_sprowmatrix_setr(NspSpRowMatrix *A, double d)
 
 int nsp_sprowmatrix_seti(NspSpRowMatrix *A, double d)
 {
-  int i,c1=1;
-  switch ( A->rc_type ) 
-    {
-    case 'r' : if (nsp_sprowmatrix_complexify(A) == FAIL ) return(FAIL); break;
-    }
-  for ( i = 0 ; i < A->m ; i++) 
-    {
-      SpRow *Ai = A->D[i];
-      if ( Ai->size != 0) 
-	{ 
-	  c1=2;
-	  nsp_dset(&Ai->size,&d,((double *) Ai->C) +1, &c1);
-	}
-    }
-  return(OK);
+  return nsp_spcolmatrix_seti((NspSpColMatrix *) A,d);
 }
 
 
@@ -1791,64 +1350,16 @@ NspMatrix *nsp_sprowmatrix_to_mat(NspSpRowMatrix *Sp)
 
 NspSpRowMatrix *nsp_sprowmatrix_transpose(const NspSpRowMatrix *A)
 {
-  int k,i,j;
-  NspSpRowMatrix *Loc;
-  Loc =nsp_sprowmatrix_create( NVOID,A->rc_type,A->n,A->m);
-  if ( Loc == NULLSPROW ) return(NULLSPROW) ; 
-  /* Initialisation : a faire a la creation ?? xxx **/
-  for (  i  = 0 ;  i  < Loc->m  ;  i++ ) 
-    {
-      Loc->D[i]->iw = 0;
-    } 
-  /* Counting elements of transposed matrix  */
-  for (  i  = 0 ;  i  < A->m  ;  i++ ) 
-    {
-      SpRow *Ai = A->D[i];
-      for  ( k = 0  ;  k < Ai->size ; k++)
-	{ 
-	  j = Ai->J[k];
-	  (Loc->D[j]->iw)++;
-	}
-    } 
-  /* Space allocation for Rows */
-  for (  i  = 0 ;  i  < Loc->m  ;  i++ ) 
-    {
-      if (nsp_sprowmatrix_resize_row(Loc,i,(int) Loc->D[i]->iw) == FAIL) return(NULLSPROW) ;
-      Loc->D[i]->iw = 0 ; /* working storage reinit */
-    } 
-  /* filling the Tranposed matrix rows by rows  **/
-  for (  i = 0 ;  i < A->m  ;  i++) 
-    {
-      SpRow *Ai = A->D[i];
-      for  ( k = 0  ;  k < Ai->size ; k++)
-	{ 
-	  int jt;
-	  j = Ai->J[k];
-	  jt = Loc->D[j]->iw ;
-	  Loc->D[j]->J[jt]= i;
-	  switch ( Loc->rc_type ) 
-	    {
-	    case 'r' : 
-	      Loc->D[j]->R[jt]= A->D[i]->R[k] ;
-	      break ;
-	    case 'c' :  
-	      Loc->D[j]->C[jt].r = A->D[i]->C[k].r  ;
-	      Loc->D[j]->C[jt].i = - A->D[i]->C[k].i  ; 
-	      break;
-	    }
-
-	  (Loc->D[j]->iw)++;
-	}
-    }
-  return(Loc) ;
-} 
-
-
-
+  NspSpColMatrix *loc;
+  if ((loc=nsp_spcolmatrix_transpose((const NspSpColMatrix *) A))==NULL)
+    return NULLSPROW;
+  return nsp_spcolmatrix_cast_to_sprow(loc);
+}
 
 /*
  * Utilities for term to term operations 
  */
+
 #if 0
 double  plus (double x, double y, double xi, double yi, double *ival, char type)
 { 
