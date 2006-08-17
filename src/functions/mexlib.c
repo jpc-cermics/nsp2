@@ -706,7 +706,7 @@ mxArray *mxCreateSparse(int m, int n, int nzmax,
  * Return value: 
  **/
 
-mxArray *mxCreateString(char *string)
+mxArray *mxCreateString(const char *string)
 {
   NspSMatrix *S;
   if ((S= nsp_smatrix_create(NVOID,1,1,string,(integer)1)) == NULLSMAT ) nsp_mex_errjump();
@@ -1796,7 +1796,7 @@ mxArray *mxCreateCharArray(int ndim, const int *dims)
  **/
 
 mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
-         const char **field_names)
+			     const char **field_names)
 {
   if ( ndim != 2 )
     {

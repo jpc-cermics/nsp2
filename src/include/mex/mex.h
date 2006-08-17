@@ -50,7 +50,7 @@ extern int mexAtExit(void (*ExitFcn)(void));
 extern mxArray *mxCreateSparse(int m, int n, int nzmax, 
 			       mxComplexity ComplexFlag);
 
-extern mxArray *mxCreateString(char *string);
+extern mxArray *mxCreateString(const char *string);
 
 extern int *mxGetJc(const mxArray *ptr);
 extern int *mxGetIr(const mxArray *ptr);
@@ -174,6 +174,8 @@ extern mxArray *mxCreateLogicalMatrix(int m, int n);
 
 extern bool mxIsDouble(const mxArray *array_ptr);
 
+extern mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
+				    const char **field_names);
 
 
 #endif /* NSP_MEX */

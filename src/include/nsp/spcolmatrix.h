@@ -153,7 +153,11 @@ extern int nsp_spcolmatrix_compress_col_simple(NspSpColMatrix *A, int i);
  extern int nsp_spcolmatrix_setr(NspSpColMatrix *A, double d); 
  extern int nsp_spcolmatrix_seti(NspSpColMatrix *A, double d); 
  extern NspSpColMatrix *nsp_spcolmatrix_from_mat(NspMatrix *A); 
+extern NspSpColMatrix *nsp_spcolmatrix_from_mat_transpose(NspMatrix *A);
  extern NspMatrix *nsp_spcolmatrix_to_mat(NspSpColMatrix *Sp); 
+extern NspMatrix *nsp_spcolmatrix_to_mat_transpose(NspSpColMatrix *Sp);
+
+
 extern NspSpColMatrix *nsp_spcolmatrix_transpose(const NspSpColMatrix *A); 
  extern NspSpColMatrix *nsp_spcolmatrix_add(NspSpColMatrix *A, NspSpColMatrix *B); 
  extern NspSpColMatrix *nsp_spcolmatrix_sub(NspSpColMatrix *A, NspSpColMatrix *B); 
