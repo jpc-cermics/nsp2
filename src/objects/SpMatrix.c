@@ -2163,132 +2163,11 @@ int nsp_sprowmatrix_clean(NspSpRowMatrix *A, int rhs, double epsa, double epsr)
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspMatrix *nsp_sprowmatrix_maximinitt_g(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int minmaxflag, int *err)
+NspSpRowMatrix *nsp_sprowmatrix_maximinitt_g(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int minmaxflag, int *err)
 {
-  /* Same philosophy as in BinaryOp **/
-  int i,count,k1,k2,k;
-  NspSpRowMatrix *Loc;
-  NspMatrix *Indi=NULL;
-  char type = 'r';
-  if ( SameDim(A,B) ) 
-    {
-      if ( A->rc_type == 'c' || B->rc_type == 'c' ) 
-	{
-	  Scierror("Error: Arguments must be real matrices\n");
-	  return NULLMAT;
-	}
-      /* storing indices **/
-      if ( flag == 1) 
-	{
-	  if (( Indi = nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT ) 
-	    return NULLMAT;
-	  nsp_mat_set_rval(Indi,1.0);
-	}
-      /* Buffer **/
-      if ((Loc =nsp_sprowmatrix_create(NVOID,type,1,A->n)) == NULLSPROW ) return(NULLMAT);
-      if (nsp_sprowmatrix_resize_row(Loc,1,A->n ) == FAIL) return(NULLMAT) ;
-      for ( i = 0 ; i < A->m ; i++ ) 
-	{
-	  SpRow *Ai = A->D[i];
-	  SpRow *Bi = B->D[i];
-	  /* We explore the ith line of A and B in increasing order of column 
-	     and want to merge the columns found ( in increasing order ) 
-	     when a same column number appear in both A and B we call the 
-	     2-ary operator op 
-	     This is very near to a merge sort of two sorted arrays 
-	  **/ 
-	  k1 = 0 ; k2 = 0 ; 
-	  count = 0 ; 
-	  /* merge part **/
-	  while ( k1 < Ai->size && k2 <  Bi->size) 
-	    { 
-	      int j1,j2;
-	      j1 = Ai->J[k1] ;
-	      j2 = Bi->J[k2] ;
-	      if ( j1 < j2 ) 
-		{ 
-		  /* A != 0 and B == 0 **/
-		  if ( minmaxflag*Ai->R[k1] > 0 ) 
-		    {
-		      Loc->D[0]->J[count] = j1;
-		      Loc->D[0]->R[count] = Ai->R[k1];
-		      count++;
-		    }
-		  else 
-		    {
-		      if ( flag == 1) Indi->R[i+Indi->m*j1]=2;
-		    }
-		  k1++; 
-		}
-	      else if ( j1 == j2 ) 
-		{ 
-		  /* A != 0 and B != 0 **/
-		  Loc->D[0]->J[count] = j1;
-		  if (  minmaxflag*Ai->R[k1] >   minmaxflag*Bi->R[k2] )
-		    {
-		      Loc->D[0]->R[count]=  Ai->R[k1];
-		    }
-		  else
-		    {
-		      Loc->D[0]->R[count]=  Bi->R[k2];
-		      if ( flag == 1) Indi->R[i+Indi->m*j1]=2;
-		    }
-		  count++;
-		  k1++; k2 ++; 
-
-		}
-	      else 
-		{ 
-		  /* A == 0 and B != 0 **/
-		  if (minmaxflag* Bi->R[k2] > 0 ) 
-		    {
-		      Loc->D[0]->J[count] = j2;
-		      Loc->D[0]->R[count] = Bi->R[k2];
-		      if ( flag == 1) Indi->R[i+Indi->m*j2]=2;
-		      count++;
-		    }
-		  k2++;
-		}
-	    }
-	  /* Keep inserting remaining arguments for A **/
-	  for ( k = k1 ; k < Ai->size ; k++) 
-	    { 
-	      if ( minmaxflag*Ai->R[k] > 0 ) 
-		{
-		  Loc->D[0]->J[count] = Ai->J[k];
-		  Loc->D[0]->R[count] = Ai->R[k];
-		  count++;
-		}
-	    }
-	  /* Keep inserting remaining arguments for B **/
-	  for ( k = k2 ; k < Bi->size ; k++) 
-	    { 
-	      if ( minmaxflag* Bi->R[k] > 0 ) 
-		{
-		  Loc->D[0]->J[count] = Bi->J[k];
-		  Loc->D[0]->R[count] = Bi->R[k];
-		  if ( flag == 1) Indi->R[i+Indi->m*k]=2;
-		  count++;
-		}
-	    }
-	  /* count is not set to the proper ith row dimension  **/
-	  /* we resize A(i,:) and store Loc  **/
-	  if (nsp_sprowmatrix_resize_row(A,i,count)  == FAIL) return(NULLMAT) ;
-	  /* use icopy and dcopy XXXX **/
-	  for ( k =0 ; k < A->D[i]->size ; k++) 
-	    {
-	      A->D[i]->J[k] = Loc->D[0]->J[k];
-	      A->D[i]->R[k] = Loc->D[0]->R[k];
-	    }
-						  
-	}
-      return(Indi);
-    }
-  else 
-    {
-      Scierror("Mat1 & Mat2 don't have same size \n");
-      return(NULLMAT);
-    }
+  NspSpColMatrix *loc;
+  loc = nsp_spcolmatrix_maximinitt_g((NspSpColMatrix *) A,(NspSpColMatrix *) B,flag,minmaxflag,err);
+  return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
 /**
@@ -2311,7 +2190,7 @@ NspMatrix *nsp_sprowmatrix_maximinitt_g(NspSpRowMatrix *A, NspSpRowMatrix *B, in
  **/
 
 
-NspMatrix *nsp_sprowmatrix_maxitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err)
+NspSpRowMatrix *nsp_sprowmatrix_maxitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err)
 {
   return nsp_sprowmatrix_maximinitt_g(A,B,flag,1,err);
 }
@@ -2335,7 +2214,7 @@ NspMatrix *nsp_sprowmatrix_maxitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspMatrix *nsp_sprowmatrix_minitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err)
+NspSpRowMatrix *nsp_sprowmatrix_minitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err)
 {
   return nsp_sprowmatrix_maximinitt_g(A,B,flag,-1,err);
 }
@@ -2351,35 +2230,7 @@ NspMatrix *nsp_sprowmatrix_minitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag
 
 int nsp_sprowmatrix_realpart(NspSpRowMatrix *A)
 {
-  int i,k;
-  if ( A->rc_type == 'r' )  return(OK);
-  for ( i=0 ; i < A->m ; i++)
-    {
-      int count =0; 
-      for ( k = 0 ; k < A->D[i]->size ; k++ ) 
-	{
-	  if ( A->D[i]->C[k].r != 0.0) count++;
-	}
-      if ( count != 0) 
-	{
-	  if ((A->D[i]->R =nsp_alloc_doubles((int) count)) == (double *) 0 ) 
-	    {
-	      Scierror("Error:\tRunning out of memory\n");
-	      return(FAIL);
-	    }
-	  count =0;
-	  for ( k = 0 ; k < A->D[i]->size ; k++ ) 
-	    {
-	      if ( A->D[i]->C[k].r != 0.0) 
-		{ 
-		  A->D[i]->R[count] =A->D[i]->C[k].r; count++;
-		}
-	    }
-	  FREE ( A->D[i]->C ) ;
-	}
-    }
-  A->rc_type = 'r';
-  return(OK);
+  return nsp_spcolmatrix_realpart((NspSpColMatrix *) A);
 }
 
 
@@ -2395,50 +2246,7 @@ int nsp_sprowmatrix_realpart(NspSpRowMatrix *A)
 
 int nsp_sprowmatrix_imagpart(NspSpRowMatrix *A)
 {
-  int i,k;
-  if ( A->rc_type == 'r')
-    {
-      for ( i=0 ; i < A->m ; i++ ) 
-	{
-	  if ( A->D[i]->size != 0 ) 
-	    {
-	      FREE( A->D[i]->J);
-	      FREE( A->D[i]->R);
-	      FREE( A->D[i]->C);
-	    }
-	  A->D[i]->size =0;
-	}
-    }
-  else
-    {
-      for ( i=0 ; i < A->m ; i++)
-	{
-	  int count =0; 
-	  for ( k = 0 ; k < A->D[i]->size ; k++ ) 
-	    {
-	      if ( A->D[i]->C[k].i != 0.0) count++;
-	    }
-	  if ( count != 0) 
-	    {
-	      if ((A->D[i]->R =nsp_alloc_doubles((int) count)) == (double *) 0 ) 
-		{
-		  Scierror("Error:\tRunning out of memory\n");
-		  return(FAIL);
-		}
-	      count =0;
-	      for ( k = 0 ; k < A->D[i]->size ; k++ ) 
-		{
-		  if ( A->D[i]->C[k].i != 0.0) 
-		    { 
-		      A->D[i]->R[count] =A->D[i]->C[k].i; count++;
-		    }
-		}
-	      FREE ( A->D[i]->C ) ;
-	    }
-	}
-      A->rc_type = 'r';
-    }
-  return OK;
+  return nsp_spcolmatrix_imagpart((NspSpColMatrix *) A);
 }
 
 /*
@@ -2513,231 +2321,6 @@ NspSpRowMatrix *nsp_sprowmatrix_sum(NspSpRowMatrix *A, char *flag)
  * A is unchanged 
  */
 
-/*
- * Max =nsp_mat_maxi(A,B,Imax,lhs)
- *     A is unchanged 
- * if B= 'c' the max for the column indices is computed 
- *       and a column vector is returned. 
- * if B= 'r' the max for the row indices is computed 
- *       and a Row vector is returned.
- * if B= 'f' the maximum 
- * Imax is created if lhs == 2 
- *    Note that Imax is a full matrix;
- */
-
-typedef int (*SpMaMi1) (NspSpRowMatrix *A,NspSpRowMatrix *M);
-typedef int (*SpMaMi2) (NspSpRowMatrix *A,int j,NspSpRowMatrix *M,int *count);
-typedef int (*SpMaMi3) (NspSpRowMatrix *A,int j,NspSpRowMatrix *M);
-
-static NspSpRowMatrix *SpMaxiMini(NspSpRowMatrix *A, char *flag, NspMatrix **Imax, int lhs, SpMaMi1 F1, SpMaMi2 F2, SpMaMi3 F3)
-{
-  NspSpRowMatrix *M=NULL;
-  int j;
-  int inc=1,imax,count;
-  if ( A->mn == 0 ) 
-    {
-      if ( lhs == 2) *Imax = nsp_matrix_create(NVOID,'r',0,0);
-      return nsp_sprowmatrix_create(NVOID,'r',0,0);
-    }
-  switch (flag[0]) 
-    {
-    case 'f': 
-    case 'F':
-      if ((M =nsp_sprowmatrix_create(NVOID,A->rc_type,1,1)) == NULLSPROW) return(NULLSPROW);
-      imax = (*F1)(A,M);
-      /* Check if M was properly resized **/
-      if ( imax == 0 )  return NULLSPROW;
-      
-      if ( lhs == 2 ) 
-	{
-	  if ((*Imax = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT)
-	    return NULLSPROW; 
-	  (*Imax)->R[0] = imax;
-	}
-      break;
-    case 'r':
-    case 'R':
-      if ((M =nsp_sprowmatrix_create(NVOID,A->rc_type,1,A->n)) == NULLSPROW)
-	return NULLSPROW;
-      if (nsp_sprowmatrix_resize_row(M,0,A->n) == FAIL) return NULLSPROW;
-      count =0;
-      if ( lhs == 2) 
-	{
-	  if ((*Imax = nsp_matrix_create(NVOID,'r',1,A->n)) == NULLMAT) 
-	    return NULLSPROW;
-	  for ( j= 0 ; j < A->n ; j++) 
-	    {
-	      (*Imax)->R[j]=(*F2)(A,j,M,&count); 
-	    }
-	}
-      else 
-	for ( j= 0 ; j < A->n ; j++) 
-	  {
-	    (*F2)(A,j,M,&count); 
-	  }
-      if (nsp_sprowmatrix_resize_row(M,0,count) == FAIL) return NULLSPROW;
-      break ;
-    case 'c':
-    case 'C':
-      if ((M =nsp_sprowmatrix_create(NVOID,A->rc_type,A->m,1)) == NULLSPROW) 
-	return NULLSPROW;
-      inc = A->m;
-      if ( lhs == 2) 
-	{
-	  if ((*Imax = nsp_matrix_create(NVOID,'r',A->m,1)) == NULLMAT) 
-	    return NULLSPROW; 
-	  for ( j= 0 ; j < A->m ; j++) 
-	    {
-	      int imax =  (*F3)(A,j,M);
-	      if ( imax == 0) return NULLSPROW;
-	      (*Imax)->R[j] = imax;
-	    }
-	}
-      else
-	for ( j= 0 ; j < A->m ; j++) 
-	  {
-	    int imax =  (*F3)(A,j,M);
-	    if ( imax == 0) return NULLSPROW;
-	  }
-      break;
-    }
-  return M;
-}
-
-
-/**
- * SpColMaxi1:
- * @A: 
- * @M: 
- * 
- * M(1) = Maxi(A) max of all the elements 
- * 
- * 
- * Return value: the indice of the element of Matrix @A which realize the maximum 
- * (the indice is given as a global indice of a mxn Matrix).
- **/
-
-static int SpMaxi1(NspSpRowMatrix *A, NspSpRowMatrix *M)
-{
-  int imax = 0,i,k;
-  double amax=0.0; imax=1;
-  /* find a first value **/
-  for ( i = 0 ; i < A->m ; i++ ) 
-    {
-      if ( A->D[i]->size !=0 ) 
-	{ amax = A->D[i]->R[0];imax = A->D[i]->J[0]+1; break;}
-    }
-  /* find the max  **/
-  for ( i = 0 ; i < A->m ; i++ ) 
-    {
-      for ( k = 0 ; k < A->D[i]->size ; k++) 
-	{
-	  if ( A->D[i]->R[k] > amax ) 
-	    {
-	      amax = A->D[i]->R[k];
-	      imax =  A->D[i]->J[k]+1;
-	    }
-	}
-    }
-  if ( amax != 0.0 )
-    {
-      if (nsp_sprowmatrix_resize_row(M,0,1) == FAIL) return 0;
-      M->D[0]->J[0]=0;
-      M->D[0]->R[0]= amax;
-    }
-  return imax;
-}
-
-/**
- * SpColMaxi3:
- * @A: 
- * @j: 
- * @M: 
- * @count: 
- * 
- * utility : M(j)=Max A(j,:) : max of row j  
- *
- * Return value: the column indice which realize the max of row @j.
- **/
-
-static int SpMaxi2(NspSpRowMatrix *A, int j, NspSpRowMatrix *M, int *count)
-{
-  int imax = 0,i,k;
-  double amax=0.0; imax=1;
-  /* find a first value **/
-  for ( i = 0 ; i < A->m ; i++ ) 
-    {
-      for ( k = 0 ; k < A->D[i]->size ; k++) 
-	{
-	  if ( A->D[i]->J[k] == j ) 
-	    { amax = A->D[i]->R[k] ; imax = i+1; break;}
-	  if ( j < A->D[i]->J[k] ) break;
-	}
-      if ( amax != 0.0 ) break;
-    }
-  /* find the max **/
-  for ( i = 0 ; i < A->m ; i++ ) 
-    {
-      int ok=-1;
-      for ( k = 0 ; k < A->D[i]->size ; k++) 
-	{
-	  if ( A->D[i]->J[k] == j ) { ok=k;break;}
-	  if ( j < A->D[i]->J[k] ) break;
-	}
-      if ( ok != -1 )
-	{
-	  if ( A->D[i]->R[ok] > amax ) 
-	    {
-	      amax = A->D[i]->R[k];
-	      imax = i+1;
-	    }
-	}
-    }
-  if ( amax != 0.0 )
-    {
-      M->D[0]->J[*count]= j;
-      M->D[0]->R[*count]= amax; (*count)++;
-    }
-  return imax;
-}
-
-
-/**
- * SpColMaxi2:
- * @A: 
- * @j: 
- * @M: 
- *
- * utility: M(j)=Max A(:,j) find the max of column j 
- * 
- * 
- * Return value: the row indice which realize the max of column @j.
- **/
-
-static int SpMaxi3(NspSpRowMatrix *A, int j, NspSpRowMatrix *M)
-{
-  int imax = 0,k;
-  double amax=0.0; imax=1;
-  /* find a first value **/
-  if ( A->D[j]->size != 0 ) { amax = A->D[j]->R[0] ; imax = A->D[j]->J[0]+1;}
-  /* find the max **/
-  for ( k = 0 ; k < A->D[j]->size ; k++) 
-    {
-      if ( A->D[j]->R[k]> amax ) 
-	{
-	  amax = A->D[j]->R[k];
-	  imax = A->D[j]->J[k]+1;
-	}
-    }
-  if ( amax != 0.0 )
-    {
-      if (nsp_sprowmatrix_resize_row(M,j,1) == FAIL) return 0;
-      M->D[j]->J[0]= 0;
-      M->D[j]->R[0]= amax;
-    }
-  return imax;
-}
-
 /**
  * nsp_sprowmatrix_maxi:
  * @A: 
@@ -2761,7 +2344,35 @@ static int SpMaxi3(NspSpRowMatrix *A, int j, NspSpRowMatrix *M)
 
 NspSpRowMatrix *nsp_sprowmatrix_maxi(NspSpRowMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 {
-  return SpMaxiMini(A,flag,Imax,lhs,SpMaxi1,SpMaxi2,SpMaxi3);
+  NspSpColMatrix *loc=NULL;
+  switch (flag[0]) 
+    {
+    case 'f':
+    case 'F':
+      loc = nsp_spcolmatrix_maxi((NspSpColMatrix *)A,flag,Imax,lhs);
+      /* Imax is for the transpose */
+      if ( lhs == 2)
+	{
+	  int ival = (*Imax)->R[0]-1;
+	  int rb= ival % A->n;
+	  int cb= (ival - rb )/A->n;
+	  (*Imax)->R[0]= rb +1 + cb*A->m;
+	}
+      break;
+    case 'r':
+    case 'R':
+      loc = nsp_spcolmatrix_maxi((NspSpColMatrix *)A,"c",Imax,lhs);break;
+    case 'c':
+    case 'C': 
+      loc = nsp_spcolmatrix_maxi((NspSpColMatrix *)A,"r",Imax,lhs);break;
+    }
+  if ( lhs == 2 )
+    {
+      int ival = (*Imax)->m;
+      (*Imax)->m = (*Imax)->n;
+      (*Imax)->n = ival;
+    }
+  return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
 
@@ -2914,7 +2525,6 @@ NspSpRowMatrix *nsp_sprowmatrix_zeros(int m, int n)
 typedef double (*Func1) (double);
 typedef void   (*Func2) (const doubleC *, doubleC *);
 
-
 static NspMatrix* SpUnary2Full(NspSpRowMatrix *A, Func1 F1, Func2 F2)
 {
   double val ;
@@ -2950,6 +2560,7 @@ static NspMatrix* SpUnary2Full(NspSpRowMatrix *A, Func1 F1, Func2 F2)
     }
   return Loc;
 }
+
 /**
  * nsp_sprowmatrix_acos:
  * @A: 
@@ -2961,7 +2572,7 @@ static NspMatrix* SpUnary2Full(NspSpRowMatrix *A, Func1 F1, Func2 F2)
 
 NspMatrix *nsp_sprowmatrix_acos(NspSpRowMatrix *A)
 {
-  return SpUnary2Full(A,acosh,nsp_acosh_c);
+  return SpUnary2Full(A,acos,nsp_acos_c);
 }
 
 /*
@@ -2980,7 +2591,7 @@ NspMatrix *nsp_sprowmatrix_acos(NspSpRowMatrix *A)
 
 NspMatrix *nsp_sprowmatrix_acosh(NspSpRowMatrix *A)
 {
-  return SpUnary2Full(A,acos,nsp_acos_c);
+  return SpUnary2Full(A,acosh,nsp_acosh_c);
 }
 
 
@@ -3153,25 +2764,7 @@ void nsp_sprowmatrix_round(NspSpRowMatrix *A)
 
 int nsp_sprowmatrix_sign(NspSpRowMatrix *A)
 {
-  int i,k ;
-  if ( A->rc_type == 'r') 
-    {
-      for ( i = 0 ; i < A->m ; i++)
-	for ( k=0; k < A->D[i]->size ; k++ ) 
-	  {
-	    if (A->D[i]->R[k] > 0.0) 
-	      A->D[i]->R[k] = 1.00;
-	    else if (A->D[i]->R[k] < 0.0) 
-	      A->D[i]->R[k] = -1.00;
-	  }
-    }
-  else
-    {
-      for ( i = 0 ; i < A->m ; i++)
-	for ( k=0; k < A->D[i]->size ; k++ ) 
-	  nsp_signum_c(&A->D[i]->C[k],&A->D[i]->C[k]);
-    }
-  return(OK);
+  return nsp_spcolmatrix_sign((NspSpColMatrix *)A);
 }
 
 /**
@@ -3237,19 +2830,7 @@ int nsp_sprowmatrix_abs(NspSpRowMatrix *A)
 
 int nsp_sprowmatrix_erf(NspSpRowMatrix *A)
 {
-  int i,k ;
-  if ( A->rc_type == 'r') 
-    {
-      for ( i = 0 ; i < A->m ; i++)
-	for ( k=0; k < A->D[i]->size ; k++ ) 
-	  A->D[i]->R[k] = erf(A->D[i]->R[k]);
-    }
-  else
-    {
-      Scierror("Error:\t erf function argument must be real\n");
-      return(FAIL);
-    }
-  return(OK);
+  return nsp_spcolmatrix_erf((NspSpColMatrix *)A);
 }
 /**
  * nsp_sprowmatrix_erf:
@@ -3334,18 +2915,7 @@ int nsp_sprowmatrix_arg(NspSpRowMatrix *A)
 
 void nsp_sprowmatrix_conj(NspSpRowMatrix *A)
 {
-  int i,k;
-  switch ( A->rc_type ) 
-    {
-    case 'r' : break;
-    case 'c' : 
-      for ( i = 0 ; i < A->m ; i++)
-	{
-	  for ( k= 0 ; k < A->D[i]->size; k++ ) 
-	    A->D[i]->C[k].i = - A->D[i]->C[k].i;
-	}
-      break;
-    }
+  return nsp_spcolmatrix_conj((NspSpColMatrix *)A);
 }
 
 
@@ -3511,25 +3081,7 @@ int nsp_sprowmatrix_sqrtel(NspSpRowMatrix *A)
 
 int nsp_sprowmatrix_minus(NspSpRowMatrix *A)
 {
-  int i,k ;
-  if ( A->rc_type  == 'r') 
-    {
-      for ( i = 0 ; i < A->m ; i++)
-	for ( k = 0 ; k < A->D[i]->size ; k++)
-	  {
-	    A->D[i]->R[k] = - A->D[i]->R[k];
-	  }
-    }
-  else
-    {
-      for ( i = 0 ; i < A->m ; i++)
-	for ( k = 0 ; k < A->D[i]->size ; k++)
-	  {
-	    A->D[i]->C[k].r = - A->D[i]->C[k].r;
-	    A->D[i]->C[k].i = - A->D[i]->C[k].i;
-	  }
-    }
-  return(OK);
+  return nsp_spcolmatrix_minus((NspSpColMatrix *)A);
 }
 
 

@@ -1330,6 +1330,30 @@ static int int_spcolmatrix_zeros(Stack stack, int rhs, int opt, int lhs)
   return int_spcolmatrix_eoz(stack,rhs,opt,lhs,nsp_spcolmatrix_zeros);
 }
 
+
+static int int_spcolmatrix_clean(Stack stack, int rhs, int opt, int lhs)
+{
+  double epsa =1.e-10, epsr = 1.e-10;
+  NspSpColMatrix *A;
+  CheckRhs (1, 3);
+  CheckLhs (1, 1);
+  if (rhs >= 2)
+    {
+      if (GetScalarDouble (stack, 2, &epsa) == FAIL)
+	return RET_BUG;
+    }
+  if (rhs >= 3)
+    {
+      if (GetScalarDouble (stack, 3, &epsr) == FAIL)
+	return RET_BUG;
+    }
+  if ((A = GetSpColCopy(stack, 1)) == NULL)
+    return RET_BUG;
+  nsp_spcolmatrix_clean (A, rhs, epsa, epsr);
+  NSP_OBJECT (A)->ret_pos = 1;
+  return 1;
+}
+
 static int int_spcolmatrix_sprand(Stack stack, int rhs, int opt, int lhs)
 {
   char *str;
@@ -1836,6 +1860,7 @@ static OpTab SpColMatrix_func[]={
   {"log_sp",int_spcolmatrix_logel},
   {"exp_sp",int_spcolmatrix_expel},
   {"sprand",int_spcolmatrix_sprand},  
+  {"clean_spcol",int_spcolmatrix_clean},  
   {(char *) 0, NULL}
 };
 

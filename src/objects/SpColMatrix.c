@@ -3847,7 +3847,7 @@ int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
       /* remove null elements and resize rows **/
       if ( n != 0 ) 
 	{
-	  int ndel =nsp_spcolmatrix_compress_col(A,i);
+	  int ndel =nsp_spcolmatrix_compress_col_simple(A,i);
 	  if (nsp_spcolmatrix_resize_col(A,i, A->D[i]->size-ndel ) == FAIL) return(FAIL) ;
 	}
     }

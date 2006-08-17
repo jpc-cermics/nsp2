@@ -168,9 +168,9 @@ extern NspSpRowMatrix *nsp_sprowmatrix_transpose(const NspSpRowMatrix *A);
 /* SpRowMatOps.c */
 
  extern int nsp_sprowmatrix_clean(NspSpRowMatrix *A, int rhs, double epsa, double epsr); 
- extern NspMatrix *nsp_sprowmatrix_maximinitt_g(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int minmaxflag, int *err); 
- extern NspMatrix *nsp_sprowmatrix_maxitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err); 
- extern NspMatrix *nsp_sprowmatrix_minitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err); 
+ extern NspSpRowMatrix *nsp_sprowmatrix_maximinitt_g(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int minmaxflag, int *err); 
+extern NspSpRowMatrix *nsp_sprowmatrix_maxitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err); 
+ extern NspSpRowMatrix *nsp_sprowmatrix_minitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err); 
 
 extern int nsp_sprowmatrix_triu(NspSpRowMatrix *A,int k);
 extern int nsp_sprowmatrix_tril(NspSpRowMatrix *A,int k);
@@ -211,6 +211,7 @@ extern void nsp_sprowmatrix_sinh(NspSpRowMatrix *A);
 extern int nsp_sprowmatrix_sqrtel(NspSpRowMatrix *A); 
 extern int nsp_sprowmatrix_minus(NspSpRowMatrix *A); 
 extern int nsp_sprowmatrix_find(NspSpRowMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
+extern NspSpRowMatrix *nsp_sprowmatrix_rand(int m,int n,double sparsity,char crand);
 
 extern int nsp_sprow_update_from_triplet(NspSpRowMatrix *M);
 extern int nsp_sprow_set_triplet_from_m(NspSpRowMatrix *M,int flag);
