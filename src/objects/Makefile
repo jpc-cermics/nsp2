@@ -11,7 +11,7 @@ OBJSC = Matrix.o MatOps.o MatObj.o  \
 	BMatrix.o BMatObj.o \
 	SMatrix.o SMatrix-IN.o SMatObj.o \
 	PMatrix.o PMatObj.o \
-	SpMatrix.o SpMatObj.o SpMatOps.o \
+	SpMatrix.o SpMatObj.o \
 	List.o ListObj.o \
 	Hash.o HashObj.o \
 	object.o objectlib.o \

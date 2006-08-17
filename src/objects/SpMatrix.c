@@ -103,10 +103,17 @@ NspSpColMatrix * nsp_spowmatrix_cast_to_spcol(NspSpRowMatrix *M)
   return (NspSpColMatrix *) M;
 }
 
-/*
- * Creates a Sp Matrix of size mxn with no stored date
- * Attention on peut creer une nx0 matrice XXXXX
- */
+/**
+ * nsp_sprowmatrix_create:
+ * @name: 
+ * @type: 
+ * @m: 
+ * @n: 
+ * 
+ * Creates a #NspSColMatrix of size @mx@n with no stored data
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_create(char *name, char type, int m, int n)
 {
@@ -116,13 +123,22 @@ NspSpRowMatrix *nsp_sprowmatrix_create(char *name, char type, int m, int n)
   return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
-/*
- * Creation of a Sparse Matrix with specified data
- * Scilab function sparse(rowcols,vals,[m,n])
- * if m and n  have -1 value, sizes are to be computed from 
- * rowscols (RC)
+/**
+ * nsp_sprowmatrix_sparse:
+ * @name: 
+ * @RC: 
+ * @Values: 
+ * @m: 
+ * @n: 
  * 
- */
+ * Creates a #NspSColMatrix of size @mx@n filed with values specified 
+ * in @RC ((i,j) values stored in a two column matrix) and @Values 
+ * ( A(@RC(k,1),@RC(k,2))= Values(k)).
+ * XXXX should be changed in order to cumulate values when specific
+ * indices are repeated as in Matlab.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, int m, int n)
 {
@@ -134,10 +150,16 @@ NspSpRowMatrix *nsp_sprowmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
   return nsp_spcolmatrix_cast_to_sprow(loc1);
 }
 
-
-/*
- * Scilab function [rc,vals,mn]= spget(sp)
- */
+/**
+ * nsp_sprowmatrix_get:
+ * @A: 
+ * @RC: 
+ * @Values: 
+ * 
+ * get a @RC,@Values description of the sparse matrix @A
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_get(NspSpRowMatrix *A, NspMatrix **RC, NspMatrix **Values)
 {
@@ -152,10 +174,14 @@ int nsp_sprowmatrix_get(NspSpRowMatrix *A, NspMatrix **RC, NspMatrix **Values)
   return OK;
 }
 
-/*
- * Res =nsp_sprowmatrix_copy(A) 
- * Copy a sparse matrix in Res : res is created 
- */
+/**
+ * nsp_sprowmatrix_copy:
+ * @A: 
+ * 
+ * returns a copy of sparse matrix @A.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_copy(NspSpRowMatrix *A)
 {
@@ -164,7 +190,7 @@ NspSpRowMatrix *nsp_sprowmatrix_copy(NspSpRowMatrix *A)
   return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
-/*
+/* XXX
  * Resize the ith Row 
  * if Row->size = 0 the Row is created with n potential elements 
  * if Row->size != 0 the Row is resized ( enlarged or reduced ) 
@@ -176,37 +202,17 @@ NspSpRowMatrix *nsp_sprowmatrix_copy(NspSpRowMatrix *A)
 
 int nsp_sprowmatrix_resize_row(NspSpRowMatrix *Sp, int i, int n)
 {
-  SpRow *Row;
-  int cp = ( Sp->rc_type == 'c') ? 2 : 1;
-  Row = Sp->D[i];
-  if ( Row->size == 0 ) 
-    {
-      if ( n <= 0 ) return(OK);
-      if ((Row->J =nsp_alloc_int((int) n)) == (int *) 0) return(FAIL);
-      /* note that all data are in a union */
-      if ((Row->R =nsp_alloc_doubles(n*cp)) == (double *) 0 ) return(FAIL);
-      Row->size = n;
-      return(OK);
-    }
-  if ( Row->size == n  ) return(OK);
-  
-  if ( n <= 0 ) 
-    {
-      /* empty new size **/
-      FREE(Row->J);
-      FREE(Row->R);
-      Row->size = 0;
-      return(OK);
-    }
-  if ((Row->J =nsp_realloc_int(Row->J, n))  == (int *) 0) return(FAIL);
-  if (( Row->R =nsp_realloc_doubles(Row->R, n*cp)) == (double *) 0 ) return(FAIL);
-  Row->size = n;
-  return(OK);
+  return nsp_spcolmatrix_resize_col((NspSpColMatrix *) Sp,i,n);
 }
 
-/*
- * Destroy a Sp Matrix 
- */
+
+/**
+ * nsp_sprowmatrix_row_destroy:
+ * @Row: 
+ * 
+ * internal: destroys a #SpCol structure.
+ * 
+ **/
 
 void nsp_sprowmatrix_row_destroy(SpRow *Row)
 {
@@ -217,24 +223,44 @@ void nsp_sprowmatrix_row_destroy(SpRow *Row)
     }
 }
 
+/**
+ * nsp_sprowmatrix_destroy:
+ * @Row: 
+ * 
+ * internal: destroys a #SpCol structure.
+ * 
+ **/
+
 void nsp_sprowmatrix_destroy(NspSpRowMatrix *Mat)
 {
   nsp_spcolmatrix_destroy((NspSpColMatrix *) Mat);
 }
 
-/*
- *  nsp_sprowmatrix_nnz: computes the number of non nul elements
- *  (Number of Non Zero elements) of a  Sparse Matrix
- *  (added by Bruno)
- */
+/**
+ * nsp_sprowmatrix_nnz:
+ * @HMat: 
+ * 
+ * computes the number of non nul elements stored in 
+ * a sparse Matrix. 
+ * 
+ * Return value: the number of non nul elements.
+ **/
+
 int nsp_sprowmatrix_nnz(const NspSpRowMatrix *HMat)
 {
   return nsp_spcolmatrix_nnz((const NspSpColMatrix *) HMat);
 }
 
-/*
- *nsp_sprowmatrix_info: display Info on Sparse Matrix
- */
+
+/**
+ * nsp_sprowmatrix_info:
+ * @Sp: 
+ * @indent: 
+ * @name: 
+ * @rec_level: 
+ * 
+ * displays info on Sparse Matrix @Sp.
+ **/
 
 void nsp_sprowmatrix_info(NspSpRowMatrix *Sp, int indent,char *name,int rec_level)
 { 
@@ -251,10 +277,15 @@ void nsp_sprowmatrix_info(NspSpRowMatrix *Sp, int indent,char *name,int rec_leve
     Sciprintf("Spmatrix %s %c (%dx%d)\n",NSP_OBJECT(Sp)->name,Sp->rc_type, Sp->m,Sp->n);
 }
 
-
-/*
- *	 Writes Sp, Sp remains unchanged 
- */
+/**
+ * nsp_spcolmatrix_print:
+ * @Sp: 
+ * @indent: 
+ * @name: 
+ * @rec_level: 
+ * 
+ * displays a sparse Matrix.
+ **/
 
 void nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_level)
 { 
@@ -299,13 +330,23 @@ void nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_le
     }
 }
 
-/*
- *nsp_sprowmatrix_redim: Changes matrix dimensions to mxn 
- *   the product m*n must be unchanged and 
- *   the stored data is kept considering that data are stored 
- *   columnwise. 
- *   a New Matrix is returned or NULLSPROW on failure
- */
+/**
+ * nsp_sprowmatrix_redim:
+ * @A: 
+ * @m: 
+ * @n: 
+ * 
+ * If the product @mx@n is equal to @A->mw@A->n, 
+ * returns a new sparse matrix of size @mx@n. The new 
+ * matrix is filled with the values of @A assuming 
+ * columnwize order. This operation can be done 
+ * without copy on full matrices by here we have to create 
+ * a new sparse.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * XXXX: Attention c'est faux a cause du codage on obtient un redim de la 
+ *       transposée
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_redim(NspSpRowMatrix *A, int m, int n)
 {
@@ -314,24 +355,32 @@ NspSpRowMatrix *nsp_sprowmatrix_redim(NspSpRowMatrix *A, int m, int n)
   return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
-/*
- * Add m empty Rows ( Row->size = 0) to a Sparse matrix 
- * if m < Sp->m then Sp is unchanged. 
- */
+/**
+ * nsp_sprowmatrix_enlarge_cols:
+ * @Sp: 
+ * @n: 
+ * 
+ * changes the number of columns of Sp to Min(Sp->n,n);
+ *
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_enlarge_rows(NspSpRowMatrix *Sp, int m)
 {
   return nsp_spcolmatrix_enlarge_cols((NspSpColMatrix *) Sp, m);
 }
 
-/*
- *nsp_sprowmatrix_enlarge(A,m,n)
- * changes A to B= [ A , 0; 0,0 ]  
- * in such a way that B (max(A->m,m)xmax(A->n,n));
- * The result is stored in A
- * if m and n are smaller than A->m and A->n Matrix 
- * associated dimensions are not changed 
- */
+/**
+ * nsp_sprowmatrix_enlarge:
+ * @A: 
+ * @m: 
+ * @n: 
+ * 
+ * changes @A to [@A,0;0,0]  
+ * in such a way that the new size of @A is (max(A->m,m) x max(A->n,n));
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_enlarge(NspSpRowMatrix *A, int m, int n)
 {
@@ -342,20 +391,33 @@ int nsp_sprowmatrix_enlarge(NspSpRowMatrix *A, int m, int n)
   return OK;
 }
 
-/*
+/**
+ * nsp_sprowmatrix_concatr:
+ * @A: 
+ * @B: 
+ * 
  * A = [A, B] 
  * Right concatenation on A, A is changed 
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_concatr(NspSpRowMatrix *A, NspSpRowMatrix *B)
 {
   return  nsp_spcolmatrix_concatd((NspSpColMatrix *) A,(NspSpColMatrix *) B);
 }
 
-/*
- *  A=[A; B ] 
- *   Down concatenation on A 
- */
+/**
+ * nsp_sprowmatrix_concatd:
+ * @A: 
+ * @B: 
+ * 
+ *  A=[A; B ]  Down concatenation on A 
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_concatd(NspSpRowMatrix *A, NspSpRowMatrix *B)
 { 
@@ -363,11 +425,15 @@ int nsp_sprowmatrix_concatd(NspSpRowMatrix *A, NspSpRowMatrix *B)
 }
 
 
-/*
- * Diag Concatenation 
- * A = [A,0;0,B] 
- * A is changed  B is left unchanged 
- */
+/**
+ * nsp_sprowmatrix_concatdiag:
+ * @A: 
+ * @B: 
+ * 
+ * Diag Concatenation A = [A,0;0,B] 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_concatdiag(NspSpRowMatrix *A, NspSpRowMatrix *B)
 {
@@ -505,22 +571,32 @@ int nsp_sprowmatrix_get_elt(NspSpRowMatrix *B, int i, int j)
 }
 
 
-/*
+/**
+ * nsp_sprowmatrix_set_rowcol:
+ * @A: 
+ * @Rows: 
+ * @Cols: 
+ * @B: 
+ * 
  *  A(Rows,Cols) = B 
  *  A is changed and enlarged if necessary 
  *  Size Compatibility is checked between 
  *  A and B 
- *  XXXXX : Cols doit-il etre croissant ?
- *     ---> A priori non 
- *          Ce qui fait un BUG pour l'instant 
- */
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_set_rowcol(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspSpRowMatrix *B)
 {
   return nsp_spcolmatrix_set_rowcol((NspSpColMatrix *) A,Cols,Rows,(NspSpColMatrix *) B);
 }
 
-/*
+/**
+ * nsp_sprowmatrix_set_row:
+ * @A: 
+ * @Inds: 
+ * @B: 
+ * 
  *  A(Inds) = B 
  *  A is changed and enlarged if necessary 
  *  Inds is unchanged 
@@ -534,9 +610,12 @@ int nsp_sprowmatrix_set_rowcol(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix *Co
  *      A column vector B must be column 
  *      Inds must be in the range of A indices unless A is row or column or []
  *      Inds and B must have the same size or B must be scalar 
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
-int nsp_sprowmatrix_set_row(NspSpRowMatrix *A, NspMatrix *Inds, NspSpRowMatrix *B)
+int nsp_sprowmatrix_set_row(NspSpRowMatrix *A, NspMatrix *Inds, NspSpRowMatrix *B) 
 {
   int i;
   int Bscal=0;
@@ -613,37 +692,59 @@ int nsp_sprowmatrix_set_row(NspSpRowMatrix *A, NspMatrix *Inds, NspSpRowMatrix *
   return(OK);
 }
 
-/*
- *  A(:,Cols) = []
- *  A is changed. 
- *  Cols must be strictly increasing . XXXXXXX
- *  A changer 
- */
+
+/**
+ * nsp_sprowmatrix_compress_row:
+ * @A: 
+ * @i: 
+ * 
+ * compress the #SpRow structure of the @i-th column of sparse Matrix @A 
+ * by moving elements (eliminating the -1 values). the row indices 
+ * stored in A->D[i]->J are also changed during the compression assuming 
+ * that each -1 implies that the row indice is decreased by 1.
+ * [1,2,-1,4,5,6,-1,11]--> [1,2,3,4,5,9].
+ * The #SpRow structure is not reallocated
+ * 
+ * 
+ * Return value: the number of deleted elements in the column @i.
+ **/
+
+int nsp_sprowmatrix_compress_row(NspSpRowMatrix *A, int i)
+{
+  return nsp_spcolmatrix_compress_col((NspSpColMatrix *)A,i);
+}
+
+/**
+ * nsp_sprowmatrix_delete_rows:
+ * @A: 
+ * @Rows: 
+ * 
+ *  A(Rows,:) = [],  A is changed. 
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_delete_cols(NspSpRowMatrix *A, NspMatrix *Cols)
 {
   return nsp_spcolmatrix_delete_rows((NspSpColMatrix *) A,Cols);
 }
 
-
-/*
- *  A(Rows,:) = []
- *  A is changed. 
- *  Rows must be increasing XXXXXXXXXXX
- *  A Changer 
- */
+/**
+ * nsp_sprowmatrix_delete_cols:
+ * @A: 
+ * @Cols: 
+ * 
+ *  A(:,Cols) = []
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_delete_rows(NspSpRowMatrix *A, NspMatrix *Rows)
 {
   return nsp_spcolmatrix_delete_cols((NspSpColMatrix *) A,Rows);
 }
 
-/*
- *  A(elts) = []
- *  A is changed. 
- *  elts must be increasing XXXXXXXXXXX
- *  A Changer et ecrire 
- */
 
 /*
  * Res=nsp_matrix_extract(A,Rows,Cols)
@@ -713,6 +814,16 @@ static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix
   return(Loc);
 }
 
+/**
+ * nsp_sprowmatrix_extract:
+ * @A: 
+ * @Rows: 
+ * @Cols: 
+ * 
+ * returns A(Row,Cols) but @Rows is changed in the process.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_extract(NspSpRowMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
@@ -722,11 +833,15 @@ NspSpRowMatrix *nsp_sprowmatrix_extract(NspSpRowMatrix *A, NspMatrix *Rows, NspM
   return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
-/*
- * Res=nsp_matrix_extract_elements(A,Elts)
- * A unchanged, Elts
- */
-
+/**
+ * nsp_sprowmatrix_extract_elts:
+ * @A: 
+ * @Elts: 
+ * 
+ * return A(Elts)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspMatrix *Elts)
 {
@@ -781,11 +896,18 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspMatrix *Elts)
     }
 }
 
-/*
- * Res=nsp_matrix_extract_columns(A,Cols,err)
- * A unchanged
+
+/**
+ * nsp_sprowmatrix_extract_rows:
+ * @A: 
+ * @Rows: 
+ * @err: 
+ * 
+ * returns A(Rows,:) but @Rows is changed 
  * err is used inside for-loops 
- */	
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_extract_cols(NspSpRowMatrix *A, NspMatrix *Cols, int *err)
 {
@@ -800,10 +922,16 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_cols(NspSpRowMatrix *A, NspMatrix *Cols,
  * Used in for loops 
  */	
 
-/*
- * Res=nsp_matrix_extract_rows(A,Rows,err)
- * A unchanged
- */	
+/**
+ * nsp_sprowmatrix_extract_cols:
+ * @A: 
+ * @Cols: 
+ * @err: 
+ * 
+ * A(:,Cols)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_extract_rows(NspSpRowMatrix *A, NspMatrix *Rows, int *err)
 {
@@ -813,237 +941,70 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_rows(NspSpRowMatrix *A, NspMatrix *Rows,
   return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
-/*
- * Returns the kthe diag of a Sparse NspMatrix as a Sparse 
- * Column 
- * Note : 
- * Note that sparse column vector storage is bigger than 
- * row sparse vector storage and returning a sparse row 
- * could be a better idea 
- */
+
+/**
+ * nsp_sprowmatrix_diag_extract:
+ * @A: 
+ * @k: 
+ * 
+ * 
+ * Returns the kthe diag of a Sparse NspMatrix as a Sparse Row.
+ * 
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_diag_extract(NspSpRowMatrix *A, int k)
 {
-  NspSpRowMatrix *Loc;
-  int j,i;
-  int imin,imax;
-  imin = Max(0,-k);
-  imax = Min(A->m,A->n -k );
-  if ( imin > imax ) 
-    {
-      Loc =nsp_sprowmatrix_create(NVOID,A->rc_type,(int) 0 , (int) 0);
-      return(Loc);
-    }
-  if (( Loc =nsp_sprowmatrix_create(NVOID,A->rc_type,imax-imin,(int)1))==NULLSPROW)  return NULLSPROW;
-  for ( i = 0 ; i < Loc->m ; i++ ) 
-    { 
-      int ia= i+imin;
-      int ok=-1;
-      for ( j = 0 ; j < A->D[ia]->size ; j++) 
-	{
-	  if ( A->D[ia]->J[j] == ia+k) 
-	    {
-	      ok=j;break;
-	    }
-	  if ( A->D[ia]->J[j] > ia+k ) break;
-	}
-      if ( ok != -1 ) 
-	{
-	  if (nsp_sprowmatrix_resize_row(Loc,i,1)==FAIL) return NULLSPROW;  
-	  Loc->D[i]->J[0] = 0;
-	  if ( A->rc_type == 'c' )
-	    Loc->D[i]->C[0] = A->D[ia]->C[ok];
-	  else 
-	    Loc->D[i]->R[0] = A->D[ia]->R[ok];
-	}
-    }
-  return Loc;
+  NspSpColMatrix *loc;
+  loc = nsp_spcolmatrix_diag_extract((NspSpColMatrix *) A,-k);
+  return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
-/*
- * Set the kth Diag of A to Diag 
- *  A is enlarged & comlexified if necessary 
- *  int nsp_sprowmatrix_diag_create(A,Diag,k)
- * Diag is a sparse nxm matrix 
- */
-
-static int  GetDiagVal (NspSpRowMatrix *Diag,int i,double *val,doubleC *cval);
+/**
+ * nsp_sprowmatrix_diag_set:
+ * @A: 
+ * @Diag: 
+ * @k: 
+ * 
+ * sets the kth diagonal of A to Diag 
+ * A is enlarged and complexified if necessary 
+ * 
+ * Return value: 
+ **/
 
 int nsp_sprowmatrix_diag_set(NspSpRowMatrix *A, NspSpRowMatrix *Diag, int k)
 {
-  int i,l;
-  int imin,imax,isize;
-  imin = Max(0,-k);
-  imax = Min(A->m,A->n -k );
-  isize = imax-imin ;
-  if ( isize > Diag->mn ) 
-    {
-      Scierror("Error:\tGiven vector is too small\n");
-      return(FAIL);
-    }
-  if ( isize < Diag->mn ) 
-    {
-      imax = Diag->mn +imin;
-      /* enlarge A rows if necessary **/
-      if (nsp_sprowmatrix_enlarge_rows(A,imax) == FAIL ) return FAIL;
-      A->n = imax+k;
-    }
-  if ( Diag->rc_type == 'c' && A->rc_type == 'r' ) 
-    if (nsp_sprowmatrix_complexify(A) == FAIL ) return(FAIL);
-  for ( i = imin ; i < A->m ; i++ ) 
-    {
-      int rep ;
-      double val=0.0;
-      doubleC cval={0.0,0.0};
-      /* get next element to be inserted */
-      rep = GetDiagVal(Diag,i-imin,&val,&cval);
-      if ( rep  == OK  ) 
-	{
-	  int ok = 0,col=-1;
-	  /* insert new element in row i **/
-	  for ( l = 0 ; l < A->D[i]->size ; l++)
-	    {
-	      if ( A->D[i]->J[l] == i+k ) 
-		{
-		  ok = 1 ; col = l  ; break;
-		}
-	      if ( A->D[i]->J[l] > i+k ) 
-		{
-		  col = l ; break;
-		}
-	    }
-	  if ( ok != 1) 
-	    {
-	      /* increment row i by 1 **/
-	      if (nsp_sprowmatrix_resize_row(A,i,A->D[i]->size+1)==FAIL) return FAIL;
-	      /* Move data right **/
-	      if ( col != -1 ) 
-		{
-		  for ( l = A->D[i]->size -1 ; l >= col ; l--) 
-		    {
-		      A->D[i]->J[l+1] = A->D[i]->J[l]; 
-		      if ( A->rc_type == 'r' ) 
-			A->D[i]->R[l+1] = A->D[i]->R[l]; 
-		      else 
-			A->D[i]->C[l+1] = A->D[i]->C[l]; 
-		    }
-		}
-	      else 
-		{
-		  /* insertion at the end **/
-		  col = A->D[i]->size -1;
-		}
-	    }
-	  /* Now the new row is to be inserted at position col **/
-	  A->D[i]->J[col] = i+k;
-	  if ( A->rc_type == 'r' ) 
-	    {
-	      A->D[i]->R[col] = val ;
-	    }
-	  else
-	    {
-	      if ( Diag->rc_type == 'r') 
-		{
-		  A->D[i]->C[col].r  = val ;
-		  A->D[i]->C[col].i  = 0.0 ;
-		}
-	      else 
-		A->D[i]->C[col]  = cval;
-	    }
-	}
-    }
-  return(OK);
+  return nsp_spcolmatrix_diag_set((NspSpColMatrix *) A,(NspSpColMatrix *) Diag,-k);
 }
 
-/*
- * return the ith element of Diag in ival or Cval + an OK value 
- * if this element is non nul. 
- */
-
-static int  GetDiagVal(NspSpRowMatrix *Diag, int i, double *val, doubleC *cval)
-{
-  int row, col,k;
-  if ( Diag->m == 0) return FAIL;
-  row = i % Diag->m ;
-  col = (i-row ) / Diag->m ;
-  for ( k = 0 ; k < Diag->D[row]->size ; k++) 
-    {
-      if ( Diag->D[row]->J[k] == col ) 
-	{
-	  if ( Diag->rc_type == 'r' )
-	    *val = Diag->D[row]->R[k] ;
-	  else 
-	    *cval = Diag->D[row]->C[k] ;
-	  return OK ;
-	}
-      if ( Diag->D[row]->J[k] > col ) return FAIL;
-    }
-  return FAIL;
-}
-
-/*
+/**
+ * nsp_sprowmatrix_diag_create:
+ * @Diag: 
+ * @k: 
+ * 
  *  Creates a Matrix with kth diag set to Diag 
- */
+ * 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_diag_create(NspSpRowMatrix *Diag, int k)
 {
-  int i,k1;
-  int imin,imax;
-  NspSpRowMatrix *Loc;
-  imin = Max(0,-k);
-  imax = Diag->mn +imin;
-  if ((Loc =nsp_sprowmatrix_create(NVOID,Diag->rc_type,imax,imax+k))  == NULLSPROW) 
-    return(NULLSPROW);
-  if ( Diag->m == 1 )
-    {
-      for ( k1=0 ; k1 < Diag->D[0]->size ; k1++) 
-	{
-	  int j= Diag->D[0]->J[k1];
-	  int iloc = (k>0) ? j : j-k;
-	  int jloc = (k>0) ? j+k : j;
-	  if (nsp_sprowmatrix_resize_row(Loc,iloc,1)==FAIL) return NULLSPROW;
-	  Loc->D[iloc]->J[0] = jloc;
-	  switch ( Loc->rc_type ) 
-	    {
-	    case 'r' : Loc->D[iloc]->R[0] = Diag->D[0]->R[k1];break;
-	    case 'c' : Loc->D[iloc]->C[0] = Diag->D[0]->C[k1];break;
-	    }
-	}
-    }
-  else if ( Diag->n == 1) 
-    {
-      for ( i=0 ; i < Diag->m ; i++) 
-	{
-	  if ( Diag->D[i]->size != 0) 
-	    {
-	      int iloc = (k>0) ? i : i-k;
-	      int jloc = (k>0) ? i+k : i;
-	      if (nsp_sprowmatrix_resize_row(Loc,iloc,1)==FAIL) return NULLSPROW;
-	      Loc->D[iloc]->J[0] = jloc;
-	      switch ( Loc->rc_type ) 
-		{
-		case 'r' : Loc->D[iloc]->R[0] = Diag->D[i]->R[0];break;
-		case 'c' : Loc->D[iloc]->C[0] = Diag->D[i]->C[0];break;
-		}
-	    }
-	}
-    }
-  else
-    {
-      Scierror("Error: second element should be a sparse vector\n");
-      return NULLSPROW;
-    }
-  return Loc;
+  NspSpColMatrix *loc;
+  loc = nsp_spcolmatrix_diag_create((NspSpColMatrix *) Diag,-k);
+  return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
-/*
- * Multiplication of Two Sparse Matrices 
- * ------------------------
- *  multiply sparse matrices by the method of gustafson,acm t.o.m.s. 
- *  vol 4 (1978) p250. 
- *  C coded version : Chancelier 1996
- *  some modifs by Bruno Pincon 2005 to improve efficiency
- */
+/**
+ * nsp_sprowmatrix_mult:
+ * @A: 
+ * @B: 
+ * 
+ * returns @Ax@B  by the method of gustafson,acm t.o.m.s. 
+ * vol 4 (1978) p250. 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B)
 {
@@ -1053,11 +1014,15 @@ NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B)
   return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
-/*
- * nsp_sprowmatrix_mult_matrix(A,X) when A is sparse and X full
- * result B is a full matrix. Special cases have been checked
- * in the interface. (added by Bruno)
- */
+/**
+ * nsp_sprowmatrix_mult_matrix:
+ * @A: 
+ * @B: 
+ * 
+ * @Ax@B when @B is a full matrix and returns the result as a full matrix.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspMatrix *nsp_sprowmatrix_mult_matrix(NspSpRowMatrix *A, NspMatrix *X)
 {
@@ -1153,6 +1118,22 @@ NspMatrix *nsp_sprowmatrix_mult_matrix(NspSpRowMatrix *A, NspMatrix *X)
   return B;
 }
 
+/**
+ * nsp_sprowmatrix_mult_m_sp:
+ * @X: 
+ * @A: 
+ * 
+ * @Xx@A when @X is full 
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
+
+NspMatrix *nsp_sprowmatrix_mult_m_sp(NspMatrix *X,NspSpColMatrix *A)
+{
+  
+}
+
+
 /*
  * nsp_sprowmatrix_mult_scal(A,B) when B is a scalar sparse 
  * A is changed 
@@ -1181,22 +1162,33 @@ int nsp_sprowmatrix_mult_scal_old(NspSpRowMatrix *A, NspSpRowMatrix *B)
   return(OK);
 }
 
-
-
-
-/*
+/**
+ * nsp_sprowmatrix_complexify:
+ * @A: 
+ * 
  * Changes A to complex type and 
  * provide storage allocation 
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+
 
 int nsp_sprowmatrix_complexify(NspSpRowMatrix *A)
 {
   return nsp_spcolmatrix_complexify((NspSpColMatrix *) A);
 }
 
-/*
+/**
+ * nsp_sprowmatrix_setr:
+ * @A: 
+ * @d: 
+ * 
  * Set real part of all non nul elements of A to d 
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_setr(NspSpRowMatrix *A, double d)
 {
@@ -1204,10 +1196,17 @@ int nsp_sprowmatrix_setr(NspSpRowMatrix *A, double d)
 }
 
 
-/*
+/**
+ * nsp_sprowmatrix_seti:
+ * @A: 
+ * @d: 
+ * 
  * Set imag part of all non nul elements of A to d 
  * if A is real A is changed to complex 
- */
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_seti(NspSpRowMatrix *A, double d)
 {
@@ -1215,138 +1214,45 @@ int nsp_sprowmatrix_seti(NspSpRowMatrix *A, double d)
 }
 
 
-
-/*
- * Count the number of elements of A which are 
- * non zero 
- * A and val are unchanged 
- */
-
-static int  RowCountNonNull(NspMatrix *A, int i)
-{ 
-  int count=0,j;
-  switch ( A->rc_type ) 
-    {
-    case 'r' :
-      for ( j = 0 ; j < A->n ; j++ )  if (A->R[i+j*(A->m)] != 0.00 ) count++; break;
-    case 'c' :
-      for ( j = 0 ; j < A->n ; j++ )  
-	if (A->C[i+j*A->m].r  != 0.00 ||  A->C[i+j*A->m].i != 0.00)  count++;
-      break;
-    }
-  return(count);
-}
-
-#if 0 
-static int countnonnull(NspMatrix *A)
-{ 
-  int count=0,i;
-  for ( i = 0 ; i < A->m ; i++ ) count +=  RowCountNonNull(A,(int)i);
-  return(count);
-}
-#endif 
-
-/*
- * Converts a full Matrix to a Sparse one 
- * used for test on sparse matrix 
- * we have two solutions 
- *  [1] use CountNonNull 
- *  [2] SpCreates with 256 elements 
- *        and SpIncrease to increase Storage 
- *        Fix storage at end 
- */
+/**
+ * nsp_sprowmatrix_from_mat:
+ * @A: 
+ * 
+ * from full to sparse.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_from_mat(NspMatrix *A)
 { 
-  /* nnul : counts non nul elements in the sparse matrix 
-   * count : count non nul elements in row i */
-  int i,j;
-  NspSpRowMatrix *Sp;
-  if (( Sp =nsp_sprowmatrix_create(NVOID,A->rc_type,A->m,A->n))== NULLSPROW) return(NULLSPROW);
-  /* first pass to count non null elements on rows */
-  for ( i = 0 ; i < A->m ; i++ ) 
-    { 
-      int count;
-      count =  RowCountNonNull(A,(int)i) ;
-      if (nsp_sprowmatrix_resize_row(Sp,i,count) == FAIL) return(NULLSPROW) ;
-    }
-  /* Storing Datas */
-  for ( i = 0 ; i < A->m ; i++ ) 
-    { 
-      SpRow *Ri = Sp->D[i];
-      int count = 0;
-      switch ( A->rc_type ) 
-	{
-	case 'r' :
-	  for ( j = 0 ; j < A->n ; j++ ) 
-	    { 
-	      if ( A->R[i+j*A->m] != 0.00  ) 
-		{
-		  Ri->J[count] = j;
-		  Ri->R[count] = A->R[i+j*A->m];
-		  count++;
-		}
-	    }
-	  break ;
-	case 'c' : 
-	  for ( j = 0 ; j < A->n ; j++ ) 
-	    { 
-	      if ( A->C[i+j*A->m].r != 0.00 || A->C[i+j*A->m].i != 0.00 )
-		{
-		  Ri->J[count] = j;
-		  Ri->C[count].r  = A->C[i+j*A->m].r;
-		  Ri->C[count].i  = A->C[i+j*A->m].i;
-		  count++;
-		}
-	    }
-	}
-    }
-  return(Sp) ;
+  return nsp_spcolmatrix_cast_to_sprow(nsp_spcolmatrix_from_mat_transpose(A));
 }
 
-
-/*
- * Sparse to Full conversion 
- * mainly used for testing sparse 
- */
+/**
+ * nsp_sprowmatrix_to_mat:
+ * @Sp: 
+ * 
+ * from sparse to full.
+ * 
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
 
 NspMatrix *nsp_sprowmatrix_to_mat(NspSpRowMatrix *Sp)
 { 	
-  NspMatrix *A;
-  int i,k; 
-  A = nsp_matrix_create(NVOID,Sp->rc_type,Sp->m,Sp->n) ;
-  if ( A == NULLMAT ) { return(NULLMAT);}
-  nsp_mat_set_rval(A,0.0);
-  if ( A->rc_type == 'c') if (nsp_mat_set_ival(A,0.00) == FAIL ) return(NULLMAT);
-  for ( i = 0 ; i < Sp->m ; i++ ) 
-    {
-      SpRow *Ri = Sp->D[i] ;
-      switch ( A->rc_type ) 
-	{
-	case 'r' : 
-	  for  ( k = 0  ;  k < Ri->size ; k++)
-	    { 
-	      A->R[i+ Ri->J[k]*A->m] = Ri->R[k]  ;
-	    }
-	  break ; 
-	case 'c' :
-	  for  ( k = 0  ;  k < Ri->size ; k++)
-	    { 
-	      A->C[i+ Ri->J[k]*A->m].r = Ri->C[k].r ;
-	      A->C[i+ Ri->J[k]*A->m].i = Ri->C[k].i ;
-	    }
-	}
-    }
-  return(A);
+  return nsp_spcolmatrix_to_mat_transpose((NspSpColMatrix *) Sp);
 }
 
-/*
- * Transpose a sparse Matrix, A is unchanged 
- *  A new matrix is created 
- *  We could add a routine for vectors with a transposition without copy 
+/**
+ * nsp_sprowmatrix_transpose:
+ * @A: 
+ * 
+ * Transpose a sparse Matrix, A is unchanged and a new matrix is created and 
+ * returned. 
  * Warning : For Complex matrices transpose is a' = transp+ conj
- */
-
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_transpose(const NspSpRowMatrix *A)
 {
@@ -1567,20 +1473,46 @@ void MultttRight(SpRow *Li, char Ltype, int *count, SpRow *Bi, char Btype, int k
 {
 }
 
-/*
- *nsp_sprowmatrix_add,nsp_sprowmatrix_sub, SpMulttt
- * A+B A-B A.*B
- */
+
+/**
+ * nsp_sprowmatrix_add:
+ * @A: 
+ * @B: 
+ * 
+ * A+B
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_add(NspSpRowMatrix *A, NspSpRowMatrix *B)
 {
   return(BinaryOp(A,B,PlusLeft,PlusBoth,PlusRight));
 }
 
+/**
+ * nsp_sprowmatrix_sub:
+ * @A: 
+ * @B: 
+ * 
+ * A-B
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
 NspSpRowMatrix *nsp_sprowmatrix_sub(NspSpRowMatrix *A, NspSpRowMatrix *B)
 {
   return(BinaryOp(A,B,MinusLeft,MinusBoth,MinusRight));
 }
+
+/**
+ * nsp_sprowmatrix_multtt:
+ * @A: 
+ * @B: 
+ * 
+ * A.*B
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
 NspSpRowMatrix *nsp_sprowmatrix_multtt(NspSpRowMatrix *A, NspSpRowMatrix *B)
 {
@@ -1681,9 +1613,15 @@ static NspSpRowMatrix *BinaryOp(NspSpRowMatrix *A, NspSpRowMatrix *B, BopLeft Bi
     }
 }
 
-/*
+/**
+ * nsp_sprowmatrix_mult_scal:
+ * @A: 
+ * @B: 
+ * 
  * A = A.*B where B is a scalar sparse ( [] or scalar )
- */
+ * 
+ * Return value:  %OK or %FAIL
+ **/
 
 int nsp_sprowmatrix_mult_scal(NspSpRowMatrix *A, NspSpRowMatrix *B)
 { 
@@ -1742,7 +1680,14 @@ int nsp_sprowmatrix_mult_scal(NspSpRowMatrix *A, NspSpRowMatrix *B)
   return OK;
 }
 
-/*
+
+/**
+ * nsp_sprowmatrix_op_scal:
+ * @A: 
+ * @B: 
+ * @flag: 
+ * @op: 
+ * 
  * A = A op B where B is a scalar sparse ( [] or scalar )
  * op can be + or - 
  * if B==[] or B==[0] 
@@ -1750,7 +1695,10 @@ int nsp_sprowmatrix_mult_scal(NspSpRowMatrix *A, NspSpRowMatrix *B)
  * else a full matrix is returned and *flag == 0 
  * 
  * op can be '+'(A+B) ,'-' (A-B), '#' (-A+B)
- */
+ * 
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
 
 NspMatrix *nsp_sprowmatrix_op_scal(NspSpRowMatrix *A, NspSpRowMatrix *B, int *flag, char op)
 { 
@@ -2181,4 +2129,1512 @@ static void nsp_sprowmatrix_print_internal(nsp_num_formats *fmt,NspSpRowMatrix *
 }
 
 
-  
+/**
+ * nsp_sprowmatrix_clean:
+ * @A: 
+ * @rhs: 
+ * @epsa: 
+ * @epsr: 
+ * 
+ * A = Matclean(a) clean A according to epsa and epsr 
+ * epsa is used if rhs >= 1 
+ * epsr is used if rhs >= 2
+ * A is changed, 
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_clean(NspSpRowMatrix *A, int rhs, double epsa, double epsr)
+{
+  return nsp_spcolmatrix_clean((NspSpColMatrix *)A,rhs,epsa,epsr);
+}
+
+/**
+ * nsp_sprowmatrix_maximinitt_g:
+ * @A: 
+ * @B: 
+ * @flag: 
+ * @minmaxflag: 
+ * @err: 
+ * 
+ * max or min (A,B)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspMatrix *nsp_sprowmatrix_maximinitt_g(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int minmaxflag, int *err)
+{
+  /* Same philosophy as in BinaryOp **/
+  int i,count,k1,k2,k;
+  NspSpRowMatrix *Loc;
+  NspMatrix *Indi=NULL;
+  char type = 'r';
+  if ( SameDim(A,B) ) 
+    {
+      if ( A->rc_type == 'c' || B->rc_type == 'c' ) 
+	{
+	  Scierror("Error: Arguments must be real matrices\n");
+	  return NULLMAT;
+	}
+      /* storing indices **/
+      if ( flag == 1) 
+	{
+	  if (( Indi = nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULLMAT ) 
+	    return NULLMAT;
+	  nsp_mat_set_rval(Indi,1.0);
+	}
+      /* Buffer **/
+      if ((Loc =nsp_sprowmatrix_create(NVOID,type,1,A->n)) == NULLSPROW ) return(NULLMAT);
+      if (nsp_sprowmatrix_resize_row(Loc,1,A->n ) == FAIL) return(NULLMAT) ;
+      for ( i = 0 ; i < A->m ; i++ ) 
+	{
+	  SpRow *Ai = A->D[i];
+	  SpRow *Bi = B->D[i];
+	  /* We explore the ith line of A and B in increasing order of column 
+	     and want to merge the columns found ( in increasing order ) 
+	     when a same column number appear in both A and B we call the 
+	     2-ary operator op 
+	     This is very near to a merge sort of two sorted arrays 
+	  **/ 
+	  k1 = 0 ; k2 = 0 ; 
+	  count = 0 ; 
+	  /* merge part **/
+	  while ( k1 < Ai->size && k2 <  Bi->size) 
+	    { 
+	      int j1,j2;
+	      j1 = Ai->J[k1] ;
+	      j2 = Bi->J[k2] ;
+	      if ( j1 < j2 ) 
+		{ 
+		  /* A != 0 and B == 0 **/
+		  if ( minmaxflag*Ai->R[k1] > 0 ) 
+		    {
+		      Loc->D[0]->J[count] = j1;
+		      Loc->D[0]->R[count] = Ai->R[k1];
+		      count++;
+		    }
+		  else 
+		    {
+		      if ( flag == 1) Indi->R[i+Indi->m*j1]=2;
+		    }
+		  k1++; 
+		}
+	      else if ( j1 == j2 ) 
+		{ 
+		  /* A != 0 and B != 0 **/
+		  Loc->D[0]->J[count] = j1;
+		  if (  minmaxflag*Ai->R[k1] >   minmaxflag*Bi->R[k2] )
+		    {
+		      Loc->D[0]->R[count]=  Ai->R[k1];
+		    }
+		  else
+		    {
+		      Loc->D[0]->R[count]=  Bi->R[k2];
+		      if ( flag == 1) Indi->R[i+Indi->m*j1]=2;
+		    }
+		  count++;
+		  k1++; k2 ++; 
+
+		}
+	      else 
+		{ 
+		  /* A == 0 and B != 0 **/
+		  if (minmaxflag* Bi->R[k2] > 0 ) 
+		    {
+		      Loc->D[0]->J[count] = j2;
+		      Loc->D[0]->R[count] = Bi->R[k2];
+		      if ( flag == 1) Indi->R[i+Indi->m*j2]=2;
+		      count++;
+		    }
+		  k2++;
+		}
+	    }
+	  /* Keep inserting remaining arguments for A **/
+	  for ( k = k1 ; k < Ai->size ; k++) 
+	    { 
+	      if ( minmaxflag*Ai->R[k] > 0 ) 
+		{
+		  Loc->D[0]->J[count] = Ai->J[k];
+		  Loc->D[0]->R[count] = Ai->R[k];
+		  count++;
+		}
+	    }
+	  /* Keep inserting remaining arguments for B **/
+	  for ( k = k2 ; k < Bi->size ; k++) 
+	    { 
+	      if ( minmaxflag* Bi->R[k] > 0 ) 
+		{
+		  Loc->D[0]->J[count] = Bi->J[k];
+		  Loc->D[0]->R[count] = Bi->R[k];
+		  if ( flag == 1) Indi->R[i+Indi->m*k]=2;
+		  count++;
+		}
+	    }
+	  /* count is not set to the proper ith row dimension  **/
+	  /* we resize A(i,:) and store Loc  **/
+	  if (nsp_sprowmatrix_resize_row(A,i,count)  == FAIL) return(NULLMAT) ;
+	  /* use icopy and dcopy XXXX **/
+	  for ( k =0 ; k < A->D[i]->size ; k++) 
+	    {
+	      A->D[i]->J[k] = Loc->D[0]->J[k];
+	      A->D[i]->R[k] = Loc->D[0]->R[k];
+	    }
+						  
+	}
+      return(Indi);
+    }
+  else 
+    {
+      Scierror("Mat1 & Mat2 don't have same size \n");
+      return(NULLMAT);
+    }
+}
+
+/**
+ * nsp_sprowmatrix_maxitt:
+ * @A: 
+ * @B: 
+ * @flag: 
+ * @err: 
+ * 
+ *  term to term max A(i;j) = Max(A(i,j),B(i,j) 
+ *  Res(i,j) = 1 or 2 or 0 
+ *   1 if Max(A(i,j),B(i,j)==A(i,j)
+ *   2 if Max(A(i,j),B(i,j)==B(i,j)
+ *   0 if A(i,j)=B(i,j)=0
+ *  A changed, B unchanged, 
+ *  Res Created if flag == 1
+ * 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+
+NspMatrix *nsp_sprowmatrix_maxitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err)
+{
+  return nsp_sprowmatrix_maximinitt_g(A,B,flag,1,err);
+}
+
+/**
+ * nsp_sprowmatrix_minitt:
+ * @A: 
+ * @B: 
+ * @flag: 
+ * @err: 
+ * 
+ *  term to term min A(i;j) = Min(A(i,j),B(i,j) 
+ *  Res(i,j) = 1 or 2 or 0 
+ *   1 if Min(A(i,j),B(i,j)==A(i,j)
+ *   2 if Min(A(i,j),B(i,j)==B(i,j)
+ *   0 if A(i,j)=B(i,j)=0
+ *  A changed, B unchanged, 
+ *  Res Created if flag == 1
+ * 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspMatrix *nsp_sprowmatrix_minitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err)
+{
+  return nsp_sprowmatrix_maximinitt_g(A,B,flag,-1,err);
+}
+
+/**
+ * nsp_sprowmatrix_realpart:
+ * @A: 
+ * 
+ * Return the Real part of Matrix A in A.
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_realpart(NspSpRowMatrix *A)
+{
+  int i,k;
+  if ( A->rc_type == 'r' )  return(OK);
+  for ( i=0 ; i < A->m ; i++)
+    {
+      int count =0; 
+      for ( k = 0 ; k < A->D[i]->size ; k++ ) 
+	{
+	  if ( A->D[i]->C[k].r != 0.0) count++;
+	}
+      if ( count != 0) 
+	{
+	  if ((A->D[i]->R =nsp_alloc_doubles((int) count)) == (double *) 0 ) 
+	    {
+	      Scierror("Error:\tRunning out of memory\n");
+	      return(FAIL);
+	    }
+	  count =0;
+	  for ( k = 0 ; k < A->D[i]->size ; k++ ) 
+	    {
+	      if ( A->D[i]->C[k].r != 0.0) 
+		{ 
+		  A->D[i]->R[count] =A->D[i]->C[k].r; count++;
+		}
+	    }
+	  FREE ( A->D[i]->C ) ;
+	}
+    }
+  A->rc_type = 'r';
+  return(OK);
+}
+
+
+/**
+ * nsp_sprowmatrix_imagpart:
+ * @A: 
+ * 
+ * Return the Imaginary part of Matrix A in A.
+ * 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_imagpart(NspSpRowMatrix *A)
+{
+  int i,k;
+  if ( A->rc_type == 'r')
+    {
+      for ( i=0 ; i < A->m ; i++ ) 
+	{
+	  if ( A->D[i]->size != 0 ) 
+	    {
+	      FREE( A->D[i]->J);
+	      FREE( A->D[i]->R);
+	      FREE( A->D[i]->C);
+	    }
+	  A->D[i]->size =0;
+	}
+    }
+  else
+    {
+      for ( i=0 ; i < A->m ; i++)
+	{
+	  int count =0; 
+	  for ( k = 0 ; k < A->D[i]->size ; k++ ) 
+	    {
+	      if ( A->D[i]->C[k].i != 0.0) count++;
+	    }
+	  if ( count != 0) 
+	    {
+	      if ((A->D[i]->R =nsp_alloc_doubles((int) count)) == (double *) 0 ) 
+		{
+		  Scierror("Error:\tRunning out of memory\n");
+		  return(FAIL);
+		}
+	      count =0;
+	      for ( k = 0 ; k < A->D[i]->size ; k++ ) 
+		{
+		  if ( A->D[i]->C[k].i != 0.0) 
+		    { 
+		      A->D[i]->R[count] =A->D[i]->C[k].i; count++;
+		    }
+		}
+	      FREE ( A->D[i]->C ) ;
+	    }
+	}
+      A->rc_type = 'r';
+    }
+  return OK;
+}
+
+/*
+ *nsp_mat_inv_el: a(i,j)=1/a(i,j) A est changee
+ */
+
+/*
+ *nsp_mat_kron: produit de Kroeneker
+ * A et B sont inchanges 
+ */
+
+/*
+ *nsp_mat_sort: Index=Sort(A)
+ * A is changed, Index created with the indexes 
+ * return NULLMAT on error 
+ * WARNING : A must be real but the test is not done here 
+ * ======
+ */
+
+/**
+ * nsp_sprowmatrix_sum:
+ * @A: 
+ * @flag: 
+ * 
+ * Sum =nsp_mat_sum(A ,B])
+ *     A is unchanged 
+ * if B= 'c' the sum for the column indices is computed 
+ *       and a column vector is returned. 
+ * if B= 'r' the sum for the row indices is computed 
+ *       and a Row vector is returned.
+ * if B= 'f' the full sum is computed 
+ * 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpRowMatrix *nsp_sprowmatrix_sum(NspSpRowMatrix *A, char *flag)
+{
+  NspSpColMatrix *loc;
+  switch ( flag[0]) 
+    {
+    case 'f':
+    case 'F':
+      loc = nsp_spcolmatrix_sum((NspSpColMatrix *)A,flag); break;
+    case 'r':
+    case 'R':
+      loc = nsp_spcolmatrix_sum((NspSpColMatrix *)A,"c"); break;
+    case 'c':
+    case 'C':
+      loc = nsp_spcolmatrix_sum((NspSpColMatrix *)A,"r"); break;
+    }
+  return nsp_spcolmatrix_cast_to_sprow(loc);
+}
+
+/*
+ * Prod =nsp_mat_prod(A ,B])
+ *     A is unchanged 
+ * if B= 'c' the prod for the column indices is computed 
+ *       and a column vector is returned. 
+ * if B= 'r' the prod for the row indices is computed 
+ *       and a Row vector is returned.
+ * if B= 'f' the full prod is computed 
+ */
+
+/*
+ *nsp_mat_cum_prod: Cumulative Product of all elements of A
+ * A is unchanged 
+ */
+
+/*
+ *nsp_mat_cum_sum: Cumulative Sum of all elements of A
+ * A is unchanged 
+ */
+
+/*
+ * Max =nsp_mat_maxi(A,B,Imax,lhs)
+ *     A is unchanged 
+ * if B= 'c' the max for the column indices is computed 
+ *       and a column vector is returned. 
+ * if B= 'r' the max for the row indices is computed 
+ *       and a Row vector is returned.
+ * if B= 'f' the maximum 
+ * Imax is created if lhs == 2 
+ *    Note that Imax is a full matrix;
+ */
+
+typedef int (*SpMaMi1) (NspSpRowMatrix *A,NspSpRowMatrix *M);
+typedef int (*SpMaMi2) (NspSpRowMatrix *A,int j,NspSpRowMatrix *M,int *count);
+typedef int (*SpMaMi3) (NspSpRowMatrix *A,int j,NspSpRowMatrix *M);
+
+static NspSpRowMatrix *SpMaxiMini(NspSpRowMatrix *A, char *flag, NspMatrix **Imax, int lhs, SpMaMi1 F1, SpMaMi2 F2, SpMaMi3 F3)
+{
+  NspSpRowMatrix *M=NULL;
+  int j;
+  int inc=1,imax,count;
+  if ( A->mn == 0 ) 
+    {
+      if ( lhs == 2) *Imax = nsp_matrix_create(NVOID,'r',0,0);
+      return nsp_sprowmatrix_create(NVOID,'r',0,0);
+    }
+  switch (flag[0]) 
+    {
+    case 'f': 
+    case 'F':
+      if ((M =nsp_sprowmatrix_create(NVOID,A->rc_type,1,1)) == NULLSPROW) return(NULLSPROW);
+      imax = (*F1)(A,M);
+      /* Check if M was properly resized **/
+      if ( imax == 0 )  return NULLSPROW;
+      
+      if ( lhs == 2 ) 
+	{
+	  if ((*Imax = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT)
+	    return NULLSPROW; 
+	  (*Imax)->R[0] = imax;
+	}
+      break;
+    case 'r':
+    case 'R':
+      if ((M =nsp_sprowmatrix_create(NVOID,A->rc_type,1,A->n)) == NULLSPROW)
+	return NULLSPROW;
+      if (nsp_sprowmatrix_resize_row(M,0,A->n) == FAIL) return NULLSPROW;
+      count =0;
+      if ( lhs == 2) 
+	{
+	  if ((*Imax = nsp_matrix_create(NVOID,'r',1,A->n)) == NULLMAT) 
+	    return NULLSPROW;
+	  for ( j= 0 ; j < A->n ; j++) 
+	    {
+	      (*Imax)->R[j]=(*F2)(A,j,M,&count); 
+	    }
+	}
+      else 
+	for ( j= 0 ; j < A->n ; j++) 
+	  {
+	    (*F2)(A,j,M,&count); 
+	  }
+      if (nsp_sprowmatrix_resize_row(M,0,count) == FAIL) return NULLSPROW;
+      break ;
+    case 'c':
+    case 'C':
+      if ((M =nsp_sprowmatrix_create(NVOID,A->rc_type,A->m,1)) == NULLSPROW) 
+	return NULLSPROW;
+      inc = A->m;
+      if ( lhs == 2) 
+	{
+	  if ((*Imax = nsp_matrix_create(NVOID,'r',A->m,1)) == NULLMAT) 
+	    return NULLSPROW; 
+	  for ( j= 0 ; j < A->m ; j++) 
+	    {
+	      int imax =  (*F3)(A,j,M);
+	      if ( imax == 0) return NULLSPROW;
+	      (*Imax)->R[j] = imax;
+	    }
+	}
+      else
+	for ( j= 0 ; j < A->m ; j++) 
+	  {
+	    int imax =  (*F3)(A,j,M);
+	    if ( imax == 0) return NULLSPROW;
+	  }
+      break;
+    }
+  return M;
+}
+
+
+/**
+ * SpColMaxi1:
+ * @A: 
+ * @M: 
+ * 
+ * M(1) = Maxi(A) max of all the elements 
+ * 
+ * 
+ * Return value: the indice of the element of Matrix @A which realize the maximum 
+ * (the indice is given as a global indice of a mxn Matrix).
+ **/
+
+static int SpMaxi1(NspSpRowMatrix *A, NspSpRowMatrix *M)
+{
+  int imax = 0,i,k;
+  double amax=0.0; imax=1;
+  /* find a first value **/
+  for ( i = 0 ; i < A->m ; i++ ) 
+    {
+      if ( A->D[i]->size !=0 ) 
+	{ amax = A->D[i]->R[0];imax = A->D[i]->J[0]+1; break;}
+    }
+  /* find the max  **/
+  for ( i = 0 ; i < A->m ; i++ ) 
+    {
+      for ( k = 0 ; k < A->D[i]->size ; k++) 
+	{
+	  if ( A->D[i]->R[k] > amax ) 
+	    {
+	      amax = A->D[i]->R[k];
+	      imax =  A->D[i]->J[k]+1;
+	    }
+	}
+    }
+  if ( amax != 0.0 )
+    {
+      if (nsp_sprowmatrix_resize_row(M,0,1) == FAIL) return 0;
+      M->D[0]->J[0]=0;
+      M->D[0]->R[0]= amax;
+    }
+  return imax;
+}
+
+/**
+ * SpColMaxi3:
+ * @A: 
+ * @j: 
+ * @M: 
+ * @count: 
+ * 
+ * utility : M(j)=Max A(j,:) : max of row j  
+ *
+ * Return value: the column indice which realize the max of row @j.
+ **/
+
+static int SpMaxi2(NspSpRowMatrix *A, int j, NspSpRowMatrix *M, int *count)
+{
+  int imax = 0,i,k;
+  double amax=0.0; imax=1;
+  /* find a first value **/
+  for ( i = 0 ; i < A->m ; i++ ) 
+    {
+      for ( k = 0 ; k < A->D[i]->size ; k++) 
+	{
+	  if ( A->D[i]->J[k] == j ) 
+	    { amax = A->D[i]->R[k] ; imax = i+1; break;}
+	  if ( j < A->D[i]->J[k] ) break;
+	}
+      if ( amax != 0.0 ) break;
+    }
+  /* find the max **/
+  for ( i = 0 ; i < A->m ; i++ ) 
+    {
+      int ok=-1;
+      for ( k = 0 ; k < A->D[i]->size ; k++) 
+	{
+	  if ( A->D[i]->J[k] == j ) { ok=k;break;}
+	  if ( j < A->D[i]->J[k] ) break;
+	}
+      if ( ok != -1 )
+	{
+	  if ( A->D[i]->R[ok] > amax ) 
+	    {
+	      amax = A->D[i]->R[k];
+	      imax = i+1;
+	    }
+	}
+    }
+  if ( amax != 0.0 )
+    {
+      M->D[0]->J[*count]= j;
+      M->D[0]->R[*count]= amax; (*count)++;
+    }
+  return imax;
+}
+
+
+/**
+ * SpColMaxi2:
+ * @A: 
+ * @j: 
+ * @M: 
+ *
+ * utility: M(j)=Max A(:,j) find the max of column j 
+ * 
+ * 
+ * Return value: the row indice which realize the max of column @j.
+ **/
+
+static int SpMaxi3(NspSpRowMatrix *A, int j, NspSpRowMatrix *M)
+{
+  int imax = 0,k;
+  double amax=0.0; imax=1;
+  /* find a first value **/
+  if ( A->D[j]->size != 0 ) { amax = A->D[j]->R[0] ; imax = A->D[j]->J[0]+1;}
+  /* find the max **/
+  for ( k = 0 ; k < A->D[j]->size ; k++) 
+    {
+      if ( A->D[j]->R[k]> amax ) 
+	{
+	  amax = A->D[j]->R[k];
+	  imax = A->D[j]->J[k]+1;
+	}
+    }
+  if ( amax != 0.0 )
+    {
+      if (nsp_sprowmatrix_resize_row(M,j,1) == FAIL) return 0;
+      M->D[j]->J[0]= 0;
+      M->D[j]->R[0]= amax;
+    }
+  return imax;
+}
+
+/**
+ * nsp_sprowmatrix_maxi:
+ * @A: 
+ * @flag: 
+ * @Imax: 
+ * @lhs: 
+ * 
+ * [max,imax]=max(A,'c'|'r'|'g')
+ * Max =nsp_mat_maxi(A,B,Imax,lhs)
+ *     A is unchanged 
+ * if B= 'c' the max for the column indices is computed 
+ *       and a column vector is returned. 
+ * if B= 'r' the max for the row indices is computed 
+ *       and a Row vector is returned.
+ * if B= 'f' the maximum 
+ * Imax is created if lhs == 2 
+ * Note that Imax is a full matrix XXX not a good idea ? 
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpRowMatrix *nsp_sprowmatrix_maxi(NspSpRowMatrix *A, char *flag, NspMatrix **Imax, int lhs)
+{
+  return SpMaxiMini(A,flag,Imax,lhs,SpMaxi1,SpMaxi2,SpMaxi3);
+}
+
+
+/*
+ *nsp_mat_mini: Mini(A)
+ * A is unchanged 
+ * rs and ri are set to the result 
+ */
+
+/*
+ * Creates a Matrix and initialize it with the 
+ * function func 
+ * R=func(i,j) or R=func(i,j,&Imag) 
+ */
+
+
+/**
+ * nsp_sprowmatrix_triu:
+ * @A: 
+ * @k: 
+ * 
+ * A=Triu(A)
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_triu(NspSpRowMatrix *A,int k)
+{
+  return nsp_spcolmatrix_tril((NspSpColMatrix *) A,-k);
+}
+
+
+/**
+ * nsp_sprowmatrix_tril:
+ * @A: 
+ * @k: 
+ * 
+ * A=Tril(A)
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_tril(NspSpRowMatrix *A,int k)
+{
+  return nsp_spcolmatrix_triu((NspSpColMatrix *) A,-k);
+}
+
+
+/**
+ * nsp_sprowmatrix_eye:
+ * @m: 
+ * @n: 
+ * 
+ * A=Eye(m,n)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpRowMatrix *nsp_sprowmatrix_eye(int m, int n)
+{
+  return nsp_spcolmatrix_cast_to_sprow(nsp_spcolmatrix_eye(n,m));
+}
+
+
+/**
+ * nsp_sprowmatrix_ones:
+ * @m: 
+ * @n: 
+ * 
+ * A=ones(m,n)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpRowMatrix *nsp_sprowmatrix_ones(int m, int n)
+{
+  return nsp_spcolmatrix_cast_to_sprow(nsp_spcolmatrix_ones(n,m));
+}
+
+
+/**
+ * nsp_sprowmatrix_zeros:
+ * @m: 
+ * @n: 
+ * 
+ * A=zeros(m,n)
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpRowMatrix *nsp_sprowmatrix_zeros(int m, int n)
+{
+  return nsp_sprowmatrix_create(NVOID,'r',m,n);
+}
+
+/*
+ *nsp_mat_rand: A=rand(m,n)
+ * A is changed  a 'ecrire ? 
+ */
+
+/*
+  A Set of term to term function on Matrices (complex or real)
+*/
+
+/*
+ *nsp_mat_pow_el(A,B) a(i,i)**b(i,i) 
+ * A is changed  since 0.^0 --> 1 the returned matrix is full
+ */
+
+/*
+ *nsp_mat_pow_scalar(A,B) a(i,i)**b
+ * A is changed 
+ */
+
+/*
+ * MatPowScalarMat(A,B) a(i,j)=b**a(i,j)
+ * A is changed 
+ */
+
+/*
+ *nsp_mat_div_el(A,B) a(i,i)/b(i,i) 
+ * A is changed 
+ */
+
+/*
+ *nsp_mat_div_scalar(A,B) a(i,i)/b
+ * A is changed 
+ */
+
+/*
+ *nsp_mat_bdiv_el(A,B) a(i,j) = a(i,j) \ b(i,j) 
+ * A is changed 
+ */
+
+/*
+ *nsp_mat_bdiv_scalar(A,B) a(i,j)= a(i,j) \ b
+ * A is changed 
+ */
+
+/*
+ * A=nsp_mat_mult_el(A,B) a(i,i).*b(i,i) 
+ * A is changed 
+ */
+
+/*
+ * A=Acos(A), 
+ * A is changed 
+ */
+
+typedef double (*Func1) (double);
+typedef void   (*Func2) (const doubleC *, doubleC *);
+
+
+static NspMatrix* SpUnary2Full(NspSpRowMatrix *A, Func1 F1, Func2 F2)
+{
+  double val ;
+  doubleC Cval,Czero={0.0,0.0};
+  int i,j,k;
+  NspMatrix *Loc;
+  if ((Loc = nsp_matrix_create(NVOID,A->rc_type,A->m,A->n))== NULLMAT) return(NULLMAT);
+  switch ( A->rc_type )
+    {
+    case 'r' : val = (*F1)(0.00); nsp_mat_set_rval(Loc,val); break;
+    case 'c' : (*F2)(&Czero,&Cval);
+      nsp_mat_set_rval(Loc,Cval.r);
+      nsp_mat_set_ival(Loc,Cval.i);
+      break;
+    }
+  if ( A->rc_type == 'r' )
+    {
+      for ( i = 0 ; i < A->m ; i++ ) 
+	for ( k = 0 ; k < A->D[i]->size ; k++) 
+	  {
+	    j= A->D[i]->J[k];
+	    Loc->R[i+Loc->m*j] = (*F1)( A->D[i]->R[k]);
+	  }
+    }
+  else
+    {
+      for ( i = 0 ; i < A->m ; i++ ) 
+	for ( k = 0 ; k < A->D[i]->size ; k++) 
+	  {
+	    j= A->D[i]->J[k];
+	    (*F2)(&A->D[i]->C[k],&Loc->C[i+Loc->m*j]);
+	  }
+    }
+  return Loc;
+}
+/**
+ * nsp_sprowmatrix_acos:
+ * @A: 
+ * 
+ * returns cos(A) as a full matrix.
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
+
+NspMatrix *nsp_sprowmatrix_acos(NspSpRowMatrix *A)
+{
+  return SpUnary2Full(A,acosh,nsp_acosh_c);
+}
+
+/*
+ * A=Acosh(A), 
+ * A is changed 
+ */
+
+/**
+ * nsp_sprowmatrix_acosh:
+ * @A: 
+ * 
+ * returns cosh(A) as a full matrix.
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
+
+NspMatrix *nsp_sprowmatrix_acosh(NspSpRowMatrix *A)
+{
+  return SpUnary2Full(A,acos,nsp_acos_c);
+}
+
+
+/*
+ * Generic Function for Sparse unary operators 
+ * computes A=f1(A) or A=f2(A) assuming fi(0)=0
+ */
+
+static void  SpUnary(NspSpRowMatrix *A, Func1 F1, Func2 F2)
+{
+  int i,k,compress,ndel;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i = 0 ; i < A->m ; i++)
+	{
+	  compress=0;
+	  for ( k=0; k < A->D[i]->size ; k++ ) 
+	    {
+	      A->D[i]->R[k] = (*F1)(A->D[i]->R[k]);
+	      if ( A->D[i]->R[k] == 0.0) 
+		{
+		  compress=1; A->D[i]->J[k]=-1;
+		}
+	    }
+	  if ( compress == 1) 
+	    {
+	      ndel =nsp_sprowmatrix_compress_row(A,i);
+	      nsp_sprowmatrix_resize_row(A,i,A->D[i]->size-ndel);
+	    }
+	}
+    }
+  else
+    {
+      for ( i = 0 ; i < A->m ; i++)
+	{
+	  compress=0;
+	  for ( k=0; k < A->D[i]->size ; k++ ) 
+	    {
+	      (*F2)(&A->D[i]->C[k],&A->D[i]->C[k]);
+	      if ( A->D[i]->C[k].r == 0.0 &&  A->D[i]->C[k].i == 0.0 )
+		{
+		  compress=1;
+		  A->D[i]->J[k]=-1;
+		}
+	    }
+	  if ( compress == 1) 
+	    {
+	      ndel =nsp_sprowmatrix_compress_row(A,i);
+	      nsp_sprowmatrix_resize_row(A,i,A->D[i]->size-ndel);
+	    }
+	}
+    }
+}
+
+/**
+ * nsp_sprowmatrix_asin:
+ * @A: 
+ * A=asin(A)
+ * 
+ **/
+
+
+void nsp_sprowmatrix_asin(NspSpRowMatrix *A)
+{
+  SpUnary(A,asin,nsp_asin_c);
+}
+
+/**
+ * nsp_sprowmatrix_asinh:
+ * @A: 
+ * 
+ * A=Asinh(A),
+ **/
+
+void nsp_sprowmatrix_asinh(NspSpRowMatrix *A)
+{
+  SpUnary(A,asinh,nsp_asinh_c);
+}
+
+/**
+ * nsp_sprowmatrix_atan:
+ * @A: 
+ * 
+ * A=Atan(A),
+ **/
+
+void nsp_sprowmatrix_atan(NspSpRowMatrix *A)
+{
+  SpUnary(A,atan,nsp_atan_c);
+}
+
+
+/**
+ * nsp_sprowmatrix_atanh:
+ * @A: 
+ * 
+ * A=Atanh(A)
+ **/
+
+void nsp_sprowmatrix_atanh(NspSpRowMatrix *A)
+{
+  SpUnary(A,atanh,nsp_atanh_c);
+}
+
+
+/**
+ * nsp_sprowmatrix_ceil:
+ * @A: 
+ * 
+ * A=Ceil(A)
+ **/
+
+void nsp_sprowmatrix_ceil(NspSpRowMatrix *A)
+{
+  SpUnary(A,ceil,nsp_ceil_c);
+}
+
+
+
+static double R_aint(double x) { return aint(x);} 
+/** 
+ * nsp_sprowmatrix_int:
+ * @A: 
+ * 
+ * 
+ * A=Int(A)
+ **/
+
+void nsp_sprowmatrix_int(NspSpRowMatrix *A)
+{
+  SpUnary(A,R_aint,nsp_aint_c);
+}
+
+
+/**
+ * nsp_sprowmatrix_floor:
+ * @A: 
+ * 
+ * A=Floor(A) 
+ **/
+
+void nsp_sprowmatrix_floor(NspSpRowMatrix *A)
+{
+  SpUnary(A,floor,nsp_floor_c);
+}
+
+
+
+static double R_anint(double x) { return anint(x);} 
+/**
+ *nsp_sprowmatrix_round: 
+ * @A: 
+ * 
+ * A=Round(A)
+ **/
+
+void nsp_sprowmatrix_round(NspSpRowMatrix *A)
+{
+  SpUnary(A,R_anint,nsp_round_c);
+}
+
+/**
+ * nsp_sprowmatrix_sign:
+ * @A: 
+ * 
+ * 
+ * A=Sign(A)
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_sign(NspSpRowMatrix *A)
+{
+  int i,k ;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i = 0 ; i < A->m ; i++)
+	for ( k=0; k < A->D[i]->size ; k++ ) 
+	  {
+	    if (A->D[i]->R[k] > 0.0) 
+	      A->D[i]->R[k] = 1.00;
+	    else if (A->D[i]->R[k] < 0.0) 
+	      A->D[i]->R[k] = -1.00;
+	  }
+    }
+  else
+    {
+      for ( i = 0 ; i < A->m ; i++)
+	for ( k=0; k < A->D[i]->size ; k++ ) 
+	  nsp_signum_c(&A->D[i]->C[k],&A->D[i]->C[k]);
+    }
+  return(OK);
+}
+
+/**
+ * nsp_sprowmatrix_tan:
+ * @A: 
+ * 
+ * A=Tan(A) 
+ **/
+
+void nsp_sprowmatrix_tan(NspSpRowMatrix *A)
+{
+  SpUnary(A,tan,nsp_tan_c);
+}
+
+/**
+ * nsp_sprowmatrix_tanh:
+ * @A: 
+ * 
+ * A=Tanh(A)
+ **/
+
+void nsp_sprowmatrix_tanh(NspSpRowMatrix *A)
+{
+  SpUnary(A,tanh,nsp_tanh_c);
+}
+
+/**
+ * nsp_sprowmatrix_abs:
+ * @A: 
+ * 
+ * 
+ * A=Abs(A), absolue value or module of each element 
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_abs(NspSpRowMatrix *A)
+{
+  int i,k ;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i = 0 ; i < A->m ; i++)
+	for ( k=0; k < A->D[i]->size ; k++ ) 
+	  A->D[i]->R[k] = fabs(A->D[i]->R[k]);
+    }
+  else
+    {
+      for ( i = 0 ; i < A->m ; i++)
+	for ( k=0; k < A->D[i]->size ; k++ ) 
+	  A->D[i]->C[k].r =nsp_abs_c(&A->D[i]->C[k]);
+      if (nsp_sprowmatrix_realpart(A) == FAIL) return FAIL;
+    }
+  return(OK);
+}
+
+/**
+ * nsp_sprowmatrix_erf:
+ * @A: 
+ * 
+ * 
+ * A=Erf(A), Erf function 
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_erf(NspSpRowMatrix *A)
+{
+  int i,k ;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i = 0 ; i < A->m ; i++)
+	for ( k=0; k < A->D[i]->size ; k++ ) 
+	  A->D[i]->R[k] = erf(A->D[i]->R[k]);
+    }
+  else
+    {
+      Scierror("Error:\t erf function argument must be real\n");
+      return(FAIL);
+    }
+  return(OK);
+}
+/**
+ * nsp_sprowmatrix_erf:
+ * @A: 
+ * 
+ * 
+ * A=Erf(A), Erf function 
+ * Return value:  %OK or %FAIL
+ **/
+
+/*
+ * A=Erfc(A), Erf function 
+ */
+
+/*
+  int SpErfc(A)
+  NspSpRowMatrix *A;
+  {
+  int i ;
+  if ( A->rc_type == 'r') 
+  {
+  for ( i = 0 ; i < A->mn ; i++) A->R[i]= erfc(A->R[i]);
+  }
+  else
+  {
+  Scierror("Erf function argument must be real\n");
+  return(FAIL);
+  }
+  return(OK);
+  }
+**/
+
+
+/**
+ * nsp_sprowmatrix_arg:
+ * @A: 
+ * 
+ * 
+ * A=Arg(A),
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_arg(NspSpRowMatrix *A)
+{
+  int i,k ;
+  if ( A->rc_type == 'r') 
+    {
+      /* change a to  [] sparse **/
+      for ( i=0 ; i < A->m ; i++ ) 
+	{
+	  if ( A->D[i]->size != 0 ) 
+	    {
+	      FREE( A->D[i]->J);
+	      FREE( A->D[i]->R);
+	      FREE( A->D[i]->C);
+	    }
+	  A->D[i]->size =0;
+	}
+    }
+  else
+    {
+      for ( i = 0 ; i < A->m ; i++)
+	for ( k=0; k < A->D[i]->size ; k++ ) 
+	  A->D[i]->C[k].r =nsp_arg_c(&A->D[i]->C[k]);
+      if (nsp_sprowmatrix_realpart(A) == FAIL) return FAIL;
+    }
+  return(OK);
+}
+
+/*
+ * A=Polar(A,B),
+ * A=A(cos(B)+%i*sin(B);
+ */
+
+
+/**
+ * nsp_sprowmatrix_conj:
+ * @A: 
+ * 
+ * A=real(A)-i*Imag(A) A is changed  only if imaginary 
+ **/
+
+void nsp_sprowmatrix_conj(NspSpRowMatrix *A)
+{
+  int i,k;
+  switch ( A->rc_type ) 
+    {
+    case 'r' : break;
+    case 'c' : 
+      for ( i = 0 ; i < A->m ; i++)
+	{
+	  for ( k= 0 ; k < A->D[i]->size; k++ ) 
+	    A->D[i]->C[k].i = - A->D[i]->C[k].i;
+	}
+      break;
+    }
+}
+
+
+/**
+ * nsp_sprowmatrix_cos:
+ * @A: 
+ * 
+ * 
+ * Cos(A)
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
+
+NspMatrix *nsp_sprowmatrix_cos(NspSpRowMatrix *A)
+{
+  return SpUnary2Full(A,cos,nsp_cos_c);
+}
+
+/**
+ * nsp_sprowmatrix_cosh:
+ * @A: 
+ * 
+ * 
+ * Cosh(A)
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
+
+NspMatrix *nsp_sprowmatrix_cosh(NspSpRowMatrix *A)
+{
+  return SpUnary2Full(A,cosh,nsp_cosh_c);
+}
+
+/**
+ * nsp_sprowmatrix_expel:
+ * @A: 
+ * 
+ * exp(A)
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
+
+NspMatrix *nsp_sprowmatrix_expel(NspSpRowMatrix *A)
+{
+  return SpUnary2Full(A,exp,nsp_exp_c);
+}
+
+
+/**
+ * nsp_sprowmatrix_logel:
+ * @A: 
+ * 
+ * 
+ * log(A)
+ * The real case is special since the result can be complex
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_logel(NspSpRowMatrix *A)
+{
+  int i,k;
+  if ( A->rc_type == 'r')
+    {
+      /* Check if really real or imaginary case */
+      int itr = 0;
+      for ( i=0 ; i < A->m ; i++) 
+	for ( k=0 ; k < A->D[i]->size ; k++) 
+	  if ( A->D[i]->R[k] < 0.00 ) 
+	    {
+	      itr = 1; break;
+	    }
+      if ( itr == 0) 
+	{
+	  /* real case sqrt(A) is real  */
+	  SpUnary(A,log,nsp_log_c);
+	  return OK;
+	}
+      else 
+	{
+	  /* result is complex  */
+	  if (nsp_sprowmatrix_seti(A,0.00) == FAIL ) return FAIL;
+	  SpUnary(A,log,nsp_log_c);
+	  return OK;
+	}
+    }
+  /* A is complex and sqrt(A) too **/
+  SpUnary(A,log,nsp_log_c);
+  return OK;
+}
+
+/**
+ * nsp_sprowmatrix_sin:
+ * @A: 
+ * 
+ * A=sin(A)
+ **/
+
+void nsp_sprowmatrix_sin(NspSpRowMatrix *A)
+{
+  SpUnary(A,sin,nsp_sin_c);
+}
+
+
+/**
+ * nsp_sprowmatrix_sinh:
+ * @A: 
+ * 
+ * A=Sinh(A)
+ **/
+
+void nsp_sprowmatrix_sinh(NspSpRowMatrix *A)
+{
+  SpUnary(A,sinh,nsp_sinh_c);
+}
+
+/**
+ * nsp_sprowmatrix_sqrtel:
+ * @A: 
+ * 
+ * 
+ *  A=SqrtEl(A)  term to term square root
+ * The real case is special since the result can be complex
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_sqrtel(NspSpRowMatrix *A)
+{
+  int i,k;
+  if ( A->rc_type == 'r')
+    {
+      /* Check if really real or imaginary case */
+      int itr = 0;
+      for ( i=0 ; i < A->m ; i++) 
+	for ( k=0 ; k < A->D[i]->size ; k++) 
+	  if ( A->D[i]->R[k] < 0.00 ) 
+	    {
+	      itr = 1; break;
+	    }
+      if ( itr == 0) 
+	{
+	  /* real case sqrt(A) is real  */
+	  SpUnary(A,sqrt,nsp_sqrt_c);
+	  return OK;
+	}
+      else 
+	{
+	  /* result is complex  */
+	  if (nsp_sprowmatrix_seti(A,0.00) == FAIL ) return FAIL;
+	  SpUnary(A,sqrt,nsp_sqrt_c);
+	  return OK;
+	}
+    }
+  /* A is complex and sqrt(A) too **/
+  SpUnary(A,sqrt,nsp_sqrt_c);
+  return OK;
+}
+
+/**
+ * nsp_sprowmatrix_minus:
+ * @A: 
+ * 
+ * 
+ * A= -A 
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_minus(NspSpRowMatrix *A)
+{
+  int i,k ;
+  if ( A->rc_type  == 'r') 
+    {
+      for ( i = 0 ; i < A->m ; i++)
+	for ( k = 0 ; k < A->D[i]->size ; k++)
+	  {
+	    A->D[i]->R[k] = - A->D[i]->R[k];
+	  }
+    }
+  else
+    {
+      for ( i = 0 ; i < A->m ; i++)
+	for ( k = 0 ; k < A->D[i]->size ; k++)
+	  {
+	    A->D[i]->C[k].r = - A->D[i]->C[k].r;
+	    A->D[i]->C[k].i = - A->D[i]->C[k].i;
+	  }
+    }
+  return(OK);
+}
+
+
+/*
+ * Kronecker product of two Matrices 
+ * PK is the result it must be created 
+ * before calling this function size (AmxBm,AnxBn)
+ * The rule to compute PK is the following 
+ * PK[ i + j*B->m + k*(B->m*A->m) + p*(B->m*A->m*B->n)] = a(j,p)*b(i,k)
+ * The i-loop leads to dcopy calls 
+ */
+
+/*
+ *nsp_mat_magic: A=Magic(n)
+ */
+
+/*
+ *nsp_mat_franck: A=Franck(n)
+ */
+
+/*
+ *nsp_mat_hilbert: A=Hilbert(n)
+ */
+
+/*
+ * Comparison operators
+ */
+
+/*
+ * Operation on Matrices leading to Boolean Matrices results 
+ * Res = A(i,j) op B(i;j) 
+ * with the special case : 
+ *      A(i;j)op B(0,0) or A(0,0) op B(i,j) if A or B are of size 1x1
+ *      
+ * A and B are unchanged : Res is created 
+ */
+
+/**
+ * nsp_sprowmatrix_find:
+ * @A: 
+ * @lhs: 
+ * @Res1: 
+ * @Res2: 
+ * 
+ * returns in a Matrix the indices for which the 
+ * Matrix A has non zero entries 
+ * A is left unchanged
+ * according to lhs one or two arguments are returned 
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_sprowmatrix_find(NspSpRowMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
+{
+  int k,i,count=0;
+  /* first pass for counting **/
+  for ( i=0 ; i < A->m ; i++) 
+    {
+      count += A->D[i]->size ;
+    }
+  if ( lhs == 1) 
+    {
+      *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+      if ( *Res1 == NULLMAT) return FAIL;
+      count=0;
+      for ( i = 0 ; i < A->m ; i++ )
+	{
+	  for ( k = 0 ; k < A->D[i]->size ; k++) 
+	    (*Res1)->R[count++] = A->D[i]->J[k]*A->m + i + 1;
+	}
+    }
+  else 
+    {
+      *Res1 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+      if ( *Res1 == NULLMAT) return FAIL;
+      *Res2 = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
+      if ( *Res2 == NULLMAT) return FAIL;
+      count=0;
+      for ( i = 0 ; i < A->m ; i++ )
+	{
+	  for ( k = 0 ; k < A->D[i]->size ; k++) 
+	    {
+	      (*Res1)->R[count]   = i + 1;
+	      (*Res2)->R[count++] = A->D[i]->J[k] + 1;
+	    }
+	}
+    }
+  return OK;
+}
+
+
+/**
+ * nsp_sprowmatrix_rand:
+ * @A: 
+ * @sparsity: 
+ * @crand: 
+ * 
+ * returns a new #NspSpColMatrix filled with random values ('n' or 'u') 
+ * the percent of non null elements is given by @sparsity.
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
+
+NspSpRowMatrix *nsp_sprowmatrix_rand(int m,int n,double sparsity,char crand)
+{
+  return nsp_spcolmatrix_cast_to_sprow(nsp_spcolmatrix_rand(n,m,sparsity,crand));
+}
+

@@ -2659,7 +2659,63 @@ NspSpColMatrix *nsp_spcolmatrix_from_mat(NspMatrix *A)
   return(Sp) ;
 }
 
+/**
+ * nsp_spcolmatrix_from_mat_transpose:
+ * @A: 
+ * 
+ * creates a sparse matrix filled with the transpose of @A
+ * 
+ * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ **/
 
+NspSpColMatrix *nsp_spcolmatrix_from_mat_transpose(NspMatrix *A)
+{ 
+  /* nnul : counts non nul elements in the sparse matrix 
+   * count : count non nul elements in row i 
+   */
+  int i,j;
+  NspSpColMatrix *Sp;
+  if (( Sp =nsp_spcolmatrix_create(NVOID,A->rc_type,A->n,A->m))== NULLSPCOL) return(NULLSPCOL);
+  /* first pass to count non null elements */
+  for ( i = 0 ; i < A->m ; i++ ) 
+    { 
+      int count;
+      count =  RowCountNonNull(A,(int)i) ;
+      if (nsp_spcolmatrix_resize_col(Sp,i,count) == FAIL) return(NULLSPCOL) ;
+    }
+  /* Storing Datas */
+  for ( i = 0 ; i < A->m ; i++ ) 
+    { 
+      SpCol *Ri = Sp->D[i];
+      int count = 0;
+      switch ( A->rc_type ) 
+	{
+	case 'r' :
+	  for ( j = 0 ; j < A->n ; j++ ) 
+	    { 
+	      if ( A->R[i+j*A->m] != 0.00  ) 
+		{
+		  Ri->J[count] = j;
+		  Ri->R[count] = A->R[i+j*A->m];
+		  count++;
+		}
+	    }
+	  break ;
+	case 'c' : 
+	  for ( j = 0 ; j < A->n ; j++ ) 
+	    { 
+	      if ( A->C[i+j*A->m].r != 0.00 || A->C[i+j*A->m].i != 0.00 )
+		{
+		  Ri->J[count] = j;
+		  Ri->C[count].r  = A->C[i+j*A->m].r;
+		  Ri->C[count].i  = A->C[i+j*A->m].i;
+		  count++;
+		}
+	    }
+	}
+    }
+  return(Sp) ;
+}
 
 /**
  * nsp_spcolmatrix_to_mat:
@@ -2705,6 +2761,56 @@ NspMatrix *nsp_spcolmatrix_to_mat(NspSpColMatrix *Sp)
 	    { 
 	      wC[Ri->J[k]].r = Ri->C[k].r ;
 	      wC[Ri->J[k]].i = Ri->C[k].i ;
+	    }
+	}
+    }
+  return(A);
+}
+
+/**
+ * nsp_spcolmatrix_to_mat_transpose:
+ * @Sp: 
+ * 
+ * from sparse to full. returns a full matrix 
+ * filled from the transpose of @Sp.
+ * 
+ * 
+ * Return value: a new  #NspMatrix or %NULLSPCOL
+ **/
+
+NspMatrix *nsp_spcolmatrix_to_mat_transpose(NspSpColMatrix *Sp)
+{ 	
+  double *wR;
+  doubleC *wC;
+  NspMatrix *A;
+  int i,k; 
+  A = nsp_matrix_create(NVOID,Sp->rc_type,Sp->n,Sp->m) ;
+  if ( A == NULLMAT ) { return(NULLMAT);}
+  nsp_mat_set_rval(A,0.0);
+  if ( A->rc_type == 'c') if (nsp_mat_set_ival(A,0.00) == FAIL ) return(NULLMAT);
+  /* walk on columns */
+  for ( i = 0 ; i < Sp->n ; i++ ) 
+    {
+      SpCol *Ri = Sp->D[i] ;
+      int iof = i;
+      switch ( A->rc_type ) 
+	{
+	case 'r' : 
+	  wR = A->R+iof;
+	  for  ( k = 0  ;  k < Ri->size ; k++)
+	    { 
+	      if ( Ri->J[k] > A->n || Ri->J[k] < 0) 
+		{
+		  Sciprintf("wrong column in sparse\n" );
+		}
+	      *(wR+A->m*Ri->J[k]) = Ri->R[k]  ;
+	    }
+	  break ; 
+	case 'c' :
+	  wC = A->C+iof;
+	  for  ( k = 0  ;  k < Ri->size ; k++)
+	    { 
+	      *(wC+A->m*Ri->J[k])= Ri->C[k];
 	    }
 	}
     }
@@ -4959,7 +5065,7 @@ void nsp_spcolmatrix_floor(NspSpColMatrix *A)
 static double R_anint(double x) { return anint(x);} 
 
 /**
- *nsp_mat_round: 
+ *nsp_spcolmatrix_round: 
  * @A: 
  * 
  * A=Round(A)

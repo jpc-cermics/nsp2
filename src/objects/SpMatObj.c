@@ -1617,7 +1617,7 @@ static int int_sprowmatrix_find(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab SpRowMatrix_func[]={
-  {"create_sprow",int_sprowmatrix_create},
+  {"sprow_create",int_sprowmatrix_create},
   {"m2sprow",int_sprowmatrix_m2sp},
   {"sprow2m",int_sprowmatrix_sp2m},
   {"dst_sprow_sprow",int_sprowmatrix_multt},
@@ -1631,7 +1631,7 @@ static OpTab SpRowMatrix_func[]={
   {"quote_sprow",int_sprowmatrix_quote},
   {"dprim_sprow", int_sprowmatrix_dquote},
   {"multt_sprow_sprow",int_sprowmatrix_multt}, 
-  {"spredim",int_sprowmatrix_redim},
+  {"spredim_sprow",int_sprowmatrix_redim},
   {"concatd_sprow_sprow" ,  int_sprowmatrix_concatd },
   {"concatr_sprow_sprow" ,  int_sprowmatrix_concatr },
   {"concatdiag_sprow_sprow" ,  int_sprowmatrix_concatdiag },
@@ -1648,14 +1648,14 @@ static OpTab SpRowMatrix_func[]={
   {"diag_sprow", int_sprowmatrix_diag},
   {"diag_sprow_m", int_sprowmatrix_diag},
   {"sprow_sparse", int_sprowmatrix_sparse},
-  {"spget", int_sprowmatrix_get},
+  {"spget_sprow", int_sprowmatrix_get},
   {"full_sprow",int_sprowmatrix_sp2m},
   {"full_m",int_sprowmatrix_m2m},
   {"sum_sprow_s" ,  int_sprowmatrix_sum },
   {"sum_sprow" ,  int_sprowmatrix_sum },
   {"setrowscols_sprow",int_sprowmatrix_setrc},
-  {"maxi_sprow" ,  int_sprowmatrix_maxi },
-  {"maxi_sprow_s" ,  int_sprowmatrix_maxi },
+  {"max_sprow" ,  int_sprowmatrix_maxi },
+  {"max_sprow_s" ,  int_sprowmatrix_maxi },
   {"extractelts_sprow",int_sprowmatrix_extractelts},
   {"nnz_sprow",int_sprowmatrix_nnz},
 
