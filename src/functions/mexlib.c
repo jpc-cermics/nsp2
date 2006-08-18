@@ -1930,3 +1930,40 @@ mxArray *mexGetArray(const char *name, const char *workspace)
 {
   return mexGetVariable(workspace,name);
 }
+
+
+
+/**
+ * mxSetLogical:
+ * @array_ptr: 
+ * 
+ * cast a #NspMatrix to a #NspBMatrix and converts data.
+ * 
+ **/
+
+void mxSetLogical(mxArray *array_ptr)
+{
+  if ( IsMat(array_ptr) && ((NspMatrix *) array_ptr)->rc_type == 'r') 
+    {
+      int i;
+      /* we cast the #NspMatrix to a #NspBMatrix which is always 
+       * possible 
+       */
+      NspBMatrix *M = (NspBMatrix *) array_ptr;      
+      M->type = new_type_bmatrix(T_BASE);
+      NSP_OBJECT(M)->type =(NspTypeObject *) M->type->surtype;
+      NSP_OBJECT(M)->basetype =(NspTypeBase *) M->type;
+      for ( i = 0 ; i < M->mn ; i++ ) 
+	M->B[i] = (((NspMatrix *) array_ptr)->R[i] != 0.0) ? TRUE : FALSE ;
+      return;
+    }
+  else if ( IsBMat(array_ptr) )
+    {
+      /* nothing to do */
+      return;
+    }
+  Scierror("Error: mxSetLogical failed, argument cannot be converted to logical\n");
+  nsp_mex_errjump();
+}
+
+

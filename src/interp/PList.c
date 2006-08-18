@@ -1362,22 +1362,35 @@ static void _nsp_plist_print(PList List, int indent)
 	case EMPTYCELL:
 	  Sciprintf("{}");break;
 	case P_MATRIX :
-	case P_CELL :
 	  Sciprintf("[");
 	  _nsp_plist_print_arg(List,indent);
 	  Sciprintf("]");
+	case P_CELL :
+	  Sciprintf("{");
+	  _nsp_plist_print_arg(List,indent);
+	  Sciprintf("}");
 	  break;
 	case ROWCONCAT:
 	case COLCONCAT:
 	case DIAGCONCAT:
-	case CELLROWCONCAT:
-	case CELLCOLCONCAT:
-	case CELLDIAGCONCAT:
 	  Sciprintf("[");
 	  _nsp_plist_print_arg(List,indent);
 	  nsp_print_opname(L->type);
 	  _nsp_plist_print_arg(List->next,indent);
 	  Sciprintf("]");
+	  break;
+	case CELLROWCONCAT:
+	case CELLCOLCONCAT:
+	case CELLDIAGCONCAT:
+	  if ( L->arity > 1) Sciprintf("{");
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      _nsp_plist_print_arg(List,indent);
+	      if ( j < L->arity-1)
+		nsp_print_opname(L->type);
+	      List = List->next;
+	    }
+	  if ( L->arity > 1) Sciprintf("}");
 	  break;
 	case WHILE:
 	  Sciprintf("while ") ;
@@ -1782,11 +1795,17 @@ void plist_name_to_local_id(PList List,NspHash *H)
 	case ROWCONCAT:
 	case COLCONCAT:
 	case DIAGCONCAT:
+	  Arg_name_to_local_name(List,H);
+	  Arg_name_to_local_name(List->next,H);
+	  break;
 	case CELLROWCONCAT:
 	case CELLCOLCONCAT:
 	case CELLDIAGCONCAT:
-	  Arg_name_to_local_name(List,H);
-	  Arg_name_to_local_name(List->next,H);
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      Arg_name_to_local_name(List,H);
+	      List = List->next;
+	    }
 	  break;
 	case WHILE:
 	  Arg_name_to_local_name(List,H);

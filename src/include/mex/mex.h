@@ -101,7 +101,7 @@ extern mxClassID mxGetClassID(const mxArray *ptr) ;
 #define  mxLOGICAL_CLASS  nsp_type_bmatrix_id
 #define  mxDOUBLE_CLASS  nsp_type_matrix_id
 #define  mxOBJECT_CLASS  nsp_type_object_id
-#define  mxSPARSE_CLASS  nsp_type_spmatrix_id
+#define  mxSPARSE_CLASS  nsp_type_spcolmatrix_id
 #define  mxSINGLE_CLASS  -1 
 #define  mxINT8_CLASS  -2
 #define  mxUINT8_CLASS  -3
@@ -176,6 +176,10 @@ extern bool mxIsDouble(const mxArray *array_ptr);
 
 extern mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
 				    const char **field_names);
+
+extern mxArray *mexGetVariable(const char *workspace, const char *var_name);
+extern mxArray *mexGetArray(const char *name, const char *workspace);
+extern void mxSetLogical(mxArray *array_ptr);
 
 
 #endif /* NSP_MEX */
