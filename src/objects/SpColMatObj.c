@@ -932,7 +932,7 @@ static int int_spcolmatrix_mult(Stack stack, int rhs, int opt, int lhs)
  *   A and X are left unchanged
  *   added by Bruno
  */
-static int int_spcolmatrix_multm(Stack stack, int rhs, int opt, int lhs)
+static int int_spcolmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *HMat1;
   NspMatrix *HMat2, *HMat3;
@@ -944,6 +944,7 @@ static int int_spcolmatrix_multm(Stack stack, int rhs, int opt, int lhs)
 
   if ( HMat1->mn == 0)  
     {
+      /* Not so good we need to return a full XXXX */
       NSP_OBJECT(HMat1)->ret_pos = 1;
       return 1;
     }
@@ -958,8 +959,45 @@ static int int_spcolmatrix_multm(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error:\tIncompatible dimensions\n");
       return RET_BUG;
     }
-
   if ( (HMat3 = nsp_spcolmatrix_mult_sp_m(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) HMat3);
+  return 1;
+}
+
+/*
+ *   Res = X * A , A sparse matrix, X full matrix
+ *   A and X are left unchanged
+ *   added by Bruno
+ */
+
+static int int_spcolmatrix_mult_m_sp(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *HMat2;
+  NspMatrix *HMat1, *HMat3;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+
+  if ((HMat1 = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  if ((HMat2 = GetSpCol(stack,2)) == NULLSPCOL) return RET_BUG;
+
+  if ( HMat1->mn == 0)  
+    {
+      NSP_OBJECT(HMat1)->ret_pos = 1;
+      return 1;
+    }
+  else if ( HMat2->mn == 0 )
+    {
+      /* Not so good we need to return a full XXXX */
+      NSP_OBJECT(HMat2)->ret_pos = 1;
+      return 1;
+    }
+
+  if ( HMat1->n != HMat2->m )
+    {
+      Scierror("Error:\tIncompatible dimensions\n");
+      return RET_BUG;
+    }
+  if ( (HMat3 = nsp_spcolmatrix_mult_m_sp(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat3);
   return 1;
 }
@@ -1794,7 +1832,8 @@ static OpTab SpColMatrix_func[]={
   {"sp2m",int_spcolmatrix_sp2m},
   {"dst_sp_sp",int_spcolmatrix_multt},
   {"mult_sp_sp",int_spcolmatrix_mult},
-  {"mult_sp_m",int_spcolmatrix_multm},
+  {"mult_sp_m",int_spcolmatrix_mult_sp_m},
+  {"mult_m_sp",int_spcolmatrix_mult_m_sp},
   {"plus_sp_sp",int_spcolmatrix_plus},
   {"minus_sp_sp",int_spcolmatrix_sub},
   {"minus_sp_m",int_spcolmatrix_sub},

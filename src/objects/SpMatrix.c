@@ -1113,12 +1113,12 @@ NspMatrix *nsp_sprowmatrix_mult_sp_m(NspSpRowMatrix *A, NspMatrix *X)
 NspMatrix *nsp_sprowmatrix_mult_m_sp(NspMatrix *X,NspSpRowMatrix *A)
 {
   NspMatrix *C = NULLMAT;
-  int i, j, k, l, kp,size;
+  int i, j, k, l,size;
   const int inc=1;
   char type = 'r';
   double zero=0.0;
   if ( A->rc_type == 'c' || X->rc_type == 'c' ) type = 'c';
-  if ( A->n != X->m ) 
+  if ( A->m != X->n ) 
     {
       Scierror("SpMult : incompatible arguments\n");
       return NULLMAT;
@@ -1131,11 +1131,11 @@ NspMatrix *nsp_sprowmatrix_mult_m_sp(NspMatrix *X,NspSpRowMatrix *A)
   /* X*A */
   for ( i = 0 ; i < A->m ; i++) 
     {
-      SpRow *Aj= A->D[j];
-      for ( k = 0 ;  kp < Aj->size ; kp++) 
+      SpRow *Ai= A->D[i];
+      for ( k = 0 ;  k < Ai->size ; k++) 
 	{
-	  void *val = &Aj->R[k];
-	  j = Aj->J[k];
+	  void *val = &Ai->R[k];
+	  j = Ai->J[k];
 	  /* element A(i,j) != 0 */
 	  for ( l =  0 ; l < X->m ; l++) 
 	    {

@@ -908,7 +908,7 @@ static int int_sprowmatrix_mult(Stack stack, int rhs, int opt, int lhs)
  *   A and X are left unchanged
  *   added by Bruno
  */
-static int int_sprowmatrix_multm(Stack stack, int rhs, int opt, int lhs)
+static int int_sprowmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpRowMatrix *HMat1;
   NspMatrix *HMat2, *HMat3;
@@ -920,6 +920,7 @@ static int int_sprowmatrix_multm(Stack stack, int rhs, int opt, int lhs)
 
   if ( HMat1->mn == 0)  
     {
+      /* Not so good we need to return a full XXXX */
       NSP_OBJECT(HMat1)->ret_pos = 1;
       return 1;
     }
@@ -936,6 +937,45 @@ static int int_sprowmatrix_multm(Stack stack, int rhs, int opt, int lhs)
     }
 
   if ( (HMat3 = nsp_sprowmatrix_mult_sp_m(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) HMat3);
+  return 1;
+}
+
+
+/*
+ *   Res = X * A , A sparse matrix, X full matrix
+ *   A and X are left unchanged
+ *   added by Bruno
+ */
+
+static int int_sprowmatrix_mult_m_sp(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpRowMatrix *HMat2;
+  NspMatrix *HMat1, *HMat3;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+
+  if ((HMat1 = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
+  if ((HMat2 = GetSpRow(stack,2)) == NULLSPROW) return RET_BUG;
+
+  if ( HMat1->mn == 0)  
+    {
+      NSP_OBJECT(HMat1)->ret_pos = 1;
+      return 1;
+    }
+  else if ( HMat2->mn == 0 )
+    {
+      /* Not so good we need to return a full XXXX */
+      NSP_OBJECT(HMat2)->ret_pos = 1;
+      return 1;
+    }
+
+  if ( HMat1->n != HMat2->m )
+    {
+      Scierror("Error:\tIncompatible dimensions\n");
+      return RET_BUG;
+    }
+  if ( (HMat3 = nsp_sprowmatrix_mult_m_sp(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat3);
   return 1;
 }
@@ -1761,7 +1801,9 @@ static OpTab SpRowMatrix_func[]={
   {"sprow2m",int_sprowmatrix_sp2m},
   {"dst_sprow_sprow",int_sprowmatrix_multt},
   {"mult_sprow_sprow",int_sprowmatrix_mult},
-  {"mult_sprow_m",int_sprowmatrix_multm},
+  {"mult_sprow_m",int_sprowmatrix_mult_sp_m},
+  {"mult_m_sprow",int_sprowmatrix_mult_m_sp},
+
   {"plus_sprow_sprow",int_sprowmatrix_plus},
   {"minus_sprow_sprow",int_sprowmatrix_sub},
   {"minus_sprow_m",int_sprowmatrix_sub},

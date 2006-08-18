@@ -2083,7 +2083,7 @@ NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
   if ( (pxb =nsp_alloc_int(C->m)) == NULL) goto err;
 
   /* initialize the non-zero-element indicator for row i of c. */
-  for (v = 0 ; v < B->n ; v++ )  xb[v] = -1;
+  for (v = 0 ; v < C->m ; v++ )  xb[v] = -1;
 
   /* process the columns of B */
   for (i = 0 ; i < B->n ; i++) 
