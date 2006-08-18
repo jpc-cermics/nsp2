@@ -35,25 +35,6 @@ static void nsp_sprowmatrix_print_internal(nsp_num_formats *fmt,NspSpRowMatrix *
 extern int C2F(dperm) (double A[],int ind[],int *nv);
 extern int C2F(zperm) (doubleC A[],int ind[],int *nv);
 
-typedef void (*BopLeft) (SpRow *,char,int *,SpRow *,char,int);
-typedef void (*BopBoth) (SpRow *,char,int *,SpRow *,char,int,SpRow *,char,int);
-typedef void (*BopRight) (SpRow *,char,int *,SpRow *,char,int);
-
-static NspSpRowMatrix *BinaryOp (NspSpRowMatrix *,NspSpRowMatrix *,BopLeft,BopBoth,
-			      BopRight);
-
-static void PlusLeft (SpRow *,char,int *,SpRow *,char,int);
-static void PlusBoth (SpRow *,char,int *,SpRow *,char,int,SpRow *,char,int);
-static void PlusRight (SpRow *,char,int *,SpRow *,char,int);
-
-static void MinusLeft (SpRow *,char,int *,SpRow *,char,int);
-static void MinusBoth (SpRow *,char,int *,SpRow *,char,int,SpRow *,char,int);
-static void MinusRight (SpRow *,char,int *,SpRow *,char,int);
-
-static void MultttLeft (SpRow *,char,int *,SpRow *,char,int);
-static void MultttBoth (SpRow *,char,int *,SpRow *,char,int,SpRow *,char,int);
-static void MultttRight (SpRow *,char,int *,SpRow *,char,int);
-
 static int nsp_dichotomic_search(int x,const int val[],int imin,int imax);
 
 static int nsp_bi_dichotomic_search(const double x[],int xpmin,int xpmax,const int val[],int imin,int imax,
@@ -1015,7 +996,7 @@ NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B)
 }
 
 /**
- * nsp_sprowmatrix_mult_matrix:
+ * nsp_sprowmatrix_mult_sp_m:
  * @A: 
  * @B: 
  * 
@@ -1024,7 +1005,9 @@ NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B)
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspMatrix *nsp_sprowmatrix_mult_matrix(NspSpRowMatrix *A, NspMatrix *X)
+/* (added by Bruno) */
+
+NspMatrix *nsp_sprowmatrix_mult_sp_m(NspSpRowMatrix *A, NspMatrix *X)
 {
   int i, j, k, ij, m = A->m, n = X->n, p = X->m;
   char rtype;
@@ -1114,7 +1097,6 @@ NspMatrix *nsp_sprowmatrix_mult_matrix(NspSpRowMatrix *A, NspMatrix *X)
 	    }
 	}
     }
-
   return B;
 }
 
@@ -1128,39 +1110,68 @@ NspMatrix *nsp_sprowmatrix_mult_matrix(NspSpRowMatrix *A, NspMatrix *X)
  * Return value: a new  #NspMatrix or %NULLSPCOL
  **/
 
-NspMatrix *nsp_sprowmatrix_mult_m_sp(NspMatrix *X,NspSpColMatrix *A)
+NspMatrix *nsp_sprowmatrix_mult_m_sp(NspMatrix *X,NspSpRowMatrix *A)
 {
-  
+  NspMatrix *C = NULLMAT;
+  int i, j, k, l, kp,size;
+  const int inc=1;
+  char type = 'r';
+  double zero=0.0;
+  if ( A->rc_type == 'c' || X->rc_type == 'c' ) type = 'c';
+  if ( A->n != X->m ) 
+    {
+      Scierror("SpMult : incompatible arguments\n");
+      return NULLMAT;
+    }
+
+  if ( (C =nsp_matrix_create(NVOID,type,X->m,A->n)) == NULLMAT ) return NULLMAT;
+  /* initialize to 0.0 */
+  size=(type == 'c') ? 2*C->mn : C->mn;
+  nsp_dset(&size,&zero,C->R,&inc);
+  /* X*A */
+  for ( i = 0 ; i < A->m ; i++) 
+    {
+      SpRow *Aj= A->D[j];
+      for ( k = 0 ;  kp < Aj->size ; kp++) 
+	{
+	  void *val = &Aj->R[k];
+	  j = Aj->J[k];
+	  /* element A(i,j) != 0 */
+	  for ( l =  0 ; l < X->m ; l++) 
+	    {
+	      /* C(l,j) += X(l,i)*A(i,j) */
+	      if ( C->rc_type == 'r' )
+		{
+		  C->R[l+C->m*j] += X->R[l+X->m*i]*( *((double *) val));
+		}
+	      else
+		{
+		  doubleC *z = &C->C[l+C->m*j];
+		  if ( X->rc_type == 'r') 
+		    {
+		      z->r += X->R[l+X->m*i]*((doubleC *) val)->r;
+		      z->i += X->R[l+X->m*i]*((doubleC *) val)->i;
+		    }
+		  else if ( A->rc_type == 'r' ) 
+		    {
+		      z->r  += X->C[l+X->m*i].r *( *((double *) val));
+		      z->i  += X->C[l+X->m*i].i *( *((double *) val));
+		    }
+		  else 
+		    {
+		      z->r += X->C[l+X->m*i].r * ((doubleC *) val)->r - 
+			X->C[l+X->m*i].i * ((doubleC *) val)->i;
+		      z->i += X->C[l+X->m*i].r*((doubleC *) val)->i + 
+			X->C[l+X->m*i].i *((doubleC *) val)->r;
+		    }
+		}
+	    }
+	}
+    }
+  return C;
 }
 
 
-/*
- * nsp_sprowmatrix_mult_scal(A,B) when B is a scalar sparse 
- * A is changed 
- * the fact that B is scalar is not checked 
- */
-
-int nsp_sprowmatrix_mult_scal_old(NspSpRowMatrix *A, NspSpRowMatrix *B)
-{
-  int i,k ;
-  if ( A->rc_type == 'r' &&  B->rc_type == 'c' )  
-    {
-      if (nsp_sprowmatrix_complexify(A) == FAIL ) return(FAIL);
-    }
-  if ( A->rc_type == 'r') 
-    {
-      for ( i = 0 ; i < A->m ; i++)
-	for ( k=0; k < A->D[i]->size ; k++ ) 
-	  A->D[i]->R[k] *= B->D[0]->R[0];
-    }
-  else
-    {
-      for ( i = 0 ; i < A->m ; i++)
-	for ( k=0; k < A->D[i]->size ; k++ ) 
-	  nsp_prod_c(&A->D[i]->C[k],&B->D[0]->C[0]);
-    }
-  return(OK);
-}
 
 /**
  * nsp_sprowmatrix_complexify:
@@ -1262,216 +1273,7 @@ NspSpRowMatrix *nsp_sprowmatrix_transpose(const NspSpRowMatrix *A)
   return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 
-/*
- * Utilities for term to term operations 
- */
 
-#if 0
-double  plus (double x, double y, double xi, double yi, double *ival, char type)
-{ 
-  if ( type == 'c' ) *ival = xi + yi ;
-  return( x+y ) ;
-}
-#endif 
-
-/*
- * PLus operator A Plus B 
- *   XXXLeft   is used when A(i,j) != 0  and B(i,j) == 0 
- *   XXXRight  is used when A(i,j) == 0  and B(i,j) != 0
- *   XXXBoth   is used when A(i,j) !=    and B(i,j) != 0
- */
-
-void PlusLeft(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1)
-{
-  if ( Ltype == 'r') 
-    Li->R[*count] = Ai->R[k1];
-  else 
-    { 
-      if ( Atype == 'r' )
-	{
-	  Li->C[*count].r = Ai->R[k1];
-	  Li->C[*count].i = 0.00;
-	}
-      else 
-	{
-	  Li->C[*count].r = Ai->C[k1].r;
-	  Li->C[*count].i= Ai->C[k1].i;
-	}
-    }
-  (*count)++;
-}
-
-void PlusBoth(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1, SpRow *Bi, char Btype, int k2)
-{
-  if ( Ltype == 'r') 
-    {
-      Li->R[*count] =  Ai->R[k1]+ Bi->R[k2];
-      if ( Li->R[*count] != 0.00 ) (*count)++; 
-    }
-  else 
-    {
-      if ( Btype == 'r' )
-	{
-	  Li->C[*count].r =  Ai->C[k1].r+Bi->R[k2];
-	  Li->C[*count].i =  Ai->C[k1].i;
-	}
-      else 
-	{
-	  if ( Atype == 'r' ) 
-	    {
-	      Li->C[*count].r =  Ai->R[k1]+Bi->C[k2].r;
-	      Li->C[*count].i =  Bi->C[k2].i;
-	    }
-	  else 
-	    {
-	      Li->C[*count].r =   Ai->C[k1].r + Bi->C[k2].r;
-	      Li->C[*count].i =   Ai->C[k1].i + Bi->C[k2].i;
-	    }
-	}
-      if ( Li->C[*count].r  != 0.00||  Li->C[*count].i  != 0.00 ) (*count)++; 
-    }
-}
-
-
-void PlusRight(SpRow *Li, char Ltype, int *count, SpRow *Bi, char Btype, int k1)
-{
-  if ( Ltype == 'r') 
-    Li->R[*count] = Bi->R[k1];
-  else 
-    {
-      if ( Btype == 'r' )
-	{
-	  Li->C[*count].r = Bi->R[k1];
-	  Li->C[*count].i = 0.00;
-	}
-      else 
-	{
-	  Li->C[*count].r = Bi->C[k1].r;
-	  Li->C[*count].i= Bi->C[k1].i;
-	}
-    }
-  (*count)++;
-}
-
-/*
- * Minus operator 
- */
-
-void MinusLeft(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1)
-{
-  if ( Ltype == 'r') 
-    Li->R[*count] = Ai->R[k1];
-  else 
-    { 
-      if ( Atype == 'r' )
-	{
-	  Li->C[*count].r =  Ai->R[k1];
-	  Li->C[*count].i = 0.00;
-	}
-      else 
-	{
-	  Li->C[*count].r =  Ai->C[k1].r;
-	  Li->C[*count].i=  Ai->C[k1].i;
-	}
-    }
-  (*count)++;
-}
-
-void MinusBoth(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1, SpRow *Bi, char Btype, int k2)
-{
-  if ( Ltype == 'r') 
-    {
-      Li->R[*count] =  Ai->R[k1] -  Bi->R[k2];
-      if ( Li->R[*count] != 0.00 ) (*count)++; 
-    }
-  else 
-    {
-      if ( Btype == 'r' )
-	{
-	  Li->C[*count].r =  Ai->C[k1].r - Bi->R[k2];
-	  Li->C[*count].i =  Ai->C[k1].i;
-	}
-      else 
-	{
-	  if ( Atype == 'r' ) 
-	    {
-	      Li->C[*count].r =  Ai->R[k1] - Bi->C[k2].r;
-	      Li->C[*count].i =  - Bi->C[k2].i;
-	    }
-	  else 
-	    {
-	      Li->C[*count].r =   Ai->C[k1].r - Bi->C[k2].r;
-	      Li->C[*count].i =   Ai->C[k1].i - Bi->C[k2].i;
-	    }
-	}
-      if ( Li->C[*count].r  != 0.00||  Li->C[*count].i  != 0.00 ) (*count)++; 
-    }
-}
-
-
-void MinusRight(SpRow *Li, char Ltype, int *count, SpRow *Bi, char Btype, int k1)
-{
-  if ( Ltype == 'r') 
-    Li->R[*count] = - Bi->R[k1];
-  else 
-    {
-      if ( Btype == 'r' )
-	{
-	  Li->C[*count].r = - Bi->R[k1];
-	  Li->C[*count].i = 0.00;
-	}
-      else 
-	{
-	  Li->C[*count].r = - Bi->C[k1].r;
-	  Li->C[*count].i= - Bi->C[k1].i;
-	}
-    }
-  (*count)++;
-}
-
-
-/*
- * Multtt ( term to term multiplication ) 
- */
-
-void MultttLeft(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1)
-{
-}
-
-void MultttBoth(SpRow *Li, char Ltype, int *count, SpRow *Ai, char Atype, int k1, SpRow *Bi, char Btype, int k2)
-{
-  if ( Ltype == 'r') 
-    {
-      Li->R[*count] =  Ai->R[k1]*Bi->R[k2];
-      if ( Li->R[*count] != 0.00 ) (*count)++; 
-    }
-  else 
-    {
-      if ( Btype == 'r' )
-	{
-	  Li->C[*count].r =  Ai->C[k1].r*Bi->R[k2];
-	  Li->C[*count].i =  Ai->C[k1].i*Bi->R[k2];
-	}
-      else 
-	{
-	  if ( Atype == 'r' ) 
-	    {
-	      Li->C[*count].r =  Ai->R[k1]*Bi->C[k2].r;
-	      Li->C[*count].i =  Ai->R[k1]*Bi->C[k2].i;
-	    }
-	  else 
-	    {
-	      Li->C[*count].r =   Ai->C[k1].r * Bi->C[k2].r -   Ai->C[k1].i* Bi->C[k2].i;
-	      Li->C[*count].i =   Ai->C[k1].i * Bi->C[k2].r +   Ai->C[k1].r* Bi->C[k2].i;;
-	    }
-	}
-      if ( Li->C[*count].r  != 0.00||  Li->C[*count].i  != 0.00 ) (*count)++; 
-    }
-}
-
-void MultttRight(SpRow *Li, char Ltype, int *count, SpRow *Bi, char Btype, int k1)
-{
-}
 
 
 /**
@@ -1486,7 +1288,8 @@ void MultttRight(SpRow *Li, char Ltype, int *count, SpRow *Bi, char Btype, int k
 
 NspSpRowMatrix *nsp_sprowmatrix_add(NspSpRowMatrix *A, NspSpRowMatrix *B)
 {
-  return(BinaryOp(A,B,PlusLeft,PlusBoth,PlusRight));
+  return nsp_spcolmatrix_cast_to_sprow(nsp_spcolmatrix_add((NspSpColMatrix *)A,
+							   (NspSpColMatrix *)B));
 }
 
 /**
@@ -1501,7 +1304,8 @@ NspSpRowMatrix *nsp_sprowmatrix_add(NspSpRowMatrix *A, NspSpRowMatrix *B)
 
 NspSpRowMatrix *nsp_sprowmatrix_sub(NspSpRowMatrix *A, NspSpRowMatrix *B)
 {
-  return(BinaryOp(A,B,MinusLeft,MinusBoth,MinusRight));
+  return nsp_spcolmatrix_cast_to_sprow(nsp_spcolmatrix_sub((NspSpColMatrix *)A,
+							   (NspSpColMatrix *)B));
 }
 
 /**
@@ -1516,102 +1320,12 @@ NspSpRowMatrix *nsp_sprowmatrix_sub(NspSpRowMatrix *A, NspSpRowMatrix *B)
 
 NspSpRowMatrix *nsp_sprowmatrix_multtt(NspSpRowMatrix *A, NspSpRowMatrix *B)
 {
-  return(BinaryOp(A,B,MultttLeft,MultttBoth,MultttRight));
+  return nsp_spcolmatrix_cast_to_sprow(nsp_spcolmatrix_multtt((NspSpColMatrix *)A,
+							      (NspSpColMatrix *)B));
 }
 
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
-/*
- * A generic function for performing Res(i,j) = A(i,j) op B(i,j)
- * assuming that 0 op 0 --> 0  (WARNING)
- * For performing a specific operation the function is called 
- * with three operators 
- *    BopLeft for performing  A(i,j) op B(i,j) when 
- *            A(i,j) != 0  and B(i,j) == 0 
- *    BopRight for performing A(i,j) op B(i,j) when 
- *            A(i,j) == 0  and B(i,j) != 0
- *    BopBoth  for performing A(i,j) op B(i,j) when 
- *            A(i,j) !=    and B(i,j) != 0 
- * each Bopxxx functions performs the operation, stores 
- *    the result (if #0) in the sparse matrix Loc 
- *    and increment a counter for counting #0 elements 
- */
-
-static NspSpRowMatrix *BinaryOp(NspSpRowMatrix *A, NspSpRowMatrix *B, BopLeft BinLeft, BopBoth BinBoth, BopRight BinRight)
-{ 
-  int i,count,k1,k2,k;
-  NspSpRowMatrix *Loc;
-  char type = 'r';
-  if ( SameDim(A,B) ) 
-    {
-      if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
-      Loc =nsp_sprowmatrix_create(NVOID,type, A->m,A->n);
-      if ( Loc == NULLSPROW ) return(NULLSPROW) ; 
-      for ( i = 0 ; i < Loc->m ; i++ ) 
-	{
-	  int iest;
-	  SpRow *Ai = A->D[i];
-	  SpRow *Bi = B->D[i];
-	  SpRow *Li = Loc->D[i];
-	  iest= Min( A->n, A->D[i]->size+B->D[i]->size);
-	  if (nsp_sprowmatrix_resize_row(Loc,i,(int)iest ) == FAIL) return(NULLSPROW) ;
-	  /* We explore the ith line of A and B in increasing order of column 
-	     and want to merge the columns found ( in increasing order ) 
-	     when a same column number appear in both A and B we call the 
-	     2-ary operator op 
-	     This is very near to a merge sort of two sorted arrays 
-	  **/ 
-	  k1 = 0 ; k2 = 0 ; 
-	  count = 0;
-	  /* merge part **/
-	  while ( k1 < Ai->size && k2 <  Bi->size) 
-	    { 
-	      int j1,j2;
-	      j1 = Ai->J[k1] ;
-	      j2 = Bi->J[k2] ;
-	      if ( j1 < j2 ) 
-		{ 
-		  Li->J[count] = j1;
-		  (*BinLeft)(Li,Loc->rc_type,&count,Ai,A->rc_type,k1);
-		  k1++; 
-		}
-	      else if ( j1 == j2 ) 
-		{ 
-		  Li->J[count] = j1;
-		  (*BinBoth)(Li,Loc->rc_type,&count,Ai,A->rc_type,k1,Bi,B->rc_type,k2);
-		  k1++; k2 ++; 
-		}
-	      else 
-		{ 
-		  Li->J[count] = j2;
-		  (*BinRight)(Li,Loc->rc_type,&count,Bi,B->rc_type,k2);
-		  k2++;
-		}
-	    }
-	  /* Keep inserting remaining arguments for A **/
-	  for ( k = k1 ; k < Ai->size ; k++) 
-	    { 
-	      Li->J[count] = Ai->J[k];
-	      (*BinLeft)(Li,Loc->rc_type,&count,Ai,A->rc_type,k);
-	    }
-	  /* Keep inserting remaining arguments for B **/
-	  for ( k = k2 ; k < Bi->size ; k++) 
-	    { 
-	      Li->J[count] = Bi->J[k] ;
-	      (*BinRight)(Li,Loc->rc_type,&count,Bi,B->rc_type,k);
-	    }
-	  /* Count doit maintenant nous donner la taille de la ligne i **/
-	  /* Resizer Loc->D[i] : car on peut avoir moins d'el que pr'evus **/
-	  if (nsp_sprowmatrix_resize_row(Loc,i,count) == FAIL) return(NULLSPROW) ;
-	}
-      return(Loc);
-    }
-  else 
-    {
-      Scierror("Mat1 & Mat2 don't have same size \n");
-      return(NULLSPROW);
-    }
-}
 
 /**
  * nsp_sprowmatrix_mult_scal:

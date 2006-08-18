@@ -2204,7 +2204,7 @@ NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
 
 
 /**
- * nsp_spcolmatrix_mult_matrix:
+ * nsp_spcolmatrix_mult_sp_m:
  * @A: 
  * @B: 
  * 
@@ -2213,10 +2213,10 @@ NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspMatrix *nsp_spcolmatrix_mult_matrix(NspSpColMatrix *A, NspMatrix *B)
+NspMatrix *nsp_spcolmatrix_mult_sp_m(NspSpColMatrix *A, NspMatrix *B)
 {
   NspMatrix *C = NULLMAT;
-  int i, j, k, jp, kp, neli,size;
+  int i, j, k, jp, kp,size;
   const int inc=1;
   char type = 'r';
   double zero=0.0;
@@ -2234,7 +2234,6 @@ NspMatrix *nsp_spcolmatrix_mult_matrix(NspSpColMatrix *A, NspMatrix *B)
   /* process the columns of B */
   for (i = 0 ; i < B->n ; i++) 
     {
-      neli = 0;  /* to count the number of a priori non nul elements of column i of C */
       double *BRi = &B->R[i*B->m];
       double *CRi = &C->R[i*C->m];
       doubleC *BCi = &B->C[i*B->m];
@@ -2283,6 +2282,8 @@ NspMatrix *nsp_spcolmatrix_mult_matrix(NspSpColMatrix *A, NspMatrix *B)
     }
   return C;
 }
+
+
 
 /**
  * nsp_spcolmatrix_mult_m_sp:

@@ -935,7 +935,7 @@ static int int_sprowmatrix_multm(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  if ( (HMat3 = nsp_sprowmatrix_mult_matrix(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
+  if ( (HMat3 = nsp_sprowmatrix_mult_sp_m(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat3);
   return 1;
 }
@@ -1828,7 +1828,7 @@ static OpTab SpRowMatrix_func[]={
   {"log_sprow",int_sprowmatrix_logel},
   {"exp_sprow",int_sprowmatrix_expel},
   {"sprow_rand",int_sprowmatrix_sprand},  
-  {"clean_spcol",int_sprowmatrix_clean},  
+  {"clean_sprow",int_sprowmatrix_clean},  
   {(char *) 0, NULL}
 };
 

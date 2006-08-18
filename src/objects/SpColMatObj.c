@@ -959,7 +959,7 @@ static int int_spcolmatrix_multm(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  if ( (HMat3 = nsp_spcolmatrix_mult_matrix(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
+  if ( (HMat3 = nsp_spcolmatrix_mult_sp_m(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat3);
   return 1;
 }
@@ -1860,7 +1860,7 @@ static OpTab SpColMatrix_func[]={
   {"log_sp",int_spcolmatrix_logel},
   {"exp_sp",int_spcolmatrix_expel},
   {"sprand",int_spcolmatrix_sprand},  
-  {"clean_spcol",int_spcolmatrix_clean},  
+  {"clean_sp",int_spcolmatrix_clean},  
   {(char *) 0, NULL}
 };
 
@@ -1886,6 +1886,6 @@ void SpColMatrix_Interf_Info(int i, char **fname, function (**f))
 
 
 
-
+ 
 
 
