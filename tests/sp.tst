@@ -20,7 +20,7 @@ if or(A1<>A) then pause;end
 // create 
 // same as zeros 
 
-Sp1=create_sp(7,8);
+Sp1=sp_create(7,8);
 A1=sp2m(Sp1);
 if or(A1<>zeros(7,8)) then pause;end
 
@@ -386,7 +386,11 @@ Sp1= - Sp + m2sp(4);
 if or(Sp1<>-A+4) then pause;end
 
 // nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
-// XXXXX : interface to be added 
+
+Sp1 = sparse(Sp +m2sp(0.01));
+Sp2 = clean(Sp1,0.1);
+A1=sp2m(Sp2);
+if or(A1<>clean(A+0.01,0.1)) then pause;end
 
 
 // nsp_spcolmatrix_realpart: 

@@ -5,7 +5,6 @@ rand('normal')
 //==============================      qr      ============================== 
 //==========================================================================
 //Empty matrix
-
 e=[];
 if qr(e)<>[] then pause,end
 if qr(e,mode="e")<>[] then pause,end
@@ -48,30 +47,27 @@ if Err(Q*R-A')> 200*%eps then pause,end
 [Q,R]=qr(A',mode="e");
 if Err(Q*R-A')> 200*%eps then pause,end
 
-[Q,R,x]=qr(A);
-if Err(Q*R*x'-A)> 200*%eps then pause,end
+[Q,R,p]=qr(A);
+if Err(Q*R-A(:,p))> 200*%eps then pause,end
 
-[Q,R,x]=qr(A,mode="e");
-if Err(Q*R*x'-A)> 200*%eps then pause,end
+[Q,R,p]=qr(A,mode="e");
+if Err(Q*R-A(:,p))> 200*%eps then pause,end
 
 //Complex case
 Q=qr(Ac);
 if Err(Q*Q'-eye(Q))> 200*%eps then pause,end
 Q=qr(Ac,mode="e");
-ZZ
-if Err(Q'*Q-eye())> 200*%eps then pause,end
-
+if Err(Q'*Q-eye(Q'*Q))> 200*%eps then pause,end
 [Q,R]=qr(Ac);
 if Err(Q*R-Ac)> 200*%eps then pause,end
 [Q,R]=qr(Ac,mode="e");
 if Err(Q*R-Ac)> 200*%eps then pause,end
-if Err(Q'*Q-eye())> 200*%eps then pause,end
+if Err(Q'*Q-eye(Q'*Q))> 200*%eps then pause,end
 
 Q=qr(Ac');
-if Err(Q*Q'-eye())> 200*%eps then pause,end
+if Err(Q*Q'-eye(Q'*Q))> 200*%eps then pause,end
 Q=qr(Ac',mode="e");
-if Err(Q*Q'-eye())> 200*%eps then pause,end
-
+if Err(Q*Q'-eye(Q'*Q))> 200*%eps then pause,end
 
 [Q,R]=qr(Ac');
 if Err(Q*R-Ac')> 200*%eps then pause,end
