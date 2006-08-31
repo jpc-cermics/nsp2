@@ -1434,7 +1434,7 @@ static int int_spcolmatrix__gen11(Stack stack, int rhs, int opt, int lhs, M11 F)
       return 1;
     }
   if ((A=GetSpColCopy(stack,1))== NULLSPCOL) return RET_BUG;
-  (*F)(A);
+  if ((*F)(A) == FAIL) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -1819,6 +1819,16 @@ static int int_spcolmatrix_find(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_spcolmatrix_real(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix__gen11(stack,rhs,opt,lhs,nsp_spcolmatrix_realpart);
+}
+
+static int int_spcolmatrix_imag(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_spcolmatrix__gen11(stack,rhs,opt,lhs,nsp_spcolmatrix_imagpart);
+}
+
 
 /*
  * The Interface for basic numerical sparse matrices operation 
@@ -1900,6 +1910,8 @@ static OpTab SpColMatrix_func[]={
   {"exp_sp",int_spcolmatrix_expel},
   {"sprand",int_spcolmatrix_sprand},  
   {"clean_sp",int_spcolmatrix_clean},  
+  {"real_sp", int_spcolmatrix_real},
+  {"imag_sp", int_spcolmatrix_imag},
   {(char *) 0, NULL}
 };
 

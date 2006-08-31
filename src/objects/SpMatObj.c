@@ -1409,7 +1409,7 @@ static int int_sprowmatrix__gen11(Stack stack, int rhs, int opt, int lhs, M11 F)
       return 1;
     }
   if ((A=GetSpRowCopy(stack,1))== NULLSPROW) return RET_BUG;
-  (*F)(A);
+  if ((*F)(A) == FAIL) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -1791,6 +1791,18 @@ static int int_sprowmatrix_find(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+static int int_sprowmatrix_real(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_sprowmatrix__gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_realpart);
+}
+
+static int int_sprowmatrix_imag(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_sprowmatrix__gen11(stack,rhs,opt,lhs,nsp_sprowmatrix_imagpart);
+}
+
+
 /*
  * The Interface for sparse ops
  */
@@ -1871,6 +1883,8 @@ static OpTab SpRowMatrix_func[]={
   {"exp_sprow",int_sprowmatrix_expel},
   {"sprow_rand",int_sprowmatrix_sprand},  
   {"clean_sprow",int_sprowmatrix_clean},  
+  {"real_sprow", int_sprowmatrix_real},
+  {"imag_sprow", int_sprowmatrix_imag},
   {(char *) 0, NULL}
 };
 
