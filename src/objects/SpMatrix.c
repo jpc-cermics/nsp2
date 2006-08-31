@@ -1113,7 +1113,7 @@ NspMatrix *nsp_sprowmatrix_mult_sp_m(NspSpRowMatrix *A, NspMatrix *X)
 NspMatrix *nsp_sprowmatrix_mult_m_sp(NspMatrix *X,NspSpRowMatrix *A)
 {
   NspMatrix *C = NULLMAT;
-  int i, j, k, l,size;
+  int i, j, k, l,size,fact,factA;
   const int inc=1;
   char type = 'r';
   double zero=0.0;
@@ -1126,15 +1126,17 @@ NspMatrix *nsp_sprowmatrix_mult_m_sp(NspMatrix *X,NspSpRowMatrix *A)
 
   if ( (C =nsp_matrix_create(NVOID,type,X->m,A->n)) == NULLMAT ) return NULLMAT;
   /* initialize to 0.0 */
-  size=(type == 'c') ? 2*C->mn : C->mn;
+  fact = (type == 'c') ? 2 : 1;
+  size= fact*C->mn;
   nsp_dset(&size,&zero,C->R,&inc);
+  factA = ( A->rc_type == 'c') ? 2 : 1;
   /* X*A */
   for ( i = 0 ; i < A->m ; i++) 
     {
       SpRow *Ai= A->D[i];
       for ( k = 0 ;  k < Ai->size ; k++) 
 	{
-	  void *val = &Ai->R[k];
+	  void *val = Ai->R + k*factA;
 	  j = Ai->J[k];
 	  /* element A(i,j) != 0 */
 	  for ( l =  0 ; l < X->m ; l++) 
@@ -1437,7 +1439,7 @@ NspMatrix *nsp_sprowmatrix_op_scal(NspSpRowMatrix *A, NspSpRowMatrix *B, int *fl
       nsp_mat_set_rval(Loc,(op == '-') ? -B->D[0]->R[0] :B->D[0]->R[0]);
       if (Loc->rc_type == 'c' ) 
 	{
-	  nsp_mat_set_rval(Loc,0.0);
+	  nsp_mat_set_ival(Loc,0.0);
 	}
       break;
     case 'c' : 
