@@ -934,13 +934,19 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
     {
       if ( A->rc_type == 'c') 
 	{
-	  memcpy(Loc->C+j*(Loc->m),A->C+j*A->m,A->m*sizeof(doubleC));
-	  nsp_csetd(&B->m,&d,Loc->C+j*(Loc->m)+A->m,&inc);
+	  for ( j = 0 ; j < A->n ; j++ ) 
+	    {
+	      memcpy(Loc->C+j*(Loc->m),A->C+j*A->m,A->m*sizeof(doubleC));
+	      nsp_csetd(&B->m,&d,Loc->C+j*(Loc->m)+A->m,&inc);
+	    }
 	}
       else 
 	{
-	  nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->C+j*(Loc->m),&inc);
-	  nsp_csetd(&B->m,&d,Loc->C+j*(Loc->m)+A->m,&inc);
+	  for ( j = 0 ; j < A->n ; j++ ) 
+	    {
+	      nsp_dzcopy(&A->m,A->R+j*A->m,&inc,Loc->C+j*(Loc->m),&inc);
+	      nsp_csetd(&B->m,&d,Loc->C+j*(Loc->m)+A->m,&inc);
+	    }
 	}
     }
   if ( Loc->rc_type == 'r' ) 
@@ -955,13 +961,19 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
     {
       if ( B->rc_type == 'c') 
 	{
-	  memcpy(Loc->C+(j+A->n)*(Loc->m)+A->m,B->C+j*A->m,B->m*sizeof(doubleC));
-	  nsp_csetd(&A->m,&d,Loc->C+(j+A->n)*(Loc->m),&inc);
+	  for ( j = 0 ; j < B->n ; j++ ) 
+	    {
+	      memcpy(Loc->C+(j+A->n)*(Loc->m)+A->m,B->C+j*A->m,B->m*sizeof(doubleC));
+	      nsp_csetd(&A->m,&d,Loc->C+(j+A->n)*(Loc->m),&inc);
+	    }
 	}
       else 
 	{
-	  nsp_dzcopy(&B->m,B->R+j*A->m,&inc,Loc->C+(j+A->n)*(Loc->m)+A->m,&inc);
-	  nsp_csetd(&A->m,&d,Loc->C+(j+A->n)*(Loc->m),&inc);
+	  for ( j = 0 ; j < B->n ; j++ ) 
+	    {
+	      nsp_dzcopy(&B->m,B->R+j*A->m,&inc,Loc->C+(j+A->n)*(Loc->m)+A->m,&inc);
+	      nsp_csetd(&A->m,&d,Loc->C+(j+A->n)*(Loc->m),&inc);
+	    }
 	}
     }
   return(Loc) ;
