@@ -30,6 +30,7 @@
 #include "nsp/cnumeric.h"
 #include "nsp/blas.h"
 #include "nsp/nsp_lapack.h"
+#include "nsp/matint.h"
 
 
 /**
@@ -2529,7 +2530,7 @@ static int intdgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
 {
   double Rcond=0.0,eps;
   NspMatrix *jpvt,*dwork;
-  int *Ijpvt,irank,info,lworkMin,i; 
+  int *Ijpvt,irank,info,lworkMin,i, *iwork; 
   /*  [X,rank]=lsq(A,B,rcond) */
   int m = A->m, n = A->n, mb = B->m,nrhs = B->n ; 
 
@@ -2614,10 +2615,10 @@ static int intdgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
   if ( n < m) 
     {
       /* we must delete the last rows of B */ 
-      if (( dwork =nsp_matrix_create(NVOID,'r',1,m-n)) == NULLMAT) return FAIL;
-      for ( i = n+1; i <= m ; i++) dwork->R[i-(n+1)]=i;
-      if (nsp_matrix_delete_rows(B,dwork) == FAIL) return FAIL; 
-      nsp_matrix_destroy(dwork); 
+      if ( (iwork= nsp_alloc_work_int(m-n)) == NULL ) return FAIL;
+      for ( i = n+1; i <= m ; i++) iwork[i-(n+1)] = i-1;  /* -1 because iwork must must be 0-based */
+      if ( nsp_matint_delete_rows( (NspObject *)B, iwork, m-n, n+1, m) == FAIL ) return FAIL; 
+      FREE(iwork); 
     }
 
   if ( rank != NULL)
@@ -2634,7 +2635,7 @@ static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
 {
   double Rcond=0.0,eps;
   NspMatrix *jpvt,*dwork,*rwork;
-  int *Ijpvt,ix1,ix2,irank,info,lworkMin,i; 
+  int *Ijpvt,ix1,ix2,irank,info,lworkMin,i, *iwork; 
   /*  [X,rank]=lsq(A,B,rcond) */
   int m = A->m, n = A->n, mb = B->m,nrhs = B->n ; 
 
@@ -2720,10 +2721,10 @@ static int intzgesv3(NspMatrix *A,NspMatrix *B,NspMatrix **rank,double *rcond,ch
       nsp_matrix_destroy(rwork); 
       if ( n < m) 
 	{
-	  /* we must delete the last rows of B */ 
-	  if (( dwork =nsp_matrix_create(NVOID,'r',1,m-n)) == NULLMAT) return FAIL;
-	  for ( i = n+1; i <= m ; i++) dwork->R[i-(n+1)]=i;
-	  if (nsp_matrix_delete_rows(B,dwork) == FAIL) return FAIL; 
+	  /* we must delete the last rows of B */
+	  if ( (iwork =nsp_alloc_work_int(m-n)) == NULL) return FAIL;
+	  for ( i = n+1; i <= m ; i++) iwork[i-(n+1)]=i-1;  /* -1 because iwork must be 0-based */
+	  if (nsp_matint_delete_rows((NspObject *) B, iwork, m-n, n+1, m) == FAIL) return FAIL; 
 	}
 
       if ( rank != NULL)

@@ -24,6 +24,7 @@
 #include "nsp/matutil.h"
 #include "nsp/grint.h" /* interface definition */
 #include "nsp/graphics/Graphics.h"
+#include "nsp/matint.h"
 
 static void link_unlock( NspLink *L,int lp) ;
 
@@ -1121,15 +1122,11 @@ int link_add_control(NspLink *L,const double pt[2])
 
 int link_remove_control(NspLink *L,const double pt[2])
 {
-  NspMatrix *Rows;
-  int cp,rep=OK;
+  int cp;
   if ( link_control_near_pt(L,pt,&cp) == FALSE ) return OK;
   if ( cp == 0 || cp == L->obj->poly->m -1 ) return OK;
   /* remove point in matrix */
-  if ((Rows = nsp_matrix_create_from_doubles(NVOID,1,1,(double) cp +1))== NULLMAT) return FAIL;
-  if ( nsp_matrix_delete_rows(L->obj->poly,Rows)== FAIL) rep = FAIL;
-  nsp_matrix_destroy(Rows);
-  return rep;
+  return nsp_matint_delete_rows( (NspObject *) (L->obj->poly), &cp, 1, cp+1, cp+1);
 }
 
 
