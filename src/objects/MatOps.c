@@ -484,10 +484,16 @@ void nsp_mat_clean(NspMatrix *A, int rhs, double epsa, double epsr)
       for ( j = 0 ; j < A->mn  ; j++ ) if ( Abs(A->R[j]) < eps) A->R[j] = 0.0; 
       break;
     case 'c': 
+      /* XXX: like scilab or use the module ? 
       for ( j = 0 ; j < A->mn  ; j++ ) 
 	{
 	  if ( Abs(A->C[j].r) < eps) A->C[j].r = 0.0;
 	  if ( Abs(A->C[j].i) < eps) A->C[j].i = 0.0;
+	}
+      */
+      for ( j = 0 ; j < A->mn  ; j++ ) 
+	{
+	  if (nsp_abs_c(&A->C[j]) < eps) A->C[j].r = A->C[j].i = 0.0;
 	}
     }
 }
