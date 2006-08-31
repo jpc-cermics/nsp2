@@ -99,6 +99,20 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
   return(Mat);
 }
 
+/**
+ * nsp_matrix_clone:
+ * @name: matrix name 
+ * @A: a #NspMatrix
+ * @m: number of rows 
+ * @n: number of columns 
+ * 
+ * Creates a new matrix with same rc_type than A with unspecified values, returns %NULLMAT on failure. 
+ * Returns a #NspMatrix or %NULLMAT.
+ */
+NspMatrix *nsp_matrix_clone(const char *name, NspMatrix *A, int m, int n)
+{
+  return nsp_matrix_create(name, A->rc_type, m, n);
+}
 
 /**
  * nsp_matrix_create_impl:
@@ -1040,7 +1054,7 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
  * returns %OK or %FAIL.
  */
 
-int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B)
+int nsp_matrix_set_submatrix_obsolete(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B)
 {
   int rmin, rmax, cmin, cmax, i, j, ib=0, *irow=NULL, *icol=NULL;
   /* Check compatibility : B is a scalar or B must have compatible 
@@ -1256,7 +1270,6 @@ int GenericMatSeRo(void *A, int Am, int An, int Amn, NspMatrix *Rows, void *B, i
   return OK;
 }
 
-
 int GenericMatSeRoBis(void *A, int Am, int An, int Amn, int nb_ind, int rmin, int rmax,
 		      void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal)
 {
@@ -1334,7 +1347,7 @@ int GenericMatSeRoBis(void *A, int Am, int An, int Amn, int nb_ind, int rmin, in
 }
 
 
-int nsp_matrix_set_rows(NspMatrix *A, NspMatrix *Rows, NspMatrix *B)
+int nsp_matrix_set_rows_obsolete(NspMatrix *A, NspMatrix *Rows, NspMatrix *B)
 {
   int i, *irow=NULL, rmin, rmax;
   int Bscal=0;
@@ -1429,63 +1442,6 @@ int mat_is_increasing(const NspMatrix *A)
   return OK;
 }
 
-
-/**
- * nsp_matrix_delete_columns:
- * @A: a #NspMatrix
- * @Cols: a #NspMatrix
- *
- * Performs A(:,Cols) = []. 
- * this function is only here as a facility since 
- * in the interface for Matrices nsp_smatrix_delete_columns() is 
- * directly called.
- *
- * returns %OK or %FAIL.
- */
-
-int nsp_matrix_delete_columns(NspMatrix *A, NspMatrix *Cols)
-{
-  return nsp_smatrix_delete_columns((NspSMatrix *)A,Cols);
-}
-
-/**
- * nsp_matrix_delete_rows:
- * @A: a #NspMatrix
- * @Rows: a #NspMatrix
- *
- * Performs A(Rows,:)  = []. 
- * this function is only here as a facility since 
- * in the interface for Matrices nsp_smatrix_delete_rows() is 
- * directly called.
- *
- *
- * returns %OK or %FAIL.
- **/
-
-int nsp_matrix_delete_rows(NspMatrix *A, NspMatrix *Rows)
-{
-  return nsp_smatrix_delete_rows((NspSMatrix *)A,Rows);
-}
-
-
-/**
- * nsp_matrix_delete_elements:
- * @A: a #NspMatrix
- * @Elts: a #NspMatrix
- *
- * Performs A(Elts) = []. 
- * this function is only here as a facility since 
- * in the interface for Matrices nsp_smatrix_delete_elements() is 
- * directly called.
- *
- * returns %OK or %FAIL.
- */
-
-int nsp_matrix_delete_elements(NspMatrix *A, NspMatrix *Elts)
-{
-  return nsp_smatrix_delete_elements((NspSMatrix *)A,Elts);
-}
-
 /**
  * nsp_matrix_extract:
  * @A: a #NspMatrix
@@ -1497,7 +1453,7 @@ int nsp_matrix_delete_elements(NspMatrix *A, NspMatrix *Elts)
  * returns a #NspMatrix or %NULLMAT 
  */
 
-NspMatrix *nsp_matrix_extract(const NspMatrix *A, const NspMatrix *Rows, const NspMatrix *Cols)
+NspMatrix *nsp_matrix_extract_obsolete(const NspMatrix *A, const NspMatrix *Rows, const NspMatrix *Cols)
 {
   NspMatrix *Loc;
   int rmin, rmax, cmin, cmax, i, j, ij, ind;
@@ -1593,7 +1549,7 @@ NspMatrix *nsp_matrix_extract(const NspMatrix *A, const NspMatrix *Rows, const N
  * returns a #NspMatrix or %NULLMAT 
  */
 
-NspMatrix *nsp_matrix_extract_elements(const NspMatrix *A,const NspMatrix *Elts)
+NspMatrix *nsp_matrix_extract_elements_obsolete(const NspMatrix *A,const NspMatrix *Elts)
 {
   NspMatrix *Loc;
   int rmin, rmax, i, *ind=NULL;
@@ -1669,7 +1625,7 @@ NspMatrix *nsp_matrix_extract_elements(const NspMatrix *A,const NspMatrix *Elts)
  * returns a #NspMatrix or %NULLMAT 
  */
 
-NspMatrix *nsp_matrix_extract_columns(const NspMatrix *A,const NspMatrix *Cols)
+NspMatrix *nsp_matrix_extract_columns_obsolete(const NspMatrix *A,const NspMatrix *Cols)
 {
   NspMatrix *Loc;
   int j, cmin, cmax, *icol=NULL;
@@ -1715,7 +1671,7 @@ NspMatrix *nsp_matrix_extract_columns(const NspMatrix *A,const NspMatrix *Cols)
  * returns a #NspMatrix or %NULLMAT 
  */
 
-NspMatrix *nsp_matrix_extract_rows(const NspMatrix *A,const NspMatrix *Rows)
+NspMatrix *nsp_matrix_extract_rows_obsolete(const NspMatrix *A,const NspMatrix *Rows)
 {
   NspMatrix *Loc;
   int i, j, rmin, rmax, *irow=NULL;

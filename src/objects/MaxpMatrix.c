@@ -65,6 +65,21 @@ NspMaxpMatrix * nsp_mpmatrix_create(const char *name, char type, int m, int n)
 }
 
 /**
+ * nsp_mpmatrix_clone:
+ * @name: matrix name 
+ * @A: a #NspMaxpMatrix
+ * @m: number of rows 
+ * @n: number of columns 
+ * 
+ * Creates a new matrix with same rc_type than A with unspecified values, returns %NULLMAT on failure. 
+ * Returns a #NspMaxpMatrix or %NULLMAT.
+ */
+NspMaxpMatrix *nsp_mpmatrix_clone(const char *name, NspMatrix *A, int m, int n)
+{
+  return nsp_mpmatrix_create(name, A->rc_type, m, n);
+}
+
+/**
  * nsp_mp_matrix_from_m: 
  * @name: matrix name 
  * @M: a NspMatrix *
@@ -580,9 +595,9 @@ int nsp_mpmatrix_add_rows(NspMaxpMatrix *A, int m)
  * returns %OK or %FAIL.
  */
 
-int nsp_mpmatrix_set_submatrix(NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMaxpMatrix *B)
+int nsp_mpmatrix_set_submatrix_obsolete(NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMaxpMatrix *B)
 {
-  int rep = nsp_matrix_set_submatrix((NspMatrix *)A,Rows,Cols,(NspMatrix *)B);
+  int rep = nsp_matrix_set_submatrix_obsolete((NspMatrix *)A,Rows,Cols,(NspMatrix *)B);
   nsp_matrix_cast_to_mpmatrix((NspMatrix *)A);
   return rep;
 }
@@ -609,9 +624,9 @@ int nsp_mpmatrix_set_submatrix(NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Col
  * returns %OK or %FAIL.
  */
 
-int nsp_mpmatrix_set_rows(NspMaxpMatrix *A, NspMatrix *Rows, NspMaxpMatrix *B)
+int nsp_mpmatrix_set_rows_obsolete(NspMaxpMatrix *A, NspMatrix *Rows, NspMaxpMatrix *B)
 {
-  int rep = nsp_matrix_set_rows((NspMatrix *)A,Rows,(NspMatrix *)B);
+  int rep = nsp_matrix_set_rows_obsolete((NspMatrix *)A,Rows,(NspMatrix *)B);
   nsp_matrix_cast_to_mpmatrix((NspMatrix *)A);
   return rep;
 }
@@ -630,54 +645,6 @@ int mpmat_is_increasing(const NspMaxpMatrix *A)
   return mat_is_increasing((const NspMatrix *) A);
 }
 
-
-/**
- * nsp_mpmatrix_delete_columns:
- * @A: a #NspMaxpMatrix
- * @Cols: a #NspMaxpMatrix
- *
- * Performs A(:,Cols) = []. 
- *
- * returns %OK or %FAIL.
- */
-
-int nsp_mpmatrix_delete_columns(NspMaxpMatrix *A, NspMatrix *Cols)
-{
-  int rep = nsp_smatrix_delete_columns((NspSMatrix *)A,Cols);
-  nsp_matrix_cast_to_mpmatrix((NspMatrix *) A);
-  return rep;
-}
-
-/**
- * nsp_mpmatrix_delete_rows:
- * @A: a #NspMaxpMatrix
- * @Rows: a #NspMatrix
- *
- * Performs A(Rows,:)  = []. 
- *
- * returns %OK or %FAIL.
- */
-
-int nsp_mpmatrix_delete_rows(NspMaxpMatrix *A, NspMatrix *Rows)
-{
-  return nsp_smatrix_delete_rows((NspSMatrix *) A,Rows);
-}
-
-/**
- * nsp_mpmatrix_delete_elements:
- * @A: a #NspMaxpMatrix
- * @Elts: a #NspMatrix
- *
- * Performs A(Elts) = []. 
- *
- * returns %OK or %FAIL.
- */
-
-int nsp_mpmatrix_delete_elements(NspMaxpMatrix *A, NspMatrix *Elts)
-{
-  return nsp_smatrix_delete_elements((NspSMatrix *)A,Elts);
-}
-
 /**
  * nsp_mpmatrix_extract:
  * @A: a #NspMaxpMatrix
@@ -689,9 +656,9 @@ int nsp_mpmatrix_delete_elements(NspMaxpMatrix *A, NspMatrix *Elts)
  * returns a #MspMatrix or %NULLMAXPMAT 
  */
 
-NspMaxpMatrix *nsp_mpmatrix_extract(const NspMaxpMatrix *A,const  NspMatrix *Rows, const NspMatrix *Cols)
+NspMaxpMatrix *nsp_mpmatrix_extract_obsolete(const NspMaxpMatrix *A,const  NspMatrix *Rows, const NspMatrix *Cols)
 {
-  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract((const NspMatrix *)A,Rows,Cols));
+  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract_obsolete((const NspMatrix *)A,Rows,Cols));
 }
 
 /**
@@ -704,9 +671,9 @@ NspMaxpMatrix *nsp_mpmatrix_extract(const NspMaxpMatrix *A,const  NspMatrix *Row
  * returns a #MspMatrix or %NULLMAXPMAT 
  */
 
-NspMaxpMatrix *nsp_mpmatrix_extract_elements(const NspMaxpMatrix *A,const NspMatrix *Elts)
+NspMaxpMatrix *nsp_mpmatrix_extract_elements_obsolete(const NspMaxpMatrix *A,const NspMatrix *Elts)
 {
-  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract_elements((const NspMatrix *)A,Elts));
+  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract_elements_obsolete((const NspMatrix *)A,Elts));
 }
 
 
@@ -720,9 +687,9 @@ NspMaxpMatrix *nsp_mpmatrix_extract_elements(const NspMaxpMatrix *A,const NspMat
  * returns a #MspMatrix or %NULLMAXPMAT 
  */
 
-NspMaxpMatrix *nsp_mpmatrix_extract_columns(const NspMaxpMatrix *A,const NspMatrix *Cols)
+NspMaxpMatrix *nsp_mpmatrix_extract_columns_obsolete(const NspMaxpMatrix *A,const NspMatrix *Cols)
 {
-  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract_columns((const NspMatrix *)A,Cols));
+  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract_columns_obsolete((const NspMatrix *)A,Cols));
 }
 
 
@@ -736,9 +703,9 @@ NspMaxpMatrix *nsp_mpmatrix_extract_columns(const NspMaxpMatrix *A,const NspMatr
  * returns a #MspMatrix or %NULLMAXPMAT 
  */
 
-NspMaxpMatrix *nsp_mpmatrix_extract_rows(const NspMaxpMatrix *A,const NspMatrix *Rows)
+NspMaxpMatrix *nsp_mpmatrix_extract_rows_obsolete(const NspMaxpMatrix *A,const NspMatrix *Rows)
 {
-  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract_rows((const NspMatrix *)A,Rows));
+  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_extract_rows_obsolete((const NspMatrix *)A,Rows));
 }
 
 

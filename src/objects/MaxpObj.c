@@ -114,6 +114,9 @@ NspTypeMaxpMatrix *new_type_mpmatrix(type_mode mode)
   mati->resize = (matint_resize  *) nsp_mpmatrix_resize;
   mati->free_elt = (matint_free_elt *) 0; /* nothing to do */
   mati->elt_size = (matint_elt_size *) nsp_matrix_elt_size ;/* same as for matrix */
+  mati->clone = (matint_clone *) nsp_mpmatrix_clone ;
+  mati->copy_elt = (matint_copy_elt *) 0; /* nothing to do */
+  mati->enlarge = (matint_enlarge *) nsp_mpmatrix_enlarge;
 
   type->interface = (NspTypeBase *) mati;
 
@@ -1310,20 +1313,6 @@ int int_mpredim(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * changes a copy of matrix stack object to column vector 
- */
-
-int int_mpmat2vect(Stack stack, int rhs, int opt, int lhs)
-{
-  NspMaxpMatrix  *HMat;
-  CheckRhs(1,1);
-  CheckLhs(1,1);
-  if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
-  if ( nsp_mpmatrix_redim(HMat,HMat->mn,1) != OK) return RET_BUG;
-  NSP_OBJECT(HMat)->ret_pos = 1;
-  return 1;
-}
 
 /* xxxx ecrire le Enlarge ***/
 
@@ -1559,220 +1548,6 @@ int int_mpaddrows(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- *  A(Rows,Cols) = B 
- *  A is changed and enlarged if necessary 
- *  Size Compatibility is checked 
- *  WARNING : A is not Copied we want this routine to change A
- *  =======
- */
-
-int int_mpsetrc(Stack stack, int rhs, int opt, int lhs)
-{
-  NspMaxpMatrix *A,*B;
-  NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT;
-  CheckRhs(3,4);
-  CheckLhs(1,1);
-  if ( IsBMatObj(stack,rhs)) 
-    return int_bmatrix_setrc(stack,rhs,opt,lhs);
-  else if ( IsSMatObj(stack,rhs)) 
-    return int_smxsetrc(stack,rhs,opt,lhs);
-  if ((A = GetMpMat(stack,1)) == NULLMAXPMAT) goto ret_bug;
-  if ( IsBMatObj(stack,2) ) 
-    {
-      /* Rows is boolean : use find(Rows) **/
-      NspBMatrix *BRows ;
-      if ((BRows = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
-      if ((Rows = Rows1 = nsp_bmatrix_find(BRows)) == NULLMAT) goto ret_bug;
-    }
-  else
-    {
-      /* Rows is a real matrix : make a copy if Rows == A */
-      if ((Rows = GetRealMat(stack,2)) == NULLMAT) goto ret_bug;
-    }
-  if ( rhs == 4 )
-    {
-      /* Cols is boolean : use find(Cols) **/
-      if ( IsBMatObj(stack,3)  ) 
-	{
-	  NspBMatrix *BCols ;
-	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
-	  if ((Cols = Cols1 = nsp_bmatrix_find(BCols)) == NULLMAT) goto ret_bug;
-	}  
-      else
-	{
-	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
-	}
-    }
-  if ((B = GetMpMat(stack,rhs)) == NULLMAXPMAT ) goto ret_bug;
-  if ( B == A ) 
-    { if ((B = GetMpMatCopy(stack,rhs)) == NULLMAXPMAT ) goto ret_bug;}
-  if ( rhs == 3 ) 
-    { if ( nsp_mpmatrix_set_rows( A, Rows,B) == FAIL) goto ret_bug; }
-  else 
-    { if ( nsp_mpmatrix_set_submatrix( A, Rows,Cols,B) == FAIL )  goto ret_bug;} 
-  NSP_OBJECT(A)->ret_pos = 1;
-  nsp_matrix_destroy(Rows1);
-  nsp_matrix_destroy(Cols1);
-  return 1;
- ret_bug: 
-  /* delete if non null; */
-  nsp_matrix_destroy(Rows1);
-  nsp_matrix_destroy(Cols1);
-  return RET_BUG;
-}
-
-
-/*
- * Res=MatDeletecols(A,Cols)
- *     Cols unchanged  ( restored at end of function if necessary)
- * WARNING : A must be changed by this routine
- * =======
- */	
-
-/* generic interface for elts, rows and columns deletion **/
-
-typedef int (*mpdelf) (NspMaxpMatrix *M,NspMatrix *Elts);
-
-static int int_mpdeleteelts_gen(Stack stack, int rhs, int opt, int lhs, mpdelf F)
-{
-  NspMaxpMatrix *A;
-  NspMatrix *Elts;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetMpMat(stack,1)) == NULLMAXPMAT) 
-    return RET_BUG;
-  if ( IsBMatObj(stack,2)  ) 
-    {
-      /* Elts is boolean : use find(Elts) **/
-      NspBMatrix *BElts;
-      if ((BElts = GetBMat(stack,2)) == NULLBMAT) 
-	return RET_BUG;
-      if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) 
-	return RET_BUG;
-    }
-  else
-    {
-      if ((Elts = GetRealMat(stack,2)) == NULLMAT) 
-	return RET_BUG;
-    }
-  if ( (*F)( A, Elts) == FAIL ) 
-    return RET_BUG;
-  NSP_OBJECT(A)->ret_pos =1;
-  return 1;
-}
-
-int int_mpdeletecols(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mpdeleteelts_gen(stack,rhs,opt,lhs,nsp_mpmatrix_delete_columns);
-}
-
-/*
- * Res=MatDeleterows(A,Rows)
- *     Rows unchanged  ( restored at end of function if necessary)
- * WARNING : A must be changed by this routine
- */	
-
-int int_mpdeleterows(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mpdeleteelts_gen(stack,rhs,opt,lhs,nsp_mpmatrix_delete_rows);
-}
-
-/*
- * Res=MatDeleteelts(A,Elts)
- *     Elts unchanged  ( restored at end of function if necessary)
- * WARNING : A must be changed by this routine
- */	
-
-int int_mpdeleteelts(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mpdeleteelts_gen(stack,rhs,opt,lhs,nsp_mpmatrix_delete_elements);
-}
-
-/*
- * Res=nsp_mpmatrix_extract(Rows,Cols,A)
- * A unchanged, Rows and Cols are unchanged 
- * if Rows and Cols are to be kept they are restored at end of function 
- * WARNING note that on the stack we have Rows,Cols,A 
- */	
-
-int int_mpextract(Stack stack, int rhs, int opt, int lhs)
-{
-  NspMaxpMatrix *A,*Res;
-  NspMatrix *Rows,*Cols;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ((A = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-  if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ((Cols = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
-  Res =nsp_mpmatrix_extract( A, Rows,Cols);
-  if ( Res == NULLMAXPMAT) return RET_BUG;
-  MoveObj(stack,1,(NspObject *)Res);
-  return 1;
-}
-
-/*
- * Res=nsp_mpmatrix_extract_elements(Elts,A)
- * A unchanged, Elts
- */	
-
-/* generic function for elts extraction */
-
-typedef NspMaxpMatrix *(*extrf) (const NspMaxpMatrix *M,const NspMatrix *Elts);
-
-static int int_mpextractelts_gen(Stack stack, int rhs, int opt, int lhs, extrf F)
-{
-  NspMaxpMatrix *A,*Res;
-  NspMatrix *Elts,*Elts1=NULL;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-
-  if ( IsBMatObj(stack,2)  ) 
-    {
-      /* Elts is boolean : use find(Elts) **/
-      NspBMatrix *BElts;
-      if ((BElts = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-      if ((Elts = Elts1 = nsp_bmatrix_find(BElts)) == NULLMAT) return RET_BUG;
-    }
-  else
-    {
-      /* Elts is a real matrix  **/
-      if ((Elts = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-    }
-
-  if ((Res = (*F)( A, Elts)) == NULLMAXPMAT)
-    {
-      nsp_matrix_destroy(Elts1); 
-      return RET_BUG;
-    }
-  nsp_matrix_destroy(Elts1); 
-  MoveObj(stack,1,(NspObject *)Res);
-  return 1;
-}
-
-int int_mpextractelts(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mpextractelts_gen(stack,rhs,opt,lhs,nsp_mpmatrix_extract_elements);
-}
-
-/*
- * columns extraction  Cols A --> A(Cols)
- */	
-
-int int_mpextractcols(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mpextractelts_gen(stack,rhs,opt,lhs,nsp_mpmatrix_extract_columns);
-}
-
-/*
- * rows extraction 					   
- */	
-
-int int_mpextractrows(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mpextractelts_gen(stack,rhs,opt,lhs,nsp_mpmatrix_extract_rows);
-}
 
 /*
  * Scilab diag function 
@@ -2650,12 +2425,6 @@ static OpWrapTab Matrix_func[]={
   {"cumsum_mp" ,  int_mpcusum ,NULL},
   {"cumsum_mp_s" ,  int_mpcusum ,NULL},
   {"dadd_mp_mp" ,   int_mpdadd ,NULL},
-  {"deletecols_mp_b", int_mpdeletecols,NULL},
-  {"deletecols_mp_m", int_mpdeletecols,NULL},
-  {"deleteelts_mp_b", int_mpdeleteelts,NULL},
-  {"deleteelts_mp_m", int_mpdeleteelts,NULL},
-  {"deleterows_mp_b", int_mpdeleterows,NULL},
-  {"deleterows_mp_m", int_mpdeleterows,NULL},
   {"destroy_mp" ,  int_mpdestroy ,NULL},
   {"dh_mp_m",int_mppowel,NULL},
   {"diag_mp",int_mpdiag,NULL},
@@ -2673,10 +2442,6 @@ static OpWrapTab Matrix_func[]={
   {"erf_mp",int_mxerf,int_mp_wrap1},
   {"erfc_mp",int_mxerfc,int_mp_wrap1},
   {"expel_mp",int_mxexpel,int_mp_wrap1},
-  {"extract_mp",int_mpextract,NULL},
-  {"extractcols_mp",int_mpextractcols,NULL},
-  {"extractelts_mp",int_mpextractelts,NULL},
-  {"extractrows_mp",int_mpextractrows,NULL},
   {"eye_mp_mp" ,  int_mpeye ,NULL},
   {"eye_mp" ,  int_mpeye ,NULL},
   {"feq_mp_mp" ,  int_mpfeq ,NULL},
@@ -2722,13 +2487,10 @@ static OpWrapTab Matrix_func[]={
   {"quote_mp",int_mpquote,NULL},
   {"real_mp" ,  int_mprealpart ,NULL},
   {"redim_mp" ,  int_mpredim ,NULL},
-  {"resize2vect_mp",int_mpmat2vect,NULL},
   {"resize_mp_mp" ,  int_mpresize ,NULL},
   {"round_mp",int_mxround,int_mp_wrap1},
   {"seti_mp_mp" ,  int_mpseti ,NULL},
   {"setr_mp_mp" ,  int_mpsetr ,NULL},
-  {"setrc_mp_mp" ,  int_mpsetrc ,NULL},
-  {"setrowscols_mp",int_mpsetrc,NULL},
   {"sign_mp",int_mxsign,int_mp_wrap1},
   {"sin_mp",int_mxsin,int_mp_wrap1},
   {"sinh_mp",int_mxsinh,int_mp_wrap1},

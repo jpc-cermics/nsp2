@@ -190,6 +190,12 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag
   return(Loc);
 }
 
+NspPMatrix *nsp_pmatrix_clone(char *name, NspPMatrix *A, int m, int n)
+{
+ /* -1 for just allocating a matrix of pointers */
+  return nsp_pmatrix_create(name, m, n, NULL, -1); 
+}
+
 /*
  * Delete the NspPMatrix A
  */
@@ -524,7 +530,7 @@ int nsp_pmatrix_add_rows(NspPMatrix *A, int m)
  *  Size Compatibility is checked 
  */
 
-int nsp_pmatrix_set_submatrix(NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B)
+int nsp_pmatrix_set_submatrix_obsolete(NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B)
 {
   int rmin,rmax,cmin,cmax,i,j;
   if ( B->mn != 1)
@@ -571,7 +577,7 @@ int nsp_pmatrix_set_submatrix(NspPMatrix *A,const NspMatrix *Rows,const NspMatri
  *  Size Compatibility is checked
  */
 
-int nsp_pmatrix_set_rows(NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B)
+int nsp_pmatrix_set_rows_obsolete(NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B)
 {
   int i,Bscal=0;
   if (GenericMatSeRo(A,A->m,A->n,A->mn,Rows,B,B->m,B->n,B->mn,
@@ -602,7 +608,7 @@ int nsp_pmatrix_set_rows(NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B)
  *  Size Compatibility is checked 
  */
 
-int nsp_pmatrix_setrc(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B)
+int nsp_pmatrix_setrc_obsolete(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B)
 {
   int rmin,rmax,cmin,cmax,i,j,*Icol,*Irow;
   if ( Rows->mn != B->m ||  Cols->mn != B->n )
@@ -640,7 +646,7 @@ int nsp_pmatrix_setrc(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatri
  * 
  */	
 
-NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
+NspPMatrix *nsp_pmatrix_extract_obsolete(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   NspPMatrix *Loc;
   int rmin,rmax,cmin,cmax,i,j,*Irow,*Icol;
@@ -676,7 +682,7 @@ NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
  * A unchanged, Elts
  */	
 
-NspPMatrix*nsp_pmatrix_extract_elements(NspPMatrix *A, NspMatrix *Elts, int *err)
+NspPMatrix*nsp_pmatrix_extract_elements_obsolete(NspPMatrix *A, NspMatrix *Elts, int *err)
 {
   NspPMatrix *Loc;
   int rmin,rmax,i;
@@ -708,7 +714,7 @@ NspPMatrix*nsp_pmatrix_extract_elements(NspPMatrix *A, NspMatrix *Elts, int *err
  * A unchanged
  */
 
-NspPMatrix*nsp_pmatrix_extract_columns(NspPMatrix *A, NspMatrix *Cols, int *err)
+NspPMatrix*nsp_pmatrix_extract_columns_obsolete(NspPMatrix *A, NspMatrix *Cols, int *err)
 {
   NspPMatrix *Loc;
   int j,cmin,cmax;
@@ -737,7 +743,7 @@ NspPMatrix*nsp_pmatrix_extract_columns(NspPMatrix *A, NspMatrix *Cols, int *err)
  * A unchanged
  */
 
-NspPMatrix*nsp_pmatrix_extract_rows(NspPMatrix *A, NspMatrix *Rows, int *err)
+NspPMatrix*nsp_pmatrix_extract_rows_obsolete(NspPMatrix *A, NspMatrix *Rows, int *err)
 {
   NspPMatrix *Loc;
   int i,j,cmin,cmax;

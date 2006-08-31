@@ -4354,7 +4354,7 @@ int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B)
 	{
 	  if ( B->rc_type == 'r') 
 	    for ( i = 0 ; i < A->mn ; i++ ) 
-	      A->C[i].r -= B->C[i].r;
+	      A->C[i].r -= B->R[i];
 	  else 
 	    for ( i = 0 ; i < A->mn ; i++ ) 
 	      { A->C[i].r -= B->C[i].r;  A->C[i].i -= B->C[i].i; }
@@ -4372,8 +4372,8 @@ int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B)
 {
   int i;
 
-/*   if ( A->mn == 0 ) */
-/*     return OK; */
+  if ( A->mn == 0 )
+    return OK;
 
   if ( A->rc_type == 'r' )
     {
@@ -4394,7 +4394,7 @@ int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B)
 	  { A->C[i].r *= B->R[0]; A->C[i].i *= B->R[0]; }
       else
 	for ( i = 0 ; i < A->mn ; i++ ) 
-	  nsp_prod_c(&A->C[i],&B->C[i]);
+	  nsp_prod_c(&A->C[i],&B->C[0]);
     }
   return OK;
 }

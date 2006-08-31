@@ -85,6 +85,11 @@ NspSMatrix* nsp_smatrix_create(nsp_const_string name, int m, int n,nsp_const_str
   return(Loc);
 }
 
+NspSMatrix *nsp_smatrix_clone(const char *name, NspSMatrix *A, int m, int n)
+{
+  return nsp_smatrix_create_with_length(name, m, n, -1);
+}
+
 /*
  * Creation of a NspSMatrix all the elements ( if m*n != 0) 
  * are initialized as string of size strl (unfilled) 
@@ -710,7 +715,7 @@ int nsp_smatrix_add_rows(NspSMatrix *A, int m)
  *  Size Compatibility is checked 
  */
 
-int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B)
+int nsp_smatrix_set_submatrix_obsolete(NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B)
 {
   int rmin,rmax,cmin,cmax,i,j;
   if ( B->mn != 1)
@@ -758,7 +763,7 @@ int nsp_smatrix_set_submatrix(NspSMatrix *A,const NspMatrix *Rows,const NspMatri
  *  Size Compatibility is checked
  */
 
-int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
+int nsp_smatrix_set_rows_obsolete(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
 {
   int i,Bscal=0;
   if (GenericMatSeRo(A,A->m,A->n,A->mn,Rows,B,B->m,B->n,B->mn,
@@ -781,44 +786,6 @@ int nsp_smatrix_set_rows(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
   return(OK);
 }
 
-int nsp_smatrix_delete_columns(NspSMatrix *A, NspMatrix *Cols)
-{
-  return nsp_matint_delete_columns(NSP_OBJECT(A),Cols);
-}
-
-
-/*
- *  A(Rows,:) = []
- *  A is changed.
- */
-
-int nsp_smatrix_delete_rows(NspSMatrix *A, NspMatrix *Rows)
-{
-  return nsp_matint_delete_rows(NSP_OBJECT(A),Rows);
-}
-
-
-/*
- *  A(elts) = []
- *  A is changed.
- */
-
-int nsp_smatrix_delete_elements(NspSMatrix *A, NspMatrix *Elts)
-{
-  return nsp_matint_delete_elements(NSP_OBJECT(A),Elts);
-}
-
-
-/*
- *  A(rows,cols) = []
- *  
- */
-
-int nsp_smatrix_delete_elements2(NspSMatrix *A, NspMatrix *EltsR, NspMatrix *EltsC)
-{
-  return nsp_matint_delete_elements2(NSP_OBJECT(A),EltsR,EltsC);
-}
-
 
 
 /*
@@ -826,7 +793,7 @@ int nsp_smatrix_delete_elements2(NspSMatrix *A, NspMatrix *EltsR, NspMatrix *Elt
  * A, Rows and Cols are unchanged 
  */	
 
-NspSMatrix*nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
+NspSMatrix*nsp_smatrix_extract_obsolete(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   NspSMatrix *Loc;
   int rmin,rmax,cmin,cmax,i,j;
@@ -857,7 +824,7 @@ NspSMatrix*nsp_smatrix_extract(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
  * A unchanged, Elts
  */	
 
-NspSMatrix*nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, int *err)
+NspSMatrix*nsp_smatrix_extract_elements_obsolete(NspSMatrix *A, NspMatrix *Elts, int *err)
 {
   NspSMatrix *Loc;
   int rmin,rmax,i;
@@ -889,7 +856,7 @@ NspSMatrix*nsp_smatrix_extract_elements(NspSMatrix *A, NspMatrix *Elts, int *err
  * A unchanged
  */
 
-NspSMatrix*nsp_smatrix_extract_columns(NspSMatrix *A, NspMatrix *Cols, int *err)
+NspSMatrix*nsp_smatrix_extract_columns_obsolete(NspSMatrix *A, NspMatrix *Cols, int *err)
 {
   NspSMatrix *Loc;
   int j,cmin,cmax;
@@ -943,7 +910,7 @@ NspSMatrix*SMatLoopCol(char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int 
  * A unchanged
  */
 
-NspSMatrix*nsp_smatrix_extract_rows(NspSMatrix *A, NspMatrix *Rows, int *err)
+NspSMatrix*nsp_smatrix_extract_rows_obsolete(NspSMatrix *A, NspMatrix *Rows, int *err)
 {
   NspSMatrix *Loc;
   int i,j,cmin,cmax;

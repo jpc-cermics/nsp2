@@ -29,6 +29,7 @@
 #include "nsp/plisttoken.h" /*for name_maxl **/
 #include "nsp/stack.h" 
 #include "nsp/parse.h" 
+#include "nsp/matint.h" 
 #include "Functions.h" 
 #include "Eval.h" 
 #include "../functions/FunTab.h"
@@ -320,68 +321,121 @@ int nsp_eval_method(char *str, Stack stack, int first, int rhs, int opt, int lhs
 int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 {
   char name[NAME_MAXL];
-  int n;
+  int n, ret_val;
   stack.first = first;
-  /*special cases x(:), x(:,y) , x(y,:), x(:,:) **/
-  switch ( rhs ) 
-    {
-    case  2 :
-      if ( IsIVect(stack.val->S[stack.first+1] ))
-	{
-	  /* x(:) just a resize or a full list extraction **/
-	  nsp_build_funcname("@resize2vect",stack,stack.first,1,name);
-	  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
-	  if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first,1,0,1)) < 0)  return RET_BUG;
-	  return n;
-	}
-      break;
-    case 3: 
-      if (IsIVect(stack.val->S[stack.first+1]) )
-	{
-	  if (IsIVect(stack.val->S[stack.first+2]) )
-	    {
-	      /*x(:,:) --> keep x unchanged **/
-	      nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+3);
-	      return 1;
-	    }
-	  else
-	    {
-	      /*x(:,<expr>) **/
-	      nsp_build_funcname("@extractcols",stack,stack.first,1,name);
-	      nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
-	      stack.val->S[stack.first+1] = stack.val->S[stack.first+2];
-	      stack.val->S[stack.first+2] = NULLOBJ;
-	      if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first,2,0,lhs)) < 0) return RET_BUG;
-	      return n;
-	    }
-	}
-      else 
-	{
-	  if (IsIVect(stack.val->S[stack.first+2]) )
-	    {
-	      /*x(<expr>,:); **/
-	      nsp_void_seq_object_destroy(stack,stack.first+2,stack.first+3);
-	      stack.val->S[stack.first+2] =  NULLOBJ;
-	      nsp_build_funcname("@extractrows",stack,stack.first,1,name);
-	      if (( n=nsp_eval_func(NULLOBJ,name,stack,stack.first,2,0,lhs)) < 0) return RET_BUG;
-	      return n;
-	    }
-	}
-      break;
-    default : break;
-    }
-  /*General case **/
-  /*Build a specialized name for extraction **/
-  switch ( rhs ) 
-    {
-    case 2: nsp_build_funcname("@extractelts",stack,stack.first,1,name);break;
-    default: nsp_build_funcname("@extract",stack,stack.first,1,name);break;
-    }
-  /*ici Il faudrait eviter que FuncEval construise des noms plus compliues XXXXXXXXX  **/ 
-  if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first,rhs,opt,lhs)) < 0) return RET_BUG;
-  return n;
-}
 
+  HOBJ_GET_OBJECT(stack.val->S[stack.first], RET_BUG);
+
+  if ( check_implements(stack.val->S[stack.first], nsp_type_matint_id) != NULL ) 
+    {
+      /* the object under extraction implement the matint interface */
+      /* doit-on vérifier que opt = 0 et lhs = 1 ? */
+      if ( rhs == 2 )
+	{
+	  if ( IsIVect(stack.val->S[stack.first+1] ))     /* x(:) */
+	    {
+	      nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
+	      ret_val = call_interf((function *) nsp_matint_resize2vect_xx, stack, 1, 0, lhs);
+	    }
+	  else                                            /* x(i) */
+	    ret_val = call_interf((function *) nsp_matint_extractelts_xx, stack, 2, 0, lhs);
+	}
+      else if ( rhs == 3 )
+	{
+	  if (IsIVect(stack.val->S[stack.first+1]) )
+	    {
+	      if (IsIVect(stack.val->S[stack.first+2]) )  /* x(:,:) --> keep x unchanged */
+		{
+		  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+3);
+		  ret_val = 1;
+		}
+	      else 		                          /* x(:,j) */
+		{
+		  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
+		  stack.val->S[stack.first+1] = stack.val->S[stack.first+2];
+		  stack.val->S[stack.first+2] = NULLOBJ;
+		  ret_val = call_interf((function *) nsp_matint_extractcols_xx, stack, 2, 0, lhs);
+		}
+	    }
+	  else 
+	    {
+	      if (IsIVect(stack.val->S[stack.first+2]) )  /* x(i,:) */
+		{
+		  nsp_void_seq_object_destroy(stack,stack.first+2,stack.first+3);
+		  ret_val = call_interf((function *) nsp_matint_extractrows_xx, stack, 2, 0, lhs);
+		}
+	      else                                        /* x(i,j) */
+		ret_val = call_interf((function *) nsp_matint_extract_xx, stack, 3, 0, lhs);
+	    }
+	}
+      else  /* rhs > 3  currently not implemented */
+	{
+	  /* voir pour le message d'erreur */
+	  ret_val = -1;
+	}
+      if ( ret_val < 0 )  return RET_BUG ; else return 1;
+    }
+  else
+    {
+      /*special cases x(:), x(:,y) , x(y,:), x(:,:) **/
+      switch ( rhs ) 
+	{
+	case  2 :
+	  if ( IsIVect(stack.val->S[stack.first+1] ))
+	    {
+	      /* x(:) just a resize or a full list extraction **/
+	      nsp_build_funcname("@resize2vect",stack,stack.first,1,name);
+	      nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
+	      if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first,1,0,1)) < 0)  return RET_BUG;
+	      return n;
+	    }
+	  break;
+	case 3: 
+	  if (IsIVect(stack.val->S[stack.first+1]) )
+	    {
+	      if (IsIVect(stack.val->S[stack.first+2]) )
+		{
+		  /*x(:,:) --> keep x unchanged **/
+		  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+3);
+		  return 1;
+		}
+	      else
+		{
+		  /*x(:,<expr>) **/
+		  nsp_build_funcname("@extractcols",stack,stack.first,1,name);
+		  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
+		  stack.val->S[stack.first+1] = stack.val->S[stack.first+2];
+		  stack.val->S[stack.first+2] = NULLOBJ;
+		  if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first,2,0,lhs)) < 0) return RET_BUG;
+		  return n;
+		}
+	    }
+	  else 
+	    {
+	      if (IsIVect(stack.val->S[stack.first+2]) )
+		{
+		  /*x(<expr>,:); **/
+		  nsp_void_seq_object_destroy(stack,stack.first+2,stack.first+3);
+		  nsp_build_funcname("@extractrows",stack,stack.first,1,name);
+		  if (( n=nsp_eval_func(NULLOBJ,name,stack,stack.first,2,0,lhs)) < 0) return RET_BUG;
+		  return n;
+		}
+	    }
+	  break;
+	default : break;
+	}
+      /*General case **/
+      /*Build a specialized name for extraction **/
+      switch ( rhs ) 
+	{
+	case 2: nsp_build_funcname("@extractelts",stack,stack.first,1,name);break;
+	default: nsp_build_funcname("@extract",stack,stack.first,1,name);break;
+	}
+      /*ici Il faudrait eviter que FuncEval construise des noms plus compliues XXXXXXXXX  **/ 
+      if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first,rhs,opt,lhs)) < 0) return RET_BUG;
+      return n;
+    }
+}
 
 /**
  * nsp_eval_extract_cells:

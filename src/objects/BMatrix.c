@@ -39,7 +39,7 @@ static void nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int
  * Returns a #NspMatrix or %NULLMAT.
  */
   
-NspBMatrix  *nsp_bmatrix_create(char *name, int m, int n)
+NspBMatrix  *nsp_bmatrix_create(const char *name, int m, int n)
 {
   int i;
   NspBMatrix *Loc= new_bmatrix();
@@ -65,6 +65,22 @@ NspBMatrix  *nsp_bmatrix_create(char *name, int m, int n)
   /* we could use a iset nsp_iset(&ns,&d,A->B+Asize,&inc); **/
   for ( i = 0 ; i < Loc->mn ; i++ )   Loc->B[ i] = TRUE ;
   return(Loc);
+}
+
+
+/**
+ * nsp_bmatrix_clone:
+ * @name: matrix name 
+ * @A: a #NspBMatrix
+ * @m: number of rows 
+ * @n: number of columns 
+ * 
+ * Creates a new matrix with same rc_type than A with unspecified values, returns %NULLMAT on failure. 
+ * Returns a #NspMatrix or %NULLMAT.
+ */
+NspBMatrix *nsp_bmatrix_clone(const char *name, NspBMatrix *A, int m, int n)
+{
+  return nsp_bmatrix_create(name, m, n);
 }
 
 
@@ -346,7 +362,7 @@ int nsp_bmatrix_enlarge(NspBMatrix *A, int m, int n)
     {
       int i;
       if (nsp_bmatrix_resize(A,m,n) == FAIL) return FAIL;
-      for ( i = 0 ; i < A->mn ; i++ ) A->B[ i] = TRUE ;
+      for ( i = 0 ; i < A->mn ; i++ ) A->B[ i] = FALSE; /*TRUE ; a voir */
     }
   if ( n > A->n  )
     if (nsp_bmatrix_add_columns(A,n- A->n) == FAIL) return(FAIL);
@@ -396,7 +412,7 @@ int nsp_bmatrix_concat_right(NspBMatrix *A, NspBMatrix *B)
 
 int nsp_bmatrix_add_columns(NspBMatrix *A, int n)
 {
-  int d=TRUE;
+  int d=FALSE; /* TRUE; */
   int inc = 1,ns;
   int Asize;
   if (n == 0) return OK;
@@ -456,7 +472,7 @@ NspBMatrix *nsp_bmatrix_concat_down(NspBMatrix *A, NspBMatrix *B)
 NspBMatrix *nsp_bmatrix_concat_diag(NspBMatrix *A, NspBMatrix *B)
 {
   NspBMatrix *Loc;
-  int d=TRUE;
+  int d=FALSE; /* TRUE; */
   int inc = 1;
   int j;
   if ( ( Loc =nsp_bmatrix_create(NVOID,A->m+B->m,A->n+B->n)) == NULLBMAT) 
@@ -488,7 +504,7 @@ NspBMatrix *nsp_bmatrix_concat_diag(NspBMatrix *A, NspBMatrix *B)
 
 int nsp_bmatrix_add_rows(NspBMatrix *A, int m)
 {
-  int d=TRUE;
+  int d=FALSE; /* TRUE; */
   int inc = -1,Am;
   int j;
   if ( m == 0) return OK;
@@ -521,7 +537,7 @@ int nsp_bmatrix_add_rows(NspBMatrix *A, int m)
  * returns %OK or %FAIL.
  */
 
-int nsp_bmatrix_set_submatrix(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B)
+int nsp_bmatrix_set_submatrix_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B)
 {
   int rmin,rmax,cmin,cmax,i,j;
   if ( B->mn != 1) 
@@ -579,7 +595,7 @@ int nsp_bmatrix_set_submatrix(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, N
  * returns %OK or %FAIL.
  */
 
-int nsp_bmatrix_set_rows(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
+int nsp_bmatrix_set_rows_obsolete(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
 {
   int i,Bscal=0;
   if (GenericMatSeRo(A,A->m,A->n,A->mn,Rows,B,B->m,B->n,B->mn,
@@ -595,53 +611,6 @@ int nsp_bmatrix_set_rows(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
 }
 
 /**
- * nsp_bmatrix_delete_columns:
- * @A: a #NspBMatrix
- * @Cols: a #NspMatrix
- *
- * Performs A(:,Cols) = []. 
- *
- * returns %OK or %FAIL.
- */
-
-int nsp_bmatrix_delete_columns(NspBMatrix *A, NspMatrix *Cols)
-{
-  return nsp_smatrix_delete_columns((NspSMatrix *)A,Cols);
-}
-
-/**
- * nsp_bmatrix_delete_rows:
- * @A: a #NspBMatrix
- * @Rows: a #NspMatrix
- *
- * Performs A(Rows,:)  = []. 
- * Based on the template code  nsp_TYPEmatrix_delete_rows
- * (see nsp2_dev/matrix/deletions_templates.c) * 
- * 
- * returns %OK or %FAIL.
- */
-
-int nsp_bmatrix_delete_rows(NspBMatrix *A, NspMatrix *Rows)
-{
-  return nsp_smatrix_delete_rows((NspSMatrix *)A,Rows);
-}
-
-/**
- * nsp_bmatrix_delete_elements:
- * @A: a #NspBMatrix
- * @Elts: a #NspMatrix
- *
- * Performs A(Elts) = []. 
- * 
- * returns %OK or %FAIL.
- */
-
-int nsp_bmatrix_delete_elements(NspBMatrix *A, NspMatrix *Elts)
-{
-  return nsp_smatrix_delete_elements((NspSMatrix *)A,Elts);
-}
-
-/**
  * nsp_bmatrix_extract:
  * @A: a #NspBMatrix
  * @Rows: a #NspMatrix
@@ -652,7 +621,7 @@ int nsp_bmatrix_delete_elements(NspBMatrix *A, NspMatrix *Elts)
  * returns a #MspBMatrix or %NULLMAT 
  */
 
-NspBMatrix  *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
+NspBMatrix  *nsp_bmatrix_extract_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   NspBMatrix *Loc;
   int rmin,rmax,cmin,cmax,i,j;
@@ -685,7 +654,7 @@ NspBMatrix  *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols
  * returns a #MspBMatrix or %NULLMAT 
  */
 
-NspBMatrix  *nsp_bmatrix_extract_elements(NspBMatrix *A, NspMatrix *Elts)
+NspBMatrix  *nsp_bmatrix_extract_elements_obsolete(NspBMatrix *A, NspMatrix *Elts)
 {
   NspBMatrix *Loc;
   int rmin,rmax,i;
@@ -723,7 +692,7 @@ NspBMatrix  *nsp_bmatrix_extract_elements(NspBMatrix *A, NspMatrix *Elts)
  * returns a #MspBMatrix or %NULLMAT 
  */
 
-NspBMatrix  *nsp_bmatrix_extract_columns(NspBMatrix *A, NspMatrix *Cols)
+NspBMatrix  *nsp_bmatrix_extract_columns_obsolete(NspBMatrix *A, NspMatrix *Cols)
 {
   NspBMatrix *Loc;
   int i,j,cmin,cmax;
@@ -755,7 +724,7 @@ NspBMatrix  *nsp_bmatrix_extract_columns(NspBMatrix *A, NspMatrix *Cols)
  * returns a #MspBMatrix or %NULLMAT 
  */
 
-NspBMatrix  *nsp_bmatrix_extract_rows(NspBMatrix *A, NspMatrix *Rows)
+NspBMatrix  *nsp_bmatrix_extract_rows_obsolete(NspBMatrix *A, NspMatrix *Rows)
 {
   NspBMatrix *Loc;
   int i,j,cmin,cmax;
@@ -1110,14 +1079,14 @@ NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
   /* first pass for counting **/
   for ( i=0 ; i < A->mn ; i++) 
     {
-      if ( A->B[i] != FALSE ) count++;
+      if ( A->B[i] ) count++;
     }
   Res = nsp_matrix_create(NVOID,'r',(int) 1,(int) count);
   if ( Res == NULLMAT) return NULLMAT;
   count=0;
   for ( i = 0 ; i < A->mn ; i++ )
     {
-      if ( A->B[i] != FALSE ) Res->R[count++] = i+1;
+      if ( A->B[i] ) Res->R[count++] = i+1;
     }
   return Res;
 }
@@ -1144,7 +1113,7 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
   /* first pass for counting **/
   for ( i=0 ; i < A->mn ; i++) 
     {
-      if ( A->B[i] != FALSE ) count++;
+      if ( A->B[i] ) count++;
     }
   if ( lhs == 1) 
     {
@@ -1153,7 +1122,7 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
       count=0;
       for ( i = 0 ; i < A->mn ; i++ )
 	{
-	  if ( A->B[i] != FALSE ) (*Res1)->R[count++] = i+1;
+	  if ( A->B[i] ) (*Res1)->R[count++] = i+1;
 	}
     }
   else 
@@ -1166,7 +1135,7 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
       for ( i = 0 ; i < A->m ; i++ )
 	for ( j = 0 ; j < A->n ; j++ )
 	  {
-	    if ( A->B[i+(A->m)*j]== TRUE ) 
+	    if ( A->B[i+(A->m)*j] ) 
 	      {
 		(*Res1)->R[count] = i+1;
 		(*Res2)->R[count++] = j+1;

@@ -81,6 +81,11 @@ NspCells *nsp_cells_create(const char *name, int m, int n)
 }
 
 
+NspCells *nsp_cells_clone(const char *name, NspCells *A, int m, int n)
+{
+  return nsp_cells_create(name, m, n);
+}
+
 /**
  * nsp_cells_create_from_table:
  * @name: name of the cell 
@@ -618,7 +623,7 @@ int nsp_cells_add_rows(NspCells *A, int m)
  * Return value: %Ok or %FAIL.
  **/
 
-int nsp_cells_set_submatrix(NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,
+int nsp_cells_set_submatrix_obsolete(NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,
 			    const NspCells *B)
 {
   int rmin,rmax,cmin,cmax,i,j;
@@ -705,7 +710,7 @@ int nsp_cells_set_element(NspCells *A,int index, NspObject *B)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B)
+int nsp_cells_set_rows_obsolete(NspCells *A, NspMatrix *Rows, NspCells *B)
 {
   int i,Bscal=0;
   if (GenericMatSeRo(A,A->m,A->n,A->mn,Rows,B,B->m,B->n,B->mn,
@@ -735,52 +740,6 @@ int nsp_cells_set_rows(NspCells *A, NspMatrix *Rows, NspCells *B)
 }
 
 /**
- * nsp_cells_delete_columns:
- * @A:  a #NspCells object 
- * @Cols:  a #NspMatrix object 
- * 
- *  A(:,Cols) = []
- * 
- * 
- * Return value: %OK or %FAIL 
- **/
-
-int nsp_cells_delete_columns(NspCells *A, NspMatrix *Cols)
-{
-  return nsp_smatrix_delete_columns((NspSMatrix *) A,Cols);
-}
-
-/**
- * nsp_cells_delete_rows:
- * @A:  a #NspCells object 
- * @Rows:  a #NspMatrix object 
- * 
- *  A(Rows,:) = []
- * 
- * Return value: %OK or %FAIL 
- **/
-
-int nsp_cells_delete_rows(NspCells *A, NspMatrix *Rows)
-{
-  return nsp_smatrix_delete_rows((NspSMatrix *) A,Rows);
-}
-
-/**
- * nsp_cells_delete_elements:
- * @A:  a #NspCells object 
- * @Elts:  a #NspMatrix object 
- * 
- *  A(elts) = []
- * 
- * Return value: %OK or %FAIL 
- **/
-
-int nsp_cells_delete_elements(NspCells *A, NspMatrix *Elts)
-{
-  return nsp_smatrix_delete_elements((NspSMatrix *) A,Elts);
-}
-
-/**
  * nsp_cells_extract:
  * @A:  a #NspCells object 
  * @Rows:  a #NspMatrix object 
@@ -791,7 +750,7 @@ int nsp_cells_delete_elements(NspCells *A, NspMatrix *Elts)
  * Return value: a new #NspCells or %NULLCELLS.
  **/
 
-NspCells*nsp_cells_extract(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
+NspCells*nsp_cells_extract_obsolete(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
 {
   NspCells *Loc;
   int rmin,rmax,cmin,cmax,i,j;
@@ -827,7 +786,7 @@ NspCells*nsp_cells_extract(NspCells *A, NspMatrix *Rows, NspMatrix *Cols)
  * Return value:  a new #NspCells or %NULLCELLS.
  **/
 
-NspCells*nsp_cells_extract_elements(NspCells *A, NspMatrix *Elts, int *err)
+NspCells*nsp_cells_extract_elements_obsolete(NspCells *A, NspMatrix *Elts, int *err)
 {
   NspCells *Loc;
   int rmin,rmax,i;
@@ -870,7 +829,7 @@ NspCells*nsp_cells_extract_elements(NspCells *A, NspMatrix *Elts, int *err)
  * Return value:  a new #NspCells or %NULLCELLS.
  **/
 
-NspCells*nsp_cells_extract_columns(NspCells *A, NspMatrix *Cols, int *err)
+NspCells*nsp_cells_extract_columns_obsolete(NspCells *A, NspMatrix *Cols, int *err)
 {
   NspCells *Loc;
   int j,cmin,cmax;
@@ -938,7 +897,7 @@ NspCells*CellsLoopCol(char *str, NspCells *Col, NspCells *A, int icol, int *rep)
  * Return value:  a new #NspCells or %NULLCELLS.
  **/
 
-NspCells*nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err)
+NspCells*nsp_cells_extract_rows_obsolete(NspCells *A, NspMatrix *Rows, int *err)
 {
   NspCells *Loc;
   int i,j,cmin,cmax;
@@ -973,20 +932,18 @@ NspCells*nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err)
 
 static int Eq(NspObject * a, NspObject * b) 
 {
-  if ( a == NULLOBJ || b == NULLOBJ ) 
-    {
-      return ( a==b ) ? TRUE: FALSE;
-    }
-  return ( a->type->eq != NULL) ?  a->type->eq(a,b) : FALSE ;
+  if ( a != NULLOBJ  &&  b != NULLOBJ )
+    return ( a->type->eq != NULL) ?  a->type->eq(a,b) : FALSE ;
+  else 
+    return a == b;
 }
 
 static int NEq(NspObject * a, NspObject * b)
 {
-  if ( a == NULLOBJ || b == NULLOBJ ) 
-    {
-      return ( a==b ) ? FALSE: TRUE;
-    }
-  return ( a->type->neq != NULL) ?  a->type->neq(a,b) : TRUE ;
+  if ( a != NULLOBJ  &&  b != NULLOBJ )
+    return ( a->type->neq != NULL) ?  a->type->neq(a,b) : TRUE ;
+  else
+    return a != b;
 }
 
 

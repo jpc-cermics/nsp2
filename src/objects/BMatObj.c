@@ -99,6 +99,9 @@ NspTypeBMatrix *new_type_bmatrix(type_mode mode)
   mati->resize = (matint_resize  *) nsp_bmatrix_resize;
   mati->free_elt = (matint_free_elt *) 0; /* nothing to do */
   mati->elt_size = (matint_elt_size *) nsp_bmatrix_elt_size ;
+  mati->clone = (matint_clone *) nsp_bmatrix_clone ;
+  mati->copy_elt = (matint_copy_elt *) 0; /* nothing to do */
+  mati->enlarge = (matint_enlarge *) nsp_bmatrix_enlarge;
 
   type->interface = (NspTypeBase *) mati;
   
@@ -685,24 +688,6 @@ static int int_bmatrix_redim(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * changes a copy of matrix stack object to column vector 
- */
-
-static int int_bmatrix_to_vect (Stack stack, int rhs, int opt, int lhs)
-{
-  NspBMatrix *HMat;
-  CheckRhs (1, 1);
-  CheckLhs (1, 1);
-  if ((HMat = GetBMatCopy (stack, 1)) == NULLBMAT)
-    return RET_BUG;
-  if (nsp_bmatrix_redim (HMat, HMat->mn, 1) != OK)
-    return RET_BUG;
-  NSP_OBJECT (HMat)->ret_pos = 1;
-  return 1;
-}
-
-
-/*
  * Right Concatenation 
  * A= [A,B] 
  * return 0 on failure ( incompatible size or No more space )
@@ -853,240 +838,6 @@ static int int_bmatrix_addrows(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- *  A(Rows,Cols) = B 
- *  A is changed and enlarged if necessary 
- *  Size Compatibility is checked 
- *  WARNING: A is not Copied we want this routine to change A
- *  =======
- *  XXXXX: Attention cette routine ne peux pas changer le 
- *  premier argument qui est un objet nomme 
- */
-
-int int_bmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
-{
-  NspBMatrix *A,*B;
-  NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT;
-  CheckRhs(3,4);
-  CheckLhs(1,1);
-
-  if ( IsBMatObj(stack,1) ) 
-    {
-      /* A is boolean **/
-      if ((A = GetBMat(stack,1)) == NULLBMAT) goto ret_bug;
-    }
-  else 
-    {
-      Scierror("Error: A(...)= B, A and B must be of the same type\n");
-      goto ret_bug;
-    }
-
-  if ( IsBMatObj(stack,2)  ) 
-    {
-      /* Rows is boolean: use find(Rows) **/
-      NspBMatrix *BRows ;
-      if ((BRows = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
-      if ((Rows = Rows1 = nsp_bmatrix_find(BRows)) == NULLMAT) goto ret_bug;
-    }
-  else
-    {
-      /* Rows is a real matrix **/
-      if ((Rows = GetRealMat(stack,2)) == NULLMAT) goto ret_bug;
-    }
-  if ( rhs == 4 )
-    {
-      /* Cols is boolean: use find(Cols) **/
-      if ( IsBMatObj(stack,3) ) 
-	{
-	  NspBMatrix *BCols ;
-	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
-	  if ((Cols = Cols1 = nsp_bmatrix_find(BCols)) == NULLMAT) goto ret_bug;
-	}  
-      else
-	{
-	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
-	}
-    }
-  if ((B = GetBMat(stack,rhs)) == NULLBMAT) goto ret_bug;
-  if ( B == A) 
-    {
-      if ((B = GetBMatCopy(stack,rhs)) == NULLBMAT) goto ret_bug;
-    }
-  if ( rhs == 3 )
-    {  if (nsp_bmatrix_set_rows( A, Rows,B) != OK) goto ret_bug; }
-  else
-    {  if (nsp_bmatrix_set_submatrix( A, Rows,Cols,B) != OK) goto ret_bug;}
-
-  NSP_OBJECT(A)->ret_pos = 1;
-  nsp_matrix_destroy(Rows1);
-  nsp_matrix_destroy(Cols1);
-  return 1;
- ret_bug: 
-  /* delete if non null; */
-  nsp_matrix_destroy(Rows1);
-  nsp_matrix_destroy(Cols1);
-  return RET_BUG;
-}
-
-
-/*
- * Res=BMatDeletecols(A,Cols)
- *     Cols unchanged  ( restored at end of function if necessary)
- *     WARNING: A must be changed by this routine
- */
-
-typedef int (*delf) (NspBMatrix *M,NspMatrix *Elts);
-
-static int int_bmatrix_deleteelts_gen(Stack stack, int rhs, int opt, int lhs, delf F)
-{
-  int alloc=FALSE;
-  NspBMatrix *A,*BElts=NULLBMAT;
-  NspMatrix *Elts;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
-  if ( IsBMatObj(stack,2)  ) 
-    {
-      /* Elts is boolean: use find(Elts) **/
-      if ((BElts = GetBMat(stack,2)) == NULLBMAT) 
-	return RET_BUG;
-      if ((Elts =nsp_bmatrix_find(BElts)) == NULLMAT) 
-	return RET_BUG;
-      alloc=TRUE;
-    }
-  else
-    {
-      if ((Elts = GetRealMat(stack,2)) == NULLMAT) 
-	return RET_BUG;
-    }
-  if ( (*F)( A, Elts) == FAIL )
-    {
-      if ( alloc ) nsp_matrix_destroy(Elts) ;
-      return RET_BUG;
-    }
-  /* take care that A and Elts can be the same */
-  if ( A == BElts ) NthObj(2)=NULLOBJ;
-  NSP_OBJECT(A)->ret_pos = 1;
-  if ( alloc ) nsp_matrix_destroy(Elts) ;
-  return 1;
-}
-
-static int int_bmatrix_deletecols(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_bmatrix_deleteelts_gen(stack,rhs,opt,lhs,
-				    (delf) nsp_smatrix_delete_columns);
-}
-
-/*
- * Res=BMatDeleterows(A,Rows)
- *     Rows unchanged  ( restored at end of function if necessary)
- * WARNING: A must be changed by this routine
- */
-
-static int int_bmatrix_deleterows(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_bmatrix_deleteelts_gen(stack,rhs,opt,lhs,
-				    (delf) nsp_smatrix_delete_rows);
-}
-
-/*
- * Res=BMatDeleteelts(A,Elts)
- *     Elts unchanged  ( restored at end of function if necessary)
- *     redirect to  nsp_smatrix_delete_elements which is generic now 
- */
-
-static int int_bmatrix_deleteelts(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_bmatrix_deleteelts_gen(stack,rhs,opt,lhs,
-				    (delf) nsp_smatrix_delete_elements);
-}
-
-/*
- * Res=nsp_bmatrix_extract(A,Rows,Cols)
- * A unchanged, Rows and Cols are unchanged 
- * if Rows and Cols are to be kept they are restored at end of function 
- */
-
-static int int_bmatrix_extract(Stack stack, int rhs, int opt, int lhs)
-{
-  NspBMatrix *A,*Res;
-  NspMatrix *Rows,*Cols;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ((A = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
-  if ((Rows = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ((Cols = GetMat(stack,3)) == NULLMAT) return RET_BUG;
-  Res =nsp_bmatrix_extract( A, Rows,Cols);
-  if ( Res == NULLBMAT) return RET_BUG;
-  MoveObj(stack,1, (NspObject *)Res);
-  return 1;
-}
-
-
-/*
- * Res=nsp_bmatrix_extract_elements(Elts,A)
- * A unchanged, Elts
- */
-
-
-/* generic function for elts extraction */
-
-typedef NspBMatrix * (*extrf) (NspBMatrix *M,NspMatrix *Elts);
-
-static int int_bmatrix_extractelts_gen(Stack stack, int rhs, int opt, int lhs, extrf F)
-{
-  NspBMatrix *A,*Res;
-  NspMatrix *Elts,*Elts1=NULL; /* Elts1 is here to track object to be freed */
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetBMat(stack,1)) == NULLBMAT) return RET_BUG;
-
-  if ( IsBMatObj(stack,2)  ) 
-    {
-      /* Elts is boolean: use find(Elts) **/
-      NspBMatrix *BElts;
-      if ((BElts = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-      if ((Elts = Elts1 = nsp_bmatrix_find(BElts)) == NULLMAT) return RET_BUG;
-    }
-  else
-    {
-      /* Elts is a real matrix **/
-      if ((Elts = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-    }
-
-  if ((Res = (*F)( A, Elts)) == NULLBMAT)
-    {
-      nsp_matrix_destroy(Elts1); 
-      return RET_BUG;
-    }
-  nsp_matrix_destroy(Elts1); 
-
-  MoveObj(stack,1,(NspObject *)Res);
-  return 1;
-}
-
-static int int_bmatrix_extractelts(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_bmatrix_extractelts_gen(stack,rhs,opt,lhs,nsp_bmatrix_extract_elements);
-}
-
-/*
- * columns extraction  Cols A --> A(Cols)				   
- */
-
-static int int_bmatrix_extractcols(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_bmatrix_extractelts_gen(stack,rhs,opt,lhs,nsp_bmatrix_extract_columns);
-}
-
-/*
- * rows extraction 					   
- */
-
-static int int_bmatrix_extractrows(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_bmatrix_extractelts_gen(stack,rhs,opt,lhs,nsp_bmatrix_extract_rows);
-}
 
 /*
  * Returns the kthe diag of a NspBMatrix 
@@ -1340,7 +1091,6 @@ static int int_bmatrix_feq(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab BMatrix_func[]={
-  {"resize2vect_b", int_bmatrix_to_vect},
   {"latexmat_b",int_bmatrix_2latexmat},
   {"latextab_b",int_bmatrix_2latextab},
   {"addcols_b_m",int_bmatrix_addcols},
@@ -1355,19 +1105,9 @@ static OpTab BMatrix_func[]={
   {"concatdiag_b_b" ,  int_bmatrix_concatdiag },
   {"copy_b",int_bmatrix_copy},
   {"create_b",int_bmatrix_create},
-  {"deletecols_b_b", int_bmatrix_deletecols},
-  {"deletecols_b_m", int_bmatrix_deletecols},
-  {"deleteelts_b_b", int_bmatrix_deleteelts},
-  {"deleteelts_b_m", int_bmatrix_deleteelts},
-  {"deleterows_b_b", int_bmatrix_deleterows},
-  {"deleterows_b_m", int_bmatrix_deleterows},
   {"diagcre_b",int_bmatrix_diagcre},
   {"diage_b",int_bmatrix_diage},
   {"diagset_b",int_bmatrix_diagset},
-  {"extract_b",int_bmatrix_extract},
-  {"extractcols_b",int_bmatrix_extractcols},
-  {"extractelts_b",int_bmatrix_extractelts},
-  {"extractrows_b",int_bmatrix_extractrows},
   {"find_b",int_bmatrix_find},
   {"m2b",int_bmatrix_m2b},
   {"not_b",int_bmatrix_not},
@@ -1377,8 +1117,6 @@ static OpTab BMatrix_func[]={
   {"seq_or_b_b",int_bmatrix_or},
   {"redim_b",int_bmatrix_redim},
   {"resize_b",int_bmatrix_resize},
-  {"setrc_b",int_bmatrix_setrc},
-  {"setrowscols_b",int_bmatrix_setrc},
   {"eq_b_b" ,  int_bmatrix_eq },
   {"ne_b_b" ,  int_bmatrix_neq },
   {"fneq_b_b" ,  int_bmatrix_fneq },

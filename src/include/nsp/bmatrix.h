@@ -88,7 +88,8 @@ extern int GetScalarBool (Stack stack, int i, int *val);
 
 /* from NspBMatrix.c */
 
-extern NspBMatrix *nsp_bmatrix_create(char *name, int m, int n); 
+extern NspBMatrix *nsp_bmatrix_create(const char *name, int m, int n); 
+extern NspBMatrix *nsp_bmatrix_clone(const char *name, NspBMatrix *A, int m, int n);
 extern NspBMatrix *nsp_bmatrix_copy(NspBMatrix *A); 
 extern unsigned int  nsp_bmatrix_elt_size(NspMatrix *M);
 extern int nsp_bmatrix_resize(NspBMatrix *A, int m, int n); 
@@ -104,15 +105,12 @@ extern int nsp_bmatrix_add_columns(NspBMatrix *A, int n);
 extern NspBMatrix *nsp_bmatrix_concat_down(NspBMatrix *A, NspBMatrix *B); 
 extern NspBMatrix *nsp_bmatrix_concat_diag(NspBMatrix *A, NspBMatrix *B); 
 extern int nsp_bmatrix_add_rows(NspBMatrix *A, int m); 
-extern int nsp_bmatrix_set_submatrix(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B); 
-extern int nsp_bmatrix_set_rows(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B); 
-extern int nsp_bmatrix_delete_columns(NspBMatrix *A, NspMatrix *Cols); 
-extern int nsp_bmatrix_delete_rows(NspBMatrix *A, NspMatrix *Rows); 
-extern int nsp_bmatrix_delete_elements(NspBMatrix *A, NspMatrix *Elts); 
-extern NspBMatrix *nsp_bmatrix_extract(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
-extern NspBMatrix *nsp_bmatrix_extract_elements(NspBMatrix *A, NspMatrix *Elts); 
-extern NspBMatrix *nsp_bmatrix_extract_columns(NspBMatrix *A, NspMatrix *Cols); 
-extern NspBMatrix *nsp_bmatrix_extract_rows(NspBMatrix *A, NspMatrix *Rows); 
+extern int nsp_bmatrix_set_submatrix_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B); 
+extern int nsp_bmatrix_set_rows_obsolete(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B); 
+extern NspBMatrix *nsp_bmatrix_extract_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
+extern NspBMatrix *nsp_bmatrix_extract_elements_obsolete(NspBMatrix *A, NspMatrix *Elts); 
+extern NspBMatrix *nsp_bmatrix_extract_columns_obsolete(NspBMatrix *A, NspMatrix *Cols); 
+extern NspBMatrix *nsp_bmatrix_extract_rows_obsolete(NspBMatrix *A, NspMatrix *Rows); 
 extern NspBMatrix *BMatLoopCol (char *str, NspBMatrix *Col, NspBMatrix *A, int icol, int *rep); 
 extern NspBMatrix *nsp_bmatrix_extract_diag(NspBMatrix *A, int k); 
 extern int nsp_bmatrix_set_diag(NspBMatrix *A, NspBMatrix *Diag, int k); 

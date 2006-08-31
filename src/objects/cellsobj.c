@@ -103,6 +103,9 @@ NspTypeCells *new_type_cells(type_mode mode)
   mati->resize = (matint_resize  *) nsp_cells_resize; 
   mati->free_elt = (matint_free_elt *) nsp_object_destroy;
   mati->elt_size = (matint_elt_size *) nsp_cells_elt_size ;
+  mati->clone = (matint_clone *) nsp_cells_clone;
+  mati->copy_elt = (matint_copy_elt *) nsp_object_copy; 
+  mati->enlarge = (matint_enlarge *) nsp_cells_enlarge;
 
   type->interface = (NspTypeBase *) mati;
 
@@ -571,23 +574,6 @@ int int_cells_redim(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * changes a copy of matrix stack object to column vector 
- */
-
-int
-int_cells_mat2vect (Stack stack, int rhs, int opt, int lhs)
-{
-  NspCells *HMat;
-  CheckRhs (1, 1);
-  CheckLhs (1, 1);
-  if ((HMat = GetCellsCopy (stack, 1)) == NULLCELLS) return RET_BUG;
-  if (nsp_cells_redim (HMat, HMat->mn, 1) != OK) return RET_BUG;
-  NSP_OBJECT (HMat)->ret_pos = 1;
-  return 1;
-}
-
-
-/*
  * Right Concatenation 
  * A= [A,B] 
  * return 0 on failure ( incompatible size or No more space )
@@ -779,232 +765,6 @@ int int_cells_addrows(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- *  A(Rows,Cols) = B 
- *  A is changed and enlarged if necessary 
- *  Size Compatibility is checked 
- *  WARNING : A is not Copied we want this routine to change A
- *            and the adress of A must not be changed 
- *  =======
- *  A can be a String Matrix 
- *  A(x)=B is not allowed when A and B do not have the same type 
- */
-
-int int_cells_setrc(Stack stack, int rhs, int opt, int lhs)
-{
-  NspCells *A,*B;
-  NspMatrix *Rows,*Rows1=NULLMAT,*Cols=NULLMAT,*Cols1=NULLMAT;
-  CheckRhs(3,4);
-  CheckLhs(1,1);
-  if ( IsCellsObj(stack,1)  ) 
-    {
-      /* A is a cells matrix **/
-      if ((A = GetCells(stack,1)) == NULLCELLS) goto ret_bug;
-    }
-  else 
-    {
-      Scierror("Error: A(...)= B, A and B must be of the same type\n");
-      goto ret_bug;
-    }
-  if ( IsBMatObj(stack,2)  ) 
-    {
-      /* Rows is boolean : use find(Rows) **/
-      NspBMatrix *BRows ;
-      if ((BRows = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
-      if ((Rows =Rows1= nsp_bmatrix_find(BRows)) == NULLMAT) goto ret_bug;
-    }
-  else
-    {
-      /* Rows is a real matrix **/
-      if ((Rows = GetRealMat(stack,2)) == NULLMAT) goto ret_bug;
-    }
-  if ( rhs == 4 )
-    {
-      /* Cols is boolean : use find(Cols) **/
-      if ( IsBMatObj(stack,3)  ) 
-	{
-	  NspBMatrix *BCols ;
-	  if ((BCols = GetBMat(stack,2)) == NULLBMAT) goto ret_bug;
-	  if ((Cols = Cols1 = nsp_bmatrix_find(BCols)) == NULLMAT) goto ret_bug;
-	}  
-      else
-	{
-	  if ((Cols = GetRealMat(stack,3)) == NULLMAT ) goto ret_bug;
-	}
-    }
-  /* last argument is B a String NspMatrix **/
-  if ((B = GetCells(stack,rhs)) == NULLCELLS) goto ret_bug;
-  if ( B == A) 
-    {
-      if ((B = GetCellsCopy(stack,rhs)) == NULLCELLS) goto ret_bug;
-    }
-  if ( rhs == 3 )
-    {  if ( nsp_cells_set_rows( A, Rows,B) != OK) goto ret_bug; }
-  else
-    {  if ( nsp_cells_set_submatrix( A, Rows,Cols,B) != OK) goto ret_bug;}
-
-
-  NSP_OBJECT(A)->ret_pos = 1;
-  nsp_matrix_destroy(Rows1);
-  nsp_matrix_destroy(Cols1);
-  return 1;
- ret_bug: 
-  /* delete if non null; */
-  nsp_matrix_destroy(Rows1);
-  nsp_matrix_destroy(Cols1);
-  return RET_BUG;
-}
-
-/*
- * Res=SMatDeletecols(A,Cols)
- * Cols unchanged  ( restored at end of function if necessary)
- * WARNING : A must be changed by this routine
- */
-
-int int_cells_deletecols(Stack stack, int rhs, int opt, int lhs)
-{
-  NspCells *A;
-  NspMatrix *Cols;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
-  if ((Cols = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ( nsp_cells_delete_columns( A, Cols) == FAIL) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  return 1;
-}
-
-
-
-/*
- * Res=SMatDeleterows(A,Rows)
- *     Rows unchanged  ( restored at end of function if necessary)
- * WARNING : A must be changed by this routine
- */
-
-int int_cells_deleterows(Stack stack, int rhs, int opt, int lhs)
-{
-  NspCells *A;
-  NspMatrix *Rows;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
-  if ((Rows = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ( nsp_cells_delete_rows( A, Rows) == FAIL) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  return 1;
-}
-
-/*
- * Res=SMatDeleteelts(A,Elts)
- *     Elts unchanged  ( restored at end of function if necessary)
- * WARNING : A must be changed by this routine
- */
-
-int int_cells_deleteelts(Stack stack, int rhs, int opt, int lhs)
-{
-  NspCells *A;
-  NspMatrix *Elts;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
-  if ((Elts = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ( nsp_cells_delete_elements( A, Elts) == FAIL) return RET_BUG;
-  NSP_OBJECT(A)->ret_pos = 1;
-  return 1;
-}
-
-/*
- * Res=nsp_cells_extract(A,Rows,Cols)
- * A unchanged, Rows and Cols are changed (i.e converted to int) 
- * 
- */	
-
-int int_cells_extract(Stack stack, int rhs, int opt, int lhs)
-{
-  NspCells *A,*Res; 
-  NspMatrix *Rows,*Cols;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
-  if ((Rows = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ((Cols = GetMat(stack,3)) == NULLMAT) return RET_BUG;
-  Res =nsp_cells_extract( A, Rows,Cols);
-  if ( Res == NULLCELLS) return RET_BUG;
-  MoveObj(stack,1,(NspObject *) Res);
-  return 1;
-}
-
-/*
- * Res=nsp_matrix_extract_elements(Elts,A)
- * A unchanged, Elts
- */	
-
-/* generic function for elts extraction */
-
-typedef NspCells * (*extrf) (NspCells*M,NspMatrix *Elts,int *err);
-
-int int_cells_extractelts_gen(Stack stack, int rhs, int opt, int lhs, extrf F)
-{
-  int err;
-  NspCells *A,*Res;
-  NspMatrix *Elts,*Elts1=NULL;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
-
-  if ( IsBMatObj(stack,2)  ) 
-    {
-      /* Elts is boolean : use find(Elts) **/
-      NspBMatrix *BElts;
-      if ((BElts = GetBMat(stack,2)) == NULLBMAT) return RET_BUG;
-      if ((Elts = Elts1 = nsp_bmatrix_find(BElts)) == NULLMAT) return RET_BUG;
-    }
-  else
-    {
-      /* Elts is a real matrix  **/
-      if ((Elts = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
-    }
-
-  Res = (*F)( A, Elts,&err);
-  if ( err == 1) 
-    {
-      nsp_matrix_destroy(Elts1); 
-      Scierror("Error:\tIndices out of bound\n");
-      return RET_BUG;
-    }
-  if ( Res  == NULLCELLS) 
-    {
-      nsp_matrix_destroy(Elts1); 
-      return RET_BUG;
-    }
-  nsp_matrix_destroy(Elts1); 
-  MoveObj(stack,1,(NspObject *)Res);
-  return 1;
-}
-
-int int_cells_extractelts(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_cells_extractelts_gen(stack,rhs,opt,lhs,nsp_cells_extract_elements);
-}
-
-/*
- * columns extraction  Cols A --> A(Cols)
- */	
-
-int int_cells_extractcols(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_cells_extractelts_gen(stack,rhs,opt,lhs,nsp_cells_extract_columns);
-}
-
-/*
- * rows extraction 					   
- */	
-
-int int_cells_extractrows(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_cells_extractelts_gen(stack,rhs,opt,lhs,nsp_cells_extract_rows);
-}
 
 /*
  * columns extraction for do loop
@@ -1020,7 +780,7 @@ int int_cells_extractcolforloop(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(3,3);
   if ((A = GetCells(stack,1)) == NULLCELLS) return RET_BUG;
   if ((Cols = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  Res =nsp_cells_extract_columns( A,Cols,&err);
+  Res =nsp_cells_extract_columns_obsolete( A,Cols,&err);
   if ( err == 1) return RET_ENDFOR;
   if ( Res == NULLCELLS) return RET_BUG;
   NthObj(3) = (NspObject *) Res;
@@ -1418,15 +1178,7 @@ static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab Cells_func[]={
-  {"resize2vect_ce", int_cells_mat2vect},	
-  {"extractcols_ce",int_cells_extractcols},	
-  {"extractrows_ce",int_cells_extractrows},
-  {"extractelts_ce",int_cells_extractelts},
-  {"loopextract_m_ce",int_cells_extractcolforloop},
-  {"deletecols_ce_m", int_cells_deletecols},
-  {"deleterows_ce_m", int_cells_deleterows},
-  {"deleteelts_ce_m", int_cells_deleteelts},
-  {"setrowscols_ce",int_cells_setrc},
+  {"loopextract_m_ce",int_cells_extractcolforloop},  /* a voir (inutile ?)*/
   {"cells_create",int_cells_create},
   {"col_cells_create", int_col_cells_create},
   {"row_cells_create", int_row_cells_create},
@@ -1438,8 +1190,6 @@ static OpTab Cells_func[]={
   {"concatd_ce_ce",int_cells_concatd},
   {"concatd_m_ce",int_cells_concatd_m_ce},
   {"addrows_ce",int_cells_addrows},
-  {"setrc_ce",int_cells_setrc},
-  {"extract_ce",int_cells_extract},
   {"resize_ce",int_cells_resize},
   {"enlarge_ce", int_cells_enlarge },
   {"eq_ce_ce" ,  int_cells_eq },

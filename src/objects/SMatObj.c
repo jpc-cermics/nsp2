@@ -104,6 +104,9 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
   mati->resize = (matint_resize  *) nsp_smatrix_resize; 
   mati->free_elt = (matint_free_elt *) nsp_string_destroy;
   mati->elt_size = (matint_elt_size *) nsp_smatrix_elt_size ;
+  mati->clone = (matint_clone *) nsp_smatrix_clone;
+  mati->copy_elt = (matint_copy_elt *) nsp_string_copy; 
+  mati->enlarge = (matint_enlarge *) nsp_smatrix_enlarge;
 
   type->interface = (NspTypeBase *) mati;
 
