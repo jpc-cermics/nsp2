@@ -5,11 +5,13 @@
 // faire tourner avec des matrices + ou - creuses 
 // et carrees ou rect 
 // + le cas complexe 
-
-A=int(rand(12,12)*30);A(A>=5)=0;
+nn=12
+A=int(rand(nn,nn)*30);A(A>=15)=0;
+Ai=int(rand(A)*30);Ai(Ai>=15)=0;
+A=A+%i*Ai
 Asizes=[144,1;1,144;6,24;24,6];
-//redim(A,24,6);
-//redim(A,6,24);
+redim(A,24,6);
+redim(A,6,24);
 
 // convert m2sp and sp2m 
 
@@ -346,9 +348,6 @@ if or(A1<>A2) then pause;end
 // nsp_spcolmatrix_seti
 // XXXX pas interfacé : ATESTER 
 
-// nsp_spcolmatrix_from_mat : m2sp 
-// nsp_spcolmatrix_to_mat: sp2m
-// already tested 
 
 // nsp_spcolmatrix_transpose 
 
@@ -394,9 +393,18 @@ if or(A1<>clean(A+0.01,0.1)) then pause;end
 
 
 // nsp_spcolmatrix_realpart: 
- 
+
+Sp1 = real(Sp);
+A1=real(A);
+if or(A1<>full(Sp1)) then pause;end
+
 // nsp_spcolmatrix_imagpart: 
-  
+
+Sp1 = imag(Sp);
+A1=imag(A);
+if or(A1<>full(Sp1)) then pause;end
+
+
 // /*
 //  *nsp_mat_inv_el: a(i,j)=1/a(i,j) A est changee
 //  */
@@ -448,16 +456,17 @@ end
 // nsp_spcolmatrix_maxitt 
 // XXXX n-ary version to be implemented 
 
-A1=int(rand(12,12)*30);A1(A1>=5)=0;
+Spr=real(Sp);Ar=real(A);
+A1=int(rand(A)*30);A1(A1>=5)=0;
 Sp1=m2sp(A1);
-Sp2=max(Sp,Sp1);
-A2=max(A,A1);
+Sp2=max(Spr,Sp1);
+A2=max(Ar,A1);
 if or(A2<>sp2m(Sp2)) then pause;end
 
-[Sp2,SpImax2]=max(Sp,Sp1);
-[A2,AImax2]=max(A,A1);
+[Sp2,SpImax2]=max(Spr,Sp1);
+[A2,AImax2]=max(Ar,A1);
 if or(A2<>sp2m(Sp2)) then pause;end
-I=find(A==0 && A1==0);
+I=find(Ar==0 && A1==0);
 AImax2(I)=0;
 if or(sp2m(SpImax2)<>AImax2) then pause;end
 
@@ -467,36 +476,36 @@ if or(sp2m(SpImax2)<>AImax2) then pause;end
 // Max =nsp_mat_maxi(A,B,Imax,lhs)
 // nsp_mat_mini: Mini(A)
 
-[Sp1]=max(Sp);
+[Sp1]=max(Spr);
 A1=sp2m(Sp1);
-A2=max(A);
+A2=max(Ar);
 if or(A1<>A2) then pause;end
 
-[Sp1,Imax]=max(Sp);
+[Sp1,Imax]=max(Spr);
 A1=sp2m(Sp1);
-[A2,Imax2]=max(A);
+[A2,Imax2]=max(Ar);
 if or(A1<>A2) then pause;end
 if or(Imax<>Imax2) then pause;end
 
-[Sp1]=max(Sp,'c');
+[Sp1]=max(Spr,'c');
 A1=sp2m(Sp1);
-A2=max(A,'c');
+A2=max(Ar,'c');
 if or(A1<>A2) then pause;end
 
-[Sp1,Imax]=max(Sp,'c');
+[Sp1,Imax]=max(Spr,'c');
 A1=sp2m(Sp1);
-[A2,Imax1]=max(A,'c');
+[A2,Imax1]=max(Ar,'c');
 if or(A1<>A2) then pause;end
 if or(Imax<>Imax1) then pause;end
 
-[Sp1]=max(Sp,'r');
+[Sp1]=max(Spr,'r');
 A1=sp2m(Sp1);
-A2=max(A,'r');
+A2=max(Ar,'r');
 if or(A1<>A2) then pause;end
 
-[Sp1,Imax]=max(Sp,'r');
+[Sp1,Imax]=max(Spr,'r');
 A1=sp2m(Sp1);
-[A2,Imax1]=max(A,'r');
+[A2,Imax1]=max(Ar,'r');
 if or(A1<>A2) then pause;end
 if or(Imax<>Imax1) then pause;end
 
@@ -607,7 +616,7 @@ endfunction
 
 // A=Acos(A), 
 
-A1=A/max(A);
+A1=A/max(real(A));
 Sp1=m2sp(A1);
 A2=acos(Sp1);
 if norm(acos(A1)-A2) > 1.e-8  then pause;end 
@@ -622,7 +631,7 @@ if norm(acosh(A1)-A2) > 1.e-8  then pause;end
 // SpColUnary
 // A=Asin(A), 
  
-A1=A/max(A);
+A1=A/max(real(A));
 Sp1=m2sp(A1);
 Sp1=asin(Sp1);
 if norm(asin(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
@@ -636,14 +645,14 @@ if norm(asinh(A1)-sp2m(Sp1)) > 1.e-8  then pause;end
 
 // atan 
 
-A1=A/max(A);
+A1=A/max(abs(A));
 Sp1=m2sp(A1);
 Sp1=atan(Sp1);
 if norm(atan(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 
 
 // atanh 
 
-A1=A/(2*max(A));
+A1=A/(2*max(real(A)));
 Sp1=m2sp(A1);
 Sp1=atanh(Sp1);
 if norm(atanh(A1)-sp2m(Sp1)) > 1.e-8  then pause;end 

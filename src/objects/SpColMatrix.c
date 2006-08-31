@@ -429,10 +429,11 @@ void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat)
   int i;
   if ( Mat != NULLSPCOL )
     {
+      
       nsp_object_destroy_name(NSP_OBJECT(Mat));
       for ( i = 0  ; i < Mat->n ; i++) 
 	{
-	nsp_spcolmatrix_col_destroy(Mat->D[i]);
+	  nsp_spcolmatrix_col_destroy(Mat->D[i]);
 	  FREE(Mat->D[i]);
 	}
       FREE(Mat->D);
@@ -3351,7 +3352,7 @@ NspMatrix *nsp_spcolmatrix_op_scal(NspSpColMatrix *A, NspSpColMatrix *B, int *fl
       nsp_mat_set_rval(Loc,(op == '-') ? -B->D[0]->R[0] :B->D[0]->R[0]);
       if (Loc->rc_type == 'c' ) 
 	{
-	  nsp_mat_set_rval(Loc,0.0);
+	  nsp_mat_set_ival(Loc,0.0);
 	}
       break;
     case 'c' : 
@@ -3842,7 +3843,15 @@ int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
 	  switch ( A->rc_type ) 
 	    {
 	    case 'r' : if ( Abs(A->D[i]->R[j])   < eps) A->D[i]->J[j] = -1;n=1; break ;
-	    case 'c' : if (nsp_abs_c(&A->D[i]->C[j]) < eps) A->D[i]->J[j] = -1;n=1; break ;
+	    case 'c' : 
+	      /* using complex absolute value  */
+	      if (nsp_abs_c(&A->D[i]->C[j]) < eps) A->D[i]->J[j] = -1;n=1; break ;
+	      /* 
+	       * if ( Abs(A->D[i]->C[j].r) < eps ) A->D[i]->C[j].r = 0.0;
+	       * if ( Abs(A->D[i]->C[j].i) < eps ) A->D[i]->C[j].i = 0.0;
+	       * if ( A->D[i]->C[j].r == 0.0 && A->D[i]->C[j].i == 0.0) 
+	       *  { A->D[i]->J[j] = -1;n=1;break;}
+	       */
 	    }
 	}
       /* remove null elements and resize rows **/
@@ -4115,6 +4124,49 @@ NspSpColMatrix *nsp_spcolmatrix_minitt(NspSpColMatrix *A, NspSpColMatrix *B, int
   return nsp_spcolmatrix_maximinitt_g(A,B,flag,-1,err);
 }
 
+/**
+ * nsp_spcol_resize:
+ * @col: 
+ * @n: 
+ * @rc_type: 
+ * 
+ * allocate or reallocate a sparse column structure
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+      
+static int nsp_spcol_resize(SpCol **col, int n, char rc_type)
+{
+  int cp = ( rc_type == 'c') ? 2 : 1;
+  if ( *col == NULL ) 
+    {
+      if ((*col= MALLOC(sizeof(SpCol))) == NULL) return FAIL; 
+      (*col)->size=0;
+    }
+
+  if ( (*col)->size == 0 ) 
+    {
+      if ( n <= 0 ) return(OK);
+      if (((*col)->J =nsp_alloc_int((int) n)) == (int *) 0) return(FAIL);
+      /* note that all data are in a union */
+      if (((*col)->R =nsp_alloc_doubles(n*cp)) == (double *) 0 ) return(FAIL);
+      (*col)->size = n;
+      return(OK);
+    }
+  if ( (*col)->size == n  ) return(OK);
+  if ( n <= 0 ) 
+    {
+      /* empty new size **/
+      FREE((*col)->J);
+      FREE((*col)->R);
+      (*col)->size = 0;
+      return(OK);
+    }
+  if (((*col)->J =nsp_realloc_int((*col)->J, n))  == (int *) 0) return(FAIL);
+  if (( (*col)->R =nsp_realloc_doubles((*col)->R, n*cp)) == (double *) 0 ) return(FAIL);
+  (*col)->size = n;
+  return(OK);
+}
 
 /**
  * nsp_spcolmatrix_realpart:
@@ -4125,34 +4177,36 @@ NspSpColMatrix *nsp_spcolmatrix_minitt(NspSpColMatrix *A, NspSpColMatrix *B, int
  * Return value:  %OK or %FAIL
  **/
 
+
+
+
 int nsp_spcolmatrix_realpart(NspSpColMatrix *A)
 {
+  SpCol *col=NULL;
   int i,k;
   if ( A->rc_type == 'r' )  return(OK);
   for ( i=0 ; i < A->n ; i++)
     {
+      col = NULL;
+      /* count non null elements in column i */
       int count =0; 
       for ( k = 0 ; k < A->D[i]->size ; k++ ) 
 	{
 	  if ( A->D[i]->C[k].r != 0.0) count++;
 	}
-      if ( count != 0) 
+      if ( nsp_spcol_resize(&col,count,'r')== FAIL) return FAIL;
+      count =0;
+      for ( k = 0 ; k < A->D[i]->size ; k++ ) 
 	{
-	  if ((A->D[i]->R =nsp_alloc_doubles((int) count)) == (double *) 0 ) 
-	    {
-	      Scierror("Error:\tRunning out of memory\n");
-	      return(FAIL);
+	  if ( A->D[i]->C[k].r != 0.0) 
+	    { 
+	      col->R[count] = A->D[i]->C[k].r; 
+	      col->J[count] = A->D[i]->J[k]; 
+	      count++;
 	    }
-	  count =0;
-	  for ( k = 0 ; k < A->D[i]->size ; k++ ) 
-	    {
-	      if ( A->D[i]->C[k].r != 0.0) 
-		{ 
-		  A->D[i]->R[count] =A->D[i]->C[k].r; count++;
-		}
-	    }
-	  FREE ( A->D[i]->C ) ;
 	}
+      nsp_spcolmatrix_col_destroy(A->D[i]);
+      A->D[i]= col;
     }
   A->rc_type = 'r';
   return(OK);
@@ -4170,6 +4224,7 @@ int nsp_spcolmatrix_realpart(NspSpColMatrix *A)
 
 int nsp_spcolmatrix_imagpart(NspSpColMatrix *A)
 {
+  SpCol *col=NULL;
   int i,k;
   if ( A->rc_type == 'r')
     {
@@ -4189,27 +4244,24 @@ int nsp_spcolmatrix_imagpart(NspSpColMatrix *A)
       for ( i=0 ; i < A->n ; i++)
 	{
 	  int count =0; 
+	  col=NULL;
 	  for ( k = 0 ; k < A->D[i]->size ; k++ ) 
 	    {
 	      if ( A->D[i]->C[k].i != 0.0) count++;
 	    }
-	  if ( count != 0) 
+	  if ( nsp_spcol_resize(&col,count,'r')== FAIL) return FAIL;
+	  count =0;
+	  for ( k = 0 ; k < A->D[i]->size ; k++ ) 
 	    {
-	      if ((A->D[i]->R =nsp_alloc_doubles((int) count)) == (double *) 0 ) 
-		{
-		  Scierror("Error:\tRunning out of memory\n");
-		  return(FAIL);
+	      if ( A->D[i]->C[k].i != 0.0) 
+		{ 
+		  col->R[count] = A->D[i]->C[k].i; 
+		  col->J[count] = A->D[i]->J[k]; 
+		  count++;
 		}
-	      count =0;
-	      for ( k = 0 ; k < A->D[i]->size ; k++ ) 
-		{
-		  if ( A->D[i]->C[k].i != 0.0) 
-		    { 
-		      A->D[i]->R[count] =A->D[i]->C[k].i; count++;
-		    }
-		}
-	      FREE ( A->D[i]->C ) ;
 	    }
+	  nsp_spcolmatrix_col_destroy(A->D[i]);
+	  A->D[i]= col;
 	}
       A->rc_type = 'r';
     }
@@ -4882,7 +4934,7 @@ static NspMatrix* SpColUnary2Full(NspSpColMatrix *A, Func1 F1, Func2 F2)
     }
   else
     {
-      for ( i = 0 ; i < A->m ; i++ ) 
+      for ( i = 0 ; i < A->n ; i++ ) 
 	for ( k = 0 ; k < A->D[i]->size ; k++) 
 	  {
 	    j= A->D[i]->J[k];
