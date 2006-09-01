@@ -21,7 +21,9 @@ TESTS= \
 	smat_concat_right.dia \
 	regexp.dia \
 	serial.dia \
-	sp.dia 
+	sp.dia \
+	spmult.dia 
+
 
 AFINIR= \
 	matelm-nsp.dia \

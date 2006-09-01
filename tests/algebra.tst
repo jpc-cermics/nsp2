@@ -75,47 +75,48 @@ if Err(Q*R-Ac')> 200*%eps then pause,end
 if Err(Q*R-Ac')> 200*%eps then pause,end
 
 [Q,R,x]=qr(Ac);
-if Err(Q*R-Ac*x)> 200*%eps then pause,end
+if Err(Q*R-Ac(:,x)) > 200*%eps then pause,end
 [Q,R,x]=qr(Ac,mode="e");
-if Err(Q*R-Ac*x)> 200*%eps then pause,end
+if Err(Q*R-Ac(:,x)) > 200*%eps then pause,end
 
-[Q,R,x]=qr(Ac');
-if Err(Q*R-Ac'*x)> 200*%eps then pause,end
-[Q,R,x]=qr(Ac',mode="e");
-if Err(Q*R-Ac'*x)> 200*%eps then pause,end
+Act=Ac';
+[Q,R,x]=qr(Act);
+if Err(Q*R-Act(:,x))> 200*%eps then pause,end
+[Q,R,x]=qr(Act,mode="e");
+if Err(Q*R-Act(:,x))> 200*%eps then pause,end
 
 //Rank detection (obsolete)
-[Q,R,rk,x]=qr(A);
-if Err(Q*R*x'-A)> 200*%eps | rk<>2  then pause,end
-[Q,R,rk,x]=qr(A,1.d-8);
-if Err(Q*R*x'-A)> 200*%eps | rk<>2  then pause,end
+[Q,R,x,rk]=qr(A);
+if Err(Q*R-A(:,x))> 200*%eps | rk<>2  then pause,end
+[Q,R,x,rk]=qr(A,tol=1.d-8);
+if Err(Q*R-A(:,x))> 200*%eps | rk<>2  then pause,end
 
-[Q,R,rk,x]=qr(Ac);
-if Err(Q*R*x'-Ac)> 200*%eps | rk<>2  then pause,end
+[Q,R,x,rk]=qr(Ac);
+if Err(Q*R-Ac(:,x))> 200*%eps | rk<>2  then pause,end
 
-[Q,R,rk,x]=qr(Ac,1.d-8);
-if Err(Q*R*x'-Ac)> 200*%eps | rk<>2  then pause,end
+[Q,R,x,rk]=qr(Ac,tol=1.d-8);
+if Err(Q*R-Ac(:,x))> 200*%eps | rk<>2  then pause,end
 
 //Large dimension
 //---------------
 A=rand(150,60);Ac=A+rand(A)*%i;
 //Real Case
 Q=qr(A);
-if Err(Q*Q'-eye())> 1000*%eps then pause,end
+if Err(Q*Q'-eye(Q*Q'))> 1000*%eps then pause,end
 Q=qr(A,mode="e");
-if Err(Q'*Q-eye())> 1000*%eps then pause,end
+if Err(Q'*Q-eye(Q'*Q))> 1000*%eps then pause,end
 
 [Q,R]=qr(A);
 if Err(Q*R-A)> 1000*%eps then pause,end
 
 [Q,R]=qr(A,mode="e");
 if Err(Q*R-A)> 1000*%eps then pause,end
-if Err(Q'*Q-eye())> 1000*%eps then pause,end
+if Err(Q'*Q-eye(Q'*Q))> 1000*%eps then pause,end
 
 Q=qr(A');
-if Err(Q*Q'-eye())> 1000*%eps then pause,end
+if Err(Q*Q'-eye(Q*Q'))> 1000*%eps then pause,end
 Q=qr(A',mode="e");
-if Err(Q*Q'-eye())> 1000*%eps then pause,end
+if Err(Q*Q'-eye(Q*Q'))> 1000*%eps then pause,end
 
 [Q,R]=qr(A');
 if Err(Q*R-A')> 1000*%eps then pause,end
@@ -124,27 +125,27 @@ if Err(Q*R-A')> 1000*%eps then pause,end
 if Err(Q*R-A')> 1000*%eps then pause,end
 
 [Q,R,x]=qr(A);
-if Err(Q*R*x'-A)> 1000*%eps then pause,end
+if Err(Q*R-A(:,x))> 1000*%eps then pause,end
 
 [Q,R,x]=qr(A,mode="e");
-if Err(Q*R*x'-A)> 1000*%eps then pause,end
+if Err(Q*R-A(:,x))> 1000*%eps then pause,end
 
 //Complex case
 Q=qr(Ac);
-if Err(Q*Q'-eye())> 2000*%eps then pause,end
+if Err(Q*Q'-eye(Q*Q'))> 2000*%eps then pause,end
 Q=qr(Ac,mode="e");
-if Err(Q'*Q-eye())> 2000*%eps then pause,end
+if Err(Q'*Q-eye(Q'*Q))> 2000*%eps then pause,end
 
 [Q,R]=qr(Ac);
 if Err(Q*R-Ac)> 2000*%eps then pause,end
 [Q,R]=qr(Ac,mode="e");
 if Err(Q*R-Ac)> 2000*%eps then pause,end
-if Err(Q'*Q-eye())> 2000*%eps then pause,end
+if Err(Q'*Q-eye(Q'*Q))> 2000*%eps then pause,end
 
 Q=qr(Ac');
-if Err(Q*Q'-eye())> 2000*%eps then pause,end
+if Err(Q*Q'-eye(Q*Q'))> 2000*%eps then pause,end
 Q=qr(Ac',mode="e");
-if Err(Q*Q'-eye())> 2000*%eps then pause,end
+if Err(Q*Q'-eye(Q*Q'))> 2000*%eps then pause,end
 
 
 [Q,R]=qr(Ac');
@@ -153,26 +154,27 @@ if Err(Q*R-Ac')> 2000*%eps then pause,end
 if Err(Q*R-Ac')> 2000*%eps then pause,end
 
 [Q,R,x]=qr(Ac);
-if Err(Q*R-Ac*x)> 2000*%eps then pause,end
+if Err(Q*R-Ac(:,x))> 2000*%eps then pause,end
 [Q,R,x]=qr(Ac,mode="e");
-if Err(Q*R-Ac*x)> 2000*%eps then pause,end
+if Err(Q*R-Ac(:,x))> 2000*%eps then pause,end
 
-[Q,R,x]=qr(Ac');
-if Err(Q*R-Ac'*x)> 2000*%eps then pause,end
-[Q,R,x]=qr(Ac',mode="e");
-if Err(Q*R-Ac'*x)> 2000*%eps then pause,end
+Act=Ac';
+[Q,R,x]=qr(Act);
+if Err(Q*R-Act(:,x))> 2000*%eps then pause,end
+[Q,R,x]=qr(Act,mode="e");
+if Err(Q*R-Act(:,x))> 2000*%eps then pause,end
 
 //Rank detection (obsolete)
-[Q,R,rk,x]=qr(A);
-if Err(Q*R*x'-A)> 2000*%eps | rk<>60  then pause,end
-[Q,R,rk,x]=qr(A,1.d-8);
-if Err(Q*R*x'-A)> 2000*%eps | rk<>60  then pause,end
+[Q,R,x,rk]=qr(A);
+if Err(Q*R-A(:,x))> 2000*%eps | rk<>60  then pause,end
+[Q,R,x,rk]=qr(A,tol=1.d-8);
+if Err(Q*R-A(:,x))> 2000*%eps | rk<>60  then pause,end
 
-[Q,R,rk,x]=qr(Ac);
-if Err(Q*R*x'-Ac)> 2000*%eps | rk<>60  then pause,end
+[Q,R,x,rk]=qr(Ac);
+if Err(Q*R-Ac(:,x))> 2000*%eps | rk<>60  then pause,end
 
-[Q,R,rk,x]=qr(Ac,1.d-8);
-if Err(Q*R*x'-Ac)> 2000*%eps | rk<>60  then pause,end
+[Q,R,x,rk]=qr(Ac,tol=1.d-8);
+if Err(Q*R-Ac(:,x))> 2000*%eps | rk<>60  then pause,end
 //==========================================================================
 //==============================      lu      ============================== 
 //==========================================================================
@@ -183,11 +185,11 @@ if L<>[]|U<>[] then pause,end
 [L,U,E]=lu(A);
 if L<>[]|U<>[]|E<>[] then pause,end
 //Non full rank
-A=rand(5,2);A=A*A';;Ac=rand(5,2)+%i*rand(5,2);Ac=Ac*Ac';
+A=rand(5,2);A=A*A';Ac=rand(5,2)+%i*rand(5,2);Ac=Ac*Ac';
 [L,U,E]=lu(A);
-if Err(L*U-E*A) >200*%eps then pause,end
+if Err(L*U-A(E,:)) >200*%eps then pause,end
 [L,U,E]=lu(Ac);
-if Err(L*U-E*Ac) >200*%eps then pause,end
+if Err(L*U-Ac(E,:)) >200*%eps then pause,end
 
 //Small dimension
 //---------------
@@ -198,36 +200,36 @@ A=rand(5,5);Ac=A+%i*rand(A);
 [L,U]=lu(A);
 if Err(L*U-A) >200*%eps then pause,end
 [L,U,E]=lu(A);
-if Err(L*U-E*A) >200*%eps then pause,end
+if Err(L*U-A(E,:)) >200*%eps then pause,end
 //Complex case
 [L,U]=lu(Ac);
 if Err(L*U-Ac) >200*%eps then pause,end
 [L,U,E]=lu(Ac);
-if Err(L*U-E*Ac) >200*%eps then pause,end
+if Err(L*U-Ac(E,:)) >200*%eps then pause,end
 //Fat
 A=rand(3,5);Ac=A+%i*rand(A);
 //Real case
 [L,U]=lu(A);
 if Err(L*U-A) >200*%eps then pause,end
 [L,U,E]=lu(A);
-if Err(L*U-E*A) >200*%eps then pause,end
+if Err(L*U-A(E,:)) >200*%eps then pause,end
 //Complex case
 [L,U]=lu(Ac);
 if Err(L*U-Ac) >200*%eps then pause,end
 [L,U,E]=lu(Ac);
-if Err(L*U-E*Ac) >200*%eps then pause,end
+if Err(L*U-Ac(E,:)) >200*%eps then pause,end
 //Tall
 A=rand(5,3);Ac=A+%i*rand(A);
 //Real case
 [L,U]=lu(A);
 if Err(L*U-A) >200*%eps then pause,end
 [L,U,E]=lu(A);
-if Err(L*U-E*A) >200*%eps then pause,end
+if Err(L*U-A(E,:)) >200*%eps then pause,end
 //Complex case
 [L,U]=lu(Ac);
 if Err(L*U-Ac) >200*%eps then pause,end
 [L,U,E]=lu(Ac);
-if Err(L*U-E*Ac) >200*%eps then pause,end
+if Err(L*U-Ac(E,:)) >200*%eps then pause,end
 
 
 //large dimension
@@ -238,36 +240,36 @@ A=rand(50,50);Ac=A+%i*rand(A);
 [L,U]=lu(A);
 if Err(L*U-A) >1000*%eps then pause,end
 [L,U,E]=lu(A);
-if Err(L*U-E*A) >1000*%eps then pause,end
+if Err(L*U-A(E,:)) >1000*%eps then pause,end
 //Complex case
 [L,U]=lu(Ac);
 if Err(L*U-Ac) >1000*%eps then pause,end
 [L,U,E]=lu(Ac);
-if Err(L*U-E*Ac) >1000*%eps then pause,end
+if Err(L*U-Ac(E,:)) >1000*%eps then pause,end
 //Fat
 A=rand(30,50);Ac=A+%i*rand(A);
 //Real case
 [L,U]=lu(A);
 if Err(L*U-A) >1000*%eps then pause,end
 [L,U,E]=lu(A);
-if Err(L*U-E*A) >1000*%eps then pause,end
+if Err(L*U-A(E,:)) >1000*%eps then pause,end
 //Complex case
 [L,U]=lu(Ac);
 if Err(L*U-Ac) >1000*%eps then pause,end
 [L,U,E]=lu(Ac);
-if Err(L*U-E*Ac) >1000*%eps then pause,end
+if Err(L*U-Ac(E,:)) >1000*%eps then pause,end
 //Tall
 A=rand(50,30);Ac=A+%i*rand(A);
 //Real case
 [L,U]=lu(A);
 if Err(L*U-A) >1000*%eps then pause,end
 [L,U,E]=lu(A);
-if Err(L*U-E*A) >1000*%eps then pause,end
+if Err(L*U-A(E,:)) >1000*%eps then pause,end
 //Complex case
 [L,U]=lu(Ac);
 if Err(L*U-Ac) >1000*%eps then pause,end
 [L,U,E]=lu(Ac);
-if Err(L*U-E*Ac) >1000*%eps then pause,end
+if Err(L*U-Ac(E,:)) >1000*%eps then pause,end
 
 
 //==========================================================================
@@ -286,11 +288,11 @@ S=svd(A,mode="e");
 if S<>[] then pause,end
 
 //Matrix with inf or nan
-if execstr('svd([%inf 1;2 3])','errcatch')==0 then pause,end
-if execstr('svd([1 %nan;2 3])','errcatch')==0 then pause,end
+if execstr('svd([%inf 1;2 3])',errcatch=%t)==%t then pause,end
+if execstr('svd([1 %nan;2 3])',errcatch=%t)==%t then pause,end
 
-if execstr('svd([%inf %i;2 3])','errcatch')==0 then pause,end
-if execstr('svd([%i %i;%nan 3])','errcatch')==0 then pause,end
+if execstr('svd([%inf %i;2 3])',errcatch=%t)==%t then pause,end
+if execstr('svd([%i %i;%nan 3])',errcatch=%t)==%t then pause,end
 
 
 //Small dimension
@@ -299,77 +301,88 @@ A=rand(3,5);Ac=A+%i*rand(A);
 
 //Real Case
 [U,S,V]=svd(A);
-if Err(U*S*V'-A)>200*%eps then pause,end
-if Err(svd(A)-diag(S))> 200*%eps then pause,end
+XX= U*[diag(S),zeros(3,2)]*V';
+if Err(XX-A)>200*%eps then pause,end
+if Err(svd(A)-S)> 200*%eps then pause,end
 
 [U,S,V]=svd(A,mode="e");
-if Err(U*S*V'-A)>200*%eps then pause,end
+XX= U*[diag(S)]*V';
+if Err(XX-A)>200*%eps then pause,end
 
 A=A';
 [U,S,V]=svd(A);
-if Err(U*S*V'-A)>200*%eps then pause,end
-if Err(svd(A)-diag(S))> 200*%eps then pause,end
+XX= U*[diag(S);zeros(2,3)]*V';
+if Err(XX-A)>200*%eps then pause,end
+if Err(svd(A)-S)> 200*%eps then pause,end
 
 [U,S,V]=svd(A,mode="e");
-if Err(U*S*V'-A)>200*%eps then pause,end
+XX= U*[diag(S)]*V';
+if Err(XX-A)>200*%eps then pause,end
 
 
 //Complex Case
 [U,S,V]=svd(Ac);
-if Err(U*S*V'-Ac)>200*%eps then pause,end
-if Err(svd(Ac)-diag(S))> 200*%eps then pause,end
+XX= U*[diag(S),zeros(3,2)]*V'
+if Err(XX-Ac)>200*%eps then pause,end
+if Err(svd(Ac)-S)> 200*%eps then pause,end
 
 [U,S,V]=svd(Ac,mode="e");
-if Err(U*S*V'-Ac)>200*%eps then pause,end
+XX= U*[diag(S)]*V'
+if Err(XX-Ac)>200*%eps then pause,end
 
 Ac=Ac';
-[U,S,V]=svd(Ac);U*S*V'-Ac;
-if Err(U*S*V'-Ac)>200*%eps then pause,end
-if Err(svd(Ac)-diag(S))> 200*%eps then pause,end
+[U,S,V]=svd(Ac);
+XX= U*[diag(S);zeros(2,3)]*V'
+if Err(XX-Ac)>200*%eps then pause,end
+if Err(svd(Ac)-S)> 200*%eps then pause,end
 
 [U,S,V]=svd(Ac,mode="e");
-if Err(U*S*V'-Ac)>200*%eps then pause,end
-
+XX= U*[diag(S)]*V'
+if Err(XX-Ac)>200*%eps then pause,end
 
 //Large dimension
 //---------------
+// BUGXXXXXX
+if %f then 
 A=rand(150,60);Ac=A+rand(A)*%i;
 //Real Case
 [U,S,V]=svd(A);
-if Err(U*S*V'-A)>10000*%eps then pause,end
-if Err(svd(A)-diag(S))> 10000*%eps then pause,end
+if Err(XX-A)>10000*%eps then pause,end
+if Err(svd(A)-S)> 10000*%eps then pause,end
 
 [U,S,V]=svd(A,mode="e");
-if Err(U*S*V'-A)>10000*%eps then pause,end
+if Err(XX-A)>10000*%eps then pause,end
 
 A=A';
 [U,S,V]=svd(A);
-if Err(U*S*V'-A)>10000*%eps then pause,end
-if Err(svd(A)-diag(S))> 10000*%eps then pause,end
+if Err(XX-A)>10000*%eps then pause,end
+if Err(svd(A)-S)> 10000*%eps then pause,end
 
 [U,S,V]=svd(A,mode="e");
-if Err(U*S*V'-A)>10000*%eps then pause,end
-
+if Err(XX-A)>10000*%eps then pause,end
 
 //Complex Case
 [U,S,V]=svd(Ac);
-if Err(U*S*V'-Ac)>10000*%eps then pause,end
-if Err(svd(Ac)-diag(S))> 10000*%eps then pause,end
+if Err(XX-Ac)>10000*%eps then pause,end
+if Err(svd(Ac)-S)> 10000*%eps then pause,end
 
 [U,S,V]=svd(Ac,mode="e");
-if Err(U*S*V'-Ac)>10000*%eps then pause,end
+if Err(XX-Ac)>10000*%eps then pause,end
 
 Ac=Ac';
 [U,S,V]=svd(Ac);U*S*V'-Ac;
-if Err(U*S*V'-Ac)>10000*%eps then pause,end
-if Err(svd(Ac)-diag(S))> 10000*%eps then pause,end
+if Err(XX-Ac)>10000*%eps then pause,end
+if Err(svd(Ac)-S)> 10000*%eps then pause,end
 
 [U,S,V]=svd(Ac,mode="e");
-if Err(U*S*V'-Ac)>10000*%eps then pause,end
+if Err(XX-Ac)>10000*%eps then pause,end
+end 
+
 //==========================================================================
 //==============================     spec     ============================== 
 //==========================================================================
 //define tools
+
 function A=testmat1(a,n)
 //eigen values are given by a dilation of nth roots of 1
 A=diag(a*ones(1,n-1),1)+diag((1/a)*ones(1,n-1),-1)
@@ -401,64 +414,64 @@ A=[];
 S=spec(A);
 if S<>[] then pause,end
 //Matrix with Inf or Nan (test de la detection d'erreur
-if execstr('spec([%inf 1;2 3])','errcatch')==0 then pause,end
-if execstr('spec([1 %nan;2 3])','errcatch')==0 then pause,end
+if execstr('spec([%inf 1;2 3])',errcatch=%t)==%t then pause,end
+if execstr('spec([1 %nan;2 3])',errcatch=%t)==%t then pause,end
 
-if execstr('spec([%inf %i;2 3])','errcatch')==0 then pause,end
-if execstr('spec([%i %i;%nan 3])','errcatch')==0 then pause,end
+if execstr('spec([%inf %i;2 3])',errcatch=%t)==%t then pause,end
+if execstr('spec([%i %i;%nan 3])',errcatch=%t)==%t then pause,end
 
 //Small dimension
 //---------------
 //Real Case
 //Unsymetric
 if Checktestmat1(3,5)>200*%eps then pause,end
-[U,S]=spec(testmat1(3,5));
-if Err(U*S/U-testmat1(3,5))>200*%eps then pause,end 
+[S,U]=spec(testmat1(3,5));
+if Err(U*diag(S)*U'-testmat1(3,5))>200*%eps then pause,end 
 //Symmetric
 if Checktestmat2(3,5)>200*%eps then pause,end
-[U,S]=spec(testmat2(3,5));
-if Err(U*S/U-testmat2(3,5))>200*%eps then pause,end 
+[S,U]=spec(testmat2(3,5));
+if Err(U*diag(S)*U'-testmat2(3,5))>200*%eps then pause,end 
 
 //Complex Case
 //Unsymetric
 if Checktestmat1(3+2*%i,5)>200*%eps then pause,end
-[U,S]=spec(testmat1(3+2*%i,5));
-if Err(U*S/U-testmat1(3+2*%i,5))>200*%eps then pause,end 
+[S,U]=spec(testmat1(3+2*%i,5));
+if Err(U*diag(S)*U'-testmat1(3+2*%i,5))>200*%eps then pause,end 
 
 //Symmetric
 if Checktestmat2(3+2*%i,5)>200*%eps then pause,end
-[U,S]=spec(testmat2(3+2*%i,5));
-if Err(U*S/U-testmat2(3+2*%i,5))>200*%eps then pause,end 
+[S,U]=spec(testmat2(3+2*%i,5));
+if Err(U*diag(S)*U'-testmat2(3+2*%i,5))>200*%eps then pause,end 
 
 //Large dimension
 //---------------
 //Real Case
 //Unsymetric
 if Checktestmat1(3,50)>1000*%eps then pause,end
-[U,S]=spec(testmat1(3,50));
-if Err(U*S/U-testmat1(3,50))>1000*%eps then pause,end 
+[S,U]=spec(testmat1(3,50));
+if Err(U*diag(S)*U'-testmat1(3,50))>2000*%eps then pause,end 
 
 //Symmetric
 if Checktestmat2(3,50)>1000*%eps then pause,end
-[U,S]=spec(testmat2(3,50));
-if Err(U*S/U-testmat2(3,50))>1000*%eps then pause,end 
+[S,U]=spec(testmat2(3,50));
+if Err(U*diag(S)*U'-testmat2(3,50))>10000*%eps then pause,end 
 
 //Complex Case
 //Unsymetric
 if Checktestmat1(3+2*%i,50)>1000*%eps then pause,end
-[U,S]=spec(testmat1(3+2*%i,50));
-if Err(U*S/U-testmat1(3+2*%i,50))>1000*%eps then pause,end 
+[S,U]=spec(testmat1(3+2*%i,50));
+if Err(U*diag(S)*U'-testmat1(3+2*%i,50))>10000*%eps then pause,end 
 
 //Symmetric
 if Checktestmat2(3+2*%i,50)>1000*%eps then pause,end
-[U,S]=spec(testmat2(3+2*%i,50));
-if Err(U*S/U-testmat2(3+2*%i,50))>1000*%eps then pause,end 
+[S,U]=spec(testmat2(3+2*%i,50));
+if Err(U*diag(S)*U'-testmat2(3+2*%i,50))>10000*%eps then pause,end 
 
 //==========================================================================
 //==============================    gspec     ============================== 
 //==========================================================================
-
-
+// XXXXXXX to be done 
+if %f then 
 //Empty matrix
 S=spec([],[]);
 if S<>[] then pause,end
@@ -470,8 +483,8 @@ if al<>[]|be<>[]|Z<>[] then pause,end
 if al<>[]|be<>[]|Z<>[]|Q<>[] then pause,end
 
 //Matrix with Inf or Nan (test de la detection d'erreur
-if execstr('spec([%inf 1;2 3],[1 2;3 4])','errcatch')==0 then pause,end
-if execstr('spec([1 2;3 4],[1 %nan;2 3])','errcatch')==0 then pause,end
+if execstr('spec([%inf 1;2 3],[1 2;3 4])',errcatch=%t)==%t then pause,end
+if execstr('spec([1 2;3 4],[1 %nan;2 3])',errcatch=%t)==%t then pause,end
 
 //Small dimension
 //---------------
@@ -501,7 +514,6 @@ if Err(A*Z-E*Z*diag(S))>200*%eps then pause,end
 if Err(S-Sa./Se)>10*%eps then pause,end
 if Err(A*Z-E*Z*diag(S))>200*%eps then pause,end
 if Err(Q'*A-diag(S)*Q'*E)>200*%eps then pause,end
-
 
 //Large dimension
 //---------------
@@ -533,6 +545,8 @@ if Err(S-Sa./Se)>20*%eps then pause,end
 if Err(A*Z-E*Z*diag(S))>1000*%eps then pause,end
 if Err(Q'*A-diag(S)*Q'*E)>1000*%eps then pause,end
 
+end 
+
 
 //==========================================================================
 //==============================     inv      ============================== 
@@ -541,11 +555,11 @@ if Err(Q'*A-diag(S)*Q'*E)>1000*%eps then pause,end
 A=[];
 if inv(A)<>[] then pause,end
 //Singular matrix
-if execstr('inv([0 0;2 3])','errcatch')==0 then pause,end
-if execstr('inv([0 0;%i 3])','errcatch')==0 then pause,end
+if execstr('inv([0 0;2 3])',errcatch=%t)==%t then pause,end
+if execstr('inv([0 0;%i 3])',errcatch=%t)==%t then pause,end
 //Rectangular matrix
-if execstr('inv(rand(2,3))','errcatch')==0 then pause,end
-if execstr('inv(rand(2,3)+%i*eye())','errcatch')==0 then pause,end
+if execstr('inv(rand(2,3))',errcatch=%t)==%t then pause,end
+if execstr('inv(rand(2,3)+%i*eye())',errcatch=%t)==%t then pause,end
 //Small dimension
 //---------------
 //Unsymetric
@@ -582,8 +596,8 @@ A=[];
 if rcond(A)<>[] then pause,end
 
 //Rectangular matrix
-if execstr('rcond(rand(2,3))','errcatch')==0 then pause,end
-if execstr('rcond(rand(2,3)+%i*eye())','errcatch')==0 then pause,end
+if execstr('rcond(rand(2,3))',errcatch=%t)==%t then pause,end
+if execstr('rcond(rand(2,3)+%i*eye())',errcatch=%t)==%t then pause,end
 //Small dimension
 //---------------
 //Real Case
@@ -603,6 +617,9 @@ if  Err(rcond(eye(50,50)*(1+%i))-1)>10*%eps then pause,end
 //==========================================================================
 //==============================    schur     ============================== 
 //==========================================================================
+// XXXXXXXXXXXX to be done 
+
+if %f then 
 function t=sel(R),t=real(R)<0 ,endfunction
 //Empty matrix
 A=[];
@@ -621,8 +638,6 @@ if U<>[]|S<>[] then pause,end
 [U,S]=schur(A,'complex');
 if U<>[]|S<>[] then pause,end
 
-
-
 [U,N]=schur(A,'c');
 if U<>[]|N<>0 then pause,end
 [U,N]=schur(A,'d');
@@ -638,11 +653,11 @@ if U<>[]|N<>0|S<>[] then pause,end
 if U<>[]|N<>0|S<>[] then pause,end
 
 //Rectangular matrix
-if execstr('schur(rand(2,3))','errcatch')==0 then pause,end
-if execstr('[U,S]=schur(rand(2,3))','errcatch')==0 then pause,end
+if execstr('schur(rand(2,3))',errcatch=%t)==%t then pause,end
+if execstr('[U,S]=schur(rand(2,3))',errcatch=%t)==%t then pause,end
 
-if execstr('schur(rand(2,3)+%i*eye())','errcatch')==0 then pause,end
-if execstr('[U,S]=schur(rand(2,3)+%i*eye())','errcatch')==0 then pause,end
+if execstr('schur(rand(2,3)+%i*eye())',errcatch=%t)==%t then pause,end
+if execstr('[U,S]=schur(rand(2,3)+%i*eye())',errcatch=%t)==%t then pause,end
 
 //Small dimension
 A=testmat1(3,5);Ac=testmat1(3+%i,5);
@@ -761,11 +776,15 @@ if or(abs(spec(S(n+1:$,n+1:$)))<1) then pause,end
 if n<>25 then pause,end
 if or(real(spec(S(1:n,1:n)))>=0) then pause,end
 if or(real(spec(S(n+1:$,n+1:$)))<0) then pause,end
+end 
 
 //==========================================================================
 //==============================    gschur    ============================== 
 //==========================================================================
 //Empty matrix
+
+// XXXX to be done 
+if %f then 
 [As,Es]=schur([],[]);
 if As<>[]|Es<>[] then pause,end
 
@@ -795,10 +814,10 @@ if Z<>[]|dim<>0 then pause,end
 
 
 //Rectangular matrix
-if execstr('[As,Es]=schur(rand(2,3),rand(2,3))','errcatch')==0 then  pause,end
-if execstr('[As,Es,Q,Z]=schur(rand(2,3),rand(2,3))','errcatch')==0 then  pause,end
-if execstr('[As,Es,dim]=schur(rand(2,3),rand(2,3),''c'')','errcatch')==0 then  pause,end
-if execstr('[Z,dim]=schur(rand(2,3),rand(2,3),sel)','errcatch')==0 then  pause,end
+if execstr('[As,Es]=schur(rand(2,3),rand(2,3))',errcatch=%t)==%t then  pause,end
+if execstr('[As,Es,Q,Z]=schur(rand(2,3),rand(2,3))',errcatch=%t)==%t then  pause,end
+if execstr('[As,Es,dim]=schur(rand(2,3),rand(2,3),''c'')',errcatch=%t)==%t then  pause,end
+if execstr('[Z,dim]=schur(rand(2,3),rand(2,3),sel)',errcatch=%t)==%t then  pause,end
 
 //Small dimension
 //----Real------------
@@ -1069,6 +1088,8 @@ if Err(Z*Z'-eye(Z)) >200*%eps then pause,end
 if Err(As-Q'*A*Z) >1000*%eps then pause,end
 if Err(Es-Q'*E*Z) >1000*%eps then pause,end
 
+end 
+
 //==========================================================================
 //==============================     svd      ============================== 
 //==========================================================================
@@ -1082,10 +1103,10 @@ if U<>[]|S<>[]  then pause,end
 if U<>[]|S<>[]|V<>[]  then pause,end
 [U,S,V,rk]=svd([]);
 if U<>[]|S<>[]|V<>[]|rk<>0  then pause,end
-[U,S,V,rk]=svd([],%eps);
+[U,S,V,rk]=svd([],tol=%eps);
 if U<>[]|S<>[]|V<>[]|rk<>0  then pause,end
 
-if errcatch('[U,S,V,rk]=svd([],'"e'")') == 0 then pause,end
+if execstr('[U,S,V,rk]=svd([],mode='"e'")',errcatch=%t) == %f then pause,end
 
 //Small dimension
 //Real Case Fat
@@ -1095,16 +1116,16 @@ if or(S<0) then pause,end
 if sort(S)<>S  then pause,end
 
 [U,S1]=svd(A);
-if Err(S-diag(S1))>200*%eps  then pause,end
-if Err(U'*U-eye())>10*%eps  then pause,end
+if Err(S-S1)>200*%eps  then pause,end
+if Err(U'*U-eye(U'*U))>10*%eps  then pause,end
 
 [U1,S1]=svd(A,mode="e");
-if Err(S-diag(S1))>200*%eps  then pause,end
-if Err(U1'*U1-eye())>200*%eps  then pause,end
+if Err(S-S1)>200*%eps  then pause,end
+if Err(U1'*U1-eye(U1'*U1))>200*%eps  then pause,end
 
 [U1,S1,V]=svd(A);
-if Err(S-diag(S1))>200*%eps  then pause,end
-if Err(U'*U-eye())>200*%eps  then pause,end
+if Err(S-S1)>200*%eps  then pause,end
+if Err(U'*U-eye(U'*U))>200*%eps  then pause,end
 if Err(U1*S1*V'-A) >200*%eps  then pause,end
 
 [U1,S1,V1]=svd(A,mode="e");
@@ -1347,10 +1368,10 @@ if hess([])<>[] then pause,end
 [U,H]=hess([]);
 if U<>[]|H<>[] then pause,end
 
-if execstr('hess(rand(2,5))','errcatch')==0 then pause,end
-if execstr('[U,H]=hess(rand(2,5))','errcatch')==0 then pause,end
-if execstr('hess(rand(2,5)+%i)','errcatch')==0 then pause,end
-if execstr('[U,H]=hess(rand(2,5)+%i)','errcatch')==0 then pause,end
+if execstr('hess(rand(2,5))',errcatch=%t)==%t then pause,end
+if execstr('[U,H]=hess(rand(2,5))',errcatch=%t)==%t then pause,end
+if execstr('hess(rand(2,5)+%i)',errcatch=%t)==%t then pause,end
+if execstr('[U,H]=hess(rand(2,5)+%i)',errcatch=%t)==%t then pause,end
 
 //Small dimension
 //Real case
@@ -1387,9 +1408,9 @@ if Err(U'*A*U-H1)  >1000*%eps then pause,end
 
 //Empty matrix
 if lsq([],[])<>[] then pause,end
-if errcatch('lsq([],1)','errcatch')==0 then pause,end
-if errcatch('lsq(1,[])','errcatch')==0 then pause,end
-if errcatch('lsq(rand(3,2),rand(2,1))','errcatch')==0 then pause,end
+if errcatch('lsq([],1)',errcatch=%t)==%t then pause,end
+if errcatch('lsq(1,[])',errcatch=%t)==%t then pause,end
+if errcatch('lsq(rand(3,2),rand(2,1))',errcatch=%t)==%t then pause,end
 
 //Small dimensions
 //Real full rank fat
@@ -1490,8 +1511,8 @@ if Err(X-X1)>200*%eps then pause,end
 //Empty matrix
 if chol([])<>[] then pause,end
 
-if errcatch('chol([1 2;3 4])','errcatch')==0 then pause,end
-if errcatch('chol([1 2;3 4]+%i)','errcatch')==0 then pause,end
+if errcatch('chol([1 2;3 4])',errcatch=%t)==%t then pause,end
+if errcatch('chol([1 2;3 4]+%i)',errcatch=%t)==%t then pause,end
 
 //Small dimension
 //REAL
@@ -1529,7 +1550,7 @@ function x=rdiv(A,B),x=A/B,endfunction
 //-----Square matrix-----
 n=5;  A=rand(n,n);b=rand(2,n+1);
 if rdiv([],A) <>[] then pause,end
-if execstr('rdiv(b,A)','errcatch')==0 then pause,end
+if execstr('rdiv(b,A)',errcatch=%t)==%t then pause,end
 //Small dimensions real
 n=5;
 b=rand(2,n);A=rand(n,n);
@@ -1569,7 +1590,7 @@ if Err(x*A-b)>10000*%eps then pause,end
 //-----Rectangular matrix-----
 n=5;m=3; A=rand(m,n);b=rand(2,n+1);
 if rdiv([],A) <>[] then pause,end
-if execstr('rdiv(b,A)','errcatch')==0 then pause,end
+if execstr('rdiv(b,A)',errcatch=%t)==%t then pause,end
 
 //Small dimensions real
 n=5;m=3;
@@ -1657,7 +1678,7 @@ function x=ldiv(A,B),x=A\B,endfunction
 //-----Square matrix-----
 n=5;  A=rand(n,n);b=rand(2,n+1);
 if ldiv(A,[]) <>[] then pause,end
-if execstr('ldiv(A,B)','errcatch')==0 then pause,end
+if execstr('ldiv(A,B)',errcatch=%t)==%t then pause,end
 //Small dimensions real
 n=5;
 b=rand(n,2);A=rand(n,n);
@@ -1699,7 +1720,7 @@ if Err(A*x-b)>50000*%eps then pause,end
 //-----Rectangular matrix-----
 n=5;m=3; A=rand(m,n);b=rand(n+1,2);
 if ldiv(A,[]) <>[] then pause,end
-if execstr('ldiv(A,b)','errcatch')==0 then pause,end
+if execstr('ldiv(A,b)',errcatch=%t)==%t then pause,end
 
 //Small dimensions real
 n=5;m=3;
@@ -1779,7 +1800,7 @@ if Err(A'*A*x-A'*b)>10000*%eps then pause,end
 //==========================================================================
 //==============================   det        ============================== 
 //==========================================================================
-if execstr('det([1 2;3 4;5 6])','errcatch')==0 then pause,end
+if execstr('det([1 2;3 4;5 6])',errcatch=%t)==%t then pause,end
 //Small dimension 
 //Real
 A=[1 1; 1 2];
@@ -1879,7 +1900,7 @@ if bdiag([])<>[] then pause,end
 if ab<>[]|x<>[] then pause,end
 [ab,x,bs]=bdiag([]);
 if ab<>[]|x<>[]|bs<>[] then pause,end
-if execstr('bdiag([1 2;3 4;5 6])','errcatch')==0 then pause,end
+if execstr('bdiag([1 2;3 4;5 6])',errcatch=%t)==%t then pause,end
 
 //Small dimension
 //---------------

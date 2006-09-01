@@ -5,7 +5,7 @@
 
 function [y]=string(x)
  y=m2s(x,"%.0f")
-endfunction
+endfunction;
 
 N=4;P=5;
 // a random permutation 
