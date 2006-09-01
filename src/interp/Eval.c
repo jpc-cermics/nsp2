@@ -1392,12 +1392,15 @@ static int EvalEqual(PList L1, Stack stack, int first)
 
 int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 {
+  NspTypeBase *type;
   int k,n;
-/*   NspObject *O1; */
-/*   char fname[NAME_MAXL]; */
+  NspObject *O1; 
+  char fname[NAME_MAXL];
   stack.first = first;
   /* check if w=[] : Not perfect since list() will also return 0 
    */
+  type = check_implements(stack.val->S[first], nsp_type_matint_id);
+
   if (nsp_object_get_size( stack.val->S[first+1+fargs],0) == 0) 
     { 
       /* Removing columns or lines or elements 
@@ -1412,10 +1415,16 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	       * delete first+1,first+2 
 	       */
 	      nsp_void_seq_object_destroy(stack,first+1,first+3);
-/* 	      O1=nsp_frames_search_op_object("tozero"); */
-/* 	      return nsp_eval_func(O1,"tozero",stack,first,1,0,1); */
-	      if ( call_interf((function *) nsp_matint_tozero_xx, stack, 1, 0, 1) < 0 )
-		return RET_BUG;
+	      if ( type == NULL ) 
+		{
+		  O1=nsp_frames_search_op_object("tozero"); 
+		  return nsp_eval_func(O1,"tozero",stack,first,1,0,1); 
+		}
+	      else
+		{
+		  if ( call_interf((function *) nsp_matint_tozero_xx, stack, 1, 0, 1) < 0 )
+		    return RET_BUG;
+		}
 	      return 1;
 	    }
 	  else
@@ -1423,10 +1432,16 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	      /*x(elts)=[] ==> removing elements **/
 	      nsp_void_object_destroy(&stack.val->S[first+2]); /* [] */
 	      stack.val->S[first+2]=NULLOBJ;
-/* 	      O1=nsp_frames_search_op_object("deleteelts"); */
-/* 	      if ( (n=nsp_eval_func(O1,"deleteelts",stack,first,2,0,1)) < 0)  return n; */
-	      if ( call_interf((function *) nsp_matint_delete_elts_xx, stack, 2, 0, 1) < 0 )
-		return RET_BUG;
+	      if ( type == NULL ) 
+		{
+		  O1=nsp_frames_search_op_object("deleteelts"); 
+		  if ( (n=nsp_eval_func(O1,"deleteelts",stack,first,2,0,1)) < 0)  return n; 
+		}
+	      else
+		{
+		  if ( call_interf((function *) nsp_matint_delete_elts_xx, stack, 2, 0, 1) < 0 )
+		    return RET_BUG;
+		}
 	      return 1;
 	    }
 	  break;
@@ -1438,10 +1453,16 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		  /* delete first+1,first+2,first+3 */
 		  nsp_void_seq_object_destroy(stack,first+1,first+4);
 		  /*x(:,:)=[] ==> x=[] **/
-/* 		  O1=nsp_frames_search_op_object("tozero"); */
-/* 		  return nsp_eval_func(O1,"tozero",stack,first,1,0,1); */
-		  if ( call_interf((function *) nsp_matint_tozero_xx, stack, 1, 0, 1) < 0 )
-		    return RET_BUG;
+		  if ( type == NULL ) 
+		    {
+		      O1=nsp_frames_search_op_object("tozero"); 
+		      return nsp_eval_func(O1,"tozero",stack,first,1,0,1); 
+		    }
+		  else
+		    {
+		      if ( call_interf((function *) nsp_matint_tozero_xx, stack, 1, 0, 1) < 0 )
+			return RET_BUG;
+		    }
 		  return 1;
 		}
 	      else
@@ -1453,10 +1474,16 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		  nsp_void_object_destroy(&stack.val->S[first+3]); /* : */
 		  stack.val->S[first+3]=NULLOBJ;
 		  /*now we have [x,expr] on the stack **/
-/* 		  O1=nsp_frames_search_op_object("deletecols"); */
-/* 		  if ( (n=nsp_eval_func(O1,"deletecols",stack,first,2,0,1)) < 0)  return n; */
-		  if ( call_interf((function *) nsp_matint_delete_cols_xx, stack, 2, 0, 1) < 0 )
-		    return RET_BUG;
+		  if ( type == NULL ) 
+		    {
+		      O1=nsp_frames_search_op_object("deletecols"); 
+		      if ( (n=nsp_eval_func(O1,"deletecols",stack,first,2,0,1)) < 0)  return n; 
+		    }
+		  else
+		    {
+		      if ( call_interf((function *) nsp_matint_delete_cols_xx, stack, 2, 0, 1) < 0 )
+			return RET_BUG;
+		    }
 		  return 1;
 		}
 	    }
@@ -1468,10 +1495,16 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		  /*we have [x,expr] on the stack **/
 		  /* delete first+2,first+3 */
 		  nsp_void_seq_object_destroy(stack,first+2,first+4);
-/* 		  O1=nsp_frames_search_op_object("deleterows"); */
-/* 		  if ((n=nsp_eval_func(O1,"deleterows",stack,first,2,0,1)) < 0)  return n; */
-		  if ( call_interf((function *) nsp_matint_delete_rows_xx, stack, 2, 0, 1) < 0 )
-		    return RET_BUG;
+		  if ( type == NULL ) 
+		    {
+		      O1=nsp_frames_search_op_object("deleterows"); 
+		      if ((n=nsp_eval_func(O1,"deleterows",stack,first,2,0,1)) < 0)  return n; 
+		    }
+		  else
+		    {
+		      if ( call_interf((function *) nsp_matint_delete_rows_xx, stack, 2, 0, 1) < 0 )
+			return RET_BUG;
+		    }
 		  return 1;
 		}
 	      else 
@@ -1479,10 +1512,16 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		  /*x(<expr>,<expr>)=[] **/
 		  nsp_void_object_destroy(&stack.val->S[first+3]); /* [] */
 		  stack.val->S[first+3]=NULLOBJ;
-/* 		  O1=nsp_frames_search_op_object("deleteelts"); */
-/* 		  if ((n=nsp_eval_func(O1,"deleteelts",stack,first,3,0,1)) < 0)  return n; */
-		  if ( call_interf((function *) nsp_matint_delete_elts2_xx, stack, 3, 0, 1) < 0 )
-		    return RET_BUG;
+		  if ( type == NULL ) 
+		    {
+		      O1=nsp_frames_search_op_object("deleteelts"); 
+		      if ((n=nsp_eval_func(O1,"deleteelts",stack,first,3,0,1)) < 0)  return n; 
+		    }
+		  else
+		    {
+		      if ( call_interf((function *) nsp_matint_delete_elts2_xx, stack, 3, 0, 1) < 0 )
+			return RET_BUG;
+		    }
 		  return 1;
 		}
 	    }
@@ -1509,23 +1548,25 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	  stack.val->S[first+fargs+2]=NULLOBJ;
 	}
     }
-
-  if ( call_interf((function *) nsp_matint_setrowscols_xx, stack, fargs+ 2, 0, 1) < 0 )
-    return RET_BUG; 
+  if ( type == NULL ) 
+    {
+      /*we build a name which depends on first and last argument x(,,,,,)=z */
+      /*nsp_build_funcnameij("setrowscols",stack,first,0,fargs+1,fname);
+       *  O1=nsp_frames_search_object(fname); */
+      /* if (nsp_eval_func(O1,fname,stack,first,fargs+ 2,0,1) < 0) return RET_BUG;  */
+      /* here rhs==3 and we want the name to depend on the first argument type 
+       * thus we force name construction. 
+       * we should add here a sign to avoid name construction in FuncEval XXXX 
+       */
+      nsp_build_funcname("@setrowscols",stack,first,1,fname); 
+      if (nsp_eval_func(NULL,fname,stack,first,fargs+ 2,0,1) < 0) return RET_BUG; 
+    }
   else 
-    return 1;
-
-  /*we build a name which depends on first and last argument x(,,,,,)=z */
-  /*nsp_build_funcnameij("setrowscols",stack,first,0,fargs+1,fname);
-   *  O1=nsp_frames_search_object(fname); */
-  /* if (nsp_eval_func(O1,fname,stack,first,fargs+ 2,0,1) < 0) return RET_BUG;  */
-  /* here rhs==3 and we want the name to depend on the first argument type 
-   * thus we force name construction. 
-   * we should add here a sign to avoid name construction in FuncEval XXXX 
-   */
-/*   nsp_build_funcname("@setrowscols",stack,first,1,fname); */
-/*   if (nsp_eval_func(NULL,fname,stack,first,fargs+ 2,0,1) < 0) return RET_BUG; */
-/*   return 1; */
+    {
+      if ( call_interf((function *) nsp_matint_setrowscols_xx, stack, fargs+ 2, 0, 1) < 0 )
+	return RET_BUG; 
+    }
+  return 1;
 }
 
 /**
