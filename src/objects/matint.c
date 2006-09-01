@@ -160,22 +160,6 @@ NspMethods *matint_get_methods(void) { return matint_methods;};
  * cast elements of A to integers in ind (minus 1 such that ind is "0-based")
  * and computes the min and max of A (here staying "1-based")   
  */
-static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
-{
-  int i, ival;
-
-  *imax = 1;
-  *imin = 1;
-  for (i = 0; i < A->mn; i++)
-    {
-      ival = (int) A->R[i];
-      if (ival > *imax)
-	*imax = ival;
-      else if (ival < *imin)
-	*imin = ival;
-      ind[i] = ival-1;
-    }
-}
 
 /* static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax) */
 /* { */
@@ -183,42 +167,59 @@ static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax
 
 /*   *imax = 1; */
 /*   *imin = 1; */
-/*   if ( A->convert == 'd' ) */
-/*     for (i = 0; i < A->mn; i++) */
-/*       { */
-/* 	ival = (int) A->R[i]; */
-/* 	if (ival > *imax) */
-/* 	  *imax = ival; */
-/* 	else if (ival < *imin) */
-/* 	  *imin = ival; */
-/* 	ind[i] = ival-1; */
-/*       } */
-/*   else if ( A->convert == 'i' ) */
+/*   for (i = 0; i < A->mn; i++) */
 /*     { */
-/*       for (i = 0; i < A->mn; i++) */
-/* 	{ */
-/* 	  ival = A->I[i]; */
-/* 	  if (ival > *imax) */
-/* 	    *imax = ival; */
-/* 	  else if (ival < *imin) */
-/* 	    *imin = ival; */
-/* 	  ind[i] = ival-1; */
-/* 	} */
-/*     } */
-/*   else /\* A->convert must be 'f' *\/ */
-/*     { */
-/*       float *AF = (float *) A->R; */
-/*       for (i = 0; i < A->mn; i++) */
-/* 	{ */
-/* 	  ival = (int) AF[i]; */
-/* 	  if (ival > *imax) */
-/* 	    *imax = ival; */
-/* 	  else if (ival < *imin) */
-/* 	    *imin = ival; */
-/* 	  ind[i] = ival-1; */
-/* 	} */
+/*       ival = (int) A->R[i]; */
+/*       if (ival > *imax) */
+/* 	*imax = ival; */
+/*       else if (ival < *imin) */
+/* 	*imin = ival; */
+/*       ind[i] = ival-1; */
 /*     } */
 /* } */
+
+static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
+{
+  int i, ival;
+
+  *imax = 1;
+  *imin = 1;
+  if ( A->convert == 'd' )
+    for (i = 0; i < A->mn; i++)
+      {
+	ival = (int) A->R[i];
+	if (ival > *imax)
+	  *imax = ival;
+	else if (ival < *imin)
+	  *imin = ival;
+	ind[i] = ival-1;
+      }
+  else if ( A->convert == 'i' )
+    {
+      for (i = 0; i < A->mn; i++)
+	{
+	  ival = A->I[i];
+	  if (ival > *imax)
+	    *imax = ival;
+	  else if (ival < *imin)
+	    *imin = ival;
+	  ind[i] = ival-1;
+	}
+    }
+  else /* A->convert must be 'f' */
+    {
+      float *AF = (float *) A->R;
+      for (i = 0; i < A->mn; i++)
+	{
+	  ival = (int) AF[i];
+	  if (ival > *imax)
+	    *imax = ival;
+	  else if (ival < *imin)
+	    *imin = ival;
+	  ind[i] = ival-1;
+	}
+    }
+}
 
 /**
  * nsp_matint_indices_for_deletions:
@@ -295,7 +296,10 @@ static int *get_index_vector(Stack stack, int ipos, int *Nb_elts, int *Rmin, int
   else
     {
       NspMatrix *Elts;
-      /* Elts must be a real matrix  * */
+      /* Elts must be a real matrix  
+       * XXX : here we would like to keep Elts in int mode 
+       * if it is already the case. 
+       */
       if ( (Elts =GetRealMat(stack, ipos)) == NULLMAT )
 	return NULL;
       nb_elts = Elts->mn; 

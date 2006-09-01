@@ -111,7 +111,9 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
  */
 NspMatrix *nsp_matrix_clone(const char *name, NspMatrix *A, int m, int n)
 {
-  return nsp_matrix_create(name, A->rc_type, m, n);
+  NspMatrix *loc =  nsp_matrix_create(name, A->rc_type, m, n);
+  if ( loc != NULL) loc->convert = A->convert ;
+  return loc;
 }
 
 /**
@@ -335,7 +337,10 @@ NspMatrix *nsp_matrix_copy(const NspMatrix *A)
 
 unsigned int  nsp_matrix_elt_size(NspMatrix *M)
 {
-  return M->rc_type == 'r' ? sizeof(double) : 2*sizeof(double);
+  return M->rc_type == 'r' ? 
+    ((M->convert == 'i' ) ? sizeof(int) 
+     : ((M->convert == 'f') ? sizeof(float) : sizeof(double)))
+    : 2*sizeof(double);
 }
 
 /**
