@@ -1208,6 +1208,7 @@ static OpTab Cells_func[]={
   {"ce2m",int_ce2m},
   {"object2seq_ce",int_cells_to_seq}, /* C{...} : extract +object2seq */
   {"cells_setrowscols_ce",int_cells_setrowscols}, /* C{..}=(....) */
+  {"setrowscols_ce", nsp_matint_setrowscols_xx}, /* still used in EvalEqual2 : pb in the test in EvalEqual */
   {(char *) 0, NULL}
 };
 

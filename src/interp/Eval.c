@@ -1320,6 +1320,11 @@ static int EvalEqual(PList L1, Stack stack, int first)
 	   * since cells can behave like list or matrix depending on operations 
 	   * the test stack.val->S[freepos+1]->type->path_extract is not enough.
 	   */
+	  /* XXXX: There's a bug here in the check for objects 
+	   *       indices are wrong for j+mlhs_r[i]-1 
+	   *       if should depend on first. 
+	   *       see bug-list 
+	   */
 	  itag =  check_cast(stack.val->S[freepos+1],nsp_type_cells_id) == TRUE 
 	    && mlhs_dot_flag[i] == ARGS 
 	    && check_cast(stack.val->S[j+mlhs_r[i]-1],nsp_type_matrix_id) == TRUE 
