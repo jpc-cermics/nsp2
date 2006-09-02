@@ -1535,6 +1535,7 @@ NspObject *nsp_matint_concat_right(NspObject *ObjA, NspObject *ObjB)
 }
 
 /* utilisée quand l'objet A n'a pas de nom */
+
 int nsp_matint_concat_right_bis(NspObject *ObjA, NspObject *ObjB)
 {
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB;
