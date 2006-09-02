@@ -594,7 +594,14 @@ IntScalar (NspObject * O, int * val)
       Scierror (mess);
       return (FAIL);
     }
-  *val = (int) aint (A->R[0]);
+  switch ( A->convert ) 
+    {
+    case 'i' :  *val = A->I[0]; break;
+    case 'f' :  *val = (int) aint( A->F[0]); break;
+    case 'd' :  
+    default : 
+      *val = (int) aint (A->R[0]); break;
+    }
   return (OK);
 }
 
@@ -616,7 +623,14 @@ GetScalarInt (Stack stack, int i, int * val)
       Scierror (" of function %s should be an integer\n", NspFname(stack));
       return FAIL;
     }
-  *val = (int) aint (M->R[0]);
+  switch ( M->convert ) 
+    {
+    case 'i' :  *val = M->I[0]; break;
+    case 'f' :  *val = (int) aint( M->F[0]); break;
+    case 'd' :  
+    default : 
+      *val = (int) aint (M->R[0]); break;
+    }
   return (OK);
 }
 
@@ -637,7 +651,14 @@ DoubleScalar (NspObject * O, double *val)
       Scierror (mess);
       return (FAIL);
     }
-  *val = A->R[0];
+  switch ( A->convert ) 
+    {
+    case 'i' :  *val = (double) A->I[0]; break;
+    case 'f' :  *val = (double) A->F[0]; break;
+    case 'd' :  
+    default : 
+      *val = A->R[0]; break;
+    }
   return (OK);
 }
 
@@ -659,7 +680,14 @@ GetScalarDouble (Stack stack, int i, double *val)
       Scierror (" of function %s should be a double\n", NspFname(stack));
       return FAIL;
     }
-  *val = M->R[0];
+  switch ( M->convert ) 
+    {
+    case 'i' :  *val = M->I[0]; break;
+    case 'f' :  *val = M->F[0]; break;
+    case 'd' :  
+    default : 
+      *val = M->R[0]; break;
+    }
   return (OK);
 }
 
