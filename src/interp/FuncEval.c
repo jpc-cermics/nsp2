@@ -335,10 +335,15 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 	  if ( IsIVect(stack.val->S[stack.first+1] ))     /* x(:) */
 	    {
 	      nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
+	      NspFname(stack) = "resize2vect" ;
 	      ret_val = call_interf((function *) nsp_matint_resize2vect_xx, stack, 1, 0, lhs);
 	    }
-	  else                                            /* x(i) */
-	    ret_val = call_interf((function *) nsp_matint_extractelts_xx, stack, 2, 0, lhs);
+	  else               
+	    {
+	      /* x(i) */
+	      NspFname(stack) = "extractelts" ;
+	      ret_val = call_interf((function *) nsp_matint_extractelts_xx, stack, 2, 0, lhs);
+	    }
 	}
       else if ( rhs == 3 )
 	{
@@ -354,6 +359,7 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 		  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
 		  stack.val->S[stack.first+1] = stack.val->S[stack.first+2];
 		  stack.val->S[stack.first+2] = NULLOBJ;
+		  NspFname(stack) = "extractcols";
 		  ret_val = call_interf((function *) nsp_matint_extractcols_xx, stack, 2, 0, lhs);
 		}
 	    }
@@ -362,10 +368,15 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 	      if (IsIVect(stack.val->S[stack.first+2]) )  /* x(i,:) */
 		{
 		  nsp_void_seq_object_destroy(stack,stack.first+2,stack.first+3);
+		  NspFname(stack) = "extractrows";
 		  ret_val = call_interf((function *) nsp_matint_extractrows_xx, stack, 2, 0, lhs);
 		}
-	      else                                        /* x(i,j) */
-		ret_val = call_interf((function *) nsp_matint_extract_xx, stack, 3, 0, lhs);
+	      else 
+		{                                 
+		  /* x(i,j) */
+		  NspFname(stack) = "extract";
+		  ret_val = call_interf((function *) nsp_matint_extract_xx, stack, 3, 0, lhs);
+		}
 	    }
 	}
       else  /* rhs > 3  currently not implemented */

@@ -398,6 +398,40 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return n;
 	  break;
 	case COLCONCAT:
+#if 0 
+	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 )
+	    SHOWBUG(stack,nargs,L1);
+	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0)
+	    {
+	      /* clean first part */
+	      nsp_void_seq_object_destroy(stack,first,first+nargs);
+	      SHOWBUG(stack,n,L1);
+	    }
+	  nargs += n; /* if nargs != 2 should display an error */
+	  {
+	    NspTypeBase *type1, *type2;
+	    HOBJ_GET_OBJECT(stack.val->S[stack.first], RET_BUG);
+	    HOBJ_GET_OBJECT(stack.val->S[stack.first+1], RET_BUG);
+	    type1 = check_implements(stack.val->S[stack.first], nsp_type_matint_id);
+	    type2 = check_implements(stack.val->S[stack.first+1],nsp_type_matint_id);
+	    if ( type1 != NULL && type1 == type2 )  /* */
+	      {
+		NspFname(stack) = "concatr";
+		if ( call_interf((function *) nsp_matint_concat_right_xx, stack,
+				 nargs, 0, lhs) < 0 )
+		  return RET_BUG;
+		return 1;
+	      }
+	    else
+	      {
+		O1=nsp_frames_search_op_object("concatr");
+		if (( n =nsp_eval_func(O1,"concatr",stack,first,nargs,0,lhs)) < 0) 
+		  SHOWBUG(stack,n,L1);
+		return n;
+	      }
+	  }
+	  break;
+#else 
 	  O1=nsp_frames_search_op_object("concatr");
 	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 )  SHOWBUG(stack,nargs,L1);
 	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0)  
@@ -410,6 +444,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  if (( n =nsp_eval_func(O1,"concatr",stack,first,nargs,0,lhs)) < 0)  SHOWBUG(stack,n,L1);
 	  return n;
 	  break;
+#endif 
 	case DIAGCONCAT:
 	  O1=nsp_frames_search_op_object("concatdiag");
 	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 ) SHOWBUG(stack,nargs,L1);
@@ -1427,6 +1462,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		}
 	      else
 		{
+		  NspFname(stack) = "tozero";
 		  if ( call_interf((function *) nsp_matint_tozero_xx, stack, 1, 0, 1) < 0 )
 		    return RET_BUG;
 		}
@@ -1444,6 +1480,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		}
 	      else
 		{
+		  NspFname(stack) = "deleteelts";
 		  if ( call_interf((function *) nsp_matint_delete_elts_xx, stack, 2, 0, 1) < 0 )
 		    return RET_BUG;
 		}
@@ -1465,6 +1502,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		    }
 		  else
 		    {
+		      NspFname(stack) = "tozero";
 		      if ( call_interf((function *) nsp_matint_tozero_xx, stack, 1, 0, 1) < 0 )
 			return RET_BUG;
 		    }
@@ -1486,6 +1524,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		    }
 		  else
 		    {
+		      NspFname(stack) = "deletecols";
 		      if ( call_interf((function *) nsp_matint_delete_cols_xx, stack, 2, 0, 1) < 0 )
 			return RET_BUG;
 		    }
@@ -1507,6 +1546,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		    }
 		  else
 		    {
+		      NspFname(stack) = "deleterows";
 		      if ( call_interf((function *) nsp_matint_delete_rows_xx, stack, 2, 0, 1) < 0 )
 			return RET_BUG;
 		    }
@@ -1524,6 +1564,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 		    }
 		  else
 		    {
+		      NspFname(stack) = "deleteelts";
 		      if ( call_interf((function *) nsp_matint_delete_elts2_xx, stack, 3, 0, 1) < 0 )
 			return RET_BUG;
 		    }
@@ -1568,6 +1609,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
     }
   else 
     {
+      NspFname(stack) = "setrowscols";
       if ( call_interf((function *) nsp_matint_setrowscols_xx, stack, fargs+ 2, 0, 1) < 0 )
 	return RET_BUG; 
     }

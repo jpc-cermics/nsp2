@@ -33,7 +33,7 @@ if or(a1<> matrix(a(ind),N,P))  then BUG,end;
 nc=size(a,'c');
 tst=[];
 for i=1:nc ; 
-   tst= [tst, matrix(a(ind(:,i),i),N,1)];
+  tst= [tst, matrix(a(ind(:,i),i),N,1)];
 end 
 if or(a1<> tst)  then BUG,end;
 
