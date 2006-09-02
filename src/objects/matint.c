@@ -160,7 +160,6 @@ NspMethods *matint_get_methods(void) { return matint_methods;};
  * cast elements of A to integers in ind (minus 1 such that ind is "0-based")
  * and computes the min and max of A (here staying "1-based")   
  */
-
 /* static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax) */
 /* { */
 /*   int i, ival; */
@@ -181,21 +180,22 @@ NspMethods *matint_get_methods(void) { return matint_methods;};
 static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
 {
   int i, ival;
-
   *imax = 1;
   *imin = 1;
-  if ( A->convert == 'd' )
-    for (i = 0; i < A->mn; i++)
-      {
-	ival = (int) A->R[i];
-	if (ival > *imax)
-	  *imax = ival;
-	else if (ival < *imin)
-	  *imin = ival;
-	ind[i] = ival-1;
-      }
-  else if ( A->convert == 'i' )
+  switch (  A->convert ) 
     {
+    case 'd':
+      for (i = 0; i < A->mn; i++)
+	{
+	  ival = (int) A->R[i];
+	  if (ival > *imax)
+	    *imax = ival;
+	  else if (ival < *imin)
+	    *imin = ival;
+	  ind[i] = ival-1;
+	}
+      break;
+    case 'i' : 
       for (i = 0; i < A->mn; i++)
 	{
 	  ival = A->I[i];
@@ -205,19 +205,21 @@ static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax
 	    *imin = ival;
 	  ind[i] = ival-1;
 	}
-    }
-  else /* A->convert must be 'f' */
-    {
-      float *AF = (float *) A->R;
-      for (i = 0; i < A->mn; i++)
-	{
-	  ival = (int) AF[i];
-	  if (ival > *imax)
-	    *imax = ival;
-	  else if (ival < *imin)
-	    *imin = ival;
-	  ind[i] = ival-1;
-	}
+      break;
+    default:
+      { 
+	float *AF = (float *) A->R;
+	for (i = 0; i < A->mn; i++)
+	  {
+	    ival = (int) AF[i];
+	    if (ival > *imax)
+	      *imax = ival;
+	    else if (ival < *imin)
+	      *imin = ival;
+	    ind[i] = ival-1;
+	  }
+      }
+      break;
     }
 }
 
@@ -229,6 +231,7 @@ static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax
  *       re-ordering of indices (if needed) 
  *       in case of duplicated indices it compress the array
  */
+
 static void nsp_matint_indices_for_deletions(int nb_elts, int *ind, int *count)
 {
   int i, j, in_order=1, in_strict_order=1;
@@ -296,11 +299,8 @@ static int *get_index_vector(Stack stack, int ipos, int *Nb_elts, int *Rmin, int
   else
     {
       NspMatrix *Elts;
-      /* Elts must be a real matrix  
-       * XXX : here we would like to keep Elts in int mode 
-       * if it is already the case. 
-       */
-      if ( (Elts =GetRealMat(stack, ipos)) == NULLMAT )
+      /* Elts must be a real matrix  * */
+      if ( (Elts =GetRealMat_G(stack, ipos)) == NULLMAT )
 	return NULL;
       nb_elts = Elts->mn; 
       if (  nb_elts > WORK_SIZE ) 
@@ -701,6 +701,11 @@ NspObject *nsp_matint_extract_elements(NspObject *Obj, const int *ind, int nb_el
 
   elt_size = MAT_INT(type)->elt_size(Obj); 
 
+  if ( A->m == 0 || A->n == 0) 
+    {
+      return nsp_object_copy(Obj);
+    }
+
   if ( rmin < 1 || rmax > A->mn )
     {
       Scierror("Error:\tIndices out of bound\n");
@@ -794,7 +799,10 @@ NspObject *nsp_matint_extract_columns(NspObject *Obj, const int *ind, int nb_elt
      return MAT_INT(type)->clone(NVOID, Obj, A->m, 0);
 
   elt_size = MAT_INT(type)->elt_size(Obj); 
-
+  if ( A->m == 0 || A->n == 0) 
+    {
+      return nsp_object_copy(Obj);
+    }
   if ( cmin < 1 || cmax > A->n )
     {
       Scierror("Error:\tIndices out of bound\n");
@@ -861,6 +869,11 @@ NspObject *nsp_matint_extract_rows(NspObject *Obj, const int *ind, int nb_elts, 
      return MAT_INT(type)->clone(NVOID, Obj, 0, A->n);
 
   elt_size = MAT_INT(type)->elt_size(Obj); 
+
+  if ( A->m == 0 || A->n == 0) 
+    {
+      return nsp_object_copy(Obj);
+    }
 
   if ( rmin < 1 || rmax > A->m )
     {
@@ -1143,11 +1156,23 @@ int nsp_matint_set_submatrix(NspObject *ObjA,
   elt_size_A = MAT_INT(typeA)->elt_size(ObjA); 
   elt_size_B = MAT_INT(typeB)->elt_size(ObjB); 
 
+
   if ( rmax > A->m ||  cmax > A->n )
     {
       if ( MAT_INT(typeA)->enlarge(ObjA, rmax, cmax) == FAIL )
 	return FAIL;
     }
+
+  if ( elt_size_A != elt_size_B )  /* FIXME: explain these lines ! */
+    {
+      /* FIXME: add a test to verify if typeA is NspMatrix or NspMaxpMatrix */
+      NspMatrix *AA = (NspMatrix *) ObjA, *BB = (NspMatrix *) ObjB;
+      AA = Mat2double(AA); 
+      elt_size_A = AA->rc_type == 'r' ? sizeof(double) : 2*sizeof(double);
+      BB = Mat2double(BB);
+      elt_size_B = BB->rc_type == 'r' ? sizeof(double) : 2*sizeof(double);      
+    }
+
 
   if ( elt_size_A < elt_size_B )  /* just because A is real and B complex... */
     {
@@ -1341,6 +1366,16 @@ int nsp_matint_set_elts(NspObject *ObjA,
 	  Scierror("Error:\tA(ind)=B, ind must be inside A range when A is not a vector\n");
 	  return FAIL;
 	}
+    }
+
+  if ( elt_size_A != elt_size_B )  /* FIXME: explain these lines ! */
+    {
+      /* FIXME: add a test to verify if typeA is NspMatrix or NspMaxpMatrix */
+      NspMatrix *AA = (NspMatrix *) ObjA, *BB = (NspMatrix *) ObjB;
+      AA = Mat2double(AA); 
+      elt_size_A = AA->rc_type == 'r' ? sizeof(double) : 2*sizeof(double);
+      BB = Mat2double(BB);
+      elt_size_B = BB->rc_type == 'r' ? sizeof(double) : 2*sizeof(double);      
     }
 
   if ( elt_size_A < elt_size_B )  /* just because A is real and B complex... */
@@ -1812,4 +1847,3 @@ int nsp_matint_concat_right_xx(Stack stack, int rhs, int opt, int lhs)
     }
   return 1;
 }
-
