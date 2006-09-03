@@ -28,10 +28,9 @@ FFLAGS = $(FC_OPTIONS)
 
 include ../Make.lib
 
-helpbrowser:  helpbrowser.c queue.o
-	$(CC) -DALONE $(CC_OPTIONS) `gnome-config --cflags gnome` \
-		-o helpbrowser helpbrowser.c queue.o \
-		`gnome-config --cflags gnome` $(XLIBS)
+helpbrowser:  testhelpbrowser.c queue.o uri.o
+	$(CC) -g -DALONE -o helpbrowser  testhelpbrowser.c queue.o uri.o \
+		 -I../include `pkg-config gtk+-2.0 libgtkhtml-2.0 --libs --cflags `
 
 OBJTEST = x_test_loop.o
 

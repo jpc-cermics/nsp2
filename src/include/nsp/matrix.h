@@ -32,6 +32,7 @@ struct _NspMatrix {
     double *R;     /* Pointer on real values */
     doubleC *C;    /* Pointer on complex values */
     int *I;        /* Pointer on integer values */
+    int *F;        /* Pointer on float values */
   };
   char rc_type;    /* 'r' : real or  'c' : complex  */
   char convert;    /* 'd','i','f','c' : double, int, float, old_complex

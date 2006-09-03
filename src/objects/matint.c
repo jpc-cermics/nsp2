@@ -1848,3 +1848,105 @@ int nsp_matint_concat_right_xx(Stack stack, int rhs, int opt, int lhs)
     }
   return 1;
 }
+
+NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
+{
+  NspObject *ObjC=NULLOBJ;
+  NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C;
+  int i, j;
+  NspTypeBase *type; 
+  unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
+
+  type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
+                                                         (so we don't check) */
+
+  elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
+  elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
+
+  if ( A->n == B->n ) 
+    {
+      if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  /* Matrices of numbers or booleans */
+	{
+	  if ( elt_size_A == elt_size_B )
+	    {
+	      if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n)) != NULLOBJ )
+		{
+		  char *to;
+		  C = (NspSMatrix *) ObjC;  to = (char *) C->S;
+		  for ( j = 0 ; j < A->n ; j++ ) 
+		    {
+		      memcpy(to+j*(C->m)*elt_size_A, A->S+j*A->m*elt_size_A,A->m*sizeof(double));
+		      memcpy(to+j*(C->m)*elt_size_A +A->m*elt_size_A,B->S+j*B->m*elt_size_B,
+			     B->m*sizeof(double));
+		    }
+		}
+	    }
+	  else    /* one matrix is real and the other is complex */
+	    {
+	      NspMatrix *AA = (NspMatrix *) ObjA, *BB = (NspMatrix *) ObjB, *CC;
+	      if ( elt_size_A > elt_size_B )  /* A is complex, B real */
+		{
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n);
+		  if ( ObjC != NULLOBJ )
+		    {
+		      CC = (NspMatrix *) ObjC;
+		      memcpy(CC->C, AA->C, elt_size_A*A->mn);
+		      for ( i = 0 ; i < BB->mn ; i++ )
+			{
+			  CC->C[A->mn+i].r = BB->R[i]; CC->C[A->mn+i].i = 0.0;
+			}
+		    }
+		}
+	      else 
+		{ 
+		  /* A is real, B complex */
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n);
+		  if ( ObjC != NULLOBJ )
+		    {
+		      CC = (NspMatrix *) ObjC;
+		      for ( i = 0 ; i < AA->mn ; i++ )
+			{
+			  CC->C[i].r = AA->R[i]; CC->C[i].i = 0.0;
+			}
+		      memcpy(CC->C+ A->mn, BB->C, elt_size_B*B->mn);
+		    }
+		}
+	    }
+	}
+      else                                                      
+	{
+	  /* Matrices of pointers (String, cells, poly,...) */
+	  if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n)) != NULLOBJ )
+	    {
+	      C = (NspSMatrix *) ObjC;
+	      char *elt;
+	      for ( j = 0 ; j < A->n ; j++ ) 
+		{
+		  char **fromA= A->S+j*A->m;
+		  char **fromB= B->S+j*B->m;
+		  char **toA = C->S+j*(C->m),**toB = toA+A->m;
+		  for ( i = 0 ; i < A->m ; i++ )
+		    {
+		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromA[i])) == NULL ) goto err;
+		      toA[i]=elt;
+		    }
+		  for ( i = 0 ; i < B->m ; i++ )
+		    {
+		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromB[i])) == NULL ) goto err;
+		      toB[i]=elt;
+		    }
+		}
+	    }
+	}
+    }
+  else if ( A->m == 0  &&  A->n == 0 )
+    ObjC = nsp_object_copy(ObjB);
+  else if ( B->m == 0  &&  B->n == 0 )
+    ObjC = nsp_object_copy(ObjA);
+  else
+    Scierror("Error:\tIncompatible dimensions\n");
+  return ObjC;
+ err:
+  nsp_object_destroy(&ObjC); 
+  return NULLOBJ;
+}

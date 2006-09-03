@@ -921,6 +921,14 @@ NspMatrix* nsp_matrix_concat_down(const NspMatrix *A,const NspMatrix *B)
   return(Loc) ;
 }
 
+
+
+NspMatrix* nsp_matrix_concat_down_en_cours(const NspMatrix *A,const NspMatrix *B)
+{
+  return (NspMatrix*) nsp_matint_concat_down(NSP_OBJECT(A),NSP_OBJECT(B));
+}
+
+
 /**
  * nsp_matrix_concat_diag:
  * @A: a #NspMatrix
