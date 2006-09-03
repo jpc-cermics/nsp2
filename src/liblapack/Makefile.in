@@ -19,7 +19,7 @@ ATLAS=
 
 LOCAL= dgesv.o dgetrf.o dgetrs.o dpotrs.o dpotrf.o  zgetrf.o zgetrs.o zpotrf.o
 
-UNUSED= dlamch.o xerbla.o 
+UNUSED= dlamch.o xerbla.o dhgeqz.o
 
 OBJSF = dbdsdc.o dbdsqr.o ddisna.o dgbbrd.o dgbcon.o dgbequ.o dgbrfs.o dgbsv.o \
 	 dgbsvx.o dgbtf2.o dgbtrf.o dgbtrs.o dgebak.o dgebal.o dgebd2.o dgebrd.o \
@@ -29,7 +29,7 @@ OBJSF = dbdsdc.o dbdsqr.o ddisna.o dgbbrd.o dgbcon.o dgbequ.o dgbrfs.o dgbsv.o \
 	dgesdd.o dgesvd.o dgesv.o dgesvx.o dgetc2.o dgetf2.o dgetrf.o dgetri.o dgetrs.o \
 	dggbak.o dggbal.o dgges.o dggesx.o dggev.o dggevx.o dggglm.o dgghrd.o dgglse.o \
 	dggqrf.o dggrqf.o dggsvd.o dggsvp.o dgtcon.o dgtrfs.o dgtsv.o dgtsvx.o dgttrf.o \
-	dgttrs.o dgtts2.o dhgeqz.o dhsein.o dhseqr.o dlabad.o dlabrd.o dlacon.o dlacpy.o \
+	dgttrs.o dgtts2.o  dhsein.o dhseqr.o dlabad.o dlabrd.o dlacon.o dlacpy.o \
 	dladiv.o dlae2.o dlaebz.o dlaed0.o dlaed1.o dlaed2.o dlaed3.o dlaed4.o dlaed5.o \
 	dlaed6.o dlaed7.o dlaed8.o dlaed9.o dlaeda.o dlaein.o dlaev2.o dlaexc.o dlag2.o \
 	dlags2.o dlagtf.o dlagtm.o dlagts.o dlagv2.o dlahqr.o dlahrd.o dlaic1.o dlaln2.o \

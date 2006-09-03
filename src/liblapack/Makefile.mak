@@ -22,9 +22,7 @@ ATLAS=
 
 LOCAL= dgesv.obj dgetrf.obj dgetrs.obj dpotrs.obj dpotrf.obj  zgetrf.obj zgetrs.obj zpotrf.obj
 
-# the UNUSED are redefined for nsp elsewhere 
-
-UNUSED= dlamch.obj xerbla.obj dhgeqz.obj
+UNUSED= dlamch.obj xerbla.obj 
 
 OBJSF = dbdsdc.obj dbdsqr.obj ddisna.obj dgbbrd.obj dgbcon.obj dgbequ.obj dgbrfs.obj dgbsv.obj \
 	 dgbsvx.obj dgbtf2.obj dgbtrf.obj dgbtrs.obj dgebak.obj dgebal.obj dgebd2.obj dgebrd.obj \

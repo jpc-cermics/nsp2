@@ -407,7 +407,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      nsp_void_seq_object_destroy(stack,first,first+nargs);
 	      SHOWBUG(stack,n,L1);
 	    }
-	  nargs += n; /* if nargs != 2 should display an error */
+	  nargs += n; 
 	  {
 	    NspTypeBase *type1, *type2;
 	    HOBJ_GET_OBJECT(stack.val->S[stack.first], RET_BUG);

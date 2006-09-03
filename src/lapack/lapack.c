@@ -726,12 +726,24 @@ static int intdgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
     } 
   else             /* we also compute U and Vt */ 
     {
+      int lwork1;
       int nU  = ( flag == 'e') ? Minmn : m;
       int mVt = ( flag == 'e') ? Minmn : n;
       if ( (u=nsp_matrix_create(NVOID,'r',m,nU)) == NULLMAT ) goto err;
       if ( (vt=nsp_matrix_create(NVOID,'r',mVt,n)) == NULLMAT ) goto err;
       C2F(dgesdd)(flag=='e'?"S":"A", &m, &n, A->R, &m, s->R, u->R, &m, vt->R, &mVt, qwork, &lwork, iwork, &info, 1L);
+      if (info != 0) 
+	{
+	  if (info > 0) Scierror("Error: convergence problem in svd\n");
+	  goto err;
+	} 
       lwork = (int) qwork[0];
+      /* the optimal value seams incorrect for large matrices 
+       * with liblapck or lapack rmp
+       * thus I correct it with the minimum requested.
+       */
+      lwork1 = 3*Minmn*Minmn + Max(Max(m,n),4*Minmn*Minmn+4*Minmn);
+      lwork = Max(lwork, lwork1);
       if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
       C2F(dgesdd)(flag=='e'?"S":"A", &m, &n, A->R, &m, s->R, u->R, &m, vt->R, &mVt, dwork, &lwork, iwork, &info, 1L);
       /* build V from its transpose matrix Vt */ 
@@ -795,13 +807,19 @@ static int intzgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
     } 
   else             /* we also compute U and Vt */ 
     {
+      int lwork1,lrwork;
       int nU  = ( flag == 'e') ? Minmn : m;
       int mVt = ( flag == 'e') ? Minmn : n;
       if ( (u=nsp_matrix_create(NVOID,'c',m,nU)) == NULLMAT ) goto err;
       if ( (vt=nsp_matrix_create(NVOID,'c',mVt,n)) == NULLMAT ) goto err;
-      if ( (rwork=nsp_alloc_work_doubles(5*Minmn*Minmn+5*Minmn)) == NULL ) goto err;
+      /* The rwork given in zgelsdd seams wrong !!! */
+      lrwork = 5*Minmn*Minmn+5*Minmn;
+      lrwork = Max(Max(lrwork,3*m*m),3*n*n);
+      if ( (rwork=nsp_alloc_work_doubles(lrwork)) == NULL ) goto err;
       C2F(zgesdd)(flag=='e'?"S":"A", &m, &n, A->C, &m, s->R, u->C, &m, vt->C, &mVt, qwork, &lwork, rwork, iwork, &info, 1L);
       lwork = (int) qwork[0].r;
+      lwork1 = Minmn*Minmn + 2*Minmn+Max(m,n);
+      lwork = Max(lwork1,lwork);
       if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
       C2F(zgesdd)(flag=='e'?"S":"A", &m, &n, A->C, &m, s->R, u->C, &m, vt->C, &mVt, cwork, &lwork, rwork, iwork, &info, 1L);
       /* build V from its transpose matrix Vt */ 
