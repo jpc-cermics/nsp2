@@ -24,6 +24,23 @@ TESTS= \
 	sp.dia \
 	spmult.dia 
 
+ALG=algebra-balanc.dia \
+	algebra-bdiag.dia \
+	algebra-bslash.dia \
+	algebra-chol.dia \
+	algebra-det.dia \
+	algebra-gschur.dia \
+	algebra-gspec.dia \
+	algebra-hess.dia \
+	algebra-inv.dia \
+	algebra-lsq.dia \
+	algebra-lu.dia \
+	algebra-qr.dia \
+	algebra-rcond.dia \
+	algebra-schur.dia \
+	algebra-slash.dia \
+	algebra-spec.dia \
+	algebra-svd.dia 
 
 AFINIR= \
 	matelm-nsp.dia \
@@ -32,7 +49,11 @@ AFINIR= \
 	strelm-nsp.dia \
 	algebra.dia
 
-all : $(TESTS) 
+all : algebra basic 
+
+algebra : $(ALG) 
+
+basic : $(TESTS) 
 
 tests: all
 
@@ -42,7 +63,8 @@ tests: all
 
 distclean	:
 	@echo cleaning tests
-	@$(RM) $(TESTS) libaddinter.*
+	@$(RM) $(TESTS) $(ALG) libaddinter.*
 	@../bin/nsplibtool OBJS=addinter.o LIBRARY=libaddinter distclean
 
 clean:	distclean
+
