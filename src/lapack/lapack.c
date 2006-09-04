@@ -1142,9 +1142,9 @@ static int intdsyev(NspMatrix *A,NspMatrix **d,char flag)
 static int intdsyevr(NspMatrix *A,NspMatrix **d, char flag)
 {
   int n=A->n, il=1, iu=n;
-  int info, lwork, m, liwork, qiwork[1], *iwork=NULL, *isuppz=NULL;
+  int info=0, lwork, m, liwork, qiwork[1], *iwork=NULL, *isuppz=NULL;
   NspMatrix *wr;
-  double *dwork=NULL, abstol=0.0, qwork[1], *Z=NULL, vl, vu;
+  double *dwork=NULL, abstol=0.0, qwork[1], *Z=NULL, vl=0, vu=0;
 
 
   if ( (wr=nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
@@ -1233,9 +1233,9 @@ static int intzheev(NspMatrix *A,NspMatrix **d,char flag)
 static int intzheevr(NspMatrix *A,NspMatrix **d, char flag)
 {
   int n=A->n, il=1, iu=n;
-  int info, lwork, lrwork, m, liwork, qiwork[1], *iwork=NULL, *isuppz=NULL;
+  int info=0, lwork, lrwork, m, liwork, qiwork[1], *iwork=NULL, *isuppz=NULL;
   NspMatrix *wr;
-  double *rwork=NULL, abstol=0.0, qrwork[1], vl, vu;
+  double *rwork=NULL, abstol=0.0, qrwork[1], vl=0, vu=0;
   doubleC *Z=NULL, *work=NULL, qwork[1];
 
   if ( (wr=nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT ) return FAIL;
@@ -1254,7 +1254,6 @@ static int intzheevr(NspMatrix *A,NspMatrix **d, char flag)
   if ( (work =nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
   if ( (rwork =nsp_alloc_work_doubles(lrwork)) == NULL ) goto err;
   if ( (iwork =nsp_alloc_work_int(liwork)) == NULL ) goto err;
-  
 
   C2F(zheevr)((flag == 'V' ) ? "V" : "N","A", "U" , &n,A->C, &n,&vl,&vu,
 	     &il, &iu,&abstol, &m, wr->R, Z, &n, isuppz, work, &lwork,

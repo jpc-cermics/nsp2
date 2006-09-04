@@ -48,8 +48,11 @@ void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned 
 
 static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef UPDATE_EXEC_DIR
   static char dir[FSIZE+1]={0};
-  char buf[FSIZE+1],old[FSIZE+1];
+  char old[FSIZE+1];
+#endif
+  char buf[FSIZE+1];
   NspObject *Ob;
   char *fname= NULL;
   int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;
@@ -70,7 +73,9 @@ static int int_parseevalfile(Stack stack, int rhs, int opt, int lhs)
   Sciprintf("Updated to %s and file = %s\n",dir,buf);
 #endif 
   rep =nsp_parse_eval_file(buf,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE);
+#ifdef UPDATE_EXEC_DIR
   strncpy(dir,old,FSIZE);
+#endif
   if ( rep < 0 && errcatch == FALSE ) return RET_BUG;
   if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) return RET_BUG;
   MoveObj(stack,1,Ob);

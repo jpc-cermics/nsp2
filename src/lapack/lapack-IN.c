@@ -1,7 +1,7 @@
 /* 
  * interface of lapack for Nsp 
- * Copyright (C) 2005 Jean-Philippe Chancelier
- * Copyright (C) 2005 Bruno Pinçon
+ * Copyright (C) 2005-2006 Jean-Philippe Chancelier
+ * Copyright (C) 2005-2006 Bruno Pinçon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -39,7 +39,7 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
   char *mode = NULL,cmode ;
   double tol = 0, *Tol=NULL;
   NspMatrix *A;
-  NspMatrix *Q=NULL, *R=NULL, *E=NULL, *rank=NULL, *sval;
+  NspMatrix *Q=NULL, *R=NULL, *E=NULL, *rank=NULL, *sval=NULL;
   NspMatrix **hE=NULL,**hrank=NULL,**hsval=NULL;
   int_types T[] = {mat,new_opts,t_end} ;
   nsp_option opts[] ={{ "tol",s_double,NULLOBJ,-1},
@@ -60,11 +60,40 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
   if ( lhs >= 5) { hsval= &sval;}
   if ( nsp_qr(A,&Q,&R,hE,hrank,hsval,Tol,cmode)== FAIL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(Q));
-  if ( lhs >= 2 ) MoveObj(stack,2,NSP_OBJECT(R));
-  if ( lhs >= 3 ) MoveObj(stack,3,NSP_OBJECT(E));
-  if ( lhs >= 4 ) MoveObj(stack,4,NSP_OBJECT(rank));
-  if ( lhs >= 5 ) MoveObj(stack,5,NSP_OBJECT(sval));
+  if ( lhs >= 2 ) 
+    {
+      MoveObj(stack,2,NSP_OBJECT(R));
+    }
+  else 
+    {
+      if ( R != NULL) nsp_matrix_destroy(R);
+    }
+  if ( lhs >= 3 ) 
+    {
+      MoveObj(stack,3,NSP_OBJECT(E));
+    }
+  else 
+    {
+      if ( E != NULL) nsp_matrix_destroy(E);
+    }
 
+  if ( lhs >= 4 ) 
+    {
+      MoveObj(stack,4,NSP_OBJECT(rank));
+    }
+
+  else 
+    {
+      if ( rank != NULL) nsp_matrix_destroy(rank);
+    }
+  if ( lhs >= 5 ) 
+    {
+      MoveObj(stack,5,NSP_OBJECT(sval));
+    }
+  else 
+    {
+      if ( sval != NULL) nsp_matrix_destroy(sval);
+    }
   return Max(lhs,1);
 }
 
