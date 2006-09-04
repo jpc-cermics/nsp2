@@ -827,7 +827,7 @@ NspSpRowMatrix *nsp_sprowmatrix_extract(NspSpRowMatrix *A, NspMatrix *Rows, NspM
 NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspMatrix *Elts)
 {
   NspSpRowMatrix *Loc;
-  int rmin,rmax,i,err,k;
+  int rmin,rmax,i,err=0,k;
   Bounds(Elts,&rmin,&rmax);
   if ( A->mn == 0) return nsp_sprowmatrix_create(NVOID,A->rc_type,0,0);
   if ( rmin < 1 || rmax > A->mn )
@@ -2001,7 +2001,7 @@ int nsp_sprowmatrix_imagpart(NspSpRowMatrix *A)
 
 NspSpRowMatrix *nsp_sprowmatrix_sum(NspSpRowMatrix *A, char *flag)
 {
-  NspSpColMatrix *loc;
+  NspSpColMatrix *loc=NULL;
   switch ( flag[0]) 
     {
     case 'f':

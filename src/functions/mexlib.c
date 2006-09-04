@@ -1892,7 +1892,7 @@ bool mxIsDouble(const mxArray *array_ptr)
 
 mxArray *mexGetVariable(const char *workspace, const char *var_name)
 {
-  mxArray *Obj;
+  mxArray *Obj=NULLOBJ;
   if (strcmp(workspace,"caller")==0) 
     {
       Obj = nsp_frame_search_object(var_name);
