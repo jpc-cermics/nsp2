@@ -37,19 +37,21 @@ struct _OpWrapTab  {
 extern NspSMatrix *SMatCreateFromAttrsTable (AttrTab *T); 
 
 #define NthObj(x) (stack.val->S[stack.first+x-1])
-#define NspFname(x) (x).val->fname
+/* #define NspFname(x) (x).val->fname */
+#define NspFname(x) (x).fname 
+#define NspFnameH(x) (x)->fname 
 
 #define CheckRhs(x,y) if ( rhs < x || rhs > y ) \
-  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.val->fname);return RET_BUG;} 
+  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
 
 #define CheckLhs(x,y) if ( lhs != -1 && ( lhs < x || lhs > y )) \
-  { Scierror("Error %d returned values is incorrect for function %s\n",lhs,stack.val->fname);return RET_BUG;}
+  { Scierror("Error %d returned values is incorrect for function %s\n",lhs,stack.fname);return RET_BUG;}
 
 #define CheckStdRhs(x,y) if ( rhs -opt < x || rhs -opt > y ) \
-  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs-opt,stack.val->fname);return RET_BUG;} 
+  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs-opt,stack.fname);return RET_BUG;} 
 
 #define CheckOptRhs(x,y) if ( opt < x || opt > y ) \
-  { Scierror("Error: %d optional arguments is incorrect for function %s\n",opt,stack.val->fname);return RET_BUG;} 
+  { Scierror("Error: %d optional arguments is incorrect for function %s\n",opt,stack.fname);return RET_BUG;} 
 
 /* Used by GetArgs to decode argument list */
 

@@ -1594,7 +1594,7 @@ static int get_polyhedron(Stack *stack,int k,NspHash *H,Polyhedron *Q,int *nf)
     }
   if ( Q->Mcoord->m != 3 ) 
     {
-      Scierror("%s: bad coord, first dimension should be 3\n", stack->val->fname);
+      Scierror("%s: bad coord, first dimension should be 3\n", NspFnameH(stack));
       return FAIL;
     }
   Q->nb_coords = Q->Mcoord->n;
@@ -1602,7 +1602,7 @@ static int get_polyhedron(Stack *stack,int k,NspHash *H,Polyhedron *Q,int *nf)
 
   if ( Q->Mface->m < 3 ) 
     {
-      Scierror("%s : bad face, first dimension should be < 3 %d\n", stack->val->fname);
+      Scierror("%s : bad face, first dimension should be < 3 %d\n",NspFnameH(stack));
       return FAIL;
     }
   Q->nb_vertices_per_face = Q->Mface->m;
@@ -1680,7 +1680,7 @@ static int get_spolyhedron(Stack *stack,int k,NspHash *H,SPolyhedron *Q,int *nf)
     }
   if ( Q->Mcoord->m != 3 ) 
     {
-      Scierror("%s: bad coord, first dimension should be 3\n", stack->val->fname);
+      Scierror("%s: bad coord, first dimension should be 3\n", NspFnameH(stack));
       return FAIL;
     }
   Q->nb_coords = Q->Mcoord->n;
@@ -1688,7 +1688,7 @@ static int get_spolyhedron(Stack *stack,int k,NspHash *H,SPolyhedron *Q,int *nf)
 
   if ( Q->Mface->m < 3 ) 
     {
-      Scierror("%s : bad face, first dimension should be < 3 %d\n", stack->val->fname);
+      Scierror("%s : bad face, first dimension should be < 3 %d\n", NspFnameH(stack));
       return FAIL;
     }
   Q->nb_vertices_per_face = Q->Mface->m;
@@ -1704,7 +1704,7 @@ static int get_spolyhedron(Stack *stack,int k,NspHash *H,SPolyhedron *Q,int *nf)
   
   if ( Q->Mval->mn != Q->nb_coords ) 
     {
-      Scierror("%s : bad dimensions for val, mxn should be equal to %d\n", stack->val->fname,Q->nb_coords);
+      Scierror("%s : bad dimensions for val, mxn should be equal to %d\n", NspFnameH(stack),Q->nb_coords);
       return FAIL;
     }
   Q->val = Q->Mval->R;
@@ -1713,7 +1713,7 @@ static int get_spolyhedron(Stack *stack,int k,NspHash *H,SPolyhedron *Q,int *nf)
 
   if ( Q->Mvalminmax->mn != 2 )
     {
-      Scierror("%s : bad dimensions for valminmax, should be of size 2\n", stack->val->fname);
+      Scierror("%s : bad dimensions for valminmax, should be of size 2\n", NspFnameH(stack));
       return FAIL;
     }
   Q->vmin = Q->Mvalminmax->R[0]; Q->vmax = Q->Mvalminmax->R[1];
@@ -1722,7 +1722,7 @@ static int get_spolyhedron(Stack *stack,int k,NspHash *H,SPolyhedron *Q,int *nf)
 
   if ( Q->Mcolminmax->mn != 2 )
     {
-      Scierror("%s : bad dimensions for colminmax, should be of size 2\n", stack->val->fname);
+      Scierror("%s : bad dimensions for colminmax, should be of size 2\n", NspFnameH(stack));
       return FAIL;
     }
 
@@ -1730,7 +1730,7 @@ static int get_spolyhedron(Stack *stack,int k,NspHash *H,SPolyhedron *Q,int *nf)
 
   if ( Q->Mcolout->mn != 2 )
     {
-      Scierror("%s : bad dimensions for colout, should be of size 2\n", stack->val->fname);
+      Scierror("%s : bad dimensions for colout, should be of size 2\n", NspFnameH(stack));
       return FAIL;
     }
 
@@ -1740,7 +1740,7 @@ static int get_spolyhedron(Stack *stack,int k,NspHash *H,SPolyhedron *Q,int *nf)
 
   if ( Q->nb_levels < 1 )
     {
-      Scierror("%s : bad colout field for object number %d \r\n", stack->val->fname, k-7);
+      Scierror("%s : bad colout field for object number %d \r\n", NspFnameH(stack), k-7);
     }
 
   Q->back_color = back_color;
@@ -1802,7 +1802,7 @@ static int get_polyline(Stack *stack,int k,NspHash *H,PolyLine *L,int *nf)
 
   if ( L->Mcoord->m != 3 ) 
     {
-      Scierror("%s: bad coord, first dimension should be 3\n", stack->val->fname);
+      Scierror("%s: bad coord, first dimension should be 3\n", NspFnameH(stack));
       return FAIL;
     }
   L->nb_coords = L->Mcoord->n;
@@ -1811,7 +1811,7 @@ static int get_polyline(Stack *stack,int k,NspHash *H,PolyLine *L,int *nf)
 
   if ( L->Mcolor->mn != L->Mcoord->n -1 && L->Mcolor->mn != 1 ) 
     {
-      Scierror("%s : bad color for object number %d \r\n", stack->val->fname, k-7);
+      Scierror("%s : bad color for object number %d \r\n", NspFnameH(stack), k-7);
     }
   L->nb_colors = L->Mcolor->mn ;
   L->Mcolor = Mat2int(L->Mcolor);
@@ -1851,7 +1851,7 @@ static int get_points(Stack *stack,int k,NspHash *H,Points *P,int *nf)
 
   if ( P->Mcoord->m != 3 ) 
     {
-      Scierror("%s: bad coord, first dimension should be 3\n", stack->val->fname);
+      Scierror("%s: bad coord, first dimension should be 3\n", NspFnameH(stack));
       return FAIL;
     }
   P->nb_coords = P->Mcoord->n;
@@ -1907,7 +1907,7 @@ static int get_string3d(Stack *stack,int k,NspHash *H,String3d *S,int *nf)
     }
   if ( S->Mcoord->m != 3 || S->Mcoord->n != 1 ) 
     {
-      Scierror("%s: bad coord for object %d \n", stack->val->fname,k-7);
+      Scierror("%s: bad coord for object %d \n", NspFnameH(stack) ,k-7);
       return FAIL;
     }
 

@@ -1254,7 +1254,7 @@ nspg_closure_marshal(GClosure *closure,
       goto end;
     }
   /* nsp_init_stack(&Marshal_stack,Marshal_stack_S); */
-  Marshal_stack.val->fname = "pipo"; 
+  NspFname(Marshal_stack) = "pipo"; 
   Marshal_stack.first =0;
 
   /* fprintf(stderr,"FuncEval(%d) avec le Marshal_stack %s stack.val->S=<%lx>, first=%d\n",
@@ -1314,7 +1314,7 @@ nspg_closure_marshal(GClosure *closure,
 
   /* Calling a macro func is a macro coded in P_PList **/
   
-  if ((n=nsp_eval_func((NspObject *)pc->callback,Marshal_stack.val->fname,Marshal_stack,Marshal_stack.first,nargs,0,-1)) < 0 )
+  if ((n=nsp_eval_func((NspObject *)pc->callback,NspFname(Marshal_stack),Marshal_stack,Marshal_stack.first,nargs,0,-1)) < 0 )
     {
       nsp_error_message_show();
       goto end; 
@@ -1374,7 +1374,7 @@ static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],i
       goto end;
     }
   /* nsp_init_stack(&Marshal_stack,Marshal_stack_S); */
-  Marshal_stack.val->fname = fname;
+  NspFname(Marshal_stack) = fname;
   Marshal_stack.first =0;
   if ( stack_count != 1 ) 
     {
@@ -1389,7 +1389,7 @@ static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],i
   for (i = 0; i < n_args ; i++) 
     Marshal_stack.val->S[Marshal_stack.first + nargs++]= args[i];
   /*Calling func is a macro coded in P_PList **/
-  if ((n=nsp_eval_func((NspObject *) func,Marshal_stack.val->fname,Marshal_stack,Marshal_stack.first,nargs,0,*nret)) < 0 )
+  if ((n=nsp_eval_func((NspObject *) func,  NspFname(Marshal_stack),Marshal_stack,Marshal_stack.first,nargs,0,*nret)) < 0 )
     {
       nsp_error_message_show();
       goto end; 

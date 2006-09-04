@@ -188,7 +188,6 @@ typedef struct _Stack_ref Stack_ref;
 typedef void stack_error(Stack *S,char *fmt,...);
 
 struct _Stack_ref {
-  const char *fname; /* function currently evaluated **/
   char *file_name ; /* current evaluated file **/
   NspObject **D;     /* D is dynamically changed so that D[1] is the first Objet used XXX **/
   NspObject **L;     /* Last position **/
@@ -202,6 +201,7 @@ struct _Stack_ref {
 
 struct _Stack {
   int first;   /* position of first argument to be used **/
+  const char *fname; /* function currently evaluated **/
   Stack_ref *val;
 } ;
 

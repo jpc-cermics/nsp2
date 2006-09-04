@@ -42,9 +42,10 @@ void InitStack()
 void nsp_init_stack(Stack *stack,NspObject **S)
 {
   stack->first = 0;
+  stack->fname = NULL;
   /* XXX : should check here that stack->val != NULL */
   stack->val = calloc(1,sizeof(Stack_ref));
-  stack->val->fname = NULL;
+  /* stack->val->fname = NULL; */
   stack->val->file_name = NULL;
   stack->val->S = S ;
   stack->val->L = S + STACK_SIZE;
