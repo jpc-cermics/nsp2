@@ -72,6 +72,7 @@ extern int nsp_matint_delete_cols_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_delete_rows_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_tozero_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_concat_right_xx(Stack stack, int rhs, int opt, int lhs);
+extern int nsp_matint_concat_down_xx(Stack stack, int rhs, int opt, int lhs);
 
 #endif 
 
