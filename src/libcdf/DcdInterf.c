@@ -829,6 +829,11 @@ static int CdfBase(Stack stack,int rhs, int opt, int lhs,
     { 
       NthObj(inarg+2+i) = NSP_OBJECT( M[i+inarg]);  NthObj(inarg+2+i)->ret_pos = i+1;
     }
+  /* just free unreturned matrices */
+  for ( i = Min(oarg,lhs); i < oarg ; i++) 
+    {
+      nsp_matrix_destroy(M[i+inarg]);
+    }
   return Min(oarg,lhs);
 }
 
