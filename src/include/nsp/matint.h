@@ -13,7 +13,7 @@
 typedef int matint_redim(void *M,int m,int n); 
 typedef int matint_resize(void *M,int m,int n); 
 typedef int matint_free_elt(void **elt);
-typedef unsigned int matint_elt_size(void *M);
+typedef unsigned int matint_elt_size(const void *M);
 typedef NspObject *matint_clone(const char *name, void *M, int m,int n); 
 typedef char *matint_copy_elt(char *from);
 typedef int matint_enlarge(void *M, int m, int n);
