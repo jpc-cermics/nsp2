@@ -711,7 +711,7 @@ NspMaxpMatrix *nsp_mpmatrix_extract_rows_obsolete(const NspMaxpMatrix *A,const N
 
 
 /**
- * MatLoopCol: 
+ * MpMatLoopCol: 
  * @str: 
  * @Col: 
  * @A: 
@@ -728,8 +728,6 @@ NspMaxpMatrix *nsp_mpmatrix_extract_rows_obsolete(const NspMaxpMatrix *A,const N
 
 NspMaxpMatrix *MpMatLoopCol(char *str, NspMaxpMatrix *Col, NspMaxpMatrix *A, int icol, int *rep)
 {
-  int i;
-  register int iof;
   NspMaxpMatrix *Loc;
   if ( icol > A->n )
     {
@@ -742,21 +740,29 @@ NspMaxpMatrix *MpMatLoopCol(char *str, NspMaxpMatrix *Col, NspMaxpMatrix *A, int
   else 
     Loc = Col;
   if ( Loc == NULLMAXPMAT) return(NULLMAXPMAT);
-  iof = (icol-1)*A->m;
+
   if ( A->rc_type == 'c' )
     {
-      for ( i = 0 ; i < A->m ; i++)
+      memcpy(Loc->C,A->C+(icol-1)*A->m ,A->m*sizeof(doubleC));
+    }
+  else
+    {
+      switch ( A->convert ) 
 	{
-	  Loc->C[i].r=A->C[i+iof].r ;
-	  Loc->C[i].i=A->C[i+iof].i ;
+	case 'd' : 
+	  memcpy(Loc->R,A->R+(icol-1)*A->m ,A->m*sizeof(double));
+	  break;
+	case 'i': 
+	  memcpy(Loc->I,A->I+(icol-1)*A->m ,A->m*sizeof(int));
+	  Loc->convert = A->convert;
+	  break;
+	case 'f': 
+	  memcpy(Loc->F,A->F+(icol-1)*A->m ,A->m*sizeof(int));
+	  Loc->convert = A->convert;
+	  break;
 	}
     }
-  else 
-    {
-      for ( i = 0 ; i < A->m ; i++)
-	Loc->R[i]=A->R[i+iof] ;
-    }
-  return(Loc);
+  return Loc;
 }
 
 /**

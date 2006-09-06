@@ -1735,8 +1735,6 @@ NspMatrix *nsp_matrix_extract_rows_obsolete(const NspMatrix *A,const NspMatrix *
 
 NspMatrix *MatLoopCol(char *str, NspMatrix *Col, NspMatrix *A, int icol, int *rep)
 {
-  int i;
-  register int iof;
   NspMatrix *Loc;
   if ( icol > A->n )
     {
@@ -1750,19 +1748,27 @@ NspMatrix *MatLoopCol(char *str, NspMatrix *Col, NspMatrix *A, int icol, int *re
     Loc = Col;
   if ( Loc == NULLMAT) return NULLMAT;
 
-  if ( A->m == 1 && A->rc_type == 'r' ) /* to speed up the usual case (for i=v  with v a row vector) */
-    Loc->R[0]=A->R[icol-1];
+  if ( A->rc_type == 'c' )
+    {
+      memcpy(Loc->C,A->C+(icol-1)*A->m ,A->m*sizeof(doubleC));
+    }
   else
     {
-      iof = (icol-1)*A->m;
-      if ( A->rc_type == 'c' )
-	for ( i = 0 ; i < A->m ; i++)
-	  Loc->C[i] = A->C[i+iof];
-      else
-	for ( i = 0 ; i < A->m ; i++)
-	  Loc->R[i]=A->R[i+iof];
+      switch ( A->convert ) 
+	{
+	case 'd' : 
+	  memcpy(Loc->R,A->R+(icol-1)*A->m ,A->m*sizeof(double));
+	  break;
+	case 'i': 
+	  memcpy(Loc->I,A->I+(icol-1)*A->m ,A->m*sizeof(int));
+	  Loc->convert = A->convert;
+	  break;
+	case 'f': 
+	  memcpy(Loc->F,A->F+(icol-1)*A->m ,A->m*sizeof(int));
+	  Loc->convert = A->convert;
+	  break;
+	}
     }
-
   return Loc;
 }
 
