@@ -22,7 +22,9 @@ TESTS= \
 	regexp.dia \
 	serial.dia \
 	sp.dia \
-	spmult.dia 
+	spmult.dia \
+	concat.dia
+
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
