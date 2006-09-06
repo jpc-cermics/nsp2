@@ -1,26 +1,40 @@
-// avec C{1,2} on peut aussi faire C{1,2}(2,2) = 3 etc.....
-// // dans un premier temps 
-// // on peut implemter .obj 
-// // t.q 
-// C(A,B).obj <=> C{A,B} 
+// -*- Mode: scilab -*- 
 
-A={8,9,rand(4,4)} // creation 
+M=rand(4,4);
+A={8,9,M,"nsp"}; // creation 
 
-// action au niveau des objets stockes 
-A{1}	// extraction de l'element 1 
-A{1:2}=(rand(4,4),78) // changer les elts 1 et 2 
-[a,b]=A{1:2} // extraction de 2 elements 
+// extraction of elements 
+//-----------------------
+if A{1}<> 8 then;pause;end 	
+if A{4}<> "nsp" then;pause;end 	
+
+[a,b]=A{[1,3]};
+if a<>8 then;pause;end 	
+if or(b<>M) then;pause;end
+
+// insertion 
+//----------
+// XXX BUG ce qui suit détruit M !!!!
+
+if %f then 
+A{1:2}=(M,78) ;// changer les elts 1 et 2 
+if A{2}<>78 then;pause;end 
+if or(A{1}<>M) then;pause;end 
+end 
+
 A{1}(2,2)=5 ; // changer l'element 1 
+if or(A{1}<>diag([8,5])) then pause;end
+
 A{5} = 6; // Attention pas de Warning et il se passe rien 
 	  // doit-on considerer que la taille de la cell 
 	  // doit croitre ? 
 
 A{:} // extrait tous les elements (utile dans f(A{:}) ? ) 
-A{:} = (4,5,6) // affectation 
-A{:} = (4,5,6,7) // affectation le 7 est oublié 
+A{:} = (4,5,6,7) // affectation 
+A{:} = (4,5,6,7,8) // affectation le 7 est oublié 
 A{:}=(4,6) // XXX pb detecté mais un print en trop ..
-A{70} // renvoit rien si pas d'objet mais qu'on est ds les bounds 
-	// .... faut-il plutot renvoyer None
+
+// A{70} // indice out of bounds 
 
 // quand D n'existe pas 
 // --------------------
