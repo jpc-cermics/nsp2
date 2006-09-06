@@ -1578,6 +1578,7 @@ NspMatrix *nsp_string_to_ascii(nsp_const_string S)
 
 NspSMatrix*nsp_smatrix_split_string(nsp_const_string string,nsp_const_string splitChars, int msep)
 {
+  char *s;
   register nsp_const_string p;
   nsp_const_string elementStart;
   int stringLen, i;
@@ -1615,7 +1616,9 @@ NspSMatrix*nsp_smatrix_split_string(nsp_const_string string,nsp_const_string spl
 		  nb_words++;
 		  if ( nsp_smatrix_resize(A,1,nb_words) == FAIL) goto err;
 		  nb_chars = p - elementStart;
-		  if ( (A->S[nb_words-1] = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+		  if ( (s  = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+		  nsp_string_destroy(&A->S[nb_words-1]);
+		  A->S[nb_words-1]= s;
 		  strncpy( A->S[nb_words-1],elementStart, nb_chars);
 		  A->S[nb_words-1][p-elementStart]='\0';
 		  elementStart = p+1;
@@ -1624,7 +1627,9 @@ NspSMatrix*nsp_smatrix_split_string(nsp_const_string string,nsp_const_string spl
 	  nb_words++;
 	  if ( nsp_smatrix_resize(A,1,nb_words) == FAIL ) goto err;
 	  nb_chars = p - elementStart;
-	  if ( (A->S[nb_words-1] = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+	  if ( (s  = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+	  nsp_string_destroy(&A->S[nb_words-1]);
+	  A->S[nb_words-1]= s;
 	  strncpy( A->S[nb_words-1],elementStart, nb_chars);
 	  A->S[nb_words-1][p-elementStart]='\0';
 	}
@@ -1640,7 +1645,9 @@ NspSMatrix*nsp_smatrix_split_string(nsp_const_string string,nsp_const_string spl
 		      nb_words++;
 		      if ( nsp_smatrix_resize(A,1,nb_words) == FAIL) goto err;
 		      nb_chars = p - elementStart;
-		      if ( (A->S[nb_words-1] = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+		      if ( (s  = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+		      nsp_string_destroy(&A->S[nb_words-1]);
+		      A->S[nb_words-1]= s;
 		      strncpy( A->S[nb_words-1],elementStart, nb_chars);
 		      A->S[nb_words-1][p-elementStart]='\0';
 		    }
@@ -1654,7 +1661,9 @@ NspSMatrix*nsp_smatrix_split_string(nsp_const_string string,nsp_const_string spl
 	      nb_words++;
 	      if ( nsp_smatrix_resize(A,1,nb_words) == FAIL ) goto err;
 	      nb_chars = p - elementStart;
-	      if ( (A->S[nb_words-1] = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+	      if ( (s  = new_nsp_string_n(nb_chars)) == NULLSTRING ) goto err;
+	      nsp_string_destroy(&A->S[nb_words-1]);
+	      A->S[nb_words-1]= s;
 	      strncpy( A->S[nb_words-1],elementStart, nb_chars);
 	      A->S[nb_words-1][p-elementStart]='\0';
 	    }
