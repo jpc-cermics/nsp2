@@ -31,7 +31,8 @@ struct _NspMpmatrix {
   union { 
     double *R;     /* Pointer on real values */
     doubleC *C;    /* Pointer on complex values */
-    int *I;    /* Pointer on integer values */
+    int *I;        /* Pointer on integer values */
+    float *F;      /* Pointer on float values */
   };
   char rc_type;    /* 'r' : real or  'c' : complex  */
   char convert;    /* 'd','i','f' : double, int, float
