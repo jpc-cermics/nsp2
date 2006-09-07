@@ -30,7 +30,9 @@ h1.enter[h,b=[20,30],c='foo']
 // ok 
 [x,y]=h.find[['a','b']];
 [a,b]=h.find['a','b'];
+//ZZ
 c= h1.find['h'].find['b']
+// 
 c= h1.h.b
 info(h)
 print(h);
