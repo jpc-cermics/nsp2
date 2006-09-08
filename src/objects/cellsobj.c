@@ -1107,6 +1107,7 @@ static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
   switch (nind ) 
     {
     case 1: 
+      /* C{Ind}= (...) */
       if ((Ind1 = GetMat(stack,2))  == NULLMAT) return RET_BUG;
       if ( Ind1->mn != rhs - 3 )
 	{
@@ -1118,7 +1119,7 @@ static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 	{
 	  int cij= Ind1->R[i]-1;
 	  NspObject *Ob = nsp_get_object(stack,i+3);
-	  if ( Ocheckname(Ob,NVOID)==FALSE ) 
+	  if ( Ocheckname(Ob,NVOID) == TRUE ) 
 	    {
 	      if (nsp_object_set_name(Ob,"ce") == FAIL) return RET_BUG;
 	    }
@@ -1135,6 +1136,7 @@ static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 	}
       break;
     case 2: 
+      /* C{Ind1,Ind2}= (...) */
       if ((Ind1 = GetMat(stack,2))  == NULLMAT) return RET_BUG;
       if ((Ind2 = GetMat(stack,3))  == NULLMAT) return RET_BUG;
       if ( Ind1->mn*Ind2->mn != rhs - 4 )
@@ -1149,7 +1151,7 @@ static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 	  {
 	    int cij= Ind1->R[i]-1+C->m*(Ind2->R[j]-1);
 	    NspObject *Ob = nsp_get_object(stack,ind);
-	    if ( Ocheckname(Ob,NVOID)==FALSE ) 
+	    if ( Ocheckname(Ob,NVOID)== TRUE ) 
 	      {
 		if (nsp_object_set_name(Ob,"ce") == FAIL) return RET_BUG;
 	      }
