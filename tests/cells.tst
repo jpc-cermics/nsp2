@@ -27,10 +27,22 @@ A{5} = 6; // Attention pas de Warning et il se passe rien
 	  // doit-on considerer que la taille de la cell 
 	  // doit croitre ? 
 
-A{:} // extrait tous les elements (utile dans f(A{:}) ? ) 
-A{:} = (4,5,6,7) // affectation 
-A{:} = (4,5,6,7,8) // affectation le 7 est oublié 
-A{:}=(4,6) // XXX pb detecté mais un print en trop ..
+A{:}; // extrait tous les elements (utile dans f(A{:}) ? ) 
+A{:} = (4,5,6,7); // affectation 
+A{:} = (4,5,6,7,8); // affectation le 7 est oublié 
+A{:}=(4,6); // XXX pb detecté mais un print en trop ..
+
+A={8,9;M,"nsp"}; // creation 
+A{1:2,1}=(56,67);
+if A{1}<>56 then pause;end 
+if A{2}<>67 then pause;end 
+
+A{2,1:2}=(56,67);
+if A{2,1}<>56 then pause;end 
+if A{2,2}<>67 then pause;end 
+
+A{1:2,1:2}=(1,2,3,4);
+if or(A<>{1,2,3,4}) then pause;end 
 
 // A{70} // indice out of bounds 
 
@@ -44,6 +56,8 @@ D{:}=8 // et D est vide c'est coherent avec D(:)=8
 // ce qui est pas forcement logique. 
 
 function y=f(varargin);y=length(varargin);endfunction;
+
+A={8,9,M,"nsp"}; // creation 
 f(A{:}) // répond 3 les arguments sont mis sur la pile 
 
 // action qui redonnes des cells 
