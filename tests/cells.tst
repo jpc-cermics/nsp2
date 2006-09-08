@@ -14,14 +14,12 @@ if or(b<>M) then;pause;end
 
 // insertion 
 //----------
-// XXX BUG ce qui suit détruit M !!!!
 
-if %f then 
 A{1:2}=(M,78) ;// changer les elts 1 et 2 
 if A{2}<>78 then;pause;end 
 if or(A{1}<>M) then;pause;end 
-end 
 
+A{1}=8;
 A{1}(2,2)=5 ; // changer l'element 1 
 if or(A{1}<>diag([8,5])) then pause;end
 

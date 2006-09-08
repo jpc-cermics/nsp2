@@ -23,7 +23,8 @@ TESTS= \
 	serial.dia \
 	sp.dia \
 	spmult.dia \
-	concat.dia
+	concat.dia \
+	cells.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
@@ -44,7 +45,6 @@ ALG=algebra-balanc.dia \
 	algebra-svd.dia 
 
 AFINIR= \
-	cells.tst \
 	color-strings.tst \
 	gsort.tst \
 	hash-vl.tst \
