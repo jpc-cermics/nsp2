@@ -102,7 +102,7 @@ clean:	distclean
 TESTS= \
 	addinter.dia \
 	class.dia \
-	concat.dia
+	concat.dia \
 	delete_op-nsp.dia \
 	dsearch.dia \
 	env.dia \
@@ -122,5 +122,4 @@ TESTS= \
 	sp.dia \
 	spmult.dia \
 	test_minmax.dia \
-	testsbdiv.dia \
-
+	testsbdiv.dia
