@@ -16,13 +16,12 @@ function [t,ok]= testd(A,meth)
   if ok == %f then pause,end;
 endfunction;
 
+A = rand(10000,1);
+t1 = [test(A,'g'), test(A,'gb'), test(A,'gd'),test(A,'gm'),test(A,'gs')];
+t2 = [testd(A,'g'), testd(A,'gb'), testd(A,'gd'),testd(A,'gm'),testd(A,'gs')];
 
-A = rand(1e6,1);
-t = [test(A,'g'), test(A,'gb'), test(A,'gd'),test(A,'gm'),test(A,'gs')]
-t = [testd(A,'g'), testd(A,'gb'), testd(A,'gd'),testd(A,'gm'),testd(A,'gs')]
-
-A = grand(1e6,1,"uin",1,10);
-t = [test(A,'g'), test(A,'gb'), test(A,'gd'),test(A,'gm'),test(A,'gs')]
+A = grand(10000,1,"uin",1,10);
+t3 = [test(A,'g'), test(A,'gb'), test(A,'gd'),test(A,'gm'),test(A,'gs')];
 
 function x=vec_test_sort16(n)
    if modulo(n,2) == 0 then
@@ -35,10 +34,11 @@ function x=vec_test_sort16(n)
 endfunction
 
 A = vec_test_sort16(40000);
-t = [test(A,'g'), test(A,'gb'), test(A,'gd'),test(A,'gm'),test(A,'gs')]
+t4 = [test(A,'g'), test(A,'gb'), test(A,'gd'),test(A,'gm'),test(A,'gs')];
 
 A = vec_test_sort16(10000);
-t = [testd(A,'g'), testd(A,'gb'), testd(A,'gd'),testd(A,'gm'),testd(A,'gs')]
-t = [test(A,'g'), test(A,'gb'), test(A,'gd'),test(A,'gm'),test(A,'gs')]
+t5 = [testd(A,'g'), testd(A,'gb'), testd(A,'gd'),testd(A,'gm'),testd(A,'gs')];
+t6 = [test(A,'g'), test(A,'gb'), test(A,'gd'),test(A,'gm'),test(A,'gs')];
+
 
 

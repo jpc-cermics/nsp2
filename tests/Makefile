@@ -1,30 +1,38 @@
 .SUFFIXES: .dia .tst .vl
 
 TESTS= \
-	grand.dia \
-	delete_op-nsp.dia \
-	class.dia \
-	gsort-nsp.dia \
-	env.dia \
-	hash.dia \
-	setro.dia \
-	matrix_io.dia \
-	test_minmax.dia \
-	testsbdiv.dia \
-	fft.dia \
-	extract.dia \
 	addinter.dia \
+	cells.dia \
+	class.dia \
+	concat.dia \
+	delete_op-nsp.dia \
 	dsearch.dia \
-	qr.dia \
+	env.dia \
+	extract.dia \
+	fft.dia \
 	function.dia \
-	smat_concat_down.dia \
-	smat_concat_right.dia \
+	grand.dia \
+	gsort-nsp.dia \
+	hash.dia \
+	insert.dia \
+	lu.dia \
+	matrix_io.dia \
+	qr.dia \
 	regexp.dia \
 	serial.dia \
+	setro.dia \
+	smat_concat_down.dia \
+	smat_concat_right.dia \
+	sorting-lex.dia \
+	sorting.dia \
 	sp.dia \
 	spmult.dia \
-	concat.dia \
-	cells.dia 
+	sprow.dia \
+	strings.dia \
+	svd.dia \
+	test_minmax.dia \
+	testsbdiv.dia 
+
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
@@ -48,22 +56,16 @@ AFINIR= \
 	color-strings.tst \
 	gsort.tst \
 	hash-vl.tst \
-	insert.tst \
 	lists.tst \
-	lu.tst \
 	matelm-nsp.tst \
 	matops-nsp.tst \
 	matops.tst \
 	pvm.tst \
-	sorting-lex.tst \
-	sorting.tst \
 	sparse-nsp.tst \
 	sparse.tst \
-	sprow.tst \
 	sp-sci.tst \
 	strelm-nsp.tst \
 	strelm.tst \
-	svd.tst \
 	trycatch.tst
 
 

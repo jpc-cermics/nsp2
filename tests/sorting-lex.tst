@@ -1,5 +1,6 @@
-// bug a corriger !
-//-----------------
+// -*- Mode: scilab -*- 
+
+// lexical row 
 
 N=7;P=4;
 alr=[1,2,2,2;
@@ -18,7 +19,7 @@ ak=a;
 a=ak;
 [a1,ind]=gsort(a,'lr');                   
 a=ak;
-[a2,ind]=new_sort(a,'ldr');
+[a2,ind]=gsort(a,'ldr');
 
 if ~and(a1==a2) then pause,end
 if ~and(a==ak) then pause,end
@@ -37,13 +38,12 @@ ak=a;
 a=ak;
 [a1,ind]=gsort(a,'lr');                   
 a=ak;
-[a2,ind]=new_sort(a,'ldr');
+[a2,ind]=gsort(a,'ldr');
 
 if ~and(a1==a2) then pause,end
 if ~and(a==ak) then pause,end
 
-
-// smallest non working 
+// ------------------------
 
 N=2;P=3;
 alr=[2,1;
@@ -53,7 +53,7 @@ a=alr;
 a=ak;
 [a1,ind]=gsort(a,'lr');                   
 a=ak;
-[a2,ind]=new_sort(a,'ldr');
+[a2,ind]=gsort(a,'ldr');
 
 if ~and(a1==a2) then pause,end
 if ~and(a==ak) then pause,end
