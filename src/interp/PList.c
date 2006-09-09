@@ -1365,6 +1365,7 @@ static void _nsp_plist_print(PList List, int indent)
 	  Sciprintf("[");
 	  _nsp_plist_print_arg(List,indent);
 	  Sciprintf("]");
+	  break;
 	case P_CELL :
 	  Sciprintf("{");
 	  _nsp_plist_print_arg(List,indent);
@@ -1420,12 +1421,29 @@ static void _nsp_plist_print(PList List, int indent)
 	  Sciprintf("end");
 	  break;
 	case IF :
+	  /* a sequence of if elseif etc.... */
 	  Sciprintf("if ") ;
-	  _nsp_plist_print_arg(List,indent);
-	  Sciprintf("then");Sciprintf1(indent+2,"\n");
-	  _nsp_plist_print_arg(List->next,indent);
-	  Sciprintf("else");Sciprintf1(indent+2,"\n");
-	  _nsp_plist_print_arg(List->next->next,indent);
+	  for ( j = 0 ; j < L->arity  ; j += 2 )
+	    {
+	      if ( j == L->arity-1 ) 
+		{
+		  /* we have reached the last else */
+		  Sciprintf("else");Sciprintf1(indent+2,"\n");
+		  _nsp_plist_print_arg(List,indent);
+		}
+	      else 
+		{ 
+		  if ( j != 0) 
+		    {
+		      Sciprintf("elseif");Sciprintf1(indent+2,"\n");
+		    }
+		  _nsp_plist_print_arg(List,indent);
+		  Sciprintf("then");Sciprintf1(indent+2,"\n");
+		  List = List->next ;
+		  _nsp_plist_print_arg(List,indent);
+		  List = List->next ;
+		}
+	    }
 	  Sciprintf("end");
 	  break;
 	case TRYCATCH :
@@ -1821,9 +1839,20 @@ void plist_name_to_local_id(PList List,NspHash *H)
 	  Arg_name_to_local_name(List->next->next,H);
 	  break;
 	case IF :
-	  Arg_name_to_local_name(List,H);
-	  Arg_name_to_local_name(List->next,H);
-	  Arg_name_to_local_name(List->next->next,H);
+	  for ( j = 0 ; j < L->arity  ; j += 2 )
+	    {
+	      if ( j == L->arity-1 ) 
+		{
+		  Arg_name_to_local_name(List,H);
+		}
+	      else 
+		{ 
+		  Arg_name_to_local_name(List,H);
+		  List = List->next ;
+		  Arg_name_to_local_name(List,H);
+		  List = List->next ;
+		}
+	    }
 	  break;
 	case TRYCATCH :
 	  Arg_name_to_local_name(List,H);
