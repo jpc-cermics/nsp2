@@ -380,7 +380,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return n;
 	  break;
 	case ROWCONCAT:
-#if 0 /* it works but wait for more tests */
+#if 1 /* it works but wait for more tests */
 	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 )
 	    SHOWBUG(stack,nargs,L1);
 	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0)
@@ -433,7 +433,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  break;
 #endif 
 	case COLCONCAT:
-#if 0 /* it works but wait for more tests */
+#if 1 /* it works but wait for more tests */
 	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 )
 	    SHOWBUG(stack,nargs,L1);
 	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0)
