@@ -204,15 +204,20 @@ int nsp_sprowmatrix_neq(NspObject *A, NspObject *B)
 
 static int nsp_sprowmatrix_xdr_save(XDR *xdrs, NspSpRowMatrix *M)
 {
-  NspMatrix *RC, *Values;
-  if ( nsp_sprowmatrix_get(M,&RC,&Values) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->m) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->n) == FAIL) return FAIL;
-  if ( NSP_OBJECT(RC)->type->save (xdrs,RC) == FAIL) return FAIL;
-  if ( NSP_OBJECT(Values)->type->save (xdrs,Values) == FAIL) return FAIL;
-  return OK;
+  int rep=FAIL;
+  NspMatrix *RC=NULL, *Values=NULL;
+  if ( nsp_sprowmatrix_get(M,&RC,&Values) == FAIL) goto fail;
+  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) goto fail;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) goto fail;
+  if (nsp_xdr_save_i(xdrs, M->m) == FAIL) goto fail;
+  if (nsp_xdr_save_i(xdrs, M->n) == FAIL) goto fail;
+  if ( NSP_OBJECT(RC)->type->save (xdrs,RC) == FAIL) goto fail;
+  if ( NSP_OBJECT(Values)->type->save (xdrs,Values) == FAIL) goto fail;
+  rep=OK;
+ fail:
+  if ( RC != NULL) nsp_matrix_destroy(RC);
+  if ( Values != NULL) nsp_matrix_destroy(Values);
+  return rep;
 }
 
 /*
@@ -222,7 +227,7 @@ static int nsp_sprowmatrix_xdr_save(XDR *xdrs, NspSpRowMatrix *M)
 static NspSpRowMatrix *nsp_sprowmatrix_xdr_load(XDR *xdrs)
 {
   int m,n;
-  NspObject *RC, *Values;
+  NspObject *RC=NULL, *Values=NULL;
   NspSpRowMatrix *Loc;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSPROW;
@@ -231,6 +236,8 @@ static NspSpRowMatrix *nsp_sprowmatrix_xdr_load(XDR *xdrs)
   if ( (RC= nsp_object_xdr_load(xdrs) ) == NULL) return NULLSPROW;
   if ( (Values= nsp_object_xdr_load(xdrs) ) == NULL) return NULLSPROW;
   if ((Loc = nsp_sprowmatrix_sparse(name,(NspMatrix *)RC,(NspMatrix *)Values,m,n)) == NULLSPROW) return NULLSPROW;
+  if ( RC != NULL) nsp_object_destroy(&RC);
+  if ( Values != NULL) nsp_object_destroy(&Values);
   return Loc;
 }
 

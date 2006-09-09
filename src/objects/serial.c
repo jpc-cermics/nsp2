@@ -388,6 +388,11 @@ int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(0,1);
   if (( a= GetSerial(stack,1))== NULLSERIAL ) return RET_BUG;
   if ((Obj=nsp_object_unserialize(a))== NULLOBJ) return RET_BUG;
+  /* take care that nsp_object_unserialize returns a new object 
+   * but with a name, we have to delete the name here otherwise 
+   * Obj will be copied at return and we will have unfreed memory.
+   */
+  if (nsp_object_set_name(Obj,NVOID) == FAIL) return RET_BUG;
   MoveObj(stack,1,Obj); 
   return 1; 
 }
@@ -398,7 +403,7 @@ int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Serial_func[]={
-  {"unserialize",int_serial_unserialize},
+  /* {"unserialize_serial",int_serial_unserialize}, moved in object.c */
   {(char *) 0, NULL}
 };
 
