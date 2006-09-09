@@ -13,10 +13,12 @@ TESTS= \
 	function.dia \
 	grand.dia \
 	gsort-nsp.dia \
+	gsort.dia \
 	hash.dia \
 	insert.dia \
 	lu.dia \
 	matrix_io.dia \
+	matelm-nsp.dia \
 	qr.dia \
 	regexp.dia \
 	serial.dia \
@@ -54,18 +56,14 @@ ALG=algebra-balanc.dia \
 
 AFINIR= \
 	color-strings.tst \
-	gsort.tst \
 	hash-vl.tst \
 	lists.tst \
-	matelm-nsp.tst \
 	matops-nsp.tst \
 	matops.tst \
 	pvm.tst \
 	sparse-nsp.tst \
 	sparse.tst \
 	sp-sci.tst \
-	strelm-nsp.tst \
-	strelm.tst \
 	trycatch.tst
 
 
@@ -90,9 +88,6 @@ tests: all
 	@valgrind --leak-check=full  ../bin/scilex -nw -e "exec('$*.tst');quit" 
 
 
-
-
-
 distclean	:
 	@echo cleaning tests
 	@$(RM) $(TESTS) $(ALG) libaddinter.*
@@ -101,27 +96,3 @@ distclean	:
 clean:	distclean
 
 
-TESTS= \
-	addinter.dia \
-	class.dia \
-	concat.dia \
-	delete_op-nsp.dia \
-	dsearch.dia \
-	env.dia \
-	extract.dia \
-	fft.dia \
-	function.dia \
-	grand.dia \
-	gsort-nsp.dia \
-	hash.dia \
-	matrix_io.dia \
-	qr.dia \
-	regexp.dia \
-	serial.dia \
-	setro.dia \
-	smat_concat_down.dia \
-	smat_concat_right.dia \
-	sp.dia \
-	spmult.dia \
-	test_minmax.dia \
-	testsbdiv.dia

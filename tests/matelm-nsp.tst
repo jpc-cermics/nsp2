@@ -2,20 +2,19 @@
 
 // fonction temporaires 
 // -------------------------------------------------------
-function [z]=plus_sp_m(a,b) z=full(a)+b endfunction 
-function [z]=plus_m_sp(a,b) z=a+full(b) endfunction 
-function [z]=minus_sp_m(a,b) z=full(a)-b endfunction 
-function [z]=minus_m_sp(a,b) z=a-full(b) endfunction 
-function [z]=concatr_sp_m(a,b) z=[a,sparse(b)] endfunction 
-function [z]=concatd_sp_m(a,b) z=[a;sparse(b)] endfunction 
+function [z]=plus_sp_m(a,b) z=full(a)+b; endfunction 
+function [z]=plus_m_sp(a,b) z=a+full(b); endfunction 
+function [z]=minus_sp_m(a,b) z=full(a)-b; endfunction 
+function [z]=minus_m_sp(a,b) z=a-full(b); endfunction 
+function [z]=concatr_sp_m(a,b) z=[a,sparse(b)]; endfunction 
+function [z]=concatd_sp_m(a,b) z=[a;sparse(b)]; endfunction 
 function [z]=mult_m_sp(a,b)  z=sparse(a)* b ; endfunction
 function [z]=mult_sp_m(a,b)  z=a * sparse(b); endfunction
-function [z]=dst_m_sp(a,b)   z=sparse(a)* b endfunction
-function [z]=dst_sp_m(a,b)   z=a * sparse(b) endfunction
-function [z]=string(a) z=m2s(a) endfunction 
-function [z]=norm(a) z=max(abs(a)) endfunction 
-function [z]=mult_m_sp(a,b)  z=sparse(a)* b endfunction
+function [z]=dst_m_sp(a,b)   z=sparse(a)* b; endfunction
+function [z]=dst_sp_m(a,b)   z=a * sparse(b) ;endfunction
+function [z]=mult_m_sp(a,b)  z=sparse(a)* b; endfunction
 function y=kron(a,b) ; y = a.*.b ; endfunction 
+
 //-------------------------------------------------------
 %eps=1.e-8
 
@@ -264,12 +263,12 @@ if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]) then pause,end
 //TOBEDONE if or(abs(a)<>[sqrt(2) 2;3 4;5 6]+%s) then pause,end
 //TOBEDONE if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]+%s) then pause,end
 
-a=sparse([1 2;-3 4;5 ,-6]);
-if or(full(abs(a))<>[1 2;3 4;5 6]) then pause,end
-if or(full(abs(a+a))<>2*[1 2;3 4;5 6]) then pause,end
-a=sparse([1+%i 2;-3 4;5, -6]);
-if or(full(abs(a))<>[sqrt(2) 2;3 4;5 6]) then pause,end
-if or(full(abs(a+a))<>2*[sqrt(2) 2;3 4;5 6]) then pause,end
+// a=sparse([1 2;-3 4;5 ,-6]);
+// if or(full(abs(a))<>[1 2;3 4;5 6]) then pause,end
+// if or(full(abs(a+a))<>2*[1 2;3 4;5 6]) then pause,end
+// a=sparse([1+%i 2;-3 4;5, -6]);
+// if or(full(abs(a))<>[sqrt(2) 2;3 4;5 6]) then pause,end
+// if or(full(abs(a+a))<>2*[sqrt(2) 2;3 4;5 6]) then pause,end
 
 //real
 a=[1 2;-3 4;5, -6];
@@ -575,86 +574,86 @@ n='c';
 if sum(a,n)<>[] then pause,end
 if sum([],n)<>[] then pause,end
 
-// sum -sparse 
-a=sparse([1 2;-3 4;5,-6]);
-// les comparaisons sur les sparses n'existent pas encore 
-// A FINIR 
-if full(sum(a))<>3 then pause,end
-if full(sum(a+0))<>3 then pause,end
+// // sum -sparse 
+// a=sparse([1 2;-3 4;5,-6]);
+// // les comparaisons sur les sparses n'existent pas encore 
+// // A FINIR 
+// if full(sum(a))<>3 then pause,end
+// if full(sum(a+0))<>3 then pause,end
 
-if or(full(sum(a,'r'))<>[3 0]) then pause,end
-if or(full(sum(a+0,'r'))<>[3 0]) then pause,end
-n='r';
-if or(full(sum(a,n))<>[3 0]) then pause,end
-if or(full(sum(a+0,n))<>[3 0]) then pause,end
-if or(full(sum(a,'r'))<>[3 0]) then pause,end
-if or(full(sum(a+0,'r'))<>[3 0]) then pause,end
-n='r';
-if or(full(sum(a,n))<>[3 0]) then pause,end
-if or(full(sum(a+0,n))<>[3 0]) then pause,end
+// if or(full(sum(a,'r'))<>[3 0]) then pause,end
+// if or(full(sum(a+0,'r'))<>[3 0]) then pause,end
+// n='r';
+// if or(full(sum(a,n))<>[3 0]) then pause,end
+// if or(full(sum(a+0,n))<>[3 0]) then pause,end
+// if or(full(sum(a,'r'))<>[3 0]) then pause,end
+// if or(full(sum(a+0,'r'))<>[3 0]) then pause,end
+// n='r';
+// if or(full(sum(a,n))<>[3 0]) then pause,end
+// if or(full(sum(a+0,n))<>[3 0]) then pause,end
 
-if or(full(sum(a,'c'))<>[3;1;-1]) then pause,end
-if or(full(sum(a+0,'c'))<>[3;1;-1]) then pause,end
-n='c';
-if or(full(sum(a,n))<>[3;1;-1]) then pause,end
-if or(full(sum(a+0,n))<>[3;1;-1]) then pause,end
-if or(full(sum(a,'c'))<>[3;1;-1]) then pause,end
-if or(full(sum(a+0,'c'))<>[3;1;-1]) then pause,end
-n='c';
-if or(full(sum(a,n))<>[3;1;-1]) then pause,end
-if or(full(sum(a+0,n))<>[3;1;-1]) then pause,end
+// if or(full(sum(a,'c'))<>[3;1;-1]) then pause,end
+// if or(full(sum(a+0,'c'))<>[3;1;-1]) then pause,end
+// n='c';
+// if or(full(sum(a,n))<>[3;1;-1]) then pause,end
+// if or(full(sum(a+0,n))<>[3;1;-1]) then pause,end
+// if or(full(sum(a,'c'))<>[3;1;-1]) then pause,end
+// if or(full(sum(a+0,'c'))<>[3;1;-1]) then pause,end
+// n='c';
+// if or(full(sum(a,n))<>[3;1;-1]) then pause,end
+// if or(full(sum(a+0,n))<>[3;1;-1]) then pause,end
 
-a=sparse([1 2;-3 4;5,-6]+0*%i);
-if or(full(sum(a))<>3+0*%i) then pause,end
-if or(full(sum(a+0))<>3+0*%i) then pause,end
-if or(full(sum(a,'r'))<>[3 0]+0*%i) then pause,end
-if or(full(sum(a+0,'r'))<>[3 0]+0*%i) then pause,end
-n='r';
-if or(full(sum(a,n))<>[3 0]+0*%i) then pause,end
-if or(full(sum(a+0,n))<>[3 0]+0*%i) then pause,end
-if or(full(sum(a,'r'))<>[3 0]+0*%i) then pause,end
-if or(full(sum(a+0,'r'))<>[3 0]+0*%i) then pause,end
-n='r';
-if or(full(sum(a,n))<>[3 0]+0*%i) then pause,end
-if or(full(sum(a+0,n))<>[3 0]+0*%i) then pause,end
+// a=sparse([1 2;-3 4;5,-6]+0*%i);
+// if or(full(sum(a))<>3+0*%i) then pause,end
+// if or(full(sum(a+0))<>3+0*%i) then pause,end
+// if or(full(sum(a,'r'))<>[3 0]+0*%i) then pause,end
+// if or(full(sum(a+0,'r'))<>[3 0]+0*%i) then pause,end
+// n='r';
+// if or(full(sum(a,n))<>[3 0]+0*%i) then pause,end
+// if or(full(sum(a+0,n))<>[3 0]+0*%i) then pause,end
+// if or(full(sum(a,'r'))<>[3 0]+0*%i) then pause,end
+// if or(full(sum(a+0,'r'))<>[3 0]+0*%i) then pause,end
+// n='r';
+// if or(full(sum(a,n))<>[3 0]+0*%i) then pause,end
+// if or(full(sum(a+0,n))<>[3 0]+0*%i) then pause,end
 
-if or(full(sum(a,'c'))<>[3;1;-1]+0*%i) then pause,end
-if or(full(sum(a+0,'c'))<>[3;1;-1]+0*%i) then pause,end
-n='c';
-if or(full(sum(a,n))<>[3;1;-1]+0*%i) then pause,end
-if or(full(sum(a+0,n))<>[3;1;-1]+0*%i) then pause,end
-if or(full(sum(a,'c'))<>[3;1;-1]+0*%i) then pause,end
-if or(full(sum(a+0,'c'))<>[3;1;-1]+0*%i) then pause,end
-n='c';
-if or(full(sum(a,n))<>[3;1;-1]+0*%i) then pause,end
-if or(full(sum(a+0,n))<>[3;1;-1]+0*%i) then pause,end
+// if or(full(sum(a,'c'))<>[3;1;-1]+0*%i) then pause,end
+// if or(full(sum(a+0,'c'))<>[3;1;-1]+0*%i) then pause,end
+// n='c';
+// if or(full(sum(a,n))<>[3;1;-1]+0*%i) then pause,end
+// if or(full(sum(a+0,n))<>[3;1;-1]+0*%i) then pause,end
+// if or(full(sum(a,'c'))<>[3;1;-1]+0*%i) then pause,end
+// if or(full(sum(a+0,'c'))<>[3;1;-1]+0*%i) then pause,end
+// n='c';
+// if or(full(sum(a,n))<>[3;1;-1]+0*%i) then pause,end
+// if or(full(sum(a+0,n))<>[3;1;-1]+0*%i) then pause,end
 
 // TEST DE FIN A FINIR 
 
-a=sparse([])
-if full(sum(a))<>0 then pause,end
-if full(sum([]))<>0 then pause,end
-if full(sum(a,'r'))<>[] then pause,end
-if full(sum([],'r'))<>[] then pause,end
-n='r';
-if full(sum(a,n))<>[] then pause,end
-if full(sum([],n))<>[] then pause,end
-if full(sum(a,'r'))<>[] then pause,end
-if full(sum([],'r'))<>[] then pause,end
-n='r';
-if full(sum(a,n))<>[] then pause,end
-if full(sum([],n))<>[] then pause,end
+// a=sparse([])
+// if full(sum(a))<>0 then pause,end
+// if full(sum([]))<>0 then pause,end
+// if full(sum(a,'r'))<>[] then pause,end
+// if full(sum([],'r'))<>[] then pause,end
+// n='r';
+// if full(sum(a,n))<>[] then pause,end
+// if full(sum([],n))<>[] then pause,end
+// if full(sum(a,'r'))<>[] then pause,end
+// if full(sum([],'r'))<>[] then pause,end
+// n='r';
+// if full(sum(a,n))<>[] then pause,end
+// if full(sum([],n))<>[] then pause,end
 
-if full(sum(a,'c'))<>[] then pause,end
-if full(sum([],'c'))<>[] then pause,end
-n='c';
-if full(sum(a,n))<>[] then pause,end
-if full(sum([],n))<>[] then pause,end
-if full(sum(a,'c'))<>[] then pause,end
-if full(sum([],'c'))<>[] then pause,end
-n='c';
-if full(sum(a,n))<>[] then pause,end
-if full(sum([],n))<>[] then pause,end
+// if full(sum(a,'c'))<>[] then pause,end
+// if full(sum([],'c'))<>[] then pause,end
+// n='c';
+// if full(sum(a,n))<>[] then pause,end
+// if full(sum([],n))<>[] then pause,end
+// if full(sum(a,'c'))<>[] then pause,end
+// if full(sum([],'c'))<>[] then pause,end
+// n='c';
+// if full(sum(a,n))<>[] then pause,end
+// if full(sum([],n))<>[] then pause,end
 
 //prod
 a=[1 2;-3 4;5,-6];
