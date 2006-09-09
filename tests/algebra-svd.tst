@@ -76,7 +76,6 @@ if Err(XX-Ac)>200*%eps then pause,end
 A=rand(150,60);Ac=A+rand(A)*%i;
 //Real Case
 [U,S,V]=svd(A);
-//--> corriger le message d'erreur ! XX= U*[diag(S)]*V'
 XX= U*[diag(S);zeros(150-60,60)]*V';
 if Err(XX-A)>10000*%eps then pause,end
 if Err(svd(A)-S)> 10000*%eps then pause,end
@@ -247,7 +246,7 @@ if Err(U1'*U1-eye(U1'*U1))>200*%eps  then pause,end
 [U1,S1,V]=svd(A);
 if Err(S-S1)>200*%eps  then pause,end
 if Err(U'*U-eye(U'*U))>200*%eps  then pause,end
-//XXXif Err(U1*S1*V'-A) >200*%eps  then pause,end
+//XXX if Err(U1*S1*V'-A) >200*%eps  then pause,end
 
 [U1,S1,V1]=svd(A,mode="e");
 if Err(S-S1)>200*%eps  then pause,end
