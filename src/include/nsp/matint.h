@@ -10,7 +10,7 @@
 
 #include "nsp/object.h"
 
-typedef int matint_redim(void *M,int m,int n); 
+typedef int matint_redim(NspObject *M,int m,int n); 
 typedef int matint_resize(void *M,int m,int n); 
 typedef int matint_free_elt(void **elt);
 typedef unsigned int matint_elt_size(const void *M);
@@ -75,6 +75,7 @@ extern int nsp_matint_concat_right_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_concat_down_xx(Stack stack, int rhs, int opt, int lhs);
 
 extern int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs);
+extern int nsp_matint_redim(NspObject *Obj, int m, int n);
 
 #endif 
 
