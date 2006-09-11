@@ -1,0 +1,73 @@
+% -*- mode: latex -*-
+
+\mansection{setdiff}
+\begin{mandesc}
+  \short{setdiff}{compute the set difference between two vectors of numbers
+  or strings} \\
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+C = setdiff(A,B)
+[C [,ind]] = setdiff(A,B)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A} : vector of numbers or strings (if A is a matrix, it is
+    considered as a big column vector).
+    \vname{B} : vector of same type than A.
+    \vname{C} : vector with elements of A but not in B.
+    \vname{ind} : vector of same length than C, ind(i) is an index
+                  such that C(i)=A(ind(i)).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  This function computes the set difference $C = A \setminus B$
+  between 2 vectors of numbers or strings. $C$ contains the components
+  of $A$ which are not in $B$. Note that multiple equal components in
+  $A$ are reduced to one such component (if it is not in $B$) and that
+  $C$ is sorted in ascending order.
+
+  $C$ and $ind$ are row vectors if  A is a row vector, otherwise they
+  are column vectors.
+  
+\end{mandescription}
+
+\begin{examples}
+
+\noindent A first example with vectors of numbers:
+  
+  \begin{program}
+    A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];
+    B = [2, 0.5];
+    C = setdiff(A,B)
+    [C, ind] = setdiff(A,B)
+    // we must have C = A(ind)
+    C - A(ind)
+  \end{program}
+
+\noindent   a second example with vectors of strings:
+  
+  \begin{program}
+    A = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
+    B = [ "foo", "bar" ]
+    C = setdiff(A,B)
+    [C, ind] = setdiff(A,B)
+    // we must have C = A(ind)
+    C - A(ind)
+  \end{program}
+
+\end{examples}
+
+\begin{manseealso}
+  \manlink{model}{model}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   Bruno
+\end{authors}
