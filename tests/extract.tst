@@ -113,7 +113,7 @@ if ~and(As(:) == Asv)  then pause,end;
 function C = m2cells(A)
    [m,n] = size(A)
    C = cells_create(m,n)
-   for i = 1:m*n, C(i) = {A(i)}; end
+   for i = 1:m*n, C{i} = A(i); end
 endfunction
 
 Ac = m2cells(A);
