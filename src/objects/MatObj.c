@@ -2158,9 +2158,22 @@ int_mx_concat (Stack stack, int rhs, int opt, int lhs, Fconcat F)
 }
 
 int
-int_mxconcatd (Stack stack, int rhs, int opt, int lhs)
+int_mxconcatd_old (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_concat (stack, rhs, opt, lhs, nsp_matrix_concat_down);
+}
+
+/* The same but using the matint implementation. 
+ *
+ */
+
+typedef NspObject *(*Fconcat_d) (const NspObject *, const NspObject *);
+extern int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d F);
+NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB);
+
+int int_mxconcatd (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_matint_concat_down_yy(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
 }
 
 /*

@@ -2021,6 +2021,55 @@ int nsp_matint_concat_down_xx(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+/* an other interface for concatd 
+ * This one is used when concatd_x_x is first searched 
+ * when x is supposed to implement the matint interface 
+ * 
+ *
+ */ 
+
+typedef NspObject *(*Fconcat_d) (const NspObject *, const NspObject *);
+
+int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d F)
+{
+  /* objects with matint interface can be casted to NspSMatrix */
+  NspSMatrix *A,*B;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if ((A = (NspSMatrix *)nsp_get_object(stack, 1)) == NULL)   return RET_BUG;
+  if ((B = (NspSMatrix *)nsp_get_object(stack, 2)) == NULL)   return RET_BUG;
+  if (A->mn == 0)
+    {
+      /* this is a bit tricky since A and B may point to the same object */
+      if ( A == B ) 
+	{
+	  NthObj(2) = NULLOBJ;
+	  NSP_OBJECT(A)->ret_pos = 1;
+	}
+      else 
+	{
+	  NSP_OBJECT(B)->ret_pos = 1;
+	}
+      return 1;
+    }
+
+  if (B->mn == 0)
+    {
+      /* this is a bit tricky since A and B may point to the same object */
+      if ( A == B )  NthObj(2) = NULLOBJ;
+      NSP_OBJECT(A)->ret_pos = 1;
+    }
+  else
+    {
+      NspObject *HMat3;
+      if ((HMat3 = (*F) ((const NspObject *) A,(const NspObject *) B)) == NULLOBJ)
+	return RET_BUG;
+      MoveObj (stack, 1, HMat3);
+    }
+  return 1;
+}
+
 /*
  * set cells elements 
  * C{exps}=(....)
@@ -2175,4 +2224,5 @@ int nsp_matint_redim(NspObject *Obj, int m, int n)
       return FAIL;
     }
 }
+
 
