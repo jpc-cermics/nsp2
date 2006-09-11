@@ -110,7 +110,7 @@ NspTypeMaxpMatrix *new_type_mpmatrix(type_mode mode)
 
   mati = new_type_matint(T_DERIVED);
   mati->methods = matint_get_methods; 
-  mati->redim = (matint_redim *) nsp_mpmatrix_redim; 
+  /* mati->redim = (matint_redim *) nsp_mpmatrix_redim; use default value */
   mati->resize = (matint_resize  *) nsp_mpmatrix_resize;
   mati->free_elt = (matint_free_elt *) 0; /* nothing to do */
   mati->elt_size = (matint_elt_size *) nsp_matrix_elt_size ;/* same as for matrix */
@@ -1287,7 +1287,7 @@ int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
       m1= (int) B->R[0];
       n1= (int) B->R[1];
     }
-  if ( nsp_mpmatrix_redim(A,m1,n1) != OK) return RET_BUG;
+  if ( nsp_matint_redim(NSP_OBJECT(A),m1,n1) != OK) return RET_BUG;
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
@@ -1299,7 +1299,7 @@ int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
  * =======
  */
 
-int int_mpredim(Stack stack, int rhs, int opt, int lhs)
+int int_mpredim_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
   NspMaxpMatrix  *HMat;
@@ -1308,7 +1308,7 @@ int int_mpredim(Stack stack, int rhs, int opt, int lhs)
   if ( (HMat=GetMpMat(stack,1))== NULLMAXPMAT) return RET_BUG;
   if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
   if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if ( nsp_mpmatrix_redim(HMat,m1,n1) != OK) return RET_BUG;
+  if ( nsp_matint_redim(NSP_OBJECT(HMat),m1,n1) != OK) return RET_BUG;
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -2486,7 +2486,7 @@ static OpWrapTab Matrix_func[]={
   {"prod_mp_s" ,  int_mpprod ,NULL},
   {"quote_mp",int_mpquote,NULL},
   {"real_mp" ,  int_mprealpart ,NULL},
-  {"redim_mp" ,  int_mpredim ,NULL},
+  /* {"redim_mp" ,  int_mpredim ,NULL}, */
   {"resize_mp_mp" ,  int_mpresize ,NULL},
   {"round_mp",int_mxround,int_mp_wrap1},
   {"seti_mp_mp" ,  int_mpseti ,NULL},

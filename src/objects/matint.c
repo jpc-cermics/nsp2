@@ -70,6 +70,7 @@ NspTypeMatint *new_type_matint(type_mode mode)
   /* specific methods for matint */
       
   type->init = NULL;
+  type->redim =  nsp_matint_redim; 
       
   /* 
    * Matint interfaces can be added here 
@@ -116,12 +117,10 @@ static char *matint_type_as_string (void)
  *   implemented in the matint interface. 
  */
 
-/* static int int_matint_redim(NspMatrix *self,Stack stack,int rhs,int opt,int lhs)  */
 static int int_matint_redim(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
-  NspSMatrix *A = (NspSMatrix *) self;
   NspTypeBase *type;
-  int m, mm, n, nn;
+  int mm,nn;
   CheckRhs (2,2);
   CheckLhs (0,0);
   if (GetScalarInt (stack, 1, &mm) == FAIL)    return RET_BUG;
@@ -147,22 +146,16 @@ static int int_matint_redim(NspObject *self, Stack stack, int rhs, int opt, int 
       Scierror("Object do not implements matint interface\n");
       return RET_BUG;
     }
-
-  /*   if ( MAT_INT(type)->redim(self,m1,n1) != OK) return RET_BUG; */
-  m = mm; n = nn; 
-  if ( m == -1 ) m = (n > 0) ? A->mn/n : 0;
-  if ( n == -1 ) n = (m > 0) ? A->mn/m : 0;
-  if ( A->mn == m*n ) 
-    {
-      A->m =m;
-      A->n =n;
-      return 0;
-    }
-  else 
-    {
-      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n",mm,nn,A->mn);
-      return RET_BUG;
-    }
+  /* 
+   * here we could call directly 
+   * return nsp_matint_redim(self, m, n) == OK ? 0 : RET_BUG;
+   * considering that all the matrices implementing matint 
+   * will use default redim function. But just in case one 
+   * class decided to particularize redim we have to 
+   * call MAT_INT(type)->redim(self,m1,n1)
+   * 
+   */
+  return MAT_INT(type)->redim(self,mm,nn)  == OK ? 0 : RET_BUG;
 }
 
 static NspMethods matint_methods[] = {
@@ -2148,3 +2141,38 @@ int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
   if ( nc > WORK_SIZE ) FREE(col);
   return RET_BUG;
 }
+
+
+
+/**
+ * nsp_matint_redim:
+ * @A: a #NspMatrix
+ * @m: number of rows 
+ * @n: number of columns
+ * 
+ * Checks that the #NspObject @A (which is supposed to implement matint)
+ * of size m' x n' satisfy m'*n' = @m * @n and reshapes 
+ * @A to size @m x @n.
+ * 
+ * Return value: returns %OK or %FAIL. In case of %FAIL an error is raised.
+ **/
+
+int nsp_matint_redim(NspObject *Obj, int m, int n)
+{
+  int mm=m,nn=n;
+  NspSMatrix *A= (NspSMatrix *) Obj;
+  if ( m == -1 ) m = (n > 0) ? A->mn/n : 0;
+  if ( n == -1 ) n = (m > 0) ? A->mn/m : 0;
+  if ( A->mn == m*n ) 
+    {
+      A->m =m;
+      A->n =n;
+      return OK;
+    }
+  else 
+    {
+      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n",mm,nn,A->mn);
+      return FAIL;
+    }
+}
+

@@ -99,7 +99,7 @@ NspTypeCells *new_type_cells(type_mode mode)
 
   mati = new_type_matint(T_DERIVED);
   mati->methods = matint_get_methods; 
-  mati->redim = (matint_redim *) nsp_cells_redim; 
+  /* mati->redim = (matint_redim *) nsp_cells_redim; use default value */
   mati->resize = (matint_resize  *) nsp_cells_resize; 
   mati->free_elt = (matint_free_elt *) nsp_object_destroy;
   mati->elt_size = (matint_elt_size *) nsp_cells_elt_size ;
@@ -559,7 +559,7 @@ int int_diag_cells_create(Stack stack, int rhs, int opt, int lhs)
  * return 0 on failure 
  */
 
-int int_cells_redim(Stack stack, int rhs, int opt, int lhs)
+int int_cells_redim_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   int  m1,n1;
   NspCells  *HMat;
@@ -568,7 +568,7 @@ int int_cells_redim(Stack stack, int rhs, int opt, int lhs)
   if ( (HMat=GetCells(stack,1))== NULLCELLS) return RET_BUG;
   if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
   if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if ( nsp_cells_redim(HMat,m1,n1) != OK) return RET_BUG;
+  if ( nsp_matint_redim(NSP_OBJECT(HMat),m1,n1) != OK) return RET_BUG;
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -1130,7 +1130,7 @@ static OpTab Cells_func[]={
   {"col_cells_create", int_col_cells_create},
   {"row_cells_create", int_row_cells_create},
   {"diag_cells_create", int_row_cells_create},
-  {"redim_ce",int_cells_redim},
+  /* {"redim_ce",int_cells_redim}, */
   {"concatr_ce_ce",int_cells_concatr},
   {"concatr_m_ce",int_cells_concatr_m_ce},
   {"addcols_ce_m",int_cells_addcols},

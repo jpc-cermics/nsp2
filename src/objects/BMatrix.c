@@ -313,34 +313,6 @@ void nsp_bmatrix_latex_tab_print(NspBMatrix *BMat)
 }
 
 
-
-/**
- * nsp_bmatrix_redim:
- * @A: a #NspBMatrix
- * @m: number of rows 
- * @n: number of columns
- * 
- * Checks that the #NspBMatrix @A of size m' x n' satisfy m'*n' = @m * @n and reshapes 
- * @A to size m x @n.
- *
- * returns %OK or %FAIL.
- */
-
-int nsp_bmatrix_redim(NspBMatrix *A, int m, int n)
-{
-  if ( A->mn ==  m*n ) 
-    {
-      A->m =m ;
-      A->n =n;
-      return(OK);
-    }
-  else 
-    {
-      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n",m,n,A->mn);
-      return(FAIL);
-    }
-}
-
 /**
  * nsp_bmatrix_enlarge:
  * @A: a #NspBMatrix

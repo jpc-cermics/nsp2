@@ -707,38 +707,6 @@ void nsp_matrix_latex_tab_print(const NspMatrix *Mat)
     }
 }
 
-
-/**
- * nsp_matrix_redim:
- * @A: a #NspMatrix
- * @m: number of rows 
- * @n: number of columns
- * 
- * Checks that the #NspMatrix @A of size m' x n' satisfy m'*n' = @m * @n and reshapes 
- * @A to size m x @n.
- *
- * returns %OK or %FAIL.
- */
-
-int nsp_matrix_redim(NspMatrix *A, int m, int n)
-{
-  
-  if ( m == -1 ) m = (n== 0) ? 0 : A->mn/n;
-  if ( n == -1 ) n = (m== 0) ? 0 : A->mn/m;
-  if ( A->mn ==  m*n ) 
-    {
-      A->m =m ;
-      A->n =n;
-      return(OK);
-    }
-  else 
-    {
-      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n",m,n,A->mn);
-      return(FAIL);
-    }
-}
-
-
 /**
  * nsp_matrix_enlarge:
  * @A: a #NspMatrix

@@ -116,7 +116,7 @@ new_type_matrix (type_mode mode)
 
   mati = new_type_matint(T_DERIVED);
   mati->methods = matint_get_methods; 
-  mati->redim = (matint_redim *) nsp_matrix_redim; 
+  /* mati->redim = (matint_redim *) nsp_matrix_redim; use default value of matint */
   mati->resize = (matint_resize  *) nsp_matrix_resize;
   mati->free_elt = (matint_free_elt *) 0; /* nothing to do */
   mati->elt_size = (matint_elt_size *) nsp_matrix_elt_size ;
@@ -1967,7 +1967,7 @@ int_mxmatrix (Stack stack, int rhs, int opt, int lhs)
       m1 = (int) B->R[0];
       n1 = (int) B->R[1];
     }
-  if ( nsp_matrix_redim (A, m1, n1) != OK) return RET_BUG;
+  if ( nsp_matint_redim (NSP_OBJECT (A), m1, n1) != OK) return RET_BUG;
   NSP_OBJECT (A)->ret_pos = 1;
   return 1;
 }
@@ -1992,7 +1992,7 @@ int_mxredim (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if (GetScalarInt (stack, 3, &n1) == FAIL)
     return RET_BUG;
-  if (nsp_matrix_redim (HMat, m1, n1) != OK)
+  if (nsp_matint_redim (NSP_OBJECT(HMat), m1, n1) != OK)
     return RET_BUG;
   NSP_OBJECT (HMat)->ret_pos = 1;
   return 1;

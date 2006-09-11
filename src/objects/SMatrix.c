@@ -435,31 +435,6 @@ void nsp_smatrix_latex_tab_print(NspSMatrix *SMat)
 
 
 
-/*
- *nsp_smatrix_redim: Changes matrix dimensions
- * m*n must be unchanged 
- * The NspSMatrix is changed (m,n are changed ) 
- * return 0 on failure 
- */
-
-int nsp_smatrix_redim(NspSMatrix *A, int m, int n)
-{
-  if ( A->mn ==  m*n ) 
-    {
-      A->m =m ;
-      A->n =n;
-      return(OK);
-    }
-  else 
-    {
-      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n"
-	       ,m,n,A->mn);
-      Scierror("SMatRedim : can't redim");
-      return(FAIL);
-    }
-}
-
-
 
 /*
  *nsp_smatrix_enlarge(A,m,n) 

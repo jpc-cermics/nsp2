@@ -95,7 +95,7 @@ NspTypeBMatrix *new_type_bmatrix(type_mode mode)
 
   mati = new_type_matint(T_DERIVED);
   mati->methods = matint_get_methods; 
-  mati->redim = (matint_redim *) nsp_bmatrix_redim; 
+  /* mati->redim = (matint_redim *) nsp_bmatrix_redim; use default value */
   mati->resize = (matint_resize  *) nsp_bmatrix_resize;
   mati->free_elt = (matint_free_elt *) 0; /* nothing to do */
   mati->elt_size = (matint_elt_size *) nsp_bmatrix_elt_size ;
@@ -673,7 +673,7 @@ static int int_bmatrix_find(Stack stack, int rhs, int opt, int lhs)
  * WARNING: Object on stack is changed 
  */
 
-static int int_bmatrix_redim(Stack stack, int rhs, int opt, int lhs)
+static int int_bmatrix_redim_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
   NspBMatrix  *HMat;
@@ -682,7 +682,7 @@ static int int_bmatrix_redim(Stack stack, int rhs, int opt, int lhs)
   if ( (HMat=GetBMat(stack,1))== NULLBMAT) return RET_BUG;
   if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
   if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if (nsp_bmatrix_redim(HMat,m1,n1) != OK) return RET_BUG;
+  if (nsp_matint_redim(NSP_OBJECT(HMat),m1,n1) != OK) return RET_BUG;
   return 1;
 }
 
@@ -1115,7 +1115,7 @@ static OpTab BMatrix_func[]={
   {"or_b_b",int_bmatrix_or},
   {"seq_or_b",int_bmatrix_or1},
   {"seq_or_b_b",int_bmatrix_or},
-  {"redim_b",int_bmatrix_redim},
+  /* {"redim_b",int_bmatrix_redim}, */
   {"resize_b",int_bmatrix_resize},
   {"eq_b_b" ,  int_bmatrix_eq },
   {"ne_b_b" ,  int_bmatrix_neq },

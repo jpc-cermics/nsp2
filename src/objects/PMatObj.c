@@ -92,7 +92,7 @@ NspTypePMatrix *new_type_pmatrix(type_mode mode)
 
   mati = new_type_matint(T_DERIVED);
   mati->methods = matint_get_methods; 
-  mati->redim = (matint_redim *) nsp_pmatrix_redim; 
+  /* mati->redim = (matint_redim *) nsp_pmatrix_redim;  use default value */
   mati->resize = (matint_resize  *) nsp_pmatrix_resize; 
   mati->free_elt = (matint_free_elt *) nsp_polynom_destroy;
   mati->elt_size = (matint_elt_size *) nsp_pmatrix_elt_size ;
@@ -373,13 +373,13 @@ static int int_pmatrix_create(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * nsp_smatrix_redim: Changes matrix dimensions
+ * nsp_pmatrix_redim: Changes matrix dimensions
  * m*n must be unchanged 
  * The NspSMatrix is changed (m,n are changed ) 
  * return 0 on failure 
  */
 
-int int_pmatrix_redim(Stack stack, int rhs, int opt, int lhs)
+int int_pmatrix_redim_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
   NspPMatrix  *HMat;
@@ -388,7 +388,7 @@ int int_pmatrix_redim(Stack stack, int rhs, int opt, int lhs)
   if ( (HMat=GetPMat(stack,1))== NULLPMAT) return RET_BUG;
   if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
   if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if ( nsp_pmatrix_redim(HMat,m1,n1) != OK) return RET_BUG;
+  if ( nsp_matint_redim(NSP_OBJECT(HMat),m1,n1) != OK) return RET_BUG;
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -804,7 +804,7 @@ int int_pmatrix_transpose(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab PMatrix_func[]={
   {"pmat_create",int_pmatrix_create},
-  {"redim_p",int_pmatrix_redim},
+  /* {"redim_p",int_pmatrix_redim}, */
   {"concatr_p_p",int_pmatrix_concatr},
   {"concatr_m_p",int_pmatrix_concatr_m_s},
   {"addcols_p_m",int_pmatrix_addcols},

@@ -367,6 +367,7 @@ void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
     }
 }
 
+
 /**
  * nsp_cells_redim:
  * @A: a #NspCells object 
@@ -379,7 +380,7 @@ void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
  * Return value: %OK or %FAIL 
  **/
 
-int nsp_cells_redim(NspCells *A, int m, int n)
+int nsp_cells_redim_obsolte(NspCells *A, int m, int n)
 {
   if ( m == -1 ) m = (n== 0) ? 0 : A->mn/n;
   if ( n == -1 ) n = (m== 0) ? 0 : A->mn/m;

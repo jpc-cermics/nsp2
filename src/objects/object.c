@@ -1851,7 +1851,7 @@ int int_matrix_testredim(Stack stack, int rhs, int opt, int lhs)
   if ((A = GetMat(stack, 1)) == NULLMAT) return RET_BUG;
   if (GetScalarInt (stack, 2, &m1) == FAIL)    return RET_BUG;
   if (GetScalarInt (stack, 3, &n1) == FAIL)    return RET_BUG;
-  if ( nsp_matrix_redim (A,m1,n1) != OK) return RET_BUG;
+  if ( nsp_matint_redim ((NspObject *)A,m1,n1) != OK) return RET_BUG;
   return 0;
 }
 

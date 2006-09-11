@@ -283,30 +283,6 @@ NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A,nsp_const_string str, int flag)
   return(Loc);
 }
 
-/*
- * PMatRedim : Changes matrix dimensions
- * m*n must be unchanged 
- * The NspPMatrix is changed (m,n are changed ) 
- * return 0 on failure 
- */
-
-int nsp_pmatrix_redim(NspPMatrix *A, int m, int n)
-{
-  if ( A->mn ==  m*n ) 
-    {
-      A->m =m ;
-      A->n =n;
-      return(OK);
-    }
-  else 
-    {
-      Scierror("PMatRedim : can't redim");
-      return(FAIL);
-    }
-}
-
-
-
 /**
  * nsp_pmatrix_elt_size:
  * @M: a #NspSMatrix 

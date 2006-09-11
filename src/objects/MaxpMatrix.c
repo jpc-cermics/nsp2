@@ -469,9 +469,9 @@ void nsp_mpmatrix_latex_tab_print(const NspMaxpMatrix *Mat)
  * returns %OK or %FAIL.
  */
 
-int nsp_mpmatrix_redim(NspMaxpMatrix *A, int m, int n)
+int nsp_mpmatrix_redim_obsolete(NspMaxpMatrix *A, int m, int n)
 {
-  return nsp_matrix_redim((NspMatrix *)A,m,n);
+  return nsp_matint_redim(NSP_OBJECT(A),m,n);
 }
 
 
