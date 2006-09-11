@@ -3662,6 +3662,10 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
   C_CompOp *C_realop;
   int i;
   NspBMatrix *Loc ;
+
+  if ( A->rc_type == 'r'  &&  B->rc_type == 'r' )
+    return nsp_mat_comp_real(A, B, op);
+
   if ( SearchComp(op,&realop,&C_realop) == FAIL) return(NULLBMAT);
   if ( !( A->m == B->m && A->n == B->n ) )
     {
@@ -3823,6 +3827,72 @@ NspBMatrix  *nsp_mat_comp(NspMatrix *A, NspMatrix *B, char *op)
     }
   return(Loc);
 }
+
+
+#define MAKE_REAL_COMP(op) \
+for ( i = 0, iA = 0, iB = 0 ; i < m*n ; i++, iA+=inc_A, iB+=inc_B ) \
+   Loc->B[i] = A->R[iA] op B->R[iB] 
+
+NspBMatrix  *nsp_mat_comp_real(NspMatrix *A, NspMatrix *B, char *op)
+{
+  /* comparizon for both A and B of type real */
+  int i, iA, iB, inc_A, inc_B, m, n;
+  NspBMatrix *Loc ;
+  if ( !( A->m == B->m  &&  A->n == B->n ) )
+    {
+      if ( B->mn == 1 && A->mn != 0 ) 
+	{
+	  m = A->m; n = A->n; inc_A = 1; inc_B = 0;
+	}
+      else if ( A->mn == 1 && B->mn != 0 ) 
+	{
+	  m = B->m; n = B->n; inc_A = 0; inc_B = 1;
+	}
+      else    /* Incompatible dimensions */
+	{
+	  if ( (Loc =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT ) return NULLBMAT;
+	  if ( strcmp(op,"<>") == 0 ) 
+	    Loc->B[0] = TRUE;
+	  else
+	    Loc->B[0] = FALSE;
+	  return Loc;
+	}
+    }
+  else    /* A and B are of same dimensions */ 
+    {
+      if ( A->mn == 0) 
+	{
+	  if ( (Loc =nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT ) return NULLBMAT;
+	  if ( strcmp(op,"==") == 0  ||  strcmp(op,"<=") == 0  ||  strcmp(op,">=") == 0 ) 
+	    Loc->B[0] = TRUE;
+	  else
+	    Loc->B[0] = FALSE;
+	  return Loc;
+	}
+      else
+	{
+	  m = A->m; n = A->n; inc_A = 1; inc_B = 1;
+	}
+    }
+
+  if ( (Loc =nsp_bmatrix_create(NVOID,m,n)) == NULLBMAT ) return NULLBMAT;
+
+  if ( strcmp(op,"==") == 0 )
+    MAKE_REAL_COMP(==);
+  else if ( strcmp(op,"<>") == 0 )
+    MAKE_REAL_COMP(!=);
+  else if ( strcmp(op,"<=") == 0 )
+    MAKE_REAL_COMP(<=);
+  else if ( strcmp(op,">=") == 0 )
+    MAKE_REAL_COMP(>=);
+  else if ( strcmp(op,"<") == 0 )
+    MAKE_REAL_COMP(<);
+  else if ( strcmp(op,">") == 0 )
+    MAKE_REAL_COMP(>);
+  
+  return Loc;
+}
+
 
 /* 
  * returns and(nsp_mat_comp(A,B,op))

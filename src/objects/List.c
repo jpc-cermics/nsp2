@@ -1441,7 +1441,7 @@ int nsp_list_full_not_equal(NspList *L1, NspList *L2)
 
 /**
  *nsp_list_unique:
- * @L: a NspList 
+ * @L: a #NspList 
  * 
  *  build a new list LL with unique elements of L
  *  if Ind != NULL , Ind->R[k] give an index i such that LL(k) = L(i)
@@ -1498,8 +1498,8 @@ NspList *nsp_list_unique(NspList *L, NspMatrix **Ind, NspMatrix **Occ)
 		}
 	      k++;
 	    }
-	  cell_L = cell_L->next;
 	}
+      cell_L = cell_L->next;
     }
 
   if ( Ind != NULL )
@@ -1520,6 +1520,7 @@ NspList *nsp_list_unique(NspList *L, NspMatrix **Ind, NspMatrix **Occ)
   nsp_matrix_destroy(occ);
   return NULLLIST;
 }
+
 
 /**
  *nsp_list_compact:

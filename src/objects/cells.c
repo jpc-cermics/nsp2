@@ -381,6 +381,8 @@ void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 
 int nsp_cells_redim(NspCells *A, int m, int n)
 {
+  if ( m == -1 ) m = (n== 0) ? 0 : A->mn/n;
+  if ( n == -1 ) n = (m== 0) ? 0 : A->mn/m;
   if ( A->mn ==  m*n ) 
     {
       A->m =m ;
@@ -1166,3 +1168,101 @@ NspCells*nsp_cells_transpose(const NspCells *A)
   return(Loc);
 }
 
+
+/**
+ *nsp_cells_unique:
+ * @C: a NspCells
+ * 
+ *  build a new NspCells CC with unique elements of C
+ *  if Ind != NULL , Ind->R[k] give an index i such that CC(k) = C(i)
+ *  if Ind != NUL then Occ may be != NULL (else Occ = NULL) and
+ *  if Occ != NULL Occ->R[k] is the number of occurences in C of CC(k).
+ *
+ * Return value: a NspCells
+ **/
+NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ)
+{
+  NspCells *CC;
+  int i, j, k;
+  Boolean found;
+  NspMatrix *ind=NULLMAT, *occ=NULLMAT;
+  NspObject *Current, *O=NULLOBJ;
+
+  if ( (CC = nsp_cells_create(NVOID, C->mn, 1)) == NULLCELLS ) return NULLCELLS;
+
+  if (Ind != NULL )
+    {
+      if ( (ind = nsp_matrix_create(NVOID,'r', C->mn, 1)) == NULLMAT ) goto err;
+      if (Occ != NULL )
+	if ( (occ = nsp_matrix_create(NVOID,'r', C->mn, 1)) == NULLMAT ) goto err;
+    }
+
+
+  k = 0;
+  for ( i = 0 ; i < C->mn ; i++ )
+    {
+      Current =  C->objs[i];
+      if ( Current != NULLOBJ )
+	{
+	  found = FALSE;
+	  for ( j = 0 ; j < k && !found ; j++ )
+	    if ( Current->type->eq(Current , CC->objs[j]) )
+	      {
+		found = TRUE;
+		if ( Occ != NULL ) occ->R[j]++;
+	      }
+	  if ( !found )
+	    {
+	      if ( (O = nsp_object_copy_with_name(Current)) == NULLOBJ ) goto err;
+	      CC->objs[k] = O;
+	      if ( Ind != NULL )
+		{
+		  ind->R[k] = (double) (i+1);
+		  if ( Occ != NULL ) occ->R[k] = 1;
+		}
+	      k++;
+	    }
+	}
+    }
+
+  if ( k < C->mn )
+    {
+      nsp_cells_resize(CC, k, 1);
+      if ( Ind != NULL )
+	{
+	  nsp_matrix_resize(ind,k,1);
+	  if ( Occ != NULL ) 
+	    {
+	      nsp_matrix_resize(occ,k,1);
+	    }
+	}
+    }
+
+  if ( C->m == 1 && k > 1 )  /* outputs in row form */
+    {
+      CC->m = 1; CC->n = k;
+      if ( Ind != NULL )
+	{
+	  ind->m = 1; ind->n = k;
+	  if ( Occ != NULL ) 
+	    {
+	      occ->m = 1; occ->n = k;
+	    }
+	}
+    }
+
+  if ( Ind != NULL )
+    {
+      *Ind = ind;
+      if ( Occ != NULL )
+	*Occ = occ;
+    }
+
+  return CC;
+
+ err:
+  nsp_cells_destroy(CC);
+  nsp_matrix_destroy(ind);
+  nsp_matrix_destroy(occ);
+  return NULLCELLS;
+}

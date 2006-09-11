@@ -116,14 +116,23 @@ static char *matint_type_as_string (void)
  *   implemented in the matint interface. 
  */
 
-static int int_matint_redim(NspMatrix *self,Stack stack,int rhs,int opt,int lhs) 
+/* static int int_matint_redim(NspMatrix *self,Stack stack,int rhs,int opt,int lhs)  */
+static int int_matint_redim(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
+  NspSMatrix *A = (NspSMatrix *) self;
   NspTypeBase *type;
-  int m1, n1;
+  int m, mm, n, nn;
   CheckRhs (2,2);
   CheckLhs (0,0);
-  if (GetScalarInt (stack, 1, &m1) == FAIL)    return RET_BUG;
-  if (GetScalarInt (stack, 2, &n1) == FAIL)    return RET_BUG;
+  if (GetScalarInt (stack, 1, &mm) == FAIL)    return RET_BUG;
+  if (GetScalarInt (stack, 2, &nn) == FAIL)    return RET_BUG;
+
+  if ( mm < -1 || nn < -1 )
+    {
+      Scierror("Error:\tBad arguments (must be >= -1)\n");
+      return RET_BUG;
+    }
+
   /* interface is supposed to be initialized 
    *  nsp_type_matint= new_type_matint(T_BASE); 
    */
@@ -138,8 +147,22 @@ static int int_matint_redim(NspMatrix *self,Stack stack,int rhs,int opt,int lhs)
       Scierror("Object do not implements matint interface\n");
       return RET_BUG;
     }
-  if ( MAT_INT(type)->redim(self,m1,n1) != OK) return RET_BUG;
-  return 0;
+
+  /*   if ( MAT_INT(type)->redim(self,m1,n1) != OK) return RET_BUG; */
+  m = mm; n = nn; 
+  if ( m == -1 ) m = (n > 0) ? A->mn/n : 0;
+  if ( n == -1 ) n = (m > 0) ? A->mn/m : 0;
+  if ( A->mn == m*n ) 
+    {
+      A->m =m;
+      A->n =n;
+      return 0;
+    }
+  else 
+    {
+      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n",mm,nn,A->mn);
+      return RET_BUG;
+    }
 }
 
 static NspMethods matint_methods[] = {
@@ -2003,4 +2026,125 @@ int nsp_matint_concat_down_xx(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   MoveObj (stack, 1, Res);
   return 1;
+}
+
+/*
+ * set cells elements 
+ * C{exps}=(....)
+ * or C{exp,exp,..}=(...)
+ */
+
+int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
+{
+  int i, j, ind, nind;
+  int nr=0, nc=0, *row=NULL, *col=NULL, rmin, rmax, cmin, cmax;
+  NspCells *C;
+  CheckRhs (3, 1000);
+
+  if ( rhs >= 1 ) 
+    {
+      /* last elt gives us the number of indices cells(ind1,...,indn)=rhs */
+      if ( GetScalarInt(stack,rhs,&nind) == FAIL) return RET_BUG;
+    }
+
+  if ((C = GetCells(stack, 1)) == NULLCELLS) return RET_BUG;
+  switch (nind ) 
+    {
+    case 1: 
+      if ( (row =get_index_vector(stack, 2, &nr, &rmin, &rmax, iwork1)) == NULL )
+	goto err;
+      if ( nr != rhs - 3 )
+	{
+	  Scierror("Error: internal error, less rhs arguments %d than expected %d\n",
+		   rhs- 3, nr);
+	  goto err;
+	}
+      if ( rmin <= 0 )
+	{
+	  Scierror("Error:\tNon Positive indices are not allowed\n");
+	  goto err;
+	}
+      if ( rmax > C->mn ) 
+	{
+	  /* we must enlarge C */
+	  if ( C->n == 1 )
+	    {
+	      if ( nsp_cells_enlarge(C, rmax, 1) == FAIL ) goto err;
+	    }
+	  else if ( C->m == 1 )
+	    {
+	      if ( nsp_cells_enlarge(C, 1, rmax) == FAIL ) goto err;
+	    }
+	  else  /* C is a matrix or a empty matrix */
+	    {
+	      if ( nsp_cells_enlarge(C, rmax, 1) == FAIL ) goto err;
+	    }
+	}
+
+      for ( i = 0 ; i < nr ; i++)
+	{
+	  int cij = row[i];
+	  NspObject *Ob = nsp_get_object(stack,i+3);
+	  if ( Ocheckname(Ob,NVOID) ) 
+	    {
+	      if (nsp_object_set_name(Ob,"ce") == FAIL) goto err;
+	    }
+	  else 
+	    {
+	      if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) goto err;
+	    }
+	  if ( C->objs[cij] != NULLOBJ) nsp_object_destroy(&C->objs[cij]);
+	  C->objs[cij]= Ob;
+	}
+      break;
+
+    case 2: 
+      if ( (row =get_index_vector(stack, 2, &nr, &rmin, &rmax, iwork1)) == NULL )
+	goto err;
+      if ( (col =get_index_vector(stack, 3, &nc, &cmin, &cmax, iwork2)) == NULL )
+	goto err;
+      if ( nr*nc != rhs - 4 )
+	{
+	  Scierror("Error: internal error, less rhs arguments %d than expected %d\n",
+		   rhs- 4, nr*nc);
+	  goto err;
+	}
+
+      if ( rmax > C->m || cmax > C->n ) 
+	if ( nsp_cells_enlarge(C, rmax, cmax) == FAIL ) goto err;
+
+      ind = 4;
+      for ( j = 0 ; j < nc ; j++)
+	for ( i = 0 ; i < nr ; i++)
+	  {
+	    int cij= row[i] + C->m*col[j];
+	    NspObject *Ob = nsp_get_object(stack,ind);
+	    if ( Ocheckname(Ob,NVOID) ) 
+	      {
+		if (nsp_object_set_name(Ob,"ce") == FAIL) goto err;
+	      }
+	    else 
+	      {
+		if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) goto err;
+	      }
+	    if ( C->objs[cij] != NULLOBJ) nsp_object_destroy(&C->objs[cij]);
+	    C->objs[cij] = Ob;
+	    ind++;
+	  }
+      break;
+
+    default: 
+      Scierror("Error: cells with more than 2 indices are not yet implemented\n");
+      return RET_BUG;
+
+    }
+  NthObj(1)->ret_pos = 1;
+  if ( nr > WORK_SIZE ) FREE(row);
+  if ( nc > WORK_SIZE ) FREE(col);
+  return 1;
+  
+ err:
+  if ( nr > WORK_SIZE ) FREE(row);
+  if ( nc > WORK_SIZE ) FREE(col);
+  return RET_BUG;
 }

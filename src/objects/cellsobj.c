@@ -1094,85 +1094,30 @@ static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
 
 static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 {
-  int i,j,ind=0,nind;
-  NspCells *C;
-  NspMatrix *Ind1,*Ind2;
-  CheckRhs (3, 1000);
-  if ( rhs >= 1 ) 
-    {
-      /* last elt gives us the number of indices cells(ind1,...,indn)=rhs */
-      if ( GetScalarInt(stack,rhs,&nind) == FAIL) return RET_BUG;
-    }
-  if ((C = GetCells(stack, 1)) == NULLCELLS) return RET_BUG;
-  switch (nind ) 
-    {
-    case 1: 
-      /* C{Ind}= (...) */
-      if ((Ind1 = GetMat(stack,2))  == NULLMAT) return RET_BUG;
-      if ( Ind1->mn != rhs - 3 )
-	{
-	  Scierror("Error: internal error, less rhs arguments %d than expected %d\n",
-		   rhs- 3, Ind1->mn);
-	  return RET_BUG;
-	}
-      for ( i = 0 ; i < Ind1->mn ; i++)
-	{
-	  int cij= Ind1->R[i]-1;
-	  NspObject *Ob = nsp_get_object(stack,i+3);
-	  if ( Ocheckname(Ob,NVOID) == TRUE ) 
-	    {
-	      if (nsp_object_set_name(Ob,"ce") == FAIL) return RET_BUG;
-	    }
-	  else 
-	    {
-	      if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) return RET_BUG;
-	    }
-	  if ( cij >= 0 && cij < C->mn )
-	    {
-	      if ( C->objs[cij] != NULLOBJ) nsp_object_destroy(&C->objs[cij]);
-	      C->objs[cij]= Ob;
-	    }
-	  ind++;
-	}
-      break;
-    case 2: 
-      /* C{Ind1,Ind2}= (...) */
-      if ((Ind1 = GetMat(stack,2))  == NULLMAT) return RET_BUG;
-      if ((Ind2 = GetMat(stack,3))  == NULLMAT) return RET_BUG;
-      if ( Ind1->mn*Ind2->mn != rhs - 4 )
-	{
-	  Scierror("Error: internal error, less rhs arguments %d than expected %d\n",
-		   rhs- 4, Ind1->mn*Ind2->mn);
-	  return RET_BUG;
-	}
-      ind=4;
-      for ( j = 0 ; j < Ind2->mn ; j++)
-	for ( i = 0 ; i < Ind1->mn ; i++)
-	  {
-	    int cij= Ind1->R[i]-1+C->m*(Ind2->R[j]-1);
-	    NspObject *Ob = nsp_get_object(stack,ind);
-	    if ( Ocheckname(Ob,NVOID)== TRUE ) 
-	      {
-		if (nsp_object_set_name(Ob,"ce") == FAIL) return RET_BUG;
-	      }
-	    else 
-	      {
-		if ((Ob =nsp_object_copy_and_name("ce",Ob))== NULLOBJ) return RET_BUG;
-	      }
-	    if ( cij >= 0 && cij < C->mn )
-	      {
-		if ( C->objs[cij] != NULLOBJ) nsp_object_destroy(&C->objs[cij]);
-		C->objs[cij]= Ob;
-	      }
-	    ind++;
-	  }
-      break;
-    default: 
-      Scierror("Error: cells with more than 2 indices are not yet implemented\n");
-      return RET_BUG;
-    }
-  NthObj(1)->ret_pos = 1;
-  return 1;
+  return nsp_matint_cells_setrowscols_xx(stack, rhs, opt, lhs);
+}
+
+/* unique for cells
+ *
+ */
+static int int_cells_unique(Stack stack, int rhs, int opt, int lhs)
+{
+  NspCells *C, *CC;
+  NspMatrix *ind=NULLMAT, *occ=NULLMAT, **hind=NULL, **hocc=NULL;
+  CheckRhs(1,1);
+  CheckLhs(1,3);
+
+  if ( (C = GetCells(stack,1)) == NULLCELLS ) return RET_BUG;
+  if ( lhs >= 2 ) hind = &ind;
+  if ( lhs == 3 ) hocc = &occ;
+      
+  if ( (CC = nsp_cells_unique(C, hind, hocc)) == NULLCELLS ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(CC));
+  if ( lhs >= 2 )
+    MoveObj(stack,2,NSP_OBJECT(ind));
+  if ( lhs == 3 )
+    MoveObj(stack,3,NSP_OBJECT(occ));
+  return Max(lhs,1);
 }
 
 /*
@@ -1211,6 +1156,7 @@ static OpTab Cells_func[]={
   {"object2seq_ce",int_cells_to_seq}, /* C{...} : extract +object2seq */
   {"cells_setrowscols_ce",int_cells_setrowscols}, /* C{..}=(....) */
   {"setrowscols_ce", nsp_matint_setrowscols_xx}, /* still used in EvalEqual2 : pb in the test in EvalEqual */
+  {"unique_ce" ,  int_cells_unique },
   {(char *) 0, NULL}
 };
 
