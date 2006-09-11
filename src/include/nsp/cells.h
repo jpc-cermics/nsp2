@@ -89,6 +89,7 @@ extern NspCells *nsp_cells_extract_columns_obsolete(NspCells *A, NspMatrix *Cols
 extern NspCells *CellsLoopCol (char *str, NspCells *Col, NspCells *A, int icol, int *rep); 
 extern NspCells *nsp_cells_extract_rows_obsolete(NspCells *A, NspMatrix *Rows, int *err); 
 extern int nsp_cells_set_element(NspCells *A,int index, NspObject *B);
+extern NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ);
 
 #define NULLCELLS (NspCells *) NULL
 

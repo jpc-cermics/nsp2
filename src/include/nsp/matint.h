@@ -74,6 +74,8 @@ extern int nsp_matint_tozero_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_concat_right_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_concat_down_xx(Stack stack, int rhs, int opt, int lhs);
 
+extern int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs);
+
 #endif 
 
 #ifdef   Matint_Private 
