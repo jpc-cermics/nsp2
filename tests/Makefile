@@ -22,6 +22,7 @@ TESTS= \
 	qr.dia \
 	regexp.dia \
 	serial.dia \
+	setdiff.dia \
 	setro.dia \
 	smat_concat_down.dia \
 	smat_concat_right.dia \
@@ -33,7 +34,8 @@ TESTS= \
 	strings.dia \
 	svd.dia \
 	test_minmax.dia \
-	testsbdiv.dia 
+	testsbdiv.dia \
+	unique.dia
 
 
 ALG=algebra-balanc.dia \
