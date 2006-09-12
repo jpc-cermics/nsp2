@@ -2005,11 +2005,8 @@ int_mxredim (Stack stack, int rhs, int opt, int lhs)
  * A= [A,B] 
  */
 
-
-
-
 int
-int_mxconcatr (Stack stack, int rhs, int opt, int lhs)
+int_mxconcatr(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat1, *HMat2;
   CheckRhs (2, 2);
@@ -2050,6 +2047,9 @@ int_mxconcatr (Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT(HMat1)->ret_pos = 1;
   return 1;
 }
+
+
+
 
 /*
  * Right Concatenation Mat & BMat  
@@ -4112,7 +4112,8 @@ static OpTab Matrix_func[] = {
   {"clean", int_mxclean},
   {"complexify_m", int_mxcomplexify},
   {"concatd_m_m", int_mxconcatd},
-  {"concatr_m_m", int_mxconcatr},
+  /* {"concatr_m_m", int_mxconcatr}, */
+  {"concatr_m_m", nsp_matint_concat_right_xx},
   {"concatr_b_m", int_mxconcatr_mb},
   {"concatr_m_b", int_mxconcatr_mb}, 
   {"create_m_m", int_mxcreate},
