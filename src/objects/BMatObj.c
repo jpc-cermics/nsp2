@@ -667,25 +667,6 @@ static int int_bmatrix_find(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * BMatredim: changes NspBMatrix dimensions
- * but keeps m*n constant
- * WARNING: Object on stack is changed 
- */
-
-static int int_bmatrix_redim_obsolete(Stack stack, int rhs, int opt, int lhs)
-{
-  int m1,n1;
-  NspBMatrix  *HMat;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ( (HMat=GetBMat(stack,1))== NULLBMAT) return RET_BUG;
-  if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
-  if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if (nsp_matint_redim(NSP_OBJECT(HMat),m1,n1) != OK) return RET_BUG;
-  return 1;
-}
-
 
 /*
  * Right Concatenation 
@@ -1115,7 +1096,7 @@ static OpTab BMatrix_func[]={
   {"or_b_b",int_bmatrix_or},
   {"seq_or_b",int_bmatrix_or1},
   {"seq_or_b_b",int_bmatrix_or},
-  /* {"redim_b",int_bmatrix_redim}, */
+  {"redim_b",int_matint_redim}, 
   {"resize_b",int_bmatrix_resize},
   {"eq_b_b" ,  int_bmatrix_eq },
   {"ne_b_b" ,  int_bmatrix_neq },

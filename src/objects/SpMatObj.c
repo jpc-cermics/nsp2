@@ -1831,7 +1831,7 @@ static OpTab SpRowMatrix_func[]={
   {"quote_sprow",int_sprowmatrix_quote},
   {"dprim_sprow", int_sprowmatrix_dquote},
   {"multt_sprow_sprow",int_sprowmatrix_multt}, 
-  {"spredim_sprow",int_sprowmatrix_redim},
+  {"redim_sprow",int_sprowmatrix_redim},
   {"concatd_sprow_sprow" ,  int_sprowmatrix_concatd },
   {"concatr_sprow_sprow" ,  int_sprowmatrix_concatr },
   {"concatdiag_sprow_sprow" ,  int_sprowmatrix_concatdiag },

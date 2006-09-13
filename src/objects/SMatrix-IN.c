@@ -55,27 +55,6 @@ int int_smxcreate(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/*
- * nsp_smatrix_redim: Changes matrix dimensions
- * m*n must be unchanged 
- * The NspSMatrix is changed (m,n are changed ) 
- * return 0 on failure 
- */
-
-int int_smxredim_obsolete(Stack stack, int rhs, int opt, int lhs)
-{
-  int m1,n1;
-  NspSMatrix  *HMat;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ( (HMat=GetSMat(stack,1))== NULLSMAT) return RET_BUG;
-  if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
-  if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if ( nsp_matint_redim(NSP_OBJECT(HMat),m1,n1) != OK) return RET_BUG;
-  NSP_OBJECT(HMat)->ret_pos = 1;
-  return 1;
-}
-
 
 /*
  * Right Concatenation 
@@ -1188,7 +1167,7 @@ static OpTab SMatrix_func[]={
   {"latextab_s",int_smatrix_2latextab},
   {"loopextract_m_s",int_smxextractcolforloop}, /* ne sert plus */
   {"smat_create",int_smxcreate},
-  /* {"redim_s",int_smxredim},*/
+  {"redim_s",int_matint_redim},
   {"concatr_s_s",int_smxconcatr},
   {"concatr_m_s",int_smxconcatr_m_s},
   {"addcols_s_m",int_smxaddcols},

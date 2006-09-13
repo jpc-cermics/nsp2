@@ -14,7 +14,7 @@ typedef int matint_redim(NspObject *M,int m,int n);
 typedef int matint_resize(void *M,int m,int n); 
 typedef int matint_free_elt(void **elt);
 typedef unsigned int matint_elt_size(const void *M);
-typedef NspObject *matint_clone(const char *name, void *M, int m,int n); 
+typedef NspObject *matint_clone(const char *name,const void *M, int m,int n); 
 typedef char *matint_copy_elt(char *from);
 typedef int matint_enlarge(void *M, int m, int n);
 
@@ -57,8 +57,8 @@ extern int nsp_matint_set_submatrix(NspObject *ObjA,
 				    const int *col, int nc, int cmin, int cmax,
 				    NspObject *ObjB);
 extern int nsp_matint_set_elts(NspObject *ObjA, const int *ind, int nb_elts, int imin, int imax, NspObject *ObjB);
-extern NspObject *nsp_matint_concat_right(NspObject *ObjA, NspObject *ObjB);
-extern int nsp_matint_concat_right_bis(NspObject *ObjA, NspObject *ObjB);
+extern NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB);
+extern int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB);
 
 extern int nsp_matint_resize2vect_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_extractelts_xx(Stack stack, int rhs, int opt, int lhs);
@@ -73,8 +73,8 @@ extern int nsp_matint_delete_rows_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_tozero_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_concat_right_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_concat_down_xx(Stack stack, int rhs, int opt, int lhs);
-
 extern int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs);
+extern int int_matint_redim(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_redim(NspObject *Obj, int m, int n);
 
 #endif 

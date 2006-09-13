@@ -373,28 +373,6 @@ static int int_pmatrix_create(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * nsp_pmatrix_redim: Changes matrix dimensions
- * m*n must be unchanged 
- * The NspSMatrix is changed (m,n are changed ) 
- * return 0 on failure 
- */
-
-int int_pmatrix_redim_obsolete(Stack stack, int rhs, int opt, int lhs)
-{
-  int m1,n1;
-  NspPMatrix  *HMat;
-  CheckRhs(3,3);
-  CheckLhs(1,1);
-  if ( (HMat=GetPMat(stack,1))== NULLPMAT) return RET_BUG;
-  if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
-  if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if ( nsp_matint_redim(NSP_OBJECT(HMat),m1,n1) != OK) return RET_BUG;
-  NSP_OBJECT(HMat)->ret_pos = 1;
-  return 1;
-}
-
-
-/*
  * Right Concatenation 
  * A= [A,B] 
  * return 0 on failure ( incompatible size or No more space )
@@ -804,7 +782,7 @@ int int_pmatrix_transpose(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab PMatrix_func[]={
   {"pmat_create",int_pmatrix_create},
-  /* {"redim_p",int_pmatrix_redim}, */
+  {"redim_p",int_matint_redim},
   {"concatr_p_p",int_pmatrix_concatr},
   {"concatr_m_p",int_pmatrix_concatr_m_s},
   {"addcols_p_m",int_pmatrix_addcols},

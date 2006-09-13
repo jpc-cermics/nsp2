@@ -1859,7 +1859,7 @@ static OpTab SpColMatrix_func[]={
   {"quote_sp",int_spcolmatrix_quote},
   {"dprim_sp", int_spcolmatrix_dquote},
   {"multt_sp_sp",int_spcolmatrix_multt}, 
-  {"spredim",int_spcolmatrix_redim},
+  {"redim_sp",int_spcolmatrix_redim},
   {"concatd_sp_sp" ,  int_spcolmatrix_concatd },
   {"concatr_sp_sp" ,  int_spcolmatrix_concatr },
   {"concatdiag_sp_sp" ,  int_spcolmatrix_concatdiag },

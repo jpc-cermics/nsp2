@@ -45,7 +45,7 @@ if n1<>n then pause;end
 //Asizes=[144,1;1,144;6,24;24,6];
 
 for i=1:size(Asizes,'r');
-  Sp1=spredim(Sp,Asizes(i,1),Asizes(i,2));
+  Sp1=redim(Sp,Asizes(i,1),Asizes(i,2));
   A1=sp2m(Sp1);
   A2=A;
   redim(A2,Asizes(i,1),Asizes(i,2));

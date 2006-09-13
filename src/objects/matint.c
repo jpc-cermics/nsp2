@@ -117,7 +117,7 @@ static char *matint_type_as_string (void)
  *   implemented in the matint interface. 
  */
 
-static int int_matint_redim(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+static int int_matint_meth_redim(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
   NspTypeBase *type;
   int mm,nn;
@@ -159,7 +159,7 @@ static int int_matint_redim(NspObject *self, Stack stack, int rhs, int opt, int 
 }
 
 static NspMethods matint_methods[] = {
-  {"redim",(nsp_method *) int_matint_redim},
+  {"redim",(nsp_method *) int_matint_meth_redim},
   { NULL, NULL}
 };
 
@@ -176,22 +176,6 @@ NspMethods *matint_get_methods(void) { return matint_methods;};
  * cast elements of A to integers in ind (minus 1 such that ind is "0-based")
  * and computes the min and max of A (here staying "1-based")   
  */
-/* static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax) */
-/* { */
-/*   int i, ival; */
-
-/*   *imax = 1; */
-/*   *imin = 1; */
-/*   for (i = 0; i < A->mn; i++) */
-/*     { */
-/*       ival = (int) A->R[i]; */
-/*       if (ival > *imax) */
-/* 	*imax = ival; */
-/*       else if (ival < *imin) */
-/* 	*imin = ival; */
-/*       ind[i] = ival-1; */
-/*     } */
-/* } */
 
 static void nsp_matint_bounds(const NspMatrix *A, int *ind, int *imin, int *imax)
 {
@@ -344,6 +328,7 @@ static int *get_index_vector(Stack stack, int ipos, int *Nb_elts, int *Rmin, int
  * 
  * Return value: %OK or %FAIL.
  **/
+
 int nsp_matint_delete_columns(NspObject  *Obj, int *ind, int nb_elts, int cmin, int cmax)
 {
   /* all objects which implements matint can be casted 
@@ -1073,11 +1058,11 @@ static int nsp_matint_special_set_submatrix(NspObject *ObjA,
    */
   NspMatrix *A = (NspMatrix *) ObjA, *B =  (NspMatrix *) ObjB;
   int i, j, k, stride, inc;
-/*   if ( ! ( type == nsp_type_matrix ||  type == nsp_type_maxpmatrix ) ) */
-/*     { */
-/*       Scierror("Error:\tsomething wrong in nsp_matint_special_set_submatrix\n"); */
-/*       return FAIL; */
-/*     } */
+  /*   if ( ! ( type == nsp_type_matrix ||  type == nsp_type_maxpmatrix ) ) */
+  /*     { */
+  /*       Scierror("Error:\tsomething wrong in nsp_matint_special_set_submatrix\n"); */
+  /*       return FAIL; */
+  /*     } */
   
   inc = B->mn == 1 ? 0 : 1;
   for ( j = 0, k = 0 ; j < nc ; j++ )
@@ -1101,11 +1086,11 @@ static int nsp_matint_special_set_elts(NspObject *ObjA,
    */
   NspMatrix *A = (NspMatrix *) ObjA, *B =  (NspMatrix *) ObjB;
   int i, k, inc;
-/*   if ( ! ( type == nsp_type_matrix ||  type == nsp_type_maxpmatrix ) ) */
-/*     { */
-/*       Scierror("Error:\tsomething wrong in nsp_matint_special_set_submatrix\n"); */
-/*       return FAIL; */
-/*     } */
+  /*   if ( ! ( type == nsp_type_matrix ||  type == nsp_type_maxpmatrix ) ) */
+  /*     { */
+  /*       Scierror("Error:\tsomething wrong in nsp_matint_special_set_submatrix\n"); */
+  /*       return FAIL; */
+  /*     } */
   
   inc = B->mn == 1 ? 0 : 1;
   for ( i = 0, k = 0 ; i < nb_elts ; i++, k+=inc )
@@ -1454,7 +1439,16 @@ int nsp_matint_set_elts(NspObject *ObjA,
   return OK;
 }
 
-NspObject *nsp_matint_concat_right(NspObject *ObjA, NspObject *ObjB)
+/**
+ * nsp_matint_concat_right:
+ * @ObjA: a #Matrix (that is a #NspObject which implements the matint interface)
+ * @ObjB: 
+ * 
+ * 
+ * Return value: returns [@ObjA,@ObjB] or %NULLOBJ 
+ **/
+
+NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB)
 {
   NspObject *ObjC=NULLOBJ;
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C;
@@ -1550,9 +1544,17 @@ NspObject *nsp_matint_concat_right(NspObject *ObjA, NspObject *ObjB)
   return NULLOBJ;
 }
 
-/* utilisée quand l'objet A n'a pas de nom */
+/**
+ * nsp_matint_concat_right_bis:
+ * @ObjA: a #Matrix (that is a #NspObject which implements the matint interface)
+ * @ObjB: a #Matrix (that is a #NspObject which implements the matint interface)
+ * 
+ * changes @ObjA to [@ObjA,@ObjB] 
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
-int nsp_matint_concat_right_bis(NspObject *ObjA, NspObject *ObjB)
+int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB)
 {
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB;
   int i, nA = A->n, nB = B->n, mnA = A->mn;
@@ -1625,7 +1627,175 @@ int nsp_matint_concat_right_bis(NspObject *ObjA, NspObject *ObjB)
 }
 
 
-/* interface functions */
+
+/**
+ * nsp_matint_concat_down:
+ * @ObjA: a #Matrix (that is a #NspObject which implements the matint interface)
+ * @ObjB: a #Matrix (that is a #NspObject which implements the matint interface)
+ * 
+ * returns [@ObjA;@ObjB]
+ * 
+ * Return value: a new #NspObject or %NULLOBJ.
+ **/
+
+NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
+{
+  NspObject *ObjC=NULLOBJ;
+  NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C;
+  int i, j;
+  NspTypeBase *type; 
+  unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
+
+  type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
+                                                         (so we don't check) */
+
+  elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
+  elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
+
+  if ( A->n == B->n ) 
+    {
+      /* Matrices of numbers or booleans */
+      if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  
+	{
+	  if ( elt_size_A == elt_size_B )
+	    {
+ 	      if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n)) != NULLOBJ )
+		{
+		  int step=elt_size_A;
+		  char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
+		  C = (NspSMatrix *) ObjC;  to = (char *) C->S;
+		  for ( j = 0 ; j < A->n ; j++ ) 
+		    { 
+		      memcpy(to+j*(C->m)*step,fromA+j*A->m*step,A->m*step);
+		      memcpy(to+j*(C->m)*step + A->m*step,fromB+j*B->m*step,B->m*step);
+		    }
+		}
+	    }
+	  else    /* one matrix is real and the other is complex */
+	    {
+	      if ( elt_size_A > elt_size_B )  
+		{
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n);
+		  if ( ObjC != NULLOBJ )
+		    {
+		      /* A is complex, B real */
+		      int stepA=elt_size_A;
+		      int stepB=elt_size_B;
+		      char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
+		      C = (NspSMatrix *) ObjC;  to = (char *) C->S;
+		      for ( j = 0 ; j < A->n ; j++ ) 
+			{ 
+			  doubleC *elt =(doubleC *) (to +j*(C->m)*stepA + A->m*stepA);
+			  memcpy(to+j*(C->m)*stepA,fromA+j*A->m*stepA,A->m*stepA);
+			  for ( i = 0 ; i < B->m ; i++)
+			    {
+			      elt[i].r = *(((double *) (fromB+j*B->m*stepB)) +i);
+			      elt[i].i = 0.0;
+			    }
+			}
+		    }
+		}
+	      else 
+		{ 
+		  /* A is real, B complex */
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n);
+		  if ( ObjC != NULLOBJ )
+		    {
+		      int stepA=elt_size_A;
+		      int stepB=elt_size_B;
+		      char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
+		      C = (NspSMatrix *) ObjC;  to = (char *) C->S;
+		      for ( j = 0 ; j < A->n ; j++ ) 
+			{ 
+			  doubleC *elt =(doubleC *) (to +j*(C->m)*stepB);
+			  /* copy column j of A which is real */
+			  for ( i = 0 ; i < A->m ; i++)
+			    {
+			      elt[i].r = *(((double *) (fromA+j*A->m*stepA)) +i);
+			      elt[i].i = 0.0;
+			    }
+			  /* copy column j of B which is complex as C */
+			  memcpy(to+j*(C->m)*stepB + A->m*stepB,fromB+j*B->m*stepB,B->m*stepB);
+			}
+		    }
+		}
+	    }
+	}
+      else                                                      
+	{
+	  /* Matrices of pointers (String, cells, poly,...) */
+	  if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n)) != NULLOBJ )
+	    {
+	      C = (NspSMatrix *) ObjC;
+	      char *elt;
+	      for ( j = 0 ; j < A->n ; j++ ) 
+		{
+		  char **fromA= A->S+j*A->m;
+		  char **fromB= B->S+j*B->m;
+		  char **toA = C->S+j*(C->m),**toB = toA+A->m;
+		  for ( i = 0 ; i < A->m ; i++ )
+		    {
+		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromA[i])) == NULL ) goto err;
+		      toA[i]=elt;
+		    }
+		  for ( i = 0 ; i < B->m ; i++ )
+		    {
+		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromB[i])) == NULL ) goto err;
+		      toB[i]=elt;
+		    }
+		}
+	    }
+	}
+    }
+  else if ( A->m == 0  &&  A->n == 0 )
+    ObjC = nsp_object_copy(ObjB);
+  else if ( B->m == 0  &&  B->n == 0 )
+    ObjC = nsp_object_copy(ObjA);
+  else
+    Scierror("Error:\tIncompatible dimensions\n");
+  return ObjC;
+ err:
+  nsp_object_destroy(&ObjC); 
+  return NULLOBJ;
+}
+
+
+/**
+ * nsp_matint_redim:
+ * @A: a #NspMatrix
+ * @m: number of rows 
+ * @n: number of columns
+ * 
+ * Checks that the #NspObject @A (which is supposed to implement matint)
+ * of size m' x n' satisfy m'*n' = @m * @n and reshapes 
+ * @A to size @m x @n.
+ * 
+ * Return value: returns %OK or %FAIL. In case of %FAIL an error is raised.
+ **/
+
+int nsp_matint_redim(NspObject *Obj, int m, int n)
+{
+  int mm=m,nn=n;
+  NspSMatrix *A= (NspSMatrix *) Obj;
+  if ( m == -1 ) m = (n > 0) ? A->mn/n : 0;
+  if ( n == -1 ) n = (m > 0) ? A->mn/m : 0;
+  if ( A->mn == m*n ) 
+    {
+      A->m =m;
+      A->n =n;
+      return OK;
+    }
+  else 
+    {
+      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n",mm,nn,A->mn);
+      return FAIL;
+    }
+}
+
+
+/* interface functions which are called by other interfaces 
+ * or called in Eval.c 
+ */
 
 /* various deletions functions */
 
@@ -1865,137 +2035,6 @@ int nsp_matint_concat_right_xx(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-/**
- * nsp_matint_concat_down:
- * @ObjA: 
- * @ObjB: 
- * 
- * returns [@ObjA;@ObjB]
- * 
- * Return value: a new #NspObject or %NULLOBJ.
- **/
-
-NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
-{
-  NspObject *ObjC=NULLOBJ;
-  NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C;
-  int i, j;
-  NspTypeBase *type; 
-  unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
-
-  type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
-                                                         (so we don't check) */
-
-  elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
-  elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
-
-  if ( A->n == B->n ) 
-    {
-      /* Matrices of numbers or booleans */
-      if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  
-	{
-	  if ( elt_size_A == elt_size_B )
-	    {
- 	      if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n)) != NULLOBJ )
-		{
-		  int step=elt_size_A;
-		  char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
-		  C = (NspSMatrix *) ObjC;  to = (char *) C->S;
-		  for ( j = 0 ; j < A->n ; j++ ) 
-		    { 
-		      memcpy(to+j*(C->m)*step,fromA+j*A->m*step,A->m*step);
-		      memcpy(to+j*(C->m)*step + A->m*step,fromB+j*B->m*step,B->m*step);
-		    }
-		}
-	    }
-	  else    /* one matrix is real and the other is complex */
-	    {
-	      if ( elt_size_A > elt_size_B )  
-		{
-		  ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n);
-		  if ( ObjC != NULLOBJ )
-		    {
-		      /* A is complex, B real */
-		      int stepA=elt_size_A;
-		      int stepB=elt_size_B;
-		      char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
-		      C = (NspSMatrix *) ObjC;  to = (char *) C->S;
-		      for ( j = 0 ; j < A->n ; j++ ) 
-			{ 
-			  doubleC *elt =(doubleC *) (to +j*(C->m)*stepA + A->m*stepA);
-			  memcpy(to+j*(C->m)*stepA,fromA+j*A->m*stepA,A->m*stepA);
-			  for ( i = 0 ; i < B->m ; i++)
-			    {
-			      elt[i].r = *(((double *) (fromB+j*B->m*stepB)) +i);
-			      elt[i].i = 0.0;
-			    }
-			}
-		    }
-		}
-	      else 
-		{ 
-		  /* A is real, B complex */
-		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n);
-		  if ( ObjC != NULLOBJ )
-		    {
-		      int stepA=elt_size_A;
-		      int stepB=elt_size_B;
-		      char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
-		      C = (NspSMatrix *) ObjC;  to = (char *) C->S;
-		      for ( j = 0 ; j < A->n ; j++ ) 
-			{ 
-			  doubleC *elt =(doubleC *) (to +j*(C->m)*stepB);
-			  /* copy column j of A which is real */
-			  for ( i = 0 ; i < A->m ; i++)
-			    {
-			      elt[i].r = *(((double *) (fromA+j*A->m*stepA)) +i);
-			      elt[i].i = 0.0;
-			    }
-			  /* copy column j of B which is complex as C */
-			  memcpy(to+j*(C->m)*stepB + A->m*stepB,fromB+j*B->m*stepB,B->m*stepB);
-			}
-		    }
-		}
-	    }
-	}
-      else                                                      
-	{
-	  /* Matrices of pointers (String, cells, poly,...) */
-	  if ( (ObjC = MAT_INT(type)->clone(NVOID, ObjA,A->m+B->m,A->n)) != NULLOBJ )
-	    {
-	      C = (NspSMatrix *) ObjC;
-	      char *elt;
-	      for ( j = 0 ; j < A->n ; j++ ) 
-		{
-		  char **fromA= A->S+j*A->m;
-		  char **fromB= B->S+j*B->m;
-		  char **toA = C->S+j*(C->m),**toB = toA+A->m;
-		  for ( i = 0 ; i < A->m ; i++ )
-		    {
-		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromA[i])) == NULL ) goto err;
-		      toA[i]=elt;
-		    }
-		  for ( i = 0 ; i < B->m ; i++ )
-		    {
-		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromB[i])) == NULL ) goto err;
-		      toB[i]=elt;
-		    }
-		}
-	    }
-	}
-    }
-  else if ( A->m == 0  &&  A->n == 0 )
-    ObjC = nsp_object_copy(ObjB);
-  else if ( B->m == 0  &&  B->n == 0 )
-    ObjC = nsp_object_copy(ObjA);
-  else
-    Scierror("Error:\tIncompatible dimensions\n");
-  return ObjC;
- err:
-  nsp_object_destroy(&ObjC); 
-  return NULLOBJ;
-}
-
 
 /**
  * nsp_matint_concat_down_xx:
@@ -2193,36 +2232,50 @@ int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
 
 
 
-/**
- * nsp_matint_redim:
- * @A: a #NspMatrix
- * @m: number of rows 
- * @n: number of columns
- * 
- * Checks that the #NspObject @A (which is supposed to implement matint)
- * of size m' x n' satisfy m'*n' = @m * @n and reshapes 
- * @A to size @m x @n.
- * 
- * Return value: returns %OK or %FAIL. In case of %FAIL an error is raised.
+
+/*
+ * redim interface for objects which implements matint 
+ * interface 
  **/
 
-int nsp_matint_redim(NspObject *Obj, int m, int n)
+int int_matint_redim(Stack stack, int rhs, int opt, int lhs) 
 {
-  int mm=m,nn=n;
-  NspSMatrix *A= (NspSMatrix *) Obj;
-  if ( m == -1 ) m = (n > 0) ? A->mn/n : 0;
-  if ( n == -1 ) n = (m > 0) ? A->mn/m : 0;
-  if ( A->mn == m*n ) 
+  NspTypeBase *type;
+  int mm,nn;
+  CheckRhs (2,3);
+  CheckLhs (0,1);
+  NspObject *Obj;
+
+  if ((Obj = nsp_get_object(stack,1))== NULL) return RET_BUG;
+  if (GetScalarInt (stack, 2, &mm) == FAIL)    return RET_BUG;
+  if (rhs == 3) 
     {
-      A->m =m;
-      A->n =n;
-      return OK;
+      if (GetScalarInt (stack, 3, &nn) == FAIL)    return RET_BUG;
     }
   else 
     {
-      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n",mm,nn,A->mn);
-      return FAIL;
+      nn=-1;
     }
-}
 
+  if ( mm < -1 || nn < -1 )
+    {
+      Scierror("Error:\tBad second or third arguments (must be >= -1)\n");
+      return RET_BUG;
+    }
+  if (( type = check_implements(Obj,nsp_type_matint_id)) == NULL )
+    {
+      Scierror("Error: first argument does not implements matint interface\n");
+      return RET_BUG;
+    }
+  /* 
+   * here we could call directly 
+   * return nsp_matint_redim(self, m, n) == OK ? 0 : RET_BUG;
+   * considering that all the matrices implementing matint 
+   * will use default redim function. But just in case one 
+   * class decided to particularize redim we have to 
+   * call MAT_INT(type)->redim(self,m1,n1)
+   * 
+   */
+  return MAT_INT(type)->redim(Obj,mm,nn)  == OK ? 0 : RET_BUG;
+}
 

@@ -369,37 +369,6 @@ void nsp_cells_print(const NspCells *Mat, int indent,char *name, int rec_level)
 
 
 /**
- * nsp_cells_redim:
- * @A: a #NspCells object 
- * @m: number of rows 
- * @n: number of columns 
- * 
- * changes the #NspCells dimensions but the product 
- * @m x @n must be kept constant.
- * 
- * Return value: %OK or %FAIL 
- **/
-
-int nsp_cells_redim_obsolte(NspCells *A, int m, int n)
-{
-  if ( m == -1 ) m = (n== 0) ? 0 : A->mn/n;
-  if ( n == -1 ) n = (m== 0) ? 0 : A->mn/m;
-  if ( A->mn ==  m*n ) 
-    {
-      A->m =m ;
-      A->n =n;
-      return(OK);
-    }
-  else 
-    {
-      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n"
-	       ,m,n,A->mn);
-      Scierror("CellsRedim : can't redim");
-      return(FAIL);
-    }
-}
-
-/**
  * nsp_cells_enlarge:
  * @A: a #NspCells object 
  * @m: number of rows 

@@ -4164,7 +4164,7 @@ static OpTab Matrix_func[] = {
   {"rand", int_mxrand},
   {"grand", int_nsp_grand},	/* grand XXXX */
   {"real_m", int_mxrealpart},
-  {"redim", int_mxredim},
+  {"redim_m", int_matint_redim},
   {"resize_m_m", int_mxresize},
   {"seti_m_m", int_mxseti},
   {"setr_m_m", int_mxsetr},

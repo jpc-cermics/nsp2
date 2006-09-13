@@ -456,25 +456,6 @@ void nsp_mpmatrix_latex_tab_print(const NspMaxpMatrix *Mat)
     }
 }
 
-
-/**
- * nsp_mpmatrix_redim:
- * @A: a #NspMaxpMatrix
- * @m: number of rows 
- * @n: number of columns
- * 
- * Checks that the #NspMaxpMatrix @A of size m' x n' satisfy m'*n' = @m * @n and reshapes 
- * @A to size m x @n.
- *
- * returns %OK or %FAIL.
- */
-
-int nsp_mpmatrix_redim_obsolete(NspMaxpMatrix *A, int m, int n)
-{
-  return nsp_matint_redim(NSP_OBJECT(A),m,n);
-}
-
-
 /**
  * nsp_mpmatrix_enlarge:
  * @A: a #NspMaxpMatrix

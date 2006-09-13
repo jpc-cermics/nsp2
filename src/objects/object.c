@@ -1810,52 +1810,6 @@ static int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * FIXME: just here to test the matrix interface 
- * the redim function can be factorized here 
- * it calls the correct redim function for objects 
- * which implements the matint interface.
- */
-
-#include <nsp/matint.h>
-
-int int_object_testredim(Stack stack, int rhs, int opt, int lhs)
-{
-  int m1,n1;
-  NspTypeBase *type;
-  NspObject *Ob;
-  CheckRhs(3,3);
-  if ((Ob= nsp_get_object(stack,1))== NULLOBJ) return RET_BUG;
-  if (GetScalarInt (stack, 2, &m1) == FAIL)    return RET_BUG;
-  if (GetScalarInt (stack, 3, &n1) == FAIL)    return RET_BUG;
-  /* be sure that interface is initialized : FIXME */
-  nsp_type_matint= new_type_matint(T_BASE);
-  type = check_implements(Ob,nsp_type_matint_id);
-  if ( type != NULL) 
-    {
-      if ( MAT_INT(type)->redim(Ob,m1,n1) != OK) return RET_BUG;
-    }
-  else 
-    {
-      Scierror("Object do not implements matint\n");
-      return RET_BUG;
-    }
-  return 0;
-}
-
-int int_matrix_testredim(Stack stack, int rhs, int opt, int lhs)
-{
-  int m1,n1;
-  NspMatrix *A;
-  CheckRhs (3,3);
-  CheckLhs (0,0);
-  if ((A = GetMat(stack, 1)) == NULLMAT) return RET_BUG;
-  if (GetScalarInt (stack, 2, &m1) == FAIL)    return RET_BUG;
-  if (GetScalarInt (stack, 3, &n1) == FAIL)    return RET_BUG;
-  if ( nsp_matint_redim ((NspObject *)A,m1,n1) != OK) return RET_BUG;
-  return 0;
-}
-
-/*
  * The Interface for basic object operations
  */
 
@@ -1891,8 +1845,6 @@ static OpTab Obj_func[]={
   {"length",int_object_length},
   {"serialize",int_object_serialize},
   {"unserialize",int_serial_unserialize},
-  {"REDIM",int_object_testredim}, /* FIXME: testing */
-  {"REDIM1",int_matrix_testredim}, /* FIXME: testing */
   {(char *) 0, NULL}
 };
 
