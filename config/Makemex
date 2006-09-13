@@ -18,12 +18,12 @@ NM = /usr/bin/nm -B
 OBJDUMP = objdump
 STATIC = 
 
-CPPFLAGS = 
-LDFLAGS = 
+CPPFLAGS = -I/usr/include/ufsparse -I/usr/include/ufsparse 
+LDFLAGS =  -L/usr/lib -L/usr/lib
 LIBS = -lm 
-FLIBS =  -L/usr/lib/gcc/i686-pc-cygwin/3.4.4 -L/usr/lib/gcc/i686-pc-cygwin/3.4.4/../../.. -lfrtbegin -lg2c -lcygwin -luser32 -lkernel32 -ladvapi32 -lshell32
+FLIBS =  -L/usr/lib/gcc/i386-redhat-linux/4.0.2 -L/usr/lib/gcc/i386-redhat-linux/4.0.2/../../.. -lgfortranbegin -lgfortran -lm -lgcc_s
 
-INCLUDES= -I$(SCIDIR)/src/include
+INCLUDES= -I$(SCIDIR)/src/include -I$(SCIDIR)/src/include/mex
 CFLAGS = $(CC_OPTIONS) 
 FFLAGS = $(FC_OPTIONS) 
 COMPILE = $(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)

@@ -1098,12 +1098,12 @@ fi
 if test "yes" = yes; then 
  builtin(include,config/ac_find_file.m4)
  builtin(include,config/ac_check_umfpack.m4)
- AC_CHECK_UMFPACK
-
+ AC_CHECK_UMFPACK()
  if test "xx$umfpack_libs" != "xx" ; then
    AC_DEFINE(WITH_UMFPACK)
-   AC_MSG_RESULT([adding umfpack UMFPACK="$umfpack_libs"])
- fi 
+   AC_MSG_RESULT([using "$umfpack_libs" for umfpack libraries])
+   AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
+ fi	          
 fi
 
 #################
