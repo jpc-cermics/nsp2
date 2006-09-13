@@ -16,6 +16,7 @@ TESTS= \
 	gsort.dia \
 	hash.dia \
 	insert.dia \
+	lists.dia \
 	lu.dia \
 	matrix_io.dia \
 	matelm-nsp.dia \
@@ -35,7 +36,9 @@ TESTS= \
 	svd.dia \
 	test_minmax.dia \
 	testsbdiv.dia \
-	unique.dia
+	trycatch.dia \
+	unique.dia 
+
 
 
 ALG=algebra-balanc.dia \
@@ -59,14 +62,13 @@ ALG=algebra-balanc.dia \
 AFINIR= \
 	color-strings.tst \
 	hash-vl.tst \
-	lists.tst \
 	matops-nsp.tst \
 	matops.tst \
 	pvm.tst \
 	sparse-nsp.tst \
 	sparse.tst \
 	sp-sci.tst \
-	trycatch.tst
+
 
 
 VL=$(ALG:.dia=.vl) $(TESTS:.dia=.vl) 
