@@ -35,7 +35,7 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  umfpack_version="${umfpack_ver}.${umfpack_subver}.${umfpack_minor}"
 
  AC_MSG_CHECKING([for amd include file directory])
- ac_mpi_includedirs="/usr/include/amd /usr/include/umfpack /usr/include/ufsparse  $REPOSITORY/$ARCH/include/UMFPACK /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include"
+ ac_mpi_includedirs="/usr/include/amd /usr/include/umfpack /usr/include/ufsparse  $REPOSITORY/$ARCH/include/UMFPACK /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
  AC_FIND_FILE("amd.h", $ac_mpi_includedirs, amd_includedir)
  if test "x${amd_includedir}" != "x" -a "x${amd_includedir}" != "xNO"; then
   CPPFLAGS="-I${amd_includedir} ${CPPFLAGS}"
@@ -46,7 +46,7 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  ac_save_cppflags=${CPPFLAGS}
 
  AC_MSG_CHECKING([for umfpack include file directory])
- ac_mpi_includedirs="/usr/include/umfpack /usr/include/ufsparse $REPOSITORY/$ARCH/include/UMFPACK /usr/include /usr/local/include/umfpack /usr/local/include"
+ ac_mpi_includedirs="/usr/include/umfpack /usr/include/ufsparse $REPOSITORY/$ARCH/include/UMFPACK /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
  AC_FIND_FILE("umfpack.h", $ac_mpi_includedirs, umfpack_includedir)
  if test "x${umfpack_includedir}" != "x" -a "x${umfpack_includedir}" != "xNO"; then
   CPPFLAGS="-I${umfpack_includedir} ${CPPFLAGS}"

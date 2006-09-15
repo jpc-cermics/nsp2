@@ -1095,6 +1095,8 @@ fi
 ## prepared for future use 
 #################
 
+UFSPARSE_LIB=
+
 if test "yes" = yes; then 
  builtin(include,config/ac_find_file.m4)
  builtin(include,config/ac_check_umfpack.m4)
@@ -1102,7 +1104,9 @@ if test "yes" = yes; then
  if test "xx$umfpack_libs" != "xx" ; then
    AC_DEFINE(WITH_UMFPACK)
    AC_MSG_RESULT([using "$umfpack_libs" for umfpack libraries])
+   UMFPACK_LIBS=$umfpack_libs
    AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
+   CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
  fi	          
 fi
 
@@ -1390,6 +1394,7 @@ AC_SUBST(GTKPLUGBUG)
 AC_SUBST(MPLUSLIB)
 AC_SUBST(MPLUSLIBDIR)
 AC_SUBST(ENABLE_DEBUG)
+AC_SUBST(UMFPACK_LIBS)
 AC_SUBST(BLAS_LIBS)
 AC_SUBST(LAPACK_LIBS)
 AC_SUBST(BLAS_LOCAL)
@@ -1413,10 +1418,14 @@ if test "$HAVE_GMP" = "yes"; then
    echo "gmp....................:" $GMP_LIBS
 fi
 echo "Terminal...............:" $TERMCAPLIB
+if test "xx$umfpack_libs" != "xx" ; then
+   echo "umfpack................:" $UMFPACK_LIBS
+fi
 echo 
 echo "C compiler.............:" $CC
 echo "C options..............:" $CC_OPTIONS 
 echo "Fortran compiler.......:" $FC
 echo "Fortran options........:" $FC_OPTIONS 
 echo
+
 
