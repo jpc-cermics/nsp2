@@ -47,8 +47,7 @@ if n1<>n then pause;end
 for i=1:size(Asizes,'r');
   Sp1=redim(Sp,Asizes(i,1),Asizes(i,2));
   A1=sp2m(Sp1);
-  A2=A;
-  redim(A2,Asizes(i,1),Asizes(i,2));
+  A2=redim(A,Asizes(i,1),Asizes(i,2));
   if or(A1<>A2) then pause;end
 end
 
