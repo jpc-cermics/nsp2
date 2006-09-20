@@ -398,7 +398,7 @@ NspMatrix *nsp_serial_to_matrix(NspSerial *S)
     }
   n = S->nbytes / sizeof(double);
   n += 2; 
-  if ((A=nsp_matrix_create(NVOID,'r',1,n))==NULLMAT) return NULLMAT;
+  if ((A=nsp_matrix_create(NVOID,'r',n,1))==NULLMAT) return NULLMAT;
   A->R[0]= S->nbytes;
   memcpy(A->R +1,S->val,S->nbytes);
   return A;
