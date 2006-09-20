@@ -71,6 +71,10 @@ extern NspSerial *GetSerial (Stack stack, int i);
 extern NspObject *nsp_object_unserialize(NspSerial *S);
 extern NspObject * nsp_object_serialize(NspObject *O);
 
+extern NspMatrix *nsp_serial_to_matrix(NspSerial *S);
+extern NspSerial *nsp_matrix_to_serial(NspMatrix *A);
+
+
 #endif 
 
 /* private part */

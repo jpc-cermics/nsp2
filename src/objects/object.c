@@ -1781,15 +1781,31 @@ static int int_object_length(Stack stack, int rhs, int opt, int lhs)
 
 static int int_object_serialize(Stack stack, int rhs, int opt, int lhs) 
 {
-  NspObject *Obj;
-  CheckRhs(1,1);
+  char *str = "s";/* s for serial , m for matrix */
+  NspObject *Obj,*Obj1;;
+  CheckRhs(1,2);
   CheckLhs(0,1);
+  if (rhs == 2)
+    {
+      if ((str = GetString (stack, 2)) == (char *) 0)
+	return RET_BUG;
+    }
   Obj = nsp_object_serialize(NthObj(1));
   if ( Obj == NULLOBJ) return RET_BUG;
-  MoveObj(stack,1,Obj);
+  if ( strncmp(str,"m",1)==0) 
+    {
+      /* serialize in a matrix */
+      Obj1 = (NspObject *) nsp_serial_to_matrix((NspSerial *) Obj);
+      nsp_object_destroy(&Obj);
+      if ( Obj1 == NULLOBJ) return RET_BUG;
+      Obj = Obj1;
+    }
+  MoveObj(stack,1,Obj);      
   return 1;
 }
 
+/* unserialize a serialized object 
+ */
 
 static int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1800,6 +1816,32 @@ static int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
   if (( a= GetSerial(stack,1))== NULLSERIAL ) return RET_BUG;
   if ((Obj = nsp_object_unserialize(a))==NULLOBJ)
     return RET_BUG;
+  /* take care that nsp_object_unserialize returns a new object 
+   * but with a name, we have to delete the name here otherwise 
+   * Obj will be copied at return and we will have unfreed memory.
+   */
+  if (nsp_object_set_name(Obj,NVOID) == FAIL) return RET_BUG;
+  MoveObj(stack,1,Obj);
+  return 1;
+}
+
+/* unserialize a serialized object stored in a numeric matrix 
+ */
+
+static int int_serial_munserialize(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj;
+  NspMatrix *A;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  NspSerial *a;
+  if (( A= GetRealMat(stack,1))== NULLMAT ) return RET_BUG;
+  if (( a = nsp_matrix_to_serial(A)) == NULLSERIAL ) return RET_BUG;
+  if ((Obj = nsp_object_unserialize(a))==NULLOBJ)
+    {
+      nsp_serial_destroy(a);
+      return RET_BUG;
+    }
   /* take care that nsp_object_unserialize returns a new object 
    * but with a name, we have to delete the name here otherwise 
    * Obj will be copied at return and we will have unfreed memory.
@@ -1845,6 +1887,7 @@ static OpTab Obj_func[]={
   {"length",int_object_length},
   {"serialize",int_object_serialize},
   {"unserialize",int_serial_unserialize},
+  {"unserialize_m",int_serial_munserialize},
   {(char *) 0, NULL}
 };
 

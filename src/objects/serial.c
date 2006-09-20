@@ -380,6 +380,51 @@ static NspMethods *serial_get_methods(void) { return serial_methods;};
  * function 
  *-------------------------------------------*/
 
+/* Store a serial object in a matrix. This is potentially 
+ * dangerous since changing the matrix will damage the serial 
+ * object, but this is used in scicos in order to store data 
+ * in a block state.
+ */
+
+NspMatrix *nsp_serial_to_matrix(NspSerial *S)
+{
+  NspMatrix *A;
+  int hs= strlen(nsp_serial_header);
+  int n;
+  if ( S->nbytes < hs || strncmp(S->val,nsp_serial_header,hs) != 0)
+    {
+      Scierror("Error: serial object does not contain a serialized Nsp object\n");
+      return NULLMAT;
+    }
+  n = S->nbytes / sizeof(double);
+  n += 2; 
+  if ((A=nsp_matrix_create(NVOID,'r',1,n))==NULLMAT) return NULLMAT;
+  A->R[0]= S->nbytes;
+  memcpy(A->R +1,S->val,S->nbytes);
+  return A;
+}
+
+NspSerial *nsp_matrix_to_serial(NspMatrix *A)
+{
+  NspSerial *S;
+  int nbytes;
+  int hs= strlen(nsp_serial_header);
+  nbytes = A->R[0];
+  if ( (nbytes/sizeof(double))+2 != A->mn) 
+    {
+      Scierror("Error: Matrix argument do not contains a serialized object\n");
+      return NULLSERIAL;
+    }
+  S = nsp_serial_create(NVOID,((const char *) (A->R+1))+hs,nbytes-hs);
+  return S;
+}
+
+/*----------------------------------------------------
+ * Interface 
+ * i.e a set of function which are accessible at nsp level
+ *----------------------------------------------------*/
+
+
 int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
 {
   NspSerial *a;
@@ -396,11 +441,6 @@ int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,Obj); 
   return 1; 
 }
-
-/*----------------------------------------------------
- * Interface 
- * i.e a set of function which are accessible at nsp level
- *----------------------------------------------------*/
 
 static OpTab Serial_func[]={
   /* {"unserialize_serial",int_serial_unserialize}, moved in object.c */
