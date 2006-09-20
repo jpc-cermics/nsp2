@@ -2246,7 +2246,7 @@ int int_matint_redim(Stack stack, int rhs, int opt, int lhs)
   CheckLhs (0,1);
   NspObject *Obj;
 
-  if ((Obj = nsp_get_object(stack,1))== NULL) return RET_BUG;
+  if ((Obj = nsp_get_object_copy(stack,1))== NULL) return RET_BUG;
   if (GetScalarInt (stack, 2, &mm) == FAIL)    return RET_BUG;
   if (rhs == 3) 
     {
@@ -2276,6 +2276,8 @@ int int_matint_redim(Stack stack, int rhs, int opt, int lhs)
    * call MAT_INT(type)->redim(self,m1,n1)
    * 
    */
-  return MAT_INT(type)->redim(Obj,mm,nn)  == OK ? 0 : RET_BUG;
+  if ( MAT_INT(type)->redim(Obj,mm,nn)  == FAIL) return  RET_BUG;
+  MoveObj(stack,1,Obj);
+  return 1;
 }
 
