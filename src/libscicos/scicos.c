@@ -1863,6 +1863,7 @@ static void  callf(double *t, double *xtd, double *xt, double *residual, double 
   }
   
   Scicos->params.scsptr=Scicos->Blocks[kf-1].scsptr; /* set scilab function adress for sciblk */
+  Scicos->params.scsptr_flag=Scicos->Blocks[kf-1].scsptr_flag; 
 
   loc=Scicos->Blocks[kf-1].funpt;
   if (Scicos->Blocks[kf-1].type==4||Scicos->Blocks[kf-1].type==10004) {
@@ -2210,6 +2211,7 @@ void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, dou
   ScicosF4 loc4;
 
   Scicos->params.scsptr=Scicos->Blocks[deb_blk].scsptr;
+  Scicos->params.scsptr_flag=Scicos->Blocks[deb_blk].scsptr_flag;
   loc=Scicos->Blocks[deb_blk].funpt;
   scicos_time=*t;
   Scicos->Blocks[kf-1].nevprt=Scicos->params.nclock;

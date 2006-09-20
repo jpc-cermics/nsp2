@@ -11,11 +11,26 @@
 
 #include "scicos/scicos.h"
 
-int scicos_scifunc(  NspObject **Args,int mlhs,int mrhs ) 
+/* XXXXX */
+extern int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
+
+
+int scicos_scifunc(  NspObject **Args,int mrhs,NspObject **Ret, int *mlhs ) 
 {
-  /* here we must call the macro scsptr ? */
-  Scierror("To be done scicos_scifunc_n\n");
-  return  FAIL;
+  switch (Scicos->params.scsptr_flag ) 
+    {
+    case  fun_macros: 
+      Sciprintf("Evaluate a given macro\n");
+      nsp_object_print( Scicos->params.scsptr,0,0,0);break;
+    case fun_macro_name:
+      Scierror("To be done scicos_scifunc_n evaluate a macro given by name\n");
+      nsp_object_print( Scicos->params.scsptr,0,0,0);break;
+      return FAIL;
+    case fun_pointer: 
+      Scierror("Internal error: Expecting a macro or macro name\n");
+      return FAIL;
+    }
+  return nsp_gtk_eval_function((NspPList *) Scicos->params.scsptr,Args, mrhs, Ret, mlhs);
 }
 
 NspMatrix *scicos_itosci(const int x[],int mx,int nx) 
@@ -61,7 +76,8 @@ int scicos_scitod(double x[],int mx,int nx, NspObject *Ob)
 {
   NspMatrix *M= ((NspMatrix *) Ob);
   int i;
-  if ( M->m != mx || M->n != nx ) 
+  if ( mx*nx == 0 || M->mn == 0) return OK;
+  if ( M->m != mx || M->n != nx || M->rc_type != 'r' ) 
     {
       Scierror("Expecting a (%d,%d) matrix\n",mx,nx);
       return FAIL;
@@ -74,12 +90,13 @@ int scicos_scitoi(int x[],int mx,int nx, NspObject *Ob)
 {
   NspMatrix *M= ((NspMatrix *) Ob);
   int i;
-  if ( M->m != mx || M->n != nx ) 
+  if ( mx*nx == 0 || M->mn == 0) return OK;
+  if ( M->m != mx || M->n != nx || M->rc_type != 'r' ) 
     {
       Scierror("Expecting a (%d,%d) matrix\n",mx,nx);
       return FAIL;
     }
-  for ( i = 0 ; i < M->mn; i++) x[i]= M->R[i];
+  for ( i = 0 ; i < M->mn ; i++) x[i]= M->R[i];
   return OK;
 }
 
@@ -130,7 +147,7 @@ void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
   int mlhs=5,mrhs=8;
   NspObject * Args[8]; 
   NspObject * Ret[5];
-
+  
   /* FIXME: give names to all */
   if ((Args[0]= (NspObject *) scicos_itosci(flag,1,1)) == NULL) goto err;
   if ((Args[1]= (NspObject *) scicos_itosci(nevprt,1,1)) == NULL) goto err;
@@ -139,10 +156,12 @@ void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
   if ((Args[4]= (NspObject *) scicos_vvtosci(z,*nz)) == NULL) goto err;
   if ((Args[5]= (NspObject *) scicos_vvtosci(rpar,*nrpar)) == NULL) goto err; 
   if ((Args[6]= (NspObject *) scicos_itosci(ipar,*nipar,1)) == NULL) goto err;
-  if ((Args[7]= (NspObject *) nsp_list_create("L") ) == NULL) goto err;
-  if ((Args[8]= scicos_vars_to_list(inptr,*nin,insz))==NULLOBJ) goto err;
+  if ((Args[7]= scicos_vars_to_list(inptr,*nin,insz))==NULLOBJ) goto err;
 
-  if ( scicos_scifunc(Args,mlhs,mrhs) == FAIL) goto err;
+  /* function to be evaluated or name of function to be evaluated */
+
+  if ( scicos_scifunc(Args,mrhs,Ret,&mlhs) == FAIL) goto err;
+
   switch (*flag) 
     {
     case 1 :
@@ -155,7 +174,6 @@ void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
       break;
     case 0 :
       /*     [y,x,z,tvec,xd]=func(flag,nevprt,t,x,z,rpar,ipar,u) */
-
       /*  x'  computation */
       scicos_scitod(xd,*nx,1,Ret[4]);
       break;
@@ -180,6 +198,7 @@ void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
 	}
       break;
     }
+  /* XXX : we must clear Ret variables */
   return;
  err: 
     *flag=-1;
@@ -198,8 +217,8 @@ sciblk2i(flag,nevprt,t,residual,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
   [y,  x,  z,  tvec,xd]=func(flag,nevprt,t,xd,x,z,rpar,ipar,u)
   [y,  x,  z,  tvec,res]=func(flag,nevprt,t,xd,x,z,rpar,ipar,u)
   */
-  NspObject * Args[9]; 
-  NspObject * Ret[5]; /* FIXME */
+  NspObject * Args[10]; 
+  NspObject * Ret[7];
 
   /* FIXME: give names to all */
   if ((Args[0]= (NspObject *) scicos_itosci(flag,1,1)) == NULL) goto err;
@@ -212,7 +231,9 @@ sciblk2i(flag,nevprt,t,residual,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
   if ((Args[7]= (NspObject *) scicos_itosci(ipar,*nipar,1)) == NULL) goto err;
   if ((Args[8]= (NspObject *) nsp_list_create("L") ) == NULL) goto err;
   if ((Args[9]= scicos_vars_to_list(inptr,*nin,insz))==NULLOBJ) goto err;
-  if ( scicos_scifunc(Args,mlhs,mrhs) == FAIL) goto err;
+
+  if ( scicos_scifunc(Args,mrhs,Ret,&mlhs) == FAIL) goto err;
+
   switch (*flag) 
     {
     case 1 :
@@ -312,7 +333,8 @@ void sciblk4(scicos_block *Blocks, int flag)
   if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->mode,Blocks->nmode,1))== NULL) goto err; 
   if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->mode,Blocks->nmode,1))== NULL) goto err; 
 
-  if ( scicos_scifunc(Args,mlhs,mrhs) == FAIL) goto err;
+  if ( scicos_scifunc(Args,mrhs,Ret,&mlhs) == FAIL) goto err;
+
   H=(NspHash *) Ret[0];
   switch (flag) {
   case 1 :
@@ -462,8 +484,8 @@ void scicos_sciblk(int *flag, int *nevprt, double *t, double *xd, double *x, int
   /*        flag   int */
   /*        y      column vector block output */
   /*        xd     column vector block state derivative */
-  NspObject * Args[8]; 
-  NspObject * Ret[5];
+  NspObject * Args[9]; 
+  NspObject * Ret[6];
   /* FIXME: give names to all */
   if ((Args[0]= (NspObject *) scicos_itosci(flag,1,1)) == NULL) goto err;
   if ((Args[1]= (NspObject *) scicos_itosci(nevprt,1,1)) == NULL) goto err;
@@ -474,7 +496,8 @@ void scicos_sciblk(int *flag, int *nevprt, double *t, double *xd, double *x, int
   if ((Args[6]= (NspObject *) scicos_itosci(ipar,*nipar,1)) == NULL) goto err;
   if ((Args[8]= (NspObject *) scicos_dtosci(u,*nu,1)) == NULL) goto err;
   /*     macro execution */
-  if ( scicos_scifunc(Args,mlhs,mrhs) == FAIL) goto err;
+
+  if ( scicos_scifunc(Args,mrhs,Ret,&mlhs) == FAIL) goto err;
   /*     transfer output variables to fortran */
   switch (*flag) 
     {
