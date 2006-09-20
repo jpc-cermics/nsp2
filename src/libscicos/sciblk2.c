@@ -20,8 +20,10 @@ int scicos_scifunc(  NspObject **Args,int mrhs,NspObject **Ret, int *mlhs )
   switch (Scicos->params.scsptr_flag ) 
     {
     case  fun_macros: 
-      Sciprintf("Evaluate a given macro\n");
-      nsp_object_print( Scicos->params.scsptr,0,0,0);break;
+      /* Sciprintf("Evaluate a given macro\n");
+       * nsp_object_print( Scicos->params.scsptr,0,0,0);
+       */
+       break;
     case fun_macro_name:
       Scierror("To be done scicos_scifunc_n evaluate a macro given by name\n");
       nsp_object_print( Scicos->params.scsptr,0,0,0);break;
@@ -79,10 +81,10 @@ int scicos_scitod(double x[],int mx,int nx, NspObject *Ob)
   if ( mx*nx == 0 || M->mn == 0) return OK;
   if ( M->m != mx || M->n != nx || M->rc_type != 'r' ) 
     {
-      Scierror("Expecting a (%d,%d) matrix\n",mx,nx);
-      return FAIL;
+      Sciprintf("Expecting a (%d,%d) matrix and (%d,%d) returned\n",mx,nx,
+		M->m,M->n);
     }
-  for ( i = 0 ; i < M->mn; i++) x[i]= M->R[i];
+  for ( i = 0 ; i < Min(M->mn,mx*nx); i++) x[i]= M->R[i];
   return OK;
 }
 
@@ -93,10 +95,10 @@ int scicos_scitoi(int x[],int mx,int nx, NspObject *Ob)
   if ( mx*nx == 0 || M->mn == 0) return OK;
   if ( M->m != mx || M->n != nx || M->rc_type != 'r' ) 
     {
-      Scierror("Expecting a (%d,%d) matrix\n",mx,nx);
-      return FAIL;
+      Scierror("Expecting a (%d,%d) matrix and (%d,%d) returned\n",mx,nx,
+	       M->m,M->n);
     }
-  for ( i = 0 ; i < M->mn ; i++) x[i]= M->R[i];
+  for ( i = 0 ; i < Min(M->mn,mx*nx) ; i++) x[i]= M->R[i];
   return OK;
 }
 
