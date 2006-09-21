@@ -19,19 +19,19 @@ static int scicos_scifunc(  NspObject **Args,int mrhs,NspObject **Ret, int *mlhs
   switch (Scicos->params.scsptr_flag ) 
     {
     case  fun_macros: 
-      /* Sciprintf("Evaluate a given macro\n");
-       * nsp_object_print( Scicos->params.scsptr,0,0,0);
-       */
-       break;
+      Sciprintf("Evaluate a given macro\n");
+      nsp_object_print( Scicos->params.scsptr,0,0,0);
+      return nsp_gtk_eval_function((NspPList *) Scicos->params.scsptr,Args, mrhs, Ret, mlhs);
+      break;
     case fun_macro_name:
-      Scierror("To be done scicos_scifunc_n evaluate a macro given by name\n");
-      nsp_object_print( Scicos->params.scsptr,0,0,0);break;
-      return FAIL;
+      Sciprintf("Evaluate a macro given by its name: %s\n",
+		Scicos->params.scsptr);
+      return nsp_gtk_eval_function_by_name(Scicos->params.scsptr,Args, mrhs, Ret, mlhs);
     case fun_pointer: 
       Scierror("Internal error: Expecting a macro or macro name\n");
       return FAIL;
     }
-  return nsp_gtk_eval_function((NspPList *) Scicos->params.scsptr,Args, mrhs, Ret, mlhs);
+  return FAIL;
 }
 
 static NspMatrix *scicos_itosci(const int x[],int mx,int nx) 
@@ -259,6 +259,16 @@ void  scicos_sciblk2(int *flag, int *nevprt, double *t, double *xd, double *x, i
 }
 
 
+
+/*
+$1 = {nevprt = 0, funpt = 0x825e584, type = 4, scsptr_flag = fun_macro_name,
+  scsptr = 0x87821d0, nz = 7, z = 0x8781bf0, nx = 1, x = 0x8781858, xd = 0x8781860,
+  res = 0x8783410, nin = 0, insz = 0x87833c0, inptr = 0x87833d0, nout = 1,
+  outsz = 0x87833e0, outptr = 0x87833f0, nevout = 1, evout = 0x8783400, nrpar = 11,
+  rpar = 0x8781f90, nipar = 3, ipar = 0x8782ddc, ng = 0, g = 0x0, ztyp = 0,
+  jroot = 0x8783420, jroot_init = 0x8783420, label = 0x8782438 "", work = 0x8780300,
+  nmode = 0, mode = 0x0}
+*/
 
 void scicos_sciblk4(scicos_block *Blocks, int flag)
 {
