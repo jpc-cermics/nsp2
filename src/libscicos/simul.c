@@ -285,10 +285,6 @@ NspHash *scicos_get_sim_copy(scicos_sim *scsim)
 }
 
 
-extern void  scicos_sciblk();
-extern void  sciblk2();
-extern void  sciblk4();
-
 /*
  * creates and fills an array of Blocks.
  */
@@ -333,20 +329,20 @@ static void *scicos_fill_blocks(scicos_sim *scsim,scicos_state *scst)
 	      scicos_clear_blocks(Blocks,kf+1);
 	      return NULL;
 	    case 3:
-	      Blocks[kf].funpt=sciblk2;
+	      Blocks[kf].funpt=scicos_sciblk2;
 	      Blocks[kf].type=2;
 	      break;
 	    case 5:
-	      Blocks[kf].funpt=sciblk4;
+	      Blocks[kf].funpt=scicos_sciblk4;
 	      Blocks[kf].type=4;
 	      break;
 	    case 99: /* debugging block */
-	      Blocks[kf].funpt=sciblk4;
+	      Blocks[kf].funpt=scicos_sciblk4;
 	      Blocks[kf].type=4;
 	      scsim->debug_block=kf;
 	      break;
 	    case 10005:
-	      Blocks[kf].funpt=sciblk4;
+	      Blocks[kf].funpt=scicos_sciblk4;
 	      Blocks[kf].type=10004;
 	      break;
 	    default :

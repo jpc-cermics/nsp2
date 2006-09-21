@@ -187,5 +187,21 @@ extern int scicos_fill_run(scicos_run *sr,NspHash *Sim,NspHash *State);
 extern void scicos_clear_run(scicos_run *sr);
 extern int scicos_main( scicos_run *sr, double *t0_in, double *tf_in, double *simpar, int *flag__, int *ierr_out);
 
+extern void  scicos_sciblk();
+extern void  scicos_sciblk2();
+extern void  scicos_sciblk4();
+
+extern void  scicos_sciblk2(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z,
+		     int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, 
+		     int *nipar, double **inptr, int *insz, int *nin, double **outptr, 
+		     int *outsz, int *nout);
+extern void scicos_sciblk4(scicos_block *Blocks, int flag);
+extern void scicos_sciblk(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx,
+			  double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar,
+			  int *ipar, int *nipar, double *u, int *nu, double *y, int *ny);
+
+
+
+
 #endif 
 
