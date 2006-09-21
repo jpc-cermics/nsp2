@@ -15,7 +15,7 @@
 extern int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
 
 
-int scicos_scifunc(  NspObject **Args,int mrhs,NspObject **Ret, int *mlhs ) 
+static int scicos_scifunc(  NspObject **Args,int mrhs,NspObject **Ret, int *mlhs ) 
 {
   switch (Scicos->params.scsptr_flag ) 
     {
@@ -35,7 +35,7 @@ int scicos_scifunc(  NspObject **Args,int mrhs,NspObject **Ret, int *mlhs )
   return nsp_gtk_eval_function((NspPList *) Scicos->params.scsptr,Args, mrhs, Ret, mlhs);
 }
 
-NspMatrix *scicos_itosci(const int x[],int mx,int nx) 
+static NspMatrix *scicos_itosci(const int x[],int mx,int nx) 
 {
   int i;
   NspMatrix *M;
@@ -44,7 +44,7 @@ NspMatrix *scicos_itosci(const int x[],int mx,int nx)
   return M;
 }
 
-NspMatrix *scicos_dtosci(const double x[],int mx,int nx) 
+static NspMatrix *scicos_dtosci(const double x[],int mx,int nx) 
 {
   int i;
   NspMatrix *M;
@@ -58,23 +58,94 @@ static NspSMatrix *scicos_str2sci(nsp_const_string x)
   return nsp_smatrix_create(NVOID,1,1,x,1);
 }
 
-void scicos_scitovv(double x[],int nx, NspObject *Ob )
+static void scicos_scitovv(double x[],int nx, NspObject *Ob )
 {
   NspMatrix *M= ((NspMatrix *) Ob);
   int i; 
   for ( i= 0 ; i < Min(nx,M->mn) ; i++) x[i]=M->R[i];
 }
 
-NspMatrix *scicos_vvtosci(const double x[],int nx) 
+/**
+ * scicos_obj_to_mserial:
+ * @x: array pointer 
+ * @nx: size of @x 
+ * @Obj: #NspObject to be stored in @x
+ * 
+ * fills array @x of size @nx with the Matrix serialized version 
+ * of nsp object @Obj. If @nx is not equal to the serialized size 
+ * an error is raised
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+static int scicos_obj_to_mserial(double *x,int nx, NspObject *Obj )
 {
-  int i;
-  NspMatrix *M;
-  if ((M = nsp_matrix_create(NVOID,'r',1,nx)) == NULLMAT) return NULLMAT; 
-  for ( i = 0 ; i < M->mn; i++) M->R[i]= x[i];
-  return M;
+  int i; 
+  NspObject *S;
+  NspMatrix *A;;
+  if ((S = nsp_object_serialize(Obj))== NULLOBJ) return FAIL;
+  /* serialize in a matrix */
+  if ((A = nsp_serial_to_matrix((NspSerial *) S))== NULLMAT) 
+    {
+      nsp_object_destroy(&S);
+      return FAIL;
+    }
+  if ( A->mn != nx ) 
+    {
+      Sciprintf("Error: cannot store a serialized nsp object (size %d) in double array (soze %d)\n",
+		A->mn,nx);
+    }
+  for ( i= 0 ; i < A->mn; i++) x[i]= A->R[i];
+  nsp_matrix_destroy(A);
+  return OK;
 }
 
-int scicos_scitod(double x[],int mx,int nx, NspObject *Ob)
+/* XXXX: les vv fonctions sont des fonctions avec serialization */
+
+/**
+ * scicos_vvtosci:
+ * @: 
+ * @nx: 
+ * 
+ * XXX, to be removed an directly inserted in next function 
+ * scicos_mserial_to_obj.
+ * 
+ * Return value: 
+ **/
+
+static NspMatrix *scicos_vvtosci(const double x[],int nx) 
+{
+  return nsp_matrix_create_from_array(NVOID,1,nx,x,NULL);
+}
+
+/**
+ * scicos_mserial_to_obj:
+ * @x: array pointer 
+ * @nx: size of @x 
+ * 
+ * unserialize the nsp object stored in a double array @x.
+ * 
+ * Return value: %NULLOBJ or a new #NspObject
+ **/
+
+static NspObject *scicos_mserial_to_obj(const double *x,int nx)
+{
+  NspMatrix *Z=NULL;
+  NspSerial *S=NULL;
+  NspObject *Obj=NULL;
+  if ((Z = scicos_vvtosci(x,nx)) == NULL) goto err;
+  /* unserialize z in two steps */
+  if ((S= nsp_matrix_to_serial(Z ))== NULL) goto err;
+  if ((Obj=nsp_object_unserialize(S))== NULLOBJ) goto err;
+ err:
+  if ( S != NULL) nsp_serial_destroy(S);
+  if ( Z != NULL) nsp_matrix_destroy(Z);
+  return Obj;
+}
+
+
+
+static int scicos_scitod(double x[],int mx,int nx, NspObject *Ob)
 {
   NspMatrix *M= ((NspMatrix *) Ob);
   int i;
@@ -88,14 +159,14 @@ int scicos_scitod(double x[],int mx,int nx, NspObject *Ob)
   return OK;
 }
 
-int scicos_scitoi(int x[],int mx,int nx, NspObject *Ob)
+static int scicos_scitoi(int x[],int mx,int nx, NspObject *Ob)
 {
   NspMatrix *M= ((NspMatrix *) Ob);
   int i;
   if ( mx*nx == 0 || M->mn == 0) return OK;
   if ( M->m != mx || M->n != nx || M->rc_type != 'r' ) 
     {
-      Scierror("Expecting a (%d,%d) matrix and (%d,%d) returned\n",mx,nx,
+      Sciprintf("Expecting a (%d,%d) matrix and (%d,%d) returned\n",mx,nx,
 	       M->m,M->n);
     }
   for ( i = 0 ; i < Min(M->mn,mx*nx) ; i++) x[i]= M->R[i];
@@ -103,7 +174,7 @@ int scicos_scitoi(int x[],int mx,int nx, NspObject *Ob)
 }
 
 
-int scicos_list_to_vars(double *outptr[],int nout,int outsz[],NspObject *Ob)
+static int scicos_list_to_vars(double *outptr[],int nout,int outsz[],NspObject *Ob)
 {
   int k; 
   NspList *L= (NspList *) Ob;
@@ -116,7 +187,7 @@ int scicos_list_to_vars(double *outptr[],int nout,int outsz[],NspObject *Ob)
   return OK;
 }
 
-NspObject *scicos_vars_to_list(double *inptr[],int nin,int insz[])
+static NspObject *scicos_vars_to_list(double *inptr[],int nin,int insz[])
 {
   int k;
   NspObject *Ob;
@@ -137,17 +208,21 @@ NspObject *scicos_vars_to_list(double *inptr[],int nin,int insz[])
     }
   return Ob;
 }
+ 
+/* XXX: note that the array z transmited here is suposed 
+ * to be a nsp object serialized in a matrix. 
+ * Thus we have to serialize/unserialize here.
+ *
+ *
+ */
 
-
-
-void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
-	      ipar,nipar,inptr,insz,nin,outptr,outsz,nout)
-     int *flag,*nevprt,*nx,*nz,*ntvec,*nrpar,ipar[],*nipar,insz[],*nin,outsz[],*nout;
-     double x[],xd[],z[],tvec[],rpar[];
-     double *inptr[],*outptr[],*t;
+void  sciblk2(int *flag, int *nevprt, double *t, double *xd, double *x, int *nx, double *z,
+	      int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, int *ipar, 
+	      int *nipar, double **inptr, int *insz, int *nin, double **outptr, 
+	      int *outsz, int *nout)
 {
   int mlhs=5,mrhs=8;
-  NspObject * Args[8]; 
+  NspObject * Args[8];
   NspObject * Ret[5];
   
   /* FIXME: give names to all */
@@ -155,7 +230,7 @@ void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
   if ((Args[1]= (NspObject *) scicos_itosci(nevprt,1,1)) == NULL) goto err;
   if ((Args[2]= (NspObject *) scicos_dtosci(t,1,1)) == NULL) goto err;
   if ((Args[3]= (NspObject *) scicos_dtosci(x,*nx,1)) == NULL) goto err;
-  if ((Args[4]= (NspObject *) scicos_vvtosci(z,*nz)) == NULL) goto err;
+  if ((Args[4]= (NspObject *) scicos_mserial_to_obj(z,*nz))== NULL) goto err;
   if ((Args[5]= (NspObject *) scicos_vvtosci(rpar,*nrpar)) == NULL) goto err; 
   if ((Args[6]= (NspObject *) scicos_itosci(ipar,*nipar,1)) == NULL) goto err;
   if ((Args[7]= scicos_vars_to_list(inptr,*nin,insz))==NULLOBJ) goto err;
@@ -167,7 +242,8 @@ void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
   switch (*flag) 
     {
     case 1 :
-      scicos_scitovv(z,*nz,Ret[2]);
+      if ( scicos_obj_to_mserial(z,*nz,Ret[2])== FAIL) goto err;
+      /* scicos_scitovv(z,*nz,Ret[2]); */
       scicos_scitod(x,*nx,1,Ret[1]);
       if (*nout != 0 ) 
 	{
@@ -180,7 +256,8 @@ void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
       scicos_scitod(xd,*nx,1,Ret[4]);
       break;
     case 2 :
-      scicos_scitovv(z,*nz,Ret[2]);
+      if ( scicos_obj_to_mserial(z,*nz,Ret[2])== FAIL) goto err;
+      /* scicos_scitovv(z,*nz,Ret[2]); */
       scicos_scitod(x,*nx,1,Ret[1]);
       break;
     case 3 :
@@ -188,11 +265,13 @@ void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
       break;
     case 4 :
     case 5 :
-      scicos_scitovv(z,*nz,Ret[2]);
+      if ( scicos_obj_to_mserial(z,*nz,Ret[2])== FAIL) goto err;
+      /* scicos_scitovv(z,*nz,Ret[2]); */
       scicos_scitod(x,*nx,1,Ret[1]);
       break;
     case 6 :
-      scicos_scitovv(z,*nz,Ret[2]);
+      if ( scicos_obj_to_mserial(z,*nz,Ret[2])== FAIL) goto err;
+      /* scicos_scitovv(z,*nz,Ret[2]);*/
       scicos_scitod(x,*nx,1,Ret[1]);
       if ( *nout !=0 ) 
 	{
@@ -207,12 +286,10 @@ void  sciblk2(flag,nevprt,t,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
 }
 
 
-void 
-sciblk2i(flag,nevprt,t,residual,xd,x,nx,z,nz,tvec,ntvec,rpar,nrpar,
-	 ipar,nipar,inptr,insz,nin,outptr,outsz,nout)
-     int *flag,*nevprt,*nx,*nz,*ntvec,*nrpar,ipar[],*nipar,insz[],*nin,outsz[],*nout;
-     double residual[],x[],xd[],z[],tvec[],rpar[];
-     double *inptr[],*outptr[],*t;
+void sciblk2i(int *flag, int *nevprt, double *t, double *residual, double *xd, double *x, 
+	      int *nx, double *z, int *nz, double *tvec, int *ntvec, double *rpar, int *nrpar, 
+	      int *ipar, int *nipar, double **inptr, int *insz, int *nin, double **outptr, 
+	      int *outsz, int *nout)
 {
   int mlhs=6,mrhs=9;
   /*
