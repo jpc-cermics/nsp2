@@ -108,7 +108,8 @@ static int scicos_obj_to_mserial(double *x,int nx, NspObject *Obj )
 {
   int i; 
   NspObject *S;
-  NspMatrix *A;;
+  NspMatrix *A;
+  if ( nx == 0) return OK; 
   if ((S = nsp_object_serialize(Obj))== NULLOBJ) return FAIL;
   /* serialize in a matrix */
   if ((A = nsp_serial_to_matrix((NspSerial *) S))== NULLMAT) 
@@ -143,6 +144,11 @@ static NspObject *scicos_mserial_to_obj(const char *name,const double *x,int nx)
   NspObject *Obj=NULL;
   /* new matrix from x */
   if ((Z=  nsp_matrix_create_from_array(NVOID,1,nx,x,NULL))== NULL) goto err;
+  if ( nx == 0 )
+    {
+      if (nsp_object_set_name(NSP_OBJECT(Z),name) == FAIL) goto err;
+      return NSP_OBJECT(Z);
+    }
   /* Z is supposed to contain serialized data  */
   if ((S= nsp_matrix_to_serial(Z ))== NULL) goto err;
   /* unserialize S */
