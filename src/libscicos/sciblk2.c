@@ -13,6 +13,7 @@
 
 /* XXXXX */
 extern int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
+extern int nsp_gtk_eval_function_by_name(char *name,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
 
 static int scicos_scifunc(  NspObject **Args,int mrhs,NspObject **Ret, int *mlhs ) 
 {
@@ -34,27 +35,60 @@ static int scicos_scifunc(  NspObject **Args,int mrhs,NspObject **Ret, int *mlhs
   return FAIL;
 }
 
-static NspMatrix *scicos_itosci(const int x[],int mx,int nx) 
+/**
+ * scicos_itosci:
+ * @name: 
+ * @x: 
+ * @mx: 
+ * @nx: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+static NspObject *scicos_itosci(const char *name, const int *x,int mx,int nx) 
 {
   int i;
   NspMatrix *M;
-  if ((M = nsp_matrix_create(NVOID,'r',mx,nx)) == NULLMAT) return NULLMAT; 
+  if ((M = nsp_matrix_create(name,'r',mx,nx)) == NULLMAT) return NULLOBJ;
   for ( i = 0 ; i < M->mn; i++) M->R[i]=(double) x[i];
-  return M;
+  return NSP_OBJECT(M);
 }
 
-static NspMatrix *scicos_dtosci(const double x[],int mx,int nx) 
+/**
+ * scicos_dtosci:
+ * @name: 
+ * @x: 
+ * @mx: 
+ * @nx: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+static NspObject *scicos_dtosci(const char *name,const double *x,int mx,int nx) 
 {
-  int i;
   NspMatrix *M;
-  if ((M = nsp_matrix_create(NVOID,'r',mx,nx)) == NULLMAT) return NULLMAT; 
-  for ( i = 0 ; i < M->mn; i++) M->R[i]= x[i];
-  return M;
+  if ((M = nsp_matrix_create(name,'r',mx,nx)) == NULLMAT) return NULLOBJ;
+  memcpy(M->R,x,M->mn*sizeof(double));
+  return NSP_OBJECT(M);
 }
 
-static NspSMatrix *scicos_str2sci(nsp_const_string x)
+/**
+ * scicos_str2sci:
+ * @name: 
+ * @x: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+static NspObject *scicos_str2sci(const char *name,nsp_const_string x)
 {
-  return nsp_smatrix_create(NVOID,1,1,x,1);
+  return (NspObject *) nsp_smatrix_create(name,1,1,x,1);
 }
 
 /**
@@ -92,7 +126,6 @@ static int scicos_obj_to_mserial(double *x,int nx, NspObject *Obj )
   return OK;
 }
 
-
 /**
  * scicos_mserial_to_obj:
  * @x: array pointer 
@@ -103,7 +136,7 @@ static int scicos_obj_to_mserial(double *x,int nx, NspObject *Obj )
  * Return value: %NULLOBJ or a new #NspObject
  **/
 
-static NspObject *scicos_mserial_to_obj(const double *x,int nx)
+static NspObject *scicos_mserial_to_obj(const char *name,const double *x,int nx)
 {
   NspMatrix *Z=NULL;
   NspSerial *S=NULL;
@@ -114,13 +147,23 @@ static NspObject *scicos_mserial_to_obj(const double *x,int nx)
   if ((S= nsp_matrix_to_serial(Z ))== NULL) goto err;
   /* unserialize S */
   if ((Obj=nsp_object_unserialize(S))== NULLOBJ) goto err;
+  if (nsp_object_set_name(Obj,name) == FAIL) goto err;
  err:
   if ( S != NULL) nsp_serial_destroy(S);
   if ( Z != NULL) nsp_matrix_destroy(Z);
   return Obj;
 }
 
-
+/**
+ * scicos_scitod:
+ * @: 
+ * @mx: 
+ * @nx: 
+ * @Ob: 
+ * 
+ * 
+ * Return value: 
+ **/
 
 static int scicos_scitod(double x[],int mx,int nx, NspObject *Ob)
 {
@@ -135,6 +178,18 @@ static int scicos_scitod(double x[],int mx,int nx, NspObject *Ob)
   for ( i = 0 ; i < Min(M->mn,mx*nx); i++) x[i]= M->R[i];
   return OK;
 }
+
+/**
+ * scicos_scitoi:
+ * @: 
+ * @mx: 
+ * @nx: 
+ * @Ob: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 
 static int scicos_scitoi(int x[],int mx,int nx, NspObject *Ob)
 {
@@ -151,6 +206,18 @@ static int scicos_scitoi(int x[],int mx,int nx, NspObject *Ob)
 }
 
 
+/**
+ * scicos_list_to_vars:
+ * @: 
+ * @nout: 
+ * @: 
+ * @Ob: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
 static int scicos_list_to_vars(double *outptr[],int nout,int outsz[],NspObject *Ob)
 {
   int k; 
@@ -164,26 +231,37 @@ static int scicos_list_to_vars(double *outptr[],int nout,int outsz[],NspObject *
   return OK;
 }
 
-static NspObject *scicos_vars_to_list(double *inptr[],int nin,int insz[])
+/**
+ * scicos_vars_to_list:
+ * @: 
+ * @nin: 
+ * @: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+static NspObject *scicos_vars_to_list(char *name,double *inptr[],int nin,int insz[])
 {
   int k;
-  NspObject *Ob;
-  if ((Ob = (NspObject *) nsp_list_create("L") ) == NULL) return NULL;
+  NspList *Ob;
+  if ((Ob = nsp_list_create(name) ) == NULL) return NULL;
   for( k=0 ; k < nin ; k++) 
     {
       NspObject *elt;
-      if ((elt = (NspObject *) scicos_dtosci(inptr[k],insz[k],1))== NULL)
+      if ((elt = scicos_dtosci("el",inptr[k],insz[k],1))== NULL)
 	{
-	  nsp_list_destroy((NspList *) Ob);
+	  nsp_list_destroy(Ob);
 	  return NULL;
 	}
-      if ( nsp_list_insert((NspList *) Ob,elt,k+1) == FAIL)
+      if ( nsp_list_insert(Ob,elt,k+1) == FAIL)
 	{
-	  nsp_list_destroy((NspList *) Ob);
+	  nsp_list_destroy(Ob);
 	  return NULL;
 	}
     }
-  return Ob;
+  return NSP_OBJECT(Ob);
 }
  
 /* XXX: note that the array z transmited here is suposed 
@@ -203,14 +281,14 @@ void  scicos_sciblk2(int *flag, int *nevprt, double *t, double *xd, double *x, i
   NspObject * Ret[5];
   
   /* FIXME: give names to all */
-  if ((Args[0]= (NspObject *) scicos_itosci(flag,1,1)) == NULL) goto err;
-  if ((Args[1]= (NspObject *) scicos_itosci(nevprt,1,1)) == NULL) goto err;
-  if ((Args[2]= (NspObject *) scicos_dtosci(t,1,1)) == NULL) goto err;
-  if ((Args[3]= (NspObject *) scicos_dtosci(x,*nx,1)) == NULL) goto err;
-  if ((Args[4]= (NspObject *) scicos_mserial_to_obj(z,*nz))== NULL) goto err;
-  if ((Args[5]= (NspObject *) scicos_mserial_to_obj(rpar,*nrpar)) == NULL) goto err; 
-  if ((Args[6]= (NspObject *) scicos_itosci(ipar,*nipar,1)) == NULL) goto err;
-  if ((Args[7]= scicos_vars_to_list(inptr,*nin,insz))==NULLOBJ) goto err;
+  if ((Args[0]= scicos_itosci(NVOID,flag,1,1)) == NULL) goto err;
+  if ((Args[1]= scicos_itosci(NVOID,nevprt,1,1)) == NULL) goto err;
+  if ((Args[2]= scicos_dtosci(NVOID,t,1,1)) == NULL) goto err;
+  if ((Args[3]= scicos_dtosci(NVOID,x,*nx,1)) == NULL) goto err;
+  if ((Args[4]= scicos_mserial_to_obj(NVOID,z,*nz))== NULL) goto err;
+  if ((Args[5]= scicos_mserial_to_obj(NVOID,rpar,*nrpar)) == NULL) goto err; 
+  if ((Args[6]= scicos_itosci(NVOID,ipar,*nipar,1)) == NULL) goto err;
+  if ((Args[7]= scicos_vars_to_list(NVOID,inptr,*nin,insz))==NULLOBJ) goto err;
 
   /* function to be evaluated or name of function to be evaluated */
 
@@ -258,68 +336,60 @@ void  scicos_sciblk2(int *flag, int *nevprt, double *t, double *xd, double *x, i
     *flag=-1;
 }
 
-
-
-/*
-$1 = {nevprt = 0, funpt = 0x825e584, type = 4, scsptr_flag = fun_macro_name,
-  scsptr = 0x87821d0, nz = 7, z = 0x8781bf0, nx = 1, x = 0x8781858, xd = 0x8781860,
-  res = 0x8783410, nin = 0, insz = 0x87833c0, inptr = 0x87833d0, nout = 1,
-  outsz = 0x87833e0, outptr = 0x87833f0, nevout = 1, evout = 0x8783400, nrpar = 11,
-  rpar = 0x8781f90, nipar = 3, ipar = 0x8782ddc, ng = 0, g = 0x0, ztyp = 0,
-  jroot = 0x8783420, jroot_init = 0x8783420, label = 0x8782438 "", work = 0x8780300,
-  nmode = 0, mode = 0x0}
-*/
+/* time added in block 
+ *
+ */
 
 void scicos_sciblk4(scicos_block *Blocks, int flag)
 {
   int mlhs=1,mrhs=2;
   NspObject *Ob;
   NspHash *H;
-  NspObject * Args[31]; 
-  NspObject * Ret[5];
-  int p = 0;
-  /* this are the tlist names */
-  /* 
-   *     char *str[]={ "scicos_block","nevprt","funpt","type",
-   * "scsptr","nz","z","nx","x","xd","res","nin",
-   *  "insz","inptr","nout","outsz","outptr","nevout",
-   *  "evout","nrpar","rpar","nipar","ipar","ng","g",
-   *  "ztyp","jroot","label","work","nmode","mode"};
-   */
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nevprt,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->funpt,0,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->type,1,1))== NULL) goto err;
-  /* if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->scsptr,0,1))== NULL) goto err; */
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nz,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *) scicos_mserial_to_obj(Blocks->z,Blocks->nz))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nx,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_dtosci(Blocks->x,Blocks->nx,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_dtosci(Blocks->xd,Blocks->nx,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_dtosci(Blocks->res,Blocks->nx,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nin,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->insz,Blocks->nin,1))== NULL) goto err;
-  if ((Args[p++]= scicos_vars_to_list(Blocks->inptr,Blocks->nin,Blocks->insz))==NULLOBJ) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->outsz,Blocks->nout,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nout,1,1))== NULL) goto err;
-  if ((Args[p++]= scicos_vars_to_list(Blocks->outptr,Blocks->nout,Blocks->outsz))==NULLOBJ) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nevout,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_dtosci(Blocks->evout,Blocks->nevout,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nrpar,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *) scicos_mserial_to_obj(Blocks->rpar,Blocks->nrpar)) == NULL) goto err; 
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nipar,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->ipar,Blocks->nipar,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->ng,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_dtosci(Blocks->g,Blocks->ng,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->ztyp,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->jroot,Blocks->ng,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_str2sci(Blocks->label))== NULL) goto err;
-  /* if ((Args[p++]= (NspObject *) scicos_mserial_to_obj(Blocks->work,0))== NULL) goto err; */
-  if ((Args[p++]= (NspObject *)  scicos_itosci(&Blocks->nmode,1,1))== NULL) goto err;
-  if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->mode,Blocks->nmode,1))== NULL) goto err; 
-  if ((Args[p++]= (NspObject *)  scicos_itosci(Blocks->mode,Blocks->nmode,1))== NULL) goto err; 
+  NspObject *Hel[32], *Ret[1], *Args[2];
+  int p = 0,i;
+  double time=get_scicos_time();
+  if ((Hel[p++]=   scicos_dtosci("time",&time,1,1))== NULL) goto err;
+  if ((Hel[p++]=   scicos_itosci("nevprt",&Blocks->nevprt,1,1))== NULL) goto err;
+  if ((Hel[p++]=   scicos_itosci("nevprt",&Blocks->nevprt,1,1))== NULL) goto err;
+  if ((Hel[p++]=   scicos_itosci("type",&Blocks->type,1,1))== NULL) goto err;
+  /* if ((Hel[p++]=   scicos_itosci(&Blocks->scsptr,0,1))== NULL) goto err; */
+  /* if ((Hel[p++]=   scicos_itosci("nz",&Blocks->nz,1,1))== NULL) goto err; */
+  if ((Hel[p++]=  scicos_mserial_to_obj("z",Blocks->z,Blocks->nz))== NULL) goto err;
+  /* if ((Hel[p++]=   scicos_itosci("nx",&Blocks->nx,1,1))== NULL) goto err; */
+  if ((Hel[p++]=   scicos_dtosci("x",Blocks->x,Blocks->nx,1))== NULL) goto err;
+  if ((Hel[p++]=   scicos_dtosci("xd",Blocks->xd,Blocks->nx,1))== NULL) goto err;
+  if ((Hel[p++]=   scicos_dtosci("res",Blocks->res,Blocks->nx,1))== NULL) goto err;
+  if ((Hel[p++]=   scicos_itosci("nin",&Blocks->nin,1,1))== NULL) goto err; 
+  if ((Hel[p++]=   scicos_itosci("insz",Blocks->insz,Blocks->nin,1))== NULL) goto err;
+  if ((Hel[p++]= scicos_vars_to_list("inptr",Blocks->inptr,Blocks->nin,Blocks->insz))==NULLOBJ) goto err;
+  if ((Hel[p++]=   scicos_itosci("outsz",Blocks->outsz,Blocks->nout,1))== NULL) goto err; 
+  if ((Hel[p++]=   scicos_itosci("nout",&Blocks->nout,1,1))== NULL) goto err;
+  if ((Hel[p++]= scicos_vars_to_list("outptr",Blocks->outptr,Blocks->nout,Blocks->outsz))==NULLOBJ) goto err;
+  if ((Hel[p++]=   scicos_itosci("nevout",&Blocks->nevout,1,1))== NULL) goto err;
+  if ((Hel[p++]=   scicos_dtosci("evout",Blocks->evout,Blocks->nevout,1))== NULL) goto err;
+  /* if ((Hel[p++]=   scicos_itosci("nrpar",&Blocks->nrpar,1,1))== NULL) goto err; */
+  if ((Hel[p++]=  scicos_mserial_to_obj("rpar",Blocks->rpar,Blocks->nrpar)) == NULL) goto err; 
+  /* if ((Hel[p++]=   scicos_itosci("nipar",&Blocks->nipar,1,1))== NULL) goto err; */
+  if ((Hel[p++]=   scicos_itosci("ipar",Blocks->ipar,Blocks->nipar,1))== NULL) goto err;
+  /* if ((Hel[p++]=   scicos_itosci("ng",&Blocks->ng,1,1))== NULL) goto err; */
+  if ((Hel[p++]=   scicos_dtosci("g",Blocks->g,Blocks->ng,1))== NULL) goto err;
+  if ((Hel[p++]=   scicos_itosci("ztyp",&Blocks->ztyp,1,1))== NULL) goto err;
+  if ((Hel[p++]=   scicos_itosci("jroot",Blocks->jroot,Blocks->ng,1))== NULL) goto err;
+  if ((Hel[p++]=   scicos_str2sci("label",Blocks->label))== NULL) goto err;
+  /* if ((Hel[p++]=  scicos_mserial_to_obj(Blocks->work,0))== NULL) goto err; */
+  /* if ((Hel[p++]=   scicos_itosci("nmode",&Blocks->nmode,1,1))== NULL) goto err; */
+  if ((Hel[p++]=   scicos_itosci("mode",Blocks->mode,Blocks->nmode,1))== NULL) goto err; 
 
+  if(( H = nsp_hash_create(NVOID,p)) == NULLHASH) goto err; 
+  for ( i = 0 ; i < p ; i++) 
+    {
+      if (nsp_hash_enter(H,Hel[i]) == FAIL) goto err; 
+    }
+  Args[0]=NSP_OBJECT(H);
+  if ((Args[1]= scicos_itosci(NVOID,&flag,1,1)) == NULL) goto err;
+  
   if ( scicos_scifunc(Args,mrhs,Ret,&mlhs) == FAIL) goto err;
-
+  
   H=(NspHash *) Ret[0];
   switch (flag) {
   case 1 :
@@ -348,7 +418,7 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
     if (Blocks->nz != 0) 
       {
 	if ( nsp_hash_find(H,"z",&Ob) == FAIL) goto err;
-	scicos_scitod(Blocks->z,Blocks->nz,1,Ob);
+	if ( scicos_obj_to_mserial(Blocks->z,Blocks->nz,Ob)== FAIL) goto err;
       }
     /* 8 ieme element de la tlist x */
     if (Blocks->nx != 0)
@@ -370,7 +440,7 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
     if (Blocks->nz != 0) 
       {
 	if ( nsp_hash_find(H,"z",&Ob) == FAIL) goto err;
-	scicos_scitod(Blocks->z,Blocks->nz,1,Ob);
+	if ( scicos_obj_to_mserial(Blocks->z,Blocks->nz,Ob)== FAIL) goto err;
       }
     if (Blocks->nx != 0) 
       {
@@ -386,7 +456,7 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
     if (Blocks->nz != 0) 
       {
 	if ( nsp_hash_find(H,"z",&Ob) == FAIL) goto err;
-	scicos_scitod(Blocks->z,Blocks->nz,1,Ob);
+	if ( scicos_obj_to_mserial(Blocks->z,Blocks->nz,Ob)== FAIL) goto err;
       }
     if (Blocks->nx != 0) 
       {
@@ -403,7 +473,7 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
       {
 	/* 6ieme element de la tlist z */
 	if ( nsp_hash_find(H,"z",&Ob) == FAIL) goto err;
-	scicos_scitod(Blocks->z,Blocks->nz,1,Ob);
+	if ( scicos_obj_to_mserial(Blocks->z,Blocks->nz,Ob)== FAIL) goto err;
       }
     if (Blocks->nx != 0) 
       {
@@ -470,14 +540,14 @@ void scicos_sciblk(int *flag, int *nevprt, double *t, double *xd, double *x, int
   NspObject * Args[9]; 
   NspObject * Ret[6];
   /* FIXME: give names to all */
-  if ((Args[0]= (NspObject *) scicos_itosci(flag,1,1)) == NULL) goto err;
-  if ((Args[1]= (NspObject *) scicos_itosci(nevprt,1,1)) == NULL) goto err;
-  if ((Args[2]= (NspObject *) scicos_dtosci(t,1,1)) == NULL) goto err;
-  if ((Args[3]= (NspObject *) scicos_dtosci(x,*nx,1)) == NULL) goto err;
-  if ((Args[4]= (NspObject *) scicos_mserial_to_obj(z,*nz))== NULL) goto err;
-  if ((Args[5]= (NspObject *) scicos_mserial_to_obj(rpar,*nrpar)) == NULL) goto err; 
-  if ((Args[6]= (NspObject *) scicos_itosci(ipar,*nipar,1)) == NULL) goto err;
-  if ((Args[8]= (NspObject *) scicos_dtosci(u,*nu,1)) == NULL) goto err;
+  if ((Args[0]= scicos_itosci(NVOID,flag,1,1)) == NULL) goto err;
+  if ((Args[1]= scicos_itosci(NVOID,nevprt,1,1)) == NULL) goto err;
+  if ((Args[2]= scicos_dtosci(NVOID,t,1,1)) == NULL) goto err;
+  if ((Args[3]= scicos_dtosci(NVOID,x,*nx,1)) == NULL) goto err;
+  if ((Args[4]= scicos_mserial_to_obj(NVOID,z,*nz))== NULL) goto err;
+  if ((Args[5]= scicos_mserial_to_obj(NVOID,rpar,*nrpar)) == NULL) goto err; 
+  if ((Args[6]= scicos_itosci(NVOID,ipar,*nipar,1)) == NULL) goto err;
+  if ((Args[8]= scicos_dtosci(NVOID,u,*nu,1)) == NULL) goto err;
   /*     macro execution */
 
   if ( scicos_scifunc(Args,mrhs,Ret,&mlhs) == FAIL) goto err;
