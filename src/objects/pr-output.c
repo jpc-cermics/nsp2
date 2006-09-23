@@ -205,6 +205,7 @@ void gen_pr_min_max_internal(const void *M, char flag, double *dmin, double *dma
 void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_inf_or_nan, pr_mima min_max, 
 		     it_gen_f all_iin, nsp_it_init Init)
 {
+  double d_epsr=DBL_EPSILON;
   int work[2];
   int sign,inf_or_nan, r_x_max,r_x_min,i_x_max,i_x_min;
   int x_max,x_min,prec,ld, rd;
@@ -217,19 +218,25 @@ void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_
   if ( type == 'r' )
     {
       (*min_max)(M,'r',&r_min_abs,&r_max_abs);      
+      if (r_max_abs == 0.0) r_max_abs = d_epsr;
+      if (r_min_abs == 0.0) r_min_abs = d_epsr;
       x_max = r_max_abs == 0.0 ? 0 : (int) floor (log10 (r_max_abs) + 1.0);
       x_min = r_min_abs == 0.0 ? 0 : (int) floor (log10 (r_min_abs) + 1.0);
     }
   else 
     {
-      (*min_max)(M,'r',&r_min_abs,&r_max_abs);      
+      (*min_max)(M,'r',&r_min_abs,&r_max_abs); 
+      if (r_max_abs == 0.0) r_max_abs = d_epsr;
+      if (r_min_abs == 0.0) r_min_abs = d_epsr;     
       (*min_max)(M,'c',&i_min_abs,&i_max_abs);
+      if (i_max_abs == 0.0) i_max_abs = d_epsr;
+      if (i_min_abs == 0.0) i_min_abs = d_epsr;
       r_x_max = r_max_abs == 0.0 ? 0 : (int) floor (log10 (r_max_abs) + 1.0);
       r_x_min = r_min_abs == 0.0 ? 0 : (int) floor (log10 (r_min_abs) + 1.0);
       i_x_max = i_max_abs == 0.0 ? 0 : (int) floor (log10 (i_max_abs) + 1.0);
       i_x_min = i_min_abs == 0.0 ? 0 : (int) floor (log10 (i_min_abs) + 1.0);
-      x_max = r_x_max > i_x_max ? r_x_max : i_x_max;
-      x_min = r_x_min > i_x_min ? r_x_min : i_x_min;
+      x_max = Max(r_x_max, i_x_max);
+      x_min = Min(r_x_min, i_x_min);
     }
 
   prec = user_pref.output_precision;
