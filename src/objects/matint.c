@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2006 Jean-Philippe Chancelier Enpc/Cermics
  * Copyright (C) 2006      Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
@@ -1606,6 +1606,7 @@ int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB)
 	      for ( i = 0 ; i < B->mn ; i++ )
 		if ( from[i] != NULL )   /* just for cells which may have undefined elements */
 		  {
+		    if ( to[i] != NULL) MAT_INT(type)->free_elt((void **) &to[i]);
 		    if ( (elt = (char *) MAT_INT(type)->copy_elt(from[i])) == NULL ) return FAIL;
 		    to[i] = elt;
 		  }
@@ -2022,9 +2023,26 @@ int nsp_matint_concat_right_xx(Stack stack, int rhs, int opt, int lhs)
 
   if ( Ocheckname(ObjA, NVOID) )   /* ObjA has no name */ 
     {
-      if ( nsp_matint_concat_right_bis(ObjA, ObjB) == FAIL )
-	return RET_BUG;
-       ObjA->ret_pos = 1;
+      int m=nsp_object_get_size(ObjA,1);
+      int n=nsp_object_get_size(ObjA,2);
+      /* XXX quick and dirty hack to correct 
+       * nsp_matint_concat_right_bis which is wrong when 
+       * ObjA == []
+       * ObjA should be transmited by adress to 
+       *  nsp_matint_concat_right_bis.
+       */
+      if ( m  == 0 && n == 0 )
+	{
+	  if ( (ObjA =nsp_object_copy(ObjB)) == NULLOBJ ) return FAIL;
+	  /* this will clean the previously stored ObjA */
+	  MoveObj (stack, 1, ObjA);
+	}
+      else 
+	{
+	  if ( nsp_matint_concat_right_bis(ObjA, ObjB) == FAIL )
+	    return RET_BUG;
+	  ObjA->ret_pos = 1;
+	}
     }
   else
     {
