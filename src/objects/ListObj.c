@@ -431,10 +431,12 @@ static int int_list_add(void *self,Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,2);
   CheckLhs(0,0);
   if ( MaybeObjCopy(&NthObj(1))== NULL )  return RET_BUG;
-  if (nsp_object_set_name(NthObj(1),"lel") == FAIL) return RET_BUG;
+  if ( nsp_object_set_name(NthObj(1),"lel") == FAIL) return RET_BUG;
   if ( GetScalarInt(stack,2,&i) == FAIL) return RET_BUG;
   if ( nsp_list_store(L,NthObj(1),i) == FAIL ) return RET_BUG;
-  NthObj(1) = NULLOBJ;
+  /* no need to remove  NthObj(1) from stack
+   * it is named and we want second position to be freed 
+   */
   return 0;
 }
 
@@ -529,17 +531,12 @@ static int int_list_item(void *self,Stack stack, int rhs, int opt, int lhs)
   NspObject *O;
   CheckRhs(1,1);
   CheckLhs(1,1);
-
   if ( GetScalarInt(stack,1,&i) == FAIL ) return RET_BUG;
-
   if ( (O = nsp_list_get_element(L,i)) ==  NULLOBJ )
     return RET_BUG;  /* error message done in nsp_list_get_element */
-
   if ( (O=nsp_object_copy(O)) == NULLOBJ ) 
     return RET_BUG;
- 
-  O->ret_pos = 1;
-  NthObj(1) = O;
+  MoveObj(stack,1,O);
   return 1;
 }
 

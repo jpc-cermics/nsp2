@@ -1200,7 +1200,10 @@ NspList *nsp_list_map(NspList *L, NspPList *PL, NspList *args)
       O[0] = L_cell->O;
       if ( O[0] != NULLOBJ ) 
 	{
-	  if ((O[0] =nsp_object_copy_with_name(O[0]))== NULLOBJ) return NULLLIST;
+	  /* the object is copied without name,it will be freed by 
+	   * nsp_eval_macro_code
+	   */
+	  if ((O[0] =nsp_object_copy(O[0]))== NULLOBJ) return NULLLIST;
 	  /* stack position to use is computed on the first call and set 
 	   * for next calls in first 
 	   */
@@ -1256,7 +1259,7 @@ NspObject *nsp_list_fold_right(NspList *L, NspPList *PL, NspList *args)
 
 static NspObject *cell_fold_right(Cell *C, NspPList *PL, NspList *args,int *first)  
 {
-  NspObject *O[3];
+  NspObject *O[]={NULL,NULL,NULL};
   /* limit case */
   if ( C == NULLCELL || C->next == NULLCELL ) 
     {
