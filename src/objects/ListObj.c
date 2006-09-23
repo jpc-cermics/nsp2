@@ -655,8 +655,8 @@ static int int_lxlist(Stack stack, int rhs, int opt, int lhs)
 	 that we have inserted in our list **/
       NthObj(i) = NULLOBJ ;
     }
-  NthObj(1)=(NspObject *) L;
-  NSP_OBJECT(NthObj(1))->ret_pos = 1;
+  NthObj(1)=NSP_OBJECT(L);
+  NthObj(1)->ret_pos = 1;
   return 1;
 }
 
@@ -1208,6 +1208,7 @@ static int int_lxcat(Stack stack, int rhs, int opt, int lhs)
 	{
 	  if ( (LL =GetList(stack,i)) == NULLLIST ) goto err;
 	  if ( nsp_list_concat(L, LL) == FAIL ) goto err;
+	  nsp_void_object_destroy(&Ob);
 	}
       else 
 	{	      
@@ -1216,8 +1217,9 @@ static int int_lxcat(Stack stack, int rhs, int opt, int lhs)
 	  if ( nsp_list_end_insert(L,Ob) == FAIL ) goto err;
 	}
       /* If NthObj(i) is not copied it is inserted in the list 
-       *     we must set then NthObj(i) to NULLOBJ 
-       *     to prevent the cleaning process to clean the object 
+       * or explicitely freed. 
+       * we must set then NthObj(i) to NULLOBJ 
+       * to prevent the cleaning process to clean the object 
        * that we have inserted in our list 
        */
       NthObj(i) = NULLOBJ;
