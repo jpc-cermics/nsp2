@@ -1433,7 +1433,8 @@ static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],i
 
 int nsp_gtk_eval_function_by_name(char *name,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
 {
-  return  _nsp_gtk_eval_function(NULL,name,args,n_args,ret,nret);
+  NspObject *Obj= nsp_frames_search_object(name);
+  return  _nsp_gtk_eval_function(Obj,name,args,n_args,ret,nret);
 }
 
 
