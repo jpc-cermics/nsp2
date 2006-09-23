@@ -21,9 +21,6 @@ double Get_Jacobian_parameter(void);
 double Get_Scicos_SQUR(void);
 void call_debug_scicos(double *, double *, double *, double *,double *,int *,int,int,int);
 
-extern void  scicos_sciblk();
-extern void  sciblk2();
-extern void  sciblk4();
 extern  int C2F(ddaskr)();
 extern  int C2F(lsodar2)();
 
@@ -1874,7 +1871,7 @@ static void  callf(double *t, double *xtd, double *xt, double *residual, double 
 	Scicos->Blocks[kf-1].g=&g[Scicos->sim.zcptr[-1+kf]-1];
       }
     if(Scicos->Blocks[kf-1].nx==0){
-      (*loc4)(&Scicos->Blocks[kf-1],*flag);
+      (*loc4)(&Scicos->Blocks[kf-1],flag);
     } 
     else {
       Scicos->Blocks[kf-1].x=&xt[Scicos->sim.xptr[kf-1]-1];
@@ -1882,7 +1879,7 @@ static void  callf(double *t, double *xtd, double *xt, double *residual, double 
 	if(*flag==0 && solver==100) {
 	  Scicos->Blocks[kf-1].res=&residual[Scicos->sim.xptr[kf-1]-1];
 	  Scicos->Blocks[kf-1].xd=&residual[Scicos->sim.xptr[kf-1]-1];
-	  (*loc4)(&Scicos->Blocks[kf-1],*flag);
+	  (*loc4)(&Scicos->Blocks[kf-1],flag);
 	  Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
 	  if(flagi!=7) {
 	    for (k=0;k<Scicos->Blocks[kf-1].nx;k++) {
@@ -1897,13 +1894,13 @@ static void  callf(double *t, double *xtd, double *xt, double *residual, double 
 	}
 	else {
 	  Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
-	  (*loc4)(&Scicos->Blocks[kf-1],*flag);
+	  (*loc4)(&Scicos->Blocks[kf-1],flag);
 	}
       }
       else {
 	Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
 	Scicos->Blocks[kf-1].res=&residual[Scicos->sim.xptr[kf-1]-1];
-	(*loc4)(&Scicos->Blocks[kf-1],*flag);
+	(*loc4)(&Scicos->Blocks[kf-1],flag);
       }
     }
     if ( cosd > 1){
@@ -2220,14 +2217,14 @@ void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, dou
     Scicos->Blocks[kf-1].g=&g[Scicos->sim.zcptr[-1+kf]-1];
   }
   if(Scicos->Blocks[kf-1].nx==0){
-    (*loc4)(&Scicos->Blocks[kf-1],*flag);
+    (*loc4)(&Scicos->Blocks[kf-1],flag);
   } 
   else {
     Scicos->Blocks[kf-1].x=&xt[Scicos->sim.xptr[kf-1]-1];
     if(*flag==0 && solver==100) {
       Scicos->Blocks[kf-1].res=&residual[Scicos->sim.xptr[kf-1]-1];
       Scicos->Blocks[kf-1].xd=&residual[Scicos->sim.xptr[kf-1]-1];
-      (*loc4)(&Scicos->Blocks[kf-1],*flag);
+      (*loc4)(&Scicos->Blocks[kf-1],flag);
       Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
       if(flagi!=7) {
 	for (k=0;k<Scicos->Blocks[kf-1].nx;k++) {
@@ -2242,7 +2239,7 @@ void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, dou
     }
     else {
       Scicos->Blocks[kf-1].xd=&xtd[Scicos->sim.xptr[kf-1]-1];
-      (*loc4)(&Scicos->Blocks[kf-1],*flag);
+      (*loc4)(&Scicos->Blocks[kf-1],flag);
     }
   }
   if (*flag<0) sciprint("Error in the Debug block \n");

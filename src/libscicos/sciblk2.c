@@ -346,12 +346,12 @@ void  scicos_sciblk2(int *flag, int *nevprt, double *t, double *xd, double *x, i
  *
  */
 
-void scicos_sciblk4(scicos_block *Blocks, int flag)
+void scicos_sciblk4(scicos_block *Blocks, int *flag)
 {
   int mlhs=1,mrhs=2;
   NspObject *Ob;
-  NspHash *H;
-  NspObject *Hel[32], *Ret[1], *Args[2];
+  NspHash *H=NULL,*Hi=NULL;
+  NspObject *Hel[32], *Args[2],*Ret[1];
   int p = 0,i;
   double time=get_scicos_time();
   if ((Hel[p++]=   scicos_dtosci("time",&time,1,1))== NULL) goto err;
@@ -386,18 +386,17 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
   /* if ((Hel[p++]=   scicos_itosci("nmode",&Blocks->nmode,1,1))== NULL) goto err; */
   if ((Hel[p++]=   scicos_itosci("mode",Blocks->mode,Blocks->nmode,1))== NULL) goto err; 
 
-  if(( H = nsp_hash_create(NVOID,p)) == NULLHASH) goto err; 
+  if(( Hi = nsp_hash_create(NVOID,p)) == NULLHASH) goto err; 
   for ( i = 0 ; i < p ; i++) 
     {
-      if (nsp_hash_enter(H,Hel[i]) == FAIL) goto err; 
+      if (nsp_hash_enter(Hi,Hel[i]) == FAIL) goto err; 
     }
-  Args[0]=NSP_OBJECT(H);
-  if ((Args[1]= scicos_itosci(NVOID,&flag,1,1)) == NULL) goto err;
+  Args[0]=NSP_OBJECT(Hi);
+  if ((Args[1]= scicos_itosci(NVOID,flag,1,1)) == NULL) goto err;
   
   if ( scicos_scifunc(Args,mrhs,Ret,&mlhs) == FAIL) goto err;
-  
-  H=(NspHash *) Ret[0];
-  switch (flag) {
+  H = (NspHash *) Ret[0];
+  switch (*flag) {
   case 1 :
     /* z,x et outptr */
     if ( Blocks->nx != 0) 
@@ -505,9 +504,11 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
     scicos_scitoi(Blocks->mode,Blocks->nmode,1,Ob);
     break;
   }
+  nsp_hash_destroy(H);
   return;
  err: 
-  flag=-1;
+  if ( H != NULL) nsp_hash_destroy(H);
+  *flag=-1;
 }
 
 
