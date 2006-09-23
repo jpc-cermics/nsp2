@@ -1437,7 +1437,7 @@ int nsp_gtk_eval_function_by_name(char *name,NspObject *args[],int n_args,NspObj
    * since it is used by scicos or mexcallmatlab.
    */
   NspObject *Obj= nsp_frames_search_object(name);
-  return  _nsp_gtk_eval_function(Obj,name,args,n_args,ret,nret);
+  return  _nsp_gtk_eval_function((NspPList *)Obj,name,args,n_args,ret,nret);
 }
 
 

@@ -399,39 +399,46 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
   H=(NspHash *) Ret[0];
   switch (flag) {
   case 1 :
-    /* y computation */
-    if (Blocks->nout!=0) 
+    /* z,x et outptr */
+    if ( Blocks->nx != 0) 
       {
-	/* 16ieme element de la tlist y */
-	if ( nsp_hash_find(H,"y",&Ob) == FAIL) goto err;
-	if ( scicos_list_to_vars(Blocks->outptr,Blocks->nout,Blocks->outsz,Ob)==FAIL) goto err;
+	if ( nsp_hash_find(H,"x",&Ob) == FAIL) goto err;
+	scicos_scitod(Blocks->x,Blocks->nx,1,Ob);
       }
-    break;
-  case 0 :
-    /*  x'  computation */
-    /* 9 ieme element de la tlist xd */
-    if (Blocks->nx != 0)
-      {
-	if ( nsp_hash_find(H,"xd",&Ob) == FAIL) goto err;
-	scicos_scitod(Blocks->xd,Blocks->nx,1,Ob);
-	/* 10 ieme element de la tlist res */
-	if ( nsp_hash_find(H,"res",&Ob) == FAIL) goto err;
-	scicos_scitod(Blocks->res,Blocks->nx,1,Ob);
-      }
-      break;
-  case 2 :
-    /* 6ieme element de la tlist z */
     if (Blocks->nz != 0) 
       {
 	if ( nsp_hash_find(H,"z",&Ob) == FAIL) goto err;
 	if ( scicos_obj_to_mserial(Blocks->z,Blocks->nz,Ob)== FAIL) goto err;
       }
-    /* 8 ieme element de la tlist x */
+    if (Blocks->nout!=0) 
+      {
+	if ( nsp_hash_find(H,"outptr",&Ob) == FAIL) goto err;
+	if ( scicos_list_to_vars(Blocks->outptr,Blocks->nout,Blocks->outsz,Ob)==FAIL) goto err;
+      }
+    break;
+  case 0 :
+    /*  x'  computation */
+    if (Blocks->nx != 0)
+      {
+	if ( nsp_hash_find(H,"xd",&Ob) == FAIL) goto err;
+	scicos_scitod(Blocks->xd,Blocks->nx,1,Ob);
+	/* res XXX */
+	if ( nsp_hash_find(H,"res",&Ob) == FAIL) goto err;
+	scicos_scitod(Blocks->res,Blocks->nx,1,Ob);
+      }
+      break;
+  case 2 :
+    /* z */
+    if (Blocks->nz != 0) 
+      {
+	if ( nsp_hash_find(H,"z",&Ob) == FAIL) goto err;
+	if ( scicos_obj_to_mserial(Blocks->z,Blocks->nz,Ob)== FAIL) goto err;
+      }
+    /* x */
     if (Blocks->nx != 0)
       {
 	if ( nsp_hash_find(H,"x",&Ob) == FAIL) goto err;
 	scicos_scitod(Blocks->x,Blocks->nx,1,Ob);
-	/* 9 ieme element de la tlist xd */
 	if ( nsp_hash_find(H,"xd",&Ob) == FAIL) goto err;
 	scicos_scitod(Blocks->xd,Blocks->nx,1,Ob);
       }
@@ -443,6 +450,7 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
     scicos_scitod(Blocks->evout,Blocks->nevout,1,Ob);
     break;
   case 4 :
+  case 5 :
     if (Blocks->nz != 0) 
       {
 	if ( nsp_hash_find(H,"z",&Ob) == FAIL) goto err;
@@ -458,43 +466,22 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
 	scicos_scitod(Blocks->xd,Blocks->nx,1,Ob);
     }
     break;
-  case 5 :
-    if (Blocks->nz != 0) 
-      {
-	if ( nsp_hash_find(H,"z",&Ob) == FAIL) goto err;
-	if ( scicos_obj_to_mserial(Blocks->z,Blocks->nz,Ob)== FAIL) goto err;
-      }
-    if (Blocks->nx != 0) 
-      {
-	/* 8ieme element de la tlist x */
-	if ( nsp_hash_find(H,"x",&Ob) == FAIL) goto err;
-	scicos_scitod(Blocks->x,Blocks->nx,1,Ob);
-	/* 9 ieme element de la tlist xd */
-	if ( nsp_hash_find(H,"xd",&Ob) == FAIL) goto err;
-	scicos_scitod(Blocks->xd,Blocks->nx,1,Ob);
-      }
-    break;
   case 6 :
     if (Blocks->nz != 0) 
       {
-	/* 6ieme element de la tlist z */
 	if ( nsp_hash_find(H,"z",&Ob) == FAIL) goto err;
 	if ( scicos_obj_to_mserial(Blocks->z,Blocks->nz,Ob)== FAIL) goto err;
       }
     if (Blocks->nx != 0) 
       {
-	/* 8ieme element de la tlist x */
 	if ( nsp_hash_find(H,"x",&Ob) == FAIL) goto err;
 	scicos_scitod(Blocks->x,Blocks->nx,1,Ob);
-	/* 9 ieme element de la tlist xd */
 	if ( nsp_hash_find(H,"xd",&Ob) == FAIL) goto err;
 	scicos_scitod(Blocks->xd,Blocks->nx,1,Ob);
       }
-    /* 16ieme element de la tlist y */
     if (Blocks->nout!=0) 
       {
-	/* 16ieme element de la tlist y */
-	if ( nsp_hash_find(H,"y",&Ob) == FAIL) goto err;
+	if ( nsp_hash_find(H,"outptr",&Ob) == FAIL) goto err;
 	if ( scicos_list_to_vars(Blocks->outptr,Blocks->nout,Blocks->outsz,Ob)==FAIL) goto err;
       }
     break;
