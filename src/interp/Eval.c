@@ -511,7 +511,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		}
 	      else if ( nargs > 0)  
 		{
-		  Scierror("Strange: a while body evaluation return %d variables\n",nargs);
+		  Scierror("Strange: a while body evaluation returns %d variables\n",nargs);
 		}
 	    }
 	  return 0;
