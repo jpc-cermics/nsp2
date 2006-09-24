@@ -1834,14 +1834,12 @@ static int int_serial_munserialize(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *A;
   CheckRhs(1,1);
   CheckLhs(0,1);
-  NspSerial *a;
+  NspSerial *a=NULL;
   if (( A= GetRealMat(stack,1))== NULLMAT ) return RET_BUG;
   if (( a = nsp_matrix_to_serial(A)) == NULLSERIAL ) return RET_BUG;
-  if ((Obj = nsp_object_unserialize(a))==NULLOBJ)
-    {
-      nsp_serial_destroy(a);
-      return RET_BUG;
-    }
+  Obj = nsp_object_unserialize(a);
+  nsp_serial_destroy(a);
+  if ( Obj == NULLOBJ ) return RET_BUG;
   /* take care that nsp_object_unserialize returns a new object 
    * but with a name, we have to delete the name here otherwise 
    * Obj will be copied at return and we will have unfreed memory.

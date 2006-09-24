@@ -329,6 +329,7 @@ NspClassA *nsp_classa_copy(NspClassA *H)
 
 static int int_cla_create(Stack stack, int rhs, int opt, int lhs)
 {
+  NspMatrix *A;
   NspClassA *H;
   int color=-1,thickness=-1;
   /* first argument is a unused its a NspType */
@@ -336,7 +337,9 @@ static int int_cla_create(Stack stack, int rhs, int opt, int lhs)
   /* we first create a default object */
   if(( H = nsp_classa_create(NVOID,color,thickness,NULL)) == NULLCLA) return RET_BUG;
   /* then we use optional arguments to fill attributes */
+  A = H->classa_val;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+  if ( H->classa_val != A) nsp_matrix_destroy(A);
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 

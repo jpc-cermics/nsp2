@@ -414,6 +414,7 @@ void nsp_spcolmatrix_col_destroy(SpCol *Row)
       FREE( Row->J);
       FREE( Row->R);
     }
+  FREE(Row);
 }
 
 /**
@@ -434,7 +435,6 @@ void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat)
       for ( i = 0  ; i < Mat->n ; i++) 
 	{
 	  nsp_spcolmatrix_col_destroy(Mat->D[i]);
-	  FREE(Mat->D[i]);
 	}
       FREE(Mat->D);
       FREE(Mat) ;
@@ -1520,7 +1520,7 @@ int nsp_spcolmatrix_delete_cols(NspSpColMatrix *A, NspMatrix *Cols)
 static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix *Cols, int flag, int *err)
 {
   NspMatrix *Work= NULL, *Index = NULL;
-  NspSpColMatrix *Loc;
+  NspSpColMatrix *Loc=NULL;
   int rmin,rmax,cmin,cmax,i,j,Cn;
   if ( A->mn == 0) return nsp_spcolmatrix_create(NVOID,A->rc_type,0,0);
   if (flag == 1) 
@@ -1539,13 +1539,14 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
   if (  rmin < 1 ||  rmax > A->n ) 
     {
       *err=1;
-      return(NULLSPCOL);
+      goto err;
     }
   Cn= (flag == 1) ? Cols->mn : A->n;
   if ( (Loc =nsp_spcolmatrix_create(NVOID,A->rc_type,Rows->mn,Cn))== NULLSPCOL) 
-    return(NULLSPCOL);
+    goto err;
   /* used to store elements */
-  if ( ( Work = nsp_matrix_create(NVOID,'r',2,Rows->mn)) == NULLMAT) return NULLSPCOL;
+  if ( ( Work = nsp_matrix_create(NVOID,'r',2,Rows->mn)) == NULLMAT) 
+    goto err;
   
   for ( i = 0 ; i < Loc->n ; i++)
     {
@@ -1562,7 +1563,7 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
       Li->iw=0;
       count = nsp_bi_dichotomic_search(Rows->R,0,Rows->mn-1,Ai->J,imin,imax,Work,Index,0);
       /* now we know the column size */
-      if (nsp_spcolmatrix_resize_col(Loc,i,count)==FAIL) return NULLSPCOL;
+      if (nsp_spcolmatrix_resize_col(Loc,i,count)==FAIL) goto err;
       /* Fills the rows of i-th column */
       Li->iw=0;
       for ( j = 0 ; j < Li->size ; j++ )
@@ -1577,7 +1578,13 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
 	}
     }
   nsp_matrix_destroy(Work);
+  nsp_matrix_destroy(Index);
   return(Loc);
+ err:
+  if ( Work != NULL ) nsp_matrix_destroy(Work);
+  if ( Index != NULL) nsp_matrix_destroy(Index);
+  if ( Loc != NULL) nsp_spcolmatrix_destroy(Loc);
+  return NULL;
 }
 
 
@@ -4234,7 +4241,7 @@ int nsp_spcolmatrix_imagpart(NspSpColMatrix *A)
 	    {
 	      FREE( A->D[i]->J);
 	      FREE( A->D[i]->R);
-	      FREE( A->D[i]->C);
+	      /* FREE( A->D[i]->C); */
 	    }
 	  A->D[i]->size =0;
 	}

@@ -1982,8 +1982,11 @@ int nsp_matint_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
   ObjB = NthObj(rhs); HOBJ_GET_OBJECT(ObjB, RET_BUG);
 
   if ( ObjB == ObjA )
-    if ( (ObjB = nsp_object_copy(ObjA)) == NULLOBJ )
-      return RET_BUG;
+    {
+      if ( (ObjB = nsp_object_copy(ObjA)) == NULLOBJ )
+	return RET_BUG;
+      NthObj(rhs) = ObjB; /* we want be to be cleared at return */
+    }
 
   if ( rhs == 3 )
     {
@@ -2006,7 +2009,6 @@ int nsp_matint_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
   if ( nc > WORK_SIZE ) FREE(col);
   ObjA->ret_pos = 1;
   return 1;
-  
  err:
   if ( nr > WORK_SIZE ) FREE(row);
   if ( nc > WORK_SIZE ) FREE(col);
