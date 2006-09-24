@@ -1045,8 +1045,11 @@ static int int_cells_to_seq (Stack stack, int rhs, int opt, int lhs)
     {
       if ( C->objs[i-1] != NULLOBJ) 
 	{
+	  nsp_object_set_name(C->objs[i-1],NVOID);
 	  NthObj(count+1) = C->objs[i-1];
 	  NthObj(count+1)->ret_pos = i;
+
+
 	  C->objs[i-1]= NULLOBJ;
 	  count++;
 	}
