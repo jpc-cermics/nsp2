@@ -40,6 +40,8 @@ function sci_load(fname,varargin)
      case 1 then xval=sci_load_mat(F1);
      case 4 then xval=sci_load_bmat(F1);
      case 10 then xval=sci_load_smat(F1);
+     case 13 then sci_load_fun(F1);xval=[];
+      printf("Warning: Scilab coded function %s ignored\n",str);
      case 15 then xval=sci_load_list(F1,15);
      case 16 then xval=sci_load_list(F1,16);
      case 17 then xval=sci_load_list(F1,17);
@@ -118,6 +120,21 @@ function Str=sci_load_smat(F1)
   end
 endfunction
 
+function sci_load_fun(F1)
+// load a function 
+// utility function for sci_load
+// not that we do not try to convert the function code 
+// we just read the corresponding data to be able to skip 
+// saved function 
+// Copyright (C) 2006 Jean-Philippe Chancelier
+  nout=F1.get[n=1,type='il'];
+  nsiz=6;vv=F1.get[n=nout*nsiz+1,type='il'];
+  nin=vv($);
+  vv=F1.get[n=nin*nsiz+1,type='il'];
+  n=vv($);
+  vv=F1.get[n=n,type='il'];
+endfunction
+
 function L=sci_load_list(F1,type)
 // load a list 
 // utility function for sci_load
@@ -134,6 +151,8 @@ function L=sci_load_list(F1,type)
       select obj_type 
        case 1 then xval=sci_load_mat(F1);
        case 4 then xval=sci_load_bmat(F1);
+       case 13 then sci_load_fun(F1);xval=[];
+	printf("Warning: Scilab coded function ignored in list %s\n",str);
        case 10 then xval=sci_load_smat(F1);
        case 15 then xval=sci_load_list(F1,15);
        case 16 then xval=sci_load_list(F1,16);
@@ -142,7 +161,7 @@ function L=sci_load_list(F1,type)
 	error(sprintf('unknown type %d  while reloading a list element %d',obj_type,i));
 	return;
       end
-      L(i)=xval;
+      if obj_type<>13 then; L(i)=xval;end 
     end
   end
   if type == 16 then 
