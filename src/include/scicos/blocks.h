@@ -198,6 +198,7 @@ extern void scicos_cscope_block(scicos_block *block,int *flag);
 extern void scicos_cmscope_block(scicos_block *block,int *flag);
 extern void scicos_scalar2vector_block(scicos_block *block,int *flag);
 extern void scicos_evaluate_expr_block(scicos_block *block,int *flag);
+extern void scicos_cstblk4_block(scicos_block *block,int *flag);
 
 #endif 
 
@@ -229,6 +230,7 @@ scicos_block_table  tabsim[] ={
   {"cscope",(ScicosF) scicos_cscope_block},
   {"csslti",(ScicosF) scicos_csslti_block},
   {"cstblk",(ScicosF) scicos_cst_block},
+  {"cstblk4",(ScicosF) scicos_cstblk4_block},
   {"dband",(ScicosF) scicos_dband_block},
   {"deadband",(ScicosF) scicos_deadband_block},
   {"delay",(ScicosF) scicos_delay_block},

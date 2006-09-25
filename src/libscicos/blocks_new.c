@@ -1972,3 +1972,13 @@ void scicos_scalar2vector_block(scicos_block *block,int *flag)
     }
   }
 }
+
+void scicos_cstblk4_block(scicos_block *block,int *flag)
+{ 
+  /*
+   * Scicos block simulator
+   * output a vector of constants out(i)=rpar(i)
+   * rpar(1:nrpar) : given constants 
+   */
+  memcpy(block->outptr[0],block->rpar,block->nrpar*sizeof(double));    
+}
