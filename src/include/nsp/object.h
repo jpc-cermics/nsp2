@@ -33,7 +33,7 @@ typedef void *(loop_func) (char *str,void *,void *,int i,int *rep);
 typedef void *(path_func) (void *,void *);
 typedef void *(get_from_obj_func) (void *);
 typedef int (eq_func) (void *,void *);
-typedef int (save_func) (void *,void *);
+typedef int (save_func) (void *,const void *);
 typedef NspObject *(load_func) (void *);
 typedef int (init_func) (void *,void *);
 /* typedef AttrTab *(attrs_func) (void );*/

@@ -771,7 +771,7 @@ static NspSMatrix * writeproc_string(writeproc_buf *buf,int *ntot)
 
 
 
-NspObject *nsp_object_serialize(NspObject *O)
+NspObject *nsp_object_serialize(const NspObject *O)
 {
   NspObject *Obj=NULLOBJ;
   NspSMatrix *Res=NULLSMAT;
@@ -814,7 +814,7 @@ NspObject *nsp_object_serialize(NspObject *O)
 }
 
 
-NspObject *nsp_object_unserialize(NspSerial *S)
+NspObject *nsp_object_unserialize(const NspSerial *S)
 {
   NspObject *Obj;
   int hs= strlen(nsp_serial_header);

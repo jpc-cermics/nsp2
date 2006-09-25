@@ -386,7 +386,7 @@ static NspMethods *serial_get_methods(void) { return serial_methods;};
  * in a block state.
  */
 
-NspMatrix *nsp_serial_to_matrix(NspSerial *S)
+NspMatrix *nsp_serial_to_matrix(const NspSerial *S)
 {
   NspMatrix *A;
   int hs= strlen(nsp_serial_header);
@@ -404,7 +404,7 @@ NspMatrix *nsp_serial_to_matrix(NspSerial *S)
   return A;
 }
 
-NspSerial *nsp_matrix_to_serial(NspMatrix *A)
+NspSerial *nsp_matrix_to_serial(const NspMatrix *A)
 {
   NspSerial *S;
   int nbytes;

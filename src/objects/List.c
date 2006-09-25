@@ -46,7 +46,7 @@ extern NspObject *nsp_eval_macro_code(NspPList *PL, NspObject **O, NspList *args
  * Return value: 
  **/
 
-NspList*nsp_list_create(char *name)
+NspList*nsp_list_create(const char *name)
 {
   NspList *Loc = new_list();
 

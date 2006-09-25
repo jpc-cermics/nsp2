@@ -104,7 +104,7 @@ static NspObject *scicos_str2sci(const char *name,nsp_const_string x)
  * Return value: %OK or %FAIL
  **/
 
-static int scicos_obj_to_mserial(double *x,int nx, NspObject *Obj )
+static int scicos_obj_to_mserial(double *x,int nx,const NspObject *Obj )
 {
   int i; 
   NspObject *S;
@@ -171,7 +171,7 @@ static NspObject *scicos_mserial_to_obj(const char *name,const double *x,int nx)
  * Return value: 
  **/
 
-static int scicos_scitod(double x[],int mx,int nx, NspObject *Ob)
+static int scicos_scitod(double *x,int mx,int nx,const NspObject *Ob)
 {
   NspMatrix *M= ((NspMatrix *) Ob);
   int i;
@@ -197,7 +197,7 @@ static int scicos_scitod(double x[],int mx,int nx, NspObject *Ob)
  * Return value: 
  **/
 
-static int scicos_scitoi(int x[],int mx,int nx, NspObject *Ob)
+static int scicos_scitoi(int x[],int mx,int nx,const NspObject *Ob)
 {
   NspMatrix *M= ((NspMatrix *) Ob);
   int i;
@@ -210,7 +210,6 @@ static int scicos_scitoi(int x[],int mx,int nx, NspObject *Ob)
   for ( i = 0 ; i < Min(M->mn,mx*nx) ; i++) x[i]= M->R[i];
   return OK;
 }
-
 
 /**
  * scicos_list_to_vars:
@@ -248,7 +247,7 @@ static int scicos_list_to_vars(double *outptr[],int nout,int outsz[],NspObject *
  * Return value: 
  **/
 
-static NspObject *scicos_vars_to_list(char *name,double *inptr[],int nin,int insz[])
+static NspObject *scicos_vars_to_list(const char *name,double *inptr[],int nin,int insz[])
 {
   int k;
   NspList *Ob;
