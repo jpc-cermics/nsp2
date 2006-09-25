@@ -20,13 +20,17 @@ static int scicos_scifunc(  NspObject **Args,int mrhs,NspObject **Ret, int *mlhs
   switch (Scicos->params.scsptr_flag ) 
     {
     case  fun_macros: 
-      Sciprintf("Evaluate a given macro\n");
-      nsp_object_print( Scicos->params.scsptr,0,0,0);
+      /* 
+       *	 Sciprintf("Evaluate a given macro\n");
+       *	 nsp_object_print( Scicos->params.scsptr,0,0,0);
+       */
       return nsp_gtk_eval_function((NspPList *) Scicos->params.scsptr,Args, mrhs, Ret, mlhs);
       break;
     case fun_macro_name:
-      Sciprintf("Evaluate a macro given by its name: %s\n",
-		Scicos->params.scsptr);
+      /* 
+       *	 Sciprintf("Evaluate a macro given by its name: %s\n",
+       *	 Scicos->params.scsptr);
+       */
       return nsp_gtk_eval_function_by_name(Scicos->params.scsptr,Args, mrhs, Ret, mlhs);
     case fun_pointer: 
       Scierror("Internal error: Expecting a macro or macro name\n");
@@ -112,11 +116,9 @@ static int scicos_obj_to_mserial(double *x,int nx,const NspObject *Obj )
   if ( nx == 0) return OK; 
   if ((S = nsp_object_serialize(Obj))== NULLOBJ) return FAIL;
   /* serialize in a matrix */
-  if ((A = nsp_serial_to_matrix((NspSerial *) S))== NULLMAT) 
-    {
-      nsp_object_destroy(&S);
-      return FAIL;
-    }
+  A = nsp_serial_to_matrix((NspSerial *) S);
+  nsp_object_destroy(&S);
+  if ( A== NULLMAT)  return FAIL;
   if ( A->mn != nx ) 
     {
       Sciprintf("Error: cannot store a serialized nsp object (size %d) in double array (soze %d)\n",
@@ -247,7 +249,7 @@ static int scicos_list_to_vars(double *outptr[],int nout,int outsz[],NspObject *
  * Return value: 
  **/
 
-static NspObject *scicos_vars_to_list(const char *name,double *inptr[],int nin,int insz[])
+static NspObject *scicos_vars_to_list(const char *name,double **inptr,int nin,int *insz)
 {
   int k;
   NspList *Ob;
@@ -282,10 +284,11 @@ void  scicos_sciblk2(int *flag, int *nevprt, double *t, double *xd, double *x, i
 		     int *outsz, int *nout)
 {
   int mlhs=5,mrhs=8;
-  NspObject * Args[8];
-  NspObject * Ret[5];
+  int i;
+  NspObject *Args[8]={NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
+  NspObject *Ret[5]={NULL,NULL,NULL,NULL,NULL};
   
-  /* FIXME: give names to all */
+  /* we give no names to Args, they will be freed by scicos_scifunc */
   if ((Args[0]= scicos_itosci(NVOID,flag,1,1)) == NULL) goto err;
   if ((Args[1]= scicos_itosci(NVOID,nevprt,1,1)) == NULL) goto err;
   if ((Args[2]= scicos_dtosci(NVOID,t,1,1)) == NULL) goto err;
@@ -335,10 +338,13 @@ void  scicos_sciblk2(int *flag, int *nevprt, double *t, double *xd, double *x, i
 	}
       break;
     }
-  /* XXX : we must clear Ret variables */
+  for (i=0 ; i < mlhs ; i++)
+    {
+      if ( Ret[i] != NULLOBJ)  nsp_object_destroy(&Ret[i]);
+    }
   return;
  err: 
-    *flag=-1;
+  *flag=-1;
 }
 
 /* time added in block 
