@@ -1417,7 +1417,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	    {
 	      nsp_void_object_destroy(&stack.val->S[first+2]);
 	      stack.val->S[first+2]=NULLOBJ;
-	      return nsp_eval_maybe_accelerated_op("deleteelts", 2, &deleteelts_tab, stack,first,1,0,1); 
+	      return nsp_eval_maybe_accelerated_op("deleteelts", 2, &deleteelts_tab, stack,first,2,0,1); 
 	    }
 	  break;
 	case 2: 
