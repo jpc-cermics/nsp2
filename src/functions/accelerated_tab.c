@@ -1,59 +1,41 @@
+/* Nsp
+ * Copyright (C) 2006 Bruno Pinçon
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "FunTab.h"  /* FindFunction */
 #include "nsp/accelerated_tab.h"
 #include "nsp/plisttoken.h" /*for name_maxl **/
 #include "callfunc.h"
 
+static int matint_types[5];
 
-  static int matint_types[5];
-
-  AcceleratedTab  concatr_tab = { "concatr", 2, 
-				  5, matint_types,
-				  0, NULL};
-
-  AcceleratedTab concatd_tab = { "concatd", 2, 
-				 5, matint_types,
-				 0, NULL};
-
-  AcceleratedTab extract_tab = { "extract", 1, 
-				 5, matint_types,
-				 0, NULL};
-
-  AcceleratedTab extractelts_tab = { "extractelts", 1, 
-				     5, matint_types, 
-				     0, NULL};
-
-  AcceleratedTab extractcols_tab = { "extractcols", 1, 
-				     5, matint_types,
-				     0, NULL};
-
-  AcceleratedTab extractrows_tab = { "extractrows", 1, 
-				     5, matint_types,
-				     0, NULL};
-
-  AcceleratedTab resize2vect_tab = { "resize2vect", 1, 
-				     5, matint_types,
-				     0, NULL};
-
-  AcceleratedTab deleteelts_tab = { "deleteelts", 1,
-				    5, matint_types,
-				    0, NULL};
-  AcceleratedTab deletecols_tab = { "deletecols", 1,
-				    5, matint_types,
-				    0, NULL};
-
-  AcceleratedTab deleterows_tab = { "deleterows", 1,
-				    5, matint_types,
-				    0, NULL};
-
-  AcceleratedTab tozero_tab = { "tozero", 1,
-				5, matint_types,
-				0, NULL};
-
-  AcceleratedTab setrowscols_tab = { "setrowscols", 1, 
-				     5, matint_types,
-				     0, NULL};
-
-
+AcceleratedTab concatr_tab =     { "concatr",     2, 5, matint_types, 0, NULL};
+AcceleratedTab concatd_tab =     { "concatd",     2, 5, matint_types, 0, NULL};
+AcceleratedTab extract_tab =     { "extract",     1, 5, matint_types, 0, NULL};
+AcceleratedTab extractelts_tab = { "extractelts", 1, 5, matint_types, 0, NULL};
+AcceleratedTab extractcols_tab = { "extractcols", 1, 5, matint_types, 0, NULL};
+AcceleratedTab extractrows_tab = { "extractrows", 1, 5, matint_types, 0, NULL};
+AcceleratedTab resize2vect_tab = { "resize2vect", 1, 5, matint_types, 0, NULL};
+AcceleratedTab deleteelts_tab =  { "deleteelts",  1, 5, matint_types, 0, NULL};
+AcceleratedTab deletecols_tab =  { "deletecols",  1, 5, matint_types, 0, NULL};
+AcceleratedTab deleterows_tab =  { "deleterows",  1, 5, matint_types, 0, NULL};
+AcceleratedTab tozero_tab =      { "tozero",      1, 5, matint_types, 0, NULL};
+AcceleratedTab setrowscols_tab = { "setrowscols", 1, 5, matint_types, 0, NULL};
 
 static int init_func_tab(AcceleratedTab *tab)
 {
@@ -70,7 +52,7 @@ static int init_func_tab(AcceleratedTab *tab)
   tab->length = type_id_max;
   if ( (tab->func=malloc(tab->length*sizeof(function *))) == NULL )
     {
-      Sciprintf("\n Warning: enable to allocate the %s accelerated func tab",tab->opname);
+      Sciprintf("Warning: enable to allocate the %s accelerated func tab\n",tab->opname);
       return FAIL;
     }
   for ( i = 0 ; i < tab->length ; i++ )
@@ -95,16 +77,15 @@ static int init_func_tab(AcceleratedTab *tab)
 	  while ( *str != '\0' ) *name++ = *str++;
 	}
       *name = '\0';
-
       if ( FindFunction(op_typed, &Int, &Num) == OK ) 
-	  (*(Interfaces[Int].info))(Num, &nothing, &(tab->func[tab->accelerated_types[i]-1]));
+	(*(Interfaces[Int].info))(Num, &nothing, &(tab->func[tab->accelerated_types[i]-1]));
       else
-	Sciprintf("\n Warning: %s not found (building the accelerated table)", op_typed);
+	Sciprintf("Warning: %s not found (building the accelerated table)\n", op_typed);
     }
   return OK;
 }
 
-int nsp_init_accelerated_tabs()
+int nsp_init_accelerated_tabs(void)
 {
   matint_types[0] = nsp_type_matrix_id;
   matint_types[1] = nsp_type_smatrix_id;
@@ -130,8 +111,5 @@ int nsp_init_accelerated_tabs()
 
 function *nsp_get_fast_function(AcceleratedTab *tab, int type_id)
 {
-  if ( type_id > tab->length )
-    return (function *) 0;
-  else
-    return tab->func[type_id-1];
+  return ( type_id > tab->length ) ? NULL : tab->func[type_id-1];
 }
