@@ -51,7 +51,6 @@ int nsp_sprow_update_from_triplet( NspSpRowMatrix *M)
   for ( i = 0  ; i < M->m ; i++) 
     {
       nsp_sprowmatrix_row_destroy(M->D[i]);
-      FREE(M->D[i]);
     }
   FREE(M->D);
   M->m= M->n = 0;
@@ -145,7 +144,6 @@ static int nsp_sprow_update_from_triplet_internal( NspSpRowMatrix *M)
       for ( i = M->triplet.m ; i < M->m ; i++)
 	{
 	  nsp_sprowmatrix_row_destroy(M->D[i]);
-	  FREE(M->D[i]);
 	  M->D[i]= NULL;
 	}
     }

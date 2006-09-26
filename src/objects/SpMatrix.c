@@ -202,6 +202,7 @@ void nsp_sprowmatrix_row_destroy(SpRow *Row)
       FREE( Row->J);
       FREE( Row->R);
     }
+  FREE(Row);
 }
 
 /**
