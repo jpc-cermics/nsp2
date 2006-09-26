@@ -162,6 +162,7 @@ int nsp_type_object_init(void);
 
 #ifndef HAVE_INLINE 
 extern int check_cast(void *obj,NspTypeId id);
+extern int nsp_get_id_from_object(NspObject *Obj);
 #else
 /* include an inlined version */ 
 #define NSP_OBJECT_INLINED static inline 
@@ -385,6 +386,7 @@ extern int nsp_object_set_name(NspObject *O,const char *str);
 extern int print_count_rows(Stack stack,int first_arg,int last_arg);
 extern const char *nsp_object_set_initial_name(NspObject *ob,const char *name);
 extern void nsp_object_destroy_name(NspObject *ob);
+extern char *nsp_get_short_string_from_id(int id);
 
 
 #endif /*  NSP_TYPE_OBJECT  */

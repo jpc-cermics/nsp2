@@ -3206,7 +3206,102 @@ int_mx_mopscal_mtlb (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM
     }
   return 1;
 }
-#endif 
+/* static int */
+/* int_mx_mopscal_mtlb(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3) */
+/* { */
+/*   NspMatrix *HMat1, *HMat2, *HMat3; */
+/*   int HMat1_has_no_name, HMat2_has_no_name; */
+/*   CheckRhs (2, 2); */
+/*   CheckLhs (1, 1); */
+
+/*   if ( (HMat1 =GetMat(stack, 1)) == NULLMAT ) */
+/*     return RET_BUG; */
+/*   HMat1_has_no_name = Ocheckname(HMat1,NVOID); */
+  
+/*   if ( (HMat2 =GetMat(stack, 2)) == NULLMAT ) */
+/*     return RET_BUG; */
+/*   HMat2_has_no_name = Ocheckname(HMat2,NVOID); */
+
+/*   if ( HMat1->mn == 1 ) */
+/*     { */
+/*       if ( HMat2->mn == 1 ) */
+/* 	{ */
+/* 	  if ( HMat1_has_no_name ) */
+/* 	    { */
+/* 	      if ( (*F1)(HMat1, HMat2) == FAIL ) */
+/* 		return RET_BUG; */
+/* 	      NSP_OBJECT (HMat1)->ret_pos = 1; */
+/* 	    } */
+/* 	  else if ( HMat2_has_no_name ) */
+/* 	    { */
+/* 	      if ( (*F3)(HMat2, HMat1) == FAIL ) */
+/* 		return RET_BUG; */
+/* 	      NSP_OBJECT (HMat2)->ret_pos = 1; */
+/* 	    } */
+/* 	  else */
+/* 	    { */
+/* 	      if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT ) */
+/* 		return RET_BUG; */
+/* 	      if ( (*F1)(HMat3, HMat2) == FAIL ) */
+/* 		return RET_BUG; */
+/* 	      MoveObj(stack, 1, (NspObject *) HMat3); */
+/* 	    } */
+/* 	} */
+/*       else /\* HMat2 is not a scalar *\/  */
+/* 	{ */
+/* 	  if ( HMat2_has_no_name ) */
+/* 	    { */
+/* 	      if ( (*F3)(HMat2, HMat1) == FAIL ) */
+/* 		return RET_BUG; */
+/* 	      NSP_OBJECT (HMat2)->ret_pos = 1; */
+/* 	    } */
+/* 	  else */
+/* 	    { */
+/* 	      if ( (HMat3 =nsp_matrix_copy(HMat2)) == NULLMAT ) */
+/* 		return RET_BUG; */
+/* 	      if ( (*F3)(HMat3, HMat1) == FAIL ) */
+/* 		return RET_BUG; */
+/* 	      MoveObj(stack, 1, (NspObject *) HMat3); */
+/* 	    } */
+/* 	} */
+/*     } */
+/*   else if ( HMat2->mn == 1 ) */
+/*     { */
+/*       if ( HMat1_has_no_name ) */
+/* 	{ */
+/* 	  if ( (*F1)(HMat1, HMat2) == FAIL ) */
+/* 	    return RET_BUG; */
+/* 	  NSP_OBJECT (HMat1)->ret_pos = 1; */
+/* 	} */
+/*       else */
+/* 	{ */
+/* 	  if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT ) */
+/* 	    return RET_BUG; */
+/* 	  if ( (*F1)(HMat3, HMat2) == FAIL ) */
+/* 	    return RET_BUG; */
+/* 	  MoveObj(stack, 1, (NspObject *) HMat3); */
+/* 	} */
+/*     } */
+/*   else */
+/*     { */
+/*       if ( HMat1_has_no_name ) */
+/* 	{ */
+/* 	  if ( (*F2)(HMat1, HMat2) == FAIL ) */
+/* 	    return RET_BUG; */
+/* 	  NSP_OBJECT (HMat1)->ret_pos = 1; */
+/* 	} */
+/*       else */
+/* 	{ */
+/* 	  if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT ) */
+/* 	    return RET_BUG; */
+/* 	  if ( (*F2)(HMat3, HMat2) == FAIL ) */
+/* 	    return RET_BUG; */
+/* 	  MoveObj(stack, 1, (NspObject *) HMat3); */
+/* 	} */
+/*     } */
+/*   return 1; */
+/* } */
+#endif
 
 
 /*
@@ -3461,7 +3556,7 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
   if ( (HMat2 = GetMat(stack, 2)) == NULLMAT )
     return RET_BUG;
 
-  if ( HMat1->mn == 1 )  
+  if ( HMat1->mn == 1 )
     {
       if ( (HMat2 = GetMatCopy(stack, 2)) == NULLMAT )
 	return RET_BUG;
@@ -3474,7 +3569,7 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
       if ( (HMat1 = GetMatCopy(stack, 1)) == NULLMAT )
 	return RET_BUG;
       if ( nsp_mat_mult_scalar_bis(HMat1, HMat2) == FAIL )
-	return RET_BUG;	   
+	return RET_BUG;
       NSP_OBJECT(HMat1)->ret_pos = 1;
     }
   else
@@ -3485,6 +3580,86 @@ int_mxmult (Stack stack, int rhs, int opt, int lhs)
     }
   return 1;
 }
+/* int */
+/* int_mxmult (Stack stack, int rhs, int opt, int lhs) */
+/* { */
+/*   NspMatrix *HMat1, *HMat2, *HMat3; */
+/*   CheckRhs (2, 2); */
+/*   CheckLhs (1, 1); */
+
+/*   if ( (HMat1 =GetMat(stack, 1)) == NULLMAT ) */
+/*     return RET_BUG; */
+/*   if ( (HMat2 = GetMat(stack, 2)) == NULLMAT ) */
+/*     return RET_BUG; */
+
+/*   if ( HMat1->mn == 1 ) */
+/*     { */
+/*       if ( HMat2->mn == 1 ) */
+/* 	{ */
+/* 	  if ( Ocheckname(HMat1,NVOID) ) */
+/* 	    { */
+/* 	      if ( nsp_mat_mult_scalar_bis(HMat1, HMat2) == FAIL ) */
+/* 		return RET_BUG; */
+/* 	      NSP_OBJECT(HMat1)->ret_pos = 1; */
+/* 	    } */
+/* 	  else if ( Ocheckname(HMat2,NVOID) ) */
+/* 	    { */
+/* 	      if ( nsp_mat_mult_scalar_bis(HMat2, HMat1) == FAIL ) */
+/* 		return RET_BUG; */
+/* 	      NSP_OBJECT(HMat2)->ret_pos = 1; */
+/* 	    } */
+/* 	  else */
+/* 	    { */
+/* 	      if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT ) */
+/* 		return RET_BUG; */
+/* 	      if ( nsp_mat_mult_scalar_bis(HMat3, HMat2) == FAIL ) */
+/* 		return RET_BUG; */
+/* 	      MoveObj(stack, 1, (NspObject *) HMat3); */
+/* 	    } */
+/* 	} */
+/*       else */
+/* 	{ */
+/* 	  if ( Ocheckname(HMat2,NVOID) ) */
+/* 	    { */
+/* 	      if ( nsp_mat_mult_scalar_bis(HMat2, HMat1) == FAIL ) */
+/* 		return RET_BUG; */
+/* 	      NSP_OBJECT(HMat2)->ret_pos = 1; */
+/* 	    } */
+/* 	  else */
+/* 	    { */
+/* 	      if ( (HMat3 =nsp_matrix_copy(HMat2)) == NULLMAT ) */
+/* 		return RET_BUG; */
+/* 	      if ( nsp_mat_mult_scalar_bis(HMat3, HMat1) == FAIL ) */
+/* 		return RET_BUG; */
+/* 	      MoveObj(stack, 1, (NspObject *) HMat3); */
+/* 	    } */
+/* 	} */
+/*     } */
+/*   else if ( HMat2->mn == 1 ) */
+/*     { */
+/*       if ( Ocheckname(HMat1,NVOID) ) */
+/* 	{ */
+/* 	  if ( nsp_mat_mult_scalar_bis(HMat1, HMat2) == FAIL ) */
+/* 	    return RET_BUG; */
+/* 	  NSP_OBJECT(HMat1)->ret_pos = 1; */
+/* 	} */
+/*       else */
+/* 	{ */
+/* 	  if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT ) */
+/* 	    return RET_BUG; */
+/* 	  if ( nsp_mat_mult_scalar_bis(HMat3, HMat2) == FAIL ) */
+/* 	    return RET_BUG; */
+/* 	  MoveObj(stack, 1, (NspObject *) HMat3); */
+/* 	} */
+/*     } */
+/*   else */
+/*     { */
+/*       if ( (HMat3 = nsp_mat_mult(HMat1, HMat2)) == NULLMAT ) */
+/* 	return RET_BUG; */
+/*       MoveObj(stack, 1, (NspObject *) HMat3); */
+/*     } */
+/*   return 1; */
+/* } */
 #else
 int
 int_mxmult (Stack stack, int rhs, int opt, int lhs)
@@ -3993,11 +4168,11 @@ int int_harmloop1(Stack stack, int rhs, int opt, int lhs)
       Ob1 =(NspMatrix *) nsp_new_double_obj(1.0); 
       NthObj(2)= NSP_OBJECT(Ob1);
       NthObj(3)= NSP_OBJECT(M1);
-      if (( rep = nsp_eval_func(NULL,"div",stack,stack.first+1,2,0,1)) <0 )
+      if (( rep = nsp_eval_func(NULL,"div",2,stack,stack.first+1,2,0,1)) <0 )
 	  return RET_BUG;
       NthObj(3)=NthObj(2);
       NthObj(2)=Ob;
-      if (( rep = nsp_eval_func(NULL,"plus",stack,stack.first+1,2,0,1)) <0 )
+      if (( rep = nsp_eval_func(NULL,"plus",2,stack,stack.first+1,2,0,1)) <0 )
 	  return RET_BUG;
     }
   NthObj(2)->ret_pos  = 1;
@@ -4113,7 +4288,7 @@ static OpTab Matrix_func[] = {
   {"complexify_m", int_mxcomplexify},
   {"concatd_m_m", int_mxconcatd},
   /* {"concatr_m_m", int_mxconcatr}, */
-  {"concatr_m_m", nsp_matint_concat_right_xx},
+  {"concatr_m_m", nsp_matint_concatr_xx},
   {"concatr_b_m", int_mxconcatr_mb},
   {"concatr_m_b", int_mxconcatr_mb}, 
   {"create_m_m", int_mxcreate},
@@ -4128,6 +4303,16 @@ static OpTab Matrix_func[] = {
   {"diage_m_m", int_mxdiage},
   {"diagset_m", int_mxdiagset},
   {"eq_m_m", int_mxeq},
+  {"extract_m", nsp_matint_extract_xx}, 
+  {"extractelts_m", nsp_matint_extractelts_xx}, 
+  {"extractcols_m", nsp_matint_extractcols_xx}, 
+  {"extractrows_m", nsp_matint_extractrows_xx}, 
+  {"resize2vect_m", nsp_matint_resize2vect_xx},
+  {"setrowscols_m", nsp_matint_setrowscols_xx},
+  {"deleteelts_m", nsp_matint_deleteelts_xx},
+  {"deleterows_m", nsp_matint_deleterows_xx},
+  {"deletecols_m", nsp_matint_deletecols_xx},
+  {"tozero_m", nsp_matint_tozero_xx},
   {"eye_m_m", int_mxeye},
   {"ones_m_m", int_mxones},
   {"zeros_m_m", int_mxzeros},

@@ -235,7 +235,7 @@ int int_mxtest(Stack stack, int rhs, int opt, int lhs)
   /* second argument is a PList **/
   NthObj(3) = NthObj(1);
   /* Here we have the choice XXXXX NULLOBJ or a PList **/
-  if ( (n=nsp_eval_func(NULLOBJ,NSP_OBJECT(P)->name,stack,stack.first+2,1,0,1)) < 0 ); return RET_BUG;
+  if ( (n=nsp_eval_func(NULLOBJ,NSP_OBJECT(P)->name,2,stack,stack.first+2,1,0,1)) < 0 ); return RET_BUG;
   NthObj(1) = NthObj(3);
   NthObj(3) = NULLOBJ;
   return 1;

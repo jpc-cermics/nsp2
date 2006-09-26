@@ -1314,7 +1314,7 @@ nspg_closure_marshal(GClosure *closure,
 
   /* Calling a macro func is a macro coded in P_PList **/
   
-  if ((n=nsp_eval_func((NspObject *)pc->callback,NspFname(Marshal_stack),Marshal_stack,Marshal_stack.first,nargs,0,-1)) < 0 )
+  if ((n=nsp_eval_func((NspObject *)pc->callback,NspFname(Marshal_stack),2,Marshal_stack,Marshal_stack.first,nargs,0,-1)) < 0 )
     {
       nsp_error_message_show();
       goto end; 
@@ -1389,7 +1389,7 @@ static int _nsp_gtk_eval_function(NspPList *func,char *fname,NspObject *args[],i
   for (i = 0; i < n_args ; i++) 
     Marshal_stack.val->S[Marshal_stack.first + nargs++]= args[i];
   /*Calling func is a macro coded in P_PList **/
-  if ((n=nsp_eval_func((NspObject *) func,  NspFname(Marshal_stack),Marshal_stack,Marshal_stack.first,nargs,0,*nret)) < 0 )
+  if ((n=nsp_eval_func((NspObject *) func,  NspFname(Marshal_stack),2,Marshal_stack,Marshal_stack.first,nargs,0,*nret)) < 0 )
     {
       nsp_error_message_show();
       goto end; 

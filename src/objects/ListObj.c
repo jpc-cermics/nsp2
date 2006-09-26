@@ -980,7 +980,7 @@ static int int_lxextract_l(Stack stack, int rhs, int opt, int lhs)
   if ( (rep = ListFollowExtract(stack,rhs,opt,lhs)) < 0 ) return rep; 
   /* last extraction : here O can be anything */ 
   nsp_build_funcname("extractelts",stack,stack.first+1,1,name);
-  if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first+1,2,0,1)) < 0) 
+  if ((n=nsp_eval_func(NULLOBJ,name,2,stack,stack.first+1,2,0,1)) < 0) 
     {
       return RET_BUG;
     }

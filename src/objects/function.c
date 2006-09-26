@@ -391,7 +391,7 @@ static int int_func_extractelts(Stack stack, int rhs, int opt, int lhs)
   NspFunction  *F;
   if ( (F = GetFunction(stack,1)) == NULLFUNC) return RET_BUG;
   /* since we want name mangling we just use the function name */
-  if (nsp_eval_func(NULL,F->fname,stack,stack.first+1,rhs-1,opt,1)== RET_BUG ) 
+  if (nsp_eval_func(NULL,F->fname,2,stack,stack.first+1,rhs-1,opt,1)== RET_BUG ) 
     return RET_BUG;
   NthObj(2)->ret_pos = 1;
   return 1;

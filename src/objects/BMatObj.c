@@ -1072,6 +1072,16 @@ static int int_bmatrix_feq(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab BMatrix_func[]={
+  {"extract_b", nsp_matint_extract_xx}, 
+  {"extractelts_b", nsp_matint_extractelts_xx}, 
+  {"extractcols_b", nsp_matint_extractcols_xx}, 
+  {"extractrows_b", nsp_matint_extractrows_xx}, 
+  {"resize2vect_b", nsp_matint_resize2vect_xx},
+  {"setrowscols_b", nsp_matint_setrowscols_xx},
+  {"deleteelts_b", nsp_matint_deleteelts_xx},
+  {"deleterows_b", nsp_matint_deleterows_xx},
+  {"deletecols_b", nsp_matint_deletecols_xx},
+  {"tozero_b", nsp_matint_tozero_xx},
   {"latexmat_b",int_bmatrix_2latexmat},
   {"latextab_b",int_bmatrix_2latextab},
   {"addcols_b_m",int_bmatrix_addcols},

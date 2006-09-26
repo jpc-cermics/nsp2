@@ -1107,6 +1107,16 @@ static int int_cells_unique(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab Cells_func[]={
+  {"extract_ce", nsp_matint_extract_xx}, 
+  {"extractelts_ce", nsp_matint_extractelts_xx}, 
+  {"extractcols_ce", nsp_matint_extractcols_xx}, 
+  {"extractrows_ce", nsp_matint_extractrows_xx}, 
+  {"resize2vect_ce", nsp_matint_resize2vect_xx},
+  {"setrowscols_ce", nsp_matint_setrowscols_xx},
+  {"deleteelts_ce", nsp_matint_deleteelts_xx},
+  {"deleterows_ce", nsp_matint_deleterows_xx},
+  {"deletecols_ce", nsp_matint_deletecols_xx},
+  {"tozero_ce", nsp_matint_tozero_xx},
   {"loopextract_m_ce",int_cells_extractcolforloop},  /* a voir (inutile ?)*/
   {"cells_create",int_cells_create},
   {"col_cells_create", int_col_cells_create},

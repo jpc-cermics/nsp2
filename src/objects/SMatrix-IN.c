@@ -1166,12 +1166,22 @@ int int_smatrix_strtod(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab SMatrix_func[]={
+  {"extract_s", nsp_matint_extract_xx}, 
+  {"extractelts_s", nsp_matint_extractelts_xx}, 
+  {"extractcols_s", nsp_matint_extractcols_xx}, 
+  {"extractrows_s", nsp_matint_extractrows_xx}, 
+  {"resize2vect_s", nsp_matint_resize2vect_xx},
+  {"setrowscols_s", nsp_matint_setrowscols_xx},
+  {"deleteelts_s", nsp_matint_deleteelts_xx},
+  {"deleterows_s", nsp_matint_deleterows_xx},
+  {"deletecols_s", nsp_matint_deletecols_xx},
+  {"tozero_s", nsp_matint_tozero_xx},
   {"latexmat_s",int_smatrix_2latexmat},
   {"latextab_s",int_smatrix_2latextab},
   {"loopextract_m_s",int_smxextractcolforloop}, /* ne sert plus */
   {"smat_create",int_smxcreate},
   {"redim_s",int_matint_redim},
-  {"concatr_s_s",int_smxconcatr},
+  {"concatr_s_s",nsp_matint_concatr_xx},
   {"concatr_m_s",int_smxconcatr_m_s},
   {"addcols_s_m",int_smxaddcols},
   {"concatd_s_s",int_smxconcatd},

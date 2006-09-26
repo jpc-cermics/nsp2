@@ -30,6 +30,7 @@
 #include "nsp/stack.h" 
 #include "nsp/parse.h" 
 #include "nsp/matint.h" 
+#include "nsp/accelerated_tab.h"
 #include "Functions.h" 
 #include "Eval.h" 
 #include "../functions/FunTab.h"
@@ -70,6 +71,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
  *nsp_eval_func:
  * @O: 
  * @str: 
+ * @msuffix:
  * @stack: 
  * @first: 
  * @rhs: 
@@ -93,8 +95,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
  * 
  * Return value: #RET_BUG or the number of returned arguments
  **/
-
-int nsp_eval_func(NspObject *O,const char *str, Stack stack, int first, int rhs, int opt, int lhs)
+int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int first, int rhs, int opt, int lhs)
 {
   NspObject *M;
   char name[NAME_MAXL];
@@ -115,81 +116,63 @@ int nsp_eval_func(NspObject *O,const char *str, Stack stack, int first, int rhs,
     }
   else 
     {
-      if ( str[0] == '@' )
+      /* Build a new name according to arguments type not using optional arguments 
+       * we first build the most specialized name (i.e based on Min(rhs-op,2)) 
+       */ 
+      int nb_suffix = Min(msuffix, rhs-opt);
+
+      nsp_build_funcname(str,stack,first,nb_suffix,name);
+      if (debug) Sciprintf("[test function Evaluation]--> search  [%s] \n",name);
+      if ( FindFunction(name,&Int,&Num) == OK) 
 	{
-	  /* no name mangling */
-	  if ( FindFunction(str+1,&Int,&Num) == OK) 
+	  /* Call a primitive with name depending on argument types */
+	  NspFname(stack) = name ;
+	  return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
+	}
+      if ( (M=nsp_find_macro(name)) != NULLOBJ) 
+	{
+	  return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
+	}
+      
+      if ( nb_suffix >= 2 ) 
+	{
+	  /* just try with one argument */
+	  nsp_build_funcname(str,stack,first,1,name1);
+	  if ( FindFunction(name1,&Int,&Num) == OK ) 
 	    {
-	      /* Call a primitive with name depending on argument types */
-	      NspFname(stack) = str+1;
+	      /* Call a primitive with name depending on first argument type */
+	      NspFname(stack) = name1 ;
 	      return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
 	    }
-	  if ( (M=nsp_find_macro(str+1)) != NULLOBJ) 
+	  if ( (M=nsp_find_macro(name1)) != NULLOBJ) 
 	    {
 	      return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
 	    }
-	  Scierror("Error:\tUnknown function %s \n",str+1);
-	  /*clean the stack */
-	  reorder_stack(stack,0);
-	  return RET_BUG;
 	}
-      else 
+      
+      if ( nb_suffix >= 1 )
 	{
-	  /* Build a new name according to arguments type not using optional arguments 
-	   * we first build the most specialized name (i.e based on Min(rhs-op,2)) 
-	   */ 
-	  nsp_build_funcname(str,stack,first,rhs-opt,name);
-	  if (debug) Sciprintf("[test function Evaluation]--> search  [%s] \n",name);
-	  if ( FindFunction(name,&Int,&Num) == OK) 
+	  /* try with just str  **/
+	  if ( FindFunction(str,&Int,&Num) == OK ) 
 	    {
-	      /* Call a primitive with name depending on argument types */
-	      NspFname(stack) = name ;
+	      NspFname(stack) = str ;
 	      return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
 	    }
-	  if ( (M=nsp_find_macro(name)) != NULLOBJ) 
+	  if ( (M=nsp_find_macro(str)) != NULLOBJ) 
 	    {
 	      return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
 	    }
-
-	  if ( rhs -opt >= 2 ) 
-	    {
-	      /* just try with one argument */
-	      nsp_build_funcname(str,stack,first,1,name1);
-	      if ( FindFunction(name1,&Int,&Num) == OK ) 
-		{
-		  /* Call a primitive with name depending on first argument type */
-		  NspFname(stack) = name1 ;
-		  return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
-		}
-	      if ( (M=nsp_find_macro(name1)) != NULLOBJ) 
-		{
-		  return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
-		}
-	    }
-
-	  if ( rhs -opt >= 1 )
-	    {
-	      /* try with just str  **/
-	      if ( FindFunction(str,&Int,&Num) == OK ) 
-		{
-		  NspFname(stack) = str ;
-		  return(nsp_interfaces(Int,Num,stack,rhs,opt,lhs));
-		}
-	      if ( (M=nsp_find_macro(str)) != NULLOBJ) 
-		{
-		  return(nsp_eval_macro(M,stack,first,rhs,opt,lhs));
-		}
-	    }
-	  /* take care that name1 is to be used only 
-	   * for ( rhs -opt >= 2 ) 
-	   */
-	  FuncEvalErrorMess(str,rhs,opt,name,name1);
-	  /*clean the stack */
-	  reorder_stack(stack,0);
-	  return RET_BUG;
 	}
+      /* take care that name1 is to be used only 
+       * for ( rhs -opt >= 2 ) 
+       */
+      FuncEvalErrorMess(str,rhs,opt,name,name1);
+      /*clean the stack */
+      reorder_stack(stack,0);
+      return RET_BUG;
     }
 }
+
 
 /**
  *nsp_eval_dotplus:
@@ -233,7 +216,7 @@ int nsp_eval_dotplus(Stack stack, int first, int rhs, int opt, int lhs)
        * Nsp_frames_search_op_object
        */
       o1 =nsp_frames_search_object(name);
-      return nsp_eval_func(o1,name,stack,first,rhs,opt,lhs);
+      return nsp_eval_func(o1,name,2,stack,first,rhs,opt,lhs);
     }
   return ret;
 }
@@ -320,133 +303,65 @@ int nsp_eval_method(char *str, Stack stack, int first, int rhs, int opt, int lhs
 
 int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 {
-  char name[NAME_MAXL];
-  int n, ret_val;
+  int n;
   stack.first = first;
 
-  HOBJ_GET_OBJECT(stack.val->S[stack.first], RET_BUG);
-
-  if ( check_implements(stack.val->S[stack.first], nsp_type_matint_id) != NULL ) 
+  if ( rhs == 2 )
     {
-      /* the object under extraction implement the matint interface */
-      /* doit-on vérifier que opt = 0 et lhs = 1 ? */
-      if ( rhs == 2 )
+      if ( IsIVect(stack.val->S[stack.first+1] ))       /* x(:) */
 	{
-	  if ( IsIVect(stack.val->S[stack.first+1] ))     /* x(:) */
+	  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
+	  n = nsp_eval_maybe_accelerated_op("resize2vect", 1, &resize2vect_tab, 
+					    stack,stack.first, 1, 0, 1);
+	}
+      else                                              /* x(i) */           
+	{
+	  n = nsp_eval_maybe_accelerated_op("extractelts", 1, &extractelts_tab,
+					    stack,stack.first, 2, 0, 1);
+	}
+    }
+  else if ( rhs == 3 )
+    {
+      if (IsIVect(stack.val->S[stack.first+1]) )
+	{
+	  if (IsIVect(stack.val->S[stack.first+2]) )    /* x(:,:) --> keep x unchanged */
+	    {
+	      nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+3);
+	      n = 1;
+	    }
+	  else 		                                /* x(:,j) */
 	    {
 	      nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
-	      NspFname(stack) = "resize2vect" ;
-	      ret_val = call_interf((function *) nsp_matint_resize2vect_xx, stack, 1, 0, lhs);
-	    }
-	  else               
-	    {
-	      /* x(i) */
-	      NspFname(stack) = "extractelts" ;
-	      ret_val = call_interf((function *) nsp_matint_extractelts_xx, stack, 2, 0, lhs);
+	      stack.val->S[stack.first+1] = stack.val->S[stack.first+2];
+	      stack.val->S[stack.first+2] = NULLOBJ;
+	      n = nsp_eval_maybe_accelerated_op("extractcols", 1, &extractcols_tab,
+						stack,stack.first, 2, 0, 1);
 	    }
 	}
-      else if ( rhs == 3 )
+      else 
 	{
-	  if (IsIVect(stack.val->S[stack.first+1]) )
+	  if (IsIVect(stack.val->S[stack.first+2]) )    /* x(i,:) */
 	    {
-	      if (IsIVect(stack.val->S[stack.first+2]) )  /* x(:,:) --> keep x unchanged */
-		{
-		  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+3);
-		  ret_val = 1;
-		}
-	      else 		                          /* x(:,j) */
-		{
-		  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
-		  stack.val->S[stack.first+1] = stack.val->S[stack.first+2];
-		  stack.val->S[stack.first+2] = NULLOBJ;
-		  NspFname(stack) = "extractcols";
-		  ret_val = call_interf((function *) nsp_matint_extractcols_xx, stack, 2, 0, lhs);
-		}
+	      nsp_void_seq_object_destroy(stack,stack.first+2,stack.first+3);
+	      n = nsp_eval_maybe_accelerated_op("extractrows", 1, &extractrows_tab,
+						stack,stack.first, 2, 0, 1);
 	    }
-	  else 
+	  else                                          /* x(i,j) */
 	    {
-	      if (IsIVect(stack.val->S[stack.first+2]) )  /* x(i,:) */
-		{
-		  nsp_void_seq_object_destroy(stack,stack.first+2,stack.first+3);
-		  NspFname(stack) = "extractrows";
-		  ret_val = call_interf((function *) nsp_matint_extractrows_xx, stack, 2, 0, lhs);
-		}
-	      else 
-		{                                 
-		  /* x(i,j) */
-		  NspFname(stack) = "extract";
-		  ret_val = call_interf((function *) nsp_matint_extract_xx, stack, 3, 0, lhs);
-		}
+	      n = nsp_eval_maybe_accelerated_op("extract", 1, &extract_tab,
+						stack,stack.first, 3, 0, 1);
 	    }
 	}
-      else  /* rhs > 3  currently not implemented */
-	{
-	  /* voir pour le message d'erreur */
-	  ret_val = -1;
-	}
-      if ( ret_val < 0 )  return RET_BUG ; else return 1;
     }
-  else
+  else  /* rhs > 3  currently not implemented */
     {
-      /*special cases x(:), x(:,y) , x(y,:), x(:,:) **/
-      switch ( rhs ) 
-	{
-	case  2 :
-	  if ( IsIVect(stack.val->S[stack.first+1] ))
-	    {
-	      /* x(:) just a resize or a full list extraction **/
-	      nsp_build_funcname("@resize2vect",stack,stack.first,1,name);
-	      nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
-	      if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first,1,0,1)) < 0)  return RET_BUG;
-	      return n;
-	    }
-	  break;
-	case 3: 
-	  if (IsIVect(stack.val->S[stack.first+1]) )
-	    {
-	      if (IsIVect(stack.val->S[stack.first+2]) )
-		{
-		  /*x(:,:) --> keep x unchanged **/
-		  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+3);
-		  return 1;
-		}
-	      else
-		{
-		  /*x(:,<expr>) **/
-		  nsp_build_funcname("@extractcols",stack,stack.first,1,name);
-		  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
-		  stack.val->S[stack.first+1] = stack.val->S[stack.first+2];
-		  stack.val->S[stack.first+2] = NULLOBJ;
-		  if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first,2,0,lhs)) < 0) return RET_BUG;
-		  return n;
-		}
-	    }
-	  else 
-	    {
-	      if (IsIVect(stack.val->S[stack.first+2]) )
-		{
-		  /*x(<expr>,:); **/
-		  nsp_void_seq_object_destroy(stack,stack.first+2,stack.first+3);
-		  nsp_build_funcname("@extractrows",stack,stack.first,1,name);
-		  if (( n=nsp_eval_func(NULLOBJ,name,stack,stack.first,2,0,lhs)) < 0) return RET_BUG;
-		  return n;
-		}
-	    }
-	  break;
-	default : break;
-	}
-      /*General case **/
-      /*Build a specialized name for extraction **/
-      switch ( rhs ) 
-	{
-	case 2: nsp_build_funcname("@extractelts",stack,stack.first,1,name);break;
-	default: nsp_build_funcname("@extract",stack,stack.first,1,name);break;
-	}
-      /*ici Il faudrait eviter que FuncEval construise des noms plus compliues XXXXXXXXX  **/ 
-      if ((n=nsp_eval_func(NULLOBJ,name,stack,stack.first,rhs,opt,lhs)) < 0) return RET_BUG;
-      return n;
+      Sciprintf("Error: multi-dimensionnal arrays not currently supported");
+      /* voir pour le message d'erreur */
+      n = -1;
     }
+  if ( n < 0 )  return RET_BUG ; else return n;
 }
+
 
 /**
  * nsp_eval_extract_cells:
@@ -470,7 +385,6 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 
 int nsp_eval_extract_cells(Stack stack, int first, int rhs, int opt, int lhs)
 {
-  char name[NAME_MAXL];
   int nret;
   stack.first = first;
   if ((nret =nsp_eval_extract(stack,first,rhs,opt,lhs)) < 0) 
@@ -486,8 +400,7 @@ int nsp_eval_extract_cells(Stack stack, int first, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   /* now perform a convertion to sequence of objects */
-  nsp_build_funcname("@object2seq",stack,stack.first,1,name);
-  return nsp_eval_func(NULLOBJ,name,stack,stack.first,1,0,1);
+  return nsp_eval_func(NULLOBJ,"object2seq",1,stack,stack.first,1,0,1);
 }
 
 

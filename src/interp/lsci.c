@@ -46,6 +46,7 @@ extern int  nsp_new_frame(void);
 extern void InitFunctionTable(void);
 extern void controlC_handler (int sig);
 extern void nsp_init_gtk_stack(void);
+extern int nsp_init_accelerated_tabs();
 
 /**/
 static int  no_startup= FALSE;
@@ -95,6 +96,8 @@ int main(int argc, char **argv)
   primitive_types_register();
   /* initialize primitive table */
   InitFunctionTable();
+  /* Initialize acceleration op tables */
+  nsp_init_accelerated_tabs();
   /* Initialize macro hash table **/
   nsp_init_macro_table();
   /* MPI */

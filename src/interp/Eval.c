@@ -136,7 +136,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		}
 	      if ( display == 1 )
 		{
-		  if ((n=nsp_eval_func(O1,opcode,stack,first,nargs,0,lhs))<0) return n;
+		  if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) return n;
 		}
 	      /* clean the stack : XXXX maybe useless now */
 	      nsp_void_seq_object_destroy(stack,first,first+nargs);
@@ -157,7 +157,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  SHOWBUG(stack,RET_BUG,L1);
 		  return RET_BUG;
 		}
-	      if ((n=nsp_eval_func(O1,opcode,stack,first,nargs,0,lhs))<0) 
+	      if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) 
 		SHOWBUG(stack,n,L1);
 	      return n;
 	    }
@@ -206,7 +206,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		}
 	      nargs +=n;
 	      /*XXXXX Pas forcement astucieux pour un operateur ? **/
-	      if ((n=nsp_eval_func(O1,opcode,stack,first,nargs,0,lhs))<0) 
+	      if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) 
 		SHOWBUG(stack,n,L1);
 	      return n;
 	    }
@@ -240,7 +240,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		}
 	      nargs +=n;
 	      /* Pas forcement astucieux pour un operateur ? **/
-	      if ((n=nsp_eval_func(O1,opcode,stack,first,nargs,0,lhs))<0) 
+	      if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) 
 		SHOWBUG(stack,n,L1);
 	      return n;
 	    }
@@ -261,7 +261,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      nargs += n;
 	      loc = loc->next ;
 	    }
-	  if ((n=nsp_eval_func(O1,opcode,stack,first,nargs,0,lhs))<0) SHOWBUG(stack,n,L1);
+	  if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) SHOWBUG(stack,n,L1);
 	  return n;
 	  break;
 	}
@@ -376,50 +376,10 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      loc= loc->next;
 	    }
 	  /* now we have nargs arguments : we must create a cell */
-	  if (( n =nsp_eval_func(O1,fname,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L1);
+	  if (( n =nsp_eval_func(O1,fname,2,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L1);
 	  return n;
 	  break;
 	case ROWCONCAT:
-#if 1 /* it works but wait for more tests */
-	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 )
-	    SHOWBUG(stack,nargs,L1);
-	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0)
-	    {
-	      /* clean first part */
-	      nsp_void_seq_object_destroy(stack,first,first+nargs);
-	      SHOWBUG(stack,n,L1);
-	    }
-	  nargs += n; 
-	  {
-	    NspTypeBase *type1, *type2;
-	    HOBJ_GET_OBJECT(stack.val->S[stack.first], RET_BUG);
-	    HOBJ_GET_OBJECT(stack.val->S[stack.first+1], RET_BUG);
-	    type1 = check_implements(stack.val->S[stack.first], nsp_type_matint_id);
-	    type2 = check_implements(stack.val->S[stack.first+1],nsp_type_matint_id);
-	    if ( type1 != NULL && type1 == type2 )  /* */
-	      {
-		NspFname(stack) = "concatd";
-		if ( call_interf((function *) nsp_matint_concat_down_xx, stack,
-				 nargs, 0, lhs) < 0 )
-		  return RET_BUG;
-		return 1;
-	      }
-	    else
-	      {
-		O1=nsp_frames_search_op_object("concatd");
-		if (( n =nsp_eval_func(O1,"concatd",stack,first,nargs,0,lhs)) < 0) 
-		  SHOWBUG(stack,n,L1);
-		return n;
-	      }
-	  }
-	  break;
-#else 
-	  /* FIXME: 
-	   * pour les trois operateurs qui suivent 
-	   * le nsp_frames_search_object semble inutile 
-	   * c'est FuncEval qui doit faire le boulot 
-	   **/
-	  O1=nsp_frames_search_op_object("concatd");
 	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 ) SHOWBUG(stack,nargs,L1);
 	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0) 
 	    {
@@ -428,46 +388,12 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      SHOWBUG(stack,n,L1);
 	    }
 	  nargs += n;
-	  if (( n =nsp_eval_func(O1,"concatd",stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L1);
+	  if ( (n =nsp_eval_maybe_accelerated_op("concatd",2,&concatd_tab, stack,first,nargs,0,lhs)) < 0 ) 
+	    SHOWBUG(stack,n,L1);
 	  return n;
 	  break;
-#endif 
+
 	case COLCONCAT:
-#if 1 /* it works but wait for more tests */
-	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 )
-	    SHOWBUG(stack,nargs,L1);
-	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0)
-	    {
-	      /* clean first part */
-	      nsp_void_seq_object_destroy(stack,first,first+nargs);
-	      SHOWBUG(stack,n,L1);
-	    }
-	  nargs += n; 
-	  {
-	    NspTypeBase *type1, *type2;
-	    HOBJ_GET_OBJECT(stack.val->S[stack.first], RET_BUG);
-	    HOBJ_GET_OBJECT(stack.val->S[stack.first+1], RET_BUG);
-	    type1 = check_implements(stack.val->S[stack.first], nsp_type_matint_id);
-	    type2 = check_implements(stack.val->S[stack.first+1],nsp_type_matint_id);
-	    if ( type1 != NULL && type1 == type2 )  /* */
-	      {
-		NspFname(stack) = "concatr";
-		if ( call_interf((function *) nsp_matint_concat_right_xx, stack,
-				 nargs, 0, lhs) < 0 )
-		  return RET_BUG;
-		return 1;
-	      }
-	    else
-	      {
-		O1=nsp_frames_search_op_object("concatr");
-		if (( n =nsp_eval_func(O1,"concatr",stack,first,nargs,0,lhs)) < 0) 
-		  SHOWBUG(stack,n,L1);
-		return n;
-	      }
-	  }
-	  break;
-#else 
-	  O1=nsp_frames_search_op_object("concatr");
 	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 )  SHOWBUG(stack,nargs,L1);
 	  if ((n =nsp_eval_arg(L1->next,stack,first+nargs,1,1,display)) < 0)  
 	    {
@@ -476,10 +402,11 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      SHOWBUG(stack,n,L1);
 	    }
 	  nargs += n;
-	  if (( n =nsp_eval_func(O1,"concatr",stack,first,nargs,0,lhs)) < 0)  SHOWBUG(stack,n,L1);
+	  if ( (n =nsp_eval_maybe_accelerated_op("concatr",2,&concatr_tab, stack,first,nargs,0,lhs)) < 0 ) 
+	    SHOWBUG(stack,n,L1);
 	  return n;
 	  break;
-#endif 
+
 	case DIAGCONCAT:
 	  O1=nsp_frames_search_op_object("concatdiag");
 	  if ((nargs =nsp_eval_arg(L1,stack,first,1,1,display)) <0 ) SHOWBUG(stack,nargs,L1);
@@ -490,7 +417,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      SHOWBUG(stack,n,L1);
 	    }
 	  nargs += n;
-	  if ((n=nsp_eval_func(O1,"concatdiag",stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L1);
+	  if ((n=nsp_eval_func(O1,"concatdiag",2,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L1);
 	  return n;
 	  break;
 	case WHILE:
@@ -781,7 +708,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	   * note that the value at position first is preserved at first-1 
 	   * and cannot be destroyed since it has a name 
 	   */
-	  nargs=nsp_eval_func(NULLOBJ,"feq",stack,first,2,0,1);
+	  nargs=nsp_eval_func(NULLOBJ,"feq",2,stack,first,2,0,1);
 	  if ( nargs != 1 ) 
 	    {
 	      if ( nargs > 1 ) 
@@ -1467,14 +1394,10 @@ static int EvalEqual(PList L1, Stack stack, int first)
 
 int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 {
-  NspTypeBase *type;
   int k,n;
-  NspObject *O1; 
-  char fname[NAME_MAXL];
   stack.first = first;
   /* check if w=[] : Not perfect since list() will also return 0 
    */
-  type = check_implements(stack.val->S[first], nsp_type_matint_id);
 
   if (nsp_object_get_size( stack.val->S[first+1+fargs],0) == 0) 
     { 
@@ -1484,130 +1407,60 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
       switch ( fargs ) 
 	{
 	case  1:
-	  if ( IsIVect(stack.val->S[first+1]) )
+	  if ( IsIVect(stack.val->S[first+1]) )                   /* x(:)=[] ==> x=[] */
 	    {
-	      /* x(:)=[] ==> x = []  
-	       * delete first+1,first+2 
-	       */
+	      /* delete first+1,first+2 */
 	      nsp_void_seq_object_destroy(stack,first+1,first+3);
-	      if ( type == NULL ) 
-		{
-		  O1=nsp_frames_search_op_object("tozero"); 
-		  return nsp_eval_func(O1,"tozero",stack,first,1,0,1); 
-		}
-	      else
-		{
-		  NspFname(stack) = "tozero";
-		  if ( call_interf((function *) nsp_matint_tozero_xx, stack, 1, 0, 1) < 0 )
-		    return RET_BUG;
-		}
-	      return 1;
+	      return nsp_eval_maybe_accelerated_op("tozero", 1, &tozero_tab, stack,first,1,0,1); 
 	    }
-	  else
+	  else	                                                  /* x(elts)=[] ==> removing elements */
 	    {
-	      /*x(elts)=[] ==> removing elements **/
-	      nsp_void_object_destroy(&stack.val->S[first+2]); /* [] */
+	      nsp_void_object_destroy(&stack.val->S[first+2]);
 	      stack.val->S[first+2]=NULLOBJ;
-	      if ( type == NULL ) 
-		{
-		  O1=nsp_frames_search_op_object("deleteelts"); 
-		  if ( (n=nsp_eval_func(O1,"deleteelts",stack,first,2,0,1)) < 0)  return n; 
-		}
-	      else
-		{
-		  NspFname(stack) = "deleteelts";
-		  if ( call_interf((function *) nsp_matint_delete_elts_xx, stack, 2, 0, 1) < 0 )
-		    return RET_BUG;
-		}
-	      return 1;
+	      return nsp_eval_maybe_accelerated_op("deleteelts", 2, &deleteelts_tab, stack,first,1,0,1); 
 	    }
 	  break;
 	case 2: 
 	  if (IsIVect(stack.val->S[first+1]) )
 	    {
-	      if (IsIVect(stack.val->S[first+2]) )
+	      if (IsIVect(stack.val->S[first+2]) )		  /* x(:,:)=[] ==> x=[] */
 		{
 		  /* delete first+1,first+2,first+3 */
 		  nsp_void_seq_object_destroy(stack,first+1,first+4);
-		  /*x(:,:)=[] ==> x=[] **/
-		  if ( type == NULL ) 
-		    {
-		      O1=nsp_frames_search_op_object("tozero"); 
-		      return nsp_eval_func(O1,"tozero",stack,first,1,0,1); 
-		    }
-		  else
-		    {
-		      NspFname(stack) = "tozero";
-		      if ( call_interf((function *) nsp_matint_tozero_xx, stack, 1, 0, 1) < 0 )
-			return RET_BUG;
-		    }
-		  return 1;
+		  return nsp_eval_maybe_accelerated_op("tozero",1, &tozero_tab, stack,first,1,0,1); 
 		}
-	      else
+	      else                                                /* x(:,<expr>)=[] */
 		{
-		  /*x(:,<expr>)=[] **/
-		  nsp_void_object_destroy(&stack.val->S[first+1]); /* : */
+		  nsp_void_object_destroy(&stack.val->S[first+1]);
 		  stack.val->S[first+1]=stack.val->S[first+2];
 		  stack.val->S[first+2]=NULLOBJ;
-		  nsp_void_object_destroy(&stack.val->S[first+3]); /* : */
+		  nsp_void_object_destroy(&stack.val->S[first+3]);
 		  stack.val->S[first+3]=NULLOBJ;
-		  /*now we have [x,expr] on the stack **/
-		  if ( type == NULL ) 
-		    {
-		      O1=nsp_frames_search_op_object("deletecols"); 
-		      if ( (n=nsp_eval_func(O1,"deletecols",stack,first,2,0,1)) < 0)  return n; 
-		    }
-		  else
-		    {
-		      NspFname(stack) = "deletecols";
-		      if ( call_interf((function *) nsp_matint_delete_cols_xx, stack, 2, 0, 1) < 0 )
-			return RET_BUG;
-		    }
-		  return 1;
+		  /* now we have [x,expr] on the stack */
+		  return nsp_eval_maybe_accelerated_op("deletecols",2, &deletecols_tab, stack,first,2,0,1);
 		}
 	    }
 	  else 
 	    {
-	      if (IsIVect(stack.val->S[first+2]) )
+	      if (IsIVect(stack.val->S[first+2]) )                /* x(<expr>,:)=[] */
 		{
-		  /*x(<expr>,:)=[] **/
-		  /*we have [x,expr] on the stack **/
-		  /* delete first+2,first+3 */
+		  /* we have [x,expr] on the stack : delete first+2,first+3 */
 		  nsp_void_seq_object_destroy(stack,first+2,first+4);
-		  if ( type == NULL ) 
-		    {
-		      O1=nsp_frames_search_op_object("deleterows"); 
-		      if ((n=nsp_eval_func(O1,"deleterows",stack,first,2,0,1)) < 0)  return n; 
-		    }
-		  else
-		    {
-		      NspFname(stack) = "deleterows";
-		      if ( call_interf((function *) nsp_matint_delete_rows_xx, stack, 2, 0, 1) < 0 )
-			return RET_BUG;
-		    }
-		  return 1;
+		  return nsp_eval_maybe_accelerated_op("deleterows",2, &deleterows_tab,stack,first,2,0,1);
 		}
-	      else 
+	      else                                                /* x(<expr>,<expr>)=[] */
 		{
-		  /*x(<expr>,<expr>)=[] **/
-		  nsp_void_object_destroy(&stack.val->S[first+3]); /* [] */
+		  nsp_void_object_destroy(&stack.val->S[first+3]);
 		  stack.val->S[first+3]=NULLOBJ;
-		  if ( type == NULL ) 
-		    {
-		      O1=nsp_frames_search_op_object("deleteelts"); 
-		      if ((n=nsp_eval_func(O1,"deleteelts",stack,first,3,0,1)) < 0)  return n; 
-		    }
-		  else
-		    {
-		      NspFname(stack) = "deleteelts";
-		      if ( call_interf((function *) nsp_matint_delete_elts2_xx, stack, 3, 0, 1) < 0 )
-			return RET_BUG;
-		    }
-		  return 1;
+		  return nsp_eval_maybe_accelerated_op("deleteelts",2, &deleteelts_tab, stack,first,3,0,1);
 		}
 	    }
 	  break;
-	default : break;
+	default :       /* when multi dim arrays will be supported we will have to verify in fact
+                           if fargs > nb dim of the array */
+	  Sciprintf("Error: multi-dimensionnal arrays not currently supported");
+	  return RET_BUG;
+	  break;
 	}
     }
   /*General case **/
@@ -1621,7 +1474,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	  IV->last=nsp_object_get_size(stack.val->S[first],fargs == 1 ? 0 : k);
 	  /* copy at end of stack before evaluation */
 	  stack.val->S[first+fargs+2]= stack.val->S[first+k];
-	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat",stack,first+fargs+2,1,0,1)) < 0) return n;
+	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat", 2, stack,first+fargs+2,1,0,1)) < 0) return n;
 	  /* we do not need to clean stack.val->S[first+k] since the corresponding 
 	   * object is cleaned by iv2mat 
 	   */
@@ -1629,26 +1482,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 	  stack.val->S[first+fargs+2]=NULLOBJ;
 	}
     }
-  if ( type == NULL ) 
-    {
-      /*we build a name which depends on first and last argument x(,,,,,)=z */
-      /*nsp_build_funcnameij("setrowscols",stack,first,0,fargs+1,fname);
-       *  O1=nsp_frames_search_object(fname); */
-      /* if (nsp_eval_func(O1,fname,stack,first,fargs+ 2,0,1) < 0) return RET_BUG;  */
-      /* here rhs==3 and we want the name to depend on the first argument type 
-       * thus we force name construction. 
-       * we should add here a sign to avoid name construction in FuncEval XXXX 
-       */
-      nsp_build_funcname("@setrowscols",stack,first,1,fname); 
-      if (nsp_eval_func(NULL,fname,stack,first,fargs+ 2,0,1) < 0) return RET_BUG; 
-    }
-  else 
-    {
-      NspFname(stack) = "setrowscols";
-      if ( call_interf((function *) nsp_matint_setrowscols_xx, stack, fargs+ 2, 0, 1) < 0 )
-	return RET_BUG; 
-    }
-  return 1;
+  return nsp_eval_maybe_accelerated_op("setrowscols",1, &setrowscols_tab, stack, first,fargs+2,0,1);
 }
 
 /**
@@ -1678,7 +1512,6 @@ int EvalEqual2(const char *name, Stack stack, int first,int largs, int fargs, in
 {
   int n;
   NspObject *O1;
-  char fname[NAME_MAXL];
   stack.first = first;
   if ( dotflag == DOTARGS ) 
     {
@@ -1698,12 +1531,11 @@ int EvalEqual2(const char *name, Stack stack, int first,int largs, int fargs, in
 	  IV->flag = 0; IV->first = 1;IV->step=1;
 	  IV->last=nsp_object_get_size(stack.val->S[first], 0);
 	  /*WARNING: must be sure that int_iv2mat only changes first+1 **/
-	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat",stack,first+1,1,0,1)) < 0) return n;
+	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat",2,stack,first+1,1,0,1)) < 0) return n;
 	}
       /* we build a function name depending only on the object L */
-      nsp_build_funcname("@setrowscols",stack,first,1,fname);
       O1=nsp_frames_search_op_object(fname);
-      if (nsp_eval_func(O1,fname,stack,first,fargs,0,1) < 0) return RET_BUG;
+      if (nsp_eval_func(O1,"setrowscols",1,stack,first,fargs,0,1) < 0) return RET_BUG;
       nsp_void_seq_object_destroy(stack,first,first+fargs);
       return 1;
     }
@@ -1726,12 +1558,10 @@ int EvalEqual2(const char *name, Stack stack, int first,int largs, int fargs, in
 	  IV->flag = 0; IV->first = 1;IV->step=1;
 	  IV->last=nsp_object_get_size(stack.val->S[first], 0);
 	  /*WARNING: must be sure that int_iv2mat only changes first+1 **/
-	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat",stack,first+1,1,0,1)) < 0) return n;
+	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat",2,stack,first+1,1,0,1)) < 0) return n;
 	}
-      /* we build a function name depending only on the object L */
-      nsp_build_funcname("@cells_setrowscols",stack,first,1,fname);
       O1=nsp_frames_search_op_object(fname);
-      if (nsp_eval_func(O1,fname,stack,first,fargs+1,0,1) < 0) return RET_BUG;
+      if (nsp_eval_func(O1,"cells_setrowscols",1,stack,first,fargs+1,0,1) < 0) return RET_BUG;
       nsp_void_seq_object_destroy(stack,first,first+fargs+1);
       return 1;
     }
@@ -2361,7 +2191,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 	      count += n;
 	      /*counting optional arguments **/
 	      opt=0; for ( k = 0 ; k < count ; k++ ) if ( IsHopt(stack.val->S[first+k]) ) opt++;
-	      if ((nret=nsp_eval_func(O1,name,stack,first,count,opt,lhs1))<0) 
+	      if ((nret=nsp_eval_func(O1,name,2,stack,first,count,opt,lhs1))<0) 
 		return nret;
 	      nargs = nret;
 	    }
@@ -2520,7 +2350,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 	    }
 	}
       else 
-	if ((nret=nsp_eval_func(O1,name,stack,first,count,opt,lhs))<0) 
+	if ((nret=nsp_eval_func(O1,name,2,stack,first,count,opt,lhs))<0) 
 	  {
 	    return nret;
 	  }
@@ -2845,3 +2675,38 @@ void nsp_void_seq_object_destroy(Stack stack,int from, int to)
       stack.val->S[i]=NULLOBJ;
     }
 }
+
+
+
+int nsp_eval_maybe_accelerated_op(char *opname, int msuffix, AcceleratedTab *tab,
+				  Stack stack, int first, int rhs, int opt, int lhs)
+{
+  int id1, id2;
+  NspObject *O1=NULLOBJ;
+  function *the_func = NULL;
+
+  HOBJ_GET_OBJECT(stack.val->S[stack.first], RET_BUG);
+  id1 = nsp_get_id_from_object(stack.val->S[stack.first]);
+
+  if ( tab->arity == 1 )
+    the_func = nsp_get_fast_function(tab, id1);
+  else
+    {
+      HOBJ_GET_OBJECT(stack.val->S[stack.first+1], RET_BUG);
+      id2 = nsp_get_id_from_object(stack.val->S[stack.first+1]);
+      if ( id1 == id2 )
+	the_func = nsp_get_fast_function(tab, id1);
+    }
+
+  if ( the_func )      /* acceleration is supported */
+    {
+      NspFname(stack) = opname;
+      return call_interf(the_func, stack, rhs, opt, lhs);
+    }
+  else                 /* acceleration not supported */
+    {
+      O1 = nsp_frames_search_op_object(opname);
+      return nsp_eval_func(O1, opname, msuffix, stack, first, rhs, opt, lhs);
+    }
+}
+

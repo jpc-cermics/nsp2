@@ -829,3 +829,11 @@ NspObject *nsp_object_unserialize(const NspSerial *S)
   Obj= nsp_object_xdr_load(&xdrs); 
   return Obj;
 }
+
+char *nsp_get_short_string_from_id(int id)
+{
+  NspTypeObject *type = nsp_get_type_from_id(id);
+  while (type->surtype != NULL) 
+    type = (NspTypeObject *) type->surtype;
+  return type->sh_type(NULL);
+}

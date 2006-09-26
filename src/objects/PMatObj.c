@@ -781,6 +781,16 @@ int int_pmatrix_transpose(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab PMatrix_func[]={
+  {"extract_p", nsp_matint_extract_xx}, 
+  {"extractelts_p", nsp_matint_extractelts_xx}, 
+  {"extractcols_p", nsp_matint_extractcols_xx}, 
+  {"extractrows_p", nsp_matint_extractrows_xx}, 
+  {"resize2vect_p", nsp_matint_resize2vect_xx},
+  {"setrowscols_p", nsp_matint_setrowscols_xx},
+  {"deleteelts_p", nsp_matint_deleteelts_xx},
+  {"deleterows_p", nsp_matint_deleterows_xx},
+  {"deletecols_p", nsp_matint_deletecols_xx},
+  {"tozero_p", nsp_matint_tozero_xx},
   {"pmat_create",int_pmatrix_create},
   {"redim_p",int_matint_redim},
   {"concatr_p_p",int_pmatrix_concatr},

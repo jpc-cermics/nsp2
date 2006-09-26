@@ -2392,6 +2392,16 @@ static int int_mp_wrap1(Stack stack, int rhs, int opt, int lhs,function *f)
  */
 
 static OpWrapTab Matrix_func[]={
+  {"extract_mp", nsp_matint_extract_xx}, 
+  {"extractelts_mp", nsp_matint_extractelts_xx}, 
+  {"extractcols_mp", nsp_matint_extractcols_xx}, 
+  {"extractrows_mp", nsp_matint_extractrows_xx}, 
+  {"resize2vect_mp", nsp_matint_resize2vect_xx},
+  {"setrowscols_mp", nsp_matint_setrowscols_xx},
+  {"deleteelts_mp", nsp_matint_deleteelts_xx},
+  {"deleterows_mp", nsp_matint_deleterows_xx},
+  {"deletecols_mp", nsp_matint_deletecols_xx},
+  {"tozero_mp", nsp_matint_tozero_xx},
   {"abs_mp",int_mxabs,int_mp_wrap1},
   {"acos_mp",int_mxacos,int_mp_wrap1},
   {"acosh_mp",int_mxacosh,int_mp_wrap1},

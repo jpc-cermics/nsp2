@@ -19,4 +19,10 @@ NSP_OBJECT_INLINED int check_cast(const void *obj,NspTypeId id)
   return FALSE;
 }
 
+NSP_OBJECT_INLINED int nsp_get_id_from_object(NspObject *Obj)
+{
+  NspTypeBase *type = Obj->basetype;
+  return type->id;
+}
+
 #endif

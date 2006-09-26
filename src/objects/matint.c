@@ -1834,23 +1834,26 @@ static int nsp_matint_delete_gen_xx(Stack stack, int rhs, int opt, int lhs, delf
   return RET_BUG;
 }
 
-int nsp_matint_delete_elts_xx(Stack stack, int rhs, int opt, int lhs)
+int nsp_matint_deleteelts_xx(Stack stack, int rhs, int opt, int lhs)
 {
-  return nsp_matint_delete_gen_xx(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_elements);
+  if ( rhs == 3 )
+    return nsp_matint_deleteelts2_xx(stack, rhs, opt, lhs);
+  else
+    return nsp_matint_delete_gen_xx(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_elements);
 }
 
-int nsp_matint_delete_cols_xx(Stack stack, int rhs, int opt, int lhs)
+int nsp_matint_deletecols_xx(Stack stack, int rhs, int opt, int lhs)
 {
   return nsp_matint_delete_gen_xx(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_columns);
 }
 
-int nsp_matint_delete_rows_xx(Stack stack, int rhs, int opt, int lhs)
+int nsp_matint_deleterows_xx(Stack stack, int rhs, int opt, int lhs)
 {
   return nsp_matint_delete_gen_xx(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_rows);
 }
 
 
-int nsp_matint_delete_elts2_xx(Stack stack, int rhs, int opt, int lhs)
+int nsp_matint_deleteelts2_xx(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj;
   int nr, nc, *row=NULL, *col=NULL, rmin, rmax, cmin, cmax;
@@ -2015,7 +2018,7 @@ int nsp_matint_setrowscols_xx(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-int nsp_matint_concat_right_xx(Stack stack, int rhs, int opt, int lhs)
+int nsp_matint_concatr_xx(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *ObjA, *ObjB, *Res;
 
@@ -2068,7 +2071,7 @@ int nsp_matint_concat_right_xx(Stack stack, int rhs, int opt, int lhs)
  * Return value: 1 or %RET_BUG.
  **/
 
-int nsp_matint_concat_down_xx(Stack stack, int rhs, int opt, int lhs)
+int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs)
 {
   /* note that pointers have already been changed thus we can use NthObj */
   NspObject *ObjA= NthObj(1), *ObjB= NthObj(2), *Res;
