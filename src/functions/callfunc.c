@@ -103,6 +103,10 @@ extern  sci_interface  kiko_Interf ;extern  interface_info  kiko_Interf_Info ;
 extern  sci_interface  mpz_Interf ;extern  interface_info  mpz_Interf_Info ;
 
 
+#ifdef WITH_UMFPACK 
+extern  sci_interface umfpack_Interf ;extern  interface_info  umfpack_Interf_Info ;
+#endif 
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -159,7 +163,6 @@ InterfTab Interfaces[]={
   {Cells_Interf, Cells_Interf_Info},
   {PMatrix_Interf,PMatrix_Interf_Info},
   {Scicos_Interf,Scicos_Interf_Info},
-
   /* 
   {Sound_Interf , Sound_Interf_Info},
   {Pvm_Interf , Pvm_Interf_Info},
@@ -173,6 +176,9 @@ InterfTab Interfaces[]={
 #endif
 #ifdef BHASH
   {BHash_Interf , BHash_Interf_Info},
+#endif
+#ifdef WITH_UMFPACK
+  {umfpack_Interf , umfpack_Interf_Info},
 #endif
   {NULL,NULL}
 }; 
