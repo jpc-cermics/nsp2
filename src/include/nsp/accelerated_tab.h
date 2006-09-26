@@ -3,14 +3,17 @@
 
 #include "interf.h"   /* ici pour le type function */
 
-typedef struct {
+typedef struct _AcceleratedTab AcceleratedTab;
+
+struct _AcceleratedTab
+{
   char *opname;
   int arity;
   int nb_accelerated_types;
   int *accelerated_types;
   int length;
   function **func;
-} AcceleratedTab;
+} ;
 
 extern AcceleratedTab concatr_tab; 
 extern AcceleratedTab concatd_tab; 
@@ -25,8 +28,7 @@ extern AcceleratedTab deleterows_tab;
 extern AcceleratedTab tozero_tab;
 extern AcceleratedTab setrowscols_tab;
 
-
 function *nsp_get_fast_function(AcceleratedTab *tab, int type_id);
-int nsp_init_accelerated_tabs();
+int nsp_init_accelerated_tabs(void);
 
 #endif 
