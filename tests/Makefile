@@ -89,12 +89,12 @@ tests: all
 
 .tst.vl :
 	@echo -n "valgrind $*: "
-	@valgrind --leak-check=full  ../bin/scilex -nw -e "exec('$*.tst');quit" 
-
+	@valgrind --leak-check=full  ../bin/scilex -nw -e "exec('$*.tst');quit" >& $*.vl
+	@echo  " $*.vl"
 
 distclean	:
 	@echo cleaning tests
-	@$(RM) $(TESTS) $(ALG) libaddinter.*
+	@$(RM) $(TESTS) $(ALG) $(VL) libaddinter.*
 	@../bin/nsplibtool OBJS=addinter.o LIBRARY=libaddinter distclean
 
 clean:	distclean
