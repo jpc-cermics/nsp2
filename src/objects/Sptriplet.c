@@ -294,7 +294,7 @@ int nsp_spcol_update_from_triplet( NspSpColMatrix *M)
   for ( i = 0  ; i < M->n ; i++) 
     {
       nsp_spcolmatrix_col_destroy(M->D[i]);
-      FREE(M->D[i]);
+      M->D[i]=NULL;
     }
   FREE(M->D);
   M->m= M->n = 0;
@@ -371,7 +371,6 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
       for ( i = M->triplet.n ; i < M->n ; i++)
 	{
 	  nsp_spcolmatrix_col_destroy(M->D[i]);
-	  FREE(M->D[i]);
 	  M->D[i]= NULL;
 	}
     }
