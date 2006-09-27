@@ -5628,7 +5628,7 @@ NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
   int mres;
   NspMatrix *icol=NULL;
   NspSpColMatrix *A=NULL;
-  int k,i,count=0;
+  int k,i;
   if ((A =nsp_spcolmatrix_create(NVOID,'r',m,n))== NULLSPCOL ) 
     return NULLSPCOL;
   if ((icol=nsp_matrix_create(NVOID,'r',m,1)) == NULLMAT)
