@@ -1986,3 +1986,105 @@ void _mxAssert(char *mess, int line, const char *file)
   Scierror("Assertion failed at line %d of file %s (%s)\n",line,file,mess); 
   nsp_mex_errjump();
 }
+
+
+/**
+ * mxSetPr:
+ * @array_ptr: 
+ * @pr: 
+ * 
+ * 
+ **/
+void mxSetPr(mxArray *array_ptr, double *pr)
+{
+  if ( IsMat(array_ptr)) 
+    {
+      NspMatrix *A = (NspMatrix *)  array_ptr;
+      /* be sure that matrix is matlab converted */
+      A->R = pr ;
+    }
+  else if ( IsSpColMat(array_ptr))
+    {
+      NspSpColMatrix *A = (NspSpColMatrix *)  array_ptr;
+      if (A->convert != 't' ) 
+	{
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	}
+      A->triplet.Ax = pr;
+    }
+  else if ( IsBMat(array_ptr) )
+    {
+      Sciprintf("Warning: mxGetPr should be replaced by mxGetData for booleans\n");
+      ((NspBMatrix *) array_ptr)->B = (int *) pr;
+    }
+  else 
+    {
+      Scierror("Error in %s: mxGetPr failed\n","mex");
+      nsp_mex_errjump();
+    }
+}
+
+/**
+ * mxSetJc:
+ * @array_ptr: 
+ * @jc: 
+ * 
+ * 
+ **/
+void mxSetJc(mxArray *array_ptr, int *jc)
+{
+  if ( IsSpColMat(array_ptr))
+    {
+      NspSpColMatrix *A = (NspSpColMatrix *)  array_ptr;
+      if (A->convert != 't' ) 
+	{
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	}
+      A->triplet.Ap = jc;
+    }
+  else 
+    {
+      Scierror("Error in %s: mxGetPr failed\n","mex");
+      nsp_mex_errjump();
+    }
+  
+}
+
+/**
+ * mxSetIr:
+ * @array_ptr: 
+ * @ir: 
+ * 
+ * 
+ **/
+void mxSetIr(mxArray *array_ptr,int *ir)
+{
+  if ( IsSpColMat(array_ptr))
+    {
+      NspSpColMatrix *A = (NspSpColMatrix *)  array_ptr;
+      if (A->convert != 't' ) 
+	{
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	}
+      A->triplet.Ai = ir;
+    }
+  else 
+    {
+      Scierror("Error in %s: mxGetPr failed\n","mex");
+      nsp_mex_errjump();
+    }
+}
+
+
+/**
+ * mxRealloc:
+ * @ptr: 
+ * @size: 
+ * 
+ * 
+ **/
+
+void *mxRealloc(void *ptr, size_t size)
+{
+  return realloc(ptr,sizeof(char)*size);
+}

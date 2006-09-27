@@ -183,6 +183,12 @@ extern mxArray *mexGetArray(const char *name, const char *workspace);
 extern void mxSetLogical(mxArray *array_ptr);
 
 
+extern void mxSetPr(mxArray *array_ptr, double *pr);
+extern void mxSetJc(mxArray *array_ptr, int *jc);
+extern void mxSetIr(mxArray *array_ptr,int *ir);
+extern void *mxRealloc(void *ptr, size_t size);
+
+
 #endif /* NSP_MEX */
 
 
