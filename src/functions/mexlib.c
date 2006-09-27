@@ -1798,12 +1798,17 @@ mxArray *mxCreateCharArray(int ndim, const int *dims)
 mxArray *mxCreateStructArray(int ndim, const int *dims, int nfields,
 			     const char **field_names)
 {
-  if ( ndim != 2 )
+  switch (ndim) 
     {
-      Scierror("Error: mxCreateCharArray only works for dims==2\n");
+    case 1: 
+      return mxCreateStructMatrix(1,dims[0],nfields,field_names);
+    case 2: 
+      return mxCreateStructMatrix(dims[0],dims[1],nfields,field_names);
+    default:
+      Scierror("Error: mxCreateCharArray only works for dims <= 2\n");
       nsp_mex_errjump();      
     }
-  return mxCreateStructMatrix(dims[0],dims[1],nfields,field_names);
+  return NULL;
 }
 
 const char *mxGetClassName(const mxArray *array_ptr)
@@ -1967,3 +1972,17 @@ void mxSetLogical(mxArray *array_ptr)
 }
 
 
+/**
+ * _mxAssert:
+ * @mess: 
+ * @line: 
+ * @file: 
+ * 
+ * 
+ **/
+
+void _mxAssert(char *mess, int line, const char *file)
+{
+  Scierror("Assertion failed at line %d of file %s (%s)\n",line,file,mess); 
+  nsp_mex_errjump();
+}

@@ -24,7 +24,8 @@ typedef int bool;
 #define false FALSE
 #endif 
 
-  
+extern void _mxAssert(char *mess,int line,const char *file);
+#define mxAssert(cond,mess) if ( !(cond) ) _mxAssert(mess,__LINE__,__FILE__) ;
 extern int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction);
 extern double *mxGetPr (const mxArray *ptr);
 extern double *mxGetPi (const mxArray *ptr);
