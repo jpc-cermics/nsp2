@@ -5648,10 +5648,9 @@ NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
       nsp_qsort_double(icol->R,NULL,FALSE,mres,'i');
       /* resize column i */
       nsp_spcolmatrix_resize_col(A,i,mres);
-      count=0;
       for ( k = 0 ; k < A->D[i]->size ; k++) 
 	{
-	  A->D[i]->J[k] = icol->R[count];
+	  A->D[i]->J[k] = icol->R[k];
 	}
       if ( crand == 'n' ) 
 	for (k = 0 ; k < A->D[i]->size ; k++)
