@@ -3669,12 +3669,14 @@ scicos_writef_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
   else if (*flag==4) 
     {
       char str[FSIZE];
+      char fname[FSIZE+1];
       int i;
       /* get the file name from its ascii code  */
       for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
       str[wi->len]='\0';
+      nsp_path_expand(str,fname,FSIZE);
       sciprint("Trying to open [%s] in writef\n",str);
-      if (( F= fopen(str,"w")) == NULL) 
+      if (( F= fopen(fname,"w")) == NULL) 
 	{
 	  Scierror("Error: in scicos_writef_block, could not open the file %s !\n",str);
 	  *flag = -3;
@@ -3785,12 +3787,14 @@ scicos_writec_block(int *flag, int *nevprt, double *t, double *xd, double *x, in
   else if (*flag==4) 
     {
       char str[FSIZE];
+      char fname[FSIZE+1];
       int i;
       /* get the file name from its ascii code  */
       for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
       str[wi->len]='\0';
+      nsp_path_expand(str,fname,FSIZE);
       sciprint("Trying to open [%s] in writec\n",str);
-      if (( F= nsp_file_open(str,"wb",FALSE,wi->swap)) == NULL) 
+      if (( F= nsp_file_open(fname,"wb",FALSE,wi->swap)) == NULL) 
 	{
 	  Scierror("Error: in scicos_writec_block, could not open the file %s !\n",str);
 	  *flag = -3;
@@ -3946,13 +3950,16 @@ void scicos_readc_block(int *flag, int *nevprt, double *t, double *xd, double *x
   else if (*flag==4) 
     {
       char type[4];
-      char str[FSIZE];
+      char str[FSIZE+1];
+      char fname[FSIZE+1];
       int i;
       /* get the file name from its ascii code  */
       for ( i=0; i < wi->len; i++) str[i]= *(&wi->fname + i);
       str[wi->len]='\0';
+      /* expand SCI,NSP,.... */
+      nsp_path_expand(str,fname,FSIZE);
       sciprint("Trying to open [%s] in readc\n",str);
-      if (( F= nsp_file_open(str,"rb",FALSE,wi->swap)) == NULL) 
+      if (( F= nsp_file_open(fname,"rb",FALSE,wi->swap)) == NULL) 
 	{
 	  Scierror("Error: in scicos_readc_block, could not open the file %s !\n",str);
 	  *flag = -3;
@@ -4103,12 +4110,14 @@ scicos_readf_block(int *flag, int *nevprt, double *t, double *xd, double *x, int
   else if (*flag == 4) 
     {
       char str[FSIZE];
+      char fname[FSIZE+1];
       int i;
       /* get the file name from its ascii code  */
       for ( i=0; i < rf->lfil ; i++) str[i]= *(&rf->fname + i);
       str[rf->lfil]='\0';
+      nsp_path_expand(str,fname,FSIZE);
       /* sciprint("Trying to open [%s] in readf\n",str); */
-      if (( F= nsp_file_open(str,"r",FALSE,FALSE)) == NULL) 
+      if (( F= nsp_file_open(fname,"r",FALSE,FALSE)) == NULL) 
 	{
 	  Scierror("Error: in scicos_readf_block, could not open the file %s !\n",str);
 	  *flag = -3;
