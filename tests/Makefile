@@ -37,6 +37,7 @@ TESTS= \
 	test_minmax.dia \
 	testsbdiv.dia \
 	trycatch.dia \
+	umfpack.dia \
 	unique.dia 
 
 

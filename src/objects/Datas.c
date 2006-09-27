@@ -113,6 +113,13 @@ int nsp_init_frames(int argc, char **argv)
   /* flag to know that we are using nsp !! */
   if ((O =nsp_create_true_object("%nsp"))==NULLOBJ) return FAIL;
   nsp_frame_replace_object(O);
+  /* flag to detect if we have umfpack */
+#ifdef WITH_UMFPACK
+  if ((O =nsp_create_true_object("%umfpack"))==NULLOBJ) return FAIL;
+#else 
+  if ((O =nsp_create_false_object("%umfpack"))==NULLOBJ) return FAIL;
+#endif 
+  nsp_frame_replace_object(O);
   /* types */ 
   nsp_frame_replace_object((NspObject *)nsp_types_hash_table); 
   /* gtk */
