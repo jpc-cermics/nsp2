@@ -1,0 +1,699 @@
+/* Nsp
+ * Copyright (C) 2006 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * Interface with the umfpack library using a NspUmfpack Object. 
+ *
+ */
+
+#include <nsp/object.h>
+#include <gtk/gtk.h>
+/* ----------- Umfpack ----------- */
+#define  Umfpack_Private 
+#include "nsp/object.h"
+#include "nsp_umfpack.h"
+#include "nsp/interf.h"
+#include <umfpack.h>
+
+/* 
+ * NspUmfpack inherits from NspObject 
+ */
+
+int nsp_type_umfpack_id=0;
+NspTypeUmfpack *nsp_type_umfpack=NULL;
+
+/*
+ * Type object for Umfpack 
+ * all the instance of NspTypeUmfpack share the same id. 
+ * nsp_type_umfpack: is an instance of NspTypeUmfpack 
+ *    used for objects of NspUmfpack type (i.e built with new_umfpack) 
+ * other instances are used for derived classes 
+ */
+NspTypeUmfpack *new_type_umfpack(type_mode mode)
+{
+  NspTypeUmfpack *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_umfpack != 0 && mode == T_BASE ) 
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_umfpack;
+    }
+  if ((type =  malloc(sizeof(NspTypeUmfpack))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = umfpack_attrs ; 
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = umfpack_get_methods; 
+  type->new = (new_func *) new_umfpack;
+
+  
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+  
+  /* object methods redefined for umfpack */ 
+
+  top->pr = (print_func *) nsp_umfpack_print;                  
+  top->dealloc = (dealloc_func *) nsp_umfpack_destroy;
+  top->copy  =  (copy_func *) nsp_umfpack_copy;                 
+  top->size  = (size_func *) nsp_umfpack_size;                
+  top->s_type =  (s_type_func *) nsp_umfpack_type_as_string;  
+  top->sh_type = (sh_type_func *) nsp_umfpack_type_short_string;
+  top->info = (info_func *) nsp_umfpack_info ;                  
+  /* top->is_true = (is_true_func  *) nsp_umfpack_is_true; */
+  /* top->loop =(loop_func *) nsp_umfpack_loop;*/
+  top->path_extract = (path_func *)  object_path_extract; 
+  top->get_from_obj = (get_from_obj_func *) nsp_umfpack_object;
+  top->eq  = (eq_func *) nsp_umfpack_eq;
+  top->neq  = (eq_func *) nsp_umfpack_neq;
+  top->save  = (save_func *) nsp_umfpack_xdr_save;
+  top->load  = (load_func *) nsp_umfpack_xdr_load;
+  top->create = (create_func*) int_umfpack_create;
+  
+  /* specific methods for umfpack */
+      
+  type->init = (init_func *) init_umfpack;
+
+/* 
+ * Umfpack interfaces can be added here 
+ * type->interface = (NspTypeBase *) new_type_b();
+ * type->interface->interface = (NspTypeBase *) new_type_C()
+ * ....
+ */
+  if ( nsp_type_umfpack_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeUmfpack called nsp_type_umfpack
+       */
+      type->id =  nsp_type_umfpack_id = nsp_new_type_id();
+      nsp_type_umfpack = type;
+      if ( nsp_register_type(nsp_type_umfpack) == FALSE) return NULL;
+      return ( mode == T_BASE ) ? type : new_type_umfpack(mode);
+    }
+  else 
+    {
+       type->id = nsp_type_umfpack_id;
+       return type;
+    }
+}
+
+/*
+ * initialize Umfpack instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_umfpack(NspUmfpack *o,NspTypeUmfpack *type)
+{
+  /* jump the first surtype */ 
+  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
+  o->type = type; 
+  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  /* specific */
+  return OK;
+}
+
+/*
+ * new instance of Umfpack 
+ */
+
+NspUmfpack *new_umfpack() 
+{
+  NspUmfpack *loc; 
+  /* type must exists */
+  nsp_type_umfpack = new_type_umfpack(T_BASE);
+  if ( (loc = malloc(sizeof(NspUmfpack)))== NULLUMFPACK) return loc;
+  /* initialize object */
+  if ( init_umfpack(loc,nsp_type_umfpack) == FAIL) return NULLUMFPACK;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for Umfpack 
+ *-----------------------------------------------*/
+/*
+ * size 
+ */
+
+static int nsp_umfpack_size(NspUmfpack *Mat, int flag)
+{
+  return 0;
+}
+
+/*
+ * type as string 
+ */
+
+static char umfpack_type_name[]="Umfpack";
+static char umfpack_short_type_name[]="umfpack";
+
+static char *nsp_umfpack_type_as_string(void)
+{
+  return(umfpack_type_name);
+}
+
+static char *nsp_umfpack_type_short_string(void)
+{
+  return(umfpack_short_type_name);
+}
+
+/*
+ * A == B 
+ */
+
+static int nsp_umfpack_eq(NspUmfpack *A, NspObject *B)
+{
+  NspUmfpack *loc = (NspUmfpack *) B;
+  if ( check_cast(B,nsp_type_umfpack_id) == FALSE) return FALSE ;
+  if ( A->obj == loc->obj ) return TRUE;
+  return FALSE;
+}
+
+/*
+ * A != B 
+ */
+
+static int nsp_umfpack_neq(NspUmfpack *A, NspObject *B)
+{
+  return ( nsp_umfpack_eq(A,B) == TRUE ) ? FALSE : TRUE;
+}
+
+/*
+ * save 
+ */
+
+static int nsp_umfpack_xdr_save(XDR *xdrs, NspUmfpack *M)
+{
+  Sciprintf("Warning: cannot save Umfpack objects (cowardly not saving this object)\n");
+  return OK;
+}
+
+/*
+ * load 
+ */
+
+static NspUmfpack  *nsp_umfpack_xdr_load(XDR *xdrs)
+{
+  NspUmfpack *M = NULL;
+  /* should never get there since umfpack object are not saved */
+  return M;
+}
+
+/*
+ * delete 
+ */
+
+void nsp_umfpack_destroy(NspUmfpack *H)
+{
+  FREE(NSP_OBJECT(H)->name);
+  H->obj->ref_count--;
+  if ( H->obj->ref_count == 0 )
+   {
+     void *Numeric = H->obj->data;
+     if ( Numeric != NULL) umfpack_di_free_numeric(&Numeric);
+     FREE(H->obj->mtlb_T.Ap);
+     FREE(H->obj->mtlb_T.Ai);
+     FREE(H->obj->mtlb_T.Ax);
+     FREE(H->obj);
+   }
+  FREE(H);
+}
+
+/*
+ * info 
+ */
+
+void nsp_umfpack_info(NspUmfpack *M, int indent,const char *name, int rec_level)
+{
+  int i;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
+  if ( M == NULLUMFPACK || M->obj == NULL ) 
+    {
+      Sciprintf("Null Pointer Umfpack \n");
+      return;
+    }
+  Sciprintf("%s\t= [...]\t%s %c (%dx%d)\n",pname,nsp_umfpack_type_short_string(),
+	    M->obj->rc_type,M->obj->mtlb_T.m,M->obj->mtlb_T.n);
+}
+
+/*
+ * print 
+ */
+
+void nsp_umfpack_print(NspUmfpack *Mat, int indent,char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  if (user_pref.pr_as_read_syntax)
+    {
+      Sciprintf("// Cannot print an umfpack object using as_read=%%t option \n");
+    }
+  else 
+    {
+      nsp_umfpack_info(Mat,indent,pname,rec_level);
+    }
+}
+
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for Umfpack objects 
+ * Note that some of these functions could become MACROS XXXXX 
+ *-----------------------------------------------------*/
+
+NspUmfpack   *nsp_umfpack_object(NspObject *O)
+{
+  /* Follow pointer */
+  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  /* Check type */
+  if ( check_cast (O,nsp_type_umfpack_id) == TRUE ) return ((NspUmfpack *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_umfpack));
+  return NULL;
+}
+
+int IsUmfpackObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i) , nsp_type_umfpack_id);
+}
+
+int IsUmfpack(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_umfpack_id);
+}
+
+NspUmfpack  *GetUmfpackCopy(Stack stack, int i)
+{
+  if (  GetUmfpack(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspUmfpack  *GetUmfpack(Stack stack, int i)
+{
+  NspUmfpack *M;
+  if (( M = nsp_umfpack_object(NthObj(i))) == NULLUMFPACK)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*-----------------------------------------------------
+  * constructor 
+ * if type is non NULL it is a subtype which can be used to 
+ * create a NspClassB instance 
+ *-----------------------------------------------------*/
+
+static NspUmfpack *umfpack_create_void(char *name,NspTypeBase *type)
+{
+ NspUmfpack *H  = (type == NULL) ? new_umfpack() : type->new();
+ if ( H ==  NULLUMFPACK)
+  {
+   Sciprintf("No more memory\n");
+   return NULLUMFPACK;
+  }
+ if ( ( NSP_OBJECT(H)->name =new_nsp_string(name)) == NULLSTRING) return NULLUMFPACK;
+ NSP_OBJECT(H)->ret_pos = -1 ;
+  H->obj = NULL;
+ return H;
+}
+
+NspUmfpack *umfpack_create(char *name,char rc_type,char* data,NspTypeBase *type)
+{
+ NspUmfpack *H  = umfpack_create_void(name,type);
+ if ( H ==  NULLUMFPACK) return NULLUMFPACK;
+  if ((H->obj = malloc(sizeof(nsp_umfpack))) == NULL) return NULL;
+  H->obj->ref_count=1;
+  /* XXXXX write_copy not implemented for CharArg  if ((H->obj->data = nsp_string_copy(data)) == NULL) return NULL; */
+ return H;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspUmfpack *nsp_umfpack_copy(NspUmfpack *self)
+{
+  NspUmfpack *H  =umfpack_create_void(NVOID,(NspTypeBase *) nsp_type_umfpack);
+  if ( H ==  NULLUMFPACK) return NULLUMFPACK;
+  H->obj = self->obj;
+  self->obj->ref_count++;
+ return H;
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the Umfpack
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+static const char *nsp_umfpack_error(int num_error)
+{
+  switch (num_error)
+    {
+    case UMFPACK_WARNING_singular_matrix: return "singular matrix";
+    case UMFPACK_ERROR_out_of_memory:   return "out of memory";
+    case UMFPACK_ERROR_internal_error:  return "internal error";
+    case UMFPACK_ERROR_invalid_matrix:  return "invalid matrix";
+    default:                            return "unknown error";
+    }
+}
+
+static int int_umfpack_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A;
+  double *Control = NULL, *Info = NULL;
+  void *Symbolic=NULL, *Numeric=NULL;
+  int stat;
+  NspUmfpack *H=NULL;
+  /* Get a sparse matrix */
+  CheckStdRhs(1,1);
+  if ((A = GetSpCol(stack,1)) == NULLSPCOL) goto err;
+  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) goto err;
+  if ( A->rc_type == 'r' ) 
+    {
+      stat = umfpack_di_symbolic(A->m, A->n, A->triplet.Ap, A->triplet.Ai, A->triplet.Ax, 
+				 &Symbolic, Control, Info);
+      if ( stat  != UMFPACK_OK ) goto symb_fact_error;
+      stat = umfpack_di_numeric(A->triplet.Ap, A->triplet.Ai, A->triplet.Ax, 
+				Symbolic, &Numeric, Control, Info);
+      if ( stat  != UMFPACK_OK ) goto num_fact_error;
+    }
+  else 
+    {
+      stat = umfpack_zi_symbolic(A->m, A->n, A->triplet.Ap, A->triplet.Ai, A->triplet.Ax,
+				 A->triplet.Ax + A->triplet.Aisize,
+				 &Symbolic, Control, Info);
+      if ( stat  != UMFPACK_OK ) goto symb_fact_error;
+      stat = umfpack_zi_numeric(A->triplet.Ap, A->triplet.Ai, A->triplet.Ax,
+				A->triplet.Ax + A->triplet.Aisize ,
+				Symbolic, &Numeric, Control, Info);
+      if ( stat  != UMFPACK_OK ) goto num_fact_error;
+    }
+  umfpack_di_free_symbolic(&Symbolic);
+  /* now we can store the Numeric part */
+  /* want to be sure that type umfpack is initialized */
+  nsp_type_umfpack = new_type_umfpack(T_BASE);
+  if(( H = umfpack_create_void(NVOID,(NspTypeBase *) nsp_type_umfpack)) == NULLUMFPACK) 
+    goto err;
+  /* then we use optional arguments to fill attributes */
+  if((H->obj = calloc(1,sizeof(nsp_umfpack)))== NULL ) 
+    goto err;
+  H->obj->ref_count = 1;
+  H->obj->data = Numeric;
+  H->obj->rc_type = A->rc_type;
+  /* update triplet from A and release triplet conversion in A */
+  H->obj->mtlb_T = A->triplet;
+  A->convert = 'v';
+  A->triplet.Ap=NULL;
+  A->triplet.Ai=NULL;
+  A->triplet.Ax=NULL;
+  MoveObj(stack,1,NSP_OBJECT(H));
+  return 1;
+
+ symb_fact_error: 
+  Scierror("Error: symbolic factorization failed in %s (%s)\n",NspFname(stack),
+	   nsp_umfpack_error(stat));
+  return RET_BUG;
+ num_fact_error:
+  Scierror("Error: numeric factorization failed in %s (%s)\n",NspFname(stack),
+	   nsp_umfpack_error(stat));
+  return RET_BUG;
+ err: 
+  /* clean stuff here XXXX ? */
+  if ( Numeric != NULL) umfpack_di_free_numeric(&Numeric);
+  return RET_BUG;
+} 
+
+
+/* extract L,U,P,R,Q from a umfpack object */
+
+static int int_umfpack_meth_luget(NspUmfpack *self, Stack stack, int rhs, int opt, int lhs)
+{
+  void *Numeric;
+  NspSpColMatrix *L,*U,*Lt;
+  NspMatrix *p,*q,*Rs;
+  int lnz, unz, n_row, n_col, n, nz_udiag, i, stat, do_recip;
+  char rc_flag;
+  int error_flag = 0 ;
+
+  CheckRhs(0,0); 
+  CheckLhs(0,5); 
+  if ( self->obj == NULL || self->obj->data  == NULL) 
+    {
+      Scierror("Error: umfpack object is not properly built\n");
+      return RET_BUG;
+    }
+  Numeric= self->obj->data; 
+  rc_flag = self->obj->rc_type; 
+  if (rc_flag == 'r' )
+    umfpack_di_get_lunz(&lnz, &unz, &n_row, &n_col, &nz_udiag, Numeric);
+  else
+    umfpack_zi_get_lunz(&lnz, &unz, &n_row, &n_col, &nz_udiag, Numeric);
+  
+  n = Min(n_row,n_col);
+  /* prepare space for a n_row x n L matrix */
+  if ((Lt= nsp_spcolmatrix_create(NVOID,rc_flag,n_row,n))== NULLSPCOL) 
+    return RET_BUG;
+  /* allocate matlab triplet */
+  if ( nsp_spcol_alloc_col_triplet(Lt,lnz)== FAIL) 
+    return RET_BUG;
+  /* prepare space for a n x n_col R matrix */
+  if ((U= nsp_spcolmatrix_create(NVOID,rc_flag,n,n_col))== NULLSPCOL) 
+    return RET_BUG;
+  /* allocate matlab triplet */
+  if ( nsp_spcol_alloc_col_triplet(U,unz)== FAIL) 
+    return RET_BUG;
+
+  if ((p =nsp_matrix_create(NVOID,'r',n_row,1))== NULLMAT) return RET_BUG;
+  if ((q =nsp_matrix_create(NVOID,'r',n_col,1))== NULLMAT) return RET_BUG;
+  if ((Rs =nsp_matrix_create(NVOID,'r',n_row,1))== NULLMAT) return RET_BUG;
+
+  if ( rc_flag == 'r' )
+    stat = umfpack_di_get_numeric(Lt->triplet.Ap, Lt->triplet.Ai, Lt->triplet.Ax,
+				  U->triplet.Ap, U->triplet.Ai, U->triplet.Ax,
+				  p->I, q->I, (double *)NULL, &do_recip, Rs->R, Numeric);
+  else
+    stat = umfpack_zi_get_numeric(Lt->triplet.Ap, Lt->triplet.Ai, Lt->triplet.Ax, Lt->triplet.Ax + Lt->triplet.Aisize,
+				  U->triplet.Ap, U->triplet.Ai, U->triplet.Ax, U->triplet.Ax + U->triplet.Aisize,
+				  p->I, q->I, (double *)NULL, (double *)NULL, &do_recip, Rs->R, Numeric);
+
+  if ( stat != UMFPACK_OK ) 
+    { 
+      error_flag = 2; goto the_end; 
+    };
+
+  /* If do_recip is TRUE (one), then the scale factors Rs [i] are to be used
+   * by multiplying row i by Rs [i].  Otherwise, the entries in row i are to
+   * be divided by Rs [i].
+   */
+
+  if ( do_recip )
+    for ( i = 0 ; i < n_row ; i++ ) Rs->R[i] = 1.0 / Rs->R[i];
+
+  if ( nsp_spcol_update_from_triplet(Lt) == FAIL) 
+    return RET_BUG;
+  if ( nsp_spcol_update_from_triplet(U) == FAIL) 
+    return RET_BUG;
+  
+  /* Note that Lt is returned in row compressed form 
+   * thus we transpose Lt in L to get it in column compressed form.
+   * and we conjugate L 
+   */ 
+  
+  if ((L =nsp_spcolmatrix_transpose(Lt)) == NULLSPCOL)  return RET_BUG;
+  nsp_spcolmatrix_conj(L);
+
+  nsp_spcolmatrix_destroy(Lt);
+  
+  /* nsp indices start at 1 */
+  for ( i = 0 ; i < n_row ; i++ ) p->I[i]++; 
+  for ( i = 0 ; i < n_col ; i++ ) q->I[i]++; 
+  /* p and q are in integer mode */
+  p->convert = 'i';
+  q->convert = 'i';
+
+the_end:
+  switch (error_flag)
+    {
+    case 0:   /* no error */
+      MoveObj(stack,1,NSP_OBJECT(L));
+      if ( lhs >= 2) MoveObj(stack,2,NSP_OBJECT(U));
+      if ( lhs >= 3) MoveObj(stack,3,NSP_OBJECT(p));
+      if ( lhs >= 4) MoveObj(stack,4,NSP_OBJECT(q));
+      if ( lhs >= 5) MoveObj(stack,5,NSP_OBJECT(Rs));
+      return Max(lhs,1);
+      break;
+    case 1:   /* enought memory (with malloc) */
+      Scierror("%s: not enough memory",nsp_umfpack_error(stat));
+      break;
+    case 2:   /* a problem with one umfpack routine */
+      Scierror("%s: %s",NspFname(stack), nsp_umfpack_error(stat));
+      break;
+    }
+  return RET_BUG;
+}
+
+
+/* solve Ax=b */
+
+int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int lhs)
+{
+  double *Control = NULL, *Info = NULL;
+  NspMatrix *B,*X=NULL,*Wi=NULL,*W=NULL;
+  nsp_sparse_triplet T;
+  char rc_type, rc_x;
+  void *Numeric=NULL;
+  int i,rep=RET_BUG;
+  
+  CheckRhs(1,1); 
+  CheckLhs(1,1);
+
+  if ( self->obj == NULL || self->obj->data  == NULL) 
+    {
+      Scierror("Error: umfpack object is not properly built\n");
+      return RET_BUG;
+    }
+  Numeric= self->obj->data; 
+  rc_type = self->obj->rc_type; 
+  T = self->obj->mtlb_T;
+  if ((B = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  
+  if ( B->m != T.m || B->n < 1 )
+    {
+      Scierror("Error: first argument to method has wrong dimensions (%d,%d)\n",
+	       B->m,B->n);
+      return RET_BUG;
+    };
+  if ( B->rc_type  == 'c')
+    {
+      if ((B = GetMatCopy(stack,1)) == NULLMAT) return RET_BUG;
+      Mat2mtlb_cplx (B);
+    }
+  /* allocate memory for the solution */
+  rc_x = ( rc_type == 'c'   ||  B->rc_type == 'c' ) ? 'c' : 'r' ;
+  if ((X =nsp_matrix_create(NVOID,rc_x,B->m,B->n)) == NULLMAT ) return RET_BUG;
+  /* allocate memory for working arrays */
+  if ((Wi =nsp_matrix_create(NVOID,'r',T.m,1)) == NULLMAT ) goto err;
+  if ((W  =nsp_matrix_create(NVOID,'r',((rc_type == 'c') ? 10: 5)*T.m,1)) == NULLMAT ) 
+    goto err;
+  if ( rc_type == 'c' &&  B->rc_type  == 'r' )
+    {
+      /* A is complex -> B is complexified and matlab converted */
+      if (nsp_mat_complexify(B,0.00) == FAIL ) return RET_BUG;
+      Mat2mtlb_cplx (B);
+    }
+  if (self->obj->rc_type == 'r' )
+    {
+      /* Axr = Br */
+      for ( i = 0 ; i < B->n ; i++ )
+	umfpack_di_wsolve(UMFPACK_A, T.Ap, T.Ai, T.Ax, X->R+i*B->m,B->R+i*B->m,
+			  Numeric, Control, Info, Wi->I, W->R);
+      if ( B->rc_type == 'c' )
+	{
+	  /* Axi= Bi */
+	  for ( i = 0 ; i < B->n ; i++ )
+	    umfpack_di_wsolve(UMFPACK_A, T.Ap, T.Ai, T.Ax,X->R+i*B->m+B->mn,B->R+i*B->m+B->mn,
+			      Numeric, Control, Info, Wi->I, W->R);
+	  /* X is mtlb converted we have to back convert */
+	  X->convert = 'c';
+	  Mat2double (X);
+	}
+    }
+  else /* A is complex and B too  */
+    {
+      for ( i = 0 ; i < B->n ; i++ )
+	umfpack_zi_wsolve(UMFPACK_A, T.Ap, T.Ai, T.Ax,  T.Ax + T.Aisize,
+			  X->R+i*B->m, X->R+i*B->m+B->mn, 
+			  B->R+i*B->m, B->R+i*B->m+B->mn, Numeric, Control, Info, Wi->I, W->R);
+      /* X is mtlb converted we have to back convert */
+      X->convert = 'c';
+      Mat2double (X);
+    }
+  rep=1;
+  MoveObj(stack,1,NSP_OBJECT(X));
+ err:
+  if ( W != NULL) nsp_matrix_destroy(W);
+  if ( Wi != NULL) nsp_matrix_destroy(Wi);
+  return rep;
+}
+
+
+
+static int int_umfpack_meth_isreal(NspUmfpack *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj;
+  int ret;
+  CheckRhs(0,0); 
+  CheckLhs(1,1);
+  if ( self->obj == NULL || self->obj->data  == NULL) 
+    {
+      Scierror("Error: umfpack object is not properly built\n");
+      return RET_BUG;
+    }
+  ret = self->obj->rc_type == 'r' ? TRUE : FALSE;
+  if ((Obj = nsp_new_boolean_obj(ret))==NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,Obj);
+  return 1;
+}
+
+static NspMethods umfpack_methods[] = {
+  {"solve",(nsp_method *) int_umfpack_meth_solve},
+  {"luget",(nsp_method *) int_umfpack_meth_luget},
+  {"isreal",(nsp_method *) int_umfpack_meth_isreal},
+
+  { NULL, NULL}
+};
+
+static NspMethods *umfpack_get_methods(void) { return umfpack_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab umfpack_attrs[] = {
+  { NULL,NULL,NULL,NULL },
+};
+
+
+/*-------------------------------------------
+ * functions 
+ *-------------------------------------------*/
+/*----------------------------------------------------
+ * Interface 
+ * i.e a set of function which are accessible at nsp level
+ *----------------------------------------------------*/
+
+static OpTab umfpack_func[]={
+  { "umfpack_create", int_umfpack_create},
+  { NULL, NULL}
+};
+
+/* call ith function in the umfpack interface */
+
+int umfpack_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+{
+  return (*(umfpack_func[i].fonc))(stack,rhs,opt,lhs);
+}
+
+/* used to walk through the interface table 
+    (for adding or removing functions) */
+
+void umfpack_Interf_Info(int i, char **fname, function (**f))
+{
+  *fname = umfpack_func[i].name;
+  *f = umfpack_func[i].fonc;
+}
+
+
+
