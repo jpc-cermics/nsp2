@@ -171,7 +171,8 @@ int int_smx_concat(Stack stack, int rhs, int opt, int lhs, FSconcat F)
 
 int int_smxconcatd(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_smx_concat(stack,rhs,opt,lhs,nsp_smatrix_concat_down);
+  return int_matint_concat_down_yy(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
+  /* return int_smx_concat(stack,rhs,opt,lhs,nsp_smatrix_concat_down); */
 }
 
 

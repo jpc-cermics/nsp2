@@ -471,7 +471,8 @@ int int_pmatrix__concat(Stack stack, int rhs, int opt, int lhs, FSconcat F)
 
 int int_pmatrix_concatd(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_pmatrix__concat(stack,rhs,opt,lhs,nsp_pmatrix_concat_down);
+  return int_matint_concat_down_yy(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
+  /* return int_pmatrix__concat(stack,rhs,opt,lhs,nsp_pmatrix_concat_down); */
 }
 
 

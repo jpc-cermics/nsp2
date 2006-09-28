@@ -35,8 +35,8 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	cells.obj cellsobj.obj Sptriplet.obj \
 	pr-output.obj bhash.obj \
 	serial.obj \
-	SpColMatrix.obj SpColMatObj.obj \
-	intumfpack.obj 
+	SpColMatrix.obj SpColMatObj.obj 
+
 
 
 OLD=	gsort.obj qsort.obj	

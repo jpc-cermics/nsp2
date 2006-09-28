@@ -1425,7 +1425,8 @@ static int int_mp_concat(Stack stack, int rhs, int opt, int lhs, Fconcat F)
 
 int int_mpconcatd(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mp_concat(stack,rhs,opt,lhs,nsp_mpmatrix_concat_down);
+  return int_matint_concat_down_yy(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
+  /* return int_mp_concat(stack,rhs,opt,lhs,nsp_mpmatrix_concat_down); */
 }
 
 /*

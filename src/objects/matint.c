@@ -2083,7 +2083,6 @@ int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-
 /* an other interface for concatd 
  * This one is used when concatd_x_x is first searched 
  * when x is supposed to implement the matint interface 
@@ -2091,7 +2090,6 @@ int nsp_matint_concatd_xx(Stack stack, int rhs, int opt, int lhs)
  *
  */ 
 
-typedef NspObject *(*Fconcat_d) (const NspObject *, const NspObject *);
 
 int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d F)
 {
