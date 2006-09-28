@@ -60,6 +60,9 @@ extern int nsp_matint_set_elts(NspObject *ObjA, const int *ind, int nb_elts, int
 extern NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB);
 extern int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB);
 
+typedef NspObject *(*Fconcat_d) (const NspObject *, const NspObject *);
+extern NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB);
+extern int int_matint_concat_down_yy(Stack stack, int rhs, int opt, int lhs, Fconcat_d F);
 extern int nsp_matint_resize2vect_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_extractelts_xx(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_extractcols_xx(Stack stack, int rhs, int opt, int lhs);
