@@ -187,6 +187,13 @@ extern void mxSetPr(mxArray *array_ptr, double *pr);
 extern void mxSetJc(mxArray *array_ptr, int *jc);
 extern void mxSetIr(mxArray *array_ptr,int *ir);
 extern void *mxRealloc(void *ptr, size_t size);
+extern void mxSetPi(mxArray *array_ptr, double *pi);
+
+typedef int mwSize; 
+
+extern void mxSetN(mxArray *ptr, mwSize n);
+extern void mxSetM(mxArray *ptr, mwSize m);
+
 
 
 #endif /* NSP_MEX */

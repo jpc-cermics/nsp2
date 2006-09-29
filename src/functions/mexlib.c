@@ -1995,6 +1995,7 @@ void _mxAssert(char *mess, int line, const char *file)
  * 
  * 
  **/
+
 void mxSetPr(mxArray *array_ptr, double *pr)
 {
   if ( IsMat(array_ptr)) 
@@ -2019,9 +2020,23 @@ void mxSetPr(mxArray *array_ptr, double *pr)
     }
   else 
     {
-      Scierror("Error in %s: mxGetPr failed\n","mex");
+      Scierror("Error in %s: mxSetPr failed\n","mex");
       nsp_mex_errjump();
     }
+}
+
+/**
+ * mxSetPi:
+ * @array_ptr: 
+ * @pi: 
+ * 
+ * 
+ **/
+
+void mxSetPi(mxArray *array_ptr, double *pi)
+{
+  Scierror("Error in %s: mxSetPi failed, use mxSetPr for real+complex values\n","mex");
+  nsp_mex_errjump();
 }
 
 /**
@@ -2044,7 +2059,7 @@ void mxSetJc(mxArray *array_ptr, int *jc)
     }
   else 
     {
-      Scierror("Error in %s: mxGetPr failed\n","mex");
+      Scierror("Error in %s: mxSetJc failed\n","mex");
       nsp_mex_errjump();
     }
   
@@ -2070,7 +2085,7 @@ void mxSetIr(mxArray *array_ptr,int *ir)
     }
   else 
     {
-      Scierror("Error in %s: mxGetPr failed\n","mex");
+      Scierror("Error in %s: mxSetIr failed\n","mex");
       nsp_mex_errjump();
     }
 }
@@ -2087,4 +2102,30 @@ void mxSetIr(mxArray *array_ptr,int *ir)
 void *mxRealloc(void *ptr, size_t size)
 {
   return realloc(ptr,sizeof(char)*size);
+}
+
+void mxSetN(mxArray *ptr, mwSize n)
+{
+  if ( IsMat(ptr)) 
+    {
+      NspMatrix *A = (NspMatrix *)  ptr;
+      /* be sure that matrix is matlab converted */
+      A->n = n;
+      A->mn = A->m*A->n;
+    }
+  Scierror("Error in %s: mxSetN failed\n","mex");
+  nsp_mex_errjump();
+}
+
+void mxSetM(mxArray *ptr, mwSize m)
+{
+  if ( IsMat(ptr)) 
+    {
+      NspMatrix *A = (NspMatrix *)  ptr;
+      /* be sure that matrix is matlab converted */
+      A->m = m;
+      A->mn = A->m*A->n;
+    }
+  Scierror("Error in %s: mxSetM failed\n","mex");
+  nsp_mex_errjump();
 }
