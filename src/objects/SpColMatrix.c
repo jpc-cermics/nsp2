@@ -5622,7 +5622,7 @@ int nsp_spcolmatrix_find(NspSpColMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
+NspSpColMatrix *nsp_spcolmatrix_rand_one(int m,int n,double sparsity,char crand)
 {
   double moy=0.0,std=1.0, mcol=m*sparsity;
   int mres;
@@ -5662,3 +5662,81 @@ NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
   nsp_matrix_destroy(icol);
   return A;
 }
+
+/* repartit ntot en ncol-valeurs qui sont chacunes <= colsize
+ *
+ */
+
+static NspMatrix *nsp_sprand_column_deviates(int ntot,int ncol,int colsize)
+{
+  NspMatrix *Icol;
+  int count=0;
+  if ((Icol=nsp_matrix_create(NVOID,'r',ncol,1)) == NULLMAT) return NULLMAT;
+  memset(Icol->I,0,Icol->mn*sizeof(int));
+  while ( count != ntot) 
+    {
+      int val = floor(ncol* rand_ranf());
+      if ( Icol->I[val] <= colsize ) 
+	{
+	  Icol->I[val]++;
+	  count++;
+	}
+    }
+  return Icol;
+}
+
+
+NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
+{
+  double moy=0.0,std=1.0, mcol=m*n*sparsity;
+  NspMatrix *icol=NULL,*col_elt=NULL;
+  NspSpColMatrix *A=NULL;
+  int k,i,mcolres=mcol,*tcol=NULL,ret=FAIL;
+  if ((A =nsp_spcolmatrix_create(NVOID,'r',m,n))== NULLSPCOL ) 
+    return NULLSPCOL;
+  /* used to detect row already selected */
+  if ((icol=nsp_matrix_create(NVOID,'r',m,2)) == NULLMAT) goto err;
+  tcol= (int *) (icol->R+icol->m);
+  /* number of non-nul elements for each column 
+   */
+  if ((col_elt = nsp_sprand_column_deviates(mcolres,A->n,A->m))== NULL)
+    goto err;
+  for ( i=0 ; i < A->n ; i++) 
+    {
+      int count=0;
+      int mres= col_elt->I[i]; /* number of non-nul elements in column i */
+      memset(tcol,0,icol->m*sizeof(int));
+      /* random selection of row indices */
+      while ( count != mres) 
+	{
+	  int val = floor(A->m* rand_ranf());
+	  if ( tcol[val] != 1) 
+	    {
+	      tcol[val]=1;
+	      icol->R[count++]= val;
+	    }
+	}
+      /* sort the mres first elements */
+      nsp_qsort_double(icol->R,NULL,FALSE,mres,'i');
+      /* resize column i */
+      nsp_spcolmatrix_resize_col(A,i,mres);
+      for ( k = 0 ; k < A->D[i]->size ; k++) 
+	{
+	  A->D[i]->J[k] = icol->R[k];
+	}
+      if ( crand == 'n' ) 
+	for (k = 0 ; k < A->D[i]->size ; k++)
+	  A->D[i]->R[k]= rand_gennor(&moy,&std);
+      else 
+	for (k = 0 ; k < A->D[i]->size ; k++)
+	  A->D[i]->R[k]= rand_ranf();
+    }
+  ret = OK;
+ err: 
+  if ( icol != NULL ) nsp_matrix_destroy(icol);
+  if ( icol != NULL ) nsp_matrix_destroy(col_elt);
+  if ( ret == FAIL) { nsp_spcolmatrix_destroy(A);A=NULL;}
+  return A;
+}
+
+
