@@ -274,7 +274,7 @@ double *mxGetPi(const mxArray *ptr)
 	{
 	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
-      return A->triplet.Ax + A->triplet.Aisize;
+      return A->rc_type == 'c' ? A->triplet.Ax + A->triplet.Aisize : NULL;
     }
   else
     {
@@ -1319,6 +1319,7 @@ int mxGetNzmax(const mxArray *array_ptr)
  * 
  * Return value: 
  **/
+
 int mxSetNzmax(mxArray *array_ptr,int n)
 {
   NspSpColMatrix *A=(NspSpColMatrix *) array_ptr;
@@ -1331,7 +1332,9 @@ int mxSetNzmax(mxArray *array_ptr,int n)
     {
       if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
     }
-  return  nsp_spcol_realloc_col_triplet(A,n);
+  A->triplet.Aisize = n ;
+  /* nsp_spcol_realloc_col_triplet(A,n);*/
+  return OK;
 }
 
 
@@ -2113,8 +2116,11 @@ void mxSetN(mxArray *ptr, mwSize n)
       A->n = n;
       A->mn = A->m*A->n;
     }
-  Scierror("Error in %s: mxSetN failed\n","mex");
-  nsp_mex_errjump();
+  else 
+    {
+      Scierror("Error in %s: mxSetN failed\n","mex");
+      nsp_mex_errjump();
+    }
 }
 
 void mxSetM(mxArray *ptr, mwSize m)
@@ -2126,6 +2132,9 @@ void mxSetM(mxArray *ptr, mwSize m)
       A->m = m;
       A->mn = A->m*A->n;
     }
-  Scierror("Error in %s: mxSetM failed\n","mex");
-  nsp_mex_errjump();
+  else 
+    {
+      Scierror("Error in %s: mxSetM failed\n","mex");
+      nsp_mex_errjump();
+    }
 }
