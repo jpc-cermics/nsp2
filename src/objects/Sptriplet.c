@@ -80,10 +80,16 @@ int nsp_sprow_update_from_triplet( NspSpRowMatrix *M)
 int nsp_sprow_alloc_col_triplet(NspSpRowMatrix *M,int nzmax)
 {
   if ( M->convert == 't' ) return OK;
-  if ((M->triplet.Ap = malloc(sizeof(int)*(M->n+1)))== NULL) return FAIL;
-  if ((M->triplet.Ai = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
-  if ((M->triplet.Ax = malloc(sizeof(double)*(nzmax)*(M->rc_type=='c' ? 2: 1))) == NULL)
+  if ((M->triplet.Jc = malloc(sizeof(int)*(M->n+1)))== NULL) return FAIL;
+  if ((M->triplet.Ir = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
+  if ((M->triplet.Pr = malloc(sizeof(double)*(nzmax))) == NULL)
       return FAIL;
+  M->triplet.Pi=NULL;
+  if ( M->rc_type=='c' ) 
+    {
+      if ((M->triplet.Pi = malloc(sizeof(double)*(nzmax))) == NULL)
+	return FAIL;
+    }
   M->triplet.Aisize = nzmax;
   M->triplet.m= M->m;
   M->triplet.n= M->n;
@@ -93,17 +99,21 @@ int nsp_sprow_alloc_col_triplet(NspSpRowMatrix *M,int nzmax)
 
 int nsp_sprow_realloc_col_triplet( NspSpRowMatrix *M,int nzmax)
 {
-  int cp = (M->rc_type=='c' ? 2: 1);
   if ( M->convert != 't' ) 
     {
       return nsp_sprow_alloc_col_triplet(M,nzmax);
     }
   else
     {
-      /* no need to realloc Ap */
-      if ((M->triplet.Ai = realloc(M->triplet.Ai,sizeof(int)*(nzmax)))== NULL) return FAIL;
-      if ((M->triplet.Ax = realloc(M->triplet.Ax,sizeof(double)*(nzmax)*cp)) == NULL)
+      /* no need to realloc Jc */
+      if ((M->triplet.Ir = realloc(M->triplet.Ir,sizeof(int)*(nzmax)))== NULL) return FAIL;
+      if ((M->triplet.Pr = realloc(M->triplet.Pr,sizeof(double)*(nzmax))) == NULL)
 	return FAIL;
+      if ( M->rc_type=='c' )
+	{
+	  if ((M->triplet.Pi = realloc(M->triplet.Pi,sizeof(double)*(nzmax))) == NULL)
+	    return FAIL;
+	}
       M->triplet.Aisize = nzmax;
       M->triplet.m= M->m;
       M->triplet.n= M->n;
@@ -152,19 +162,19 @@ static int nsp_sprow_update_from_triplet_internal( NspSpRowMatrix *M)
   /* resize each row */
   for ( i = 0 ; i < M->m ; i++) 
     {
-      int row_size = M->triplet.Ap[i+1]-M->triplet.Ap[i];
+      int row_size = M->triplet.Jc[i+1]-M->triplet.Jc[i];
       if (nsp_sprowmatrix_resize_row(M,i,row_size) == FAIL) return FAIL;
     }
   if ( M->rc_type == 'r')
     {
       for ( i = 0 ; i < M->m ; i++)
 	{
-	  int start = M->triplet.Ap[i],j;
+	  int start = M->triplet.Jc[i],j;
 	  SpRow *D = M->D[i];
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
-	      D->J[j]= M->triplet.Ai[start+j];
-	      D->R[j]= M->triplet.Ax[start+j];
+	      D->J[j]= M->triplet.Ir[start+j];
+	      D->R[j]= M->triplet.Pr[start+j];
 	    }
 	}
     }
@@ -172,17 +182,13 @@ static int nsp_sprow_update_from_triplet_internal( NspSpRowMatrix *M)
     {
       for ( i = 0 ; i < M->m ; i++)
 	{
-	  int start = M->triplet.Ap[i],j;
+	  int start = M->triplet.Jc[i],j;
 	  SpRow *D = M->D[i];
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
-	      D->J[j]= M->triplet.Ai[start+j];
-	      /* 
-		 D->C[j].r= M->triplet.Ax[2*(start+j)];
-		 D->C[j].i= M->triplet.Ax[2*(start+j)+1];
-	      */
-	      D->C[j].r= M->triplet.Ax[start+j];
-	      D->C[j].i= M->triplet.Ax[start+j+M->triplet.Aisize];
+	      D->J[j]= M->triplet.Ir[start+j];
+	      D->C[j].r= M->triplet.Pr[start+j];
+	      D->C[j].i= M->triplet.Pi[start+j];
 	    }
 	}
     }
@@ -191,7 +197,7 @@ static int nsp_sprow_update_from_triplet_internal( NspSpRowMatrix *M)
 }
 
 
-/* from internal coding to the Ap,Ai,Az coding using int and double.
+/* from internal coding to the Jc,Ir,Pr coding using int and double.
  * Note that the matrix M is row coded and thus the triplet is also 
  * row coded 
  * here the triplet has been allocated !
@@ -200,24 +206,24 @@ static int nsp_sprow_update_from_triplet_internal( NspSpRowMatrix *M)
 static int nsp_sprow_fill_zi_triplet(const NspSpRowMatrix *M)
 {
   int i, *loc;
-  /* fill the array Ap */
+  /* fill the array Jc */
   if ( M->convert != 't' ) return FAIL;
-  loc = M->triplet.Ap; loc[0]=0;
+  loc = M->triplet.Jc; loc[0]=0;
   for ( i = 1 ; i <= M->m ; i++)
     {
       loc[i]= loc[i-1] + M->D[i-1]->size;
     }
-  /* fills the array Ai and Ax */
+  /* fills the array Ir and Pr */
   if ( M->rc_type == 'r')
     {
       for ( i = 0 ; i < M->m ; i++)
 	{
-	  int start = M->triplet.Ap[i],j;
+	  int start = M->triplet.Jc[i],j;
 	  SpRow *D = M->D[i];
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
-	      M->triplet.Ai[start+j]= D->J[j];
-	      M->triplet.Ax[start+j]= D->R[j];
+	      M->triplet.Ir[start+j]= D->J[j];
+	      M->triplet.Pr[start+j]= D->R[j];
 	    }
 	}
     }
@@ -225,17 +231,17 @@ static int nsp_sprow_fill_zi_triplet(const NspSpRowMatrix *M)
     {
       for ( i = 0 ; i < M->m ; i++)
 	{
-	  int start = M->triplet.Ap[i],j;
+	  int start = M->triplet.Jc[i],j;
 	  SpRow *D = M->D[i];
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
-	      M->triplet.Ai[start+j]=  D->J[j];
+	      M->triplet.Ir[start+j]=  D->J[j];
 	      /* 
-		 M->triplet.Ax[2*(start+j)]= D->C[j].r;
-		 M->triplet.Ax[2*(start+j)+1]= D->C[j].i;
+		 M->triplet.Pr[2*(start+j)]= D->C[j].r;
+		 M->triplet.Pr[2*(start+j)+1]= D->C[j].i;
 	      */
-	      M->triplet.Ax[start+j]= D->C[j].r;
-	      M->triplet.Ax[start+j+M->triplet.Aisize]= D->C[j].i;
+	      M->triplet.Pr[start+j]= D->C[j].r;
+	      M->triplet.Pi[start+j]= D->C[j].i;
 	    }
 	}
     }
@@ -245,18 +251,25 @@ static int nsp_sprow_fill_zi_triplet(const NspSpRowMatrix *M)
 static void nsp_sprow_free_triplet(NspSpRowMatrix *M)
 {
   M->convert = 'v';
-  FREE(M->triplet.Ap);
-  FREE(M->triplet.Ai);
-  FREE(M->triplet.Ax);
+  FREE(M->triplet.Jc);
+  FREE(M->triplet.Ir);
+  FREE(M->triplet.Pr);
+  FREE(M->triplet.Pi);
 }
 
 static int nsp_sprow_alloc_triplet(NspSpRowMatrix *M,int nzmax)
 {
   if ( M->convert == 't' ) return OK;
-  if ((M->triplet.Ap = malloc(sizeof(int)*(M->m+1)))== NULL) return FAIL;
-  if ((M->triplet.Ai = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
-  if ((M->triplet.Ax = malloc(sizeof(double)*(nzmax)*(M->rc_type=='c' ? 2: 1))) == NULL)
+  if ((M->triplet.Jc = malloc(sizeof(int)*(M->m+1)))== NULL) return FAIL;
+  if ((M->triplet.Ir = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
+  if ((M->triplet.Pr = malloc(sizeof(double)*(nzmax)*(M->rc_type=='c' ? 2: 1))) == NULL)
       return FAIL;
+  M->triplet.Pi = NULL;
+  if ( M->rc_type=='c' )
+    {
+      if ((M->triplet.Pi = malloc(sizeof(double)*(nzmax))) == NULL)
+	return FAIL;
+    }
   M->triplet.Aisize = nzmax;
   M->triplet.m= M->m;
   M->triplet.n= M->n;
@@ -305,10 +318,16 @@ int nsp_spcol_update_from_triplet( NspSpColMatrix *M)
 int nsp_spcol_alloc_col_triplet(NspSpColMatrix *M,int nzmax)
 {
   if ( M->convert == 't' ) return OK;
-  if ((M->triplet.Ap = malloc(sizeof(int)*(M->n+1)))== NULL) return FAIL;
-  if ((M->triplet.Ai = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
-  if ((M->triplet.Ax = malloc(sizeof(double)*(nzmax)*(M->rc_type=='c' ? 2: 1))) == NULL)
+  if ((M->triplet.Jc = malloc(sizeof(int)*(M->n+1)))== NULL) return FAIL;
+  if ((M->triplet.Ir = malloc(sizeof(int)*(nzmax)))== NULL) return FAIL;
+  if ((M->triplet.Pr = malloc(sizeof(double)*(nzmax))) == NULL)
       return FAIL;
+  M->triplet.Pi =NULL;
+  if (M->rc_type=='c' ) 
+    {
+      if ((M->triplet.Pi = malloc(sizeof(double)*(nzmax))) == NULL)
+	return FAIL;
+    }
   M->triplet.Aisize = nzmax;
   M->triplet.m= M->m;
   M->triplet.n= M->n;
@@ -325,10 +344,15 @@ int nsp_spcol_realloc_col_triplet( NspSpColMatrix *M,int nzmax)
     }
   else
     {
-      /* no need to realloc Ap */
-      if ((M->triplet.Ai = realloc(M->triplet.Ai,sizeof(int)*(nzmax)))== NULL) return FAIL;
-      if ((M->triplet.Ax = realloc(M->triplet.Ax,sizeof(double)*(nzmax)*cp)) == NULL)
+      /* no need to realloc Jc */
+      if ((M->triplet.Ir = realloc(M->triplet.Ir,sizeof(int)*(nzmax)))== NULL) return FAIL;
+      if ((M->triplet.Pr = realloc(M->triplet.Pr,sizeof(double)*(nzmax)*cp)) == NULL)
 	return FAIL;
+      if (M->rc_type=='c')
+	{
+	  if ((M->triplet.Pi = realloc(M->triplet.Pi,sizeof(double)*(nzmax)*cp)) == NULL)
+	    return FAIL;
+	}
       M->triplet.Aisize = nzmax;
       M->triplet.m= M->m;
       M->triplet.n= M->n;
@@ -377,19 +401,19 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
   /* resize each column */
   for ( i = 0 ; i < M->n ; i++) 
     {
-      int col_size = M->triplet.Ap[i+1]-M->triplet.Ap[i];
+      int col_size = M->triplet.Jc[i+1]-M->triplet.Jc[i];
       if (nsp_spcolmatrix_resize_col(M,i,col_size) == FAIL) return FAIL;
     }
   if ( M->rc_type == 'r')
     {
       for ( i = 0 ; i < M->n ; i++)
 	{
-	  int start = M->triplet.Ap[i],j;
+	  int start = M->triplet.Jc[i],j;
 	  SpCol *D = M->D[i];
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
-	      D->J[j]= M->triplet.Ai[start+j];
-	      D->R[j]= M->triplet.Ax[start+j];
+	      D->J[j]= M->triplet.Ir[start+j];
+	      D->R[j]= M->triplet.Pr[start+j];
 	    }
 	}
     }
@@ -397,13 +421,13 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
     {
       for ( i = 0 ; i < M->n ; i++)
 	{
-	  int start = M->triplet.Ap[i],j;
+	  int start = M->triplet.Jc[i],j;
 	  SpCol *D = M->D[i];
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
-	      D->J[j]= M->triplet.Ai[start+j];
-	      D->C[j].r= M->triplet.Ax[start+j];
-	      D->C[j].i= M->triplet.Ax[start+j+M->triplet.Aisize];
+	      D->J[j]= M->triplet.Ir[start+j];
+	      D->C[j].r= M->triplet.Pr[start+j];
+	      D->C[j].i= M->triplet.Pi[start+j];
 	    }
 	}
     }
@@ -411,31 +435,31 @@ static int nsp_spcol_update_from_triplet_internal( NspSpColMatrix *M)
   return OK;
 }
 
-/* from internal coding to the Ap,Ai,Az coding using int and double.
+/* from internal coding to the Jc,Ir,Az coding using int and double.
  * here the triplet has been allocated !
  */
 
 static int nsp_spcol_fill_zi_triplet(const NspSpColMatrix *M)
 {
   int i, *loc;
-  /* fill the array Ap */
+  /* fill the array Jc */
   if ( M->convert != 't' ) return FAIL;
-  loc = M->triplet.Ap; loc[0]=0;
+  loc = M->triplet.Jc; loc[0]=0;
   for ( i = 1 ; i <= M->n ; i++)
     {
       loc[i]= loc[i-1] + M->D[i-1]->size;
     }
-  /* fills the array Ai and Ax */
+  /* fills the array Ir and Pr */
   if ( M->rc_type == 'r')
     {
       for ( i = 0 ; i < M->n ; i++)
 	{
-	  int start = M->triplet.Ap[i],j;
+	  int start = M->triplet.Jc[i],j;
 	  SpCol *D = M->D[i];
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
-	      M->triplet.Ai[start+j]= D->J[j];
-	      M->triplet.Ax[start+j]= D->R[j];
+	      M->triplet.Ir[start+j]= D->J[j];
+	      M->triplet.Pr[start+j]= D->R[j];
 	    }
 	}
     }
@@ -443,13 +467,13 @@ static int nsp_spcol_fill_zi_triplet(const NspSpColMatrix *M)
     {
       for ( i = 0 ; i < M->n ; i++)
 	{
-	  int start = M->triplet.Ap[i],j;
+	  int start = M->triplet.Jc[i],j;
 	  SpCol *D = M->D[i];
 	  for (j= 0 ; j < D->size ; j++) 
 	    {
-	      M->triplet.Ai[start+j]=  D->J[j];
-	      M->triplet.Ax[start+j]=  D->C[j].r;
-	      M->triplet.Ax[start+j+M->triplet.Aisize]= D->C[j].i;
+	      M->triplet.Ir[start+j]=  D->J[j];
+	      M->triplet.Pr[start+j]=  D->C[j].r;
+	      M->triplet.Pi[start+j]= D->C[j].i;
 	    }
 	}
     }
@@ -459,8 +483,9 @@ static int nsp_spcol_fill_zi_triplet(const NspSpColMatrix *M)
 static void nsp_spcol_free_triplet(NspSpColMatrix *M)
 {
   M->convert = 'v';
-  FREE(M->triplet.Ap);
-  FREE(M->triplet.Ai);
-  FREE(M->triplet.Ax);
+  FREE(M->triplet.Jc);
+  FREE(M->triplet.Ir);
+  FREE(M->triplet.Pr);
+  FREE(M->triplet.Pi);
 }
 

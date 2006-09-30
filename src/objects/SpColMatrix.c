@@ -93,9 +93,10 @@ NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
   Sp->mn = Sp->m*Sp->n;
   Sp->rc_type=type;
   Sp->convert = 'n';
-  Sp->triplet.Ai=NULL;
-  Sp->triplet.Ap=NULL;
-  Sp->triplet.Ax=NULL;
+  Sp->triplet.Jc=NULL;
+  Sp->triplet.Ir=NULL;
+  Sp->triplet.Pr=NULL;
+  Sp->triplet.Pi=NULL;
   if ( Sp->mn == 0 ) 
     {
       Sp->D = NULL;
@@ -5663,80 +5664,107 @@ NspSpColMatrix *nsp_spcolmatrix_rand_one(int m,int n,double sparsity,char crand)
   return A;
 }
 
-/* repartit ntot en ncol-valeurs qui sont chacunes <= colsize
- *
+/* 
+ * randomly select requested number of non-nul elements for each column 
+ * in order to get a total of ntot non-nul elements.
  */
 
-static NspMatrix *nsp_sprand_column_deviates(int ntot,int ncol,int colsize)
+static int *nsp_sprand_column_deviates(int ntot,int ncol,int colsize)
 {
-  NspMatrix *Icol;
+  int *Icol;
   int count=0;
-  if ((Icol=nsp_matrix_create(NVOID,'r',ncol,1)) == NULLMAT) return NULLMAT;
-  memset(Icol->I,0,Icol->mn*sizeof(int));
-  while ( count != ntot) 
+  if ( (Icol = nsp_alloc_work_int(ncol)) == NULL ) return NULL;
+  memset(Icol, 0, ncol*sizeof(int));
+  while ( count != ntot)
     {
       int val = floor(ncol* rand_ranf());
-      if ( Icol->I[val] <= colsize ) 
+      if ( Icol[val] < colsize )
 	{
-	  Icol->I[val]++;
+	  Icol[val]++;
 	  count++;
 	}
     }
   return Icol;
 }
 
+/**
+ * nsp_spcolmatrix_rand:
+ * @m: 
+ * @n: 
+ * @sparsity: 
+ * @crand: 
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
 
 NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
 {
-  double moy=0.0,std=1.0, mcol=m*n*sparsity;
-  NspMatrix *icol=NULL,*col_elt=NULL;
-  NspSpColMatrix *A=NULL;
-  int k,i,mcolres=mcol,*tcol=NULL,ret=FAIL;
-  if ((A =nsp_spcolmatrix_create(NVOID,'r',m,n))== NULLSPCOL ) 
+  double moy=0.0, std=1.0;
+  int *nb_elts_col = NULL, *icol = NULL, *tcol = NULL;
+  NspSpColMatrix *A=NULLSPCOL;
+  int nnz=(int)(m*(n*Min(Max(sparsity,0.0),1.0))), k, j;
+
+  if ( (A =nsp_spcolmatrix_create(NVOID,'r',m,n)) == NULLSPCOL )
     return NULLSPCOL;
+
   /* used to detect row already selected */
-  if ((icol=nsp_matrix_create(NVOID,'r',m,2)) == NULLMAT) goto err;
-  tcol= (int *) (icol->R+icol->m);
-  /* number of non-nul elements for each column 
-   */
-  if ((col_elt = nsp_sprand_column_deviates(mcolres,A->n,A->m))== NULL)
+  if ( (icol =nsp_alloc_work_int(2*m)) == NULL ) goto err;
+  tcol = icol + m;
+  memset(tcol, 0, m*sizeof(int));  /* out of the loop */
+
+  /* number of non-nul elements for each column  */
+  if ( (nb_elts_col =nsp_sprand_column_deviates(nnz,A->n,A->m)) == NULL )
     goto err;
-  for ( i=0 ; i < A->n ; i++) 
+
+  for ( j=0 ; j < A->n ; j++)
     {
-      int count=0;
-      int mres= col_elt->I[i]; /* number of non-nul elements in column i */
-      memset(tcol,0,icol->m*sizeof(int));
+      int count = 0;
+      int nnzj = nb_elts_col[j]; /* number of non-nul elements in column j */
       /* random selection of row indices */
-      while ( count != mres) 
+      while ( count != nnzj )
 	{
 	  int val = floor(A->m* rand_ranf());
-	  if ( tcol[val] != 1) 
+	  if ( tcol[val] != 1)
 	    {
-	      tcol[val]=1;
-	      icol->R[count++]= val;
+	      tcol[val] = 1;
+	      icol[count++] = val;
 	    }
 	}
-      /* sort the mres first elements */
-      nsp_qsort_double(icol->R,NULL,FALSE,mres,'i');
-      /* resize column i */
-      nsp_spcolmatrix_resize_col(A,i,mres);
-      for ( k = 0 ; k < A->D[i]->size ; k++) 
-	{
-	  A->D[i]->J[k] = icol->R[k];
-	}
-      if ( crand == 'n' ) 
-	for (k = 0 ; k < A->D[i]->size ; k++)
-	  A->D[i]->R[k]= rand_gennor(&moy,&std);
-      else 
-	for (k = 0 ; k < A->D[i]->size ; k++)
-	  A->D[i]->R[k]= rand_ranf();
+      /* reset tcol to 0 (but only on the previous flagged cases) */
+      for ( k = 0 ; k < nnzj ; k++ )
+	tcol[icol[k]] = 0;
+
+      /* sort icol[0:nnzj-1] */
+      nsp_qsort_int(icol, NULL, FALSE, nnzj, 'i');
+
+      /* resize column j */
+      nsp_spcolmatrix_resize_col(A, j, nnzj);
+
+      /* fill the column j (with row indices and random values) */
+      for ( k = 0 ; k < nnzj ; k++ )
+	A->D[j]->J[k] = icol[k];
+      if ( crand == 'n' )
+	for ( k = 0 ; k < nnzj ; k++ )
+	  A->D[j]->R[k] = rand_gennor(&moy,&std);
+      else
+	for ( k = 0 ; k < nnzj ; k++ )
+	  A->D[j]->R[k] = rand_ranf();
     }
-  ret = OK;
- err: 
-  if ( icol != NULL ) nsp_matrix_destroy(icol);
-  if ( icol != NULL ) nsp_matrix_destroy(col_elt);
-  if ( ret == FAIL) { nsp_spcolmatrix_destroy(A);A=NULL;}
+   
+  FREE(icol);
+  FREE(nb_elts_col);
   return A;
+
+ err:
+  FREE(icol);
+  FREE(nb_elts_col);
+  nsp_spcolmatrix_destroy(A);
+  return NULLSPCOL;
 }
+
+
+
 
 
