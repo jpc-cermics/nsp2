@@ -226,9 +226,10 @@ void nsp_umfpack_destroy(NspUmfpack *H)
    {
      void *Numeric = H->obj->data;
      if ( Numeric != NULL) umfpack_di_free_numeric(&Numeric);
-     FREE(H->obj->mtlb_T.Ap);
-     FREE(H->obj->mtlb_T.Ai);
-     FREE(H->obj->mtlb_T.Ax);
+     FREE(H->obj->mtlb_T.Jc);
+     FREE(H->obj->mtlb_T.Ir);
+     FREE(H->obj->mtlb_T.Pr);
+     FREE(H->obj->mtlb_T.Pi);
      FREE(H->obj);
    }
   FREE(H);
@@ -383,22 +384,20 @@ static int int_umfpack_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) goto err;
   if ( A->rc_type == 'r' ) 
     {
-      stat = umfpack_di_symbolic(A->m, A->n, A->triplet.Ap, A->triplet.Ai, A->triplet.Ax, 
+      stat = umfpack_di_symbolic(A->m, A->n, A->triplet.Jc, A->triplet.Ir, A->triplet.Pr, 
 				 &Symbolic, Control, Info);
       if ( stat  != UMFPACK_OK ) goto symb_fact_error;
-      stat = umfpack_di_numeric(A->triplet.Ap, A->triplet.Ai, A->triplet.Ax, 
+      stat = umfpack_di_numeric(A->triplet.Jc, A->triplet.Ir, A->triplet.Pr, 
 				Symbolic, &Numeric, Control, Info);
       if ( stat  != UMFPACK_OK ) goto num_fact_error;
     }
   else 
     {
-      stat = umfpack_zi_symbolic(A->m, A->n, A->triplet.Ap, A->triplet.Ai, A->triplet.Ax,
-				 A->triplet.Ax + A->triplet.Aisize,
-				 &Symbolic, Control, Info);
+      stat = umfpack_zi_symbolic(A->m, A->n, A->triplet.Jc, A->triplet.Ir, A->triplet.Pr,
+				 A->triplet.Pi, &Symbolic, Control, Info);
       if ( stat  != UMFPACK_OK ) goto symb_fact_error;
-      stat = umfpack_zi_numeric(A->triplet.Ap, A->triplet.Ai, A->triplet.Ax,
-				A->triplet.Ax + A->triplet.Aisize ,
-				Symbolic, &Numeric, Control, Info);
+      stat = umfpack_zi_numeric(A->triplet.Jc, A->triplet.Ir, A->triplet.Pr,
+				A->triplet.Pi,Symbolic, &Numeric, Control, Info);
       if ( stat  != UMFPACK_OK ) goto num_fact_error;
     }
   umfpack_di_free_symbolic(&Symbolic);
@@ -416,9 +415,10 @@ static int int_umfpack_create(Stack stack, int rhs, int opt, int lhs)
   /* update triplet from A and release triplet conversion in A */
   H->obj->mtlb_T = A->triplet;
   A->convert = 'v';
-  A->triplet.Ap=NULL;
-  A->triplet.Ai=NULL;
-  A->triplet.Ax=NULL;
+  A->triplet.Jc=NULL;
+  A->triplet.Ir=NULL;
+  A->triplet.Pr=NULL;
+  A->triplet.Pi=NULL;
   MoveObj(stack,1,NSP_OBJECT(H));
   return 1;
 
@@ -481,12 +481,12 @@ static int int_umfpack_meth_luget(NspUmfpack *self, Stack stack, int rhs, int op
   if ((Rs =nsp_matrix_create(NVOID,'r',n_row,1))== NULLMAT) return RET_BUG;
 
   if ( rc_flag == 'r' )
-    stat = umfpack_di_get_numeric(Lt->triplet.Ap, Lt->triplet.Ai, Lt->triplet.Ax,
-				  U->triplet.Ap, U->triplet.Ai, U->triplet.Ax,
+    stat = umfpack_di_get_numeric(Lt->triplet.Jc, Lt->triplet.Ir, Lt->triplet.Pr,
+				  U->triplet.Jc, U->triplet.Ir, U->triplet.Pr,
 				  p->I, q->I, (double *)NULL, &do_recip, Rs->R, Numeric);
   else
-    stat = umfpack_zi_get_numeric(Lt->triplet.Ap, Lt->triplet.Ai, Lt->triplet.Ax, Lt->triplet.Ax + Lt->triplet.Aisize,
-				  U->triplet.Ap, U->triplet.Ai, U->triplet.Ax, U->triplet.Ax + U->triplet.Aisize,
+    stat = umfpack_zi_get_numeric(Lt->triplet.Jc, Lt->triplet.Ir, Lt->triplet.Pr,Lt->triplet.Pi,
+				  U->triplet.Jc, U->triplet.Ir, U->triplet.Pr, U->triplet.Pi,
 				  p->I, q->I, (double *)NULL, (double *)NULL, &do_recip, Rs->R, Numeric);
 
   if ( stat != UMFPACK_OK ) 
@@ -546,7 +546,7 @@ the_end:
 }
 
 
-/* solve Ax=b */
+/* solve Pr=b */
 
 int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -598,13 +598,13 @@ int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int 
     {
       /* Axr = Br */
       for ( i = 0 ; i < B->n ; i++ )
-	umfpack_di_wsolve(UMFPACK_A, T.Ap, T.Ai, T.Ax, X->R+i*B->m,B->R+i*B->m,
+	umfpack_di_wsolve(UMFPACK_A, T.Jc, T.Ir, T.Pr, X->R+i*B->m,B->R+i*B->m,
 			  Numeric, Control, Info, Wi->I, W->R);
       if ( B->rc_type == 'c' )
 	{
 	  /* Axi= Bi */
 	  for ( i = 0 ; i < B->n ; i++ )
-	    umfpack_di_wsolve(UMFPACK_A, T.Ap, T.Ai, T.Ax,X->R+i*B->m+B->mn,B->R+i*B->m+B->mn,
+	    umfpack_di_wsolve(UMFPACK_A, T.Jc, T.Ir, T.Pr,X->R+i*B->m+B->mn,B->R+i*B->m+B->mn,
 			      Numeric, Control, Info, Wi->I, W->R);
 	  /* X is mtlb converted we have to back convert */
 	  X->convert = 'c';
@@ -614,12 +614,94 @@ int int_umfpack_meth_solve(NspUmfpack *self, Stack stack, int rhs, int opt, int 
   else /* A is complex and B too  */
     {
       for ( i = 0 ; i < B->n ; i++ )
-	umfpack_zi_wsolve(UMFPACK_A, T.Ap, T.Ai, T.Ax,  T.Ax + T.Aisize,
+	umfpack_zi_wsolve(UMFPACK_A, T.Jc, T.Ir, T.Pr,  T.Pi,
 			  X->R+i*B->m, X->R+i*B->m+B->mn, 
 			  B->R+i*B->m, B->R+i*B->m+B->mn, Numeric, Control, Info, Wi->I, W->R);
       /* X is mtlb converted we have to back convert */
       X->convert = 'c';
       Mat2double (X);
+    }
+  rep=1;
+  MoveObj(stack,1,NSP_OBJECT(X));
+ err:
+  if ( W != NULL) nsp_matrix_destroy(W);
+  if ( Wi != NULL) nsp_matrix_destroy(Wi);
+  return rep;
+}
+
+/* Unfinished : in complex cases the triplet must be in nsp-complex mode 
+ * if we want X and B to be also in that mode.
+ */
+
+int int_umfpack_meth_solve_new(NspUmfpack *self, Stack stack, int rhs, int opt, int lhs)
+{
+  double *Control = NULL, *Info = NULL;
+  NspMatrix *B,*X=NULL,*Wi=NULL,*W=NULL;
+  nsp_sparse_triplet T;
+  char rc_type, rc_x;
+  void *Numeric=NULL;
+  int i,rep=RET_BUG;
+  
+  CheckRhs(1,1); 
+  CheckLhs(1,1);
+
+  if ( self->obj == NULL || self->obj->data  == NULL) 
+    {
+      Scierror("Error: umfpack object is not properly built\n");
+      return RET_BUG;
+    }
+  Numeric= self->obj->data; 
+  rc_type = self->obj->rc_type; 
+  T = self->obj->mtlb_T;
+  if ((B = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  
+  if ( B->m != T.m || B->n < 1 )
+    {
+      Scierror("Error: first argument to method has wrong dimensions (%d,%d)\n",
+	       B->m,B->n);
+      return RET_BUG;
+    };
+  /* allocate memory for the solution */
+  rc_x = ( rc_type == 'c'   ||  B->rc_type == 'c' ) ? 'c' : 'r' ;
+  if ((X =nsp_matrix_create(NVOID,rc_x,B->m,B->n)) == NULLMAT ) return RET_BUG;
+  /* allocate memory for working arrays */
+  if ((Wi =nsp_matrix_create(NVOID,'r',T.m,1)) == NULLMAT ) goto err;
+  if ((W  =nsp_matrix_create(NVOID,'r',((rc_type == 'c') ? 10: 5)*T.m,1)) == NULLMAT ) 
+    goto err;
+
+  if ( rc_x == 'c' &&  B->rc_type  == 'r' )
+    {
+      /* A is complex -> B is complexified */
+      if ((B = GetMatCopy(stack,1)) == NULLMAT) return RET_BUG;
+      if (nsp_mat_complexify(B,0.00) == FAIL ) return RET_BUG;
+    }
+  if (self->obj->rc_type == 'r' )
+    {
+      if ( B->rc_type == 'c' ) Mat2mtlb_cplx (B);
+      /* Axr = Br */
+      for ( i = 0 ; i < B->n ; i++ )
+	umfpack_di_wsolve(UMFPACK_A, T.Jc, T.Ir, T.Pr, X->R+i*B->m,B->R+i*B->m,
+			  Numeric, Control, Info, Wi->I, W->R);
+      if ( B->rc_type == 'c' )
+	{
+	  /* Axi= Bi */
+	  for ( i = 0 ; i < B->n ; i++ )
+	    umfpack_di_wsolve(UMFPACK_A, T.Jc, T.Ir, T.Pr,X->R+i*B->m+B->mn,B->R+i*B->m+B->mn,
+			      Numeric, Control, Info, Wi->I, W->R);
+	  /* X is mtlb converted we have to back convert */
+	  X->convert = 'c';
+	  Mat2double (X);
+	}
+    }
+  else 
+    {
+      /* A is complex and B too (X and B are nsp-complex coded) 
+       * The complex matrix should be in nsp-complex coded
+       */
+      for ( i = 0 ; i < B->n ; i++ )
+	umfpack_zi_wsolve(UMFPACK_A, T.Jc, T.Ir, T.Pr,  T.Pi,
+			  X->R+i*B->m, NULL,
+			  B->R+i*B->m, NULL, Numeric, Control, Info, Wi->I, W->R);
     }
   rep=1;
   MoveObj(stack,1,NSP_OBJECT(X));

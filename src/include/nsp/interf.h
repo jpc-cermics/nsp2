@@ -37,9 +37,13 @@ struct _OpWrapTab  {
 extern NspSMatrix *SMatCreateFromAttrsTable (AttrTab *T); 
 
 #define NthObj(x) (stack.val->S[stack.first+x-1])
+/* current fonction name in use */
 /* #define NspFname(x) (x).val->fname */
 #define NspFname(x) (x).fname 
 #define NspFnameH(x) (x)->fname 
+/* current file name in use */
+#define NspFileName(x) (x).file_name
+
 
 #define CheckRhs(x,y) if ( rhs < x || rhs > y ) \
   { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 

@@ -11,9 +11,10 @@
 typedef struct _nsp_sparse_triplet nsp_sparse_triplet;
 
 struct _nsp_sparse_triplet { /* used in mexlib */
-  int *Ap; /* m+ 1 */
-  int *Ai; /* Aisize */
-  double *Ax; /* Aisize */
+  int *Jc; /* Ap;*/ /* m+ 1 */
+  int *Ir; /* Ai;*/ /* Aisize */
+  double *Pr; /* Ax;*/ /* Aisize */
+  double *Pi; /* Ax;*/ /* Aisize */
   int m,n,Aisize;
 };
 
