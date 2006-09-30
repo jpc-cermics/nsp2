@@ -232,7 +232,7 @@ double *mxGetPr(const mxArray *ptr)
 	{
 	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
-      return A->triplet.Ax;
+      return A->triplet.Pr;
     }
   else if ( IsBMat(ptr) )
     {
@@ -274,7 +274,7 @@ double *mxGetPi(const mxArray *ptr)
 	{
 	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
-      return A->rc_type == 'c' ? A->triplet.Ax + A->triplet.Aisize : NULL;
+      return A->rc_type == 'c' ? A->triplet.Pi : NULL;
     }
   else
     {
@@ -324,7 +324,7 @@ int *mxGetJc(const mxArray *ptr)
     {
       if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
     }
-  return A->triplet.Ap;
+  return A->triplet.Jc;
 }
 
 /**
@@ -345,7 +345,7 @@ int *mxGetIr(const mxArray *ptr)
     {
       if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
     }
-  return A->triplet.Ai;
+  return A->triplet.Ir;
 }
 
 /**
@@ -1641,7 +1641,7 @@ void *mxGetData(const mxArray *array_ptr)
 	{
 	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
-      return A->triplet.Ax;
+      return A->triplet.Pr;
     }
   Scierror("Error in %s: mxGetPr failed\n","mex");
   nsp_mex_errjump();
@@ -2014,7 +2014,7 @@ void mxSetPr(mxArray *array_ptr, double *pr)
 	{
 	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
-      A->triplet.Ax = pr;
+      A->triplet.Pr = pr;
     }
   else if ( IsBMat(array_ptr) )
     {
@@ -2038,6 +2038,16 @@ void mxSetPr(mxArray *array_ptr, double *pr)
 
 void mxSetPi(mxArray *array_ptr, double *pi)
 {
+  if ( IsSpColMat(array_ptr))
+    {
+      NspSpColMatrix *A = (NspSpColMatrix *)  array_ptr;
+      if (A->convert != 't' ) 
+	{
+	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
+	}
+      A->triplet.Pi = pi;
+      return;
+    }
   Scierror("Error in %s: mxSetPi failed, use mxSetPr for real+complex values\n","mex");
   nsp_mex_errjump();
 }
@@ -2058,7 +2068,7 @@ void mxSetJc(mxArray *array_ptr, int *jc)
 	{
 	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
-      A->triplet.Ap = jc;
+      A->triplet.Jc = jc;
     }
   else 
     {
@@ -2084,7 +2094,7 @@ void mxSetIr(mxArray *array_ptr,int *ir)
 	{
 	  if ( nsp_spcol_set_triplet_from_m(A,TRUE)==FAIL) nsp_mex_errjump();
 	}
-      A->triplet.Ai = ir;
+      A->triplet.Ir = ir;
     }
   else 
     {
