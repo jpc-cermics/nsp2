@@ -95,7 +95,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
   Tokenizer T;
   int rep;
   int cur_echo= nsp_set_echo_input_line(echo);
-  char *file_name = SciStack.val->file_name; 
+  char *file_name = NspFileName(SciStack);
   if ((input = fopen(Str,"r")) == NULL) 
     {
       /* Only when strerror exists XXXXXXX */
@@ -108,7 +108,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
   nsp_tokeniser_file(&T,input);
   /** reset the line counter **/
   /** Calling the evaluator **/
-  SciStack.val->file_name = Str;
+  NspFileName(SciStack) =  Str;
   rep = ParseEvalLoop(&T,display,errcatch,pause);
   if ( rep == RET_EOF || rep == RET_QUIT ) rep = 0;
   if ( rep == RET_CTRLC ) 
@@ -125,7 +125,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
     nsp_error_message_to_lasterror();
   /** restore current input function **/
   nsp_set_echo_input_line(cur_echo);
-  SciStack.val->file_name = file_name;
+  NspFileName(SciStack) = file_name;
   return rep;
 }
 
@@ -300,7 +300,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
   int rep=RET_OK;
   char F[FSIZE+1], F1[FSIZE+1], F2[FSIZE+1], dirname[FSIZE+1];
   FILE *f, *SciInput = NULL;
-  char *file_name = SciStack.val->file_name; 
+  char *file_name = NspFileName(SciStack);
   /** Open the file Dir/Fname  **/
   nsp_path_expand(Dir,dirname,FSIZE);
   sprintf(F,"%s/%s",dirname,Fname);
@@ -342,7 +342,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
 	}
       Sciprintf("Processing file: %s\n",F1);
       /* set current file name  **/
-      SciStack.val->file_name = F1;
+      NspFileName(SciStack) = F1;
       /* reset the line counter **/
       nsp_init_tokenizer(&T);
       nsp_tokeniser_file(&T,SciInput);
@@ -352,7 +352,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
       rep= DirParseAndXdrSave(&T,dirname);
       fclose(SciInput);
       /* restore current input function **/
-      SciStack.val->file_name = file_name;
+      NspFileName(SciStack) = file_name;
       if ( rep < 0 ) 
 	{
 	  Sciprintf("Error while processing file: %s\n",F1);
@@ -383,7 +383,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
   int rep=RET_OK,flen;
   char F1[FSIZE+1], F2[FSIZE+1], dirname[FSIZE+1];
   FILE *SciInput = NULL;
-  char *file_name = SciStack.val->file_name; 
+  char *file_name = NspFileName(SciStack);
 
   /** Open the file Dir/Fname  **/
   nsp_path_expand(Dir,dirname,FSIZE);
@@ -427,7 +427,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 		}
 	      Sciprintf("Processing file: %s\n",F1);
 	      /* set current file name  **/
-	      SciStack.val->file_name = F1;
+	      NspFileName(SciStack) = F1;
 	      /* reset the line counter **/
 	      nsp_init_tokenizer(&T);
 	      nsp_tokeniser_file(&T,SciInput);
@@ -436,7 +436,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 	      rep= DirParseAndXdrSave(&T,dirname);
 	      fclose(SciInput);
 	      /** restore current input function **/
-	      SciStack.val->file_name = file_name;
+	      NspFileName(SciStack) = file_name;
 	      if ( rep < 0 ) 
 		{
 		  Sciprintf("Error while processing file: %s\n",F1);
