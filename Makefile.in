@@ -113,6 +113,7 @@ install:
 	@cd config ; make install;
 	@cd demos ; make install;
 	@cd macros ; make install;
+	@cd man ; make install;
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/scilab-inst $(prefix)/lib/nsp/bin/scilab
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(prefix)/lib/nsp/bin/nsplibtool
 	@$(TOP)/config/install-sh $(opt_DATA) scripts/Path.incl $(prefix)/lib/nsp/Path.incl
