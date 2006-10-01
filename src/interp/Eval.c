@@ -1672,6 +1672,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
        * as in a.foo or a('foo') in that case we should create a hash table !
        * FIXME 
        */
+      /* 
       if ((stack.val->S[*ipos] =nsp_create_empty_matrix_object(name)) == NULLOBJ ) 
 	SHOWBUG(stack,RET_BUG,L);
       if (nsp_frame_replace_object(stack.val->S[*ipos])==FAIL) 
@@ -1679,6 +1680,8 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	  nsp_object_destroy(&stack.val->S[*ipos]);
 	  SHOWBUG(stack,RET_BUG,L);
 	}
+      */
+      stack.val->S[*ipos] = Reserved;
     }
   /* duplicate */
   stack.val->S[*ipos+1]=stack.val->S[*ipos];
@@ -1693,6 +1696,44 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
 	  SHOWBUG(stack,n,L);
 	}
+      if ( stack.val->S[*ipos+1] == Reserved )
+	{
+	  /* we must create missing object */
+	  /* 
+	  switch (((PList) L->O)->type)
+	    {
+	    case ARGS :
+	      Sciprintf("Using args\n");break;
+	    case METARGS :
+	      Sciprintf("Using methargs\n");break;
+	    case DOTARGS :
+	      Sciprintf("Using dotargs\n");break;
+	    case CELLARGS :
+	      Sciprintf("Using cellargs\n");break;
+	    default: 
+	      Sciprintf("Oooops \n");
+	    }
+	  */
+	  /* XXX we create an empty matrix 
+	   */
+	  if ((stack.val->S[*ipos+1] =nsp_create_empty_matrix_object(name)) == NULLOBJ ) 
+	    {
+	      stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
+	      nsp_void_object_destroy(&stack.val->S[*ipos+2]);
+	      stack.val->S[*ipos+2]= NULLOBJ;
+	      SHOWBUG(stack,RET_BUG,L);
+	    }
+	  if (nsp_frame_replace_object(stack.val->S[*ipos+1])==FAIL) 
+	    {
+	      nsp_object_destroy(&stack.val->S[*ipos+1]);
+	      stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
+	      nsp_void_object_destroy(&stack.val->S[*ipos+2]);
+	      stack.val->S[*ipos+2]= NULLOBJ;
+	      SHOWBUG(stack,RET_BUG,L);
+	    }
+	  if ( stack.val->S[*ipos] == Reserved ) stack.val->S[*ipos]= stack.val->S[*ipos+1];
+	}
+      /* let's go for component extraction */
       if ( stack.val->S[*ipos+1]->type->path_extract == NULL ) 
 	{
 	  Scierror("Error: path extraction cannot be performed (step %d)\n",j);
@@ -1717,6 +1758,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
   /* Now stack.val->S[*ipos+1] contains the element inside the followed object 
    * which is to be changed. Now we evaluate the last expr which gives
    * the extraction or deletion indices 
+   * Note that stack.val->S[*ipos+1] and stack.val->S[*ipos] 
    */
   L=L->next;
   L= (PList) L->O;
@@ -1727,7 +1769,42 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
    * 
    */
   *mlhs_flag = L1->type; /*  == DOTARGS; */
-  
+
+  if ( stack.val->S[*ipos] == Reserved )
+    {
+      /* first object does not exists we have to create it 
+       */
+      switch (L1->type)
+	{
+	case ARGS :
+	  /* Sciprintf("Using args\n"); */
+	  stack.val->S[*ipos] =nsp_create_empty_matrix_object(name);
+	  break;
+	case DOTARGS :
+	  /* Sciprintf("Using dotargs\n");*/
+	  stack.val->S[*ipos] =(NspObject *) nsp_hcreate(name, 5);
+	  break;
+	case CELLARGS :
+	  /* Sciprintf("Using cellargs\n");*/
+	  stack.val->S[*ipos] =(NspObject *)  nsp_cells_create(name,0,0);
+	  break; 
+	default: 
+	  stack.val->S[*ipos]= NULLOBJ;
+	}
+      if (stack.val->S[*ipos] == NULLOBJ ) 
+	{
+	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
+	  SHOWBUG(stack,RET_BUG,L);
+	}
+      if (nsp_frame_replace_object(stack.val->S[*ipos])==FAIL) 
+	{
+	  nsp_object_destroy(&stack.val->S[*ipos]);
+	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
+	  SHOWBUG(stack,RET_BUG,L);
+	}
+      stack.val->S[*ipos+1]= stack.val->S[*ipos];
+    }
+
   if (0 && arity1 > 2 ) 
     {
       /* FIXME : to be relaxed in the futur 
@@ -1736,7 +1813,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
       Scierror("y(.)= or y(.,.)= only \n");
       return RET_BUG;
     }
-  /* arguments are stored at *ipos+2,...., **/
+  /* arguments are stored at *ipos+2,...., */
   fargs=0;
   for ( j = 1 ; j <= arity1 ; j++ )
     {
