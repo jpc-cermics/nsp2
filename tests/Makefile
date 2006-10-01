@@ -38,9 +38,8 @@ TESTS= \
 	testsbdiv.dia \
 	trycatch.dia \
 	umfpack.dia \
-	unique.dia 
-
-
+	unique.dia \
+	createbyset.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
