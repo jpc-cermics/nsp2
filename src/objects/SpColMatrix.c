@@ -1537,7 +1537,7 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspMatrix *Rows, NspMatrix
   Index = nsp_mat_sort (Rows,2,"g","i");
   rmin = Rows->R[0]; rmax = Rows->R[Rows->mn-1];
   *err=0;
-  if (  rmin < 1 ||  rmax > A->n ) 
+  if (  rmin < 1 ||  rmax > A->m ) 
     {
       *err=1;
       goto err;
@@ -2400,6 +2400,89 @@ NspMatrix *nsp_spcolmatrix_mult_m_sp(NspMatrix *X,NspSpColMatrix *A)
   return B;
 }
 
+
+/**
+ * nsp_spcolmatrix_mult_scalar:
+ * @val: pointer to a double or a double C
+ * @type_val: 'r' if val point to a double and 'c' if val point to a complex
+ * @A: a NspSpColMatrix
+ * 
+ * Do the operation A <- scalar * A  (that is A is modified in place)
+ *
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_spcolmatrix_mult_scalar(double *val, char val_type, NspSpColMatrix *A)
+{
+  int i, k;
+  double scal;
+  doubleC scalc; 
+  Boolean zero_flag, was_complexified = FALSE;
+
+  if ( val_type == 'r' )
+    {
+      scal = *val;
+      zero_flag = scal == 0.0 ? TRUE : FALSE;
+    }
+  else
+    {
+      scalc.r = val[0]; scalc.i = val[1];
+      zero_flag = (scalc.r == 0.0 && scalc.i == 0.0) ? TRUE : FALSE;
+    }
+
+  if ( zero_flag )
+    {
+      for ( i=0 ; i < A->n ; i++ ) 
+	{
+	  if ( A->D[i]->size != 0 ) 
+	    {
+	      FREE( A->D[i]->J);
+	      FREE( A->D[i]->R);
+	      A->D[i]->size =0;
+	    }
+	}
+      return OK;
+    }
+
+  if ( val_type == 'c' && A->rc_type == 'r' )
+    {
+       if ( nsp_spcolmatrix_complexify(A) == FAIL )
+	return FAIL;
+      was_complexified = TRUE;
+   }
+
+  if ( A->rc_type == 'r' )       /* scalar and matrix real */
+    {
+      for ( i = 0 ; i < A->n ; i++)
+	for ( k=0; k < A->D[i]->size ; k++ ) 
+	  A->D[i]->R[k] *= scal;
+    }
+  else if ( val_type == 'r' )    /* scalar real but matrix cmplx */
+    {
+      for ( i = 0 ; i < A->n ; i++)
+	for ( k=0; k < A->D[i]->size ; k++ ) 
+	  {
+	    A->D[i]->C[k].r *= scal; A->D[i]->C[k].i *= scal;
+	  }
+    }
+  else if ( was_complexified )   /* scalar is cmplx but matrix initially real */
+    {
+      for ( i = 0 ; i < A->n ; i++)
+	for ( k=0; k < A->D[i]->size ; k++ ) 
+	  {
+	    A->D[i]->C[k].i = A->D[i]->C[k].r * scalc.i;
+	    A->D[i]->C[k].r *= scalc.r;
+	  }
+    }
+  else                           /* scalar and matrix both cmplx */
+    {
+      for ( i = 0 ; i < A->n ; i++)
+	for ( k=0 ; k < A->D[i]->size ; k++ ) 
+	  nsp_prod_c(&A->D[i]->C[k],&scalc);
+    }
+
+  return OK;
+}
 
 /**
  * nsp_spcolmatrix_mult_scal_old:
@@ -5664,6 +5747,7 @@ NspSpColMatrix *nsp_spcolmatrix_rand_one(int m,int n,double sparsity,char crand)
   return A;
 }
 
+
 /* 
  * randomly select requested number of non-nul elements for each column 
  * in order to get a total of ntot non-nul elements.
@@ -5673,9 +5757,10 @@ static int *nsp_sprand_column_deviates(int ntot,int ncol,int colsize)
 {
   int *Icol;
   int count=0;
+
   if ( (Icol = nsp_alloc_work_int(ncol)) == NULL ) return NULL;
   memset(Icol, 0, ncol*sizeof(int));
-  while ( count != ntot)
+  while ( count != ntot )
     {
       int val = floor(ncol* rand_ranf());
       if ( Icol[val] < colsize )
@@ -5763,8 +5848,3 @@ NspSpColMatrix *nsp_spcolmatrix_rand(int m,int n,double sparsity,char crand)
   nsp_spcolmatrix_destroy(A);
   return NULLSPCOL;
 }
-
-
-
-
-

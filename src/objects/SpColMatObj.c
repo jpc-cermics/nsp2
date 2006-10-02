@@ -936,8 +936,6 @@ static int int_spcolmatrix_mult(Stack stack, int rhs, int opt, int lhs)
 
 /*
  *   Res = A * X , A sparse matrix, X full matrix
- *   A and X are left unchanged
- *   added by Bruno
  */
 static int int_spcolmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
 {
@@ -961,13 +959,23 @@ static int int_spcolmatrix_mult_sp_m(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
 
-  if ( HMat1->n != HMat2->m )
+  if ( HMat2->m == 1 && HMat2->n == 1 )
+    {
+      if ((HMat1 = GetSpColCopy(stack,1)) == NULLSPCOL) return RET_BUG;
+      if ( nsp_spcolmatrix_mult_scalar(HMat2->R, HMat2->rc_type, HMat1) == FAIL ) return RET_BUG;
+      NSP_OBJECT(HMat1)->ret_pos = 1;
+    }
+  else if ( HMat1->n == HMat2->m )
+    {
+      if ( (HMat3 = nsp_spcolmatrix_mult_sp_m(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
+      MoveObj(stack,1,(NspObject *) HMat3);
+    }
+  else
     {
       Scierror("Error:\tIncompatible dimensions\n");
       return RET_BUG;
     }
-  if ( (HMat3 = nsp_spcolmatrix_mult_sp_m(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
-  MoveObj(stack,1,(NspObject *) HMat3);
+
   return 1;
 }
 
@@ -999,14 +1007,25 @@ static int int_spcolmatrix_mult_m_sp(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
 
-  if ( HMat1->n != HMat2->m )
+  if ( HMat1->m == 1 && HMat1->n == 1 )
+    {
+      if ((HMat2 = GetSpColCopy(stack,2)) == NULLSPCOL) return RET_BUG;
+      if ( nsp_spcolmatrix_mult_scalar(HMat1->R, HMat1->rc_type, HMat2) == FAIL ) return RET_BUG;
+      NSP_OBJECT(HMat2)->ret_pos = 1;
+    }
+  else if ( HMat1->n == HMat2->m )
+    {
+      if ( (HMat3 = nsp_spcolmatrix_mult_m_sp(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
+      MoveObj(stack,1,(NspObject *) HMat3);
+    }
+  else
     {
       Scierror("Error:\tIncompatible dimensions\n");
       return RET_BUG;
     }
-  if ( (HMat3 = nsp_spcolmatrix_mult_m_sp(HMat1, HMat2)) == NULLMAT ) return RET_BUG;
-  MoveObj(stack,1,(NspObject *) HMat3);
+
   return 1;
+
 }
 
 /*
