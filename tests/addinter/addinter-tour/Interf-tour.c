@@ -447,15 +447,15 @@ int int_ex_5c_2(Stack stack, int rhs, int opt, int lhs)
  * 
  */
 
-static NspSpMatrix *nsp_spmatrix_sparse_from_constant(char *name,double re, double im)
+static NspSpColMatrix *nsp_spmatrix_sparse_from_constant(char *name,double re, double im)
 {
   char type = (im == 0.0) ? 'r':'c';
-  NspSpMatrix *Loc;
+  NspSpColMatrix *Loc;
   /* allocate space for Loc with proper row size **/
-  if ((Loc =nsp_spmatrix_create(name,type,1,1))== NULLSP ) return NULLSP;
+  if ((Loc =nsp_spcolmatrix_create(name,type,1,1))== NULLSPCOL ) return NULLSPCOL;
   /* Counting non nul arguments of each line and store it in Loc **/
   Loc->D[0]->iw=1;
-  if (nsp_spmatrix_resize_row(Loc,0,Loc->D[0]->iw) == FAIL) return(NULLSP);
+  if (nsp_spcolmatrix_resize_col(Loc,0,Loc->D[0]->iw) == FAIL) return(NULLSPCOL);
   /* fill each row with Values 
    */
   if ( type == 'r') 
@@ -474,14 +474,14 @@ static NspSpMatrix *nsp_spmatrix_sparse_from_constant(char *name,double re, doub
 
 int int_ex_6c_1(Stack stack, int rhs, int opt, int lhs)
 { 
-  NspSpMatrix *A,*B;
+  NspSpColMatrix *A,*B;
   CheckRhs(1,1);
   CheckLhs(1,3);
-  if ((A = GetSpCopy(stack,1)) == NULLSP) return RET_BUG;
+  if ((A = GetSpColCopy(stack,1)) == NULLSPCOL) return RET_BUG;
   /* multiply the sparse by 2+3*%i */
-  if ((B = nsp_spmatrix_sparse_from_constant(NVOID,2.0,3.0)) == NULLSP) return RET_BUG;
-  if ( nsp_spmatrix_mult_scal(A,B)==FAIL) return RET_BUG;
-  nsp_spmatrix_destroy(B);
+  if ((B = nsp_spmatrix_sparse_from_constant(NVOID,2.0,3.0)) == NULLSPCOL) return RET_BUG;
+  if ( nsp_spcolmatrix_mult_scal(A,B)==FAIL) return RET_BUG;
+  nsp_spcolmatrix_destroy(B);
   /* the sparse is already on the stack */
   NSP_OBJECT(A)->ret_pos=1;
   return 1;
