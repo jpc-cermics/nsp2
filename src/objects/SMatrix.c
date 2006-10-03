@@ -692,43 +692,7 @@ int nsp_smatrix_add_rows(NspSMatrix *A, int m)
 
 int nsp_smatrix_set_submatrix_obsolete(NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B)
 {
-  int rmin,rmax,cmin,cmax,i,j;
-  if ( B->mn != 1)
-    {
-      if ( Rows->mn != B->m ||  Cols->mn != B->n )
-	{
-	  Scierror("Set incompatible indices ");
-	  return(FAIL);
-	}
-    }
-  Bounds(Rows,&rmin,&rmax);
-  Bounds(Cols,&cmin,&cmax);
-  if ( rmin < 1 || cmin < 1 ) 
-    {
-      Scierror("Error:\tNegative indices are not allowed\n");
-      return(FAIL);
-    }
-  if ( rmax > A->m ||  cmax > A->n )
-    if ( nsp_smatrix_enlarge(A,rmax,cmax) == FAIL) return(FAIL);
-  if ( B->mn != 1) 
-    for ( i = 0 ; i < Rows->mn ; i++)
-      for ( j = 0 ; j < Cols->mn ; j++ )
-	{
-	  nsp_string_destroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
-	  if (( A->S[((int) Rows->R[i])-1+ (((int)Cols->R[j])-1)*A->m] 
-		=nsp_string_copy(B->S[i+B->m*j]))
-	      == (nsp_string) 0)  return(FAIL);
-	}
-  else
-    for ( i = 0 ; i < Rows->mn ; i++)
-      for ( j = 0 ; j < Cols->mn ; j++ )
-	{
-	  nsp_string_destroy(&((A->S[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m])));
-	  if (( A->S[((int) Rows->R[i])-1+ (((int)Cols->R[j])-1)*A->m] 
-		=nsp_string_copy(B->S[0]))
-	      == (nsp_string) 0)  return(FAIL);
-	}
-  return(OK);
+  return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
 
 

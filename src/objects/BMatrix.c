@@ -511,37 +511,7 @@ int nsp_bmatrix_add_rows(NspBMatrix *A, int m)
 
 int nsp_bmatrix_set_submatrix_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B)
 {
-  int rmin,rmax,cmin,cmax,i,j;
-  if ( B->mn != 1) 
-    {
-      if ( Rows->mn != B->m ||  Cols->mn != B->n )
-	{
-	  Scierror("Error:\tIncompatible dimensions\n");
-	  return(FAIL);
-	}
-    }
-  Bounds(Rows,&rmin,&rmax);
-  Bounds(Cols,&cmin,&cmax);
-  if ( rmin < 1 || cmin < 1 ) 
-    {
-      Scierror("Error:\tNegative indices are not allowed\n");
-      return(FAIL);
-    }
-  if ( rmax > A->m ||  cmax > A->n ) 
-    if (nsp_bmatrix_enlarge(A,rmax,cmax) == FAIL) return(FAIL);
-  if ( B->mn != 1) 
-    for ( i = 0 ; i < Rows->mn ; i++)
-      for ( j = 0 ; j < Cols->mn ; j++ )
-	{
-	  A->B[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m] =B->B[i+B->m*j];
-	}
-  else
-    for ( i = 0 ; i < Rows->mn ; i++)
-      for ( j = 0 ; j < Cols->mn ; j++ )
-	{
-	  A->B[((int) Rows->R[i])-1+ (((int) Cols->R[j])-1)*A->m] =B->B[0];
-	}
-  return(OK);
+  return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
 
 

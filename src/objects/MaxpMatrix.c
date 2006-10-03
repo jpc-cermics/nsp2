@@ -578,9 +578,7 @@ int nsp_mpmatrix_add_rows(NspMaxpMatrix *A, int m)
 
 int nsp_mpmatrix_set_submatrix_obsolete(NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMaxpMatrix *B)
 {
-  int rep = nsp_matrix_set_submatrix_obsolete((NspMatrix *)A,Rows,Cols,(NspMatrix *)B);
-  nsp_matrix_cast_to_mpmatrix((NspMatrix *)A);
-  return rep;
+  return nsp_matint_set_submatrix1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols),NSP_OBJECT(B));
 }
 
 /** 
