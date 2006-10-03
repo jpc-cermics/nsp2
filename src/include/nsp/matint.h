@@ -80,6 +80,10 @@ extern int nsp_matint_cells_setrowscols_xx(Stack stack, int rhs, int opt, int lh
 extern int int_matint_redim(Stack stack, int rhs, int opt, int lhs);
 extern int nsp_matint_redim(NspObject *Obj, int m, int n);
 
+typedef enum { matint_iwork1=0, matint_iwork2=1} matint_workid;
+extern int *get_index_vector_from_object(NspObject *Obj, int *Nb_elts, int *Rmin, int *Rmax,matint_workid iwork);
+extern int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB);
+
 #endif 
 
 #ifdef   Matint_Private 
