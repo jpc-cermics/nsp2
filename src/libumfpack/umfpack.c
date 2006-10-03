@@ -730,11 +730,65 @@ static int int_umfpack_meth_isreal(NspUmfpack *self, Stack stack, int rhs, int o
   return 1;
 }
 
+
+static int int_umfpack_meth_det(NspUmfpack *self, Stack stack, int rhs, int opt, int lhs)
+{
+  double *Info = NULL,dx,dz=0.0,*p=NULL,dexp;
+  void *Numeric;
+  NspObject *Ret1,*Ret2;
+  int status;
+  CheckRhs(0,0); 
+  CheckLhs(1,2);
+  if ( self->obj == NULL || self->obj->data  == NULL) 
+    {
+      Scierror("Error: umfpack object is not properly built\n");
+      return RET_BUG;
+    }
+  Numeric= self->obj->data; 
+  if ( lhs  == 2)
+    {
+      /* return determinant in the form det * 10^dexp */
+      p = &dexp ;
+    }
+  if ( self->obj->rc_type == 'c' )
+    {
+      status = umfpack_zi_get_determinant (&dx, &dz, p, Numeric, Info) ;
+    }
+  else 
+    {
+      status = umfpack_di_get_determinant (&dx, p, Numeric, Info) ;
+    }
+  if (status < 0)
+    {
+      Scierror("Error: method det failed\n");
+    }
+  if ( self->obj->rc_type == 'c' )
+    {
+      Ret1 =(NspObject *)  nsp_matrix_create_from_array(NVOID,1,1,&dx,&dz);
+    }
+  else
+    {
+      Ret1 = nsp_new_double_obj(dx);
+    }
+  if ( Ret1 == NULLOBJ ) return RET_BUG;
+  if ( lhs  == 2)
+    {
+      if ((Ret2 = nsp_new_double_obj(dexp))==NULLOBJ) 
+	{
+	  nsp_object_destroy(&Ret1);
+	  return RET_BUG;
+	}
+    }
+  MoveObj(stack,1,Ret1);
+  if ( lhs == 2) MoveObj(stack,2,Ret2);
+  return Max(lhs,1);
+}
+
 static NspMethods umfpack_methods[] = {
   {"solve",(nsp_method *) int_umfpack_meth_solve},
   {"luget",(nsp_method *) int_umfpack_meth_luget},
   {"isreal",(nsp_method *) int_umfpack_meth_isreal},
-
+  {"det",(nsp_method *) int_umfpack_meth_det},
   { NULL, NULL}
 };
 
