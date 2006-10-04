@@ -1182,6 +1182,7 @@ static OpTab SMatrix_func[]={
   {"loopextract_m_s",int_smxextractcolforloop}, /* ne sert plus */
   {"smat_create",int_smxcreate},
   {"redim_s",int_matint_redim},
+  {"matrix_s", int_matint_redim},
   {"concatr_s_s",nsp_matint_concatr_xx},
   {"concatr_m_s",int_smxconcatr_m_s},
   {"addcols_s_m",int_smxaddcols},

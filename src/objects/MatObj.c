@@ -1934,45 +1934,6 @@ int_mxfge (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * NspMatrix : Restack a copy of matrix A
- * keeps m*n constant
- */
-
-int
-int_mxmatrix (Stack stack, int rhs, int opt, int lhs)
-{
-  int m1, n1;
-  NspMatrix *A, *B;
-  CheckRhs (2, 3);
-  CheckLhs (1, 1);
-  if ((A = GetMatCopy (stack, 1)) == NULLMAT)
-    return RET_BUG;
-  if (rhs == 3)
-    {
-      if (GetScalarInt (stack, 2, &m1) == FAIL)
-	return RET_BUG;
-      if (GetScalarInt (stack, 3, &n1) == FAIL)
-	return RET_BUG;
-    }
-  else if (rhs == 2)
-    {
-      if ((B = GetRealMat (stack, 2)) == NULLMAT)
-	return RET_BUG;
-      if (B->mn != 2)
-	{
-	  Scierror ("Error:\t second argument of function %s\n", NspFname(stack));
-	  Scierror ("\texpecting a vector of size 2\n");
-	  return RET_BUG;
-	}
-      m1 = (int) B->R[0];
-      n1 = (int) B->R[1];
-    }
-  if ( nsp_matint_redim (NSP_OBJECT (A), m1, n1) != OK) return RET_BUG;
-  NSP_OBJECT (A)->ret_pos = 1;
-  return 1;
-}
-
-/*
  * Matredim : changes Matrix dimensions
  * but keeps m*n constant
  * WARNING : Object on stack is changed 
@@ -4354,7 +4315,7 @@ static OpTab Matrix_func[] = {
   {"triu", int_mxtriu},
   {"testm", int_mxtestmatrix},
   {"testmatrix", int_mxtestmatrix},
-  {"matrix", int_mxmatrix}, /* FIXME : sould be generic */
+  {"matrix_m", int_matint_redim},
   {"quote_m", int_mxquote},
   {"dprim_m", int_mxdquote},
   {"abs_m", int_mxabs},

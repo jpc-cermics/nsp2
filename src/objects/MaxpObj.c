@@ -2498,6 +2498,7 @@ static OpWrapTab Matrix_func[]={
   {"quote_mp",int_mpquote,NULL},
   {"real_mp" ,  int_mprealpart ,NULL},
   {"redim_mp" ,  int_matint_redim ,NULL}, 
+  {"matrix_mp", int_matint_redim, NULL},
   {"resize_mp_mp" ,  int_mpresize ,NULL},
   {"round_mp",int_mxround,int_mp_wrap1},
   {"seti_mp_mp" ,  int_mpseti ,NULL},

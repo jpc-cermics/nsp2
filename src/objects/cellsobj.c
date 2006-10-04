@@ -1124,6 +1124,7 @@ static OpTab Cells_func[]={
   {"row_cells_create", int_row_cells_create},
   {"diag_cells_create", int_row_cells_create},
   {"redim_ce",int_matint_redim},
+  {"matrix_ce", int_matint_redim},
   {"concatr_ce_ce",int_cells_concatr},
   {"concatr_m_ce",int_cells_concatr_m_ce},
   {"addcols_ce_m",int_cells_addcols},
