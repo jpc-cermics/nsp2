@@ -108,7 +108,9 @@ function x=sci_load_spmat(F1)
   val=F1.get[n=nel*(s(3)+1),type='dl'];
   if s(3)==1 then val = val(1:nel)+%i*val(nel+1:$);end 
   IJ=[] 
-  for i=1:m, nbi=rows(i),IJi=zeros(nbi,2);
+  Im=find(rows <> 0);
+  for i=Im, nbi=rows(i),
+    IJi=zeros(nbi,2);
     indi=ind(1:nbi);ind(1:nbi)=[];
     IJi(:,1)=i,IJi(:,2)=indi';
     IJ=[IJ;IJi];
