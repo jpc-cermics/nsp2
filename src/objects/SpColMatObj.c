@@ -425,7 +425,6 @@ static int int_spcolmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
 static int int_spcolmatrix_sparse_sp(Stack stack, int rhs, int opt, int lhs)
 {  
   NspSpColMatrix *A;
-  NspMatrix *RC,*Values,*MN;
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((A = GetSpColCopy(stack,1)) == NULLSPCOL) return RET_BUG;
