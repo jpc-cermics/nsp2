@@ -1069,7 +1069,7 @@ static int int_spcolmatrix_dquote (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ((B = nsp_spcolmatrix_transpose (A)) == NULLSPCOL)
     return RET_BUG;
- nsp_spcolmatrix_conj(B);
+  nsp_spcolmatrix_conj(B);
   MoveObj (stack, 1, (NspObject *) B);
   return 1;
 }
@@ -1126,7 +1126,8 @@ static int int_spcolmatrix_plus(Stack stack, int rhs, int opt, int lhs)
 	  return 1;
 	}
     }
-  return 1;
+  Scierror("Error: incompatible dimensions\n");
+  return RET_BUG;
 }
 
 
@@ -1185,7 +1186,8 @@ static int int_spcolmatrix_sub(Stack stack, int rhs, int opt, int lhs)
 	  return 1;
 	}
     }
-  return 1;
+  Scierror("Error: incompatible dimensions\n");
+  return RET_BUG;
 }
 
 /*

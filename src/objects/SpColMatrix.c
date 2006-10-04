@@ -3274,7 +3274,7 @@ static NspSpColMatrix *BinaryOp(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft Bi
 	  SpCol *Ai = A->D[i];
 	  SpCol *Bi = B->D[i];
 	  SpCol *Li = Loc->D[i];
-	  iest= Min( A->n, A->D[i]->size+B->D[i]->size);
+	  iest= Min( A->m, A->D[i]->size+B->D[i]->size);
 	  if (nsp_spcolmatrix_resize_col(Loc,i,(int)iest ) == FAIL) return(NULLSPCOL) ;
 	  /* We explore the ith column of A and B in increasing order of row 
 	   *  and want to merge the rows found ( in increasing order ) 
