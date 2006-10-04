@@ -40,6 +40,7 @@ function sci_load(fname,varargin)
      case 1 then xval=sci_load_mat(F1);
      case 4 then xval=sci_load_bmat(F1);
      case 5 then xval=sci_load_spmat(F1);
+     case 8 then xval=sci_load_imat(F1);
      case 10 then xval=sci_load_smat(F1);
      case 13 then sci_load_fun(F1);xval=[];
       printf("Warning: Scilab coded function %s ignored\n",str);
@@ -128,6 +129,22 @@ function x=sci_load_bmat(F1)
   x=m2b(matrix(x,s(1),s(2)));
 endfunction
 
+function x=sci_load_imat(F1)
+// load an int matrix 
+// utility function for sci_load
+  types_id=['c','sl','x','il','x','x','x','x','x','x','uc','usl','x','uil']
+  s=F1.get[n=3,type='il'];
+  mn=s(1)*s(2);
+  it=s(3);
+  typ = types_id(it);
+  if typ == 'x'  then 
+    error('int matrix badly stored\n');
+    return
+  end
+  x=F1.get[n=mn,type=typ];
+  x=matrix(x,s(1),s(2));
+endfunction
+
 function Str=sci_load_smat(F1)
 // load string matrix 
 // utility function for sci_load
@@ -180,6 +197,7 @@ function L=sci_load_list(F1,type)
        case 1 then xval=sci_load_mat(F1);
        case 4 then xval=sci_load_bmat(F1);
        case 5 then xval=sci_load_spmat(F1);
+       case 8 then xval=sci_load_imat(F1);
        case 13 then sci_load_fun(F1);xval=[];
 	printf("Warning: Scilab coded function ignored in list %s\n",str);
        case 10 then xval=sci_load_smat(F1);
