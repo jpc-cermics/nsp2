@@ -159,7 +159,7 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
   if ( IsNspPList(NSP_OBJECT(PL)) == FALSE ) return RET_BUG;
   NthObj(rhs+1)=NthObj(1);
   NspFname(stack) = ((NspObject *) PL)->name;
-  NspFileName(SciStack) = ((NspPList *) PL)->file_name;
+  NspFileName(stack) = ((NspPList *) PL)->file_name;
   rep=nsp_eval_macro_body((NspObject *) PL,stack,stack.first+rhs+1,0,0,0);
   if ( rep == RET_CTRLC ) 
     {

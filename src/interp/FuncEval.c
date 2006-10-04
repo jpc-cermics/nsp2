@@ -587,7 +587,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
   /*Test on Lhs **/
   stack.first = first;
   NspFname(stack) = ((NspObject *) OF)->name;
-  NspFileName(SciStack) = ((NspPList *) OF)->file_name;
+  NspFileName(stack) = ((NspPList *) OF)->file_name;
   stack.val->symbols =(NspObject *) symb_table;
   Loc = Lhs;
   nret = Loc->arity ; 

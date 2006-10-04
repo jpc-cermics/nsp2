@@ -448,7 +448,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  /*L1 is copied since it is destroyed after evaluation */
 	  if ((FC=nsp_plist_copy(L)) == NULLPLIST ) return RET_BUG;
 	  /*Remplacer void par le nom de la fonction **/
-	  if (( F = NspPListCreate(nsp_function_name(FC),FC,NspFileName(SciStack))) == NULLP_PLIST) 
+	  if (( F = NspPListCreate(nsp_function_name(FC),FC,NspFileName(stack))) == NULLP_PLIST) 
 	    return RET_BUG;
 	  O = (NspObject *) F;
 	  stack.val->S[first] = O;
@@ -2707,11 +2707,11 @@ static int show_eval_bug(Stack stack,int n, PList L)
 	    Scierror("%s\n",res->S[i]);
 	  nsp_smatrix_destroy(res);
 	}
-      if ( NspFileName(SciStack) != NULL) 
+      if ( NspFileName(stack) != NULL) 
 	{
 	  int line= nsp_parser_get_line(L);
 	  if ( line != -1 ) 
-	    Scierror("\tline %d of file %s\n",line,NspFileName(SciStack));
+	    Scierror("\tline %d of file %s\n",line,NspFileName(stack));
 	}
       else if ( 0 && NspFname(stack) != NULL) 
 	{
