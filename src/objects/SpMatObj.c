@@ -400,6 +400,16 @@ static int int_sprowmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_sprowmatrix_sparse_sprow(Stack stack, int rhs, int opt, int lhs)
+{  
+  NspSpRowMatrix *A;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((A = GetSpRowCopy(stack,1)) == NULLSPROW) return RET_BUG;
+  NSP_OBJECT(A)->ret_pos=1;
+  return Max(lhs,1);
+}
+
 /*
  * Creation of a Sparse Matrix 
  * returns NULLSPROW on failure 
@@ -1848,6 +1858,7 @@ static OpTab SpRowMatrix_func[]={
   {"diag_sprow", int_sprowmatrix_diag},
   {"diag_sprow_m", int_sprowmatrix_diag},
   {"sprow_sparse", int_sprowmatrix_sparse},
+  {"sprow_sparse_sprow", int_sprowmatrix_sparse_sprow},
   {"spget_sprow", int_sprowmatrix_get},
   {"full_sprow",int_sprowmatrix_sp2m},
   {"full_m",int_sprowmatrix_m2m},

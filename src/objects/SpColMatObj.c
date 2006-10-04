@@ -422,6 +422,16 @@ static int int_spcolmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_spcolmatrix_sparse_sp(Stack stack, int rhs, int opt, int lhs)
+{  
+  NspSpColMatrix *A;
+  NspMatrix *RC,*Values,*MN;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((A = GetSpColCopy(stack,1)) == NULLSPCOL) return RET_BUG;
+  NSP_OBJECT(A)->ret_pos=1;
+  return Max(lhs,1);
+}
 
 /*
  * Creation of a Sparse Matrix 
@@ -1895,6 +1905,7 @@ static OpTab SpColMatrix_func[]={
   {"diag_sp", int_spcolmatrix_diag},
   {"diag_sp_m", int_spcolmatrix_diag},
   {"sparse", int_spcolmatrix_sparse},
+  {"sparse_sp", int_spcolmatrix_sparse_sp},
   {"spget", int_spcolmatrix_get},
   {"full_sp",int_spcolmatrix_sp2m},
   {"sum_sp_s" ,  int_spcolmatrix_sum },
