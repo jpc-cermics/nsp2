@@ -1615,12 +1615,12 @@ int nsp_parser_get_line(PList L)
   if ( L == NULLPLIST ) return -1;
   switch ( L->type ) 
     {
+    case PLIST: return nsp_parser_get_line((PList) L->O);
     case COMMENT :
     case STRING:
     case NUMBER:
     case NAME :
     case OPNAME :
-    case PLIST:
     case EMPTYMAT:
     case EMPTYCELL:
       return -1 ;
