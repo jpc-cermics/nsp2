@@ -39,6 +39,7 @@ function sci_load(fname,varargin)
     select obj_type 
      case 1 then xval=sci_load_mat(F1);
      case 4 then xval=sci_load_bmat(F1);
+     case 5 then xval=sci_load_spmat(F1);
      case 10 then xval=sci_load_smat(F1);
      case 13 then sci_load_fun(F1);xval=[];
       printf("Warning: Scilab coded function %s ignored\n",str);
@@ -89,6 +90,31 @@ function x=sci_load_mat(F1)
   x=F1.get[n=mn*(s(3)+1),type='dl'];
   if s(3)==1 then x = x(1:mn)+%i*x(mn+1:$);end 
   x=matrix(x,s(1),s(2));
+endfunction
+
+function x=sci_load_spmat(F1)
+// load a scimatrix 
+// utility function for sci_load
+// Copyright (C) 2006 Jean-Philippe Chancelier
+  s=F1.get[n=4,type='il']
+  m=s(1);n=s(2);
+  // nnz 
+  nel=s(4);
+  // number of non-null elements for each row 
+  rows=F1.get[n=m,type='il'];
+  // column indices of non-nul elements 
+  ind=F1.get[n=nel,type='il'];
+  // non-nul values 
+  val=F1.get[n=nel*(s(3)+1),type='dl'];
+  if s(3)==1 then val = val(1:nel)+%i*val(nel+1:$);end 
+  IJ=[] 
+  for i=1:m, nbi=rows(i),IJi=zeros(nbi,2);
+    indi=ind(1:nbi);ind(1:nbi)=[];
+    IJi(:,1)=i,IJi(:,2)=indi';
+    IJ=[IJ;IJi];
+  end
+  x=sparse(IJ,val(:),[m,n]);
+  //x=matrix(x,s(1),s(2));
 endfunction
 
 function x=sci_load_bmat(F1)
@@ -151,6 +177,7 @@ function L=sci_load_list(F1,type)
       select obj_type 
        case 1 then xval=sci_load_mat(F1);
        case 4 then xval=sci_load_bmat(F1);
+       case 5 then xval=sci_load_spmat(F1);
        case 13 then sci_load_fun(F1);xval=[];
 	printf("Warning: Scilab coded function ignored in list %s\n",str);
        case 10 then xval=sci_load_smat(F1);
