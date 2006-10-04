@@ -376,7 +376,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      loc= loc->next;
 	    }
 	  /* now we have nargs arguments : we must create a cell */
-	  if (( n =nsp_eval_func(O1,fname,2,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L1);
+	  if (( n =nsp_eval_func(O1,fname,2,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L);
 	  return n;
 	  break;
 	case ROWCONCAT:
@@ -389,7 +389,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    }
 	  nargs += n;
 	  if ( (n =nsp_eval_maybe_accelerated_op("concatd",2,&concatd_tab, stack,first,nargs,0,lhs)) < 0 ) 
-	    SHOWBUG(stack,n,L1);
+	    SHOWBUG(stack,n,L);
 	  return n;
 	  break;
 
@@ -403,7 +403,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    }
 	  nargs += n;
 	  if ( (n =nsp_eval_maybe_accelerated_op("concatr",2,&concatr_tab, stack,first,nargs,0,lhs)) < 0 ) 
-	    SHOWBUG(stack,n,L1);
+	    SHOWBUG(stack,n,L);
 	  return n;
 	  break;
 
@@ -417,7 +417,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      SHOWBUG(stack,n,L1);
 	    }
 	  nargs += n;
-	  if ((n=nsp_eval_func(O1,"concatdiag",2,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L1);
+	  if ((n=nsp_eval_func(O1,"concatdiag",2,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L);
 	  return n;
 	  break;
 	case WHILE:
