@@ -783,7 +783,7 @@ static void * sci_window_initial_menu(void)
 			   "_Kill||$kill",
 			   "_Quit|<control>Q|$quit|gtk-quit" };
 
-  char *control_entries[] = { "Resume||$resume",
+  char *control_entries[] = { "Quit||$quit",
 			      "Abort||$abort",
 			      "Restart||$restart",
 			      "Stop||$stop" } ;
