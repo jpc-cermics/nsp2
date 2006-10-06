@@ -62,5 +62,21 @@ function [c,ka] = setdiff(a,b)
    end
 
 endfunction
-   
+
+function [c,ka] = setdiff_l_l(a,b)
+   [c,ka] = unique(a)
+   for i = 1:length(b)
+      [found,k] = c.has[b.item[i]];
+      if found then, c.remove[k], ka(k) = [], end
+   end
+endfunction
+
+function [c,ka] = setdiff_ce_ce(a,b)
+   [c,ka] = unique(a)
+   for i = 1:length(b)
+      [found,k] = c.has[b{i}];
+      if found then, c(k) = [], ka(k) = [], end
+   end
+endfunction
+
    
