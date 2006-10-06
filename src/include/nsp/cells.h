@@ -90,6 +90,7 @@ extern NspCells *CellsLoopCol (char *str, NspCells *Col, NspCells *A, int icol, 
 extern NspCells *nsp_cells_extract_rows_obsolete(NspCells *A, NspMatrix *Rows, int *err); 
 extern int nsp_cells_set_element(NspCells *A,int index, NspObject *B);
 extern NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ);
+extern Boolean nsp_cells_has(NspCells *C, NspObject *Obj, int *ind);
 
 #define NULLCELLS (NspCells *) NULL
 
