@@ -199,6 +199,7 @@ extern void scicos_cmscope_block(scicos_block *block,int *flag);
 extern void scicos_scalar2vector_block(scicos_block *block,int *flag);
 extern void scicos_evaluate_expr_block(scicos_block *block,int *flag);
 extern void scicos_cstblk4_block(scicos_block *block,int *flag);
+extern void scicos_transmit_or_zero_block(scicos_block *block,int *flag);
 
 #endif 
 
@@ -327,6 +328,7 @@ scicos_block_table  tabsim[] ={
   {"tcsltj",(ScicosF) scicos_tcsltj_block},
   {"timblk",(ScicosF) scicos_timblk_block},
   {"time_delay",(ScicosF) scicos_time_delay_block},
+  {"transmit_or_zero",(ScicosF) scicos_transmit_or_zero_block},
   {"trash",(ScicosF) scicos_trash_block},
   {"variable_delay",(ScicosF) scicos_variable_delay_block},
   {"writeau",(ScicosF) scicos_writeau_block},
