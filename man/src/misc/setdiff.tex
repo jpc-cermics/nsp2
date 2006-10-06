@@ -2,8 +2,8 @@
 
 \mansection{setdiff}
 \begin{mandesc}
-  \short{setdiff}{compute the set difference between two vectors of numbers
-  or strings} \\
+  \short{setdiff}{compute the set difference between two vectors (of
+    numbers, strings or cells) or two lists} \\
 \end{mandesc}
 
 % -- Calling sequence section
@@ -16,10 +16,10 @@ C = setdiff(A,B)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A} : vector of numbers or strings (if A is a matrix, it is
-    considered as a big column vector).
-    \vname{B} : vector of same type than A.
-    \vname{C} : vector with elements of A but not in B.
+    \vname{A} : vector of numbers, strings or cells (if A is a matrix, it is
+    considered as a big column vector), or list.
+    \vname{B} : vector of same type than A, or list if A is a list. 
+    \vname{C} : vector or list with elements of A but not in B.
     \vname{ind} : vector of same length than C, ind(i) is an index
                   such that C(i)=A(ind(i)).
   \end{varlist}
@@ -27,10 +27,11 @@ C = setdiff(A,B)
 
 \begin{mandescription}
   This function computes the set difference $C = A \setminus B$
-  between 2 vectors of numbers or strings. $C$ contains the components
+  between 2 vectors (of numbers, strings or cells) or between 2
+  lists. $C$ contains the components
   of $A$ which are not in $B$. Note that multiple equal components in
   $A$ are reduced to one such component (if it is not in $B$) and that
-  $C$ is sorted in ascending order.
+  $C$ is sorted in ascending order (only for vectors of numbers or strings).
 
   $C$ and $ind$ are row vectors if  A is a row vector, otherwise they
   are column vectors.
@@ -47,7 +48,7 @@ C = setdiff(A,B)
     C = setdiff(A,B)
     [C, ind] = setdiff(A,B)
     // we must have C = A(ind)
-    C - A(ind)
+    and(C == A(ind))
   \end{program}
 
 \noindent   a second example with vectors of strings:
@@ -58,7 +59,29 @@ C = setdiff(A,B)
     C = setdiff(A,B)
     [C, ind] = setdiff(A,B)
     // we must have C = A(ind)
-    C - A(ind)
+    and(C == A(ind))
+  \end{program}
+
+\noindent   a third example with vectors of cells:
+  
+  \begin{program}
+    A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}
+    B = { "foo", 2,  [0,1;1,0] }
+    C = setdiff(A,B)
+    [C, ind] = setdiff(A,B)
+    // we must have C = A(ind)
+    and(C == A(ind))
+  \end{program}
+
+\noindent   the same example using list:
+  
+  \begin{program}
+    A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")
+    B = list( "foo", 2,  [0,1;1,0] )
+    C = setdiff(A,B)
+    [C, ind] = setdiff(A,B)
+    // we must have C = A(ind)
+    and(C == A.sublist[ind])
   \end{program}
 
 \end{examples}
