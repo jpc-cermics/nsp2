@@ -57,6 +57,11 @@ lists.
    is a string : \verb+"row"+, or \verb+"r"+, to concatenate by row
    and \verb+"col"+, or \verb+"c"+, to concatenate by
    column (which is the default). %(see the \manlink{compact}{compact} help page).  
+   \item \verb+[found[,index]]=L.has[Obj]+ search if the the object
+   \verb+Obj+ is in the list \verb+L+ and return a scalar boolean (\verb+found+);
+   additionnaly the (first) \verb+index+ of \verb+Obj+ in  \verb+L+ could be
+   returned  (\verb+index=0+ if \verb+found+ is false).
+  
 \end{itemize}
 
 \itemdesc{extraction, insertion, deletion}
@@ -145,6 +150,7 @@ variable  \verb+e+ being equal to \verb+L(i+) at the i-th iteration.
 
 \begin{manseealso}
   \manlink{unique}{unique}  
+  \manlink{setdiff}{setdiff}  
 \end{manseealso}
 
 % -- Authors
