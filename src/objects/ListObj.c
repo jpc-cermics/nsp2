@@ -602,6 +602,41 @@ static int int_lxreverse(void *self, Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/*
+ * tests if the list has the object Obj 
+ */
+static int int_lxhas(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L=self;
+  NspObject *Obj;
+  NspBMatrix *B;
+  NspMatrix *Ind;
+  int ind;
+  
+  CheckRhs(1,1); 
+  CheckLhs(1,2);
+
+  if ( (Obj = nsp_get_object(stack, 1)) == NULLOBJ )
+    return RET_BUG;
+
+  if ( (B = nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT )
+    return RET_BUG;
+  B->B[0] = nsp_list_has(L, Obj, &ind);
+
+  MoveObj(stack,1,NSP_OBJECT(B));
+  
+  if ( lhs == 2 )
+    {
+      if ( (Ind = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT )
+	{
+	  nsp_bmatrix_destroy(B); return RET_BUG;
+	}
+      Ind->R[0] = (double) ind;
+      MoveObj(stack,2,NSP_OBJECT(Ind));
+    }
+
+  return Max(lhs,1);
+}
 
 static NspMethods nsp_list_methods[] = {
   { "sublist", int_list_sublist },
@@ -617,6 +652,7 @@ static NspMethods nsp_list_methods[] = {
   { "compact", int_lxcompact },
   { "concat", int_lxconcat },
   { "reverse", int_lxreverse },
+  { "has", int_lxhas },
   { (char *) 0, NULL}
 };
 

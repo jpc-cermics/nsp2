@@ -1194,3 +1194,35 @@ NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ)
   nsp_matrix_destroy(occ);
   return NULLCELLS;
 }
+
+
+/**
+ * nsp_cells_has:
+ * @C   : a #NspCells
+ * @Obj : a #NspObject
+ * @ind : an integer 
+ *
+ *  tests if the cells array C contains the object Obj
+ *
+ * Return value: %TRUE or %FALSE
+ **/
+
+Boolean nsp_cells_has(NspCells *C, NspObject *Obj, int *ind)
+{
+  int i = 0;
+  Boolean found = FALSE;
+  NspObject *Current;
+
+  while ( !found  &&  i < C->mn )
+    {
+      Current = C->objs[i];
+      if ( Current != NULLOBJ  &&  Current->type->eq(Current, Obj) )
+	found = TRUE;
+      i++;
+    }
+
+  *ind = found ? i : 0;
+
+  return found;
+}
+

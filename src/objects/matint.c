@@ -1361,13 +1361,13 @@ int nsp_matint_set_elts(NspObject *ObjA,
       return FAIL;
     }
 
-  if ( A->m == 1  &&  B->m != 1 ) 
+  if ( A->m == 1  &&  A->n > 1  &&  B->m != 1 )
     {
       Scierror("Error:\tA(ind)=B, B must be row when A is a row\n");
       return FAIL;
     } 
 
-  if ( A->n == 1 && B->n != 1 )
+  if ( A->n == 1 &&  A->m > 1  &&  B->n != 1 )
     {
       Scierror("Error:\tA(ind)=B, B must be column when A is a column\n");
       return FAIL;
@@ -1389,7 +1389,7 @@ int nsp_matint_set_elts(NspObject *ObjA,
     {
       if ( A->mn == 0) 
 	{
-	  if ( B->n != 1)
+	  if  ( B->m == 1 )  /* ( B->n != 1) */
 	    { 
 	      if ( MAT_INT(typeA)->enlarge(ObjA, 1, imax) == FAIL ) return FAIL;
 	    }
@@ -1402,7 +1402,7 @@ int nsp_matint_set_elts(NspObject *ObjA,
 	{
 	  if ( A->n == 1 )
 	    {
-	      if ( B->n > 1 )
+	      if ( B->m == 1 )   /* ( B->n > 1 ) */
 		{ 
 		  if ( MAT_INT(typeA)->enlarge(ObjA, 1, imax) == FAIL ) return FAIL;
 		}

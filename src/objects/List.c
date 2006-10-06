@@ -1657,3 +1657,38 @@ int nsp_list_compact(NspList *L1, char flag )
 
   return OK;
 }
+
+/**
+ *nsp_list_has:
+ * @L   : a #NspList 
+ * @Obj : a #NspObject
+ * @ind : an integer 
+ *
+ *  tests if the list L contains the object Obj
+ *
+ *  FIXME : voir si on maj icurrent et current 
+ *
+ * Return value: %TRUE or %FALSE
+ **/
+
+Boolean nsp_list_has(NspList *L, NspObject *Obj, int *ind)
+{
+  int i = 0;
+  Boolean found = FALSE;
+  Cell *cell_L = L->first;
+
+  while ( !found  &&  cell_L != NULLCELL )
+    {
+      i++;
+      if ( cell_L->O != NULLOBJ  &&  cell_L->O->type->eq(cell_L->O, Obj) )
+	{
+	  found = TRUE;
+	  L->icurrent = i; L->current = cell_L;
+	}
+      cell_L = cell_L->next;      
+    }
+
+  *ind = found ? i : 0;
+
+  return found;
+}

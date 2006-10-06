@@ -416,8 +416,64 @@ static int int_meth_cells_get(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+static int int_meth_cells_has(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspCells *C=self;
+  NspObject *Obj;
+  NspBMatrix *B=NULLBMAT;
+  NspMatrix *Ind=NULLMAT,*Ind2=NULLMAT;
+  int ind;
+  
+  CheckRhs(1,1); 
+  CheckLhs(1,3);
+
+  if ( (Obj = nsp_get_object(stack, 1)) == NULLOBJ )
+    return RET_BUG;
+
+  if ( (B = nsp_bmatrix_create(NVOID,1,1)) == NULLBMAT )
+    return RET_BUG;
+  B->B[0] = nsp_cells_has(C, Obj, &ind);
+
+  if ( lhs >= 2 )
+    {
+      if ( (Ind = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT )
+	goto err;
+      
+      if ( lhs == 3 )
+	{
+	  if ( (Ind2 = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT )
+	    goto err;
+	  if ( ind == 0 )
+	    { Ind->R[0] = 0.0; Ind2->R[0] = 0.0; }
+	  else
+	    { Ind->R[0] = (ind-1)%C->m + 1; Ind2->R[0] = (ind-1)/C->m + 1; }
+	}
+      else
+	Ind->R[0] = ind;
+    }
+
+  MoveObj(stack,1,NSP_OBJECT(B));
+  if ( lhs >= 2 )
+    {
+      MoveObj(stack,2,NSP_OBJECT(Ind));
+      if ( lhs == 3 )
+	MoveObj(stack,3,NSP_OBJECT(Ind2));
+    }
+
+  return Max(lhs,1);
+
+ err:
+  nsp_bmatrix_destroy(B);
+  nsp_matrix_destroy(Ind);
+  nsp_matrix_destroy(Ind2);
+  return RET_BUG;
+}
+
+
 static NspMethods cells_methods[] = {
   { "get", int_meth_cells_get},
+  { "has", int_meth_cells_has},
   { (char *) 0, NULL}
 };
 
