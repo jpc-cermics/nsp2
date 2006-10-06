@@ -101,6 +101,9 @@
 /* Define if sizeof(int*)==sizeof(int) */
 #undef POINTER_INT 
 
+/* matlab mode */
+#define MTLB_MODE 0
+
 /* storing and retrieving an int in a pointer */
 
 #if defined(POINTER_INT) 
