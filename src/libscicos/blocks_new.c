@@ -1982,3 +1982,19 @@ void scicos_cstblk4_block(scicos_block *block,int *flag)
    */
   memcpy(block->outptr[0],block->rpar,block->nrpar*sizeof(double));    
 }
+
+
+void scicos_transmit_or_zero_block(scicos_block *block,int *flag)
+{
+  int j;
+  if(*flag==1)
+    {
+      if( block->ipar[0] == 1 )
+	for (j=0;j<block->insz[0];j++) 
+	  {
+	    block->outptr[0][j]=block->inptr[0][j];
+	  }
+    }
+}
+
+
