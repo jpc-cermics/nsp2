@@ -1698,7 +1698,7 @@ NspMatrix *nsp_matrix_extract_diag(const NspMatrix *A, int k)
   int imin,imax;
   imin = Max(0,-k);
   imax = Min(A->m,A->n -k);
-  if ( imin > imax ) 
+  if ( imin >= imax ) 
     {
       Loc = nsp_matrix_create(NVOID,A->rc_type,0,0);
       return Loc;
