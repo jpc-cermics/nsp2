@@ -96,8 +96,9 @@ xx = [1;2;0;4]
 Res = x; Res(4) = 4;
 if ~and(Res == xx)  then pause,end;
 
+
 x = 1;
-xx = [1;0;3];
+xx = [1,0,3];
 Res = x; Res(3) = 3;
 if ~and(Res == xx)  then pause,end;
 
