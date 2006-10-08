@@ -2328,6 +2328,7 @@ int int_xclick(Stack stack, int rhs, int opt, int lhs)
 
   if ( opts != 0 && winall != TRUE &&  opts[4].obj != NULLOBJ) 
     {
+      /* win=window_id was given */
       win = Max(win,0);
       Xgc = window_list_search(win);
       if ( Xgc == NULL ) 
@@ -4783,6 +4784,112 @@ int int_draw_pixbuf( Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/* Acceleration of scicos standard draw.
+ *
+ */
+
+static void scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
+{
+  int cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  int npt=6;
+  double x[]={r[0],r[0]     ,r[0]+r[2],r[0]+r[2]-size3d,r[0]-size3d     ,r[0]-size3d};
+  double y[]={r[1],r[1]-r[3],r[1]-r[3],r[1]-r[3]-size3d,r[1]-r[3]-size3d,r[1]-size3d};
+  if ( color != -1 && color != cpat ) 
+    Xgc->graphic_engine->scale->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
+  Xgc->graphic_engine->scale->drawrectangle(Xgc,r);
+  if ( color != -1 && color != cpat ) 
+    Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
+}
+
+
+static int int_scicos_draw3D(Stack stack, int rhs, int opt, int lhs)
+{
+  int color=-1;
+  double rect[4],e=0.3;
+  BCG *Xgc;
+  NspMatrix *orig,*size;
+  int_types T[] = {realmat,realmat,s_double,s_int, t_end} ;
+  CheckRhs(4,4);
+  if ( GetArgs(stack,rhs,opt,T,&orig,&size,&e,&color) == FAIL) return RET_BUG;
+  CheckLength(NspFname(stack),1,orig,2);
+  CheckLength(NspFname(stack),2,size,2);
+  Xgc=nsp_check_graphic_context();
+  rect[0]=orig->R[0]+e;rect[1]=orig->R[1]+size->R[1];rect[2]=size->R[0]-e;rect[3]=size->R[1]-e;
+  scicos_draw_3d(Xgc,rect,color,e);
+  return 0;
+} 
+
+
+typedef  enum { SLD_NORTH=0, SLD_SOUTH=1, SLD_EAST=2, SLD_WEST=3, SLD_ANY=4 } 
+  slock_dir;
+typedef  enum { SL_IN=0  ,SL_OUT=1 ,SL_EVIN=2,SL_EVOUT=3 , SL_SQP=4, SL_SQM=5 } 
+  slock_type;
+
+static void lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir dir,slock_type typ,int locked)
+{
+  /* angle according to dir */
+  /*  LD_NORTH=0, LD_SOUTH=1, LD_EAST=2, LD_WEST=3, LD_ANY=4 */
+  const double alpha[]= {180,0,90,-90,0};
+  const double lock_triangle_x[]={- xf/2,xf/2,0};
+  const double lock_triangle_yout[]={- yf,-yf,0};
+  const double lock_triangle_yin[]={0,0,- yf}; 
+  const double lock_square_x[]={- xf/2,xf/2,xf/2,-xf/2};
+  const double lock_square_y[]={- yf,-yf,0,0};
+  const double *ly=NULL,*lx=NULL;
+  double cosa,sina;
+  double x[4];
+  double y[4];
+  int npt=3 , i;
+  switch (typ) 
+    {
+    case SL_SQP:
+    case SL_SQM: 
+      npt=4;
+      lx=  lock_square_x;
+      ly=  lock_square_y;
+      break;
+    case SL_OUT:
+    case SL_EVOUT: 
+      ly = lock_triangle_yin; 
+      lx = lock_triangle_x; 
+      break;
+    default:
+    case SL_IN:
+    case SL_EVIN: 
+      ly = lock_triangle_yout;
+      lx = lock_triangle_x; 
+      break;
+    }
+  cosa= cos(alpha[dir]*M_PI/180);
+  sina= sin(alpha[dir]*M_PI/180);
+  for ( i = 0 ; i < npt ; i++) 
+    {
+      x[i] = cosa*lx[i] -sina*ly[i]+pt[0];
+      y[i] = sina*lx[i] +cosa*ly[i]+pt[1];
+    }
+  if ( typ == SL_SQP ) 
+    Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
+  else 
+    Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
+}
+
+
+static int int_lock_draw(Stack stack, int rhs, int opt, int lhs)
+{
+  int dir=0,typ=0;
+  double xf,yf;
+  BCG *Xgc;
+  NspMatrix *Mpt;
+  int_types T[] = {realmat,s_double,s_double,s_int,s_int, t_end} ;
+  CheckRhs(5,5);
+  if ( GetArgs(stack,rhs,opt,T,&Mpt,&xf,&yf,&dir,&typ) == FAIL) return RET_BUG;
+  CheckLength(NspFname(stack),1,Mpt,2);
+  Xgc=nsp_check_graphic_context();
+  lock_draw(Xgc,Mpt->R,xf/9.0,yf/3.5,dir,typ,1);
+  return 0;
+} 
 
 
 /*************************************************************
@@ -4874,6 +4981,8 @@ static OpTab Graphics_func[]={
   {"xdraw_pixbuf",int_draw_pixbuf},
   {"xflush",int_xflush},
   {"show_pixbuf",int_show_pixbuf}, 
+  {"scicos_draw3D",int_scicos_draw3D},
+  {"scicos_lock_draw",int_lock_draw},
   {(char *) 0, NULL}
 };
 
