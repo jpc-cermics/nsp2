@@ -745,7 +745,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  /* 1-ary pause 
 	   * FIXME: unused 
 	   */
-	  Sciprintf("pause [%s]",(char *) L1->O);
+	  Sciprintf("pause [%s]\n",(char *) L1->O);
 	  /* We enter a new scilab evaluation loop  */
 	  inc_pause_prompt();
 	  rep =nsp_parse_eval_from_std(1);
