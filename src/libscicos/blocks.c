@@ -12,6 +12,8 @@
 #include "scicos/scicos.h"
 #include "scicos/blocks.h"
 
+/* Copyright Inria Scicos.
+ */ 
 
 /* 
  * most of the blocks defined here have the following calling sequence
@@ -516,59 +518,92 @@ scicos_integr_block (scicos_args_F0)
 }			
 
 
-/*     y=f(t) for f a tabulated function from R to R^ny 
- *     ipar(1)             : np number of mesh points 
- *     rpar(1:ny+1,1:np) : matrix of mesh point coordinates 
+/* linear interpolation to compute y=f(t) for 
+ * f a tabulated function from R to R^(ny)
+ * ipar(1)             : np number of mesh points 
+ * rpar(1:np,1:ny+1) : matrix of mesh point coordinates 
  *                       first row contains t coordinate mesh points 
  *                       next rows contains y coordinates mesh points 
  *                       (one row for each output) 
  */
 
-int
-scicos_intplt_block (scicos_args_F0)
+static void scicos_intp(double x,const double *xd,const double *yd,int n,int nc,double *y);
+
+int scicos_intplt_block (scicos_args_F0)
 {
-  int np;
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  np = ipar[1];
-  Scierror("Error: intplt block is to be done \n");
-  *flag__ = -1;
-  /* 
-   *  scicos_intp (t, &rpar[1], &rpar[np + 1], ny, &np, &y[1]);
-   */
+  int np = ipar[0];
+  scicos_intp (*t, rpar, rpar+np,*ny,np,y);
   return 0;
 }			
 
+/* linear interpolation to compute y=f(u) for 
+ * for f a tabulated function from R to R^ny
+ *    rpar(1:np,1:ny+1) : matrix of mesh point coordinates 
+ *                       first row contains u coordinate mesh points 
+ *                       next rows contains y coordinates mesh points 
+ *                       (one row for each output) 
+ */
 
 int scicos_intpol_block(scicos_args_F0)
 {
-  int np;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     y=f(u) for f a tabulated function from R to R^ny */
-  /*     rpar(1:ny+1,1:np) : matrix of mesh point coordinates */
-  /*                       first row contains u coordinate mesh points */
-  /*                       next rows contains y coordinates mesh points */
-  /*                       (one row for each output) */
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  np = ipar[1];
-  sciprint("scicos_intpol_block to be done \n");
-  /* scicos_intp (&u[1], &rpar[1], &rpar[np + 1], ny, &np, &y[1]); */
+  int np = ipar[0];
+  scicos_intp (*u,rpar,rpar+np,*ny,np,y);
   return 0;
 }			
+
+/* compute y=F(x) by linear interpolation where F : R -> R^n and 
+ * F is given by nc values F(xd[i])=ydi where ydi is the i-th row of yd.
+ * the xd values are supposed to be increasing values.
+ * 
+ *  x: value at which to compute F 
+ *  xd: increasing vector of size nc
+ *  yd: matrix (nc x n): yd(i,:)=F(x(i))
+ *  n : F takes its values in R^n.
+ *  y : vector of size n filled with F(x)
+ *  
+ *  F is set to F(xd(1)) for x < xd(1) and to F(xd(nc)) for x>= xd(nc).
+ *
+ * Originally writen in Fortran by Pejman GOHARI 1996 (Copyright INRIA).
+ * C-version Jean-Philippe Chancelier 
+ */
+
+static void scicos_intp(double x,const double *xd,const double *yd,int n,int nc,double *y)
+{
+  int pos=nc-1,i;
+  /* where is x ? this could be improved with dsearch.
+   */
+  for ( i = 0 ; i < nc ; i++) 
+    {
+      if ( x < xd[i] )
+	{
+	  pos=i-1;break;
+	}
+    }
+  /* limit cases */
+  if ( pos == -1 )
+    {
+      /* return first value */
+      for ( i = 0 ; i < n ; i++) y[i]= yd[nc*i];
+    }
+  else if ( pos == nc -1 )
+    {
+      /* return last value */
+      for ( i = 0 ; i < n ; i++) y[i]= yd[(nc-1)+nc*i];
+    }
+  else
+    {
+      double alpha = xd[pos+1] -xd[pos];
+      if ( alpha < 1.e-10) 
+	{
+	  for ( i = 0 ; i < n ; i++) y[i]= yd[(nc-1)+nc*i];
+	}
+      else 
+	{
+	  alpha = (x-xd[pos])/alpha;
+	  for ( i = 0 ; i < n ; i++) y[i]= (1-alpha)*yd[pos+nc*i]+alpha*yd[pos+1+nc*i];
+	}
+    }
+}
 
 
 int scicos_intrp2_block(scicos_args_F);

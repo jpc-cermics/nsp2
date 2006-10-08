@@ -200,6 +200,7 @@ extern void scicos_scalar2vector_block(scicos_block *block,int *flag);
 extern void scicos_evaluate_expr_block(scicos_block *block,int *flag);
 extern void scicos_cstblk4_block(scicos_block *block,int *flag);
 extern void scicos_transmit_or_zero_block(scicos_block *block,int *flag);
+extern void scicos_mvswitch_block(scicos_block *block,int *flag);
 
 #endif 
 
@@ -282,6 +283,7 @@ scicos_block_table  tabsim[] ={
   {"mswitch",(ScicosF) scicos_mswitch_block},
   {"multiplex",(ScicosF) scicos_multiplex_block},
   {"mux",(ScicosF) scicos_mux_block},
+  {"mvswitch",(ScicosF) scicos_mvswitch_block},
   {"pload",(ScicosF) scicos_pload_block},
   {"plusblk",(ScicosF) scicos_plus_block},
   {"powblk",(ScicosF) scicos_pow_block},

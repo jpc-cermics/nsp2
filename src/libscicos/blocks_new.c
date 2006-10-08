@@ -1998,3 +1998,17 @@ void scicos_transmit_or_zero_block(scicos_block *block,int *flag)
 }
 
 
+/* switch selected with ipar 
+ *
+ */
+
+void scicos_mvswitch_block(scicos_block *block,int *flag)
+{
+  int i,j=0;
+  j=Min(Max(block->ipar[0],0),block->nin-1);
+  for (i=0 ; i< block->insz[j]; i++) 
+    {
+      block->outptr[0][i]=block->inptr[j][i];
+    }
+}
+
