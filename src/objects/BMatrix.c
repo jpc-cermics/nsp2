@@ -539,17 +539,7 @@ int nsp_bmatrix_set_submatrix_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMatrix
 
 int nsp_bmatrix_set_rows_obsolete(NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B)
 {
-  int i,Bscal=0;
-  if (GenericMatSeRo(A,A->m,A->n,A->mn,Rows,B,B->m,B->n,B->mn,
-		     (F_Enlarge)nsp_bmatrix_enlarge,&Bscal)== FAIL) 
-    return FAIL;
-  if ( Bscal == 0) 
-    for ( i = 0 ; i < Rows->mn ; i++)
-      A->B[((int) Rows->R[i]) -1] =B->B[i];
-  else
-    for ( i = 0 ; i < Rows->mn ; i++)
-      A->B[((int) Rows->R[i]) -1] =B->B[0];
-  return(OK);
+  return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
 
 /**
@@ -598,30 +588,7 @@ NspBMatrix  *nsp_bmatrix_extract_obsolete(NspBMatrix *A, NspMatrix *Rows, NspMat
 
 NspBMatrix  *nsp_bmatrix_extract_elements_obsolete(NspBMatrix *A, NspMatrix *Elts)
 {
-  NspBMatrix *Loc;
-  int rmin,rmax,i;
-  Bounds(Elts,&rmin,&rmax);
-  if ( A->mn == 0) return nsp_bmatrix_create(NVOID,0,0);
-  if ( rmin < 1 || rmax > A->mn )
-    {
-      Scierror("Error:\tIndices out of bound\n");
-      return(NULLBMAT);
-    }
-  if ( A->m == 1 && A->n > 1 ) 
-    {
-      if ( (Loc =nsp_bmatrix_create(NVOID,1,Elts->mn))== NULLBMAT) 
-	return(NULLBMAT);
-    }
-  else
-    {
-      if ( (Loc =nsp_bmatrix_create(NVOID,Elts->mn,1))== NULLBMAT) 
-	return(NULLBMAT);
-    }
-  for ( i = 0 ; i < Elts->mn ; i++)
-    {	
-      Loc->B[i] = A->B[((int) Elts->R[i])-1];
-    }
-  return(Loc);
+  return (NspBMatrix *) nsp_matint_extract_elements1(NSP_OBJECT(A),NSP_OBJECT(Elts));
 }
 
 /**
@@ -636,24 +603,7 @@ NspBMatrix  *nsp_bmatrix_extract_elements_obsolete(NspBMatrix *A, NspMatrix *Elt
 
 NspBMatrix  *nsp_bmatrix_extract_columns_obsolete(NspBMatrix *A, NspMatrix *Cols)
 {
-  NspBMatrix *Loc;
-  int i,j,cmin,cmax;
-  if ( A->mn == 0) return nsp_bmatrix_create(NVOID,0,0);
-  Bounds(Cols,&cmin,&cmax);
-  if ( cmin < 1 || cmax  > A->n ) 
-    {
-      Scierror("Error:\tIndices out of bound\n");
-      return(NULLBMAT);
-    }
-  Loc =nsp_bmatrix_create(NVOID,A->m,Cols->mn);
-  if ( Loc == NULLBMAT) 
-    return(NULLBMAT);
-  for ( i = 0 ; i < A->m ; i++)
-    for ( j = 0 ; j < Cols->mn ; j++ )
-      {	
-	Loc->B[i+Loc->m*j]=A->B[i+(((int) Cols->R[j])-1)*A->m] ;
-      }
-  return(Loc);
+  return (NspBMatrix *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
 }
 
 /**
@@ -668,23 +618,7 @@ NspBMatrix  *nsp_bmatrix_extract_columns_obsolete(NspBMatrix *A, NspMatrix *Cols
 
 NspBMatrix  *nsp_bmatrix_extract_rows_obsolete(NspBMatrix *A, NspMatrix *Rows)
 {
-  NspBMatrix *Loc;
-  int i,j,cmin,cmax;
-  if ( A->mn == 0) return nsp_bmatrix_create(NVOID,0,0);
-  Bounds(Rows,&cmin,&cmax);
-  if ( cmin < 1 || cmax  > A->m ) 
-    {
-      Scierror("Error:\tIndices out of bound\n");
-      return(NULLBMAT);
-    }
-  if ((Loc =nsp_bmatrix_create(NVOID,Rows->mn,A->n)) == NULLBMAT )
-    return(NULLBMAT);
-  for ( i = 0 ; i < Rows->mn ; i++)
-    for ( j = 0 ; j < A->n ; j++ )
-      {	
-	Loc->B[i+Loc->m*j]=A->B[(((int) Rows->R[i])-1)+ j*A->m] ;
-      }
-  return(Loc);
+  return (NspBMatrix *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));
 }
 
 /*

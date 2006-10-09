@@ -1264,71 +1264,8 @@ int GenericMatSeRoBis(void *A, int Am, int An, int Amn, int nb_ind, int rmin, in
 
 int nsp_matrix_set_rows_obsolete(NspMatrix *A, NspMatrix *Rows, NspMatrix *B)
 {
-  int i, *irow=NULL, rmin, rmax;
-  int Bscal=0;
-
-  if (Rows->mn == 0) return OK;
-
-  if ( Rows->mn > WORK_SIZE ) 
-    { if ( (irow = nsp_alloc_int(Rows->mn)) == NULL ) return FAIL; }
-  else
-    irow = iwork1;
-
-  nsp_matrix_boundster(Rows, irow, &rmin, &rmax);
-
-  if (GenericMatSeRoBis(A,A->m,A->n,A->mn,Rows->mn,rmin,rmax,
-		     B,B->m,B->n,B->mn,(F_Enlarge)nsp_matrix_enlarge,&Bscal)== FAIL) 
-    goto err;
-
-  if ( B->rc_type == 'r' )
-    {
-      if (  A->rc_type == 'r' )
- 	{ 
-	  if ( Bscal == 0) 
-	    for ( i = 0 ; i < Rows->mn ; i++)
-	      A->R[irow[i]] = B->R[i];
-	  else
-	    for ( i = 0 ; i < Rows->mn ; i++)
-	      A->R[irow[i]] = B->R[0];
-	}
-      else
- 	{ 
-	  if ( Bscal == 0) 
-	    for ( i = 0 ; i < Rows->mn ; i++)
-	      {	
-		A->C[irow[i]].r =B->R[i];
-		A->C[irow[i]].i = 0.0;
-	      }
-	  else
-	    for ( i = 0 ; i < Rows->mn ; i++)
-	      {	
-		A->C[irow[i]].r =B->R[0];
-		A->C[irow[i]].i = 0.0;
-	      }
-	}
-    }
-  else  /* B is complex */
-    {
-      if (  A->rc_type == 'r' )
- 	{ 
- 	  if (nsp_mat_complexify(A,0.00) == FAIL ) goto err;
- 	} 
-      if ( Bscal == 0 ) 
-	for ( i = 0 ; i < Rows->mn ; i++)
-	  A->C[irow[i]] =B->C[i];
-      else
-	for ( i = 0 ; i < Rows->mn ; i++)
-	  A->C[irow[i]] =B->C[0];
-    }
-
-  if ( Rows->mn > WORK_SIZE ) FREE(irow);
-  return OK;
-
- err:
-  if ( Rows->mn > WORK_SIZE ) FREE(irow);
-  return FAIL;
+  return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
-
 
 /**
  * nsp_matrix_is_increasing;
@@ -1466,69 +1403,8 @@ NspMatrix *nsp_matrix_extract_obsolete(const NspMatrix *A, const NspMatrix *Rows
 
 NspMatrix *nsp_matrix_extract_elements_obsolete(const NspMatrix *A,const NspMatrix *Elts)
 {
-  NspMatrix *Loc;
-  int rmin, rmax, i, *ind=NULL;
-
-  if ( A->mn == 0) return nsp_matrix_create(NVOID,A->rc_type,0,0);
-
-  /* one index only */
-  if ( Elts->mn == 1 )
-    {
-      i = (int) Elts->R[0];
-      if ( i < 1  ||  i > A->mn )
-  	{
-  	  Scierror("Error:\tIndices out of bound\n");
-  	  return NULLMAT;
-  	}
-      if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,1,1))== NULLMAT)
-  	return NULLMAT;
-      if ( A->rc_type == 'c' )
-	Loc->C[0] = A->C[i-1];
-      else
-	Loc->R[0] = A->R[i-1];
-      return Loc;
-    }
-
-  /*  several indices */
-  if ( Elts->mn > WORK_SIZE ) 
-    { if ( (ind = nsp_alloc_int(Elts->mn)) == NULL ) return NULLMAT; }
-  else
-    ind = iwork1;
-
-  nsp_matrix_boundster(Elts, ind, &rmin, &rmax);
-
-  if ( rmin < 1 || rmax > A->mn )
-    {
-      Scierror("Error:\tIndices out of bound\n");
-      goto err;
-    }
-
-  if ( A->m == 1 && A->n > 1 ) 
-    {
-      if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,1,Elts->mn)) == NULLMAT ) 
-	goto err;
-    }
-  else
-    {
-      if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,Elts->mn,1)) == NULLMAT ) 
-	goto err;
-    }
-
-  if ( A->rc_type == 'c' )
-    for ( i = 0 ; i < Elts->mn ; i++)
-      Loc->C[i]=A->C[ind[i]];
-  else 
-    for ( i = 0 ; i < Elts->mn ; i++)
-      Loc->R[i]=A->R[ind[i]];
-
-  if ( Elts->mn > WORK_SIZE ) FREE(ind);
-  return Loc;
-
- err:
-  if ( Elts->mn > WORK_SIZE ) FREE(ind);
-  return NULLMAT;
+  return (NspMatrix *) nsp_matint_extract_elements1(NSP_OBJECT(A),NSP_OBJECT(Elts));
 }
-
 
 /**
  * nsp_matrix_extract_columns:
@@ -1542,38 +1418,7 @@ NspMatrix *nsp_matrix_extract_elements_obsolete(const NspMatrix *A,const NspMatr
 
 NspMatrix *nsp_matrix_extract_columns_obsolete(const NspMatrix *A,const NspMatrix *Cols)
 {
-  NspMatrix *Loc;
-  int j, cmin, cmax, *icol=NULL;
-
-  if ( A->mn == 0) return nsp_matrix_create(NVOID,A->rc_type,0,0);
-
-  if ( Cols->mn > WORK_SIZE ) 
-    { if ( (icol = nsp_alloc_int(Cols->mn)) == NULL ) return NULLMAT; }
-  else
-    icol = iwork1;
-
-  nsp_matrix_boundster(Cols, icol, &cmin, &cmax);
-  if ( cmin < 1 || cmax  > A->n ) 
-    {
-      Scierror("Error:\tIndices out of bound\n");
-      goto err;
-    }
-
-  if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,A->m,Cols->mn)) == NULLMAT ) goto err;
-
-  if ( A->rc_type == 'c' )
-    for ( j = 0 ; j < Cols->mn ; j++ )
-      memcpy( Loc->C+Loc->m*j, A->C+icol[j]*A->m, A->m*sizeof(doubleC));
-  else 
-    for ( j = 0 ; j < Cols->mn ; j++ )
-      memcpy( Loc->R+Loc->m*j, A->R+icol[j]*A->m, A->m*sizeof(double));
-
-  if ( Cols->mn > WORK_SIZE ) FREE(icol);
-  return Loc;
-
- err:
-  if ( Cols->mn > WORK_SIZE ) FREE(icol);
-  return NULLMAT;
+  return (NspMatrix *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
 }
 
 /**
@@ -1588,41 +1433,7 @@ NspMatrix *nsp_matrix_extract_columns_obsolete(const NspMatrix *A,const NspMatri
 
 NspMatrix *nsp_matrix_extract_rows_obsolete(const NspMatrix *A,const NspMatrix *Rows)
 {
-  NspMatrix *Loc;
-  int i, j, rmin, rmax, *irow=NULL;
-
-  if ( A->mn == 0) return nsp_matrix_create(NVOID,A->rc_type,0,0);
-
-  if ( Rows->mn > WORK_SIZE ) 
-    { if ( (irow = nsp_alloc_int(Rows->mn)) == NULL ) return NULLMAT; }
-  else
-    irow = iwork1;
-
-  nsp_matrix_boundster(Rows, irow, &rmin, &rmax);
-
-  if ( rmin < 1 || rmax > A->m ) 
-    {
-      Scierror("Error:\tIndices out of bound\n");
-      goto err;
-    }
-
-  if ( (Loc = nsp_matrix_create(NVOID,A->rc_type,Rows->mn,A->n)) == NULLMAT ) goto err;
-
-  if ( A->rc_type == 'c' )
-    for ( j = 0 ; j < A->n ; j++ )
-      for ( i = 0 ; i < Rows->mn ; i++)
-	Loc->C[i+ j*Loc->m] = A->C[irow[i]+ j*A->m];
-  else 
-    for ( j = 0 ; j < A->n ; j++ )
-      for ( i = 0 ; i < Rows->mn ; i++)
-	Loc->R[i+ j*Loc->m] = A->R[irow[i]+ j*A->m];
-
-  if ( Rows->mn > WORK_SIZE ) FREE(irow);
-  return Loc;
-
- err:
-  if ( Rows->mn > WORK_SIZE ) FREE(irow);
-  return NULLMAT;
+  return (NspMatrix *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));
 }
 
 

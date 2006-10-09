@@ -704,28 +704,8 @@ int nsp_smatrix_set_submatrix_obsolete(NspSMatrix *A,const NspMatrix *Rows,const
 
 int nsp_smatrix_set_rows_obsolete(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
 {
-  int i,Bscal=0;
-  if (GenericMatSeRo(A,A->m,A->n,A->mn,Rows,B,B->m,B->n,B->mn,
-		     (F_Enlarge) nsp_smatrix_enlarge,&Bscal)== FAIL) 
-    return FAIL;
-  if ( Bscal == 0) 
-    for ( i = 0 ; i < Rows->mn ; i++)
-      {
-	nsp_string_destroy(&((A->S[((int) Rows->R[i])-1])));
-	if (( A->S[((int) Rows->R[i])-1] =nsp_string_copy(B->S[i]))
-	    == (nsp_string) 0)  return(FAIL);
-      }
-  else
-    for ( i = 0 ; i < Rows->mn ; i++)
-      {
-	nsp_string_destroy(&((A->S[((int) Rows->R[i])-1])));
-	if (( A->S[((int) Rows->R[i])-1] =nsp_string_copy(B->S[0]))
-	    == (nsp_string) 0)  return(FAIL);
-      }
-  return(OK);
+  return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
-
-
 
 /*
  * Res=nsp_smatrix_extract(A,Rows,Cols)
@@ -765,29 +745,8 @@ NspSMatrix*nsp_smatrix_extract_obsolete(NspSMatrix *A, NspMatrix *Rows, NspMatri
 
 NspSMatrix*nsp_smatrix_extract_elements_obsolete(NspSMatrix *A, NspMatrix *Elts, int *err)
 {
-  NspSMatrix *Loc;
-  int rmin,rmax,i;
-  Bounds(Elts,&rmin,&rmax);
   *err=0;
-  if ( A->mn == 0) return nsp_smatrix_create(NVOID,0,0,"v",0);
-  if ( rmin < 1 || rmax > A->mn )
-    {
-      *err=1;
-      return(NULLSMAT);
-    }
-  if ( A->m == 1 && A->n > 1 ) 
-    {
-      if ((Loc =nsp_smatrix_create_with_length(NVOID,1,Elts->mn,-1)) ==NULLSMAT) return(NULLSMAT);
-    }
-  else
-    {
-      if ( (Loc =nsp_smatrix_create_with_length(NVOID,Elts->mn,1,-1)) == NULLSMAT) return(NULLSMAT);
-    }
-  for ( i = 0 ; i < Elts->mn ; i++)
-    { 
-      if ((Loc->S[i] =nsp_string_copy(A->S[((int) Elts->R[i])-1]))== (nsp_string) 0)  return(NULLSMAT);
-    }
-  return(Loc);
+  return (NspSMatrix *) nsp_matint_extract_elements1(NSP_OBJECT(A),NSP_OBJECT(Elts));
 }
 
 /*
@@ -797,26 +756,8 @@ NspSMatrix*nsp_smatrix_extract_elements_obsolete(NspSMatrix *A, NspMatrix *Elts,
 
 NspSMatrix*nsp_smatrix_extract_columns_obsolete(NspSMatrix *A, NspMatrix *Cols, int *err)
 {
-  NspSMatrix *Loc;
-  int j,cmin,cmax;
   *err=0;
-  if ( A->mn == 0) return nsp_smatrix_create(NVOID,0,0,"v",0);
-  Bounds(Cols,&cmin,&cmax);
-  if ( cmin < 1 || cmax  > A->n )
-    {
-      *err=1;
-      return(NULLSMAT);
-    }
-  if ((Loc =nsp_smatrix_create_with_length(NVOID,A->m,Cols->mn,-1))==NULLSMAT)  return(NULLSMAT);
-  for ( j = 0 ; j < Cols->mn ; j++ )
-    {
-      int ind=(((int) Cols->R[j])-1)*A->m, i, ind1=Loc->m*j;
-      for ( i = A->m -1 ; i >= 0 ; i--) 
-	{
-	  if (( Loc->S[ind1+i] =nsp_string_copy( A->S[ind+i])) == (nsp_string) 0)  return NULLSMAT;
-	}
-    }
-  return(Loc);
+  return (NspSMatrix *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
 }
 
 /*
@@ -851,23 +792,8 @@ NspSMatrix*SMatLoopCol(char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int 
 
 NspSMatrix*nsp_smatrix_extract_rows_obsolete(NspSMatrix *A, NspMatrix *Rows, int *err)
 {
-  NspSMatrix *Loc;
-  int i,j,cmin,cmax;
   *err=0;
-  if ( A->mn == 0) return nsp_smatrix_create(NVOID,0,0,"v",0);
-  Bounds(Rows,&cmin,&cmax);
-  if ( cmin < 1 || cmax  > A->m )
-    {
-      *err=1;
-      return(NULLSMAT);
-    }
-  if ((Loc =nsp_smatrix_create_with_length(NVOID,Rows->mn,A->n,-1)) == NULLSMAT )   return(NULLSMAT);
-  for ( i = 0 ; i < Rows->mn ; i++)
-    for ( j = 0 ; j < A->n ; j++ )
-      {
-	if (( Loc->S[i+ j*Loc->m]=nsp_string_copy(A->S[(((int) Rows->R[i])-1)+ j*A->m]))  == (nsp_string) 0)  return NULLSMAT;
-      }
-  return(Loc);
+  return (NspSMatrix *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));
 }
 
 /**

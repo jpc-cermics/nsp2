@@ -807,7 +807,7 @@ int int_cells_addrows(Stack stack, int rhs, int opt, int lhs)
  * Cols A --> (Cols,A,Cols(A))
  */
 
-int int_cells_extractcolforloop(Stack stack, int rhs, int opt, int lhs)
+int int_cells_extractcolforloop_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   NspCells *A,*Res;
   NspMatrix *Cols;
@@ -1174,7 +1174,7 @@ static OpTab Cells_func[]={
   {"deleterows_ce", nsp_matint_deleterows_xx},
   {"deletecols_ce", nsp_matint_deletecols_xx},
   {"tozero_ce", nsp_matint_tozero_xx},
-  {"loopextract_m_ce",int_cells_extractcolforloop},  /* a voir (inutile ?)*/
+  /* {"loopextract_m_ce",int_cells_extractcolforloop}, */
   {"cells_create",int_cells_create},
   {"col_cells_create", int_col_cells_create},
   {"row_cells_create", int_row_cells_create},

@@ -642,31 +642,7 @@ int nsp_cells_set_element(NspCells *A,int index, NspObject *B)
 
 int nsp_cells_set_rows_obsolete(NspCells *A, NspMatrix *Rows, NspCells *B)
 {
-  int i,Bscal=0;
-  if (GenericMatSeRo(A,A->m,A->n,A->mn,Rows,B,B->m,B->n,B->mn,
-		     (F_Enlarge) nsp_cells_enlarge,&Bscal)== FAIL) 
-    return FAIL;
-  if ( Bscal == 0) 
-    for ( i = 0 ; i < Rows->mn ; i++)
-      {
-	nsp_object_destroy(&((A->objs[((int) Rows->R[i])-1])));
-	if ( B->objs[i] != NULL) 
-	  {
-	    if (( A->objs[((int) Rows->R[i])-1] = nsp_object_copy_with_name(B->objs[i]))
-		== NULL )  return(FAIL);
-	  }
-      }
-  else
-    for ( i = 0 ; i < Rows->mn ; i++)
-      {
-	nsp_object_destroy(&((A->objs[((int) Rows->R[i])-1])));
-	if ( B->objs[0] != NULL)
-	  {
-	    if (( A->objs[((int) Rows->R[i])-1] = nsp_object_copy_with_name(B->objs[0]))
-		== NULL)  return(FAIL);
-	  }
-      }
-  return(OK);
+  return nsp_matint_set_elts1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(B));
 }
 
 /**
@@ -718,35 +694,9 @@ NspCells*nsp_cells_extract_obsolete(NspCells *A, NspMatrix *Rows, NspMatrix *Col
 
 NspCells*nsp_cells_extract_elements_obsolete(NspCells *A, NspMatrix *Elts, int *err)
 {
-  NspCells *Loc;
-  int rmin,rmax,i;
-  Bounds(Elts,&rmin,&rmax);
   *err=0;
-  if ( A->mn == 0) return nsp_cells_create(NVOID,0,0);
-  if ( rmin < 1 || rmax > A->mn )
-    {
-      *err=1;
-      return(NULLCELLS);
-    }
-  if ( A->m == 1 && A->n > 1 ) 
-    {
-      if ((Loc =nsp_cells_create(NVOID,1,Elts->mn)) ==NULLCELLS) return(NULLCELLS);
-    }
-  else
-    {
-      if ( (Loc =nsp_cells_create(NVOID,Elts->mn,1)) == NULLCELLS) return(NULLCELLS);
-    }
-  for ( i = 0 ; i < Elts->mn ; i++)
-    { 
-      NspObject *Ob=A->objs[((int) Elts->R[i])-1];
-      if ( Ob != NULL) 
-	{
-	  if ((Loc->objs[i] = nsp_object_copy_with_name(Ob))== NULL)  return(NULLCELLS);
-	}
-    }
-  return(Loc);
+  return (NspCells *) nsp_matint_extract_elements1(NSP_OBJECT(A),NSP_OBJECT(Elts));
 }
-
 
 /**
  * nsp_cells_extract_columns:
@@ -761,26 +711,8 @@ NspCells*nsp_cells_extract_elements_obsolete(NspCells *A, NspMatrix *Elts, int *
 
 NspCells*nsp_cells_extract_columns_obsolete(NspCells *A, NspMatrix *Cols, int *err)
 {
-  NspCells *Loc;
-  int j,cmin,cmax;
   *err=0;
-  if ( A->mn == 0) return nsp_cells_create(NVOID,0,0);
-  Bounds(Cols,&cmin,&cmax);
-  if ( cmin < 1 || cmax  > A->n )
-    {
-      *err=1;
-      return(NULLCELLS);
-    }
-  if ((Loc =nsp_cells_create(NVOID,A->m,Cols->mn)) == NULLCELLS)  return(NULLCELLS);
-  for ( j = 0 ; j < Cols->mn ; j++ )
-    {
-      int ind=(((int) Cols->R[j])-1)*A->m, i, ind1=Loc->m*j;
-      for ( i = A->m -1 ; i >= 0 ; i--) 
-	{
-	  if (( Loc->objs[ind1+i] = nsp_object_copy_with_name( A->objs[ind+i])) == NULL)  return NULLCELLS;
-	}
-    }
-  return(Loc);
+  return (NspCells *) nsp_matint_extract_columns1(NSP_OBJECT(A),NSP_OBJECT(Cols));
 }
 
 /**
@@ -829,27 +761,8 @@ NspCells*CellsLoopCol(char *str, NspCells *Col, NspCells *A, int icol, int *rep)
 
 NspCells*nsp_cells_extract_rows_obsolete(NspCells *A, NspMatrix *Rows, int *err)
 {
-  NspCells *Loc;
-  int i,j,cmin,cmax;
   *err=0;
-  if ( A->mn == 0) return nsp_cells_create(NVOID,0,0);
-  Bounds(Rows,&cmin,&cmax);
-  if ( cmin < 1 || cmax  > A->m )
-    {
-      *err=1;
-      return(NULLCELLS);
-    }
-  if ((Loc =nsp_cells_create(NVOID,Rows->mn,A->n)) == NULLCELLS )   return(NULLCELLS);
-  for ( i = 0 ; i < Rows->mn ; i++)
-    for ( j = 0 ; j < A->n ; j++ )
-      {
-	NspObject *Ob= A->objs[(((int) Rows->R[i])-1)+ j*A->m];
-	if ( Ob != NULL) 
-	  {
-	    if (( Loc->objs[i+ j*Loc->m]= nsp_object_copy_with_name(Ob))  == NULL)  return NULLCELLS;
-	  }
-      }
-  return(Loc);
+  return (NspCells *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));
 }
 
 /*

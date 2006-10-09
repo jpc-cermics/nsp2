@@ -268,7 +268,7 @@ int int_smxaddrows(Stack stack, int rhs, int opt, int lhs)
  * FIXME ne sert plus ?
  */
 
-int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
+int int_smxextractcolforloop_obsolete(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *A,*Res;
   NspMatrix *Cols;
@@ -1179,7 +1179,7 @@ static OpTab SMatrix_func[]={
   {"tozero_s", nsp_matint_tozero_xx},
   {"latexmat_s",int_smatrix_2latexmat},
   {"latextab_s",int_smatrix_2latextab},
-  {"loopextract_m_s",int_smxextractcolforloop}, /* ne sert plus */
+  /* {"loopextract_m_s",int_smxextractcolforloop}, */
   {"smat_create",int_smxcreate},
   {"redim_s",int_matint_redim},
   {"matrix_s", int_matint_redim},

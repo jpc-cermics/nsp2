@@ -818,6 +818,15 @@ NspObject *nsp_matint_extract_elements(NspObject *Obj, const int *ind, int nb_el
   return Loc;
 }
 
+NspObject *nsp_matint_extract_elements1(NspObject *Obj,NspObject *Elts)
+{
+  int *elts,nr, rmin, rmax;
+  elts = get_index_vector_from_object(Elts,&nr, &rmin, &rmax,matint_iwork1);
+  if ( elts == NULL) return NULLOBJ;
+  return nsp_matint_extract_elements(Obj,elts,nr, rmin, rmax);
+}
+
+
 /**
  * nsp_matint_extract_columns:
  * @Obj: a #Matrix (that is a #NspObject which implements the matint interface)
@@ -887,6 +896,16 @@ NspObject *nsp_matint_extract_columns(NspObject *Obj, const int *ind, int nb_elt
     }
   return Loc;
 }
+
+NspObject *nsp_matint_extract_columns1(NspObject *Obj,NspObject *Cols)
+{
+  int *cols,nr, rmin, rmax;
+  cols = get_index_vector_from_object(Cols,&nr, &rmin, &rmax,matint_iwork1);
+  if ( cols == NULL) return NULLOBJ;
+  return nsp_matint_extract_columns(Obj,cols,nr, rmin, rmax);
+}
+
+
 
 /**
  * nsp_matint_extract_rows:
@@ -983,6 +1002,15 @@ NspObject *nsp_matint_extract_rows(NspObject *Obj, const int *ind, int nb_elts, 
     }
   return Loc;
 }
+
+NspObject *nsp_matint_extract_rows1(NspObject *Obj,NspObject *Rows)
+{
+  int *rows,nr, rmin, rmax;
+  rows = get_index_vector_from_object(Rows,&nr, &rmin, &rmax,matint_iwork1);
+  if ( rows == NULL) return NULLOBJ;
+  return nsp_matint_extract_rows(Obj,rows,nr, rmin, rmax);
+}
+
 
 /**
  * nsp_matint_extract:
@@ -1496,6 +1524,16 @@ int nsp_matint_set_elts(NspObject *ObjA,
     }
   return OK;
 }
+
+
+int nsp_matint_set_elts1(NspObject *ObjA, NspObject *Elts, NspObject *ObjB)
+{
+  int *elts,nr, rmin, rmax;
+  elts = get_index_vector_from_object(Elts,&nr, &rmin, &rmax,matint_iwork1);
+  if ( elts == NULL) return FAIL;
+  return nsp_matint_set_elts(ObjA,elts,nr, rmin, rmax,ObjB);
+}
+
 
 /**
  * nsp_matint_concat_right:
