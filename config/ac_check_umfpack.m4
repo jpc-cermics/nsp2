@@ -33,7 +33,8 @@ AC_DEFUN([AC_CHECK_UMFPACK],
   umfpack_ver=`echo "$1" | sed -e 's#^\([0-9]\+\)\..*#\1#'`
  fi
  umfpack_version="${umfpack_ver}.${umfpack_subver}.${umfpack_minor}"
-
+ # check amd includes 
+ #-------------------
  AC_MSG_CHECKING([for amd include file directory])
  ac_mpi_includedirs="/usr/include/amd /usr/include/umfpack /usr/include/ufsparse  $REPOSITORY/$ARCH/include/UMFPACK /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
  AC_FIND_FILE("amd.h", $ac_mpi_includedirs, amd_includedir)
@@ -41,23 +42,21 @@ AC_DEFUN([AC_CHECK_UMFPACK],
   CPPFLAGS="-I${amd_includedir} ${CPPFLAGS}"
  fi
  AC_MSG_RESULT([${amd_includedir}])  
- #AC_CHECK_HEADERS([amd.h])
 
  ac_save_cppflags=${CPPFLAGS}
 
+ # check umfpack includes 
+ #-------------------
  AC_MSG_CHECKING([for umfpack include file directory])
  ac_mpi_includedirs="/usr/include/umfpack /usr/include/ufsparse $REPOSITORY/$ARCH/include/UMFPACK /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
  AC_FIND_FILE("umfpack.h", $ac_mpi_includedirs, umfpack_includedir)
  if test "x${umfpack_includedir}" != "x" -a "x${umfpack_includedir}" != "xNO"; then
-  CPPFLAGS="-I${umfpack_includedir} ${CPPFLAGS}"
+    if test "x${umfpack_includedir}" != "x${amd_includedir}"; then 
+      CPPFLAGS="-I${umfpack_includedir} ${CPPFLAGS}"
+    fi
  fi
- AC_CHECK_HEADERS([umfpack.h], [], [CPPFLAGS="${ac_save_cppflags}"], [])
-
-# if test ${umfpack_includedir} != ${amd_includedir}
-# then
-#   CPPFLAGS="-I${umfpack_includedir} ${CPPFLAGS}"
-#   AC_MSG_RESULT([${umfpack_includedir}])
-# fi
+ # check amd_library 
+ #-------------------
  amd_library=no
  AC_MSG_CHECKING([amd library presence])
  ac_amd_libdirs="$REPOSITORY/$ARCH/lib$AFFIX/UMFPACK /usr/lib /usr/local/lib /usr/lib/amd /usr/local/lib/amd /usr/lib/umfpack /usr/local/lib/umfpack"
@@ -67,7 +66,8 @@ AC_DEFUN([AC_CHECK_UMFPACK],
   LDFLAGS="${LDFLAGS} -L${ac_amd_libdir}"
  fi
  AC_MSG_RESULT([$amd_library])
-  # check for umfpack 
+ # check for umfpack if amd was found 
+ #----------------------------------
  if test "xx$amd_library" != "xxno";then 
   umfpack_library=no
   AC_MSG_CHECKING([umfpack library presence])
@@ -75,26 +75,30 @@ AC_DEFUN([AC_CHECK_UMFPACK],
   AC_FIND_FILE("libumfpack.a", $ac_umfpack_libdirs, ac_umfpack_libdir)
   if test "x${ac_umfpack_libdir}" != "x" -a "x${ac_umfpack_libdir}" != "xNO"; then
     umfpack_library=$ac_umfpack_libdir/libumfpack.a
-    LDFLAGS="${LDFLAGS} -L${ac_umfpack_libdir}"
+    if test "x${ac_umfpack_libdir}" != "x${ac_amd_libdir}"; then
+      LDFLAGS="${LDFLAGS} -L${ac_umfpack_libdir}"
+    fi
   fi
-
   AC_MSG_RESULT([$umfpack_library])
+#  AC_MSG_WARN([up to here LDFLAGS="$LDFLAGS"])
   if test "xx$umfpack_library" != "xxno";then 
     if test "$umfpack_ver" = "4"; then
      if test "${ac_amd_libdir}" = "/usr/lib"; then 
-      AC_CHECK_LIB(amd,amd_postorder,[umfpack_libs="-lamd"])
+      AC_CHECK_LIB(amd,amd_postorder,[amd_libs="-lamd"])
      else 
-      AC_CHECK_LIB(amd,amd_postorder,[umfpack_libs="-L${ac_amd_libdir} -lamd"])
+      AC_CHECK_LIB(amd,amd_postorder,[amd_libs="-L${ac_amd_libdir} -lamd"])
      fi
+#     AC_MSG_WARN([amd_postorder found with $amd_libs])
      ac_save_ldflags=${LDFLAGS}
-     LDFLAGS="${LDFLAGS} -L${ac_amd_libdir} -lamd"
+     LDFLAGS="${LDFLAGS} $amd_libs"
+#     AC_MSG_WARN([up to here LDFLAGS="$LDFLAGS" and amd_libs="$amd_libs"])
      if test "${ac_umfpack_libdir}" = "/usr/lib"; then 
-      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-lumfpack ${umfpack_libs}"])
+      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-lumfpack ${amd_libs}"])
      else 
-      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack ${umfpack_libs}"])
+      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack ${amd_libs}"])
      fi
      LDFLAGS=${ac_save_ldflags}
-
+#     AC_MSG_WARN([up to here LDFLAGS="$LDFLAGS" umfpack_libs="$umfpack_libs"])
     else
      ac_save_ldflags=${LDFLAGS}
      LDFLAGS="${LDFLAGS} -L${ac_amd_libdir} -lamd"
