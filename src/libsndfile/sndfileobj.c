@@ -732,7 +732,9 @@ snd_formats sndfile_major_formats[] =
     {"SDS"	,SF_FORMAT_SDS },
     {"AVR"	,SF_FORMAT_AVR },
     {"WAVEX"	,SF_FORMAT_WAVEX },
+#ifdef SF_FORMAT_SD2 
     {"SD2"	,SF_FORMAT_SD2 },
+#endif
     {NULL,0}
   };
 
