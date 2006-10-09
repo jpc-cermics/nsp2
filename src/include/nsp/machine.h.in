@@ -102,7 +102,7 @@
 #undef POINTER_INT 
 
 /* matlab mode */
-#define MTLB_MODE 0
+/* #define MTLB_MODE 0 */
 
 /* storing and retrieving an int in a pointer */
 
