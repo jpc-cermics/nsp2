@@ -26935,35 +26935,33 @@ fi
 
 UFSPARSE_LIB=
 
-if test "yes" = yes; then
 
 
 
 
 
 
- if test -z ""; then
-  umfpack_ver=4
-  umfpack_subver=3
-  umfpack_minorrel=0
- else
-  umfpack_minor=`echo "" | sed -e 's#[0-9]\+\.[0-9]\+\.\([0-9]\+\).*#\1#'`
-  umfpack_subver=`echo "" | sed -e 's#[0-9]\+\.\([0-9]\+\).*#\1#'`
-  umfpack_ver=`echo "" | sed -e 's#^\([0-9]\+\)\..*#\1#'`
- fi
- umfpack_version="${umfpack_ver}.${umfpack_subver}.${umfpack_minor}"
+# check for umfpack: you must have performed a AC_CHECK_AMD() before.
+#------------------------------------------------------------------
+
+
+
+
+ ac_save_cppflags=${CPPFLAGS}
+ ac_save_libs=${LIBS}
+ ac_save_ldflags=${LDFLAGS}
  # check amd includes
  #-------------------
  echo "$as_me:$LINENO: checking for amd include file directory" >&5
 echo $ECHO_N "checking for amd include file directory... $ECHO_C" >&6
- ac_mpi_includedirs="/usr/include/amd /usr/include/umfpack /usr/include/ufsparse  $REPOSITORY/$ARCH/include/UMFPACK /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
+ ac_amd_includedirs=" /usr/include/amd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
 
 amd_includedir=NO
-for i in $ac_mpi_includedirs;
+for i in $ac_amd_includedirs;
 do
   for j in "amd.h";
   do
-    echo "configure: 26966: $i/$j" >&5
+    echo "configure: 26964: $i/$j" >&5
     if test -r "$i/$j"; then
       echo "taking that" >&5
       amd_includedir=$i
@@ -26978,46 +26976,21 @@ done
  echo "$as_me:$LINENO: result: ${amd_includedir}" >&5
 echo "${ECHO_T}${amd_includedir}" >&6
 
- ac_save_cppflags=${CPPFLAGS}
+ ac_save_ldflags=${LDFLAGS}
 
- # check umfpack includes
- #-------------------
- echo "$as_me:$LINENO: checking for umfpack include file directory" >&5
-echo $ECHO_N "checking for umfpack include file directory... $ECHO_C" >&6
- ac_mpi_includedirs="/usr/include/umfpack /usr/include/ufsparse $REPOSITORY/$ARCH/include/UMFPACK /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
-
-umfpack_includedir=NO
-for i in $ac_mpi_includedirs;
-do
-  for j in "umfpack.h";
-  do
-    echo "configure: 26994: $i/$j" >&5
-    if test -r "$i/$j"; then
-      echo "taking that" >&5
-      umfpack_includedir=$i
-      break 2
-    fi
-  done
-done
-
- if test "x${umfpack_includedir}" != "x" -a "x${umfpack_includedir}" != "xNO"; then
-    if test "x${umfpack_includedir}" != "x${amd_includedir}"; then
-      CPPFLAGS="-I${umfpack_includedir} ${CPPFLAGS}"
-    fi
- fi
  # check amd_library
  #-------------------
  amd_library=no
  echo "$as_me:$LINENO: checking amd library presence" >&5
 echo $ECHO_N "checking amd library presence... $ECHO_C" >&6
- ac_amd_libdirs="$REPOSITORY/$ARCH/lib$AFFIX/UMFPACK /usr/lib /usr/local/lib /usr/lib/amd /usr/local/lib/amd /usr/lib/umfpack /usr/local/lib/umfpack"
+ ac_amd_libdirs="/usr/lib /usr/local/lib /usr/lib/amd /usr/local/lib/amd /usr/lib/umfpack /usr/local/lib/umfpack"
 
 ac_amd_libdir=NO
 for i in $ac_amd_libdirs;
 do
   for j in "libamd.a";
   do
-    echo "configure: 27020: $i/$j" >&5
+    echo "configure: 26993: $i/$j" >&5
     if test -r "$i/$j"; then
       echo "taking that" >&5
       ac_amd_libdir=$i
@@ -27028,44 +27001,14 @@ done
 
  if test "x${ac_amd_libdir}" != "x" -a "x${ac_amd_libdir}" != "xNO"; then
   amd_library=$ac_amd_libdir/libamd.a
-  LDFLAGS="${LDFLAGS} -L${ac_amd_libdir}"
  fi
  echo "$as_me:$LINENO: result: $amd_library" >&5
 echo "${ECHO_T}$amd_library" >&6
+
  # check for umfpack if amd was found
  #----------------------------------
  if test "xx$amd_library" != "xxno";then
-  umfpack_library=no
-  echo "$as_me:$LINENO: checking umfpack library presence" >&5
-echo $ECHO_N "checking umfpack library presence... $ECHO_C" >&6
-  ac_umfpack_libdirs="$REPOSITORY/$ARCH/lib$AFFIX/UMFPACK /usr/lib /usr/local/lib /usr/lib/umfpack /usr/local/lib/umfpack"
-
-ac_umfpack_libdir=NO
-for i in $ac_umfpack_libdirs;
-do
-  for j in "libumfpack.a";
-  do
-    echo "configure: 27048: $i/$j" >&5
-    if test -r "$i/$j"; then
-      echo "taking that" >&5
-      ac_umfpack_libdir=$i
-      break 2
-    fi
-  done
-done
-
-  if test "x${ac_umfpack_libdir}" != "x" -a "x${ac_umfpack_libdir}" != "xNO"; then
-    umfpack_library=$ac_umfpack_libdir/libumfpack.a
-    if test "x${ac_umfpack_libdir}" != "x${ac_amd_libdir}"; then
-      LDFLAGS="${LDFLAGS} -L${ac_umfpack_libdir}"
-    fi
-  fi
-  echo "$as_me:$LINENO: result: $umfpack_library" >&5
-echo "${ECHO_T}$umfpack_library" >&6
-#  AC_MSG_WARN([up to here LDFLAGS="$LDFLAGS"])
-  if test "xx$umfpack_library" != "xxno";then
-    if test "$umfpack_ver" = "4"; then
-     if test "${ac_amd_libdir}" = "/usr/lib"; then
+    if test "${ac_amd_libdir}" = "/usr/lib"; then
       echo "$as_me:$LINENO: checking for amd_postorder in -lamd" >&5
 echo $ECHO_N "checking for amd_postorder in -lamd... $ECHO_C" >&6
 if test "${ac_cv_lib_amd_amd_postorder+set}" = set; then
@@ -27142,7 +27085,8 @@ if test $ac_cv_lib_amd_amd_postorder = yes; then
   amd_libs="-lamd"
 fi
 
-     else
+    else
+      LDFLAGS="-L${ac_amd_libdir} ${LDFLAGS}"
       echo "$as_me:$LINENO: checking for amd_postorder in -lamd" >&5
 echo $ECHO_N "checking for amd_postorder in -lamd... $ECHO_C" >&6
 if test "${ac_cv_lib_amd_amd_postorder+set}" = set; then
@@ -27219,12 +27163,81 @@ if test $ac_cv_lib_amd_amd_postorder = yes; then
   amd_libs="-L${ac_amd_libdir} -lamd"
 fi
 
-     fi
-#     AC_MSG_WARN([amd_postorder found with $amd_libs])
-     ac_save_ldflags=${LDFLAGS}
-     LDFLAGS="${LDFLAGS} $amd_libs"
-#     AC_MSG_WARN([up to here LDFLAGS="$LDFLAGS" and amd_libs="$amd_libs"])
-     if test "${ac_umfpack_libdir}" = "/usr/lib"; then
+    fi
+ fi
+ CPPFLAGS=${ac_save_cppflags}
+ LIBS=${ac_save_libs}
+ LDFLAGS=${ac_save_ldflags}
+
+if test "xx$amd_libs" != "xx" ; then
+   echo "$as_me:$LINENO: result: using \"$amd_libs\" for amd libraries" >&5
+echo "${ECHO_T}using \"$amd_libs\" for amd libraries" >&6
+   echo "$as_me:$LINENO: result: using \"-I${amd_includedir}\" for amd includes" >&5
+echo "${ECHO_T}using \"-I${amd_includedir}\" for amd includes" >&6
+fi
+
+if test "xx$amd_libs" != "xx" ; then
+
+ ac_save_cppflags=${CPPFLAGS}
+ ac_save_libs=${LIBS}
+ ac_save_ldflags=${LDFLAGS}
+ LIBS="$amd_libs ${LIBS}"
+
+ # check umfpack includes
+ #-------------------
+ echo "$as_me:$LINENO: checking for umfpack include file directory" >&5
+echo $ECHO_N "checking for umfpack include file directory... $ECHO_C" >&6
+ ac_umf_includedirs="/usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
+
+umfpack_includedir=NO
+for i in $ac_umf_includedirs;
+do
+  for j in "umfpack.h";
+  do
+    echo "configure: 27197: $i/$j" >&5
+    if test -r "$i/$j"; then
+      echo "taking that" >&5
+      umfpack_includedir=$i
+      break 2
+    fi
+  done
+done
+
+ if test "x${umfpack_includedir}" != "x" -a "x${umfpack_includedir}" != "xNO"; then
+    if test "x${umfpack_includedir}" != "x${amd_includedir}"; then
+      CPPFLAGS="-I${umfpack_includedir} ${CPPFLAGS}"
+    fi
+ fi
+ echo "$as_me:$LINENO: result: ${umfpack_includedir}" >&5
+echo "${ECHO_T}${umfpack_includedir}" >&6
+ # check for umfpack
+ #-------------------
+ umfpack_library=no
+ echo "$as_me:$LINENO: checking umfpack library presence" >&5
+echo $ECHO_N "checking umfpack library presence... $ECHO_C" >&6
+ ac_umfpack_libdirs="/usr/lib /usr/local/lib /usr/lib/umfpack /usr/local/lib/umfpack"
+
+ac_umfpack_libdir=NO
+for i in $ac_umfpack_libdirs;
+do
+  for j in "libumfpack.a";
+  do
+    echo "configure: 27225: $i/$j" >&5
+    if test -r "$i/$j"; then
+      echo "taking that" >&5
+      ac_umfpack_libdir=$i
+      break 2
+    fi
+  done
+done
+
+ if test "x${ac_umfpack_libdir}" != "x" -a "x${ac_umfpack_libdir}" != "xNO"; then
+     umfpack_library=$ac_umfpack_libdir/libumfpack.a
+ fi
+ echo "$as_me:$LINENO: result: $umfpack_library" >&5
+echo "${ECHO_T}$umfpack_library" >&6
+ if test "xx$umfpack_library" != "xxno";then
+   if test "${ac_umfpack_libdir}" = "/usr/lib"; then
       echo "$as_me:$LINENO: checking for umfpack_di_solve in -lumfpack" >&5
 echo $ECHO_N "checking for umfpack_di_solve in -lumfpack... $ECHO_C" >&6
 if test "${ac_cv_lib_umfpack_umfpack_di_solve+set}" = set; then
@@ -27301,7 +27314,8 @@ if test $ac_cv_lib_umfpack_umfpack_di_solve = yes; then
   umfpack_libs="-lumfpack ${amd_libs}"
 fi
 
-     else
+   else
+      LDFLAGS="-L${ac_umfpack_libdir} ${LDFLAGS}"
       echo "$as_me:$LINENO: checking for umfpack_di_solve in -lumfpack" >&5
 echo $ECHO_N "checking for umfpack_di_solve in -lumfpack... $ECHO_C" >&6
 if test "${ac_cv_lib_umfpack_umfpack_di_solve+set}" = set; then
@@ -27378,95 +27392,15 @@ if test $ac_cv_lib_umfpack_umfpack_di_solve = yes; then
   umfpack_libs="-L${ac_umfpack_libdir} -lumfpack ${amd_libs}"
 fi
 
-     fi
-     LDFLAGS=${ac_save_ldflags}
-#     AC_MSG_WARN([up to here LDFLAGS="$LDFLAGS" umfpack_libs="$umfpack_libs"])
-    else
-     ac_save_ldflags=${LDFLAGS}
-     LDFLAGS="${LDFLAGS} -L${ac_amd_libdir} -lamd"
-     echo "$as_me:$LINENO: checking for umfpack_solve in -lumfpack" >&5
-echo $ECHO_N "checking for umfpack_solve in -lumfpack... $ECHO_C" >&6
-if test "${ac_cv_lib_umfpack_umfpack_solve+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lumfpack  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
+   fi
 
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char umfpack_solve ();
-#ifdef F77_DUMMY_MAIN
-
-#  ifdef __cplusplus
-     extern "C"
-#  endif
-   int F77_DUMMY_MAIN() { return 1; }
-
-#endif
-int
-main ()
-{
-umfpack_solve ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_lib_umfpack_umfpack_solve=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_lib_umfpack_umfpack_solve=no
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_umfpack_umfpack_solve" >&5
-echo "${ECHO_T}$ac_cv_lib_umfpack_umfpack_solve" >&6
-if test $ac_cv_lib_umfpack_umfpack_solve = yes; then
-  umfpack_libs="-L${ac_umfpack_libdir} -lumfpack -lamd "
-fi
-
-     LDFLAGS=${ac_save_ldflags}
-    fi
-
-  fi
  fi
+ CPPFLAGS=${ac_save_cppflags}
+ LIBS=${ac_save_libs}
+ LDFLAGS=${ac_save_ldflags}
 
- if test "xx$umfpack_libs" != "xx" ; then
+
+  if test "xx$umfpack_libs" != "xx" ; then
    cat >>confdefs.h <<\_ACEOF
 #define WITH_UMFPACK 1
 _ACEOF
@@ -27475,10 +27409,16 @@ _ACEOF
 echo "${ECHO_T}using \"$umfpack_libs\" for umfpack libraries" >&6
    UMFPACK_LIBS=$umfpack_libs
    UFSPARSE_LIB=libumfpack
-   echo "$as_me:$LINENO: result: using \"-I${umfpack_includedir}\" for umfpack includes" >&5
+   if test "x${umfpack_includedir}" != "x${amd_includedir}"; then
+    echo "$as_me:$LINENO: result: using \"-I${umfpack_includedir} -I${amd_includedir}\" for umfpack includes" >&5
+echo "${ECHO_T}using \"-I${umfpack_includedir} -I${amd_includedir}\" for umfpack includes" >&6
+    CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir} -I${amd_includedir}"
+   else
+    echo "$as_me:$LINENO: result: using \"-I${umfpack_includedir}\" for umfpack includes" >&5
 echo "${ECHO_T}using \"-I${umfpack_includedir}\" for umfpack includes" >&6
-   CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
- fi
+    CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
+   fi
+  fi
 fi
 
 #################

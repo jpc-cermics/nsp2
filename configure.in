@@ -1097,18 +1097,29 @@ fi
 
 UFSPARSE_LIB=
 
-if test "yes" = yes; then 
- builtin(include,config/ac_find_file.m4)
- builtin(include,config/ac_check_umfpack.m4)
- AC_CHECK_UMFPACK()
- if test "xx$umfpack_libs" != "xx" ; then
+builtin(include,config/ac_find_file.m4)
+builtin(include,config/ac_check_umfpack.m4)
+AC_CHECK_AMD()
+if test "xx$amd_libs" != "xx" ; then
+   AC_MSG_RESULT([using "$amd_libs" for amd libraries])
+   AC_MSG_RESULT([using "-I${amd_includedir}" for amd includes])
+fi
+
+if test "xx$amd_libs" != "xx" ; then
+  AC_CHECK_UMFPACK()
+  if test "xx$umfpack_libs" != "xx" ; then
    AC_DEFINE(WITH_UMFPACK)
    AC_MSG_RESULT([using "$umfpack_libs" for umfpack libraries])
    UMFPACK_LIBS=$umfpack_libs
    UFSPARSE_LIB=libumfpack
-   AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
-   CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
- fi	          
+   if test "x${umfpack_includedir}" != "x${amd_includedir}"; then 
+    AC_MSG_RESULT([using "-I${umfpack_includedir} -I${amd_includedir}" for umfpack includes])
+    CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir} -I${amd_includedir}"
+   else 
+    AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
+    CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
+   fi
+  fi	          
 fi
 
 #################
