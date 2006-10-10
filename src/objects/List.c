@@ -1249,6 +1249,7 @@ static NspObject *cell_fold_right(Cell *C, NspPList *PL, NspList *args,int *firs
  * returns f(L(1),f(L(2),....),args(1),..,args(n))
  * 
  * Return value: a new #NspList or %NULLLIST
+ *
  **/
 
 NspObject *nsp_list_fold_right(NspList *L, NspPList *PL, NspList *args)
@@ -1283,6 +1284,45 @@ static NspObject *cell_fold_right(Cell *C, NspPList *PL, NspList *args,int *firs
       return nsp_eval_macro_code(PL,O,args,first);
     }
   return NULLOBJ;
+} 
+
+
+
+/**
+ *nsp_list_fold_left:
+ * @L: a #NspList 
+ * @x: a #NspObject
+ * @PL: a #NspPList
+ * @args: a #NspList 
+ * 
+ * folds function @PL to list @L passing extra 
+ * arguments to the function through @args.
+ * for example on a list of length 3 it returns f(f(f(x,L(1),args),L(2),args),L(3),args);
+ * 
+ * Return value: a new #NspList or %NULLLIST
+ **/
+
+extern NspObject *nsp_list_fold_left(NspList *L, NspObject *x,NspPList *PL, NspList *largs)
+{
+  int first = -1;
+  Cell *C= L->first;
+  NspObject *args[]={NULL,NULL,NULL}, *Ret;
+  /* limit case */
+  if (( Ret = nsp_object_copy(x))== NULLOBJ) 
+    return Ret;
+  while ( C != NULLCELL) 
+    {
+      args[0]=Ret;
+      if ( (args[1]= C->O) == NULLOBJ ) 
+	{
+	  Scierror("foldl: NspList with unknown elements are not allowed \n");
+	  return NULLOBJ ; 
+	}
+      if ((Ret = nsp_eval_macro_code(PL,args,largs,&first))==NULLOBJ)
+	return NULLOBJ;
+      C=C->next;
+    }
+  return Ret;
 } 
 
 

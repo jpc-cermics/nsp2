@@ -1333,6 +1333,30 @@ static int int_lxfoldr(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * foldl 
+ */
+
+static int int_lxfoldl(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPList *PL;
+  NspObject *O,*X;
+  NspList *L,*args = NULLLIST ; 
+  CheckRhs(3,4);
+  CheckLhs(-1,1);
+  if ((L = GetList(stack,1)) == NULLLIST ) return RET_BUG;
+  if ((PL = GetNspPList(stack,2)) == NULLP_PLIST ) return RET_BUG;
+  if ((X = nsp_get_object(stack,3)) == NULLOBJ ) return RET_BUG;
+  if ( rhs == 4 ) 
+    {
+      if ((args = GetList(stack,4)) == NULLLIST ) return RET_BUG;
+    }
+  if ( ( O =nsp_list_fold_left(L,X,PL,args)) == NULLOBJ ) return RET_BUG;
+  MoveObj(stack,1,O);
+  return 1;      
+}
+
+
+/*
  * L1 == L2 
  */
 
@@ -1407,6 +1431,7 @@ static OpTab List_func[]={
   {"sorted_list_search_and_remove", int_lxsortedsearchandremove},
   {"map",int_lxmap },	          
   {"foldr",int_lxfoldr },	  
+  {"foldl",int_lxfoldl },	  
   {"eq_l_l",int_lxeq},
   {"ne_l_l",int_lxneq},
   {"size_l",int_lxlength}, /* redefined for list so as to always return just one number */
