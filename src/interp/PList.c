@@ -1194,6 +1194,10 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
  * @indent: 
  * 
  * prints a #PList with fully parenthesized expressions.
+ * Note that the given pointer can start not at the begining 
+ * of the list @L in that case we walk back at the begining of 
+ * the list for printing and the element given by @L can be 
+ * highlighted if wanted. 
  * 
  **/
 
@@ -1606,7 +1610,9 @@ void nsp_plist_info(PList L, int indent)
  * 
  * 
  * returns the line number contained in the first cell of @L.
- * 
+ * note that when no line information is available we can walk 
+ * at the beginning of @L to search.
+ *
  * Return value: a line number or -1.
  **/
 
@@ -1623,7 +1629,13 @@ int nsp_parser_get_line(PList L)
     case OPNAME :
     case EMPTYMAT:
     case EMPTYCELL:
-      return -1 ;
+      while ( L->prev != NULL) 
+	{
+	  int rep;
+	  L= L->prev;
+	  if ((rep=nsp_parser_get_line(L)) != -1) return rep;
+	}
+      return nsp_parser_get_line(L);
     default:
       return NSP_POINTER_TO_INT(L->O);
     }

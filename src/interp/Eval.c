@@ -241,7 +241,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      nargs +=n;
 	      /* Pas forcement astucieux pour un operateur ? **/
 	      if ((n=nsp_eval_func(O1,opcode,2,stack,first,nargs,0,lhs))<0) 
-		SHOWBUG(stack,n,L1);
+		SHOWBUG(stack,n,L);
 	      return n;
 	    }
 	  break;
@@ -2719,7 +2719,7 @@ static int show_eval_bug(Stack stack,int n, PList L)
 	   * and in that case line refers to interactive lines 
 	   * thus it is not worth giving this information
 	   */
-	  int line= nsp_parser_get_line(L);
+       	  int line= nsp_parser_get_line(L);
 	  if ( line != -1 ) 
 	    Scierror("\tline %d of function %s\n",line,NspFname(stack));
 	}
