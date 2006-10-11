@@ -1,0 +1,42 @@
+% -*- mode: latex -*-
+
+\mansection{xtitle}
+\begin{mandesc}
+  \short{xtitle}{sets the main title and the axis labels of a graph}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+xtitle(title, [x_title, y_title])
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{title}: a matrix of strings. Each line of the matrix corresponds to a new line
+    in the title.
+    \vname{x_title}: a string corresponding to the label of the x axis
+    \vname{y_title}: a string corresponding to the label of the y axis
+\end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb+xtitle+ adds a title to a graph. \verb+x_title+ and \verb+y_title+ are optional.
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}
+    "x=(1:10)';plot2d(x,x);
+    xtitle(['Titre';'Principal'],'x legend ','y legend');"
+  \end{program}
+\end{examples}
+
+\begin{manseealso}
+  plot2d
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   jl
+\end{authors}

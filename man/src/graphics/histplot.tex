@@ -1,0 +1,69 @@
+% -*- mode: latex -*-
+
+\mansection{histplot}
+\begin{mandesc}
+  \short{histplot}{draw an histogram of the components of a vector of numbers}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ histplot(n,data,[normalize=%t|%f,style=val1,rect=val2,axesflag=val3,fill=%t|%f])
+ histplot(x,data,[normalize=%t|%f,style=val1,rect=val2,axesflag=val3,fill=%t|%f])
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{n} : number of classes for the histogram
+    \vname{x} : an increasing vector defining the classes.
+    \vname{y} : vector of data.
+    \vname{style=val1} : optional named argument, sets the style for each curve. \verb+val1+
+    must be a vector of integers.
+    \vname{rect=val2} : optional named argument, sets the bounds of the plotting
+    window. \verb+val2+ must be a vector of integers: \verb+[xmin, ymin, xmax, ymax]+.
+    \vname{nax} : not implemented
+    \vname{axesflag=val3} : optional named argument, specified how axes are
+    drown. \verb+val3+ is an integer between \verb+0+ and \verb+5+
+    \begin{itemize}
+    \item \verb+val3=0+ : no axes are drawn.
+    \item \verb+val3=1+ : axes are drawn with the y axis on the left.
+    \item \verb+val3=2+ : a box is drawn around the plot.
+    \item \verb+val3=3+ : axes are drawn with the y axis on the right.
+    \item \verb+val3=4+ : axes are drawn centred in the middle of the plotting window
+    \item \verb+val3=5+ : axes are drawn so to cross at the point \verb+(0,0)+.
+    \end{itemize}
+
+\end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  This function plots an histogram of the vector data using the
+  classes x. If \verb+n+ is given, x is defined by x=[min(data):h:max(data)] with
+  h=(max(data)-min(data))/n.
+
+  The optional argument \verb+normalise+ (default value \verb+%t+) can be set to
+  \verb+%f+.
+  optional argument \verb+fill+ (default value \verb+%t+).
+
+
+  
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}
+    //basic example
+    g = rand(1,10000, 'normal');
+    histplot(100, g)
+  \end{program}
+
+\end{examples}
+
+\begin{manseealso}
+  xtitle, plot2d
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   jl
+\end{authors}

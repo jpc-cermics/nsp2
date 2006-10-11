@@ -1,0 +1,77 @@
+% -*- mode: latex -*-
+
+\mansection{plot2d}
+\begin{mandesc}
+  \short{plot2d}{draw two dimensional graphs}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+plot2d(x,y,[leg=str1, leg_pos=str2, style=val1, rect=val2, axesflag=val3])
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{x} : abscissa vector. It can be empty, in this case \verb+[1:length(y)]+ is used.
+    \vname{y} : vector or matrix of numbers.
+    \vname{style=val1} : optional named argument, sets the style for each curve. \verb+val1+
+    must be a vector of integers.
+    \vname{rect=val2} : optional named argument, sets the bounds of the plotting
+    window. \verb+val2+ must be a vector of integers: \verb+[xmin, ymin, xmax, ymax]+.
+    \vname{leg=str1} : optional named argument, str1 must be a string of the form
+    \verb+'leg1@leg2@...'+ where \verb+legi+ is the legend associated with the i-th curve.
+    \vname{leg_pos=str2} : optional named argument, only useful when \verb+leg=str1+
+    is specified. \verb+str2+ is one of these strings ``dr'' (downer right corner), ``ur'' (upper
+    right corner), ``dl'' (downer left corner), ``ul'' (upper left corner)
+    indicating the position of the legend.
+    \vname{axesflag=val3} : optional named argument, specified how axes are
+    drown. \verb+val3+ is an integer between \verb+0+ and \verb+5+
+    \begin{itemize}
+    \item \verb+val3=0+ : no axes are drawn.
+    \item \verb+val3=1+ : axes are drawn with the y axis on the left.
+    \item \verb+val3=2+ : a box is drawn around the plot.
+    \item \verb+val3=3+ : axes are drawn with the y axis on the right.
+    \item \verb+val3=4+ : axes are drawn centred in the middle of the plotting window
+    \item \verb+val3=5+ : axes are drawn so to cross at the point \verb+(0,0)+.
+    \end{itemize}
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  plot2d plots a set of two dimensional curves.
+
+  If \verb+y+ is a matrix, each column of \verb+y+ is plotted against vector
+  \verb+x+. In this case.
+
+  If \verb+x+ is empty and \verb+y+ is a vector, \verb+plot2d([], y, opt_arg)+ is
+  equivalent to \verb|plot2d((1:size(y,'*')), y, opt_arg)|.
+
+  If \verb+x+ is empty and \verb+y+ is a matrix, \verb+plot2d([], y, opt_arg)+ is
+  equivalent to \verb|plot2d((1:size(y,'r')), y, opt_arg)|.  
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}
+    x=(-%pi:0.01:%pi);
+    //simple plot
+    plot2d(x, sin(x));
+
+    //multiple plot
+    plot2d(x, [sin(x)', cos(x)'], leg='sin@cos', style=[3,4], leg_pos='ul');
+
+    x=(-3:0.01:3)
+    xtitle('density of the normal distribution')
+    plot2d(x, exp(-x.*x/2)/sqrt(2*%pi), rect=[-3,0,3,1]);
+  \end{program}
+\end{examples}
+
+\begin{manseealso}
+  xtitle
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   jl
+\end{authors}
