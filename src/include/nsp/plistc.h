@@ -9,6 +9,7 @@
 #include "nsp/math.h"
 #include "nsp/sciio.h" 
 #include "nsp/plisttoken.h"
+#include "nsp/object.h"
 
 extern int debug; 
 extern int debugI;
@@ -37,5 +38,6 @@ extern const char *nsp_astcode_to_name(int code);
 extern int nsp_is_nsp_keyword(const char *id);
 extern int nsp_is_code_keyword(int keyc);
 extern int nsp_print_opname(int code);
+extern NspHash *nsp_ast_hash_create(void);
 
 #endif /* PARSER_H  */

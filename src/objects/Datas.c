@@ -22,6 +22,7 @@
 #include "nsp/object.h"
 #include "nsp/datas.h"
 #include "nsp/shext.h"
+#include "nsp/plistc.h"
 #include "../functions/FunTab.h"
 #include "../interp/LibsTab.h"
 
@@ -127,6 +128,9 @@ int nsp_init_frames(int argc, char **argv)
   nsp_frame_replace_object((NspObject *)nsp_gdk_hash_table); 
   nsp_frame_replace_object((NspObject *)nsp_atk_hash_table); 
   nsp_frame_replace_object((NspObject *)nsp_pango_hash_table); 
+  /* ast */
+  if ((O = (NspObject *) nsp_ast_hash_create()) ==NULLOBJ) return FAIL;
+  nsp_frame_replace_object(O);
   return(OK);
 }
 

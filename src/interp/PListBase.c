@@ -262,3 +262,43 @@ int nsp_print_opname(int code)
   return (s != NULL) ?  Sciprintf(s): 0;
 }
 
+
+/**
+ * nsp_ast_hash_create:
+ * @void: 
+ *
+ * create a hash table containing all possible codes for ast nodes 
+ * 
+ * Return value: a new #NspHash object or %NULLHASH
+ **/
+
+NspHash *nsp_ast_hash_create(void)
+{
+  int i=0;
+  NspObject *el;
+  NspHash *ast_codes; 
+  if ((ast_codes = nsp_hash_create("%ast",50))== NULLHASH) return NULLHASH;
+  while (Ops[i].name != NULL)
+    {
+      if (Ops[i].name[0] != '@') 
+	{
+	  el = nsp_create_object_from_double(Ops[i].name,Ops[i].code);
+	  if ( el == NULLOBJ) return NULLHASH;
+	  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+	}
+      i++;
+    }
+  if ((el = nsp_create_object_from_double("NUMBER",NUMBER))== NULLOBJ) return NULLHASH;
+  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+  if ((el = nsp_create_object_from_double("NAME",NAME))== NULLOBJ) return NULLHASH;
+  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+  if ((el = nsp_create_object_from_double("STRING",STRING))== NULLOBJ) return NULLHASH;
+  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+  if ((el = nsp_create_object_from_double("COMMENT",COMMENT))== NULLOBJ) return NULLHASH;
+  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+  if ((el = nsp_create_object_from_double("OPNAME",OPNAME))== NULLOBJ) return NULLHASH;
+  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+  if ((el = nsp_create_object_from_double("OBJECT",OBJECT))== NULLOBJ) return NULLHASH;
+  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+  return ast_codes;
+}
