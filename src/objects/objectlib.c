@@ -413,7 +413,7 @@ NspObject *nsp_get_object_copy(Stack stack, int i)
  * Return value: a new #NspObject ( in fact a #NspMatrix)
  **/
 
-NspObject *nsp_create_object_from_double(char *str, double dval)
+NspObject *nsp_create_object_from_double(const char *str, double dval)
 {
   NspMatrix *A;
   if ((A= nsp_matrix_create(str,'r',(int)1,(int)1))==NULLMAT) return(NULLOBJ);
@@ -472,7 +472,7 @@ NspObject *nsp_complexi_object_(char *str)
  * Return value: a new #NspObject ( in fact a #NspMatrix)
  **/
 
-NspObject *nsp_create_object_from_complex(char *str,const doubleC *d)
+NspObject *nsp_create_object_from_complex(const char *str,const doubleC *d)
 {
   NspMatrix *A;
   if ((A= nsp_matrix_create(str,'c',(int)1,(int)1))==NULLMAT) return(NULLOBJ);

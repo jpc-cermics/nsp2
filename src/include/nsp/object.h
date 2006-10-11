@@ -370,8 +370,8 @@ extern NspObject *nsp_object_loop_extract(char *str, NspObject *O, NspObject *O1
 extern NspObject *def_loop (char *str, NspObject *O, NspObject *O1, int i, int *rep); 
 extern NspObject *nsp_get_object(Stack stack, int i); 
 extern NspObject *nsp_get_object_copy(Stack stack, int i);
-extern NspObject *nsp_create_object_from_double(char *str, double dval); 
-extern NspObject *nsp_create_object_from_complex(char *str,const doubleC *d);
+extern NspObject *nsp_create_object_from_double(const char *str, double dval); 
+extern NspObject *nsp_create_object_from_complex(const char *str,const doubleC *d);
 extern NspObject *nsp_create_object_from_int(char *str, int ival); 
 extern NspObject *nsp_complexi_object_(char *str); 
 extern NspObject *nsp_create_object_from_str(char *str); 
