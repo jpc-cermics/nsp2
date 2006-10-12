@@ -714,26 +714,7 @@ int nsp_smatrix_set_rows_obsolete(NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B)
 
 NspSMatrix*nsp_smatrix_extract_obsolete(NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
-  NspSMatrix *Loc;
-  int rmin,rmax,cmin,cmax,i,j;
-  if ( A->mn == 0) return nsp_smatrix_create(NVOID,0,0,"v",0);
-  Bounds(Rows,&rmin,&rmax);
-  Bounds(Cols,&cmin,&cmax);
-  if ( rmin < 1 || cmin < 1 || rmax > A->m || cmax > A->n ) 
-    {
-      Scierror("Error:\tIndices out of bound\n");
-      return(NULLSMAT);
-    }
-  if ((Loc =nsp_smatrix_create_with_length(NVOID,Rows->mn,Cols->mn, -1))== NULLSMAT) 
-    return(NULLSMAT);
-  for ( i = 0 ; i < Rows->mn ; i++)
-    for ( j = 0 ; j < Cols->mn ; j++ )
-      {
-	if ((Loc->S[i+Loc->m*j] = 
-	     nsp_string_copy(A->S[((int) Rows->R[i])-1+(((int) Cols->R[j])-1)*A->m]))
-	    == (nsp_string) 0 ) return(NULLSMAT);
-      }
-  return(Loc);
+  return (NspSMatrix*)nsp_matint_extract1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols));
 }
 
 

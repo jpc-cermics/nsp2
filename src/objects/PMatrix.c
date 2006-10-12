@@ -569,33 +569,7 @@ int nsp_pmatrix_setrc_obsolete(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, 
 
 NspPMatrix *nsp_pmatrix_extract_obsolete(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols)
 {
-  NspPMatrix *Loc;
-  int rmin,rmax,cmin,cmax,i,j,*Irow,*Icol;
-  Irow = Matd2i(Rows,&rmin,&rmax);
-  /* Matd2i changes Rows, thus we must check if Rows == Cols 
-     before changing Cols again : **/
-  if ( Cols == Rows ) 
-    { cmin=rmin;cmax=rmax ; Icol = Irow ;}
-  else 
-    {Icol = Matd2i(Cols,&cmin,&cmax);}
-  if ( rmin < 1 || cmin < 1 || rmax > A->m || cmax > A->n ) 
-    {
-      Scierror("Extraction wrong indices");
-      return(NULLPMAT);
-    }
-  Loc =nsp_pmatrix_create(NVOID,Rows->mn,Cols->mn,&Czero,(int) 0);
-  if ( Loc == NULLPMAT) 
-    {
-      return(NULLPMAT);
-    }
-  for ( i = 0 ; i < Rows->mn ; i++)
-    for ( j = 0 ; j < Cols->mn ; j++ )
-      {
-	nsp_polynom_destroy(&Loc->S[i+Loc->m*j]);
-	if ((Loc->S[i+Loc->m*j] =nsp_polynom_copy(A->S[Irow[i]-1+(Icol[j]-1)*A->m]))
-	    == (nsp_polynom ) 0 ) return(NULLPMAT);
-      }
-  return(Loc);
+  return (NspPMatrix*)nsp_matint_extract1(NSP_OBJECT(A),NSP_OBJECT(Rows),NSP_OBJECT(Cols));
 }
 
 /*

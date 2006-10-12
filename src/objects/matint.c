@@ -1124,6 +1124,18 @@ NspObject *nsp_matint_extract(NspObject *Obj,
   return Loc;
 }
 
+
+NspObject *nsp_matint_extract1(NspObject *Obj,NspObject *Rows, NspObject *Cols)
+{
+  int *row,*col,nr, rmin, rmax, nc, cmin, cmax;
+  row = get_index_vector_from_object(Rows,&nr, &rmin, &rmax,matint_iwork1);
+  if ( row == NULL) return NULLOBJ;
+  col = get_index_vector_from_object(Cols,&nc, &cmin, &cmax,matint_iwork1);
+  if ( col == NULL) return NULLOBJ;
+  return nsp_matint_extract(Obj,row,nr, rmin, rmax,col, nc, cmin, cmax);
+}
+
+
 static int nsp_matint_special_set_submatrix(NspObject *ObjA, 
 					    const int *row, int nr, const int *col, int nc, 
 					    NspObject *ObjB, NspTypeBase *type)

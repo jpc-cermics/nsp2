@@ -402,25 +402,33 @@ static int int_list_sublist(void *self,Stack stack, int rhs, int opt, int lhs)
 
 static int int_list_add_first(void *self,Stack stack, int rhs, int opt, int lhs)
 {
+  int i;
   NspList *L=self;
-  CheckRhs(1,1);
+  CheckRhs(1,1000);
   CheckLhs(0,0);
-  if ( MaybeObjCopy(&NthObj(1)) == NULL )  return RET_BUG;
-  if (nsp_object_set_name(NthObj(1),"lel") == FAIL) return RET_BUG;
-  if ( nsp_list_begin_insert(L,NthObj(1)) == FAIL ) return RET_BUG;
-  NthObj(1) = NULLOBJ;
+  for ( i= rhs; i>=1  ; i--) 
+    {
+      if ( MaybeObjCopy(&NthObj(i)) == NULL )  return RET_BUG;
+      if (nsp_object_set_name(NthObj(i),"lel") == FAIL) return RET_BUG;
+      if ( nsp_list_begin_insert(L,NthObj(i)) == FAIL ) return RET_BUG;
+    }
+  for ( i= 1; i <= rhs ; i++) NthObj(i)=NULLOBJ;
   return 0;
 }
 
 static int int_list_add_last(void *self,Stack stack, int rhs, int opt, int lhs)
 {
+  int i;
   NspList *L=self;
-  CheckRhs(1,1);
+  CheckRhs(1,1000);
   CheckLhs(0,0);
-  if ( MaybeObjCopy(&NthObj(1)) == NULL )  return RET_BUG;
-  if (nsp_object_set_name(NthObj(1),"lel") == FAIL) return RET_BUG;
-  if ( nsp_list_end_insert(L,NthObj(1)) == FAIL ) return RET_BUG;
-  NthObj(1) = NULLOBJ;
+  for ( i= 1; i <= rhs ; i++) 
+    {
+      if ( MaybeObjCopy(&NthObj(i)) == NULL )  return RET_BUG;
+      if (nsp_object_set_name(NthObj(i),"lel") == FAIL) return RET_BUG;
+      if ( nsp_list_end_insert(L,NthObj(i)) == FAIL ) return RET_BUG;
+    }
+  for ( i= 1; i <= rhs ; i++) NthObj(i)=NULLOBJ;
   return 0;
 }
 

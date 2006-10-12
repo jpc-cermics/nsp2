@@ -57,10 +57,14 @@ extern NspObject *nsp_matint_extract_rows1(NspObject *Obj,NspObject *Rows);
 extern NspObject *nsp_matint_extract(NspObject *Obj, 
 				     const int *row, int nr, int rmin, int rmax, 
 				     const int *col, int nc, int cmin, int cmax);
+
+extern NspObject *nsp_matint_extract1(NspObject *Obj,NspObject *Rows, NspObject *Cols);
+
 extern int nsp_matint_set_submatrix(NspObject *ObjA, 
 				    const int *row, int nr, int rmin, int rmax,
 				    const int *col, int nc, int cmin, int cmax,
 				    NspObject *ObjB);
+
 extern int nsp_matint_set_elts(NspObject *ObjA, const int *ind, int nb_elts, int imin, int imax, NspObject *ObjB);
 extern int nsp_matint_set_elts1(NspObject *ObjA, NspObject *Elts, NspObject *ObjB);
 extern NspObject *nsp_matint_concat_right(const NspObject *ObjA,const NspObject *ObjB);
