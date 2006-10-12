@@ -66,8 +66,8 @@ function [sd]=gr_menu(sd,flag,noframe)
   if init==0 then redraw(sd,s_t); else sd=list('sd',cdef); end,
   if flag==1; xclip();return ;end
   [menus]=resume(menus);
-  resume(pixmap=%t);
-  xset('pixmap',1);
+  resume(pixmap=%f);
+  //xset('pixmap',1);
 endfunction
 
 //---------------------------------------
@@ -196,15 +196,10 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
 	cp=find(sd('locks status')<>0);
 	for i=cp ; xrect([rr(i,1:2)+[-1,1],2,2],color=1);end 
       else 
-	 xset('thickness',sd('thickness'));
-	 xset('color',sd('color'));
-	 xrect(sd('data'));
-	 if sd('hilited') then 
-	   xset('color',10);
-	   xfrect([sd('data')(1:2)+[-1,1],2,2]);
-	 end
-	 xset('thickness',1);
-	 xset('color',1);
+	xrect(sd('data'),color=sd('color'),thickness=sd('thickness'));
+	if sd('hilited') then 
+	  xfrect([sd('data')(1:2)+[-1,1],2,2],color=10);
+	end
       end
     end
    case 'translate' then 
@@ -299,6 +294,14 @@ function [sd1]=gr_rect(action,sd,pt,pt1)
       end
     end
     gr_objects(sd)('locks status')=0*cp;
+   case 'params' then 
+    colors=m2s(1:xget("lastpattern")+2,"%1.0f");
+    lcols_bg=list('colors','Color',sd('color'),colors);
+    rep=x_choices('color settings',list(lcols_bg));
+    if rep<>[] then
+      sd('color')=rep;
+    end
+    sd1=sd;
   end
 endfunction
 
@@ -854,14 +857,27 @@ function my_eventhandler(win,x,y,ibut)
      else 
 	xinfo('Click in empty region');
      end
+  elseif ibut==2
+    [xc,yc]=xchange(x,y,'i2f')
+    k = gr_find(xc,yc);
+    if k<>0 then 
+      rep(3)=-1
+      obj=gr_objects(k);
+      execstr('obj1=gr_'+obj.type+'(''params'',obj,0);');
+      gr_objects(k)=obj1;
+      // should check here if redraw is needed 
+      if ~obj1.equal[obj] then 
+	gr_draw(win);
+      end
+    end
   elseif ibut==100 
-     gr_delete();
-     gr_draw(win);
+    gr_delete();
+    gr_draw(win);
   elseif ibut==99
-     gr_copy();
-     gr_draw(win);
+    gr_copy();
+    gr_draw(win);
   else
-     xinfo('Mouse action: ['+string(ibut)+']');
+    xinfo('Mouse action: ['+string(ibut)+']');
   end
   count=0;
 endfunction
