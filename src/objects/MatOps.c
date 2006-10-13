@@ -1,5 +1,6 @@
 /* Nsp
  * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2006 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -1048,105 +1049,98 @@ NspMatrix *nsp_mat_sort(NspMatrix *A, int flag, char *str1, char *str2)
   return Loc;
 }
 
-/*
- * Sum =nsp_mat_sum(A ,B])
- *     A is unchanged 
- * if B= 'c'|'C' the sum for the column indices is computed 
- *       and a column vector is returned. 
- * if B= 'r'|'R' the sum for the row indices is computed 
- *       and a Row vector is returned.
- * if B= 'f'|'F' the full sum is computed 
- * else 'f' is assumed 
- */
-
-NspMatrix *nsp_mat_sum(NspMatrix *A, char *flag)
+/**
+ * nsp_mat_sum:  computes various sums of @A
+ * @A: a #NspMatrix
+ * @dim: for dim=0 the sum of all elements of @A is computed, a scalar is returned
+ *       for dim=1 the sum over the row indices is computed, a row vector is returned. 
+ *       for dim=2 the sum over the column indices is computed, a column vector is returned. 
+ *       else dim=0 is forced.
+ * 
+ * Return value: a  #NspMatrix (a scalar, row or comumn vector)
+ **/
+NspMatrix *nsp_mat_sum(NspMatrix *A, int dim)
 {
   NspMatrix *Sum;
   int j;
   int inc=1;
-  if ( A->mn == 0) 
+
+#ifndef MTLB_MODE
+  if ( A->mn == 0)
     {
-      if ( flag[0] == 'F' || flag[0]=='f' )
+      if ( dim == 0 )
 	{
 	  Sum = nsp_matrix_create(NVOID,'r',1,1);
 	  if ( Sum != NULLMAT) Sum->R[0]=0;
 	  return Sum;
 	}
-      else 
+      else
 	return  nsp_matrix_create(NVOID,'r',0,0);
     }
-  switch (flag[0]) 
+#endif
+
+  switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid flag '%c' assuming flag='f'\n",flag[0]);
-    case 'f': 
-    case 'F':
+      Sciprintf("\nInvalid flag '%d' assuming 0\n",dim);
+
+    case 0: 
       if ((Sum = nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) 
 	return(NULLMAT);
-      switch ( A->rc_type) 
-	{
-	case 'r' : 
-	  Sum->R[0] =nsp_dsum(&A->mn,A->R,&inc); ;break ;
-	case 'c' :  
-	  nsp_zsum(&Sum->C[0],&A->mn,A->C,&inc); break;
-	}
+      if ( A->rc_type == 'r' ) 
+	Sum->R[0] =nsp_dsum(&A->mn,A->R,&inc);
+      else
+	nsp_zsum(&Sum->C[0],&A->mn,A->C,&inc);
       break;
-    case 'r':
-    case 'R':
+
+    case 1:
       if ((Sum = nsp_matrix_create(NVOID,A->rc_type,1,A->n)) == NULLMAT) 
 	return NULLMAT;
-      switch ( A->rc_type) 
-	{
-	case 'r' : 
-	  for ( j= 0 ; j < A->n ; j++) 
-	    Sum->R[j] =nsp_dsum(&A->m,A->R+(A->m)*j,&inc); 
-	  break ;
-	case 'c' :  
-	  for ( j= 0 ; j < A->n ; j++) 
-	    nsp_zsum(&Sum->C[j],&A->m,A->C+(A->m)*j,&inc); break;
-	  break;
-	}
+      if ( A->rc_type == 'r' ) 
+	for ( j= 0 ; j < A->n ; j++) 
+	  Sum->R[j] =nsp_dsum(&A->m,A->R+(A->m)*j,&inc); 
+      else
+	for ( j= 0 ; j < A->n ; j++) 
+	  nsp_zsum(&Sum->C[j],&A->m,A->C+(A->m)*j,&inc);
       break;
-    case 'c':
-    case 'C':
+
+    case 2:
       if ((Sum = nsp_matrix_create(NVOID,A->rc_type,A->m,1)) == NULLMAT) 
 	return NULLMAT;
       inc = A->m;
-      switch ( A->rc_type) 
-	{
-	case 'r' : 
-	  for ( j= 0 ; j < A->m ; j++) 
-	    Sum->R[j] =nsp_dsum(&A->n,A->R+j,&inc); 
-	  break ;
-	case 'c' :  
-	  for ( j= 0 ; j < A->m ; j++) 
-	    nsp_zsum(&Sum->C[j],&A->n,A->C+j,&inc); break;
-	  break;
-	}
+      if ( A->rc_type == 'r' )
+	for ( j= 0 ; j < A->m ; j++)
+	  Sum->R[j] =nsp_dsum(&A->n,A->R+j,&inc);
+      else
+	for ( j= 0 ; j < A->m ; j++)
+	  nsp_zsum(&Sum->C[j],&A->n,A->C+j,&inc);
       break;
     }
+
   return Sum;
 }
 
+/**
+ * nsp_mat_prod:  computes various products of elements of @A
+ * @A: a #NspMatrix
+ * @dim: for dim=0 the product of all elements is computed, a scalar is returned.
+ *       for dim=1 the product over the row indices is computed, a row vector is returned. 
+ *       for dim=2 the product over the column indices is computed, a column vector is returned. 
+ *       else dim=0 is forced.
+ * 
+ * Return value: a  #NspMatrix (a scalar, row or comumn vector)
+ **/
 
-/*
- * Prod =nsp_mat_prod(A ,B])
- *     A is unchanged 
- * if B= 'c' the prod for the column indices is computed 
- *       and a column vector is returned. 
- * if B= 'r' the prod for the row indices is computed 
- *       and a Row vector is returned.
- * if B= 'f' the full prod is computed 
- */
-
-NspMatrix *nsp_mat_prod(NspMatrix *A, char *flag)
+NspMatrix *nsp_mat_prod(NspMatrix *A, int dim)
 {
   NspMatrix *Prod;
   int j;
   int inc=1,zero=0;
+
+#ifndef MTLB_MODE
   if ( A->mn == 0) 
     {
-      if ( flag[0] == 'F' || flag[0]=='f' )
+      if ( dim == 0 )
 	{
 	  Prod = nsp_matrix_create(NVOID,'r',1,1);
 	  if ( Prod != NULLMAT) Prod->R[0]= 1.0;
@@ -1155,199 +1149,193 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, char *flag)
       else 
 	return  nsp_matrix_create(NVOID,'r',0,0);
     }
-  switch (flag[0]) 
+#endif
+
+  switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid flag '%c' assuming flag='f'\n",flag[0]);
-    case 'f': 
-    case 'F':
-  
+      Sciprintf("\nInvalid flag '%d' assuming 0\n",dim);
+
+    case 0:
       if ((Prod = nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) 
 	return(NULLMAT);
-      switch ( A->rc_type) 
+      if ( A->rc_type == 'r' ) 
 	{
-	case 'r' : 
 	  Prod->R[0] =1.00;
-	  nsp_dvmul(A->mn,A->R,inc,Prod->R,zero); ;break ;
-	case 'c' :  
+	  nsp_dvmul(A->mn,A->R,inc,Prod->R,zero);
+	}
+      else
+	{
 	  Prod->C[0].r =1.00 ; Prod->C[0].i = 0.00;
-	  nsp_zvmul(&A->mn,A->C,&inc,Prod->C,&zero); break;
+	  nsp_zvmul(&A->mn,A->C,&inc,Prod->C,&zero);
 	}
       break;
-    case 'r':
-    case 'R':
+
+    case 1:
       if ((Prod = nsp_matrix_create(NVOID,A->rc_type,1,A->n)) == NULLMAT) 
 	return NULLMAT;
-      switch ( A->rc_type) 
-	{
-	case 'r' : 
-	  for ( j= 0 ; j < A->n ; j++) 
-	    {
-	      Prod->R[j] =1.00;
-	      nsp_dvmul(A->m,A->R+(A->m)*j,inc,Prod->R+j,zero); 
-	    }
-	  break ;
-	case 'c' :  
-	  for ( j= 0 ; j < A->n ; j++) 
-	    {
-	      Prod->C[j].r =1.00 ; Prod->C[j].i = 0.00;
-	      nsp_zvmul(&A->m,A->C+(A->m)*j,&inc,Prod->C+j,&zero);
-	    }
-	  break;
-	}
+      if ( A->rc_type == 'r' ) 
+	for ( j= 0 ; j < A->n ; j++) 
+	  {
+	    Prod->R[j] =1.00;
+	    nsp_dvmul(A->m,A->R+(A->m)*j,inc,Prod->R+j,zero); 
+	  }
+      else
+	for ( j= 0 ; j < A->n ; j++) 
+	  {
+	    Prod->C[j].r =1.00 ; Prod->C[j].i = 0.00;
+	    nsp_zvmul(&A->m,A->C+(A->m)*j,&inc,Prod->C+j,&zero);
+	  }
       break;
-    case 'c':
-    case 'C':
-  
+
+    case 2:
       if ((Prod = nsp_matrix_create(NVOID,A->rc_type,A->m,1)) == NULLMAT) 
 	return NULLMAT;
       inc = A->m;
-      switch ( A->rc_type) 
-	{
-	case 'r' : 
-	  for ( j= 0 ; j < A->m ; j++) 
-	    {
-	      Prod->R[j] =1.00;
-	      nsp_dvmul(A->n,A->R+j,inc,Prod->R+j,zero); 
-	    }
-	  break ;
-	case 'c' :  
-	  for ( j= 0 ; j < A->m ; j++) 
-	    {
-	      Prod->C[j].r =1.00 ; Prod->C[j].i = 0.00;
-	      nsp_zvmul(&A->n,A->C+j,&inc,Prod->C+j,&zero);
-	    }
-	  break;
-	}
+      if ( A->rc_type == 'r' ) 
+	for ( j= 0 ; j < A->m ; j++) 
+	  {
+	    Prod->R[j] =1.00;
+	    nsp_dvmul(A->n,A->R+j,inc,Prod->R+j,zero); 
+	  }
+      else
+	for ( j= 0 ; j < A->m ; j++) 
+	  {
+	    Prod->C[j].r =1.00 ; Prod->C[j].i = 0.00;
+	    nsp_zvmul(&A->n,A->C+j,&inc,Prod->C+j,&zero);
+	  }
       break;
+
     }
+
   return Prod;
 }
 
 
-/*
- *nsp_mat_cum_prod: Cumulative Product of all elements of A
- * A is unchanged 
- */
+/**
+ * nsp_mat_cum_prod:  cumulative products of elements of @A
+ * @A: a #NspMatrix
+ * @dim: for dim=0 the cumulative product over all elements is computed (in column major order).
+ *       for dim=1 the cumulative product over the row indices is computed.
+ *       for dim=2 the cumulative product over the column indices is computed.
+ *       else dim=0 is forced.
+ * 
+ * Return value: a #NspMatrix of same dim than @A
+ **/
 
-NspMatrix *nsp_mat_cum_prod(NspMatrix *A, char *flag)
+NspMatrix *nsp_mat_cum_prod(NspMatrix *A, int dim)
 {
   double cuprod;
   doubleC C_cuprod;
   NspMatrix *Prod;
-  int i,j;
-  if ( A->mn == 0) return nsp_matrix_create(NVOID,'r',0,0);
+  int i,j, k, kp;
+
+  if ( A->mn == 0) return nsp_matrix_create(NVOID,'r',A->m,A->n);
+
   if ((Prod = nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) 
     return NULLMAT;
-  switch (flag[0]) 
+
+  switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid flag '%c' assuming flag='f'\n",flag[0]);
-    case 'f': 
-    case 'F':
-      switch ( A->rc_type) 
+      Sciprintf("\nInvalid flag '%d' assuming 0\n",dim);
+
+    case 0: 
+      if ( A->rc_type == 'r' ) 
 	{
-	case 'r' : 
 	  cuprod=1.00;
 	  for ( i=0 ; i < A->mn ; i++) 
 	    Prod->R[i] = (cuprod *= A->R[i]);
-	  break;
-	case 'c' :  
+	}
+      else
+	{
 	  C_cuprod.r  = 1.00 ; C_cuprod.i = 0.00;
 	  for ( i=0 ; i < A->mn ; i++) 
 	    { 
 	      nsp_prod_c(&C_cuprod,&A->C[i]);
-	      Prod->C[i].r = C_cuprod.r;
-	      Prod->C[i].i = C_cuprod.i;
+	      Prod->C[i] = C_cuprod;
 	    }
 	}
       break;
-    case 'r':
-    case 'R':
-      switch ( A->rc_type) 
-	{
-	case 'r' : 
-	  for ( j= 0 ; j < A->n ; j++) 
-	    {
-	      cuprod=1.00;
-	      for ( i=0 ; i < A->m ; i++) 
-		Prod->R[i+(A->m)*j] = (cuprod *= A->R[i+(A->m)*j]);
-	    }
-	  break ;
-	case 'c' :  
-	  for ( j= 0 ; j < A->n ; j++) 
-	    {
-	      C_cuprod.r  = 1.00 ; C_cuprod.i = 0.00;
-	      for ( i=0 ; i < A->m ; i++) 
-		{ 
-		  nsp_prod_c(&C_cuprod,&A->C[i+j*A->m]);
-		  Prod->C[i+j*A->m].r = C_cuprod.r;
-		  Prod->C[i+j*A->m].i = C_cuprod.i;
-		}
-	    }
-	  break;
-	}
+
+    case 1:
+      if ( A->rc_type == 'r' ) 
+	for ( j= 0 ; j < A->n ; j++) 
+	  {
+	    cuprod=1.00;
+	    for ( i=0 ; i < A->m ; i++) 
+	      Prod->R[i+(A->m)*j] = (cuprod *= A->R[i+(A->m)*j]);
+	  }
+      else
+	for ( j= 0 ; j < A->n ; j++) 
+	  {
+	    C_cuprod.r  = 1.00 ; C_cuprod.i = 0.00;
+	    for ( i=0 ; i < A->m ; i++) 
+	      { 
+		nsp_prod_c(&C_cuprod,&A->C[i+j*A->m]);
+		Prod->C[i+j*A->m] = C_cuprod;
+	      }
+	  }
       break;
-    case 'c':
-    case 'C':
-      switch ( A->rc_type) 
+
+    case 2:
+      if ( A->rc_type == 'r' ) 
 	{
-	case 'r' : 
-	  for ( j= 0 ; j < A->m ; j++) 
-	    {
-	      cuprod=1.00;
-	      for ( i=0 ; i < A->n ; i++) 
-		Prod->R[j+(A->m)*i] = (cuprod *= A->R[j+(A->m)*i]);
-	    }
-	  break ;
-	case 'c' :  
-	  for ( j= 0 ; j < A->m ; j++) 
-	    {
-	      C_cuprod.r  = 1.00 ; C_cuprod.i = 0.00;
-	      for ( i=0 ; i < A->n ; i++) 
-		{ 
-		  nsp_prod_c(&C_cuprod,&A->C[j+i*A->m]);
-		  Prod->C[j+i*A->m].r = C_cuprod.r;
-		  Prod->C[j+i*A->m].i = C_cuprod.i;
-		}
-	    }
-	  break;
+	  memcpy(Prod->R, A->R, A->mn*sizeof(double));
+	  for ( k = A->m, kp = 0 ; k < A->mn ; k++, kp++ )
+	    Prod->R[k] *= Prod->R[kp];
+	}
+      else
+	{
+	  memcpy(Prod->C, A->C, A->mn*sizeof(doubleC));
+	  for ( k = A->m, kp = 0 ; k < A->mn ; k++, kp++ )
+	    nsp_prod_c(&Prod->C[k], &Prod->C[kp]);
 	}
       break;
     }
+
   return Prod;
 }
 
-/*
- *nsp_mat_cum_sum: Cumulative Sum of all elements of A
- * A is unchanged 
- */
 
-NspMatrix *nsp_mat_cum_sum(NspMatrix *A, char *flag)
+/**
+ * nsp_mat_cum_sum:  cumulative sums of elements of @A
+ * @A: a #NspMatrix
+ * @dim: for dim=0 the cumulative sum over all elements is computed (in column major order).
+ *       for dim=1 the cumulative sum over the row indices is computed.
+ *       for dim=2 the cumulative sum over the column indices is computed.
+ *       else dim=0 is forced.
+ * 
+ * Return value: a #NspMatrix of same dim than @A
+ **/
+
+NspMatrix *nsp_mat_cum_sum(NspMatrix *A, int dim)
 {
   double cusum;
   doubleC C_cusum;
   NspMatrix *Sum;
-  int i,j;
+  int i,j, k, kp;
 
-  if ( A->mn == 0) return  nsp_matrix_create(NVOID,'r',0,0);
+  if ( A->mn == 0) 
+    return  nsp_matrix_create(NVOID,'r',A->m,A->n);
 
   if ((Sum = nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT) 
     return NULLMAT;
-  switch (flag[0]) 
+
+  switch (dim) 
     {
     default : 
-      Sciprintf("\nInvalid flag '%c' assuming flag='f'\n",flag[0]);
-    case 'f': 
-    case 'F':
-      switch ( A->rc_type) 
+      Sciprintf("\nInvalid flag '%d' assuming 0\n",dim);
+
+    case 0: 
+      if ( A->rc_type == 'r' ) 
 	{
-	case 'r' : 
 	  cusum=0.00;
-	  for ( i=0 ; i < A->mn ; i++) 
+	  for ( i=0 ; i < A->mn ; i++)
 	    Sum->R[i] = (cusum += A->R[i]);
-	  break;
-	case 'c' :  
+	}
+      else
+	{
 	  C_cusum.r  = 0.00 ; C_cusum.i = 0.00;
 	  for ( i=0 ; i < A->mn ; i++) 
 	    { 
@@ -1356,57 +1344,46 @@ NspMatrix *nsp_mat_cum_sum(NspMatrix *A, char *flag)
 	    }
 	}
       break;
-    case 'r':
-    case 'R':
-      switch ( A->rc_type) 
-	{
-	case 'r' : 
-	  for ( j= 0 ; j < A->n ; j++) 
-	    {
-	      cusum=0.00;
-	      for ( i=0 ; i < A->m ; i++) 
-		Sum->R[i+(A->m)*j] = (cusum += A->R[i+(A->m)*j]);
-	    }
-	  break ;
-	case 'c' :  
-	  for ( j= 0 ; j < A->n ; j++) 
-	    {
-	      C_cusum.r  = 0.00 ; C_cusum.i = 0.00;
-	      for ( i=0 ; i < A->m ; i++) 
-		{ 
-		  Sum->C[i+j*A->m].r = ( C_cusum.r +=A->C[i+j*A->m].r);
-		  Sum->C[i+j*A->m].i = ( C_cusum.i +=A->C[i+j*A->m].i);
-		}
-	    }
-	  break;
-	}
+
+    case 1:
+      if ( A->rc_type == 'r' ) 
+	for ( j= 0 ; j < A->n ; j++) 
+	  {
+	    cusum=0.00;
+	    for ( i=0 ; i < A->m ; i++) 
+	      Sum->R[i+(A->m)*j] = (cusum += A->R[i+(A->m)*j]);
+	  }
+      else
+	for ( j= 0 ; j < A->n ; j++) 
+	  {
+	    C_cusum.r  = 0.00 ; C_cusum.i = 0.00;
+	    for ( i=0 ; i < A->m ; i++) 
+	      { 
+		Sum->C[i+j*A->m].r = ( C_cusum.r +=A->C[i+j*A->m].r);
+		Sum->C[i+j*A->m].i = ( C_cusum.i +=A->C[i+j*A->m].i);
+	      }
+	  }
       break;
-    case 'c':
-    case 'C':
-      switch ( A->rc_type) 
+
+    case 2:
+      if ( A->rc_type == 'r' ) 
 	{
-	case 'r' : 
-	  for ( j= 0 ; j < A->m ; j++) 
+	  memcpy(Sum->R, A->R, A->mn*sizeof(double));
+	  for ( k = A->m, kp = 0 ; k < A->mn ; k++, kp++ )
+	    Sum->R[k] += Sum->R[kp];
+	}
+      else
+	{
+	  memcpy(Sum->C, A->C, A->mn*sizeof(doubleC));
+	  for ( k = A->m, kp = 0 ; k < A->mn ; k++, kp++ )
 	    {
-	      cusum=0.00;
-	      for ( i=0 ; i < A->n ; i++) 
-		Sum->R[j+(A->m)*i] = (cusum += A->R[j+(A->m)*i]);
+	      Sum->C[k].r += Sum->C[kp].r;
+	      Sum->C[k].i += Sum->C[kp].i;
 	    }
-	  break ;
-	case 'c' :  
-	  for ( j= 0 ; j < A->m ; j++) 
-	    {
-	      C_cusum.r  = 0.00 ; C_cusum.i = 0.00;
-	      for ( i=0 ; i < A->n ; i++) 
-		{ 
-		  Sum->C[j+i*A->m].r = ( C_cusum.r +=A->C[j+i*A->m].r);
-		  Sum->C[j+i*A->m].i = ( C_cusum.i +=A->C[j+i*A->m].i);
-		}
-	    }
-	  break;
 	}
       break;
     }
+
   return Sum;
 }
 
@@ -1571,7 +1548,7 @@ NspMatrix *nsp_mat_mini(NspMatrix *A, char *flag, NspMatrix **Imax, int lhs)
 
 
 /* compute at the same time the min and max of a vector 
- * (routine introduced by bruno). Note that it is difficult
+ * Note that it is difficult
  * to use the minmax algorithm (which compares first A[i] and A[i+1]
  * before comparing one to the current minimum and the other to the
  * current maximum) because of eventual Nan components.
@@ -1612,7 +1589,6 @@ static void VMiniMaxi(int n, double *A, int incr, double *amin, double *amax,
  * int nsp_mat_minmax: 
  * A is unchanged 
  * Amin, Amx, Imin, Imax are set to the result
- * routine introduced by bruno 
  */
 int nsp_mat_minmax(NspMatrix *A, char *str, NspMatrix **Amin, NspMatrix **Imin,
 		   NspMatrix **Amax, NspMatrix **Imax, int lhs)
@@ -1868,7 +1844,6 @@ int nsp_get_urandtype(void)
  * square (if not FAIL is returned). When @A is not a scalar
  * this routine works only if @B is an integer (and when @B is
  * a negative integer, @A must be numerically invertible).
- * Added by Bruno. 
  * 
  * (*) The operation A^B is done with the generic interface int_mx_mopscal
  *     which branches to one of the 3 routines:
@@ -4312,7 +4287,7 @@ int nsp_mat_add_mat(NspMatrix *A, NspMatrix *B)
       if ( A->rc_type == 'r' ) 
 	{
 	  if ( B->rc_type == 'r') 
-	    for ( i = 0 ; i < A->mn ; i++ ) 
+	    for ( i = 0 ; i < A->mn ; i++ )
 	      A->R[i] += B->R[i];
 	  else 
 	    {
