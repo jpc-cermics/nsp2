@@ -1470,37 +1470,21 @@ int scicos_qzflr_block(scicos_args_F0)
   return 0;
 }			
 
-/*     Gives quantized signal by round method */
-/*     rpar(i) quantization step used for i input */
+/* quantize a signal using round method
+ * rpar(i) quantization step used for i input 
+ */
+
+extern double round(double x);
 
 int scicos_qzrnd_block(scicos_args_F0)
 {
-  double d__1;
-  int i__;
-  --y;
-  --u;
-  --ipar;
-  --rpar;
-  --tvec;
-  --z__;
-  --x;
-  --xd;
-  for (i__ = 1; i__ <= *nu ; ++i__)
+  int i;
+  for (i = 0 ; i < *nu ; i++) 
     {
-      if (u[i__] < 0.)
-	{
-	  d__1 = u[i__] / rpar[i__] + .5;
-	  y[i__] = rpar[i__] * (d_nint (d__1) - .5);
-	}
-      else
-	{
-	  d__1 = u[i__] / rpar[i__] - .5;
-	  y[i__] = rpar[i__] * (d_nint (d__1) + .5);
-	}
+      y[i] = rpar[i] * round(u[i] / rpar[i]);
     }
   return 0;
 }			
-
 
 /*     Gives quantized signal by truncation method */
 /*     rpar(i) quantization step used for i input */
