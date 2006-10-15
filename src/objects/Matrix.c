@@ -1047,7 +1047,7 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
     {
       for ( j = A->n-1  ; j >= 0 ; j-- ) 
  	{
-	  memmove(A->C+j*(A->m),A->C+j*Am,Am*sizeof(doubleC));
+	  if ( j!= 0) memmove(A->C+j*(A->m),A->C+j*Am,Am*sizeof(doubleC));
 	  nsp_csetd(&m,&d,A->C+j*(A->m)+Am,&inc);
  	}
     }
@@ -1055,7 +1055,7 @@ int nsp_matrix_add_rows(NspMatrix *A, int m)
     {
       for ( j = A->n-1  ; j >= 0 ; j-- ) 
  	{
-	  memmove(A->R+j*(A->m),A->R+j*Am,Am*sizeof(double));
+	  if ( j != 0) memmove(A->R+j*(A->m),A->R+j*Am,Am*sizeof(double));
 	  nsp_dset(&m,&d,A->R+j*(A->m)+Am,&inc);
  	}
     }
