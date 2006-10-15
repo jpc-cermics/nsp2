@@ -982,6 +982,7 @@ int int_object_info(Stack stack, int rhs, int opt, int lhs)
 
 int int_object_print(Stack stack, int rhs, int opt, int lhs)
 {
+  NspObject *object;
   print_func *pr;
   int dp=user_pref.pr_depth;
   int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0;
@@ -994,7 +995,6 @@ int int_object_print(Stack stack, int rhs, int opt, int lhs)
 		      { "table",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  NspObject *object;
   CheckStdRhs(1,1);
   CheckLhs(0,1);
   if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
@@ -1031,7 +1031,64 @@ int int_object_print(Stack stack, int rhs, int opt, int lhs)
  * etc....
  */
 
+
 int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
+{
+  IOVFun def ;
+  MoreFun mf; 
+
+  NspObject *res, *object ; 
+  print_func *pr;
+  int dp=user_pref.pr_depth;
+  int as_read=FALSE,latex=FALSE,table=FALSE,depth=LONG_MAX,indent=0;
+  char *name = NULL;
+  nsp_option opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
+		      { "depth", s_int,NULLOBJ,-1},
+		      { "indent",s_int,NULLOBJ,-1},
+		      { "latex",s_bool,NULLOBJ,-1},
+		      { "name",string,NULLOBJ,-1},
+		      { "table",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
+  if ( get_optional_args(stack, rhs, opt, opts,&as_read,&depth,
+			 &indent,&latex,&name,&table) == FAIL) 
+    return RET_BUG;
+  
+  def = SetScilabIO(Sciprint2string);
+  mf =nsp_set_nsp_more(scimore_void);
+
+  user_pref.pr_depth= depth;
+  pr = ( latex == TRUE) ?  object->type->latex :  object->type->pr ;
+  if ( as_read == TRUE ) 
+    {
+      int kp=user_pref.pr_as_read_syntax;
+      user_pref.pr_as_read_syntax= 1;
+      if ( latex == TRUE ) 
+	{
+	  Sciprintf("Warning: you cannot select both as_read and latex, latex ignored\n");
+	}
+      pr(object,indent,name,0);
+      user_pref.pr_as_read_syntax= kp;
+      user_pref.pr_depth= dp;
+    }
+  else 
+    {
+      pr(object,indent,name,0);
+    }
+  user_pref.pr_depth= dp;
+  res = Sciprint2string_reset(); 
+  SetScilabIO(def);
+  nsp_set_nsp_more(mf);
+  if ( res == NULL) return RET_BUG; 
+  MoveObj(stack,1, res);
+  return 1;
+
+}
+
+
+int int_object_sprint_old(Stack stack, int rhs, int opt, int lhs)
 {
   int rep=-1;
   NspObject *res, *object ; 
@@ -1061,7 +1118,7 @@ int int_object_sprint(Stack stack, int rhs, int opt, int lhs)
     }
   res = Sciprint2string_reset(); 
   SetScilabIO(def);
- nsp_set_nsp_more(mf);
+  nsp_set_nsp_more(mf);
   if ( res == NULL) return RET_BUG; 
   MoveObj(stack,1, res);
   return 1;
