@@ -157,8 +157,55 @@ static int int_matint_meth_redim(NspObject *self, Stack stack, int rhs, int opt,
   return MAT_INT(type)->redim(self,mm,nn)  == OK ? 0 : RET_BUG;
 }
 
+
+static int int_matint_meth_concatr(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+{
+  NspObject *B;
+  NspTypeBase *typeSelf,*typeB;
+  CheckRhs (1,1);
+  CheckLhs (0,0);
+  if ((B = nsp_get_object(stack, 1)) == NULL)   return RET_BUG;
+  typeB = check_implements(B, nsp_type_matint_id);
+  typeSelf = check_implements(self, nsp_type_matint_id);
+  
+  if ( typeB != typeSelf )
+    {
+      Scierror("Error: A.concar[B], A and B must be of the same type\n");
+      return FAIL;
+    }
+  if ( nsp_matint_concat_right_bis(self,B)==FAIL) 
+    return RET_BUG;
+  return 0;
+}
+
+
+int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB);
+
+static int int_matint_meth_concatd(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+{
+  NspObject *B;
+  NspTypeBase *typeSelf,*typeB;
+  CheckRhs (1,1);
+  CheckLhs (0,0);
+  if ((B = nsp_get_object(stack, 1)) == NULL)   return RET_BUG;
+  typeB = check_implements(B, nsp_type_matint_id);
+  typeSelf = check_implements(self, nsp_type_matint_id);
+  
+  if ( typeB != typeSelf )
+    {
+      Scierror("Error: A.concar[B], A and B must be of the same type\n");
+      return FAIL;
+    }
+  if ( nsp_matint_concat_down_bis(self,B)==FAIL) 
+    return RET_BUG;
+  return 0;
+}
+
+
 static NspMethods matint_methods[] = {
   {"redim",(nsp_method *) int_matint_meth_redim},
+  {"concatr",(nsp_method *) int_matint_meth_concatr},
+  {"concatd",(nsp_method *) int_matint_meth_concatd},
   { NULL, NULL}
 };
 
@@ -1675,13 +1722,14 @@ int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB)
   elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
   elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
 
-  if ( A->m == B->m )
+  if ( A->m == B->m || A->m == 0)
     {
+      int Am= B->m ; /* to cover the case A->m==0 */
       if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  /* Matrices of numbers or booleans */
 	{
 	  if ( elt_size_A == elt_size_B )
 	    {
-	      if ( MAT_INT(type)->enlarge(ObjA, A->m, nA + nB) == FAIL ) return FAIL;
+	      if ( MAT_INT(type)->enlarge(ObjA, Am, nA + nB) == FAIL ) return FAIL;
 	      {
 		char *to = ((char *) A->S) + elt_size_A*mnA;
 		memcpy(to, B->S, elt_size_A*B->mn);
@@ -1692,7 +1740,7 @@ int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB)
 	      NspMatrix *AA = (NspMatrix *) ObjA, *BB = (NspMatrix *) ObjB;
 	      if ( elt_size_A > elt_size_B )  /* A is complex, B real */
 		{
-		  if ( nsp_matrix_resize(AA, A->m, nA + nB) == FAIL ) return FAIL;
+		  if ( nsp_matrix_resize(AA, Am, nA + nB) == FAIL ) return FAIL;
 		  for ( i = 0 ; i < BB->mn ; i++ )
 		    {
 		      AA->C[mnA+i].r = BB->R[i]; AA->C[mnA+i].i = 0.0;
@@ -1700,7 +1748,7 @@ int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB)
 		}
 	      else
 		{                             /* A is real, B complex */
-		  if ( nsp_matrix_resize(AA, A->m, nA + nB) == FAIL ) return FAIL;
+		  if ( nsp_matrix_resize(AA, Am, nA + nB) == FAIL ) return FAIL;
 		  if ( nsp_mat_complexify(AA, 0.00) == FAIL ) return FAIL;
 		  memcpy( &(AA->C[mnA]), BB->C, elt_size_B*B->mn);
 		}
@@ -1708,7 +1756,7 @@ int nsp_matint_concat_right_bis(NspObject *ObjA,const NspObject *ObjB)
 	}
       else                                                      /* Matrices of pointers (String, cells, poly,...) */
 	{
-	  if ( MAT_INT(type)->enlarge(ObjA, A->m, nA + nB) == FAIL ) return FAIL;
+	  if ( MAT_INT(type)->enlarge(ObjA, Am, nA + nB) == FAIL ) return FAIL;
 	    {
 	      char **from = (char **) B->S, **to = ((char **) A->S) + mnA, *elt;
 	      for ( i = 0 ; i < B->mn ; i++ )
@@ -1866,6 +1914,137 @@ NspObject *nsp_matint_concat_down(NspObject *ObjA, NspObject *ObjB)
  err:
   nsp_object_destroy(&ObjC); 
   return NULLOBJ;
+}
+
+
+int nsp_matint_concat_down_bis(NspObject *ObjA, NspObject *ObjB)
+{
+  NspObject *ObjC=NULLOBJ;
+  NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB, *C;
+  int i, j;
+  NspTypeBase *type; 
+  unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
+
+  type = check_implements(ObjA, nsp_type_matint_id);  /* ObjA and ObjB must have the same type to send here 
+                                                         (so we don't check) */
+
+  elt_size_A = MAT_INT(type)->elt_size(ObjA);  /* but there is the problem real/complex */
+  elt_size_B = MAT_INT(type)->elt_size(ObjB);  /* for Matrix and MaxpMatrix */
+
+  if ( A->n == B->n ) 
+    {
+      /* Matrices of numbers or booleans */
+      if ( MAT_INT(type)->free_elt == (matint_free_elt *) 0 )  
+	{
+	  if ( elt_size_A == elt_size_B )
+	    {
+	      int Am=A->m;
+	      if ( MAT_INT(type)->resize(ObjA,A->m+B->m,A->n) == OK )
+		{
+		  int step=elt_size_A;
+		  char *to=(char *) A->S, *fromA = (char *) A->S, *fromB = (char *) B->S;
+		  for ( j = A->n-1  ; j >= 1 ; j-- ) 
+		    {
+		      memmove(to +j*(A->m)*step,fromA+j*Am*step,Am*step);
+		    }
+		  for ( j = A->n-1  ; j >= 0 ; j-- ) 
+		    {
+		      memcpy(to+j*(A->m)*step + Am*step,fromB+j*B->m*step,B->m*step);
+		    }
+		}
+	    }
+	  else    /* one matrix is real and the other is complex */
+	    {
+	      if ( elt_size_A > elt_size_B )  
+		{
+		  int Am=A->m;
+		  if ( MAT_INT(type)->resize(ObjA,A->m+B->m,A->n) == OK )
+		    {
+		      /* A is complex, B real */
+		      int stepA=elt_size_A;
+		      int stepB=elt_size_B;
+		      char *to=(char *) A->S, *fromA = (char *) A->S, *fromB = (char *) B->S;
+		      for ( j = A->n-1  ; j >= 1 ; j-- ) 
+			{
+			  memmove(to +j*(A->m)*stepA,fromA+j*Am*stepA,Am*stepA);
+			}
+		      for ( j = A->n-1  ; j >= 0 ; j-- ) 
+			{
+			  doubleC *elt =(doubleC *) (to +j*(A->m)*stepA + Am*stepA);
+			  for ( i = 0 ; i < B->m ; i++)
+			    {
+			      elt[i].r = *(((double *) (fromB+j*B->m*stepB)) +i);
+			      elt[i].i = 0.0;
+			    }
+			}
+		    }
+		}
+	      else 
+		{ 
+		  /* XXXX we need here a resize which can change the elt_size too */
+		  /* A is real, B complex */
+		  ObjC = MAT_INT(type)->clone(NVOID, ObjB,A->m+B->m,A->n);
+		  if ( ObjC != NULLOBJ )
+		    {
+		      int stepA=elt_size_A;
+		      int stepB=elt_size_B;
+		      char *to, *fromA = (char *) A->S, *fromB = (char *) B->S;
+		      C = (NspSMatrix *) ObjC;  to = (char *) C->S;
+		      for ( j = 0 ; j < A->n ; j++ ) 
+			{ 
+			  doubleC *elt =(doubleC *) (to +j*(C->m)*stepB);
+			  /* copy column j of A which is real */
+			  for ( i = 0 ; i < A->m ; i++)
+			    {
+			      elt[i].r = *(((double *) (fromA+j*A->m*stepA)) +i);
+			      elt[i].i = 0.0;
+			    }
+			  /* copy column j of B which is complex as C */
+			  memcpy(to+j*(C->m)*stepB + A->m*stepB,fromB+j*B->m*stepB,B->m*stepB);
+			}
+		    }
+		  /* a little trick waiting for XXXX above  */
+		  A->m = C->m;
+		  A->n = C->n;
+		  ((NspMatrix *) A)->rc_type = 'c';
+		  A->mn = C->mn;
+		  A->S = C->S;
+		  C->S = NULL;
+		  C->m = C->n = C->mn = 0;
+		  nsp_object_destroy(&ObjC);
+		}
+	    }
+	}
+      else                                                      
+	{
+	  int Am=A->m;
+	  if ( MAT_INT(type)->resize(ObjA,A->m+B->m,A->n) == OK )
+	    {
+	      char *elt;
+	      int step=elt_size_A;
+	      char *to=(char *) A->S, *fromA = (char *) A->S;
+	      for ( j = A->n-1  ; j >= 1 ; j-- ) 
+		{
+		  memmove(to +j*(A->m)*step,fromA+j*Am*step,Am*step);
+		}
+	      for ( j = 0 ; j < A->n ; j++ ) 
+		{
+		  char **fromB= B->S+j*B->m;
+		  char **toB =A->S+j*(C->m)+ Am;
+		  for ( i = 0 ; i < B->m ; i++ )
+		    {
+		      if ( (elt = (char *) MAT_INT(type)->copy_elt(fromB[i])) == NULL ) goto err;
+		      toB[i]=elt;
+		    }
+		}
+	    }
+	}
+    }
+  else
+    Scierror("Error:\tIncompatible dimensions\n");
+  return OK;
+ err:
+  return FAIL;
 }
 
 
