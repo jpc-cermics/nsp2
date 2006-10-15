@@ -804,23 +804,54 @@ static int int_mpmatrix_sort(Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
-typedef NspMatrix *(*SuPro) (NspMatrix *A,char *);
+typedef NspMatrix *(*SuPro) (NspMatrix *A,int dim);
 
-static int int_mp_sum(Stack stack, int rhs, int opt, int lhs, SuPro F)
+static int getdimfromstring(char *str)
+{
+  switch(str[0])
+    {
+    default :
+      Sciprintf("\nInvalid flag '%c' assuming flag='*'\n",str[0]);
+    case 'f': case 'F': case '*':
+      return 0;
+      break;
+    case 'r': case 'R':
+      return 1;
+      break ;
+    case 'c': case 'C':
+      return 2;
+      break;
+    }
+}
+
+static int
+int_mp_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
 {
   char *str;
+  int dim=0;
   NspMaxpMatrix *HMat,*Res; 
   NspMatrix *M;
-  CheckRhs(1,2);
-  CheckLhs(1,1);
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+
   if ((HMat = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;
-  if ( rhs == 2) 
+
+  if (rhs == 2)
     {
-      if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
+      if ( IsSMatObj(stack, 2) )
+	{
+	  if ((str = GetString (stack, 2)) == (char *) 0)
+	    return RET_BUG;
+	  dim = getdimfromstring(str);
+	}
+      else
+	{
+	  if ( GetScalarInt(stack, 2, &dim) == FAIL )
+	    return RET_BUG;
+	}
     }
-  else 
-    { str = "F"; }
-  if ((M= (*F)((NspMatrix *) HMat,str)) == NULLMAT ) return RET_BUG;
+      
+  if ((M= (*F)((NspMatrix *) HMat,dim)) == NULLMAT ) return RET_BUG;
   if ((Res = nsp_mp_matrix_from_m(NVOID,M))  == NULLMAXPMAT) return RET_BUG;
   nsp_matrix_destroy(M);
   MoveObj(stack,1,(NspObject *)Res);
