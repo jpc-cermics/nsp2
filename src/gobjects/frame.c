@@ -160,10 +160,11 @@ static char *gframe_type_short_string(void)
   return(gframe_short_type_name);
 }
 
-static NspObject *gframe_path_extract(NspGFrame *H, NspObject *O)
+static NspObject *gframe_path_extract(NspGFrame *H,int n, NspObject **Objs)
 {
   int i;
-  if ( IntScalar(O,&i) == FAIL) return NULLOBJ ;
+  if ( n != 1 ) return NULLOBJ;
+  if ( IntScalar(*Objs,&i) == FAIL) return NULLOBJ ;
   if ( i >= 1 && i <=nsp_list_length(H->obj->objs))
     return nsp_list_get_element(H->obj->objs,i);
   else

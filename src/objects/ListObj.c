@@ -198,12 +198,13 @@ NspObject *list_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int 
 }
 
 
-NspObject *nsp_list_path_extract(NspList *L, NspObject *O)
+NspObject *nsp_list_path_extract(NspList *L,int n, NspObject **Objs)
 {
   int ival;
-  if ( IsMat(O)  ) 
+  if ( n != 1 ) return NULLOBJ ;
+  if ( IsMat(*Objs)  ) 
     {
-      if ( IntScalar(O,&ival) == FAIL ) return NULLOBJ ;
+      if ( IntScalar(*Objs,&ival) == FAIL ) return NULLOBJ ;
       return nsp_list_get_element(L,ival);
     }
   return  NULLOBJ;

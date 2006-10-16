@@ -1742,7 +1742,10 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	  stack.val->S[*ipos+2]= NULLOBJ;
 	  SHOWBUG(stack,RET_BUG,L);
 	}
-      O= stack.val->S[*ipos+1]->type->path_extract(stack.val->S[*ipos+1],stack.val->S[*ipos+2]);
+      /* XXXX : Pb here because path-extract can have more than one 
+       * argument for example A{1,2}... for cells 
+       */
+      O= stack.val->S[*ipos+1]->type->path_extract(stack.val->S[*ipos+1],n,&stack.val->S[*ipos+2]);
       if ( O == NULLOBJ ) 
 	{
 	  Scierror("Error: path extraction cannot be performed (step %d)\n",j);

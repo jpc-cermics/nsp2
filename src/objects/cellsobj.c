@@ -30,7 +30,7 @@
 #include "nsp/matutil.h"
 #include "nsp/matint.h"
 
-static NspObject *nsp_cells_path_extract(NspCells *C, NspObject *O);
+static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs);
 
 /*
  * NspCells inherits from NspObject 
@@ -237,12 +237,12 @@ int nsp_cells_neq(NspObject *A, NspObject *B)
  *        on elements. 
  */
 
-static NspObject *nsp_cells_path_extract(NspCells *C, NspObject *O)
+static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs)
 {
   int ival;
-  if ( IsMat(O)  ) 
+  if ( IsMat(*Objs)  ) 
     {
-      if ( IntScalar(O,&ival) == FAIL ) return NULLOBJ ;
+      if ( IntScalar(*Objs,&ival) == FAIL ) return NULLOBJ ;
       if ( ival >= 1 && ival <= C->mn )
 	{
 	  /* note that we can return NULLOBJ */

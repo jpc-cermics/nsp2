@@ -55,7 +55,7 @@ static int type_xdr_save(XDR  *F, NspType *M);
 static NspType  *type_xdr_load(XDR  *F);
 static AttrTab type_attrs[];
 static NspMethods *type_get_methods(void); 
-static NspObject *type_path_extract(NspType *A, NspObject *O);
+static NspObject *type_path_extract(NspType *A,int n, NspObject **Objs);
 #endif /* Type_Private */
 
 #define NULLTYPE (NspType*) 0

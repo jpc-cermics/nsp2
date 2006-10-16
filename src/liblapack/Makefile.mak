@@ -22,7 +22,7 @@ ATLAS=
 
 LOCAL= dgesv.obj dgetrf.obj dgetrs.obj dpotrs.obj dpotrf.obj  zgetrf.obj zgetrs.obj zpotrf.obj
 
-UNUSED= dlamch.obj xerbla.obj 
+UNUSED= dlamch.obj xerbla.obj dhgeqz.obj
 
 OBJSF = dbdsdc.obj dbdsqr.obj ddisna.obj dgbbrd.obj dgbcon.obj dgbequ.obj dgbrfs.obj dgbsv.obj \
 	 dgbsvx.obj dgbtf2.obj dgbtrf.obj dgbtrs.obj dgebak.obj dgebal.obj dgebd2.obj dgebrd.obj \
@@ -32,7 +32,7 @@ OBJSF = dbdsdc.obj dbdsqr.obj ddisna.obj dgbbrd.obj dgbcon.obj dgbequ.obj dgbrfs
 	dgesdd.obj dgesvd.obj dgesv.obj dgesvx.obj dgetc2.obj dgetf2.obj dgetrf.obj dgetri.obj dgetrs.obj \
 	dggbak.obj dggbal.obj dgges.obj dggesx.obj dggev.obj dggevx.obj dggglm.obj dgghrd.obj dgglse.obj \
 	dggqrf.obj dggrqf.obj dggsvd.obj dggsvp.obj dgtcon.obj dgtrfs.obj dgtsv.obj dgtsvx.obj dgttrf.obj \
-	dgttrs.obj dgtts2.obj dhsein.obj dhseqr.obj dlabad.obj dlabrd.obj dlacon.obj dlacpy.obj \
+	dgttrs.obj dgtts2.obj  dhsein.obj dhseqr.obj dlabad.obj dlabrd.obj dlacon.obj dlacpy.obj \
 	dladiv.obj dlae2.obj dlaebz.obj dlaed0.obj dlaed1.obj dlaed2.obj dlaed3.obj dlaed4.obj dlaed5.obj \
 	dlaed6.obj dlaed7.obj dlaed8.obj dlaed9.obj dlaeda.obj dlaein.obj dlaev2.obj dlaexc.obj dlag2.obj \
 	dlags2.obj dlagtf.obj dlagtm.obj dlagts.obj dlagv2.obj dlahqr.obj dlahrd.obj dlaic1.obj dlaln2.obj \

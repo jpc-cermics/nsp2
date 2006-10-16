@@ -67,7 +67,7 @@ static int gframe_eq(NspGFrame *A, NspObject *B);
 static int gframe_neq(NspGFrame *A, NspObject *B);
 static int gframe_xdr_save(XDR  *F, NspGFrame *M);
 static NspGFrame  *gframe_xdr_load(XDR  *F);
-static NspObject *gframe_path_extract(NspGFrame *H, NspObject *O);
+static NspObject *gframe_path_extract(NspGFrame *H,int n, NspObject **Objs);
 static AttrTab gframe_attrs[];
 static NspGFrame *gframe_object (NspObject *O); 
 static NspGFrame *gframe_copy (NspGFrame *H); 
@@ -90,7 +90,7 @@ extern NspGFrame *GetGFrameCopy (Stack stack, int i);
 extern NspGFrame *GetGFrame (Stack stack, int i); 
 extern int IsGFrame (NspObject *O); 
 
-extern NspObject *gframe_path_extract (NspGFrame *H, NspObject *O); 
+extern NspObject *gframe_path_extract (NspGFrame *H,int n, NspObject **Objs); 
 extern NspGFrame *gframe_create(char *name,BCG *Xgc,int init_objs,const double scale[],double r[],NspTypeBase *type);
 extern void gframe_draw (NspGFrame *R); 
 extern int gframe_select_obj (NspGFrame *R, const double *pt, NspObject **Objs,NspObject *exclude); 

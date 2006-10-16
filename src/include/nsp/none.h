@@ -55,7 +55,7 @@ static int nsp_none_xdr_save(XDR  *F, NspNone *M);
 static NspNone  *nsp_none_xdr_load(XDR  *F);
 static AttrTab none_attrs[];
 static NspMethods *nsp_none_get_methods(void); 
-static NspObject *nsp_none_path_extract(NspNone *A, NspObject *O);
+static NspObject *nsp_none_path_extract(NspNone *A,int n, NspObject **Objs);
 #endif /* None_Private */
 
 #define NULLNONE (NspNone*) 0

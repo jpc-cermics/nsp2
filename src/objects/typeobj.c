@@ -210,10 +210,11 @@ static int type_neq(NspType *A, NspObject *B)
  *       iterate on the result 
  */
 
-static NspObject *type_path_extract(NspType *a, NspObject *ob)
+static NspObject *type_path_extract(NspType *a,int n, NspObject **ob)
 {
   char *str;
-  if ((str=nsp_string_object(ob)) == NULL ) return NULLOBJ;
+  if ( n != 1 ) return NULLOBJ;
+  if ((str=nsp_string_object(*ob)) == NULL ) return NULLOBJ;
   return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
 }
 

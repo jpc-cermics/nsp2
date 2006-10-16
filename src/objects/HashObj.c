@@ -203,12 +203,13 @@ static int hash_neq(NspHash *A, NspObject *B)
  *       iterate on the result 
  */
 
-static NspObject *hash_path_extract(NspHash *H, NspObject *O)
+static NspObject *hash_path_extract(NspHash *H,int n, NspObject **Objs)
 {
   NspObject *O1;
   NspSMatrix *M;
   /* faire une fonction ou macros pour un string XXXX **/
-  if (( M =nsp_smatrix_object(O)) == NULLSMAT || M->mn != 1) return NULLOBJ ;
+  if ( n != 1 ) return NULLOBJ ;
+  if (( M =nsp_smatrix_object(Objs[0])) == NULLSMAT || M->mn != 1) return NULLOBJ ;
   if (nsp_hash_find(H,M->S[0],&O1) == FAIL) return NULLOBJ ;
   return O1;
 }

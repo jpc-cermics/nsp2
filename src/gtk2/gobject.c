@@ -204,10 +204,11 @@ static int gobject_neq(NspGObject *A, NspObject *B)
  *       iterate on the result 
  */
 
-static NspObject *gobject_path_extract(NspGObject *a, NspObject *ob)
+static NspObject *gobject_path_extract(NspGObject *a,int n, NspObject **ob)
 {
   char *str;
-  if ((str=nsp_string_object(ob)) == NULL ) return NULLOBJ;
+  if ( n != 1) return NULLOBJ;
+  if ((str=nsp_string_object(*ob)) == NULL ) return NULLOBJ;
   return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
 }
 

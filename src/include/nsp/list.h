@@ -60,7 +60,7 @@ NspList *new_list();
 
 /* Functions declaration */
 
-extern NspObject *nsp_list_path_extract(NspList *L, NspObject *O); 
+extern NspObject *nsp_list_path_extract(NspList *L,int n, NspObject **Objs); 
 extern NspList *nsp_list_object(NspObject *O); 
 extern int IsListObj (Stack stack, int i); 
 extern int IsList (NspObject *O); 

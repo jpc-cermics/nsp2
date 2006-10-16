@@ -192,10 +192,11 @@ static int gdkatom_neq(NspGdkAtom *A, NspObject *B)
  *       iterate on the result 
  */
 
-static NspObject *gdkatom_path_extract(NspGdkAtom *a, NspObject *ob)
+static NspObject *gdkatom_path_extract(NspGdkAtom *a,int n, NspObject **ob)
 {
   char *str;
-  if ((str=nsp_string_object(ob)) == NULL ) return NULLOBJ;
+  if ( n != 1 ) return NULLOBJ;
+  if ((str=nsp_string_object(ob[0])) == NULL ) return NULLOBJ;
   return nsp_get_attribute_object((NspObject *) a,((NspObject *)a)->basetype,str) ;
 }
 
