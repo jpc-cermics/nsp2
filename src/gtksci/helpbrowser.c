@@ -741,7 +741,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
       else 
 	load_page (buf, TRUE); 
     }
-  else if ( strncmp(help_file,"file:",5)==0)
+  else if ( strncmp(help_file,"file:",5)==0 || strncmp(help_file,"http:",5)==0) 
     {
       strcpy(buf,help_file);
       if ( window == NULL) 

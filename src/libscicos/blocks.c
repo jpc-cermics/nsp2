@@ -12,6 +12,9 @@
 #include "scicos/scicos.h"
 #include "scicos/blocks.h"
 
+
+static void scicos_intp(double x,const double *xd,const double *yd,int n,int nc,double *y);
+
 /* Copyright Inria Scicos.
  */ 
 
@@ -73,42 +76,39 @@ int scicos_delay_block(scicos_args_F0)
 }			
 
 
+/*     SISO, strictly proper adapted transfer function 
+ *     u(1)    : main input 
+ *     u(2)    : modes adaptation input 
+ *     m = ipar(1) : degree of numerator 
+ *     n = ipar(2) : degree of denominator n>m 
+ *     npt = ipar(3) : number of mesh points 
+ *     x = rpar(1:npt) : mesh points abscissae 
+ *     rnr = rpar(npt+1:npt+m*npt) : rnr(i,k) i=1:m  is the real part of 
+ *          the roots of the numerator at the kth mesh point 
+ *     rni = rpar(npt+m*npt+1:npt+2*m*npt) : rni(i,k) i=1:m  is the 
+ *          imaginary part of the roots of the numerator at the kth 
+ *          mesh point 
+ *     rdr = rpar(npt+2*m*np+1:npt+(2*m+n)*npt) : rdr(i,k) i=1:n 
+ *          is the real part of the roots of the denominator at the kth 
+ *          meshpoint 
+ *     rdi = rpar(npt+(2*m+n)*np+1:npt+2*(m+n)*npt) : rdi(i,k) i=1:n 
+ *          is the imaginary part of the roots of the denominator at 
+ *          the kth  meshpoint 
+ *     g   = rpar(npt+2*(m+n)*npt+1:npt+2*(m+n)*npt+npt) is the 
+ *           gain values at the mesh points. 
+ */
+
+
+static void coeffs_from_roots(int n,const double *rootr,const double *rooti,double *coeffr, double *coeffi);
 
 int scicos_dlradp_block(scicos_args_F0)
 {
   static int c__1 = 1;
   /* static int c_n1 = -1; */
-
   int i__1;  int m, n, iflag;
-  double  yy[201], den[51];
-  int mpn;
-  double num[51];
-  int npt;
+  double  yy[201], num[51],den[51],ww[51];
+  int npt,mpn;
   double yyp;
-  /*     Copyright INRIA */
-  /*     Scicos block simulator */
-  /*     SISO, strictly proper adapted transfer function */
-  /*     u(1)    : main input */
-  /*     u(2)    : modes adaptation input */
-  /*     m = ipar(1) : degree of numerator */
-  /*     n = ipar(2) : degree of denominator n>m */
-  /*     npt = ipar(3) : number of mesh points */
-  /*     x = rpar(1:npt) : mesh points abscissae */
-  /*     rnr = rpar(npt+1:npt+m*npt) : rnr(i,k) i=1:m  is the real part of */
-  /*          the roots of the numerator at the kth mesh point */
-  /*     rni = rpar(npt+m*npt+1:npt+2*m*npt) : rni(i,k) i=1:m  is the */
-  /*          imaginary part of the roots of the numerator at the kth */
-  /*          mesh point */
-  /*     rdr = rpar(npt+2*m*np+1:npt+(2*m+n)*npt) : rdr(i,k) i=1:n */
-  /*          is the real part of the roots of the denominator at the kth */
-  /*          meshpoint */
-  /*     rdi = rpar(npt+(2*m+n)*np+1:npt+2*(m+n)*npt) : rdi(i,k) i=1:n */
-  /*          is the imaginary part of the roots of the denominator at */
-  /*          the kth  meshpoint */
-  /*     g   = rpar(npt+2*(m+n)*npt+1:npt+2*(m+n)*npt+npt) is the */
-  /*           gain values at the mesh points. */
-  /* ! */
-
   --y;
   --u;
   --ipar;
@@ -127,12 +127,9 @@ int scicos_dlradp_block(scicos_args_F0)
       mpn = m + n;
       npt = ipar[3];
       i__1 = (mpn << 1) + 1;
-      Scierror("Error : scicos_intp to be done \n");
-      /* XXXXXXXXXXXX
-	 scicos_intp (&u[2], &rpar[1], &rpar[npt + 1], &i__1, &npt, yy);
-	 scicos_wprxc (&m, yy, &yy[m], num, ww);
-	 scicos_wprxc (&n, &yy[m * 2], &yy[(m << 1) + 1 + n - 1], den, ww);
-      */
+      scicos_intp (u[2], &rpar[1], &rpar[npt + 1], i__1, npt, yy);
+      coeffs_from_roots (m, yy, &yy[m], num, ww);
+      coeffs_from_roots (n, &yy[m * 2], &yy[(m << 1) + 1 + n - 1], den, ww);
       yyp = - C2F(ddot) (&n, den, &c__1, &z__[m + 1], &c__1) 
 	+ (C2F(ddot) (&m, num, &c__1, &z__[1],&c__1) + u[1]) * yy[mpn * 2];
       if (m > 0)
@@ -166,6 +163,27 @@ int scicos_dlradp_block(scicos_args_F0)
   y[1] = z__[m + n];
   return 0;
 }			
+
+/* utilities for previous function 
+ * computes the n+1 coefficients of a polynom given by its n roots
+ * the coefficient of max degree is set to 1.
+ */
+
+static void coeffs_from_roots(int n,const double *rootr,const double *rooti,double *coeffr, double *coeffi)
+{
+  int i;
+  for (i=0; i < n+1 ; i++) coeffr[i]=coeffi[i]=0.0;
+  coeffr[n]=1.0;
+  for (i=0; i < n ; i++) 
+    {
+      int j,nj=n-1-i;
+      for (j = 0 ; j < i ; j++)
+	{
+	  coeffr[nj+j] += (-rootr[i+j])*coeffr[nj+1+j] - (-rooti[i+j])*coeffi[nj+1+j];
+	  coeffi[nj+j] += (-rootr[i+j])*coeffi[nj+1+j] + (-rooti[i+j])*coeffr[nj+1+j];
+	}
+    }
+}
 
 
 /* Ouputs delayed input */
@@ -527,7 +545,7 @@ scicos_integr_block (scicos_args_F0)
  *                       (one row for each output) 
  */
 
-static void scicos_intp(double x,const double *xd,const double *yd,int n,int nc,double *y);
+
 
 int scicos_intplt_block (scicos_args_F0)
 {
