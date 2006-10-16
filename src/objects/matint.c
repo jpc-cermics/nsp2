@@ -119,11 +119,28 @@ static char *matint_type_as_string (void)
 static int int_matint_meth_redim(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
 {
   NspTypeBase *type;
+  NspMatrix *B;
   int mm,nn;
-  CheckRhs (2,2);
-  CheckLhs (0,0);
-  if (GetScalarInt (stack, 1, &mm) == FAIL)    return RET_BUG;
-  if (GetScalarInt (stack, 2, &nn) == FAIL)    return RET_BUG;
+  CheckRhs (1,2);
+  CheckLhs (0,0); 
+
+ if ( rhs == 1 )
+    { 
+      if ((B = GetRealMat (stack, 1)) == NULLMAT)
+	return RET_BUG;
+      if (B->mn != 2)
+	{
+	  Scierror ("Error:\t expecting a vector of size 2\n");
+	  return RET_BUG;
+	}
+      mm = (int) B->R[0];
+      nn = (int) B->R[1];
+    }
+  else
+    {
+      if (GetScalarInt (stack, 1, &mm) == FAIL) return RET_BUG;
+      if (GetScalarInt (stack, 2, &nn) == FAIL) return RET_BUG;
+    }
 
   if ( mm < -1 || nn < -1 )
     {
