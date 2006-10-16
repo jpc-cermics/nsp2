@@ -240,14 +240,33 @@ int nsp_cells_neq(NspObject *A, NspObject *B)
 static NspObject *nsp_cells_path_extract(NspCells *C,int n, NspObject **Objs)
 {
   int ival;
-  if ( IsMat(*Objs)  ) 
+  switch (n) 
     {
-      if ( IntScalar(*Objs,&ival) == FAIL ) return NULLOBJ ;
-      if ( ival >= 1 && ival <= C->mn )
+    case 1: 
+      if ( IsMat(*Objs)  ) 
 	{
-	  /* note that we can return NULLOBJ */
-	  return C->objs[ival-1];
+	  if ( IntScalar(*Objs,&ival) == FAIL ) return NULLOBJ ;
+	  if ( ival >= 1 && ival <= C->mn )
+	    {
+	      /* note that we can return NULLOBJ */
+	      return C->objs[ival-1];
+	    }
 	}
+      break;
+    case 2: 
+      if ( IsMat(Objs[0]) && IsMat(Objs[1]))
+	{
+	  int row,col;
+	  if ( IntScalar(Objs[0],&row) == FAIL ) return NULLOBJ ;
+	  if ( IntScalar(Objs[1],&col) == FAIL ) return NULLOBJ ;
+	  ival = (row-1) + C->m *(col-1);
+	  if ( ival >= 0 && ival < C->mn )
+	    {
+	      /* note that we can return NULLOBJ */
+	      return C->objs[ival];
+	    }
+	}
+      break;
     }
   return NULLOBJ;
 }
