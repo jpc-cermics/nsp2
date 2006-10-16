@@ -2552,16 +2552,26 @@ int int_matint_redim(Stack stack, int rhs, int opt, int lhs)
   CheckRhs (2,3);
   CheckLhs (0,1);
   NspObject *Obj;
+  NspMatrix *B;
 
   if ((Obj = nsp_get_object_copy(stack,1))== NULL) return RET_BUG;
-  if (GetScalarInt (stack, 2, &mm) == FAIL)    return RET_BUG;
-  if (rhs == 3) 
-    {
-      if (GetScalarInt (stack, 3, &nn) == FAIL)    return RET_BUG;
+
+  if ( rhs == 2 )
+    { 
+      if ((B = GetRealMat (stack, 2)) == NULLMAT)
+	return RET_BUG;
+      if (B->mn != 2)
+	{
+	  Scierror ("Error:\t expecting a vector of size 2\n");
+	  return RET_BUG;
+	}
+      mm = (int) B->R[0];
+      nn = (int) B->R[1];
     }
-  else 
+  else
     {
-      nn=-1;
+      if (GetScalarInt (stack, 2, &mm) == FAIL) return RET_BUG;
+      if (GetScalarInt (stack, 3, &nn) == FAIL) return RET_BUG;
     }
 
   if ( mm < -1 || nn < -1 )
