@@ -1,6 +1,6 @@
-20% symbol docs coverage.
-349 symbols documented.
-1407 not documented.
+18% symbol docs coverage.
+306 symbols documented.
+1392 not documented.
 
 
 Abs
@@ -257,7 +257,6 @@ Mod_Type
 MpMat2double
 MpMat2float
 MpMat2int
-MpMatLoopCol
 MpMatd2i
 NAME_MAXL
 NSP_INT_TO_POINTER
@@ -772,6 +771,7 @@ nsp_atk_hash_table
 nsp_balanc
 nsp_basic_to_string
 nsp_bmatrix_find
+nsp_bmatrix_redim
 nsp_ceil_c
 nsp_cells_concat_down
 nsp_cells_eq
@@ -779,6 +779,7 @@ nsp_cells_is_true
 nsp_cells_loop_extract
 nsp_cells_neq
 nsp_cells_object
+nsp_cells_redim
 nsp_cells_strcmp
 nsp_cells_type_as_string
 nsp_cells_type_short_string
@@ -972,6 +973,7 @@ nsp_mat_pow_tt
 nsp_mat_prod
 nsp_mat_rand
 nsp_mat_readline
+nsp_mat_round
 nsp_mat_set_ival
 nsp_mat_set_rval
 nsp_mat_sign
@@ -993,6 +995,7 @@ nsp_mat_triu
 nsp_mat_zeros
 nsp_matrix_boundster
 nsp_matrix_dialog
+nsp_matrix_redim
 nsp_matrix_to_pmatrix
 nsp_matrix_to_polynom
 nsp_matrix_to_smatrix
@@ -1093,6 +1096,7 @@ nsp_mpmat_tanh
 nsp_mpmat_tril
 nsp_mpmat_triu
 nsp_mpmat_zeros
+nsp_mpmatrix_redim
 nsp_multi_dialog
 nsp_multi_dialog_
 nsp_new_file
@@ -1114,15 +1118,9 @@ nsp_pmatrix_concat_down
 nsp_pmatrix_concat_right
 nsp_pmatrix_copy
 nsp_pmatrix_create
-nsp_pmatrix_delete_elements
-nsp_pmatrix_delete_rows
 nsp_pmatrix_destroy
 nsp_pmatrix_enlarge
 nsp_pmatrix_eq
-nsp_pmatrix_extract
-nsp_pmatrix_extract_columns
-nsp_pmatrix_extract_elements
-nsp_pmatrix_extract_rows
 nsp_pmatrix_info
 nsp_pmatrix_length
 nsp_pmatrix_loop_extract
@@ -1131,9 +1129,6 @@ nsp_pmatrix_object
 nsp_pmatrix_print
 nsp_pmatrix_redim
 nsp_pmatrix_resize
-nsp_pmatrix_set_rows
-nsp_pmatrix_set_submatrix
-nsp_pmatrix_setrc
 nsp_pmatrix_size
 nsp_pmatrix_transpose
 nsp_pmatrix_type_as_string
@@ -1181,18 +1176,10 @@ nsp_smatrix_create_from_array
 nsp_smatrix_create_from_struct
 nsp_smatrix_create_from_table
 nsp_smatrix_create_with_length
-nsp_smatrix_delete_columns
-nsp_smatrix_delete_elements
-nsp_smatrix_delete_elements2
-nsp_smatrix_delete_rows
 nsp_smatrix_destroy
 nsp_smatrix_elts_length
 nsp_smatrix_enlarge
 nsp_smatrix_eq
-nsp_smatrix_extract
-nsp_smatrix_extract_columns
-nsp_smatrix_extract_elements
-nsp_smatrix_extract_rows
 nsp_smatrix_info
 nsp_smatrix_is_true
 nsp_smatrix_loop_extract
@@ -1203,8 +1190,6 @@ nsp_smatrix_print
 nsp_smatrix_redim
 nsp_smatrix_resize
 nsp_smatrix_row_concat
-nsp_smatrix_set_rows
-nsp_smatrix_set_submatrix
 nsp_smatrix_sort_old
 nsp_smatrix_split
 nsp_smatrix_strcmp

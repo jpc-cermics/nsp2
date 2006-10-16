@@ -275,9 +275,14 @@ NspSpColMatrix *Diag, int k
 NspSpColMatrix *A, NspSpColMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_spcolmatrix_mult_matrix</NAME>
+<NAME>nsp_spcolmatrix_mult_sp_m</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 NspSpColMatrix *A, NspMatrix *X
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_spcolmatrix_mult_m_sp</NAME>
+<RETURNS>NspMatrix  *</RETURNS>
+NspMatrix *X,NspSpColMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_spcolmatrix_mult_scal</NAME>
@@ -305,7 +310,17 @@ NspSpColMatrix *A, double d
 NspMatrix *A
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_spcolmatrix_from_mat_transpose</NAME>
+<RETURNS>NspSpColMatrix  *</RETURNS>
+NspMatrix *A
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_spcolmatrix_to_mat</NAME>
+<RETURNS>NspMatrix  *</RETURNS>
+NspSpColMatrix *Sp
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_spcolmatrix_to_mat_transpose</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 NspSpColMatrix *Sp
 </FUNCTION>
@@ -852,6 +867,10 @@ double *tab, int size
 #define WITH_GTKHTML 1
 </MACRO>
 <MACRO>
+<NAME>WITH_UMFPACK</NAME>
+#define WITH_UMFPACK 1
+</MACRO>
+<MACRO>
 <NAME>WITH_FFTW3</NAME>
 #define WITH_FFTW3 1
 </MACRO>
@@ -1189,6 +1208,7 @@ struct NspMatrix {
     double *R;     /* Pointer on real values */
     doubleC *C;    /* Pointer on complex values */
     int *I;        /* Pointer on integer values */
+    int *F;        /* Pointer on float values */
   };
   char rc_type;    /* 'r' : real or  'c' : complex  */
   char convert;    /* 'd','i','f','c' : double, int, float, old_complex
@@ -1423,24 +1443,9 @@ NspMatrix *A, int *imin, int *imax
 const NspMatrix *A, int *imin, int *imax
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_boundsbis</NAME>
-<RETURNS>int  *</RETURNS>
-const NspMatrix * A, int * imin, int * imax
-</FUNCTION>
-<FUNCTION>
 <NAME>nsp_matrix_boundster</NAME>
 <RETURNS>void  </RETURNS>
 const NspMatrix *A, int *ind, int *imin, int *imax
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_complement_for_deletions</NAME>
-<RETURNS>int  *</RETURNS>
-int mn, const NspMatrix *Elts, int *Count
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_indices_for_deletions</NAME>
-<RETURNS>int  *</RETURNS>
-int mn, const NspMatrix *Elts, int *Count
 </FUNCTION>
 <FUNCTION>
 <NAME>Mat2double</NAME>
@@ -1471,6 +1476,11 @@ void *A,int m,int n
 <NAME>nsp_matrix_create</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 const char *name, char type, int m, int n
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matrix_clone</NAME>
+<RETURNS>NspMatrix  *</RETURNS>
+const char *name, NspMatrix *A, int m, int n
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matrix_create_impl</NAME>
@@ -1558,7 +1568,7 @@ const NspMatrix *A,const NspMatrix *B
 NspMatrix *A, int m
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_set_submatrix</NAME>
+<NAME>nsp_matrix_set_submatrix_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B
 </FUNCTION>
@@ -1573,7 +1583,7 @@ void *A, int Am, int An, int Amn, NspMatrix *Rows, void *B, int Bm, int Bn, int 
 void *A, int Am, int An, int Amn, int nb_ind, int rmin, int rmax,void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_set_rows</NAME>
+<NAME>nsp_matrix_set_rows_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspMatrix *A, NspMatrix *Rows, NspMatrix *B
 </FUNCTION>
@@ -1583,37 +1593,22 @@ NspMatrix *A, NspMatrix *Rows, NspMatrix *B
 const NspMatrix *A
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_delete_columns</NAME>
-<RETURNS>int  </RETURNS>
-NspMatrix *A, NspMatrix *Cols
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_matrix_delete_rows</NAME>
-<RETURNS>int  </RETURNS>
-NspMatrix *A, NspMatrix *Rows
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_matrix_delete_elements</NAME>
-<RETURNS>int  </RETURNS>
-NspMatrix *A, NspMatrix *Elts
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_matrix_extract</NAME>
+<NAME>nsp_matrix_extract_obsolete</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 const NspMatrix *A,const  NspMatrix *Rows,const  NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_extract_elements</NAME>
+<NAME>nsp_matrix_extract_elements_obsolete</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 const NspMatrix *A,const  NspMatrix *Elts
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_extract_columns</NAME>
+<NAME>nsp_matrix_extract_columns_obsolete</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 const NspMatrix *A,const  NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_matrix_extract_rows</NAME>
+<NAME>nsp_matrix_extract_rows_obsolete</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 const NspMatrix *A,const  NspMatrix *Rows
 </FUNCTION>
@@ -2672,11 +2667,6 @@ PList plist
 <FUNCTION>
 <NAME>nsp_plist_print_internal</NAME>
 <RETURNS>void  </RETURNS>
-PList L, int indent
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_plist_print_int</NAME>
-<RETURNS>void  </RETURNS>
 PList L
 </FUNCTION>
 <FUNCTION>
@@ -2703,11 +2693,6 @@ PList L, int i, int pos, int posret
 <NAME>nsp_plist_print</NAME>
 <RETURNS>void  </RETURNS>
 PList L, int indent
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_arg_print</NAME>
-<RETURNS>void  </RETURNS>
-PList L, int i
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_plist_info</NAME>
@@ -3162,6 +3147,11 @@ const char *key,void **Table,unsigned int size, int flag
 nsp_const_string name,int m,int n,nsp_const_string str,int flag
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_smatrix_clone</NAME>
+<RETURNS>NspSMatrix  *</RETURNS>
+const char *name, NspSMatrix *A, int m, int n
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_smatrix_create_with_length</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 nsp_const_string , int m, int n, int strl
@@ -3257,47 +3247,27 @@ NspSMatrix *A,NspSMatrix *B,int flag
 NspSMatrix *A, int m
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_set_submatrix</NAME>
+<NAME>nsp_smatrix_set_submatrix_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspSMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspSMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_set_rows</NAME>
+<NAME>nsp_smatrix_set_rows_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspSMatrix *A, NspMatrix *Rows, NspSMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_delete_columns</NAME>
-<RETURNS>int  </RETURNS>
-NspSMatrix *A, NspMatrix *Cols
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_delete_rows</NAME>
-<RETURNS>int  </RETURNS>
-NspSMatrix *A, NspMatrix *Rows
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_delete_elements</NAME>
-<RETURNS>int  </RETURNS>
-NspSMatrix *A, NspMatrix *Elts
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_delete_elements2</NAME>
-<RETURNS>int  </RETURNS>
-NspSMatrix *A, NspMatrix *EltsR, NspMatrix *EltsC
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_smatrix_extract</NAME>
+<NAME>nsp_smatrix_extract_obsolete</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 NspSMatrix *A, NspMatrix *Rows, NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_extract_elements</NAME>
+<NAME>nsp_smatrix_extract_elements_obsolete</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 NspSMatrix *A, NspMatrix *Elts, int *err
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_extract_columns</NAME>
+<NAME>nsp_smatrix_extract_columns_obsolete</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 NspSMatrix *A, NspMatrix *Cols, int *err
 </FUNCTION>
@@ -3307,7 +3277,7 @@ NspSMatrix *A, NspMatrix *Cols, int *err
 char *str, NspSMatrix *Col, NspSMatrix *A, int icol, int *rep
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_smatrix_extract_rows</NAME>
+<NAME>nsp_smatrix_extract_rows_obsolete</NAME>
 <RETURNS>NspSMatrix  *</RETURNS>
 NspSMatrix *A, NspMatrix *Rows, int *err
 </FUNCTION>
@@ -3671,22 +3641,27 @@ NspPMatrix *A
 char *name, int m, int n, doubleC *cval, int flag
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_extract</NAME>
+<NAME>nsp_pmatrix_clone</NAME>
+<RETURNS>NspPMatrix  *</RETURNS>
+char *name, NspPMatrix *A, int m, int n
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_extract_obsolete</NAME>
 <RETURNS>NspPMatrix  *</RETURNS>
 NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_extract_columns</NAME>
+<NAME>nsp_pmatrix_extract_columns_obsolete</NAME>
 <RETURNS>NspPMatrix  *</RETURNS>
 NspPMatrix *A, NspMatrix *Cols, int *err
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_extract_elements</NAME>
+<NAME>nsp_pmatrix_extract_elements_obsolete</NAME>
 <RETURNS>NspPMatrix  *</RETURNS>
 NspPMatrix *A, NspMatrix *Elts, int *err
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_extract_rows</NAME>
+<NAME>nsp_pmatrix_extract_rows_obsolete</NAME>
 <RETURNS>NspPMatrix  *</RETURNS>
 NspPMatrix *A, NspMatrix *Rows, int *err
 </FUNCTION>
@@ -3716,16 +3691,6 @@ NspPMatrix *A, int m
 NspPMatrix *A,const NspPMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_delete_elements</NAME>
-<RETURNS>int  </RETURNS>
-NspPMatrix *A, NspMatrix *Elts
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_pmatrix_delete_rows</NAME>
-<RETURNS>int  </RETURNS>
-NspPMatrix *A, NspMatrix *Rows
-</FUNCTION>
-<FUNCTION>
 <NAME>nsp_pmatrix_enlarge</NAME>
 <RETURNS>int  </RETURNS>
 NspPMatrix *A, int m, int n
@@ -3741,17 +3706,17 @@ NspPMatrix *A, int m, int n
 NspPMatrix *A, int m, int n
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_set_rows</NAME>
+<NAME>nsp_pmatrix_set_rows_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_set_submatrix</NAME>
+<NAME>nsp_pmatrix_set_submatrix_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pmatrix_setrc</NAME>
+<NAME>nsp_pmatrix_setrc_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B
 </FUNCTION>
@@ -3862,27 +3827,31 @@ AttrTab *T
 </MACRO>
 <MACRO>
 <NAME>NspFname</NAME>
-#define NspFname(x) (x).val->fname
+#define NspFname(x) (x).fname 
+</MACRO>
+<MACRO>
+<NAME>NspFnameH</NAME>
+#define NspFnameH(x) (x)->fname 
 </MACRO>
 <MACRO>
 <NAME>CheckRhs</NAME>
 #define CheckRhs(x,y) if ( rhs < x || rhs > y ) \
-  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.val->fname);return RET_BUG;} 
+  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs,stack.fname);return RET_BUG;} 
 </MACRO>
 <MACRO>
 <NAME>CheckLhs</NAME>
 #define CheckLhs(x,y) if ( lhs != -1 && ( lhs < x || lhs > y )) \
-  { Scierror("Error %d returned values is incorrect for function %s\n",lhs,stack.val->fname);return RET_BUG;}
+  { Scierror("Error %d returned values is incorrect for function %s\n",lhs,stack.fname);return RET_BUG;}
 </MACRO>
 <MACRO>
 <NAME>CheckStdRhs</NAME>
 #define CheckStdRhs(x,y) if ( rhs -opt < x || rhs -opt > y ) \
-  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs-opt,stack.val->fname);return RET_BUG;} 
+  { Scierror("Error: %d arguments is incorrect for function %s\n",rhs-opt,stack.fname);return RET_BUG;} 
 </MACRO>
 <MACRO>
 <NAME>CheckOptRhs</NAME>
 #define CheckOptRhs(x,y) if ( opt < x || opt > y ) \
-  { Scierror("Error: %d optional arguments is incorrect for function %s\n",opt,stack.val->fname);return RET_BUG;} 
+  { Scierror("Error: %d optional arguments is incorrect for function %s\n",opt,stack.fname);return RET_BUG;} 
 </MACRO>
 <ENUM>
 <NAME>int_types</NAME>
@@ -4537,7 +4506,12 @@ Stack stack, int i, int *val
 <FUNCTION>
 <NAME>nsp_bmatrix_create</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
-char *name, int m, int n
+const char *name, int m, int n
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_bmatrix_clone</NAME>
+<RETURNS>NspBMatrix  *</RETURNS>
+const char *name, NspBMatrix *A, int m, int n
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_bmatrix_copy</NAME>
@@ -4615,47 +4589,32 @@ NspBMatrix *A, NspBMatrix *B
 NspBMatrix *A, int m
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_set_submatrix</NAME>
+<NAME>nsp_bmatrix_set_submatrix_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspBMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_set_rows</NAME>
+<NAME>nsp_bmatrix_set_rows_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspBMatrix *A, NspMatrix *Rows, NspBMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_delete_columns</NAME>
-<RETURNS>int  </RETURNS>
-NspBMatrix *A, NspMatrix *Cols
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_bmatrix_delete_rows</NAME>
-<RETURNS>int  </RETURNS>
-NspBMatrix *A, NspMatrix *Rows
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_bmatrix_delete_elements</NAME>
-<RETURNS>int  </RETURNS>
-NspBMatrix *A, NspMatrix *Elts
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_bmatrix_extract</NAME>
+<NAME>nsp_bmatrix_extract_obsolete</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
 NspBMatrix *A, NspMatrix *Rows, NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_extract_elements</NAME>
+<NAME>nsp_bmatrix_extract_elements_obsolete</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
 NspBMatrix *A, NspMatrix *Elts
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_extract_columns</NAME>
+<NAME>nsp_bmatrix_extract_columns_obsolete</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
 NspBMatrix *A, NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_bmatrix_extract_rows</NAME>
+<NAME>nsp_bmatrix_extract_rows_obsolete</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
 NspBMatrix *A, NspMatrix *Rows
 </FUNCTION>
@@ -4756,6 +4715,11 @@ const NspBMatrix *A,const  NspBMatrix *B, char *op, int *err
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_comp</NAME>
+<RETURNS>NspBMatrix  *</RETURNS>
+NspMatrix *A, NspMatrix *B, char *op
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_mat_comp_real</NAME>
 <RETURNS>NspBMatrix  *</RETURNS>
 NspMatrix *A, NspMatrix *B, char *op
 </FUNCTION>
@@ -4927,6 +4891,11 @@ void
 <RETURNS>int  </RETURNS>
 void *obj,NspTypeId id
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_get_id_from_object</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *Obj
+</FUNCTION>
 <MACRO>
 <NAME>NSP_OBJECT_INLINED</NAME>
 #define NSP_OBJECT_INLINED static inline 
@@ -4955,7 +4924,6 @@ void * F, NspObject * M
 <STRUCT>
 <NAME>Stack_ref</NAME>
 struct Stack_ref {
-  const char *fname; /* function currently evaluated **/
   char *file_name ; /* current evaluated file **/
   NspObject **D;     /* D is dynamically changed so that D[1] is the first Objet used XXX **/
   NspObject **L;     /* Last position **/
@@ -4971,6 +4939,7 @@ struct Stack_ref {
 <NAME>Stack</NAME>
 struct Stack {
   int first;   /* position of first argument to be used **/
+  const char *fname; /* function currently evaluated **/
   Stack_ref *val;
 } ;
 </STRUCT>
@@ -5317,6 +5286,11 @@ NspObject *ob,const char *name
 <RETURNS>void  </RETURNS>
 NspObject *ob
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_get_short_string_from_id</NAME>
+<RETURNS>char  *</RETURNS>
+int id
+</FUNCTION>
 <STRUCT>
 <NAME>NspMod</NAME>
 </STRUCT>
@@ -5541,6 +5515,79 @@ NspRect *R,const double pt[2]
 <RETURNS>void  </RETURNS>
 NspRect *R,const double size[2]
 </FUNCTION>
+<STRUCT>
+<NAME>AcceleratedTab</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>AcceleratedTab</NAME>
+struct AcceleratedTab
+{
+  char *opname;
+  int arity;
+  int nb_accelerated_types;
+  int *accelerated_types;
+  int length;
+  function **func;
+} ;
+</STRUCT>
+<VARIABLE>
+<NAME>concatr_tab</NAME>
+extern AcceleratedTab concatr_tab; 
+</VARIABLE>
+<VARIABLE>
+<NAME>concatd_tab</NAME>
+extern AcceleratedTab concatd_tab; 
+</VARIABLE>
+<VARIABLE>
+<NAME>extract_tab</NAME>
+extern AcceleratedTab extract_tab; 
+</VARIABLE>
+<VARIABLE>
+<NAME>extractelts_tab</NAME>
+extern AcceleratedTab extractelts_tab;
+</VARIABLE>
+<VARIABLE>
+<NAME>extractcols_tab</NAME>
+extern AcceleratedTab extractcols_tab;
+</VARIABLE>
+<VARIABLE>
+<NAME>extractrows_tab</NAME>
+extern AcceleratedTab extractrows_tab;
+</VARIABLE>
+<VARIABLE>
+<NAME>resize2vect_tab</NAME>
+extern AcceleratedTab resize2vect_tab;
+</VARIABLE>
+<VARIABLE>
+<NAME>deleteelts_tab</NAME>
+extern AcceleratedTab deleteelts_tab;
+</VARIABLE>
+<VARIABLE>
+<NAME>deletecols_tab</NAME>
+extern AcceleratedTab deletecols_tab;
+</VARIABLE>
+<VARIABLE>
+<NAME>deleterows_tab</NAME>
+extern AcceleratedTab deleterows_tab;
+</VARIABLE>
+<VARIABLE>
+<NAME>tozero_tab</NAME>
+extern AcceleratedTab tozero_tab;
+</VARIABLE>
+<VARIABLE>
+<NAME>setrowscols_tab</NAME>
+extern AcceleratedTab setrowscols_tab;
+</VARIABLE>
+<FUNCTION>
+<NAME>nsp_get_fast_function</NAME>
+<RETURNS>function  *</RETURNS>
+AcceleratedTab *tab, int type_id
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_init_accelerated_tabs</NAME>
+<RETURNS>int  </RETURNS>
+void
+</FUNCTION>
 <VARIABLE>
 <NAME>int_sprowmatrix_minus</NAME>
 extern function int_sprowmatrix_minus;
@@ -5682,7 +5729,8 @@ struct NspMpmatrix {
   union { 
     double *R;     /* Pointer on real values */
     doubleC *C;    /* Pointer on complex values */
-    int *I;    /* Pointer on integer values */
+    int *I;        /* Pointer on integer values */
+    float *F;      /* Pointer on float values */
   };
   char rc_type;    /* 'r' : real or  'c' : complex  */
   char convert;    /* 'd','i','f' : double, int, float
@@ -5872,6 +5920,11 @@ const char *name,NspMatrix *M
 const char *name, char type, int m, int n
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_mpmatrix_clone</NAME>
+<RETURNS>NspMaxpMatrix  *</RETURNS>
+const char *name, NspMatrix *A, int m, int n
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_mpmatrix_create_impl</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
 double first, double step, double last
@@ -5942,47 +5995,32 @@ const NspMaxpMatrix *A,const NspMaxpMatrix *B
 NspMaxpMatrix *A, int m
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_set_submatrix</NAME>
+<NAME>nsp_mpmatrix_set_submatrix_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspMaxpMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMaxpMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_set_rows</NAME>
+<NAME>nsp_mpmatrix_set_rows_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspMaxpMatrix *A, NspMatrix *Rows, NspMaxpMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_delete_columns</NAME>
-<RETURNS>int  </RETURNS>
-NspMaxpMatrix *A, NspMatrix *Cols
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_mpmatrix_delete_rows</NAME>
-<RETURNS>int  </RETURNS>
-NspMaxpMatrix *A, NspMatrix *Rows
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_mpmatrix_delete_elements</NAME>
-<RETURNS>int  </RETURNS>
-NspMaxpMatrix *A, NspMatrix *Elts
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_mpmatrix_extract</NAME>
+<NAME>nsp_mpmatrix_extract_obsolete</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
 const NspMaxpMatrix *A,const  NspMatrix *Rows,const  NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_extract_elements</NAME>
+<NAME>nsp_mpmatrix_extract_elements_obsolete</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
 const NspMaxpMatrix *A,const  NspMatrix *Elts
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_extract_columns</NAME>
+<NAME>nsp_mpmatrix_extract_columns_obsolete</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
 const NspMaxpMatrix *A,const  NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_mpmatrix_extract_rows</NAME>
+<NAME>nsp_mpmatrix_extract_rows_obsolete</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
 const NspMaxpMatrix *A,const  NspMatrix *Rows
 </FUNCTION>
@@ -7296,6 +7334,11 @@ Stack stack, int i
 const char *name, int m, int n
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_cells_clone</NAME>
+<RETURNS>NspCells  *</RETURNS>
+const char *name, NspCells *A, int m, int n
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_cells_create_from_table</NAME>
 <RETURNS>NspCells  *</RETURNS>
 const char *name,NspObject **T
@@ -7366,42 +7409,27 @@ const NspCells *A,const NspCells *B
 NspCells *A, int m
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_set_submatrix</NAME>
+<NAME>nsp_cells_set_submatrix_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspCells *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspCells *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_set_rows</NAME>
+<NAME>nsp_cells_set_rows_obsolete</NAME>
 <RETURNS>int  </RETURNS>
 NspCells *A, NspMatrix *Rows, NspCells *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_delete_columns</NAME>
-<RETURNS>int  </RETURNS>
-NspCells *A, NspMatrix *Cols
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_delete_rows</NAME>
-<RETURNS>int  </RETURNS>
-NspCells *A, NspMatrix *Rows
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_delete_elements</NAME>
-<RETURNS>int  </RETURNS>
-NspCells *A, NspMatrix *Elts
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_cells_extract</NAME>
+<NAME>nsp_cells_extract_obsolete</NAME>
 <RETURNS>NspCells  *</RETURNS>
 NspCells *A, NspMatrix *Rows, NspMatrix *Cols
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_extract_elements</NAME>
+<NAME>nsp_cells_extract_elements_obsolete</NAME>
 <RETURNS>NspCells  *</RETURNS>
 NspCells *A, NspMatrix *Elts, int *err
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_extract_columns</NAME>
+<NAME>nsp_cells_extract_columns_obsolete</NAME>
 <RETURNS>NspCells  *</RETURNS>
 NspCells *A, NspMatrix *Cols, int *err
 </FUNCTION>
@@ -7411,7 +7439,7 @@ NspCells *A, NspMatrix *Cols, int *err
 char *str, NspCells *Col, NspCells *A, int icol, int *rep
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_cells_extract_rows</NAME>
+<NAME>nsp_cells_extract_rows_obsolete</NAME>
 <RETURNS>NspCells  *</RETURNS>
 NspCells *A, NspMatrix *Rows, int *err
 </FUNCTION>
@@ -7419,6 +7447,11 @@ NspCells *A, NspMatrix *Rows, int *err
 <NAME>nsp_cells_set_element</NAME>
 <RETURNS>int  </RETURNS>
 NspCells *A,int index, NspObject *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_cells_unique</NAME>
+<RETURNS>NspCells  *</RETURNS>
+NspCells *C, NspMatrix **Ind, NspMatrix **Occ
 </FUNCTION>
 <MACRO>
 <NAME>NULLCELLS</NAME>
@@ -8599,7 +8632,7 @@ NspPList *, NspObject **, NspList *, int *
 <FUNCTION>
 <NAME>nsp_list_create</NAME>
 <RETURNS>NspList  *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_cell_create</NAME>
@@ -9810,12 +9843,22 @@ Stack stack, int i
 <FUNCTION>
 <NAME>nsp_object_unserialize</NAME>
 <RETURNS>NspObject  *</RETURNS>
-NspSerial *S
+const NspSerial *S
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_object_serialize</NAME>
 <RETURNS>NspObject  *</RETURNS>
-NspObject *O
+const NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_serial_to_matrix</NAME>
+<RETURNS>NspMatrix  *</RETURNS>
+const NspSerial *S
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matrix_to_serial</NAME>
+<RETURNS>NspSerial  *</RETURNS>
+const NspMatrix *A
 </FUNCTION>
 <STRUCT>
 <NAME>NspType</NAME>
@@ -10395,24 +10438,164 @@ type_mode mode
 void
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_matint_tozero</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *Obj
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_matint_delete_columns</NAME>
 <RETURNS>int  </RETURNS>
-NspObject  *Obj, NspMatrix *Cols
+NspObject  *Obj, int *ind, int nb_elts, int cmin, int cmax
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matint_delete_rows</NAME>
 <RETURNS>int  </RETURNS>
-NspObject *Obj, NspMatrix *Rows
+NspObject *Obj, int *ind, int nb_elts, int rmin, int rmax
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matint_delete_elements</NAME>
 <RETURNS>int  </RETURNS>
-NspObject *Obj, NspMatrix *Elts
+NspObject *Obj, int *ind, int nb_elts, int rmin, int rmax
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matint_delete_elements2</NAME>
 <RETURNS>int  </RETURNS>
-NspObject *Obj, NspMatrix *EltsR, NspMatrix *EltsC
+NspObject *Obj,int *indrow, int nr, int rmin, int rmax,int *indcol, int nc, int cmin, int cmax
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_extract_elements</NAME>
+<RETURNS>NspObject  *</RETURNS>
+NspObject *Obj, const int *ind, int nb_elts, int rmin, int rmax
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_extract_columns</NAME>
+<RETURNS>NspObject  *</RETURNS>
+NspObject *Obj, const int *ind, int nb_elts, int cmin, int cmax
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_extract_rows</NAME>
+<RETURNS>NspObject  *</RETURNS>
+NspObject *Obj, const int *ind, int nb_elts, int rmin, int rmax
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_extract</NAME>
+<RETURNS>NspObject  *</RETURNS>
+NspObject *Obj,const int *row, int nr, int rmin, int rmax,const int *col, int nc, int cmin, int cmax
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_set_submatrix</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *ObjA,const int *row, int nr, int rmin, int rmax,const int *col, int nc, int cmin, int cmax,NspObject *ObjB
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_set_elts</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *ObjA, const int *ind, int nb_elts, int imin, int imax, NspObject *ObjB
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_concat_right</NAME>
+<RETURNS>NspObject  *</RETURNS>
+const NspObject *ObjA,const NspObject *ObjB
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_concat_right_bis</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *ObjA,const NspObject *ObjB
+</FUNCTION>
+<USER_FUNCTION>
+<NAME>Fconcat_d</NAME>
+<RETURNS>NspObject *</RETURNS>
+const NspObject *, const NspObject *
+</USER_FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_concat_down</NAME>
+<RETURNS>NspObject  *</RETURNS>
+NspObject *ObjA, NspObject *ObjB
+</FUNCTION>
+<FUNCTION>
+<NAME>int_matint_concat_down_yy</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs, Fconcat_d F
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_resize2vect_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_extractelts_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_extractcols_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_extractrows_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_extract_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_setrowscols_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_deleteelts_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_deleteelts2_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_deletecols_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_deleterows_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_tozero_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_concatr_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_concatd_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_cells_setrowscols_xx</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>int_matint_redim</NAME>
+<RETURNS>int  </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matint_redim</NAME>
+<RETURNS>int  </RETURNS>
+NspObject *Obj, int m, int n
 </FUNCTION>
 <STRUCT>
 <NAME>NspFile</NAME>
@@ -11405,9 +11588,14 @@ NspSpRowMatrix *Diag, int k
 NspSpRowMatrix *A, NspSpRowMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_sprowmatrix_mult_matrix</NAME>
+<NAME>nsp_sprowmatrix_mult_sp_m</NAME>
 <RETURNS>NspMatrix  *</RETURNS>
 NspSpRowMatrix *A, NspMatrix *X
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sprowmatrix_mult_m_sp</NAME>
+<RETURNS>NspMatrix  *</RETURNS>
+NspMatrix *X,NspSpRowMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_sprowmatrix_mult_scal</NAME>
@@ -11476,17 +11664,17 @@ NspSpRowMatrix *A, int rhs, double epsa, double epsr
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_sprowmatrix_maximinitt_g</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
+<RETURNS>NspSpRowMatrix  *</RETURNS>
 NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int minmaxflag, int *err
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_sprowmatrix_maxitt</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
+<RETURNS>NspSpRowMatrix  *</RETURNS>
 NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_sprowmatrix_minitt</NAME>
-<RETURNS>NspMatrix  *</RETURNS>
+<RETURNS>NspSpRowMatrix  *</RETURNS>
 NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err
 </FUNCTION>
 <FUNCTION>
@@ -11678,6 +11866,11 @@ NspSpRowMatrix *A
 <NAME>nsp_sprowmatrix_find</NAME>
 <RETURNS>int  </RETURNS>
 NspSpRowMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sprowmatrix_rand</NAME>
+<RETURNS>NspSpRowMatrix  *</RETURNS>
+int m,int n,double sparsity,char crand
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_sprow_update_from_triplet</NAME>
