@@ -171,10 +171,6 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,int use_table)
   return answer;
 }
 
-
-
-
-
 /**
  * nsp_setup_combo_box_text:
  * @Ms: 
@@ -567,13 +563,12 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 {
   gchar *fname;
   const gchar *fname1;
-  int i=0;
+  int i=0,rep;
   Cell *Loc= L->first;
   while (Loc != NULL) 
     {
       NspMatrix *active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->next->O);
       NspSMatrix *Ms = ((NspSMatrix *) ((NspList *) Loc->O)->first->next->next->next->O);
-      active_field->R[0] = 0;
       switch (  array[i].type )
 	{
 	case choice_matrix: 
@@ -632,8 +627,9 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 	  }
 	  break;
 	case choice_spin_button:
-	  return nsp_spin_button_get_value(array[i].widget,(NspMatrix *) Ms);
-
+	  rep = nsp_spin_button_get_value(array[i].widget,(NspMatrix *) Ms);
+	  active_field->R[0] = ((NspMatrix *) Ms)->R[0];
+	  return rep;
 	}
       Loc= Loc->next;
       i++;
@@ -786,14 +782,10 @@ static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S)
 
 static GtkWidget *nsp_setup_spin_button_wraper(double *val,int entry_size)
 {
-  double max=10.0;
+  /* value, lower, upper, step_increment, page_increment, page_size, climb_rate, digits*/
   GtkAdjustment *adj;
-  adj = GTK_ADJUSTMENT (gtk_adjustment_new (max,
-					    1, max,
-					    1,
-					    (max + 1) / 10,
-					    0.0));
-  return  gtk_spin_button_new (adj, 1.0, 0);
+  adj = GTK_ADJUSTMENT (gtk_adjustment_new (*val,*(val+1),*(val+2),*(val+3),*(val+4),*(val+5)));
+  return  gtk_spin_button_new (adj,*(val+6),*(val+7));
 }
 
 

@@ -478,27 +478,29 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 static int nsp_check_choice(Stack stack,NspList *L)
 {
   NspSMatrix *MS1,*MS2,*MS3;
-  NspMatrix *M3;
+  NspObject *M3;
   int i;
-  int_types Tc1[]={ smat,smat,s_int,smat ,list_end} ;
-  int_types Tc2[]={ smat,smat,s_int,realmat ,list_end} ;
-  char *str;
+  int_types Tc1[]={ smat,smat,s_int,obj ,list_end} ;
+  
+  if ( GetListArgs(L,1,Tc1,&MS1,&MS2,&i,&M3) == FAIL) return FAIL;
 
-  if ((str = GetString(stack,1))==(char*)0)
-    return FAIL;
-  if ( strcmp(str,"spin") == 0) 
+  if ( MS1->mn >= 1 &&  strcmp(MS1->S[0],"spin") == 0) 
     {
-      if ( GetListArgs(L,1,Tc2,&MS1,&MS2,&i,&M3) == FAIL) return FAIL;
       if (  nsp_smatrix_to_utf8(MS1) == FAIL 
 	    || nsp_smatrix_to_utf8(MS2) == FAIL )
 	{
 	  Scierror("Error: in %s conversion to utf8 failed\n",NspFname(stack));
 	  return FAIL;
 	}
+      if ( !( IsMat(M3) && ((NspMatrix *)M3)->mn==8) ) 
+	{
+	  Scierror("Error: Argument should be a Matrix of size 8\n");
+	  Scierror("       while parsing a list argument (element 4)\n");
+	  return FAIL;
+	}
     }
   else
     {
-      if ( GetListArgs(L,1,Tc1,&MS1,&MS2,&i,&MS3) == FAIL) return FAIL;
       if (  nsp_smatrix_to_utf8(MS1) == FAIL 
 	    || nsp_smatrix_to_utf8(MS2) == FAIL 
 	    || nsp_smatrix_to_utf8(MS3) == FAIL )
@@ -507,7 +509,7 @@ static int nsp_check_choice(Stack stack,NspList *L)
 	  return FAIL;
 	}
     }
-  return OK;
+  return OK; 
 }
 
 static int nsp_check_choice_list(Stack stack,NspList *L)
