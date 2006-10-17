@@ -28,7 +28,8 @@
 
 typedef enum { choice_combo,choice_color,choice_chooser_save, 
 	       choice_chooser_open_file,choice_button_save,choice_button_open_file,choice_entry,
-	       choice_unknown,choice_matrix,choice_chooser_open_folder,choice_button_open_folder} 
+	       choice_unknown,choice_matrix,choice_chooser_open_folder,choice_button_open_folder,
+	       choice_spin_button}
   nsp_choice_value;
 
 typedef struct _nsp_choice_array 
@@ -46,6 +47,8 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
 static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int entry_size);
 static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S);
 static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size);
+static GtkWidget *nsp_setup_spin_button_wraper(double *val,int entry_size);
+static int nsp_spin_button_get_value(GtkWidget *spin,NspMatrix *M);
 
 /*
   l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
@@ -292,6 +295,8 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
     case choice_unknown: 
       return NULL;
       break;
+    case choice_spin_button:
+      return nsp_setup_spin_button_wraper((double *)Ms,active);
     }
   return NULL;
 }
@@ -299,7 +304,7 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,char **Ms,i
 
 static int nsp_get_choice_from_title(char *type)
 {
-  char *table[]= {"combo","entry","colors","save","open","matrix","folder",NULL};
+  char *table[]= {"combo","entry","colors","save","open","matrix","folder","spin",NULL};
   int rep = is_string_in_array(type,table,1);
   if ( rep < 0 ) return choice_unknown;
   switch (rep) 
@@ -323,6 +328,8 @@ static int nsp_get_choice_from_title(char *type)
       return choice_button_open_folder;
 #endif
       break;
+    case 7:
+      return choice_spin_button;
     }
   return choice_unknown;
 }
@@ -624,6 +631,9 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 	      }
 	  }
 	  break;
+	case choice_spin_button:
+	  return nsp_spin_button_get_value(array[i].widget,(NspMatrix *) Ms);
+
 	}
       Loc= Loc->next;
       i++;
@@ -717,6 +727,7 @@ static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int
  * Return value: the widget which contains data acces to matrix edited values.
  **/
 
+
 static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size)
 {
   GtkWidget *res;
@@ -766,5 +777,28 @@ static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S)
       nsp_string_destroy(&(S->S[i]));
       S->S[i]= loc;
     }
+  return OK;
+}
+
+/*
+ * using spin button: work in progress 
+ **/
+
+static GtkWidget *nsp_setup_spin_button_wraper(double *val,int entry_size)
+{
+  double max=10.0;
+  GtkAdjustment *adj;
+  adj = GTK_ADJUSTMENT (gtk_adjustment_new (max,
+					    1, max,
+					    1,
+					    (max + 1) / 10,
+					    0.0));
+  return  gtk_spin_button_new (adj, 1.0, 0);
+}
+
+
+static int nsp_spin_button_get_value(GtkWidget *spin,NspMatrix *M)
+{
+  M->R[0] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spin));
   return OK;
 }
