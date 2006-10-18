@@ -644,7 +644,7 @@ static NspList *nsp_combo_gather_choices(NspList *L,nsp_choice_array *array)
 {
   NspObject *Ob;
   NspList *Res;
-  gchar *fname, *fname_def="";
+  gchar *fname=NULL, *fname_def="";
   const gchar *fname1;
   int i=0,rep;
   Cell *Loc= L->first;

@@ -485,8 +485,8 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 
 static int nsp_check_choice(Stack stack,NspList *L)
 {
-  NspSMatrix *MS1,*MS2,*MS3;
-  NspObject *M3;
+  NspSMatrix *MS1=NULL,*MS2=NULL,*MS3=NULL;
+  NspObject *M3=NULL;
   int i;
   int_types Tc1[]={ smat,smat,s_int,obj ,list_end} ;
   
