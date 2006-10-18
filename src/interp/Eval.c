@@ -1719,16 +1719,14 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	  if ((stack.val->S[*ipos+1] =nsp_create_empty_matrix_object(name)) == NULLOBJ ) 
 	    {
 	      stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
-	      nsp_void_object_destroy(&stack.val->S[*ipos+2]);
-	      stack.val->S[*ipos+2]= NULLOBJ;
+	      nsp_void_seq_object_destroy(stack,*ipos+2,*ipos+2+n);
 	      SHOWBUG(stack,RET_BUG,L);
 	    }
 	  if (nsp_frame_replace_object(stack.val->S[*ipos+1])==FAIL) 
 	    {
 	      nsp_object_destroy(&stack.val->S[*ipos+1]);
 	      stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
-	      nsp_void_object_destroy(&stack.val->S[*ipos+2]);
-	      stack.val->S[*ipos+2]= NULLOBJ;
+	      nsp_void_seq_object_destroy(stack,*ipos+2,*ipos+2+n);
 	      SHOWBUG(stack,RET_BUG,L);
 	    }
 	  if ( stack.val->S[*ipos] == Reserved ) stack.val->S[*ipos]= stack.val->S[*ipos+1];
@@ -1738,8 +1736,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	{
 	  Scierror("Error: path extraction cannot be performed (step %d)\n",j);
 	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
-	  nsp_void_object_destroy(&stack.val->S[*ipos+2]);
-	  stack.val->S[*ipos+2]= NULLOBJ;
+	  nsp_void_seq_object_destroy(stack,*ipos+2,*ipos+2+n);
 	  SHOWBUG(stack,RET_BUG,L);
 	}
       /* XXXX : Pb here because path-extract can have more than one 
@@ -1750,14 +1747,13 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	{
 	  Scierror("Error: path extraction cannot be performed (step %d)\n",j);
 	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
-	  nsp_void_object_destroy(&stack.val->S[*ipos+2]);
-	  stack.val->S[*ipos+2]= NULLOBJ;
+	  nsp_void_seq_object_destroy(stack,*ipos+2,*ipos+2+n);
 	  SHOWBUG(stack,RET_BUG,L);
 	}
       stack.val->S[*ipos+1]= O;
-      nsp_void_object_destroy(&stack.val->S[*ipos+2]);
-      stack.val->S[*ipos+2]= NULLOBJ;
+      nsp_void_seq_object_destroy(stack,*ipos+2,*ipos+2+n);
     }
+
   /* Now stack.val->S[*ipos+1] contains the element inside the followed object 
    * which is to be changed. Now we evaluate the last expr which gives
    * the extraction or deletion indices 
