@@ -19,3 +19,5 @@ manual.4dx
 manual.4ix
 manual.ilg
 manual.ind
+manual*.png
+*.aux
