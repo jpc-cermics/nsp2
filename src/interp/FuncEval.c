@@ -865,7 +865,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	}
       if (debug) Sciprintf("\n",nargs -j);
     }
-
+  
   else if ( option_case == 2 ) 
     {
       /* Objects from js+1 to rhs-js are optional arguments 
@@ -893,12 +893,13 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
     }
   
   /* we can now clean the stack since arguments are now on the local frame 
-   * XXX est-ce qu'ici on ne fait pas des memory leak en 
-   * mettant le X= NULLOBJ;
+   * We only have to take care of Hopt which are to be destroyed 
    */
   
   for ( j = 1 ; j <= rhs  ; j++) 
     {
+      /* delete Hopt objects (but of course not the object they point to) */
+      if ( IsHopt(NthObj(j)) ) nsp_object_destroy(&NthObj(j));
       NthObj(j)=NULLOBJ;
     }
   
