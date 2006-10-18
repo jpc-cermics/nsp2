@@ -1,0 +1,39 @@
+% -*- mode: latex -*-
+
+\mansection{x\_message\_modeless}
+\begin{mandesc}
+  \short{x-message-modeless}{X window modeless message}\\ % @mandesc@
+\end{mandesc}
+\index{x\_message\_modeless}\label{x-message-modeless}
+%-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+    x_message_modeless(strings)   
+  \end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{strings} : vector of characters strings to be displayed
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  for displaying a message (information, user-guide ...). The function
+  returns immediately. The message window is killed when "Ok" button is
+  clicked.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}
+    x_message_modeless(['This is a modeless message'
+      'Scilab may continue computation'
+      ' '
+      'Click on ""Ok"" to close the message'])
+    x_message_modeless('Now two message windows are opened')
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{x\_dialog}{x-dialog} \manlink{x\_mdialog}{x-mdialog} \manlink{x\_message}{x-message}  
+\end{manseealso}
+

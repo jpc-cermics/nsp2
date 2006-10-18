@@ -1,0 +1,41 @@
+% -*- mode: latex -*-
+
+\mansection{x\_choose}
+\begin{mandesc}
+  \short{x-choose}{interactive choices}\\ % @mandesc@
+\end{mandesc}
+\index{x\_choose}\label{x-choose}
+%-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+    [num]=x_choose(items,title [,button])   
+  \end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{items} : column vector of string,  items to choose
+    \vname{title} : column vector of string, comment for the dialog
+    \vname{button} :  string, text to appear in the button. Default value is 'Cancel'
+    \vname{num} : integer, choosen item number or 0 if dialog resumed with "Cancel" button
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Returns in \verb!num! the number of the chosen item.
+\end{mandescription}
+
+%--example 
+\begin{examples}
+  \begin{program}
+    n=x_choose(['item1';'item2';'item3'],['that is a comment';'for the dialog'])
+    n=x_choose(['item1';'item2';'item3'],['that is a comment'],'Return')
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{x\_choices}{x-choices} 
+  \manlink{x\_mdialog}{x-mdialog} 
+  \manlink{getvalue}{getvalue} 
+  \manlink{unix\_g}{unix-g}  
+\end{manseealso}
+

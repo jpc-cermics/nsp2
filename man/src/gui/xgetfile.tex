@@ -1,0 +1,42 @@
+% -*- mode: latex -*-
+
+\mansection{xgetfile}
+\begin{mandesc}
+  \short{xgetfile}{dialog to get a file or folder path}\\ % @mandesc@
+\end{mandesc}
+\index{xgetfile}\label{xgetfile}
+%-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+    path=xgetfile([title='string'])  
+    path=xgetfile(file_mask,[title='string'])  
+    path=xgetfile(file_mask,dir,[title='string'])  
+    path=xgetfile(file_mask,dir,'string')  
+  \end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{file\_mask} : a character string which gives the file mask to use for file selection. \verb!file_mask! is written with Unix convention. the default value is '*'.
+    \vname{dir} : a character string which gives the initial directory used for file search. by default xgetfile uses the previously selected directory.
+    \vname{path} : is the user selected file path if user answers "Ok" or the " " string if user answers "Cancel"
+    \vname{title='string'  } :Optional arguments which gives the title for the xgetfile window.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Creates a dialog window for file selection
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}
+    xgetfile()
+    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],save=%t)
+    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],open=%t)
+    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],action=%t);
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{x\_dialog}{x-dialog} \manlink{file}{file} \manlink{read}{read} \manlink{write}{write} \manlink{exec}{exec} \manlink{getf}{getf}  
+\end{manseealso}
+

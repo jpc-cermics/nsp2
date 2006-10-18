@@ -1,0 +1,51 @@
+% -*- mode: latex -*-
+
+\mansection{x\_mdialog}
+\begin{mandesc}
+  \short{x-mdialog}{dialogs} \\ % @mandesc@
+\end{mandesc}
+\index{x\_mdialog}\label{x-mdialog}
+%-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+    result=x_mdialog(title,labels,default_inputs_vector)   
+    result=x_mdialog(title,labelsv,labelsh,default_input_matrix)   
+  \end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{title} : column vector of strings, dialog general comment
+    \vname{labels} : n column vector of strings, \verb!labels(i)! is the label of  the ith required value
+    \vname{default\_input\_vector} : n  column vector of strings, \verb!default_input_vector(i)! is the initial value of  the ith required value
+    \vname{labelsv} : n  vector of strings, \verb!labelsv(i)! is the label of  the ith line of the required matrix
+    \vname{labelsh} : m  vector of strings, \verb!labelsh(j)! is the label of  the jth column of the required matrix
+    \vname{default\_input\_matrix} : n x m matrix of strings, \verb!default_input_matrix(i,j)! is the initial value of the (i,j) element of then required matrix
+    \vname{result} : n x m matrix of string if returned with "Ok" button or [] if returned with "Cancel" button
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  X-window vector/matrix interactive input function
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}
+    rep=x_mdialog(['System Simulation';'with PI regulator'],...
+    ['P gain';'I gain '],[' ';' '])
+    
+    n=5;m=4;mat=rand(n,m);
+    row='row';labelv=row(ones(1,n))+string(1:n)
+    col='col';labelh=col(ones(1,m))+string(1:m)
+    smat=m2s(mat,"%5.2f");
+    x_mdialog('Matrix to edit',labelv,labelh,smat);
+    x_mdialog('Matrix to edit',string([]),string([]),smat);
+    x_mdialog('Matrix to edit',labelv,labelh,smat,entry=%t);
+    x_mdialog('Matrix to edit',string([]),string([]),smat,entry=%t);
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{x\_dialog}{x-dialog} \manlink{x\_choose}{x-choose} \manlink{x\_message}{x-message} \manlink{getvalue}{getvalue} \manlink{evstr}{evstr} \manlink{execstr}{execstr}  
+\end{manseealso}
+

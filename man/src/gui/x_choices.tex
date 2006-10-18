@@ -1,0 +1,57 @@
+% -*- mode: latex -*-
+\mansection{x\_choices}
+\begin{mandesc}
+  \short{x-message}{interactive choices using a subset of Gtk widgets}\\ % @mandesc@
+\end{mandesc}
+\index{x\_choices}\label{x-choices}
+%-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+    [rep,L]=x_choices(title,items [,flag])   
+  \end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{title}: string matrix which gives the title of the popup window.
+    \vname{items}: a list of items, where each \verb!item! is itself a list 
+    describing an entry to be selected. The item list should be given as follows 
+    \begin{verbatim}
+      item=list(type,title,def,choices) 
+    \end{verbatim} 
+    where 
+    \begin{itemize}
+      \item[type] is a string among \verb+'combo'+, \verb+'entry'+,\verb+'matrix'+, 
+      \verb+'colors'+, \verb+'save'+, \verb+'open'+, \verb+'folder'+. 
+    \item[title] is a strign describing the entry. 
+    \item[def] is an integer which describes the default choice. \verb+def+ is ignored by \verb+'save'+ 
+      \verb+'load'+ and \verb+'folder'+. For \verb+'matrix'+, \verb+'def'+ gives the size of entry used for 
+      matrix edition.
+    \item[choices] is a string matrix giving the possible choices or one initial value. For an 
+      \verb+'open'+ entry it is a default answer followed be a list of file filters (See example below).
+    \end{itemize}
+    \vname{flag} optional boolean which changes the way titles are displayed. 
+    \vname{L} is a copy of verb+items+ but in which the default values are replaced by the user's choices. 
+    \vname{rep} is a column vector containing the user's choices when the choice is among a finite list and 
+    the value \verb+0+ in other cases.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Select items through toggle lists and return in \verb!rep! the selected items
+\end{mandescription}
+  %--example 
+\begin{examples}
+  \begin{program}
+    l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
+    l2=list('entry','entry title',1,['initial']); // 1 is unused 
+    l3=list('matrix','enter matrix',10,string(rand(6,2)));// l(3) is for entry size
+    l4=list('colors','colors choice 4',29,['']);
+    l5=list('save','file save',1,['foo.sav']); // initial value 
+    l6=list('open','file open',1,['foo.rep','*.eps','*.pdf']); // answer, filter 
+    l7=list('folder','choose a folder',1,['']); // answer, filter unused 
+    L= list(l1,l2,l3,l4,l5,l6,l7);
+    [rep,L]=x_choices('Toggle Menu',L,%t);
+    [rep,L]=x_choices('Toggle Menu',L,%f);
+  \end{program}
+\end{examples}
+

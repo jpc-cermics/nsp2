@@ -1,0 +1,37 @@
+% -*- mode: latex -*-
+\mansection{x\_message}
+\begin{mandesc}
+  \short{x-message}{message}\\ % @mandesc@
+\end{mandesc}
+\index{x\_message}\label{x-message}
+%-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+    [num]=x_message(strings [,buttons])   
+  \end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{strings} : vector of characters strings to be displayed
+    \vname{buttons} : character string or 2 vector of character strings which specifies button(s) name(s). Default value is "Ok"
+    \vname{num} : number  of button clicked (if 2 buttons are specified)
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  for displaying a message (diagnostic,... ) and waiting for
+  an answer (button click). The function returns only after a click on a
+  button.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}
+    x_message('foo')
+    x_message('foo',"gtk-close");
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{x\_dialog}{x-dialog} \manlink{x\_mdialog}{x-mdialog} \manlink{x\_message\_modeless}{x-message-modeless}  
+\end{manseealso}
+
