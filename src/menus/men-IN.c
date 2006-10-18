@@ -420,10 +420,10 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
   int count=0,m,use_table = FALSE;
   NspMatrix *M=NULL;
   NspSMatrix *Title;
-  NspList *ListItems ; 
+  NspList *ListItems,*Res ; 
   nsp_string title; 
   CheckRhs(2,3);
-  CheckLhs(0,2);
+  CheckLhs(0,3);
   if ((Title = GetSMatUtf8(stack,1)) == NULLSMAT) return RET_BUG;
   if ((ListItems  = GetListCopy(stack,2)) == NULLLIST) return RET_BUG;
   if ( rhs == 3 ) 
@@ -438,7 +438,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 
   /* run the widget */
 
-  rep = nsp_choices_with_combobox(title,ListItems,use_table);
+  rep = nsp_choices_with_combobox(title,ListItems,&Res,use_table);
   switch (rep)
     {
     case menu_ok :
@@ -463,8 +463,16 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: lack of memory or internal error in %s \n",NspFname(stack));
       return RET_BUG;
     }
-  MoveObj(stack,1,(NspObject *) M);
-  if ( lhs == 2 ) NSP_OBJECT(ListItems)->ret_pos = 2;
+  MoveObj(stack,1,NSP_OBJECT(M));
+  if ( lhs >= 2 ) NSP_OBJECT(ListItems)->ret_pos = 2;
+  if ( lhs == 3 )
+    {
+      MoveObj(stack,3,NSP_OBJECT(Res));
+    }
+  else 
+    {
+      nsp_list_destroy(Res);
+    }
   return Max(lhs,1); 
 }
 

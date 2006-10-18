@@ -32,7 +32,7 @@ int nsp_print_dialog(char **print_command,int *type,int *orientation,int *format
   char *types[]={ "color", "black and white",NULL};
   char *orientations[]={"landscape", "portrait", "keep size",NULL };
   NspSMatrix *S;
-  NspList *L1,*L2,*L3,*L4;
+  NspList *L1,*L2,*L3,*L4,*Res;
   int_types Ret[]={ string ,string, s_int ,smatcopy , t_end};
   int_types Ret1[]={ obj,obj,obj,obj, t_end};
   /* test the list builder **/
@@ -48,10 +48,12 @@ int nsp_print_dialog(char **print_command,int *type,int *orientation,int *format
       if (( L4 = BuildListFromArgs(Ret,"entry","print command",0,S)) == NULL ) return FAIL;
       if (( L = BuildListFromArgs(Ret1,L4,L3,L2,L1))== NULL) return FAIL;
     }
-  if ( nsp_choices_with_combobox(title,L,TRUE) == FAIL) return FAIL;
+  if ( nsp_choices_with_combobox(title,L,&Res,TRUE) == FAIL) return FAIL;
   {
     NspMatrix *active_field;
     NspSMatrix *Ms;
+    /* unused Res */
+    nsp_list_destroy(Res);
     /* L4 is an entry */
     Cell *Loc= L->first;
     active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->next->O);
@@ -83,7 +85,7 @@ int nsp_export_dialog(char **file,int *type,int *orientation,int *format)
   char *orientations[]={"landscape", "portrait", "keep size",NULL };
   char *save[]={"Untitled.eps",NULL};
   NspSMatrix *S;
-  NspList *L1,*L2,*L3,*L4;
+  NspList *L1,*L2,*L3,*L4,*Res;
   int_types Ret[]={ string ,string, s_int ,smatcopy , t_end};
   int_types Ret1[]={ obj,obj,obj,obj, t_end};
   /* test the list builder **/
@@ -99,10 +101,12 @@ int nsp_export_dialog(char **file,int *type,int *orientation,int *format)
       if (( L4 = BuildListFromArgs(Ret,"save","file name",0,S)) == NULL ) return FAIL;
       if (( L = BuildListFromArgs(Ret1,L4,L3,L2,L1))== NULL) return FAIL;
     }
-  if ( nsp_choices_with_combobox(title,L,TRUE) == FAIL) return FAIL;
+  if ( nsp_choices_with_combobox(title,L,&Res,TRUE) == FAIL) return FAIL;
   {
     NspMatrix *active_field;
     NspSMatrix *Ms;
+    /* unused Res */
+    nsp_list_destroy(Res);
     /* L4 is an entry */
     Cell *Loc= L->first;
     active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->next->O);

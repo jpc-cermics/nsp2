@@ -38,7 +38,7 @@ extern menu_answer nsp_message_modeless_(char *message);
 
 /* choices */
 
-menu_answer nsp_choices_with_combobox(char *title,NspList *L,int use_table);
+menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int use_table);
 
 /* print */
 

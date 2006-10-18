@@ -49,6 +49,7 @@ static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S);
 static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size);
 static GtkWidget *nsp_setup_spin_button_wraper(double *val,int entry_size);
 static int nsp_spin_button_get_value(GtkWidget *spin,NspMatrix *M);
+static NspList *nsp_combo_gather_choices(NspList *L,nsp_choice_array *array);
 
 /*
   l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
@@ -68,13 +69,14 @@ static int nsp_spin_button_get_value(GtkWidget *spin,NspMatrix *M);
  * @L: 
  * 
  * choose answers in combobox
- * in case of succes L is updated with selected items.
+ * in case of succes L is updated with selected items and Res contains 
+ * the answers extracted from L.
  *
- * Return value:  %OK or %FAIL
+ * Return value:  menu_ok , menu_cancel, menu_fail. 
  **/
 
 
-menu_answer nsp_choices_with_combobox(char *title,NspList *L,int use_table)
+menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int use_table)
 {
   /* GdkGeometry geometry; */
   GtkWidget *window,*mainbox,*table;
@@ -161,6 +163,7 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,int use_table)
       case GTK_RESPONSE_OK:
 	answer = menu_ok;	
 	if ( nsp_combo_update_choices(L,combo_entry_array)==FAIL) answer=menu_fail;
+	if ((*Res = nsp_combo_gather_choices(L,combo_entry_array))==NULLLIST) answer=menu_fail;
 	FREE(combo_entry_array);
 	break;
       default:
@@ -635,6 +638,93 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
       i++;
     }
   return OK;
+}
+
+static NspList *nsp_combo_gather_choices(NspList *L,nsp_choice_array *array)
+{
+  NspObject *Ob;
+  NspList *Res;
+  gchar *fname, *fname_def="";
+  const gchar *fname1;
+  int i=0,rep;
+  Cell *Loc= L->first;
+  
+  if ((Res= nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
+  while (Loc != NULL) 
+    {
+      NspMatrix *active_field = ((NspMatrix *) ((NspList *) Loc->O)->first->next->next->O);
+      NspSMatrix *Ms = ((NspSMatrix *) ((NspList *) Loc->O)->first->next->next->next->O);
+      switch (  array[i].type )
+	{
+	case choice_matrix: 
+	  /* update L */
+	  if ( nsp_matrix_entry_get_values(array[i].widget,Ms)== FAIL) return NULLLIST;
+	  /* store updated in Res */  
+	  if ((Ob =nsp_object_copy_and_name("le",NSP_OBJECT(Ms)))== NULLOBJ) return NULLLIST;
+	  if ( nsp_list_end_insert(Res,Ob) == FAIL) return NULLLIST;
+	  break;
+	case choice_unknown : 
+	  break;
+	case choice_combo :
+	case choice_color:
+	  active_field->R[0] = 1+ gtk_combo_box_get_active(GTK_COMBO_BOX (array[i].widget));
+	  if (( Ob =nsp_create_object_from_double("le",active_field->R[0])) == NULLOBJ ) 
+	    return NULLLIST;
+	  if ( nsp_list_end_insert(Res,Ob) == FAIL) return NULLLIST;
+	  break;
+	case choice_chooser_save:
+	case choice_chooser_open_file:
+	case choice_chooser_open_folder:
+	  /* fname is to be freed Free with g_free().*/
+	  fname = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(array[i].widget));
+	  if ( fname == NULL) fname = fname_def;
+	  if ( nsp_smatrix_set_first(Ms,fname) == FAIL) goto err;
+	  if (( Ob = nsp_create_object_from_str(fname)) == NULLOBJ ) goto err;
+	  if ( nsp_list_end_insert(Res,Ob) == FAIL) goto err;
+	  if ( fname != fname_def ) g_free(fname);
+	  break;
+	err: 
+	  if ( fname != fname_def ) g_free(fname);
+	  return NULLLIST;
+	  break;
+	case choice_button_save:
+	case choice_button_open_file:
+	case choice_button_open_folder:
+	  fname1 = g_object_get_data (G_OBJECT(array[i].widget),"filename");
+	  if (fname1 == NULL) fname1 = fname_def;
+	  if  ( nsp_smatrix_set_first(Ms,fname1) == FAIL) return NULLLIST;
+	  if (( Ob = nsp_create_object_from_str(fname1)) == NULLOBJ ) return NULLLIST;
+	  if ( nsp_list_end_insert(Res,Ob) == FAIL) return NULLLIST;
+	  break;
+	case choice_entry :
+	  {
+	    /* text is to be freed Free with g_free().*/
+	    char * text = gtk_editable_get_chars(GTK_EDITABLE(array[i].widget),0,
+						 GTK_ENTRY(array[i].widget)->text_length);
+	    if ( text == NULL)
+	      {
+		if  ( nsp_smatrix_set_first(Ms,"") == FAIL) return NULLLIST;
+	      }
+	    else
+	      {
+		if  ( nsp_smatrix_set_first(Ms,text) == FAIL) return NULLLIST;
+	      }
+	    if (( Ob = nsp_create_object_from_str(Ms->S[0])) == NULLOBJ ) goto err;
+	    if ( nsp_list_end_insert(Res,Ob) == FAIL) goto err;
+	  }
+	  break;
+	case choice_spin_button:
+	  rep = nsp_spin_button_get_value(array[i].widget,(NspMatrix *) Ms);
+	  active_field->R[0] = ((NspMatrix *) Ms)->R[0];
+	  if (( Ob =nsp_create_object_from_double("le",active_field->R[0])) == NULLOBJ ) 
+	    return NULLLIST;
+	  if ( nsp_list_end_insert(Res,Ob) == FAIL)return NULLLIST;
+	  break;
+	}
+      Loc= Loc->next;
+      i++;
+    }
+  return Res;
 }
 
 /*

@@ -1,13 +1,12 @@
 function demo_xchoices(flag)
   l1=list('combo','combo title',1,['choice 1','choice 2','choice 3']);
   l2=list('entry','entry title',0,['initial']); // 0 is unused 
-  l3=list('matrix','enter matrix',10,string(rand(6,2))) // l(3) is for entry size
-  l3b=list('matrix','enter matrix',10,['A','B';'C','D']) // l(3) is for entry size
+  l3=list('matrix','enter matrix',10,string(rand(6,2))); // l(3) is for entry size
+  l3b=list('matrix','enter matrix',10,['A','B';'C','D']); // l(3) is for entry size
   l4=list('colors','colors choice 4',29,['']);
   l5=list('save','file save',0,['foo.sav']); // initial value 
   l6=list('open','file open',0,['foo.rep','*.eps','*.pdf']); // answer, filter 
   l7=list('folder','choose a folder',1,['']);// answer, filter unused 
-					    
   // spin=[value,lower,upper,step_increment,page_increment,page_size,climb_rate,digits] 
   v8=[5,0,100,0.5,10,20,3,3];    
   l8=list('spin','double with spin',0,v8);// l(3) is unused
