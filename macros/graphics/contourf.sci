@@ -73,7 +73,7 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   [FA,IA]=sort(abs(Area));
 
   pat=xget('pattern');
-  for jj=IA',
+  for jj=IA,
     nl=CS(2,I(jj));
     lev1=CS(1,I(jj));
     if (lev1 ~= minz | draw_min),
