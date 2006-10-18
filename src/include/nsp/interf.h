@@ -185,6 +185,10 @@ extern NspLmo *GetLmo (Stack S,int i);
    { Scierror("%s: arguments %d should be a complex  matrix\n",fname,pos1); \
      return RET_BUG;} 
 
+#define CheckNonNegative(fname, k, pos1) if ( k < 0 ) \
+   { Scierror("%s: argument %d must be non negative\n",fname,pos1); \
+     return RET_BUG;} 
+
 extern int call_interf(function *f, Stack stack, int rhs, int opt, int lhs); 
 extern int AllInterf(int i, int num, Stack stack, int rhs, int opt, int lhs);
 

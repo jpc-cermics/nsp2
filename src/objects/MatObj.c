@@ -927,8 +927,10 @@ int_mxcreate (Stack stack, int rhs, int opt, int lhs)
   CheckLhs (1, 1);
   if (GetScalarInt (stack, 1, &m1) == FAIL)
     return RET_BUG;
+  CheckNonNegative(NspFname(stack),m1,1);
   if (GetScalarInt (stack, 2, &n1) == FAIL)
     return RET_BUG;
+  CheckNonNegative(NspFname(stack),n1,2);
   if ((HMat = nsp_matrix_create (NVOID, 'r', m1, n1)) == NULLMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) HMat);
@@ -1034,6 +1036,7 @@ int_mxtestmatrix (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if (GetScalarInt (stack, 2, &n1) == FAIL)
     return RET_BUG;
+  CheckNonNegative(NspFname(stack),n1,2);
   switch (ind)
     {
     case 0:
@@ -1263,6 +1266,7 @@ int_mx_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
 	  if ( GetScalarInt(stack, 2, &dim) == FAIL )
 	    return RET_BUG;
 	}
+      CheckNonNegative(NspFname(stack),dim,2);
     }
       
   if ((Res = (*F) (HMat, dim)) == NULLMAT)
@@ -1308,6 +1312,48 @@ int
 int_mxcuprod (Stack stack, int rhs, int opt, int lhs)
 {
   return (int_mx_sum (stack, rhs, opt, lhs, nsp_mat_cum_prod));
+}
+
+static int
+int_mxdiff (Stack stack, int rhs, int opt, int lhs)
+{
+  char *str;
+  int dim=0;
+  int order=1;
+  NspMatrix *Res, *HMat;
+  CheckRhs (1, 3);
+  CheckLhs (1, 1);
+
+  if ((HMat = GetMat (stack, 1)) == NULLMAT)
+    return RET_BUG;
+
+  if ( rhs > 1 )
+    {
+      if ( GetScalarInt(stack, 2, &order) == FAIL )
+	return RET_BUG;
+      CheckNonNegative(NspFname(stack),order,2);
+
+      if ( rhs == 3 )
+	{
+	  if ( IsSMatObj(stack, 3) )
+	    {
+	      if ((str = GetString (stack, 3)) == (char *) 0)
+		return RET_BUG;
+	      dim = getdimfromstring(str);
+	    }
+	  else
+	    {
+	      if ( GetScalarInt(stack, 3, &dim) == FAIL )
+		return RET_BUG;
+	    }
+	  CheckNonNegative(NspFname(stack),dim,3);
+	}
+    }
+      
+  if ((Res = nsp_mat_diff(HMat, order, dim)) == NULLMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
 }
 
 /*
@@ -1522,8 +1568,10 @@ int_mx_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
     {
       if (GetScalarInt (stack, 1, &m1) == FAIL)
 	return RET_BUG;
+      CheckNonNegative(NspFname(stack),m1,1);
       if (GetScalarInt (stack, 2, &n1) == FAIL)
 	return RET_BUG;
+      CheckNonNegative(NspFname(stack),n1,2);
     }
   else
     {
@@ -1644,8 +1692,10 @@ int_mxrand (Stack stack, int rhs, int opt, int lhs)
 	  /* rand(m,n) * */
 	  if (GetScalarInt (stack, 1, &m) == FAIL)
 	    return RET_BUG;
+	  CheckNonNegative(NspFname(stack),m,1);
 	  if (GetScalarInt (stack, 2, &n) == FAIL)
 	    return RET_BUG;
+	  CheckNonNegative(NspFname(stack),n,2);
 	  if ((A = nsp_mat_rand (m, n)) == NULLMAT)
 	    return RET_BUG;
 	  MoveObj (stack, 1, (NspObject *) A);
@@ -1657,8 +1707,10 @@ int_mxrand (Stack stack, int rhs, int opt, int lhs)
       /* rand(m,n,type); * */
       if (GetScalarInt (stack, 1, &m) == FAIL)
 	return RET_BUG;
+      CheckNonNegative(NspFname(stack),m,1);
       if (GetScalarInt (stack, 2, &n) == FAIL)
 	return RET_BUG;
+      CheckNonNegative(NspFname(stack),n,2);
       tkp = nsp_get_urandtype ();
       /* locally change rand type * */
       if ((tk = GetStringInArray (stack, 3, Table_R, 0)) == -1)
@@ -3149,140 +3201,140 @@ int_mx_mopscal (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
  */
 #ifdef MTLB_MODE
 
-static int
-int_mx_mopscal_mtlb (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3)
-{
-  NspMatrix *HMat1, *HMat2;
-  CheckRhs (2, 2);
-  CheckLhs (1, 1);
-
-  if ( (HMat1 =GetMat(stack, 1)) == NULLMAT )
-    return RET_BUG;
-
-  if ( HMat1->mn == 1 )     /* HMat1 is a scalar => HMat2 will store the result */
-    {
-      if ( (HMat2 =GetMatCopy(stack, 2)) == NULLMAT )
-	return RET_BUG;
-      if ( (*F3)(HMat2, HMat1) == FAIL )
-	return RET_BUG;
-      NSP_OBJECT (HMat2)->ret_pos = 1;
-    }
-  else    /* HMat1 is not a scalar and will store the result */
-    {
-      if ( (HMat1 =GetMatCopy(stack, 1)) == NULLMAT )
-	return RET_BUG;
-      
-      if ( (HMat2 =GetMat(stack, 2)) == NULLMAT )
-	return RET_BUG;
-      if ( HMat2->mn == 1 ) /* HMat2 is a scalar */
-	{
-	  if ( (*F1)(HMat1, HMat2) == FAIL )
-	    return RET_BUG;
-	}
-      else   /* HMat1 and HMat2 must have both the same dimensions : this is tested by F2 */
-	{
-	  if  ( (*F2)(HMat1, HMat2) == FAIL )
-	    return RET_BUG;
-	}
-      NSP_OBJECT (HMat1)->ret_pos = 1;
-    }
-  return 1;
-}
 /* static int */
-/* int_mx_mopscal_mtlb(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3) */
+/* int_mx_mopscal_mtlb (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3) */
 /* { */
-/*   NspMatrix *HMat1, *HMat2, *HMat3; */
-/*   int HMat1_has_no_name, HMat2_has_no_name; */
+/*   NspMatrix *HMat1, *HMat2; */
 /*   CheckRhs (2, 2); */
 /*   CheckLhs (1, 1); */
 
 /*   if ( (HMat1 =GetMat(stack, 1)) == NULLMAT ) */
 /*     return RET_BUG; */
-/*   HMat1_has_no_name = Ocheckname(HMat1,NVOID); */
-  
-/*   if ( (HMat2 =GetMat(stack, 2)) == NULLMAT ) */
-/*     return RET_BUG; */
-/*   HMat2_has_no_name = Ocheckname(HMat2,NVOID); */
 
-/*   if ( HMat1->mn == 1 ) */
+/*   if ( HMat1->mn == 1 )     /\* HMat1 is a scalar => HMat2 will store the result *\/ */
 /*     { */
-/*       if ( HMat2->mn == 1 ) */
-/* 	{ */
-/* 	  if ( HMat1_has_no_name ) */
-/* 	    { */
-/* 	      if ( (*F1)(HMat1, HMat2) == FAIL ) */
-/* 		return RET_BUG; */
-/* 	      NSP_OBJECT (HMat1)->ret_pos = 1; */
-/* 	    } */
-/* 	  else if ( HMat2_has_no_name ) */
-/* 	    { */
-/* 	      if ( (*F3)(HMat2, HMat1) == FAIL ) */
-/* 		return RET_BUG; */
-/* 	      NSP_OBJECT (HMat2)->ret_pos = 1; */
-/* 	    } */
-/* 	  else */
-/* 	    { */
-/* 	      if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT ) */
-/* 		return RET_BUG; */
-/* 	      if ( (*F1)(HMat3, HMat2) == FAIL ) */
-/* 		return RET_BUG; */
-/* 	      MoveObj(stack, 1, (NspObject *) HMat3); */
-/* 	    } */
-/* 	} */
-/*       else /\* HMat2 is not a scalar *\/  */
-/* 	{ */
-/* 	  if ( HMat2_has_no_name ) */
-/* 	    { */
-/* 	      if ( (*F3)(HMat2, HMat1) == FAIL ) */
-/* 		return RET_BUG; */
-/* 	      NSP_OBJECT (HMat2)->ret_pos = 1; */
-/* 	    } */
-/* 	  else */
-/* 	    { */
-/* 	      if ( (HMat3 =nsp_matrix_copy(HMat2)) == NULLMAT ) */
-/* 		return RET_BUG; */
-/* 	      if ( (*F3)(HMat3, HMat1) == FAIL ) */
-/* 		return RET_BUG; */
-/* 	      MoveObj(stack, 1, (NspObject *) HMat3); */
-/* 	    } */
-/* 	} */
+/*       if ( (HMat2 =GetMatCopy(stack, 2)) == NULLMAT ) */
+/* 	return RET_BUG; */
+/*       if ( (*F3)(HMat2, HMat1) == FAIL ) */
+/* 	return RET_BUG; */
+/*       NSP_OBJECT (HMat2)->ret_pos = 1; */
 /*     } */
-/*   else if ( HMat2->mn == 1 ) */
+/*   else    /\* HMat1 is not a scalar and will store the result *\/ */
 /*     { */
-/*       if ( HMat1_has_no_name ) */
+/*       if ( (HMat1 =GetMatCopy(stack, 1)) == NULLMAT ) */
+/* 	return RET_BUG; */
+      
+/*       if ( (HMat2 =GetMat(stack, 2)) == NULLMAT ) */
+/* 	return RET_BUG; */
+/*       if ( HMat2->mn == 1 ) /\* HMat2 is a scalar *\/ */
 /* 	{ */
 /* 	  if ( (*F1)(HMat1, HMat2) == FAIL ) */
 /* 	    return RET_BUG; */
-/* 	  NSP_OBJECT (HMat1)->ret_pos = 1; */
 /* 	} */
-/*       else */
+/*       else   /\* HMat1 and HMat2 must have both the same dimensions : this is tested by F2 *\/ */
 /* 	{ */
-/* 	  if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT ) */
+/* 	  if  ( (*F2)(HMat1, HMat2) == FAIL ) */
 /* 	    return RET_BUG; */
-/* 	  if ( (*F1)(HMat3, HMat2) == FAIL ) */
-/* 	    return RET_BUG; */
-/* 	  MoveObj(stack, 1, (NspObject *) HMat3); */
 /* 	} */
-/*     } */
-/*   else */
-/*     { */
-/*       if ( HMat1_has_no_name ) */
-/* 	{ */
-/* 	  if ( (*F2)(HMat1, HMat2) == FAIL ) */
-/* 	    return RET_BUG; */
-/* 	  NSP_OBJECT (HMat1)->ret_pos = 1; */
-/* 	} */
-/*       else */
-/* 	{ */
-/* 	  if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT ) */
-/* 	    return RET_BUG; */
-/* 	  if ( (*F2)(HMat3, HMat2) == FAIL ) */
-/* 	    return RET_BUG; */
-/* 	  MoveObj(stack, 1, (NspObject *) HMat3); */
-/* 	} */
+/*       NSP_OBJECT (HMat1)->ret_pos = 1; */
 /*     } */
 /*   return 1; */
 /* } */
+static int
+int_mx_mopscal_mtlb(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3)
+{
+  NspMatrix *HMat1, *HMat2, *HMat3;
+  int HMat1_has_no_name, HMat2_has_no_name;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ( (HMat1 =GetMat(stack, 1)) == NULLMAT )
+    return RET_BUG;
+  HMat1_has_no_name = Ocheckname(HMat1,NVOID);
+  
+  if ( (HMat2 =GetMat(stack, 2)) == NULLMAT )
+    return RET_BUG;
+  HMat2_has_no_name = Ocheckname(HMat2,NVOID);
+
+  if ( HMat1->mn == 1 )
+    {
+      if ( HMat2->mn == 1 )
+	{
+	  if ( HMat1_has_no_name )
+	    {
+	      if ( (*F1)(HMat1, HMat2) == FAIL )
+		return RET_BUG;
+	      NSP_OBJECT (HMat1)->ret_pos = 1;
+	    }
+	  else if ( HMat2_has_no_name )
+	    {
+	      if ( (*F3)(HMat2, HMat1) == FAIL )
+		return RET_BUG;
+	      NSP_OBJECT (HMat2)->ret_pos = 1;
+	    }
+	  else
+	    {
+	      if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT )
+		return RET_BUG;
+	      if ( (*F1)(HMat3, HMat2) == FAIL )
+		return RET_BUG;
+	      MoveObj(stack, 1, (NspObject *) HMat3);
+	    }
+	}
+      else /* HMat2 is not a scalar */
+	{
+	  if ( HMat2_has_no_name )
+	    {
+	      if ( (*F3)(HMat2, HMat1) == FAIL )
+		return RET_BUG;
+	      NSP_OBJECT (HMat2)->ret_pos = 1;
+	    }
+	  else
+	    {
+	      if ( (HMat3 =nsp_matrix_copy(HMat2)) == NULLMAT )
+		return RET_BUG;
+	      if ( (*F3)(HMat3, HMat1) == FAIL )
+		return RET_BUG;
+	      MoveObj(stack, 1, (NspObject *) HMat3);
+	    }
+	}
+    }
+  else if ( HMat2->mn == 1 )
+    {
+      if ( HMat1_has_no_name )
+	{
+	  if ( (*F1)(HMat1, HMat2) == FAIL )
+	    return RET_BUG;
+	  NSP_OBJECT (HMat1)->ret_pos = 1;
+	}
+      else
+	{
+	  if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT )
+	    return RET_BUG;
+	  if ( (*F1)(HMat3, HMat2) == FAIL )
+	    return RET_BUG;
+	  MoveObj(stack, 1, (NspObject *) HMat3);
+	}
+    }
+  else
+    {
+      if ( HMat1_has_no_name )
+	{
+	  if ( (*F2)(HMat1, HMat2) == FAIL )
+	    return RET_BUG;
+	  NSP_OBJECT (HMat1)->ret_pos = 1;
+	}
+      else
+	{
+	  if ( (HMat3 =nsp_matrix_copy(HMat1)) == NULLMAT )
+	    return RET_BUG;
+	  if ( (*F2)(HMat3, HMat2) == FAIL )
+	    return RET_BUG;
+	  MoveObj(stack, 1, (NspObject *) HMat3);
+	}
+    }
+  return 1;
+}
 #endif
 
 
@@ -4283,6 +4335,7 @@ static OpTab Matrix_func[] = {
   {"diage_m", int_mxdiage},
   {"diage_m_m", int_mxdiage},
   {"diagset_m", int_mxdiagset},
+  {"diff_m", int_mxdiff},
   {"eq_m_m", int_mxeq},
   {"extract_m", nsp_matint_extract_xx}, 
   {"extractelts_m", nsp_matint_extractelts_xx}, 

@@ -1387,6 +1387,106 @@ NspMatrix *nsp_mat_cum_sum(NspMatrix *A, int dim)
   return Sum;
 }
 
+/**
+ * nsp_mat_diff:  diff of elements of @A
+ * @A: a #NspMatrix
+ * @order: diff level
+ * @dim: for dim=0 the diff over all elements is computed (in column major order).
+ *       for dim=1 the diff over the row indices is computed.
+ *       for dim=2 the diff sum over the column indices is computed.
+ *       else dim=0 is forced.
+ * 
+ * Return value: a #NspMatrix
+ **/
+
+NspMatrix *nsp_mat_diff(NspMatrix *A, int order, int dim)
+{
+  NspMatrix *Diff;
+  int i, j, k, l;
+
+  switch (dim) 
+    {
+    default : 
+      Sciprintf("\nInvalid flag '%d' assuming 0\n",dim);
+
+    case 0: 
+      if ( A->mn - order <= 0 )
+	return nsp_matrix_create(NVOID,A->rc_type,0,0);
+
+      if ( (Diff = nsp_matrix_copy(A)) == NULLMAT ) 
+	return NULLMAT;
+
+      if ( A->rc_type == 'r' )
+	for ( k = 1 ; k <= order ; k++ )
+	  for ( i = 0 ; i < A->mn - k ; i++ )
+	    Diff->R[i] = Diff->R[i+1] - Diff->R[i];
+      else
+	for ( k = 1 ; k <= order ; k++ )
+	  for ( i = 0 ; i < A->mn - k ; i++ )
+	    { 
+	      Diff->C[i].r = Diff->C[i+1].r - Diff->C[i].r;
+	      Diff->C[i].i = Diff->C[i+1].i - Diff->C[i].i;
+	    }
+	      
+      if ( A->m > 1 )
+	nsp_matrix_resize(Diff, A->mn-order, 1);
+      else
+	nsp_matrix_resize(Diff, 1, A->mn-order);
+      break;
+
+    case 1:
+      if ( A->m - order <= 0 )
+	return nsp_matrix_create(NVOID,A->rc_type,0,A->n);
+
+      if ( (Diff = nsp_matrix_copy(A)) == NULLMAT ) 
+	return NULLMAT;
+
+      if ( A->rc_type == 'r' )
+	for ( k = 0 ; k < order ; k++ )
+	  for ( j = 0 ; j < A->n ; j++ )
+	    for ( i = j*(A->m-k) ; i < (j+1)*(A->m-k) - k ; i++ )
+	      Diff->R[i-j] = Diff->R[i+1] - Diff->R[i];
+      else
+	for ( k = 0 ; k < order ; k++ )
+	  for ( j = 0 ; j < A->n ; j++ )
+	    for ( i = j*(A->m-k) ; i < (j+1)*(A->m-k) - k ; i++ )
+	      {
+		Diff->C[i-j].r = Diff->C[i+1].r - Diff->C[i].r;
+		Diff->C[i-j].i = Diff->C[i+1].i - Diff->C[i].i;
+	      }
+	      
+      nsp_matrix_resize(Diff, A->m-order, A->n);
+      break;
+
+    case 2:
+      if ( A->n - order <= 0 )
+	return nsp_matrix_create(NVOID,A->rc_type,A->m,0);
+
+      if ( (Diff = nsp_matrix_copy(A)) == NULLMAT ) 
+	return NULLMAT;
+
+      if ( A->rc_type == 'r' )
+	for ( k = 1 ; k <= order ; k++ )
+	  for ( i = 0 ; i < A->m ; i++ )
+	    for ( j = 0, l = i ; j < A->n-k ; j++, l+=A->m )
+	      Diff->R[l] = Diff->R[l+A->m] - Diff->R[l] ;
+      else
+	for ( k = 1 ; k <= order ; k++ )
+	  for ( i = 0 ; i < A->m ; i++ )
+	    for ( j = 0, l = i ; j < A->n-k ; j++, l+=A->m )
+	      {
+		Diff->C[l].r = Diff->C[l+A->m].r - Diff->C[l].r;
+		Diff->C[l].i = Diff->C[l+A->m].i - Diff->C[l].i;
+	      }
+	      
+      nsp_matrix_resize(Diff, A->m, A->n-order);
+      break;
+    }
+
+  return Diff;
+}
+
+
 
 /*
  * Max =nsp_mat_maxi(A,B,Imax,lhs)
