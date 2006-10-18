@@ -2221,7 +2221,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 		      if ((nret = nsp_eval_extract_cells(stack,first,count,opt,-1)) < 0)
 			return nret;
 		    }
-		  else
+		  else if ( stack.val->S[first]->type->path_extract != NULL ) 
 		    {
 		      /* for a cell here we must perform a path_extract */
 		      NspObject *Ob= stack.val->S[first]->type->path_extract(stack.val->S[first],count-1,&stack.val->S[first+1]);
@@ -2233,6 +2233,21 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
 			}
 		      stack.val->S[first] = Ob;
 		      nret=1;
+		    }
+		  else
+		    {
+		      if ((nret =nsp_eval_extract(stack,first,count,opt,-1)) < 0) 
+			{
+			  nsp_void_seq_object_destroy(stack,first,first+count);
+			  return nret;
+			}
+		      if ( nret != 1 ) 
+			{
+			  Scierror("Error: path extraction in step (step %d) returned too many arguments\n",
+				   j,nret);
+			  nsp_void_seq_object_destroy(stack,first,first+count);
+			  SHOWBUG(stack,RET_BUG,L);
+			}
 		    }
 		}
 	      else 
