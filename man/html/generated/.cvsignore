@@ -21,3 +21,4 @@ manual.ilg
 manual.ind
 manual*.png
 *.aux
+texput.log
