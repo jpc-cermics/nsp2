@@ -493,7 +493,7 @@ NspObject *nsp_create_object_from_complex(const char *str,const doubleC *d)
  * Return value:  a new #NspObject ( in fact a #NspSMatrix)
  **/
 
-NspObject *nsp_create_object_from_str(char *str)
+NspObject *nsp_create_object_from_str(const char *str)
 {
   return (NspObject *) nsp_smatrix_create(NVOID,1,1,str,1);
 }
