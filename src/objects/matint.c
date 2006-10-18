@@ -188,7 +188,7 @@ static int int_matint_meth_concatr(NspObject *self, Stack stack, int rhs, int op
   if ( typeB != typeSelf )
     {
       Scierror("Error: A.concar[B], A and B must be of the same type\n");
-      return FAIL;
+      return RET_BUG;
     }
   if ( nsp_matint_concat_right_bis(self,B)==FAIL) 
     return RET_BUG;
@@ -211,7 +211,7 @@ static int int_matint_meth_concatd(NspObject *self, Stack stack, int rhs, int op
   if ( typeB != typeSelf )
     {
       Scierror("Error: A.concar[B], A and B must be of the same type\n");
-      return FAIL;
+      return RET_BUG;
     }
   if ( nsp_matint_concat_down_bis(self,B)==FAIL) 
     return RET_BUG;
