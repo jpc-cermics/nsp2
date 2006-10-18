@@ -444,7 +444,9 @@ int int_nsp_grand( Stack stack, int rhs, int opt, int lhs)
   if (IsMatObj(stack,2)) 
     {
       if (GetScalarInt(stack,1,&ResL) == FAIL) return RET_BUG;
+      CheckNonNegative(NspFname(stack),ResL,1);
       if (GetScalarInt(stack,2,&ResC) == FAIL) return RET_BUG;
+      CheckNonNegative(NspFname(stack),ResC,2);
       if (rhs <= 2 ) 
 	{
 	  Scierror("Error: expecting more than two numbers as arguments \n",NspFname(stack));
