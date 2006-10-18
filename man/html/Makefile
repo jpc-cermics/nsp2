@@ -2,7 +2,7 @@
 all:: manual
 
 manual::
-	cd generated ; make manual 
+	cd generated ; make all
 
 index: 
 	cd generated ; make index 

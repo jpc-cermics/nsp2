@@ -3,13 +3,11 @@ SHELL = /bin/sh
 
 # voir http://john.regehr.org/latex/
 
-all:: manual-silent index-silent manual2-silent  manualindex 
-
-debug:: manual
+all:: manual-silent index-silent manual-silent  manualindex 
 
 # tlatex ../manual 'xhtml,3,sec-filename,next,notoc*'
 
-manual2-silent manual-silent:
+manual-silent:
 	@echo "running htlatex"
 	@export TEXINPUTS=`pwd`/../../src//:: ; \
 	htlatex ../manual 'xhtml,uni-html4,3,section+,next,notoc*' "-cunihtf -utf8" >& /dev/null
@@ -31,7 +29,12 @@ index:
 	@tex '\def\filename{{manual}{idx}{4dx}{ind}} \input  idxmake.4ht' 
 	@makeindex -o manual.ind manual.4dx >& /dev/null
 
+# a link for the index.
 
+manualindex:
+	@echo "link for index"	
+	@$(RM)  manualindex.html
+	@ln -f -s `grep  -l '<title>Index</title>' *.html` manualindex.html
 
 distclean::
 	@$(RM) manualch*.html manualli*.html manualse*.html manualindex.html
@@ -58,9 +61,3 @@ distclean::
 
 clean	::
 
-# a link for the index.
-
-manualindex:
-	@echo "link for index"	
-	@$(RM)  manualindex.html
-	@ln -f -s `grep  -l '<title>Index</title>' *.html` manualindex.html
