@@ -1695,7 +1695,7 @@ void plist_get_nargs(PList List,int *lhs , int *rhsp1)
 	  plist_arg_get_nargs(List,lhs,rhsp1);
 	  break;
 	case FUNCTION:
-	  plist_arg_get_nargs(List,lhs,rhsp1);
+	  plist_arg_get_nargs(List->next,lhs,rhsp1);
 	  break;
 	default:
 	  /* ignore */
