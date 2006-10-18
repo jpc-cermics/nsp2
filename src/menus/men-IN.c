@@ -485,7 +485,7 @@ int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 
 static int nsp_check_choice(Stack stack,NspList *L)
 {
-  NspSMatrix *MS1=NULL,*MS2=NULL,*MS3=NULL;
+  NspSMatrix *MS1=NULL,*MS2=NULL;
   NspObject *M3=NULL;
   int i;
   int_types Tc1[]={ smat,smat,s_int,obj ,list_end} ;
@@ -509,9 +509,15 @@ static int nsp_check_choice(Stack stack,NspList *L)
     }
   else
     {
+      if ( !( IsSMat(M3)))
+	{
+	  Scierror("Error: Argument should be a SMat\n");
+	  Scierror("       while parsing a list argument (element 4)\n");
+	  return FAIL;
+	}
       if (  nsp_smatrix_to_utf8(MS1) == FAIL 
 	    || nsp_smatrix_to_utf8(MS2) == FAIL 
-	    || nsp_smatrix_to_utf8(MS3) == FAIL )
+	    || nsp_smatrix_to_utf8((NspSMatrix *)M3) == FAIL )
 	{
 	  Scierror("Error: in %s conversion to utf8 failed\n",NspFname(stack));
 	  return FAIL;
