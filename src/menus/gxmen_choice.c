@@ -168,6 +168,7 @@ menu_answer nsp_choices_with_combobox(char *title,NspList *L,NspList **Res,int u
 	break;
       default:
 	answer = menu_cancel;
+	if ((*Res= nsp_list_create(NVOID)) == NULLLIST ) answer=menu_fail;
 	break;
     }
   gtk_widget_destroy(window);
