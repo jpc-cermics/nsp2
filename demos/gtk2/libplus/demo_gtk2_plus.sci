@@ -1,6 +1,6 @@
 
 function demo_gtk2_plus()
-  B = hcreate(20);
+  B = hash_create(20);
   B('colorsel')=demo_colorsel,
   B('display and screen')=demo_display_screen,
   B('image from drawable')=demo_image_from_drawable,

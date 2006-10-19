@@ -39,7 +39,7 @@ function screen_display_check (widget,args)
 endfunction 
 
 function demo_display_screen () 
-  opts=hcreate(type= GTK.WINDOW_TOPLEVEL,title="Screen or Display selection",...
+  opts=hash_create(type= GTK.WINDOW_TOPLEVEL,title="Screen or Display selection",...
 	       border_width= 10);
   window = gtkwidget_new(%types.GtkWindow,opts);
   screen = window.get_screen[];

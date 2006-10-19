@@ -67,7 +67,7 @@ function demo_treestore_from_mat ()
 
   renderer = gtkcellrenderertext_new ();
   for i=1:size(M,'c') 
-    col = gtktreeviewcolumn_new(title=sprintf("Col %d",i),renderer=renderer,attrs=hcreate(text=i-1));
+    col = gtktreeviewcolumn_new(title=sprintf("Col %d",i),renderer=renderer,attrs=hash(text=i-1));
     col.set_sort_column_id[i-1];
     treeview.append_column[col];
   end 

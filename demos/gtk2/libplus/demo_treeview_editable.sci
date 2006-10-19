@@ -46,7 +46,7 @@ function demo_treeview_editable()
       renderer = gtkcellrenderertext_new ();
       renderer.connect[  "edited",  cell_edited,list(model)]
       renderer.set_data[column=col ];
-      attrs= hcreate(text= col, editable= col_editable);
+      attrs= hash_create(text= col, editable= col_editable);
       // XXXX bugué a reparer 
       // treeview.insert_column_with_attributes[ -1,title=sprintf("Column
       // %d",col+1),renderer=renderer,attrs= attrs];
@@ -71,7 +71,7 @@ function demo_treeview_editable()
     endfunction
   
     renderer.connect["toggled", editable_toggled,list(model,col_editable)]
-    col = gtktreeviewcolumn_new(title="Editable",renderer=renderer,attrs= hcreate(active=col_editable));
+    col = gtktreeviewcolumn_new(title="Editable",renderer=renderer,attrs= hash(active=col_editable));
     col.set_sizing[ GTK.TREE_VIEW_COLUMN_FIXED] 
     col.set_fixed_width[50]
     treeview.append_column[col];

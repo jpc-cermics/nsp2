@@ -1,4 +1,4 @@
-
+
 // XXXX : si on met 1 a la place de "mxn" 
 // le message d'erreur ensuite est pas clair a revoir 
 
@@ -71,15 +71,15 @@ function tree_view=create_tree(h)
   tree_view.set_size_request[  200, -1]
   
   cell = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Name",renderer=cell,attrs=hcreate(text= 0));
+  col = gtktreeviewcolumn_new(title="Name",renderer=cell,attrs=hash(text= 0));
   tree_view.append_column[col];
   
   cell = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Type",renderer=cell,attrs=hcreate(text= 1));
+  col = gtktreeviewcolumn_new(title="Type",renderer=cell,attrs=hash(text= 1));
   tree_view.append_column[col];
   
   cell = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="mxn",renderer=cell,attrs=hcreate(text=  2));
+  col = gtktreeviewcolumn_new(title="mxn",renderer=cell,attrs=hash(text=  2));
   tree_view.append_column[col];
     
   selection.connect["changed", selection_cb,list(model)]
@@ -97,9 +97,9 @@ endfunction
 
 function demo_treestore1() 
 // 
-  h=hcreate(A=89,B=%t,C=rand(4,4));
-  h1=hcreate(A=89,B=%t,C=rand(4,4),h1=h,h2=h);
-  h3=hcreate(A=78,foo=h1);
+  h=hash_create(A=89,B=%t,C=rand(4,4));
+  h1=hash_create(A=89,B=%t,C=rand(4,4),h1=h,h2=h);
+  h3=hash_create(A=78,foo=h1);
   
   setup_default_icon ();
   window = gtkwindow_new();// (GTK.WINDOW_TOPLEVEL);

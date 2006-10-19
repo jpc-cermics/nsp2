@@ -62,39 +62,39 @@ function demo_liststore ()
   endfunction
   
   renderer.connect[  "toggled", fixed_toggled,list(model,C1)]
-  col = gtktreeviewcolumn_new(title="Boolean as toggle",renderer=renderer,attrs= hcreate(active=C1));
+  col = gtktreeviewcolumn_new(title="Boolean as toggle",renderer=renderer,attrs= hash(active=C1));
   col.set_sizing[ GTK.TREE_VIEW_COLUMN_FIXED]   // set this column to a fixed sizing (of 50 pixels) */
   col.set_fixed_width[50]
   treeview.append_column[col];
 
   // same column  for booleans as text 
   renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Boolean as text",renderer=renderer,attrs= hcreate(text=C1));
+  col = gtktreeviewcolumn_new(title="Boolean as text",renderer=renderer,attrs= hash(text=C1));
   col.set_sizing[ GTK.TREE_VIEW_COLUMN_FIXED]   // set this column to a fixed sizing (of 50 pixels) */
   col.set_fixed_width[50]
   treeview.append_column[col];
   
   // column for numbers */
   renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Scalars",renderer=renderer,attrs=hcreate(text=C2));
+  col = gtktreeviewcolumn_new(title="Scalars",renderer=renderer,attrs=hash(text=C2));
   col.set_sort_column_id[C2];
   treeview.append_column[col];
 
   // column for numbers 
   renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Scalars",renderer=renderer,attrs=hcreate(text=C3));
+  col = gtktreeviewcolumn_new(title="Scalars",renderer=renderer,attrs=hash(text=C3));
   col.set_sort_column_id[C3];
   treeview.append_column[col];
 
   // column for strings */
   renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="String",renderer=renderer,attrs=hcreate(text=C4));
+  col = gtktreeviewcolumn_new(title="String",renderer=renderer,attrs=hash(text=C4));
   col.set_sort_column_id[C4];
   treeview.append_column[col];
   
   // column for numbers */
   renderer = gtkcellrenderertext_new ();
-  col = gtktreeviewcolumn_new(title="Scalars",renderer=renderer,attrs=hcreate(text=C5));
+  col = gtktreeviewcolumn_new(title="Scalars",renderer=renderer,attrs=hash(text=C5));
   col.set_sort_column_id[C5];
   treeview.append_column[col];
   // ---------------------------------------------
