@@ -8,8 +8,8 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-L = list()
-L = list(O1, O2, O3, ...)
+L = list()  // or L = list_create()
+L = list(O1, O2, O3, ...)  // or L = list_create(O1, O2, O3, ...) 
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -26,7 +26,8 @@ L = list(O1, O2, O3, ...)
 The \emph{list} data type is useful to collect objects of different
 types. Internally nsp lists are implemented as doubled linked lists
 and operations (extraction, insertion, deletion) on head and queue
-are efficient. The \emph{list} function can be used to create lists.  
+are efficient. The \emph{list} (or \emph{list\_create}) function can 
+be used to create lists.  
 \end{mandescription}
 
 \paragraph{Operations on lists}
@@ -121,7 +122,7 @@ variable  \verb+e+ being equal to \verb+L(i+) at the i-th iteration.
   \begin{itemize}
     \item Creation and methods:
     \begin{program}
-    L = list(1,2,"c",%f, %t, rand(2,1))
+    L = list(1,2,"c",%f, %t, rand(2,1))  // or  L = list_create(1,2,"c",%f, %t, rand(2,1)) 
     n = length(L)
     // adds 0 as first element of L increasing its size
     L.add_first[0]; L
