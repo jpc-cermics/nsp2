@@ -1180,7 +1180,7 @@ static OpTab SMatrix_func[]={
   {"latexmat_s",int_smatrix_2latexmat},
   {"latextab_s",int_smatrix_2latextab},
   /* {"loopextract_m_s",int_smxextractcolforloop}, */
-  {"smat_create",int_smxcreate},
+  {"smat_create_m",int_smxcreate},
   {"redim_s",int_matint_redim},
   {"matrix_s", int_matint_redim},
   {"concatr_s_s",nsp_matint_concatr_xx},

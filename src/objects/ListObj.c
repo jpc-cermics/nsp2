@@ -1424,6 +1424,7 @@ static int int_list_2latexmat(Stack stack, int rhs, int opt, int lhs)
 static OpTab List_func[]={
   {"latex_l",int_list_2latexmat},
   {"list",int_lxlist},
+  {"list_create",int_lxlist},
   {"tlist",int_lx_tlist_as_hash},
   {"mlist",int_lx_mlist_as_hash},
   {"null",int_lxnull},
@@ -1432,8 +1433,6 @@ static OpTab List_func[]={
   {"extractelts_l",int_lxextract}, 
   {"setrowscols_l",int_lxsetrc},
   {"unique_l",int_lxunique},
-  {"lxcreate",int_lxcreate},
-  {"lxlength",int_lxlength},
   {"list_concat",int_lxcat},
   {"sorted_list", int_lxsortedlist},
   {"sorted_list_search", int_lxsortedsearch},

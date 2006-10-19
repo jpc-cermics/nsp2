@@ -990,7 +990,8 @@ static int int_hash_as_options(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab Hash_func[]={
-  {"hcreate",int_htcreate},  		/* could be renamed hcreate(10)
+  {"hash",int_htcreate},  
+  {"hash_create",int_htcreate},  		/* could be renamed hcreate(10)
                                          * hcreate(x=67,y=89,...) 
                                          * hcreate(n,x=67,y=89,...) 
                                          * hcreate(n) 
