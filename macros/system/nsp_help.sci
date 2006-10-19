@@ -6,7 +6,7 @@ function nsp_help(topic)
     F=fopen(idx,mode="r");
     Str=F.get_smatrix[];
     F.close[];
-    h=hcreate(size(Str,'*'));
+    h=hash_create(size(Str,'*'));
     // remove \indexentry{
     Str=regsub(Str,'^[^{]*{','h.');
     // remove enclosing \LNK{xx} -> xx 

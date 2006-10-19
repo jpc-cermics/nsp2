@@ -18,7 +18,7 @@ A1=unserialize(serialize(A));
 A1=full(A1);
 if ~A1.equal[full(A)] then pause;end 
 
-A=hcreate(A1=testmatrix('magic',6),A2="poo",A3=%t);
+A=hash_create(A1=testmatrix('magic',6),A2="poo",A3=%t);
 A1=unserialize(serialize(A));
 if ~A1.equal[A] then pause;end 
 
@@ -57,7 +57,7 @@ A1=unserialize(serialize(A,'m'));
 A1=full(A1);
 if ~A1.equal[full(A)] then pause;end 
 
-A=hcreate(A1=testmatrix('magic',6),A2="poo",A3=%t);
+A=hash_create(A1=testmatrix('magic',6),A2="poo",A3=%t);
 A1=unserialize(serialize(A,'m'));
 if ~A1.equal[A] then pause;end 
 

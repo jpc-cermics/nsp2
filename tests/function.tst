@@ -1,5 +1,5 @@
 
-H=hcreate(A=1,B=2,C=3);
+H=hash_create(A=1,B=2,C=3);
 function y=f(x,varargopt);y=varargopt;endfunction;
 function y=g(x,varargopt);y=f(x,varargopt(:));endfunction;
 y=g(5,H(:));

@@ -110,7 +110,7 @@ function tree_view=create_tree(demo_list)
   cell.set_property["style", PANGO.STYLE_ITALIC];
   TITLE_COLUMN=0;
   ITALIC_COLUMN=3;
-  attrs=hcreate(text= TITLE_COLUMN,style_set=ITALIC_COLUMN);
+  attrs=hash_create(text= TITLE_COLUMN,style_set=ITALIC_COLUMN);
   col = gtktreeviewcolumn_new(title="Widget (double click for demo)",renderer=cell,attrs=attrs);
   tree_view.append_column[col];
   tree_view.connect["row_activated",row_activated_cb,list(model)]

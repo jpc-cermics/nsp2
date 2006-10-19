@@ -4,7 +4,7 @@
 // table in an environment.
 
 function h=my_env() 
-  h=hcreate(a=67,b=67); 
+  h=hash_create(a=67,b=67); 
   h.scilab= %f; 
   h.foo = 8*ones(4,5)
   function y=poo(x); y=sin(x);endfunction 

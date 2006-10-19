@@ -347,7 +347,7 @@ function F= diagram()
 endfunction;
   
 global('GF');
-GF=hcreate(6);
+GF=hash_create(6);
 
 xinit(name='My diagram',dim=[1000,1000],popup_dim=[600,400])
 xset('recording',0)
