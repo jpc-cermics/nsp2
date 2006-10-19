@@ -8,7 +8,8 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-L = h_create(size,var1,...,varn,name1=val1,...)
+L = hash_create(size,var1,...,varn,name1=val1,...)
+L = hash(size,var1,...,varn,name1=val1,...)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -22,9 +23,13 @@ L = h_create(size,var1,...,varn,name1=val1,...)
 
 \begin{mandescription}
 The \emph{hash} data type is useful to maintain a collection of objects 
-which can be accessed using their names as access key. 
+which can be accessed using their names as access key. A hash table
+could be created with the \verb+hash_create+ function (you can use
+either the shortly name +hash+).  
 Internally nsp hash tables are implemented as hash tables with open adressing. 
-They are dynamically resized according to the number of stored objects. 
+They are dynamically resized according to the number of stored
+objects.
+
 \end{mandescription}
 
 \paragraph{Operations on hashs}
@@ -58,7 +63,7 @@ They are dynamically resized according to the number of stored objects.
   which evaluates to a string) 
 \item \verb+H(:)+ puts all the elements of \verb+H+ on the calling stack but as named 
   optional arguments. Thus is can be usefull to pass a set of named options to a function. 
-  (\verb+H=hcreate(color=3,size=5)+ and \verb+f(70,H(:))+ is equivalent to 
+  (\verb+H=hash_create(color=3,size=5)+ and \verb+f(70,H(:))+ is equivalent to 
   \verb+f(70,color=3,size=5)+).
 \item \verb+H(key)=e+ or \verb+H.key=e+ insert the rhs value in the hash table with key name 
   given by \verb+key+.
@@ -74,18 +79,18 @@ They are dynamically resized according to the number of stored objects.
 
 \begin{examples}
   \begin{program}
-    A=rand(4,4);
-    H= hcreate(5,A,B=34,C="foo")
+    A = rand(4,4);
+    H = hash_create(5,A,B=34,C="foo")  // or shortly H = hash(5,A,B=34,C="foo")
     H.delete['A',['B','C']];
     H.enter[A,Z='foo',C=3.56];
     [a,b,c]=H.find['A',['B','C']]
     [a,b,c]=H.iskey['A',['B','C']]
-    H.merge[hcreate(P=89,Q=67)];
+    H.merge[hash_create(P=89,Q=67)];
     H.A = 56 
-    str='A'
-    H(str)=45;
+    str = 'A'
+    H(str) = 45;
     function y=f(a=1,b=2,c=3);y=[a,b,c];endfunction 
-    H=hcreate(a=67,b=45);
+    H = hash_create(a=67,b=45);
     f(H(:));
   \end{program}
  \end{examples}
