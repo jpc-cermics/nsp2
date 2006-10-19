@@ -55,8 +55,8 @@ function [y,ind,occ] = unique(x,first_ind=%f)
 	   y = x; ind = 1;
 	 else
 	   [y,ind] = sort(x,type_sort,"i");
-	   id = find(y(1:$-1)==y(2:$))         // id = 1 + find(y(1:$-1)==y(2:$))
-	   if id ~= [] then, id = id + 1, end  // directly if mtlb mode is used
+	   id = find(y(1:$-1)==y(2:$))             // id = 1 + find(y(1:$-1)==y(2:$))
+	   if ~isempty(id) then, id = id + 1, end  // directly if mtlb mode is used
 	   y(id) = []; ind(id) = []
 	 end
 	 if nargout == 3 then
