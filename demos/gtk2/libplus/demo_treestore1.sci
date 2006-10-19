@@ -1,4 +1,3 @@
-
 // XXXX : si on met 1 a la place de "mxn" 
 // le message d'erreur ensuite est pas clair a revoir 
 
