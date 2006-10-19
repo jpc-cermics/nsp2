@@ -1,17 +1,17 @@
-
 SHELL = /bin/sh
 
 # voir http://john.regehr.org/latex/
 
-all:: manual-silent index-silent manual-silent  manualindex 
+all:: manual-silent index-silent manual2-silent  manualindex 
 
 # tlatex ../manual 'xhtml,3,sec-filename,next,notoc*'
 
-manual-silent:
-	@echo "running htlatex"
+manual2-silent manual-silent:
+	@echo -n "running htlatex..."
 	@export TEXINPUTS=`pwd`/../../src//:: ; \
 	htlatex ../manual 'xhtml,uni-html4,3,section+,next,notoc*' "-cunihtf -utf8" >& /dev/null
 	@cp ../manual.css manual.css
+	@echo "done"
 
 manual:
 	@echo "running htlatex"
@@ -20,9 +20,10 @@ manual:
 	@cp ../manual.css manual.css
 
 index-silent: 
-	@echo "make index"
+	@echo -n "make index..."
 	@tex '\def\filename{{manual}{idx}{4dx}{ind}} \input  idxmake.4ht' >& /dev/null
 	@makeindex -o manual.ind manual.4dx >& /dev/null
+	@echo "done"
 
 index:
 	@echo "make index"
@@ -59,5 +60,4 @@ distclean::
 	@$(RM) *.aux
 	@$(RM) manual*.png
 
-clean	::
-
+clean	:: 
