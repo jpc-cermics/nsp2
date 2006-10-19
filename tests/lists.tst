@@ -158,9 +158,24 @@ L=list(1,2,3,4);
 L1=foldr(L,f);
 if L1<>list(1,list(2,list(3,4))) then pause;end 
 
+// static int int_lxfoldl
+
+function z=f(x,y);z=x+y;endfunction ;
+L=list(1,2,3,4);
+v=foldl(L,f,0);
+if v<>10 then pause;end 
+
+function z=f(x,y);z=[x,y];endfunction ;
+L=list(1,2,3,4);
+L1=foldl(L,f,0);
+if ~L1.equal[0:4] then pause;end 
+
+// L(:) 
+
 L=list(1,5,9);
 [a,b,c]=L(:);
 if c<>9 then pause;end 
+
 
 
 // extract/insert/remove with path 
